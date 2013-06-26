@@ -216,7 +216,7 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 bool SaveLoadManager::readSavegameHeader(int slot, hopkinsSavegameHeader &header) {
 	// Try and open the save file for reading
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		g_vm->generateSaveName(slot));
+		_vm->generateSaveName(slot));
 	if (!saveFile)
 		return false;
 
