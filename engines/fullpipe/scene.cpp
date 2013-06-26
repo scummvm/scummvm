@@ -174,7 +174,7 @@ bool Scene::load(MfcArchive &file) {
 
 	_libHandle = g_fullpipe->_currArchive;
 
-	if (_list.size() > 0 && _stringObj && strlen(_stringObj) > 1) {
+	if (_picObjList.size() > 0 && _stringObj && strlen(_stringObj) > 1) {
 		char fname[260];
 
 		strcpy(fname, _stringObj);

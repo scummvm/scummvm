@@ -74,7 +74,25 @@ bool Background::load(MfcArchive &file) {
 }
 
 void Background::addPictureObject(PictureObject *pct) {
-	warning("STUB: Background::addPictureObject");
+	if (pct->_field_4)
+		renumPictures(pct);
+
+	bool inserted = false;
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		if (((PictureObject *)_picObjList[i])->_priority == pct->_priority) {
+	  		_picObjList.insert_at(i, pct);
+			inserted = true;
+			break;
+		}
+	}
+
+	if (!inserted) {
+		_picObjList.push_back(pct);
+	}
+}
+
+void Background::renumPictures(PictureObject *pct) {
+	warning("STUB: Background::renumPictures");
 }
 
 PictureObject::PictureObject() {

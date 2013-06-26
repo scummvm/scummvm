@@ -89,7 +89,7 @@ class PictureObject : public GameObject {
 
 class Background : public CObject {
   protected:
-	CPtrList _list;
+	CPtrList _picObjList;
 	char *_stringObj;
 	int _x;
 	int _y;
@@ -103,6 +103,7 @@ class Background : public CObject {
 	Background();
 	virtual bool load(MfcArchive &file);
 	void addPictureObject(PictureObject *pct);
+	void renumPictures(PictureObject *pct);
 };
 
 class Shadows : public CObject {

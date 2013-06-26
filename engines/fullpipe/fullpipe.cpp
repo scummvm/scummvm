@@ -51,6 +51,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_scrollSpeed = 0;
 	_currSoundListCount = 0;
 
+	_currArchive = 0;
+
 	_soundEnabled = true;
 	_flgSoundList = true;
 
