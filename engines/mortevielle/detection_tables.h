@@ -33,7 +33,7 @@ static const ADGameDescription MortevielleGameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::FR_FRA,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -47,7 +47,7 @@ static const ADGameDescription MortevielleGameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::FR_FRA,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -61,7 +61,7 @@ static const ADGameDescription MortevielleGameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::DE_DEU,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -77,7 +77,7 @@ static const ADGameDescription MortevielleGameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
