@@ -1408,7 +1408,7 @@ void MortevielleEngine::fctDiscuss() {
 		do {
 			bool dummyFl;
 			_mouse.moveMouse(dummyFl, retKey);
-			if (g_vm->shouldQuit())
+			if (shouldQuit())
 				return;
 
 			_mouse.getMousePosition(x, y, click);

@@ -582,12 +582,12 @@ void MortevielleEngine::showIntroduction() {
 	f3f8::aff50(false);
 	_speechManager._mlec = 0;
 	f3f8::checkForF8(142, false);
-	if (g_vm->shouldQuit())
+	if (shouldQuit())
 		return;
 
 	f3f8::ani50();
 	f3f8::checkForF8(143, true);
-	if (g_vm->shouldQuit())
+	if (shouldQuit())
 		return;
 
 	// TODO: Once music (Amiga/Atari ports) is implemented, only use the below delay if music is turned off
@@ -619,7 +619,7 @@ void MortevielleEngine::mainGame() {
 	// Loop to play the game
 	do {
 		playGame();
-		if (g_vm->shouldQuit())
+		if (shouldQuit())
 			return;
 	} while (!_quitGame);
 }
@@ -634,7 +634,7 @@ void MortevielleEngine::playGame() {
 	// Loop handling actions until the game has to be quit, or show the lose or end sequence
 	do {
 		handleAction();
-		if (g_vm->shouldQuit())
+		if (shouldQuit())
 			return;
 	} while (!((_quitGame) || (_endGame) || (_loseGame)));
 
@@ -670,7 +670,7 @@ void MortevielleEngine::handleAction() {
 			_menu.updateMenu();
 			prepareRoom();
 			_mouse.moveMouse(funct, inkey);
-			if (g_vm->shouldQuit())
+			if (shouldQuit())
 				return;
 			++temps;
 		} while (!((_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));
@@ -739,7 +739,7 @@ void MortevielleEngine::handleAction() {
 					handleOpcode();
 
 				if ((_controlMenu == 0) && (! _loseGame) && (! _endGame)) {
-					g_vm->_text.taffich();
+					_text.taffich();
 					if (_destinationOk) {
 						_destinationOk = false;
 						drawPicture();
@@ -1759,7 +1759,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 	do {
 		_speechManager.startSpeech(rep, haut[_caff - 69], 0);
 		key = f3f8::waitForF3F8();
-		if (g_vm->shouldQuit())
+		if (shouldQuit())
 			return;
 	} while (key != 66);
 	hirs();
@@ -3395,7 +3395,7 @@ void MortevielleEngine::testKey(bool d) {
 			prepareRoom();
 		quest = keyPressed();
 		_mouse.getMousePosition(x, y, click);
-		if (g_vm->shouldQuit())
+		if (shouldQuit())
 			return;
 	} while (!(quest || (click) || (d && _anyone)));
 	if (quest)
@@ -3631,7 +3631,7 @@ void MortevielleEngine::tfleche() {
 
 		do {
 			_mouse.moveMouse(qust, touch);
-			if (g_vm->shouldQuit())
+			if (shouldQuit())
 				return;
 
 			if (getMouseClick())
