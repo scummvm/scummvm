@@ -401,7 +401,7 @@ bool CGameVar::load(MfcArchive &file) {
 	for (int i = 0; i < file.getLevel(); i++)
 		debugN(6, " ");
 
-	debugN(6, "<%s>: ", _stringObj);
+	debugN(6, "<%s>: ", transCyrillic((byte *)_stringObj));
 
 	switch (_varType) {
 	case 0:

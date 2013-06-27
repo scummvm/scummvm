@@ -127,6 +127,7 @@ struct CNode {
 typedef Common::Array<void *> CPtrList;
 
 char *genFileName(int superId, int sceneId, const char *ext);
+byte *transCyrillic(byte *s);
 
 } // End of namespace Fullpipe
 
