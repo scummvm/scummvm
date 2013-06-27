@@ -67,6 +67,8 @@ public:
 	virtual Common::Error run();
  
 private:
+	void initialize();
+
 	void processEvents();
 	void onMouseDown(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);

@@ -73,7 +73,7 @@ ZVision::~ZVision() {
 	DebugMan.clearAllDebugChannels();
 }
 
-Common::Error ZVision::run() {
+void ZVision::initialize() {
 	// Find zfs archive files
 	Common::ArchiveMemberList list;
 	SearchMan.listMatchingMembers(list, "*.zfs");
@@ -92,6 +92,12 @@ Common::Error ZVision::run() {
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
+}
+
+Common::Error ZVision::run() {
+	initialize();
+
+	tests();
 
 	// Main loop
 	uint32 currentTime = _system->getMillis();
