@@ -22,8 +22,6 @@ ifeq "$(HAVE_GCC)" "1"
 	CXXFLAGS:= -Wall $(CXXFLAGS)
 	# Turn off some annoying and not-so-useful warnings
 	CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
-
-ifneq "$(BACKEND)" "tizen"
 	# Enable even more warnings...
 	CXXFLAGS+= -Wpointer-arith -Wcast-qual
 	CXXFLAGS+= -Wshadow -Wnon-virtual-dtor -Wwrite-strings
@@ -34,7 +32,8 @@ ifneq "$(BACKEND)" "tizen"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable RTTI and exceptions
+ifneq "$(BACKEND)" "tizen"
+	# Disable RTTI and exceptions. These settings cause tizen apps to crash
 	CXXFLAGS+= -fno-rtti -fno-exceptions
 endif
 

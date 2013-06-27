@@ -814,7 +814,7 @@ begin_credits("Credits");
 				add_person("Lars Persson", "AnotherGuest", "");
 			end_section();
 
-			begin_section("Tizen / bada");
+			begin_section("Tizen / BADA");
 				add_person("Chris Warren-Smith", "", "");
 			end_section();
 
