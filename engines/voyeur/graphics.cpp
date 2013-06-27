@@ -54,6 +54,7 @@ GraphicsManager::GraphicsManager():
 	_drawTextPermFlag = false;
 	_clipPtr = NULL;
 	_viewPortListPtr = NULL;
+	_backgroundPage = NULL;
 	_vPort = NULL;
 	_fontPtr = NULL;
 }
@@ -586,6 +587,11 @@ void GraphicsManager::restoreBack(Common::Array<Common::Rect> &rectList, int rec
 	bool saveBack = _saveBack;
 	_saveBack = false;
 
+	// WORKAROUND: Since _backgroundPage can point to a resource freed at the end of display methods,
+	// I'm now explicitly resetting it to null in screenReset(), so at this point it can be null
+	if (!srcPic)
+		return;
+
 	if (rectListCount == -1) {
 		sDrawPic(srcPic, destPic, Common::Point());
 	} else {
@@ -629,6 +635,7 @@ void GraphicsManager::setColor(int idx, byte r, byte g, byte b) {
 void GraphicsManager::screenReset() {
 	resetPalette();
 
+	_backgroundPage = NULL;
 	(*_vPort)->setupViewPort();
 	fillPic(*_vPort, 0);	
 	(*_vPort)->_parent->_flags |= DISPFLAG_8;
