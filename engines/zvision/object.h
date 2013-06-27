@@ -30,16 +30,10 @@ namespace ZVision {
 /**
  * A generic single value storage class. It is useful for storing different 
  * value types in a single List, Hashmap, etc.
- *
- * Mimics C#'s Object class
- *
- * Caution: The actual value is stored on the heap, so be careful creating
- * many objects of this class. Also, when re-using 'Object', try to assign
- * a value of the same type as before, as this will prevent an extra memory allocation.
  */
-class Object {
+class SingleValueContainer {
 public:
-	enum ObjectType {
+	enum ValueType {
 		BOOL,
 		BYTE,
 		INT16,
@@ -52,25 +46,25 @@ public:
 	};
 
 	// Constructors
-	explicit Object(ObjectType type);
-	explicit Object(bool value);
-	explicit Object(byte value);
-	explicit Object(int16 value);
-	explicit Object(uint16 value);
-	explicit Object(int32 value);
-	explicit Object(uint32 value);
-	explicit Object(float value);
-	explicit Object(double value);
-	explicit Object(Common::String value);
+	explicit SingleValueContainer(ValueType type);
+	explicit SingleValueContainer(bool value);
+	explicit SingleValueContainer(byte value);
+	explicit SingleValueContainer(int16 value);
+	explicit SingleValueContainer(uint16 value);
+	explicit SingleValueContainer(int32 value);
+	explicit SingleValueContainer(uint32 value);
+	explicit SingleValueContainer(float value);
+	explicit SingleValueContainer(double value);
+	explicit SingleValueContainer(Common::String value);
 
 	// Copy constructor
-	explicit Object(const Object& other);
+	explicit SingleValueContainer(const SingleValueContainer& other);
 
 	// Destructor
-	~Object();
+	~SingleValueContainer();
 
 private:
-	ObjectType _objectType;
+	ValueType _objectType;
 
 	union {
 		bool boolVal;
@@ -85,17 +79,17 @@ private:
 	} _value;
 
 public:
-	Object &operator=(const bool &rhs);
-	Object &operator=(const byte &rhs);
-	Object &operator=(const int16 &rhs);
-	Object &operator=(const uint16 &rhs);
-	Object &operator=(const int32 &rhs);
-	Object &operator=(const uint32 &rhs);
-	Object &operator=(const float &rhs);
-	Object &operator=(const double &rhs);
-	Object &operator=(const Common::String &rhs);
+	SingleValueContainer &operator=(const bool &rhs);
+	SingleValueContainer &operator=(const byte &rhs);
+	SingleValueContainer &operator=(const int16 &rhs);
+	SingleValueContainer &operator=(const uint16 &rhs);
+	SingleValueContainer &operator=(const int32 &rhs);
+	SingleValueContainer &operator=(const uint32 &rhs);
+	SingleValueContainer &operator=(const float &rhs);
+	SingleValueContainer &operator=(const double &rhs);
+	SingleValueContainer &operator=(const Common::String &rhs);
 
-	Object& operator=(const Object &rhs);
+	SingleValueContainer& operator=(const SingleValueContainer &rhs);
 
 	/**
 	 * Retrieve a bool from the container. If the container is not storing a 

@@ -27,46 +27,46 @@
 
 namespace ZVision {
 
-Object::Object(ObjectType type) : _objectType(type) { }
+SingleValueContainer::SingleValueContainer(ValueType type) : _objectType(type) { }
 
-Object::Object(bool value) : _objectType(BOOL) {
+SingleValueContainer::SingleValueContainer(bool value) : _objectType(BOOL) {
 	_value.boolVal = value;
 }
 
-Object::Object(byte value) : _objectType(BYTE) {
+SingleValueContainer::SingleValueContainer(byte value) : _objectType(BYTE) {
 	_value.byteVal = value;
 }
 
-Object::Object(int16 value) : _objectType(INT16) {
+SingleValueContainer::SingleValueContainer(int16 value) : _objectType(INT16) {
 	_value.int16Val = value;
 }
 
-Object::Object(uint16 value) : _objectType(UINT16) {
+SingleValueContainer::SingleValueContainer(uint16 value) : _objectType(UINT16) {
 	_value.uint16Val = value;
 }
 
-Object::Object(int32 value) : _objectType(INT32) {
+SingleValueContainer::SingleValueContainer(int32 value) : _objectType(INT32) {
 	_value.int32Val = value;
 }
 
-Object::Object(uint32 value) : _objectType(UINT32) {
+SingleValueContainer::SingleValueContainer(uint32 value) : _objectType(UINT32) {
 	_value.uint32Val = value;
 }
 
-Object::Object(float value) : _objectType(FLOAT) {
+SingleValueContainer::SingleValueContainer(float value) : _objectType(FLOAT) {
 	_value.floatVal = value;
 }
 
-Object::Object(double value) : _objectType(DOUBLE) {
+SingleValueContainer::SingleValueContainer(double value) : _objectType(DOUBLE) {
 	_value.doubleVal = value;
 }
 
-Object::Object(Common::String value) : _objectType(BYTE) {
+SingleValueContainer::SingleValueContainer(Common::String value) : _objectType(BYTE) {
 	_value.stringVal = new char[value.size() + 1];
 	memcpy(_value.stringVal, value.c_str(), value.size() + 1);
 }
 
-Object::Object(const Object &other) {
+SingleValueContainer::SingleValueContainer(const SingleValueContainer &other) {
 	_objectType = other._objectType;
 
 	switch (_objectType) {
@@ -102,17 +102,17 @@ Object::Object(const Object &other) {
 	}
 }
 
-Object::~Object() {
+SingleValueContainer::~SingleValueContainer() {
 	deleteCharPointer();
 }
 
-void Object::deleteCharPointer() {
+void SingleValueContainer::deleteCharPointer() {
 	if (_objectType == STRING)
 		delete[] _value.stringVal;
 }
 
 
-Object &Object::operator=(const bool &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const bool &rhs) {
 	if (_objectType == BOOL) {
 		_value.boolVal = rhs;
 		return *this;
@@ -125,7 +125,7 @@ Object &Object::operator=(const bool &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const byte &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const byte &rhs) {
 	if (_objectType == BYTE) {
 		_value.byteVal = rhs;
 		return *this;
@@ -138,7 +138,7 @@ Object &Object::operator=(const byte &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const int16 &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const int16 &rhs) {
 	if (_objectType == INT16) {
 		_value.int16Val = rhs;
 		return *this;
@@ -151,7 +151,7 @@ Object &Object::operator=(const int16 &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const uint16 &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const uint16 &rhs) {
 	if (_objectType == UINT16) {
 		_value.uint16Val = rhs;
 		return *this;
@@ -164,7 +164,7 @@ Object &Object::operator=(const uint16 &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const int32 &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const int32 &rhs) {
 	if (_objectType == INT32) {
 		_value.int32Val = rhs;
 		return *this;
@@ -177,7 +177,7 @@ Object &Object::operator=(const int32 &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const uint32 &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const uint32 &rhs) {
 	if (_objectType == UINT32) {
 		_value.uint32Val = rhs;
 		return *this;
@@ -190,7 +190,7 @@ Object &Object::operator=(const uint32 &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const float &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const float &rhs) {
 	if (_objectType == FLOAT) {
 		_value.floatVal = rhs;
 		return *this;
@@ -203,7 +203,7 @@ Object &Object::operator=(const float &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const double &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const double &rhs) {
 	if (_objectType == DOUBLE) {
 		_value.doubleVal = rhs;
 		return *this;
@@ -216,7 +216,7 @@ Object &Object::operator=(const double &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const Common::String &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const Common::String &rhs) {
 	if (_objectType != STRING) {
 		_objectType = STRING;
 		_value.stringVal = new char[rhs.size() + 1];
@@ -237,7 +237,7 @@ Object &Object::operator=(const Common::String &rhs) {
 	return *this;
 }
 
-Object &Object::operator=(const Object &rhs) {
+SingleValueContainer &SingleValueContainer::operator=(const SingleValueContainer &rhs) {
 	switch (_objectType) {
 	case BOOL:
 		return operator=(rhs._value.boolVal);
@@ -268,7 +268,7 @@ Object &Object::operator=(const Object &rhs) {
 }
 
 
-bool Object::getBoolValue(bool *returnValue) const {
+bool SingleValueContainer::getBoolValue(bool *returnValue) const {
 	if (_objectType !=  BOOL) {
 		warning("'Object' is not storing a bool.");
 		return false;
@@ -278,7 +278,7 @@ bool Object::getBoolValue(bool *returnValue) const {
 	return true;
 }
 
-bool Object::getByteValue(byte *returnValue) const {
+bool SingleValueContainer::getByteValue(byte *returnValue) const {
 	if (_objectType !=  BYTE)
 		warning("'Object' is not storing a byte.");
 
@@ -286,7 +286,7 @@ bool Object::getByteValue(byte *returnValue) const {
 	return true;
 }
 
-bool Object::getInt16Value(int16 *returnValue) const {
+bool SingleValueContainer::getInt16Value(int16 *returnValue) const {
 	if (_objectType !=  INT16)
 		warning("'Object' is not storing an int16.");
 
@@ -294,7 +294,7 @@ bool Object::getInt16Value(int16 *returnValue) const {
 	return true;
 }
 
-bool Object::getUInt16Value(uint16 *returnValue) const {
+bool SingleValueContainer::getUInt16Value(uint16 *returnValue) const {
 	if (_objectType !=  UINT16)
 		warning("'Object' is not storing a uint16.");
 
@@ -302,7 +302,7 @@ bool Object::getUInt16Value(uint16 *returnValue) const {
 	return true;
 }
 
-bool Object::getInt32Value(int32 *returnValue) const {
+bool SingleValueContainer::getInt32Value(int32 *returnValue) const {
 	if (_objectType !=  INT32)
 		warning("'Object' is not storing an int32.");
 
@@ -310,7 +310,7 @@ bool Object::getInt32Value(int32 *returnValue) const {
 	return true;
 }
 
-bool Object::getUInt32Value(uint32 *returnValue) const {
+bool SingleValueContainer::getUInt32Value(uint32 *returnValue) const {
 	if (_objectType !=  UINT32)
 		warning("'Object' is not storing a uint32.");
 
@@ -318,7 +318,7 @@ bool Object::getUInt32Value(uint32 *returnValue) const {
 	return true;
 }
 
-bool Object::getFloatValue(float *returnValue) const {
+bool SingleValueContainer::getFloatValue(float *returnValue) const {
 	if (_objectType !=  FLOAT)
 		warning("'Object' is not storing a float.");
 
@@ -326,7 +326,7 @@ bool Object::getFloatValue(float *returnValue) const {
 	return true;
 }
 
-bool Object::getDoubleValue(double *returnValue) const {
+bool SingleValueContainer::getDoubleValue(double *returnValue) const {
 	if (_objectType !=  DOUBLE)
 		warning("'Object' is not storing a double.");
 
@@ -334,7 +334,7 @@ bool Object::getDoubleValue(double *returnValue) const {
 	return true;
 }
 
-bool Object::getStringValue(Common::String *returnValue) const {
+bool SingleValueContainer::getStringValue(Common::String *returnValue) const {
 	if (_objectType !=  STRING)
 		warning("'Object' is not storing a Common::String.");
 
