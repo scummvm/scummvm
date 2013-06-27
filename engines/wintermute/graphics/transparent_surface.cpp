@@ -31,7 +31,7 @@
 
 namespace Wintermute {
 
-void TransparentSurface::nearestCopy(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
+void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 			int srcW = srcRect.width();
 			int srcH = srcRect.height();
 			int dstW = dstRect.width();
@@ -51,7 +51,7 @@ void TransparentSurface::nearestCopy(float projX, float projY, int dstX, int dst
  			WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
 }
 
-void TransparentSurface::bilinearCopy(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
+void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 
 			int srcW = srcRect.width();
 			int srcH = srcRect.height();
@@ -528,7 +528,7 @@ TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const 
 				targX += transform._hotspot.x;
 				targY += transform._hotspot.y;
 			
-				nearestCopy(targX, targY, x, y, srcRect, dstRect, this, target); 
+				copyPixelNearestNeighbor(targX, targY, x, y, srcRect, dstRect, this, target); 
 			}
 		}
 	} else {
@@ -543,7 +543,7 @@ TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const 
 				targX += transform._hotspot.x;
 				targY += transform._hotspot.y;
 			
-				bilinearCopy(targX, targY, x, y, srcRect, dstRect, this, target); 
+				copyPixelBilinear(targX, targY, x, y, srcRect, dstRect, this, target); 
 			}
 		}
 	}
@@ -573,7 +573,7 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 			for (int x = 0; x < dstW; x++) {
 				projX = x / dstW * srcW;
 				projY = y / dstH * srcH;
-				nearestCopy(projX, projY, x, y, srcRect, dstRect, this, target); 
+				copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target); 
 			}
 		}
 	} else {
@@ -583,7 +583,7 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 			for (int x = 0; x < dstW; x++) {
 				projX = x / (float)dstW * srcW;
 				projY = y / (float)dstH * srcH;
-				bilinearCopy(projX, projY, x, y, srcRect, dstRect, this, target); 
+				copyPixelBilinear(projX, projY, x, y, srcRect, dstRect, this, target); 
 			}
 		}
 	}
