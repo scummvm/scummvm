@@ -53,8 +53,7 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		// Then scale it if necessary
 		if (_transform._angle != 0) {
 			TransparentSurface src(*_surface, false);
-			Common::Rect srcRect_1(srcRect->left, srcRect->top, srcRect->right, srcRect->bottom);
-			Graphics::Surface *temp = src.rotate(srcRect_1, transform);
+			Graphics::Surface *temp = src.rotate(transform);
 			_surface->free();
 			delete _surface;
 			_surface = temp;

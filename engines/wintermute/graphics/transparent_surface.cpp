@@ -496,10 +496,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
-TransparentSurface *TransparentSurface::rotate(Common::Rect aSrcRect, TransformStruct transform) const {
+TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const {
 	Point32 newHotspot;
-	Rect32 rect = TransformTools::newRect(Rect32 (aSrcRect), transform, &newHotspot);
-	Common::Rect srcRect(0, 0, (int16)(aSrcRect.right - aSrcRect.left), (int16)(aSrcRect.bottom - aSrcRect.top));
+	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
+	Rect32 rect = TransformTools::newRect(Rect32 (srcRect), transform, &newHotspot);
 	Common::Rect dstRect(0, 0, (int16)(rect.right - rect.left), (int16)(rect.bottom - rect.top));
 
 	TransparentSurface *target = new TransparentSurface();
@@ -526,7 +526,7 @@ TransparentSurface *TransparentSurface::rotate(Common::Rect aSrcRect, TransformS
 			targY += transform._hotspot.y;
 			
 			if (FAST_TRANSFORM) {
-				bilinearCopy(targX, targY, x, y, srcRect, dstRect, this, target); 
+				nearestCopy(targX, targY, x, y, srcRect, dstRect, this, target); 
 			} else {
 				bilinearCopy(targX, targY, x, y, srcRect, dstRect, this, target);
 			}
