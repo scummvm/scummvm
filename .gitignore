@@ -161,6 +161,10 @@ ipch/
 #Ignore default Visual Studio build folders
 [Dd]ebug/
 [Rr]elease/
+[Dd]ebug32/
+[Rr]elease32/
+[Dd]ebug64/
+[Rr]elease64/
 
 #Ignore Qt Creator project files
 ScummVM.config
