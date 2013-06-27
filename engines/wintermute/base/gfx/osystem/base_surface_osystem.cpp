@@ -440,10 +440,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	if (transform._alphaDisable) {
 		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}
-	bool mirrorX = transform._flip && TransparentSurface::FLIP_H;
-	bool mirrorY = transform._flip && TransparentSurface::FLIP_V;
-	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, transform._alphaDisable);
-
+	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
 	return STATUS_OK;
 }
 

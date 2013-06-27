@@ -23,9 +23,11 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/rect.h"
+#include "common/math.h"
 #include "common/textconsole.h"
 #include "graphics/primitives.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
+#include "engines/wintermute/graphics/transform_tools.h"
 
 namespace Wintermute {
 
@@ -492,6 +494,45 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	return retSize;
+}
+
+TransparentSurface *TransparentSurface::rotate(Common::Rect aSrcRect, TransformStruct transform) const {
+	Point32 newHotspot;
+	Rect32 rect = TransformTools::newRect(Rect32 (aSrcRect), transform, &newHotspot);
+	Common::Rect srcRect(0, 0, (int16)(aSrcRect.right - aSrcRect.left), (int16)(aSrcRect.bottom - aSrcRect.top));
+	Common::Rect dstRect(0, 0, (int16)(rect.right - rect.left), (int16)(rect.bottom - rect.top));
+
+	TransparentSurface *target = new TransparentSurface();
+	assert(format.bytesPerPixel == 4);
+
+	int dstW = dstRect.width();
+	int dstH = dstRect.height();
+
+	target->create((uint16)dstW, (uint16)dstH, this->format);
+
+	uint32 invAngle = (360 - transform._angle) % 360;
+	float invCos = cos(invAngle * M_PI / 180.0);
+	float invSin = sin(invAngle * M_PI / 180.0);
+
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			int x1 = x - newHotspot.x;
+			int y1 = y - newHotspot.y;
+
+			float targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
+			float targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
+				
+			targX += transform._hotspot.x;
+			targY += transform._hotspot.y;
+			
+			if (FAST_TRANSFORM) {
+				bilinearCopy(targX, targY, x, y, srcRect, dstRect, this, target); 
+			} else {
+				bilinearCopy(targX, targY, x, y, srcRect, dstRect, this, target);
+			}
+		}
+	}
+	return target;
 }
 
 TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {

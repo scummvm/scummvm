@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_RENDER_TICKET_H
 #define WINTERMUTE_RENDER_TICKET_H
 
+#include "engines/wintermute/graphics/transparent_surface.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
 
@@ -37,14 +38,14 @@ namespace Wintermute {
 class BaseSurfaceOSystem;
 class RenderTicket {
 public:
-	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false, bool disableAlpha = false);
-	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
+	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, TransformStruct transform); 
+	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0), _transform(TransformStruct()) {}
 	~RenderTicket();
-	const Graphics::Surface *getSurface() { return _surface; }
+	const Graphics::Surface *getSurface() const { return _surface; }
 	// Non-dirty-rects:
-	void drawToSurface(Graphics::Surface *_targetSurface);
+	void drawToSurface(Graphics::Surface *_targetSurface) const;
 	// Dirty-rects:
-	void drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect);
+	void drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const;
 
 	Common::Rect _dstRect;
 	uint32 _batchNum;
@@ -52,16 +53,15 @@ public:
 	bool _isValid;
 	bool _wantsDraw;
 	uint32 _drawNum;
-	uint32 _colorMod;
 
+	TransformStruct _transform; 
+	
 	BaseSurfaceOSystem *_owner;
-	bool operator==(RenderTicket &a);
-	const Common::Rect *getSrcRect() { return &_srcRect; }
+	bool operator==(const RenderTicket &a) const;
+	const Common::Rect *getSrcRect() const { return &_srcRect; }
 private:
 	Graphics::Surface *_surface;
 	Common::Rect _srcRect;
-	bool _hasAlpha;
-	uint32 _mirror;
 };
 
 } // end of namespace Wintermute
