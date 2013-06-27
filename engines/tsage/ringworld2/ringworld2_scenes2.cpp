@@ -1003,6 +1003,8 @@ void Scene2000::signal() {
 		g_globals->_sceneManager.changeScene(2350);
 		break;
 	default:
+		R2_GLOBALS._v56AAB = 0;
+		R2_GLOBALS._player.enableControl();
 		break;
 	}
 }
