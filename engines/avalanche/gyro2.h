@@ -44,10 +44,6 @@ namespace Avalanche {
 	const int16 maxobjs = 12;  /* carry limit */
 	const byte howlong = 1/*8*/; /* 18 ticks. */
 
-	const bool oncandopageswap = true; 
-	/* Variable constant for overriding the ability of On to switch pages.
-	 * You may know better than On which page to switch to. */
-
 	const int16 num = 32;  /* Code for Num Lock */
 
 	const int16 mouse_size = 134;
@@ -623,6 +619,12 @@ namespace Avalanche {
 		177, /* nobody allocated here! */
 		r__wisewomans
 	}; /* The Wise Woman. */
+
+	bool oncandopageswap = true; 
+	/* Variable constant for overriding the ability of On to switch pages.
+	 * You may know better than On which page to switch to. */
+
+
 
 
 
