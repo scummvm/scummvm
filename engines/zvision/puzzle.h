@@ -48,8 +48,8 @@ struct Criteria {
 	uint32 argument;
 	/** How to do the comparison */
 	CriteriaOperator criteriaOperator;
-	/** Is 'argument' the id of a global state or a pure value */
-	bool argumentIsAnId;
+	/** Whether 'argument' is the id of a global state (true) or a pure value (false) */
+	bool isArgumentAnId;
 };
 
 /** What happens when Puzzle criteria are met */
