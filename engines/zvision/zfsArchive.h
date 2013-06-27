@@ -67,7 +67,7 @@ public:
 	 * Add all members of the Archive to list.
 	 * Must only append to list, and not remove elements from it.
 	 *
-	 * @return the number of names added to list
+	 * @return    The number of names added to list
 	 */
 	int listMembers(Common::ArchiveMemberList &list) const;
 
@@ -79,7 +79,8 @@ public:
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
-	 * @return the newly created input stream
+	 *
+	 * @return    The newly created input stream
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
@@ -92,7 +93,7 @@ private:
 	 * Parses the zfs file into file entry headers that can be used later
 	 * to get the entry data.
 	 *
-	 * @param stream	The contents of the zfs file
+	 * @param stream    The contents of the zfs file
 	 */
 	void readHeaders(Common::SeekableReadStream *stream);
 
@@ -100,8 +101,8 @@ private:
 	 * Entry names are contained within a 16 byte block. This reads the block
 	 * and converts it the name to a Common::String
 	 *
-	 * @param stream	The zfs file stream
-	 * @return			The entry file name
+	 * @param stream    The zfs file stream
+	 * @return          The entry file name
 	 */
 	Common::String readEntryName(Common::SeekableReadStream *stream) const;
 
@@ -109,8 +110,8 @@ private:
 	 * ZFS file entries can be encrypted using XOR encoding. This method
 	 * decodes the buffer in place using the supplied xorKey.
 	 *
-	 * @param buffer	The data to decode
-	 * @param length	Length of buffer
+	 * @param buffer    The data to decode
+	 * @param length    Length of buffer
 	 */
 	void unXor(byte *buffer, int length, const byte *xorKey) const;
 };
