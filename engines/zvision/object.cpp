@@ -27,74 +27,43 @@
 
 namespace ZVision {
 
-Object::Object(ObjectType type) {
-	_objectType = type;
-
-	switch (type) {
-	case BOOL:
-		_value.boolVal = new bool;
-		break;
-	case BYTE:
-		_value.byteVal = new byte;
-		break;
-	case INT16:
-		_value.int16Val = new int16;
-		break;
-	case UINT16:
-		_value.uint16Val = new uint16;
-		break;
-	case INT32:
-		_value.int32Val = new int32;
-		break;
-	case UINT32:
-		_value.uint32Val = new uint32;
-		break;
-	case FLOAT:
-		_value.floatVal = new float;
-		break;
-	case DOUBLE:
-		_value.doubleVal = new double;
-		break;
-	case STRING:
-		_value.stringVal = new Common::String;
-		break;
-	}
-}
+Object::Object(ObjectType type) : _objectType(type) { }
 
 Object::Object(bool value) : _objectType(BOOL) {
-	_value.boolVal = new bool(value);
+	_value.boolVal = value;
 }
 
 Object::Object(byte value) : _objectType(BYTE) {
-	_value.byteVal = new byte(value);
+	_value.byteVal = value;
 }
 
 Object::Object(int16 value) : _objectType(INT16) {
-	_value.int16Val = new int16(value);
+	_value.int16Val = value;
 }
 
 Object::Object(uint16 value) : _objectType(UINT16) {
-	_value.uint16Val = new uint16(value);
+	_value.uint16Val = value;
 }
 
 Object::Object(int32 value) : _objectType(INT32) {
-	_value.int32Val = new int32(value);
+	_value.int32Val = value;
 }
 
 Object::Object(uint32 value) : _objectType(UINT32) {
-	_value.uint32Val = new uint32(value);
+	_value.uint32Val = value;
 }
 
 Object::Object(float value) : _objectType(FLOAT) {
-	_value.floatVal = new float(value);
+	_value.floatVal = value;
 }
 
 Object::Object(double value) : _objectType(DOUBLE) {
-	_value.doubleVal = new double(value);
+	_value.doubleVal = value;
 }
 
 Object::Object(Common::String value) : _objectType(BYTE) {
-	_value.stringVal = new Common::String(value);
+	_value.stringVal = new char[value.size() + 1];
+	memcpy(_value.stringVal, value.c_str(), value.size() + 1);
 }
 
 Object::Object(const Object &other) {
@@ -102,178 +71,167 @@ Object::Object(const Object &other) {
 
 	switch (_objectType) {
 	case BOOL:
-		_value.boolVal = new bool(*other._value.boolVal);
+		_value.boolVal = other._value.boolVal;
 		break;
 	case BYTE:
-		_value.byteVal = new byte(*other._value.byteVal);
+		_value.byteVal = other._value.byteVal;
 		break;
 	case INT16:
-		_value.int16Val = new int16(*other._value.int16Val);
+		_value.int16Val = other._value.int16Val;
 		break;
 	case UINT16:
-		_value.uint16Val = new uint16(*other._value.uint16Val);
+		_value.uint16Val = other._value.uint16Val;
 		break;
 	case INT32:
-		_value.int32Val = new int32(*other._value.int32Val);
+		_value.int32Val = other._value.int32Val;
 		break;
 	case UINT32:
-		_value.uint32Val = new uint32(*other._value.uint32Val);
+		_value.uint32Val = other._value.uint32Val;
 		break;
 	case FLOAT:
-		_value.floatVal = new float(*other._value.floatVal);
+		_value.floatVal = other._value.floatVal;
 		break;
 	case DOUBLE:
-		_value.doubleVal = new double(*other._value.doubleVal);
+		_value.doubleVal = other._value.doubleVal;
 		break;
 	case STRING:
-		_value.stringVal = new Common::String(*other._value.stringVal);
+		uint32 length = strlen(other._value.stringVal);
+		_value.stringVal = new char[length + 1];
+		memcpy(_value.stringVal, other._value.stringVal, length + 1);
 		break;
 	}
 }
 
 Object::~Object() {
-	deleteValue();
+	deleteCharPointer();
 }
 
-void Object::deleteValue() {
-	// Call delete on the correct part of the union.
-	// Even though they all point to the same memory and will all be cast 
-	// to a void *, this can still cause undefined behavior.
-	switch (_objectType) {
-	case BOOL:
-		delete _value.boolVal;
-		break;
-	case BYTE:
-		delete _value.byteVal;
-		break;
-	case INT16:
-		delete _value.int16Val;
-		break;
-	case UINT16:
-		delete _value.uint16Val;
-		break;
-	case INT32:
-		delete _value.int32Val;
-		break;
-	case UINT32:
-		delete _value.uint32Val;
-		break;
-	case FLOAT:
-		delete _value.floatVal;
-		break;
-	case DOUBLE:
-		delete _value.doubleVal;
-		break;
-	case STRING:
-		delete _value.stringVal;
-		break;
-	}
+void Object::deleteCharPointer() {
+	if (_objectType == STRING)
+		delete[] _value.stringVal;
 }
 
 
 Object &Object::operator=(const bool &rhs) {
-	if (_objectType == BOOL)
-		*_value.boolVal = rhs;
-	else {
-		deleteValue();
-		_objectType = BOOL;
-		_value.boolVal = new bool(rhs);
+	if (_objectType == BOOL) {
+		_value.boolVal = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = BOOL;
+	_value.boolVal = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const byte &rhs) {
-	if (_objectType == BYTE)
-		*_value.byteVal = rhs;
-	else {
-		deleteValue();
-		_objectType = BYTE;
-		_value.byteVal = new byte(rhs);
+	if (_objectType == BYTE) {
+		_value.byteVal = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = BYTE;
+	_value.byteVal = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const int16 &rhs) {
-	if (_objectType == INT16)
-		*_value.int16Val = rhs;
-	else {
-		deleteValue();
-		_objectType = INT16;
-		_value.int16Val = new int16(rhs);
+	if (_objectType == INT16) {
+		_value.int16Val = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = INT16;
+	_value.int16Val = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const uint16 &rhs) {
-	if (_objectType == UINT16)
-		*_value.uint16Val = rhs;
-	else {
-		deleteValue();
-		_objectType = UINT16;
-		_value.uint16Val = new uint16(rhs);
+	if (_objectType == UINT16) {
+		_value.uint16Val = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = UINT16;
+	_value.uint16Val = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const int32 &rhs) {
-	if (_objectType == INT32)
-		*_value.int32Val = rhs;
-	else {
-		deleteValue();
-		_objectType = INT32;
-		_value.int32Val = new int32(rhs);
+	if (_objectType == INT32) {
+		_value.int32Val = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = INT32;
+	_value.int32Val = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const uint32 &rhs) {
-	if (_objectType == UINT32)
-		*_value.uint32Val = rhs;
-	else {
-		deleteValue();
-		_objectType = UINT32;
-		_value.uint32Val = new uint32(rhs);
+	if (_objectType == UINT32) {
+		_value.uint32Val = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = UINT32;
+	_value.uint32Val = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const float &rhs) {
-	if (_objectType == FLOAT)
-		*_value.floatVal = rhs;
-	else {
-		deleteValue();
-		_objectType = FLOAT;
-		_value.floatVal = new float(rhs);
+	if (_objectType == FLOAT) {
+		_value.floatVal = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = FLOAT;
+	_value.floatVal = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const double &rhs) {
-	if (_objectType == DOUBLE)
-		*_value.doubleVal = rhs;
-	else {
-		deleteValue();
-		_objectType = DOUBLE;
-		_value.doubleVal = new double(rhs);
+	if (_objectType == DOUBLE) {
+		_value.doubleVal = rhs;
+		return *this;
 	}
+
+	deleteCharPointer();
+	_objectType = DOUBLE;
+	_value.doubleVal = rhs;
 
 	return *this;
 }
 
 Object &Object::operator=(const Common::String &rhs) {
-	if (_objectType == STRING)
-		*_value.stringVal = rhs;
-	else {
-		deleteValue();
+	if (_objectType != STRING) {
 		_objectType = STRING;
-		_value.stringVal = new Common::String(rhs);
+		_value.stringVal = new char[rhs.size() + 1];
+		memcpy(_value.stringVal, rhs.c_str(), rhs.size() + 1);
+
+		return *this;
+	}
+
+	uint32 length = strlen(_value.stringVal);
+	if (length <= rhs.size() + 1) {
+		memcpy(_value.stringVal, rhs.c_str(), rhs.size() + 1);
+	} else {
+		delete[] _value.stringVal;
+		_value.stringVal = new char[rhs.size() + 1];
+		memcpy(_value.stringVal, rhs.c_str(), rhs.size() + 1);
 	}
 
 	return *this;
@@ -282,23 +240,28 @@ Object &Object::operator=(const Common::String &rhs) {
 Object &Object::operator=(const Object &rhs) {
 	switch (_objectType) {
 	case BOOL:
-		return operator=(*rhs._value.boolVal);
+		return operator=(rhs._value.boolVal);
 	case BYTE:
-		return operator=(*rhs._value.byteVal);
+		return operator=(rhs._value.byteVal);
 	case INT16:
-		return operator=(*rhs._value.int16Val);
+		return operator=(rhs._value.int16Val);
 	case UINT16:
-		return operator=(*rhs._value.uint16Val);
+		return operator=(rhs._value.uint16Val);
 	case INT32:
-		return operator=(*rhs._value.int32Val);
+		return operator=(rhs._value.int32Val);
 	case UINT32:
-		return operator=(*rhs._value.uint32Val);
+		return operator=(rhs._value.uint32Val);
 	case FLOAT:
-		return operator=(*rhs._value.floatVal);
+		return operator=(rhs._value.floatVal);
 	case DOUBLE:
-		return operator=(*rhs._value.doubleVal);
+		return operator=(rhs._value.doubleVal);
 	case STRING:
-		return operator=(*rhs._value.stringVal);
+		uint32 length = strlen(rhs._value.stringVal);
+
+		_value.stringVal = new char[length + 1];
+		memcpy(_value.stringVal, rhs._value.stringVal, length + 1);
+
+		return *this;
 	}
 
 	return *this;
@@ -307,75 +270,75 @@ Object &Object::operator=(const Object &rhs) {
 
 bool Object::getBoolValue(bool *returnValue) const {
 	if (_objectType !=  BOOL) {
-		warning("'Object' not of type bool.");
+		warning("'Object' is not storing a bool.");
 		return false;
 	}
 
-	*returnValue = *_value.boolVal;
+	*returnValue = _value.boolVal;
 	return true;
 }
 
 bool Object::getByteValue(byte *returnValue) const {
 	if (_objectType !=  BYTE)
-		warning("'Object' not of type byte.");
+		warning("'Object' is not storing a byte.");
 
-	*returnValue = *_value.byteVal;
+	*returnValue = _value.byteVal;
 	return true;
 }
 
 bool Object::getInt16Value(int16 *returnValue) const {
 	if (_objectType !=  INT16)
-		warning("'Object' not of type int16.");
+		warning("'Object' is not storing an int16.");
 
-	*returnValue = *_value.int16Val;
+	*returnValue = _value.int16Val;
 	return true;
 }
 
 bool Object::getUInt16Value(uint16 *returnValue) const {
 	if (_objectType !=  UINT16)
-		warning("'Object' not of type uint16.");
+		warning("'Object' is not storing a uint16.");
 
-	*returnValue = *_value.uint16Val;
+	*returnValue = _value.uint16Val;
 	return true;
 }
 
 bool Object::getInt32Value(int32 *returnValue) const {
 	if (_objectType !=  INT32)
-		warning("'Object' not of type int32.");
+		warning("'Object' is not storing an int32.");
 
-	*returnValue = *_value.int32Val;
+	*returnValue = _value.int32Val;
 	return true;
 }
 
 bool Object::getUInt32Value(uint32 *returnValue) const {
 	if (_objectType !=  UINT32)
-		warning("'Object' not of type uint32.");
+		warning("'Object' is not storing a uint32.");
 
-	*returnValue = *_value.uint32Val;
+	*returnValue = _value.uint32Val;
 	return true;
 }
 
 bool Object::getFloatValue(float *returnValue) const {
 	if (_objectType !=  FLOAT)
-		warning("'Object' not of type float.");
+		warning("'Object' is not storing a float.");
 
-	*returnValue = *_value.floatVal;
+	*returnValue = _value.floatVal;
 	return true;
 }
 
 bool Object::getDoubleValue(double *returnValue) const {
 	if (_objectType !=  DOUBLE)
-		warning("'Object' not of type double.");
+		warning("'Object' is not storing a double.");
 
-	*returnValue = *_value.doubleVal;
+	*returnValue = _value.doubleVal;
 	return true;
 }
 
 bool Object::getStringValue(Common::String *returnValue) const {
 	if (_objectType !=  STRING)
-		warning("'Object' not of type Common::String.");
+		warning("'Object' is not storing a Common::String.");
 
-	*returnValue = *_value.stringVal;
+	*returnValue = _value.stringVal;
 	return true;
 }
 

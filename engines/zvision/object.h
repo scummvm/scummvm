@@ -73,15 +73,15 @@ private:
 	ObjectType _objectType;
 
 	union {
-		bool *boolVal;
-		byte *byteVal;
-		int16 *int16Val;
-		uint16 *uint16Val;
-		int32 *int32Val;
-		uint32 *uint32Val;
-		float *floatVal;
-		double *doubleVal;
-		Common::String *stringVal;
+		bool boolVal;
+		byte byteVal;
+		int16 int16Val;
+		uint16 uint16Val;
+		int32 int32Val;
+		uint32 uint32Val;
+		float floatVal;
+		double doubleVal;
+		char *stringVal;
 	} _value;
 
 public:
