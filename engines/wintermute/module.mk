@@ -89,6 +89,7 @@ MODULE_OBJS := \
 	base/save_thumb_helper.o \
 	base/timer.o \
 	detection.o \
+	graphics/transform_struct.o \
 	graphics/transparent_surface.o \
 	math/math_util.o \
 	math/matrix4.o \
