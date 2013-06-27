@@ -513,25 +513,41 @@ TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const 
 	uint32 invAngle = (360 - transform._angle) % 360;
 	float invCos = cos(invAngle * M_PI / 180.0);
 	float invSin = sin(invAngle * M_PI / 180.0);
+	float targX;
+	float targY;
 
-	for (int y = 0; y < dstH; y++) {
-		for (int x = 0; x < dstW; x++) {
-			int x1 = x - newHotspot.x;
-			int y1 = y - newHotspot.y;
+	if (FAST_TRANSFORM) {
+		for (int y = 0; y < dstH; y++) {
+			for (int x = 0; x < dstW; x++) {
+				int x1 = x - newHotspot.x;
+				int y1 = y - newHotspot.y;
 
-			float targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
-			float targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
+				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
+				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
 				
-			targX += transform._hotspot.x;
-			targY += transform._hotspot.y;
+				targX += transform._hotspot.x;
+				targY += transform._hotspot.y;
 			
-			if (FAST_TRANSFORM) {
 				nearestCopy(targX, targY, x, y, srcRect, dstRect, this, target); 
-			} else {
-				bilinearCopy(targX, targY, x, y, srcRect, dstRect, this, target);
+			}
+		}
+	} else {
+		for (int y = 0; y < dstH; y++) {
+			for (int x = 0; x < dstW; x++) {
+				int x1 = x - newHotspot.x;
+				int y1 = y - newHotspot.y;
+
+				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
+				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
+				
+				targX += transform._hotspot.x;
+				targY += transform._hotspot.y;
+			
+				bilinearCopy(targX, targY, x, y, srcRect, dstRect, this, target); 
 			}
 		}
 	}
+
 	return target;
 }
 
@@ -550,13 +566,23 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-	for (int y = 0; y < dstH; y++) {
-		for (int x = 0; x < dstW; x++) {
-			float projX = x / (float)dstW * srcW;
-			float projY = y / (float)dstH * srcH;
-			if (FAST_TRANSFORM) {
+	if (FAST_TRANSFORM) {
+		int projX;
+		int projY;
+		for (int y = 0; y < dstH; y++) {
+			for (int x = 0; x < dstW; x++) {
+				projX = x / dstW * srcW;
+				projY = y / dstH * srcH;
 				nearestCopy(projX, projY, x, y, srcRect, dstRect, this, target); 
-			} else {
+			}
+		}
+	} else {
+		float projX;
+		float projY;
+		for (int y = 0; y < dstH; y++) {
+			for (int x = 0; x < dstW; x++) {
+				projX = x / (float)dstW * srcW;
+				projY = y / (float)dstH * srcH;
 				bilinearCopy(projX, projY, x, y, srcRect, dstRect, this, target); 
 			}
 		}
