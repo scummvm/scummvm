@@ -80,6 +80,7 @@ public:
 	Action1 _action1, _action2, _action3, _action4, _action5;
 	SequenceManager _sequenceManager;
 
+	Scene2000();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void signal();
