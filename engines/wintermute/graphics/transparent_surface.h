@@ -24,6 +24,10 @@
 
 #include "graphics/surface.h"
 
+
+#define FAST_TRANSFORM 0
+
+
 /*
  * This code is based on Broken Sword 2.5 engine
  *
@@ -48,6 +52,9 @@ struct TransparentSurface : public Graphics::Surface {
 
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
+
+	static void bilinearCopy(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
+	static void nearestCopy(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
 
 	// Enums
 	/**
@@ -102,9 +109,8 @@ struct TransparentSurface : public Graphics::Surface {
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
-	// The following scale-code supports arbitrary scaling (i.e. no repeats of column 0 at the end of lines)
-	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
-	TransparentSurface *scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const;
+
+	TransparentSurface *scale (uint16 newWidth, uint16 newHeight) const;
 	static byte *_lookup;
 	static void destroyLookup();
 private:

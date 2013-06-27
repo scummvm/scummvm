@@ -29,6 +29,117 @@
 
 namespace Wintermute {
 
+void TransparentSurface::nearestCopy(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
+			int srcW = srcRect.width();
+			int srcH = srcRect.height();
+			int dstW = dstRect.width();
+			int dstH = dstRect.height();
+
+			assert(dstX >= 0 && dstX < dstW);
+			assert(dstY >= 0 && dstY < dstH);
+
+			uint32 color;
+			
+			if (projX >= srcW || projX < 0 || projY >= srcH || projY < 0) { 
+				color = 0;
+			} else {
+				color = READ_UINT32((const byte *)src->getBasePtr(projX, projY));
+			}
+
+ 			WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
+}
+
+void TransparentSurface::bilinearCopy(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
+
+			int srcW = srcRect.width();
+			int srcH = srcRect.height();
+			int dstW = dstRect.width();
+			int dstH = dstRect.height();
+
+			assert(dstX >= 0 && dstX < dstW);
+			assert(dstY >= 0 && dstY < dstH);
+
+			float x1 = floor(projX);
+			float x2 = ceil(projX);
+			float y1 = floor(projY);
+			float y2 = ceil(projY);
+
+			uint32 Q11, Q12, Q21, Q22;
+
+			if (x1 >= srcW || x1 < 0 || y1 >= srcH || y1 < 0) { 
+				Q11 = 0;
+			} else {
+				Q11 = READ_UINT32((const byte *)src->getBasePtr(x1 + srcRect.left, y1 + srcRect.top));
+			}
+
+			if (x1 >= srcW || x1 < 0 || y2 >= srcH || y2 < 0) { 
+				Q12 = 0;
+			} else {
+				Q12 = READ_UINT32((const byte *)src->getBasePtr(x1 + srcRect.left, y2 + srcRect.top));
+			}
+
+			if (x2 >= srcW || x2 < 0 || y1 >= srcH || y1 < 0) { 
+				Q21 = 0;
+			} else {
+				Q21 = READ_UINT32((const byte *)src->getBasePtr(x2 + srcRect.left, y1 + srcRect.top));
+			}
+
+			if (x2 >= srcW || x2 < 0 || y2 >= srcH || y2 < 0) { 
+				Q22 = 0;
+			} else {
+				Q22 = READ_UINT32((const byte *)src->getBasePtr(x2 + srcRect.left, y2 + srcRect.top));
+			}
+
+			byte *Q11s = (byte *)&Q11;
+			byte *Q12s = (byte *)&Q12;
+			byte *Q21s = (byte *)&Q21;
+			byte *Q22s = (byte *)&Q22;
+
+			uint32 color;
+			byte *dest = (byte *)&color;
+			
+			float q11x = (x2 - projX);
+			float q11y = (y2 - projY);
+			float q21x = (projX - x1);
+			float q21y = (y2 - projY);
+			float q12x = (x2 - projX);
+			float q12y = (projY - y1);
+			float q22x = (projX - x1);
+			float q22y = (projY - y1);
+
+			if (x1 == x2 && y1 == y2) {
+				for (int c = 0; c < 4; c++) {
+					dest[c]	= ((float)Q11s[c]);
+				}
+			} else {
+
+				if (x1 == x2) { 
+					q11x = 0.5; 
+					q12x = 0.5; 
+					q21x = 0.5; 
+					q22x = 0.5;
+				} else if (y1 == y2) { 
+					q11y = 0.5; 
+					q12y = 0.5; 
+					q21y = 0.5; 
+					q22y = 0.5;
+				} 
+
+				for (int c = 0; c < 4; c++) {
+					dest[c]	= (
+								((float)Q11s[c]) * q11x * q11y +
+								((float)Q21s[c]) * q21x * q21y +
+								((float)Q12s[c]) * q12x * q12y +
+								((float)Q22s[c]) * (1.0 - 
+													 q11x * q11y - 
+													 q21x * q21y - 
+													 q12x * q12y)
+							  );
+				}					
+			}
+			WRITE_UINT32((byte *)dst->getBasePtr(dstX + dstRect.left, dstY + dstRect.top), color);
+}
+
 byte *TransparentSurface::_lookup = nullptr;
 
 void TransparentSurface::destroyLookup() {
@@ -386,13 +497,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
-	return scale(srcRect, dstRect);
-}
-
-// Copied from clone2727's https://github.com/clone2727/scummvm/blob/pegasus/engines/pegasus/surface.cpp#L247
-TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
-	// I'm doing simple linear scaling here
-	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
+		
 	TransparentSurface *target = new TransparentSurface();
 
 	assert(format.bytesPerPixel == 4);
@@ -406,9 +511,13 @@ TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const
 
 	for (int y = 0; y < dstH; y++) {
 		for (int x = 0; x < dstW; x++) {
-			uint32 color = READ_UINT32((const byte *)getBasePtr(x * srcW / dstW + srcRect.left,
-														  y * srcH / dstH + srcRect.top));
-			WRITE_UINT32((byte *)target->getBasePtr(x + dstRect.left, y + dstRect.top), color);
+			float projX = x / (float)dstW * srcW;
+			float projY = y / (float)dstH * srcH;
+			if (FAST_TRANSFORM) {
+				nearestCopy(projX, projY, x, y, srcRect, dstRect, this, target); 
+			} else {
+				bilinearCopy(projX, projY, x, y, srcRect, dstRect, this, target); 
+			}
 		}
 	}
 	return target;
