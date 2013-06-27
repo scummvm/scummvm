@@ -27,6 +27,8 @@
 
 /* TIMEOUT	The scheduling unit. */
 
+// DON'T FORGET ABOUT THE ARRAY INDEXES, THEY MAY'LL CAUSE TROUBLES!!!
+
 #include "common/textconsole.h"
 
 #include "avalanche/timeout2.h"
