@@ -265,9 +265,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 		TransformStruct transform = TransformStruct(zoomX, zoomY, rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
 		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
 		newOrigin = origin - newHotspot;
-		// When the transform functions are refactored to use TransformStruct this will be like:
-		// res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transformStruct); 
-		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
+		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
 	} else {
 		if (zoomX == 100 && zoomY == 100) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);

@@ -56,7 +56,7 @@ public:
 	bool displayTransOffset(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) override;
 	bool display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayTransform(int x, int y, int hotX, int hotY, Rect32 Rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTransform(int x, int y, Rect32 rect, Rect32 newRect, TransformStruct transform) override;
 	bool repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) override;
 	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
@@ -85,10 +85,11 @@ private:
 	Graphics::Surface *_surface;
 	bool _loaded;
 	bool finishLoad();
-	bool drawSprite(int x, int y, Rect32 *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
+	bool drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transformStruct);
 	void genAlphaMask(Graphics::Surface *surface);
 	uint32 getPixelAt(Graphics::Surface *surface, int x, int y);
 
+	uint32 _rotation;
 	bool _hasAlpha;
 	void *_lockPixels;
 	int _lockPitch;

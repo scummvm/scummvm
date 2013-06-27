@@ -52,6 +52,7 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
+	_rotation = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -319,39 +320,56 @@ bool BaseSurfaceOSystem::endPixelOp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, 100, 100, 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(100, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(100, blendMode, 0xFFFFFFFF, mirrorX, mirrorY)); 
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
-	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY, offsetX, offsetY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr,  TransformStruct(100, 100, 0, 0, 0, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(zoomX, zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, !transparent, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	TransformStruct transform;
+	if (transparent) {
+		transform = TransformStruct(zoomX, zoomY, 0, 0, 0, blendMode, alpha,  mirrorX, mirrorY);
+	} else {
+		transform = TransformStruct(zoomX, zoomY, mirrorX, mirrorY);
+	}
+	return drawSprite(x, y, &rect, nullptr, transform);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
+bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, TransformStruct transform) {
+	_rotation = (uint32)transform._angle;
+	if (transform._angle < 0.0f) {
+		warning("Negative rotation: %f %d", transform._angle, _rotation);
+		_rotation = (uint32)(360.0f + transform._angle);
+		warning("Negative post rotation: %f %d", transform._angle, _rotation);
+	}
+	return drawSprite(x, y, &rect, &newRect, transform);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transform) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
 	if (!_loaded) {
@@ -359,13 +377,13 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	}
 
 	if (renderer->_forceAlphaColor != 0) {
-		alpha = renderer->_forceAlphaColor;
+		transform._rgbaMod = renderer->_forceAlphaColor;
 	}
 
-	byte r = RGBCOLGetR(alpha);
-	byte g = RGBCOLGetG(alpha);
-	byte b = RGBCOLGetB(alpha);
-	byte a = RGBCOLGetA(alpha);
+	byte r = RGBCOLGetR(transform._rgbaMod);
+	byte g = RGBCOLGetG(transform._rgbaMod);
+	byte b = RGBCOLGetB(transform._rgbaMod);
+	byte a = RGBCOLGetA(transform._rgbaMod);
 
 	renderer->setAlphaMod(a);
 	renderer->setColorMod(r, g, b);
@@ -386,8 +404,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	srcRect.setHeight(rect->bottom - rect->top);
 
 	Common::Rect position;
-	position.left = x + offsetX;
-	position.top = y + offsetY;
+	position.left = x + transform._offset.x;
+	position.top = y + transform._offset.y;
 
 	// Crop off-by-ones:
 	if (position.left == -1) {
@@ -396,30 +414,35 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	if (position.top == -1) {
 		position.top = 0; // TODO: Something is wrong
 	}
-
-	position.setWidth((int16)((float)srcRect.width() * zoomX / 100.f));
-	position.setHeight((int16)((float)srcRect.height() * zoomX / 100.f));
-
+	if (newRect) {
+		position.top = y;
+		position.left = x;
+		position.right = x + (newRect->right - newRect->left);
+		position.bottom = y + (newRect->top - newRect->bottom);
+		position.setWidth(newRect->right - newRect->left);
+		position.setHeight(newRect->bottom - newRect->top);
+	} else {
+		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / 100.f));
+		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / 100.f));
+	}
 	renderer->modTargetRect(&position);
-
-	/*  position.left += offsetX;
-	    position.top += offsetY;*/
 
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.
 
 	// TODO: Optimize by not doing alpha-blits if we lack or disable alpha
 	bool hasAlpha;
-	if (_hasAlpha && !alphaDisable) {
+	if (_hasAlpha && !transform._alphaDisable) {
 		hasAlpha = true;
 	} else {
 		hasAlpha = false;
 	}
-	if (alphaDisable) {
+	if (transform._alphaDisable) {
 		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}
-
-	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, !hasAlpha);
+	bool mirrorX = transform._flip && TransparentSurface::FLIP_H;
+	bool mirrorY = transform._flip && TransparentSurface::FLIP_V;
+	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, transform._alphaDisable);
 
 	return STATUS_OK;
 }
