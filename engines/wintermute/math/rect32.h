@@ -24,7 +24,8 @@
 #define WINTERMUTE_RECT32_H
 
 #include "common/system.h"
-#include "engines/wintermute/math/floatrect.h"
+#include "engines/wintermute/math/floatpoint.h"
+#include "common/rect.h"
 
 namespace Wintermute {
 

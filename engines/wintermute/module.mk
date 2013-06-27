@@ -90,6 +90,7 @@ MODULE_OBJS := \
 	base/timer.o \
 	detection.o \
 	graphics/transform_struct.o \
+	graphics/transform_tools.o \
 	graphics/transparent_surface.o \
 	math/math_util.o \
 	math/matrix4.o \

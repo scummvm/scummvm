@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef WINTERMUTE_FLOATRECT_H
-#define WINTERMUTE_FLOATRECT_H
+#ifndef WINTERMUTE_FLOATPOINT_H
+#define WINTERMUTE_FLOATPOINT_H
 
 namespace Wintermute {
 

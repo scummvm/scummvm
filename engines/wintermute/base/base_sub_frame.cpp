@@ -38,6 +38,8 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/graphics/transform_tools.h"
+#include "engines/wintermute/graphics/transform_struct.h"
 
 namespace Wintermute {
 
@@ -256,6 +258,15 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	}
 
 	if (rotate != 0.0f) {
+		Point32 boxOffset, rotatedHotspot, hotspotOffset, newOrigin;
+		Point32 origin(x, y);
+		Rect32 oldRect = getRect();
+		Point32 newHotspot;
+		TransformStruct transform = TransformStruct(zoomX, zoomY, rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
+		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
+		newOrigin = origin - newHotspot;
+		// When the transform functions are refactored to use TransformStruct this will be like:
+		// res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transformStruct); 
 		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
 	} else {
 		if (zoomX == 100 && zoomY == 100) {
