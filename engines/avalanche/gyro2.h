@@ -495,33 +495,6 @@ namespace Avalanche {
 	const int16 walk = 3;
 	const int16 run = 5;
 
-	const byte whereis[29] = {
-		/* The Lads */
-			r__yours, /* Avvy */
-			r__spludwicks, /* Spludwick */
-			r__outsideyours, /* Crapulus */
-			r__ducks, /* Duck - r__DucksRoom's not defined yet. */
-			r__argentpub, /* Malagauche */
-			r__robins, /* Friar Tuck. */
-			177, /* Robin Hood - can't meet him at the start. */
-			r__brummieroad, /* Cwytalot */
-			r__lustiesroom, /* Baron du Lustie. */
-			r__outsidecardiffcastle, /* The Duke of Cardiff. */
-			r__argentpub, /* Dogfood */
-			r__outsideducks, /* Trader */
-			r__argentpub, /* Ibythneth */
-			r__aylesoffice, /* Ayles */
-			r__nottspub, /* Port */
-			r__nottspub, /* Spurge */
-			r__musicroom, /* Jacques */
-			0, 0, 0, 0, 0, 0, 0, 0,
-			/* The Lasses */
-			r__yours, /* Arkata */
-			r__geidas, /* Geida */
-			177, /* nobody allocated here! */
-			r__wisewomans
-	}; /* The Wise Woman. */
-
 	/* Art gallery at 2,1; notice about this at 2,2. */
 
 	const int32 catamap[8][8] = {
@@ -574,11 +547,6 @@ namespace Avalanche {
 		7     = wall with door and candles,
 		F     = straight-through corridor. */
 
-	const byte interrogation = 0;
-	/* If this is greater than zero, the next line you type is stored in
-	   the DNA in a position dictated by the value. If a scroll comes up,
-	   or you leave the room, it's automatically set to zero. */
-
 	const bool demo = false; /* If this is true, we're in a demo of the game. */
 
 	const char spludwick_order[3] = {onion, ink, mushroom};
@@ -623,6 +591,40 @@ namespace Avalanche {
 
 
 	///////////////////////////// VARIABLES ///////////////////////////// 
+
+	byte interrogation = 0;
+	/* If this is greater than zero, the next line you type is stored in
+	   the DNA in a position dictated by the value. If a scroll comes up,
+	   or you leave the room, it's automatically set to zero. */
+
+	byte whereis[29] = {
+		/* The Lads */
+		r__yours, /* Avvy */
+		r__spludwicks, /* Spludwick */
+		r__outsideyours, /* Crapulus */
+		r__ducks, /* Duck - r__DucksRoom's not defined yet. */
+		r__argentpub, /* Malagauche */
+		r__robins, /* Friar Tuck. */
+		177, /* Robin Hood - can't meet him at the start. */
+		r__brummieroad, /* Cwytalot */
+		r__lustiesroom, /* Baron du Lustie. */
+		r__outsidecardiffcastle, /* The Duke of Cardiff. */
+		r__argentpub, /* Dogfood */
+		r__outsideducks, /* Trader */
+		r__argentpub, /* Ibythneth */
+		r__aylesoffice, /* Ayles */
+		r__nottspub, /* Port */
+		r__nottspub, /* Spurge */
+		r__musicroom, /* Jacques */
+		0, 0, 0, 0, 0, 0, 0, 0,
+		/* The Lasses */
+		r__yours, /* Arkata */
+		r__geidas, /* Geida */
+		177, /* nobody allocated here! */
+		r__wisewomans
+	}; /* The Wise Woman. */
+
+
 
 	Common::String current;
 	byte curpos;
