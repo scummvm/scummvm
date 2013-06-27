@@ -97,22 +97,89 @@ public:
 
 	Object& operator=(const Object &rhs);
 
+	/**
+	 * Retrieve a bool from the container. If the container is not storing a 
+	 * bool, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getBoolValue(bool *returnValue) const;
+	/**
+	 * Retrieve a byte from the container. If the container is not storing a 
+	 * byte, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getByteValue(byte *returnValue) const;
+	/**
+	 * Retrieve an int16 from the container. If the container is not storing an 
+	 * int16, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getInt16Value(int16 *returnValue) const;
+	/**
+	 * Retrieve a uint16 from the container. If the container is not storing a 
+	 * uint16, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getUInt16Value(uint16 *returnValue) const;
+	/**
+	 * Retrieve an int32 from the container. If the container is not storing an 
+	 * int32, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getInt32Value(int32 *returnValue) const;
+	/**
+	 * Retrieve a uint32 from the container. If the container is not storing a 
+	 * uint32, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getUInt32Value(uint32 *returnValue) const;
+	/**
+	 * Retrieve a float from the container. If the container is not storing a 
+	 * float, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getFloatValue(float *returnValue) const;
+	/**
+	 * Retrieve a double from the container. If the container is not storing a 
+	 * double, this will return false and display a warning().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getDoubleValue(double *returnValue) const;
+	/**
+	 * Retrieve a String from the container. If the container is not storing a 
+	 * string, this will return false and display a warning().
+	 * 
+	 * Caution: Strings are internally stored as char[]. getStringValue uses
+	 * Common::String::operator=(char *) to do the assigment, which uses both
+	 * strlen() AND memmove().
+	 *
+	 * @param returnValue	Pointer to where you want the value stored
+	 * @return				Value indicating whether the value assignment was successful
+	 */
 	bool getStringValue(Common::String *returnValue) const;
 
 private:
 	/**
-	 * Helper method for destruction and assignment. Calls delete on
-	 * the currently used data pointer			
+	 * Helper method for destruction and assignment. It checks to see
+	 * if the char pointer is being used, and if so calls delete on it
 	 */
-	void deleteValue();
+	void deleteCharPointer();
 };
 
 } // End of namespace ZVision
