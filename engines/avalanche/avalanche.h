@@ -29,6 +29,8 @@
 #define AVALANCHE_H
 
 #include "avalanche/console.h"
+#include "avalanche/gyro2.h"
+#include "avalanche/enhanced2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -45,6 +47,10 @@ static const int kSavegameVersion = 1;
 
 class AvalancheEngine : public Engine {
 public:
+	Gyro _gyro;
+	Enhanced _enhanced;
+
+
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
 

@@ -46,6 +46,9 @@ namespace Avalanche {
 		_system = syst;
 		_console = new AvalancheConsole(this);
 		_rnd = 0;
+
+		_gyro.setParent(this);
+		_enhanced.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
