@@ -52,6 +52,7 @@ namespace Avalanche {
 		_logger.setParent(this);
 		_pingo.setParent(this);
 		_scrolls.setParent(this);
+		_visa.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
