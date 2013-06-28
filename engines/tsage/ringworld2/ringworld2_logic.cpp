@@ -166,7 +166,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Ice Maze: Large empty room
 		return new Scene2400();
 	case 2425:
-		// Ice Maze:
+		// Ice Maze: The Hall of Records
 		return new Scene2425();
 	case 2430:
 		// Ice Maze: Bedroom
@@ -213,7 +213,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 2900:
 		error("Missing scene %d from group 2", sceneNumber);
 	/* Scene group #3 */
-	//
+	// ARM Base Hanager
 	case 3100:
 		return new Scene3100();
 	case 3125:
@@ -258,16 +258,22 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship landing
 		return new Scene3350();
 	case 3375:
+		// Outer walkway
 		return new Scene3375();
 	case 3385:
+		// Corridor
 		return new Scene3385();
 	case 3395:
+		// Walkway
 		return new Scene3395();
 	case 3400:
+		// Confrontation
 		return new Scene3400();
 	case 3500:
+		// Maze action scene
 		return new Scene3500();
 	case 3600:
+		// Cutscene - walking at gunpoint
 		return new Scene3600();
 	case 3700:
 		// Cutscene - Teleport outside
