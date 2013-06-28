@@ -36,11 +36,13 @@
 #include "avalanche/trip6.h"
 //#include "avalanche/scrolls2.h"
 
-
-
 #include "common/textconsole.h"
 
 namespace Avalanche {
+
+void Pingo::setParent(AvalancheEngine *vm) {
+	_vm = vm;
+}
 
 void Pingo::dplot(int16 x, int16 y, Common::String z) {
 	warning("STUB: Pingo::dplot()");
