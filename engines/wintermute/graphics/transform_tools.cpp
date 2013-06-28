@@ -32,8 +32,8 @@ namespace Wintermute {
 		*/
 		float rotateRad = rotate * M_PI / 180;
 		FloatPoint newPoint;
-		newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad))*zoom.x/100;
-		newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad))*zoom.y/100;
+		newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad))*zoom.x/100.0;
+		newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad))*zoom.y/100.0;
 		if (mirrorX) newPoint.x *= -1;
 		if (mirrorY) newPoint.y *= -1;
 		/*
