@@ -24,6 +24,7 @@
 
 #include "engines/advancedDetector.h"
 #include "common/file.h"
+#include "common/translation.h"
 
 #include "neverhood/neverhood.h"
 
@@ -143,6 +144,13 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 
 } // End of namespace Neverhood
 
+static const ExtraGuiOption neverhoodExtraGuiOption = {
+	_s("Use original save/load screens"),
+	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	"originalsaveload",
+	false
+};
+
 class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
 	NeverhoodMetaEngine() : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(Neverhood::NeverhoodGameDescription), neverhoodGames) {
@@ -160,7 +168,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
@@ -192,6 +200,12 @@ bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 		*engine = new Neverhood::NeverhoodEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+const ExtraGuiOptions NeverhoodMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(neverhoodExtraGuiOption);
+	return options;
 }
 
 SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
