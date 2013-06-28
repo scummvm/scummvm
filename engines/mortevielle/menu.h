@@ -35,8 +35,9 @@ namespace Mortevielle {
 class MortevielleEngine;
 
 enum {
-	MENU_INVENTORY = 1, MENU_MOVE = 2, MENU_ACTION = 3, MENU_SELF = 4,
-	MENU_DISCUSS = 5,   MENU_FILE = 6, MENU_SAVE = 7,   MENU_LOAD = 8
+	MENU_NONE = 0, MENU_INVENTORY = 1, MENU_MOVE = 2, MENU_ACTION = 3,
+	MENU_SELF = 4, MENU_DISCUSS = 5,   MENU_FILE = 6, MENU_SAVE = 7,
+	MENU_LOAD = 8
 };
 
 class Menu {

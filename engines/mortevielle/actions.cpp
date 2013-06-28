@@ -77,7 +77,7 @@ void MortevielleEngine::fctMove() {
 			_roomDoorId = _num - 3;
 
 		if (_num != 6)
-			affrep();
+			prepareDisplayText();
 		else
 			showMoveMenuAlert();
 		return;
@@ -164,11 +164,11 @@ void MortevielleEngine::fctMove() {
 			loseGame();
 		} else {
 			_coreVar._currPlace = INSIDE_WELL;
-			affrep();
+			prepareDisplayText();
 		}
 	}
 	if ((menuChoice < 5) || (menuChoice == 13) || (menuChoice == 14))
-		affrep();
+		prepareDisplayText();
 	resetRoomVariables(_coreVar._currPlace);
 	_menu.setDestinationText(_coreVar._currPlace);
 }
@@ -203,7 +203,7 @@ void MortevielleEngine::fctTake() {
 					_coreVar._wellObjectId = 0;
 				_menu.unsetSearchMenu();
 				_obpart = false;
-				affrep();
+				prepareDisplayText();
 			} else {
 				_tabdon[kAcha + ((_mchai - 1) * 10) + _searchCount - 1] = 0;
 				tsuiv();
@@ -735,7 +735,7 @@ void MortevielleEngine::fctPlace() {
 							aniof(2, 1);
 							_crep = 166;
 						}
-						affrep();
+						prepareDisplayText();
 					} else {
 						aniof(2, 1);
 						_crep = 166;
@@ -813,7 +813,7 @@ void MortevielleEngine::fctTurn() {
 			int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
 			if (answer == 1) {
 				_coreVar._currPlace = CRYPT;
-				affrep();
+				prepareDisplayText();
 			} else
 				_crep = 176;
 		}
@@ -1175,7 +1175,7 @@ void MortevielleEngine::fctEnter() {
 			aniof(1, 1);
 
 			_coreVar._currPlace = _roomDoorId;
-			affrep();
+			prepareDisplayText();
 			resetRoomVariables(_coreVar._currPlace);
 			_menu.setDestinationText(_coreVar._currPlace);
 			_roomDoorId = OWN_ROOM;
@@ -1199,7 +1199,7 @@ void MortevielleEngine::fctSleep() {
 	if (_coreVar._currPlace != OWN_ROOM) {
 		exitRoom();
 		_coreVar._currPlace = OWN_ROOM;
-		affrep();
+		prepareDisplayText();
 		drawPictureWithText();
 		resetRoomVariables(_coreVar._currPlace);
 		_menu.setDestinationText(_coreVar._currPlace);
@@ -1537,7 +1537,7 @@ void MortevielleEngine::fctDiscuss() {
 	showPeoplePresent(_currBitIndex);
 	prepareRoom();
 	drawClock();
-	affrep();
+	prepareDisplayText();
 	/* chech;*/
 	_menu.setDestinationText(_coreVar._currPlace);
 	clearVerbBar();

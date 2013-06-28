@@ -1338,7 +1338,7 @@ bool MortevielleEngine::checkInventory(int objectId) {
  */
 void MortevielleEngine::displayDiningRoom() {
 	_coreVar._currPlace = DINING_ROOM;
-	affrep();
+	prepareDisplayText();
 }
 
 /**
@@ -1409,7 +1409,7 @@ void MortevielleEngine::gotoDiningRoom() {
 		drawClock();
 		_mouse.showMouse();
 		_coreVar._currPlace = OWN_ROOM;
-		affrep();
+		prepareDisplayText();
 		resetPresenceInRooms(DINING_ROOM);
 		if (!_blo)
 			getPresence(OWN_ROOM);
@@ -1432,7 +1432,7 @@ void MortevielleEngine::checkManorDistance() {
 	} else {
 		_destinationOk = true;
 		_coreVar._currPlace = MOUNTAIN;
-		affrep();
+		prepareDisplayText();
 	}
 }
 
@@ -1443,7 +1443,7 @@ void MortevielleEngine::checkManorDistance() {
 void MortevielleEngine::gotoManorFront() {
 	_manorDistance = 0;
 	_coreVar._currPlace = MANOR_FRONT;
-	affrep();
+	prepareDisplayText();
 }
 
 /**
@@ -1452,7 +1452,7 @@ void MortevielleEngine::gotoManorFront() {
  */
 void MortevielleEngine::gotoManorBack() {
 	_coreVar._currPlace = MANOR_BACK;
-	affrep();
+	prepareDisplayText();
 }
 
 /**
@@ -1518,7 +1518,7 @@ void MortevielleEngine::gameLoaded() {
 	_manorDistance = 0;
 	resetOpenObjects();
 	_takeObjCount = 0;
-	affrep();
+	prepareDisplayText();
 	_hintPctMessage = getString(580);
 
 	_destinationOk = false;
@@ -3038,7 +3038,11 @@ void MortevielleEngine::tlu(int af, int ob) {
 	_crep = 998;
 }
 
-void MortevielleEngine::affrep() {
+/**
+ * Prepare Display Text
+ * @remarks	Originally called 'affrep'
+ */
+void MortevielleEngine::prepareDisplayText() {
 	_caff = _coreVar._currPlace;
 	_crep = _coreVar._currPlace;
 }
@@ -3209,7 +3213,7 @@ L1:
 			clearDescriptionBar();
 			displayAloneText();
 			resetRoomVariables(MANOR_FRONT);
-			affrep();
+			prepareDisplayText();
 		}
 	}
 	if (_menu._menuDisplayed)
@@ -3233,7 +3237,7 @@ void MortevielleEngine::tsuiv() {
 		if (_currBitIndex != 0)
 			_coreVar._faithScore += 2;
 	} else {
-		affrep();
+		prepareDisplayText();
 		endSearch();
 		if (cx > 9)
 			_crep = 131;
@@ -3347,7 +3351,7 @@ void MortevielleEngine::treg(int objId) {
 			handleDescriptionText(2, _caff + 400);
 		testKey(true);
 		_caff = mdes;
-		_msg[3] = 0;
+		_msg[3] = MENU_NONE;
 		_crep = 998;
 	} else {
 		_obpart = true;
