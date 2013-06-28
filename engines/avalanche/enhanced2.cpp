@@ -31,6 +31,11 @@
 
 namespace Avalanche {
 
+void Enhanced::setParent(AvalancheEngine *vm) {
+	_vm = vm;
+}
+
+
 bool Enhanced::isenh() {
 	warning("STUB: Enhanced::isenh()");
 	return true;

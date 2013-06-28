@@ -35,12 +35,17 @@
 #include "common/system.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
 class Enhanced {
 public:
+	AvalancheEngine *_vm;
+
 	byte shiftstate;	/*ABSOLUTE $40:$17;*/
 	bool atbios; // BIOS type
 	char inchar, extd;
+
+	void setParent(AvalancheEngine *vm);
 
 	void readkeye();
 
