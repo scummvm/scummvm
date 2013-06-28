@@ -53,6 +53,7 @@ namespace Avalanche {
 		_pingo.setParent(this);
 		_scrolls.setParent(this);
 		_visa.setParent(this);
+		_lucerna.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
