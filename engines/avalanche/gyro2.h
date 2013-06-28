@@ -33,11 +33,13 @@
 #include "common/system.h"
 #include "common/str.h"
 #include "common/scummsys.h"
-#include "avalanche/avalanche.h"
+
 #include "avalanche/roomnums.h"
 #include "avalanche/color.h"
 
 namespace Avalanche {
+class AvalancheEngine;
+
 
 static const char numobjs = 18; /* always preface with a # */
 static const int16 maxobjs = 12;  /* carry limit */
@@ -617,7 +619,7 @@ public:
 
 	Gyro();
 
-	void Gyro::setParent(AvalancheEngine *vm);
+	void setParent(AvalancheEngine *vm);
 
 	void newpointer(byte m);
 
