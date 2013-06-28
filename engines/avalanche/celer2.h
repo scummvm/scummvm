@@ -30,50 +30,68 @@
 #ifndef CELER2_H
 #define CELER2_H
 
+
+
 #include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Celer {
+class Celer {
+public:
+	enum flavourtype {ch_ega, ch_bgi, last_flavourtype};
 
-		enum flavourtype {ch_ega, ch_bgi, last_flavourtype};
+	struct chunkblocktype {
+		flavourtype flavour;
+		int16 x, y;
+		int16 xl, yl;
+		int32 size;
+		bool natural;
 
-		struct chunkblocktype {
-			flavourtype flavour;
-			int16 x, y;
-			int16 xl, yl;
-			int32 size;
-			bool natural;
+		bool memorise; /* Hold it in memory? */
+	};
 
-			bool memorise; /* Hold it in memory? */
-		};
+	struct memotype {
+		int16 x, y;
+		int16 xl, yl;
+		flavourtype flavour;
+		uint16 size;
+	};
 
-		struct memotype {
-			int16 x, y;
-			int16 xl, yl;
-			flavourtype flavour;
-			uint16 size;
-		};
-
-		int32 offsets[40];
-		byte num_chunks = 0;
-		memotype memos[40];
-		void *memory[40];
+	int32 offsets[40];
+	byte num_chunks;
+	memotype memos[40];
+	void *memory[40];
 
 
+	Celer();
 
-		void pics_link();
+	void setParent(AvalancheEngine *vm);
 
-		void load_chunks(Common::String xx);
+	void pics_link();
 
-		void forget_chunks();
+	void load_chunks(Common::String xx);
 
-		void show_one(byte which);
+	void forget_chunks();
 
-		void show_one_at(byte which, int16 xxx, int16 yyy);
+	void show_one(byte which);
 
-	} // End of namespace Celer.
+	void show_one_at(byte which, int16 xxx, int16 yyy);
+
+private:
+	AvalancheEngine *_vm;
+
+	//untyped_file f; /* Private variable- not accessible from elsewhere. */
+
+	static const int16 on_disk; /* Value of memos[fv].x when it's not in memory. */
+
+	void mdrop(int16 x, int16 y, int16 xl, int16 yl, void *p);
+
+	void display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, void *p);
+
+	void display_it1(int16 xl, int16 yl, flavourtype flavour, void *p, int16 &xxx, int16 &yyy);
+};
 
 } // End of namespace Avalanche.
 
