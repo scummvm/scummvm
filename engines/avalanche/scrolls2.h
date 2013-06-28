@@ -34,20 +34,23 @@
 // #include "avalanche/joystick2.h" - Will be implemented later, if it will be implemented at all...
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Scrolls {
+class Scrolls {
+public:
+	bool aboutscroll; /* Is this the about box? */
 
-	// Call it where Scrolls are first used.
-	// Procuded to replace the initizalization part of the original Pascal unit.
-	void initialize_scrolls();
 
-	const bool aboutscroll = false; /* Is this the about box? */
+
+	Scrolls();
+
+	void setParent(AvalancheEngine *vm);
 
 	void state(byte x);      /* Sets "Ready" light to whatever */
 
-	void drawscroll(Gyro::proc gotoit);      /* This is one of the oldest procs in the game. */
+	void drawscroll(proc gotoit);      /* This is one of the oldest procs in the game. */
 
-	void bubble(Gyro::proc gotoit);
+	void bubble(proc gotoit);
 
 	void resetscroll();
 
@@ -65,7 +68,39 @@ namespace Avalanche {
 
 	void musical_scroll();
 
-	} // End of namespace Scrolls
+private:
+	AvalancheEngine *_vm;
+
+	static const int16 roman;
+	static const int16 italic;
+
+	static const int16 halficonwidth; /* Half the width of an icon. */
+
+	int16 dix, diy;
+	raw ch[2];
+	byte cfont; /* Current font */
+
+	int16 dodgex, dodgey;
+	byte param; /* For using arguments code */
+
+	byte use_icon;
+
+	void easteregg();
+
+	void say(int16 x, int16 y, Common::String z);
+
+	void normscroll();
+
+	void dialogue();
+
+	void store_(byte what, tunetype &played);
+
+	bool they_match(tunetype &played);
+
+	void music_scroll();
+
+
+};
 
 } // End of namespace Avalanche
 
