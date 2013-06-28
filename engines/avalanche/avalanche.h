@@ -36,6 +36,7 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/lucerna2.h"
+#include "avalanche/enid2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -59,6 +60,7 @@ public:
 	Scrolls _scrolls;
 	Visa _visa;
 	Lucerna _lucerna;
+	Enid _enid;
 
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);

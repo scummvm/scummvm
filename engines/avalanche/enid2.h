@@ -35,8 +35,11 @@
 #include "avalanche/gyro2.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Enid {
+class Enid {
+public:
+	void setParent(AvalancheEngine *vm);
 
 	void edna_save(Common::String name);
 
@@ -52,7 +55,51 @@ namespace Avalanche {
 
 	bool there_was_a_problem();
 
-	} // End of namespace Enid.
+private:
+	AvalancheEngine *_vm;
+
+	static const Common::String crlf;
+	static const char tab;
+	static const char eof_;
+
+	static const Common::String ednafirst;
+
+	static const Common::String ednaid;
+
+	static const int16 ttage;
+	static const Common::String ttwashere;
+
+	typedef char fourtype[5];
+	static const fourtype avaricius_file;
+
+
+
+	bool bug;
+
+	Common::String path, groi;
+
+	Common::String month;
+	Common::String day;
+
+
+
+	void addon(Common::String x);
+	Common::String expanddate(byte d, byte m, uint16 y);
+
+	void show_bug(char icon, Common::String strn);
+	bool test_bug(byte what);
+
+	void loaderror(Common::String x, char icon);
+
+	void showheader();
+
+	void to_sundry(sundry &sund);
+	void from_sundry(sundry sund);
+
+	void restore_dna();
+
+	
+};
 
 } // End of namespace Avalanche.
 

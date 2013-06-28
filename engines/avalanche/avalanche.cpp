@@ -54,6 +54,7 @@ namespace Avalanche {
 		_scrolls.setParent(this);
 		_visa.setParent(this);
 		_lucerna.setParent(this);
+		_enid.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
