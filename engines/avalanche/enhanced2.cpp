@@ -31,31 +31,27 @@
 
 namespace Avalanche {
 
-	namespace Enhanced {
+bool Enhanced::isenh() {
+	warning("STUB: Enhanced::isenh()");
+	return true;
+}
 
-	bool isenh() {
-		warning("STUB: Enhanced::isenh()");
-		return true;
-	}
+void Enhanced::readkeye() {
+	warning("STUB: Enhanced::readkeye()");
+}
 
-	void readkeye() {
-		warning("STUB: Enhanced::readkeye()");
-	}
-
-	bool keypressede() {
-	/*
-	 function fancystuff:boolean;
-	  inline( $B4/ $11/  { MOV AH,11 }
-			  $CD/ $16/  { INT 16 }
-			  $B8/ $00/ $00/ { MOV AX, 0000 }
-			  $74/ $01/  { JZ 0112 (or wherever- the next byte after $40, anyway) }
-			  $40);      { INC AX }
-	*/
+bool Enhanced::keypressede() {
+/*
+	function fancystuff:boolean;
+	inline( $B4/ $11/  { MOV AH,11 }
+			$CD/ $16/  { INT 16 }
+			$B8/ $00/ $00/ { MOV AX, 0000 }
+			$74/ $01/  { JZ 0112 (or wherever- the next byte after $40, anyway) }
+			$40);      { INC AX }
+*/
 	
-		warning("STUB: Enhanced::keypressede()");
-		return true;
-	}
-
-	} // End of namespace Enhanced
+	warning("STUB: Enhanced::keypressede()");
+	return true;
+}
 
 } // End of namespace Avalanche

@@ -36,8 +36,8 @@
 
 namespace Avalanche {
 
-	namespace Enhanced {
-
+class Enhanced {
+public:
 	byte shiftstate;	/*ABSOLUTE $40:$17;*/
 	bool atbios; // BIOS type
 	char inchar, extd;
@@ -45,8 +45,10 @@ namespace Avalanche {
 	void readkeye();
 
 	bool keypressede();
+private:
+	bool isenh();
 
-	} // End of namespace Enhanced
+};
 
 } // End of namespace Avalanche
 
