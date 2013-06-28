@@ -420,6 +420,8 @@ private:
 	void askRestart();
 	void delay(int amount);
 	void handleOpcode();
+	void displayStatusArrow();
+	void displayStatusInDescriptionBar(char stat);
 
 	void displayTextInDescriptionBar(int x, int y, int nb, int mesgId);
 	void mapMessageId(int &mesgId);
@@ -438,7 +440,6 @@ private:
 	void writetp(Common::String s, int t);
 	void premtet();
 	void ajchai();
-	void tfleche();
 	void ecr2(Common::String text);
 	void init_nbrepm();
 	void aniof(int ouf, int num);
@@ -448,7 +449,6 @@ private:
 	void tsuiv();
 	void treg(int objId);
 	void rechai(int &ch);
-	void displayStatusInDescriptionBar(char stat);
 
 public:
 	Common::Point _prevPos;
