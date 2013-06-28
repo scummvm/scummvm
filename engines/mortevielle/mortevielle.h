@@ -444,7 +444,7 @@ private:
 	void init_nbrepm();
 	void aniof(int ouf, int num);
 	void tlu(int af, int ob);
-	void affrep();
+	void prepareDisplayText();
 	void mennor();
 	void tsuiv();
 	void treg(int objId);
