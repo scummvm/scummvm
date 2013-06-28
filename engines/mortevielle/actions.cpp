@@ -49,7 +49,7 @@ void MortevielleEngine::fctMove() {
 	if ((_coreVar._currPlace == LANDING) && (_msg[4] == _menu._moveMenu[6])) {
 		if (!_syn)
 			displayTextInVerbBar(getEngineString(S_GO_TO));
-		tfleche();
+		displayStatusArrow();
 
 		if (_keyPressedEsc)
 			_destinationOk = false;
@@ -218,7 +218,7 @@ void MortevielleEngine::fctTake() {
 	}
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_TAKE));
-	tfleche();
+	displayStatusArrow();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 	if (_caff == 3) {
@@ -324,7 +324,7 @@ void MortevielleEngine::fctInventoryTake() {
 void MortevielleEngine::fctLift() {
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_LIFT));
-	tfleche();
+	displayStatusArrow();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 	setCoordinates(3);
@@ -361,7 +361,7 @@ void MortevielleEngine::fctRead() {
 	else {
 		if (!_syn)
 			displayTextInVerbBar(getEngineString(S_READ));
-		tfleche();
+		displayStatusArrow();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			setCoordinates(4);
 			if (_num != 0)
@@ -394,7 +394,7 @@ void MortevielleEngine::fctLook() {
 	}
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_LOOK));
-	tfleche();
+	displayStatusArrow();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 	setCoordinates(5);
@@ -485,7 +485,7 @@ void MortevielleEngine::fctSearch() {
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_SEARCH));
 
-	tfleche();
+	displayStatusArrow();
 	if (_anyone || _keyPressedEsc)
 		return;
 
@@ -595,7 +595,7 @@ void MortevielleEngine::fctOpen() {
 		return;
 	}
 
-	tfleche();
+	displayStatusArrow();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 
@@ -659,7 +659,7 @@ void MortevielleEngine::fctPlace() {
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_PUT));
 
-	tfleche();
+	displayStatusArrow();
 	if (_keyPressedEsc)
 		_crep = 998;
 
@@ -791,7 +791,7 @@ void MortevielleEngine::fctTurn() {
 	}
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_TURN));
-	tfleche();
+	displayStatusArrow();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 	setCoordinates(9);
@@ -827,7 +827,7 @@ void MortevielleEngine::fctTurn() {
 void MortevielleEngine::fctSelfHide() {
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_HIDE_SELF));
-	tfleche();
+	displayStatusArrow();
 	if (!(_anyone) && !(_keyPressedEsc)) {
 		setCoordinates(10);
 		if (_num == 0)
@@ -849,7 +849,7 @@ void MortevielleEngine::fctAttach() {
 	else {
 		if (!_syn)
 			displayTextInVerbBar(getEngineString(S_TIE));
-		tfleche();
+		displayStatusArrow();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			setCoordinates(8);
 			_crep = 997;
@@ -875,7 +875,7 @@ void MortevielleEngine::fctClose() {
 		displayTextInVerbBar(getEngineString(S_CLOSE));
 
 	if (_caff < ROOM26) {
-		tfleche();
+		displayStatusArrow();
 		if (_keyPressedEsc)
 			_crep = 998;
 		if ((_anyone) || (_keyPressedEsc))
@@ -920,7 +920,7 @@ void MortevielleEngine::fctKnock() {
 	}
 
 	if (_coreVar._currPlace < DOOR) {
-		tfleche();
+		displayStatusArrow();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			if ((_coreVar._currPlace < MOUNTAIN) && (_coreVar._currPlace != LANDING))
 				_crep = 133;
@@ -970,7 +970,7 @@ void MortevielleEngine::fctSelfPut() {
 				displayEmptyHand();
 			return;
 		}
-		tfleche();
+		displayStatusArrow();
 		if ((_anyone) || (_keyPressedEsc))
 			return;
 		setCoordinates(7);
@@ -1240,7 +1240,7 @@ void MortevielleEngine::fctForce() {
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_SMASH));
 	if (_caff < DOOR)
-		tfleche();
+		displayStatusArrow();
 
 	if ((!_anyone) && (!_keyPressedEsc)) {
 		if (_coreVar._currPlace != ROOM26)
@@ -1330,7 +1330,7 @@ void MortevielleEngine::fctSound() {
 	if (!_syn)
 		displayTextInVerbBar(getEngineString(S_PROBE2));
 	if (_caff < 27) {
-		tfleche();
+		displayStatusArrow();
 		if (!(_anyone) && (!_keyPressedEsc))
 			_crep = 145;
 		_num = 0;
@@ -1552,7 +1552,7 @@ void MortevielleEngine::fctSmell() {
 	if (_caff < ROOM26) {
 		if (!_syn)
 			displayTextInVerbBar(getEngineString(S_SMELL));
-		tfleche();
+		displayStatusArrow();
 		if (!(_anyone) && !(_keyPressedEsc))
 			if (_caff == CRYPT)
 				_crep = 153;
@@ -1570,7 +1570,7 @@ void MortevielleEngine::fctScratch() {
 	if (_caff < 27) {
 		if (!_syn)
 			displayTextInVerbBar(getEngineString(S_SCRATCH));
-		tfleche();
+		displayStatusArrow();
 	}
 	_num = 0;
 }

@@ -3240,7 +3240,11 @@ void MortevielleEngine::tsuiv() {
 	}
 }
 
-void MortevielleEngine::tfleche() {
+/**
+ * Display Arrow status
+ * @remarks	Originally called 'tfleche'
+ */
+void MortevielleEngine::displayStatusArrow() {
 	bool qust;
 	char touch;
 
