@@ -3001,7 +3001,7 @@ void MortevielleEngine::testKey(bool d) {
 	bool click;
 
 	_mouse.hideMouse();
-	fenat('K');
+	displayStatusInDescriptionBar('K');
 
 	// Wait for release from any key or mouse button
 	while (keyPressed())
@@ -3247,7 +3247,7 @@ void MortevielleEngine::tfleche() {
 	if (_num == 9999)
 		return;
 
-	fenat(chr(152));
+	displayStatusInDescriptionBar(chr(152));
 	bool inRect = false;
 	do {
 		touch = '\0';
@@ -3390,18 +3390,22 @@ int MortevielleEngine::checkLeaveSecretPassage() {
 	return CELLAR;
 }
 
-void MortevielleEngine::fenat(char ans) {
-	int coul;
+/**
+ * Display status character in description bar
+ * @remarks	Originally called 'fenat'
+ */
+void MortevielleEngine::displayStatusInDescriptionBar(char stat) {
+	int color;
 
 	_mouse.hideMouse();
 	if (_currGraphicalDevice == MODE_CGA)
-		coul = 2;
+		color = 2;
 	else if (_currGraphicalDevice == MODE_HERCULES)
-		coul = 1;
+		color = 1;
 	else
-		coul = 12;
+		color = 12;
 
-	_screenSurface.writeCharacter(Common::Point(306, 193), ord(ans), coul);
+	_screenSurface.writeCharacter(Common::Point(306, 193), ord(stat), color);
 	_screenSurface.drawBox(300, 191, 16, 8, 15);
 	_mouse.showMouse();
 }

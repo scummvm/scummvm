@@ -448,7 +448,7 @@ private:
 	void tsuiv();
 	void treg(int objId);
 	void rechai(int &ch);
-	void fenat(char ans);
+	void displayStatusInDescriptionBar(char stat);
 
 public:
 	Common::Point _prevPos;
