@@ -319,7 +319,6 @@ void Menu::menuDown(int ii) {
 	xco = _menuConstants[ii - 1][0];
 	lignNumb = _menuConstants[ii - 1][3];
 	_vm->_mouse.hideMouse();
-	_vm->sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
 	if (_vm->_resolutionScaler == 1)
 		cx = 10;
@@ -392,8 +391,6 @@ void Menu::menuDown(int ii) {
  */
 void Menu::menuUp(int msgId) {
 	if (_multiTitle) {
-		_vm->charecr(10, (_menuConstants[msgId - 1][1] + 1) << 1);
-
 		/* Restore the background area */
 		assert(_vm->_screenSurface.pitch == _vm->_backgroundSurface.pitch);
 

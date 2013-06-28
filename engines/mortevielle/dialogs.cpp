@@ -55,7 +55,6 @@ int DialogManager::show(const Common::String &msg, int n) {
 	Common::String caseStr;
 
 	decodeAlertDetails(msg, caseNumb, lignNumb, colNumb, alertStr, caseStr);
-	_vm->sauvecr(50, (NUM_LINES + 1) << 4);
 
 	int i = 0;
 	Common::Point curPos;
@@ -175,7 +174,6 @@ int DialogManager::show(const Common::String &msg, int n) {
 		tmp4 += " ";
 		_vm->_screenSurface.drawString(tmp4, 1);
 	}
-	_vm->charecr(50, (NUM_LINES + 1) * 16);
 	_vm->_mouse.showMouse();
 
 	/* Restore the background area */
