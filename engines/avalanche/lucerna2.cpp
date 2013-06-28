@@ -25,6 +25,10 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+/* LUCERNA		The screen, [keyboard] and mouse handler.*/
+
+#include "avalanche/avalanche.h"
+
 #include "common/system.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
@@ -32,50 +36,43 @@
 #include "avalanche/logger2.h"
 #include "avalanche/enhanced2.h"
 
-//#include "Graph.h"
-///*#include "Dos.h"*/
-///*#include "Crt.h"*/
-//#include "trip5.h"
-//#include "Acci.h"
-//#include "pingo.h"
+
+#include "avalanche/visa2.h"
+#include "avalanche/timeout2.h"
+#include "avalanche/trip6.h"
+#include "avalanche/enid2.h"
+#include "avalanche/celer2.h"
+#include "avalanche/pingo2.h"
+#include "avalanche/sequence2.h"
+#include "avalanche/acci2.h"
+
+
 //#include "dropdown.h"
-//#include "visa.h"
-//#include "celer.h"
-//#include "timeout.h"
 //#include "basher.h"
-//#include "sequence.h"
+
 
 namespace Avalanche {
 
-	namespace Lucerna {
+Lucerna::Lucerna() {
+	// Will be needed.
+}
 
-	bool fxhidden;
+void Lucerna::setParent(AvalancheEngine *vm) {
+	_vm = vm;
+}
+	
+void Lucerna::callverb(char n) {
+	/*if (n == pardon)
+	Scrolls::display(
+	"The f5 key lets you do a particular action in certain "
+	"situations. However, at the moment there is nothing "
+	"assigned to it. You may press alt-A to see what the "
+	"current setting of this key is.");*/
 
-	struct rgbrec {
-		int16 red;
-		int16 green;
-		int16 blue;
-	};
+	// Needs const char pardon located in Acci.
 
-	struct palettetype {
-		int32 size;
-		rgbrec colors[256];
-	};
+}
 
-	palettetype fxpal[4];
 
-	void callverb(char n) {
-		/*if (n == pardon)
-		Scrolls::display(
-		"The f5 key lets you do a particular action in certain "
-		"situations. However, at the moment there is nothing "
-		"assigned to it. You may press alt-A to see what the "
-		"current setting of this key is.");*/
-
-		// Needs const char pardon located in Acci.
-
-	}
-
-	} // End of namespace Lucerna
 
 } // End of namespace Avalanche

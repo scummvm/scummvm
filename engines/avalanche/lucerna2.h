@@ -25,18 +25,23 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+/* LUCERNA		The screen, [keyboard] and mouse handler.*/
+
 #ifndef LUCERNA2_H
 #define LUCERNA2_H
 
 #include "common/scummsys.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Lucerna {
-
+class Lucerna {
+public:
 	// Call it where Lucerna is first used.
 	// Procuded to replace the initizalization part of the original Pascal unit.
-	void initialize_lucerna();
+	Lucerna();
+
+	void setParent(AvalancheEngine *vm);
 
 	void callverb(char n);
 
@@ -106,7 +111,24 @@ namespace Avalanche {
 
 	void fix_flashers();
 
-	} // End of namespace Lucerna
+private:
+	AvalancheEngine *_vm;
+
+	bool fxhidden;
+
+	struct rgbrec {
+		int16 red;
+		int16 green;
+		int16 blue;
+	};
+
+	struct palettetype {
+		int32 size;
+		rgbrec colors[256];
+	};
+
+	palettetype fxpal[4];
+};
 
 } // End of namespace Avalanche
 
