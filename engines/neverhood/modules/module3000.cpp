@@ -49,7 +49,7 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 
-	if (_isWallBroken) {
+	if (!_isWallBroken) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
 	}
@@ -77,11 +77,12 @@ void Module3000::createScene(int sceneNum, int which) {
 	static const byte kNavigationTypes06[] = {5};
 	debug(1, "Module3000::createScene(%d, %d)", sceneNum, which);
 	_vm->gameState().sceneNum = sceneNum;
+	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 	switch (_vm->gameState().sceneNum) {
 	case 1:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN)) {
 			createNavigationScene(0x004B7C80, which);
-		} else if (getGlobalVar(V_WALL_BROKEN)) {
+		} else if (_isWallBroken) {
 			createNavigationScene(0x004B7CE0, which);
 		} else {
 			createNavigationScene(0x004B7CB0, which);
@@ -89,11 +90,11 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
-		if (_isWallBroken) {
+		if (!_isWallBroken) {
 			_soundVolume = 90;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 90);
 		}
-		if (getGlobalVar(V_WALL_BROKEN)) {
+		if (_isWallBroken) {
 			createNavigationScene(0x004B7D58, which);
 		} else {
 			createNavigationScene(0x004B7D10, which);
@@ -102,7 +103,7 @@ void Module3000::createScene(int sceneNum, int which) {
 	case 3:
 		if (getGlobalVar(V_STAIRS_DOWN))
 			createNavigationScene(0x004B7E60, which);
-		else if (getGlobalVar(V_WALL_BROKEN))
+		else if (_isWallBroken)
 			createNavigationScene(0x004B7DA0, which);
 		else
 			createNavigationScene(0x004B7E00, which);
@@ -150,12 +151,12 @@ void Module3000::createScene(int sceneNum, int which) {
 	// NOTE: Newly introduced sceneNums
 	case 1001:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN))
-			if (getGlobalVar(V_WALL_BROKEN))
+			if (_isWallBroken)
 				createSmackerScene(0x00940021, true, true, false);
 			else
 				createSmackerScene(0x01140021, true, true, false);
 		else
-			if (getGlobalVar(V_WALL_BROKEN))
+			if (_isWallBroken)
 				createSmackerScene(0x001011B1, true, true, false);
 			else
 				createSmackerScene(0x001021B1, true, true, false);
@@ -299,7 +300,7 @@ void Module3000::updateScene() {
 					} else if (frameNumber == 10) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
@@ -313,7 +314,7 @@ void Module3000::updateScene() {
 			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
 				int navigationIndex = navigationScene()->getNavigationIndex();
-				if (_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
+				if (!_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
 					_soundVolume--;
 					_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 				}
@@ -338,7 +339,7 @@ void Module3000::updateScene() {
 					if (frameNumber == 40) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
