@@ -49,6 +49,9 @@ namespace Avalanche {
 
 		_gyro.setParent(this);
 		_enhanced.setParent(this);
+		_logger.setParent(this);
+		_pingo.setParent(this);
+		_scrolls.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
