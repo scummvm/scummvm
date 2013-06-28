@@ -38,6 +38,8 @@
 #include "avalanche/lucerna2.h"
 #include "avalanche/enid2.h"
 #include "avalanche/celer2.h"
+#include "avalanche/sequence2.h"
+#include "avalanche/timeout2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -63,7 +65,8 @@ public:
 	Lucerna _lucerna;
 	Enid _enid;
 	Celer _celer;
-
+	Sequence _sequence;
+	Timeout _timeout;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
