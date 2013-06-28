@@ -299,9 +299,7 @@ struct ednahead { /* Edna header */
 
 
 class Gyro {
-
 public:
-
 	static const char *vernum;
 	static const char *copyright;
 	static const int16 thisvercode = 130;
