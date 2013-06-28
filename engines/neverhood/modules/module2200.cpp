@@ -50,6 +50,7 @@ void Module2200::createScene(int sceneNum, int which) {
 	switch (_sceneNum) {
 	case 0:
 		_vm->gameState().sceneNum = 0;
+		_vm->_soundMan->startMusic(0x601C908C, 0, 2);
 		_childObject = new Scene2201(_vm, this, which);
 		break;
 	case 1:
