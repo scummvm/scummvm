@@ -239,30 +239,30 @@ void Menu::invert(int indx) {
 
 	Common::String str;
 	switch (_msg3) {
-	case 1:
+	case MENU_INVENTORY:
 		str = _inventoryStringArray[menuIndex];
 		break;
-	case 2:
+	case MENU_MOVE:
 		str = _moveStringArray[menuIndex];
 		break;
-	case 3:
+	case MENU_ACTION:
 		str = _actionStringArray[menuIndex];
 		break;
-	case 4:
+	case MENU_SELF:
 		str = _selfStringArray[menuIndex];
 		break;
-	case 5:
+	case MENU_DISCUSS:
 		str = _discussStringArray[menuIndex];
 		break;
-	case 6:
+	case MENU_FILE:
 		str = _vm->getEngineString(S_SAVE_LOAD + menuIndex);
 		break;
-	case 7:
+	case MENU_SAVE:
 		str = _vm->getEngineString(S_SAVE_LOAD + 1);
 		str += ' ';
 		str += (char)(48 + menuIndex);
 		break;
-	case 8:
+	case MENU_LOAD:
 		if (menuIndex == 1) {
 			str = _vm->getEngineString(S_RESTART);
 		} else {
@@ -470,9 +470,9 @@ void Menu::updateMenu() {
 			_vm->setMouseClick(false);
 			menuUp(_msg3);
 			if (lo(_msg4) == 1)
-				_msg3 = 7;
+				_msg3 = MENU_SAVE;
 			else
-				_msg3 = 8;
+				_msg3 = MENU_LOAD;
 			menuDown(_msg3);
 
 			_vm->setMouseClick(false);
