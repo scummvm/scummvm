@@ -27,6 +27,8 @@
 
 /* SEQUENCE		The sequencer. */
 
+#include "avalanche/avalanche.h"
+
 #include "avalanche/sequence2.h"
 #include "common/scummsys.h"
 #include "avalanche/gyro2.h"
@@ -36,74 +38,74 @@
 
 namespace Avalanche {
 
-	namespace Sequence {
+void Sequence::setParent(AvalancheEngine *vm) {
+	_vm = vm;
+}
 
-	void then_show(byte what) {
-		byte fv;
-		for (fv = 1; fv <= seq_length; fv ++)
-			if (seq[fv] == 0) {
-				seq[fv] = what;
-				return;
-			}
-	}
+void Sequence::first_show(byte what) {
+	/* First, we need to blank out the entire array. */
+	for (int i = 0; i < sizeof(seq); i++)
+		seq[i] = 0;
 
-	void first_show(byte what) {
-		/* First, we need to blank out the entire array. */
-		for (int i = 0; i < sizeof(seq); i++)
-			seq[i] = 0;
+	/* Then it's just the same as then_show. */
+	then_show(what);
 
-		/* Then it's just the same as then_show. */
-		then_show(what);
+}
 
-	}
-
-	void then_flip(byte where, byte ped) {
-		then_show(now_flip);
-
-		Gyro::dna.flip_to_where = where;
-		Gyro::dna.flip_to_ped = ped;
-	}
-
-	void start_to_close() {
-		Timeout::lose_timer(Timeout::reason_sequencer);
-		Timeout::set_up_timer(7, Timeout::PROCsequence, Timeout::reason_sequencer);
-	}
-
-	void start_to_open() {
-		Gyro::dna.user_moves_avvy = false; /* They can't move. */
-		Trip::stopwalking(); /* And they're not moving now. */
-		start_to_close(); /* Apart from that, it's the same thing. */
-	}
-
-	void call_sequencer();
-
-	/* This PROC is called by Timeout when it's time to do another frame. */
-	static void shove_left() {
-		memcpy(seq, seq+1, seq_length - 1); /* Shift everything to the left. */
-	}
-
-	void call_sequencer() {
-		switch (seq[0]) {
-		case 0:
+void Sequence::then_show(byte what) {
+	byte fv;
+	for (fv = 1; fv <= seq_length; fv ++)
+		if (seq[fv] == 0) {
+			seq[fv] = what;
 			return;
-			break; /* No more routines. */
-		case 177: {
-			Gyro::dna.user_moves_avvy = true;
-			Trip::fliproom(Gyro::dna.flip_to_where, Gyro::dna.flip_to_ped); /* 177 = Flip room. */
-			if (seq[0] == 177)  shove_left();
-			}
-			break;
 		}
+}
 
-		if ((seq[0] >= 1) && (seq[0] <= 176)) {
-			/* Show a frame. */
-			Celer::show_one(seq[1]);
-			shove_left();
+void Sequence::then_flip(byte where, byte ped) {
+	then_show(now_flip);
+
+	_vm->_gyro.dna.flip_to_where = where;
+	_vm->_gyro.dna.flip_to_ped = ped;
+}
+
+void Sequence::start_to_close() {
+	Timeout::lose_timer(Timeout::reason_sequencer);
+	Timeout::set_up_timer(7, Timeout::procsequence, Timeout::reason_sequencer);
+}
+
+void Sequence::start_to_open() {
+	_vm->_gyro.dna.user_moves_avvy = false; /* They can't move. */
+	Trip::stopwalking(); /* And they're not moving now. */
+	start_to_close(); /* Apart from that, it's the same thing. */
+}
+
+
+
+/* This PROC is called by Timeout when it's time to do another frame. */
+void Sequence::shove_left() {
+	memcpy(seq, seq+1, seq_length - 1); /* Shift everything to the left. */
+}
+
+void Sequence::call_sequencer() {
+	switch (seq[0]) {
+	case 0:
+		return;
+		break; /* No more routines. */
+	case 177: {
+		_vm->_gyro.dna.user_moves_avvy = true;
+		Trip::fliproom(_vm->_gyro.dna.flip_to_where, _vm->_gyro.dna.flip_to_ped); /* 177 = Flip room. */
+		if (seq[0] == 177)  shove_left();
 		}
-	
-		start_to_close(); /* Make sure this PROC gets called again. */
+		break;
 	}
 
-	} // End of namespace Sequence .
+	if ((seq[0] >= 1) && (seq[0] <= 176)) {
+		/* Show a frame. */
+		_vm->_celer.show_one(seq[1]);
+		shove_left();
+	}
+	
+	start_to_close(); /* Make sure this PROC gets called again. */
+}
 
 } // End of namespace Avalanche.
