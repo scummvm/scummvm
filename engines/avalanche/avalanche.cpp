@@ -56,6 +56,8 @@ namespace Avalanche {
 		_lucerna.setParent(this);
 		_enid.setParent(this);
 		_celer.setParent(this);
+		_sequence.setParent(this);
+		_timeout.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
