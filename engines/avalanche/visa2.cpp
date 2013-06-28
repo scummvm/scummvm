@@ -25,6 +25,10 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+/* VISA		The new Sez handler. (Replaces Access.) */
+
+#include "avalanche/avalanche.h"
+
 #include "avalanche/visa2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/scrolls2.h"
@@ -37,40 +41,38 @@
 
 namespace Avalanche {
 
-	namespace Visa {
-
-	const bool bubbling = false;
-	const bool report_dixi_errors = true;
-
-	bool went_ok;
-
-	void unskrimble() {
-		for (uint16  fv = 0; fv < Gyro::bufsize; fv++) 
-			Gyro::buffer[fv] = (char)((!(Gyro::buffer[fv]) - fv) % 256);
+	void Visa::setParent(AvalancheEngine *vm) {
+		_vm = vm;
 	}
 
-	void do_the_bubble() {
-		Gyro::bufsize++;
-		Gyro::buffer[Gyro::bufsize] = 2;
+	const bool Visa::bubbling = false;
+	const bool Visa::report_dixi_errors = true;
+
+	void Visa::unskrimble() {
+		for (uint16  fv = 0; fv < _vm->_gyro.bufsize; fv++) 
+			_vm->_gyro.buffer[fv] = (char)((!(_vm->_gyro.buffer[fv]) - fv) % 256);
+	}
+
+	void Visa::do_the_bubble() {
+		_vm->_gyro.bufsize++;
+		_vm->_gyro.buffer[_vm->_gyro.bufsize] = 2;
 	}
 
 	// File handling.
-	void dixi(char block, byte point) {
+	void Visa::dixi(char block, byte point) {
 		warning("STUB: Visa::dixi()");
 	}
 
 	// File handling.
-	void speech(byte who, byte subject) {
+	void Visa::speech(byte who, byte subject) {
 		warning("STUB: Visa::speech()");
 	}
 
-	void talkto(byte whom) {
+	void Visa::talkto(byte whom) {
 		byte fv;
 		bool no_matches;
 
 		warning("STUB: Visa::talkto()");
 	}
-
-	} // End of namespace Visa.
 
 } // End of namespace Avalanche.

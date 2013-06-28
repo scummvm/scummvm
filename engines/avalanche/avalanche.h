@@ -34,6 +34,7 @@
 #include "avalanche/logger2.h"
 #include "avalanche/pingo2.h"
 #include "avalanche/scrolls2.h"
+#include "avalanche/visa2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -55,6 +56,7 @@ public:
 	Logger _logger;
 	Pingo _pingo;
 	Scrolls _scrolls;
+	Visa _visa;
 
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);

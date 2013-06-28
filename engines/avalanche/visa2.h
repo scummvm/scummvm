@@ -25,20 +25,38 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+/* VISA		The new Sez handler. (Replaces Access.) */
+
 #ifndef VISA2_H
 #define VISA2_H
 
 #include "common/scummsys.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Visa {
+class Visa {
+public:
+	void Visa::setParent(AvalancheEngine *vm);
 
 	void dixi(char block, byte point);
 
 	void talkto(byte whom);
 
-	} // End of namespace Visa.
+private:
+	AvalancheEngine *_vm;
+
+	static const bool bubbling;
+	static const bool report_dixi_errors;
+
+	bool went_ok;
+
+	void unskrimble();
+
+	void do_the_bubble();
+
+	void speech(byte who, byte subject);
+};
 
 } // End of namespace Avalanche.
 
