@@ -25,14 +25,21 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+/* LOGGER	Handles the logging. */
+
 #ifndef LOGGER2_H
 #define LOGGER2_H
 
-#include "common/system.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Logger {
+class Logger {
+public:
+	void setParent(AvalancheEngine *vm);
 
 	void log_setup(Common::String name, bool printing);
 
@@ -62,7 +69,24 @@ namespace Avalanche {
 
 	void log_score(uint16 credit, uint16 now);
 
-	} // End of namespace Logger
+private:
+	AvalancheEngine *_vm;
+
+	static const char divide[];
+
+	static const Common::String quote;
+	static const Common::String unquote;
+	static const Common::String copyright;
+	static const int16 divide_indent;
+
+	Common::String scroll_line;
+	byte scroll_line_length;
+
+	void centre(byte size, byte x);
+
+	void log_addstuff(Common::String x);
+
+};
 
 } // End of namespace Avalanche
 
