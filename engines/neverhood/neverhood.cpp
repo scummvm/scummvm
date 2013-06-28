@@ -123,9 +123,10 @@ Common::Error NeverhoodEngine::run() {
 		(*navigationList)[5].middleFlag = 1;
 	}
 	
-	if (ConfMan.hasKey("save_slot"))
-		loadGameState(ConfMan.getInt("save_slot"));
-	else
+	if (ConfMan.hasKey("save_slot")) {
+		if (loadGameState(ConfMan.getInt("save_slot")).getCode() != Common::kNoError)
+			_gameModule->startup();
+	} else
 		_gameModule->startup();
 	
 	mainLoop();
