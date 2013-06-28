@@ -432,6 +432,7 @@ private:
 	void drawPictureWithText();
 	void addObjectToInventory(int objectId);
 	void putInHand(int &objId);
+	void prepareDisplayText();
 
 	void cinq_huit(char &c, int &idx, byte &pt, bool &the_end);
 	void copcha();
@@ -444,7 +445,6 @@ private:
 	void init_nbrepm();
 	void aniof(int ouf, int num);
 	void tlu(int af, int ob);
-	void prepareDisplayText();
 	void mennor();
 	void tsuiv();
 	void treg(int objId);
