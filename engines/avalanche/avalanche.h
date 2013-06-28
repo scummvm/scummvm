@@ -37,6 +37,7 @@
 #include "avalanche/visa2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/enid2.h"
+#include "avalanche/celer2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -61,6 +62,7 @@ public:
 	Visa _visa;
 	Lucerna _lucerna;
 	Enid _enid;
+	Celer _celer;
 
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);

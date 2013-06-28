@@ -33,32 +33,38 @@
 #include "common/scummsys.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Sequence {
+class Sequence {
+public:
+	static const int16 now_flip = 177;
 
-		const int16 now_flip = 177;
-
-		const int16 seq_length = 10;
-
-
-
-		byte seq[seq_length];
+	static const int16 seq_length = 10;
 
 
 
-		void first_show(byte what);
+	byte seq[seq_length];
 
-		void then_show(byte what);
 
-		void then_flip(byte where, byte ped);
+	void setParent(AvalancheEngine *vm);
 
-		void start_to_close();
+	void first_show(byte what);
 
-		void start_to_open();
+	void then_show(byte what);
 
-		void call_sequencer();
+	void then_flip(byte where, byte ped);
 
-	} // End of namespace Sequence .
+	void start_to_close();
+
+	void start_to_open();
+
+	void call_sequencer();
+
+private:
+	AvalancheEngine *_vm;
+
+	void shove_left();
+};
 
 } // End of namespace Avalanche.
 
