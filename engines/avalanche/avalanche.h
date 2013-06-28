@@ -31,6 +31,9 @@
 #include "avalanche/console.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/enhanced2.h"
+#include "avalanche/logger2.h"
+#include "avalanche/pingo2.h"
+#include "avalanche/scrolls2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -49,6 +52,9 @@ class AvalancheEngine : public Engine {
 public:
 	Gyro _gyro;
 	Enhanced _enhanced;
+	Logger _logger;
+	Pingo _pingo;
+	Scrolls _scrolls;
 
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
