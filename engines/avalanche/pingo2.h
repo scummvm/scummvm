@@ -31,11 +31,17 @@
 #define PINGO2_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
+
+
 
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Pingo {
+class Pingo {
+public:
+	void setParent(AvalancheEngine *vm);
 
 	void bosskey();
 
@@ -51,7 +57,13 @@ namespace Avalanche {
 
 	void winning_pic();
 
-	} // End of namespace Pingo.
+private:
+	AvalancheEngine *_vm;
+
+	void dplot(int16 x, int16 y, Common::String z);
+
+	void zl(int16 x1, int16 y1, int16 x2, int16 y2);
+};
 
 } // End of namespace Avalanche.
 
