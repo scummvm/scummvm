@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+/* GYRO		It all revolves around this bit! */
+
 #include "avalanche/gyro2.h"
 #include "common/textconsole.h"
 
@@ -41,289 +43,476 @@
 
 namespace Avalanche {
 
-	namespace Gyro {
+const char *Gyro::vernum = "1.30";
 
-	const Common::String things[numobjs] = {
-		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
-		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
-		"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
-	};
+const char *Gyro::copyright = "1995";
 
-	const char thingchar[] = "WMBParCLguKeSnIohn"; /* V=Vinegar */
 
-	const Common::String better[numobjs] = {
-		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
-		"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
-		"a key", "a bell", "a scroll", "a pen", "some ink", "your clothes", "a habit",
-		"an onion"
-	};
-
-	const char betterchar[] = "WMBParCLguKeSnIohn";
-
-	void newpointer(byte m) {
-		warning("STUB: Gyro::newpointer()");
-	}
-
-	void wait() {   /* makes hourglass */
-		newpointer(5);
-	}
-
-	void on() {
-		warning("STUB: Gyro::on()");
-	}
-
-	void on_virtual() {
-		switch (visible) {
-		case m_virtual:
-			return;
-			break;
-		case m_yes:
-			off();
-			break;
-		}
-
-		visible = m_virtual;
-	}
-
-	void off() {
-		warning("STUB: Gyro::off()");
-	}
-
-	void off_virtual() {
-		warning("STUB: Gyro::off_virtual()");
-	}
-
-	void xycheck() {   /* only updates mx & my, not all other mouse vars */
-		warning("STUB: Gyro::xycheck()");
-	}
-
-	void hopto(int16 x, int16 y) { /* Moves mouse void *to x,y */
-		warning("STUB: Gyro::hopto()");
-	}
-
-	void check() {
-		warning("STUB: Gyro::check()");
-	}
-
-	void note(uint16 hertz) {
-		warning("STUB: Gyro::note()");
-	}
-
-	void blip() {
-		warning("STUB: Gyro::blip()");
-	}
-
-	Common::String strf(int32 x) {
-		Common::String q = Common::String::format("%d", x);
-		return q;
-	}
-
-	void shadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc) {
-		warning("STUB: Gyro::shadow()");
-	}
-
-	void shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
-		warning("STUB: Gyro::shbox()");
-	}
-
-	void newgame() {   /* This sets up the DNA for a completely new game. */
-		warning("STUB: Gyro::newgame()");
-	}
-
-	void click() {   /* "Audio keyboard feedback" */
-		warning("STUB: Gyro::click()");
-	}
-
-	void slowdown() {
-		warning("STUB: Gyro::slowdown()");
-	}
-
-	bool flagset(char x) {
-		for (uint16 i = 0; i < flags.size(); i++)
-			if (flags[i] == x)
-				return true;
-		return false;
-	}
-
-	void force_numlock() {
-		if ((locks & num) > 0)  locks -= num;
-	}
-
-	bool pennycheck(uint16 howmuchby) {
-		warning("STUB: Gyro::pennycheck()");
-		return true;
-	}
-
-	// There'll may be problems with calling these functions becouse of the conversion of the arrays!!!
-	// Keep an eye open!
-	Common::String getname(byte whose) { 
-		Common::String getname_result;
-		if (whose < 17)
-			getname_result = lads[whose];
-		else
-			getname_result = lasses[whose-17];
-		return getname_result;
-	}
-
-	// Keep an eye open! ^
-	char getnamechar(byte whose) {
-		char getnamechar_result;
-		if (whose < 16) 
-			getnamechar_result = ladchar[whose];
-		else
-			getnamechar_result = lasschar[whose-16];
-		return getnamechar_result;
-	}
-
-	// Keep an eye open! ^^
-	Common::String get_thing(byte which) {
-		Common::String get_thing_result;
-		switch (which) {
-		case wine:
-			switch (dna.winestate) {
-			case 1:
-			case 4:
-				get_thing_result = things[which];
-				break;
-			case 3:
-				get_thing_result = "Vinegar";
-				break;
-			}
-			break;
-		case onion:
-			if (dna.rotten_onion)
-				get_thing_result = "rotten onion";
-			else get_thing_result = things[which];
-			break;
-		default:
-			get_thing_result = things[which];
-		}
-		return get_thing_result;
-	}
-
-	// Keep an eye open! ^^^
-	char get_thingchar(byte which) {
-		char get_thingchar_result;
-		switch (which) {
-		case wine:
-			if (dna.winestate == 3)
-				get_thingchar_result = 'V'; /* Vinegar */
-			else
-				get_thingchar_result = thingchar[which];
-			break;
-		default:
-			get_thingchar_result = thingchar[which];
-		}
-		return get_thingchar_result;
-	}
-
-	// Keep an eye open! ^^^^
-	Common::String get_better(byte which) {
-		Common::String get_better_result;
-		if (which > 150)  which -= 149;
-		switch (which) {
-		case wine:
-			switch (dna.winestate) {
-			case 0:
-			case 1:
-			case 4:
-				get_better_result = better[which];
-				break;
-			case 3:
-				get_better_result = "some vinegar";
-				break;
-			}
-			break;
-		case onion:
-			if (dna.rotten_onion)
-				get_better_result = "a rotten onion";
-			else if (dna.onion_in_vinegar)
-				get_better_result = "a pickled onion (in the vinegar)";
-			else get_better_result = better[which];
-			break;
-		default:
-			if ((which < numobjs) && (which > '\0'))
-				get_better_result = better[which];
-			else
-				get_better_result = "";
-		}
-		return get_better_result;
-	}
-
-	// Get back here after finished with acci.pas, where vb_-s are resided.
-	Common::String f5_does()
-	/* This procedure determines what f5 does. */
+const mp Gyro::mps[9] = {
 	{
-		warning("STUB: Gyro::f5_does()");
-		return "STUB: Gyro::f5_does()";
+		/* 1 - up-arrow */
+		{	{65151, 64575, 64575, 63519, 63519, 61455, 61455, 57351, 57351, 49155, 49155, 64575, 64575, 64575, 64575, 64575},
+		{0, 384, 384, 960, 960, 2016, 2016, 4080, 4080, 8184, 384, 384, 384, 384, 384, 0}
+		},	
+			8,
+			0
+	},
+
+	{
+		/* 2 - screwdriver */
+		{	{8191, 4095, 2047, 34815, 50175, 61951, 63743, 64543, 65039, 65031, 65027, 65281, 65408, 65472, 65505, 65523},
+		{0, 24576, 28672, 12288, 2048, 1024, 512, 256, 224, 176, 216, 96, 38, 10, 12, 0}
+
+		},
+			0,
+			0
+	},
+
+	{
+		/* 3 - right-arrow */
+		{	{65535, 65535, 64639, 64543, 7, 1, 0, 1, 7, 64543, 64639, 65535, 65535, 65535, 65535, 65535},
+		{0, 0, 0, 384, 480, 32760, 32766, 32760, 480, 384, 0, 0, 0, 0, 0, 0}	
+		},
+			15,
+			6
+	},
+
+	{
+		/* 4 - fletch */
+		{	{255, 511, 1023, 2047, 1023, 4607, 14591, 31871, 65031, 65283, 65281, 65280, 65280, 65409, 65473, 65511},
+		{0, 10240, 20480, 24576, 26624, 17408, 512, 256, 128, 88, 32, 86, 72, 20, 16, 0}
+		},
+			0,
+			0
+		},
+
+		{
+			/* 5 - hourglass */
+			{	{0, 0, 0, 34785, 50115, 61455, 61455, 63519, 63519, 61839, 61455, 49155, 32769, 0, 0, 0},
+			{0, 32766, 16386, 12300, 2064, 1440, 1440, 576, 576, 1056, 1440, 3024, 14316, 16386, 32766, 0}
+			},
+				8,
+				7
+		},
+
+		{
+			/* 6 - TTHand */
+			{	{62463, 57855, 57855, 57855, 57471, 49167, 32769, 0, 0, 0, 0, 32768, 49152, 57344, 61441, 61443},
+			{3072, 4608, 4608, 4608, 4992, 12912, 21070, 36937, 36873, 36865, 32769, 16385, 8193, 4097, 2050, 4092}
+			},
+				4,
+				0
+		},
+
+		{
+			/* 7- Mark's crosshairs */
+			{	{65535, 65151, 65151, 65151, 65151, 0, 65151, 65151, 65151, 65151, 65535, 65535, 65535, 65535, 65535, 65535},
+			{0, 384, 384, 384, 384, 65535, 384, 384, 384, 384, 0, 0, 0, 0, 0, 0}
+			},
+				8,
+				5
+		},
+
+		{
+			/* 8- I-beam. */
+			{	{65535, 65535, 63631, 63503, 63503, 65087, 65087, 65087, 65087, 65087, 63503, 63503, 63631, 65535, 65535, 65535},
+			{0, 0, 0, 864, 128, 128, 128, 128, 128, 128, 128, 864, 0, 0, 0, 0}
+			},
+				8,
+				7
+		},
+
+		{
+			/* 9- Question mark. */
+			{	{511, 1023, 2047, 31, 15, 8199, 32647, 65415, 63503, 61471, 61503, 61695, 63999, 63999, 61695, 61695},
+			{65024, 33792, 34816, 34784, 40976, 57224, 32840, 72, 1936, 2080, 2496, 2304, 1536, 1536, 2304, 3840}
+			},
+				0,
+				0
+		}
+};
+
+const Common::String Gyro::lads[17] = {
+	"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
+	"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
+	"A trader", "Ibythneth", "Ayles", "Port", "Spurge", "Jacques"
+};
+
+const Common::String Gyro::lasses[4] =
+{"Arkata", "Geida", "±", "the Wise Woman"};
+
+const char Gyro::ladchar[] = "ASCDMTRwLfgeIyPu";
+
+const char Gyro::lasschar[] = "kG±o";
+
+const int32 Gyro::catamap[8][8] = {
+	/* Geida's room */
+	/*  1     2			3   | 4     5		6		7     8*/
+	{0x204, 0x200, 0xd0f0, 0xf0ff, 0xff, 0xd20f, 0xd200, 0x200},
+	{0x50f1, 0x20ff, 0x2ff, 0xff, 0xe0ff, 0x20ff, 0x200f, 0x7210},
+	{0xe3f0, 0xe10f, 0x72f0, 0xff, 0xe0ff, 0xff, 0xff, 0x800f},
+	{0x2201, 0x2030, 0x800f, 0x220, 0x20f, 0x30, 0xff, 0x23f}, /* >> Oubliette */
+	{0x5024, 0xf3, 0xff, 0x200f, 0x22f0, 0x20f, 0x200, 0x7260},
+	{0xf0, 0x2ff, 0xe2ff, 0xff, 0x200f, 0x50f0, 0x72ff, 0x201f},
+	{0xf6, 0x220f, 0x22f0, 0x30f, 0xf0, 0x20f, 0x8200, 0x2f0}, /* <<< In here */
+	{0x34, 0x200f, 0x51f0, 0x201f, 0xf1, 0x50ff, 0x902f, 0x2062}
+};
+/* vv Stairs trap. */
+
+const char Gyro::spludwick_order[3] = {onion, ink, mushroom};
+
+const quasiped_type Gyro::quasipeds[16] = {
+	{2, lightgray, 19, brown, pdogfood},                       /* A: Dogfood (screen 19). */
+	{3, green,     19, white, pibythneth},                         /* B: Ibythneth (screen 19). */
+	{3, white,     1, magenta, parkata},                        /* C: Arkata (screen 1). */
+	{3, black,     23, red, 177},                         /* D: Hawk (screen 23). */
+	{3, lightgreen, 50, brown, ptrader},                        /* E: Trader (screen 50). */
+	{6, yellow,    42, red, pavalot},                           /* F: Avvy, tied up (scr.42) */
+	{2, blue,      16, white, payles},                         /* G: Ayles (screen 16). */
+	{2, brown,     7, white, pjacques},                          /* H: Jacques (screen 7). */
+	{2, lightgreen, 47, green, pspurge},                        /* I: Spurge (screen 47). */
+	{3, yellow,    47, red, pavalot},                           /* J: Avalot (screen 47). */
+	{2, lightgray, 23, black, pdulustie},                         /* K: du Lustie (screen 23). */
+	{2, yellow,    27, red, pavalot},                           /* L: Avalot (screen 27). */
+	{3, white,     27, red, 177},                         /* M: Avaroid (screen 27). */
+	{4, lightgray, 19, darkgray, pmalagauche},                        /*N: Malagauche (screen 19). */
+	{5, lightmagenta, 47, red, pport},                           /* O: Port (screen 47). */
+	{2, lightgreen, 51, darkgray, pdrduck}
+};                         /*P: Duck (screen 51). */
+
+const char Gyro::keys[] = "QWERTYUIOP[]";
+
+const uint16 Gyro::notes[12] =
+{196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
+
+const tunetype Gyro::tune = {
+	higher, higher, lower, same, higher, higher, lower, higher, higher, higher,
+	lower, higher, higher,
+	same, higher, lower, lower, lower, lower, higher, higher, lower, lower, lower,
+	lower, same, lower, higher, same, lower, higher
+};
+
+const byte Gyro::static_const_whereis[29] = {
+	/* The Lads */
+	r__yours, /* Avvy */
+	r__spludwicks, /* Spludwick */
+	r__outsideyours, /* Crapulus */
+	r__ducks, /* Duck - r__DucksRoom's not defined yet. */
+	r__argentpub, /* Malagauche */
+	r__robins, /* Friar Tuck. */
+	177, /* Robin Hood - can't meet him at the start. */
+	r__brummieroad, /* Cwytalot */
+	r__lustiesroom, /* Baron du Lustie. */
+	r__outsidecardiffcastle, /* The Duke of Cardiff. */
+	r__argentpub, /* Dogfood */
+	r__outsideducks, /* Trader */
+	r__argentpub, /* Ibythneth */
+	r__aylesoffice, /* Ayles */
+	r__nottspub, /* Port */
+	r__nottspub, /* Spurge */
+	r__musicroom, /* Jacques */
+	0, 0, 0, 0, 0, 0, 0, 0,
+	/* The Lasses */
+	r__yours, /* Arkata */
+	r__geidas, /* Geida */
+	177, /* nobody allocated here! */
+	r__wisewomans  /* The Wise Woman. */
+};
+
+
+
+
+
+const Common::String Gyro::things[numobjs] = {
+	"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
+	"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
+	"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
+};
+
+const char Gyro::thingchar[] = "WMBParCLguKeSnIohn"; /* V=Vinegar */
+
+const Common::String Gyro::better[numobjs] = {
+	"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
+	"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
+	"a key", "a bell", "a scroll", "a pen", "some ink", "your clothes", "a habit",
+	"an onion"
+};
+
+const char Gyro::betterchar[] = "WMBParCLguKeSnIohn";
+
+
+
+Gyro::Gyro() : interrogation(0), oncandopageswap(true) {
+	for (int i = 0; i < 29; i++)
+		whereis[i] = static_const_whereis[i];
+}
+
+void Gyro::setParent(AvalancheEngine *vm) {
+	_vm = vm;
+}
+
+void Gyro::newpointer(byte m) {
+	warning("STUB: Gyro::newpointer()");
+}
+
+void Gyro::wait() {   /* makes hourglass */
+	newpointer(5);
+}
+
+void Gyro::on() {
+	warning("STUB: Gyro::on()");
+}
+
+void Gyro::on_virtual() {
+	switch (visible) {
+	case m_virtual:
+		return;
+		break;
+	case m_yes:
+		off();
+		break;
 	}
 
-	// Pobably vmc functions will deal with the mouse cursor.
-	void plot_vmc(int16 xx, int16 yy, byte page_) {
-		warning("STUB: Gyro::plot_vmc()");
+	visible = m_virtual;
+}
+
+void Gyro::off() {
+	warning("STUB: Gyro::off()");
+}
+
+void Gyro::off_virtual() {
+	warning("STUB: Gyro::off_virtual()");
+}
+
+void Gyro::xycheck() {   /* only updates mx & my, not all other mouse vars */
+	warning("STUB: Gyro::xycheck()");
+}
+
+void Gyro::hopto(int16 x, int16 y) { /* Moves mouse void *to x,y */
+	warning("STUB: Gyro::hopto()");
+}
+
+void Gyro::check() {
+	warning("STUB: Gyro::check()");
+}
+
+void Gyro::note(uint16 hertz) {
+	warning("STUB: Gyro::note()");
+}
+
+void Gyro::blip() {
+	warning("STUB: Gyro::blip()");
+}
+
+Common::String Gyro::strf(int32 x) {
+	Common::String q = Common::String::format("%d", x);
+	return q;
+}
+
+void Gyro::shadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc) {
+	warning("STUB: Gyro::shadow()");
+}
+
+void Gyro::shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
+	warning("STUB: Gyro::shbox()");
+}
+
+void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
+	warning("STUB: Gyro::newgame()");
+}
+
+void Gyro::click() {   /* "Audio keyboard feedback" */
+	warning("STUB: Gyro::click()");
+}
+
+void Gyro::slowdown() {
+	warning("STUB: Gyro::slowdown()");
+}
+
+bool Gyro::flagset(char x) {
+	for (uint16 i = 0; i < flags.size(); i++)
+		if (flags[i] == x)
+			return true;
+	return false;
+}
+
+void Gyro::force_numlock() {
+	if ((locks & num) > 0)  locks -= num;
+}
+
+bool Gyro::pennycheck(uint16 howmuchby) {
+	warning("STUB: Gyro::pennycheck()");
+	return true;
+}
+
+// There'll may be problems with calling these functions becouse of the conversion of the arrays!!!
+// Keep an eye open!
+Common::String Gyro::getname(byte whose) { 
+	Common::String getname_result;
+	if (whose < 17)
+		getname_result = lads[whose];
+	else
+		getname_result = lasses[whose-17];
+	return getname_result;
+}
+
+// Keep an eye open! ^
+char Gyro::getnamechar(byte whose) {
+	char getnamechar_result;
+	if (whose < 16) 
+		getnamechar_result = ladchar[whose];
+	else
+		getnamechar_result = lasschar[whose-16];
+	return getnamechar_result;
+}
+
+// Keep an eye open! ^^
+Common::String Gyro::get_thing(byte which) {
+	Common::String get_thing_result;
+	switch (which) {
+	case wine:
+		switch (dna.winestate) {
+		case 1:
+		case 4:
+			get_thing_result = things[which];
+			break;
+		case 3:
+			get_thing_result = "Vinegar";
+			break;
+		}
+		break;
+	case onion:
+		if (dna.rotten_onion)
+			get_thing_result = "rotten onion";
+		else get_thing_result = things[which];
+		break;
+	default:
+		get_thing_result = things[which];
 	}
+	return get_thing_result;
+}
 
-	void wipe_vmc(byte page_) {
-		warning("STUB: Gyro::wipe_vmc()");
+// Keep an eye open! ^^^
+char Gyro::get_thingchar(byte which) {
+	char get_thingchar_result;
+	switch (which) {
+	case wine:
+		if (dna.winestate == 3)
+			get_thingchar_result = 'V'; /* Vinegar */
+		else
+			get_thingchar_result = thingchar[which];
+		break;
+	default:
+		get_thingchar_result = thingchar[which];
 	}
+	return get_thingchar_result;
+}
 
-	void setup_vmc() {
-		warning("STUB: Gyro::setup_vmc()");
+// Keep an eye open! ^^^^
+Common::String Gyro::get_better(byte which) {
+	Common::String get_better_result;
+	if (which > 150)  which -= 149;
+	switch (which) {
+	case wine:
+		switch (dna.winestate) {
+		case 0:
+		case 1:
+		case 4:
+			get_better_result = better[which];
+			break;
+		case 3:
+			get_better_result = "some vinegar";
+			break;
+		}
+		break;
+	case onion:
+		if (dna.rotten_onion)
+			get_better_result = "a rotten onion";
+		else if (dna.onion_in_vinegar)
+			get_better_result = "a pickled onion (in the vinegar)";
+		else get_better_result = better[which];
+		break;
+	default:
+		if ((which < numobjs) && (which > '\0'))
+			get_better_result = better[which];
+		else
+			get_better_result = "";
 	}
+	return get_better_result;
+}
 
-	void clear_vmc() {
-		warning("STUB: Gyro::clear_vmc()");
-	}
+// Get back here after finished with acci.pas, where vb_-s are resided.
+Common::String Gyro::f5_does()
+/* This procedure determines what f5 does. */
+{
+	warning("STUB: Gyro::f5_does()");
+	return "STUB: Gyro::f5_does()";
+}
 
-	void setminmaxhorzcurspos(uint16 min, uint16 max) { /* phew */
-		warning("STUB: Gyro::setminmaxhorzcurspos()");
-	}
+// Pobably vmc functions will deal with the mouse cursor.
+void Gyro::plot_vmc(int16 xx, int16 yy, byte page_) {
+	warning("STUB: Gyro::plot_vmc()");
+}
 
-	void setminmaxvertcurspos(uint16 min, uint16 max) {
-		warning("STUB: Gyro::setminmaxvertcurspos()");
-	}
+void Gyro::wipe_vmc(byte page_) {
+	warning("STUB: Gyro::wipe_vmc()");
+}
 
-	void load_a_mouse(byte which) {
-		warning("STUB: Gyro::load_a_mouse()");
-	}
+void Gyro::setup_vmc() {
+	warning("STUB: Gyro::setup_vmc()");
+}
 
-	void background(byte x) {
-		warning("STUB: Gyro::background()");
-	}
+void Gyro::clear_vmc() {
+	warning("STUB: Gyro::clear_vmc()");
+}
 
-	void hang_around_for_a_while() {
-		byte fv;
+void Gyro::setminmaxhorzcurspos(uint16 min, uint16 max) { /* phew */
+	warning("STUB: Gyro::setminmaxhorzcurspos()");
+}
 
-		for (fv = 1; fv <= 28; fv ++) slowdown();
-	}
+void Gyro::setminmaxvertcurspos(uint16 min, uint16 max) {
+	warning("STUB: Gyro::setminmaxvertcurspos()");
+}
 
-	bool mouse_near_text() {
-		bool mouse_near_text_result;
-		mouse_near_text_result = (my > 144) && (my < 188);
-		return mouse_near_text_result;
-	}
+void Gyro::load_a_mouse(byte which) {
+	warning("STUB: Gyro::load_a_mouse()");
+}
 
-	/* Super_Off and Super_On are two very useful procedures. Super_Off switches
-	  the mouse cursor off, WHATEVER it's like. Super_On restores it again
-	  afterwards. */
+void Gyro::background(byte x) {
+	warning("STUB: Gyro::background()");
+}
 
-	void super_off() {
-		super_was_off = visible == m_no;
-		if (super_was_off)  return;
+void Gyro::hang_around_for_a_while() {
+	byte fv;
 
-		super_was_virtual = visible == m_virtual;
+	for (fv = 1; fv <= 28; fv ++) slowdown();
+}
 
-		if (visible == m_virtual)  off_virtual();
-		else off();
-	}
+/* Super_Off and Super_On are two very useful procedures. Super_Off switches
+	the mouse cursor off, WHATEVER it's like. Super_On restores it again
+	afterwards. */
 
-	void super_on() {
-		if ((visible != m_no) || (super_was_off))  return;
+void Gyro::super_off() {
+	super_was_off = visible == m_no;
+	if (super_was_off)  return;
 
-		if (super_was_virtual)  on_virtual();
-		else on();
-	}
+	super_was_virtual = visible == m_virtual;
 
-	} // End of namespace Gyro
+	if (visible == m_virtual)  off_virtual();
+	else off();
+}
+
+void Gyro::super_on() {
+	if ((visible != m_no) || (super_was_off))  return;
+
+	if (super_was_virtual)  on_virtual();
+	else on();
+}
+
+bool Gyro::mouse_near_text() {
+	bool mouse_near_text_result;
+	mouse_near_text_result = (my > 144) && (my < 188);
+	return mouse_near_text_result;
+}
 
 } // End of namespace Avalanche
