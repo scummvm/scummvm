@@ -39,8 +39,6 @@ class AvalancheEngine;
 
 class Enhanced {
 public:
-	AvalancheEngine *_vm;
-
 	byte shiftstate;	/*ABSOLUTE $40:$17;*/
 	bool atbios; // BIOS type
 	char inchar, extd;
@@ -51,6 +49,8 @@ public:
 
 	bool keypressede();
 private:
+	AvalancheEngine *_vm;
+
 	bool isenh();
 
 };
