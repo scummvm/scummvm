@@ -3441,14 +3441,4 @@ int MortevielleEngine::testou() {
 	return ord(ch);
 }
 
-void MortevielleEngine::sauvecr(int y, int dy) {
-//	_mouse.hideMouse();
-//	_mouse.showMouse();
-}
-
-void MortevielleEngine::charecr(int y, int dy) {
-//	_mouse.hideMouse();
-//	_mouse.showMouse();
-}
-
 } // End of namespace Mortevielle

@@ -528,8 +528,6 @@ public:
 	void handleDescriptionText(int f, int mesgId);
 	int  animof(int ouf, int num);
 	void pictout(int seg, int dep, int x, int y);
-	void sauvecr(int y, int dy);
-	void charecr(int y, int dy);
 };
 
 extern MortevielleEngine *g_vm;
