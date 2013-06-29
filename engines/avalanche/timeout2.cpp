@@ -263,8 +263,8 @@ void Timeout::avaricius_talks() {
 }
 
 void Timeout::urinate() {
-	Trip::tr[1].turn(Trip::up);
-	Trip::stopwalking();
+	_vm->_trip.tr[1].turn(_vm->_trip.up);
+	_vm->_trip.stopwalking();
 	_vm->_lucerna.showrw();
 	set_up_timer(14, proctoilet2, reason_gototoilet);
 }
@@ -284,7 +284,7 @@ void Timeout::bang2() {
 
 void Timeout::stairs() {
 	_vm->_gyro.blip();
-	Trip::tr[0].walkto(4);
+	_vm->_trip.tr[0].walkto(4);
 	_vm->_celer.show_one(2);
 	_vm->_gyro.dna.brummie_stairs = 2;
 	_vm->_gyro.magics[11].op = _vm->_gyro.special;
@@ -320,39 +320,39 @@ void Timeout::get_tied_up() {
 	_vm->_visa.dixi('q', 34); /* ...Trouble! */
 	_vm->_gyro.dna.user_moves_avvy = false;
 	_vm->_gyro.dna.been_tied_up = true;
-	Trip::stopwalking();
-	Trip::tr[2].stopwalk();
-	Trip::tr[2].stophoming();
-	Trip::tr[2].call_eachstep = true;
-	Trip::tr[2].eachstep = Trip::procgrab_avvy;
+	_vm->_trip.stopwalking();
+	_vm->_trip.tr[2].stopwalk();
+	_vm->_trip.tr[2].stophoming();
+	_vm->_trip.tr[2].call_eachstep = true;
+	_vm->_trip.tr[2].eachstep = _vm->_trip.procgrab_avvy;
 	set_up_timer(70, procget_tied_up2, reason_getting_tied_up);
 }
 
 void Timeout::get_tied_up2() {
-	Trip::tr[1].walkto(4);
-	Trip::tr[2].walkto(5);
+	_vm->_trip.tr[1].walkto(4);
+	_vm->_trip.tr[2].walkto(5);
 	_vm->_gyro.magics[4].op = _vm->_gyro.nix; /* No effect when you touch the boundaries. */
 	_vm->_gyro.dna.friar_will_tie_you_up = true;
 }
 
 void Timeout::hang_around() {
-	Trip::tr[2].check_me = false;
-	Trip::tr[1].init(7, true); /* Robin Hood */
+	_vm->_trip.tr[2].check_me = false;
+	_vm->_trip.tr[1].init(7, true, &_vm->_trip); /* Robin Hood */
 	_vm->_gyro.whereis[_vm->_gyro.probinhood] = r__robins;
-	Trip::apped(1, 2);
+	_vm->_trip.apped(1, 2);
 	_vm->_visa.dixi('q', 39);
-	Trip::tr[1].walkto(7);
+	_vm->_trip.tr[1].walkto(7);
 	set_up_timer(55, prochang_around2, reason_hanging_around);
 }
 
 void Timeout::hang_around2() {
 	_vm->_visa.dixi('q', 40);
-	Trip::tr[2].vanishifstill = false;
-	Trip::tr[2].walkto(4);
+	_vm->_trip.tr[2].vanishifstill = false;
+	_vm->_trip.tr[2].walkto(4);
 	_vm->_gyro.whereis[_vm->_gyro.pfriartuck] = r__robins;
 	_vm->_visa.dixi('q', 41);
-	Trip::tr[1].done();
-	Trip::tr[2].done(); /* Get rid of Robin Hood and Friar Tuck. */
+	_vm->_trip.tr[1].done();
+	_vm->_trip.tr[2].done(); /* Get rid of Robin Hood and Friar Tuck. */
 
 	set_up_timer(1, procafter_the_shootemup, reason_hanging_around); 
 	/* Immediately call the following proc (when you have a chance). */
@@ -412,9 +412,9 @@ void Timeout::jacques_wakes_up() {
 void Timeout::naughty_duke()
 /* This is when the Duke comes in and takes your money. */
 {
-	Trip::tr[2].init(9, false); /* Here comes the Duke. */
-	Trip::apped(2, 1); /* He starts at the door... */
-	Trip::tr[2].walkto(3); /* He walks over to you. */
+	_vm->_trip.tr[2].init(9, false, &_vm->_trip); /* Here comes the Duke. */
+	_vm->_trip.apped(2, 1); /* He starts at the door... */
+	_vm->_trip.tr[2].walkto(3); /* He walks over to you. */
 
 	/* Let's get the door opening. */
 	_vm->_celer.show_one(1);
@@ -426,8 +426,8 @@ void Timeout::naughty_duke()
 
 void Timeout::naughty_duke2() {
 	_vm->_visa.dixi('q', 48); /* Ha ha, it worked again! */
-	Trip::tr[2].walkto(1); /* Walk to the door. */
-	Trip::tr[2].vanishifstill = true; /* Then go away! */
+	_vm->_trip.tr[2].walkto(1); /* Walk to the door. */
+	_vm->_trip.tr[2].vanishifstill = true; /* Then go away! */
 	set_up_timer(32, procnaughty_duke3, reason_naughty_duke);
 }
 
@@ -444,7 +444,7 @@ void Timeout::jump() {
 		with.jumpstatus += 1;
 
 		{
-			Trip::triptype &with1 = Trip::tr[1];
+			triptype &with1 = _vm->_trip.tr[1];
 			switch (with.jumpstatus) {
 			case 1:
 			case 2:
@@ -477,7 +477,7 @@ void Timeout::jump() {
 		if ((with.jumpstatus == 10) /* You're at the highest point of your jump. */
 				&& (_vm->_gyro.dna.room == r__insidecardiffcastle)
 				&& (_vm->_gyro.dna.arrow_in_the_door == true)
-				&& (Trip::infield(3))) { /* beside the wall*/
+				&& (_vm->_trip.infield(3))) { /* beside the wall*/
 			/* Grab the arrow! */
 			if (_vm->_gyro.dna.carrying >= maxobjs)
 				_vm->_scrolls.display("You fail to grab it, because your hands are full.");
@@ -536,8 +536,8 @@ void Timeout::greetsmonk() {
 
 void Timeout::fall_down_oubliette() {
 	_vm->_gyro.magics[9].op = _vm->_gyro.nix;
-	Trip::tr[1].iy += 1; /* increments dx/dy! */
-	Trip::tr[1].y += Trip::tr[1].iy;   /* Dowwwn we go... */
+	_vm->_trip.tr[1].iy += 1; /* increments dx/dy! */
+	_vm->_trip.tr[1].y += _vm->_trip.tr[1].iy;   /* Dowwwn we go... */
 	set_up_timer(3, procfall_down_oubliette, reason_falling_down_oubliette);
 }
 
@@ -550,8 +550,8 @@ void Timeout::meet_avaroid() {
 		_vm->_gyro.dna.met_avaroid = true;
 		set_up_timer(1, procrise_up_oubliette, reason_rising_up_oubliette);
 		{
-			Trip::triptype &with = Trip::tr[1];
-			with.face = Trip::left;
+			triptype &with = _vm->_trip.tr[1];
+			with.face = _vm->_trip.left;
 			with.x = 151;
 			with.ix = -3;
 			with.iy = -5;
@@ -562,7 +562,7 @@ void Timeout::meet_avaroid() {
 
 void Timeout::rise_up_oubliette() {
 	{
-		Trip::triptype &with = Trip::tr[1];
+		triptype &with = _vm->_trip.tr[1];
 
 		with.visible = true;
 		with.iy += 1; /* decrements dx/dy! */
@@ -575,29 +575,29 @@ void Timeout::rise_up_oubliette() {
 }
 
 void Timeout::robin_hood_and_geida() {
-	Trip::tr[1].init(7, true);
-	Trip::apped(1, 7);
-	Trip::tr[1].walkto(6);
-	Trip::tr[2].stopwalk();
-	Trip::tr[2].face = Trip::left;
+	_vm->_trip.tr[1].init(7, true, &_vm->_trip);
+	_vm->_trip.apped(1, 7);
+	_vm->_trip.tr[1].walkto(6);
+	_vm->_trip.tr[2].stopwalk();
+	_vm->_trip.tr[2].face = _vm->_trip.left;
 	set_up_timer(20, procrobin_hood_and_geida_talk, reason_robin_hood_and_geida);
 	_vm->_gyro.dna.geida_follows = false;
 }
 
 void Timeout::robin_hood_and_geida_talk() {
 	_vm->_visa.dixi('q', 66);
-	Trip::tr[1].walkto(2);
-	Trip::tr[2].walkto(2);
-	Trip::tr[1].vanishifstill = true;
-	Trip::tr[2].vanishifstill = true;
+	_vm->_trip.tr[1].walkto(2);
+	_vm->_trip.tr[2].walkto(2);
+	_vm->_trip.tr[1].vanishifstill = true;
+	_vm->_trip.tr[2].vanishifstill = true;
 	set_up_timer(162, procavalot_returns, reason_robin_hood_and_geida);
 }
 
 void Timeout::avalot_returns() {
-	Trip::tr[1].done();
-	Trip::tr[2].done();
-	Trip::tr[1].init(0, true);
-	Trip::apped(1, 1);
+	_vm->_trip.tr[1].done();
+	_vm->_trip.tr[2].done();
+	_vm->_trip.tr[1].init(0, true, &_vm->_trip);
+	_vm->_trip.apped(1, 1);
 	_vm->_visa.dixi('q', 67);
 	_vm->_gyro.dna.user_moves_avvy = true;
 }
@@ -606,13 +606,13 @@ void Timeout::avvy_sit_down()
 /* This is used when you sit down in the pub in Notts. It loops around so
 	that it will happen when Avvy stops walking. */
 {
-	if (Trip::tr[1].homing)    /* Still walking */
+	if (_vm->_trip.tr[1].homing)    /* Still walking */
 		set_up_timer(1, procavvy_sit_down, reason_sitting_down);
 	else {
 		_vm->_celer.show_one(3);
 		_vm->_gyro.dna.sitting_in_pub = true;
 		_vm->_gyro.dna.user_moves_avvy = false;
-		Trip::tr[1].visible = false;
+		_vm->_trip.tr[1].visible = false;
 	}
 }
 
@@ -638,22 +638,22 @@ void Timeout::winning() {
 }
 
 void Timeout::avalot_falls() {
-	if (Trip::tr[1].step < 5) {
-		Trip::tr[1].step += 1;
+	if (_vm->_trip.tr[1].step < 5) {
+		_vm->_trip.tr[1].step += 1;
 		set_up_timer(3, procavalot_falls, reason_falling_over);
 	} else
 		_vm->_scrolls.display("\r\r\r\r\r\r\n\n\n\n\n\n\23Z\26");
 }
 
 void Timeout::spludwick_goes_to_cauldron() {
-	if (Trip::tr[2].homing)
+	if (_vm->_trip.tr[2].homing)
 		set_up_timer(1, procspludwick_goes_to_cauldron, reason_spludwalk);
 	else
 		set_up_timer(17, procspludwick_leaves_cauldron, reason_spludwalk);
 }
 
 void Timeout::spludwick_leaves_cauldron() {
-	Trip::tr[2].call_eachstep = true; /* So that normal procs will continue. */
+	_vm->_trip.tr[2].call_eachstep = true; /* So that normal procs will continue. */
 }
 
 void Timeout::give_lute_to_geida() {   /* Moved here from Acci. */
