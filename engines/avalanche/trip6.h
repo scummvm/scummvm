@@ -39,142 +39,170 @@
 #include "avalanche/gyro2.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
-	namespace Trip {
 
-	// Call it where Trip is first used.
-	// Procuded to replace the initizalization part of the original Pascal unit.
-	void initialize_trip();
+typedef byte manitype[2049]; // manitype = array[5..2053] of byte; 
+// Be aware!!!
 
-	const int16 maxgetset = 35;
+typedef byte siltype[51][11]; /* 35, 4 */
 
-	typedef byte manitype[2049]; // manitype = array[5..2053] of byte; 
-	// Be aware!!!
+struct adxtype { /* Second revision of ADX type */
+	Common::String name; /* name of character */
+	Common::String comment; /* comment */
+	byte num; /* number of pictures */
+	byte xl, yl; /* x & y lengths of pictures */
+	byte seq; /* how many in one stride */
+	uint16 size; /* the size of one picture */
+	byte fgc, bgc; /* foreground & background bubble colours */
+	byte accinum; /* the number according to Acci (1=Avvy, etc.) */
+};
 
-	typedef byte siltype[51][11]; /* 35, 4 */
+struct trip_saver_type {
+	byte whichsprite;
+	byte face;
+	byte step;
+	int16 x;
+	int16 y;
+	int8 ix;
+	int8 iy;
+	bool visible;
+	bool homing;
+	bool check_me;
+	byte count;
+	byte xw, xs, ys;
+	byte totalnum;
+	int16 hx;
+	int16 hy;
+	bool call_eachstep;
+	byte eachstep;
+	bool vanishifstill;
+};
 
-	struct adxtype { /* Second revision of ADX type */
-		Common::String name; /* name of character */
-		Common::String comment; /* comment */
-		byte num; /* number of pictures */
-		byte xl, yl; /* x & y lengths of pictures */
-		byte seq; /* how many in one stride */
-		uint16 size; /* the size of one picture */
-		byte fgc, bgc; /* foreground & background bubble colours */
-		byte accinum; /* the number according to Acci (1=Avvy, etc.) */
-	};
 
-	struct trip_saver_type {
-		byte whichsprite;
-		byte face;
-		byte step;
-		int16 x;
-		int16 y;
-		int8 ix;
-		int8 iy;
-		bool visible;
-		bool homing;
-		bool check_me;
-		byte count;
-		byte xw, xs, ys;
-		byte totalnum;
-		int16 hx;
-		int16 hy;
-		bool call_eachstep;
-		byte eachstep;
-		bool vanishifstill;
-	};
+class Trip;
 
-	class triptype {
-	public:
-		adxtype a; /* vital statistics */
-		byte face, step;
-		int16 x, y; /* current xy coords */
-		int16 ox[2], oy[2];  /* last xy coords */
-		int8 ix, iy; /* amount to move sprite by, each step */
-		manitype *mani[24];
-		siltype *sil[24];
-		byte whichsprite;
-		bool quick, visible, homing, check_me;
-		int16 hx, hy; /* homing x & y coords */
-		byte count; /* counts before changing step */
-		byte xw; /* x-width in bytes */
-		byte xs, ys; /* x & y speed */
-		byte totalnum; /* total number of sprites */
-		bool vanishifstill; /* Do we show this sprite if it's still? */
+class triptype {
+public:
+	adxtype a; /* vital statistics */
+	byte face, step;
+	int16 x, y; /* current xy coords */
+	int16 ox[2], oy[2];  /* last xy coords */
+	int8 ix, iy; /* amount to move sprite by, each step */
+	manitype *mani[24];
+	siltype *sil[24];
+	byte whichsprite;
+	bool quick, visible, homing, check_me;
+	int16 hx, hy; /* homing x & y coords */
+	byte count; /* counts before changing step */
+	byte xw; /* x-width in bytes */
+	byte xs, ys; /* x & y speed */
+	byte totalnum; /* total number of sprites */
+	bool vanishifstill; /* Do we show this sprite if it's still? */
 
-		bool call_eachstep; /* Do we call the eachstep procedure? */
-		byte eachstep;
+	bool call_eachstep; /* Do we call the eachstep procedure? */
+	byte eachstep;
 
-		triptype *init(byte spritenum, bool do_check);
-		/* loads & sets up the sprite */
-		void original();    /* just sets Quick to false */
-		void andexor();    /* drops sprite onto screen */
-		void turn(byte whichway);      /* turns him round */
-		void appear(int16 wx, int16 wy, byte wf); /* switches him on */
-		void bounce();    /* bounces off walls. */
-		void walk();    /* prepares for andexor, etc. */
-		void walkto(byte pednum);      /* home in on a point */
-		void stophoming();    /* self-explanatory */
-		void homestep();    /* calculates ix & iy for one homing step */
-		void speed(int8 xx, int8 yy); /* sets ix & iy, non-homing, etc */
-		void stopwalk();    /* Stops the sprite from moving */
-		void chatter();    /* Sets up talk vars */
-		void set_up_saver(trip_saver_type &v);
-		void unload_saver(trip_saver_type v);
+	triptype *init(byte spritenum, bool do_check, Trip *tr);
+	/* loads & sets up the sprite */
+	void original();    /* just sets Quick to false */
+	void andexor();    /* drops sprite onto screen */
+	void turn(byte whichway);      /* turns him round */
+	void appear(int16 wx, int16 wy, byte wf); /* switches him on */
+	void bounce();    /* bounces off walls. */
+	void walk();    /* prepares for andexor, etc. */
+	void walkto(byte pednum);      /* home in on a point */
+	void stophoming();    /* self-explanatory */
+	void homestep();    /* calculates ix & iy for one homing step */
+	void speed(int8 xx, int8 yy); /* sets ix & iy, non-homing, etc */
+	void stopwalk();    /* Stops the sprite from moving */
+	void chatter();    /* Sets up talk vars */
+	void set_up_saver(trip_saver_type &v);
+	void unload_saver(trip_saver_type v);
 
-		void savedata(/*untyped_file &f*/); /* Self-explanatory, */
-		void loaddata(/*untyped_file &f*/);  /* really. */
-		
+	void savedata(/*untyped_file &f*/); /* Self-explanatory, */
+	void loaddata(/*untyped_file &f*/);  /* really. */
+
+	void save_data_to_mem(uint16 &where);
+	void load_data_from_mem(uint16 &where);
+	triptype *done();
+
+private:
+	Trip *_tr;
+
+	bool collision_check();
+
+	int8 sgn(int16 x);
+};
+
+
+
+const int16 maxgetset = 35;
+
+class getsettype {
+public:
+	bytefield gs[maxgetset];
+	byte numleft;
+
+	getsettype *init();
+	void remember(bytefield r);
+	void recall(bytefield &r);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+class Trip {
+public:
+	friend triptype;
+	friend getsettype;
+
 	
 
 
-		void save_data_to_mem(uint16 &where);
-		void load_data_from_mem(uint16 &where);
-		triptype *done();
-
-	private:
-		bool collision_check();
-	};
-
-	class getsettype {
-	public:
-		Gyro::bytefield gs[maxgetset];
-		byte numleft;
-
-		getsettype *init();
-		void remember(Gyro::bytefield r);
-		void recall(Gyro::bytefield &r);
-	};
-
-
-	const int16 up = 0;
-	const int16 right = 1;
-	const int16 down = 2;
-	const int16 left = 3;
-	const int16 ur = 4;
-	const int16 dr = 5;
-	const int16 dl = 6;
-	const int16 ul = 7;
-	const int16 stopped = 8;
-
-	const int16 numtr = 5; /* current max no. of sprites */
 
 
 
-	const int16 procfollow_avvy_y = 1;
 
-	const int16 procback_and_forth = 2;
+	Trip();
 
-	const int16 procface_avvy = 3;
+	void setParent(AvalancheEngine *vm);
 
-	const int16 procarrow_procs = 4;
+	static const int16 up = 0;
+	static const int16 right = 1;
+	static const int16 down = 2;
+	static const int16 left = 3;
+	static const int16 ur = 4;
+	static const int16 dr = 5;
+	static const int16 dl = 6;
+	static const int16 ul = 7;
+	static const int16 stopped = 8;
 
-	const int16 procspludwick_procs = 5;
+	static const int16 numtr = 5; /* current max no. of sprites */
 
-	const int16 procgrab_avvy = 6;
 
-	const int16 procgeida_procs = 7;
+
+	static const int16 procfollow_avvy_y = 1;
+
+	static const int16 procback_and_forth = 2;
+
+	static const int16 procface_avvy = 3;
+
+	static const int16 procarrow_procs = 4;
+
+	static const int16 procspludwick_procs = 5;
+
+	static const int16 procgrab_avvy = 6;
+
+	static const int16 procgeida_procs = 7;
 
 
 	void trippancy_link();
@@ -211,7 +239,7 @@ namespace Avalanche {
 
 	void new_game_for_trippancy();
 
-
+	void take_a_step(byte &tripnum);
 
 	triptype tr[numtr];
 	getsettype getset[2];
@@ -220,7 +248,45 @@ namespace Avalanche {
 	bool mustexclaim;
 	uint16 saywhat;
 
-	} // End of namespace Trip.
+private:
+	AvalancheEngine *_vm;
+
+	bytefield r;
+
+	int16 beforex, beforey;
+
+	byte checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
+
+	byte geida_ped(byte which);
+
+	void dawndelay();
+
+	void hide_in_the_cupboard();
+
+	bool overlaps_with_mouse();
+
+	void follow_avvy_y(byte tripnum);
+
+	void back_and_forth(byte tripnum);
+
+	void face_avvy(byte tripnum);
+
+	void arrow_procs(byte tripnum);
+
+	void grab_avvy(byte tripnum);
+
+	void spin(byte whichway, byte &tripnum);
+
+	void geida_procs(byte tripnum);
+
+	void call_andexors();
+
+	void getsetclear();
+
+	void tidy_up(int16 a, int16 b, int16 c, int16 d);
+
+	void tidy_after_mouse();
+};
 
 } // End of namespace Avalanche.
 
