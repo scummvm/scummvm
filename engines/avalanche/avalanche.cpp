@@ -47,6 +47,7 @@ namespace Avalanche {
 		_console = new AvalancheConsole(this);
 		_rnd = 0;
 
+		_avalot.setParent(this);
 		_gyro.setParent(this);
 		_enhanced.setParent(this);
 		_logger.setParent(this);
