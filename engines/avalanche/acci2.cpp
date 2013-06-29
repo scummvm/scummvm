@@ -28,11 +28,8 @@
 /* ACCIDENCE II		The parser. */
 
 #include "avalanche/avalanche.h"
+
 #include "avalanche/acci2.h"
-
-#include "common/textconsole.h"
-#include "common/scummsys.h"
-
 #include "avalanche/gyro2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/scrolls2.h"
@@ -43,6 +40,8 @@
 #include "avalanche/celer2.h"
 #include "avalanche/pingo2.h"
 #include "avalanche/sequence2.h"
+
+#include "common/textconsole.h"
 
 
 /*#include "NimUnit.h"*/

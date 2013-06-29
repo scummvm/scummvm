@@ -29,12 +29,10 @@
 
 // DON'T FORGET ABOUT THE ARRAY INDEXES, THEY MAY'LL CAUSE TROUBLES!!!
 
-#include "common/textconsole.h"
-
-#include "avalanche/timeout2.h"
 
 #include "avalanche/avalanche.h"
 
+#include "avalanche/timeout2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/trip6.h"
@@ -43,6 +41,8 @@
 #include "avalanche/sequence2.h"
 #include "avalanche/enid2.h"
 #include "avalanche/pingo2.h"
+
+#include "common/textconsole.h"
 
 namespace Avalanche {
 

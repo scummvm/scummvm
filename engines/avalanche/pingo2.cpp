@@ -30,11 +30,10 @@
 #include "avalanche/avalanche.h"
 
 #include "avalanche/pingo2.h"
-
 #include "avalanche/gyro2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/trip6.h"
-//#include "avalanche/scrolls2.h"
+#include "avalanche/scrolls2.h"
 
 #include "common/textconsole.h"
 

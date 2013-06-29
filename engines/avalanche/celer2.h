@@ -30,8 +30,6 @@
 #ifndef CELER2_H
 #define CELER2_H
 
-
-
 #include "common/scummsys.h"
 #include "common/str.h"
 

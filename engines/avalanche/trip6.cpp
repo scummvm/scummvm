@@ -27,12 +27,9 @@
 
 /* TRIP5	Trippancy V */
 
-#include "avalanche/trip6.h"
-#include "common/scummsys.h"
-#include "common/textconsole.h"
-
 #include "avalanche/avalanche.h"
 
+#include "avalanche/trip6.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/visa2.h"
@@ -41,6 +38,9 @@
 #include "avalanche/sequence2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/enid2.h"
+
+#include "common/scummsys.h"
+#include "common/textconsole.h"
 
 /*#include "Dropdown.h"*/
 

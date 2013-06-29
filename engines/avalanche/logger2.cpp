@@ -27,12 +27,12 @@
 
 /* LOGGER	Handles the logging. */
 
+#include "avalanche/avalanche.h"
+
 #include "avalanche/logger2.h"
 #include "avalanche/gyro2.h"
-#include "avalanche/avalanche.h"
-//#include "avalanche/trip6.h"
+#include "avalanche/trip6.h"
 
-#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Avalanche {

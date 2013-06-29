@@ -25,8 +25,10 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+#include "avalanche/avalanche.h"
+
 #include "avalanche/enhanced2.h"
-#include "common/system.h"
+
 #include "common/textconsole.h"
 
 namespace Avalanche {

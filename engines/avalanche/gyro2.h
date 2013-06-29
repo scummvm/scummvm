@@ -30,7 +30,6 @@
 #ifndef GYRO2_H
 #define GYRO2_H
 
-#include "common/system.h"
 #include "common/str.h"
 #include "common/scummsys.h"
 
