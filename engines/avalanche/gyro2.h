@@ -498,7 +498,7 @@ public:
 	Common::String mousetext;
 	/* which:array[0..5] of byte;*/
 	void *p;
-	bool weirduint16;
+	bool weirdword;
 	byte to_do;
 	bool lmo, mousemade;
 	Common::String scroll[15];

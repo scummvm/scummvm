@@ -64,7 +64,8 @@ void triptype::andexor() {
 }
 
 void triptype::turn(byte whichway) {
-	if (whichway == 8)  face = 0;
+	if (whichway == 8) 
+		face = 0;
 	else face = whichway;
 }
 
@@ -346,11 +347,10 @@ byte Trip::geida_ped(byte which) {
 	return geida_ped_result;
 }
 
-void Trip::catamove(byte ped)
+void Trip::catamove(byte ped) {
 /* When you enter a new position in the catacombs, this procedure should
 	be called. It changes the Also codes so that they may match the picture
 	on the screen. (Coming soon: It draws up the screen, too.) */
-{
 
 	warning("Repair array indexes in Trip::catamove()");
 
