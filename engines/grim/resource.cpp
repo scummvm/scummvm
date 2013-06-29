@@ -153,6 +153,14 @@ ResourceLoader::ResourceLoader() {
 			if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 				SearchMan.listMatchingMembers(files, "???.m4b");
 			}
+
+			//Check the presence of datausr.m4b and if the user wants to load it.
+			//In this case put it in the top of the list
+			const char *datausr_name = "datausr.m4b";
+			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
+				warning("Loading datausr.m4b. Please note that the ResidualVM-team doesn't provide support for using such patches");
+				files.push_front(SearchMan.getMember(datausr_name));
+			}
 		}
 	}
 
