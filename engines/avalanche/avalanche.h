@@ -29,6 +29,8 @@
 #define AVALANCHE_H
 
 #include "avalanche/console.h"
+
+#include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/enhanced2.h"
 #include "avalanche/logger2.h"
@@ -57,6 +59,7 @@ static const int kSavegameVersion = 1;
 
 class AvalancheEngine : public Engine {
 public:
+	Avalot _avalot;
 	Gyro _gyro;
 	Enhanced _enhanced;
 	Logger _logger;

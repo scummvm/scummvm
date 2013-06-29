@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/textconsole.h"
 
+#include "avalanche/avalanche.h"
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
 
@@ -37,15 +38,20 @@ namespace Avalanche {
 		int16 gd, gm;
 
 		checkbreak = false;
-		Gyro::visible = Gyro::m_no;
-		Gyro::to_do = 0;
-		Gyro::lmo = false;
+		_vm->_gyro.visible = _vm->_gyro.m_no;
+		_vm->_gyro.to_do = 0;
+		_vm->_gyro.lmo = false;
 		// resetscroll(); Needs scrolls "unit" to make it work.
 
 		warning("STUB: Avalot::Avalot()");
 
 
 	}
+
+	void Avalot::setParent(AvalancheEngine *vm) {
+		_vm = vm;
+	}
+
 
 	void Avalot::run(Common::String arg) {
 		warning("STUB: Avalot::run(%s)", arg.c_str());

@@ -31,15 +31,21 @@
 #include "common/system.h"
 
 namespace Avalanche {
+class AvalancheEngine;
 
 class Avalot {
-private:
-	bool checkbreak; // Originally located in avalot9.map
-
 public:
 	Avalot();
 
+	void setParent(AvalancheEngine *vm);
+
 	void run(Common::String arg);
+
+private:
+	AvalancheEngine *_vm;
+
+	bool checkbreak; // Originally located in avalot9.map
+
 };
 
 } // End of namespace Avalanche
