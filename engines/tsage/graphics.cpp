@@ -234,10 +234,15 @@ GfxSurface::GfxSurface(const GfxSurface &s) {
 }
 
 GfxSurface::~GfxSurface() {
+	clear();
+}
+
+void GfxSurface::clear() {
 	if (_customSurface) {
 		_customSurface->free();
 		delete _customSurface;
-	}
+		_customSurface = NULL;
+	}	
 }
 
 /**

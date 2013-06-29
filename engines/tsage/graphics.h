@@ -42,6 +42,7 @@ class Rect : public Common::Rect, public Serialisable {
 public:
 	Rect() : Common::Rect() {}
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
+	Rect(const Common::Rect &r) : Common::Rect(r) {}
 
 	void set(int16 x1, int16 y1, int16 x2, int16 y2);
 	void collapse(int dx, int dy);
@@ -100,6 +101,7 @@ public:
 	void unlockSurface();
 	void synchronize(Serializer &s);
 	void create(int width, int height);
+	void clear();
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 	const Rect &getBounds() const { return _bounds; }
 

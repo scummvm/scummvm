@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/rect.h"
 #include "tsage/graphics.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -1276,15 +1277,14 @@ void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, i
 /*****************************************************************************/
 
 MazeUI::MazeUI() {
-	_field16 = _field3A = NULL;
+	_field16 = NULL;
 	_field12 = _field14 = 0;
 	_field26 = _field28 = _width = _height = _field2E = _field30 = 0;
-	_resNum = _field34 = _field36 = _field38 = _field3E = _field40 = 0;
+	_resNum = _field34 = _field36 = _field38 = _mapImagePitch = _field40 = 0;
 }
 
 MazeUI::~MazeUI() {
 	DEALLOCATE(_field16);
-	DEALLOCATE(_field3A);
 }
 
 void MazeUI::synchronize(Serializer &s) {
@@ -1305,7 +1305,7 @@ void MazeUI::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field34);
 	s.syncAsSint16LE(_field36);
 	s.syncAsSint16LE(_field38);
-	s.syncAsSint16LE(_field3E);
+	s.syncAsSint16LE(_mapImagePitch);
 	s.syncAsSint16LE(_field40);
 }
 
@@ -1336,8 +1336,8 @@ void MazeUI::load(int resNum) {
 	_field12 = (_rect1.width() + _width - 1) / _width;
 	_field14 = (_rect1.height() + _height - 1) / _height;
 
-	_field3E = (_field12 + 1) * _width;
-	_field3A = ALLOCATE(_field3E * _height);
+	_mapImagePitch = (_field12 + 1) * _width;
+	_mapImage.create(_mapImagePitch, _height);
 
 	_rect2 = Rect(0, 0, _width * _field26, _height * _field28);
 }
@@ -1350,9 +1350,7 @@ void MazeUI::clear() {
 		DEALLOCATE(_field16);
 	_field16 = NULL;
 	
-	DEALLOCATE(_field3A);
-	_field3A = NULL;
-
+	_mapImage.clear();
 }
 
 int MazeUI::sub51AF8(Common::Point pt) {
@@ -1397,8 +1395,65 @@ bool MazeUI::setMazePosition(Common::Point pt) {
 	return retval;
 }
 
-void MazeUI::mazeProc1() {
-	warning("STUB: MazeUI::mazeProc1()");
+void MazeUI::draw() {
+	int xs = _rect1.left;
+	int yPos = 0;
+	int yInc;
+	Visage visage;
+
+	for (int yp = 0; yp < _field14; yp += yInc) {
+		int y = yp + _field30 / _height;
+		
+		for (int idx = 0; idx > _field12; ++idx) {
+			int x = _field2E / _width + idx;
+
+			int cell = getCellValue(Common::Point(x, y));
+			if (cell >= 0) {
+				int frameNum = (cell % _field36) + 1;
+				int rlbNum = (cell % _field38) / _field36 + 1;
+				int resNum = _field34 + (cell / _field38); 
+
+				visage.setVisage(resNum, rlbNum);
+				GfxSurface frame = visage.getFrame(frameNum);
+
+				_mapImage.copyFrom(frame, 0, idx);
+			} else {
+				GfxSurface emptyRect;
+				emptyRect.create(_width, _height);
+
+				_mapImage.copyFrom(emptyRect, 0, idx);
+			}
+		}
+
+		if (yPos == 0) {
+			yPos = _rect1.top;
+			yInc = _height - (_field30 % _height); 
+
+			Rect srcBounds(Common::Rect(_field2E % _width, _field30 % _height, 
+				_rect1.width(), yInc));
+			Rect destBounds(Common::Rect(_rect1.left, yPos, _rect1.width(), yInc));
+
+			R2_GLOBALS._screenSurface.copyFrom(_mapImage, srcBounds, destBounds);
+		} else {
+			if ((yPos + _height) < _rect1.bottom) {
+				yInc = _height;
+			} else {
+				yInc = _rect1.bottom - yPos;
+			}
+
+			Rect srcBounds(Common::Rect(0, _field2E, _rect1.width(), yInc)); 
+			Rect destBounds(Common::Rect(_rect1.left, yPos, _rect1.width(), yInc));
+			R2_GLOBALS._screenSurface.copyFrom(_mapImage, srcBounds, destBounds);
+		}
+	}
+}
+
+int MazeUI::getCellValue(const Common::Point &p) {
+	if (p.x < 0 || p.y < 0 || p.x >= _field26 || p.y >= _field28) {
+		return -1;
+	} else {
+		return READ_LE_UINT16(_field16 + (_field26 * p.y + p.x) * 2);
+	}
 }
 
 void MazeUI::setUIBounds(Rect rect) {

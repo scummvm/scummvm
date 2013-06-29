@@ -1139,7 +1139,7 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	_object1.load(1);
 	_object1.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 	warning("int unk = set_pane_p(_paneNumber);");
-	_object1.mazeProc1();
+	_object1.draw();
 	warning("set_pane_p(unk);");
 
 	R2_GLOBALS._player.enableControl();
@@ -1546,7 +1546,7 @@ void Scene1200::dispatch() {
 	if (_field41C != 0) {
 		_object1.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 		warning("int unk = set_pane_p(_paneNumber);");
-		_object1.mazeProc1();
+		_object1.draw();
 		warning("_gfxManager.sub294AC(unk);");
 		warning("tmpRect.sub14DF3();");
 		_field41C = 0;
@@ -1573,7 +1573,7 @@ void Scene1200::dispatch() {
 		}
 		_object1.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 		warning("int unk = set_pane_p(_paneNumber);");
-		_object1.mazeProc1();
+		_object1.draw();
 		warning("_gfxManager.sub294AC(unk);");
 		warning("tmpRect.sub14DF3();");
 

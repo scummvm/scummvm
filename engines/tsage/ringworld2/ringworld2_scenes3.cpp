@@ -3671,7 +3671,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 
 	_action1._field24 = 0;
 	warning("gfx_set_pane_p()");
-	_mazeUI.mazeProc1();
+	_mazeUI.draw();
 	warning("gfx_set_pane_p()");
 	_field1286 = 1;
 
@@ -4126,7 +4126,7 @@ void Scene3500::dispatch() {
 				_rotation->_idxChange = 0;
 			}
 			warning("gfx_set_pane_p");
-			_mazeUI.mazeProc1();
+			_mazeUI.draw();
 			if (_field1284 != 0)
 				++_field1284;
 		}

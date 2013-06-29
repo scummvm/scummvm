@@ -279,12 +279,13 @@ public:
 class MazeUI: public SavedObject {
 private:
 	void clear();
+	int getCellValue(const Common::Point &p);
 public:
 	Rect _rect1;
 	Rect _rect2;
 
 	byte *_field16;
-	byte *_field3A;
+	GfxSurface _mapImage;
 
 	int _field12;
 	int _field14;
@@ -298,19 +299,19 @@ public:
 	int _field34;
 	int _field36;
 	int _field38;
-	int _field3E;
+	int _mapImagePitch;
 	int _field40;
 public:
 	MazeUI();
-	~MazeUI();
+	virtual ~MazeUI();
 	void load(int resNum);
+	void draw();
 
 	virtual Common::String getClassName() { return "MazeUI"; }
 	void synchronize(Serializer &s);
 
 	int sub51AF8(Common::Point pt);
 	bool setMazePosition(Common::Point pt);
-	void mazeProc1();
 	void setUIBounds(Rect rect);
 	int sub9EE22(int &arg1, int &arg2);
 };
