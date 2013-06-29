@@ -363,12 +363,12 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 		int inStep = 4;
 		int inoStep = img->pitch;
-		if (flipping & TransparentSurface::FLIP_V) {
+		if (flipping & TransparentSurface::FLIP_H) {
 			inStep = -inStep;
 			xp = img->w - 1;
 		}
 
-		if (flipping & TransparentSurface::FLIP_H) {
+		if (flipping & TransparentSurface::FLIP_V) {
 			inoStep = -inoStep;
 			yp = img->h - 1;
 		}
