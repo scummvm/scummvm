@@ -43,6 +43,7 @@
 #include "avalanche/sequence2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/trip6.h"
+#include "avalanche/acci2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -72,6 +73,7 @@ public:
 	Sequence _sequence;
 	Timeout _timeout;
 	Trip _trip;
+	Acci _acci;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
