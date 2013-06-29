@@ -40,6 +40,7 @@
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
 #include "avalanche/timeout2.h"
+#include "avalanche/trip6.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -67,6 +68,7 @@ public:
 	Celer _celer;
 	Sequence _sequence;
 	Timeout _timeout;
+	Trip _trip;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();

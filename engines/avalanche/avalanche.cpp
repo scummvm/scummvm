@@ -58,6 +58,7 @@ namespace Avalanche {
 		_celer.setParent(this);
 		_sequence.setParent(this);
 		_timeout.setParent(this);
+		_trip.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
