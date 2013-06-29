@@ -199,15 +199,6 @@ public:
 	byte col;
 };
 
-struct adxtype {
-	Common::String name; /* name of character */
-	byte num; /* number of pictures */
-	byte xl, yl; /* x & y lengths of pictures */
-	byte seq; /* how many in one stride */
-	uint16 size; /* the size of one picture */
-	byte fgc, bgc; /* foreground & background bubble colours */
-};
-
 typedef byte raw[256][16]; /* raw_font_type */
 
 enum controllers {cjoy, ckey};
