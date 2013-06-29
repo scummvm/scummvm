@@ -633,7 +633,7 @@ class Scene3500 : public SceneExt {
 		// TODO: double check if nothing specific is present, then remove this class
 	};
 
-	class UnkObject3500 : public UnkObject1200 {
+	class UnkObject3500 : public MazeUI {
 	public:
 		int sub1097C9(int arg1);
 		int sub1097EF(int arg1);

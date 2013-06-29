@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "tsage/graphics.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -270,7 +271,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Confrontation
 		return new Scene3400();
 	case 3500:
-		// Maze action scene
+		// Maze action sequencec
 		return new Scene3500();
 	case 3600:
 		// Cutscene - walking at gunpoint
@@ -1274,14 +1275,19 @@ void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, i
 
 /*****************************************************************************/
 
-UnkObject1200::UnkObject1200() {
+MazeUI::MazeUI() {
 	_field16 = _field3A = NULL;
 	_field12 = _field14 = 0;
-	_field26 = _field28 = _field2A = _field2C = _field2E = _field30 = 0;
-	_field32 = _field34 = _field36 = _field38 = _field3E = _field40 = 0;
+	_field26 = _field28 = _width = _height = _field2E = _field30 = 0;
+	_resNum = _field34 = _field36 = _field38 = _field3E = _field40 = 0;
 }
 
-void UnkObject1200::synchronize(Serializer &s) {
+MazeUI::~MazeUI() {
+	DEALLOCATE(_field16);
+	DEALLOCATE(_field3A);
+}
+
+void MazeUI::synchronize(Serializer &s) {
 	SavedObject::synchronize(s);
 
 	_rect1.synchronize(s);
@@ -1293,11 +1299,11 @@ void UnkObject1200::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field14);
 	s.syncAsSint16LE(_field26);
 	s.syncAsSint16LE(_field28);
-	s.syncAsSint16LE(_field2A);
-	s.syncAsSint16LE(_field2C);
+	s.syncAsSint16LE(_width);
+	s.syncAsSint16LE(_height);
 	s.syncAsSint16LE(_field2E);
 	s.syncAsSint16LE(_field30);
-	s.syncAsSint16LE(_field32);
+	s.syncAsSint16LE(_resNum);
 	s.syncAsSint16LE(_field34);
 	s.syncAsSint16LE(_field36);
 	s.syncAsSint16LE(_field38);
@@ -1305,16 +1311,58 @@ void UnkObject1200::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field40);
 }
 
-void UnkObject1200::sub51AE9(int arg1) {
-	warning("STUB: UnkObject1200::sub51AE9()");
+void MazeUI::load(int resNum) {
+	clear();
+	_resNum = resNum;
+
+	const byte *header = g_resourceManager->getResource(RT17, resNum, 0);
+
+	_field34 = resNum + 1000;
+	_field26 = READ_LE_UINT16(header + 2);
+	_field28 = READ_LE_UINT16(header + 4);
+	_field36 = 10;
+	_field38 = _field36 << 3;
+
+	Visage visage;
+	visage.setVisage(_field34, 1);
+
+	GfxSurface frame = visage.getFrame(2);
+	_width = frame.getBounds().width();
+	_height = frame.getBounds().height();
+
+	_field16 = ALLOCATE(_field26 * _field28 * 2);
+	const byte *res = g_resourceManager->getResource(RT17, resNum, 1);
+	Common::copy(res, res + (_field26 * _field28 * 2), _field16);
+
+	_field30 = _field2E = 0;
+	_field12 = (_rect1.width() + _width - 1) / _width;
+	_field14 = (_rect1.height() + _height - 1) / _height;
+
+	_field3E = (_field12 + 1) * _width;
+	_field3A = ALLOCATE(_field3E * _height);
+
+	_rect2 = Rect(0, 0, _width * _field26, _height * _field28);
 }
 
-int UnkObject1200::sub51AF8(Common::Point pt) {
+void MazeUI::clear() {
+	if (!_resNum)
+		_resNum = 1;
+
+	if (_field16)
+		DEALLOCATE(_field16);
+	_field16 = NULL;
+	
+	DEALLOCATE(_field3A);
+	_field3A = NULL;
+
+}
+
+int MazeUI::sub51AF8(Common::Point pt) {
 	if (!_rect1.contains(pt))
 		return -1;
 
-	int tmp1 = (pt.x - _rect1.left + _field2E) / _field2A;
-	int tmp2 = (pt.y - _rect1.top + _field30) / _field2C;
+	int tmp1 = (pt.x - _rect1.left + _field2E) / _width;
+	int tmp2 = (pt.y - _rect1.top + _field30) / _height;
 
 	if ((tmp1 >= 0) && (tmp2 >= 0) && (_field26 > tmp1) && (_field28 > tmp2))
 		return _field16[(((_field26 * tmp2) + tmp1)* 2)];
@@ -1322,7 +1370,7 @@ int UnkObject1200::sub51AF8(Common::Point pt) {
 	return -1;
 }
 
-bool UnkObject1200::sub51AFD(Common::Point pt) {
+bool MazeUI::sub51AFD(Common::Point pt) {
 	int retval = false;
 
 	_field2E = pt.x;
@@ -1351,19 +1399,19 @@ bool UnkObject1200::sub51AFD(Common::Point pt) {
 	return retval;
 }
 
-void UnkObject1200::sub51B02() {
-	warning("STUB: UnkObject1200::sub51B02()");
+void MazeUI::sub51B02() {
+	warning("STUB: MazeUI::sub51B02()");
 }
 
-void UnkObject1200::sub9EDE8(Rect rect) {
+void MazeUI::sub9EDE8(Rect rect) {
 	_rect1 = rect;
-	warning("FIXME: UnkObject1200::sub9EDE8()");
+	warning("FIXME: MazeUI::sub9EDE8()");
 //	_rect1.clip(g_globals->gfxManager()._bounds);
 }
 
-int UnkObject1200::sub9EE22(int &arg1, int &arg2) {
-	arg1 /= _field2A;
-	arg2 /= _field2C;
+int MazeUI::sub9EE22(int &arg1, int &arg2) {
+	arg1 /= _width;
+	arg2 /= _height;
 
 	if ((arg1 >= 0) && (arg2 >= 0) && (_field26 > arg1) && (_field28 > arg2)) {
 		return _field16[(((_field26 * arg2) + arg1) * 2)];
@@ -1371,6 +1419,10 @@ int UnkObject1200::sub9EE22(int &arg1, int &arg2) {
 
 	return -1;
 }
+
+/*--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*/
 
 void Scene1200::sub9DAD6(int indx) {
 	_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);

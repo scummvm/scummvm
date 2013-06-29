@@ -276,6 +276,45 @@ public:
 	}
 };
 
+class MazeUI: public SavedObject {
+private:
+	void clear();
+public:
+	Rect _rect1;
+	Rect _rect2;
+
+	byte *_field16;
+	byte *_field3A;
+
+	int _field12;
+	int _field14;
+	int _field26;
+	int _field28;
+	int _width;
+	int _height;
+	int _field2E;
+	int _field30;
+	int _resNum;
+	int _field34;
+	int _field36;
+	int _field38;
+	int _field3E;
+	int _field40;
+public:
+	MazeUI();
+	~MazeUI();
+	void load(int resNum);
+
+	virtual Common::String getClassName() { return "MazeUI"; }
+	void synchronize(Serializer &s);
+
+	int sub51AF8(Common::Point pt);
+	bool sub51AFD(Common::Point pt);
+	void sub51B02();
+	void sub9EDE8(Rect rect);
+	int sub9EE22(int &arg1, int &arg2);
+};
+
 class SceneAreaObject: public SceneArea {
 	class Object1: public SceneActor {
 	public:
@@ -288,41 +327,6 @@ public:
 	virtual void process(Event &event);
 	void setDetails(int visage, int strip, int frameNumber, const Common::Point &pt);
 	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
-};
-
-class UnkObject1200 : public SavedObject {
-public:
-	Rect _rect1;
-	Rect _rect2;
-
-	int *_field16;
-	int *_field3A;
-
-	int _field12;
-	int _field14;
-	int _field26;
-	int _field28;
-	int _field2A;
-	int _field2C;
-	int _field2E;
-	int _field30;
-	int _field32;
-	int _field34;
-	int _field36;
-	int _field38;
-	int _field3E;
-	int _field40;
-
-	UnkObject1200();
-	void synchronize(Serializer &s);
-
-	void sub51AE9(int arg1);
-	int sub51AF8(Common::Point pt);
-	bool sub51AFD(Common::Point pt);
-	void sub51B02();
-	void sub9EDE8(Rect rect);
-	int sub9EE22(int &arg1, int &arg2);
-	virtual Common::String getClassName() { return "UnkObject1200"; }
 };
 
 /*--------------------------------------------------------------------------*/

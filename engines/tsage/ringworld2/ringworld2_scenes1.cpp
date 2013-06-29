@@ -1136,7 +1136,7 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	tmpRect.set(110, 20, 210, 120);
 	_object1.sub9EDE8(tmpRect);
 
-	_object1.sub51AE9(1);
+	_object1.load(1);
 	_object1.sub51AFD(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 	warning("int unk = set_pane_p(_paneNumber);");
 	_object1.sub51B02();

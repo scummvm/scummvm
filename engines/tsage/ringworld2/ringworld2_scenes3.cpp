@@ -2888,6 +2888,7 @@ void Scene3400::signal() {
  * Scene 3500 -
  *
  *--------------------------------------------------------------------------*/
+
 Scene3500::Action1::Action1() {
 	_field1E = 0;
 	_field20 = 0;
@@ -3046,16 +3047,16 @@ void Scene3500::Actor7::sub109693(Common::Point Pt) {
 }
 
 int Scene3500::UnkObject3500::sub1097C9(int arg1) {
-	return (_field2A / 2) + arg1 - (arg1 % _field2A);
+	return (_width / 2) + arg1 - (arg1 % _width);
 }
 
 int Scene3500::UnkObject3500::sub1097EF(int arg1) {
-	return (_field2C / 2) + arg1 - (arg1 % _field2C);
+	return (_height / 2) + arg1 - (arg1 % _height);
 }
 
 int Scene3500::UnkObject3500::sub109C09(Common::Point pt) {
-	int vx = pt.x / _field2A;
-	int vy = pt.y / _field2C;
+	int vx = pt.x / _width;
+	int vy = pt.y / _height;
 
 	if ((vx >= 0) && (_field26 > vx) && (_field28 > vy)) {
 		return _field16[((_field26 * vy) + vx) * 2];
@@ -3665,7 +3666,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 
 	tmpRect.set(160, 89, 299, 182);
 	_unkObj1.sub9EDE8(tmpRect);
-	_unkObj1.sub51AE9(2);
+	_unkObj1.load(2);
 	_unkObj1.sub51AFD(Common::Point(_field127A, _field127C));
 
 	_action1._field24 = 0;
@@ -3787,6 +3788,7 @@ void Scene3500::process(Event &event) {
 void Scene3500::dispatch() {
 	Rect tmpRect;
 	Scene::dispatch();
+
 	if (((_actor1._frame % 2) == 0) && (_action1._field24 == 0)) {
 		_actor1.setFrame(_actor1.changeFrame());
 		_field1276 = _actor1._frame;
