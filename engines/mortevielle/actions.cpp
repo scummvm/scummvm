@@ -509,7 +509,7 @@ void MortevielleEngine::fctSearch() {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 
-				rechai(_mchai);
+				_mchai = rechai();
 				if (_mchai != 0) {
 					_searchCount = 0;
 					_heroSearching = true;
@@ -893,8 +893,7 @@ void MortevielleEngine::fctClose() {
 				--_openObjCount;
 				if (_openObjCount < 0)
 					_openObjCount = 0;
-				int chai = 9999;
-				rechai(chai);
+				int chai = rechai();
 				if (_mchai == chai)
 					_mchai = 0;
 			} else {
@@ -976,8 +975,7 @@ void MortevielleEngine::fctSelfPut() {
 		setCoordinates(7);
 		_crep = 124;
 		if (_num != 0) {
-			int chai;
-			rechai(chai);
+			int chai = rechai();
 			if (chai == 0)
 				_crep = 997;
 			else {

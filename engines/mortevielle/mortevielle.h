@@ -418,7 +418,6 @@ private:
 	void fctScratch();
 	void endGame();
 	void askRestart();
-	void delay(int amount);
 	void handleOpcode();
 	void displayStatusArrow();
 	void displayStatusInDescriptionBar(char stat);
@@ -448,7 +447,7 @@ private:
 	void mennor();
 	void tsuiv();
 	void treg(int objId);
-	void rechai(int &ch);
+	int  rechai();
 
 public:
 	Common::Point _prevPos;
@@ -510,6 +509,7 @@ public:
 	Common::String getEngineString(int idx) const { return _engineStrings[idx]; }
 	Common::String getGameString(int idx) const { return _gameStrings[idx]; }
 
+	void delay(int amount);
 	void gameLoaded();
 	void initGame();
 	void displayAloneText();
@@ -524,7 +524,7 @@ public:
 	void displayEmptyHand();
 
 	void hirs();
-	int  testou();
+	int  gettKeyPressed();
 	void handleDescriptionText(int f, int mesgId);
 	int  animof(int ouf, int num);
 	void pictout(int seg, int dep, int x, int y);

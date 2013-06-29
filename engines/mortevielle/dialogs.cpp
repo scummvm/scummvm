@@ -447,7 +447,7 @@ int DialogManager::waitForF3F8() {
 	int key;
 
 	do {
-		key = _vm->testou();
+		key = _vm->gettKeyPressed();
 		if (_vm->shouldQuit())
 			return key;
 	} while ((key != 61) && (key != 66));
