@@ -32,7 +32,6 @@
 
 #include "common/scummsys.h"
 
-#include "avalanche/gyro2.h"
 
 namespace Avalanche {
 class AvalancheEngine;

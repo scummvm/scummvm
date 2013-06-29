@@ -32,7 +32,7 @@
 #ifndef ENHANCED2_H
 #define ENHANCED2_H
 
-#include "common/system.h"
+#include "common/scummsys.h"
 
 namespace Avalanche {
 class AvalancheEngine;

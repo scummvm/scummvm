@@ -27,13 +27,15 @@
 
 /* CELER	The unit for updating the screen pics. */
 
+#include "avalanche/avalanche.h"
+
 #include "avalanche/celer2.h"
-#include "common/textconsole.h"
 #include "avalanche/trip6.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/roomnums.h"
-#include "avalanche/avalanche.h"
+
+#include "common/textconsole.h"
 
 namespace Avalanche {
 

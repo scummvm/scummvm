@@ -30,9 +30,6 @@
 
 #include "common/system.h"
 
-#include "avalanche/gyro2.h"
-// #include "avalanche/joystick2.h" - Will be implemented later, if it will be implemented at all...
-
 namespace Avalanche {
 class AvalancheEngine;
 

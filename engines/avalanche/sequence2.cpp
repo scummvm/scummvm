@@ -30,11 +30,12 @@
 #include "avalanche/avalanche.h"
 
 #include "avalanche/sequence2.h"
-#include "common/scummsys.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/trip6.h"
+
+#include "common/scummsys.h"
 
 namespace Avalanche {
 

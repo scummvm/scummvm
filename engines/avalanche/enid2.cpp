@@ -27,9 +27,6 @@
 
 /* ENID		Edna's manager. */
 
-#include "common/scummsys.h"
-#include "common/textconsole.h"
-
 #include "avalanche/avalanche.h"
 
 #include "avalanche/enid2.h"
@@ -39,6 +36,9 @@
 #include "avalanche/timeout2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
+
+#include "common/textconsole.h"
+
 //#include "fileunit.h"
 //#include "basher.h"
 

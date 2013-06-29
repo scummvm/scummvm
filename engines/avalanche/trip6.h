@@ -31,12 +31,8 @@
 #ifndef TRIP6_H
 #define TRIP6_H
 
-
-
 #include "common/scummsys.h"
 #include "common/str.h"
-
-#include "avalanche/gyro2.h"
 
 namespace Avalanche {
 class AvalancheEngine;
