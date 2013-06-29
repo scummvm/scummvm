@@ -1396,7 +1396,6 @@ bool MazeUI::setMazePosition(Common::Point pt) {
 }
 
 void MazeUI::draw() {
-	int xs = _rect1.left;
 	int yPos = 0;
 	int yInc;
 	Visage visage;
@@ -1429,9 +1428,9 @@ void MazeUI::draw() {
 			yPos = _rect1.top;
 			yInc = _height - (_field30 % _height); 
 
-			Rect srcBounds(Common::Rect(_field2E % _width, _field30 % _height, 
-				_rect1.width(), yInc));
-			Rect destBounds(Common::Rect(_rect1.left, yPos, _rect1.width(), yInc));
+			Rect srcBounds(_field2E % _width, _field30 % _height, 
+				(_field2E % _width) + _rect1.width(), (_field30 % _height) + yInc);
+			Rect destBounds(_rect1.left, yPos, _rect1.right, yPos + yInc);
 
 			R2_GLOBALS._screenSurface.copyFrom(_mapImage, srcBounds, destBounds);
 		} else {
@@ -1441,8 +1440,8 @@ void MazeUI::draw() {
 				yInc = _rect1.bottom - yPos;
 			}
 
-			Rect srcBounds(Common::Rect(0, _field2E, _rect1.width(), yInc)); 
-			Rect destBounds(Common::Rect(_rect1.left, yPos, _rect1.width(), yInc));
+			Rect srcBounds(0, _field2E, _rect1.width(), _field2E + yInc); 
+			Rect destBounds(_rect1.left, yPos, _rect1.right, yPos + yInc);
 			R2_GLOBALS._screenSurface.copyFrom(_mapImage, srcBounds, destBounds);
 		}
 	}

@@ -3027,7 +3027,7 @@ void Scene3500::Actor7::sub109466(int arg1, int arg2, int arg3, int arg4, int ar
 	_fieldAC = _fieldAA / _fieldA8;
 
 	postInit();
-	setup(10501, 3, 1);
+	setup(1050, 3, 1);
 	fixPriority(255);
 	sub109663(arg5);
 }
@@ -3616,7 +3616,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_item7.setDetails(96, 3500, 12, 10, -1);
 
 	_actor8.postInit();
-	_actor8.setup(10501, 1, 1);
+	_actor8.setup(1050, 1, 1);
 	_actor8.setPosition(Common::Point(160, 73));
 	_actor8.fixPriority(1);
 
@@ -3670,9 +3670,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_mazeUI.setMazePosition(_position1);
 
 	_action1._field24 = 0;
-	warning("gfx_set_pane_p()");
 	_mazeUI.draw();
-	warning("gfx_set_pane_p()");
 	_field1286 = 1;
 
 	R2_GLOBALS._player.postInit();
