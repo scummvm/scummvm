@@ -1293,8 +1293,6 @@ void MazeUI::synchronize(Serializer &s) {
 	_rect1.synchronize(s);
 	_rect2.synchronize(s);
 
-	// FIXME: syncrhonize _field16 and _field3A
-
 	s.syncAsSint16LE(_field12);
 	s.syncAsSint16LE(_field14);
 	s.syncAsSint16LE(_field26);
@@ -1370,8 +1368,8 @@ int MazeUI::sub51AF8(Common::Point pt) {
 	return -1;
 }
 
-bool MazeUI::sub51AFD(Common::Point pt) {
-	int retval = false;
+bool MazeUI::setMazePosition(Common::Point pt) {
+	bool retval = false;
 
 	_field2E = pt.x;
 	_field30 = pt.y;
@@ -1399,14 +1397,13 @@ bool MazeUI::sub51AFD(Common::Point pt) {
 	return retval;
 }
 
-void MazeUI::sub51B02() {
-	warning("STUB: MazeUI::sub51B02()");
+void MazeUI::mazeProc1() {
+	warning("STUB: MazeUI::mazeProc1()");
 }
 
-void MazeUI::sub9EDE8(Rect rect) {
+void MazeUI::setUIBounds(Rect rect) {
 	_rect1 = rect;
-	warning("FIXME: MazeUI::sub9EDE8()");
-//	_rect1.clip(g_globals->gfxManager()._bounds);
+	_rect1.clip(g_globals->gfxManager()._bounds);
 }
 
 int MazeUI::sub9EE22(int &arg1, int &arg2) {

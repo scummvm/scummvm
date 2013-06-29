@@ -633,12 +633,12 @@ class Scene3500 : public SceneExt {
 		// TODO: double check if nothing specific is present, then remove this class
 	};
 
-	class UnkObject3500 : public MazeUI {
+	class MazeUI3500 : public MazeUI {
 	public:
 		int sub1097C9(int arg1);
 		int sub1097EF(int arg1);
 		int sub109C09(Common::Point pt);
-		int sub109C5E(int &x, int &y);
+		int sub109C5E(Common::Point &p);
 	};
 public:
 	Action1 _action1;
@@ -660,7 +660,7 @@ public:
 	Actor8 _actor8;
 	Actor8 _actor9;
 	ASoundExt _aSound1;
-	UnkObject3500 _unkObj1;
+	MazeUI3500 _mazeUI;
 	SequenceManager _sequenceManager;
 
 	int _fieldAF8;
@@ -672,8 +672,7 @@ public:
 	int _field1274;
 	int _field1276;
 	int _field1278;
-	int _field127A;
-	int _field127C;
+	Common::Point _position1;
 	int _field127E;
 	int _field1280;
 	int _field1282;

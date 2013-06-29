@@ -309,9 +309,9 @@ public:
 	void synchronize(Serializer &s);
 
 	int sub51AF8(Common::Point pt);
-	bool sub51AFD(Common::Point pt);
-	void sub51B02();
-	void sub9EDE8(Rect rect);
+	bool setMazePosition(Common::Point pt);
+	void mazeProc1();
+	void setUIBounds(Rect rect);
 	int sub9EE22(int &arg1, int &arg2);
 };
 
