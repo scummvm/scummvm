@@ -3005,7 +3005,7 @@ void MortevielleEngine::testKey(bool d) {
 
 	// Wait for release from any key or mouse button
 	while (keyPressed())
-		_key = testou();
+		_key = gettKeyPressed();
 
 	do {
 		_mouse.getMousePosition(x, y, click);
@@ -3022,7 +3022,7 @@ void MortevielleEngine::testKey(bool d) {
 			return;
 	} while (!(quest || (click) || (d && _anyone)));
 	if (quest)
-		testou();
+		gettKeyPressed();
 	setMouseClick(false);
 	_mouse.showMouse();
 }
@@ -3377,12 +3377,13 @@ void MortevielleEngine::putInHand(int &objId) {
 	}
 }
 
-void MortevielleEngine::rechai(int &ch) {
+int MortevielleEngine::rechai() {
 	int tmpPlace = _coreVar._currPlace;
 
 	if (_coreVar._currPlace == CRYPT)
 		tmpPlace = CELLAR;
-	ch = _tabdon[kAchai + (tmpPlace * 7) + _num - 1];
+
+	return _tabdon[kAchai + (tmpPlace * 7) + _num - 1];
 }
 
 /**
@@ -3424,10 +3425,14 @@ void MortevielleEngine::displayStatusInDescriptionBar(char stat) {
  */
 void MortevielleEngine::testKeyboard() {
 	if (keyPressed())
-		testou();
+		gettKeyPressed();
 }
 
-int MortevielleEngine::testou() {
+/**
+ * Test Key Pressed
+ * @remarks	Originally called 'testou'
+ */
+int MortevielleEngine::gettKeyPressed() {
 	char ch = getChar();
 
 	switch (ch)  {
