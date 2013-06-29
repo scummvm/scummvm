@@ -953,7 +953,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	}
 }
 
-void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw) {
+void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 
 	// PS2 EMI uses a TGA for it's splash-screen, avoid using the following
 	// code for drawing that (as it has no tiles).
@@ -963,37 +963,26 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw)
 		BitmapData *data = bitmap->_data;
 		float *texc = data->_texc;
 
-		int curLayer, frontLayer;
-		if (initialDraw) {
-			curLayer = frontLayer = data->_numLayers - 1;
-		} else {
-			curLayer = data->_numLayers - 2;
-			frontLayer = 0;
-		}
-
 		BlitImage *b = (BlitImage *)bitmap->getTexIds();
 
-		while (frontLayer <= curLayer) {
-			uint32 offset = data->_layers[curLayer]._offset;
-			for (uint32 i = offset; i < offset + data->_layers[curLayer]._numImages; ++i) {
-				const BitmapData::Vert & v = data->_verts[i];
-				uint32 texId = v._texid;
-				uint32 ntex = data->_verts[i]._pos * 4;
-				uint32 numRects = data->_verts[i]._verts / 4;
-				while (numRects-- > 0) {
-					int dx1 = ((texc[ntex+0] + 1) * _screenWidth) / 2;
-					int dy1 = ((1 - texc[ntex+1]) * _screenHeight) / 2;
-					int dx2 = ((texc[ntex+8] + 1) * _screenWidth) / 2;
-					int dy2 = ((1 - texc[ntex+9]) * _screenHeight) / 2;
-					int srcX = texc[ntex+2] * bitmap->getWidth();
-					int srcY = texc[ntex+3] * bitmap->getHeight();
+		uint32 offset = data->_layers[layer]._offset;
+		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
+			const BitmapData::Vert & v = data->_verts[i];
+			uint32 texId = v._texid;
+			uint32 ntex = data->_verts[i]._pos * 4;
+			uint32 numRects = data->_verts[i]._verts / 4;
+			while (numRects-- > 0) {
+				int dx1 = ((texc[ntex+0] + 1) * _screenWidth) / 2;
+				int dy1 = ((1 - texc[ntex+1]) * _screenHeight) / 2;
+				int dx2 = ((texc[ntex+8] + 1) * _screenWidth) / 2;
+				int dy2 = ((1 - texc[ntex+9]) * _screenHeight) / 2;
+				int srcX = texc[ntex+2] * bitmap->getWidth();
+				int srcY = texc[ntex+3] * bitmap->getHeight();
 
-					blit(bitmap->getPixelFormat(texId), &b[texId], _zb->pbuf.getRawBuffer(), bitmap->getData(texId).getRawBuffer(),
-							x + dx1, y + dy1, srcX, srcY, dx2 - dx1, dy2 - dy1, b[texId]._width, b[texId]._height, !initialDraw);
-					ntex += 16;
-				}
+				blit(bitmap->getPixelFormat(texId), &b[texId], _zb->pbuf.getRawBuffer(), bitmap->getData(texId).getRawBuffer(),
+						x + dx1, y + dy1, srcX, srcY, dx2 - dx1, dy2 - dy1, b[texId]._width, b[texId]._height, true);
+				ntex += 16;
 			}
-			curLayer--;
 		}
 
 		return;

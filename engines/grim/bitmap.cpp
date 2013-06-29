@@ -432,15 +432,15 @@ void Bitmap::draw(int x, int y) {
 	if (_currImage == 0)
 		return;
 
-	g_driver->drawBitmap(this, x, y);
+	g_driver->drawBitmap(this, x, y, _data->_numLayers - 1);
 }
 
-void Bitmap::drawForeground() {
+void Bitmap::drawLayer(uint32 layer) {
 	_data->load();
 	if (_currImage == 0)
 		return;
 
-	g_driver->drawBitmap(this, _data->_x, _data->_y, false);
+	g_driver->drawBitmap(this, _data->_x, _data->_y, layer);
 }
 
 void Bitmap::setActiveImage(int n) {

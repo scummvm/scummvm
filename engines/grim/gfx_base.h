@@ -169,7 +169,7 @@ public:
 	 * @see createBitmap
 	 * @see destroyBitmap
 	 */
-	virtual void drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw = true) = 0;
+	virtual void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer = 0) = 0;
 
 	/**
 	 * Deletes any internal references and representations of a bitmap

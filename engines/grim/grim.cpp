@@ -562,12 +562,17 @@ void GrimEngine::updateDisplayScene() {
 					a->draw();
 			}
 		} else {
-			bool drewForeground = false;
+			Bitmap *background = _currSet->_currSetup->_bkgndBm;
+			uint32 numLayers = background->_data->_numLayers;
+			int32 currentLayer = numLayers - 1;
 			foreach (Actor *a, _activeActors) {
-				if (a->getSortOrder() < 15 && !drewForeground) {
-					drewForeground = true;
-					_currSet->drawForeground();
+				if (a->getSortOrder() < 0)
+					break;
+
+				while (a->getSortOrder() < currentLayer * 10 && currentLayer >= 0) {
+					background->drawLayer(currentLayer--);
 				}
+
 				if (a->isVisible() && a->getSortOrder() < 100)
 					a->draw();
 			}

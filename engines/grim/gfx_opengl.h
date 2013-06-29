@@ -92,7 +92,7 @@ public:
 	void destroyMaterial(Texture *material);
 
 	void createBitmap(BitmapData *bitmap);
-	void drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw = true);
+	void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer);
 	void destroyBitmap(BitmapData *bitmap);
 
 	void createFont(Font *font);

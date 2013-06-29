@@ -838,7 +838,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 	}
 }
 
-void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDraw) {
+void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 
 	// The PS2 version of EMI uses a TGA for it's splash-screen
 	// avoid using the TIL-code below for that, by checking
@@ -864,28 +864,17 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDra
 		GLuint *textures = (GLuint *)bitmap->getTexIds();
 		float *texc = data->_texc;
 
-		int curLayer, frontLayer;
-		if (initialDraw) {
-			curLayer = frontLayer = data->_numLayers - 1;
-		} else {
-			curLayer = data->_numLayers - 2;
-			frontLayer = 0;
-		}
-
-		while (frontLayer <= curLayer) {
-			uint32 offset = data->_layers[curLayer]._offset;
-			for (uint32 i = offset; i < offset + data->_layers[curLayer]._numImages; ++i) {
-				glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
-				glBegin(GL_QUADS);
-				uint32 ntex = data->_verts[i]._pos * 4;
-				for (uint32 x = 0; x < data->_verts[i]._verts; ++x) {
-					glTexCoord2f(texc[ntex + 2], texc[ntex + 3]);
-					glVertex2f(texc[ntex + 0], texc[ntex + 1]);
-					ntex += 4;
-				}
-				glEnd();
+		uint32 offset = data->_layers[layer]._offset;
+		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
+			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
+			glBegin(GL_QUADS);
+			uint32 ntex = data->_verts[i]._pos * 4;
+			for (uint32 x = 0; x < data->_verts[i]._verts; ++x) {
+				glTexCoord2f(texc[ntex + 2], texc[ntex + 3]);
+				glVertex2f(texc[ntex + 0], texc[ntex + 1]);
+				ntex += 4;
 			}
-			curLayer--;
+			glEnd();
 		}
 
 		glDisable(GL_TEXTURE_2D);
