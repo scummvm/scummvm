@@ -330,14 +330,17 @@ void Gyro::slowdown() {
 }
 
 bool Gyro::flagset(char x) {
-	for (uint16 i = 0; i < flags.size(); i++)
+	for (uint16 i = 0; i < flags.size(); i++) {
 		if (flags[i] == x)
 			return true;
+	}
+
 	return false;
 }
 
 void Gyro::force_numlock() {
-	if ((locks & num) > 0)  locks -= num;
+	if ((locks & num) > 0)
+		locks -= num;
 }
 
 bool Gyro::pennycheck(uint16 howmuchby) {
@@ -384,7 +387,8 @@ Common::String Gyro::get_thing(byte which) {
 	case onion:
 		if (dna.rotten_onion)
 			get_thing_result = "rotten onion";
-		else get_thing_result = things[which];
+		else
+			get_thing_result = things[which];
 		break;
 	default:
 		get_thing_result = things[which];
@@ -411,7 +415,9 @@ char Gyro::get_thingchar(byte which) {
 // Keep an eye open! ^^^^
 Common::String Gyro::get_better(byte which) {
 	Common::String get_better_result;
-	if (which > 150)  which -= 149;
+	if (which > 150)
+		which -= 149;
+
 	switch (which) {
 	case wine:
 		switch (dna.winestate) {
@@ -430,7 +436,8 @@ Common::String Gyro::get_better(byte which) {
 			get_better_result = "a rotten onion";
 		else if (dna.onion_in_vinegar)
 			get_better_result = "a pickled onion (in the vinegar)";
-		else get_better_result = better[which];
+		else
+			get_better_result = better[which];
 		break;
 	default:
 		if ((which < numobjs) && (which > '\0'))
@@ -485,7 +492,8 @@ void Gyro::background(byte x) {
 void Gyro::hang_around_for_a_while() {
 	byte fv;
 
-	for (fv = 1; fv <= 28; fv ++) slowdown();
+	for (fv = 1; fv <= 28; fv ++)
+		slowdown();
 }
 
 /* Super_Off and Super_On are two very useful procedures. Super_Off switches
@@ -494,19 +502,25 @@ void Gyro::hang_around_for_a_while() {
 
 void Gyro::super_off() {
 	super_was_off = visible == m_no;
-	if (super_was_off)  return;
+	if (super_was_off)
+		return;
 
 	super_was_virtual = visible == m_virtual;
 
-	if (visible == m_virtual)  off_virtual();
-	else off();
+	if (visible == m_virtual)
+		off_virtual();
+	else
+		off();
 }
 
 void Gyro::super_on() {
-	if ((visible != m_no) || (super_was_off))  return;
+	if ((visible != m_no) || (super_was_off))
+		return;
 
-	if (super_was_virtual)  on_virtual();
-	else on();
+	if (super_was_virtual)
+		on_virtual();
+	else
+		on();
 }
 
 bool Gyro::mouse_near_text() {

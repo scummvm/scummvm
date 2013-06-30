@@ -61,7 +61,8 @@ void Scrolls::setParent(AvalancheEngine *vm) {
 void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 	byte page_;
 
-	if (_vm->_gyro.ledstatus == x)  return; /* Already like that! */
+	if (_vm->_gyro.ledstatus == x)
+		return; /* Already like that! */
 
 	warning("STUB: Scrolls::state(). Calls of Pascal units need to be removed.");
 	//switch (x) {
@@ -82,8 +83,8 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 	_vm->_gyro.super_off();
 
 	/*	for (page_ = 0; page_ <= 1; page_ ++) {
-	setactivepage(page_);
-	bar(419, 195, 438, 197);
+		setactivepage(page_);
+		bar(419, 195, 438, 197);
 	}*/
 
 	_vm->_gyro.super_on();
@@ -96,10 +97,11 @@ void Scrolls::easteregg() {
 	warning("STUB: Scrolls::easteregg(). Calls of Pascal units need to be removed.");
 
 	/*	background(15);
-	for (fv = 4; fv <= 100; fv ++)
-	for (ff = 0; ff <= 70; ff ++) {
-	sound(fv * 100 + ff * 10);
-	delay(1);
+	for (fv = 4; fv <= 100; fv ++) {
+		for (ff = 0; ff <= 70; ff ++) {
+			sound(fv * 100 + ff * 10);
+			delay(1);
+		}
 	}
 	nosound;
 	setcolor(10);
@@ -204,9 +206,8 @@ bool Scrolls::they_match(tunetype &played) {
 	mistakes = 0;
 
 	for (fv = 1; fv <= sizeof(played); fv ++)
-		if (played[fv] != Gyro::tune[fv]) {
+		if (played[fv] != Gyro::tune[fv])
 			mistakes++;
-		}
 
 		they_match_result = mistakes < 5;
 		return they_match_result;
@@ -226,17 +227,16 @@ void Scrolls::music_scroll() {
 	_vm->_gyro.on();
 	_vm->_gyro.newpointer(4);
 	//do {
-	//do {
-	//	Gyro::check(); /* was "checkclick;" */
-	//	if (Enhanced::keypressede())  break;
-	//} while (!(Gyro::mpress > 0) || buttona1() || buttonb1());
+	//	do {
+	//		Gyro::check(); /* was "checkclick;" */
+	//		if (Enhanced::keypressede())
+	//			break;
+	//	} while (!(Gyro::mpress > 0) || buttona1() || buttonb1());
 	//
 	// Needs joystick - not sure it will be implemented.
 
-	//if (Gyro::mpress == 0) {
-	//	inkey(); Needs Lucerna to proceed.
-	//	
-	//}
+	//	if (Gyro::mpress == 0)
+	//		inkey(); Needs Lucerna to proceed.
 	//}
 
 }

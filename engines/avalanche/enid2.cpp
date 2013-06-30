@@ -96,7 +96,7 @@ Common::String Enid::expanddate(byte d, byte m, uint16 y) {
 
 	day = _vm->_gyro.strf(d);
 
-	if (((d >= 0) && (d <= 9)) || ((d >= 21) && (d <= 31)))
+	if (((d >= 0) && (d <= 9)) || ((d >= 21) && (d <= 31))) {
 		switch (d % 10) {
 		case 1:
 			day = day + "st";
@@ -110,14 +110,11 @@ Common::String Enid::expanddate(byte d, byte m, uint16 y) {
 		default:
 			day = day + "th";
 		}
+	}
 
 	expanddate_result = day + ' ' + month + ' ' + _vm->_gyro.strf(y);
 	return expanddate_result;
 }
-
-
-
-
 
 void Enid::show_bug(char icon, Common::String strn) {
 	_vm->_scrolls.display(Common::String("\7\6\23") + icon + "\26\r" + strn + '\15');
@@ -159,16 +156,9 @@ void Enid::loaderror(Common::String x, char icon) {
 	bug = true;
 }
 
-
-
-
 void Enid::edna_load(Common::String name) {
 	warning("STUB: Enid::edna_load()");
 }
-
-
-
-
 
 void Enid::showheader() {
 	_vm->_scrolls.display(Common::String("Dir: ") + path + "\r\r\4");
@@ -260,21 +250,17 @@ void Enid::avvy_background() {    /* Not really a filing procedure,
 }
 
 void Enid::to_sundry(sundry &sund) {
-	{
-		sund.qenid_filename = _vm->_gyro.enid_filename;
-		sund.qsoundfx = _vm->_gyro.soundfx;
-		sund.qthinks = _vm->_gyro.thinks;
-		sund.qthinkthing = _vm->_gyro.thinkthing;
-	}
+	sund.qenid_filename = _vm->_gyro.enid_filename;
+	sund.qsoundfx = _vm->_gyro.soundfx;
+	sund.qthinks = _vm->_gyro.thinks;
+	sund.qthinkthing = _vm->_gyro.thinkthing;
 }
 
 void Enid::from_sundry(sundry sund) {
-	{
-		_vm->_gyro.enid_filename = sund.qenid_filename;
-		_vm->_gyro.soundfx = sund.qsoundfx;
-		_vm->_gyro.thinks = sund.qthinks;
-		_vm->_gyro.thinkthing = sund.qthinkthing;
-	}
+	_vm->_gyro.enid_filename = sund.qenid_filename;
+	_vm->_gyro.soundfx = sund.qsoundfx;
+	_vm->_gyro.thinks = sund.qthinks;
+	_vm->_gyro.thinkthing = sund.qthinkthing;
 }
 
 void Enid::restore_dna() {
