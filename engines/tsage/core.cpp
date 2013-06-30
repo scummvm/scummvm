@@ -3157,6 +3157,8 @@ void Visage::setVisage(int resNum, int rlbNum) {
 				_flipHoriz = flags & 1;
 
 				_data = g_resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
+
+				DEALLOCATE(indexData);
 			}
 		}
 
