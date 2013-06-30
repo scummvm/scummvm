@@ -37,8 +37,6 @@ class AvalancheEngine;
 
 class Lucerna {
 public:
-	// Call it where Lucerna is first used.
-	// Procuded to replace the initizalization part of the original Pascal unit.
 	Lucerna();
 
 	void setParent(AvalancheEngine *vm);

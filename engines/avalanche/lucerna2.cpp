@@ -29,14 +29,11 @@
 
 #include "avalanche/avalanche.h"
 
-#include "common/system.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/logger2.h"
 #include "avalanche/enhanced2.h"
-
-
 #include "avalanche/visa2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/trip6.h"
@@ -46,6 +43,7 @@
 #include "avalanche/sequence2.h"
 #include "avalanche/acci2.h"
 
+#include "common/system.h"
 
 //#include "dropdown.h"
 //#include "basher.h"

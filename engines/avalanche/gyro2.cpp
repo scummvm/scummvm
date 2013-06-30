@@ -27,19 +27,20 @@
 
 /* GYRO		It all revolves around this bit! */
 
+#include "avalanche/avalanche.h"
+
 #include "avalanche/gyro2.h"
+#include "avalanche/pingo2.h"
+#include "avalanche/scrolls2.h"
+#include "avalanche/lucerna2.h"
+#include "avalanche/visa2.h"
+#include "avalanche/acci2.h"
+#include "avalanche/trip6.h"
+
 #include "common/textconsole.h"
 
-//#include "pingo.h"
-//#include "scrolls.h"
-//#include "lucerna.h"
-//#include "visa.h"
-//#include "acci.h"
-//#include "trip5.h"
 //#include "dropdown.h"
 //#include "basher.h"
-
-
 
 namespace Avalanche {
 

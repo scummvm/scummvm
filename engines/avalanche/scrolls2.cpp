@@ -31,15 +31,16 @@
 #include "avalanche/gyro2.h"
 #include "avalanche/logger2.h"
 #include "avalanche/enhanced2.h"
-
-//#include "lucerna.h"
-//#include "trip5.h"
-//#include "Acci.h"
-//#include "basher.h"
-//#include "visa.h"
-//#include "timeout.h"
+#include "avalanche/lucerna2.h"
+#include "avalanche/trip6.h"
+#include "avalanche/acci2.h"
+#include "avalanche/visa2.h"
+#include "avalanche/timeout2.h"
 
 #include "common/textconsole.h"
+
+//#include "basher.h"
+//#include "avalanche/joystick2.h" - Will be implemented later, if it will be implemented at all...
 
 namespace Avalanche {
 
