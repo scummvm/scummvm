@@ -322,6 +322,8 @@ const Graphics::Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *
 						*((uint8 *)rowDest) = (uint8)color;
 					else if (_surface->format.bytesPerPixel == 2)
 						*((uint16 *)rowDest) = (uint16)color;
+					else if (_surface->format.bytesPerPixel == 4)
+						*((uint32 *)rowDest) = (uint32)color;
 				}
 			}
 
