@@ -650,6 +650,7 @@ public:
 	Item4 _item5;
 	Item4 _item6;
 	Item4 _item7;
+	// Glyph of vessel on top of the maze ui
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;

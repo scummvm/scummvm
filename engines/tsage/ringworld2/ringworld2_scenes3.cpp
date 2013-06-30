@@ -2920,9 +2920,10 @@ void Scene3500::Action1::sub108670(int arg1) {
 	else
 		scene->_actor5.show();
 
-	if (scene->_actor1._frame % 2 == 0)
-	scene->_actor1._frameChange = _field1E;
-	scene->_actor1.setFrame(scene->_actor1.changeFrame());
+	if (scene->_actor1._frame % 2 == 0) {
+		scene->_actor1._frameChange = _field1E;
+		scene->_actor1.setFrame(scene->_actor1.changeFrame());
+	}
 
 	setActionIndex(0);
 }
@@ -2993,7 +2994,7 @@ void Scene3500::Action1::signal() {
 		}
 		break;
 	case 1:
-		if ((scene->_actor1._frame % 2) == 0) {
+		if ((scene->_actor1._frame % 2) == 1) {
 			setDelay(1);
 			return;
 		}
@@ -3637,7 +3638,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_item1.setDetails(Rect(0, 0, 320, 200), 3500, 0, -1, 2, 1, NULL);
 
 	_actor1.postInit();
-	_mazeDirection = 1;
+	_mazeDirection = MAZEDIR_NORTH;
 	_actor1.setup(1004, 1, _mazeDirection);
 	_actor1.setPosition(Common::Point(230, 135));
 	_actor1.fixPriority(200);
