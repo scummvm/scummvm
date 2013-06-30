@@ -58,9 +58,10 @@ private:
 	int _yInc, _yEnd, _xInc, _xEnd;
 	int _width, _height;
 
+	byte nextNibble(const byte *&pSrc);
+	byte nextByte(const byte *&pSrc, const byte *&pLookup);
+
 	void majTtxTty();
-	byte suiv(const byte *&pSrc);
-	byte csuiv(const byte *&pSrc, const byte *&pLookup);
 	int desanalyse(const byte *&pSrc);
 	void horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
 	void vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
