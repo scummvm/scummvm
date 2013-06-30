@@ -3087,7 +3087,7 @@ Scene3500::Scene3500() {
 	_field1270 = 0;
 	_field1272 = 0;
 	_field1274 = 0;
-	_field1276 = 0;
+	_mazeDirection = MAZEDIR_NONE;
 	_field1278 = 0;
 	_mazePosition.x = 0;
 	_mazePosition.y = 0;
@@ -3108,7 +3108,7 @@ void Scene3500::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field1270);
 	s.syncAsSint16LE(_field1272);
 	s.syncAsSint16LE(_field1274);
-	s.syncAsSint16LE(_field1276);
+	s.syncAsSint16LE(_mazeDirection);
 	s.syncAsSint16LE(_field1278);
 	s.syncAsSint16LE(_mazePosition.x);
 	s.syncAsSint16LE(_mazePosition.y);
@@ -3235,7 +3235,7 @@ void Scene3500::Action1::signal() {
 			scene->_actor1.setFrame(scene->_actor1.changeFrame());
 		}
 
-		int var8 = (scene->_action1._field1E * 2 + scene->_field1276);
+		int var8 = (scene->_action1._field1E * 2 + scene->_mazeDirection);
 		if (var8 > 7)
 			var8 = 1;
 		else if (var8 < 1)
@@ -3312,8 +3312,8 @@ void Scene3500::Action1::signal() {
 		break;
 	case 5:
 		scene->_actor1._frameChange = _field1E;
-		scene->_field1276 = scene->_actor1.changeFrame();
-		scene->_actor1.setFrame(scene->_field1276);
+		scene->_mazeDirection = scene->_actor1.changeFrame();
+		scene->_actor1.setFrame(scene->_mazeDirection);
 		setDelay(1);
 		break;
 	case 6:
@@ -3333,8 +3333,8 @@ void Scene3500::Action1::signal() {
 	case 7:
 		if ((scene->_actor1._frame % 2) == 0) {
 			scene->_actor1._frameChange = _field1E;
-			scene->_field1276 = scene->_actor1.changeFrame();
-			scene->_actor1.setFrame(scene->_field1276);
+			scene->_mazeDirection = scene->_actor1.changeFrame();
+			scene->_actor1.setFrame(scene->_mazeDirection);
 		}
 		setDelay(1);
 		break;
@@ -3350,7 +3350,7 @@ void Scene3500::Action1::signal() {
 		// but it's clearly a cut and paste error from case 4.
 		// The following code allows the switch to work properly.
 		warning("Checkme: fix for dead code");
-		int var_8 = (_field1E * 2 + scene->_field1276);
+		int var_8 = (_field1E * 2 + scene->_mazeDirection);
 		if (var_8 > 7)
 			var_8 = 1;
 		else if (var_8 < 1)
@@ -3637,8 +3637,8 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_item1.setDetails(Rect(0, 0, 320, 200), 3500, 0, -1, 2, 1, NULL);
 
 	_actor1.postInit();
-	_field1276 = 1;
-	_actor1.setup(1004, 1, _field1276);
+	_mazeDirection = 1;
+	_actor1.setup(1004, 1, _mazeDirection);
 	_actor1.setPosition(Common::Point(230, 135));
 	_actor1.fixPriority(200);
 	_actor1._frameChange = 1;
@@ -3794,7 +3794,7 @@ void Scene3500::dispatch() {
 
 	if (((_actor1._frame % 2) == 0) && (_action1._field24 == 0)) {
 		_actor1.setFrame(_actor1.changeFrame());
-		_field1276 = _actor1._frame;
+		_mazeDirection = _actor1._frame;
 	}
 	int oldField1278;
 	if ((_field1278 != 0) && (_action1._field24 == 0)) {
@@ -3830,8 +3830,8 @@ void Scene3500::dispatch() {
 		var_a = abs(var_6 - newMazeY);
 		dx = 0;
 
-		switch (_field1276 - 1) {
-		case 0:
+		switch (_mazeDirection) {
+		case MAZEDIR_NORTH:
 			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 			if (((cellId == 2) || (cellId == 3) || (cellId == 6) || (cellId == 1)) ||
 					((cellId == 25 || cellId == 26 || cellId == 5 || cellId == 14 || cellId == 15) && var_8 > 3)) {
@@ -3897,7 +3897,7 @@ void Scene3500::dispatch() {
 				}
 			}
 			break;
-		case 2:
+		case MAZEDIR_EAST:
 			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 			if (  ((cellId == 12) || (cellId == 13) || (cellId == 11) || (cellId == 16) || (cellId == 31))
 			  || (((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)) && (var_a > 3)) ) {
@@ -3963,7 +3963,7 @@ void Scene3500::dispatch() {
 				}
 			}
 			break;
-		case 4:
+		case MAZEDIR_SOUTH:
 			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 			if (  ((cellId == 2) || (cellId == 3) || (cellId == 6) || (cellId == 1))
 			  || (((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)) && (var_8 > 3)) ) {
@@ -4048,7 +4048,7 @@ void Scene3500::dispatch() {
 				}
 			}
 			break;
-		case 6:
+		case MAZEDIR_WEST:
 			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 			if ( ((cellId == 12) || (cellId == 13) || (cellId == 11) || (cellId == 16) || (cellId == 31))
 			 || (((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4)) && (var_a > 3)) ) {
@@ -4140,10 +4140,10 @@ void Scene3500::dispatch() {
 			if (_mazeChangeAmount >= _field1270) {
 				if (_mazeChangeAmount == 1) {
 					if (_action1._field24 != 0) {
-						if ( ((_field1276 == 1) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)))
-						  || ((_field1276 == 3) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)))
-						  || ((_field1276 == 5) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)))
-						  || ((_field1276 == 7) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4))) ){
+						if ( ((_mazeDirection == 1) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)))
+						  || ((_mazeDirection == 3) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)))
+						  || ((_mazeDirection == 5) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)))
+						  || ((_mazeDirection == 7) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4))) ){
 							_mazeChangeAmount = 1;
 						} else
 							_mazeChangeAmount--;

@@ -670,7 +670,7 @@ public:
 	int _field1270;
 	int _field1272;
 	int _field1274;
-	int _field1276;
+	int _mazeDirection;
 	int _field1278;
 	Common::Point _mazePosition;
 	int _field127E;

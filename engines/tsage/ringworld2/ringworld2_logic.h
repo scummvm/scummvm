@@ -276,6 +276,8 @@ public:
 	}
 };
 
+enum MazeDirection { MAZEDIR_NONE = 0, MAZEDIR_NORTH = 1, MAZEDIR_EAST = 3, MAZEDIR_SOUTH = 5, MAZEDIR_WEST = 7 };
+
 class MazeUI: public SavedObject {
 private:
 	void clear();
