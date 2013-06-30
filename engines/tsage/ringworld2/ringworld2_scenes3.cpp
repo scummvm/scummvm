@@ -2978,226 +2978,6 @@ void Scene3500::Action1::sub108732(int arg1) {
 	}
 }
 
-/*--------------------------------------------------------------------------*/
-
-Scene3500::Action2::Action2() {
-	_field1E = 0;
-}
-
-void Scene3500::Action2::synchronize(Serializer &s) {
-	Action::synchronize(s);
-
-	s.syncAsSint16LE(_field1E);
-}
-
-/*--------------------------------------------------------------------------*/
-
-Scene3500::Item4::Item4() {
-	_field34 = 0;
-}
-
-void Scene3500::Item4::synchronize(Serializer &s) {
-	NamedHotspot::synchronize(s);
-
-	s.syncAsSint16LE(_field34);
-}
-
-/*--------------------------------------------------------------------------*/
-
-Scene3500::Actor7::Actor7() {
-	_fieldA4 = 0;
-	_fieldA6 = 0;
-	_fieldA8 = 0;
-	_fieldAA = 0;
-	_fieldAC = 0;
-	_fieldAE = 0;
-}
-
-void Scene3500::Actor7::synchronize(Serializer &s) {
-	SceneActor::synchronize(s);
-
-	s.syncAsSint16LE(_fieldA4);
-	s.syncAsSint16LE(_fieldA6);
-	s.syncAsSint16LE(_fieldA8);
-	s.syncAsSint16LE(_fieldAA);
-	s.syncAsSint16LE(_fieldAC);
-	s.syncAsSint16LE(_fieldAE);
-}
-
-void Scene3500::Actor7::sub109466(int arg1, int arg2, int arg3, int arg4, int arg5) {
-	_fieldAE = 0;
-	_fieldA4 = arg1;
-	_fieldA6 = arg2;
-	_fieldA8 = arg3;
-	_fieldAA = arg4;
-	_fieldAC = _fieldAA / _fieldA8;
-
-	postInit();
-	setup(1050, 3, 1);
-	fixPriority(255);
-	sub109663(arg5);
-}
-
-void Scene3500::Actor7::sub1094ED() {
-	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
-
-	scene->_field1270 = _position.x - _fieldA4;
-}
-
-void Scene3500::Actor7::sub109663(int arg1){
-	sub109693(Common::Point(_fieldA4 + arg1, _fieldA6 - (_fieldAC * arg1)));
-}
-
-void Scene3500::Actor7::sub109693(Common::Point Pt) {
-	setPosition(Pt);
-}
-
-/*--------------------------------------------------------------------------*/
-
-int Scene3500::MazeUI3500::cellFromX(int x) {
-	return (_cellSize.x / 2) + x - (x % _cellSize.x);
-}
-
-int Scene3500::MazeUI3500::cellFromY(int y) {
-	return (_cellSize.y / 2) + y - (y % _cellSize.y);
-}
-
-int Scene3500::MazeUI3500::getCellFromMapXY(Common::Point pt) {
-	int cellX = pt.x / _cellSize.x;
-	int cellY = pt.y / _cellSize.y;
-
-	if ((cellX >= 0) && (cellY >= 0) && (cellX < _mapCells.x) && (cellY < _mapCells.y)) {
-		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * cellY + cellX) * 2);
-	} else
-		return -1;
-}
-
-bool Scene3500::MazeUI3500::setMazePosition2(Common::Point &p) {
-	bool retVal = setMazePosition(p);
-	p = _mapOffset;
-
-	return retVal;
-}
-
-Scene3500::Scene3500() {
-	_fieldAF8 = 0;
-	_fieldB9E = 0;
-	_rotation = NULL;
-	_mazeChangeAmount = 0;
-	_field1270 = 0;
-	_field1272 = 0;
-	_field1274 = 0;
-	_mazeDirection = MAZEDIR_NONE;
-	_field1278 = 0;
-	_mazePosition.x = 0;
-	_mazePosition.y = 0;
-	_field127E = 0;
-	_field1280 = 0;
-	_field1282 = 0;
-	_field1284 = 0;
-	_field1286 = 0;
-}
-
-void Scene3500::synchronize(Serializer &s) {
-	SceneExt::synchronize(s);
-	SYNC_POINTER(_rotation);
-
-	s.syncAsSint16LE(_fieldAF8);
-	s.syncAsSint16LE(_fieldB9E);
-	s.syncAsSint16LE(_mazeChangeAmount);
-	s.syncAsSint16LE(_field1270);
-	s.syncAsSint16LE(_field1272);
-	s.syncAsSint16LE(_field1274);
-	s.syncAsSint16LE(_mazeDirection);
-	s.syncAsSint16LE(_field1278);
-	s.syncAsSint16LE(_mazePosition.x);
-	s.syncAsSint16LE(_mazePosition.y);
-	s.syncAsSint16LE(_field127E);
-	s.syncAsSint16LE(_field1280);
-	s.syncAsSint16LE(_field1282);
-	s.syncAsSint16LE(_field1284);
-	s.syncAsSint16LE(_field1286);
-}
-
-void Scene3500::sub107F71(int arg1) {
-	switch (arg1) {
-	case -1:
-		_actor7.sub1094ED();
-		if (_field1270 != 0) {
-			_field1270--;
-			_actor7.sub109663(_field1270);
-		}
-		if (_action1._field24 != 0)
-			_field1270 = 0;
-		break;
-	case 1:
-		_actor7.sub1094ED();
-		if (_field1270 < 16) {
-			++_field1270;
-			_actor7.sub109663(_field1270);
-		}
-		if (_action1._field24 != 0)
-			_field1270 = 0;
-		break;
-	case 88:
-		if ((_action == 0) || (_action1._field24 == 0)) {
-		// The original makes a second useless check on action, skipped
-			_action2.sub10831F(2);
-			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._field1E != 2))) {
-				_action2.signal();
-			} else {
-				_actor9.setAction(&_action2, &_actor9, NULL);
-			}
-		}
-		break;
-	case 96:
-		if ((_action) && (_action1._field24 != 0) && (_action2._field1E != 1)) {
-			_field1278 = 0;
-			_action1.sub108732(0);
-		} else if ((_action) && (_field1278 == 0) && (_action1._field24 != 0)) {
-			_field1278 = arg1;
-		} else if ((_action) && (_action1._field24 == 0)) {
-			_action1.sub108670(1);
-			_action1.signal();
-		} else if (_action == 0) {
-			_action1.sub108670(1);
-			setAction(&_action1, &_actor1, NULL);
-		}
-		break;
-	case 104:
-		if ((_action == 0) || (_action1._field24 == 0)) {
-			_action2.sub10831F(-1);
-			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._field1E != -1))) {
-				_action2.signal();
-			} else {
-				_actor9.setAction(&_action2, &_actor9, NULL);
-			}
-		}
-		break;
-	case 112:
-		if ((_action) && (_action1._field24 != 0) && (_action2._field1E != -1)) {
-			_field1278 = 0;
-			_action1.sub108732(0);
-		} else if ((_action) && (_field1278 == 0) && (_action1._field24 != 0)) {
-			_field1278 = arg1;
-		} else if ((_action) && (_action1._field24 == 0)) {
-			_action1.sub108670(-1);
-			_action1.signal();
-		} else if (_action == 0) {
-			_action1.sub108670(-1);
-			setAction(&_action1, &_actor1, NULL);
-		}
-		break;
-	default:
-		_field1270 = arg1;
-		_actor7.sub109663(arg1);
-		if (_action1._field24 != 0) {
-			_field1270 = 0;
-		}
-		break;
-	}
-}
-
 void Scene3500::Action1::signal() {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
@@ -3427,6 +3207,226 @@ void Scene3500::Action1::dispatch() {
 	if ((_actionIndex == 1) && (scene->_mazeChangeAmount <= 4)) {
 		scene->_rotation->_idxChange = 0;
 		signal();
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene3500::Action2::Action2() {
+	_field1E = 0;
+}
+
+void Scene3500::Action2::synchronize(Serializer &s) {
+	Action::synchronize(s);
+
+	s.syncAsSint16LE(_field1E);
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene3500::Item4::Item4() {
+	_field34 = 0;
+}
+
+void Scene3500::Item4::synchronize(Serializer &s) {
+	NamedHotspot::synchronize(s);
+
+	s.syncAsSint16LE(_field34);
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene3500::Actor7::Actor7() {
+	_fieldA4 = 0;
+	_fieldA6 = 0;
+	_fieldA8 = 0;
+	_fieldAA = 0;
+	_fieldAC = 0;
+	_fieldAE = 0;
+}
+
+void Scene3500::Actor7::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+
+	s.syncAsSint16LE(_fieldA4);
+	s.syncAsSint16LE(_fieldA6);
+	s.syncAsSint16LE(_fieldA8);
+	s.syncAsSint16LE(_fieldAA);
+	s.syncAsSint16LE(_fieldAC);
+	s.syncAsSint16LE(_fieldAE);
+}
+
+void Scene3500::Actor7::sub109466(int arg1, int arg2, int arg3, int arg4, int arg5) {
+	_fieldAE = 0;
+	_fieldA4 = arg1;
+	_fieldA6 = arg2;
+	_fieldA8 = arg3;
+	_fieldAA = arg4;
+	_fieldAC = _fieldAA / _fieldA8;
+
+	postInit();
+	setup(1050, 3, 1);
+	fixPriority(255);
+	sub109663(arg5);
+}
+
+void Scene3500::Actor7::sub1094ED() {
+	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
+
+	scene->_field1270 = _position.x - _fieldA4;
+}
+
+void Scene3500::Actor7::sub109663(int arg1){
+	sub109693(Common::Point(_fieldA4 + arg1, _fieldA6 - (_fieldAC * arg1)));
+}
+
+void Scene3500::Actor7::sub109693(Common::Point Pt) {
+	setPosition(Pt);
+}
+
+/*--------------------------------------------------------------------------*/
+
+int Scene3500::MazeUI3500::cellFromX(int x) {
+	return (_cellSize.x / 2) + x - (x % _cellSize.x);
+}
+
+int Scene3500::MazeUI3500::cellFromY(int y) {
+	return (_cellSize.y / 2) + y - (y % _cellSize.y);
+}
+
+int Scene3500::MazeUI3500::getCellFromMapXY(Common::Point pt) {
+	int cellX = pt.x / _cellSize.x;
+	int cellY = pt.y / _cellSize.y;
+
+	if ((cellX >= 0) && (cellY >= 0) && (cellX < _mapCells.x) && (cellY < _mapCells.y)) {
+		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * cellY + cellX) * 2);
+	} else
+		return -1;
+}
+
+bool Scene3500::MazeUI3500::setMazePosition2(Common::Point &p) {
+	bool retVal = setMazePosition(p);
+	p = _mapOffset;
+
+	return retVal;
+}
+
+Scene3500::Scene3500() {
+	_fieldAF8 = 0;
+	_fieldB9E = 0;
+	_rotation = NULL;
+	_mazeChangeAmount = 0;
+	_field1270 = 0;
+	_field1272 = 0;
+	_field1274 = 0;
+	_mazeDirection = MAZEDIR_NONE;
+	_field1278 = 0;
+	_mazePosition.x = 0;
+	_mazePosition.y = 0;
+	_field127E = 0;
+	_field1280 = 0;
+	_field1282 = 0;
+	_field1284 = 0;
+	_field1286 = 0;
+}
+
+void Scene3500::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	SYNC_POINTER(_rotation);
+
+	s.syncAsSint16LE(_fieldAF8);
+	s.syncAsSint16LE(_fieldB9E);
+	s.syncAsSint16LE(_mazeChangeAmount);
+	s.syncAsSint16LE(_field1270);
+	s.syncAsSint16LE(_field1272);
+	s.syncAsSint16LE(_field1274);
+	s.syncAsSint16LE(_mazeDirection);
+	s.syncAsSint16LE(_field1278);
+	s.syncAsSint16LE(_mazePosition.x);
+	s.syncAsSint16LE(_mazePosition.y);
+	s.syncAsSint16LE(_field127E);
+	s.syncAsSint16LE(_field1280);
+	s.syncAsSint16LE(_field1282);
+	s.syncAsSint16LE(_field1284);
+	s.syncAsSint16LE(_field1286);
+}
+
+void Scene3500::sub107F71(int arg1) {
+	switch (arg1) {
+	case -1:
+		_actor7.sub1094ED();
+		if (_field1270 != 0) {
+			_field1270--;
+			_actor7.sub109663(_field1270);
+		}
+		if (_action1._field24 != 0)
+			_field1270 = 0;
+		break;
+	case 1:
+		_actor7.sub1094ED();
+		if (_field1270 < 16) {
+			++_field1270;
+			_actor7.sub109663(_field1270);
+		}
+		if (_action1._field24 != 0)
+			_field1270 = 0;
+		break;
+	case 88:
+		if ((_action == 0) || (_action1._field24 == 0)) {
+		// The original makes a second useless check on action, skipped
+			_action2.sub10831F(2);
+			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._field1E != 2))) {
+				_action2.signal();
+			} else {
+				_actor9.setAction(&_action2, &_actor9, NULL);
+			}
+		}
+		break;
+	case 96:
+		if ((_action) && (_action1._field24 != 0) && (_action2._field1E != 1)) {
+			_field1278 = 0;
+			_action1.sub108732(0);
+		} else if ((_action) && (_field1278 == 0) && (_action1._field24 != 0)) {
+			_field1278 = arg1;
+		} else if ((_action) && (_action1._field24 == 0)) {
+			_action1.sub108670(1);
+			_action1.signal();
+		} else if (_action == 0) {
+			_action1.sub108670(1);
+			setAction(&_action1, &_actor1, NULL);
+		}
+		break;
+	case 104:
+		if ((_action == 0) || (_action1._field24 == 0)) {
+			_action2.sub10831F(-1);
+			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._field1E != -1))) {
+				_action2.signal();
+			} else {
+				_actor9.setAction(&_action2, &_actor9, NULL);
+			}
+		}
+		break;
+	case 112:
+		if ((_action) && (_action1._field24 != 0) && (_action2._field1E != -1)) {
+			_field1278 = 0;
+			_action1.sub108732(0);
+		} else if ((_action) && (_field1278 == 0) && (_action1._field24 != 0)) {
+			_field1278 = arg1;
+		} else if ((_action) && (_action1._field24 == 0)) {
+			_action1.sub108670(-1);
+			_action1.signal();
+		} else if (_action == 0) {
+			_action1.sub108670(-1);
+			setAction(&_action1, &_actor1, NULL);
+		}
+		break;
+	default:
+		_field1270 = arg1;
+		_actor7.sub109663(arg1);
+		if (_action1._field24 != 0) {
+			_field1270 = 0;
+		}
+		break;
 	}
 }
 
@@ -3703,64 +3703,58 @@ void Scene3500::process(Event &event) {
 
 	if (event.eventType == EVENT_KEYPRESS) {
 		switch (event.kbd.keycode) {
-		case Common::KEYCODE_1:
-			warning("FIXME: keycode = 0x4700");
+		case Common::KEYCODE_KP7:
 			R2_GLOBALS._sound2.play(338);
 			sub107F71(16);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_2:
-			warning("FIXME: keycode = 0x4800");
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			sub107F71(88);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_3:
-			warning("FIXME: keycode = 0x4900");
+		case Common::KEYCODE_KP9:
 			if (_field1270 < 16)
 				R2_GLOBALS._sound2.play(338);
 			sub107F71(1);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_4:
-			warning("FIXME: keycode = 0x4B00");
+		case Common::KEYCODE_KP4:
+		case Common::KEYCODE_LEFT:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			sub107F71(112);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_5:
-			warning("FIXME: keycode = 0x4D00");
+		case Common::KEYCODE_KP6:
+		case Common::KEYCODE_RIGHT:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			sub107F71(96);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_6:
-			warning("FIXME: keycode = 0x4F00");
+		case Common::KEYCODE_KP1:
 			R2_GLOBALS._sound2.play(338);
 			sub107F71(0);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_7:
-			warning("FIXME: keycode = 0x5000");
+		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_DOWN:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			sub107F71(104);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_8:
-			warning("FIXME: keycode = 0x5100");
+		case Common::KEYCODE_KP3:
 			if (_field1270 != 0)
 				R2_GLOBALS._sound2.play(338);
 			sub107F71(-1);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_9:
-			warning("FIXME: keycode = 0x5200");
+		case Common::KEYCODE_KP0:
 			R2_GLOBALS._sound2.play(338);
 			sub107F71(8);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_0:
-			warning("FIXME: keycode = 0x5300");
+		case Common::KEYCODE_KP_PERIOD:
 			R2_GLOBALS._sound2.play(338);
 			sub107F71(4);
 			event.handled = true;
