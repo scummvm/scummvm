@@ -3016,14 +3016,17 @@ void Scene3500::Action1::signal() {
 			scene->_actor1.setFrame(scene->_actor1.changeFrame());
 		}
 
+		// Get the new direction starting on
 		int var8 = (scene->_action1._field1E * 2 + scene->_mazeDirection);
-		if (var8 > 7)
-			var8 = 1;
-		else if (var8 < 1)
-			var8 = 7;
+		if (var8 > MAZEDIR_NORTHWEST)
+			var8 = MAZEDIR_NORTH;
+		else if (var8 < MAZEDIR_NORTH)
+			var8 = MAZEDIR_WEST;
 
+		// Check whether movement is allowed in that direction. If so, then
+		// movement is started again
 		switch (var8) {
-		case 0:
+		case MAZEDIR_NORTH:
 			if ( ((si != 2)  && (si != 3)  && (si != 6) && (si != 1) && (si != 23) && (si != 24) && (si != 4) && (si != 11))
 				|| (var6 != 0)) {
 				if ((si != 25) && (si != 26) && (si != 5) && (si != 14) && (si != 15))
@@ -3035,7 +3038,7 @@ void Scene3500::Action1::signal() {
 			} else
 				_field20 = 1;
 			break;
-		case 2:
+		case MAZEDIR_EAST:
 			if ( ((si != 12)  && (si != 13)  && (si != 11) && (si != 16) && (si != 26) && (si != 24) && (si != 15) && (si != 6) && (si != 31))
 				|| (di != 0)) {
 				if ((si != 25) && (si != 23) && (si != 14) && (si != 5) && (si != 4))
@@ -3047,7 +3050,7 @@ void Scene3500::Action1::signal() {
 			} else
 				_field20 = 1;
 			break;
-		case 4:
+		case MAZEDIR_SOUTH:
 			if ( ((si != 2)  && (si != 3)  && (si != 6) && (si != 1) && (si != 25) && (si != 26) && (si != 5) && (si != 16) && (si != 31))
 				|| (var6 != 0)) {
 					if ((si != 23) && (si != 24) && (si != 4) && (si != 14) && (si != 15))
@@ -3059,7 +3062,7 @@ void Scene3500::Action1::signal() {
 			} else
 				_field20 = 1;
 			break;
-		case 6:
+		case MAZEDIR_WEST:
 			if ( ((si != 12)  && (si != 13)  && (si != 11) && (si != 16) && (si != 25) && (si != 23) && (si != 14) && (si != 1) && (si != 31))
 				|| (var6 != 0)) {
 					if ((si != 26) && (si != 24) && (si != 15) && (si != 5) && (si != 4))
