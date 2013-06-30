@@ -1387,7 +1387,7 @@ void MazeUI::draw() {
 			int cellX = _mapOffset.x / _cellSize.x + xCtr;
 
 			// Get the type of content to display in the cell
-			int cell = getCellFromCellXY(Common::Point(cellX, cellY));
+			int cell = getCellFromCellXY(Common::Point(cellX, cellY)) - 1;
 			if (cell >= 0) {
 				int frameNum = (cell % _frameCount) + 1;
 				int rlbNum = (cell % _resCount) / _frameCount + 1;
