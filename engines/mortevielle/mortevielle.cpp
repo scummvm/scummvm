@@ -101,6 +101,10 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 }
 
 MortevielleEngine::~MortevielleEngine() {
+	// Allocated from run() > initialise() > loadCFIPH()
+	free(_speechManager._cfiphBuffer);
+	// Allocated from run() > initialise() > loadCFIEC()
+	free(_cfiecBuffer);
 }
 
 /**
@@ -204,8 +208,6 @@ Common::ErrorCode MortevielleEngine::initialise() {
 		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
 
-	free(_cfiecBuffer);
-	free(_speechManager._cfiphBuffer);
 	return Common::kNoError;
 }
 
