@@ -3067,7 +3067,7 @@ int Scene3500::MazeUI3500::sub109C09(Common::Point pt) {
 	int vy = pt.y / _cellSize.y;
 
 	if ((vx >= 0) && (_mapCells.x > vx) && (_mapCells.y > vy)) {
-		return _field16[((_mapCells.x * vy) + vx) * 2];
+		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * vy + vx) * 2);
 	} else
 		return -1;
 }

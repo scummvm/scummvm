@@ -1393,7 +1393,7 @@ void Scene1200::process(Event &event) {
 		return;
 
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+		_object1.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
 		int unk = _object1.getCellFromPixelXY(event.mousePos);
 		switch (R2_GLOBALS._events.getCursor()) {
 		case CURSOR_ARROW:
@@ -1603,6 +1603,189 @@ void Scene1200::dispatch() {
 void Scene1200::saveCharacter(int characterIndex) {
 	R2_GLOBALS._sound1.fadeOut2(NULL);
 	SceneExt::saveCharacter(characterIndex);
+}
+
+void Scene1200::sub9DAD6(int indx) {
+	_object1.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+
+	switch (indx) {
+	case 0:
+		if ( ((_object1.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_object1.getCellFromPixelXY(Common::Point(200, 88)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
+				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
+				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
+				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 41)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1200;
+			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
+		} else if (_object1.getCellFromPixelXY(Common::Point(200, 69)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 15;
+				else
+					_sceneMode = 10;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 76;
+				else
+					_sceneMode = 75;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 101;
+				else
+					_sceneMode = 100;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 111;
+				else
+					_sceneMode = 110;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 1;
+			signal();
+		}
+		break;
+	case 1:
+		if ( ((_object1.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_object1.getCellFromPixelXY(Common::Point(120, 88)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
+				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
+				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
+				|| ((R2_GLOBALS._v56AA2 == 5) && (R2_GLOBALS._v56AA4 == 5)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1201;
+			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
+		} else if (_object1.getCellFromPixelXY(Common::Point(120, 69)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 56;
+				else
+					_sceneMode = 55;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 25;
+				else
+					_sceneMode = 20;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 91;
+				else
+					_sceneMode = 90;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 121;
+				else
+					_sceneMode = 120;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 2;
+			signal();
+		}
+		break;
+	case 2:
+		if ( ((_object1.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_object1.getCellFromPixelXY(Common::Point(178, 110)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3))
+				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1203;
+			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
+		} else if (_object1.getCellFromPixelXY(Common::Point(160, 110)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 51;
+				else
+					_sceneMode = 50;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 81;
+				else
+					_sceneMode = 80;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 35;
+				else
+					_sceneMode = 30;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 116;
+				else
+					_sceneMode = 115;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 3;
+			signal();
+		}
+		break;
+	case 3:
+		if ( ((_object1.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_object1.getCellFromPixelXY(Common::Point(178, 30)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3))
+				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1202;
+			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);
+		} else if (_object1.getCellFromPixelXY(Common::Point(160, 30)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 61;
+				else
+					_sceneMode = 60;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 71;
+				else
+					_sceneMode = 70;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 96;
+				else
+					_sceneMode = 95;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 45;
+				else
+					_sceneMode = 40;
+				break;
+			default:
+				_sceneMode = 1;
+				R2_GLOBALS._player.setup(3156, 4, 6);
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 4;
+			signal();
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 /*--------------------------------------------------------------------------

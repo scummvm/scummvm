@@ -283,7 +283,7 @@ public:
 	Rect _displayBounds;
 	Rect _mapBounds;
 
-	byte *_field16;
+	byte *_mapData;
 	GfxSurface _mapImage;
 
 	int _field12;
@@ -306,11 +306,10 @@ public:
 	void draw();
 	int getCellFromPixelXY(const Common::Point &pt);
 	int getCellFromCellXY(const Common::Point &p);
+	int pixelToCellXY(int &arg1, int &arg2);
 
 	virtual Common::String getClassName() { return "MazeUI"; }
 	void synchronize(Serializer &s);
-
-	int sub9EE22(int &arg1, int &arg2);
 };
 
 class SceneAreaObject: public SceneArea {
