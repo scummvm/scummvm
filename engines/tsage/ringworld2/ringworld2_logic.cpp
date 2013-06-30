@@ -1281,7 +1281,7 @@ MazeUI::MazeUI() {
 	_cellsVisible.x = _cellsVisible.y = 0;
 	_mapCells.x = _mapCells.y = 0;
 	_cellSize.x = _cellSize.y = 0;
-	_cellOffset.x = _cellOffset.y = 0;
+	_mapOffset.x = _mapOffset.y = 0;
 	_resNum = _cellsResNum = 0;
 	_frameCount = _resCount = _mapImagePitch = _unused = 0;
 }
@@ -1297,8 +1297,8 @@ void MazeUI::synchronize(Serializer &s) {
 	if (s.isLoading())
 		load(_resNum);
 
-	s.syncAsSint16LE(_cellOffset.x);
-	s.syncAsSint16LE(_cellOffset.y);
+	s.syncAsSint16LE(_mapOffset.x);
+	s.syncAsSint16LE(_mapOffset.y);
 	s.syncAsSint16LE(_unused);
 }
 
@@ -1323,7 +1323,7 @@ void MazeUI::load(int resNum) {
 
 	_mapData = g_resourceManager->getResource(RT17, resNum, 1);
 
-	_cellOffset.y = _cellOffset.x = 0;
+	_mapOffset.y = _mapOffset.x = 0;
 	_cellsVisible.x = (_displayBounds.width() + _cellSize.x - 1) / _cellSize.x;
 	_cellsVisible.y = (_displayBounds.height() + _cellSize.y - 1) / _cellSize.y;
 
@@ -1347,25 +1347,25 @@ void MazeUI::clear() {
 bool MazeUI::setMazePosition(const Common::Point &pt) {
 	bool retval = false;
 
-	_cellOffset = pt;
+	_mapOffset = pt;
 
-	if (_cellOffset.x < _mapBounds.top) {
-		_cellOffset.x = _mapBounds.top;
+	if (_mapOffset.x < _mapBounds.top) {
+		_mapOffset.x = _mapBounds.top;
 		retval = true;
 	}
 
-	if (_cellOffset.y < _mapBounds.left) {
-		_cellOffset.y = _mapBounds.left;
+	if (_mapOffset.y < _mapBounds.left) {
+		_mapOffset.y = _mapBounds.left;
 		retval = true;
 	}
 
-	if (_cellOffset.x + _displayBounds.width() > _mapBounds.right) {
-		_cellOffset.x = _mapBounds.right - _displayBounds.width();
+	if (_mapOffset.x + _displayBounds.width() > _mapBounds.right) {
+		_mapOffset.x = _mapBounds.right - _displayBounds.width();
 		retval = true;
 	}
 
-	if (_cellOffset.y + _displayBounds.height() > _mapBounds.bottom) {
-		_cellOffset.y = _mapBounds.bottom - _displayBounds.height();
+	if (_mapOffset.y + _displayBounds.height() > _mapBounds.bottom) {
+		_mapOffset.y = _mapBounds.bottom - _displayBounds.height();
 		retval = true;
 	}
 
@@ -1374,16 +1374,20 @@ bool MazeUI::setMazePosition(const Common::Point &pt) {
 
 void MazeUI::draw() {
 	int yPos = 0;
-	int yInc;
+	int ySize;
 	Visage visage;
 
-	for (int yp = 0; yp < _cellsVisible.y; yp += yInc) {
-		int y = yp + _cellOffset.y / _cellSize.y;
+	// Loop to handle the cell rows of the visible display area one at a time
+	for (int yCtr = 0; yCtr < _cellsVisible.y; ++yCtr, yPos += ySize) {
+		int cellY = _mapOffset.y / _cellSize.y + yCtr;
 		
-		for (int idx = 0; idx > _cellsVisible.x; ++idx) {
-			int x = _cellOffset.x / _cellSize.x + idx;
+		// Loop to iterate through the horizontal visible cells to build up
+		// an entire cell high horizontal slice of the map
+		for (int xCtr = 0; xCtr < _cellsVisible.x; ++xCtr) {
+			int cellX = _mapOffset.x / _cellSize.x + xCtr;
 
-			int cell = getCellFromCellXY(Common::Point(x, y));
+			// Get the type of content to display in the cell
+			int cell = getCellFromCellXY(Common::Point(cellX, cellY));
 			if (cell >= 0) {
 				int frameNum = (cell % _frameCount) + 1;
 				int rlbNum = (cell % _resCount) / _frameCount + 1;
@@ -1392,33 +1396,37 @@ void MazeUI::draw() {
 				visage.setVisage(resNum, rlbNum);
 				GfxSurface frame = visage.getFrame(frameNum);
 
-				_mapImage.copyFrom(frame, 0, idx);
+				_mapImage.copyFrom(frame, xCtr * _cellSize.x, 0);
 			} else {
 				GfxSurface emptyRect;
 				emptyRect.create(_cellSize.x, _cellSize.y);
 
-				_mapImage.copyFrom(emptyRect, 0, idx);
+				_mapImage.copyFrom(emptyRect, xCtr * _cellSize.x, 0);
 			}
 		}
 
 		if (yPos == 0) {
+			// First line of the map to be displayed - only the bottom portion of that
+			// first cell row may be visible
 			yPos = _displayBounds.top;
-			yInc = _cellSize.y - (_cellOffset.y % _cellSize.y); 
+			ySize = _cellSize.y - (_mapOffset.y % _cellSize.y); 
 
-			Rect srcBounds(_cellOffset.x % _cellSize.x, _cellOffset.y % _cellSize.y, 
-				(_cellOffset.x % _cellSize.x) + _displayBounds.width(), (_cellOffset.y % _cellSize.y) + yInc);
-			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + yInc);
+			Rect srcBounds(_mapOffset.x % _cellSize.x, _mapOffset.y % _cellSize.y,
+				(_mapOffset.x % _cellSize.x) + _displayBounds.width(), _cellSize.y);
+			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + ySize);
 
 			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
 		} else {
 			if ((yPos + _cellSize.y) < _displayBounds.bottom) {
-				yInc = _cellSize.y;
+				ySize = _cellSize.y;
 			} else {
-				yInc = _displayBounds.bottom - yPos;
+				ySize = _displayBounds.bottom - yPos;
 			}
 
-			Rect srcBounds(0, _cellOffset.x, _displayBounds.width(), _cellOffset.x + yInc); 
-			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + yInc);
+			Rect srcBounds(_mapOffset.x % _cellSize.x, 0,
+				(_mapOffset.x % _cellSize.x) + _displayBounds.width(), ySize);
+			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + ySize);
+
 			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
 		}
 	}
@@ -1428,8 +1436,8 @@ int MazeUI::getCellFromPixelXY(const Common::Point &pt) {
 	if (!_displayBounds.contains(pt))
 		return -1;
 
-	int cellX = (pt.x - _displayBounds.left + _cellOffset.x) / _cellSize.x;
-	int cellY = (pt.y - _displayBounds.top + _cellOffset.y) / _cellSize.y;
+	int cellX = (pt.x - _displayBounds.left + _mapOffset.x) / _cellSize.x;
+	int cellY = (pt.y - _displayBounds.top + _mapOffset.y) / _cellSize.y;
 
 	if ((cellX >= 0) && (cellY >= 0) && (cellX < _mapCells.x) && (cellY < _mapCells.y))
 		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * cellY + cellX) * 2);

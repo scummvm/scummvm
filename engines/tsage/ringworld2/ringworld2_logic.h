@@ -293,7 +293,7 @@ public:
 	Common::Point _cellsVisible;
 	Common::Point _mapCells;
 	Common::Point _cellSize;
-	Common::Point _cellOffset;
+	Common::Point _mapOffset;
 	int _resNum;
 	int _cellsResNum;
 	int _frameCount;

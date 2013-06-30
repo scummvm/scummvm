@@ -3074,7 +3074,7 @@ int Scene3500::MazeUI3500::getCellFromMapXY(Common::Point pt) {
 
 bool Scene3500::MazeUI3500::seteMazePosition2(Common::Point &p) {
 	bool retVal = setMazePosition(p);
-	p = _cellOffset;
+	p = _mapOffset;
 
 	return retVal;
 }
