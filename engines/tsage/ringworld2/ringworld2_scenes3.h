@@ -638,7 +638,7 @@ class Scene3500 : public SceneExt {
 		int cellFromX(int arg1);
 		int cellFromY(int arg1);
 		int getCellFromMapXY(Common::Point pt);
-		bool seteMazePosition2(Common::Point &p);
+		bool setMazePosition2(Common::Point &p);
 	};
 public:
 	Action1 _action1;
@@ -666,13 +666,13 @@ public:
 	int _fieldAF8;
 	int _fieldB9E;
 	PaletteRotation *_rotation;
-	int _field126E;
+	int _mazeChangeAmount;
 	int _field1270;
 	int _field1272;
 	int _field1274;
 	int _field1276;
 	int _field1278;
-	Common::Point _position1;
+	Common::Point _mazePosition;
 	int _field127E;
 	int _field1280;
 	int _field1282;

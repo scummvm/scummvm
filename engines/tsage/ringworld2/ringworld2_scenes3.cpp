@@ -3072,7 +3072,7 @@ int Scene3500::MazeUI3500::getCellFromMapXY(Common::Point pt) {
 		return -1;
 }
 
-bool Scene3500::MazeUI3500::seteMazePosition2(Common::Point &p) {
+bool Scene3500::MazeUI3500::setMazePosition2(Common::Point &p) {
 	bool retVal = setMazePosition(p);
 	p = _mapOffset;
 
@@ -3083,14 +3083,14 @@ Scene3500::Scene3500() {
 	_fieldAF8 = 0;
 	_fieldB9E = 0;
 	_rotation = NULL;
-	_field126E = 0;
+	_mazeChangeAmount = 0;
 	_field1270 = 0;
 	_field1272 = 0;
 	_field1274 = 0;
 	_field1276 = 0;
 	_field1278 = 0;
-	_position1.x = 0;
-	_position1.y = 0;
+	_mazePosition.x = 0;
+	_mazePosition.y = 0;
 	_field127E = 0;
 	_field1280 = 0;
 	_field1282 = 0;
@@ -3104,14 +3104,14 @@ void Scene3500::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_fieldAF8);
 	s.syncAsSint16LE(_fieldB9E);
-	s.syncAsSint16LE(_field126E);
+	s.syncAsSint16LE(_mazeChangeAmount);
 	s.syncAsSint16LE(_field1270);
 	s.syncAsSint16LE(_field1272);
 	s.syncAsSint16LE(_field1274);
 	s.syncAsSint16LE(_field1276);
 	s.syncAsSint16LE(_field1278);
-	s.syncAsSint16LE(_position1.x);
-	s.syncAsSint16LE(_position1.y);
+	s.syncAsSint16LE(_mazePosition.x);
+	s.syncAsSint16LE(_mazePosition.y);
 	s.syncAsSint16LE(_field127E);
 	s.syncAsSint16LE(_field1280);
 	s.syncAsSint16LE(_field1282);
@@ -3207,7 +3207,7 @@ void Scene3500::Action1::signal() {
 		scene->_field1286 = 0;
 		if (scene->_field1270 != 0) {
 			scene->_field1270 = 0;
-			scene->_field126E = 0;
+			scene->_mazeChangeAmount = 0;
 			scene->_field1272 = 0;
 			scene->_rotation->_idxChange = 0;
 		}
@@ -3224,11 +3224,11 @@ void Scene3500::Action1::signal() {
 		setDelay(1);
 		break;
 	case 4: {
-		int si = scene->_mazeUI.getCellFromMapXY(Common::Point(scene->_position1.x + 70, scene->_position1.y + 46));
-		int var2 = scene->_mazeUI.cellFromX(scene->_position1.x + 70) - 70;
-		int var4 = scene->_mazeUI.cellFromY(scene->_position1.y + 46) - 46;
-		int di = abs(var2 - scene->_position1.x);
-		int var6 = abs(var4 - scene->_position1.y);
+		int si = scene->_mazeUI.getCellFromMapXY(Common::Point(scene->_mazePosition.x + 70, scene->_mazePosition.y + 46));
+		int var2 = scene->_mazeUI.cellFromX(scene->_mazePosition.x + 70) - 70;
+		int var4 = scene->_mazeUI.cellFromY(scene->_mazePosition.y + 46) - 46;
+		int di = abs(var2 - scene->_mazePosition.x);
+		int var6 = abs(var4 - scene->_mazePosition.y);
 
 		if ((scene->_actor1._frame % 2) != 0) {
 			scene->_actor1._frameChange = _field1E;
@@ -3296,14 +3296,14 @@ void Scene3500::Action1::signal() {
 	// No break on purpose
 	case 2: {
 		scene->_actor8.setPosition(Common::Point(160, 73));
-		scene->_actor8._moveDiff.x = 160 - scene->_field126E;
+		scene->_actor8._moveDiff.x = 160 - scene->_mazeChangeAmount;
 		scene->_fieldAF8 = 160 - ((_field1E * 2) * 160);
 		Common::Point pt(scene->_fieldAF8, 73);
 		NpcMover *mover = new NpcMover();
 		scene->_actor8.addMover(mover, &pt, this);
 
 		scene->_actor9.setPosition(Common::Point(160 + ((_field1E * 2) * 160), 73));
-		scene->_actor9._moveDiff.x = 160 - scene->_field126E;
+		scene->_actor9._moveDiff.x = 160 - scene->_mazeChangeAmount;
 		scene->_fieldB9E = 160;
 		Common::Point pt2(scene->_fieldB9E, 73);
 		NpcMover *mover2 = new NpcMover();
@@ -3361,12 +3361,12 @@ void Scene3500::Action1::signal() {
 		case 0:
 		// No break on purpose
 		case 4:
-			scene->_position1.x = scene->_mazeUI.cellFromX(scene->_position1.x + 70) - 70;
+			scene->_mazePosition.x = scene->_mazeUI.cellFromX(scene->_mazePosition.x + 70) - 70;
 			break;
 		case 2:
 		// No break on purpose
 		case 6:
-			scene->_position1.y = scene->_mazeUI.cellFromY(scene->_position1.y + 46) - 46;
+			scene->_mazePosition.y = scene->_mazeUI.cellFromY(scene->_mazePosition.y + 46) - 46;
 			break;
 		default:
 			break;
@@ -3376,7 +3376,7 @@ void Scene3500::Action1::signal() {
 		_field24 = 0;
 		if (_field20 == 0) {
 			scene->_actor7.sub1094ED();
-			if (scene->_field126E == scene->_field1270)
+			if (scene->_mazeChangeAmount == scene->_field1270)
 				scene->_aSound1.play(276);
 		}
 		break;
@@ -3424,7 +3424,7 @@ void Scene3500::Action1::dispatch() {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
 	Action::dispatch();
-	if ((_actionIndex == 1) && (scene->_field126E <= 4)) {
+	if ((_actionIndex == 1) && (scene->_mazeChangeAmount <= 4)) {
 		scene->_rotation->_idxChange = 0;
 		signal();
 	}
@@ -3460,17 +3460,17 @@ void Scene3500::Action2::signal() {
 			di = scene->_fieldB9E;
 		}
 
-		scene->_actor8._moveDiff.y = 9 - (scene->_field126E / 2);
+		scene->_actor8._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
 		Common::Point pt(si, 73 - (_field1E * 12));
 		NpcMover *mover = new NpcMover();
 		scene->_actor8.addMover(mover, &pt, NULL);
 
-		scene->_actor9._moveDiff.y = 9 - (scene->_field126E / 2);
+		scene->_actor9._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
 		Common::Point pt2(di, 73 - (_field1E * 12));
 		NpcMover *mover2 = new NpcMover();
 		scene->_actor9.addMover(mover2, &pt2, NULL);
-		scene->_field126E = (scene->_field126E / 2) + (scene->_field126E % 2);
-		setDelay(17 - scene->_field126E);
+		scene->_mazeChangeAmount = (scene->_mazeChangeAmount / 2) + (scene->_mazeChangeAmount % 2);
+		setDelay(17 - scene->_mazeChangeAmount);
 		}
 		break;
 	case 1: {
@@ -3485,12 +3485,12 @@ void Scene3500::Action2::signal() {
 
 		scene->_actor7.sub1094ED();
 
-		scene->_actor8._moveDiff.y = 9 - (scene->_field126E / 2);
+		scene->_actor8._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
 		Common::Point pt(si, 73);
 		NpcMover *mover = new NpcMover();
 		scene->_actor8.addMover(mover, &pt, NULL);
 
-		scene->_actor9._moveDiff.y = 9 - (scene->_field126E / 2);
+		scene->_actor9._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
 		Common::Point pt2(di, 73);
 		NpcMover *mover2 = new NpcMover();
 		scene->_actor9.addMover(mover2, &pt2, NULL);
@@ -3581,9 +3581,9 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_field1278 = 0;
 	_field1272 = 1;
 	_field1270 = 4;
-	_field126E = 4;
-	_position1.x = 860;
-	_position1.y = 891;
+	_mazeChangeAmount = 4;
+	_mazePosition.x = 860;
+	_mazePosition.y = 891;
 	_rotation = R2_GLOBALS._scenePalette.addRotation(240, 254, -1);
 	_rotation->setDelay(0);
 	_rotation->_idxChange = 1;
@@ -3661,7 +3661,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_actor6.hide();
 
 	_actor2.postInit();
-	_actor2.setup(1004, 4, _field126E + 1);
+	_actor2.setup(1004, 4, _mazeChangeAmount + 1);
 	_actor2.setPosition(Common::Point(126, 137));
 	_actor2.fixPriority(200);
 
@@ -3672,7 +3672,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 
 	_mazeUI.setDisplayBounds(Rect(160, 89, 299, 182));
 	_mazeUI.load(2);
-	_mazeUI.setMazePosition(_position1);
+	_mazeUI.setMazePosition(_mazePosition);
 
 	_action1._field24 = 0;
 	_mazeUI.draw();
@@ -3806,90 +3806,90 @@ void Scene3500::dispatch() {
 	if (!_rotation)
 		return;
 
-	int var127A = 0;
-	int di = 0;
+	int newMazeX = 0;
+	int newMazeY = 0;
 	int var_4 = 0;
 	int var_6 = 0;
 	int var_8 = 0;
 	int var_a = 0;
 	int dx = 0;
-	int tmpVar = 0;
+	int cellId = 0;
 
-	if ((_field126E == 0) && (_field1282 == 0)) {
+	if ((_mazeChangeAmount == 0) && (_field1282 == 0)) {
 		if (_field1284 == 2)
 			R2_GLOBALS._sceneManager.changeScene(1000);
 	} else {
 		_field1282 = 0;
 		tmpRect.set(160, 89, 299, 182);
 
-		var127A = _position1.x;
-		di = _position1.y;
+		newMazeX = _mazePosition.x;
+		newMazeY = _mazePosition.y;
 		var_4 = _mazeUI.cellFromX(70) - 70;
-		var_6 = _mazeUI.cellFromY(_position1.y + 46) - 46;
-		var_8 = abs(var_4 - var127A);
-		var_a = abs(var_6 - di);
+		var_6 = _mazeUI.cellFromY(_mazePosition.y + 46) - 46;
+		var_8 = abs(var_4 - newMazeX);
+		var_a = abs(var_6 - newMazeY);
 		dx = 0;
 
-		switch (_field1276) {
+		switch (_field1276 - 1) {
 		case 0:
-			tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, 46));
-			if (    ((tmpVar == 2) || (tmpVar == 3) || (tmpVar == 6) || (tmpVar == 1))
-				|| (((tmpVar == 25) || (tmpVar == 26) || (tmpVar == 5) || (tmpVar == 14) || (tmpVar == 15)) && (var_8 > 3)) ) {
+			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+			if (    ((cellId == 2) || (cellId == 3) || (cellId == 6) || (cellId == 1))
+				|| (((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)) && (var_8 > 3)) ) {
 				R2_GLOBALS._sound2.play(339);
 				_rotation->_idxChange = 0;
 				_field1270 = 0;
-				_field126E = 0;
+				_mazeChangeAmount = 0;
 				_field1272 = 0;
 				if (_action1._field24 == 0)
 					_actor8.hide();
 			} else {
-				var_6 = _mazeUI.cellFromY(di + 46) - 46;
-				di = _position1.y - _field126E;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-				if (((tmpVar == 23) || (tmpVar == 24) || (tmpVar == 4)) && (tmpVar != dx)) {
-					di = var_6;
+				var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
+				newMazeY = _mazePosition.y - _mazeChangeAmount;
+				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				if (((cellId == 23) || (cellId == 24) || (cellId == 4)) && (cellId != dx)) {
+					newMazeY = var_6;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
-				} else if ((tmpVar == 11) && (tmpVar != dx)) {
-					di = var_6 + 3;
+				} else if ((cellId == 11) && (cellId != dx)) {
+					newMazeY = var_6 + 3;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
 				} else {
-					var_6 = _mazeUI.cellFromY(di + 46) - 46;
-					var_a = abs(var_6 - di);
-					tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
+					var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
+					var_a = abs(var_6 - newMazeY);
+					cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 
-					if ( (((tmpVar == 23) || (tmpVar == 24) || (tmpVar == 4)) && (di <= var_6) && (_position1.y>= var_6))
-						|| (((tmpVar == 25) || (tmpVar == 26) || (tmpVar == 5) || (tmpVar == 14) || (tmpVar == 15)) && (_field126E >= var_a) && (_field126E > 3) && (_action1._field24 != 0)) ) {
-						di = var_6;
-						if ((tmpVar != 25) && (tmpVar != 26) && (tmpVar != 5) && (tmpVar != 14) && (tmpVar == 15))
+					if ( (((cellId == 23) || (cellId == 24) || (cellId == 4)) && (newMazeY <= var_6) && (_mazePosition.y>= var_6))
+						|| (((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)) && (_mazeChangeAmount >= var_a) && (_mazeChangeAmount > 3) && (_action1._field24 != 0)) ) {
+						newMazeY = var_6;
+						if ((cellId != 25) && (cellId != 26) && (cellId != 5) && (cellId != 14) && (cellId == 15))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if ((tmpVar == 11) && (var_6 + 3 >= di) && (_position1.y >= var_6 + 3)) {
+					} else if ((cellId == 11) && (var_6 + 3 >= newMazeY) && (_mazePosition.y >= var_6 + 3)) {
 						R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if (((tmpVar == 25) || (tmpVar == 26) || (tmpVar == 5) || (tmpVar == 14) || (tmpVar == 15)) && (var_8 != 0) && (var_8 <= 3)) {
-						var127A = var_4;
+					} else if (((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)) && (var_8 != 0) && (var_8 <= 3)) {
+						newMazeX = var_4;
 						R2_GLOBALS._sound2.play(339);
 					} else {
 						// Nothing
@@ -3898,64 +3898,64 @@ void Scene3500::dispatch() {
 			}
 			break;
 		case 2:
-			tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-			if (  ((tmpVar == 12) || (tmpVar == 13) || (tmpVar == 11) || (tmpVar == 16) || (tmpVar == 31))
-			  || (((tmpVar == 25) || (tmpVar == 23) || (tmpVar == 14) || (tmpVar == 5) || (tmpVar == 4)) && (var_a > 3)) ) {
+			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+			if (  ((cellId == 12) || (cellId == 13) || (cellId == 11) || (cellId == 16) || (cellId == 31))
+			  || (((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)) && (var_a > 3)) ) {
 				R2_GLOBALS._sound2.play(339);
 				_rotation->_idxChange = 0;
 				_field1270 = 0;
-				_field126E = 0;
+				_mazeChangeAmount = 0;
 				_field1272 = 0;
 				if (_action1._field24 == 0)
 					_actor8.hide();
 			} else {
-				var_4 = _mazeUI.cellFromX(var127A + 70) - 70;
-				var127A = _position1.x + _field126E;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-				if (((tmpVar == 26) || (tmpVar == 24) || (tmpVar == 15)) && (tmpVar != dx)) {
-					var127A = var_4;
+				var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
+				newMazeX = _mazePosition.x + _mazeChangeAmount;
+				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				if (((cellId == 26) || (cellId == 24) || (cellId == 15)) && (cellId != dx)) {
+					newMazeX = var_4;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
-				} else if ((tmpVar == 6) && (tmpVar != dx)) {
-					var127A = var_4 - 5;
+				} else if ((cellId == 6) && (cellId != dx)) {
+					newMazeX = var_4 - 5;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
 				} else {
-					var_4 = _mazeUI.cellFromX(var127A + 70) - 70;
-					var_8 = abs(var127A - var_4);
-					tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, tmpVar + 46));
-					if ( (((tmpVar == 26) || (tmpVar == 24) || (tmpVar == 15)) && (var127A >= var_4) && (_position1.x <= var_4))
-						|| (((tmpVar == 25) || (tmpVar == 23) || (tmpVar == 14) || (tmpVar == 5) || (tmpVar == 4)) && (_field126E >= var_8) && (_field126E <= 3) && (_action1._field24 != 0)) ) {
-						var127A = var_4;
-						if ((tmpVar == 25) || (tmpVar == 23) || (tmpVar == 14) || (tmpVar == 5) || (tmpVar == 4))
+					var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
+					var_8 = abs(newMazeX - var_4);
+					cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, cellId + 46));
+					if ( (((cellId == 26) || (cellId == 24) || (cellId == 15)) && (newMazeX >= var_4) && (_mazePosition.x <= var_4))
+						|| (((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)) && (_mazeChangeAmount >= var_8) && (_mazeChangeAmount <= 3) && (_action1._field24 != 0)) ) {
+						newMazeX = var_4;
+						if ((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if ((tmpVar == 6) && (var_4 - 5 <= var127A) && (_position1.x <= var_4 - 5)) {
-						var127A = var_4 - 5;
+					} else if ((cellId == 6) && (var_4 - 5 <= newMazeX) && (_mazePosition.x <= var_4 - 5)) {
+						newMazeX = var_4 - 5;
 						R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if (((tmpVar == 25) || (tmpVar == 23) || (tmpVar == 14) || (tmpVar == 5) || (tmpVar == 4)) && (var_a != 0) && (var_a <= 3)) {
-						di = var_6;
+					} else if (((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)) && (var_a != 0) && (var_a <= 3)) {
+						newMazeY = var_6;
 						R2_GLOBALS._sound2.play(339);
 					} else {
 						// Nothing
@@ -3964,83 +3964,83 @@ void Scene3500::dispatch() {
 			}
 			break;
 		case 4:
-			tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-			if (  ((tmpVar == 2) || (tmpVar == 3) || (tmpVar == 6) || (tmpVar == 1))
-			  || (((tmpVar == 23) || (tmpVar == 24) || (tmpVar == 4) || (tmpVar == 14) || (tmpVar == 15)) && (var_8 > 3)) ) {
+			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+			if (  ((cellId == 2) || (cellId == 3) || (cellId == 6) || (cellId == 1))
+			  || (((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)) && (var_8 > 3)) ) {
 				R2_GLOBALS._sound2.play(339);
 				_rotation->_idxChange = 0;
 				_field1270 = 0;
-				_field126E = 0;
+				_mazeChangeAmount = 0;
 				_field1272 = 0;
 				if (_action1._field24 == 0)
 					_actor8.hide();
 			} else {
-				var_6 = _mazeUI.cellFromY(di + 46) - 46;
-				di = _position1.y + _field126E;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-				if (((tmpVar == 25) || (tmpVar == 26) || (tmpVar == 5)) && (tmpVar == dx)) {
+				var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
+				newMazeY = _mazePosition.y + _mazeChangeAmount;
+				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				if (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (cellId == dx)) {
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
-				} else if ((tmpVar == 16) && (tmpVar == dx)) {
-					di = var_6 - 3;
+				} else if ((cellId == 16) && (cellId == dx)) {
+					newMazeY = var_6 - 3;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
-				} else if ((tmpVar == 31) && (tmpVar == dx)) {
-					di = var_6 + 4;
+				} else if ((cellId == 31) && (cellId == dx)) {
+					newMazeY = var_6 + 4;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
 				} else {
-					var_6 = _mazeUI.cellFromY(di + 46) - 46;
-					var_a = abs(di - var_6);
-					tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-					if ( (((tmpVar == 25) || (tmpVar == 26) || (tmpVar == 5)) && (di >= var_6) && (_position1.y <= var_6))
-					  || (((tmpVar == 23) || (tmpVar == 24) || (tmpVar == 4) || (tmpVar == 14) || (tmpVar == 15)) && (_field126E >= var_a) && (_field126E <= 3) && (_action1._field24 != 0)) ){
-						if ((tmpVar != 23) && (tmpVar != 24) && (tmpVar != 4) && (tmpVar != 14) && (tmpVar != 15))
+					var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
+					var_a = abs(newMazeY - var_6);
+					cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+					if ( (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (newMazeY >= var_6) && (_mazePosition.y <= var_6))
+					  || (((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)) && (_mazeChangeAmount >= var_a) && (_mazeChangeAmount <= 3) && (_action1._field24 != 0)) ){
+						if ((cellId != 23) && (cellId != 24) && (cellId != 4) && (cellId != 14) && (cellId != 15))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if ((tmpVar == 16) && (var_6 - 3 <= di) && (_position1.y <= var_6 - 3)) {
-						di = var_6 - 3;
+					} else if ((cellId == 16) && (var_6 - 3 <= newMazeY) && (_mazePosition.y <= var_6 - 3)) {
+						newMazeY = var_6 - 3;
 						R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if ((tmpVar == 31) && (var_6 + 4 <= di) && (_position1.y <= var_6 + 4)) {
-						di = var_6 + 4;
+					} else if ((cellId == 31) && (var_6 + 4 <= newMazeY) && (_mazePosition.y <= var_6 + 4)) {
+						newMazeY = var_6 + 4;
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-						if ((var127A == 660) && (_field126E + 306 <= di) && (di <= 307))
+						if ((newMazeX == 660) && (_mazeChangeAmount + 306 <= newMazeY) && (newMazeY <= 307))
 							 ++_field1284;
 						else
 							R2_GLOBALS._sound2.play(339);
-					} else if (((tmpVar == 23) || (tmpVar == 24) || (tmpVar == 4) || (tmpVar == 14) || (tmpVar == 15)) && (var_8 != 0) && (var_8 <= 3)) {
-						var127A = var_4;
+					} else if (((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)) && (var_8 != 0) && (var_8 <= 3)) {
+						newMazeX = var_4;
 						R2_GLOBALS._sound2.play(339);
 					} else {
 						// Nothing
@@ -4049,64 +4049,64 @@ void Scene3500::dispatch() {
 			}
 			break;
 		case 6:
-			tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-			if ( ((tmpVar == 12) || (tmpVar == 13) || (tmpVar == 11) || (tmpVar == 16) || (tmpVar == 31))
-			 || (((tmpVar == 26) || (tmpVar == 24) || (tmpVar == 15) || (tmpVar == 5) || (tmpVar == 4)) && (var_a > 3)) ) {
+			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+			if ( ((cellId == 12) || (cellId == 13) || (cellId == 11) || (cellId == 16) || (cellId == 31))
+			 || (((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4)) && (var_a > 3)) ) {
 				R2_GLOBALS._sound2.play(339);
 				_rotation->_idxChange = 0;
 				_field1270 = 0;
-				_field126E = 0;
+				_mazeChangeAmount = 0;
 				_field1272 = 0;
 				if (_action1._field24 == 0)
 					_actor8.hide();
 			} else {
-				var_4 = _mazeUI.cellFromX(var127A + 70) - 70;
-				var127A = _position1.x - _field126E;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-				if (((tmpVar == 25) || (tmpVar == 23) || (tmpVar == 14)) && (tmpVar != dx)) {
-					var127A = var_4;
+				var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
+				newMazeX = _mazePosition.x - _mazeChangeAmount;
+				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				if (((cellId == 25) || (cellId == 23) || (cellId == 14)) && (cellId != dx)) {
+					newMazeX = var_4;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
-				} else if ((tmpVar == 1) && (tmpVar != dx)) {
-					var127A = var_4 + 5;
+				} else if ((cellId == 1) && (cellId != dx)) {
+					newMazeX = var_4 + 5;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
-					_field126E = 0;
+					_mazeChangeAmount = 0;
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
 				} else {
-					var_4 = _mazeUI.cellFromX(var127A + 70) - 70;
-					var_8 = abs(var_4 - var127A);
-					tmpVar = _mazeUI.getCellFromMapXY(Common::Point(var127A + 70, di + 46));
-					if ( (((tmpVar == 25) || (tmpVar == 23) || (tmpVar == 14)) && (var127A <= var_4) && (_position1.x >= var_4))
-					  || (((tmpVar == 26) || (tmpVar == 24) || (tmpVar == 15) || (tmpVar == 5) || (tmpVar == 4)) && (_field126E >= var_8) && (_field126E <= 3) && (_action1._field24 != 0)) ) {
-						var127A = var_4;
-						if ((tmpVar == 26) || (tmpVar == 24) || (tmpVar == 15) || (tmpVar == 5) || (tmpVar == 4))
+					var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
+					var_8 = abs(var_4 - newMazeX);
+					cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+					if ( (((cellId == 25) || (cellId == 23) || (cellId == 14)) && (newMazeX <= var_4) && (_mazePosition.x >= var_4))
+					  || (((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4)) && (_mazeChangeAmount >= var_8) && (_mazeChangeAmount <= 3) && (_action1._field24 != 0)) ) {
+						newMazeX = var_4;
+						if ((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if ((tmpVar == 1) && (var127A >= var_4 + 5) && (_position1.x >= var_4 + 5)) {
-						var127A = var_4 + 5;
+					} else if ((cellId == 1) && (newMazeX >= var_4 + 5) && (_mazePosition.x >= var_4 + 5)) {
+						newMazeX = var_4 + 5;
 						R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_field1270 = 0;
-						_field126E = 0;
+						_mazeChangeAmount = 0;
 						_field1272 = 0;
 						if (_action1._field24 == 0)
 							_actor8.hide();
-					} else if (((tmpVar == 26) || (tmpVar == 24) || (tmpVar == 15) || (tmpVar == 5) || (tmpVar == 4)) && (var_a != 0) && (var_a <= 3)) {
-						di = var_6;
+					} else if (((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4)) && (var_a != 0) && (var_a <= 3)) {
+						newMazeY = var_6;
 						R2_GLOBALS._sound2.play(339);
 					} else {
 						// Nothing
@@ -4119,11 +4119,11 @@ void Scene3500::dispatch() {
 		}
 
 		if (_field1284 < 2) {
-			_position1.x = var127A;
-			_position1.y = di;
-			if (_mazeUI.seteMazePosition2(_position1) != 0) {
+			_mazePosition.x = newMazeX;
+			_mazePosition.y = newMazeY;
+			if (_mazeUI.setMazePosition2(_mazePosition) != 0) {
 				_field1272 = 0;
-				_field126E = 0;
+				_mazeChangeAmount = 0;
 				_field1270 = 0;
 				_rotation->setDelay(0);
 				_rotation->_idxChange = 0;
@@ -4136,32 +4136,32 @@ void Scene3500::dispatch() {
 	}
 
 	if (_field1272 == 0) {
-		if (_field126E != _field1270) {
-			if (_field126E >= _field1270) {
-				if (_field126E == 1) {
+		if (_mazeChangeAmount != _field1270) {
+			if (_mazeChangeAmount >= _field1270) {
+				if (_mazeChangeAmount == 1) {
 					if (_action1._field24 != 0) {
-						if ( ((_field1276 == 1) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((tmpVar == 25) || (tmpVar == 26) || (tmpVar == 5) || (tmpVar == 14) || (tmpVar == 15)))
-						  || ((_field1276 == 3) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((tmpVar == 25) || (tmpVar == 23) || (tmpVar == 14) || (tmpVar == 5) || (tmpVar == 4)))
-						  || ((_field1276 == 5) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((tmpVar == 23) || (tmpVar == 24) || (tmpVar == 4) || (tmpVar == 14) || (tmpVar == 15)))
-						  || ((_field1276 == 7) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((tmpVar == 26) || (tmpVar == 24) || (tmpVar == 15) || (tmpVar == 5) || (tmpVar == 4))) ){
-							_field126E = 1;
+						if ( ((_field1276 == 1) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)))
+						  || ((_field1276 == 3) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)))
+						  || ((_field1276 == 5) && (var_8 == 0) && (var_a != 0) && (var_a <= 3) && ((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)))
+						  || ((_field1276 == 7) && (var_a == 0) && (var_8 != 0) && (var_8 <= 3) && ((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4))) ){
+							_mazeChangeAmount = 1;
 						} else
-							_field126E--;
+							_mazeChangeAmount--;
 					} else
-						_field126E--;
+						_mazeChangeAmount--;
 				} else
-					_field126E--;
+					_mazeChangeAmount--;
 			} else
-				++_field126E;
+				++_mazeChangeAmount;
 			_field1272 = 1;
 		}
-		_actor2.setFrame2(_field126E);
+		_actor2.setFrame2(_mazeChangeAmount);
 	}
 
 	if (_field1272 == 1) {
-		if (_field126E == 0)
+		if (_mazeChangeAmount == 0)
 			_rotation->_idxChange = 0;
-		else if (_field126E > 8)
+		else if (_mazeChangeAmount > 8)
 			_rotation->_idxChange = 2;
 		else
 			_rotation->_idxChange = 1;
@@ -4170,9 +4170,9 @@ void Scene3500::dispatch() {
 	if (_field1272 != 0)
 		_field1272--;
 
-	if (_field126E != 0) {
+	if (_mazeChangeAmount != 0) {
 		R2_GLOBALS._player._uiEnabled = false;
-		if (_field126E != _field1270)
+		if (_mazeChangeAmount != _field1270)
 			_aSound1.play(276);
 	} else {
 		R2_GLOBALS._player._uiEnabled = true;
