@@ -1279,8 +1279,8 @@ void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, i
 MazeUI::MazeUI() {
 	_field16 = NULL;
 	_field12 = _field14 = 0;
-	_field26 = _field28 = _width = _height = _field2E = _field30 = 0;
-	_resNum = _field34 = _field36 = _field38 = _mapImagePitch = _field40 = 0;
+	_mapCells.x = _mapCells.y = _cellSize.x = _cellSize.y = _cellOffset.x = _cellOffset.y = 0;
+	_resNum = _cellsResNum = _field36 = _field38 = _mapImagePitch = _field40 = 0;
 }
 
 MazeUI::~MazeUI() {
@@ -1290,22 +1290,16 @@ MazeUI::~MazeUI() {
 void MazeUI::synchronize(Serializer &s) {
 	SavedObject::synchronize(s);
 
-	_rect1.synchronize(s);
-	_rect2.synchronize(s);
+	s.syncAsSint16LE(_resNum);
+	if (s.isLoading())
+		load(_resNum);
 
 	s.syncAsSint16LE(_field12);
 	s.syncAsSint16LE(_field14);
-	s.syncAsSint16LE(_field26);
-	s.syncAsSint16LE(_field28);
-	s.syncAsSint16LE(_width);
-	s.syncAsSint16LE(_height);
-	s.syncAsSint16LE(_field2E);
-	s.syncAsSint16LE(_field30);
-	s.syncAsSint16LE(_resNum);
-	s.syncAsSint16LE(_field34);
+	s.syncAsSint16LE(_cellOffset.x);
+	s.syncAsSint16LE(_cellOffset.y);
 	s.syncAsSint16LE(_field36);
 	s.syncAsSint16LE(_field38);
-	s.syncAsSint16LE(_mapImagePitch);
 	s.syncAsSint16LE(_field40);
 }
 
@@ -1315,31 +1309,31 @@ void MazeUI::load(int resNum) {
 
 	const byte *header = g_resourceManager->getResource(RT17, resNum, 0);
 
-	_field34 = resNum + 1000;
-	_field26 = READ_LE_UINT16(header + 2);
-	_field28 = READ_LE_UINT16(header + 4);
+	_cellsResNum = resNum + 1000;
+	_mapCells.x = READ_LE_UINT16(header + 2);
+	_mapCells.y = READ_LE_UINT16(header + 4);
 	_field36 = 10;
 	_field38 = _field36 << 3;
 
 	Visage visage;
-	visage.setVisage(_field34, 1);
+	visage.setVisage(_cellsResNum, 1);
 
 	GfxSurface frame = visage.getFrame(2);
-	_width = frame.getBounds().width();
-	_height = frame.getBounds().height();
+	_cellSize.x = frame.getBounds().width();
+	_cellSize.y = frame.getBounds().height();
 
-	_field16 = ALLOCATE(_field26 * _field28 * 2);
+	_field16 = ALLOCATE(_mapCells.x * _mapCells.y * 2);
 	const byte *res = g_resourceManager->getResource(RT17, resNum, 1);
-	Common::copy(res, res + (_field26 * _field28 * 2), _field16);
+	Common::copy(res, res + (_mapCells.x * _mapCells.y * 2), _field16);
 
-	_field30 = _field2E = 0;
-	_field12 = (_rect1.width() + _width - 1) / _width;
-	_field14 = (_rect1.height() + _height - 1) / _height;
+	_cellOffset.y = _cellOffset.x = 0;
+	_field12 = (_displayBounds.width() + _cellSize.x - 1) / _cellSize.x;
+	_field14 = (_displayBounds.height() + _cellSize.y - 1) / _cellSize.y;
 
-	_mapImagePitch = (_field12 + 1) * _width;
-	_mapImage.create(_mapImagePitch, _height);
+	_mapImagePitch = (_field12 + 1) * _cellSize.x;
+	_mapImage.create(_mapImagePitch, _cellSize.y);
 
-	_rect2 = Rect(0, 0, _width * _field26, _height * _field28);
+	_mapBounds = Rect(0, 0, _cellSize.x * _mapCells.x, _cellSize.y * _mapCells.y);
 }
 
 void MazeUI::clear() {
@@ -1353,42 +1347,29 @@ void MazeUI::clear() {
 	_mapImage.clear();
 }
 
-int MazeUI::sub51AF8(Common::Point pt) {
-	if (!_rect1.contains(pt))
-		return -1;
-
-	int tmp1 = (pt.x - _rect1.left + _field2E) / _width;
-	int tmp2 = (pt.y - _rect1.top + _field30) / _height;
-
-	if ((tmp1 >= 0) && (tmp2 >= 0) && (_field26 > tmp1) && (_field28 > tmp2))
-		return _field16[(((_field26 * tmp2) + tmp1)* 2)];
-
-	return -1;
-}
-
-bool MazeUI::setMazePosition(Common::Point pt) {
+bool MazeUI::setMazePosition(const Common::Point &pt) {
 	bool retval = false;
 
-	_field2E = pt.x;
-	_field30 = pt.y;
+	_cellOffset.x = pt.x;
+	_cellOffset.y = pt.y;
 
-	if (_field2E < _rect2.top) {
-		_field2E = _rect2.top;
+	if (_cellOffset.x < _mapBounds.top) {
+		_cellOffset.x = _mapBounds.top;
 		retval = true;
 	}
 
-	if (_field30 < _rect2.left) {
-		_field30 = _rect2.left;
+	if (_cellOffset.y < _mapBounds.left) {
+		_cellOffset.y = _mapBounds.left;
 		retval = true;
 	}
 
-	if (_field2E + _rect1.width() > _rect2.right) {
-		_field2E = _rect2.right - _rect1.width();
+	if (_cellOffset.x + _displayBounds.width() > _mapBounds.right) {
+		_cellOffset.x = _mapBounds.right - _displayBounds.width();
 		retval = true;
 	}
 
-	if (_field30 + _rect1.height() > _rect2.bottom) {
-		_field30 = _rect2.bottom - _rect1.height();
+	if (_cellOffset.y + _displayBounds.height() > _mapBounds.bottom) {
+		_cellOffset.y = _mapBounds.bottom - _displayBounds.height();
 		retval = true;
 	}
 
@@ -1401,16 +1382,16 @@ void MazeUI::draw() {
 	Visage visage;
 
 	for (int yp = 0; yp < _field14; yp += yInc) {
-		int y = yp + _field30 / _height;
+		int y = yp + _cellOffset.y / _cellSize.y;
 		
 		for (int idx = 0; idx > _field12; ++idx) {
-			int x = _field2E / _width + idx;
+			int x = _cellOffset.x / _cellSize.x + idx;
 
-			int cell = getCellValue(Common::Point(x, y));
+			int cell = getCellFromCellXY(Common::Point(x, y));
 			if (cell >= 0) {
 				int frameNum = (cell % _field36) + 1;
 				int rlbNum = (cell % _field38) / _field36 + 1;
-				int resNum = _field34 + (cell / _field38); 
+				int resNum = _cellsResNum + (cell / _field38); 
 
 				visage.setVisage(resNum, rlbNum);
 				GfxSurface frame = visage.getFrame(frameNum);
@@ -1418,54 +1399,67 @@ void MazeUI::draw() {
 				_mapImage.copyFrom(frame, 0, idx);
 			} else {
 				GfxSurface emptyRect;
-				emptyRect.create(_width, _height);
+				emptyRect.create(_cellSize.x, _cellSize.y);
 
 				_mapImage.copyFrom(emptyRect, 0, idx);
 			}
 		}
 
 		if (yPos == 0) {
-			yPos = _rect1.top;
-			yInc = _height - (_field30 % _height); 
+			yPos = _displayBounds.top;
+			yInc = _cellSize.y - (_cellOffset.y % _cellSize.y); 
 
-			Rect srcBounds(_field2E % _width, _field30 % _height, 
-				(_field2E % _width) + _rect1.width(), (_field30 % _height) + yInc);
-			Rect destBounds(_rect1.left, yPos, _rect1.right, yPos + yInc);
+			Rect srcBounds(_cellOffset.x % _cellSize.x, _cellOffset.y % _cellSize.y, 
+				(_cellOffset.x % _cellSize.x) + _displayBounds.width(), (_cellOffset.y % _cellSize.y) + yInc);
+			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + yInc);
 
-			R2_GLOBALS._screenSurface.copyFrom(_mapImage, srcBounds, destBounds);
+			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
 		} else {
-			if ((yPos + _height) < _rect1.bottom) {
-				yInc = _height;
+			if ((yPos + _cellSize.y) < _displayBounds.bottom) {
+				yInc = _cellSize.y;
 			} else {
-				yInc = _rect1.bottom - yPos;
+				yInc = _displayBounds.bottom - yPos;
 			}
 
-			Rect srcBounds(0, _field2E, _rect1.width(), _field2E + yInc); 
-			Rect destBounds(_rect1.left, yPos, _rect1.right, yPos + yInc);
-			R2_GLOBALS._screenSurface.copyFrom(_mapImage, srcBounds, destBounds);
+			Rect srcBounds(0, _cellOffset.x, _displayBounds.width(), _cellOffset.x + yInc); 
+			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + yInc);
+			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
 		}
 	}
 }
 
-int MazeUI::getCellValue(const Common::Point &p) {
-	if (p.x < 0 || p.y < 0 || p.x >= _field26 || p.y >= _field28) {
+int MazeUI::getCellFromPixelXY(const Common::Point &pt) {
+	if (!_displayBounds.contains(pt))
+		return -1;
+
+	int tmp1 = (pt.x - _displayBounds.left + _cellOffset.x) / _cellSize.x;
+	int tmp2 = (pt.y - _displayBounds.top + _cellOffset.y) / _cellSize.y;
+
+	if ((tmp1 >= 0) && (tmp2 >= 0) && (_mapCells.x > tmp1) && (_mapCells.y > tmp2))
+		return _field16[(((_mapCells.x * tmp2) + tmp1)* 2)];
+
+	return -1;
+}
+
+int MazeUI::getCellFromCellXY(const Common::Point &p) {
+	if (p.x < 0 || p.y < 0 || p.x >= _mapCells.x || p.y >= _mapCells.y) {
 		return -1;
 	} else {
-		return READ_LE_UINT16(_field16 + (_field26 * p.y + p.x) * 2);
+		return READ_LE_UINT16(_field16 + (_mapCells.x * p.y + p.x) * 2);
 	}
 }
 
-void MazeUI::setUIBounds(Rect rect) {
-	_rect1 = rect;
-	_rect1.clip(g_globals->gfxManager()._bounds);
+void MazeUI::setDisplayBounds(const Rect &r) {
+	_displayBounds = r;
+	_displayBounds.clip(g_globals->gfxManager()._bounds);
 }
 
 int MazeUI::sub9EE22(int &arg1, int &arg2) {
-	arg1 /= _width;
-	arg2 /= _height;
+	arg1 /= _cellSize.x;
+	arg2 /= _cellSize.y;
 
-	if ((arg1 >= 0) && (arg2 >= 0) && (_field26 > arg1) && (_field28 > arg2)) {
-		return _field16[(((_field26 * arg2) + arg1) * 2)];
+	if ((arg1 >= 0) && (arg2 >= 0) && (_mapCells.x > arg1) && (_mapCells.y > arg2)) {
+		return _field16[(((_mapCells.x * arg2) + arg1) * 2)];
 	}
 
 	return -1;
@@ -1480,7 +1474,7 @@ void Scene1200::sub9DAD6(int indx) {
 
 	switch (indx) {
 	case 0:
-		if ( ((_object1.sub51AF8(Common::Point(200, 50)) > 36) || (_object1.sub51AF8(Common::Point(200, 88)) > 36))
+		if ( ((_object1.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_object1.getCellFromPixelXY(Common::Point(200, 88)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
 				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
 				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
@@ -1489,7 +1483,7 @@ void Scene1200::sub9DAD6(int indx) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1200;
 			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(200, 69)) == 36) {
+		} else if (_object1.getCellFromPixelXY(Common::Point(200, 69)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3155)
@@ -1524,7 +1518,7 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 1:
-		if ( ((_object1.sub51AF8(Common::Point(120, 50)) > 36) || (_object1.sub51AF8(Common::Point(120, 88)) > 36))
+		if ( ((_object1.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_object1.getCellFromPixelXY(Common::Point(120, 88)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
 				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
 				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
@@ -1533,7 +1527,7 @@ void Scene1200::sub9DAD6(int indx) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1201;
 			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(120, 69)) == 36) {
+		} else if (_object1.getCellFromPixelXY(Common::Point(120, 69)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3156)
@@ -1568,14 +1562,14 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 2:
-		if ( ((_object1.sub51AF8(Common::Point(140, 110)) > 36) || (_object1.sub51AF8(Common::Point(178, 110)) > 36))
+		if ( ((_object1.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_object1.getCellFromPixelXY(Common::Point(178, 110)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3))
 				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1203;
 			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(160, 110)) == 36) {
+		} else if (_object1.getCellFromPixelXY(Common::Point(160, 110)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3156)
@@ -1610,14 +1604,14 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 3:
-		if ( ((_object1.sub51AF8(Common::Point(140, 30)) > 36) || (_object1.sub51AF8(Common::Point(178, 30)) > 36))
+		if ( ((_object1.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_object1.getCellFromPixelXY(Common::Point(178, 30)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3))
 				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1202;
 			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(160, 30)) == 36) {
+		} else if (_object1.getCellFromPixelXY(Common::Point(160, 30)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3156)

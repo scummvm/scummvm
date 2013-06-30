@@ -1327,6 +1327,12 @@ void GfxManager::copyFrom(GfxSurface &src, int destX, int destY) {
 	_surface.copyFrom(src, destX, destY);
 }
 
+void GfxManager::copyFrom(GfxSurface &src, const Rect &srcBounds, const Rect &destBounds) {
+	_surface.setBounds(_bounds);
+
+	_surface.copyFrom(src, srcBounds, destBounds);
+}
+
 /*--------------------------------------------------------------------------*/
 
 

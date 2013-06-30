@@ -1099,8 +1099,6 @@ void Scene1200::Area1::proc13(int resNum, int lookLineNum, int talkLineNum, int 
 }
 
 void Scene1200::postInit(SceneObjectList *OwnerList) {
-	Rect tmpRect;
-
 	loadScene(1200);
 	SceneExt::postInit();
 
@@ -1133,8 +1131,7 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	_actor1.postInit();
 	_actor1.hide();
 
-	tmpRect.set(110, 20, 210, 120);
-	_object1.setUIBounds(tmpRect);
+	_object1.setDisplayBounds(Rect(110, 20, 210, 120));
 
 	_object1.load(1);
 	_object1.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
@@ -1397,7 +1394,7 @@ void Scene1200::process(Event &event) {
 
 	if (event.eventType == EVENT_BUTTON_DOWN) {
 		_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
-		int unk = _object1.sub51AF8(event.mousePos);
+		int unk = _object1.getCellFromPixelXY(event.mousePos);
 		switch (R2_GLOBALS._events.getCursor()) {
 		case CURSOR_ARROW:
 			event.handled = true;

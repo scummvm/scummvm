@@ -279,24 +279,20 @@ public:
 class MazeUI: public SavedObject {
 private:
 	void clear();
-	int getCellValue(const Common::Point &p);
 public:
-	Rect _rect1;
-	Rect _rect2;
+	Rect _displayBounds;
+	Rect _mapBounds;
 
 	byte *_field16;
 	GfxSurface _mapImage;
 
 	int _field12;
 	int _field14;
-	int _field26;
-	int _field28;
-	int _width;
-	int _height;
-	int _field2E;
-	int _field30;
+	Common::Point _mapCells;
+	Common::Point _cellSize;
+	Common::Point _cellOffset;
 	int _resNum;
-	int _field34;
+	int _cellsResNum;
 	int _field36;
 	int _field38;
 	int _mapImagePitch;
@@ -304,15 +300,16 @@ public:
 public:
 	MazeUI();
 	virtual ~MazeUI();
+	void setDisplayBounds(const Rect &r);
+	bool setMazePosition(const Common::Point &pt);
 	void load(int resNum);
 	void draw();
+	int getCellFromPixelXY(const Common::Point &pt);
+	int getCellFromCellXY(const Common::Point &p);
 
 	virtual Common::String getClassName() { return "MazeUI"; }
 	void synchronize(Serializer &s);
 
-	int sub51AF8(Common::Point pt);
-	bool setMazePosition(Common::Point pt);
-	void setUIBounds(Rect rect);
 	int sub9EE22(int &arg1, int &arg2);
 };
 

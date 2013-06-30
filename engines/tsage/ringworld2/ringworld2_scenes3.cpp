@@ -2978,6 +2978,8 @@ void Scene3500::Action1::sub108732(int arg1) {
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
 Scene3500::Action2::Action2() {
 	_field1E = 0;
 }
@@ -2988,6 +2990,8 @@ void Scene3500::Action2::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field1E);
 }
 
+/*--------------------------------------------------------------------------*/
+
 Scene3500::Item4::Item4() {
 	_field34 = 0;
 }
@@ -2997,6 +3001,8 @@ void Scene3500::Item4::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_field34);
 }
+
+/*--------------------------------------------------------------------------*/
 
 Scene3500::Actor7::Actor7() {
 	_fieldA4 = 0;
@@ -3046,28 +3052,29 @@ void Scene3500::Actor7::sub109693(Common::Point Pt) {
 	setPosition(Pt);
 }
 
+/*--------------------------------------------------------------------------*/
+
 int Scene3500::MazeUI3500::sub1097C9(int arg1) {
-	return (_width / 2) + arg1 - (arg1 % _width);
+	return (_cellSize.x / 2) + arg1 - (arg1 % _cellSize.x);
 }
 
 int Scene3500::MazeUI3500::sub1097EF(int arg1) {
-	return (_height / 2) + arg1 - (arg1 % _height);
+	return (_cellSize.y / 2) + arg1 - (arg1 % _cellSize.y);
 }
 
 int Scene3500::MazeUI3500::sub109C09(Common::Point pt) {
-	int vx = pt.x / _width;
-	int vy = pt.y / _height;
+	int vx = pt.x / _cellSize.x;
+	int vy = pt.y / _cellSize.y;
 
-	if ((vx >= 0) && (_field26 > vx) && (_field28 > vy)) {
-		return _field16[((_field26 * vy) + vx) * 2];
+	if ((vx >= 0) && (_mapCells.x > vx) && (_mapCells.y > vy)) {
+		return _field16[((_mapCells.x * vy) + vx) * 2];
 	} else
 		return -1;
 }
 
 int Scene3500::MazeUI3500::sub109C5E(Common::Point &p) {
 	int retVal = setMazePosition(p);
-	p.x = _field2E;
-	p.y = _field30;
+	p = _cellOffset;
 
 	return retVal;
 }
@@ -3560,7 +3567,6 @@ bool Scene3500::Actor7::startAction(CursorType action, Event &event) {
 
 void Scene3500::postInit(SceneObjectList *OwnerList) {
 	byte tmpPal[768];
-	Rect tmpRect;
 
 	loadScene(1050);
 	R2_GLOBALS._uiElements._active = false;
@@ -3664,8 +3670,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_actor3.setPosition(Common::Point(126, 108));
 	_actor3.fixPriority(200);
 
-	tmpRect.set(160, 89, 299, 182);
-	_mazeUI.setUIBounds(tmpRect);
+	_mazeUI.setDisplayBounds(Rect(160, 89, 299, 182));
 	_mazeUI.load(2);
 	_mazeUI.setMazePosition(_position1);
 
@@ -4123,7 +4128,7 @@ void Scene3500::dispatch() {
 				_rotation->setDelay(0);
 				_rotation->_idxChange = 0;
 			}
-			warning("gfx_set_pane_p");
+
 			_mazeUI.draw();
 			if (_field1284 != 0)
 				++_field1284;
