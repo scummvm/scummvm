@@ -1278,9 +1278,12 @@ void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, i
 
 MazeUI::MazeUI() {
 	_mapData = NULL;
-	_field12 = _field14 = 0;
-	_mapCells.x = _mapCells.y = _cellSize.x = _cellSize.y = _cellOffset.x = _cellOffset.y = 0;
-	_resNum = _cellsResNum = _field36 = _field38 = _mapImagePitch = _field40 = 0;
+	_cellsVisible.x = _cellsVisible.y = 0;
+	_mapCells.x = _mapCells.y = 0;
+	_cellSize.x = _cellSize.y = 0;
+	_cellOffset.x = _cellOffset.y = 0;
+	_resNum = _cellsResNum = 0;
+	_frameCount = _resCount = _mapImagePitch = _unused = 0;
 }
 
 MazeUI::~MazeUI() {
@@ -1294,13 +1297,9 @@ void MazeUI::synchronize(Serializer &s) {
 	if (s.isLoading())
 		load(_resNum);
 
-	s.syncAsSint16LE(_field12);
-	s.syncAsSint16LE(_field14);
 	s.syncAsSint16LE(_cellOffset.x);
 	s.syncAsSint16LE(_cellOffset.y);
-	s.syncAsSint16LE(_field36);
-	s.syncAsSint16LE(_field38);
-	s.syncAsSint16LE(_field40);
+	s.syncAsSint16LE(_unused);
 }
 
 void MazeUI::load(int resNum) {
@@ -1312,8 +1311,8 @@ void MazeUI::load(int resNum) {
 	_cellsResNum = resNum + 1000;
 	_mapCells.x = READ_LE_UINT16(header + 2);
 	_mapCells.y = READ_LE_UINT16(header + 4);
-	_field36 = 10;
-	_field38 = _field36 << 3;
+	_frameCount = 10;
+	_resCount = _frameCount << 3;
 
 	Visage visage;
 	visage.setVisage(_cellsResNum, 1);
@@ -1325,10 +1324,10 @@ void MazeUI::load(int resNum) {
 	_mapData = g_resourceManager->getResource(RT17, resNum, 1);
 
 	_cellOffset.y = _cellOffset.x = 0;
-	_field12 = (_displayBounds.width() + _cellSize.x - 1) / _cellSize.x;
-	_field14 = (_displayBounds.height() + _cellSize.y - 1) / _cellSize.y;
+	_cellsVisible.x = (_displayBounds.width() + _cellSize.x - 1) / _cellSize.x;
+	_cellsVisible.y = (_displayBounds.height() + _cellSize.y - 1) / _cellSize.y;
 
-	_mapImagePitch = (_field12 + 1) * _cellSize.x;
+	_mapImagePitch = (_cellsVisible.x + 1) * _cellSize.x;
 	_mapImage.create(_mapImagePitch, _cellSize.y);
 
 	_mapBounds = Rect(0, 0, _cellSize.x * _mapCells.x, _cellSize.y * _mapCells.y);
@@ -1348,8 +1347,7 @@ void MazeUI::clear() {
 bool MazeUI::setMazePosition(const Common::Point &pt) {
 	bool retval = false;
 
-	_cellOffset.x = pt.x;
-	_cellOffset.y = pt.y;
+	_cellOffset = pt;
 
 	if (_cellOffset.x < _mapBounds.top) {
 		_cellOffset.x = _mapBounds.top;
@@ -1379,17 +1377,17 @@ void MazeUI::draw() {
 	int yInc;
 	Visage visage;
 
-	for (int yp = 0; yp < _field14; yp += yInc) {
+	for (int yp = 0; yp < _cellsVisible.y; yp += yInc) {
 		int y = yp + _cellOffset.y / _cellSize.y;
 		
-		for (int idx = 0; idx > _field12; ++idx) {
+		for (int idx = 0; idx > _cellsVisible.x; ++idx) {
 			int x = _cellOffset.x / _cellSize.x + idx;
 
 			int cell = getCellFromCellXY(Common::Point(x, y));
 			if (cell >= 0) {
-				int frameNum = (cell % _field36) + 1;
-				int rlbNum = (cell % _field38) / _field36 + 1;
-				int resNum = _cellsResNum + (cell / _field38); 
+				int frameNum = (cell % _frameCount) + 1;
+				int rlbNum = (cell % _resCount) / _frameCount + 1;
+				int resNum = _cellsResNum + (cell / _resCount); 
 
 				visage.setVisage(resNum, rlbNum);
 				GfxSurface frame = visage.getFrame(frameNum);
@@ -1434,7 +1432,7 @@ int MazeUI::getCellFromPixelXY(const Common::Point &pt) {
 	int cellY = (pt.y - _displayBounds.top + _cellOffset.y) / _cellSize.y;
 
 	if ((cellX >= 0) && (cellY >= 0) && (cellX < _mapCells.x) && (cellY < _mapCells.y))
-		return (int16)READ_LE_UINT16(_mapData + ((_mapCells.x * cellY) + cellX) * 2);
+		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * cellY + cellX) * 2);
 
 	return -1;
 }

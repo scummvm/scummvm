@@ -280,23 +280,26 @@ class MazeUI: public SavedObject {
 private:
 	void clear();
 public:
+	// Position on screen to show map
 	Rect _displayBounds;
+	// The dimensions (in cells) of the entire maze map
 	Rect _mapBounds;
 
+	// Encoded cell map specifying the features of the maze
 	byte *_mapData;
+	// Image surface used to store a line of the map for rendering
 	GfxSurface _mapImage;
 
-	int _field12;
-	int _field14;
+	Common::Point _cellsVisible;
 	Common::Point _mapCells;
 	Common::Point _cellSize;
 	Common::Point _cellOffset;
 	int _resNum;
 	int _cellsResNum;
-	int _field36;
-	int _field38;
+	int _frameCount;
+	int _resCount;
 	int _mapImagePitch;
-	int _field40;
+	int _unused;
 public:
 	MazeUI();
 	virtual ~MazeUI();

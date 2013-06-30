@@ -635,10 +635,10 @@ class Scene3500 : public SceneExt {
 
 	class MazeUI3500 : public MazeUI {
 	public:
-		int sub1097C9(int arg1);
-		int sub1097EF(int arg1);
-		int sub109C09(Common::Point pt);
-		int sub109C5E(Common::Point &p);
+		int cellFromX(int arg1);
+		int cellFromY(int arg1);
+		int getCellFromMapXY(Common::Point pt);
+		bool seteMazePosition2(Common::Point &p);
 	};
 public:
 	Action1 _action1;
