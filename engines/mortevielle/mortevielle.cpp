@@ -101,10 +101,6 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 }
 
 MortevielleEngine::~MortevielleEngine() {
-	// Allocated from run() > initialise() > loadCFIPH()
-	free(_speechManager._cfiphBuffer);
-	// Allocated from run() > initialise() > loadCFIEC()
-	free(_cfiecBuffer);
 }
 
 /**
@@ -174,8 +170,10 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	// Load the mort.dat resource
 	Common::ErrorCode result = loadMortDat();
-	if (result != Common::kNoError)
+	if (result != Common::kNoError) {
+		_screenSurface.free();
 		return result;
+	}
 
 	// Load some error messages (was previously in chartex())
 	_hintPctMessage = getString(580);  // You should have noticed %d hints
@@ -341,6 +339,11 @@ Common::Error MortevielleEngine::run() {
 
 	// Run the main game loop
 	mainGame();
+	
+	// Cleanup (allocated in initialise())
+	_screenSurface.free();
+	free(_speechManager._cfiphBuffer);
+	free(_cfiecBuffer);
 
 	return Common::kNoError;
 }
