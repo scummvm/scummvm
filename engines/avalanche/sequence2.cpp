@@ -55,11 +55,12 @@ void Sequence::first_show(byte what) {
 
 void Sequence::then_show(byte what) {
 	byte fv;
-	for (fv = 1; fv <= seq_length; fv ++)
+	for (fv = 1; fv <= seq_length; fv++) {
 		if (seq[fv] == 0) {
 			seq[fv] = what;
 			return;
 		}
+	}
 }
 
 void Sequence::then_flip(byte where, byte ped) {
