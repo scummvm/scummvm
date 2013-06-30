@@ -27,12 +27,9 @@
 
 /* TRIP5	Trippancy V */
 
-#include "avalanche/trip6.h"
-#include "common/scummsys.h"
-#include "common/textconsole.h"
-
 #include "avalanche/avalanche.h"
 
+#include "avalanche/trip6.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/visa2.h"
@@ -41,6 +38,9 @@
 #include "avalanche/sequence2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/enid2.h"
+
+#include "common/scummsys.h"
+#include "common/textconsole.h"
 
 /*#include "Dropdown.h"*/
 
@@ -356,11 +356,10 @@ byte Trip::geida_ped(byte which) {
 	return geida_ped_result;
 }
 
-void Trip::catamove(byte ped)
+void Trip::catamove(byte ped) {
 /* When you enter a new position in the catacombs, this procedure should
 	be called. It changes the Also codes so that they may match the picture
 	on the screen. (Coming soon: It draws up the screen, too.) */
-{
 
 	warning("Repair array indexes in Trip::catamove()");
 

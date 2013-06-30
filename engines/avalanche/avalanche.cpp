@@ -60,6 +60,7 @@ namespace Avalanche {
 		_sequence.setParent(this);
 		_timeout.setParent(this);
 		_trip.setParent(this);
+		_acci.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {

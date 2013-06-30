@@ -32,12 +32,12 @@
 #include "avalanche/visa2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/scrolls2.h"
-//#include "avalanche/acci2.h"
+#include "avalanche/acci2.h"
 #include "avalanche/lucerna2.h"
+#include "avalanche/trip6.h"
 
 #include "common/textconsole.h"
 
-/*#include "Trip5.h"*/
 
 namespace Avalanche {
 

@@ -29,12 +29,10 @@
 
 // DON'T FORGET ABOUT THE ARRAY INDEXES, THEY MAY'LL CAUSE TROUBLES!!!
 
-#include "common/textconsole.h"
-
-#include "avalanche/timeout2.h"
 
 #include "avalanche/avalanche.h"
 
+#include "avalanche/timeout2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/trip6.h"
@@ -43,6 +41,8 @@
 #include "avalanche/sequence2.h"
 #include "avalanche/enid2.h"
 #include "avalanche/pingo2.h"
+
+#include "common/textconsole.h"
 
 namespace Avalanche {
 
@@ -496,7 +496,7 @@ void Timeout::buydrinks() {
 	_vm->_visa.dixi('D', 1); /* That'll be thruppence. */
 	if (_vm->_gyro.pennycheck(3)) /* Pay 3d. */
 		_vm->_visa.dixi('D', 3); /* Tell 'em you paid up. */
-	Acci::have_a_drink();
+	_vm->_acci.have_a_drink();
 }
 
 void Timeout::buywine() {
@@ -621,8 +621,7 @@ void Timeout::winning() {
 	do {
 		_vm->_lucerna.checkclick();
 	} while (!(_vm->_gyro.mrelease == 0));
-
-	_vm->_lucerna.callverb(Acci::vb_score);
+	_vm->_lucerna.callverb(_vm->_acci.vb_score);
 	_vm->_scrolls.display(" T H E    E N D ");
 	_vm->_gyro.lmo = true;
 }
