@@ -45,7 +45,7 @@ static void plotPixel(int x, int y, int color, void *data) {
 Pixel::Pixel(byte *vidMem, uint8 bpp, byte *min, byte *max) :
 	_vidMem(vidMem), _bpp(bpp), _min(min), _max(max) {
 
-	assert((_bpp == 1) || (_bpp == 2));
+	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
 	assert(_vidMem >= _min);
 	assert(_vidMem <  _max);
 }
@@ -91,6 +91,8 @@ uint32 Pixel::get() const {
 		return *((byte *) _vidMem);
 	if (_bpp == 2)
 		return *((uint16 *) _vidMem);
+	if (_bpp == 4)
+		return *((uint32 *) _vidMem);
 
 	return 0;
 }
@@ -103,6 +105,8 @@ void Pixel::set(uint32 p) {
 		*((byte *) _vidMem) = (byte) p;
 	if (_bpp == 2)
 		*((uint16 *) _vidMem) = (uint16) p;
+	if (_bpp == 4)
+		*((uint32 *) _vidMem) = (uint32) p;
 }
 
 bool Pixel::isValid() const {
@@ -113,7 +117,7 @@ bool Pixel::isValid() const {
 ConstPixel::ConstPixel(const byte *vidMem, uint8 bpp, const byte *min, const byte *max) :
 	_vidMem(vidMem), _bpp(bpp), _min(min), _max(max) {
 
-	assert((_bpp == 1) || (_bpp == 2));
+	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
 	assert(_vidMem >= _min);
 	assert(_vidMem <  _max);
 }
@@ -159,6 +163,8 @@ uint32 ConstPixel::get() const {
 		return *((const byte *) _vidMem);
 	if (_bpp == 2)
 		return *((const uint16 *) _vidMem);
+	if (_bpp == 4)
+		return *((const uint32 *) _vidMem);
 
 	return 0;
 }
@@ -172,7 +178,7 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
 	_width(width), _height(height), _bpp(bpp), _vidMem(vidMem) {
 
 	assert((_width > 0) && (_height > 0));
-	assert((_bpp == 1) || (_bpp == 2));
+	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
 
 	if (!_vidMem) {
 		_vidMem    = new byte[_bpp * _width * _height];
@@ -187,7 +193,7 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem) :
 	_width(width), _height(height), _bpp(bpp), _vidMem(0) {
 
 	assert((_width > 0) && (_height > 0));
-	assert((_bpp == 1) || (_bpp == 2));
+	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
 
 	_vidMem    = new byte[_bpp * _width * _height];
 	_ownVidMem = true;
@@ -504,7 +510,7 @@ void Surface::fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uin
 		return;
 	}
 
-	assert(_bpp == 2);
+	assert((_bpp == 2) || (_bpp == 4));
 
 	// Otherwise, we have to fill by pixel
 
