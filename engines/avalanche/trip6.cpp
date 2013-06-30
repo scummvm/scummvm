@@ -85,7 +85,7 @@ bool triptype::collision_check() {
 	byte fv;
 
 	bool collision_check_result = false;
-	for (fv = 1; fv <= _tr->numtr; fv ++) {
+	for (fv = 1; fv <= _tr->numtr; fv++) {
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
 			((x + a.xl) > _tr->tr[fv].x) &&
 			(x < (_tr->tr[fv].x + _tr->tr[fv].a.xl)) &&
@@ -93,7 +93,8 @@ bool triptype::collision_check() {
 			collision_check_result = true;
 			break;
 		}
-		// CHECKME: Only checks the first element of the for() statement
+		// CHECKME: Only checks the first element of the for() statement.
+		// Both lines should certainly be removed
 		collision_check_result = false;
 		return collision_check_result;
 	}
@@ -276,8 +277,8 @@ triptype *triptype::done() {
 	xw = with.xl / 8;
 	if ((with.xl % 8) > 0)
 		xw += 1;
-	for (aa = 1; aa <= /*nds*seq*/ with.num; aa ++) {
-		totalnum --;
+	for (aa = 1; aa <= /*nds*seq*/ with.num; aa++) {
+		totalnum--;
 		free(mani[totalnum]);
 		free(sil[totalnum]); /* <<- Width of a siltype. */
 	}
@@ -293,14 +294,14 @@ getsettype *getsettype::init() {
 }
 
 void getsettype::remember(bytefield r) {
-	numleft ++;
+	numleft++;
 	warning("STUB: _vm->_timeout.getsettype::remember()");
 	gs[numleft] = r;
 }
 
 void getsettype::recall(bytefield &r) {
 	r = gs[numleft];
-	numleft --;
+	numleft--;
 }
 
 Trip::Trip() {
@@ -396,7 +397,7 @@ void Trip::catamove(byte ped) {
 		return;
 	}
 
-	if (! _vm->_gyro.dna.enter_catacombs_from_lusties_room)
+	if (!_vm->_gyro.dna.enter_catacombs_from_lusties_room)
 		_vm->_lucerna.load(29);
 	here = _vm->_gyro.catamap[_vm->_gyro.dna.cat_y][_vm->_gyro.dna.cat_x];
 
@@ -531,7 +532,8 @@ void Trip::catamove(byte ped) {
 			
 		if ((xy_uint16 == 2051) & (_vm->_gyro.dna.geida_follows))
 			_vm->_gyro.magics[13].op = _vm->_gyro.exclaim;
-		else _vm->_gyro.magics[13].op = _vm->_gyro.special; /* Right exit south. */
+		else
+			_vm->_gyro.magics[13].op = _vm->_gyro.special; /* Right exit south. */
 
 		_vm->_gyro.magics[7].op = _vm->_gyro.bounces;
 		_vm->_gyro.magics[12].op = _vm->_gyro.bounces;
@@ -637,13 +639,13 @@ void Trip::catamove(byte ped) {
 		_vm->_celer.show_one(2);
 		break;      /* [5,7] : "Ite Mingite" sign. */
 	case 258:
-		for (fv = 0; fv <= 2; fv ++) { /* [2,1] : Art gallery - pictures */
+		for (fv = 0; fv <= 2; fv++) { /* [2,1] : Art gallery - pictures */
 			_vm->_celer.show_one_at(15, 130 + fv * 120, 70);
 			_vm->_celer.show_one_at(16, 184 + fv * 120, 78);
 		}
 		break;
 	case 1287:
-		for (fv = 10; fv <= 13; fv ++)
+		for (fv = 10; fv <= 13; fv++)
 			_vm->_celer.show_one(fv);
 		break; /* [7,5] : 4 candles. */
 	case 776:
@@ -661,7 +663,7 @@ void Trip::catamove(byte ped) {
 	if ((_vm->_gyro.dna.geida_follows) & (ped > 0)) {
 		triptype &with = tr[2];
 
-		if (! with.quick)  /* If we don't already have her... */
+		if (!with.quick)  /* If we don't already have her... */
 			tr[2].init(5, true, this); /* ...Load Geida. */
 		apped(2, geida_ped(ped));
 		tr[2].call_eachstep = true;
@@ -699,7 +701,7 @@ void Trip::call_special(uint16 which) {
 	case 3: /* _vm->_gyro.special 3: Room 71: triggers dart. */
 		tr[1].bounce(); /* Must include that. */
 
-		if (! _vm->_gyro.dna.arrow_triggered) {
+		if (!_vm->_gyro.dna.arrow_triggered) {
 			_vm->_gyro.dna.arrow_triggered = true;
 			apped(2, 4); /* The dart starts at ped 4, and... */
 			tr[2].walkto(5); /* flies to ped 5. */
@@ -754,7 +756,7 @@ void Trip::call_special(uint16 which) {
 		_vm->_timeout.set_up_timer(200, _vm->_timeout.procmeet_avaroid, _vm->_timeout.reason_meeting_avaroid);
 		break;
 	case 8:        /* _vm->_gyro.special 8: leave du Lustie's room. */
-		if ((_vm->_gyro.dna.geida_follows) && (! _vm->_gyro.dna.lustie_is_asleep)) {
+		if ((_vm->_gyro.dna.geida_follows) && (!_vm->_gyro.dna.lustie_is_asleep)) {
 			_vm->_visa.dixi('q', 63);
 			tr[2].turn(down);
 			tr[2].stopwalk();
@@ -763,7 +765,7 @@ void Trip::call_special(uint16 which) {
 		}
 		break;
 	case 9: /* _vm->_gyro.special 9: lose Geida to Robin Hood... */
-		if (! _vm->_gyro.dna.geida_follows)
+		if (!_vm->_gyro.dna.geida_follows)
 			return;   /* DOESN'T COUNT: no Geida. */
 		tr[2].call_eachstep = false; /* She no longer follows Avvy around. */
 		tr[2].walkto(4); /* She walks to somewhere... */
@@ -960,18 +962,24 @@ void Trip::getback() {
 	while (getset[1 - _vm->_gyro.cp].numleft > 0) {
 		getset[1 - _vm->_gyro.cp].recall(r);
 
-		/*    if overlaps_with_mouse and not endangered then
+		/*
+		if overlaps_with_mouse and not endangered then
 			begin
 				endangered:=true;
 				blitfix;
 				Super_Off;
-			end;*/
+			end;
+		*/
 
 		_vm->_lucerna.mblit(r.x1, r.y1, r.x2, r.y2, 3, 1 - _vm->_gyro.cp);
 	}
 
 	_vm->_lucerna.blitfix();
-	/*if endangered then*/ /*Super_On;*/
+
+	/*
+	if endangered then
+		Super_On;
+	*/
 }
 
 /* Eachstep procedures: */
@@ -997,7 +1005,7 @@ void Trip::follow_avvy_y(byte tripnum) {
 }
 
 void Trip::back_and_forth(byte tripnum) {
-	if (! tr[tripnum].homing) {
+	if (!tr[tripnum].homing) {
 		if (tr[tripnum].face == right)
 			tr[tripnum].walkto(4);
 		else
@@ -1006,7 +1014,7 @@ void Trip::back_and_forth(byte tripnum) {
 }
 
 void Trip::face_avvy(byte tripnum) {
-	if (! tr[tripnum].homing) {
+	if (!tr[tripnum].homing) {
 		if (tr[1].x >= tr[tripnum].x)
 			tr[tripnum].face = right;
 		else
@@ -1165,14 +1173,14 @@ void Trip::call_andexors() {
 	for (int i = 0; i < 5; i++)
 		order[i] = 0;
 
-	for (fv = 1; fv <= numtr; fv ++) {
+	for (fv = 1; fv <= numtr; fv++) {
 		if (tr[fv].quick && tr[fv].visible)
 			order[fv] = fv;
 	}
 
 	do {
 		ok = true;
-		for (fv = 1; fv <= 4; fv ++) {
+		for (fv = 1; fv <= 4; fv++) {
 			if (((order[fv] != 0) && (order[fv + 1] != 0))
 					&& (tr[order[fv]].y > tr[order[fv + 1]].y)) {
 				/* Swap them! */
@@ -1184,7 +1192,7 @@ void Trip::call_andexors() {
 		}
 	} while (!ok);
 
-	for (fv = 1; fv <= 5; fv ++) {
+	for (fv = 1; fv <= 5; fv++) {
 		if (order[fv] > 0)
 			tr[order[fv]].andexor();
 	}
@@ -1195,13 +1203,13 @@ void Trip::trippancy_link() {
 
 	if (_vm->_gyro.ddmnow | _vm->_gyro.ontoolbar | _vm->_gyro.seescroll)
 		return;
-	for (fv = 1; fv <= numtr; fv ++) {
+	for (fv = 1; fv <= numtr; fv++) {
 		if (tr[fv].quick)
 			tr[fv].walk();
 	}
 
 	call_andexors();
-	for (fv = 1; fv <= numtr; fv ++) {
+	for (fv = 1; fv <= numtr; fv++) {
 		triptype &with = tr[fv];
 		if (with.quick && with.call_eachstep) {
 			switch (tr[fv].eachstep) {
@@ -1237,9 +1245,11 @@ void Trip::get_back_loretta() {
 	byte fv;
 
 	/* for fv:=1 to numtr do with tr[fv] do if quick then getback;*/
-	for (fv = 1; fv <= numtr; fv ++) if (tr[fv].quick) {
-		getback();
-		return;
+	for (fv = 1; fv <= numtr; fv++) {
+		if (tr[fv].quick) {
+			getback();
+			return;
+		}
 	}
 	/* for fv:=0 to 1 do begin cp:=1-cp; getback; end;*/
 }
@@ -1252,7 +1262,7 @@ void Trip::stopwalking() {
 }
 
 void Trip::tripkey(char dir) {
-	if ((_vm->_gyro.ctrl == cjoy) | (! _vm->_gyro.dna.user_moves_avvy))
+	if ((_vm->_gyro.ctrl == cjoy) | (!_vm->_gyro.dna.user_moves_avvy))
 		return;
 
 	triptype &with = tr[1];
@@ -1325,7 +1335,7 @@ void Trip::readstick() {
 }
 
 void Trip::getsetclear() {
-	for (byte fv = 0; fv <= 1; fv ++)
+	for (byte fv = 0; fv <= 1; fv++)
 		getset[fv].init();
 }
 
@@ -1370,7 +1380,7 @@ void Trip::tidy_after_mouse() {
 void Trip::fliproom(byte room, byte ped) {
 	byte fv;
 
-	if (! _vm->_gyro.alive) {
+	if (!_vm->_gyro.alive) {
 		/* You can't leave the room if you're dead. */
 		tr[1].ix = 0;
 		tr[1].iy = 0; /* Stop him from moving. */
@@ -1397,7 +1407,7 @@ void Trip::fliproom(byte room, byte ped) {
 	getsetclear();
 
 
-	for (fv = 2; fv <= numtr; fv ++) {
+	for (fv = 2; fv <= numtr; fv++) {
 		if (tr[fv].quick)
 			tr[fv].done();
 	} /* Deallocate sprite */
@@ -1412,7 +1422,7 @@ void Trip::fliproom(byte room, byte ped) {
 	_vm->_gyro.dna.rw = tr[1].face;
 	_vm->_lucerna.showrw();
 
-	for (fv = 0; fv <= 1; fv ++) {
+	for (fv = 0; fv <= 1; fv++) {
 		_vm->_gyro.cp = 1 - _vm->_gyro.cp;
 		getback();
 	}
@@ -1447,7 +1457,7 @@ bool Trip::neardoor() {       /* returns True if you're near a door! */
 	uy = tr[1].y + tr[1].a.yl;
 		
 	nd = false;
-	for (fv = 9; fv <= _vm->_gyro.numfields; fv ++) {
+	for (fv = 9; fv <= _vm->_gyro.numfields; fv++) {
 		_vm->_gyro.fields[fv];
 
 		if ((ux >= _vm->_gyro.fields[fv].x1) && (ux <= _vm->_gyro.fields[fv].x2)

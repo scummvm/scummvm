@@ -493,7 +493,7 @@ void Gyro::background(byte x) {
 void Gyro::hang_around_for_a_while() {
 	byte fv;
 
-	for (fv = 1; fv <= 28; fv ++)
+	for (fv = 1; fv <= 28; fv++)
 		slowdown();
 }
 

@@ -61,7 +61,7 @@ void Celer::pics_link() {
 	case r__outsideargentpub:
 		if ((_vm->_gyro.roomtime % int32(12)) == 0)
 			show_one(int32(1) + (_vm->_gyro.roomtime / int32(12)) % int32(4));
-				break;
+		break;
 
 	case r__brummieroad:
 		if ((_vm->_gyro.roomtime % int32(2)) == 0)
@@ -74,7 +74,7 @@ void Celer::pics_link() {
 		break;
 
 	case r__yours:
-		if ((! _vm->_gyro.dna.avvy_is_awake) && ((_vm->_gyro.roomtime % int32(4)) == 0))
+		if ((!_vm->_gyro.dna.avvy_is_awake) && ((_vm->_gyro.roomtime % int32(4)) == 0))
 			show_one(int32(1) + (_vm->_gyro.roomtime / int32(12)) % int32(2));
 		break;
 

@@ -83,7 +83,7 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 
 	_vm->_gyro.super_off();
 
-	/*	for (page_ = 0; page_ <= 1; page_ ++) {
+	/*	for (page_ = 0; page_ <= 1; page_++) {
 		setactivepage(page_);
 		bar(419, 195, 438, 197);
 	}*/
@@ -98,8 +98,8 @@ void Scrolls::easteregg() {
 	warning("STUB: Scrolls::easteregg(). Calls of Pascal units need to be removed.");
 
 	/*	background(15);
-	for (fv = 4; fv <= 100; fv ++) {
-		for (ff = 0; ff <= 70; ff ++) {
+	for (fv = 4; fv <= 100; fv++) {
+		for (ff = 0; ff <= 70; ff++) {
 			sound(fv * 100 + ff * 10);
 			delay(1);
 		}
@@ -128,23 +128,22 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	ox = 0;
 	_vm->_logger.log_scrollline();
 
-	for (xx = 1; xx <= lz; xx ++) {
+	for (xx = 1; xx <= lz; xx++) {
 		switch (z[xx]) {
-		case '\22': {
+		case '\22':
 			cfont = roman;
 			_vm->_logger.log_roman();
-					}
-					break;
-		case '\6': {
+			break;
+		case '\6':
 			cfont = italic;
 			_vm->_logger.log_italic();
-					}
-					break;
-		default: {
+			break;
+		default:
 			ox += 1;
-			for (yy = 1; yy <= 12; yy ++) itw[yy][ox] = ~ ch[cfont][z[xx]][yy + 1];
+			for (yy = 1; yy <= 12; yy++)
+				itw[yy][ox] = ~ ch[cfont][z[xx]][yy + 1];
 			_vm->_logger.log_scrollchar(Common::String(z[xx]));
-					}
+			break;
 		}
 	}
 
@@ -152,10 +151,10 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	if (offset) {
 		/* offsetting routine */
 		lz += 1;
-		for (yy = 1; yy <= 12; yy ++) {
+		for (yy = 1; yy <= 12; yy++) {
 			bit = 240;
 			itw[yy][lz] = 255;
-			for (xx = 1; xx <= lz; xx ++) {
+			for (xx = 1; xx <= lz; xx++) {
 				t = itw[yy][xx];
 				itw[yy][xx] = bit + t / 16;
 				bit = t << 4;
@@ -163,9 +162,9 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 		}
 	}
 	yp = x + y * 80 + (1 - _vm->_gyro.cp) * _vm->_gyro.pagetop;
-	for (yy = 1; yy <= 12; yy ++) {
+	for (yy = 1; yy <= 12; yy++) {
 		yp += 80;
-		for (bit = 0; bit <= locol; bit ++) {
+		for (bit = 0; bit <= locol; bit++) {
 			/*port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -190,15 +189,10 @@ void Scrolls::dialogue() {
 	warning("STUB: Scrolls::dialogue()");
 }
 
-
-
-
 void Scrolls::store_(byte what, tunetype &played) {
 	memcpy(played, played+1, sizeof(played) - 1);
 	played[30] = what;
 }
-
-
 
 bool Scrolls::they_match(tunetype &played) {
 	byte fv, mistakes;
@@ -206,7 +200,7 @@ bool Scrolls::they_match(tunetype &played) {
 	bool they_match_result;
 	mistakes = 0;
 
-	for (fv = 1; fv <= sizeof(played); fv ++)
+	for (fv = 1; fv <= sizeof(played); fv++)
 		if (played[fv] != Gyro::tune[fv])
 			mistakes++;
 
@@ -241,15 +235,6 @@ void Scrolls::music_scroll() {
 	//}
 
 }
-
-
-
-
-
-
-
-
-
 
 
 } // End of namespace Avalanche

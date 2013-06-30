@@ -82,13 +82,12 @@ void Logger::setParent(AvalancheEngine *vm) {
 void Logger::centre(byte size, byte x) { /* Prints req'd number of spaces. */
 	byte fv;
 	
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::centre()");
-	/*for (fv = 1; fv <= size - (x / 2);
-		fv ++)
-	output << logfile << ' ';*/
+	/*for (fv = 1; fv <= size - (x / 2); fv++)
+		output << logfile << ' ';*/
 }
 
 void Logger::log_setup(Common::String name, bool printing) {     /* Sets up. */
@@ -101,43 +100,48 @@ void Logger::log_setup(Common::String name, bool printing) {     /* Sets up. */
 	log_epson = printing;
 	logging = true;
 
-	if (! printing)  {
-	quote = '"';
-	unquote = '"';
-	copyright = "(c)";
+	if (!printing)  {
+		quote = '"';
+		unquote = '"';
+		copyright = "(c)";
 	}*/
 }
 
 void Logger::log_divider() {   /* Prints the divider sign. */
 	byte fv;
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::log_divider()");
 
-	/*if (_vm->_gyro.log_epson) {
-	output << logfile << Common::String(' ') + double_width;
-	for (fv = 1; fv <= divide_indent; fv ++) output << logfile << ' ';
-	output << logfile << Common::String(' ') + double_off;
-	} else
-	for (fv = 1; fv <= 36; fv ++) output << logfile << ' ';
-	output << logfile << divide << NL;*/
+	/*
+	if (_vm->_gyro.log_epson) {
+		output << logfile << Common::String(' ') + double_width;
+		for (fv = 1; fv <= divide_indent; fv++)
+			output << logfile << ' ';
+		output << logfile << Common::String(' ') + double_off;
+	} else {
+		for (fv = 1; fv <= 36; fv++)
+			output << logfile << ' ';
+	}
+	output << logfile << divide << NL;
+	*/
 }
 
 void Logger::log_command(Common::String x) {     /* Prints a command */
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::log_command()");
 
 	/*if (_vm->_gyro.log_epson)
-	output << logfile << double_width + '>' + double_off + ' ' + italic + x + italic_off << NL;
+		output << logfile << double_width + '>' + double_off + ' ' + italic + x + italic_off << NL;
 	else
-	output << logfile << Common::String("> ") + x << NL;*/
+		output << logfile << Common::String("> ") + x << NL;*/
 }
 
 void Logger::log_addstuff(Common::String x) {
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	scroll_line += x;
@@ -145,7 +149,7 @@ void Logger::log_addstuff(Common::String x) {
 
 void Logger::log_scrollchar(Common::String x) {     /* print one character */
 	Common::String z;
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	switch (x[1]) {
@@ -166,7 +170,7 @@ void Logger::log_scrollchar(Common::String x) {     /* print one character */
 }
 
 void Logger::log_italic() {
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::log_italic()");
@@ -178,7 +182,7 @@ void Logger::log_italic() {
 }
 
 void Logger::log_roman() {
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::log_roman()");
@@ -190,7 +194,7 @@ void Logger::log_roman() {
 }
 
 void Logger::log_epsonroman() {   /* This only sends the Roman code if you're on Epson.*/
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::log_epsonroman()");
@@ -206,29 +210,32 @@ void Logger::log_scrollline() {   /* Set up a line for the scroll driver */
 
 void Logger::log_scrollendline(bool centred) {
 	byte x, fv;
-	if (! _vm->_gyro.logging)  return;
+	if (!_vm->_gyro.logging)
+		return;
 	x = 17;
-	if (centred)  x += (50 - scroll_line_length) / 2;
+	if (centred)
+		x += (50 - scroll_line_length) / 2;
 
 	warning("STUB: Logger::log_scrollendline()");
 
-	/*for (fv = 1; fv <= x; fv ++)
+	/*for (fv = 1; fv <= x; fv++)
 		output << logfile << ' ';
 	output << logfile << scroll_line << NL;*/
 }
 
 void Logger::log_bubbleline(byte linenum, byte whom, Common::String x) {
 	byte fv;
-	if (! _vm->_gyro.logging)  return;
+	if (!_vm->_gyro.logging)
+		return;
 
 	warning("STUB: Logger::log_bubbleline()");
 
 	/*if (linenum == 1) {
-		for (fv = 1; fv <= 15; fv ++)
+		for (fv = 1; fv <= 15; fv++)
 			output << logfile << ' ';
 		output << logfile << italic + tr[whom].a.name + ": " + italic_off + x << NL;
 	} else {
-		for (fv = 1; fv <= 17; fv ++)
+		for (fv = 1; fv <= 17; fv++)
 			output << logfile << ' ';
 		output << logfile << x << NL;
 	}*/
@@ -243,11 +250,12 @@ void Logger::log_newline() {
 
 void Logger::log_newroom(Common::String where) {
 	byte fv;
-	if (! _vm->_gyro.logging)  return;
+	if (!_vm->_gyro.logging)
+		return;
 
 	warning("STUB: Logger::log_newroom()");
 
-	/*for (fv = 1; fv <= 20; fv ++)
+	/*for (fv = 1; fv <= 20; fv++)
 		output << logfile << ' ';
 	if (_vm->_gyro.log_epson)
 		output << logfile << emph_on;
@@ -259,7 +267,7 @@ void Logger::log_newroom(Common::String where) {
 
 void Logger::log_aside(Common::String what) {
 /* This writes "asides" to the printer. For example, moves in Nim. */
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::log_aside()");
@@ -270,12 +278,12 @@ void Logger::log_aside(Common::String what) {
 
 void Logger::log_score(uint16 credit, uint16 now) {
 	byte fv;
-	if (! _vm->_gyro.logging)
+	if (!_vm->_gyro.logging)
 		return;
 
 	warning("STUB: Logger::log_score()");
 
-	/*for (fv = 1; fv <= 50; fv ++)
+	/*for (fv = 1; fv <= 50; fv++)
 		output << logfile << ' ';
 	output << logfile << "Score " << italic << "credit : " << credit << italic_off << " total : " << now << NL;*/
 }

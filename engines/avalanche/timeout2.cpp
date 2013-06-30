@@ -76,7 +76,7 @@ void Timeout::one_tick() {
 	if (_vm->_gyro.ddmnow)
 		return;
 
-	for (fv = 1; fv <= 7; fv ++) {
+	for (fv = 1; fv <= 7; fv++) {
 		timetype &with = times[fv];
 		if (with.time_left > 0) {
 			with.time_left -= 1;
@@ -217,7 +217,7 @@ void Timeout::one_tick() {
 void Timeout::lose_timer(byte which) {
 	byte fv;
 
-	for (fv = 1; fv <= 7; fv ++) {
+	for (fv = 1; fv <= 7; fv++) {
 		timetype &with = times[fv];
 		if (with.what_for == which)
 			with.time_left = 0;
@@ -240,7 +240,7 @@ end;*/
 /* Timeout procedures: */
 
 void Timeout::open_drawbridge() {
-	_vm->_gyro.dna.drawbridge_open ++;
+	_vm->_gyro.dna.drawbridge_open++;
 	_vm->_celer.show_one(_vm->_gyro.dna.drawbridge_open - 1);
 
 	if (_vm->_gyro.dna.drawbridge_open == 4)
@@ -253,7 +253,7 @@ void Timeout::open_drawbridge() {
 
 void Timeout::avaricius_talks() {
 	_vm->_visa.dixi('q', _vm->_gyro.dna.avaricius_talk);
-	_vm->_gyro.dna.avaricius_talk ++;
+	_vm->_gyro.dna.avaricius_talk++;
 
 	if (_vm->_gyro.dna.avaricius_talk < 17)
 		set_up_timer(177, procavaricius_talks, reason_avariciustalks);
