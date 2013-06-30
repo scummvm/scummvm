@@ -3824,7 +3824,7 @@ void Scene3500::dispatch() {
 
 		newMazeX = _mazePosition.x;
 		newMazeY = _mazePosition.y;
-		var_4 = _mazeUI.cellFromX(70) - 70;
+		var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
 		var_6 = _mazeUI.cellFromY(_mazePosition.y + 46) - 46;
 		var_8 = abs(var_4 - newMazeX);
 		var_a = abs(var_6 - newMazeY);
@@ -3833,8 +3833,8 @@ void Scene3500::dispatch() {
 		switch (_field1276 - 1) {
 		case 0:
 			cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
-			if (    ((cellId == 2) || (cellId == 3) || (cellId == 6) || (cellId == 1))
-				|| (((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)) && (var_8 > 3)) ) {
+			if (((cellId == 2) || (cellId == 3) || (cellId == 6) || (cellId == 1)) ||
+					((cellId == 25 || cellId == 26 || cellId == 5 || cellId == 14 || cellId == 15) && var_8 > 3)) {
 				R2_GLOBALS._sound2.play(339);
 				_rotation->_idxChange = 0;
 				_field1270 = 0;
