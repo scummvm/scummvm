@@ -29,17 +29,27 @@
 
 #include "zvision/puzzle.h"
 #include "zvision/control.h"
+#include "zvision/singleValueContainer.h"
 
 namespace ZVision {
 
 class ScriptManager {
+private:
+	/** Holds the global state variables. Optimize for fast random access */
+	Common::HashMap<uint32, byte> _globalState;
+	/** Holds the currently active puzzles. Optimize for fast iteration */
+	Common::List<Puzzle> _puzzles;
+	/** Holds the currently active controls. Optimize for fast iteration */
+	Common::List<Control> _controls;
+
 public:
-	ScriptManager();
-	~ScriptManager();
+	
+	void initialize();
+	byte getStateValue(uint32 key);
+	void setStateValue(uint32 key, byte value);
+	void addToStateValue(uint32 key, byte valueToAdd);
 
 private:
-	Common::HashMap<uint32, byte> _globalState;
-
 	/**
 	 * Parses a script file into triggers and events
 	 *
@@ -48,54 +58,47 @@ private:
 	void parseScrFile(Common::String fileName);
 
 	/**
-	 * Helper method for parseScrFile. Parses the stream into a Puzzle object
+	 * Parses the stream into a Puzzle object
+	 * Helper method for parseScrFile. 
 	 *
-	 * @param puzzle	The object to store what is parsed
-	 * @param stream	Scr file stream
+	 * @param puzzle    The object to store what is parsed
+	 * @param stream    Scr file stream
 	 */
-	void parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream);
+	void parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stream);
 
 	/**
-	 * Helper method for parsePuzzle. Parses the stream into a Criteria object
+	 * Parses the stream into a Criteria object
+	 * Helper method for parsePuzzle. 
 	 *
-	 * @param stream	Scr file stream
-	 * @return			Created Criteria object
+	 * @param stream    Scr file stream
+	 * @return          Created Criteria object
 	 */
 	Criteria parseCriteria(Common::SeekableReadStream &stream) const;
 
 	/**
-	 * Helper method for parsePuzzle. Parses the stream into a Results object
+	 * Parses the stream into a Results object
+	 * Helper method for parsePuzzle. 
 	 *
-	 * @param stream	Scr file stream
-	 * @return			Created Results object
+	 * @param stream    Scr file stream
+	 * @return          Created Results object
 	 */
-	Result parseResult(Common::SeekableReadStream &stream) const;
-
-	/**
-	 * Helper method for parseResults. Parses a number of strings into Object types.
-	 *
-	 * @param result			Results object to store the arguments in
-	 * @param types				The type of the each of the arguments. IE. BOOL, UINT32, etc.
-	 * @param numberOfArgs		The number of arguments. This has to equal the length of 'types' AND the number of optional arguments passed.
-	 * @param 					String arguments wanting to be parsed
-	 */
-	void parseResultArguments(Result &result, const ObjectType *types, int numberOfArgs, ...) const;
+	void parseResult(Common::SeekableReadStream &stream, Common::List<ResultAction> &actionList) const;
 
 	/**
 	 * Helper method for parsePuzzle. Parses the stream into a bitwise or of the StateFlags enum
 	 *
-	 * @param stream	Scr file stream
-	 * @return			Bitwise or of all the flags set within the puzzle
+	 * @param stream    Scr file stream
+	 * @return          Bitwise or of all the flags set within the puzzle
 	 */
 	byte parseFlags(Common::SeekableReadStream &stream) const;
 
 	/**
 	 * Helper method for parseScrFile. Parses the stream into a Control object
 	 *
-	 * @param control	The object to store what is parsed
-	 * @param stream	Scr file stream
+	 * @param control    The object to store what is parsed
+	 * @param stream     Scr file stream
 	 */
-	void parseControl(Control *control, Common::SeekableReadStream &stream);
+	void parseControl(Control &control, Common::SeekableReadStream &stream);
 };
 
 
