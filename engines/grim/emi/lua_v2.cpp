@@ -356,6 +356,12 @@ void Lua_V2::FileFindFirst() {
 	const char *extension = lua_getstring(extObj);
 	if (0 == strncmp(extension, "Saves/", 6))
 		extension += 6;
+
+	// _menus.lua: saveload_menu.get_file_list searches for *.gsv.
+	// This avoids conflicts with grim saves.
+	if (0 == strcmp(extension, "*.gsv"))
+		extension = "efmi???.gsv";
+
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	g_grim->_listFiles = saveFileMan->listSavefiles(extension);
 	Common::sort(g_grim->_listFiles.begin(), g_grim->_listFiles.end());
