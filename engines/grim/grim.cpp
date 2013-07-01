@@ -298,8 +298,9 @@ Common::Error GrimEngine::run() {
 	lua->registerOpcodes();
 	lua->registerLua();
 
-	lua->loadSystemScript();
+	//Initialize Localizer first. In system-script are already localizeable Strings
 	g_localizer = new Localizer();
+	lua->loadSystemScript();
 	lua->boot();
 
 	_savegameLoadRequest = false;

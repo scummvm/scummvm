@@ -83,20 +83,43 @@ Localizer::Localizer() {
 
 	char *nextline;
 	Common::String last_entry;
-	for (char *line = data + 4; line != NULL && *line != '\0' && *line != '\r'; line = nextline + 1) {
+	//Read file till end
+	for (char *line = data + 4; line != NULL && line-data <= filesize; line = nextline + 1) {
+
 		nextline = strchr(line, '\n');
-		assert(nextline);
+		//if there is no next line we arrived the last one
+		if (nextline == NULL) {
+			nextline = strchr(line, '\0');
+		}
+
+		//in grim we have to exit on first empty line else skip line
+		if (*line == '\r') {
+			if (g_grim->getGameType() == GType_GRIM) {
+				break;
+			}
+
+			nextline = strchr(line+2,'\n');
+			continue;
+		}
+		
+		//EMI has an garbage line which should be ignored
+		if (g_grim->getGameType() == GType_MONKEY4 && *line == '\x1A')
+			continue;
 
 		char *tab = strchr(line, '\t');
-		assert(tab);
+		//skip line if no tab found
+		if (tab == NULL) {
+			continue;
+		}
 
 		if (tab > nextline) {
 			Common::String cont = Common::String(line, nextline - line - 1);
 			assert(last_entry != "");
 			warning("Continuation line: \"%s\" = \"%s\" + \"%s\"", last_entry.c_str(), _entries[last_entry].c_str(), cont.c_str());
 			_entries[last_entry] += cont;
-		} else
+		} else {
 			_entries[last_entry = Common::String(line, tab - line)] = Common::String(tab + 1, (nextline - tab - 2));
+		}
 	}
 	delete[] data;
 }
