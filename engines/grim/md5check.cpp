@@ -170,21 +170,27 @@ const char *voice001[] = {
 
 const char *emi_artAll[] = {
 	"8c7db9dab564854f2c4bab0571104780", // english patched
+	"7c1da307c5c3eb1ba65b7c1a2e6b5bce", // german patched
 };
 const char *emi_artJam[] = {
 	"e5ff286dbf7b23d1ad41dd8defe48291", // english patched
+	"f0bcfa22f77d12e25920148d405a9615", // german patched
 };
 const char *emi_artLuc[] = {
 	"1fcaef5755e6f6c3c30c89536022bd72", // english patched
+	"0f6bcf8997ddd3cbdf161132103f769d", // german patched
 };
 const char *emi_artMel[] = {
 	"66144e92a0742fdc9cc6c4f892c53e84", // english patched
+	"ed1d2548374339775110bf5826db9f6d", // german patched
 };
 const char *emi_artMon[] = {
 	"3510567bda8a4e8c5aee4c3b3bb1f98e", // english patched
+	"5ff8b38e44fe1d3aeeb277f35f932d7b", // german patched
 };
 const char *emi_lip[] = {
 	"57eceeae6b82028243ede6c97c334c57", // english patched
+	"0ad24338f33f8ed9b4ab21e43f99aff0", // german patched
 };
 const char *emi_local[] = {
 	"c3b694d941c05264e8c37dc2be75ca1c", // english patched
@@ -197,18 +203,23 @@ const char *emi_sfx[] = {
 };
 const char *emi_voiceAll[] = {
 	"18d3996c7de4d460b4cd4ee5897a90ae", // english patched
+	"4e2ae54188a96dfb8ecbd39bf322b3f5", // german patched
 };
 const char *emi_voiceJam[] = {
 	"2318a4680a89b93f1f71b09e66c65c86", // english patched
+	"3df7d4964fe33f22be67920b21d65710", // german patched
 };
 const char *emi_voiceLuc[] = {
 	"d5e4842e421bdb891e6cbf88741e9119", // english patched
+	"60d96bb92042729037b37c0056f93267", // german patched
 };
 const char *emi_voiceMel[] = {
 	"b8b19fc4a9438f51a99f7cf3cad9c419", // english patched
+	"0511a19405b763e2dd9ab5b0637757ee", // german patched
 };
 const char *emi_voiceMon[] = {
 	"9327a6bea951b28bac31bdb52007dc41", // english patched
+	"e3046478916f0000a657f9ebf498e120", // german patched
 };
 
 // EMI retail PS2 version
