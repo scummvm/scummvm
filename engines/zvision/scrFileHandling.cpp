@@ -26,6 +26,7 @@
 
 #include "zvision/scriptManager.h"
 #include "zvision/utility.h"
+#include "zvision/puzzle.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -33,13 +34,11 @@
 
 namespace ZVision {
 
-
 void ScriptManager::parseScrFile(Common::String fileName) {
 	Common::File file;
 	if (!file.open(fileName))
 		return; // File.open already throws a warning if the file doesn't exist, so there is no need to throw another
 
-	char buffer[1024];
 	while(!file.eos()) {
 		Common::String line = file.readLine();
 		if (file.err()) {
@@ -52,32 +51,34 @@ void ScriptManager::parseScrFile(Common::String fileName) {
 			continue;
 
 		if (line.matchString("puzzle:*", true)) {
-			Puzzle *puzzle = new Puzzle();
-			sscanf(line.c_str(),"puzzle:%u",&(puzzle->id));
+			Puzzle puzzle;
+			sscanf(line.c_str(),"puzzle:%u",&(puzzle.id));
 
 			parsePuzzle(puzzle, file);
+			_puzzles.push_back(puzzle);
 		} else if (line.matchString("control:*", true)) {
-			Control *control = new Control();
-			sscanf(line.c_str(),"control:%u",&(control->id));
+			Control control;
+			char controlType[20];
+			sscanf(line.c_str(),"control:%u %s",&(control.id), controlType);
 
 			parseControl(control, file);
+			_controls.push_back(control);
 		}
 	}
 }
 
-void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream) {
+void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stream) {
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(line);
 
 	while (!line.contains('}')) {
 		if (line.matchString("criteria {", true))
-			puzzle->criteriaList.push_back(parseCriteria(stream));
+			puzzle.criteriaList.push_back(parseCriteria(stream));
 		else if (line.matchString("results {", true))
-			puzzle->resultList.push_back(parseResult(stream));
+			parseResult(stream, puzzle.resultActions);
 		else if (line.matchString("flags {", true))
-			puzzle->flags = parseFlags(stream);
+			puzzle.flags = parseFlags(stream);
 	}
-
 }
 
 Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const {
@@ -125,177 +126,138 @@ Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const 
 	return criteria;
 }
 
-Result ScriptManager::parseResult(Common::SeekableReadStream &stream) const {
-	Result result;
-
+void ScriptManager::parseResult(Common::SeekableReadStream &stream, Common::List<ResultAction> &actionList) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(line);
 
 	while (!line.contains('}')) {
-		Common::StringTokenizer tokenizer(line, " :(),");
-		// We don't care about the first token
-		tokenizer.nextToken();
-		Common::String token = tokenizer.nextToken();
+		// Parse for the action type
+		if (line.matchString("*:add*", true)) {
+			actionList.push_back(ActionAdd(line));
+		} else if (line.matchString("*:animplay*", true)) {
+			
 
-		// The second token defines the action
-		// Use it to set the action enum and then to parse the arguments
-		if (token.matchString("add", true)) {
-			result.action = ADD;
-			ObjectType argTypes[] = { UINT32, UINT32 };
-			parseResultArguments(result, argTypes, 2, tokenizer.nextToken(), tokenizer.nextToken());
-		} else if (token.matchString("animplay", true)) {
-			result.action = ANIM_PLAY;
+		} else if (line.matchString("*:animpreload*", true)) {
+			
 
-		} else if (token.matchString("animpreload", true)) {
-			result.action = ANIM_PRELOAD;
+		} else if (line.matchString("*:animunload*", true)) {
+			
 
-		} else if (token.matchString("animunload", true)) {
-			result.action = ANIM_UNLOAD;
+		} else if (line.matchString("*:attenuate*", true)) {
+			
 
-		} else if (token.matchString("attenuate", true)) {
-			result.action = ATTENUATE;
+		} else if (line.matchString("*:assign*", true)) {
+			
 
-		} else if (token.matchString("assign", true)) {
-			result.action = ASSIGN;
-			ObjectType argTypes[] = { UINT32, UINT32 };
-			parseResultArguments(result, argTypes, 2, tokenizer.nextToken(), tokenizer.nextToken());
-		} else if (token.matchString("change_location", true)) {
-			result.action = CHANGE_LOCATION;
-			ObjectType argTypes[] = { STRING, STRING, STRING, UINT32 };
-			parseResultArguments(result, argTypes, 4, tokenizer.nextToken(), tokenizer.nextToken(), tokenizer.nextToken(), tokenizer.nextToken());
-		} else if (token.matchString("crossfade", true)) {
-			result.action = CROSSFADE;
+		} else if (line.matchString("*:change_location*", true)) {
+			
 
-		} else if (token.matchString("debug", true)) {
-			result.action = DEBUG;
+		} else if (line.matchString("*:crossfade*", true)) {
+			
 
-		} else if (token.matchString("delay_render", true)) {
-			result.action = DELAY_RENDER;
+		} else if (line.matchString("*:debug*", true)) {
+			
 
-		} else if (token.matchString("disable_control", true)) {
-			result.action = DISABLE_CONTROL;
+		} else if (line.matchString("*:delay_render*", true)) {
+			
 
-		} else if (token.matchString("disable_venus", true)) {
-			result.action = DISABLE_VENUS;
+		} else if (line.matchString("*:disable_control*", true)) {
+			
 
-		} else if (token.matchString("display_message", true)) {
-			result.action = DISPLAY_MESSAGE;
+		} else if (line.matchString("*:disable_venus*", true)) {
+			
 
-		} else if (token.matchString("dissolve", true)) {
-			result.action = DISSOLVE;
-		} else if (token.matchString("distort", true)) {
-			result.action = DISTORT;
+		} else if (line.matchString("*:display_message*", true)) {
+			
 
-		} else if (token.matchString("enable_control", true)) {
-			result.action = ENABLE_CONTROL;
+		} else if (line.matchString("*:dissolve*", true)) {
+			
 
-		} else if (token.matchString("flush_mouse_events", true)) {
-			result.action = FLUSH_MOUSE_EVENTS;
+		} else if (line.matchString("*:distort*", true)) {
+			
 
-		} else if (token.matchString("inventory", true)) {
-			result.action = INVENTORY;
+		} else if (line.matchString("*:enable_control*", true)) {
+			
 
-		} else if (token.matchString("kill", true)) {
-			result.action = KILL;
+		} else if (line.matchString("*:flush_mouse_events*", true)) {
+			
 
-		} else if (token.matchString("menu_bar_enable", true)) {
-			result.action = MENU_BAR_ENABLE;
+		} else if (line.matchString("*:inventory*", true)) {
+			
 
-		} else if (token.matchString("music", true)) {
-			result.action = MUSIC;
-			ObjectType argTypes[] = { UINT32, UINT32, STRING, UINT32, UINT32 };
-			parseResultArguments(result, argTypes, 5,
-								 tokenizer.nextToken(), tokenizer.nextToken(),
-								 tokenizer.nextToken(), tokenizer.nextToken(),
-								 tokenizer.nextToken());
-		} else if (token.matchString("pan_track", true)) {
-			result.action = PAN_TRACK;
+		} else if (line.matchString("*:kill*", true)) {
+			
 
-		} else if (token.matchString("playpreload", true)) {
-			result.action = PLAY_PRELOAD;
+		} else if (line.matchString("*:menu_bar_enable*", true)) {
+			
 
-		} else if (token.matchString("preferences", true)) {
-			result.action = PREFERENCES;
+		} else if (line.matchString("*:music*", true)) {
+			
 
-		} else if (token.matchString("quit", true)) {
-			result.action = QUIT;
+		} else if (line.matchString("*:pan_track*", true)) {
+			
 
-		} else if (token.matchString("random", true)) {
-			result.action = RANDOM;
-			ObjectType argTypes[] = { UINT32, UINT32 };
-			parseResultArguments(result, argTypes, 2, tokenizer.nextToken(), tokenizer.nextToken());
-		} else if (token.matchString("region", true)) {
-			result.action = REGION;
+		} else if (line.matchString("*:playpreload*", true)) {
+			
 
-		} else if (token.matchString("restore_game", true)) {
-			result.action = RESTORE_GAME;
+		} else if (line.matchString("*:preferences*", true)) {
+			
 
-		} else if (token.matchString("rotate_to", true)) {
-			result.action = ROTATE_TO;
+		} else if (line.matchString("*:quit*", true)) {
+			
 
-		} else if (token.matchString("save_game", true)) {
-			result.action = SAVE_GAME;
+		} else if (line.matchString("*:random*", true)) {
+			
 
-		} else if (token.matchString("set_partial_screen", true)) {
-			result.action = SET_PARTIAL_SCREEN;
+		} else if (line.matchString("*:region*", true)) {
+			
 
-		} else if (token.matchString("set_screen", true)) {
-			result.action = SET_SCREEN;
+		} else if (line.matchString("*:restore_game*", true)) {
+			
 
-		} else if (token.matchString("set_venus", true)) {
-			result.action = SET_VENUS;
+		} else if (line.matchString("*:rotate_to*", true)) {
+			
 
-		} else if (token.matchString("stop", true)) {
-			result.action = STOP;
-			ObjectType argTypes[] = { UINT32 };
-			parseResultArguments(result, argTypes, 1, tokenizer.nextToken());
-		} else if (token.matchString("streamvideo", true)) {
-			result.action = STREAM_VIDEO;
+		} else if (line.matchString("*:save_game*", true)) {
+			
 
-		} else if (token.matchString("syncsound", true)) {
-			result.action = SYNC_SOUND;
+		} else if (line.matchString("*:set_partial_screen*", true)) {
+			
 
-		} else if (token.matchString("timer", true)) {
-			result.action = TIMER;
-			ObjectType argTypes[] = { UINT32, UINT32 };
-			parseResultArguments(result, argTypes, 2, tokenizer.nextToken(), tokenizer.nextToken());
-		} else if (token.matchString("ttytext", true)) {
-			result.action = TTY_TEXT;
+		} else if (line.matchString("*:set_screen*", true)) {
+			
 
-		} else if (token.matchString("universe_music", true)) {
-			result.action = UNIVERSE_MUSIC;
+		} else if (line.matchString("*:set_venus*", true)) {
+			
+
+		} else if (line.matchString("*:stop*", true)) {
+			
+
+		} else if (line.matchString("*:streamvideo*", true)) {
+			
+
+		} else if (line.matchString("*:syncsound*", true)) {
+			
+
+		} else if (line.matchString("*:timer*", true)) {
+			
+
+		} else if (line.matchString("*:ttytext*", true)) {
+			
+
+		} else if (line.matchString("*:universe_music*", true)) {
+			
 
 		} else {
-			warning("Unhandled result action type: ", token);
+			warning("Unhandled result action type: ", line);
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(line);
 	}
 
-	return result;
-}
-
-void ScriptManager::parseResultArguments(Result &result, const ObjectType *types, int numberOfArgs, ...) const {
-	va_list argptr;
-	va_start(argptr, numberOfArgs);
-
-	for (int i = 0; i < numberOfArgs; i++) {
-		if (types[i] == UINT32) {
-			Common::String arg = va_arg(argptr, Common::String);
-			Object argObject(UINT32);
-			sscanf(arg.c_str(), "%u", &argObject);
-			result.arguments.push_back(argObject);
-			break;
-		} else {
-			Common::String arg = va_arg(argptr, Common::String);
-			result.arguments.push_back(Object(arg));
-			break;
-		}
-	}
-
-	va_end(argptr);
+	return;
 }
 
 byte ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
@@ -318,7 +280,7 @@ byte ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	return flags;
 }
 
-void ScriptManager::parseControl(Control *control, Common::SeekableReadStream &stream) {
+void ScriptManager::parseControl(Control &control, Common::SeekableReadStream &stream) {
 
 }
 

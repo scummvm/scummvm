@@ -25,7 +25,7 @@
 
 #include "common/list.h"
 
-#include "zvision/object.h"
+#include "zvision/resultAction.h"
 
 namespace ZVision {
 
@@ -39,66 +39,17 @@ enum CriteriaOperator {
 
 /** Criteria for a Puzzle result to be fired */
 struct Criteria {
-	/** The id of a global state */
-	uint32 id;
+	/** The key of a global state */
+	uint32 key;
 	/**  
 	 * What we're comparing the value of the global state against
-	 * This can either be a pure value or it can be the id of another global state
+	 * This can either be a pure value or it can be the key of another global state
 	 */
 	uint32 argument;
 	/** How to do the comparison */
 	CriteriaOperator criteriaOperator;
 	/** Whether 'argument' is the id of a global state (true) or a pure value (false) */
 	bool isArgumentAnId;
-};
-
-/** What happens when Puzzle criteria are met */
-enum ResultAction {
-	ADD,
-	ANIM_PLAY,
-	ANIM_PRELOAD,
-	ANIM_UNLOAD,
-	ATTENUATE,
-	ASSIGN,
-	CHANGE_LOCATION,
-	CROSSFADE,
-	DEBUG,
-	DELAY_RENDER,
-	DISABLE_CONTROL,
-	DISABLE_VENUS,
-	DISPLAY_MESSAGE,
-	DISSOLVE,
-	DISTORT,
-	ENABLE_CONTROL,
-	FLUSH_MOUSE_EVENTS,
-	INVENTORY,
-	KILL,
-	MENU_BAR_ENABLE,
-	MUSIC,
-	PAN_TRACK,
-	PLAY_PRELOAD,
-	PREFERENCES,
-	QUIT,
-	RANDOM,
-	REGION,
-	RESTORE_GAME,
-	ROTATE_TO,
-	SAVE_GAME,
-	SET_PARTIAL_SCREEN,
-	SET_SCREEN,
-	SET_VENUS,
-	STOP,
-	STREAM_VIDEO,
-	SYNC_SOUND,
-	TIMER,
-	TTY_TEXT,
-	UNIVERSE_MUSIC,
-};
-
-/** What happens when Puzzle criteria are met */
-struct Result {
-	ResultAction action;
-	Common::List<Object> arguments;
 };
 
 enum StateFlags : byte {
@@ -108,9 +59,9 @@ enum StateFlags : byte {
 };
 
 struct Puzzle {
-	uint32 id;
+	uint32 key;
 	Common::List<Criteria> criteriaList;
-	Common::List<Result> resultList;
+	Common::List<ResultAction> resultActions;
 	byte flags;
 };
 
