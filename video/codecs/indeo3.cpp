@@ -288,14 +288,14 @@ const Graphics::Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *
 
 	if (scaleWidth == 1 && scaleHeight == 1) {
 		// Shortcut: Don't need to scale so we can decode straight to the surface
-		YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleFull, srcY, tempU, tempV,
+		YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
 				fWidth, fHeight, fWidth, chromaWidth + 1);
 	} else {
 		// Need to upscale, so decode to a temp surface first
 		Graphics::Surface tempSurface;
 		tempSurface.create(fWidth, fHeight, _surface->format);
 
-		YUVToRGBMan.convert410(&tempSurface, Graphics::YUVToRGBManager::kScaleFull, srcY, tempU, tempV,
+		YUVToRGBMan.convert410(&tempSurface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
 				fWidth, fHeight, fWidth, chromaWidth + 1);
 
 		// Upscale
