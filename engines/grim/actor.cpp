@@ -1550,6 +1550,7 @@ void Actor::draw() {
 	// FIXME: if isAttached(), factor in the joint rotation as well.
 	Math::Vector3d absPos = getWorldPos();
 	const Math::Quaternion rot = getRotationQuat();
+	const float alpha = _alphaMode != AlphaOff ? _globalAlpha : 1.f;
 	if (!_costumeStack.empty()) {
 		g_grim->getCurrSet()->setupLights(absPos);
 
@@ -1561,7 +1562,7 @@ void Actor::draw() {
 			g_driver->setShadowMode();
 			if (g_driver->isHardwareAccelerated())
 				g_driver->drawShadowPlanes();
-			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
+			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, alpha);
 			costume->draw();
 			g_driver->finishActorDraw();
 			g_driver->clearShadowMode();
@@ -1571,7 +1572,7 @@ void Actor::draw() {
 		bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
 		if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
 			// normal draw actor
-			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
+			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, alpha);
 			costume->draw();
 			g_driver->finishActorDraw();
 		}
