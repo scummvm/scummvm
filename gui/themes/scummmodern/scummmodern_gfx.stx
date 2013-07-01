@@ -73,7 +73,7 @@
 				rgb = '255, 255, 255'
 		/>
 		<color name = 'shadowcolor'
-				rgb = '63, 60, 17'
+				rgb = '105, 101, 86'
 		/>
 		<color name = 'darkgray'
 				rgb = '176, 168, 144'
@@ -232,7 +232,7 @@
 					stroke = '0'
 					gradient_start = 'darkorange'
 					gradient_end = 'brightorange'
-					shadow = '3'
+					shadow = '7'
 					gradient_factor = '3'
 		/>
 	</drawdata>
@@ -466,7 +466,7 @@
 					fg_color = 'lightgray2'
 					fill = 'background'
 					bg_color = 'xtrabrightred'
-					shadow = '2'
+					shadow = '1'
 		/>
 	
 		<drawstep	func = 'triangle'
@@ -505,7 +505,7 @@
 					fg_color = 'lightgray2'
 					fill = 'background'
 					bg_color = 'xtrabrightred'
-					shadow = '2'
+					shadow = '1'
 		/>
 	
 		<drawstep	func = 'triangle'
@@ -663,7 +663,7 @@
 					fg_color = 'lightgray2'
 					fill = 'background'
 					bg_color = 'xtrabrightred'
-					shadow = '2'
+					shadow = '1'
 		/>
 	
 		<drawstep	func = 'triangle'
@@ -716,7 +716,7 @@
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
 					fill = 'gradient'
-					shadow = '3'
+					shadow = '7'
 		/>
 	</drawdata>
 
@@ -737,7 +737,7 @@
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
 					gradient_factor = '4'
-					shadow = '3'
+					shadow = '7'
 		/>
 	</drawdata>
 
@@ -915,7 +915,7 @@
 					gradient_factor = '6'
 					fill = 'gradient'
 					bg_color = 'xtrabrightred'
-					shadow = '3'
+					shadow = '7'
 		/>
 	</drawdata>
 

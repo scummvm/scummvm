@@ -73,6 +73,8 @@ struct DrawStep {
 	uint8 shadow, stroke, factor, radius, bevel; /**< Misc options... */
 
 	uint8 fillMode; /**< active fill mode */
+	uint8 shadowFillMode; /**< fill mode of the shadow used */
+
 	uint32 extraData; /**< Generic parameter for extra options (orientation/bevel) */
 
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
@@ -103,7 +105,7 @@ VectorRenderer *createRenderer(int mode);
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0),
+	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential), 
 		_disableShadows(false), _strokeWidth(1), _gradientFactor(1) {
 
 	}
@@ -124,6 +126,11 @@ public:
 		kTriangleDown,
 		kTriangleLeft,
 		kTriangleRight
+	};
+
+	enum ShadowFillMode {
+		kShadowLinear = 0,
+		kShadowExponential = 1
 	};
 
 	/**
@@ -290,6 +297,10 @@ public:
 	 */
 	virtual void setFillMode(FillMode mode) {
 		_fillMode = mode;
+	}
+
+	virtual void setShadowFillMode(ShadowFillMode mode) {
+		_shadowFillMode = mode;
 	}
 
 	/**
@@ -485,6 +496,7 @@ protected:
 	Surface *_activeSurface; /**< Pointer to the surface currently being drawn */
 
 	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
+	ShadowFillMode _shadowFillMode;
 
 	int _shadowOffset; /**< offset for drawn shadows */
 	int _bevel; /**< amount of fake bevel */

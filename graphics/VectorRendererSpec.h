@@ -186,10 +186,10 @@ protected:
 	 * There functions may be overloaded in inheriting classes to improve performance
 	 * in the slowest platforms where pixel alpha blending just doesn't cut it.
 	 *
-	 * @param blur Intensity/size of the shadow.
+	 * @param offset Intensity/size of the shadow.
 	 */
-	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
+	virtual void drawSquareShadow(int x, int y, int w, int h, int offset);
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset);
 
 	/**
 	 * Calculates the color gradient on a given point.
@@ -292,10 +292,8 @@ protected:
 	 */
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
 
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur) {
-		Base::drawRoundedSquareShadow(x, y, r, w, h, blur);
-//		VectorRenderer::applyConvolutionMatrix(VectorRenderer::kConvolutionHardBlur,
-//            Common::Rect(x, y, x + w + blur * 2, y + h + blur * 2));
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset) {
+		Base::drawRoundedSquareShadow(x, y, r, w, h, offset);
 	}
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,

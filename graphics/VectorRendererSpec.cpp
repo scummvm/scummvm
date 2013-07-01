@@ -883,7 +883,8 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
-		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h) {
+		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
+		&& h > (Base::_shadowOffset + 1) * 2) {
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
@@ -1704,85 +1705,112 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
  ********************************************************************/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawSquareShadow(int x, int y, int w, int h, int blur) {
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + blur);
+drawSquareShadow(int x, int y, int w, int h, int offset) {
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + offset);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int i, j;
 
-	i = h - blur;
+	i = h - offset;
 
 	while (i--) {
-		j = blur;
+		j = offset;
 		while (j--)
-			blendPixelPtr(ptr + j, 0, ((blur - j) << 8) / blur);
+			blendPixelPtr(ptr + j, 0, ((offset - j) << 8) / offset);
 		ptr += pitch;
 	}
 
-	ptr = (PixelType *)_activeSurface->getBasePtr(x + blur, y + h - 1);
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + offset, y + h - 1);
 
-	while (i++ < blur) {
-		j = w - blur;
+	while (i++ < offset) {
+		j = w - offset;
 		while (j--)
-			blendPixelPtr(ptr + j, 0, ((blur - i) << 8) / blur);
+			blendPixelPtr(ptr + j, 0, ((offset - i) << 8) / offset);
 		ptr += pitch;
 	}
 
 	ptr = (PixelType *)_activeSurface->getBasePtr(x + w, y + h);
 
 	i = 0;
-	while (i++ < blur) {
-		j = blur - 1;
+	while (i++ < offset) {
+		j = offset - 1;
 		while (j--)
-			blendPixelPtr(ptr + j, 0, (((blur - j) * (blur - i)) << 8) / (blur * blur));
+			blendPixelPtr(ptr + j, 0, (((offset - j) * (offset - i)) << 8) / (offset * offset));
 		ptr += pitch;
 	}
 }
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
-	int f, ddF_x, ddF_y;
-	int x, y, px, py;
+drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	int alpha = 102;
 
-	x1 += blur;
-	y1 += blur;
+	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
+	double expFactor = (_activeSurface->format.bytesPerPixel > 2) ? 1.60 : 1.25;
+	double alpha = (_activeSurface->format.bytesPerPixel > 2) ? 1 : 8;
+	
+	// These constants ensure a border of 2px on the left and of each rounded square
+	int xstart = (x1 > 2) ? x1 - 2 : x1;
+	int ystart = y1;
+	int width = w + offset + 2;
+	int height = h + offset + 1;
 
-	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
-	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
-	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
-	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - blur, y1 + r);
+	for (int i = offset; i >= 0; i--) {
+		int f, ddF_x, ddF_y;
+		int x, y, px, py;
+		
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
+		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + height - r);
+		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + height - r);
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
 
-	int short_h = h - (2 * r) + 1;
+		int short_h = height - (2 * r) + 2;
+		PixelType color = _format.RGBToColor(0, 0, 0);
 
-	BE_RESET();
+		BE_RESET();
 
-	// HACK: As we are drawing circles exploting 8-axis symmetry,
-	// there are 4 pixels on each circle which are drawn twice.
-	// this is ok on filled circles, but when blending on surfaces,
-	// we cannot let it blend twice. awful.
-	uint32 hb = 0;
+		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// there are 4 pixels on each circle which are drawn twice.
+		// this is ok on filled circles, but when blending on surfaces,
+		// we cannot let it blend twice. awful.
+		uint32 hb = 0;
+		
+		while (x++ < y) {
+			BE_ALGORITHM();
 
-	while (x++ < y) {
-		BE_ALGORITHM();
 
-		if (((1 << x) & hb) == 0) {
-			blendFill(ptr_tr - px - r, ptr_tr + y - px, 0, alpha);
-			blendFill(ptr_bl - y + px, ptr_br + y + px, 0, alpha);
-			hb |= (1 << x);
+			if (((1 << x) & hb) == 0) {
+				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
+				
+				// Will create a dark line of pixles if left out
+				if (hb > 0) {
+					blendFill(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
+				}
+				hb |= (1 << x);
+			}
+
+			if (((1 << y) & hb) == 0) {
+				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
+				blendFill(ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha);
+				hb |= (1 << y);
+			}
+		}
+	
+		ptr_fill += pitch * r;
+		while (short_h--) {
+			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
+			ptr_fill += pitch;
 		}
 
-		if (((1 << y) & hb) == 0) {
-			blendFill(ptr_tr - r - py, ptr_tr + x - py, 0, alpha);
-			blendFill(ptr_bl - x + py, ptr_br + x + py, 0, alpha);
-			hb |= (1 << y);
-		}
-	}
-
-	while (short_h--) {
-		blendFill(ptr_fill - r, ptr_fill + blur, 0, alpha);
-		ptr_fill += pitch;
+		// Make shadow smaller each iteration, and move it one pixel inward
+		xstart += 1;
+		ystart += 1;
+		width -= 2;
+		height -= 2;
+		
+		if (_shadowFillMode == kShadowExponential)
+			// Multiply with expfactor
+			alpha = alpha * expFactor;
 	}
 }
 
