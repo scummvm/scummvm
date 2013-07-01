@@ -387,6 +387,10 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 	}
 #endif
 
+	if (c->color_mask == 0) {
+		// FIXME: Accept more than just 0 or 1.
+		ZB_fillTriangleDepthOnly(c->zb, &p0->zp, &p1->zp, &p2->zp);
+	}
 	if (c->shadow_mode & 1) {
 		assert(c->zb->shadow_mask_buf);
 		ZB_fillTriangleFlatShadowMask(c->zb, &p0->zp, &p1->zp, &p2->zp);

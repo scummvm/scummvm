@@ -98,6 +98,8 @@ void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
 // ztriangle.c */
 
 void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
+void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p1,
+						 ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1,
 						 ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p1,

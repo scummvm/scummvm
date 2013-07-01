@@ -6,6 +6,23 @@ namespace TinyGL {
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
+void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+
+#define INTERP_Z
+
+#define DRAW_INIT()
+
+#define PUT_PIXEL(_a) {						\
+	if (ZCMP(z, pz[_a])) {					\
+	pz[_a] = z;								\
+	}										\
+	z += dzdx;								\
+}
+
+#include "graphics/tinygl/ztriangle.h"
+}
+
+
 void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color;
 

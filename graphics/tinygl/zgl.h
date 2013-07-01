@@ -272,6 +272,8 @@ typedef struct GLContext {
 
 	// depth test
 	int depth_test;
+
+	int color_mask;
 } GLContext;
 
 extern GLContext *gl_ctx;

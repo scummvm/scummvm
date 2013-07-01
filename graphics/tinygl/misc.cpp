@@ -145,4 +145,8 @@ void  glopPolygonOffset(GLContext *c, GLParam *p) {
 	c->offset_units = p[2].f;
 }
 
+void glopColorMask(GLContext *c, TinyGL::GLParam *p) {
+	c->color_mask = p[1].i;
+}
+
 } // end of namespace TinyGL

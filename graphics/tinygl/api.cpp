@@ -156,6 +156,15 @@ void tglFrontFace(int mode) {
 	TinyGL::gl_add_op(p);
 }
 
+void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a) {
+	TinyGL::GLParam p[2];
+
+	p[0].op = TinyGL::OP_ColorMask;
+	p[1].i = (r << 24) | (g << 16) | (b << 8) | (a << 0);
+
+	TinyGL::gl_add_op(p);
+}
+
 void tglPolygonMode(int face, int mode) {
 	TinyGL::GLParam p[3];
 

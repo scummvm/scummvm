@@ -180,6 +180,8 @@ void glInit(void *zbuffer1) {
 
 	// depth test
 	c->depth_test = 0;
+
+	c->color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
 }
 
 void glClose() {
