@@ -45,6 +45,7 @@
 #include "avalanche/trip6.h"
 #include "avalanche/acci2.h"
 #include "avalanche/basher2.h"
+#include "avalanche/dropdown2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -76,6 +77,7 @@ public:
 	Trip _trip;
 	Acci _acci;
 	Basher _basher;
+	Dropdown _dropdown;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
