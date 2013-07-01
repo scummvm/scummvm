@@ -436,6 +436,10 @@ void GfxSurface::majTtxTty() {
 		_height += _ySize;
 }
 
+/**
+ * Decompression Function - get next nibble
+ * @remarks	Originally called 'suiv'
+ */
 byte GfxSurface::nextNibble(const byte *&pSrc) {
 	int v = *pSrc;
 	if (_nibbleFlag) {
@@ -449,6 +453,10 @@ byte GfxSurface::nextNibble(const byte *&pSrc) {
 	}
 }
 
+/**
+ * Decompression Function - get next byte
+ * @remarks	Originally called 'csuiv'
+ */
 byte GfxSurface::nextByte(const byte *&pSrc, const byte *&pLookup) {
 	assert(pLookup);
 
@@ -650,14 +658,14 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 			break;
 
 		case 1:
-			increments(pDest);
+			nextDecompPtr(pDest);
 
 			if (!drawIndex) {
-				NIH();
-				NIV();
+				negXInc();
+				negYInc();
 
 				if (yPos == _ySize) {
-					increments(pDest);
+					nextDecompPtr(pDest);
 					++drawIndex;
 				} else {
 					++yPos;
@@ -670,9 +678,9 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 				--drawIndex;
 				areaNum = 0;
 			} else {
-				NIH();
-				NIV();
-				increments(pDest);
+				negXInc();
+				negYInc();
+				nextDecompPtr(pDest);
 				++drawIndex;
 
 				*++pDest = nextByte(pSrc, pLookup);
@@ -686,14 +694,14 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 			break;
 
 		case 2:
-			increments(pDest);
+			nextDecompPtr(pDest);
 
 			if (!yPos) {
-				NIH();
-				NIV();
+				negXInc();
+				negYInc();
 
 				if (drawIndex == _xSize) {
-					increments(pDest);
+					nextDecompPtr(pDest);
 					++yPos;
 				} else {
 					++drawIndex;
@@ -710,9 +718,9 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 			} else {
 				pDest += DEFAULT_WIDTH;
 				++yPos;
-				NIH();
-				NIV();
-				increments(pDest);
+				negXInc();
+				negYInc();
+				nextDecompPtr(pDest);
 
 				*pDest = nextByte(pSrc, pLookup);
 
@@ -732,25 +740,25 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 
 	while (!TFP(diagIndex)) {
 		for (;;) {
-			NIH();
+			negXInc();
 			for (int idx = 0; idx <= _thickness; ++idx) {
 				*pDest = nextByte(pSrc, pLookup);
-				NIH();
-				increments(pDest);
+				negXInc();
+				nextDecompPtr(pDest);
 			}
 
-			NIV();
+			negYInc();
 			pDest += _yInc;
 
 			for (int idx = 0; idx <= _thickness; ++idx) {
 				*pDest = nextByte(pSrc, pLookup);
-				NIH();
-				increments(pDest);
+				negXInc();
+				nextDecompPtr(pDest);
 			}
 
-			NIH();
-			NIV();
-			increments(pDest);
+			negXInc();
+			negYInc();
+			nextDecompPtr(pDest);
 
 			++drawIndex;
 			if (_xEnd < (drawIndex + 1)) {
@@ -772,52 +780,63 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 		for (;;) {
 			for (int idx = 0; idx <= _thickness; ++idx) {
 				*pDest = nextByte(pSrc, pLookup);
-				NIH();
-				increments(pDest);
+				negXInc();
+				nextDecompPtr(pDest);
 			}
 
-			NIV();
+			negYInc();
 			pDest += _yInc;
 
 			for (int idx = 0; idx <= _thickness; ++idx) {
 				*pDest = nextByte(pSrc, pLookup);
-				NIH();
-				increments(pDest);
+				negXInc();
+				nextDecompPtr(pDest);
 			}
 
-			NIH();
-			NIV();
-			increments(pDest);
+			negXInc();
+			negYInc();
+			nextDecompPtr(pDest);
 
 			if (--drawIndex == 0) {
 				TF1(pDest, diagIndex);
-				NIH();
+				negXInc();
 				break;
 			} else {
 				pDest += _xInc;
 
 				if (--drawIndex == 0) {
 					TF2(pSrc, pDest, pLookup, diagIndex);
-					NIH();
+					negXInc();
 					break;
 				}
 			}
 
-			NIH();
+			negXInc();
 		}
 	}
 }
 
-
-void GfxSurface::increments(byte *&pDest) {
+/**
+ * Decompression Function - Move pDest ptr to next value to uncompress
+ * @remarks	Originally called 'increments'
+ */
+void GfxSurface::nextDecompPtr(byte *&pDest) {
 	pDest += _xInc + _yInc;
 }
 
-void GfxSurface::NIH() {
+/**
+ * Decompression Function - set xInc to its opposite value
+ * @remarks	Originally called 'NIH'
+ */
+void GfxSurface::negXInc() {
 	_xInc = -_xInc;
 }
 
-void GfxSurface::NIV() {
+/**
+ * Decompression Function - set yInc to its opposite value
+ * @remarks	Originally called 'NIV'
+ */
+void GfxSurface::negYInc() {
 	_yInc = -_yInc;
 }
 
