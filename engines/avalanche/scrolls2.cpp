@@ -36,150 +36,37 @@
 #include "avalanche/acci2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/timeout2.h"
+#include "avalanche/basher2.h"
 
 #include "common/textconsole.h"
 
-//#include "basher.h"
 //#include "avalanche/joystick2.h" - Will be implemented later, if it will be implemented at all...
 
 namespace Avalanche {
 
-const int16 Scrolls::roman = 0;
-const int16 Scrolls::italic = 1;
+Scrolls::Scrolls() {
+	loadfont();
+	resetscrolldriver();
 
-const int16 Scrolls::halficonwidth = 19; /* Half the width of an icon. */
-
-
-
-Scrolls::Scrolls() : aboutscroll(false)  {
 }
 
 void Scrolls::setParent(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-
 void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
-	byte page_;
-
-	if (_vm->_gyro.ledstatus == x)
-		return; /* Already like that! */
-
-	warning("STUB: Scrolls::state(). Calls of Pascal units need to be removed.");
-	//switch (x) {
-	//case 0:
-	//	setfillstyle(1, black);
-	//	break; /* Off */
-	//case 1:
-	//	setfillstyle(9, green);
-	//	break; /* Half-on (menus) */
-	//case 2:
-	//	setfillstyle(1, green);
-	//	break; /* On (kbd) */
-	//case 3:
-	//	setfillstyle(6, green);
-	//	break; /* Hit a key */
-	//}
-
-	_vm->_gyro.super_off();
-
-	/*	for (page_ = 0; page_ <= 1; page_++) {
-		setactivepage(page_);
-		bar(419, 195, 438, 197);
-	}*/
-
-	_vm->_gyro.super_on();
-	_vm->_gyro.ledstatus = x;
+	warning("STUB: Scrolls::state()");
 }
 
 void Scrolls::easteregg() {
-	uint16 fv, ff;
-
-	warning("STUB: Scrolls::easteregg(). Calls of Pascal units need to be removed.");
-
-	/*	background(15);
-	for (fv = 4; fv <= 100; fv++) {
-		for (ff = 0; ff <= 70; ff++) {
-			sound(fv * 100 + ff * 10);
-			delay(1);
-		}
-	}
-	nosound;
-	setcolor(10);
-	settextstyle(0, 0, 3);
-	settextjustify(1, 1);
-	outtextxy(320, 100, "GIED");
-	settextstyle(0, 0, 1);
-	settextjustify(0, 2);*/
-
-	_vm->_gyro.background(0);
+	warning("STUB: Scrolls::easteregg()");
 }
 
 void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwriting */
-	const int16 locol = 2;
-	byte xx, yy, ox, bit, lz, t;
-	int16 yp;
-	bool offset;
-	byte itw[12][80];
-
-	offset = x % 8 == 4;
-	x = x / 8;
-	lz = z.size();
-	ox = 0;
-	_vm->_logger.log_scrollline();
-
-	for (xx = 1; xx <= lz; xx++) {
-		switch (z[xx]) {
-		case '\22':
-			cfont = roman;
-			_vm->_logger.log_roman();
-			break;
-		case '\6':
-			cfont = italic;
-			_vm->_logger.log_italic();
-			break;
-		default:
-			ox += 1;
-			for (yy = 1; yy <= 12; yy++)
-				itw[yy][ox] = ~ ch[cfont][z[xx]][yy + 1];
-			_vm->_logger.log_scrollchar(Common::String(z[xx]));
-			break;
-		}
-	}
-
-	lz = ox;
-	if (offset) {
-		/* offsetting routine */
-		lz += 1;
-		for (yy = 1; yy <= 12; yy++) {
-			bit = 240;
-			itw[yy][lz] = 255;
-			for (xx = 1; xx <= lz; xx++) {
-				t = itw[yy][xx];
-				itw[yy][xx] = bit + t / 16;
-				bit = t << 4;
-			}
-		}
-	}
-	yp = x + y * 80 + (1 - _vm->_gyro.cp) * _vm->_gyro.pagetop;
-	for (yy = 1; yy <= 12; yy++) {
-		yp += 80;
-		for (bit = 0; bit <= locol; bit++) {
-			/*port[0x3c4] = 2;
-			port[0x3ce] = 4;
-			port[0x3c5] = 1 << bit;
-			port[0x3cf] = bit;
-			move(itw[yy], mem[0xa000 * yp], lz);
-				
-			Some old Pascal-ish. To be removed. */
-
-			warning("STUB: Scrolls::say()");
-		}
-	}
-
+	warning("STUB: Scrolls::say()");
 }
 
-/* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
+/* Here are the func2edures that Scroll calls */ /* So they must be... */ /*$F+*/
 
 void Scrolls::normscroll() {
 	warning("STUB: Scrolls::normscroll()");
@@ -189,51 +76,164 @@ void Scrolls::dialogue() {
 	warning("STUB: Scrolls::dialogue()");
 }
 
+
+
+
 void Scrolls::store_(byte what, tunetype &played) {
-	memcpy(played, played+1, sizeof(played) - 1);
-	played[30] = what;
+	memcpy(played+1, played+2, sizeof(played) - 1);
+	played[31] = what;
 }
 
 bool Scrolls::they_match(tunetype &played) {
 	byte fv, mistakes;
 
-	bool they_match_result;
 	mistakes = 0;
 
-	for (fv = 1; fv <= sizeof(played); fv++)
-		if (played[fv] != Gyro::tune[fv])
-			mistakes++;
+	for (fv = 1; fv <= sizeof(played); fv ++)
+		if (played[fv] != _vm->_gyro.tune[fv]) {
+			mistakes += 1;
+		}
 
-		they_match_result = mistakes < 5;
-		return they_match_result;
+	return mistakes < 5;
 }
 
 void Scrolls::music_scroll() {
-	char r;
-	byte value;
+	warning("STUB: Scrolls::music_scroll()");
+}
 
-	byte last_one, this_one;
+/* ThatsAll, so put us back to */ /*$F-*/
 
-	tunetype played;
+void Scrolls::resetscrolldriver() {   /* phew */
+	_vm->_gyro.scrollbells = 0;
+	cfont = roman;
+	_vm->_logger.log_epsonroman();
+	use_icon = 0;
+	_vm->_gyro.interrogation = 0; /* always reset after a scroll comes up. */
+}
+
+void Scrolls::dingdongbell() {   /* Pussy's in the well. Who put her in? Little... */
+	byte fv;
+
+	for (fv = 1; fv <= _vm->_gyro.scrollbells; fv ++) _vm->_lucerna.errorled(); /* ring the bell "x" times */
+}
+
+void Scrolls::dodgem() {     /* This moves the mouse pointer off the scroll so that you can read it. */
+	_vm->_gyro.xycheck(); /* Mx & my now contain xy pos of mouse */
+	dodgex = _vm->_gyro.mx;
+	dodgey = _vm->_gyro.my; /* Store 'em */
+	_vm->_gyro.hopto(dodgex, _vm->_gyro.underscroll); /* Move the pointer off the scroll. */
+}
+
+void Scrolls::undodgem() {   /* This is the opposite of Dodgem. It moves the
+ mouse pointer back, IF you haven't moved it in the meantime. */
+	_vm->_gyro.xycheck();
+	if ((_vm->_gyro.mx == dodgex) && (_vm->_gyro.my == _vm->_gyro.underscroll))
+		/* No change, so restore the pointer's original position. */
+		_vm->_gyro.hopto(dodgex, dodgey);
+}
+
+void Scrolls::geticon(int16 x, int16 y, byte which) {
+	warning("STUB: Scrolls::geticon()");
+}
+
+void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
+	warning("STUB: Scrolls::block_drop()");
+}
+
+void Scrolls::drawscroll(func2 gotoit) {     /* This is one of the oldest func2s in the game. */
+	warning("STUB: Scrolls::drawscroll()");
+}
+
+void Scrolls::bubble(func2 gotoit) {
+	warning("STUB: Scrolls::bubble()");
+}
+
+bool Scrolls::ask(Common::String question) {
+	warning("STUB: Scrolls::ask()");
+	return true;
+}
+
+void Scrolls::resetscroll() {
+	_vm->_gyro.scrolln = 1;
+	for (int j = 0; j < 15; j ++)
+		for (int i = 0; i < sizeof(_vm->_gyro.scroll); i++)
+			_vm->_gyro.scroll[j].setChar(0, i);
+}
+
+void Scrolls::natural() {   /* Natural state of bubbles */
+	_vm->_gyro.talkx = 320;
+	_vm->_gyro.talky = 200;
+	_vm->_gyro.talkb = 8;
+	_vm->_gyro.talkf = 15;
+}
+
+Common::String Scrolls::lsd() {
+	Common::String x;
+
+	Common::String lsd_result;
+	if (_vm->_gyro.dna.pence < 12) {
+		/* just pence */
+		x = _vm->_gyro.strf(_vm->_gyro.dna.pence) + 'd';
+	} else if (_vm->_gyro.dna.pence < 240) {
+		/* shillings & pence */
+		x = _vm->_gyro.strf(_vm->_gyro.dna.pence / int32(12)) + '/';
+		if ((_vm->_gyro.dna.pence % int32(12)) == 0)  x = x + '-';
+		else x = x + _vm->_gyro.strf(_vm->_gyro.dna.pence % int32(12));
+	} else   /* L, s & d */
+		x = Common::String('œ') + _vm->_gyro.strf(_vm->_gyro.dna.pence / int32(240)) + '.' + _vm->_gyro.strf((_vm->_gyro.dna.pence / int32(12)) % int32(20))
+			+ '.' + _vm->_gyro.strf(_vm->_gyro.dna.pence % int32(12));
+	if (_vm->_gyro.dna.pence > 12)  x = x + " (that's " + _vm->_gyro.strf(_vm->_gyro.dna.pence) + "d)";
+	lsd_result = x;
+	return lsd_result;
+}
 
 
-	state(3);
-	_vm->_gyro.seescroll = true;
-	_vm->_gyro.on();
-	_vm->_gyro.newpointer(4);
-	//do {
-	//	do {
-	//		Gyro::check(); /* was "checkclick;" */
-	//		if (Enhanced::keypressede())
-	//			break;
-	//	} while (!(Gyro::mpress > 0) || buttona1() || buttonb1());
-	//
-	// Needs joystick - not sure it will be implemented.
 
-	//	if (Gyro::mpress == 0)
-	//		inkey(); Needs Lucerna to proceed.
-	//}
 
+void Scrolls::strip(Common::String &q) {
+	warning("STUB: Scrolls::strip()");
+}
+
+void Scrolls::solidify(byte n) {
+	warning("STUB: Scrolls::solidify()");
+}
+
+void Scrolls::calldrivers() {
+	warning("STUB: Scrolls::calldrivers()");
+}
+
+void Scrolls::display(Common::String z) {
+	_vm->_gyro.bufsize = z.size();
+	memcpy(_vm->_gyro.buffer, z.c_str() + 1, _vm->_gyro.bufsize);
+	calldrivers();
+}
+
+void Scrolls::loadfont() {
+	warning("STUB: Scrolls::loadfont()");
+}
+
+void Scrolls::okay() {
+	display("Okay!");
+}
+
+void Scrolls::musical_scroll() {
+	bool was_virtual;
+
+	display(Common::String("To play the harp...\r\rUse these keys:\r\n") +
+	        "Q W E R T Y U I O P [ ]\r\rOr press Enter to stop playing.\4");
+
+	_vm->_lucerna.sprite_run();
+
+	was_virtual = _vm->_gyro.visible == _vm->_gyro.m_virtual;
+
+	if (was_virtual)
+		_vm->_gyro.off_virtual();
+
+	drawscroll(&Avalanche::Scrolls::music_scroll);
+
+	if (was_virtual)
+		_vm->_gyro.on_virtual();
+	resetscroll();
 }
 
 
