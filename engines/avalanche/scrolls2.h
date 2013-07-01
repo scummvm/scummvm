@@ -33,6 +33,10 @@
 namespace Avalanche {
 class AvalancheEngine;
 
+class Scrolls;
+
+typedef void (Scrolls::*func2)();
+
 class Scrolls {
 public:
 	bool aboutscroll; /* Is this the about box? */
@@ -45,9 +49,9 @@ public:
 
 	void state(byte x);      /* Sets "Ready" light to whatever */
 
-	void drawscroll(proc gotoit);      /* This is one of the oldest procs in the game. */
+	void drawscroll(func2 gotoit);      /* This is one of the oldest funcs in the game. */
 
-	void bubble(proc gotoit);
+	void bubble(func2 gotoit);
 
 	void resetscroll();
 
@@ -96,7 +100,23 @@ private:
 
 	void music_scroll();
 
+	void resetscrolldriver();
 
+	void dingdongbell();
+
+	void dodgem();
+
+	void undodgem();
+
+	void geticon(int16 x, int16 y, byte which);
+
+	void block_drop(Common::String fn, int16 xl, int16 yl, int16 y);
+
+	void strip(Common::String &q);
+
+	void solidify(byte n);
+
+	void loadfont();
 };
 
 } // End of namespace Avalanche
