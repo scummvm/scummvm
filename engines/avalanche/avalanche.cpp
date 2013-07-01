@@ -54,13 +54,14 @@ namespace Avalanche {
 		_pingo.setParent(this);
 		_scrolls.setParent(this);
 		_visa.setParent(this);
-		_lucerna.setParent(this);
+		_lucerna.setParent(this); _lucerna.init();
 		_enid.setParent(this);
 		_celer.setParent(this);
 		_sequence.setParent(this);
 		_timeout.setParent(this);
 		_trip.setParent(this);
-		_acci.setParent(this);
+		_acci.setParent(this); _acci.init();
+		_basher.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
