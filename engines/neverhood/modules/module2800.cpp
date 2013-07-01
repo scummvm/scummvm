@@ -3120,7 +3120,7 @@ Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
 	addBackground(_background);
 	_background->getSurface()->getDrawRect().y = -10;
 	setPalette(0xD542022E);
-	insertPuzzleMouse(0x0028D089, 20, 620);
+	insertPuzzleMouse(0x2022AD5C, 20, 620);
 	_ssButton = insertStaticSprite(0x1A4D4120, 1100);
 	_ssButton->setVisible(false);
 	loadSound(2, 0x19044E72);
