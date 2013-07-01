@@ -60,8 +60,11 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc) : Engine
 	//DebugMan.addDebugChannel(kZVisionDebugExample, "example", "this is just an example for a engine specific debug channel");
 	//DebugMan.addDebugChannel(kZVisionDebugExample2, "example2", "also an example");
  
-	// Don't forget to register your random source
+	// Register random source
 	_rnd = new Common::RandomSource("zvision");
+
+	// Create managers
+	_scriptManager = new ScriptManager();
 
 	debug("ZVision::ZVision");
 }
@@ -69,10 +72,11 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc) : Engine
 ZVision::~ZVision() {
 	debug("ZVision::~ZVision");
  
-	// Dispose your resources here
+	// Dispose of resources
+	delete _scriptManager;
 	delete _rnd;
  
-	// Remove all of our debug levels here
+	// Remove all of our debug levels
 	DebugMan.clearAllDebugChannels();
 }
 
@@ -93,7 +97,7 @@ void ZVision::initialize() {
 	Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);	// RGB555
 	initGraphics(640, 480, true, &format);
 
-	_scriptManager.initialize();
+	_scriptManager->initialize();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -132,6 +136,10 @@ Common::Error ZVision::run() {
 	}
 
 	return Common::kNoError;
+}
+
+ScriptManager *ZVision::getScriptManager() const {
+	return _scriptManager;
 }
 
 } // End of namespace ZVision

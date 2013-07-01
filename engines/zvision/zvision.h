@@ -58,7 +58,7 @@ private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
 
-	ScriptManager _scriptManager;
+	ScriptManager *_scriptManager;
 
 	// To prevent allocation every time we process events
 	Common::Event _event;
@@ -69,7 +69,8 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	virtual Common::Error run();
- 
+	ScriptManager *getScriptManager() const;
+
 private:
 	void initialize();
 
