@@ -62,6 +62,7 @@ namespace Avalanche {
 		_trip.setParent(this);
 		_acci.setParent(this); _acci.init();
 		_basher.setParent(this);
+		_dropdown.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
