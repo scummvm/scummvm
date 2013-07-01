@@ -72,10 +72,10 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	static const int16 roman;
-	static const int16 italic;
+	static const int16 roman = 0;
+	static const int16 italic = 1;
 
-	static const int16 halficonwidth; /* Half the width of an icon. */
+	static const int16 halficonwidth = 19; /* Half the width of an icon. */
 
 	int16 dix, diy;
 	raw ch[2];
