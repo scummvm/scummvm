@@ -562,6 +562,9 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		tglScalef(scale, scale, scale);
 		tglMultMatrixf(quat.toMatrix().getData());
 	}
+
+	if (depthOnly)
+		tglColorMask(false,false,false,false);
 }
 
 void GfxTinyGL::finishActorDraw() {
@@ -596,6 +599,8 @@ void GfxTinyGL::finishActorDraw() {
 			WRITE_LE_UINT16(dst + _gameWidth * y + g_winX2, c);
 		}
 	}*/
+
+	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
 }
 
 void GfxTinyGL::drawShadowPlanes() {
