@@ -386,7 +386,7 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 }
 
 void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                             const bool inOverworld, const float alpha) {
+	                             const bool inOverworld, const float alpha, const bool depthOnly) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -436,6 +436,11 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glScalef(scale, scale, scale);
 		glMultMatrixf(quat.toMatrix().getData());
 	}
+
+	if (depthOnly) {
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDepthMask(GL_TRUE);
+	}
 }
 
 void GfxOpenGL::finishActorDraw() {
@@ -454,6 +459,7 @@ void GfxOpenGL::finishActorDraw() {
 		glColor3f(1.0f, 1.0f, 1.0f);
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 void GfxOpenGL::setShadow(Shadow *shadow) {

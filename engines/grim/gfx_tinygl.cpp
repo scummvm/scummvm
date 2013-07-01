@@ -513,7 +513,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 }
 
 void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                             const bool inOverworld, const float alpha) {
+	                             const bool inOverworld, const float alpha, const bool depthOnly) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_PROJECTION);
 	tglPushMatrix();

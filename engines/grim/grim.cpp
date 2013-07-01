@@ -574,7 +574,7 @@ void GrimEngine::updateDisplayScene() {
 					background->drawLayer(currentLayer--);
 				}
 
-				if (a->isVisible() && a->getSortOrder() < 100)
+				if (a->isVisible())
 					a->draw();
 			}
 		}

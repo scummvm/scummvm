@@ -115,7 +115,7 @@ public:
 
 	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                            const bool inOverworld, const float alpha) = 0;
+	                            const bool inOverworld, const float alpha, const bool depthOnly) = 0;
 
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;

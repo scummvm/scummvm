@@ -62,7 +62,7 @@ public:
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
 	void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                    const bool inOverworld, const float alpha);
+	                    const bool inOverworld, const float alpha, const bool depthOnly);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
