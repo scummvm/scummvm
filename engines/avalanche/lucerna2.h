@@ -41,6 +41,8 @@ public:
 
 	void setParent(AvalancheEngine *vm);
 
+	void init();
+
 	void callverb(char n);
 
 	void draw_also_lines();
@@ -126,6 +128,45 @@ private:
 	};
 
 	palettetype fxpal[4];
+
+	//Clock
+	static const int16 xm = 510;
+	static const int16 ym = 183;
+	//arccoordstype ah, am; http://www.freepascal.org/docs-html/rtl/graph/arccoordstype.html
+	uint16 nh;
+
+
+	//untyped_file f;
+	Common::String nextstring();
+	void scram1(Common::String &x);
+	void unscramble();
+	void load_also(Common::String n);
+
+	void zoomout(int16 x, int16 y);
+
+	void find_people(byte room);
+
+	void new_town();
+
+	void put_geida_at(byte whichped, byte &ped);
+
+	void topcheck();
+
+	void verte();
+
+	int8 fades(int8 x);
+
+	void fadeout(byte n);
+
+	void fadein(byte n);
+
+	// clock_lucerna
+	void calchand(uint16 ang, uint16 length,/* arccoordstype &a,*/ byte c);
+	void hand(/*arccoordstype a,*/ byte c);
+	void chime();
+	void refresh_hands();
+	void plothands();
+
 };
 
 } // End of namespace Avalanche

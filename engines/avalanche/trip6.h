@@ -150,23 +150,10 @@ public:
 
 
 
-
-
-
-
-
-
 class Trip {
 public:
 	friend triptype;
 	friend getsettype;
-
-	
-
-
-
-
-
 
 	Trip();
 
