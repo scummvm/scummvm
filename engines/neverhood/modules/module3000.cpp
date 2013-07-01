@@ -73,7 +73,7 @@ Module3000::~Module3000() {
 }
 
 void Module3000::createScene(int sceneNum, int which) {
-	static const byte kNavigationTypes05[] = {3, 0};
+	static const byte kNavigationTypes05[] = {2, 0};
 	static const byte kNavigationTypes06[] = {5};
 	debug(1, "Module3000::createScene(%d, %d)", sceneNum, which);
 	_vm->gameState().sceneNum = sceneNum;
