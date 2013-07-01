@@ -29,6 +29,8 @@
 
 #include "engines/engine.h"
 
+#include "zvision/scriptManager.h"
+
 #include "gui/debugger.h"
  
 namespace ZVision {
@@ -55,6 +57,8 @@ private:
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
+
+	ScriptManager _scriptManager;
 
 	// To prevent allocation every time we process events
 	Common::Event _event;

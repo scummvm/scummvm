@@ -32,9 +32,12 @@
 #include "engines/util.h"
  
 #include "zvision/zvision.h"
+#include "zvision/scriptManager.h"
 #include "zvision/zfsArchive.h"
 
 #include "graphics/decoders/tga.h"
+
+#include "zvision/tests.h"
 
 namespace ZVision {
  
@@ -59,7 +62,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc) : Engine
  
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("zvision");
- 
+
 	debug("ZVision::ZVision");
 }
  
@@ -89,6 +92,8 @@ void ZVision::initialize() {
 	//Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);	// ARGB8888
 	Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);	// RGB555
 	initGraphics(640, 480, true, &format);
+
+	_scriptManager.initialize();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
