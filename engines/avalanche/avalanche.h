@@ -44,6 +44,7 @@
 #include "avalanche/timeout2.h"
 #include "avalanche/trip6.h"
 #include "avalanche/acci2.h"
+#include "avalanche/basher2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -74,6 +75,7 @@ public:
 	Timeout _timeout;
 	Trip _trip;
 	Acci _acci;
+	Basher _basher;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
