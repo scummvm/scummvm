@@ -3474,7 +3474,7 @@ echo "$_zlib"
 #
 # Check for LibMPEG2
 #
-echocheck "libmpeg2 >= 0.3.2"
+echocheck "libmpeg2 >= 0.4.0"
 if test "$_mpeg2" = auto ; then
 	_mpeg2=no
 	cat > $TMPC << EOF
@@ -3486,16 +3486,19 @@ typedef unsigned $type_1_byte uint8_t;
 typedef unsigned $type_2_byte uint16_t;
 typedef unsigned $type_4_byte uint32_t;
 
+extern "C" {
 #include <mpeg2dec/mpeg2.h>
+}
+
 int main(void) {
+	#if MPEG2_RELEASE < MPEG2_VERSION(0, 4, 0)
+	#error libmpeg2 version too low
+	#endif
+
 	/* mpeg2_state_t first appears in 0.4.0 */
 	mpeg2_state_t state;
 
-		#ifdef MPEG2_RELEASE
-		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 3, 2))
-			return 0;
-	#endif
-	return 1;
+	return 0;
 }
 EOF
 
