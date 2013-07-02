@@ -29,6 +29,7 @@
 
 namespace Wintermute {
 
+class DebuggerAdapter;
 class Console;
 class BaseGame;
 class SystemClassRegistry;
@@ -48,7 +49,9 @@ public:
 	WintermuteEngine();
 	~WintermuteEngine();
 
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_debugger; }
+	// Not sure if a great idea, but I need Wintermute::Console with all the bell and whistles
+	virtual Wintermute::Console *getConsole() { return _debugger; }
 	void trigDebugger() { _trigDebug = true; }
 
 	virtual Common::Error run();
@@ -65,10 +68,12 @@ private:
 	int init();
 	void deinit();
 	int messageLoop();
-	GUI::Debugger *_debugger;
+	Wintermute::Console *_debugger;
+	Wintermute::DebuggerAdapter *_adapter;
 	BaseGame *_game;
 	const ADGameDescription *_gameDescription;
 
+	friend class DebuggerAdapter;
 	friend class Console;
 };
 

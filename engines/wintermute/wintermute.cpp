@@ -35,6 +35,7 @@
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/debugger.h"
+#include "engines/wintermute/debugger_adapter.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"
 
@@ -113,7 +114,9 @@ Common::Error WintermuteEngine::run() {
 	}
 
 	// Create debugger console. It requires GFX to be initialized
+	_adapter = new DebuggerAdapter(this);
 	_debugger = new Console(this);
+
 
 //	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
@@ -149,6 +152,8 @@ int WintermuteEngine::init() {
 
 	// set gameId, for savegame-naming:
 	_game->setGameId(_targetName);
+	_game->_adapter = _adapter;
+	// _game->attachDebugger(_debugger);
 
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");

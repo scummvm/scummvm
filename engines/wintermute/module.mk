@@ -112,6 +112,7 @@ MODULE_OBJS := \
 	video/video_player.o \
 	video/video_theora_player.o \
 	debugger.o \
+	debugger_adapter.o \
 	wintermute.o \
 	persistent.o
  

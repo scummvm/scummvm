@@ -76,7 +76,6 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 
 	_isProfiling = false;
 	_profilingStartTime = 0;
-
 	//EnableProfiling();
 }
 
@@ -162,10 +161,88 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 		script->_globals->setProp("self", &val);
 		script->_globals->setProp("this", &val);
 
-		_scripts.add(script);
+		// We need to carry over breakpoints, otherwise the new thread won't break
+		// TODO: Add a function for this. 
+		// TODO-TODO: Or just rip refreshBreakpoints() off original
 
+		for (int i = 0; i < _watchlist.size(); i++) {
+			if (!strcmp(filename, _watchlist[i]._filename.c_str())) {
+				script->_watchlist.add(_watchlist[i]);
+			}
+		}
+		_scripts.add(script);
 		return script;
 	}
+}
+
+bool ScEngine::addWatch(const char *filename, const char *name) {
+	CScWatch watch = CScWatch(filename);
+	watch._symbol = name;
+	watch._lastvalue = new ScValue(_gameRef);
+	// TODO: This leaks?
+	_watchlist.add(watch);
+	refreshWatchlist();
+	return 0;
+}
+
+bool ScEngine::removeWatch(int id) {
+	if (id >= _watchlist.size()) return 0;
+	_watchlist.remove_at(id);
+	refreshWatchlist();
+	return 1;
+}
+
+bool ScEngine::refreshWatchlist() {
+	for (int i = 0; i < _scripts.size(); i++) {
+		_scripts[i]->_watchlist.clear();
+		for (int j = 0; j < _watchlist.size(); j++) {
+			if (!strcmp(_scripts[i]->_filename, _watchlist[j]._filename.c_str())) {
+				_scripts[i]->_watchlist.add(_watchlist[j]);
+
+			}
+		}
+	}
+	return 1;
+}
+
+bool ScEngine::addBreakpoint(const char *filename, int line) {
+	// Add a <filename, line> pair to the per-Engine list of breakpoints.
+	CScBreakpoint breakpoint = CScBreakpoint(filename);
+	breakpoint._line = (line);
+	breakpoint._hits = 0;
+	_breakpoints.add(breakpoint);
+	// refreshBreakpoints();
+	return 1;
+}
+
+bool ScEngine::removeBreakpoint(int id) {
+	if (id >= _breakpoints.size()) return 0;
+	_breakpoints.remove_at(id);
+	return 1;
+}
+
+int ScEngine::incrementWatch(int id) {
+	// TODO: Check if existing
+	_watchlist[id]._hits = 0;
+	return 0;
+}
+
+int ScEngine::incrementBreakpoint(int id) {
+	// TODO: Check if existing
+	_breakpoints[id]._hits = 0;
+	return 0;
+}
+
+int ScEngine::resetWatch(int id) {
+	// TODO: Check if existing
+	_watchlist[id]._hits = 0;
+	return 0;
+}
+
+int ScEngine::resetBreakpoint(int id) {
+	// TODO: Check if existing
+	_breakpoints[id]._hits = 0;
+	return 0;
 }
 
 

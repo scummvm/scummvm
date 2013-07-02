@@ -33,17 +33,20 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/scriptables/script_engine.h"
 
 namespace Wintermute {
 class BaseScriptHolder;
 class BaseObject;
 class ScEngine;
 class ScStack;
+class DebuggerAdapter;
 class ScScript : public BaseClass {
 public:
-	BaseArray<int> _breakpoints;
+	BaseArray<ScEngine::CScWatch> _watchlist; 
+	// We need a per-script watchlist, we can have different threads, same filename, different rvalues.
 	bool _tracingMode;
-
 	ScScript *_parentScript;
 	bool _unbreakable;
 	bool finishThreads();
@@ -124,6 +127,7 @@ public:
 	ScStack *_stack;
 	ScValue *_globals;
 	ScEngine *_engine;
+	DebuggerAdapter *_adapter;
 	int32 _currentLine;
 	bool executeInstruction();
 	char *getString();
@@ -132,6 +136,8 @@ public:
 	void cleanup();
 	bool create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
 	uint32 _iP;
+	int32 getCallDepth();
+	int32 _step;
 private:
 	void readHeader();
 	uint32 _bufferSize;
@@ -147,9 +153,10 @@ public:
 	BaseScriptHolder *_owner;
 	ScScript::TExternalFunction *getExternal(char *name);
 	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
-private:
 	char **_symbols;
 	uint32 _numSymbols;
+	ScValue *resolveName(const char *name);
+private:
 	TFunctionPos *_functions;
 	TMethodPos *_methods;
 	TEventPos *_events;
@@ -161,7 +168,6 @@ private:
 
 	bool initScript();
 	bool initTables();
-
 
 // IWmeDebugScript interface implementation
 public:
