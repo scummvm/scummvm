@@ -249,10 +249,10 @@ protected:
 	virtual void onNewReverbMode(Bit8u /* mode */) {}
 	virtual void onNewReverbTime(Bit8u /* time */) {}
 	virtual void onNewReverbLevel(Bit8u /* level */) {}
-	virtual void onPartStateChanged(int /* partNum */, bool /* isActive */) {}
+	virtual void onPartStateChanged(int /* partNum */, bool /* hasActiveNonReleasingPolys */) {}
 	virtual void onPolyStateChanged(int /* partNum */) {}
 	virtual void onPartialStateChanged(int /* partialNum */, int /* oldPartialPhase */, int /* newPartialPhase */) {}
-	virtual void onProgramChanged(int /* partNum */, char * /* patchName */) {}
+	virtual void onProgramChanged(int /* partNum */, int /* bankNum */, const char * /* patchName */) {}
 };
 
 class Synth {
@@ -370,10 +370,8 @@ private:
 
 	void printPartialUsage(unsigned long sampleOffset = 0);
 
-	void partStateChanged(int partNum, bool isPartActive);
 	void polyStateChanged(int partNum);
-	void partialStateChanged(const Partial * const partial, int oldPartialPhase, int newPartialPhase);
-	void newTimbreSet(int partNum, char patchName[]);
+	void newTimbreSet(int partNum, Bit8u timbreGroup, const char patchName[]);
 	void printDebug(const char *fmt, ...);
 
 public:
