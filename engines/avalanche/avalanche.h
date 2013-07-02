@@ -46,6 +46,7 @@
 #include "avalanche/acci2.h"
 #include "avalanche/basher2.h"
 #include "avalanche/dropdown2.h"
+#include "avalanche/closing2.h"
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -78,6 +79,7 @@ public:
 	Acci _acci;
 	Basher _basher;
 	Dropdown _dropdown;
+	Closing _closing;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
