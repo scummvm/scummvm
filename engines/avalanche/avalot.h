@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+/* AVALOT		The kernel of the program. */
+
 #ifndef AVALOT_H
 #define AVALOT_H
 

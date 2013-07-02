@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+ /* SCROLLS		The scroll driver. */
+
 #ifndef SCROLLS2_H
 #define SCROLLS2_H
 
