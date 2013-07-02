@@ -114,37 +114,63 @@ public:
 };
 
 File textFile, txxInp, txxNtp;
+int _version;
 
 /*-------------------------------------------------------------------------*/
 
 #define BUFFER_SIZE 32768
 
-const byte tabdr[32] = {
-	32, 101, 115,  97, 114, 105, 110,
+const byte tabdrFr[32] = {
+	32, 101, 115,  97, 114, 105, 110, // ' e♣arinutol
 	117, 116, 111, 108,  13, 100,  99,
 	112, 109,  46, 118, 130,  39, 102,
 	98,  44, 113, 104, 103,  33,  76,
 	85, 106,  30,  31
 };
 
-const byte tab30[32] = {
-	69,  67,  74, 138, 133, 120,  77, 122,
+const byte tabdrDe[32] = {
+	0x20, 0x65, 0x6E, 0x69, 0x73, 0x72, 0x74, // ' e♣arinutol
+	0x68, 0x61, 0x75, 0x0D, 0x63, 0x6C, 0x64,
+	0x6D, 0x6F, 0x67, 0x2E, 0x62, 0x66, 0x53,
+	0x2C, 0x77, 0x45, 0x7A, 0x6B, 0x44, 0x76,
+	0x9C, 0x47, 0x1E, 0x1F
+};
+
+const byte tab30Fr[32] = {
+	69,  67,  74, 138, 133, 120,  77, 122, //ECJèà¶M
 	121,  68,  65,  63,  73,  80,  83,  82,
 	156,  45,  58,  79,  49,  86,  78,  84,
 	71,  81,  64,  66, 135,  34, 136,  91
 };
 
-const byte tab31[32]= {
+const byte tab30De[32] = {
+	0x49, 0x4D, 0x21, 0x42, 0x4C, 0x70, 0x41, 0x52, //ECJèà¶M
+	0x57, 0x4E, 0x48, 0x3F, 0x46, 0x50, 0x55, 0x4B,
+	0x5A, 0x4A, 0x54, 0x31, 0x4F, 0x56, 0x79, 0x3A,
+	0x6A, 0x5B, 0x5D, 0x40, 0x22, 0x2F, 0x30, 0x35
+};
+
+const byte tab31Fr[32]= {
 	93,  47,  48,  53,  50,  70, 124,  75,
 	72, 147, 140, 150, 151,  57,  56,  51,
 	107, 139,  55,  89, 131,  37,  54,  88,
 	119,   0,   0,   0,   0,   0,   0,   0
 };
 
+const byte tab31De[32]= {
+	0x78, 0x2D, 0x32, 0x82, 0x43, 0x39, 0x33, 0x38,
+	0x7C, 0x27, 0x37, 0x3B, 0x25, 0x28, 0x29, 0x36,
+	0x51, 0x59, 0x71, 0x81, 0x87, 0x88, 0x93, 0,
+	0,    0,    0,    0,    0,    0,    0,    0
+};
+
+const byte *tabdr, *tab30, *tab31;
+uint16 ctrlChar;
+
 /**
  * Extracts a single character from the game data
  */
-static void extractCharacter(unsigned char &c, int &idx, int &pt, bool &the_end, const uint16 *strData) {
+static void extractCharacter(unsigned char &c, uint &idx, uint &pt, bool &the_end, const uint16 *strData) {
 	uint16 oct, ocd;
 
 	/* 5-8 */
@@ -161,14 +187,10 @@ static void extractCharacter(unsigned char &c, int &idx, int &pt, bool &the_end,
 		oct = (uint)oct >> pt;
 	}
 
-	switch (oct) {
-	case 11 : {
+	if (oct == ctrlChar) {
 		c = '$';
 		the_end = true;
-	}
-	break;
-	case 30:
-	case 31 : {
+	} else if (oct == 30 || oct == 31) {
 		ocd = FROM_LE_16(strData[idx]);
 		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
@@ -185,14 +207,11 @@ static void extractCharacter(unsigned char &c, int &idx, int &pt, bool &the_end,
 		else
 			c = (char)tab31[ocd];
 
-		if (c == '\0') {
+		if (c == '\0')
 			the_end = true;
-		}
-	}
-	break;
-	default:
+	} else {
 		c = (char)tabdr[oct];
-	}	
+	}
 }
 
 /**
@@ -293,8 +312,8 @@ static void export_strings(const char *textFilename) {
 
 	// Loop through getting each string
 	for (unsigned int strIndex = 0; strIndex < (txxNtp.size() / 3); ++strIndex) {
-		int indis = txxNtp.readWord();
-		int point = txxNtp.readByte();
+		uint indis = txxNtp.readWord();
+		uint point = txxNtp.readByte();
 
 		// Extract the string
 		int charIndex = 0;
@@ -330,8 +349,14 @@ static void export_strings(const char *textFilename) {
  */
 static void import_strings(const char *textFilename) {
 	// Open input and output files
-	txxInp.open("TXX.INP", kFileWriteMode);
-	txxNtp.open("TXX.NTP", kFileWriteMode);
+	if (!txxInp.open("TXX.INP", kFileWriteMode)) {
+		printf("Missing TXX data file");
+		exit(-1);
+	}
+	if (!txxNtp.open("TXX.NTP", kFileWriteMode)) {
+		printf("Missing TXX index file");
+		exit(-1);
+	}
 	textFile.open(textFilename, kFileReadMode);
 
 	// Set up a buffer for the output compressed strings
@@ -371,17 +396,33 @@ static void import_strings(const char *textFilename) {
 
 
 int main(int argc, char *argv[]) {
-	if (argc != 3) {
-		printf("Format: %s export|import output_file\n", argv[0]);
+	if (argc != 4) {
+		printf("Format: %s export|import v1|v2 output_file\n", argv[0]);
+		printf("where:\nv1: French DOS version\nv2: German DOS version\n");
 		printf("The program must be run from the directory with the Mortville Manor game files.\n");
 		exit(0);
 	}
 
+	if (!strcmp(argv[2], "v1")) {
+		tab30 = tab30Fr;
+		tab31 = tab31Fr;
+		tabdr = tabdrFr;
+		ctrlChar = 11;
+	} else if (!strcmp(argv[2], "v2")) {
+		tab30 = tab30De;
+		tab31 = tab31De;
+		tabdr = tabdrDe;
+		ctrlChar = 10;
+	} else {
+		printf("Unknown version");
+		exit(-1);
+	}
+
 	// Do the processing
 	if (!strcmp(argv[1], "export"))
-		export_strings(argv[2]);
+		export_strings(argv[3]);
 	else if (!strcmp(argv[1], "import"))
-		import_strings(argv[2]);
+		import_strings(argv[3]);
 	else
 		printf("Unknown operation specified\n");
 }
