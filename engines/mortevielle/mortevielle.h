@@ -125,7 +125,7 @@ const int kArep = 1314;
 const int kAmzon = 1650;
 const int kArega = 0;
 
-const int kMaxTi = 7975;
+const int kMaxTi = 9000;
 const int kMaxTd = 600;
 
 const int kDescriptionStringIndex = 0;                // Unused
@@ -136,7 +136,7 @@ const int kMenuPlaceStringIndex = 435;
 const int kMenuActionStringIndex = 476;
 const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
-const int kSecretPassageQuestionStringIndex = 510;    // Unusued?
+const int kSecretPassageQuestionStringIndex = 510;    // Unused?
 const int kMaxPatt = 20;
 
 const int OPCODE_NONE = 0;
