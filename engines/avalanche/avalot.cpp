@@ -50,7 +50,7 @@
 
 namespace Avalanche {
 
-Avalot::Avalot() {
+void Avalot::init() {
 	int16 gd, gm;
 
 	checkbreak = false;

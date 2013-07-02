@@ -44,14 +44,13 @@
 
 namespace Avalanche {
 
-Scrolls::Scrolls() {
-	loadfont();
-	resetscrolldriver();
-
-}
-
 void Scrolls::setParent(AvalancheEngine *vm) {
 	_vm = vm;
+}
+
+void Scrolls::init() {
+	loadfont();
+	resetscrolldriver();
 }
 
 void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
@@ -156,7 +155,7 @@ bool Scrolls::ask(Common::String question) {
 void Scrolls::resetscroll() {
 	_vm->_gyro.scrolln = 1;
 	for (int j = 0; j < 15; j ++)
-		for (int i = 0; i < sizeof(_vm->_gyro.scroll); i++)
+		for (int i = 0; i < _vm->_gyro.scroll[j].size(); i++)
 			_vm->_gyro.scroll[j].setChar(0, i);
 }
 
