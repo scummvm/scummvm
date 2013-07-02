@@ -588,7 +588,7 @@ void displayHelp(const char *exe) {
 	        " Additionally there are the following switches for changing various settings:\n"
 	        "\n"
 	        "Project specific settings:\n"
-	        " --codeblock              build Code::Blocks project files\n"
+	        " --codeblocks             build Code::Blocks project files\n"
 	        " --msvc                   build Visual Studio project files\n"
 	        " --xcode                  build XCode project files\n"
 	        " --file-prefix prefix     allow overwriting of relative file prefix in the\n"
