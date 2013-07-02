@@ -61,12 +61,12 @@ NeverhoodEngine::kReadSaveHeaderError NeverhoodEngine::readSaveHeader(Common::Se
 	return ((in->eos() || in->err()) ? kRSHEIoError : kRSHENoError);
 }
 
-void NeverhoodEngine::savegame(const char *filename, const char *description) {
+bool NeverhoodEngine::savegame(const char *filename, const char *description) {
 
 	Common::OutSaveFile *out;
 	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
 		warning("Can't create file '%s', game not saved", filename);
-		return;
+		return false;
 	}
 
 	TimeDate curTime;
@@ -99,13 +99,14 @@ void NeverhoodEngine::savegame(const char *filename, const char *description) {
 	
 	out->finalize();
 	delete out;
+	return true;
 }
 
-void NeverhoodEngine::loadgame(const char *filename) {
+bool NeverhoodEngine::loadgame(const char *filename) {
 	Common::InSaveFile *in;
 	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		warning("Can't open file '%s', game not loaded", filename);
-		return;
+		return false;
 	}
 
 	SaveHeader header;
@@ -115,7 +116,7 @@ void NeverhoodEngine::loadgame(const char *filename) {
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);
 		delete in;
-		return;
+		return false;
 	}
 	
 	g_engine->setTotalPlayTime(header.playTime * 1000);
@@ -128,18 +129,20 @@ void NeverhoodEngine::loadgame(const char *filename) {
 	_gameModule->requestRestoreGame();
 
 	delete in;
-
+	return true;
 }
 
 Common::Error NeverhoodEngine::loadGameState(int slot) {
 	const char *fileName = getSavegameFilename(slot);
-	loadgame(fileName);
+	if (!loadgame(fileName))
+		return Common::kReadingFailed;
 	return Common::kNoError;
 }
 
 Common::Error NeverhoodEngine::saveGameState(int slot, const Common::String &description) {
 	const char *fileName = getSavegameFilename(slot);
-	savegame(fileName, description.c_str());
+	if (!savegame(fileName, description.c_str()))
+		return Common::kWritingFailed;
 	return Common::kNoError;
 }
 

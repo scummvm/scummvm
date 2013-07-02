@@ -43,12 +43,12 @@ SaveLoadManager::SaveLoadManager(HopkinsEngine *vm) {
 }
 
 bool SaveLoadManager::save(const Common::String &file, const void *buf, size_t n) {
-	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(file);
+	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(file);
 
-	if (f) {
-		size_t bytesWritten = f->write(buf, n);
-		f->finalize();
-		delete f;
+	if (savefile) {
+		size_t bytesWritten = savefile->write(buf, n);
+		savefile->finalize();
+		delete savefile;
 
 		return bytesWritten == n;
 	} else
@@ -69,13 +69,13 @@ void SaveLoadManager::initSaves() {
 }
 
 void SaveLoadManager::load(const Common::String &file, byte *buf) {
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(file);
-	if (f == NULL)
-		error("Error openinig file - %s", file.c_str());
+	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(file);
+	if (savefile == NULL)
+		error("Error opening file - %s", file.c_str());
 
-	int32 filesize = f->size();
-	f->read(buf, filesize);
-	delete f;
+	int32 filesize = savefile->size();
+	savefile->read(buf, filesize);
+	delete savefile;
 }
 
 bool SaveLoadManager::readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header) {
@@ -215,13 +215,13 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 
 bool SaveLoadManager::readSavegameHeader(int slot, hopkinsSavegameHeader &header) {
 	// Try and open the save file for reading
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		g_vm->generateSaveName(slot));
-	if (!saveFile)
+	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(
+		_vm->generateSaveName(slot));
+	if (!savefile)
 		return false;
 
-	bool result = readSavegameHeader(saveFile, header);
-	delete saveFile;
+	bool result = readSavegameHeader(savefile, header);
+	delete savefile;
 	return result;
 }
 

@@ -32,8 +32,9 @@
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
-#include "graphics/conversion.h"
+#include "graphics/yuv_to_rgb.h"
 
 #include "video/codecs/indeo3.h"
 
@@ -260,90 +261,60 @@ const Graphics::Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *
 
 	delete[] inData;
 
-	// Blit the frame onto the surface
 	const byte *srcY = _cur_frame->Ybuf;
 	const byte *srcU = _cur_frame->Ubuf;
 	const byte *srcV = _cur_frame->Vbuf;
-	byte *dest = (byte *)_surface->pixels;
 
-	const byte *srcUP = srcU;
-	const byte *srcVP = srcV;
-	const byte *srcUN = srcU + chromaWidth;
-	const byte *srcVN = srcV + chromaWidth;
+	// Create buffers for U/V with an extra row/column copied from the second-to-last
+	// row/column.
+	byte *tempU = new byte[(chromaWidth + 1) * (chromaHeight + 1)];
+	byte *tempV = new byte[(chromaWidth + 1) * (chromaHeight + 1)];
 
+	for (uint i = 0; i < chromaHeight; i++) {
+		memcpy(tempU + (chromaWidth + 1) * i, srcU + chromaWidth * i, chromaWidth);
+		memcpy(tempV + (chromaWidth + 1) * i, srcV + chromaWidth * i, chromaWidth);
+		tempU[(chromaWidth + 1) * i + chromaWidth] = srcU[chromaWidth * (i + 1) - 1];
+		tempV[(chromaWidth + 1) * i + chromaWidth] = srcV[chromaWidth * (i + 1) - 1];
+	}
+
+	memcpy(tempU + (chromaWidth + 1) * chromaHeight, tempU + (chromaWidth + 1) * (chromaHeight - 1),
+			chromaWidth + 1);
+	memcpy(tempV + (chromaWidth + 1) * chromaHeight, tempV + (chromaWidth + 1) * (chromaHeight - 1),
+			chromaWidth + 1);
+
+	// Blit the frame onto the surface
 	uint32 scaleWidth  = _surface->w / fWidth;
 	uint32 scaleHeight = _surface->h / fHeight;
 
-	for (uint32 y = 0; y < fHeight; y++) {
-		byte *rowDest = dest;
+	if (scaleWidth == 1 && scaleHeight == 1) {
+		// Shortcut: Don't need to scale so we can decode straight to the surface
+		YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
+				fWidth, fHeight, fWidth, chromaWidth + 1);
+	} else {
+		// Need to upscale, so decode to a temp surface first
+		Graphics::Surface tempSurface;
+		tempSurface.create(fWidth, fHeight, _surface->format);
 
-		for (uint32 sH = 0; sH < scaleHeight; sH++) {
-			for (uint32 x = 0; x < fWidth; x++) {
-				uint32 xP = MAX<int32>((x >> 2) - 1, 0);
-				uint32 xN = MIN<int32>((x >> 2) + 1, chromaWidth - 1);
+		YUVToRGBMan.convert410(&tempSurface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
+				fWidth, fHeight, fWidth, chromaWidth + 1);
 
-				byte cY = srcY[x];
-				byte cU = srcU[x >> 2];
-				byte cV = srcV[x >> 2];
-
-				if        (((x % 4) == 0) && ((y % 4) == 0)) {
-					cU = (((uint32) cU) + ((uint32) srcUP[xP])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcVP[xP])) / 2;
-				} else if (((x % 4) == 3) && ((y % 4) == 0)) {
-					cU = (((uint32) cU) + ((uint32) srcUP[xN])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcVP[xN])) / 2;
-				} else if (((x % 4) == 0) && ((y % 4) == 3)) {
-					cU = (((uint32) cU) + ((uint32) srcUN[xP])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcVN[xP])) / 2;
-				} else if (((x % 4) == 3) && ((y % 4) == 3)) {
-					cU = (((uint32) cU) + ((uint32) srcUN[xN])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcVN[xN])) / 2;
-				} else if ( (x % 4) == 0) {
-					cU = (((uint32) cU) + ((uint32) srcU[xP])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcV[xP])) / 2;
-				} else if ( (x % 4) == 3) {
-					cU = (((uint32) cU) + ((uint32) srcU[xN])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcV[xN])) / 2;
-				} else if ( (y % 4) == 0) {
-					cU = (((uint32) cU) + ((uint32) srcUP[x >> 2])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcVP[x >> 2])) / 2;
-				} else if ( (y % 4) == 3) {
-					cU = (((uint32) cU) + ((uint32) srcUN[x >> 2])) / 2;
-					cV = (((uint32) cV) + ((uint32) srcVN[x >> 2])) / 2;
-				}
-
-				byte r = 0, g = 0, b = 0;
-				Graphics::YUV2RGB(cY, cU, cV, r, g, b);
-
-				const uint32 color = _pixelFormat.RGBToColor(r, g, b);
-
-				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->format.bytesPerPixel) {
-					if      (_surface->format.bytesPerPixel == 1)
-						*((uint8 *)rowDest) = (uint8)color;
-					else if (_surface->format.bytesPerPixel == 2)
-						*((uint16 *)rowDest) = (uint16)color;
-				}
-			}
-
-			dest += _surface->pitch;
+		// Upscale
+		for (int y = 0; y < _surface->h; y++) {
+			for (int x = 0; x < _surface->w; x++) {
+				if (_surface->format.bytesPerPixel == 1)
+					*((byte *)_surface->getBasePtr(x, y)) = *((byte *)tempSurface.getBasePtr(x / scaleWidth, y / scaleHeight));
+				else if (_surface->format.bytesPerPixel == 2)
+					*((uint16 *)_surface->getBasePtr(x, y)) = *((uint16 *)tempSurface.getBasePtr(x / scaleWidth, y / scaleHeight));
+				else if (_surface->format.bytesPerPixel == 4)
+					*((uint32 *)_surface->getBasePtr(x, y)) = *((uint32 *)tempSurface.getBasePtr(x / scaleWidth, y / scaleHeight));
+ 			}
 		}
 
-		srcY += fWidth;
-
-		if ((y & 3) == 3) {
-			srcU += chromaWidth;
-			srcV += chromaWidth;
-
-			if (y > 0) {
-				srcUP += chromaWidth;
-				srcVP += chromaWidth;
-			}
-			if (y < (fHeight - 4U)) {
-				srcUN += chromaWidth;
-				srcVN += chromaWidth;
-			}
-		}
+		tempSurface.free();
 	}
+
+	delete[] tempU;
+	delete[] tempV;
 
 	return _surface;
 }

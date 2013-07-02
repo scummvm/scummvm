@@ -45,6 +45,7 @@ public:
 	void setLoadgameInfo(uint index);
 	void setSavegameInfo(const Common::String &description, uint index, bool newSavegame);
 	void setDeletegameInfo(uint index);
+	void refreshSaveGameList();
 protected:
 	int _sceneNum;
 	byte *_savedPaletteData;
@@ -229,6 +230,7 @@ protected:
 	Common::String _savegameDescription;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	virtual void performAction();
+	int scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc);
 };
 
 class SaveGameMenu : public GameStateMenu {

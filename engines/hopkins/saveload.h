@@ -63,7 +63,7 @@ public:
 
 	static bool readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header);
 	void writeSavegameHeader(Common::OutSaveFile *out, hopkinsSavegameHeader &header);
-	static bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
+	bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
 	Common::Error saveGame(int slot, const Common::String &saveName);
 	Common::Error loadGame(int slot);
 

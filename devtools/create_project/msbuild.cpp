@@ -52,6 +52,9 @@ int MSBuildProvider::getVisualStudioVersion() {
 	if (_version == 11)
 		return 2012;
 
+	if (_version == 12)
+		return 2013;
+
 	error("Unsupported version passed to getVisualStudioVersion");
 }
 
@@ -88,7 +91,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		error("Could not open \"" + projectFile + "\" for writing");
 
 	project << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
 	outputConfiguration(project, "Debug", "Win32");
@@ -105,7 +108,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "\t\t<ProjectGuid>{" << uuid << "}</ProjectGuid>\n"
 	           "\t\t<RootNamespace>" << name << "</RootNamespace>\n"
 	           "\t\t<Keyword>Win32Proj</Keyword>\n"
-	           "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath11)</VCTargetsPath>\n"
+			   "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n"
 	           "\t</PropertyGroup>\n";
 
 	// Shared configuration
@@ -184,7 +187,7 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 		error("Could not open \"" + filtersFile + "\" for writing");
 
 	filters << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	           "<Project ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n";
+	           "<Project ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n";
 
 	// Output the list of filters
 	filters << "\t<ItemGroup>\n";
@@ -314,9 +317,8 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 		definesList += REVISION_DEFINE ";";
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<PropertyGroup>\n"
-	              "\t\t<_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>\n"
 	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
 	              "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(ExecutablePath)</ExecutablePath>\n"
 	              "\t\t<LibraryPath>$(" << LIBS_DEFINE << ")\\lib\\" << (bits == 32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
@@ -368,12 +370,11 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<ImportGroup Label=\"PropertySheets\">\n"
 	              "\t\t<Import Project=\"" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
 	              "\t</ImportGroup>\n"
 	              "\t<PropertyGroup>\n"
-	              "\t\t<_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>\n"
 	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
 	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
 	              "\t</PropertyGroup>\n"

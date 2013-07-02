@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 8 && msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11) {
+			if (msvcVersion != 8 && msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
@@ -609,9 +609,9 @@ void displayHelp(const char *exe) {
 	        "                          (default: false)\n"
 	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
 	        "                          (default: false)\n"
-			" --tools                  Create project files for the devtools\n"
-			"                          (ignores --build-events and --installer, as well as engine settings)\n"
-			"                          (default: false)\n"
+	        " --tools                  Create project files for the devtools\n"
+	        "                          (ignores --build-events and --installer, as well as engine settings)\n"
+	        "                          (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines           list all available engines and their default state\n"
