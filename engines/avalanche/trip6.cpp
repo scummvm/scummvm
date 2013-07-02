@@ -319,7 +319,8 @@ void Trip::loadtrip() {
 	for (gm = 1; gm <= numtr; gm++)
 		tr[gm].original();
 	// CHECKME: A 'i++' is missing somewhere, obviously!
-	for (int i = 0; i < sizeof(aa); aa[i] = 0);
+	for (int i = 0; i < sizeof(aa); i++)
+		aa[i] = 0;
 }
 
 byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
