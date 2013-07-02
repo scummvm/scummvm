@@ -47,12 +47,11 @@ namespace Avalanche {
 		_console = new AvalancheConsole(this);
 		_rnd = 0;
 
-		_avalot.setParent(this);
 		_gyro.setParent(this);
 		_enhanced.setParent(this);
 		_logger.setParent(this);
 		_pingo.setParent(this);
-		_scrolls.setParent(this);
+		_scrolls.setParent(this); _scrolls.init();
 		_visa.setParent(this);
 		_lucerna.setParent(this); _lucerna.init();
 		_enid.setParent(this);
@@ -64,6 +63,7 @@ namespace Avalanche {
 		_basher.setParent(this);
 		_dropdown.setParent(this);
 		_closing.setParent(this);
+		_avalot.setParent(this); _avalot.init();
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
@@ -229,8 +229,7 @@ namespace Avalanche {
 	void AvalancheEngine::run_avalot() {
 		bflight_on();
 
-		Avalot ava;
-		ava.run(Common::String(runcodes[first_time]) + arguments);  // TODO: Check if parameteres are ever use and eventually remove them
+		_avalot.run(Common::String(runcodes[first_time]) + arguments);  // TODO: Check if parameteres are ever use and eventually remove them
 		// If there's an error initalizing avalot, i'll handle it in there, not here
 		first_time = false;
 	}

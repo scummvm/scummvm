@@ -35,9 +35,9 @@ class AvalancheEngine;
 
 class Avalot {
 public:
-	Avalot();
-
 	void setParent(AvalancheEngine *vm);
+
+	void init();
 
 	void run(Common::String arg);
 

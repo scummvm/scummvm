@@ -43,7 +43,7 @@ public:
 
 
 
-	Scrolls();
+	void init();
 
 	void setParent(AvalancheEngine *vm);
 

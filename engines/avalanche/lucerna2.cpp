@@ -100,8 +100,7 @@ Common::String Lucerna::nextstring() {
 }
 
 void Lucerna::scram1(Common::String &x) {
-	byte fz;
-	for (fz = 1; fz <= x.size(); fz ++)
+	for (int fz = 0; fz < x.size(); fz ++)
 		x.setChar(x[fz] ^ 177, fz);
 }
 
@@ -637,9 +636,9 @@ void Lucerna::inkey() {
 			_vm->_enhanced.extd = '#'; /* alt-spacebar = alt-H */
 		}
 	} else {
-		if (_vm->_gyro.mousetext[1] == '`')
-			_vm->_gyro.mousetext.setChar(13,1); /* Backquote = return in a macro */
-		_vm->_enhanced.inchar = _vm->_gyro.mousetext[1];
+		if (_vm->_gyro.mousetext[0] == '`')
+			_vm->_gyro.mousetext.setChar(13,0); /* Backquote = return in a macro */
+		_vm->_enhanced.inchar = _vm->_gyro.mousetext[0];
 		_vm->_gyro.mousetext = Common::String(_vm->_gyro.mousetext.c_str() + 2, 253);
 	}
 }
