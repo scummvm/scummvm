@@ -20,15 +20,14 @@
  *
  */
 
-#if defined(BADA)
+#if defined(TIZEN)
 
-#include "backends/timer/bada/timer.h"
+#include "backends/timer/tizen/timer.h"
 
 //
-// TimerSlot
+// TimerSlot - an event driven thread
 //
-TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback,
-										 uint32 interval, void *refCon) :
+TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback, uint32 interval, void *refCon) :
 	_timer(0),
 	_callback(callback),
 	_interval(interval),
@@ -36,16 +35,17 @@ TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback,
 }
 
 TimerSlot::~TimerSlot() {
+	delete _timer;
 }
 
 bool TimerSlot::OnStart() {
-	_timer = new Osp::Base::Runtime::Timer();
+	_timer = new Tizen::Base::Runtime::Timer();
 	if (!_timer || IsFailed(_timer->Construct(*this))) {
 		AppLog("Failed to create timer");
 		return false;
 	}
 
-	if (IsFailed(_timer->Start(_interval))) {
+	if (IsFailed(_timer->StartAsRepeatable(_interval))) {
 		AppLog("failed to start timer");
 		return false;
 	}
@@ -65,28 +65,28 @@ void TimerSlot::OnStop() {
 
 void TimerSlot::OnTimerExpired(Timer &timer) {
 	_callback(_refCon);
-	timer.Start(_interval);
 }
 
 //
-// BadaTimerManager
+// TizenTimerManager
 //
-BadaTimerManager::BadaTimerManager() {
+TizenTimerManager::TizenTimerManager() {
 }
 
-BadaTimerManager::~BadaTimerManager() {
-	for (Common::List<TimerSlot>::iterator slot = _timers.begin();
-			 slot != _timers.end(); ) {
-		slot->Stop();
-		slot = _timers.erase(slot);
+TizenTimerManager::~TizenTimerManager() {
+	for (Common::List<TimerSlot *>::iterator it = _timers.begin(); it != _timers.end(); ) {
+		TimerSlot *slot = (*it);
+		slot->Quit();
+		slot->Join();
+		delete slot;
+		it = _timers.erase(it);
 	}
 }
 
-bool BadaTimerManager::installTimerProc(TimerProc proc, int32 interval, void *refCon,
-																				const Common::String &id) {
+bool TizenTimerManager::installTimerProc(TimerProc proc, int32 interval, void *refCon, const Common::String &id) {
 	TimerSlot *slot = new TimerSlot(proc, interval / 1000, refCon);
 
-	if (IsFailed(slot->Construct(THREAD_TYPE_EVENT_DRIVEN))) {
+	if (IsFailed(slot->Construct())) {
 		AppLog("Failed to create timer thread");
 		delete slot;
 		return false;
@@ -98,16 +98,18 @@ bool BadaTimerManager::installTimerProc(TimerProc proc, int32 interval, void *re
 		return false;
 	}
 
-	_timers.push_back(*slot);
+	_timers.push_back(slot);
 	return true;
 }
 
-void BadaTimerManager::removeTimerProc(TimerProc proc) {
-	for (Common::List<TimerSlot>::iterator slot = _timers.begin();
-			 slot != _timers.end(); ++slot) {
+void TizenTimerManager::removeTimerProc(TimerProc proc) {
+	for (Common::List<TimerSlot *>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+		TimerSlot *slot = (*it);
 		if (slot->_callback == proc) {
-			slot->Stop();
-			slot = _timers.erase(slot);
+			slot->Quit();
+			slot->Join();
+			delete slot;
+			it = _timers.erase(it);
 		}
 	}
 }

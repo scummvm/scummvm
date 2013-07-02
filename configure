@@ -816,7 +816,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, bada, dc, dingux, ds, gph,
+  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gph,
                           iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
                           psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
@@ -845,7 +845,7 @@ Fine tuning of the installation directories:
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
                           special targets: android for Android
-                                           bada for Samsung BADA
+                                           tizen for Samsung Tizen
                                            caanoo for Caanoo
                                            dingux for Dingux
                                            dreamcast for Sega Dreamcast
@@ -1247,16 +1247,6 @@ arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
 	;;
-bada)
-	_host_os=bada
-	if test "$_debug_build" = yes; then
-		_host_cpu=i686
-		_host_alias=i686-mingw32
-	else
-		_host_cpu=arm
-		_host_alias=arm-samsung-nucleuseabi
-	fi
-	;;
 caanoo)
 	_host_os=gph-linux
 	_host_cpu=arm
@@ -1382,6 +1372,11 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+tizen)
+ 	_host_os=tizen
+	_host_cpu=arm
+	_host_alias=arm-linux-gnueabi
+	;;
 webos)
 	_host_os=webos
 	_host_cpu=arm
@@ -1491,12 +1486,6 @@ android)
 		exit 1
 	fi
 	;;
-bada)
-	if test -z "$BADA_SDK"; then
-		echo "Please set BADA_SDK in your environment. export BADA_SDK=<path to Bada SDK>"
-		exit 1
-	fi
-	;;
 ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
@@ -1535,6 +1524,12 @@ psp)
 	fi
 	if test -z "$PSPSDK"; then
 		echo "Please set PSPSDK in your environment. export PSPSDK=<path to psp sdk>"
+		exit 1
+	fi
+	;;
+tizen)
+	if test -z "$TIZEN_ROOTSTRAP"; then
+		echo "Please set TIZEN_ROOTSTRAP in your environment. export TIZEN_ROOTSTRAP=<path to Tizen SDK device profile>"
 		exit 1
 	fi
 	;;
@@ -1731,7 +1726,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			amigaos* | android | bada | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
+			amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
 				;;
 			*)
 				CXXFLAGS="$CXXFLAGS -ansi"
@@ -1767,7 +1762,7 @@ echo $_use_cxx11
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | gamecube | psp | wii | webos)
+android | gamecube | psp | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2051,16 +2046,6 @@ case $_host_os in
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
 		;;
-	bada)
-		BADA_SDK_ROOT="`cygpath -m ${BADA_SDK}`"
-		add_line_to_config_mk "BADA_SDK = $BADA_SDK"
-		add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
-
-		# assume dependencies have been installed in cygwin's /usr/local
-		CYGWIN_USR_LOCAL="`cygpath -m /usr/local`"
-		LDFLAGS="$LDFLAGS -L${CYGWIN_USR_LOCAL}/lib"
-		CXXFLAGS="$CXXFLAGS -I${CYGWIN_USR_LOCAL}/include"
-		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
@@ -2238,6 +2223,12 @@ case $_host_os in
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
+	tizen)
+		add_line_to_config_mk "TIZEN_ROOTSTRAP = $TIZEN_ROOTSTRAP"
+		LDFLAGS="$LDFLAGS --sysroot=${TIZEN_ROOTSTRAP}"
+		LDFLAGS="$LDFLAGS -L${TIZEN_LIBS}/lib"
+		CXXFLAGS="$CXXFLAGS -I${TIZEN_LIBS}/include"
+		;;
 	webos)
 		CXXFLAGS="$CXXFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include"
@@ -2315,22 +2306,6 @@ if test -n "$_host"; then
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
-			;;
-		bada)
-			_unix=yes
-			_backend="bada"
-			_port_mk="backends/platform/bada/bada.mk"
-			if test "$_debug_build" = yes; then
-				_arm_asm=no
-			else
-				_arm_asm=yes
-			fi
-			_taskbar=no
-			_build_scalers=no
-			_seq_midi=no
-			_mt32emu=no
-			_timidity=no
-			_vkeybd=yes
 			;;
 		bfin*)
 			;;
@@ -2644,6 +2619,18 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_vkeybd=yes
 			;;
+		tizen)
+			_unix=yes
+			_backend="tizen"
+			_port_mk="backends/platform/tizen/tizen.mk"
+			_arm_asm=yes
+			_taskbar=no
+			_build_scalers=no
+			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
+			_vkeybd=yes
+			;;
 		webos)
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
@@ -2693,34 +2680,6 @@ case $_backend in
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
 		INCLUDES="$INCLUDES -I$ANDROID_NDK/sources/cxx-stl/system/include"
-		;;
-	bada)
-		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
-		DEFINES="$DEFINES -DBADA -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
-		DEFINES="$DEFINES -DNO_STDERR_STDOUT"
-		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
-		INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
-		INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'
-		if test "$_debug_build" = yes; then
-			# debug using with the simulator
-			CXXFLAGS="$CXXFLAGS -D_DEBUG -DSHP -DBUILD_DLL -fmessage-length=0"
-		else
-			# created a shared library for inclusion via the eclipse build
-			CXXFLAGS="$CXXFLAGS -DSHP"
-			CXXFLAGS="$CXXFLAGS -fpic"
-			CXXFLAGS="$CXXFLAGS -fshort-wchar"
-			CXXFLAGS="$CXXFLAGS -mcpu=cortex-a8"
-			CXXFLAGS="$CXXFLAGS -mfpu=vfpv3"
-			CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
-			CXXFLAGS="$CXXFLAGS -mlittle-endian"
-			CXXFLAGS="$CXXFLAGS -mthumb-interwork"
-			CXXFLAGS="$CXXFLAGS -Wno-psabi"
-			CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
-			CXXFLAGS="$CXXFLAGS -fno-short-enums"
-		fi
-		HOSTEXEPRE=lib
-		HOSTEXEEXT=.a
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
@@ -2804,6 +2763,25 @@ case $_backend in
 		LDFLAGS="$LDFLAGS -shared"
 		LDFLAGS="$LDFLAGS -fpic"
 		;;
+	tizen)
+		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
+		DEFINES="$DEFINES -DTIZEN -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DNO_STDERR_STDOUT"
+		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/tizen'
+		INCLUDES="$INCLUDES "'-I$(TIZEN_ROOTSTRAP)/usr/include'
+		INCLUDES="$INCLUDES "'-I$(TIZEN_ROOTSTRAP)/usr/include/osp'
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -D_DEBUG -DBUILD_DLL -O0 -g3"
+		fi
+		# created a shared library for inclusion via the eclipse build
+		CXXFLAGS="$CXXFLAGS -Wno-psabi"
+		CXXFLAGS="$CXXFLAGS --sysroot=${TIZEN_ROOTSTRAP}"
+		CXXFLAGS="$CXXFLAGS -fmessage-length=0"
+		CXXFLAGS="$CXXFLAGS -fPIC"
+		HOSTEXEPRE=lib
+		HOSTEXEEXT=.a
+		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
 		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
@@ -2869,7 +2847,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | bada | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3721,7 +3699,7 @@ EOF
 fi
 
 case $_host_os in
-	bada)
+	tizen)
 		# components live in non-standard locations so just assume sane SDK
 		_opengl=yes
 		_opengles=yes
