@@ -142,8 +142,6 @@ void Avalot::setParent(AvalancheEngine *vm) {
 
 
 void Avalot::run(Common::String arg) {
-	warning("STUB: Avalot::run(%s)", arg.c_str());
-
 	do {
 		_vm->_lucerna.clock_lucerna();
 		_vm->_basher.keyboard_link();
