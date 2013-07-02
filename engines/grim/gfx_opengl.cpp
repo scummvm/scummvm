@@ -538,6 +538,10 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
+
+	//Transparency-Support
+	glEnable(GL_BLEND);
+
 	if (face->_hasTexture)
 		glEnable(GL_TEXTURE_2D);
 	else
