@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BADA_AUDIO_H
-#define BADA_AUDIO_H
+#ifndef TIZEN_AUDIO_H
+#define TIZEN_AUDIO_H
 
 #include <FBase.h>
 #include <FMedia.h>
@@ -33,17 +33,19 @@
 #include "common/system.h"
 #include "audio/mixer_intern.h"
 
-using namespace Osp::Base;
-using namespace Osp::Base::Collection;
-using namespace Osp::Base::Runtime;
-using namespace Osp::Media;
-using namespace Osp::Io;
+using namespace Tizen::Base;
+using namespace Tizen::Base::Collection;
+using namespace Tizen::Base::Runtime;
+using namespace Tizen::Media;
+using namespace Tizen::Io;
 
 #define NUM_AUDIO_BUFFERS 2
 
-class AudioThread: public Osp::Media::IAudioOutEventListener,
-									 public Osp::Base::Runtime::ITimerEventListener,
-									 public Osp::Base::Runtime::Thread {
+class AudioThread:
+	public Tizen::Media::IAudioOutEventListener,
+	public Tizen::Base::Runtime::ITimerEventListener,
+	public Tizen::Base::Runtime::EventDrivenThread {
+
 public:
 	AudioThread(void);
 	~AudioThread(void);
@@ -51,21 +53,20 @@ public:
 	Audio::MixerImpl *Construct(OSystem *system);
 	bool isSilentMode();
 	void setMute(bool on);
-	int setVolume(bool up, bool minMax);
 
 	bool OnStart(void);
 	void OnStop(void);
-	void OnAudioOutErrorOccurred(Osp::Media::AudioOut &src, result r);
-	void OnAudioOutInterrupted(Osp::Media::AudioOut &src);
-	void OnAudioOutReleased(Osp::Media::AudioOut &src);
-	void OnAudioOutBufferEndReached(Osp::Media::AudioOut &src);
+	void OnAudioOutErrorOccurred(Tizen::Media::AudioOut &src, result r);
+	void OnAudioOutInterrupted(Tizen::Media::AudioOut &src);
+	void OnAudioOutReleased(Tizen::Media::AudioOut &src);
+	void OnAudioOutBufferEndReached(Tizen::Media::AudioOut &src);
 	void OnTimerExpired(Timer &timer);
 
 private:
 	Audio::MixerImpl *_mixer;
-	Osp::Base::Runtime::Timer *_timer;
-	Osp::Media::AudioOut *_audioOut;
-	Osp::Base::ByteBuffer _audioBuffer[NUM_AUDIO_BUFFERS];
+	Tizen::Base::Runtime::Timer *_timer;
+	Tizen::Media::AudioOut *_audioOut;
+	Tizen::Base::ByteBuffer _audioBuffer[NUM_AUDIO_BUFFERS];
 	int _head, _tail, _ready, _interval, _playing;
 	bool _muted;
 };

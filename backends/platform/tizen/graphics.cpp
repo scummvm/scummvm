@@ -22,29 +22,40 @@
 
 #include "graphics/fontman.h"
 
-#include "backends/platform/bada/form.h"
-#include "backends/platform/bada/system.h"
-#include "backends/platform/bada/graphics.h"
+#include "backends/platform/tizen/form.h"
+#include "backends/platform/tizen/system.h"
+#include "backends/platform/tizen/graphics.h"
 
 //
-// BadaGraphicsManager
+// TizenGraphicsManager
 //
-BadaGraphicsManager::BadaGraphicsManager(BadaAppForm *appForm) :
+TizenGraphicsManager::TizenGraphicsManager(TizenAppForm *appForm) :
 	_appForm(appForm),
 	_eglDisplay(EGL_DEFAULT_DISPLAY),
 	_eglSurface(EGL_NO_SURFACE),
-	_eglConfig(0),
+	_eglConfig(NULL),
 	_eglContext(EGL_NO_CONTEXT),
 	_initState(true) {
 	assert(appForm != NULL);
 	_videoMode.fullscreen = true;
 }
 
-const Graphics::Font *BadaGraphicsManager::getFontOSD() {
+TizenGraphicsManager::~TizenGraphicsManager() {
+	logEntered();
+
+	if (_eglDisplay != EGL_NO_DISPLAY) {
+		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
+		if (_eglContext != EGL_NO_CONTEXT) {
+			eglDestroyContext(_eglDisplay, _eglContext);
+		}
+	}
+}
+
+const Graphics::Font *TizenGraphicsManager::getFontOSD() {
 	return FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 }
 
-bool BadaGraphicsManager::moveMouse(int16 &x, int16 &y) {
+bool TizenGraphicsManager::moveMouse(int16 &x, int16 &y) {
 	int16 currentX = _cursorState.x;
 	int16 currentY = _cursorState.y;
 
@@ -62,7 +73,7 @@ bool BadaGraphicsManager::moveMouse(int16 &x, int16 &y) {
 	return (currentX != x || currentY != y);
 }
 
-Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() const {
+Common::List<Graphics::PixelFormat> TizenGraphicsManager::getSupportedFormats() const {
 	logEntered();
 
 	Common::List<Graphics::PixelFormat> res;
@@ -73,33 +84,37 @@ Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() c
 	return res;
 }
 
-bool BadaGraphicsManager::hasFeature(OSystem::Feature f) {
+bool TizenGraphicsManager::hasFeature(OSystem::Feature f) {
 	bool result = (f == OSystem::kFeatureFullscreenMode ||
-								 f == OSystem::kFeatureVirtualKeyboard ||
-								 OpenGLGraphicsManager::hasFeature(f));
+			f == OSystem::kFeatureVirtualKeyboard ||
+			OpenGLGraphicsManager::hasFeature(f));
 	return result;
 }
 
-void BadaGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	OpenGLGraphicsManager::setFeatureState(f, enable);
+void TizenGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	if (f == OSystem::kFeatureVirtualKeyboard && enable) {
+		_appForm->showKeypad();
+	} else {
+		OpenGLGraphicsManager::setFeatureState(f, enable);
+	}
 }
 
-void BadaGraphicsManager::setReady() {
+void TizenGraphicsManager::setReady() {
 	_initState = false;
 }
 
-void BadaGraphicsManager::updateScreen() {
+void TizenGraphicsManager::updateScreen() {
 	if (_transactionMode == kTransactionNone) {
 		internUpdateScreen();
 	}
 }
 
-bool BadaGraphicsManager::loadEgl() {
+bool TizenGraphicsManager::loadEgl() {
 	logEntered();
 
 	EGLint numConfigs = 1;
 	EGLint eglConfigList[] = {
-		EGL_RED_SIZE,		5,
+		EGL_RED_SIZE,	5,
 		EGL_GREEN_SIZE, 6,
 		EGL_BLUE_SIZE,	5,
 		EGL_ALPHA_SIZE, 0,
@@ -132,8 +147,7 @@ bool BadaGraphicsManager::loadEgl() {
 		return false;
 	}
 
-	if (EGL_FALSE == eglChooseConfig(_eglDisplay, eglConfigList,
-																	 &_eglConfig, 1, &numConfigs) ||
+	if (EGL_FALSE == eglChooseConfig(_eglDisplay, eglConfigList, &_eglConfig, 1, &numConfigs) ||
 			EGL_SUCCESS != eglGetError()) {
 		systemError("eglChooseConfig() failed");
 		return false;
@@ -144,15 +158,13 @@ bool BadaGraphicsManager::loadEgl() {
 		return false;
 	}
 
-	_eglSurface = eglCreateWindowSurface(_eglDisplay, _eglConfig,
-																			(EGLNativeWindowType)_appForm, NULL);
+	_eglSurface = eglCreateWindowSurface(_eglDisplay, _eglConfig, (EGLNativeWindowType)_appForm, NULL);
 	if (EGL_NO_SURFACE == _eglSurface || EGL_SUCCESS != eglGetError()) {
 		systemError("eglCreateWindowSurface() failed. EGL_NO_SURFACE");
 		return false;
 	}
 
-	_eglContext = eglCreateContext(_eglDisplay, _eglConfig,
-																EGL_NO_CONTEXT, eglContextList);
+	_eglContext = eglCreateContext(_eglDisplay, _eglConfig, EGL_NO_CONTEXT, eglContextList);
 	if (EGL_NO_CONTEXT == _eglContext ||
 			EGL_SUCCESS != eglGetError()) {
 		systemError("eglCreateContext() failed");
@@ -169,7 +181,7 @@ bool BadaGraphicsManager::loadEgl() {
 	return true;
 }
 
-bool BadaGraphicsManager::loadGFXMode() {
+bool TizenGraphicsManager::loadGFXMode() {
 	logEntered();
 
 	if (!loadEgl()) {
@@ -181,35 +193,28 @@ bool BadaGraphicsManager::loadGFXMode() {
 	_appForm->GetBounds(x, y, width, height);
 	_videoMode.overlayWidth = _videoMode.hardwareWidth = width;
 	_videoMode.overlayHeight = _videoMode.hardwareHeight = height;
-	_videoMode.scaleFactor = 3; // for proportional sized cursor in the launcher
+	_videoMode.scaleFactor = 4; // for proportional sized cursor in the launcher
 
 	AppLog("screen size: %dx%d", _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	return OpenGLGraphicsManager::loadGFXMode();
 }
 
-void BadaGraphicsManager::loadTextures() {
+void TizenGraphicsManager::loadTextures() {
 	logEntered();
-
 	OpenGLGraphicsManager::loadTextures();
-
-	// prevent image skew in some games, see:
-	// http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
-void BadaGraphicsManager::internUpdateScreen() {
+void TizenGraphicsManager::internUpdateScreen() {
 	if (!_initState) {
 		OpenGLGraphicsManager::internUpdateScreen();
 		eglSwapBuffers(_eglDisplay, _eglSurface);
-	} else {
-		showSplash();
 	}
 }
 
-void BadaGraphicsManager::unloadGFXMode() {
+void TizenGraphicsManager::unloadGFXMode() {
 	logEntered();
 
-	if (EGL_NO_DISPLAY != _eglDisplay) {
+	if (_eglDisplay != EGL_NO_DISPLAY) {
 		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
 
 		if (_eglContext != EGL_NO_CONTEXT) {
@@ -227,35 +232,6 @@ void BadaGraphicsManager::unloadGFXMode() {
 	}
 
 	_eglConfig = NULL;
-
 	OpenGLGraphicsManager::unloadGFXMode();
 	logLeaving();
-}
-
-// display a simple splash screen until launcher is ready
-void BadaGraphicsManager::showSplash() {
-	Canvas canvas;
-	canvas.Construct();
-	canvas.SetBackgroundColor(Color::COLOR_BLACK);
-	canvas.Clear();
-
-	int x = _videoMode.hardwareWidth / 3;
-	int y = _videoMode.hardwareHeight / 3;
-
-	Font *pFont = new Font();
-	pFont->Construct(FONT_STYLE_ITALIC | FONT_STYLE_BOLD, 55);
-	canvas.SetFont(*pFont);
-	canvas.SetForegroundColor(Color::COLOR_GREEN);
-	canvas.DrawText(Point(x, y), L"ScummVM");
-	delete pFont;
-
-	pFont = new Font();
-	pFont->Construct(FONT_STYLE_ITALIC | FONT_STYLE_BOLD, 35);
-	canvas.SetFont(*pFont);
-	canvas.SetForegroundColor(Color::COLOR_WHITE);
-	canvas.DrawText(Point(x + 70, y + 50), L"Loading ...");
-	delete pFont;
-
-	canvas.Show();
-
 }

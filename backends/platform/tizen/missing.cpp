@@ -26,7 +26,7 @@
 #include <FSystem.h>
 #include <FBase.h>
 
-#include "backends/platform/bada/portdefs.h"
+#include "backends/platform/tizen/portdefs.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -48,7 +48,7 @@ void __assert_func(const char *file, int line,
 	systemError(buffer);
 }
 
-void stderr_fprintf(void*, const char *format, ...) {
+void stderr_fprintf(void *, const char *format, ...) {
 	va_list ap;
 	char buffer[BUF_SIZE];
 
@@ -59,7 +59,7 @@ void stderr_fprintf(void*, const char *format, ...) {
 	AppLog(buffer);
 }
 
-void stderr_vfprintf(void*, const char *format, va_list ap) {
+void stderr_vfprintf(void *, const char *format, va_list ap) {
 	char buffer[BUF_SIZE];
 	vsnprintf(buffer, sizeof(buffer), format, ap);
 	AppLog(buffer);
@@ -76,37 +76,6 @@ int printf(const char *format, ...) {
 
 	AppLog(buffer);
 
-	return result;
-}
-
-int sprintf(char *str, const char *format, ...) {
-	va_list ap;
-	int result;
-	char buffer[BUF_SIZE];
-
-	va_start(ap, format);
-	result = vsnprintf(buffer, sizeof(buffer), format, ap);
-	va_end(ap);
-
-	strcpy(str, buffer);
-
-	return result;
-}
-
-char *strdup(const char *strSource) {
-	char *buffer;
-	int len = strlen(strSource) + 1;
-	buffer = (char *)malloc(len);
-	if (buffer) {
-		memcpy(buffer, strSource, len);
-	}
-	return buffer;
-}
-
-int vsprintf(char *str, const char *format, va_list ap) {
-	char buffer[BUF_SIZE];
-	int result = vsnprintf(buffer, sizeof(buffer), format, ap);
-	strcpy(str, buffer);
 	return result;
 }
 

@@ -43,6 +43,9 @@
  #define C_LINKAGE_END
 #endif
 
+// value missing from osp gl headers
+#define GL_UNSIGNED_INT_8_8_8_8 0x8035
+
 C_LINKAGE_BEGIN
 
 // for libFLAC
@@ -51,11 +54,11 @@ C_LINKAGE_BEGIN
 #define fseeko fseek
 #define ftello ftell
 
-// overcome use of fprintf since bada/newlib (1.2) does not
+// overcome use of fprintf since newlib (1.2) does not
 // support stderr/stdout (undefined reference to `_impure_ptr').
 
-void stderr_fprintf(void*, const char *format, ...);
-void stderr_vfprintf(void*, const char *format, va_list ap);
+void stderr_fprintf(void *, const char *format, ...);
+void stderr_vfprintf(void *, const char *format, va_list ap);
 
 #undef fprintf
 #undef vfprintf
@@ -75,10 +78,7 @@ void stderr_vfprintf(void*, const char *format, va_list ap);
 #define vfprintf stderr_vfprintf
 
 int printf(const char *format, ...);
-int sprintf(char *str, const char *format, ...);
 int simple_sscanf(const char *buffer, const char *format, ...);
-char *strdup(const char *s1);
-int vsprintf(char *str, const char *format, va_list ap);
 
 C_LINKAGE_END
 
