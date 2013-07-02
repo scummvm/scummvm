@@ -2082,8 +2082,10 @@ void MortevielleEngine::loadTexts() {
 		}
 	}
 	if (!ntpFile.open("TXX.NTP")) {
-		warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
-		return;
+		if (!ntpFile.open("TXX.IND")) {
+			warning("Missing file - TXX.NTP or .IND - Switching to DAT file");
+			return;
+		}
 	}
 
 	if ((inpFile.size() > (kMaxTi * 2)) || (ntpFile.size() > (kMaxTd * 3))) {
