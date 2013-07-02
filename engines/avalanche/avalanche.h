@@ -114,7 +114,8 @@ private:
 	AvalancheConsole *_console;
 	Common::Platform _platform;
 
-	void initialize();
+	
+
 
 	// From bootstrp:
 

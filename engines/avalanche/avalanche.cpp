@@ -45,7 +45,9 @@ namespace Avalanche {
 	AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 		_system = syst;
 		_console = new AvalancheConsole(this);
-		_rnd = 0;
+
+		_rnd = new Common::RandomSource("avalanche");
+		_rnd->setSeed(42);     
 
 		_gyro.setParent(this);
 		_enhanced.setParent(this);
@@ -97,12 +99,11 @@ namespace Avalanche {
 		//	_sound->syncVolume();
 	}
 
-	void AvalancheEngine::initialize() {
-		//debugC(1, kDebugEngine, "initialize");
+	
 
-		_rnd = new Common::RandomSource("avalanche");
-		_rnd->setSeed(42);                              // Kick random number generator
-	}
+
+
+
 
 
 
