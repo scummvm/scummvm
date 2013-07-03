@@ -22,43 +22,55 @@
 
 #include "engines/engine.h"
 
-#include "backends/platform/bada/form.h"
-#include "backends/platform/bada/system.h"
-#include "backends/platform/bada/application.h"
+#include "backends/platform/tizen/form.h"
+#include "backends/platform/tizen/system.h"
+#include "backends/platform/tizen/application.h"
 
-using namespace Osp::System;
-using namespace Osp::Ui::Controls;
-
-Application *BadaScummVM::createInstance() {
-	return new BadaScummVM();
+Application *TizenScummVM::createInstance() {
+	logEntered();
+	return new TizenScummVM();
 }
 
-BadaScummVM::BadaScummVM() : _appForm(0) {
+TizenScummVM::TizenScummVM() : _appForm(0) {
+	logEntered();
 }
 
-BadaScummVM::~BadaScummVM() {
+TizenScummVM::~TizenScummVM() {
 	logEntered();
 	if (g_system) {
-		BadaSystem *system = (BadaSystem *)g_system;
+		TizenSystem *system = (TizenSystem *)g_system;
 		system->destroyBackend();
 		delete system;
 		g_system = 0;
 	}
 }
 
-bool BadaScummVM::OnAppInitializing(AppRegistry &appRegistry) {
-	_appForm = systemStart(this);
-	return (_appForm != NULL);
+bool TizenScummVM::OnAppInitialized(void) {
+	logEntered();
+	_appForm->SetOrientation(Tizen::Ui::ORIENTATION_LANDSCAPE);
+	return true;
 }
 
-bool BadaScummVM::OnAppTerminating(AppRegistry &appRegistry,
-																	 bool forcedTermination) {
+bool TizenScummVM::OnAppWillTerminate(void) {
 	logEntered();
 	return true;
 }
 
-void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
-																			 Osp::Base::Collection::IList *args) {
+bool TizenScummVM::OnAppInitializing(AppRegistry &appRegistry) {
+	logEntered();
+	_appForm = systemStart(this);
+	return (_appForm != NULL);
+}
+
+bool TizenScummVM::OnAppTerminating(AppRegistry &appRegistry, bool forcedTermination) {
+	logEntered();
+	return true;
+}
+
+void TizenScummVM::OnUserEventReceivedN(RequestId requestId, IList *args) {
+	MessageBox messageBox;
+	int modalResult;
+
 	logEntered();
 
 	if (requestId == USER_MESSAGE_EXIT) {
@@ -73,39 +85,56 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 		if (!message) {
 			message = new String("Unknown error");
 		}
-
-		MessageBox messageBox;
 		messageBox.Construct(L"Oops...", *message, MSGBOX_STYLE_OK);
-		int modalResult;
+		messageBox.ShowAndWait(modalResult);
+		Terminate();
+	} else if (requestId == USER_MESSAGE_EXIT_ERR_CONFIG) {
+		// the config file was corrupted
+		messageBox.Construct(L"Config file corrupted",
+				L"Settings have been reverted, please restart.", MSGBOX_STYLE_OK);
 		messageBox.ShowAndWait(modalResult);
 		Terminate();
 	}
 }
 
-void BadaScummVM::OnForeground(void) {
+void TizenScummVM::OnForeground(void) {
 	logEntered();
 	pauseGame(false);
 }
 
-void BadaScummVM::OnBackground(void) {
+void TizenScummVM::OnBackground(void) {
 	logEntered();
 	pauseGame(true);
 }
 
-void BadaScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
+void TizenScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
+	logEntered();
 }
 
-void BadaScummVM::OnLowMemory(void) {
+void TizenScummVM::OnLowMemory(void) {
+	logEntered();
 }
 
-void BadaScummVM::pauseGame(bool pause) {
+void TizenScummVM::OnScreenOn(void) {
+	logEntered();
+}
+
+void TizenScummVM::OnScreenOff(void) {
+	logEntered();
+}
+
+void TizenScummVM::OnScreenBrightnessChanged(int brightness) {
+	logEntered();
+}
+
+void TizenScummVM::pauseGame(bool pause) {
 	if (_appForm) {
 		if (pause && g_engine && !g_engine->isPaused()) {
 			_appForm->pushKey(Common::KEYCODE_SPACE);
 		}
 
 		if (g_system) {
-			((BadaSystem *)g_system)->setMute(pause);
+			((TizenSystem *)g_system)->setMute(pause);
 		}
 	}
 }

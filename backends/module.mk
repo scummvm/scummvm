@@ -120,9 +120,9 @@ MODULE_OBJS += \
 	mixer/sdl13/sdl13-mixer.o
 endif
 
-ifeq ($(BACKEND),bada)
+ifeq ($(BACKEND),tizen)
 MODULE_OBJS += \
-	timer/bada/timer.o
+	timer/tizen/timer.o
 endif
 
 ifeq ($(BACKEND),ds)

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BADA_GRAPHICS_H
-#define BADA_GRAPHICS_H
+#ifndef TIZEN_GRAPHICS_H
+#define TIZEN_GRAPHICS_H
 
 #include <FBase.h>
 #include <FGraphics.h>
@@ -33,15 +33,16 @@
 #include "config.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "graphics/font.h"
-#include "backends/platform/bada/form.h"
+#include "backends/platform/tizen/form.h"
 
-using namespace Osp::Graphics;
-using namespace Osp::Graphics::Opengl;
-using namespace Osp::App;
+using namespace Tizen::Graphics;
+using namespace Tizen::Graphics::Opengl;
+using namespace Tizen::App;
 
-class BadaGraphicsManager : public OpenGLGraphicsManager {
+class TizenGraphicsManager : public OpenGLGraphicsManager {
 public:
-	BadaGraphicsManager(BadaAppForm *appForm);
+	TizenGraphicsManager(TizenAppForm *appForm);
+	virtual ~TizenGraphicsManager();
 
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 	bool hasFeature(OSystem::Feature f);
@@ -61,7 +62,7 @@ private:
 	void showSplash();
 
 	bool loadEgl();
-	BadaAppForm *_appForm;
+	TizenAppForm *_appForm;
 	EGLDisplay _eglDisplay;
 	EGLSurface _eglSurface;
 	EGLConfig	 _eglConfig;

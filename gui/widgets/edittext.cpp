@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/system.h"
 #include "gui/widgets/edittext.h"
 #include "gui/gui-manager.h"
 
@@ -79,8 +80,13 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 	if (setCaretPos(i))
 		draw();
-}
 
+#ifdef TIZEN
+	// Display the virtual keypad to allow text entry. Samsung app-store testers expected
+	// the keypad to be displayed when clicking the filter edit control in the laucher gui.
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+#endif
+}
 
 void EditTextWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, ThemeEngine::kWidgetBackgroundEditText);
