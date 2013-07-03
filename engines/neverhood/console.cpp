@@ -25,6 +25,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/scene.h"
+#include "neverhood/sound.h"
 #include "neverhood/modules/module1600.h"
 
 namespace Neverhood {
@@ -34,6 +35,7 @@ Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
 	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
 	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
+	DCmd_Register("playsound",		WRAP_METHOD(Console, Cmd_PlaySound));
 }
 
 Console::~Console() {
@@ -165,6 +167,23 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 
 bool Console::Cmd_Dumpvars(int argc, const char **argv) {
 	_vm->_gameVars->dumpVars(this);
+
+	return true;
+}
+
+bool Console::Cmd_PlaySound(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage: %s <sound hash>\n", argv[0]);
+	} else {
+		uint32 soundHash = strtol(argv[1], NULL, 0);
+		AudioResourceManSoundItem *soundItem = new AudioResourceManSoundItem(_vm, soundHash);
+		soundItem->setVolume(100);
+		soundItem->playSound(false);
+		while (soundItem->isPlaying()) {
+			_vm->_system->delayMillis(10);
+		}
+		delete soundItem;
+	}
 
 	return true;
 }
