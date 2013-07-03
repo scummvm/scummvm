@@ -35,8 +35,11 @@
 // it with an alternate slightly less unfriendly override.
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_FILE)
 #undef FILE
+// Solaris has typedef __FILE FILE in several places already
+#if !defined(__sun)
 typedef struct { int FAKE; } FAKE_FILE;
 #define FILE FAKE_FILE
+#endif   // (__sun)
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp)
