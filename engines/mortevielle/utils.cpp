@@ -1798,7 +1798,7 @@ void MortevielleEngine::decodeNumber(byte *pStart, int count) {
 	}
 }
 
-const byte tabdrFr[32] = {
+const byte cryptoArrDefaultFr[32] = {
 	32, 101, 115,  97, 114, 105, 110,
 	117, 116, 111, 108,  13, 100,  99,
 	112, 109,  46, 118, 130,  39, 102,
@@ -1806,21 +1806,21 @@ const byte tabdrFr[32] = {
 	85, 106,  30,  31
 };
 
-const byte tab30Fr[32] = {
+const byte cryptoArr30Fr[32] = {
 	69,  67,  74, 138, 133, 120,  77, 122,
 	121,  68,  65,  63,  73,  80,  83,  82,
 	156,  45,  58,  79,  49,  86,  78,  84,
 	71,  81,  64,  66, 135,  34, 136,  91
 };
 
-const byte tab31Fr[32]= {
+const byte cryptoArr31Fr[32]= {
 	93,  47,  48,  53,  50,  70, 124,  75,
 	72, 147, 140, 150, 151,  57,  56,  51,
 	107, 139,  55,  89, 131,  37,  54,  88,
 	119,   0,   0,   0,   0,   0,   0,   0
 };
 
-const byte tabdrDe[32] = {
+const byte cryptoArrDefaultDe[32] = {
 	0x20, 0x65, 0x6E, 0x69, 0x73, 0x72, 0x74,
 	0x68, 0x61, 0x75, 0x0D, 0x63, 0x6C, 0x64,
 	0x6D, 0x6F, 0x67, 0x2E, 0x62, 0x66, 0x53,
@@ -1828,21 +1828,21 @@ const byte tabdrDe[32] = {
 	0x9C, 0x47, 0x1E, 0x1F
 };
 
-const byte tab30De[32] = {
+const byte cryptoArr30De[32] = {
 	0x49, 0x4D, 0x21, 0x42, 0x4C, 0x70, 0x41, 0x52,
 	0x57, 0x4E, 0x48, 0x3F, 0x46, 0x50, 0x55, 0x4B,
 	0x5A, 0x4A, 0x54, 0x31, 0x4F, 0x56, 0x79, 0x3A,
 	0x6A, 0x5B, 0x5D, 0x40, 0x22, 0x2F, 0x30, 0x35
 };
 
-const byte tab31De[32]= {
+const byte cryptoArr31De[32]= {
 	0x78, 0x2D, 0x32, 0x82, 0x43, 0x39, 0x33, 0x38,
 	0x7C, 0x27, 0x37, 0x3B, 0x25, 0x28, 0x29, 0x36,
 	0x51, 0x59, 0x71, 0x81, 0x87, 0x88, 0x93, 0,
 	0,    0,    0,    0,    0,    0,    0,    0
 };
 
-const byte *tabdr, *tab30, *tab31;
+const byte *cryptoArrDefault, *cryptoArr30, *cryptoArr31;
 uint16 ctrlChar;
 
 void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
@@ -1878,16 +1878,16 @@ void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 		}
 
 		if (oct == 30)
-			c = chr(tab30[ocd]);
+			c = chr(cryptoArr30[ocd]);
 		else
-			c = chr(tab31[ocd]);
+			c = chr(cryptoArr31[ocd]);
 
 		if (c == '\0') {
 			the_end = true;
 			c = '#';
 		}
 	} else {
-		c = chr(tabdr[oct]);
+		c = chr(cryptoArrDefault[oct]);
 	}
 }
 
@@ -2102,14 +2102,14 @@ void MortevielleEngine::loadTexts() {
 		}
 	}
 	if (ntpFile.open("TXX.NTP")) {
-		tab30 = tab30Fr;
-		tab31 = tab31Fr;
-		tabdr = tabdrFr;
+		cryptoArr30 = cryptoArr30Fr;
+		cryptoArr31 = cryptoArr31Fr;
+		cryptoArrDefault = cryptoArrDefaultFr;
 		ctrlChar = 11;
 	} else if (ntpFile.open("TXX.IND")) {
-		tab30 = tab30De;
-		tab31 = tab31De;
-		tabdr = tabdrDe;
+		cryptoArr30 = cryptoArr30De;
+		cryptoArr31 = cryptoArr31De;
+		cryptoArrDefault = cryptoArrDefaultDe;
 		ctrlChar = 10;
 	} else {
 		warning("Missing file - TXX.NTP or .IND - Switching to DAT file");
