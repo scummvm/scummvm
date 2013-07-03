@@ -3295,7 +3295,7 @@ int Scene3500::MazeUI3500::cellFromX(int x) {
 }
 
 int Scene3500::MazeUI3500::cellFromY(int y) {
-	return (_cellSize.y / 2) + y - (y % _cellSize.y);
+	return (_cellSize.y / 2) + y - (y % _cellSize.y) - 1;
 }
 
 int Scene3500::MazeUI3500::getCellFromMapXY(Common::Point pt) {
@@ -3976,7 +3976,8 @@ void Scene3500::dispatch() {
 				var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
 				newMazeY = _mazePosition.y + _mazeChangeAmount;
 				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
-				if (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (cellId == dx)) {
+
+				if (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (cellId != dx)) {
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_field1270 = 0;
@@ -3984,7 +3985,7 @@ void Scene3500::dispatch() {
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
-				} else if ((cellId == 16) && (cellId == dx)) {
+				} else if ((cellId == 16) && (cellId != dx)) {
 					newMazeY = var_6 - 3;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -3993,7 +3994,7 @@ void Scene3500::dispatch() {
 					_field1272 = 0;
 					if (_action1._field24 == 0)
 						_actor8.hide();
-				} else if ((cellId == 31) && (cellId == dx)) {
+				} else if ((cellId == 31) && (cellId != dx)) {
 					newMazeY = var_6 + 4;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -4008,6 +4009,8 @@ void Scene3500::dispatch() {
 					cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 					if ( (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (newMazeY >= var_6) && (_mazePosition.y <= var_6))
 					  || (((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)) && (_mazeChangeAmount >= var_a) && (_mazeChangeAmount <= 3) && (_action1._field24 != 0)) ){
+						newMazeY = var_6;
+						
 						if ((cellId != 23) && (cellId != 24) && (cellId != 4) && (cellId != 14) && (cellId != 15))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
@@ -4153,7 +4156,7 @@ void Scene3500::dispatch() {
 				++_mazeChangeAmount;
 			_field1272 = 1;
 		}
-		_actor2.setFrame2(_mazeChangeAmount);
+		_actor2.setFrame2(_mazeChangeAmount + 1);
 	}
 
 	if (_field1272 == 1) {
@@ -4169,7 +4172,7 @@ void Scene3500::dispatch() {
 		_field1272--;
 
 	if (_mazeChangeAmount != 0) {
-		R2_GLOBALS._player._uiEnabled = false;
+ 		R2_GLOBALS._player._uiEnabled = false;
 		if (_mazeChangeAmount != _field1270)
 			_aSound1.play(276);
 	} else {

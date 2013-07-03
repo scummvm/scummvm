@@ -1377,6 +1377,9 @@ void MazeUI::draw() {
 	int ySize;
 	Visage visage;
 
+	_cellsVisible.y = ((_mapOffset.y % _cellSize.y) + _displayBounds.height() +
+		(_cellSize.y - 1)) / _cellSize.y;
+
 	// Loop to handle the cell rows of the visible display area one at a time
 	for (int yCtr = 0; yCtr < _cellsVisible.y; ++yCtr, yPos += ySize) {
 		int cellY = _mapOffset.y / _cellSize.y + yCtr;
