@@ -31,6 +31,7 @@
 #define CELER2_H
 
 #include "common/scummsys.h"
+#include "common/file.h"
 #include "common/str.h"
 
 namespace Avalanche {
@@ -38,7 +39,7 @@ class AvalancheEngine;
 
 class Celer {
 public:
-	enum flavourtype {ch_ega, ch_bgi, last_flavourtype};
+	enum flavourtype {ch_ega, ch_bgi};
 
 	struct chunkblocktype {
 		flavourtype flavour;
@@ -62,6 +63,9 @@ public:
 	memotype memos[40];
 	void *memory[40];
 
+	Common::File f;
+
+
 
 	Celer();
 
@@ -69,7 +73,7 @@ public:
 
 	void pics_link();
 
-	void load_chunks(Common::String xx);
+	void load_chunks(char *xx);
 
 	void forget_chunks();
 
