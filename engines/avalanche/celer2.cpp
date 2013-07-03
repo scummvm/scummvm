@@ -268,8 +268,55 @@ void Celer::pics_link() {
 	}
 }
 
-void Celer::load_chunks(Common::String xx) {
-	warning("STUB: Celer::load_chunks()");
+void Celer::load_chunks(char *xx) {
+	chunkblocktype ch;
+	byte fv;
+	
+	Common::String filename;
+	filename = filename.format("chunk%s.avd", xx);
+	if (!f.open(filename)) {
+		warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
+		return;
+	}
+
+	f.seek(44);
+	num_chunks = f.readByte();
+	for (int i = 0; i < num_chunks; i++)
+		offsets[i] = f.readSint32LE();
+
+	for (fv = 0; fv < num_chunks; fv++) {
+		f.seek(offsets[fv]);
+		
+		ch.flavour = flavourtype(f.readByte());
+		ch.x = f.readSint16LE();
+		ch.y = f.readSint16LE();
+		ch.xl = f.readSint16LE();
+		ch.yl = f.readSint16LE();
+		ch.size = f.readSint32LE();
+		ch.natural = f.readByte();
+		ch.memorise = f.readByte();
+				
+		if (ch.memorise) {
+
+			memos[fv].x = ch.x;
+			memos[fv].xl = ch.xl;
+			memos[fv].y = ch.y;
+			memos[fv].yl = ch.yl;
+			memos[fv].flavour = ch.flavour;
+			memos[fv].size = ch.size;
+
+			memory[fv] = malloc(ch.size); // Celer::forget_chunks() deallocates it.
+
+			/*if (ch.natural) {
+			getimage(ch.x * 8, ch.y, (ch.x + ch.xl) * 8, ch.y + ch.yl, memory[fv]);
+			} else
+			blockread(f, memory[fv], ch.size);*/
+		} else
+			memos[fv].x = on_disk;
+		
+	}
+
+	f.close();
 }
 
 void Celer::forget_chunks() {
