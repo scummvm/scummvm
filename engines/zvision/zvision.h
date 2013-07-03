@@ -29,7 +29,7 @@
 
 #include "engines/engine.h"
 
-#include "zvision/scriptManager.h"
+#include "zvision/script_manager.h"
 
 #include "gui/debugger.h"
  

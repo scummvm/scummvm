@@ -29,7 +29,7 @@
 
 #include "zvision/puzzle.h"
 #include "zvision/control.h"
-#include "zvision/singleValueContainer.h"
+#include "zvision/result_action.h"
 
 namespace ZVision {
 

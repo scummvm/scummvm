@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scriptManager.h"
+#include "zvision/script_manager.h"
 
 namespace ZVision {
 

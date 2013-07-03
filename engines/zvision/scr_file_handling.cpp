@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 
-#include "zvision/scriptManager.h"
+#include "zvision/script_manager.h"
 #include "zvision/utility.h"
 #include "zvision/puzzle.h"
 

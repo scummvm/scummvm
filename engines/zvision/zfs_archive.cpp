@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zfsArchive.h"
+#include "zvision/zfs_archive.h"
 #include "common/hashmap.h"
 #include "common/memstream.h"
 #include "common/debug.h"

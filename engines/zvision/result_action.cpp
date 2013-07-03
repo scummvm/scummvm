@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/resultAction.h"
+#include "zvision/result_action.h"
 
 namespace ZVision {
 

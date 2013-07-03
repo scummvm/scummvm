@@ -32,8 +32,8 @@
 #include "engines/util.h"
  
 #include "zvision/zvision.h"
-#include "zvision/scriptManager.h"
-#include "zvision/zfsArchive.h"
+#include "zvision/script_manager.h"
+#include "zvision/zfs_archive.h"
 
 #include "graphics/decoders/tga.h"
 
