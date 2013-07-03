@@ -26,12 +26,42 @@
 
 namespace ZVision {
 
+// ActionAdd
+//////////////////////////////////////////////////////////////////////////////
+
 ActionAdd::ActionAdd(Common::String line) {
 	sscanf(line.c_str(), ":add(%u,%hhu)", &_key, &_value);
 }
 
 bool ActionAdd::execute(ZVision *zVision) {
 	zVision->getScriptManager()->addToStateValue(_key, _value);
+	return true;
+}
+
+
+// ActionAssign
+//////////////////////////////////////////////////////////////////////////////
+
+ActionAssign::ActionAssign(Common::String line) {
+	sscanf(line.c_str(), ":assign(%u, %hhu)", &_key, &_value);
+}
+
+bool ActionAssign::execute(ZVision *zVision) {
+	zVision->getScriptManager()->setStateValue(_key, _value);
+	return true;
+}
+
+
+// ActionRandom
+//////////////////////////////////////////////////////////////////////////////
+
+ActionRandom::ActionRandom(Common::String line) {
+	sscanf(line.c_str(), ":random:%u, %u)", &_key, &_max);
+}
+
+bool ActionRandom::execute(ZVision *zVision) {
+	uint32 randNumber = zVision->getRandomSource()->getRandomNumber(_max);
+	zVision->getScriptManager()->setStateValue(_key, randNumber);
 	return true;
 }
 

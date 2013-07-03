@@ -70,6 +70,7 @@ public:
 	Common::Language getLanguage() const;
 	virtual Common::Error run();
 	ScriptManager *getScriptManager() const;
+	Common::RandomSource *getRandomSource() const;
 
 private:
 	void initialize();
@@ -89,7 +90,7 @@ public:
 	Console(ZVision *vm) {}
 	virtual ~Console(void) {}
 };
- 
+
 } // End of namespace ZVision
  
 #endif

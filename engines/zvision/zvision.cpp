@@ -142,4 +142,8 @@ ScriptManager *ZVision::getScriptManager() const {
 	return _scriptManager;
 }
 
+Common::RandomSource *ZVision::getRandomSource() const {
+	return _rnd;
+}
+
 } // End of namespace ZVision

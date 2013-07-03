@@ -87,6 +87,44 @@ private:
 	byte _value;
 };
 
+class ActionPlayAnimation : public ResultAction {
+public:
+	ActionPlayAnimation(Common::String line);
+	bool execute(ZVision *zVision);
+};
+
+class ActionPreloadAnimation : public ResultAction {
+public:
+	ActionPreloadAnimation(Common::String line);
+	bool execute(ZVision *zVision);
+};
+
+class ActionAttenuate : public ResultAction {
+public:
+	ActionAttenuate(Common::String line);
+	bool execute(ZVision *zVision);
+};
+
+class ActionAssign : public ResultAction {
+public:
+	ActionAssign(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	uint32 _key;
+	byte _value;
+};
+
+class ActionRandom : public ResultAction {
+public:
+	ActionRandom(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	uint32 _key;
+	uint32 _max;
+};
+
 } // End of namespace ZVision
 
 #endif

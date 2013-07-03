@@ -131,16 +131,15 @@ void ScriptManager::parseResult(Common::SeekableReadStream &stream, Common::List
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(line);
 
+	// TODO: Re-order the if-then statements in order of highest occurrence
 	while (!line.contains('}')) {
 		// Parse for the action type
 		if (line.matchString("*:add*", true)) {
 			actionList.push_back(ActionAdd(line));
 		} else if (line.matchString("*:animplay*", true)) {
-			
-
+			actionList.push_back(ActionPlayAnimation(line));
 		} else if (line.matchString("*:animpreload*", true)) {
-			
-
+			actionList.push_back(ActionPreloadAnimation(line));
 		} else if (line.matchString("*:animunload*", true)) {
 			
 
