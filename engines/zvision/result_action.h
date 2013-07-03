@@ -25,9 +25,12 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zvision.h"
+#include "common/str.h"
 
 namespace ZVision {
+
+// Forward declaration of ZVision. This file is included before ZVision is declared
+class ZVision;
 
 class ResultAction {
 public:
