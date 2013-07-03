@@ -147,7 +147,7 @@ public:
 	NamedHotspot _item1;
 	SceneActor _actor1;
 	Area1 _area1;
-	MazeUI _object1;
+	MazeUI _mazeUI;
 	SequenceManager _sequenceManager;
 
 	int _field412;

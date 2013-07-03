@@ -1131,12 +1131,12 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	_actor1.postInit();
 	_actor1.hide();
 
-	_object1.setDisplayBounds(Rect(110, 20, 210, 120));
+	_mazeUI.setDisplayBounds(Rect(110, 20, 210, 120));
 
-	_object1.load(1);
-	_object1.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
+	_mazeUI.load(1);
+	_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 	warning("int unk = set_pane_p(_paneNumber);");
-	_object1.draw();
+	_mazeUI.draw();
 	warning("set_pane_p(unk);");
 
 	R2_GLOBALS._player.enableControl();
@@ -1393,8 +1393,8 @@ void Scene1200::process(Event &event) {
 		return;
 
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		_object1.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
-		int unk = _object1.getCellFromPixelXY(event.mousePos);
+		_mazeUI.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+		int unk = _mazeUI.getCellFromPixelXY(event.mousePos);
 		switch (R2_GLOBALS._events.getCursor()) {
 		case CURSOR_ARROW:
 			event.handled = true;
@@ -1541,13 +1541,14 @@ void Scene1200::dispatch() {
 	Rect tmpRect;
 	Scene::dispatch();
 	if (_field41C != 0) {
-		_object1.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
-		warning("int unk = set_pane_p(_paneNumber);");
-		_object1.draw();
+		_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
+		_mazeUI.draw();
+
 		warning("_gfxManager.sub294AC(unk);");
 		warning("tmpRect.sub14DF3();");
 		_field41C = 0;
 	}
+		_mazeUI.draw(); //**DEBUG**
 
 	if (_field414 != 0) {
 		tmpRect.set(110, 20, 210, 120);
@@ -1568,9 +1569,9 @@ void Scene1200::dispatch() {
 		default:
 			break;
 		}
-		_object1.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
+		_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 		warning("int unk = set_pane_p(_paneNumber);");
-		_object1.draw();
+		_mazeUI.draw();
 		warning("_gfxManager.sub294AC(unk);");
 		warning("tmpRect.sub14DF3();");
 
@@ -1606,11 +1607,11 @@ void Scene1200::saveCharacter(int characterIndex) {
 }
 
 void Scene1200::sub9DAD6(int indx) {
-	_object1.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+	_mazeUI.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
 
 	switch (indx) {
 	case 0:
-		if ( ((_object1.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_object1.getCellFromPixelXY(Common::Point(200, 88)) > 36))
+		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(200, 88)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
 				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
 				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
@@ -1619,7 +1620,7 @@ void Scene1200::sub9DAD6(int indx) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1200;
 			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
-		} else if (_object1.getCellFromPixelXY(Common::Point(200, 69)) == 36) {
+		} else if (_mazeUI.getCellFromPixelXY(Common::Point(200, 69)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3155)
@@ -1654,7 +1655,7 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 1:
-		if ( ((_object1.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_object1.getCellFromPixelXY(Common::Point(120, 88)) > 36))
+		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(120, 88)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
 				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
 				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
@@ -1663,7 +1664,7 @@ void Scene1200::sub9DAD6(int indx) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1201;
 			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
-		} else if (_object1.getCellFromPixelXY(Common::Point(120, 69)) == 36) {
+		} else if (_mazeUI.getCellFromPixelXY(Common::Point(120, 69)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3156)
@@ -1698,14 +1699,14 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 2:
-		if ( ((_object1.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_object1.getCellFromPixelXY(Common::Point(178, 110)) > 36))
+		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 110)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3))
 				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1203;
 			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
-		} else if (_object1.getCellFromPixelXY(Common::Point(160, 110)) == 36) {
+		} else if (_mazeUI.getCellFromPixelXY(Common::Point(160, 110)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3156)
@@ -1740,14 +1741,14 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 3:
-		if ( ((_object1.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_object1.getCellFromPixelXY(Common::Point(178, 30)) > 36))
+		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 30)) > 36))
 			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3))
 				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1202;
 			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);
-		} else if (_object1.getCellFromPixelXY(Common::Point(160, 30)) == 36) {
+		} else if (_mazeUI.getCellFromPixelXY(Common::Point(160, 30)) == 36) {
 			switch (_field412 - 1) {
 			case 0:
 				if (R2_GLOBALS._player._visage == 3156)
