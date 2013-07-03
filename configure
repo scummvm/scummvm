@@ -2176,7 +2176,7 @@ case $_host_os in
 		# When not cross-compiling, enable large file support, but don't
 		# care if getconf doesn't exist or doesn't recognize LFS_CFLAGS.
 		if test -z "$_host"; then
-			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
+			CXXFLAGS="$CXXFLAGS `getconf LFS_CFLAGS 2>/dev/null`"
 		fi
 		;;
 	maemo)
@@ -3563,8 +3563,8 @@ if test "$_libunity" = auto ; then
 			;;
 		*)
 			# Unity has a lots of dependencies, update the libs and cflags var with them
-			LIBUNITY_LIBS="$LIBUNITY_LIBS $(pkg-config --libs unity = 3.8.4 2>> "$TMPLOG")"
-			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS $(pkg-config --cflags unity = 3.8.4 2>> "$TMPLOG")"
+			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs unity = 3.8.4 2>> "$TMPLOG"`"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags unity = 3.8.4 2>> "$TMPLOG"`"
 			_libunity=no
 			cat > $TMPC << EOF
 #include <unity.h>
