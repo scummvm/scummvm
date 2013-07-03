@@ -39,7 +39,7 @@ public:
 protected:
 	int _sceneNum;
 	int _soundIndex;
-	bool _raidoMusicInitialized;
+	bool _radioMusicInitialized;
 	uint32 _scene2711StaticSprites[6];
 	uint32 _musicFileHash;
 	void createScene(int sceneNum, int which);
