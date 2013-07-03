@@ -525,9 +525,7 @@ void Gyro::super_on() {
 }
 
 bool Gyro::mouse_near_text() {
-	bool mouse_near_text_result;
-	mouse_near_text_result = (my > 144) && (my < 188);
-	return mouse_near_text_result;
+	return (my > 144) && (my < 188);
 }
 
 } // End of namespace Avalanche

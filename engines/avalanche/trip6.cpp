@@ -84,21 +84,14 @@ void triptype::appear(int16 wx, int16 wy, byte wf) {
 bool triptype::collision_check() {
 	byte fv;
 
-	bool collision_check_result = false;
-	for (fv = 1; fv <= _tr->numtr; fv++) {
+	for (fv = 1; fv <= _tr->numtr; fv++) 
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
 			((x + a.xl) > _tr->tr[fv].x) &&
 			(x < (_tr->tr[fv].x + _tr->tr[fv].a.xl)) &&
-			(_tr->tr[fv].y == y)) {
-			collision_check_result = true;
-			break;
-		}
-		// CHECKME: Only checks the first element of the for() statement.
-		// Both lines should certainly be removed
-		collision_check_result = false;
-		return collision_check_result;
-	}
-	return collision_check_result;
+			(_tr->tr[fv].y == y)) 
+				return true;
+
+	return false;
 }
 
 void triptype::walk() {
@@ -318,7 +311,7 @@ void Trip::loadtrip() {
 
 	for (gm = 1; gm <= numtr; gm++)
 		tr[gm].original();
-	// CHECKME: A 'i++' is missing somewhere, obviously!
+	
 	for (int i = 0; i < sizeof(aa); i++)
 		aa[i] = 0;
 }
