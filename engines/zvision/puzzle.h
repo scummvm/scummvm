@@ -61,7 +61,8 @@ enum StateFlags : byte {
 struct Puzzle {
 	uint32 key;
 	Common::List<Criteria> criteriaList;
-	Common::List<ResultAction> resultActions;
+	// This has to be list of pointers because ResultAction is abstract
+	Common::List<ResultAction *> resultActions;
 	byte flags;
 };
 

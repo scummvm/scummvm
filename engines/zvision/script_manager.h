@@ -82,7 +82,7 @@ private:
 	 * @param stream    Scr file stream
 	 * @return          Created Results object
 	 */
-	void parseResult(Common::SeekableReadStream &stream, Common::List<ResultAction> &actionList) const;
+	void parseResult(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const;
 
 	/**
 	 * Helper method for parsePuzzle. Parses the stream into a bitwise or of the StateFlags enum
