@@ -52,7 +52,7 @@ void ScriptManager::parseScrFile(Common::String fileName) {
 
 		if (line.matchString("puzzle:*", true)) {
 			Puzzle puzzle;
-			sscanf(line.c_str(),"puzzle:%u",&(puzzle.id));
+			sscanf(line.c_str(),"puzzle:%u",&(puzzle.key));
 
 			parsePuzzle(puzzle, file);
 			_puzzles.push_back(puzzle);
@@ -95,7 +95,7 @@ Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const 
 
 		// Parse the id out of the first token
 		token = tokenizer.nextToken();
-		sscanf(token.c_str(), "[%u]", &(criteria.id));
+		sscanf(token.c_str(), "[%u]", &(criteria.key));
 
 		// Parse the operator out of the second token
 		token = tokenizer.nextToken();
