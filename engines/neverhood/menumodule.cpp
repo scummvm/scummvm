@@ -766,9 +766,7 @@ void SavegameListBox::onClick() {
 	mousePos.y -= _y + _rect.y1;
 	if (mousePos.x >= 0 && mousePos.x <= _rect.x2 - _rect.x1 &&
 		mousePos.y >= 0 && mousePos.y <= _rect.y2 - _rect.y1) {
-		// We add 1 to the char height to ensure that the correct entry is chosen if the
-		// user clicks at the bottom the text entry
-		int newIndex = _firstVisibleItem + mousePos.y / (_fontSurface->getCharHeight() + 1);
+		int newIndex = _firstVisibleItem + mousePos.y / _fontSurface->getCharHeight();
 		if (newIndex <= _lastVisibleItem) {
 			_currIndex = newIndex;
 			refresh();
