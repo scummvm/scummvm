@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 
-#include "zvision/singleValueContainer.h"
+#include "zvision/single_value_container.h"
 
 namespace ZVision {
 
