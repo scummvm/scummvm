@@ -224,10 +224,15 @@ struct quasiped_type {
 
 typedef byte tunetype[31];
 
+
+struct PointType {
+	int16 x, y;
+};
+
 struct vmctype { /* Virtual Mouse Cursor */
 	void *andpic, *xorpic;
 	void *backpic[2];
-	void* wherewas[2];
+	PointType wherewas[2];
 	byte picnumber;
 	int8 ofsx, ofsy;
 };
@@ -606,6 +611,8 @@ public:
 
 
 	Gyro();
+
+	~Gyro();
 
 	void setParent(AvalancheEngine *vm);
 
