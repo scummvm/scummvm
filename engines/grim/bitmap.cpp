@@ -24,6 +24,7 @@
 
 #include "graphics/colormasks.h"
 #include "graphics/pixelbuffer.h"
+#include "graphics/decoders/tga.h"
 
 #include "engines/grim/savegame.h"
 #include "engines/grim/debug.h"
@@ -229,60 +230,31 @@ void BitmapData::freeData() {
 }
 
 bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
-	data->seek(0, SEEK_SET);
-	if (data->readByte() != 0)	// Verify that description-field is empty
-		return false;
-	data->seek(1, SEEK_CUR);
+	Graphics::TGADecoder dec;
+	bool success = dec.loadStream(*data);
 
-	int format = data->readByte();
-	if (format != 2)
+	if (!success)
 		return false;
 
-	data->seek(9, SEEK_CUR);
-	_width = data->readUint16LE();
-	_height = data->readUint16LE();
+	const Graphics::Surface *origSurf = dec.getSurface();
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	const Graphics::Surface *surf = origSurf->convertTo(pixelFormat);
+
+	_width = surf->w;
+	_height = surf->h;
 	_format = 1;
-	_x = 0;
-	_y = 0;
-
-	int bpp = data->readByte();
-	Graphics::PixelFormat pixelFormat;
-	if (bpp == 32) {
-		_colorFormat = BM_RGBA;
-		pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-		_bpp = 4;
-	} else {
-		return false;
-	}
-
-	uint8 desc = data->readByte();
-	uint8 flipped = !(desc & 32);
-
-	if (!(bpp == 24 || bpp == 32)) // Assure we have 24/32 bpp
-		return false;
-	_data = new Graphics::PixelBuffer[1];
-	_data[0].create(pixelFormat, _width * _height, DisposeAfterUse::YES);
-	char *writePtr = (char *)_data[0].getRawBuffer(_width * (_height - 1));
-
-	if (flipped) {
-		for (int i = 0; i < _height; i++) {
-			data->read(writePtr, _width * (bpp / 8));
-			writePtr -= (_width * bpp / 8);
-		}
-	} else {
-		data->read(_data[0].getRawBuffer(), _width * _height * (bpp / 8));
-	}
-
-	uint8 x;
-	for (int i = 0; i < _width * _height * (bpp / 8); i+=4) {
-		byte *b = _data[0].getRawBuffer();
-		x = b[i];
-		b[i] = b[i + 2];
-		b[i + 2] = x;
-	}
-
+	_x = _y = 0;
+	_bpp = 4;
+	_colorFormat = BM_RGBA;
 	_numImages = 1;
+	_data = new Graphics::PixelBuffer[1];
+	_data[0].set(pixelFormat, (unsigned char *)surf->pixels);
+
 	g_driver->createBitmap(this);
+
+	freeData();
+	delete surf;
+
 	return true;
 }
 
