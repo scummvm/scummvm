@@ -31,6 +31,7 @@
 #define LUCERNA2_H
 
 #include "common/scummsys.h"
+#include "common/file.h"
 
 namespace Avalanche {
 class AvalancheEngine;
@@ -111,10 +112,10 @@ public:
 
 	void fix_flashers();
 
+	void load_also(char *n);
+
 private:
 	AvalancheEngine *_vm;
-
-	bool fxhidden;
 
 	struct rgbrec {
 		int16 red;
@@ -127,8 +128,6 @@ private:
 		rgbrec colors[256];
 	};
 
-	palettetype fxpal[4];
-
 	//Clock
 	static const int16 xm = 510;
 	static const int16 ym = 183;
@@ -136,11 +135,17 @@ private:
 	uint16 nh;
 
 
-	//untyped_file f;
+	palettetype fxpal[4];
+
+	bool fxhidden;
+
+	Common::File f;
+
+
 	Common::String nextstring();
 	void scram1(Common::String &x);
 	void unscramble();
-	void load_also(Common::String n);
+	//lódalszó
 
 	void zoomout(int16 x, int16 y);
 
