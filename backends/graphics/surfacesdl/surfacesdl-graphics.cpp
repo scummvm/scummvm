@@ -768,7 +768,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	}
 
 
-#ifdef ENABLE_KEYMAPPER
+#ifdef ENABLE_EVENTRECORDER
 	_displayDisabled = ConfMan.getBool("disable_display");
 
 	if (_displayDisabled) {
