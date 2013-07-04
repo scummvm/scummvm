@@ -288,12 +288,18 @@ void Lua_V2::AdvanceChore() {
 
 	int chore = lua_getuserdata(choreObj);
 	float time = lua_getnumber(timeObj);
-	// FIXME: implement missong code
-	warning("Lua_V2::AdvanceChore: stub, chore: %d time: %f", chore, time);
 	Chore *c = PoolChore::getPool().getObject(chore);
 	if (c) {
-		// this is kind of wrong, but it at least gets stuff to draw.
-		c->getOwner()->playChoreLooping(c->getChoreId());
+		if (!c->isPlaying()) {
+			warning("AdvanceChore() called on stopped chore %s (%s)",
+			        c->getName(), c->getOwner()->getFilename().c_str());
+			if (c->isLooping()) {
+				c->getOwner()->playChoreLooping(c->getName());
+			} else {
+				c->getOwner()->playChore(c->getName());
+			}
+		}
+		c->setTime(time * 1000);
 	}
 }
 

@@ -63,6 +63,8 @@ public:
 	bool isPlaying() { return _playing; }
 	bool isLooping() { return _looping; }
 
+	void setTime(float t) { _currTime = t; }
+
 	const char *getName() const { return _name; }
 
 	int getChoreId() { return _choreId; }
