@@ -71,11 +71,11 @@ void EventDispatcher::dispatch() {
 }
 
 void EventDispatcher::registerMapper(EventMapper *mapper, bool autoFree) {
+	_autoFreeMapper = autoFree;
 	if (_autoFreeMapper) {
 		delete _mapper;
 	}
 	_mapper = mapper;
-	_autoFreeMapper = autoFree;
 }
 
 
