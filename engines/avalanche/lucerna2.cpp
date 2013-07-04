@@ -90,13 +90,11 @@ void Lucerna::draw_also_lines() {
 
 
 Common::String Lucerna::nextstring() {
-	byte l;
-	Common::String x;
-
-	
-	warning("STUB: Lucerna::nextstring()");
-
-	return "STUB: Lucerna::nextstring()";
+	Common::String str;
+	byte length = f.readByte();
+	for (int i = 0; i < length; i++)
+		str += f.readByte();
+	return str;
 }
 
 void Lucerna::scram1(Common::String &x) {
@@ -105,10 +103,8 @@ void Lucerna::scram1(Common::String &x) {
 }
 
 void Lucerna::unscramble() {
-	byte fv, ff;
-
-	for (fv = 0; fv <= 30; fv ++)
-		for (ff = 0; ff <= 1; ff ++)
+	for (byte fv = 0; fv <= 30; fv ++)
+		for (byte ff = 0; ff <= 1; ff ++)
 			if (_vm->_gyro.also[fv][ff] != 0)
 				scram1(*_vm->_gyro.also[fv][ff]);
 	scram1(_vm->_gyro.listen);
@@ -117,19 +113,93 @@ void Lucerna::unscramble() {
 	      _vm->_gyro.also[fv,ff]^[fz]:=chr(ord(_vm->_gyro.also[fv,ff]^[fz]) xor 177);*/
 }
 
-void Lucerna::load_also(Common::String n) {
-	byte minnames;
+void Lucerna::load_also(char *n) {
 	byte ff, fv;
-
-
-	for (fv = 0; fv <= 30; fv ++)
-		for (ff = 0; ff <= 1; ff ++)
+	
+	for (fv = 0; fv < 31; fv++)
+		for (ff = 0; ff < 2; ff++)
 			if (_vm->_gyro.also[fv][ff] != 0)  {
 				delete _vm->_gyro.also[fv][ff];
 				_vm->_gyro.also[fv][ff] = 0;
 			}
 
+	Common::String filename;
+	filename = filename.format("also%s.avd", n);
+	if (!f.open(filename)) {
+		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
+		return;
+	}
+
+	f.seek(128);
+
+	byte minnames = f.readByte();
+	for (fv = 0; fv <= minnames; fv++) {
+		for (ff = 0; ff < 2; ff++) {
+			_vm->_gyro.also[fv][ff] = new Common::String;
+			*_vm->_gyro.also[fv][ff] = nextstring();
+		}
+		*_vm->_gyro.also[fv][0] = Common::String(157) + *_vm->_gyro.also[fv][0] + 157;
+	}
+	
+	memset(_vm->_gyro.lines, 0xFF, sizeof(_vm->_gyro.lines));
+
+	//fv = getpixel(0, 0);
 	warning("STUB: Lucerna::load_also()");
+		
+	fv = f.readByte();
+	for (byte i = 0; i < fv; i++) {
+		_vm->_gyro.lines[i].col = f.readByte();
+		_vm->_gyro.lines[i].x1 = f.readSint16LE();
+		_vm->_gyro.lines[i].x2 = f.readSint16LE();
+		_vm->_gyro.lines[i].y1 = f.readSint16LE();
+		_vm->_gyro.lines[i].y2 = f.readSint16LE();
+	}
+
+	memset(_vm->_gyro.peds, 177, sizeof(_vm->_gyro.peds));
+	fv = f.readByte();
+	for (byte i = 0; i < fv; i++) {
+		_vm->_gyro.peds[i].dir = f.readByte();
+		_vm->_gyro.peds[i].x = f.readSint16LE();
+		_vm->_gyro.peds[i].y = f.readSint16LE();
+	}
+	
+	_vm->_gyro.numfields = f.readByte();
+	for (byte i = 0; i < _vm->_gyro.numfields; i++) {
+		_vm->_gyro.fields[i].x1 = f.readSint16LE();
+		_vm->_gyro.fields[i].x2 = f.readSint16LE();
+		_vm->_gyro.fields[i].y1 = f.readSint16LE();
+		_vm->_gyro.fields[i].y2 = f.readSint16LE();
+	}
+
+	for (byte i = 0; i < 15; i++) {
+		_vm->_gyro.magics[i].data = f.readUint16LE();
+		_vm->_gyro.magics[i].op = f.readByte();
+	}
+
+	for (byte i = 0; i < 7; i++) {
+		_vm->_gyro.portals[i].data = f.readUint16LE();
+		_vm->_gyro.portals[i].op = f.readByte();
+	}
+
+	for (byte i = 0;  i < 26; i++)
+		_vm->_gyro.flags += f.readByte();
+
+	int16 listen_length;
+	listen_length = f.readByte();
+	_vm->_gyro.listen.clear();
+	for (byte i = 0; i < listen_length; i++)
+		_vm->_gyro.listen.setChar(f.readByte(), i);
+	
+	draw_also_lines();
+
+	//setactivepage(1);
+	warning("STUB: Lucerna::load_also()");
+
+	f.close();
+	unscramble();
+	for (fv = 0; fv <= minnames; fv++)
+		*_vm->_gyro.also[fv][0] = Common::String(',') + *_vm->_gyro.also[fv][0] + ',';
+	
 }
 
 void Lucerna::load(byte n) {     /* Load2, actually */
