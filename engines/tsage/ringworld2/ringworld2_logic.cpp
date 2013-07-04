@@ -1456,12 +1456,12 @@ int MazeUI::getCellFromCellXY(const Common::Point &p) {
 	}
 }
 
-int MazeUI::pixelToCellXY(int &x, int &y) {
-	x /= _cellSize.x;
-	y /= _cellSize.y;
+int MazeUI::pixelToCellXY(Common::Point &pt) {
+	pt.x /= _cellSize.x;
+	pt.y /= _cellSize.y;
 
-	if ((x >= 0) && (y >= 0) && (_mapCells.x > x) && (_mapCells.y > y)) {
-		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * y + x) * 2);
+	if ((pt.x >= 0) && (pt.y >= 0) && (pt.x < _mapCells.x) && (pt.y < _mapCells.y)) {
+		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * pt.y + pt.x) * 2);
 	}
 
 	return -1;

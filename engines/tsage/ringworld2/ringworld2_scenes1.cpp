@@ -1393,50 +1393,52 @@ void Scene1200::process(Event &event) {
 		return;
 
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		_mazeUI.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
-		int unk = _mazeUI.getCellFromPixelXY(event.mousePos);
+		Common::Point cellPos(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+		_mazeUI.pixelToCellXY(cellPos);
+
+		int cellId = _mazeUI.getCellFromPixelXY(event.mousePos);
 		switch (R2_GLOBALS._events.getCursor()) {
-		case CURSOR_ARROW:
+		case CURSOR_WALK:
 			event.handled = true;
 			if ((event.mousePos.x > 179) && (event.mousePos.x < 210) && (event.mousePos.y > 50) && (event.mousePos.y < 89))
-				sub9DAD6(1);
+				startCrawling(1);
 
 			if ((event.mousePos.x > 109) && (event.mousePos.x < 140) && (event.mousePos.y > 50) && (event.mousePos.y < 89))
-				sub9DAD6(2);
+				startCrawling(2);
 
 			if ((event.mousePos.x > 140) && (event.mousePos.x < 179) && (event.mousePos.y > 89) && (event.mousePos.y < 120))
-				sub9DAD6(3);
+				startCrawling(3);
 
 			if ((event.mousePos.x > 140) && (event.mousePos.x < 179) && (event.mousePos.y > 19) && (event.mousePos.y < 50))
-				sub9DAD6(4);
+				startCrawling(4);
 			break;
 		case CURSOR_USE:
-			if (unk > 36) {
-				if ( ((R2_GLOBALS._v56AA2 == 3)  && (R2_GLOBALS._v56AA4 == 33))
-					|| ((R2_GLOBALS._v56AA2 == 7)  && (R2_GLOBALS._v56AA4 == 33))
-					|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 41))
-					|| ((R2_GLOBALS._v56AA2 == 5)  && (R2_GLOBALS._v56AA4 == 5))
-					|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21))
-					|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21))
-					|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5))
-					|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9))
-					|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17))
-					|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17))
-					|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17))
-					|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) ) {
+			if (cellId > 36) {
+				if ( ((cellPos.x == 3)  && (cellPos.y == 33))
+					|| ((cellPos.x == 7)  && (cellPos.y == 33))
+					|| ((cellPos.x == 33) && (cellPos.y == 41))
+					|| ((cellPos.x == 5)  && (cellPos.y == 5))
+					|| ((cellPos.x == 13) && (cellPos.y == 21))
+					|| ((cellPos.x == 17) && (cellPos.y == 21))
+					|| ((cellPos.x == 17) && (cellPos.y == 5))
+					|| ((cellPos.x == 17) && (cellPos.y == 9))
+					|| ((cellPos.x == 29) && (cellPos.y == 17))
+					|| ((cellPos.x == 33) && (cellPos.y == 17))
+					|| ((cellPos.x == 35) && (cellPos.y == 17))
+					|| ((cellPos.x == 41) && (cellPos.y == 21)) ) {
 					_area1.postInit();
 					event.handled = true;
 				}
 			}
 
-			if ((unk == 1) || (unk == 4) || (unk == 11) || (unk == 14)) {
-				if ( ((R2_GLOBALS._v56AA2 == 3)  && (R2_GLOBALS._v56AA4 == 9))
-				  || ((R2_GLOBALS._v56AA2 == 11)  && (R2_GLOBALS._v56AA4 == 27))
-				  || ((R2_GLOBALS._v56AA2 == 17)  && (R2_GLOBALS._v56AA4 == 7))
-				  || ((R2_GLOBALS._v56AA2 == 17)  && (R2_GLOBALS._v56AA4 == 27))
-				  || ((R2_GLOBALS._v56AA2 == 17)  && (R2_GLOBALS._v56AA4 == 33))
-				  || (R2_GLOBALS._v56AA2 == 33) ) {
-					switch (R2_GLOBALS._v56AA2) {
+			if ((cellId == 1) || (cellId == 4) || (cellId == 11) || (cellId == 14)) {
+				if ( ((cellPos.x == 3)  && (cellPos.y == 9))
+				  || ((cellPos.x == 11)  && (cellPos.y == 27))
+				  || ((cellPos.x == 17)  && (cellPos.y == 7))
+				  || ((cellPos.x == 17)  && (cellPos.y == 27))
+				  || ((cellPos.x == 17)  && (cellPos.y == 33))
+				  || (cellPos.x == 33) ) {
+					switch (cellPos.x) {
 					case 3:
 						R2_GLOBALS._sceneManager.changeScene(3150);
 						break;
@@ -1455,9 +1457,9 @@ void Scene1200::process(Event &event) {
 			}
 			break;
 		case CURSOR_LOOK:
-			if ((unk == 1) || (unk == 4) || (unk == 11) || (unk == 14)) {
+			if ((cellId == 1) || (cellId == 4) || (cellId == 11) || (cellId == 14)) {
 				event.handled = true;
-				switch (R2_GLOBALS._v56AA2) {
+				switch (cellPos.x) {
 				case 3:
 					SceneItem::display(1200, 8, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 						break;
@@ -1465,13 +1467,13 @@ void Scene1200::process(Event &event) {
 						R2_GLOBALS._sceneManager.changeScene(3240);
 						break;
 				case 11:
-					if (R2_GLOBALS._v56AA4 == 27)
+					if (cellPos.y == 27)
 						R2_GLOBALS._sceneManager.changeScene(3210);
 					else
 						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 					break;
 				case 17:
-					switch (R2_GLOBALS._v56AA4) {
+					switch (cellPos.y) {
 					case 5:
 						R2_GLOBALS._sceneManager.changeScene(3230);
 						break;
@@ -1493,7 +1495,7 @@ void Scene1200::process(Event &event) {
 					break;
 				}
 			}
-			if (unk > 36) {
+			if (cellId > 36) {
 				event.handled = true;
 				SceneItem::display(1200, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			}
@@ -1513,19 +1515,19 @@ void Scene1200::process(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_1:
 			warning("FIXME: keycode = 0x4800");
-			sub9DAD6(4);
+			startCrawling(4);
 			break;
 		case Common::KEYCODE_2:
 			warning("FIXME: keycode = 0x4B00");
-			sub9DAD6(2);
+			startCrawling(2);
 			break;
 		case Common::KEYCODE_3:
 			warning("FIXME: keycode = 0x4D00");
-			sub9DAD6(1);
+			startCrawling(1);
 			break;
 		case Common::KEYCODE_4:
 			warning("FIXME: keycode = 0x5000");
-			sub9DAD6(3);
+			startCrawling(3);
 			break;
 		default:
 			event.handled = false;
@@ -1606,16 +1608,17 @@ void Scene1200::saveCharacter(int characterIndex) {
 	SceneExt::saveCharacter(characterIndex);
 }
 
-void Scene1200::sub9DAD6(int indx) {
-	_mazeUI.pixelToCellXY(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+void Scene1200::startCrawling(int indx) {
+	Common::Point cellPos = Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+	_mazeUI.pixelToCellXY(cellPos);
 
 	switch (indx) {
-	case 0:
+	case 1:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(200, 88)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
-				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
-				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
-				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 41)) )
+			&& ( ((cellPos.x == 3) && (cellPos.y == 33) && (_field418 != 4))
+				|| ((cellPos.x == 13) && (cellPos.y == 21) && (_field418 != 2))
+				|| ((cellPos.x == 29) && (cellPos.y == 17) && (_field418 != 1))
+				|| ((cellPos.x == 33) && (cellPos.y == 41)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1200;
@@ -1654,12 +1657,12 @@ void Scene1200::sub9DAD6(int indx) {
 			signal();
 		}
 		break;
-	case 1:
+	case 2:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(120, 88)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
-				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
-				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
-				|| ((R2_GLOBALS._v56AA2 == 5) && (R2_GLOBALS._v56AA4 == 5)) )
+			&& ( ((cellPos.x == 7) && (cellPos.y == 33) && (_field418 != 4))
+				|| ((cellPos.x == 17) && (cellPos.y == 21) && (_field418 != 2))
+				|| ((cellPos.x == 33) && (cellPos.y == 17) && (_field418 != 1))
+				|| ((cellPos.x == 5) && (cellPos.y == 5)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1201;
@@ -1698,10 +1701,10 @@ void Scene1200::sub9DAD6(int indx) {
 			signal();
 		}
 		break;
-	case 2:
+	case 3:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 110)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3))
-				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
+			&& ( ((cellPos.x == 17) && (cellPos.y == 5) && (_field418 != 3))
+				|| ((cellPos.x == 41) && (cellPos.y == 21)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1203;
@@ -1740,10 +1743,10 @@ void Scene1200::sub9DAD6(int indx) {
 			signal();
 		}
 		break;
-	case 3:
+	case 4:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 30)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3))
-				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
+			&& ( ((cellPos.x == 17) && (cellPos.y == 9) && (_field418 != 3))
+				|| ((cellPos.x == 35) && (cellPos.y == 17)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1202;

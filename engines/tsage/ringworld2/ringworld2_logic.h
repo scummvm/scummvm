@@ -313,7 +313,7 @@ public:
 	void draw();
 	int getCellFromPixelXY(const Common::Point &pt);
 	int getCellFromCellXY(const Common::Point &p);
-	int pixelToCellXY(int &arg1, int &arg2);
+	int pixelToCellXY(Common::Point &pt);
 
 	virtual Common::String getClassName() { return "MazeUI"; }
 	void synchronize(Serializer &s);

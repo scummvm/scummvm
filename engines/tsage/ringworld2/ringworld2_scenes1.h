@@ -160,7 +160,7 @@ public:
 	Scene1200();
 	void synchronize(Serializer &s);
 
-	void sub9DAD6(int indx);
+	void startCrawling(int indx);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
