@@ -16,6 +16,11 @@ scripts, from.
 lure.dat
 TODO
 
+mort.dat:
+File created partially by extracting font data from the French executable. It
+also contains the French and German translation, as well as a custom-made
+English translation.
+
 queen.tbl:
 'queen.tbl' contains a list of filenames, filesizes and offsets for the
 individual files saved in QUEEN.1. This data was originally included in the
