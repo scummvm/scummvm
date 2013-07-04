@@ -53,7 +53,7 @@ bool ModularBackend::hasFeature(Feature f) {
 }
 
 void ModularBackend::setFeatureState(Feature f, bool enable) {
-	return _graphicsManager->setFeatureState(f, enable);
+	_graphicsManager->setFeatureState(f, enable);
 }
 
 bool ModularBackend::getFeatureState(Feature f) {

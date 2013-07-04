@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BADA_SYSTEM_H
-#define BADA_SYSTEM_H
+#ifndef TIZEN_SYSTEM_H
+#define TIZEN_SYSTEM_H
 
 #include <FApp.h>
 #include <FGraphics.h>
@@ -34,47 +34,46 @@
 #include "common/scummsys.h"
 #include "backends/modular-backend.h"
 
-#include "backends/platform/bada/fs.h"
-#include "backends/platform/bada/form.h"
-#include "backends/platform/bada/audio.h"
-#include "backends/platform/bada/graphics.h"
+#include "backends/platform/tizen/fs.h"
+#include "backends/platform/tizen/form.h"
+#include "backends/platform/tizen/audio.h"
+#include "backends/platform/tizen/graphics.h"
 
 #if defined(_DEBUG)
-#define logEntered() AppLog("%s entered (%s %d)", \
-														 __FUNCTION__, __FILE__, __LINE__);
-#define logLeaving() AppLog("%s leaving (%s %d)", \
-														 __FUNCTION__, __FILE__, __LINE__);
+#define logEntered() AppLog("%s entered (%s %d)", __FUNCTION__, __FILE__, __LINE__);
+#define logLeaving() AppLog("%s leaving (%s %d)", __FUNCTION__, __FILE__, __LINE__);
 #else
 #define logEntered()
 #define logLeaving()
 #endif
 
-BadaAppForm *systemStart(Osp::App::Application *app);
+TizenAppForm *systemStart(Tizen::App::Application *app);
 void systemError(const char *message);
 
-#define USER_MESSAGE_EXIT			1000
-#define USER_MESSAGE_EXIT_ERR 1001
+#define USER_MESSAGE_EXIT		1000
+#define USER_MESSAGE_EXIT_ERR		1001
+#define USER_MESSAGE_EXIT_ERR_CONFIG 1002
 
 //
-// BadaSystem
+// TizenSystem
 //
-class BadaSystem : public ModularBackend,
-									 Common::EventSource {
+class TizenSystem :
+	public ModularBackend,
+	Common::EventSource {
 public:
-	BadaSystem(BadaAppForm *appForm);
-	~BadaSystem();
+	TizenSystem(TizenAppForm *appForm);
+	~TizenSystem();
 
 	result Construct();
 	void closeAudio();
 	void closeGraphics();
 	void destroyBackend();
 	void setMute(bool on);
-	int setVolume(bool up, bool minMax);
 	void exitSystem();
 	bool isClosing() { return _appForm->isClosing(); }
 
-	BadaGraphicsManager *getGraphics() {
-		return (BadaGraphicsManager *)_graphicsManager;
+	TizenGraphicsManager *getGraphics() {
+		return (TizenGraphicsManager *)_graphicsManager;
 	}
 
 private:
@@ -94,9 +93,10 @@ private:
 	Common::SeekableReadStream *createConfigReadStream();
 	Common::WriteStream *createConfigWriteStream();
 
-	BadaAppForm *_appForm;
+	TizenAppForm *_appForm;
 	AudioThread *_audioThread;
 	long long _epoch;
+	Common::String _resourcePath;
 };
 
 #endif
