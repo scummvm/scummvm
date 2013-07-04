@@ -24,7 +24,7 @@
 
 namespace Common {
 
-EventDispatcher::EventDispatcher() : _mapper(0) {
+EventDispatcher::EventDispatcher() : _autoFreeMapper(false), _mapper(0) {
 }
 
 EventDispatcher::~EventDispatcher() {
