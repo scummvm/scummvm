@@ -599,42 +599,8 @@ void EventRecorder::setFileHeader() {
 }
 
 SDL_Surface *EventRecorder::getSurface(int width, int height) {
-	SDL_Surface *surface = new SDL_Surface();
-	surface->format = new SDL_PixelFormat();
-	surface->flags = 0;
-	surface->format->palette = NULL;
-	surface->format->BitsPerPixel = 16;
-	surface->format->BytesPerPixel = 2;
-	surface->format->Rloss = 3;
-	surface->format->Gloss = 2;
-	surface->format->Bloss = 3;
-	surface->format->Aloss = 8;
-	surface->format->Rshift = 11;
-	surface->format->Gshift = 5;
-	surface->format->Bshift = 0;
-	surface->format->Ashift = 0;
-	surface->format->Rmask = 63488;
-	surface->format->Gmask = 2016;
-	surface->format->Bmask = 31;
-	surface->format->Amask = 0;
-	surface->format->colorkey = 0;
-	surface->format->alpha = 255;
-	surface->w = width;
-	surface->h = height;
-	surface->pitch = width * 2;
-	surface->pixels = (char *)malloc(surface->pitch * surface->h);
-	surface->offset = 0;
-	surface->hwdata = NULL;
-	surface->clip_rect.x = 0;
-	surface->clip_rect.y = 0;
-	surface->clip_rect.w = width;
-	surface->clip_rect.h = height;
-	surface->unused1 = 0;
-	surface->locked = 0;
-	surface->map = NULL;
-	surface->format_version = 4;
-	surface->refcount = 1;
-	return surface;
+	// Create a RGB565 surface of the requested dimensions.
+	return SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16, 0xF800, 0x07E0, 0x001F, 0x0000);
 }
 
 bool EventRecorder::switchMode() {

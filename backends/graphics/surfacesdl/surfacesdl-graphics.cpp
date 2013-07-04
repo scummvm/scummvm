@@ -878,12 +878,7 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 	}
 
 	if (_hwscreen) {
-		if (_displayDisabled) {
-			delete _hwscreen;
-		} else {
-			SDL_FreeSurface(_hwscreen);
-		}
-
+		SDL_FreeSurface(_hwscreen);
 		_hwscreen = NULL;
 	}
 
