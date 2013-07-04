@@ -2885,7 +2885,7 @@ void Scene3400::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 3500 -
+ * Scene 3500 - Cavern Maze
  *
  *--------------------------------------------------------------------------*/
 
@@ -3586,8 +3586,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_field1272 = 1;
 	_field1270 = 4;
 	_mazeChangeAmount = 4;
-	_mazePosition.x = 860;
-	_mazePosition.y = 891;
+	_mazePosition = Common::Point(860, 891);
 	_rotation = R2_GLOBALS._scenePalette.addRotation(240, 254, -1);
 	_rotation->setDelay(0);
 	_rotation->_idxChange = 1;
@@ -3690,7 +3689,6 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene3500::remove() {
-	_rotation->remove();
 	R2_GLOBALS._sound2.fadeOut2(NULL);
 	SceneExt::remove();
 }
