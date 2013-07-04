@@ -33,7 +33,8 @@ enum AccessMode {
 
 enum DataType {
 	kStaticStrings = 0,
-	kGameStrings = 1
+	kGameStrings = 1,
+	kEncryptionArrays = 2
 };
 
 #define MORT_DAT "mort.dat"
