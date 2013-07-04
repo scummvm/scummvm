@@ -288,11 +288,14 @@ public:
 	 * to the EventDispatcher, thus it will be deleted
 	 * with "delete", when EventDispatcher is destroyed.
 	 *
-	 * Note there is only one mapper per EventDispatcher
-	 * possible, thus when this method is called twice,
-	 * the former mapper will be destroied.
+	 * @param autoFree	Destroy previous mapper [default]
+	 *         		Normally we allow only one event mapper to exists,
+	 *			However Event Recorder must intervent into normal
+	 *			event flow without altering its semantics. Thus during
+	 *			Event Recorder playback and recording we allow
+	 *			two mappers.
 	 */
-	void registerMapper(EventMapper *mapper);
+	void registerMapper(EventMapper *mapper, bool autoFree = true);
 
 	/**
 	 * Queries the setup event mapper.
@@ -326,6 +329,7 @@ public:
 	 */
 	void unregisterObserver(EventObserver *obs);
 private:
+	bool _autoFreeMapper;
 	EventMapper *_mapper;
 
 	struct Entry {

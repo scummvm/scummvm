@@ -83,7 +83,7 @@ private:
 
 	void updateScreen();
 	bool pollEvent(Common::Event &event);
-	uint32 getMillis();
+	uint32 getMillis(bool skipRecord = false);
 	void delayMillis(uint msecs);
 	void getTimeAndDate(TimeDate &t) const;
 	void fatalError();
