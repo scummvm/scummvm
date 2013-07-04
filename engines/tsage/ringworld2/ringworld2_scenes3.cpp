@@ -3929,7 +3929,7 @@ void Scene3500::dispatch() {
 				} else {
 					var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
 					var_8 = abs(newMazeX - var_4);
-					cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, cellId + 46));
+					cellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 					if ( (((cellId == 26) || (cellId == 24) || (cellId == 15)) && (newMazeX >= var_4) && (_mazePosition.x <= var_4))
 						|| (((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)) && (_mazeChangeAmount >= var_8) && (_mazeChangeAmount <= 3) && (_action1._field24 != 0)) ) {
 						newMazeX = var_4;
