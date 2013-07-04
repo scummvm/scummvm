@@ -858,9 +858,10 @@ void Scene1100::saveCharacter(int characterIndex) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1200 -
+ * Scene 1200 - Air Ducts Maze
  *
  *--------------------------------------------------------------------------*/
+
 Scene1200::Scene1200() {
 	_field412 = 0;
 	_field414 = 0;
@@ -881,17 +882,17 @@ void Scene1200::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field41C);
 }
 
-Scene1200::Area1::Area1() {
+Scene1200::LaserPanel::LaserPanel() {
 	_field20 = 0;
 }
 
-void Scene1200::Area1::synchronize(Serializer &s) {
+void Scene1200::LaserPanel::synchronize(Serializer &s) {
 	SceneArea::synchronize(s);
 
 	s.syncAsByte(_field20);
 }
 
-void Scene1200::Area1::Actor3::init(int state) {
+void Scene1200::LaserPanel::Jumper::init(int state) {
 	_state = state;
 
 	SceneActor::postInit();
@@ -912,6 +913,7 @@ void Scene1200::Area1::Actor3::init(int state) {
 		default:
 			break;
 		}
+		break;
 	case 2:
 		switch (R2_GLOBALS._v56AA7) {
 		case 1:
@@ -929,6 +931,7 @@ void Scene1200::Area1::Actor3::init(int state) {
 		default:
 			break;
 		}
+		break;
 	case 3:
 		switch (R2_GLOBALS._v56AA8) {
 		case 1:
@@ -942,6 +945,7 @@ void Scene1200::Area1::Actor3::init(int state) {
 		default:
 			break;
 		}
+		break;
 	default:
 		break;
 	}
@@ -949,7 +953,7 @@ void Scene1200::Area1::Actor3::init(int state) {
 	setDetails(1200, 12, -1, -1, 2, (SceneItem *) NULL);
 }
 
-bool Scene1200::Area1::Actor3::startAction(CursorType action, Event &event) {
+bool Scene1200::LaserPanel::Jumper::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
@@ -1018,7 +1022,7 @@ bool Scene1200::Area1::Actor3::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene1200::Area1::postInit(SceneObjectList *OwnerList) {
+void Scene1200::LaserPanel::postInit(SceneObjectList *OwnerList) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_field41A = 1;
@@ -1026,24 +1030,24 @@ void Scene1200::Area1::postInit(SceneObjectList *OwnerList) {
 	proc12(1003, 1, 1, 100, 40);
 	proc13(1200, 11, -1, -1);
 	R2_GLOBALS._sound2.play(259);
-	_actor3.init(1);
-	_actor4.init(2);
-	_actor5.init(3);
+	_jumper1.init(1);
+	_jumper2.init(2);
+	_jumper3.init(3);
 
 	R2_GLOBALS._player._canWalk = false;
 }
 
-void Scene1200::Area1::remove() {
+void Scene1200::LaserPanel::remove() {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_field41A = 0;
 	warning("Unexpected _sceneAreas.remove() call");
-//	scene->_sceneAreas.remove(&_actor3);
-//	scene->_sceneAreas.remove(&_actor4);
-//	scene->_sceneAreas.remove(&_actor5);
-	_actor3.remove();
-	_actor4.remove();
-	_actor5.remove();
+//	scene->_sceneAreas.remove(&_jumper1);
+//	scene->_sceneAreas.remove(&_jumper2);
+//	scene->_sceneAreas.remove(&_jumper3);
+	_jumper1.remove();
+	_jumper2.remove();
+	_jumper3.remove();
 
 	// sub201EA
 	R2_GLOBALS._sceneItems.remove((SceneItem *)this);
@@ -1055,7 +1059,7 @@ void Scene1200::Area1::remove() {
 	R2_GLOBALS._player._canWalk = true;
 }
 
-void Scene1200::Area1::process(Event &event) {
+void Scene1200::LaserPanel::process(Event &event) {
 	if (_field20 != R2_GLOBALS._insetUp)
 		return;
 
@@ -1081,7 +1085,7 @@ void Scene1200::Area1::process(Event &event) {
 	}
 }
 
-void Scene1200::Area1::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void Scene1200::LaserPanel::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	_actor2.postInit();
@@ -1094,7 +1098,7 @@ void Scene1200::Area1::proc12(int visage, int stripFrameNum, int frameNum, int p
 	_field20 = R2_GLOBALS._insetUp;
 }
 
-void Scene1200::Area1::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void Scene1200::LaserPanel::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	_actor2.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
@@ -1426,7 +1430,7 @@ void Scene1200::process(Event &event) {
 					|| ((cellPos.x == 33) && (cellPos.y == 17))
 					|| ((cellPos.x == 35) && (cellPos.y == 17))
 					|| ((cellPos.x == 41) && (cellPos.y == 21)) ) {
-					_area1.postInit();
+					_laserPanel.postInit();
 					event.handled = true;
 				}
 			}
@@ -1461,6 +1465,7 @@ void Scene1200::process(Event &event) {
 				event.handled = true;
 				switch (cellPos.x) {
 				case 3:
+					// It was your cell.
 					SceneItem::display(1200, 8, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 						break;
 				case 9:
@@ -1470,6 +1475,7 @@ void Scene1200::process(Event &event) {
 					if (cellPos.y == 27)
 						R2_GLOBALS._sceneManager.changeScene(3210);
 					else
+						// A vent grill
 						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 					break;
 				case 17:
@@ -1484,6 +1490,7 @@ void Scene1200::process(Event &event) {
 						R2_GLOBALS._sceneManager.changeScene(3200);
 						break;
 					default:
+						// A vent grill
 						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 						break;
 					}
@@ -1496,6 +1503,7 @@ void Scene1200::process(Event &event) {
 				}
 			}
 			if (cellId > 36) {
+				// "An anti-pest laser"
 				event.handled = true;
 				SceneItem::display(1200, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			}
@@ -7108,7 +7116,7 @@ void Scene1550::UnkArea1550::remove() {
 }
 
 void Scene1550::UnkArea1550::process(Event &event) {
-// This is a copy of Scene1200::Area1::process
+// This is a copy of Scene1200::LaserPanel::process
 	if (_field20 != R2_GLOBALS._insetUp)
 		return;
 
@@ -7172,7 +7180,7 @@ void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum,
 }
 
 void Scene1550::UnkArea1550::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	// Copy of Scene1200::Area1::proc13
+	// Copy of Scene1200::LaserPanel::proc13
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
@@ -13131,7 +13139,7 @@ void Scene1950::Area1::remove() {
 }
 
 void Scene1950::Area1::process(Event &event) {
-// This is a copy of Scene1200::Area1::process
+// This is a copy of Scene1200::LaserPanel::process
 	if (_field20 != R2_GLOBALS._insetUp)
 		return;
 
@@ -13184,7 +13192,7 @@ void Scene1950::Area1::proc12(int visage, int stripFrameNum, int frameNum, int p
 }
 
 void Scene1950::Area1::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	// Copy of Scene1200::Area1::proc13()
+	// Copy of Scene1200::LaserPanel::proc13()
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 

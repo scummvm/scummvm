@@ -118,22 +118,22 @@ public:
 };
 
 class Scene1200 : public SceneExt {
-	class Area1: public SceneArea {
+	class LaserPanel: public SceneArea {
 	public:
-		class Actor3 : public SceneActorExt {
+		class Jumper : public SceneActorExt {
 		public:
 			void init(int state);
 			virtual bool startAction(CursorType action, Event &event);
 		};
 
 		SceneActor _actor2;
-		Actor3 _actor3;
-		Actor3 _actor4;
-		Actor3 _actor5;
+		Jumper _jumper1;
+		Jumper _jumper2;
+		Jumper _jumper3;
 
 		byte _field20;
 
-		Area1();
+		LaserPanel();
 		void synchronize(Serializer &s);
 
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -146,7 +146,7 @@ class Scene1200 : public SceneExt {
 public:
 	NamedHotspot _item1;
 	SceneActor _actor1;
-	Area1 _area1;
+	LaserPanel _laserPanel;
 	MazeUI _mazeUI;
 	SequenceManager _sequenceManager;
 
