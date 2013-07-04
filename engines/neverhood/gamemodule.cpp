@@ -786,6 +786,7 @@ void GameModule::openMainMenu() {
 		createModule(1000, 0);
 	}
 	_vm->_screen->saveParams();
+	_vm->_screen->update();
 	_mainMenuRequested = false;
 	createMenuModule();
 }

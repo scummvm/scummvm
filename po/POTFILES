@@ -48,6 +48,8 @@ engines/groovie/script.cpp
 engines/kyra/detection.cpp
 engines/kyra/lol.cpp
 engines/kyra/sound_midi.cpp
+engines/neverhood/detection.cpp
+engines/neverhood/menumodule.cpp
 engines/queen/queen.cpp
 engines/sky/compact.cpp
 engines/sky/detection.cpp

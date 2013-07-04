@@ -800,7 +800,7 @@ void AsScene1306Elevator::update() {
 	if (_isUp && _countdown != 0 && (--_countdown == 0))
 		stGoingDown();
 	AnimatedSprite::update();
-	if (_currFrameIndex == 7) {
+	if (_currFrameIndex == 7 && _asElevatorDoor->getVisible()) {
 		playSound(1);
 		_asElevatorDoor->setVisible(false);
 	}

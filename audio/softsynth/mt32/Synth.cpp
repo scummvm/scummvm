@@ -201,25 +201,12 @@ void ReportHandler::printDebug(const char *fmt, va_list list) {
 		printf("\n");
 }
 
-void Synth::partStateChanged(int partNum, bool isPartActive) {
-	reportHandler->onPartStateChanged(partNum, isPartActive);
-}
-
 void Synth::polyStateChanged(int partNum) {
 	reportHandler->onPolyStateChanged(partNum);
 }
 
-void Synth::partialStateChanged(const Partial * const partial, int oldPartialPhase, int newPartialPhase) {
-	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
-		if (getPartial(i) == partial) {
-			reportHandler->onPartialStateChanged(i, oldPartialPhase, newPartialPhase);
-			break;
-		}
-	}
-}
-
-void Synth::newTimbreSet(int partNum, char patchName[]) {
-	reportHandler->onProgramChanged(partNum, patchName);
+void Synth::newTimbreSet(int partNum, Bit8u timbreGroup, const char patchName[]) {
+	reportHandler->onProgramChanged(partNum, timbreGroup, patchName);
 }
 
 void Synth::printDebug(const char *fmt, ...) {

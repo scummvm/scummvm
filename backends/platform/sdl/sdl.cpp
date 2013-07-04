@@ -30,7 +30,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
-#include "common/EventRecorder.h"
+#include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 
@@ -97,7 +97,9 @@ OSystem_SDL::~OSystem_SDL() {
 	_audiocdManager = 0;
 	delete _mixerManager;
 	_mixerManager = 0;
-	delete _timerManager;
+
+	delete g_eventRec.getTimerManager();
+
 	_timerManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
@@ -130,9 +132,6 @@ void OSystem_SDL::init() {
 	// (we check for this to allow subclasses to provide their own).
 	if (_mutexManager == 0)
 		_mutexManager = new SdlMutexManager();
-
-	if (_timerManager == 0)
-		_timerManager = new SdlTimerManager();
 
 #if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)
@@ -191,10 +190,12 @@ void OSystem_SDL::initBackend() {
 
 	if (_mixerManager == 0) {
 		_mixerManager = new SdlMixerManager();
-
 		// Setup and start mixer
 		_mixerManager->init();
 	}
+	g_eventRec.registerMixerManager(_mixerManager);
+
+	g_eventRec.registerTimerManager(new SdlTimerManager());
 
 	if (_audiocdManager == 0) {
 		// Audio CD support was removed with SDL 1.3
@@ -466,14 +467,15 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
-uint32 OSystem_SDL::getMillis() {
+
+uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
+	g_eventRec.processMillis(millis, skipRecord);
 	return millis;
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
-	if (!g_eventRec.processDelayMillis(msecs))
+	if (!g_eventRec.processDelayMillis())
 		SDL_Delay(msecs);
 }
 
@@ -491,12 +493,16 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 
 Audio::Mixer *OSystem_SDL::getMixer() {
 	assert(_mixerManager);
-	return _mixerManager->getMixer();
+	return getMixerManager()->getMixer();
 }
 
 SdlMixerManager *OSystem_SDL::getMixerManager() {
 	assert(_mixerManager);
-	return _mixerManager;
+	return g_eventRec.getMixerManager();
+}
+
+Common::TimerManager *OSystem_SDL::getTimerManager() {
+	return g_eventRec.getTimerManager();
 }
 
 #ifdef USE_OPENGL

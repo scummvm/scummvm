@@ -160,12 +160,15 @@ public:
 	 */
 	void replaceCursorPalette(const byte *colors, uint start, uint num);
 
+	void lock(bool locked);
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	// Even though this is basically the default constructor we implement it
 	// ourselves, so it is private and thus there is no way to create this class
 	// except from the Singleton code.
-	CursorManager() {}
+	CursorManager() {
+		_locked = false;
+	}
 	~CursorManager();
 
 	struct Cursor {
@@ -198,6 +201,7 @@ private:
 	};
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;
+	bool _locked;
 };
 
 } // End of namespace Graphics

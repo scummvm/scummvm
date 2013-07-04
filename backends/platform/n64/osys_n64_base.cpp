@@ -810,7 +810,7 @@ void OSystem_N64::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, 
 	return;
 }
 
-uint32 OSystem_N64::getMillis() {
+uint32 OSystem_N64::getMillis(bool skipRecord) {
 	return getMilliTick();
 }
 

@@ -20,6 +20,11 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/translation.h"
+
+#include "gui/saveload.h"
+
 #include "neverhood/menumodule.h"
 #include "neverhood/gamemodule.h"
 
@@ -73,12 +78,14 @@ MenuModule::MenuModule(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_savedPaletteData = _vm->_screen->getPaletteData();
 	_vm->_mixer->pauseAll(true);
+	_vm->toggleSoundUpdate(false);
 
 	createScene(MAIN_MENU, -1);
 }
 
 MenuModule::~MenuModule() {
 	_vm->_mixer->pauseAll(false);
+	_vm->toggleSoundUpdate(true);
 	_vm->_screen->setPaletteData(_savedPaletteData);
 }
 
@@ -191,24 +198,26 @@ uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Enti
 }
 
 void MenuModule::createLoadGameMenu() {
-	_savegameSlot = -1;
-	_savegameList = new SavegameList();
-	loadSavegameList();
+	refreshSaveGameList();
 	_childObject = new LoadGameMenu(_vm, this, _savegameList);
 }
 
 void MenuModule::createSaveGameMenu() {
-	_savegameSlot = -1;
-	_savegameList = new SavegameList();
-	loadSavegameList();
+	refreshSaveGameList();
 	_childObject = new SaveGameMenu(_vm, this, _savegameList);
 }
 
 void MenuModule::createDeleteGameMenu() {
+	refreshSaveGameList();
+	_childObject = new DeleteGameMenu(_vm, this, _savegameList);
+}
+
+void MenuModule::refreshSaveGameList() {
 	_savegameSlot = -1;
+	delete _savegameList;
+	_savegameList = NULL;
 	_savegameList = new SavegameList();
 	loadSavegameList();
-	_childObject = new DeleteGameMenu(_vm, this, _savegameList);
 }
 
 void MenuModule::handleLoadGameMenuAction(bool doLoad) {
@@ -757,9 +766,7 @@ void SavegameListBox::onClick() {
 	mousePos.y -= _y + _rect.y1;
 	if (mousePos.x >= 0 && mousePos.x <= _rect.x2 - _rect.x1 &&
 		mousePos.y >= 0 && mousePos.y <= _rect.y2 - _rect.y1) {
-		// We add 1 to the char height to ensure that the correct entry is chosen if the
-		// user clicks at the bottom the text entry
-		int newIndex = _firstVisibleItem + mousePos.y / (_fontSurface->getCharHeight() + 1);
+		int newIndex = _firstVisibleItem + mousePos.y / _fontSurface->getCharHeight();
 		if (newIndex <= _lastVisibleItem) {
 			_currIndex = newIndex;
 			refresh();
@@ -846,6 +853,36 @@ void SavegameListBox::pageDown() {
 	}
 }
 
+int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) {
+	const EnginePlugin *plugin = NULL;
+	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		desc = dialog->getResultString();
+
+		if (desc.empty())
+			desc = dialog->createDefaultSaveDescription(slot);
+
+		if (desc.size() > 29)
+			desc = Common::String(desc.c_str(), 29);
+
+		saveDesc = desc;
+	} else {
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	}
+
+	delete dialog;
+
+	return slot;
+}
+
 GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList,
 	const uint32 *buttonFileHashes, const NRect *buttonCollisionBounds,
 	uint32 backgroundFileHash, uint32 fontFileHash,
@@ -855,8 +892,29 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 	uint32 textFileHash1, uint32 textFileHash2) 
 	: Scene(vm, parentModule), _currWidget(NULL), _savegameList(savegameList) {
 	
+	bool isSave = (textEditCursorFileHash != 0);
+
 	_fontSurface = new FontSurface(_vm, fontFileHash, 32, 7, 32, 11, 17);
-	
+
+	if (!ConfMan.getBool("originalsaveload")) {
+		Common::String saveDesc;
+		int saveCount = savegameList->size();
+		int slot = scummVMSaveLoadDialog(isSave, saveDesc);
+
+		if (slot >= 0) {
+			if (!isSave) {
+				((MenuModule*)_parentModule)->setLoadgameInfo(slot);
+			} else {
+				((MenuModule*)_parentModule)->setSavegameInfo(saveDesc,
+					slot, slot >= saveCount);
+			}
+			leaveScene(0);
+		} else {
+			leaveScene(1);
+		}
+		return;
+	}
+
 	setBackground(backgroundFileHash);
 	setPalette(backgroundFileHash);
 	insertScreenMouse(mouseFileHash, mouseRect);
@@ -869,7 +927,7 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 
 	_textEditWidget = new TextEditWidget(_vm, textEditX, textEditY, this, 29,
 		_fontSurface, textEditBackgroundFileHash, textEditRect);
-	if (textEditCursorFileHash != 0)
+	if (isSave)
 		_textEditWidget->setCursor(textEditCursorFileHash, 2, 13);
 	else
 		_textEditWidget->setReadOnly(true);
@@ -884,7 +942,6 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&GameStateMenu::handleMessage);
-	
 }
 
 GameStateMenu::~GameStateMenu() {

@@ -213,7 +213,7 @@ void KyraRpgEngine::drawDialogueButtons() {
 			screen()->printText(_dialogueButtonString[i], (x + 37 - (screen()->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
 			                    ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2) & ~7, _dialogueHighlightedButton == i ? 0xC1 : 0xE1, 0);
 		} else {
-			int sjisYOffset = (_flags.lang == Common::JA_JPN && _dialogueButtonString[i][0] < 0) ? 2 : 0;
+			int sjisYOffset = (_flags.lang == Common::JA_JPN && (_dialogueButtonString[i][0] & 0x80)) ? 2 : 0;
 			gui_drawBox(x, (_dialogueButtonYoffs + _dialogueButtonPosY[i]), _dialogueButtonWidth, guiSettings()->buttons.height, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 			screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
 			                    (_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2 - sjisYOffset, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0);

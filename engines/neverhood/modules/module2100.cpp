@@ -210,7 +210,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x72427010, 0x32423010, 200, 0);
 	_asTape1 = insertSprite<AsScene1201Tape>(this, 18, 1100, 412, 443, 0x9148A011);
 	addCollisionSprite(_asTape1);
-	_asTape2 = insertSprite<AsScene1201Tape>(this, 11, 1100, 441, 443, 0x9148A011);
+	_asTape2 = insertSprite<AsScene1201Tape>(this, 11, 1100, 441, 443, 0x9048A093);
 	addCollisionSprite(_asTape2);
 	
 	if (which < 0) {

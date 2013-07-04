@@ -83,7 +83,7 @@ static const uint32 kScene2725StaticSprites[] = {
 };
 
 Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundIndex(0), _raidoMusicInitialized(false) {
+	: Module(vm, parentModule), _soundIndex(0), _radioMusicInitialized(false) {
 	
 	_vm->_soundMan->addMusic(0x42212411, 0x04020210);
 	_vm->_soundMan->startMusic(0x04020210, 24, 2);
@@ -500,7 +500,7 @@ void Module2700::updateScene() {
 	} else {
 		switch (_sceneNum) {
 		case 21:
-			if (!_raidoMusicInitialized) {
+			if (!_radioMusicInitialized) {
 				_vm->_soundMan->stopMusic(0x04020210, 0, 1);
 				_vm->gameModule()->initRadioPuzzle();
 				_musicFileHash = getGlobalVar(V_GOOD_RADIO_MUSIC_NAME);
@@ -508,7 +508,7 @@ void Module2700::updateScene() {
 				_vm->_soundMan->startMusic(_musicFileHash, 0, 2);
 				_vm->_soundMan->addSound(0x42212411, 0x44014282);
 				_vm->_soundMan->setSoundParams(0x44014282, true, 120, 360, 72, 0);
-				_raidoMusicInitialized = true;
+				_radioMusicInitialized = true;
 			}
 			break;
 		}

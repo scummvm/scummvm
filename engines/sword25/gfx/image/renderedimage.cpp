@@ -41,6 +41,7 @@
 #include "sword25/gfx/renderobjectmanager.h"
 
 #include "common/system.h"
+#include "graphics/thumbnail.h"
 
 namespace Sword25 {
 
@@ -507,62 +508,6 @@ void RenderedImage::checkForTransparency() {
 			data += 4;
 		}
 	}
-}
-
-/**
- * Scales a passed surface, creating a new surface with the result
- * @param srcImage		Source image to scale
- * @param scaleFactor	Scale amount. Must be between 0 and 1.0 (but not zero)
- * @remarks Caller is responsible for freeing the returned surface
- */
-Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(xSize, ySize, srcImage.format);
-
-	int *horizUsage = scaleLine(xSize, srcImage.w);
-	int *vertUsage = scaleLine(ySize, srcImage.h);
-
-	// Loop to create scaled version
-	for (int yp = 0; yp < ySize; ++yp) {
-		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
-		byte *destP = (byte *)s->getBasePtr(0, yp);
-
-		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
-			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
-				*destP++ = *tempSrcP++;
-			}
-		}
-	}
-
-	// Delete arrays and return surface
-	delete[] horizUsage;
-	delete[] vertUsage;
-	return s;
-}
-
-/**
- * Returns an array indicating which pixels of a source image horizontally or vertically get
- * included in a scaled image
- */
-int *RenderedImage::scaleLine(int size, int srcSize) {
-	int scale = 100 * size / srcSize;
-	assert(scale > 0);
-	int *v = new int[size];
-	Common::fill(v, &v[size], 0);
-
-	int distCtr = 0;
-	int *destP = v;
-	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
-		distCtr += scale;
-		while (distCtr >= 100) {
-			assert(destP < &v[size]);
-			*destP++ = distIndex;
-			distCtr -= 100;
-		}
-	}
-
-	return v;
 }
 
 } // End of namespace Sword25

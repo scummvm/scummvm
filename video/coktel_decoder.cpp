@@ -2426,8 +2426,10 @@ void VMDDecoder::blit16(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 			if ((r == 0) && (g == 0) && (b == 0))
 				c = 0;
 
-			if (_surface.format.bytesPerPixel == 2)
+			if      (_surface.format.bytesPerPixel == 2)
 				*((uint16 *)dstRow) = (uint16) c;
+			else if (_surface.format.bytesPerPixel == 4)
+				*((uint32 *)dstRow) = (uint32) c;
 		}
 
 		src += srcSurf .pitch;
@@ -2462,8 +2464,10 @@ void VMDDecoder::blit24(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 			if ((r == 0) && (g == 0) && (b == 0))
 				c = 0;
 
-			if (_surface.format.bytesPerPixel == 2)
+			if      (_surface.format.bytesPerPixel == 2)
 				*((uint16 *)dstRow) = (uint16) c;
+			else if (_surface.format.bytesPerPixel == 4)
+				*((uint32 *)dstRow) = (uint32) c;
 		}
 
 		src += srcSurf .pitch;

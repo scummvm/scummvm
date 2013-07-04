@@ -1256,7 +1256,7 @@ int Screen::getTextWidth(const char *str) {
 
 	while (1) {
 		if (_sjisMixedFontMode)
-			setFont(*str < 0 ? FID_SJIS_FNT : curFont);
+			setFont((*str & 0x80) ? FID_SJIS_FNT : curFont);
 
 		uint c = fetchChar(str);
 
@@ -1296,7 +1296,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 
 	while (1) {
 		if (_sjisMixedFontMode)
-			setFont(*str < 0 ? FID_SJIS_FNT : curFont);
+			setFont((*str & 0x80) ? FID_SJIS_FNT : curFont);
 
 		uint8 charHeightFnt = getFontHeight();
 
