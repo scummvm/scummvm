@@ -247,6 +247,11 @@ const char Gyro::betterchar[] = "WMBParCLguKeSnIohn";
 Gyro::Gyro() : interrogation(0), oncandopageswap(true) {
 	for (int i = 0; i < 29; i++)
 		whereis[i] = static_const_whereis[i];
+
+	/* Needed becouse of Lucerna::load_also() */
+	for (int fv = 0; fv < 31; fv++)
+		for (int ff = 0; ff < 2; ff++)
+			also[fv][ff] = 0;
 }
 
 Gyro::~Gyro() {
