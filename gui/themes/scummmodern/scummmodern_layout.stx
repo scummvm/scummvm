@@ -114,7 +114,7 @@
 				size = '60, 25'
 		/>
 		<widget name = 'EditRecord'
-				size = '240, 25'
+				size = '220, 25'
 		/>
 	</globals>
 
