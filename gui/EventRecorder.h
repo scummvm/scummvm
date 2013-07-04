@@ -1,0 +1,293 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef GUI_EVENTRECORDER_H
+#define GUI_EVENTRECORDER_H
+
+#include "common/system.h"
+
+#include "common/events.h"
+#include "common/savefile.h"
+#include "common/singleton.h"
+
+#include "engines/advancedDetector.h"
+
+#ifdef ENABLE_EVENTRECORDER
+
+#include "common/mutex.h"
+#include "common/array.h"
+#include "common/memstream.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "backends/timer/sdl/sdl-timer.h"
+#include "common/config-manager.h"
+#include "common/recorderfile.h"
+#include "backends/saves/recorder/recorder-saves.h"
+#include "backends/mixer/nullmixer/nullsdl-mixer.h"
+#include "backends/saves/default/default-saves.h"
+
+
+#define g_eventRec (GUI::EventRecorder::instance())
+
+namespace GUI {
+	class OnScreenDialog;
+}
+
+namespace GUI {
+class RandomSource;
+class SeekableReadStream;
+class WriteStream;
+
+
+/**
+ * Our generic event recorder.
+ *
+ * TODO: Add more documentation.
+ */
+class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::DefaultEventMapper {
+	friend class Common::Singleton<SingletonBaseType>;
+	EventRecorder();
+	~EventRecorder();
+public:
+	/** Specify operation mode of Event Recorder */
+	enum RecordMode {
+		kPassthrough = 0,		/**< kPassthrough, do nothing */
+		kRecorderRecord = 1,		/**< kRecorderRecord, do the recording */
+		kRecorderPlayback = 2,		/**< kRecorderPlayback, playback existing recording */
+		kRecorderPlaybackPause = 3	/**< kRecordetPlaybackPause, interal state when user pauses the playback */
+	};
+
+	void init(Common::String recordFileName, RecordMode mode);
+	void deinit();
+	bool processDelayMillis();
+	uint32 getRandomSeed(const Common::String &name);
+	void processMillis(uint32 &millis, bool skipRecord);
+	bool processAudio(uint32 &samples, bool paused);
+	void processGameDescription(const ADGameDescription *desc);
+	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
+
+	/** Hooks for intercepting into GUI processing, so required events could be shoot
+	 *  or filtered out */
+	void preDrawOverlayGui();
+	void postDrawOverlayGui();
+
+	/** Set recording author
+	 *
+	 *  @see getAuthor
+	 */
+	void setAuthor(const Common::String &author) {
+		_author = author;
+	}
+
+	/** Set recording notes
+	 *
+	 *  @see getNotes
+	 */
+	void setNotes(const Common::String &desc){
+		_desc = desc;
+	}
+
+	/** Set descriptive name of the recording
+	 *
+	 *  @see getName
+	 */
+	void setName(const Common::String &name) {
+		_name = name;
+	}
+
+	/** Get recording author
+	 *
+	 *  @see getAuthor
+	 */
+	const Common::String getAuthor() {
+		return _author;
+	}
+
+	/** Get recording notes
+	 *
+	 *  @see setNotes
+	 */
+	const Common::String getNotes() {
+		return _desc;
+	}
+
+	/** Get recording name
+	 *
+	 *  @see setName
+	 */
+	const Common::String getName() {
+		return _name;
+	}
+	void setRedraw(bool redraw) {
+		_needRedraw = redraw;
+	}
+
+	void registerMixerManager(SdlMixerManager *mixerManager);
+	void registerTimerManager(DefaultTimerManager *timerManager);
+
+	SdlMixerManager *getMixerManager();
+	DefaultTimerManager *getTimerManager();
+
+	void deleteRecord(const Common::String& fileName);
+	bool checkForContinueGame();
+
+	void suspendRecording() {
+		_savedState = _initialized;
+		_initialized = false;
+	}
+
+	void resumeRecording() {
+		_initialized = _savedState;
+	}
+
+	Common::StringArray listSaveFiles(const Common::String &pattern);
+	Common::String generateRecordFileName(const Common::String &target);
+
+	Common::SaveFileManager *getSaveManager(Common::SaveFileManager *realSaveManager);
+	SDL_Surface *getSurface(int width, int height);
+	void RegisterEventSource();
+
+	/** Retrieve game screenshot and compute its checksum for comparison */
+	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
+
+	void updateSubsystems();
+	bool switchMode();
+	void switchFastMode();
+
+private:
+	virtual Common::List<Common::Event> mapEvent(const Common::Event &ev, Common::EventSource *source);
+	bool notifyPoll();
+	bool pollEvent(Common::Event &ev);
+	bool _initialized;
+	volatile uint32 _fakeTimer;
+	bool _savedState;
+	bool _needcontinueGame;
+	int _temporarySlot;
+	Common::String _author;
+	Common::String _desc;
+	Common::String _name;
+
+	Common::SaveFileManager *_realSaveManager;
+	SdlMixerManager *_realMixerManager;
+	DefaultTimerManager *_timerManager;
+	RecorderSaveFileManager _fakeSaveManager;
+	NullSdlMixerManager *_fakeMixerManager;
+	GUI::OnScreenDialog *controlPanel;
+	Common::RecorderEvent _nextEvent;
+
+	void setFileHeader();
+	void setGameMd5(const ADGameDescription *gameDesc);
+	void getConfig();
+	void getConfigFromDomain(Common::ConfigManager::Domain *domain);
+	void removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain);
+	void applyPlaybackSettings();
+
+	void switchMixer();
+	void switchTimerManagers();
+
+	void togglePause();
+
+	void takeScreenshot();
+
+	bool openRecordFile(const Common::String &fileName);
+
+	bool checkGameHash(const ADGameDescription *desc);
+
+	void checkForKeyCode(const Common::Event &event);
+	bool allowMapping() const { return false; }
+
+	volatile uint32 _lastMillis;
+	uint32 _lastScreenshotTime;
+	uint32 _screenshotPeriod;
+	Common::PlaybackFile *_playbackFile;
+
+	void saveScreenShot();
+	void checkRecordedMD5();
+	void deleteTemporarySave();
+	volatile RecordMode _recordMode;
+	Common::String _recordFileName;
+	bool _fastPlayback;
+	bool _needRedraw;
+};
+
+} // End of namespace GUI
+
+#else
+
+#ifdef SDL_BACKEND
+#include "backends/timer/default/default-timer.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
+#endif
+
+#define g_eventRec (GUI::EventRecorder::instance())
+
+namespace GUI {
+
+class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::DefaultEventMapper {
+	friend class Common::Singleton<SingletonBaseType>;
+
+  public:
+	EventRecorder() {
+#ifdef SDL_BACKEND
+	  _timerManager = NULL;
+	  _realMixerManager = NULL;
+#endif
+	}
+	~EventRecorder() {}
+
+	bool pollEvent(Common::Event &ev) { return false; }
+	void RegisterEventSource() {}
+	void deinit() {}
+	void suspendRecording() {}
+	void resumeRecording() {}
+	void preDrawOverlayGui() {}
+	void postDrawOverlayGui() {}
+	void processGameDescription(const ADGameDescription *desc) {}
+	void updateSubsystems() {}
+	uint32 getRandomSeed(const Common::String &name) { return g_system->getMillis(); }
+	Common::SaveFileManager *getSaveManager(Common::SaveFileManager *realSaveManager) { return realSaveManager; }
+
+#ifdef SDL_BACKEND
+  private:
+	DefaultTimerManager *_timerManager;
+	SdlMixerManager *_realMixerManager;
+
+  public:
+	DefaultTimerManager *getTimerManager() { return _timerManager; }
+	void registerTimerManager(DefaultTimerManager *timerManager) { _timerManager = timerManager; }
+
+	SdlMixerManager *getMixerManager() { return _realMixerManager; }
+	void registerMixerManager(SdlMixerManager *mixerManager) { _realMixerManager = mixerManager; }
+
+	void processMillis(uint32 &millis, bool skipRecord) {}
+	bool processDelayMillis() { return false; }
+#endif
+
+};
+
+} // namespace GUI
+
+#endif // ENABLE_EVENTRECORDER
+
+#endif

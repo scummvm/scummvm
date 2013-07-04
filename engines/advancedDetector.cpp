@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-
+#include "gui/EventRecorder.h"
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
@@ -301,6 +301,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kUserCanceled;
 
 	debug(2, "Running %s", gameDescriptor.description().c_str());
+	initSubSystems(agdDesc);
 	if (!createInstance(syst, engine, agdDesc))
 		return Common::kNoGameDataFoundError;
 	else
@@ -605,4 +606,10 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 	_guioptions = GUIO_NONE;
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
+}
+
+void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {
+	if (gameDesc) {
+		g_eventRec.processGameDescription(gameDesc);
+	}
 }

@@ -50,6 +50,14 @@ const char * const ThemeEngine::kImageEraser = "eraser.bmp";
 const char * const ThemeEngine::kImageDelbtn = "delbtn.bmp";
 const char * const ThemeEngine::kImageList = "list.bmp";
 const char * const ThemeEngine::kImageGrid = "grid.bmp";
+const char * const ThemeEngine::kImageStopbtn = "stopbtn.bmp";
+const char * const ThemeEngine::kImageEditbtn = "editbtn.bmp";
+const char * const ThemeEngine::kImageSwitchModebtn = "switchbtn.bmp";
+const char * const ThemeEngine::kImageFastReplaybtn = "fastreplay.bmp";
+const char * const ThemeEngine::kImageStopSmallbtn = "stopbtn_small.bmp";
+const char * const ThemeEngine::kImageEditSmallbtn = "editbtn_small.bmp";
+const char * const ThemeEngine::kImageSwitchModeSmallbtn = "switchbtn_small.bmp";
+const char * const ThemeEngine::kImageFastReplaySmallbtn = "fastreplay_small.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -465,11 +473,7 @@ void ThemeEngine::enable() {
 	if (_enabled)
 		return;
 
-	if (_useCursor) {
-		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
-		CursorMan.showMouse(true);
-	}
+	showCursor();
 
 	_system->showOverlay();
 	clearAll();
@@ -482,10 +486,8 @@ void ThemeEngine::disable() {
 
 	_system->hideOverlay();
 
-	if (_useCursor) {
-		CursorMan.popCursorPalette();
-		CursorMan.popCursor();
-	}
+	hideCursor();
+
 
 	_enabled = false;
 }
@@ -1784,6 +1786,21 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 		return id;
 	} else {
 		return node.getName();
+	}
+}
+
+void ThemeEngine::showCursor() {
+	if (_useCursor) {
+		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
+		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
+		CursorMan.showMouse(true);
+	}
+}
+
+void ThemeEngine::hideCursor() {
+	if (_useCursor) {
+		CursorMan.popCursorPalette();
+		CursorMan.popCursor();
 	}
 }
 

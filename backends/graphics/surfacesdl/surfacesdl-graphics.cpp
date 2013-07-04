@@ -40,6 +40,7 @@
 #include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
+#include "gui/EventRecorder.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
@@ -135,6 +136,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
 	_graphicsMutex(0),
+	_displayDisabled(false),
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
 #endif
@@ -765,9 +767,20 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
-	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
-		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-	);
+
+#ifdef ENABLE_EVENTRECORDER
+	_displayDisabled = ConfMan.getBool("disable_display");
+
+	if (_displayDisabled) {
+		_hwscreen = g_eventRec.getSurface(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	} else 
+#endif
+		{
+		_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
+			_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+			);
+	}
+
 #ifdef USE_RGB_COLOR
 	detectSupportedFormats();
 #endif
@@ -865,7 +878,12 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 	}
 
 	if (_hwscreen) {
-		SDL_FreeSurface(_hwscreen);
+		if (_displayDisabled) {
+			delete _hwscreen;
+		} else {
+			SDL_FreeSurface(_hwscreen);
+		}
+
 		_hwscreen = NULL;
 	}
 
@@ -1188,7 +1206,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #endif
 
 		// Finally, blit all our changes to the screen
-		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+		if (!_displayDisabled) {
+			SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+		}
 	}
 
 	_numDirtyRects = 0;
