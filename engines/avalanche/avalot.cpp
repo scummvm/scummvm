@@ -52,7 +52,7 @@
 
 namespace Avalanche {
 
-void Avalot::init() {
+void Avalot::setup() {
 	int16 gd, gm;
 
 	checkbreak = false;
@@ -144,6 +144,11 @@ void Avalot::setParent(AvalancheEngine *vm) {
 
 
 void Avalot::run(Common::String arg) {
+	setup();
+	
+	_vm->_lucerna.load_also("1");
+
+
 	do {
 		_vm->_lucerna.clock_lucerna();
 		_vm->_basher.keyboard_link();

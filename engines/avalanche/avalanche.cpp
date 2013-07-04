@@ -65,7 +65,7 @@ namespace Avalanche {
 		_basher.setParent(this);
 		_dropdown.setParent(this);
 		_closing.setParent(this);
-		_avalot.setParent(this); _avalot.init();
+		_avalot.setParent(this);
 	}
 
 	AvalancheEngine::~AvalancheEngine() {
