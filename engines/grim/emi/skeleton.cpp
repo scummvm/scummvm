@@ -228,4 +228,18 @@ Joint *Skeleton::getJointNamed(const Common::String &name) const {
 	}
 }
 
+Joint *Skeleton::getParentJoint(const Joint *j) const {
+	assert(j);
+	if (j->_parentIndex == -1)
+		return NULL;
+	return &_joints[j->_parentIndex];
+}
+
+int Skeleton::getJointIndex(const Joint *j) const {
+	int idx = j - _joints;
+	assert(idx >= 0 && idx < _numJoints);
+	return idx;
+}
+
+
 } // end of namespace Grim

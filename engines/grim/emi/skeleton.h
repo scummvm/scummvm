@@ -64,10 +64,12 @@ public:
 	void resetAnim();
 	void setAnim(AnimationEmi *anim);
 	void animate(float time);
-	int findJointIndex(const Common::String & name, int max) const;
-	bool hasJoint(const Common::String & name) const;
-	Joint * getJointNamed(const Common::String & name) const;
 	float _time;
+	int findJointIndex(const Common::String &name, int max) const;
+	bool hasJoint(const Common::String &name) const;
+	Joint *getJointNamed(const Common::String &name) const;
+	Joint *getParentJoint(const Joint *j) const;
+	int getJointIndex(const Joint *j) const;
 };
 
 } // end of namespace Grim
