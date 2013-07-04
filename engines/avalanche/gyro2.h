@@ -530,7 +530,7 @@ public:
 	byte cmp; /* current mouse-void **/
 	Common::String verbstr; /* what you can do with your object. :-) */
 
-	Common::String * also[31][2];
+	Common::String *also[31][2];
 	pedtype peds[15];
 	magictype magics[15];
 	magictype portals[7];
