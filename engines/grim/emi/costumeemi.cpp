@@ -148,10 +148,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 }
 
 Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent) {
-	// some have an exclimation mark, this could mean something.
-	// for now, return 0 otherwise it will just crash in some other part.
-	//return 0;
-
 	assert(name[0] == '!');
 	++name;
 
@@ -165,25 +161,18 @@ Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const c
 	name += 4;
 
 	if (tag == MKTAG('m', 'e', 's', 'h')) {
-		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement MESH-handling: %s" , name);
 		return new EMIMeshComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('s', 'k', 'e', 'l')) {
-		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
 		return new EMISkelComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('t', 'e', 'x', 'i')) {
-//    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
 		return new EMITexiComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('a', 'n', 'i', 'm')) {
-		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
 		return new EMIAnimComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('l', 'u', 'a', 'c')) {
-//    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
 		return new EMILuaCodeComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('l', 'u', 'a', 'v')) {
-//    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
 		return new EMILuaVarComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('s', 'p', 'r', 't')) {
-		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
 		return new EMISpriteComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('s', 'h', 'a', 'd')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
@@ -194,10 +183,7 @@ Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const c
 	} else {
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
 	}
-	/*
-	char t[4];
-	memcpy(t, &tag, sizeof(tag32));
-	warning("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);*/
+
 	return NULL;
 }
 
