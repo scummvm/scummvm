@@ -111,6 +111,7 @@ void Lucerna::unscramble() {
 	scram1(_vm->_gyro.flags);
 	/*     for fz:=1 to length(_vm->_gyro.also[fv,ff]^) do
 	      _vm->_gyro.also[fv,ff]^[fz]:=chr(ord(_vm->_gyro.also[fv,ff]^[fz]) xor 177);*/
+	warning("STUB: Lucerna::unscramble()");
 }
 
 void Lucerna::load_also(char *n) {
@@ -142,53 +143,50 @@ void Lucerna::load_also(char *n) {
 	}
 	
 	memset(_vm->_gyro.lines, 0xFF, sizeof(_vm->_gyro.lines));
-
-	//fv = getpixel(0, 0);
-	warning("STUB: Lucerna::load_also()");
-		
+	
 	fv = f.readByte();
 	for (byte i = 0; i < fv; i++) {
-		_vm->_gyro.lines[i].col = f.readByte();
 		_vm->_gyro.lines[i].x1 = f.readSint16LE();
-		_vm->_gyro.lines[i].x2 = f.readSint16LE();
 		_vm->_gyro.lines[i].y1 = f.readSint16LE();
+		_vm->_gyro.lines[i].x2 = f.readSint16LE();
 		_vm->_gyro.lines[i].y2 = f.readSint16LE();
+		_vm->_gyro.lines[i].col = f.readByte();
 	}
 
 	memset(_vm->_gyro.peds, 177, sizeof(_vm->_gyro.peds));
 	fv = f.readByte();
 	for (byte i = 0; i < fv; i++) {
-		_vm->_gyro.peds[i].dir = f.readByte();
 		_vm->_gyro.peds[i].x = f.readSint16LE();
 		_vm->_gyro.peds[i].y = f.readSint16LE();
+		_vm->_gyro.peds[i].dir = f.readByte();
 	}
 	
 	_vm->_gyro.numfields = f.readByte();
 	for (byte i = 0; i < _vm->_gyro.numfields; i++) {
 		_vm->_gyro.fields[i].x1 = f.readSint16LE();
-		_vm->_gyro.fields[i].x2 = f.readSint16LE();
 		_vm->_gyro.fields[i].y1 = f.readSint16LE();
+		_vm->_gyro.fields[i].x2 = f.readSint16LE();
 		_vm->_gyro.fields[i].y2 = f.readSint16LE();
 	}
 
 	for (byte i = 0; i < 15; i++) {
-		_vm->_gyro.magics[i].data = f.readUint16LE();
 		_vm->_gyro.magics[i].op = f.readByte();
+		_vm->_gyro.magics[i].data = f.readUint16LE();
 	}
 
 	for (byte i = 0; i < 7; i++) {
-		_vm->_gyro.portals[i].data = f.readUint16LE();
 		_vm->_gyro.portals[i].op = f.readByte();
+		_vm->_gyro.portals[i].data = f.readUint16LE();
 	}
 
+	_vm->_gyro.flags.clear();
 	for (byte i = 0;  i < 26; i++)
 		_vm->_gyro.flags += f.readByte();
 
-	int16 listen_length;
-	listen_length = f.readByte();
+	int16 listen_length = f.readByte();
 	_vm->_gyro.listen.clear();
 	for (byte i = 0; i < listen_length; i++)
-		_vm->_gyro.listen.setChar(f.readByte(), i);
+		_vm->_gyro.listen += f.readByte();
 	
 	draw_also_lines();
 

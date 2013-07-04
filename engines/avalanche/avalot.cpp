@@ -146,7 +146,7 @@ void Avalot::setParent(AvalancheEngine *vm) {
 void Avalot::run(Common::String arg) {
 	setup();
 	
-	_vm->_lucerna.load_also("1");
+	_vm->_lucerna.load_also("9");
 
 
 	do {
