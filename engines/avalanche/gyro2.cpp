@@ -252,11 +252,11 @@ Gyro::Gyro() : interrogation(0), oncandopageswap(true) {
 Gyro::~Gyro() {
 	/* These are allocated in Gyro::setup_vmc */
 
-	free(vmc.andpic);
-	free(vmc.xorpic);
+	delete[] vmc.andpic;
+	delete[] vmc.xorpic;
 
 	for (int fv = 0; fv < 2; fv ++) {
-		free(vmc.backpic[fv]);
+		delete[] vmc.backpic[fv];
 	}
 
 }
@@ -480,11 +480,11 @@ void Gyro::wipe_vmc(byte page_) {
 }
 
 void Gyro::setup_vmc() {
-	vmc.andpic = malloc(mouse_size);
-	vmc.xorpic = malloc(mouse_size);
+	vmc.andpic = new byte[mouse_size];
+	vmc.xorpic = new byte[mouse_size];
 
 	for (int fv = 0; fv < 2; fv ++) {
-		vmc.backpic[fv] = malloc(mouse_size);
+		vmc.backpic[fv] = new byte[mouse_size];
 		vmc.wherewas[fv].x = 32767;
 	}
 }
@@ -512,10 +512,10 @@ void Gyro::load_a_mouse(byte which) {
 	f.seek(mouse_size * 2 * (which - 1) + 134);
 
 	for (int i = 0; i < mouse_size; i++)
-		((byte *) vmc.andpic)[i] = f.readByte();
+		vmc.andpic[i] = f.readByte();
 	
 	for (int i = 0; i < mouse_size; i++)
-		((byte *) vmc.xorpic)[i] = f.readByte();
+		vmc.xorpic[i] = f.readByte();
 	
 	f.close();
 	

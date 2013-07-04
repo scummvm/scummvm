@@ -230,8 +230,8 @@ struct PointType {
 };
 
 struct vmctype { /* Virtual Mouse Cursor */
-	void *andpic, *xorpic;
-	void *backpic[2];
+	byte *andpic, *xorpic;
+	byte *backpic[2];
 	PointType wherewas[2];
 	byte picnumber;
 	int8 ofsx, ofsy;
