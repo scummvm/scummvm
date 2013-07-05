@@ -707,7 +707,75 @@ void Lucerna::enterroom(byte x, byte ped) {
 }
 
 void Lucerna::thinkabout(char z, bool th) {     /* Hey!!! Get it and put it!!! */
+	const int16 x = 205;
+	const int16 y = 170;
+	const int16 picsize = 966;
+	const bytefield thinkspace = {25, 170, 32, 200};
+	byte *p;
+	byte fv;
+
+
+	_vm->_gyro.thinks = z;
+	z--;
+
+	if (th) {
+		/* Things */
+		_vm->_gyro.wait();
+	
+		p = new byte[picsize];
+	
+		if (!f.open("thinks.avd")) {
+			warning("AVALANCHE: Lucerna: File not found: thinks.avd");
+			return;
+		}
+
+		f.seek(z * picsize + 65);
+
+		for (int16 i = 0; i < picsize; i++)
+			p[i] = f.readByte();
+
+		_vm->_gyro.off();
+
+		f.close();
+	} else {
+		/* People */
+		_vm->_gyro.wait();
+
+		p = new byte[picsize];
+
+		if (!f.open("folk.avd")) {
+			warning("AVALANCHE: Lucerna: File not found: thinks.avd");
+			return;
+		}
+
+		fv = z - 149;
+		if (fv >= 25)
+			fv -= 8;
+		if (fv == 20) 
+			fv--; /* Last time... */
+
+		f.seek(fv * picsize + 65);
+
+		for (int16 i = 0; i < picsize; i++)
+			p[i] = f.readByte();
+
+		_vm->_gyro.off();
+
+		f.close();
+	}
+
+	/*setactivepage(3);
+	putimage(x, y, p, 0);
+	setactivepage(1 - cp);*/
 	warning("STUB: Lucerna::thinkabout()");
+
+	for (fv = 0; fv <= 1; fv ++)
+		_vm->_trip.getset[fv].remember(thinkspace);
+
+	delete[] p;
+	
+	_vm->_gyro.on();
+	_vm->_gyro.thinkthing = th;
 }
 
 void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */

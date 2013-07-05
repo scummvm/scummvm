@@ -271,7 +271,20 @@ void Gyro::setParent(AvalancheEngine *vm) {
 }
 
 void Gyro::newpointer(byte m) {
+	if (m == cmp)  return;
+	cmp = m;
+	
+	/*r.ax = 9;
+	r.bx = (word)(mps[m].horzhotspot);
+	r.cx = (word)(mps[m].verthotspot);
+	r.es = seg(mps[m].mask);
+	r.dx = ofs(mps[m].mask);
+	intr(0x33, r);
+	
+	r is a 'registers' type variable of Gyro in the Pascal code.*/
+
 	warning("STUB: Gyro::newpointer()");
+	load_a_mouse(m);
 }
 
 void Gyro::wait() {   /* makes hourglass */
