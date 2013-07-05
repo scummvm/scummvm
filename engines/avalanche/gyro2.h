@@ -523,8 +523,8 @@ public:
 	bool ontoolbar, seescroll;
 
 	char objlist[10];
-	void * digit[10];
-	void *rwlite[9];
+	byte *digit[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
+	byte *rwlite[9]; // Maybe it will be needed to move them to the class itself instead.
 	byte oldrw;
 	Common::String lastscore;
 	byte cmp; /* current mouse-void **/

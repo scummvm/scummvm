@@ -744,7 +744,7 @@ void Lucerna::thinkabout(char z, bool th) {     /* Hey!!! Get it and put it!!! *
 		p = new byte[picsize];
 
 		if (!f.open("folk.avd")) {
-			warning("AVALANCHE: Lucerna: File not found: thinks.avd");
+			warning("AVALANCHE: Lucerna: File not found: folk.avd");
 			return;
 		}
 
@@ -779,7 +779,26 @@ void Lucerna::thinkabout(char z, bool th) {     /* Hey!!! Get it and put it!!! *
 }
 
 void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
-	warning("STUB: Lucerna::load_digits()");
+	const byte digitsize = 134;
+	const byte rwlitesize = 126;
+
+	if (!f.open("digit.avd")) {
+		warning("AVALANCHE: Lucerna: File not found: digit.avd");
+		return;
+	}
+
+	for (byte fv = 0; fv < 10; fv ++) {
+		_vm->_gyro.digit[fv] = new byte[digitsize];
+		for (byte i = 0; i < digitsize; i++)
+			_vm->_gyro.digit[fv][i] = f.readByte();
+	}
+
+	for (byte ff = 0; ff < 9; ff ++) {
+		_vm->_gyro.digit[ff] = new byte[rwlitesize];
+		for (byte i = 0; i < rwlitesize; i++)
+			_vm->_gyro.digit[ff][i] = f.readByte();
+	}
+	f.close();
 }
 
 void Lucerna::toolbar() {
