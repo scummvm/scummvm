@@ -272,7 +272,6 @@ void Celer::load_chunks(char *xx) {
 	chunkblocktype ch;
 	byte fv;
 	
-	Common::String filename;
 	filename = filename.format("chunk%s.avd", xx);
 	if (!f.open(filename)) {
 		warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
@@ -433,7 +432,49 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 }
 
 void Celer::show_one(byte which) {
+	chunkblocktype ch;
+	byte *p;
+	
+	//setactivepage(3);
 	warning("STUB: Celer::show_one()");
+
+	if (memos[which].x > on_disk)
+		display_it(memos[which].x, memos[which].y, memos[which].xl, memos[which].yl, memos[which].flavour, memory[which]);
+	else {
+		if (!f.open(filename)) { /* Filename was set in load_chunks() */
+			warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
+			return;
+		}
+
+		f.seek(offsets[which]);
+
+		ch.flavour = flavourtype(f.readByte());
+		ch.x = f.readSint16LE();
+		ch.y = f.readSint16LE();
+		ch.xl = f.readSint16LE();
+		ch.yl = f.readSint16LE();
+		ch.size = f.readSint32LE();
+		ch.natural = f.readByte();
+		ch.memorise = f.readByte();
+
+
+		p = new byte[ch.size];
+
+		for (int32 i = 0; i < ch.size; i++)
+			p[i] = f.readByte();
+
+		display_it(ch.x, ch.y, ch.xl, ch.yl, ch.flavour, p);
+
+		delete[] p;
+
+		f.close();
+	}
+
+	//setactivepage(1 - cp);
+	warning("STUB: Celer::show_one()");
+
+	for (byte fv = 0; fv < 2; fv ++)
+		_vm->_trip.getset[fv].remember(r);
 }
 
 
