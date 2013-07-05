@@ -61,17 +61,13 @@ void AnimationEmi::animate(Skeleton *skel, float delta) {
 		_time = _duration;
 		return;
 	}
-	Math::Matrix4 *relMatrices = new Math::Matrix4[skel->_numJoints];
-	for (int m = 0; m < skel->_numJoints; ++m) {
-		relMatrices[m] = skel->_joints[m]._relMatrix;
-	}
 
 	for (int bone = 0; bone < _numBones; ++bone) {
 		Bone &curBone = _bones[bone];
 		if (!curBone._target)
 			curBone._target = skel->getJointNamed(curBone._boneName);
 
-		Math::Matrix4 &relFinal = relMatrices[skel->getJointIndex(curBone._target)];
+		Math::Matrix4 &relFinal = curBone._target->_finalMatrix;
 
 		if (curBone._rotations) {
 			int keyfIdx = 0;
@@ -132,16 +128,6 @@ void AnimationEmi::animate(Skeleton *skel, float delta) {
 		}
 	}
 
-	for (int m = 0; m < skel->_numJoints; ++m) {
-		const Joint *parent = skel->getParentJoint(&skel->_joints[m]);
-		if (!parent) {
-			skel->_joints[m]._finalMatrix = relMatrices[m];
-		} else {
-			skel->_joints[m]._finalMatrix = parent->_finalMatrix * relMatrices[m];
-		}
-	}
-
-	delete[] relMatrices;
 }
 
 void Bone::loadBinary(Common::SeekableReadStream *data) {

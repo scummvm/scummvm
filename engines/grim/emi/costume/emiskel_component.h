@@ -40,6 +40,8 @@ public:
 	void reset();
 	void draw();
 
+	void commit();
+
 public:
 	bool _hierShared;
 	Component *_parentModel;

@@ -48,9 +48,16 @@ int EMISkelComponent::update(uint time) {
 
 void EMISkelComponent::reset() {
 	_visible = true;
+	if (_obj)
+		_obj->resetAnim();
 }
 	
 void EMISkelComponent::draw() {
+}
+
+void EMISkelComponent::commit() {
+	if (_obj)
+		_obj->commitAnim();
 }
 
 } // end of namespace Grim

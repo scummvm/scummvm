@@ -84,6 +84,18 @@ void Skeleton::initBones() {
 }
 
 void Skeleton::resetAnim() {
+	for (int i = 0; i < _numJoints; ++i) {
+		_joints[i]._finalMatrix = _joints[i]._relMatrix;
+	}
+}
+
+void Skeleton::commitAnim() {
+	for (int m = 0; m < _numJoints; ++m) {
+		const Joint *parent = getParentJoint(&_joints[m]);
+		if (parent) {
+			_joints[m]._finalMatrix = parent->_finalMatrix * _joints[m]._finalMatrix;
+		}
+	}
 }
 
 int Skeleton::findJointIndex(const Common::String &name, int max) const {

@@ -60,6 +60,7 @@ public:
 
 	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 	~Skeleton();
+	void commitAnim();
 	void resetAnim();
 	int findJointIndex(const Common::String &name, int max) const;
 	bool hasJoint(const Common::String &name) const;
