@@ -51,7 +51,6 @@ struct Joint {
 
 class Skeleton : public Object {
 
-	AnimationEmi *_anim;
 	void loadSkeleton(Common::SeekableReadStream *data);
 	void initBone(int index);
 	void initBones();
@@ -62,9 +61,6 @@ public:
 	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 	~Skeleton();
 	void resetAnim();
-	void setAnim(AnimationEmi *anim);
-	void animate(float time);
-	float _time;
 	int findJointIndex(const Common::String &name, int max) const;
 	bool hasJoint(const Common::String &name) const;
 	Joint *getJointNamed(const Common::String &name) const;

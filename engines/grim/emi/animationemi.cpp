@@ -51,6 +51,99 @@ AnimationEmi::~AnimationEmi() {
 	delete[] _bones;
 }
 
+void AnimationEmi::reset() {
+	_time = 0.0f;
+}
+
+void AnimationEmi::animate(Skeleton *skel, float delta) {
+	_time += delta;
+	if (_time > _duration) {
+		_time = _duration;
+		return;
+	}
+	Math::Matrix4 *relMatrices = new Math::Matrix4[skel->_numJoints];
+	for (int m = 0; m < skel->_numJoints; ++m) {
+		relMatrices[m] = skel->_joints[m]._relMatrix;
+	}
+
+	for (int bone = 0; bone < _numBones; ++bone) {
+		Bone &curBone = _bones[bone];
+		if (!curBone._target)
+			curBone._target = skel->getJointNamed(curBone._boneName);
+
+		Math::Matrix4 &relFinal = relMatrices[skel->getJointIndex(curBone._target)];
+
+		if (curBone._rotations) {
+			int keyfIdx = 0;
+			Math::Quaternion quat;
+			Math::Vector3d relPos = relFinal.getPosition();
+
+			for (int curKeyFrame = 0; curKeyFrame < curBone._count; curKeyFrame++) {
+				if (curBone._rotations[curKeyFrame]._time >= _time) {
+					keyfIdx = curKeyFrame;
+					break;
+				}
+			}
+
+			if (keyfIdx == 0) {
+				quat = curBone._rotations[keyfIdx]._quat;
+			} else if (keyfIdx == curBone._count - 1) {
+				quat = curBone._rotations[keyfIdx-1]._quat;
+			} else {
+				float timeDelta = curBone._rotations[keyfIdx-1]._time - curBone._rotations[keyfIdx]._time;
+				float interpVal = (_time - curBone._rotations[keyfIdx]._time) / timeDelta;
+
+				// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
+				quat = curBone._rotations[keyfIdx]._quat.slerpQuat(curBone._rotations[keyfIdx - 1]._quat, interpVal);
+			}
+			quat.toMatrix(relFinal);
+			relFinal.setPosition(relPos);
+		}
+
+		if (curBone._translations) {
+			int keyfIdx = 0;
+			Math::Vector3d vec;
+
+			for (int curKeyFrame = 0; curKeyFrame < curBone._count; curKeyFrame++) {
+				if (curBone._translations[curKeyFrame]._time >= _time) {
+					keyfIdx = curKeyFrame;
+					break;
+				}
+			}
+
+			if (keyfIdx == 0) {
+				vec = curBone._translations[keyfIdx]._vec;
+			} else if (keyfIdx == curBone._count - 1) {
+				vec = curBone._translations[keyfIdx-1]._vec;
+			} else {
+				float timeDelta = curBone._translations[keyfIdx-1]._time - curBone._translations[keyfIdx]._time;
+				float interpVal = (_time - curBone._translations[keyfIdx]._time) / timeDelta;
+
+				vec.x() = curBone._translations[keyfIdx-1]._vec.x() +
+					(curBone._translations[keyfIdx]._vec.x() - curBone._translations[keyfIdx-1]._vec.x()) * interpVal;
+
+				vec.y() = curBone._translations[keyfIdx-1]._vec.y() +
+					(curBone._translations[keyfIdx]._vec.y() - curBone._translations[keyfIdx-1]._vec.y()) * interpVal;
+
+				vec.z() = curBone._translations[keyfIdx-1]._vec.z() +
+					(curBone._translations[keyfIdx]._vec.z() - curBone._translations[keyfIdx-1]._vec.z()) * interpVal;
+			}
+			relFinal.setPosition(vec);
+		}
+	}
+
+	for (int m = 0; m < skel->_numJoints; ++m) {
+		const Joint *parent = skel->getParentJoint(&skel->_joints[m]);
+		if (!parent) {
+			skel->_joints[m]._finalMatrix = relMatrices[m];
+		} else {
+			skel->_joints[m]._finalMatrix = parent->_finalMatrix * relMatrices[m];
+		}
+	}
+
+	delete[] relMatrices;
+}
+
 void Bone::loadBinary(Common::SeekableReadStream *data) {
 	uint32 len = data->readUint32LE();
 	char *inString = new char[len];

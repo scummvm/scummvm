@@ -36,6 +36,7 @@ public:
 	EMIAnimComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~EMIAnimComponent();
 	void init();
+	void setKey(int);
 	int update(uint time);
 	void reset();
 	void draw();

@@ -43,9 +43,6 @@ void EMISkelComponent::init() {
 }
 
 int EMISkelComponent::update(uint time) {
-	if (_obj) {
-		_obj->animate(time);
-	}
 	return 0;
 }
 

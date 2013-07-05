@@ -33,7 +33,7 @@ namespace Grim {
 #define ROTATE_OP 4
 #define TRANSLATE_OP 3
 
-Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) : _anim(NULL), _time(0) {
+Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) {
 	loadSkeleton(data);
 }
 
@@ -84,33 +84,6 @@ void Skeleton::initBones() {
 }
 
 void Skeleton::resetAnim() {
-	_time = 0;
-}
-
-void Skeleton::setAnim(AnimationEmi *anim) {
-	if (_anim == anim) {
-		return;
-	}
-	_anim = anim;
-	if (!_anim) {
-		return;
-	}
-	for (int i = 0; i < _numJoints; i++) {
-		_joints[i]._animIndex[0] = -1;
-		_joints[i]._animIndex[1] = -1;
-	}
-	
-	for(int i = 0; i < _anim->_numBones; i++) {
-		int index = findJointIndex(_anim->_bones[i]._boneName, _numJoints);
-		if (index == -1)
-			continue;
-		if (_anim->_bones[i]._operation == 3) {
-			_joints[index]._animIndex[0] = i;
-		} else {
-			_joints[index]._animIndex[1] = i;
-		}
-	}
-	resetAnim();
 }
 
 int Skeleton::findJointIndex(const Common::String &name, int max) const {
@@ -122,94 +95,6 @@ int Skeleton::findJointIndex(const Common::String &name, int max) const {
 		}
 	}
 	return -1;
-}
-
-void Skeleton::animate(float delta) {
-	if (_anim == NULL)
-		return;
-	_time += delta;
-	if (_time > _anim->_duration) {
-		resetAnim();
-	}
-	
-	Math::Vector3d vec;
-
-	for (int curJoint = 0; curJoint < _numJoints; curJoint++) {
-		int transIdx = _joints[curJoint]._animIndex[0];
-		int rotIdx = _joints[curJoint]._animIndex[1];
-
-		float timeDelta = 0.0f;
-		float interpVal = 0.0f;
-
-		Math::Matrix4 relFinal = _joints[curJoint]._relMatrix;
-		
-		if (rotIdx >= 0) {
-			int keyfIdx = 0;
-			Math::Quaternion quat;
-			Bone *curBone = &_anim->_bones[rotIdx];
-			Math::Vector3d relPos = relFinal.getPosition();
-
-			// Find the right keyframe
-			for (int curKeyFrame = 0; curKeyFrame < curBone->_count; curKeyFrame++) {
-				if (curBone->_rotations[curKeyFrame]._time >= _time) {
-					keyfIdx = curKeyFrame;
-					break;
-				}
-			}
-
-			if (keyfIdx == 0) {
-				quat = curBone->_rotations[keyfIdx]._quat;
-			} else if (keyfIdx == curBone->_count - 1) {
-				quat = curBone->_rotations[keyfIdx-1]._quat;
-			} else {
-				timeDelta = curBone->_rotations[keyfIdx-1]._time - curBone->_rotations[keyfIdx]._time;
-				interpVal = (_time - curBone->_rotations[keyfIdx]._time) / timeDelta;
-
-				// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
-				quat = curBone->_rotations[keyfIdx]._quat.slerpQuat(curBone->_rotations[keyfIdx - 1]._quat, interpVal);
-			}
-			quat.toMatrix(relFinal);
-			relFinal.setPosition(relPos);
-		}
-
-		if (transIdx >= 0) {
-			int keyfIdx = 0;
-			Bone *curBone = &_anim->_bones[transIdx];
-			// Find the right keyframe
-			for (int curKeyFrame = 0; curKeyFrame < curBone->_count; curKeyFrame++) {
-				if (curBone->_translations[curKeyFrame]._time >= _time) {
-					keyfIdx = curKeyFrame;
-					break;
-				}
-			}
-
-			if (keyfIdx == 0) {
-				vec = curBone->_translations[keyfIdx]._vec;
-			} else if (keyfIdx == curBone->_count - 1) {
-				vec = curBone->_translations[keyfIdx-1]._vec;
-			} else {
-				timeDelta = curBone->_translations[keyfIdx-1]._time - curBone->_translations[keyfIdx]._time;
-				interpVal = (_time - curBone->_translations[keyfIdx]._time) / timeDelta;
-
-				vec.x() = curBone->_translations[keyfIdx-1]._vec.x() +
-					(curBone->_translations[keyfIdx]._vec.x() - curBone->_translations[keyfIdx-1]._vec.x()) * interpVal;
-
-				vec.y() = curBone->_translations[keyfIdx-1]._vec.y() +
-					(curBone->_translations[keyfIdx]._vec.y() - curBone->_translations[keyfIdx-1]._vec.y()) * interpVal;
-
-				vec.z() = curBone->_translations[keyfIdx-1]._vec.z() +
-					(curBone->_translations[keyfIdx]._vec.z() - curBone->_translations[keyfIdx-1]._vec.z()) * interpVal;
-			}
-			relFinal.setPosition(vec);
-		}
-		
-		if (_joints[curJoint]._parentIndex == -1) {
-			_joints[curJoint]._finalMatrix = relFinal;
-		} else {
-			_joints[curJoint]._finalMatrix = _joints[_joints[curJoint]._parentIndex]._finalMatrix;
-			_joints[curJoint]._finalMatrix = _joints[curJoint]._finalMatrix * relFinal;
-		}
-	} // end for
 }
 
 bool Skeleton::hasJoint(const Common::String &name) const {

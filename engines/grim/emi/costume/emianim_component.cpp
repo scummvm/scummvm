@@ -46,18 +46,25 @@ void EMIAnimComponent::init() {
 }
 
 int EMIAnimComponent::update(uint time) {
+	if (_obj) {
+		EMISkelComponent *skel = ((EMICostume*) _cost)->_emiSkel;
+		_obj->animate(skel->_obj, time);
+	}
 	return 0;
+}
+
+void EMIAnimComponent::setKey(int f) {
+	if (f == 1)
+		reset();
 }
 
 void EMIAnimComponent::reset() {
 	_visible = true;
+	if (_obj)
+		_obj->reset();
 }
 	
 void EMIAnimComponent::draw() {
-	EMISkelComponent *skel = ((EMICostume*) _cost)->_emiSkel;
-	if (skel && skel->_obj) {
-		skel->_obj->setAnim(_obj);
-	}
 }
 
 } // end of namespace Grim

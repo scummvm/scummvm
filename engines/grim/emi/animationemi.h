@@ -27,6 +27,7 @@
 #include "math/mathfwd.h"
 #include "math/quat.h"
 #include "engines/grim/object.h"
+#include "engines/grim/emi/skeleton.h"
 
 namespace Grim {
 
@@ -48,7 +49,8 @@ struct Bone {
 	int _count;
 	AnimRotation *_rotations;
 	AnimTranslation *_translations;
-	Bone() : _rotations(NULL), _translations(NULL), _boneName(""), _operation(0) {}
+	Joint *_target;
+	Bone() : _rotations(NULL), _translations(NULL), _boneName(""), _operation(0), _target(NULL) {}
 	~Bone();
 	void loadBinary(Common::SeekableReadStream *data);
 };
@@ -60,8 +62,12 @@ public:
 	float _duration;
 	int _numBones;
 	Bone *_bones;
-	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data) : _name(""), _duration(0.0f), _numBones(0), _bones(NULL) { loadAnimation(data); }
+	float _time;
+	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data) : _name(""), _duration(0.0f), _numBones(0), _bones(NULL), _time(0.0f) { loadAnimation(data); }
 	~AnimationEmi();
+
+	void animate(Skeleton *skel, float delta);
+	void reset();
 };
 
 } // end of namespace Grim
