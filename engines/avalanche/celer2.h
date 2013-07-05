@@ -61,7 +61,7 @@ public:
 	int32 offsets[40];
 	byte num_chunks;
 	memotype memos[40];
-	void *memory[40];
+	byte *memory[40];
 
 	Common::File f;
 

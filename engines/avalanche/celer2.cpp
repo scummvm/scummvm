@@ -281,7 +281,7 @@ void Celer::load_chunks(char *xx) {
 
 	f.seek(44);
 	num_chunks = f.readByte();
-	for (int i = 0; i < num_chunks; i++)
+	for (byte i = 0; i < num_chunks; i++)
 		offsets[i] = f.readSint32LE();
 
 	for (fv = 0; fv < num_chunks; fv++) {
@@ -305,22 +305,29 @@ void Celer::load_chunks(char *xx) {
 			memos[fv].flavour = ch.flavour;
 			memos[fv].size = ch.size;
 
-			memory[fv] = malloc(ch.size); // Celer::forget_chunks() deallocates it.
+			memory[fv] = new byte[ch.size]; // Celer::forget_chunks() deallocates it.
 
 			/*if (ch.natural) {
 			getimage(ch.x * 8, ch.y, (ch.x + ch.xl) * 8, ch.y + ch.yl, memory[fv]);
 			} else
 			blockread(f, memory[fv], ch.size);*/
+			warning("STUB: Celer::load_chunks()");
+
+			if (!ch.natural)
+				for (int32 i = 0; i < ch.size; i++)
+					memory[fv][i] = f.readByte();
 		} else
 			memos[fv].x = on_disk;
-		
 	}
-
 	f.close();
 }
 
 void Celer::forget_chunks() {
-	warning("STUB: Celer::forget_chunks()");
+	for (byte fv = 0; fv < num_chunks; fv ++)
+		if (memos[fv].x > on_disk)
+			delete[] memory[fv];
+
+	memset(memos, 255, sizeof(memos)); /* x=-1, => on disk. */
 }
 
 void Celer::mdrop(int16 x, int16 y, int16 xl, int16 yl, void *p) { /* assembler;
