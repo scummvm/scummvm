@@ -121,7 +121,7 @@ static const char HELP_STRING[] =
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
-	"  --record-file=FILE       Specify record file name\n"
+	"  --record-file-name=FILE  Specify record file name\n"
 	"  --disable-display        Disable any gfx output. Used for headless events\n"
 	"                           playback by Event Recorder\n"
 #endif
