@@ -41,6 +41,7 @@
 #include "avalanche/basher2.h"
 
 #include "common/textconsole.h"
+#include "common/file.h"
 
 //#include "avalanche/joystick2.h" - Will be implemented later, if it will be implemented at all...
 
@@ -134,11 +135,55 @@ void Scrolls::undodgem() {   /* This is the opposite of Dodgem. It moves the
 }
 
 void Scrolls::geticon(int16 x, int16 y, byte which) {
+	Common::File f;
+	byte *p;
+
+	if (!f.open("icons.avd")) {
+		warning("AVALANCHE: Scrolls: File not found: icons.avd");
+		return;
+	}
+
+	which--;
+	f.seek(which * 426);
+
+	p = new byte[426];
+	for (int16 i = 0; i < 426; i++)
+		p[i] = f.readByte();
+
+	//putimage(x, y, p, 0);
 	warning("STUB: Scrolls::geticon()");
+
+	delete[] p;
+	f.close();
 }
 
 void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
+	Common::File f;
+	byte bit;
+	int16 fv;
+	uint16 st;
+
+	st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro.cp) * _vm->_gyro.pagetop);
+
+	Common::String filename;
+	filename = filename.format("%s.avd", fn.c_str());
+	if (!f.open(filename)) {
+		warning("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+		return;
+	}
+
+	/*for (fv = 1; fv <= yl; fv ++)
+	for (bit = 0; bit <= 3; bit ++) {
+	port[0x3c4] = 2;
+	port[0x3ce] = 4;
+	port[0x3c5] = 1 << bit;
+	port[0x3cf] = bit;
+	blockread(f, mem[0xa000 * st + (fv * 80)], xl);
+	}
+	bit = getpixel(0, 0);*/
 	warning("STUB: Scrolls::block_drop()");
+
+	f.close();
 }
 
 void Scrolls::drawscroll(func2 gotoit) {     /* This is one of the oldest func2s in the game. */
