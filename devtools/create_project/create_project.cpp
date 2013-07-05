@@ -310,6 +310,17 @@ int main(int argc, char *argv[]) {
 			cout << "    " << i->description << '\n';
 	}
 
+	// Check if the keymapper and the event recorder are enabled simultaneously
+	bool keymapperEnabled = false;
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && !strcmp(i->name, "keymapper"))
+			keymapperEnabled = true;
+		if (i->enable && !strcmp(i->name, "eventrecorder") && keymapperEnabled) {
+			std::cerr << "ERROR: The keymapper and the event recorder cannot be enabled simultaneously currently, please disable one of the two\n";
+			return -1;
+		}
+	}
+
 	// Setup defines and libraries
 	setup.defines = getEngineDefines(setup.engines);
 	setup.libraries = getFeatureLibraries(setup.features);
