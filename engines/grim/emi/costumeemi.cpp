@@ -207,25 +207,22 @@ void EMICostume::draw() {
 
 int EMICostume::update(uint time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
-		(*i)->update(time);
-		if (!(*i)->isPlaying()) {
+		Chore *c = *i;
+		c->update(time);
+
+		for (int t = 0; t < c->_numTracks; ++t) {
+			if (c->_tracks[t].component) {
+				c->_tracks[t].component->update(time);
+			}
+		}
+
+		if (!c->isPlaying()) {
 			i = _playingChores.erase(i);
 			--i;
 		}
 	}
 
-	int marker = 0;
-	for (int i = 0; i < _numComponents; i++) {
-		if (_components[i]) {
-			_components[i]->setMatrix(_matrix);
-			int m = _components[i]->update(time);
-			if (m > 0) {
-				marker = m;
-			}
-		}
-	}
-
-	return marker;
+	return 0;
 }
 
 Material * EMICostume::findSharedMaterial(const Common::String &name) {
