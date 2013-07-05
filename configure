@@ -3798,6 +3798,16 @@ define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
 define_in_config_if_yes $_keymapper 'ENABLE_KEYMAPPER'
 define_in_config_if_yes $_eventrec 'ENABLE_EVENTRECORDER'
 
+#
+# Check if the keymapper and the event recorder are enabled simultaneously
+#
+if test "$_keymapper" = yes ; then
+	if test "$_eventrec" = yes ; then
+		echo "ERROR: The keymapper and the event recorder cannot be enabled simultaneously currently, please disable one of the two"
+		exit 1
+	fi
+fi
+
 # Check whether to build translation support
 #
 echo_n "Building translation support... "
