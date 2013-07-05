@@ -112,7 +112,7 @@ public:
 
 	void fix_flashers();
 
-	void load_also(char *n);
+	void load_also(Common::String n);
 
 private:
 	AvalancheEngine *_vm;

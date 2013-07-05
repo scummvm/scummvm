@@ -268,11 +268,11 @@ void Celer::pics_link() {
 	}
 }
 
-void Celer::load_chunks(char *xx) {
+void Celer::load_chunks(Common::String xx) {
 	chunkblocktype ch;
 	byte fv;
 	
-	filename = filename.format("chunk%s.avd", xx);
+	filename = filename.format("chunk%s.avd", xx.c_str());
 	if (!f.open(filename)) {
 		warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
 		return;

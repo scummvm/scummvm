@@ -71,7 +71,7 @@ public:
 
 	void pics_link();
 
-	void load_chunks(char *xx);
+	void load_chunks(Common::String xx);
 
 	void forget_chunks();
 
