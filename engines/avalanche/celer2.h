@@ -62,11 +62,9 @@ public:
 	byte num_chunks;
 	memotype memos[40];
 	byte *memory[40];
+	bytefield r;
 
-	Common::File f;
-
-
-
+	
 	Celer();
 
 	void setParent(AvalancheEngine *vm);
@@ -84,7 +82,9 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	//untyped_file f; /* Private variable- not accessible from elsewhere. */
+	Common::String filename;
+
+	Common::File f;
 
 	static const int16 on_disk; /* Value of memos[fv].x when it's not in memory. */
 
