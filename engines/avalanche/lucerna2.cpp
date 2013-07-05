@@ -103,15 +103,12 @@ void Lucerna::scram1(Common::String &x) {
 }
 
 void Lucerna::unscramble() {
-	for (byte fv = 0; fv <= 30; fv ++)
-		for (byte ff = 0; ff <= 1; ff ++)
+	for (byte fv = 0; fv < 31; fv ++)
+		for (byte ff = 0; ff < 2; ff ++)
 			if (_vm->_gyro.also[fv][ff] != 0)
 				scram1(*_vm->_gyro.also[fv][ff]);
 	scram1(_vm->_gyro.listen);
 	scram1(_vm->_gyro.flags);
-	/*     for fz:=1 to length(_vm->_gyro.also[fv,ff]^) do
-	      _vm->_gyro.also[fv,ff]^[fz]:=chr(ord(_vm->_gyro.also[fv,ff]^[fz]) xor 177);*/
-	warning("STUB: Lucerna::unscramble()");
 }
 
 void Lucerna::load_also(char *n) {
@@ -197,7 +194,6 @@ void Lucerna::load_also(char *n) {
 	unscramble();
 	for (fv = 0; fv <= minnames; fv++)
 		*_vm->_gyro.also[fv][0] = Common::String(',') + *_vm->_gyro.also[fv][0] + ',';
-	
 }
 
 void Lucerna::load(byte n) {     /* Load2, actually */
