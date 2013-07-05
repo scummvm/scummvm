@@ -802,7 +802,38 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 }
 
 void Lucerna::toolbar() {
+	uint16 s;
+	byte *p;
+
+	if (!f.open("useful.avd")) {
+		warning("AVALANCHE: Lucerna: File not found: useful.avd");
+		return;
+	}
+
+	s = f.size() - 40;
+	p = new byte[s];
+	f.seek(40);
+	for (uint16 i = 0; i < s; i++)
+		p[i] = f.readByte();
+	f.close();
+	/* off;*/
+
+	//setcolor(15); /* (And sent for chrysanthemums...) Yellow and white. */
+	//setfillstyle(1, 6);
+	//for (byte fv = 0; fv <= 1; fv ++) {
+	//	setactivepage(fv);
+	//	putimage(5, 169, p, 0);
+	//	if (demo) {
+	//		bar(264, 177, 307, 190);
+	//		outtextxy(268, 188, "Demo!"); /* well... actually only white now. */
+	//	}
+	//}
 	warning("STUB: Lucerna::toolbar()");
+
+	/* on;*/
+	delete[] p;
+	_vm->_gyro.oldrw = 177;
+	showrw();
 }
 
 void Lucerna::showscore() {
