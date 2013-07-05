@@ -111,7 +111,7 @@ void Lucerna::unscramble() {
 	scram1(_vm->_gyro.flags);
 }
 
-void Lucerna::load_also(char *n) {
+void Lucerna::load_also(Common::String n) {
 	byte ff, fv;
 	
 	for (fv = 0; fv < 31; fv++)
@@ -122,7 +122,7 @@ void Lucerna::load_also(char *n) {
 			}
 
 	Common::String filename;
-	filename = filename.format("also%s.avd", n);
+	filename = filename.format("also%s.avd", n.c_str());
 	if (!f.open(filename)) {
 		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
 		return;
@@ -200,8 +200,59 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	byte a0;  /*absolute $A000:800;*/
 	byte a1;  /*absolute $A000:17184;*/
 	byte bit;
+	Common::String xx;
+	bool was_virtual;
 
+	was_virtual = _vm->_gyro.visible == _vm->_gyro.m_virtual;
+	if (was_virtual)
+		_vm->_gyro.off_virtual();
+	else
+		_vm->_gyro.off();
+
+	_vm->_gyro.clear_vmc();
+
+	xx = _vm->_gyro.strf(n);
+	flesh_colours();
+
+	Common::String filename;
+	filename = filename.format("place%s.avd", xx.c_str());
+	if (!f.open(filename)) {
+		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
+		return;
+	}
+
+	f.seek(146);
+	for (byte i = 0; i < 30; i++)
+		_vm->_gyro.roomname += f.readByte();
+	/* Compression method byte follows this... */
+
+	f.seek(177);
 	warning("STUB: Lucerna::load()");
+	for (bit = 0; bit <= 3; bit++) {
+		/*port[0x3c4] = 2;
+		port[0x3ce] = 4;
+		port[0x3c5] = 1 << bit;
+		port[0x3cf] = bit;
+		blockread(f, a0, 12080);
+		move(a0, a1, 12080);*/
+	}
+
+	f.close();
+
+	load_also(xx);
+	_vm->_celer.load_chunks(xx);
+
+	_vm->_pingo.copy03();
+
+	//bit = getpixel(0, 0);
+	warning("STUB: Lucerna::load()");
+
+	_vm->_logger.log_newroom(_vm->_gyro.roomname);
+
+	if (was_virtual)
+		_vm->_gyro.on_virtual();
+	else 
+		_vm->_gyro.on();
 }
 
 
