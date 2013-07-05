@@ -36,6 +36,7 @@
 #include "avalanche/scrolls2.h"
 
 #include "common/textconsole.h"
+#include "common/file.h"
 
 namespace Avalanche {
 
@@ -107,6 +108,38 @@ void Pingo::zonk() {
 }
 
 void Pingo::winning_pic() {
+	Common::File f;
+	char r;
+
+	_vm->_lucerna.dusk();
+
+	if (!f.open("finale.avd")) {
+		warning("AVALANCHE: Lucerna: File not found: finale.avd");
+		return;
+	}
+
+	/*for (byte bit = 0; bit <= 3; bit ++) {
+	port[0x3c4] = 2;
+	port[0x3ce] = 4;
+	port[0x3c5] = 1 << bit;
+	port[0x3cf] = bit;
+	blockread(f, mem[0xa000 * 0], 16000);
+	}*/
+	warning("STUB: Pingo::winning_pic()");
+
+	f.close();
+	_vm->_lucerna.blitfix();
+
+	//setvisualpage(0);
+	warning("STUB: Pingo::winning_pic()");
+
+	_vm->_lucerna.dawn();
+
+	/*do {
+		_vm->_gyro.check();
+	} while (!(keypressed() || (mrelease > 0)));
+	while (keypressed())  r = readkey();
+	major_redraw();*/
 	warning("STUB: Pingo::winning_pic()");
 }
 
