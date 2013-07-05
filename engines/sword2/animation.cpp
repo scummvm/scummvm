@@ -42,7 +42,14 @@
 
 #include "gui/message.h"
 
+#ifdef USE_MPEG2
+#include "video/avi_decoder.h"
+#endif
+
+#ifdef USE_ZLIB
 #include "video/dxa_decoder.h"
+#endif
+
 #include "video/smk_decoder.h"
 #include "video/psx_decoder.h"
 
@@ -88,26 +95,26 @@ bool MoviePlayer::load(const char *name) {
 		break;
 	case kVideoDecoderPSX:
 		filename = Common::String::format("%s.str", name);
-
-		// Need to switch to true color
-		initGraphics(640, 480, true, 0);
-
-		// Need to load here in case it fails in which case we'd need
-		// to go back to paletted mode
-		if (_decoder->loadFile(filename)) {
-			_decoder->start();
-			return true;
-		} else {
-			initGraphics(640, 480, true);
-			return false;
-		}
+		break;
+	case kVideoDecoderMP2:
+		filename = Common::String::format("%s.mp2", name);
+		break;
 	}
 
-	if (!_decoder->loadFile(filename))
-		return false;
+	// Need to switch to true color for PSX/MP2 videos
+	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
+		initGraphics(g_system->getWidth(), g_system->getHeight(), true, 0);
 
-	// For DXA, also add the external sound file
-	if (_decoderType == kVideoDecoderDXA)
+	if (!_decoder->loadFile(filename)) {
+		// Go back to 8bpp color
+		if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
+			initGraphics(g_system->getWidth(), g_system->getHeight(), true);
+
+		return false;
+	}
+
+	// For DXA/MP2, also add the external sound file
+	if (_decoderType == kVideoDecoderDXA || _decoderType == kVideoDecoderMP2)
 		_decoder->addStreamFileTrack(name);
 
 	_decoder->start();
@@ -136,10 +143,9 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 		_vm->_sound->stopSpeech();
 	}
 
-	if (_decoderType == kVideoDecoderPSX) {
-		// Need to jump back to paletted color
+	// Need to jump back to paletted color
+	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
 		initGraphics(640, 480, true);
-	}
 }
 
 void MoviePlayer::openTextObject(uint32 index) {
@@ -378,11 +384,11 @@ bool MoviePlayer::playVideo() {
 }
 
 uint32 MoviePlayer::getBlackColor() {
-	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
+	return (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
 }
 
 uint32 MoviePlayer::getWhiteColor() {
-	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF) : _white;
+	return (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) ? g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF) : _white;
 }
 
 void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
@@ -446,9 +452,16 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 	filename = Common::String::format("%s.mp2", name);
 
 	if (Common::File::exists(filename)) {
-		GUI::MessageDialog dialog(_("MPEG2 cutscenes are no longer supported"), _("OK"));
+#ifdef USE_MPEG2
+		// HACK: Old ScummVM builds ignored the AVI frame rate field and forced the video
+		// to be played back at 12fps.
+		Video::AVIDecoder *aviDecoder = new Video::AVIDecoder(12);
+		return new MoviePlayer(vm, system, aviDecoder, kVideoDecoderMP2);
+#else
+		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"), _("OK"));
 		dialog.runModal();
 		return NULL;
+#endif
 	}
 
 	// The demo tries to play some cutscenes that aren't there, so make those warnings more discreet.

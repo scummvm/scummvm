@@ -37,7 +37,14 @@
 
 #include "gui/message.h"
 
+#ifdef USE_MPEG2
+#include "video/avi_decoder.h"
+#endif
+
+#ifdef USE_ZLIB
 #include "video/dxa_decoder.h"
+#endif
+
 #include "video/psx_decoder.h"
 #include "video/smk_decoder.h"
 
@@ -176,27 +183,26 @@ bool MoviePlayer::load(uint32 id) {
 		break;
 	case kVideoDecoderPSX:
 		filename = Common::String::format("%s.str", (_vm->_systemVars.isDemo) ? sequenceList[id] : sequenceListPSX[id]);
-
-		// Need to switch to true color
-		initGraphics(g_system->getWidth(), g_system->getHeight(), true, 0);
-
-		// Need to load here in case it fails in which case we'd need
-		// to go back to paletted mode
-		if (_decoder->loadFile(filename)) {
-			_decoder->start();
-			return true;
-		} else {
-			initGraphics(g_system->getWidth(), g_system->getHeight(), true);
-			return false;
-		}
+		break;
+	case kVideoDecoderMP2:
+		filename = Common::String::format("%s.mp2", sequenceList[id]);
 		break;
 	}
 
-	if (!_decoder->loadFile(filename))
-		return false;
+	// Need to switch to true color for PSX/MP2 videos
+	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
+		initGraphics(g_system->getWidth(), g_system->getHeight(), true, 0);
 
-	// For DXA, also add the external sound file
-	if (_decoderType == kVideoDecoderDXA)
+	if (!_decoder->loadFile(filename)) {
+		// Go back to 8bpp color
+		if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
+			initGraphics(g_system->getWidth(), g_system->getHeight(), true);
+
+		return false;
+	}
+
+	// For DXA/MP2, also add the external sound file
+	if (_decoderType == kVideoDecoderDXA || _decoderType == kVideoDecoderMP2)
 		_decoder->addStreamFileTrack(sequenceList[id]);
 
 	_decoder->start();
@@ -224,9 +230,9 @@ void MoviePlayer::play() {
 }
 
 void MoviePlayer::performPostProcessing(byte *screen) {
-	// TODO: We don't support the PSX stream videos yet
+	// TODO: We don't support displaying these in true color yet,
 	// nor using the PSX fonts to display subtitles.
-	if (_vm->isPsx())
+	if (_vm->isPsx() || _decoderType == kVideoDecoderMP2)
 		return;
 
 	if (!_movieTexts.empty()) {
@@ -414,20 +420,19 @@ bool MoviePlayer::playVideo() {
 		_vm->_system->delayMillis(10);
 	}
 
-	if (_decoderType == kVideoDecoderPSX) {
-		// Need to jump back to paletted color
+	// Need to jump back to paletted color
+	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
 		initGraphics(g_system->getWidth(), g_system->getHeight(), true);
-	}
 
 	return !_vm->shouldQuit() && !skipped;
 }
 
 uint32 MoviePlayer::getBlackColor() {
-	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
+	return (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
 }
 
 uint32 MoviePlayer::findTextColor() {
-	if (_decoderType == kVideoDecoderPSX) {
+	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2) {
 		// We're in true color mode, so return the actual colors
 		switch (_textColor) {
 		case 1:
@@ -547,9 +552,16 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	filename = Common::String::format("%s.mp2", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-		GUI::MessageDialog dialog(_("MPEG2 cutscenes are no longer supported"), _("OK"));
+#ifdef USE_MPEG2
+		// HACK: Old ScummVM builds ignored the AVI frame rate field and forced the video
+		// to be played back at 12fps.
+		Video::VideoDecoder *aviDecoder = new Video::AVIDecoder(12);
+		return new MoviePlayer(vm, textMan, resMan, system, aviDecoder, kVideoDecoderMP2);
+#else
+		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"), _("OK"));
 		dialog.runModal();
 		return 0;
+#endif
 	}
 
 	if (!vm->isPsx() || scumm_stricmp(sequenceList[id], "enddemo") != 0) {

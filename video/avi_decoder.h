@@ -52,10 +52,13 @@ class Codec;
  *
  * Video decoder used in engines:
  *  - sci
+ *  - sword1
+ *  - sword2
  */
 class AVIDecoder : public VideoDecoder {
 public:
 	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -219,9 +222,11 @@ private:
 	AVIHeader _header;
 
 	Common::SeekableReadStream *_fileStream;
-	bool _decodedHeader;
+	bool _decodedHeader, _foundMovieList;
 
 	Audio::Mixer::SoundType _soundType;
+	Common::Rational _frameRateOverride;
+	void initCommon();
 
 	void runHandle(uint32 tag);
 	void handleList();
