@@ -404,6 +404,26 @@ void Lua_V2::LocalizeString() {
 	}
 }
 
+void Lua_V2::OverWorldToScreen() { // TODO
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	lua_Object param3 = lua_getparam(3);
+
+	float x = 0, y = 0, z = 0;
+	if (!lua_isnumber(param1) || !lua_isnumber(param2) || !lua_isnumber(param3)) {
+		error("Param not a number for OverWorldToScreen");
+	} else {
+		x = lua_getnumber(param1);
+		y = lua_getnumber(param2);
+		z = lua_getnumber(param3);
+	}
+
+	warning("Stub function: OverWorldToScreen(%f, %f, %f) - returning 0,0", x, y, z);
+
+	lua_pushnumber(0);
+	lua_pushnumber(0);
+}
+
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -583,7 +603,8 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) },
 	{ "LocalizeString", LUA_OPCODE(Lua_V2, LocalizeString) },
 // PS2:
-	{ "GetMemoryCardId", LUA_OPCODE(Lua_V2, GetMemoryCardId) }
+	{ "GetMemoryCardId", LUA_OPCODE(Lua_V2, GetMemoryCardId) },
+	{ "OverWorldToScreen", LUA_OPCODE(Lua_V2, OverWorldToScreen) }
 };
 
 void Lua_V2::registerOpcodes() {

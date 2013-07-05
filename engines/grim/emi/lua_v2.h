@@ -166,8 +166,10 @@ protected:
 	DECLARE_LUA_OPCODE(GammaEnabled);
 	DECLARE_LUA_OPCODE(FileFindFirst);
 	DECLARE_LUA_OPCODE(WalkActorToAvoiding);
-	DECLARE_LUA_OPCODE(GetMemoryCardId);
 	DECLARE_LUA_OPCODE(LocalizeString);
+	//PS2:
+	DECLARE_LUA_OPCODE(GetMemoryCardId);
+	DECLARE_LUA_OPCODE(OverWorldToScreen);
 };
 
 } // end of namespace Grim
