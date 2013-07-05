@@ -527,7 +527,7 @@ void Gyro::load_a_mouse(byte which) {
 	vmc.ofsx = -mps[which].horzhotspot;
 	vmc.ofsy = -mps[which].verthotspot;
 
-	setminmaxhorzcurspos(mps[which].horzhotspot, 624 + mps[which].horzhotspot);
+	setminmaxhorzcurspos(mps[which].horzhotspot + 3, 624 + mps[which].horzhotspot);
 	setminmaxvertcurspos(mps[which].verthotspot, 199);
 }
 
