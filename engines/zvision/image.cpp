@@ -20,25 +20,34 @@
 *
 */
 
-#ifndef ZVISION_CONSOLE_H
-#define ZVISION_CONSOLE_H
+#include "common/scummsys.h"
 
-#include "gui/debugger.h"
+#include "common/file.h"
+#include "common/system.h"
+
+#include "graphics/decoders/tga.h"
+
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
-	class ZVision;
+void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y, uint32 width, uint32 height) {
+	Common::File file;
 
-	class Console : public GUI::Debugger {
-	public:
-		Console(ZVision *engine);
-		virtual ~Console() {}
+	if (file.open(fileName)) {
+		Graphics::TGADecoder tga;
+		if (!tga.loadStream(file))
+			error("Error while reading TGA image");
+		file.close();
 
-	private:
-		ZVision *_engine;
+		const Graphics::Surface *tgaSurface = tga.getSurface();
 
-		bool cmdLoadImage(int argc, const char **argv);
-	};
+		_system->copyRectToScreen(tgaSurface->pixels, tgaSurface->pitch, x, y, width, height);
+
+		tga.destroy();
+
+		_needsScreenUpdate = true;
+	}
+}
 
 } // End of namespace ZVision
-#endif

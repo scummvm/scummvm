@@ -30,6 +30,17 @@
 namespace ZVision {
 
 	Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
+		DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
+	}
+
+	bool Console::cmdLoadImage(int argc, const char **argv) {
+		if (argc != 6) {
+			DebugPrintf("Use loadimage <fileName> <x> <y> <width> <height> to load an image to the screen");
+			return false;
+		}
+		_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+
+		return true;
 	}
 
 } // End of namespace ZVision
