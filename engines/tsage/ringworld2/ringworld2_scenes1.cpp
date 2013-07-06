@@ -1405,16 +1405,16 @@ void Scene1200::process(Event &event) {
 		case CURSOR_WALK:
 			event.handled = true;
 			if ((event.mousePos.x > 179) && (event.mousePos.x < 210) && (event.mousePos.y > 50) && (event.mousePos.y < 89))
-				startCrawling(1);
+				startCrawling(CRAWL_EAST);
 
 			if ((event.mousePos.x > 109) && (event.mousePos.x < 140) && (event.mousePos.y > 50) && (event.mousePos.y < 89))
-				startCrawling(2);
+				startCrawling(CRAWL_WEST);
 
 			if ((event.mousePos.x > 140) && (event.mousePos.x < 179) && (event.mousePos.y > 89) && (event.mousePos.y < 120))
-				startCrawling(3);
+				startCrawling(CRAWL_SOUTH);
 
 			if ((event.mousePos.x > 140) && (event.mousePos.x < 179) && (event.mousePos.y > 19) && (event.mousePos.y < 50))
-				startCrawling(4);
+				startCrawling(CRAWL_NORTH);
 			break;
 		case CURSOR_USE:
 			if (cellId > 36) {
@@ -1523,19 +1523,19 @@ void Scene1200::process(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_1:
 			warning("FIXME: keycode = 0x4800");
-			startCrawling(4);
+			startCrawling(CRAWL_NORTH);
 			break;
 		case Common::KEYCODE_2:
 			warning("FIXME: keycode = 0x4B00");
-			startCrawling(2);
+			startCrawling(CRAWL_WEST);
 			break;
 		case Common::KEYCODE_3:
 			warning("FIXME: keycode = 0x4D00");
-			startCrawling(1);
+			startCrawling(CRAWL_EAST);
 			break;
 		case Common::KEYCODE_4:
 			warning("FIXME: keycode = 0x5000");
-			startCrawling(3);
+			startCrawling(CRAWL_SOUTH);
 			break;
 		default:
 			event.handled = false;
@@ -1616,12 +1616,12 @@ void Scene1200::saveCharacter(int characterIndex) {
 	SceneExt::saveCharacter(characterIndex);
 }
 
-void Scene1200::startCrawling(int indx) {
+void Scene1200::startCrawling(CrawlDirection dir) {
 	Common::Point cellPos = Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
 	_mazeUI.pixelToCellXY(cellPos);
 
-	switch (indx) {
-	case 1:
+	switch (dir) {
+	case CRAWL_EAST:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(200, 88)) > 36))
 			&& ( ((cellPos.x == 3) && (cellPos.y == 33) && (_field418 != 4))
 				|| ((cellPos.x == 13) && (cellPos.y == 21) && (_field418 != 2))
@@ -1665,7 +1665,7 @@ void Scene1200::startCrawling(int indx) {
 			signal();
 		}
 		break;
-	case 2:
+	case CRAWL_WEST:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(120, 88)) > 36))
 			&& ( ((cellPos.x == 7) && (cellPos.y == 33) && (_field418 != 4))
 				|| ((cellPos.x == 17) && (cellPos.y == 21) && (_field418 != 2))
@@ -1709,7 +1709,7 @@ void Scene1200::startCrawling(int indx) {
 			signal();
 		}
 		break;
-	case 3:
+	case CRAWL_SOUTH:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 110)) > 36))
 			&& ( ((cellPos.x == 17) && (cellPos.y == 5) && (_field418 != 3))
 				|| ((cellPos.x == 41) && (cellPos.y == 21)) )
@@ -1751,7 +1751,7 @@ void Scene1200::startCrawling(int indx) {
 			signal();
 		}
 		break;
-	case 4:
+	case CRAWL_NORTH:
 		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 30)) > 36))
 			&& ( ((cellPos.x == 17) && (cellPos.y == 9) && (_field418 != 3))
 				|| ((cellPos.x == 35) && (cellPos.y == 17)) )

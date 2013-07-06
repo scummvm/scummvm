@@ -118,6 +118,8 @@ public:
 };
 
 class Scene1200 : public SceneExt {
+	enum CrawlDirection { CRAWL_EAST = 1, CRAWL_WEST = 2, CRAWL_SOUTH = 3, CRAWL_NORTH = 4 };
+
 	class LaserPanel: public SceneArea {
 	public:
 		class Jumper : public SceneActorExt {
@@ -160,7 +162,7 @@ public:
 	Scene1200();
 	void synchronize(Serializer &s);
 
-	void startCrawling(int indx);
+	void startCrawling(CrawlDirection dir);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
