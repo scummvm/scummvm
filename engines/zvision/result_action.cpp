@@ -27,6 +27,7 @@
 
 namespace ZVision {
 
+//////////////////////////////////////////////////////////////////////////////
 // ActionAdd
 //////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,7 @@ bool ActionAdd::execute(ZVision *zVision) {
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
 // ActionAssign
 //////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +55,83 @@ bool ActionAssign::execute(ZVision *zVision) {
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionAttenuate
+//////////////////////////////////////////////////////////////////////////////
+
+ActionAttenuate::ActionAttenuate(Common::String line) {
+	sscanf(line.c_str(), ":assign(%u, %hd)", &_key, &_attenuation);
+}
+
+bool ActionAttenuate::execute(ZVision *zVision) {
+	// TODO: Implement
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionChangeLocation
+//////////////////////////////////////////////////////////////////////////////
+
+ActionChangeLocation::ActionChangeLocation(Common::String line) {
+	sscanf(line.c_str(), ":change_location(%c,%c,%2c,%hu)", &_world, &_room, &_nodeview, &_x);
+}
+
+bool ActionChangeLocation::execute(ZVision *zVision) {
+	// TODO: Implement
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionCrossfade
+//////////////////////////////////////////////////////////////////////////////
+
+ActionCrossfade::ActionCrossfade(Common::String line) {
+	sscanf(line.c_str(), 
+           ":crossfade(%u %u %hhu %hhu %hhu %hhu %hu)",
+           &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
+}
+
+bool ActionCrossfade::execute(ZVision *zVision) {
+	// TODO: Implement
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionPreloadAnimation
+//////////////////////////////////////////////////////////////////////////////
+
+ActionPreloadAnimation::ActionPreloadAnimation(Common::String line) {
+	// The two %*hhu are always 0 and dont seem to have a use
+	sscanf(line.c_str(), ":animpreload:%u(%s %*hhu %*hhu %u %hhu)", &_key, &_fileName, &_mask, &_framerate);
+}
+
+bool ActionPreloadAnimation::execute(ZVision *zVision) {
+	// TODO: Implement
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionPlayAnimation
+//////////////////////////////////////////////////////////////////////////////
+
+ActionPlayAnimation::ActionPlayAnimation(Common::String line) {
+	// The two %*hhu are always 0 and dont seem to have a use
+	sscanf(line.c_str(), 
+           ":animplay:%u(%s %u %u %u %u %u %u %hhu %*hhu %*hhu %u %hhu)",
+           &_key, &_x, &_y, &_width, &_height, &_start, &_end, &_loop, &_mask, &_framerate);
+}
+
+bool ActionPlayAnimation::execute(ZVision *zVision) {
+	// TODO: Implement
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionRandom
 //////////////////////////////////////////////////////////////////////////////
 
@@ -63,6 +142,20 @@ ActionRandom::ActionRandom(Common::String line) {
 bool ActionRandom::execute(ZVision *zVision) {
 	uint32 randNumber = zVision->getRandomSource()->getRandomNumber(_max);
 	zVision->getScriptManager()->setStateValue(_key, randNumber);
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionTimer
+//////////////////////////////////////////////////////////////////////////////
+
+ActionTimer::ActionTimer(Common::String line) {
+	sscanf(line.c_str(), ":timer:%u(%hu)", &_key, &_time);
+}
+
+bool ActionTimer::execute(ZVision *zVision) {
+	// TODO: Implement
 	return true;
 }
 

@@ -40,13 +40,6 @@ public:
 
 
 // The different types of actions
-// ADD,
-// ANIM_PLAY,
-// ANIM_PRELOAD,
-// ANIM_UNLOAD,
-// ATTENUATE,
-// ASSIGN,
-// CHANGE_LOCATION,
 // CROSSFADE,
 // DEBUG,
 // DELAY_RENDER,
@@ -76,7 +69,6 @@ public:
 // STOP,
 // STREAM_VIDEO,
 // SYNC_SOUND,
-// TIMER,
 // TTY_TEXT,
 // UNIVERSE_MUSIC,
 
@@ -90,24 +82,6 @@ private:
 	byte _value;
 };
 
-class ActionPlayAnimation : public ResultAction {
-public:
-	ActionPlayAnimation(Common::String line);
-	bool execute(ZVision *zVision);
-};
-
-class ActionPreloadAnimation : public ResultAction {
-public:
-	ActionPreloadAnimation(Common::String line);
-	bool execute(ZVision *zVision);
-};
-
-class ActionAttenuate : public ResultAction {
-public:
-	ActionAttenuate(Common::String line);
-	bool execute(ZVision *zVision);
-};
-
 class ActionAssign : public ResultAction {
 public:
 	ActionAssign(Common::String line);
@@ -118,6 +92,81 @@ private:
 	byte _value;
 };
 
+class ActionAttenuate : public ResultAction {
+public:
+	ActionAttenuate(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	uint32 _key;
+	int16 _attenuation;
+};
+
+class ActionChangeLocation : public ResultAction {
+public:
+	ActionChangeLocation(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	char _world;
+	char _room;
+	char _nodeview[2];
+	int16 _x;
+};
+
+class ActionCrossfade : public ResultAction {
+public:
+	ActionCrossfade(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	uint32 _keyOne;
+	uint32 _keyTwo;
+	byte _oneStartVolume;
+	byte _twoStartVolume;
+	byte _oneEndVolume;
+	byte _twoEndVolume;
+	uint16 _timeInMillis;
+};
+
+class ActionPlayAnimation : public ResultAction {
+public:
+	ActionPlayAnimation(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	uint32 _key;
+	Common::String _fileName;
+	uint32 _x;
+	uint32 _y;
+	uint32 _width;
+	uint32 _height;
+	uint32 _start;
+	uint32 _end;
+	uint32 _mask;
+	byte _framerate;
+	bool _loop;
+};
+
+class ActionPreloadAnimation : public ResultAction {
+public:
+	ActionPreloadAnimation(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	uint32 _key;
+	Common::String _fileName;
+	uint32 _mask;
+	byte _framerate;
+};
+
+// TODO: See if this exists in ZGI. It doesn't in ZNem
+//class ActionUnloadAnimation : public ResultAction {
+//public:
+//	ActionUnloadAnimation(Common::String line);
+//	bool execute(ZVision *zVision);
+//};
+
 class ActionRandom : public ResultAction {
 public:
 	ActionRandom(Common::String line);
@@ -126,6 +175,16 @@ public:
 private:
 	uint32 _key;
 	uint32 _max;
+};
+
+class ActionTimer : public ResultAction {
+public:
+	ActionTimer(Common::String line);
+	bool execute(ZVision *zVision);
+
+private:
+	uint32 _key;
+	uint32 _time;
 };
 
 } // End of namespace ZVision
