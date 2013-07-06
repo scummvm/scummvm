@@ -83,13 +83,6 @@ private:
 	void updateScripts();
 	void updateAnimations(uint32 detaTimeMillis);
 };
- 
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(ZVision *vm) {}
-	virtual ~Console(void) {}
-};
 
 } // End of namespace ZVision
  

@@ -25,6 +25,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/textconsole.h"
 #include "common/error.h"
 #include "common/system.h"
 #include "common/file.h"
@@ -32,10 +33,9 @@
 #include "engines/util.h"
  
 #include "zvision/zvision.h"
+#include "zvision/console.h"
 #include "zvision/script_manager.h"
 #include "zvision/zfs_archive.h"
-
-#include "graphics/decoders/tga.h"
 
 #include "zvision/utility.h"
 
@@ -73,6 +73,7 @@ ZVision::~ZVision() {
 	debug("ZVision::~ZVision");
  
 	// Dispose of resources
+	delete _console;
 	delete _scriptManager;
 	delete _rnd;
  
@@ -124,9 +125,11 @@ Common::Error ZVision::run() {
 		updateScripts();
 		updateAnimations(deltaTime);
 
-		if (_needsScreenUpdate)
-		{
+		
+
+		if (_needsScreenUpdate || _console->isActive()) {
 			_system->updateScreen();
+			_needsScreenUpdate = false;
 		}
 		
 		// Calculate the frame delay based off a desired frame rate

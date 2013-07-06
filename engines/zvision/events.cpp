@@ -22,7 +22,8 @@
 
 #include "common/scummsys.h"
 
-#include "zvision.h"
+#include "zvision/zvision.h"
+#include "zvision/console.h"
 #include "common/EventRecorder.h"
 
 
@@ -50,8 +51,8 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_d:
 				if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
 					// Start the debugger
-					getDebugger()->attach();
-					getDebugger()->onFrame();
+					_console->attach();
+					_console->onFrame();
 				}
 				break;
 
