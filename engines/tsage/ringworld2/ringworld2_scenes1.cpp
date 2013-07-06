@@ -1336,7 +1336,7 @@ void Scene1200::signal() {
 	case 111:
 	// No break on purpose
 	case 116:
-		R2_GLOBALS._player.setup(3157, 3, 1);
+		R2_GLOBALS._player.setup(3157, 4, 1);
 		R2_GLOBALS._player.animate(ANIM_MODE_5, this);
 		break;
 	case 78:
