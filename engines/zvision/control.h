@@ -23,7 +23,7 @@
 #ifndef ZVISION_CONTROL_H
 #define ZVISION_CONTROL_H
 
-#include "common/scummsys.h"
+#include "common/types.h"
 
 namespace ZVision {
 
