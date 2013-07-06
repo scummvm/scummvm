@@ -64,9 +64,9 @@ bool Background::load(MfcArchive &file) {
 	for (int i = 0; i < _bigPictureArray1Count; i++) {
 		_bigPictureArray[i] = (BigPicture **)calloc(_bigPictureArray2Count, sizeof(BigPicture *));
 		for (int j = 0; j < _bigPictureArray2Count; j++) {
-		  _bigPictureArray[i][j] = new BigPicture();
+			_bigPictureArray[i][j] = new BigPicture();
 
-		  _bigPictureArray[i][j]->load(file);
+			_bigPictureArray[i][j]->load(file);
 		}
 	}
 
@@ -80,7 +80,7 @@ void Background::addPictureObject(PictureObject *pct) {
 	bool inserted = false;
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		if (((PictureObject *)_picObjList[i])->_priority == pct->_priority) {
-	  		_picObjList.insert_at(i, pct);
+			_picObjList.insert_at(i, pct);
 			inserted = true;
 			break;
 		}
@@ -92,7 +92,7 @@ void Background::addPictureObject(PictureObject *pct) {
 }
 
 void Background::renumPictures(PictureObject *pct) {
-  int *buf = (int *)calloc(_picObjList.size() + 2, sizeof(int));
+	int *buf = (int *)calloc(_picObjList.size() + 2, sizeof(int));
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		if (pct->_id == ((PictureObject *)_picObjList[i])->_id)
@@ -166,7 +166,7 @@ bool GameObject::load(MfcArchive &file) {
 	_priority = file.readUint16LE();
 
 	if (g_fullpipe->_gameProjectVersion >= 11) {
-	  _field_8 = file.readUint32LE();
+		_field_8 = file.readUint32LE();
 	}
 
 	return true;

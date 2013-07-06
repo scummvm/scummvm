@@ -105,7 +105,7 @@ char *MfcArchive::readPascalString(bool twoByte) {
 }
 
 MemoryObject::MemoryObject() {
-  	_filename = 0;
+	_filename = 0;
 	_field_8 = 0;
 	_field_C = 0;
 	_field_10 = -1;
@@ -169,20 +169,20 @@ int MfcArchive::readCount() {
 }
 
 double MfcArchive::readDouble() {
-  // FIXME: This is utterly cruel and unportable
+	// FIXME: This is utterly cruel and unportable
 
-  union {
-    struct {
-      int32 a;
-      int32 b;
-    } i;
-    double d;
-  } tmp;
+	union {
+		struct {
+			int32 a;
+			int32 b;
+		} i;
+		double d;
+	} tmp;
 
-  tmp.i.a = readUint32LE();
-  tmp.i.b = readUint32LE();
-    
-  return tmp.d;
+	tmp.i.a = readUint32LE();
+	tmp.i.b = readUint32LE();
+
+	return tmp.d;
 }
 
 enum {
@@ -380,7 +380,7 @@ byte *transCyrillic(byte *s) {
 		0xf1, 0xd181, 0xf2, 0xd182, 0xf3, 0xd183, 0xf4, 0xd184,
 		0xf5, 0xd185, 0xf6, 0xd186, 0xf7, 0xd187, 0xf8, 0xd188,
 		0xf9, 0xd189, 0xfa, 0xd18a, 0xfb, 0xd18b, 0xfc, 0xd18c,
-       	  	0xfd, 0xd18d, 0xfe, 0xd18e, 0xff, 0xd18f };
+		0xfd, 0xd18d, 0xfe, 0xd18e, 0xff, 0xd18f };
 
 	int i = 0;
 

@@ -469,82 +469,82 @@ bool CGameVar::load(MfcArchive &file) {
 }
 
 CGameVar *CGameVar::getSubVarByName(const char *name) {
-  CGameVar *sv = 0;
+	CGameVar *sv = 0;
 
-  if (_subVars != 0) {
-    sv = _subVars;
-    for (;sv && scumm_stricmp(sv->_stringObj, name); sv = sv->_nextVarObj)
-      ;
-  }
-  return sv;
+	if (_subVars != 0) {
+		sv = _subVars;
+		for (;sv && scumm_stricmp(sv->_stringObj, name); sv = sv->_nextVarObj)
+			;
+	}
+	return sv;
 }
 
 bool CGameVar::setSubVarAsInt(const char *name, int value) {
-  CGameVar *var = getSubVarByName(name);
+	CGameVar *var = getSubVarByName(name);
 
-  if (var) {
-    if (var->_varType == 0) {
-      var->_value.intValue = value;
+	if (var) {
+		if (var->_varType == 0) {
+			var->_value.intValue = value;
 
-      return true;
-    }
-    return false;
-  }
+			return true;
+		}
+		return false;
+	}
 
-  var = new CGameVar();
-  var->_varType = 0;
-  var->_value.intValue = value;
-  var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
-  strcpy(var->_stringObj, name);
+	var = new CGameVar();
+	var->_varType = 0;
+	var->_value.intValue = value;
+	var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
+	strcpy(var->_stringObj, name);
 
-  return addSubVar(var);
+	return addSubVar(var);
 }
 
 int CGameVar::getSubVarAsInt(const char *name) {
-  CGameVar *var = getSubVarByName(name);
+	CGameVar *var = getSubVarByName(name);
 
-  if (var)
-    return var->_value.intValue;
-  else
-    return 0;
+	if (var)
+		return var->_value.intValue;
+	else
+		return 0;
 }
 
 CGameVar *CGameVar::addSubVarAsInt(const char *name, int value) {
-  if (getSubVarByName(name)) {
-    return 0;
-  } else {
-    CGameVar *var = new CGameVar();
+	if (getSubVarByName(name)) {
+		return 0;
+	} else {
+		CGameVar *var = new CGameVar();
 
-    var->_varType = 0;
-    var->_value.intValue = value;
+		var->_varType = 0;
+		var->_value.intValue = value;
 
-    var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
-    strcpy(var->_stringObj, name);
+		var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
+		strcpy(var->_stringObj, name);
 
-    return (addSubVar(var) != 0) ? var : 0;
-  }
+		return (addSubVar(var) != 0) ? var : 0;
+	}
 }
 
 bool CGameVar::addSubVar(CGameVar *subvar) {
-  CGameVar *var = _subVars;
+	CGameVar *var = _subVars;
 
-  if (var) {
-    for (CGameVar *i = var->_nextVarObj; i; i = i->_nextVarObj)
-      var = i;
+	if (var) {
+		for (CGameVar *i = var->_nextVarObj; i; i = i->_nextVarObj)
+			var = i;
 
-    var->_nextVarObj = subvar;
-    subvar->_prevVarObj = var;
-    subvar->_parentVarObj = var;
-    
-    return true;
-  } else {
-    var->_subVars = subvar;
-    subvar->_parentVarObj = var;
+		var->_nextVarObj = subvar;
+		subvar->_prevVarObj = var;
+		subvar->_parentVarObj = var;
 
-    return true;
-  }
+		return true;
+	} else {
+		var->_subVars = subvar;
+		subvar->_parentVarObj = var;
 
-  return false;
+		return true;
+	}
+
+	return false;
 }
 
 Sc2::Sc2() {
@@ -571,27 +571,27 @@ bool Sc2::load(MfcArchive &file) {
 	_count1 = file.readUint32LE();
 	debug(4, "count1: %d", _count1);
 	if (_count1 > 0) {
-	  _data1 = (int32 *)malloc(_count1 * sizeof(int32));
-	  
-	  for (int i = 0; i < _count1; i++) {
-		_data1[i] = file.readUint32LE();
-	  }
+		_data1 = (int32 *)malloc(_count1 * sizeof(int32));
+
+		for (int i = 0; i < _count1; i++) {
+			_data1[i] = file.readUint32LE();
+		}
 	} else {
-	  _data1 = 0;
+		_data1 = 0;
 	}
 
 	_defPicAniInfosCount = file.readUint32LE();
 	debug(4, "defPicAniInfos: %d", _defPicAniInfosCount);
 	if (_defPicAniInfosCount > 0) {
-	  _defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
+		_defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
 
-	  for (int i = 0; i < _defPicAniInfosCount; i++) {
-		_defPicAniInfos[i] = new PicAniInfo();
+		for (int i = 0; i < _defPicAniInfosCount; i++) {
+			_defPicAniInfos[i] = new PicAniInfo();
 
-		_defPicAniInfos[i]->load(file);
-	  }
+			_defPicAniInfos[i]->load(file);
+		}
 	} else {
-	  _defPicAniInfos = 0;
+		_defPicAniInfos = 0;
 	}
 
 	_picAniInfos = 0;
@@ -601,14 +601,14 @@ bool Sc2::load(MfcArchive &file) {
 	debug(4, "_entranceData: %d", _entranceDataCount);
 
 	if (_entranceDataCount > 0) {
-	  _entranceData = (EntranceInfo **)malloc(_defPicAniInfosCount * sizeof(EntranceInfo *));
+		_entranceData = (EntranceInfo **)malloc(_defPicAniInfosCount * sizeof(EntranceInfo *));
 
-	  for (int i = 0; i < _entranceDataCount; i++) {
-		_entranceData[i] = new EntranceInfo();
-		_entranceData[i]->load(file);
-	  }
+		for (int i = 0; i < _entranceDataCount; i++) {
+			_entranceData[i] = new EntranceInfo();
+			_entranceData[i]->load(file);
+		}
 	} else {
-	  _entranceData = 0;
+		_entranceData = 0;
 	}
 
 	debug(4, "pos: %d, 0x%x: %d", file.size(), file.pos(), file.size() - file.pos());
@@ -617,33 +617,33 @@ bool Sc2::load(MfcArchive &file) {
 }
 
 bool PicAniInfo::load(MfcArchive &file) {
-  type = file.readUint32LE();
-  objectId = file.readUint16LE();
-  field_6 = file.readUint16LE();
-  field_8 = file.readUint32LE();
-  field_C = file.readUint16LE();
-  field_E = file.readUint16LE();
-  ox = file.readUint32LE();
-  oy = file.readUint32LE();
-  priority = file.readUint32LE();
-  staticsId = file.readUint16LE();
-  movementId = file.readUint16LE();
-  dynamicPhaseIndex = file.readUint16LE();
-  flags = file.readUint16LE();
-  field_24 = file.readUint32LE();
-  someDynamicPhaseIndex = file.readUint32LE();
+	type = file.readUint32LE();
+	objectId = file.readUint16LE();
+	field_6 = file.readUint16LE();
+	field_8 = file.readUint32LE();
+	field_C = file.readUint16LE();
+	field_E = file.readUint16LE();
+	ox = file.readUint32LE();
+	oy = file.readUint32LE();
+	priority = file.readUint32LE();
+	staticsId = file.readUint16LE();
+	movementId = file.readUint16LE();
+	dynamicPhaseIndex = file.readUint16LE();
+	flags = file.readUint16LE();
+	field_24 = file.readUint32LE();
+	someDynamicPhaseIndex = file.readUint32LE();
 
-  return true;
+	return true;
 }
 
 bool EntranceInfo::load(MfcArchive &file) {
-  sceneId = file.readUint32LE();
-  field_4 = file.readUint32LE();
-  messageQueueId = file.readUint32LE();
-  file.read(gap_C, 292); // FIXME, Ugh
-  field_130 = file.readUint32LE();
+	sceneId = file.readUint32LE();
+	field_4 = file.readUint32LE();
+	messageQueueId = file.readUint32LE();
+	file.read(gap_C, 292); // FIXME, Ugh
+	field_130 = file.readUint32LE();
 
-  return true;
+	return true;
 }
 
 } // End of namespace Fullpipe

@@ -180,11 +180,10 @@ bool Scene::load(MfcArchive &file) {
 		strcpy(fname, _stringObj);
 		strcpy(strrchr(fname, '.') + 1, "col");
 
-		MemoryObject *col =  new MemoryObject();
+		MemoryObject *col = new MemoryObject();
 		col->loadFile(fname);
 
 		_colorMemoryObj = col;
-	  
 	}
 
 	char *shdname = genFileName(0, _sceneId, "shd");
@@ -203,7 +202,7 @@ bool Scene::load(MfcArchive &file) {
 
 		if (g_fullpipe->_flgSoundList) {
 			char *nlname = genFileName(17, _sceneId, "nl");
-		  
+
 			_soundList->loadFile(slsname, nlname);
 
 			free(nlname);

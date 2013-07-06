@@ -53,7 +53,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		Statics *st = new Statics();
-	  
+
 		st->load(file);
 		_staticsList.push_back(st);
 	}
@@ -62,7 +62,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 	debug(7, "Movements: %d", count);
 
 	for (int i = 0; i < count; i++) {
-	  	int movNum = file.readUint16LE();
+		int movNum = file.readUint16LE();
 
 		char *movname = genFileName(_id, movNum, "mov");
 
