@@ -32,11 +32,13 @@ class SineTableTestSuite : public CxxTest::TestSuite {
 		}
 	}
 
-	void test_for_symmetry() {
+	void test_for_non_redundant() {
 
-		// The table is, by definition of the cos function,
-		// expected to be symmetric around its 2^(p-2)-th point
-		// in the absence of rounding errors.
+		// Computing the sin values by hand from 0 to pi would
+		// normally make them symmetric around pi/2.
+		// We only need the first half, though.
+		// We make sure that the table does NOT revert to 
+		// the old, redundant behavior.
 
 		for (int p = kMinBitPrecision; p <= kMaxBitPrecision; p++) {
 			int entries = 1;
@@ -48,8 +50,31 @@ class SineTableTestSuite : public CxxTest::TestSuite {
 			Common::SineTable st(p);
 			float *table = const_cast<float *>(st.getTable());
 			for (int i = 1; i < half_entries; i++) {
-				TS_ASSERT(table[i] == table[entries - i]);
+				TS_ASSERT(table[i] != table[entries - i]);
+				// This must not be true.
 			}
 		}
 	}
-};
+
+	void test_for_asymmetry() {
+
+		// The second half must mirror the first half - e.g. 
+		// sin(1/10) must be, in the absence of rounding errors,
+		// equal to -sin(pi+1/10)
+
+		for (int p = kMinBitPrecision; p <= kMaxBitPrecision; p++) {
+			int entries = 1;
+			for (int exp = 0; exp < (p - 1); exp++) {
+				entries = entries * 2;
+			}
+			// And now entries = 2^^(p-1)
+			int half_entries = entries / 2;
+			Common::SineTable st(p);
+			float *table = const_cast<float *>(st.getTable());
+			for (int i = 1; i < half_entries; i++) {
+				TS_ASSERT(table[i] == -table[half_entries + i]);
+			}
+		}
+	}
+
+};      
