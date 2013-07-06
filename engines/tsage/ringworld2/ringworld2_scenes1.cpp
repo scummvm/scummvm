@@ -1571,10 +1571,9 @@ void Scene1200::dispatch() {
 			break;
 		}
 		_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
-		warning("int unk = set_pane_p(_paneNumber);");
-		_mazeUI.draw();
-		warning("_gfxManager.sub294AC(unk);");
-		warning("tmpRect.sub14DF3();");
+
+		debug("_gfxManager.sub294AC(unk);");
+		debug("tmpRect.sub14DF3();");
 
 		if (_field416 != 0) {
 			switch(_field412 - 1) {

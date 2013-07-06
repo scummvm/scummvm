@@ -2708,6 +2708,8 @@ void Scene250::signal() {
 	case 7:
 		_field418 = 1;
 		if ((_field414 + 12) == _field412)
+			_sceneMode = 9;
+		else
 			_sceneMode = 8;
 		signal();
 		break;
@@ -3181,8 +3183,9 @@ void Scene300::synchronize(Serializer &s) {
 }
 
 void Scene300::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(300);
+	SceneExt::postInit();
+
 	_sound1.play(23);
 	setZoomPercents(75, 93, 120, 100);
 
