@@ -136,7 +136,6 @@ const int kMenuPlaceStringIndex = 435;
 const int kMenuActionStringIndex = 476;
 const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
-const int kSecretPassageQuestionStringIndex = 510;    // Unused?
 const int kMaxPatt = 20;
 
 const int OPCODE_NONE = 0;
