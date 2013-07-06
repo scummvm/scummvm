@@ -107,9 +107,6 @@ void ZVision::initialize() {
 Common::Error ZVision::run() {
 	initialize();
 
-	dumpEveryResultAction("resultActions.txt");
-	debug("dump finished");
-
 	// Main loop
 	uint32 currentTime = _system->getMillis();
 	uint32 lastTime = currentTime;
@@ -124,8 +121,6 @@ Common::Error ZVision::run() {
 		
 		updateScripts();
 		updateAnimations(deltaTime);
-
-		
 
 		if (_needsScreenUpdate || _console->isActive()) {
 			_system->updateScreen();
