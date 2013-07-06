@@ -868,7 +868,8 @@ Scene1200::Scene1200() {
 	_field416 = 0;
 	_field418 = 0;
 	_field41A = 0;
-	_field41C = 1; //CHECKME: Only if fixup_flag == 6??
+	_fixupMaze = false;
+	_drawMaze = true;
 }
 
 void Scene1200::synchronize(Serializer &s) {
@@ -879,7 +880,8 @@ void Scene1200::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field416);
 	s.syncAsSint16LE(_field418);
 	s.syncAsSint16LE(_field41A);
-	s.syncAsSint16LE(_field41C);
+	s.syncAsSint16LE(_fixupMaze);
+	s.syncAsSint16LE(_drawMaze);
 }
 
 Scene1200::LaserPanel::LaserPanel() {
@@ -1035,6 +1037,7 @@ void Scene1200::LaserPanel::postInit(SceneObjectList *OwnerList) {
 	_jumper3.init(3);
 
 	R2_GLOBALS._player._canWalk = false;
+	scene->_drawMaze = false;
 }
 
 void Scene1200::LaserPanel::remove() {
@@ -1057,6 +1060,7 @@ void Scene1200::LaserPanel::remove() {
 	//
 
 	R2_GLOBALS._player._canWalk = true;
+	scene->_drawMaze = true;
 }
 
 void Scene1200::LaserPanel::process(Event &event) {
@@ -1067,19 +1071,16 @@ void Scene1200::LaserPanel::process(Event &event) {
 
 	if (_actor2._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
 		if (cursor == _cursorNum) {
-			warning("TODO: _cursorState = ???");
-			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
 		}
 	} else if (event.mousePos.y < 168) {
 		if (cursor != _cursorNum) {
 			_savedCursorNum = cursor;
-			warning("TODO: _cursorState = ???");
 			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
 		}
 		if (event.eventType == EVENT_BUTTON_DOWN) {
 			event.handled = true;
-			warning("TODO: _cursorState = ???");
-			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
 			remove();
 		}
 	}
@@ -1114,7 +1115,6 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	_field416 = 0;
 	_field418 = 0;
 	_field41A = 0;
-	_field41C = 0;
 
 	if ((R2_GLOBALS._v56AA6 == 1) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 1))
 		_field418 = 1;
@@ -1139,9 +1139,7 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 
 	_mazeUI.load(1);
 	_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
-	warning("int unk = set_pane_p(_paneNumber);");
 	_mazeUI.draw();
-	warning("set_pane_p(unk);");
 
 	R2_GLOBALS._player.enableControl();
 	_item1.setDetails(Rect(0, 0, 320, 200), 1200, 0, 1, 2, 1, NULL);
@@ -1550,15 +1548,18 @@ void Scene1200::process(Event &event) {
 void Scene1200::dispatch() {
 	Rect tmpRect;
 	Scene::dispatch();
-	if (_field41C != 0) {
+
+	if (_fixupMaze) {
 		_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 		_mazeUI.draw();
 
 		warning("_gfxManager.sub294AC(unk);");
 		warning("tmpRect.sub14DF3();");
-		_field41C = 0;
+		_fixupMaze = false;
 	}
-		_mazeUI.draw(); //**DEBUG**
+
+	if (_drawMaze)
+		_mazeUI.draw();
 
 	if (_field414 != 0) {
 		tmpRect.set(110, 20, 210, 120);

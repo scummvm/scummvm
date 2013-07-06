@@ -472,11 +472,13 @@ class Visage {
 private:
 	byte *_data;
 
-	void flip(GfxSurface &s);
+	void flipHorizontal(GfxSurface &s);
+	void flipVertical(GfxSurface &s);
 public:
 	int _resNum;
 	int _rlbNum;
 	bool _flipHoriz;
+	bool _flipVert;
 public:
 	Visage();
 	Visage(const Visage &v);

@@ -3105,6 +3105,7 @@ Visage::Visage() {
 	_rlbNum = -1;
 	_data = NULL;
 	_flipHoriz = false;
+	_flipVert = false;
 }
 
 Visage::Visage(const Visage &v) {
@@ -3114,6 +3115,7 @@ Visage::Visage(const Visage &v) {
 	if (_data)
 		g_vm->_memoryManager.incLocks(_data);
 	_flipHoriz = false;
+	_flipVert = false;
 }
 
 Visage &Visage::operator=(const Visage &s) {
@@ -3157,6 +3159,7 @@ void Visage::setVisage(int resNum, int rlbNum) {
 					rlbNum = (int)(v & 0xff);
 				}
 				_flipHoriz = flags & 1;
+				_flipVert = flags & 2;
 
 				_data = g_resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 
@@ -3183,7 +3186,9 @@ GfxSurface Visage::getFrame(int frameNum) {
 	byte *frameData = _data + offset;
 
 	GfxSurface result = surfaceFromRes(frameData);
-	if (_flipHoriz) flip(result);
+	if (_flipHoriz) flipHorizontal(result);
+	if (_flipVert) flipVertical(result);
+
 	return result;
 }
 
@@ -3191,7 +3196,7 @@ int Visage::getFrameCount() const {
 	return READ_LE_UINT16(_data);
 }
 
-void Visage::flip(GfxSurface &gfxSurface) {
+void Visage::flipHorizontal(GfxSurface &gfxSurface) {
 	Graphics::Surface s = gfxSurface.lockSurface();
 
 	for (int y = 0; y < s.h; ++y) {
@@ -3199,6 +3204,21 @@ void Visage::flip(GfxSurface &gfxSurface) {
 		byte *lineP = (byte *)s.getBasePtr(0, y);
 		for (int x = 0; x < (s.w / 2); ++x)
 			SWAP(lineP[x], lineP[s.w - x - 1]);
+	}
+
+	gfxSurface.unlockSurface();
+}
+
+void Visage::flipVertical(GfxSurface &gfxSurface) {
+	Graphics::Surface s = gfxSurface.lockSurface();
+
+	for (int y = 0; y < s.h / 2; ++y) {
+		// Flip the lines1
+		byte *line1P = (byte *)s.getBasePtr(0, y);
+		byte *line2P = (byte *)s.getBasePtr(0, s.h - y - 1);
+		
+		for (int x = 0; x < s.w; ++x)
+			SWAP(line1P[x], line2P[x]);
 	}
 
 	gfxSurface.unlockSurface();
