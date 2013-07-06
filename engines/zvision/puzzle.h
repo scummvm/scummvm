@@ -25,7 +25,7 @@
 
 #include "common/list.h"
 
-#include "zvision/result_action.h"
+#include "zvision/actions.h"
 
 namespace ZVision {
 
