@@ -46,7 +46,7 @@ void ScriptManager::parseScrFile(Common::String fileName) {
 			return;
 		}
 
-		trimCommentsAndWhiteSpace(line);
+		trimCommentsAndWhiteSpace(&line);
 		if (line.empty())
 			continue;
 
@@ -69,7 +69,7 @@ void ScriptManager::parseScrFile(Common::String fileName) {
 
 void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stream) {
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(line);
+	trimCommentsAndWhiteSpace(&line);
 
 	while (!line.contains('}')) {
 		if (line.matchString("criteria {", true))
@@ -86,7 +86,7 @@ Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const 
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(line);
+	trimCommentsAndWhiteSpace(&line);
 
 	while (!line.contains('}')) {
 		// Split the string into tokens using ' ' as a delimiter
@@ -120,7 +120,7 @@ Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const 
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(line);
+		trimCommentsAndWhiteSpace(&line);
 	}
 
 	return criteria;
@@ -129,7 +129,7 @@ Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const 
 void ScriptManager::parseResult(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(line);
+	trimCommentsAndWhiteSpace(&line);
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
 	while (!line.contains('}')) {
@@ -253,7 +253,7 @@ void ScriptManager::parseResult(Common::SeekableReadStream &stream, Common::List
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(line);
+		trimCommentsAndWhiteSpace(&line);
 	}
 
 	return;
@@ -264,7 +264,7 @@ byte ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(line);
+	trimCommentsAndWhiteSpace(&line);
 
 	while (!line.contains('}')) {
 		if (line.matchString("ONCE_PER_INST", true)) {

@@ -59,14 +59,15 @@ void writeFileContentsToFile(Common::String sourceFile, Common::String destFile)
  *
  * @param string    The string to modify. It is modified in place
  */
-void trimCommentsAndWhiteSpace(Common::String &string) {
-	for (int i = string.size(); i >= 0; --i) {
-		if (string[i] == '#') {
-			string.erase(i);
+void trimCommentsAndWhiteSpace(Common::String *string) {
+	for (int i = string->size() - 1; i >= 0; i--) {
+		if ((*string)[i] == '#') {
+			string->erase(i);
 		}
 	}
 
-	string.trim();
+	string->trim();
+}
 }
 
 } // End of namespace ZVision
