@@ -88,8 +88,10 @@ class PictureObject : public GameObject {
 };
 
 class Background : public CObject {
-  protected:
+  public:
 	CPtrList _picObjList;
+
+  protected:
 	char *_stringObj;
 	int _x;
 	int _y;

@@ -44,7 +44,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 		_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
 		_inventory->addItem(ANI_INV_MAP, 1);
 
-#if 1
+#if 0
 		g_fullpipe->accessScene(301);
 		g_fullpipe->accessScene(302);
 		g_fullpipe->accessScene(303);
@@ -100,6 +100,9 @@ bool FullpipeEngine::loadGam(const char *fname) {
 #endif
 
 		_inventory->rebuildItemRects();
+
+		for (CPtrList::iterator s = _inventory->getScene()->_picObjList.begin(); s != _inventory->getScene()->_picObjList.end(); ++s) {
+		}
 		
 		warning("STUB: loadGam()");
 	} else

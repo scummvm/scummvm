@@ -72,7 +72,7 @@ bool CInventory::setItemFlags(int itemId, int flags) {
 CInventory2::CInventory2() {
 	_selectedId = -1;
 	_field_48 = -1;
-	_sceneObj = 0;
+	_scene = 0;
 	_picture = 0;
 	_isInventoryOut = 0;
 	_isLocked = 0;

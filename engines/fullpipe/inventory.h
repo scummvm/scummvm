@@ -88,7 +88,7 @@ class CInventory2 : public CInventory {
 	int _isInventoryOut;
 	int _isLocked;
 	int _topOffset;
-	Scene *_sceneObj;
+	Scene *_scene;
 	BigPicture *_picture;
 
  public:
@@ -96,6 +96,9 @@ class CInventory2 : public CInventory {
 	bool loadPartial(MfcArchive &file);
 	void addItem(int itemId, int value);
 	void rebuildItemRects();
+
+	Scene *getScene() { return _scene; }
+
 };
 
 } // End of namespace Fullpipe
