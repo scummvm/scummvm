@@ -280,12 +280,10 @@ enum MazeDirection { MAZEDIR_NONE = 0, MAZEDIR_NORTH = 1, MAZEDIR_NORTHEAST = 2,
 	MAZEDIR_SOUTHEAST = 4, MAZEDIR_SOUTH = 5, MAZEDIR_SOUTHWEST = 6, MAZEDIR_WEST = 7,
 	MAZEDIR_NORTHWEST = 8 };
 
-class MazeUI: public SavedObject {
+class MazeUI: public SceneObject {
 private:
 	void clear();
 public:
-	// Position on screen to show map
-	Rect _displayBounds;
 	// The dimensions (in cells) of the entire maze map
 	Rect _mapBounds;
 
@@ -307,16 +305,18 @@ public:
 public:
 	MazeUI();
 	virtual ~MazeUI();
+
 	void setDisplayBounds(const Rect &r);
 	bool setMazePosition(const Common::Point &pt);
 	void load(int resNum);
-	void draw();
 	int getCellFromPixelXY(const Common::Point &pt);
 	int getCellFromCellXY(const Common::Point &p);
 	int pixelToCellXY(Common::Point &pt);
 
 	virtual Common::String getClassName() { return "MazeUI"; }
 	void synchronize(Serializer &s);
+	virtual void reposition();
+	virtual void draw();
 };
 
 class SceneAreaObject: public SceneArea {

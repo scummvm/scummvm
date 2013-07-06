@@ -158,7 +158,6 @@ public:
 	int _field418;
 	int _field41A;
 	bool _fixupMaze;
-	bool _drawMaze;
 
 	Scene1200();
 	void synchronize(Serializer &s);

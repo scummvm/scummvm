@@ -1303,6 +1303,7 @@ void MazeUI::synchronize(Serializer &s) {
 }
 
 void MazeUI::load(int resNum) {
+	postInit();
 	clear();
 	_resNum = resNum;
 
@@ -1324,8 +1325,8 @@ void MazeUI::load(int resNum) {
 	_mapData = g_resourceManager->getResource(RT17, resNum, 1);
 
 	_mapOffset.y = _mapOffset.x = 0;
-	_cellsVisible.x = (_displayBounds.width() + _cellSize.x - 1) / _cellSize.x;
-	_cellsVisible.y = (_displayBounds.height() + _cellSize.y - 1) / _cellSize.y;
+	_cellsVisible.x = (_bounds.width() + _cellSize.x - 1) / _cellSize.x;
+	_cellsVisible.y = (_bounds.height() + _cellSize.y - 1) / _cellSize.y;
 
 	_mapImagePitch = (_cellsVisible.x + 1) * _cellSize.x;
 	_mapImage.create(_mapImagePitch, _cellSize.y);
@@ -1359,17 +1360,20 @@ bool MazeUI::setMazePosition(const Common::Point &pt) {
 		retval = true;
 	}
 
-	if (_mapOffset.x + _displayBounds.width() > _mapBounds.right) {
-		_mapOffset.x = _mapBounds.right - _displayBounds.width();
+	if (_mapOffset.x + _bounds.width() > _mapBounds.right) {
+		_mapOffset.x = _mapBounds.right - _bounds.width();
 		retval = true;
 	}
 
-	if (_mapOffset.y + _displayBounds.height() > _mapBounds.bottom) {
-		_mapOffset.y = _mapBounds.bottom - _displayBounds.height();
+	if (_mapOffset.y + _bounds.height() > _mapBounds.bottom) {
+		_mapOffset.y = _mapBounds.bottom - _bounds.height();
 		retval = true;
 	}
 
 	return retval;
+}
+
+void MazeUI::reposition() {
 }
 
 void MazeUI::draw() {
@@ -1377,7 +1381,7 @@ void MazeUI::draw() {
 	int ySize;
 	Visage visage;
 
-	_cellsVisible.y = ((_mapOffset.y % _cellSize.y) + _displayBounds.height() +
+	_cellsVisible.y = ((_mapOffset.y % _cellSize.y) + _bounds.height() +
 		(_cellSize.y - 1)) / _cellSize.y;
 
 	// Loop to handle the cell rows of the visible display area one at a time
@@ -1411,24 +1415,24 @@ void MazeUI::draw() {
 		if (yPos == 0) {
 			// First line of the map to be displayed - only the bottom portion of that
 			// first cell row may be visible
-			yPos = _displayBounds.top;
+			yPos = _bounds.top;
 			ySize = _cellSize.y - (_mapOffset.y % _cellSize.y); 
 
 			Rect srcBounds(_mapOffset.x % _cellSize.x, _mapOffset.y % _cellSize.y,
-				(_mapOffset.x % _cellSize.x) + _displayBounds.width(), _cellSize.y);
-			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + ySize);
+				(_mapOffset.x % _cellSize.x) + _bounds.width(), _cellSize.y);
+			Rect destBounds(_bounds.left, yPos, _bounds.right, yPos + ySize);
 
 			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
 		} else {
-			if ((yPos + _cellSize.y) < _displayBounds.bottom) {
+			if ((yPos + _cellSize.y) < _bounds.bottom) {
 				ySize = _cellSize.y;
 			} else {
-				ySize = _displayBounds.bottom - yPos;
+				ySize = _bounds.bottom - yPos;
 			}
 
 			Rect srcBounds(_mapOffset.x % _cellSize.x, 0,
-				(_mapOffset.x % _cellSize.x) + _displayBounds.width(), ySize);
-			Rect destBounds(_displayBounds.left, yPos, _displayBounds.right, yPos + ySize);
+				(_mapOffset.x % _cellSize.x) + _bounds.width(), ySize);
+			Rect destBounds(_bounds.left, yPos, _bounds.right, yPos + ySize);
 
 			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
 		}
@@ -1436,11 +1440,11 @@ void MazeUI::draw() {
 }
 
 int MazeUI::getCellFromPixelXY(const Common::Point &pt) {
-	if (!_displayBounds.contains(pt))
+	if (!_bounds.contains(pt))
 		return -1;
 
-	int cellX = (pt.x - _displayBounds.left + _mapOffset.x) / _cellSize.x;
-	int cellY = (pt.y - _displayBounds.top + _mapOffset.y) / _cellSize.y;
+	int cellX = (pt.x - _bounds.left + _mapOffset.x) / _cellSize.x;
+	int cellY = (pt.y - _bounds.top + _mapOffset.y) / _cellSize.y;
 
 	if ((cellX >= 0) && (cellY >= 0) && (cellX < _mapCells.x) && (cellY < _mapCells.y))
 		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * cellY + cellX) * 2);
@@ -1468,8 +1472,8 @@ int MazeUI::pixelToCellXY(Common::Point &pt) {
 }
 
 void MazeUI::setDisplayBounds(const Rect &r) {
-	_displayBounds = r;
-	_displayBounds.clip(g_globals->gfxManager()._bounds);
+	_bounds = r;
+	_bounds.clip(g_globals->gfxManager()._bounds);
 }
 
 /*--------------------------------------------------------------------------*/
