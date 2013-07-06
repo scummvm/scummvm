@@ -37,7 +37,7 @@
 
 #include "graphics/decoders/tga.h"
 
-#include "zvision/tests.h"
+#include "zvision/utility.h"
 
 namespace ZVision {
  
@@ -106,7 +106,8 @@ void ZVision::initialize() {
 Common::Error ZVision::run() {
 	initialize();
 
-	tests();
+	dumpEveryResultAction("resultActions.txt");
+	debug("dump finished");
 
 	// Main loop
 	uint32 currentTime = _system->getMillis();
