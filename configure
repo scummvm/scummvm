@@ -900,6 +900,10 @@ Optional Features:
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
+  --enable-vkeybd          build virtual keyboard support
+  --enable-keymapper       build key mapper support
+  --enable-eventrecorder   enable event recording functionality
+  --disable-eventrecorder  disable event recording functionality
   --enable-updates         build support for updates
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
