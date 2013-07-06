@@ -2724,7 +2724,9 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 }
 
 void SceneObject::setup(int visage, int stripFrameNum, int frameNum) {
-	postInit();
+	if (g_vm->getGameID() != GType_Ringworld2)
+		postInit();
+
 	setVisage(visage);
 	setStrip(stripFrameNum);
 	setFrame(frameNum);
