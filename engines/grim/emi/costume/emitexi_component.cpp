@@ -32,30 +32,30 @@
 
 namespace Grim {
 
-	EMITexiComponent::EMITexiComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag) : Component(parent, parentID, filename, tag) {
-	}
+EMITexiComponent::EMITexiComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag) : Component(parent, parentID, filename, tag) {
+}
 
-	EMITexiComponent::~EMITexiComponent() {
-	}
+EMITexiComponent::~EMITexiComponent() {
+}
 
-	void EMITexiComponent::init() {
-		EMICostume *c = static_cast<EMICostume *>(_cost);
-		_mat = c->findSharedMaterial(_name);
-	}
+void EMITexiComponent::init() {
+	EMICostume *c = static_cast<EMICostume *>(_cost);
+	_mat = c->findSharedMaterial(_name);
+}
 
-	int EMITexiComponent::update(uint time) {
-		return 0;
-	}
+int EMITexiComponent::update(uint time) {
+	return 0;
+}
 
-	void EMITexiComponent::setKey(int k) {
-		if (_mat)
-			_mat->setActiveTexture(k);
-	}
+void EMITexiComponent::setKey(int k) {
+	if (_mat)
+		_mat->setActiveTexture(k);
+}
 
-	void EMITexiComponent::reset() {
-	}
+void EMITexiComponent::reset() {
+}
 
-	void EMITexiComponent::draw() {
-	}
+void EMITexiComponent::draw() {
+}
 
 } // end of namespace Grim
