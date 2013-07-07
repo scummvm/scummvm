@@ -1744,8 +1744,8 @@ if test "$have_gcc" = yes ; then
 			amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
 				;;
 			*)
-			CXXFLAGS="$CXXFLAGS -ansi"
-			;;
+				CXXFLAGS="$CXXFLAGS -ansi"
+				;;
 			esac
 		fi
 		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
@@ -2556,6 +2556,7 @@ if test -n "$_host"; then
 			if test "$_optimizations" = yes; then
 				_optimization_level=-O3
 			fi
+
 			define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 			CXXFLAGS="$CXXFLAGS -march=armv7-a"
 			CXXFLAGS="$CXXFLAGS -mtune=cortex-a8"
@@ -2866,7 +2867,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | webos | tizen | wii)
+	android | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
