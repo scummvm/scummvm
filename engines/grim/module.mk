@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	emi/sound/codecs/scx.o \
 	emi/animationemi.o \
 	emi/costumeemi.o \
+	emi/emi.o \
 	emi/modelemi.o \
 	emi/skeleton.o \
 	emi/poolsound.o \
