@@ -1849,13 +1849,13 @@ void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 	uint16 oct, ocd;
 
 	/* 5-8 */
-	oct = _inpBuffer[idx];
+	oct = _dialogIndexArray[idx];
 	oct = ((uint16)(oct << (16 - pt))) >> (16 - pt);
 	if (pt < 6) {
 		++idx;
 		oct = oct << (5 - pt);
 		pt += 11;
-		oct = oct | ((uint)_inpBuffer[idx] >> pt);
+		oct = oct | ((uint)_dialogIndexArray[idx] >> pt);
 	} else {
 		pt -= 5;
 		oct = (uint)oct >> pt;
@@ -1865,13 +1865,13 @@ void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 		c = '$';
 		the_end = true;
 	} else if (oct == 30 || oct == 31) {
-		ocd = _inpBuffer[idx];
+		ocd = _dialogIndexArray[idx];
 		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
 			++idx;
 			ocd = ocd << (5 - pt);
 			pt += 11;
-			ocd = ocd | ((uint)_inpBuffer[idx] >> pt);
+			ocd = ocd | ((uint)_dialogIndexArray[idx] >> pt);
 		} else {
 			pt -= 5;
 			ocd = (uint)ocd >> pt;
@@ -1903,8 +1903,8 @@ Common::String MortevielleEngine::getString(int num) {
 	} else if (!_txxFileFl) {
 		wrkStr = getGameString(num);
 	} else {
-		int hint = _ntpBuffer[num]._hintId;
-		byte point = _ntpBuffer[num]._point;
+		int hint = _dialogHintArray[num]._hintId;
+		byte point = _dialogHintArray[num]._point;
 		int length = 0;
 		bool endFl = false;
 		char let;
@@ -2116,20 +2116,20 @@ void MortevielleEngine::loadTexts() {
 		return;
 	}
 
-	if ((inpFile.size() > (kMaxTi * 2)) || (ntpFile.size() > (kMaxTd * 3))) {
+	if ((inpFile.size() > (kMaxDialogIndex * 2)) || (ntpFile.size() > (kMaxDialogHint * 3))) {
 		warning("TXX file - Unexpected format - Switching to DAT file");
 		return;
 	}
 
 	for (int i = 0; i < inpFile.size() / 2; ++i)
-		_inpBuffer[i] = inpFile.readUint16LE();
+		_dialogIndexArray[i] = inpFile.readUint16LE();
 
 	inpFile.close();
 	_txxFileFl = true;
 
 	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
-		_ntpBuffer[i]._hintId = ntpFile.readSint16LE();
-		_ntpBuffer[i]._point = ntpFile.readByte();
+		_dialogHintArray[i]._hintId = ntpFile.readSint16LE();
+		_dialogHintArray[i]._point = ntpFile.readByte();
 	}
 
 	ntpFile.close();
