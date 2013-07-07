@@ -52,7 +52,7 @@ struct Criteria {
 	bool isArgumentAnId;
 };
 
-enum StateFlags : byte {
+enum StateFlags {
 	ONCE_PER_INST = 0x01,
 	DO_ME_NOW = 0x02,
 	DISABLED = 0x04
