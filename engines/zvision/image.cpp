@@ -28,25 +28,55 @@
 #include "graphics/decoders/tga.h"
 
 #include "zvision/zvision.h"
+#include "zvision/lzss_read_stream.h"
 
 namespace ZVision {
 
-void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y, uint32 width, uint32 height) {
+void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y) {
 	Common::File file;
 
 	if (file.open(fileName)) {
-		Graphics::TGADecoder tga;
-		if (!tga.loadStream(file))
-			error("Error while reading TGA image");
-		file.close();
+		// Read the magic number
+		// Some files are true TGA, while others are TGZ
+		char fileType[4];
+		file.read(fileType, 4);
 
-		const Graphics::Surface *tgaSurface = tga.getSurface();
+		// Check for true TGA files
+		if (fileType[0] == 'T' && fileType[1] == 'G' && fileType[2] == 'A' && fileType[3] == '\0') {
+			// Reset the cursor
+			file.seek(0);
 
-		_system->copyRectToScreen(tgaSurface->pixels, tgaSurface->pitch, x, y, width, height);
+			// Decode
+			Graphics::TGADecoder tga;
+			if (!tga.loadStream(file))
+				error("Error while reading TGA image");
+			file.close();
 
-		tga.destroy();
+			const Graphics::Surface *tgaSurface = tga.getSurface();
+
+			_system->copyRectToScreen(tgaSurface->pixels, tgaSurface->pitch, x, y, tgaSurface->w, tgaSurface->h);
+
+			tga.destroy();
+		} else {
+			// TGZ files have a header and then Bitmap data that is compressed with LZSS
+			uint32 decompressedSize = file.readSint32LE();
+			uint32 width = file.readSint32LE();
+			uint32 height = file.readSint32LE();
+
+			LzssReadStream stream(&file, false, decompressedSize);
+			byte *buffer = new byte[stream.currentSize()];
+			stream.read(buffer, stream.currentSize());
+
+			//Graphics::PixelFormat format(16, 5, 6, 5, 0, 11, 5, 0, 0);
+			// Graphics::PixelFormat format(16, 5, 5, 5, 1, 11, 6, 1, 0);
+
+			_system->copyRectToScreen(buffer, width * 2, x, y, width, height);
+		}
+		
 
 		_needsScreenUpdate = true;
+	} else {
+		error("Could not open file %s", fileName.c_str());
 	}
 }
 

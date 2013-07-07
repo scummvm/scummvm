@@ -34,11 +34,11 @@ namespace ZVision {
 	}
 
 	bool Console::cmdLoadImage(int argc, const char **argv) {
-		if (argc != 6) {
-			DebugPrintf("Use loadimage <fileName> <x> <y> <width> <height> to load an image to the screen");
+		if (argc != 4) {
+			DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen");
 			return false;
 		}
-		_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+		_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
 
 		return true;
 	}

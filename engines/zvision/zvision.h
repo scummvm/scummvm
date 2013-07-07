@@ -71,7 +71,7 @@ public:
 	virtual Common::Error run();
 	ScriptManager *getScriptManager() const;
 	Common::RandomSource *getRandomSource() const;
-	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y, uint32 width, uint32 height);
+	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
 
 private:
 	void initialize();
