@@ -34,6 +34,11 @@ public:
 	EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language);
 	virtual ~EMIEngine();
 
+	void pushText(Common::List<TextObject *> *objects);
+	Common::List<TextObject *> *popText();
+
+private:
+	Common::List<Common::List<TextObject *> *> _textstack;
 };
 
 extern EMIEngine *g_emi;

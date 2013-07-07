@@ -33,8 +33,19 @@ EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Com
 	g_emi = this;
 }
 
+
 EMIEngine::~EMIEngine() {
 	g_emi = NULL;
+}
+
+void EMIEngine::pushText(Common::List<TextObject *> *objects) {
+	_textstack.push_back(objects);
+}
+
+Common::List<TextObject *> *EMIEngine::popText() {
+	Common::List<TextObject *> *object = _textstack.front();
+	_textstack.pop_front();
+	return object;
 }
 
 } // end of namespace Grim
