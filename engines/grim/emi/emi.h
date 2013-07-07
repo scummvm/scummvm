@@ -38,6 +38,7 @@ public:
 	Common::List<TextObject *> *popText();
 
 private:
+	LuaBase *createLua();
 	Common::List<Common::List<TextObject *> *> _textstack;
 };
 

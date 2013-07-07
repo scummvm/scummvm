@@ -22,6 +22,7 @@
 
 
 #include "engines/grim/emi/emi.h"
+#include "engines/grim/emi/lua_v2.h"
 
 
 namespace Grim {
@@ -36,6 +37,10 @@ EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Com
 
 EMIEngine::~EMIEngine() {
 	g_emi = NULL;
+}
+
+LuaBase *EMIEngine::createLua() {
+	return new Lua_V2();
 }
 
 void EMIEngine::pushText(Common::List<TextObject *> *objects) {
