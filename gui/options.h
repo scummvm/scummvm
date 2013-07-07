@@ -32,6 +32,10 @@
 #include "gui/KeysDialog.h"
 #endif
 
+#ifdef USE_FLUIDSYNTH
+#include "gui/fluidsynth-dialog.h"
+#endif
+
 namespace GUI {
 
 class CheckboxWidget;
@@ -104,7 +108,7 @@ private:
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_aspectCheckbox;
-	CheckboxWidget *_softwareRenderingCheckbox;
+	CheckboxWidget *_softwareRenderingCheckbox; // ResidualVM specific
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
 
@@ -208,6 +212,9 @@ public:
 protected:
 #ifdef SMALL_SCREEN_DEVICE
 	KeysDialog *_keysDialog;
+#endif
+#ifdef USE_FLUIDSYNTH
+	FluidSynthSettingsDialog *_fluidSynthSettingsDialog;
 #endif
 	StaticTextWidget *_savePath;
 	ButtonWidget	 *_savePathClearButton;

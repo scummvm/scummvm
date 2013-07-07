@@ -124,7 +124,7 @@ public:
 		LINK_PLUGIN(MT32)
 		#endif
 		LINK_PLUGIN(ADLIB)
-//ResidualVM: disabled belows
+//ResidualVM: disabled belows:
 //		LINK_PLUGIN(PCSPK)
 //		LINK_PLUGIN(PCJR)
 //		LINK_PLUGIN(CMS)
@@ -133,8 +133,8 @@ public:
 		#endif
 		#ifndef DISABLE_SID
 //		LINK_PLUGIN(C64)
-//		LINK_PLUGIN(AMIGA)
 		#endif
+//		LINK_PLUGIN(AMIGA)
 //		LINK_PLUGIN(APPLEIIGS)
 //		LINK_PLUGIN(TOWNS)
 //		LINK_PLUGIN(PC98)

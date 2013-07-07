@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -29,6 +29,7 @@ Poly::Poly(Part *usePart) {
 		partials[i] = NULL;
 	}
 	state = POLY_Inactive;
+	next = NULL;
 }
 
 void Poly::reset(unsigned int newKey, unsigned int newVelocity, bool newSustain, Partial **newPartials) {
@@ -172,6 +173,14 @@ void Poly::partialDeactivated(Partial *partial) {
 		state = POLY_Inactive;
 	}
 	part->partialDeactivated(this);
+}
+
+Poly *Poly::getNext() {
+	return next;
+}
+
+void Poly::setNext(Poly *poly) {
+	next = poly;
 }
 
 }

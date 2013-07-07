@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "gui/EventRecorder.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -253,11 +254,12 @@ Dialog *GuiManager::getTopDialog() const {
 void GuiManager::runLoop() {
 	Dialog * const activeDialog = getTopDialog();
 	bool didSaveState = false;
-	int button;
-	uint32 time;
 
 	if (activeDialog == 0)
 		return;
+
+	// Suspend recording while GUI is shown
+	g_eventRec.suspendRecording();
 
 	if (!_stateIsSaved) {
 		saveState();
@@ -296,10 +298,10 @@ void GuiManager::runLoop() {
 //		_theme->updateScreen();
 //		_system->updateScreen();
 
-		if (lastRedraw + waitTime < _system->getMillis()) {
+		if (lastRedraw + waitTime < _system->getMillis(true)) {
 			_theme->updateScreen();
 			_system->updateScreen();
-			lastRedraw = _system->getMillis();
+			lastRedraw = _system->getMillis(true);
 		}
 
 		Common::Event event;
@@ -314,72 +316,21 @@ void GuiManager::runLoop() {
 			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;
 
-			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+			processEvent(event, activeDialog);
 
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				activeDialog->handleKeyDown(event.kbd);
-				break;
-			case Common::EVENT_KEYUP:
-				activeDialog->handleKeyUp(event.kbd);
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
-
-				if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
-					_lastMousePosition.x = mouse.x;
-					_lastMousePosition.y = mouse.y;
-					_lastMousePosition.time = _system->getMillis();
-				}
-
+			if (event.type == Common::EVENT_MOUSEMOVE) {
 				tooltipCheck = true;
-				break;
-			// We don't distinguish between mousebuttons (for now at least)
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_RBUTTONDOWN:
-				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
-				time = _system->getMillis();
-				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-							&& ABS(_lastClick.x - event.mouse.x) < 3
-							&& ABS(_lastClick.y - event.mouse.y) < 3) {
-					_lastClick.count++;
-				} else {
-					_lastClick.x = event.mouse.x;
-					_lastClick.y = event.mouse.y;
-					_lastClick.count = 1;
-				}
-				_lastClick.time = time;
-				activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
-				break;
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONUP:
-				button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
-				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
-				break;
-			case Common::EVENT_WHEELUP:
-				activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
-				break;
-			case Common::EVENT_WHEELDOWN:
-				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
-				break;
-			case Common::EVENT_SCREEN_CHANGED:
-				screenChange();
-				break;
-			default:
-#ifdef ENABLE_KEYMAPPER
-				activeDialog->handleOtherEvent(event);
-#endif
-				break;
 			}
 
-			if (lastRedraw + waitTime < _system->getMillis()) {
+
+			if (lastRedraw + waitTime < _system->getMillis(true)) {
 				_theme->updateScreen();
 				_system->updateScreen();
-				lastRedraw = _system->getMillis();
+				lastRedraw = _system->getMillis(true);
 			}
 		}
 
-		if (tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis()) {
+		if (tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
 			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)) {
 				Tooltip *tooltip = new Tooltip();
@@ -409,6 +360,9 @@ void GuiManager::runLoop() {
 		restoreState();
 		_useStdCursor = false;
 	}
+
+	// Resume recording once GUI is shown
+	g_eventRec.resumeRecording();
 }
 
 #pragma mark -
@@ -492,7 +446,7 @@ void GuiManager::setupCursor() {
 // very much. We could plug in a different cursor here if we like to.
 
 void GuiManager::animateCursor() {
-	int time = _system->getMillis();
+	int time = _system->getMillis(true);
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		for (int i = 0; i < 15; i++) {
 			if ((i < 6) || (i > 8)) {
@@ -535,6 +489,66 @@ void GuiManager::screenChange() {
 	_redrawStatus = kRedrawFull;
 	redraw();
 	_system->updateScreen();
+}
+
+void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDialog) {
+	int button;
+	uint32 time;
+	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		activeDialog->handleKeyDown(event.kbd);
+		break;
+	case Common::EVENT_KEYUP:
+		activeDialog->handleKeyUp(event.kbd);
+		break;
+	case Common::EVENT_MOUSEMOVE:
+		activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
+
+		if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
+			_lastMousePosition.x = mouse.x;
+			_lastMousePosition.y = mouse.y;
+			_lastMousePosition.time = _system->getMillis(true);
+		}
+
+		break;
+		// We don't distinguish between mousebuttons (for now at least)
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+		button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
+		time = _system->getMillis(true);
+		if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
+			&& ABS(_lastClick.x - event.mouse.x) < 3
+			&& ABS(_lastClick.y - event.mouse.y) < 3) {
+				_lastClick.count++;
+		} else {
+			_lastClick.x = event.mouse.x;
+			_lastClick.y = event.mouse.y;
+			_lastClick.count = 1;
+		}
+		_lastClick.time = time;
+		activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
+		break;
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+		button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
+		activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
+		break;
+	case Common::EVENT_WHEELUP:
+		activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
+		break;
+	case Common::EVENT_WHEELDOWN:
+		activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
+		break;
+	case Common::EVENT_SCREEN_CHANGED:
+		screenChange();
+		break;
+	default:
+	#ifdef ENABLE_KEYMAPPER
+		activeDialog->handleOtherEvent(event);
+	#endif
+		break;
+	}
 }
 
 } // End of namespace GUI

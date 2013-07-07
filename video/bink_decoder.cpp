@@ -40,7 +40,7 @@
 #include "common/dct.h"
 #include "common/system.h"
 
-#include "graphics/yuva_to_rgba.h"
+#include "graphics/yuva_to_rgba.h" // ResidualVM specific
 #include "graphics/surface.h"
 
 #include "video/binkdata.h"
@@ -186,7 +186,7 @@ void BinkDecoder::readNextPacket() {
 			uint32 audioPacketStart = _bink->pos();
 			uint32 audioPacketEnd   = _bink->pos() + audioPacketLength;
 
-			// ResidualVM specific
+			// ResidualVM specific if:
 			if (i == _selectedAudioTrack) {
 				//                  Number of samples in bytes
 				audio.sampleCount = _bink->readUint32LE() / (2 * audio.channels);
@@ -419,6 +419,7 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	// Convert the YUV data we have to our format
 	// The width used here is the surface-width, and not the video-width
 	// to allow for odd-sized videos.
+	// ResidualVM: added support for Alpha version: YUVAToRGBAMan, _curPlanes[3]
 	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2] && _curPlanes[3]);
 	YUVAToRGBAMan.convert420(&_surface, Graphics::YUVAToRGBAManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2], _curPlanes[3],
 			_surfaceWidth, _surfaceHeight, _surfaceWidth, _surfaceWidth >> 1);
@@ -629,8 +630,8 @@ void BinkDecoder::BinkVideoTrack::initBundles() {
 		_bundles[i].dataEnd = _bundles[i].data + blocks * 64;
 	}
 
-	uint32 cbw[2] = { (_surface.w + 7) >> 3, (_surface.w  + 15) >> 4 };
-	uint32 cw [2] = {  _surface.w          ,  _surface.w        >> 1 };
+	uint32 cbw[2] = { (uint32)((_surface.w + 7) >> 3), (uint32)((_surface.w  + 15) >> 4) };
+	uint32 cw [2] = { (uint32)( _surface.w          ), (uint32)( _surface.w        >> 1) };
 
 	// Calculate the lengths of an element count in bits
 	for (int i = 0; i < 2; i++) {

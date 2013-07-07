@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	error.o \
 	EventDispatcher.o \
 	EventMapper.o \
-	EventRecorder.o \
 	file.o \
 	fs.o \
 	gui_options.o \
@@ -44,6 +43,11 @@ MODULE_OBJS += \
 	huffman.o \
 	rdft.o \
 	sinetables.o
+endif
+
+ifdef ENABLE_EVENTRECORDER
+MODULE_OBJS += \
+	recorderfile.o
 endif
 
 # Include common rules

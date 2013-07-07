@@ -101,6 +101,7 @@ int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
+// ResidualVM specific relMouse x,y
 void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int relx, int rely) {
 	event.mouse.x = x;
 	event.mouse.y = y;
@@ -118,7 +119,9 @@ void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int r
 }
 
 void SdlEventSource::handleKbdMouse() {
-	uint32 curTime = g_system->getMillis();
+	// Skip recording of these events
+	uint32 curTime = g_system->getMillis(true);
+
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
 		if (_km.x_down_count == 1) {
@@ -530,7 +533,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
-	processMouseEvent(event, ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel);
+	processMouseEvent(event, ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel); // ResidualVM xrel,yrel
 
 	return true;
 }

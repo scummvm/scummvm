@@ -51,10 +51,9 @@ namespace Audio {
 class MixerImpl : public Mixer {
 private:
 	enum {
-		NUM_CHANNELS = 32
+		NUM_CHANNELS = 32 // ResidualVM specific
 	};
 
-	OSystem *_syst;
 	Common::Mutex _mutex;
 
 	const uint _sampleRate;

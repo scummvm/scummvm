@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -59,20 +59,6 @@
 #define MT32EMU_MONITOR_TVA 0
 #define MT32EMU_MONITOR_TVF 0
 
-// The WG algorithm involves dozens of transcendent maths, e.g. exponents and trigonometry.
-// Unfortunately, the majority of systems perform such computations inefficiently,
-// standard math libs and FPUs make no optimisations for single precision floats,
-// and use no LUTs to speedup computing internal taylor series. Though, there're rare exceptions,
-// and there's a hope it will become common soon.
-// So, this is the crucial point of speed optimisations. We have now eliminated all the transcendent maths
-// within the critical path and use LUTs instead.
-// Besides, since the LA32 chip is assumed to use similar LUTs inside, the overall emulation accuracy should be better.
-// 0: Use LUTs to speedup WG. Most common setting. You can expect about 50% performance boost.
-// 1: Use precise float math. Use this setting to achieve more accurate wave generator. If your system performs better with this setting, it is really notable. :)
-#define MT32EMU_ACCURATE_WG 0
-
-#define MT32EMU_USE_EXTINT 0
-
 // Configuration
 // The maximum number of partials playing simultaneously
 #define MT32EMU_MAX_PARTIALS 32
@@ -84,9 +70,14 @@
 // If zero, keeps reverb buffers for all modes around all the time to avoid allocating/freeing in the critical path.
 #define MT32EMU_REDUCE_REVERB_MEMORY 1
 
-// 0: Use standard Freeverb
-// 1: Use AReverb (currently not properly tuned)
-#define MT32EMU_USE_AREVERBMODEL 0
+// 0: Use legacy Freeverb
+// 1: Use Accurate Reverb model aka AReverb
+// 2: Use Bit-perfect Boss Reverb model aka BReverb (for developers, not much practical use)
+#define MT32EMU_USE_REVERBMODEL 1
+
+// 0: Use refined wave generator based on logarithmic fixed-point computations and LUTs
+// 1: Use legacy accurate wave generator based on float computations
+#define MT32EMU_ACCURATE_WG 0
 
 namespace MT32Emu
 {
@@ -111,11 +102,14 @@ const unsigned int MAX_PRERENDER_SAMPLES = 1024;
 #include "Tables.h"
 #include "Poly.h"
 #include "LA32Ramp.h"
+#include "LA32WaveGenerator.h"
+#include "LegacyWaveGenerator.h"
 #include "TVA.h"
 #include "TVP.h"
 #include "TVF.h"
 #include "Partial.h"
 #include "Part.h"
+#include "ROMInfo.h"
 #include "Synth.h"
 
 #endif

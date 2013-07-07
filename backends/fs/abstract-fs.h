@@ -100,7 +100,7 @@ public:
 	 * @param mode Mode to use while listing the directory.
 	 * @param hidden Whether to include hidden files or not in the results.
 	 *
-	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
+	 * @return true if successful, false otherwise (e.g. when the directory does not exist).
 	 */
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const = 0;
 

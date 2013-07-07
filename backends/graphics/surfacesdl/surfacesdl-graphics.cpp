@@ -40,6 +40,8 @@
 #include "graphics/scaler.h"
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
+#include "gui/EventRecorder.h"
+
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };

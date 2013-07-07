@@ -80,7 +80,7 @@ endif
 $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
-distclean: clean
+distclean: clean clean-devtools
 	$(RM) config.h config.mk config.log
 
 clean:
@@ -174,7 +174,7 @@ ifeq ($(origin VER_REV), undefined)
 VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/null 2>&1; git diff-index --quiet HEAD || echo "-dirty")
 # Get the working copy base revision
 #ResidualVM: --always
-VER_REV := $(shell cd $(srcdir); git describe --always --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
+VER_REV := $(shell cd $(srcdir); git describe --always --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
 GITROOT := git://github.com/residualvm/residualvm.git

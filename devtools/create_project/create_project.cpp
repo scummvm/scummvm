@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 8 && msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11) {
+			if (msvcVersion != 8 && msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
@@ -308,6 +308,17 @@ int main(int argc, char *argv[]) {
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (!i->enable)
 			cout << "    " << i->description << '\n';
+	}
+
+	// Check if the keymapper and the event recorder are enabled simultaneously
+	bool keymapperEnabled = false;
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && !strcmp(i->name, "keymapper"))
+			keymapperEnabled = true;
+		if (i->enable && !strcmp(i->name, "eventrecorder") && keymapperEnabled) {
+			std::cerr << "ERROR: The keymapper and the event recorder cannot be enabled simultaneously currently, please disable one of the two\n";
+			return -1;
+		}
 	}
 
 	// Setup defines and libraries
@@ -588,7 +599,7 @@ void displayHelp(const char *exe) {
 	        " Additionally there are the following switches for changing various settings:\n"
 	        "\n"
 	        "Project specific settings:\n"
-	        " --codeblock              build Code::Blocks project files\n"
+	        " --codeblocks             build Code::Blocks project files\n"
 	        " --msvc                   build Visual Studio project files\n"
 	        " --xcode                  build XCode project files\n"
 	        " --file-prefix prefix     allow overwriting of relative file prefix in the\n"
@@ -609,9 +620,9 @@ void displayHelp(const char *exe) {
 	        "                          (default: false)\n"
 	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
 	        "                          (default: false)\n"
-			" --tools                  Create project files for the devtools\n"
-			"                          (ignores --build-events and --installer, as well as engine settings)\n"
-			"                          (default: false)\n"
+	        " --tools                  Create project files for the devtools\n"
+	        "                          (ignores --build-events and --installer, as well as engine settings)\n"
+	        "                          (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines           list all available engines and their default state\n"
@@ -810,18 +821,19 @@ const Feature s_features[] = {
 	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         true, "mpeg2 codec for cutscenes" },
 
 	// Feature flags
-	{        "bink",        "USE_BINK",         "", true, "Bink video support" },
-	{     "scalers",     "USE_SCALERS",         "", true, "Scalers" },
-	{   "hqscalers",  "USE_HQ_SCALERS",         "", true, "HQ scalers" },
-	{       "16bit",   "USE_RGB_COLOR",         "", true, "16bit color support" },
-	{     "mt32emu",     "USE_MT32EMU",         "", true, "integrated MT-32 emulator" },
-	{        "nasm",        "USE_NASM",         "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{      "opengl",      "USE_OPENGL", "opengl32", true, "OpenGL support" },
-	{     "taskbar",     "USE_TASKBAR",         "", true, "Taskbar integration support" },
-	{ "translation", "USE_TRANSLATION",         "", false, "Translation support" },
-	{      "vkeybd",   "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
-	{   "keymapper","ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
-	{  "langdetect",  "USE_DETECTLANG",         "", true, "System language detection support" } // This feature actually depends on "translation", there
+	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },
+	{         "scalers",          "USE_SCALERS",         "", true,  "Scalers" },
+	{       "hqscalers",       "USE_HQ_SCALERS",         "", true,  "HQ scalers" },
+	{           "16bit",        "USE_RGB_COLOR",         "", true,  "16bit color support" },
+	{         "mt32emu",          "USE_MT32EMU",         "", true,  "integrated MT-32 emulator" },
+	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, t
+	{          "opengl",           "USE_OPENGL", "opengl32", true,  "OpenGL support" },
+	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
+	{     "translation",      "USE_TRANSLATION",         "", false,  "Translation support" },
+	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
+	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
+	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
+	{      "langdetect",       "USE_DETECTLANG",         "", true,  "System language detection support" } // This feature actually depends
 	                                                                                            // is just no current way of properly detecting this...
 };
 
@@ -1192,6 +1204,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/COPYING.BSD");
 		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
+		//ResidualVM specific:
 		in.push_back(setup.srcDir + "/KNOWN_BUGS");
 		in.push_back(setup.srcDir + "/NEWS");
 		in.push_back(setup.srcDir + "/README");

@@ -33,9 +33,11 @@
 
 #include "common/array.h"
 #include "common/rational.h"
-#include "graphics/surface.h"
+#include "graphics/surface.h" // ResidualVM specific
 
 #include "video/video_decoder.h"
+
+#include "graphics/surface.h"
 
 namespace Audio {
 class AudioStream;

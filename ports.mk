@@ -48,7 +48,7 @@ ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(libdir)/residualvm/"
 endif
 
-#ResidualVM only:
+#ResidualVM specific:
 deb:
 	ln -sf dists/debian;
 	debian/prepare
@@ -93,6 +93,12 @@ endif
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
+	# Binary patch workaround for Iphone 5/IPad 4 "Illegal instruction: 4" toolchain issue (http://code.google.com/p/iphone-gcc-full/issues/detail?id=6)
+	cp residualvm residualvm-iph5
+	sed -i'' 's/\x00\x30\x93\xe4/\x00\x30\x93\xe5/g;s/\x00\x30\xd3\xe4/\x00\x30\xd3\xe5/g;' residualvm-iph5
+	ldid -S residualvm-iph5
+	chmod 755 residualvm-iph5
+	cp residualvm-iph5 $(bundle_name)/ResidualVM-iph5
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)
@@ -128,11 +134,6 @@ ifdef USE_MAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif
 
-#ResidualVM use it:
-ifdef USE_MPEG2
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
-endif
-
 ifdef USE_PNG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libpng.a
 endif
@@ -143,6 +144,10 @@ endif
 
 ifdef USE_FAAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfaad.a
+endif
+
+ifdef USE_MPEG2
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
 
 ifdef USE_ZLIB
@@ -365,7 +370,6 @@ endif
 	cp $(srcdir)/dists/ps3/ICON0.PNG ps3pkg/
 	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
 	pkg.py --contentid UP0001-RESI12000_00-0000000000000000 ps3pkg/ residualvm-ps3.pkg
-	package_finalize residualvm-ps3.pkg
 
 ps3run: $(EXECUTABLE)
 	$(STRIP) $(EXECUTABLE)
@@ -374,4 +378,4 @@ ps3run: $(EXECUTABLE)
 	ps3load $(EXECUTABLE).self
 
 # Mark special targets as phony
-.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
+.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg ps3run

@@ -3,6 +3,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_iscntrl
+#define FORBIDDEN_SYMBOL_EXCEPTION_ispunct
 
 #include "common/util.h"
 

@@ -388,24 +388,28 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
+			draw();
 		}
 	}
 }
 
 void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
-	int newSelection = _selectedItem + direction;
+	if (isEnabled()) {
+		int newSelection = _selectedItem + direction;
 
-	// Skip separator entries
-	while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-		_entries[newSelection].name.equals("")) {
-		newSelection += direction;
-	}
+		// Skip separator entries
+		while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+			_entries[newSelection].name.equals("")) {
+			newSelection += direction;
+		}
 
-	// Just update the selected item when we're in range
-	if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-		(newSelection != _selectedItem)) {
-		_selectedItem = newSelection;
-		draw();
+		// Just update the selected item when we're in range
+		if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+			(newSelection != _selectedItem)) {
+			_selectedItem = newSelection;
+			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
+			draw();
+		}
 	}
 }
 

@@ -50,8 +50,6 @@ bool skipThumbnail(Common::SeekableReadStream &in);
 
 /**
  * Loads a thumbnail from the given input stream.
- * The loaded thumbnail will be automatically converted to the
- * current overlay pixelformat.
  */
 Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in);
 
@@ -65,6 +63,24 @@ bool saveThumbnail(Common::WriteStream &out);
  * Saves a (given) thumbnail to the given write stream.
  */
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb);
+
+/**
+ * Grabs framebuffer into surface
+ *
+ * @param surf	a surface
+ * @return		false if a error occurred
+ */
+bool createScreenShot(Graphics::Surface &surf);
+
+/**
+ * Scales a passed surface, creating a new surface with the result
+ * @param srcImage		Source image to scale
+ * @param xSize			New surface width
+ * @param ySize			New surface height
+ * @remarks Caller is responsible for freeing the returned surface
+ */
+Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize);
+
 
 } // End of namespace Graphics
 

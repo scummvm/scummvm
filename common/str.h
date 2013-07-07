@@ -43,6 +43,8 @@ namespace Common {
  * behavior in some operations.
  */
 class String {
+public:
+	static const uint32 npos = 0xFFFFFFFF;
 protected:
 	/**
 	 * The size of the internal storage. Increasing this means less heap
@@ -190,6 +192,9 @@ public:
 
 	/** Remove the character at position p from the string. */
 	void deleteChar(uint32 p);
+
+	/** Remove all characters from position p to the p + len. If len = String::npos, removes all characters to the end */
+	void erase(uint32 p, uint32 len = npos);
 
 	/** Set character c at position p, replacing the previous character there. */
 	void setChar(char c, uint32 p);

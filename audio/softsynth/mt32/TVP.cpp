@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -47,12 +47,11 @@ static Bit16u keyToPitchTable[] = {
 
 TVP::TVP(const Partial *usePartial) :
 	partial(usePartial), system_(&usePartial->getSynth()->mt32ram.system) {
-	unsigned int sampleRate = usePartial->getSynth()->myProp.sampleRate;
 	// We want to do processing 4000 times per second. FIXME: This is pretty arbitrary.
-	maxCounter = sampleRate / 4000;
+	maxCounter = SAMPLE_RATE / 4000;
 	// The timer runs at 500kHz. We only need to bother updating it every maxCounter samples, before we do processing.
 	// This is how much to increment it by every maxCounter samples.
-	processTimerIncrement = 500000 * maxCounter / sampleRate;
+	processTimerIncrement = 500000 * maxCounter / SAMPLE_RATE;
 }
 
 static Bit16s keyToPitch(unsigned int key) {

@@ -48,7 +48,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 21; # The maximal width of a name.
+	$max_name_width = 23; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -65,6 +65,7 @@ sub html_entities_to_ascii {
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
 	# &auml;    -> a
+	# &euml;    -> e
 	# &uuml;    -> ue
 	# &aring;   -> aa
 	# &amp;     -> &
@@ -82,6 +83,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&aring;/aa/g;
 
 	$text =~ s/&auml;/a/g;
+	$text =~ s/&euml;/e/g;
 	$text =~ s/&uuml;/ue/g;
 	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver and J*oe*rg
 	$text =~ s/Torbj&ouml;rn/Torbjorn/g;
@@ -108,6 +110,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&aring;/\\345/g;
 
 	$text =~ s/&auml;/\\344/g;
+	$text =~ s/&euml;/\\353/g;
 	$text =~ s/&ouml;/\\366/g;
 	$text =~ s/&uuml;/\\374/g;
 
@@ -133,6 +136,7 @@ sub html_entities_to_rtf {
 
 	# Back to hex numbers
 	$text =~ s/&auml;/\\'8a/g;
+	$text =~ s/&euml;/\\'eb/g;
 	$text =~ s/&ouml;/\\'9a/g;
 	$text =~ s/&uuml;/\\'9f/g;
 
@@ -156,6 +160,7 @@ sub html_entities_to_tex {
 
 	$text =~ s/&auml;/\\"a/g;
 	$text =~ s/&ouml;/\\"o/g;
+	$text =~ s/&euml;/\\"e/g;
 	$text =~ s/&uuml;/\\"u/g;
 
 	$text =~ s/&amp;/\\&/g;
@@ -267,14 +272,22 @@ sub begin_section {
 		print '\f1\b0\fs24 \cf0 \\' . "\n";
 	} elsif ($mode eq "CPP") {
 		if ($section_level eq 0) {
-		  # TODO: Would be nice to have a 'fat' or 'large' mode for
-		  # headlines...
-		  $title = html_entities_to_cpp($title);
-		  print '"C1""'.$title.'",' . "\n";
-		  print '"",' . "\n";
+			# TODO: Would be nice to have a 'fat' or 'large' mode for
+			# headlines...
+			my $ascii_title = html_entities_to_ascii($title);
+			$title = html_entities_to_cpp($title);
+			if ($ascii_title ne $title) {	
+				print '"A1""'.$ascii_title.'",' . "\n";
+			}
+			print '"C1""'.$title.'",' . "\n";
+			print '"",' . "\n";
 		} else {
-		  $title = html_entities_to_cpp($title);
-		  print '"C1""'.$title.'",' . "\n";
+			my $ascii_title = html_entities_to_ascii($title);
+			$title = html_entities_to_cpp($title);
+			if ($ascii_title ne $title) {	
+				print '"A1""'.$ascii_title.'",' . "\n";
+			}
+			print '"C1""'.$title.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
 		print "  <row><entry namest='start' nameend='job'>";
@@ -359,6 +372,9 @@ sub add_person {
 		my $min_name_width = length $desc > 0 ? $max_name_width : 0;
 		$name = $nick if $name eq "";
 		$name = html_entities_to_ascii($name);
+		if (length $name > $max_name_width) {
+			print STDERR "Warning: max_name_width is too small (" . $max_name_width . " < " . (length $name) . " for \"" . $name. "\")\n";
+		}
 		$desc = html_entities_to_ascii($desc);
 
 		$tab = " " x ($section_level * 2 + 1);
@@ -389,13 +405,21 @@ sub add_person {
 		}
 	} elsif ($mode eq "CPP") {
 		$name = $nick if $name eq "";
+		my $ascii_name = html_entities_to_ascii($name);
 		$name = html_entities_to_cpp($name);
 
+		if ($ascii_name ne $name) {
+			print '"A0""'.$ascii_name.'",' . "\n";
+		}
 		print '"C0""'.$name.'",' . "\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
+			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
+			if ($ascii_desc ne $desc) {	
+				print '"A2""'.$ascii_desc.'",' . "\n";
+			}
 			print '"C2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {

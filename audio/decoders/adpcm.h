@@ -51,7 +51,7 @@ class RewindableAudioStream;
 // http://wiki.multimedia.cx/index.php?title=Category:ADPCM_Audio_Codecs
 // Usually, if the audio stream we're trying to play has the FourCC header
 // string intact, it's easy to discern which encoding is used
-enum typesADPCM {
+enum ADPCMType {
 	kADPCMOki,                 // Dialogic/Oki ADPCM (aka VOX)
 	kADPCMMSIma,               // Microsoft IMA ADPCM
 	kADPCMMS,                  // Microsoft ADPCM
@@ -76,9 +76,9 @@ enum typesADPCM {
 RewindableAudioStream *makeADPCMStream(
     Common::SeekableReadStream *stream,
     DisposeAfterUse::Flag disposeAfterUse,
-    uint32 size, typesADPCM type,
-    int rate = 22050,
-    int channels = 2,
+    uint32 size, ADPCMType type,
+    int rate,
+    int channels,
     uint32 blockAlign = 0);
 
 } // End of namespace Audio

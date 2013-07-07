@@ -26,11 +26,11 @@
 
 #include "backends/graphics/graphics.h"
 #include "backends/mutex/mutex.h"
+#include "gui/EventRecorder.h"
 
 #include "audio/mixer.h"
 #include "graphics/pixelformat.h"
-// ResidualVM specific:
-#include "graphics/pixelbuffer.h"
+#include "graphics/pixelbuffer.h" // ResidualVM specific:
 
 ModularBackend::ModularBackend()
 	:
@@ -54,7 +54,7 @@ bool ModularBackend::hasFeature(Feature f) {
 }
 
 void ModularBackend::setFeatureState(Feature f, bool enable) {
-	return _graphicsManager->setFeatureState(f, enable);
+	_graphicsManager->setFeatureState(f, enable);
 }
 
 bool ModularBackend::getFeatureState(Feature f) {
@@ -153,7 +153,9 @@ void ModularBackend::fillScreen(uint32 col) {
 }
 
 void ModularBackend::updateScreen() {
+	g_eventRec.preDrawOverlayGui();
 	_graphicsManager->updateScreen();
+	g_eventRec.postDrawOverlayGui();
 }
 
 void ModularBackend::setShakePos(int shakeOffset) {

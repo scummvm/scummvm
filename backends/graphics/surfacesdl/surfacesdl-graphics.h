@@ -69,8 +69,8 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
-	virtual void launcherInitSize(uint w, uint h);
-	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	virtual void launcherInitSize(uint w, uint h); // ResidualVM specific method
+	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
 	virtual void beginGFXTransaction();
@@ -100,17 +100,17 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(void *buf, int pitch);
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-	//ResidualVM specific implemention:
+
+	//ResidualVM specific implementions:
 	virtual int16 getOverlayHeight() { return _overlayHeight; }
 	virtual int16 getOverlayWidth() { return _overlayWidth; }
-	void closeOverlay();
+	void closeOverlay(); // ResidualVM specific method
 
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	// ResidualVM specific method
-	virtual bool lockMouse(bool lock);
+	virtual bool lockMouse(bool lock); // ResidualVM specific method
 
 #ifdef USE_OSD
 	virtual void displayMessageOnOSD(const char *msg);

@@ -116,7 +116,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_screen_changeid(0),
 	_egl_surface_width(0),
 	_egl_surface_height(0),
-	_htc_fail(false),
+	_htc_fail(true),
 	_force_redraw(false),
 	_game_texture(0),
 	_game_pbuf(),
@@ -149,8 +149,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_touchpad_scale(66),
 	_dpad_scale(4),
 	_fingersDown(0),
-	_trackball_scale(2)
-	{
+	_trackball_scale(2) {
 
 	_fsFactory = new POSIXFilesystemFactory();
 
@@ -166,10 +165,10 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 			getSystemProperty("ro.product.cpu.abi").c_str());
 
 	mf.toLowercase();
-	_htc_fail = mf.contains("htc");
+	/*_htc_fail = mf.contains("htc");
 
 	if (_htc_fail)
-		LOGI("Enabling HTC workaround");
+		LOGI("Enabling HTC workaround");*/
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -463,7 +462,7 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	}
 }
 
-uint32 OSystem_Android::getMillis() {
+uint32 OSystem_Android::getMillis(bool skipRecord) {
 	timeval curTime;
 
 	gettimeofday(&curTime, 0);

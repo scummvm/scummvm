@@ -62,8 +62,7 @@ void OSystem_PS3::initBackend() {
 	ConfMan.set("joystick_num", 0);
 	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
-	//ResidualVM: not used
-	//ConfMan.registerDefault("aspect_ratio", true);
+	//ConfMan.registerDefault("aspect_ratio", true); //ResidualVM: not used
 
 	// Create the savefile manager
 	if (_savefileManager == 0)

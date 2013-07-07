@@ -75,6 +75,12 @@ enum {
 };
 #endif
 
+#ifdef USE_FLUIDSYNTH
+enum {
+	kFluidSynthSettingsCmd		= 'flst'
+};
+#endif
+
 static const char *savePeriodLabels[] = { _s("Never"), _s("every 5 mins"), _s("every 10 mins"), _s("every 15 mins"), _s("every 30 mins"), 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
@@ -102,7 +108,7 @@ void OptionsDialog::init() {
 	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
-	_softwareRenderingCheckbox = 0;
+	_softwareRenderingCheckbox = 0; // ResidualVM specific
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
@@ -169,15 +175,60 @@ void OptionsDialog::open() {
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
+#if 0 // ResidualVM specific
+		_gfxPopUp->setSelected(0);
+
+		if (ConfMan.hasKey("gfx_mode", _domain)) {
+			const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+			Common::String gfxMode(ConfMan.get("gfx_mode", _domain));
+			int gfxCount = 1;
+			while (gm->name) {
+				gfxCount++;
+
+				if (scumm_stricmp(gm->name, gfxMode.c_str()) == 0)
+					_gfxPopUp->setSelected(gfxCount);
+
+				gm++;
+			}
+		}
+
+		_renderModePopUp->setSelected(0);
+
+		if (ConfMan.hasKey("render_mode", _domain)) {
+			const Common::RenderModeDescription *p = Common::g_renderModes;
+			const Common::RenderMode renderMode = Common::parseRenderMode(ConfMan.get("render_mode", _domain));
+			int sel = 0;
+			for (int i = 0; p->code; ++p, ++i) {
+				if (renderMode == p->id)
+					sel = p->id;
+			}
+			_renderModePopUp->setSelectedTag(sel);
+		}
+#endif
 #ifdef SMALL_SCREEN_DEVICE
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
+#if 0 // ResidualVM specific
+		_aspectCheckbox->setState(false);
+		_aspectCheckbox->setEnabled(false);
+#endif
 #else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+
+#if 0 // ResidualVM specific
+		// Aspect ratio setting
+		if (_guioptions.contains(GUIO_NOASPECT)) {
+			_aspectCheckbox->setState(false);
+			_aspectCheckbox->setEnabled(false);
+		} else {
+			_aspectCheckbox->setEnabled(true);
+			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		}
+#endif
 #endif // SMALL_SCREEN_DEVICE
 
-		// Software rendering setting - ResidualVM specific
+		// Software rendering setting - ResidualVM specific lines
 		_softwareRenderingCheckbox->setEnabled(true);
 		_softwareRenderingCheckbox->setState(ConfMan.getBool("soft_renderer", _domain));
 	}
@@ -283,10 +334,47 @@ void OptionsDialog::close() {
 			if (_enableGraphicSettings) {
 				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
 					graphicsModeChanged = true;
+#if 0 // ResidualVM specific
+				if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
+					graphicsModeChanged = true;
+#endif
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
+#if 0 // ResidualVM specific
+				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
+
+				bool isSet = false;
+
+				if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
+					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+
+					while (gm->name) {
+						if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
+							if (ConfMan.get("gfx_mode", _domain) != gm->name)
+								graphicsModeChanged = true;
+							ConfMan.set("gfx_mode", gm->name, _domain);
+							isSet = true;
+							break;
+						}
+						gm++;
+					}
+				}
+				if (!isSet)
+					ConfMan.removeKey("gfx_mode", _domain);
+
+				if ((int32)_renderModePopUp->getSelectedTag() >= 0)
+					ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
+#endif
+
+// ResidualVM specific
 				ConfMan.setBool("soft_renderer", _softwareRenderingCheckbox->getState(), _domain);
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
+#if 0 // ResidualVM specific
+				ConfMan.removeKey("aspect_ratio", _domain);
+				ConfMan.removeKey("gfx_mode", _domain);
+				ConfMan.removeKey("render_mode", _domain);
+#endif
+// ResidualVM specific
 				ConfMan.removeKey("soft_renderer", _domain);
 			}
 		}
@@ -532,9 +620,22 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
+#if 0 // ResidualVM specific
+	_gfxPopUpDesc->setEnabled(enabled);
+	_gfxPopUp->setEnabled(enabled);
+	_renderModePopUpDesc->setEnabled(enabled);
+	_renderModePopUp->setEnabled(enabled);
+#endif
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
+#if 0 // ResidualVM specific
+	if (_guioptions.contains(GUIO_NOASPECT))
+		_aspectCheckbox->setEnabled(false);
+	else
+		_aspectCheckbox->setEnabled(enabled);
 #endif
+#endif
+// ResidualVM specific:
 	if (enabled)
 		_softwareRenderingCheckbox->setEnabled(true);
 	else
@@ -654,9 +755,46 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 }
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
+#if 0 // ResidualVM specific
+	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+	Common::String context;
+	if (g_system->getOverlayWidth() <= 320)
+		context = "lowres";
+
+	// The GFX mode popup
+	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", _("Graphics mode:"));
+	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
+
+	_gfxPopUp->appendEntry(_("<default>"));
+	_gfxPopUp->appendEntry("");
+	while (gm->name) {
+		_gfxPopUp->appendEntry(_c(gm->description, context), gm->id);
+		gm++;
+	}
+
+	// RenderMode popup
+	const Common::String allFlags = Common::allRenderModesGUIOs();
+	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
+
+	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
+	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
+	_renderModePopUp->appendEntry(_("<default>"), Common::kRenderDefault);
+	_renderModePopUp->appendEntry("");
+	const Common::RenderModeDescription *rm = Common::g_renderModes;
+	for (; rm->code; ++rm) {
+		Common::String renderGuiOption = Common::renderMode2GUIO(rm->id);
+		if ((_domain == Common::ConfigManager::kApplicationDomain) || (_domain != Common::ConfigManager::kApplicationDomain && !renderingTypeDefined) || (_guioptions.contains(renderGuiOption)))
+			_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
+	}
+#endif
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 
+#if 0 // ResidualVM specific
+	// Aspect ratio checkbox
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
+#endif
+// ResidualVM specific option:
 	_softwareRenderingCheckbox = new CheckboxWidget(boss, prefix + "grSoftwareRendering", _("Software Rendering"), _("Enable software rendering"));
 	_enableGraphicSettings = true;
 }
@@ -768,6 +906,10 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	_midiGainSlider->setMaxValue(1000);
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
 
+#ifdef USE_FLUIDSYNTH
+	new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
+#endif
+
 	_enableMIDISettings = true;
 }
 
@@ -783,7 +925,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _c("True Roland MT-32 (no GM emulation)", "lowres"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 
 	// GS Extensions setting
-	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), _("Turns off General MIDI mapping for games with Roland MT-32 soundtrack"));
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Roland GS Device (enable MT-32 mappings)"), _("Check if you want to enable patch mappings to emulate an MT-32 on a Roland GS device"));
 
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	// Make sure the null device is the first one in the list to avoid undesired
@@ -1137,11 +1279,19 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();
 #endif
+
+#ifdef USE_FLUIDSYNTH
+	_fluidSynthSettingsDialog = new FluidSynthSettingsDialog();
+#endif
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
 #ifdef SMALL_SCREEN_DEVICE
 	delete _keysDialog;
+#endif
+
+#ifdef USE_FLUIDSYNTH
+	delete _fluidSynthSettingsDialog;
 #endif
 }
 
@@ -1372,6 +1522,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_keysDialog->runModal();
 		break;
 #endif
+#ifdef USE_FLUIDSYNTH
+	case kFluidSynthSettingsCmd:
+		_fluidSynthSettingsDialog->runModal();
+		break;
+#endif
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}
@@ -1382,11 +1537,12 @@ void GlobalOptionsDialog::reflowLayout() {
 
 	if (_midiTabId != -1) {
 		_tabWidget->setActiveTab(_midiTabId);
-/* Residual do not use it
+#if 0 // Residual do not use it
 		_tabWidget->removeWidget(_soundFontClearButton);
 		_soundFontClearButton->setNext(0);
 		delete _soundFontClearButton;
-		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);*/
+		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);
+#endif
 	}
 
 	if (_pathsTabId != -1) {

@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/fs.h"
 #include "common/str.h"
-//#include "backends/plugins/elf/version.h"
+//#include "backends/plugins/elf/version.h" // ResidualVM specific
 
 
 /**

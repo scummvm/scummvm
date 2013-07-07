@@ -72,10 +72,8 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
-// ResidualVM specific method
-	virtual void launcherInitSize(uint w, uint h);
-// ResidualVM specific method
-	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	virtual void launcherInitSize(uint w, uint h); // ResidualVM specific method
+	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
 	virtual int getScreenChangeID() const;
 
 	virtual void beginGFXTransaction();
@@ -106,8 +104,7 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	// ResidualVM specific method
-	virtual bool lockMouse(bool lock);
+	virtual bool lockMouse(bool lock); // ResidualVM specific method
 
 	//@}
 

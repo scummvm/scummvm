@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -72,36 +72,25 @@ Tables::Tables() {
 		//synth->printDebug("%d: %d", i, pulseWidth100To255[i]);
 	}
 
-	// Ratio of negative segment to wave length
-	for (int i = 0; i < 128; i++) {
-		// Formula determined from sample analysis.
-		float pt = 0.5f / 127.0f * i;
-		pulseLenFactor[i] = (1.241857812f - pt) * pt;    // seems to be 2 ^ (5 / 16) = 1.241857812f
+	// The LA32 chip contains an exponent table inside. The table contains 12-bit integer values.
+	// The actual table size is 512 rows. The 9 higher bits of the fractional part of the argument are used as a lookup address.
+	// To improve the precision of computations, the lower bits are supposed to be used for interpolation as the LA32 chip also
+	// contains another 512-row table with inverted differences between the main table values.
+	for (int i = 0; i < 512; i++) {
+		exp9[i] = Bit16u(8191.5f - EXP2F(13.0f + ~i / 512.0f));
 	}
 
-	// The LA32 chip presumably has such a table inside as the internal computaions seem to be performed using fixed point math with 12-bit fractions
-	for (int i = 0; i < 4096; i++) {
-		exp2[i] = EXP2F(i / 4096.0f);
+	// There is a logarithmic sine table inside the LA32 chip. The table contains 13-bit integer values.
+	for (int i = 1; i < 512; i++) {
+		logsin9[i] = Bit16u(0.5f - LOG2F(sin((i + 0.5f) / 1024.0f * FLOAT_PI)) * 1024.0f);
 	}
+
+	// The very first value is clamped to the maximum possible 13-bit integer
+	logsin9[0] = 8191;
 
 	// found from sample analysis
-	for (int i = 0; i < 32; i++) {
-		resAmpMax[i] = EXP2F(1.0f - (32 - i) / 4.0f);
-	}
-
-	// found from sample analysis
-	resAmpFadeFactor[7] = 1.0f / 8.0f;
-	resAmpFadeFactor[6] = 2.0f / 8.0f;
-	resAmpFadeFactor[5] = 3.0f / 8.0f;
-	resAmpFadeFactor[4] = 5.0f / 8.0f;
-	resAmpFadeFactor[3] = 8.0f / 8.0f;
-	resAmpFadeFactor[2] = 12.0f / 8.0f;
-	resAmpFadeFactor[1] = 16.0f / 8.0f;
-	resAmpFadeFactor[0] = 31.0f / 8.0f;
-
-	for (int i = 0; i < 5120; i++) {
-		sinf10[i] = sin(FLOAT_PI * i / 2048.0f);
-	}
+	static const Bit8u resAmpDecayFactorTable[] = {31, 16, 12, 8, 5, 3, 2, 1};
+	resAmpDecayFactor = resAmpDecayFactorTable;
 }
 
 }

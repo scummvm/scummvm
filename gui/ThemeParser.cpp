@@ -335,11 +335,15 @@ bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 
 	drawstep->drawingCall = getDrawingFunctionCallback(functionName);
 
-	if (drawstep->drawingCall == 0)
+	if (drawstep->drawingCall == 0) {
+		delete drawstep;
 		return parserError(functionName + " is not a valid drawing function name");
+	}
 
-	if (!parseDrawStep(node, drawstep, true))
+	if (!parseDrawStep(node, drawstep, true)) {
+		delete drawstep;
 		return false;
+	}
 
 	_theme->addDrawStep(getParentNode(node)->values["id"], *drawstep);
 	delete drawstep;
@@ -691,7 +695,7 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 			return false;
 	}
 
-	Common::parseBool(node->values["center"], center);
+	(void)Common::parseBool(node->values["center"], center);
 
 	if (node->values["type"] == "vertical")
 		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, center);

@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -35,7 +35,12 @@ static const float PAN_NUMERATOR_MASTER[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 static const float PAN_NUMERATOR_SLAVE[]  = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f};
 
 Partial::Partial(Synth *useSynth, int useDebugPartialNum) :
-	synth(useSynth), debugPartialNum(useDebugPartialNum), sampleNum(0), tva(new TVA(this, &ampRamp)), tvp(new TVP(this)), tvf(new TVF(this, &cutoffModifierRamp)) {
+	synth(useSynth), debugPartialNum(useDebugPartialNum), sampleNum(0) {
+	// Initialisation of tva, tvp and tvf uses 'this' pointer
+	// and thus should not be in the initializer list to avoid a compiler warning
+	tva = new TVA(this, &ampRamp);
+	tvp = new TVP(this);
+	tvf = new TVF(this, &cutoffModifierRamp);
 	ownerPart = -1;
 	poly = NULL;
 	pair = NULL;
@@ -81,26 +86,22 @@ void Partial::deactivate() {
 	ownerPart = -1;
 	if (poly != NULL) {
 		poly->partialDeactivated(this);
-		if (pair != NULL) {
-			pair->pair = NULL;
-		}
 	}
 #if MT32EMU_MONITOR_PARTIALS > 2
 	synth->printDebug("[+%lu] [Partial %d] Deactivated", sampleNum, debugPartialNum);
 	synth->printPartialUsage(sampleNum);
 #endif
-}
-
-// DEPRECATED: This should probably go away eventually, it's currently only used as a kludge to protect our old assumptions that
-// rhythm part notes were always played as key MIDDLEC.
-int Partial::getKey() const {
-	if (poly == NULL) {
-		return -1;
-	} else if (ownerPart == 8) {
-		// FIXME: Hack, should go away after new pitch stuff is committed (and possibly some TVF changes)
-		return MIDDLEC;
+	if (isRingModulatingSlave()) {
+		pair->la32Pair.deactivate(LA32PartialPair::SLAVE);
 	} else {
-		return poly->getKey();
+		la32Pair.deactivate(LA32PartialPair::MASTER);
+		if (hasRingModulatingSlave()) {
+			pair->deactivate();
+			pair = NULL;
+		}
+	}
+	if (pair != NULL) {
+		pair->pair = NULL;
 	}
 }
 
@@ -163,8 +164,6 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 		pcmWave = &synth->pcmWaves[pcmNum];
 	} else {
 		pcmWave = NULL;
-		wavePos = 0.0f;
-		lastFreq = 0.0;
 	}
 
 	// CONFIRMED: pulseWidthVal calculation is based on information from Mok
@@ -175,26 +174,65 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 		pulseWidthVal = 255;
 	}
 
-	pcmPosition = 0.0f;
 	pair = pairPartial;
 	alreadyOutputed = false;
 	tva->reset(part, patchCache->partialParam, rhythmTemp);
 	tvp->reset(part, patchCache->partialParam);
 	tvf->reset(patchCache->partialParam, tvp->getBasePitch());
-}
 
-float Partial::getPCMSample(unsigned int position) {
-	if (position >= pcmWave->len) {
-		if (!pcmWave->loop) {
-			return 0;
-		}
-		position = position % pcmWave->len;
+	LA32PartialPair::PairType pairType;
+	LA32PartialPair *useLA32Pair;
+	if (isRingModulatingSlave()) {
+		pairType = LA32PartialPair::SLAVE;
+		useLA32Pair = &pair->la32Pair;
+	} else {
+		pairType = LA32PartialPair::MASTER;
+		la32Pair.init(hasRingModulatingSlave(), mixType == 1);
+		useLA32Pair = &la32Pair;
 	}
-	return synth->pcmROMData[pcmWave->addr + position];
+	if (isPCM()) {
+		useLA32Pair->initPCM(pairType, &synth->pcmROMData[pcmWave->addr], pcmWave->len, pcmWave->loop);
+	} else {
+		useLA32Pair->initSynth(pairType, (patchCache->waveform & 1) != 0, pulseWidthVal, patchCache->srcPartial.tvf.resonance + 1);
+	}
+	if (!hasRingModulatingSlave()) {
+		la32Pair.deactivate(LA32PartialPair::SLAVE);
+	}
+	// Temporary integration hack
+	stereoVolume.leftVol /= 8192.0f;
+	stereoVolume.rightVol /= 8192.0f;
 }
 
-unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) {
-	const Tables &tables = Tables::getInstance();
+Bit32u Partial::getAmpValue() {
+	// SEMI-CONFIRMED: From sample analysis:
+	// (1) Tested with a single partial playing PCM wave 77 with pitchCoarse 36 and no keyfollow, velocity follow, etc.
+	// This gives results within +/- 2 at the output (before any DAC bitshifting)
+	// when sustaining at levels 156 - 255 with no modifiers.
+	// (2) Tested with a special square wave partial (internal capture ID tva5) at TVA envelope levels 155-255.
+	// This gives deltas between -1 and 0 compared to the real output. Note that this special partial only produces
+	// positive amps, so negative still needs to be explored, as well as lower levels.
+	//
+	// Also still partially unconfirmed is the behaviour when ramping between levels, as well as the timing.
+	// TODO: The tests above were performed using the float model, to be refined
+	Bit32u ampRampVal = 67117056 - ampRamp.nextValue();
+	if (ampRamp.checkInterrupt()) {
+		tva->handleInterrupt();
+	}
+	return ampRampVal;
+}
+
+Bit32u Partial::getCutoffValue() {
+	if (isPCM()) {
+		return 0;
+	}
+	Bit32u cutoffModifierRampVal = cutoffModifierRamp.nextValue();
+	if (cutoffModifierRamp.checkInterrupt()) {
+		tvf->handleInterrupt();
+	}
+	return (tvf->getBaseCutoff() << 18) + cutoffModifierRampVal;
+}
+
+unsigned long Partial::generateSamples(Bit16s *partialBuf, unsigned long length) {
 	if (!isActive() || alreadyOutputed) {
 		return 0;
 	}
@@ -202,301 +240,29 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::generateSamples()!", debugPartialNum);
 		return 0;
 	}
-
 	alreadyOutputed = true;
 
-	// Generate samples
-
 	for (sampleNum = 0; sampleNum < length; sampleNum++) {
-		float sample = 0;
-		Bit32u ampRampVal = ampRamp.nextValue();
-		if (ampRamp.checkInterrupt()) {
-			tva->handleInterrupt();
-		}
-		if (!tva->isPlaying()) {
+		if (!tva->isPlaying() || !la32Pair.isActive(LA32PartialPair::MASTER)) {
 			deactivate();
 			break;
 		}
-
-		Bit16u pitch = tvp->nextPitch();
-
-		// SEMI-CONFIRMED: From sample analysis:
-		// (1) Tested with a single partial playing PCM wave 77 with pitchCoarse 36 and no keyfollow, velocity follow, etc.
-		// This gives results within +/- 2 at the output (before any DAC bitshifting)
-		// when sustaining at levels 156 - 255 with no modifiers.
-		// (2) Tested with a special square wave partial (internal capture ID tva5) at TVA envelope levels 155-255.
-		// This gives deltas between -1 and 0 compared to the real output. Note that this special partial only produces
-		// positive amps, so negative still needs to be explored, as well as lower levels.
-		//
-		// Also still partially unconfirmed is the behaviour when ramping between levels, as well as the timing.
-
-#if MT32EMU_ACCURATE_WG == 1
-		float amp = EXP2F((32772 - ampRampVal / 2048) / -2048.0f);
-		float freq = EXP2F(pitch / 4096.0f - 16.0f) * 32000.0f;
-#else
-		static const float ampFactor = EXP2F(32772 / -2048.0f);
-		float amp = EXP2I(ampRampVal >> 10) * ampFactor;
-
-		static const float freqFactor = EXP2F(-16.0f) * 32000.0f;
-		float freq = EXP2I(pitch) * freqFactor;
-#endif
-
-		if (patchCache->PCMPartial) {
-			// Render PCM waveform
-			int len = pcmWave->len;
-			int intPCMPosition = (int)pcmPosition;
-			if (intPCMPosition >= len && !pcmWave->loop) {
-				// We're now past the end of a non-looping PCM waveform so it's time to die.
-				deactivate();
-				break;
-			}
-			Bit32u pcmAddr = pcmWave->addr;
-			float positionDelta = freq * 2048.0f / synth->myProp.sampleRate;
-
-			// Linear interpolation
-			float firstSample = synth->pcmROMData[pcmAddr + intPCMPosition];
-			// We observe that for partial structures with ring modulation the interpolation is not applied to the slave PCM partial.
-			// It's assumed that the multiplication circuitry intended to perform the interpolation on the slave PCM partial
-			// is borrowed by the ring modulation circuit (or the LA32 chip has a similar lack of resources assigned to each partial pair).
-			if (pair == NULL || mixType == 0 || structurePosition == 0) {
-				sample = firstSample + (getPCMSample(intPCMPosition + 1) - firstSample) * (pcmPosition - intPCMPosition);
-			} else {
-				sample = firstSample;
-			}
-
-			float newPCMPosition = pcmPosition + positionDelta;
-			if (pcmWave->loop) {
-				newPCMPosition = fmod(newPCMPosition, (float)pcmWave->len);
-			}
-			pcmPosition = newPCMPosition;
-		} else {
-			// Render synthesised waveform
-			wavePos *= lastFreq / freq;
-			lastFreq = freq;
-
-			Bit32u cutoffModifierRampVal = cutoffModifierRamp.nextValue();
-			if (cutoffModifierRamp.checkInterrupt()) {
-				tvf->handleInterrupt();
-			}
-			float cutoffModifier = cutoffModifierRampVal / 262144.0f;
-
-			// res corresponds to a value set in an LA32 register
-			Bit8u res = patchCache->srcPartial.tvf.resonance + 1;
-
-			// Using tiny exact table for computation of EXP2F(1.0f - (32 - res) / 4.0f)
-			float resAmp = tables.resAmpMax[res];
-
-			// The cutoffModifier may not be supposed to be directly added to the cutoff -
-			// it may for example need to be multiplied in some way.
-			// The 240 cutoffVal limit was determined via sample analysis (internal Munt capture IDs: glop3, glop4).
-			// More research is needed to be sure that this is correct, however.
-			float cutoffVal = tvf->getBaseCutoff() + cutoffModifier;
-			if (cutoffVal > 240.0f) {
-				cutoffVal = 240.0f;
-			}
-
-			// Wave length in samples
-			float waveLen = synth->myProp.sampleRate / freq;
-
-			// Init cosineLen
-			float cosineLen = 0.5f * waveLen;
-			if (cutoffVal > 128.0f) {
-#if MT32EMU_ACCURATE_WG == 1
-				cosineLen *= EXP2F((cutoffVal - 128.0f) / -16.0f); // found from sample analysis
-#else
-				static const float cosineLenFactor = EXP2F(128.0f / -16.0f);
-				cosineLen *= EXP2I(Bit32u((256.0f - cutoffVal) * 256.0f)) * cosineLenFactor;
-#endif
-			}
-
-			// Start playing in center of first cosine segment
-			// relWavePos is shifted by a half of cosineLen
-			float relWavePos = wavePos + 0.5f * cosineLen;
-			if (relWavePos > waveLen) {
-				relWavePos -= waveLen;
-			}
-
-			float pulseLen = 0.5f;
-			if (pulseWidthVal > 128) {
-				pulseLen += tables.pulseLenFactor[pulseWidthVal - 128];
-			}
-			pulseLen *= waveLen;
-
-			float lLen = pulseLen - cosineLen;
-
-			// Ignore pulsewidths too high for given freq
-			if (lLen < 0.0f) {
-				lLen = 0.0f;
-			}
-
-			// Ignore pulsewidths too high for given freq and cutoff
-			float hLen = waveLen - lLen - 2 * cosineLen;
-			if (hLen < 0.0f) {
-				hLen = 0.0f;
-			}
-
-			// Correct resAmp for cutoff in range 50..66
-			if ((cutoffVal >= 128.0f) && (cutoffVal < 144.0f)) {
-#if MT32EMU_ACCURATE_WG == 1
-				resAmp *= sinf(FLOAT_PI * (cutoffVal - 128.0f) / 32.0f);
-#else
-				resAmp *= tables.sinf10[Bit32u(64 * (cutoffVal - 128.0f))];
-#endif
-			}
-
-			// Produce filtered square wave with 2 cosine waves on slopes
-
-			// 1st cosine segment
-			if (relWavePos < cosineLen) {
-#if MT32EMU_ACCURATE_WG == 1
-				sample = -cosf(FLOAT_PI * relWavePos / cosineLen);
-#else
-				sample = -tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) + 1024];
-#endif
-			} else
-
-			// high linear segment
-			if (relWavePos < (cosineLen + hLen)) {
-				sample = 1.f;
-			} else
-
-			// 2nd cosine segment
-			if (relWavePos < (2 * cosineLen + hLen)) {
-#if MT32EMU_ACCURATE_WG == 1
-				sample = cosf(FLOAT_PI * (relWavePos - (cosineLen + hLen)) / cosineLen);
-#else
-				sample = tables.sinf10[Bit32u(2048.0f * (relWavePos - (cosineLen + hLen)) / cosineLen) + 1024];
-#endif
-			} else {
-
-			// low linear segment
-				sample = -1.f;
-			}
-
-			if (cutoffVal < 128.0f) {
-
-				// Attenuate samples below cutoff 50
-				// Found by sample analysis
-#if MT32EMU_ACCURATE_WG == 1
-				sample *= EXP2F(-0.125f * (128.0f - cutoffVal));
-#else
-				static const float cutoffAttenuationFactor = EXP2F(-0.125f * 128.0f);
-				sample *= EXP2I(Bit32u(512.0f * cutoffVal)) * cutoffAttenuationFactor;
-#endif
-			} else {
-
-				// Add resonance sine. Effective for cutoff > 50 only
-				float resSample = 1.0f;
-
-				// Now relWavePos counts from the middle of first cosine
-				relWavePos = wavePos;
-
-				// negative segments
-				if (!(relWavePos < (cosineLen + hLen))) {
-					resSample = -resSample;
-					relWavePos -= cosineLen + hLen;
+		la32Pair.generateNextSample(LA32PartialPair::MASTER, getAmpValue(), tvp->nextPitch(), getCutoffValue());
+		if (hasRingModulatingSlave()) {
+			la32Pair.generateNextSample(LA32PartialPair::SLAVE, pair->getAmpValue(), pair->tvp->nextPitch(), pair->getCutoffValue());
+			if (!pair->tva->isPlaying() || !la32Pair.isActive(LA32PartialPair::SLAVE)) {
+				pair->deactivate();
+				if (mixType == 2) {
+					deactivate();
+					break;
 				}
-
-				// Resonance sine WG
-#if MT32EMU_ACCURATE_WG == 1
-				resSample *= sinf(FLOAT_PI * relWavePos / cosineLen);
-#else
-				resSample *= tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) & 4095];
-#endif
-
-				// Resonance sine amp
-				float resAmpFadeLog2 = -tables.resAmpFadeFactor[res >> 2] * (relWavePos / cosineLen); // seems to be exact
-#if MT32EMU_ACCURATE_WG == 1
-				float resAmpFade = EXP2F(resAmpFadeLog2);
-#else
-				static const float resAmpFadeFactor = EXP2F(-30.0f);
-				float resAmpFade = (resAmpFadeLog2 < -30.0f) ? 0.0f : EXP2I(Bit32u((30.0f + resAmpFadeLog2) * 4096.0f)) * resAmpFadeFactor;
-#endif
-
-				// Now relWavePos set negative to the left from center of any cosine
-				relWavePos = wavePos;
-
-				// negative segment
-				if (!(wavePos < (waveLen - 0.5f * cosineLen))) {
-					relWavePos -= waveLen;
-				} else
-
-				// positive segment
-				if (!(wavePos < (hLen + 0.5f * cosineLen))) {
-					relWavePos -= cosineLen + hLen;
-				}
-
-				// Fading to zero while within cosine segments to avoid jumps in the wave
-				// Sample analysis suggests that this window is very close to cosine
-				if (relWavePos < 0.5f * cosineLen) {
-#if MT32EMU_ACCURATE_WG == 1
-					resAmpFade *= 0.5f * (1.0f - cosf(FLOAT_PI * relWavePos / (0.5f * cosineLen)));
-#else
-					resAmpFade *= 0.5f * (1.0f + tables.sinf10[Bit32s(2048.0f * relWavePos / (0.5f * cosineLen)) + 3072]);
-#endif
-				}
-
-				sample += resSample * resAmp * resAmpFade;
-			}
-
-			// sawtooth waves
-			if ((patchCache->waveform & 1) != 0) {
-#if MT32EMU_ACCURATE_WG == 1
-				sample *= cosf(FLOAT_2PI * wavePos / waveLen);
-#else
-				sample *= tables.sinf10[(Bit32u(4096.0f * wavePos / waveLen) & 4095) + 1024];
-#endif
-			}
-
-			wavePos++;
-
-			// wavePos isn't supposed to be > waveLen
-			if (wavePos > waveLen) {
-				wavePos -= waveLen;
 			}
 		}
-
-		// Multiply sample with current TVA value
-		sample *= amp;
-		*partialBuf++ = sample;
+		*partialBuf++ = la32Pair.nextOutSample();
 	}
 	unsigned long renderedSamples = sampleNum;
 	sampleNum = 0;
 	return renderedSamples;
-}
-
-float *Partial::mixBuffersRingMix(float *buf1, float *buf2, unsigned long len) {
-	if (buf1 == NULL) {
-		return NULL;
-	}
-	if (buf2 == NULL) {
-		return buf1;
-	}
-
-	while (len--) {
-		// FIXME: At this point we have no idea whether this is remotely correct...
-		*buf1 = *buf1 * *buf2 + *buf1;
-		buf1++;
-		buf2++;
-	}
-	return buf1;
-}
-
-float *Partial::mixBuffersRing(float *buf1, float *buf2, unsigned long len) {
-	if (buf1 == NULL) {
-		return NULL;
-	}
-	if (buf2 == NULL) {
-		return NULL;
-	}
-
-	while (len--) {
-		// FIXME: At this point we have no idea whether this is remotely correct...
-		*buf1 = *buf1 * *buf2;
-		buf1++;
-		buf2++;
-	}
-	return buf1;
 }
 
 bool Partial::hasRingModulatingSlave() const {
@@ -530,53 +296,14 @@ bool Partial::produceOutput(float *leftBuf, float *rightBuf, unsigned long lengt
 		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::produceOutput()!", debugPartialNum);
 		return false;
 	}
-
-	float *partialBuf = &myBuffer[0];
-	unsigned long numGenerated = generateSamples(partialBuf, length);
-	if (mixType == 1 || mixType == 2) {
-		float *pairBuf;
-		unsigned long pairNumGenerated;
-		if (pair == NULL) {
-			pairBuf = NULL;
-			pairNumGenerated = 0;
-		} else {
-			pairBuf = &pair->myBuffer[0];
-			pairNumGenerated = pair->generateSamples(pairBuf, numGenerated);
-			// pair will have been set to NULL if it deactivated within generateSamples()
-			if (pair != NULL) {
-				if (!isActive()) {
-					pair->deactivate();
-					pair = NULL;
-				} else if (!pair->isActive()) {
-					pair = NULL;
-				}
-			}
-		}
-		if (pairNumGenerated > 0) {
-			if (mixType == 1) {
-				mixBuffersRingMix(partialBuf, pairBuf, pairNumGenerated);
-			} else {
-				mixBuffersRing(partialBuf, pairBuf, pairNumGenerated);
-			}
-		}
-		if (numGenerated > pairNumGenerated) {
-			if (mixType == 2) {
-				numGenerated = pairNumGenerated;
-				deactivate();
-			}
-		}
-	}
-
+	unsigned long numGenerated = generateSamples(myBuffer, length);
 	for (unsigned int i = 0; i < numGenerated; i++) {
-		*leftBuf++ = partialBuf[i] * stereoVolume.leftVol;
+		*leftBuf++ = myBuffer[i] * stereoVolume.leftVol;
+		*rightBuf++ = myBuffer[i] * stereoVolume.rightVol;
 	}
-	for (unsigned int i = 0; i < numGenerated; i++) {
-		*rightBuf++ = partialBuf[i] * stereoVolume.rightVol;
-	}
-	while (numGenerated < length) {
+	for (; numGenerated < length; numGenerated++) {
 		*leftBuf++ = 0.0f;
 		*rightBuf++ = 0.0f;
-		numGenerated++;
 	}
 	return true;
 }

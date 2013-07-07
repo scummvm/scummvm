@@ -188,6 +188,25 @@ const Graphics::Surface *VideoDecoder::decodeNextFrame() {
 	return frame;
 }
 
+bool VideoDecoder::setReverse(bool reverse) {
+	// Can only reverse video-only videos
+	if (reverse && hasAudio())
+		return false;
+
+	// Attempt to make sure all the tracks are in the requested direction
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo && ((VideoTrack *)*it)->isReversed() != reverse) {
+			if (!((VideoTrack *)*it)->setReverse(reverse))
+				return false;
+
+			_needsUpdate = true; // force an update
+		}
+	}
+
+	findNextVideoTrack();
+	return true;
+}
+
 const byte *VideoDecoder::getPalette() {
 	_dirtyPalette = false;
 	return _palette;
@@ -218,7 +237,7 @@ uint32 VideoDecoder::getTime() const {
 		return _lastTimeChange.msecs();
 
 	if (isPaused())
-		return (_playbackRate * (_pauseStartTime - _startTime)).toInt();
+		return MAX<int>((_playbackRate * (_pauseStartTime - _startTime)).toInt(), 0);
 
 	if (useAudioSync()) {
 		for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
@@ -231,20 +250,29 @@ uint32 VideoDecoder::getTime() const {
 		}
 	}
 
-	return (_playbackRate * (g_system->getMillis() - _startTime)).toInt();
+	return MAX<int>((_playbackRate * (g_system->getMillis() - _startTime)).toInt(), 0);
 }
 
 uint32 VideoDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _needsUpdate || !_nextVideoTrack)
 		return 0;
 
-	uint32 elapsedTime = getTime();
+	uint32 currentTime = getTime();
 	uint32 nextFrameStartTime = _nextVideoTrack->getNextFrameStartTime();
 
-	if (nextFrameStartTime <= elapsedTime)
+	if (_nextVideoTrack->isReversed()) {
+		// For reversed videos, we need to handle the time difference the opposite way.
+		if (nextFrameStartTime >= currentTime)
+			return 0;
+
+		return currentTime - nextFrameStartTime;
+	}
+
+	// Otherwise, handle it normally.
+	if (nextFrameStartTime <= currentTime)
 		return 0;
 
-	return nextFrameStartTime - elapsedTime;
+	return nextFrameStartTime - currentTime;
 }
 
 bool VideoDecoder::endOfVideo() const {
@@ -318,7 +346,7 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	// Also reset our start time
 	if (isPlaying()) {
 		startAudio();
-		_startTime = g_system->getMillis() - time.msecs();
+		_startTime = g_system->getMillis() - (time.msecs() / _playbackRate).toInt();
 	}
 
 	resetPauseStartTime();
@@ -402,9 +430,11 @@ void VideoDecoder::setRate(const Common::Rational &rate) {
 
 	Common::Rational targetRate = rate;
 
-	if (rate < 0) {
-		// TODO: Implement support for this
+	// Attempt to set the reverse
+	if (!setReverse(rate < 0)) {
+		assert(rate < 0); // We shouldn't fail for forward.
 		warning("Cannot set custom rate to backwards");
+		setReverse(false);
 		targetRate = 1;
 
 		if (_playbackRate == targetRate)
@@ -418,7 +448,7 @@ void VideoDecoder::setRate(const Common::Rational &rate) {
 	_startTime = g_system->getMillis();
 
 	// Adjust start time if we've seeked to something besides zero time
-	if (_lastTimeChange.totalNumberOfFrames() != 0)
+	if (_lastTimeChange != 0)
 		_startTime -= (_lastTimeChange.msecs() / _playbackRate).toInt();
 
 	startAudio();
@@ -644,6 +674,8 @@ bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 
 	if (result)
 		addTrack(track);
+	else
+		delete track;
 
 	return result;
 }

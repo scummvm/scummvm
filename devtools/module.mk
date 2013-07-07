@@ -41,8 +41,24 @@ credits:
 	$(srcdir)/devtools/credits.pl --text > $(srcdir)/AUTHORS
 #	$(srcdir)/devtools/credits.pl --rtf > $(srcdir)/Credits.rtf
 	$(srcdir)/devtools/credits.pl --cpp > $(srcdir)/gui/credits.h
-	$(srcdir)/devtools/credits.pl --xml-website > $(srcdir)/../../web/trunk/data/credits.xml
+	$(srcdir)/devtools/credits.pl --xml-website > $(srcdir)/../../residualvm-web/data/credits.xml
 #	$(srcdir)/devtools/credits.pl --xml-docbook > $(srcdir)/../../docs/trunk/docbook/credits.xml
 
 
-.PHONY: clean-devtools devtools credits
+#
+# Rules which automatically and implicitly rebuild the credits and
+# MD5 tables when needed.
+# These are currently disabled, because if the input data changes, then
+# the generated files should be checked in, too. Otherwise, we'd reduce
+# portability to system on which our devtools can't (automatically) be
+# run for some reason.
+#
+
+#scumm/scumm-md5.h: $(srcdir)/devtools/scumm-md5.txt devtools/md5table$(EXEEXT)
+#	devtools/md5table$(EXEEXT) --c++ < $< > $@
+
+#AUTHORS: $(srcdir)/devtools/credits.pl
+#	$(srcdir)/devtools/credits.pl --text > $@
+
+#gui/credits.h: $(srcdir)/devtools/credits.pl
+#	$(srcdir)/devtools/credits.pl --cpp > $@.PHONY: clean-devtools devtools credits
