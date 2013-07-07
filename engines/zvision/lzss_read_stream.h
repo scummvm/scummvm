@@ -53,6 +53,7 @@ private:
 	char _window[blockSize];
 	uint16 _windowCursor;
 	uint32 _readCursor;
+	bool _eosFlag;
 
 public:
 	bool eos() const;

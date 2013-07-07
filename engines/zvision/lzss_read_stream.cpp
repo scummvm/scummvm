@@ -30,7 +30,8 @@ LzssReadStream::LzssReadStream(Common::SeekableReadStream *source, bool stream, 
 		: _source(source),
 		  // It's convention to set the starting cursor position to blockSize - 16
 		  _windowCursor(0x0FEE),
-		  _readCursor(0) {
+		  _readCursor(0),
+		  _eosFlag(false) {
 	// Clear the window to null
 	memset(_window, 0, blockSize);
 
@@ -104,8 +105,7 @@ void LzssReadStream::decompressAll() {
 }
 
 bool LzssReadStream::eos() const {
-	// Make sure that we've read all of the source
-	return _readCursor >= _destination.size() && _source->eos();
+	return _eosFlag;
 }
 
 uint32 LzssReadStream::read(void *dataPtr, uint32 dataSize) {
@@ -114,15 +114,19 @@ uint32 LzssReadStream::read(void *dataPtr, uint32 dataSize) {
 	while (dataSize > _destination.size() - _readCursor) {
 		// Check if we can read any more data from source
 		if (_source->eos()) {
+			// Shorten the dataSize to what we have left and flag that we're at EOS
 			dataSize = _destination.size() - _readCursor;
+			_eosFlag = true;
 			break;
 		}
 
 		decompressBytes(blockSize);
 	}
 
-	memcpy(dataPtr, _destination.begin() + _readCursor, dataSize);
-	_readCursor += dataSize;
+	if (dataSize > 0) {
+		memcpy(dataPtr, _destination.begin() + _readCursor, dataSize);
+		_readCursor += dataSize;
+	}
 
 	return dataSize;
 }
