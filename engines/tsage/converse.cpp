@@ -843,8 +843,12 @@ void StripManager::signal() {
 			}
 		}
 
-		if ((g_vm->getGameID() == GType_Ringworld2) && (_obj44List.size() > 0))
-			static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker)->proc15();
+		if (g_vm->getGameID() == GType_Ringworld2) {
+			Ringworld2::VisualSpeaker *speaker = static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker);
+			speaker->_fieldF6 = obj44._field8;
+			if (_obj44List.size() > 0)
+				speaker->proc15();
+		}
 
 		_textShown = true;
 		_activeSpeaker->setText(choiceList[strIndex]);
