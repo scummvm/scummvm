@@ -52,49 +52,49 @@ void LzssReadStream::decompressBytes(uint32 numberOfBytes) {
 
 	while (!_source->eos() && bytesRead <= numberOfBytes) {
 		byte flagbyte = _source->readByte();
+		if (_source->eos())
+			break;
 		byte mask = 1;
 
 		for (uint32 i = 0; i < 8; i++) {
-			if (!_source->eos()) {
-				if ((flagbyte & mask) == mask)
+			if ((flagbyte & mask) == mask)
+			{
+				byte data = _source->readByte();
+				bytesRead++;
+				if (_source->eos())
+					break;
+
+				_window[_windowCursor] = data;
+				_destination.push_back(data);
+
+				// Increment and wrap the window cursor
+				_windowCursor = (_windowCursor + 1) & 0xFFF;
+			}
+			else
+			{
+				byte low = _source->readByte();
+				bytesRead++;
+				if (_source->eos())
+					break;
+
+				byte high = _source->readByte();
+				bytesRead++;
+				if (_source->eos())
+					break;
+
+				uint16 length = (high & 0xF) + 2;
+				uint16 offset = low | ((high & 0xF0)<<4);
+
+				for(byte j = 0; j <= length; j++)
 				{
-					byte data = _source->readByte();
-					bytesRead++;
-					if (_source->eos())
-						break;
-
-					_window[_windowCursor] = data;
-					_destination.push_back(data);
-
-					// Increment and wrap the window cursor
+					byte temp = _window[(offset + j) & 0xFFF];
+					_window[_windowCursor] = temp;
+					_destination.push_back(temp);
 					_windowCursor = (_windowCursor + 1) & 0xFFF;
 				}
-				else
-				{
-					byte low = _source->readByte();
-					bytesRead++;
-					if (_source->eos())
-						break;
+			};
 
-					byte high = _source->readByte();
-					bytesRead++;
-					if (_source->eos())
-						break;
-
-					uint16 length = (high & 0xF) + 2;
-					uint16 offset = low | ((high & 0xF0)<<4);
-
-					for(byte j = 0; j <= length; j++)
-					{
-						byte temp = _window[(offset + j) & 0xFFF];
-						_window[_windowCursor] = temp;
-						_destination.push_back(temp);
-						_windowCursor = (_windowCursor + 1) & 0xFFF;
-					}
-				};
-
-				mask = mask << 1;
-			}
+			mask = mask << 1;
 		}
 	}
 }
