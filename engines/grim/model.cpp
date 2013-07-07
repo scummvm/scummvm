@@ -408,9 +408,10 @@ Mesh::Mesh() :	_numFaces(0),
 				_verticesI(NULL),
 				_vertNormals(NULL),
 				_numTextureVerts(0),
-				_textureVerts(NULL) {
+				_textureVerts(NULL),
+				_faces(NULL) {
 	_name[0] = '\0';
-					
+
 }
 
 
