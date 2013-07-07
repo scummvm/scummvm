@@ -429,7 +429,11 @@ void MixerImpl::pauseHandle(SoundHandle handle, bool paused) {
 
 bool MixerImpl::isSoundIDActive(int id) {
 	Common::StackLock lock(_mutex);
+
+#ifdef ENABLE_EVENTRECORDER
 	g_eventRec.updateSubsystems();
+#endif
+
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->getId() == id)
 			return true;
@@ -446,7 +450,11 @@ int MixerImpl::getSoundID(SoundHandle handle) {
 
 bool MixerImpl::isSoundHandleActive(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
+
+#ifdef ENABLE_EVENTRECORDER
 	g_eventRec.updateSubsystems();
+#endif
+
 	const int index = handle._val % NUM_CHANNELS;
 	return _channels[index] && _channels[index]->getHandle()._val == handle._val;
 }
