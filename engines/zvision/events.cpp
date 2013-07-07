@@ -24,7 +24,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/console.h"
-#include "common/EventRecorder.h"
+#include "common/events.h"
 
 
 namespace ZVision {

@@ -29,7 +29,7 @@
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/zork_raw.h"
 
-#include "common/EventRecorder.h"
+#include "common/events.h"
 #include "common/file.h"
 
 namespace ZVision {
