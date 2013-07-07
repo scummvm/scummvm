@@ -110,6 +110,7 @@ protected:
 	int16 _signalToSet;
 	bool _dataincAdd;
 	int16 _dataincToAdd;
+	bool _jumpToHoldTick;
 	bool _resetOnPause;
 
 	bool _channelUsed[16];

@@ -57,6 +57,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_signalToSet = 0;
 	_dataincAdd = false;
 	_dataincToAdd = 0;
+	_jumpToHoldTick = false;
 	_resetOnPause = false;
 	_pSnd = 0;
 }
@@ -452,6 +453,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 
 		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
+	if (_jumpToHoldTick) {
+		_jumpToHoldTick = false;
+		jumpToTick(_loopTick, false, false);
+	}
 
 	info.start = _position._playPos;
 	info.delta = 0;
@@ -532,9 +537,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// marker set for that song by cmdSetSoundHold.
 				// If it is, loop back, but don't stop notes when jumping.
 				if (info.basic.param2 == _pSnd->hold) {
-					uint32 extraDelta = info.delta;
-					jumpToTick(_loopTick, false, false);
-					_nextEvent.delta += extraDelta;
+					_jumpToHoldTick = true;
 				}
 				break;
 			case kUpdateCue:
