@@ -34,6 +34,9 @@ SoundTrack::SoundTrack() {
 	_handle = NULL;
 	_paused = false;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
+
+	// Initialize to a plain sound for now
+	_soundType = Audio::Mixer::SoundType::kPlainSoundType;
 }
 
 SoundTrack::~SoundTrack() {
