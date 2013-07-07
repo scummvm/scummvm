@@ -22,8 +22,6 @@
 
 #include "common/scummsys.h"
 
-#include <stdio.h>
-
 #include "zvision/script_manager.h"
 #include "zvision/utility.h"
 #include "zvision/puzzle.h"
