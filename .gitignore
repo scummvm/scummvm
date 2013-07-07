@@ -93,6 +93,7 @@ project.xcworkspace
 /dists/msvc*/*.SAV
 /dists/msvc*/*.dat
 /dists/msvc*/*.dll
+/dists/msvc*/test_runner.cpp
 
 /doc/*.aux
 /doc/*.dvi

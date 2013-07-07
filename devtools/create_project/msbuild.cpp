@@ -69,7 +69,7 @@ inline void outputConfiguration(std::ostream &project, const std::string &config
 
 inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, int version) {
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
-	           "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
+	           "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools || setup.tests) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
 	           "\t\t<PlatformToolset>v" << version << "0</PlatformToolset>\n"
 	           "\t</PropertyGroup>\n";
 }
@@ -159,10 +159,26 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	if (name == setup.projectName)
 		writeReferences(setup, project);
 
+	// Output auto-generated test runner
+	if (setup.tests) {
+		project << "\t<ItemGroup>\n";
+		project << "\t\t<ClCompile Include=\"test_runner.cpp\" />\n";
+		project << "\t</ItemGroup>\n";
+	}
+
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionTargets\">\n"
-	           "\t</ImportGroup>\n"
-	           "</Project>\n";
+	           "\t</ImportGroup>\n";
+
+	if (setup.tests) {
+		// We override the normal target to ignore the exit code (this allows us to have a clean output and not message about the command exit code)
+		project << "\t\t<Target Name=\"PostBuildEvent\">\n"
+		        << "\t\t\t<Message Text=\"Description: Run tests\" />\n"
+				<< "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
+		        << "\t\t</Target>\n";
+	}
+
+	project << "</Project>\n";
 
 	// Output filter file if necessary
 	createFiltersFile(setup, name);
@@ -248,7 +264,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
 	// Nothing to add here, move along!
-	if (!setup.devTools && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
+	if ((!setup.devTools || !setup.tests) && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
@@ -260,7 +276,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	           "\t\t<ClCompile>\n";
 
 	// Language Extensions
-	if (setup.devTools || name == setup.projectName || enableLanguageExtensions)
+	if (setup.devTools || setup.tests || name == setup.projectName || enableLanguageExtensions)
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 
 	// Edit and Continue
@@ -274,18 +290,18 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t\t</ClCompile>\n";
 
 	// Link configuration for main project
-	if (name == setup.projectName || setup.devTools) {
+	if (name == setup.projectName || setup.devTools || setup.tests) {
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += *i + ".lib;";
 
 		project << "\t\t<Link>\n"
-		           "\t\t\t<OutputFile>$(OutDir)" << (setup.devTools ? name : setup.projectName) << ".exe</OutputFile>\n"
+		           "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n"
 		           "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
 		           "\t\t</Link>\n";
 
-		if (!setup.devTools && setup.runBuildEvents) {
+		if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 			project << "\t\t<PreBuildEvent>\n"
 			           "\t\t\t<Message>Generate revision</Message>\n"
 			           "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
@@ -296,6 +312,11 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 					   "\t\t\t<Message>Copy data files to the build folder</Message>\n"
 					   "\t\t\t<Command>" << getPostBuildEvent(isWin32, setup.createInstaller) << "</Command>\n"
 					   "\t\t</PostBuildEvent>\n";
+		} else if (setup.tests) {
+			project << "\t\t<PreBuildEvent>\n"
+			           "\t\t\t<Message>Generate runner.cpp</Message>\n"
+			           "\t\t\t<Command>" << getTestPreBuildEvent(setup) << "</Command>\n"
+			           "\t\t</PreBuildEvent>\n";
 		}
 	}
 
@@ -330,9 +351,9 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t<ClCompile>\n"
 	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;" << prefix << ";" << prefix << "\\engines;$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-	              "\t\t\t<ExceptionHandling>" << (setup.devTools ? "Sync" : "") << "</ExceptionHandling>\n";
+	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
 #if NEEDS_RTTI
 	properties << "\t\t\t<RuntimeTypeInfo>true</RuntimeTypeInfo>\n";
@@ -348,7 +369,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
 	              "\t\t\t<SubSystem>Console</SubSystem>\n";
 
-	if (!setup.devTools)
+	if (!setup.devTools && !setup.tests)
 		properties << "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n";
 
 	properties << "\t\t</Link>\n"

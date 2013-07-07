@@ -88,6 +88,13 @@ protected:
 	std::string getPreBuildEvent() const;
 
 	/**
+	* Get the command line for the test generator
+	*
+	* @param setup Description of the desired build setup.
+	*/
+	std::string getTestPreBuildEvent(const BuildSetup &setup) const;
+
+	/**
 	 * Get the command line for copying data files to the build directory.
 	 *
 	 * @param	isWin32		   	Bitness of property file.
