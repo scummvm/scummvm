@@ -41,6 +41,7 @@
 
 #include "common/endian.h"
 #include "graphics/conversion.h"
+#include "graphics/opengles2/shader.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni.h"
@@ -52,7 +53,7 @@ static inline GLfixed xdiv(int numerator, int denominator) {
 
 // ResidualVM specific method
 void OSystem_Android::launcherInitSize(uint w, uint h) {
-	//setupScreen(w, h, true, false);
+	setupScreen(w, h, true, true, false);
 }
 
 // ResidualVM specific method
@@ -191,7 +192,7 @@ void OSystem_Android::initSurface() {
 	JNI::initSurface();
 
 	// Initialize OpenGLES context.
-	GLESTexture::initGLExtensions();
+	GLESTexture::initGL();
 
 	if (_game_texture)
 		_game_texture->reinit();
@@ -233,44 +234,14 @@ void OSystem_Android::initViewport() {
 
 	assert(JNI::haveSurface());
 
-	if (_opengl) {
-		GLCALL(glEnable(GL_DITHER));
-		GLCALL(glShadeModel(GL_SMOOTH));
-
-		GLCALL(glDisableClientState(GL_VERTEX_ARRAY));
-		GLCALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
-
-		GLCALL(glDisable(GL_TEXTURE_2D));
-
-		GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
-	} else {
-		// Turn off anything that looks like 3D ;)
-		GLCALL(glDisable(GL_DITHER));
-		GLCALL(glShadeModel(GL_FLAT));
-
-		GLCALL(glEnableClientState(GL_VERTEX_ARRAY));
-		GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-
-		GLCALL(glEnable(GL_TEXTURE_2D));
-
-		GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
-	}
-
 	GLCALL(glDisable(GL_CULL_FACE));
 	GLCALL(glDisable(GL_DEPTH_TEST));
-	GLCALL(glDisable(GL_LIGHTING));
-	GLCALL(glDisable(GL_FOG));
 
 	GLCALL(glEnable(GL_BLEND));
 	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	GLCALL(glViewport(0, 0, _egl_surface_width, _egl_surface_height));
-
-	GLCALL(glMatrixMode(GL_PROJECTION));
-	GLCALL(glLoadIdentity());
-	GLCALL(glOrthof(0, _egl_surface_width, _egl_surface_height, 0, -1, 1));
-	GLCALL(glMatrixMode(GL_MODELVIEW));
-	GLCALL(glLoadIdentity());
+	LOGD("viewport size: %dx%d", _egl_surface_width, _egl_surface_height);
 
 	clearFocusRectangle();
 }
@@ -287,10 +258,10 @@ void OSystem_Android::initOverlay() {
 	// enforces the 'lowres' layout, which will be scaled back up by factor 2x,
 	// but this looks way better than the 'normal' layout scaled by some
 	// calculated factors
-	while (overlay_height > 480) {
-		overlay_width /= 2;
-		overlay_height /= 2;
-	}
+//	while (overlay_height > 480) {
+//		overlay_width /= 2;
+//		overlay_height /= 2;
+//	}
 
 	LOGI("overlay size is %ux%u", overlay_width, overlay_height);
 
@@ -333,7 +304,7 @@ void OSystem_Android::clearScreen(FixupType type, byte count) {
 
 	for (byte i = 0; i < count; ++i) {
 		// clear screen
-		GLCALL(glClearColorx(0, 0, 0, 1 << 16));
+		GLCALL(glClearColor(0, 0, 0, 1 << 16));
 		if (_opengl) {
 			GLCALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 		} else {
@@ -460,15 +431,20 @@ void OSystem_Android::copyRectToScreen(const void *buf, int pitch,
 
 
 // ResidualVM specific method
-Graphics::PixelBuffer OSystem_Android::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+Graphics::PixelBuffer OSystem_Android::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d, bool isGame) {
 	_opengl = accel3d;
 	initViewport();
+
+	_touchControls.init(this, _egl_surface_width, _egl_surface_height);
 
 	if (_opengl) {
 		// resize game texture
 		initSize(screenW, screenH, 0);
+		if (isGame)
+			_game_texture->setGameTexture();
 		// format is not used by the gfx_opengl driver, use fake format
 		_game_pbuf.set(Graphics::PixelFormat(), 0);
+
 	} else {
 		Graphics::PixelFormat format = GLES565Texture::pixelFormat();
 		initSize(screenW, screenH, &format);
@@ -488,7 +464,6 @@ void OSystem_Android::updateScreen() {
 	if (!JNI::haveSurface())
 		return;
 
-	if (!_opengl) {
 		if (_game_pbuf) {
 			int pitch = _game_texture->width() * _game_texture->getPixelFormat().bytesPerPixel;
 			_game_texture->updateBuffer(0, 0, _game_texture->width(), _game_texture->height(),
@@ -509,8 +484,8 @@ void OSystem_Android::updateScreen() {
 		if ((_show_overlay || _htc_fail) && !_fullscreen)
 			clearScreen(kClear);
 
-		GLCALL(glPushMatrix());
-
+// TODO: Do we have engines that use this?
+#if 0
 		if (_shake_offset != 0 ||
 				(!_focus_rect.isEmpty() &&
 				!Common::Rect(_game_texture->width(),
@@ -522,14 +497,18 @@ void OSystem_Android::updateScreen() {
 			// Move everything up by _shake_offset (game) pixels
 			GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
 		}
+#endif
 
 	// TODO this doesnt work on those sucky drivers, do it differently
 	//	if (_show_overlay)
 	//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
 
-		if (_focus_rect.isEmpty()) {
+		if (true || _focus_rect.isEmpty()) {
 			_game_texture->drawTextureRect();
+			drawVirtControls();
 		} else {
+// TODO what is this and do we have engines using it?
+#if 0
 			GLCALL(glPushMatrix());
 
 			GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
@@ -544,6 +523,7 @@ void OSystem_Android::updateScreen() {
 			_game_texture->drawTextureRect();
 
 			GLCALL(glPopMatrix());
+#endif
 		}
 
 		int cs = _mouse_targetscale;
@@ -559,17 +539,13 @@ void OSystem_Android::updateScreen() {
 		}
 
 		if (_show_mouse && !_mouse_texture->isEmpty()) {
-			GLCALL(glPushMatrix());
-
 			const Common::Point &mouse = getEventManager()->getMousePos();
-
-			// Scale up ResidualVM -> OpenGL (pixel) coordinates
 			if (_show_overlay) {
-				GLCALL(glScalex(xdiv(_egl_surface_width,
-										_overlay_texture->width()),
-								xdiv(_egl_surface_height,
-										_overlay_texture->height()),
-								1 << 16));
+				_mouse_texture->drawTexture(mouse.x * cs, mouse.y * cs, _mouse_texture->width(), _mouse_texture->height());
+			}
+// TODO: Port the non-overlay code as well?
+#if 0
+			if (_show_overlay) {
 			} else {
 				const Common::Rect &r = _game_texture->getDrawRect();
 
@@ -585,23 +561,20 @@ void OSystem_Android::updateScreen() {
 								(-_mouse_hotspot.y * cs) << 16,
 								0));
 
-			// Note the extra half texel to position the mouse in
-			// the middle of the x,y square:
-			GLCALL(glTranslatex((mouse.x << 16) | 1 << 15,
-								(mouse.y << 16) | 1 << 15, 0));
-
-			GLCALL(glScalex(cs << 16, cs << 16, 1 << 16));
-
-			_mouse_texture->drawTextureOrigin();
-
-			GLCALL(glPopMatrix());
-		}
-
-		GLCALL(glPopMatrix());
+#endif
 	}
 
 	if (!JNI::swapBuffers())
 		LOGW("swapBuffers failed: 0x%x", glGetError());
+
+}
+
+void OSystem_Android::drawVirtControls() {
+	if (_show_overlay)
+		return;
+
+	glEnable(GL_BLEND);
+	_touchControls.draw();
 }
 
 Graphics::Surface *OSystem_Android::lockScreen() {

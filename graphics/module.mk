@@ -21,6 +21,10 @@ MODULE_OBJS := \
 	decoders/jpeg.o \
 	decoders/tga.o \
 	pixelbuffer.o \
+	opengles2/shader.o \
+	opengles2/box_shaders.o \
+	opengles2/control_shaders.o \
+	opengles2/compat_shaders.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \

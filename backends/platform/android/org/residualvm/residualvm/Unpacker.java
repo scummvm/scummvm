@@ -271,7 +271,7 @@ public class Unpacker extends Activity {
 		unpack_libs.add(new Uri.Builder()
 						.scheme("plugin")
 						.authority(getPackageName())
-						.path("mylib/armeabi/libresidualvm.so")
+						.path("lib/armeabi/libresidualvm.so")
 						.toString());
 		extras.putStringArrayList(ResidualVMApplication.EXTRA_UNPACK_LIBS,
 								  unpack_libs);

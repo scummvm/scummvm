@@ -35,7 +35,9 @@
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
+#include "backends/platform/android/events.h"
 #include "backends/platform/android/texture.h"
+#include "backends/platform/android/touchcontrols.h"
 
 #include <pthread.h>
 
@@ -104,7 +106,7 @@ protected:
 };
 #endif
 
-class OSystem_Android : public EventsBaseBackend, public PaletteManager {
+class OSystem_Android : public EventsBaseBackend, public PaletteManager, public KeyReceiver {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -140,7 +142,7 @@ private:
 	bool _show_mouse;
 	bool _use_mouse_palette;
 
-	int _virt_arrowkeys_pressed;
+	bool _virtcontrols_on;
 
 	int _graphicsMode;
 	bool _fullscreen;
@@ -224,6 +226,7 @@ public:
 
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
+	void keyPress(const Common::KeyCode keycode, const KeyReceiver::KeyPressType type);
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -245,10 +248,9 @@ private:
 	void updateEventScale();
 	void disableCursorPalette();
 
-	void updateVirtArrowKeys(int keys);
-	int getTouchArea(int x, int y);
-	int checkVirtArrowKeys(int action, int x, int y);
-	void checkVirtArrowKeys(int pointer, int action, int x0, int y0, int x1, int y1);
+	TouchControls _touchControls;
+
+	void drawVirtControls();
 
 protected:
 	// PaletteManager API
@@ -310,7 +312,10 @@ public:
 	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);
 	bool lockMouse(bool lock);
-	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+		return setupScreen(screenW, screenH, fullscreen, accel3d, true);
+	}
+	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d, bool isGame);
 };
 
 #endif

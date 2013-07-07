@@ -36,7 +36,7 @@
 
 class GLESBaseTexture {
 public:
-	static void initGLExtensions();
+	static void initGL();
 
 protected:
 	GLESBaseTexture(GLenum glFormat, GLenum glType,
@@ -57,7 +57,11 @@ public:
 								const void *buf, int pitch_buf) = 0;
 	virtual void fillBuffer(uint32 color) = 0;
 
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+		drawTexture(x, y, w, h, Common::Rect(0, 0, width(), height()));
+	}
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip);
+
 
 	inline void setDrawRect(const Common::Rect &rect) {
 		_draw_rect = rect;
@@ -90,6 +94,14 @@ public:
 
 	inline GLuint height() const {
 		return _surface.h;
+	}
+
+	inline GLuint texWidth() const {
+		return _texture_width;
+	}
+
+	inline GLuint texHeight() const {
+		return _texture_height;
 	}
 
 	inline uint16 pitch() const {
@@ -131,6 +143,14 @@ public:
 		return _palettePixelFormat;
 	}
 
+	GLuint getTextureName() const {
+		return _texture_name;
+	}
+
+	void setGameTexture() {
+		_is_game_texture = true;
+	}
+
 protected:
 	inline void setDirty() {
 		_all_dirty = true;
@@ -169,6 +189,8 @@ protected:
 
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::PixelFormat _palettePixelFormat;
+
+	bool _is_game_texture;
 };
 
 class GLESTexture : public GLESBaseTexture {
@@ -185,11 +207,24 @@ public:
 								const void *buf, int pitch_buf);
 	virtual void fillBuffer(uint32 color);
 
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+		drawTexture(x, y, w, h, Common::Rect(0, 0, width(), height()));
+	}
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip);
 
 protected:
 	byte *_pixels;
 	byte *_buf;
+};
+
+class GLES8888Texture : public GLESTexture {
+public:
+	GLES8888Texture();
+	virtual ~GLES8888Texture();
+
+	static Graphics::PixelFormat pixelFormat() {
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	}
 };
 
 // RGBA4444 texture
@@ -238,7 +273,10 @@ public:
 								const void *buf, int pitch_buf);
 	virtual void fillBuffer(uint32 color);
 
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+		drawTexture(x, y, w, h, Common::Rect(0, 0, width(), height()));
+	}
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip);
 
 	virtual const byte *palette_const() const {
 		return (byte *)_palette;

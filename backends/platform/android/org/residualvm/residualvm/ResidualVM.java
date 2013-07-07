@@ -151,7 +151,14 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 		_egl.eglInitialize(_egl_display, version);
 
 		int[] num_config = new int[1];
-		_egl.eglGetConfigs(_egl_display, null, 0, num_config);
+		int[] config_attrib_list = {
+				EGL10.EGL_RENDERABLE_TYPE, 4, // ES2
+				EGL10.EGL_RED_SIZE, 5,
+				EGL10.EGL_GREEN_SIZE, 6,
+				EGL10.EGL_BLUE_SIZE, 5,
+				EGL10.EGL_NONE
+		};
+		_egl.eglChooseConfig(_egl_display, config_attrib_list, null, 0, num_config);
 
 		final int numConfigs = num_config[0];
 
@@ -159,14 +166,14 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 			throw new IllegalArgumentException("No EGL configs");
 
 		EGLConfig[] configs = new EGLConfig[numConfigs];
-		_egl.eglGetConfigs(_egl_display, configs, numConfigs, num_config);
+		_egl.eglChooseConfig(_egl_display, config_attrib_list, configs, numConfigs, num_config);
 
-		// Android's eglChooseConfig is busted in several versions and
-		// devices so we have to filter/rank the configs ourselves.
 		_egl_config = chooseEglConfig(configs);
-
+		int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+		int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2,
+		                      EGL10.EGL_NONE };
 		_egl_context = _egl.eglCreateContext(_egl_display, _egl_config,
-											EGL10.EGL_NO_CONTEXT, null);
+		                                     EGL10.EGL_NO_CONTEXT, attrib_list);
 
 		if (_egl_context == EGL10.EGL_NO_CONTEXT)
 			throw new Exception(String.format("Failed to create context: 0x%x",

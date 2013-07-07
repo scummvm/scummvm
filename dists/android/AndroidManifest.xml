@@ -3,14 +3,12 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.residualvm.residualvm"
-		android:versionCode="@ANDROID_VERSIONCODE@"
+		android:versionCode="1000"
 		android:versionName="0.2.0git"
 		android:installLocation="preferExternal"
 		android:sharedUserId="org.residualvm.residualvm">
 
-	<!-- This version works on Android 1.5 (SDK 3) and newer, but we
-			want Android 2.2 (SDK 8) defaults and features. -->
-	<uses-sdk android:minSdkVersion="5"
+	<uses-sdk android:minSdkVersion="8"
 			android:targetSdkVersion="8"/>
 
 	<application android:name=".ResidualVMApplication"
@@ -47,6 +45,7 @@
 		android:protectionLevel="signature"/>
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.INTERNET"/>
 
 	<!-- Always needs some sort of qwerty keyboard.
 			Can work with a D-pad / trackball -->
@@ -59,4 +58,6 @@
 
 	<uses-configuration android:reqTouchScreen="stylus"
 			android:reqKeyboardType="qwerty"/>
+
+	<uses-feature android:glEsVersion="0x00020000" android:required="true" />
 </manifest>

@@ -104,7 +104,7 @@ _srcdir=`dirname $0`
 #
 #ResidualVM defaults: mpeg2=auto, faad=no, opengles=no, vorbis=no, tremor=no
 # mt32emu=no, translation=no, flac=no, seq_midi=no, snd_io=no, timidity=no, png=no
-# theoradec=no, fluidsynth=no
+# theoradec=no, fluidsynth=no, opengles2=no
 #
 # Default lib behaviour yes/no/auto
 _vorbis=no
@@ -125,6 +125,7 @@ _faad=no
 _fluidsynth=no
 _opengl=auto
 _opengles=no
+_opengles2=no
 _readline=auto
 _freetype2=auto
 _taskbar=yes
@@ -178,6 +179,8 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _tainted_build=no
+# residualvm specific
+_android_sysroot_path=""
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -1478,6 +1481,15 @@ android)
 		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
 		exit 1
 	fi
+	# residualvm specific
+	if test ! -d android-toolchain; then
+		echo "Installing Android toolchain to build directory..."
+		"$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" --platform=android-8 --install-dir=android-toolchain
+	else
+		echo "Android toolchain already installed."
+	fi
+	PATH="android-toolchain/bin:$PATH"
+	_android_sysroot_path="android-toolchain/bin:"
 	;;
 bada)
 	if test -z "$BADA_SDK"; then
@@ -1990,7 +2002,7 @@ case $_host_os in
 				;;
 		esac
 		# ResidualVM use newer NDK
-		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-5/arch-arm"
+		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-8/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections"
 		CXXFLAGS="$CXXFLAGS -funwind-tables"
@@ -2012,7 +2024,7 @@ case $_host_os in
 		# supress 'mangling of 'va_list' has changed in GCC 4.4'
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
 		# ResidualVM use newer NDK
-		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-5/arch-arm"
+		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-8/arch-arm"
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
@@ -2656,6 +2668,8 @@ case $_backend in
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
 		INCLUDES="$INCLUDES -I$ANDROID_NDK/sources/cxx-stl/system/include"
+		DEFINES="$DEFINES -DANDROID_BACKEND"
+		add_line_to_config_mk "ANDROID_BACKEND = 1"
 		;;
 	bada)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
@@ -3701,6 +3715,8 @@ EOF
 				break
 			fi
 		done
+	elif test "$_opengles2" = "yes" ; then
+		OPENGL_LIBS="$OPENGL_LIBS -lGLESv2"
 	else
 		case $_host_os in
 		darwin*)
@@ -3732,16 +3748,24 @@ case $_host_os in
 		_opengl=yes
 		_opengles=yes
 		;;
+	android)
+		_opengles2=yes
+		LDFLAGS="$LDFLAGS -Landroid-toolchain/sysroot/usr/lib"
+		LDFLAGS="$LDFLAGS -lGLESv2"
+		;;
 esac
 
 if test "$_opengles" = "yes" ; then
 	echo "yes (OpenGL ES)"
+elif test "$_opengles2" = "yes" ; then
+	echo "yes (OpenGL ES2)"
 else
 	echo "$_opengl"
 fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
+define_in_config_if_yes "$_opengles2" "USE_GLES2"
 
 
 #
@@ -4016,7 +4040,10 @@ case $_backend in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog"
+		if test "$_opengles2" != "yes" ; then
+			LIBS="$LIBS -lGLESv1_CM"
+		fi
 		;;
 	n64)
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
@@ -4212,6 +4239,7 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
+PATH := ${_android_sysroot_path}\$(PATH)
 
 BACKEND := $_backend
 MODULES += $MODULES
