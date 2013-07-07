@@ -125,8 +125,8 @@ const int kArep = 1314;
 const int kAmzon = 1650;
 const int kArega = 0;
 
-const int kMaxTi = 9000;
-const int kMaxTd = 600;
+const int kMaxDialogIndex = 9000;
+const int kMaxDialogHint = 600;
 
 const int kDescriptionStringIndex = 0;                // Unused
 const int kInventoryStringIndex = 186;
@@ -281,8 +281,8 @@ private:
 	int    _openObjects[8];
 	int    _nbrep[9];
 	int    _nbrepm[9];
-	uint16 _inpBuffer[kMaxTi + 1];
-	Hint   _ntpBuffer[kMaxTd + 1];
+	uint16 _dialogIndexArray[kMaxDialogIndex + 1];
+	Hint   _dialogHintArray[kMaxDialogHint + 1];
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
