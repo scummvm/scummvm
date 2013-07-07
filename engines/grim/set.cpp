@@ -68,8 +68,11 @@ Set::~Set() {
 			delete _sectors[i];
 		}
 		delete[] _sectors;
-		foreach (ObjectState *s, _states)
+		while (!_states.empty()) {
+			ObjectState *s = _states.front();
+			_states.pop_front();
 			delete s;
+		}
 	}
 }
 
