@@ -26,21 +26,37 @@
 
 #include "zvision/console.h"
 #include "zvision/zvision.h"
+#include "zvision/zork_avi_decoder.h"
 
 namespace ZVision {
 
-	Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
-		DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
+Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
+	DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
+	DCmd_Register("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
+}
+
+bool Console::cmdLoadImage(int argc, const char **argv) {
+	if (argc != 4) {
+		DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen");
+		return false;
+	}
+	_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
+
+	return true;
+}
+
+bool Console::cmdLoadVideo(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use loadvideo <fileName> to load a video to the screen");
+		return false;
 	}
 
-	bool Console::cmdLoadImage(int argc, const char **argv) {
-		if (argc != 4) {
-			DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen");
-			return false;
-		}
-		_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
-
-		return true;
+	Video::VideoDecoder *videoDecoder = new ZorkAVIDecoder();
+	if (videoDecoder && videoDecoder->loadFile(argv[1])) {
+		_engine->startVideo(videoDecoder);
 	}
+
+	return true;
+}
 
 } // End of namespace ZVision

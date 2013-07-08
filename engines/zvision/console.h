@@ -38,6 +38,7 @@ namespace ZVision {
 		ZVision *_engine;
 
 		bool cmdLoadImage(int argc, const char **argv);
+		bool cmdLoadVideo(int argc, const char **argv);
 	};
 
 } // End of namespace ZVision

@@ -82,6 +82,7 @@ void ZVision::startVideo(Video::VideoDecoder *videoDecoder) {
 	initGraphics(640, 480, true, formats);
 	_currentVideo->start();
 
+	// Load the first frame
 	continueVideo();
 }
 
