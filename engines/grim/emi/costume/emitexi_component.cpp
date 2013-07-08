@@ -48,7 +48,7 @@ int EMITexiComponent::update(uint time) {
 }
 
 void EMITexiComponent::setKey(int k) {
-	if (_mat)
+	if (_mat && _mat->getNumTextures() > k)
 		_mat->setActiveTexture(k);
 }
 
