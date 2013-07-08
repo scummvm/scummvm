@@ -37,18 +37,7 @@ class Material;
 class Mesh;
 class ModelNode;
 class CMap;
-
-struct Sprite {
-	void draw() const;
-	void loadBinary(Common::SeekableReadStream*);
-
-	Math::Vector3d _pos;
-	float _width;
-	float _height;
-	bool _visible;
-	Material *_material;
-	Sprite *_next;
-};
+class Sprite;
 
 class Model : public Object {
 public:

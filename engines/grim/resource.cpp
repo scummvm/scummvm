@@ -34,6 +34,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/model.h"
+#include "engines/grim/sprite.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/emi/animationemi.h"

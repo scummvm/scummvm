@@ -30,48 +30,9 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/sprite.h"
 
 namespace Grim {
-
-void Sprite::draw() const {
-	if (!_visible)
-		return;
-
-	_material->select();
-	g_driver->drawSprite(this);
-}
-
-void Sprite::loadBinary(Common::SeekableReadStream *stream) {
-	if (!stream)
-		return;
-
-	uint32 namelength = stream->readUint32LE();
-	stream->skip(namelength);
-
-	stream->seek(40, SEEK_CUR);
-	uint32 texnamelength = stream->readUint32LE();
-	char *texname = new char[texnamelength];
-	stream->read(texname, texnamelength);
-	/* unknown = */ stream->readUint32LE();
-	float width, height;
-	float offX, offY;
-	char data[16];
-	stream->read(data, sizeof(data));
-	width = get_float(data);
-	height = get_float(data + 4);
-	offX = get_float(data + 8);
-	offY = get_float(data + 12);
-
-
-	_material = g_resourceloader->loadMaterial(texname, 0);
-	_width = width;
-	_height = height;
-	_next = NULL;
-	_visible = true;
-	_pos.set(-offX, offY, 0);
-
-	delete[] texname;
-}
 
 
 /**

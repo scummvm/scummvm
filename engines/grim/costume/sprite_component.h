@@ -27,7 +27,7 @@
 
 namespace Grim {
 
-struct Sprite;
+class Sprite;
 
 class SpriteComponent : public Component {
 public:

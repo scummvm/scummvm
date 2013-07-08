@@ -20,38 +20,36 @@
  *
  */
 
-#include "engines/grim/emi/costume/emisprite_component.h"
-#include "engines/grim/resource.h"
-#include "engines/grim/costume.h"
-#include "engines/grim/sprite.h"
+#ifndef GRIM_SPRITE_H
+#define GRIM_SPRITE_H
+
+#include "math/matrix4.h"
+
+namespace Common {
+class SeekableReadStream;
+class String;
+}
 
 namespace Grim {
 
-EMISpriteComponent::EMISpriteComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _sprite(NULL) {
-}
+class Material;
+class CMap;
 
-EMISpriteComponent::~EMISpriteComponent() {
-	delete _sprite;
-}
+class Sprite {
+public:
+	Sprite();
+	void draw() const;
+	void loadBinary(Common::SeekableReadStream*);
+	void loadGrim(const Common::String &name, const char *comma, CMap *cmap);
 
-void EMISpriteComponent::init() {
-	_sprite = g_resourceloader->loadSprite(_name);
-}
-
-int EMISpriteComponent::update(uint time) {
-	return 0;
-}
-
-void EMISpriteComponent::reset() {
-}
-
-void EMISpriteComponent::draw() {
-	// HACK: don't draw _masks for now.
-	if (_name.contains("_mask"))
-		return;
-	if (_sprite) {
-		_sprite->draw();
-	}
-}
+	Math::Vector3d _pos;
+	float _width;
+	float _height;
+	bool _visible;
+	Material *_material;
+	Sprite *_next;
+};
 
 } // end of namespace Grim
+
+#endif

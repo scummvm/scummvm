@@ -23,6 +23,7 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/model.h"
+#include "engines/grim/sprite.h"
 #include "engines/grim/material.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/costume/mesh_component.h"
@@ -69,16 +70,8 @@ void SpriteComponent::init() {
 	}
 
 	if (comma) {
-		int width, height, x, y, z;
-		sscanf(comma, ",%d,%d,%d,%d,%d", &width, &height, &x, &y, &z);
-
-		_sprite = new Sprite;
-		_sprite->_material = g_resourceloader->loadMaterial(name, getCMap());
-		_sprite->_width = (float)width / 100.0f;
-		_sprite->_height = (float)height / 100.0f;
-		_sprite->_pos.set((float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f);
-		_sprite->_visible = false;
-		_sprite->_next = NULL;
+		_sprite = new Sprite();
+		_sprite->loadGrim(name, comma, getCMap());
 
 		if (_parent) {
 			if (_parent->isComponentType('M','E','S','H')) {

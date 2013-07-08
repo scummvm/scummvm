@@ -42,7 +42,7 @@ class LipSync;
 class TrackedObject;
 class SaveGame;
 class Skeleton;
-struct Sprite;
+class Sprite;
 class Lab;
 
 typedef ObjectPtr<Material> MaterialPtr;

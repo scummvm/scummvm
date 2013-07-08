@@ -118,6 +118,7 @@ MODULE_OBJS := \
 	set.o \
 	sector.o \
 	sound.o \
+	sprite.o \
 	stuffit.o \
 	textobject.o \
 	textsplit.o \
