@@ -88,17 +88,13 @@ PatchedFile::PatchedFile():
 }
 
 PatchedFile::~PatchedFile() {
-	if (diffBuffer)
-		delete[] diffBuffer;
+	delete[] diffBuffer;
 
-	if (_file)
-		delete _file;
+	delete _file;
 
-	if (_ctrl)
-		delete _ctrl;
-	if (_diff)
-		delete _diff;
-	if (!(_flags & FLAG_MIX_DIFF_EXTRA) && _extra)
+	delete _ctrl;
+	delete _diff;
+	if (!(_flags & FLAG_MIX_DIFF_EXTRA))
 		delete _extra;
 }
 

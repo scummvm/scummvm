@@ -200,9 +200,7 @@ Costume::~Costume() {
 	if (_chores) {
 		stopChores();
 		for (int i = _numComponents - 1; i >= 0; i--) {
-			// The "Sprite" component can be NULL
-			if (_components[i])
-				delete _components[i];
+			delete _components[i];
 		}
 		delete[] _components;
 

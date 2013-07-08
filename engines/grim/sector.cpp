@@ -36,10 +36,8 @@ Sector::Sector(const Sector &other) {
 }
 
 Sector::~Sector() {
-	if (_vertices)
-		delete[] _vertices;
-	if (_origVertices)
-		delete[] _origVertices;
+	delete[] _vertices;
+	delete[] _origVertices;
 }
 
 void Sector::saveState(SaveGame *savedState) const {

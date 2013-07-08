@@ -312,8 +312,7 @@ Common::Error GrimEngine::run() {
 	}
 
 	g_grim->setMode(NormalMode);
-	if (splash_bm)
-		delete splash_bm;
+	delete splash_bm;
 	g_grim->mainLoop();
 
 	return Common::kNoError;
