@@ -41,7 +41,13 @@
 
 namespace ZVision {
  
-ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
+		: Engine(syst),
+		  _gameDescription(gameDesc),
+		  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
+		  _currentVideo(0),
+		  _width(640),
+		  _height(480) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from run().
@@ -94,9 +100,7 @@ void ZVision::initialize() {
 		SearchMan.add(name, archive);
 	}
 
-	//Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);	// ARGB8888
-	Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);	// RGB555
-	initGraphics(640, 480, true, &format);
+	initGraphics(_width, _height, true, &_pixelFormat);
 
 	_scriptManager->initialize();
 

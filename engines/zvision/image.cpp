@@ -56,9 +56,6 @@ void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint
 		byte *buffer = new byte[stream.currentSize()];
 		stream.read(buffer, stream.currentSize());
 
-		//Graphics::PixelFormat format(16, 5, 6, 5, 0, 11, 5, 0, 0);
-		// Graphics::PixelFormat format(16, 5, 5, 5, 1, 11, 6, 1, 0);
-
 		_system->copyRectToScreen(buffer, width * 2, x, y, width, height);
 	} else {
 		// Reset the cursor
@@ -71,7 +68,6 @@ void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint
 		file.close();
 
 		const Graphics::Surface *tgaSurface = tga.getSurface();
-
 		_system->copyRectToScreen(tgaSurface->pixels, tgaSurface->pitch, x, y, tgaSurface->w, tgaSurface->h);
 
 		tga.destroy();

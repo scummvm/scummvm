@@ -54,12 +54,14 @@ public:
 private:
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
+	const Graphics::PixelFormat _pixelFormat;
+	const int _width;
+	const int _height;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
-
+	// Managers
 	ScriptManager *_scriptManager;
-
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
