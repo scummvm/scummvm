@@ -122,9 +122,13 @@ Common::Error ZVision::run() {
 		currentTime = _system->getMillis();
 		uint32 deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-		
-		updateScripts();
-		updateAnimations(deltaTime);
+
+		if (_currentVideo != 0)
+			continueVideo();
+		else {
+			updateScripts();
+			updateAnimations(deltaTime);
+		}
 
 		if (_needsScreenUpdate || _console->isActive()) {
 			_system->updateScreen();

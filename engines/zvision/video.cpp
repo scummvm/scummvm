@@ -21,16 +21,14 @@
  */
 
 #include "common/scummsys.h"
+
 #include "common/system.h"
+#include "engines/util.h"
 
-#include "engines/engine.h"
-#include "graphics/decoders/tga.h"
+#include "graphics/surface.h"
 
-#include "zvision/zork_avi_decoder.h"
-#include "zvision/zork_raw.h"
+#include "zvision/zvision.h"
 
-#include "common/events.h"
-#include "common/file.h"
 
 namespace ZVision {
 
@@ -73,63 +71,50 @@ void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte b
 	}
 }
 
-void playVideo(Video::VideoDecoder *videoDecoder /*, VideoState videoState*/) {
+void ZVision::startVideo(Video::VideoDecoder *videoDecoder) {
 	if (!videoDecoder)
 		return;
 
-	videoDecoder->start();
+	_currentVideo = videoDecoder;
 
-	byte *scaleBuffer = 0;
-	byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
-	uint16 width = videoDecoder->getWidth();
-	uint16 height = videoDecoder->getHeight();
-	uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
-	uint16 screenWidth = 640;//g_sci->_gfxScreen->getDisplayWidth();
-	uint16 screenHeight = 480;//g_sci->_gfxScreen->getDisplayHeight();
+	Common::List<Graphics::PixelFormat> formats;
+	formats.push_back(videoDecoder->getPixelFormat());
+	initGraphics(640, 480, true, formats);
+	_currentVideo->start();
 
-	bool zoom2x = true;
+	continueVideo();
+}
 
-	if (zoom2x) {
-		width *= 2;
-		height *= 2;
-		pitch *= 2;
-		scaleBuffer = new byte[width * height * bytesPerPixel];
+void ZVision::continueVideo() {
+	if (_currentVideo == 0) {
+		warning("No video loaded. Nothing to continue");
+		return;
 	}
 
-	uint16 x, y;
+	byte bytesPerPixel = _currentVideo->getPixelFormat().bytesPerPixel;
+	uint16 width = _currentVideo->getWidth();
+	uint16 height = _currentVideo->getHeight();
+	uint16 pitch = _currentVideo->getWidth() * bytesPerPixel;
 
-	x = (screenWidth - width) / 2;
-	y = (screenHeight - height) / 2;
+	uint16 x = (_system->getWidth() - width) / 2;
+	uint16 y = (_system->getWidth() - height) / 2;
 
-	bool skipVideo = false;
-
-	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-		if (videoDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+	if (!_currentVideo->endOfVideo()) {
+		if (_currentVideo->needsUpdate()) {
+			const Graphics::Surface *frame = _currentVideo->decodeNextFrame();
 
 			if (frame) {
-				if (scaleBuffer) {
-					scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
-					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
-				} else {
-					g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, width, height);
-				}
+				_system->copyRectToScreen(frame->pixels, pitch, x, y, width, height);
 
-				g_system->updateScreen();
+				_needsScreenUpdate = true;
 			}
 		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
-				skipVideo = true;
-		}
-
-		g_system->delayMillis(10);
+	} else {
+		initGraphics(_width, _height, true, &_pixelFormat);
+		delete _currentVideo;
+		_currentVideo = 0;
 	}
 
-	delete[] scaleBuffer;
-	delete videoDecoder;
 }
 
 } // End of namespace ZVision

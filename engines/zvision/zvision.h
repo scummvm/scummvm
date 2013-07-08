@@ -27,6 +27,8 @@
 #include "common/random.h"
 #include "common/events.h"
 
+#include "video/video_decoder.h"
+
 #include "engines/engine.h"
 
 #include "zvision/script_manager.h"
@@ -67,6 +69,7 @@ private:
 
 	bool _needsScreenUpdate;
 
+	Video::VideoDecoder *_currentVideo;
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -74,6 +77,8 @@ public:
 	ScriptManager *getScriptManager() const;
 	Common::RandomSource *getRandomSource() const;
 	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
+	void startVideo(Video::VideoDecoder *videoDecoder);
+	void continueVideo();
 
 private:
 	void initialize();
