@@ -3236,7 +3236,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_protocolDisplay.postInit();
 	_protocolDisplay.setup(300, 6, 1);
 	_protocolDisplay.setPosition(Common::Point(287, 71));
-	_protocolDisplay.animate(ANIM_MODE_7, NULL);
+	_protocolDisplay.animate(ANIM_MODE_7, 0, NULL);
 	_protocolDisplay._numFrames = 5;
 
 	_object6.postInit();
