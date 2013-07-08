@@ -36,7 +36,7 @@ public:
 	PatchedFile();
 	virtual ~PatchedFile();
 
-	bool load(Common::SeekableReadStream *file, Common::String patchName);
+	bool load(Common::SeekableReadStream *file, const Common::String &patchName);
 
 	// Common::ReadStream implementation
 	virtual bool eos() const;
@@ -102,7 +102,7 @@ PatchedFile::~PatchedFile() {
 		delete _extra;
 }
 
-bool PatchedFile::load(Common::SeekableReadStream *file, Common::String patchName) {
+bool PatchedFile::load(Common::SeekableReadStream *file, const Common::String &patchName) {
 	uint8 md5_p[16], md5_f[16];
 	uint32 zctrllen, zdatalen, zextralen;
 	Common::File patch;

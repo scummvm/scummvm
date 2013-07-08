@@ -63,7 +63,7 @@ bool VimaTrack::isPlaying() {
 		return true;
 }
 	
-bool VimaTrack::openSound(Common::String voiceName, Common::SeekableReadStream *file) {
+bool VimaTrack::openSound(const Common::String &voiceName, Common::SeekableReadStream *file) {
 	_soundName = voiceName;
 	_mcmp = new McmpMgr();
 	_desc = new SoundDesc();
@@ -200,7 +200,7 @@ void VimaTrack::playTrack() {
 	}
 }
 
-VimaTrack::VimaTrack(Common::String soundName) {
+VimaTrack::VimaTrack(const Common::String &soundName) {
 	_soundType = Audio::Mixer::kSpeechSoundType;
 	_handle = new Audio::SoundHandle();
 	_file = NULL;

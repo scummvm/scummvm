@@ -67,7 +67,7 @@ int32 EMISound::getFreeChannel() {
 	return -1;
 }
 	
-int32 EMISound::getChannelByName(Common::String name) {
+int32 EMISound::getChannelByName(const Common::String &name) {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i] && _channels[i]->getSoundName() == name)
 			return i;
@@ -169,7 +169,7 @@ uint32 EMISound::getMsPos(int stateId) {
 	return g_system->getMixer()->getSoundElapsedTime(*_music->getHandle());
 }
 	
-MusicEntry *initMusicTableDemo(Common::String filename) {
+MusicEntry *initMusicTableDemo(const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
 	if (!data)
@@ -204,7 +204,7 @@ MusicEntry *initMusicTableDemo(Common::String filename) {
 	return musicTable;
 }
 
-MusicEntry *initMusicTableRetail(Common::String filename) {
+MusicEntry *initMusicTableRetail(const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 	
 	// Remember to check, in case we forgot to copy over those files from the CDs.

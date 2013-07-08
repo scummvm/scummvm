@@ -149,7 +149,7 @@ void MoviePlayer::deinit() {
 	_videoFinished = true;
 }
 
-bool MoviePlayer::play(Common::String filename, bool looping, int x, int y, bool start) {
+bool MoviePlayer::play(const Common::String &filename, bool looping, int x, int y, bool start) {
 	Common::StackLock lock(_frameMutex);
 	deinit();
 	_x = x;

@@ -50,14 +50,14 @@ protected:
 public:
 	SoundTrack();
 	virtual ~SoundTrack();
-	virtual bool openSound(Common::String voiceName, Common::SeekableReadStream *file) = 0;
+	virtual bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file) = 0;
 	virtual bool isPlaying() = 0;
 	virtual bool play();
 	virtual void pause();
 	virtual void stop();
 	Audio::SoundHandle *getHandle() { return _handle; }
 	Common::String getSoundName();
-	void setSoundName(Common::String);
+	void setSoundName(const Common::String &name);
 };
 
 }

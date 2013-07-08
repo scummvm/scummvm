@@ -45,7 +45,7 @@ class MP3Track : public SoundTrack {
 public:
 	MP3Track(Audio::Mixer::SoundType soundType);
 	~MP3Track();
-	bool openSound(Common::String soundName, Common::SeekableReadStream *file);
+	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file);
 	bool isPlaying() { return !_endFlag; }
 };
 

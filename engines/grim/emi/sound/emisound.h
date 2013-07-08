@@ -53,7 +53,7 @@ class EMISound {
 
 	void removeItem(SoundTrack* item);
 	int32 getFreeChannel();
-	int32 getChannelByName(Common::String name);
+	int32 getChannelByName(const Common::String &name);
 	void freeChannel(int32 channel);
 	void initMusicTable();
 public:

@@ -40,7 +40,7 @@ BinkPlayer::BinkPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_videoDecoder = new Video::BinkDecoder();
 }
 
-bool BinkPlayer::loadFile(Common::String filename) {
+bool BinkPlayer::loadFile(const Common::String &filename) {
 	_fname = filename;
 
 	if (_demo) {

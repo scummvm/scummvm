@@ -48,7 +48,7 @@ Common::String SoundTrack::getSoundName() {
 	return _soundName;
 }
 
-void SoundTrack::setSoundName(Common::String name) {
+void SoundTrack::setSoundName(const Common::String &name) {
 	_soundName = name;
 }
 

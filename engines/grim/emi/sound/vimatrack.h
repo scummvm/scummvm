@@ -41,11 +41,11 @@ class VimaTrack : public SoundTrack {
 	void parseSoundHeader(SoundDesc *sound, int &headerSize);
 	int32 getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size);
 public:
-	VimaTrack(Common::String soundName);
+	VimaTrack(const Common::String &soundName);
 	virtual ~VimaTrack();
 	
 	bool isPlaying();
-	bool openSound(Common::String voiceName, Common::SeekableReadStream *file);
+	bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file);
 	void playTrack();
 	SoundDesc *_desc;
 	McmpMgr *_mcmp;

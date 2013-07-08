@@ -38,7 +38,7 @@ SCXTrack::~SCXTrack() {
 	stop();
 }
 	
-bool SCXTrack::openSound(Common::String soundName, Common::SeekableReadStream *file) {
+bool SCXTrack::openSound(const Common::String &soundName, Common::SeekableReadStream *file) {
 	_soundName = soundName;
 	Audio::RewindableAudioStream *scxStream = makeSCXStream(file, DisposeAfterUse::YES);
 	if (_soundType == Audio::Mixer::kMusicSoundType)

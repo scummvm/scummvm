@@ -33,7 +33,7 @@ class BinkPlayer : public MoviePlayer {
 public:
 	BinkPlayer(bool demo);
 private:
-	bool loadFile(Common::String filename);
+	bool loadFile(const Common::String &filename);
 	bool _demo;
 };
 

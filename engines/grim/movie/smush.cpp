@@ -38,7 +38,7 @@ SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	//_smushDecoder->setDemo(_demo);
 }
 
-bool SmushPlayer::loadFile(Common::String filename) {
+bool SmushPlayer::loadFile(const Common::String &filename) {
 	if (!_demo)
 		return _videoDecoder->loadStream(g_resourceloader->openNewStreamFile(filename.c_str()));
 	else

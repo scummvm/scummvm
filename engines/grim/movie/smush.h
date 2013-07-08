@@ -36,7 +36,7 @@ public:
 	void restore(SaveGame *state);
 
 private:
-	bool loadFile(Common::String filename);
+	bool loadFile(const Common::String &filename);
 	void handleFrame();
 	void postHandleFrame();
 	void init();
