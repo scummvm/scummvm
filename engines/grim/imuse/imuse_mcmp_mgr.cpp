@@ -38,7 +38,6 @@ McmpMgr::McmpMgr() {
 	_compInput = NULL;
 	_outputSize = 0;
 	_file = NULL;
-	_numCompItems = 0;
 	_lastBlock = -1;
 }
 

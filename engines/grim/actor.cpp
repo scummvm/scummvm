@@ -496,7 +496,7 @@ void Actor::setPos(const Math::Vector3d &position) {
 	// Don't allow positions outside the sectors.
 	// This is necessary after solving the tree pump puzzle, when the bone
 	// wagon returns to the signopost set.
-	if (_followBoxes && !_walking) {
+	if (_followBoxes) {
 		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 }

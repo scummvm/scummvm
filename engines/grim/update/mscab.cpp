@@ -233,10 +233,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 	bool decRes;
 
 	//Sanity checks
-	if (!_compressedBlock || !_compressedBlock)
-		return false;
-
-	if (entry.folder != _curFolder)
+	if (!_compressedBlock || entry.folder != _curFolder)
 		return false;
 
 	_startBlock = entry.folderOffset / kCabBlockSize;
