@@ -175,7 +175,7 @@ bool MoviePlayer::play(const Common::String &filename, bool looping, int x, int 
 	return true;
 }
 
-bool MoviePlayer::loadFile(Common::String filename) {
+bool MoviePlayer::loadFile(const Common::String &filename) {
 	return _videoDecoder->loadFile(filename);
 }
 

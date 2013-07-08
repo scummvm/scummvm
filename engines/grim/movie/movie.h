@@ -146,7 +146,7 @@ protected:
 	 * @see play
 	 * @param filename		The filename to be handled.
 	 */
-	virtual bool loadFile(Common::String filename);
+	virtual bool loadFile(const Common::String &filename);
 
 	/**
 	 * Saves subclass related state of the video to a savegame
