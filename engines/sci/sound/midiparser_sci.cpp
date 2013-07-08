@@ -537,10 +537,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// marker set for that song by cmdSetSoundHold.
 				// If it is, loop back, but don't stop notes when jumping.
 				// We need to wait for the delta of the current event before
-				// jumping, as in LSL6, this ends up jumping forward one tick
-				// (the hold marker occurs at playtick 27, with loopTick
-				// being 15 and the event itself having a tick of 13,
-				// total = 28) - bug #3614566.
+				// jumping, thus the jump will be performed on the next
+				// parseNextEvent() call, like with the signal set events.
+				// In LSL6, room 360, song 381, this ends up jumping forward
+				// one tick (the hold marker occurs at playtick 27, with
+				// _loopTick being 15 and the event itself having a delta of
+				// 13, total = 28) - bug #3614566.
 				if (info.basic.param2 == _pSnd->hold) {
 					_jumpToHoldTick = true;
 				}
@@ -649,11 +651,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					// the MIDI hold one above. However, we can't perform the
 					// jump on the next tick like with the MIDI hold jump above,
 					// as there aren't any subsequent MIDI events after this one.
-					// This assert is here to detect cases where the song jumps
-					// forward, like with the hold jump above (however, this
-					// scenario sounds less likely to occur with this jump). Note
-					// that we haven't yet found a scene where this jump might
-					// lock up,
+					// This assert is here to detect cases where the song ends
+					// up jumping forward, like with bug #3614566 (see above).
 					assert(_loopTick + info.delta < _position._playTick);
 
 					uint32 extraDelta = info.delta;
