@@ -34,12 +34,13 @@ namespace Grim {
 
 class Material;
 class CMap;
+class EMICostume;
 
 class Sprite {
 public:
 	Sprite();
 	void draw() const;
-	void loadBinary(Common::SeekableReadStream*);
+	void loadBinary(Common::SeekableReadStream *, EMICostume *costume);
 	void loadGrim(const Common::String &name, const char *comma, CMap *cmap);
 
 	Math::Vector3d _pos;

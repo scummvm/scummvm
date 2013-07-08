@@ -25,6 +25,7 @@
 #include "engines/grim/sprite.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/emi/costumeemi.h"
 
 
 namespace Grim {
@@ -50,7 +51,7 @@ void Sprite::loadGrim(const Common::String &name, const char *comma, CMap *cmap)
 	_pos.set((float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f);
 }
 
-void Sprite::loadBinary(Common::SeekableReadStream *stream) {
+void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume) {
 	if (!stream)
 		return;
 
@@ -71,8 +72,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream) {
 	offX = get_float(data + 8);
 	offY = get_float(data + 12);
 
-
-	_material = g_resourceloader->loadMaterial(texname, 0);
+	_material = costume->findSharedMaterial(texname);
 	_width = width;
 	_height = height;
 	_next = NULL;
