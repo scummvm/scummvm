@@ -62,13 +62,13 @@ public:
 protected:
 	TextObjectCommon();
 
-	Color _fgColor;
+	const Font *_font;
 	int _x, _y;
 	int _posX, _posY;
 	int _width, _height;
 	int _justify;
-	const Font *_font;
 	int _duration;
+	Color _fgColor;
 	bool _positioned;
 };
 
