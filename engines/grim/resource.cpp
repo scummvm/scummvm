@@ -34,6 +34,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/model.h"
+#include "engines/grim/sprite.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/emi/animationemi.h"
@@ -474,7 +475,7 @@ Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	return result;
 }
 
-Sprite *ResourceLoader::loadSprite(const Common::String &filename) {
+Sprite *ResourceLoader::loadSprite(const Common::String &filename, EMICostume *costume) {
 	assert(g_grim->getGameType() == GType_MONKEY4);
 	Common::SeekableReadStream *stream;
 
@@ -486,8 +487,8 @@ Sprite *ResourceLoader::loadSprite(const Common::String &filename) {
 		return NULL;
 	}
 
-	Sprite *result = new Sprite;
-	result->loadBinary(stream);
+	Sprite *result = new Sprite();
+	result->loadBinary(stream, costume);
 	delete stream;
 
 	return result;

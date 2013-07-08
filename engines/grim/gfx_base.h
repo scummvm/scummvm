@@ -51,7 +51,7 @@ class EMIMeshFace;
 class ModelNode;
 class Mesh;
 class MeshFace;
-struct Sprite;
+class Sprite;
 class Light;
 class Texture;
 

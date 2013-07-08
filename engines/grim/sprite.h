@@ -20,28 +20,35 @@
  *
  */
 
-#ifndef GRIM_SPRITE_COMPONENT_H
-#define GRIM_SPRITE_COMPONENT_H
+#ifndef GRIM_SPRITE_H
+#define GRIM_SPRITE_H
 
-#include "engines/grim/costume/component.h"
+#include "math/matrix4.h"
+
+namespace Common {
+class SeekableReadStream;
+class String;
+}
 
 namespace Grim {
 
-class Sprite;
+class Material;
+class CMap;
+class EMICostume;
 
-class SpriteComponent : public Component {
+class Sprite {
 public:
-	SpriteComponent(Component *parent, int parentID, const char *filename, tag32 tag);
-	~SpriteComponent();
+	Sprite();
+	void draw() const;
+	void loadBinary(Common::SeekableReadStream *, EMICostume *costume);
+	void loadGrim(const Common::String &name, const char *comma, CMap *cmap);
 
-	void init();
-	void setKey(int val);
-	void reset();
-	void saveState(SaveGame *state);
-	void restoreState(SaveGame *state);
-
-private:
-	Sprite *_sprite;
+	Math::Vector3d _pos;
+	float _width;
+	float _height;
+	bool _visible;
+	Material *_material;
+	Sprite *_next;
 };
 
 } // end of namespace Grim

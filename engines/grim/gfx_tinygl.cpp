@@ -35,6 +35,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/model.h"
+#include "engines/grim/sprite.h"
 #include "engines/grim/set.h"
 #include "engines/grim/emi/modelemi.h"
 

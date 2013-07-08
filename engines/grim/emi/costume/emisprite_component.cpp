@@ -21,9 +21,10 @@
  */
 
 #include "engines/grim/emi/costume/emisprite_component.h"
+#include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/costume.h"
-#include "engines/grim/model.h"
+#include "engines/grim/sprite.h"
 
 namespace Grim {
 
@@ -35,7 +36,8 @@ EMISpriteComponent::~EMISpriteComponent() {
 }
 
 void EMISpriteComponent::init() {
-	_sprite = g_resourceloader->loadSprite(_name);
+	EMICostume *c = static_cast<EMICostume *>(_cost);
+	_sprite = g_resourceloader->loadSprite(_name, c);
 }
 
 int EMISpriteComponent::update(uint time) {
