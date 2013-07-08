@@ -620,6 +620,8 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glDisable(GL_LIGHTING);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		glDepthMask(GL_FALSE);
+
 		float halfWidth = (sprite->_width / 2) * _scaleW;
 		float halfHeight = (sprite->_height / 2) * _scaleH;
 
