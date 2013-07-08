@@ -46,7 +46,6 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/lua_v1.h"
-#include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/emi/poolsound.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/movie/movie.h"
@@ -200,6 +199,10 @@ void GrimEngine::clearPools() {
 	_currSet = NULL;
 }
 
+LuaBase *GrimEngine::createLua() {
+	return new Lua_V1();
+}
+
 void GrimEngine::createRenderer() {
 #ifdef USE_OPENGL
 	_softRenderer = g_registry->getBool("soft_renderer");
@@ -288,12 +291,7 @@ Common::Error GrimEngine::run() {
 	if (_softRenderer)
 		g_driver->flipBuffer();
 
-	LuaBase *lua = NULL;
-	if (getGameType() == GType_GRIM) {
-		lua = new Lua_V1();
-	} else {
-		lua = new Lua_V2();
-	}
+	LuaBase *lua = createLua();
 
 	lua->registerOpcodes();
 	lua->registerLua();

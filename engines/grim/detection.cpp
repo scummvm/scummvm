@@ -25,6 +25,7 @@
 
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/emi/emi.h"
 
 #include "common/system.h"
 #include "common/savefile.h"
@@ -454,8 +455,13 @@ public:
 bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const GrimGameDescription *gd = (const GrimGameDescription *)desc;
 
-	if (gd)
-		*engine = new GrimEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
+	if (gd) {
+		if (gd->gameType == GType_MONKEY4) {
+			*engine = new EMIEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
+		} else {
+			*engine = new GrimEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
+		}
+	}
 
 	return gd != 0;
 }

@@ -46,6 +46,7 @@ class Set;
 class TextObject;
 class PrimitiveObject;
 class Debugger;
+class LuaBase;
 
 enum GrimGameType {
 	GType_GRIM,
@@ -198,6 +199,7 @@ private:
 	void buildActiveActorsList();
 	void savegameCallback();
 	void createRenderer();
+	virtual LuaBase *createLua();
 
 	void savegameSave();
 	void saveGRIM();

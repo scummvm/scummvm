@@ -32,6 +32,8 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/font.h"
 
+#include "engines/grim/emi/emi.h"
+
 #include "engines/grim/movie/movie.h"
 
 namespace Grim {
@@ -308,13 +310,23 @@ void Lua_V2::GetCameraRoll() {
 	lua_pushnumber(0);
 }
 
-// I suspect that pushtext and poptext stack the current text objects.
 void Lua_V2::PushText() {
-	warning("Lua_V2::PushText: implement opcode");
+	Common::List<TextObject *> *textobjects = new Common::List<TextObject *>;
+	TextObject::Pool::iterator it = TextObject::getPool().begin();
+	for (; it != TextObject::getPool().end(); ++it) {
+		textobjects->push_back(*it);
+		TextObject::getPool().removeObject((*it)->getId());
+	}
+	g_emi->pushText(textobjects);
 }
 
 void Lua_V2::PopText() {
-	warning("Lua_V2::PopText: implement opcode");
+	Common::List<TextObject *> *textobjects = g_emi->popText();
+	Common::List<TextObject *>::iterator it = textobjects->begin();
+	for (; it != textobjects->end(); ++it) {
+		TextObject::getPool().addObject(*it);
+	}
+	delete textobjects;
 }
 
 void Lua_V2::GetSectorName() {
