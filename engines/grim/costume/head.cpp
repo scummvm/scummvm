@@ -174,7 +174,7 @@ void Head::Joint::restoreState(SaveGame *state) {
 }
 
 Head::Head() :
-	_maxPitch(0),
+	_maxPitch(0), _maxYaw(0), _maxRoll(0),
 	_joint1Node(-1), _joint2Node(-1), _joint3Node(-1) {
 
 }
