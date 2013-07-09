@@ -31,13 +31,18 @@
 
 namespace Grim {
 
-Sector::Sector(const Sector &other) {
+ Sector::Sector() : _vertices(NULL), _origVertices(NULL), _sortplanes(NULL),
+					_invalid(false), _shrinkRadius(0.f) {
+ }
+
+Sector::Sector(const Sector &other) : _vertices(NULL), _origVertices(NULL), _sortplanes(NULL) {
 	*this = other;
 }
 
 Sector::~Sector() {
 	delete[] _vertices;
 	delete[] _origVertices;
+	delete[] _sortplanes;
 }
 
 void Sector::saveState(SaveGame *savedState) const {

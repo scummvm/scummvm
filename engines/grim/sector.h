@@ -49,7 +49,7 @@ public:
 		HotType = 0x8000
 	};
 
-	Sector() : _vertices(NULL), _origVertices(NULL), _invalid(false), _shrinkRadius(0.f) {}
+	Sector();
 	Sector(const Sector &other);
 	virtual ~Sector();
 
