@@ -496,7 +496,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
-TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const {
+TransparentSurface *TransparentSurface::rotate(TransformStruct *transform) const {
+	
+	assert (transform);
+	
 	Point32 newHotspot;
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Rect32 rect = TransformTools::newRect(Rect32 (srcRect), transform, &newHotspot);
@@ -510,7 +513,7 @@ TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const 
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-	uint32 invAngle = (360 - transform._angle) % 360;
+	uint32 invAngle = (360 - transform->_angle) % 360;
 	float invCos = cos(invAngle * M_PI / 180.0);
 	float invSin = sin(invAngle * M_PI / 180.0);
 	float targX;
@@ -522,11 +525,11 @@ TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const 
 				int x1 = x - newHotspot.x;
 				int y1 = y - newHotspot.y;
 
-				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
-				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
+				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform->_zoom.x + srcRect.left; 
+				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform->_zoom.y + srcRect.top; 
 				
-				targX += transform._hotspot.x;
-				targY += transform._hotspot.y;
+				targX += transform->_hotspot.x;
+				targY += transform->_hotspot.y;
 			
 				copyPixelNearestNeighbor(targX, targY, x, y, srcRect, dstRect, this, target); 
 			}
@@ -537,11 +540,11 @@ TransparentSurface *TransparentSurface::rotate(TransformStruct transform) const 
 				int x1 = x - newHotspot.x;
 				int y1 = y - newHotspot.y;
 
-				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
-				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
+				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform->_zoom.x + srcRect.left; 
+				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform->_zoom.y + srcRect.top; 
 				
-				targX += transform._hotspot.x;
-				targY += transform._hotspot.y;
+				targX += transform->_hotspot.x;
+				targY += transform->_hotspot.y;
 			
 				copyPixelBilinear(targX, targY, x, y, srcRect, dstRect, this, target); 
 			}

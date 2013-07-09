@@ -43,7 +43,10 @@ namespace Wintermute {
 		return newPoint;
 	}
 
-	Rect32 TransformTools::newRect (Rect32 oldRect, TransformStruct transform, Point32 *newHotspot) {
+	Rect32 TransformTools::newRect (Rect32 oldRect, TransformStruct *transform, Point32 *newHotspot) {
+
+		assert (transform);
+
 		Point32 nw(oldRect.left, oldRect.top);
 		Point32 ne(oldRect.right, oldRect.top);
 		Point32 sw(oldRect.left, oldRect.bottom);
@@ -51,10 +54,10 @@ namespace Wintermute {
 		
 		FloatPoint nw1, ne1, sw1, se1;
 
-		nw1 = transformPoint(nw - transform._hotspot, transform._angle, transform._zoom);
-		ne1 = transformPoint(ne - transform._hotspot, transform._angle, transform._zoom);
-		sw1 = transformPoint(sw - transform._hotspot, transform._angle, transform._zoom);
-		se1 = transformPoint(se - transform._hotspot, transform._angle, transform._zoom);
+		nw1 = transformPoint(nw - transform->_hotspot, transform->_angle, transform->_zoom);
+		ne1 = transformPoint(ne - transform->_hotspot, transform->_angle, transform->_zoom);
+		sw1 = transformPoint(sw - transform->_hotspot, transform->_angle, transform->_zoom);
+		se1 = transformPoint(se - transform->_hotspot, transform->_angle, transform->_zoom);
 		
 		float top = MIN(nw1.y, MIN(ne1.y, MIN(sw1.y, se1.y)));
 		float bottom = MAX(nw1.y, MAX(ne1.y, MAX(sw1.y, se1.y)));
@@ -65,10 +68,10 @@ namespace Wintermute {
 		newHotspot->y = -floor(top);
 		newHotspot->x = -floor(left);
 
-		res.top = floor(top) + transform._hotspot.y;
-		res.bottom = ceil(bottom) + transform._hotspot.y; 
-		res.left = floor(left) + transform._hotspot.x;
-		res.right = ceil(right) + transform._hotspot.x;
+		res.top = floor(top) + transform->_hotspot.y;
+		res.bottom = ceil(bottom) + transform->_hotspot.y; 
+		res.left = floor(left) + transform->_hotspot.x;
+		res.right = ceil(right) + transform->_hotspot.x;
 
 		return res;
 	}
