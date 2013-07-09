@@ -654,6 +654,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	e5563c8358443c4352fcddf7402a5e0a	-1	fr	Windows	HE 98.5	-	-	gist974
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
+	7477bc23d0383516c5e310cd8771dcc9	-1	fr	Windows	HE 99	-	-	Strangerke
 	32709cbeeb3044b34129950860a83f14	-1	ru	Windows	HE 99	-	-	sev
 	1af4eb581a33d808707d66d50e084dca	-1	he	Windows	HE 99	-	-	Matan Bareket
 
