@@ -184,7 +184,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeBool(_followBoxes);
 	savedState->writeFloat(_reflectionAngle);
 	savedState->writeBool(_visible);
-	savedState->writeBool(_lookingMode),
+	savedState->writeBool(_lookingMode);
 	savedState->writeFloat(_scale);
 	savedState->writeFloat(_timeScale);
 	savedState->writeBool(_puckOrient);

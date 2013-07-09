@@ -52,9 +52,9 @@ void GfxBase::saveState(SaveGame *state) {
 
 	byte r, g, b;
 	getShadowColor(&r, &g, &b);
-	state->writeByte(r),
-	state->writeByte(g),
-	state->writeByte(b),
+	state->writeByte(r);
+	state->writeByte(g);
+	state->writeByte(b);
 	state->writeBool(_renderBitmaps);
 	state->writeBool(_renderZBitmaps);
 
