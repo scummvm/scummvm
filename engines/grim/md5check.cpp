@@ -269,10 +269,10 @@ const char *emiPS2_local[] = {
 };
 /*
 const char *emiPS2_music1[] = {
-	"a44753d9aaed016e6c7b398b55c97d3d", // english
+    "a44753d9aaed016e6c7b398b55c97d3d", // english
 };
 const char *emiPS2_music2[] = {
-	"204cb3d451e4bf71ae5432ab33ca3a49", // english
+    "204cb3d451e4bf71ae5432ab33ca3a49", // english
 };
 */
 const char *emiPS2_sfx[] = {
@@ -453,15 +453,15 @@ bool MD5Check::advanceCheck(int *pos, int *total) {
 		if (!checkMD5(sum, md5.c_str())) {
 			warning("'%s' may be corrupted. MD5: '%s'", sum.filename, md5.c_str());
 			GUI::displayErrorDialog(Common::String::format("The game data file %s may be corrupted.\nIf you are sure it is "
-			"not please provide the ResidualVM team the following code, along with the file name, the language and a "
-			"description of your game version (i.e. dvd-box or jewelcase):\n%s", sum.filename, md5.c_str()).c_str());
+									"not please provide the ResidualVM team the following code, along with the file name, the language and a "
+									"description of your game version (i.e. dvd-box or jewelcase):\n%s", sum.filename, md5.c_str()).c_str());
 			return false;
 		}
 	} else {
 		warning("Could not open %s for checking", sum.filename);
 		GUI::displayErrorDialog(Common::String::format("Could not open the file %s for checking.\nIt may be missing or "
-		"you may not have the rights to open it.\nGo to http://wiki.residualvm.org/index.php/Datafiles to see a list "
-		"of the needed files.", sum.filename).c_str());
+								"you may not have the rights to open it.\nGo to http://wiki.residualvm.org/index.php/Datafiles to see a list "
+								"of the needed files.", sum.filename).c_str());
 		return false;
 	}
 

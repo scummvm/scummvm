@@ -49,12 +49,12 @@ struct BoneInfo {
 
 Common::String readLAString(Common::ReadStream *ms) {
 	int strLength = ms->readUint32LE();
-	char* readString = new char[strLength];
+	char *readString = new char[strLength];
 	ms->read(readString, strLength);
-	
+
 	Common::String retVal(readString);
 	delete[] readString;
-	
+
 	return retVal;
 }
 
@@ -62,7 +62,7 @@ void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 	_flags = data->readUint32LE();
 	_hasTexture = data->readUint32LE();
 
-	if(_hasTexture)
+	if (_hasTexture)
 		_texID = data->readUint32LE();
 	_faceLength = data->readUint32LE();
 	_faceLength = _faceLength / 3;
@@ -80,7 +80,7 @@ void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 			y = data->readSint16LE();
 			z = data->readSint16LE();
 		}
-		_indexes[j++].setVal(x,y,z);
+		_indexes[j++].setVal(x, y, z);
 	}
 }
 
@@ -95,7 +95,7 @@ void EMIModel::setTex(uint32 index) {
 
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	//int strLength = 0; // Usefull for PS2-strings
-	
+
 	Common::String nameString = readLAString(data);
 
 	_sphereData->readFromStream(data);
@@ -109,7 +109,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	_texNames = new Common::String[_numTextures];
 
-	for(uint32 i = 0;i < _numTextures; i++) {
+	for (uint32 i = 0; i < _numTextures; i++) {
 		_texNames[i] = readLAString(data);
 		// Every texname seems to be followed by 4 0-bytes (Ref mk1.mesh,
 		// this is intentional)
@@ -164,7 +164,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	_faces = new EMIMeshFace[_numFaces];
 
-	for(uint32 j = 0;j < _numFaces; j++) {
+	for (uint32 j = 0; j < _numFaces; j++) {
 		_faces[j].setParent(this);
 		_faces[j].loadFace(data);
 	}
@@ -174,14 +174,14 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	if (hasBones == 1) {
 		_numBones = data->readUint32LE();
 		_boneNames = new Common::String[_numBones];
-		for(int i = 0;i < _numBones; i++) {
+		for (int i = 0; i < _numBones; i++) {
 			_boneNames[i] = readLAString(data);
 		}
 
 		_numBoneInfos =  data->readUint32LE();
 		_boneInfos = new BoneInfo[_numBoneInfos];
 
-		for(int i = 0;i < _numBoneInfos; i++) {
+		for (int i = 0; i < _numBoneInfos; i++) {
 			_boneInfos[i]._incFac = data->readUint32LE();
 			_boneInfos[i]._joint = data->readUint32LE();
 			_boneInfos[i]._weight = data->readUint32LE();
@@ -206,16 +206,16 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 	delete[] _vertexBone; _vertexBone = NULL;
 	_vertexBoneInfo = new int[_numBoneInfos];
 	_vertexBone = new int[_numBoneInfos]; // Oversized, but yeah.
-	
+
 	for (int i = 0; i < _numBoneInfos; i++) {
 		_vertexBoneInfo[i] = _skeleton->findJointIndex(_boneNames[_boneInfos[i]._joint], _skeleton->_numJoints);
-		
+
 		if (_boneInfos[i]._incFac == 1) {
 			_vertexBone[boneVert] = i;
 			boneVert++;
 		}
 	}
-	
+
 	Math::Vector3d vertex;
 	Math::Matrix4 mat;
 	for (int i = 0; i < _numVertices; i++) {
@@ -254,7 +254,7 @@ void EMIModel::draw() {
 	prepareForRender();
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
-	for(uint32 i = 0; i < _numFaces; i++) {
+	for (uint32 i = 0; i < _numFaces; i++) {
 		setTex(_faces[i]._texID);
 		g_driver->drawEMIModelFace(this, &_faces[i]);
 	}

@@ -94,10 +94,10 @@ int LipSync::getAnim(int pos) {
 		if ((i + 1) < _numEntries) {
 			frame2 = _entries[i + 1].frame;
 		} else {
-			frame2 = (unsigned int)-1L;
+			frame2 = (unsigned int) - 1L;
 		}
 		if ((pos >= frame1) && (pos < frame2)) {
-// 			debug("frame1: %d, frame2: %d, pos: %d, i: %d, num: %d\n", frame1, frame2, pos, i, _numEntries -1);
+//          debug("frame1: %d, frame2: %d, pos: %d, i: %d, num: %d\n", frame1, frame2, pos, i, _numEntries -1);
 			return _entries[i].anim;
 		}
 	}

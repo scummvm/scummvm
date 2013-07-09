@@ -55,7 +55,7 @@ private:
 	/**
 	 * A bitfield ID which specifies which joints of the skeleton hierarchy this
 	 * KeyFrameAnim can animate on. This is ANDed against the _type of the ModelNode
-	 * to test whether this KeyFrameAnim can animate that ModelNode, or if it is to 
+	 * to test whether this KeyFrameAnim can animate that ModelNode, or if it is to
 	 * be ignored.
 	 */
 	unsigned int _type;

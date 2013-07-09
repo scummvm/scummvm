@@ -30,7 +30,7 @@ namespace Grim {
 
 class EMILuaCodeComponent : public Component {
 public:
-	EMILuaCodeComponent(Component *parent, int parentID, const char *name, Component * prevComponent, tag32 tag);
+	EMILuaCodeComponent(Component *parent, int parentID, const char *name, Component *prevComponent, tag32 tag);
 	~EMILuaCodeComponent();
 	void init();
 	int update(uint time);

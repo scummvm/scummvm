@@ -29,7 +29,7 @@
 #include "engines/grim/emi/skeleton.h"
 
 namespace Grim {
-	
+
 #define ROTATE_OP 4
 #define TRANSLATE_OP 3
 
@@ -44,34 +44,34 @@ Skeleton::~Skeleton() {
 void Skeleton::loadSkeleton(Common::SeekableReadStream *data) {
 	_numJoints = data->readUint32LE();
 	_joints = new Joint[_numJoints];
-	
+
 	char inString[32];
-	
-	for(int i = 0;i < _numJoints; i++) {
+
+	for (int i = 0; i < _numJoints; i++) {
 		data->read(inString, 32);
 		_joints[i]._name = inString;
 		data->read(inString, 32);
 		_joints[i]._parent = inString;
-		
+
 		_joints[i]._trans.readFromStream(data);
 		_joints[i]._quat.readFromStream(data);
-		
+
 		_joints[i]._parentIndex = findJointIndex(_joints[i]._parent, i);
 	}
 	initBones();
 	resetAnim();
 }
-	
+
 void Skeleton::initBone(int index) {
 	// The matrix should have identity at this point.
 	_joints[index]._quat.toMatrix(_joints[index]._relMatrix);
 	// Might need to be translate instead.
 	_joints[index]._relMatrix.setPosition(_joints[index]._trans);
-	if(_joints[index]._parentIndex == -1) {
+	if (_joints[index]._parentIndex == -1) {
 		_joints[index]._absMatrix = _joints[index]._relMatrix;
 	} else {
 		_joints[index]._absMatrix = _joints[_joints[index]._parentIndex]._absMatrix;
-		
+
 		// Might be the other way around.
 		_joints[index]._absMatrix =  _joints[index]._absMatrix * _joints[index]._relMatrix;
 	}
@@ -80,7 +80,7 @@ void Skeleton::initBone(int index) {
 void Skeleton::initBones() {
 	for (int i = 0; i < _numJoints; i++) {
 		initBone(i);
-	}	
+	}
 }
 
 void Skeleton::resetAnim() {
@@ -100,8 +100,8 @@ void Skeleton::commitAnim() {
 
 int Skeleton::findJointIndex(const Common::String &name, int max) const {
 	if (_numJoints > 0) {
-		for(int i = 0; i < max; i++) {
-			if(!_joints[i]._name.compareToIgnoreCase(name)) {
+		for (int i = 0; i < max; i++) {
+			if (!_joints[i]._name.compareToIgnoreCase(name)) {
 				return i;
 			}
 		}

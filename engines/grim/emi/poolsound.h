@@ -28,22 +28,22 @@
 
 
 namespace Grim {
-	class PoolSound : public PoolObject<PoolSound>{
-	public:
-		PoolSound();
-		PoolSound(const Common::String &filename);
-		~PoolSound();
+class PoolSound : public PoolObject<PoolSound> {
+public:
+	PoolSound();
+	PoolSound(const Common::String &filename);
+	~PoolSound();
 
-		void openFile(const Common::String &filename);
-		void play(bool looping);
-		void stop();
-		void saveState(SaveGame *state);
-		void restoreState(SaveGame *state);
+	void openFile(const Common::String &filename);
+	void play(bool looping);
+	void stop();
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 
-		static int32 getStaticTag() { return MKTAG('A', 'I', 'F', 'F'); }
-		AIFFTrack *_track;
-		Common::String _filename;
-	};
+	static int32 getStaticTag() { return MKTAG('A','I','F','F'); }
+	AIFFTrack *_track;
+	Common::String _filename;
+};
 }
 
 #endif

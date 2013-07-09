@@ -27,7 +27,7 @@
 #include "engines/grim/emi/sound/track.h"
 
 namespace Grim {
-	
+
 struct SoundDesc;
 class McmpMgr;
 
@@ -43,7 +43,7 @@ class VimaTrack : public SoundTrack {
 public:
 	VimaTrack(const Common::String &soundName);
 	virtual ~VimaTrack();
-	
+
 	bool isPlaying();
 	bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file);
 	void playTrack();

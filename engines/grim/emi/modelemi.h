@@ -40,7 +40,7 @@ class Material;
 struct EMIColormap {
 	unsigned char r, g, b, a;
 };
-	
+
 // Todo: port this to math::vector
 struct Vector3int;
 
@@ -48,7 +48,7 @@ class EMIModel;
 struct BoneInfo;
 struct Bone;
 class Skeleton;
-	
+
 class EMIMeshFace {
 public:
 	Vector3int *_indexes;
@@ -58,7 +58,7 @@ public:
 	uint32 _texID;
 	uint32 _flags;
 	EMIModel *_parent;
-	
+
 	EMIMeshFace() : _faceLength(0), _numFaces(0), _hasTexture(0), _texID(0), _flags(0), _indexes(NULL), _parent(NULL) { }
 	~EMIMeshFace();
 	void loadFace(Common::SeekableReadStream *data);
@@ -77,17 +77,17 @@ public:
 	Math::Vector3d *_normals;
 	EMIColormap *_colorMap;
 	Math::Vector2d *_texVerts;
-	
+
 	uint32 _numFaces;
 	EMIMeshFace *_faces;
 	uint32 _numTextures;
 	Common::String *_texNames;
 	Material **_mats;
-	
+
 	Skeleton *_skeleton;
-	
+
 	int _numBones;
-	
+
 	// Bone-stuff:
 	int _numBoneInfos;
 	BoneInfo *_boneInfos;
@@ -101,7 +101,7 @@ public:
 	Math::Vector3d *_boxData2;
 	int _numTexSets;
 	int _setType;
-	
+
 	Common::String _fname;
 public:
 	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent = NULL);

@@ -47,25 +47,25 @@ public:
 
 private:
 	struct Region {
-		int32 offset;		// offset of region
-		int32 length;		// lenght of region
+		int32 offset;       // offset of region
+		int32 length;       // lenght of region
 	};
 
 	struct Jump {
-		int32 offset;		// jump offset position
-		int32 dest;			// jump to dest position
-		byte hookId;		// id of hook
-		int16 fadeDelay;	// fade delay in ms
+		int32 offset;       // jump offset position
+		int32 dest;         // jump to dest position
+		byte hookId;        // id of hook
+		int16 fadeDelay;    // fade delay in ms
 	};
 
 public:
 
 	struct SoundDesc {
-		uint16 freq;		// frequency
-		byte channels;		// stereo or mono
-		byte bits;			// 8, 12, 16
-		int numJumps;		// number of Jumps
-		int numRegions;		// number of Regions
+		uint16 freq;        // frequency
+		byte channels;      // stereo or mono
+		byte bits;          // 8, 12, 16
+		int numJumps;       // number of Jumps
+		int numRegions;     // number of Regions
 		Region *region;
 		Jump *jump;
 		bool endFlag;

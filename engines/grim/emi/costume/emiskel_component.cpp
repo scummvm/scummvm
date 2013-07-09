@@ -51,7 +51,7 @@ void EMISkelComponent::reset() {
 	if (_obj)
 		_obj->resetAnim();
 }
-	
+
 void EMISkelComponent::draw() {
 }
 

@@ -49,7 +49,7 @@ EMISound::EMISound() {
 	_music = NULL;
 	initMusicTable();
 }
-	
+
 EMISound::~EMISound() {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		freeChannel(i);
@@ -66,7 +66,7 @@ int32 EMISound::getFreeChannel() {
 	}
 	return -1;
 }
-	
+
 int32 EMISound::getChannelByName(const Common::String &name) {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i] && _channels[i]->getSoundName() == name)
@@ -74,22 +74,22 @@ int32 EMISound::getChannelByName(const Common::String &name) {
 	}
 	return -1;
 }
-	
+
 void EMISound::freeChannel(int32 channel) {
 	delete _channels[channel];
 	_channels[channel] = NULL;
 }
-	
-bool EMISound::startVoice(const char *soundName, int volume, int pan) {	
+
+bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 	int channel = getFreeChannel();
 	assert(channel != -1);
-	
+
 	// TODO: This could be handled on filenames instead
 	if (g_grim->getGamePlatform() == Common::kPlatformPS2)
 		_channels[channel] = new SCXTrack(Audio::Mixer::kSpeechSoundType);
 	else
 		_channels[channel] = new VimaTrack(soundName);
-	
+
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(soundName);
 
 	if (str && _channels[channel]->openSound(soundName, str)) {
@@ -101,11 +101,11 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 
 bool EMISound::getSoundStatus(const char *soundName) {
 	int32 channel = getChannelByName(soundName);
-	
-	if (channel == -1)	// We have no such sound.
+
+	if (channel == -1)  // We have no such sound.
 		return false;
-	
-	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->getHandle()) && _channels[channel]->isPlaying();	
+
+	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->getHandle()) && _channels[channel]->isPlaying();
 }
 
 void EMISound::stopSound(const char *soundName) {
@@ -120,7 +120,7 @@ int32 EMISound::getPosIn16msTicks(const char *soundName) {
 	assert(channel != -1);
 	return (62.5 / 60.0) * g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle()); //16 ms is 62.5 Hz
 }
-	
+
 void EMISound::setVolume(const char *soundName, int volume) {
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
@@ -130,7 +130,7 @@ void EMISound::setVolume(const char *soundName, int volume) {
 void EMISound::setPan(const char *soundName, int pan) {
 	warning("EMI doesn't support sound-panning yet, %s", soundName);
 }
-	
+
 void EMISound::setMusicState(int stateId) {
 	if (_music) {
 		delete _music;
@@ -154,7 +154,7 @@ void EMISound::setMusicState(int stateId) {
 		_music = new SCXTrack(Audio::Mixer::kMusicSoundType);
 	} else {
 		filename = _musicTable[stateId]._filename;
-		_music = new MP3Track(Audio::Mixer::kMusicSoundType);	
+		_music = new MP3Track(Audio::Mixer::kMusicSoundType);
 	}
 	warning("Loading music: %s", filename.c_str());
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
@@ -168,7 +168,7 @@ uint32 EMISound::getMsPos(int stateId) {
 		return 0;
 	return g_system->getMixer()->getSoundElapsedTime(*_music->getHandle());
 }
-	
+
 MusicEntry *initMusicTableDemo(const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
@@ -178,7 +178,7 @@ MusicEntry *initMusicTableDemo(const Common::String &filename) {
 	MusicEntry *musicTable = new MusicEntry[15];
 	for (unsigned int i = 0; i < 15; i++)
 		musicTable[i]._id = -1;
-	
+
 	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync;
 	char musicfilename[64];
@@ -206,14 +206,14 @@ MusicEntry *initMusicTableDemo(const Common::String &filename) {
 
 MusicEntry *initMusicTableRetail(const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
-	
+
 	// Remember to check, in case we forgot to copy over those files from the CDs.
 	if (!data)
 		error("Couldn't open %s", filename.c_str());
 	MusicEntry *musicTable = new MusicEntry[126];
 	for (unsigned int i = 0; i < 126; i++)
 		musicTable[i]._id = -1;
-	
+
 	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync, trim;
 	char musicfilename[64];
@@ -287,7 +287,7 @@ void EMISound::popStateFromStack() {
 	//even pop state from stack if music isn't set
 	_music = _stateStack.pop();
 
-	if(_music) {
+	if (_music) {
 		_music->pause();
 	}
 }

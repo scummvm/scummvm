@@ -30,7 +30,7 @@
 namespace Grim {
 
 class AnimationEmi;
-	
+
 class EMIAnimComponent : public Component {
 public:
 	EMIAnimComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);

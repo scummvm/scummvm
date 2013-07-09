@@ -28,7 +28,7 @@
 
 namespace Grim {
 
-EMILuaVarComponent::EMILuaVarComponent(Component *p, int parentID, const char *name, Component * prevComponent, tag32 t) : Component(p, parentID, name, t) {
+EMILuaVarComponent::EMILuaVarComponent(Component *p, int parentID, const char *name, Component *prevComponent, tag32 t) : Component(p, parentID, name, t) {
 }
 
 EMILuaVarComponent::~EMILuaVarComponent() {
@@ -49,7 +49,7 @@ void EMILuaVarComponent::setKey(int val) {
 
 void EMILuaVarComponent::reset() {
 }
-	
+
 void EMILuaVarComponent::draw() {
 }
 

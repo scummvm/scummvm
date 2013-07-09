@@ -34,7 +34,7 @@ Color::Color(byte r, byte g, byte b) {
 	_vals[2] = b;
 }
 
-Color::Color(const Color& c) {
+Color::Color(const Color &c) {
 	_vals[0] = c._vals[0];
 	_vals[1] = c._vals[1];
 	_vals[2] = c._vals[2];
@@ -47,19 +47,19 @@ Color::Color(uint32 c) {
 }
 
 uint32 Color::toEncodedValue() {
-	return	(_vals[0] << 16) |
-			(_vals[1] << 8 ) |
-			 _vals[2];
+	return (_vals[0] << 16) |
+		   (_vals[1] << 8) |
+		   _vals[2];
 }
 
-Color& Color::operator =(const Color &c) {
+Color &Color::operator =(const Color &c) {
 	_vals[0] = c._vals[0];
 	_vals[1] = c._vals[1];
 	_vals[2] = c._vals[2];
 	return *this;
 }
 
-Color& Color::operator =(Color *c) {
+Color &Color::operator =(Color *c) {
 	_vals[0] = c->_vals[0];
 	_vals[1] = c->_vals[1];
 	_vals[2] = c->_vals[2];

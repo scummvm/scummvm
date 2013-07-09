@@ -276,7 +276,7 @@ void Blocky16::makeTablesInterpolation(int param) {
 						}
 					}
 				} else if ((b1 == 0 && b2 == 1) || (b2 == 0 && b1 == 1) ||
-				           (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
+						   (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
 					if (param > variable4) {
 						i = param - variable4;
 						while (i--) {
@@ -759,7 +759,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		_prevSeqNb = -1;
 	}
 
-	switch(src[18]) {
+	switch (src[18]) {
 	case 0:
 #if defined(SCUMM_BIG_ENDIAN)
 		for (int i = 0; i < _width * _height; i++) {

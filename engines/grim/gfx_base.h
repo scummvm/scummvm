@@ -82,9 +82,9 @@ public:
 	/**
 	 * Creates a render-context.
 	 *
-	 * @param screenW		the width of the context
-	 * @param screenH		the height of the context
-	 * @param fullscreen	true if fullscreen is desired, false otherwise.
+	 * @param screenW       the width of the context
+	 * @param screenH       the height of the context
+	 * @param fullscreen    true if fullscreen is desired, false otherwise.
 	 */
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
@@ -109,13 +109,13 @@ public:
 	virtual void clearScreen() = 0;
 
 	/**
-	 *	Swap the buffers, making the drawn screen visible
+	 *  Swap the buffers, making the drawn screen visible
 	 */
 	virtual void flipBuffer() = 0;
 
 	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                            const bool inOverworld, const float alpha, const bool depthOnly) = 0;
+								const bool inOverworld, const float alpha, const bool depthOnly) = 0;
 
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
@@ -133,7 +133,7 @@ public:
 	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) = 0;
 	virtual void translateViewpointFinish() = 0;
 
-	virtual void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) = 0;
+	virtual void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) = 0;
 	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 
@@ -155,7 +155,7 @@ public:
 	 *
 	 * the external bitmap might have its data changed by this function,
 	 *
-	 * @param bitmap	the bitmap to be prepared
+	 * @param bitmap    the bitmap to be prepared
 	 * @see destroyBitmap
 	 * @see drawBitmap
 	 */
@@ -165,7 +165,7 @@ public:
 	 * Draws a bitmap
 	 * before this is safe to use, createBitmap MUST have been called
 	 *
-	 * @param bitmap	the bitmap to be drawn
+	 * @param bitmap    the bitmap to be drawn
 	 * @see createBitmap
 	 * @see destroyBitmap
 	 */
@@ -176,7 +176,7 @@ public:
 	 * after this is called, it is safe to dispose of or change the external
 	 * bitmapdata.
 	 *
-	 * @param bitmap	the bitmap to be destroyed
+	 * @param bitmap    the bitmap to be destroyed
 	 * @see createBitmap
 	 * @see drawBitmap
 	 */
@@ -207,8 +207,8 @@ public:
 	 * the arguments specify the distance from the screen-edge to the first
 	 * non-iris pixel.
 	 *
-	 * @param x		the width of the Iris
-	 * @param y		the height of the Iris
+	 * @param x     the width of the Iris
+	 * @param y     the height of the Iris
 	 */
 	virtual void irisAroundRegion(int x1, int y1, int x2, int y2) = 0;
 
@@ -223,13 +223,13 @@ public:
 	 * Prepare a movie-frame for drawing
 	 * performing any necessary conversion
 	 *
-	 * @param width			the width of the movie-frame.
-	 * @param height		the height of the movie-frame.
-	 * @param bitmap		a pointer to the data for the movie-frame.
+	 * @param width         the width of the movie-frame.
+	 * @param height        the height of the movie-frame.
+	 * @param bitmap        a pointer to the data for the movie-frame.
 	 * @see drawMovieFrame
 	 * @see releaseMovieFrame
 	 */
-	virtual void prepareMovieFrame(Graphics::Surface* frame) = 0;
+	virtual void prepareMovieFrame(Graphics::Surface *frame) = 0;
 	virtual void drawMovieFrame(int offsetX, int offsetY) = 0;
 
 	/**

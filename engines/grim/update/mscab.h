@@ -34,7 +34,7 @@ namespace Grim {
 
 class MsCabinet : public Common::Archive {
 public:
-	MsCabinet(Common::SeekableReadStream* data);
+	MsCabinet(Common::SeekableReadStream *data);
 	~MsCabinet();
 
 	// Common::Archive API implementation
@@ -44,18 +44,18 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 private:
-	Common::SeekableReadStream* _data;
+	Common::SeekableReadStream *_data;
 
 	struct FolderEntry {
-		uint16 comp_type;			//The compression type
-		uint16 num_blocks;			//The total number of data blocks used by this folder
-		uint32 offset;				//The cabinet offset of first datablock
+		uint16 comp_type;           //The compression type
+		uint16 num_blocks;          //The total number of data blocks used by this folder
+		uint32 offset;              //The cabinet offset of first datablock
 	};
 
 	struct FileEntry {
-		uint32 length;				//Uncompressed size of the file in bytes
-		FolderEntry *folder;		//Folder holding this file
-		uint32 folderOffset;		//Uncompressed offset in the folder
+		uint32 length;              //Uncompressed size of the file in bytes
+		FolderEntry *folder;        //Folder holding this file
+		uint32 folderOffset;        //Uncompressed offset in the folder
 	};
 
 	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
@@ -69,12 +69,14 @@ private:
 	//Decompressor
 	class Decompressor {
 	public:
-		Decompressor(const FolderEntry *folder, Common::SeekableReadStream* _data);
+		Decompressor(const FolderEntry *folder, Common::SeekableReadStream *_data);
 		~Decompressor();
 		bool decompressFile(byte *&fileBuf, const FileEntry &entry);
-		const FolderEntry *getFolder() const { return _curFolder; }
+		const FolderEntry *getFolder() const {
+			return _curFolder;
+		}
 	private:
-		Common::SeekableReadStream* _data;
+		Common::SeekableReadStream *_data;
 		const FolderEntry *_curFolder;
 		int16 _curBlock;
 		byte *_compressedBlock, *_decompressedBlock;

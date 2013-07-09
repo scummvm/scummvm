@@ -40,7 +40,7 @@ ColormapComponent::ColormapComponent(Component *p, int parentID, const char *fil
 void ColormapComponent::init() {
 	if (!_parent)
 		warning("No parent to apply colormap object on. CMap: %s, Costume: %s",
-			_cmap->getFilename().c_str(), _cost->getFilename().c_str());
+				_cmap->getFilename().c_str(), _cost->getFilename().c_str());
 }
 
 } // end of namespace Grim

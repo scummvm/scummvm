@@ -36,7 +36,7 @@ EMIMeshComponent::EMIMeshComponent(Component *p, int parentID, const char *filen
 EMIMeshComponent::~EMIMeshComponent() {
 	if (_hierShared) {
 		_obj = NULL; // Keep ~ModelComp from deleting it
-		 //_animation = NULL;
+		//_animation = NULL;
 	} else {
 		delete _obj;
 	}
@@ -64,7 +64,7 @@ int EMIMeshComponent::update(uint time) {
 void EMIMeshComponent::reset() {
 	_visible = true;
 }
-	
+
 void EMIMeshComponent::draw() {
 	// If the object was drawn by being a component
 	// of it's parent then don't draw it
@@ -80,9 +80,9 @@ void EMIMeshComponent::draw() {
 	// Need to translate object to be in accordance
 	// with the setup of the parent
 	//translateObject(false);
-	
+
 	_obj->draw();
-	
+
 	// Need to un-translate when done
 	//translateObject(true);
 }

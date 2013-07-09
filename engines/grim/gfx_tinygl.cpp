@@ -133,7 +133,7 @@ GfxBase *CreateGfxTinyGL() {
 
 // below funcs lookAt, transformPoint and tgluProject are from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,
-		TGLfloat centery, TGLfloat centerz, TGLfloat upx, TGLfloat upy, TGLfloat upz) {
+				   TGLfloat centery, TGLfloat centerz, TGLfloat upx, TGLfloat upy, TGLfloat upz) {
 	TGLfloat m[16];
 	TGLfloat x[3], y[3], z[3];
 	TGLfloat mag;
@@ -207,7 +207,7 @@ static void transformPoint(TGLfloat out[4], const TGLfloat m[16], const TGLfloat
 }
 
 TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat model[16], const TGLfloat proj[16],
-		const TGLint viewport[4], TGLfloat *winx, TGLfloat *winy, TGLfloat *winz) {
+				   const TGLint viewport[4], TGLfloat *winx, TGLfloat *winy, TGLfloat *winz) {
 	TGLfloat in[4], out[4];
 
 	in[0] = objx;
@@ -301,7 +301,7 @@ void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 
 void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		tglScalef(1.0,1.0,-1.0);
+		tglScalef(1.0, 1.0, -1.0);
 
 		_currentPos = pos;
 		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
@@ -444,7 +444,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 
 	for (int i = 0; i < model->_numFaces; i++) {
 		Math::Vector3d v;
-		float* pVertices;
+		float *pVertices;
 
 		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
 			TGLfloat modelView[16], projection[16];
@@ -514,7 +514,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 }
 
 void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                             const bool inOverworld, const float alpha, const bool depthOnly) {
+							   const bool inOverworld, const float alpha, const bool depthOnly) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_PROJECTION);
 	tglPushMatrix();
@@ -565,7 +565,7 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 	}
 
 	if (depthOnly)
-		tglColorMask(false,false,false,false);
+		tglColorMask(false, false, false, false);
 }
 
 void GfxTinyGL::finishActorDraw() {
@@ -661,8 +661,8 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 	*b = _shadowColorB;
 }
 
-void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
-	int *indices = (int*)face->_indexes;
+void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) {
+	int *indices = (int *)face->_indexes;
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
 
@@ -864,7 +864,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				buf[i] = ((uint32) val) * 0x10000 / 100 / (0x10000 - val) << 14;
 			}
 			delete[] bufPtr;
-			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte*)buf);
+			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
 		}
 	} else {
 		BlitImage *imgs = new BlitImage[bitmap->_numImages];
@@ -946,7 +946,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 					int skipEnd   = l->x + l->length > maxX ? l->x + l->length - maxX : 0;
 					length -= skipEnd;
 					memcpy(dstBuf.getRawBuffer((l->y - srcY) * _gameWidth + MAX(l->x - srcX, 0)),
-							l->pixels + skipStart * format.bytesPerPixel, length * format.bytesPerPixel);
+						   l->pixels + skipStart * format.bytesPerPixel, length * format.bytesPerPixel);
 				}
 				l = l->next;
 			}
@@ -978,20 +978,20 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 
 		uint32 offset = data->_layers[layer]._offset;
 		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
-			const BitmapData::Vert & v = data->_verts[i];
+			const BitmapData::Vert &v = data->_verts[i];
 			uint32 texId = v._texid;
 			uint32 ntex = data->_verts[i]._pos * 4;
 			uint32 numRects = data->_verts[i]._verts / 4;
 			while (numRects-- > 0) {
-				int dx1 = ((texc[ntex+0] + 1) * _screenWidth) / 2;
-				int dy1 = ((1 - texc[ntex+1]) * _screenHeight) / 2;
-				int dx2 = ((texc[ntex+8] + 1) * _screenWidth) / 2;
-				int dy2 = ((1 - texc[ntex+9]) * _screenHeight) / 2;
-				int srcX = texc[ntex+2] * bitmap->getWidth();
-				int srcY = texc[ntex+3] * bitmap->getHeight();
+				int dx1 = ((texc[ntex + 0] + 1) * _screenWidth) / 2;
+				int dy1 = ((1 - texc[ntex + 1]) * _screenHeight) / 2;
+				int dx2 = ((texc[ntex + 8] + 1) * _screenWidth) / 2;
+				int dy2 = ((1 - texc[ntex + 9]) * _screenHeight) / 2;
+				int srcX = texc[ntex + 2] * bitmap->getWidth();
+				int srcY = texc[ntex + 3] * bitmap->getHeight();
 
 				blit(bitmap->getPixelFormat(texId), &b[texId], _zb->pbuf.getRawBuffer(), bitmap->getData(texId).getRawBuffer(),
-						x + dx1, y + dy1, srcX, srcY, dx2 - dx1, dy2 - dy1, b[texId]._width, b[texId]._height, true);
+					 x + dx1, y + dy1, srcX, srcY, dx2 - dx1, dy2 - dy1, b[texId]._width, b[texId]._height, true);
 				ntex += 16;
 			}
 		}
@@ -1011,10 +1011,10 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 
 	if (bitmap->getFormat() == 1)
 		blit(bitmap->getPixelFormat(num), &b[num], (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(num).getRawBuffer(),
-			x, y, bitmap->getWidth(), bitmap->getHeight(), true);
+			 x, y, bitmap->getWidth(), bitmap->getHeight(), true);
 	else
 		blit(bitmap->getPixelFormat(num), NULL, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
-			x, y, bitmap->getWidth(), bitmap->getHeight(), false);
+			 x, y, bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
 void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {
@@ -1168,7 +1168,7 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 //		internalFormat = TGL_RGBA;
 	} else if (material->_colorFormat == BM_BGRA) {
 		format = TGL_BGRA;
-	} else {	// The only other colorFormat we load right now is BGR
+	} else {    // The only other colorFormat we load right now is BGR
 		format = TGL_BGR;
 //		internalFormat = TGL_RGB;
 	}
@@ -1203,7 +1203,7 @@ void GfxTinyGL::destroyMaterial(Texture *material) {
 	delete[] (TGLuint *)material->_texture;
 }
 
-void GfxTinyGL::prepareMovieFrame(Graphics::Surface* frame) {
+void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
 	_smushWidth = frame->w;
 	_smushHeight = frame->h;
 
@@ -1428,7 +1428,7 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 
 void GfxTinyGL::createSpecialtyTextures() {
 	//make a buffer big enough to hold any of the textures
-	uint8 *buffer = new uint8[256*256*4];
+	uint8 *buffer = new uint8[256 * 256 * 4];
 
 	readPixels(0, 0, 256, 256, buffer);
 	_specialty[0].create((const char *)buffer, 256, 256);

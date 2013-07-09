@@ -205,7 +205,7 @@ void StuffItArchive::update14(uint16 first, uint16 last, byte *code, uint16 *fre
 		do {
 			while (++i < last && code[first] > code[i])
 				;
-		
+
 			while (--j > first && code[first] < code[j])
 				;
 
@@ -308,7 +308,7 @@ void StuffItArchive::readTree14(Common::BitStream *bits, SIT14Data *dat, uint16 
 			l = bits->getBits(j);
 
 			if (k != l) {
-				if  (l == m) {
+				if (l == m) {
 					l = bits->getBits(j) + 3;
 
 					while (l--) {
@@ -316,7 +316,7 @@ void StuffItArchive::readTree14(Common::BitStream *bits, SIT14Data *dat, uint16 
 						++i;
 					}
 				} else {
-					dat->code[i++] = l+o;
+					dat->code[i++] = l + o;
 				}
 			} else {
 				dat->code[i++] = 0;
@@ -338,7 +338,8 @@ void StuffItArchive::readTree14(Common::BitStream *bits, SIT14Data *dat, uint16 
 		if (i)
 			j <<= (dat->codecopy[i] - dat->codecopy[i - 1]);
 
-		k = dat->codecopy[i]; m = 0;
+		k = dat->codecopy[i];
+		m = 0;
 
 		for (l = j; k--; l >>= 1)
 			m = (m << 1) | (l & 1);
@@ -391,7 +392,7 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 
 	SIT14Data *dat = new SIT14Data();
 
-    // initialization
+	// initialization
 	for (i = k = 0; i < 52; ++i) {
 		dat->var2[i] = k;
 		k += (1 << (dat->var1[i] = ((i >= 4) ? ((i - 4) >> 2) : 0)));
@@ -401,14 +402,14 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 		dat->var8[i] = i;
 
 	for (m = 1, l = 4; i < 0x4000; m <<= 1) // i is 4
-		for (n = l+4; l < n; ++l)
+		for (n = l + 4; l < n; ++l)
 			for (j = 0; j < m; ++j)
 				dat->var8[i++] = l;
 
-    for (i = 0, k = 1; i < 75; ++i) {
+	for (i = 0, k = 1; i < 75; ++i) {
 		dat->var5[i] = k;
 		k += (1 << (dat->var4[i] = (i >= 3 ? ((i - 3) >> 2) : 0)));
-    }
+	}
 
 	for (i = 0; i < 4; ++i)
 		dat->var6[i] = i - 1;
@@ -418,8 +419,8 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 			for (j = 0; j < m; ++j)
 				dat->var6[i++] = l;
 
-    m = bits->getBits(16); // number of blocks
-    j = 0; // window position
+	m = bits->getBits(16); // number of blocks
+	j = 0; // window position
 
 	while (m-- && !bits->eos()) {
 		bits->getBits(16); // skip crunched block size
@@ -440,7 +441,7 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 				--n;
 			} else {
 				i -= 0x100;
-				k = dat->var2[i]+4;
+				k = dat->var2[i] + 4;
 				i = dat->var1[i];
 
 				if (i)

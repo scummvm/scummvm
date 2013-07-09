@@ -197,7 +197,7 @@ void TextObject::setupText() {
 
 	// If the speaker is too close to the edge of the screen we have to make
 	// some room for the subtitles.
-	if (_isSpeech){
+	if (_isSpeech) {
 		if (_posX < SCREEN_MARGIN) {
 			_posX = SCREEN_MARGIN;
 		} else if (SCREEN_WIDTH - _posX < SCREEN_MARGIN) {
@@ -241,7 +241,7 @@ void TextObject::setupText() {
 				}
 				message += '-';
 				wordSplit = true;
- 			}
+			}
 			message += '\n';
 			currLine.clear();
 			_numberLines++;
@@ -330,7 +330,7 @@ int TextObject::getLineY(int line) const {
 	}
 	if (y < 0)
 		y = 0;
-	y += _font->getHeight()*line;
+	y += _font->getHeight() * line;
 
 	return y;
 }

@@ -84,9 +84,9 @@ void AnimationEmi::animate(Skeleton *skel, float delta) {
 			if (keyfIdx == 0) {
 				quat = curBone._rotations[keyfIdx]._quat;
 			} else if (keyfIdx == curBone._count - 1) {
-				quat = curBone._rotations[keyfIdx-1]._quat;
+				quat = curBone._rotations[keyfIdx - 1]._quat;
 			} else {
-				float timeDelta = curBone._rotations[keyfIdx-1]._time - curBone._rotations[keyfIdx]._time;
+				float timeDelta = curBone._rotations[keyfIdx - 1]._time - curBone._rotations[keyfIdx]._time;
 				float interpVal = (_time - curBone._rotations[keyfIdx]._time) / timeDelta;
 
 				// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
@@ -110,19 +110,19 @@ void AnimationEmi::animate(Skeleton *skel, float delta) {
 			if (keyfIdx == 0) {
 				vec = curBone._translations[keyfIdx]._vec;
 			} else if (keyfIdx == curBone._count - 1) {
-				vec = curBone._translations[keyfIdx-1]._vec;
+				vec = curBone._translations[keyfIdx - 1]._vec;
 			} else {
-				float timeDelta = curBone._translations[keyfIdx-1]._time - curBone._translations[keyfIdx]._time;
+				float timeDelta = curBone._translations[keyfIdx - 1]._time - curBone._translations[keyfIdx]._time;
 				float interpVal = (_time - curBone._translations[keyfIdx]._time) / timeDelta;
 
-				vec.x() = curBone._translations[keyfIdx-1]._vec.x() +
-					(curBone._translations[keyfIdx]._vec.x() - curBone._translations[keyfIdx-1]._vec.x()) * interpVal;
+				vec.x() = curBone._translations[keyfIdx - 1]._vec.x() +
+						  (curBone._translations[keyfIdx]._vec.x() - curBone._translations[keyfIdx - 1]._vec.x()) * interpVal;
 
-				vec.y() = curBone._translations[keyfIdx-1]._vec.y() +
-					(curBone._translations[keyfIdx]._vec.y() - curBone._translations[keyfIdx-1]._vec.y()) * interpVal;
+				vec.y() = curBone._translations[keyfIdx - 1]._vec.y() +
+						  (curBone._translations[keyfIdx]._vec.y() - curBone._translations[keyfIdx - 1]._vec.y()) * interpVal;
 
-				vec.z() = curBone._translations[keyfIdx-1]._vec.z() +
-					(curBone._translations[keyfIdx]._vec.z() - curBone._translations[keyfIdx-1]._vec.z()) * interpVal;
+				vec.z() = curBone._translations[keyfIdx - 1]._vec.z() +
+						  (curBone._translations[keyfIdx]._vec.z() - curBone._translations[keyfIdx - 1]._vec.z()) * interpVal;
 			}
 			relFinal.setPosition(vec);
 		}
@@ -144,14 +144,14 @@ void Bone::loadBinary(Common::SeekableReadStream *data) {
 	char temp[4];
 	if (_operation == 3) { // Translation
 		_translations = new AnimTranslation[_count];
-		for(int j = 0; j < _count; j++) {
+		for (int j = 0; j < _count; j++) {
 			_translations[j]._vec.readFromStream(data);
 			data->read(temp, 4);
 			_translations[j]._time = 1000 * get_float(temp);
 		}
 	} else if (_operation == 4) { // Rotation
 		_rotations = new AnimRotation[_count];
-		for(int j = 0; j < _count; j++) {
+		for (int j = 0; j < _count; j++) {
 			_rotations[j]._quat.readFromStream(data);
 			data->read(temp, 4);
 			_rotations[j]._time = 1000 * get_float(temp);

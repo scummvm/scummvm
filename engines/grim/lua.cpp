@@ -249,8 +249,8 @@ void LuaBase::loadSystemScript() {
 }
 
 void LuaBase::boot() {
-	lua_pushnil();		// resumeSave
-	lua_pushnil();		// bootParam - not used in scripts
+	lua_pushnil();      // resumeSave
+	lua_pushnil();      // bootParam - not used in scripts
 	lua_call("BOOT");
 }
 

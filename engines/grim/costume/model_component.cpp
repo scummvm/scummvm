@@ -34,7 +34,7 @@
 #include "engines/grim/costume/mesh_component.h"
 
 namespace Grim {
-	
+
 #define DEFAULT_COLORMAP "item.cmp"
 
 ModelComponent::ModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
@@ -125,7 +125,7 @@ AnimManager *ModelComponent::getAnimManager() const {
 int ModelComponent::update(uint time) {
 	// First reset the current animation.
 	for (int i = 0; i < getNumNodes(); i++) {
-		_hier[i]._animPos.set(0,0,0);
+		_hier[i]._animPos.set(0, 0, 0);
 		_hier[i]._animPitch = 0;
 		_hier[i]._animYaw = 0;
 		_hier[i]._animRoll = 0;
@@ -183,7 +183,7 @@ void ModelComponent::draw() {
 	// of it's parent then don't draw it
 
 	if (_parent && _parent->isVisible())
-			return;
+		return;
 	// Need to translate object to be in accordance
 	// with the setup of the parent
 	translateObject(false);
@@ -201,7 +201,7 @@ void ModelComponent::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 	if (_parent && _parent->isVisible())
 		return;
 	// Need to translate object to be in accordance
-		// with the setup of the parent
+	// with the setup of the parent
 	translateObject(false);
 
 	_hier->getBoundingBox(x1, y1, x2, y2);

@@ -159,7 +159,7 @@ void Lua_V1::GetSectorOppositeEdge() {
 	if (sector) {
 		if (sector->getNumVertices() != 4)
 			warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
-		Math::Vector3d* vertices = sector->getVertices();
+		Math::Vector3d *vertices = sector->getVertices();
 		Sector::ExitInfo e;
 
 		sector->getExitInfo(actor->getPos(), -actor->getPuckVector(), &e);
@@ -334,7 +334,7 @@ void Lua_V1::GetShrinkPos() {
 	Math::Vector3d pos;
 	pos.set(x, y, z);
 
-	Sector* sector;
+	Sector *sector;
 	g_grim->getCurrSet()->shrinkBoxes(r);
 	g_grim->getCurrSet()->findClosestSector(pos, &sector, &pos);
 	g_grim->getCurrSet()->unshrinkBoxes();

@@ -55,7 +55,7 @@ MsCabinet::~MsCabinet() {
 		delete _decompressor;
 }
 
-MsCabinet::MsCabinet(Common::SeekableReadStream* data) :
+MsCabinet::MsCabinet(Common::SeekableReadStream *data) :
 	_data(data), _decompressor(0) {
 	if (!_data)
 		return;
@@ -204,7 +204,7 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::S
 	return new Common::MemoryReadStream(fileBuf, entry.length, DisposeAfterUse::NO);
 }
 
-MsCabinet::Decompressor::Decompressor(const MsCabinet::FolderEntry *folder, Common::SeekableReadStream* data) :
+MsCabinet::Decompressor::Decompressor(const MsCabinet::FolderEntry *folder, Common::SeekableReadStream *data) :
 	_curFolder(folder), _data(data), _curBlock(-1), _compressedBlock(0), _decompressedBlock(0), _fileBuf(0) {
 
 	//Alloc the decompression buffers
@@ -248,7 +248,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 		if (entry.folder->comp_type != kMszipCompression)
 			return false;
 
-		_curBlock = -1;		//No block decompressed
+		_curBlock = -1;     //No block decompressed
 	}
 
 	//Check if the file is contained in the folder
@@ -264,7 +264,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 	//if a part of this file has been decompressed in the last block, make a copy of it
 	copyBlock(buf_tmp);
 
-	while((_curBlock + 1) <= _endBlock) {
+	while ((_curBlock + 1) <= _endBlock) {
 		// Read the CFDATA header
 		cksum = _data->readUint32LE();
 		_data->read(hdrS, 4);
@@ -316,8 +316,8 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 void MsCabinet::Decompressor::copyBlock(byte *&data_ptr) const {
 	uint16 start, end, size;
 
-	if(_startBlock <= _curBlock && _curBlock <= _endBlock) {
-		start = (_startBlock == _curBlock) ? _inBlockStart: 0;
+	if (_startBlock <= _curBlock && _curBlock <= _endBlock) {
+		start = (_startBlock == _curBlock) ? _inBlockStart : 0;
 		end = (_endBlock == _curBlock) ? _inBlockEnd : uint16(kCabBlockSize);
 		size = end - start;
 

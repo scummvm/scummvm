@@ -109,23 +109,23 @@ void BitmapData::load() {
 
 bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	uint32 tag2 = data->readUint32BE();
-	if(tag2 != (MKTAG('F','\0','\0','\0')))
+	if (tag2 != (MKTAG('F','\0','\0','\0')))
 		return false;
 
 	int codec = data->readUint32LE();
-	data->readUint32LE(); 				//_paletteIncluded
+	data->readUint32LE();               //_paletteIncluded
 	_numImages = data->readUint32LE();
 	_x = data->readUint32LE();
 	_y = data->readUint32LE();
-	data->readUint32LE(); 				//_transparentColor
+	data->readUint32LE();               //_transparentColor
 	_format = data->readUint32LE();
 	_bpp = data->readUint32LE();
-// 	uint32 redBits = data->readUint32LE();
-// 	uint32 greenBits = data->readUint32LE();
-// 	uint32 blueBits = data->readUint32LE();
-// 	uint32 redShift = data->readUint32LE();
-// 	uint32 greenShift = data->readUint32LE();
-// 	uint32 blueShift = data->readUint32LE();
+//  uint32 redBits = data->readUint32LE();
+//  uint32 greenBits = data->readUint32LE();
+//  uint32 blueBits = data->readUint32LE();
+//  uint32 redShift = data->readUint32LE();
+//  uint32 greenShift = data->readUint32LE();
+//  uint32 blueShift = data->readUint32LE();
 
 	// Hardcode the format, since the values saved in the files are garbage for some, like "ha_0_elvos.zbm".
 	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
@@ -493,12 +493,11 @@ static bool decompress_codec3(const char *compressed, char *result, int maxBytes
 			if (byteIndex >= maxBytes) {
 				warning("Buffer overflow when decoding image: decompress_codec3 walked past the input buffer!");
 				return false;
-			}
-			else
+			} else {
 				*result++ = *compressed++;
+			}
 			++byteIndex;
-		}
-		else {
+		} else {
 			GET_BIT;
 			int copy_len, copy_offset;
 			if (bit == 0) {
@@ -521,8 +520,7 @@ static bool decompress_codec3(const char *compressed, char *result, int maxBytes
 				if (byteIndex >= maxBytes) {
 					warning("Buffer overflow when decoding image: decompress_codec3 walked past the input buffer!");
 					return false;
-				}
-				else {
+				} else {
 					assert(byteIndex + copy_offset >= 0);
 					assert(byteIndex + copy_offset < maxBytes);
 					*result = result[copy_offset];

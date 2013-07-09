@@ -237,7 +237,7 @@ void MoviePlayer::restoreState(SaveGame *state) {
 #ifdef NEED_NULLPLAYER
 class NullPlayer : public MoviePlayer {
 public:
-	NullPlayer(const char* codecID) {
+	NullPlayer(const char *codecID) {
 		warning("%s-playback not compiled in, but needed", codecID);
 		_videoFinished = true; // Rigs all movies to be completed.
 	}

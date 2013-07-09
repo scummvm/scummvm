@@ -26,9 +26,9 @@
 #include "engines/grim/sound.h"
 
 namespace Grim {
-	
+
 SoundPlayer *g_sound = NULL;
-	
+
 SoundPlayer::SoundPlayer() {
 	// TODO: Replace this with g_emiSound when we get a full working sound-system for more than voices.
 	if (g_grim->getGameType() == GType_MONKEY4)
@@ -36,7 +36,7 @@ SoundPlayer::SoundPlayer() {
 	else
 		_emiSound = NULL;
 }
-	
+
 SoundPlayer::~SoundPlayer() {
 	delete _emiSound;
 }
@@ -47,14 +47,14 @@ bool SoundPlayer::startVoice(const char *soundName, int volume, int pan) {
 	else
 		return _emiSound->startVoice(soundName, volume, pan);
 }
-	
+
 bool SoundPlayer::getSoundStatus(const char *soundName) {
 	if (g_grim->getGameType() == GType_GRIM)
 		return g_imuse->getSoundStatus(soundName);
 	else
 		return _emiSound->getSoundStatus(soundName);
 }
-	
+
 void SoundPlayer::stopSound(const char *soundName) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->stopSound(soundName);
@@ -70,7 +70,7 @@ int32 SoundPlayer::getPosIn16msTicks(const char *soundName) {
 	else
 		return _emiSound->getPosIn16msTicks(soundName);
 }
-	
+
 void SoundPlayer::setVolume(const char *soundName, int volume) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->setVolume(soundName, volume);
@@ -86,7 +86,7 @@ void SoundPlayer::setPan(const char *soundName, int pan) {
 		_emiSound->setPan(soundName, pan);
 	}
 }
-	
+
 void SoundPlayer::setMusicState(int stateId) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->setMusicState(stateId);
@@ -94,7 +94,7 @@ void SoundPlayer::setMusicState(int stateId) {
 		_emiSound->setMusicState(stateId);
 	}
 }
-	
+
 // EMI-only
 uint32 SoundPlayer::getMsPos(int stateId) {
 	assert(_emiSound); // This shouldn't ever be called from Grim.

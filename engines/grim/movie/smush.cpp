@@ -59,13 +59,13 @@ void SmushPlayer::handleFrame() {
 	// Force the last frame to stay in place for it's duration:
 	if (_videoDecoder->endOfVideo() && _videoDecoder->getTime() >= _videoDecoder->getDuration().msecs()) {
 		// If we're not supposed to loop (or looping fails) then end the video
-		if (!_videoLooping ) {
+		if (!_videoLooping) {
 			_videoFinished = true;
 			g_grim->setMode(GrimEngine::NormalMode);
 			deinit();
 			return;
 		} else {
- 			_smushDecoder->rewind(); // This doesnt handle if looping fails.
+			_smushDecoder->rewind(); // This doesnt handle if looping fails.
 			_smushDecoder->start();
 		}
 	}

@@ -36,7 +36,7 @@ class MoviePlayer {
 protected:
 	Common::String _fname;
 	Common::Mutex _frameMutex;
-	Video::VideoDecoder *_videoDecoder;		//< Initialize this to your needed subclass of VideoDecoder in the constructor
+	Video::VideoDecoder *_videoDecoder;     //< Initialize this to your needed subclass of VideoDecoder in the constructor
 	const Graphics::Surface *_internalSurface;
 	Graphics::Surface *_externalSurface;
 	int32 _frame;
@@ -59,11 +59,11 @@ public:
 	 * the default implementation calls init()/deinit() to handle
 	 * any necessary setup.
 	 *
-	 * @param filename		the file to open
-	 * @param looping		true if we want the video to loop, false otherwise
-	 * @param x				the x-coordinate for the draw-position
-	 * @param y				the y-coordinate for the draw-position
-	 * @see	init
+	 * @param filename      the file to open
+	 * @param looping       true if we want the video to loop, false otherwise
+	 * @param x             the x-coordinate for the draw-position
+	 * @param y             the y-coordinate for the draw-position
+	 * @see init
 	 * @see stop
 	 */
 	virtual bool play(const Common::String &filename, bool looping, int x, int y, bool start = true);
@@ -80,7 +80,7 @@ public:
 
 	/**
 	 * Saves the state of the video to a savegame
-	 * @param state			The state to save to
+	 * @param state         The state to save to
 	 */
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
@@ -144,7 +144,7 @@ protected:
 	 * files vs containers (i.e. load from LAB vs load from file).
 	 *
 	 * @see play
-	 * @param filename		The filename to be handled.
+	 * @param filename      The filename to be handled.
 	 */
 	virtual bool loadFile(const Common::String &filename);
 

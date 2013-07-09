@@ -58,7 +58,7 @@ public:
 	bool isFilled() const { return _filled; }
 	void draw() const;
 	void saveState(SaveGame *state) const;
-    bool restoreState(SaveGame *state);
+	bool restoreState(SaveGame *state);
 
 private:
 	Common::Point _p1, _p2, _p3, _p4;

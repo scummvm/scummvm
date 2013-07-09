@@ -206,7 +206,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 			} else if (code[0] == '[') {
 				char *string = (char*)var;
 				strncpy(string, s, fieldWidth);
-				string[fieldWidth-1] = '\0';
+				string[fieldWidth - 1] = '\0';
 			} else {
 				error("Code not handled: \"%s\" \"%s\"\n\"%s\" \"%s\"", code, s, line, fmt);
 			}

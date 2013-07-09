@@ -62,8 +62,8 @@ public:
 	/**
 	 * Loads an EMI TILE-bitmap.
 	 *
-	 * @param data		the data for the TILE.
-	 * @param len		the length of the data.
+	 * @param data      the data for the TILE.
+	 * @param len       the length of the data.
 	 */
 	bool loadTile(Common::SeekableReadStream *data);
 	bool loadGrimBm(Common::SeekableReadStream *data);
@@ -77,14 +77,14 @@ public:
 	/**
 	 * Convert a bitmap to another color-format.
 	 *
-	 * @param format	the format to convert to.
+	 * @param format    the format to convert to.
 	 */
 	void convertToColorFormat(const Graphics::PixelFormat &format);
 
 	/**
 	 * Convert a bitmap to another color-format.
 	 *
-	 * @param format	the format to convert to.
+	 * @param format    the format to convert to.
 	 */
 	void convertToColorFormat(int num, const Graphics::PixelFormat &format);
 
@@ -128,9 +128,9 @@ public:
 	/**
 	 * Construct a bitmap from the given data.
 	 *
-	 * @oaram filename	the filename of the bitmap
-	 * @param data		the actual data to construct from
-	 * @param len		the length of the data
+	 * @oaram filename  the filename of the bitmap
+	 * @param data      the actual data to construct from
+	 * @param len       the length of the data
 	 */
 	Bitmap(const Common::String &filename);
 	Bitmap(const Graphics::PixelBuffer &buf, int width, int height, const char *filename);
@@ -150,7 +150,7 @@ public:
 	/**
 	 * Set which image in an animated bitmap to use
 	 *
-	 * @param n		the image to be selected
+	 * @param n     the image to be selected
 	 */
 	void setActiveImage(int n);
 

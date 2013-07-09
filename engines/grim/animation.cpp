@@ -281,7 +281,7 @@ void AnimManager::animate(ModelNode *hier, int numNodes) {
 				tempYaw += hier[i]._animYaw * weightFactor;
 				tempPitch += hier[i]._animPitch * weightFactor;
 				tempRoll += hier[i]._animRoll * weightFactor;
-				hier[i]._animPos.set(0,0,0);
+				hier[i]._animPos.set(0, 0, 0);
 				hier[i]._animYaw = 0.0f;
 				hier[i]._animPitch = 0.0f;
 				hier[i]._animRoll = 0.0f;

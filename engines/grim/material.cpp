@@ -77,7 +77,7 @@ void MaterialData::initGrim(Common::SeekableReadStream *data) {
 		t->_data = NULL;
 		if (t->_width == 0 || t->_height == 0) {
 			Debug::warning(Debug::Materials, "skip load texture: bad texture size (%dx%d) for texture %d of material %s",
-						t->_width, t->_height, i, _fname.c_str());
+						   t->_width, t->_height, i, _fname.c_str());
 			break;
 		}
 		t->_data = new char[t->_width * t->_height];
@@ -116,7 +116,7 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 
 	delete tgaDecoder;
 }
-	
+
 void MaterialData::initEMI(Common::SeekableReadStream *data) {
 	Common::Array<Common::String> texFileNames;
 	char readFileName[64];
@@ -127,8 +127,8 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 		ts->expectString("version\t1.0");
 		if (ts->checkString("name:"))
 			ts->scanString("name:%s", 1, readFileName);
-		
-		while(!ts->checkString("END_OF_SECTION")) {
+
+		while (!ts->checkString("END_OF_SECTION")) {
 			ts->scanString("tex:%s", 1, readFileName);
 			Common::String mFileName(readFileName);
 			texFileNames.push_back(ResourceLoader::fixFilename(mFileName, false));
@@ -150,13 +150,13 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 		_numImages = texFileNames.size();
 		delete ts;
 		return;
-	} else if(_fname.hasSuffix(".tga")) {
+	} else if (_fname.hasSuffix(".tga")) {
 		_numImages = 1;
 		_textures = new Texture();
 		loadTGA(data, _textures);
-		//	texFileNames.push_back(filename);
+		//  texFileNames.push_back(filename);
 		return;
-		
+
 	} else {
 		warning("Unknown material-format: %s", _fname.c_str());
 	}

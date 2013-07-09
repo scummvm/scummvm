@@ -39,7 +39,7 @@ public:
 		void init(ModelNode *node);
 
 		void orientTowards(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix,
-			float maxPitch, float maxYaw, float maxRoll, float constrain);
+						   float maxPitch, float maxYaw, float maxRoll, float constrain);
 
 		void saveState(SaveGame *state) const;
 		void restoreState(SaveGame *state);

@@ -35,7 +35,7 @@ void Head::Joint::init(ModelNode *node) {
 }
 
 void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix,
-	float maxPitch, float maxYaw, float maxRoll, float constrain) {
+								float maxPitch, float maxYaw, float maxRoll, float constrain) {
 	float step = g_grim->getPerSecond(rate);
 	float yawStep = step;
 	float pitchStep = step / 3.0f;
@@ -59,9 +59,9 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	Math::Vector3d frontDir; // Character front facing direction vector in world space (global scene coordinate space)
 
 	// the character head coordinate frame is: +Y forward, +Z up, +X right.
-	frontDir = Math::Vector3d(_node->_matrix(0,1), _node->_matrix(1,1), _node->_matrix(2,1)); // Look straight ahead. (+Y)
-	modelFront = Math::Vector3d(0,1,0);
-	modelUp = Math::Vector3d(0,0,1);
+	frontDir = Math::Vector3d(_node->_matrix(0, 1), _node->_matrix(1, 1), _node->_matrix(2, 1)); // Look straight ahead. (+Y)
+	modelFront = Math::Vector3d(0, 1, 0);
+	modelUp = Math::Vector3d(0, 0, 1);
 
 	// v is the world space direction vector this character should be looking towards.
 	Math::Vector3d targetDir = point - _node->_pivotMatrix.getPosition();
@@ -76,7 +76,7 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	// orientation.
 	Math::Matrix4 lookAtTM;
 	lookAtTM.setToIdentity();
-	const Math::Vector3d worldUp(0,0,1); // The Residual scene convention: +Z is world space up.
+	const Math::Vector3d worldUp(0, 0, 1); // The Residual scene convention: +Z is world space up.
 	if (Math::Vector3d::dotProduct(targetDir, worldUp) >= 0.98f) // Avoid singularity if trying to look straight up.
 		lookAtTM.buildFromTargetDir(modelFront, targetDir, modelUp, -frontDir); // Instead of orienting head towards scene up, orient head towards character "back",
 	                                                                // i.e. when you look straight up, your head up vector tilts/arches to point straight backwards.
@@ -198,7 +198,7 @@ void Head::setMaxAngles(float maxPitch, float maxYaw, float maxRoll) {
 	_maxPitch = maxPitch;
 	_maxYaw = maxYaw;
 }
-	
+
 void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) {
 	if (_joint1Node != -1) {
 		// NOTE: By default, the _head.maxRoll for Manny's head is constrained to 165 degrees, which

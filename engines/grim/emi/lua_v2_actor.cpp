@@ -62,7 +62,7 @@ void Lua_V2::SetActorGlobalAlpha() {
 		return;
 
 	if (!lua_isnumber(alphaObj))
-			return;
+		return;
 
 	float alpha = lua_getnumber(alphaObj);
 	if (alpha == Actor::AlphaOff ||
@@ -292,7 +292,7 @@ void Lua_V2::AdvanceChore() {
 	if (c) {
 		if (!c->isPlaying()) {
 			warning("AdvanceChore() called on stopped chore %s (%s)",
-			        c->getName(), c->getOwner()->getFilename().c_str());
+					c->getName(), c->getOwner()->getFilename().c_str());
 			if (c->isLooping()) {
 				c->getOwner()->playChoreLooping(c->getName());
 			} else {
@@ -428,7 +428,7 @@ void Lua_V2::SetActorRestChore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		const char * choreStr = lua_getstring(choreObj);
+		const char *choreStr = lua_getstring(choreObj);
 		chore = costume->getChoreId(choreStr);
 	}
 
@@ -459,7 +459,7 @@ void Lua_V2::SetActorWalkChore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		const char * choreStr = lua_getstring(choreObj);
+		const char *choreStr = lua_getstring(choreObj);
 		chore = costume->getChoreId(choreStr);
 	}
 
@@ -523,7 +523,7 @@ void Lua_V2::SetActorTalkChore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		const char * choreStr = lua_getstring(choreObj);
+		const char *choreStr = lua_getstring(choreObj);
 		chore = costume->getChoreId(choreStr);
 	}
 
@@ -554,7 +554,7 @@ void Lua_V2::SetActorMumblechore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		const char * choreStr = lua_getstring(choreObj);
+		const char *choreStr = lua_getstring(choreObj);
 		chore = costume->getChoreId(choreStr);
 	}
 
@@ -803,21 +803,21 @@ void Lua_V2::AttachActor() {
 	lua_Object actorObj = lua_getparam(2);
 	lua_Object jointObj = lua_getparam(3);
 
-	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A', 'C', 'T', 'R'))
 		return;
 
 	Actor *actor = getactor(actorObj);
 	if (!actor)
 		return;
 
-	if (!lua_isuserdata(attachedObj) || lua_tag(attachedObj) != MKTAG('A','C','T','R'))
+	if (!lua_isuserdata(attachedObj) || lua_tag(attachedObj) != MKTAG('A', 'C', 'T', 'R'))
 		return;
 
 	Actor *attached = getactor(attachedObj);
 	if (!attached)
 		return;
 
-	const char * joint = NULL;
+	const char *joint = NULL;
 	if (!lua_isnil(jointObj)) {
 		joint = lua_getstring(jointObj);
 	}

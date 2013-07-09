@@ -367,7 +367,7 @@ void Lua_V1::DrawRectangle() {
 	p2.y = (int)lua_getnumber(objY2);
 	bool filled = false;
 
-	if (lua_istable(tableObj)){
+	if (lua_istable(tableObj)) {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
 		lua_Object colorObj = lua_gettable();
@@ -406,7 +406,7 @@ void Lua_V1::BlastRect() {
 	p2.y = (int)lua_getnumber(objY2);
 	bool filled = false;
 
-	if (lua_istable(tableObj)){
+	if (lua_istable(tableObj)) {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
 		lua_Object colorObj = lua_gettable();

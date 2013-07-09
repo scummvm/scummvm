@@ -30,7 +30,7 @@ namespace Grim {
 
 class EMILuaVarComponent : public Component {
 public:
-	EMILuaVarComponent(Component *parent, int parentID, const char *name, Component * prevComponent, tag32 tag);
+	EMILuaVarComponent(Component *parent, int parentID, const char *name, Component *prevComponent, tag32 tag);
 	~EMILuaVarComponent();
 	void init();
 	int update(uint time);

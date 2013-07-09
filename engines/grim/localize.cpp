@@ -66,7 +66,7 @@ Localizer::Localizer() {
 			if (g_grim->getGameType() == GType_MONKEY4) {
 				uint32 next = 0x16;
 				for (int i = 4; i < filesize; i++) {
-					 next = next * 0x343FD + 0x269EC3;
+					next = next * 0x343FD + 0x269EC3;
 					data[i] ^= (int)(((((next >> 16) & 0x7FFF) / 32767.f) * 254) + 1);
 				}
 			} else {
@@ -84,7 +84,7 @@ Localizer::Localizer() {
 	char *nextline = data;
 	Common::String last_entry;
 	//Read file till end
-	for (char *line = data + 4; line-data <= filesize; line = nextline + 1) {
+	for (char *line = data + 4; line - data <= filesize; line = nextline + 1) {
 		if (line == NULL || nextline == NULL) {
 			break;
 		}
@@ -101,10 +101,10 @@ Localizer::Localizer() {
 				break;
 			}
 
-			nextline = strchr(line+2,'\n');
+			nextline = strchr(line + 2, '\n');
 			continue;
 		}
-		
+
 		//EMI has an garbage line which should be ignored
 		if (g_grim->getGameType() == GType_MONKEY4 && *line == '\x1A')
 			continue;

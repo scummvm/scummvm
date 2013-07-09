@@ -30,7 +30,7 @@
 namespace Grim {
 
 class Skeleton;
-	
+
 class EMISkelComponent : public Component {
 public:
 	EMISkelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);

@@ -169,7 +169,7 @@ ResourceLoader::ResourceLoader() {
 	if (!(g_grim->getGameFlags() & ADGF_DEMO || SearchMan.hasArchive("update"))) {
 		const char *errorMessage = 0;
 		if (g_grim->getGameType() == GType_GRIM) {
-			errorMessage = 	"Unsupported version of Grim Fandango.\n"
+			errorMessage =  "Unsupported version of Grim Fandango.\n"
 							"Please download the original patch from\n"
 							"http://www.residualvm.org/downloads/\n"
 							"and put it in the game data files directory";
@@ -179,11 +179,11 @@ ResourceLoader::ResourceLoader() {
 
 		//Don't force the update for MI4 for now
 		/*else if (g_grim->getGameType() == GType_MONKEY4)
-			errorMessage = 	"Unsupported version of Escape from Monkey Island.\n"
-							"Please download the original patch from\n"
-							"http://www.residualvm.org/downloads/\n"
-							"and put it in the game data files directory.\n"
-							"Pay attention to download the correct version according to the game's language";
+		    errorMessage =  "Unsupported version of Escape from Monkey Island.\n"
+		                    "Please download the original patch from\n"
+		                    "http://www.residualvm.org/downloads/\n"
+		                    "and put it in the game data files directory.\n"
+		                    "Pay attention to download the correct version according to the game's language";
 		*/
 	}
 
@@ -273,7 +273,7 @@ Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filen
 
 Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fname, bool cache) const {
 	Common::SeekableReadStream *s;
-    fname.toLowercase();
+	fname.toLowercase();
 
 	if (cache) {
 		s = getFileFromCache(fname);
@@ -346,13 +346,13 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *pr
 	}
 	Costume *result;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		result = new EMICostume(filename, prevCost);		
+		result = new EMICostume(filename, prevCost);
 	} else {
 		result = new Costume(filename, prevCost);
 	}
 	result->load(stream);
 	delete stream;
-	
+
 	return result;
 }
 
@@ -360,7 +360,7 @@ Font *ResourceLoader::loadFont(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(filename.c_str(), true);
-	if(!stream)
+	if (!stream)
 		error("Could not find font file %s", filename.c_str());
 
 	Font *result = new Font(filename, stream);
@@ -373,7 +373,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(filename.c_str());
-	if(!stream)
+	if (!stream)
 		error("Could not find keyframe file %s", filename.c_str());
 
 	KeyframeAnim *result = new KeyframeAnim(filename, stream);
@@ -388,7 +388,7 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(filename.c_str());
-	if(!stream)
+	if (!stream)
 		return NULL;
 
 	result = new LipSync(filename, stream);
@@ -411,7 +411,7 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(fname.c_str(), true);
-	if(!stream) {
+	if (!stream) {
 		// FIXME: EMI demo references files that aren't included. Return a known material.
 		// This should be fixed in the data files instead.
 		if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() & ADGF_DEMO) {
@@ -432,7 +432,7 @@ Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model 
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(fname.c_str());
-	if(!stream)
+	if (!stream)
 		error("Could not find model %s", filename.c_str());
 
 	Model *result = new Model(filename, stream, c, parent);
@@ -447,7 +447,7 @@ EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel 
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(fname.c_str());
-	if(!stream) {
+	if (!stream) {
 		warning("Could not find model %s", filename.c_str());
 		return NULL;
 	}
@@ -464,7 +464,7 @@ Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(fname.c_str(), true);
-	if(!stream) {
+	if (!stream) {
 		warning("Could not find skeleton %s", filename.c_str());
 		return NULL;
 	}
@@ -482,7 +482,7 @@ Sprite *ResourceLoader::loadSprite(const Common::String &filename, EMICostume *c
 	const Common::String fname = fixFilename(filename, true);
 
 	stream = openNewStreamFile(fname.c_str(), true);
-	if(!stream) {
+	if (!stream) {
 		warning("Could not find sprite %s", fname.c_str());
 		return NULL;
 	}
@@ -497,13 +497,13 @@ Sprite *ResourceLoader::loadSprite(const Common::String &filename, EMICostume *c
 AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 	Common::String fname = fixFilename(filename);
 	Common::SeekableReadStream *stream;
-	
+
 	stream = openNewStreamFile(fname.c_str(), true);
-	if(!stream) {
+	if (!stream) {
 		warning("Could not find animation %s", filename.c_str());
 		return NULL;
 	}
-	
+
 	AnimationEmi *result = new AnimationEmi(filename, stream);
 	delete stream;
 

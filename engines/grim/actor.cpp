@@ -283,7 +283,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		savedState->writeByte(_alphaMode);
 		savedState->writeFloat(_globalAlpha);
-	
+
 		savedState->writeBool(_inOverworld);
 		savedState->writeLESint32(_sortOrder);
 		savedState->writeBool(_shadowActive);
@@ -326,7 +326,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_timeScale          = savedState->readFloat();
 	_puckOrient         = savedState->readBool();
 
-	_talkSoundName 		= savedState->readString();
+	_talkSoundName      = savedState->readString();
 	_talking = savedState->readBool();
 	_backgroundTalk = savedState->readBool();
 	if (isTalking()) {
@@ -348,7 +348,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		Common::String fname = savedState->readString();
 		const int depth = savedState->readLESint32();
 		Costume *pc = NULL;
-		if (depth > 0) {	//build all the previousCostume hierarchy
+		if (depth > 0) {    //build all the previousCostume hierarchy
 			Common::String *names = new Common::String[depth];
 			for (int j = 0; j < depth; ++j) {
 				names[j] = savedState->readString();
@@ -446,7 +446,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		_alphaMode = (AlphaMode) savedState->readByte();
 		_globalAlpha = savedState->readFloat();
-	
+
 		_inOverworld  = savedState->readBool();
 		_sortOrder    = savedState->readLESint32();
 		_shadowActive = savedState->readBool();
@@ -756,7 +756,7 @@ void Actor::walkForward() {
 
 	if (!_followBoxes) {
 		Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
-			_moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
+								  _moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
 		// EMI: Y is up-down, sectors use an X-Z plane for movement
 		if (g_grim->getGameType() == GType_MONKEY4) {
@@ -810,16 +810,16 @@ void Actor::walkForward() {
 				Math::Angle ax = Math::Vector2d(currSector->getNormal().x(), currSector->getNormal().z()).getAngle();
 				Math::Angle ay = Math::Vector2d(currSector->getNormal().y(), currSector->getNormal().z()).getAngle();
 
-				float z1 = -_moveYaw.getCosine() * (ay -_pitch).getCosine();
-				float z2 = _moveYaw.getSine() * (ax -_pitch).getCosine();
+				float z1 = -_moveYaw.getCosine() * (ay - _pitch).getCosine();
+				float z2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
 				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(),
-										_moveYaw.getCosine() * ay.getSine() * _pitch.getCosine(), z1 + z2);
+											_moveYaw.getCosine() * ay.getSine() * _pitch.getCosine(), z1 + z2);
 			} else {
 				Math::Angle ax = Math::Vector2d(currSector->getNormal().x(), currSector->getNormal().y()).getAngle();
 				Math::Angle az = Math::Vector2d(currSector->getNormal().z(), currSector->getNormal().y()).getAngle();
 
-				float y1 = -_moveYaw.getCosine() * (az -_pitch).getCosine();
-				float y2 = _moveYaw.getSine() * (ax -_pitch).getCosine();
+				float y1 = -_moveYaw.getCosine() * (az - _pitch).getCosine();
+				float y2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
 				forwardVec = Math::Vector3d(_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(), y1 + y2,
 											-_moveYaw.getCosine() * az.getSine() * _pitch.getCosine());
 			}
@@ -1773,23 +1773,23 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 	Math::Segment2d segment(p1, p2);
 
 	// TODO: collision with Box
-// 	if (_collisionMode == CollisionSphere) {
-		Math::Vector2d center(p.x(), p.y());
+//  if (_collisionMode == CollisionSphere) {
+	Math::Vector2d center(p.x(), p.y());
 
-		Math::Vector2d inter;
-		float distance = segment.getLine().getDistanceTo(center, &inter);
+	Math::Vector2d inter;
+	float distance = segment.getLine().getDistanceTo(center, &inter);
 
-		if (distance < size && segment.containsPoint(inter)) {
-			Math::Vector2d v(inter - center);
-			v.normalize();
-			v *= size;
-			v += center;
+	if (distance < size && segment.containsPoint(inter)) {
+		Math::Vector2d v(inter - center);
+		v.normalize();
+		v *= size;
+		v += center;
 
-			return Math::Vector3d(v.getX(), v.getY(), dest.z());
-		}
-// 	} else {
+		return Math::Vector3d(v.getX(), v.getY(), dest.z());
+	}
+//  } else {
 
-// 	}
+//  }
 
 	return dest;
 }
@@ -2030,7 +2030,7 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 void Actor::detach() {
 	if (!isAttached())
 		return;
-	
+
 	// FIXME: Use last known position of attached joint
 	Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
 	setPos(attachedActor->_pos);

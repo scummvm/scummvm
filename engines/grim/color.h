@@ -33,7 +33,7 @@ public:
 
 	Color();
 	Color(byte r, byte g, byte b);
-	Color(const Color& c);
+	Color(const Color &c);
 	Color(uint32 c);
 
 	byte &getRed() { return _vals[0]; }
@@ -45,8 +45,8 @@ public:
 
 	uint32 toEncodedValue();
 
-	Color& operator =(const Color &c);
-	Color& operator =(Color *c);
+	Color &operator =(const Color &c);
+	Color &operator =(Color *c);
 };
 
 

@@ -47,7 +47,7 @@ void EMIAnimComponent::init() {
 
 int EMIAnimComponent::update(uint time) {
 	if (_obj) {
-		EMISkelComponent *skel = ((EMICostume*) _cost)->_emiSkel;
+		EMISkelComponent *skel = ((EMICostume *) _cost)->_emiSkel;
 		_obj->animate(skel->_obj, time);
 	}
 	return 0;
@@ -63,7 +63,7 @@ void EMIAnimComponent::reset() {
 	if (_obj)
 		_obj->reset();
 }
-	
+
 void EMIAnimComponent::draw() {
 }
 

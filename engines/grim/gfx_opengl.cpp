@@ -163,15 +163,14 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	return NULL;
 }
 
-void GfxOpenGL::initExtensions()
-{
+void GfxOpenGL::initExtensions() {
 	if (!g_registry->getBool("use_arb_shaders")) {
 		return;
 	}
 
 #if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
 	union {
-		void* obj_ptr;
+		void *obj_ptr;
 		void (APIENTRY *func_ptr)();
 	} u;
 	// We're casting from an object pointer to a function pointer, the
@@ -188,7 +187,7 @@ void GfxOpenGL::initExtensions()
 	u.obj_ptr = SDL_GL_GetProcAddress("glProgramLocalParameter4fARB");
 	glProgramLocalParameter4fARB = (PFNGLPROGRAMLOCALPARAMETER4FARBPROC)u.func_ptr;
 
-	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+	const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "ARB_fragment_program")) {
 		_useDepthShader = true;
 		_useDimShader = true;
@@ -238,7 +237,7 @@ void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 
 void GfxOpenGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		glScaled(1,1,-1);
+		glScaled(1, 1, -1);
 
 		_currentPos = pos;
 		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
@@ -332,7 +331,7 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 
 	for (int i = 0; i < model->_numFaces; i++) {
 		Math::Vector3d v;
-		float* pVertices;
+		float *pVertices;
 
 		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
 			GLdouble modelView[16], projection[16];
@@ -387,7 +386,7 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 }
 
 void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                             const bool inOverworld, const float alpha, const bool depthOnly) {
+							   const bool inOverworld, const float alpha, const bool depthOnly) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -403,7 +402,7 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
-// 		glColor3f(0.0f, 1.0f, 0.0f);
+//      glColor3f(0.0f, 1.0f, 0.0f);
 		glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
@@ -533,8 +532,8 @@ void GfxOpenGL::set3DMode() {
 	glDepthFunc(GL_LESS);
 }
 
-void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
-	int *indices = (int*)face->_indexes;
+void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) {
+	int *indices = (int *)face->_indexes;
 
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
@@ -570,7 +569,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	glEnable(GL_LIGHTING);
 	glDisable(GL_BLEND);
 	glDepthMask(true);
-	glColor3f(1.0f,1.0f,1.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
@@ -771,7 +770,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format == 1 || _useDepthShader) {
 		bitmap->_hasTransparency = false;
 		bitmap->_numTex = ((bitmap->_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-			((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+						  ((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
 		bitmap->_texIds = new GLuint[bitmap->_numTex * bitmap->_numImages];
 		textures = (GLuint *)bitmap->_texIds;
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
@@ -838,7 +837,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
 					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type,
-						texOut + (y * bytes * bitmap->_width) + (bytes * x));
+									texOut + (y * bytes * bitmap->_width) + (bytes * x));
 					cur_tex_idx++;
 				}
 			}
@@ -1208,7 +1207,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	} else if (material->_colorFormat == BM_BGRA) {
 		format = GL_BGRA;
 		internalFormat = GL_RGBA;
-	} else {	// The only other colorFormat we load right now is BGR
+	} else {    // The only other colorFormat we load right now is BGR
 		format = GL_BGR;
 		internalFormat = GL_RGB;
 	}
@@ -1250,7 +1249,7 @@ void GfxOpenGL::destroyMaterial(Texture *material) {
 
 void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//if (num != 0) {
-	//	warning("Animation not handled yet in GL texture path");
+	//  warning("Animation not handled yet in GL texture path");
 	//}
 
 	if (y + h == 480) {
@@ -1273,7 +1272,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	glDepthFunc(GL_LESS);
 }
 
-void GfxOpenGL::prepareMovieFrame(Graphics::Surface* frame) {
+void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	int height = frame->h;
 	int width = frame->w;
 	byte *bitmap = (byte *)frame->pixels;
@@ -1287,7 +1286,7 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface* frame) {
 
 	// create texture
 	_smushNumTex = ((width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-		((height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+				   ((height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
 	_smushTexIds = new GLuint[_smushNumTex];
 	glGenTextures(_smushNumTex, _smushTexIds);
 	for (int i = 0; i < _smushNumTex; i++) {
@@ -1478,7 +1477,7 @@ void GfxOpenGL::dimScreen() {
 
 void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	x = (int)(x * _scaleW);
-	yReal = (int)(yReal *_scaleH);
+	yReal = (int)(yReal * _scaleH);
 	w = (int)(w * _scaleW);
 	h = (int)(h * _scaleH);
 	int y = _screenHeight - yReal - h;
@@ -1490,8 +1489,8 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glViewport(0, 0, _screenWidth, _screenHeight);
 
@@ -1763,7 +1762,7 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 
 void GfxOpenGL::createSpecialtyTextures() {
 	//make a buffer big enough to hold any of the textures
-	char *buffer = new char[256*256*4];
+	char *buffer = new char[256 * 256 * 4];
 
 	glReadPixels(0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 	_specialty[0].create(buffer, 256, 256);

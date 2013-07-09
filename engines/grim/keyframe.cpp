@@ -57,7 +57,7 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	// Next four bytes are the frames per second
 	// The fps value seems to be ignored and causes the animation the first time manny
 	// enters the kitchen of the Blue Casket to go out of sync. So we force it to 15.
-// 	_fps = get_float(data + 52);
+//  _fps = get_float(data + 52);
 	_fps = 15.;
 	// Next four bytes are the number of frames
 	data->seek(56, SEEK_SET);
@@ -94,7 +94,7 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 		data->read(nameHandle, 32);
 		// If the name handle is entirely null (like ma_rest.key)
 		// then we shouldn't try to set the name
-		if(nameHandle[0] == 0)
+		if (nameHandle[0] == 0)
 			memcpy(nameHandle, "(null)", 7);
 
 		// The next four bytes are the node number identifier

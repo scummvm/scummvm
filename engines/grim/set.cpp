@@ -129,7 +129,7 @@ void Set::loadText(TextSplitter &ts) {
 
 	// Calculate the number of sectors
 	ts.expectString("section: sectors");
-	if (ts.isEof())	// Sectors are optional, but section: doesn't seem to be
+	if (ts.isEof()) // Sectors are optional, but section: doesn't seem to be
 		return;
 
 	int sectorStart = ts.getLineNumber();
@@ -267,7 +267,7 @@ bool Set::restoreState(SaveGame *savedState) {
 		_setups[i].restoreState(savedState);
 	}
 
-    //Sectors
+	//Sectors
 	_numSectors = savedState->readLESint32();
 	if (_numSectors > 0) {
 		_sectors = new Sector*[_numSectors];
@@ -350,8 +350,8 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	int fNameLen = 0;
 	fNameLen = data->readUint32LE();
 
-	char* fileName = new char[fNameLen];
-	data->read(fileName,fNameLen);
+	char *fileName = new char[fNameLen];
+	data->read(fileName, fNameLen);
 
 	_bkgndZBm = NULL;
 	_bkgndBm = Bitmap::create(fileName);
@@ -701,15 +701,15 @@ void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int
 		newVolume = _maxVolume;
 	g_sound->setVolume(soundName, newVolume);
 
-	Math::Vector3d cameraVector =_currSetup->_interest - _currSetup->_pos;
-	Math::Vector3d up(0,0,1);
+	Math::Vector3d cameraVector = _currSetup->_interest - _currSetup->_pos;
+	Math::Vector3d up(0, 0, 1);
 	Math::Vector3d right;
 	cameraVector.normalize();
 	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
 	float cosr = cos(roll);
 	// Rotate the up vector by roll.
 	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
-		cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
+		 cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
 	right = Math::Vector3d::crossProduct(cameraVector, up);
 	right.normalize();
 	float angle = atan2(Math::Vector3d::dotProduct(vector, right),

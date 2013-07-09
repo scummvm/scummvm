@@ -29,8 +29,8 @@ GfxBase::GfxBase() :
 	_renderBitmaps(true),
 	_renderZBitmaps(true),
 	_shadowModeActive(false),
-	_currentPos(0,0,0),
-	_currentQuat(0,0,0,1),
+	_currentPos(0, 0, 0),
+	_currentQuat(0, 0, 0, 1),
 	_dimLevel(0.0f) {
 
 }
@@ -68,7 +68,7 @@ void GfxBase::restoreState(SaveGame *state) {
 	r = state->readByte();
 	g = state->readByte();
 	b = state->readByte();
-	setShadowColor(r, g ,b);
+	setShadowColor(r, g , b);
 	_renderBitmaps = state->readBool();
 	_renderZBitmaps = state->readBool();
 

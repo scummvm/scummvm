@@ -316,9 +316,9 @@ void GrimEngine::handleControls(Common::EventType operation, const Common::KeySt
 	if (!LuaBase::instance()->callback("buttonHandler", objects)) {
 		error("handleControls: invalid keys handler");
 	}
-	// 	if (!LuaBase::instance()->callback("axisHandler", objects)) {
-	// 		error("handleControls: invalid joystick handler");
-	// 	}
+	//  if (!LuaBase::instance()->callback("axisHandler", objects)) {
+	//      error("handleControls: invalid joystick handler");
+	//  }
 
 	if (operation == Common::EVENT_KEYDOWN)
 		_controlsState[key.keycode] = true;

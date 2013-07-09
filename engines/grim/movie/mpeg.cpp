@@ -51,7 +51,7 @@ bool MpegPlayer::loadFile(const Common::String &filename) {
 
 	return true;
 }
-	
+
 } // end of namespace Grim
 
 #endif // USE_MPEG2

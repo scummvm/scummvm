@@ -208,7 +208,7 @@ void GrimEngine::createRenderer() {
 	_softRenderer = g_registry->getBool("soft_renderer");
 #endif
 
-	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)){
+	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)) {
 		warning("gfx backend doesn't support hardware rendering");
 		_softRenderer = true;
 	}
@@ -239,8 +239,8 @@ Common::Error GrimEngine::run() {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
 			Common::String confirmString("ResidualVM found some problems with your game data files.\n"
-				"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
-				"Do you still want to run ");
+										 "Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
+										 "Do you still want to run ");
 			confirmString += (GType_MONKEY4 == getGameType() ? "Escape From Monkey Island?" : "Grim Fandango?");
 			GUI::MessageDialog msg(confirmString, "Yes", "No");
 			if (!msg.runModal()) {
@@ -318,10 +318,10 @@ Common::Error GrimEngine::run() {
 
 Common::Error GrimEngine::loadGameState(int slot) {
 	assert(slot >= 0);
-	if (getGameType() == GType_MONKEY4) { 
-		_savegameFileName = Common::String::format("efmi%03d.gsv",slot);
+	if (getGameType() == GType_MONKEY4) {
+		_savegameFileName = Common::String::format("efmi%03d.gsv", slot);
 	} else {
-		_savegameFileName = Common::String::format("grim%02d.gsv",slot);
+		_savegameFileName = Common::String::format("grim%02d.gsv", slot);
 	}
 	_savegameLoadRequest = true;
 	return Common::kNoError;
@@ -609,7 +609,7 @@ void GrimEngine::doFlip() {
 		unsigned int currentTime = g_system->getMillis();
 		unsigned int delta = currentTime - _lastFrameTime;
 		if (delta > 500) {
-			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)delta );
+			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)delta);
 			_frameCounter = 0;
 			_lastFrameTime = currentTime;
 		}
@@ -1065,7 +1065,7 @@ Set *GrimEngine::loadSet(const Common::String &name) {
 		}
 		Common::SeekableReadStream *stream;
 		stream = g_resourceloader->openNewStreamFile(filename.c_str());
-		if(!stream)
+		if (!stream)
 			error("Could not find scene file %s", name.c_str());
 
 		s = new Set(name, stream);

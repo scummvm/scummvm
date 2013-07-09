@@ -427,7 +427,7 @@ void Mesh::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
 	data->seek(24, SEEK_CUR);
 }
 
-void Mesh::loadText(TextSplitter *ts, Material* materials[]) {
+void Mesh::loadText(TextSplitter *ts, Material *materials[]) {
 	ts->scanString("name %32s", 1, _name);
 	ts->scanString("radius %f", 1, &_radius);
 
@@ -585,7 +585,7 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	_yaw = get_float(f);
 	data->read(f, 4);
 	_roll = get_float(f);
-	_animPos.set(0,0,0);
+	_animPos.set(0, 0, 0);
 	_animPitch = 0;
 	_animYaw = 0;
 	_animRoll = 0;
@@ -732,8 +732,8 @@ void ModelNode::addSprite(Sprite *sprite) {
 }
 
 void ModelNode::removeSprite(Sprite *sprite) {
-	Sprite* curr = _sprite;
-	Sprite* prev = NULL;
+	Sprite *curr = _sprite;
+	Sprite *prev = NULL;
 	while (curr) {
 		if (curr == sprite) {
 			if (prev)

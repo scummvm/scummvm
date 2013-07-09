@@ -43,7 +43,7 @@ SoundTrack::~SoundTrack() {
 	if (_stream && (_disposeAfterPlaying == DisposeAfterUse::NO || !_handle))
 		delete _stream;
 }
-	
+
 Common::String SoundTrack::getSoundName() {
 	return _soundName;
 }

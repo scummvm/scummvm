@@ -90,7 +90,7 @@ int LangFilter::listMembers(Common::ArchiveMemberList &list) const {
 	//Search only files with the right language and create a list with their basenames
 	for (Common::ArchiveMemberList::const_iterator it = orgList.begin(); it != orgList.end(); it++) {
 		orgName = (*it)->getName();
-		if (orgName.hasPrefix(kLanguages1[_lang]) ||orgName.hasPrefix(kLanguages1[kCommon]))
+		if (orgName.hasPrefix(kLanguages1[_lang]) || orgName.hasPrefix(kLanguages1[kCommon]))
 			name = Common::String(orgName.c_str() + 3);
 		else if (orgName.hasPrefix(kLanguages2[_lang]) || orgName.hasPrefix(kLanguages2[kCommon])) {
 			int i = 0;

@@ -107,7 +107,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 							_emiMesh->_obj->setSkeleton(_emiSkel->_obj);
 						}
 					}
-				
+
 				}
 			}
 
@@ -229,13 +229,13 @@ int EMICostume::update(uint time) {
 	return 0;
 }
 
-Material * EMICostume::findSharedMaterial(const Common::String &name) {
+Material *EMICostume::findSharedMaterial(const Common::String &name) {
 	Common::List<Material *>::iterator it = _materials.begin();
 	for (; it != _materials.end(); ++it)
 		if ((*it)->getFilename() == name)
 			return *it;
 
-	Material * mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
+	Material *mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
 	_materials.push_back(mat);
 	return mat;
 }

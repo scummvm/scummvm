@@ -27,7 +27,7 @@
 
 namespace Grim {
 
-EMILuaCodeComponent::EMILuaCodeComponent(Component *p, int parentID, const char *name, Component * prevComponent, tag32 t) : Component(p, parentID, name, t) {
+EMILuaCodeComponent::EMILuaCodeComponent(Component *p, int parentID, const char *name, Component *prevComponent, tag32 t) : Component(p, parentID, name, t) {
 }
 
 EMILuaCodeComponent::~EMILuaCodeComponent() {

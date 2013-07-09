@@ -33,7 +33,7 @@ class SeekableReadStream;
 }
 
 namespace Grim {
-	
+
 class AnimationEmi;
 
 struct Joint {

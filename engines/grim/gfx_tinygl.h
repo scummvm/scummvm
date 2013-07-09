@@ -58,7 +58,7 @@ public:
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
 	void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-	                    const bool inOverworld, const float alpha, const bool depthOnly);
+						const bool inOverworld, const float alpha, const bool depthOnly);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
@@ -74,7 +74,7 @@ public:
 	void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis);
 	void translateViewpointFinish();
 
-	void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face);
+	void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face);
 	void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts);
 	void drawSprite(const Sprite *sprite);
 
@@ -113,7 +113,7 @@ public:
 	void drawLine(const PrimitiveObject *primitive);
 	void drawPolygon(const PrimitiveObject *primitive);
 
-	void prepareMovieFrame(Graphics::Surface* frame);
+	void prepareMovieFrame(Graphics::Surface *frame);
 	void drawMovieFrame(int offsetX, int offsetY);
 	void releaseMovieFrame();
 

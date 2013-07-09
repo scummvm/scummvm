@@ -28,15 +28,15 @@
 #ifdef USE_MPEG2
 
 namespace Grim {
-	
-	class MpegPlayer : public MoviePlayer {
-	public:
-		MpegPlayer();
-	private:
-		bool loadFile(const Common::String &filename);
-		bool _demo;
-	};
-	
+
+class MpegPlayer : public MoviePlayer {
+public:
+	MpegPlayer();
+private:
+	bool loadFile(const Common::String &filename);
+	bool _demo;
+};
+
 } // end of namespace Grim
 
 #endif // USE_MPEG2

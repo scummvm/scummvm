@@ -253,7 +253,7 @@ void Blocky8::makeTablesInterpolation(int param) {
 						}
 					}
 				} else if ((b1 == 0 && b2 == 1) || (b2 == 0 && b1 == 1) ||
-				           (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
+						   (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
 					if (param > variable4) {
 						i = param - variable4;
 						while (i--) {

@@ -29,7 +29,7 @@
 namespace Grim {
 
 class SoundTrack;
-	
+
 struct MusicEntry {
 	int _x;
 	int _y;
@@ -51,7 +51,7 @@ class EMISound {
 	Common::String _musicPrefix;
 	Common::Stack<SoundTrack*> _stateStack;
 
-	void removeItem(SoundTrack* item);
+	void removeItem(SoundTrack *item);
 	int32 getFreeChannel();
 	int32 getChannelByName(const Common::String &name);
 	void freeChannel(int32 channel);
@@ -77,7 +77,7 @@ public:
 
 	uint32 getMsPos(int stateId);
 };
-	
+
 }
 
 #endif
