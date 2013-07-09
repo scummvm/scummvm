@@ -44,8 +44,8 @@ typedef byte manitype[2049]; // manitype = array[5..2053] of byte;
 typedef byte siltype[51][11]; /* 35, 4 */
 
 struct adxtype { /* Second revision of ADX type */
-	Common::String name; /* name of character */
-	Common::String comment; /* comment */
+	Common::String name/*[13]*/; /* name of character */ // uruk: Note to self: TRAILING /0 !!! Real size: 12
+	Common::String comment/*[17]*/; /* comment */ // uruk: Same here, but 16.
 	byte num; /* number of pictures */
 	byte xl, yl; /* x & y lengths of pictures */
 	byte seq; /* how many in one stride */
@@ -99,7 +99,7 @@ public:
 	bool call_eachstep; /* Do we call the eachstep procedure? */
 	byte eachstep;
 
-	triptype *init(byte spritenum, bool do_check, Trip *tr);
+	void init(byte spritenum, bool do_check, Trip *tr);
 	/* loads & sets up the sprite */
 	void original();    /* just sets Quick to false */
 	void andexor();    /* drops sprite onto screen */

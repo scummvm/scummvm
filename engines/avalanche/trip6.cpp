@@ -41,6 +41,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "common/file.h"
 
 /*#include "Dropdown.h"*/
 
@@ -48,10 +49,97 @@
 namespace Avalanche {
 
 	
-triptype *triptype::init(byte spritenum, bool do_check, Trip *tr) {
-	warning("STUB: Trip::init()");	
+void triptype::init(byte spritenum, bool do_check, Trip *tr) {
+	const int32 idshould = -1317732048;
+	int16 gd, gm;
+	byte fv/*,nds*/;
+	int32 id;
+	uint16 soa;
+	Common::File inf;
+
+	if (spritenum == 177)
+		return; /* Already running! */
+
+	Common::String filename;
+	filename = filename.format("sprite%d.avd", spritenum);
+	if (!inf.open(filename)) {
+		warning("AVALANCHE: Trip: File not found: %s", filename.c_str());
+		return;
+	}
+
+	inf.seek(177);
+
+	id = inf.readSint32LE();
+	if (id != idshould) {
+		//output << '\7';
+		inf.close();
+		return;
+	}
+
+	soa = inf.readUint16LE(); // Only used in the original code. 
+	// I use it just to jump forward in the file. Should be replaced with seek().
+	
+	byte size = inf.readByte(); // Same purpose as soa.
+	for (byte i = 0; i < 12; i++) {
+		byte be = inf.readByte();
+		a.name += be;
+	}
+
+	size = inf.readByte(); // Same purpose as soa.
+	for (byte i = 0; i < 16; i++) {
+		byte be = inf.readByte();
+		a.comment += be;
+	}
+
+	a.num = inf.readByte();
+	a.xl = inf.readByte();
+	a.yl = inf.readByte();
+	a.seq = inf.readByte();
+	a.size = inf.readUint16LE();
+	a.fgc = inf.readByte();
+	a.bgc = inf.readByte();
+	a.accinum = inf.readByte();
+
+	totalnum = 0; // = 1;
+	xw = a.xl / 8;
+	if ((a.xl % 8) > 0)
+		xw++;
+	for (byte aa = 0; aa < /*nds*seq*/a.num; aa++) {
+
+		sil[totalnum] = new siltype[11 * (a.yl + 1)];
+		//getmem(sil[totalnum-1], 11 * (a.yl + 1));
+		mani[totalnum] = new manitype[a.size - 6];
+		//getmem(mani[totalnum-1], a.size - 6);
+		for (fv = 0; fv <= a.yl; fv ++)
+			inf.read((*sil[totalnum])[fv], xw);
+			//blockread(inf, (*sil[totalnum-1])[fv], xw);
+		inf.read(*mani[totalnum], a.size - 6);
+		//blockread(inf, *mani[totalnum-1], a.size - 6);
+
+		totalnum ++;
+	}
+
+	/* on; */
+	x = 0;
+	y = 0;
+	quick = true;
+	visible = false;
+	xs = 3;
+	ys = 1;
+	/* if spritenum=1 then newspeed; { Just for the lights. }*/
+
+	homing = false;
+	ix = 0;
+	iy = 0;
+	step = 0;
+	check_me = do_check;
+	count = 0;
+	whichsprite = spritenum;
+	vanishifstill = false;
+	call_eachstep = false;
+	inf.close();
+	
 	_tr = tr;
-	return this;
 }
 
 void triptype::original() {
