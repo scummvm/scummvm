@@ -146,9 +146,6 @@ void Avalot::setParent(AvalancheEngine *vm) {
 void Avalot::run(Common::String arg) {
 	setup();
 	
-	_vm->_lucerna.load_also("9");
-
-
 	do {
 		_vm->_lucerna.clock_lucerna();
 		_vm->_basher.keyboard_link();
