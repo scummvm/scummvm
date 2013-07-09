@@ -183,6 +183,7 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 	_type = (SectorType)data->readUint32LE();
 
 	_numSortplanes = data->readUint32LE();
+	_sortplanes = new int[_numSortplanes];
 	for (int i = 0; i < _numSortplanes; ++i) {
 		_sortplanes[i] = data->readUint32LE();
 	}
