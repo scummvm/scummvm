@@ -327,6 +327,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		for (it = _lastAddedTicket; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
+				compareTicket->_transform._rgbaMod = transform._rgbaMod; 
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket);
 				} else {
@@ -526,6 +527,7 @@ void BaseRenderOSystem::drawTickets() {
 			// convert from screen-coords to surface-coords.
 			dstClip.translate(-offsetX, -offsetY);
 
+			_colorMod = ticket->_transform._rgbaMod; 
 			drawFromSurface(ticket, &pos, &dstClip);
 			_needsFlip = true;
 		}
