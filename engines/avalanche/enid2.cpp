@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* ENID		Edna's manager. */
+/* ENID		Edna's manager. Loads/saves files. */
 
 #include "avalanche/avalanche.h"
 
