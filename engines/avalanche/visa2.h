@@ -46,8 +46,8 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	static const bool bubbling;
-	static const bool report_dixi_errors;
+	static bool bubbling;
+	static bool report_dixi_errors;
 
 	bool went_ok;
 
