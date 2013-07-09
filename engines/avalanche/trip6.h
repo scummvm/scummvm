@@ -116,8 +116,8 @@ public:
 	void set_up_saver(trip_saver_type &v);
 	void unload_saver(trip_saver_type v);
 
-	void savedata(/*untyped_file &f*/); /* Self-explanatory, */
-	void loaddata(/*untyped_file &f*/);  /* really. */
+	void savedata(Common::File &f); /* Self-explanatory, */
+	void loaddata(Common::File &f);  /* really. */
 
 	void save_data_to_mem(uint16 &where);
 	void load_data_from_mem(uint16 &where);

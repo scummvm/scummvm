@@ -54,7 +54,6 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	int16 gd, gm;
 	byte fv/*,nds*/;
 	int32 id;
-	uint16 soa;
 	Common::File inf;
 
 	if (spritenum == 177)
@@ -76,20 +75,15 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 		return;
 	}
 
-	soa = inf.readUint16LE(); // Only used in the original code. 
-	// I use it just to jump forward in the file. Should be replaced with seek().
+	inf.skip(2); // Replace variable named 'soa' in the original code.
 	
-	byte size = inf.readByte(); // Same purpose as soa.
-	for (byte i = 0; i < 12; i++) {
-		byte be = inf.readByte();
-		a.name += be;
-	}
-
-	size = inf.readByte(); // Same purpose as soa.
-	for (byte i = 0; i < 16; i++) {
-		byte be = inf.readByte();
-		a.comment += be;
-	}
+	inf.skip(1); // We don't need to read the size of the string as in the original code.
+	for (byte i = 0; i < 12; i++) 
+		a.name += inf.readByte();
+	
+	inf.skip(1); // Same as above.
+	for (byte i = 0; i < 16; i++)
+		a.comment += inf.readByte();
 
 	a.num = inf.readByte();
 	a.xl = inf.readByte();
@@ -148,7 +142,7 @@ void triptype::original() {
 }
 
 void triptype::andexor() {
-	warning("STUB: Trip::andexor()");
+	warning("STUB: triptype::andexor()");
 }
 
 void triptype::turn(byte whichway) {
@@ -183,7 +177,7 @@ bool triptype::collision_check() {
 }
 
 void triptype::walk() {
-	warning("STUB: Trip::walk()");
+	warning("STUB: triptype::walk()");
 }
 
 void triptype::bounce() {
@@ -328,20 +322,20 @@ void triptype::unload_saver(trip_saver_type v) {
 	vanishifstill = v.vanishifstill;
 }
 
-void triptype::savedata(/*untyped_file &f*/) {
-	warning("STUB: _vm->_timeout.savedata()");
+void triptype::savedata(Common::File &f) {
+	warning("STUB: triptype::savedata()");
 }
 
-void triptype::loaddata(/*untyped_file &f*/) {
-	warning("STUB: _vm->_timeout.loaddata()");
+void triptype::loaddata(Common::File &f) {
+	warning("STUB: triptype::loaddata()");
 }
 
 void triptype::save_data_to_mem(uint16 &where) {
-	warning("STUB: save_data_to_mem()");
+	warning("STUB: triptype::save_data_to_mem()");
 }
 
 void triptype::load_data_from_mem(uint16 &where) {
-	warning("STUB: load_data_from_mem()");
+	warning("STUB: triptype::load_data_from_mem()");
 }
 
 triptype *triptype::done() {
@@ -376,7 +370,7 @@ getsettype *getsettype::init() {
 
 void getsettype::remember(bytefield r) {
 	numleft++;
-	warning("STUB: _vm->_timeout.getsettype::remember()");
+	warning("STUB: getsettype::remember()");
 	gs[numleft] = r;
 }
 
@@ -384,6 +378,11 @@ void getsettype::recall(bytefield &r) {
 	r = gs[numleft];
 	numleft--;
 }
+
+
+
+
+
 
 Trip::Trip() {
 	getsetclear();
