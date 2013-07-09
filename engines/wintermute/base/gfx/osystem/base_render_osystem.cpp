@@ -60,8 +60,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
-	setAlphaMod(255);
-	setColorMod(255, 255, 255);
+	_colorMod = 0xFFFFFFFF;
 	_dirtyRect = nullptr;
 	_disableDirtyRects = false;
 	_tempDisableDirtyRects = 0;
@@ -151,15 +150,11 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 }
 
 void BaseRenderOSystem::setAlphaMod(byte alpha) {
-	byte r = RGBCOLGetR(_colorMod);
-	byte g = RGBCOLGetB(_colorMod);
-	byte b = RGBCOLGetB(_colorMod);
-	_colorMod = BS_ARGB(alpha, r, g, b);
+	error("DEPRECATED: BaseRenderOSystem::setAlphaMod(byte alpha)");
 }
 
 void BaseRenderOSystem::setColorMod(byte r, byte g, byte b) {
-	byte alpha = RGBCOLGetA(_colorMod);
-	_colorMod = BS_ARGB(alpha, r, g, b);
+	error("DEPRECATED: void BaseRenderOSystem::setColorMod(byte r, byte g, byte b)");
 }
 
 bool BaseRenderOSystem::indicatorFlip() {
@@ -278,8 +273,6 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 	//TODO: This is only here until I'm sure about the final pixelformat
 	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
 
-	setAlphaMod(255);
-	setColorMod(255, 255, 255);
 	Graphics::Surface surf;
 	surf.create((uint16)fillRect.width(), (uint16)fillRect.height(), _renderSurface->format);
 	Common::Rect sizeRect(fillRect);

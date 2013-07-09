@@ -380,14 +380,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		transform._rgbaMod = renderer->_forceAlphaColor;
 	}
 
-	byte r = RGBCOLGetR(transform._rgbaMod);
-	byte g = RGBCOLGetG(transform._rgbaMod);
-	byte b = RGBCOLGetB(transform._rgbaMod);
-	byte a = RGBCOLGetA(transform._rgbaMod);
-
-	renderer->setAlphaMod(a);
-	renderer->setColorMod(r, g, b);
-
 #if 0 // These are kept for reference if BlendMode is reimplemented at some point.
 	if (alphaDisable) {
 		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_NONE);
