@@ -48,8 +48,9 @@ IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 //////////////////////////////////////////////////////////////////////////
 BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_surface = nullptr;
-	_hotspotX = _hotspotY = 0;
-	_alpha = 0xFFFFFFFF;
+	_hotspotX = DEFAULT_HOTSPOT_X;
+	_hotspotY = DEFAULT_HOTSPOT_Y;
+	_alpha = DEFAULT_RGBAMOD;
 	_transparent = 0xFFFF00FF;
 
 	_wantsDefaultRect = false;
@@ -246,7 +247,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	}
 
 	if (registerOwner != nullptr && !_decoration) {
-		if (zoomX == 100 && zoomY == 100) {
+		if (zoomX == DEFAULT_ZOOM_X && zoomY == DEFAULT_ZOOM_Y) {
 			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
 			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
@@ -259,11 +260,11 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	bool res;
 
 	//if (Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
-	if (_alpha != 0xFFFFFFFF) {
+	if (_alpha != DEFAULT_RGBAMOD) {
 		alpha = _alpha;
 	}
 
-	if (rotate != 0.0f) {
+	if (rotate != DEFAULT_ANGLE) {
 		Point32 boxOffset, rotatedHotspot, hotspotOffset, newOrigin;
 		Point32 origin(x, y);
 		Rect32 oldRect = getRect();
@@ -273,10 +274,10 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 		newOrigin = origin - newHotspot;
 		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
 	} else {
-		if (zoomX == 100 && zoomY == 100) {
+		if (zoomX == DEFAULT_ZOOM_X && zoomY == DEFAULT_ZOOM_Y) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
 		} else {
-			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / DEFAULT_ZOOM_X)), (int)(y - _hotspotY * (zoomY / DEFAULT_ZOOM_Y)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 		}
 	}
 
