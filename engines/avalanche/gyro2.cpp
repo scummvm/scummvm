@@ -501,6 +501,7 @@ void Gyro::setup_vmc() {
 	vmc.andpic = new byte[mouse_size];
 	vmc.xorpic = new byte[mouse_size];
 
+	/* Released in Gyro's destructor. */
 	for (int fv = 0; fv < 2; fv ++) {
 		vmc.backpic[fv] = new byte[mouse_size];
 		vmc.wherewas[fv].x = 32767;
