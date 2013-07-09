@@ -182,9 +182,10 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 
 	_type = (SectorType)data->readUint32LE();
 
-	// this probably does something more than skip bytes, but ATM I don't know what
-	int skip = data->readUint32LE();
-	data->seek(skip * 4, SEEK_CUR);
+	_numSortplanes = data->readUint32LE();
+	for (int i = 0; i < _numSortplanes; ++i) {
+		_sortplanes[i] = data->readUint32LE();
+	}
 
 	char f[4];
 	data->read(f, 4);

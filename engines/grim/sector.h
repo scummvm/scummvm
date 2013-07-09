@@ -93,6 +93,8 @@ public:
 
 private:
 	int _numVertices, _id;
+	int _numSortplanes;
+	int *_sortplanes;
 
 	Common::String _name;
 	SectorType _type;
