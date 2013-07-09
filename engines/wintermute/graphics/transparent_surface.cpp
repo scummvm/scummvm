@@ -496,9 +496,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
-TransparentSurface *TransparentSurface::rotate(TransformStruct *transform) const {
+TransparentSurface *TransparentSurface::rotoscale(TransformStruct *transform) const {
 	
 	assert (transform);
+	assert (transform->_angle != 0); // This would not be ideal
 	
 	Point32 newHotspot;
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
