@@ -296,7 +296,6 @@ void Celer::load_chunks(Common::String xx) {
 		ch.memorise = f.readByte();
 				
 		if (ch.memorise) {
-
 			memos[fv].x = ch.x;
 			memos[fv].xl = ch.xl;
 			memos[fv].y = ch.y;
@@ -313,8 +312,7 @@ void Celer::load_chunks(Common::String xx) {
 			warning("STUB: Celer::load_chunks()");
 
 			if (!ch.natural)
-				for (int32 i = 0; i < ch.size; i++)
-					memory[fv][i] = f.readByte();
+				f.read(memory[fv], ch.size);
 		} else
 			memos[fv].x = on_disk;
 	}
