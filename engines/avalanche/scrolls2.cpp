@@ -147,8 +147,7 @@ void Scrolls::geticon(int16 x, int16 y, byte which) {
 	f.seek(which * 426);
 
 	p = new byte[426];
-	for (int16 i = 0; i < 426; i++)
-		p[i] = f.readByte();
+	f.read(p, 426);
 
 	//putimage(x, y, p, 0);
 	warning("STUB: Scrolls::geticon()");

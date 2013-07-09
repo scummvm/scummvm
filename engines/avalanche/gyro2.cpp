@@ -530,11 +530,9 @@ void Gyro::load_a_mouse(byte which) {
 
 	f.seek(mouse_size * 2 * (which - 1) + 134);
 
-	for (int i = 0; i < mouse_size; i++)
-		vmc.andpic[i] = f.readByte();
+	f.read(vmc.andpic, mouse_size);
 	
-	for (int i = 0; i < mouse_size; i++)
-		vmc.xorpic[i] = f.readByte();
+	f.read(vmc.xorpic, mouse_size);
 	
 	f.close();
 	

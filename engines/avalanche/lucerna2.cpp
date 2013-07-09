@@ -731,8 +731,7 @@ void Lucerna::thinkabout(char z, bool th) {     /* Hey!!! Get it and put it!!! *
 
 		f.seek(z * picsize + 65);
 
-		for (int16 i = 0; i < picsize; i++)
-			p[i] = f.readByte();
+		f.read(p, picsize);
 
 		_vm->_gyro.off();
 
@@ -756,8 +755,7 @@ void Lucerna::thinkabout(char z, bool th) {     /* Hey!!! Get it and put it!!! *
 
 		f.seek(fv * picsize + 65);
 
-		for (int16 i = 0; i < picsize; i++)
-			p[i] = f.readByte();
+		f.read(p, picsize);
 
 		_vm->_gyro.off();
 
@@ -789,15 +787,14 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 
 	for (byte fv = 0; fv < 10; fv ++) {
 		_vm->_gyro.digit[fv] = new byte[digitsize];
-		for (byte i = 0; i < digitsize; i++)
-			_vm->_gyro.digit[fv][i] = f.readByte();
+		f.read(_vm->_gyro.digit[fv], digitsize);
 	}
 
 	for (byte ff = 0; ff < 9; ff ++) {
 		_vm->_gyro.digit[ff] = new byte[rwlitesize];
-		for (byte i = 0; i < rwlitesize; i++)
-			_vm->_gyro.digit[ff][i] = f.readByte();
+		f.read(_vm->_gyro.digit[ff], rwlitesize);
 	}
+
 	f.close();
 }
 
@@ -813,8 +810,7 @@ void Lucerna::toolbar() {
 	s = f.size() - 40;
 	p = new byte[s];
 	f.seek(40);
-	for (uint16 i = 0; i < s; i++)
-		p[i] = f.readByte();
+	f.read(p, s);
 	f.close();
 	/* off;*/
 
