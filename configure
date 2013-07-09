@@ -3946,7 +3946,14 @@ fi
 test "x$prefix" = xNONE && prefix=/usr/local
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-DEFINES="$DEFINES -DDATA_PATH=\\\"$datadir\\\""
+case $_host_os in
+	mingw*)
+		# Windows stores all the external data files in executable file.
+		;;
+	*)
+		DEFINES="$DEFINES -DDATA_PATH=\\\"$datadir\\\""
+		;;
+esac
 
 case $_backend in
 	openpandora)
