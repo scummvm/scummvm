@@ -3140,7 +3140,7 @@ void Scene2822::update() {
 				_ssButton->setVisible(false);
 				_countdownStatus = 1;
 				_countdown = 48;
-			} else if (_countdownStatus == 1) {
+			} else if (_countdownStatus == 1 && getGlobalVar(V_LADDER_DOWN_ACTION)) {
 				playSound(0, 0x1384CB60);
 				_countdownStatus = 2;
 				_countdown = 12;
