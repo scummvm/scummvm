@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 #include "common/foreach.h"
+#include "common/savefile.h"
 
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lauxlib.h"

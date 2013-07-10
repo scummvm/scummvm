@@ -23,9 +23,15 @@
 #ifndef GRIM_SAVEGAME_H
 #define GRIM_SAVEGAME_H
 
-#include "common/savefile.h"
-
 #include "math/mathfwd.h"
+
+namespace Common {
+class SeekableReadStream;
+typedef SeekableReadStream InSaveFile;
+class WriteStream;
+typedef WriteStream OutSaveFile;
+class String;
+}
 
 namespace Grim {
 

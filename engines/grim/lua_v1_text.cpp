@@ -21,6 +21,7 @@
  */
 
 #include "common/foreach.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "engines/grim/grim.h"

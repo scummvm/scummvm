@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "engines/grim/costume.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/model.h"

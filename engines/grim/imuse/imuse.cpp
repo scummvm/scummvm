@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "common/timer.h"
 
 #include "engines/grim/savegame.h"
