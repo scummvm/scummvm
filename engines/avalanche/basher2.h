@@ -45,9 +45,9 @@ public:
 
 
 
-	Basher();
-
 	void setParent(AvalancheEngine *vm);
+
+	void init();
 
 	void plottext();
 
