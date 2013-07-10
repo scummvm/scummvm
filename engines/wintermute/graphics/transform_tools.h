@@ -43,5 +43,5 @@ public:
 	 */
 	static Rect32 newRect (Rect32 oldRect, const TransformStruct &transform, Point32 *newHotspot);	
 };
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 #endif

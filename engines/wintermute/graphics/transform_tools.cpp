@@ -70,4 +70,4 @@ namespace Wintermute {
 
 		return res;
 	}
-}
+} // End of namespace Wintermute

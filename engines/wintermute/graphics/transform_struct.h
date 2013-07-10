@@ -81,7 +81,5 @@ public:
 		return !(compare == *this);
 	}
 };
-
-}
-
+} // End of namespace Wintermute
 #endif

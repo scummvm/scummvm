@@ -123,5 +123,4 @@ bool TransformStruct::mirrorX() const {
 bool TransformStruct::mirrorY() const {
 	return (bool)(_flip & TransparentSurface::FLIP_V);
 }
-
-}
+} // End of namespace Wintermute
