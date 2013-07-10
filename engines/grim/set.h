@@ -156,8 +156,15 @@ public:
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
 
+	enum LightType {
+		Spot,
+		Direct,
+		Omni,
+		UnknownLight
+	};
+
 	Common::String _name;
-	Common::String _type;
+	LightType _type;
 	Math::Vector3d _pos, _dir;
 	Color _color;
 	float _intensity, _umbraangle, _penumbraangle;

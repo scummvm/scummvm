@@ -701,16 +701,16 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	lightColor[1] = ((float)light->_color.getGreen() / 15.0f) * intensity;
 	lightColor[2] = ((float)light->_color.getBlue() / 15.0f) * intensity;
 
-	if (light->_type == "omni") {
+	if (light->_type == Light::Omni) {
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
 		lightPos[2] = light->_pos.z();
-	} else if (light->_type == "direct") {
+	} else if (light->_type == Light::Direct) {
 		lightPos[0] = -light->_dir.x();
 		lightPos[1] = -light->_dir.y();
 		lightPos[2] = -light->_dir.z();
 		lightPos[3] = 0;
-	} else if (light->_type == "spot") {
+	} else if (light->_type == Light::Spot) {
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
 		lightPos[2] = light->_pos.z();
@@ -718,10 +718,8 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
 		cutoff = light->_penumbraangle;
-	} else {
-		error("Set::setupLights() Unknown type of light: %s", light->_type.c_str());
-		return;
 	}
+
 	glDisable(GL_LIGHT0 + lightId);
 	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);

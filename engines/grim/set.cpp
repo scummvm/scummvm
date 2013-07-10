@@ -424,7 +424,16 @@ void Light::load(TextSplitter &ts) {
 	_name = buf;
 
 	ts.scanString(" type %256s", 1, buf);
-	_type = buf;
+	Common::String type = buf;
+	if (type == "spot") {
+		_type = Spot;
+	} else if (type == "omni") {
+		_type = Omni;
+	} else if (type == "direct") {
+		_type = Direct;
+	} else {
+		error("Light::load() Unknown type of light: %s", buf);
+	}
 
 	ts.scanString(" position %f %f %f", 3, &_pos.x(), &_pos.y(), &_pos.z());
 	ts.scanString(" direction %f %f %f", 3, &_dir.x(), &_dir.y(), &_dir.z());
@@ -455,23 +464,12 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	data->read(&_dir.z(), 4);
 	data->read(&_intensity, 4);
 
-	int type = data->readSint32LE();
+	// This relies on the order of the LightType enum, which might not be correct.
+	// The order should only affect EMI, and not Grim.
+	_type = (LightType)data->readSint32LE();
 
-	//Probably all wrong.
-	switch (type) {
-	case 1:
-		_type = "spot";
-		break;
-	case 2:
-		_type = "direct";
-		break;
-	case 3:
-		_type = "omni";
-		break;
-	case 4:
-		//This is probably some new kind of ambient light
-		_type = "omni";
-		break;
+	if (_type == UnknownLight) {
+		warning("light %s using UnkownLight");
 	}
 
 	// No ideas for these two.
@@ -503,7 +501,7 @@ void Light::saveState(SaveGame *savedState) const {
 	savedState->writeBool(_enabled);
 
 	//type
-	savedState->writeString(_type);
+	savedState->writeLEUint32(_type);
 
 	savedState->writeVector3d(_pos);
 	savedState->writeVector3d(_dir);
@@ -518,7 +516,18 @@ void Light::saveState(SaveGame *savedState) const {
 bool Light::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_enabled = savedState->readBool();
-	_type = savedState->readString();
+	if (savedState->saveMinorVersion() > 7) {
+		_type = (LightType)savedState->readLEUint32();
+	} else {
+		Common::String type = savedState->readString();
+		if (type == "spot") {
+			_type = Spot;
+		} else if (type == "omni") {
+			_type = Omni;
+		} else if (type == "direct") {
+			_type = Direct;
+		}
+	}
 
 	_pos           = savedState->readVector3d();
 	_dir           = savedState->readVector3d();
