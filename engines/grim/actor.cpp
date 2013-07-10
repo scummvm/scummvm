@@ -1361,6 +1361,22 @@ void Actor::update(uint frameTime) {
 		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Set *set = g_grim->getCurrSet();
+		Sector *sect = set->findPointSector(_pos, Sector::WalkType);
+		int setup = set->getSetup();
+		if (sect) {
+			int sortorder = 0;
+			if (setup < sect->getNumSortplanes()) {
+				sortorder = sect->getSortplane(setup);
+			}
+			if (getSortOrder() != sortorder) {
+				setSortOrder(sortorder);
+				g_grim->invalidateActiveActorsList();
+			}
+		}
+	}
+
 	if (_turning) {
 		float turnAmt = g_grim->getPerSecond(_turnRate) * _turnRateMultiplier;
 		_currTurnDir = animTurn(turnAmt, _moveYaw, &_yaw);

@@ -567,12 +567,15 @@ void GrimEngine::updateDisplayScene() {
 				if (a->getSortOrder() < 0)
 					break;
 
-				while (a->getSortOrder() < currentLayer * 10 && currentLayer >= 0) {
+				while (a->getSortOrder() <= currentLayer * 10 && currentLayer >= 0) {
 					background->drawLayer(currentLayer--);
 				}
 
 				if (a->isVisible())
 					a->draw();
+			}
+			while (currentLayer >= 0) {
+				background->drawLayer(currentLayer--);
 			}
 		}
 
