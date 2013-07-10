@@ -866,6 +866,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 
 		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
 
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
@@ -889,6 +890,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 			glEnd();
 		}
 
+		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
