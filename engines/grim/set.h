@@ -157,10 +157,10 @@ public:
 	bool restoreState(SaveGame *savedState);
 
 	enum LightType {
-		Spot,
-		Direct,
-		Omni,
-		UnknownLight
+		Spot = 1,
+		Direct = 2,
+		Omni = 3,
+		UnknownLight = 4
 	};
 
 	Common::String _name;
