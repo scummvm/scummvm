@@ -32,6 +32,7 @@
 
 #include "common/str.h"
 #include "common/scummsys.h"
+#include "common/file.h"
 
 #include "avalanche/roomnums.h"
 #include "avalanche/color.h"
@@ -582,7 +583,8 @@ public:
 
 	/* For the demo: */
 	demo_type demo_rec;
-	//file<demo_type> demofile; // http://www.freepascal.org/docs-html/ref/refsu21.html#x45-520003.3.4
+	Common::File demofile; // of demo_type
+	Common::DumpFile demofile_save; // uruk added it - first use located in constructor of Basher
 
 	char last_person; /* Last person to have been selected using the People
 						menu. */
