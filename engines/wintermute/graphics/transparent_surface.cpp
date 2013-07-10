@@ -496,10 +496,9 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
-TransparentSurface *TransparentSurface::rotoscale(TransformStruct *transform) const {
+TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 	
-	assert (transform);
-	assert (transform->_angle != 0); // This would not be ideal
+	assert (transform._angle != 0); // This would not be ideal
 	
 	Point32 newHotspot;
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
@@ -514,43 +513,43 @@ TransparentSurface *TransparentSurface::rotoscale(TransformStruct *transform) co
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-	uint32 invAngle = (360 - transform->_angle) % 360;
+	uint32 invAngle = (360 - transform._angle) % 360;
 	float invCos = cos(invAngle * M_PI / 180.0);
 	float invSin = sin(invAngle * M_PI / 180.0);
 	float targX;
 	float targY;
 
-	if (FAST_TRANSFORM) {
-		for (int y = 0; y < dstH; y++) {
-			for (int x = 0; x < dstW; x++) {
-				int x1 = x - newHotspot.x;
-				int y1 = y - newHotspot.y;
+#if ENABLE_BILINEAR
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			int x1 = x - newHotspot.x;
+			int y1 = y - newHotspot.y;
 
-				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform->_zoom.x + srcRect.left; 
-				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform->_zoom.y + srcRect.top; 
+			targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
+			targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
 				
-				targX += transform->_hotspot.x;
-				targY += transform->_hotspot.y;
+			targX += transform._hotspot.x;
+			targY += transform._hotspot.y;
 			
-				copyPixelNearestNeighbor(targX, targY, x, y, srcRect, dstRect, this, target); 
-			}
-		}
-	} else {
-		for (int y = 0; y < dstH; y++) {
-			for (int x = 0; x < dstW; x++) {
-				int x1 = x - newHotspot.x;
-				int y1 = y - newHotspot.y;
-
-				targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform->_zoom.x + srcRect.left; 
-				targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform->_zoom.y + srcRect.top; 
-				
-				targX += transform->_hotspot.x;
-				targY += transform->_hotspot.y;
-			
-				copyPixelBilinear(targX, targY, x, y, srcRect, dstRect, this, target); 
-			}
+			copyPixelBilinear(targX, targY, x, y, srcRect, dstRect, this, target); 
 		}
 	}
+#else
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			int x1 = x - newHotspot.x;
+			int y1 = y - newHotspot.y;
+
+			targX = ((x1 * invCos - y1 * invSin)) * 100.0 / transform._zoom.x + srcRect.left; 
+			targY = ((x1 * invSin + y1 * invCos)) * 100.0 / transform._zoom.y + srcRect.top; 
+				
+			targX += transform._hotspot.x;
+			targY += transform._hotspot.y;
+			
+			copyPixelNearestNeighbor(targX, targY, x, y, srcRect, dstRect, this, target); 
+		}
+	}
+#endif
 
 	return target;
 }
@@ -570,27 +569,27 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-	if (FAST_TRANSFORM) {
-		int projX;
-		int projY;
-		for (int y = 0; y < dstH; y++) {
-			for (int x = 0; x < dstW; x++) {
-				projX = x / dstW * srcW;
-				projY = y / dstH * srcH;
-				copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target); 
-			}
-		}
-	} else {
-		float projX;
-		float projY;
-		for (int y = 0; y < dstH; y++) {
-			for (int x = 0; x < dstW; x++) {
-				projX = x / (float)dstW * srcW;
-				projY = y / (float)dstH * srcH;
-				copyPixelBilinear(projX, projY, x, y, srcRect, dstRect, this, target); 
-			}
+#if ENABLE_BILINEAR
+	float projX;
+	float projY;
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			projX = x / (float)dstW * srcW;
+			projY = y / (float)dstH * srcH;
+			copyPixelBilinear(projX, projY, x, y, srcRect, dstRect, this, target); 
 		}
 	}
+#else
+	int projX;
+	int projY;
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			projX = x / dstW * srcW;
+			projY = y / dstH * srcH;
+			copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target); 
+		}
+	}
+#endif
 	return target;
 
 }

@@ -25,7 +25,7 @@
 #include "graphics/surface.h"
 #include "engines/wintermute/graphics/transform_struct.h"
 
-#define FAST_TRANSFORM 0
+#define ENABLE_BILINEAR 0
 
 
 /*
@@ -111,7 +111,7 @@ struct TransparentSurface : public Graphics::Surface {
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
 	TransparentSurface *scale (uint16 newWidth, uint16 newHeight) const;
-	TransparentSurface *rotoscale (TransformStruct *transform) const;  
+	TransparentSurface *rotoscale (const TransformStruct &transform) const;  
 	static byte *_lookup;
 	static void destroyLookup();
 private:

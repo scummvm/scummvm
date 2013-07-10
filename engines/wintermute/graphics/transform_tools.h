@@ -41,7 +41,7 @@ public:
 	 * and, as a side-effect, "newHotspot" will tell you where the hotspot will
 	 * have ended up in the new rect, for centering.
 	 */
-	static Rect32 newRect (Rect32 oldRect, TransformStruct *transform, Point32 *newHotspot);	
+	static Rect32 newRect (Rect32 oldRect, const TransformStruct &transform, Point32 *newHotspot);	
 };
 } // end of namespace Wintermute
 #endif
