@@ -26,8 +26,8 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/dctypes.h"
 
-#define DEFAULT_ZOOM_X 100
-#define DEFAULT_ZOOM_Y 100
+#define DEFAULT_ZOOM_X 100.0
+#define DEFAULT_ZOOM_Y 100.0
 #define DEFAULT_RGBAMOD 0xFFFFFFFF
 #define DEFAULT_HOTSPOT_X 0
 #define DEFAULT_HOTSPOT_Y 0
