@@ -54,17 +54,17 @@ const char Logger::divide[] = "--- oOo ---";
 
 /* L'jet codes: */
 
-//// Not sure if these will be needed at all...
-//
-//const Common::String startwith = Common::String('\33') + '\50' + "10J" + '\130';
-//const Common::String endwith = Common::String('\33') + '\105';
-//const Common::String italic = Common::String('\33') + '\50' + '\163' + '\61' + '\123'; /* switches italics on... */
-//const Common::String italic_off = Common::String('\33') + '\50' + '\163' + '\60' + '\123'; /* and off. */
-//const Common::String emph_on = Common::String('\33') + '\50' + '\163' + '\63' + '\102';
-//const Common::String emph_off = Common::String('\33') + '\50' + '\163' + '\60' + '\102';
-//
-//const Common::String double_width = emph_on; /* There IS no double-width. */
-//const Common::String double_off = emph_off; /* So we'll have to use bold. */
+// Not sure if these will be needed at all...
+
+const Common::String startwith = Common::String(33) + 50 + "10J" + 130;
+const Common::String endwith = Common::String(33) + 105;
+const Common::String italic = Common::String(33) + 50 + 163 + 61 + 123; /* switches italics on... */
+const Common::String italic_off = Common::String(33) + 50 + 163 + 60 + 123; /* and off. */
+const Common::String emph_on = Common::String(33) + 50 + 163 + 63 + 102;
+const Common::String emph_off = Common::String(33) + 50 + 163 + 60 + 102;
+
+const Common::String double_width = emph_on; /* There IS no double-width. */
+const Common::String double_off = emph_off; /* So we'll have to use bold. */
 
 
 
@@ -197,10 +197,8 @@ void Logger::log_epsonroman() {   /* This only sends the Roman code if you're on
 	if (!_vm->_gyro.logging)
 		return;
 
-	warning("STUB: Logger::log_epsonroman()");
-
-	//if (_vm->_gyro.log_epson)
-	//	log_addstuff(italic_off);
+	if (_vm->_gyro.log_epson)
+		log_addstuff(italic_off);
 }
 
 void Logger::log_scrollline() {   /* Set up a line for the scroll driver */
