@@ -543,7 +543,7 @@ void Obj44::load(const byte *dataP) {
 		_lookupValue = s.readSint16LE();
 		_lookupIndex = s.readSint16LE();
 		_field6 = s.readSint16LE();
-		_field8 = s.readSint16LE();
+		_speakerMode = s.readSint16LE();
 	}
 
 	_id = s.readSint16LE();
@@ -579,7 +579,7 @@ void Obj44::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_lookupValue);
 		s.syncAsSint16LE(_lookupIndex);
 		s.syncAsSint16LE(_field6);
-		s.syncAsSint16LE(_field8);
+		s.syncAsSint16LE(_speakerMode);
 		s.syncAsSint16LE(_field16);
 	}
 }
@@ -845,7 +845,7 @@ void StripManager::signal() {
 
 		if (g_vm->getGameID() == GType_Ringworld2) {
 			Ringworld2::VisualSpeaker *speaker = static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker);
-			speaker->_fieldF6 = obj44._field8;
+			speaker->_speakerMode = obj44._speakerMode;
 			if (_obj44List.size() > 0)
 				speaker->proc15();
 		}

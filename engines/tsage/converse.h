@@ -190,7 +190,7 @@ public:
 	// Return to Ringworld specific field
 	int _mode;
 	int _lookupValue, _lookupIndex, _field6;
-	int _field8, _field16;
+	int _speakerMode, _field16;
 public:
 	void load(const byte *dataP);
 	virtual void synchronize(Serializer &s);
