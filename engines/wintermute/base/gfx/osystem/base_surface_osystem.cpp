@@ -334,7 +334,7 @@ bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, T
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr,  TransformStruct(100, 100, 0, 0, 0, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
+	return drawSprite(x, y, &rect, nullptr,  TransformStruct(DEFAULT_ZOOM_X, DEFAULT_ZOOM_Y, DEFAULT_ANGLE, DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -349,7 +349,7 @@ bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, flo
 	_rotation = 0;
 	TransformStruct transform;
 	if (transparent) {
-		transform = TransformStruct(zoomX, zoomY, 0, 0, 0, blendMode, alpha,  mirrorX, mirrorY);
+		transform = TransformStruct(zoomX, zoomY, DEFAULT_ANGLE, DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y, blendMode, alpha,  mirrorX, mirrorY);
 	} else {
 		transform = TransformStruct(zoomX, zoomY, mirrorX, mirrorY);
 	}
@@ -414,8 +414,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		position.setWidth(newRect->right - newRect->left);
 		position.setHeight(newRect->bottom - newRect->top);
 	} else {
-		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / 100.f));
-		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / 100.f));
+		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / DEFAULT_ZOOM_X));
+		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / DEFAULT_ZOOM_Y));
 	}
 	renderer->modTargetRect(&position);
 
