@@ -149,14 +149,6 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	return STATUS_OK;
 }
 
-void BaseRenderOSystem::setAlphaMod(byte alpha) {
-	error("DEPRECATED: BaseRenderOSystem::setAlphaMod(byte alpha)");
-}
-
-void BaseRenderOSystem::setColorMod(byte r, byte g, byte b) {
-	error("DEPRECATED: void BaseRenderOSystem::setColorMod(byte r, byte g, byte b)");
-}
-
 bool BaseRenderOSystem::indicatorFlip() {
 	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
 	g_system->updateScreen();

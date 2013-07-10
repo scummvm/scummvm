@@ -57,8 +57,6 @@ public:
 
 	BaseImage *takeScreenshot() override;
 
-	void setAlphaMod(byte alpha);
-	void setColorMod(byte r, byte g, byte b);
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	void drawFromTicket(RenderTicket *renderTicket);
