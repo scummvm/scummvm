@@ -120,16 +120,21 @@ public:
 	};
 
 protected:
-	bool _created;
 	void setupText();
-	int _numberLines;
-	bool _blastDraw;
-	bool _isSpeech;
+
 	Common::String _textID;
+
+	Common::String *_lines;
+
+	void *_userData;
+
+	int _numberLines;
 	int _elapsedTime;
 	int _maxLineWidth;
-	Common::String *_lines;
-	void *_userData;
+
+	bool _blastDraw;
+	bool _isSpeech;
+	bool _created;
 };
 
 } // end of namespace Grim
