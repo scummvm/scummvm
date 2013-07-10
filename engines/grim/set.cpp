@@ -469,7 +469,7 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_type = (LightType)data->readSint32LE();
 
 	if (_type == UnknownLight) {
-		warning("light %s using UnkownLight");
+		warning("light %s using UnkownLight", name);
 	}
 
 	// No ideas for these two.
