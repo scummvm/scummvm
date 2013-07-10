@@ -584,8 +584,8 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 	int projY;
 	for (int y = 0; y < dstH; y++) {
 		for (int x = 0; x < dstW; x++) {
-			projX = x / dstW * srcW;
-			projY = y / dstH * srcH;
+			projX = x / (float)dstW * srcW;
+			projY = y / (float)dstH * srcH;
 			copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target); 
 		}
 	}
