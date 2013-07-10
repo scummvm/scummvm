@@ -113,7 +113,7 @@ private:
 	 * @param buffer    The data to decode
 	 * @param length    Length of buffer
 	 */
-	void unXor(byte *buffer, int length, const byte *xorKey) const;
+	void unXor(byte *buffer, uint32 length, const byte *xorKey) const;
 };
 
 } // End of namespace ZVision
