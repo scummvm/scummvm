@@ -27,19 +27,16 @@
 namespace Wintermute {
 	
 	FloatPoint TransformTools::transformPoint(FloatPoint point, float rotate, Point32 zoom, bool mirrorX, bool mirrorY) {
-		/*
-		* Returns the coordinates for a point after rotation
-		*/
 		float rotateRad = rotate * M_PI / 180;
 		FloatPoint newPoint;
-		newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad))*zoom.x/100.0;
-		newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad))*zoom.y/100.0;
-		if (mirrorX) newPoint.x *= -1;
-		if (mirrorY) newPoint.y *= -1;
-		/*
-		* I apply the textbook formula, but first I reverse the Y-axis, otherwise
-		* I'd be performing a rotation in the wrong direction
-		*/
+		newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad))*zoom.x/DEFAULT_ZOOM_X;
+		newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad))*zoom.y/DEFAULT_ZOOM_Y;
+		if (mirrorX) {
+			newPoint.x *= -1;
+		}
+		if (mirrorY) {
+			newPoint.y *= -1;
+		}
 		return newPoint;
 	}
 
