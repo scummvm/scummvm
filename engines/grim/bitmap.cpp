@@ -259,7 +259,6 @@ bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
 }
 
 bool BitmapData::loadTile(Common::SeekableReadStream *o) {
-#ifdef ENABLE_MONKEY4
 	_x = 0;
 	_y = 0;
 	_format = 1;
@@ -340,7 +339,6 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	delete[] data;
 
 	g_driver->createBitmap(this);
-#endif // ENABLE_MONKEY4
 	return true;
 }
 
