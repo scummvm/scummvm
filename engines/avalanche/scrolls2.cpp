@@ -254,7 +254,31 @@ void Scrolls::display(Common::String z) {
 }
 
 void Scrolls::loadfont() {
-	warning("STUB: Scrolls::loadfont()");
+	Common::File f;
+
+	if (!f.open("avalot.fnt")) {
+		warning("AVALANCHE: Scrolls: File not found: avalot.fnt");
+		return;
+	}
+	for (int16 i = 0; i < 256; i++)
+		f.read(ch[0][i],16);
+	f.close();
+
+	if (!f.open("avitalic.fnt")) {
+		warning("AVALANCHE: Scrolls: File not found: avitalic.fnt");
+		return;
+	}
+	for (int16 i = 0; i < 256; i++)
+		f.read(ch[1][i],16);
+	f.close();
+	
+	if (!f.open("ttsmall.fnt")) {
+		warning("AVALANCHE: Scrolls: File not found: ttsmall.fnt");
+		return;
+	}
+	for (int16 i = 0; i < 256; i++)
+		f.read(_vm->_gyro.little[i],16);
+	f.close();
 }
 
 void Scrolls::okay() {

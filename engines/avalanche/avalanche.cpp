@@ -53,15 +53,15 @@ namespace Avalanche {
 		_enhanced.setParent(this);
 		_logger.setParent(this);
 		_pingo.setParent(this);
-		_scrolls.setParent(this); _scrolls.init();
+		_scrolls.setParent(this);
 		_visa.setParent(this);
-		_lucerna.setParent(this); _lucerna.init();
+		_lucerna.setParent(this);
 		_enid.setParent(this);
 		_celer.setParent(this);
 		_sequence.setParent(this);
 		_timeout.setParent(this);
 		_trip.setParent(this);
-		_acci.setParent(this); _acci.init();
+		_acci.setParent(this);
 		_basher.setParent(this);
 		_dropdown.setParent(this);
 		_closing.setParent(this);
@@ -230,8 +230,10 @@ namespace Avalanche {
 	void AvalancheEngine::run_avalot() {
 		bflight_on();
 
-		_avalot.run(Common::String(runcodes[first_time]) + arguments);  // TODO: Check if parameteres are ever use and eventually remove them
+		_avalot.run(Common::String(runcodes[first_time]) + arguments);
+		// TODO: Check if parameteres are ever used (probably not) and eventually remove them.
 		// If there's an error initalizing avalot, i'll handle it in there, not here
+
 		first_time = false;
 	}
 
@@ -242,7 +244,10 @@ namespace Avalanche {
 		initGraphics(320, 200, false);
 		_console = new AvalancheConsole(this);
 
-
+		_scrolls.init();
+		_lucerna.init();
+		_acci.init();
+		_basher.init();
 
 		// From bootstrp:
 
@@ -256,6 +261,8 @@ namespace Avalanche {
 		// becouse zoomy's value is given there. Not sure yet what "zoomy" stands for.
 		if (!zoomy)
 			call_menu();    /* Not run when zoomy. */
+
+		
 
 		do {
 			run_avalot();
