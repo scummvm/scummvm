@@ -184,9 +184,6 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 		_lightsList.push_back(&_lights[i]);
 	}
 
-	// bypass light stuff for now
-	_numLights = 0;
-
 	_numSectors = data->readUint32LE();
 	// Allocate and fill an array of sector info
 	_sectors = new Sector*[_numSectors];
@@ -445,8 +442,59 @@ void Light::load(TextSplitter &ts) {
 }
 
 void Light::loadBinary(Common::SeekableReadStream *data) {
-	// skip lights for now
-	data->seek(100, SEEK_CUR);
+	char name[32];
+	data->read(name, 32);
+	_name = name;
+
+	// All guesses.
+	data->read(&_pos.x(), 4);
+	data->read(&_pos.y(), 4);
+	data->read(&_pos.z(), 4);
+	data->read(&_dir.x(), 4);
+	data->read(&_dir.y(), 4);
+	data->read(&_dir.z(), 4);
+	data->read(&_intensity, 4);
+
+	int type = data->readSint32LE();
+
+	//Probably all wrong.
+	switch (type) {
+	case 1:
+		_type = "spot";
+		break;
+	case 2:
+		_type = "direct";
+		break;
+	case 3:
+		_type = "omni";
+		break;
+	case 4:
+		//This is probably some new kind of ambient light
+		_type = "omni";
+		break;
+	}
+
+	// No ideas for these two.
+	float i;
+	data->read(&i, 4);
+	int j = data->readSint32LE();
+	// This always seems to be 0
+	if (j != 0) {
+		warning("Light::loadBinary j != 0");
+	}
+
+	_color.getRed() = data->readSint32LE();
+	_color.getGreen() = data->readSint32LE();
+	_color.getBlue() = data->readSint32LE();
+
+	//Don't know what any of these do.
+	float n, o, p, q;
+	data->read(&n, 4);
+	data->read(&o, 4);
+	data->read(&p, 4);
+	data->read(&q, 4);
+
+	_enabled = true;
 }
 
 void Light::saveState(SaveGame *savedState) const {
