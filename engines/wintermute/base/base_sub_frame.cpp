@@ -237,11 +237,11 @@ const char* BaseSubFrame::getSurfaceFilename() {
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	
-	while (rotate < 0) {
+	rotate = fmod(rotate, 360.0f);
+	if (rotate < 0) {
 		rotate += 360.0f;
 	}
-	rotate = fmod(rotate, 360.0f);
-	
+
 	if (!_surface) {
 		return STATUS_OK;
 	}
