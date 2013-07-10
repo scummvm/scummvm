@@ -498,8 +498,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 	
-	assert (transform._angle != 0); // This would not be ideal
-	
+	assert(transform._angle != 0); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
+
 	Point32 newHotspot;
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Rect32 rect = TransformTools::newRect(Rect32 (srcRect), transform, &newHotspot);
