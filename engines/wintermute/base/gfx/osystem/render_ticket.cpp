@@ -51,7 +51,7 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			memcpy(_surface->getBasePtr(0, i), surf->getBasePtr(srcRect->left, srcRect->top + i), srcRect->width() * _surface->format.bytesPerPixel);
 		}
 		// Then scale it if necessary
-		if (_transform._angle != 0) {
+		if (_transform._angle != DEFAULT_ANGLE) {
 			TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp = src.rotoscale(transform);
 			_surface->free();
@@ -67,7 +67,7 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 	} else {
 		_surface = nullptr;
 		
-		if (transform._angle != 0) { // Make sure comparison-tickets get the correct width
+		if (transform._angle != DEFAULT_ANGLE) { // Make sure comparison-tickets get the correct width
 			Rect32 dstRect;
 			Point32 newHotspot;
 			dstRect = TransformTools::newRect(_srcRect, transform,  &newHotspot);
