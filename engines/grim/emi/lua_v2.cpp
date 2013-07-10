@@ -281,10 +281,6 @@ void Lua_V2::EngineDisplay() {
 	// dummy
 }
 
-void Lua_V2::SetAmbientLight() {
-	// dummy
-}
-
 void Lua_V2::Display() {
 	// dummy
 }
