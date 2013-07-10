@@ -22,6 +22,7 @@
 
 #include "engines/grim/debugger.h"
 #include "engines/grim/md5check.h"
+#include "engines/grim/grim.h"
 
 namespace Grim {
 
@@ -29,6 +30,7 @@ Debugger::Debugger()
 	: GUI::Debugger() {
 
 	DCmd_Register("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
+	DCmd_Register("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
 }
 
 Debugger::~Debugger() {
@@ -42,6 +44,22 @@ bool Debugger::cmd_checkFiles(int argc, const char **argv) {
 		DebugPrintf("Some files are corrupted or missing.\n");
 	}
 
+	return true;
+}
+
+bool Debugger::cmd_lua_do(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage: lua_do <lua command>\n");
+		return true;
+	}
+
+	Common::String cmd;
+	for (int i = 1; i < argc; ++i) {
+		cmd += argv[i];
+		cmd += " ";
+	}
+	DebugPrintf("Executing command: <%s>\n", cmd.c_str());
+	g_grim->debugLua(cmd);
 	return true;
 }
 

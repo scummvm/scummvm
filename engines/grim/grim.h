@@ -184,6 +184,7 @@ public:
 	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
 
 	virtual void openMainMenuDialog();
+	void debugLua(const Common::String &str);
 
 protected:
 	virtual void pauseEngineIntern(bool pause);

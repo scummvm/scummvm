@@ -33,6 +33,7 @@ public:
 	virtual ~Debugger();
 
 	bool cmd_checkFiles(int argc, const char **argv);
+	bool cmd_lua_do(int argc, const char **argv);
 };
 
 }

@@ -1230,4 +1230,8 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 	g_movie->pause(pause);
 }
 
+void GrimEngine::debugLua(const Common::String &str) {
+	lua_dostring(str.c_str());
+}
+
 } // end of namespace Grim
