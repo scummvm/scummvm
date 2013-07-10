@@ -537,6 +537,7 @@ private:
 	bool shouldDrawShadow(int shadowId);
 	void stopTalking();
 	bool stopMumbleChore();
+	void drawCostume(Costume *costume, const Math::Vector3d &absPos, const Math::Quaternion &rot);
 	/**
 	 * Given a start point and a destination this function returns a position
 	 * that doesn't collide with any actor.

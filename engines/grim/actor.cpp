@@ -1566,32 +1566,16 @@ void Actor::draw() {
 	// FIXME: if isAttached(), factor in the joint rotation as well.
 	Math::Vector3d absPos = getWorldPos();
 	const Math::Quaternion rot = getRotationQuat();
-	const float alpha = _alphaMode != AlphaOff ? _globalAlpha : 1.f;
-	const bool depthOnly = getSortOrder() >= 100;
 	if (!_costumeStack.empty()) {
 		g_grim->getCurrSet()->setupLights(absPos);
-
-		Costume *costume = _costumeStack.back();
-		for (int l = 0; l < MAX_SHADOWS; l++) {
-			if (!shouldDrawShadow(l))
-				continue;
-			g_driver->setShadow(&_shadowArray[l]);
-			g_driver->setShadowMode();
-			if (g_driver->isHardwareAccelerated())
-				g_driver->drawShadowPlanes();
-			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, alpha, depthOnly);
-			costume->draw();
-			g_driver->finishActorDraw();
-			g_driver->clearShadowMode();
-			g_driver->setShadow(NULL);
-		}
-
-		bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
-		if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
-			// normal draw actor
-			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, alpha, depthOnly);
-			costume->draw();
-			g_driver->finishActorDraw();
+		if (g_grim->getGameType() == GType_GRIM) {
+			Costume *costume = _costumeStack.back();
+			drawCostume(costume, absPos, rot);
+		} else {
+			for (Common::List<Costume *>::iterator it = _costumeStack.begin(); it != _costumeStack.end(); ++it) {
+				Costume *costume = *it;
+				drawCostume(costume, absPos, rot);
+			}
 		}
 	}
 
@@ -1620,6 +1604,32 @@ void Actor::draw() {
 	}
 
 	_drawnToClean = false;
+}
+
+void Actor::drawCostume(Costume *costume, const Math::Vector3d &absPos, const Math::Quaternion &rot) {
+	const float alpha = _alphaMode != AlphaOff ? _globalAlpha : 1.f;
+	const bool depthOnly = getSortOrder() >= 100;
+	for (int l = 0; l < MAX_SHADOWS; l++) {
+		if (!shouldDrawShadow(l))
+			continue;
+		g_driver->setShadow(&_shadowArray[l]);
+		g_driver->setShadowMode();
+		if (g_driver->isHardwareAccelerated())
+			g_driver->drawShadowPlanes();
+		g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, alpha, depthOnly);
+		costume->draw();
+		g_driver->finishActorDraw();
+		g_driver->clearShadowMode();
+		g_driver->setShadow(NULL);
+	}
+
+	bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
+	if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
+		// normal draw actor
+		g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, alpha, depthOnly);
+		costume->draw();
+		g_driver->finishActorDraw();
+	}
 }
 
 void Actor::setShadowPlane(const char *n) {
