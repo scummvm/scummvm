@@ -513,7 +513,7 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-	uint32 invAngle = (360 - transform._angle) % 360;
+	uint32 invAngle = 360 - (transform._angle % 360);
 	float invCos = cos(invAngle * M_PI / 180.0);
 	float invSin = sin(invAngle * M_PI / 180.0);
 	float targX;
