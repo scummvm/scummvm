@@ -24,6 +24,8 @@
 
 #include "zvision/actions.h"
 #include "zvision/zvision.h"
+#include "zvision/script_manager.h"
+#include "zvision/action_node.h"
 
 namespace ZVision {
 
@@ -154,8 +156,8 @@ ActionTimer::ActionTimer(Common::String line) {
 	sscanf(line.c_str(), ":timer:%u(%hu)", &_key, &_time);
 }
 
-	// TODO: Implement
 bool ActionTimer::execute(ZVision *engine) {
+	engine->getScriptManager()->addActionNode(new NodeTimer(_key, _time));
 	return true;
 }
 
