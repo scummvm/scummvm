@@ -77,7 +77,7 @@ byte *Graph::getPixel(int16 x, int16 y) {
 }
 
 void Graph::setPixel(byte *pixel, byte color) {
-	memset(pixel, color, 1);
+	*pixel = color;
 }
 
 void Graph::drawToScreen() {

@@ -176,5 +176,4 @@ private:
 
 } // End of namespace Avalanche
 
-
 #endif // LUCERNA2_H

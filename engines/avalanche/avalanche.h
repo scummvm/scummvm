@@ -30,6 +30,8 @@
 
 #include "avalanche/console.h"
 
+#include "avalanche/graph.h"
+
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/enhanced2.h"
@@ -63,6 +65,8 @@ static const int kSavegameVersion = 1;
 
 class AvalancheEngine : public Engine {
 public:
+	Graph _graph;
+
 	Avalot _avalot;
 	Gyro _gyro;
 	Enhanced _enhanced;
@@ -81,6 +85,8 @@ public:
 	Dropdown _dropdown;
 	Closing _closing;
 
+
+
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
 
@@ -93,8 +99,6 @@ public:
 	const AvalancheGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
-
-	void initGame(const AvalancheGameDescription *gd);
 
 	Common::Platform getPlatform() const;
 

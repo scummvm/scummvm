@@ -38,6 +38,8 @@
 
 #include "engines/util.h"
 
+
+
 namespace Avalanche {
 
 	AvalancheEngine *AvalancheEngine::s_Engine = 0;
@@ -48,6 +50,8 @@ namespace Avalanche {
 
 		_rnd = new Common::RandomSource("avalanche");
 		_rnd->setSeed(42);     
+
+		_graph.setParent(this);
 
 		_gyro.setParent(this);
 		_enhanced.setParent(this);
@@ -241,13 +245,17 @@ namespace Avalanche {
 
 	Common::Error AvalancheEngine::run() {
 		s_Engine = this;
-		initGraphics(320, 200, false);
-		_console = new AvalancheConsole(this);
 
+		_console = new AvalancheConsole(this);
+		
 		_scrolls.init();
 		_lucerna.init();
 		_acci.init();
 		_basher.init();
+		_graph.init();
+
+		
+
 
 		// From bootstrp:
 
