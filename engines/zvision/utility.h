@@ -56,7 +56,19 @@ void trimCommentsAndWhiteSpace(Common::String *string);
  */
 void dumpEveryResultAction(const Common::String &destFile);
 
+/**
+ * Removes all duplicate entries from container.
+ *
+ * @param container        
+ * @return                
+ */
+template<class T>
+void removeDuplicateEntries(Common::Array<T> *container) {
+	Common::sort(container->front(), container->back());
 
+	for (int i = 0; i < container->size(); i++) {
+		while (container[i] == container[i +1]) {
+			container->remove_at(i + 1);
 		}
 	}
 }
