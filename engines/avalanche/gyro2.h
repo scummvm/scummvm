@@ -460,8 +460,6 @@ public:
 
 	static const int16 runerr_getset_overflow = 50;
 
-	static const byte static_const_whereis[29];
-
 
 
 
@@ -472,7 +470,7 @@ public:
 		the DNA in a position dictated by the value. If a scroll comes up,
 		or you leave the room, it's automatically set to zero. */
 
-	byte whereis[29];
+	static byte whereis[29];
 
 	bool oncandopageswap; 
 	/* Variable static constant for overriding the ability of On to switch pages.

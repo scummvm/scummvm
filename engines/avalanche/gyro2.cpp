@@ -194,7 +194,7 @@ const tunetype Gyro::tune = {
 	lower, same, lower, higher, same, lower, higher
 };
 
-const byte Gyro::static_const_whereis[29] = {
+byte Gyro::whereis[29] = {
 	/* The Lads */
 	r__yours, /* Avvy */
 	r__spludwicks, /* Spludwick */
@@ -245,9 +245,6 @@ const char Gyro::betterchar[] = "WMBParCLguKeSnIohn";
 
 
 Gyro::Gyro() : interrogation(0), oncandopageswap(true) {
-	for (int i = 0; i < 29; i++)
-		whereis[i] = static_const_whereis[i];
-
 	/* Needed becouse of Lucerna::load_also() */
 	for (int fv = 0; fv < 31; fv++)
 		for (int ff = 0; ff < 2; ff++)
