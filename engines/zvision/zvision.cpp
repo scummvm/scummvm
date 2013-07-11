@@ -70,7 +70,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	_rnd = new Common::RandomSource("zvision");
 
 	// Create managers
-	_scriptManager = new ScriptManager();
+	_scriptManager = new ScriptManager(this);
 
 	debug("ZVision::ZVision");
 }
@@ -126,8 +126,8 @@ Common::Error ZVision::run() {
 		if (_currentVideo != 0)
 			continueVideo();
 		else {
-			updateScripts();
-			updateAnimations(deltaTime);
+			_scriptManager->updateNodes(deltaTime);
+			_scriptManager->checkPuzzleCriteria();
 		}
 
 		if (_needsScreenUpdate || _console->isActive()) {

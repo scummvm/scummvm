@@ -33,10 +33,15 @@
 
 namespace ZVision {
 
+class ZVision;
 class ActionNode;
 
 class ScriptManager {
+public:
+	ScriptManager(ZVision *engine);
+
 private:
+	ZVision *_engine;
 	/** 
 	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and 
 	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a 
@@ -57,11 +62,18 @@ private:
 public:
 	
 	void initialize();
+	void updateNodes(uint32 deltaTimeMillis);
+	void checkPuzzleCriteria();
+
 	byte getStateValue(uint32 key);
 	void setStateValue(uint32 key, byte value);
 	void addToStateValue(uint32 key, byte valueToAdd);
 
+	void addActionNode(ActionNode *node);
+
 private:
+	void createReferenceTable();
+
 	/**
 	 * Parses a script file into triggers and events
 	 *
