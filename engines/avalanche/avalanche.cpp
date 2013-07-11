@@ -256,8 +256,8 @@ namespace Avalanche {
 		get_arguments();
 		get_slope();
 
-		zoomy = false; 
-		// Call the menu by default. Might be modified later, if get_slope() gets implemented,
+		zoomy = true; 
+		// Don't call the menu by default. Might be modified later, if get_slope() gets implemented,
 		// becouse zoomy's value is given there. Not sure yet what "zoomy" stands for.
 		if (!zoomy)
 			call_menu();    /* Not run when zoomy. */
