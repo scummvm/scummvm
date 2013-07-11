@@ -2375,7 +2375,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			# Enable serial debugging output only when --enable-debug is passed
-			if test "$_debug_build" != yes; then
+			if test "$_release_build" = yes -o "$_debug_build" != yes; then
 				DEFINES="$DEFINES -DNOSERIAL"
 			fi
 			_optimization_level=-O3
@@ -2708,7 +2708,7 @@ case $_backend in
 		LDFLAGS="$LDFLAGS "'$(ronindir)/lib/crt0.o'
 		LDFLAGS="$LDFLAGS "'-L$(ronindir)/lib'
 		# Enable serial debugging output only when --enable-debug is passed
-		if test "$_debug_build" != yes; then
+		if test "$_release_build" = yes -o "$_debug_build" != yes; then
 			LIBS="$LIBS -lronin-noserial -lm"
 		else
 			LIBS="$LIBS -lronin -lm"
