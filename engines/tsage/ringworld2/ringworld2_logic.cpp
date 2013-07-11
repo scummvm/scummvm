@@ -90,6 +90,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 600:
 		return new Scene600();
 	case 700:
+		// Lander Bay 2
 		return new Scene700();
 	case 800:
 		// Sick bay

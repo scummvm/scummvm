@@ -2743,7 +2743,7 @@ void Scene250::signal() {
 			R2_GLOBALS._sceneManager.changeScene(300);
 			break;
 		case 139:
-			R2_GLOBALS._sceneManager.changeScene(139);
+			R2_GLOBALS._sceneManager.changeScene(700);
 			break;
 		case 91:
 			R2_GLOBALS._sceneManager.changeScene(850);
@@ -4989,7 +4989,7 @@ bool Scene500::SonicStunner::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_USE) && (R2_GLOBALS._player._characterIndex == R2_QUINN)) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = R2_GLOBALS.getFlag(26) ? 520 : 502;
-		scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, this, NULL);
 		return true;
 	} else {
 		return SceneActor::startAction(action, event);
@@ -5078,7 +5078,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	if ((R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) != 500) && R2_GLOBALS.getFlag(27)) {
+	if ((R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 500) && R2_GLOBALS.getFlag(27)) {
 		_tanks1.postInit();
 		_tanks1.setup(502, 7, 1);
 		_tanks1.setPosition(Common::Point(281, 120));
@@ -5233,7 +5233,7 @@ void Scene500::signal() {
 		R2_GLOBALS._sceneManager.changeScene(700);
 		break;
 	case 501:
-		if (R2_GLOBALS._player._characterScene[R2_QUINN] == 500) {
+		if (R2_GLOBALS._player._characterScene[R2_MIRANDA] == 500) {
 			_stripNumber = 1100;
 			_sceneMode = 523;
 			setAction(&_sequenceManager1, this, 523, &R2_GLOBALS._player, NULL);
@@ -5806,7 +5806,7 @@ void Scene600::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 700 -
+ * Scene 700 - Lander Bay 2
  *
  *--------------------------------------------------------------------------*/
 Scene700::Scene700() {
