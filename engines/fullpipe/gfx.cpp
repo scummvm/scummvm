@@ -24,7 +24,23 @@
 
 #include "fullpipe/objects.h"
 
+#include "common/memstream.h"
+
 namespace Fullpipe {
+
+void Bitmap::load(Common::ReadStream *s) {
+	x = s->readUint32LE();
+	y = s->readUint32LE();
+	width = s->readUint32LE();
+	height = s->readUint32LE();
+	s->readUint32LE(); // pixels
+	type = s->readUint32LE();
+	field_18 = s->readUint32LE();
+	flags = s->readUint32LE();
+
+	debug(9, "x: %d y: %d w: %d h: %d", x, y, width, height);
+	debug(9, "type: %d field_18: %d flags: 0x%x", type, field_18, flags);
+}
 
 Background::Background() {
 	_x = 0;
@@ -225,6 +241,27 @@ bool Picture::load(MfcArchive &file) {
 
 void Picture::setAOIDs() {
 	warning("STUB: Picture::setAOIDs()");
+}
+
+void Picture::init() {
+	_bitmap = new Bitmap();
+
+	getDibInfo();
+
+	_bitmap->flags |= 0x1000000;
+}
+
+void Picture::getDibInfo() {
+	int off = _dataSize & ~0xf;
+
+	if (_dataSize != off) {
+		warning("Uneven data size: 0x%x", _dataSize);
+	}
+
+	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off, 32);
+
+	_bitmap->load(s);
+	_bitmap->pixels = _data;
 }
 
 BigPicture::BigPicture() {

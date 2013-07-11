@@ -23,10 +23,25 @@
 #ifndef FULLPIPE_GFX_H
 #define FULLPIPE_GFX_H
 
+class Common::ReadStream;
+
 namespace Fullpipe {
 
 class ShadowsItemArray : public CObArray {
 	// empty
+};
+
+struct Bitmap {
+	int x;
+	int y;
+	int width;
+	int height;
+	byte *pixels;
+	int type;
+	int field_18;
+	int flags;
+
+	void load(Common::ReadStream *s);
 };
 
 class Picture : public MemoryObject {
@@ -39,7 +54,7 @@ class Picture : public MemoryObject {
 	int _field_44;
 	int _width;
 	int _height;
-	int _bitmap;
+	Bitmap *_bitmap;
 	int _field_54;
 	MemoryObject2 *_memoryObject2;
 	int _alpha;
@@ -49,6 +64,8 @@ class Picture : public MemoryObject {
 	Picture();
 	virtual bool load(MfcArchive &file);
 	void setAOIDs();
+	void init();
+	void getDibInfo();
 };
 
 class BigPicture : public Picture {

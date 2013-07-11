@@ -89,7 +89,7 @@ class MemoryObject : CObject {
 	char _field_15;
 	char _field_16;
 	char _field_17;
-	void *_data;
+	byte *_data;
 	int _dataSize;
 	int _flags;
 	NGIArchive *_libHandle;
@@ -98,6 +98,8 @@ class MemoryObject : CObject {
 	MemoryObject();
 	virtual bool load(MfcArchive &file);
 	void loadFile(char *filename);
+	void load() { loadFile(_filename); }
+	void *getData();
 };
 
 class MemoryObject2 : public MemoryObject {

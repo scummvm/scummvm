@@ -134,12 +134,24 @@ void MemoryObject::loadFile(char *filename) {
 		if (s) {
 			assert(s->size() > 0);
 
-			debug(0, "Loading %s", filename);
-			_data = calloc(s->size(), 1);
-			s->read(_data, s->size());
+			_dataSize = s->size();
+
+			debug(0, "Loading %s (%d bytes)", filename, _dataSize);
+			_data = (byte *)calloc(_dataSize, 1);
+			s->read(_data, _dataSize);
 
 			delete s;
 		}
+	}
+}
+
+void *MemoryObject::getData() {
+	load();
+
+	if (_field_14 || _flags & 1) {
+		return _data;
+	} else {
+		error("Unhandled packed data");
 	}
 }
 
