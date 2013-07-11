@@ -111,10 +111,10 @@ Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const 
 		token = tokenizer.nextToken();
 		if (token.contains('[')) {
 			sscanf(token.c_str(), "[%u]", &(criteria.argument));
-			criteria.isArgumentAnId = true;
+			criteria.argumentIsAKey = true;
 		} else {
 			sscanf(token.c_str(), "%u", &(criteria.argument));
-			criteria.isArgumentAnId = false;
+			criteria.argumentIsAKey = false;
 		}
 
 		line = stream.readLine();

@@ -25,9 +25,9 @@
 
 #include "common/list.h"
 
-#include "zvision/actions.h"
-
 namespace ZVision {
+
+class ResultAction;
 
 /** How criteria should be decided */
 enum CriteriaOperator {
@@ -48,8 +48,8 @@ struct Criteria {
 	uint32 argument;
 	/** How to do the comparison */
 	CriteriaOperator criteriaOperator;
-	/** Whether 'argument' is the id of a global state (true) or a pure value (false) */
-	bool isArgumentAnId;
+	/** Whether 'argument' is the key of a global state (true) or a pure value (false) */
+	bool argumentIsAKey;
 };
 
 enum StateFlags {

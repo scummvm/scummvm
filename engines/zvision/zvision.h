@@ -31,14 +31,13 @@
 
 #include "engines/engine.h"
 
-#include "zvision/script_manager.h"
-
 #include "gui/debugger.h"
  
 namespace ZVision {
 
 struct ZVisionGameDescription;
 class Console;
+class ScriptManager;
  
 // our engine debug channels
 enum {
