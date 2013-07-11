@@ -46,6 +46,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		  _gameDescription(gameDesc),
 		  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
 		  _currentVideo(0),
+		  _scaledVideoFrameBuffer(0),
 		  _width(640),
 		  _height(480) {
 	// Put your engine in a sane state, but do nothing big yet;

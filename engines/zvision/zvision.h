@@ -69,6 +69,7 @@ private:
 	bool _needsScreenUpdate;
 
 	Video::VideoDecoder *_currentVideo;
+	byte *_scaledVideoFrameBuffer;
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;

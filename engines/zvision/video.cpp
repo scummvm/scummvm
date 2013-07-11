@@ -79,7 +79,10 @@ void ZVision::startVideo(Video::VideoDecoder *videoDecoder) {
 
 	Common::List<Graphics::PixelFormat> formats;
 	formats.push_back(videoDecoder->getPixelFormat());
-	initGraphics(640, 480, true, formats);
+	initGraphics(_width, _height, true, formats);
+	
+	_scaledVideoFrameBuffer = new byte[_currentVideo->getWidth() * _currentVideo->getHeight() * _currentVideo->getPixelFormat().bytesPerPixel * 4];
+
 	_currentVideo->start();
 
 	// Load the first frame
@@ -95,17 +98,18 @@ void ZVision::continueVideo() {
 	byte bytesPerPixel = _currentVideo->getPixelFormat().bytesPerPixel;
 	uint16 width = _currentVideo->getWidth();
 	uint16 height = _currentVideo->getHeight();
-	uint16 pitch = _currentVideo->getWidth() * bytesPerPixel;
+	uint16 pitch = width * bytesPerPixel;
 
-	uint16 x = (_system->getWidth() - width) / 2;
-	uint16 y = (_system->getWidth() - height) / 2;
+	uint16 x = (_system->getWidth() - (width * 2)) / 2;
+	uint16 y = (_system->getHeight() - (height * 2)) / 2;
 
 	if (!_currentVideo->endOfVideo()) {
 		if (_currentVideo->needsUpdate()) {
 			const Graphics::Surface *frame = _currentVideo->decodeNextFrame();
 
-			if (frame) {
-				_system->copyRectToScreen(frame->pixels, pitch, x, y, width, height);
+			if (frame) {		
+				scale2x(static_cast<byte *>(frame->pixels), _scaledVideoFrameBuffer, width, height, bytesPerPixel);
+				_system->copyRectToScreen(_scaledVideoFrameBuffer, pitch * 2, x, y, width * 2, height * 2);
 
 				_needsScreenUpdate = true;
 			}
@@ -114,6 +118,8 @@ void ZVision::continueVideo() {
 		initGraphics(_width, _height, true, &_pixelFormat);
 		delete _currentVideo;
 		_currentVideo = 0;
+		delete _scaledVideoFrameBuffer;
+		_scaledVideoFrameBuffer = 0;
 	}
 
 }
