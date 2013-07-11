@@ -26,21 +26,33 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/hashmap.h"
+#include "common/stack.h"
 
 #include "zvision/puzzle.h"
 #include "zvision/control.h"
-#include "zvision/actions.h"
 
 namespace ZVision {
 
+class ActionNode;
+
 class ScriptManager {
 private:
-	/** Holds the global state variables. Optimize for fast random access */
+	/** 
+	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and 
+	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a 
+	 * particular state key are checked after the key is modified.
+	 */
 	Common::HashMap<uint32, byte> _globalState;
-	/** Holds the currently active puzzles. Optimize for fast iteration */
-	Common::List<Puzzle> _puzzles;
-	/** Holds the currently active controls. Optimize for fast iteration */
-	Common::List<Control> _controls;
+	/** Holds the currently active ActionNodes */
+	Common::List<ActionNode *> _activeNodes;
+	/** References _globalState keys to Puzzles */
+	Common::HashMap<uint32, Common::Array<Puzzle *>> _referenceTable;
+	/** Holds the Puzzles that should be checked this frame */
+	Common::Stack<Puzzle *> _puzzlesToCheck;
+	/** Holds the currently active puzzles */
+	Common::List<Puzzle> _activePuzzles;
+	/** Holds the currently active controls */
+	Common::List<Control> _activeControls;
 
 public:
 	

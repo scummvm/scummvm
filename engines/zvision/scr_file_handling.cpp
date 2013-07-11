@@ -25,6 +25,7 @@
 #include "zvision/script_manager.h"
 #include "zvision/utility.h"
 #include "zvision/puzzle.h"
+#include "zvision/actions.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -53,14 +54,15 @@ void ScriptManager::parseScrFile(Common::String fileName) {
 			sscanf(line.c_str(),"puzzle:%u",&(puzzle.key));
 
 			parsePuzzle(puzzle, file);
-			_puzzles.push_back(puzzle);
+			_activePuzzles.push_back(puzzle);
 		} else if (line.matchString("control:*", true)) {
 			Control control;
 			char controlType[20];
 			sscanf(line.c_str(),"control:%u %s",&(control.id), controlType);
 
 			parseControl(control, file);
-			_controls.push_back(control);
+			/** Holds the currently active puzzles */
+			_activeControls.push_back(control);
 		}
 	}
 }
