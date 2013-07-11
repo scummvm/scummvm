@@ -26,12 +26,4 @@
 
 namespace ZVision {
 
-void ZVision::updateScripts() {
-
-}
-
-void ZVision::updateAnimations(uint32 detaTimeMillis) {
-
-}
-
 } // End of namespace ZVision
