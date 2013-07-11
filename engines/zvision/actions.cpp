@@ -35,8 +35,8 @@ ActionAdd::ActionAdd(Common::String line) {
 	sscanf(line.c_str(), ":add(%u,%hhu)", &_key, &_value);
 }
 
-bool ActionAdd::execute(ZVision *zVision) {
-	zVision->getScriptManager()->addToStateValue(_key, _value);
+bool ActionAdd::execute(ZVision *engine) {
+	engine->getScriptManager()->addToStateValue(_key, _value);
 	return true;
 }
 
@@ -49,8 +49,8 @@ ActionAssign::ActionAssign(Common::String line) {
 	sscanf(line.c_str(), ":assign(%u, %hhu)", &_key, &_value);
 }
 
-bool ActionAssign::execute(ZVision *zVision) {
-	zVision->getScriptManager()->setStateValue(_key, _value);
+bool ActionAssign::execute(ZVision *engine) {
+	engine->getScriptManager()->setStateValue(_key, _value);
 	return true;
 }
 
@@ -63,7 +63,7 @@ ActionAttenuate::ActionAttenuate(Common::String line) {
 	sscanf(line.c_str(), ":assign(%u, %hd)", &_key, &_attenuation);
 }
 
-bool ActionAttenuate::execute(ZVision *zVision) {
+bool ActionAttenuate::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
 }
@@ -77,7 +77,7 @@ ActionChangeLocation::ActionChangeLocation(Common::String line) {
 	sscanf(line.c_str(), ":change_location(%c,%c,%2c,%hu)", &_world, &_room, &_nodeview, &_x);
 }
 
-bool ActionChangeLocation::execute(ZVision *zVision) {
+bool ActionChangeLocation::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
 }
@@ -93,7 +93,7 @@ ActionCrossfade::ActionCrossfade(Common::String line) {
            &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
 }
 
-bool ActionCrossfade::execute(ZVision *zVision) {
+bool ActionCrossfade::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
 }
@@ -108,7 +108,7 @@ ActionPreloadAnimation::ActionPreloadAnimation(Common::String line) {
 	sscanf(line.c_str(), ":animpreload:%u(%s %*hhu %*hhu %u %hhu)", &_key, &_fileName, &_mask, &_framerate);
 }
 
-bool ActionPreloadAnimation::execute(ZVision *zVision) {
+bool ActionPreloadAnimation::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
 }
@@ -125,7 +125,7 @@ ActionPlayAnimation::ActionPlayAnimation(Common::String line) {
            &_key, &_x, &_y, &_width, &_height, &_start, &_end, &_loop, &_mask, &_framerate);
 }
 
-bool ActionPlayAnimation::execute(ZVision *zVision) {
+bool ActionPlayAnimation::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
 }
@@ -139,9 +139,9 @@ ActionRandom::ActionRandom(Common::String line) {
 	sscanf(line.c_str(), ":random:%u, %u)", &_key, &_max);
 }
 
-bool ActionRandom::execute(ZVision *zVision) {
-	uint32 randNumber = zVision->getRandomSource()->getRandomNumber(_max);
-	zVision->getScriptManager()->setStateValue(_key, randNumber);
+bool ActionRandom::execute(ZVision *engine) {
+	uint32 randNumber = engine->getRandomSource()->getRandomNumber(_max);
+	engine->getScriptManager()->setStateValue(_key, randNumber);
 	return true;
 }
 
@@ -154,8 +154,8 @@ ActionTimer::ActionTimer(Common::String line) {
 	sscanf(line.c_str(), ":timer:%u(%hu)", &_key, &_time);
 }
 
-bool ActionTimer::execute(ZVision *zVision) {
 	// TODO: Implement
+bool ActionTimer::execute(ZVision *engine) {
 	return true;
 }
 

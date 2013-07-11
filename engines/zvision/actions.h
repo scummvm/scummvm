@@ -35,7 +35,7 @@ class ZVision;
 class ResultAction {
 public:
 	virtual ~ResultAction() {}
-	virtual bool execute(ZVision *zVision) = 0;
+	virtual bool execute(ZVision *engine) = 0;
 };
 
 
@@ -75,7 +75,7 @@ public:
 class ActionAdd : public ResultAction {
 public:
 	ActionAdd(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _key;
@@ -85,7 +85,7 @@ private:
 class ActionAssign : public ResultAction {
 public:
 	ActionAssign(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _key;
@@ -95,7 +95,7 @@ private:
 class ActionAttenuate : public ResultAction {
 public:
 	ActionAttenuate(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _key;
@@ -105,7 +105,7 @@ private:
 class ActionChangeLocation : public ResultAction {
 public:
 	ActionChangeLocation(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	char _world;
@@ -117,7 +117,7 @@ private:
 class ActionCrossfade : public ResultAction {
 public:
 	ActionCrossfade(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _keyOne;
@@ -132,7 +132,7 @@ private:
 class ActionPlayAnimation : public ResultAction {
 public:
 	ActionPlayAnimation(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _key;
@@ -151,7 +151,7 @@ private:
 class ActionPreloadAnimation : public ResultAction {
 public:
 	ActionPreloadAnimation(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _key;
@@ -164,13 +164,13 @@ private:
 //class ActionUnloadAnimation : public ResultAction {
 //public:
 //	ActionUnloadAnimation(Common::String line);
-//	bool execute(ZVision *zVision);
+//	bool execute(ZVision *engine);
 //};
 
 class ActionRandom : public ResultAction {
 public:
 	ActionRandom(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _key;
@@ -180,7 +180,7 @@ private:
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(Common::String line);
-	bool execute(ZVision *zVision);
+	bool execute(ZVision *engine);
 
 private:
 	uint32 _key;
