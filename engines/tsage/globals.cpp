@@ -374,6 +374,9 @@ void Ringworld2Globals::reset() {
 	T2_GLOBALS._uiElements.updateInventory();
 	T2_GLOBALS._uiElements._active = false;
 
+	// Set the screen to track the player
+	_scrollFollower = &_player;
+
 	// Reset fields
 	Common::fill(&_v1000[0], &_v1000[0x1000], 0);
 	_v1000Flag = false;

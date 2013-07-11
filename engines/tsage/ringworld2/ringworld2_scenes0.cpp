@@ -4911,7 +4911,7 @@ bool Scene500::Doorway::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_sequenceManager1, scene, 524, &R2_GLOBALS._player, NULL);
 		} else {
 			scene->_sceneMode = 500;
-			scene->setAction(&scene->_sequenceManager1, scene, 500, &R2_GLOBALS._player, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 500, &R2_GLOBALS._player, this, NULL);
 		}
 
 		return true;
