@@ -66,12 +66,6 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		Common::FSNode curNode = gameDataDir;
 
-		Common::String fixedPath = "";
-		while (!path.empty()) {
-			fixedPath += path.nextToken() + "/";
-		}
-		fixedPath.deleteLastChar();
-
 		// Parse all path-elements
 		while (!path.empty()) {
 			// Get the next path-component by slicing on '\\'
