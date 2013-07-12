@@ -80,7 +80,7 @@ MD5CheckDialog::MD5CheckDialog() :
 void MD5CheckDialog::drawDialog() {
 	GUI::Dialog::drawDialog();
 
-	g_gui.theme()->drawSlider(_progressRect, _progressRect.width() * _progress);
+	g_gui.theme()->drawSlider(_progressRect, (int)(_progressRect.width() * _progress));
 }
 
 void MD5CheckDialog::check() {

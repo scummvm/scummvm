@@ -454,7 +454,7 @@ bool MD5Check::advanceCheck(int *pos, int *total) {
 	if (total) {
 		*total = _files->size();
 	}
-	if (_iterator == _files->size()) {
+	if ((uint32)_iterator == _files->size()) {
 		_iterator = -1;
 	}
 
