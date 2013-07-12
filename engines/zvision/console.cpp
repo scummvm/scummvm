@@ -38,7 +38,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 bool Console::cmdLoadImage(int argc, const char **argv) {
 	if (argc != 4) {
 		DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen");
-		return false;
+		return true;
 	}
 	_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
 
@@ -48,7 +48,7 @@ bool Console::cmdLoadImage(int argc, const char **argv) {
 bool Console::cmdLoadVideo(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Use loadvideo <fileName> to load a video to the screen");
-		return false;
+		return true;
 	}
 
 	Video::VideoDecoder *videoDecoder = new ZorkAVIDecoder();
