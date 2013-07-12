@@ -433,6 +433,65 @@ void Lua_V2::OverWorldToScreen() { // TODO
 	lua_pushnumber(0);
 }
 
+void Lua_V2::NewLayer() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	lua_Object param3 = lua_getparam(3);
+
+	const char *til = NULL;
+	int layer = 0, zero = 0;
+	if (lua_isstring(param1) && lua_isnumber(param2) && lua_isnumber(param3)) {
+		til = lua_getstring(param1);
+		layer = lua_getnumber(param2);
+
+		//This one is always specified, but also always 0...
+		zero = lua_getnumber(param2);
+
+		warning("Stub function: NewLayer(%s, %d, %d) - returning 0", til, layer, zero);
+
+		// Need to return something that can be looked up later
+		lua_pushusertag(0, MKTAG('L','A','Y','R'));
+	}
+}
+
+void Lua_V2::FreeLayer() {
+	lua_Object param1 = lua_getparam(1);
+	if (lua_isuserdata(param1) && lua_tag(param1) == MKTAG('L','A','Y','R')) {
+		int layer = lua_getuserdata(param1);
+		warning("Stub function: FreeLayer(%d)", layer);
+	}
+}
+
+void Lua_V2::AdvanceLayerFrame() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	if (lua_isuserdata(param1) && lua_tag(param1) == MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
+		int layer = lua_getuserdata(param1);
+		int one = lua_getnumber(param2);
+		warning("Stub function: AdvanceLayerFrame(%d, %d)", layer, one);
+	}
+}
+
+void Lua_V2::SetLayerFrame() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	if (lua_isuserdata(param1) && lua_tag(param1) == MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
+		int layer = lua_getuserdata(param1);
+		int one = lua_getnumber(param2);
+		warning("Stub function: SetLayerFrame(%d, %d)", layer, one);
+	}
+}
+
+void Lua_V2::SetLayerSortOrder() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	if (lua_isuserdata(param1) && lua_tag(param1) != MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
+		int layer = lua_getuserdata(param1);
+		int sortorder = lua_getnumber(param2);
+		warning("Stub function: SetLayerSortOrder(%d, %d)", layer, sortorder);
+	}
+}
+
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
     warning("Stub function: %s", funcName);
@@ -488,11 +547,6 @@ STUB_FUNC2(Lua_V2::YawCamera)
 STUB_FUNC2(Lua_V2::GetCameraPitch)
 STUB_FUNC2(Lua_V2::PitchCamera)
 STUB_FUNC2(Lua_V2::RollCamera)
-STUB_FUNC2(Lua_V2::NewLayer)
-STUB_FUNC2(Lua_V2::FreeLayer)
-STUB_FUNC2(Lua_V2::SetLayerSortOrder)
-STUB_FUNC2(Lua_V2::SetLayerFrame)
-STUB_FUNC2(Lua_V2::AdvanceLayerFrame)
 STUB_FUNC2(Lua_V2::NukeAllScriptLocks)
 STUB_FUNC2(Lua_V2::ToggleDebugDraw)
 STUB_FUNC2(Lua_V2::ToggleDrawCameras)
