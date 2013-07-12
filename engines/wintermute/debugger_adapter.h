@@ -27,15 +27,30 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/wintermute.h"
 
+
 namespace Wintermute {
 class ScScript;
 
 enum ErrorCode {
 	OK,
 	NO_SUCH_FILE,
+	COULD_NOT_OPEN,
 	NO_SUCH_LINE,
 	DUPLICATE_BREAKPOINT,
 	NO_SUCH_BREAKPOINT
+};
+
+class SourceFile {
+private:
+	BaseArray<Common::String> _strings;
+	bool _err;
+public:
+	SourceFile(Common::String filename);
+	bool loadFile(Common::String filename, int *error = nullptr);
+	int getLength();
+	BaseArray<Common::String> getSurroundingLines(int centre, int lines, int *error = nullptr);
+	BaseArray<Common::String> getSurroundingLines(int cemtre, int before, int after, int *error = nullptr);
+	Common::String getLine(int n, int *error = nullptr);
 };
 
 struct BreakpointInfo {
@@ -68,11 +83,14 @@ public:
 	int stepOver();
 	int stepInto();
 	int stepContinue();
+	int32 getLastLine();
 	bool showFps(bool show);
+	SourceFile *_lastSource;
 private:
 	WintermuteEngine *_engine;
 	int32 _lastDepth;
 	ScScript *_lastScript;
+	int32 _lastLine;
 };
 }
 

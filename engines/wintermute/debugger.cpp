@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include "engines/wintermute/debugger.h"
 #include "engines/wintermute/debugger_adapter.h"
 #include "engines/wintermute/wintermute.h"
@@ -52,8 +53,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("watch", WRAP_METHOD(Console, Cmd_Watch));
 	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
 	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
-	// TODO: import and display source?
-	// TODO: factor out actual interface code
+	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
 }
 
 Console::~Console(void) {
@@ -78,9 +78,6 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 	return true;
 }
 
-
-
-
 bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		int error = ADAPTER->removeBreakpoint(atoi(argv[1]));
@@ -94,7 +91,6 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 
 	return true;
 }
-
 
 bool Console::Cmd_Watch(int argc, const char **argv) {
 	/**
@@ -171,6 +167,10 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 	}
 }
 
+bool Console::Cmd_List(int argc, const char **argv) {
+	printSource();
+	return true;
+}
 
 bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	if (argc == 2) {
@@ -223,6 +223,7 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 
 void Console::notifyBreakpoint(const char *filename, int line) {
 	DebugPrintf("Breakpoint hit %s: %d\n", filename, line);
+	printSource(0);
 	attach();
 	onFrame();
 }
@@ -237,5 +238,18 @@ void Console::notifyWatch(const char *filename, const char *symbol, const char *
 	DebugPrintf("Watch: %s:%s <---- %s\n", filename, symbol, newValue);
 	attach();
 	onFrame();
+}
+
+void Console::printSource(int n) {
+	int error = 0;
+	int *perror = &error;
+	BaseArray<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
+	if (error != 0) {
+		DebugPrintf("Error retrieving source file\n");
+	} 
+	for (int i = 0; i < strings.size(); i++) {
+		DebugPrintf(strings[i].c_str());
+		DebugPrintf("\n");
+	}
 }
 } // end of namespace Wintermute

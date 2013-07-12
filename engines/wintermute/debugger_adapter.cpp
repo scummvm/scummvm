@@ -23,18 +23,87 @@
 #include "common/str.h"
 #include "engines/wintermute/debugger_adapter.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #define SCENGINE _engine->_game->_scEngine
 #define DEBUGGER _engine->_debugger
+#define DBG_PATH "dbg"
 
 namespace Wintermute {
+
+SourceFile::SourceFile (Common::String filename) {
+
+	_err = 0;
+
+	Common::String dst;
+	dst = Common::String(DBG_PATH) + Common::String("\\") + filename;
+
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(dst);
+	
+	if (!file) {
+		_err = 1;
+	} else {
+		if (file->err()) {
+			_err = file->err();
+		}
+		while (!file->eos()) {
+			_strings.add(file->readLine());
+			if (file->err()) { 
+				_err = file->err();
+			}
+		}
+	}
+}
 
 DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
 	_engine = vm;
 	_lastScript = nullptr;
+}
+
+int SourceFile::getLength() {
+	if (_err) {
+		return 0;
+	}
+	return _strings.size();
+}
+
+Common::String SourceFile::getLine(int n, int *error) {
+	if (_err) {
+		if (error != nullptr) {
+			*error = COULD_NOT_OPEN;
+		}
+		return 0;
+	}	
+	if (n < 0 || n > _strings.size()) {
+		if (error != nullptr) {
+			*error = NO_SUCH_LINE;
+		}
+		return 0;
+	}
+	return _strings[n];
+}
+
+
+BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int lines, int *error) {
+	return getSurroundingLines(center, lines, lines, error);
+}
+
+
+BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int before, int after, int *error) {
+	*error = 0;
+	int start = MAX(center - before, 0);
+	int finish = MIN(center + after, getLength() - 1);
+	BaseArray<Common::String> ret;
+	Common::String temp;
+	for (int i = start; i <= finish && *error == 0; i++) {
+		temp = Common::String::format("%d", i);
+		temp += " ";
+		temp += getLine(i, error).c_str();
+		ret.add(temp);
+	}
+	return ret;
 }
 
 int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
@@ -47,6 +116,7 @@ int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
 int DebuggerAdapter::removeBreakpoint(int id) {
 	// TODO: Check blah.
 	assert(SCENGINE);
+
 	if (SCENGINE->removeBreakpoint(id)) {
 		return OK;
 	} else {
@@ -64,13 +134,19 @@ int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 bool DebuggerAdapter::triggerBreakpoint(ScScript *script) {
 	_lastDepth = script->getCallDepth();
 	_lastScript = script;
+	_lastLine = script->_currentLine;
+	_lastSource = new SourceFile(script->_filename);
+	// Todo: leak?
 	DEBUGGER->notifyBreakpoint(script->dbgGetFilename(), script->_currentLine);
 	return 1;
 }
 
 bool DebuggerAdapter::triggerStep(ScScript *script) {
 	_lastDepth = script->getCallDepth();
-	_lastScript = script;
+	_lastScript = script; // If script has changed do we still care?
+	_lastLine = script->_currentLine;
+	_lastSource = new SourceFile(script->_filename);
+	// Todo: leak?
 	DEBUGGER->notifyStep(script->dbgGetFilename(), script->_currentLine);
 	return 1;
 }
@@ -78,6 +154,8 @@ bool DebuggerAdapter::triggerStep(ScScript *script) {
 bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
 	_lastDepth = script->getCallDepth();
 	_lastScript = script; // If script has changed do we still care?
+	_lastLine = script->_currentLine;
+	_lastSource = new SourceFile(script->_filename);
 	DEBUGGER->notifyWatch(script->dbgGetFilename(), symbol, script->resolveName(symbol)->getString());
 	return 1;
 }
@@ -133,4 +211,7 @@ BaseArray<WatchInfo> DebuggerAdapter::getWatchlist() {
 	return watchlist;
 }
 
+int32 DebuggerAdapter::getLastLine() {
+	return _lastLine;
+}
 } // end of namespace Wintermute
