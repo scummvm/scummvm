@@ -124,6 +124,14 @@ Statics *StaticANIObject::addStatics(Statics *ani) {
 	return 0;
 }
 
+void StaticANIObject::draw() {
+	warning("STUB: StaticANIObject::draw()");
+}
+
+void StaticANIObject::draw2() {
+	warning("STUB: StaticANIObject::draw2()");
+}
+
 Statics::Statics() {
 	_staticsId = 0;
 	_picture = 0;

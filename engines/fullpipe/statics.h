@@ -145,6 +145,8 @@ class StaticANIObject : public GameObject {
 	Movement *getMovementById(int id);
 
 	Statics *addStatics(Statics *ani);
+	void draw();
+	void draw2();
 };
 
 } // End of namespace Fullpipe

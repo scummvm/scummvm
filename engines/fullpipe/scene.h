@@ -43,6 +43,9 @@ class Scene : public Background {
 	virtual bool load(MfcArchive &file);
 	void initStaticANIObjects();
 	void init();
+	void draw(int par);
+	void drawContent(int minPri, int maxPri, bool drawBG);
+	void updateScrolling(int par);
 };
 
 class SceneTag : public CObject {

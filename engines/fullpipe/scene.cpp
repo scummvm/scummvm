@@ -234,4 +234,32 @@ void Scene::init() {
 	warning("STUB: Scene::init()");
 }
 
+void Scene::draw(int par) {
+	updateScrolling(par);
+
+	drawContent(60000, 0, true);
+
+	//_staticANIObjectList2.sortByPriority();
+
+	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
+		((StaticANIObject *)s)->draw2();
+	}
+
+	int priority = -1;
+	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
+		drawContent(((StaticANIObject *)s)->_priority, priority, false);
+		((StaticANIObject *)s)->draw();
+
+		priority = ((StaticANIObject *)s)->_priority;
+	}
+
+	drawContent(-1, priority, false);
+}
+
+void Scene::updateScrolling(int par) {
+}
+
+void Scene::drawContent(int minPri, int maxPri, bool drawBG) {
+}
+
 } // End of namespace Fullpipe

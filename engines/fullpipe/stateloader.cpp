@@ -101,10 +101,10 @@ bool FullpipeEngine::loadGam(const char *fname) {
 
 		_inventory->rebuildItemRects();
 
-		for (CPtrList::iterator s = _inventory->getScene()->_picObjList.begin(); s != _inventory->getScene()->_picObjList.end(); ++s) {
-		}
-		
 		warning("STUB: loadGam()");
+		//for (CPtrList::iterator s = _inventory->getScene()->_picObjList.begin(); s != _inventory->getScene()->_picObjList.end(); ++s) {
+		//}
+		
 	} else
 		return false;
 
