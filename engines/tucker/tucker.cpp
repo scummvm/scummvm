@@ -941,7 +941,7 @@ void TuckerEngine::fadeOutPalette(int colorsCount) {
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 3 + i]) + kFadePaletteStep * 3;
+			const int c = int(pal[color * 3 + i]) + kFadePaletteStep * 4;
 			pal[color * 3 + i] = MIN<int>(c, _currentPalette[color * 3 + i]);
 		}
 	}
@@ -954,7 +954,7 @@ void TuckerEngine::fadeInPalette(int colorsCount) {
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 3 + i]) - kFadePaletteStep * 3;
+			const int c = int(pal[color * 3 + i]) - kFadePaletteStep * 4;
 			pal[color * 3 + i] = MAX<int>(c, 0);
 		}
 	}
