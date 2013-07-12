@@ -980,11 +980,11 @@ int8 Lucerna::fades(int8 x) {
 
 
 void Lucerna::fadeout(byte n) {
-	warning("STUB: Lucerna::fadeout()");
+	warning("STUB: Lucerna::fadeout()"); // I'll bother with colors later.
 }
 
 void Lucerna::dusk() {
-	warning("STUB: Lucerna::dusk()");
+	warning("STUB: Lucerna::dusk()"); // I'll bother with colors later.
 }
 
 

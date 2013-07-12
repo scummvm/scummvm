@@ -37,8 +37,8 @@ class AvalancheEngine;
 
 class Graph {
 public:
-	static const int16 _screenWidth = 320;
-	static const int16 _screenHeight = 200;
+	static const int16 _screenWidth = 640;
+	static const int16 _screenHeight = 350;
 
 	
 
@@ -59,9 +59,9 @@ private:
 
 	Graphics::Surface _surface;
 
-	static const byte ega_palette_index[16];
+	static const byte _egaPaletteIndex[16];
 
-	static const byte ega_palette[64][3];
+	byte _egaPalette[64][3];
 };
 
 } // End of namespace Avalanche
