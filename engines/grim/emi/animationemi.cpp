@@ -59,7 +59,6 @@ void AnimationEmi::animate(Skeleton *skel, float delta) {
 	_time += delta;
 	if (_time > _duration) {
 		_time = _duration;
-		return;
 	}
 
 	for (int bone = 0; bone < _numBones; ++bone) {
