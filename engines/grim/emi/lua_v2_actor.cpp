@@ -303,6 +303,21 @@ void Lua_V2::AdvanceChore() {
 	}
 }
 
+// TODO: Implement, verify, and rename parameters
+void Lua_V2::CompleteChore() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+
+	if (!lua_isuserdata(param1) || !lua_isnumber(param2))
+		error("Lua_V2::CompleteChore - Unknown params");
+
+	// Guesswork based on StopChore:
+	int chore = lua_getuserdata(param1);
+	float time = lua_getnumber(param2);
+
+	error("Lua_V2::CompleteChore(%d, %f) - TODO: Implement opcode", chore, time);
+}
+
 void Lua_V2::SetActorSortOrder() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object orderObj = lua_getparam(2);
