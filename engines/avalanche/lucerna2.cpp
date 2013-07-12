@@ -46,6 +46,8 @@
 
 #include "common/system.h"
 
+#include "graphics/palette.h"
+
 //#include "dropdown.h"
 //#include "basher.h"
 
@@ -791,8 +793,8 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 	}
 
 	for (byte ff = 0; ff < 9; ff ++) {
-		_vm->_gyro.digit[ff] = new byte[rwlitesize];
-		f.read(_vm->_gyro.digit[ff], rwlitesize);
+		_vm->_gyro.rwlite[ff] = new byte[rwlitesize];
+		f.read(_vm->_gyro.rwlite[ff], rwlitesize);
 	}
 
 	f.close();
@@ -949,7 +951,7 @@ void Lucerna::checkclick() {
 }
 
 void Lucerna::mouse_init() {
-	warning("STUB: Lucerna::mouse_init()");
+	_vm->_gyro.wait();
 }
 
 void Lucerna::mousepage(uint16 page_) {
