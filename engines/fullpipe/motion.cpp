@@ -34,11 +34,14 @@ namespace Fullpipe {
 bool CMotionController::load(MfcArchive &file) {
 	// Is originally empty	file.readClass();
 
+	debug(5, "CMotionController::load()");
 
 	return true;
 }
 
 bool CMctlCompound::load(MfcArchive &file) {
+	debug(5, "CMctlCompound::load()");
+
 	int count = file.readUint32LE();
 
 	debug(6, "CMctlCompound::count = %d", count);
@@ -70,6 +73,8 @@ bool CMctlCompound::load(MfcArchive &file) {
 }
 
 bool CMctlCompoundArray::load(MfcArchive &file) {
+	debug(5, "CMctlCompoundArray::load()");
+
 	int count = file.readUint32LE();
 
 	debug(0, "CMctlCompoundArray::count = %d", count);
@@ -88,6 +93,8 @@ CMovGraph::CMovGraph() {
 }
 
 bool CMovGraph::load(MfcArchive &file) {
+	debug(5, "CMovGraph::load()");
+
 	_links.load(file);
 	_nodes.load(file);
 
@@ -106,6 +113,8 @@ CMovGraphLink::CMovGraphLink() {
 }
 
 bool CMovGraphLink::load(MfcArchive &file) {
+	debug(5, "CMovGraphLink::load()");
+
 	_dwordArray1.load(file);
 	_dwordArray2.load(file);
 
@@ -128,6 +137,8 @@ bool CMovGraphLink::load(MfcArchive &file) {
 }
 
 bool CMovGraphNode::load(MfcArchive &file) {
+	debug(5, "CMovGraphNode::load()");
+
 	_field_14 = file.readUint32LE();
 	_x = file.readUint32LE();
 	_y = file.readUint32LE();
@@ -147,6 +158,8 @@ CReactParallel::CReactParallel() {
 }
 
 bool CReactParallel::load(MfcArchive &file) {
+	debug(5, "CReactParallel::load()");
+
 	_x1 = file.readUint32LE();
 	_y1 = file.readUint32LE();
 	_x2 = file.readUint32LE();
@@ -192,6 +205,8 @@ CReactPolygonal::CReactPolygonal() {
 }
 
 bool CReactPolygonal::load(MfcArchive &file) {
+	debug(5, "CReactPolygonal::load()");
+
 	_field_C = file.readUint32LE();
 	_field_10 = file.readUint32LE();
 	_pointCount = file.readUint32LE();

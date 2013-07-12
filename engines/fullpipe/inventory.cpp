@@ -27,6 +27,8 @@
 namespace Fullpipe {
 
 bool CInventory::load(MfcArchive &file) {
+	debug(5, "CInventory::load()");
+
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
 

@@ -34,6 +34,8 @@ SoundList::SoundList() {
 }
 
 bool SoundList::load(MfcArchive &file, char *fname) {
+	debug(5, "SoundList::load()");
+
 	_soundItemsCount = file.readUint32LE();
 	_soundItems = (Sound **)calloc(_soundItemsCount, sizeof(Sound *));
 
@@ -75,6 +77,8 @@ Sound::Sound() {
 
 
 bool Sound::load(MfcArchive &file, NGIArchive *archive) {
+	debug(5, "Sound::load()");
+
 	MemoryObject::load(file);
 
 	_id = file.readUint32LE();

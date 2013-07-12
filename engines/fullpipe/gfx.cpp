@@ -29,6 +29,8 @@
 namespace Fullpipe {
 
 void Bitmap::load(Common::ReadStream *s) {
+	debug(5, "Bitmap::load()");
+
 	x = s->readUint32LE();
 	y = s->readUint32LE();
 	width = s->readUint32LE();
@@ -54,6 +56,7 @@ Background::Background() {
 }
 
 bool Background::load(MfcArchive &file) {
+	debug(5, "Background::load()");
 	_stringObj = file.readPascalString();
 
 	int count = file.readUint16LE();
@@ -132,6 +135,7 @@ PictureObject::PictureObject() {
 }
 
 bool PictureObject::load(MfcArchive &file, bool bigPicture) {
+	debug(5, "PictureObject::load()");
 	GameObject::load(file);
 
 	if (bigPicture)
@@ -170,6 +174,7 @@ GameObject::GameObject() {
 }
 
 bool GameObject::load(MfcArchive &file) {
+	debug(5, "GameObject::load()");
 	_field_4 = 0;
 	_flags = 0;
 	_field_20 = 0;
@@ -205,6 +210,7 @@ Picture::Picture() {
 }
 
 bool Picture::load(MfcArchive &file) {
+	debug(5, "Picture::load()");
 	MemoryObject::load(file);
 
 	_x = file.readUint32LE();
@@ -240,6 +246,17 @@ bool Picture::load(MfcArchive &file) {
 }
 
 void Picture::setAOIDs() {
+	int w = (g_fullpipe->_pictureScale + _width - 1) / g_fullpipe->_pictureScale;
+	int h = (g_fullpipe->_pictureScale + _height - 1) / g_fullpipe->_pictureScale;
+
+	_memoryObject2->_rows = (byte **)malloc(w * sizeof(int *));
+
+	int pitch = 2 * h;
+	byte *ptr = _memoryObject2->getData();
+	for (int i = 0; i < w; i++) {
+		_memoryObject2->_rows[i] = ptr;
+		ptr += pitch;
+	}
 	warning("STUB: Picture::setAOIDs()");
 }
 
@@ -268,6 +285,7 @@ BigPicture::BigPicture() {
 }
 
 bool BigPicture::load(MfcArchive &file) {
+	debug(5, "BigPicture::load()");
 	Picture::load(file);
 
 	return true;
@@ -280,6 +298,7 @@ Shadows::Shadows() {
 }
 
 bool Shadows::load(MfcArchive &file) {
+	debug(5, "Shadows::load()");
 	_sceneId = file.readUint32LE();
 	_staticAniObjectId = file.readUint32LE();
 	_movementId = file.readUint32LE();

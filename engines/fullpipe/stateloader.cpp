@@ -144,6 +144,8 @@ CGameLoader::~CGameLoader() {
 }
 
 bool CGameLoader::load(MfcArchive &file) {
+	debug(5, "CGameLoader::load()");
+
 	_gameName = file.readPascalString();
 	debug(6, "_gameName: %s", _gameName);
 
@@ -229,18 +231,20 @@ GameProject::GameProject() {
 }
 
 bool GameProject::load(MfcArchive &file) {
+	debug(5, "GameProject::load()");
+
 	_field_4 = 0;
 	_headerFilename = 0;
 	_field_10 = 12;
 
 	g_fullpipe->_gameProjectVersion = file.readUint32LE();
-	g_fullpipe->_gameProjectValue = file.readUint16LE();
+	g_fullpipe->_pictureScale = file.readUint16LE();
 	g_fullpipe->_scrollSpeed = file.readUint32LE();
 
 	_headerFilename = file.readPascalString();
 
 	debug(1, "_gameProjectVersion = %d", g_fullpipe->_gameProjectVersion);
-	debug(1, "_gameProjectValue = %d", g_fullpipe->_gameProjectValue);
+	debug(1, "_pictureScale = %d", g_fullpipe->_pictureScale);
 	debug(1, "_scrollSpeed = %d", g_fullpipe->_scrollSpeed);
 	debug(1, "_headerFilename = %s", _headerFilename);
 
@@ -264,6 +268,8 @@ GameProject::~GameProject() {
 }
 
 bool CInteractionController::load(MfcArchive &file) {
+	debug(5, "CInteractionController::load()");
+
 	return _interactions.load(file);
 }
 
@@ -288,6 +294,8 @@ CInteraction::CInteraction() {
 }
 
 bool CInteraction::load(MfcArchive &file) {
+	debug(5, "CInteraction::load()");
+
 	_objectId1 = file.readUint16LE();
 	_objectId2 = file.readUint16LE();
 	_staticsId1 = file.readUint16LE();
@@ -316,6 +324,8 @@ MessageQueue::MessageQueue() {
 }
 
 bool MessageQueue::load(MfcArchive &file) {
+	debug(5, "MessageQueue::load()");
+
 	_dataId = file.readUint16LE();
 
 	int count = file.readUint16LE();
@@ -346,6 +356,8 @@ ExCommand::ExCommand() {
 }
 
 bool ExCommand::load(MfcArchive &file) {
+	debug(5, "ExCommand::load()");
+
 	_msg._parentId = file.readUint16LE();
 	_msg._messageKind = file.readUint32LE();
 	_msg._x = file.readUint32LE();
@@ -393,6 +405,8 @@ CObjstateCommand::CObjstateCommand() {
 }
 
 bool CObjstateCommand::load(MfcArchive &file) {
+	debug(5, "CObjStateCommand::load()");
+
 	_cmd.load(file);
 
 	_value = file.readUint32LE();
@@ -403,6 +417,8 @@ bool CObjstateCommand::load(MfcArchive &file) {
 }
 
 bool PreloadItems::load(MfcArchive &file) {
+	debug(5, "PreloadItems::load()");
+
 	int count = file.readCount();
 
 	resize(count);
@@ -564,6 +580,8 @@ Sc2::Sc2() {
 }
 
 bool Sc2::load(MfcArchive &file) {
+	debug(5, "Sc2::load()");
+
 	_sceneId = file.readUint16LE();
 
 	_motionController = (CMotionController *)file.readClass();
@@ -617,6 +635,8 @@ bool Sc2::load(MfcArchive &file) {
 }
 
 bool PicAniInfo::load(MfcArchive &file) {
+	debug(5, "PicAniInfo::load()");
+
 	type = file.readUint32LE();
 	objectId = file.readUint16LE();
 	field_6 = file.readUint16LE();
@@ -637,6 +657,8 @@ bool PicAniInfo::load(MfcArchive &file) {
 }
 
 bool EntranceInfo::load(MfcArchive &file) {
+	debug(5, "EntranceInfo::load()");
+
 	sceneId = file.readUint32LE();
 	field_4 = file.readUint32LE();
 	messageQueueId = file.readUint32LE();

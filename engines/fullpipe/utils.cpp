@@ -43,6 +43,7 @@ bool CObject::loadFile(const char *fname) {
 }
 
 bool CObList::load(MfcArchive &file) {
+	debug(5, "CObList::load()");
 	int count = file.readCount();
 
 	debug(9, "CObList::count: %d:", count);
@@ -58,6 +59,7 @@ bool CObList::load(MfcArchive &file) {
 }
 
 bool CObArray::load(MfcArchive &file) {
+	debug(5, "CObArray::load()");
 	int count = file.readCount();
 
 	resize(count);
@@ -72,6 +74,7 @@ bool CObArray::load(MfcArchive &file) {
 }
 
 bool CDWordArray::load(MfcArchive &file) {
+	debug(5, "CWordArray::load()");
 	int count = file.readCount();
 
 	debug(9, "CDWordArray::count: %d", count);
@@ -117,6 +120,7 @@ MemoryObject::MemoryObject() {
 }
 
 bool MemoryObject::load(MfcArchive &file) {
+	debug(5, "MemoryObject::load()");
 	_filename = file.readPascalString();
 
 	if (g_fullpipe->_currArchive) {
@@ -128,6 +132,7 @@ bool MemoryObject::load(MfcArchive &file) {
 }
 
 void MemoryObject::loadFile(char *filename) {
+	debug(0, "MemoryObject::loadFile(<%s>)", filename);
 	if (!_data) {
 		Common::SeekableReadStream *s = g_fullpipe->_currArchive->createReadStreamForMember(filename);
 
@@ -145,7 +150,7 @@ void MemoryObject::loadFile(char *filename) {
 	}
 }
 
-void *MemoryObject::getData() {
+byte *MemoryObject::getData() {
 	load();
 
 	if (_field_14 || _flags & 1) {
@@ -156,10 +161,11 @@ void *MemoryObject::getData() {
 }
 
 MemoryObject2::MemoryObject2() {
-	_data2 = 0;
+	_rows = 0;
 }
 
 bool MemoryObject2::load(MfcArchive &file) {
+	debug(5, "MemoryObject2::load()");
 	MemoryObject::load(file);
 
 	_flags |= 1;

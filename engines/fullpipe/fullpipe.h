@@ -78,7 +78,7 @@ public:
 	bool loadGam(const char *fname);
 
 	int _gameProjectVersion;
-	int _gameProjectValue;
+	int _pictureScale;
 	int _scrollSpeed;
 	int _currSoundListCount;
 	bool _soundEnabled;

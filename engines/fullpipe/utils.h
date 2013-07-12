@@ -99,11 +99,14 @@ class MemoryObject : CObject {
 	virtual bool load(MfcArchive &file);
 	void loadFile(char *filename);
 	void load() { loadFile(_filename); }
-	void *getData();
+	byte *getData();
 };
 
 class MemoryObject2 : public MemoryObject {
-	void *_data2;
+	friend class Picture;
+
+ protected:
+	byte **_rows;
 
  public:
 	MemoryObject2();

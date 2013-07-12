@@ -47,6 +47,8 @@ StaticANIObject::StaticANIObject() {
 }
 
 bool StaticANIObject::load(MfcArchive &file) {
+	debug(5, "StaticANIObject::load()");
+
 	GameObject::load(file);
 
 	int count = file.readUint16LE();
@@ -128,6 +130,8 @@ Statics::Statics() {
 }
 
 bool Statics::load(MfcArchive &file) {
+	debug(5, "Statics::load()");
+
 	DynamicPhase::load(file);
 
 	_staticsId = file.readUint16LE();
@@ -279,6 +283,8 @@ DynamicPhase::DynamicPhase() {
 }
 
 bool DynamicPhase::load(MfcArchive &file) {
+	debug(5, "DynamicPhase::load()");
+
 	StaticPhase::load(file);
 
 	_field_7C = file.readUint16LE();
@@ -309,6 +315,8 @@ StaticPhase::StaticPhase() {
 }
 
 bool StaticPhase::load(MfcArchive &file) {
+	debug(5, "StaticPhase::load()");
+
 	Picture::load(file);
 
 	_initialCountdown = file.readUint16LE();

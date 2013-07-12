@@ -49,6 +49,8 @@ Scene *FullpipeEngine::accessScene(int sceneId) {
 }
 
 bool SceneTagList::load(MfcArchive &file) {
+	debug(5, "SceneTagList::load()");
+
 	int numEntries = file.readUint16LE();
 
 	for (int i = 0; i < numEntries; i++) {
@@ -66,6 +68,8 @@ SceneTag::SceneTag() {
 }
 
 bool SceneTag::load(MfcArchive &file) {
+	debug(5, "SceneTag::load()");
+
 	_field_4 = 0;
 	_scene = 0;
 
@@ -113,6 +117,8 @@ Scene::Scene() {
 }
 
 bool Scene::load(MfcArchive &file) {
+	debug(5, "Scene::load()");
+
 	Background::load(file);
 
 	_sceneId = file.readUint16LE();
