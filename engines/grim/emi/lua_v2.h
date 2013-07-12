@@ -92,6 +92,7 @@ protected:
 	DECLARE_LUA_OPCODE(ToggleOverworld);
 	DECLARE_LUA_OPCODE(ScreenshotForSavegame);
 	DECLARE_LUA_OPCODE(EngineDisplay);
+	DECLARE_LUA_OPCODE(SetAmbientLight);
 	DECLARE_LUA_OPCODE(Display);
 	DECLARE_LUA_OPCODE(ThumbnailFromFile);
 	DECLARE_LUA_OPCODE(ClearSpecialtyTexture);

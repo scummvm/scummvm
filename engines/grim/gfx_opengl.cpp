@@ -537,6 +537,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_LIGHTING);
 
 	//Transparency-Support
 	glEnable(GL_BLEND);
@@ -565,6 +566,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_LIGHTING);
 	glDisable(GL_BLEND);
 	glDepthMask(true);
 	glColor3f(1.0f, 1.0f, 1.0f);
