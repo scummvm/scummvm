@@ -229,18 +229,29 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	/* Compression method byte follows this... */
 
 	f.seek(177);
-	warning("STUB: Lucerna::load()");
+
+	/*for (bit = 0; bit <= 3; bit++) {
+	port[0x3c4] = 2;
+	port[0x3ce] = 4;
+	port[0x3c5] = 1 << bit;
+	port[0x3cf] = bit;
+	blockread(f, a0, 12080);
+	move(a0, a1, 12080);
+	}*/
 
 	Graphics::Surface background;
 	background.create(_vm->_graph._screenWidth, _vm->_graph._screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
+	byte backgroundHeight = 8 * 12080 / _vm->_graph._screenWidth; // With 640 width it's 151
+	// The 8 = number of bits in a byte, and 12080 comes from the original code (see above)
+
 	for (byte plane = 0; plane < 4; plane++)
-		for (uint16 y = 0; y < 151; y++)
-			for (uint16 x = 0; x < 640; x += 8) {
+		for (uint16 y = 0; y < backgroundHeight; y++)
+			for (uint16 x = 0; x < _vm->_graph._screenWidth; x += 8) {
 				byte pixel = f.readByte();
 				for (byte i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
-					*(byte *)background.getBasePtr(x + i, y) += (pixelBit << plane);
+					*(byte *)background.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
 				}	
 			}
 
@@ -251,14 +262,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	_vm->_graph.refreshScreen();
 
 
-	/*for (bit = 0; bit <= 3; bit++) {
-	port[0x3c4] = 2;
-	port[0x3ce] = 4;
-	port[0x3c5] = 1 << bit;
-	port[0x3cf] = bit;
-	blockread(f, a0, 12080);
-	move(a0, a1, 12080);
-	}*/
+
 
 	f.close();
 
