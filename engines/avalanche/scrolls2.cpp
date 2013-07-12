@@ -57,7 +57,46 @@ void Scrolls::init() {
 }
 
 void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
+	byte page_;
+
+	if (_vm->_gyro.ledstatus == x)
+		return; /* Already like that! */
+
+	byte color;
+	switch (x) {
+	case 0:
+		color = black;
+		break; /* Off */
+	case 1:
+	case 2:
+	case 3:
+		color = green;
+		break; /* Hit a key */
+	}
+
+	//switch (x) {
+	//case 0:
+	//	setfillstyle(1, black);
+	//	break; /* Off */
+	//case 1:
+	//	setfillstyle(9, green);
+	//	break; /* Half-on (menus) */
+	//case 2:
+	//	setfillstyle(1, green);
+	//	break; /* On (kbd) */
+	//case 3:
+	//	setfillstyle(6, green);
+	//	break; /* Hit a key */
+	//}
 	warning("STUB: Scrolls::state()");
+
+	_vm->_gyro.super_off();
+
+	_vm->_graph.drawBar(419, 195, 438, 197, color);
+	_vm->_graph.refreshScreen();
+
+	_vm->_gyro.super_on();
+	_vm->_gyro.ledstatus = x;
 }
 
 void Scrolls::easteregg() {
