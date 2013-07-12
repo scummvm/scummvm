@@ -501,91 +501,7 @@ void GrimEngine::updateDisplayScene() {
 
 		g_driver->clearScreen();
 
-		_prevSmushFrame = 0;
-		_movieTime = 0;
-
-		_currSet->drawBackground();
-
-		// Draw underlying scene components
-		// Background objects are drawn underneath everything except the background
-		// There are a bunch of these, especially in the tube-switcher room
-		_currSet->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
-
-		// State objects are drawn on top of other things, such as the flag
-		// on Manny's message tube
-		_currSet->drawBitmaps(ObjectState::OBJSTATE_STATE);
-
-		// Play SMUSH Animations
-		// This should occur on top of all underlying scene objects,
-		// a good example is the tube switcher room where some state objects
-		// need to render underneath the animation or you can't see what's going on
-		// This should not occur on top of everything though or Manny gets covered
-		// up when he's next to Glottis's service room
-		if (g_movie->isPlaying() && _movieSetup == _currSet->getCurrSetup()->_name) {
-			_movieTime = g_movie->getMovieTime();
-			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareMovieFrame(g_movie->getDstSurface());
-				g_movie->clearUpdateNeeded();
-			}
-			if (g_movie->getFrame() >= 0)
-				g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
-			else
-				g_driver->releaseMovieFrame();
-		}
-
-		// Underlay objects must be drawn on top of movies
-		// Otherwise the lighthouse door will always be open as the underlay for
-		// the closed door will be overdrawn by a movie used as background image.
-		_currSet->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
-
-		// Draw Primitives
-		foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
-			p->draw();
-		}
-
-		_currSet->setupCamera();
-
-		g_driver->set3DMode();
-
-		if (_setupChanged) {
-			cameraPostChangeHandle(_currSet->getSetup());
-			_setupChanged = false;
-		}
-
-		// Draw actors
-		buildActiveActorsList();
-		if (g_grim->getGameType() == GType_GRIM) {
-			foreach (Actor *a, _activeActors) {
-				if (a->isVisible())
-					a->draw();
-			}
-		} else {
-			Bitmap *background = _currSet->_currSetup->_bkgndBm;
-			uint32 numLayers = background->_data->_numLayers;
-			int32 currentLayer = numLayers - 1;
-			foreach (Actor *a, _activeActors) {
-				if (a->getSortOrder() < 0)
-					break;
-
-				while (a->getSortOrder() <= currentLayer * 10 && currentLayer >= 0) {
-					background->drawLayer(currentLayer--);
-				}
-
-				if (a->isVisible())
-					a->draw();
-			}
-			while (currentLayer >= 0) {
-				background->drawLayer(currentLayer--);
-			}
-		}
-
-
-		flagRefreshShadowMask(false);
-
-		// Draw overlying scene components
-		// The overlay objects should be drawn on top of everything else,
-		// including 3D objects such as Manny and the message tube
-		_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+		drawNormalMode();
 
 		g_driver->drawBuffers();
 		drawPrimitives();
@@ -594,6 +510,73 @@ void GrimEngine::updateDisplayScene() {
 		_prevSmushFrame = 0;
 		_movieTime = 0;
 	}
+}
+
+void GrimEngine::drawNormalMode() {
+	_prevSmushFrame = 0;
+	_movieTime = 0;
+
+	_currSet->drawBackground();
+
+	// Draw underlying scene components
+	// Background objects are drawn underneath everything except the background
+	// There are a bunch of these, especially in the tube-switcher room
+	_currSet->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
+
+	// State objects are drawn on top of other things, such as the flag
+	// on Manny's message tube
+	_currSet->drawBitmaps(ObjectState::OBJSTATE_STATE);
+
+	// Play SMUSH Animations
+	// This should occur on top of all underlying scene objects,
+	// a good example is the tube switcher room where some state objects
+	// need to render underneath the animation or you can't see what's going on
+	// This should not occur on top of everything though or Manny gets covered
+	// up when he's next to Glottis's service room
+	if (g_movie->isPlaying() && _movieSetup == _currSet->getCurrSetup()->_name) {
+		_movieTime = g_movie->getMovieTime();
+		if (g_movie->isUpdateNeeded()) {
+			g_driver->prepareMovieFrame(g_movie->getDstSurface());
+			g_movie->clearUpdateNeeded();
+		}
+		if (g_movie->getFrame() >= 0)
+			g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
+		else
+			g_driver->releaseMovieFrame();
+	}
+
+	// Underlay objects must be drawn on top of movies
+	// Otherwise the lighthouse door will always be open as the underlay for
+	// the closed door will be overdrawn by a movie used as background image.
+	_currSet->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+
+	// Draw Primitives
+	foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
+		p->draw();
+	}
+
+	_currSet->setupCamera();
+
+	g_driver->set3DMode();
+
+	if (_setupChanged) {
+		cameraPostChangeHandle(_currSet->getSetup());
+		_setupChanged = false;
+	}
+
+	// Draw actors
+	buildActiveActorsList();
+	foreach (Actor *a, _activeActors) {
+		if (a->isVisible())
+			a->draw();
+	}
+
+	flagRefreshShadowMask(false);
+
+	// Draw overlying scene components
+	// The overlay objects should be drawn on top of everything else,
+	// including 3D objects such as Manny and the message tube
+	_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 }
 
 void GrimEngine::doFlip() {

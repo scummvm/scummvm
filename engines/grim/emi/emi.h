@@ -38,7 +38,9 @@ public:
 	Common::List<TextObject *> *popText();
 
 private:
-	LuaBase *createLua();
+	LuaBase *createLua() override;
+	void drawNormalMode() override;
+
 	Common::List<Common::List<TextObject *> *> _textstack;
 };
 
