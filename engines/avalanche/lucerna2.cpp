@@ -236,11 +236,11 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	for (byte plane = 0; plane < 4; plane++)
 		for (uint16 y = 0; y < 151; y++)
-			for (uint16 x = 0; x < 640/8; x++) {
+			for (uint16 x = 0; x < 640; x += 8) {
 				byte pixel = f.readByte();
 				for (byte i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
-					*(byte *)background.getBasePtr(x * 8, y) += (pixelBit << plane);
+					*(byte *)background.getBasePtr(x + i, y) += (pixelBit << plane);
 				}	
 			}
 
