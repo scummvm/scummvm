@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	emi/modelemi.o \
 	emi/skeleton.o \
 	emi/poolsound.o \
+	emi/layer.o \
 	emi/lua_v2.o \
 	emi/lua_v2_actor.o \
 	emi/lua_v2_sound.o \

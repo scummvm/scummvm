@@ -33,6 +33,7 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/font.h"
 
+#include "engines/grim/emi/layer.h"
 #include "engines/grim/emi/emi.h"
 
 #include "engines/grim/movie/movie.h"
@@ -439,18 +440,18 @@ void Lua_V2::NewLayer() {
 	lua_Object param3 = lua_getparam(3);
 
 	const char *til = NULL;
-	int layer = 0, zero = 0;
+	int sortorder = 0, zero = 0;
 	if (lua_isstring(param1) && lua_isnumber(param2) && lua_isnumber(param3)) {
 		til = lua_getstring(param1);
-		layer = (int)lua_getnumber(param2);
+		sortorder = (int)lua_getnumber(param2);
 
 		//This one is always specified, but also always 0...
-		zero = (int)lua_getnumber(param2);
+		zero = (int)lua_getnumber(param3);
 
-		warning("Stub function: NewLayer(%s, %d, %d) - returning 0", til, layer, zero);
+		Layer *layer = new Layer(til, sortorder);
 
 		// Need to return something that can be looked up later
-		lua_pushusertag(0, MKTAG('L','A','Y','R'));
+		lua_pushusertag(layer->getId(), MKTAG('L','A','Y','R'));
 	}
 }
 
@@ -458,7 +459,8 @@ void Lua_V2::FreeLayer() {
 	lua_Object param1 = lua_getparam(1);
 	if (lua_isuserdata(param1) && lua_tag(param1) == MKTAG('L','A','Y','R')) {
 		int layer = (int)lua_getuserdata(param1);
-		warning("Stub function: FreeLayer(%d)", layer);
+		Layer *l = Layer::getPool().getObject(layer);
+		delete l;
 	}
 }
 
@@ -468,7 +470,8 @@ void Lua_V2::AdvanceLayerFrame() {
 	if (lua_isuserdata(param1) && lua_tag(param1) == MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
 		int layer = (int)lua_getuserdata(param1);
 		int one = (int)lua_getnumber(param2);
-		warning("Stub function: AdvanceLayerFrame(%d, %d)", layer, one);
+		Layer *l = Layer::getPool().getObject(layer);
+		l->advanceFrame(one);
 	}
 }
 
@@ -478,7 +481,8 @@ void Lua_V2::SetLayerFrame() {
 	if (lua_isuserdata(param1) && lua_tag(param1) == MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
 		int layer = (int)lua_getuserdata(param1);
 		int one = (int)lua_getnumber(param2);
-		warning("Stub function: SetLayerFrame(%d, %d)", layer, one);
+		Layer *l = Layer::getPool().getObject(layer);
+		l->setFrame(one);
 	}
 }
 
@@ -488,7 +492,8 @@ void Lua_V2::SetLayerSortOrder() {
 	if (lua_isuserdata(param1) && lua_tag(param1) != MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
 		int layer = (int)lua_getuserdata(param1);
 		int sortorder = (int)lua_getnumber(param2);
-		warning("Stub function: SetLayerSortOrder(%d, %d)", layer, sortorder);
+		Layer *l = Layer::getPool().getObject(layer);
+		l->setSortOrder(sortorder);
 	}
 }
 
