@@ -537,17 +537,62 @@ static void stubError(const char *funcName) {
 // STUB_FUNC2(Lua_V2::IsPointInSector)
 // STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 
+// Stubbed functions with semi-known arguments:
+// TODO: Verify and implement these: (And add type-checking), also rename params
+void Lua_V2::GetCameraPitch() {
+	error("Lua_V2::GetCameraPitch() - TODO: Implement opcode");
+}
+
+// No idea about parameter types for these three, presumably float
+void Lua_V2::PitchCamera() {
+	lua_Object param1 = lua_getparam(1);
+
+	if (!lua_isnumber(param1))
+		error("Lua_V2::PitchCamera - Unknown parameters");
+
+	float floatValue = lua_getnumber(param1);
+	error("Lua_V2::PitchCamera(%f) - TODO: Implement opcode", floatValue);
+}
+
+void Lua_V2::RollCamera() {
+	lua_Object param1 = lua_getparam(1);
+
+	if (!lua_isnumber(param1))
+		error("Lua_V2::RollCamera - Unknown parameters");
+
+	float floatValue = lua_getnumber(param1);
+	error("Lua_V2::RollCamera(%f) - TODO: Implement opcode", floatValue);
+}
+
+void Lua_V2::YawCamera() {
+	lua_Object param1 = lua_getparam(1);
+
+	if (!lua_isnumber(param1))
+		error("Lua_V2::YawCamera - Unknown parameters");
+
+	float floatValue = lua_getnumber(param1);
+	error("Lua_V2::YawCamera(%f) - TODO: Implement opcode", floatValue);
+}
+
+void Lua_V2::NukeAllScriptLocks() {
+	error("Lua_V2::NukeAllScriptLocks() - TODO: Implement opcode");
+}
+
+void Lua_V2::FRUTEY_Begin() {
+	lua_Object param1 = lua_getparam(1);
+
+	if (!lua_isstring(param1))
+		error("Lua_V2::FRUTEY_Begin - Unknown parameters");
+
+	const char *paramText = lua_getstring(param1);
+	error("Lua_V2::FRUTEY_Begin(%s) - TODO: Implement opcode", paramText);
+}
+
+void Lua_V2::FRUTEY_End() {
+	error("Lua_V2::FRUTEY_End() - TODO: Implement opcode");
+}
+
 // Monkey specific LUA_OPCODEs
-STUB_FUNC2(Lua_V2::CompleteChore)
-STUB_FUNC2(Lua_V2::GetSoundVolume)
-STUB_FUNC2(Lua_V2::SetSoundVolume)
-STUB_FUNC2(Lua_V2::UpdateSoundPosition)
-STUB_FUNC2(Lua_V2::ImStateHasLooped)
-STUB_FUNC2(Lua_V2::YawCamera)
-STUB_FUNC2(Lua_V2::GetCameraPitch)
-STUB_FUNC2(Lua_V2::PitchCamera)
-STUB_FUNC2(Lua_V2::RollCamera)
-STUB_FUNC2(Lua_V2::NukeAllScriptLocks)
 STUB_FUNC2(Lua_V2::ToggleDebugDraw)
 STUB_FUNC2(Lua_V2::ToggleDrawCameras)
 STUB_FUNC2(Lua_V2::ToggleDrawLights)
@@ -562,8 +607,6 @@ STUB_FUNC2(Lua_V2::SectEditDelete)
 STUB_FUNC2(Lua_V2::SectEditInsert)
 STUB_FUNC2(Lua_V2::SectEditSortAdd)
 STUB_FUNC2(Lua_V2::SectEditForgetIt)
-STUB_FUNC2(Lua_V2::FRUTEY_Begin)
-STUB_FUNC2(Lua_V2::FRUTEY_End)
 
 struct luaL_reg monkeyMainOpcodes[] = {
 	// Monkey specific LUA_OPCODEs:

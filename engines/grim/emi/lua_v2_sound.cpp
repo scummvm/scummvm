@@ -117,6 +117,19 @@ void Lua_V2::ImStateHasEnded() {
 	warning("Lua_V2::ImStateHasEnded: state %d.", state);
 }
 
+// TODO: Implement this:
+void Lua_V2::ImStateHasLooped() {
+	lua_Object stateObj = lua_getparam(1);
+	if (!lua_isnumber(stateObj))
+		return;
+
+	int state = (int)lua_getnumber(stateObj);
+
+	// See ImStateHasEnded for clues to return-value
+	pushbool(false); // TODO: Implement
+	error("Lua_V2::ImStateHasLooped(%d) - TODO: Implement opcode", state);
+}
+
 void Lua_V2::EnableVoiceFX() {
 	lua_Object stateObj = lua_getparam(1);
 
@@ -313,6 +326,41 @@ void Lua_V2::PlaySoundFrom() {
 //  lua_Object posZObj = lua_getparam(5);
 
 	return PlaySound();
+}
+
+// TODO: Implement, verify, and rename parameters
+void Lua_V2::GetSoundVolume() {
+	error("Lua_V2::GetSoundVolume - TODO: Implement opcode");
+}
+
+// TODO: Implement, verify, and rename parameters
+void Lua_V2::SetSoundVolume() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+
+	if (!lua_isuserdata(param1) || !lua_isnumber(param2))
+		error("Lua_V2::SetSoundVolume - ERROR: Unknown parameters");
+
+	int volume = (int)lua_getnumber(param2);
+
+	error("Lua_V2::SetSoundVolume(???, %d) - TODO: Implement opcode", volume);
+}
+
+// TODO: Implement, verify, and rename parameters
+void Lua_V2::UpdateSoundPosition() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	lua_Object param3 = lua_getparam(3);
+	lua_Object param4 = lua_getparam(4);
+
+	if (lua_isuserdata(param1) && lua_isnumber(param2) && lua_isnumber(param3) && lua_isnumber(param4)) {
+		float x = lua_getnumber(param2);
+		float y = lua_getnumber(param3);
+		float z = lua_getnumber(param4);
+		error("Lua_V2::UpdateSoundPosition(???, %f, %f, %f) - TODO: Implement opcode", x, y, z);
+	} else {
+		error("Lua_V2::UpdateSoundPosition - ERROR: Unknown parameters");
+	}
 }
 
 void Lua_V2::ImSetMusicVol() {
