@@ -35,6 +35,7 @@
 #include "engines/util.h"
 
 #include "graphics/palette.h"
+#include "common/rect.h"
 
 namespace Avalanche {
 
@@ -73,7 +74,11 @@ void Graph::setPixel(byte *pixel, byte color) {
 	*pixel = color;
 }
 
-void Graph::drawToScreen() {
+void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
+	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
+}
+
+void Graph::refreshScreen() {
 	g_system->copyRectToScreen(_surface.pixels, _surface.pitch , 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 }

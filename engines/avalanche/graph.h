@@ -38,7 +38,7 @@ class AvalancheEngine;
 class Graph {
 public:
 	static const int16 _screenWidth = 640;
-	static const int16 _screenHeight = 350;
+	static const int16 _screenHeight = 200;
 
 	
 
@@ -52,7 +52,9 @@ public:
 
 	void setPixel(byte *pixel, byte color);
 
-	void drawToScreen();
+	void drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
+
+	void refreshScreen();
 
 private:
 	AvalancheEngine *_vm;
