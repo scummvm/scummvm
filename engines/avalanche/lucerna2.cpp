@@ -230,14 +230,35 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	f.seek(177);
 	warning("STUB: Lucerna::load()");
-	for (bit = 0; bit <= 3; bit++) {
-		/*port[0x3c4] = 2;
-		port[0x3ce] = 4;
-		port[0x3c5] = 1 << bit;
-		port[0x3cf] = bit;
-		blockread(f, a0, 12080);
-		move(a0, a1, 12080);*/
-	}
+
+	Graphics::Surface background;
+	background.create(_vm->_graph._screenWidth, _vm->_graph._screenHeight, Graphics::PixelFormat::createFormatCLUT8());
+
+	for (byte plane = 0; plane < 4; plane++)
+		for (uint16 y = 0; y < 151; y++)
+			for (uint16 x = 0; x < 640/8; x++) {
+				byte pixel = f.readByte();
+				for (byte i = 0; i < 8; i++) {
+					byte pixelBit = (pixel >> i) & 1;
+					*(byte *)background.getBasePtr(x * 8, y) += (pixelBit << plane);
+				}	
+			}
+
+	_vm->_graph.copySurface(background);
+
+	background.free();
+
+	_vm->_graph.refreshScreen();
+
+
+	/*for (bit = 0; bit <= 3; bit++) {
+	port[0x3c4] = 2;
+	port[0x3ce] = 4;
+	port[0x3c5] = 1 << bit;
+	port[0x3cf] = bit;
+	blockread(f, a0, 12080);
+	move(a0, a1, 12080);
+	}*/
 
 	f.close();
 
@@ -246,8 +267,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	_vm->_pingo.copy03();
 
-	//bit = getpixel(0, 0);
-	warning("STUB: Lucerna::load()");
+	bit = *_vm->_graph.getPixel(0,0);
 
 	_vm->_logger.log_newroom(_vm->_gyro.roomname);
 
