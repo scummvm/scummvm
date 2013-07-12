@@ -64,18 +64,20 @@ struct InventoryItem {
 
 typedef Common::Array<InventoryItem> InventoryItems;
 
+class PictureObject;
+
 class InventoryIcon {
-	int pictureObjectNormal;
-	int pictureObjectMouseInside;
-	int pictureObject3;
-	int x1;
-	int y1;
-	int x2;
-	int y2;
-	int16 inventoryItemId;
-	int16 field_1E;
-	int isSelected;
-	int isMouseInside;
+	PictureObject *_pictureObjectNormal;
+	InventoryIcon **_icons;
+	int _numIcons;
+	int _x1;
+	int _y1;
+	int _x2;
+	int _y2;
+	int16 _inventoryItemId;
+	int16 _field_1E;
+	int _isSelected;
+	int _isMouseInside;
 };
 
 typedef Common::Array<InventoryIcon> InventoryIcons;

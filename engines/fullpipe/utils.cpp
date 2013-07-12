@@ -132,7 +132,7 @@ bool MemoryObject::load(MfcArchive &file) {
 }
 
 void MemoryObject::loadFile(char *filename) {
-	debug(0, "MemoryObject::loadFile(<%s>)", filename);
+	debug(5, "MemoryObject::loadFile(<%s>)", filename);
 	if (!_data) {
 		Common::SeekableReadStream *s = g_fullpipe->_currArchive->createReadStreamForMember(filename);
 

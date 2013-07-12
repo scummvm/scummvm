@@ -257,7 +257,6 @@ void Picture::setAOIDs() {
 		_memoryObject2->_rows[i] = ptr;
 		ptr += pitch;
 	}
-	warning("STUB: Picture::setAOIDs()");
 }
 
 void Picture::init() {
@@ -279,6 +278,13 @@ void Picture::getDibInfo() {
 
 	_bitmap->load(s);
 	_bitmap->pixels = _data;
+}
+
+Bitmap *Picture::getPixelData() {
+	if (!_bitmap)
+		init();
+
+	return _bitmap;
 }
 
 BigPicture::BigPicture() {

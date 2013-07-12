@@ -66,6 +66,10 @@ class Picture : public MemoryObject {
 	void setAOIDs();
 	void init();
 	void getDibInfo();
+	Bitmap *getPixelData();
+
+	byte getAlpha() { return (byte)_alpha; }
+	void setAlpha(byte alpha) { _alpha = alpha; }
 };
 
 class BigPicture : public Picture {
