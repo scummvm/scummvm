@@ -840,10 +840,10 @@ const Feature s_features[] = {
 	{     "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
 	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
 	{    "flac",        "USE_FLAC", "libFLAC_static",   true, "FLAC support" },
-	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
+	{     "png",         "USE_PNG", "libpng",           false, "libpng support" },
 	{    "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
-	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
-	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
+	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         true, "MPEG-2 support" },
+	{  "theora",   "USE_THEORADEC", "libtheora_static", false, "Theora decoding support" },
 	{"freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
 
 	// Feature flags
@@ -855,7 +855,7 @@ const Feature s_features[] = {
 	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{          "opengl",           "USE_OPENGL", "opengl32", true,  "OpenGL support" },
 	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
-	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
+	{     "translation",      "USE_TRANSLATION",         "", false,  "Translation support" },
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
