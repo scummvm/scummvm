@@ -154,4 +154,8 @@ Common::RandomSource *ZVision::getRandomSource() const {
 	return _rnd;
 }
 
+Audio::Mixer *ZVision::getMixer() const {
+	return _mixer;
+}
+
 } // End of namespace ZVision

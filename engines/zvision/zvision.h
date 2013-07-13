@@ -76,6 +76,8 @@ public:
 	virtual Common::Error run();
 	ScriptManager *getScriptManager() const;
 	Common::RandomSource *getRandomSource() const;
+	Audio::Mixer *getMixer() const;
+
 	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
 	void startVideo(Video::VideoDecoder *videoDecoder);
 	void continueVideo();

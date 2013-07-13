@@ -23,16 +23,21 @@
 #include "common/scummsys.h"
 
 #include "gui/debugger.h"
+#include "common/file.h"
+#include "common/bufferedstream.h"
+#include "audio/mixer.h"
 
 #include "zvision/console.h"
 #include "zvision/zvision.h"
 #include "zvision/zork_avi_decoder.h"
+#include "zvision/zork_raw.h"
 
 namespace ZVision {
 
 Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
 	DCmd_Register("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
+	DCmd_Register("loadsound", WRAP_METHOD(Console, cmdLoadSound));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -55,6 +60,25 @@ bool Console::cmdLoadVideo(int argc, const char **argv) {
 	if (videoDecoder && videoDecoder->loadFile(argv[1])) {
 		_engine->startVideo(videoDecoder);
 	}
+
+	return true;
+}
+
+bool Console::cmdLoadSound(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Use loadsound <fileName> <rate> to load a video to the screen");
+		return true;
+	}
+
+	Common::File *file = new Common::File();
+	if (!file->open(argv[1])) {
+		DebugPrintf("File does not exist");
+		return true;
+	}
+
+	Audio::AudioStream *soundStream = makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), atoi(argv[2]), DisposeAfterUse::YES);
+	Audio::SoundHandle handle;
+	_engine->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
 
 	return true;
 }
