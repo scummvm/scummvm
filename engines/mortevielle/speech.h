@@ -25,8 +25,8 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#ifndef MORTEVIELLE_PAROLE_H
-#define MORTEVIELLE_PAROLE_H
+#ifndef MORTEVIELLE_SPEECH_H
+#define MORTEVIELLE_SPEECH_H
 
 #include "common/scummsys.h"
 #include "mortevielle/sound.h"
@@ -99,4 +99,5 @@ public:
 };
 
 } // End of namespace Mortevielle
+
 #endif
