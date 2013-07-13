@@ -102,6 +102,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Deck #5 - By Lift
 		return new Scene850();
 	case 900:
+		// Lander Bay 2 - Crane Controls
 		return new Scene900();
 	/* Scene group #1 */
 	//
