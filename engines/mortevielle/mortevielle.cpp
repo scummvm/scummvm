@@ -55,6 +55,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_text.setParent(this);
 	_soundManager.setParent(this);
 	_speechManager.setParent(this);
+	_savegameManager.setParent(this);
 
 	_lastGameFrame = 0;
 	_mouseClick = false;
@@ -144,6 +145,18 @@ Common::Error MortevielleEngine::saveGameState(int slot, const Common::String &d
 		return Common::kWritingFailed;
 
 	return _savegameManager.saveGame(slot, desc);
+}
+
+/**
+ * Support method that generates a savegame name
+ * @param slot		Slot number
+ */
+Common::String MortevielleEngine::generateSaveFilename(const Common::String &target, int slot) {
+	if (slot == 0)
+		// Initial game state loaded when the game starts
+		return "sav0.mor";
+
+	return Common::String::format("%s.%03d", target.c_str(), slot);
 }
 
 /**
@@ -335,7 +348,7 @@ Common::Error MortevielleEngine::run() {
 
 	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
-	_savegameManager.loadSavegame(loadSlot);
+	_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
 
 	// Run the main game loop
 	mainGame();

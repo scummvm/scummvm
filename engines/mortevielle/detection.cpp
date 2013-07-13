@@ -89,7 +89,8 @@ SaveStateList MortevielleMetaEngine::listSaves(const char *target) const {
 }
 
 SaveStateDescriptor MortevielleMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	return Mortevielle::SavegameManager::querySaveMetaInfos(slot);
+	Common::String filename = Mortevielle::MortevielleEngine::generateSaveFilename(target, slot);
+	return Mortevielle::SavegameManager::querySaveMetaInfos(filename);
 }
 
 
