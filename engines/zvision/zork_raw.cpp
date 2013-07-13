@@ -22,164 +22,113 @@
 
 #include "common/scummsys.h"
 
-#include "common/endian.h"
+#include "common/stream.h"
 #include "common/memstream.h"
-#include "common/textconsole.h"
 #include "common/util.h"
-
 #include "audio/audiostream.h"
 
 #include "engines/zvision/zork_raw.h"
 
 namespace ZVision {
 
-#pragma mark -
-#pragma mark --- RawZorkStream ---
-#pragma mark -
+const int16 RawZorkStream::stepAdjustmentTable[8] = {-1, -1, -1, 1, 4, 7, 10, 12};
 
-/**
- * This is a stream, which allows for playing raw PCM data from a stream.
- */
-class RawZorkStream : public Audio::SeekableAudioStream {
-public:
-	RawZorkStream(int rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
-		: _rate(rate), _playtime(0, rate), _stream(stream, disposeStream), _endOfData(false), _buffer(0) {
-		// Setup our buffer for readBuffer
-		_buffer = new byte[kSampleBufferLength];
-		assert(_buffer);
+const int32 RawZorkStream::amplitudeLookupTable[89] = {0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E,
+                                                       0x0010, 0x0011, 0x0013, 0x0015, 0x0017, 0x0019, 0x001C, 0x001F,
+                                                       0x0022, 0x0025, 0x0029, 0x002D, 0x0032, 0x0037, 0x003C, 0x0042,
+                                                       0x0049, 0x0050, 0x0058, 0x0061, 0x006B, 0x0076, 0x0082, 0x008F,
+                                                       0x009D, 0x00AD, 0x00BE, 0x00D1, 0x00E6, 0x00FD, 0x0117, 0x0133, 
+                                                       0x0151, 0x0173, 0x0198, 0x01C1, 0x01EE, 0x0220, 0x0256, 0x0292,
+                                                       0x02D4, 0x031C, 0x036C, 0x03C3, 0x0424, 0x048E, 0x0502, 0x0583, 
+                                                       0x0610, 0x06AB, 0x0756, 0x0812, 0x08E0, 0x09C3, 0x0ABD, 0x0BD0,
+                                                       0x0CFF, 0x0E4C, 0x0FBA, 0x114C, 0x1307, 0x14EE, 0x1706, 0x1954, 
+                                                       0x1BDC, 0x1EA5, 0x21B6, 0x2515, 0x28CA, 0x2CDF, 0x315B, 0x364B,
+                                                       0x3BB9, 0x41B2, 0x4844, 0x4F7E, 0x5771, 0x602F, 0x69CE, 0x7462, 0x7FFF};
 
-		// Calculate the total playtime of the stream
-		_playtime = Audio::Timestamp(0, _stream->size() / 2 / 1, rate);
-	}
+RawZorkStream::RawZorkStream(uint32 rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
+		: _rate(rate),
+		  _stream(stream, disposeStream),
+		  _endOfData(false) {
+	_lastSample[0] = {0, 0};
+	_lastSample[1] = {0, 0};
 
-	~RawZorkStream() {
-		delete[] _buffer;
-	}
-
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool isStereo() const  { return true; }
-	bool endOfData() const { return _endOfData; }
-
-	int getRate() const         { return _rate; }
-	Audio::Timestamp getLength() const { return _playtime; }
-
-	bool seek(const Audio::Timestamp &where);
-private:
-	const int _rate;                                           ///< Sample rate of stream
-	Audio::Timestamp _playtime;                                       ///< Calculated total play time
-	Common::DisposablePtr<Common::SeekableReadStream> _stream; ///< Stream to read data from
-	bool _endOfData;                                           ///< Whether the stream end has been reached
-
-	byte *_buffer;                                             ///< Buffer used in readBuffer
-	enum {
-		/**
-		 * How many samples we can buffer at once.
-		 *
-		 * TODO: Check whether this size suffices
-		 * for systems with slow disk I/O.
-		 */
-		kSampleBufferLength = 2048
-	};
-
-	/**
-	 * Fill the temporary sample buffer used in readBuffer.
-	 *
-	 * @param maxSamples Maximum samples to read.
-	 * @return actual count of samples read.
-	 */
-	int fillBuffer(int maxSamples);
-};
+	// Calculate the total playtime of the stream
+	_playtime = Audio::Timestamp(0, _stream->size() / 2, rate);
+}
 
 int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samplesLeft = numSamples;
+	uint16 bytesRead = 0;
 
-	while (samplesLeft > 0) {
-		// Try to read up to "samplesLeft" samples.
-		int len = fillBuffer(samplesLeft);
+	// 0: Left, 1: Right
+	byte channel = 0;
 
-		// In case we were not able to read any samples
-		// we will stop reading here.
-		if (!len)
-			break;
+	while (bytesRead < numSamples) {
+		byte encodedSample = _stream->readByte();
+		bytesRead++;
 
-		// Adjust the samples left to read.
-		samplesLeft -= len;
-
-		// Copy the data to the caller's buffer.
-		const byte *src = _buffer;
-		while (len-- > 0) {
-			if (*src < 128)
-				*buffer++ = ((128 - *src) << 8) ^ 0x8000;
-			else
-				*buffer++ = (*src << 8) ^ 0x8000;
-			src++;
-		}
-	}
-
-	return numSamples - samplesLeft;
-}
-
-int RawZorkStream::fillBuffer(int maxSamples) {
-	int bufferedSamples = 0;
-	byte *dst = _buffer;
-
-	// We can only read up to "kSampleBufferLength" samples
-	// so we take this into consideration, when trying to
-	// read up to maxSamples.
-	maxSamples = MIN<int>(kSampleBufferLength, maxSamples);
-
-	// We will only read up to maxSamples
-	while (maxSamples > 0 && !endOfData()) {
-		// Try to read all the sample data and update the
-		// destination pointer.
-		const int bytesRead = _stream->read(dst, maxSamples);
-		dst += bytesRead;
-
-		// Calculate how many samples we actually read.
-		const int samplesRead = bytesRead;
-
-		// Update all status variables
-		bufferedSamples += samplesRead;
-		maxSamples -= samplesRead;
-
-		// We stop stream playback, when we reached the end of the data stream.
-		// We also stop playback when an error occures.
-		if (_stream->pos() == _stream->size() || _stream->err() || _stream->eos())
+		if (_stream->eos()) {
 			_endOfData = true;
+			return bytesRead;
+		}
+
+		uint16 index = _lastSample[channel].index;
+		uint32 lookUpSample = amplitudeLookupTable[index];
+
+		int32 sample = 0;
+
+		if (encodedSample & 0x40)
+			sample += lookUpSample;
+		if (encodedSample & 0x20)
+			sample += lookUpSample >> 1;
+		if (encodedSample & 0x10)
+			sample += lookUpSample >> 2;
+		if (encodedSample & 8)
+			sample += lookUpSample >> 3;
+		if (encodedSample & 4)
+			sample += lookUpSample >> 4;
+		if (encodedSample & 2)
+			sample += lookUpSample >> 5;
+		if (encodedSample & 1)
+			sample += lookUpSample >> 6;
+		if (encodedSample & 0x80)
+			sample = -sample;
+
+		sample += _lastSample[channel].sample;
+		sample = CLIP(sample, -32768, 32767);
+
+		buffer[bytesRead - 1] = (int16)sample;
+
+		index += stepAdjustmentTable[(encodedSample >> 4) & 7];
+		index = CLIP<uint16>(index, 0, 88);
+
+		_lastSample[channel].sample = sample;
+		_lastSample[channel].index = index;
+
+		// Increment and wrap the channel
+		channel = (channel + 1) & 1;
 	}
 
-	return bufferedSamples;
+	return bytesRead;
 }
 
-bool RawZorkStream::seek(const Audio::Timestamp &where) {
-	_endOfData = true;
-
-	if (where > _playtime)
-		return false;
-
-	const uint32 seekSample = convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
-	_stream->seek(seekSample, SEEK_SET);
-
-	// In case of an error we will not continue stream playback.
-	if (!_stream->err() && !_stream->eos() && _stream->pos() != _stream->size())
-		_endOfData = false;
+bool RawZorkStream::rewind() {
+	_stream->seek(0, 0);
+	_stream->clearErr();
+	_endOfData = false;
+	_lastSample[0] = {0, 0};
+	_lastSample[1] = {0, 0};
 
 	return true;
 }
 
-#pragma mark -
-#pragma mark --- Raw stream factories ---
-#pragma mark -
-
-Audio::SeekableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
+Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
                                    int rate,
                                    DisposeAfterUse::Flag disposeAfterUse) {
 	assert(stream->size() % 2 == 0);
 	return new RawZorkStream(rate, disposeAfterUse, stream);
 }
 
-Audio::SeekableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
+Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
                                    int rate,
                                    DisposeAfterUse::Flag disposeAfterUse) {
 	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, DisposeAfterUse::YES);

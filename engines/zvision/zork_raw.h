@@ -23,19 +23,64 @@
 #ifndef ZVISION_ZORK_RAW_H
 #define ZVISION_ZORK_RAW_H
 
-#include "common/scummsys.h"
 #include "common/types.h"
-
-#include "common/list.h"
-
+#include "audio/audiostream.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace ZVision {
+/**
+ * This is a stream, which allows for playing raw ADPCM data from a stream.
+ */
+class RawZorkStream : public Audio::RewindableAudioStream {
+public:
+	RawZorkStream(uint32 rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
 
-class SeekableAudioStream;
+	~RawZorkStream() {
+	}
+
+private:
+	const int _rate;                                           // Sample rate of stream
+	Audio::Timestamp _playtime;                                // Calculated total play time
+	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
+	bool _endOfData;                                           // Whether the stream end has been reached
+
+	/** 
+	 * Holds the frequency and index from the last sample
+	 * 0 holds the left channel, 1 holds the right channel
+	 */
+	struct {
+		int32 sample;
+		int16 index;
+	} _lastSample[2];
+
+	static const int16 stepAdjustmentTable[8];
+
+	static const int32 amplitudeLookupTable[89];
+
+public:
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool isStereo() const { return true; }
+	bool endOfData() const { return _endOfData; }
+
+	int getRate() const { return _rate; }
+	Audio::Timestamp getLength() const { return _playtime; }
+
+	bool rewind();
+
+private:
+	/**
+	 * Fill the temporary sample buffer used in readBuffer.
+	 *
+	 * @param maxSamples Maximum samples to read.
+	 * @return actual count of samples read.
+	 */
+	int fillBuffer(int maxSamples);
+	uint32 processBlock();
+};
 
 /**
  * Creates an audio stream, which plays from the given buffer.
@@ -46,7 +91,7 @@ class SeekableAudioStream;
  * @param disposeAfterUse Whether to free the buffer after use (with free!).
  * @return The new SeekableAudioStream (or 0 on failure).
  */
-Audio::SeekableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
+Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
                                    int rate,
                                    DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
@@ -58,7 +103,7 @@ Audio::SeekableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
  * @param disposeAfterUse Whether to delete the stream after use.
  * @return The new SeekableAudioStream (or 0 on failure).
  */
-Audio::SeekableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
+Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
                                    int rate,
                                    DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
