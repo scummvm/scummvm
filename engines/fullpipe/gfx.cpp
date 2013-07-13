@@ -287,6 +287,56 @@ Bitmap *Picture::getPixelData() {
 	return _bitmap;
 }
 
+void Picture::draw(int x, int y, int style, int angle) {
+	int x1 = x;
+	int y1 = y;
+
+	if (x != -1)
+		x1 = x;
+
+	if (y != -1)
+		y1 = y;
+
+	if (!_bitmap)
+		init();
+
+	if (!_bitmap)
+		return;
+
+	if (_alpha < 0xff) {
+		warning("Picture:draw: alpha = %0x", _alpha);
+	}
+
+	if (_bitmap->type == MKTAG('C', 'B', '\0', '\0') || _bitmap->type == MKTAG('R', 'B', '\0', '\0')) {
+		if (_paletteData) {
+			warning("Picture:draw: have palette");
+		}
+	}
+
+	switch (style) {
+	case 1:
+		//flip
+		warning("Picture::draw: style 1");
+		break;
+	case 2:
+		error("Picture::draw: style 2");
+		break;
+	default:
+		if (angle) {
+			warning("Picture:draw: angle = %d", angle);
+			drawRotated(x1, y1, angle);
+		} else {
+			putDib(x1, y1);
+		}
+	}
+}
+
+void Picture::drawRotated(int x, int y, int angle) {
+}
+
+void Picture::putDib(int x, int y) {
+}
+
 BigPicture::BigPicture() {
 }
 

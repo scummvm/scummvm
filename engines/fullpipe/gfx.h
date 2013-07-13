@@ -67,6 +67,9 @@ class Picture : public MemoryObject {
 	void init();
 	void getDibInfo();
 	Bitmap *getPixelData();
+	void draw(int x, int y, int style, int angle);
+	void drawRotated(int x, int y, int angle);
+	void putDib(int x, int y);
 
 	byte getAlpha() { return (byte)_alpha; }
 	void setAlpha(byte alpha) { _alpha = alpha; }
