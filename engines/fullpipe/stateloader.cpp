@@ -517,6 +517,12 @@ bool CMctlCompound::load(MfcArchive &file) {
 
 	debug(0, "CMctlCompund::count = %d", count);
 
+	for (int i = 0; i < count; i++) {
+	  CMctlCompoundArrayItem *obj = (CMctlCompoundArrayItem *)file.readClass();
+
+	  _motionControllers.push_back(*obj);
+	}
+
 	return true;
 }
 

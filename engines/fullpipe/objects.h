@@ -190,17 +190,89 @@ class CMctlCompoundArray : public Common::Array<CObject>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
+class CMctlConnectionPointsArray : public Common::Array<CObject>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
+class CMctlCompoundArrayItem : public CObject {
+  int _motionControllerObj;
+  int _movGraphReactObj;
+  CMctlConnectionPointsArray _connectionPoints;
+  int _field_20;
+  int _field_24;
+  int _field_28;
+
+ public:
+	CMctlCompoundArrayItem() : _movGraphReactObj(0), _motionControllerObj(0) {}
+};
+
 class CMctlCompound : public CMotionController {
-	CMctlCompoundArray motionControllers;
+	CMctlCompoundArray _motionControllers;
 
  public:
 	virtual bool load(MfcArchive &file);
 };
 
+class Unk2 {
+  //CObject CObject;
+  int items;
+  int count;
+};
+
+class CMovGraph : public CMotionController {
+  CObList _nodes;
+  CObList _links;
+  int _field_44;
+  int _items;
+  int _itemsCount;
+  int (*_callback1)(int, int, int);
+  Unk2 _unk2;
+};
+
+class ShadowsItemArray : public Common::Array<CObject>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
+class Background {
+	CPtrList list;
+	int stringObj;
+	int x;
+	int y;
+	int16 messageQueueId;
+	int colorMemoryObj;
+	int bigPictureArray1Count;
+	int bigPictureArray2Count;
+	int bigPictureArray;
+};
+
+class Shadows {
+	//CObject obj;
+	int sceneId;
+	int staticAniObjectId;
+	int movementId;
+	ShadowsItemArray items;
+};
+
+class Scene {
+	Background bg;
+	CPtrList staticANIObjectList1;
+	CPtrList staticANIObjectList2;
+	CPtrList messageQueueList;
+	CPtrList faObjectList;
+	Shadows *shadows;
+	int soundList;
+	int16 sceneId;
+	int stringObj;
+	int field_BC;
+	int libHandle;
+};
+
 class Sc2 : public CObject {
 	int16 _sceneId;
 	int16 _field_2;
-	//Scene *_scene;
+	Scene *_scene;
 	CMotionController *_motionController;
 	int _data1;
 	int _count1;
@@ -321,44 +393,6 @@ class InventoryIcon {
 };
 
 typedef Common::Array<InventoryIcon> InventoryIcons;
-
-class Background {
-	CPtrList list;
-	int stringObj;
-	int x;
-	int y;
-	int16 messageQueueId;
-	int colorMemoryObj;
-	int bigPictureArray1Count;
-	int bigPictureArray2Count;
-	int bigPictureArray;
-};
-
-class ShadowsItemArray {
-	CObArray objs;
-};
-
-class Shadows {
-	//CObject obj;
-	int sceneId;
-	int staticAniObjectId;
-	int movementId;
-	ShadowsItemArray items;
-};
-
-class Scene {
-	Background bg;
-	CPtrList staticANIObjectList1;
-	CPtrList staticANIObjectList2;
-	CPtrList messageQueueList;
-	CPtrList faObjectList;
-	Shadows *shadows;
-	int soundList;
-	int16 sceneId;
-	int stringObj;
-	int field_BC;
-	int libHandle;
-};
 
 class Picture {
 	MemoryObject obj;
