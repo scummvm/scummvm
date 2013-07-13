@@ -47,21 +47,26 @@ struct SavegameHeader {
 	int totalFrames;
 };
 
+class MortevielleEngine;
+
 class SavegameManager {
 private:
+	MortevielleEngine *_vm;
 	byte _tabdonSaveBuffer[391];
 
 	void sync_save(Common::Serializer &sz);
 public:
-	void loadSavegame(int n);
-	Common::Error loadGame(int n);
+	void setParent(MortevielleEngine *vm);
+	void loadSavegame(const Common::String &filename);
+	Common::Error loadGame(const Common::String &filename);
 	Common::Error saveGame(int n, const Common::String &saveName);
+	Common::Error loadGame(int slot);
+	Common::Error saveGame(int slot);	
 
 	void writeSavegameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
-	static Common::String generateSaveName(int slotNumber);
-	static SaveStateList listSaves(const char *target);
-	static SaveStateDescriptor querySaveMetaInfos(int slot);
+	static SaveStateList listSaves(const Common::String &target);
+	static SaveStateDescriptor querySaveMetaInfos(const Common::String &fileName);
 };
 
 } // End of namespace Mortevielle

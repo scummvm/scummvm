@@ -36,8 +36,8 @@ namespace Mortevielle {
 
 static const char SAVEGAME_ID[4] = { 'M', 'O', 'R', 'T' };
 
-Common::String SavegameManager::generateSaveName(int slotNumber) {
-	return Common::String::format("sav%d.mor", slotNumber);
+void SavegameManager::setParent(MortevielleEngine *vm) {
+	_vm = vm;
 }
 
 /**
@@ -71,14 +71,10 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
  * Inner code for loading a saved game
  * @remarks	Originally called 'takesav'
  */
-void SavegameManager::loadSavegame(int n) {
-	// -- Load the file
-	Common::String filename = generateSaveName(n);
-
+void SavegameManager::loadSavegame(const Common::String &filename) {
 	// Try loading first from the save area
 	Common::SeekableReadStream *stream = g_system->getSavefileManager()->openForLoading(filename);
 
-	// If not present, try loading from the program folder
 	Common::File f;
 	if (stream == NULL) {
 		if (!f.open(filename))
@@ -115,10 +111,10 @@ void SavegameManager::loadSavegame(int n) {
 /**
  * Load a saved game
  */
-Common::Error SavegameManager::loadGame(int n) {
+Common::Error SavegameManager::loadGame(const Common::String &filename) {
 	g_vm->_mouse.hideMouse();
 	g_vm->displayEmptyHand();
-	loadSavegame(n);
+	loadSavegame(filename);
 
 	/* Initialization */
 	g_vm->charToHour();
@@ -144,7 +140,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	if (g_vm->_saveStruct._currPlace == ROOM26)
 		g_vm->_saveStruct._currPlace = LANDING;
 
-	Common::String filename = generateSaveName(n);
+	Common::String filename = _vm->generateSaveFilename(n);
 	f = g_system->getSavefileManager()->openForSaving(filename);
 
 	// Write out the savegame header
@@ -166,6 +162,14 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 
 	g_vm->_mouse.showMouse();
 	return Common::kNoError;
+}
+
+Common::Error SavegameManager::loadGame(int slot) {
+	return loadGame(_vm->generateSaveFilename(slot));
+}
+
+Common::Error SavegameManager::saveGame(int slot) {
+	return saveGame(slot, _vm->generateSaveFilename(slot));
 }
 
 void SavegameManager::writeSavegameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
@@ -226,8 +230,10 @@ bool SavegameManager::readSavegameHeader(Common::InSaveFile *in, SavegameHeader 
 	return true;
 }
 
-SaveStateList SavegameManager::listSaves(const char *target) {
-	Common::String pattern = "sav*.mor";
+SaveStateList SavegameManager::listSaves(const Common::String &target) {
+	Common::String pattern = target;
+	pattern += ".???";
+
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
 	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
@@ -235,7 +241,7 @@ SaveStateList SavegameManager::listSaves(const char *target) {
 	for (Common::StringArray::const_iterator file = files.begin(); file != files.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		const Common::String &fname = *file;
-		int slotNumber = atoi(fname.c_str() + 3);
+		int slotNumber = atoi(fname.c_str() + fname.size() - 3);
 
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fname);
 		if (in) {
@@ -274,11 +280,15 @@ SaveStateList SavegameManager::listSaves(const char *target) {
 	return saveList;
 }
 
-SaveStateDescriptor SavegameManager::querySaveMetaInfos(int slot) {
-	Common::String fileName = Mortevielle::SavegameManager::generateSaveName(slot);
+SaveStateDescriptor SavegameManager::querySaveMetaInfos(const Common::String &fileName) {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (f) {
+		// Get the slot number
+		int slot = 1;
+		if (fileName.size() > 4 && fileName[fileName.size() - 4] == '.')
+			slot = atoi(fileName.c_str() + fileName.size() - 3);
+
 		// Check to see if it's a ScummVM savegame or not
 		char buffer[4];
 		f->read(buffer, 4);
@@ -289,7 +299,7 @@ SaveStateDescriptor SavegameManager::querySaveMetaInfos(int slot) {
 			// Original savegame perhaps?
 			delete f;
 
-			SaveStateDescriptor desc(slot, Common::String::format("Savegame #%d", slot));
+			SaveStateDescriptor desc(slot, Common::String::format("Savegame - %s", slot));
 			desc.setDeletableFlag(slot != 0);
 			desc.setWriteProtectedFlag(slot == 0);
 			return desc;
