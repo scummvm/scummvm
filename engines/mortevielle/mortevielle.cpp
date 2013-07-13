@@ -210,14 +210,14 @@ Common::ErrorCode MortevielleEngine::initialise() {
 }
 
 /**
- * Loads the contents of the Mort.dat data file
+ * Loads the contents of the mort.dat data file
  */
 Common::ErrorCode MortevielleEngine::loadMortDat() {
 	Common::File f;
 
 	// Open the mort.dat file
 	if (!f.open(MORT_DAT)) {
-		GUIErrorMessage("Could not locate Mort.dat file");
+		GUIErrorMessage("Could not locate 'mort.dat'.");
 		return Common::kReadingFailed;
 	}
 
@@ -231,7 +231,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 	// Check the version
 	if (f.readByte() < MORT_DAT_REQUIRED_VERSION) {
-		GUIErrorMessage("The located mort.dat data file is too a version");
+		GUIErrorMessage("The located mort.dat data file is too old, please download an updated version on scummvm.org");
 		return Common::kReadingFailed;
 	}
 	f.readByte();		// Minor version
