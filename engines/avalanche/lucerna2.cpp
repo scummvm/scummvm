@@ -251,7 +251,8 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 				byte pixel = f.readByte();
 				for (byte i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
-					*(byte *)background.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+					for (byte j = 0; j < 2; j++) // We draw every line twice to reach 400 picture height.
+						*(byte *)background.getBasePtr(x + 7 - i, y * 2 + j) += (pixelBit << plane);
 				}	
 			}
 
