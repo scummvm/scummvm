@@ -358,6 +358,8 @@ char *genFileName(int superId, int sceneId, const char *ext) {
 		snprintf(s, 255, "%04d.%s", sceneId, ext);
 	}
 
+	debug(7, "genFileName: %s", s);
+
 	return s;
 }
 

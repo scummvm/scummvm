@@ -38,25 +38,41 @@ class StaticPhase : public Picture {
 	int16 _countdown;
 	int16 _field_68;
 	int16 _field_6A;
-	int _exCommand;
+	ExCommand *_exCommand;
+
+  public:
+	StaticPhase();
+	virtual bool load(MfcArchive &file);
 };
 
 class DynamicPhase : public StaticPhase {
 	friend class Movement;
 
-	int _x;
-	int _y;
-	Common::Rect *_rectPtr;
+	int _someX;
+	int _someY;
+	Common::Rect *_rect;
 	int16 _field_7C;
 	int16 _field_7E;
 	int _flags;
+
+  public:
+	DynamicPhase();
+	virtual bool load(MfcArchive &file);
 };
 
 class Statics : public DynamicPhase {
+	friend class StaticANIObject;
+	friend class Movement;
+
  	int16 _staticsId;
 	int16 _field_86;
 	char *_stringObj;
-	int _picture;
+	Picture *_picture;
+
+  public:
+	Statics();
+	virtual bool load(MfcArchive &file);
+	Statics *getStaticsById(int itemId);
 };
 
 class StaticANIObject;
@@ -78,8 +94,8 @@ class Movement : public GameObject {
 	int _counter;
 	CPtrList _dynamicPhases;
 	int _field_78;
-	Common::Point *_framePosOffsets;
-	int _currMovementObj;
+	Common::Point **_framePosOffsets;
+	Movement *_currMovementObj;
 	int _field_84;
 	DynamicPhase *_currDynamicPhase;
 	int _field_8C;
@@ -92,6 +108,9 @@ class Movement : public GameObject {
 	bool load(MfcArchive &file, StaticANIObject *ani);
 
 	Common::Point *getCurrDynamicPhaseXY(Common::Point &p);
+
+	void initStatics(StaticANIObject *ani);
+	void updateCurrDynamicPhase();
 };
 
 class StaticANIObject : public GameObject {
@@ -120,7 +139,12 @@ class StaticANIObject : public GameObject {
   public:
 	StaticANIObject();
 	virtual bool load(MfcArchive &file);
+
 	void setOXY(int x, int y);
+	Statics *getStaticsById(int id);
+	Movement *getMovementById(int id);
+
+	Statics *addStatics(Statics *ani);
 };
 
 } // End of namespace Fullpipe

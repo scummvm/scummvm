@@ -57,7 +57,7 @@ bool Background::load(MfcArchive &file) {
 
 	_bigPictureArray = (BigPicture ***)calloc(_bigPictureArray1Count, sizeof(BigPicture **));
 
-	debug(0, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
+	debug(6, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
 
 	for (int i = 0; i < _bigPictureArray1Count; i++) {
 		_bigPictureArray[i] = (BigPicture **)calloc(_bigPictureArray2Count, sizeof(BigPicture *));
@@ -136,6 +136,11 @@ bool GameObject::load(MfcArchive &file) {
 	}
 
 	return true;
+}
+
+void GameObject::setOXY(int x, int y) {
+	_ox = x;
+	_oy = y;
 }
 
 Picture::Picture() {

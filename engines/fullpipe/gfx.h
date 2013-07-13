@@ -31,6 +31,8 @@ class ShadowsItemArray : public Common::Array<CObject>, public CObject {
 };
 
 class Picture : public MemoryObject {
+	friend class Movement;
+
 	Common::Rect _rect;
 	int _convertedBitmap;
 	int _x;
@@ -57,7 +59,7 @@ class BigPicture : public Picture {
 };
 
 class GameObject : public CObject {
-  protected:
+  public:
 	int16 _field_4;
 	int16 _field_6;
 	int _field_8;
@@ -72,6 +74,7 @@ class GameObject : public CObject {
   public:
 	GameObject();
 	virtual bool load(MfcArchive &file);
+	void setOXY(int x, int y);
 };
 
 class PictureObject : public GameObject {
