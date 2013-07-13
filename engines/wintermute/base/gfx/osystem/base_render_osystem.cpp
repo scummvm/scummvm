@@ -270,7 +270,9 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 	Common::Rect sizeRect(fillRect);
 	sizeRect.translate(-fillRect.top, -fillRect.left);
 	surf.fillRect(fillRect, col);
-	drawSurface(nullptr, &surf, &sizeRect, &fillRect, TransformStruct());
+	TransformStruct temp = TransformStruct();
+	temp._alphaDisable = false;
+	drawSurface(nullptr, &surf, &sizeRect, &fillRect, temp);
 	surf.free();
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
