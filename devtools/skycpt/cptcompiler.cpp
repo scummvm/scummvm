@@ -376,6 +376,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	uint32 asciiSize = (uint32)(asciiPos - asciiBuf);
 	fwrite(&asciiSize, 1, 4, debOutf);
 	fwrite(asciiBuf, 1, asciiSize, debOutf);
+	free(asciiBuf);
 
 	// the direct links...
 	fwrite(&dlinkCount, 2, 1, debOutf);
@@ -438,6 +439,8 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			diffNo++;
 		}
 	}
+	fclose(dif);
+	free(resCpts);
 	assert(diffDest <= 8192);
 	fwrite(&diffNo, 1, 2, debOutf);
 	fwrite(&diffDest, 1, 2, debOutf);
