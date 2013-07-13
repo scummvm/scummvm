@@ -2350,8 +2350,10 @@ bool createIDMap(PAKFile &out, const ExtractInformation *eI, const int *needList
 	for (const int *id = needList; *id != -1; ++id) {
 		WRITE_BE_UINT16(dst, *id); dst += 2;
 		const ExtractFilename *fDesc = getFilenameDesc(*id);
-		if (!fDesc)
+		if (!fDesc) {
+			delete[] map;
 			return false;
+		}
 		*dst++ = getTypeID(fDesc->type);
 		WRITE_BE_UINT32(dst, getFilename(eI, *id)); dst += 4;
 	}
@@ -2359,15 +2361,18 @@ bool createIDMap(PAKFile &out, const ExtractInformation *eI, const int *needList
 	char filename[12];
 	if (!getFilename(filename, eI, 0)) {
 		fprintf(stderr, "ERROR: Could not create ID map for game\n");
+		delete[] map;
 		return false;
 	}
 
 	out.removeFile(filename);
 	if (!out.addFile(filename, map, mapSize)) {
 		fprintf(stderr, "ERROR: Could not add ID map \"%s\" to kyra.dat\n", filename);
+		delete[] map;
 		return false;
 	}
 
+	delete[] map;
 	return true;
 }
 
