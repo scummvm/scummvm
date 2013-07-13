@@ -100,7 +100,8 @@ bool FullpipeEngine::loadGam(const char *fname) {
 #endif
 
 		_inventory->rebuildItemRects();
-		// TODO
+		
+		warning("STUB: loadGam()");
 	} else
 		return false;
 
@@ -183,6 +184,39 @@ bool CGameLoader::load(MfcArchive &file) {
 	_gameVar = (CGameVar *)file.readClass();
 
 	return true;
+}
+
+bool CGameLoader::loadScene(int num) {
+	SceneTag *st;
+
+	int idx = getSceneTagBySceneId(num, &st);
+
+	if (st->_scene)
+		st->loadScene();
+
+	if (st->_scene) {
+		st->_scene->init();
+
+		applyPicAniInfos(st->_scene, _sc2array[idx]._defPicAniInfos, _sc2array[idx]._defPicAniInfosCount);
+		applyPicAniInfos(st->_scene, _sc2array[idx]._picAniInfos, _sc2array[idx]._picAniInfosCount);
+
+		_sc2array[idx]._scene = st->_scene;
+		_sc2array[idx]._isLoaded = 1;
+
+		return true;
+	}
+
+	return false;
+}
+
+int CGameLoader::getSceneTagBySceneId(int num, SceneTag **st) {
+	warning("STUB: CGameLoader::getSceneTagBySceneId()");
+
+	return 0;
+}
+
+void CGameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount) {
+	warning("STUB: CGameLoader::applyPicAniInfo()");
 }
 
 GameProject::GameProject() {

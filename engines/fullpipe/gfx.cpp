@@ -92,7 +92,21 @@ void Background::addPictureObject(PictureObject *pct) {
 }
 
 void Background::renumPictures(PictureObject *pct) {
-	warning("STUB: Background::renumPictures");
+  int *buf = (int *)calloc(_picObjList.size() + 2, sizeof(int));
+
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		if (pct->_id == ((PictureObject *)_picObjList[i])->_id)
+			buf[((PictureObject *)_picObjList[i])->_field_4] = 1;
+	}
+	
+	if (buf[pct->_field_4]) {
+		uint count;
+		for (count = 1; buf[count] && count < _picObjList.size() + 2; count++)
+			;
+		pct->_field_4 = count;
+	}
+
+	free(buf);
 }
 
 PictureObject::PictureObject() {

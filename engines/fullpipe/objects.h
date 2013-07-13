@@ -153,6 +153,7 @@ struct EntranceInfo {
 class CMotionController;
 
 class Sc2 : public CObject {
+ public:
 	int16 _sceneId;
 	int16 _field_2;
 	Scene *_scene;
@@ -254,6 +255,10 @@ class CGameLoader : public CObject {
 	virtual ~CGameLoader();
 
 	virtual bool load(MfcArchive &file);
+	bool loadScene(int num);
+
+	int getSceneTagBySceneId(int num, SceneTag **st);
+	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
 
 	CGameVar *_gameVar;
 	CInventory2 _inventory;

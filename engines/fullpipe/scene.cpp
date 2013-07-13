@@ -225,4 +225,8 @@ void Scene::initStaticANIObjects() {
 	warning("STUB: Scene::initStaticANIObjects");
 }
 
+void Scene::init() {
+	warning("STUB: Scene::init()");
+}
+
 } // End of namespace Fullpipe

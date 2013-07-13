@@ -42,6 +42,7 @@ class Scene : public Background {
 	Scene();
 	virtual bool load(MfcArchive &file);
 	void initStaticANIObjects();
+	void init();
 };
 
 class SceneTag : public CObject {
