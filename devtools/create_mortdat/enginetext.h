@@ -29,7 +29,7 @@
 const char *engineDataEn[] =  {
 	"[2][ ][YES][NO]",
 	"Go to",
-	"Someone enters, looks surised, but says nothing",
+	"Someone enters, looks surprised, but says nothing",
 	"   Cool   ",
 	"Oppressive",
 	"  Tense   ",
@@ -136,7 +136,7 @@ const char *engineDataFr[] = {
 const char *engineDataDe[] =  {
 	"[2][ ][JA][NEIN]",
 	"Go to",
-	"Someone enters, looks surised, but says nothing",
+	"Someone enters, looks surprised, but says nothing",
 	"Cool",
 	"Schwer",
 	"Ungesund",
