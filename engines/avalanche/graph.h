@@ -38,7 +38,7 @@ class AvalancheEngine;
 class Graph {
 public:
 	static const int16 _screenWidth = 640;
-	static const int16 _screenHeight = 200;
+	static const int16 _screenHeight = 400;
 
 	
 
