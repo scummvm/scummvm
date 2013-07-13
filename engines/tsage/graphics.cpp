@@ -294,8 +294,11 @@ void GfxSurface::addDirtyRect(const Rect &r) {
 		r2.translate(_bounds.left, _bounds.top);
 
 		// Add to the dirty rect list
-		_dirtyRects.push_back(Rect(r2.left, r2.top,
-		MIN(r2.right + 1, SCREEN_WIDTH), MIN(r2.bottom + 1, SCREEN_HEIGHT)));
+		r2.right = MIN(r2.right + 1, SCREEN_WIDTH);
+		r2.bottom = MIN(r2.bottom + 1, SCREEN_HEIGHT);
+
+		if (r2.isValidRect())
+			_dirtyRects.push_back(r2);
 	}
 }
 

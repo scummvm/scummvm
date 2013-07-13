@@ -865,30 +865,29 @@ public:
 };
 
 class Scene900 : public SceneExt {
-	class Actor4 : public SceneActor {
+	class Button : public SceneActor {
 	public:
-    int _fieldA4;
+		int _buttonId;
 
-		Actor4();
-		void sub96135(int arg1);
+		Button();
+		void initButton(int buttonId);
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
 	int _field412;
-	int _field414;
-	int _field416;
+	Common::Point _magnetChangeAmount;
 	NamedHotspot _item1;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	SceneActor _actor3;
-	Actor4 _actor4;
-	Actor4 _actor5;
-	Actor4 _actor6;
-	Actor4 _actor7;
-	Actor4 _actor8;
-	Actor4 _actor9;
-	Actor4 _actor10;
+	SceneActor _electromagnet;
+	Button _button1;
+	Button _button2;
+	Button _button3;
+	Button _button4;
+	Button _button5;
+	Button _button6;
+	Button _button7;
 	ASoundExt _aSound1;
 	SequenceManager _sequenceManager1;
 

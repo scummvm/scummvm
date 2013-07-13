@@ -1093,6 +1093,14 @@ void SceneActor::postInit(SceneObjectList *OwnerList) {
 	SceneObject::postInit();
 }
 
+void SceneActor::remove() {
+	R2_GLOBALS._sceneItems.remove(this);
+	_field9C = NULL;
+	_linkedActor = NULL;
+
+	SceneObject::remove();
+}
+
 bool SceneActor::startAction(CursorType action, Event &event) {
 	bool handled = true;
 

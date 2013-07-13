@@ -261,8 +261,8 @@ public:
 	Rect _v558B6;
 	int _v558C2;
 	int _animationCtr;
-	int _v565E1;
-	int _v565E3;
+	int _electromagnetChangeAmount;
+	int _electromagnetZoom;
 	int _v565E5;
 	int _v565E7;
 	int _v565E9;

@@ -2468,10 +2468,10 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 	if (!OwnerList)
 		OwnerList = g_globals->_sceneObjects;
 
-	if (!OwnerList->contains(this)) {
+	if (!OwnerList->contains(this) || ((_flags & OBJFLAG_REMOVE) != 0)) {
 		_percent = 100;
 		_priority = 255;
-		_flags = 4;
+		_flags = OBJFLAG_ZOOMED;
 		_visage = 0;
 		_strip = 1;
 		_frame = 1;
