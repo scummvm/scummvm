@@ -43,7 +43,16 @@ struct ThumbnailHeader {
 
 #define ThumbnailHeaderSize (4+4+1+2+2+(1+4+4))
 
-bool loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool outputWarnings) {
+enum HeaderState {
+	/// There is no header present
+	kHeaderNone,
+	/// The header present only has reliable values for version and size
+	kHeaderUnsupported,
+	/// The header is present and the version is supported
+	kHeaderPresent
+};
+
+HeaderState loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool outputWarnings) {
 	header.type = in.readUint32BE();
 	// We also accept the bad 'BMHT' header here, for the sake of compatibility
 	// with some older savegames which were written incorrectly due to a bug in
@@ -51,16 +60,28 @@ bool loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool ou
 	if (header.type != MKTAG('T','H','M','B') && header.type != MKTAG('B','M','H','T')) {
 		if (outputWarnings)
 			warning("couldn't find thumbnail header type");
-		return false;
+		return kHeaderNone;
 	}
 
 	header.size = in.readUint32BE();
 	header.version = in.readByte();
 
+	// Do a check whether any read errors had occured. If so we cannot use the
+	// values obtained for size and version because they might be bad.
+	if (in.err() || in.eos()) {
+		// TODO: We fake that there is no header. This is actually not quite
+		// correct since we found the start of the header and then things
+		// started to break. Right no we leave detection of this to the client.
+		// Since this case is caused by broken files, the client code should
+		// catch it anyway... If there is a nicer solution here, we should
+		// implement it.
+		return kHeaderNone;
+	}
+
 	if (header.version > THMB_VERSION) {
 		if (outputWarnings)
 			warning("trying to load a newer thumbnail version: %d instead of %d", header.version, THMB_VERSION);
-		return false;
+		return kHeaderUnsupported;
 	}
 
 	header.width = in.readUint16BE();
@@ -82,7 +103,15 @@ bool loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool ou
 		header.format = createPixelFormat<565>();
 	}
 
-	return true;
+	if (in.err() || in.eos()) {
+		// When we reached this point we know that at least the size and
+		// version field was loaded successfully, thus we tell this header
+		// is not supported and silently hope that the client code is
+		// prepared to handle read errors.
+		return kHeaderUnsupported;
+	} else {
+		return kHeaderPresent;
+	}
 }
 } // end of anonymous namespace
 
@@ -90,7 +119,12 @@ bool checkThumbnailHeader(Common::SeekableReadStream &in) {
 	uint32 position = in.pos();
 	ThumbnailHeader header;
 
-	bool hasHeader = loadHeader(in, header, false);
+	// TODO: It is not clear whether this is the best semantics. Now
+	// checkThumbnailHeader will return true even when the thumbnail header
+	// found is actually not usable. However, most engines seem to use this
+	// to detect the presence of any header and if there is none it wont even
+	// try to skip it. Thus, this looks like the best solution for now...
+	bool hasHeader = (loadHeader(in, header, false) != kHeaderNone);
 
 	in.seek(position, SEEK_SET);
 
@@ -101,7 +135,9 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	uint32 position = in.pos();
 	ThumbnailHeader header;
 
-	if (!loadHeader(in, header, false)) {
+	// We can skip unsupported and supported headers. So we only seek back
+	// to the old position in case there is no header at all.
+	if (loadHeader(in, header, false) == kHeaderNone) {
 		in.seek(position, SEEK_SET);
 		return false;
 	}
@@ -111,10 +147,23 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 }
 
 Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
+	const uint32 position = in.pos();
 	ThumbnailHeader header;
+	HeaderState headerState = loadHeader(in, header, true);
 
-	if (!loadHeader(in, header, true))
+	// Try to handle unsupported/broken headers gracefully. If there is no
+	// header at all, we seek back and return at this point. If there is an
+	// unsupported/broken header, we skip the actual data and return. The
+	// downside is that we might reset the end of stream flag with this and
+	// the client code would not be able to notice a read past the end of the
+	// stream at this point then.
+	if (headerState == kHeaderNone) {
+		in.seek(position, SEEK_SET);
 		return 0;
+	} else if (headerState == kHeaderUnsupported) {
+		in.seek(header.size - (in.pos() - position), SEEK_CUR);
+		return 0;
+	}
 
 	if (header.format.bytesPerPixel != 2 && header.format.bytesPerPixel != 4) {
 		warning("trying to load thumbnail with unsupported bit depth %d", header.format.bytesPerPixel);
