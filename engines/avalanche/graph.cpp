@@ -79,7 +79,11 @@ void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 }
 
 void Graph::copySurface(Graphics::Surface source) {
-	_surface.copyFrom(source);
+	for (uint16 y = 0; y < _screenHeight / 2; y++)
+		for (uint16 x = 0; x < _screenWidth; x ++) {
+			for (byte j = 0; j < 2; j++) // We copy every line twice to reach 400 picture height.
+				*(byte *)_surface.getBasePtr(x, y * 2 + j) = *(byte *)source.getBasePtr(x, y);
+			}	
 }
 
 void Graph::refreshScreen() {
