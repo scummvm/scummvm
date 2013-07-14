@@ -116,6 +116,9 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 	_enableDrag = false;
 	_mouseOver = false;
 	_editDlgShown = false;
+
+	lastTime = 0;
+	dlg = 0;
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
