@@ -20,9 +20,14 @@
  *
  */
 
+#include "common/foreach.h"
 
 #include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/lua_v2.h"
+#include "engines/grim/primitives.h"
+#include "engines/grim/set.h"
+#include "engines/grim/gfx_base.h"
+#include "engines/grim/actor.h"
 
 
 namespace Grim {
@@ -51,6 +56,49 @@ Common::List<TextObject *> *EMIEngine::popText() {
 	Common::List<TextObject *> *object = _textstack.front();
 	_textstack.pop_front();
 	return object;
+}
+
+void EMIEngine::drawNormalMode() {
+
+	// Draw Primitives
+	foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
+		p->draw();
+	}
+
+	_currSet->setupCamera();
+
+	g_driver->set3DMode();
+
+	if (_setupChanged) {
+		cameraPostChangeHandle(_currSet->getSetup());
+		_setupChanged = false;
+	}
+
+	// Draw actors
+	buildActiveActorsList();
+
+	Bitmap *background = _currSet->getCurrSetup()->_bkgndBm;
+	uint32 numLayers = background->_data->_numLayers;
+	background->_data->load();
+	int32 currentLayer = numLayers - 1;
+	foreach (Actor *a, _activeActors) {
+		if (a->getSortOrder() < 0)
+			break;
+
+		while (a->getSortOrder() <= currentLayer * 10 && currentLayer >= 0) {
+			background->drawLayer(currentLayer--);
+		}
+
+		if (a->isVisible())
+			a->draw();
+	}
+	while (currentLayer >= 0) {
+		background->drawLayer(currentLayer--);
+	}
+
+
+	flagRefreshShadowMask(false);
+
 }
 
 } // end of namespace Grim

@@ -189,7 +189,6 @@ public:
 protected:
 	virtual void pauseEngineIntern(bool pause);
 
-private:
 	void handleControls(Common::EventType type, const Common::KeyState &key);
 	void handleChars(Common::EventType type, const Common::KeyState &key);
 	void handleExit();
@@ -201,6 +200,7 @@ private:
 	void savegameCallback();
 	void createRenderer();
 	virtual LuaBase *createLua();
+	virtual void drawNormalMode();
 
 	void savegameSave();
 	void saveGRIM();
