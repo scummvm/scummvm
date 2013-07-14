@@ -52,6 +52,12 @@ enum {
 };
 
 RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentScreenshot(0) {
+	_firstScreenshotUpdate = false;
+	_screenShotsCount = 0;
+	_currentScreenshotText = 0;
+	_authorText = 0;
+	_notesText = 0;
+
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", _("Recorder or Playback Gameplay"));
