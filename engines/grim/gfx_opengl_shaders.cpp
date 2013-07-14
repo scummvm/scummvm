@@ -205,8 +205,16 @@ void GfxOpenGLS::setupQuadEBO() {
 
 void GfxOpenGLS::setupTexturedQuad() {
 	_smushVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(textured_quad), textured_quad, GL_STATIC_DRAW);
+	_smushProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	_smushProgram->enableVertexAttribute("texcoord", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+
 	_emergProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	_emergProgram->enableVertexAttribute("texcoord", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+
+	if (g_grim->getGameType() == GType_GRIM) {
+		_backgroundProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+		_backgroundProgram->enableVertexAttribute("texcoord", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+	}
 }
 
 void GfxOpenGLS::setupTexturedCenteredQuad() {
@@ -217,6 +225,7 @@ void GfxOpenGLS::setupShaders() {
 	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
 
 	static const char* commonAttributes[] = {"position", "texcoord", NULL};
+	_smushProgram = Graphics::Shader::fromFiles("smush", commonAttributes);
 	_textProgram = Graphics::Shader::fromFiles("text", commonAttributes);
 	_emergProgram = Graphics::Shader::fromFiles("emerg", commonAttributes);
 
@@ -809,13 +818,70 @@ void GfxOpenGLS::drawPolygon(const PrimitiveObject *primitive) {
 
 
 void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
+	int width = frame->w;
+	int height = frame->h;
+	const byte *bitmap = (const byte *)frame->getPixels();
+
+	GLenum frameType, frameFormat;
+
+	switch (frame->format.bytesPerPixel) {
+	case 2:
+		frameType = GL_UNSIGNED_SHORT_5_6_5;
+		frameFormat = GL_RGB;
+		_smushSwizzle = false;
+		break;
+	case 4:
+		frameType = GL_UNSIGNED_BYTE;
+		frameFormat = GL_RGBA;
+		_smushSwizzle = true;
+		break;
+	default:
+		error("Video decoder returned invalid pixel format!");
+		return;
+	}
+
+	// create texture
+	if (_smushTexId == 0) {
+		glGenTextures(1, &_smushTexId);
+	}
+	glBindTexture(GL_TEXTURE_2D, _smushTexId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, frameFormat, nextHigher2(width), nextHigher2(height), 0, frameFormat, frameType, NULL);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, frame->format.bytesPerPixel);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, frameFormat, frameType, bitmap);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+	_smushWidth = (int)(width);
+	_smushHeight = (int)(height);
 }
 
 void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
+	_smushProgram->use();
+	glDisable(GL_DEPTH_TEST);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
+	_smushProgram->setUniform("texcrop", Math::Vector2d(float(_smushWidth) / nextHigher2(_smushWidth), float(_smushHeight) / nextHigher2(_smushHeight)));
+	_smushProgram->setUniform("scale", Math::Vector2d(float(_gameWidth)/ float(_smushWidth), float(_gameHeight) / float(_smushHeight)));
+	_smushProgram->setUniform("offset", Math::Vector2d(float(offsetX) / float(_gameWidth), float(offsetY) / float(_gameHeight)));
+	_smushProgram->setUniform("swizzle", _smushSwizzle);
+	glBindTexture(GL_TEXTURE_2D, _smushTexId);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 
 void GfxOpenGLS::releaseMovieFrame() {
+	if (_smushTexId > 0) {
+		glDeleteTextures(1, &_smushTexId);
+		_smushTexId = 0;
+	}
 }
 
 
