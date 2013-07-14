@@ -1,0 +1,70 @@
+struct light {
+	vec4 _position;
+	vec4 _direction;
+	vec4 _color;
+};
+
+const int maxLights = 8;
+const float DIFFUSE_FACTOR = 0.8;
+
+in vec3 position;
+in vec2 texcoord;
+in vec4 color;
+in vec3 normal;
+
+uniform highp mat4 projMatrix;
+uniform highp mat4 extraMatrix;
+uniform highp mat4 mvpMatrix;
+uniform highp vec2 texScale;
+uniform bool textured;
+uniform light lights[maxLights];
+uniform bool lightsEnabled;
+
+out vec2 Texcoord;
+out vec4 Color;
+
+void main()
+{
+	vec4 pos = vec4(position, 1.0);
+	pos = mvpMatrix *
+	      extraMatrix *
+	      pos;
+
+	gl_Position = projMatrix * pos;
+
+	if (textured) {
+		Texcoord = vec2(0.0, 1.0) + (texcoord / texScale);
+	} else {
+		Texcoord = vec2(0.0, 0.0);
+	}
+
+	if (lightsEnabled) {
+		vec3 normal_eye = normalize((mvpMatrix * extraMatrix * vec4(normal, 0.0))).xyz;
+		vec3 light = vec3(0.0, 0.0, 0.0);
+		for (int i = 0; i < maxLights; ++i) {
+			if (lights[i]._color.w != 0.0) {
+				vec3 faceToLight = normalize(lights[i]._position - pos).xyz;
+				if (lights[i]._position.w == 1.0) {
+					float incidence = dot(normal_eye, faceToLight);
+					if (incidence > 0.0) {
+						if (lights[i]._direction.w == -1.0) {
+							light += incidence * DIFFUSE_FACTOR * lights[i]._color.rgb;
+						} else {
+							vec3 lightDir = normalize(lights[i]._direction.xyz);
+							float cos_angle = dot(lightDir, faceToLight);
+							float incidence2 = max(-cos_angle, 0.0);
+							light += incidence2 * DIFFUSE_FACTOR * lights[i]._color.rgb;
+						}
+					}
+				} else {
+					vec3 lightDir = normalize(lights[i]._position.xyz);
+					float incidence = dot(lightDir, faceToLight);
+					light += max(-incidence, 0.0) * DIFFUSE_FACTOR * lights[i]._color.rgb;
+				}
+			}
+		}
+		Color = color * vec4(light, 1.0);
+	} else {
+		Color = color;
+	}
+}

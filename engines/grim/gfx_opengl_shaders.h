@@ -204,6 +204,7 @@ protected:
 	GLuint compileShader(const char *shader) { return compileShader(shader, shader); }
 
 private:
+	const Actor *_currentActor;
 	float _alpha;
 	uint32 _maxLights;
 	GLuint _emergTexture;
