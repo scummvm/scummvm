@@ -3064,8 +3064,9 @@ static const struct {
 
 int TuckerEngine::readTableInstructionCode(int *index) {
 	bool match = false;
+	int nameLen = 0;
 	for (int i = 0; _instructions[i].name; ++i) {
-		const int nameLen = strlen(_instructions[i].name);
+		nameLen = strlen(_instructions[i].name);
 		if (_instructions[i].name[1] == '0') {
 			if (_instructions[i].name[0] == _tableInstructionsPtr[0] && _instructions[i].name[2] == _tableInstructionsPtr[2]) {
 				const char digit = _tableInstructionsPtr[1];
@@ -3085,6 +3086,7 @@ int TuckerEngine::readTableInstructionCode(int *index) {
 		}
 	}
 	warning("Unhandled instruction '%c%c%c'", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
+	_tableInstructionsPtr += nameLen + 1;
 	return kCode_invalid;
 }
 
