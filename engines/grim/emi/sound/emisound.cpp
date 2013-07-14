@@ -20,6 +20,8 @@
  *
  */
 
+#include "gui/error.h"
+
 #include "common/stream.h"
 #include "common/mutex.h"
 #include "audio/audiostream.h"
@@ -204,15 +206,23 @@ MusicEntry *initMusicTableDemo(const Common::String &filename) {
 	return musicTable;
 }
 
-MusicEntry *initMusicTableRetail(const Common::String &filename) {
+MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
 	// Remember to check, in case we forgot to copy over those files from the CDs.
-	if (!data)
-		error("Couldn't open %s", filename.c_str());
-	MusicEntry *musicTable = new MusicEntry[126];
-	for (unsigned int i = 0; i < 126; i++)
-		musicTable[i]._id = -1;
+	if (!data) {
+		warning("Couldn't open %s", filename.c_str());
+		delete[] table;
+		return NULL;
+	}
+	
+	MusicEntry *musicTable = table;
+	if (!table) {
+		musicTable = new MusicEntry[126];
+		for (unsigned int i = 0; i < 126; i++) {
+			musicTable[i]._id = -1;
+		}
+	}
 
 	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync, trim;
@@ -244,6 +254,18 @@ MusicEntry *initMusicTableRetail(const Common::String &filename) {
 	return musicTable;
 }
 
+void tableLoadErrorDialog(const char *filename) {
+	const char *errorMessage = 0;
+	errorMessage =  "ERROR: Missing file for music-support.\n"
+	"Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
+	"you need to copy both files from both CDs to Textures/, and rename\n"
+	"them as follows to get music-support in-game: \n"
+	"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+	"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"";
+	GUI::displayErrorDialog(errorMessage);
+	error("Missing file %s", filename);
+}
+
 void EMISound::initMusicTable() {
 	if (g_grim->getGameFlags() == ADGF_DEMO) {
 		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");
@@ -254,7 +276,15 @@ void EMISound::initMusicTable() {
 		_musicTable = NULL;
 		_musicPrefix = "";
 	} else {
-		_musicTable = initMusicTableRetail("Textures/FullMonkeyMap.imt");
+		_musicTable = NULL;
+		_musicTable = initMusicTableRetail(_musicTable, "Textures/FullMonkeyMap1.imt");
+		if (_musicTable == NULL) {
+			tableLoadErrorDialog("Textures/FullMonkeyMap1.imt");
+		}
+		_musicTable = initMusicTableRetail(_musicTable, "Textures/FullMonkeyMap2.imt");
+		if (_musicTable == NULL) {
+			tableLoadErrorDialog("Textures/FullMonkeyMap2.imt");
+		}
 		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.
 	}
 }
