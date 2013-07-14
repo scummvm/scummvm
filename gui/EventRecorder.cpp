@@ -77,6 +77,19 @@ EventRecorder::EventRecorder() {
 	_initialized = false;
 	_needRedraw = false;
 	_fastPlayback = false;
+
+	_fakeTimer = 0;
+	_savedState = false;
+	_needcontinueGame = false;
+	_temporarySlot = 0;
+	_realSaveManager = 0;
+	_realMixerManager = 0;
+	controlPanel = 0;
+	_lastMillis = 0;
+	_lastScreenshotTime = 0;
+	_screenshotPeriod = 0;
+	_playbackFile = 0;
+	
 	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 }
 
