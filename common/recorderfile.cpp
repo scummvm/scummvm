@@ -39,6 +39,12 @@ PlaybackFile::PlaybackFile() : _tmpRecordFile(_tmpBuffer, kRecordBuffSize), _tmp
 	_writeStream = NULL;
 	_screenshotsFile = NULL;
 	_mode = kClosed;
+
+	_recordFile = 0;
+	_headerDumped = false;
+	_recordCount = 0;
+	_eventsSize = 0;
+	memset(_tmpBuffer, kRecordBuffSize, 1);
 }
 
 PlaybackFile::~PlaybackFile() {
