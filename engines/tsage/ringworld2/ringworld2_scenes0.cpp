@@ -5972,10 +5972,10 @@ bool Scene700::Actor6::startAction(CursorType action, Event &event) {
 }
 
 void Scene700::postInit(SceneObjectList *OwnerList) {
-	if (R2_GLOBALS._sceneManager._previousScene == 900)
-		g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
-
 	loadScene(700);
+	if (R2_GLOBALS._sceneManager._previousScene == 900)
+		_sceneBounds = Rect(160, 0, 480, 200);
+
 	R2_GLOBALS._v558B6.set(60, 0, 260, 200);
 	SceneExt::postInit();
 
