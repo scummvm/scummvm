@@ -79,14 +79,15 @@ void EMIEngine::drawNormalMode() {
 	sortActiveActorsList();
 
 	Bitmap *background = _currSet->getCurrSetup()->_bkgndBm;
-	uint32 numLayers = background->_data->_numLayers;
 	background->_data->load();
+	uint32 numLayers = background->_data->_numLayers;
 	int32 currentLayer = numLayers - 1;
 	foreach (Actor *a, _activeActors) {
-		if (a->getSortOrder() < 0)
+		int sortorder = a->getSortOrder();
+		if (sortorder < 0)
 			break;
 
-		while (a->getSortOrder() <= currentLayer * 10 && currentLayer >= 0) {
+		while (sortorder <= currentLayer * 10 && currentLayer >= 0) {
 			background->drawLayer(currentLayer--);
 		}
 
