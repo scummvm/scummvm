@@ -205,6 +205,8 @@ void GfxOpenGLS::setupQuadEBO() {
 
 void GfxOpenGLS::setupTexturedQuad() {
 	_smushVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(textured_quad), textured_quad, GL_STATIC_DRAW);
+	_emergProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	_emergProgram->enableVertexAttribute("texcoord", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
 }
 
 void GfxOpenGLS::setupTexturedCenteredQuad() {
@@ -213,6 +215,9 @@ void GfxOpenGLS::setupTexturedCenteredQuad() {
 
 void GfxOpenGLS::setupShaders() {
 	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
+
+	static const char* commonAttributes[] = {"position", "texcoord", NULL};
+	_emergProgram = Graphics::Shader::fromFiles("emerg", commonAttributes);
 
 	setupBigEBO();
 	setupQuadEBO();
@@ -562,9 +567,58 @@ void GfxOpenGLS::irisAroundRegion(int x1, int y1, int x2, int y2) {
 
 
 void GfxOpenGLS::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
+	if (!*text)
+		return;
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, _emergTexture);
+	_emergProgram->use();
+	Math::Vector3d colors(float(fgColor.getRed()) / 255.0f,
+	                      float(fgColor.getGreen()) / 255.0f,
+	                      float(fgColor.getBlue()) / 255.0f);
+	_emergProgram->setUniform("color", colors);
+	_emergProgram->setUniform("sizeWH", Math::Vector2d(float(8) / _gameWidth, float(16) / _gameHeight));
+	_emergProgram->setUniform("texScale", Math::Vector2d(float(8) / 128, float(16) / 128));
+
+	for (; *text; ++text, x+=10) {
+		int blockcol = *text & 0xf;
+		int blockrow = *text / 16;
+		_emergProgram->setUniform("offsetXY", Math::Vector2d(float(x) / _gameWidth, float(y) / _gameHeight));
+		_emergProgram->setUniform("texOffsetXY", Math::Vector2d(float(blockcol * 8) / 128, float(blockrow * 16) / 128));
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	}
 }
 
 void GfxOpenGLS::loadEmergFont() {
+	uint8 *atlas = new uint8[128 * 128];
+	memset(atlas, 0, 128 * 128);
+
+	for (int c = 32; c < 128; ++c) {
+		int blockrow = c / 16;
+		int blockcol = c & 0xf;
+		for (int row = 0; row < 13; ++row) {
+			int base = 128 * (16 * blockrow + row) + 8 * blockcol;
+			uint8 val = Font::emerFont[c-32][row];
+			atlas[base+0] = (val & 0x80) ? 255 : 0;
+			atlas[base+1] = (val & 0x40) ? 255 : 0;
+			atlas[base+2] = (val & 0x20) ? 255 : 0;
+			atlas[base+3] = (val & 0x10) ? 255 : 0;
+			atlas[base+4] = (val & 0x08) ? 255 : 0;
+			atlas[base+5] = (val & 0x04) ? 255 : 0;
+			atlas[base+6] = (val & 0x02) ? 255 : 0;
+			atlas[base+7] = (val & 0x01) ? 255 : 0;
+		}
+	}
+
+	glGenTextures(1, &_emergTexture);
+	glBindTexture(GL_TEXTURE_2D, _emergTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, 128, 128, 0, GL_ALPHA, GL_UNSIGNED_BYTE, atlas);
+
+	delete[] atlas;
 }
 
 
