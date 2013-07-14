@@ -94,8 +94,9 @@ MODULE_OBJS := \
 	detection.o \
 	font.o \
 	gfx_base.o \
-	gfx_opengl.o \
 	gfx_tinygl.o \
+	gfx_opengl_shaders.o \
+	gfx_opengl.o \
 	grim.o \
 	grim_controls.o \
 	inputdialog.o \
