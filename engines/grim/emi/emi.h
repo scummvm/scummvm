@@ -28,6 +28,7 @@
 namespace Grim {
 
 class TextObject;
+class Actor;
 
 class EMIEngine : public GrimEngine {
 public:
@@ -37,11 +38,18 @@ public:
 	void pushText(Common::List<TextObject *> *objects);
 	Common::List<TextObject *> *popText();
 
+	void invalidateActiveActorsList() override;
+	void invalidateSortOrder();
+	void sortActiveActorsList();
+
 private:
 	LuaBase *createLua() override;
 	void drawNormalMode() override;
+	static bool compareActor(Actor *x, Actor *y);
 
 	Common::List<Common::List<TextObject *> *> _textstack;
+
+	bool _sortOrderInvalidated;
 };
 
 extern EMIEngine *g_emi;

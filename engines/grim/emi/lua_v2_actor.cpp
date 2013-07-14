@@ -28,6 +28,7 @@
 #include "engines/grim/costume.h"
 #include "engines/grim/costume/chore.h"
 
+#include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/skeleton.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
@@ -331,6 +332,8 @@ void Lua_V2::SetActorSortOrder() {
 	Actor *actor = getactor(actorObj);
 	int order = (int)lua_getnumber(orderObj);
 	actor->setSortOrder(order);
+
+	g_emi->invalidateSortOrder();
 }
 
 void Lua_V2::GetActorSortOrder() {

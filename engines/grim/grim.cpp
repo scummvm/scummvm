@@ -1139,16 +1139,7 @@ void GrimEngine::buildActiveActorsList() {
 	_activeActors.clear();
 	foreach (Actor *a, Actor::getPool()) {
 		if ((_mode == NormalMode && a->isInSet(_currSet->getName())) || a->isInOverworld()) {
-			if (getGameType() == GType_MONKEY4) {
-				Common::List<Actor *>::iterator it = _activeActors.begin();
-				for (; it != _activeActors.end(); ++it) {
-					if (a->getSortOrder() >= (*it)->getSortOrder())
-						break;
-				}
-				_activeActors.insert(it, a);
-			} else {
-				_activeActors.push_back(a);
-			}
+			_activeActors.push_back(a);
 		}
 	}
 	_buildActiveActorsList = false;

@@ -37,6 +37,7 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 
+#include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/skeleton.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
@@ -1372,7 +1373,7 @@ void Actor::update(uint frameTime) {
 			}
 			if (getSortOrder() != sortorder) {
 				setSortOrder(sortorder);
-				g_grim->invalidateActiveActorsList();
+				g_emi->invalidateSortOrder();
 			}
 		}
 	}

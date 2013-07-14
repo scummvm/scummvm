@@ -153,7 +153,7 @@ public:
 	 * Tell the engine that an actor has been moved into/outside a set,
 	 * and so that it should rebuild the list of active ones.
 	 */
-	void invalidateActiveActorsList();
+	virtual void invalidateActiveActorsList();
 	/**
 	 * Return a list of the currently active actors, i. e. the actors in the current set.
 	 */

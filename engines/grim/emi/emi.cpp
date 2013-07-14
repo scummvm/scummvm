@@ -35,7 +35,7 @@ namespace Grim {
 EMIEngine *g_emi = NULL;
 
 EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		GrimEngine(syst, gameFlags, gameType, platform, language) {
+		GrimEngine(syst, gameFlags, gameType, platform, language), _sortOrderInvalidated(false) {
 	g_emi = this;
 }
 
@@ -76,6 +76,7 @@ void EMIEngine::drawNormalMode() {
 
 	// Draw actors
 	buildActiveActorsList();
+	sortActiveActorsList();
 
 	Bitmap *background = _currSet->getCurrSetup()->_bkgndBm;
 	uint32 numLayers = background->_data->_numLayers;
@@ -99,6 +100,29 @@ void EMIEngine::drawNormalMode() {
 
 	flagRefreshShadowMask(false);
 
+}
+
+void EMIEngine::invalidateActiveActorsList() {
+	GrimEngine::invalidateActiveActorsList();
+	invalidateSortOrder();
+}
+
+void EMIEngine::invalidateSortOrder() {
+	_sortOrderInvalidated = true;
+}
+
+bool EMIEngine::compareActor(Actor *x, Actor *y) {
+	return x->getSortOrder() > y->getSortOrder();
+}
+
+void EMIEngine::sortActiveActorsList() {
+	if (!_sortOrderInvalidated) {
+		return;
+	}
+
+	_sortOrderInvalidated = false;
+
+	Common::sort(_activeActors.begin(), _activeActors.end(), compareActor);
 }
 
 } // end of namespace Grim
