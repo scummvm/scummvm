@@ -281,6 +281,10 @@ void OSystem_Android::initSize(uint width, uint height,
 #else
 	_game_texture->allocBuffer(width, height);
 #endif
+#ifdef USE_GLES2
+	_frame_buffer = new Graphics::FrameBuffer(_game_texture->getTextureName(), _game_texture->texWidth(), _game_texture->texHeight());
+	_frame_buffer->attach();
+#endif
 
 	updateScreenRect();
 	updateEventScale();
@@ -474,6 +478,11 @@ void OSystem_Android::updateScreen() {
 
 		_force_redraw = false;
 
+		if (_frame_buffer) {
+			_frame_buffer->detach();
+			glViewport(0,0, _egl_surface_width, _egl_surface_height);
+		}
+
 		// clear pointer leftovers in dead areas
 		// also, HTC's GLES drivers are made of fail and don't preserve the buffer
 		// ( http://www.khronos.org/registry/egl/specs/EGLTechNote0001.html )
@@ -563,6 +572,8 @@ void OSystem_Android::updateScreen() {
 	if (!JNI::swapBuffers())
 		LOGW("swapBuffers failed: 0x%x", glGetError());
 
+	if (_frame_buffer)
+		_frame_buffer->attach();
 }
 
 void OSystem_Android::drawVirtControls() {
