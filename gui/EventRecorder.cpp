@@ -331,7 +331,7 @@ bool EventRecorder::openRecordFile(const Common::String &fileName) {
 }
 
 bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
-	if ((gameDesc == NULL) && (_playbackFile->getHeader().hashRecords.size() != 0)) {
+	if (_playbackFile->getHeader().hashRecords.size() != 0) {
 		warning("Engine doesn't contain description table");
 		return false;
 	}
