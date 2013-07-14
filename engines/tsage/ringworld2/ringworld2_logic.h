@@ -159,6 +159,9 @@ public:
 /*--------------------------------------------------------------------------*/
 
 class Ringworld2InvObjectList : public InvObjectList {
+private:
+	static bool SelectItem(int objectNumber);
+	static void selectDefault(int obectNumber);
 public:
 	InvObject _none;
 	InvObject _inv1;

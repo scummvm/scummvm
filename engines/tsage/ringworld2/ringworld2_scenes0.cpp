@@ -5852,7 +5852,7 @@ bool Scene700::Item12::startAction(CursorType action, Event &event) {
 		break;
 	}
 
-	scene->setAction(&scene->_sequenceManager, this, 707, &R2_GLOBALS._player, &scene->_actor5, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 707, &R2_GLOBALS._player, &scene->_actor5, NULL);
 	return true;
 }
 
@@ -6161,9 +6161,7 @@ void Scene700::signal() {
 		}
 		break;
 	case 3:
-		R2_INVENTORY.setObjectScene(5, 600);
-		R2_INVENTORY.setObjectScene(16, 700);
-		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._sceneManager.changeScene(600);
 		break;
 	case 4:
 		_sceneMode = 5;

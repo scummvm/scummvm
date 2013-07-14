@@ -852,6 +852,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 	_itemList.push_back(&_inv52);
 
 	_selectedItem = NULL;
+
 }
 
 void Ringworld2InvObjectList::reset() {
@@ -914,6 +915,9 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_ALCOHOL_LAMP_3, 2435);
 	setObjectScene(R2_BROKEN_DISPLAY, 1580);
 	setObjectScene(R2_TOOLBOX, 3260);
+
+	// Set up the select item handler method
+	T2_GLOBALS._onSelectItem = SelectItem;
 }
 
 void Ringworld2InvObjectList::setObjectScene(int objectNum, int sceneNumber) {
@@ -929,6 +933,125 @@ void Ringworld2InvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 
 	// Update the user interface if necessary
 	T2_GLOBALS._uiElements.updateInventory();
+}
+
+/**
+ * When an inventory item is selected, in Return to Ringworld two objects can be combined
+ */
+bool Ringworld2InvObjectList::SelectItem(int objectNumber) {
+	// If no existing item selected, don't go any further
+	int currentItem = R2_GLOBALS._events.getCursor();
+	if (currentItem >= 256)
+		return false;
+
+	switch (objectNumber) {
+	case R2_NEGATOR_GUN:
+		switch (currentItem) {
+		case R2_SENSOR_PROBE:
+			if (R2_GLOBALS.getFlag(1))
+				SceneItem::display2(5, 1);
+			else if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) == 100)
+				SceneItem::display(5, 3);
+			else {
+				R2_GLOBALS._sound3.play(48);
+				SceneItem::display2(5, 2);
+				R2_INVENTORY.setObjectScene(R2_SPENT_POWER_CAPSULE, 1);
+			}
+			break;
+		case R2_COM_SCANNER:
+			R2_GLOBALS._sound3.play(44);
+			if (R2_GLOBALS.getFlag(1))
+				SceneItem::display2(5, 9);
+			else if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) == 100)
+				SceneItem::display2(5, 8);
+			else
+				SceneItem::display2(5, 10);
+			break;
+		case R2_CHARGED_POWER_CAPSULE:
+			if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) == 1) {
+				R2_GLOBALS._sound3.play(49);
+				R2_INVENTORY.setObjectScene(R2_CHARGED_POWER_CAPSULE, 100);
+				R2_GLOBALS.setFlag(1);
+				SceneItem::display2(5, 4);
+			} else {
+				SceneItem::display2(5, 5);
+			}
+			break;
+		default:
+			selectDefault(objectNumber);
+			break;
+		}
+		break;
+	case R2_STEPPING_DISKS:
+		switch (currentItem) {
+		case R2_SENSOR_PROBE:
+			if (R2_INVENTORY.getObjectScene(R2_CHARGED_POWER_CAPSULE) == 400) {
+				R2_GLOBALS._sound3.play(48);
+				SceneItem::display2(5, 6);
+				R2_INVENTORY.setObjectScene(R2_CHARGED_POWER_CAPSULE, 1);
+			} else {
+				SceneItem::display2(5, 7);
+			}
+			break;
+		case R2_COM_SCANNER:
+			R2_GLOBALS._sound3.play(44);
+			if (R2_INVENTORY.getObjectScene(R2_CHARGED_POWER_CAPSULE) == 400)
+				SceneItem::display2(5, 16);
+			else
+				SceneItem::display2(5, 17);
+			R2_GLOBALS._sound3.stop();
+			break;
+		default:
+			selectDefault(objectNumber);
+			break;
+		}
+		break;
+	case R2_ATTRACTOR_UNIT:
+	case R2_CABLE_HARNESS:
+		if (currentItem == R2_CABLE_HARNESS ||
+				currentItem == R2_ATTRACTOR_UNIT) {
+			R2_INVENTORY.setObjectScene(R2_CABLE_HARNESS, 0);
+			R2_INVENTORY.setObjectScene(R2_ATTRACTOR_UNIT, 0);
+			R2_INVENTORY.setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 1);
+		} else {
+			selectDefault(objectNumber);
+		}
+		break;
+	case R2_TANNER_MASK:
+	case R2_PURE_GRAIN_ALCOHOL:
+		if (currentItem == R2_TANNER_MASK ||
+				currentItem == R2_PURE_GRAIN_ALCOHOL) {
+			R2_INVENTORY.setObjectScene(R2_TANNER_MASK, 0);
+			R2_INVENTORY.setObjectScene(R2_PURE_GRAIN_ALCOHOL, 0);
+			R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, 1);
+		} else {
+			selectDefault(objectNumber);
+		}
+		break;
+	default:
+		// Standard item selection
+		return false;
+	}
+
+	return true;
+}
+
+void Ringworld2InvObjectList::selectDefault(int objectNumber) {
+	Common::String msg1 = g_resourceManager->getMessage(4, 53);
+	Common::String msg2 = g_resourceManager->getMessage(4, R2_GLOBALS._events.getCursor());
+	Common::String msg3 = g_resourceManager->getMessage(4, 54);
+	Common::String msg4 = g_resourceManager->getMessage(4, objectNumber);
+	Common::String line = Common::String::format("%.5s%.5s%.5s%.5s%s %s %s %s.",
+		msg1.c_str(), msg2.c_str(), msg3.c_str(), msg4.c_str(),
+		msg1.c_str() + 5, msg2.c_str() + 5, msg3.c_str() + 5, msg4.c_str() + 5);
+		
+	SceneItem::display(-1, -1, line.c_str(),
+		SET_WIDTH, 280,
+		SET_X, 160,
+		SET_Y, 20,
+		SET_POS_MODE, 1,
+		SET_EXT_BGCOLOR, 7,
+		LIST_END);
 }
 
 /*--------------------------------------------------------------------------*/
