@@ -95,6 +95,22 @@ void SoundPlayer::setMusicState(int stateId) {
 	}
 }
 
+void SoundPlayer::restoreState(SaveGame *savedState) {
+	if (g_grim->getGameType() == GType_GRIM) {
+		g_imuse->restoreState(savedState);
+	} else {
+		_emiSound->restoreState(savedState);
+	}
+}
+
+
+void SoundPlayer::saveState(SaveGame *savedState) {
+	if (g_grim->getGameType() == GType_GRIM) {
+		g_imuse->saveState(savedState);
+	} else {
+		_emiSound->saveState(savedState);
+	}
+}
 // EMI-only
 uint32 SoundPlayer::getMsPos(int stateId) {
 	assert(_emiSound); // This shouldn't ever be called from Grim.

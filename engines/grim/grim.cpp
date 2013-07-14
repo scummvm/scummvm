@@ -808,7 +808,7 @@ void GrimEngine::savegameRestore() {
 	g_driver->restoreState(_savedState);
 	Debug::debug(Debug::Engine, "Renderer restored successfully.");
 
-	g_imuse->restoreState(_savedState);
+	g_sound->restoreState(_savedState);
 	Debug::debug(Debug::Engine, "iMuse restored successfully.");
 
 	g_movie->restoreState(_savedState);
@@ -968,7 +968,7 @@ void GrimEngine::savegameSave() {
 	g_driver->saveState(_savedState);
 	Debug::debug(Debug::Engine, "Renderer saved successfully.");
 
-	g_imuse->saveState(_savedState);
+	g_sound->saveState(_savedState);
 	Debug::debug(Debug::Engine, "iMuse saved successfully.");
 
 	g_movie->saveState(_savedState);
