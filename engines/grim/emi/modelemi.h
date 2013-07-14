@@ -53,6 +53,7 @@ class Skeleton;
 class EMIMeshFace {
 public:
 	Vector3int *_indexes;
+	uint32 _indicesEBO;
 	uint32 _faceLength;
 	uint32 _numFaces;
 	uint32 _hasTexture;
@@ -60,7 +61,7 @@ public:
 	uint32 _flags;
 	EMIModel *_parent;
 
-	EMIMeshFace() : _faceLength(0), _numFaces(0), _hasTexture(0), _texID(0), _flags(0), _indexes(NULL), _parent(NULL) { }
+	EMIMeshFace() : _faceLength(0), _numFaces(0), _hasTexture(0), _texID(0), _flags(0), _indexes(NULL), _parent(NULL), _indicesEBO(0) { }
 	~EMIMeshFace();
 	void loadFace(Common::SeekableReadStream *data);
 	void setParent(EMIModel *m) { _parent = m; }
@@ -105,6 +106,9 @@ public:
 
 	Common::String _fname;
 	EMICostume *_costume;
+
+	void *_userData;
+
 public:
 	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume);
 	~EMIModel();

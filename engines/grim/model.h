@@ -101,6 +101,8 @@ public:
 	int _numVertices;
 	int *_vertices, *_texVertices;
 	Math::Vector3d _normal;
+
+	void *_userData;
 };
 
 class Mesh {
@@ -130,6 +132,8 @@ public:
 	int _numFaces;
 	MeshFace *_faces;
 	Math::Matrix4 _matrix;
+
+	void *_userData;
 
 private:
 	void sortFaces();

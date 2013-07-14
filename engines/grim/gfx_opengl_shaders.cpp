@@ -107,6 +107,18 @@ struct FontUserData {
 	GLuint texture;
 };
 
+struct EMIModelUserData {
+	Graphics::Shader *_shader;
+	uint32 _texCoordsVBO;
+	uint32 _colorMapVBO;
+	uint32 _verticesVBO;
+};
+
+struct ModelUserData {
+	Graphics::Shader *_shader;
+	uint32 _meshInfoVBO;
+};
+
 // taken from glm
 Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
 	Math::Vector3d f = (interest - pos).getNormalized();
@@ -398,6 +410,11 @@ void GfxOpenGLS::translateViewpointFinish() {
 }
 
 void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
+	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
+	glBindBuffer(GL_ARRAY_BUFFER, mud->_verticesVBO);
+	void * bufData = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	memcpy(bufData, model->_drawVertices, 3 * sizeof(float) * model->_numVertices);
+	glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
@@ -1104,9 +1121,73 @@ void GfxOpenGLS::createSpecialtyTextures() {
 }
 
 void GfxOpenGLS::createEMIModel(EMIModel *model) {
+	EMIModelUserData *mud = new EMIModelUserData;
+	model->_userData = mud;
+	mud->_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_vertices, GL_STREAM_DRAW);
+
+//	model->_normalsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_normals, GL_STATIC_DRAW);;
+
+	mud->_texCoordsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 2 * sizeof(float), model->_texVerts, GL_STATIC_DRAW);
+
+	mud->_colorMapVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 4 * sizeof(byte), model->_colorMap, GL_STATIC_DRAW);
+
+	Graphics::Shader * actorShader = _actorProgram->clone();
+	actorShader->enableVertexAttribute("position", mud->_verticesVBO, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	actorShader->enableVertexAttribute("texcoord", mud->_texCoordsVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	actorShader->enableVertexAttribute("color", mud->_colorMapVBO, 4, GL_UNSIGNED_BYTE, GL_TRUE, 4 * sizeof(byte), 0);
+	mud->_shader = actorShader;
+
+	for (uint32 i = 0; i < model->_numFaces; ++i) {
+		EMIMeshFace * face = &model->_faces[i];
+		face->_indicesEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_faceLength * 3 * sizeof(uint32), face->_indexes, GL_STATIC_DRAW);
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GfxOpenGLS::createModel(Mesh *mesh) {
+	Common::Array<GrimVertex> meshInfo;
+	meshInfo.reserve(mesh->_numVertices * 5);
+	for (int i = 0; i < mesh->_numFaces; ++i) {
+		MeshFace *face = &mesh->_faces[i];
+		face->_userData = new uint32;
+		*(uint32 *)face->_userData = meshInfo.size();
+
+		if (face->_numVertices < 3)
+			continue;
+
+#define VERT(j) (&mesh->_vertices[3*face->_vertices[j]])
+#define TEXVERT(j) (face->_texVertices ? &mesh->_textureVerts[2*face->_texVertices[j]] : zero_texVerts)
+#define NORMAL(j) (&mesh->_vertNormals[3*face->_vertices[j]])
+
+		for (int j = 2; j < face->_numVertices; ++j) {
+			meshInfo.push_back(GrimVertex(VERT(0), TEXVERT(0), NORMAL(0)));
+			meshInfo.push_back(GrimVertex(VERT(j-1), TEXVERT(j-1), NORMAL(j-1)));
+			meshInfo.push_back(GrimVertex(VERT(j), TEXVERT(j), NORMAL(j)));
+		}
+
+#undef VERT
+#undef TEXVERT
+#undef NORMAL
+
+	}
+
+	if (meshInfo.empty()) {
+		mesh->_userData = NULL;
+		return;
+	}
+
+	ModelUserData *mud = new ModelUserData;
+	mesh->_userData = mud;
+
+	mud->_meshInfoVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, meshInfo.size() * sizeof(GrimVertex), &meshInfo[0], GL_STATIC_DRAW);
+
+	Graphics::Shader *shader = _actorProgram->clone();
+	mud->_shader = shader;
+	shader->enableVertexAttribute("position", mud->_meshInfoVBO, 3, GL_FLOAT, GL_FALSE, sizeof(GrimVertex), 0);
+	shader->enableVertexAttribute("texcoord", mud->_meshInfoVBO, 2, GL_FLOAT, GL_FALSE, sizeof(GrimVertex), 3 * sizeof(float));
+	shader->enableVertexAttribute("normal", mud->_meshInfoVBO, 3, GL_FLOAT, GL_FALSE, sizeof(GrimVertex), 5 * sizeof(float));
+	shader->disableVertexAttribute("color", Math::Vector4d(1.f, 1.f, 1.f, 1.f));
 }
 
 
