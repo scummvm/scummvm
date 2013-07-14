@@ -217,6 +217,7 @@ void GfxOpenGLS::setupShaders() {
 	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
 
 	static const char* commonAttributes[] = {"position", "texcoord", NULL};
+	_textProgram = Graphics::Shader::fromFiles("text", commonAttributes);
 	_emergProgram = Graphics::Shader::fromFiles("emerg", commonAttributes);
 
 	setupBigEBO();
@@ -525,18 +526,190 @@ void GfxOpenGLS::destroyBitmap(BitmapData *bitmap) {
 }
 
 void GfxOpenGLS::createFont(Font *font) {
+	const byte *bitmapData = font->getFontData();
+	uint dataSize = font->getDataSize();
+
+	uint8 bpp = 4;
+	uint8 charsWide = 16;
+	uint8 charsHigh = 16;
+
+	byte *texDataPtr = new byte[dataSize * bpp];
+	byte *data = texDataPtr;
+
+	for (uint i = 0; i < dataSize; i++, texDataPtr += bpp, bitmapData++) {
+		byte pixel = *bitmapData;
+		if (pixel == 0x00) {
+			texDataPtr[0] = texDataPtr[1] = texDataPtr[2] = texDataPtr[3] = 0;
+		} else if (pixel == 0x80) {
+			texDataPtr[0] = texDataPtr[1] = texDataPtr[2] = 0;
+			texDataPtr[3] = 255;
+		} else if (pixel == 0xFF) {
+			texDataPtr[0] = texDataPtr[1] = texDataPtr[2] = texDataPtr[3] = 255;
+		}
+	}
+	int size = 0;
+	for (int i = 0; i < 256; ++i) {
+		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int m = MAX(width, height);
+		if (m > size)
+			size = m;
+	}
+	assert(size < 64);
+	if (size < 8)
+		size = 8;
+	if (size < 16)
+		size = 16;
+	else if (size < 32)
+		size = 32;
+	else if (size < 64)
+		size = 64;
+
+	uint arraySize = size * size * bpp * charsWide * charsHigh;
+	byte *temp = new byte[arraySize];
+	if (!temp)
+		error("Could not allocate %d bytes", arraySize);
+
+	memset(temp, 0, arraySize);
+
+	FontUserData *userData = new FontUserData;
+	font->setUserData(userData);
+	userData->texture = 0;
+	userData->size = size;
+
+	GLuint *texture = &(userData->texture);
+	glGenTextures(1, texture);
+
+	for (int i = 0, row = 0; i < 256; ++i) {
+		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int32 d = font->getCharOffset(i);
+		for (int x = 0; x < height; ++x) {
+			// a is the offset to get to the correct row.
+			// b is the offset to get to the correct line in the character.
+			// c is the offset of the character from the start of the row.
+			uint a = row * size * size * bpp * charsHigh;
+			uint b = x * size * charsWide * bpp;
+			uint c = 0;
+			if (i != 0)
+				c = ((i - 1) % 16) * size * bpp;
+
+			uint pos = a + b + c;
+			uint pos2 = d * bpp + x * width * bpp;
+			assert(pos + width * bpp <= arraySize);
+			assert(pos2 + width * bpp <= dataSize * bpp);
+			memcpy(temp + pos, data + pos2, width * bpp);
+		}
+		if (i != 0 && i % charsWide == 0)
+			++row;
+
+	}
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size * charsWide, size * charsHigh, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp);
+
+	delete[] data;
+	delete[] temp;
 }
 
 void GfxOpenGLS::destroyFont(Font *font) {
+	const FontUserData *data = (const FontUserData *)font->getUserData();
+	if (data) {
+		glDeleteTextures(1, &(data->texture));
+		delete data;
+	}
 }
 
 void GfxOpenGLS::createTextObject(TextObject *text) {
+	const Color &color = text->getFGColor();
+	const Font *font = text->getFont();
+
+	const FontUserData *userData = (const FontUserData *)font->getUserData();
+	if (!userData)
+		error("Could not get font userdata");
+	float sizeW = float(userData->size) / _gameWidth;
+	float sizeH = float(userData->size) / _gameHeight;
+	const Common::String *lines = text->getLines();
+	int numLines = text->getNumLines();
+
+	int numCharacters = 0;
+	for (int j = 0; j < numLines; ++j) {
+		numCharacters += lines[j].size();
+	}
+
+	float * bufData = new float[numCharacters * 16];
+	float * cur = bufData;
+
+	for (int j = 0; j < numLines; ++j) {
+		const Common::String &line = lines[j];
+		int x = text->getLineX(j);
+		int y = text->getLineY(j);
+		for (uint i = 0; i < line.size(); ++i) {
+			uint8 character = line[i];
+			float w = y + font->getCharStartingLine(character);
+			if (g_grim->getGameType() == GType_GRIM)
+				w += font->getBaseOffsetY();
+			float z = x + font->getCharStartingCol(character);
+			z /= _gameWidth;
+			w /= _gameHeight;
+			float width = 1 / 16.f;
+			float cx = ((character - 1) % 16) / 16.0f;
+			float cy = ((character - 1) / 16) / 16.0f;
+
+			float charData[] = {
+					z, w, cx, cy,
+					z + sizeW, w, cx + width, cy,
+					z + sizeW, w + sizeH, cx + width, cy + width,
+					z, w + sizeH, cx, cy + width
+			};
+			memcpy(cur, charData, 16 * sizeof(float));
+			cur += 16;
+
+			x += font->getCharWidth(character);
+		}
+	}
+
+	GLuint vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, numCharacters * 16 * sizeof(float), bufData, GL_STATIC_DRAW);
+
+	Graphics::Shader * textShader = _textProgram->clone();
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	textShader->enableVertexAttribute("position", vbo, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	textShader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+
+	TextUserData * td = new TextUserData;
+	td->characters = numCharacters;
+	td->shader = textShader;
+	td->color = color;
+	td->texture = userData->texture;
+	text->setUserData(td);
+	delete[] bufData;
 }
 
 void GfxOpenGLS::drawTextObject(const TextObject *text) {
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	const TextUserData * td = (const TextUserData *) text->getUserData();
+	assert(td);
+	td->shader->use();
+
+	Math::Vector3d colors(float(td->color.getRed()) / 255.0f,
+	                      float(td->color.getGreen()) / 255.0f,
+	                      float(td->color.getBlue()) / 255.0f);
+	_textProgram->setUniform("color", colors);
+	glBindTexture(GL_TEXTURE_2D, td->texture);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
+	glDrawElements(GL_TRIANGLES, td->characters * 6, GL_UNSIGNED_SHORT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void GfxOpenGLS::destroyTextObject(TextObject *text) {
+	const TextUserData * td = (const TextUserData *) text->getUserData();
+	glDeleteBuffers(1, &td->shader->getAttributeAt(0)._vbo);
+	text->setUserData(NULL);
+	delete td;
 }
 
 
