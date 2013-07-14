@@ -407,14 +407,14 @@ void Lua_V2::GetMemoryCardId() {
 void Lua_V2::LocalizeString() {
 	char msgId[50], buf[1000];
 	lua_Object strObj = lua_getparam(1);
+	msgId[0] = 0;
 
 	if (lua_isstring(strObj)) {
 		const char *str = lua_getstring(strObj);
 		Common::String msg = parseMsgText(str, msgId);
 		sprintf(buf, "/%s/%s", msgId, msg.c_str());
-		str = buf;
 
-		lua_pushstring(str);
+		lua_pushstring(buf);
 	}
 }
 
