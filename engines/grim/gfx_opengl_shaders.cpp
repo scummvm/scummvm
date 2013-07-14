@@ -182,6 +182,22 @@ GfxOpenGLS::~GfxOpenGLS() {
 }
 
 void GfxOpenGLS::setupZBuffer() {
+	GLint format = GL_LUMINANCE_ALPHA;
+	GLenum type = GL_UNSIGNED_BYTE;
+	float width = _gameWidth;
+	float height = _gameHeight;
+
+	glGenTextures(1, (GLuint *)&_zBufTex);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _zBufTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, nextHigher2((int)width), nextHigher2((int)height), 0, format, type, NULL);
+	glActiveTexture(GL_TEXTURE0);
+
+	_zBufTexCrop = Math::Vector2d(width / nextHigher2((int)width), height / nextHigher2((int)height));
 }
 
 void GfxOpenGLS::setupBigEBO() {
@@ -225,6 +241,7 @@ void GfxOpenGLS::setupShaders() {
 	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
 
 	static const char* commonAttributes[] = {"position", "texcoord", NULL};
+	_backgroundProgram = Graphics::Shader::fromFiles(isEMI ? "emi_background" : "grim_background", commonAttributes);
 	_smushProgram = Graphics::Shader::fromFiles("smush", commonAttributes);
 	_textProgram = Graphics::Shader::fromFiles("text", commonAttributes);
 	_emergProgram = Graphics::Shader::fromFiles("emerg", commonAttributes);
@@ -522,16 +539,201 @@ void GfxOpenGLS::destroyMaterial(Texture *material) {
 }
 
 void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
+	if (bitmap->_format != 1) {
+		for (int pic = 0; pic < bitmap->_numImages; pic++) {
+			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
+			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
+				uint16 val = READ_LE_UINT16(zbufPtr + i);
+				// fix the value if it is incorrectly set to the bitmap transparency color
+				if (val == 0xf81f) {
+					val = 0;
+				}
+				zbufPtr[i] = 0xffff - ((uint32)val) * 0x10000 / 100 / (0x10000 - val);
+			}
+		}
+	}
+
+	bitmap->_hasTransparency = false;
+	if (bitmap->_format == 1) {
+		bitmap->_numTex = 1;
+		GLuint *textures = new GLuint[bitmap->_numTex * bitmap->_numImages];
+		bitmap->_texIds = textures;
+		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
+
+		byte *texData = 0;
+		byte *texOut = 0;
+
+		GLint format = GL_RGBA;
+		GLint type = GL_UNSIGNED_BYTE;
+		int bytes = 4;
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, bytes);
+
+		for (int pic = 0; pic < bitmap->_numImages; pic++) {
+			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
+				if (texData == 0)
+					texData = new byte[4 * bitmap->_width * bitmap->_height];
+				// Convert data to 32-bit RGBA format
+				byte *texDataPtr = texData;
+				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
+				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += 4, bitmapData++) {
+					uint16 pixel = *bitmapData;
+					int r = pixel >> 11;
+					texDataPtr[0] = (r << 3) | (r >> 2);
+					int g = (pixel >> 5) & 0x3f;
+					texDataPtr[1] = (g << 2) | (g >> 4);
+					int b = pixel & 0x1f;
+					texDataPtr[2] = (b << 3) | (b >> 2);
+					if (pixel == 0xf81f) { // transparent
+						texDataPtr[3] = 0;
+						bitmap->_hasTransparency = true;
+					} else {
+						texDataPtr[3] = 255;
+					}
+				}
+				texOut = texData;
+			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
+				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
+			} else {
+				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
+			}
+
+			int actualWidth = nextHigher2(bitmap->_width);
+			int actualHeight = nextHigher2(bitmap->_height);
+
+			glBindTexture(GL_TEXTURE_2D, textures[bitmap->_numTex * pic]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, actualWidth, actualHeight, 0, format, type, NULL);
+
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bitmap->_width, bitmap->_height, format, type, texOut);
+		}
+
+		if (texData)
+			delete[] texData;
+		bitmap->freeData();
+
+		Graphics::Shader *shader = _backgroundProgram->clone();
+		bitmap->_userData = shader;
+
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			GLuint vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, bitmap->_numCoords * 4 * sizeof(float), bitmap->_texc, GL_STATIC_DRAW);
+			shader->enableVertexAttribute("position", vbo, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+			shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2*sizeof(float));
+		}
+	} else {
+		bitmap->_numTex = 0;
+		bitmap->_texIds = NULL;
+		bitmap->_userData = NULL;
+	}
 }
 
 
 void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
+	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
+		BitmapData *data = bitmap->_data;
+		Graphics::Shader *shader = (Graphics::Shader *)data->_userData;
+		GLuint *textures = (GLuint *)bitmap->getTexIds();
+
+		glDisable(GL_DEPTH_TEST);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		shader->use();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
+		uint32 offset = data->_layers[layer]._offset;
+		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
+			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
+
+			unsigned short startVertex = data->_verts[i]._pos / 4 * 6;
+			unsigned short numVertices = data->_verts[i]._verts / 4 * 6;
+			glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_SHORT, (void *)(startVertex * sizeof(unsigned short)));
+		}
+		return;
+	}
+
+	int format = bitmap->getFormat();
+	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
+		return;
+	}
+
+	if (format == 1) {
+		GLuint *textures = (GLuint *)bitmap->getTexIds();
+		if (bitmap->getFormat() == 1 && bitmap->getHasTransparency()) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			glDisable(GL_BLEND);
+		}
+
+		Graphics::Shader *shader = (Graphics::Shader *)bitmap->_data->_userData;
+		shader->use();
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
+		int cur_tex_idx = bitmap->getNumTex() * (bitmap->getActiveImage() - 1);
+		glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
+		float width = bitmap->getWidth();
+		float height = bitmap->getHeight();
+		shader->setUniform("offsetXY", Math::Vector2d(float(dx) / _gameWidth, float(dy) / _gameHeight));
+		shader->setUniform("sizeWH", Math::Vector2d(width / _gameWidth, height / _gameHeight));
+		shader->setUniform("texcrop", Math::Vector2d(width / nextHigher2((int)width), height / nextHigher2((int)height)));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		// Only draw the manual zbuffer when enabled
+		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
+			drawDepthBitmap(dx, dy, bitmap->getWidth(), bitmap->getHeight(), (char *)bitmap->getData(bitmap->getActiveImage() - 1).getRawBuffer());
+		} else {
+			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
+		}
+		return;
+	}
 }
 
 void GfxOpenGLS::drawDepthBitmap(int x, int y, int w, int h, char *data) {
+	static int prevX = -1, prevY = -1;
+	static char *prevData = NULL;
+
+	if (prevX == x && prevY == y && data == prevData)
+		return;
+
+	prevX = x;
+	prevY = y;
+	prevData = data;
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _zBufTex);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glActiveTexture(GL_TEXTURE0);
 }
 
 void GfxOpenGLS::destroyBitmap(BitmapData *bitmap) {
+	GLuint *textures = (GLuint *)bitmap->_texIds;
+	if (textures) {
+		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, textures);
+		delete[] textures;
+		bitmap->_texIds = 0;
+	}
+	Graphics::Shader *shader = (Graphics::Shader *)bitmap->_userData;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glDeleteBuffers(1, &shader->getAttributeAt(0)._vbo);
+	}
+	delete shader;
+
+	if (bitmap->_format != 1) {
+		bitmap->freeData();
+	}
 }
 
 void GfxOpenGLS::createFont(Font *font) {
