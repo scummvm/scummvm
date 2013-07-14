@@ -194,8 +194,8 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
-		}
 	}
+}
 
 void RecorderDialog::updateList() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
