@@ -70,12 +70,18 @@ public:
 	void setMusicState(int stateId);
 	void selectMusicSet(int setId);
 
+	void restoreState(SaveGame *savedState);
+	void saveState(SaveGame *savedState);
 // The stack-classes currently ignore g_imusestate completely.
 	void pushStateToStack();
 	void popStateFromStack();
 	void flushStack();
 
 	uint32 getMsPos(int stateId);
+private:
+	void freeAllChannels();
+	bool initTrack(const Common::String &filename, SoundTrack *track);
+	SoundTrack *createEmptyMusicTrack() const;
 };
 
 }

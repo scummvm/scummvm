@@ -67,6 +67,13 @@ void Sector::saveState(SaveGame *savedState) const {
 			savedState->writeVector3d(_origVertices[i]);
 		}
 	}
+
+	if (savedState->saveMinorVersion() > 8 && g_grim->getGameType() == GType_MONKEY4) {
+		savedState->writeLEUint32(_numSortplanes);
+		for (int i = 0; i < _numSortplanes; ++i) {
+			savedState->writeLEUint32(_sortplanes[i]);
+		}
+	}
 }
 
 bool Sector::restoreState(SaveGame *savedState) {
@@ -95,7 +102,13 @@ bool Sector::restoreState(SaveGame *savedState) {
 	} else {
 		_origVertices = NULL;
 	}
-
+	if (savedState->saveMinorVersion() > 8 && g_grim->getGameType() == GType_MONKEY4) {
+		_numSortplanes = savedState->readLEUint32();
+		_sortplanes = new int[_numSortplanes];
+		for (int i = 0; i < _numSortplanes; ++i) {
+			_sortplanes[i] = savedState->readLEUint32();
+		}
+	}
 	return true;
 }
 

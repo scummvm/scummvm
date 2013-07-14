@@ -30,6 +30,7 @@
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/savegame.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/sound/track.h"
@@ -53,9 +54,7 @@ EMISound::EMISound() {
 }
 
 EMISound::~EMISound() {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		freeChannel(i);
-	}
+	freeAllChannels();
 	delete _music;
 	delete[] _channels;
 	delete[] _musicTable;
@@ -80,6 +79,12 @@ int32 EMISound::getChannelByName(const Common::String &name) {
 void EMISound::freeChannel(int32 channel) {
 	delete _channels[channel];
 	_channels[channel] = NULL;
+}
+
+void EMISound::freeAllChannels() {
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		freeChannel(i);
+	}
 }
 
 bool EMISound::startVoice(const char *soundName, int volume, int pan) {
@@ -133,6 +138,25 @@ void EMISound::setPan(const char *soundName, int pan) {
 	warning("EMI doesn't support sound-panning yet, %s", soundName);
 }
 
+SoundTrack *EMISound::createEmptyMusicTrack() const {
+	SoundTrack *music;
+	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		music = new SCXTrack(Audio::Mixer::kMusicSoundType);
+	} else {
+		music = new MP3Track(Audio::Mixer::kMusicSoundType);
+	}
+	return music;
+}
+
+bool EMISound::initTrack(const Common::String &filename, SoundTrack *track) {
+	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
+	if (track->openSound(filename, str)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void EMISound::setMusicState(int stateId) {
 	if (_music) {
 		delete _music;
@@ -153,16 +177,15 @@ void EMISound::setMusicState(int stateId) {
 		warning("PS2 doesn't have musictable yet %d ignored, just playing 1195.SCX", stateId);
 		// So, we just rig up the menu-song hardcoded for now, as a test of the SCX-code.
 		filename = "1195.SCX";
-		_music = new SCXTrack(Audio::Mixer::kMusicSoundType);
 	} else {
 		filename = _musicTable[stateId]._filename;
-		_music = new MP3Track(Audio::Mixer::kMusicSoundType);
 	}
-	warning("Loading music: %s", filename.c_str());
-	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
+	_music = createEmptyMusicTrack();
 
-	if (_music->openSound(filename, str))
+	warning("Loading music: %s", filename.c_str());
+	if (initTrack(filename, _music)) {
 		_music->play();
+	}
 }
 
 uint32 EMISound::getMsPos(int stateId) {
@@ -327,6 +350,93 @@ void EMISound::flushStack() {
 		SoundTrack *temp = _stateStack.pop();
 		delete temp;
 	}
+}
+
+void EMISound::restoreState(SaveGame *savedState) {
+	// Clear any current music
+	flushStack();
+	setMusicState(0);
+	freeAllChannels();
+	// Actually load:
+	savedState->beginSection('SOUN');
+	_musicPrefix = savedState->readString();
+	// Stack:
+	uint32 stackSize = savedState->readLEUint32();
+	for (uint32 i = 0; i < stackSize; i++) {
+		Common::String soundName = savedState->readString();
+		SoundTrack *track = createEmptyMusicTrack();
+		if (initTrack(soundName, track)) {
+			track->play();
+			track->pause();
+			_stateStack.push(track);
+		} else {
+			error("Couldn't reopen %s", soundName.c_str());
+		}
+	}
+	// Currently playing music:
+	uint32 hasActiveTrack = savedState->readLEUint32();
+	if (hasActiveTrack) {
+		_music = createEmptyMusicTrack();
+		Common::String soundName = savedState->readString();
+		if (initTrack(soundName, _music)) {
+			_music->play();
+		} else {
+			error("Couldn't reopen %s", soundName.c_str());
+		}
+	}
+	// Channels:
+	uint32 numChannels = savedState->readLEUint32();
+	if (numChannels > NUM_CHANNELS) {
+		error("Save game made with more channels than we have now: %d > %d", numChannels, NUM_CHANNELS);
+	}
+	for (uint32 i = 0; i < numChannels; i++) {
+		uint32 channelIsActive = savedState->readLEUint32();
+		if (channelIsActive) {
+			Common::String soundName = savedState->readString();
+			uint32 volume = savedState->readLEUint32();
+			uint32 pan = savedState->readLEUint32();
+			/*uint32 pos = */savedState->readLEUint32();
+			/*bool isPlaying = */savedState->readByte();
+			startVoice(soundName.c_str(), volume, pan);
+		}
+	}
+	savedState->endSection();
+}
+
+void EMISound::saveState(SaveGame *savedState) {
+	savedState->beginSection('SOUN');
+	savedState->writeString(_musicPrefix);
+	// Stack:
+	uint32 stackSize = _stateStack.size();
+	savedState->writeLEUint32(stackSize);
+	// TODO: Save actual state, instead of just the file needed.
+	// We'll need repeatable state first though.
+	for (uint32 i = 0; i < stackSize; i++) {
+		savedState->writeString(_stateStack[i]->getSoundName());
+	}
+	// Currently playing music:
+	if (_music) {
+		savedState->writeLEUint32(1);
+		savedState->writeString(_music->getSoundName());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+	// Channels:
+	uint32 numChannels = NUM_CHANNELS;
+	savedState->writeLEUint32(numChannels);
+	for (uint32 i = 0; i < numChannels; i++) {
+		if (!_channels[i]) {
+			savedState->writeLEUint32(0);
+		} else {
+			savedState->writeLEUint32(1);
+			savedState->writeString(_channels[i]->getSoundName());
+			savedState->writeLEUint32(255); // TODO: Place-holder for volume.
+			savedState->writeLEUint32(255); // TODO: Place-holder for pan.
+			savedState->writeLEUint32(0); // TODO: Place-holder for position.
+			savedState->writeByte(1); // isPlaying.
+		}
+	}
+	savedState->endSection();
 }
 
 } // end of namespace Grim
