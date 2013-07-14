@@ -247,6 +247,9 @@ void GfxOpenGLS::setupTexturedQuad() {
 
 void GfxOpenGLS::setupTexturedCenteredQuad() {
 	_spriteVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(textured_quad_centered), textured_quad_centered, GL_STATIC_DRAW);
+	_spriteProgram->enableVertexAttribute("position", _spriteVBO, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	_spriteProgram->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 3 * sizeof(float));
+	_spriteProgram->disableVertexAttribute("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void GfxOpenGLS::setupShaders() {
@@ -260,6 +263,7 @@ void GfxOpenGLS::setupShaders() {
 
 	static const char* actorAttributes[] = {"position", "texcoord", "color", "normal", NULL};
 	_actorProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
+	_spriteProgram = _actorProgram->clone();
 
 	setupBigEBO();
 	setupQuadEBO();
@@ -557,6 +561,24 @@ void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
+	return;
+	glDisable(GL_DEPTH_TEST);
+
+	_spriteProgram->use();
+	Math::Matrix4 extraMatrix;
+	extraMatrix.setPosition(sprite->_pos);
+	extraMatrix(0,0) *= sprite->_width;
+	extraMatrix(1,1) *= sprite->_height;
+	_spriteProgram->setUniform("extraMatrix", extraMatrix);
+
+	_spriteProgram->setUniform("textured", GL_TRUE);
+	_spriteProgram->setUniform("isBillboard", GL_TRUE);
+	_spriteProgram->setUniform("lightsEnabled", false);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 
