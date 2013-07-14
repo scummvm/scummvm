@@ -237,6 +237,7 @@ void EMIModel::prepareForRender() {
 		int animIndex = _vertexBoneInfo[_vertexBone[i]];
 		_skeleton->_joints[animIndex]._finalMatrix.transform(_drawVertices + i, true);
 	}
+	g_driver->updateEMIModel(this);
 }
 
 void EMIModel::prepareTextures() {
