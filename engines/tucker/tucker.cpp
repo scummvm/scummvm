@@ -2991,6 +2991,7 @@ enum TableInstructionCode {
 	kCode_gfg,
 	kCode_gv,
 	kCode_loc,
+	kCode_mof,
 	kCode_opt,
 	kCode_opf,
 	kCode_ofg,
@@ -3041,6 +3042,7 @@ static const struct {
 	{ "gfg", kCode_gfg },
 	{ "gv",  kCode_gv  },
 	{ "loc", kCode_loc },
+	{ "mof", kCode_mof },
 	{ "opt", kCode_opt },
 	{ "opf", kCode_opf },
 	{ "ofg", kCode_ofg },
@@ -3232,6 +3234,9 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_loc:
 		_nextLocationNum = readTableInstructionParam(2);
 		return 1;
+	case kCode_mof:
+		// TODO: Unknown opcode in Spanish version. Identify if this has any function.
+		return 2;
 	case kCode_opt:
 		_conversationOptionsCount = readTableInstructionParam(2);
 		for (i = 0; i < _conversationOptionsCount; ++i) {
