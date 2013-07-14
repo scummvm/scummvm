@@ -69,13 +69,13 @@ bool loadExe(const char *filename) {
 
 bool validateMd5() {
 	uint8 digest[16];
-	
+
 	md5_buffer(data, dataSize, digest);
-	
+
 	printf("MD5 of nhc.exe is %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
-		digest[0], digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7], 
+		digest[0], digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7],
 		digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
-	
+
 	if (memcmp(kNhcExeMd5, digest, 16)) {
 		printf("MD5 hash of nhc.exe doesn't match the expected value! Quitting...\n");
 		return false;
@@ -112,7 +112,7 @@ uint32 calcHash(const char *value) {
 struct HitRect {
 	int16 x1, y1, x2, y2;
 	uint16 messageNum;
-	
+
 	void load(uint32 offset) {
 		byte *item = getData(offset);
 		x1 = READ_LE_UINT16(item + 0);
@@ -120,7 +120,7 @@ struct HitRect {
 		x2 = READ_LE_UINT16(item + 4);
 		y2 = READ_LE_UINT16(item + 6);
 		messageNum = READ_LE_UINT16(item + 8);
-	}	
+	}
 
 	void save(FILE *fd) {
 		writeUint16LE(fd, x1);
@@ -129,11 +129,11 @@ struct HitRect {
 		writeUint16LE(fd, y2);
 		writeUint16LE(fd, messageNum);
 	}
-	
+
 	int getItemSize() const {
 		return 10;
 	}
-	
+
 };
 
 struct MessageItem {
@@ -141,22 +141,22 @@ struct MessageItem {
 	uint32 messageParam;
 	MessageItem() {}
 	MessageItem(uint16 msgNum, uint32 msgParam) : messageNum(msgNum), messageParam(msgParam) {}
-	
+
 	void load(uint32 offset) {
 		byte *item = getData(offset);
 		messageNum = READ_LE_UINT16(item + 0);
 		messageParam = READ_LE_UINT32(item + 4);
-	}	
+	}
 
 	void save(FILE *fd) {
 		writeUint16LE(fd, messageNum);
 		writeUint32LE(fd, messageParam);
 	}
-	
+
 	int getItemSize() const {
 		return 8;
 	}
-	
+
 };
 
 struct SubRectItem {
@@ -175,7 +175,7 @@ struct SubRectItem {
 		// Add the message to the message list
 		addMessageList(messageListCount, messageListOffset);
 	}
-	
+
 	void save(FILE *fd) {
 		writeUint16LE(fd, x1);
 		writeUint16LE(fd, y1);
@@ -183,11 +183,11 @@ struct SubRectItem {
 		writeUint16LE(fd, y2);
 		writeUint32LE(fd, messageListOffset);
 	}
-	
+
 	int getItemSize() const {
 		return 16;
 	}
-	
+
 };
 
 struct RectItem {
@@ -212,7 +212,7 @@ struct RectItem {
 			subItemOffset += 16;
 			subRectItems.push_back(subRectItem);
 		}
-	}	
+	}
 
 	void save(FILE *fd) {
 		writeUint16LE(fd, x1);
@@ -223,11 +223,11 @@ struct RectItem {
 		for (uint32 j = 0; j < subRectItems.size(); j++)
 			subRectItems[j].save(fd);
 	}
-	
+
 	int getItemSize() const {
 		return 16;
 	}
-	
+
 };
 
 struct NavigationItem {
@@ -238,10 +238,10 @@ struct NavigationItem {
 	byte interactive;
 	byte middleFlag;
 	uint32 mouseCursorFileHash;
-	
+
 	void load(uint32 offset) {
 		byte *item = getData(offset);
-		fileHash = READ_LE_UINT32(item + 0); 
+		fileHash = READ_LE_UINT32(item + 0);
 		leftSmackerFileHash = READ_LE_UINT32(item + 4);
 		rightSmackerFileHash = READ_LE_UINT32(item + 8);
 		middleSmackerFileHash = READ_LE_UINT32(item + 12);
@@ -263,7 +263,7 @@ struct NavigationItem {
 	int getItemSize() const {
 		return 24;
 	}
-	
+
 };
 
 struct SceneInfo140Item {
@@ -347,24 +347,24 @@ struct SceneInfo2700Item {
 template<class ITEMCLASS>
 class StaticDataList {
 public:
-	uint32 id;	
+	uint32 id;
 	std::vector<ITEMCLASS> items;
-	
+
 	virtual ~StaticDataList() {
 	}
-	
+
 	void add(ITEMCLASS item) {
 		items.push_back(item);
 	}
-	
+
 	int getCount() const {
 		return items.size();
 	}
-	
+
 	ITEMCLASS *getListItem(int index) {
 		return &items[index];
 	}
-		
+
 	virtual bool specialLoadList(uint32 count, uint32 offset) {
 		return false;
 	}
@@ -398,7 +398,7 @@ class RectList : public StaticDataList<RectItem> {
 };
 
 class MessageList : public StaticDataList<MessageItem> {
-public:	
+public:
 
 	virtual bool specialLoadList(uint32 count, uint32 offset) {
 		// Special code for message lists which are set at runtime (but otherwise constant)
@@ -455,7 +455,7 @@ public:
 		}
 		return false;
 	}
-		
+
 };
 
 class NavigationList : public StaticDataList<NavigationItem> {
@@ -465,11 +465,11 @@ template<class LISTCLASS>
 class StaticDataListVector {
 public:
 	std::vector<LISTCLASS*> lists;
-	
+
 	void add(LISTCLASS *list) {
 		lists.push_back(list);
 	}
-	
+
 	void loadListVector(const uint32 *offsets) {
 		for (int i = 0; offsets[i] != 0; i += 2) {
 			LISTCLASS *list = new LISTCLASS();
@@ -486,7 +486,7 @@ public:
 				lists.push_back(list);
 		}
 	}
-	
+
 	void saveListVector(FILE *fd) {
 		writeUint32LE(fd, lists.size());
 		for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
@@ -500,7 +500,7 @@ template<class ITEMCLASS>
 class StaticDataVector {
 public:
 	std::vector<ITEMCLASS> items;
-	
+
 	void loadVector(const uint32 *offsets) {
 		for (int i = 0; offsets[i] != 0; i++) {
 			ITEMCLASS item;
@@ -508,7 +508,7 @@ public:
 			items.push_back(item);
 		}
 	}
-	
+
 	void saveVector(FILE *fd) {
 		writeUint32LE(fd, items.size());
 		for (typename std::vector<ITEMCLASS>::iterator it = items.begin(); it != items.end(); it++) {
@@ -522,8 +522,8 @@ StaticDataListVector<HitRectList> hitRectLists;
 StaticDataListVector<RectList> rectLists;
 StaticDataListVector<MessageList> messageLists;
 StaticDataListVector<NavigationList> navigationLists;
-StaticDataVector<SceneInfo140Item> sceneInfo140Items; 
-StaticDataVector<SceneInfo2700Item> sceneInfo2700Items; 
+StaticDataVector<SceneInfo140Item> sceneInfo140Items;
+StaticDataVector<SceneInfo2700Item> sceneInfo2700Items;
 
 void addMessageList(uint32 messageListCount, uint32 messageListOffset) {
 	MessageList *messageList = new MessageList();
@@ -550,7 +550,7 @@ int main(int argc, char *argv[]) {
 
 	writeUint32LE(datFile, 0x11223344); // Some magic
 	writeUint32LE(datFile, DAT_VERSION);
-		
+
 	messageLists.saveListVector(datFile);
 	rectLists.saveListVector(datFile);
 	hitRectLists.saveListVector(datFile);

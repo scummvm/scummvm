@@ -32,12 +32,12 @@ static const uint32 kModule2300SoundList[] = {
 
 Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundVolume(0) {
-	
+
 	_vm->_soundMan->addSoundList(0x1A214010, kModule2300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule2300SoundList, true, 50, 600, 10, 150);
 
 	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
-	
+
 	if (_isWallBroken) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
@@ -161,12 +161,12 @@ void Module2300::updateScene() {
 	} else {
 		switch (_sceneNum) {
 		case 1:
-			if (_isWallBroken && navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 4 && 
+			if (_isWallBroken && navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 4 &&
 				navigationScene()->getFrameNumber() % 2) {
 				_soundVolume++;
 				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 			}
-			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0 && 
+			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0 &&
 				navigationScene()->getFrameNumber() == 50) {
 				_vm->_soundMan->playTwoSounds(0x1A214010, 0x48498E46, 0x50399F64, 0);
 				_vm->_soundMan->setSoundVolume(0x48498E46, 70);
@@ -182,5 +182,5 @@ void Module2300::updateScene() {
 		}
 	}
 }
-			
+
 } // End of namespace Neverhood

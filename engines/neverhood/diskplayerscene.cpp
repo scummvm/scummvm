@@ -61,7 +61,7 @@ static const uint32 kDiskplayerSmackerFileHashes[] = {
 	0x04002810
 };
 
-static const uint32 kDiskplayerSlotFileHashes1[] = { 
+static const uint32 kDiskplayerSlotFileHashes1[] = {
 	0x81312280,
 	0x01312281,
 	0x01312282,
@@ -84,7 +84,7 @@ static const uint32 kDiskplayerSlotFileHashes1[] = {
 	0x04312281
 };
 
-static const uint32 kDiskplayerSlotFileHashes2[] = { 
+static const uint32 kDiskplayerSlotFileHashes2[] = {
 	0x90443A00,
 	0x90443A18,
 	0x90443A28,
@@ -107,8 +107,8 @@ static const uint32 kDiskplayerSlotFileHashes2[] = {
 	0xC0443A18
 };
 
-static const uint32 kDiskplayerSlotFileHashes3[] = { 
-	0x10357320, 
+static const uint32 kDiskplayerSlotFileHashes3[] = {
+	0x10357320,
 	0x10557320,
 	0x10957320,
 	0x11157320,
@@ -130,7 +130,7 @@ static const uint32 kDiskplayerSlotFileHashes3[] = {
 	0x10543320
 };
 
-static const uint32 kDiskplayerSlotFileHashes4[] = { 
+static const uint32 kDiskplayerSlotFileHashes4[] = {
 	0xDC8020E4,
 	0xDC802164,
 	0xDC802264,
@@ -155,7 +155,7 @@ static const uint32 kDiskplayerSlotFileHashes4[] = {
 
 AsDiskplayerSceneKey::AsDiskplayerSceneKey(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100) {
-	
+
 	createSurface1(0x100B90B4, 1200);
 	_x = 211;
 	_y = 195;
@@ -193,7 +193,7 @@ void AsDiskplayerSceneKey::stDropKeyDone() {
 
 DiskplayerPlayButton::DiskplayerPlayButton(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene)
 	: StaticSprite(vm, 1400), _diskplayerScene(diskplayerScene), _isPlaying(false) {
-	
+
 	loadSprite(0x24A4A664, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44043000);
@@ -317,10 +317,10 @@ void DiskplayerSlot::stop() {
 
 DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int paletteIndex)
 	: Scene(vm, parentModule), _diskIndex(0), _appearCountdown(0), _tuneInCountdown(0),
-	_hasAllDisks(false), _dropKey(false), _inputDisabled(true), _updateStatus(kUSStopped) { 
+	_hasAllDisks(false), _dropKey(false), _inputDisabled(true), _updateStatus(kUSStopped) {
 
 	int availableDisksCount = 0;
-	
+
 	setBackground(0x8A000044);
 	setPalette(kDiskplayerPaletteFileHashes[paletteIndex]);
 
@@ -344,7 +344,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	}
 
 	_hasAllDisks = availableDisksCount == 20;
-	
+
 	if (_hasAllDisks && !getGlobalVar(V_HAS_FINAL_KEY))
 		_dropKey = true;
 
@@ -360,8 +360,8 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 
 	_palette->usePalette();
 
-	SetMessageHandler(&DiskplayerScene::handleMessage); 
-	SetUpdateHandler(&DiskplayerScene::update); 
+	SetMessageHandler(&DiskplayerScene::handleMessage);
+	SetUpdateHandler(&DiskplayerScene::update);
 	_appearCountdown = 6;
 
 }
@@ -417,7 +417,7 @@ void DiskplayerScene::update() {
 		}
 		_diskIndex++;
 		while (!_diskAvailable[_diskIndex] && _diskIndex < 19)
-			_diskIndex++;					
+			_diskIndex++;
 		if (_diskIndex < 20) {
 			_appearCountdown = 1;
 		} else {
@@ -448,7 +448,7 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 			} else if (!_dropKey &&
 				param.asPoint().x > 38 && param.asPoint().x < 598 &&
 				param.asPoint().y > 400 && param.asPoint().y < 460) {
-				
+
 				_diskSlots[_diskIndex]->stop();
 				_diskIndex = (param.asPoint().x - 38) / 28;
 				_diskSlots[_diskIndex]->activate();
@@ -462,10 +462,10 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 			break;
 		case 0x2000:
 			tuneIn();
-			break;			
+			break;
 		case 0x2001:
 			stop();
-			break;			
+			break;
 		}
 	}
 	return 0;

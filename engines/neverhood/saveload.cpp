@@ -78,7 +78,7 @@ bool NeverhoodEngine::savegame(const char *filename, const char *description) {
 	byte descriptionLen = strlen(description);
 	out->writeByte(descriptionLen);
 	out->write(description, descriptionLen);
-	
+
 	Graphics::saveThumbnail(*out);
 
 	// Not used yet, reserved for future usage
@@ -96,7 +96,7 @@ bool NeverhoodEngine::savegame(const char *filename, const char *description) {
 	_gameVars->setGlobalVar(V_CURRENT_SCENE_WHICH, _gameState.which);
 
 	_gameVars->saveState(out);
-	
+
 	out->finalize();
 	delete out;
 	return true;
@@ -112,17 +112,17 @@ bool NeverhoodEngine::loadgame(const char *filename) {
 	SaveHeader header;
 
 	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
-	
+
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);
 		delete in;
 		return false;
 	}
-	
+
 	g_engine->setTotalPlayTime(header.playTime * 1000);
 
 	_gameVars->loadState(in);
-	
+
 	_gameState.sceneNum = _gameVars->getGlobalVar(V_CURRENT_SCENE);
 	_gameState.which = _gameVars->getGlobalVar(V_CURRENT_SCENE_WHICH);
 

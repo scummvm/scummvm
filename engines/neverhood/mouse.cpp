@@ -26,9 +26,9 @@
 namespace Neverhood {
 
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect)
-	: StaticSprite(vm, 2000), _mouseType(kMouseType433), 
+	: StaticSprite(vm, 2000), _mouseType(kMouseType433),
 	_mouseCursorResource(vm), _frameNum(0) {
-	
+
 	_mouseRect = mouseRect;
 	init(fileHash);
 	if (_x >= _mouseRect.x1 && _x <= _mouseRect.x2 &&
@@ -43,7 +43,7 @@ Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect)
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2)
 	: StaticSprite(vm, 2000), _mouseType(kMouseType435),
 	_mouseCursorResource(vm), _frameNum(0), _x1(x1), _x2(x2) {
-	
+
 	init(fileHash);
 	if (_x <= _x1) {
 		_mouseCursorResource.setCursorNum(6);
@@ -69,8 +69,8 @@ Mouse::~Mouse() {
 
 void Mouse::init(uint32 fileHash) {
 	_mouseCursorResource.load(fileHash);
-	_x = _vm->getMouseX();	
-	_y = _vm->getMouseY();	
+	_x = _vm->getMouseX();
+	_y = _vm->getMouseY();
 	createSurface(2000, 32, 32);
 	SetUpdateHandler(&Mouse::update);
 	SetMessageHandler(&Mouse::handleMessage);
@@ -99,7 +99,7 @@ void Mouse::update() {
 	_frameNum++;
 	if (_frameNum >= 6)
 		_frameNum = 0;
-	_needRefresh = _frameNum % 2 == 0;		
+	_needRefresh = _frameNum % 2 == 0;
 }
 
 uint32 Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -113,40 +113,40 @@ uint32 Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		case 1:
 			if (_x >= 320)
 				messageResult = 1;
-			else				
+			else
 				messageResult = 0;
 			break;
 		case 2:
 		default:
 			if (_x < 100)
 				messageResult = 0;
-			else if (_x > 540)				
+			else if (_x > 540)
 				messageResult = 1;
-			else				
+			else
 				messageResult = 2;
 			break;
 		case 3:
 			if (_x < 100)
 				messageResult = 0;
-			else if (_x > 540)				
+			else if (_x > 540)
 				messageResult = 1;
-			else				
+			else
 				messageResult = 4;
 			break;
 		case 4:
 			if (_x < 100)
 				messageResult = 0;
-			else if (_x > 540)				
+			else if (_x > 540)
 				messageResult = 1;
-			else if (_y >= 150)				
+			else if (_y >= 150)
 				messageResult = 2;
-			else				
+			else
 				messageResult = 3;
 			break;
 		case 5:
 			if (_y >= 240)
 				messageResult = 4;
-			else				
+			else
 				messageResult = 3;
 			break;
 		}
@@ -162,7 +162,7 @@ uint32 Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *s
 }
 
 void Mouse::updateCursor() {
-	
+
 	if (!_surface)
 		return;
 
@@ -213,44 +213,44 @@ void Mouse::updateCursorNum() {
 		case 1:
 			if (_x >= 320)
 				_mouseCursorResource.setCursorNum(5);
-			else				
+			else
 				_mouseCursorResource.setCursorNum(6);
 			break;
 		case 2:
 		default:
 			if (_x < 100)
 				_mouseCursorResource.setCursorNum(6);
-			else if (_x > 540)				
+			else if (_x > 540)
 				_mouseCursorResource.setCursorNum(5);
-			else				
+			else
 				_mouseCursorResource.setCursorNum(0);
 			break;
 		case 3:
 			if (_x < 100)
 				_mouseCursorResource.setCursorNum(1);
-			else if (_x > 540)				
+			else if (_x > 540)
 				_mouseCursorResource.setCursorNum(1);
 			break;
 		case 4:
 			if (_x < 100)
 				_mouseCursorResource.setCursorNum(6);
-			else if (_x > 540)				
+			else if (_x > 540)
 				_mouseCursorResource.setCursorNum(5);
-			else if (_y >= 150)				
+			else if (_y >= 150)
 				_mouseCursorResource.setCursorNum(0);
-			else				
+			else
 				_mouseCursorResource.setCursorNum(3);
 			break;
 		case 5:
 			if (_y >= 240)
 				_mouseCursorResource.setCursorNum(2);
-			else				
+			else
 				_mouseCursorResource.setCursorNum(3);
 			break;
 		}
 		break;
 	}
-	
+
 }
 
 } // End of namespace Neverhood

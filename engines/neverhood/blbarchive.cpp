@@ -58,8 +58,8 @@ BlbArchive::~BlbArchive() {
 void BlbArchive::open(const Common::String &filename) {
 	BlbHeader header;
 	uint16 *extDataOffsets;
-	
-	_entries.clear();		
+
+	_entries.clear();
 
 	if (!_fd.open(filename))
 		error("BlbArchive::open() Could not open %s", filename.c_str());
@@ -83,16 +83,16 @@ void BlbArchive::open(const Common::String &filename) {
 		entry.fileHash = _fd.readUint32LE();
 		_entries.push_back(entry);
 	}
-	
+
 	extDataOffsets = new uint16[header.fileCount];
-	
+
 	// Load file records
 	for (uint i = 0; i < header.fileCount; i++) {
 		BlbArchiveEntry &entry = _entries[i];
 		entry.type = _fd.readByte();
 		entry.comprType = _fd.readByte();
 		entry.extData = NULL;
-		extDataOffsets[i] = _fd.readUint16LE(); 
+		extDataOffsets[i] = _fd.readUint16LE();
 		entry.timeStamp = _fd.readUint32LE();
 		entry.offset = _fd.readUint32LE();
 		entry.diskSize = _fd.readUint32LE();
@@ -101,7 +101,7 @@ void BlbArchive::open(const Common::String &filename) {
 			entry.fileHash, entry.type, entry.comprType, extDataOffsets[i], entry.timeStamp,
 			entry.offset, entry.diskSize, entry.size);
 	}
-	
+
 	// Load ext data
 	if (header.extDataSize > 0) {
 		_extData = new byte[header.extDataSize];
@@ -120,9 +120,9 @@ void BlbArchive::load(uint index, byte *buffer, uint32 size) {
 
 void BlbArchive::load(BlbArchiveEntry *entry, byte *buffer, uint32 size) {
 	Common::StackLock lock(_mutex);
-	
+
 	_fd.seek(entry->offset);
-	
+
 	switch (entry->comprType) {
 	case 1: // Uncompressed
 		if (size == 0)

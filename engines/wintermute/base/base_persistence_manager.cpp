@@ -282,7 +282,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 				} else {
 					_saveStream->writeUint32LE(0);
 				}
-				
+
 				thumbnailOK = true;
 			}
 		}

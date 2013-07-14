@@ -79,22 +79,22 @@ void SmackerDoubleSurface::draw() {
 void NeverhoodSmackerDecoder::forceSeekToFrame(uint frame) {
 	if (!isVideoLoaded())
 		return;
-	
+
 	if (frame >= getFrameCount())
 		error("Can't force Smacker seek to invalid frame %d", frame);
-	
+
 	if (_header.audioInfo[0].hasAudio)
 		error("Can't force Smacker frame seek with audio");
 	if (!rewind())
 		error("Failed to rewind");
-	
+
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
 	uint32 offset = 0;
 	for (uint32 i = 0; i < frame; i++) {
 		videoTrack->increaseCurFrame();
 		offset += _frameSizes[i] & ~3;
 	}
-	
+
 	_fileStream->seek(offset, SEEK_CUR);
 }
 
@@ -124,7 +124,7 @@ SmackerPlayer::~SmackerPlayer() {
 
 void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	debug(0, "SmackerPlayer::open(%08X)", fileHash);
-	
+
 	_fileHash = fileHash;
 	_keepLastFrame = keepLastFrame;
 
@@ -136,13 +136,13 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 
 	_smackerDecoder = new NeverhoodSmackerDecoder();
 	_smackerDecoder->loadStream(_stream);
-	
+
 	_palette = new Palette(_vm);
 	_palette->usePalette();
 
 	if (!_paused)
 		_smackerDecoder->start();
-	
+
 }
 
 void SmackerPlayer::close() {
@@ -212,7 +212,7 @@ void SmackerPlayer::update() {
 			_videoDone = false;
 		}
 	}
-	
+
 }
 
 void SmackerPlayer::updateFrame() {
@@ -240,7 +240,7 @@ void SmackerPlayer::updateFrame() {
 
 	if (_smackerDecoder->hasDirtyPalette())
 		updatePalette();
-		
+
 }
 
 void SmackerPlayer::updatePalette() {

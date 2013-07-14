@@ -66,7 +66,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 
 	_console = new HugoConsole(this);
 	_rnd = 0;
-	
+
 	_screen = NULL;
 	_mouse = NULL;
 	_inventory = NULL;

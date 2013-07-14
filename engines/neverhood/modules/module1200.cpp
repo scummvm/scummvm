@@ -26,7 +26,7 @@ namespace Neverhood {
 
 Module1200::Module1200(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	SetMessageHandler(&Module1200::handleMessage);
 
 	if (which < 0)
@@ -124,7 +124,7 @@ static const uint32 kScene1201TntFileHashList2[] = {
 	0xB140A1E6, 0x5088A068, 0x5088A068,
 	0x74C4C866, 0x3192C059, 0x3192C059
 };
-			
+
 SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 pointIndex, int16 clipY2)
 	: StaticSprite(vm, 900) {
 
@@ -136,10 +136,10 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 		loadSprite(kScene1201TntFileHashList2[elemIndex], kSLFCenteredDrawOffset | kSLFSetPosition, 50, x, y - 20);
 	setClipRect(0, 0, 640, clipY2);
 }
-	
+
 AsScene1201Tape::AsScene1201Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 nameHash, int surfacePriority, int16 x, int16 y, uint32 fileHash)
 	: AnimatedSprite(vm, fileHash, surfacePriority, x, y), _parentScene(parentScene), _nameHash(nameHash) {
-	
+
 	if (!getSubVar(VA_HAS_TAPE, _nameHash) && !getSubVar(VA_IS_TAPE_INSERTED, _nameHash)) {
 		SetMessageHandler(&AsScene1201Tape::handleMessage);
 	} else {
@@ -253,10 +253,10 @@ void AsScene1201RightDoor::stCloseDoorDone() {
 	stopAnimation();
 	setVisible(false);
 }
-		
+
 AsScene1201KlaymenHead::AsScene1201KlaymenHead(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1200) {
-	
+
 	createSurface(1200, 69, 98);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1201KlaymenHead::handleMessage);
@@ -301,7 +301,7 @@ AsScene1201TntMan::AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sp
 
 AsScene1201TntMan::~AsScene1201TntMan() {
 	_vm->_soundMan->deleteSoundGroup(0x01D00560);
-}	 
+}
 
 uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
@@ -396,7 +396,7 @@ void AsScene1201TntManFlame::suUpdate() {
 
 AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _countdown(0) {
-	
+
 	createSurface(1100, 57, 60);
 	SetUpdateHandler(&AsScene1201Match::update);
 	SetMessageHandler(&AsScene1201Match::hmOnDoorFrameAboutToMove);
@@ -518,7 +518,7 @@ AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene
 	: AnimatedSprite(vm, 900), _parentScene(parentScene), _klaymen(klaymen), _klaymenTooClose(false) {
 
 	// NOTE: _countdown2 and _countdown3 were unused/without effect and thus removed
-	
+
 	createSurface(1100, 203, 199);
 	SetUpdateHandler(&AsScene1201Creature::update);
 	SetMessageHandler(&AsScene1201Creature::hmWaiting);
@@ -664,7 +664,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1201::handleMessage);
 
 	setHitRects(0x004AEBD0);
-	
+
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52)) {
 		setSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52, 1);
 		for (uint32 index = 0; index < 18; index++)
@@ -672,25 +672,25 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	insertScreenMouse(0x9A2C0409);
-	
+
 	_asTape = insertSprite<AsScene1201Tape>(this, 3, 1100, 243, 340, 0x9148A011);
 	addCollisionSprite(_asTape);
-	
+
 	tempSprite = insertStaticSprite(0x03C82530, 100);
-	topY1 = tempSprite->getY() + tempSprite->getDrawRect().height; 
+	topY1 = tempSprite->getY() + tempSprite->getDrawRect().height;
 
 	tempSprite = insertStaticSprite(0x88182069, 200);
-	topY2 = tempSprite->getY() + tempSprite->getDrawRect().height; 
+	topY2 = tempSprite->getY() + tempSprite->getDrawRect().height;
 
 	tempSprite = insertStaticSprite(0x476014E0, 300);
-	topY3 = tempSprite->getY() + tempSprite->getDrawRect().height; 
+	topY3 = tempSprite->getY() + tempSprite->getDrawRect().height;
 
 	tempSprite = insertStaticSprite(0x04063110, 500);
-	topY4 = tempSprite->getY() + 1; 
+	topY4 = tempSprite->getY() + 1;
 
 	_asTntManRope = insertSprite<AsScene1201TntManRope>(getGlobalVar(V_TNT_DUMMY_BUILT) && which != 1);
 	_asTntManRope->setClipRect(0, topY4, 640, 480);
-	
+
 	insertStaticSprite(0x400B04B0, 1200);
 
 	tempSprite = insertStaticSprite(0x40295462, 1200);
@@ -735,7 +735,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_klaymen->setClipRect(x1, 0, x2, 480);
 	_klaymen->setRepl(64, 0);
-	
+
 	if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 		setBackground(0x4019A2C4);
 		setPalette(0x4019A2C4);
@@ -756,8 +756,8 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			tempSprite = insertSprite<AsScene1201TntManFlame>(_asTntMan);
 			tempSprite->setClipRect(x1, 0, x2, 480);
 		}
-		
-		uint32 tntIndex = 1; 
+
+		uint32 tntIndex = 1;
 		while (tntIndex < 18) {
 			uint32 elemIndex = getSubVar(VA_TNT_POSITIONS, tntIndex);
 			int16 clipY2;
@@ -783,10 +783,10 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			setRectList(0x004AEE58);
 		} else {
 			setRectList(0x004AEDC8);
-		} 
-		
+		}
+
 	} else {
-	
+
 		insertStaticSprite(0x8E8A1981, 900);
 
 		uint32 tntIndex = 0;
@@ -795,7 +795,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			int16 clipY2;
 			if (kScene1201PointArray[elemIndex].x < 300) {
 				clipY2 = 480;
-			} else { 
+			} else {
 				if (kScene1201PointArray[elemIndex].y < 175)
 					clipY2 = topY1;
 				else if (kScene1201PointArray[elemIndex].y < 230)
@@ -811,7 +811,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			setRectList(0x004AEE18);
 		else
 			setRectList(0x004AED88);
-		 
+
 	}
 
 	tempSprite = insertStaticSprite(0x63D400BC, 900);
@@ -875,7 +875,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList2(0x004AECC0);
 		}
 		break;
-	case 0x2002:		
+	case 0x2002:
 		if (getGlobalVar(V_TNT_DUMMY_FUSE_LIT)) {
 			// Move the TNT dummy if the fuse is burning
 			sendEntityMessage(_klaymen, 0x1014, _asTntMan);
@@ -903,7 +903,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x8000:
 		sendMessage(_asKlaymenHead, 0x2006, 0);
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -956,7 +956,7 @@ uint32 AsScene1202TntItem::hmShowIdle(int messageNum, const MessageParam &param,
 	case 0x2001:
 		_newPosition = (int)param.asInteger();
 		stChangePositionFadeOut();
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -998,7 +998,7 @@ void AsScene1202TntItem::stChangePositionDone() {
 }
 
 Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _paletteResource(vm),  
+	: Scene(vm, parentModule), _paletteResource(vm),
 	_soundToggle(true), _isPuzzleSolved(false), _counter(0), _clickedIndex(-1) {
 
 	SetMessageHandler(&Scene1202::handleMessage);
@@ -1093,8 +1093,8 @@ uint32 Scene1202::hmSolved(int messageNum, const MessageParam &param, Entity *se
 }
 
 bool Scene1202::isSolved() {
-	return 
-		getSubVar(VA_TNT_POSITIONS,  0) ==  0 && getSubVar(VA_TNT_POSITIONS,  3) ==  3 && 
+	return
+		getSubVar(VA_TNT_POSITIONS,  0) ==  0 && getSubVar(VA_TNT_POSITIONS,  3) ==  3 &&
 		getSubVar(VA_TNT_POSITIONS,  6) ==  6 && getSubVar(VA_TNT_POSITIONS,  9) ==  9 &&
 		getSubVar(VA_TNT_POSITIONS, 12) == 12 && getSubVar(VA_TNT_POSITIONS, 15) == 15;
 }

@@ -551,7 +551,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	// NOTE: To fix a corrupted jar object, type "send Glass_Jar message 52"
 	// in the debugger.
 	if (g_sci->getGameId() == GID_PEPPER && func == 0 && argc >= 6 && module == 894 &&
-		tuple.noun == 26 && tuple.cond == 0 && tuple.seq == 1 && 
+		tuple.noun == 26 && tuple.cond == 0 && tuple.seq == 1 &&
 		!s->_msgState->getMessage(module, tuple, NULL_REG))
 		tuple.verb = 0;
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@ BaseGameSettings::BaseGameSettings(BaseGame *gameRef) {
 	_allowAccessTab = true;
 	_allowAboutTab = true;
 	_allowDesktopRes = false;
-	
+
 	_compressedSavegames = true;
 	_richSavedGames = false;
 	_savedGameExt = "dsv";
@@ -101,21 +101,21 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 	TOKEN_TABLE(SAVED_GAME_EXT)
 	TOKEN_TABLE(GUID)
 	TOKEN_TABLE_END
-	
-	
+
+
 	byte *origBuffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (origBuffer == nullptr) {
 		BaseEngine::LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
-	
+
 	bool ret = STATUS_OK;
-	
+
 	byte *buffer = origBuffer;
 	byte *params;
 	int cmd;
 	BaseParser parser;
-	
+
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
 		BaseEngine::LOG(0, "'SETTINGS' keyword expected in game settings file.");
 		return STATUS_FAILED;
@@ -130,61 +130,61 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 					strcpy(_gameFile, (char *)params);
 				}
 				break;
-				
+
 			case TOKEN_STRING_TABLE:
 				if (DID_FAIL(_stringTable->loadFile((char *)params))) {
 					cmd = PARSERR_GENERIC;
 				}
 				break;
-				
+
 			case TOKEN_RESOLUTION:
 				parser.scanStr((char *)params, "%d,%d", &_resWidth, &_resHeight);
 				break;
-				
+
 			case TOKEN_REQUIRE_3D_ACCELERATION:
 				parser.scanStr((char *)params, "%b", &_requireAcceleration);
 				break;
-				
+
 			case TOKEN_REQUIRE_SOUND:
 				parser.scanStr((char *)params, "%b", &_requireSound);
 				break;
-				
+
 			case TOKEN_HWTL_MODE:
 				parser.scanStr((char *)params, "%d", &_TLMode);
 				break;
-				
+
 			case TOKEN_ALLOW_WINDOWED_MODE:
 				parser.scanStr((char *)params, "%b", &_allowWindowed);
 				break;
-				
+
 			case TOKEN_ALLOW_DESKTOP_RES:
 				parser.scanStr((char *)params, "%b", &_allowDesktopRes);
 				break;
-				
+
 			case TOKEN_ALLOW_ADVANCED:
 				parser.scanStr((char *)params, "%b", &_allowAdvanced);
 				break;
-				
+
 			case TOKEN_ALLOW_ACCESSIBILITY_TAB:
 				parser.scanStr((char *)params, "%b", &_allowAccessTab);
 				break;
-				
+
 			case TOKEN_ALLOW_ABOUT_TAB:
 				parser.scanStr((char *)params, "%b", &_allowAboutTab);
 				break;
-				
+
 			case TOKEN_REGISTRY_PATH:
 				//BaseEngine::instance().getRegistry()->setBasePath((char *)params);
 				break;
-				
+
 			case TOKEN_RICH_SAVED_GAMES:
 				parser.scanStr((char *)params, "%b", &_richSavedGames);
 				break;
-				
+
 			case TOKEN_SAVED_GAME_EXT:
 				_savedGameExt = (char *)params;
 				break;
-				
+
 			case TOKEN_GUID:
 				break;
 		}
@@ -197,12 +197,12 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 		BaseEngine::LOG(0, "Error loading game settings '%s'", filename);
 		ret = STATUS_FAILED;
 	}
-	
+
 	_allowWindowed = true; // TODO: These two settings should probably be cleaned out altogether.
 	_compressedSavegames = true;
-	
+
 	delete[] origBuffer;
-	
+
 	return ret;
 }
 

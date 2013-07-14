@@ -57,7 +57,7 @@ bool SpriteResource::load(uint32 fileHash, bool doLoadPosition) {
 		const byte *spriteData = _resourceHandle.data();
 		NPoint *position = doLoadPosition ? &_position : NULL;
 		parseBitmapResource(spriteData, &_rle, &_dimensions, position, NULL, &_pixels);
-	} 
+	}
 	return _pixels != NULL;
 }
 
@@ -134,11 +134,11 @@ bool AnimResource::load(uint32 fileHash) {
 		return true;
 
 	unload();
-	
+
 	_vm->_res->queryResource(fileHash, _resourceHandle);
 	if (!_resourceHandle.isValid() || _resourceHandle.type() != kResTypeAnimation)
 		return false;
-	
+
 	const byte *resourceData, *animList, *frameList;
 	uint16 animInfoStartOfs, animListIndex, animListCount;
 	uint16 frameListStartOfs, frameCount;
@@ -146,20 +146,20 @@ bool AnimResource::load(uint32 fileHash) {
 
 	_vm->_res->loadResource(_resourceHandle);
 	resourceData = _resourceHandle.data();
-	
+
 	animListCount = READ_LE_UINT16(resourceData);
 	animInfoStartOfs = READ_LE_UINT16(resourceData + 2);
 	spriteDataOfs = READ_LE_UINT32(resourceData + 4);
 	paletteDataOfs = READ_LE_UINT32(resourceData + 8);
-	
+
 	animList = resourceData + 12;
 	for (animListIndex = 0; animListIndex < animListCount; animListIndex++) {
 		debug(8, "hash: %08X", READ_LE_UINT32(animList));
 		if (READ_LE_UINT32(animList) == fileHash)
 			break;
-		animList += 8;				
+		animList += 8;
 	}
-	
+
 	if (animListIndex >= animListCount) {
 		_vm->_res->unloadResource(_resourceHandle);
 		return false;
@@ -168,12 +168,12 @@ bool AnimResource::load(uint32 fileHash) {
 	_spriteData = resourceData + spriteDataOfs;
 	if (paletteDataOfs > 0)
 		_paletteData = resourceData + paletteDataOfs;
-	
+
 	frameCount = READ_LE_UINT16(animList + 4);
 	frameListStartOfs = READ_LE_UINT16(animList + 6);
-	
+
 	debug(8, "frameCount = %d; frameListStartOfs = %04X; animInfoStartOfs = %04X", frameCount, frameListStartOfs, animInfoStartOfs);
-	
+
 	frameList = resourceData + animInfoStartOfs + frameListStartOfs;
 
 	_frames.clear();
@@ -189,13 +189,13 @@ bool AnimResource::load(uint32 fileHash) {
 		frameInfo.drawOffset.height = READ_LE_UINT16(frameList + 12);
 		frameInfo.deltaX = READ_LE_UINT16(frameList + 14);
 		frameInfo.deltaY = READ_LE_UINT16(frameList + 16);
-		frameInfo.collisionBoundsOffset.x = READ_LE_UINT16(frameList + 18); 
-		frameInfo.collisionBoundsOffset.y = READ_LE_UINT16(frameList + 20); 
-		frameInfo.collisionBoundsOffset.width = READ_LE_UINT16(frameList + 22); 
+		frameInfo.collisionBoundsOffset.x = READ_LE_UINT16(frameList + 18);
+		frameInfo.collisionBoundsOffset.y = READ_LE_UINT16(frameList + 20);
+		frameInfo.collisionBoundsOffset.width = READ_LE_UINT16(frameList + 22);
 		frameInfo.collisionBoundsOffset.height = READ_LE_UINT16(frameList + 24);
 		frameInfo.spriteDataOffs = READ_LE_UINT32(frameList + 28);
-		debug(8, "frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; collisionBoundsOffset = (%d,%d,%d,%d); spriteDataOffs = %08X", 
-			frameInfo.frameHash, frameInfo.counter, 
+		debug(8, "frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; collisionBoundsOffset = (%d,%d,%d,%d); spriteDataOffs = %08X",
+			frameInfo.frameHash, frameInfo.counter,
 			frameInfo.drawOffset.x, frameInfo.drawOffset.y, frameInfo.drawOffset.width, frameInfo.drawOffset.height,
 			frameInfo.deltaX, frameInfo.deltaY,
 			frameInfo.collisionBoundsOffset.x, frameInfo.collisionBoundsOffset.y, frameInfo.collisionBoundsOffset.width, frameInfo.collisionBoundsOffset.height,
@@ -203,11 +203,11 @@ bool AnimResource::load(uint32 fileHash) {
 		frameList += 32;
 		_frames.push_back(frameInfo);
 	}
-	
+
 	_fileHash = fileHash;
 
 	return true;
-	
+
 }
 
 void AnimResource::unload() {
@@ -229,7 +229,7 @@ int16 AnimResource::getFrameIndex(uint32 frameHash) {
 			break;
 		}
 	debug(2, "AnimResource::getFrameIndex(%08X) -> %d", frameHash, frameIndex);
-	return frameIndex;			
+	return frameIndex;
 }
 
 void AnimResource::setRepl(byte oldColor, byte newColor) {
@@ -254,7 +254,7 @@ NDimensions AnimResource::loadSpriteDimensions(uint32 fileHash) {
 
 // MouseCursorResource
 
-MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm) 
+MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm)
 	: _cursorSprite(vm), _cursorNum(4), _currFileHash(0) {
 
 	_rect.width = 32;
@@ -265,7 +265,7 @@ void MouseCursorResource::load(uint32 fileHash) {
 	if (_currFileHash != fileHash) {
 		if (_cursorSprite.load(fileHash) && !_cursorSprite.isRle() &&
 			_cursorSprite.getDimensions().width == 96 && _cursorSprite.getDimensions().height == 224) {
-			_currFileHash = fileHash; 
+			_currFileHash = fileHash;
 		} else {
 			unload();
 		}
@@ -296,14 +296,14 @@ NDrawRect& MouseCursorResource::getRect() {
 void MouseCursorResource::draw(int frameNum, Graphics::Surface *destSurface) {
 	if (_cursorSprite.getPixels()) {
 		const int sourcePitch = (_cursorSprite.getDimensions().width + 3) & 0xFFFC; // 4 byte alignment
-		const int destPitch = destSurface->pitch;				
+		const int destPitch = destSurface->pitch;
 		const byte *source = _cursorSprite.getPixels() + _cursorNum * (sourcePitch * 32) + frameNum * 32;
 		byte *dest = (byte*)destSurface->pixels;
 		for (int16 yc = 0; yc < 32; yc++) {
 			memcpy(dest, source, 32);
 			source += sourcePitch;
 			dest += destPitch;
-		}	
+		}
 	}
 }
 
@@ -311,7 +311,7 @@ void MouseCursorResource::draw(int frameNum, Graphics::Surface *destSurface) {
 
 TextResource::TextResource(NeverhoodEngine *vm)
 	: _vm(vm), _textData(NULL), _count(0) {
-	
+
 }
 
 TextResource::~TextResource() {
@@ -372,7 +372,7 @@ void DataResource::load(uint32 fileHash) {
 			dataS.seek(2 + i * 8);
 			DRDirectoryItem drDirectoryItem;
 			drDirectoryItem.nameHash = dataS.readUint32LE();
-			drDirectoryItem.offset = dataS.readUint16LE(); 
+			drDirectoryItem.offset = dataS.readUint16LE();
 			drDirectoryItem.type = dataS.readUint16LE();
 			debug(2, "%03d nameHash = %08X; offset = %04X; type = %d", i, drDirectoryItem.nameHash, drDirectoryItem.offset, drDirectoryItem.type);
 			dataS.seek(itemStartOffs + drDirectoryItem.offset);
@@ -415,7 +415,7 @@ void DataResource::load(uint32 fileHash) {
 						hitRect.rect.y1 = dataS.readUint16LE();
 						hitRect.rect.x2 = dataS.readUint16LE();
 						hitRect.rect.y2 = dataS.readUint16LE();
-						hitRect.type = dataS.readUint16LE() + 0x5001; 
+						hitRect.type = dataS.readUint16LE() + 0x5001;
 						debug(3, "(%d, %d, %d, %d) -> %04d", hitRect.rect.x1, hitRect.rect.y1, hitRect.rect.x2, hitRect.rect.y2, hitRect.type);
 						hitRectList->push_back(hitRect);
 					}
@@ -491,7 +491,7 @@ void DataResource::load(uint32 fileHash) {
 					break;
 				}
 			}
-			_directory.push_back(drDirectoryItem); 
+			_directory.push_back(drDirectoryItem);
 		}
 	}
 }
@@ -540,12 +540,12 @@ HitRectList *DataResource::getHitRectList() {
 
 MessageList *DataResource::getMessageListAtPos(int16 klaymenX, int16 klaymenY, int16 mouseX, int16 mouseY) {
 	for (uint i = 0; i < _drRects.size(); i++) {
-		if (klaymenX >= _drRects[i].rect.x1 && klaymenX <= _drRects[i].rect.x2 && 
+		if (klaymenX >= _drRects[i].rect.x1 && klaymenX <= _drRects[i].rect.x2 &&
 			klaymenY >= _drRects[i].rect.y1 && klaymenY <= _drRects[i].rect.y2) {
-			DRSubRectList *drSubRectList = _drSubRectLists[_drRects[i].subRectIndex]; 
+			DRSubRectList *drSubRectList = _drSubRectLists[_drRects[i].subRectIndex];
 			for (uint j = 0; j < drSubRectList->size(); j++) {
 				DRSubRect &subRect = (*drSubRectList)[j];
-				if (mouseX >= subRect.rect.x1 && mouseX <= subRect.rect.x2 && 
+				if (mouseX >= subRect.rect.x1 && mouseX <= subRect.rect.x2 &&
 					mouseY >= subRect.rect.y1 && mouseY <= subRect.rect.y2) {
 					return _messageLists[subRect.messageListItemIndex];
 				}

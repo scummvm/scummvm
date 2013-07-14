@@ -28,7 +28,7 @@ namespace Neverhood {
 
 Module2000::Module2000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
 	else if (which == 0)
@@ -137,9 +137,9 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(this, 0x2000, 0);
 		_klaymen->setDoDeltaX(1);
 	}
-	
+
 	_klaymen->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
-	
+
 }
 
 uint32 Scene2001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -153,7 +153,7 @@ uint32 Scene2001::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B3670);
 			_klaymen->setKlaymenIdleTable1();
 		}
-	}	
+	}
 	return 0;
 }
 

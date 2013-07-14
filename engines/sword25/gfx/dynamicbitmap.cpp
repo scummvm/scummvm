@@ -53,7 +53,7 @@ DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<Rend
 bool DynamicBitmap::createRenderedImage(uint width, uint height) {
 	bool result = false;
 	_image.reset(new RenderedImage(width, height, result));
-	
+
 	_originalWidth = _width = width;
 	_originalHeight = _height = height;
 
@@ -77,7 +77,7 @@ bool DynamicBitmap::doRender(RectangleList *updateRects) {
 	// Get the frame buffer object
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 	assert(pGfx);
-	
+
 	// Draw the bitmap
 	bool result;
 	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {

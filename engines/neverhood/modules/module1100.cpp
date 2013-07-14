@@ -40,7 +40,7 @@ static const uint32 kModule1100SoundList[] = {
 
 Module1100::Module1100(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
 	} else if (which == 1) {
@@ -271,7 +271,7 @@ static const uint32 kSsScene1105SymbolDieFileHashes[] = {
 
 SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds)
 	: StaticSprite(vm, fileHash, 200), _parentScene(parentScene), _countdown(0) {
-	
+
 	_collisionBounds = collisionBounds;
 	SetMessageHandler(&SsScene1105Button::handleMessage);
 	SetUpdateHandler(&SsScene1105Button::update);
@@ -347,7 +347,7 @@ void SsScene1105SymbolDie::hide() {
 
 AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
+
 	createSurface(100, 556, 328);
 	_x = 320;
 	_y = 240;
@@ -396,7 +396,7 @@ void AsScene1105TeddyBear::hide() {
 
 SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _isClicked(false) {
-	
+
 	loadSprite(0x8228A46C, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44045140);
@@ -432,26 +432,26 @@ uint32 SsScene1105OpenButton::handleMessage(int messageNum, const MessageParam &
 Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule), _countdown(0), _isPanelOpen(false), _isActionButtonClicked(false), _doMoveTeddy(false),
 	_isClosePanelDone(false), _leaveResult(0), _backgroundIndex(0) {
-	
+
 	Sprite *ssOpenButton;
-	
+
 	_vm->gameModule()->initMemoryPuzzle();
-	
+
 	SetUpdateHandler(&Scene1105::update);
 	SetMessageHandler(&Scene1105::handleMessage);
-	
+
 	setBackground(0x20010002);
 	setPalette(0x20010002);
-	
+
 	_asTeddyBear = insertSprite<AsScene1105TeddyBear>(this);
 	ssOpenButton = insertSprite<SsScene1105OpenButton>(this);
 	addCollisionSprite(ssOpenButton);
 	insertPuzzleMouse(0x10006208, 20, 620);
-	
+
 	loadSound(0, 0x48442057);
 	loadSound(1, 0xC025014F);
 	loadSound(2, 0x68E25540);
-	
+
 }
 
 uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -569,13 +569,13 @@ void Scene1105::createObjects() {
 	addCollisionSprite(_ssSymbol3DownButton);
 	_ssActionButton = insertSprite<SsScene1105Button>(this, 0x8248AD35, NRect(280, 170, 354, 245));
 	addCollisionSprite(_ssActionButton);
-	
+
 	_isPanelOpen = true;
-	
+
 	_asTeddyBear->show();
 
 	insertPuzzleMouse(0x18666208, 20, 620);
-	
+
 }
 
 void Scene1105::upOpenPanel() {
@@ -639,13 +639,13 @@ void Scene1105::update() {
 
 Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	SetMessageHandler(&Scene1109::handleMessage);
-	
+
 	setBackground(0x8449E02F);
 	setPalette(0x8449E02F);
 	insertScreenMouse(0x9E02B84C);
-	
+
 	_sprite1 = insertStaticSprite(0x600CEF01, 1100);
 
 	if (which < 0) {

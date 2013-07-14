@@ -249,7 +249,7 @@ void StuffItArchive::update14(uint16 first, uint16 last, byte *code, uint16 *fre
 		do {
 			while (++i < last && code[first] > code[i])
 				;
-		
+
 			while (--j > first && code[first] < code[j])
 				;
 

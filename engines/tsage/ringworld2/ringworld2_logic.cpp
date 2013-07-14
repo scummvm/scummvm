@@ -1351,7 +1351,7 @@ void MazeUI::clear() {
 	if (_mapData)
 		DEALLOCATE(_mapData);
 	_mapData = NULL;
-	
+
 	_mapImage.clear();
 }
 
@@ -1397,7 +1397,7 @@ void MazeUI::draw() {
 	// Loop to handle the cell rows of the visible display area one at a time
 	for (int yCtr = 0; yCtr < _cellsVisible.y; ++yCtr, yPos += ySize) {
 		int cellY = _mapOffset.y / _cellSize.y + yCtr;
-		
+
 		// Loop to iterate through the horizontal visible cells to build up
 		// an entire cell high horizontal slice of the map
 		for (int xCtr = 0; xCtr < _cellsVisible.x; ++xCtr) {
@@ -1408,7 +1408,7 @@ void MazeUI::draw() {
 			if (cell >= 0) {
 				int frameNum = (cell % _frameCount) + 1;
 				int rlbNum = (cell % _resCount) / _frameCount + 1;
-				int resNum = _cellsResNum + (cell / _resCount); 
+				int resNum = _cellsResNum + (cell / _resCount);
 
 				visage.setVisage(resNum, rlbNum);
 				GfxSurface frame = visage.getFrame(frameNum);
@@ -1426,7 +1426,7 @@ void MazeUI::draw() {
 			// First line of the map to be displayed - only the bottom portion of that
 			// first cell row may be visible
 			yPos = _bounds.top;
-			ySize = _cellSize.y - (_mapOffset.y % _cellSize.y); 
+			ySize = _cellSize.y - (_mapOffset.y % _cellSize.y);
 
 			Rect srcBounds(_mapOffset.x % _cellSize.x, _mapOffset.y % _cellSize.y,
 				(_mapOffset.x % _cellSize.x) + _bounds.width(), _cellSize.y);

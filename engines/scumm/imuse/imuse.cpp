@@ -1509,7 +1509,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: GS Reset");
 		_system->delayMillis(200);
-		
+
 		// Set global Master Tune to 442.0kHz, as on the MT-32
 		memcpy(&buffer[4], "\x40\x00\x00\x00\x04\x04\x0F\x29", 8);
 		midi->sysEx(buffer, 12);

@@ -137,7 +137,7 @@ public:
 	bool initialize2();
 	bool initialize3();
 	BaseTransitionMgr *_transMgr;
-	
+
 	// String Table
 	void expandStringByStringTable(char **str) const;
 	char *getKeyFromStringTable(const char *str) const;
@@ -275,7 +275,7 @@ private:
 
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
-	
+
 	BaseGameSettings *_settings;
 
 	int32 _soundBufferSizeSec;

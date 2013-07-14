@@ -84,7 +84,7 @@ bool Panel::doRender(RectangleList *updateRects) {
 			gfxPtr->fill(&intersectionRect, _color);
 		}
 	}
-	
+
 	return true;
 }
 

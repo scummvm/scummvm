@@ -49,7 +49,7 @@ public:
 	void initWaterPipesPuzzle();
 	void initRadioPuzzle();
 	void initTestTubes1Puzzle();
-	void initTestTubes2Puzzle();	
+	void initTestTubes2Puzzle();
 	void initCannonSymbolsPuzzle();
 	void initCodeSymbolsPuzzle();
 	void initCubeSymbolsPuzzle();

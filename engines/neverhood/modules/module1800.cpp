@@ -38,7 +38,7 @@ static const uint32 kModule1800SoundList[] = {
 
 Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	_vm->_soundMan->addSoundList(0x04A14718, kModule1800SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1800SoundList, true, 50, 600, 10, 150);
 	_vm->_soundMan->playTwoSounds(0x04A14718, 0x8A382B55, 0x0C242F1D, 0);
@@ -177,5 +177,5 @@ void Module1800::updateScene() {
 		}
 	}
 }
-		
+
 } // End of namespace Neverhood

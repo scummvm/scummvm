@@ -125,7 +125,7 @@ public:
 public:
 	GraphicsManager(HopkinsEngine *vm);
 	~GraphicsManager();
-	
+
 	void clearPalette();
 	void clearScreen();
 	void clearVesaScreen();

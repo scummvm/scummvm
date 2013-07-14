@@ -124,8 +124,8 @@ protected:
 class TextLabelWidget : public Widget {
 public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		int baseObjectPriority, int baseSurfacePriority, 
-		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);	
+		int baseObjectPriority, int baseSurfacePriority,
+		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);
 	virtual void initialize();
 	virtual int16 getWidth();
 	virtual int16 getHeight();
@@ -206,13 +206,13 @@ protected:
 	uint _currIndex;
 	int _maxVisibleItemsCount;
 };
-      
+
 class GameStateMenu : public Scene {
 public:
 	GameStateMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList,
 		const uint32 *buttonFileHashes, const NRect *buttonCollisionBounds,
 		uint32 backgroundFileHash, uint32 fontFileHash,
-		uint32 mouseFileHash, const NRect *mouseRect,  
+		uint32 mouseFileHash, const NRect *mouseRect,
 		uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
 		uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
 		uint32 textFileHash1, uint32 textFileHash2);

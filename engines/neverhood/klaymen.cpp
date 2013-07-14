@@ -33,19 +33,19 @@ static const KlaymenIdleTableItem klaymenIdleTable1[] = {
 	{1, kIdleArms},
 	{1, kIdleChest},
 	{1, kIdleHeadOff}
-}; 
+};
 
 static const KlaymenIdleTableItem klaymenIdleTable2[] = {
 	{1, kIdlePickEar},
 	{1, kIdleSpinHead},
 	{1, kIdleChest},
 	{1, kIdleHeadOff}
-}; 
+};
 
 static const KlaymenIdleTableItem klaymenIdleTable3[] = {
 	{1, kIdleTeleporterHands},
 	{1, kIdleTeleporterHands2}
-}; 
+};
 
 static const KlaymenIdleTableItem klaymenIdleTable4[] = {
 	{1, kIdleSpinHead},
@@ -56,7 +56,7 @@ static const KlaymenIdleTableItem klaymenIdleTable4[] = {
 static const KlaymenIdleTableItem klaymenIdleTable1002[] = {
 	{1, kIdlePickEar},
 	{2, kIdleWonderAbout}
-}; 
+};
 
 // Klaymen
 
@@ -66,7 +66,7 @@ Klaymen::Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRec
 	_attachedSprite(NULL), _isWalking(false), _actionStatus(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false),
 	_doYHitIncr(false), _isLeverDown(false), _isSittingInTeleporter(false), _actionStatusChanged(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false),
 	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _readyToSpit(false), _walkResumeFrameIncr(0) {
-	
+
 	createSurface(1000, 320, 200);
 	_x = x;
 	_y = y;
@@ -447,7 +447,7 @@ void Klaymen::upIdleAnimation() {
 bool Klaymen::stStartActionFromIdle(AnimationCb callback) {
 	if (_busyStatus == 2) {
 		_busyStatus = 1;
-		_acceptInput = false; 
+		_acceptInput = false;
 		startAnimation(0x9A7020B8, 0, -1);
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&Klaymen::hmStartAction);
@@ -684,35 +684,35 @@ void Klaymen::suAction() {
 		_x += _deltaX;
 	}
 	_deltaX = 0;
-	
+
 	if (_doDeltaY) {
 		_y -= _deltaY;
 	} else {
 		_y += _deltaY;
 	}
 	_deltaY = 0;
-	
+
 	if (_frameChanged) {
 		if (xdiff > 6)
 			_x += 6;
 		else if (xdiff < -6)
 			_x -= 6;
 		else
-			_x = _destX;				
+			_x = _destX;
 	}
-	
+
 	updateBounds();
-	
+
 }
 
 void Klaymen::suSneaking() {
-	
+
 	int16 xdiff = _destX - _x;
-	
+
 	if (_currFrameIndex == 9) {
 		if (xdiff > 26)
 			_deltaX += xdiff - 26;
-		else if (xdiff < -26)			
+		else if (xdiff < -26)
 			_deltaX -= xdiff + 26;
 	}
 
@@ -720,7 +720,7 @@ void Klaymen::suSneaking() {
 		xdiff = _deltaX;
 	else if (xdiff < -_deltaX)
 		xdiff = -_deltaX;
-	_deltaX = 0;				
+	_deltaX = 0;
 
 	if (_destX != _x) {
 		HitRect *hitRectPrev = _parentScene->findHitRectAtPos(_x, _y);
@@ -749,7 +749,7 @@ void Klaymen::suSneaking() {
 		}
 		updateBounds();
 	}
-	
+
 }
 
 void Klaymen::stSneak() {
@@ -761,7 +761,7 @@ void Klaymen::stSneak() {
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&Klaymen::hmSneaking);
 	SetSpriteUpdate(&Klaymen::suSneaking);
-	FinalizeState(&Klaymen::evSneakingDone);	
+	FinalizeState(&Klaymen::evSneakingDone);
 }
 
 void Klaymen::evSneakingDone() {
@@ -801,7 +801,7 @@ void Klaymen::stStartWalking() {
 		SetMessageHandler(&Klaymen::hmStartWalking);
 		SetSpriteUpdate(&Klaymen::suWalkingTestExit);
 		NextState(&Klaymen::stWalkingFirst);
-		FinalizeState(&Klaymen::evStartWalkingDone);	
+		FinalizeState(&Klaymen::evStartWalkingDone);
 	}
 }
 
@@ -832,7 +832,7 @@ void Klaymen::stWalkingFirst() {
 	SetMessageHandler(&Klaymen::hmWalking);
 	SetSpriteUpdate(&Klaymen::suWalkingFirst);
 	NextState(&Klaymen::stUpdateWalkingFirst);
-	FinalizeState(&Klaymen::evStartWalkingDone);	
+	FinalizeState(&Klaymen::evStartWalkingDone);
 }
 
 void Klaymen::suWalkingFirst() {
@@ -882,20 +882,20 @@ void Klaymen::stUpdateWalkingFirst() {
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&Klaymen::hmSneaking);
 		SetSpriteUpdate(&Klaymen::suSneaking);
-		FinalizeState(&Klaymen::evSneakingDone);	
+		FinalizeState(&Klaymen::evSneakingDone);
 	}
 }
 
 void Klaymen::suWalkingTestExit() {
 	int16 xdiff = ABS(_destX - _x);
 	int16 xdelta = _destX - _x;
-	
+
 	if (xdelta > _deltaX)
 		xdelta = _deltaX;
 	else if (xdelta < -_deltaX)
 		xdelta = -_deltaX;
-		
-	_deltaX = 0;		
+
+	_deltaX = 0;
 
 	if (xdiff == 0 ||
 		(_actionStatus != 2 && _actionStatus != 3 && xdiff <= 42 && _currFrameIndex >= 5 && _currFrameIndex <= 11) ||
@@ -928,7 +928,7 @@ void Klaymen::suWalkingTestExit() {
 		}
 		updateBounds();
 	}
-	
+
 }
 
 uint32 Klaymen::hmLever(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1363,7 +1363,7 @@ void Klaymen::stLargeStep() {
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&Klaymen::hmLargeStep);
 	SetSpriteUpdate(&Klaymen::suLargeStep);
-	FinalizeState(&Klaymen::evLargeStepDone);	
+	FinalizeState(&Klaymen::evLargeStepDone);
 }
 
 void Klaymen::evLargeStepDone() {
@@ -1372,11 +1372,11 @@ void Klaymen::evLargeStepDone() {
 
 void Klaymen::suLargeStep() {
 	int16 xdiff = _destX - _x;
-	
+
 	if (_doDeltaX) {
 		_deltaX = -_deltaX;
 	}
-	
+
 	if (_currFrameIndex == 7) {
 		_deltaX = xdiff;
 	}
@@ -1385,7 +1385,7 @@ void Klaymen::suLargeStep() {
 		xdiff = _deltaX;
 
 	_deltaX = 0;
-	
+
 	if (_x != _destX) {
 		HitRect *hitRectPrev = _parentScene->findHitRectAtPos(_x, _y);
 		_x += xdiff;
@@ -1420,7 +1420,7 @@ uint32 Klaymen::hmLargeStep(int messageNum, const MessageParam &param, Entity *s
 	case 0x3002:
 		_x = _destX;
 		gotoNextStateExt();
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -1681,7 +1681,7 @@ void Klaymen::stStartClimbLadderDown() {
 			_ladderStatus = 2;
 			_acceptInput = true;
 			startAnimation(0x122D1505, 29 - _currFrameIndex, -1);
-		} 
+		}
 	}
 }
 
@@ -1979,7 +1979,7 @@ uint32 Klaymen::hmMoveObjectTurn(int messageNum, const MessageParam &param, Enti
 		break;
 	case 0x480A:
 		_isMoveObjectRequested = true;
-		return 0;		
+		return 0;
 	}
 	return hmLowLevelAnimation(messageNum, param, sender);
 }
@@ -2521,7 +2521,7 @@ void Klaymen::stInsertKey() {
 						more = true;
 				} while (more);
 				_keysToInsert++;
-			} 
+			}
 		}
 		if (_keysToInsert == 0) {
 			GotoState(NULL);
@@ -3049,7 +3049,7 @@ void Klaymen::stFallSkipJump() {
 void Klaymen::upMoveObject() {
 	if (_x >= 380)
 		gotoNextStateExt();
-	Klaymen::update();		
+	Klaymen::update();
 }
 
 uint32 Klaymen::hmMatch(int messageNum, const MessageParam &param, Entity *sender) {
@@ -3165,7 +3165,7 @@ void Klaymen::stTumbleHeadless() {
 void Klaymen::stCloseEyes() {
 	if (!stStartActionFromIdle(AnimationCallback(&Klaymen::stCloseEyes))) {
 		_busyStatus = 1;
-		_acceptInput = false;		
+		_acceptInput = false;
 		startAnimation(0x5420E254, 0, -1);
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&Klaymen::hmLowLevel);
@@ -3358,7 +3358,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
-		break;		
+		break;
 	case 0x4804:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stSleeping);
@@ -3380,7 +3380,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -3408,10 +3408,10 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 			sendMessage(_parentScene, 0x2002, 0);
 			GotoState(&Klaymen::stWakeUp);
 		}
-		break;		
+		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -3423,7 +3423,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1002::KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	setKlaymenIdleTable1();
 }
 
@@ -3438,7 +3438,7 @@ void KmScene1002::xUpdate() {
 		_idleTableNum = 0;
 	}
 }
-	
+
 uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x2001:
@@ -3451,7 +3451,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004: 
+	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
@@ -3479,42 +3479,42 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 			break;
 		}
 		break;
-	case 0x480A:	  
+	case 0x480A:
 		GotoState(&Klaymen::stMoveVenusFlyTrap);
 		break;
-	case 0x480D:			   
+	case 0x480D:
 		GotoState(&Klaymen::stJumpToRingVenusFlyTrap);
 		break;
-	case 0x4816:  
+	case 0x4816:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressDoorButton);
 		break;
-	case 0x4817:				  
+	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481B:				
+	case 0x481B:
 		startWalkToAttachedSpriteXDistance(param.asInteger());
 		break;
-	case 0x4820:  
+	case 0x4820:
 		sendMessage(_parentScene, 0x2005, 0);
-		GotoState(&Klaymen::stContinueClimbLadderUp);	 
+		GotoState(&Klaymen::stContinueClimbLadderUp);
 		break;
-	case 0x4821:	
+	case 0x4821:
 		sendMessage(_parentScene, 0x2005, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderDown);	 
+		GotoState(&Klaymen::stStartClimbLadderDown);
 		break;
-	case 0x4822:  
+	case 0x4822:
 		sendMessage(_parentScene, 0x2005, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderUp);	 
+		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
 		sendMessage(_parentScene, 0x2006, 0);
-		GotoState(&Klaymen::stClimbLadderHalf);	 
+		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
 		else
@@ -3529,7 +3529,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
 		break;
-	case 0x4840: 
+	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
@@ -3540,8 +3540,8 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1004::KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
-	_dataResource.load(0x01900A04);	
+
+	_dataResource.load(0x01900A04);
 }
 
 uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3606,7 +3606,7 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1109::KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	// Empty
 }
 
@@ -3615,7 +3615,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x2000:
 		_isSittingInTeleporter = param.asInteger() != 0;
-		messageResult = 1;		
+		messageResult = 1;
 		break;
 	case 0x4001:
 	case 0x4800:
@@ -3653,7 +3653,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2000, 1);
 		_isSittingInTeleporter = true;
 		GotoState(&Klaymen::stSitInTeleporter);
-		break;																		
+		break;
 	case 0x4836:
 		sendMessage(_parentScene, 0x2000, 0);
 		_isSittingInTeleporter = false;
@@ -3673,7 +3673,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1201::KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	setKlaymenIdleTable(klaymenIdleTable4, ARRAYSIZE(klaymenIdleTable4));
 	_doYHitIncr = true;
 }
@@ -3741,7 +3741,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1303::KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	// Empty
 }
 
@@ -3762,8 +3762,8 @@ uint32 KmScene1303::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1304::KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
-	// Empty	
+
+	// Empty
 }
 
 uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3774,7 +3774,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
-		break;		
+		break;
 	case 0x4812:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
@@ -3792,7 +3792,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
-		break;						
+		break;
 	case 0x481F:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnAwayFromUse);
@@ -3803,7 +3803,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -3814,7 +3814,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1305::KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
-	// Empty	
+	// Empty
 }
 
 uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3825,10 +3825,10 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
-		break;		
+		break;
 	case 0x4804:
 		GotoState(&Klaymen::stCrashDown);
-		break;		
+		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
@@ -3839,7 +3839,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1306::KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	// Empty
 }
 
@@ -3879,9 +3879,9 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481A:
-		GotoState(&Klaymen::stInsertDisk);		
+		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
@@ -3936,7 +3936,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2000, 1);
 		_isSittingInTeleporter = true;
 		GotoState(&Klaymen::stSitInTeleporter);
-		break;																		
+		break;
 	case 0x4836:
 		sendMessage(_parentScene, 0x2000, 0);
 		_isSittingInTeleporter = false;
@@ -3944,13 +3944,13 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483D:
 		teleporterAppear(0xEE084A04);
-		break;																				
+		break;
 	case 0x483E:
 		teleporterDisappear(0xB86A4274);
-		break;																				
+		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -3961,7 +3961,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1308::KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
-	// Empty	
+	// Empty
 }
 
 uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3978,7 +3978,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		break;		
+		break;
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
@@ -3993,12 +3993,12 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481A:
 		if (param.asInteger() == 1)
-			GotoState(&Klaymen::stInsertKey);		
+			GotoState(&Klaymen::stInsertKey);
 		else
-			GotoState(&Klaymen::stInsertDisk);		
+			GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
@@ -4020,7 +4020,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -4032,8 +4032,8 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1401::KmScene1401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
-	// Empty	
+
+	// Empty
 }
 
 uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4044,13 +4044,13 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
-		break;		
+		break;
 	case 0x480A:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		break;		
+		break;
 	case 0x4816:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
@@ -4068,7 +4068,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
-		break;						
+		break;
 	case 0x481F:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnAwayFromUse);
@@ -4101,8 +4101,8 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene1402::KmScene1402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
-	SetFilterY(&Sprite::defFilterY);	
+
+	SetFilterY(&Sprite::defFilterY);
 }
 
 uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4113,13 +4113,13 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
-		break;		
+		break;
 	case 0x480A:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		break;		
+		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
@@ -4129,7 +4129,7 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
-		break;						
+		break;
 	case 0x481D:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
@@ -4162,7 +4162,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		break;		
+		break;
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
@@ -4177,7 +4177,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -4189,7 +4189,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -4202,7 +4202,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1404::KmScene1404(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
-	// Empty	
+	// Empty
 }
 
 uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4219,7 +4219,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		break;		
+		break;
 	case 0x4812:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
@@ -4233,7 +4233,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		gotoNextStateExt();
 		break;
 	case 0x481A:
-		GotoState(&Klaymen::stInsertDisk);		
+		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
@@ -4307,7 +4307,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -4345,7 +4345,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2032, 1);
 		_isSittingInTeleporter = true;
 		GotoState(&Klaymen::stSitInTeleporter);
-		break;																		
+		break;
 	case 0x4836:
 		sendMessage(_parentScene, 0x2032, 0);
 		_isSittingInTeleporter = false;
@@ -4353,7 +4353,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -4366,7 +4366,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1705::KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
-	// Empty	
+	// Empty
 }
 
 uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4388,7 +4388,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4803:
 		GotoState(&Klaymen::stFallSkipJump);
-		break;				
+		break;
 	case 0x4812:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
@@ -4435,7 +4435,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2000, 1);
 		_isSittingInTeleporter = true;
 		GotoState(&Klaymen::stSitInTeleporter);
-		break;																		
+		break;
 	case 0x4836:
 		sendMessage(_parentScene, 0x2000, 0);
 		_isSittingInTeleporter = false;
@@ -4443,10 +4443,10 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483D:
 		teleporterAppear(0x5E0A4905);
-		break;																				
+		break;
 	case 0x483E:
 		teleporterDisappear(0xD86E4477);
-		break;																				
+		break;
 	}
 	return messageResult;
 }
@@ -4454,7 +4454,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1901::KmScene1901(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
-	// Empty	
+	// Empty
 }
 
 uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4469,7 +4469,7 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481D:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
@@ -4482,7 +4482,7 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -4493,7 +4493,7 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene2001::KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
-	// Empty	
+	// Empty
 }
 
 uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4557,7 +4557,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene2101::KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	// Empty
 }
 
@@ -4600,7 +4600,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -4622,7 +4622,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2000, 1);
 		_isSittingInTeleporter = true;
 		GotoState(&Klaymen::stSitInTeleporter);
-		break;																		
+		break;
 	case 0x4836:
 		sendMessage(_parentScene, 0x2000, 0);
 		_isSittingInTeleporter = false;
@@ -4635,7 +4635,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		teleporterDisappear(0x9A28CA1C);
 		break;
 	}
-	return messageResult;	
+	return messageResult;
 }
 
 KmScene2201::KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
@@ -4684,7 +4684,7 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
 		else
@@ -4698,12 +4698,12 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
-	return 0;	
+	return 0;
 }
 
 KmScene2203::KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
@@ -4711,7 +4711,7 @@ KmScene2203::KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 
 	// Empty
 }
-	
+
 uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
@@ -4740,7 +4740,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
@@ -4748,7 +4748,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stClayDoorOpen);
 		break;
 	case 0x481A:
-		GotoState(&Klaymen::stInsertDisk);		
+		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
@@ -4768,7 +4768,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -4785,7 +4785,7 @@ KmScene2205::KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 void KmScene2205::xUpdate() {
 	setGlobalVar(V_KLAYMEN_FRAMEINDEX, _currFrameIndex);
 }
-	
+
 uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
@@ -4809,13 +4809,13 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -4837,7 +4837,7 @@ KmScene2206::~KmScene2206() {
 void KmScene2206::xUpdate() {
 	setGlobalVar(V_KLAYMEN_FRAMEINDEX, _currFrameIndex);
 }
-	
+
 uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
@@ -4874,7 +4874,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -4897,7 +4897,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
 		else
@@ -4914,7 +4914,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -4927,7 +4927,7 @@ KmScene2207::KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 
 	// Empty
 }
-	
+
 uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x2001:
@@ -4961,7 +4961,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -4977,7 +4977,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -5022,7 +5022,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -5080,7 +5080,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481F:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
@@ -5133,7 +5133,7 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481F:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
@@ -5156,13 +5156,13 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 	}
 	return 0;
 }
-  
+
 KmScene2401::KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
-	
+
 uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
@@ -5184,7 +5184,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
@@ -5203,7 +5203,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
 		else
@@ -5228,7 +5228,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
-		break;		
+		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
@@ -5357,23 +5357,23 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stWonderAbout);
 		break;
-	case 0x4820:  
+	case 0x4820:
 		sendMessage(_parentScene, 0x2000, 0);
-		GotoState(&Klaymen::stContinueClimbLadderUp);	 
+		GotoState(&Klaymen::stContinueClimbLadderUp);
 		break;
-	case 0x4821:	
+	case 0x4821:
 		sendMessage(_parentScene, 0x2000, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderDown);	 
+		GotoState(&Klaymen::stStartClimbLadderDown);
 		break;
-	case 0x4822:  
+	case 0x4822:
 		sendMessage(_parentScene, 0x2000, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderUp);	 
+		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
 		sendMessage(_parentScene, 0x2001, 0);
-		GotoState(&Klaymen::stClimbLadderHalf);	 
+		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
@@ -5382,16 +5382,16 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
 		break;
-	case 0x4840: 
+	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return messageResult;
 }
-	
+
 KmScene2406::KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	_surface->setClipRects(clipRects, clipRectsCount);
 }
 
@@ -5425,7 +5425,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		gotoNextStateExt();
 		break;
 	case 0x481A:
-		GotoState(&Klaymen::stInsertDisk);		
+		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
@@ -5451,40 +5451,40 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stWonderAbout);
 		break;
-	case 0x4820:  
+	case 0x4820:
 		sendMessage(_parentScene, 0x2000, 0);
-		GotoState(&Klaymen::stContinueClimbLadderUp);	 
+		GotoState(&Klaymen::stContinueClimbLadderUp);
 		break;
-	case 0x4821:	
+	case 0x4821:
 		sendMessage(_parentScene, 0x2000, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderDown);	 
+		GotoState(&Klaymen::stStartClimbLadderDown);
 		break;
-	case 0x4822:  
+	case 0x4822:
 		sendMessage(_parentScene, 0x2000, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderUp);	 
+		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
 		sendMessage(_parentScene, 0x2001, 0);
-		GotoState(&Klaymen::stClimbLadderHalf);	 
+		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
 		break;
-	case 0x4840: 
+	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return messageResult;
 }
-	
+
 KmScene2501::KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
-	
+
 uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
@@ -5505,7 +5505,7 @@ uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481D:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
@@ -5521,7 +5521,7 @@ uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2000, 1);
 		_isSittingInTeleporter = true;
 		GotoState(&Klaymen::stSitInTeleporter);
-		break;																		
+		break;
 	case 0x4836:
 		sendMessage(_parentScene, 0x2000, 0);
 		_isSittingInTeleporter = false;
@@ -5536,7 +5536,7 @@ KmScene2732::KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 
 	// Empty
 }
-	
+
 uint32 KmScene2732::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4804:
@@ -5570,13 +5570,13 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
 			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
-		break;						
+		break;
 	case 0x481D:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
@@ -5599,7 +5599,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
 		else
@@ -5620,7 +5620,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene2803::KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	_surface->setClipRects(clipRects, clipRectsCount);
 	_dataResource.load(0x00900849);
 }
@@ -5648,7 +5648,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
@@ -5664,7 +5664,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stWonderAboutHalf);
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		GotoState(&Klaymen::stWalkToFront);
 		break;
 	case 0x482F:
@@ -5682,7 +5682,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene2803Small::KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
-	
+
 	_dataResource.load(0x81120132);
 }
 
@@ -5759,7 +5759,7 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x481D:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
@@ -5775,7 +5775,7 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 		sendMessage(_parentScene, 0x2000, 1);
 		_isSittingInTeleporter = true;
 		GotoState(&Klaymen::stSitInTeleporter);
-		break;																		
+		break;
 	case 0x4836:
 		sendMessage(_parentScene, 0x2000, 0);
 		_isSittingInTeleporter = false;
@@ -5805,7 +5805,7 @@ KmScene2806::KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 		loadSound(6, 0x166FC6E0);
 		loadSound(7, 0x00018040);
 	}
-	
+
 	_dataResource.load(0x98182003);
 	_surface->setClipRects(clipRects, clipRectsCount);
 }
@@ -5827,12 +5827,12 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4816:
 		if (param.asInteger() == 0)
-			GotoState(&Klaymen::stPressButtonSide); 
+			GotoState(&Klaymen::stPressButtonSide);
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
@@ -5885,12 +5885,12 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4816:
 		if (param.asInteger() == 0)
-			GotoState(&Klaymen::stPressButtonSide); 
+			GotoState(&Klaymen::stPressButtonSide);
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
@@ -5907,7 +5907,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y) 
+KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty
@@ -5925,7 +5925,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x4818:
 		startWalkToXSmall(_dataResource.getPoint(param.asInteger()).x);
 		break;
@@ -5937,7 +5937,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 		else
 			GotoState(&Klaymen::stWonderAboutSmall);
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStepSmall);
 		else
@@ -5961,7 +5961,7 @@ KmScene2810::KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 
 	_surface->setClipRects(clipRects, clipRectsCount);
 }
-		
+
 uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
@@ -5985,7 +5985,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
-		break;		
+		break;
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
@@ -6009,23 +6009,23 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stWonderAbout);
 		break;
-	case 0x4820:  
+	case 0x4820:
 		sendMessage(_parentScene, 0x2000, 0);
-		GotoState(&Klaymen::stContinueClimbLadderUp);	 
+		GotoState(&Klaymen::stContinueClimbLadderUp);
 		break;
-	case 0x4821:	
+	case 0x4821:
 		sendMessage(_parentScene, 0x2000, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderDown);	 
+		GotoState(&Klaymen::stStartClimbLadderDown);
 		break;
-	case 0x4822:  
+	case 0x4822:
 		sendMessage(_parentScene, 0x2000, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderUp);	 
+		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
 		sendMessage(_parentScene, 0x2001, 0);
-		GotoState(&Klaymen::stClimbLadderHalf);	 
+		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
 	case 0x4824:
 		sendMessage(_parentScene, 0x2000, 0);
@@ -6080,7 +6080,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		gotoNextStateExt();
 		break;
 	case 0x481A:
-		GotoState(&Klaymen::stInsertDisk);		
+		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0)
@@ -6094,29 +6094,29 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x481E:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
-	case 0x4820:  
+	case 0x4820:
 		sendMessage(_parentScene, 0x2001, 0);
-		GotoState(&Klaymen::stContinueClimbLadderUp);	 
+		GotoState(&Klaymen::stContinueClimbLadderUp);
 		break;
-	case 0x4821:	
+	case 0x4821:
 		sendMessage(_parentScene, 0x2001, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderDown);	 
+		GotoState(&Klaymen::stStartClimbLadderDown);
 		break;
-	case 0x4822:  
+	case 0x4822:
 		sendMessage(_parentScene, 0x2001, 0);
 		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderUp);	 
+		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
 		sendMessage(_parentScene, 0x2002, 0);
-		GotoState(&Klaymen::stClimbLadderHalf);	 
+		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
-	case 0x482E:	 
+	case 0x482E:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
 		else
@@ -6131,7 +6131,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
 		break;
-	case 0x4840: 
+	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
 	}

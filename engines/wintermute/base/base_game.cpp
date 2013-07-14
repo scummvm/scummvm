@@ -212,7 +212,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	#else*/
 	_touchInterface = false;
 	_constrainedMemory = false;
-	
+
 	_settings = new BaseGameSettings(this);
 //#endif
 
@@ -3734,7 +3734,7 @@ bool BaseGame::onWindowClose() {
 bool BaseGame::displayDebugInfo() {
 	const uint32 strLength = 100;
 	char str[strLength];
-	
+
 	if (_debugShowFPS) {
 		sprintf(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);

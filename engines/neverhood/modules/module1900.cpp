@@ -35,8 +35,8 @@ static const uint32 kModule1900SoundList[] = {
 Module1900::Module1900(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 
-	// NOTE: The original has a Scene1908 here as well but it's not used here but in another module... 
-	
+	// NOTE: The original has a Scene1908 here as well but it's not used here but in another module...
+
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
 	else
@@ -88,7 +88,7 @@ void Module1900::updateScene() {
 
 Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	Sprite *tempSprite;
 
 	setRectList(0x004B34C8);
@@ -98,7 +98,7 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertScreenMouse(0x0322301B);
 
 	insertStaticSprite(0x42213133, 1100);
-	
+
 	if (!getGlobalVar(V_STAIRS_PUZZLE_SOLVED))
 		insertStaticSprite(0x40A40168, 100);
 	else if (getGlobalVar(V_STAIRS_DOWN)) {
@@ -132,16 +132,16 @@ static const NPoint kAsScene1907SymbolGroundPositions[] = {
 	{400, 375}, {370, 435}, {475, 415}
 };
 
-static const NPoint kAsScene1907SymbolPluggedInPositions[] = { 
+static const NPoint kAsScene1907SymbolPluggedInPositions[] = {
 	{275, 125}, {244, 125}, {238, 131},
 	{221, 135}, {199, 136}, {168, 149},
 	{145, 152}, {123, 154}, {103, 157}
 };
 
 static const NPoint kAsScene1907SymbolGroundHitPositions[] = {
-	{275, 299}, {244, 299}, {238, 305}, 
-	{221, 309}, {199, 310}, {168, 323}, 
-	{145, 326}, {123, 328}, {103, 331} 
+	{275, 299}, {244, 299}, {238, 305},
+	{221, 309}, {199, 310}, {168, 323},
+	{145, 326}, {123, 328}, {103, 331}
 };
 
 static const NPoint kAsScene1907SymbolPluggedInDownPositions[] = {
@@ -164,7 +164,7 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 
 	_plugInFailed = false;
 	_plugInTryCount = 0;
-	
+
 	if (getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
 		_isPluggedIn = true;
 		_currPositionIndex = elementIndex;
@@ -289,7 +289,7 @@ void AsScene1907Symbol::suMoveDown() {
 		_y = kAsScene1907SymbolPluggedInDownPositions[_elementIndex].y;
 		_isMoving = false;
 		SetSpriteUpdate(NULL);
-	}	
+	}
 }
 
 void AsScene1907Symbol::suMoveUp() {
@@ -423,7 +423,7 @@ void AsScene1907Symbol::moveDown() {
 SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *asScene1907Symbol)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _asScene1907Symbol(asScene1907Symbol),
 	_countdown1(0) {
-	
+
 	loadSprite(0x64516424, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 1400);
 	setVisible(false);
 	loadSound(0, 0x44061000);
@@ -474,7 +474,7 @@ void SsScene1907UpDownButton::setToDownPosition() {
 
 AsScene1907WaterHint::AsScene1907WaterHint(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1400) {
-	
+
 	createSurface1(0x110A1061, 1500);
 	_x = 320;
 	_y = 240;
@@ -515,10 +515,10 @@ void AsScene1907WaterHint::hide() {
 	SetMessageHandler(&Sprite::handleMessage);
 }
 
-Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)	
-	: Scene(vm, parentModule), _currMovingSymbolIndex(0), _pluggedInCount(0), 
+Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
+	: Scene(vm, parentModule), _currMovingSymbolIndex(0), _pluggedInCount(0),
 	_moveDownCountdown(0), _moveUpCountdown(0), _countdown3(0), _hasPlugInFailed(false) {
-	
+
 	setBackground(0x20628E05);
 	setPalette(0x20628E05);
 
@@ -529,12 +529,12 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
 		_asSymbols[i] = insertSprite<AsScene1907Symbol>(this, i, getRandomPositionIndex());
 		addCollisionSprite(_asSymbols[i]);
 	}
-	
+
 	_ssUpDownButton = insertSprite<SsScene1907UpDownButton>(this, _asSymbols[8]);
 	addCollisionSprite(_ssUpDownButton);
 
 	_asWaterHint = insertSprite<AsScene1907WaterHint>();
-	
+
 	insertPuzzleMouse(0x28E0120E, 20, 620);
 
 	SetMessageHandler(&Scene1907::handleMessage);
@@ -542,7 +542,7 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
 
 	if (getGlobalVar(V_STAIRS_PUZZLE_SOLVED))
 		_pluggedInCount = 9;
-		
+
 	loadSound(0, 0x72004A10);
 	loadSound(1, 0x22082A12);
 	loadSound(2, 0x21100A10);
@@ -552,7 +552,7 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
 
 void Scene1907::update() {
 	Scene::update();
-	
+
 	if (_hasPlugInFailed) {
 		int fallOffDelay = 0;
 		_hasPlugInFailed = false;
@@ -619,7 +619,7 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 		playSound(3);
 		setGlobalVar(V_STAIRS_PUZZLE_SOLVED, 1);
 		break;
-	}	
+	}
 	return 0;
 }
 

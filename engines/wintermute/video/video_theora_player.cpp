@@ -163,14 +163,14 @@ bool VideoTheoraPlayer::resetStream() {
 	if (!_file) {
 		return STATUS_FAILED;
 	}
-	
+
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
 #else
 	return STATUS_FAILED;
 #endif
 	_theoraDecoder->loadStream(_file);
-	
+
 	if (!_theoraDecoder->isVideoLoaded()) {
 		return STATUS_FAILED;
 	}

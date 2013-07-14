@@ -28,11 +28,11 @@ namespace Neverhood {
 // Sprite
 
 Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
-	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),   
+	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),
 	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0), _surface(NULL) {
 
 	SetMessageHandler(&Sprite::handleMessage);
-	
+
 }
 
 Sprite::~Sprite() {
@@ -71,7 +71,7 @@ bool Sprite::isPointInside(int16 x, int16 y) {
 }
 
 bool Sprite::checkCollision(NRect &rect) {
-	return (_collisionBounds.x1 < rect.x2) && (rect.x1 < _collisionBounds.x2) && (_collisionBounds.y1 < rect.y2) && (rect.y1 < _collisionBounds.y2);	
+	return (_collisionBounds.x1 < rect.x2) && (rect.x1 < _collisionBounds.x2) && (_collisionBounds.y1 < rect.y2) && (rect.y1 < _collisionBounds.y2);
 }
 
 uint32 Sprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -153,13 +153,13 @@ void StaticSprite::updatePosition() {
 
 	if (!_surface)
 		return;
-		
+
 	if (_doDeltaX) {
 		_surface->getDrawRect().x = filterX(_x - _drawOffset.x - _drawOffset.width + 1);
 	} else {
 		_surface->getDrawRect().x = filterX(_x + _drawOffset.x);
 	}
-		
+
 	if (_doDeltaY) {
 		_surface->getDrawRect().y = filterY(_y - _drawOffset.y - _drawOffset.height + 1);
 	} else {
@@ -261,7 +261,7 @@ void AnimatedSprite::updateAnim() {
 		}
 		if (_newAnimFileHash == 0 && _currFrameIndex != _currStickFrameIndex) {
 			if (_currFrameTicks != 0 && (--_currFrameTicks == 0) && _animResource.getFrameCount() != 0) {
-				
+
 				if (_nextAnimFileHash != 0) {
 					if (_animResource.load(_nextAnimFileHash)) {
 						_currAnimFileHash = _nextAnimFileHash;
@@ -270,7 +270,7 @@ void AnimatedSprite::updateAnim() {
 						_currAnimFileHash = 0;
 					}
 					if (_replOldColor != _replNewColor) {
-						_animResource.setRepl(_replOldColor, _replNewColor);	
+						_animResource.setRepl(_replOldColor, _replNewColor);
 					}
 					_nextAnimFileHash = 0;
 					if (_animStatus != 0) {
@@ -278,17 +278,17 @@ void AnimatedSprite::updateAnim() {
 						_lastFrameIndex = _plLastFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plLastFrameHash)) : _animResource.getFrameCount() - 1;
 					} else {
 						_currFrameIndex = _plFirstFrameIndex != -1 ? _plFirstFrameIndex : _animResource.getFrameCount() - 1;
-						_lastFrameIndex = _plLastFrameIndex != -1 ? _plLastFrameIndex : _animResource.getFrameCount() - 1; 
+						_lastFrameIndex = _plLastFrameIndex != -1 ? _plLastFrameIndex : _animResource.getFrameCount() - 1;
 					}
 				} else {
 					updateFrameIndex();
 				}
 				if (_newAnimFileHash == 0)
 					updateFrameInfo();
-			}				
+			}
 		}
 	}
-	
+
 	if (_newAnimFileHash != 0) {
 		if (_animStatus == 2) {
 			_currStickFrameIndex = _currFrameIndex;
@@ -301,7 +301,7 @@ void AnimatedSprite::updateAnim() {
 					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {
-					_animResource.setRepl(_replOldColor, _replNewColor);	
+					_animResource.setRepl(_replOldColor, _replNewColor);
 				}
 				_newAnimFileHash = 0;
 				_currFrameIndex = _plFirstFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plFirstFrameHash)) : 0;
@@ -314,7 +314,7 @@ void AnimatedSprite::updateAnim() {
 					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {
-					_animResource.setRepl(_replOldColor, _replNewColor);	
+					_animResource.setRepl(_replOldColor, _replNewColor);
 				}
 				_newAnimFileHash = 0;
 				_currFrameIndex = _plFirstFrameIndex != -1 ? _plFirstFrameIndex : _animResource.getFrameCount() - 1;

@@ -1179,7 +1179,7 @@ void GraphicsManager::displayZones() {
 			Common::Rect r(_vm->_objectsMan->_bob[bobId]._oldX, _vm->_objectsMan->_bob[bobId]._oldY,
 				_vm->_objectsMan->_bob[bobId]._oldX + _vm->_objectsMan->_bob[bobId]._oldWidth,
 				_vm->_objectsMan->_bob[bobId]._oldY + _vm->_objectsMan->_bob[bobId]._oldHeight);
-				
+
 			displayDebugRect(screenSurface, r, 0xff0000);
 		}
 	}
@@ -1204,7 +1204,7 @@ void GraphicsManager::displayLines() {
 
 	uint16* pixels = (uint16*)screenSurface->pixels;
 
-	for (int lineIndex = 0; lineIndex < _vm->_linesMan->_linesNumb; lineIndex++) {	
+	for (int lineIndex = 0; lineIndex < _vm->_linesMan->_linesNumb; lineIndex++) {
 		int i = 0;
 		do {
 			int x = _vm->_linesMan->_lineItem[lineIndex]._lineData[i] - _scrollPosX;
@@ -1230,7 +1230,7 @@ void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common:
 	r.top = MAX(r.top, (int16)0);
 	r.right = MIN(r.right, (int16)SCREEN_WIDTH);
 	r.bottom = MIN(r.bottom, (int16)SCREEN_HEIGHT);
-				
+
 	// If there's an on-screen portion, display it
 	if (r.isValidRect())
 		surface->frameRect(r, color);

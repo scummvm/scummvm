@@ -30,8 +30,8 @@ namespace Neverhood {
 
 Module2200::Module2200(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
-	_vm->_soundMan->addMusic(0x11391412, 0x601C908C); 
+
+	_vm->_soundMan->addMusic(0x11391412, 0x601C908C);
 
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
@@ -440,7 +440,7 @@ void Module2200::updateScene() {
 }
 
 #undef HallOfRecordsSceneLink
-			
+
 void Module2200::createHallOfRecordsScene(int which, uint32 hallOfRecordsInfoId) {
 	_childObject = new HallOfRecordsScene(_vm, this, which, hallOfRecordsInfoId);
 }
@@ -461,7 +461,7 @@ AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klaymen *klaymen, Sprite *
 	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _ssDoorLight(ssDoorLight), _countdown(0), _isOpen(isOpen) {
 
 	_x = 408;
-	_y = 290;	
+	_y = 290;
 	createSurface(900, 63, 266);
 	SetUpdateHandler(&AsScene2201Door::update);
 	SetMessageHandler(&AsScene2201Door::handleMessage);
@@ -528,7 +528,7 @@ void AsScene2201Door::stCloseDoor() {
 
 SsScene2201PuzzleCube::SsScene2201PuzzleCube(NeverhoodEngine *vm, uint32 positionIndex, uint32 cubeIndex)
 	: StaticSprite(vm, 900) {
-	
+
 	createSurface(100, 16, 16);
 	loadSprite(kSsScene2201PuzzleCubeFileHashes[cubeIndex], kSLFCenteredDrawOffset | kSLFSetPosition, 0,
 		kSsScene2201PuzzleCubePoints[positionIndex].x, kSsScene2201PuzzleCubePoints[positionIndex].y);
@@ -543,7 +543,7 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene2201::handleMessage);
 	SetUpdateHandler(&Scene2201::update);
-	
+
 	loadDataResource(0x04104242);
 	loadHitRectList();
 	setBackground(0x40008208);
@@ -551,9 +551,9 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertScreenMouse(0x0820C408);
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 7, 1100, 459, 432, 0x9148A011);
-	addCollisionSprite(_asTape); 
+	addCollisionSprite(_asTape);
 	_ssDoorButton = insertSprite<SsCommonPressButton>(this, 0xE4A43E29, 0xE4A43E29, 100, 0);
-	
+
 	for (uint32 cubeIndex = 0; cubeIndex < 9; cubeIndex++)
 		if ((int16)getSubVar(VA_CUBE_POSITIONS, cubeIndex) >= 0)
 			insertSprite<SsScene2201PuzzleCube>(cubeIndex, (int16)getSubVar(VA_CUBE_POSITIONS, cubeIndex));
@@ -562,10 +562,10 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[0].x2 = 640;
 	_clipRects[1].x2 = 640;
 	_clipRects[1].y2 = 480;
-	
+
 	if (!getGlobalVar(V_TILE_PUZZLE_SOLVED))
 		insertStaticSprite(0x00026027, 900);
-	
+
 	tempSprite = insertStaticSprite(0x030326A0, 1100);
 	_clipRects[0].x1 = tempSprite->getDrawRect().x;
 	insertStaticSprite(0x811DA061, 1100);
@@ -602,7 +602,7 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B8120);
 		_asDoor = insertSprite<AsScene2201Door>(_klaymen, _ssDoorLight, true);
 	}
-	
+
 	insertSprite<AsScene2201CeilingFan>();
 
 	_vm->_soundMan->addSound(0x04106220, 0x81212040);
@@ -719,7 +719,7 @@ uint32 SsScene2202PuzzleCube::handleMessage(int messageNum, const MessageParam &
 	}
 	return messageResult;
 }
-				
+
 void SsScene2202PuzzleCube::suMoveCubeX() {
 
 	bool done = false;
@@ -746,9 +746,9 @@ void SsScene2202PuzzleCube::suMoveCubeX() {
 		if (_x == _xFlagPos)
 			_counterDirection = true;
 	}
-	
+
 	if (done)
-		stopMoving();			
+		stopMoving();
 
 	updateBounds();
 
@@ -780,9 +780,9 @@ void SsScene2202PuzzleCube::suMoveCubeY() {
 		if (_x == _xFlagPos)
 			_counterDirection = true;
 	}
-	
+
 	if (done)
-		stopMoving();			
+		stopMoving();
 
 	updateBounds();
 
@@ -794,7 +794,7 @@ void SsScene2202PuzzleCube::moveCube(int16 newCubePosition) {
 
 	setSubVar(VA_CUBE_POSITIONS, _cubePosition, (uint32)-1);
 	setSubVar(VA_CUBE_POSITIONS, newCubePosition, (uint32)_cubeSymbol);
-	
+
 	_cubePosition = newCubePosition;
 	_errValue = 0;
 	_counterDirection = false;
@@ -837,7 +837,7 @@ void SsScene2202PuzzleCube::moveCube(int16 newCubePosition) {
 			if (_newX - _x >= 180)
 				_xFlagPos = _newX - 90;
 			else
-				_xFlagPos = _x + _newX / 2;				
+				_xFlagPos = _x + _newX / 2;
 		} else {
 			if (_x - _newX >= 180)
 				_xFlagPos = _x + 90;
@@ -851,7 +851,7 @@ void SsScene2202PuzzleCube::moveCube(int16 newCubePosition) {
 			if (_newY - _y >= 180)
 				_xFlagPos = _newY - 90;
 			else
-				_xFlagPos = _y + _newY / 2;				
+				_xFlagPos = _y + _newY / 2;
 		} else {
 			if (_y - _newY >= 180)
 				_xFlagPos = _y + 90;
@@ -860,7 +860,7 @@ void SsScene2202PuzzleCube::moveCube(int16 newCubePosition) {
 		}
 		playSound(1);
 	}
-	
+
 }
 
 void SsScene2202PuzzleCube::stopMoving() {
@@ -939,7 +939,7 @@ void Scene2202::update() {
 			_isSolved = true;
 		}
 	}
-	
+
 }
 
 uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -981,7 +981,7 @@ int16 Scene2202::getFreeCubePosition(int16 cubePosition) {
 }
 
 bool Scene2202::testIsSolved() {
-	return 
+	return
 		getSubVar(VA_CUBE_POSITIONS, 0) == 0 &&
 		getSubVar(VA_CUBE_POSITIONS, 2) == 2 &&
 		getSubVar(VA_CUBE_POSITIONS, 3) == 3 &&
@@ -1146,7 +1146,7 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 		_ssSmallRightDoor->setVisible(false);
 		_klaymen->setClipRect(_leftDoorClipRect);
 	}
-	
+
 }
 
 Scene2203::~Scene2203() {
@@ -1220,7 +1220,7 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene2205::handleMessage);
 	SetUpdateHandler(&Scene2205::update);
-	
+
 	setHitRects(0x004B0620);
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		_isLightOn = true;
@@ -1263,11 +1263,11 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_klaymen->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 640, 480);
 	_klaymen->setSoundFlag(true);
-	
+
 	loadDataResource(0x00144822);
-	
+
 }
-	
+
 void Scene2205::update() {
 	Scene::update();
 	if (!_isLightOn && getGlobalVar(V_LIGHTS_ON)) {
@@ -1343,7 +1343,7 @@ static const int16 kAsScene2206DoorSpikesXDeltasClose[] = {
 
 AsScene2206DoorSpikes::AsScene2206DoorSpikes(NeverhoodEngine *vm, uint32 fileHash)
 	: StaticSprite(vm, fileHash, 200) {
-	
+
 	if (getGlobalVar(V_SPIKES_RETRACTED))
 		_x -= 63;
 	SetUpdateHandler(&AsScene2206DoorSpikes::update);
@@ -1457,10 +1457,10 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
 
 	uint32 fileHash;
-	
+
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene2206::handleMessage);
-	
+
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		fileHash = 0x41983216;
 		_sprite1 = insertStaticSprite(0x2201266A, 100);
@@ -1495,7 +1495,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (!getGlobalVar(V_LIGHTS_ON))
 		_palette->addPalette(0x0263D144, 0, 65, 0);
 	addCollisionSprite(_ssTestTube);
-	
+
 	if (which < 0) {
 		// Restoring game
 		insertKlaymen<KmScene2206>(200, 430);
@@ -1644,7 +1644,7 @@ void AsScene2207Elevator::update() {
 	if (_destPointIndex + _destPointIndexDelta > _pointIndex) {
 		_pointIndex++;
 		startAnimation(getGlobalVar(V_LIGHTS_ON) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
-		_newStickFrameIndex = _pointIndex;		
+		_newStickFrameIndex = _pointIndex;
 		if (_destPointIndex + _destPointIndexDelta == _pointIndex) {
 			if (_destPointIndexDelta != 0)
 				_destPointIndexDelta = 0;
@@ -1660,7 +1660,7 @@ void AsScene2207Elevator::update() {
 		if (_pointIndex == 0)
 			sendMessage(_parentScene, 0x2003, 0);
 		startAnimation(getGlobalVar(V_LIGHTS_ON) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
-		_newStickFrameIndex = _pointIndex;		
+		_newStickFrameIndex = _pointIndex;
 		if (_destPointIndex + _destPointIndexDelta == _pointIndex) {
 			if (_destPointIndexDelta != 0)
 				_destPointIndexDelta = 0;
@@ -1675,14 +1675,14 @@ void AsScene2207Elevator::update() {
 		sendMessage(_parentScene, 0x2002, 900);
 	else if (_pointIndex < 20 && _surface->getPriority() != 1100)
 		sendMessage(_parentScene, 0x2002, 1100);
-	
+
 	AnimatedSprite::update();
-	
+
 	if (_destPointIndex + _destPointIndexDelta == _pointIndex && _isMoving) {
 		sendMessage(_parentScene, 0x2004, 0);
 		_isMoving = false;
 	}
-	
+
 }
 
 void AsScene2207Elevator::suSetPosition() {
@@ -1706,14 +1706,14 @@ void AsScene2207Elevator::moveToY(int16 y) {
 
 	if (!_pointArray || _pointArray->size() == 0)
 		return;
-	
+
 	for (uint i = 0; i < _pointArray->size(); i++) {
 		int16 distance = ABS(y - (*_pointArray)[i].y);
 		if (distance < minDistance) {
 			minDistance = distance;
 			_destPointIndex = i;
 		}
-	}	
+	}
 
 	if (_destPointIndex != _pointIndex) {
 		if (_destPointIndex == 0 || _destPointIndex == (int)_pointArray->size() - 1)
@@ -1732,7 +1732,7 @@ void AsScene2207Elevator::moveToY(int16 y) {
 
 AsScene2207Lever::AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int doDeltaX)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
+
 	_x = x;
 	_y = y;
 	createSurface(1010, 71, 73);
@@ -1793,7 +1793,7 @@ void AsScene2207Lever::stLeverUpEvent() {
 
 AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1200), _idle(true) {
-	
+
 	_x = 309;
 	_y = 320;
 	createSurface1(0xCCFD6090, 100);
@@ -1874,7 +1874,7 @@ void AsScene2207WallRobotAnimation::cbStopAnimation() {
 
 AsScene2207WallCannonAnimation::AsScene2207WallCannonAnimation(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1200), _idle(true) {
-	
+
 	_x = 309;
 	_y = 320;
 	createSurface1(0x8CAA0099, 100);
@@ -1925,7 +1925,7 @@ SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int i
 
 	_x = 330;
 	_y = 246 + index * 50;
-	updatePosition();	
+	updatePosition();
 }
 
 Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
@@ -1943,7 +1943,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 	_klaymen->setRepl(64, 0);
 	setMessageList(0x004B38E8);
 	_asElevator = insertSprite<AsScene2207Elevator>(this);
-	
+
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		setBackground(0x88C00241);
 		setPalette(0x88C00241);
@@ -1952,7 +1952,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 		_ssMaskPart2 = insertStaticSprite(0x688F62A5, 1100);
 		_ssMaskPart3 = insertStaticSprite(0x0043B038, 1100);
 		_asTape = insertSprite<AsScene1201Tape>(this, 4, 1100, 277, 428, 0x9148A011);
-		addCollisionSprite(_asTape); 
+		addCollisionSprite(_asTape);
 		_asLever = insertSprite<AsScene2207Lever>(this, 527, 333, 0);
 		addCollisionSprite(_asLever);
 		_asWallRobotAnimation = insertSprite<AsScene2207WallRobotAnimation>(this);
@@ -2106,7 +2106,7 @@ static const uint32 kScene2208FileHashes1[] = {
 	0x041023CB, 0x041020CB, 0x041026CB, 0x04102ACB,
 	0x041032CB, 0x041002CB
 };
-	
+
 static const uint32 kScene2208FileHashes2[] = {
 	0x091206C9, 0x091406C9, 0x091806C9, 0x090006C9,
 	0x093006C9, 0x095006C9
@@ -2122,13 +2122,13 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 		setGlobalVar(V_COLUMN_TEXT_NAME, calcHash("stLineagex"));
 
 	_textResource.load(getGlobalVar(V_COLUMN_TEXT_NAME));
-	
+
 	textStart = _textResource.getString(getGlobalVar(V_CLICKED_COLUMN_INDEX), textEnd);
 	while (textStart < textEnd) {
 		_strings.push_back(textStart);
 		textStart += strlen(textStart) + 1;
 	}
-	
+
 	_maxRowIndex = 8 + 10 * (3 - (getGlobalVar(V_COLUMN_TEXT_NAME) == calcHash("stLineagex") ? 1 : 0));
 
 	_background = new Background(_vm, 0);
@@ -2154,7 +2154,7 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 	_bottomBackgroundSurface = new BaseSurface(_vm, 0, 640, 192, "bottom background");
 	spriteResource.load(kScene2208FileHashes2[getGlobalVar(V_CLICKED_COLUMN_INDEX) % 6], true);
 	_bottomBackgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
-	
+
 	SetUpdateHandler(&Scene2208::update);
 	SetMessageHandler(&Scene2208::handleMessage);
 
@@ -2165,7 +2165,7 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (_newRowIndex < 6)
 		_newRowIndex = 0;
 	_rowScrollY = 0;
-	_backgroundScrollY = 48 * _newRowIndex;		
+	_backgroundScrollY = 48 * _newRowIndex;
 	_currRowIndex = _newRowIndex;
 
 	for (int16 rowIndex = 0; rowIndex < _visibleRowsCount; rowIndex++)
@@ -2185,7 +2185,7 @@ Scene2208::~Scene2208() {
 void Scene2208::update() {
 
 	int16 mouseY = _vm->getMouseY();
-	
+
 	if (mouseY < 48) {
 		if (_currRowIndex > 0)
 			_newRowIndex = _currRowIndex - 1;
@@ -2235,7 +2235,7 @@ uint32 Scene2208::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 void Scene2208::drawRow(int16 rowIndex) {
-	NDrawRect sourceRect;	
+	NDrawRect sourceRect;
 	int16 y = (rowIndex * 48) % 528;
 	if (rowIndex < 4) {
 		sourceRect.x = 0;
@@ -2280,7 +2280,7 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene2242::handleMessage);
 	SetUpdateHandler(&Scene2242::update);
-	
+
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		setBackground(0x11840E24);
 		setPalette(0x11840E24);
@@ -2297,7 +2297,7 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 10, 1100, 464, 435, 0x9148A011);
-	addCollisionSprite(_asTape); 
+	addCollisionSprite(_asTape);
 
 	if (which < 0) {
 		// Restoring game
@@ -2380,7 +2380,7 @@ void Scene2242::readClickedColumn() {
 }
 
 static const int16 kHallOfRecordsKlaymenXPos[] = {
-	 68, 157, 246, 335, 
+	 68, 157, 246, 335,
 	424, 513, 602
 };
 
@@ -2396,7 +2396,7 @@ static const uint32 kHallOfRecordsSceneMessageListIds1[] = {
 
 HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule, int which, uint32 hallOfRecordsInfoId)
 	: Scene(vm, parentModule) {
-	
+
 	_hallOfRecordsInfo = _vm->_staticData->getHallOfRecordsInfoItem(hallOfRecordsInfoId);
 
 	SetMessageHandler(&HallOfRecordsScene::handleMessage);
@@ -2487,7 +2487,7 @@ static const uint32 kScene2247MessageListIds1[] = {
 
 Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	SetMessageHandler(&Scene2247::handleMessage);
 	SetUpdateHandler(&Scene::update);
 
@@ -2524,7 +2524,7 @@ Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setSoundFlag(true);
-	
+
 }
 
 Scene2247::~Scene2247() {

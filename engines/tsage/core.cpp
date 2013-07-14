@@ -3216,7 +3216,7 @@ void Visage::flipVertical(GfxSurface &gfxSurface) {
 		// Flip the lines1
 		byte *line1P = (byte *)s.getBasePtr(0, y);
 		byte *line2P = (byte *)s.getBasePtr(0, s.h - y - 1);
-		
+
 		for (int x = 0; x < s.w; ++x)
 			SWAP(line1P[x], line2P[x]);
 	}

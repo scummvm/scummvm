@@ -62,12 +62,12 @@ struct NRect {
 
 typedef Common::Array<NRect> NRectArray;
 
-// TODO: Use Common::Rect 
+// TODO: Use Common::Rect
 struct NDrawRect {
 	int16 x, y, width, height;
 	NDrawRect() : x(0), y(0), width(0), height(0) {}
 	NDrawRect(int16 x0, int16 y0, int16 width0, int16 height0) : x(x0), y(y0), width(width0), height(height0) {}
-	int16 x2() { return x + width; } 
+	int16 x2() { return x + width; }
 	int16 y2() { return y + height; }
 	void set(int16 x0, int16 y0, int16 width0, int16 height0) {
 		x = x0;

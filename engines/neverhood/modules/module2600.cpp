@@ -35,7 +35,7 @@ static const uint32 kModule2600SoundList[] = {
 
 Module2600::Module2600(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
 	else if (which == 1)
@@ -218,10 +218,10 @@ void Module2600::updateScene() {
 		}
 	}
 }
-			
+
 SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
-	
+
 	SetUpdateHandler(&SsScene2609Button::update);
 	SetMessageHandler(&SsScene2609Button::handleMessage);
 
@@ -273,7 +273,7 @@ uint32 SsScene2609Button::handleMessage(int messageNum, const MessageParam &para
 
 AsScene2609Water::AsScene2609Water(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1000) {
-	
+
 	_x = 240;
 	_y = 420;
 	setDoDeltaX(1);
@@ -309,7 +309,7 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 
 Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _isBusy(false) {
-	
+
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene2609::handleMessage);
 

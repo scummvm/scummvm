@@ -36,7 +36,7 @@ Module2900::Module2900(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which >= 0)
 		setGlobalVar(V_TELEPORTER_WHICH, which);
-		
+
 	createScene(0, 0);
 
 }
@@ -255,7 +255,7 @@ SsScene2901LocationButton::SsScene2901LocationButton(NeverhoodEngine *vm, Scene 
 	: StaticSprite(vm, 900), _parentScene(parentScene), _index(index), _countdown1(0) {
 
 	const NPoint &pt = kSsScene2901LocationButtonPoints[_index];
-	
+
 	loadSprite(kSsScene2901LocationButtonFileHashes[which * 6 + index], kSLFDefDrawOffset | kSLFDefPosition, 800);
 	_collisionBounds.set(pt.x - 25, pt.y - 25, pt.x + 25, pt.y + 25);
 	setVisible(false);
@@ -263,7 +263,7 @@ SsScene2901LocationButton::SsScene2901LocationButton(NeverhoodEngine *vm, Scene 
 	SetUpdateHandler(&SsScene2901LocationButton::update);
 	SetMessageHandler(&SsScene2901LocationButton::handleMessage);
 }
-	
+
 void SsScene2901LocationButton::update() {
 	updatePosition();
 	if (_countdown1 != 0 && (--_countdown1) == 0) {
@@ -289,7 +289,7 @@ uint32 SsScene2901LocationButton::handleMessage(int messageNum, const MessagePar
 
 SsScene2901LocationButtonLight::SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index)
 	: StaticSprite(vm, 900), _index(index) {
-	
+
 	loadSprite(kSsScene2901LocationButtonLightFileHashes1[which * 6 + index], kSLFDefDrawOffset | kSLFDefPosition, 900);
 	setVisible(false);
 	loadSound(0, kSsScene2901LocationButtonLightFileHashes2[_index]);
@@ -315,7 +315,7 @@ SsScene2901BrokenButton::SsScene2901BrokenButton(NeverhoodEngine *vm, int which)
 SsScene2901BigButton::SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _which(which), _countdown1(0) {
 
-	loadSprite(kSsScene2901BigButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 400);	
+	loadSprite(kSsScene2901BigButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 400);
 	_collisionBounds.set(62, 94, 322, 350);
 	setVisible(false);
 	loadSound(0, 0xF3D420C8);
@@ -330,7 +330,7 @@ void SsScene2901BigButton::update() {
 		sendMessage(_parentScene, 0x2000, 0);
 	}
 }
-	
+
 uint32 SsScene2901BigButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -361,7 +361,7 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(kScene2901FileHashes1[_currLocationButtonNum]);
 	setPalette(kScene2901FileHashes1[_currLocationButtonNum]);
-	
+
 	for (uint i = 0; i < 6; ++i) {
 		if (i != 2 || !_isButton2Broken) {
 			_ssLocationButtons[i] = insertSprite<SsScene2901LocationButton>(this, _currLocationButtonNum, i);
@@ -369,7 +369,7 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 			_ssLocationButtonLights[i] = insertSprite<SsScene2901LocationButtonLight>(_currLocationButtonNum, i);
 		}
 	}
-	
+
 	if (_isButton2Broken)
 		insertSprite<SsScene2901BrokenButton>(_currLocationButtonNum);
 
@@ -377,10 +377,10 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 	addCollisionSprite(_ssBigButton);
 
 	insertPuzzleMouse(kScene2901FileHashes2[_currLocationButtonNum], 20, 620);
-	
+
 	SetUpdateHandler(&Scene2901::update);
 	SetMessageHandler(&Scene2901::handleMessage);
-	
+
 }
 
 void Scene2901::update() {

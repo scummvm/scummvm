@@ -69,7 +69,7 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentS
 	new GUI::ButtonWidget(this, "RecorderDialog.Cancel", _("Cancel"), 0, kCloseCmd);
 	new GUI::ButtonWidget(this, "RecorderDialog.Record", _("Record"), 0, kRecordCmd);
 	_playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), 0, kPlaybackCmd);
-	
+
 	_editButton = new GUI::ButtonWidget(this, "RecorderDialog.Edit", _("Edit"), 0, kEditRecordCmd);
 
 	_editButton->setEnabled(false);
@@ -80,7 +80,7 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentS
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
 		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", 0, kPrevScreenshotCmd);
-		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", 0, kNextScreenshotCmd);	
+		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", 0, kNextScreenshotCmd);
 		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", "0/0");
 		_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
 		_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));

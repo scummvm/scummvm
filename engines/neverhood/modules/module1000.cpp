@@ -26,8 +26,8 @@ namespace Neverhood {
 
 Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
-	_musicFileHash = getGlobalVar(V_ENTRANCE_OPEN) ? 0x81106480 : 0x00103144;		
+
+	_musicFileHash = getGlobalVar(V_ENTRANCE_OPEN) ? 0x81106480 : 0x00103144;
 
 	_vm->_soundMan->addMusic(0x03294419, 0x061880C6);
 	_vm->_soundMan->addMusic(0x03294419, _musicFileHash);
@@ -118,11 +118,11 @@ void Module1000::updateScene() {
 	}
 }
 
-// Scene1001			
+// Scene1001
 
 AsScene1001Door::AsScene1001Door(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100) {
-	
+
 	createSurface(800, 137, 242);
 	_x = 726;
 	_y = 440;
@@ -151,16 +151,16 @@ void AsScene1001Door::hammerHitsDoor() {
 	case 1:
 		playSound(0, 0x65482F03);
 		startAnimation(0x624C0498, 1, 3);
-		NextState(&AsScene1001Door::stShowIdleDoor);		
+		NextState(&AsScene1001Door::stShowIdleDoor);
 		break;
 	case 2:
 		playSound(1);
 		startAnimation(0x624C0498, 6, 6);
-		NextState(&AsScene1001Door::stBustedDoorMove);		
+		NextState(&AsScene1001Door::stBustedDoorMove);
 		break;
 	default:
 		// Nothing
-		break;		
+		break;
 	}
 	incGlobalVar(V_DOOR_STATUS, 1);
 }
@@ -196,9 +196,9 @@ void AsScene1001Door::stBustedDoorMove() {
 void AsScene1001Door::stBustedDoorGone() {
 	playSound(0);
 	stopAnimation();
-	setVisible(false);	
+	setVisible(false);
 }
-	
+
 AsScene1001Hammer::AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor)
 	: AnimatedSprite(vm, 1100), _asDoor(asDoor) {
 
@@ -262,7 +262,7 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 
 AsScene1001Lever::AsScene1001Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
+
 	createSurface(1010, 71, 73);
 	setDoDeltaX(deltaXType);
 	startAnimation(0x04A98C36, 0, -1);
@@ -302,22 +302,22 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 	}
 	return messageResult;
 }
-	
+
 SsCommonButtonSprite::SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, int surfacePriority, uint32 soundFileHash)
 	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene), _countdown(0) {
 
 	_priority = 1100;
-	_soundFileHash = soundFileHash ? soundFileHash : 0x44141000; 
+	_soundFileHash = soundFileHash ? soundFileHash : 0x44141000;
 	setVisible(false);
 	SetUpdateHandler(&SsCommonButtonSprite::update);
 	SetMessageHandler(&SsCommonButtonSprite::handleMessage);
 }
-	
+
 void SsCommonButtonSprite::update() {
 	if (_countdown != 0 && (--_countdown) == 0)
 		setVisible(false);
 }
-	
+
 uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -330,19 +330,19 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 	}
 	return messageResult;
 }
-		
+
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _asDoor(NULL), _asWindow(NULL) {
 
 	Sprite *tempSprite;
 
 	SetMessageHandler(&Scene1001::handleMessage);
-	
+
 	setHitRects(0x004B4860);
 	setBackground(0x4086520E);
 	setPalette(0x4086520E);
 	insertScreenMouse(0x6520A400);
-	
+
 	if (which < 0) {
 		// Restoring game
 		setRectList(0x004B49F0);
@@ -373,7 +373,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x2080A3A8, 1300);
 
 	_klaymen->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
-	
+
 	if (!getGlobalVar(V_DOOR_BUSTED)) {
 		_asDoor = insertSprite<AsScene1001Door>();
 		_asDoor->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
@@ -445,7 +445,7 @@ AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool i
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isSpecial(isSpecial) {
 
 	SetUpdateHandler(&AsScene1002Ring::update);
-	
+
 	if (_isSpecial) {
 		createSurface(990, 68, 314);
 		if (isRingLow) {
@@ -581,7 +581,7 @@ uint32 AsScene1002Ring::hmRingReleased(int messageNum, const MessageParam &param
 
 AsScene1002Door::AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect)
 	: StaticSprite(vm, 1200) {
-	
+
 	loadSprite(0x1052370F, kSLFDefDrawOffset | kSLFSetPosition, 800, 526, getGlobalVar(V_FLYTRAP_RING_DOOR) ? 49 : 239);
 	setClipRect(clipRect);
 	SetUpdateHandler(&AsScene1002Door::update);
@@ -637,7 +637,7 @@ AsScene1002BoxingGloveHitEffect::AsScene1002BoxingGloveHitEffect(NeverhoodEngine
 	createSurface(1025, 88, 165);
 	setVisible(false);
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1002BoxingGloveHitEffect::handleMessage);	
+	SetMessageHandler(&AsScene1002BoxingGloveHitEffect::handleMessage);
 }
 
 uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -716,7 +716,7 @@ void AsScene1002DoorSpy::stDoorSpyBoxingGlove() {
 	NextState(&AsScene1002DoorSpy::stDoorSpyIdle);
 }
 
-SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash) 
+SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash)
 	: StaticSprite(vm, 1100), _parentScene(parentScene), _status(0), _countdown(0) {
 
 	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000;
@@ -788,7 +788,7 @@ AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *par
 			stRingGrabbed();
 		} else {
 			stIdle();
-		} 
+		}
 	}
 	_flags = 4;
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
@@ -850,12 +850,12 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 		if (_isSecond) {
 			if (_x >= 154 && _x <= 346)
 				messageResult = 1;
-			else				
+			else
 				messageResult = 0;
 		} else {
 			if (_x >= 174 && _x <= 430)
 				messageResult = 1;
-			else				
+			else
 				messageResult = 0;
 		}
 		break;
@@ -1023,7 +1023,7 @@ AsScene1002OutsideDoorBackground::AsScene1002OutsideDoorBackground(NeverhoodEngi
 	} else
 		setVisible(false);
 	SetUpdateHandler(&AsScene1002OutsideDoorBackground::update);
-	SetMessageHandler(&AsScene1002OutsideDoorBackground::handleMessage);	
+	SetMessageHandler(&AsScene1002OutsideDoorBackground::handleMessage);
 }
 
 void AsScene1002OutsideDoorBackground::update() {
@@ -1083,7 +1083,7 @@ void AsScene1002OutsideDoorBackground::stDoorClosed() {
 
 AsScene1002KlaymenLadderHands::AsScene1002KlaymenLadderHands(NeverhoodEngine *vm, Klaymen *klaymen)
 	: AnimatedSprite(vm, 1200), _klaymen(klaymen) {
-	
+
 	createSurface(1200, 40, 163);
 	setVisible(false);
 	SetUpdateHandler(&AsScene1002KlaymenLadderHands::update);
@@ -1095,15 +1095,15 @@ void AsScene1002KlaymenLadderHands::update() {
 		startAnimation(0xBA280522, _klaymen->getFrameIndex(), -1);
 		_newStickFrameIndex = _klaymen->getFrameIndex();
 		setVisible(true);
-		_x = _klaymen->getX(); 
-		_y = _klaymen->getY(); 
+		_x = _klaymen->getX();
+		_y = _klaymen->getY();
 		setDoDeltaX(_klaymen->isDoDeltaX() ? 1 : 0);
 	} else if (_klaymen->getCurrAnimFileHash() == 0x122D1505) {
 		startAnimation(0x1319150C, _klaymen->getFrameIndex(), -1);
 		_newStickFrameIndex = _klaymen->getFrameIndex();
 		setVisible(true);
-		_x = _klaymen->getX(); 
-		_y = _klaymen->getY(); 
+		_x = _klaymen->getX();
+		_y = _klaymen->getY();
 		setDoDeltaX(_klaymen->isDoDeltaX() ? 1 : 0);
 	} else
 		setVisible(false);
@@ -1113,7 +1113,7 @@ void AsScene1002KlaymenLadderHands::update() {
 AsScene1002KlaymenPeekHand::AsScene1002KlaymenPeekHand(NeverhoodEngine *vm, Scene *parentScene, Klaymen *klaymen)
 	: AnimatedSprite(vm, 1200), _parentScene(parentScene), _klaymen(klaymen),
 	_isClipRectSaved(false) {
-	
+
 	createSurface(1000, 33, 41);
 	setVisible(false);
 	SetUpdateHandler(&AsScene1002KlaymenPeekHand::update);
@@ -1245,7 +1245,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	sendEntityMessage(_klaymen, 0x2007, _asVenusFlyTrap);
 
 	_asOutsideDoorBackground = insertSprite<AsScene1002OutsideDoorBackground>();
-								  
+
 	setRectList(0x004B43A0);
 
 	loadSound(1, 0x60755842);
@@ -1322,11 +1322,11 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2002:
 		_messageList = NULL;
-		break;										
+		break;
 	case 0x2005:
 		_isClimbingLadder = true;
 		setRectList(0x004B4418);
-		break;										
+		break;
 	case 0x2006:
 		_isClimbingLadder = false;
 		setRectList(0x004B43A0);
@@ -1360,11 +1360,11 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 				sendMessage(_asRing3, 0x4807, 0);
 			}
-		}	
+		}
 		break;
 	case 0x480B:
 		sendEntityMessage(_klaymen, 0x1014, _asDoorSpy);
-		break;				
+		break;
 	case 0x480F:
 		setGlobalVar(V_RADIO_ENABLED, 0);
 		playSound(1);
@@ -1379,7 +1379,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		setSpriteSurfacePriority(_ssCeiling, 1015);
 		setSpriteSurfacePriority(_ssLadderArch, 1015);
 		break;
-	}	
+	}
 	return messageResult;
 }
 
@@ -1389,7 +1389,7 @@ StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backg
 	: Scene(vm, parentModule) {
 
 	SetMessageHandler(&StaticScene::handleMessage);
-	
+
 	setBackground(backgroundFileHash);
 	setPalette(backgroundFileHash);
 	insertPuzzleMouse(cursorFileHash, 20, 620);
@@ -1442,7 +1442,7 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _paletteAreaStatus(-1) {
 
 	Sprite *tempSprite;
-	
+
 	SetUpdateHandler(&Scene1004::update);
 	SetMessageHandler(&Scene1004::handleMessage);
 
@@ -1475,16 +1475,16 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlaymen<KmScene1004>(_dataResource.getPoint(0x80052A29).x, 27);
 		setMessageList(0x004B7BF0);
 	}
-	
+
 	updatePaletteArea();
-	
+
 	_asKlaymenLadderHands = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 
 	insertStaticSprite(0x800034A0, 1100);
 	insertStaticSprite(0x64402020, 1100);
 	insertStaticSprite(0x3060222E, 1300);
 	tempSprite = insertStaticSprite(0x0E002004, 1300);
-	
+
 	_klaymen->setClipRect(0, tempSprite->getDrawRect().y, 640, 480);
 	_asKlaymenLadderHands->setClipRect(_klaymen->getClipRect());
 
@@ -1518,7 +1518,7 @@ uint32 Scene1004::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
-} 
+}
 
 void Scene1004::updatePaletteArea() {
 	if (_klaymen->getY() < 150) {
@@ -1557,7 +1557,7 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	drawTextToBackground();
-	
+
 }
 
 uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1565,7 +1565,7 @@ uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
-			leaveScene(0);			
+			leaveScene(0);
 		break;
 	}
 	return 0;
@@ -1614,19 +1614,19 @@ uint32 Scene1005::getTextIndex1() {
 				textIndex = 23;
 			else if (!getSubVar(VA_HAS_KEY, 0) && !getSubVar(VA_IS_KEY_INSERTED, 0))
 				textIndex = 24;
-			else if (!getGlobalVar(V_HAS_FINAL_KEY))			
+			else if (!getGlobalVar(V_HAS_FINAL_KEY))
 				textIndex = 26;
 			else if (!getSubVar(VA_HAS_KEY, 1) && !getSubVar(VA_IS_KEY_INSERTED, 1))
 				textIndex = 27;
-			else if (!getGlobalVar(V_HAS_FINAL_KEY)) 
+			else if (!getGlobalVar(V_HAS_FINAL_KEY))
 				textIndex = 28;
-			else				
+			else
 				textIndex = 29;
 		} else if (!getGlobalVar(V_FELL_DOWN_HOLE))
 			textIndex = 20;
 		else if (!getGlobalVar(V_SEEN_SYMBOLS_NO_LIGHT))
 			textIndex = 21;
-		else			
+		else
 			textIndex = 22;
 	} else if (getGlobalVar(V_BOLT_DOOR_UNLOCKED)) {
 		if (!getGlobalVar(V_WALL_BROKEN))
@@ -1641,7 +1641,7 @@ uint32 Scene1005::getTextIndex1() {
 			textIndex = 15;
 		else if (!getGlobalVar(V_BEEN_STATUE_ROOM))
 			textIndex = 16;
-		else 
+		else
 			textIndex = 17;
 	} else if (!getGlobalVar(V_FLYTRAP_RING_EATEN)) {
 		textIndex = 0;
@@ -1660,7 +1660,7 @@ uint32 Scene1005::getTextIndex1() {
 			textIndex = 9;
 		else if (!getSubVar(VA_LOCKS_DISABLED, 0x01180951))
 			textIndex = 10;
-		else 
+		else
 			textIndex = 11;
 	} else if (!getGlobalVar(V_CREATURE_ANGRY)) {
 		textIndex = 1;

@@ -773,7 +773,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 
 	if (_displayDisabled) {
 		_hwscreen = g_eventRec.getSurface(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-	} else 
+	} else
 #endif
 		{
 		_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,

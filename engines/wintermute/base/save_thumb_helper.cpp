@@ -56,23 +56,23 @@ BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 			// works normally for direct3d
 			_gameRef->displayContent(false);
 			_gameRef->_renderer->flip();
-			
+
 			_gameRef->displayContent(false);
 			_gameRef->_renderer->flip();
 		}
-		
+
 		BaseImage *screenshot = _gameRef->_renderer->takeScreenshot();
 		if (!screenshot) {
 			return nullptr;
 		}
-		
+
 		// normal thumbnail
 		if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
 			thumbnail = new BaseImage();
 			thumbnail->copyFrom(screenshot, width, height);
 		}
-		
-		
+
+
 		delete screenshot;
 		screenshot = nullptr;
 	}
@@ -99,7 +99,7 @@ bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 bool SaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
 	delete _scummVMThumb;
 	_scummVMThumb = nullptr;
-	
+
 	_scummVMThumb = storeThumb(doFlip, kThumbnailWidth, kThumbnailHeight2);
 	if (!_scummVMThumb) {
 		return STATUS_FAILED;

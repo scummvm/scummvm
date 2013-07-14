@@ -49,7 +49,7 @@ void ResourceMan::addArchive(const Common::String &filename) {
 			if (archiveEntry->timeStamp > entry->archiveEntry->timeStamp) {
 				entry->archive = archive;
 				entry->archiveEntry = archiveEntry;
-			} 
+			}
 		} else {
 			ResourceFileEntry newEntry;
 			newEntry.resourceHandle = -1;

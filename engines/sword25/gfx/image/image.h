@@ -205,7 +205,7 @@ public:
 	    @brief Returns true, if the content of the BS_Image is allowed to be replaced by call of SetContent().
 	*/
 	virtual bool isSetContentAllowed() const = 0;
-	
+
 	virtual bool isSolid() const { return false; }
 
 	//@}

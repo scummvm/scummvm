@@ -33,13 +33,13 @@ StaticData::~StaticData() {
 void StaticData::load(const char *filename) {
 
 	Common::File fd;
-	
+
 	if (!fd.open(filename))
 		error("StaticData::load() Could not open %s", filename);
-		
-	fd.readUint32LE(); // magic		
+
+	fd.readUint32LE(); // magic
 	fd.readUint32LE(); // version
-	
+
 	// Load message lists
 	uint32 messageListsCount = fd.readUint32LE();
 	debug(3, "messageListsCount: %d", messageListsCount);
@@ -84,7 +84,7 @@ void StaticData::load(const char *filename) {
 		}
 		_rectLists[id] = rectList;
 	}
-	
+
 	// Load hit rects
 	uint32 hitRectListsCount = fd.readUint32LE();
 	debug(3, "hitRectListsCount: %d", hitRectListsCount);

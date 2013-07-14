@@ -598,8 +598,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_console = NULL;
 
 	_egoHoldKey = false;
-	
-	
+
+
 }
 
 void AgiEngine::initialize() {

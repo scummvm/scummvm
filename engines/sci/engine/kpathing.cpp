@@ -1966,7 +1966,7 @@ static bool isVertexCovered(const Patch &p, unsigned int wi) {
 	//  ---w1--1----p----w2--2----
 	//         ^             \       (inside)
 	if (wi > p.indexw1 && wi <= p.indexw2)
-		return true; 
+		return true;
 
 	//         v             /       (outside)
 	//  ---w2--2----p----w1--1----

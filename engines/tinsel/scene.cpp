@@ -138,7 +138,7 @@ const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 	g_tempStruc.hEntrance      = READ_32(p); p += sizeof(uint32);
 	g_tempStruc.hPoly          = READ_32(p); p += sizeof(uint32);
 	g_tempStruc.hTaggedActor   = READ_32(p); p += sizeof(uint32);
-	
+
 	return &g_tempStruc;
 }
 

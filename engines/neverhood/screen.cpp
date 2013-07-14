@@ -28,16 +28,16 @@ namespace Neverhood {
 Screen::Screen(NeverhoodEngine *vm)
 	: _vm(vm), _paletteData(NULL), _paletteChanged(false), _smackerDecoder(NULL),
 	_yOffset(0), _fullRefresh(false) {
-	
+
 	_ticks = _vm->_system->getMillis();
-	
+
 	_backScreen = new Graphics::Surface();
 	_backScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-	
+
 	_renderQueue = new RenderQueue();
 	_prevRenderQueue = new RenderQueue();
 	_microTiles = new MicroTileArray(640, 480);
-	
+
 }
 
 Screen::~Screen() {
@@ -72,13 +72,13 @@ void Screen::update() {
 			}
 		}
 	}
-	
+
 	for (RenderQueue::iterator jt = _prevRenderQueue->begin(); jt != _prevRenderQueue->end(); ++jt) {
 		RenderItem &prevRenderItem = (*jt);
 		if (prevRenderItem._refresh)
 			_microTiles->addRect(Common::Rect(prevRenderItem._destX, prevRenderItem._destY, prevRenderItem._destX + prevRenderItem._width, prevRenderItem._destY + prevRenderItem._height));
 	}
-	
+
 	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
 		RenderItem &renderItem = (*it);
 		if (renderItem._refresh)
@@ -93,7 +93,7 @@ void Screen::update() {
 		for (RectangleList::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri)
 			blitRenderItem(renderItem, *ri);
 	}
-	
+
 	SWAP(_renderQueue, _prevRenderQueue);
 	_renderQueue->clear();
 
@@ -202,12 +202,12 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		destX = drawRect.x;
 		ddRect.x1 = 0;
 	}
-	
+
 	if (drawRect.y + drawRect.height >= clipRect.y2)
 		ddRect.y2 = clipRect.y2 - drawRect.y;
 	else
 		ddRect.y2 = drawRect.height;
-	
+
 	if (drawRect.y < clipRect.y1) {
 		destY = clipRect.y1;
 		ddRect.y1 = clipRect.y1 - drawRect.y;
@@ -215,7 +215,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		destY = drawRect.y;
 		ddRect.y1 = 0;
 	}
-	
+
 	queueBlit(surface, destX, destY, ddRect, transparent, version, shadowSurface);
 
 }
@@ -224,12 +224,12 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 
 	int16 destX, destY;
 	NRect ddRect;
-	
+
 	if (x + drawRect.width >= clipRect.x2)
 		ddRect.x2 = clipRect.x2 - drawRect.x - x;
 	else
 		ddRect.x2 = drawRect.x + drawRect.width;
-		
+
 	if (x < clipRect.x1) {
 		destX = clipRect.x1;
 		ddRect.x1 = clipRect.x1 + drawRect.x - x;
@@ -242,7 +242,7 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 		ddRect.y2 = clipRect.y2 + drawRect.y - y;
 	else
 		ddRect.y2 = drawRect.y + drawRect.height;
-	
+
 	if (y < clipRect.y1) {
 		destY = clipRect.y1;
 		ddRect.y1 = clipRect.y1 + drawRect.y - y;
@@ -250,7 +250,7 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 		destY = y;
 		ddRect.y1 = drawRect.y;
 	}
-	
+
 	queueBlit(surface, destX, destY, ddRect, transparent, version);
 
 }
@@ -270,13 +270,13 @@ void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &dra
 		dest += _backScreen->pitch;
 		dest += _backScreen->pitch;
 	}
-	
+
 	_fullRefresh = true; // See Screen::update
 
 }
 
 void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version) {
-	
+
 	int16 x, y;
 	bool xflag, yflag;
 	NDrawRect newDrawRect;
@@ -292,26 +292,26 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 		y = y % sysRect.height;
 	if (y < 0)
 		y += sysRect.height;
-	
+
 	xflag = x <= 0;
 	yflag = y <= 0;
-  
+
 	newDrawRect.x = x;
 	newDrawRect.width = sysRect.width - x;
 	if (drawRect.width < newDrawRect.width) {
 		xflag = true;
 		newDrawRect.width = drawRect.width;
 	}
-  
+
 	newDrawRect.y = y;
 	newDrawRect.height = sysRect.height - y;
 	if (drawRect.height < newDrawRect.height) {
 		yflag = true;
 		newDrawRect.height = drawRect.height;
 	}
-	
+
 	drawSurface3(surface, drawRect.x, drawRect.y, newDrawRect, clipRect, transparent, version);
-  
+
 	if (!xflag) {
 		newDrawRect.x = 0;
 		newDrawRect.y = y;
@@ -321,7 +321,7 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 			newDrawRect.height = drawRect.height;
 		drawSurface3(surface, sysRect.width + drawRect.x - x, drawRect.y, newDrawRect, clipRect, transparent, version);
 	}
-  
+
 	if (!yflag) {
 		newDrawRect.x = x;
 		newDrawRect.y = 0;
@@ -331,7 +331,7 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 			newDrawRect.width = drawRect.width;
 		drawSurface3(surface, drawRect.x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent, version);
 	}
-  
+
 	if (!xflag && !yflag) {
 		newDrawRect.x = 0;
 		newDrawRect.y = 0;
@@ -350,13 +350,13 @@ void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &d
 
 void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
 	const Graphics::Surface *shadowSurface) {
-	
+
 	const int width = ddRect.x2 - ddRect.x1;
 	const int height = ddRect.y2 - ddRect.y1;
 
 	if (width <= 0 || height <= 0)
 		return;
-	
+
 	RenderItem renderItem;
 	renderItem._surface = surface;
 	renderItem._shadowSurface = shadowSurface;
@@ -369,7 +369,7 @@ void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 dest
 	renderItem._transparent = transparent;
 	renderItem._version = version;
 	_renderQueue->push_back(renderItem);
-	
+
 }
 
 void Screen::blitRenderItem(const RenderItem &renderItem, const Common::Rect &clipRect) {

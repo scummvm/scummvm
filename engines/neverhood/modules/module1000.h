@@ -85,7 +85,7 @@ protected:
 	Scene *_parentScene;
 	uint32 _soundFileHash;
 	int16 _countdown;
-	void update();	
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

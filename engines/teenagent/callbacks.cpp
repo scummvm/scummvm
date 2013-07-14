@@ -294,7 +294,7 @@ bool TeenAgentEngine::fnRobotSafeAlreadyUnlockedCheck() {
 }
 
 void TeenAgentEngine::fnRobotSafeUnlockCheck() {
-	if (CHECK_FLAG(dsAddr_MansionRobotSafeVoiceTestPassedFlag, 1) && 
+	if (CHECK_FLAG(dsAddr_MansionRobotSafeVoiceTestPassedFlag, 1) &&
 	    CHECK_FLAG(dsAddr_MansionRobotSafeScentTestPassedFlag, 1) &&
 	    CHECK_FLAG(dsAddr_MansionRobotSafeViewTestPassedFlag, 1)) {
 		waitLanAnimationFrame(1, 1);
@@ -546,7 +546,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4056:
-		// FIXME - This is the bird use callback in the first act at 
+		// FIXME - This is the bird use callback in the first act at
 		//         the mudpool. Current Code based on behaviour. Need to analyse cseg data.
 		dialog->popMark(scene, dsAddr_dialogStackMudpoolBird);
 		break;
@@ -1603,7 +1603,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5b44:
-		// FIXME - This is the doorbell use callback on House #2 
+		// FIXME - This is the doorbell use callback on House #2
 		// i.e. Granny and Anne's House. Need to analyse cseg data properly.
 		// Current code inferred from behaviour.
 		// FIXME - Add animation call for Ego pushing doorbell.

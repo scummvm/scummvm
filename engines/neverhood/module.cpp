@@ -31,9 +31,9 @@ namespace Neverhood {
 Module::Module(NeverhoodEngine *vm, Module *parentModule)
 	: Entity(vm, 0), _parentModule(parentModule), _childObject(NULL),
 	_done(false), _sceneType(kSceneTypeNormal) {
-	
+
 	SetMessageHandler(&Module::handleMessage);
-	
+
 }
 
 Module::~Module() {

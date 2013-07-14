@@ -81,7 +81,7 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 		DebugPrintf("  music   - shows the correct index in the radio music puzzle, module 2800, scene 1\n");
 		DebugPrintf("  radio   - enables the radio, module 3000, scene 9 - same as pulling the rightmost cord in the flytrap room\n");
 		DebugPrintf("  symbols - solves the symbols puzzle, module 1600, scene 8. Only available in that room\n");
-		DebugPrintf("  tubes   - shows the correct test tube combination in module 2800, scenes 7 and 10\n");		
+		DebugPrintf("  tubes   - shows the correct test tube combination in module 2800, scenes 7 and 10\n");
 		return true;
 	}
 

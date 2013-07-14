@@ -7258,7 +7258,7 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 			break;
 		}
 	} else if (action == CURSOR_LOOK) {
-		SceneItem::display(900, ((_buttonId == 2) && (scene->_field412 == 2)) ? 21 : _buttonId + 11, 
+		SceneItem::display(900, ((_buttonId == 2) && (scene->_field412 == 2)) ? 21 : _buttonId + 11,
 			SET_WIDTH, 280, SET_X, 160,  SET_POS_MODE, 1, SET_Y, 20, SET_EXT_BGCOLOR, 7, -999);
 		return true;
 	} else {

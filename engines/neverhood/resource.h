@@ -168,7 +168,7 @@ protected:
 
 	struct DRDirectoryItem {
 		uint32 nameHash;
-		uint16 offset; 
+		uint16 offset;
 		uint16 type;
 	};
 
@@ -195,7 +195,7 @@ protected:
 	Common::Array<MessageList*> _messageLists;
 	Common::Array<DRRect> _drRects;
 	Common::Array<DRSubRectList*> _drSubRectLists;
-	DataResource::DRDirectoryItem *findDRDirectoryItem(uint32 nameHash, uint16 type); 
+	DataResource::DRDirectoryItem *findDRDirectoryItem(uint32 nameHash, uint16 type);
 };
 
 uint32 calcHash(const char *value);

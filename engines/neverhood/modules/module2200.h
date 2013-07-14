@@ -100,7 +100,7 @@ class SsScene2202PuzzleCube : public StaticSprite {
 public:
 	SsScene2202PuzzleCube(NeverhoodEngine *vm, Scene *parentScene, int16 cubePosition, int16 cubeSymbol);
 protected:
-	Scene *_parentScene;	
+	Scene *_parentScene;
 	int16 _cubeSymbol;
 	int16 _cubePosition;
 	int16 _newX, _newY;
@@ -135,7 +135,7 @@ protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	int16 getFreeCubePosition(int16 index);
-	bool testIsSolved();	
+	bool testIsSolved();
 };
 
 class AsCommonKey : public AnimatedSprite {

@@ -79,7 +79,7 @@ public:
 protected:
 	Scene *_parentScene;
 	uint32 _fileHash1, _fileHash2;
-	bool _isPulled, _isBusy;	
+	bool _isPulled, _isBusy;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmPulled(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -323,7 +323,7 @@ protected:
 	Scene *_parentScene;
 	int _countdown;
 	int _testTubeSetNum, _testTubeIndex;
-	void update();	
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -408,7 +408,7 @@ protected:
 	Sprite *_sprite3;
 	Sprite *_sprite4;
 	Sprite *_asSpew;
-	void update();	
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void findClosestPoint();
 };

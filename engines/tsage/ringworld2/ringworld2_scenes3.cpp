@@ -4008,7 +4008,7 @@ void Scene3500::dispatch() {
 					if ( (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (newMazeY >= var_6) && (_mazePosition.y <= var_6))
 					  || (((cellId == 23) || (cellId == 24) || (cellId == 4) || (cellId == 14) || (cellId == 15)) && (_mazeChangeAmount >= var_a) && (_mazeChangeAmount <= 3) && (_action1._field24 != 0)) ){
 						newMazeY = var_6;
-						
+
 						if ((cellId != 23) && (cellId != 24) && (cellId != 4) && (cellId != 14) && (cellId != 15))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;

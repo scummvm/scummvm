@@ -62,7 +62,7 @@ public:
 	void close();
 	void gotoFrame(int frameNumber);
 	uint32 getFrameCount();
-	uint32 getFrameNumber(); 
+	uint32 getFrameNumber();
 	uint getStatus();
 	void setDrawPos(int16 x, int16 y);
 	void rewind();

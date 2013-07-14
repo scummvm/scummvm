@@ -89,7 +89,7 @@ EventRecorder::EventRecorder() {
 	_lastScreenshotTime = 0;
 	_screenshotPeriod = 0;
 	_playbackFile = 0;
-	
+
 	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 }
 
@@ -186,7 +186,7 @@ void EventRecorder::checkForKeyCode(const Common::Event &event) {
 bool EventRecorder::pollEvent(Common::Event &ev) {
 	if ((_recordMode != kRecorderPlayback) || !_initialized)
 		return false;
-	
+
 	if ((_nextEvent.recordedtype == Common::kRecorderEventTypeTimer) || (_nextEvent.type ==  Common::EVENT_INVALID)) {
 		return false;
 	}

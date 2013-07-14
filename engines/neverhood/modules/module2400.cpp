@@ -26,7 +26,7 @@ namespace Neverhood {
 
 Module2400::Module2400(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	_vm->_soundMan->addMusic(0x202D1010, 0xB110382D);
 
 	if (which < 0)
@@ -187,7 +187,7 @@ static const uint32 kAsScene2401WaterSpitFileHashes1[] = {
 
 AsScene2401WaterSpit::AsScene2401WaterSpit(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1200) {
-	
+
 	_x = 240;
 	_y = 447;
 	createSurface(100, 146, 74);
@@ -222,7 +222,7 @@ uint32 AsScene2401WaterSpit::handleMessage(int messageNum, const MessageParam &p
 
 AsScene2401FlowingWater::AsScene2401FlowingWater(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1200), _isWaterFlowing(false) {
-	
+
 	_x = 88;
 	_y = 421;
 	createSurface1(0x10203116, 100);
@@ -262,10 +262,10 @@ uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam
 	}
 	return messageResult;
 }
-	
+
 AsScene2401WaterFlushing::AsScene2401WaterFlushing(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 1200), _countdown(0), _flushLoopCount(0) {
-	
+
 	_x = x;
 	_y = y;
 	createSurface1(0xB8596884, 100);
@@ -308,7 +308,7 @@ uint32 AsScene2401WaterFlushing::handleMessage(int messageNum, const MessagePara
 
 AsScene2401Door::AsScene2401Door(NeverhoodEngine *vm, bool isOpen)
 	: AnimatedSprite(vm, 1100), _countdown(0), _isOpen(isOpen) {
-	
+
 	_x = 320;
 	_y = 240;
 	createSurface1(0x44687810, 100);
@@ -398,7 +398,7 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 		_ssWaterPipes[i] = insertStaticSprite(kScene2401FileHashes1[i], 300);
 		_ssWaterPipes[i]->setVisible(false);
 	}
-	
+
 	_asWaterSpit[0] = insertSprite<AsScene2401WaterSpit>();
 	_asWaterSpit[1] = insertSprite<AsScene2401WaterSpit>();
 
@@ -461,7 +461,7 @@ void Scene2401::update() {
 
 	if (_countdown2 != 0 && (--_countdown2) == 0)
 		sendMessage(_asFlowingWater, 0x2003, 0);
-	
+
 	Scene::update();
 
 }
@@ -559,7 +559,7 @@ AsScene2402Door::AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool i
 	} else {
 		stopAnimation();
 		setVisible(false);
-	}	
+	}
 	SetUpdateHandler(&AsScene2402Door::update);
 	SetMessageHandler(&AsScene2402Door::handleMessage);
 }
@@ -654,7 +654,7 @@ void AsScene2402TV::upFocusKlaymen() {
 		_newStickFrameIndex = _currFrameIndex;
 		if (_countdown2 == 0) {
 			_vm->_soundMan->addSound(0x01520123, 0xC42D4528);
-			_vm->_soundMan->playSoundLooping(0xC42D4528); 
+			_vm->_soundMan->playSoundLooping(0xC42D4528);
 		}
 		_countdown2 = 5;
 	} else if (_countdown2 != 0 && (--_countdown2 == 0))
@@ -698,7 +698,7 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asTape = insertSprite<AsScene1201Tape>(this, 9, 1100, 286, 409, 0x9148A011);
 	addCollisionSprite(_asTape);
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x15288120, 100, 0);
-	
+
 	if (which < 0) {
 		// Restoring game
 		insertKlaymen<KmScene2402>(198, 404);
@@ -779,7 +779,7 @@ uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entit
 	}
 	return messageResult;
 }
-		
+
 void Scene2402::playPipeSound(uint32 fileHash) {
 	playSound(_soundToggle ? 0 : 1, fileHash);
 	_soundToggle = !_soundToggle;
@@ -787,7 +787,7 @@ void Scene2402::playPipeSound(uint32 fileHash) {
 
 Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	Sprite *tempSprite1, *tempSprite2, *tempSprite3;
 
 	SetMessageHandler(&Scene2403::handleMessage);
@@ -799,7 +799,7 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	addCollisionSprite(_asTape);
 	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0xA1095A10, 0x836D3813, 368, 200);
 	_asLightCord->setClipRect(0, 25, 640, 480);
-	
+
 	if (which < 0) {
 		// Restoring game
 		_isClimbingLadder = false;
@@ -828,11 +828,11 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x3130B0EB, 100, 0);
-	tempSprite1 = insertStaticSprite(0x20C24220, 1100);	
+	tempSprite1 = insertStaticSprite(0x20C24220, 1100);
 	tempSprite2 = insertStaticSprite(0x03080900, 1300);
 	tempSprite3 = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 	tempSprite3->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());
-	_klaymen->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());	
+	_klaymen->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());
 	loadSound(1, calcHash("fxFogHornSoft"));
 }
 
@@ -887,7 +887,7 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 		setGlobalVar(V_KEY3_LOCATION, 2);
 
 	SetMessageHandler(&Scene2406::handleMessage);
-	
+
 	setRectList(0x004B78C8);
 	insertScreenMouse(0xB03001A8);
 
@@ -913,7 +913,7 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 		setPalette(0x0A038595);
 		tempSprite1 = insertStaticSprite(0x1712112A, 1100);
 	}
-	
+
 	tempSprite2 = insertStaticSprite(0x22300924, 1300);
 	_clipRects[1].x1 = tempSprite1->getDrawRect().x;
 	_clipRects[1].y1 = tempSprite2->getDrawRect().y;

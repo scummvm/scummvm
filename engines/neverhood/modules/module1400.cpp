@@ -31,7 +31,7 @@ namespace Neverhood {
 
 Module1400::Module1400(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	_vm->_soundMan->addMusic(0x00AD0012, 0x06333232);
 	_vm->_soundMan->addMusic(0x00AD0012, 0x624A220E);
 
@@ -139,7 +139,7 @@ void Module1400::updateScene() {
 
 AsScene1401Pipe::AsScene1401Pipe(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100), _countdown1(0), _countdown2(0) {
-	
+
 	createSurface(900, 152, 147);
 	_x = 454;
 	_y = 217;
@@ -179,10 +179,10 @@ uint32 AsScene1401Pipe::handleMessage(int messageNum, const MessageParam &param,
 		_countdown1 = 70;
 		_countdown2 = 8;
 		stStartSucking();
-		break;		
+		break;
 	case 0x483A:
 		stSuckInProjector();
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -221,7 +221,7 @@ void AsScene1401Pipe::stSuckInProjector() {
 
 AsScene1401Mouse::AsScene1401Mouse(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100) {
-	
+
 	createSurface(100, 71, 41);
 	_x = 478;
 	_y = 433;
@@ -243,7 +243,7 @@ uint32 AsScene1401Mouse::handleMessage(int messageNum, const MessageParam &param
 		break;
 	case 0x4839:
 		stSuckedIn();
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -280,7 +280,7 @@ uint32 AsScene1401Cheese::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x4839:
 		stSuckedIn();
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -332,7 +332,7 @@ uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &pa
 	case 0x2001:
 		if (_isOpen)
 			_countdown = 168;
-		messageResult = _isOpen ? 1 : 0;			
+		messageResult = _isOpen ? 1 : 0;
 		break;
 	case 0x3002:
 		gotoNextState();
@@ -341,7 +341,7 @@ uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &pa
 		_countdown = 168;
 		if (!_isOpen)
 			stOpenDoor();
-		break;						
+		break;
 	}
 	return messageResult;
 }
@@ -540,7 +540,7 @@ void AsCommonProjector::moveProjector() {
 		playSound(1, 0x5440E474);
 		_lockedInSlot = true;
 	}
-	
+
 }
 
 void AsCommonProjector::stSuckedIn() {
@@ -627,8 +627,8 @@ void AsCommonProjector::stStartSuckedIn() {
 }
 
 Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _projectorBorderFlag(false), _ssFloorButton(NULL), _asProjector(NULL), 
-	_asPipe(NULL), _asMouse(NULL), _asCheese(NULL), _asBackDoor(NULL), 
+	: Scene(vm, parentModule), _projectorBorderFlag(false), _ssFloorButton(NULL), _asProjector(NULL),
+	_asPipe(NULL), _asMouse(NULL), _asCheese(NULL), _asBackDoor(NULL),
 	_sprite1(NULL), _sprite2(NULL), _sprite3(NULL), _ssButton(NULL) {
 
 	SetMessageHandler(&Scene1401::handleMessage);
@@ -638,7 +638,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x08221FA5);
 	setPalette(0x08221FA5);
 	insertScreenMouse(0x21FA108A);
-	
+
 	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x980F3124, 0x12192892, 100, 0);
 	_asPipe = insertSprite<AsScene1401Pipe>();
 
@@ -692,7 +692,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 		_asProjector->setClipRect(_sprite3->getDrawRect().x, _sprite2->getDrawRect().y, 640, 480);
 	}
-	
+
 	_klaymen->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
 	if (which == 0 && _asProjector)
@@ -752,7 +752,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList2(0x004B6658);
 			} else
 				setMessageList2(0x004B65F0);
-		}						
+		}
 		break;
 	case 0x482A:
 		_sprite1->setVisible(true);
@@ -772,7 +772,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 
 SsScene1402BridgePart::SsScene1402BridgePart(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority)
 	: StaticSprite(vm, fileHash, surfacePriority) {
-	
+
 	SetFilterY(&Sprite::defFilterY);
 	SetUpdateHandler(&StaticSprite::updatePosition);
 }
@@ -892,7 +892,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 			startShaking();
 		}
 	}
-	
+
 	if (_asPuzzleBox)
 		_asPuzzleBox->setClipRect(0, 0, 640, _ssBridgePart3->getDrawRect().y2());
 
@@ -914,7 +914,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setClipRect(_ssBridgePart1->getDrawRect().x, 0, _ssBridgePart2->getDrawRect().x2(), _ssBridgePart3->getDrawRect().y2());
-	
+
 }
 
 void Scene1402::upShaking() {
@@ -1082,7 +1082,7 @@ static const struct {
 
 AsScene1407Mouse::AsScene1407Mouse(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _currSectionIndex(0) {
-	
+
 	createSurface(100, 117, 45);
 	_x = 108;
 	_y = 106;
@@ -1096,7 +1096,7 @@ void AsScene1407Mouse::suWalkTo() {
 		xdelta = _deltaX;
 	else if (xdelta < -_deltaX)
 		xdelta = -_deltaX;
-	_deltaX = 0;		
+	_deltaX = 0;
 	if (_walkDestX == _x)
 		sendMessage(this, 0x1019, 0);
 	else {
@@ -1231,7 +1231,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule)
 
 	_asMouse = insertSprite<AsScene1407Mouse>(this);
 	_ssResetButton = insertStaticSprite(0x12006600, 100);
-	_ssResetButton->setVisible(false); 
+	_ssResetButton->setVisible(false);
 
 }
 
@@ -1279,9 +1279,9 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 
 Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _asProjector(NULL), _isProjecting(false) {
-	
+
 	SetMessageHandler(&Scene1403::handleMessage);
-	
+
 	setRectList(0x004B1FF8);
 	setBackground(0x2110A234);
 	setPalette(0x2110A234);
@@ -1383,10 +1383,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 
 Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _asProjector(NULL), _asKey(NULL) {
-	
+
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 5);
-	
+
 	SetMessageHandler(&Scene1404::handleMessage);
 
 	setRectList(0x004B8D80);
@@ -1555,14 +1555,14 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule), _selectFirstTile(true), _tilesLeft(48), _countdown(0) {
 
 	_vm->gameModule()->initMemoryPuzzle();
-	
+
 	SetUpdateHandler(&Scene1405::update);
 	SetMessageHandler(&Scene1405::handleMessage);
 
 	setBackground(0x0C0C007D);
 	setPalette(0x0C0C007D);
 	insertPuzzleMouse(0xC00790C8, 20, 620);
-	
+
 	for (uint32 tileIndex = 0; tileIndex < 48; tileIndex++) {
 		_tiles[tileIndex] = insertSprite<AsScene1405Tile>(this, tileIndex);
 		addCollisionSprite(_tiles[tileIndex]);

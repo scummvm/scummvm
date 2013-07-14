@@ -244,7 +244,7 @@ protected:
 	bool _buttonClicked;
 	int _countdown;
 	int _noisySymbolIndex;
-	int _currentSymbolIndex;   
+	int _currentSymbolIndex;
 	int _noisyRandomSymbolIndex;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

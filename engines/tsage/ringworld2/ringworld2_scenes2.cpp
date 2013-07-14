@@ -762,8 +762,8 @@ Scene2000::Scene2000(): SceneExt() {
 		R2_GLOBALS._v56605[1] = 21;
 		R2_GLOBALS._v56605[2] = 21;
 	}
-	if ((R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex] 
-			!= R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) 
+	if ((R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]
+			!= R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex])
 			&& (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] != 2350)) {
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 0;
 	}

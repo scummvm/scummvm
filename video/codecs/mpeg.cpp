@@ -58,7 +58,7 @@ const Graphics::Surface *MPEGDecoder::decodeImage(Common::SeekableReadStream *st
 	return _surface;
 }
 
-bool MPEGDecoder::decodePacket(Common::SeekableReadStream *packet, uint32 &framePeriod, Graphics::Surface *dst) {			
+bool MPEGDecoder::decodePacket(Common::SeekableReadStream *packet, uint32 &framePeriod, Graphics::Surface *dst) {
 	// Decode as much as we can out of this packet
 	uint32 size = 0xFFFFFFFF;
 	mpeg2_state_t state;

@@ -71,7 +71,7 @@ bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 	// RenderObject Eigenschaften aktualisieren
 	_originalWidth = _width = bitmapPtr->getWidth();
 	_originalHeight = _height = bitmapPtr->getHeight();
-	
+
 	_isSolid = bitmapPtr->isSolid();
 
 	// Bild-Resource freigeben

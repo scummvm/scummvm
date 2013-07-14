@@ -51,7 +51,7 @@ static const NRect kScene2508ClipRect2 = NRect(0, 0, 594, 448);
 
 Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundIndex(0) {
-	
+
 	_vm->_soundMan->addMusic(0x29220120, 0x05343184);
 	_vm->_soundMan->startMusic(0x05343184, 0, 0);
 	SetMessageHandler(&Module2500::handleMessage);
@@ -212,14 +212,14 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 	}
 	return messageResult;
 }
-			
+
 void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 
 Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2628));
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B264C));
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2670));
@@ -282,7 +282,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	insertSprite<AsCommonCarConnector>(_asCar);
-	
+
 	_newTrackIndex = -1;
 	_dataResource.load(calcHash("Ashooded"));
 
@@ -300,9 +300,9 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
 			sendMessage(_asCar, 0x2008, 150);
 	}
-	
+
 	_carStatus = 0;
-	
+
 }
 
 Scene2501::~Scene2501() {
@@ -391,7 +391,7 @@ uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entit
 	}
 	return messageResult;
 }
-		
+
 uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -434,7 +434,7 @@ uint32 Scene2501::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	}
 	return messageResult;
 }
-	
+
 void Scene2501::moveCarToPoint(NPoint &pt) {
 	int minMatchTrackIndex, minMatchDistance;
 	_tracks.findTrackPoint(pt, minMatchTrackIndex, minMatchDistance, _dataResource);
@@ -472,7 +472,7 @@ void Scene2501::updateKlaymenClipRect() {
 
 SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
 	: StaticSprite(vm, 1400), _countdown(0), _isSoundPlaying(false) {
-	
+
 	loadSprite(0x070220D9, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x4600204C);
@@ -520,9 +520,9 @@ uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &para
 
 Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	Sprite *ssButton;
-	
+
 	setBackground(0x90791B80);
 	setPalette(0x90791B80);
 	ssButton = insertSprite<SsScene2504Button>();

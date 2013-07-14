@@ -546,7 +546,7 @@ void BaseRenderOSystem::drawTickets() {
 
 	// Revert the colorMod-state.
 	_colorMod = oldColorMod;
-	
+
 	it = _renderQueue.begin();
 	// Clean out the old tickets
 	decrement = 0;

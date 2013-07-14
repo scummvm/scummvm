@@ -36,7 +36,7 @@ static const uint32 kModule1700SoundList[] = {
 
 Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	_vm->_soundMan->addMusic(0x04212331, 0x31114225);
 	_vm->_soundMan->addSoundList(0x04212331, kModule1700SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1700SoundList, true, 50, 600, 5, 150);
@@ -125,7 +125,7 @@ void Module1700::updateScene() {
 		}
 	}
 }
-		
+
 // Scene1705
 
 static const uint32 kScene1705FileHashes[] = {
@@ -137,7 +137,7 @@ static const uint32 kScene1705FileHashes[] = {
 
 SsScene1705WallSymbol::SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHash, int symbolIndex)
 	: StaticSprite(vm, fileHash, 100) {
-	
+
 	_x = _spriteResource.getPosition().x + symbolIndex * 30;
 	_y = _spriteResource.getPosition().y + 160;
 	updatePosition();
@@ -171,7 +171,7 @@ uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param,
 		setSubVar(VA_HAS_TAPE, _tapeIndex, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -180,7 +180,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _paletteArea(1) {
 
 	Sprite *tempSprite;
-	
+
 	setGlobalVar(V_FELL_DOWN_HOLE, 1);
 	_vm->gameModule()->initCannonSymbolsPuzzle();
 
@@ -271,7 +271,7 @@ uint32 Scene1705::handleMessage(int messageNum, const MessageParam &param, Entit
 			sendEntityMessage(_klaymen, 0x1014, sender);
 			setMessageList(0x004B6AC0);
 		}
-		break;		
+		break;
 	}
 	return 0;
 }

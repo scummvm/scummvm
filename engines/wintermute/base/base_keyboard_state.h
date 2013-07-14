@@ -61,7 +61,7 @@ private:
 	bool _currentPrintable;
 	uint32 _currentKeyData;
 	uint32 _currentCharCode;
-	
+
 	bool _currentShift;
 	bool _currentAlt;
 	bool _currentControl;

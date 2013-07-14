@@ -45,7 +45,7 @@ static const uint32 kModule1300SoundList[] = {
 
 Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	_vm->_soundMan->addMusic(0x61C090, 0x00203197);
 	_vm->_soundMan->addSoundList(0x61C090, kModule1300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 50, 600, 20, 150);
@@ -56,7 +56,7 @@ Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		if (_vm->gameState().sceneNum >= 1 && _vm->gameState().sceneNum <= 17)
 			createScene(_vm->gameState().sceneNum, -1);
-		else			
+		else
 			createScene(11, 0);
 	} else {
 		switch (which) {
@@ -101,7 +101,7 @@ Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 			break;
 		}
 	}
-	
+
 }
 
 Module1300::~Module1300() {
@@ -218,7 +218,7 @@ void Module1300::createScene(int sceneNum, int which) {
 	SetUpdateHandler(&Module1300::updateScene);
 	_childObject->handleUpdate();
 }
-			
+
 void Module1300::updateScene() {
 	if (!updateChild()) {
 		switch (_sceneNum) {
@@ -274,7 +274,7 @@ void Module1300::updateScene() {
 				createScene(11, 1);
 			break;
 		case 12:
-			if (_moduleResult == 0) 
+			if (_moduleResult == 0)
 				createScene(14, 1);
 			else if (_moduleResult == 1)
 				createScene(15, 1);
@@ -367,7 +367,7 @@ void AsScene1302Bridge::cbLowerBridgeEvent() {
 
 SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
 	: StaticSprite(vm, 0x11122122, 200) {
-	
+
 	_firstY = _y;
 	if (getGlobalVar(V_FLYTRAP_RING_FENCE))
 		_y += 152;
@@ -459,7 +459,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	addCollisionSprite(_asVenusFlyTrap);
 
 	sendEntityMessage(_klaymen, 0x2007, _asVenusFlyTrap);
-	
+
 }
 
 uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -513,7 +513,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (_klaymen->getY() > 360) {
 			sendEntityMessage(_klaymen, 0x1014, _asVenusFlyTrap);
-			setMessageList2(0x004B08F0);	
+			setMessageList2(0x004B08F0);
 		} else
 			setMessageList2(0x004B0920);
 		break;
@@ -583,7 +583,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 
 AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
+
 	createSurface(200, 128, 315);
 	_x = 289;
 	_y = 390;
@@ -643,7 +643,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
 		_asBalloon = insertSprite<AsScene1303Balloon>(this);
 		addCollisionSprite(_asBalloon);
 	}
-	
+
 	_sprite1 = insertStaticSprite(0xA014216B, 1100);
 
 	insertKlaymen<KmScene1303>(207, 332);
@@ -671,7 +671,7 @@ uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entit
 AsScene1304Needle::AsScene1304Needle(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x548E9411, surfacePriority, x, y), _parentScene(parentScene) {
 
-	// NOTE: Skipped check if Klaymen already has the needle since that's done in the scene itself	
+	// NOTE: Skipped check if Klaymen already has the needle since that's done in the scene itself
 	SetMessageHandler(&AsScene1304Needle::handleMessage);
 }
 
@@ -693,14 +693,14 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 
 Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _asNeedle(NULL) {
-	
+
 	SetMessageHandler(&Scene1304::handleMessage);
 
 	setRectList(0x004B91A8);
 	setBackground(0x062C0214);
 	setPalette(0x062C0214);
 	insertScreenMouse(0xC021006A);
-	
+
 	if (getGlobalVar(V_BALLOON_POPPED)) {
 		_asKey = insertSprite<AsCommonKey>(this, 0, 1100, 278, 347);
 		addCollisionSprite(_asKey);
@@ -774,7 +774,7 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlaymen<KmScene1305>(212, 441);
 		setMessageList(0x004B6E48);
 	}
-	
+
 }
 
 uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -868,10 +868,10 @@ void AsScene1306Elevator::cbGoingDownEvent() {
 
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 4);
-	
+
 	SetMessageHandler(&Scene1306::handleMessage);
 
 	setBackground(0x05303114);
@@ -949,7 +949,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 }
-	
+
 Scene1306::~Scene1306() {
 	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
@@ -1073,7 +1073,7 @@ static const NPoint kAsScene1307KeyPoints[] = {
 const uint kAsScene1307KeyFrameIndicesCount = 20;
 
 static const int16 kAsScene1307KeyFrameIndices[] = {
-	 1,  4,  8, 11, 15, 16, 17, 17, 17, 16, 
+	 1,  4,  8, 11, 15, 16, 17, 17, 17, 16,
 	15, 14, 12, 10,  9,  7,  5,  3,  2,  1
 };
 
@@ -1084,10 +1084,10 @@ const int16 kAsScene1307KeyYDelta = -12;
 AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint keyIndex, NRect *clipRects)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _keyIndex(keyIndex), _clipRects(clipRects),
 	_isClickable(true) {
-	
+
 	NPoint pt;
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
-	
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex];
+
 	_dataResource.load(0x22102142);
 	_pointList = _dataResource.getPointArray(0xAC849240);
 	pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex)];
@@ -1173,7 +1173,7 @@ void AsScene1307Key::suMoveKey() {
 }
 
 void AsScene1307Key::stRemoveKey() {
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex];
 	_pointIndex = 0;
 	startAnimation(fileHashes[0], 0, -1);
 	playSound(1);
@@ -1199,7 +1199,7 @@ void AsScene1307Key::stMoveKey() {
 	if (newX == _x && newY == _y) {
 		stInsertKey();
 	} else {
-		const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
+		const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex];
 		_pointIndex = 0;
 		_frameIndex = 0;
 		_deltaX = newX - _x;
@@ -1210,13 +1210,13 @@ void AsScene1307Key::stMoveKey() {
 }
 
 void AsScene1307Key::stUnlock() {
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex];
 	startAnimation(fileHashes[1], 0, -1);
 	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 void AsScene1307Key::stInsert() {
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex];
 	startAnimation(fileHashes[2], 0, -1);
 	_newStickFrameIndex = STICK_LAST_FRAME;
 }
@@ -1226,9 +1226,9 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
 	_isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
 
 	Sprite *tempSprite;
-	
+
 	_vm->gameModule()->initKeySlotsPuzzle();
-	
+
 	_dataResource.load(0x22102142);
 	_keyHolePoints = _dataResource.getPointArray(0xAC849240);
 
@@ -1279,7 +1279,7 @@ void Scene1307::update() {
 	if (_doLeaveScene && !isSoundPlaying(0)) {
 		leaveScene(1);
 		setGlobalVar(V_KEYDOOR_UNLOCKED, 1);
-	} 
+	}
 }
 
 uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1294,7 +1294,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 					int16 mouseY = param.asPoint().y;
 					uint clickedKeyHoleIndex;
 					for (clickedKeyHoleIndex = 0; clickedKeyHoleIndex < 16; clickedKeyHoleIndex++) {
-						if (mouseX >= _keyHoleRects[clickedKeyHoleIndex].x1 && mouseX <= _keyHoleRects[clickedKeyHoleIndex].x2 && 
+						if (mouseX >= _keyHoleRects[clickedKeyHoleIndex].x1 && mouseX <= _keyHoleRects[clickedKeyHoleIndex].x2 &&
 							mouseY >= _keyHoleRects[clickedKeyHoleIndex].y1 && mouseY <= _keyHoleRects[clickedKeyHoleIndex].y2)
 							break;
 					}
@@ -1362,7 +1362,7 @@ static const uint32 kScene1308NumberFileHashes[] = {
 
 AsScene1308JaggyDoor::AsScene1308JaggyDoor(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 0xBA0AE050, 1100, 320, 240), _parentScene(parentScene) {
-	
+
 	setVisible(false);
 	stopAnimation();
 	SetMessageHandler(&AsScene1308JaggyDoor::handleMessage);
@@ -1412,12 +1412,12 @@ void AsScene1308JaggyDoor::stCloseDoorDone() {
 
 AsScene1308KeyboardDoor::AsScene1308KeyboardDoor(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 0xA08A0851, 1100, 320, 240), _parentScene(parentScene) {
-	
+
 	playSound(0, 0x51456049);
 	SetMessageHandler(&AsScene1308KeyboardDoor::handleMessage);
 	NextState(&AsScene1308KeyboardDoor::stFallingKeys);
 }
- 
+
 uint32 AsScene1308KeyboardDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -1443,7 +1443,7 @@ void AsScene1308KeyboardDoor::stFallingKeysDone() {
 
 AsScene1308LightWallSymbols::AsScene1308LightWallSymbols(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 0x80180A10, 100, 320, 240), _parentScene(parentScene) {
-	
+
 	setVisible(false);
 	stopAnimation();
 	Entity::_priority = 1200;
@@ -1486,7 +1486,7 @@ void AsScene1308LightWallSymbols::stFadeOutDone() {
 
 SsScene1308Number::SsScene1308Number(NeverhoodEngine *vm, uint32 fileHash, int index)
 	: StaticSprite(vm, fileHash, 100) {
-	
+
 	setVisible(false);
 	_x = _spriteResource.getPosition().x + index * 20;
 	updatePosition();
@@ -1520,11 +1520,11 @@ uint32 AsScene1308Mouse::handleMessage(int messageNum, const MessageParam &param
 
 Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _isProjecting(false), _asProjector(NULL) {
-	
+
 	_vm->gameModule()->initKeySlotsPuzzle();
 
 	SetMessageHandler(&Scene1308::handleMessage);
-	
+
 	setBackground(0x41024202);
 	setPalette(0x41024202);
 	insertScreenMouse(0x24206418);
@@ -1536,7 +1536,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertSprite<AsScene1308Mouse>();
 		insertSprite<AnimatedSprite>(0x461A1490, 200, 235, 429);
 	}
-	
+
 	_sprite1 = insertStaticSprite(0x0A042060, 1100);
 	_asJaggyDoor = insertSprite<AsScene1308JaggyDoor>(this);
 	_asLightWallSymbols = insertSprite<AsScene1308LightWallSymbols>(this);
@@ -1546,7 +1546,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite2 = insertStaticSprite(0x40043120, 995);
 	_sprite3 = insertStaticSprite(0x43003100, 995);
 	_sprite4 = NULL;
-	
+
 	if (which < 0) {
 		// Restoring game
 		insertKlaymen<KmScene1308>(380, 440);
@@ -1698,7 +1698,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 
 Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule) {
-	
+
 	SetMessageHandler(&Scene1317::handleMessage);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08982841, true, false));
 	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
@@ -1720,7 +1720,7 @@ void Scene1317::update() {
 void Scene1317::upChooseKing() {
 	if (!_klaymenBlinks && _klaymenBlinkCountdown != 0 && (--_klaymenBlinkCountdown == 0))
 		_klaymenBlinks = true;
-		
+
 	if (!_klaymenBlinks && _smackerPlayer->getFrameNumber() + 1 >= 2) {
 		_smackerPlayer->rewind();
 	} else if (_klaymenBlinks && _smackerPlayer->getFrameNumber() + 1 >= 6) {
@@ -1731,7 +1731,7 @@ void Scene1317::upChooseKing() {
 
 	if (!_klaymenBlinks && _decisionCountdown != 0 && (--_decisionCountdown == 0))
 		stNoDecisionYet();
-			
+
 	if (_smackerFileHash) {
 		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
 		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
@@ -1739,7 +1739,7 @@ void Scene1317::upChooseKing() {
 	}
 
 	Scene::update();
-	
+
 }
 
 uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1751,7 +1751,7 @@ uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entit
 	}
 	return messageResult;
 }
-	
+
 uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {

@@ -93,7 +93,7 @@ public:
 	AudioResourceMan *_audioResourceMan;
 
 public:
-	
+
 	/* Save/load */
 
 	enum kReadSaveHeaderError {
@@ -118,7 +118,7 @@ public:
 
 	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
-	
+
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
 	Common::Error removeGameState(int slot);

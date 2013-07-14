@@ -124,7 +124,7 @@ bool Player_V3M::checkMusicAvailable() {
 			return true;
 		}
 	}
-		
+
 	GUI::MessageDialog dialog(_(
 		"Could not find the 'Loom' Macintosh executable to read the\n"
 		"instruments from. Music will be disabled."), _("OK"));

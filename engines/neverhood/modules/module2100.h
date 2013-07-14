@@ -68,7 +68,7 @@ protected:
 	uint32 _soundFileHash;
 	uint32 _fileHash1, _fileHash2;
 	int16 _countdown;
-	void update();	
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

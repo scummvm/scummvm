@@ -183,7 +183,7 @@ bool RenderObject::updateObjectState() {
 
 		// Die Bounding-Box neu berechnen und Update-Regions registrieren.
 		updateBoxes();
-		
+
 		++_version;
 
 		// Änderungen Validieren

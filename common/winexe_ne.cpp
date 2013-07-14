@@ -231,7 +231,7 @@ bool NEResources::readResourceTable(uint32 offset) {
 			if (id & 0x8000)
 				res.id = id & 0x7FFF;
 			else
-				res.id = getResourceString(*_exe, offset + id);				
+				res.id = getResourceString(*_exe, offset + id);
 
 			if (typeID & 0x8000 && ((typeID & 0x7FFF) < ARRAYSIZE(s_resTypeNames)) && s_resTypeNames[typeID & 0x7FFF][0] != 0)
 				debug(2, "Found resource %s %s", s_resTypeNames[typeID & 0x7FFF], res.id.toString().c_str());

@@ -745,7 +745,7 @@ void GfxFrameout::kernelFrameout() {
 					// Process global scaling, if needed.
 					// TODO: Seems like SCI32 always processes global scaling for scaled objects
 					// TODO: We can only process symmetrical scaling for now (i.e. same value for scaleX/scaleY)
-					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) && 
+					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) &&
 					   !(itemEntry->scaleSignal & kScaleSignalDisableGlobalScaling32) &&
 					    (itemEntry->scaleX == itemEntry->scaleY) &&
 						itemEntry->scaleX != 128)

@@ -98,7 +98,7 @@ public:
 	void incGlobalVar(uint32 nameHash, int incrValue);
 	void incSubVar(uint32 nameHash, uint32 subNameHash, int incrValue);
 	int getPriority() const { return _priority; }
-	bool hasMessageHandler() const { return _messageHandlerCb != NULL; } 
+	bool hasMessageHandler() const { return _messageHandlerCb != NULL; }
 protected:
 	void (Entity::*_updateHandlerCb)();
 	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);

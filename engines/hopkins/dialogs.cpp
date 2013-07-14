@@ -505,7 +505,7 @@ void DialogsManager::inventAnim() {
 		return;
 
 	if (_vm->_objectsMan->_eraseVisibleCounter && !_vm->_objectsMan->_visibleFl) {
-		_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, _oldInventX, 27, 48, 38, 
+		_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, _oldInventX, 27, 48, 38,
 			_vm->_graphicsMan->_frontBuffer, _oldInventX, 27);
 		_vm->_graphicsMan->addDirtyRect(_oldInventX, 27, _oldInventX + 48, 65);
 		--_vm->_objectsMan->_eraseVisibleCounter;

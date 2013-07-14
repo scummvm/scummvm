@@ -39,7 +39,7 @@ static const uint32 kModule3000SoundList[] = {
 
 Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundVolume(0) {
-	
+
 	_vm->_soundMan->addSoundList(0x81293110, kModule3000SoundList);
 	_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->setSoundParams(0x90F0D1C3, false, 20000, 30000, 20000, 30000);
@@ -440,7 +440,7 @@ static const uint32 kAsScene3009SymbolFileHashes[] = {
 };
 
 static const uint32 kSsScene3009SymbolArrowFileHashes1[] = {
-	0x24016060,  
+	0x24016060,
 	0x21216221,
 	0x486160A0,
 	0x42216422,
@@ -455,7 +455,7 @@ static const uint32 kSsScene3009SymbolArrowFileHashes1[] = {
 };
 
 static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
-	0x40092024, 
+	0x40092024,
 	0x01636002,
 	0x8071E028,
 	0x02A56064,
@@ -471,7 +471,7 @@ static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
 
 SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _isClicked(false) {
-	
+
 	loadSprite(0x120B24B0, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	SetUpdateHandler(&SsScene3009FireCannonButton::update);
@@ -637,7 +637,7 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 
 AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 cannonTargetStatus)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
-	
+
 	_x = getGlobalVar(V_CANNON_TURNED) ? 533 : 92;
 	_y = 150;
 	createSurface1(0xC0C12954, 1200);
@@ -702,7 +702,7 @@ AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _symbolPosition(symbolPosition) {
 
 	_symbolIndex = getSubVar(VA_CURR_CANNON_SYMBOLS, _symbolPosition);
-	
+
 	_x = kAsScene3009SymbolPoints[_symbolPosition].x;
 	_y = kAsScene3009SymbolPoints[_symbolPosition].y;
 	createSurface1(kAsScene3009SymbolFileHashes[_symbolPosition / 3], 1200);
@@ -753,17 +753,17 @@ void AsScene3009Symbol::hide() {
 }
 
 Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _keepVideo(false), _moveCannonLeftFirst(false), 
+	: Scene(vm, parentModule), _keepVideo(false), _moveCannonLeftFirst(false),
 	_isTurning(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
 
 	_cannonTargetStatus = getGlobalVar(V_CANNON_TARGET_STATUS);
-	
+
 	_vm->gameModule()->initCannonSymbolsPuzzle();
-	
+
 	setGlobalVar(V_CANNON_SMACKER_NAME, 0);
-	
+
 	_vm->_screen->clear();
-	
+
 	setBackground(0xD000420C);
 	setPalette(0xD000420C);
 	insertPuzzleMouse(0x04208D08, 20, 620);
@@ -821,7 +821,7 @@ void Scene3009::openSmacker(uint32 fileHash, bool keepLastFrame) {
 
 void Scene3009::update() {
 	Scene::update();
-	
+
 	if (!_keepVideo && _cannonSmackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
 		switch (_cannonTargetStatus) {
 		case kCTSNull:
@@ -850,9 +850,9 @@ void Scene3009::update() {
 			if (_moveCannonLeftFirst) {
 				if (_cannonTargetStatus == kCTSLeftRobotNoTarget)
 					openSmacker(0x110A000F, false);
-				else if (_cannonTargetStatus == kCTSLeftRobotIsTarget)				
+				else if (_cannonTargetStatus == kCTSLeftRobotIsTarget)
 					openSmacker(0x500B004F, false);
-				else if (_cannonTargetStatus == kCTSLeftNoRobot)				
+				else if (_cannonTargetStatus == kCTSLeftNoRobot)
 					openSmacker(0x100B010E, false);
 				_moveCannonLeftFirst = false;
 				_asHorizontalIndicator->stMoveLeft();
@@ -1119,7 +1119,7 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 		loadSound(0, 0x420073DC);
 		loadSound(1, 0x420073DC);
 	}
-	
+
 	setVisible(false);
 	stIdle();
 	if (initUnlocked)
@@ -1127,7 +1127,7 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 
 	_needRefresh = true;
 	AnimatedSprite::updatePosition();
-	
+
 }
 
 void AsScene3010DeadBolt::update() {
@@ -1217,7 +1217,7 @@ void AsScene3010DeadBolt::stDisabledMessage() {
 
 Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
-	
+
 	int initCountdown = 0;
 
 	setBackground(0x80802626);
@@ -1348,7 +1348,7 @@ static const uint32 kAsScene3011SymbolFileHashes[] = {
 
 SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
-	
+
 	loadSprite(flag ? 0x11282020 : 0x994D0433, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44061000);
@@ -1446,7 +1446,7 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene3011::handleMessage);
 	SetUpdateHandler(&Scene3011::update);
-	
+
 	setBackground(0x92124A04);
 	setPalette(0xA4070114);
 	addEntity(_palette);
@@ -1458,12 +1458,12 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	addCollisionSprite(_ssButton);
-	
+
 }
 
 void Scene3011::update() {
 	Scene::update();
-	
+
 	if (_countdown != 0 && (--_countdown == 0)) {
 		switch (_updateStatus) {
 		case 0:

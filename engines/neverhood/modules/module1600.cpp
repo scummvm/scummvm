@@ -34,7 +34,7 @@ static const uint32 kModule1600SoundList[] = {
 
 Module1600::Module1600(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
 	else if (which == 1)
@@ -109,7 +109,7 @@ void Module1600::createScene(int sceneNum, int which) {
 		if (getGlobalVar(V_TALK_COUNTING_INDEX) >= 2)
 			setGlobalVar(V_TALK_COUNTING_INDEX, 0);
 		else
-			incGlobalVar(V_TALK_COUNTING_INDEX, +1);			
+			incGlobalVar(V_TALK_COUNTING_INDEX, +1);
 		break;
 	}
 	SetUpdateHandler(&Module1600::updateScene);
@@ -185,11 +185,11 @@ void Module1600::updateScene() {
 
 AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene) {
-	
+
 	createSurface(200, 556, 328);
 	_x = x;
 	_y = y;
-	
+
 	_inMainArea = false;
 	_exitDirection = 0;
 	_currPointIndex = 0;
@@ -207,7 +207,7 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	_soundCounter = 0;
 	_pathPoints = NULL;
 	_currMoveDirection = 0;
-	
+
 	startAnimation(0xD4220027, 0, -1);
 	setDoDeltaX(getGlobalVar(V_CAR_DELTA_X));
 
@@ -517,7 +517,7 @@ void AsCommonCar::moveToNextPoint() {
 		if (ABS(nextPt.y - currPt.y) <= ABS(nextPt.x - currPt.x) &&
 			((_currMoveDirection == 2 && nextPt.x < currPt.x) ||
 			(_currMoveDirection == 4 && nextPt.x >= currPt.x))) {
-			if (_currMoveDirection == 2) 
+			if (_currMoveDirection == 2)
 				_currMoveDirection = 4;
 			else if (_currMoveDirection == 4)
 				_currMoveDirection = 2;
@@ -605,7 +605,7 @@ void AsCommonCar::moveToPrevPoint() {
 		if (ABS(prevPt.y - currPt.y) <= ABS(prevPt.x - currPt.x) &&
 			((_currMoveDirection == 2 && prevPt.x < currPt.x) ||
 			(_currMoveDirection == 4 && prevPt.x >= currPt.x))) {
-			if (_currMoveDirection == 2) 
+			if (_currMoveDirection == 2)
 				_currMoveDirection = 4;
 			else if (_currMoveDirection == 4)
 				_currMoveDirection = 2;
@@ -668,7 +668,7 @@ void AsCommonCar::suMoveToNextPoint() {
 	bool firstTime = true;
 	_ySteps = _steps;
 	int stepsCtr = _steps;
-	
+
 	while (stepsCtr > 0) {
 		NPoint pt1;
 		NPoint pt2 = pathPoint(_currPointIndex);
@@ -739,7 +739,7 @@ void AsCommonCar::suMoveToNextPoint() {
 				stepsCtr = 0;
 			}
 		}
-		firstTime = false;		
+		firstTime = false;
 	}
 
 	if (_yMoveTotalSteps != 0) {
@@ -811,7 +811,7 @@ void AsCommonCar::suMoveToPrevPoint() {
 	bool firstTime = true;
 	_ySteps = _steps;
 	int stepsCtr = _steps;
-	
+
 	while (stepsCtr > 0) {
 		if (_stepError == 0)
 			_currPointIndex--;
@@ -884,7 +884,7 @@ void AsCommonCar::suMoveToPrevPoint() {
 				stepsCtr = 0;
 			}
 		}
-		firstTime = false;		
+		firstTime = false;
 	}
 
 	if (_yMoveTotalSteps != 0) {
@@ -971,7 +971,7 @@ AsCommonIdleCarFull::AsCommonIdleCarFull(NeverhoodEngine *vm, int16 x, int16 y)
 
 AsCommonCarConnector::AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asCar)
 	: AnimatedSprite(vm, 1100), _asCar(asCar) {
-	
+
 	createSurface1(0x60281C10, 150);
 	startAnimation(0x60281C10, -1, -1);
 	_newStickFrameIndex = STICK_LAST_FRAME;
@@ -1006,9 +1006,9 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _asCar(NULL), _countdown1(0) {
 
 	setGlobalVar(V_CAR_DELTA_X, 1);
-	
+
 	SetMessageHandler(&Scene1608::hmLowerFloor);
-	
+
 	_asKey = insertSprite<AsCommonKey>(this, 1, 1100, 198, 220);
 	addCollisionSprite(_asKey);
 
@@ -1092,9 +1092,9 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_carClipFlag = false;
 		_carStatus = 0;
 		setRectList(0x004B4810);
-	} 
+	}
 
-	// NOTE: Not in the else because 'which' is set to 1 in the true branch	
+	// NOTE: Not in the else because 'which' is set to 1 in the true branch
 	if (which == 1) {
 		// Klaymen riding the car
 		_vm->gameState().which = 1;
@@ -1134,9 +1134,9 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_carClipFlag = true;
 		_carStatus = 0;
 	}
-	
+
 	_palette->addPalette("paKlayRed", 0, 64, 0);
-	
+
 }
 
 Scene1608::~Scene1608() {
@@ -1308,7 +1308,7 @@ uint32 Scene1608::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	}
 	return 0;
 }
-	
+
 void Scene1608::updateKlaymenCliprect() {
 	if (_kmScene1608->getX() <= 375)
 		_kmScene1608->setClipRect(_clipRect1);
@@ -1321,17 +1321,17 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule)
 
 	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
-	
+
 	SetMessageHandler(&Scene1609::handleMessage);
 	SetUpdateHandler(&Scene1609::update);
-	
+
 	setBackground(0x92124A14);
 	setPalette(0x92124A14);
 	insertPuzzleMouse(0x24A10929, 20, 620);
-	
+
 	for (int symbolPosition = 0; symbolPosition < 12; symbolPosition++)
 		_asSymbols[symbolPosition] = insertSprite<AsScene3011Symbol>(symbolPosition, false);
-	
+
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	addCollisionSprite(_ssButton);
 	loadSound(0, 0x68E25540);
@@ -1408,5 +1408,5 @@ bool Scene1609::testVars() {
 
 	return true;
 }
-	
+
 } // End of namespace Neverhood

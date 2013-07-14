@@ -242,7 +242,7 @@ void GfxSurface::clear() {
 		_customSurface->free();
 		delete _customSurface;
 		_customSurface = NULL;
-	}	
+	}
 }
 
 /**

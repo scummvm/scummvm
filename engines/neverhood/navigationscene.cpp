@@ -35,19 +35,19 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 	_isWalkingForward(false), _isTurning(false), _smackerFileHash(0), _interactive(true), _leaveSceneAfter(false) {
 
 	_navigationList = _vm->_staticData->getNavigationList(navigationListId);
-	
+
 	if (_navigationIndex < 0) {
 		_navigationIndex = (int)getGlobalVar(V_NAVIGATION_INDEX);
 		if (_navigationIndex >= (int)_navigationList->size())
-			_navigationIndex = 0; 
+			_navigationIndex = 0;
 	}
 	setGlobalVar(V_NAVIGATION_INDEX, _navigationIndex);
-	
+
 	SetUpdateHandler(&NavigationScene::update);
 	SetMessageHandler(&NavigationScene::handleMessage);
-	
-	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, (*_navigationList)[_navigationIndex].fileHash, true, true));	
-	
+
+	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, (*_navigationList)[_navigationIndex].fileHash, true, true));
+
 	createMouseCursor();
 
 	_vm->_screen->clear();
@@ -99,7 +99,7 @@ void NavigationScene::update() {
 			_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 			sendMessage(_parentModule, 0x100A, _navigationIndex);
 		}
-	} 
+	}
 	Scene::update();
 }
 
@@ -135,7 +135,7 @@ void NavigationScene::createMouseCursor() {
 	mouseCursorFileHash = navigationItem.mouseCursorFileHash;
 	if (mouseCursorFileHash == 0)
 		mouseCursorFileHash = 0x63A40028;
-		
+
 	if (_itemsTypes)
 		areaType = _itemsTypes[_navigationIndex];
 	else if (navigationItem.middleSmackerFileHash != 0 || navigationItem.middleFlag)
@@ -152,7 +152,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 	bool oldIsWalkingForward = _isWalkingForward;
 	bool oldIsTurning = _isTurning;
 	uint32 direction = sendPointMessage(_mouseCursor, 0x2064, mousePos);
-	
+
 	switch (direction) {
 	case 0:
 		if (navigationItem.leftSmackerFileHash != 0) {
@@ -203,7 +203,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 		}
 		break;
 	}
-	
+
 	if (oldIsTurning != _isTurning)
 		_vm->_soundMan->setSoundThreePlayFlag(_isTurning);
 

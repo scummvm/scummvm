@@ -104,9 +104,9 @@ Common::Error NeverhoodEngine::run() {
 
 	_soundMan = new SoundMan(this);
 	_audioResourceMan = new AudioResourceMan(this);
-	
+
 	_gameModule = new GameModule(this);
-	
+
 	_isSaveAllowed = true;
 	_updateSound = true;
 
@@ -122,15 +122,15 @@ Common::Error NeverhoodEngine::run() {
 		(*navigationList)[5].middleSmackerFileHash = 0;
 		(*navigationList)[5].middleFlag = 1;
 	}
-	
+
 	if (ConfMan.hasKey("save_slot")) {
 		if (loadGameState(ConfMan.getInt("save_slot")).getCode() != Common::kNoError)
 			_gameModule->startup();
 	} else
 		_gameModule->startup();
-	
+
 	mainLoop();
-	
+
 	delete _gameModule;
 	delete _soundMan;
 	delete _audioResourceMan;
@@ -141,7 +141,7 @@ Common::Error NeverhoodEngine::run() {
 
 	delete _gameVars;
 	delete _staticData;
-	
+
 	return Common::kNoError;
 }
 

@@ -75,7 +75,7 @@ void VisualSpeaker::signal() {
 			_sceneText.show();
 
 		if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && _soundId) {
-			// TODO: Check global that is passed 
+			// TODO: Check global that is passed
 			setFrame2(/* word_55F90 */ 0);
 		}
 	} else if (_action && _object2) {

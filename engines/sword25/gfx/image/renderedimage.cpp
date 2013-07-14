@@ -294,7 +294,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 	for (RectangleList::iterator it = updateRects->begin(); it != updateRects->end(); ++it) {
 		const Common::Rect &clipRect = *it;
-	
+
 		int skipLeft = 0, skipTop = 0;
 		int drawX = posX, drawY = posY;
 		int drawWidth = img->w;
@@ -306,7 +306,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			drawWidth -= skipLeft;
 			drawX = clipRect.left;
 		}
-		
+
 		if (drawY < clipRect.top) {
 			skipTop = clipRect.top - drawY;
 			drawHeight -= skipTop;
@@ -315,13 +315,13 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 		if (drawX + drawWidth >= clipRect.right)
 			drawWidth = clipRect.right - drawX;
-	
+
 		if (drawY + drawHeight >= clipRect.bottom)
 			drawHeight = clipRect.bottom - drawY;
-			
+
 		if ((drawWidth > 0) && (drawHeight > 0)) {
 			int xp = 0, yp = 0;
-	
+
 			int inStep = 4;
 			int inoStep = img->pitch;
 			if (flipping & Image::FLIP_V) {
@@ -330,14 +330,14 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			} else {
 				xp = skipLeft;
 			}
-	
+
 			if (flipping & Image::FLIP_H) {
 				inoStep = -inoStep;
 				yp = img->h - 1 - skipTop;
 			} else {
 				yp = skipTop;
 			}
-	
+
 			byte *ino = (byte *)img->getBasePtr(xp, yp);
 			byte *outo = (byte *)_backSurface->getBasePtr(drawX, drawY);
 
@@ -351,7 +351,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 					ino += inoStep;
 				}
 			} else
-#endif			 
+#endif
 			{
 				byte *in, *out;
 				for (int i = 0; i < drawHeight; i++) {
@@ -361,7 +361,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 						uint32 pix = *(uint32 *)in;
 						int a = (pix >> 24) & 0xff;
 						in += inStep;
-						
+
 						if (ca != 255) {
 							a = a * ca >> 8;
 						}
@@ -371,11 +371,11 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 							out += 4;
 							continue;
 						}
-						
+
 						int b = (pix >> 0) & 0xff;
 						int g = (pix >> 8) & 0xff;
 						int r = (pix >> 16) & 0xff;
-		
+
 						if (a == 255) {
 #if defined(SCUMM_LITTLE_ENDIAN)
 							if (cb != 255)
@@ -460,7 +460,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			}
 
 		}
-		
+
 	}
 
 	if (imgScaled) {

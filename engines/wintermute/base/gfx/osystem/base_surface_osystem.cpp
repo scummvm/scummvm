@@ -163,7 +163,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 			needsColorKey = true;
 		}
 	}
-	
+
 	if (needsColorKey) {
 		TransparentSurface trans(*_surface);
 		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);

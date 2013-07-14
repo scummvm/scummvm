@@ -316,16 +316,16 @@ void TizenAppForm::invokeShortcut() {
 	case kControlMouse:
 		setButtonShortcut();
 		break;
-		
+
 	case kEscapeKey:
 		pushKey(Common::KEYCODE_ESCAPE);
 		break;
-		
+
 	case kGameMenu:
 		_buttonState = kLeftButton;
 		pushKey(Common::KEYCODE_F5);
 		break;
-		
+
 	case kShowKeypad:
 		showKeypad();
 		break;

@@ -70,7 +70,7 @@ public:
 	void setVolume(int16 volume);
 protected:
 	NeverhoodEngine *_vm;
-	int16 _musicIndex;	
+	int16 _musicIndex;
 	AudioResourceManMusicItem *getMusicItem();
 };
 
@@ -83,7 +83,7 @@ public:
 	void update();
 	uint32 getGroupNameHash() const { return _groupNameHash; }
 	uint32 getFileHash() const { return _fileHash; }
-protected:	
+protected:
 	NeverhoodEngine *_vm;
 	uint32 _groupNameHash;
 	uint32 _fileHash;
@@ -110,7 +110,7 @@ public:
 	uint32 getGroupNameHash() const { return _groupNameHash; }
 	uint32 getFileHash() const { return _fileHash; }
 	int16 getCurrCountdown() const { return _currCountdown; }
-protected:	
+protected:
 	NeverhoodEngine *_vm;
 	uint32 _groupNameHash;
 	uint32 _fileHash;
@@ -136,7 +136,7 @@ public:
 	void deleteMusic(uint32 musicFileHash);
 	void startMusic(uint32 musicFileHash, int16 countdown, int16 fadeVolumeStep);
 	void stopMusic(uint32 musicFileHash, int16 countdown, int16 fadeVolumeStep);
-	
+
 	// Sound
 	void addSound(uint32 groupNameHash, uint32 soundFileHash);
 	void addSoundList(uint32 groupNameHash, const uint32 *soundFileHashList);
@@ -148,7 +148,7 @@ public:
 	void playSoundLooping(uint32 soundFileHash);
 	void stopSound(uint32 soundFileHash);
 	void setSoundVolume(uint32 soundFileHash, int volume);
-	
+
 	// Misc
 	void update();
 	void deleteGroup(uint32 groupNameHash);
@@ -161,25 +161,25 @@ public:
 
 protected:
 	NeverhoodEngine *_vm;
-	
+
 	// TODO Find out what these special sounds are used for (door sounds?)
 	int _soundIndex1, _soundIndex2;
 	int16 _initialCountdown;
 	bool _playOnceAfterCountdown;
-	
+
 	int _soundIndex3;
 	int16 _initialCountdown3;
 	bool _playOnceAfterCountdown3;
 
 	Common::Array<MusicItem*> _musicItems;
 	Common::Array<SoundItem*> _soundItems;
-	
+
 	MusicItem *getMusicItemByHash(uint32 musicFileHash);
 	SoundItem *getSoundItemByHash(uint32 soundFileHash);
 	int16 addMusicItem(MusicItem *musicItem);
 	int16 addSoundItem(SoundItem *soundItem);
 	void deleteSoundByIndex(int index);
-	
+
 };
 
 class NeverhoodAudioStream : public Audio::AudioStream {
@@ -209,7 +209,7 @@ private:
 // TODO Rename these
 
 class AudioResourceManSoundItem {
-public:	
+public:
 	AudioResourceManSoundItem(NeverhoodEngine *vm, uint32 fileHash);
 	void loadSound();
 	void unloadSound();
@@ -218,7 +218,7 @@ public:
 	void playSound(bool looping);
 	void stopSound();
 	bool isPlaying();
-protected:	
+protected:
 	NeverhoodEngine *_vm;
 	uint32 _fileHash;
 	ResourceHandle _resourceHandle;
@@ -243,7 +243,7 @@ public:
 	bool canRestart() const { return _canRestart; }
 	bool isTerminated() const { return _terminate; }
 	uint32 getFileHash() const { return _fileHash; }
-protected:	
+protected:
 	NeverhoodEngine *_vm;
 	uint32 _fileHash;
 	bool _isPlaying;
@@ -263,7 +263,7 @@ class AudioResourceMan {
 public:
 	AudioResourceMan(NeverhoodEngine *vm);
 	~AudioResourceMan();
-	
+
 	void stopAllSounds();
 
 	int16 addSound(uint32 fileHash);
@@ -271,10 +271,10 @@ public:
 
 	int16 loadMusic(uint32 fileHash);
 	void updateMusic();
-	
+
 	AudioResourceManSoundItem *getSoundItem(int16 index);
 	AudioResourceManMusicItem *getMusicItem(int16 index);
-	
+
 protected:
 	NeverhoodEngine *_vm;
 
