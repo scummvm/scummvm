@@ -149,7 +149,7 @@ void process() {
  */
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
-		printf("Usage:\n%s input_filename\nWhere input_filename is the name of the Mortevielle DOS executable", argv[0]);
+		printf("Usage:\n%s input_filename\nWhere input_filename is the name of the Mortevielle DOS executable.\n", argv[0]);
 		exit(0);
 	}
 
