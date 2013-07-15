@@ -284,7 +284,7 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct transform) { 
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) { 
 
 	if (_tempDisableDirtyRects || _disableDirtyRects) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
@@ -376,7 +376,8 @@ void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, 
 				dstRect.translate(offsetX, 0);
 			}
 			for (int j = (i == 0 ? 1 : 0); j < numTimesX; j++) {
-				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, TransformStruct()); 
+				TransformStruct temp = TransformStruct();
+				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, temp); 
 				dstRect.translate(offsetX, 0);
 			}
 			dstRect.left = initLeft;
