@@ -33,17 +33,17 @@ LzssReadStream::LzssReadStream(Common::SeekableReadStream *source, bool stream, 
 		  _readCursor(0),
 		  _eosFlag(false) {
 	// Clear the window to null
-	memset(_window, 0, blockSize);
+	memset(_window, 0, _blockSize);
 
 	// Reserve space in the destination buffer
 	// TODO: Make a better guess
-	if (decompressedSize == npos) {
+	if (decompressedSize == _npos) {
 		decompressedSize = source->size();
 	}
 	_destination.reserve(decompressedSize);
 
 	if (stream)
-		decompressBytes(blockSize);
+		decompressBytes(_blockSize);
 	else
 		decompressAll();
 }
@@ -120,7 +120,7 @@ uint32 LzssReadStream::read(void *dataPtr, uint32 dataSize) {
 			break;
 		}
 
-		decompressBytes(blockSize);
+		decompressBytes(_blockSize);
 	}
 
 	if (dataSize > 0) {

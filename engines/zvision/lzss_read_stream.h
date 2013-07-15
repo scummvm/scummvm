@@ -41,16 +41,16 @@ public:
 	 * @param stream			  Decompress the data as needed (true) or all at once (false)
 	 * @param decompressedSize    The size of the decompressed data. If npos, the class will choose a size and grow as needed
 	 */
-	LzssReadStream(Common::SeekableReadStream *source, bool stream = true, uint32 decompressedSize = npos);
+	LzssReadStream(Common::SeekableReadStream *source, bool stream = true, uint32 decompressedSize = _npos);
 
 public:
-	static const uint32 npos = 0xFFFFFFFFu;
-	static const uint16 blockSize = 0x1000u;
+	static const uint32 _npos = 0xFFFFFFFFu;
+	static const uint16 _blockSize = 0x1000u;
 
 private:
 	Common::SeekableReadStream *_source;
 	Common::Array<char> _destination;
-	char _window[blockSize];
+	char _window[_blockSize];
 	uint16 _windowCursor;
 	uint32 _readCursor;
 	bool _eosFlag;
