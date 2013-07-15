@@ -29,8 +29,8 @@ namespace Wintermute {
 	FloatPoint TransformTools::transformPoint(const FloatPoint &point, const float rotate, const Point32 &zoom, const bool mirrorX, const bool mirrorY) {
 		float rotateRad = rotate * M_PI / 180.0f;
 		FloatPoint newPoint;
-		newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad))*zoom.x/kDefaultZoomX;
-		newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad))*zoom.y/kDefaultZoomY;
+		newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad)) * zoom.x / kDefaultZoomX;
+		newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad)) * zoom.y / kDefaultZoomY;
 		if (mirrorX) {
 			newPoint.x *= -1;
 		}
