@@ -185,7 +185,7 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.time = (40 / 3) * 1000 / _cutawayList[cut].frameRate;
 
 		if (fade)
-			eventColumns = _vm->_events->chain(eventColumns, event);
+			_vm->_events->chain(eventColumns, event);
 		else
 			_vm->_events->queue(event);
 	}
