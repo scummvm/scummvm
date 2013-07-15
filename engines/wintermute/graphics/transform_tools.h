@@ -36,8 +36,12 @@ public:
 	static FloatPoint transformPoint(const FloatPoint &point, const float rotate, const Point32 &zoom, const bool mirrorX = false, const bool mirrorY = false);
 
 	/**
-	 * Takes a rectangle, a transform and a pointer to a point, "newHotspot".
-	 * In return you get the smallest rect that can contain the transformed sprite
+	 * @param &point the point on which the transform is to be applied
+	 * @param rotate the angle in degrees
+	 * @param &zoom  zoom x,y in percent
+	 * @param mirrorX flip along the vertical axis?
+	 * @param mirrorY flip along the horizontal axis?
+	 * @return the smallest rect that can contain the transformed sprite
 	 * and, as a side-effect, "newHotspot" will tell you where the hotspot will
 	 * have ended up in the new rect, for centering.
 	 */
