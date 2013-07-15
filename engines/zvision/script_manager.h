@@ -51,7 +51,7 @@ private:
 	/** Holds the currently active ActionNodes */
 	Common::List<ActionNode *> _activeNodes;
 	/** References _globalState keys to Puzzles */
-	Common::HashMap<uint32, Common::Array<Puzzle *>> _referenceTable;
+	Common::HashMap<uint32, Common::Array<Puzzle *> > _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
 	Common::Stack<Puzzle *> _puzzlesToCheck;
 	/** Holds the currently active puzzles */
