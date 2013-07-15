@@ -190,6 +190,7 @@ void TrollEngine::inventory() {
 		break;
 	case IDI_TRO_MAX_TREASURE:
 		drawStr(3, 17, kColorDefault, IDS_TRO_TREASURE_2);
+		break;
 	default:
 		sprintf(tmp, IDS_TRO_TREASURE_4, _treasuresLeft);
 		drawStr(20, 10, kColorDefault, tmp);
