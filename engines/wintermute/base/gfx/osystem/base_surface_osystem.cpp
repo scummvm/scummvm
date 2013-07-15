@@ -409,10 +409,10 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	if (newRect) {
 		position.top = y;
 		position.left = x;
-		position.right = x + (newRect->right - newRect->left);
-		position.bottom = y + (newRect->top - newRect->bottom);
-		position.setWidth(newRect->right - newRect->left);
-		position.setHeight(newRect->bottom - newRect->top);
+		position.right = x + newRect->width();
+		position.bottom = y + newRect->height();
+		position.setWidth(newRect->width());
+		position.setHeight(newRect->height());
 	} else {
 		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / DEFAULT_ZOOM_X));
 		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / DEFAULT_ZOOM_Y));
