@@ -191,7 +191,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kCloseCmd:
 		setResult(kRecordDialogClose);
-		break;
+		// Fall through
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
