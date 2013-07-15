@@ -41,7 +41,7 @@ void ScriptManager::parseScrFile(Common::String fileName) {
 	while(!file.eos()) {
 		Common::String line = file.readLine();
 		if (file.err()) {
-			warning("Error parsing scr file: %s", fileName);
+			warning("Error parsing scr file: %s", fileName.c_str());
 			return;
 		}
 
@@ -249,7 +249,7 @@ void ScriptManager::parseResult(Common::SeekableReadStream &stream, Common::List
 			
 
 		} else {
-			warning("Unhandled result action type: ", line);
+			warning("Unhandled result action type: %s", line.c_str());
 		}
 
 		line = stream.readLine();
