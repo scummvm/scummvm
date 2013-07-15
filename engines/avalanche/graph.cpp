@@ -70,20 +70,18 @@ byte *Graph::getPixel(int16 x, int16 y) {
 	return (byte *)_surface.getBasePtr(x, y);
 }
 
-void Graph::setPixel(byte *pixel, byte color) {
-	*pixel = color;
+void Graph::setPixel(int16 x, int16 y, byte color) {
+	*(byte *)_surface.getBasePtr(x, y) = color;
 }
 
 void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void Graph::copySurface(Graphics::Surface source) {
-	for (uint16 y = 0; y < _screenHeight / 2; y++)
-		for (uint16 x = 0; x < _screenWidth; x ++) {
-			for (byte j = 0; j < 2; j++) // We copy every line twice to reach 400 picture height.
-				*(byte *)_surface.getBasePtr(x, y * 2 + j) = *(byte *)source.getBasePtr(x, y);
-			}	
+void Graph::copySurface(Graphics::Surface source, uint16 destX, uint16 destY) {
+	for (uint16 y = 0; y < source.h; y++)
+		for (uint16 x = 0; x < source.w; x++)
+			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)source.getBasePtr(x, y);		
 }
 
 void Graph::refreshScreen() {

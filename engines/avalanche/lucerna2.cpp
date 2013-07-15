@@ -240,14 +240,16 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	}*/
 
 	Graphics::Surface background;
-	background.create(_vm->_graph._screenWidth, _vm->_graph._screenHeight, Graphics::PixelFormat::createFormatCLUT8());
-
+	
+	uint16 backgroundWidht = _vm->_graph._screenWidth;
 	byte backgroundHeight = 8 * 12080 / _vm->_graph._screenWidth; // With 640 width it's 151
 	// The 8 = number of bits in a byte, and 12080 comes from the original code (see above)
 
+	background.create(backgroundWidht, backgroundHeight, Graphics::PixelFormat::createFormatCLUT8());
+
 	for (byte plane = 0; plane < 4; plane++)
 		for (uint16 y = 0; y < backgroundHeight; y++)
-			for (uint16 x = 0; x < _vm->_graph._screenWidth; x += 8) {
+			for (uint16 x = 0; x < backgroundWidht; x += 8) {
 				byte pixel = f.readByte();
 				for (byte i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
@@ -255,7 +257,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 				}	
 			}
 
-	_vm->_graph.copySurface(background);
+	_vm->_graph.copySurface(background, 0 ,0);
 
 	background.free();
 
@@ -823,35 +825,41 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 }
 
 void Lucerna::toolbar() {
-	uint16 s;
-	byte *p;
-
 	if (!f.open("useful.avd")) {
 		warning("AVALANCHE: Lucerna: File not found: useful.avd");
 		return;
 	}
 
-	s = f.size() - 40;
-	p = new byte[s];
 	f.seek(40);
-	f.read(p, s);
-	f.close();
+	
 	/* off;*/
 
-	//setcolor(15); /* (And sent for chrysanthemums...) Yellow and white. */
-	//setfillstyle(1, 6);
-	//for (byte fv = 0; fv <= 1; fv ++) {
-	//	setactivepage(fv);
-	//	putimage(5, 169, p, 0);
-	//	if (demo) {
-	//		bar(264, 177, 307, 190);
-	//		outtextxy(268, 188, "Demo!"); /* well... actually only white now. */
-	//	}
-	//}
+	uint16 toolbarWidth = f.readUint16LE() + 1;
+	uint16 toolbarHeight = f.readUint16LE() + 1;
+
+	Graphics::Surface toolbar;
+	toolbar.create(toolbarWidth, toolbarHeight, Graphics::PixelFormat::createFormatCLUT8());
+	
+	for (byte y = 0; y < toolbarHeight; y++)
+		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
+			for (uint16 x = 0; x < toolbarWidth; x += 8) {
+				byte pixel = f.readByte();
+				for (byte i = 0; i < 8; i++) {
+					byte pixelBit = (pixel >> i) & 1;
+					*(byte *)toolbar.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+				} 
+			}
+	
+	_vm->_graph.copySurface(toolbar, 5, 169);
+
+	toolbar.free();
+
+	f.close();
+
 	warning("STUB: Lucerna::toolbar()");
 
 	/* on;*/
-	delete[] p;
+
 	_vm->_gyro.oldrw = 177;
 	showrw();
 }
