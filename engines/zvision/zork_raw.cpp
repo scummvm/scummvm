@@ -45,8 +45,9 @@ const int32 RawZorkStream::amplitudeLookupTable[89] = {0x0007, 0x0008, 0x0009, 0
                                                        0x1BDC, 0x1EA5, 0x21B6, 0x2515, 0x28CA, 0x2CDF, 0x315B, 0x364B,
                                                        0x3BB9, 0x41B2, 0x4844, 0x4F7E, 0x5771, 0x602F, 0x69CE, 0x7462, 0x7FFF};
 
-RawZorkStream::RawZorkStream(uint32 rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
+RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
 		: _rate(rate),
+		  _stereo(stereo),
 		  _stream(stream, disposeStream),
 		  _endOfData(false) {
 	_lastSample[0] = {0, 0};
@@ -64,14 +65,13 @@ int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
 
 	while (bytesRead < numSamples) {
 		byte encodedSample = _stream->readByte();
-		bytesRead++;
-
 		if (_stream->eos()) {
 			_endOfData = true;
 			return bytesRead;
 		}
+		bytesRead++;
 
-		uint16 index = _lastSample[channel].index;
+		int16 index = _lastSample[channel].index;
 		uint32 lookUpSample = amplitudeLookupTable[index];
 
 		int32 sample = 0;
@@ -105,7 +105,7 @@ int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
 		_lastSample[channel].index = index;
 
 		// Increment and wrap the channel
-		channel = (channel + 1) & 1;
+		channel = (channel + 1) & _stereo;
 	}
 
 	return bytesRead;
@@ -122,16 +122,18 @@ bool RawZorkStream::rewind() {
 }
 
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-                                   int rate,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
+                                                int rate,
+								                bool stereo,
+                                                DisposeAfterUse::Flag disposeAfterUse) {
 	assert(stream->size() % 2 == 0);
-	return new RawZorkStream(rate, disposeAfterUse, stream);
+	return new RawZorkStream(rate, stereo, disposeAfterUse, stream);
 }
 
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
-                                   int rate,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
-	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, DisposeAfterUse::YES);
+                                                int rate,
+								                bool stereo,
+                                                DisposeAfterUse::Flag disposeAfterUse) {
+	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, stereo, DisposeAfterUse::YES);
 }
 
 } // End of namespace ZVision

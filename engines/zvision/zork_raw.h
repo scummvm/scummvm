@@ -36,7 +36,7 @@ namespace ZVision {
  */
 class RawZorkStream : public Audio::RewindableAudioStream {
 public:
-	RawZorkStream(uint32 rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
+	RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
 
 	~RawZorkStream() {
 	}
@@ -46,6 +46,7 @@ private:
 	Audio::Timestamp _playtime;                                // Calculated total play time
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
 	bool _endOfData;                                           // Whether the stream end has been reached
+	bool _stereo;
 
 	/** 
 	 * Holds the frequency and index from the last sample
@@ -92,8 +93,9 @@ private:
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
-                                   int rate,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+                                                int rate,
+								                bool stereo,
+                                                DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates an audio stream, which plays from the given stream.
@@ -104,8 +106,9 @@ Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-                                   int rate,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+                                                int rate,
+								                bool stereo,
+                                                DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 } // End of namespace ZVision
 

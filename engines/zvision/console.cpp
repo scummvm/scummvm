@@ -65,8 +65,8 @@ bool Console::cmdLoadVideo(int argc, const char **argv) {
 }
 
 bool Console::cmdLoadSound(int argc, const char **argv) {
-	if (argc != 3) {
-		DebugPrintf("Use loadsound <fileName> <rate> to load a video to the screen");
+	if (argc != 4) {
+		DebugPrintf("Use loadsound <fileName> <rate> <stereo: 0 or 1> to load a video to the screen");
 		return true;
 	}
 
@@ -76,7 +76,7 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 		return true;
 	}
 
-	Audio::AudioStream *soundStream = makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), atoi(argv[2]), DisposeAfterUse::YES);
+	Audio::AudioStream *soundStream = makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), atoi(argv[2]), atoi(argv[3]), DisposeAfterUse::YES);
 	Audio::SoundHandle handle;
 	_engine->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
 
