@@ -29,6 +29,7 @@
 
 #include "avalanche/avalanche.h"
 
+#include "avalanche/graph.h"
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/trip6.h"
@@ -43,12 +44,14 @@
 #include "avalanche/celer2.h"
 #include "avalanche/enid2.h"
 #include "avalanche/visa2.h"
+#include "avalanche/closing2.h"
 
 /*#include "Incline.h"*/
-/*#include "Closing.h"*/
 
 #include "common/str.h"
 #include "common/textconsole.h"
+
+
 
 namespace Avalanche {
 
@@ -98,7 +101,7 @@ void Avalot::setup() {
 
 	_vm->_trip.loadtrip();
 
-	if ((_vm->_gyro.filetoload == "") && (! _vm->_gyro.reloaded))
+	if ((_vm->_gyro.filetoload.empty()) && (! _vm->_gyro.reloaded)*)
 		_vm->_gyro.newgame(); /* no game was requested- load the default */
 	else {
 		if (! _vm->_gyro.reloaded)
@@ -145,7 +148,7 @@ void Avalot::setParent(AvalancheEngine *vm) {
 
 void Avalot::run(Common::String arg) {
 	setup();
-	
+
 	do {
 		_vm->_lucerna.clock_lucerna();
 		_vm->_basher.keyboard_link();
