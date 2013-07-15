@@ -44,7 +44,7 @@ PlaybackFile::PlaybackFile() : _tmpRecordFile(_tmpBuffer, kRecordBuffSize), _tmp
 	_headerDumped = false;
 	_recordCount = 0;
 	_eventsSize = 0;
-	memset(_tmpBuffer, kRecordBuffSize, 1);
+	memset(_tmpBuffer, 1, kRecordBuffSize);
 }
 
 PlaybackFile::~PlaybackFile() {
