@@ -78,7 +78,7 @@ void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void Graph::copySurface(Graphics::Surface source, uint16 destX, uint16 destY) {
+void Graph::copySurface(const Graphics::Surface &source, uint16 destX, uint16 destY) {
 	for (uint16 y = 0; y < source.h; y++)
 		for (uint16 x = 0; x < source.w; x++)
 			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)source.getBasePtr(x, y);		
