@@ -61,28 +61,6 @@ TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, TSpriteBlendMode blen
 		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
 }
 
-TransformStruct::TransformStruct(int32 zoom, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY) {
-	init(Point32(zoom, zoom), 
-		DEFAULT_ANGLE, 
-		Point32(DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y), 
-		false,
-		blendMode, 
-		rgbaMod, 
-		mirrorX, mirrorY, 
-		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
-}
-
-TransformStruct::TransformStruct(int32 zoom, bool mirrorX, bool mirrorY) {
-	init(Point32(zoom, zoom), 
-		DEFAULT_ANGLE,
-		Point32(DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y), 
-		true, 
-		BLEND_NORMAL, 
-		DEFAULT_RGBAMOD, 
-		mirrorX, mirrorY,  
-		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
-}
-
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY) {
 	init(Point32(zoomX, zoomY), 
 		angle, 
@@ -91,17 +69,6 @@ TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 h
 		BLEND_NORMAL, 
 		DEFAULT_RGBAMOD, 
 		false, false,
-		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
-}
-
-TransformStruct::TransformStruct(int32 zoom) {
-	init(Point32(zoom, zoom), 
-		DEFAULT_ANGLE, 
-		Point32(DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y), 
-		true, 
-		BLEND_NORMAL, 
-		DEFAULT_RGBAMOD, 
-		false, false,  
 		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
 }
 
@@ -116,11 +83,11 @@ TransformStruct::TransformStruct() {
 		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
 }
 
-bool TransformStruct::mirrorX() const {
+bool TransformStruct::getMirrorX() const {
 	return (bool)(_flip & TransparentSurface::FLIP_H);
 }
 
-bool TransformStruct::mirrorY() const {
+bool TransformStruct::getMirrorY() const {
 	return (bool)(_flip & TransparentSurface::FLIP_V);
 }
 } // End of namespace Wintermute

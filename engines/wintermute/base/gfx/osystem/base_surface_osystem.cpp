@@ -321,14 +321,14 @@ bool BaseSurfaceOSystem::endPixelOp() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(100, mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(DEFAULT_ZOOM_X, DEFAULT_ZOOM_Y,  mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(100, blendMode, alpha, mirrorX, mirrorY)); 
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(DEFAULT_ZOOM_X, DEFAULT_ZOOM_Y, blendMode, alpha, mirrorX, mirrorY)); 
 }
 
 //////////////////////////////////////////////////////////////////////////

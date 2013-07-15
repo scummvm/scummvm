@@ -48,10 +48,7 @@ private:
 public:
 	TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX = false, bool mirrorY = false, int32 offsetX = 0, int32 offsetY = 0);
 	TransformStruct(int32 zoomX, int32 zoomY, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX = false, bool mirrorY = false);
-	TransformStruct(int32 zoom, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX, bool mirrorY);
-	TransformStruct(int32 zoom, bool mirrorX, bool mirrorY);
 	TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX = 0, int32 hotspotY = 0);
-	TransformStruct(int32 zoom);
 	TransformStruct();
 	
 	Point32 _zoom;	 ///< Zoom; 100 = no zoom
@@ -63,8 +60,8 @@ public:
 	uint32 _rgbaMod;	  ///< RGBa
 	Point32 _offset;  
 	
-	bool mirrorX() const;
-	bool mirrorY() const;
+	bool getMirrorX() const;
+	bool getMirrorY() const;
 
 	bool operator==(const TransformStruct &compare) const {
 		return (compare._angle == _angle &&
