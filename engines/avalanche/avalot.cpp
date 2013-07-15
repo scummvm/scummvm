@@ -101,7 +101,7 @@ void Avalot::setup() {
 
 	_vm->_trip.loadtrip();
 
-	if ((_vm->_gyro.filetoload.empty()) && (! _vm->_gyro.reloaded)*)
+	if ((_vm->_gyro.filetoload.empty()) && (! _vm->_gyro.reloaded))
 		_vm->_gyro.newgame(); /* no game was requested- load the default */
 	else {
 		if (! _vm->_gyro.reloaded)
