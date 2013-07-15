@@ -68,11 +68,11 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		_surface = nullptr;
 		
 		if (transform._angle != DEFAULT_ANGLE) { // Make sure comparison-tickets get the correct width
-			Rect32 dstRect;
+			Rect32 newDstRect;
 			Point32 newHotspot;
-			dstRect = TransformTools::newRect(_srcRect, transform,  &newHotspot);
-			_dstRect.setWidth(dstRect.right-dstRect.left);
-			_dstRect.setHeight(dstRect.bottom-dstRect.top);
+			newDstRect = TransformTools::newRect(_srcRect, transform, &newHotspot);
+			_dstRect.setWidth(newDstRect.right - newDstRect.left);
+			_dstRect.setHeight(newDstRect.bottom - newDstRect.top);
 		}
 	}
 }
