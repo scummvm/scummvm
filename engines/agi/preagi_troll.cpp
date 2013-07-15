@@ -220,6 +220,7 @@ void TrollEngine::waitAnyKeyIntro() {
 		switch (iMsg) {
 		case 200:
 			iMsg = 0;
+			// fall through
 		case 0:
 			drawStr(22, 3, kColorDefault, IDS_TRO_INTRO_2);
 			_gfx->doUpdate();
