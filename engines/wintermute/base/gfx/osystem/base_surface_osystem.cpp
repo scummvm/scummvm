@@ -321,20 +321,20 @@ bool BaseSurfaceOSystem::endPixelOp() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(DEFAULT_ZOOM_X, DEFAULT_ZOOM_Y,  mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY,  mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(DEFAULT_ZOOM_X, DEFAULT_ZOOM_Y, blendMode, alpha, mirrorX, mirrorY)); 
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY)); 
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr,  TransformStruct(DEFAULT_ZOOM_X, DEFAULT_ZOOM_Y, DEFAULT_ANGLE, DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
+	return drawSprite(x, y, &rect, nullptr,  TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -349,7 +349,7 @@ bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, flo
 	_rotation = 0;
 	TransformStruct transform;
 	if (transparent) {
-		transform = TransformStruct(zoomX, zoomY, DEFAULT_ANGLE, DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y, blendMode, alpha,  mirrorX, mirrorY);
+		transform = TransformStruct(zoomX, zoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
 	} else {
 		transform = TransformStruct(zoomX, zoomY, mirrorX, mirrorY);
 	}
@@ -414,8 +414,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		position.setWidth(newRect->width());
 		position.setHeight(newRect->height());
 	} else {
-		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / DEFAULT_ZOOM_X));
-		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / DEFAULT_ZOOM_Y));
+		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / kDefaultZoomX));
+		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / kDefaultZoomY));
 	}
 	renderer->modTargetRect(&position);
 

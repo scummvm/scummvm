@@ -51,14 +51,14 @@ TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 h
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY) {
 	init(Point32(zoomX, zoomY), 
-		DEFAULT_ANGLE, 
-		Point32(DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y), 
+		kDefaultAngle, 
+		Point32(kDefaultHotspotX, kDefaultHotspotY), 
 		false, 
 		blendMode, 
 		rgbaMod, 
 		mirrorX, 
 		mirrorY,  
-		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
+		Point32(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY) {
@@ -67,20 +67,20 @@ TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 h
 		Point32(hotspotX, hotspotY), 
 		true, 
 		BLEND_NORMAL, 
-		DEFAULT_RGBAMOD, 
+		kDefaultRgbaMod, 
 		false, false,
-		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
+		Point32(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 TransformStruct::TransformStruct() {
-	init(Point32(DEFAULT_ZOOM_X, DEFAULT_ZOOM_Y), 
-		DEFAULT_ANGLE, 
-		Point32(DEFAULT_HOTSPOT_X, DEFAULT_HOTSPOT_Y), 
+	init(Point32(kDefaultZoomX, kDefaultZoomY), 
+		kDefaultAngle, 
+		Point32(kDefaultHotspotX, kDefaultHotspotY), 
 		true, 
 		BLEND_NORMAL, 
-		DEFAULT_RGBAMOD, 
+		kDefaultRgbaMod, 
 		false, false,  
-		Point32(DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y));
+		Point32(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 bool TransformStruct::getMirrorX() const {

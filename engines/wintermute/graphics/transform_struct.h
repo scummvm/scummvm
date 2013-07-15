@@ -20,21 +20,21 @@
  *
  */
 
-#ifndef GRAPHICS_TRANSFORM_STRUCT_H
-#define GRAPHICS_TRANSFORM_STRUCT_H
+#ifndef WINTERMUTE_TRANSFORM_STRUCT_H
+#define WINTERMUTE_TRANSFORM_STRUCT_H
 
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/dctypes.h"
 
-#define DEFAULT_ZOOM_X 100.0
-#define DEFAULT_ZOOM_Y 100.0
-#define DEFAULT_RGBAMOD 0xFFFFFFFF
-#define DEFAULT_HOTSPOT_X 0
-#define DEFAULT_HOTSPOT_Y 0
-#define DEFAULT_OFFSET_X 0
-#define DEFAULT_OFFSET_Y 0
-#define DEFAULT_ANGLE 0
-
+const float kDefaultZoomX = 100.0;
+const float kDefaultZoomY = 100.0;
+const uint32 kDefaultRgbaMod = 0xFFFFFFFF;
+const int32 kDefaultHotspotX = 0;
+const int32 kDefaultHotspotY = 0;
+const int32 kDefaultOffsetX = 0;
+const int32 kDefaultOffsetY = 0;
+const int32 kDefaultAngle = 0;
+	
 namespace Wintermute {
 /** 
  * Contains all the required information that define a transform.
