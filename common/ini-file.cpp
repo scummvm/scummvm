@@ -53,7 +53,7 @@ bool INIFile::loadFromFile(const String &filename) {
 		return false;
 }
 
-bool INIFile::loadFromSaveFile(const char *filename) {
+bool INIFile::loadFromSaveFile(const String &filename) {
 	assert(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SeekableReadStream *loadFile;
@@ -181,7 +181,7 @@ bool INIFile::saveToFile(const String &filename) {
 		return false;
 }
 
-bool INIFile::saveToSaveFile(const char *filename) {
+bool INIFile::saveToSaveFile(const String &filename) {
 	assert(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	WriteStream *saveFile;
