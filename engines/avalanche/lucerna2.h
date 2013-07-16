@@ -58,7 +58,7 @@ public:
 
 	void enterroom(byte x, byte ped);
 
-	void thinkabout(char z, bool th);      /* Hey!!! Get it and put it!!! */
+	void thinkabout(byte z, bool th);      /* Hey!!! Get it and put it!!! */
 
 	void load_digits();    /* Load the scoring digits & rwlites */
 
