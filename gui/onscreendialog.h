@@ -30,14 +30,16 @@ namespace GUI {
 
 class OnScreenDialog : public Dialog {
 private:
-	uint32 lastTime;
+	uint32 _lastTime;
 	bool _enableDrag;
 	bool _mouseOver;
 	bool _editDlgShown;
 	Common::Point _dragPoint;
-	GUI::StaticTextWidget *text;
-	Dialog *dlg;
+	GUI::StaticTextWidget *_text;
+	Dialog *_dlg;
+
 	bool isMouseOver(int x, int y);
+
 public:
 	OnScreenDialog(bool recordingMode);
 	~OnScreenDialog();
@@ -56,7 +58,7 @@ public:
 	bool isEditDlgVisible();
 	Dialog *getActiveDlg();
 protected:
-	virtual void	releaseFocus();
+	virtual void releaseFocus();
 };
 
 } // End of namespace GUI

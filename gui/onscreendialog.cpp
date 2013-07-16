@@ -97,26 +97,28 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 	} else
 #endif
 	{
-		GUI::ButtonWidget *btn;
 		if (g_system->getOverlayWidth() > 320)
-			btn = new ButtonWidget(this, "OnScreenDialog.StopButton", "[ ]", _("Stop"), kStopCmd);
+			new ButtonWidget(this, "OnScreenDialog.StopButton", "[ ]", _("Stop"), kStopCmd);
 		else
-			btn = new ButtonWidget(this, "OnScreenDialog.StopButton", "[]", _("Stop"), kStopCmd);
+			new ButtonWidget(this, "OnScreenDialog.StopButton", "[]", _("Stop"), kStopCmd);
 
 		if (isRecord) {
-			btn = new ButtonWidget(this, "OnScreenDialog.EditButton", "E", _("Edit record description"), kEditCmd);
+			new ButtonWidget(this, "OnScreenDialog.EditButton", "E", _("Edit record description"), kEditCmd);
 		} else {
-			btn = new ButtonWidget(this, "OnScreenDialog.SwitchModeButton", "G", _("Switch to Game"), kSwitchModeCmd);
+			new ButtonWidget(this, "OnScreenDialog.SwitchModeButton", "G", _("Switch to Game"), kSwitchModeCmd);
 
-			btn = new ButtonWidget(this, "OnScreenDialog.FastReplayButton", ">>", _("Fast replay"), kFastModeCmd);
+			new ButtonWidget(this, "OnScreenDialog.FastReplayButton", ">>", _("Fast replay"), kFastModeCmd);
 		}
 	}
 
 
-	text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
+	_text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
 	_enableDrag = false;
 	_mouseOver = false;
 	_editDlgShown = false;
+
+	_lastTime = 0;
+	_dlg = 0;
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -128,20 +130,20 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kEditCmd:
-		dlg = new EditRecordDialog(g_eventRec.getAuthor(), g_eventRec.getName(), g_eventRec.getNotes());
+		_dlg = new EditRecordDialog(g_eventRec.getAuthor(), g_eventRec.getName(), g_eventRec.getNotes());
 		CursorMan.lock(false);
 		g_eventRec.setRedraw(false);
 		g_system->showOverlay();
 		_editDlgShown = true;
-		dlg->runModal();
+		_dlg->runModal();
 		_editDlgShown = false;
 		g_system->hideOverlay();
 		g_eventRec.setRedraw(true);
 		CursorMan.lock(true);
-		g_eventRec.setAuthor(((EditRecordDialog *)dlg)->getAuthor());
-		g_eventRec.setName(((EditRecordDialog *)dlg)->getName());
-		g_eventRec.setNotes(((EditRecordDialog *)dlg)->getNotes());
-		delete dlg;
+		g_eventRec.setAuthor(((EditRecordDialog *)_dlg)->getAuthor());
+		g_eventRec.setName(((EditRecordDialog *)_dlg)->getName());
+		g_eventRec.setNotes(((EditRecordDialog *)_dlg)->getNotes());
+		delete _dlg;
 		break;
 	case kSwitchModeCmd:
 		if (g_eventRec.switchMode()) {
@@ -155,10 +157,10 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void OnScreenDialog::setReplayedTime(uint32 newTime) {
-	if (newTime - lastTime > 1000) {
+	if (newTime - _lastTime > 1000) {
 		uint32 seconds = newTime / 1000;
-		text->setLabel(Common::String::format("%.2d:%.2d:%.2d", seconds / 3600 % 24, seconds / 60 % 60, seconds % 60));
-		lastTime = newTime;
+		_text->setLabel(Common::String::format("%.2d:%.2d:%.2d", seconds / 3600 % 24, seconds / 60 % 60, seconds % 60));
+		_lastTime = newTime;
 	}
 }
 
@@ -218,7 +220,7 @@ void OnScreenDialog::close() {
 
 Dialog *OnScreenDialog::getActiveDlg() {
 	if (_editDlgShown) {
-		return dlg;
+		return _dlg;
 	} else {
 		return this;
 	}

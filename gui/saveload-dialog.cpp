@@ -286,6 +286,7 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 		break;
 	case kCloseCmd:
 		setResult(-1);
+		// Fall through
 	default:
 		SaveLoadChooserDialog::handleCommand(sender, cmd, data);
 	}
@@ -595,6 +596,7 @@ void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 	case kCloseCmd:
 		setResult(-1);
+		// Fall through
 	default:
 		SaveLoadChooserDialog::handleCommand(sender, cmd, data);
 	}

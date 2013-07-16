@@ -37,7 +37,7 @@ void EditRecordDialog::setAuthor(const Common::String &author) {
 
 const Common::String EditRecordDialog::getNotes() {
 	return _notesEdit->getEditString();
-} 
+}
 
 void EditRecordDialog::setNotes(const Common::String &desc) {
 	_notesEdit->setEditString(desc);

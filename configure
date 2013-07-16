@@ -1782,7 +1782,8 @@ android | gamecube | psp | tizen | wii | webos)
 *)
 	# ICC does not support pedantic, while GCC and clang do.
 	if test "$have_icc" = no ; then
-		CXXFLAGS="$CXXFLAGS -pedantic"
+		# We *do* want the 'long long' extension.
+		CXXFLAGS="$CXXFLAGS -pedantic -Wno-long-long"
 	fi
 	;;
 esac
@@ -1840,7 +1841,7 @@ esac
 # Determine a data type with the given length
 #
 find_type_with_size() {
-	for datatype in int short char long "long long" unknown; do
+	for datatype in int short char long "long long" __int64 "long long int" unknown; do
 		cat > tmp_find_type_with_size.cpp << EOF
 typedef $datatype ac__type_sizeof_;
 int main() {

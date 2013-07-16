@@ -193,7 +193,7 @@ private:
 	DefaultTimerManager *_timerManager;
 	RecorderSaveFileManager _fakeSaveManager;
 	NullSdlMixerManager *_fakeMixerManager;
-	GUI::OnScreenDialog *controlPanel;
+	GUI::OnScreenDialog *_controlPanel;
 	Common::RecorderEvent _nextEvent;
 
 	void setFileHeader();
