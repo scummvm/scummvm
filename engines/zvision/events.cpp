@@ -25,6 +25,7 @@
 #include "zvision/zvision.h"
 #include "zvision/console.h"
 #include "common/events.h"
+#include "engines/util.h"
 
 
 namespace ZVision {
@@ -55,12 +56,19 @@ void ZVision::processEvents() {
 					_console->onFrame();
 				}
 				break;
-
 			case Common::KEYCODE_q:
 				if (_event.kbd.hasFlags(Common::KBD_CTRL))
 					quitGame();
 				break;
-
+			case Common::KEYCODE_ESCAPE:
+				if (_currentVideo != 0) {
+					initGraphics(_width, _height, true, &_pixelFormat);
+					delete _currentVideo;
+					_currentVideo = 0;
+					delete _scaledVideoFrameBuffer;
+					_scaledVideoFrameBuffer = 0;
+				}
+				break;
 			default:
 				break;
 			}
