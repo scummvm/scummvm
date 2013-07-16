@@ -36,6 +36,7 @@
 #include "zvision/console.h"
 #include "zvision/script_manager.h"
 #include "zvision/zfs_archive.h"
+#include "zvision/detection.h"
 
 #include "zvision/utility.h"
 
@@ -154,8 +155,8 @@ Common::RandomSource *ZVision::getRandomSource() const {
 	return _rnd;
 }
 
-Audio::Mixer *ZVision::getMixer() const {
-	return _mixer;
+ZVisionGameId ZVision::getGameId() const {
+	return _gameDescription->gameId;
 }
 
 } // End of namespace ZVision

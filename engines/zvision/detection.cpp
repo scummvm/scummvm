@@ -23,21 +23,16 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
-
 #include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
 
 #include "zvision/zvision.h"
+#include "zvision/detection.h"
 
 
 namespace ZVision {
-
-struct ZVisionGameDescription {
-	ADGameDescription desc;
-};
 
 uint32 ZVision::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -47,7 +42,8 @@ Common::Language ZVision::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-}
+} // End of namespace ZVision
+
 
 static const PlainGameDescriptor zVisionGames[] = {
 	{"zvision",  "ZVision Game"},
@@ -72,6 +68,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
+		ZorkNemesis
 	},
 
 	{ AD_TABLE_END_MARKER }

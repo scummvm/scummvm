@@ -31,6 +31,8 @@
 
 #include "engines/engine.h"
 
+#include "zvision/detection.h"
+
 #include "gui/debugger.h"
  
 namespace ZVision {
@@ -76,7 +78,7 @@ public:
 	virtual Common::Error run();
 	ScriptManager *getScriptManager() const;
 	Common::RandomSource *getRandomSource() const;
-	Audio::Mixer *getMixer() const;
+	ZVisionGameId getGameId() const;
 
 	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
 	void startVideo(Video::VideoDecoder *videoDecoder);
