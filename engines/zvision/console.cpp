@@ -42,7 +42,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
 	if (argc != 4) {
-		DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen");
+		DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen\n");
 		return true;
 	}
 	_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
@@ -52,7 +52,7 @@ bool Console::cmdLoadImage(int argc, const char **argv) {
 
 bool Console::cmdLoadVideo(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Use loadvideo <fileName> to load a video to the screen");
+		DebugPrintf("Use loadvideo <fileName> to load a video to the screen\n");
 		return true;
 	}
 
@@ -65,20 +65,19 @@ bool Console::cmdLoadVideo(int argc, const char **argv) {
 }
 
 bool Console::cmdLoadSound(int argc, const char **argv) {
-	if (argc != 4) {
-		DebugPrintf("Use loadsound <fileName> <rate> <stereo: 0 or 1> to load a video to the screen");
+	if (argc != 2) {
+		DebugPrintf("Use loadsound <fileName> to load a sound\n");
 		return true;
 	}
 
-	Common::File *file = new Common::File();
-	if (!file->open(argv[1])) {
-		DebugPrintf("File does not exist");
+	if (!Common::File::exists(argv[1])) {
+		DebugPrintf("File does not exist\n");
 		return true;
 	}
 
-	Audio::AudioStream *soundStream = makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), atoi(argv[2]), atoi(argv[3]), DisposeAfterUse::YES);
+	Audio::AudioStream *soundStream = makeRawZorkStream(argv[1], _engine);
 	Audio::SoundHandle handle;
-	_engine->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
+	_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
 
 	return true;
 }
