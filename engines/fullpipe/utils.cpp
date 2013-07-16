@@ -108,7 +108,7 @@ char *MfcArchive::readPascalString(bool twoByte) {
 }
 
 MemoryObject::MemoryObject() {
-	_filename = 0;
+	_memfilename = 0;
 	_field_8 = 0;
 	_field_C = 0;
 	_field_10 = -1;
@@ -121,7 +121,14 @@ MemoryObject::MemoryObject() {
 
 bool MemoryObject::load(MfcArchive &file) {
 	debug(5, "MemoryObject::load()");
-	_filename = file.readPascalString();
+	_memfilename = file.readPascalString();
+
+	if (char *p = strchr(_memfilename, '\\')) {
+		for (char *d = _memfilename; *p;) {
+			p++;
+			*d++ = *p;
+		}
+	}
 
 	if (g_fullpipe->_currArchive) {
 		_field_14 = 0;
@@ -170,8 +177,10 @@ bool MemoryObject2::load(MfcArchive &file) {
 
 	_flags |= 1;
 
-	if (_filename) {
-		MemoryObject::loadFile(_filename);
+	debug(5, "MemoryObject2::load: <%s>", _memfilename);
+
+	if (_memfilename && *_memfilename) {
+		MemoryObject::loadFile(_memfilename);
 	}
 
 	return true;

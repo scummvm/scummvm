@@ -32,16 +32,22 @@ class ShadowsItemArray : public CObArray {
 };
 
 struct Bitmap {
-	int x;
-	int y;
-	int width;
-	int height;
-	byte *pixels;
-	int type;
-	int field_18;
-	int flags;
+	int _x;
+	int _y;
+	int _width;
+	int _height;
+	byte *_pixels;
+	int _type;
+	int _field_18;
+	int _flags;
 
 	void load(Common::ReadStream *s);
+	void putDib(int x, int y, byte *palette);
+
+	void colorFill(byte *dest, int len, int color);
+	void paletteFill(byte *dest, byte *src, int len);
+	void copierKeyColor(byte *dest, byte *src, int len, int keyColor);
+	void copier(byte *dest, byte *src, int len);
 };
 
 class Picture : public MemoryObject {
@@ -69,7 +75,6 @@ class Picture : public MemoryObject {
 	Bitmap *getPixelData();
 	void draw(int x, int y, int style, int angle);
 	void drawRotated(int x, int y, int angle);
-	void putDib(int x, int y);
 
 	byte getAlpha() { return (byte)_alpha; }
 	void setAlpha(byte alpha) { _alpha = alpha; }

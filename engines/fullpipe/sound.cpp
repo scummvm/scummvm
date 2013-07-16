@@ -88,8 +88,8 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 
 	_objectId = file.readUint16LE();
 
-	if (archive && archive->hasFile(_filename)) {
-		Common::SeekableReadStream *s = archive->createReadStreamForMember(_filename);
+	if (archive && archive->hasFile(_memfilename)) {
+		Common::SeekableReadStream *s = archive->createReadStreamForMember(_memfilename);
 
 		_soundData = (byte *)calloc(s->size(), 1);
 

@@ -31,17 +31,17 @@ namespace Fullpipe {
 void Bitmap::load(Common::ReadStream *s) {
 	debug(5, "Bitmap::load()");
 
-	x = s->readUint32LE();
-	y = s->readUint32LE();
-	width = s->readUint32LE();
-	height = s->readUint32LE();
+	_x = s->readUint32LE();
+	_y = s->readUint32LE();
+	_width = s->readUint32LE();
+	_height = s->readUint32LE();
 	s->readUint32LE(); // pixels
-	type = s->readUint32LE();
-	field_18 = s->readUint32LE();
-	flags = s->readUint32LE();
+	_type = s->readUint32LE();
+	_field_18 = s->readUint32LE();
+	_flags = s->readUint32LE();
 
-	debug(9, "x: %d y: %d w: %d h: %d", x, y, width, height);
-	debug(9, "type: %d field_18: %d flags: 0x%x", type, field_18, flags);
+	debug(8, "Bitmap: x: %d y: %d w: %d h: %d field_18: 0x%x", _x, _y, _width, _height, _field_18);
+	debug(8, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
 }
 
 Background::Background() {
@@ -242,6 +242,11 @@ bool Picture::load(MfcArchive &file) {
 		file.read(_paletteData, 1024);
 	}
 
+	debug(5, "Picture::load: <%s>", _memfilename);
+
+	getData();
+	init();
+
 	return true;
 }
 
@@ -264,20 +269,27 @@ void Picture::init() {
 
 	getDibInfo();
 
-	_bitmap->flags |= 0x1000000;
+	_bitmap->_flags |= 0x1000000;
 }
 
 void Picture::getDibInfo() {
 	int off = _dataSize & ~0xf;
 
+	debug(0, "Picture::getDibInfo: _dataSize: %d", _dataSize);
+
+	if (!_dataSize) {
+		warning("Picture::getDibInfo(): Empty data size");
+		return;
+	}
+
 	if (_dataSize != off) {
 		warning("Uneven data size: 0x%x", _dataSize);
 	}
 
-	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off, 32);
+	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);
 
 	_bitmap->load(s);
-	_bitmap->pixels = _data;
+	_bitmap->_pixels = _data;
 }
 
 Bitmap *Picture::getPixelData() {
@@ -307,7 +319,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		warning("Picture:draw: alpha = %0x", _alpha);
 	}
 
-	if (_bitmap->type == MKTAG('C', 'B', '\0', '\0') || _bitmap->type == MKTAG('R', 'B', '\0', '\0')) {
+	if (_bitmap->_type == MKTAG('C', 'B', '\0', '\0') || _bitmap->_type == MKTAG('R', 'B', '\0', '\0')) {
 		if (_paletteData) {
 			warning("Picture:draw: have palette");
 		}
@@ -326,7 +338,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 			warning("Picture:draw: angle = %d", angle);
 			drawRotated(x1, y1, angle);
 		} else {
-			putDib(x1, y1);
+			_bitmap->putDib(x1, y1, _paletteData);
 		}
 	}
 }
@@ -334,7 +346,237 @@ void Picture::draw(int x, int y, int style, int angle) {
 void Picture::drawRotated(int x, int y, int angle) {
 }
 
-void Picture::putDib(int x, int y) {
+void Bitmap::putDib(int x, int y, byte *palette) {
+	byte *curDestPtr;
+	int endy;
+	int pos;
+	byte *srcPtr;
+	uint pixel;
+	int start1;
+	int fillValue;
+	int pixoffset;
+	int end2;
+	int pixelHigh;
+	int pixoffset1;
+	int leftx;
+	uint pixel1;
+	uint pixel1High;
+	int bpp;
+	uint pitch;
+	byte *srcPtr1;
+	int end;
+	int endx;
+	int endy1;
+	bool cb05_format;
+	byte *pixPtr;
+	byte *srcPtr2;
+	int start;
+
+	endx = _width + _x - 1;
+	endy = _height + _y - 1;
+
+	if (_x > 799 || _width + _x - 1 < 0 || _y > 599 || endy < 0)
+		return;
+
+	if (endy > 599)
+		endy = 599;
+
+	if (_type == MKTAG('R', 'B', '\0', '\0')) {
+		endy1 = endy;
+		pixPtr = _pixels;
+		pos = _x;
+
+	LABEL_17:
+		srcPtr = pixPtr;
+		while (1) {
+			while (1) {
+                while (1) {
+					while (1) {
+						while (1) {
+							pixel = *(int16 *)srcPtr;
+							srcPtr += 2;
+							pixPtr = srcPtr;
+							if (pixel)
+								break;
+							--endy1;
+							if (endy1 < _y)
+								return;
+							pos = _x;
+						}
+
+						if (pixel == 0x100)
+							return;
+
+						if (pixel != 0x200)
+							break;
+
+						pixel1 = *(int16 *)srcPtr;
+						srcPtr += 2;
+						pos += (byte)pixel1;
+						pixel1High = pixel1 >> 8;
+
+						if (pixel1High) {
+							endy1 -= pixel1High;
+
+							if (endy1 < _y)
+								return;
+						}
+					}
+					start1 = pos;
+					fillValue = (byte)pixel;
+
+					if (!(byte)pixel)
+						break;
+
+					pos += (byte)pixel;
+					pixoffset = -start1;
+
+					if (pixoffset <= 0)
+						goto LABEL_25;
+
+					fillValue = (byte)pixel - pixoffset;
+
+					if (fillValue > 0) {
+						start1 = 0;
+
+					LABEL_25:
+						end2 = 799;
+						if (pos <= end2 + 1 || (fillValue += end2 - pos + 1, fillValue > 0)) {
+							if (endy1 <= endy) {
+								curDestPtr = (byte *)g_fullpipe->_backgroundSurface.getBasePtr(endy1, start1);
+								int bgcolor = *(int32 *)(palette + 4 * (pixel >> 8));
+
+								colorFill(curDestPtr, fillValue, bgcolor);
+							}
+							goto LABEL_17;
+						}
+					}
+				}
+				pixelHigh = pixel >> 8;
+				srcPtr2 = srcPtr;
+				pos += pixelHigh;
+				srcPtr += 2 * ((pixelHigh + 1) >> 1);
+				pixoffset1 = -start1;
+
+				if (pixoffset1 > 0)
+					break;
+
+			LABEL_37:
+				leftx = 799;
+				if (pos > leftx + 1) {
+					pixelHigh += leftx - pos + 1;
+					if (pixelHigh <= 0)
+						continue;
+				}
+				if (endy1 <= endy) {
+					curDestPtr = (byte *)g_fullpipe->_backgroundSurface.getBasePtr(endy1, start1);
+					paletteFill(curDestPtr, srcPtr2, pixelHigh);
+				}
+			}
+			pixelHigh -= pixoffset1;
+			if (pixelHigh > 0) {
+				start1 = 0;
+				srcPtr2 += pixoffset1;
+				goto LABEL_37;
+			}
+		}
+	}
+
+	cb05_format = (_type == MKTAG('C', 'B', '\05', 'e'));
+	bpp = cb05_format ? 2 : 1;
+	end = _width + _x - 1;
+	pitch = (bpp * (endx - _x + 1) + 3) & 0xFFFFFFFC;
+	start = _x;
+	srcPtr1 = &_pixels[pitch * (endy - _y)];
+	if (_x < 0) {
+		srcPtr1 += bpp * -_x;
+		start = 0;
+	}
+
+	if (endx > 799)
+		end = 799;
+
+	if (_flags & 0x1000000) {
+		for (int n = _y; n < endy; srcPtr1 -= pitch) {
+			curDestPtr = (byte *)g_fullpipe->_backgroundSurface.getBasePtr(n, start);
+			copierKeyColor(curDestPtr, srcPtr1, end - start + 1, _flags & 0xff);
+			++n;
+		}
+	} else {
+		for (int n = _y; n <= endy; srcPtr1 -= pitch) {
+			curDestPtr = (byte *)g_fullpipe->_backgroundSurface.getBasePtr(n, start);
+			copier(curDestPtr, srcPtr1, end - start + 1);
+			++n;
+		}
+	}
+}
+
+	void Bitmap::colorFill(byte *dest, int len, int color) {
+#if 0
+	if (blendMode) {
+		if (blendMode != 1)
+			error("vrtPutDib : RLE Fill : Invalid alpha blend mode");
+
+		colorFill = ptralphaFillColor16bit;
+	} else {
+		colorFill = ptrfillColor16bit;
+	}
+#endif
+
+}
+
+void Bitmap::paletteFill(byte *dest, byte *src, int len) {
+#if 0
+	if (blendMode) {
+		if (blendMode != 1)
+			error("vrtPutDib : RLE Fill : Invalid alpha blend mode");
+
+		paletteFill = ptrcopierWithPaletteAlpha;
+	} else {
+		paletteFill = ptrcopierWithPalette;
+	}
+#endif
+
+}
+
+void Bitmap::copierKeyColor(byte *dest, byte *src, int len, int keyColor) {
+#if 0
+	if (blendMode) {
+		if (blendMode == 1) {
+			if (cb05_format)
+				copierKeyColor = ptrcopier16bitKeycolorAlpha;
+			else
+				copierKeyColor = ptrcopierKeycolorAlpha;
+		} else {
+			copier = 0;
+		}
+	} else if (cb05_format) {
+		copierKeyColor = ptrcopier16bitKeycolor;
+	} else {
+		copierKeyColor = ptrkeyColor16bit;
+	}
+#endif
+
+}
+
+void Bitmap::copier(byte *dest, byte *src, int len) {
+#if 0
+	if (blendMode) {
+		if (blendMode == 1) {
+			if (cb05_format)
+				copier = ptrcopier16bitAlpha;
+			else
+				copier = ptrcopierWithPaletteAlpha;
+		} else {
+			copier = 0;
+		}
+	} else if (cb05_format) {
+		copier = ptrcopier16bit;
+	} else {
+		copier = ptrcopierWithPalette;
+	}
+#endif
+
 }
 
 BigPicture::BigPicture() {

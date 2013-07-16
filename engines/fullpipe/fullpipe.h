@@ -73,6 +73,8 @@ public:
 
 	void updateEvents();
 
+	Graphics::Surface _backgroundSurface;
+
 	CGameLoader *_gameLoader;
 	GameProject *_gameProject;
 	bool loadGam(const char *fname);

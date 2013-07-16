@@ -64,8 +64,12 @@ FullpipeEngine::~FullpipeEngine() {
 }
 
 Common::Error FullpipeEngine::run() {
+
+	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	// Initialize backend
-	initGraphics(800, 600, true);
+	initGraphics(800, 600, true, &format);
+
+	_backgroundSurface.create(800, 600, format);
 
 	_isSaveAllowed = false;
 

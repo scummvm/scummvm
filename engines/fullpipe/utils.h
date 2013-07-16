@@ -81,7 +81,7 @@ class MemoryObject : CObject {
 	friend class Picture;
 
  protected:
-	char *_filename;
+	char *_memfilename;
 	int _field_8;
 	int _field_C;
 	int _field_10;
@@ -98,7 +98,7 @@ class MemoryObject : CObject {
 	MemoryObject();
 	virtual bool load(MfcArchive &file);
 	void loadFile(char *filename);
-	void load() { loadFile(_filename); }
+	void load() { loadFile(_memfilename); }
 	byte *getData();
 };
 

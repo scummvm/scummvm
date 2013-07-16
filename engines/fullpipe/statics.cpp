@@ -145,7 +145,7 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_stringObj = file.readPascalString();
-	debug(7, "statics: <%s>", _stringObj);
+	debug(7, "statics: <%s>", transCyrillic((byte *)_stringObj));
 
 	_picture = new Picture();
 	_picture->load(file);
