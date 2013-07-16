@@ -732,71 +732,56 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 }
 
-void Lucerna::thinkabout(char z, bool th) {     /* Hey!!! Get it and put it!!! */
+void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! */
 	const int16 x = 205;
 	const int16 y = 170;
 	const int16 picsize = 966;
 	const bytefield thinkspace = {25, 170, 32, 200};
-	byte *p;
-	byte fv;
-
 
 	_vm->_gyro.thinks = z;
 	z--;
 
+	_vm->_gyro.wait();
+
 	if (th) {
-		/* Things */
-		_vm->_gyro.wait();
-	
-		p = new byte[picsize];
-	
 		if (!f.open("thinks.avd")) {
 			warning("AVALANCHE: Lucerna: File not found: thinks.avd");
 			return;
 		}
-
-		f.seek(z * picsize + 65);
-
-		f.read(p, picsize);
-
-		_vm->_gyro.off();
-
-		f.close();
 	} else {
-		/* People */
-		_vm->_gyro.wait();
-
-		p = new byte[picsize];
-
 		if (!f.open("folk.avd")) {
 			warning("AVALANCHE: Lucerna: File not found: folk.avd");
 			return;
 		}
 
-		fv = z - 149;
-		if (fv >= 25)
-			fv -= 8;
-		if (fv == 20) 
-			fv--; /* Last time... */
+		z = z - 149;
+		if (z >= 25)
+			z -= 8;
+		if (z == 20) 
+			z--; /* Last time... */
 
-		f.seek(fv * picsize + 65);
-
-		f.read(p, picsize);
-
-		_vm->_gyro.off();
-
-		f.close();
 	}
+
+	f.seek(z * picsize + 65);
+
+	Graphics::Surface *picture = _vm->_graph.readImage(f);
+
+	_vm->_graph.copySurface(*picture, x, y);
+
+	picture->free();
+
+	delete picture;
+
+	f.close();
+
+	_vm->_gyro.off();
 
 	/*setactivepage(3);
 	putimage(x, y, p, 0);
 	setactivepage(1 - cp);*/
-	warning("STUB: Lucerna::thinkabout()");
 
-	for (fv = 0; fv <= 1; fv ++)
+	for (byte fv = 0; fv <= 1; fv ++)
 		_vm->_trip.getset[fv].remember(thinkspace);
-
-	delete[] p;
 	
 	_vm->_gyro.on();
 	_vm->_gyro.thinkthing = th;
@@ -834,29 +819,15 @@ void Lucerna::toolbar() {
 	
 	/* off;*/
 
-	uint16 toolbarWidth = f.readUint16LE() + 1;
-	uint16 toolbarHeight = f.readUint16LE() + 1;
+	Graphics::Surface *toolbar = _vm->_graph.readImage(f);
 
-	Graphics::Surface toolbar;
-	toolbar.create(toolbarWidth, toolbarHeight, Graphics::PixelFormat::createFormatCLUT8());
-	
-	for (byte y = 0; y < toolbarHeight; y++)
-		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
-			for (uint16 x = 0; x < toolbarWidth; x += 8) {
-				byte pixel = f.readByte();
-				for (byte i = 0; i < 8; i++) {
-					byte pixelBit = (pixel >> i) & 1;
-					*(byte *)toolbar.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
-				} 
-			}
-	
-	_vm->_graph.copySurface(toolbar, 5, 169);
+	_vm->_graph.copySurface(*toolbar, 5, 169);
 
-	toolbar.free();
+	toolbar->free();
+
+	delete toolbar;
 
 	f.close();
-
-	warning("STUB: Lucerna::toolbar()");
 
 	/* on;*/
 
