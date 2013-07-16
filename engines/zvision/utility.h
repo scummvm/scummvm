@@ -73,6 +73,8 @@ void removeDuplicateEntries(Common::Array<T> *container) {
 	}
 }
 
+Common::String getFileName(const Common::String &fullPath);
+
 } // End of namespace ZVision
 
 #endif

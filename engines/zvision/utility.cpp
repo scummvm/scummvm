@@ -22,6 +22,8 @@
 
 #include "common/scummsys.h"
 
+#include "common/tokenizer.h"
+
 #include "zvision/utility.h"
 
 namespace ZVision {
@@ -175,6 +177,23 @@ void dumpEveryResultAction(const Common::String &destFile) {
 	}
 
 	output.close();
+}
+
+/**
+ * Gets the name of the file (including extension). Forward or back slashes 
+ * are interpreted as directory changes
+ *
+ * @param fullPath    A full or partial path to the file. Ex: folderOne/folderTwo/file.txt
+ * @return            The name of the file without any preceding directories. Ex: file.txt
+ */
+Common::String getFileName(const Common::String &fullPath) {
+	Common::StringTokenizer tokenizer(fullPath, "/\\");
+	Common::String token;
+	while (!tokenizer.empty()) {
+		token = tokenizer.nextToken();
+	}
+
+	return token;
 }
 
 } // End of namespace ZVision
