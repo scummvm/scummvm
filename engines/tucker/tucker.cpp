@@ -3238,7 +3238,7 @@ int TuckerEngine::executeTableInstruction() {
 		return 1;
 	case kCode_mof:
 		// TODO: Unknown opcode in Spanish version. Identify if this has any function.
-		return 2;
+		return 0;
 	case kCode_opt:
 		_conversationOptionsCount = readTableInstructionParam(2);
 		for (i = 0; i < _conversationOptionsCount; ++i) {
