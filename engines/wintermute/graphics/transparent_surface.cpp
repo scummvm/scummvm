@@ -45,7 +45,7 @@ void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int 
 			if (projX >= srcW || projX < 0 || projY >= srcH || projY < 0) { 
 				color = 0;
 			} else {
-				color = READ_UINT32((const byte *)src->getBasePtr(projX, projY));
+				color = READ_UINT32((const byte *)src->getBasePtr((int)projX, (int)projY));
 			}
 
  			WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
@@ -71,25 +71,25 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 			if (x1 >= srcW || x1 < 0 || y1 >= srcH || y1 < 0) { 
 				Q11 = 0;
 			} else {
-				Q11 = READ_UINT32((const byte *)src->getBasePtr(x1 + srcRect.left, y1 + srcRect.top));
+				Q11 = READ_UINT32((const byte *)src->getBasePtr((int)(x1 + srcRect.left),(int)(y1 + srcRect.top)));
 			}
 
 			if (x1 >= srcW || x1 < 0 || y2 >= srcH || y2 < 0) { 
 				Q12 = 0;
 			} else {
-				Q12 = READ_UINT32((const byte *)src->getBasePtr(x1 + srcRect.left, y2 + srcRect.top));
+				Q12 = READ_UINT32((const byte *)src->getBasePtr((int)(x1 + srcRect.left), (int)(y2 + srcRect.top)));
 			}
 
 			if (x2 >= srcW || x2 < 0 || y1 >= srcH || y1 < 0) { 
 				Q21 = 0;
 			} else {
-				Q21 = READ_UINT32((const byte *)src->getBasePtr(x2 + srcRect.left, y1 + srcRect.top));
+				Q21 = READ_UINT32((const byte *)src->getBasePtr((int)(x2 + srcRect.left), (int)(y1 + srcRect.top)));
 			}
 
 			if (x2 >= srcW || x2 < 0 || y2 >= srcH || y2 < 0) { 
 				Q22 = 0;
 			} else {
-				Q22 = READ_UINT32((const byte *)src->getBasePtr(x2 + srcRect.left, y2 + srcRect.top));
+				Q22 = READ_UINT32((const byte *)src->getBasePtr((int)(x2 + srcRect.left), (int)(y2 + srcRect.top)));
 			}
 
 			byte *Q11s = (byte *)&Q11;
@@ -124,7 +124,7 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 				} 
 
 				for (int c = 0; c < 4; c++) {
-					dest[c]	= (
+					dest[c]	= (byte)(
 								((float)Q11s[c]) * q11x * q11y +
 								((float)Q21s[c]) * q21x * q21y +
 								((float)Q12s[c]) * q12x * q12y +
@@ -580,8 +580,8 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 	int projY;
 	for (int y = 0; y < dstH; y++) {
 		for (int x = 0; x < dstW; x++) {
-			projX = x / (float)dstW * srcW;
-			projY = y / (float)dstH * srcH;
+			projX = (int)(x / (float)dstW * srcW);
+			projY = (int)(y / (float)dstH * srcH);
 			copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target); 
 		}
 	}

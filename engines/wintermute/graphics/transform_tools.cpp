@@ -60,13 +60,13 @@ namespace Wintermute {
 		float right = MAX(nw1.x, MAX(ne1.x, MAX(sw1.x, se1.x)));
 
 		Rect32 res;
-		newHotspot->y = -floor(top);
-		newHotspot->x = -floor(left);
+		newHotspot->y = (uint32)(-floor(top));
+		newHotspot->x = (uint32)(-floor(left));
 
-		res.top = floor(top) + transform._hotspot.y;
-		res.bottom = ceil(bottom) + transform._hotspot.y; 
-		res.left = floor(left) + transform._hotspot.x;
-		res.right = ceil(right) + transform._hotspot.x;
+		res.top = (int32)(floor(top)) + transform._hotspot.y;
+		res.bottom = (int32)(ceil(bottom)) + transform._hotspot.y; 
+		res.left = (int32)(floor(left)) + transform._hotspot.x;
+		res.right = (int32)(ceil(right)) + transform._hotspot.x;
 
 		return res;
 	}
