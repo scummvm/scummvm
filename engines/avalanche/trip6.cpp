@@ -370,7 +370,8 @@ getsettype *getsettype::init() {
 
 void getsettype::remember(bytefield r) {
 	numleft++;
-	warning("STUB: getsettype::remember()");
+	if (numleft > maxgetset)
+		error("Trip::remember() : runerr_Getset_Overflow");
 	gs[numleft] = r;
 }
 
