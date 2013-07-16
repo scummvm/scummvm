@@ -5397,13 +5397,14 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 }
 
 void Scene600::Actor4::signal() {
-	Common::Point pt(36, 177 + R2_GLOBALS._randomSource.getRandomNumber(5));
+	Common::Point pt(177 + R2_GLOBALS._randomSource.getRandomNumber(5),
+		108 + R2_GLOBALS._randomSource.getRandomNumber(3));
 	NpcMover *mover = new NpcMover();
 	addMover(mover, &pt, this);
 }
 
 bool Scene600::Actor4::startAction(CursorType action, Event &event) {
-	if ((action >= CURSOR_WALK) && (action < R2CURSORS_START))
+	if (action >= CURSOR_WALK)
 	// Only action cursors
 		return SceneActor::startAction(action, event);
 
@@ -5456,7 +5457,7 @@ bool Scene600::Actor5::startAction(CursorType action, Event &event) {
 bool Scene600::Actor6::startAction(CursorType action, Event &event) {
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action < CURSOR_WALK) && (action >= R2CURSORS_START)) {
+	if (action < CURSOR_WALK) {
 		switch (action) {
 		case R2_COM_SCANNER:
 			if (R2_GLOBALS.getFlag(6)) {
@@ -5512,7 +5513,7 @@ bool Scene600::Actor6::startAction(CursorType action, Event &event) {
 			return false;
 			break;
 		}
-	} else if (action != CURSOR_USE) {
+	} else if (action == CURSOR_USE) {
 		if (R2_GLOBALS.getFlag(5)) {
 			return SceneActor::startAction(action, event);
 		} else {
@@ -5706,7 +5707,7 @@ void Scene600::signal() {
 		R2_GLOBALS._walkRegions.enableRegion(9);
 		R2_GLOBALS._walkRegions.enableRegion(10);
 
-		R2_INVENTORY.setObjectScene(12, 600);
+		R2_INVENTORY.setObjectScene(R2_AEROSOL, 600);
 		R2_GLOBALS.setFlag(5);
 
 		_actor4._effect = 3;
@@ -5756,7 +5757,8 @@ void Scene600::signal() {
 }
 
 void Scene600::process(Event &event) {
-	if ((!R2_GLOBALS._player._canWalk) && (!R2_GLOBALS.getFlag(6)) && (event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == R2_NEGATOR_GUN)) {
+	if (R2_GLOBALS._player._canWalk && (!R2_GLOBALS.getFlag(6)) && (event.eventType == EVENT_BUTTON_DOWN) 
+			&& (R2_GLOBALS._events.getCursor() == CURSOR_WALK)) {
 		if (!_actor5.contains(event.mousePos) || (_actor5._frame <= 1)) {
 			if (R2_GLOBALS.getFlag(5)) {
 				_field412 += 10;
@@ -5913,7 +5915,7 @@ bool Scene700::Actor5::startAction(CursorType action, Event &event) {
 		case 0:
 			if ((_strip == 2) && (_frame == 1)) {
 				R2_GLOBALS._player.disableControl();
-				if (R2_GLOBALS._player._position.x <= 100) {
+				if (R2_GLOBALS._player._position.y <= 100) {
 					scene->_sceneMode = 710;
 					scene->setAction(&scene->_sequenceManager, scene, 710, &R2_GLOBALS._player, this, NULL);
 				} else {
@@ -6417,8 +6419,8 @@ bool Scene800::Cabinet::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void Scene800::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(800);
+	SceneExt::postInit();
 
 	_door.postInit();
 	_door.setVisage(800);
@@ -7007,8 +7009,8 @@ bool Scene850::Panel::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void Scene850::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(850);
+	SceneExt::postInit();
 
 	_liftDoor.postInit();
 	_liftDoor.setup(850, 2, 1);

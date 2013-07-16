@@ -583,7 +583,7 @@ void SceneHandlerExt::process(Event &event) {
 	SceneExt *scene = static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene);
 	if (scene && R2_GLOBALS._player._uiEnabled) {
 		// Handle any scene areas that have been registered
-		SynchronizedList<SceneArea *>::iterator saIter;
+		SynchronizedList<EventHandler *>::iterator saIter;
 		for (saIter = scene->_sceneAreas.begin(); saIter != scene->_sceneAreas.end() && !event.handled; ++saIter) {
 			(*saIter)->process(event);
 		}
@@ -2059,6 +2059,343 @@ AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
 void AnimationPlayerExt::synchronize(Serializer &s) {
 	AnimationPlayer::synchronize(s);
 	s.syncAsSint16LE(_v);
+}
+
+/*--------------------------------------------------------------------------*/
+
+ModalDialog::ModalDialog() {
+	_field20 = 0;
+}
+
+void ModalDialog::remove() {
+	R2_GLOBALS._sceneItems.remove(&_object1);
+	_object1.remove();
+
+	SceneArea::remove();
+
+	--R2_GLOBALS._insetUp;
+}
+
+void ModalDialog::synchronize(Serializer &s) {
+	SceneArea::synchronize(s);
+
+	s.syncAsByte(_field20);
+}
+
+void ModalDialog::process(Event &event) {
+	if (_field20 != R2_GLOBALS._insetUp)
+		return;
+
+	CursorType cursor = R2_GLOBALS._events.getCursor();
+
+	if (_object1._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
+		if (cursor == _cursorNum) {
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
+		}
+	} else if (event.mousePos.y < 168) {
+		if (cursor != _cursorNum) {
+			_savedCursorNum = cursor;
+			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
+		}
+		if (event.eventType == EVENT_BUTTON_DOWN) {
+			event.handled = true;
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
+			remove();
+		}
+	}
+}
+
+void ModalDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
+
+	_object1.postInit();
+	_object1.setup(visage, stripFrameNum, frameNum);
+	_object1.setPosition(Common::Point(posX, posY));
+	_object1.fixPriority(250);
+	_cursorNum = CURSOR_INVALID;
+	scene->_sceneAreas.push_front(this);
+	++R2_GLOBALS._insetUp;
+	_field20 = R2_GLOBALS._insetUp;
+}
+
+void ModalDialog::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
+ScannerDialog::ScannerActor::ScannerActor() {
+	_v1 = _v2 = 0;
+}
+
+void ScannerDialog::ScannerActor::setup(int v) {
+	_v1 = v;
+	_v2 = 0;
+	SceneActor::postInit();
+
+	SceneObject::setup(4, 2, 2);
+	fixPriority(255);
+
+	if (_v1 == 1)
+		setPosition(Common::Point(141, 99));
+	else if (_v1 == 2)
+		setPosition(Common::Point(141, 108));
+
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.push_front(this);
+}
+
+void ScannerDialog::ScannerActor::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+	s.syncAsSint16LE(_v1);
+	s.syncAsSint16LE(_v2);
+}
+
+void ScannerDialog::ScannerActor::process(Event &event) {
+	if (event.eventType == EVENT_BUTTON_DOWN && R2_GLOBALS._events.getCursor() == CURSOR_USE
+			&& _bounds.contains(event.mousePos) && !_v2) {
+		setFrame(3);
+		_v2 = 1;
+		event.handled = true;
+	}
+
+	if (event.eventType == EVENT_BUTTON_UP && _v2) {
+		setFrame(2);
+		_v2 = 0;
+		event.handled = true;
+		
+		reset();
+	}
+}
+
+bool ScannerDialog::ScannerActor::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return false;
+
+	return startAction(action, event);
+}
+
+void ScannerDialog::ScannerActor::reset() {
+	Scene *scene = R2_GLOBALS._sceneManager._scene;
+	ScannerDialog &scanner = *R2_GLOBALS._scannerDialog;
+
+	switch (_v1) {
+	case 1:
+		switch (R2_GLOBALS._sceneManager._sceneNumber) {
+		case 1550:
+			scene->_sceneMode = 80;
+			scene->signal();
+			break;
+		case 1700:
+			scene->_sceneMode = 30;
+			scene->signal();
+			remove();
+			break;
+		default:
+			break;
+		}
+		break;
+	case 2:
+		switch (R2_GLOBALS._sceneManager._sceneNumber) {
+		case 1550:
+			scanner._obj4.setup(4, 3, 1);
+
+			scanner._obj5.postInit();
+			scanner._obj5.setup(4, 4, 1);
+			scanner._obj5.setPosition(Common::Point(R2_GLOBALS._v565EC[1] + 145,
+				R2_GLOBALS._v565EC[3] + 59));
+			scanner._obj5.fixPriority(257);
+
+			scanner._obj6.postInit();
+			scanner._obj6.setup(4, 4, 2);
+			scanner._obj6.setPosition(Common::Point(R2_GLOBALS._v565EC[2] + 145,
+				R2_GLOBALS._v565EC[4] + 59));
+			scanner._obj6.fixPriority(257);
+			break;
+		case 1700:
+		case 1800:
+			if (R2_GLOBALS._v565F8 < 0 || (R2_GLOBALS._v565F8 == 0 && R2_GLOBALS._v565F6 < 1201))
+				scanner._obj4.setup(4, 3, 3);
+			else if (R2_GLOBALS._v565F8 > 0 || (R2_GLOBALS._v565F8 == 0 && R2_GLOBALS._v565F6 < 1201))
+				scanner._obj4.setup(4, 3, 4);
+			else
+				scanner._obj4.setup(4, 3, 5);
+			break;
+		case 3800:
+		case 3900:
+			if ((R2_GLOBALS._v56A93 + 1) == 0 && R2_GLOBALS._v566A9 == 0) {
+				do {
+					R2_GLOBALS._v566A9 = R2_GLOBALS._randomSource.getRandomNumber(3);
+				} while (R2_GLOBALS._v566A9 == R2_GLOBALS._v566AA);
+			}
+
+			scanner._obj4.setup(4, 7, R2_GLOBALS._v566A9);
+			if (!R2_GLOBALS.getFlag(46))
+				R2_GLOBALS.setFlag(46);
+			break;
+		default:
+			scanner._obj4.setup(4, 3, 2);
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+ScannerDialog::ScannerActor2::ScannerActor2() {
+	_v1 = _v2 = _yp = 0;
+	_v4 = _v5 = _v6 = 0;
+}
+
+void ScannerDialog::ScannerActor2::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+
+	s.syncAsSint16LE(_v1);
+	s.syncAsSint16LE(_v2);
+	s.syncAsSint16LE(_yp);
+	s.syncAsSint16LE(_v4);
+	s.syncAsSint16LE(_v5);
+	s.syncAsSint16LE(_v6);
+}
+
+void ScannerDialog::ScannerActor2::remove() {
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.remove(this);
+	SceneActor::remove();
+}
+
+void ScannerDialog::ScannerActor2::process(Event &event) {
+	if (event.eventType == EVENT_BUTTON_DOWN && R2_GLOBALS._events.getCursor() == CURSOR_USE
+			&& _bounds.contains(event.mousePos) && !_v2) {
+		_v6 = 1;
+	}
+
+	if (event.eventType == EVENT_BUTTON_UP && _v6) {
+		_v6 = 0;
+		event.handled = 1;
+		update();
+	}
+
+	if (_v6) {
+		event.handled = true;
+		if (event.mousePos.x < _v2) {
+			setPosition(Common::Point(_v2, _yp));
+		} else if (event.mousePos.x >= (_v2 + _v4)) {
+			setPosition(Common::Point(_v2 + _v4, _yp));
+		} else {
+			setPosition(Common::Point(event.mousePos.x, _yp));
+		}
+	}
+}
+
+bool ScannerDialog::ScannerActor2::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return false;
+
+	return startAction(action, event);
+}
+
+void ScannerDialog::ScannerActor2::update() {
+	int v = (_v4 / (_v5 - 1)) / 2;
+	int v2 = ((_position.x - _v2 + v) * _v5) / (_v4 + v * 2);
+	setPosition(Common::Point(_v2 + ((_v4 * v2) / (_v5 - 1)), _yp));
+
+	R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex] = v2;
+
+	switch (v2 - 1) {
+	case 0:
+		R2_GLOBALS._sound4.stop();
+		break;
+	case 1:
+		R2_GLOBALS._sound4.play(45);
+		break;
+	case 2:
+		R2_GLOBALS._sound4.play(4);
+		break;
+	case 3:
+		R2_GLOBALS._sound4.play(5);
+		break;
+	case 4:
+		R2_GLOBALS._sound4.play(6);
+		break;
+	default:
+		break;
+	}
+}
+
+void ScannerDialog::ScannerActor2::setup(int v1, int v2, int yp, int v4, int v5) {
+	_v1 = v1;
+	_v2 = v2;
+	_yp = yp;
+	_v4 = v4;
+	_v5 = v5;
+	_v6 = 0;
+	SceneActor::postInit();
+	fixPriority(255);
+	setPosition(Common::Point(_v4 * (_v1 - 1) / (_v5 - 1) + _v2, yp));
+
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.push_front(this);
+}
+
+/*--------------------------------------------------------------------------*/
+
+ScannerDialog::ScannerDialog() {
+}
+
+void ScannerDialog::remove() {
+	switch (R2_GLOBALS._sceneManager._sceneNumber) {
+	case 1550:
+	case 1700:
+		R2_GLOBALS._events.setCursor(R2_GLOBALS._player._canWalk ? CURSOR_ARROW : CURSOR_USE);
+		break;
+	case 3800:
+	case 3900: {
+		Scene *scene = R2_GLOBALS._sceneManager._scene;
+		scene->_sceneMode = 3806;
+		scene->signal();
+		break;
+		}
+	default:
+		break;
+	}
+
+	SceneExt *scene = static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene);
+	scene->_sceneAreas.remove(&_obj1);
+	scene->_sceneAreas.remove(&_obj2);
+	_obj1.remove();
+	_obj2.remove();
+	_obj3.remove();
+	_obj4.remove();
+	_obj5.remove();
+	_obj6.remove();
+	_obj7.remove();
+
+	ModalDialog::remove();
+}
+
+void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+	// Stop player moving if currently doing so
+	if (R2_GLOBALS._player._mover)
+		R2_GLOBALS._player.addMover(NULL);
+
+	R2_GLOBALS._events.setCursor(EXITCURSOR_LEFT_HAND);
+	ModalDialog::proc12(visage, stripFrameNum, frameNum, posX, posY);
+
+	proc13(100, -1, -1, -1);
+	_obj1.setup(1);
+	_obj2.setup(2);
+	_obj3.setup(R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);
+	_obj4.postInit();
+	_obj4.setup(4, 3, 2);
+	_obj4.setPosition(Common::Point(160, 83));
+	_obj4.fixPriority(256);
+
+	if (R2_GLOBALS._sceneManager._sceneNumber == 3800 || R2_GLOBALS._sceneManager._sceneNumber == 3900) {
+		Scene *scene = R2_GLOBALS._sceneManager._scene;
+		scene->_sceneMode = 3805;
+		scene->signal();
+	}
 }
 
 } // End of namespace Ringworld2

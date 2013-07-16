@@ -120,7 +120,7 @@ public:
 class Scene1200 : public SceneExt {
 	enum CrawlDirection { CRAWL_EAST = 1, CRAWL_WEST = 2, CRAWL_SOUTH = 3, CRAWL_NORTH = 4 };
 
-	class LaserPanel: public SceneArea {
+	class LaserPanel: public ModalDialog {
 	public:
 		class Jumper : public SceneActorExt {
 		public:
@@ -128,21 +128,14 @@ class Scene1200 : public SceneExt {
 			virtual bool startAction(CursorType action, Event &event);
 		};
 
-		SceneActor _actor2;
 		Jumper _jumper1;
 		Jumper _jumper2;
 		Jumper _jumper3;
 
-		byte _field20;
-
 		LaserPanel();
-		void synchronize(Serializer &s);
 
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void remove();
-		virtual void process(Event &event);
-		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
 public:

@@ -366,8 +366,19 @@ bool BlueForceGlobals::removeFlag(int flagNum) {
 
 namespace Ringworld2 {
 
+Ringworld2Globals::Ringworld2Globals() {
+	_scannerDialog = new ScannerDialog();
+}
+
+Ringworld2Globals::~Ringworld2Globals() {
+	delete _scannerDialog;
+}
+
 void Ringworld2Globals::reset() {
 	Globals::reset();
+
+	if (!_scannerDialog)
+		_scannerDialog = new ScannerDialog();
 
 	// Reset the inventory
 	R2_INVENTORY.reset();
@@ -393,6 +404,7 @@ void Ringworld2Globals::reset() {
 	_v565EB = 26;
 	_v565F5 = 0;
 	_v565F6 = 0;
+	_v565F8 = 0;
 	_v565FA = 0;
 	_v565AE = 0;
 	_v56605[0] = 0;
@@ -507,6 +519,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v565EB);
 	s.syncAsSint16LE(_v565F5);
 	s.syncAsSint16LE(_v565F6);
+	s.syncAsSint16LE(_v565F8);
 	s.syncAsSint16LE(_v565FA);
 	s.syncAsSint16LE(_v566A3);
 	s.syncAsSint16LE(_v566A6);

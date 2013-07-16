@@ -247,6 +247,8 @@ namespace Ringworld2 {
 #define k5A790 18
 #define k5A791 17
 
+class ScannerDialog;
+
 class Ringworld2Globals: public TsAGE2Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
@@ -269,6 +271,7 @@ public:
 	int _v565EB;
 	int _v565F5;
 	int _v565F6;
+	int _v565F8;
 	int _v565FA;
 	int _v5657C;
 	byte _v565AE;
@@ -304,7 +307,10 @@ public:
 	byte _v565EC[5];
 	byte _v565F1[4];
 	byte _stripManager_lookupList[12];
+	ScannerDialog *_scannerDialog;
 
+	Ringworld2Globals();
+	virtual ~Ringworld2Globals();
 	virtual void reset();
 	virtual void synchronize(Serializer &s);
 };

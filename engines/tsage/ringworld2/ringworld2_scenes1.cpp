@@ -883,13 +883,6 @@ void Scene1200::synchronize(Serializer &s) {
 }
 
 Scene1200::LaserPanel::LaserPanel() {
-	_field20 = 0;
-}
-
-void Scene1200::LaserPanel::synchronize(Serializer &s) {
-	SceneArea::synchronize(s);
-
-	s.syncAsByte(_field20);
 }
 
 void Scene1200::LaserPanel::Jumper::init(int state) {
@@ -1051,51 +1044,11 @@ void Scene1200::LaserPanel::remove() {
 
 	// sub201EA
 	R2_GLOBALS._sceneItems.remove((SceneItem *)this);
-	_actor2.remove();
+	_object1.remove();
 	SceneArea::remove();
 	R2_GLOBALS._insetUp--;
 
 	R2_GLOBALS._player._canWalk = true;
-}
-
-void Scene1200::LaserPanel::process(Event &event) {
-	if (_field20 != R2_GLOBALS._insetUp)
-		return;
-
-	CursorType cursor = R2_GLOBALS._events.getCursor();
-
-	if (_actor2._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
-		if (cursor == _cursorNum) {
-			R2_GLOBALS._events.setCursor(_savedCursorNum);
-		}
-	} else if (event.mousePos.y < 168) {
-		if (cursor != _cursorNum) {
-			_savedCursorNum = cursor;
-			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
-		}
-		if (event.eventType == EVENT_BUTTON_DOWN) {
-			event.handled = true;
-			R2_GLOBALS._events.setCursor(_savedCursorNum);
-			remove();
-		}
-	}
-}
-
-void Scene1200::LaserPanel::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
-	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
-
-	_actor2.postInit();
-	_actor2.setup(visage, stripFrameNum, frameNum);
-	_actor2.setPosition(Common::Point(posX, posY));
-	_actor2.fixPriority(250);
-	_cursorNum = CURSOR_INVALID;
-	scene->_sceneAreas.push_front(this);
-	++R2_GLOBALS._insetUp;
-	_field20 = R2_GLOBALS._insetUp;
-}
-
-void Scene1200::LaserPanel::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	_actor2.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
 void Scene1200::postInit(SceneObjectList *OwnerList) {
