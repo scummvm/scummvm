@@ -64,7 +64,7 @@ struct Rect32 {
 
 	Rect32() : top(0), left(0), bottom(0), right(0) {}
 	Rect32(int32 w, int32 h) : top(0), left(0), bottom(h), right(w) {}
-	Rect32(Common::Rect rect) : top(rect.top), left(rect.left), bottom(rect.bottom), right(rect.right) {}
+	Rect32(const Common::Rect &rect) : top(rect.top), left(rect.left), bottom(rect.bottom), right(rect.right) {}
 	Rect32(int32 x1, int32 y1, int32 x2, int32 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
