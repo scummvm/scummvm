@@ -81,9 +81,22 @@ protected:
 	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
 
-	int convertFilePath(byte *dst, int dstSize);
 	virtual void decodeParseString(int a, int b);
 	void swapObjects(int object1, int object2);
+
+	Common::String convertFilePath(const byte *src);
+	Common::String convertSavePath(const byte *src);
+	Common::String convertSavePathOld(const byte *src);
+
+	Common::SeekableReadStream *openFileForReading(const byte *fileName);
+	Common::SeekableReadStream *openSaveFileForReading(const byte *fileName);
+	Common::WriteStream *openSaveFileForWriting(const byte *fileName);
+	Common::WriteStream *openSaveFileForAppending(const byte *fileName);
+	void deleteSaveFile(const byte *fileName);
+	void renameSaveFile(const byte *from, const byte *to);
+
+	Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
+	Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
 
 	/* HE version 60 script opcodes */
 	void o60_setState();
