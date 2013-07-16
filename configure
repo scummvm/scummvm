@@ -1785,7 +1785,8 @@ android | gamecube | psp | tizen | wii | webos)
 *)
 	# ICC does not support pedantic, while GCC and clang do.
 	if test "$have_icc" = no ; then
-		CXXFLAGS="$CXXFLAGS -pedantic"
+		# We *do* want the 'long long' extension.
+		CXXFLAGS="$CXXFLAGS -pedantic -Wno-long-long"
 	fi
 	;;
 esac
