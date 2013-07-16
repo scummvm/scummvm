@@ -22,18 +22,24 @@
 
 #include "common/scummsys.h"
 
+#include "common/file.h"
+#include "common/str.h"
 #include "common/stream.h"
 #include "common/memstream.h"
+#include "common/bufferedstream.h"
 #include "common/util.h"
 #include "audio/audiostream.h"
 
-#include "engines/zvision/zork_raw.h"
+#include "zvision/zork_raw.h"
+#include "zvision/zvision.h"
+#include "zvision/detection.h"
+#include "zvision/utility.h"
 
 namespace ZVision {
 
-const int16 RawZorkStream::stepAdjustmentTable[8] = {-1, -1, -1, 1, 4, 7, 10, 12};
+const int16 RawZorkStream::_stepAdjustmentTable[8] = {-1, -1, -1, 1, 4, 7, 10, 12};
 
-const int32 RawZorkStream::amplitudeLookupTable[89] = {0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E,
+const int32 RawZorkStream::_amplitudeLookupTable[89] = {0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E,
                                                        0x0010, 0x0011, 0x0013, 0x0015, 0x0017, 0x0019, 0x001C, 0x001F,
                                                        0x0022, 0x0025, 0x0029, 0x002D, 0x0032, 0x0037, 0x003C, 0x0042,
                                                        0x0049, 0x0050, 0x0058, 0x0061, 0x006B, 0x0076, 0x0082, 0x008F,
@@ -45,9 +51,10 @@ const int32 RawZorkStream::amplitudeLookupTable[89] = {0x0007, 0x0008, 0x0009, 0
                                                        0x1BDC, 0x1EA5, 0x21B6, 0x2515, 0x28CA, 0x2CDF, 0x315B, 0x364B,
                                                        0x3BB9, 0x41B2, 0x4844, 0x4F7E, 0x5771, 0x602F, 0x69CE, 0x7462, 0x7FFF};
 
-RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
+RawZorkStream::RawZorkStream(uint32 rate, bool stereo, bool packed, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
 		: _rate(rate),
 		  _stereo(stereo),
+		  _packed(packed),
 		  _stream(stream, disposeStream),
 		  _endOfData(false) {
 	_lastSample[0] = {0, 0};
@@ -58,6 +65,18 @@ RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag dis
 }
 
 int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
+	if (_packed)
+		return decodeADPCM(buffer, numSamples);
+	else {
+		uint32 bytesRead = _stream->read(buffer, numSamples);
+		if (_stream->eos())
+			_endOfData = true;
+
+		return bytesRead;
+	}
+}
+
+int RawZorkStream::decodeADPCM(int16 *buffer, const int numSamples) {
 	uint16 bytesRead = 0;
 
 	// 0: Left, 1: Right
@@ -72,7 +91,7 @@ int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
 		bytesRead++;
 
 		int16 index = _lastSample[channel].index;
-		uint32 lookUpSample = amplitudeLookupTable[index];
+		uint32 lookUpSample = _amplitudeLookupTable[index];
 
 		int32 sample = 0;
 
@@ -98,7 +117,7 @@ int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		buffer[bytesRead - 1] = (int16)sample;
 
-		index += stepAdjustmentTable[(encodedSample >> 4) & 7];
+		index += _stepAdjustmentTable[(encodedSample >> 4) & 7];
 		index = CLIP<uint16>(index, 0, 88);
 
 		_lastSample[channel].sample = sample;
@@ -124,16 +143,43 @@ bool RawZorkStream::rewind() {
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
                                                 int rate,
 								                bool stereo,
+												bool packed,
                                                 DisposeAfterUse::Flag disposeAfterUse) {
 	assert(stream->size() % 2 == 0);
-	return new RawZorkStream(rate, stereo, disposeAfterUse, stream);
+	return new RawZorkStream(rate, stereo, packed, disposeAfterUse, stream);
 }
 
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
                                                 int rate,
 								                bool stereo,
+												bool packed,
                                                 DisposeAfterUse::Flag disposeAfterUse) {
-	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, stereo, DisposeAfterUse::YES);
+	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, stereo, packed, DisposeAfterUse::YES);
+}
+
+Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine) {
+	Common::File *file = new Common::File();
+	assert(file->open(filePath));
+
+	Common::String fileName = getFileName(filePath);
+	fileName.toLowercase();
+
+	SoundParams soundParams;
+
+	if (engine->getGameId() == ZorkNemesis) {
+		for (int i = 0; i < 6; i++) {
+			if (zNemSoundParamLookupTable[i].identifier == (fileName[6]))
+				soundParams = zNemSoundParamLookupTable[i];
+		}
+	}
+	else if (engine->getGameId() == ZorkGrandInquisitor) {
+		for (int i = 0; i < 6; i++) {
+			if (zgiSoundParamLookupTable[i].identifier == (fileName[7]))
+				soundParams = zgiSoundParamLookupTable[i];
+		}
+	}
+
+	return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams.rate, soundParams.stereo, soundParams.packed, DisposeAfterUse::YES);
 }
 
 } // End of namespace ZVision

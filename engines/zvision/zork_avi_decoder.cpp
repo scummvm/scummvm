@@ -26,13 +26,13 @@
 #include "common/stream.h"
 #include "audio/audiostream.h"
 
-#include "engines/zvision/zork_avi_decoder.h"
-#include "engines/zvision/zork_raw.h"
+#include "zvision/zork_avi_decoder.h"
+#include "zvision/zork_raw.h"
 
 namespace ZVision {
 
-Video::AVIDecoder::AVIAudioTrack *ZVision::ZorkAVIDecoder::createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) {
-	ZVision::ZorkAVIDecoder::ZorkAVIAudioTrack *audioTrack = new ZVision::ZorkAVIDecoder::ZorkAVIAudioTrack(sHeader, wvInfo, _soundType);
+Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) {
+	ZorkAVIDecoder::ZorkAVIAudioTrack *audioTrack = new ZorkAVIDecoder::ZorkAVIAudioTrack(sHeader, wvInfo, _soundType);
 	return (Video::AVIDecoder::AVIAudioTrack *)audioTrack;
 }
 
@@ -40,7 +40,7 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 	if (_audStream) {
 		if (_wvInfo.tag == kWaveFormatZorkPCM) {
 			assert(_wvInfo.size == 8);
-			_audStream->queueAudioStream(makeRawZorkStream(stream, _wvInfo.samplesPerSec, DisposeAfterUse::YES), DisposeAfterUse::YES);
+			_audStream->queueAudioStream(makeRawZorkStream(stream, _wvInfo.samplesPerSec, _audStream->isStereo(), DisposeAfterUse::YES), DisposeAfterUse::YES);
 		}
 	} else {
 		delete stream;

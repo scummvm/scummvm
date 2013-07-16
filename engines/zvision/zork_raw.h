@@ -31,15 +31,43 @@ class SeekableReadStream;
 }
 
 namespace ZVision {
+
+class ZVision;
+
+struct SoundParams {
+	char identifier;
+	uint16 rate;
+	bool stereo;
+	bool packed;
+};
+
+const SoundParams zNemSoundParamLookupTable[6] = {{'6', 0x2B11, false, false},
+                                                  {'a', 0x5622, false,  true}, 
+                                                  {'b', 0x5622, true,  true},
+                                                  {'n', 0x2B11, false, true},
+                                                  {'s', 0x5622, false, true},
+                                                  {'t', 0x5622, true, true}
+};
+
+const SoundParams zgiSoundParamLookupTable[5] = {{'a',0x5622, false, false},
+                                                 {'k',0x2B11, true, true},
+                                                 {'p',0x5622, false, true},
+                                                 {'q',0x5622, true, true},
+                                                 {'u',0xAC44, true, true}
+};
+
 /**
  * This is a stream, which allows for playing raw ADPCM data from a stream.
  */
 class RawZorkStream : public Audio::RewindableAudioStream {
 public:
-	RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
+	RawZorkStream(uint32 rate, bool stereo, bool packed, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
+	RawZorkStream(const Common::String &filePath, ZVision *engine);
 
 	~RawZorkStream() {
 	}
+
+public:
 
 private:
 	const int _rate;                                           // Sample rate of stream
@@ -47,6 +75,7 @@ private:
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
 	bool _endOfData;                                           // Whether the stream end has been reached
 	bool _stereo;
+	bool _packed;
 
 	/** 
 	 * Holds the frequency and index from the last sample
@@ -57,9 +86,8 @@ private:
 		int16 index;
 	} _lastSample[2];
 
-	static const int16 stepAdjustmentTable[8];
-
-	static const int32 amplitudeLookupTable[89];
+	static const int16 _stepAdjustmentTable[8];
+	static const int32 _amplitudeLookupTable[89];
 
 public:
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -73,14 +101,7 @@ public:
 	bool rewind();
 
 private:
-	/**
-	 * Fill the temporary sample buffer used in readBuffer.
-	 *
-	 * @param maxSamples Maximum samples to read.
-	 * @return actual count of samples read.
-	 */
-	int fillBuffer(int maxSamples);
-	uint32 processBlock();
+	int decodeADPCM(int16 *buffer, const int numSamples);
 };
 
 /**
@@ -95,6 +116,7 @@ private:
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
                                                 int rate,
 								                bool stereo,
+												bool packed,
                                                 DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
@@ -108,7 +130,10 @@ Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
                                                 int rate,
 								                bool stereo,
+												bool packed,
                                                 DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine);
 
 } // End of namespace ZVision
 
