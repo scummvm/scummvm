@@ -145,7 +145,6 @@ private:
 	Common::String nextstring();
 	void scram1(Common::String &x);
 	void unscramble();
-	//lódalszó
 
 	void zoomout(int16 x, int16 y);
 

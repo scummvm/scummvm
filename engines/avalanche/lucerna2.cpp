@@ -90,6 +90,7 @@ void Lucerna::draw_also_lines() {
 
 
 
+// nextstring, scram1 and unscrable are only used in load_also 
 
 Common::String Lucerna::nextstring() {
 	Common::String str;
@@ -111,6 +112,8 @@ void Lucerna::unscramble() {
 				scram1(*_vm->_gyro.also[fv][ff]);
 	scram1(_vm->_gyro.listen);
 	scram1(_vm->_gyro.flags);
+	/*     for fz:=1 to length(also[fv,ff]^) do
+	      also[fv,ff]^[fz]:=chr(ord(also[fv,ff]^[fz]) xor 177);*/
 }
 
 void Lucerna::load_also(Common::String n) {
@@ -143,6 +146,7 @@ void Lucerna::load_also(Common::String n) {
 	
 	memset(_vm->_gyro.lines, 0xFF, sizeof(_vm->_gyro.lines));
 	
+	//fv = getpixel(0, 0);
 	fv = f.readByte();
 	for (byte i = 0; i < fv; i++) {
 		_vm->_gyro.lines[i].x1 = f.readSint16LE();
@@ -261,10 +265,9 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	background.free();
 
-
-
-
 	f.close();
+
+
 
 	load_also(xx);
 	_vm->_celer.load_chunks(xx);
@@ -291,44 +294,38 @@ void Lucerna::zoomout(int16 x, int16 y) {
 }
 
 void Lucerna::find_people(byte room) {
-	char fv;
-
-	for (fv = 151; fv <= 178; fv ++)
+	for (byte fv = 151; fv <= 178; fv++)
 		if (_vm->_gyro.whereis[fv] == room) {
-			if (fv < 175)  _vm->_gyro.him = fv;
-			else _vm->_gyro.her = fv;
+			if (fv < 175)
+				_vm->_gyro.him = fv;
+			else
+				_vm->_gyro.her = fv;
 		}
 }
 
 void Lucerna::exitroom(byte x) {
 	//nosound();
 	_vm->_celer.forget_chunks();
-	_vm->_gyro.seescroll = true;  /* This stops the trippancy system working over the
-  length of this procedure. */
+	_vm->_gyro.seescroll = true;  /* This stops the trippancy system working over the length of this procedure. */
 
-	{
-		dnatype &with = _vm->_gyro.dna;
-		switch (x) {
-		case r__spludwicks: {
-			_vm->_timeout.lose_timer(_vm->_timeout.reason_avariciustalks);
-			/* He doesn't HAVE to be talking for this to work. It just deletes it IF it
-			exists. */        with.avaricius_talk = 0;
+	switch (x) {
+	case r__spludwicks:
+		_vm->_timeout.lose_timer(_vm->_timeout.reason_avariciustalks);
+		 _vm->_gyro.dna.avaricius_talk = 0;
+		/* He doesn't HAVE to be talking for this to work. It just deletes it IF it exists. */       
+		break;
+	case r__bridge:
+		if (_vm->_gyro.dna.drawbridge_open > 0) {
+			_vm->_gyro.dna.drawbridge_open = 4; /* Fully open. */
+			_vm->_timeout.lose_timer(_vm->_timeout.reason_drawbridgefalls);
 		}
 		break;
-		case r__bridge:
-			if (with.drawbridge_open > 0) {
-				with.drawbridge_open = 4; /* Fully open. */
-				_vm->_timeout.lose_timer(_vm->_timeout.reason_drawbridgefalls);
-			}
-			break;
-		case r__outsidecardiffcastle:
-			_vm->_timeout.lose_timer(_vm->_timeout.reason_cardiffsurvey);
-			break;
-
-		case r__robins:
-			_vm->_timeout.lose_timer(_vm->_timeout.reason_getting_tied_up);
-			break;
-		}
+	case r__outsidecardiffcastle:
+		_vm->_timeout.lose_timer(_vm->_timeout.reason_cardiffsurvey);
+		break;
+	case r__robins:
+		_vm->_timeout.lose_timer(_vm->_timeout.reason_getting_tied_up);
+		break;
 	}
 
 	_vm->_gyro.interrogation = 0; /* Leaving the room cancels all the questions automatically. */
@@ -345,8 +342,7 @@ void Lucerna::new_town() {   /* You've just entered a town from the map. */
 
 	switch (_vm->_gyro.dna.room) {
 	case r__outsidenottspub: /* Entry into Nottingham. */
-		if ((_vm->_gyro.dna.rooms[r__robins] > 0) && (_vm->_gyro.dna.been_tied_up) &&
-		        (! _vm->_gyro.dna.taken_mushroom))
+		if ((_vm->_gyro.dna.rooms[r__robins] > 0) && (_vm->_gyro.dna.been_tied_up) && (! _vm->_gyro.dna.taken_mushroom))
 			_vm->_gyro.dna.mushroom_growing = true;
 		break;
 	case r__wisewomans: { /* Entry into Argent. */
@@ -371,7 +367,8 @@ void Lucerna::new_town() {   /* You've just entered a town from the map. */
 
 
 void Lucerna::put_geida_at(byte whichped, byte &ped) {
-	if (ped == 0)  return;
+	if (ped == 0)
+		return;
 	_vm->_trip.tr[2].init(5, false, &_vm->_trip); /* load Geida */
 	_vm->_trip.apped(2, whichped);
 	_vm->_trip.tr[2].call_eachstep = true;
@@ -383,7 +380,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	find_people(x);
 	_vm->_gyro.dna.room = x;
-	if (ped != 0)  _vm->_gyro.dna.rooms[x] += 1;
+	if (ped != 0)
+		_vm->_gyro.dna.rooms[x]++;
 
 	load(x);
 
@@ -397,11 +395,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	_vm->_gyro.roomtime = 0;
 
-	{
-		dnatype &with = _vm->_gyro.dna;
-		if ((with.last_room == r__map) && (with.last_room_not_map != with.room))
-			new_town();
-	}
+	
+	if ((_vm->_gyro.dna.last_room == r__map) && (_vm->_gyro.dna.last_room_not_map != _vm->_gyro.dna.room))
+		new_town();
+	
 
 	switch (x) {
 	case r__yours:
@@ -690,7 +687,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 		break;
 
 	case r__aylesoffice:
-		if (_vm->_gyro.dna.ayles_is_awake)  _vm->_celer.show_one(2);
+		if (_vm->_gyro.dna.ayles_is_awake)
+			_vm->_celer.show_one(2);
 		break; /* Ayles awake. */
 
 	case r__geidas:
@@ -884,67 +882,67 @@ void Lucerna::fxtoggle() {
 }
 
 void Lucerna::objectlist() {
-	char fv;
-
 	_vm->_gyro.dna.carrying = 0;
 	if (_vm->_gyro.thinkthing && ! _vm->_gyro.dna.obj[_vm->_gyro.thinks])
 		thinkabout(_vm->_gyro.money, _vm->_gyro.a_thing); /* you always have money */
-	for (fv = '\1'; fv <= numobjs; fv ++)
+	for (byte fv = 0; fv < numobjs; fv ++)
 		if (_vm->_gyro.dna.obj[fv]) {
-			_vm->_gyro.dna.carrying += 1;
-			_vm->_gyro.objlist[_vm->_gyro.dna.carrying] = fv;
+			_vm->_gyro.dna.carrying ++;
+			_vm->_gyro.objlist[_vm->_gyro.dna.carrying] = fv + 1;
 		}
 }
 
 void Lucerna::verte() {
 	byte what;
 
-	if (! _vm->_gyro.dna.user_moves_avvy)  return;
-	{
-		triptype &with = _vm->_trip.tr[1];  /* that's the only one we're interested in here */
+	if (! _vm->_gyro.dna.user_moves_avvy) 
+		return;
 
 
-		if (_vm->_gyro.mx < with.x)  what = 1;
-		else if (_vm->_gyro.mx > (unsigned char)(with.x + with.a.xl))  what = 2;
-		else
-			what = 0; /* On top */
+	/* _vm->_trip.tr[0] : that's the only one we're interested in here */
+	if (_vm->_gyro.mx < _vm->_trip.tr[0].x) 
+		what = 1;
+	else if (_vm->_gyro.mx > (unsigned char)(_vm->_trip.tr[0].x + _vm->_trip.tr[0].a.xl)) 
+		what = 2;
+	else
+		what = 0; /* On top */
 
-		if (_vm->_gyro.my < with.y)  what += 3;
-		else if (_vm->_gyro.my > (unsigned char)(with.y + with.a.yl))  what += 6;
+	if (_vm->_gyro.my < _vm->_trip.tr[0].y)
+		what += 3;
+	else if (_vm->_gyro.my > (unsigned char)(_vm->_trip.tr[0].y + _vm->_trip.tr[0].a.yl))
+		what += 6;
 
-		switch (what) {
-		case 0:
-			_vm->_trip.stopwalking();
-			break; /* Clicked on Avvy- no movement */
-		case 1:
-			_vm->_trip.rwsp(1, _vm->_trip.left);
-			break;
-		case 2:
-			_vm->_trip.rwsp(1, _vm->_trip.right);
-			break;
-		case 3:
-			_vm->_trip.rwsp(1, _vm->_trip.up);
-			break;
-		case 4:
-			_vm->_trip.rwsp(1, _vm->_trip.ul);
-			break;
-		case 5:
-			_vm->_trip.rwsp(1, _vm->_trip.ur);
-			break;
-		case 6:
-			_vm->_trip.rwsp(1, _vm->_trip.down);
-			break;
-		case 7:
-			_vm->_trip.rwsp(1, _vm->_trip.dl);
-			break;
-		case 8:
-			_vm->_trip.rwsp(1, _vm->_trip.dr);
-			break;
-		}    /* no other values are possible... */
+	switch (what) {
+	case 0:
+		_vm->_trip.stopwalking();
+		break; /* Clicked on Avvy- no movement */
+	case 1:
+		_vm->_trip.rwsp(1, _vm->_trip.left);
+		break;
+	case 2:
+		_vm->_trip.rwsp(1, _vm->_trip.right);
+		break;
+	case 3:
+		_vm->_trip.rwsp(1, _vm->_trip.up);
+		break;
+	case 4:
+		_vm->_trip.rwsp(1, _vm->_trip.ul);
+		break;
+	case 5:
+		_vm->_trip.rwsp(1, _vm->_trip.ur);
+		break;
+	case 6:
+		_vm->_trip.rwsp(1, _vm->_trip.down);
+		break;
+	case 7:
+		_vm->_trip.rwsp(1, _vm->_trip.dl);
+		break;
+	case 8:
+		_vm->_trip.rwsp(1, _vm->_trip.dr);
+		break;
+	}    /* no other values are possible... */
 
-		showrw();
-
-	}
+	showrw();
 }
 
 void Lucerna::checkclick() {
@@ -964,19 +962,15 @@ void Lucerna::errorled() {
 }
 
 int8 Lucerna::fades(int8 x) {
-	byte r, g, b;
-
-	int8 fades_result;
-	r = x / 16;
+	byte r = x / 16;
 	x = x % 16;
-	g = x / 4;
-	b = x % 4;
-	if (r > 0)  r -= 1;
-	if (g > 0)  g -= 1;
-	if (b > 0)  b -= 1;
-	fades_result = (16 * r + 4 * g + b);
+	byte g = x / 4;
+	byte b = x % 4;
+	if (r > 0)  r --;
+	if (g > 0)  g --;
+	if (b > 0)  b --;
+	return (16 * r + 4 * g + b);
 	/* fades:=x-1;*/
-	return fades_result;
 }
 
 
@@ -1155,11 +1149,11 @@ void Lucerna::delavvy() {
 	byte page_;
 
 	_vm->_gyro.off();
-	{
-		triptype &with = _vm->_trip.tr[1];
-		for (page_ = 0; page_ <= 1; page_ ++)
-			mblit(with.x / 8, with.y, (with.x + with.a.xl) / 8 + 1, with.y + with.a.yl, 3, page_);
-	}
+	
+	triptype &with = _vm->_trip.tr[0];
+	for (page_ = 0; page_ <= 1; page_ ++)
+		mblit(with.x / 8, with.y, (with.x + with.a.xl) / 8 + 1, with.y + with.a.yl, 3, page_);
+	
 	blitfix();
 	_vm->_gyro.on();
 }
@@ -1197,13 +1191,9 @@ void Lucerna::minor_redraw() {
 		_vm->_trip.getback();
 	}
 
-	{
-		dnatype &with = _vm->_gyro.dna;
-
-		_vm->_gyro.lastscore = "TJA"; /* impossible digits */
-		showscore();
-	}
-
+	_vm->_gyro.lastscore = "TJA"; /* impossible digits */
+	showscore();
+	
 	dawn();
 }
 
@@ -1220,10 +1210,10 @@ uint16 Lucerna::bearing(byte whichped) {
 		pedtype &with = _vm->_gyro.peds[whichped];
 		if (_vm->_trip.tr[1].x == with.x)
 			bearing_result = 0; /* This would cause a division by zero if we let it through. */
-		else
+		else {
 			/*
 			 bearing:=trunc(((arctan((_vm->_trip.tr[1].y-y)/(_vm->_trip.tr[1].x-x)))*rad2deg)+90) mod 360*/
-		{
+		
 			if (_vm->_trip.tr[1].x < with.x)
 				bearing_result = (atan(double((_vm->_trip.tr[1].y - with.y)) / (_vm->_trip.tr[1].x - with.x)) * rad2deg) + 90;
 			else
@@ -1261,14 +1251,12 @@ asm
 {
 }
 
-void Lucerna::sprite_run()
-/* A sprite run is performed before _vm->_scrolls.displaying a scroll, if not all the
+void Lucerna::sprite_run() {
+/* A sprite run is performed before displaying a scroll, if not all the
   sprites are still. It performs two fast cycles, only using a few of
   the links usually used, and without any extra animation. This should
   make the sprites the same on both pages. */
-{
 	byte fv;
-
 
 	_vm->_gyro.doing_sprite_run = true;
 
