@@ -34,14 +34,11 @@ class LzssReadStream : public Common::ReadStream {
 public:
 	/**
 	 * A class that decompresses LZSS data and implements ReadStream for easy access 
-	 * to the decompiled data. It can either decompress all the data in the beginning 
-	 * or decompress as needed by read().
+	 * to the decompiled data.
 	 *
 	 * @param source              The source data
-	 * @param stream			  Decompress the data as needed (true) or all at once (false)
-	 * @param decompressedSize    The size of the decompressed data. If npos, the class will choose a size and grow as needed
 	 */
-	LzssReadStream(Common::SeekableReadStream *source, bool stream = true, uint32 decompressedSize = _npos);
+	LzssReadStream(Common::SeekableReadStream *source);
 
 public:
 	static const uint32 _npos = 0xFFFFFFFFu;
@@ -49,7 +46,6 @@ public:
 
 private:
 	Common::SeekableReadStream *_source;
-	Common::Array<char> _destination;
 	char _window[_blockSize];
 	uint16 _windowCursor;
 	uint32 _readCursor;
@@ -58,7 +54,6 @@ private:
 public:
 	bool eos() const;
 	uint32 read(void *dataPtr, uint32 dataSize);
-	uint32 currentSize() const;
 
 private:
 	/**
@@ -66,9 +61,7 @@ private:
 	 *
 	 * @param numberOfBytes    How many bytes to decompress. This is a count of source bytes, not destination bytes
 	 */
-	void decompressBytes(uint32 numberOfBytes);
-	/** Decompress all of the source stream. */
-	void decompressAll();
+	uint32 decompressBytes(byte* destination, uint32 numberOfBytes);
 };
 
 }

@@ -26,7 +26,7 @@
 
 namespace ZVision {
 
-LzssReadStream::LzssReadStream(Common::SeekableReadStream *source, bool stream, uint32 decompressedSize)
+LzssReadStream::LzssReadStream(Common::SeekableReadStream *source)
 		: _source(source),
 		  // It's convention to set the starting cursor position to blockSize - 16
 		  _windowCursor(0x0FEE),
@@ -34,24 +34,12 @@ LzssReadStream::LzssReadStream(Common::SeekableReadStream *source, bool stream, 
 		  _eosFlag(false) {
 	// Clear the window to null
 	memset(_window, 0, _blockSize);
-
-	// Reserve space in the destination buffer
-	// TODO: Make a better guess
-	if (decompressedSize == _npos) {
-		decompressedSize = source->size();
-	}
-	_destination.reserve(decompressedSize);
-
-	if (stream)
-		decompressBytes(_blockSize);
-	else
-		decompressAll();
 }
 
-void LzssReadStream::decompressBytes(uint32 numberOfBytes) {
-	uint32 bytesRead = 0;
+uint32 LzssReadStream::decompressBytes(byte *destination, uint32 numberOfBytes) {
+	uint32 destinationCursor = 0;
 
-	while (!_source->eos() && bytesRead <= numberOfBytes) {
+	while (destinationCursor < numberOfBytes) {
 		byte flagbyte = _source->readByte();
 		if (_source->eos())
 			break;
@@ -61,12 +49,11 @@ void LzssReadStream::decompressBytes(uint32 numberOfBytes) {
 			if ((flagbyte & mask) == mask)
 			{
 				byte data = _source->readByte();
-				bytesRead++;
 				if (_source->eos())
-					break;
+					return destinationCursor;
 
 				_window[_windowCursor] = data;
-				_destination.push_back(data);
+				destination[destinationCursor++] = data;
 
 				// Increment and wrap the window cursor
 				_windowCursor = (_windowCursor + 1) & 0xFFF;
@@ -74,14 +61,12 @@ void LzssReadStream::decompressBytes(uint32 numberOfBytes) {
 			else
 			{
 				byte low = _source->readByte();
-				bytesRead++;
 				if (_source->eos())
-					break;
+					return destinationCursor;
 
 				byte high = _source->readByte();
-				bytesRead++;
 				if (_source->eos())
-					break;
+					return destinationCursor;
 
 				uint16 length = (high & 0xF) + 2;
 				uint16 offset = low | ((high & 0xF0)<<4);
@@ -90,7 +75,7 @@ void LzssReadStream::decompressBytes(uint32 numberOfBytes) {
 				{
 					byte temp = _window[(offset + j) & 0xFFF];
 					_window[_windowCursor] = temp;
-					_destination.push_back(temp);
+					destination[destinationCursor++] = temp;
 					_windowCursor = (_windowCursor + 1) & 0xFFF;
 				}
 			};
@@ -98,10 +83,8 @@ void LzssReadStream::decompressBytes(uint32 numberOfBytes) {
 			mask = mask << 1;
 		}
 	}
-}
 
-void LzssReadStream::decompressAll() {
-	decompressBytes(_source->size());
+	return destinationCursor;
 }
 
 bool LzssReadStream::eos() const {
@@ -109,30 +92,13 @@ bool LzssReadStream::eos() const {
 }
 
 uint32 LzssReadStream::read(void *dataPtr, uint32 dataSize) {
-	// Check if there are enough bytes available
-	// If not, keep decompressing until we have enough bytes or until we reach EOS
-	while (dataSize > _destination.size() - _readCursor) {
-		// Check if we can read any more data from source
-		if (_source->eos()) {
-			// Shorten the dataSize to what we have left and flag that we're at EOS
-			dataSize = _destination.size() - _readCursor;
-			_eosFlag = true;
-			break;
-		}
-
-		decompressBytes(_blockSize);
-	}
-
-	if (dataSize > 0) {
-		memcpy(dataPtr, _destination.begin() + _readCursor, dataSize);
-		_readCursor += dataSize;
+	uint32 bytesRead = decompressBytes(static_cast<byte *>(dataPtr), dataSize);
+	if (bytesRead < dataSize) {
+		// Flag that we're at EOS
+		_eosFlag = true;
 	}
 
 	return dataSize;
-}
-
-uint32 LzssReadStream::currentSize() const {
-	return _destination.size();
 }
 
 } // End of namespace ZVision

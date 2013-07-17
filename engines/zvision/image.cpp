@@ -52,9 +52,9 @@ void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint
 		uint32 width = file.readSint32LE();
 		uint32 height = file.readSint32LE();
 
-		LzssReadStream stream(&file, false, decompressedSize);
-		byte *buffer = new byte[stream.currentSize()];
-		stream.read(buffer, stream.currentSize());
+		LzssReadStream stream(&file);
+		byte *buffer = new byte[decompressedSize];
+		stream.read(buffer, decompressedSize);
 
 		_system->copyRectToScreen(buffer, width * 2, x, y, width, height);
 	} else {
