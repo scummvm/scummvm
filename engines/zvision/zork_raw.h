@@ -73,7 +73,7 @@ private:
 	Audio::Timestamp _playtime;                                // Calculated total play time
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
 	bool _endOfData;                                           // Whether the stream end has been reached
-	bool _stereo;
+	byte _stereo;
 
 	/** 
 	 * Holds the frequency and index from the last sample

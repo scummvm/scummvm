@@ -54,9 +54,12 @@ const int32 RawZorkStream::_amplitudeLookupTable[89] = {0x0007, 0x0008, 0x0009, 
 
 RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
 		: _rate(rate),
-		  _stereo(stereo),
+		  _stereo(0),
 		  _stream(stream, disposeStream),
 		  _endOfData(false) {
+	if (stereo)
+		_stereo = 1;
+
 	_lastSample[0].index = 0;
 	_lastSample[0].sample = 0;
 	_lastSample[1].index = 0;
