@@ -525,7 +525,7 @@ public:
 	byte *digit[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
 	byte *rwlite[9]; // Maybe it will be needed to move them to the class itself instead.
 	byte oldrw;
-	Common::String lastscore;
+	int8 lastscore[3];
 	byte cmp; /* current mouse-void **/
 	Common::String verbstr; /* what you can do with your object. :-) */
 
