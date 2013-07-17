@@ -365,13 +365,13 @@ Common::Error MortevielleEngine::run() {
  * Show the game introduction
  */
 void MortevielleEngine::showIntroduction() {
-	_dialogManager.aff50(false);
+	_dialogManager.displayIntroScreen(false);
 	_speechManager._mlec = 0;
 	_dialogManager.checkForF8(142, false);
 	if (shouldQuit())
 		return;
 
-	_dialogManager.ani50();
+	_dialogManager.displayIntroFrame2();
 	_dialogManager.checkForF8(143, true);
 	if (shouldQuit())
 		return;
