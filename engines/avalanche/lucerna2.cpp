@@ -848,14 +848,12 @@ void Lucerna::toolbar() {
 void Lucerna::showscore() {
 
 	const bytefield scorespace = {33, 177, 39, 200};
-	Common::String q;
 
 	if (_vm->_gyro.demo)
 		return;
 
-	_vm->_gyro.dna.score = 156;
-	byte score = _vm->_gyro.dna.score;
-	byte numbers[3] = {0, 0, 0};
+	uint16 score = _vm->_gyro.dna.score;
+	int8 numbers[3] = {0, 0, 0};
 	for (byte i = 0; i < 2; i++) {
 		byte divisor = 1;
 		for (byte j = 0; j < (2 - i); j++)
@@ -865,38 +863,29 @@ void Lucerna::showscore() {
 	}
 	numbers[2] = score;
 
+	_vm->_gyro.off();
 
+	//setactivepage(3);
 
+	for (byte fv = 0; fv < 3; fv ++)
+		if (_vm->_gyro.lastscore[fv] != numbers[fv]) {
+			Graphics::Surface *digit = _vm->_graph.readImage(_vm->_gyro.digit[numbers[fv]]);
 
-	//Át kell írni a Graph::copySurface() -t hogy *byte tömböt kapjon és mindehol így is használni!!!!
+			_vm->_graph.copySurface(*digit, 250 + (fv + 1) * 15, 177);
 
+			digit->free();
 
+			delete digit;
+		}
 
-
-
-	
-
-	//str(_vm->_gyro.dna.score, q);
-	//while (q[0] < '\3')  q = string('0') + q;
-
-	//str(dna.score,q);
-	//while q[0]<#3 do q:='0'+q;
-
-	//_vm->_gyro.off();
-
-	////setactivepage(3);
-	//for (byte fv = 0; fv < 3; fv ++)
-	//	if (_vm->_gyro.lastscore[fv] != q[fv])
-	//		putimage(250 + fv * 15, 177, _vm->_gyro.digit[q[fv]], 0);
-
-	//for (byte fv = 0; fv <= 1; fv ++)
-	//	_vm->_trip.getset[fv].remember(scorespace);
+	for (byte fv = 0; fv < 2; fv ++)
+		_vm->_trip.getset[fv].remember(scorespace);
 
 	//setactivepage(1 - cp);
-	_vm->_gyro.on();
-	_vm->_gyro.lastscore = q;
 
-	warning("STUB: Lucerna::showscore()");
+	_vm->_gyro.on();
+	for (byte i = 0; i < 3; i++)
+		_vm->_gyro.lastscore[i] = numbers[i];
 }
 
 void Lucerna::points(byte num) {     /* Add on no. of points */
@@ -1252,8 +1241,9 @@ void Lucerna::minor_redraw() {
 		_vm->_gyro.cp = 1 - _vm->_gyro.cp;
 		_vm->_trip.getback();
 	}
-
-	_vm->_gyro.lastscore = "TJA"; /* impossible digits */
+	
+	for (byte i = 0; i < 3; i++)
+		_vm->_gyro.lastscore[i] = -1; /* impossible digits */
 	showscore();
 	
 	dawn();
