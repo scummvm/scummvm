@@ -56,6 +56,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundEnabled = true;
 	_flgSoundList = true;
 
+	_needQuit = false;
+
 	g_fullpipe = this;
 }
 
@@ -93,6 +95,9 @@ void FullpipeEngine::updateEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
+			break;
+		case Common::EVENT_QUIT:
+			_needQuit = true;
 			break;
 		default:
 			break;

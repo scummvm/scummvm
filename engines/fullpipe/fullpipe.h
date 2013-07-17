@@ -86,6 +86,8 @@ public:
 	bool _soundEnabled;
 	bool _flgSoundList;
 
+	bool _needQuit;
+
 	void initObjectStates();
 	void setLevelStates();
 	void setSwallowedEggsState();

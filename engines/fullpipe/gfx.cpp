@@ -346,6 +346,12 @@ void Picture::drawRotated(int x, int y, int angle) {
 }
 
 void Picture::displayPicture() {
+	if (g_fullpipe->_needQuit)
+		return;
+
+	if (0 && !Common::String(_memfilename).hasSuffix(".dib"))
+		return;
+
 	getData();
 	init();
 
@@ -354,7 +360,7 @@ void Picture::displayPicture() {
 
 	draw(0, 0, 0, 0);
 
-	while (1) {
+	while (!g_fullpipe->_needQuit) {
 		g_fullpipe->updateEvents();
 		g_fullpipe->_system->delayMillis(10);
 		g_fullpipe->_system->updateScreen();
