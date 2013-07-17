@@ -56,7 +56,9 @@ public:
 
 	void drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
 
-	// Must free the returened pointer!!!
+	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
+
+	// Must free the returned pointer!!!
 	Graphics::Surface *readImage(const byte *source);
 
 	void copySurface(const Graphics::Surface &source, uint16 destX, uint16 destY);
