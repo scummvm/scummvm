@@ -423,7 +423,7 @@ void DialogManager::drawF3F8() {
  * Graphical Device if modified
  * @remarks	Originally called 'diver'
  */
-void DialogManager::checkForF8(int SpeechNum, bool drawAni50Fl) {
+void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 	_vm->testKeyboard();
 	do {
 		_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
@@ -434,7 +434,7 @@ void DialogManager::checkForF8(int SpeechNum, bool drawAni50Fl) {
 		if (_vm->_newGraphicalDevice != _vm->_currGraphicalDevice) {
 			_vm->_currGraphicalDevice = _vm->_newGraphicalDevice;
 			_vm->hirs();
-			aff50(drawAni50Fl);
+			displayIntroScreen(drawFrame2Fl);
 		}
 	} while (_vm->_key != 66); // keycode for F8
 }
@@ -455,13 +455,17 @@ int DialogManager::waitForF3F8() {
 	return key;
 }
 
-void DialogManager::aff50(bool drawAni50Fl) {
+/**
+ * Intro function - display intro screen
+ * @remarks	Originally called 'aff50'
+ */
+void DialogManager::displayIntroScreen(bool drawFrame2Fl) {
 	_vm->_caff = 50;
 	_vm->_maff = 0;
 	_vm->_text.taffich();
 	_vm->draw(kAdrDes, 63, 12);
-	if (drawAni50Fl)
-		ani50();
+	if (drawFrame2Fl)
+		displayIntroFrame2();
 	else
 		_vm->handleDescriptionText(2, kDialogStringIndex + 142);
 
@@ -469,7 +473,11 @@ void DialogManager::aff50(bool drawAni50Fl) {
 	drawF3F8();
 }
 
-void DialogManager::ani50() {
+/**
+ * Intro function - display 2nd frame of intro
+ * @remarks	Originally called 'ani50'
+ */
+void DialogManager::displayIntroFrame2() {
 	_vm->_crep = _vm->animof(1, 1);
 	_vm->pictout(kAdrAni, _vm->_crep, 63, 12);
 	_vm->_crep = _vm->animof(2, 1);

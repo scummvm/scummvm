@@ -54,10 +54,10 @@ public:
 	void setParent(MortevielleEngine *vm);
 	int show(const Common::String &msg, int n);
 	void drawF3F8();
-	void checkForF8(int SpeechNum, bool drawAni50Fl);
+	void checkForF8(int SpeechNum, bool drawFrame2Fl);
 	int waitForF3F8();
-	void aff50(bool drawAni50Fl);
-	void ani50();
+	void displayIntroScreen(bool drawFrame2Fl);
+	void displayIntroFrame2();
 	bool showKnowledgeCheck();
 };
 
