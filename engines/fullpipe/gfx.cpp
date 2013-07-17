@@ -464,7 +464,7 @@ void Bitmap::putDib(int x, int y, byte *palette) {
 						if (pos <= end2 + 1 || (fillValue += end2 - pos + 1, fillValue > 0)) {
 							if (endy1 <= endy) {
 								curDestPtr = (int16 *)g_fullpipe->_backgroundSurface.getBasePtr(endy1, start1);
-								int bgcolor = *(int32 *)(palette + 4 * (pixel >> 8));
+								int bgcolor = *(int32 *)(palette + 4 * ((pixel >> 8) & 0xff));
 
 								colorFill(curDestPtr, fillValue, bgcolor);
 							}
