@@ -305,7 +305,7 @@ public:
 	int _v57C2C;
 	int _speechSubtitles;
 	byte _v565EC[5];
-	byte _v565F1[4];
+	byte _scannerFrequencies[4];
 	byte _stripManager_lookupList[12];
 	ScannerDialog *_scannerDialog;
 

@@ -5548,7 +5548,7 @@ bool Scene600::Actor8::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 615;
 		scene->setAction(&scene->_sequenceManager1, scene, 615, &R2_GLOBALS._player, &scene->_actor8, NULL);
-	} else if ((action == R2_SONIC_STUNNER) && (R2_INVENTORY.getObjectScene(9) == 600) && (R2_GLOBALS._v565F1[1] == 2) && (!R2_GLOBALS.getFlag(8))){
+	} else if ((action == R2_SONIC_STUNNER) && (R2_INVENTORY.getObjectScene(9) == 600) && (R2_GLOBALS._scannerFrequencies[1] == 2) && (!R2_GLOBALS.getFlag(8))){
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 608;
 		scene->setAction(&scene->_sequenceManager1, scene, 608, &R2_GLOBALS._player, &scene->_actor4, NULL);
@@ -5582,7 +5582,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 		_actor8.setup(602, 5, 1);
 		_actor8.setPosition(Common::Point(246, 41));
 		_actor8.setDetails(600, 20, -1, -1, 1, (SceneItem *) NULL);
-		switch (R2_GLOBALS._v565F1[1] - 2) {
+		switch (R2_GLOBALS._scannerFrequencies[1] - 2) {
 		case 0:
 			R2_GLOBALS._sound4.play(45);
 			break;

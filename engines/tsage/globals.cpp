@@ -478,7 +478,7 @@ void Ringworld2Globals::reset() {
 	_v565EC[2] = 27;
 	_v565EC[3] = 4;
 	_v565EC[4] = 4;
-	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 1);
+	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
 	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
 	_frameEdgeColour = 2;
@@ -541,7 +541,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 		s.syncAsByte(_v565EC[i]);
 
 	for (i = 0; i < MAX_CHARACTERS; ++i)
-		s.syncAsByte(_v565F1[i]);
+		s.syncAsByte(_scannerFrequencies[i]);
 
 	s.syncAsByte(_v565AE);
 	s.syncAsByte(_v566A4);

@@ -453,6 +453,7 @@ public:
 
 	virtual void remove();
 	virtual void synchronize(Serializer &s);
+	virtual Common::String getClassName() { return "ModalDialog"; }
 	virtual void process(Event &event);
 	virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 	virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
@@ -460,43 +461,45 @@ public:
 
 class ScannerDialog: public ModalDialog {
 
-	class ScannerActor: public SceneActor {
+	class Button: public SceneActor {
 	private:
 		void reset();
 	public:
-		int _v1;
-		int _v2;
+		int _buttonId;
+		bool _buttonDown;
 	public:
-		ScannerActor();
-		void setup(int v);
+		Button();
+		void setup(int buttonId);
 
 		virtual void synchronize(Serializer &s);
+		virtual Common::String getClassName() { return "ScannerButton"; }
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class ScannerActor2: public SceneActor {
+	class Slider: public SceneActor {
 	private:
 		void update();
 	public:
-		int _v1;
-		int _v2;
+		int _initial;
+		int _xStart;
 		int _yp;
-		int _v4;
-		int _v5;
-		int _v6;
+		int _width;
+		int _xInc;
+		bool _sliderDown;
 	public:
-		ScannerActor2();
-		void setup(int v1, int v2, int v3, int v4, int v5);
+		Slider();
+		void setup(int initial, int xStart, int yp, int width, int xInc);
 
 		virtual void synchronize(Serializer &s);
+		virtual Common::String getClassName() { return "ScannerSlider"; }
 		virtual void remove();
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	ScannerActor _obj1;
-	ScannerActor _obj2;
-	ScannerActor2 _obj3;
+	Button _talkButton;
+	Button _scanButton;
+	Slider _slider;
 	SceneActor _obj4;
 	SceneActor _obj5;
 	SceneActor _obj6;
@@ -504,6 +507,7 @@ public:
 public:
 	ScannerDialog();
 
+	virtual Common::String getClassName() { return "ScannerDialog"; }
 	virtual void remove();
 	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 };

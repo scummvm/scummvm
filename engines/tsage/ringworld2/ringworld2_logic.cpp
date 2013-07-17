@@ -417,8 +417,10 @@ bool SceneExt::display(CursorType action, Event &event) {
 			SceneItem::display2(5, 0);
 		break;
 	case R2_SONIC_STUNNER:
-		if ((R2_GLOBALS._v565F1[1] == 2) || ((R2_GLOBALS._v565F1[1] == 1) &&
-				(R2_GLOBALS._v565F1[2] == 2) && (R2_GLOBALS._sceneManager._previousScene == 300))) {
+		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2) 
+			|| ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 1) &&
+				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) && 
+				(R2_GLOBALS._sceneManager._previousScene == 300))) {
 			R2_GLOBALS._sound4.stop();
 			R2_GLOBALS._sound3.play(46);
 			SceneItem::display2(5, 15);
@@ -2124,62 +2126,63 @@ void ModalDialog::proc13(int resNum, int lookLineNum, int talkLineNum, int useLi
 
 /*--------------------------------------------------------------------------*/
 
-ScannerDialog::ScannerActor::ScannerActor() {
-	_v1 = _v2 = 0;
+ScannerDialog::Button::Button() {
+	_buttonId = 0;
+	_buttonDown = false;
 }
 
-void ScannerDialog::ScannerActor::setup(int v) {
-	_v1 = v;
-	_v2 = 0;
+void ScannerDialog::Button::setup(int buttonId) {
+	_buttonId = buttonId;
+	_buttonDown = false;
 	SceneActor::postInit();
 
 	SceneObject::setup(4, 2, 2);
 	fixPriority(255);
 
-	if (_v1 == 1)
+	if (_buttonId == 1)
 		setPosition(Common::Point(141, 99));
-	else if (_v1 == 2)
+	else if (_buttonId == 2)
 		setPosition(Common::Point(141, 108));
 
 	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.push_front(this);
 }
 
-void ScannerDialog::ScannerActor::synchronize(Serializer &s) {
+void ScannerDialog::Button::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
-	s.syncAsSint16LE(_v1);
-	s.syncAsSint16LE(_v2);
+	s.syncAsSint16LE(_buttonId);
 }
 
-void ScannerDialog::ScannerActor::process(Event &event) {
+void ScannerDialog::Button::process(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN && R2_GLOBALS._events.getCursor() == CURSOR_USE
-			&& _bounds.contains(event.mousePos) && !_v2) {
+			&& _bounds.contains(event.mousePos) && !_buttonDown) {
 		setFrame(3);
-		_v2 = 1;
+		_buttonDown = true;
 		event.handled = true;
 	}
 
-	if (event.eventType == EVENT_BUTTON_UP && _v2) {
+	if (event.eventType == EVENT_BUTTON_UP && _buttonDown) {
 		setFrame(2);
-		_v2 = 0;
+		_buttonDown = false;
 		event.handled = true;
 		
 		reset();
 	}
 }
 
-bool ScannerDialog::ScannerActor::startAction(CursorType action, Event &event) {
+bool ScannerDialog::Button::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE)
 		return false;
 
 	return startAction(action, event);
 }
 
-void ScannerDialog::ScannerActor::reset() {
+void ScannerDialog::Button::reset() {
 	Scene *scene = R2_GLOBALS._sceneManager._scene;
 	ScannerDialog &scanner = *R2_GLOBALS._scannerDialog;
 
-	switch (_v1) {
+	switch (_buttonId) {
 	case 1:
+		// Talk button
 		switch (R2_GLOBALS._sceneManager._sceneNumber) {
 		case 1550:
 			scene->_sceneMode = 80;
@@ -2195,6 +2198,7 @@ void ScannerDialog::ScannerActor::reset() {
 		}
 		break;
 	case 2:
+		// Scan button
 		switch (R2_GLOBALS._sceneManager._sceneNumber) {
 		case 1550:
 			scanner._obj4.setup(4, 3, 1);
@@ -2244,66 +2248,66 @@ void ScannerDialog::ScannerActor::reset() {
 
 /*--------------------------------------------------------------------------*/
 
-ScannerDialog::ScannerActor2::ScannerActor2() {
-	_v1 = _v2 = _yp = 0;
-	_v4 = _v5 = _v6 = 0;
+ScannerDialog::Slider::Slider() {
+	_initial = _xStart = _yp = 0;
+	_width = _xInc = 0;
+	_sliderDown = false;
 }
 
-void ScannerDialog::ScannerActor2::synchronize(Serializer &s) {
+void ScannerDialog::Slider::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
-	s.syncAsSint16LE(_v1);
-	s.syncAsSint16LE(_v2);
+	s.syncAsSint16LE(_initial);
+	s.syncAsSint16LE(_xStart);
 	s.syncAsSint16LE(_yp);
-	s.syncAsSint16LE(_v4);
-	s.syncAsSint16LE(_v5);
-	s.syncAsSint16LE(_v6);
+	s.syncAsSint16LE(_width);
+	s.syncAsSint16LE(_xInc);
 }
 
-void ScannerDialog::ScannerActor2::remove() {
+void ScannerDialog::Slider::remove() {
 	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.remove(this);
 	SceneActor::remove();
 }
 
-void ScannerDialog::ScannerActor2::process(Event &event) {
+void ScannerDialog::Slider::process(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN && R2_GLOBALS._events.getCursor() == CURSOR_USE
-			&& _bounds.contains(event.mousePos) && !_v2) {
-		_v6 = 1;
+			&& _bounds.contains(event.mousePos)) {
+		_sliderDown = true;
 	}
 
-	if (event.eventType == EVENT_BUTTON_UP && _v6) {
-		_v6 = 0;
-		event.handled = 1;
+	if (event.eventType == EVENT_BUTTON_UP && _sliderDown) {
+		_sliderDown = false;
+		event.handled = true;
 		update();
 	}
 
-	if (_v6) {
+	if (_sliderDown) {
 		event.handled = true;
-		if (event.mousePos.x < _v2) {
-			setPosition(Common::Point(_v2, _yp));
-		} else if (event.mousePos.x >= (_v2 + _v4)) {
-			setPosition(Common::Point(_v2 + _v4, _yp));
+		if (event.mousePos.x < _xStart) {
+			setPosition(Common::Point(_xStart, _yp));
+		} else if (event.mousePos.x >= (_xStart + _width)) {
+			setPosition(Common::Point(_xStart + _width, _yp));
 		} else {
 			setPosition(Common::Point(event.mousePos.x, _yp));
 		}
 	}
 }
 
-bool ScannerDialog::ScannerActor2::startAction(CursorType action, Event &event) {
+bool ScannerDialog::Slider::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE)
 		return false;
 
 	return startAction(action, event);
 }
 
-void ScannerDialog::ScannerActor2::update() {
-	int v = (_v4 / (_v5 - 1)) / 2;
-	int v2 = ((_position.x - _v2 + v) * _v5) / (_v4 + v * 2);
-	setPosition(Common::Point(_v2 + ((_v4 * v2) / (_v5 - 1)), _yp));
+void ScannerDialog::Slider::update() {
+	int incHalf = (_width / (_xInc - 1)) / 2;
+	int newFrequency = ((_position.x - _xStart + incHalf) * _xInc) / (_width + incHalf * 2);
+	setPosition(Common::Point(_xStart + ((_width * newFrequency) / (_xInc - 1)), _yp));
 
-	R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex] = v2;
+	R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] = newFrequency + 1;
 
-	switch (v2 - 1) {
+	switch (newFrequency) {
 	case 0:
 		R2_GLOBALS._sound4.stop();
 		break;
@@ -2324,16 +2328,17 @@ void ScannerDialog::ScannerActor2::update() {
 	}
 }
 
-void ScannerDialog::ScannerActor2::setup(int v1, int v2, int yp, int v4, int v5) {
-	_v1 = v1;
-	_v2 = v2;
+void ScannerDialog::Slider::setup(int initial, int xStart, int yp, int width, int xInc) {
+	_initial = initial;
+	_xStart = xStart;
 	_yp = yp;
-	_v4 = v4;
-	_v5 = v5;
-	_v6 = 0;
+	_width = width;
+	_xInc = xInc;
+	_sliderDown = false;
 	SceneActor::postInit();
+	SceneObject::setup(4, 2, 1);
 	fixPriority(255);
-	setPosition(Common::Point(_v4 * (_v1 - 1) / (_v5 - 1) + _v2, yp));
+	setPosition(Common::Point(_width * (_initial - 1) / (_xInc - 1) + _xStart, yp));
 
 	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.push_front(this);
 }
@@ -2361,11 +2366,11 @@ void ScannerDialog::remove() {
 	}
 
 	SceneExt *scene = static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene);
-	scene->_sceneAreas.remove(&_obj1);
-	scene->_sceneAreas.remove(&_obj2);
-	_obj1.remove();
-	_obj2.remove();
-	_obj3.remove();
+	scene->_sceneAreas.remove(&_talkButton);
+	scene->_sceneAreas.remove(&_scanButton);
+	_talkButton.remove();
+	_scanButton.remove();
+	_slider.remove();
 	_obj4.remove();
 	_obj5.remove();
 	_obj6.remove();
@@ -2379,13 +2384,14 @@ void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX
 	if (R2_GLOBALS._player._mover)
 		R2_GLOBALS._player.addMover(NULL);
 
-	R2_GLOBALS._events.setCursor(EXITCURSOR_LEFT_HAND);
+	R2_GLOBALS._events.setCursor(CURSOR_USE);
 	ModalDialog::proc12(visage, stripFrameNum, frameNum, posX, posY);
 
 	proc13(100, -1, -1, -1);
-	_obj1.setup(1);
-	_obj2.setup(2);
-	_obj3.setup(R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);
+	_talkButton.setup(1);
+	_scanButton.setup(2);
+	_slider.setup(R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);
+
 	_obj4.postInit();
 	_obj4.setup(4, 3, 2);
 	_obj4.setPosition(Common::Point(160, 83));
