@@ -388,7 +388,7 @@ void MortevielleEngine::setTextColor(int col) {
  */
 void MortevielleEngine::prepareScreenType1() {
 	// Large drawing
-	_screenSurface.drawBox(0, 11, 512, 163, 15);
+	_screenSurface.drawBox(0, 11, 512, 164, 15);
 }
 
 /**
