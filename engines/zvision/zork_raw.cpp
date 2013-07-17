@@ -57,8 +57,10 @@ RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag dis
 		  _stereo(stereo),
 		  _stream(stream, disposeStream),
 		  _endOfData(false) {
-	_lastSample[0] = {0, 0};
-	_lastSample[1] = {0, 0};
+	_lastSample[0].index = 0;
+	_lastSample[0].sample = 0;
+	_lastSample[1].index = 0;
+	_lastSample[1].sample = 0;
 
 	// Calculate the total playtime of the stream
 	_playtime = Audio::Timestamp(0, _stream->size() / 2, rate);
@@ -122,8 +124,10 @@ bool RawZorkStream::rewind() {
 	_stream->seek(0, 0);
 	_stream->clearErr();
 	_endOfData = false;
-	_lastSample[0] = {0, 0};
-	_lastSample[1] = {0, 0};
+	_lastSample[0].index = 0;
+	_lastSample[0].sample = 0;
+	_lastSample[1].index = 0;
+	_lastSample[1].sample = 0;
 
 	return true;
 }
