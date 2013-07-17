@@ -61,8 +61,7 @@ const SoundParams zgiSoundParamLookupTable[5] = {{'a',0x5622, false, false},
  */
 class RawZorkStream : public Audio::RewindableAudioStream {
 public:
-	RawZorkStream(uint32 rate, bool stereo, bool packed, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
-	RawZorkStream(const Common::String &filePath, ZVision *engine);
+	RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
 
 	~RawZorkStream() {
 	}
@@ -75,7 +74,6 @@ private:
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
 	bool _endOfData;                                           // Whether the stream end has been reached
 	bool _stereo;
-	bool _packed;
 
 	/** 
 	 * Holds the frequency and index from the last sample
@@ -99,9 +97,6 @@ public:
 	Audio::Timestamp getLength() const { return _playtime; }
 
 	bool rewind();
-
-private:
-	int decodeADPCM(int16 *buffer, const int numSamples);
 };
 
 /**
@@ -116,7 +111,6 @@ private:
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
                                                 int rate,
 								                bool stereo,
-												bool packed,
                                                 DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
@@ -130,10 +124,9 @@ Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
                                                 int rate,
 								                bool stereo,
-												bool packed,
                                                 DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine);
+Audio::AudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine);
 
 } // End of namespace ZVision
 
