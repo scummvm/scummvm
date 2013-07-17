@@ -63,9 +63,10 @@ void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint
 
 		// Decode
 		Graphics::TGADecoder tga;
-		if (!tga.loadStream(file))
+		if (!tga.loadStream(file)) {
 			error("Error while reading TGA image");
-		file.close();
+			return;
+		}
 
 		const Graphics::Surface *tgaSurface = tga.getSurface();
 		_system->copyRectToScreen(tgaSurface->pixels, tgaSurface->pitch, x, y, tgaSurface->w, tgaSurface->h);
