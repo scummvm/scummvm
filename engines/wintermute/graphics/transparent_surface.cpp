@@ -32,28 +32,6 @@
 namespace Wintermute {
 
 
-#ifndef ENABLE_BILINEAR
-void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
-			int srcW = srcRect.width();
-			int srcH = srcRect.height();
-			int dstW = dstRect.width();
-			int dstH = dstRect.height();
-
-			assert(dstX >= 0 && dstX < dstW);
-			assert(dstY >= 0 && dstY < dstH);
-
-			uint32 color;
-			
-			if (projX >= srcW || projX < 0 || projY >= srcH || projY < 0) { 
-				color = 0;
-			} else {
-				color = READ_UINT32((const byte *)src->getBasePtr((int)projX, (int)projY));
-			}
-
- 			WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
-}
-#endif
-
 #ifdef ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 
@@ -140,6 +118,26 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 				}					
 			}
 			WRITE_UINT32((byte *)dst->getBasePtr(dstX + dstRect.left, dstY + dstRect.top), color);
+}
+#else
+void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
+			int srcW = srcRect.width();
+			int srcH = srcRect.height();
+			int dstW = dstRect.width();
+			int dstH = dstRect.height();
+
+			assert(dstX >= 0 && dstX < dstW);
+			assert(dstY >= 0 && dstY < dstH);
+
+			uint32 color;
+			
+			if (projX >= srcW || projX < 0 || projY >= srcH || projY < 0) { 
+				color = 0;
+			} else {
+				color = READ_UINT32((const byte *)src->getBasePtr((int)projX, (int)projY));
+			}
+
+ 			WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
 }
 #endif 
 
@@ -520,7 +518,7 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 	float targX;
 	float targY;
 
-#if ENABLE_BILINEAR
+#ifdef ENABLE_BILINEAR
 	for (int y = 0; y < dstH; y++) {
 		for (int x = 0; x < dstW; x++) {
 			int x1 = x - newHotspot.x;
@@ -570,7 +568,7 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-#if ENABLE_BILINEAR
+#ifdef ENABLE_BILINEAR
 	float projX;
 	float projY;
 	for (int y = 0; y < dstH; y++) {
