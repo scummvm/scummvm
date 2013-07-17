@@ -178,13 +178,14 @@ Audio::AudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *e
 	}
 	
 	if (soundParams.packed) {
+		return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams.rate, soundParams.stereo, DisposeAfterUse::YES);
+	} else {
 		byte flags = 0;
 		if (soundParams.stereo)
 			flags |= Audio::FLAG_STEREO;
+
 		return Audio::makeRawStream(file, soundParams.rate, flags, DisposeAfterUse::YES);
 	}
-	else
-		return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams.rate, soundParams.stereo, DisposeAfterUse::YES);
 }
 
 } // End of namespace ZVision
