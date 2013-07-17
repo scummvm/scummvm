@@ -31,6 +31,8 @@
 
 namespace Wintermute {
 
+
+#ifndef ENABLE_BILINEAR
 void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 			int srcW = srcRect.width();
 			int srcH = srcRect.height();
@@ -50,7 +52,9 @@ void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int 
 
  			WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
 }
+#endif
 
+#ifdef ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 
 			int srcW = srcRect.width();
@@ -137,6 +141,7 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 			}
 			WRITE_UINT32((byte *)dst->getBasePtr(dstX + dstRect.left, dstY + dstRect.top), color);
 }
+#endif 
 
 byte *TransparentSurface::_lookup = nullptr;
 
