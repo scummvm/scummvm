@@ -78,6 +78,10 @@ void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
+void Graph::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
+	_surface.drawLine(x0, y0, x1, y1, color);
+}
+
 Graphics::Surface *Graph::readImage(const byte *source) {
 	Graphics::Surface *picture = new Graphics::Surface;
 	
