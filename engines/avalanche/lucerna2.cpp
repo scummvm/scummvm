@@ -889,7 +889,17 @@ void Lucerna::showscore() {
 }
 
 void Lucerna::points(byte num) {     /* Add on no. of points */
+	for (byte q = 1; q <= num; q ++) {
+		_vm->_gyro.dna.score++;
+		/*if (soundfx)
+			for (byte fv = 1; fv <= 97; fv ++)
+				sound(177 + dna.score * 3);
+		nosound;*/
+	}
 	warning("STUB: Lucerna::points()");
+
+	_vm->_logger.log_score(num, _vm->_gyro.dna.score);
+	showscore();
 }
 
 void Lucerna::topcheck() {
