@@ -731,8 +731,6 @@ void Lucerna::enterroom(byte x, byte ped) {
 }
 
 void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! */
-	const int16 x = 205;
-	const int16 y = 170;
 	const int16 picsize = 966;
 	const bytefield thinkspace = {25, 170, 32, 200};
 
@@ -762,13 +760,19 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 
 	f.seek(z * picsize + 65);
 
-	Graphics::Surface *picture = _vm->_graph.readImage(f);
+	byte *buffer = new byte[picsize];
 
-	_vm->_graph.copySurface(*picture, x, y);
+	f.read(buffer, picsize);
+
+	Graphics::Surface *picture = _vm->_graph.readImage(buffer);
+
+	_vm->_graph.copySurface(*picture, 205, 170);
 
 	picture->free();
 
 	delete picture;
+
+	delete[] buffer;
 
 	f.close();
 
@@ -817,13 +821,21 @@ void Lucerna::toolbar() {
 	
 	/* off;*/
 
-	Graphics::Surface *toolbar = _vm->_graph.readImage(f);
+	uint32 bufferSize = f.size()-40;
+
+	byte *buffer = new byte[bufferSize];
+
+	f.read(buffer, bufferSize);
+
+	Graphics::Surface *toolbar = _vm->_graph.readImage(buffer);
 
 	_vm->_graph.copySurface(*toolbar, 5, 169);
 
 	toolbar->free();
 
 	delete toolbar;
+
+	delete[] buffer;
 
 	f.close();
 
@@ -834,6 +846,56 @@ void Lucerna::toolbar() {
 }
 
 void Lucerna::showscore() {
+
+	const bytefield scorespace = {33, 177, 39, 200};
+	Common::String q;
+
+	if (_vm->_gyro.demo)
+		return;
+
+	_vm->_gyro.dna.score = 156;
+	byte score = _vm->_gyro.dna.score;
+	byte numbers[3] = {0, 0, 0};
+	for (byte i = 0; i < 2; i++) {
+		byte divisor = 1;
+		for (byte j = 0; j < (2 - i); j++)
+			divisor *= 10;
+		numbers[i] = score / divisor;
+		score -= numbers[i] * divisor;
+	}
+	numbers[2] = score;
+
+
+
+
+	//Át kell írni a Graph::copySurface() -t hogy *byte tömböt kapjon és mindehol így is használni!!!!
+
+
+
+
+
+	
+
+	//str(_vm->_gyro.dna.score, q);
+	//while (q[0] < '\3')  q = string('0') + q;
+
+	//str(dna.score,q);
+	//while q[0]<#3 do q:='0'+q;
+
+	//_vm->_gyro.off();
+
+	////setactivepage(3);
+	//for (byte fv = 0; fv < 3; fv ++)
+	//	if (_vm->_gyro.lastscore[fv] != q[fv])
+	//		putimage(250 + fv * 15, 177, _vm->_gyro.digit[q[fv]], 0);
+
+	//for (byte fv = 0; fv <= 1; fv ++)
+	//	_vm->_trip.getset[fv].remember(scorespace);
+
+	//setactivepage(1 - cp);
+	_vm->_gyro.on();
+	_vm->_gyro.lastscore = q;
+
 	warning("STUB: Lucerna::showscore()");
 }
 

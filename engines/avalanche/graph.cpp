@@ -78,18 +78,22 @@ void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-Graphics::Surface *Graph::readImage(Common::File &f) {
+Graphics::Surface *Graph::readImage(const byte *source) {
 	Graphics::Surface *picture = new Graphics::Surface;
+	
+	uint32 i = 0;
 
-	uint16 pictureWidth = f.readUint16LE() + 1;
-	uint16 pictureHeight = f.readUint16LE() + 1;
+	uint16 pictureWidth = (source[i++] + 1);
+	pictureWidth +=  (source[i++] << 8);
+	uint16 pictureHeight = (source[i++] + 1); 
+	pictureHeight += (source[i++] << 8);
 
 	picture->create(pictureWidth, pictureHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (byte y = 0; y < pictureHeight; y++)
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
 			for (uint16 x = 0; x < pictureWidth; x += 8) {
-				byte pixel = f.readByte();
+				byte pixel = source[i++];
 				for (byte i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
 					*(byte *)picture->getBasePtr(x + 7 - i, y) += (pixelBit << plane);
