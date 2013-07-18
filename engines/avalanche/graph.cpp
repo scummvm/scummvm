@@ -82,7 +82,10 @@ void Graph::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 	_surface.drawLine(x0, y0, x1, y1, color);
 }
 
-void Graph::drawSprite(const SpriteInfo &sprite) {
+void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
+	/* These 2 lines are here SOLELY for testing purposes. */
+	Common::Rect r(x, y, x + sprite.xl, y + sprite.yl);
+	_surface.frameRect(r, magenta);
 	warning("STUB: Graph::drawSprite()");
 }
 
