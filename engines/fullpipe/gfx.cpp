@@ -343,11 +343,11 @@ void Picture::displayPicture() {
 	if (g_fullpipe->_needQuit)
 		return;
 
-	if (Common::String(_memfilename).hasSuffix(".dib"))
-		return;
-
 	getData();
 	init();
+
+	if (!_dataSize)
+		return;
 
 	g_fullpipe->_backgroundSurface.fillRect(Common::Rect(0, 0, 799, 599), 0);
 	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(0, 0), g_fullpipe->_backgroundSurface.pitch, 0, 0, 799, 599);
@@ -423,7 +423,7 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 
 							--endy1;
 							if (endy1 < _y) {
-								g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx, endy);
+								g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx + 1, MIN(endy + 1, 799));
 								return;
 							}
 							pos = _x;
