@@ -30,6 +30,8 @@
 
 namespace ZVision {
 
+class ZVision;
+
 /**
  * Opens the sourceFile utilizing Common::File (aka SearchMan) and writes the
  * contents to destFile. destFile is created in the working directory
@@ -73,7 +75,23 @@ void removeDuplicateEntries(Common::Array<T> *container) {
 	}
 }
 
+/**
+ * Gets the name of the file (including extension). Forward or back slashes 
+ * are interpreted as directory changes
+ *
+ * @param fullPath    A full or partial path to the file. Ex: folderOne/folderTwo/file.txt
+ * @return            The name of the file without any preceding directories. Ex: file.txt
+ */
 Common::String getFileName(const Common::String &fullPath);
+
+/**
+ * Converts a ZVision .RAW file to a .WAV
+ * The .WAV will be created in the working directory and will overwrite any existing file
+ *
+ * @param inputFile     The path to the input .RAW file
+ * @param outputFile    The name of the output .WAV file
+ */
+void convertRawToWav(const Common::String &inputFile, ZVision *engine, const Common::String &outputFile);
 
 } // End of namespace ZVision
 

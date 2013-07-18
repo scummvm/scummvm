@@ -25,6 +25,8 @@
 #include "common/tokenizer.h"
 
 #include "zvision/utility.h"
+#include "zvision/zvision.h"
+#include "zvision/zork_raw.h"
 
 namespace ZVision {
 
@@ -179,13 +181,6 @@ void dumpEveryResultAction(const Common::String &destFile) {
 	output.close();
 }
 
-/**
- * Gets the name of the file (including extension). Forward or back slashes 
- * are interpreted as directory changes
- *
- * @param fullPath    A full or partial path to the file. Ex: folderOne/folderTwo/file.txt
- * @return            The name of the file without any preceding directories. Ex: file.txt
- */
 Common::String getFileName(const Common::String &fullPath) {
 	Common::StringTokenizer tokenizer(fullPath, "/\\");
 	Common::String token;
@@ -194,6 +189,41 @@ Common::String getFileName(const Common::String &fullPath) {
 	}
 
 	return token;
+}
+
+void convertRawToWav(const Common::String &inputFile, ZVision *engine, const Common::String &outputFile) {
+	Common::File file;
+	if (!file.open(inputFile))
+		return;
+
+	Audio::AudioStream *audioStream = makeRawZorkStream(inputFile, engine);
+	
+	Common::DumpFile output;
+	output.open(outputFile);
+
+	output.writeUint32BE(MKTAG('R', 'I', 'F', 'F'));
+	output.writeUint32LE(file.size() * 2 + 36);
+	output.writeUint32BE(MKTAG('W', 'A', 'V', 'E'));
+	output.writeUint32BE(MKTAG('f', 'm', 't', ' '));
+	output.writeUint32LE(16);
+	output.writeUint16LE(1);
+	uint16 numChannels;
+	if (audioStream->isStereo()) {
+		numChannels = 2;
+		output.writeUint16LE(2);
+	} else {
+		numChannels = 1;
+		output.writeUint16LE(1);
+	}
+	output.writeUint32LE(audioStream->getRate());
+	output.writeUint32LE(audioStream->getRate() * numChannels * 2);
+	output.writeUint16LE(numChannels * 2);
+	output.writeUint16LE(16);
+	output.writeUint32BE(MKTAG('d', 'a', 't', 'a'));
+	output.writeUint32LE(file.size() * 2);
+	int16 *buffer = new int16[file.size()];
+	int readBytes = audioStream->readBuffer(buffer, file.size());
+	output.write(buffer, file.size() * 2);
 }
 
 } // End of namespace ZVision
