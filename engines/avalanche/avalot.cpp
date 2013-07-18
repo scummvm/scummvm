@@ -91,7 +91,7 @@ void Avalot::setup() {
 	_vm->_gyro.enid_filename = ""; /* undefined. */
 	_vm->_lucerna.toolbar();
 	_vm->_scrolls.state(2);
-	_vm->_pingo.copy03();
+	_vm->_graph.refreshScreen(); //_vm->_pingo.copy03(); Replace it with refreshScreen() since they 'almost' have the same functionality.
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro.lastscore[i] = -1; /* impossible digits */
 
@@ -171,8 +171,6 @@ void Avalot::run(Common::String arg) {
 			_vm->_gyro.wipe_vmc(_vm->_gyro.cp);
 
 		_vm->_timeout.one_tick();
-
-		_vm->_graph.refreshScreen(); // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 
 	} while (false /*! _vm->_gyro.lmo*/); // So we run only one cycle during the testing. Of course it will be restored later.
 
