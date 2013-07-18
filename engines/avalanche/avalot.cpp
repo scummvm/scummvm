@@ -92,7 +92,8 @@ void Avalot::setup() {
 	_vm->_lucerna.toolbar();
 	_vm->_scrolls.state(2);
 	_vm->_pingo.copy03();
-	_vm->_gyro.lastscore = "TJA";
+	for (byte i = 0; i < 3; i++)
+		_vm->_gyro.lastscore[i] = -1; /* impossible digits */
 
 	/* for gd:=0 to 1 do
 	 begin
@@ -100,6 +101,8 @@ void Avalot::setup() {
 	 end;*/
 
 	_vm->_trip.loadtrip();
+
+	_vm->_gyro.reloaded = false; // TODO: Remove it later, when SAVE/LOAD system is implemented. Until then, we always start a new game.
 
 	if ((_vm->_gyro.filetoload.empty()) && (! _vm->_gyro.reloaded))
 		_vm->_gyro.newgame(); /* no game was requested- load the default */
@@ -169,7 +172,9 @@ void Avalot::run(Common::String arg) {
 
 		_vm->_timeout.one_tick();
 
-	} while (! _vm->_gyro.lmo);
+		_vm->_graph.refreshScreen();
+
+	} while (false /*! _vm->_gyro.lmo*/); // So we run only one cycle during the testing. Of course it will be restored later.
 
 	//restorecrtmode();
 	//if (logging)

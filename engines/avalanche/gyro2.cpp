@@ -40,6 +40,8 @@
 #include "common/textconsole.h"
 #include "common/file.h"
 
+#include "common/random.h"
+
 //#include "dropdown.h"
 //#include "basher.h"
 
@@ -347,6 +349,62 @@ void Gyro::shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
 }
 
 void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
+	byte gd, gm;
+
+	for (gm = 0; gm < numtr; gm ++)
+		if (_vm->_trip.tr[gm].quick)
+			_vm->_trip.tr[gm].done();
+	/* Deallocate sprite. Sorry, beta testers! */
+
+	_vm->_trip.tr[1].init(0, true, &_vm->_trip);
+	alive = true;
+
+	score = 0; /*for gd:=0 to 5 do which[gd]:=1;*/
+	memset(&_vm->_gyro.dna, 0, sizeof(dnatype));
+	_vm->_scrolls.natural();
+	_vm->_basher.normal_edit();
+	_vm->_lucerna.mousepage(0);
+	dna.spare_evening = "answer a questionnaire";
+	dna.like2drink = "beer";
+
+	dna.pence = 30; /* 2/6 */ dna.rw = stopped;
+	dna.wearing = clothes;
+	dna.obj[money] = true;
+	dna.obj[bodkin] = true;
+	dna.obj[bell] = true;
+	dna.obj[clothes] = true;
+	
+	thinks = '\2';
+	_vm->_lucerna.objectlist();
+	ontoolbar = false;
+	seescroll = false;
+
+	ppos[0][1] = -177; /*tr[1].appear(300,117,right);*/ gd = 0;
+	//for (gd = 0; gd <= 30; gd ++) for (gm = 0; gm <= 1; gm ++) also[gd][gm] = nil;
+	/* fillchar(previous^,sizeof(previous^),#0); { blank out array } */
+	him = 254;
+	her = 254;
+	it = 254;
+	last_person = 254; /* = Pardon? */
+	dna.pass_num = _vm->_rnd->getRandomNumber(30) + 1;//Random(30) + 1;
+	after_the_scroll = false;
+	dna.user_moves_avvy = false;
+	doing_sprite_run = false;
+	dna.avvy_in_bed = true;
+	enid_filename = "";
+
+	for (gd = 0; gd <= 1; gd ++) {
+		cp = 1 - cp;
+		_vm->_trip.getback();
+	}
+
+	_vm->_lucerna.enterroom(1, 1);
+	_vm->_trip.new_game_for_trippancy();
+	_vm->_lucerna.showscore();
+
+	_vm->_dropdown.standard_bar();
+	_vm->_lucerna.clock_lucerna();
+	_vm->_lucerna.sprite_run();
 	warning("STUB: Gyro::newgame()");
 }
 

@@ -519,7 +519,7 @@ public:
 	int16 talkx, talky;
 	byte talkb, talkf;
 	byte scrollbells; /* no. of times to ring the bell */
-	bool ontoolbar, seescroll;
+	bool ontoolbar, seescroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 
 	char objlist[10];
 	byte *digit[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
