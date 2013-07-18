@@ -440,7 +440,7 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 						pixel1 = *srcPtr;
 
 						srcPtr++;
-						pos += (byte)(pixel1 && 0xff);
+						pos += (byte)(pixel1 & 0xff);
 						pixel1High = (pixel1 >> 8) & 0xff;
 
 						if (pixel1High) {
