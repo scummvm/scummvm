@@ -31,6 +31,7 @@
 #include "zvision/zvision.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/zork_raw.h"
+#include "zvision/utility.h"
 
 namespace ZVision {
 
@@ -38,6 +39,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
 	DCmd_Register("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
 	DCmd_Register("loadsound", WRAP_METHOD(Console, cmdLoadSound));
+	DCmd_Register("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -80,6 +82,15 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 	_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
 
 	return true;
+}
+
+bool Console::cmdRawToWav(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Use raw2wav <rawFilePath> <wavFileName> to dump a .RAW file to .WAV\n");
+		return true;
+	}
+
+	convertRawToWav(argv[1], _engine, argv[2]);
 }
 
 } // End of namespace ZVision
