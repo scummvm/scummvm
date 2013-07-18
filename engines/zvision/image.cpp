@@ -42,11 +42,11 @@ void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint
 
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
-	char fileType[4];
-	file.read(fileType, 4);
+	uint32 fileType;
+	fileType = file.readUint32BE();
 
 	// Check for TGZ files
-	if (fileType[0] == 'T' && fileType[1] == 'G' && fileType[2] == 'Z' && fileType[3] == '\0') {
+	if (fileType == MKTAG('T', 'G', 'Z', '\0')) {
 		// TGZ files have a header and then Bitmap data that is compressed with LZSS
 		uint32 decompressedSize = file.readSint32LE();
 		uint32 width = file.readSint32LE();
