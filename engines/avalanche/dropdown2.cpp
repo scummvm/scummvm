@@ -139,12 +139,13 @@ void onemenu::movehighlight(int8 add) {
 }
 
 void onemenu::lightup() {  /* This makes the menu highlight follow the mouse.*/
-	if ((_dr->_vm->_gyro.mx < flx1 * 8) || (_dr->_vm->_gyro.mx > flx2 * 8) ||
+	warning("STUB: Dropdown::onemenu::lightup()");
+	/*if ((_dr->_vm->_gyro.mx < flx1 * 8) || (_dr->_vm->_gyro.mx > flx2 * 8) ||
 		(_dr->_vm->_gyro.my <= 12) || (_dr->_vm->_gyro.my > fly - 3))
 			return;
 	highlightnum = (_dr->_vm->_gyro.my - 13) / 10;
 	if (highlightnum == oldy)  return;
-	movehighlight(0);
+	movehighlight(0);*/
 	
 }
 
