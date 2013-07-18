@@ -427,6 +427,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
 
+#ifdef ENABLE_EVENTRECORDER
 	// Directly after initializing the event manager, we will initialize our
 	// event recorder.
 	//
@@ -434,6 +435,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// our event recorder, we might do this at another place. Or even change
 	// the whole API for that ;-).
 	g_eventRec.RegisterEventSource();
+#endif
 
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
@@ -471,9 +473,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
+#ifdef ENABLE_EVENTRECORDER
 			// Flush Event recorder file. The recorder does not get reinitialized for next game
 			// which is intentional. Only single game per session is allowed.
 			g_eventRec.deinit();
+#endif
 
 		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can
@@ -526,7 +530,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::DebugManager::destroy();
+#ifdef ENABLE_EVENTRECORDER
 	GUI::EventRecorder::destroy();
+#endif
 	Common::SearchManager::destroy();
 #ifdef USE_TRANSLATION
 	Common::TranslationManager::destroy();
