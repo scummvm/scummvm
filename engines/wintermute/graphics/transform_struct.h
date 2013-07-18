@@ -26,6 +26,13 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/dctypes.h"
 
+namespace Wintermute {
+/** 
+ * Contains all the required information that define a transform.
+ * Same source sprite + same TransformStruct = Same resulting sprite.
+ * Has a number of overloaded constructors to accomodate various argument lists.
+ */
+	
 const uint32 kDefaultZoomX = 100;
 const uint32 kDefaultZoomY = 100;
 const uint32 kDefaultRgbaMod = 0xFFFFFFFF;
@@ -35,12 +42,6 @@ const int32 kDefaultOffsetX = 0;
 const int32 kDefaultOffsetY = 0;
 const int32 kDefaultAngle = 0;
 	
-namespace Wintermute {
-/** 
- * Contains all the required information that define a transform.
- * Same source sprite + same TransformStruct = Same resulting sprite.
- * Has a number of overloaded constructors to accomodate various argument lists.
- */
 struct TransformStruct {
 private: 
 	void init(Point32 zoom, uint32 angle, Point32 hotspot, bool alphaDisable, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX, bool mirrorY, Point32 offset);
