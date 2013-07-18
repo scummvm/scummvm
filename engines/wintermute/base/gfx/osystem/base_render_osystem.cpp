@@ -371,12 +371,13 @@ void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, 
 		int initLeft = dstRect.left;
 		int initRight = dstRect.right;
 
+		TransformStruct temp = TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, BLEND_NORMAL, kDefaultRgbaMod, false, false, kDefaultOffsetX, kDefaultOffsetY);
+
 		for (int i = 0; i < numTimesY; i++) {
 			if (i == 0) {
 				dstRect.translate(offsetX, 0);
 			}
 			for (int j = (i == 0 ? 1 : 0); j < numTimesX; j++) {
-				TransformStruct temp = TransformStruct();
 				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, temp); 
 				dstRect.translate(offsetX, 0);
 			}
