@@ -43,55 +43,20 @@ class File {
 private:
 	FILE *f;
 public:
-	bool open(const char *filename, AccessMode mode = kFileReadMode) {
-		f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");
-		return (f != NULL);
-	}
-	void close() {
-		fclose(f);
-		f = NULL;
-	}
-	int seek(int32 offset, int whence = SEEK_SET) {
-		return fseek(f, offset, whence);
-	}
-	long read(void *buffer, int len) {
-		return fread(buffer, 1, len, f);
-	}
-	void write(const void *buffer, int len) {
-		fwrite(buffer, 1, len, f);
-	}
-	byte readByte() {
-		byte v;
-		read(&v, sizeof(byte));
-		return v;
-	}
-	uint16 readWord() {
-		uint16 v;
-		read(&v, sizeof(uint16));
-		return FROM_LE_16(v);
-	}
-	uint32 readLong() {
-		uint32 v;
-		read(&v, sizeof(uint32));
-		return FROM_LE_32(v);
-	}
-	void writeByte(byte v) {
-		write(&v, sizeof(byte));
-	}
-	void writeWord(uint16 v) {
-		uint16 vTemp = TO_LE_16(v);
-		write(&vTemp, sizeof(uint16));
-	}
-	void writeLong(uint32 v) {
-		uint32 vTemp = TO_LE_32(v);
-		write(&vTemp, sizeof(uint32));
-	}
-	void writeString(const char *s) {
-		write(s, strlen(s) + 1);
-	}
-	uint32 pos() {
-		return ftell(f);
-	}
+	bool open(const char *filename, AccessMode mode = kFileReadMode);
+	void close();
+	int seek(int32 offset, int whence = SEEK_SET);
+	uint32 pos();
+	long read(void *buffer, int len);
+	void write(const void *buffer, int len);
+
+	byte readByte();
+	uint16 readWord();
+	uint32 readLong();
+	void writeByte(byte v);
+	void writeWord(uint16 v);
+	void writeLong(uint32 v);
+	void writeString(const char *s);
 };
 
 File outputFile, mortCom;
