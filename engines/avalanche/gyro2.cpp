@@ -349,14 +349,13 @@ void Gyro::shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
 }
 
 void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
-	byte gd, gm;
-
-	for (gm = 0; gm < numtr; gm ++)
+	for (byte gm = 0; gm < numtr; gm ++) {
 		if (_vm->_trip.tr[gm].quick)
 			_vm->_trip.tr[gm].done();
+	}
 	/* Deallocate sprite. Sorry, beta testers! */
 
-	_vm->_trip.tr[1].init(0, true, &_vm->_trip);
+	_vm->_trip.tr[0].init(0, true, &_vm->_trip);
 	alive = true;
 
 	score = 0; /*for gd:=0 to 5 do which[gd]:=1;*/
@@ -374,12 +373,13 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	dna.obj[bell] = true;
 	dna.obj[clothes] = true;
 	
-	thinks = '\2';
+	thinks = 2;
 	_vm->_lucerna.objectlist();
 	ontoolbar = false;
 	seescroll = false;
 
-	ppos[0][1] = -177; /*tr[1].appear(300,117,right);*/ gd = 0;
+	ppos[0][1] = -177; 
+	_vm->_trip.tr[0].appear(300,117,right);
 	//for (gd = 0; gd <= 30; gd ++) for (gm = 0; gm <= 1; gm ++) also[gd][gm] = nil;
 	/* fillchar(previous^,sizeof(previous^),#0); { blank out array } */
 	him = 254;
@@ -393,7 +393,7 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	dna.avvy_in_bed = true;
 	enid_filename = "";
 
-	for (gd = 0; gd <= 1; gd ++) {
+	for (byte gd = 0; gd <= 1; gd ++) {
 		cp = 1 - cp;
 		_vm->_trip.getback();
 	}
@@ -405,7 +405,6 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	_vm->_dropdown.standard_bar();
 	_vm->_lucerna.clock_lucerna();
 	_vm->_lucerna.sprite_run();
-	warning("STUB: Gyro::newgame()");
 }
 
 void Gyro::click() {   /* "Audio keyboard feedback" */
