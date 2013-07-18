@@ -370,7 +370,6 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	uint16 *curDestPtr;
 	int endy;
 	int pos;
-	byte *srcPtr;
 	int start1;
 	int fillValue;
 	int pixoffset;
@@ -383,13 +382,14 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	uint pixel1High;
 	int bpp;
 	uint pitch;
-	byte *srcPtr1;
 	int end;
 	int endx;
 	int endy1;
 	bool cb05_format;
-	byte *pixPtr;
-	byte *srcPtr2;
+	uint16 *pixPtr;
+	uint16 *srcPtr2;
+	uint16 *srcPtr;
+	byte *srcPtr1;
 	int start;
 
 	endx = _width + _x - 1;
@@ -403,7 +403,7 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 
 	if (_type == MKTAG('R', 'B', '\0', '\0')) {
 		endy1 = endy;
-		pixPtr = _pixels;
+		pixPtr = (uint16 *)_pixels;
 		pos = _x;
 
 	LABEL_17:
@@ -413,15 +413,17 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
                 while (1) {
 					while (1) {
 						while (1) {
-							pixel = *(uint16 *)srcPtr;
-							srcPtr += 2;
+							pixel = *srcPtr;
+
+							srcPtr++;
 							pixPtr = srcPtr;
+
 							if (pixel)
 								break;
+
 							--endy1;
 							if (endy1 < _y) {
 								g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx, endy);
-
 								return;
 							}
 							pos = _x;
@@ -435,10 +437,11 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 						if (pixel != 0x200)
 							break;
 
-						pixel1 = *(uint16 *)srcPtr;
-						srcPtr += 2;
+						pixel1 = *srcPtr;
+
+						srcPtr++;
 						pos += (byte)(pixel1 && 0xff);
-						pixel1High = pixel1 >> 8;
+						pixel1High = (pixel1 >> 8) & 0xff;
 
 						if (pixel1High) {
 							endy1 -= pixel1High;
@@ -452,16 +455,16 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 					start1 = pos;
 					fillValue = (byte)(pixel & 0xff);
 
-					if (!(byte)pixel)
+					if (!fillValue)
 						break;
 
-					pos += (byte)(pixel & 0xff);
+					pos += fillValue;
 					pixoffset = -start1;
 
 					if (pixoffset <= 0)
 						goto LABEL_25;
 
-					fillValue = (byte)(pixel & 0xff) - pixoffset;
+					fillValue -= pixoffset;
 
 					if (fillValue > 0) {
 						start1 = 0;
@@ -478,10 +481,10 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 						}
 					}
 				}
-				pixelHigh = pixel >> 8;
+				pixelHigh = (pixel >> 8) & 0xff;
 				srcPtr2 = srcPtr;
 				pos += pixelHigh;
-				srcPtr += 2 * ((pixelHigh + 1) >> 1);
+				srcPtr += (pixelHigh + 1) >> 1;
 				pixoffset1 = -start1;
 
 				if (pixoffset1 > 0)
@@ -496,13 +499,13 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 				}
 				if (endy1 <= endy) {
 					curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, endy1);
-					paletteFill(curDestPtr, srcPtr2, pixelHigh, (int32 *)palette);
+					paletteFill(curDestPtr, (byte *)srcPtr2, pixelHigh, (int32 *)palette);
 				}
 			}
 			pixelHigh -= pixoffset1;
 			if (pixelHigh > 0) {
 				start1 = 0;
-				srcPtr2 += pixoffset1;
+				srcPtr2 = (uint16 *)((byte *)srcPtr2 + pixoffset1);
 				goto LABEL_37;
 			}
 		}
