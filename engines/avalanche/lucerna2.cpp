@@ -1058,7 +1058,28 @@ void Lucerna::dawn() {
 
 
 
-void Lucerna::showrw() {
+void Lucerna::showrw() { // It's data is loaded in load_digits().
+	if (_vm->_gyro.oldrw == _vm->_gyro.dna.rw) 
+		return;
+	_vm->_gyro.oldrw = _vm->_gyro.dna.rw;
+	_vm->_gyro.off();
+	
+	/*	for (byte page_ = 0; page_ <= 1; page_ ++) {
+	setactivepage(page_);
+	putimage(0, 161, rwlite[with.rw], 0);
+	}*/
+
+	Graphics::Surface *rwlite = _vm->_graph.readImage(_vm->_gyro.rwlite[_vm->_gyro.dna.rw]);
+
+	_vm->_graph.copySurface(*rwlite, 0, 161);
+
+	rwlite->free();
+
+	delete rwlite;
+
+	_vm->_gyro.on();
+	//setactivepage(1 - cp);
+	
 	warning("STUB: Lucerna::showrw()");
 }
 
