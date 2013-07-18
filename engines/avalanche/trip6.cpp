@@ -86,28 +86,28 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 		a.comment += inf.readByte();
 
 	a.num = inf.readByte();
-	a.xl = inf.readByte();
-	a.yl = inf.readByte();
+	_info.xl = inf.readByte();
+	_info.yl = inf.readByte();
 	a.seq = inf.readByte();
-	a.size = inf.readUint16LE();
+	_info.size = inf.readUint16LE();
 	a.fgc = inf.readByte();
 	a.bgc = inf.readByte();
 	a.accinum = inf.readByte();
 
 	totalnum = 0; // = 1;
-	xw = a.xl / 8;
-	if ((a.xl % 8) > 0)
+	xw = _info.xl / 8;
+	if ((_info.xl % 8) > 0)
 		xw++;
 	for (byte aa = 0; aa < /*nds*seq*/a.num; aa++) {
 
-		sil[totalnum] = new siltype[11 * (a.yl + 1)];
+		_info.sil[totalnum] = new siltype[11 * (_info.yl + 1)];
 		//getmem(sil[totalnum-1], 11 * (a.yl + 1));
-		mani[totalnum] = new manitype[a.size - 6];
+		_info.mani[totalnum] = new manitype[_info.size - 6];
 		//getmem(mani[totalnum-1], a.size - 6);
-		for (fv = 0; fv <= a.yl; fv ++)
-			inf.read((*sil[totalnum])[fv], xw);
+		for (fv = 0; fv <= _info.yl; fv ++)
+			inf.read((*_info.sil[totalnum])[fv], xw);
 			//blockread(inf, (*sil[totalnum-1])[fv], xw);
-		inf.read(*mani[totalnum], a.size - 6);
+		inf.read(*_info.mani[totalnum], _info.size - 6);
 		//blockread(inf, *mani[totalnum-1], a.size - 6);
 
 		totalnum ++;
@@ -168,8 +168,8 @@ bool triptype::collision_check() {
 
 	for (fv = 1; fv <= _tr->numtr; fv++) 
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
-			((x + a.xl) > _tr->tr[fv].x) &&
-			(x < (_tr->tr[fv].x + _tr->tr[fv].a.xl)) &&
+			((x + _info.xl) > _tr->tr[fv].x) &&
+			(x < (_tr->tr[fv].x + _tr->tr[fv]._info.xl)) &&
 			(_tr->tr[fv].y == y)) 
 				return true;
 
@@ -205,8 +205,8 @@ int8 triptype::sgn(int16 x) {
 
 void triptype::walkto(byte pednum) {
 	speed(sgn(_tr->_vm->_gyro.peds[pednum].x - x) * 4, sgn(_tr->_vm->_gyro.peds[pednum].y - y));
-	hx = _tr->_vm->_gyro.peds[pednum].x - a.xl / 2;
-	hy = _tr->_vm->_gyro.peds[pednum].y - a.yl;
+	hx = _tr->_vm->_gyro.peds[pednum].x - _info.xl / 2;
+	hy = _tr->_vm->_gyro.peds[pednum].y - _info.yl;
 	homing = true;
 }
 
@@ -270,7 +270,7 @@ void triptype::stopwalk() {
 }
 
 void triptype::chatter() {
-	_tr->_vm->_gyro.talkx = x + a.xl / 2;
+	_tr->_vm->_gyro.talkx = x + _info.xl / 2;
 	_tr->_vm->_gyro.talky = y;
 	_tr->_vm->_gyro.talkf = a.fgc;
 	_tr->_vm->_gyro.talkb = a.bgc;
@@ -346,16 +346,14 @@ triptype *triptype::done() {
 	int32 id;
 	uint16 soa;
 
-	adxtype &with = a;
-
 	/*  nds:=num div seq;*/
-	xw = with.xl / 8;
-	if ((with.xl % 8) > 0)
+	xw = _info.xl / 8;
+	if ((_info.xl % 8) > 0)
 		xw += 1;
-	for (aa = 1; aa <= /*nds*seq*/ with.num; aa++) {
+	for (aa = 1; aa <= /*nds*seq*/ a.num; aa++) {
 		totalnum--;
-		free(mani[totalnum]);
-		free(sil[totalnum]); /* <<- Width of a siltype. */
+		free(_info.mani[totalnum]);
+		free(_info.sil[totalnum]); /* <<- Width of a siltype. */
 	}
 
 	quick = false;
@@ -1016,7 +1014,7 @@ void Trip::rwsp(byte t, byte r) {
 }
 
 void Trip::apped(byte trn, byte np) {
-	tr[trn].appear(tr[trn].x - tr[trn].a.xl / 2, tr[trn].y - tr[trn].a.yl, _vm->_gyro.peds[np].dir);
+	tr[trn].appear(tr[trn].x - tr[trn]._info.xl / 2, tr[trn].y - tr[trn]._info.yl, _vm->_gyro.peds[np].dir);
 	rwsp(trn, _vm->_gyro.peds[np].dir);
 }
 
@@ -1115,9 +1113,9 @@ void Trip::arrow_procs(byte tripnum) {
 			This is so if: a) the bottom of the arrow is below Avvy's head,
 			b) the left of the arrow is left of the right of Avvy's head, and
 			c) the right of the arrow is right of the left of Avvy's head. */
-		if (((tr[tripnum].y + tr[tripnum].a.yl) >= tr[1].y) /* A */
-				&& (tr[tripnum].x <= (tr[1].x + tr[1].a.xl)) /* B */
-				&& ((tr[tripnum].x + tr[tripnum].a.xl) >= tr[1].x)) { /* C */
+		if (((tr[tripnum].y + tr[tripnum]._info.yl) >= tr[1].y) /* A */
+				&& (tr[tripnum].x <= (tr[1].x + tr[1]._info.xl)) /* B */
+				&& ((tr[tripnum].x + tr[tripnum]._info.xl) >= tr[1].x)) { /* C */
 			/* OK, it's hit him... what now? */
 
 			tr[2].call_eachstep = false; /* prevent recursion. */
@@ -1518,7 +1516,7 @@ void Trip::fliproom(byte room, byte ped) {
 
 bool Trip::infield(byte which) {
 /* returns True if you're within field "which" */
-	int16 yy = tr[1].y + tr[1].a.yl;
+	int16 yy = tr[1].y + tr[1]._info.yl;
 
 	return (tr[1].x >= _vm->_gyro.fields[which].x1) && (tr[1].x <= _vm->_gyro.fields[which].x2)
 		&& (yy >= _vm->_gyro.fields[which].y1) && (yy <= _vm->_gyro.fields[which].y2);
@@ -1538,7 +1536,7 @@ bool Trip::neardoor() {       /* returns True if you're near a door! */
 	}
 		
 	ux = tr[1].x;
-	uy = tr[1].y + tr[1].a.yl;
+	uy = tr[1].y + tr[1]._info.yl;
 		
 	nd = false;
 	for (fv = 9; fv <= _vm->_gyro.numfields; fv++) {

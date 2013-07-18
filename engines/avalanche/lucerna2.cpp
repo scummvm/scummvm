@@ -963,14 +963,14 @@ void Lucerna::verte() {
 	/* _vm->_trip.tr[0] : that's the only one we're interested in here */
 	if (_vm->_gyro.mx < _vm->_trip.tr[0].x) 
 		what = 1;
-	else if (_vm->_gyro.mx > (unsigned char)(_vm->_trip.tr[0].x + _vm->_trip.tr[0].a.xl)) 
+	else if (_vm->_gyro.mx > (unsigned char)(_vm->_trip.tr[0].x + _vm->_trip.tr[0]._info.xl)) 
 		what = 2;
 	else
 		what = 0; /* On top */
 
 	if (_vm->_gyro.my < _vm->_trip.tr[0].y)
 		what += 3;
-	else if (_vm->_gyro.my > (unsigned char)(_vm->_trip.tr[0].y + _vm->_trip.tr[0].a.yl))
+	else if (_vm->_gyro.my > (unsigned char)(_vm->_trip.tr[0].y + _vm->_trip.tr[0]._info.yl))
 		what += 6;
 
 	switch (what) {
@@ -1213,7 +1213,7 @@ void Lucerna::delavvy() {
 	
 	triptype &with = _vm->_trip.tr[0];
 	for (page_ = 0; page_ <= 1; page_ ++)
-		mblit(with.x / 8, with.y, (with.x + with.a.xl) / 8 + 1, with.y + with.a.yl, 3, page_);
+		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
 	
 	blitfix();
 	_vm->_gyro.on();
