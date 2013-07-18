@@ -197,6 +197,9 @@ int MfcArchive::readCount() {
 
 double MfcArchive::readDouble() {
 	// FIXME: This is utterly cruel and unportable
+	// Some articles on the matter:
+	// http://randomascii.wordpress.com/2013/02/07/float-precision-revisited-nine-digit-float-portability/
+	// http://randomascii.wordpress.com/2012/01/11/tricks-with-the-floating-point-format/
 
 	union {
 		struct {
