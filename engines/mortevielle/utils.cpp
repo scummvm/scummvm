@@ -1698,11 +1698,11 @@ void MortevielleEngine::clearDescriptionBar() {
 	_mouse.hideMouse();
 	if (_largestClearScreen) {
 		_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
-		_screenSurface.drawBox(0, 175, 634, 24, 15);
+		_screenSurface.drawBox(0, 176, 634, 23, 15);
 		_largestClearScreen = false;
 	} else {
 		_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
-		_screenSurface.drawBox(0, 175, 634, 15, 15);
+		_screenSurface.drawBox(0, 176, 634, 14, 15);
 	}
 	_mouse.showMouse();
 }
@@ -2986,7 +2986,7 @@ void MortevielleEngine::drawPicture() {
 		_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
 	} else if (_caff > 69) {
 		draw(kAdrDes, 112, 48);           // Heads
-		_screenSurface.drawBox(222, 47, 155, 91, 15);
+		_screenSurface.drawBox(222, 47, 155, 92, 15);
 	} else {
 		draw(kAdrDes, 0, 12);
 		prepareScreenType1();
