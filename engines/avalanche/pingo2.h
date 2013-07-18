@@ -44,7 +44,7 @@ public:
 
 	void copy02();
 
-	void copy03();
+	void copy03(); // Should always be replaced with _vm->_graph.refreshScreen(); - See Avalot::setup();
 
 	void copypage(byte frp, byte top);
 
