@@ -74,7 +74,7 @@ public:
 
 class ActionAdd : public ResultAction {
 public:
-	ActionAdd(Common::String line);
+	ActionAdd(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -84,7 +84,7 @@ private:
 
 class ActionAssign : public ResultAction {
 public:
-	ActionAssign(Common::String line);
+	ActionAssign(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -94,7 +94,7 @@ private:
 
 class ActionAttenuate : public ResultAction {
 public:
-	ActionAttenuate(Common::String line);
+	ActionAttenuate(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -104,7 +104,7 @@ private:
 
 class ActionChangeLocation : public ResultAction {
 public:
-	ActionChangeLocation(Common::String line);
+	ActionChangeLocation(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -116,7 +116,7 @@ private:
 
 class ActionCrossfade : public ResultAction {
 public:
-	ActionCrossfade(Common::String line);
+	ActionCrossfade(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -131,7 +131,7 @@ private:
 
 class ActionPlayAnimation : public ResultAction {
 public:
-	ActionPlayAnimation(Common::String line);
+	ActionPlayAnimation(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -150,7 +150,7 @@ private:
 
 class ActionPreloadAnimation : public ResultAction {
 public:
-	ActionPreloadAnimation(Common::String line);
+	ActionPreloadAnimation(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -163,13 +163,13 @@ private:
 // TODO: See if this exists in ZGI. It doesn't in ZNem
 //class ActionUnloadAnimation : public ResultAction {
 //public:
-//	ActionUnloadAnimation(Common::String line);
+//	ActionUnloadAnimation(Common::String *line);
 //	bool execute(ZVision *engine);
 //};
 
 class ActionRandom : public ResultAction {
 public:
-	ActionRandom(Common::String line);
+	ActionRandom(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
@@ -179,7 +179,7 @@ private:
 
 class ActionTimer : public ResultAction {
 public:
-	ActionTimer(Common::String line);
+	ActionTimer(Common::String *line);
 	bool execute(ZVision *engine);
 
 private:
