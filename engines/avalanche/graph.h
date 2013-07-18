@@ -75,6 +75,8 @@ public:
 
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
 
+	void drawSprite(const SpriteInfo &sprite);
+
 	// Must free the returned pointer!!!
 	Graphics::Surface *readImage(const byte *source);
 

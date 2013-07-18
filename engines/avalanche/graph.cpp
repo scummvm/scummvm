@@ -82,6 +82,10 @@ void Graph::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 	_surface.drawLine(x0, y0, x1, y1, color);
 }
 
+void Graph::drawSprite(const SpriteInfo &sprite) {
+	warning("STUB: Graph::drawSprite()");
+}
+
 Graphics::Surface *Graph::readImage(const byte *source) {
 	Graphics::Surface *picture = new Graphics::Surface;
 	
