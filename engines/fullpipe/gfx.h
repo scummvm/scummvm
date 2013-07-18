@@ -42,12 +42,12 @@ struct Bitmap {
 	int _flags;
 
 	void load(Common::ReadStream *s);
-	void putDib(int x, int y, byte *palette);
+	void putDib(int x, int y, int32 *palette);
 
-	void colorFill(int16 *dest, int len, int color);
-	void paletteFill(int16 *dest, byte *src, int len, int32 *palette);
-	void copierKeyColor(int16 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format);
-	void copier(int16 *dest, byte *src, int len, int32 *palette, bool cb05_format);
+	void colorFill(uint16 *dest, int len, int color);
+	void paletteFill(uint16 *dest, byte *src, int len, int32 *palette);
+	void copierKeyColor(uint16 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format);
+	void copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_format);
 };
 
 class Picture : public MemoryObject {
