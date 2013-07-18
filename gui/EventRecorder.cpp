@@ -23,11 +23,11 @@
 
 #include "gui/EventRecorder.h"
 
+#ifdef ENABLE_EVENTRECORDER
+
 namespace Common {
 DECLARE_SINGLETON(GUI::EventRecorder);
 }
-
-#ifdef ENABLE_EVENTRECORDER
 
 #include "common/debug-channels.h"
 #include "backends/timer/sdl/sdl-timer.h"
