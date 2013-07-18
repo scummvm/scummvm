@@ -88,6 +88,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Walking in hall
 		return new Scene525();
 	case 600:
+		// Drive Room
 		return new Scene600();
 	case 700:
 		// Lander Bay 2
@@ -426,7 +427,7 @@ bool SceneExt::display(CursorType action, Event &event) {
 			SceneItem::display2(5, 15);
 		} else {
 			R2_GLOBALS._sound3.play(43, 0);
-			SceneItem::display2(2, 0);
+			SceneItem::display2(2, R2_SONIC_STUNNER);
 		}
 
 		R2_GLOBALS._sound4.play(45);

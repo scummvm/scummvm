@@ -615,7 +615,7 @@ public:
 };
 
 class Scene600 : public SceneExt {
-	class Item1 : public NamedHotspot {
+	class CompartmentHotspot : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -630,15 +630,15 @@ class Scene600 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void draw();
 	};
-	class Actor5 : public SceneActor {
+	class Doorway : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor6 : public SceneActor {
+	class Laser : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor7 : public SceneActor {
+	class Aerosol : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -648,19 +648,19 @@ class Scene600 : public SceneExt {
 	};
 public:
 	int _field412;
-	Item1 _item1;
-	Item1 _item2;
-	Item1 _item3;
+	CompartmentHotspot _background;
+	CompartmentHotspot _item2;
+	CompartmentHotspot _item3;
 	Item4 _item4;
-	Item1 _item5;
+	CompartmentHotspot _item5;
 	BackgroundSceneObject _object1;
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;
 	Actor4 _actor4;
-	Actor5 _actor5;
-	Actor6 _actor6;
-	Actor7 _actor7;
+	Doorway _doorway;
+	Laser _laser;
+	Aerosol _aerosol;
 	Actor8 _actor8;
 	ASoundExt _aSound1;
 	SequenceManager _sequenceManager1;
