@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef WINTERMUTE_TRANSFORMTOOLS_H
-#define WINTERMUTE_TRANSFORMTOOLS_H
+#ifndef WINTERMUTE_TRANSFORM_TOOLS_H
+#define WINTERMUTE_TRANSFORM_TOOLS_H
 
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/floatpoint.h"
