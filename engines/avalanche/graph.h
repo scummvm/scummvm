@@ -37,6 +37,23 @@
 namespace Avalanche {
 class AvalancheEngine;
 
+typedef byte manitype[2049]; // manitype = array[5..2053] of byte; 
+// Be aware!!!
+
+typedef byte siltype[51][11]; /* 35, 4 */
+
+class SpriteInfo {
+public:
+	byte xw; /* x-width in bytes */
+	byte xl, yl; /* x & y lengths of pictures */
+
+	manitype *mani[24];
+	siltype *sil[24];
+
+	uint16 size; /* the size of one picture */
+};
+
+
 class Graph {
 public:
 	static const int16 _screenWidth = 640;
