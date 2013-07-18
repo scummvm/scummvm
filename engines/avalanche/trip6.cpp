@@ -142,14 +142,11 @@ void triptype::original() {
 }
 
 void triptype::andexor() {
-
-
-
 	if ((vanishifstill) && (ix == 0) && (iy == 0))
 		return;
 	byte picnum = face * a.seq + step + 1;
 
-	_tr->_vm->_graph.drawSprite(_info);	
+	_tr->_vm->_graph.drawSprite(_info, picnum, x, y);	
 }
 
 void triptype::turn(byte whichway) {
@@ -404,7 +401,7 @@ void Trip::setParent(AvalancheEngine *vm) {
 void Trip::loadtrip() {
 	byte gm;
 
-	for (gm = 1; gm <= numtr; gm++)
+	for (gm = 0; gm < numtr; gm++)
 		tr[gm].original();
 	
 	for (int i = 0; i < sizeof(aa); i++)
@@ -1255,12 +1252,12 @@ void Trip::geida_procs(byte tripnum) {
 /* That's all... */
 
 void Trip::call_andexors() {
-	byte order[5];
+	int8 order[5];
 	byte fv, temp;
 	bool ok;
 
 	for (int i = 0; i < 5; i++)
-		order[i] = 0;
+		order[i] = -1;
 
 	for (fv = 0; fv < numtr; fv++) {
 		if (tr[fv].quick && tr[fv].visible)
@@ -1282,7 +1279,7 @@ void Trip::call_andexors() {
 	} while (!ok);
 
 	for (fv = 0; fv < 5; fv++) {
-		if (order[fv] > 0)
+		if (order[fv] > -1)
 			tr[order[fv]].andexor();
 	}
 }
