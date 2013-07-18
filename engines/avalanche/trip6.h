@@ -31,6 +31,8 @@
 #ifndef TRIP6_H
 #define TRIP6_H
 
+#include "avalanche/graph.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -47,9 +49,7 @@ struct adxtype { /* Second revision of ADX type */
 	Common::String name/*[13]*/; /* name of character */ // uruk: Note to self: TRAILING /0 !!! Real size: 12
 	Common::String comment/*[17]*/; /* comment */ // uruk: Same here, but 16.
 	byte num; /* number of pictures */
-	byte xl, yl; /* x & y lengths of pictures */
 	byte seq; /* how many in one stride */
-	uint16 size; /* the size of one picture */
 	byte fgc, bgc; /* foreground & background bubble colours */
 	byte accinum; /* the number according to Acci (1=Avvy, etc.) */
 };
@@ -80,13 +80,13 @@ class Trip;
 
 class triptype {
 public:
+	SpriteInfo _info;
+
 	adxtype a; /* vital statistics */
 	byte face, step;
 	int16 x, y; /* current xy coords */
 	int16 ox[2], oy[2];  /* last xy coords */
 	int8 ix, iy; /* amount to move sprite by, each step */
-	manitype *mani[24];
-	siltype *sil[24];
 	byte whichsprite;
 	bool quick, visible, homing, check_me;
 	int16 hx, hy; /* homing x & y coords */
