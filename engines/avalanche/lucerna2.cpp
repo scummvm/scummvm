@@ -261,7 +261,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 				}	
 			}
 
-	_vm->_graph.copySurface(background, 0 ,0);
+	_vm->_graph.copySurface(background, 0, 10);
 
 	background.free();
 
