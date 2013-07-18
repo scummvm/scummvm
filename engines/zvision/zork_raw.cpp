@@ -73,7 +73,7 @@ RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag dis
 }
 
 int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
-	uint16 bytesRead = 0;
+	uint32 bytesRead = 0;
 
 	// 0: Left, 1: Right
 	byte channel = 0;
@@ -114,7 +114,7 @@ int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
 		buffer[bytesRead - 1] = (int16)sample;
 
 		index += _stepAdjustmentTable[(encodedSample >> 4) & 7];
-		index = CLIP<uint16>(index, 0, 88);
+		index = CLIP<int16>(index, 0, 88);
 
 		_lastSample[channel].sample = sample;
 		_lastSample[channel].index = index;
