@@ -142,7 +142,14 @@ void triptype::original() {
 }
 
 void triptype::andexor() {
-	warning("STUB: triptype::andexor()");
+
+
+
+	if ((vanishifstill) && (ix == 0) && (iy == 0))
+		return;
+	byte picnum = face * a.seq + step + 1;
+
+	_tr->_vm->_graph.drawSprite(_info);	
 }
 
 void triptype::turn(byte whichway) {
@@ -1255,14 +1262,14 @@ void Trip::call_andexors() {
 	for (int i = 0; i < 5; i++)
 		order[i] = 0;
 
-	for (fv = 1; fv <= numtr; fv++) {
+	for (fv = 0; fv < numtr; fv++) {
 		if (tr[fv].quick && tr[fv].visible)
 			order[fv] = fv;
 	}
 
 	do {
 		ok = true;
-		for (fv = 1; fv <= 4; fv++) {
+		for (fv = 0; fv < 4; fv++) {
 			if (((order[fv] != 0) && (order[fv + 1] != 0))
 					&& (tr[order[fv]].y > tr[order[fv + 1]].y)) {
 				/* Swap them! */
@@ -1274,7 +1281,7 @@ void Trip::call_andexors() {
 		}
 	} while (!ok);
 
-	for (fv = 1; fv <= 5; fv++) {
+	for (fv = 0; fv < 5; fv++) {
 		if (order[fv] > 0)
 			tr[order[fv]].andexor();
 	}
