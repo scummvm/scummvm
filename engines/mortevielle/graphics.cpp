@@ -25,12 +25,13 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
+#include "mortevielle/mortevielle.h"
+#include "mortevielle/graphics.h"
+#include "mortevielle/mouse.h"
+
 #include "common/endian.h"
 #include "common/system.h"
 #include "graphics/palette.h"
-#include "mortevielle/graphics.h"
-#include "mortevielle/mortevielle.h"
-#include "mortevielle/mouse.h"
 
 namespace Mortevielle {
 

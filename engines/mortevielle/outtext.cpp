@@ -25,12 +25,13 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "common/file.h"
-#include "common/str.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/graphics.h"
-#include "mortevielle/mortevielle.h"
+
+#include "common/file.h"
+#include "common/str.h"
 
 namespace Mortevielle {
 

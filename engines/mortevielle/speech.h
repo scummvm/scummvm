@@ -28,8 +28,9 @@
 #ifndef MORTEVIELLE_SPEECH_H
 #define MORTEVIELLE_SPEECH_H
 
-#include "common/scummsys.h"
 #include "mortevielle/sound.h"
+
+#include "common/scummsys.h"
 
 namespace Mortevielle {
 

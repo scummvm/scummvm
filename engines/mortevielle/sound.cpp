@@ -25,9 +25,10 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "common/scummsys.h"
-#include "mortevielle/sound.h"
 #include "mortevielle/mortevielle.h"
+#include "mortevielle/sound.h"
+
+#include "common/scummsys.h"
 
 namespace Mortevielle {
 

@@ -25,6 +25,15 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
+#include "mortevielle/mortevielle.h"
+
+#include "mortevielle/dialogs.h"
+#include "mortevielle/menu.h"
+#include "mortevielle/mouse.h"
+#include "mortevielle/outtext.h"
+#include "mortevielle/saveload.h"
+#include "mortevielle/outtext.h"
+
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -32,13 +41,6 @@
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
-#include "mortevielle/mortevielle.h"
-#include "mortevielle/dialogs.h"
-#include "mortevielle/menu.h"
-#include "mortevielle/mouse.h"
-#include "mortevielle/outtext.h"
-#include "mortevielle/saveload.h"
-#include "mortevielle/outtext.h"
 
 namespace Mortevielle {
 
