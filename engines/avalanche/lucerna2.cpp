@@ -261,7 +261,9 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 				}	
 			}
 
-	_vm->_graph.copySurface(background, 0, 10);
+	for (uint16 y = 0; y < backgroundHeight; y++)
+		for (uint16 x = 0; x < backgroundWidht; x++)
+			*_vm->_graph.getPixel(x + 0, y + 10) = *(byte *)background.getBasePtr(x, y);	
 
 	background.free();
 
@@ -764,13 +766,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 
 	f.read(buffer, picsize);
 
-	Graphics::Surface *picture = _vm->_graph.readImage(buffer);
-
-	_vm->_graph.copySurface(*picture, 205, 170);
-
-	picture->free();
-
-	delete picture;
+	_vm->_graph.copySurface(buffer, 205, 170);
 
 	delete[] buffer;
 
@@ -827,13 +823,7 @@ void Lucerna::toolbar() {
 
 	f.read(buffer, bufferSize);
 
-	Graphics::Surface *toolbar = _vm->_graph.readImage(buffer);
-
-	_vm->_graph.copySurface(*toolbar, 5, 169);
-
-	toolbar->free();
-
-	delete toolbar;
+	_vm->_graph.copySurface(buffer, 5, 169);
 
 	delete[] buffer;
 
@@ -868,15 +858,8 @@ void Lucerna::showscore() {
 	//setactivepage(3);
 
 	for (byte fv = 0; fv < 3; fv ++)
-		if (_vm->_gyro.lastscore[fv] != numbers[fv]) {
-			Graphics::Surface *digit = _vm->_graph.readImage(_vm->_gyro.digit[numbers[fv]]);
-
-			_vm->_graph.copySurface(*digit, 250 + (fv + 1) * 15, 177);
-
-			digit->free();
-
-			delete digit;
-		}
+		if (_vm->_gyro.lastscore[fv] != numbers[fv]) 
+			_vm->_graph.copySurface(_vm->_gyro.digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
 	for (byte fv = 0; fv < 2; fv ++)
 		_vm->_trip.getset[fv].remember(scorespace);
@@ -1069,13 +1052,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	putimage(0, 161, rwlite[with.rw], 0);
 	}*/
 
-	Graphics::Surface *rwlite = _vm->_graph.readImage(_vm->_gyro.rwlite[_vm->_gyro.dna.rw]);
-
-	_vm->_graph.copySurface(*rwlite, 0, 161);
-
-	rwlite->free();
-
-	delete rwlite;
+	_vm->_graph.copySurface(_vm->_gyro.rwlite[_vm->_gyro.dna.rw], 0, 161);
 
 	_vm->_gyro.on();
 	//setactivepage(1 - cp);

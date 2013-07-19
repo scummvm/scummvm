@@ -70,10 +70,6 @@ byte *Graph::getPixel(int16 x, int16 y) {
 	return (byte *)_surface.getBasePtr(x, y);
 }
 
-void Graph::setPixel(int16 x, int16 y, byte color) {
-	*(byte *)_surface.getBasePtr(x, y) = color;
-}
-
 void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
@@ -85,9 +81,9 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 	warning("STUB: Graph::drawSprite()");
 }
 
-Graphics::Surface *Graph::readImage(const byte *source) {
-	Graphics::Surface *picture = new Graphics::Surface;
-	
+void Graph::copySurface(const byte *source, uint16 destX, uint16 destY) {
+	Graphics::Surface picture;
+
 	uint32 i = 0;
 
 	uint16 pictureWidth = (source[i++] + 1);
@@ -95,7 +91,7 @@ Graphics::Surface *Graph::readImage(const byte *source) {
 	uint16 pictureHeight = (source[i++] + 1); 
 	pictureHeight += (source[i++] << 8);
 
-	picture->create(pictureWidth, pictureHeight, Graphics::PixelFormat::createFormatCLUT8());
+	picture.create(pictureWidth, pictureHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (byte y = 0; y < pictureHeight; y++)
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
@@ -103,17 +99,13 @@ Graphics::Surface *Graph::readImage(const byte *source) {
 				byte pixel = source[i++];
 				for (byte i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
-					*(byte *)picture->getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+					*(byte *)picture.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
 				} 
 			}
 
-	return picture;
-}
-
-void Graph::copySurface(const Graphics::Surface &source, uint16 destX, uint16 destY) {
-	for (uint16 y = 0; y < source.h; y++)
-		for (uint16 x = 0; x < source.w; x++)
-			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)source.getBasePtr(x, y);		
+	for (uint16 y = 0; y < picture.h; y++)
+		for (uint16 x = 0; x < picture.w; x++)
+			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
 }
 
 void Graph::refreshScreen() {
