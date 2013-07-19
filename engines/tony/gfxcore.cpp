@@ -1866,7 +1866,6 @@ void RMGfxSourceBuffer8RLEWordAA::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 }
 
 int RMGfxSourceBuffer8RLEWordAA::init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
-  debug("Hello!!!");
 	return RMGfxSourceBuffer8RLE::init(buf, dimx, dimy, bLoadPalette);
 }
 
