@@ -75,9 +75,25 @@ void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 }
 
 void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
-	/* These 2 lines are here SOLELY for testing purposes. */
-	Common::Rect r(x, y, x + sprite.xl, y + sprite.yl);
-	_surface.frameRect(r, magenta);
+
+	for (byte qay = 0; qay < sprite.yl; qay++) {
+		byte *mask = new byte[sprite.xl];
+
+		for (byte qax = 0; qax < sprite.xl; qax++) {
+			byte count = qax / 8;
+			mask[qax] = ((*sprite.sil[picnum])[qay][count] >> ((7 - qax % 8)) & 1);
+			if (mask[qax] == 0)
+				*getPixel(x + qax, y + qay) = 255;
+		}
+
+		delete[] mask;
+	}
+
+/*
+	for (fv = 5; fv <= sprite.size - 2; fv ++)
+		aa[fv] = aa[fv] ^ (*sprite.mani[picnum])[fv];
+*/
+
 	warning("STUB: Graph::drawSprite()");
 }
 
@@ -99,9 +115,9 @@ void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
 			for (uint16 x = 0; x < pictureWidth; x += 8) {
 				byte pixel = source[i++];
-				for (byte i = 0; i < 8; i++) {
-					byte pixelBit = (pixel >> i) & 1;
-					*(byte *)picture.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+				for (byte bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
 				} 
 			}
 
