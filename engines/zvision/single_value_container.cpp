@@ -21,7 +21,9 @@
  */
 
 #include "common/scummsys.h"
+
 #include "common/textconsole.h"
+#include "common/str.h"
 
 #include "zvision/single_value_container.h"
 

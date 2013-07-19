@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 
 #include "common/tokenizer.h"
+#include "common/file.h"
 
 #include "zvision/utility.h"
 #include "zvision/zvision.h"

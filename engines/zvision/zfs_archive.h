@@ -24,8 +24,12 @@
 #define ZVISION_ZFS_ARCHIVE_H
 
 #include "common/archive.h"
-#include "common/file.h"
-#include "common/fs.h"
+#include "common/hashmap.h"
+
+
+namespace Common {
+class String;
+}
 
 namespace ZVision {
 
@@ -48,7 +52,7 @@ struct ZfsEntryHeader {
 	uint32 unknown;
 };
 
-typedef Common::HashMap<Common::String, ZfsEntryHeader*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ZfsEntryHeaderMap;
+typedef Common::HashMap<Common::String, ZfsEntryHeader*> ZfsEntryHeaderMap;
 
 class ZfsArchive : public Common::Archive {
 public:

@@ -24,9 +24,11 @@
 #ifndef ZVISION_UTILITY_H
 #define ZVISION_UTILITY_H
 
-#include "common/str.h"
-#include "common/file.h"
 #include "common/array.h"
+
+namespace Common {
+class String;
+}
 
 namespace ZVision {
 

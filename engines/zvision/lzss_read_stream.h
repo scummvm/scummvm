@@ -25,8 +25,11 @@
 
 #include "common/types.h"
 #include "common/stream.h"
-#include "common/memstream.h"
 #include "common/array.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace ZVision {
 

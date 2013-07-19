@@ -23,7 +23,9 @@
 #ifndef ZVISION_OBJECT_H
 #define ZVISION_OBJECT_H
 
-#include "common/str.h"
+namespace Common {
+class String;
+}
 
 namespace ZVision {
 

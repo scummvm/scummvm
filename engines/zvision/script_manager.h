@@ -23,13 +23,16 @@
 #ifndef ZVISION_SCRIPT_MANAGER_H
 #define ZVISION_SCRIPT_MANAGER_H
 
-#include "common/str.h"
-#include "common/stream.h"
 #include "common/hashmap.h"
 #include "common/stack.h"
 
 #include "zvision/puzzle.h"
 #include "zvision/control.h"
+
+namespace Common {
+class String;
+class SeekableReadStream;
+}
 
 namespace ZVision {
 
