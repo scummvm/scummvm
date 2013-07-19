@@ -284,7 +284,7 @@ private:
 	uint16 _dialogIndexArray[kMaxDialogIndex + 1];
 	Hint   _dialogHintArray[kMaxDialogHint + 1];
 
-	Common::ErrorCode initialise();
+	Common::ErrorCode initialize();
 	Common::ErrorCode loadMortDat();
 	void readStaticStrings(Common::File &f, int dataSize, DataType dataType);
 	void loadFont(Common::File &f);

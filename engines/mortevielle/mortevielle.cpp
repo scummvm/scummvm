@@ -160,10 +160,10 @@ Common::String MortevielleEngine::generateSaveFilename(const Common::String &tar
 }
 
 /**
- * Initialise the game state
+ * Initialize the game state
  */
-Common::ErrorCode MortevielleEngine::initialise() {
-	// Initialise graphics mode
+Common::ErrorCode MortevielleEngine::initialize() {
+	// Initialize graphics mode
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, true);
 
 	// Set debug channels
@@ -329,8 +329,8 @@ void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize, DataTyp
 /*-------------------------------------------------------------------------*/
 
 Common::Error MortevielleEngine::run() {
-	// Initialise the game
-	Common::ErrorCode err = initialise();
+	// Initialize the game
+	Common::ErrorCode err = initialize();
 	if (err != Common::kNoError)
 		return err;
 
@@ -353,7 +353,7 @@ Common::Error MortevielleEngine::run() {
 	// Run the main game loop
 	mainGame();
 	
-	// Cleanup (allocated in initialise())
+	// Cleanup (allocated in initialize())
 	_screenSurface.free();
 	free(_speechManager._cfiphBuffer);
 	free(_cfiecBuffer);

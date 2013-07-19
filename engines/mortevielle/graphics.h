@@ -100,7 +100,7 @@ public:
 	void copyFrom(Graphics::Surface &src, int x, int y);
 	void writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex);
 	void drawBox(int x, int y, int dx, int dy, int col);
-	void fillRect(int colour, const Common::Rect &bounds);
+	void fillRect(int color, const Common::Rect &bounds);
 	void clearScreen();
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
 	void drawString(const Common::String &l, int command);
