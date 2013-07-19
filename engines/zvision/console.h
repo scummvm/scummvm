@@ -40,6 +40,7 @@ private:
 	bool cmdLoadImage(int argc, const char **argv);
 	bool cmdLoadVideo(int argc, const char **argv);
 	bool cmdLoadSound(int argc, const char **argv);
+	bool cmdRawToWav(int argc, const char **argv);
 };
 
 } // End of namespace ZVision

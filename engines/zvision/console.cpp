@@ -29,6 +29,7 @@
 
 #include "zvision/console.h"
 #include "zvision/zvision.h"
+#include "zvision/render_manager.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/zork_raw.h"
 #include "zvision/utility.h"
@@ -47,7 +48,7 @@ bool Console::cmdLoadImage(int argc, const char **argv) {
 		DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen\n");
 		return true;
 	}
-	_engine->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
+	_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
 
 	return true;
 }

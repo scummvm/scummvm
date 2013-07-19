@@ -40,6 +40,7 @@ namespace ZVision {
 struct ZVisionGameDescription;
 class Console;
 class ScriptManager;
+class RenderManager;
  
 // our engine debug channels
 enum {
@@ -65,6 +66,8 @@ private:
 	Common::RandomSource *_rnd;
 	// Managers
 	ScriptManager *_scriptManager;
+	RenderManager *_renderManager;
+
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
@@ -77,10 +80,10 @@ public:
 	Common::Language getLanguage() const;
 	virtual Common::Error run();
 	ScriptManager *getScriptManager() const;
+	RenderManager *getRenderManager() const;
 	Common::RandomSource *getRandomSource() const;
 	ZVisionGameId getGameId() const;
 
-	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
 	void startVideo(Video::VideoDecoder *videoDecoder);
 	void continueVideo();
 

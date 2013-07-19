@@ -35,6 +35,7 @@
 #include "zvision/zvision.h"
 #include "zvision/console.h"
 #include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
 #include "zvision/zfs_archive.h"
 #include "zvision/detection.h"
 
@@ -73,6 +74,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
+	_renderManager = new RenderManager(_system);
 
 	debug("ZVision::ZVision");
 }
@@ -149,6 +151,10 @@ Common::Error ZVision::run() {
 
 ScriptManager *ZVision::getScriptManager() const {
 	return _scriptManager;
+}
+
+RenderManager *ZVision::getRenderManager() const {
+	return _renderManager;
 }
 
 Common::RandomSource *ZVision::getRandomSource() const {
