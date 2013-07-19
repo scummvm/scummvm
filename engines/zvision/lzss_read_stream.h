@@ -48,7 +48,6 @@ private:
 	Common::SeekableReadStream *_source;
 	char _window[_blockSize];
 	uint16 _windowCursor;
-	uint32 _readCursor;
 	bool _eosFlag;
 
 public:

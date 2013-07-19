@@ -30,7 +30,6 @@ LzssReadStream::LzssReadStream(Common::SeekableReadStream *source)
 		: _source(source),
 		  // It's convention to set the starting cursor position to blockSize - 16
 		  _windowCursor(0x0FEE),
-		  _readCursor(0),
 		  _eosFlag(false) {
 	// Clear the window to null
 	memset(_window, 0, _blockSize);
