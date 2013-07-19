@@ -307,7 +307,7 @@ bool CInteraction::load(MfcArchive &file) {
 	_yOffs = file.readUint32LE();
 	_sceneId = file.readUint32LE();
 	_flags = file.readUint32LE();
-	_stringObj = file.readPascalString();
+	_actionName = file.readPascalString();
 
 	_messageQueue = (MessageQueue *)file.readClass();
 
@@ -332,7 +332,7 @@ bool MessageQueue::load(MfcArchive &file) {
 
 	assert(g_fullpipe->_gameProjectVersion >= 12);
 
-	_stringObj = file.readPascalString();
+	_queueName = file.readPascalString();
 
 	for (int i = 0; i < count; i++) {
 		CObject *tmp = file.readClass();
@@ -411,7 +411,7 @@ bool CObjstateCommand::load(MfcArchive &file) {
 
 	_value = file.readUint32LE();
 
-	_stringObj = file.readPascalString();
+	_objCommandName = file.readPascalString();
 
 	return true;
 }
@@ -447,14 +447,14 @@ CGameVar::CGameVar() {
 }
 
 bool CGameVar::load(MfcArchive &file) {
-	_stringObj = file.readPascalString();
+	_varName = file.readPascalString();
 	_varType = file.readUint32LE();
 
 	debugN(6, "[%03d] ", file.getLevel());
 	for (int i = 0; i < file.getLevel(); i++)
 		debugN(6, " ");
 
-	debugN(6, "<%s>: ", transCyrillic((byte *)_stringObj));
+	debugN(6, "<%s>: ", transCyrillic((byte *)_varName));
 
 	switch (_varType) {
 	case 0:
@@ -489,7 +489,7 @@ CGameVar *CGameVar::getSubVarByName(const char *name) {
 
 	if (_subVars != 0) {
 		sv = _subVars;
-		for (;sv && scumm_stricmp(sv->_stringObj, name); sv = sv->_nextVarObj)
+		for (;sv && scumm_stricmp(sv->_varName, name); sv = sv->_nextVarObj)
 			;
 	}
 	return sv;
@@ -510,8 +510,8 @@ bool CGameVar::setSubVarAsInt(const char *name, int value) {
 	var = new CGameVar();
 	var->_varType = 0;
 	var->_value.intValue = value;
-	var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
-	strcpy(var->_stringObj, name);
+	var->_varName = (char *)calloc(strlen(name) + 1, 1);
+	strcpy(var->_varName, name);
 
 	return addSubVar(var);
 }
@@ -534,8 +534,8 @@ CGameVar *CGameVar::addSubVarAsInt(const char *name, int value) {
 		var->_varType = 0;
 		var->_value.intValue = value;
 
-		var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
-		strcpy(var->_stringObj, name);
+		var->_varName = (char *)calloc(strlen(name) + 1, 1);
+		strcpy(var->_varName, name);
 
 		return (addSubVar(var) != 0) ? var : 0;
 	}

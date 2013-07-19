@@ -47,7 +47,7 @@ class GameProject : public CObject {
 class MessageQueue : public CObject {
 	int _id;
 	int _flags;
-	char *_stringObj;
+	char *_queueName;
 	int16 _dataId;
 	int16 _field_12;
 	int _field_14;
@@ -78,7 +78,7 @@ class CInteraction : public CObject {
 	int _sceneId;
 	int _field_28;
 	int _flags;
-	char *_stringObj;
+	char *_actionName;
 
  public:
 	CInteraction();
@@ -222,7 +222,7 @@ class CGameVar : public CObject {
 	CGameVar *_parentVarObj;
 	CGameVar *_subVars;
 	CGameVar *_field_14;
-	char *_stringObj;
+	char *_varName;
 	VarValue _value;
 	int _varType;
 
@@ -292,7 +292,7 @@ class CGameLoader : public CObject {
 
 class CObjstateCommand : public CObject {
 	ExCommand _cmd;
-	char *_stringObj;
+	char *_objCommandName;
 	int _value;
 
  public:

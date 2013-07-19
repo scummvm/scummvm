@@ -97,7 +97,7 @@ class GameObject : public CObject {
 	int _field_8;
 	int16 _flags;
 	int16 _id;
-	char *_stringObj;
+	char *_objectName;
 	int _ox;
 	int _oy;
 	int _priority;

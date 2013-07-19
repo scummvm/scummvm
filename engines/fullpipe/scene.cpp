@@ -123,8 +123,8 @@ bool Scene::load(MfcArchive &file) {
 
 	_sceneId = file.readUint16LE();
 	
-	_scstringObj = file.readPascalString();
-	debug(0, "scene: <%s> %d", transCyrillic((byte *)_scstringObj), _sceneId);
+	_sceneName = file.readPascalString();
+	debug(0, "scene: <%s> %d", transCyrillic((byte *)_sceneName), _sceneId);
 
 	int count = file.readUint16LE();
 	debug(7, "scene.ani: %d", count);

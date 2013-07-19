@@ -33,7 +33,7 @@ class Scene : public Background {
 	Shadows *_shadows;
 	SoundList *_soundList;
 	int16 _sceneId;
-	char *_scstringObj;
+	char *_sceneName;
 	int _field_BC;
 	NGIArchive *_libHandle;
 
