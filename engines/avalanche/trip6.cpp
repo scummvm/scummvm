@@ -50,6 +50,8 @@ namespace Avalanche {
 
 	
 void triptype::init(byte spritenum, bool do_check, Trip *tr) {
+	_tr = tr;
+
 	const int32 idshould = -1317732048;
 	int16 gd, gm;
 	byte fv/*,nds*/;
@@ -77,13 +79,17 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 
 	inf.skip(2); // Replace variable named 'soa' in the original code.
 	
-	inf.skip(1); // We don't need to read the size of the string as in the original code.
-	for (byte i = 0; i < 12; i++) 
+	//inf.skip(1); // We don't need to read the size of the string as in the original code.
+	byte nameSize = inf.readByte();
+	for (byte i = 0; i < nameSize; i++) 
 		a.name += inf.readByte();
+	inf.skip(12 - nameSize);
 	
-	inf.skip(1); // Same as above.
-	for (byte i = 0; i < 16; i++)
+	//inf.skip(1); // Same as above.
+	byte commentSize = inf.readByte();
+	for (byte i = 0; i < commentSize; i++)
 		a.comment += inf.readByte();
+	inf.skip(16 - commentSize);
 
 	a.num = inf.readByte();
 	_info.xl = inf.readByte();
@@ -95,9 +101,9 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	a.accinum = inf.readByte();
 
 	totalnum = 0; // = 1;
-	xw = _info.xl / 8;
+	_info.xw = _info.xl / 8;
 	if ((_info.xl % 8) > 0)
-		xw++;
+		_info.xw++;
 	for (byte aa = 0; aa < /*nds*seq*/a.num; aa++) {
 
 		_info.sil[totalnum] = new siltype[11 * (_info.yl + 1)];
@@ -105,13 +111,14 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 		_info.mani[totalnum] = new manitype[_info.size - 6];
 		//getmem(mani[totalnum-1], a.size - 6);
 		for (fv = 0; fv <= _info.yl; fv ++)
-			inf.read((*_info.sil[totalnum])[fv], xw);
+			inf.read((*_info.sil[totalnum])[fv], _info.xw);
 			//blockread(inf, (*sil[totalnum-1])[fv], xw);
 		inf.read(*_info.mani[totalnum], _info.size - 6);
 		//blockread(inf, *mani[totalnum-1], a.size - 6);
 
-		totalnum ++;
+		totalnum++;
 	}
+	totalnum++;
 
 	/* on; */
 	x = 0;
@@ -120,7 +127,8 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	visible = false;
 	xs = 3;
 	ys = 1;
-	/* if spritenum=1 then newspeed; { Just for the lights. }*/
+	if (spritenum == 1)
+		_tr->newspeed(); /* Just for the lights. */
 
 	homing = false;
 	ix = 0;
@@ -131,9 +139,8 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	whichsprite = spritenum;
 	vanishifstill = false;
 	call_eachstep = false;
+
 	inf.close();
-	
-	_tr = tr;
 }
 
 void triptype::original() {
@@ -292,7 +299,7 @@ void triptype::set_up_saver(trip_saver_type &v) {
 	v.homing = homing;
 	v.check_me = check_me;
 	v.count = count;
-	v.xw = xw;
+	v.xw = _info.xw;
 	v.xs = xs;
 	v.ys = ys;
 	v.totalnum = totalnum;
@@ -315,7 +322,7 @@ void triptype::unload_saver(trip_saver_type v) {
 	homing = v.homing;
 	check_me = v.check_me;
 	count = v.count;
-	xw = v.xw;
+	_info.xw = v.xw;
 	xs = v.xs;
 	ys = v.ys;
 	totalnum = v.totalnum;
@@ -351,9 +358,9 @@ triptype *triptype::done() {
 	uint16 soa;
 
 	/*  nds:=num div seq;*/
-	xw = _info.xl / 8;
+	_info.xw = _info.xl / 8;
 	if ((_info.xl % 8) > 0)
-		xw += 1;
+		_info.xw += 1;
 	for (aa = 1; aa <= /*nds*seq*/ a.num; aa++) {
 		totalnum--;
 		free(_info.mani[totalnum]);
