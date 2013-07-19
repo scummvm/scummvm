@@ -46,7 +46,6 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 
 	DCmd_Register("rmb", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
 	DCmd_Register("top", WRAP_METHOD(Console, Cmd_Top));
-	DCmd_Register("into", WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register("next", WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
