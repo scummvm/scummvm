@@ -69,16 +69,11 @@ public:
 
 	byte *getPixel(int16 x, int16 y);
 
-	void setPixel(int16 x, int16 y, byte color);
-
 	void drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
 
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
 
-	// Must free the returned pointer!!!
-	Graphics::Surface *readImage(const byte *source);
-
-	void copySurface(const Graphics::Surface &source, uint16 destX, uint16 destY);
+	void copySurface(const byte *source, uint16 destX, uint16 destY);
 
 	void refreshScreen();
 
