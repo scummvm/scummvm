@@ -491,6 +491,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// though, so ignoring these signals in SCI0 games will result
 				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
 				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
+				// FIXME: SSCI doesn't start playing at the very beginning
+				// of the stream, but at a fixed location a few commands later.
+				// That is probably why this signal isn't triggered
+				// immediately there.
 				if (_soundVersion <= SCI_VERSION_0_LATE ||
 					_position._playTick || info.delta) {
 					_signalSet = true;
