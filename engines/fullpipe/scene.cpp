@@ -266,6 +266,20 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBG) {
 	if (_palette) {
 		warning("Scene palette is ignored");
 	}
+
+	if (_picObjList.size() > 2) { // We need to z-sort them
+		// Sort by priority
+		warning("Scene::drawContent: STUB sort by priority");
+	}
+
+	if (minPri == -1 && _picObjList.size())
+		minPri = ((PictureObject *)_picObjList.back())->_priority - 1;
+
+	if (maxPri == -1)
+		maxPri = 60000;
+
+	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
+	}
 }
 
 } // End of namespace Fullpipe

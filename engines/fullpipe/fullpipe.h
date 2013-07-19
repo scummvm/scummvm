@@ -86,6 +86,8 @@ public:
 	bool _soundEnabled;
 	bool _flgSoundList;
 
+	Common::Rect _sceneRect;
+
 	bool _needQuit;
 
 	void initObjectStates();

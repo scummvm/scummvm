@@ -373,8 +373,8 @@ void Picture::displayPicture() {
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {
-	_x = x;
-	_y = y;
+	_x = x - g_fullpipe->_sceneRect.left;
+	_y = y - g_fullpipe->_sceneRect.top;
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
 		putDibRB(palette);
