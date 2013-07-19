@@ -59,6 +59,8 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x
 		stream.read(buffer, decompressedSize);
 
 		_system->copyRectToScreen(buffer, width * 2, x, y, width, height);
+
+		delete[] buffer;
 	} else {
 		// Reset the cursor
 		file.seek(0);

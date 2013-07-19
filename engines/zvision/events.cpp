@@ -65,7 +65,7 @@ void ZVision::processEvents() {
 					initGraphics(_width, _height, true, &_pixelFormat);
 					delete _currentVideo;
 					_currentVideo = 0;
-					delete _scaledVideoFrameBuffer;
+					delete[] _scaledVideoFrameBuffer;
 					_scaledVideoFrameBuffer = 0;
 				}
 				break;

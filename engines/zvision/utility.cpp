@@ -225,6 +225,8 @@ void convertRawToWav(const Common::String &inputFile, ZVision *engine, const Com
 	int16 *buffer = new int16[file.size()];
 	int readBytes = audioStream->readBuffer(buffer, file.size());
 	output.write(buffer, file.size() * 2);
+
+	delete[] buffer;
 }
 
 } // End of namespace ZVision
