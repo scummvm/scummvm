@@ -133,11 +133,9 @@ void TextHandler::loadDesFile(Common::String filename, int32 skipSize, int lengt
 	if (!f.open(filename))
 		error("Missing file %s", filename.c_str());
 
-	int skipBlock = 0;
-	while (skipSize > 127) {
-		++skipBlock;
-		skipSize -= 128;
-	}
+	int skipBlock = skipSize / 128;
+	skipSize %= 128;
+
 	if (skipBlock != 0)
 		f.seek(skipBlock * 0x80);
 
