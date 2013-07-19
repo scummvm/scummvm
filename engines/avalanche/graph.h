@@ -73,8 +73,6 @@ public:
 
 	void drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
 
-	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
-
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
 
 	// Must free the returned pointer!!!
