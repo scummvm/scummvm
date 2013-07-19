@@ -27,12 +27,14 @@
 
 #include "graphics/decoders/tga.h"
 
-#include "zvision/zvision.h"
+#include "zvision/render_manager.h"
 #include "zvision/lzss_read_stream.h"
 
 namespace ZVision {
 
-void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y) {
+RenderManager::RenderManager(OSystem *system) : _system(system) {}
+
+void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
@@ -63,10 +65,9 @@ void ZVision::renderImageToScreen(const Common::String &fileName, uint32 x, uint
 
 		// Decode
 		Graphics::TGADecoder tga;
-		if (!tga.loadStream(file)) {
+		if (!tga.loadStream(file))
 			error("Error while reading TGA image");
-			return;
-		}
+		file.close();
 
 		const Graphics::Surface *tgaSurface = tga.getSurface();
 		_system->copyRectToScreen(tgaSurface->pixels, tgaSurface->pitch, x, y, tgaSurface->w, tgaSurface->h);
