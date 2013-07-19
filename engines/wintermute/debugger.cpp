@@ -46,7 +46,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("rmb", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
 	DCmd_Register("lsb", WRAP_METHOD(Console, Cmd_ListBreakpoints));
 	DCmd_Register("top", WRAP_METHOD(Console, Cmd_Top));
-	DCmd_Register("lsw", WRAP_METHOD(Console, Cmd_ListWatches));
+	DCmd_Register("lsw", WRAP_METHOD(Console, Cmd_WatchList));
 	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register("into", WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
@@ -124,9 +124,12 @@ bool Console::Cmd_ListBreakpoints(int argc, const char **argv) {
 }
 
 
-bool Console::Cmd_ListWatches(int argc, const char **argv) {
-	// ADAPTER->getWatchlist();
-	return true;
+bool Console::Cmd_WatchList(int argc, const char **argv) {
+	BaseArray<WatchInfo>watchlist = ADAPTER->getWatchlist();
+	for (int i = 0; i < watchlist.size(); i++) {
+		DebugPrintf("%d %s:%d x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);
+	}
+	return 1;
 }
 
 bool Console::Cmd_Top(int argc, const char **argv) {

@@ -76,9 +76,9 @@ bool DebuggerAdapter::triggerStep(ScScript *script) {
 }
 
 bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
-	// _lastDepth = script->getCallDepth();
-	//_lastScript = script;
-	// DEBUGGER->notifyWatch(script->dbgGetFilename(), script->_currentLine);
+	_lastDepth = script->getCallDepth();
+	_lastScript = script; // If script has changed do we still care?
+	DEBUGGER->notifyWatch(script->dbgGetFilename(), symbol, script->resolveName(symbol)->getString());
 	return 1;
 }
 
