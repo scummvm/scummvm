@@ -53,6 +53,8 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
 	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
 	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
+	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
+	DCmd_Register("set", WRAP_METHOD(Console, Cmd_Set));
 }
 
 Console::~Console(void) {
@@ -171,6 +173,40 @@ bool Console::Cmd_List(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_Print(int argc, const char **argv) {
+	if (argc == 2) {
+		int error = 0;
+		Common::String temp = ADAPTER->readValue(argv[1], &error);
+		if (!error) {
+			DebugPrintf("%s = %s", argv[0], temp.c_str());
+		} else if (error == NOT_ALLOWED) {
+			DebugPrintf("Not allowed");
+		} else {
+			DebugPrintf("Error");
+		}
+	} else {
+		DebugPrintf("Usage: %s <name> to print value of <name>\n", argv[0]);
+		return true;
+	}
+}
+
+
+bool Console::Cmd_Set(int argc, const char **argv) {
+	if (argc == 4 && !strcmp("=", argv[2])) {
+		int error = ADAPTER->setValue(argv[1], argv[3]);
+		if (!error) {
+			DebugPrintf("Ok");
+			// DebugPrintf("%s = %s", argv[0], temp.c_str());
+		} else if (error == NOT_ALLOWED) {
+			DebugPrintf("Not allowed");
+		} else {
+			DebugPrintf("Error");
+		}
+	} else {
+		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
+		return true;
+	}
+}
 bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	if (argc == 2) {
 		if (Common::String(argv[1]) == "true") {
@@ -182,8 +218,6 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
 		return true;
 	}
-
-
 	return true;
 }
 

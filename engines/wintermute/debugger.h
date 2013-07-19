@@ -41,7 +41,9 @@ public:
 	bool Cmd_StepOver(int argc, const char **argv);
 	bool Cmd_Continue(int argc, const char **argv);
 	bool Cmd_Watch(int argc, const char **argv);
-	/**
+	bool Cmd_Print(int argc, const char **argv);
+	bool Cmd_Set(int argc, const char **argv);
+	/** 
 	 * Add a breakpoint.
 	 */
 	bool Cmd_AddBreakpoint(int argc, const char **argv);

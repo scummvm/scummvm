@@ -37,7 +37,8 @@ enum ErrorCode {
 	COULD_NOT_OPEN,
 	NO_SUCH_LINE,
 	DUPLICATE_BREAKPOINT,
-	NO_SUCH_BREAKPOINT
+	NO_SUCH_BREAKPOINT,
+	NOT_ALLOWED
 };
 
 class SourceFile {
@@ -84,6 +85,8 @@ public:
 	int stepInto();
 	int stepContinue();
 	int32 getLastLine();
+	Common::String readValue (const char* name, int *error);
+	int setValue (const char* name, const char* value);
 	bool showFps(bool show);
 	SourceFile *_lastSource;
 private:

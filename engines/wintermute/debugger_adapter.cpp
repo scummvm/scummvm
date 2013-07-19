@@ -181,6 +181,29 @@ int DebuggerAdapter::stepContinue() {
 	return OK;
 }
 
+Common::String DebuggerAdapter::readValue(const char* name, int *error) {
+	if (!_lastScript) {
+		*error = NOT_ALLOWED;
+		return Common::String();
+	}
+
+	char *temp;
+	temp = const_cast<char *>(Common::String(name).c_str());
+	return _lastScript->getVar(temp)->getString();
+}
+
+int DebuggerAdapter::setValue(const char* name, const char* value) {
+	if (!_lastScript) {
+		return NOT_ALLOWED;
+	}
+
+	char *temp;
+	temp = const_cast<char *>(Common::String(name).c_str());
+	ScValue *var = _lastScript->getVar(temp);
+	var->setStringVal(value);
+	return 0;
+}
+
 bool DebuggerAdapter::showFps(bool show) {
 	_engine->_game->setShowFPS(show);
 	return true;
