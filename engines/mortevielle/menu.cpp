@@ -35,7 +35,7 @@
 
 namespace Mortevielle {
 
-const byte _menuConstants[8][4] = {
+const byte menuConstants[8][4] = {
 	{ 7, 37, 23,  8},
 	{19, 33, 23,  7},
 	{31, 89, 10, 21},
@@ -235,7 +235,7 @@ void Menu::invert(int indx) {
 
 	int menuIndex = lo(_msg4);
 
-	_vm->_screenSurface.putxy(_menuConstants[_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
+	_vm->_screenSurface.putxy(menuConstants[_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
 
 	Common::String str;
 	switch (_msg3) {
@@ -282,9 +282,9 @@ void Menu::invert(int indx) {
 
 void Menu::util(Common::Point pos) {
 
-	int ymx = (_menuConstants[_msg3 - 1][3] << 3) + 16;
-	int dxcar = _menuConstants[_msg3 - 1][2];
-	int xmn = (_menuConstants[_msg3 - 1][0] << 2) * _vm->_resolutionScaler;
+	int ymx = (menuConstants[_msg3 - 1][3] << 3) + 16;
+	int dxcar = menuConstants[_msg3 - 1][2];
+	int xmn = (menuConstants[_msg3 - 1][0] << 2) * _vm->_resolutionScaler;
 
 	int ix;
 	if (_vm->_resolutionScaler == 1)
@@ -316,22 +316,22 @@ void Menu::menuDown(int ii) {
 	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
 
 	// Draw the menu
-	xco = _menuConstants[ii - 1][0];
-	lignNumb = _menuConstants[ii - 1][3];
+	xco = menuConstants[ii - 1][0];
+	lignNumb = menuConstants[ii - 1][3];
 	_vm->_mouse.hideMouse();
 	xco = xco << 3;
 	if (_vm->_resolutionScaler == 1)
 		cx = 10;
 	else
 		cx = 6;
-	xcc = xco + (_menuConstants[ii - 1][2] * cx) + 6;
+	xcc = xco + (menuConstants[ii - 1][2] * cx) + 6;
 	if ((ii == 4) && (_vm->getLanguage() == Common::EN_ANY))
 		// Extra width needed for Self menu in English version
 		xcc = 435;
 
-	_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (_menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (_menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (_menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (_menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (menuConstants[ii - 1][1] << 1)));
 	_vm->_screenSurface.putxy(xco, 16);
 	cx = 0;
 	do {
