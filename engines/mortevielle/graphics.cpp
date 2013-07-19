@@ -40,7 +40,7 @@ namespace Mortevielle {
  *-------------------------------------------------------------------------*/
 
 /**
- * Set palette entries from the 64 colour available EGA palette
+ * Set palette entries from the 64 color available EGA palette
  */
 void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
 	assert((idx + size) <= 16);
@@ -55,7 +55,7 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
 		*p++ = (i      & 1) * 0xaa + (i >> 3 & 1) * 0x55;
 	}
 
-	// Loop through setting palette colours based on the passed indexes
+	// Loop through setting palette colors based on the passed indexes
 	for (; size > 0; --size, ++idx) {
 		int palIndex = palette[idx];
 		assert(palIndex < 64);
@@ -416,7 +416,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			entryIndex + 1, _xp, _yp, _width, _height, decomIndex);
 	}
 
-	// At this point, the outputBuffer has the data for the image. Initialise the surface
+	// At this point, the outputBuffer has the data for the image. Initialize the surface
 	// with the calculated size, and copy the lines to the surface
 	create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -1033,16 +1033,16 @@ void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
 }
 
 /**
- * Fills an area with the specified colour
+ * Fills an area with the specified color
  * @remarks		Because the ScummVM surface is using a double height 640x400 surface to
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
-void ScreenSurface::fillRect(int colour, const Common::Rect &bounds) {
+void ScreenSurface::fillRect(int color, const Common::Rect &bounds) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(bounds.left, bounds.top * 2,
 		bounds.right, bounds.bottom * 2));
 
 	// Fill the area
-	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), colour);
+	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), color);
 }
 
 /**
