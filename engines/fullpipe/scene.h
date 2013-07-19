@@ -26,7 +26,6 @@
 namespace Fullpipe {
 
 class Scene : public Background {
-	Background _bg;
 	CPtrList _staticANIObjectList1;
 	CPtrList _staticANIObjectList2;
 	CPtrList _messageQueueList;

@@ -125,11 +125,11 @@ class Background : public CObject {
 	CPtrList _picObjList;
 
   protected:
-	char *_stringObj;
+	char *_bgname;
 	int _x;
 	int _y;
 	int16 _messageQueueId;
-	MemoryObject *_colorMemoryObj;
+	MemoryObject *_palette;
 	int _bigPictureArray1Count;
 	int _bigPictureArray2Count;
 	BigPicture ***_bigPictureArray;

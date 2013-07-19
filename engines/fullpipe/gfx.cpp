@@ -51,13 +51,13 @@ Background::Background() {
 	_bigPictureArray1Count = 0;
 	_bigPictureArray2Count = 0;
 	_bigPictureArray = 0;
-	_stringObj = 0;
-	_colorMemoryObj = 0;
+	_bgname = 0;
+	_palette = 0;
 }
 
 bool Background::load(MfcArchive &file) {
 	debug(5, "Background::load()");
-	_stringObj = file.readPascalString();
+	_bgname = file.readPascalString();
 
 	int count = file.readUint16LE();
 
@@ -244,7 +244,9 @@ bool Picture::load(MfcArchive &file) {
 
 	debug(5, "Picture::load: <%s>", _memfilename);
 
+#if 0
 	displayPicture();
+#endif
 
 	return true;
 }

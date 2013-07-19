@@ -180,16 +180,16 @@ bool Scene::load(MfcArchive &file) {
 
 	_libHandle = g_fullpipe->_currArchive;
 
-	if (_picObjList.size() > 0 && _stringObj && strlen(_stringObj) > 1) {
+	if (_picObjList.size() > 0 && _bgname && strlen(_bgname) > 1) {
 		char fname[260];
 
-		strcpy(fname, _stringObj);
+		strcpy(fname, _bgname);
 		strcpy(strrchr(fname, '.') + 1, "col");
 
 		MemoryObject *col = new MemoryObject();
 		col->loadFile(fname);
 
-		_colorMemoryObj = col;
+		_palette = col;
 	}
 
 	char *shdname = genFileName(0, _sceneId, "shd");
@@ -260,6 +260,12 @@ void Scene::updateScrolling(int par) {
 }
 
 void Scene::drawContent(int minPri, int maxPri, bool drawBG) {
+	if (!_picObjList.size() && !_bigPictureArray1Count)
+		return;
+
+	if (_palette) {
+		warning("Scene palette is ignored");
+	}
 }
 
 } // End of namespace Fullpipe
