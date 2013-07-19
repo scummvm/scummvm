@@ -27,21 +27,20 @@
 
 namespace ZVision {
 
-	class ZVision;
+class ZVision;
 
-	class Console : public GUI::Debugger {
-	public:
-		Console(ZVision *engine);
-		virtual ~Console() {}
+class Console : public GUI::Debugger {
+public:
+	Console(ZVision *engine);
+	virtual ~Console() {}
 
-	private:
-		ZVision *_engine;
+private:
+	ZVision *_engine;
 
-		bool cmdLoadImage(int argc, const char **argv);
-		bool cmdLoadVideo(int argc, const char **argv);
-		bool cmdLoadSound(int argc, const char **argv);
-		bool cmdRawToWav(int argc, const char **argv);
-	};
+	bool cmdLoadImage(int argc, const char **argv);
+	bool cmdLoadVideo(int argc, const char **argv);
+	bool cmdLoadSound(int argc, const char **argv);
+};
 
 } // End of namespace ZVision
 #endif
