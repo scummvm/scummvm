@@ -81,18 +81,20 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 	warning("STUB: Graph::drawSprite()");
 }
 
-void Graph::copySurface(const byte *source, uint16 destX, uint16 destY) {
-	Graphics::Surface picture;
-
+void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 	uint32 i = 0;
 
+	// The height and the width are stored in 2 bytes.
 	uint16 pictureWidth = (source[i++] + 1);
 	pictureWidth +=  (source[i++] << 8);
 	uint16 pictureHeight = (source[i++] + 1); 
 	pictureHeight += (source[i++] << 8);
 
+	Graphics::Surface picture; // We make a Surface object for the picture itself.
+
 	picture.create(pictureWidth, pictureHeight, Graphics::PixelFormat::createFormatCLUT8());
 
+	// Produce the picture.
 	for (byte y = 0; y < pictureHeight; y++)
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
 			for (uint16 x = 0; x < pictureWidth; x += 8) {
@@ -103,6 +105,7 @@ void Graph::copySurface(const byte *source, uint16 destX, uint16 destY) {
 				} 
 			}
 
+	// Copy the picture to a given place on the screen.
 	for (uint16 y = 0; y < picture.h; y++)
 		for (uint16 x = 0; x < picture.w; x++)
 			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		

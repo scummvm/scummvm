@@ -73,7 +73,7 @@ public:
 
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
 
-	void copySurface(const byte *source, uint16 destX, uint16 destY);
+	void drawPicture(const byte *source, uint16 destX, uint16 destY);
 
 	void refreshScreen();
 

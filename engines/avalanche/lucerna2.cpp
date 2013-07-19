@@ -766,7 +766,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 
 	f.read(buffer, picsize);
 
-	_vm->_graph.copySurface(buffer, 205, 170);
+	_vm->_graph.drawPicture(buffer, 205, 170);
 
 	delete[] buffer;
 
@@ -823,7 +823,7 @@ void Lucerna::toolbar() {
 
 	f.read(buffer, bufferSize);
 
-	_vm->_graph.copySurface(buffer, 5, 169);
+	_vm->_graph.drawPicture(buffer, 5, 169);
 
 	delete[] buffer;
 
@@ -859,7 +859,7 @@ void Lucerna::showscore() {
 
 	for (byte fv = 0; fv < 3; fv ++)
 		if (_vm->_gyro.lastscore[fv] != numbers[fv]) 
-			_vm->_graph.copySurface(_vm->_gyro.digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
+			_vm->_graph.drawPicture(_vm->_gyro.digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
 	for (byte fv = 0; fv < 2; fv ++)
 		_vm->_trip.getset[fv].remember(scorespace);
@@ -1052,7 +1052,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	putimage(0, 161, rwlite[with.rw], 0);
 	}*/
 
-	_vm->_graph.copySurface(_vm->_gyro.rwlite[_vm->_gyro.dna.rw], 0, 161);
+	_vm->_graph.drawPicture(_vm->_gyro.rwlite[_vm->_gyro.dna.rw], 0, 161);
 
 	_vm->_gyro.on();
 	//setactivepage(1 - cp);
