@@ -386,8 +386,6 @@ void MortevielleEngine::fctSelfRead() {
  * @remarks	Originally called 'tregarder'
  */
 void MortevielleEngine::fctLook() {
-	int cx;
-
 	if (_caff > 99) {
 		_crep = 103;
 		return;
@@ -433,7 +431,7 @@ void MortevielleEngine::fctLook() {
 		}
 		return;
 	}
-	cx = _coreVar._currPlace;
+	int cx = _coreVar._currPlace;
 	if (_coreVar._currPlace == CHAPEL)
 		cx = 17;
 	if ((_coreVar._currPlace > MANOR_FRONT) && (_coreVar._currPlace < DOOR))
@@ -475,7 +473,7 @@ void MortevielleEngine::fctSelftLook() {
  * @remarks	Originally called 'tfouiller'
  */
 void MortevielleEngine::fctSearch() {
-	const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
+	static const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 
 	if (_caff > 99) {
 		getSearchDescription(_caff);
@@ -1188,7 +1186,7 @@ void MortevielleEngine::fctEnter() {
  * @remarks	Originally called 'tdormir'
  */
 void MortevielleEngine::fctSleep() {
-	int z, j, h, m;
+	int j, h, m;
 
 	if ((_coreVar._currPlace > LANDING) && (_coreVar._currPlace < ROOM26)) {
 		_crep = 148;
@@ -1212,7 +1210,7 @@ void MortevielleEngine::fctSleep() {
 	do {
 		if (h < 8) {
 			_coreVar._faithScore -= (_coreVar._faithScore / 20);
-			z = (7 - h) * 2;
+			int z = (7 - h) * 2;
 			if (m == 30)
 				--z;
 			_currentHourCount += z;
@@ -1343,7 +1341,6 @@ void MortevielleEngine::fctDiscuss() {
 	bool questionAsked[47];
 	int cy, cx;
 	int x, y;
-//	int c;
 	Common::String lib[47];
 
 	int choice; 
