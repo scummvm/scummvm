@@ -43,7 +43,7 @@ const int kAdrWord   = 0x4000;
 const int kOffsetB1  = 6;
 const int kOffsetB3  = 6;
 
-const float freq0 = 1.19318e6;
+const float kfreq0 = 1.19318e6;
 const int kNullValue = 255;
 const int kTempoMusic = 71;
 const int kTempoNoise = 78;
