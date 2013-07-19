@@ -43,6 +43,8 @@ struct Bitmap {
 
 	void load(Common::ReadStream *s);
 	void putDib(int x, int y, int32 *palette);
+	void putDibRB(int32 *palette);
+	void putDibCB(int32 *palette);
 
 	void colorFill(uint16 *dest, int len, int color);
 	void paletteFill(uint16 *dest, byte *src, int len, int32 *palette);

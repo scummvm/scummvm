@@ -367,6 +367,16 @@ void Picture::displayPicture() {
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {
+	_x = x;
+	_y = y;
+
+	if (_type == MKTAG('R', 'B', '\0', '\0'))
+		putDibRB(palette);
+	else
+		putDibCB(palette);
+}
+
+void Bitmap::putDibRB(int32 *palette) {
 	uint16 *curDestPtr;
 	int endy;
 	int pos;
@@ -380,16 +390,11 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	uint16 pixel;
 	uint16 pixel1;
 	uint pixel1High;
-	int bpp;
-	uint pitch;
-	int end;
 	int endx;
 	int endy1;
-	bool cb05_format;
 	uint16 *pixPtr;
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
-	byte *srcPtr1;
 	int start;
 
 	endx = _width + _x - 1;
@@ -401,145 +406,165 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	if (endy > 599)
 		endy = 599;
 
-	if (_type == MKTAG('R', 'B', '\0', '\0')) {
-		endy1 = endy;
-		pixPtr = (uint16 *)_pixels;
-		pos = _x;
+	endy1 = endy;
+	pixPtr = (uint16 *)_pixels;
+	pos = _x;
 
-	LABEL_17:
-		srcPtr = pixPtr;
+ LABEL_17:
+	srcPtr = pixPtr;
+	while (1) {
 		while (1) {
 			while (1) {
-                while (1) {
+				while (1) {
 					while (1) {
-						while (1) {
-							pixel = *srcPtr;
-
-							srcPtr++;
-							pixPtr = srcPtr;
-
-							if (pixel)
-								break;
-
-							--endy1;
-							if (endy1 < _y) {
-								g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx + 1, MIN(endy + 1, 799));
-								return;
-							}
-							pos = _x;
-						}
-
-						if (pixel == 0x100) {
-							g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx, endy);
-							return;
-						}
-
-						if (pixel != 0x200)
-							break;
-
-						pixel1 = *srcPtr;
+						pixel = *srcPtr;
 
 						srcPtr++;
-						pos += (byte)(pixel1 & 0xff);
-						pixel1High = (pixel1 >> 8) & 0xff;
+						pixPtr = srcPtr;
 
-						if (pixel1High) {
-							endy1 -= pixel1High;
+						if (pixel)
+							break;
 
-							if (endy1 < _y) {
-								g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, start, _y, endx, endy);
-								return;
-							}
+						--endy1;
+						if (endy1 < _y) {
+							g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx + 1, MIN(endy + 1, 799));
+							return;
 						}
+						pos = _x;
 					}
-					start1 = pos;
-					fillValue = (byte)(pixel & 0xff);
 
-					if (!fillValue)
+					if (pixel == 0x100) {
+						g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx, endy);
+						return;
+					}
+
+					if (pixel != 0x200)
 						break;
 
-					pos += fillValue;
-					pixoffset = -start1;
+					pixel1 = *srcPtr;
 
-					if (pixoffset <= 0)
-						goto LABEL_25;
+					srcPtr++;
+					pos += (byte)(pixel1 & 0xff);
+					pixel1High = (pixel1 >> 8) & 0xff;
 
-					fillValue -= pixoffset;
+					if (pixel1High) {
+						endy1 -= pixel1High;
 
-					if (fillValue > 0) {
-						start1 = 0;
-
-					LABEL_25:
-						end2 = 799;
-						if (pos <= end2 + 1 || (fillValue += end2 - pos + 1, fillValue > 0)) {
-							if (endy1 <= endy) {
-								curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, endy1);
-								int bgcolor = palette[(pixel >> 8) & 0xff];
-								colorFill(curDestPtr, fillValue, bgcolor);
-							}
-							goto LABEL_17;
+						if (endy1 < _y) {
+							g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, start, _y, endx, endy);
+							return;
 						}
 					}
 				}
-				pixelHigh = (pixel >> 8) & 0xff;
-				srcPtr2 = srcPtr;
-				pos += pixelHigh;
-				srcPtr += (pixelHigh + 1) >> 1;
-				pixoffset1 = -start1;
+				start1 = pos;
+				fillValue = (byte)(pixel & 0xff);
 
-				if (pixoffset1 > 0)
+				if (!fillValue)
 					break;
 
-			LABEL_37:
-				leftx = 799;
-				if (pos > leftx + 1) {
-					pixelHigh += leftx - pos + 1;
-					if (pixelHigh <= 0)
-						continue;
-				}
-				if (endy1 <= endy) {
-					curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, endy1);
-					paletteFill(curDestPtr, (byte *)srcPtr2, pixelHigh, (int32 *)palette);
+				pos += fillValue;
+				pixoffset = -start1;
+
+				if (pixoffset <= 0)
+					goto LABEL_25;
+
+				fillValue -= pixoffset;
+
+				if (fillValue > 0) {
+					start1 = 0;
+
+				LABEL_25:
+					end2 = 799;
+					if (pos <= end2 + 1 || (fillValue += end2 - pos + 1, fillValue > 0)) {
+						if (endy1 <= endy) {
+							curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, endy1);
+							int bgcolor = palette[(pixel >> 8) & 0xff];
+							colorFill(curDestPtr, fillValue, bgcolor);
+						}
+						goto LABEL_17;
+					}
 				}
 			}
-			pixelHigh -= pixoffset1;
-			if (pixelHigh > 0) {
-				start1 = 0;
-				srcPtr2 = (uint16 *)((byte *)srcPtr2 + pixoffset1);
-				goto LABEL_37;
+			pixelHigh = (pixel >> 8) & 0xff;
+			srcPtr2 = srcPtr;
+			pos += pixelHigh;
+			srcPtr += (pixelHigh + 1) >> 1;
+			pixoffset1 = -start1;
+
+			if (pixoffset1 > 0)
+				break;
+
+		LABEL_37:
+			leftx = 799;
+			if (pos > leftx + 1) {
+				pixelHigh += leftx - pos + 1;
+				if (pixelHigh <= 0)
+					continue;
 			}
+			if (endy1 <= endy) {
+				curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, endy1);
+				paletteFill(curDestPtr, (byte *)srcPtr2, pixelHigh, (int32 *)palette);
+			}
+		}
+		pixelHigh -= pixoffset1;
+		if (pixelHigh > 0) {
+			start1 = 0;
+			srcPtr2 = (uint16 *)((byte *)srcPtr2 + pixoffset1);
+			goto LABEL_37;
 		}
 	}
 
+	error("Unhandled image type");
+}
+
+void Bitmap::putDibCB(int32 *palette) {
+	uint16 *curDestPtr;
+	int endx;
+	int endy;
+	int bpp;
+	uint pitch;
+	bool cb05_format;
+	byte *srcPtr;
+	int start;
+
+	endx = _width + _x - 1;
+	endy = _height + _y - 1;
+
+	if (_x > 799 || _width + _x - 1 < 0 || _y > 599 || endy < 0)
+		return;
+
+	if (endy > 599)
+		endy = 599;
+
+	if (endx > 799)
+		endx = 799;
+
 	cb05_format = (_type == MKTAG('C', 'B', '\05', 'e'));
+
 	bpp = cb05_format ? 2 : 1;
-	end = _width + _x - 1;
-	pitch = (bpp * (endx - _x + 1) + 3) & 0xFFFFFFFC;
+	pitch = (bpp * _width + 3) & 0xFFFFFFFC;
+
+	srcPtr = &_pixels[pitch * (endy - _y)];
+
 	start = _x;
-	srcPtr1 = &_pixels[pitch * (endy - _y)];
 	if (_x < 0) {
-		srcPtr1 += bpp * -_x;
+		srcPtr += bpp * -_x;
 		start = 0;
 	}
 
-	if (endx > 799)
-		end = 799;
-
 	if (_flags & 0x1000000) {
-		for (int n = _y; n < endy; srcPtr1 -= pitch) {
-			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start, n);
-			copierKeyColor(curDestPtr, srcPtr1, end - start + 1, _flags & 0xff, (int32 *)palette, cb05_format);
-			++n;
+		for (int y = _y; y < endy; srcPtr -= pitch, y++) {
+			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start, y);
+			copierKeyColor(curDestPtr, srcPtr, endx - start + 1, _flags & 0xff, (int32 *)palette, cb05_format);
 		}
 	} else {
-		for (int n = _y; n <= endy; srcPtr1 -= pitch) {
-			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start, n);
-			copier(curDestPtr, srcPtr1, end - start + 1, (int32 *)palette, cb05_format);
-			++n;
+		for (int y = _y; y <= endy; srcPtr -= pitch, y++) {
+			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start, y);
+			copier(curDestPtr, srcPtr, endx - start + 1, (int32 *)palette, cb05_format);
 		}
 	}
 
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(start, _y), g_fullpipe->_backgroundSurface.pitch, start, _y, end, endy);
+	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(start, _y), g_fullpipe->_backgroundSurface.pitch, start, _y, endx, endy);
 }
 
 void Bitmap::colorFill(uint16 *dest, int len, int32 color) {
