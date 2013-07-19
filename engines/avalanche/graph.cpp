@@ -78,10 +78,6 @@ void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void Graph::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
-	_surface.drawLine(x0, y0, x1, y1, color);
-}
-
 void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 	/* These 2 lines are here SOLELY for testing purposes. */
 	Common::Rect r(x, y, x + sprite.xl, y + sprite.yl);
