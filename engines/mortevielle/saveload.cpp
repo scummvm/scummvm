@@ -25,12 +25,13 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "common/file.h"
-#include "common/system.h"
-#include "mortevielle/dialogs.h"
 #include "mortevielle/mortevielle.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/saveload.h"
+
+#include "common/file.h"
+#include "common/system.h"
 
 namespace Mortevielle {
 

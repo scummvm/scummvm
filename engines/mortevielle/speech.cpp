@@ -25,11 +25,13 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "common/endian.h"
-#include "common/file.h"
+#include "mortevielle/mortevielle.h"
+
 #include "mortevielle/speech.h"
 #include "mortevielle/sound.h"
-#include "mortevielle/mortevielle.h"
+
+#include "common/endian.h"
+#include "common/file.h"
 
 namespace Mortevielle {
 
