@@ -56,7 +56,6 @@ private:
 	bool _nibbleFlag;
 	int _thickness;
 	int _yInc, _yEnd, _xInc, _xEnd;
-	int _width, _height;
 
 	byte nextNibble(const byte *&pSrc);
 	byte nextByte(const byte *&pSrc, const byte *&pLookup);

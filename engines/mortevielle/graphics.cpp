@@ -86,7 +86,7 @@ void PaletteManager::setDefaultPalette() {
 #define BUFFER_SIZE 40000
 
 void GfxSurface::decode(const byte *pSrc) {
-	_width = _height = 0;
+	w = h = 0;
 	// If no transparency, use invalid (for EGA) palette index of 16. Otherwise get index to use
 	_transparency = (*pSrc == 0) ? 16 : *(pSrc + 2);
 	bool offsetFlag = *pSrc++ == 0;
@@ -413,27 +413,27 @@ void GfxSurface::decode(const byte *pSrc) {
 
 		pSrc = pSrcStart;
 		debugC(2, kMortevielleGraphics, "Decoding image block %d position %d,%d size %d,%d method %d",
-			entryIndex + 1, _xp, _yp, _width, _height, decomIndex);
+			entryIndex + 1, _xp, _yp, w, h, decomIndex);
 	}
 
 	// At this point, the outputBuffer has the data for the image. Initialize the surface
 	// with the calculated size, and copy the lines to the surface
-	create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+	create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int yCtr = 0; yCtr < _height; ++yCtr) {
+	for (int yCtr = 0; yCtr < h; ++yCtr) {
 		const byte *copySrc = &outputBuffer[yCtr * DEFAULT_WIDTH];
 		byte *copyDest = (byte *)getBasePtr(0, yCtr);
 
-		Common::copy(copySrc, copySrc + _width, copyDest);
+		Common::copy(copySrc, copySrc + w, copyDest);
 	}
 }
 
 void GfxSurface::majTtxTty() {
 	if (!_yp)
-		_width += _xSize;
+		w += _xSize;
 
 	if (!_xp)
-		_height += _ySize;
+		h += _ySize;
 }
 
 /**
