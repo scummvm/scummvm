@@ -230,12 +230,14 @@ void Console::notifyBreakpoint(const char *filename, int line) {
 
 void Console::notifyStep(const char *filename, int line) {
 	DebugPrintf("Step: %s:%d\n", filename, line);
+	printSource(0);
 	attach();
 	onFrame();
 }
 
 void Console::notifyWatch(const char *filename, const char *symbol, const char *newValue) {
 	DebugPrintf("Watch: %s:%s <---- %s\n", filename, symbol, newValue);
+	printSource(0);
 	attach();
 	onFrame();
 }
