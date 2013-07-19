@@ -40,7 +40,7 @@
 #include "common/endian.h"
 
 enum AccessMode {
-	kFileReadMode = 1,
+	kFileReadMode  = 1,
 	kFileWriteMode = 2
 };
 
@@ -108,7 +108,7 @@ public:
 		fseek (f, 0, SEEK_END);
 		int end = ftell (f);
 		fseek (f, pos, SEEK_SET);
-	
+
 		return end;
 	}
 };
@@ -228,7 +228,7 @@ static void addCompressedValue(int oct, int &indis, int &point, uint16 *strData)
 	if (point < 5) {
 		// Overlapping into next word
 		++indis;
-		
+
 		// Get the bits that fall into the next word and set it
 		int remainder = oct & ((1 << (5 - point)) - 1);
 		strData[indis] |= remainder << (16 - (5 - point));
