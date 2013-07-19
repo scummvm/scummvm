@@ -322,7 +322,7 @@ static void export_strings(const char *textFilename) {
 		do {
 			extractCharacter(ch, indis, point, endFlag, strData);
 			buffer[charIndex++] = ch;
-			if (ch == BUFFER_SIZE) {
+			if (charIndex == BUFFER_SIZE) {
 				printf("Extracted string exceeded allowed buffer size.\n");
 				exit(1);
 			}
