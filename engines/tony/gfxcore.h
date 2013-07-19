@@ -408,7 +408,7 @@ public:
 
 	// Overloaded initialization methods
 	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer8RLEWordAA();
 };
