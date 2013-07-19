@@ -91,7 +91,6 @@ public:
 	bool quick, visible, homing, check_me;
 	int16 hx, hy; /* homing x & y coords */
 	byte count; /* counts before changing step */
-	byte xw; /* x-width in bytes */
 	byte xs, ys; /* x & y speed */
 	byte totalnum; /* total number of sprites */
 	bool vanishifstill; /* Do we show this sprite if it's still? */
