@@ -25,8 +25,8 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#ifndef MORTEVIELLE_H
-#define MORTEVIELLE_H
+#ifndef MORTEVIELLE_MORTEVIELLE_H
+#define MORTEVIELLE_MORTEVIELLE_H
 
 #include "common/events.h"
 #include "common/file.h"
