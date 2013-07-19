@@ -48,7 +48,7 @@ public:
 #define FONT_HEIGHT 6
 #define FONT_NUM_CHARS 121
 
-class GfxSurface: public Graphics::Surface {
+class GfxSurface : public Graphics::Surface {
 private:
 	int _xp, _yp;
 	int _xSize, _ySize;
