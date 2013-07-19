@@ -2487,6 +2487,8 @@ void MortevielleEngine::palette(int v1) {
  */
 
 Common::String MortevielleEngine::copy(const Common::String &s, int idx, size_t size) {
+	assert(idx + size < s.size());
+
 	// Copy the substring into a temporary buffer
 	char *tmp = new char[size + 1];
 	strncpy(tmp, s.c_str() + idx - 1, size);
