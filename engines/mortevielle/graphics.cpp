@@ -69,7 +69,7 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
  * Set the default EGA palette
  */
 void PaletteManager::setDefaultPalette() {
-	int defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
+	const int defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
 	setPalette(defaultPalette, 0, 16);
 }
 
@@ -1072,21 +1072,20 @@ void ScreenSurface::setPixel(const Common::Point &pt, int palIndex) {
  * @remarks	Originally called 'writeg'
  */
 void ScreenSurface::drawString(const Common::String &l, int command) {
-	int i, x;
-	Common::Point pt;
-	int cecr = 0;
-
 	if (l == "")
 		return;
 
 	_vm->_mouse.hideMouse();
-	pt = _textPos;
+	Common::Point pt = _textPos;
 
+	int i;
 	if (_vm->_resolutionScaler == 2)
 		i = 6;
 	else
 		i = 10;
-	x = pt.x + i * l.size();
+
+	int x = pt.x + i * l.size();
+	int cecr = 0;
 
 	switch (command) {
 	case 1:
