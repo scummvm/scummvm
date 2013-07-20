@@ -50,19 +50,12 @@ public:
 	 * Also, which line are they on and if they have any breakpoints.
 	 */
 	bool Cmd_Top(int argc, const char **argv);
-	/**
-	 * List all breakpoints set.
-	 */
-	bool Cmd_ListBreakpoints(int argc, const char **argv);
-	bool Cmd_WatchList(int argc, const char **argv);
+	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_List(int argc, const char **argv);
-	bool listBreakpoints();
-
 	// For use by the Adapter
 	void notifyBreakpoint(const char *filename, int line);
 	void notifyStep(const char *filename, int line);
 	void notifyWatch(const char *filename, const char *symbol, const char *newValue);
-	// void notifyWatch(const char *filename, const char *symbol);
 
 private:
 	WintermuteEngine *_engineRef;

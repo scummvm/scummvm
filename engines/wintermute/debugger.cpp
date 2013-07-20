@@ -42,18 +42,18 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
-	DCmd_Register("addb", WRAP_METHOD(Console, Cmd_AddBreakpoint));
+
 	DCmd_Register("rmb", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
-	DCmd_Register("lsb", WRAP_METHOD(Console, Cmd_ListBreakpoints));
 	DCmd_Register("top", WRAP_METHOD(Console, Cmd_Top));
-	DCmd_Register("lsw", WRAP_METHOD(Console, Cmd_WatchList));
-	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register("into", WRAP_METHOD(Console, Cmd_StepInto));
+	DCmd_Register("next", WRAP_METHOD(Console, Cmd_StepOver));
+	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
 	DCmd_Register("watch", WRAP_METHOD(Console, Cmd_Watch));
+	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
+	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
 	// TODO: import and display source?
 	// TODO: factor out actual interface code
-
 }
 
 Console::~Console(void) {
@@ -115,22 +115,25 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 }
 
 
-bool Console::Cmd_ListBreakpoints(int argc, const char **argv) {
-	BaseArray<BreakpointInfo> breakpoints = ADAPTER->getBreakpoints();
-	for (int i = 0; i < breakpoints.size(); i++) {
-		DebugPrintf("%d %s:%d x%d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits);
+bool Console::Cmd_Info(int argc, const char **argv) {
+	if (argc == 2 && !strcmp(argv[1], "breakpoints")) {
+		BaseArray<BreakpointInfo> breakpoints = ADAPTER->getBreakpoints();
+		for (int i = 0; i < breakpoints.size(); i++) {
+			DebugPrintf("%d %s:%d x%d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits);
+		}
+		return 1;
+	} else if (argc == 2 && !strcmp(argv[1], "watch")) {
+		BaseArray<WatchInfo>watchlist = ADAPTER->getWatchlist();
+		for (int i = 0; i < watchlist.size(); i++) {
+			DebugPrintf("%d %s:%d x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);
+		}
+		return 1;
+	} else {
+		DebugPrintf("Usage: %s [watch|breakpoints]\n", argv[0]);
 	}
-	return 1;
+
 }
 
-
-bool Console::Cmd_WatchList(int argc, const char **argv) {
-	BaseArray<WatchInfo>watchlist = ADAPTER->getWatchlist();
-	for (int i = 0; i < watchlist.size(); i++) {
-		DebugPrintf("%d %s:%d x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);
-	}
-	return 1;
-}
 
 bool Console::Cmd_Top(int argc, const char **argv) {
 	// ADAPTER->getTop();
