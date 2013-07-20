@@ -432,7 +432,7 @@ private:
 	void putInHand(int &objId);
 	void prepareDisplayText();
 
-	void cinq_huit(char &c, int &idx, byte &pt, bool &the_end);
+	bool decryptNextChar(char &c, int &idx, byte &pt);
 	void copcha();
 	void adzon();
 	void phaz(int &rand, int &p, int cf);
