@@ -27,6 +27,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #define SCENGINE _engine->_game->_scEngine
 #define DEBUGGER _engine->_debugger
 #define DBG_PATH "dbg"
@@ -200,7 +201,19 @@ int DebuggerAdapter::setValue(const char* name, const char* value) {
 	char *temp;
 	temp = const_cast<char *>(Common::String(name).c_str());
 	ScValue *var = _lastScript->getVar(temp);
-	var->setStringVal(value);
+	if (var->_type == VAL_INT) {
+		var->setInt(atoi(value));
+	} else if (var->_type == VAL_FLOAT) {
+		var->setFloat(atof(value));
+	} else if (var->_type == VAL_BOOL) {
+		Common::String str = Common::String(value);
+		bool valAsBool;
+		Common::parseBool(value, valAsBool);
+		// TODO: Warn if can't parse.
+		var->setBool(valAsBool);
+	} else {
+		// TODO> Not yet implemented
+	}
 	return 0;
 }
 
