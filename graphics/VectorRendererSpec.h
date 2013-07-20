@@ -158,6 +158,12 @@ protected:
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);
 
+	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h,
+	    PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
+
+	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h,
+	    PixelType color, FillMode fill_m);
+
 	virtual void drawSquareAlg(int x, int y, int w, int h,
 	    PixelType color, FillMode fill_m);
 
@@ -293,6 +299,10 @@ protected:
 	 * @see VectorRenderer::drawRoundedAlg()
 	 */
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
+
+	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m, uint8 alpha_t, uint8 alpha_l, uint8 alpha_r, uint8 alpha_b);
+	
+	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
 
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset) {
 		Base::drawRoundedSquareShadow(x, y, r, w, h, offset);
