@@ -2152,7 +2152,7 @@ void MortevielleEngine::loadBRUIT5() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(&_mem[kAdrNoise5 * 16 + 0], 149 * 128);
+	f.read(&_mem[kAdrNoise5 * 16], 149 * 128);
 	f.close();
 }
 
@@ -2212,8 +2212,8 @@ void MortevielleEngine::music() {
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
 
-	fic.read(&_mem[0x3800 * 16 + 0], 500);
-	fic.read(&_mem[0x47a0 * 16 + 0], 123);
+	fic.read(&_mem[0x3800 * 16], 500);
+	fic.read(&_mem[0x47a0 * 16], 123);
 	fic.close();
 
 	_soundManager.decodeMusic(&_mem[0x3800 * 16], &_mem[kAdrMusic * 16], 623);
@@ -2558,7 +2558,7 @@ void MortevielleEngine::displayControlMenu() {
 
 void MortevielleEngine::pictout(int seg, int dep, int x, int y) {
 	GfxSurface surface;
-	surface.decode(&_mem[seg * 16 + dep]);
+	surface.decode(&_mem[(seg * 16) + dep]);
 
 	if (_currGraphicalDevice == MODE_HERCULES) {
 		_mem[(kAdrPictureComp * 16) + 2] = 0;
@@ -2589,7 +2589,7 @@ void MortevielleEngine::adzon() {
 	if (!f.open("dec.mor"))
 		error("Missing file - dec.mor");
 
-	f.read(&_mem[0x73a2 * 16 + 0], 1 * 1664);
+	f.read(&_mem[0x73a2 * 16], 1664);
 	f.close();
 }
 
@@ -2597,12 +2597,12 @@ void MortevielleEngine::adzon() {
  * Returns the offset within the compressed image data resource of the desired image
  */
 int MortevielleEngine::animof(int ouf, int num) {
-	int nani = _mem[kAdrAni * 16 + 1];
+	int nani = _mem[(kAdrAni * 16) + 1];
 	int aux = num;
 	if (ouf != 1)
 		aux += nani;
 
-	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&_mem[kAdrAni * 16 + (aux << 1)]);
+	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&_mem[(kAdrAni * 16) + (aux << 1)]);
 
 	return animof_result;
 }
@@ -2981,11 +2981,10 @@ void MortevielleEngine::aniof(int ouf, int num) {
 			num = 3;
 	}
 
-	int ad = kAdrAni;
 	int offset = animof(ouf, num);
 
 	GfxSurface surface;
-	surface.decode(&_mem[ad * 16 + offset]);
+	surface.decode(&_mem[(kAdrAni * 16) + offset]);
 	_screenSurface.drawPicture(surface, 0, 12);
 
 	prepareScreenType1();

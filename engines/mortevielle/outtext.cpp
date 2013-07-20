@@ -181,7 +181,7 @@ void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int lengt
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		_vm->_mem[kAdrAni * 16 + i - remainingSkipSize] = _vm->_mem[(kAdrPictureDecomp * 16) + i];
+		_vm->_mem[(kAdrAni * 16) + i - remainingSkipSize] = _vm->_mem[(kAdrPictureDecomp * 16) + i];
 }
 
 void TextHandler::taffich() {
@@ -288,7 +288,7 @@ void TextHandler::taffich() {
 	loadDesFile(filename, lgt, handle);
 	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&_vm->_mem[(kAdrPictureComp * 16) + ((i + 1) << 1)]);
+			int palh = READ_LE_UINT16(&_vm->_mem[(kAdrPictureComp * 16) + 2 + (i << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (int i = 0; i <= 15; ++i) {
