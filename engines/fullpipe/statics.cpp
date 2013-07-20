@@ -25,9 +25,41 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/messagequeue.h"
+
 #include "fullpipe/gameobj.h"
 
 namespace Fullpipe {
+
+CStepArray::CStepArray() {
+	_points = 0;
+	_maxPointIndex = 0;
+	_currPointIndex = 0;
+	_pointsCount = 0;
+	_isEos = 0;
+}
+
+CStepArray::~CStepArray() {
+	if (_pointsCount) {
+		for (int i = 0; i < _pointsCount; i++)
+			delete _points[i];
+
+		delete _points;
+
+		_points = 0;
+	}
+}
+
+void CStepArray::clear() {
+	_currPointIndex = 0;
+	_maxPointIndex = 0;
+	_isEos = 0;
+
+	for (int i = 0; i < _pointsCount; i++) {
+		_points[i]->x = 0;
+		_points[i]->y = 0;
+	}
+}
 
 StaticANIObject::StaticANIObject() {
 	_shadowsOn = 1;
@@ -100,6 +132,43 @@ void StaticANIObject::setOXY(int x, int y) {
 	
 	if (_movementObj)
 		_movementObj->setOXY(x, y);
+}
+
+void StaticANIObject::clearFlags() {
+	_flags = 0;
+
+	deleteFromGlobalMessageQueue();
+	_messageQueueId = 0;
+	_movementObj = 0;
+	_staticsObj = 0;
+	_animExFlag = 0;
+	_counter = 0;
+	_messageNum = 0;
+	_stepArray.clear();
+}
+
+void StaticANIObject::deleteFromGlobalMessageQueue() {
+	while (_messageQueueId) {
+		if (g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId)) {
+			if (!isIdle())
+				return;
+
+			g_fullpipe->_globalMessageQueueList->deleteQueueById(_messageQueueId);
+		} else {
+			_messageQueueId = 0;
+		}
+	}
+}
+
+bool StaticANIObject::isIdle() {
+	if (_messageQueueId) {
+		MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+
+		if (m && m->getFlags() & 1)
+			return false;
+	}
+
+	return true;
 }
 
 Statics *StaticANIObject::getStaticsById(int itemId) {

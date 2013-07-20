@@ -27,10 +27,17 @@ namespace Fullpipe {
 
 class CStepArray : public CObject {
 	int _currPointIndex;
-	int _points;
+	Common::Point **_points;
 	int _maxPointIndex;
 	int _pointsCount;
 	int _isEos;
+
+  public:
+	CStepArray();
+	~CStepArray();
+	void clear();
+
+	int getCurrPointIndex() { return _currPointIndex; }
 };
 
 class StaticPhase : public Picture {
@@ -143,6 +150,11 @@ class StaticANIObject : public GameObject {
 	void setOXY(int x, int y);
 	Statics *getStaticsById(int id);
 	Movement *getMovementById(int id);
+
+	void clearFlags();
+	bool isIdle();
+
+	void deleteFromGlobalMessageQueue();
 
 	Statics *addStatics(Statics *ani);
 	void draw();

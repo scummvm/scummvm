@@ -31,6 +31,8 @@
 
 namespace Fullpipe {
 
+class MessageQueue;
+
 class GameProject : public CObject {
  public:
 	int _field_4;
@@ -41,25 +43,6 @@ class GameProject : public CObject {
  public:
 	GameProject();
 	~GameProject();
-	virtual bool load(MfcArchive &file);
-};
-
-class MessageQueue : public CObject {
-	int _id;
-	int _flags;
-	char *_queueName;
-	int16 _dataId;
-	int16 _field_12;
-	int _field_14;
-	CPtrList _exCommands;
-	int _counter;
-	int _field_38;
-	int _isFinished;
-	int _parId;
-	int _flag1;
-
- public:
-	MessageQueue();
 	virtual bool load(MfcArchive &file);
 };
 

@@ -82,6 +82,8 @@ class Picture : public MemoryObject {
 
 	byte getAlpha() { return (byte)_alpha; }
 	void setAlpha(byte alpha) { _alpha = alpha; }
+
+	Common::Point *getDimensions(Common::Point *p);
 };
 
 class BigPicture : public Picture {
@@ -118,6 +120,7 @@ class PictureObject : public GameObject {
   public:
 	PictureObject();
 	bool load(MfcArchive &file, bool bigPicture);
+	Common::Point *getDimensions(Common::Point *p);
 };
 
 class Background : public CObject {

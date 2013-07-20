@@ -25,6 +25,9 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/messagequeue.h"
+
+#include "fullpipe/gameobj.h"
 
 namespace Fullpipe {
 
@@ -234,6 +237,38 @@ void Scene::init() {
 	warning("STUB: Scene::init()");
 }
 
+StaticANIObject *Scene::getAniMan() {
+	StaticANIObject *aniMan = getStaticANIObject1ById(ANI_MAN, -1);
+
+	deleteStaticANIObject(aniMan);
+
+	return aniMan;
+}
+
+StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
+	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
+		StaticANIObject *o = (StaticANIObject *)s;
+		if (o->_id == obj && (a3 == -1 || o->_field_4 == a3))
+			return o;
+	}
+
+	return 0;
+}
+
+void Scene::deleteStaticANIObject(StaticANIObject *obj) {
+	for (uint n = 0; n < _staticANIObjectList1.size(); n++)
+		if ((StaticANIObject *)_staticANIObjectList1[n] == obj) {
+			_staticANIObjectList1.remove_at(n);
+			break;
+		}
+
+	for (uint n = 0; n < _staticANIObjectList2.size(); n++)
+		if ((StaticANIObject *)_staticANIObjectList2[n] == obj) {
+			_staticANIObjectList2.remove_at(n);
+			break;
+		}
+}
+
 void Scene::draw(int par) {
 	updateScrolling(par);
 
@@ -257,9 +292,10 @@ void Scene::draw(int par) {
 }
 
 void Scene::updateScrolling(int par) {
+	warning("STUB Scene::updateScrolling()");
 }
 
-void Scene::drawContent(int minPri, int maxPri, bool drawBG) {
+void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (!_picObjList.size() && !_bigPictureArray1Count)
 		return;
 

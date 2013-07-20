@@ -24,11 +24,8 @@
 
 namespace Fullpipe {
 
-signed int sceneSwitcher(EntranceInfo *a1, int a2) {
-	EntranceInfo *entrance; // ebx@1
-	Scene *scene; // esi@1
+bool FullPipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	CGameVar *sceneVar; // eax@21
-	signed int result; // eax@2
 	POINT *v6; // eax@3
 	int v7; // eax@3
 	CInventory2 *v8; // eax@4
@@ -46,37 +43,41 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 	CNode *v20; // eax@17
 	Scene *v21; // eax@18
 	PictureObject *v22; // eax@18
-	POINT point; // [sp+Ch] [bp-8h]@3
+	Common::Point sceneDim;
 
-	entrance = a1;
-	scene = accessScene(a1->_sceneId);
+	Scene *scene = accessScene(entrance->_sceneId);
 
 	if (!scene)
 		return 0;
 
-	v6 = PictureObject_getDimensions((PictureObject *)scene->bg.picObjList.m_pNodeHead->data, &point);
-	g_sceneWidth = v6->x;
-	v7 = v6->y;
-	g_sceneHeight = v7;
-	g_sceneRect.top = 0;
-	g_sceneRect.left = 0;
-	g_sceneRect.right = 799;
-	g_sceneRect.bottom = 599;
-	scene->bg.x = 0;
-	scene->bg.y = 0;
-	(*(void (__stdcall **)(_DWORD, _DWORD, int))(g_aniMan->GameObject.CObject.vmt + offsetof(GameObjectVmt, setOXY)))(0, 0, a2);
-	(*(void (**)(void))(g_aniMan->GameObject.CObject.vmt + offsetof(GameObjectVmt, clearFlags)))();
-	g_aniMan->callback2 = 0;
-	g_aniMan->callback1 = 0;
-	g_aniMan->shadowsOn = 1;
-	g_scrollSpeed = 8;
-	savesEnabled = 1;
-	updateFlag = 1;
-	flgCanOpenMap = 1;
+	((PictureObject *)_picObjList.front())->getDimensions(&sceneDim);
+	_sceneWidth = sceneDim.x;
+	_sceneHeight = sceneDim.y;
+
+	_sceneRect.top = 0;
+	_sceneRect.left = 0;
+	_sceneRect.right = 799;
+	_sceneRect.bottom = 599;
+
+	scene->_x = 0;
+	scene->_y = 0;
+
+	_aniMan->setOXY(0, 0);
+	_aniMan->clearFlags();
+	_aniMan->callback1 = 0;
+	_aniMan->callback2 = 0;
+	_aniMan->shadowsOn = 1;
+
+	_scrollSpeed = 8;
+
+	_savesEnabled = 1;
+	_updateFlag = 1;
+	_flgCanOpenMap = 1;
+
 	if (entrance->sceneId == SC_DBGMENU) {
-		g_inventoryScene = 0;
+		_inventoryScene = 0;
 	} else {
-		CGameLoader_loadScene(g_gameLoader, SC_INV);
+		_gameLoader->loadScene(SC_INV);
 		v8 = getGameLoaderInventory();
 		CInventory2_rebuildItemRects(v8);
 		v9 = getGameLoaderInventory();
@@ -146,7 +147,6 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandlerIntro, 2);
 		_updateCursorCallback = sceneIntro_updateCursor;
-		result = 1;
 		break;
 
 	case SC_1:
@@ -158,8 +158,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_1");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler01, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_2:
@@ -170,8 +169,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_2");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler02, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_3:
@@ -183,8 +181,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler03, 2);
 		j_Scene_sc03_sub_40F160(scene);
-		g_updateCursorCallback = scene03_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene03_updateCursor;
 		break;
 
 	case SC_4:
@@ -195,8 +192,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_4");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler04, 2, 2);
-		g_updateCursorCallback = scene04_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene04_updateCursor;
 		break;
 
 	case SC_5:
@@ -207,8 +203,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_5");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler05, 2, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_6:
@@ -220,8 +215,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		sub_415300();
 		insertMessageHandler(sceneHandler06, 2, 2);
-		g_updateCursorCallback = scene06_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene06_updateCursor;
 		break;
 
 	case SC_7:
@@ -232,8 +226,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_7");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler07, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_8:
@@ -245,8 +238,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		sub_416890();
 		addMessageHandler(sceneHandler08, 2);
-		g_updateCursorCallback = scene08_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene08_updateCursor;
 		break;
 
 	case SC_9:
@@ -257,8 +249,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_9");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler09, 2, 2);
-		g_updateCursorCallback = scene09_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene09_updateCursor;
 		break;
 
 	case SC_10:
@@ -269,8 +260,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_10");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler10, 2, 2);
-		g_updateCursorCallback = scene10_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene10_updateCursor;
 		break;
 
 	case SC_11:
@@ -282,8 +272,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler11, 2, 2);
 		scene11_sub_41A980();
-		g_updateCursorCallback = scene11_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene11_updateCursor;
 		break;
 
 	case SC_12:
@@ -294,8 +283,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_12");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler12, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_13:
@@ -306,8 +294,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_13");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler13, 2, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_14:
@@ -319,8 +306,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler14, 2, 2);
 		scene14_sub_41D2B0();
-		g_updateCursorCallback = scene14_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene14_updateCursor;
 		break;
 
 	case SC_15:
@@ -331,8 +317,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_15");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler15, 2, 2);
-		g_updateCursorCallback = scene15_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene15_updateCursor;
 		break;
 
 	case SC_16:
@@ -343,8 +328,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_16");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler16, 2);
-		g_updateCursorCallback = scene16_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene16_updateCursor;
 		break;
 
 	case SC_17:
@@ -356,8 +340,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler17, 2);
 		scene17_sub_41F060();
-		g_updateCursorCallback = scene17_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene17_updateCursor;
 		break;
 
 	case SC_18:
@@ -373,8 +356,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_18");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler18, 2, 2);
-		g_updateCursorCallback = scene18_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene18_updateCursor;
 		break;
 
 	case SC_19:
@@ -399,8 +381,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler19, 2);
 		scene19_sub_4211D0(scene);
-		g_updateCursorCallback = scene19_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene19_updateCursor;
 		break;
 
 	case SC_20:
@@ -411,8 +392,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_20");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler20, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_21:
@@ -423,8 +403,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_21");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler21, 2, 2);
-		g_updateCursorCallback = scene21_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene21_updateCursor;
 		break;
 
 	case SC_22:
@@ -436,8 +415,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		scene22_sub_4228A0();
 		insertMessageHandler(sceneHandler22, 2, 2);
-		g_updateCursorCallback = scene22_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene22_updateCursor;
 		break;
 
 	case SC_23:
@@ -449,8 +427,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler23, 2, 2);
 		scene23_sub_423B00();
-		g_updateCursorCallback = scene23_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene23_updateCursor;
 		break;
 
 	case SC_24:
@@ -462,8 +439,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler24, 2);
 		scene24_sub_423DD0();
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_25:
@@ -475,8 +451,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler25, 2);
 		scene25_sub_4253B0(scene, entrance->field_4);
-		g_updateCursorCallback = scene25_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene25_updateCursor;
 		break;
 
 	case SC_26:
@@ -488,8 +463,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler26, 2, 2);
 		scene26_sub_426140(scene);
-		g_updateCursorCallback = scene26_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene26_updateCursor;
 		break;
 
 	case SC_27:
@@ -500,8 +474,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_27");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler27, 2);
-		g_updateCursorCallback = scene27_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene27_updateCursor;
 		break;
 
 	case SC_28:
@@ -512,8 +485,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_28");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler28, 2, 2);
-		g_updateCursorCallback = scene28_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene28_updateCursor;
 		break;
 
 	case SC_29:
@@ -524,8 +496,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_29");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler29, 2);
-		g_updateCursorCallback = scene29_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene29_updateCursor;
 		break;
 
 	case SC_30:
@@ -536,8 +507,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_30");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler30, 2);
-		g_updateCursorCallback = scene30_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene30_updateCursor;
 		break;
 
 	case SC_31:
@@ -548,8 +518,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_31");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler31, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_32:
@@ -561,8 +530,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler32, 2, 2);
 		scene32_sub_42C5C0();
-		g_updateCursorCallback = scene32_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene32_updateCursor;
 		break;
 
 	case SC_33:
@@ -574,8 +542,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler33, 2, 2);
 		scene33_sub_42CEF0();
-		g_updateCursorCallback = scene33_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene33_updateCursor;
 		break;
 
 	case SC_34:
@@ -587,8 +554,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler34, 2, 2);
 		scene34_sub_42DEE0();
-		g_updateCursorCallback = scene34_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene34_updateCursor;
 		break;
 
 	case SC_35:
@@ -599,8 +565,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_35");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler35, 2, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_36:
@@ -611,8 +576,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_36");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler36, 2);
-		g_updateCursorCallback = scene36_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene36_updateCursor;
 		break;
 
 	case SC_37:
@@ -623,8 +587,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_37");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler37, 2, 2);
-		g_updateCursorCallback = scene37_updateCursor;
-		result = 1;
+		_updateCursorCallback = scene37_updateCursor;
 		break;
 
 	case SC_38:
@@ -635,8 +598,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_38");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler38, 2);
-		g_updateCursorCallback = defaultUpdateCursorCallback;
-		result = 1;
+		_updateCursorCallback = defaultUpdateCursorCallback;
 		break;
 
 	case SC_FINAL1:
@@ -647,8 +609,7 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		scene->initObjectCursors("SC_FINAL1");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandlerFinal1, 2);
-		g_updateCursorCallback = sceneFinal1_updateCursor;
-		result = 1;
+		_updateCursorCallback = sceneFinal1_updateCursor;
 		break;
 
 	case SC_DBGMENU:
@@ -658,16 +619,14 @@ signed int sceneSwitcher(EntranceInfo *a1, int a2) {
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_DBGMENU");
 		addMessageHandler(sceneHandlerDbgMenu, 2);
-		result = 1;
 		break;
 
 	default:
 		_behaviorManager->initBehavior(0, 0);
-		result = 1;
 		break;
 	}
 
-	return result;
+	return true;
 }
 
 } // End of namespace Fullpipe

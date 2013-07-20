@@ -162,6 +162,12 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	return true;
 }
 
+Common::Point *PictureObject::getDimensions(Common::Point *p) {
+	_picture->getDimensions(p);
+
+	return p;
+}
+
 GameObject::GameObject() {
 	_field_4 = 0;
 	_flags = 0;
@@ -271,6 +277,13 @@ void Picture::init() {
 	getDibInfo();
 
 	_bitmap->_flags |= 0x1000000;
+}
+
+Common::Point *Picture::getDimensions(Common::Point *p) {
+	p->x = _width;
+	p->y = _height;
+
+	return p;
 }
 
 void Picture::getDibInfo() {

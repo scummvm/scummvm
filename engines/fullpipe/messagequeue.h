@@ -20,57 +20,48 @@
  *
  */
 
-#ifndef FULLPIPE_SCENE_H
-#define FULLPIPE_SCENE_H
+#ifndef FULLPIPE_MESSAGEQUEUE_H
+#define FULLPIPE_MESSAGEQUEUE_H
+
+#include "fullpipe/utils.h"
+#include "fullpipe/inventory.h"
+#include "fullpipe/gfx.h"
+#include "fullpipe/sound.h"
+#include "fullpipe/scene.h"
 
 namespace Fullpipe {
 
-class Scene : public Background {
-	CPtrList _staticANIObjectList1;
-	CPtrList _staticANIObjectList2;
-	CPtrList _messageQueueList;
-	CPtrList _faObjectList;
-	Shadows *_shadows;
-	SoundList *_soundList;
-	int16 _sceneId;
-	char *_sceneName;
-	int _field_BC;
-	NGIArchive *_libHandle;
+class MessageQueue : public CObject {
+	friend class GlobalMessageQueueList;
 
-  public:
-	Scene();
-	virtual bool load(MfcArchive &file);
-	void initStaticANIObjects();
-	void init();
-	void draw(int par);
-	void drawContent(int minPri, int maxPri, bool drawBG);
-	void updateScrolling(int par);
-	StaticANIObject *getAniMan();
-	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
-	void deleteStaticANIObject(StaticANIObject * obj);
-};
-
-class SceneTag : public CObject {
- public:
-	int _field_4;
-	char *_tag;
-	Scene *_scene;
-	int16 _sceneId;
+  protected:
+	int _id;
+	int _flags;
+	char *_queueName;
+	int16 _dataId;
 	int16 _field_12;
+	int _field_14;
+	CPtrList _exCommands;
+	int _counter;
+	int _field_38;
+	int _isFinished;
+	int _parId;
+	int _flag1;
 
  public:
-	SceneTag();
-	~SceneTag();
-
+	MessageQueue();
 	virtual bool load(MfcArchive &file);
-	void loadScene();
+
+	int getFlags() { return _flags; }
 };
 
-class SceneTagList : public Common::List<SceneTag>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
+class GlobalMessageQueueList : public CPtrList {
+  public:
+	MessageQueue *getMessageQueueById(int id);
+	void deleteQueueById(int id);
+	void disableQueueById(int id);
 };
 
 } // End of namespace Fullpipe
 
-#endif /* FULLPIPE_SCENE_H */
+#endif /* FULLPIPE_MESSAGEQUEUE_H */

@@ -49,6 +49,8 @@ class CGameVar;
 class CInventory2;
 class Scene;
 class NGIArchive;
+class StaticANIObject;
+class GlobalMessageQueueList;
 
 class FullpipeEngine : public ::Engine {
 protected:
@@ -58,6 +60,8 @@ protected:
 public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~FullpipeEngine();
+
+	void initialize();
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
@@ -87,6 +91,10 @@ public:
 	bool _flgSoundList;
 
 	Common::Rect _sceneRect;
+	Scene *_scene2;
+	StaticANIObject *_aniMan;
+
+	GlobalMessageQueueList *_globalMessageQueueList;
 
 	bool _needQuit;
 

@@ -30,6 +30,7 @@
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/objects.h"
+#include "fullpipe/messagequeue.h"
 
 namespace Fullpipe {
 
@@ -58,20 +59,31 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_needQuit = false;
 
+	_aniMan = 0;
+	_scene2 = 0;
+
+	_globalMessageQueueList = 0;
+
 	g_fullpipe = this;
 }
 
 FullpipeEngine::~FullpipeEngine() {
 	delete _rnd;
+	delete _globalMessageQueueList;
+}
+
+void FullpipeEngine::initialize() {
+	_globalMessageQueueList = new GlobalMessageQueueList;
 }
 
 Common::Error FullpipeEngine::run() {
-
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	// Initialize backend
 	initGraphics(800, 600, true, &format);
 
 	_backgroundSurface.create(800, 600, format);
+
+	initialize();
 
 	_isSaveAllowed = false;
 

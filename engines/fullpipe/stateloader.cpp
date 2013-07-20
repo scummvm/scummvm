@@ -101,10 +101,16 @@ bool FullpipeEngine::loadGam(const char *fname) {
 
 		_inventory->rebuildItemRects();
 
-		warning("STUB: loadGam()");
 		//for (CPtrList::iterator s = _inventory->getScene()->_picObjList.begin(); s != _inventory->getScene()->_picObjList.end(); ++s) {
 		//}
+
+		//_sceneSwitcher = sceneSwitcher;
+		//_preloadCallback = gameLoaderPreloadCallback
+		//_readSavegameCallback = gameLoaderReadSavegameCallback;
+		_aniMan = accessScene(SC_COMMON)->getAniMan();
+		_scene2 = 0;
 		
+		warning("STUB: loadGam()");
 	} else
 		return false;
 
@@ -310,40 +316,6 @@ bool CInteraction::load(MfcArchive &file) {
 	_actionName = file.readPascalString();
 
 	_messageQueue = (MessageQueue *)file.readClass();
-
-	return true;
-}
-
-MessageQueue::MessageQueue() {
-	_field_14 = 0;
-	_parId = 0;
-	_dataId = 0;
-	_id = 0;
-	_isFinished = 0;
-	_flags = 0;
-}
-
-bool MessageQueue::load(MfcArchive &file) {
-	debug(5, "MessageQueue::load()");
-
-	_dataId = file.readUint16LE();
-
-	int count = file.readUint16LE();
-
-	assert(g_fullpipe->_gameProjectVersion >= 12);
-
-	_queueName = file.readPascalString();
-
-	for (int i = 0; i < count; i++) {
-		CObject *tmp = file.readClass();
-
-		_exCommands.push_back(tmp);
-	}
-
-	_id = -1;
-	_field_14 = 0;
-	_parId = 0;
-	_isFinished = 0;
 
 	return true;
 }

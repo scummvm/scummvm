@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	fullpipe.o \
 	gfx.o \
 	inventory.o \
+	messagequeue.o \
 	motion.o \
 	ngiarchive.o \
 	scene.o \
