@@ -2216,7 +2216,7 @@ void MortevielleEngine::music() {
 	fic.read(&_mem[0x47a0 * 16 + 0], 123);
 	fic.close();
 
-	_soundManager.decodeMusic(&_mem[0x3800 * 16], &_mem[0x5000 * 16], 623);
+	_soundManager.decodeMusic(&_mem[0x3800 * 16], &_mem[kAdrMusic * 16], 623);
 	_addFix = (float)((kTempoMusic - 8)) / 256;
 	_speechManager.cctable(_speechManager._tbi);
 
