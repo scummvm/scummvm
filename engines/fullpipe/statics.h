@@ -23,6 +23,8 @@
 #ifndef FULLPIPE_STATICS_H
 #define FULLPIPE_STATICS_H
 
+#include "fullpipe/gfx.h"
+
 namespace Fullpipe {
 
 class CStepArray : public CObject {
@@ -121,6 +123,9 @@ class Movement : public GameObject {
 };
 
 class StaticANIObject : public GameObject {
+	friend class FullpipeEngine;
+
+ protected:
 	Movement *_movementObj;
 	Statics *_staticsObj;
 	int _shadowsOn;

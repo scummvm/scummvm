@@ -23,6 +23,7 @@
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/objects.h"
+#include "fullpipe/sound.h"
 #include "fullpipe/ngiarchive.h"
 
 namespace Fullpipe {
@@ -99,6 +100,10 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 	}
 
 	return true;
+}
+
+void Sound::updateVolume() {
+	warning("STUB Sound::updateVolume()");
 }
 
 } // End of namespace Fullpipe

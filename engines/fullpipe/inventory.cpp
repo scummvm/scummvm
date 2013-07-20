@@ -22,9 +22,15 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
+#include "fullpipe/utils.h"
+#include "fullpipe/inventory.h"
+#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
+
+CInventory2 *getGameLoaderInventory() {
+	return &g_fullpipe->_gameLoader->_inventory;
+}
 
 bool CInventory::load(MfcArchive &file) {
 	debug(5, "CInventory::load()");

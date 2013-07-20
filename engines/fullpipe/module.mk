@@ -3,12 +3,14 @@ MODULE := engines/fullpipe
 MODULE_OBJS = \
 	detection.o \
 	fullpipe.o \
+	gameloader.o \
 	gfx.o \
 	inventory.o \
 	messagequeue.o \
 	motion.o \
 	ngiarchive.o \
 	scene.o \
+	scenes.o \
 	sound.o \
 	stateloader.o \
 	statics.o \

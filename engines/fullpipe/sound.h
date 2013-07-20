@@ -37,6 +37,7 @@ class Sound : public MemoryObject {
   public:
 	Sound();
 	bool load(MfcArchive &file, NGIArchive *archive);
+	void updateVolume();
 };
 
 class SoundList : public CObject {
@@ -48,6 +49,9 @@ class SoundList : public CObject {
 	SoundList();
 	bool load(MfcArchive &file, char *fname);
 	bool loadFile(const char *fname, char *libname);
+
+	int getCount() { return _soundItemsCount; }
+	Sound *getSoundByIndex(int idx) { return _soundItems[idx]; }
 };
 
 } // End of namespace Fullpipe

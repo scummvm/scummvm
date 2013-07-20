@@ -44,13 +44,15 @@ enum FullpipeGameFeatures {
 };
 
 class CGameLoader;
-class GameProject;
 class CGameVar;
 class CInventory2;
-class Scene;
-class NGIArchive;
-class StaticANIObject;
+class EntranceInfo;
+class GameProject;
 class GlobalMessageQueueList;
+class NGIArchive;
+class Scene;
+class SoundList;
+class StaticANIObject;
 
 class FullpipeEngine : public ::Engine {
 protected:
@@ -86,13 +88,20 @@ public:
 	int _gameProjectVersion;
 	int _pictureScale;
 	int _scrollSpeed;
+	bool _savesEnabled;
+	bool _updateFlag;
+	bool _flgCanOpenMap;
+
+	Common::Rect _sceneRect;
+	int _sceneWidth;
+	int _sceneHeight;
+	Scene *_scene2;
+	StaticANIObject *_aniMan;
+
+	SoundList *_currSoundList1[11];
 	int _currSoundListCount;
 	bool _soundEnabled;
 	bool _flgSoundList;
-
-	Common::Rect _sceneRect;
-	Scene *_scene2;
-	StaticANIObject *_aniMan;
 
 	GlobalMessageQueueList *_globalMessageQueueList;
 
@@ -106,11 +115,13 @@ public:
 	CGameVar *_swallowedEgg2;
 	CGameVar *_swallowedEgg3;
 
+	Scene *_inventoryScene;
 	CInventory2 *_inventory;
 
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);
 
+	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
 
 	NGIArchive *_currArchive;

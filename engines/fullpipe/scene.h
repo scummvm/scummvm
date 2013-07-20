@@ -23,9 +23,14 @@
 #ifndef FULLPIPE_SCENE_H
 #define FULLPIPE_SCENE_H
 
+#include "fullpipe/gfx.h"
+
 namespace Fullpipe {
 
 class Scene : public Background {
+	friend class FullpipeEngine;
+
+  protected:
 	CPtrList _staticANIObjectList1;
 	CPtrList _staticANIObjectList2;
 	CPtrList _messageQueueList;

@@ -22,27 +22,31 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/utils.h"
+#include "fullpipe/gfx.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/sound.h"
+
+#include "fullpipe/gameobj.h"
+
 namespace Fullpipe {
 
-bool FullPipeEngine::sceneSwitcher(EntranceInfo *entrance) {
-	CGameVar *sceneVar; // eax@21
-	POINT *v6; // eax@3
-	int v7; // eax@3
-	CInventory2 *v8; // eax@4
-	CInventory2 *v9; // eax@4
-	int v10; // edi@8
-	Sound *v11; // eax@9
-	int v12; // ST08_4@12
-	int v13; // eax@12
-	Scene *v14; // edi@12
-	int v15; // eax@13
-	int v16; // eax@13
-	int v17; // eax@13
-	int v18; // eax@13
-	CNode *v19; // edi@16
-	CNode *v20; // eax@17
-	Scene *v21; // eax@18
-	PictureObject *v22; // eax@18
+bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
+	CGameVar *sceneVar;
+	int v12;
+	int v13;
+	Scene *v14;
+	int v15;
+	int v16;
+	int v17;
+	int v18;
+	CNode *v19;
+	CNode *v20;
+	Scene *v21;
+	PictureObject *v22;
 	Common::Point sceneDim;
 
 	Scene *scene = accessScene(entrance->_sceneId);
@@ -50,7 +54,7 @@ bool FullPipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	if (!scene)
 		return 0;
 
-	((PictureObject *)_picObjList.front())->getDimensions(&sceneDim);
+	((PictureObject *)scene->_picObjList.front())->getDimensions(&sceneDim);
 	_sceneWidth = sceneDim.x;
 	_sceneHeight = sceneDim.y;
 
@@ -64,39 +68,39 @@ bool FullPipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	_aniMan->setOXY(0, 0);
 	_aniMan->clearFlags();
-	_aniMan->callback1 = 0;
-	_aniMan->callback2 = 0;
-	_aniMan->shadowsOn = 1;
+	_aniMan->_callback1 = 0;
+	_aniMan->_callback2 = 0;
+	_aniMan->_shadowsOn = 1;
 
 	_scrollSpeed = 8;
 
-	_savesEnabled = 1;
-	_updateFlag = 1;
-	_flgCanOpenMap = 1;
+	_savesEnabled = true;
+	_updateFlag = true;
+	_flgCanOpenMap = true;
 
-	if (entrance->sceneId == SC_DBGMENU) {
+	if (entrance->_sceneId == SC_DBGMENU) {
 		_inventoryScene = 0;
 	} else {
 		_gameLoader->loadScene(SC_INV);
-		v8 = getGameLoaderInventory();
-		CInventory2_rebuildItemRects(v8);
-		v9 = getGameLoaderInventory();
-		g_inventoryScene = CInventory2_getScene(v9);
+		getGameLoaderInventory()->rebuildItemRects();
+		_inventoryScene = getGameLoaderInventory()->getScene();
 	}
-	if (soundEnabled) {
-		if (scene->soundList) {
-			g_currSoundListCount = 2;
-			v10 = 0;
-			g_currSoundList1 = accessScene(SC_COMMON)->soundList;
-			for (*(&g_currSoundList1 + 1) = scene->soundList; v10 < SoundList_getCount(scene->soundList); ++v10) {
-				v11 = SoundList_getSoundByItemByIndex(scene->soundList, v10);
-				(*(void (__thiscall **)(Sound *))(v11->MemoryObject.obj.vmt + offsetof(SoundVmt, updateVolume)))(v11);
+	if (_soundEnabled) {
+		if (scene->_soundList) {
+			_currSoundListCount = 2;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
+			_currSoundList1[1] = scene->_soundList;
+
+			for (int i = 0; i < scene->_soundList->getCount(); i++) {
+				scene->_soundList->getSoundByIndex(i)->updateVolume();
 			}
 		} else {
-			g_currSoundListCount = 1;
-			g_currSoundList1 = accessScene(SC_COMMON)->soundList;
+			_currSoundListCount = 1;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
 		}
 	}
+
+#if 0
 	v12 = scene->sceneId;
 	v13 = (int)getGameLoaderInteractionController();
 	CInteractionController_sortInteractions(v13, v12);
@@ -625,7 +629,7 @@ bool FullPipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_behaviorManager->initBehavior(0, 0);
 		break;
 	}
-
+#endif
 	return true;
 }
 

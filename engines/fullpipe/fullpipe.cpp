@@ -30,6 +30,7 @@
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/objects.h"
+#include "fullpipe/gameloader.h"
 #include "fullpipe/messagequeue.h"
 
 namespace Fullpipe {

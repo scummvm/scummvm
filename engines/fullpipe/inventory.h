@@ -103,6 +103,8 @@ class CInventory2 : public CInventory {
 
 };
 
+CInventory2 *getGameLoaderInventory();
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_INVENTORY_H */

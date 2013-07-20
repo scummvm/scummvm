@@ -23,6 +23,7 @@
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/objects.h"
+#include "fullpipe/gfx.h"
 
 #include "common/memstream.h"
 
