@@ -1603,9 +1603,7 @@ void MortevielleEngine::endGame() {
 	testKey(false);
 	// A wait message was displayed.
 	// testKey (aka tkey1) was called before and after.
-	// Most likely the double call is useless, thus removed
-	//
-	// testKey(false);
+	// This double call is useless, thus removed
 	resetVariables();
 }
 
