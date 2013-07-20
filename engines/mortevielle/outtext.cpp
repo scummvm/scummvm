@@ -150,7 +150,7 @@ void TextHandler::loadDesFile(Common::String filename, int32 skipSize, int lengt
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		_vm->_mem[0x7000 * 16 + i - remainingSkipSize] = _vm->_mem[0x6000 * 16 + i];
+		_vm->_mem[(kAdrPictureComp * 16) + i - remainingSkipSize] = _vm->_mem[0x6000 * 16 + i];
 }
 
 /**
@@ -288,7 +288,7 @@ void TextHandler::taffich() {
 	loadDesFile(filename, lgt, handle);
 	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&_vm->_mem[(0x7000 * 16) + ((i + 1) << 1)]);
+			int palh = READ_LE_UINT16(&_vm->_mem[(kAdrPictureComp * 16) + ((i + 1) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (int i = 0; i <= 15; ++i) {
@@ -296,7 +296,7 @@ void TextHandler::taffich() {
 			for (int j = 0; j <= 15; ++j)
 				if (alllum[j] > alllum[k])
 					k = j;
-			_vm->_mem[(0x7000 * 16) + 2 + (k << 1)] = _rang[i];
+			_vm->_mem[(kAdrPictureComp * 16) + 2 + (k << 1)] = _rang[i];
 			alllum[k] = -1;
 		}
 	}

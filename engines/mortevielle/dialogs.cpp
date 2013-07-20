@@ -465,7 +465,7 @@ void DialogManager::displayIntroScreen(bool drawFrame2Fl) {
 	_vm->_caff = 50;
 	_vm->_maff = 0;
 	_vm->_text.taffich();
-	_vm->draw(kAdrDes, 63, 12);
+	_vm->draw(kAdrPictureComp, 63, 12);
 	if (drawFrame2Fl)
 		displayIntroFrame2();
 	else

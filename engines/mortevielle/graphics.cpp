@@ -937,7 +937,7 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 		(x + surface.w) * 2, (y + surface.h) * 2));
 
 	// Get a lookup for the palette mapping
-	const byte *paletteMap = &_vm->_mem[0x7000 * 16 + 2];
+	const byte *paletteMap = &_vm->_mem[kAdrPictureComp * 16 + 2];
 
 	// Loop through writing
 	for (int yp = 0; yp < surface.h; ++yp) {
@@ -1108,7 +1108,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 
 	pt.x += 1;
 	pt.y += 1;
-	for (x = 1; (x <= l.size()) && (l[x - 1] != 0); ++x) {
+	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
 		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), color);
 		pt.x += charWidth;
 	}
