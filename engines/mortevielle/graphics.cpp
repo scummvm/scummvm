@@ -1079,43 +1079,38 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	_vm->_mouse.hideMouse();
 	Common::Point pt = _textPos;
 
-	int i;
+	int charWidth;
 	if (_vm->_resolutionScaler == 2)
-		i = 6;
+		charWidth = 6;
 	else
-		i = 10;
+		charWidth = 10;
 
-	int x = pt.x + i * l.size();
+	int x = pt.x + charWidth * l.size();
 	int color = 0;
 
 	switch (command) {
-	case 1:
-	case 3: {
-		color = 0;
-		_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
-		}
+	case 0:
+	case 2:
+		color = 15;
+		_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		break;
-	case 4:
-		color = 0;
+	case 1:
+	case 3:
+		_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		break;
 	case 5:
 		color = 15;
 		break;
-	case 0:
-	case 2: {
-		color = 15;
-		_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
-		}
-		break;
 	default:
+		// Default: Color set to zero (already done)
 		break;
 	}
 
 	pt.x += 1;
 	pt.y += 1;
-	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
+	for (x = 1; (x <= l.size()) && (l[x - 1] != 0); ++x) {
 		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), color);
-		pt.x += i;
+		pt.x += charWidth;
 	}
 	_vm->_mouse.showMouse();
 }
