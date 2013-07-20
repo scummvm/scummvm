@@ -2957,11 +2957,15 @@ int MortevielleEngine::getPresence(int roomId) {
 	return retVal;
 }
 
-void MortevielleEngine::writetp(Common::String s, int t) {
+/**
+ * Display Question String
+ * @remarks	Originally called 'writetp'
+ */
+void MortevielleEngine::displayQuestionText(Common::String s, int cmd) {
 	if (_resolutionScaler == 2)
-		_screenSurface.drawString(s, t);
+		_screenSurface.drawString(s, cmd);
 	else
-		_screenSurface.drawString(copy(s, 1, 25), t);
+		_screenSurface.drawString(copy(s, 1, 25), cmd);
 }
 
 void MortevielleEngine::aniof(int ouf, int num) {

@@ -422,6 +422,7 @@ private:
 	bool decryptNextChar(char &c, int &idx, byte &pt);
 	void displayStatusArrow();
 	void displayStatusInDescriptionBar(char stat);
+	void displayQuestionText(Common::String s, int cmd);
 	void displayTextInDescriptionBar(int x, int y, int nb, int mesgId);
 	void displayTextInVerbBar(Common::String text);
 	void mapMessageId(int &mesgId);
@@ -435,7 +436,6 @@ private:
 	void copcha();
 	void adzon();
 	void phaz(int &rand, int &p, int cf);
-	void writetp(Common::String s, int t);
 	void premtet();
 	void ajchai();
 	void ecr2(Common::String text);
