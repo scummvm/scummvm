@@ -418,21 +418,20 @@ private:
 	void endGame();
 	void askRestart();
 	void handleOpcode();
+	void prepareDisplayText();
+	bool decryptNextChar(char &c, int &idx, byte &pt);
 	void displayStatusArrow();
 	void displayStatusInDescriptionBar(char stat);
-
 	void displayTextInDescriptionBar(int x, int y, int nb, int mesgId);
+	void displayTextInVerbBar(Common::String text);
 	void mapMessageId(int &mesgId);
 	void resetOpenObjects();
 	void setCoordinates(int sx);
-	void displayTextInVerbBar(Common::String text);
 	void drawPicture();
 	void drawPictureWithText();
 	void addObjectToInventory(int objectId);
 	void putInHand(int &objId);
-	void prepareDisplayText();
 
-	bool decryptNextChar(char &c, int &idx, byte &pt);
 	void copcha();
 	void adzon();
 	void phaz(int &rand, int &p, int cf);
