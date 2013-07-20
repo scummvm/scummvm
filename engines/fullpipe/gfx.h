@@ -109,6 +109,7 @@ class GameObject : public CObject {
 	GameObject();
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
+	void renumPictures(CPtrList *lst);
 };
 
 class PictureObject : public GameObject {
@@ -143,7 +144,6 @@ class Background : public CObject {
 	Background();
 	virtual bool load(MfcArchive &file);
 	void addPictureObject(PictureObject *pct);
-	void renumPictures(PictureObject *pct);
 };
 
 class Shadows : public CObject {

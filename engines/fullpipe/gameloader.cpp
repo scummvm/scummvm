@@ -27,6 +27,14 @@
 
 namespace Fullpipe {
 
+CInventory2 *getGameLoaderInventory() {
+	return &g_fullpipe->_gameLoader->_inventory;
+}
+
+CInteractionController *getGameLoaderInteractionController() {
+	return g_fullpipe->_gameLoader->_interactionController;
+}
+
 CGameLoader::CGameLoader() {
 	_interactionController = new CInteractionController();
 

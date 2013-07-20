@@ -269,6 +269,20 @@ void Scene::deleteStaticANIObject(StaticANIObject *obj) {
 		}
 }
 
+void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
+	if (obj->_field_4)
+		obj->renumPictures(&_staticANIObjectList1);
+
+	_staticANIObjectList1.push_back(obj);
+
+	if (addList2) {
+		if (!obj->_field_4)
+			obj->clearFlags();
+
+		_staticANIObjectList2.push_back(obj);
+	}
+}
+
 void Scene::draw(int par) {
 	updateScrolling(par);
 

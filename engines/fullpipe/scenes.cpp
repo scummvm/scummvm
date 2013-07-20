@@ -36,17 +36,6 @@ namespace Fullpipe {
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	CGameVar *sceneVar;
-	int v12;
-	int v13;
-	Scene *v14;
-	int v15;
-	int v16;
-	int v17;
-	int v18;
-	CNode *v19;
-	CNode *v20;
-	Scene *v21;
-	PictureObject *v22;
 	Common::Point sceneDim;
 
 	Scene *scene = accessScene(entrance->_sceneId);
@@ -100,48 +89,40 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		}
 	}
 
+	getGameLoaderInteractionController()->sortInteractions(scene->_sceneId);
+	_currentScene = scene;
+	scene->addStaticANIObject(_aniMan, 1);
+	_scene2 = scene;
+	_aniMan->_movementObj = 0;
+	_aniMan->_staticsObj = _aniMan->getStaticsById(ST_MAN_EMPTY);
+	_aniMan->setOXY(0, 0);
+
 #if 0
-	v12 = scene->sceneId;
-	v13 = (int)getGameLoaderInteractionController();
-	CInteractionController_sortInteractions(v13, v12);
-	v14 = g_currentScene;
-	g_currentScene = v4;
-	Scene_addStaticANIObject(scene, (int)g_aniMan, 1);
-	g_scene2 = v4;
-	g_aniMan->movementObj = 0;
-	g_aniMan->staticsObj = StaticANIObject_getStaticsById(g_aniMan, ST_MAN_EMPTY);
-	(*(void (__stdcall **)(_DWORD))(g_aniMan->GameObject.CObject.vmt + 24))(0);
-	if (g_aniMan) {
-		g_aniMan2 = (int)g_aniMan;
-		v15 = getSc2MotionControllerBySceneId(LOWORD(entrance->sceneId));
-		initMovGraph2((void *)v15);
-		v16 = getSc2MotionControllerBySceneId(LOWORD(entrance->sceneId));
-		(*(void (__thiscall **)(int, StaticANIObject *))(*(_DWORD *)v16 + offsetof(CMotionControllerVmt, addObject)))(v16, g_aniMan);
-		v17 = getSc2MotionControllerBySceneId(LOWORD(entrance->sceneId));
-		(*(void (__thiscall **)(int))(*(_DWORD *)v17 + offsetof(CMotionControllerVmt, setField8)))(v17);
-		v18 = (int)getGameLoaderInteractionController();
-		CInteractionController_enableFlag24(v18);
+	if (_aniMan) {
+		_aniMan2 = _aniMan;
+		getSc2MotionControllerBySceneId(entrance->_sceneId)->initMovGraph2();
+		getSc2MotionControllerBySceneId(entrance->_sceneId)->addObject(_aniMan);
+		getSc2MotionControllerBySceneId(entrance->_sceneId)->setEnabled();
+		getGameLoaderInteractionController()->enableFlag24();
 		input_setInputDisabled(0);
 	} else {
-		g_aniMan2 = 0;
+		_aniMan2 = 0;
 	}
-	g_currentScene = v14;
-	Scene_setPictureObjectsFlag4((int)scene);
-	if (scene->staticANIObjectList1.m_nCount) {
-		v19 = scene->staticANIObjectList1.m_pNodeHead;
-		while (v19) {
-			v20 = v19;
-			v19 = v19->pNext;
-			GameObject_setFlags((GameObject *)v20->data, *((_WORD *)v20->data + 6) & 0xFE7F);
-		}
-	}
-	v21 = accessScene(SC_INV);
-	v22 = Scene_getPictureObjectById(v21, PIC_INV_MENU, 0);
-	GameObject_setFlags(&v22->GameObject, v22->GameObject.flags & 0xFFFB);
-	removeMessageHandler(2, -1);
-	g_updateScreenCallback = 0;
 
-	switch (entrance->sceneId) {
+	scene->setPictureObjectsFlag4();
+
+	for (CPtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {
+		StaticANIObject *o = (StaticANIObject *)s;
+		o->setFlags(o->field_6 & 0xFE7F);
+	}
+
+	PictureObject *p = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
+	p->setFlags(p->_flags & 0xFFFB);
+
+	removeMessageHandler(2, -1);
+	_updateScreenCallback = 0;
+
+	switch (entrance->_sceneId) {
 	case SC_INTRO1:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");
 		scene->preloadMovements(sceneVar);
@@ -630,6 +611,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		break;
 	}
 #endif
+
 	return true;
 }
 

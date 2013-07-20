@@ -169,6 +169,10 @@ bool CInteractionController::load(MfcArchive &file) {
 	return _interactions.load(file);
 }
 
+void CInteractionController::sortInteractions(int sceneId) {
+	warning("STUB: CInteractionController::sortInteractions(%d)", sceneId);
+}
+
 CInputController::CInputController() {
 	// TODO
 }

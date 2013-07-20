@@ -61,6 +61,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_needQuit = false;
 
 	_aniMan = 0;
+	_aniMan2 = 0;
+	_currentScene = 0;
 	_scene2 = 0;
 
 	_globalMessageQueueList = 0;

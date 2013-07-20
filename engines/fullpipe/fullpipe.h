@@ -95,8 +95,10 @@ public:
 	Common::Rect _sceneRect;
 	int _sceneWidth;
 	int _sceneHeight;
+	Scene *_currentScene;
 	Scene *_scene2;
 	StaticANIObject *_aniMan;
+	StaticANIObject *_aniMan2;
 
 	SoundList *_currSoundList1[11];
 	int _currSoundListCount;

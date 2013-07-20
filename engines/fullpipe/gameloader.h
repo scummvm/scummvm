@@ -43,10 +43,10 @@ class CGameLoader : public CObject {
 
 	CGameVar *_gameVar;
 	CInventory2 _inventory;
+	CInteractionController *_interactionController;
 
  private:
 	GameProject *_gameProject;
-	CInteractionController *_interactionController;
 	int _field_C;
 	int _field_10;
 	int _field_14;
@@ -70,6 +70,9 @@ class CGameLoader : public CObject {
 	int _preloadId1;
 	int _preloadId2;
 };
+
+CInventory2 *getGameLoaderInventory();
+CInteractionController *getGameLoaderInteractionController();
 
 } // End of namespace Fullpipe
 

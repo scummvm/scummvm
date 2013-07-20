@@ -68,12 +68,17 @@ class CInteraction : public CObject {
 class CInteractionController : public CObject {
 	CObList _interactions;
 	int16 _field_20;
-	int _flag24;
+	bool _flag24;
 
  public:
-	CInteractionController() : _field_20(0), _flag24(1) {}
+	CInteractionController() : _field_20(0), _flag24(true) {}
 
 	virtual bool load(MfcArchive &file);
+
+	void enableFlag24() { _flag24 = true; }
+	void disableFlag24() { _flag24 = false; }
+
+	void sortInteractions(int sceneId);
 };
 
 class CInputControllerItemArray {

@@ -52,7 +52,8 @@ class Scene : public Background {
 	void updateScrolling(int par);
 	StaticANIObject *getAniMan();
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
-	void deleteStaticANIObject(StaticANIObject * obj);
+	void deleteStaticANIObject(StaticANIObject *obj);
+	void addStaticANIObject(StaticANIObject *obj, bool addList2);
 };
 
 class SceneTag : public CObject {
