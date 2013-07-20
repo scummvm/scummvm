@@ -83,7 +83,7 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 			byte count = qax / 8;
 			mask[qax] = ((*sprite.sil[picnum])[qay][count] >> ((7 - qax % 8)) & 1);
 			if (mask[qax] == 0)
-				*getPixel(x + qax, y + qay) = 255;
+				*getPixel(x + qax, y + qay) = 0;
 		}
 
 		delete[] mask;
