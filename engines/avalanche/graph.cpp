@@ -98,13 +98,11 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 }
 
 void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
-	uint32 i = 0;
+	// The height and the width are stored in 2-2 bytes. We have to add 1 to each becouse Pascal stores the value of them -1.
+	uint16 pictureWidth = READ_LE_UINT16(source) + 1;
+	uint16 pictureHeight = READ_LE_UINT16(source + 2) + 1;
 
-	// The height and the width are stored in 2 bytes.
-	uint16 pictureWidth = (source[i++] + 1);
-	pictureWidth +=  (source[i++] << 8);
-	uint16 pictureHeight = (source[i++] + 1); 
-	pictureHeight += (source[i++] << 8);
+	uint32 i = 4;
 
 	Graphics::Surface picture; // We make a Surface object for the picture itself.
 
