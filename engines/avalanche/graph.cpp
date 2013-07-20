@@ -84,6 +84,7 @@ void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 
 void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 
+	/* First we make the pixels of the spirte blank. */
 	for (byte qay = 0; qay < sprite.yl; qay++) {
 		byte *mask = new byte[sprite.xl];
 
@@ -97,6 +98,7 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 		delete[] mask;
 	}
 
+	/* Then we draw the picture to the blank places. */
 	uint16 i = 0; // Because the original siltype starts at 5!!! See Graph.h for definition.
 
 	for (byte qay = 0; qay < sprite.yl; qay++)
