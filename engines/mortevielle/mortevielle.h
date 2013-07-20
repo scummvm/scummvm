@@ -63,6 +63,7 @@ namespace Mortevielle {
  * 7000:2 - 16 words representing palette map
  * 7000:4138 - width, height, x/y offset of decoded image
  */
+const int kAdrPictureDecomp = 0x6000;
 const int kAdrPictureComp = 0x7000;
 
 #define ord(v) ((int) v)
