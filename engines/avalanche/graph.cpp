@@ -89,12 +89,17 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 		delete[] mask;
 	}
 
-/*
-	for (fv = 5; fv <= sprite.size - 2; fv ++)
-		aa[fv] = aa[fv] ^ (*sprite.mani[picnum])[fv];
-*/
+	uint16 i = 0; // Becouse the original siltype starts at 5!!! See Graph.h for definition.
 
-	warning("STUB: Graph::drawSprite()");
+	for (byte qay = 0; qay < sprite.yl; qay++)
+		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
+			for (uint16 qax = 0; qax  < sprite.xl; qax += 8) {
+				byte pixel = (*sprite.mani[picnum])[i++];
+				for (byte bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					*getPixel(x + qax + 7 - bit, y + qay) += (pixelBit << plane);
+				} 
+			}
 }
 
 void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
