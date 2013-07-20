@@ -2245,7 +2245,7 @@ void MortevielleEngine::showTitleScreen() {
 	if (_newGraphicalDevice != _currGraphicalDevice)
 		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
-	draw(kAdrPictureComp, 0, 0);
+	draw(0, 0);
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
 	_screenSurface.putxy(104 + 72 * _resolutionScaler, 185);
@@ -2256,10 +2256,10 @@ void MortevielleEngine::showTitleScreen() {
  * Draw picture
  * @remarks	Originally called 'dessine'
  */
-void MortevielleEngine::draw(int ad, int x, int y) {
+void MortevielleEngine::draw(int x, int y) {
 	_mouse.hideMouse();
 	setPal(_numpal);
-	pictout(ad, 0, x, y);
+	pictout(kAdrPictureComp, 0, x, y);
 	_mouse.showMouse();
 }
 
@@ -2273,7 +2273,7 @@ void MortevielleEngine::drawRightFrame() {
 		_mem[(kAdrPictureComp * 16) + 14] = 15;
 	}
 	_mouse.hideMouse();
-	pictout(0x73a2, 0, 0, 0);
+	pictout(kAdrDecBuffer, 0, 0, 0);
 	_mouse.showMouse();
 }
 
@@ -2589,7 +2589,7 @@ void MortevielleEngine::adzon() {
 	if (!f.open("dec.mor"))
 		error("Missing file - dec.mor");
 
-	f.read(&_mem[0x73a2 * 16], 1664);
+	f.read(&_mem[kAdrDecBuffer * 16], 1664);
 	f.close();
 }
 
@@ -2997,13 +2997,13 @@ void MortevielleEngine::aniof(int ouf, int num) {
 void MortevielleEngine::drawPicture() {
 	clearUpperLeftPart();
 	if (_caff > 99) {
-		draw(kAdrPictureComp, 60, 33);
+		draw(60, 33);
 		_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
 	} else if (_caff > 69) {
-		draw(kAdrPictureComp, 112, 48);           // Heads
+		draw(112, 48);           // Heads
 		_screenSurface.drawBox(222, 47, 155, 92, 15);
 	} else {
-		draw(kAdrPictureComp, 0, 12);
+		draw(0, 12);
 		prepareScreenType1();
 		if ((_caff < 30) || (_caff > 32)) {
 			for (int cx = 1; cx <= 6; ++cx) {
@@ -3176,7 +3176,7 @@ void MortevielleEngine::mennor() {
 }
 
 void MortevielleEngine::premtet() {
-	draw(kAdrPictureComp, 10, 80);
+	draw(10, 80);
 	_screenSurface.drawBox(18, 79, 155, 91, 15);
 }
 

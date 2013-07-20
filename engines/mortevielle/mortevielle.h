@@ -67,6 +67,8 @@ const int kAdrMusic = 0x5000;
 const int kAdrPictureDecomp = 0x6000;
 const int kAdrPictureComp = 0x7000;
 
+const int kAdrDecBuffer = 0x73A2;
+
 const int kAdrEGA = 0xA000;
 const int kAdrHERC = 0xB000;
 const int kAdrCGA1 = 0xB800;
@@ -520,7 +522,7 @@ public:
 	void gameLoaded();
 	void initGame();
 	void displayAloneText();
-	void draw(int ad, int x, int y);
+	void draw(int x, int y);
 	void charToHour();
 	void hourToChar();
 	Common::String getString(int num);
