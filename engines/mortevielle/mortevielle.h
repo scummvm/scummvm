@@ -67,6 +67,11 @@ const int kAdrMusic = 0x5000;
 const int kAdrPictureDecomp = 0x6000;
 const int kAdrPictureComp = 0x7000;
 
+const int kAdrEGA = 0xA000;
+const int kAdrHERC = 0xB000;
+const int kAdrCGA1 = 0xB800;
+const int kAdrCGA2 = 0xBA00;
+
 #define ord(v) ((int) v)
 #define chr(v) ((unsigned char) v)
 #define lo(v) ((v) & 0xff)
