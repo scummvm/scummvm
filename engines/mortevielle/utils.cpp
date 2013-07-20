@@ -1997,8 +1997,8 @@ void MortevielleEngine::setPal(int n) {
 	case MODE_EGA:
 	case MODE_AMSTRAD1512:
 		for (int i = 1; i <= 16; ++i) {
-			_mem[(0x7000 * 16) + (2 * i)] = _stdPal[n][i].x;
-			_mem[(0x7000 * 16) + (2 * i) + 1] = _stdPal[n][i].y;
+			_mem[(kAdrPictureComp * 16) + (2 * i)] = _stdPal[n][i].x;
+			_mem[(kAdrPictureComp * 16) + (2 * i) + 1] = _stdPal[n][i].y;
 		}
 		break;
 	case MODE_CGA: {
@@ -2245,7 +2245,7 @@ void MortevielleEngine::showTitleScreen() {
 	if (_newGraphicalDevice != _currGraphicalDevice)
 		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
-	draw(kAdrDes, 0, 0);
+	draw(kAdrPictureComp, 0, 0);
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
 	_screenSurface.putxy(104 + 72 * _resolutionScaler, 185);
@@ -2270,7 +2270,7 @@ void MortevielleEngine::draw(int ad, int x, int y) {
 void MortevielleEngine::drawRightFrame() {
 	setPal(89);
 	if (_currGraphicalDevice == MODE_HERCULES) {
-		_mem[0x7000 * 16 + 14] = 15;
+		_mem[(kAdrPictureComp * 16) + 14] = 15;
 	}
 	_mouse.hideMouse();
 	pictout(0x73a2, 0, 0, 0);
@@ -2561,12 +2561,12 @@ void MortevielleEngine::pictout(int seg, int dep, int x, int y) {
 	surface.decode(&_mem[seg * 16 + dep]);
 
 	if (_currGraphicalDevice == MODE_HERCULES) {
-		_mem[0x7000 * 16 + 2] = 0;
-		_mem[0x7000 * 16 + 32] = 15;
+		_mem[(kAdrPictureComp * 16) + 2] = 0;
+		_mem[(kAdrPictureComp * 16) + 32] = 15;
 	}
 
-	if ((_caff != 51) && (READ_LE_UINT16(&_mem[0x7000 * 16 + 0x4138]) > 0x100))
-		WRITE_LE_UINT16(&_mem[0x7000 * 16 + 0x4138], 0x100);
+	if ((_caff != 51) && (READ_LE_UINT16(&_mem[(kAdrPictureComp * 16) + 0x4138]) > 0x100))
+		WRITE_LE_UINT16(&_mem[(kAdrPictureComp * 16) + 0x4138], 0x100);
 
 	_screenSurface.drawPicture(surface, x, y);
 }
@@ -2998,13 +2998,13 @@ void MortevielleEngine::aniof(int ouf, int num) {
 void MortevielleEngine::drawPicture() {
 	clearUpperLeftPart();
 	if (_caff > 99) {
-		draw(kAdrDes, 60, 33);
+		draw(kAdrPictureComp, 60, 33);
 		_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
 	} else if (_caff > 69) {
-		draw(kAdrDes, 112, 48);           // Heads
+		draw(kAdrPictureComp, 112, 48);           // Heads
 		_screenSurface.drawBox(222, 47, 155, 92, 15);
 	} else {
-		draw(kAdrDes, 0, 12);
+		draw(kAdrPictureComp, 0, 12);
 		prepareScreenType1();
 		if ((_caff < 30) || (_caff > 32)) {
 			for (int cx = 1; cx <= 6; ++cx) {
@@ -3177,7 +3177,7 @@ void MortevielleEngine::mennor() {
 }
 
 void MortevielleEngine::premtet() {
-	draw(kAdrDes, 10, 80);
+	draw(kAdrPictureComp, 10, 80);
 	_screenSurface.drawBox(18, 79, 155, 91, 15);
 }
 
