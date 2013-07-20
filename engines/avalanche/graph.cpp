@@ -89,7 +89,7 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 		delete[] mask;
 	}
 
-	uint16 i = 0; // Becouse the original siltype starts at 5!!! See Graph.h for definition.
+	uint16 i = 0; // Because the original siltype starts at 5!!! See Graph.h for definition.
 
 	for (byte qay = 0; qay < sprite.yl; qay++)
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
@@ -103,7 +103,7 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 }
 
 void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
-	// The height and the width are stored in 2-2 bytes. We have to add 1 to each becouse Pascal stores the value of them -1.
+	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
 	uint16 pictureWidth = READ_LE_UINT16(source) + 1;
 	uint16 pictureHeight = READ_LE_UINT16(source + 2) + 1;
 
