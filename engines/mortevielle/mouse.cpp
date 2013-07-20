@@ -45,174 +45,19 @@ void MouseHandler::initMouse() {
 }
 
 /**
- * Hide the mouse
+ * Backs up the area behind where the mouse cursor is to be drawn
  * @remarks	Originally called 'hide_mouse'
  */
 void MouseHandler::hideMouse() {
-	--_counter;
-	if (_counter == 0) {
-		int j = 0;
-		switch (_vm->_currGraphicalDevice) {
-		case MODE_CGA: {
-			int k = 0;
-			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
-			do {
-				WRITE_LE_UINT16(&_vm->_mem[0xb000 * 16 + j], s_s[0][k]);
-				WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + j + 2], s_s[1][k]);
-				WRITE_LE_UINT16(&_vm->_mem[0xba00 * 16 + j], s_s[2][k]);
-				WRITE_LE_UINT16(&_vm->_mem[0xba00 * 16 + j + 2], s_s[3][k]);
-				j += 80;
-				++k;
-			} while (k < 5);
-			}
-			break;
-		case MODE_AMSTRAD1512: {
-			bool imp = odd(_pos.y);
-			for (int i = 0; i <= 3; ++i) {
-				int k = 0;
-				j = 0;
-				do {
-					if (imp) {
-						WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
-						j += 80 - 0x2000;
-					} else {
-						WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
-						j += 0x2000;
-					}
-					imp = !imp;
-					++k;
-				} while (k < 8);
-			}
-			break;
-			}
-		case MODE_EGA: {
-			int i = 0;
-			do {
-				int k = 0;
-				j = 0;
-				do {
-					// Useless ?
-					// ps = mem[0xa000 * 16 + j];
-					_vm->_mem[0xa000 * 16 + j] = lo(s_s[i][k]);
-
-					// Useless ??
-					// ps = mem[0xa000 * 16 + j + 1];
-					_vm->_mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
-					j += 80;
-					++k;
-				} while (k < 8);
-				++i;
-			} while (i != 4);
-			}
-			break;
-		case MODE_HERCULES:
-			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
-			for (int i = 0; i <= 5; ++i) {
-				for (int k = 0; k <= 3; ++k)
-					WRITE_LE_UINT16(&_vm->_mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
-				j += 80;
-			}
-			break;
-		case MODE_TANDY: {
-			j = ((uint)_pos.y >> 2) * 160 + ((uint)_pos.x >> 1);
-			int k = 0;
-			do {
-				for (int i = 0; i <= 3; ++i) {
-					WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
-					WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
-				}
-				j += 160;
-				++k;
-			} while (k != 3);
-			}
-			break;
-		default:
-			break;
-		}     // case Gd
-	}
+	// No implementation needed in ScummVM
 }
 
 /**
- * Show mouse
+ * Draws the mouse cursor
  * @remarks	Originally called 'show_mouse'
  */
 void MouseHandler::showMouse() {
-	int k, l;
-
-	++_counter;
-	if (_counter != 1)
-		return;
-	int j = 0;
-	int i = _pos.x & 7;
-	switch (_vm->_currGraphicalDevice) {
-	case MODE_CGA:
-		k = 0;
-		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
-		do {
-			s_s[0][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j]);
-			s_s[1][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j + 2]);
-			s_s[2][k] = READ_LE_UINT16(&_vm->_mem[0xba00 * 16 + j]);
-			s_s[3][k] = READ_LE_UINT16(&_vm->_mem[0xba00 * 16 + j + 2]);
-			j += 80;
-			++k;
-		} while (k < 5);
-		break;
-	case MODE_AMSTRAD1512: {
-		bool imp = odd(_pos.y);
-		for (i = 0; i <= 3; ++i) {
-			j = 0;
-			imp = odd(_pos.y);
-			k = 0;
-			do {
-				if (imp) {
-					s_s[i][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j]);
-					j += 80 - 0x2000;
-				} else {
-					s_s[i][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j]);
-					j += 0x2000;
-				}
-				imp = !imp;
-				++k;
-			} while (k < 8);
-		}
-		break;
-		}
-	case MODE_EGA:
-		l = 0;
-		do {
-			k = 0;
-			j = 0;
-			do {
-				s_s[l][k] = _vm->_mem[0xa000 * 16 + j] + (_vm->_mem[(0xa000 * 16) + j + 1] << 8);
-				j += 80;
-				++k;
-			} while (k < 8);
-			++l;
-		} while (l != 4);
-		break;
-	case MODE_HERCULES:
-		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
-		for (i = 0; i <= 5; ++i) {
-			for (k = 0; k <= 3; ++k)
-				s_s[i][k] = READ_LE_UINT16(&_vm->_mem[0xb000 * 16 + k * 0x200 + j]);
-			j += 80;
-		}
-		break;
-	case MODE_TANDY:
-		j = ((uint)_pos.y >> 2) * 160 + ((uint)_pos.x >> 1);
-		k = 0;
-		do {
-			for (i = 0; i <= 3; ++i) {
-				s_s[k][i + (k << 2)] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j]);
-				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2]);
-			}
-			j += 160;
-			++k;
-		} while (k != 3);
-		break;
-	default:
-		break;
-	}    //  case Gd
+	// ScummVM implementation uses CursorMan for drawing the cursor
 }
 
 /**
