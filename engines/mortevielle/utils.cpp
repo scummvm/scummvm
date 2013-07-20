@@ -1846,7 +1846,15 @@ const byte cryptoArr31De[32]= {
 const byte *cryptoArrDefault, *cryptoArr30, *cryptoArr31;
 uint16 ctrlChar;
 
-void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
+/**
+ * Decrypt the next character
+ * @param c		OUT, next decrypted char
+ * @param idx	IN/OUT, current buffer index
+ * @param pt	IN/OUT, current encryption point
+ * @return a boolean specifying if a stop character has been encountered
+ * @remarks	Originally called 'cinq_huit'
+ */
+bool MortevielleEngine::decryptNextChar(char &c, int &idx, byte &pt) {
 	uint16 oct, ocd;
 
 	/* 5-8 */
@@ -1864,7 +1872,7 @@ void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 
 	if (oct == ctrlChar) {
 		c = '$';
-		the_end = true;
+		return true;
 	} else if (oct == 30 || oct == 31) {
 		ocd = _dialogIndexArray[idx];
 		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
@@ -1884,12 +1892,13 @@ void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 			c = chr(cryptoArr31[ocd]);
 
 		if (c == '\0') {
-			the_end = true;
 			c = '#';
+			return true;
 		}
 	} else {
 		c = chr(cryptoArrDefault[oct]);
 	}
+	return false;
 }
 
 /**
@@ -1910,7 +1919,7 @@ Common::String MortevielleEngine::getString(int num) {
 		bool endFl = false;
 		char let;
 		do {
-			cinq_huit(let, hint, point, endFl);
+			endFl = decryptNextChar(let, hint, point);
 			wrkStr += let;
 			++length;
 		} while (!endFl);
