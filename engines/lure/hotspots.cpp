@@ -4006,6 +4006,7 @@ void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {
 		h.setActionCtr(4);
 		h.setLayer(2);
 
+		// Deliberate fall-through
 	case 4:
 		if (HotspotScript::execute(&h)) {
 			h.setLayer(255);
