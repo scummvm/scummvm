@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "common/rect.h"
 
 #include "graphics/decoders/tga.h"
 
@@ -32,7 +33,12 @@
 
 namespace ZVision {
 
-RenderManager::RenderManager(OSystem *system) : _system(system) {}
+RenderManager::RenderManager(OSystem *system, const int width, const int height)
+	: _system(system),
+	  _width(width),
+	  _height(height),
+	  _renderTable(width, height) {
+}
 
 void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y) {
 	Common::File file;
@@ -80,4 +86,40 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x
 	_needsScreenUpdate = true;
 }
 
+void RenderManager::generatePanoramaLookupTable() {
+	float fieldOfView = _panoramaOptions.fieldOfView;
+	float scale = _panoramaOptions.linearScale;
+	_renderTable.clear();
+
+	double halfWidth = (double)_width / 2.0;
+	double halfHeight = (double)_height / 2.0;
+
+	double fovRadians = (fieldOfView * 3.14159265 / 180.0);
+	double halfHeightOverTan = halfHeight / tan(fovRadians);
+	double tanOverHalfHeight = tan(fovRadians) / halfHeight;
+
+	for (int32 x = 0; x < _width; x++) {
+		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
+		double xPos = (double)x - halfWidth + 0.01;
+
+		double tempX = atan(xPos*tanOverHalfHeight);
+		double scaledX = scale * halfHeightOverTan * tempX;
+		double nn = cos(tempX);
+		double newHalfWidth = halfHeight * nn * halfHeightOverTan * tanOverHalfHeight*2.0;
+
+		int32 newX = floor(scaledX);// + half_w);
+
+		double yScale = newHalfWidth / (double)_height;
+		double et2 = ((double)_height - newHalfWidth) / 2.0;
+
+		for (int32 y = 0; y < _height; y++) {
+			double et1 = (double)y*yScale;
+
+			_renderTable(x, y).x = newX; //pixel index
+
+			int32 newY = floor(et2 + et1);
+			_renderTable(x, y).y = newY; //pixel index
+		}
+	}
+}
 } // End of namespace ZVision

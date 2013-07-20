@@ -74,7 +74,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(_system);
+	_renderManager = new RenderManager(_system, _width, _height);
 
 	debug("ZVision::ZVision");
 }

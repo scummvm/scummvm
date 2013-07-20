@@ -25,17 +25,20 @@
 
 #include "common/types.h"
 
+#include "zvision/dense_2d_array.h"
+
 class OSystem;
 
 namespace Common {
 class String;
+class Point;
 }
 
 namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(OSystem *system);
+	RenderManager(OSystem *system, const int width, const int height);
 
 public:
 	enum RenderState {
@@ -46,6 +49,8 @@ public:
 
 private:
 	OSystem *_system;
+	const int _width;
+	const int _height;
 	RenderState _renderState;
 
 	struct {
@@ -59,10 +64,13 @@ private:
 		uint16 linearScale;
 	} _tiltOptions;
 
+	Dense2DArray<Common::Point> _renderTable;
+
 	bool _needsScreenUpdate;
 
 public:
 	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
+	void generatePanoramaLookupTable();
 };
 
 } // End of namespace ZVision
