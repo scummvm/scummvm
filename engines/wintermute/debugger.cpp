@@ -55,6 +55,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
 	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
 	DCmd_Register("set", WRAP_METHOD(Console, Cmd_Set));
+	DCmd_Register("set-type", WRAP_METHOD(Console, Cmd_SetType));
 }
 
 Console::~Console(void) {
@@ -206,6 +207,17 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
 		return true;
 	}
+}
+
+bool Console::Cmd_SetType(int argc, const char **argv) {
+	if (argc == 3) {
+		ADAPTER->setType(argv[1], atoi(argv[2]));
+		// TODO: Sanity check
+	} else {
+		DebugPrintf("Usage ... ");
+	}
+
+	return 1;
 }
 bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	if (argc == 2) {

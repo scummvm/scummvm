@@ -754,6 +754,11 @@ void ScValue::copy(ScValue *orig, bool copyWhole) {
 
 
 //////////////////////////////////////////////////////////////////////////
+void ScValue::setType(TValType type) {
+	// TODO: Sanity check and housekeeping
+	_type = type;
+}
+//////////////////////////////////////////////////////////////////////////
 void ScValue::setValue(ScValue *val) {
 	if (val->_type == VAL_VARIABLE_REF) {
 		setValue(val->_valRef);

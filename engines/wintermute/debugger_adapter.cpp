@@ -193,11 +193,25 @@ Common::String DebuggerAdapter::readValue(const char* name, int *error) {
 	return _lastScript->getVar(temp)->getString();
 }
 
+int DebuggerAdapter::setType(const char* name, int type) {
+	// TODO: Less sucky way to pass types
+
+	if (!_lastScript) {
+		return NOT_ALLOWED;
+	}
+	char *temp;
+	temp = const_cast<char *>(Common::String(name).c_str());
+	ScValue *var = _lastScript->getVar(temp);
+	TValType ttype = (TValType)type;
+	var->setType(ttype);
+	return 0;
+
+}
+
 int DebuggerAdapter::setValue(const char* name, const char* value) {
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}
-
 	char *temp;
 	temp = const_cast<char *>(Common::String(name).c_str());
 	ScValue *var = _lastScript->getVar(temp);

@@ -87,6 +87,7 @@ public:
 	int32 getLastLine();
 	Common::String readValue (const char* name, int *error);
 	int setValue (const char* name, const char* value);
+	int setType (const char* name, int type);
 	bool showFps(bool show);
 	SourceFile *_lastSource;
 private:

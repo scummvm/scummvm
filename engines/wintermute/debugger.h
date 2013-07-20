@@ -43,6 +43,7 @@ public:
 	bool Cmd_Watch(int argc, const char **argv);
 	bool Cmd_Print(int argc, const char **argv);
 	bool Cmd_Set(int argc, const char **argv);
+	bool Cmd_SetType(int argc, const char **argv);
 	/** 
 	 * Add a breakpoint.
 	 */
