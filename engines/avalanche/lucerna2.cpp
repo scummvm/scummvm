@@ -216,10 +216,10 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 		_vm->_gyro.off();
 
 	_vm->_gyro.clear_vmc();
+	
+	_vm->_graph.flesh_colours();
 
 	xx = _vm->_gyro.strf(n);
-	flesh_colours();
-
 	Common::String filename;
 	filename = filename.format("place%s.avd", xx.c_str());
 	if (!f.open(filename)) {
@@ -1281,34 +1281,6 @@ uint16 Lucerna::bearing(byte whichped) {
 		}
 	}
 	return bearing_result;
-}
-
-void Lucerna::flesh_colours()     /* assembler;
-asm
-  mov ax,$1012;
-  mov bx,21;                 { 21 = light pink (why?) }
-  mov cx,1;
-  mov dx,seg    @flesh;
-  mov es,dx;
-  mov dx,offset @flesh;
-  int $10;
-
-  mov dx,seg    @darkflesh;
-  mov es,dx;
-  mov dx,offset @darkflesh;
-  mov bx,5;                 { 5 = dark pink. }
-  int $10;
-
-  jmp @TheEnd;
-
- @flesh:
-  db 56,35,35;
-
- @darkflesh:
-  db 43,22,22;
-
- @TheEnd: */
-{
 }
 
 void Lucerna::sprite_run() {

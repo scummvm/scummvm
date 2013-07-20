@@ -67,6 +67,8 @@ public:
 
 	~Graph();
 
+	void flesh_colours();
+
 	byte *getPixel(int16 x, int16 y);
 
 	void drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
