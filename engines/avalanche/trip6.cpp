@@ -151,7 +151,7 @@ void triptype::original() {
 void triptype::andexor() {
 	if ((vanishifstill) && (ix == 0) && (iy == 0))
 		return;
-	byte picnum = face * a.seq + step + 1;
+	byte picnum = face * a.seq + step; // There'll maybe problem because of the different array indexes in Pascal (starting from 1). 
 
 	_tr->_vm->_graph.drawSprite(_info, picnum, x, y);	
 }
