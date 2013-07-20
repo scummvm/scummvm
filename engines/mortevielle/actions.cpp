@@ -1386,9 +1386,9 @@ void MortevielleEngine::fctDiscuss() {
 			if (_coreVar._availableQuestion[icm] == '*') {
 				// If question already asked, write it in reverse video
 				if (questionAsked[icm])
-					writetp(lib[icm], 1);
+					displayQuestionText(lib[icm], 1);
 				else
-					writetp(lib[icm], 0);
+					displayQuestionText(lib[icm], 0);
 			}
 
 			if (icm == 23)  {
@@ -1398,7 +1398,7 @@ void MortevielleEngine::fctDiscuss() {
 				posY += 8;
 		}
 		_screenSurface.putxy(320, 176);
-		writetp(lib[46], 0);
+		displayQuestionText(lib[46], 0);
 		char retKey = '\0';
 		bool click;
 		do {
@@ -1423,9 +1423,9 @@ void MortevielleEngine::fctDiscuss() {
 						posX = 0;
 					_screenSurface.putxy(posX, posY);
 					if (questionAsked[choice])
-						writetp(lib[choice], 0);
+						displayQuestionText(lib[choice], 0);
 					else
-						writetp(lib[choice], 1);
+						displayQuestionText(lib[choice], 1);
 					questionAsked[choice] = !questionAsked[choice];
 					choice = 0;
 				}
@@ -1442,9 +1442,9 @@ void MortevielleEngine::fctDiscuss() {
 							posX = 0;
 						_screenSurface.putxy(posX, posY);
 						if (questionAsked[choice])
-							writetp(lib[choice], 0);
+							displayQuestionText(lib[choice], 0);
 						else
-							writetp(lib[choice], 1);
+							displayQuestionText(lib[choice], 1);
 						questionAsked[choice] = ! questionAsked[choice];
 					}
 					if ((_coreVar._availableQuestion[ix] == '*') || (ix == 46)) {
@@ -1455,9 +1455,9 @@ void MortevielleEngine::fctDiscuss() {
 							posX = 0;
 						_screenSurface.putxy(posX, posY);
 						if (questionAsked[ix])
-							writetp(lib[ix], 0);
+							displayQuestionText(lib[ix], 0);
 						else
-							writetp(lib[ix], 1);
+							displayQuestionText(lib[ix], 1);
 						questionAsked[ix] = ! questionAsked[ix];
 						choice = ix;
 					} else

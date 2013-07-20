@@ -1086,24 +1086,24 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 		i = 10;
 
 	int x = pt.x + i * l.size();
-	int cecr = 0;
+	int color = 0;
 
 	switch (command) {
 	case 1:
 	case 3: {
-		cecr = 0;
+		color = 0;
 		_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		}
 		break;
 	case 4:
-		cecr = 0;
+		color = 0;
 		break;
 	case 5:
-		cecr = 15;
+		color = 15;
 		break;
 	case 0:
 	case 2: {
-		cecr = 15;
+		color = 15;
 		_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		}
 		break;
@@ -1114,7 +1114,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	pt.x += 1;
 	pt.y += 1;
 	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
-		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), cecr);
+		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), color);
 		pt.x += i;
 	}
 	_vm->_mouse.showMouse();
