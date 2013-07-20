@@ -70,6 +70,7 @@ Graph::~Graph() {
 void Graph::flesh_colours()
 {
 	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
+	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
 }
 
 
