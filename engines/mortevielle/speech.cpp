@@ -83,7 +83,7 @@ void SpeechManager::spfrac(int wor) {
 }
 
 void SpeechManager::charg_car(int &currWordNumb) {
-	int wor = swap(READ_LE_UINT16(&_vm->_mem[kAdrWord + currWordNumb]));
+	int wor = swap(READ_LE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWordNumb]));
 	int int_ = wor & 0x3f; // 63
 
 	if ((int_ >= 0) && (int_ <= 13)) {
@@ -123,7 +123,7 @@ void SpeechManager::charg_car(int &currWordNumb) {
 
 
 void SpeechManager::entroct(byte o) {
-	_vm->_mem[kAdrTroct * 16 + _ptr_oct] = o;
+	_vm->_mem[(kAdrTroct * 16) + _ptr_oct] = o;
 	++_ptr_oct;
 }
 
@@ -145,7 +145,7 @@ void SpeechManager::regenbruit() {
 	int i = kOffsetB3 + 8590;
 	int j = 0;
 	do {
-		_cfiphBuffer[j] = READ_LE_UINT16(&_vm->_mem[kAdrNoise3 + i]);
+		_cfiphBuffer[j] = READ_LE_UINT16(&_vm->_mem[(kAdrNoise3 * 16) + i]);
 		i += 2;
 		++j;
 	} while (i < kOffsetB3 + 8790);
@@ -161,7 +161,7 @@ void SpeechManager::loadMusicSound() {
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
 
-	f.read(&_vm->_mem[0x7414 * 16 + 0], 273);
+	f.read(&_vm->_mem[0x7414 * 16], 273);
 
 	_vm->_soundManager.decodeMusic(&_vm->_mem[0x7414 * 16], &_vm->_mem[kAdrNoise * 16], 273);
 	f.close();
@@ -194,10 +194,10 @@ void SpeechManager::loadNoise() {
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
-	f.read(&_vm->_mem[kAdrNoise * 16 + 0], 250);
+	f.read(&_vm->_mem[kAdrNoise * 16], 250);
 	for (i = 0; i <= 19013; ++i)
-		_vm->_mem[kAdrNoise * 16 + 32000 + i] = _vm->_mem[kAdrNoise5 + i];
-	f.read(&_vm->_mem[kAdrNoise1 * 16 + kOffsetB1], 149);
+		_vm->_mem[(kAdrNoise * 16) + 32000 + i] = _vm->_mem[(kAdrNoise5 * 16) + i];
+	f.read(&_vm->_mem[(kAdrNoise1 * 16) + kOffsetB1], 149);
 
 	f.close();
 }
@@ -533,7 +533,7 @@ void SpeechManager::handlePhoneme() {
 	int endPos = swap(_cfiphBuffer[_phonemeNumb]) + deca[_typlec];
 	int wordCount = endPos - startPos;
 	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
-		WRITE_LE_UINT16(&_vm->_mem[kAdrWord + currWord], _cfiphBuffer[i]);
+		WRITE_LE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWord], _cfiphBuffer[i]);
 
 	_ptr_oct = 0;
 	int currWord = 0;
