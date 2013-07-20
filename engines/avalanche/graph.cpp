@@ -66,6 +66,13 @@ Graph::~Graph() {
 	_surface.free();
 }
 
+
+void Graph::flesh_colours()
+{
+	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
+}
+
+
 byte *Graph::getPixel(int16 x, int16 y) {
 	return (byte *)_surface.getBasePtr(x, y);
 }
