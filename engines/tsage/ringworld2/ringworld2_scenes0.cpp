@@ -226,9 +226,9 @@ bool Scene100::Terminal::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void Scene100::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(100);
 	R2_GLOBALS._scenePalette.loadPalette(0);
+	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene != 125)
 		R2_GLOBALS._sound1.play(10);
@@ -5345,20 +5345,6 @@ void Scene525::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-Scene600::Scene600() {
-	_field412 = 0;
-	for (int i = 0; i < 256; i++)
-		_fieldAD2[i] = 0;
-}
-
-void Scene600::synchronize(Serializer &s) {
-	SceneExt::synchronize(s);
-
-	s.syncAsSint16LE(_field412);
-	for (int i = 0; i < 256; i++)
-		s.syncAsByte(_fieldAD2[i]);
-}
-
 bool Scene600::CompartmentHotspot::startAction(CursorType action, Event &event) {
 	if ((action != R2_NEGATOR_GUN) || (!R2_GLOBALS.getFlag(5)) || (R2_GLOBALS.getFlag(8)))
 		return SceneHotspot::startAction(action, event);
@@ -5415,9 +5401,22 @@ bool Scene600::Actor4::startAction(CursorType action, Event &event) {
 	return false;
 }
 
-void Scene600::Actor4::draw() {
-	warning("TODO: Actor4::draw()");
-	SceneActor::draw();
+GfxSurface Scene600::Actor4::getFrame() {
+	GfxSurface frame = SceneActor::getFrame();
+
+	if (_effect) {
+		// Translate the frame using the scene's pixel map
+		byte *pixelMap = static_cast<Scene600 *>(R2_GLOBALS._sceneManager._scene)->_pixelMap;
+		Graphics::Surface surface = frame.lockSurface();
+		byte *srcP = (byte *)surface.pixels;
+
+		while (srcP < ((byte *)surface.pixels + (surface.w * surface.h)))
+			*srcP++ = pixelMap[*srcP];
+
+		frame.unlockSurface();
+	}
+
+	return frame;
 }
 
 bool Scene600::Doorway::startAction(CursorType action, Event &event) {
@@ -5545,6 +5544,21 @@ bool Scene600::Aerosol::startAction(CursorType action, Event &event) {
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
+Scene600::Scene600() {
+	_field412 = 0;
+	Common::fill(&_pixelMap[0], &_pixelMap[256], 0);
+}
+
+void Scene600::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_field412);
+	for (int i = 0; i < 256; i++)
+		s.syncAsByte(_pixelMap[i]);
+}
+
 bool Scene600::Actor8::startAction(CursorType action, Event &event) {
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
@@ -5570,7 +5584,15 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._walkRegions.enableRegion(3);
 	_field412 = 0;
 
-	warning("FIXME: loop to initialize _fieldAD2[]");
+	// Initialise pixel map for the obscuring effect
+	ScenePalette &pal = R2_GLOBALS._scenePalette;
+	uint r, g, b;
+	for (int i = 0; i < 256; ++i) {
+		pal.getEntry(i, &r, &g, &b);
+		int av = ((r + g + b) / 48);
+
+		_pixelMap[i] = R2_GLOBALS._paletteMap[(av << 8) | (av << 4) | av];
+	}
 
 	_doorway.postInit();
 	_doorway.setVisage(600);

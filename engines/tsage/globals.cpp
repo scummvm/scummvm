@@ -389,8 +389,10 @@ void Ringworld2Globals::reset() {
 	_scrollFollower = &_player;
 
 	// Reset fields
-	Common::fill(&_v1000[0], &_v1000[0x1000], 0);
-	_v1000Flag = false;
+	Common::fill(&_fadePaletteMap[0][0], &_fadePaletteMap[10][256], 0);
+	Common::fill(&_paletteMap[0], &_paletteMap[4096], 0);
+
+	_fadePaletteFlag = false;
 	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
 	_v558C2 = 0;

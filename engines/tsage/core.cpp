@@ -4291,10 +4291,15 @@ void SceneHandler::dispatch() {
 			GUIErrorMessage(SAVE_ERROR_MSG);
 	}
 	if (_loadGameSlot != -1) {
+		int priorSceneBeforeLoad = GLOBALS._sceneManager._previousScene;
+		int currentSceneBeforeLoad = GLOBALS._sceneManager._sceneNumber;
+
 		int loadSlot = _loadGameSlot;
 		_loadGameSlot = -1;
 		g_saver->restore(loadSlot);
 		g_globals->_events.setCursorFromFlag();
+
+		postLoad(priorSceneBeforeLoad, currentSceneBeforeLoad);
 	}
 
 	g_globals->_soundManager.dispatch();

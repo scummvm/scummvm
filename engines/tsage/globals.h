@@ -254,9 +254,9 @@ public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
 	PlayStream _playStream;
 	StripProxy _stripProxy;
-	bool _v1000Flag;
-	byte _v1000[0x1000];
-	byte _palIndexList[10][256];
+	bool _fadePaletteFlag;
+	byte _fadePaletteMap[10][256];
+	byte _paletteMap[4096];
 	int _insetUp;
 	int _frameEdgeColour;	// _v421e
 	Rect _v5589E;

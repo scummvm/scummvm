@@ -114,6 +114,7 @@ class SceneHandlerExt: public SceneHandler {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
+	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad);
 
 	void setupPaletteMaps();
 };
@@ -265,6 +266,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual bool startAction(CursorType action, Event &event);
+	virtual GfxSurface getFrame();
 };
 
 class SceneActorExt: public SceneActor {

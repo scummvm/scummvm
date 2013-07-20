@@ -900,6 +900,7 @@ public:
 protected:
 	virtual void playerAction(Event &event) {}
 	virtual void processEnd(Event &event) {}
+	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {}
 public:
 	SceneHandler();
 	void registerHandler();

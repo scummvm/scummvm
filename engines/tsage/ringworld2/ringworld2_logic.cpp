@@ -339,8 +339,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
 	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
 			|| (sceneNumber == 50)
-			|| ((prevScene == 205) && (sceneNumber == 100))
-			|| ((prevScene == 180) && (sceneNumber == 100))) {
+			|| ((sceneNumber == 100) && (prevScene == 0 || prevScene == 180 || prevScene == 205))) {
 		static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
 		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._uiElements.show();
@@ -425,12 +424,12 @@ bool SceneExt::display(CursorType action, Event &event) {
 			R2_GLOBALS._sound4.stop();
 			R2_GLOBALS._sound3.play(46);
 			SceneItem::display2(5, 15);
+
+			R2_GLOBALS._sound4.play(45);
 		} else {
 			R2_GLOBALS._sound3.play(43, 0);
 			SceneItem::display2(2, R2_SONIC_STUNNER);
 		}
-
-		R2_GLOBALS._sound4.play(45);
 		break;
 	case R2_COM_SCANNER:
 	case R2_COM_SCANNER_2:
@@ -596,11 +595,32 @@ void SceneHandlerExt::process(Event &event) {
 		SceneHandler::process(event);
 }
 
+void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {
+	if (priorSceneBeforeLoad == -1 || priorSceneBeforeLoad == 50
+			|| priorSceneBeforeLoad == 180 || priorSceneBeforeLoad == 205)
+		setupPaletteMaps();
+
+	if (currentSceneBeforeLoad == 2900) {
+		R2_GLOBALS._gfxFontNumber = 50;
+		R2_GLOBALS._gfxColors.background = 0;
+		R2_GLOBALS._gfxColors.foreground = 59;
+		R2_GLOBALS._fontColors.background = 4;
+		R2_GLOBALS._fontColors.foreground = 15;
+		R2_GLOBALS._frameEdgeColour = 2;
+
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._scenePalette.setEntry(255, 0xff, 0xff, 0xff);
+		R2_GLOBALS._fadePaletteFlag = false;
+		setupPaletteMaps();
+	}
+}
+
 void SceneHandlerExt::setupPaletteMaps() {
 	byte *palP = &R2_GLOBALS._scenePalette._palette[0];
 
-	if (!R2_GLOBALS._v1000Flag) {
-		R2_GLOBALS._v1000Flag = true;
+	// Set up the mapping table for giving faded versions of pixels at different fade percentages
+	if (!R2_GLOBALS._fadePaletteFlag) {
+		R2_GLOBALS._fadePaletteFlag = true;
 
 		for (int idx = 0; idx < 10; ++idx) {
 			for (int palIndex = 0; palIndex < 224; ++palIndex) {
@@ -650,7 +670,7 @@ void SceneHandlerExt::setupPaletteMaps() {
 					foundIndex = pIndex2;
 				}
 
-				R2_GLOBALS._palIndexList[idx][palIndex] = foundIndex;
+				R2_GLOBALS._fadePaletteMap[idx][palIndex] = foundIndex;
 			}
 		}
 	}
@@ -660,8 +680,8 @@ void SceneHandlerExt::setupPaletteMaps() {
 		int g = palP[palIndex * 3 + 1] >> 2;
 		int b = palP[palIndex * 3 + 2] >> 2;
 
-		int idx = (((r << 4) | g) << 4) | b;
-		R2_GLOBALS._v1000[idx] = palIndex;
+		int v = (r << 8) | (g << 4) | b;
+		R2_GLOBALS._paletteMap[v] = palIndex;
 	}
 
 	int vdx = 0;
@@ -669,9 +689,9 @@ void SceneHandlerExt::setupPaletteMaps() {
 	int palIndex = 224;
 
 	for (int vIndex = 0; vIndex < 4096; ++vIndex) {
-		int v = R2_GLOBALS._v1000[vIndex];
+		int v = R2_GLOBALS._paletteMap[vIndex];
 		if (!v) {
-			R2_GLOBALS._v1000[vIndex] = idx;
+			R2_GLOBALS._paletteMap[vIndex] = idx;
 		} else {
 			idx = v;
 		}
@@ -1257,6 +1277,32 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 	if (!handled)
 		handled = ((SceneExt *)R2_GLOBALS._sceneManager._scene)->display(action, event);
 	return handled;
+}
+
+GfxSurface SceneActor::getFrame() {
+	GfxSurface frame = SceneObject::getFrame();
+
+	// TODO: Proper effects handling
+	switch (_effect) {
+	case 0:
+	case 5:
+		// TODO: Figure out purpose of setting image flags to 64, and getting
+		// scene priorities -1 or _shade
+		break;
+	case 1:
+		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
+		break;
+	case 2:
+		// No effect
+		break;
+	case 4:
+		break;
+	default:
+		// TODO: Default effect
+		break;
+	}
+
+	return frame;
 }
 
 /*--------------------------------------------------------------------------*/

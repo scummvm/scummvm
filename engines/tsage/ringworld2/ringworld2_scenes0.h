@@ -628,7 +628,7 @@ class Scene600 : public SceneExt {
 	public:
 		virtual void signal();
 		virtual bool startAction(CursorType action, Event &event);
-		virtual void draw();
+		virtual GfxSurface getFrame();
 	};
 	class Doorway : public SceneActor {
 	public:
@@ -665,7 +665,7 @@ public:
 	ASoundExt _aSound1;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
-	byte _fieldAD2[256];
+	byte _pixelMap[256];
 
 	Scene600();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
