@@ -676,11 +676,12 @@ void SceneHandlerExt::setupPaletteMaps() {
 	}
 
 	for (int palIndex = 0; palIndex < 224; ++palIndex) {
-		int r = palP[palIndex * 3] >> 2;
-		int g = palP[palIndex * 3 + 1] >> 2;
-		int b = palP[palIndex * 3 + 2] >> 2;
+		int r = palP[palIndex * 3] >> 4;
+		int g = palP[palIndex * 3 + 1] >> 4;
+		int b = palP[palIndex * 3 + 2] >> 4;
 
 		int v = (r << 8) | (g << 4) | b;
+		assert(v < 0x1000);
 		R2_GLOBALS._paletteMap[v] = palIndex;
 	}
 
@@ -973,8 +974,8 @@ bool Ringworld2InvObjectList::SelectItem(int objectNumber) {
 		case R2_SENSOR_PROBE:
 			if (R2_GLOBALS.getFlag(1))
 				SceneItem::display2(5, 1);
-			else if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) == 100)
-				SceneItem::display(5, 3);
+			else if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) != 100)
+				SceneItem::display2(5, 3);
 			else {
 				R2_GLOBALS._sound3.play(48);
 				SceneItem::display2(5, 2);
@@ -989,6 +990,8 @@ bool Ringworld2InvObjectList::SelectItem(int objectNumber) {
 				SceneItem::display2(5, 8);
 			else
 				SceneItem::display2(5, 10);
+
+			R2_GLOBALS._sound3.stop();
 			break;
 		case R2_CHARGED_POWER_CAPSULE:
 			if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) == 1) {

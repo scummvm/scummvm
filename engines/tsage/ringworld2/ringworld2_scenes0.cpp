@@ -5364,7 +5364,7 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 		return true;
 	}
 
-	if (R2_GLOBALS.getFlag(5)) {
+	if (!R2_GLOBALS.getFlag(5)) {
 		SceneItem::display(600, 30, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, ALIGN_CENTER, 
 			SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
 		return true;
@@ -5382,7 +5382,7 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 	scene->_actor2.postInit();
 
 	scene->_sceneMode = 612;
-	setAction(&scene->_sequenceManager1, this, 612, &scene->_actor3, &scene->_actor2, &R2_GLOBALS._player, NULL);
+	scene->setAction(&scene->_sequenceManager1, scene, 612, &scene->_actor3, &scene->_actor2, &R2_GLOBALS._player, NULL);
 	return true;
 }
 
