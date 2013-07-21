@@ -5410,8 +5410,10 @@ GfxSurface Scene600::Actor4::getFrame() {
 		Graphics::Surface surface = frame.lockSurface();
 		byte *srcP = (byte *)surface.pixels;
 
-		while (srcP < ((byte *)surface.pixels + (surface.w * surface.h)))
-			*srcP++ = pixelMap[*srcP];
+		while (srcP < ((byte *)surface.pixels + (surface.w * surface.h))) {
+			*srcP = pixelMap[*srcP];
+			srcP++;
+		}
 
 		frame.unlockSurface();
 	}
