@@ -161,9 +161,9 @@ void SpeechManager::loadMusicSound() {
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
 
-	f.read(&_vm->_mem[0x7414 * 16], 273);
+	f.read(&_vm->_mem[kAdrCompMusicBuf1 * 16], 273);
 
-	_vm->_soundManager.decodeMusic(&_vm->_mem[0x7414 * 16], &_vm->_mem[kAdrNoise * 16], 273);
+	_vm->_soundManager.decodeMusic(&_vm->_mem[kAdrCompMusicBuf1 * 16], &_vm->_mem[kAdrNoise * 16], 273);
 	f.close();
 }
 
