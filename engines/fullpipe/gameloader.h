@@ -29,6 +29,7 @@
 namespace Fullpipe {
 
 class SceneTag;
+class CMctlCompound;
 
 class CGameLoader : public CObject {
  public:
@@ -44,6 +45,7 @@ class CGameLoader : public CObject {
 	CGameVar *_gameVar;
 	CInventory2 _inventory;
 	CInteractionController *_interactionController;
+	Sc2Array _sc2array;
 
  private:
 	GameProject *_gameProject;
@@ -57,7 +59,6 @@ class CGameLoader : public CObject {
 	int _field_28;
 	int _field_2C;
 	CInputController _inputController;
-	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	void *_preloadCallback;
 	void *_readSavegameCallback;
@@ -73,6 +74,7 @@ class CGameLoader : public CObject {
 
 CInventory2 *getGameLoaderInventory();
 CInteractionController *getGameLoaderInteractionController();
+CMctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
 
 } // End of namespace Fullpipe
 

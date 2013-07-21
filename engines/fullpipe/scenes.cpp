@@ -29,6 +29,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/sound.h"
+#include "fullpipe/motion.h"
 
 #include "fullpipe/gameobj.h"
 
@@ -97,18 +98,19 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_aniMan->_staticsObj = _aniMan->getStaticsById(ST_MAN_EMPTY);
 	_aniMan->setOXY(0, 0);
 
-#if 0
 	if (_aniMan) {
 		_aniMan2 = _aniMan;
-		getSc2MotionControllerBySceneId(entrance->_sceneId)->initMovGraph2();
-		getSc2MotionControllerBySceneId(entrance->_sceneId)->addObject(_aniMan);
-		getSc2MotionControllerBySceneId(entrance->_sceneId)->setEnabled();
+		CMctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
+		cmp->initMovGraph2();
+		cmp->addObject(_aniMan);
+		cmp->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
 		input_setInputDisabled(0);
 	} else {
 		_aniMan2 = 0;
 	}
 
+#if 0
 	scene->setPictureObjectsFlag4();
 
 	for (CPtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {

@@ -27,11 +27,16 @@ namespace Fullpipe {
 
 class CMotionController : public CObject {
 	int _field_4;
-	int _isEnabled;
+	bool _isEnabled;
 
  public:
-	CMotionController() : _isEnabled(1) {}
+	CMotionController() : _isEnabled(true) {}
 	virtual bool load(MfcArchive &file);
+
+	void setEnabled() { _isEnabled = true; }
+	void clearEnabled() { _isEnabled = false; }
+
+	virtual void addObject(StaticANIObject *obj) {}
 };
 
 class CMctlCompoundArray : public Common::Array<CObject>, public CObject {
@@ -49,6 +54,9 @@ class CMctlCompound : public CMotionController {
 
  public:
 	virtual bool load(MfcArchive &file);
+
+	virtual void addObject(StaticANIObject *obj);
+	void initMovGraph2();
 };
 
 class Unk2 : public CObject {
@@ -76,10 +84,11 @@ class CMovGraphReact : public CObject {
 	// Empty
 };
 
-class CMctlCompoundArrayItem : public CMotionController {
+class CMctlCompoundArrayItem : public CObject {
 	friend class CMctlCompound;
 
   protected:
+	CMotionController *_motionControllerObj;
 	CMovGraphReact *_movGraphReactObj;
 	CMctlConnectionPointsArray _connectionPoints;
 	int _field_20;
@@ -149,6 +158,8 @@ class CMovGraph : public CMotionController {
  public:
 	CMovGraph();
 	virtual bool load(MfcArchive &file);
+
+	virtual void addObject(StaticANIObject *obj);
 };
 
 class CMctlConnectionPoint : public CObject {

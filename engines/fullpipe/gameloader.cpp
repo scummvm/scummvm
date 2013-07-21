@@ -31,6 +31,14 @@ CInventory2 *getGameLoaderInventory() {
 	return &g_fullpipe->_gameLoader->_inventory;
 }
 
+CMctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
+	for (uint i = 0; i < g_fullpipe->_gameLoader->_sc2array.size(); i++)
+		if (g_fullpipe->_gameLoader->_sc2array[i]._sceneId == sceneId)
+			return (CMctlCompound *)g_fullpipe->_gameLoader->_sc2array[i]._motionController;
+
+	return 0;
+}
+
 CInteractionController *getGameLoaderInteractionController() {
 	return g_fullpipe->_gameLoader->_interactionController;
 }
