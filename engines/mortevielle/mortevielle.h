@@ -69,7 +69,6 @@ const int kAdrPictureComp = 0x7000;
 
 const int kAdrCompMusicBuf1 = 0x7414;
 const int kAdrCompMusicBuf2 = 0x3800;
-const int kAdrUnknownBuf = 0x47a0;
 const int kAdrDecBuffer = 0x73A2;
 
 #define ord(v) ((int) v)
