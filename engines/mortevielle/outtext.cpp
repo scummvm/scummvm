@@ -133,24 +133,10 @@ void TextHandler::loadDesFile(Common::String filename, int32 skipSize, int lengt
 	if (!f.open(filename))
 		error("Missing file %s", filename.c_str());
 
-	int skipBlock = skipSize / 128;
-	skipSize %= 128;
-
-	if (skipBlock != 0)
-		f.seek(skipBlock * 0x80);
-
-	int remainingSkipSize = abs(skipSize);
-	int totalLength = length + remainingSkipSize;
-	int memIndx = kAdrPictureDecomp * 16;
-	while (totalLength > 0) {
-		f.read(&_vm->_mem[memIndx], 128);
-		totalLength -= 128;
-		memIndx += 128;
-	}
+	assert(skipSize + length <= f.size());
+	f.seek(skipSize);
+	f.read(&_vm->_mem[(kAdrPictureComp * 16)], length);
 	f.close();
-
-	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		_vm->_mem[(kAdrPictureComp * 16) + i - remainingSkipSize] = _vm->_mem[(kAdrPictureDecomp * 16) + i];
 }
 
 /**
@@ -162,26 +148,10 @@ void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int lengt
 	if (!f.open(filename))
 		error("Missing file - %s", filename.c_str());
 
-	int skipBlock = 0;
-	while (skipSize > 127) {
-		skipSize = skipSize - 128;
-		++skipBlock;
-	}
-	if (skipBlock != 0)
-		f.seek(skipBlock * 0x80);
-
-	int remainingSkipSize = abs(skipSize);
-	int fullLength = length + remainingSkipSize;
-	int memIndx = kAdrPictureDecomp * 16;
-	while (fullLength > 0) {
-		f.read(&_vm->_mem[memIndx], 128);
-		fullLength -= 128;
-		memIndx += 128;
-	}
+	assert(skipSize + length <= f.size());
+	f.seek(skipSize);
+	f.read(&_vm->_mem[(kAdrAni * 16)], length);
 	f.close();
-
-	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		_vm->_mem[(kAdrAni * 16) + i - remainingSkipSize] = _vm->_mem[(kAdrPictureDecomp * 16) + i];
 }
 
 void TextHandler::taffich() {
