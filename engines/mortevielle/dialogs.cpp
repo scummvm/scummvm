@@ -220,8 +220,8 @@ void DialogManager::decodeAlertDetails(Common::String inputStr, int &choiceNumb,
 		choiceStr += ']';
 		col += 6;
 	}
-	++i;
-	choiceListStr = _vm->copy(inputStr, i, 30);
+
+	choiceListStr = Common::String(inputStr.c_str() + i);
 	if (_vm->_resolutionScaler == 2)
 		col *= 6;
 	else
