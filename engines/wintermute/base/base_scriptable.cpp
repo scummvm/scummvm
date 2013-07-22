@@ -188,4 +188,10 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////
+const char *BaseScriptable::debuggerToString() {
+	return "Not implemented yet";
+}
+
+
 } // end of namespace Wintermute
