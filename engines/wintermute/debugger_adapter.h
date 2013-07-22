@@ -88,6 +88,7 @@ public:
 	Common::String readValue (const char* name, int *error);
 	int setValue (const char* name, const char* value);
 	int setType (const char* name, int type);
+	Common::String readRes (Common::String name, int *error); 
 	bool showFps(bool show);
 	SourceFile *_lastSource;
 private:

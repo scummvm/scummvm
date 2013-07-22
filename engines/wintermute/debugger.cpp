@@ -51,11 +51,12 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
 	DCmd_Register("watch", WRAP_METHOD(Console, Cmd_Watch));
 	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
-	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
 	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
 	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
 	DCmd_Register("set", WRAP_METHOD(Console, Cmd_Set));
 	DCmd_Register("set-type", WRAP_METHOD(Console, Cmd_SetType));
+	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
+	DCmd_Register("dumpres", WRAP_METHOD(Console, Cmd_DumpRes));
 }
 
 Console::~Console(void) {
@@ -226,6 +227,19 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 		} else if (Common::String(argv[1]) == "false") {
 			// ADAPTER->setShowFPS(false);
 		}
+	} else {
+		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
+		return true;
+	}
+	return true;
+}
+
+bool Console::Cmd_DumpRes(int argc, const char **argv) {
+	if (argc == 2) {
+		int error = 0;
+		Common::String res = ADAPTER->readRes(Common::String(argv[1]), &error);
+		// TODO: Handle errors
+		DebugPrintf(res.c_str());
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
 		return true;

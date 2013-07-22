@@ -193,6 +193,24 @@ Common::String DebuggerAdapter::readValue(const char* name, int *error) {
 	return _lastScript->getVar(temp)->getString();
 }
 
+Common::String DebuggerAdapter::readRes(Common::String name, int *error) { // Hack
+	if (!_lastScript) {
+		*error = NOT_ALLOWED;
+		return nullptr;
+	}
+
+	char *temp;
+	temp = const_cast<char *>(name.c_str());
+	ScValue *value = _lastScript->resolveName(temp);
+	if (value->isNative()) {
+		return Common::String(((BaseScriptable *)value)->debuggerToString());
+	} else {
+		*error = NOT_ALLOWED; // TODO: a better one
+		return nullptr;
+	}
+}
+
+
 int DebuggerAdapter::setType(const char* name, int type) {
 	// TODO: Less sucky way to pass types
 

@@ -56,6 +56,7 @@ public:
 	bool Cmd_Top(int argc, const char **argv);
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_List(int argc, const char **argv);
+	bool Cmd_DumpRes(int argc, const char **argv);
 	void printSource(int n = DEFAULT_SOURCE_PADDING);
 	// For use by the Adapter
 	void notifyBreakpoint(const char *filename, int line);
