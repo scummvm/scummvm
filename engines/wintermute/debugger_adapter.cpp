@@ -202,6 +202,10 @@ Common::String DebuggerAdapter::readRes(Common::String name, int *error) { // Ha
 	char *temp;
 	temp = const_cast<char *>(name.c_str());
 	ScValue *value = _lastScript->resolveName(temp);
+	if (!value) {
+		*error = NOT_ALLOWED; // TODO: Better one
+		return nullptr;
+	}
 	if (value->isNative()) {
 		return Common::String(((BaseScriptable *)value)->debuggerToString());
 	} else {
