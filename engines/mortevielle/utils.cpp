@@ -2212,8 +2212,7 @@ void MortevielleEngine::music() {
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
 
-	fic.read(&_mem[kAdrCompMusicBuf2 * 16], 500);
-	fic.read(&_mem[kAdrUnknownBuf * 16], 123);
+	fic.read(&_mem[kAdrCompMusicBuf2 * 16], 623 * 128);
 	fic.close();
 
 	_soundManager.decodeMusic(&_mem[kAdrCompMusicBuf2 * 16], &_mem[kAdrMusic * 16], 623);
