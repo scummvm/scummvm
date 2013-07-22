@@ -293,7 +293,7 @@ void TextHandler::taffich() {
 		loadAniFile(filename, lgt, handle);
 	}
 	_vm->_mouse.showMouse();
-	if ((a < 27) && ((_vm->_maff < 27) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_msg[4] != OPCODE_ENTER)) {
+	if ((a < 27) && ((_vm->_maff < 27) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			_vm->displayAloneText();
 		else if (!_vm->_blo)

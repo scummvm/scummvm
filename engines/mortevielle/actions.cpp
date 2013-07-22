@@ -41,13 +41,13 @@ namespace Mortevielle {
  * @remarks	Originally called 'taller'
  */
 void MortevielleEngine::fctMove() {
-	if ((_coreVar._currPlace == ROOM26) && (_msg[4] == _menu._moveMenu[6])) {
+	if ((_coreVar._currPlace == ROOM26) && (_currAction == _menu._moveMenu[6])) {
 		_coreVar._currPlace = LANDING;
 		_caff = _coreVar._currPlace;
 		drawPictureWithText();
 		handleDescriptionText(2, _coreVar._currPlace);
 	}
-	if ((_coreVar._currPlace == LANDING) && (_msg[4] == _menu._moveMenu[6])) {
+	if ((_coreVar._currPlace == LANDING) && (_currAction == _menu._moveMenu[6])) {
 		if (!_syn)
 			displayTextInVerbBar(getEngineString(S_GO_TO));
 		displayStatusArrow();
@@ -86,7 +86,7 @@ void MortevielleEngine::fctMove() {
 	exitRoom();
 	int menuChoice = 1;
 
-	while (_menu._moveMenu[menuChoice] != _msg[4])
+	while (_menu._moveMenu[menuChoice] != _currAction)
 		++menuChoice;
 
 	if (_coreVar._currPlace == MOUNTAIN) {
@@ -302,7 +302,7 @@ void MortevielleEngine::fctInventoryTake() {
 	int inventIndex = 0;
 	do {
 		++inventIndex;
-	} while (_menu._inventoryMenu[inventIndex] != _msg[4]);
+	} while (_menu._inventoryMenu[inventIndex] != _currAction);
 	int cz = 0;
 	int cy = 0;
 	do {
@@ -582,7 +582,7 @@ void MortevielleEngine::fctOpen() {
 
 	if (_caff == ROOM26) {
 		if (_roomDoorId != OWN_ROOM) {
-			_msg[4] = OPCODE_ENTER;
+			_currAction = OPCODE_ENTER;
 			_syn = true;
 		} else
 			_crep = 997;
@@ -1153,8 +1153,8 @@ void MortevielleEngine::fctEnter() {
 				int charIndex = convertBitIndexToCharacterIndex(z);
 				++_coreVar._faithScore;
 				_coreVar._currPlace = LANDING;
-				_msg[3] = MENU_DISCUSS;
-				_msg[4] = _menu._discussMenu[charIndex];
+				_currMenu = MENU_DISCUSS;
+				_currAction = _menu._discussMenu[charIndex];
 				_syn = true;
 				if (_roomDoorId == ROOM9) {
 					_col = true;
@@ -1354,7 +1354,7 @@ void MortevielleEngine::fctDiscuss() {
 		cx = 0;
 		do {
 			++cx;
-		} while (_menu._discussMenu[cx] != _msg[4]);
+		} while (_menu._discussMenu[cx] != _currAction);
 		_caff = 69 + cx;
 		drawPictureWithText();
 		handleDescriptionText(2, _caff);

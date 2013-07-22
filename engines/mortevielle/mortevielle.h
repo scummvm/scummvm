@@ -455,7 +455,8 @@ private:
 
 public:
 	Common::Point _prevPos;
-	int  _msg[5];
+	int  _currMenu;
+	int  _currAction;
 	int  _fxxBuffer[108];
 	byte _tabdon[4001];
 	bool _soundOff;
