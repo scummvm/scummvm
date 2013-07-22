@@ -284,18 +284,18 @@ void MortevielleEngine::handleAction() {
 			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
-		if (_menu._menuSelected && (_msg[3] == MENU_SAVE)) {
-			Common::String saveName = Common::String::format("Savegame #%d", _msg[4] & 15);
-			_savegameManager.saveGame(_msg[4] & 15, saveName);
+		if (_menu._menuSelected && (_currMenu == MENU_SAVE)) {
+			Common::String saveName = Common::String::format("Savegame #%d", _currAction & 15);
+			_savegameManager.saveGame(_currAction & 15, saveName);
 		}
-		if (_menu._menuSelected && (_msg[3] == MENU_LOAD))
-			_savegameManager.loadGame((_msg[4] & 15) - 1);
+		if (_menu._menuSelected && (_currMenu == MENU_LOAD))
+			_savegameManager.loadGame((_currAction & 15) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = _dialogManager.show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
-			if ((_menuOpcode != OPCODE_NONE) && ((_msg[3] == MENU_ACTION) || (_msg[3] == MENU_SELF))) {
-				_msg[4] = _menuOpcode;
+			if ((_menuOpcode != OPCODE_NONE) && ((_currMenu == MENU_ACTION) || (_currMenu == MENU_SELF))) {
+				_currAction = _menuOpcode;
 				displayTextInVerbBar(getEngineString(S_IDEM));
 			} else
 				return;
@@ -316,17 +316,17 @@ void MortevielleEngine::handleAction() {
 			if (_num == 9999)
 				_num = 0;
 		} else {
-			_menuOpcode = _msg[3];
-			if ((_msg[3] == MENU_ACTION) || (_msg[3] == MENU_SELF))
-				_menuOpcode = _msg[4];
+			_menuOpcode = _currMenu;
+			if ((_currMenu == MENU_ACTION) || (_currMenu == MENU_SELF))
+				_menuOpcode = _currAction;
 			if (!_anyone) {
 				if ((_heroSearching) || (_obpart)) {
 					if (_mouse._pos.y < 12)
 						return;
 
-					if ((_msg[4] == OPCODE_SOUND) || (_msg[4] == OPCODE_LIFT)) {
+					if ((_currAction == OPCODE_SOUND) || (_currAction == OPCODE_LIFT)) {
 						oo = true;
-						if ((_msg[4] == OPCODE_LIFT) || (_obpart)) {
+						if ((_currAction == OPCODE_LIFT) || (_obpart)) {
 							endSearch();
 							_caff = _coreVar._currPlace;
 							_crep = 998;
@@ -1552,71 +1552,71 @@ void MortevielleEngine::handleOpcode() {
 	_keyPressedEsc = false;
 	if (!_anyone) {
 		if (_uptodatePresence) {
-			if ((_msg[3] == MENU_MOVE) || (_msg[4] == OPCODE_LEAVE) || (_msg[4] == OPCODE_SLEEP) || (_msg[4] == OPCODE_EAT)) {
+			if ((_currMenu == MENU_MOVE) || (_currAction == OPCODE_LEAVE) || (_currAction == OPCODE_SLEEP) || (_currAction == OPCODE_EAT)) {
 				_controlMenu = 4;
 				mennor();
 				return;
 			}
 		}
-		if (_msg[3] == MENU_MOVE)
+		if (_currMenu == MENU_MOVE)
 			fctMove();
-		if (_msg[3] == MENU_DISCUSS)
+		if (_currMenu == MENU_DISCUSS)
 			fctDiscuss();
-		if (_msg[3] == MENU_INVENTORY)
+		if (_currMenu == MENU_INVENTORY)
 			fctInventoryTake();
-		if (_msg[4] == OPCODE_ATTACH)
+		if (_currAction == OPCODE_ATTACH)
 			fctAttach();
-		if (_msg[4] == OPCODE_WAIT)
+		if (_currAction == OPCODE_WAIT)
 			fctWait();
-		if (_msg[4] == OPCODE_FORCE)
+		if (_currAction == OPCODE_FORCE)
 			fctForce();
-		if (_msg[4] == OPCODE_SLEEP)
+		if (_currAction == OPCODE_SLEEP)
 			fctSleep();
-		if (_msg[4] == OPCODE_LISTEN)
+		if (_currAction == OPCODE_LISTEN)
 			fctListen();
-		if (_msg[4] == OPCODE_ENTER)
+		if (_currAction == OPCODE_ENTER)
 			fctEnter();
-		if (_msg[4] == OPCODE_CLOSE)
+		if (_currAction == OPCODE_CLOSE)
 			fctClose();
-		if (_msg[4] == OPCODE_SEARCH)
+		if (_currAction == OPCODE_SEARCH)
 			fctSearch();
-		if (_msg[4] == OPCODE_KNOCK)
+		if (_currAction == OPCODE_KNOCK)
 			fctKnock();
-		if (_msg[4] == OPCODE_SCRATCH)
+		if (_currAction == OPCODE_SCRATCH)
 			fctScratch();
-		if (_msg[4] == OPCODE_READ)
+		if (_currAction == OPCODE_READ)
 			fctRead();
-		if (_msg[4] == OPCODE_EAT)
+		if (_currAction == OPCODE_EAT)
 			fctEat();
-		if (_msg[4] == OPCODE_PLACE)
+		if (_currAction == OPCODE_PLACE)
 			fctPlace();
-		if (_msg[4] == OPCODE_OPEN)
+		if (_currAction == OPCODE_OPEN)
 			fctOpen();
-		if (_msg[4] == OPCODE_TAKE)
+		if (_currAction == OPCODE_TAKE)
 			fctTake();
-		if (_msg[4] == OPCODE_LOOK)
+		if (_currAction == OPCODE_LOOK)
 			fctLook();
-		if (_msg[4] == OPCODE_SMELL)
+		if (_currAction == OPCODE_SMELL)
 			fctSmell();
-		if (_msg[4] == OPCODE_SOUND)
+		if (_currAction == OPCODE_SOUND)
 			fctSound();
-		if (_msg[4] == OPCODE_LEAVE)
+		if (_currAction == OPCODE_LEAVE)
 			fctLeave();
-		if (_msg[4] == OPCODE_LIFT)
+		if (_currAction == OPCODE_LIFT)
 			fctLift();
-		if (_msg[4] == OPCODE_TURN)
+		if (_currAction == OPCODE_TURN)
 			fctTurn();
-		if (_msg[4] == OPCODE_SSEARCH)
+		if (_currAction == OPCODE_SSEARCH)
 			fctSelfSearch();
-		if (_msg[4] == OPCODE_SREAD)
+		if (_currAction == OPCODE_SREAD)
 			fctSelfRead();
-		if (_msg[4] == OPCODE_SPUT)
+		if (_currAction == OPCODE_SPUT)
 			fctSelfPut();
-		if (_msg[4] == OPCODE_SLOOK)
+		if (_currAction == OPCODE_SLOOK)
 			fctSelftLook();
 		_hiddenHero = false;
 
-		if (_msg[4] == OPCODE_SHIDE)
+		if (_currAction == OPCODE_SHIDE)
 			fctSelfHide();
 	} else {
 		if (_anyone) {
@@ -3078,7 +3078,7 @@ void MortevielleEngine::tlu(int af, int ob) {
 	handleDescriptionText(2, 999);
 	testKey(true);
 	_caff = af;
-	_msg[3] = OPCODE_NONE;
+	_currMenu = OPCODE_NONE;
 	_crep = 998;
 }
 
@@ -3171,7 +3171,7 @@ void MortevielleEngine::getSearchDescription(int objId) {
 }
 
 void MortevielleEngine::mennor() {
-	_menu.menuUp(_msg[3]);
+	_menu.menuUp(_currMenu);
 }
 
 void MortevielleEngine::premtet() {
@@ -3241,8 +3241,8 @@ L1:
 		int cx = convertBitIndexToCharacterIndex(_currBitIndex);
 		_caff = 69 + cx;
 		_crep = _caff;
-		_msg[3] = MENU_DISCUSS;
-		_msg[4] = _menu._discussMenu[cx];
+		_currMenu = MENU_DISCUSS;
+		_currAction = _menu._discussMenu[cx];
 		_syn = true;
 		_col = true;
 	} else {
@@ -3387,7 +3387,7 @@ void MortevielleEngine::treg(int objId) {
 	int mdes = _caff;
 	_caff = objId;
 
-	if (((_caff > 29) && (_caff < 33)) || (_caff == 144) || (_caff == 147) || (_caff == 149) || (_msg[4] == OPCODE_SLOOK)) {
+	if (((_caff > 29) && (_caff < 33)) || (_caff == 144) || (_caff == 147) || (_caff == 149) || (_currAction == OPCODE_SLOOK)) {
 		drawPictureWithText();
 		if ((_caff > 29) && (_caff < 33))
 			handleDescriptionText(2, _caff);
@@ -3395,7 +3395,7 @@ void MortevielleEngine::treg(int objId) {
 			handleDescriptionText(2, _caff + 400);
 		testKey(true);
 		_caff = mdes;
-		_msg[3] = MENU_NONE;
+		_currMenu = MENU_NONE;
 		_crep = 998;
 	} else {
 		_obpart = true;

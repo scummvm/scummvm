@@ -482,8 +482,8 @@ void Menu::updateMenu() {
 			//  A menu was clicked on
 			_menuSelected = (_multiTitle) && (_msg4 != OPCODE_NONE);
 			menuUp(_msg3);
-			_vm->_msg[4] = _msg4;
-			_vm->_msg[3] = _msg3;
+			_vm->_currAction = _msg4;
+			_vm->_currMenu = _msg3;
 			_msg3 = OPCODE_NONE;
 			_msg4 = OPCODE_NONE;
 
@@ -540,8 +540,8 @@ void Menu::initMenu(MortevielleEngine *vm) {
 	}
 	_msg3 = OPCODE_NONE;
 	_msg4 = OPCODE_NONE;
-	_vm->_msg[3] = OPCODE_NONE;
-	_vm->_msg[4] = OPCODE_NONE;
+	_vm->_currMenu = OPCODE_NONE;
+	_vm->_currAction = OPCODE_NONE;
 	_vm->setMouseClick(false);
 }
 
