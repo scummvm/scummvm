@@ -120,6 +120,8 @@ class Movement : public GameObject {
 
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
+
+	void loadPixelData();
 };
 
 class StaticANIObject : public GameObject {
@@ -155,11 +157,14 @@ class StaticANIObject : public GameObject {
 	void setOXY(int x, int y);
 	Statics *getStaticsById(int id);
 	Movement *getMovementById(int id);
+	Movement *getMovementByName(char *name);
 
 	void clearFlags();
 	bool isIdle();
 
 	void deleteFromGlobalMessageQueue();
+
+	void loadMovementsPixelData();
 
 	Statics *addStatics(Statics *ani);
 	void draw();

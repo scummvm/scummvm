@@ -255,6 +255,16 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	return 0;
 }
 
+StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
+	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
+		StaticANIObject *o = (StaticANIObject *)s;
+		if (!strcmp(o->_objectName, name) && (a3 == -1 || o->_field_4 == a3))
+			return o;
+	}
+
+	return 0;
+}
+
 void Scene::deleteStaticANIObject(StaticANIObject *obj) {
 	for (uint n = 0; n < _staticANIObjectList1.size(); n++)
 		if ((StaticANIObject *)_staticANIObjectList1[n] == obj) {
@@ -296,6 +306,35 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	}
 
 	return 0;
+}
+
+void Scene::preloadMovements(CGameVar *var) {
+	CGameVar *preload = var->getSubVarByName("PRELOAD");
+	if (!preload)
+		return;
+
+	for (CGameVar *i = preload->_subVars; i; i = i->_nextVarObj) {
+		StaticANIObject *ani = getStaticANIObject1ByName(i->_varName, -1);
+
+		if (ani) {
+			CGameVar *subVars = i->_subVars;
+
+			if (subVars) {
+				for (;subVars; subVars = subVars->_nextVarObj) {
+					Movement *mov = ani->getMovementByName(subVars->_varName);
+
+					if (mov)
+						mov->loadPixelData();
+				}
+			} else {
+				ani->loadMovementsPixelData();
+			}
+		}
+    }
+}
+
+void Scene::initObjectCursors(const char *name) {
+	warning("STUB: Scene::initObjectCursors(%s)", name);
 }
 
 void Scene::draw(int par) {

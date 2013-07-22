@@ -127,6 +127,9 @@ public:
 	CInventory2 *_inventory;
 
 	int (*_updateScreenCallback)(void *);
+	int (*_updateCursorCallback)();
+
+	int _cursorId;
 
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);

@@ -44,18 +44,27 @@ class Scene : public Background {
 
   public:
 	Scene();
+
 	virtual bool load(MfcArchive &file);
+
 	void initStaticANIObjects();
 	void init();
 	void draw(int par);
 	void drawContent(int minPri, int maxPri, bool drawBG);
 	void updateScrolling(int par);
+
 	StaticANIObject *getAniMan();
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
+	StaticANIObject *getStaticANIObject1ByName(char *name, int a3);
+
 	void deleteStaticANIObject(StaticANIObject *obj);
 	void addStaticANIObject(StaticANIObject *obj, bool addList2);
+
 	void setPictureObjectsFlag4();
 	PictureObject *getPictureObjectById(int objId, int flags);
+	void preloadMovements(CGameVar *var);
+
+	void initObjectCursors(const char *name);
 };
 
 class SceneTag : public CObject {

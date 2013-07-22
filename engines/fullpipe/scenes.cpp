@@ -37,6 +37,9 @@
 
 namespace Fullpipe {
 
+int sceneIntro_updateCursor();
+void sceneIntro_initScene(Scene *sc);
+
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	CGameVar *sceneVar;
 	Common::Point sceneDim;
@@ -125,7 +128,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	removeMessageHandler(2, -1);
 	_updateScreenCallback = 0;
 
-#if 0
 	switch (entrance->_sceneId) {
 	case SC_INTRO1:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");
@@ -138,6 +140,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = sceneIntro_updateCursor;
 		break;
 
+#if 0
 	case SC_1:
 		scene01_sub_40E160();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_1");
@@ -609,14 +612,39 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_DBGMENU");
 		addMessageHandler(sceneHandlerDbgMenu, 2);
 		break;
+#endif
 
 	default:
 		_behaviorManager->initBehavior(0, 0);
 		break;
 	}
-#endif
 
 	return true;
+}
+
+int sceneIntro_updateCursor() {
+	g_fullpipe->_cursorId = 0;
+
+	return 0;
+}
+
+void sceneIntro_initScene(Scene *sc) {
+	g_fullpipe->_gameLoader->loadScene(SC_INTRO2);
+
+	warning("STUB: FullpipeEngine::sceneIntro_initScene()");
+
+#if 0
+	sceneIntro_aniin1man = sc->_getStaticANIObject1ById(ANI_IN1MAN, -1);
+	sceneIntro_needSleep = 1;
+	sceneIntro_needGetup = 0;
+	sceneIntro_dword_477938 = 1;
+	sceneIntro_dword_477934 = 0;
+
+	if (g_fullpipe->_recordEvents || g_fullpipe->_inputArFlag)
+		sceneIntro_skipIntro = 0;
+
+	g_fullpipe->_modalObject = new CModalIntro;
+#endif
 }
 
 } // End of namespace Fullpipe

@@ -72,6 +72,9 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_messageHandlers = 0;
 
 	_updateScreenCallback = 0;
+	_updateCursorCallback = 0;
+
+	_cursorId = 0;
 
 	g_fullpipe = this;
 }

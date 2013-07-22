@@ -187,6 +187,19 @@ Movement *StaticANIObject::getMovementById(int itemId) {
 	return 0;
 }
 
+Movement *StaticANIObject::getMovementByName(char *name) {
+	for (uint i = 0; i < _movements.size(); i++)
+		if (!strcmp(((Movement *)_movements[i])->_objectName, name))
+			return (Movement *)_movements[i];
+
+	return 0;
+}
+
+void StaticANIObject::loadMovementsPixelData() {
+	for (uint i = 0; i < _movements.size(); i++)
+		((Movement *)_movements[i])->loadPixelData();
+}
+
 Statics *StaticANIObject::addStatics(Statics *ani) {
 	warning("STUB: StaticANIObject::addStatics");
 
@@ -349,6 +362,20 @@ void Movement::updateCurrDynamicPhase() {
 	if (_dynamicPhases[_currDynamicPhaseIndex]) {
 		_currDynamicPhase = (DynamicPhase *)_dynamicPhases[_currDynamicPhaseIndex];
 	}
+}
+
+void Movement::loadPixelData() {
+	Movement *mov = this;
+	for (Movement *i = _currMovementObj; i; i = i->_currMovementObj)
+		mov = i;
+
+	for (uint i = 0; i < _dynamicPhases.size(); i++) {
+		if ((Statics *)_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000) )
+			((Statics *)_dynamicPhases[i])->getPixelData();
+	}
+
+	if (!(mov->_staticsObj1->_staticsId & 0x4000))
+		mov->_staticsObj1->getPixelData();
 }
 
 DynamicPhase::DynamicPhase() {
