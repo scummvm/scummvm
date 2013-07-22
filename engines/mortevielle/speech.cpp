@@ -161,7 +161,7 @@ void SpeechManager::loadMusicSound() {
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
 
-	f.read(&_vm->_mem[kAdrCompMusicBuf1 * 16], 273);
+	f.read(&_vm->_mem[kAdrCompMusicBuf1 * 16], 273 * 128);
 
 	_vm->_soundManager.decodeMusic(&_vm->_mem[kAdrCompMusicBuf1 * 16], &_vm->_mem[kAdrNoise * 16], 273);
 	f.close();
@@ -177,7 +177,7 @@ void SpeechManager::loadPhonemeSounds() {
 	if (!f.open("phbrui.mor"))
 		error("Missing file - phbrui.mor");
 
-	for (int i = 1; i <= 3; ++i)
+	for (int i = 1; i <= f.size() / 2; ++i)
 		_cfiphBuffer[i] = f.readSint16LE();
 
 	f.close();
@@ -194,10 +194,10 @@ void SpeechManager::loadNoise() {
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
-	f.read(&_vm->_mem[kAdrNoise * 16], 250);
+	f.read(&_vm->_mem[kAdrNoise * 16], 250 * 128);
 	for (i = 0; i <= 19013; ++i)
 		_vm->_mem[(kAdrNoise * 16) + 32000 + i] = _vm->_mem[(kAdrNoise5 * 16) + i];
-	f.read(&_vm->_mem[(kAdrNoise1 * 16) + kOffsetB1], 149);
+	f.read(&_vm->_mem[(kAdrNoise1 * 16) + kOffsetB1], 149 * 128);
 
 	f.close();
 }
