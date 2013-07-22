@@ -3176,7 +3176,7 @@ void MortevielleEngine::mennor() {
 
 void MortevielleEngine::premtet() {
 	draw(10, 80);
-	_screenSurface.drawBox(18, 79, 155, 91, 15);
+	_screenSurface.drawBox(18, 79, 155, 92, 15);
 }
 
 void MortevielleEngine::ajchai() {
