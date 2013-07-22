@@ -1398,7 +1398,7 @@ void MortevielleEngine::gotoDiningRoom() {
 		showPeoplePresent(_currBitIndex);
 		_caff = 77;
 		drawPictureWithText();
-		_screenSurface.drawBox(223, 47, 155, 91, 15);
+		_screenSurface.drawBox(223, 47, 155, 92, 15);
 		handleDescriptionText(2, 33);
 		testKey(false);
 		mennor();
