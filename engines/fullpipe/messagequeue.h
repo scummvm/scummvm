@@ -72,6 +72,14 @@ struct MessageHandler {
 
 bool removeMessageHandler(int16 id, int pos);
 void updateMessageHandlerIndex(MessageHandler *msg, int offset);
+void addMessageHandler(int (*callback)(ExCommand *), int16 id);
+MessageHandler *getMessageHandlerById(int16 id);
+bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExCommand *), int index);
+int getMessageHandlersCount();
+bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id);
+bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id);
+void clearMessageHandlers();
+
 
 } // End of namespace Fullpipe
 

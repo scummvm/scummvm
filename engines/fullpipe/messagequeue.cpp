@@ -119,4 +119,140 @@ void updateMessageHandlerIndex(MessageHandler *msg, int offset) {
 		msg->index += offset;
 }
 
+void addMessageHandler(int (*callback)(ExCommand *), int16 id) {
+	if (getMessageHandlerById(id))
+		return;
+
+	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+
+	if (!curItem)
+		return;
+
+	int index = 0;
+	for (MessageHandler *i = g_fullpipe->_messageHandlers->nextItem; i; i = i->nextItem) {
+		curItem = i;
+		index++;
+	}
+
+	allocMessageHandler(curItem, id, callback, index);
+
+	if (curItem)
+      updateMessageHandlerIndex(curItem->nextItem->nextItem, 1);
+
+}
+
+MessageHandler *getMessageHandlerById(int16 id) {
+	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+
+	if (!curItem)
+		return 0;
+
+	while (id != curItem->id) {
+		curItem = curItem->nextItem;
+
+		if (!curItem)
+			return 0;
+	}
+
+	return curItem;
+}
+
+bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExCommand *), int index) {
+	MessageHandler *msg = new MessageHandler;
+
+	if (where) {
+		msg->nextItem = where->nextItem;
+		where->nextItem = msg;
+		msg->id = id;
+		msg->callback = callback;
+		msg->index = index;
+	} else {
+		msg->nextItem = 0;
+		msg->id = id;
+		msg->callback = callback;
+		msg->index = 0;
+
+		g_fullpipe->_messageHandlers = msg;
+	}
+
+	return true;
+}
+
+int getMessageHandlersCount() {
+	int result;
+	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+
+	for (result = 0; curItem; result++)
+		curItem = curItem->nextItem;
+
+	return result;
+}
+
+bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id) {
+	if (getMessageHandlerById(id))
+		return false;
+
+	if (index) {
+		MessageHandler *curItem = g_fullpipe->_messageHandlers;
+
+		for (int i = index - 1; i > 0; i--)
+			if (curItem)
+				curItem = curItem->nextItem;
+
+		bool res = allocMessageHandler(curItem, id, callback, index);
+
+		if (res)
+			updateMessageHandlerIndex(curItem->nextItem->nextItem, 1);
+
+		return res;
+	} else {
+		MessageHandler *newItem = new MessageHandler;
+
+		newItem->nextItem = g_fullpipe->_messageHandlers;
+		newItem->id = id;
+		newItem->callback = callback;
+		newItem->index = 0;
+
+		updateMessageHandlerIndex(g_fullpipe->_messageHandlers, 1);
+		g_fullpipe->_messageHandlers = newItem;
+
+		return true;
+	}
+}
+
+bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id) {
+	if (getMessageHandlerById(id))
+		return false;
+
+	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+
+	for (int i = index; i > 0; i--)
+		if (curItem)
+			curItem = curItem->nextItem;
+
+	bool res = allocMessageHandler(curItem, id, callback, index + 1);
+	if (curItem)
+		updateMessageHandlerIndex(curItem->nextItem->nextItem, 1);
+
+	return res;
+}
+
+void clearMessageHandlers() {
+	MessageHandler *curItem;
+	MessageHandler *nextItem;
+
+	curItem = g_fullpipe->_messageHandlers;
+	if (curItem) {
+		do {
+			nextItem = curItem->nextItem;
+
+			delete curItem;
+
+			curItem = nextItem;
+		} while (nextItem);
+
+		g_fullpipe->_messageHandlers = 0;
+	}
+}
+
 } // End of namespace Fullpipe
