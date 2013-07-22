@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	fullpipe.o \
 	gameloader.o \
 	gfx.o \
+	input.o \
 	inventory.o \
 	messagequeue.o \
 	motion.o \

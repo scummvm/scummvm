@@ -81,30 +81,6 @@ class CInteractionController : public CObject {
 	void sortInteractions(int sceneId);
 };
 
-class CInputControllerItemArray {
-	CObArray objs;
-};
-
-class CInputController {
-	//CObject obj;
-	int _flag;
-	int _flags;
-	int _cursorHandle;
-	int _hCursor;
-	int _field_14;
-	int _cursorId;
-	int _cursorIndex;
-	CInputControllerItemArray _cursorsArray;
-	int _cursorDrawX;
-	int _cursorDrawY;
-	int _cursorDrawWidth;
-	int _cursorDrawHeight;
-	int _cursorItemPicture;
-
- public:
-	CInputController();
-};
-
 struct PicAniInfo {
 	int32 type;
 	int16 objectId;

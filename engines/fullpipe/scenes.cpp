@@ -30,6 +30,7 @@
 #include "fullpipe/gameloader.h"
 #include "fullpipe/sound.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/input.h"
 
 #include "fullpipe/gameobj.h"
 
@@ -105,7 +106,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		cmp->addObject(_aniMan);
 		cmp->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
-		input_setInputDisabled(0);
+		setInputDisabled(0);
 	} else {
 		_aniMan2 = 0;
 	}

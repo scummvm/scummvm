@@ -30,6 +30,7 @@ namespace Fullpipe {
 
 class SceneTag;
 class CMctlCompound;
+class CInputController;
 
 class CGameLoader : public CObject {
  public:
@@ -42,29 +43,18 @@ class CGameLoader : public CObject {
 	int getSceneTagBySceneId(int num, SceneTag **st);
 	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
 
-	CGameVar *_gameVar;
-	CInventory2 _inventory;
-	CInteractionController *_interactionController;
-	Sc2Array _sc2array;
-
- private:
 	GameProject *_gameProject;
-	int _field_C;
-	int _field_10;
-	int _field_14;
-	int _field_18;
-	int _field_1C;
-	int _field_20;
-	int _field_24;
-	int _field_28;
-	int _field_2C;
-	CInputController _inputController;
+	CInteractionController *_interactionController;
+	CInputController *_inputController;
+	CInventory2 _inventory;
+	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	void *_preloadCallback;
 	void *_readSavegameCallback;
 	int16 _field_F8;
 	int16 _field_FA;
 	PreloadItems _preloadItems;
+	CGameVar *_gameVar;
 	char *_gameName;
 	ExCommand _exCommand;
 	int _updateCounter;

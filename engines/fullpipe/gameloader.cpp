@@ -24,6 +24,7 @@
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/scene.h"
+#include "fullpipe/input.h"
 
 namespace Fullpipe {
 
@@ -45,6 +46,7 @@ CInteractionController *getGameLoaderInteractionController() {
 
 CGameLoader::CGameLoader() {
 	_interactionController = new CInteractionController();
+	_inputController = new CInputController();
 
 	_gameProject = 0;
 	//_gameName = "untitled";
@@ -68,11 +70,15 @@ CGameLoader::CGameLoader() {
 	//dword_478480 = 0;
 	//g_objectId2 = 0;
 	//g_id = 0;
+
+	warning("STUB: CGameLoader::CGameLoader()");
 }
 
 CGameLoader::~CGameLoader() {
 	free(_gameName);
 	delete _gameProject;
+	delete _interactionController;
+	delete _inputController;
 }
 
 bool CGameLoader::load(MfcArchive &file) {

@@ -45,6 +45,7 @@ enum FullpipeGameFeatures {
 
 class CGameLoader;
 class CGameVar;
+class CInputController;
 class CInventory2;
 class EntranceInfo;
 class GameProject;
@@ -99,6 +100,9 @@ public:
 	Scene *_scene2;
 	StaticANIObject *_aniMan;
 	StaticANIObject *_aniMan2;
+
+	CInputController *_inputController;
+	bool _inputDisabled;
 
 	SoundList *_currSoundList1[11];
 	int _currSoundListCount;

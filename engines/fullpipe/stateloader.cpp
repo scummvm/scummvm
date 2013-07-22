@@ -173,10 +173,6 @@ void CInteractionController::sortInteractions(int sceneId) {
 	warning("STUB: CInteractionController::sortInteractions(%d)", sceneId);
 }
 
-CInputController::CInputController() {
-	// TODO
-}
-
 CInteraction::CInteraction() {
 	_objectId1 = 0;
 	_objectId2 = 0;

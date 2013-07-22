@@ -72,6 +72,10 @@ bool CMctlCompound::load(MfcArchive &file) {
 	return true;
 }
 
+void CMctlCompound::addObject(StaticANIObject *obj) {
+	warning("STUB: CMctlCompound::addObject()");
+}
+
 bool CMctlCompoundArray::load(MfcArchive &file) {
 	debug(5, "CMctlCompoundArray::load()");
 
@@ -99,6 +103,10 @@ bool CMovGraph::load(MfcArchive &file) {
 	_nodes.load(file);
 
 	return true;
+}
+
+void CMovGraph::addObject(StaticANIObject *obj) {
+	warning("STUB: CMovGraph::addObject()");
 }
 
 CMovGraphLink::CMovGraphLink() {
