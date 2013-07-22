@@ -2026,12 +2026,12 @@ void MortevielleEngine::setPal(int n) {
 void MortevielleEngine::displayCGAPattern(int n, Pattern p, nhom *pal) {
 	int addr = n * 404 + 0xd700;
 
-	WRITE_LE_UINT16(&_mem[(kAdrPictureDecomp * 16) + addr], p._tax);
-	WRITE_LE_UINT16(&_mem[(kAdrPictureDecomp * 16) + addr + 2], p._tay);
+	WRITE_LE_UINT16(&_mem[(kAdrPictureComp * 16) + addr], p._tax);
+	WRITE_LE_UINT16(&_mem[(kAdrPictureComp * 16) + addr + 2], p._tay);
 	addr += 4;
 	for (int i = 0; i < p._tax; ++i) {
 		for (int j = 0; j < p._tay; ++j)
-			_mem[(kAdrPictureDecomp * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
+			_mem[(kAdrPictureComp * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
 	}
 }
 
