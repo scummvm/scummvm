@@ -87,4 +87,36 @@ void GlobalMessageQueueList::disableQueueById(int id) {
 	}
 }
 
+bool removeMessageHandler(int16 id, int pos) {
+	if (g_fullpipe->_messageHandlers) {
+		MessageHandler *curItem = g_fullpipe->_messageHandlers;
+		MessageHandler *prevItem = 0;
+		int curPos = 0;
+
+		while (id != curItem->id) {
+			prevItem = curItem;
+			curItem = curItem->nextItem;
+			curPos++;
+
+			if (!curItem)
+				return false;
+		}
+
+		if (pos == -1 || curPos == pos) {
+			prevItem->nextItem = curItem->nextItem;
+			delete curItem;
+			updateMessageHandlerIndex(prevItem->nextItem, -1);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void updateMessageHandlerIndex(MessageHandler *msg, int offset) {
+	for (; msg; msg = msg->nextItem)
+		msg->index += offset;
+}
+
 } // End of namespace Fullpipe

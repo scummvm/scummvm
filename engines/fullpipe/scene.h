@@ -54,6 +54,8 @@ class Scene : public Background {
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
 	void deleteStaticANIObject(StaticANIObject *obj);
 	void addStaticANIObject(StaticANIObject *obj, bool addList2);
+	void setPictureObjectsFlag4();
+	PictureObject *getPictureObjectById(int objId, int flags);
 };
 
 class SceneTag : public CObject {

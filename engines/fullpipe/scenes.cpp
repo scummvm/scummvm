@@ -31,6 +31,7 @@
 #include "fullpipe/sound.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/input.h"
+#include "fullpipe/messagequeue.h"
 
 #include "fullpipe/gameobj.h"
 
@@ -111,12 +112,11 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_aniMan2 = 0;
 	}
 
-#if 0
 	scene->setPictureObjectsFlag4();
 
 	for (CPtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {
 		StaticANIObject *o = (StaticANIObject *)s;
-		o->setFlags(o->field_6 & 0xFE7F);
+		o->setFlags(o->_field_6 & 0xFE7F);
 	}
 
 	PictureObject *p = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
@@ -125,6 +125,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	removeMessageHandler(2, -1);
 	_updateScreenCallback = 0;
 
+#if 0
 	switch (entrance->_sceneId) {
 	case SC_INTRO1:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");

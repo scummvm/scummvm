@@ -110,6 +110,7 @@ class GameObject : public CObject {
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
 	void renumPictures(CPtrList *lst);
+	void setFlags(int16 flags) { _flags = flags; }
 };
 
 class PictureObject : public GameObject {

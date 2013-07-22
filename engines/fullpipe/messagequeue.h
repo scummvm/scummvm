@@ -62,6 +62,17 @@ class GlobalMessageQueueList : public CPtrList {
 	void disableQueueById(int id);
 };
 
+struct MessageHandler {
+	int (*callback)(ExCommand *cmd);
+	int16 id;
+	int16 field_6;
+	int index;
+	MessageHandler *nextItem;
+};
+
+bool removeMessageHandler(int16 id, int pos);
+void updateMessageHandlerIndex(MessageHandler *msg, int offset);
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_MESSAGEQUEUE_H */

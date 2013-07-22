@@ -50,6 +50,7 @@ class CInventory2;
 class EntranceInfo;
 class GameProject;
 class GlobalMessageQueueList;
+class MessageHandler;
 class NGIArchive;
 class Scene;
 class SoundList;
@@ -110,6 +111,7 @@ public:
 	bool _flgSoundList;
 
 	GlobalMessageQueueList *_globalMessageQueueList;
+	MessageHandler *_messageHandlers;
 
 	bool _needQuit;
 
@@ -123,6 +125,8 @@ public:
 
 	Scene *_inventoryScene;
 	CInventory2 *_inventory;
+
+	int (*_updateScreenCallback)(void *);
 
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);

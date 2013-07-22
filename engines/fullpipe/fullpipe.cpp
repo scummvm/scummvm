@@ -69,6 +69,9 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_scene2 = 0;
 
 	_globalMessageQueueList = 0;
+	_messageHandlers = 0;
+
+	_updateScreenCallback = 0;
 
 	g_fullpipe = this;
 }

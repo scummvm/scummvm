@@ -283,6 +283,21 @@ void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
 	}
 }
 
+void Scene::setPictureObjectsFlag4() {
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		((PictureObject *)_picObjList[i])->_flags |= 4;
+	}
+}
+
+PictureObject *Scene::getPictureObjectById(int objId, int flags) {
+	for (uint i = 1; i < _picObjList.size(); i++) {
+		if(((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_field_4 == flags)
+			return (PictureObject *)_picObjList[i];
+	}
+
+	return 0;
+}
+
 void Scene::draw(int par) {
 	updateScrolling(par);
 
