@@ -189,7 +189,7 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseScriptable::debuggerToString() {
+Common::String BaseScriptable::debuggerToString() {
 	return "Not implemented yet";
 }
 

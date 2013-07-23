@@ -28,6 +28,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "common/tokenizer.h"
 #define SCENGINE _engine->_game->_scEngine
 #define DEBUGGER _engine->_debugger
 #define DBG_PATH "dbg"
@@ -199,18 +201,87 @@ Common::String DebuggerAdapter::readRes(Common::String name, int *error) { // Ha
 		return nullptr;
 	}
 
+	Common::String strName = Common::String(name);
+	strName.trim();
+	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
+	
 	char *temp;
 	temp = const_cast<char *>(name.c_str());
-	ScValue *value = _lastScript->resolveName(temp);
-	if (!value) {
+
+	Common::String mainObjectName;
+	mainObjectName = st.nextToken(); // First token
+	ScValue *result = _lastScript->getVar(const_cast<char *>(mainObjectName.c_str()));
+
+	if (!result) {
 		*error = NOT_ALLOWED; // TODO: Better one
 		return nullptr;
 	}
-	if (value->isNative()) {
-		return Common::String(((BaseScriptable *)value)->debuggerToString());
-	} else {
-		*error = NOT_ALLOWED; // TODO: a better one
+	
+
+	if (!result->isNative()) {
+		*error = NOT_ALLOWED; // TODO: Better one
 		return nullptr;
+	}
+	
+	BaseScriptable *pos; //  = mainObject->getNative();
+	// Now we split tokens like foo(bar)
+
+	pos  = result->getNative();
+	Common::String methodName = Common::String("");
+
+	while (!st.empty() && result) {
+		// TODO: if result is not native error out
+		pos  = result->getNative();
+
+		Common::String callStr = st.nextToken();
+		// Okay - now let's see if it's a call
+		Common::StringTokenizer callSt = Common::StringTokenizer(callStr.c_str(), "(");
+		methodName =  callSt.nextToken();
+		Common::String arg;
+		if (callSt.empty()) {
+			result = pos->scGetProperty(methodName);
+			// TODO: Okay, just return that, it's a property
+		} else {
+			// TODO: support multiple arguments.
+			// Let's try to chop parenthesis off it.
+			Common::String argList = callSt.nextToken();
+			Common::StringTokenizer argSt = Common::StringTokenizer(argList.c_str(), ")");
+			arg = argSt.nextToken();
+			if (argSt.empty()) {
+				// OK
+			} else { 
+				// WTF? This should not happen.
+				assert(false);
+			}
+
+			Common::StringTokenizer st3 = Common::StringTokenizer(arg, "\"");
+			Common::String dest;
+			dest = "";
+			while (!st3.empty()) {
+				dest += st3.nextToken();
+			}
+			_lastScript->_stack->pushString(dest.c_str()); // Todo: support ints and other stuff. Remove quotes correctly!
+			_lastScript->_stack->pushInt(1);
+
+			pos->scCallMethod(_lastScript, _lastScript->_stack, _lastScript->_thisStack, methodName.c_str());
+
+			result = _lastScript->_stack->pop();
+		}
+	}
+	if (!result) {
+		char *ret = new char[100]; // Hack
+		sprintf(ret, "%s has no member %s", pos->getName(), methodName.c_str()); 
+		return ret; 
+	} else if (result->isNative()) {
+		return result->getNative()->debuggerToString();
+	} else if (result->isString()) {
+		return result->getString();
+	} else if (result->isFloat()) {
+		return result->getString();
+	} else if (result->isInt()) {
+		return result->getString();
+	} else {
+		return "Not yet implemented"; // TODO: A better way to cop out
 	}
 }
 

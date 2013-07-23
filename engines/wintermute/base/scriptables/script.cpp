@@ -1529,7 +1529,7 @@ ScValue *ScScript::resolveName(const char *name) {
 	ScValue *value; 
 
 	varName = st.nextToken();
-	value = getVar((char *)varName.c_str());
+	value = getVar(const_cast<char *>(varName.c_str()));
 
 	while(!st.empty() && (value->isNative() || value->isObject())) {
 		value = value->getProp((char *)st.nextToken().c_str());
