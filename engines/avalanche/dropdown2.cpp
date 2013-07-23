@@ -209,9 +209,6 @@ void menuset::update() {
 		_dr->_vm->_trip.getset[page_].remember(menuspace);
 
 	_dr->_vm->_gyro.cp = savecp;
-
-
-	warning("STUB: Dropdown::menuset::update()");
 }
 
 void menuset::extd(char c) {
