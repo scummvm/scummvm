@@ -61,7 +61,7 @@ public:
 	Common::Error loadGame(const Common::String &filename);
 	Common::Error saveGame(int n, const Common::String &saveName);
 	Common::Error loadGame(int slot);
-	Common::Error saveGame(int slot);	
+	Common::Error saveGame(int slot);
 
 	void writeSavegameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);

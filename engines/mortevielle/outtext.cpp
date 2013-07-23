@@ -263,9 +263,10 @@ void TextHandler::taffich() {
 		}
 		for (int i = 0; i <= 15; ++i) {
 			int k = 0;
-			for (int j = 0; j <= 15; ++j)
+			for (int j = 0; j <= 15; ++j) {
 				if (alllum[j] > alllum[k])
 					k = j;
+			}
 			_vm->_mem[(kAdrPictureComp * 16) + 2 + (k << 1)] = rang[i];
 			alllum[k] = -1;
 		}

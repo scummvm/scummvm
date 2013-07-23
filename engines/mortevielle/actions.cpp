@@ -609,10 +609,10 @@ void MortevielleEngine::fctOpen() {
 		} while (!((tmpPlace > 6) || (_openObjects[tmpPlace] == 0) || (_openObjects[tmpPlace] == _num)));
 		if (_openObjects[tmpPlace] != _num) {
 			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
-				                 || (_coreVar._currPlace == ROOM9) 
-								 || (_coreVar._currPlace == BLUE_ROOM) 
+				                 || (_coreVar._currPlace == ROOM9)
+								 || (_coreVar._currPlace == BLUE_ROOM)
 								 || (_coreVar._currPlace == BATHROOM)))
-			    || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM) 
+			    || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM)
 				                 || (_coreVar._currPlace == PURPLE_ROOM)
 								 || (_coreVar._currPlace == RED_ROOM)))
 				|| ((_coreVar._currPlace == DARKBLUE_ROOM) && (_num == 5))
@@ -1344,7 +1344,7 @@ void MortevielleEngine::fctDiscuss() {
 	int x, y;
 	Common::String lib[47];
 
-	int choice; 
+	int choice;
 	int displId;
 
 	endSearch();
