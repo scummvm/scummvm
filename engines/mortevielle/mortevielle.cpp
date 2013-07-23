@@ -354,7 +354,7 @@ Common::Error MortevielleEngine::run() {
 
 	// Run the main game loop
 	mainGame();
-	
+
 	// Cleanup (allocated in initialize())
 	_screenSurface.free();
 	free(_speechManager._cfiphBuffer);

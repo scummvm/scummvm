@@ -42,7 +42,7 @@ private:
 public:
 	void setParent(MortevielleEngine *vm);
 	void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
-	void loadDesFile(Common::String filename, int32 passe, int long_);
+	void loadDesFile(Common::String filename, int32 skipSize, int length);
 	void loadAniFile(Common::String filename, int32 skipSize, int length);
 	void taffich();
 };
