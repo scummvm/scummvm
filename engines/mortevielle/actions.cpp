@@ -1484,10 +1484,10 @@ void MortevielleEngine::fctDiscuss() {
 					displId = 138;
 					_coreVar._faithScore += (3 * (_coreVar._faithScore / 10));
 				}
-			} else if (_nbrep[_caff - 69] < _nbrepm[_caff - 69]) {
+			} else if (_charAnswerCount[_caff - 69] < _charAnswerMax[_caff - 69]) {
 				displId = _tabdon[kArep + (ix << 3) + (_caff - 70)];
 				_coreVar._faithScore += _tabdon[kArcf + ix];
-				++_nbrep[_caff - 69];
+				++_charAnswerCount[_caff - 69];
 			} else {
 				_coreVar._faithScore += 3;
 				displId = 139;
