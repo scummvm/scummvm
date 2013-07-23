@@ -254,10 +254,11 @@ void MortevielleEngine::handleAction() {
 	const int lim = 20000;
 	int temps = 0;
 	char inkey = '\0';
-	bool oo, funct = 0;
+	bool funct = false;
 
 	clearVerbBar();
-	oo = false;
+
+	bool handledOpcodeFl = false;
 	_controlMenu = 0;
 	if (!_keyPressedEsc) {
 		_menu.drawMenu();
@@ -325,7 +326,7 @@ void MortevielleEngine::handleAction() {
 						return;
 
 					if ((_currAction == OPCODE_SOUND) || (_currAction == OPCODE_LIFT)) {
-						oo = true;
+						handledOpcodeFl = true;
 						if ((_currAction == OPCODE_LIFT) || (_obpart)) {
 							endSearch();
 							_caff = _coreVar._currPlace;
@@ -337,7 +338,7 @@ void MortevielleEngine::handleAction() {
 				}
 			}
 			do {
-				if (! oo)
+				if (!handledOpcodeFl)
 					handleOpcode();
 
 				if ((_controlMenu == 0) && (! _loseGame) && (! _endGame)) {
