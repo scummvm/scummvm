@@ -1,6 +1,7 @@
 MODULE := engines/fullpipe
 
 MODULE_OBJS = \
+	behavior.o \
 	detection.o \
 	fullpipe.o \
 	gameloader.o \

@@ -32,6 +32,7 @@
 #include "fullpipe/motion.h"
 #include "fullpipe/input.h"
 #include "fullpipe/messagequeue.h"
+#include "fullpipe/behavior.h"
 
 #include "fullpipe/gameobj.h"
 
@@ -39,6 +40,7 @@ namespace Fullpipe {
 
 int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
+int sceneHandlerIntro(ExCommand *cmd);
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	CGameVar *sceneVar;
@@ -631,7 +633,7 @@ int sceneIntro_updateCursor() {
 void sceneIntro_initScene(Scene *sc) {
 	g_fullpipe->_gameLoader->loadScene(SC_INTRO2);
 
-	warning("STUB: FullpipeEngine::sceneIntro_initScene()");
+	warning("STUB: sceneIntro_initScene()");
 
 #if 0
 	sceneIntro_aniin1man = sc->_getStaticANIObject1ById(ANI_IN1MAN, -1);
@@ -645,6 +647,12 @@ void sceneIntro_initScene(Scene *sc) {
 
 	g_fullpipe->_modalObject = new CModalIntro;
 #endif
+}
+
+int sceneHandlerIntro(ExCommand *cmd) {
+	warning("STUB: sceneHandlerIntro()");
+
+	return 0;
 }
 
 } // End of namespace Fullpipe

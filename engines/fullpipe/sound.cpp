@@ -106,4 +106,8 @@ void Sound::updateVolume() {
 	warning("STUB Sound::updateVolume()");
 }
 
+void FullpipeEngine::setSceneMusicParameters(CGameVar *var) {
+	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
+}
+
 } // End of namespace Fullpipe

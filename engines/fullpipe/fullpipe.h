@@ -43,6 +43,7 @@ namespace Fullpipe {
 enum FullpipeGameFeatures {
 };
 
+class BehaviorManager;
 class CGameLoader;
 class CGameVar;
 class CInputController;
@@ -113,6 +114,8 @@ public:
 	GlobalMessageQueueList *_globalMessageQueueList;
 	MessageHandler *_messageHandlers;
 
+	BehaviorManager *_behaviorManager;
+
 	bool _needQuit;
 
 	void initObjectStates();
@@ -136,6 +139,7 @@ public:
 
 	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
+	void setSceneMusicParameters(CGameVar *var);
 
 	NGIArchive *_currArchive;
 

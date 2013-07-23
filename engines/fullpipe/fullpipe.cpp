@@ -32,6 +32,7 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/messagequeue.h"
+#include "fullpipe/behavior.h"
 
 namespace Fullpipe {
 
@@ -74,6 +75,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_updateScreenCallback = 0;
 	_updateCursorCallback = 0;
 
+	_behaviorManager = 0;
+
 	_cursorId = 0;
 
 	g_fullpipe = this;
@@ -86,6 +89,7 @@ FullpipeEngine::~FullpipeEngine() {
 
 void FullpipeEngine::initialize() {
 	_globalMessageQueueList = new GlobalMessageQueueList;
+	_behaviorManager = new BehaviorManager;
 }
 
 Common::Error FullpipeEngine::run() {
