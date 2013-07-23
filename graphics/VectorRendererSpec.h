@@ -174,6 +174,8 @@ protected:
 	    PixelType color, VectorRenderer::FillMode fill_m,
 	    int baseLeft = 0, int baseRight = 0);
 
+	virtual void drawTabShadow(int x, int y, int w, int h, int r);
+
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
 	    int bevel, PixelType topColor, PixelType bottomColor,
 	    int baseLeft = 0, int baseRight = 0);

@@ -915,13 +915,14 @@ drawTab(int x, int y, int r, int w, int h) {
 			// FIXME: This is broken for the AA renderer.
 			// See the rounded rect alg for how to fix it. (The border should
 			// be drawn before the interior, both inside drawTabAlg.)
-			drawTabAlg(x, y, w, h, r, (Base::_fillMode == kFillBackground) ? _bgColor : _fgColor, Base::_fillMode);
+			drawTabShadow(x, y, w - 2, h, r);
+			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
 			break;
 
 		case kFillForeground:
-			drawTabAlg(x, y, w, h, r, (Base::_fillMode == kFillBackground) ? _bgColor : _fgColor, Base::_fillMode);
+			drawTabAlg(x, y, w, h, r, _fgColor, Base::_fillMode);
 			break;
 	}
 }
@@ -1102,6 +1103,67 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 }
 
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawTabShadow(int x1, int y1, int w, int h, int r) {
+	int offset = 3;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	
+	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
+	double expFactor = (_activeSurface->format.bytesPerPixel > 2) ? 1.60 : 1.25;
+	double alpha = (_activeSurface->format.bytesPerPixel > 2) ? 1 : 8;
+
+	int xstart = x1;
+	int ystart = y1;
+	int width = w;
+	int height = h + offset + 1;
+
+	for (int i = offset; i >= 0; i--) {
+		int f, ddF_x, ddF_y;
+		int x, y, px, py;
+
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
+
+		int short_h = height - (2 * r) + 2;
+		PixelType color = _format.RGBToColor(0, 0, 0);
+
+		BE_RESET();
+
+		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// there are 4 pixels on each circle which are drawn twice.
+		// this is ok on filled circles, but when blending on surfaces,
+		// we cannot let it blend twice. awful.
+		uint32 hb = 0;
+		
+		while (x++ < y) {
+			BE_ALGORITHM();
+
+			if (((1 << x) & hb) == 0) {
+				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, alpha);
+				hb |= (1 << x);
+			}
+
+			if (((1 << y) & hb) == 0) {
+				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, alpha);
+				hb |= (1 << y);
+			}
+		}
+	
+		ptr_fill += pitch * r;
+		while (short_h--) {
+			blendFill(ptr_fill, ptr_fill + width + 1, color, alpha);
+			ptr_fill += pitch;
+		}
+
+		// Move shadow one pixel upward each iteration
+		xstart += 1;
+
+		alpha = alpha * expFactor;
+	}
+}
+	
 /** BEVELED TABS FOR CLASSIC THEME **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
