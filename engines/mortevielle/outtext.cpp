@@ -160,8 +160,8 @@ void TextHandler::taffich() {
 	static const byte tran1[] = { 121, 121, 138, 139, 120 };
 	static const byte tran2[] = { 150, 150, 152, 152, 100, 110, 159, 100, 100 };
 
-	int cx, handle, npal;
-	int32 lgt;
+	int cx, drawingSize, npal;
+	int32 drawingStartPos;
 	int alllum[16];
 
 	int a = _vm->_caff;
@@ -213,7 +213,7 @@ void TextHandler::taffich() {
 
 	_vm->_destinationOk = true;
 	_vm->_mouse.hideMouse();
-	lgt = 0;
+	drawingStartPos = 0;
 	Common::String filename;
 
 	if ((a != 50) && (a != 51)) {
@@ -237,8 +237,8 @@ void TextHandler::taffich() {
 		npal = a;
 
 		for (cx = 0; cx <= (a - 1); ++cx)
-			lgt += _vm->_fxxBuffer[cx];
-		handle = _vm->_fxxBuffer[a];
+			drawingStartPos += _vm->_drawingSizeArr[cx];
+		drawingSize = _vm->_drawingSizeArr[a];
 
 		filename = "DXX.mor";
 	} else {
@@ -247,15 +247,15 @@ void TextHandler::taffich() {
 		else
 			filename = "DZZ.mor";
 
-		handle = _vm->_fxxBuffer[87];
+		drawingSize = _vm->_drawingSizeArr[87];
 		if (a == 51) {
-			lgt = handle;
-			handle = _vm->_fxxBuffer[88];
+			drawingStartPos = drawingSize;
+			drawingSize = _vm->_drawingSizeArr[88];
 		}
 		_vm->_maff = a;
 		npal = a + 37;
 	}
-	loadDesFile(filename, lgt, handle);
+	loadDesFile(filename, drawingStartPos, drawingSize);
 	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
 			int palh = READ_LE_UINT16(&_vm->_mem[(kAdrPictureComp * 16) + 2 + (i << 1)]);
@@ -275,7 +275,7 @@ void TextHandler::taffich() {
 	_vm->setPal(npal);
 
 	if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26) || (b == 50)) {
-		lgt = 0;
+		drawingStartPos = 0;
 		if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26)) {
 			if (b == 26)
 				b = 18;
@@ -284,14 +284,17 @@ void TextHandler::taffich() {
 			else if (b > 15)
 				--b;
 			for (cx = 0; cx <= (b - 1); ++cx)
-				lgt += _vm->_fxxBuffer[cx + 89];
-			handle = _vm->_fxxBuffer[b + 89];
+				drawingStartPos += _vm->_drawingSizeArr[cx + 89];
+			drawingSize = _vm->_drawingSizeArr[b + 89];
 			filename = "AXX.mor";
 		} else if (b == 50) {
+			// CHECKME: the size of AZZ.mor is 1280 for the DOS version
+			//          and 1260 for the Amiga version. Maybe the 20 bytes 
+			//          are a filler, or the size should be variable.
+			drawingSize = 1260;
 			filename = "AZZ.mor";
-			handle = 1260;
 		}
-		loadAniFile(filename, lgt, handle);
+		loadAniFile(filename, drawingStartPos, drawingSize);
 	}
 	_vm->_mouse.showMouse();
 	if ((a < 27) && ((_vm->_maff < 27) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != OPCODE_ENTER)) {
