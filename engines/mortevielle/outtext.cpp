@@ -247,9 +247,11 @@ void TextHandler::taffich() {
 		else
 			filename = "DZZ.mor";
 
-		drawingSize = _vm->_drawingSizeArr[87];
-		if (a == 51) {
-			drawingStartPos = drawingSize;
+		if (a == 50) {
+			drawingStartPos = 0;
+			drawingSize = _vm->_drawingSizeArr[87];
+		} else { // a == 51
+			drawingStartPos = _vm->_drawingSizeArr[87];
 			drawingSize = _vm->_drawingSizeArr[88];
 		}
 		_vm->_maff = a;
@@ -290,7 +292,8 @@ void TextHandler::taffich() {
 		} else if (b == 50) {
 			// CHECKME: the size of AZZ.mor is 1280 for the DOS version
 			//          and 1260 for the Amiga version. Maybe the 20 bytes 
-			//          are a filler, or the size should be variable.
+			//          are a filler (to get 10 blocks of 128 bytes), 
+			//          or the size should be variable.
 			drawingSize = 1260;
 			filename = "AZZ.mor";
 		}
