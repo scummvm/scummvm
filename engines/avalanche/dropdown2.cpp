@@ -290,8 +290,9 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 			byte pixel = ~(_vm->_gyro.little[z[fv]][ff] & ander); // Note that it's the bitwise NOT operator!
 			for (byte bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
-				*_vm->_graph.getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit | (pixelBit << 1) | (pixelBit << 2);
-				// We don't have to bother with the planes. See the original. Note that it's the bitwise OR operator!
+				*_vm->_graph.getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
+				// We don't have to bother with the planes, since they all have the same value. See the original.
+				// Note that it's the bitwise OR operator!
 			}
 		}
 
