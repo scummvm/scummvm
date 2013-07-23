@@ -2051,7 +2051,7 @@ void MortevielleEngine::loadPalette() {
 	}
 
 	for (int i = 0; i < 108; ++i)
-		_fxxBuffer[i] = f.readSint16LE();
+		_drawingSizeArr[i] = f.readSint16LE();
 	f.close();
 
 	if (!f.open("plxx.mor"))

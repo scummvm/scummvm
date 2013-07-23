@@ -457,7 +457,7 @@ public:
 	Common::Point _prevPos;
 	int  _currMenu;
 	int  _currAction;
-	int  _fxxBuffer[108];
+	int  _drawingSizeArr[108];
 	byte _tabdon[4001];
 	bool _soundOff;
 	bool _blo;
