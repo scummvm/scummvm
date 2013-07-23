@@ -191,6 +191,26 @@ void menuset::create(char t, Common::String n, char alttrig, func dw, func dc) {
 }
 
 void menuset::update() {
+	const bytefield menuspace = {0, 0, 80, 9};
+	byte fv, page_, savecp;
+
+	/*setactivepage(3);
+	setfillstyle(1, _dr->menu_b);
+	bar(0, 0, 640, 9);*/
+	_dr->_vm->_graph.drawBar(0, 0, 640, 9, _dr->menu_b);
+
+	savecp = _dr->_vm->_gyro.cp;
+	_dr->_vm->_gyro.cp = 3;
+
+	for (fv = 1; fv <= howmany; fv ++)
+		ddms[fv].display();
+
+	for (page_ = 0; page_ <= 1; page_ ++)
+		_dr->_vm->_trip.getset[page_].remember(menuspace);
+
+	_dr->_vm->_gyro.cp = savecp;
+
+
 	warning("STUB: Dropdown::menuset::update()");
 }
 
@@ -616,8 +636,8 @@ void Dropdown::standard_bar() {   /* Standard menu bar */
 	ddm_m.create('O', "Objects", '\30', &Avalanche::Dropdown::ddm__objects, &Avalanche::Dropdown::do__objects); /* here... */
 	ddm_m.create('P', "People", '\31', &Avalanche::Dropdown::ddm__people, &Avalanche::Dropdown::do__people);
 	ddm_m.create('W', "With", '\21', &Avalanche::Dropdown::ddm__with, &Avalanche::Dropdown::do__with);
-	ddm_m.update();
 
+	ddm_m.update();
 }
 
 
