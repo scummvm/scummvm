@@ -289,7 +289,7 @@ void TextHandler::taffich() {
 				drawingStartPos += _vm->_drawingSizeArr[cx + 89];
 			drawingSize = _vm->_drawingSizeArr[b + 89];
 			filename = "AXX.mor";
-		} else if (b == 50) {
+		} else { // b == 50
 			// CHECKME: the size of AZZ.mor is 1280 for the DOS version
 			//          and 1260 for the Amiga version. Maybe the 20 bytes 
 			//          are a filler (to get 10 blocks of 128 bytes), 
@@ -300,8 +300,8 @@ void TextHandler::taffich() {
 		loadAniFile(filename, drawingStartPos, drawingSize);
 	}
 	_vm->_mouse.showMouse();
-	if ((a < 27) && ((_vm->_maff < 27) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != OPCODE_ENTER)) {
-		if ((a == 13) || (a == 14))
+	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != OPCODE_ENTER)) {
+		if ((a == ATTIC) || (a == CELLAR))
 			_vm->displayAloneText();
 		else if (!_vm->_blo)
 			_vm->getPresence(_vm->_coreVar._currPlace);

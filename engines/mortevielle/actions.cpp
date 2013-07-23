@@ -474,7 +474,7 @@ void MortevielleEngine::fctSelftLook() {
  * @remarks	Originally called 'tfouiller'
  */
 void MortevielleEngine::fctSearch() {
-	static const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
+	static const byte answerArr[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 
 	if (_caff > 99) {
 		getSearchDescription(_caff);
@@ -542,7 +542,7 @@ void MortevielleEngine::fctSearch() {
 			_coreVar._faithScore += 3;
 		_crep = 997;
 		if (_coreVar._currPlace < CELLAR)
-			_crep = r[_coreVar._currPlace];
+			_crep = answerArr[_coreVar._currPlace];
 
 		if ((_coreVar._currPlace == TOILETS) && (_num == 2))
 			_crep = 162;
