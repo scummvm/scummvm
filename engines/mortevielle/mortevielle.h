@@ -443,7 +443,7 @@ private:
 	void premtet();
 	void ajchai();
 	void ecr2(Common::String text);
-	void init_nbrepm();
+	void initMaxAnswer();
 	void aniof(int ouf, int num);
 	void tlu(int af, int ob);
 	void mennor();
@@ -456,6 +456,8 @@ public:
 	int  _currMenu;
 	int  _currAction;
 	int  _drawingSizeArr[108];
+	int  _charAnswerCount[9];
+	int  _charAnswerMax[9];
 	byte _tabdon[4001];
 	bool _soundOff;
 	bool _blo;
@@ -469,8 +471,6 @@ public:
 	int  _key;
 	SaveStruct _coreVar, _saveStruct;
 
-	int _nbrep[9];
-	int _nbrepm[9];
 	int _maff;
 	int _caff;
 	int _crep;

@@ -1983,9 +1983,9 @@ void MortevielleEngine::resetVariables() {
 	_coreVar._availableQuestion[33] = '*';
 
 	for (int i = 1; i <= 8; ++i)
-		_nbrep[i] = 0;
+		_charAnswerCount[i] = 0;
 
-	init_nbrepm();
+	initMaxAnswer();
 }
 
 /**
@@ -2301,9 +2301,9 @@ void MortevielleEngine::prepareRoom() {
 	if (day != _day) {
 		_day = day;
 		for (int i = 0; i < 9; i++) {
-			if (_nbrepm[i] > 0)
-				--_nbrepm[i];
-			_nbrep[i] = 0;
+			if (_charAnswerMax[i] > 0)
+				--_charAnswerMax[i];
+			_charAnswerCount[i] = 0;
 		}
 	}
 	if ((hour > _hour) || ((hour == 0) && (_hour == 23))) {
@@ -2879,11 +2879,15 @@ void MortevielleEngine::setPresenceFlags(int roomId) {
 		_room9PresenceLeo = true;
 }
 
-void MortevielleEngine::init_nbrepm() {
-	static const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
+/**
+ * Initialize max answers per character
+ * @remarks	Originally called 'init_nbrepm'
+ */
+void MortevielleEngine::initMaxAnswer() {
+	static const byte maxAnswer[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
 
 	for (int idx = 0; idx < 9; ++idx)
-		_nbrepm[idx] = ipm[idx];
+		_charAnswerMax[idx] = maxAnswer[idx];
 }
 
 void MortevielleEngine::phaz(int &rand, int &p, int cf) {

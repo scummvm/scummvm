@@ -39,8 +39,8 @@ bool Debugger::Cmd_showAllQuestions(int argc, const char **argv) {
 		_vm->_coreVar._availableQuestion[i] = '*';
 
 	for (int i = 0; i < 9; i++) {
-		_vm->_nbrep[i] = 0;
-		_vm->_nbrepm[i] = 999;
+		_vm->_charAnswerCount[i] = 0;
+		_vm->_charAnswerMax[i] = 999;
 	}
 
 	return true;

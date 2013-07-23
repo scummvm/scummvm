@@ -206,7 +206,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	loadCFIEC();
 	decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 	_x26KeyCount = 1;
-	init_nbrepm();
+	initMaxAnswer();
 	initMouse();
 
 	loadPlaces();
