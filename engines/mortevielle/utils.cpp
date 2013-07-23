@@ -2254,7 +2254,7 @@ void MortevielleEngine::drawRightFrame() {
 		_mem[(kAdrPictureComp * 16) + 14] = 15;
 	}
 	_mouse.hideMouse();
-	pictout(kAdrDecBuffer, 0, 0, 0);
+	pictout(kAdrRightFramePic, 0, 0, 0);
 	_mouse.showMouse();
 }
 
@@ -2562,13 +2562,14 @@ void MortevielleEngine::adzon() {
 	if (!f.open("bmor.mor"))
 		error("Missing file - bmor.mor");
 
-	f.read(&_tabdon[kFleche], 1 * 1916);
+	f.read(&_tabdon[kFleche], 1916);
 	f.close();
 
+	// Read Right Frame Drawing
 	if (!f.open("dec.mor"))
 		error("Missing file - dec.mor");
 
-	f.read(&_mem[kAdrDecBuffer * 16], 1664);
+	f.read(&_mem[kAdrRightFramePic * 16], 1664);
 	f.close();
 }
 
