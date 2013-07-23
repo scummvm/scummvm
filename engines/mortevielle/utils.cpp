@@ -698,8 +698,8 @@ int MortevielleEngine::getPresenceStatsRedRoom() {
  * @remarks	Originally called 'person'
  */
 void MortevielleEngine::displayAloneText() {
-	for (int cf = 1; cf <= 8; ++cf)
-		_menu.disableMenuItem(_menu._discussMenu[cf]);
+	for (int i = 1; i <= 8; ++i)
+		_menu.disableMenuItem(_menu._discussMenu[i]);
 
 	Common::String sYou = getEngineString(S_YOU);
 	Common::String sAre = getEngineString(S_ARE);
@@ -1090,14 +1090,12 @@ void MortevielleEngine::initGame() {
  * Engine function - Set Random Presence - Green Room
  * @remarks	Originally called 'pl1'
  */
-void MortevielleEngine::setRandomPresenceGreenRoom(int cf) {
+void MortevielleEngine::setRandomPresenceGreenRoom(int faithScore) {
 	if ( ((_place == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda))
 	  || ((_place == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)) ) {
 		int p = getPresenceStatsGreenRoom();
-		int rand;
-		phaz(rand, p, cf);
-
-		if (rand > p)
+		p += faithScore;
+		if (getRandomNumber(1, 100) > p)
 			displayAloneText();
 		else
 			setPresenceGreenRoom(_place);
@@ -1108,13 +1106,11 @@ void MortevielleEngine::setRandomPresenceGreenRoom(int cf) {
  * Engine function - Set Random Presence - Purple Room
  * @remarks	Originally called 'pl2'
  */
-void MortevielleEngine::setRandomPresencePurpleRoom(int cf) {
+void MortevielleEngine::setRandomPresencePurpleRoom(int faithScore) {
 	if (!_purpleRoomPresenceLeo) {
 		int p = getPresenceStatsPurpleRoom();
-		int rand;
-		phaz(rand, p, cf);
-
-		if (rand > p)
+		p += faithScore;
+		if (getRandomNumber(1, 100) > p)
 			displayAloneText();
 		else
 			setPresencePurpleRoom();
@@ -1125,14 +1121,11 @@ void MortevielleEngine::setRandomPresencePurpleRoom(int cf) {
  * Engine function - Set Random Presence - Blue Room
  * @remarks	Originally called 'pl5'
  */
-void MortevielleEngine::setRandomPresenceBlueRoom(int cf) {
+void MortevielleEngine::setRandomPresenceBlueRoom(int faithScore) {
 	if (!_roomPresenceMax) {
 		int p = getPresenceStatsBlueRoom();
-		int rand;
-
-		phaz(rand, p, cf);
-
-		if (rand > p)
+		p += faithScore;
+		if (getRandomNumber(1, 100) > p)
 			displayAloneText();
 		else
 			setPresenceBlueRoom();
@@ -1143,15 +1136,12 @@ void MortevielleEngine::setRandomPresenceBlueRoom(int cf) {
  * Engine function - Set Random Presence - Red Room
  * @remarks	Originally called 'pl6'
  */
-void MortevielleEngine::setRandomPresenceRedRoom(int cf) {
+void MortevielleEngine::setRandomPresenceRedRoom(int faithScore) {
 	if ( ((_place == RED_ROOM) && (!_roomPresenceBob))
 	  || ((_place == GREEN_ROOM2) && (!_roomPresencePat)) ) {
 		int p = getPresenceStatsRedRoom();
-		int rand;
-
-		phaz(rand, p, cf);
-
-		if (rand > p)
+		p += faithScore;
+		if (getRandomNumber(1, 100) > p)
 			displayAloneText();
 		else
 			setPresenceRedRoom(_place);
@@ -1162,13 +1152,10 @@ void MortevielleEngine::setRandomPresenceRedRoom(int cf) {
  * Engine function - Set Random Presence - Room 9
  * @remarks	Originally called 'pl9'
  */
-void MortevielleEngine::setRandomPresenceRoom9(int cf) {
+void MortevielleEngine::setRandomPresenceRoom9(int faithScore) {
 	if (!_room9PresenceLeo) {
-		cf = -10;
-		int p, rand;
-		phaz(rand, p, cf);
-
-		if (rand > p)
+		faithScore = -10;
+		if (getRandomNumber(1, 100) > faithScore) // always true?
 			displayAloneText();
 		else
 			setPresencePurpleRoom();
@@ -1179,12 +1166,11 @@ void MortevielleEngine::setRandomPresenceRoom9(int cf) {
  * Engine function - Set Random Presence - Dining Room
  * @remarks	Originally called 'pl10'
  */
-void MortevielleEngine::setRandomPresenceDiningRoom(int cf) {
-	int h, rand;
+void MortevielleEngine::setRandomPresenceDiningRoom(int faithScore) {
+	int h;
 	int p = getPresenceStatsDiningRoom(h);
-	phaz(rand, p, cf);
-
-	if (rand > p)
+	p += faithScore;
+	if (getRandomNumber(1, 100) > p)
 		displayAloneText();
 	else
 		setPresenceDiningRoom(h);
@@ -1194,12 +1180,12 @@ void MortevielleEngine::setRandomPresenceDiningRoom(int cf) {
  * Engine function - Set Random Presence - Bureau
  * @remarks	Originally called 'pl11'
  */
-void MortevielleEngine::setRandomPresenceBureau(int cf) {
-	int h, rand;
+void MortevielleEngine::setRandomPresenceBureau(int faithScore) {
+	int h;
 
 	int p = getPresenceStatsBureau(h);
-	phaz(rand, p, cf);
-	if (rand > p)
+	p += faithScore;
+	if (getRandomNumber(1, 100) > p)
 		displayAloneText();
 	else
 		setPresenceBureau(h);
@@ -1209,12 +1195,11 @@ void MortevielleEngine::setRandomPresenceBureau(int cf) {
  * Engine function - Set Random Presence - Kitchen
  * @remarks	Originally called 'pl12'
  */
-void MortevielleEngine::setRandomPresenceKitchen(int cf) {
-	int p, rand;
+void MortevielleEngine::setRandomPresenceKitchen(int faithScore) {
 
-	p = getPresenceStatsKitchen();
-	phaz(rand, p, cf);
-	if (rand > p)
+	int p = getPresenceStatsKitchen();
+	p += faithScore;
+	if (getRandomNumber(1, 100) > p)
 		displayAloneText();
 	else
 		setPresenceKitchen();
@@ -1224,12 +1209,10 @@ void MortevielleEngine::setRandomPresenceKitchen(int cf) {
  * Engine function - Set Random Presence - Attic / Cellar
  * @remarks	Originally called 'pl13'
  */
-void MortevielleEngine::setRandomPresenceAttic(int cf) {
-	int p, rand;
-
-	p = getPresenceStatsAttic();
-	phaz(rand, p, cf);
-	if (rand > p)
+void MortevielleEngine::setRandomPresenceAttic(int faithScore) {
+	int p = getPresenceStatsAttic();
+	p += faithScore;
+	if (getRandomNumber(1, 100) > p)
 		displayAloneText();
 	else
 		setPresenceKitchen();
@@ -1239,12 +1222,10 @@ void MortevielleEngine::setRandomPresenceAttic(int cf) {
  * Engine function - Set Random Presence - Landing
  * @remarks	Originally called 'pl15'
  */
-void MortevielleEngine::setRandomPresenceLanding(int cf) {
-	int p, rand;
-
-	p = getPresenceStatsLanding();
-	phaz(rand, p, cf);
-	if (rand > p)
+void MortevielleEngine::setRandomPresenceLanding(int faithScore) {
+	int p = getPresenceStatsLanding();
+	p += faithScore;
+	if (getRandomNumber(1, 100) > p)
 		displayAloneText();
 	else
 		setPresenceLanding();
@@ -1254,12 +1235,12 @@ void MortevielleEngine::setRandomPresenceLanding(int cf) {
  * Engine function - Set Random Presence - Chapel
  * @remarks	Originally called 'pl20'
  */
-void MortevielleEngine::setRandomPresenceChapel(int cf) {
-	int h, rand;
+void MortevielleEngine::setRandomPresenceChapel(int faithScore) {
+	int h;
 
 	int p = getPresenceStatsChapel(h);
-	phaz(rand, p, cf);
-	if (rand > p)
+	p += faithScore;
+	if (getRandomNumber(1, 100) > p)
 		displayAloneText();
 	else
 		setPresenceChapel(h);
@@ -2814,7 +2795,7 @@ void MortevielleEngine::resetRoomVariables(int roomId) {
  * Compute presence stats
  * @remarks	Originally called 'ecfren'
  */
-int MortevielleEngine::getPresenceStats(int &rand, int cf, int roomId) {
+int MortevielleEngine::getPresenceStats(int &rand, int faithScore, int roomId) {
 	if (roomId == OWN_ROOM)
 		displayAloneText();
 	int retVal = -500;
@@ -2838,7 +2819,7 @@ int MortevielleEngine::getPresenceStats(int &rand, int cf, int roomId) {
 	  || ((roomId == ROOM9) && (_purpleRoomPresenceLeo)))
 		retVal = -400;
 	if (retVal != -500) {
-		retVal += cf;
+		retVal += faithScore;
 		rand = getRandomNumber(1, 100);
 	}
 
@@ -2888,11 +2869,6 @@ void MortevielleEngine::initMaxAnswer() {
 
 	for (int idx = 0; idx < 9; ++idx)
 		_charAnswerMax[idx] = maxAnswer[idx];
-}
-
-void MortevielleEngine::phaz(int &rand, int &p, int cf) {
-	p += cf;
-	rand = getRandomNumber(1, 100);
 }
 
 /**
