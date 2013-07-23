@@ -38,6 +38,11 @@ bool Debugger::Cmd_showAllQuestions(int argc, const char **argv) {
 	for (int i = 1; i <= 42; ++i)
 		_vm->_coreVar._availableQuestion[i] = '*';
 
+	for (int i = 0; i < 9; i++) {
+		_vm->_nbrep[i] = 0;
+		_vm->_nbrepm[i] = 999;
+	}
+
 	return true;
 }
 

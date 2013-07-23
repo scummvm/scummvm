@@ -285,8 +285,6 @@ private:
 	byte  *_cfiecBuffer;
 	int    _cfiecBufferSize;
 	int    _openObjects[8];
-	int    _nbrep[9];
-	int    _nbrepm[9];
 	uint16 _dialogIndexArray[kMaxDialogIndex + 1];
 	Hint   _dialogHintArray[kMaxDialogHint + 1];
 
@@ -471,6 +469,8 @@ public:
 	int  _key;
 	SaveStruct _coreVar, _saveStruct;
 
+	int _nbrep[9];
+	int _nbrepm[9];
 	int _maff;
 	int _caff;
 	int _crep;

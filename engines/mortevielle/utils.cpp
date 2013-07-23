@@ -2300,13 +2300,11 @@ void MortevielleEngine::prepareRoom() {
 	updateHour(day, hour, minute);
 	if (day != _day) {
 		_day = day;
-		int i = 0;
-		do {
-			++i;
-			if (_nbrepm[i] != 0)
+		for (int i = 0; i < 9; i++) {
+			if (_nbrepm[i] > 0)
 				--_nbrepm[i];
 			_nbrep[i] = 0;
-		} while (i != 8);
+		}
 	}
 	if ((hour > _hour) || ((hour == 0) && (_hour == 23))) {
 		_hour = hour;
