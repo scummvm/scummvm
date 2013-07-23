@@ -197,7 +197,7 @@ void menuset::update() {
 	/*setactivepage(3);
 	setfillstyle(1, _dr->menu_b);
 	bar(0, 0, 640, 9);*/
-	_dr->_vm->_graph.drawBar(0, 0, 640, 9, _dr->menu_b);
+	_dr->_vm->_graph.drawBar(0, 0, 640, 10, _dr->menu_b);
 
 	savecp = _dr->_vm->_gyro.cp;
 	_dr->_vm->_gyro.cp = 3;
@@ -282,11 +282,37 @@ void Dropdown::find_what_you_can_do_with_it() {
 }
 
 void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
-	byte fv, ff, p, bit;
-	uint16 pageseg;
 	byte ander;
+	if (valid)
+		ander = 255;
+	else
+		ander = 170;
 
-	warning("STUB: Dropdown::chalk()");
+	for (byte fv = 0; fv < z.size(); fv++)
+		for (byte ff = 0; ff < 8; ff++) {
+				byte pixel = ~(_vm->_gyro.little[z[fv]][ff] & ander); // Note that it's the bitwise NOT operator!
+				for (byte bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					*_vm->_graph.getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit | (pixelBit << 1) | (pixelBit << 2);
+					// We don't have to bother with the planes. See the original. Note that it's the bitwise OR operator!
+				}
+			}
+
+	if (! z.contains(t))
+		return;
+	else {
+		byte fv;
+		for (fv = 0; z[fv] != t; fv++); // Search for the character in the string.
+	
+		// Similar to the cycle before.
+		byte pixel = ~ ander;
+		for (byte bit = 0; bit < 8; bit++) {
+			byte pixelBit = (pixel >> bit) & 1;
+			*_vm->_graph.getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = pixelBit | (pixelBit << 1) | (pixelBit << 2);
+		}
+	}
+
+	_vm->_lucerna.blitfix();
 }
 
 void Dropdown::hlchalk(int16 x, int16 y, char t, Common::String z, bool valid) {
