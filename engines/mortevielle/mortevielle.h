@@ -314,7 +314,7 @@ private:
 	void displayControlMenu();
 	void displayItemInHand(int objId);
 	void resetRoomVariables(int roomId);
-	int  getPresenceStats(int &rand, int cf, int roomId);
+	int  getPresenceStats(int &rand, int faithScore, int roomId);
 	void setPresenceFlags(int roomId);
 	void testKey(bool d);
 	void exitRoom();
@@ -375,17 +375,17 @@ private:
 	int  setPresenceKitchen();
 	int  setPresenceLanding();
 	int  setPresenceChapel(int hour);
-	void setRandomPresenceGreenRoom(int cf);
-	void setRandomPresencePurpleRoom(int cf);
-	void setRandomPresenceBlueRoom(int cf);
-	void setRandomPresenceRedRoom(int cf);
-	void setRandomPresenceRoom9(int cf);
-	void setRandomPresenceDiningRoom(int cf);
-	void setRandomPresenceBureau(int cf);
-	void setRandomPresenceKitchen(int cf);
-	void setRandomPresenceAttic(int cf);
-	void setRandomPresenceLanding(int cf);
-	void setRandomPresenceChapel(int cf);
+	void setRandomPresenceGreenRoom(int faithScore);
+	void setRandomPresencePurpleRoom(int faithScore);
+	void setRandomPresenceBlueRoom(int faithScore);
+	void setRandomPresenceRedRoom(int faithScore);
+	void setRandomPresenceRoom9(int faithScore);
+	void setRandomPresenceDiningRoom(int faithScore);
+	void setRandomPresenceBureau(int faithScore);
+	void setRandomPresenceKitchen(int faithScore);
+	void setRandomPresenceAttic(int faithScore);
+	void setRandomPresenceLanding(int faithScore);
+	void setRandomPresenceChapel(int faithScore);
 	void loadPlaces();
 	void resetPresenceInRooms(int roomId);
 	void showPeoplePresent(int bitIndex);
@@ -439,7 +439,6 @@ private:
 
 	void copcha();
 	void adzon();
-	void phaz(int &rand, int &p, int cf);
 	void premtet();
 	void ajchai();
 	void ecr2(Common::String text);
