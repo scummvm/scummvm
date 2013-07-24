@@ -1570,7 +1570,72 @@ void Trip::new_game_for_trippancy() {   /* Called by gyro.newgame */
 
 
 void Trip::handleMoveKey(const Common::Event &event) { 
-	warning("STUB: Avalot::handleMoveKey()");
+	//if ((_vm->_gyro.ctrl == cjoy) | (!_vm->_gyro.dna.user_moves_avvy))
+	//	return;
+	//	
+	// We don't mess around with the joystick.
+	
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_UP:
+		if (_vm->_gyro.dna.rw != up) {
+			_vm->_gyro.dna.rw = up;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_DOWN:
+		if (_vm->_gyro.dna.rw != down) {
+			_vm->_gyro.dna.rw = down;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_LEFT:
+		if (_vm->_gyro.dna.rw != left) {
+			_vm->_gyro.dna.rw = left;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_RIGHT:
+		if (_vm->_gyro.dna.rw != right) {
+			_vm->_gyro.dna.rw = right;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_PAGEUP:
+		if (_vm->_gyro.dna.rw != ur) {
+			_vm->_gyro.dna.rw = ur;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		if (_vm->_gyro.dna.rw != dr) {
+			_vm->_gyro.dna.rw = dr;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_END:
+		if (_vm->_gyro.dna.rw != dl) {
+			_vm->_gyro.dna.rw = dl;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_HOME:
+		if (_vm->_gyro.dna.rw != ul) {
+			_vm->_gyro.dna.rw = ul;
+			rwsp(0, _vm->_gyro.dna.rw);
+		} else
+			stopwalking();
+		break;
+	case Common::KEYCODE_KP5:
+		stopwalking();
+		break;
+	}
 }
 
 

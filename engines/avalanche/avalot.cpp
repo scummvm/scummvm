@@ -164,6 +164,7 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 	case Common::KEYCODE_PAGEDOWN:
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP5:
 		_vm->_trip.handleMoveKey(event); // Fallthroughs are intended.
 		break;
 	}
