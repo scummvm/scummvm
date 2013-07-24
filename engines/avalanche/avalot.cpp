@@ -57,10 +57,9 @@ namespace Avalanche {
 
 
 
-void Avalot::setParent(AvalancheEngine *vm) {
+Avalot::Avalot(AvalancheEngine *vm) {
 	_vm = vm;
 }
-
 
 
 void Avalot::setup() {

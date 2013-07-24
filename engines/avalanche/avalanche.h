@@ -67,7 +67,7 @@ class AvalancheEngine : public Engine {
 public:
 	Graphics *_graphics;
 
-	Avalot _avalot;
+	Avalot *_avalot;
 	Gyro _gyro;
 	Enhanced _enhanced;
 	Logger _logger;

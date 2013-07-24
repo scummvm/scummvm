@@ -57,11 +57,14 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _rnd;
 
 	delete _graphics;
+
+	delete _avalot;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
 	_graphics = new Graphics(this);
 
+	_avalot = new Avalot(this);
 	_gyro.setParent(this);
 	_enhanced.setParent(this);
 	_logger.setParent(this);
@@ -78,7 +81,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_basher.setParent(this);
 	_dropdown.setParent(this);
 	_closing.setParent(this);
-	_avalot.setParent(this);
 
 	_graphics->init();
 
@@ -124,7 +126,7 @@ void AvalancheEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			_avalot.handleKeyDown(event);
+			_avalot->handleKeyDown(event);
 		}
 	}
 }
@@ -258,7 +260,7 @@ void AvalancheEngine::demo() {
 void AvalancheEngine::run_avalot() {
 	bflight_on();
 
-	_avalot.run(Common::String(runcodes[first_time]) + arguments);
+	_avalot->run(Common::String(runcodes[first_time]) + arguments);
 	// TODO: Check if parameteres are ever used (probably not) and eventually remove them.
 	// If there's an error initalizing avalot, i'll handle it in there, not here
 
