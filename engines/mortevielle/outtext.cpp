@@ -125,17 +125,20 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 }
 
 /**
- * Load DES file
+ * Load DES (picture container) file
  * @remarks	Originally called 'chardes'
  */
-void TextHandler::loadDesFile(Common::String filename, int32 skipSize, int length) {
+void TextHandler::loadPictureFile(Common::String filename, int32 skipSize, int length) {
 	Common::File f;
 	if (!f.open(filename))
 		error("Missing file %s", filename.c_str());
 
 	assert(skipSize + length <= f.size());
+
+	free(_vm->_curPict);
+	_vm->_curPict = (byte *)malloc(sizeof(byte) * length);
 	f.seek(skipSize);
-	f.read(&_vm->_mem[(kAdrCurrentPicture * 16)], length);
+	f.read(_vm->_curPict, length);
 	f.close();
 }
 
@@ -257,10 +260,10 @@ void TextHandler::taffich() {
 		_vm->_maff = a;
 		npal = a + 37;
 	}
-	loadDesFile(filename, drawingStartPos, drawingSize);
+	loadPictureFile(filename, drawingStartPos, drawingSize);
 	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&_vm->_mem[(kAdrCurrentPicture * 16) + 2 + (i << 1)]);
+			int palh = READ_LE_UINT16(&_vm->_curPict[2 + (i << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (int i = 0; i <= 15; ++i) {
@@ -269,7 +272,7 @@ void TextHandler::taffich() {
 				if (alllum[j] > alllum[k])
 					k = j;
 			}
-			_vm->_mem[(kAdrCurrentPicture * 16) + 2 + (k << 1)] = rang[i];
+			_vm->_curPict[2 + (k << 1)] = rang[i];
 			alllum[k] = -1;
 		}
 	}

@@ -1979,8 +1979,8 @@ void MortevielleEngine::setPal(int n) {
 	case MODE_EGA:
 	case MODE_AMSTRAD1512:
 		for (int i = 1; i <= 16; ++i) {
-			_mem[(kAdrCurrentPicture * 16) + (2 * i)] = _stdPal[n][i].x;
-			_mem[(kAdrCurrentPicture * 16) + (2 * i) + 1] = _stdPal[n][i].y;
+			_curPict[(2 * i)] = _stdPal[n][i].x;
+			_curPict[(2 * i) + 1] = _stdPal[n][i].y;
 		}
 		break;
 	case MODE_CGA: {
@@ -2008,12 +2008,12 @@ void MortevielleEngine::setPal(int n) {
 void MortevielleEngine::displayCGAPattern(int n, Pattern p, nhom *pal) {
 	int addr = n * 404 + 0xd700;
 
-	WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + addr], p._tax);
-	WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + addr + 2], p._tay);
+	WRITE_LE_UINT16(&_curPict[addr], p._tax);
+	WRITE_LE_UINT16(&_curPict[addr + 2], p._tay);
 	addr += 4;
 	for (int i = 0; i < p._tax; ++i) {
 		for (int j = 0; j < p._tay; ++j)
-			_mem[(kAdrCurrentPicture * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
+			_curPict[addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
 	}
 }
 
@@ -2240,7 +2240,7 @@ void MortevielleEngine::showTitleScreen() {
 void MortevielleEngine::draw(int x, int y) {
 	_mouse.hideMouse();
 	setPal(_numpal);
-	displayPicture(&_mem[kAdrCurrentPicture * 16], x, y);
+	displayPicture(_curPict, x, y);
 	_mouse.showMouse();
 }
 
@@ -2250,9 +2250,9 @@ void MortevielleEngine::draw(int x, int y) {
  */
 void MortevielleEngine::drawRightFrame() {
 	setPal(89);
-	if (_currGraphicalDevice == MODE_HERCULES) {
-		_mem[(kAdrCurrentPicture * 16) + 14] = 15;
-	}
+	if (_currGraphicalDevice == MODE_HERCULES)
+		_curPict[14] = 15;
+
 	_mouse.hideMouse();
 	displayPicture(&_mem[kAdrRightFramePic * 16], 0, 0);
 	_mouse.showMouse();
@@ -2544,12 +2544,13 @@ void MortevielleEngine::displayPicture(const byte *pic, int x, int y) {
 	surface.decode(pic);
 
 	if (_currGraphicalDevice == MODE_HERCULES) {
-		_mem[(kAdrCurrentPicture * 16) + 2] = 0;
-		_mem[(kAdrCurrentPicture * 16) + 32] = 15;
+		_curPict[2] = 0;
+		_curPict[32] = 15;
 	}
 
-	if ((_caff != 51) && (READ_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138]) > 0x100))
-		WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138], 0x100);
+	// CHECKME: Is it useful?
+	//	if ((_caff != 51) && (READ_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138]) > 0x100))
+	//		WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138], 0x100);
 
 	_screenSurface.drawPicture(surface, x, y);
 }
@@ -2954,7 +2955,7 @@ void MortevielleEngine::displayQuestionText(Common::String s, int cmd) {
  * Display animation frame
  * @remarks	Originally called 'aniof'
  */
-void MortevielleEngine::drawAnimFrame(int frameNum, int animId) {
+void MortevielleEngine::displayAnimFrame(int frameNum, int animId) {
 	if ((_caff == BATHROOM) && ((animId == 4) || (animId == 5)))
 		return;
 
@@ -2994,21 +2995,21 @@ void MortevielleEngine::drawPicture() {
 		if ((_caff < 30) || (_caff > 32)) {
 			for (int cx = 1; cx <= 6; ++cx) {
 				if (_openObjects[cx] != 0)
-					drawAnimFrame(1, _openObjects[cx]);
+					displayAnimFrame(1, _openObjects[cx]);
 			}
 
 			if (_caff == ATTIC) {
 				if (_coreVar._atticBallHoleObjectId == 141)
-					drawAnimFrame(1, 7);
+					displayAnimFrame(1, 7);
 
 				if (_coreVar._atticRodHoleObjectId == 159)
-					drawAnimFrame(1, 6);
+					displayAnimFrame(1, 6);
 			} else if ((_caff == CELLAR) && (_coreVar._cellarObjectId == 151))
-				drawAnimFrame(1, 2);
+				displayAnimFrame(1, 2);
 			else if ((_caff == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143))
-				drawAnimFrame(1, 1);
+				displayAnimFrame(1, 1);
 			else if ((_caff == WELL) && (_coreVar._wellObjectId != 0))
-				drawAnimFrame(1, 1);
+				displayAnimFrame(1, 1);
 		}
 
 		if (_caff < ROOM26)
