@@ -41,6 +41,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
 	DCmd_Register("loadsound", WRAP_METHOD(Console, cmdLoadSound));
 	DCmd_Register("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
+	DCmd_Register("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -61,7 +62,7 @@ bool Console::cmdLoadVideo(int argc, const char **argv) {
 
 	Video::VideoDecoder *videoDecoder = new ZorkAVIDecoder();
 	if (videoDecoder && videoDecoder->loadFile(argv[1])) {
-		_engine->startVideo(videoDecoder);
+		_engine->getRenderManager()->startVideo(videoDecoder);
 	}
 
 	return true;
@@ -92,6 +93,27 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 	}
 
 	convertRawToWav(argv[1], _engine, argv[2]);
+	return true;
+}
+
+bool Console::cmdSetRenderState(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+		return true;
+	}
+
+	Common::String renderState(argv[1]);
+
+	if (renderState.matchString("panorama", true))
+		_engine->getRenderManager()->setRenderState(RenderTable::PANORAMA);
+	else if (renderState.matchString("tilt", true))
+		_engine->getRenderManager()->setRenderState(RenderTable::TILT);
+	else if (renderState.matchString("flat", true))
+		_engine->getRenderManager()->setRenderState(RenderTable::FLAT);
+	else
+		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+
+	return true;
 }
 
 } // End of namespace ZVision
