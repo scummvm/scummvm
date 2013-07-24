@@ -56,8 +56,8 @@ public:
 
 class Graph {
 public:
-	static const int16 _screenWidth = 640;
-	static const int16 _screenHeight = 200;
+	static const int16 kScreenWidth = 640;
+	static const int16 kScreenHeight = 200;
 
 	
 
