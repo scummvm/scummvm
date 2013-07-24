@@ -76,6 +76,10 @@ void CMctlCompound::addObject(StaticANIObject *obj) {
 	warning("STUB: CMctlCompound::addObject()");
 }
 
+	void CMctlCompound::initMovGraph2() {
+	warning("STUB: CMctlCompound::initMovGraph2()");
+}
+
 bool CMctlCompoundArray::load(MfcArchive &file) {
 	debug(5, "CMctlCompoundArray::load()");
 

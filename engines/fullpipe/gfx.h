@@ -111,6 +111,7 @@ class GameObject : public CObject {
 	void setOXY(int x, int y);
 	void renumPictures(CPtrList *lst);
 	void setFlags(int16 flags) { _flags = flags; }
+	void clearFlags() { _flags = 0; }
 };
 
 class PictureObject : public GameObject {

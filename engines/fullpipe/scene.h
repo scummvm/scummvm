@@ -49,9 +49,9 @@ class Scene : public Background {
 
 	void initStaticANIObjects();
 	void init();
-	void draw(int par);
+	void draw();
 	void drawContent(int minPri, int maxPri, bool drawBG);
-	void updateScrolling(int par);
+	void updateScrolling();
 
 	StaticANIObject *getAniMan();
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
@@ -65,6 +65,10 @@ class Scene : public Background {
 	void preloadMovements(CGameVar *var);
 
 	void initObjectCursors(const char *name);
+
+  private:
+	static bool compareObjPriority(const void *p1, const void *p2);
+	void objectList_sortByPriority(CPtrList &list);
 };
 
 class SceneTag : public CObject {

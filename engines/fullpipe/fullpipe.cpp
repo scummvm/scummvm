@@ -105,6 +105,25 @@ Common::Error FullpipeEngine::run() {
 
 	loadGam("fullpipe.gam");
 
+	EntranceInfo ent;
+
+	ent._sceneId = 3896;
+	sceneSwitcher(&ent);
+
+	while (!g_fullpipe->_needQuit) {
+		updateEvents();
+		_system->delayMillis(10);
+		_system->updateScreen();
+
+		_currentScene->draw();
+
+		if (g_fullpipe->_keyState == ' ') {
+			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
+			break;
+		}
+	}
+
+
 	return Common::kNoError;
 }
 

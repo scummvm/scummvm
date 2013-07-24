@@ -47,7 +47,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 		_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
 		_inventory->addItem(ANI_INV_MAP, 1);
 
-#if 1
+#if 0
 		g_fullpipe->accessScene(301);
 		g_fullpipe->accessScene(302);
 		g_fullpipe->accessScene(303);
@@ -491,7 +491,8 @@ bool Sc2::load(MfcArchive &file) {
 		_entranceData = 0;
 	}
 
-	debug(4, "pos: %d, 0x%x: %d", file.size(), file.pos(), file.size() - file.pos());
+	if (file.size() - file.pos() > 0)
+		error("Sc2::load(): (%d bytes left)", file.size() - file.pos());
 
 	return true;
 }
