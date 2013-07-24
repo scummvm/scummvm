@@ -223,6 +223,11 @@ public:
 
 	void take_a_step(byte &tripnum);
 
+
+
+	void handleMoveKey(const Common::Event &event); // To replace tripkey().
+
+
 	triptype tr[numtr];
 	getsettype getset[2];
 	byte aa[1600];
