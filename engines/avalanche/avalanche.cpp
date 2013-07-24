@@ -41,30 +41,30 @@
 
 namespace Avalanche {
 
-	AvalancheEngine *AvalancheEngine::s_Engine = 0;
+AvalancheEngine *AvalancheEngine::s_Engine = 0;
 
-	AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd) {
-		_system = syst;
-		_console = new AvalancheConsole(this);
+AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd) {
+	_system = syst;
+	_console = new AvalancheConsole(this);
 
-		_rnd = new Common::RandomSource("avalanche");
-		_rnd->setSeed(42);     
+	_rnd = new Common::RandomSource("avalanche");
+	_rnd->setSeed(42);     
 
-		_graph.setParent(this);
+	_graph.setParent(this);
 
-		_gyro.setParent(this);
-		_enhanced.setParent(this);
-		_logger.setParent(this);
-		_pingo.setParent(this);
-		_scrolls.setParent(this);
-		_visa.setParent(this);
-		_lucerna.setParent(this);
-		_enid.setParent(this);
-		_celer.setParent(this);
-		_sequence.setParent(this);
-		_timeout.setParent(this);
-		_trip.setParent(this);
-		_acci.setParent(this);
+	_gyro.setParent(this);
+	_enhanced.setParent(this);
+	_logger.setParent(this);
+	_pingo.setParent(this);
+	_scrolls.setParent(this);
+	_visa.setParent(this);
+	_lucerna.setParent(this);
+	_enid.setParent(this);
+	_celer.setParent(this);
+	_sequence.setParent(this);
+	_timeout.setParent(this);
+	_trip.setParent(this);
+	_acci.setParent(this);
 	_basher.setParent(this);
 	_dropdown.setParent(this);
 	_closing.setParent(this);
