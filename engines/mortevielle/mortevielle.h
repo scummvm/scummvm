@@ -434,14 +434,14 @@ private:
 	void drawPictureWithText();
 	void addObjectToInventory(int objectId);
 	void putInHand(int &objId);
+	void initMaxAnswer();
+	void drawAnimFrame(int frameNum, int animId);
 
 	void copcha();
 	void adzon();
 	void premtet();
 	void ajchai();
 	void ecr2(Common::String text);
-	void initMaxAnswer();
-	void aniof(int ouf, int num);
 	void tlu(int af, int ob);
 	void mennor();
 	void tsuiv();
@@ -526,12 +526,13 @@ public:
 	void testKeyboard();
 	int  getPresence(int roomId);
 	void displayEmptyHand();
+	void displayPicture(const byte *pic, int x, int y);
 
-	void hirs();
 	int  gettKeyPressed();
 	void handleDescriptionText(int f, int mesgId);
-	int  animof(int ouf, int num);
-	void pictout(int seg, int dep, int x, int y);
+	int  getAnimOffset(int frameNum, int animNum);
+
+	void hirs();
 };
 
 extern MortevielleEngine *g_vm;
