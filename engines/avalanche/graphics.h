@@ -61,7 +61,7 @@ public:
 
 	
 
-	void setParent(AvalancheEngine *vm);
+	Graphics(AvalancheEngine *vm);
 
 	void init();
 

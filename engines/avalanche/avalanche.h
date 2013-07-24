@@ -65,7 +65,7 @@ static const int kSavegameVersion = 1;
 
 class AvalancheEngine : public Engine {
 public:
-	Graphics _graph;
+	Graphics *_graphics;
 
 	Avalot _avalot;
 	Gyro _gyro;
@@ -86,11 +86,13 @@ public:
 	Closing _closing;
 
 
+	OSystem *_system;
+
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
 
-	OSystem *_system;
+	Common::ErrorCode initialize(); 
 
 	GUI::Debugger *getDebugger();
 

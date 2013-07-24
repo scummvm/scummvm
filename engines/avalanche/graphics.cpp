@@ -43,7 +43,7 @@ const byte Graphics::_egaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58
 
 
 
-void Graphics::setParent(AvalancheEngine *vm) {
+Graphics::Graphics(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
