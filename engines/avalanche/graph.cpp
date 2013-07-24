@@ -48,7 +48,7 @@ void Graph::setParent(AvalancheEngine *vm) {
 }
 
 void Graph::init() {
-	initGraphics(_screenWidth, _screenHeight, true);
+	initGraphics(kScreenWidth, kScreenHeight, true);
 
 	for (int i = 0; i < 64; ++i) {
 		_egaPalette[i][0] = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
@@ -59,7 +59,7 @@ void Graph::init() {
 	for (byte i = 0; i < 16; i++)
 		g_system->getPaletteManager()->setPalette(_egaPalette[_egaPaletteIndex[i]], i, 1);
 
-	_surface.create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_surface.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Graph::~Graph() {
@@ -141,7 +141,7 @@ void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 }
 
 void Graph::refreshScreen() {
-	g_system->copyRectToScreen(_surface.pixels, _surface.pitch , 0, 0, _screenWidth, _screenHeight);
+	g_system->copyRectToScreen(_surface.pixels, _surface.pitch , 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
