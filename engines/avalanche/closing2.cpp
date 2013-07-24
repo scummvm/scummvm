@@ -38,12 +38,9 @@
 
 namespace Avalanche {
 
-Closing::Closing() {
-	warning("STUB: Closing::Closing()");
-}
-
-void Closing::setParent(AvalancheEngine *vm) {
+Closing::Closing(AvalancheEngine *vm) {
 	_vm = vm;
+	warning("STUB: Closing::Closing()");
 }
 
 void Closing::get_screen(byte which) {

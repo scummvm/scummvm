@@ -45,7 +45,7 @@
 
 namespace Avalanche {
 
-void Enid::setParent(AvalancheEngine *vm) {
+Enid::Enid(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
@@ -117,7 +117,7 @@ Common::String Enid::expanddate(byte d, byte m, uint16 y) {
 }
 
 void Enid::show_bug(char icon, Common::String strn) {
-	_vm->_scrolls.display(Common::String("\7\6\23") + icon + "\26\r" + strn + '\15');
+	_vm->_scrolls->display(Common::String("\7\6\23") + icon + "\26\r" + strn + '\15');
 }
 
 bool Enid::test_bug(byte what) {
@@ -150,9 +150,9 @@ void Enid::edna_save(Common::String name) {
 void Enid::loaderror(Common::String x, char icon) {
 	if (_vm->_gyro->holdthedawn) {
 		_vm->_gyro->holdthedawn = false;
-		_vm->_lucerna.dawn();
+		_vm->_lucerna->dawn();
 	}
-	_vm->_scrolls.display(Common::String('\7') + '\6' + '\23' + icon + '\26' + "Loading error:  " + "\r\r\22" + x);
+	_vm->_scrolls->display(Common::String('\7') + '\6' + '\23' + icon + '\26' + "Loading error:  " + "\r\r\22" + x);
 	bug = true;
 }
 
@@ -161,7 +161,7 @@ void Enid::edna_load(Common::String name) {
 }
 
 void Enid::showheader() {
-	_vm->_scrolls.display(Common::String("Dir: ") + path + "\r\r\4");
+	_vm->_scrolls->display(Common::String("Dir: ") + path + "\r\r\4");
 }
 
 void Enid::dir(Common::String where) { /* OK, it worked in Avaricius, let's do it in Avalot! */
@@ -246,7 +246,7 @@ void Enid::avvy_background() {    /* Not really a filing procedure,
 		@the_end:
 		end;
 	*/
-	_vm->_lucerna.blitfix();
+	_vm->_lucerna->blitfix();
 }
 
 void Enid::to_sundry(sundry &sund) {
@@ -277,17 +277,17 @@ void Enid::edna_reload() {
 	_vm->_gyro->seescroll = true;  /* This prevents display of the new sprites before the
 	new picture is loaded. */
 
-	_vm->_lucerna.major_redraw();
+	_vm->_lucerna->major_redraw();
 
 	_vm->_gyro->whereis[_vm->_gyro->pavalot] = _vm->_gyro->dna.room;
 
 	_vm->_gyro->alive = true;
 
-	_vm->_lucerna.objectlist();
+	_vm->_lucerna->objectlist();
 
 	if (_vm->_gyro->holdthedawn) {
 		_vm->_gyro->holdthedawn = false;
-		_vm->_lucerna.dawn();
+		_vm->_lucerna->dawn();
 	}
 }
 

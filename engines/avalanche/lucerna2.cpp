@@ -54,9 +54,7 @@
 
 namespace Avalanche {
 
-Lucerna::Lucerna() : fxhidden(false) {}
-
-void Lucerna::setParent(AvalancheEngine *vm) {
+Lucerna::Lucerna(AvalancheEngine *vm) : fxhidden(false) {
 	_vm = vm;
 }
 
@@ -68,16 +66,16 @@ void Lucerna::init() {
 }
 	
 void Lucerna::callverb(char n) {
-	if (n == _vm->_acci.pardon) {
-		_vm->_scrolls.display(Common::String("The f5 key lets you do a particular action in certain ") +
+	if (n == _vm->_acci->pardon) {
+		_vm->_scrolls->display(Common::String("The f5 key lets you do a particular action in certain ") +
 			"situations. However, at the moment there is nothing " +
 			"assigned to it. You may press alt-A to see what the " +
 			"current setting of this key is.");
 	} else {
 		_vm->_gyro->weirdword = false;
-		_vm->_acci.polite = true;
-		_vm->_acci.verb = n;
-		_vm->_acci.do_that();
+		_vm->_acci->polite = true;
+		_vm->_acci->verb = n;
+		_vm->_acci->do_that();
 	}
 }
 
@@ -272,7 +270,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 
 	load_also(xx);
-	_vm->_celer.load_chunks(xx);
+	_vm->_celer->load_chunks(xx);
 
 	_vm->_graphics->refreshScreen(); // _vm->_pingo->copy03();  -  See Avalot::setup()
 
@@ -307,7 +305,7 @@ void Lucerna::find_people(byte room) {
 
 void Lucerna::exitroom(byte x) {
 	//nosound();
-	_vm->_celer.forget_chunks();
+	_vm->_celer->forget_chunks();
 	_vm->_gyro->seescroll = true;  /* This stops the trippancy system working over the length of this procedure. */
 
 	switch (x) {
@@ -340,7 +338,7 @@ void Lucerna::exitroom(byte x) {
 }
 
 void Lucerna::new_town() {   /* You've just entered a town from the map. */
-	_vm->_dropdown.standard_bar();
+	_vm->_dropdown->standard_bar();
 
 	switch (_vm->_gyro->dna.room) {
 	case r__outsidenottspub: /* Entry into Nottingham. */
@@ -371,10 +369,10 @@ void Lucerna::new_town() {   /* You've just entered a town from the map. */
 void Lucerna::put_geida_at(byte whichped, byte &ped) {
 	if (ped == 0)
 		return;
-	_vm->_trip.tr[2].init(5, false, &_vm->_trip); /* load Geida */
-	_vm->_trip.apped(2, whichped);
-	_vm->_trip.tr[2].call_eachstep = true;
-	_vm->_trip.tr[2].eachstep = _vm->_trip.procgeida_procs;
+	_vm->_trip->tr[2].init(5, false, _vm->_trip); /* load Geida */
+	_vm->_trip->apped(2, whichped);
+	_vm->_trip->tr[2].call_eachstep = true;
+	_vm->_trip->tr[2].eachstep = _vm->_trip->procgeida_procs;
 }
 
 void Lucerna::enterroom(byte x, byte ped) {
@@ -405,7 +403,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 	switch (x) {
 	case r__yours:
 		if (_vm->_gyro->dna.avvy_in_bed) {
-			_vm->_celer.show_one(3);
+			_vm->_celer->show_one(3);
 			_vm->_timeout->set_up_timer(100, _vm->_timeout->procarkata_shouts, _vm->_timeout->reason_arkata_shouts);
 		}
 		break;
@@ -415,25 +413,25 @@ void Lucerna::enterroom(byte x, byte ped) {
 			if (! _vm->_gyro->dna.talked_to_crapulus) {
 
 				_vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__outsideyours;
-				_vm->_trip.tr[2].init(8, false, &_vm->_trip); /* load Crapulus */
+				_vm->_trip->tr[2].init(8, false, _vm->_trip); /* load Crapulus */
 
 				if (_vm->_gyro->dna.rooms[r__outsideyours] == 1) {
-					_vm->_trip.apped(2, 4); /* Start on the right-hand side of the screen. */
-					_vm->_trip.tr[2].walkto(5); /* Walks up to greet you. */
+					_vm->_trip->apped(2, 4); /* Start on the right-hand side of the screen. */
+					_vm->_trip->tr[2].walkto(5); /* Walks up to greet you. */
 				} else {
-					_vm->_trip.apped(2, 5); /* Starts where he was before. */
-					_vm->_trip.tr[2].face = 3;
+					_vm->_trip->apped(2, 5); /* Starts where he was before. */
+					_vm->_trip->tr[2].face = 3;
 				}
 
-				_vm->_trip.tr[2].call_eachstep = true;
-				_vm->_trip.tr[2].eachstep = _vm->_trip.procface_avvy; /* He always faces Avvy. */
+				_vm->_trip->tr[2].call_eachstep = true;
+				_vm->_trip->tr[2].eachstep = _vm->_trip->procface_avvy; /* He always faces Avvy. */
 
 			} else _vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__nowhere;
 
 			if (_vm->_gyro->dna.crapulus_will_tell) {
-				_vm->_trip.tr[2].init(8, false, &_vm->_trip);
-				_vm->_trip.apped(2, 2);
-				_vm->_trip.tr[2].walkto(4);
+				_vm->_trip->tr[2].init(8, false, _vm->_trip);
+				_vm->_trip->apped(2, 2);
+				_vm->_trip->tr[2].walkto(4);
 				_vm->_timeout->set_up_timer(20, _vm->_timeout->proccrapulus_splud_out, _vm->_timeout->reason_crapulus_says_spludwick_out);
 				_vm->_gyro->dna.crapulus_will_tell = false;
 			}
@@ -452,15 +450,15 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__spludwicks:
 		if (_vm->_gyro->dna.spludwicks_here) {
 			if (ped > 0) {
-				_vm->_trip.tr[2].init(2, false, &_vm->_trip); /* load Spludwick */
-				_vm->_trip.apped(2, 2);
+				_vm->_trip->tr[2].init(2, false, _vm->_trip); /* load Spludwick */
+				_vm->_trip->apped(2, 2);
 				_vm->_gyro->whereis['\227'] = r__spludwicks;
 			}
 
 			_vm->_gyro->dna.dogfoodpos = 0;  /* _vm->_gyro->also Spludwick pos. */
 
-			_vm->_trip.tr[2].call_eachstep = true;
-			_vm->_trip.tr[2].eachstep = _vm->_trip.procgeida_procs;
+			_vm->_trip->tr[2].call_eachstep = true;
+			_vm->_trip->tr[2].eachstep = _vm->_trip->procgeida_procs;
 		} else _vm->_gyro->whereis['\227'] = r__nowhere;
 		break;
 
@@ -471,18 +469,18 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_gyro->whereis[_vm->_gyro->pcwytalot] = r__nowhere;
 		} else {
 			if (ped > 0) {
-				_vm->_trip.tr[2].init(4, false, &_vm->_trip); /* 4=Cwytalot*/
-				_vm->_trip.tr[2].call_eachstep = true;
-				_vm->_trip.tr[2].eachstep = _vm->_trip.procfollow_avvy_y;
+				_vm->_trip->tr[2].init(4, false, _vm->_trip); /* 4=Cwytalot*/
+				_vm->_trip->tr[2].call_eachstep = true;
+				_vm->_trip->tr[2].eachstep = _vm->_trip->procfollow_avvy_y;
 				_vm->_gyro->whereis[_vm->_gyro->pcwytalot] = r__brummieroad;
 
 				if (_vm->_gyro->dna.rooms[r__brummieroad] == 1) { /* First time here... */
-					_vm->_trip.apped(2, 2); /* He appears on the right of the screen... */
-					_vm->_trip.tr[2].walkto(4); /* ...and he walks up... */
+					_vm->_trip->apped(2, 2); /* He appears on the right of the screen... */
+					_vm->_trip->tr[2].walkto(4); /* ...and he walks up... */
 				} else {
 					/* You've been here before. */
-					_vm->_trip.apped(2, 4); /* He's standing in your way straight away... */
-					_vm->_trip.tr[2].face = _vm->_trip.left;
+					_vm->_trip->apped(2, 4); /* He's standing in your way straight away... */
+					_vm->_trip->tr[2].face = _vm->_trip->left;
 				}
 			}
 		}
@@ -493,10 +491,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 		dnatype &with = _vm->_gyro->dna;
 		if ((with.cwytalot_gone) && (! with.cwytalot_in_herts) && (ped == 2) &&
 		        (_vm->_gyro->dna.rooms[r__argentroad] > 3)) {
-			_vm->_trip.tr[2].init(4, false, &_vm->_trip); /* 4=Cwytalot again*/
-			_vm->_trip.apped(2, 1);
-			_vm->_trip.tr[2].walkto(2);
-			_vm->_trip.tr[2].vanishifstill = true;
+			_vm->_trip->tr[2].init(4, false, _vm->_trip); /* 4=Cwytalot again*/
+			_vm->_trip->apped(2, 1);
+			_vm->_trip->tr[2].walkto(2);
+			_vm->_trip->tr[2].vanishifstill = true;
 			with.cwytalot_in_herts = true;
 			/*_vm->_gyro->whereis[#157]:=r__Nowhere;*/ /* can we fit this in? */
 			_vm->_timeout->set_up_timer(20, _vm->_timeout->proc_cwytalot_in_herts, _vm->_timeout->reason_cwytalot_in_herts);
@@ -506,7 +504,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__bridge: {
 		if (_vm->_gyro->dna.drawbridge_open == 4) { /*open*/
-			_vm->_celer.show_one(3); /* Position of drawbridge */
+			_vm->_celer->show_one(3); /* Position of drawbridge */
 			_vm->_gyro->magics[green].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
 		}
 		if (_vm->_gyro->dna.geida_follows)  put_geida_at(ped + 3, ped); /* load Geida */
@@ -517,9 +515,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (ped > 0) {
 			if (! _vm->_gyro->dna.been_tied_up) {
 				/* A welcome party... or maybe not... */
-				_vm->_trip.tr[2].init(6, false, &_vm->_trip);
-				_vm->_trip.apped(2, 2);
-				_vm->_trip.tr[2].walkto(3);
+				_vm->_trip->tr[2].init(6, false, _vm->_trip);
+				_vm->_trip->apped(2, 2);
+				_vm->_trip->tr[2].walkto(3);
 				_vm->_timeout->set_up_timer(36, _vm->_timeout->procget_tied_up, _vm->_timeout->reason_getting_tied_up);
 			}
 		}
@@ -530,10 +528,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 
 		if (_vm->_gyro->dna.tied_up)
-			_vm->_celer.show_one(2);
+			_vm->_celer->show_one(2);
 
 		if (! _vm->_gyro->dna.mushroom_growing) 
-			_vm->_celer.show_one(3);
+			_vm->_celer->show_one(3);
 	}
 	break;
 
@@ -541,9 +539,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (ped > 0)
 			switch (_vm->_gyro->dna.cardiff_things) {
 			case 0 : { /* You've answered NONE of his questions. */
-				_vm->_trip.tr[2].init(9, false, &_vm->_trip);
-				_vm->_trip.apped(2, 2);
-				_vm->_trip.tr[2].walkto(3);
+				_vm->_trip->tr[2].init(9, false, _vm->_trip);
+				_vm->_trip->apped(2, 2);
+				_vm->_trip->tr[2].walkto(3);
 				_vm->_timeout->set_up_timer(47, _vm->_timeout->proccardiffsurvey, _vm->_timeout->reason_cardiffsurvey);
 			}
 			break;
@@ -551,9 +549,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_gyro->magics[2].op = _vm->_gyro->nix;
 				break; /* You've answered ALL his questions. => nothing happens. */
 			default: { /* You've answered SOME of his questions. */
-				_vm->_trip.tr[2].init(9, false, &_vm->_trip);
-				_vm->_trip.apped(2, 3);
-				_vm->_trip.tr[2].face = _vm->_trip.right;
+				_vm->_trip->tr[2].init(9, false, _vm->_trip);
+				_vm->_trip->apped(2, 3);
+				_vm->_trip->tr[2].face = _vm->_trip->right;
 				_vm->_timeout->set_up_timer(3, _vm->_timeout->proccardiff_return, _vm->_timeout->reason_cardiffsurvey);
 			}
 			}
@@ -574,18 +572,18 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__argentpub: {
-		if (_vm->_gyro->dna.wonnim)  _vm->_celer.show_one(1);   /* No lute by the settle. */
+		if (_vm->_gyro->dna.wonnim)  _vm->_celer->show_one(1);   /* No lute by the settle. */
 		_vm->_gyro->dna.malagauche = 0; /* Ready to boot Malagauche */
 		if (_vm->_gyro->dna.givenbadgetoiby) {
-			_vm->_celer.show_one(8);
-			_vm->_celer.show_one(9);
+			_vm->_celer->show_one(8);
+			_vm->_celer->show_one(9);
 		}
 	}
 	break;
 
 	case r__lustiesroom: {
 		_vm->_gyro->dna.dogfoodpos = 1; /* Actually, du Lustie pos. */
-		if (_vm->_trip.tr[1].whichsprite == 0) /* Avvy in his normal clothes */
+		if (_vm->_trip->tr[1].whichsprite == 0) /* Avvy in his normal clothes */
 			_vm->_timeout->set_up_timer(3, _vm->_timeout->proccallsguards, _vm->_timeout->reason_du_lustie_talks);
 		else if (! _vm->_gyro->dna.entered_lusties_room_as_monk) /*already*/
 			/* Presumably, Avvy dressed as a monk. */
@@ -593,7 +591,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 		if (_vm->_gyro->dna.geida_follows) {
 			put_geida_at(5, ped);
-			if (_vm->_gyro->dna.lustie_is_asleep)  _vm->_celer.show_one(5);
+			if (_vm->_gyro->dna.lustie_is_asleep)  _vm->_celer->show_one(5);
 		}
 	}
 	break;
@@ -601,96 +599,96 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__musicroom: {
 		if (_vm->_gyro->dna.jacques_awake > 0) {
 			_vm->_gyro->dna.jacques_awake = 5;
-			_vm->_celer.show_one(2);
-			_vm->_celer.show_one(4);
+			_vm->_celer->show_one(2);
+			_vm->_celer->show_one(4);
 			_vm->_gyro->magics[brown].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pjacques] = 0;
 		}
 		if (ped != 0) {
-			_vm->_celer.show_one(6);
-			_vm->_sequence.first_show(5);
-			_vm->_sequence.then_show(7);
-			_vm->_sequence.start_to_close();
+			_vm->_celer->show_one(6);
+			_vm->_sequence->first_show(5);
+			_vm->_sequence->then_show(7);
+			_vm->_sequence->start_to_close();
 		}
 	}
 	break;
 
 	case r__outsidenottspub:
 		if (ped == 2) {
-			_vm->_celer.show_one(3);
-			_vm->_sequence.first_show(2);
-			_vm->_sequence.then_show(1);
-			_vm->_sequence.then_show(4);
-			_vm->_sequence.start_to_close();
+			_vm->_celer->show_one(3);
+			_vm->_sequence->first_show(2);
+			_vm->_sequence->then_show(1);
+			_vm->_sequence->then_show(4);
+			_vm->_sequence->start_to_close();
 		}
 		break;
 
 	case r__outsideargentpub:
 		if (ped == 2)  {
-			_vm->_celer.show_one(6);
-			_vm->_sequence.first_show(5);
-			_vm->_sequence.then_show(7);
-			_vm->_sequence.start_to_close();
+			_vm->_celer->show_one(6);
+			_vm->_sequence->first_show(5);
+			_vm->_sequence->then_show(7);
+			_vm->_sequence->start_to_close();
 		}
 		break;
 
 	case r__wisewomans: {
-		_vm->_trip.tr[2].init(11, false, &_vm->_trip);
+		_vm->_trip->tr[2].init(11, false, _vm->_trip);
 		if ((_vm->_gyro->dna.rooms[r__wisewomans] == 1) && (ped > 0)) {
-			_vm->_trip.apped(2, 2); /* Start on the right-hand side of the screen. */
-			_vm->_trip.tr[2].walkto(4); /* Walks up to greet you. */
+			_vm->_trip->apped(2, 2); /* Start on the right-hand side of the screen. */
+			_vm->_trip->tr[2].walkto(4); /* Walks up to greet you. */
 		} else {
-			_vm->_trip.apped(2, 4); /* Starts where she was before. */
-			_vm->_trip.tr[2].face = 3;
+			_vm->_trip->apped(2, 4); /* Starts where she was before. */
+			_vm->_trip->tr[2].face = 3;
 		}
 
-		_vm->_trip.tr[2].call_eachstep = true;
-		_vm->_trip.tr[2].eachstep = _vm->_trip.procface_avvy; /* She always faces Avvy. */
+		_vm->_trip->tr[2].call_eachstep = true;
+		_vm->_trip->tr[2].eachstep = _vm->_trip->procface_avvy; /* She always faces Avvy. */
 	}
 	break;
 
 	case r__insidecardiffcastle:
 		if (ped > 0) {
-			_vm->_trip.tr[2].init(10, false, &_vm->_trip); /* Define the dart. */
-			_vm->_sequence.first_show(1);
+			_vm->_trip->tr[2].init(10, false, _vm->_trip); /* Define the dart. */
+			_vm->_sequence->first_show(1);
 			if (_vm->_gyro->dna.arrow_in_the_door)
-				_vm->_sequence.then_show(3);
+				_vm->_sequence->then_show(3);
 			else
-				_vm->_sequence.then_show(2);
+				_vm->_sequence->then_show(2);
 
 			if (_vm->_gyro->dna.taken_pen)
-				_vm->_celer.show_one(4);
+				_vm->_celer->show_one(4);
 
-			_vm->_sequence.start_to_close();
+			_vm->_sequence->start_to_close();
 		} else {
-			_vm->_celer.show_one(1);
-			if (_vm->_gyro->dna.arrow_in_the_door)  _vm->_celer.show_one(3);
-			else _vm->_celer.show_one(2);
+			_vm->_celer->show_one(1);
+			if (_vm->_gyro->dna.arrow_in_the_door)  _vm->_celer->show_one(3);
+			else _vm->_celer->show_one(2);
 		}
 		break;
 
 	case r__avvysgarden:
 		if (ped == 1)  {
-			_vm->_celer.show_one(2);
-			_vm->_sequence.first_show(1);
-			_vm->_sequence.then_show(3);
-			_vm->_sequence.start_to_close();
+			_vm->_celer->show_one(2);
+			_vm->_sequence->first_show(1);
+			_vm->_sequence->then_show(3);
+			_vm->_sequence->start_to_close();
 		}
 		break;
 
 	case r__entrancehall:
 	case r__insideabbey:
 		if (ped == 2)  {
-			_vm->_celer.show_one(2);
-			_vm->_sequence.first_show(1);
-			_vm->_sequence.then_show(3);
-			_vm->_sequence.start_to_close();
+			_vm->_celer->show_one(2);
+			_vm->_sequence->first_show(1);
+			_vm->_sequence->then_show(3);
+			_vm->_sequence->start_to_close();
 		}
 		break;
 
 	case r__aylesoffice:
 		if (_vm->_gyro->dna.ayles_is_awake)
-			_vm->_celer.show_one(2);
+			_vm->_celer->show_one(2);
 		break; /* Ayles awake. */
 
 	case r__geidas:
@@ -707,7 +705,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		break;
 
 	case r__nottspub: {
-		if (_vm->_gyro->dna.sitting_in_pub)  _vm->_celer.show_one(3);
+		if (_vm->_gyro->dna.sitting_in_pub)  _vm->_celer->show_one(3);
 		_vm->_gyro->dna.dogfoodpos = 1; /* Actually, du Lustie pos. */
 	}
 	break;
@@ -715,11 +713,11 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__outsideducks:
 		if (ped == 2) {
 			/* Shut the door */
-			_vm->_celer.show_one(3);
-			_vm->_sequence.first_show(2);
-			_vm->_sequence.then_show(1);
-			_vm->_sequence.then_show(4);
-			_vm->_sequence.start_to_close();
+			_vm->_celer->show_one(3);
+			_vm->_sequence->first_show(2);
+			_vm->_sequence->then_show(1);
+			_vm->_sequence->then_show(4);
+			_vm->_sequence->start_to_close();
 		}
 		break;
 	case r__ducks:
@@ -779,7 +777,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	setactivepage(1 - cp);*/
 
 	for (byte fv = 0; fv <= 1; fv ++)
-		_vm->_trip.getset[fv].remember(thinkspace);
+		_vm->_trip->getset[fv].remember(thinkspace);
 	
 	_vm->_gyro->on();
 	_vm->_gyro->thinkthing = th;
@@ -862,7 +860,7 @@ void Lucerna::showscore() {
 			_vm->_graphics->drawPicture(_vm->_gyro->digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
 	for (byte fv = 0; fv < 2; fv ++)
-		_vm->_trip.getset[fv].remember(scorespace);
+		_vm->_trip->getset[fv].remember(scorespace);
 
 	//setactivepage(1 - cp);
 
@@ -887,7 +885,7 @@ void Lucerna::points(byte num) {     /* Add on no. of points */
 
 void Lucerna::topcheck() {
 	/* Menuset */
-	_vm->_dropdown.ddm_m.getmenu(_vm->_gyro->mpx);
+	_vm->_dropdown->ddm_m.getmenu(_vm->_gyro->mpx);
 	/* Do this one */
 }
 
@@ -943,46 +941,46 @@ void Lucerna::verte() {
 		return;
 
 
-	/* _vm->_trip.tr[0] : that's the only one we're interested in here */
-	if (_vm->_gyro->mx < _vm->_trip.tr[0].x) 
+	/* _vm->_trip->tr[0] : that's the only one we're interested in here */
+	if (_vm->_gyro->mx < _vm->_trip->tr[0].x) 
 		what = 1;
-	else if (_vm->_gyro->mx > (unsigned char)(_vm->_trip.tr[0].x + _vm->_trip.tr[0]._info.xl)) 
+	else if (_vm->_gyro->mx > (unsigned char)(_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info.xl)) 
 		what = 2;
 	else
 		what = 0; /* On top */
 
-	if (_vm->_gyro->my < _vm->_trip.tr[0].y)
+	if (_vm->_gyro->my < _vm->_trip->tr[0].y)
 		what += 3;
-	else if (_vm->_gyro->my > (unsigned char)(_vm->_trip.tr[0].y + _vm->_trip.tr[0]._info.yl))
+	else if (_vm->_gyro->my > (unsigned char)(_vm->_trip->tr[0].y + _vm->_trip->tr[0]._info.yl))
 		what += 6;
 
 	switch (what) {
 	case 0:
-		_vm->_trip.stopwalking();
+		_vm->_trip->stopwalking();
 		break; /* Clicked on Avvy- no movement */
 	case 1:
-		_vm->_trip.rwsp(1, _vm->_trip.left);
+		_vm->_trip->rwsp(1, _vm->_trip->left);
 		break;
 	case 2:
-		_vm->_trip.rwsp(1, _vm->_trip.right);
+		_vm->_trip->rwsp(1, _vm->_trip->right);
 		break;
 	case 3:
-		_vm->_trip.rwsp(1, _vm->_trip.up);
+		_vm->_trip->rwsp(1, _vm->_trip->up);
 		break;
 	case 4:
-		_vm->_trip.rwsp(1, _vm->_trip.ul);
+		_vm->_trip->rwsp(1, _vm->_trip->ul);
 		break;
 	case 5:
-		_vm->_trip.rwsp(1, _vm->_trip.ur);
+		_vm->_trip->rwsp(1, _vm->_trip->ur);
 		break;
 	case 6:
-		_vm->_trip.rwsp(1, _vm->_trip.down);
+		_vm->_trip->rwsp(1, _vm->_trip->down);
 		break;
 	case 7:
-		_vm->_trip.rwsp(1, _vm->_trip.dl);
+		_vm->_trip->rwsp(1, _vm->_trip->dl);
 		break;
 	case 8:
-		_vm->_trip.rwsp(1, _vm->_trip.dr);
+		_vm->_trip->rwsp(1, _vm->_trip->dr);
 		break;
 	}    /* no other values are possible... */
 
@@ -1209,7 +1207,7 @@ void Lucerna::delavvy() {
 
 	_vm->_gyro->off();
 	
-	triptype &with = _vm->_trip.tr[0];
+	triptype &with = _vm->_trip->tr[0];
 	for (page_ = 0; page_ <= 1; page_ ++)
 		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
 	
@@ -1223,16 +1221,16 @@ void Lucerna::gameover() {
 
 	_vm->_gyro->dna.user_moves_avvy = false;
 
-	sx = _vm->_trip.tr[1].x;
-	sy = _vm->_trip.tr[1].y;
+	sx = _vm->_trip->tr[1].x;
+	sy = _vm->_trip->tr[1].y;
 	
-	_vm->_trip.tr[1].done();
-	_vm->_trip.tr[1].init(12, true, &_vm->_trip);       /* 12 = Avalot falls */
-	_vm->_trip.tr[1].step = 0;
-	_vm->_trip.tr[1].appear(sx, sy, 0);
+	_vm->_trip->tr[1].done();
+	_vm->_trip->tr[1].init(12, true, _vm->_trip);       /* 12 = Avalot falls */
+	_vm->_trip->tr[1].step = 0;
+	_vm->_trip->tr[1].appear(sx, sy, 0);
 	
 	_vm->_timeout->set_up_timer(3, _vm->_timeout->procavalot_falls, _vm->_timeout->reason_falling_over);
-	/* _vm->_scrolls.display(^m^m^m^m^m^m^i^i^i^i^i^i^s'Z'^v);*/
+	/* _vm->_scrolls->display(^m^m^m^m^m^m^i^i^i^i^i^i^s'Z'^v);*/
 	_vm->_gyro->alive = false;
 }
 
@@ -1247,7 +1245,7 @@ void Lucerna::minor_redraw() {
 
 	for (fv = 0; fv <= 1; fv ++) {
 		_vm->_gyro->cp = 1 - _vm->_gyro->cp;
-		_vm->_trip.getback();
+		_vm->_trip->getback();
 	}
 	
 	for (byte i = 0; i < 3; i++)
@@ -1268,16 +1266,16 @@ uint16 Lucerna::bearing(byte whichped) {
 	uint16 bearing_result; 
 	{
 		pedtype &with = _vm->_gyro->peds[whichped];
-		if (_vm->_trip.tr[1].x == with.x)
+		if (_vm->_trip->tr[1].x == with.x)
 			bearing_result = 0; /* This would cause a division by zero if we let it through. */
 		else {
 			/*
-			 bearing:=trunc(((arctan((_vm->_trip.tr[1].y-y)/(_vm->_trip.tr[1].x-x)))*rad2deg)+90) mod 360*/
+			 bearing:=trunc(((arctan((_vm->_trip->tr[1].y-y)/(_vm->_trip->tr[1].x-x)))*rad2deg)+90) mod 360*/
 		
-			if (_vm->_trip.tr[1].x < with.x)
-				bearing_result = (atan(double((_vm->_trip.tr[1].y - with.y)) / (_vm->_trip.tr[1].x - with.x)) * rad2deg) + 90;
+			if (_vm->_trip->tr[1].x < with.x)
+				bearing_result = (atan(double((_vm->_trip->tr[1].y - with.y)) / (_vm->_trip->tr[1].x - with.x)) * rad2deg) + 90;
 			else
-				bearing_result = (atan(double((_vm->_trip.tr[1].y - with.y)) / (_vm->_trip.tr[1].x - with.x)) * rad2deg) + 270;
+				bearing_result = (atan(double((_vm->_trip->tr[1].y - with.y)) / (_vm->_trip->tr[1].x - with.x)) * rad2deg) + 270;
 		}
 	}
 	return bearing_result;
@@ -1293,8 +1291,8 @@ void Lucerna::sprite_run() {
 	_vm->_gyro->doing_sprite_run = true;
 
 	for (fv = 0; fv <= 1; fv ++) {
-		_vm->_trip.get_back_loretta();
-		_vm->_trip.trippancy_link();
+		_vm->_trip->get_back_loretta();
+		_vm->_trip->trippancy_link();
 
 		flip_page();
 	}
@@ -1306,7 +1304,7 @@ void Lucerna::sprite_run() {
 void Lucerna::fix_flashers() {
 	_vm->_gyro->ledstatus = 177;
 	_vm->_gyro->oldrw = 177;
-	_vm->_scrolls.state(2);
+	_vm->_scrolls->state(2);
 	showrw();
 }
 

@@ -42,12 +42,9 @@ namespace Avalanche {
 const int16 Celer::on_disk = -1;
 
 
-Celer::Celer() {
-	num_chunks = 0;
-}
-
-void Celer::setParent(AvalancheEngine *vm) {
+Celer::Celer(AvalancheEngine *vm) {
 	_vm = vm;
+	num_chunks = 0;
 }
 
 void Celer::pics_link() {
@@ -121,11 +118,11 @@ void Celer::pics_link() {
 		}
 
 		if ((_vm->_gyro->roomtime % 200 >= 0) && (_vm->_gyro->roomtime % 200 <= 178)) { /* Normally. */
-			if (((_vm->_lucerna.bearing(2) >= 1) && (_vm->_lucerna.bearing(2) <= 90)) || ((_vm->_lucerna.bearing(2) >= 358) && (_vm->_lucerna.bearing(2) <= 360)))
+			if (((_vm->_lucerna->bearing(2) >= 1) && (_vm->_lucerna->bearing(2) <= 90)) || ((_vm->_lucerna->bearing(2) >= 358) && (_vm->_lucerna->bearing(2) <= 360)))
 				xx = 3;
-			else if ((_vm->_lucerna.bearing(2) >= 293) && (_vm->_lucerna.bearing(2) <= 357))
+			else if ((_vm->_lucerna->bearing(2) >= 293) && (_vm->_lucerna->bearing(2) <= 357))
 				xx = 2;
-			else if ((_vm->_lucerna.bearing(2) >= 271) && (_vm->_lucerna.bearing(2) <= 292))
+			else if ((_vm->_lucerna->bearing(2) >= 271) && (_vm->_lucerna->bearing(2) <= 292))
 				xx = 4;
 
 			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
@@ -160,11 +157,11 @@ void Celer::pics_link() {
 				xx = 4; /* du Lustie blinks */
 
 			/* Bearing of Avvy from du Lustie. */
-			else if (((_vm->_lucerna.bearing(2) >= 0) && (_vm->_lucerna.bearing(2) <= 45)) || ((_vm->_lucerna.bearing(2) >= 315) && (_vm->_lucerna.bearing(2) <= 360)))
+			else if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
 					xx = 1; /* Middle. */
-			else if ((_vm->_lucerna.bearing(2) >= 45) && (_vm->_lucerna.bearing(2) <= 180))
+			else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
 					xx = 2; /* Left. */
-			else if ((_vm->_lucerna.bearing(2) >= 181) && (_vm->_lucerna.bearing(2) <= 314))
+			else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
 				xx = 3; /* Right. */
 
 			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
@@ -202,11 +199,11 @@ void Celer::pics_link() {
 
 	case r__nottspub:
 		/* Bearing of Avvy from Port. */
-		if (((_vm->_lucerna.bearing(5) >= 0) && (_vm->_lucerna.bearing(5) <= 45)) || ((_vm->_lucerna.bearing(5) >= 315) && (_vm->_lucerna.bearing(5) <= 360)))
+		if (((_vm->_lucerna->bearing(5) >= 0) && (_vm->_lucerna->bearing(5) <= 45)) || ((_vm->_lucerna->bearing(5) >= 315) && (_vm->_lucerna->bearing(5) <= 360)))
 			xx = 2; /* Middle. */
-		else if ((_vm->_lucerna.bearing(5) >= 45) && (_vm->_lucerna.bearing(5) <= 180))
+		else if ((_vm->_lucerna->bearing(5) >= 45) && (_vm->_lucerna->bearing(5) <= 180))
 			xx = 6; /* Left. */
-		else if ((_vm->_lucerna.bearing(5) >= 181) && (_vm->_lucerna.bearing(5) <= 314))
+		else if ((_vm->_lucerna->bearing(5) >= 181) && (_vm->_lucerna->bearing(5) <= 314))
 			xx = 8; /* Right. */
 
 		if ((_vm->_gyro->roomtime % int32(60)) > 57)
@@ -231,12 +228,12 @@ void Celer::pics_link() {
 		if ((_vm->_gyro->roomtime % 3) == 0) /* The fire flickers */
 			show_one(1 + (_vm->_gyro->roomtime / 3) % 3);
 
-		{/* _vm->_lucerna.bearing of Avvy from Duck. */
-		if (((_vm->_lucerna.bearing(2) >= 0) && (_vm->_lucerna.bearing(2) <= 45)) || ((_vm->_lucerna.bearing(2) >= 315) && (_vm->_lucerna.bearing(2) <= 360)))
+		{/* _vm->_lucerna->bearing of Avvy from Duck. */
+		if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
 			xx = 4; /* Middle. */
-		else if ((_vm->_lucerna.bearing(2) >= 45) && (_vm->_lucerna.bearing(2) <= 180))
+		else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
 			xx = 6; /* Left. */
-		else if ((_vm->_lucerna.bearing(2) >= 181) && (_vm->_lucerna.bearing(2) <= 314))
+		else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
 			xx = 8; /* Right. */
 
 		if ((_vm->_gyro->roomtime % int32(45)) > 42)
@@ -468,7 +465,7 @@ void Celer::show_one(byte which) {
 	warning("STUB: Celer::show_one()");
 
 	for (byte fv = 0; fv < 2; fv ++)
-		_vm->_trip.getset[fv].remember(r);
+		_vm->_trip->getset[fv].remember(r);
 }
 
 
@@ -517,7 +514,7 @@ void Celer::show_one_at(byte which, int16 xxx, int16 yyy) {
 	warning("STUB: Celer::show_one_at()");
 
 	for (byte fv = 0; fv < 2; fv ++)
-		_vm->_trip.getset[fv].remember(r);
+		_vm->_trip->getset[fv].remember(r);
 }
 
 

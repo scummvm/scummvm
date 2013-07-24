@@ -46,7 +46,7 @@ public:
 	byte seq[seq_length];
 
 
-	void setParent(AvalancheEngine *vm);
+	Sequence(AvalancheEngine *vm);
 
 	void first_show(byte what);
 

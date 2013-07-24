@@ -206,7 +206,7 @@ void menuset::update() {
 		ddms[fv].display();
 
 	for (page_ = 0; page_ <= 1; page_ ++)
-		_dr->_vm->_trip.getset[page_].remember(menuspace);
+		_dr->_vm->_trip->getset[page_].remember(menuspace);
 
 	_dr->_vm->_gyro->cp = savecp;
 }
@@ -246,7 +246,7 @@ void menuset::getmenu(int16 x) {
 
 
 
-void Dropdown::setParent(AvalancheEngine *vm) {
+Dropdown::Dropdown(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
@@ -255,26 +255,26 @@ void Dropdown::find_what_you_can_do_with_it() {
 	case _vm->_gyro->wine:
 	case _vm->_gyro->potion:
 	case _vm->_gyro->ink:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci.vb_exam) + _vm->_acci.vb_drink;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_drink;
 		break;
 	case _vm->_gyro->bell:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci.vb_exam) + _vm->_acci.vb_ring;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_ring;
 		break;
 	case _vm->_gyro->chastity:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci.vb_exam) + _vm->_acci.vb_wear;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_wear;
 		break;
 	case _vm->_gyro->lute:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci.vb_exam) + _vm->_acci.vb_play;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_play;
 		break;
 	case _vm->_gyro->mushroom:
 	case _vm->_gyro->onion:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci.vb_exam) + _vm->_acci.vb_eat;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_eat;
 		break;
 	case _vm->_gyro->clothes:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci.vb_exam) + _vm->_acci.vb_wear;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_wear;
 		break;
 	default:
-		_vm->_gyro->verbstr = _vm->_acci.vb_exam; /* anything else */
+		_vm->_gyro->verbstr = _vm->_acci->vb_exam; /* anything else */
 	}
 }
 
@@ -310,7 +310,7 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 		}
 	}
 
-	_vm->_lucerna.blitfix();
+	_vm->_lucerna->blitfix();
 }
 
 void Dropdown::hlchalk(int16 x, int16 y, char t, Common::String z, bool valid) {
@@ -418,12 +418,12 @@ void Dropdown::ddm__action() {
 			ddm_o.opt(Common::String(n.c_str() + 2, 253), n[1], "f5", true);
 		ddm_o.opt("Pause game", 'P', "f6", true);
 		if (_vm->_gyro->dna.room == 99)
-			ddm_o.opt("Journey thither", 'J', "f7", _vm->_trip.neardoor());
+			ddm_o.opt("Journey thither", 'J', "f7", _vm->_trip->neardoor());
 		else
-			ddm_o.opt("Open the door", 'O', "f7", _vm->_trip.neardoor());
+			ddm_o.opt("Open the door", 'O', "f7", _vm->_trip->neardoor());
 		ddm_o.opt("Look around", 'L', "f8", true);
 		ddm_o.opt("Inventory", 'I', "Tab", true);
-		if (_vm->_trip.tr[1].xs == _vm->_gyro->walk)
+		if (_vm->_trip->tr[1].xs == _vm->_gyro->walk)
 			ddm_o.opt("Run fast", 'R', "^R", true);
 		else
 			ddm_o.opt("Walk slowly", 'W', "^W", true);
@@ -501,19 +501,19 @@ void Dropdown::do__game() {
 	switch (ddm_o.choicenum) {
 		/* Help, boss, untrash screen. */
 	case 0:
-		_vm->_lucerna.callverb(_vm->_acci.vb_help);
+		_vm->_lucerna->callverb(_vm->_acci->vb_help);
 		break;
 	case 1:
-		_vm->_lucerna.callverb(_vm->_acci.vb_boss);
+		_vm->_lucerna->callverb(_vm->_acci->vb_boss);
 		break;
 	case 2:
-		_vm->_lucerna.major_redraw();
+		_vm->_lucerna->major_redraw();
 		break;
 	case 3:
-		_vm->_lucerna.callverb(_vm->_acci.vb_score);
+		_vm->_lucerna->callverb(_vm->_acci->vb_score);
 		break;
 	case 4:
-		_vm->_lucerna.callverb(_vm->_acci.vb_info);
+		_vm->_lucerna->callverb(_vm->_acci->vb_info);
 		break;
 	}
 }
@@ -522,26 +522,26 @@ void Dropdown::do__file() {
 	switch (ddm_o.choicenum) {
 		/* New game, load, save, save as, DOS shell, about, quit. */
 	case 0:
-		_vm->_lucerna.callverb(_vm->_acci.vb_restart);
+		_vm->_lucerna->callverb(_vm->_acci->vb_restart);
 		break;
 	case 1: {
-		_vm->_acci.realwords[2] = "";
-		_vm->_lucerna.callverb(_vm->_acci.vb_load);
+		_vm->_acci->realwords[2] = "";
+		_vm->_lucerna->callverb(_vm->_acci->vb_load);
 	}
 	break;
 	case 2: {
-		_vm->_acci.realwords[2] = "";
-		_vm->_lucerna.callverb(_vm->_acci.vb_save);
+		_vm->_acci->realwords[2] = "";
+		_vm->_lucerna->callverb(_vm->_acci->vb_save);
 	}
 	break;
 	case 3:
-		_vm->_basher.filename_edit();
+		_vm->_basher->filename_edit();
 		break;
 	case 4:
-		_vm->_enid.back_to_bootstrap(2);
+		_vm->_enid->back_to_bootstrap(2);
 		break;
 	case 5:
-		_vm->_lucerna.callverb(_vm->_acci.vb_quit);
+		_vm->_lucerna->callverb(_vm->_acci->vb_quit);
 		break;
 	}
 }
@@ -551,99 +551,99 @@ void Dropdown::do__action() {
 	switch (ddm_o.choicenum) {
 		/* Get up/pause game/open door/look/inv/walk-run */
 	case 0: {
-		_vm->_acci.person = _vm->_acci.pardon;
-		_vm->_acci.thing = _vm->_acci.pardon;
+		_vm->_acci->person = _vm->_acci->pardon;
+		_vm->_acci->thing = _vm->_acci->pardon;
 		n = _vm->_gyro->f5_does();
-		_vm->_lucerna.callverb(n[1]);
+		_vm->_lucerna->callverb(n[1]);
 	}
 	break;
 	case 1:
-		_vm->_lucerna.callverb(_vm->_acci.vb_pause);
+		_vm->_lucerna->callverb(_vm->_acci->vb_pause);
 		break;
 	case 2:
-		_vm->_lucerna.callverb(_vm->_acci.vb_open);
+		_vm->_lucerna->callverb(_vm->_acci->vb_open);
 		break;
 	case 3:
-		_vm->_lucerna.callverb(_vm->_acci.vb_look);
+		_vm->_lucerna->callverb(_vm->_acci->vb_look);
 		break;
 	case 4:
-		_vm->_lucerna.callverb(_vm->_acci.vb_inv);
+		_vm->_lucerna->callverb(_vm->_acci->vb_inv);
 		break;
 	case 5: {
-		if (_vm->_trip.tr[1].xs == _vm->_gyro->walk)  _vm->_trip.tr[1].xs = _vm->_gyro->run;
-		else _vm->_trip.tr[1].xs = _vm->_gyro->walk;
-		_vm->_trip.newspeed();
+		if (_vm->_trip->tr[1].xs == _vm->_gyro->walk)  _vm->_trip->tr[1].xs = _vm->_gyro->run;
+		else _vm->_trip->tr[1].xs = _vm->_gyro->walk;
+		_vm->_trip->newspeed();
 	}
 	break;
 	}
 }
 
 void Dropdown::do__objects() {
-	_vm->_lucerna.thinkabout(_vm->_gyro->objlist[ddm_o.choicenum + 1], _vm->_gyro->a_thing);
+	_vm->_lucerna->thinkabout(_vm->_gyro->objlist[ddm_o.choicenum + 1], _vm->_gyro->a_thing);
 }
 
 void Dropdown::do__people() {
-	_vm->_lucerna.thinkabout(people[ddm_o.choicenum + 1], _vm->_gyro->a_person);
+	_vm->_lucerna->thinkabout(people[ddm_o.choicenum + 1], _vm->_gyro->a_person);
 	_vm->_gyro->last_person = people[ddm_o.choicenum + 1];
 }
 
 void Dropdown::do__with() {
-	_vm->_acci.thing = _vm->_gyro->thinks;
+	_vm->_acci->thing = _vm->_gyro->thinks;
 
 	if (_vm->_gyro->thinkthing) {
 
-		_vm->_acci.thing += 49;
+		_vm->_acci->thing += 49;
 
-		if (_vm->_gyro->verbstr[ddm_o.choicenum + 1] == _vm->_acci.vb_give)
-			_vm->_acci.person = _vm->_gyro->last_person;
+		if (_vm->_gyro->verbstr[ddm_o.choicenum + 1] == _vm->_acci->vb_give)
+			_vm->_acci->person = _vm->_gyro->last_person;
 		else
-			_vm->_acci.person = '\376';
+			_vm->_acci->person = '\376';
 
 	} else {
 		switch (_vm->_gyro->verbstr[ddm_o.choicenum + 1]) {
 		case '\144': {
-			_vm->_acci.thing = '\144';
-			_vm->_lucerna.callverb(_vm->_acci.vb_buy);
+			_vm->_acci->thing = '\144';
+			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
 		break; /* Beer */
 		case '\145': {
-			_vm->_acci.thing = '\62';
-			_vm->_lucerna.callverb(_vm->_acci.vb_buy);
+			_vm->_acci->thing = '\62';
+			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
 		break; /* Wine */
 		case '\146': {
-			_vm->_acci.thing = '\146';
-			_vm->_lucerna.callverb(_vm->_acci.vb_buy);
+			_vm->_acci->thing = '\146';
+			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
 		break; /* Whisky */
 		case '\147': {
-			_vm->_acci.thing = '\147';
-			_vm->_lucerna.callverb(_vm->_acci.vb_buy);
+			_vm->_acci->thing = '\147';
+			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
 		break; /* Cider */
 		case '\150': {
-			_vm->_acci.thing = '\153';
-			_vm->_lucerna.callverb(_vm->_acci.vb_buy);
+			_vm->_acci->thing = '\153';
+			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
 		break; /* Mead */
 		case '\151': {
-			_vm->_acci.thing = '\103';
-			_vm->_lucerna.callverb(_vm->_acci.vb_buy);
+			_vm->_acci->thing = '\103';
+			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
 		break; /* Onion (trader) */
 		default: {
-			_vm->_acci.person = _vm->_acci.thing;
-			_vm->_acci.thing = '\376';
+			_vm->_acci->person = _vm->_acci->thing;
+			_vm->_acci->thing = '\376';
 		}
 		}
 	}
-	_vm->_lucerna.callverb(_vm->_gyro->verbstr[ddm_o.choicenum + 1]);
+	_vm->_lucerna->callverb(_vm->_gyro->verbstr[ddm_o.choicenum + 1]);
 }
 
 /*$F- That's all. Now for the ...bar funcs. */

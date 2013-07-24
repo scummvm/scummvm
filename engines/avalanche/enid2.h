@@ -38,7 +38,7 @@ class AvalancheEngine;
 
 class Enid {
 public:
-	void setParent(AvalancheEngine *vm);
+	Enid(AvalancheEngine *vm);
 
 	void edna_save(Common::String name);
 

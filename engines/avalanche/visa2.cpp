@@ -41,7 +41,7 @@
 
 namespace Avalanche {
 
-	void Visa::setParent(AvalancheEngine *vm) {
+	Visa::Visa(AvalancheEngine *vm) {
 		_vm = vm;
 	}
 
@@ -86,7 +86,7 @@ namespace Avalanche {
 			if (report_dixi_errors) {
 				Common::String todisplay;
 				todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro->strf(point).c_str());
-				_vm->_scrolls.display(todisplay);
+				_vm->_scrolls->display(todisplay);
 			}
 			return;
 		}
@@ -103,7 +103,7 @@ namespace Avalanche {
 
 		if (bubbling)  do_the_bubble();
 
-		_vm->_scrolls.calldrivers();
+		_vm->_scrolls->calldrivers();
 	}
 
 	void Visa::speech(byte who, byte subject) {
@@ -152,7 +152,7 @@ namespace Avalanche {
 			unskrimble();
 			do_the_bubble();
 
-			_vm->_scrolls.calldrivers();
+			_vm->_scrolls->calldrivers();
 			went_ok = true;
 		}
 

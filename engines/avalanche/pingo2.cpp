@@ -111,7 +111,7 @@ void Pingo::winning_pic() {
 	Common::File f;
 	char r;
 
-	_vm->_lucerna.dusk();
+	_vm->_lucerna->dusk();
 
 	if (!f.open("finale.avd")) {
 		warning("AVALANCHE: Lucerna: File not found: finale.avd");
@@ -128,12 +128,12 @@ void Pingo::winning_pic() {
 	warning("STUB: Pingo::winning_pic()");
 
 	f.close();
-	_vm->_lucerna.blitfix();
+	_vm->_lucerna->blitfix();
 
 	//setvisualpage(0);
 	warning("STUB: Pingo::winning_pic()");
 
-	_vm->_lucerna.dawn();
+	_vm->_lucerna->dawn();
 
 	/*do {
 		_vm->_gyro->check();

@@ -122,14 +122,14 @@ public:
 	friend onemenu;
 	friend menuset;
 
-	void setParent(AvalancheEngine *vm);
-
 	onemenu ddm_o;
 	menuset ddm_m;
 
 	Common::String people;
 
 
+
+	Dropdown(AvalancheEngine *vm);
 
 	void find_what_you_can_do_with_it();
 

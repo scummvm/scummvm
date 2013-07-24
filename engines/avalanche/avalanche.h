@@ -72,18 +72,18 @@ public:
 	Enhanced *_enhanced;
 	Logger *_logger;
 	Pingo *_pingo;
-	Scrolls _scrolls;
-	Visa _visa;
-	Lucerna _lucerna;
-	Enid _enid;
-	Celer _celer;
-	Sequence _sequence;
+	Scrolls *_scrolls;
+	Visa *_visa;
+	Lucerna *_lucerna;
+	Enid *_enid;
+	Celer *_celer;
+	Sequence *_sequence;
 	Timeout *_timeout;
-	Trip _trip;
-	Acci _acci;
-	Basher _basher;
-	Dropdown _dropdown;
-	Closing _closing;
+	Trip *_trip;
+	Acci *_acci;
+	Basher *_basher;
+	Dropdown *_dropdown;
+	Closing *_closing;
 
 
 	OSystem *_system;

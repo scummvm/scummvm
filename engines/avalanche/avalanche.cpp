@@ -63,8 +63,18 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _enhanced;
 	delete _logger;
 	delete _pingo;
-
+	delete _scrolls;
+	delete _visa;
+	delete _lucerna;
+	delete _enid;
+	delete _celer;
+	delete _sequence;
 	delete _timeout;
+	delete _trip;
+	delete _acci;
+	delete _basher;
+	delete _dropdown;
+	delete _closing;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
@@ -75,25 +85,25 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_enhanced = new Enhanced(this);
 	_logger = new Logger(this);
 	_pingo = new Pingo(this);
-	_scrolls.setParent(this);
-	_visa.setParent(this);
-	_lucerna.setParent(this);
-	_enid.setParent(this);
-	_celer.setParent(this);
-	_sequence.setParent(this);
+	_scrolls = new Scrolls(this);
+	_visa = new Visa(this);
+	_lucerna = new Lucerna(this);
+	_enid = new Enid(this);
+	_celer = new Celer(this);
+	_sequence = new Sequence(this);
 	_timeout = new Timeout(this);
-	_trip.setParent(this);
-	_acci.setParent(this);
-	_basher.setParent(this);
-	_dropdown.setParent(this);
-	_closing.setParent(this);
+	_trip = new Trip(this);
+	_acci = new Acci(this);
+	_basher = new Basher(this);
+	_dropdown = new Dropdown(this);
+	_closing = new Closing(this);
 
 	_graphics->init();
 
-	_scrolls.init();
-	_lucerna.init();
-	_acci.init();
-	_basher.init();
+	_scrolls->init();
+	_lucerna->init();
+	_acci->init();
+	_basher->init();
 	
 
 	return Common::kNoError;

@@ -39,7 +39,7 @@
 
 namespace Avalanche {
 
-void Sequence::setParent(AvalancheEngine *vm) {
+Sequence::Sequence(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
@@ -77,7 +77,7 @@ void Sequence::start_to_close() {
 
 void Sequence::start_to_open() {
 	_vm->_gyro->dna.user_moves_avvy = false; /* They can't move. */
-	_vm->_trip.stopwalking(); /* And they're not moving now. */
+	_vm->_trip->stopwalking(); /* And they're not moving now. */
 	start_to_close(); /* Apart from that, it's the same thing. */
 }
 
@@ -95,7 +95,7 @@ void Sequence::call_sequencer() {
 		break; /* No more routines. */
 	case 177:
 		_vm->_gyro->dna.user_moves_avvy = true;
-		_vm->_trip.fliproom(_vm->_gyro->dna.flip_to_where, _vm->_gyro->dna.flip_to_ped); /* 177 = Flip room. */
+		_vm->_trip->fliproom(_vm->_gyro->dna.flip_to_where, _vm->_gyro->dna.flip_to_ped); /* 177 = Flip room. */
 		if (seq[0] == 177)
 			shove_left();
 		break;
@@ -103,7 +103,7 @@ void Sequence::call_sequencer() {
 
 	if ((seq[0] >= 1) && (seq[0] <= 176)) {
 		/* Show a frame. */
-		_vm->_celer.show_one(seq[1]);
+		_vm->_celer->show_one(seq[1]);
 		shove_left();
 	}
 	

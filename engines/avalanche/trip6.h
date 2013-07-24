@@ -154,9 +154,7 @@ public:
 	friend triptype;
 	friend getsettype;
 
-	Trip();
 
-	void setParent(AvalancheEngine *vm);
 
 	static const int16 up = 0;
 	static const int16 right = 1;
@@ -186,6 +184,9 @@ public:
 
 	static const int16 procgeida_procs = 7;
 
+
+
+	Trip(AvalancheEngine *vm);
 
 	void trippancy_link();
 
