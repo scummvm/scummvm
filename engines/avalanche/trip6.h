@@ -31,7 +31,7 @@
 #ifndef TRIP6_H
 #define TRIP6_H
 
-#include "avalanche/graph.h"
+#include "avalanche/graphics.h"
 
 #include "common/scummsys.h"
 #include "common/str.h"

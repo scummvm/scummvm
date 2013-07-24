@@ -30,7 +30,7 @@
 
 #include "avalanche/console.h"
 
-#include "avalanche/graph.h"
+#include "avalanche/graphics.h"
 
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
@@ -65,7 +65,7 @@ static const int kSavegameVersion = 1;
 
 class AvalancheEngine : public Engine {
 public:
-	Graph _graph;
+	Graphics _graph;
 
 	Avalot _avalot;
 	Gyro _gyro;
