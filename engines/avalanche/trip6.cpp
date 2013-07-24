@@ -384,8 +384,8 @@ getsettype *getsettype::init() {
 
 void getsettype::remember(bytefield r) {
 	numleft++;
-	if (numleft > maxgetset)
-		error("Trip::remember() : runerr_Getset_Overflow");
+	//if (numleft > maxgetset)
+	//	error("Trip::remember() : runerr_Getset_Overflow");
 	gs[numleft] = r;
 }
 
