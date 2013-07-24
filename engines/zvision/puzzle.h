@@ -68,7 +68,7 @@ struct Puzzle {
 	// Used by the ScriptManager to allow unique-ification of _referenceTable
 	// The unique-ification is done by sorting, then iterating and removing duplicates
 	// The sort uses operator<
-	const bool operator<(const Puzzle &other) const {
+	inline bool operator<(const Puzzle &other) const {
 		return key < other.key;
 	}
 };
