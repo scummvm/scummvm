@@ -174,7 +174,7 @@ void Avalot::run(Common::String arg) {
 
 		_vm->_graph.refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 
-	} while (false /*! _vm->_gyro.lmo*/); // So we run only one cycle during the testing. Of course it will be restored later.
+	} while (! _vm->_gyro.lmo);
 
 	//restorecrtmode();
 	//if (logging)
