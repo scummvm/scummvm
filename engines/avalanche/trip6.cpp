@@ -175,9 +175,7 @@ void triptype::appear(int16 wx, int16 wy, byte wf) {
 }
 
 bool triptype::collision_check() {
-	byte fv;
-
-	for (fv = 1; fv <= _tr->numtr; fv++) 
+	for (byte fv = 0; fv < _tr->numtr; fv++) 
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
 			((x + _info.xl) > _tr->tr[fv].x) &&
 			(x < (_tr->tr[fv].x + _tr->tr[fv]._info.xl)) &&
@@ -188,7 +186,75 @@ bool triptype::collision_check() {
 }
 
 void triptype::walk() {
-	warning("STUB: triptype::walk()");
+	byte tc;
+	bytefield r;
+
+
+	if (visible) {
+		{
+			r.x1 = (x / 8) - 1;
+			if (r.x1 == 255)
+				r.x1 = 0;
+			r.y1 = y - 2;
+			r.x2 = ((x + _info.xl) / 8) + 1;
+			r.y2 = y + _info.yl + 2;
+		}
+		_tr->getset[1 - _tr->_vm->_gyro.cp].remember(r);
+	}
+
+	if (!_tr->_vm->_gyro.doing_sprite_run) {
+		ox[_tr->_vm->_gyro.cp] = x;
+		oy[_tr->_vm->_gyro.cp] = y;
+		if (homing)  homestep();
+		x = x + ix;
+		y = y + iy;
+	}
+
+	if (check_me) {
+		if (collision_check()) {
+			bounce();
+			return;
+		}
+
+		tc = _tr->checkfeet(x, x + _info.xl, oy[_tr->_vm->_gyro.cp], y, _info.yl);
+
+		if ((tc != 0) & (!_tr->_vm->_gyro.doing_sprite_run)) {
+			switch (_tr->_vm->_gyro.magics[tc].op) {
+			case _tr->_vm->_gyro.exclaim: {
+				bounce();
+				_tr->mustexclaim = true;
+				_tr->saywhat = _tr->_vm->_gyro.magics[tc].data;
+				}
+				break;
+			case _tr->_vm->_gyro.bounces:
+				bounce();
+				break;
+			case _tr->_vm->_gyro.transport:
+				_tr->fliproom(_tr->_vm->_gyro.magics[tc].data >> 8, _tr->_vm->_gyro.magics[tc].data & 0xff);
+				break;
+			case _tr->_vm->_gyro.unfinished: {
+				bounce();
+				_tr->_vm->_scrolls.display("\7Sorry.\3\rThis place is not available yet!");
+				}
+				break;
+			case _tr->_vm->_gyro.special:
+				_tr->call_special(_tr->_vm->_gyro.magics[tc].data);
+				break;
+			case _tr->_vm->_gyro.mopendoor:
+				_tr->open_the_door(_tr->_vm->_gyro.magics[tc].data >> 8, _tr->_vm->_gyro.magics[tc].data & 0xff, tc);
+				break;
+			}
+		}
+	}
+
+	if (!_tr->_vm->_gyro.doing_sprite_run) {
+		count += 1;
+		if (((ix != 0) || (iy != 0)) && (count > 1)) {
+			step += 1;
+			if (step == a.seq)  step = 0;
+			count = 0;
+		}
+	}
 }
 
 void triptype::bounce() {
