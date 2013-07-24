@@ -24,8 +24,8 @@
 
 #include "common/file.h"
 #include "common/system.h"
-#include "common/rect.h"
 
+#include "engines/util.h"
 #include "graphics/decoders/tga.h"
 
 #include "zvision/render_manager.h"
@@ -37,7 +37,27 @@ RenderManager::RenderManager(OSystem *system, const int width, const int height)
 	: _system(system),
 	  _width(width),
 	  _height(height),
+	  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
+	  _currentVideo(0),
+	  _scaledVideoFrameBuffer(0),
 	  _renderTable(width, height) {
+}
+
+/**
+ * Initialize graphics
+ */
+void RenderManager::initialize() {
+	initGraphics(_width, _height, true, &_pixelFormat);
+}
+
+void RenderManager::updateScreen(bool isConsoleActive) {
+	if (_currentVideo != 0)
+		continueVideo();
+
+	if (_needsScreenUpdate || isConsoleActive) {
+		_system->updateScreen();
+		_needsScreenUpdate = false;
+	}
 }
 
 void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y) {
@@ -86,40 +106,8 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x
 	_needsScreenUpdate = true;
 }
 
-void RenderManager::generatePanoramaLookupTable() {
-	float fieldOfView = _panoramaOptions.fieldOfView;
-	float scale = _panoramaOptions.linearScale;
-	_renderTable.clear();
-
-	double halfWidth = (double)_width / 2.0;
-	double halfHeight = (double)_height / 2.0;
-
-	double fovRadians = (fieldOfView * 3.14159265 / 180.0);
-	double halfHeightOverTan = halfHeight / tan(fovRadians);
-	double tanOverHalfHeight = tan(fovRadians) / halfHeight;
-
-	for (int32 x = 0; x < _width; x++) {
-		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
-		double xPos = (double)x - halfWidth + 0.01;
-
-		double tempX = atan(xPos*tanOverHalfHeight);
-		double scaledX = scale * halfHeightOverTan * tempX;
-		double nn = cos(tempX);
-		double newHalfWidth = halfHeight * nn * halfHeightOverTan * tanOverHalfHeight*2.0;
-
-		int32 newX = floor(scaledX);// + half_w);
-
-		double yScale = newHalfWidth / (double)_height;
-		double et2 = ((double)_height - newHalfWidth) / 2.0;
-
-		for (int32 y = 0; y < _height; y++) {
-			double et1 = (double)y*yScale;
-
-			_renderTable(x, y).x = newX; //pixel index
-
-			int32 newY = floor(et2 + et1);
-			_renderTable(x, y).y = newY; //pixel index
-		}
-	}
+void RenderManager::setRenderState(RenderTable::RenderState state) {
+	_renderTable.setRenderState(state);
 }
+
 } // End of namespace ZVision

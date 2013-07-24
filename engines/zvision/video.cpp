@@ -23,11 +23,11 @@
 #include "common/scummsys.h"
 
 #include "common/system.h"
+#include "video/video_decoder.h"
 #include "engines/util.h"
-
 #include "graphics/surface.h"
 
-#include "zvision/zvision.h"
+#include "zvision/render_manager.h"
 
 
 namespace ZVision {
@@ -71,7 +71,7 @@ void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte b
 	}
 }
 
-void ZVision::startVideo(Video::VideoDecoder *videoDecoder) {
+void RenderManager::startVideo(Video::VideoDecoder *videoDecoder) {
 	if (!videoDecoder)
 		return;
 
@@ -89,12 +89,7 @@ void ZVision::startVideo(Video::VideoDecoder *videoDecoder) {
 	continueVideo();
 }
 
-void ZVision::continueVideo() {
-	if (_currentVideo == 0) {
-		warning("No video loaded. Nothing to continue");
-		return;
-	}
-
+void RenderManager::continueVideo() {
 	byte bytesPerPixel = _currentVideo->getPixelFormat().bytesPerPixel;
 	uint16 width = _currentVideo->getWidth();
 	uint16 height = _currentVideo->getHeight();
@@ -115,13 +110,16 @@ void ZVision::continueVideo() {
 			}
 		}
 	} else {
-		initGraphics(_width, _height, true, &_pixelFormat);
-		delete _currentVideo;
-		_currentVideo = 0;
-		delete[] _scaledVideoFrameBuffer;
-		_scaledVideoFrameBuffer = 0;
+		cancelVideo();
 	}
+}
 
+void RenderManager::cancelVideo() {
+	initGraphics(_width, _height, true, &_pixelFormat);
+	delete _currentVideo;
+	_currentVideo = 0;
+	delete[] _scaledVideoFrameBuffer;
+	_scaledVideoFrameBuffer = 0;
 }
 
 } // End of namespace ZVision

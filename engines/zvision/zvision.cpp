@@ -46,9 +46,6 @@ namespace ZVision {
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		: Engine(syst),
 		  _gameDescription(gameDesc),
-		  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
-		  _currentVideo(0),
-		  _scaledVideoFrameBuffer(0),
 		  _width(640),
 		  _height(480) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -104,7 +101,7 @@ void ZVision::initialize() {
 		SearchMan.add(name, archive);
 	}
 
-	initGraphics(_width, _height, true, &_pixelFormat);
+	_renderManager->initialize();
 
 	_scriptManager->initialize();
 
@@ -127,19 +124,13 @@ Common::Error ZVision::run() {
 		uint32 deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 
-		if (_currentVideo != 0)
-			continueVideo();
-		else {
-			_scriptManager->updateNodes(deltaTime);
-			_scriptManager->checkPuzzleCriteria();
-		}
+		_scriptManager->updateNodes(deltaTime);
+		_scriptManager->checkPuzzleCriteria();
 
-		if (_needsScreenUpdate || _console->isActive()) {
-			_system->updateScreen();
-			_needsScreenUpdate = false;
-		}
+		// Render a frame
+		_renderManager->updateScreen(_console->isActive());
 		
-		// Calculate the frame delay based off a desired frame rate
+		// Calculate the frame delay based off a desired frame time
 		int delay = desiredFrameTime - (currentTime - _system->getMillis());
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;

@@ -24,14 +24,20 @@
 #define ZVISION_RENDER_MANAGER_H
 
 #include "common/types.h"
+#include "common/rect.h"
 
-#include "zvision/dense_2d_array.h"
+#include "graphics/pixelformat.h"
+
+#include "zvision/render_table.h"
 
 class OSystem;
 
 namespace Common {
 class String;
-class Point;
+}
+
+namespace Video {
+class VideoDecoder;
 }
 
 namespace ZVision {
@@ -40,37 +46,62 @@ class RenderManager {
 public:
 	RenderManager(OSystem *system, const int width, const int height);
 
-public:
-	enum RenderState {
-		PANORAMA,
-		TILT,
-		FLAT
-	};
-
 private:
 	OSystem *_system;
 	const int _width;
 	const int _height;
-	RenderState _renderState;
+	const Graphics::PixelFormat _pixelFormat;
+	RenderTable _renderTable;
 
-	struct {
-		uint16 fieldOfView;
-		uint16 linearScale;
-	} _panoramaOptions;
-
-	// TODO: See if tilt and panorama need to have separate options
-	struct {
-		uint16 fieldOfView;
-		uint16 linearScale;
-	} _tiltOptions;
-
-	Dense2DArray<Common::Point> _renderTable;
+	Video::VideoDecoder *_currentVideo;
+	byte *_scaledVideoFrameBuffer;
 
 	bool _needsScreenUpdate;
 
 public:
+	void initialize();
+	void updateScreen(bool isConsoleActive);
+
+	/**
+	 * Start a video playing. It will also load the first frame of the video.
+	 *
+	 * @param videoDecoder    The video to play
+	 */
+	void startVideo(Video::VideoDecoder *videoDecoder);
+	/**
+	 * @return    Is a video currently being played
+	 */
+	bool isVideoPlaying() { return _currentVideo == 0; }
+	/**
+	 * Cancels a video prematurely. Any sound remaining in the queue will continue to play.
+	 * The last frame of the video will remain on the screen until something else overwrites it
+	 */
+	void cancelVideo();
+
+	/**
+	 * Blits the image to the screen. Actual screen updates won't happen until the end of the frame.
+	 * The image will be clipped to fit inside the window.
+	 *
+	 * @param fileName                   Name of the image file
+	 * @param x                          X position where the image should be put
+	 * @param y                          Y position where the image should be put
+	 */
 	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
-	void generatePanoramaLookupTable();
+
+	/**
+	 * Set how the frame should be rendered
+	 *
+	 * @param state    One of the RenderStates
+	 */
+	void setRenderState(RenderTable::RenderState state);
+
+	bool needsScreenUpdate() { return _needsScreenUpdate; };
+
+private:
+	/**
+	 * Checks the time since the last video frame, and blits the next frame to the screen
+	 */
+	void continueVideo();
 };
 
 } // End of namespace ZVision

@@ -27,8 +27,6 @@
 #include "common/random.h"
 #include "common/events.h"
 
-#include "video/video_decoder.h"
-
 #include "engines/engine.h"
 
 #include "zvision/detection.h"
@@ -58,7 +56,6 @@ public:
 private:
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
-	const Graphics::PixelFormat _pixelFormat;
 	const int _width;
 	const int _height;
 
@@ -71,10 +68,6 @@ private:
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
-	bool _needsScreenUpdate;
-
-	Video::VideoDecoder *_currentVideo;
-	byte *_scaledVideoFrameBuffer;
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -83,9 +76,6 @@ public:
 	RenderManager *getRenderManager() const;
 	Common::RandomSource *getRandomSource() const;
 	ZVisionGameId getGameId() const;
-
-	void startVideo(Video::VideoDecoder *videoDecoder);
-	void continueVideo();
 
 private:
 	void initialize();

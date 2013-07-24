@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 
+#include "zvision/render_manager.h"
 
 namespace ZVision {
 
@@ -61,13 +62,9 @@ void ZVision::processEvents() {
 					quitGame();
 				break;
 			case Common::KEYCODE_ESCAPE:
-				if (_currentVideo != 0) {
-					initGraphics(_width, _height, true, &_pixelFormat);
-					delete _currentVideo;
-					_currentVideo = 0;
-					delete[] _scaledVideoFrameBuffer;
-					_scaledVideoFrameBuffer = 0;
-				}
+				if (_renderManager->isVideoPlaying())
+					_renderManager->cancelVideo();
+
 				break;
 			default:
 				break;
