@@ -64,8 +64,7 @@ namespace Mortevielle {
  * 7000:4138 - width, height, x/y offset of decoded image
  */
 const int kAdrMusic = 0x5000;
-const int kAdrPictureDecomp = 0x6000;
-const int kAdrPictureComp = 0x7000;
+const int kAdrCurrentPicture = 0x7000;
 
 const int kAdrCompMusicBuf1 = 0x7414;
 const int kAdrCompMusicBuf2 = 0x3800;

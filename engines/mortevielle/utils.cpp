@@ -1979,8 +1979,8 @@ void MortevielleEngine::setPal(int n) {
 	case MODE_EGA:
 	case MODE_AMSTRAD1512:
 		for (int i = 1; i <= 16; ++i) {
-			_mem[(kAdrPictureComp * 16) + (2 * i)] = _stdPal[n][i].x;
-			_mem[(kAdrPictureComp * 16) + (2 * i) + 1] = _stdPal[n][i].y;
+			_mem[(kAdrCurrentPicture * 16) + (2 * i)] = _stdPal[n][i].x;
+			_mem[(kAdrCurrentPicture * 16) + (2 * i) + 1] = _stdPal[n][i].y;
 		}
 		break;
 	case MODE_CGA: {
@@ -2008,12 +2008,12 @@ void MortevielleEngine::setPal(int n) {
 void MortevielleEngine::displayCGAPattern(int n, Pattern p, nhom *pal) {
 	int addr = n * 404 + 0xd700;
 
-	WRITE_LE_UINT16(&_mem[(kAdrPictureComp * 16) + addr], p._tax);
-	WRITE_LE_UINT16(&_mem[(kAdrPictureComp * 16) + addr + 2], p._tay);
+	WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + addr], p._tax);
+	WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + addr + 2], p._tay);
 	addr += 4;
 	for (int i = 0; i < p._tax; ++i) {
 		for (int j = 0; j < p._tay; ++j)
-			_mem[(kAdrPictureComp * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
+			_mem[(kAdrCurrentPicture * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
 	}
 }
 
@@ -2240,7 +2240,7 @@ void MortevielleEngine::showTitleScreen() {
 void MortevielleEngine::draw(int x, int y) {
 	_mouse.hideMouse();
 	setPal(_numpal);
-	pictout(kAdrPictureComp, 0, x, y);
+	pictout(kAdrCurrentPicture, 0, x, y);
 	_mouse.showMouse();
 }
 
@@ -2251,7 +2251,7 @@ void MortevielleEngine::draw(int x, int y) {
 void MortevielleEngine::drawRightFrame() {
 	setPal(89);
 	if (_currGraphicalDevice == MODE_HERCULES) {
-		_mem[(kAdrPictureComp * 16) + 14] = 15;
+		_mem[(kAdrCurrentPicture * 16) + 14] = 15;
 	}
 	_mouse.hideMouse();
 	pictout(kAdrRightFramePic, 0, 0, 0);
@@ -2540,12 +2540,12 @@ void MortevielleEngine::pictout(int seg, int dep, int x, int y) {
 	surface.decode(&_mem[(seg * 16) + dep]);
 
 	if (_currGraphicalDevice == MODE_HERCULES) {
-		_mem[(kAdrPictureComp * 16) + 2] = 0;
-		_mem[(kAdrPictureComp * 16) + 32] = 15;
+		_mem[(kAdrCurrentPicture * 16) + 2] = 0;
+		_mem[(kAdrCurrentPicture * 16) + 32] = 15;
 	}
 
-	if ((_caff != 51) && (READ_LE_UINT16(&_mem[(kAdrPictureComp * 16) + 0x4138]) > 0x100))
-		WRITE_LE_UINT16(&_mem[(kAdrPictureComp * 16) + 0x4138], 0x100);
+	if ((_caff != 51) && (READ_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138]) > 0x100))
+		WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138], 0x100);
 
 	_screenSurface.drawPicture(surface, x, y);
 }
