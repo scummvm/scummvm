@@ -69,7 +69,7 @@ public:
 
 	Avalot *_avalot;
 	Gyro *_gyro;
-	Enhanced _enhanced;
+	Enhanced *_enhanced;
 	Logger _logger;
 	Pingo _pingo;
 	Scrolls _scrolls;

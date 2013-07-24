@@ -43,7 +43,7 @@ public:
 	bool atbios; // BIOS type
 	char inchar, extd;
 
-	void setParent(AvalancheEngine *vm);
+	Enhanced(AvalancheEngine *vm);
 
 	void readkeye();
 
