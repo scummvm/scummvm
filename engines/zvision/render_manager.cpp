@@ -64,7 +64,7 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x
 	Common::File file;
 
 	if (!file.open(fileName)) {
-		error("Could not open file %s", fileName.c_str());
+		warning("Could not open file %s", fileName.c_str());
 		return;
 	}
 
@@ -94,7 +94,7 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x
 		// Decode
 		Graphics::TGADecoder tga;
 		if (!tga.loadStream(file))
-			error("Error while reading TGA image");
+			warning("Error while reading TGA image");
 		file.close();
 
 		const Graphics::Surface *tgaSurface = tga.getSurface();
