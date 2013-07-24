@@ -138,20 +138,24 @@ void Graphics::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 	for (uint16 y = 0; y < picture.h; y++)
 		for (uint16 x = 0; x < picture.w; x++)
 			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
+
+	picture.free();
 }
 
 void Graphics::refreshScreen() {
 	// These cycles are for doubling the screen height.
-	::Graphics::Surface source;
-	source.create(kScreenWidth, kScreenHeight * 2, ::Graphics::PixelFormat::createFormatCLUT8());
-	for (uint16 y = 0; y < source.h / 2; y++)
-		for (uint16 x = 0; x < source.w; x++)
+	::Graphics::Surface picture;
+	picture.create(kScreenWidth, kScreenHeight * 2, ::Graphics::PixelFormat::createFormatCLUT8());
+	for (uint16 y = 0; y < picture.h / 2; y++)
+		for (uint16 x = 0; x < picture.w; x++)
 			for (byte j = 0; j < 2; j++) 
-				*(byte *)source.getBasePtr(x, y * 2 + j) = *(byte *)_surface.getBasePtr(x, y);	
+				*(byte *)picture.getBasePtr(x, y * 2 + j) = *(byte *)_surface.getBasePtr(x, y);	
 
 	// Now we copy the stretched picture to the screen.
-	g_system->copyRectToScreen(source.pixels, source.pitch , 0, 0, kScreenWidth, kScreenHeight * 2);
+	g_system->copyRectToScreen(picture.pixels, picture.pitch, 0, 0, kScreenWidth, kScreenHeight * 2);
 	g_system->updateScreen();
+
+	picture.free();
 }
 
 
