@@ -48,7 +48,7 @@ Graphics::Graphics(AvalancheEngine *vm) {
 }
 
 void Graphics::init() {
-	initGraphics(kScreenWidth, kScreenHeight, true);
+	initGraphics(kScreenWidth, kScreenHeight * 2, true); // Doubling the height.
 
 	for (int i = 0; i < 64; ++i) {
 		_egaPalette[i][0] = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
@@ -141,8 +141,18 @@ void Graphics::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 }
 
 void Graphics::refreshScreen() {
-	g_system->copyRectToScreen(_surface.pixels, _surface.pitch , 0, 0, kScreenWidth, kScreenHeight);
+	// These cycles are for doubling the screen height.
+	::Graphics::Surface source;
+	source.create(kScreenWidth, kScreenHeight * 2, ::Graphics::PixelFormat::createFormatCLUT8());
+	for (uint16 y = 0; y < source.h / 2; y++)
+		for (uint16 x = 0; x < source.w; x++)
+			for (byte j = 0; j < 2; j++) 
+				*(byte *)source.getBasePtr(x, y * 2 + j) = *(byte *)_surface.getBasePtr(x, y);	
+
+	// Now we copy the stretched picture to the screen.
+	g_system->copyRectToScreen(source.pixels, source.pitch , 0, 0, kScreenWidth, kScreenHeight * 2);
 	g_system->updateScreen();
 }
+
 
 } // End of namespace Avalanche
