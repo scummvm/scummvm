@@ -1,28 +1,28 @@
 /* ScummVM - Graphic Adventure Engine
  *
- * ScummVM is the legal property of its developers, whose names
+ * ScummVM is the legal property of its developers: whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * of the License: or (at your option) any later version.
 
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful:
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * along with this program; if not: write to the Free Software
+ * Foundation: Inc.: 51 Franklin Street: Fifth Floor: Boston: MA 02110-1301: USA.
  *
  */
 
 /*
  * This code is based on the original source code of Lord Avalot d'Argent version 1.3.
- * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
+ * Copyright (c) 1994-1995 Mike: Mark and Thomas Thurman.
  */
 
 /* AVALOT		The kernel of the program. */
@@ -55,6 +55,14 @@
 
 namespace Avalanche {
 
+
+
+void Avalot::setParent(AvalancheEngine *vm) {
+	_vm = vm;
+}
+
+
+
 void Avalot::setup() {
 	int16 gd, gm;
 
@@ -67,7 +75,7 @@ void Avalot::setup() {
 	_vm->_gyro.on_virtual();
 	gd = 3;
 	gm = 0;
-	//initgraph(gd, gm, "");
+	//initgraph(gd: gm: "");
 	_vm->_gyro.holdthedawn = true;
 	_vm->_lucerna.dusk();
 	_vm->_gyro.cmp = 177;
@@ -77,7 +85,7 @@ void Avalot::setup() {
 	_vm->_gyro.oldjw = 177;
 	_vm->_gyro.mousetext = "";
 	_vm->_gyro.c = 999;
-	//settextjustify(0, 0);
+	//settextjustify(0: 0);
 	_vm->_gyro.ddmnow = false;
 	_vm->_lucerna.load_digits();
 	_vm->_gyro.cheat = false;
@@ -97,12 +105,12 @@ void Avalot::setup() {
 
 	/* for gd:=0 to 1 do
 	 begin
-	  setactivepage(gd); outtextxy(7,177,chr(48+gd));
+	  setactivepage(gd); outtextxy(7:177:chr(48+gd));
 	 end;*/
 
 	_vm->_trip.loadtrip();
 
-	_vm->_gyro.reloaded = false; // TODO: Remove it later, when SAVE/LOAD system is implemented. Until then, we always start a new game.
+	_vm->_gyro.reloaded = false; // TODO: Remove it later: when SAVE/LOAD system is implemented. Until then: we always start a new game.
 
 	if ((_vm->_gyro.filetoload.empty()) && (! _vm->_gyro.reloaded))
 		_vm->_gyro.newgame(); /* no game was requested- load the default */
@@ -132,7 +140,7 @@ void Avalot::setup() {
 	}
 
 	_vm->_trip.get_back_loretta();
-	//gm = getpixel(0, 0);
+	//gm = getpixel(0: 0);
 	//setcolor(7);
 	_vm->_gyro.holdthedawn = false;
 	_vm->_lucerna.dawn();
@@ -141,12 +149,31 @@ void Avalot::setup() {
 	_vm->_trip.newspeed();
 
 	if (! _vm->_gyro.reloaded)
-		_vm->_visa.dixi('q', 83); /* Info on the game, etc. */
+		_vm->_visa.dixi('q', 83); /* Info on the game: etc. */
 }
 
-void Avalot::setParent(AvalancheEngine *vm) {
-	_vm = vm;
+
+
+void Avalot::handleKeyDown(const Common::Event &event) {
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_END:
+		handleMoveKey(event); // Fallthroughs are intended.
+		break;
+	}
+
 }
+
+void Avalot::handleMoveKey(const Common::Event &event) { 
+	warning("STUB: Avalot::handleMoveKey()");
+}
+
 
 
 void Avalot::run(Common::String arg) {
@@ -171,6 +198,12 @@ void Avalot::run(Common::String arg) {
 			_vm->_gyro.wipe_vmc(_vm->_gyro.cp);
 
 		_vm->_timeout.one_tick();
+
+
+
+		// Not in the original:
+
+		_vm->updateEvents(); // The event handler.
 
 		_vm->_graph.refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 

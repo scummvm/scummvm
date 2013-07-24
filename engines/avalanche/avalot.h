@@ -30,6 +30,7 @@
 #ifndef AVALOT_H
 #define AVALOT_H
 
+#include "common/events.h"
 #include "common/system.h"
 
 namespace Avalanche {
@@ -40,6 +41,14 @@ public:
 	void setParent(AvalancheEngine *vm);
 
 	void setup();
+
+
+
+	void handleKeyDown(const Common::Event &event);
+
+	void handleMoveKey(const Common::Event &event); // To replace Trip::tripkey().
+
+
 
 	void run(Common::String arg);
 
