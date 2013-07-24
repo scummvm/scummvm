@@ -64,7 +64,6 @@ namespace Mortevielle {
  * 7000:4138 - width, height, x/y offset of decoded image
  */
 const int kAdrMusic = 0x5000;
-const int kAdrCurrentPicture = 0x7000;
 
 const int kAdrCompMusicBuf1 = 0x7414;
 const int kAdrCompMusicBuf2 = 0x3800;
@@ -435,7 +434,7 @@ private:
 	void addObjectToInventory(int objectId);
 	void putInHand(int &objId);
 	void initMaxAnswer();
-	void drawAnimFrame(int frameNum, int animId);
+	void displayAnimFrame(int frameNum, int animId);
 
 	void copcha();
 	void adzon();
@@ -477,6 +476,7 @@ public:
 
 	// TODO: Replace the following with proper implementations, or refactor out the code using them
 	byte _mem[65536 * 16];
+	byte *_curPict;
 
 	Debugger _debugger;
 	ScreenSurface _screenSurface;

@@ -241,17 +241,17 @@ void MortevielleEngine::fctTake() {
 			if ((_coreVar._currPlace == ATTIC) && (_num == 1) && (_coreVar._atticBallHoleObjectId != 0)) {
 				putInHand(_coreVar._atticBallHoleObjectId);
 				if ((_crep != 997) && (_crep != 139))
-					drawAnimFrame(2, 7);
+					displayAnimFrame(2, 7);
 			}
 			if ((_coreVar._currPlace == ATTIC) && (_num == 2) && (_coreVar._atticRodHoleObjectId != 0)) {
 				putInHand(_coreVar._atticRodHoleObjectId);
 				if ((_crep != 997) && (_crep != 139))
-					drawAnimFrame(2, 6);
+					displayAnimFrame(2, 6);
 			}
 			if ((_coreVar._currPlace == CELLAR) && (_coreVar._cellarObjectId != 0)) {
 				putInHand(_coreVar._cellarObjectId);
 				if ((_crep != 997) && (_crep != 139))
-					drawAnimFrame(2, 2);
+					displayAnimFrame(2, 2);
 			}
 			if ((_coreVar._currPlace == CRYPT) && (_coreVar._cryptObjectId != 0))
 				putInHand(_coreVar._cryptObjectId);
@@ -260,13 +260,13 @@ void MortevielleEngine::fctTake() {
 				putInHand(_coreVar._secretPassageObjectId);
 				if ((_crep != 997) && (_crep != 139)) {
 					_crep = 182;
-					drawAnimFrame(2, 1);
+					displayAnimFrame(2, 1);
 				}
 			}
 			if ((_coreVar._currPlace == WELL) && (_coreVar._wellObjectId != 0)) {
 				putInHand(_coreVar._wellObjectId);
 				if ((_crep != 997) && (_crep != 139))
-					drawAnimFrame(2, 1);
+					displayAnimFrame(2, 1);
 			}
 			if ((_crep != 997) && (_crep != 182) && (_crep != 139))
 				_crep = 999;
@@ -631,7 +631,7 @@ void MortevielleEngine::fctOpen() {
 						_speechManager.startSpeech(7, 9, 1);
 				}
 				_openObjects[tmpPlace] = _num;
-				drawAnimFrame(1, _num);
+				displayAnimFrame(1, _num);
 			}
 			tmpPlace = _coreVar._currPlace;
 			if (_coreVar._currPlace == CRYPT)
@@ -675,14 +675,14 @@ void MortevielleEngine::fctPlace() {
 				} else {
 					_coreVar._atticBallHoleObjectId = _coreVar._selectedObjectId;
 					if (_coreVar._selectedObjectId == 141)
-						drawAnimFrame(1, 7);
+						displayAnimFrame(1, 7);
 				}
 			} else if (_coreVar._atticRodHoleObjectId != 0) {
 				_crep = 188;
 			} else {
 				_coreVar._atticRodHoleObjectId = _coreVar._selectedObjectId;
 				if (_coreVar._selectedObjectId == 159)
-					drawAnimFrame(1, 6);
+					displayAnimFrame(1, 6);
 			}
 		}
 
@@ -693,8 +693,8 @@ void MortevielleEngine::fctPlace() {
 				_coreVar._cellarObjectId = _coreVar._selectedObjectId;
 				if (_coreVar._selectedObjectId == 151) {
 					// Open hidden passage
-					drawAnimFrame(1, 2);
-					drawAnimFrame(1, 1);
+					displayAnimFrame(1, 2);
+					displayAnimFrame(1, 1);
 					handleDescriptionText(2, 165);
 					displayEmptyHand();
 					_speechManager.startSpeech(6, -9, 1);
@@ -727,16 +727,16 @@ void MortevielleEngine::fctPlace() {
 							_menu.setDestinationText(_coreVar._currPlace);
 							setPal(14);
 							drawPicture();
-							drawAnimFrame(1, 2);
-							drawAnimFrame(1, 1);
+							displayAnimFrame(1, 2);
+							displayAnimFrame(1, 1);
 							alertTxt = getString(577);
 							_dialogManager.show(alertTxt, 1);
-							drawAnimFrame(2, 1);
+							displayAnimFrame(2, 1);
 							_crep = 166;
 						}
 						prepareDisplayText();
 					} else {
-						drawAnimFrame(2, 1);
+						displayAnimFrame(2, 1);
 						_crep = 166;
 					}
 					return;
@@ -756,7 +756,7 @@ void MortevielleEngine::fctPlace() {
 				_crep = 188;
 			} else if (_coreVar._selectedObjectId == 143) {
 				_coreVar._secretPassageObjectId = 143;
-				drawAnimFrame(1, 1);
+				displayAnimFrame(1, 1);
 			} else {
 				_crep = 1512;
 				loseGame();
@@ -768,7 +768,7 @@ void MortevielleEngine::fctPlace() {
 				_crep = 188;
 			} else if ((_coreVar._selectedObjectId == 140) || (_coreVar._selectedObjectId == 120)) {
 				_coreVar._wellObjectId = _coreVar._selectedObjectId;
-				drawAnimFrame(1, 1);
+				displayAnimFrame(1, 1);
 			} else {
 				_crep = 185;
 			}
@@ -856,7 +856,7 @@ void MortevielleEngine::fctAttach() {
 				_crep = 999;
 				if ((_coreVar._selectedObjectId == 120) || (_coreVar._selectedObjectId == 140)) {
 					_coreVar._wellObjectId = _coreVar._selectedObjectId;
-					drawAnimFrame(1, 1);
+					displayAnimFrame(1, 1);
 				} else
 					_crep = 185;
 				displayEmptyHand();
@@ -886,7 +886,7 @@ void MortevielleEngine::fctClose() {
 				++cx;
 			} while ((cx <= 6) && (_num != _openObjects[cx]));
 			if (_num == _openObjects[cx]) {
-				drawAnimFrame(2, _num);
+				displayAnimFrame(2, _num);
 				_crep = 998;
 				_openObjects[cx] = 0;
 				--_openObjCount;
@@ -1148,7 +1148,7 @@ void MortevielleEngine::fctEnter() {
 			else {
 				int randVal = (getRandomNumber(0, 10)) - 5;
 				_speechManager.startSpeech(7, randVal, 1);
-				drawAnimFrame(1, 1);
+				displayAnimFrame(1, 1);
 
 				int charIndex = convertBitIndexToCharacterIndex(z);
 				++_coreVar._faithScore;
@@ -1169,7 +1169,7 @@ void MortevielleEngine::fctEnter() {
 		} else {
 			int randVal = (getRandomNumber(0, 10)) - 5;
 			_speechManager.startSpeech(7, randVal, 1);
-			drawAnimFrame(1, 1);
+			displayAnimFrame(1, 1);
 
 			_coreVar._currPlace = _roomDoorId;
 			prepareDisplayText();

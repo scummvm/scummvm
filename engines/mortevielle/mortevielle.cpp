@@ -101,9 +101,11 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_day = 0;
 
 	memset(_mem, 0, sizeof(_mem));
+	_curPict = nullptr;
 }
 
 MortevielleEngine::~MortevielleEngine() {
+	free(_curPict);
 }
 
 /**
