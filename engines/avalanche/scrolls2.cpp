@@ -146,7 +146,7 @@ void Scrolls::music_scroll() {
 void Scrolls::resetscrolldriver() {   /* phew */
 	_vm->_gyro->scrollbells = 0;
 	cfont = roman;
-	_vm->_logger.log_epsonroman();
+	_vm->_logger->log_epsonroman();
 	use_icon = 0;
 	_vm->_gyro->interrogation = 0; /* always reset after a scroll comes up. */
 }
