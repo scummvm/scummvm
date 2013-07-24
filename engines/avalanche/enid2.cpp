@@ -94,7 +94,7 @@ Common::String Enid::expanddate(byte d, byte m, uint16 y) {
 		break;
 	}
 
-	day = _vm->_gyro.strf(d);
+	day = _vm->_gyro->strf(d);
 
 	if (((d >= 0) && (d <= 9)) || ((d >= 21) && (d <= 31))) {
 		switch (d % 10) {
@@ -112,7 +112,7 @@ Common::String Enid::expanddate(byte d, byte m, uint16 y) {
 		}
 	}
 
-	expanddate_result = day + ' ' + month + ' ' + _vm->_gyro.strf(y);
+	expanddate_result = day + ' ' + month + ' ' + _vm->_gyro->strf(y);
 	return expanddate_result;
 }
 
@@ -148,8 +148,8 @@ void Enid::edna_save(Common::String name) {
 }
 
 void Enid::loaderror(Common::String x, char icon) {
-	if (_vm->_gyro.holdthedawn) {
-		_vm->_gyro.holdthedawn = false;
+	if (_vm->_gyro->holdthedawn) {
+		_vm->_gyro->holdthedawn = false;
 		_vm->_lucerna.dawn();
 	}
 	_vm->_scrolls.display(Common::String('\7') + '\6' + '\23' + icon + '\26' + "Loading error:  " + "\r\r\22" + x);
@@ -250,17 +250,17 @@ void Enid::avvy_background() {    /* Not really a filing procedure,
 }
 
 void Enid::to_sundry(sundry &sund) {
-	sund.qenid_filename = _vm->_gyro.enid_filename;
-	sund.qsoundfx = _vm->_gyro.soundfx;
-	sund.qthinks = _vm->_gyro.thinks;
-	sund.qthinkthing = _vm->_gyro.thinkthing;
+	sund.qenid_filename = _vm->_gyro->enid_filename;
+	sund.qsoundfx = _vm->_gyro->soundfx;
+	sund.qthinks = _vm->_gyro->thinks;
+	sund.qthinkthing = _vm->_gyro->thinkthing;
 }
 
 void Enid::from_sundry(sundry sund) {
-	_vm->_gyro.enid_filename = sund.qenid_filename;
-	_vm->_gyro.soundfx = sund.qsoundfx;
-	_vm->_gyro.thinks = sund.qthinks;
-	_vm->_gyro.thinkthing = sund.qthinkthing;
+	_vm->_gyro->enid_filename = sund.qenid_filename;
+	_vm->_gyro->soundfx = sund.qsoundfx;
+	_vm->_gyro->thinks = sund.qthinks;
+	_vm->_gyro->thinkthing = sund.qthinkthing;
 }
 
 void Enid::restore_dna() {
@@ -274,19 +274,19 @@ void Enid::edna_reload() {
 
 	restore_dna();
 
-	_vm->_gyro.seescroll = true;  /* This prevents display of the new sprites before the
+	_vm->_gyro->seescroll = true;  /* This prevents display of the new sprites before the
 	new picture is loaded. */
 
 	_vm->_lucerna.major_redraw();
 
-	_vm->_gyro.whereis[_vm->_gyro.pavalot] = _vm->_gyro.dna.room;
+	_vm->_gyro->whereis[_vm->_gyro->pavalot] = _vm->_gyro->dna.room;
 
-	_vm->_gyro.alive = true;
+	_vm->_gyro->alive = true;
 
 	_vm->_lucerna.objectlist();
 
-	if (_vm->_gyro.holdthedawn) {
-		_vm->_gyro.holdthedawn = false;
+	if (_vm->_gyro->holdthedawn) {
+		_vm->_gyro->holdthedawn = false;
 		_vm->_lucerna.dawn();
 	}
 }

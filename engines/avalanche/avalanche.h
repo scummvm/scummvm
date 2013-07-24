@@ -68,7 +68,7 @@ public:
 	Graphics *_graphics;
 
 	Avalot *_avalot;
-	Gyro _gyro;
+	Gyro *_gyro;
 	Enhanced _enhanced;
 	Logger _logger;
 	Pingo _pingo;

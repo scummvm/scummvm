@@ -136,7 +136,7 @@ void Pingo::winning_pic() {
 	_vm->_lucerna.dawn();
 
 	/*do {
-		_vm->_gyro.check();
+		_vm->_gyro->check();
 	} while (!(keypressed() || (mrelease > 0)));
 	while (keypressed())  r = readkey();
 	major_redraw();*/

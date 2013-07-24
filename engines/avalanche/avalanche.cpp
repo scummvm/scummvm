@@ -59,13 +59,14 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _graphics;
 
 	delete _avalot;
+	delete _gyro;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
 	_graphics = new Graphics(this);
 
 	_avalot = new Avalot(this);
-	_gyro.setParent(this);
+	_gyro = new Gyro(this);
 	_enhanced.setParent(this);
 	_logger.setParent(this);
 	_pingo.setParent(this);

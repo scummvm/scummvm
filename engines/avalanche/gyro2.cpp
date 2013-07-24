@@ -246,7 +246,9 @@ const char Gyro::betterchar[] = "WMBParCLguKeSnIohn";
 
 
 
-Gyro::Gyro() : interrogation(0), oncandopageswap(true) {
+Gyro::Gyro(AvalancheEngine *vm) : interrogation(0), oncandopageswap(true) {
+	_vm = vm;
+
 	/* Needed becouse of Lucerna::load_also() */
 	for (int fv = 0; fv < 31; fv++)
 		for (int ff = 0; ff < 2; ff++)
@@ -263,10 +265,6 @@ Gyro::~Gyro() {
 		delete[] vmc.backpic[fv];
 	}
 
-}
-
-void Gyro::setParent(AvalancheEngine *vm) {
-	_vm = vm;
 }
 
 void Gyro::newpointer(byte m) {
@@ -359,7 +357,7 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	alive = true;
 
 	score = 0; /*for gd:=0 to 5 do which[gd]:=1;*/
-	memset(&_vm->_gyro.dna, 0, sizeof(dnatype));
+	memset(&_vm->_gyro->dna, 0, sizeof(dnatype));
 	_vm->_scrolls.natural();
 	_vm->_basher.normal_edit();
 	_vm->_lucerna.mousepage(0);

@@ -56,13 +56,13 @@ void Basher::setParent(AvalancheEngine *vm) {
 
 void Basher::init() {
 	/* new(previous);*/
-	if (!_vm->_gyro.last.empty())
-		_vm->_gyro.last.clear();
+	if (!_vm->_gyro->last.empty())
+		_vm->_gyro->last.clear();
 
 	normal_edit();
 
-	if (_vm->_gyro.demo) {
-		if (!_vm->_gyro.demofile.open("demo.avd")) {
+	if (_vm->_gyro->demo) {
+		if (!_vm->_gyro->demofile.open("demo.avd")) {
 			warning("AVALANCHE: Basher: File not found: demo.avd");
 			throw "AVALANCHE: Basher: File not found: demo.avd"; // TODO: Some proper exception handling will be needed here.
 		}
@@ -71,7 +71,7 @@ void Basher::init() {
 // Not sure that the following part will be used ever...
 #ifdef RECORD
 	count = 0;
-	if (!_vm->_gyro.demofile_save.open("demo.avd")) {
+	if (!_vm->_gyro->demofile_save.open("demo.avd")) {
 		warning("AVALANCHE: Basher: File not found: demo.avd");
 		throw "AVALANCHE: Basher: File not found: demo.avd"; // TODO: Some proper exception handling will be needed here.
 	}
@@ -183,10 +183,10 @@ void Basher::filename_edit() {
 
 void Basher::normal_edit() {
 	entering_filename = false;
-	/*if (!_vm->_gyro.current.empty())
-		_vm->_gyro.current.clear();*/
+	/*if (!_vm->_gyro->current.empty())
+		_vm->_gyro->current.clear();*/
 	left_margin = 1;
-	_vm->_gyro.curpos = 1;
+	_vm->_gyro->curpos = 1;
 }
 
 } // End of namespace Avalanche.

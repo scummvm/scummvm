@@ -49,13 +49,13 @@ namespace Avalanche {
 	bool Visa::report_dixi_errors = true;
 
 	void Visa::unskrimble() {
-		for (uint16  fv = 0; fv < _vm->_gyro.bufsize; fv++) 
-			_vm->_gyro.buffer[fv] = (char)((!(_vm->_gyro.buffer[fv]) - fv) % 256);
+		for (uint16  fv = 0; fv < _vm->_gyro->bufsize; fv++) 
+			_vm->_gyro->buffer[fv] = (char)((!(_vm->_gyro->buffer[fv]) - fv) % 256);
 	}
 
 	void Visa::do_the_bubble() {
-		_vm->_gyro.bufsize++;
-		_vm->_gyro.buffer[_vm->_gyro.bufsize] = 2;
+		_vm->_gyro->bufsize++;
+		_vm->_gyro->buffer[_vm->_gyro->bufsize] = 2;
 	}
 
 	void Visa::dixi(char block, byte point) {
@@ -85,7 +85,7 @@ namespace Avalanche {
 		if (error) {
 			if (report_dixi_errors) {
 				Common::String todisplay;
-				todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro.strf(point).c_str());
+				todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro->strf(point).c_str());
 				_vm->_scrolls.display(todisplay);
 			}
 			return;
@@ -96,8 +96,8 @@ namespace Avalanche {
 			return;
 		}
 		sezfile.seek(sez_offset);
-		_vm->_gyro.bufsize = sezfile.readUint16LE();
-		sezfile.read(_vm->_gyro.buffer, _vm->_gyro.bufsize);
+		_vm->_gyro->bufsize = sezfile.readUint16LE();
+		sezfile.read(_vm->_gyro->buffer, _vm->_gyro->bufsize);
 		sezfile.close();
 		unskrimble();
 
@@ -145,8 +145,8 @@ namespace Avalanche {
 				return;
 			}
 			sezfile.seek(sez_offset);
-			_vm->_gyro.bufsize = sezfile.readUint16LE();
-			sezfile.read(_vm->_gyro.buffer, _vm->_gyro.bufsize);
+			_vm->_gyro->bufsize = sezfile.readUint16LE();
+			sezfile.read(_vm->_gyro->buffer, _vm->_gyro->bufsize);
 			sezfile.close();
 
 			unskrimble();
