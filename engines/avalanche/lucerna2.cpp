@@ -274,7 +274,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	load_also(xx);
 	_vm->_celer.load_chunks(xx);
 
-	_vm->_graphics->refreshScreen(); // _vm->_pingo.copy03();  -  See Avalot::setup()
+	_vm->_graphics->refreshScreen(); // _vm->_pingo->copy03();  -  See Avalot::setup()
 
 	bit = *_vm->_graphics->getPixel(0,0);
 

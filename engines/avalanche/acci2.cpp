@@ -1294,7 +1294,7 @@ void Acci::do_that() {
 					"do things I tell you not to?\r\rDon't do it again!");
 			break;
 		default:
-			_vm->_pingo.zonk();
+			_vm->_pingo->zonk();
 			_vm->_scrolls.display(Common::String("A crack of lightning shoots from the sky, ") +
 					"and fries you.\r\r(`Such is the anger of the gods, Avvy!\")");
 			_vm->_lucerna.gameover();

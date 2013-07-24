@@ -98,7 +98,7 @@ void Avalot::setup() {
 	_vm->_gyro->enid_filename = ""; /* undefined. */
 	_vm->_lucerna.toolbar();
 	_vm->_scrolls.state(2);
-	_vm->_graphics->refreshScreen(); //_vm->_pingo.copy03(); Replace it with refreshScreen() since they 'almost' have the same functionality.
+	_vm->_graphics->refreshScreen(); //_vm->_pingo->copy03(); Replace it with refreshScreen() since they 'almost' have the same functionality.
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->lastscore[i] = -1; /* impossible digits */
 

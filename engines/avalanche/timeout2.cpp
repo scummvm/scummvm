@@ -490,7 +490,7 @@ void Timeout::buydrinks() {
 	_vm->_gyro->dna.malagauche = 0;
 
 	_vm->_visa.dixi('D', _vm->_gyro->dna.drinking); /* _vm->_scrolls.display message about it. */
-	_vm->_pingo.wobble(); /* Do the special effects. */
+	_vm->_pingo->wobble(); /* Do the special effects. */
 	_vm->_visa.dixi('D', 1); /* That'll be thruppence. */
 	if (_vm->_gyro->pennycheck(3)) /* Pay 3d. */
 		_vm->_visa.dixi('D', 3); /* Tell 'em you paid up. */
@@ -614,7 +614,7 @@ void Timeout::arkata_shouts() {
 
 void Timeout::winning() {
 	_vm->_visa.dixi('q', 79);
-	_vm->_pingo.winning_pic();
+	_vm->_pingo->winning_pic();
 
 	do {
 		_vm->_lucerna.checkclick();

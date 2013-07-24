@@ -38,7 +38,7 @@ class AvalancheEngine;
 
 class Pingo {
 public:
-	void setParent(AvalancheEngine *vm);
+	Pingo(AvalancheEngine *vm);
 
 	void bosskey();
 
