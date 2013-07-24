@@ -164,7 +164,7 @@ public:
 	
 
 	
-	Timeout();
+	Timeout(AvalancheEngine *vm);
 
 	void setParent(AvalancheEngine *vm);
 

@@ -837,7 +837,7 @@ void Trip::catamove(byte ped) {
 
 /* This proc gets called whenever you touch a line defined as _vm->_gyro->special. */
 void Trip::dawndelay() {
-	_vm->_timeout.set_up_timer(2, _vm->_timeout.procdawn_delay, _vm->_timeout.reason_dawndelay);
+	_vm->_timeout->set_up_timer(2, _vm->_timeout->procdawn_delay, _vm->_timeout->reason_dawndelay);
 }
 
 void Trip::call_special(uint16 which) {
@@ -846,7 +846,7 @@ void Trip::call_special(uint16 which) {
 		_vm->_celer.show_one(1);
 		_vm->_gyro->dna.brummie_stairs = 1;
 		_vm->_gyro->magics[10].op = _vm->_gyro->nix;
-		_vm->_timeout.set_up_timer(10, _vm->_timeout.procstairs, _vm->_timeout.reason_brummiestairs);
+		_vm->_timeout->set_up_timer(10, _vm->_timeout->procstairs, _vm->_timeout->reason_brummiestairs);
 		stopwalking();
 		_vm->_gyro->dna.user_moves_avvy = false;
 		break;
@@ -879,7 +879,7 @@ void Trip::call_special(uint16 which) {
 	case 4: /* This is the ghost room link. */
 		_vm->_lucerna.dusk();
 		tr[1].turn(right); /* you'll see this after we get back from bootstrap */
-		_vm->_timeout.set_up_timer(1, _vm->_timeout.procghost_room_phew, _vm->_timeout.reason_ghost_room_phew);
+		_vm->_timeout->set_up_timer(1, _vm->_timeout->procghost_room_phew, _vm->_timeout->reason_ghost_room_phew);
 		_vm->_enid.back_to_bootstrap(3);
 		break;
 	case 5:
@@ -897,7 +897,7 @@ void Trip::call_special(uint16 which) {
 			tr[2].vanishifstill = true;
 			tr[2].check_me = true; /* One of them must have Check_Me switched on. */
 			_vm->_gyro->whereis[_vm->_gyro->pfriartuck] = 177; /* Not here, then. */
-			_vm->_timeout.set_up_timer(364, _vm->_timeout.prochang_around, _vm->_timeout.reason_hanging_around);
+			_vm->_timeout->set_up_timer(364, _vm->_timeout->prochang_around, _vm->_timeout->reason_hanging_around);
 		}
 		break;
 	case 6: /* _vm->_gyro->special 6: fall down oubliette. */
@@ -905,17 +905,17 @@ void Trip::call_special(uint16 which) {
 		tr[1].ix = 3;
 		tr[1].iy = 0;
 		tr[1].face = right;
-		_vm->_timeout.set_up_timer(1, _vm->_timeout.procfall_down_oubliette, _vm->_timeout.reason_falling_down_oubliette);
+		_vm->_timeout->set_up_timer(1, _vm->_timeout->procfall_down_oubliette, _vm->_timeout->reason_falling_down_oubliette);
 		break;
 	case 7: /* _vm->_gyro->special 7: stop falling down oubliette. */
 		tr[1].visible = false;
 		_vm->_gyro->magics[10].op = _vm->_gyro->nix;
 		stopwalking();
-		_vm->_timeout.lose_timer(_vm->_timeout.reason_falling_down_oubliette);
+		_vm->_timeout->lose_timer(_vm->_timeout->reason_falling_down_oubliette);
 		_vm->_lucerna.mblit(12, 80, 38, 160, 3, 0);
 		_vm->_lucerna.mblit(12, 80, 38, 160, 3, 1);
 		_vm->_scrolls.display("Oh dear, you seem to be down the bottom of an oubliette.");
-		_vm->_timeout.set_up_timer(200, _vm->_timeout.procmeet_avaroid, _vm->_timeout.reason_meeting_avaroid);
+		_vm->_timeout->set_up_timer(200, _vm->_timeout->procmeet_avaroid, _vm->_timeout->reason_meeting_avaroid);
 		break;
 	case 8:        /* _vm->_gyro->special 8: leave du Lustie's room. */
 		if ((_vm->_gyro->dna.geida_follows) && (!_vm->_gyro->dna.lustie_is_asleep)) {
@@ -933,7 +933,7 @@ void Trip::call_special(uint16 which) {
 		tr[2].walkto(4); /* She walks to somewhere... */
 		tr[1].done();     /* Lose Avvy. */
 		_vm->_gyro->dna.user_moves_avvy = false;
-		_vm->_timeout.set_up_timer(40, _vm->_timeout.procrobin_hood_and_geida, _vm->_timeout.reason_robin_hood_and_geida);
+		_vm->_timeout->set_up_timer(40, _vm->_timeout->procrobin_hood_and_geida, _vm->_timeout->reason_robin_hood_and_geida);
 		break;
 	case 10: /* _vm->_gyro->special 10: transfer north in catacombs. */
 		if ((_vm->_gyro->dna.cat_x == 4) && (_vm->_gyro->dna.cat_y == 1)) {
@@ -1214,7 +1214,7 @@ void Trip::arrow_procs(byte tripnum) {
 			_vm->_lucerna.gameover();
 
 			_vm->_gyro->dna.user_moves_avvy = false; /* Stop the user from moving him. */
-			_vm->_timeout.set_up_timer(55, _vm->_timeout.procnaughty_duke, _vm->_timeout.reason_naughty_duke);
+			_vm->_timeout->set_up_timer(55, _vm->_timeout->procnaughty_duke, _vm->_timeout->reason_naughty_duke);
 		}
 	} else { /* Arrow has hit the wall! */
 		tr[tripnum].done(); /* Deallocate the arrow. */
