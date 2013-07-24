@@ -40,7 +40,7 @@
 
 namespace Avalanche {
 
-void Pingo::setParent(AvalancheEngine *vm) {
+Pingo::Pingo(AvalancheEngine *vm) {
 	_vm = vm;
 }
 

@@ -71,7 +71,7 @@ public:
 	Gyro *_gyro;
 	Enhanced *_enhanced;
 	Logger *_logger;
-	Pingo _pingo;
+	Pingo *_pingo;
 	Scrolls _scrolls;
 	Visa _visa;
 	Lucerna _lucerna;

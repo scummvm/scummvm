@@ -61,8 +61,10 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _avalot;
 	delete _gyro;
 	delete _enhanced;
-	delete _timeout;
 	delete _logger;
+	delete _pingo;
+
+	delete _timeout;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
@@ -72,7 +74,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_gyro = new Gyro(this);
 	_enhanced = new Enhanced(this);
 	_logger = new Logger(this);
-	_pingo.setParent(this);
+	_pingo = new Pingo(this);
 	_scrolls.setParent(this);
 	_visa.setParent(this);
 	_lucerna.setParent(this);
