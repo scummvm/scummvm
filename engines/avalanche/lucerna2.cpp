@@ -294,9 +294,9 @@ void Lucerna::zoomout(int16 x, int16 y) {
 }
 
 void Lucerna::find_people(byte room) {
-	for (byte fv = 151; fv <= 178; fv++)
+	for (byte fv = 1; fv < 29; fv++) // There'll may be problems with this.
 		if (_vm->_gyro->whereis[fv] == room) {
-			if (fv < 175)
+			if (fv < 25) // And this. See definition of whereis[].
 				_vm->_gyro->him = fv;
 			else
 				_vm->_gyro->her = fv;
