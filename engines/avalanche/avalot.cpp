@@ -155,6 +155,11 @@ void Avalot::setup() {
 
 
 void Avalot::handleKeyDown(const Common::Event &event) {
+	//if (keyboardclick)
+	//	click();
+	//	
+	// To be implemented later with the sounds, I assume.
+
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_DOWN:
@@ -168,7 +173,6 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 		_vm->_trip.handleMoveKey(event); // Fallthroughs are intended.
 		break;
 	}
-
 }
 
 
