@@ -65,9 +65,8 @@ public:
 	bytefield r;
 
 	
-	Celer();
 
-	void setParent(AvalancheEngine *vm);
+	Celer(AvalancheEngine *vm);
 
 	void pics_link();
 

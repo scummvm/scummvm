@@ -130,7 +130,7 @@ public:
 
 
 
-	void setParent(AvalancheEngine *vm);
+	Acci(AvalancheEngine *vm);
 
 	void init();
 

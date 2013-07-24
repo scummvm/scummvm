@@ -45,9 +45,9 @@ public:
 
 
 
+	Scrolls(AvalancheEngine *vm);
+	
 	void init();
-
-	void setParent(AvalancheEngine *vm);
 
 	void state(byte x);      /* Sets "Ready" light to whatever */
 

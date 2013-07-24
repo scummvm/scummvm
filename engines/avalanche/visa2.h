@@ -37,7 +37,7 @@ class AvalancheEngine;
 
 class Visa {
 public:
-	void Visa::setParent(AvalancheEngine *vm);
+	Visa(AvalancheEngine *vm);
 
 	void dixi(char block, byte point);
 

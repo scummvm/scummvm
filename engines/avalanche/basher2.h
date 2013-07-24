@@ -45,7 +45,7 @@ public:
 
 
 
-	void setParent(AvalancheEngine *vm);
+	Basher(AvalancheEngine *vm);
 
 	void init();
 

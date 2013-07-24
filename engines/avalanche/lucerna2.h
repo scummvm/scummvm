@@ -38,9 +38,7 @@ class AvalancheEngine;
 
 class Lucerna {
 public:
-	Lucerna();
-
-	void setParent(AvalancheEngine *vm);
+	Lucerna(AvalancheEngine *vm);
 
 	void init();
 

@@ -50,7 +50,7 @@
 namespace Avalanche {
 
 
-void Basher::setParent(AvalancheEngine *vm) {
+Basher::Basher(AvalancheEngine *vm) {
 	_vm = vm;
 }
 

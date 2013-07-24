@@ -234,7 +234,7 @@ void triptype::walk() {
 				break;
 			case _tr->_vm->_gyro->unfinished: {
 				bounce();
-				_tr->_vm->_scrolls.display("\7Sorry.\3\rThis place is not available yet!");
+				_tr->_vm->_scrolls->display("\7Sorry.\3\rThis place is not available yet!");
 				}
 				break;
 			case _tr->_vm->_gyro->special:
@@ -265,7 +265,7 @@ void triptype::bounce() {
 	else
 		stopwalk();
 	_tr->_vm->_gyro->oncandopageswap = false;
-	_tr->_vm->_lucerna.showrw();
+	_tr->_vm->_lucerna->showrw();
 	_tr->_vm->_gyro->oncandopageswap = true;
 }
 
@@ -465,13 +465,11 @@ void getsettype::recall(bytefield &r) {
 
 
 
-Trip::Trip() {
+Trip::Trip(AvalancheEngine *vm) {
+	_vm = vm;
+
 	getsetclear();
 	mustexclaim = false;
-}
-
-void Trip::setParent(AvalancheEngine *vm) {
-	_vm = vm;
 }
 
 void Trip::loadtrip() {
@@ -541,18 +539,18 @@ void Trip::catamove(byte ped) {
 	switch (xy_uint16) {
 	case 1801: /* Exit catacombs */
 		fliproom(r__lustiesroom, 4);
-		_vm->_scrolls.display("Phew! Nice to be out of there!");
+		_vm->_scrolls->display("Phew! Nice to be out of there!");
 		return;
 	case 1033: /* Oubliette */
 		fliproom(r__oubliette, 1);
-		_vm->_scrolls.display("Oh, NO!\231\2");
+		_vm->_scrolls->display("Oh, NO!\231\2");
 		return;
 	case 4:
 		fliproom(r__geidas, 1);
 		return;
 	case 2307:
 		fliproom(r__lusties, 5);
-		_vm->_scrolls.display("Oh no... here we go again...");
+		_vm->_scrolls->display("Oh no... here we go again...");
 		_vm->_gyro->dna.user_moves_avvy = false;
 		tr[1].iy = 1;
 		tr[1].ix = 0;
@@ -560,7 +558,7 @@ void Trip::catamove(byte ped) {
 	}
 
 	if (!_vm->_gyro->dna.enter_catacombs_from_lusties_room)
-		_vm->_lucerna.load(29);
+		_vm->_lucerna->load(29);
 	here = _vm->_gyro->catamap[_vm->_gyro->dna.cat_y][_vm->_gyro->dna.cat_x];
 
 	switch (here & 0xf) { /* West. */
@@ -568,59 +566,59 @@ void Trip::catamove(byte ped) {
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->nix; /* Door. */
-		_vm->_celer.show_one(28);
+		_vm->_celer->show_one(28);
 		break;
 	case 0x1: /* no connection (wall + shield), */
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->nix; /* Door. */
-		_vm->_celer.show_one(28); /* Wall, plus... */
-		_vm->_celer.show_one(29); /* ...shield. */
+		_vm->_celer->show_one(28); /* Wall, plus... */
+		_vm->_celer->show_one(29); /* ...shield. */
 		break;
 	case 0x2: /* wall with door */
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->special; /* Door. */
-		_vm->_celer.show_one(28); /* Wall, plus... */
-		_vm->_celer.show_one(30); /* ...door. */
+		_vm->_celer->show_one(28); /* Wall, plus... */
+		_vm->_celer->show_one(30); /* ...door. */
 		break;
 	case 0x3: /* wall with door and shield */
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->special; /* Door. */
-		_vm->_celer.show_one(28); /* Wall, plus... */
-		_vm->_celer.show_one(30); /* ...door, and... */
-		_vm->_celer.show_one(29); /* ...shield. */
+		_vm->_celer->show_one(28); /* Wall, plus... */
+		_vm->_celer->show_one(30); /* ...door, and... */
+		_vm->_celer->show_one(29); /* ...shield. */
 		break;
 	case 0x4: /* no connection (wall + window), */
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->nix; /* Door. */
-		_vm->_celer.show_one(28); /* Wall, plus... */
-		_vm->_celer.show_one(5);  /* ...window. */
+		_vm->_celer->show_one(28); /* Wall, plus... */
+		_vm->_celer->show_one(5);  /* ...window. */
 		break;
 	case 0x5: /* wall with door and window */
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->special; /* Door. */
-		_vm->_celer.show_one(28); /* Wall, plus... */
-		_vm->_celer.show_one(30); /* ...door, and... */
-		_vm->_celer.show_one(5); /* ...window. */
+		_vm->_celer->show_one(28); /* Wall, plus... */
+		_vm->_celer->show_one(30); /* ...door, and... */
+		_vm->_celer->show_one(5); /* ...window. */
 		break;
 	case 0x6: /* no connection (wall + torches), */
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->nix; /* No door. */
-		_vm->_celer.show_one(28); /* Wall, plus... */
-		_vm->_celer.show_one(7); /* ...torches. */
+		_vm->_celer->show_one(28); /* Wall, plus... */
+		_vm->_celer->show_one(7); /* ...torches. */
 		break;
 	case 0x7: /* wall with door and torches */
 		_vm->_gyro->magics[2].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[13].op = _vm->_gyro->special; /* Door. */
-		_vm->_celer.show_one(28); /* Wall, plus... */
-		_vm->_celer.show_one(30); /* ...door, and... */
-		_vm->_celer.show_one(7); /* ...torches. */
+		_vm->_celer->show_one(28); /* Wall, plus... */
+		_vm->_celer->show_one(30); /* ...door, and... */
+		_vm->_celer->show_one(7); /* ...torches. */
 		break;
 	case 0xf: /* straight-through corridor. */
 		_vm->_gyro->magics[2].op = _vm->_gyro->nix; /* Sloping wall. */
@@ -635,44 +633,44 @@ void Trip::catamove(byte ped) {
 		_vm->_gyro->magics[5].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[6].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[15].op = _vm->_gyro->nix; /* Door. */
-		_vm->_celer.show_one(19);
+		_vm->_celer->show_one(19);
 		break;
 	case 0x1: /* no connection (wall + window), */
 		_vm->_gyro->magics[5].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[6].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[15].op = _vm->_gyro->nix; /* Door. */
-		_vm->_celer.show_one(19); /* Wall, plus... */
-		_vm->_celer.show_one(20); /* ...window. */
+		_vm->_celer->show_one(19); /* Wall, plus... */
+		_vm->_celer->show_one(20); /* ...window. */
 		break;
 	case 0x2: /* wall with door */
 		_vm->_gyro->magics[5].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[6].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[15].op = _vm->_gyro->special; /* Door. */
-		_vm->_celer.show_one(19); /* Wall, plus... */
-		_vm->_celer.show_one(21); /* ...door. */
+		_vm->_celer->show_one(19); /* Wall, plus... */
+		_vm->_celer->show_one(21); /* ...door. */
 		break;
 	case 0x3: /* wall with door and window */
 		_vm->_gyro->magics[5].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[6].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[15].op = _vm->_gyro->special; /* Door. */
-		_vm->_celer.show_one(19); /* Wall, plus... */
-		_vm->_celer.show_one(20); /* ...door, and... */
-		_vm->_celer.show_one(21); /* ...window. */
+		_vm->_celer->show_one(19); /* Wall, plus... */
+		_vm->_celer->show_one(20); /* ...door, and... */
+		_vm->_celer->show_one(21); /* ...window. */
 		break;
 	case 0x6: /* no connection (wall + torches), */
 		_vm->_gyro->magics[5].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[6].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[15].op = _vm->_gyro->nix; /* No door. */
-		_vm->_celer.show_one(19); /* Wall, plus... */
-		_vm->_celer.show_one(18); /* ...torches. */
+		_vm->_celer->show_one(19); /* Wall, plus... */
+		_vm->_celer->show_one(18); /* ...torches. */
 		break;
 	case 0x7: /* wall with door and torches */
 		_vm->_gyro->magics[5].op = _vm->_gyro->bounces; /* Sloping wall. */
 		_vm->_gyro->magics[6].op = _vm->_gyro->nix; /* Straight wall. */
 		_vm->_gyro->portals[15].op = _vm->_gyro->special; /* Door. */
-		_vm->_celer.show_one(19); /* Wall, plus... */
-		_vm->_celer.show_one(21); /* ...door, and... */
-		_vm->_celer.show_one(18); /* ...torches. */
+		_vm->_celer->show_one(19); /* Wall, plus... */
+		_vm->_celer->show_one(21); /* ...door, and... */
+		_vm->_celer->show_one(18); /* ...torches. */
 		break;
 	case 0xf: /* straight-through corridor. */
 		_vm->_gyro->magics[5].op = _vm->_gyro->nix; /* Sloping wall. */
@@ -690,7 +688,7 @@ void Trip::catamove(byte ped) {
 		_vm->_gyro->magics[13].op = _vm->_gyro->bounces;
 		break;
 	case 0x1:
-		_vm->_celer.show_one(22);
+		_vm->_celer->show_one(22);
 			
 		if ((xy_uint16 == 2051) & (_vm->_gyro->dna.geida_follows))
 			_vm->_gyro->magics[13].op = _vm->_gyro->exclaim;
@@ -701,13 +699,13 @@ void Trip::catamove(byte ped) {
 		_vm->_gyro->magics[12].op = _vm->_gyro->bounces;
 		break;
 	case 0x2:
-		_vm->_celer.show_one(23);
+		_vm->_celer->show_one(23);
 		_vm->_gyro->magics[7].op = _vm->_gyro->special; /* Middle exit south. */
 		_vm->_gyro->magics[12].op = _vm->_gyro->bounces;
 		_vm->_gyro->magics[13].op = _vm->_gyro->bounces;
 		break;
 	case 0x3:
-		_vm->_celer.show_one(24);
+		_vm->_celer->show_one(24);
 		_vm->_gyro->magics[12].op = _vm->_gyro->special; /* Left exit south. */
 		_vm->_gyro->magics[7].op = _vm->_gyro->bounces;
 		_vm->_gyro->magics[13].op = _vm->_gyro->bounces;
@@ -722,36 +720,36 @@ void Trip::catamove(byte ped) {
 	// LEFT handles: 
 /*
 	case 0x1:
-		_vm->_celer.show_one(4);
+		_vm->_celer->show_one(4);
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces; // { Left exit north. } { Change magic number! }
 		_vm->_gyro->portals[12].op = _vm->_gyro->special; // { Door. }
 		break;
 */
 	case 0x2:
-		_vm->_celer.show_one(4);
+		_vm->_celer->show_one(4);
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces; // Middle exit north.
 		_vm->_gyro->portals[12].op = _vm->_gyro->special; // Door.
 		break;
 /*	case 0x3:
-		_vm->_celer.show_one(4);
+		_vm->_celer->show_one(4);
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces; // { Right exit north. } { Change magic number! }
 		_vm->_gyro->portals[12].op = _vm->_gyro->special; // { Door. }
 		break;
 	// RIGHT handles:
 	case 0x4:
-		_vm->_celer.show_one(3);
+		_vm->_celer->show_one(3);
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces; // { Left exit north. } { Change magic number! }
 		_vm->_gyro->portals[12].op = _vm->_gyro->special; // { Door. }
 		break;
 */
 	case 0x5:
-		_vm->_celer.show_one(3);
+		_vm->_celer->show_one(3);
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces; /* Middle exit north. */
 		_vm->_gyro->portals[12].op = _vm->_gyro->special; /* Door. */
 		break;
 /*
 	case 0x6:
-		_vm->_celer.show_one(3);
+		_vm->_celer->show_one(3);
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces; // { Right exit north. }
 		_vm->_gyro->portals[12].op = _vm->_gyro->special; // { Door. }
 		break;
@@ -760,12 +758,12 @@ void Trip::catamove(byte ped) {
 	case 0x7:
 	case 0x8:
 	case 0x9: {
-		_vm->_celer.show_one(6);
+		_vm->_celer->show_one(6);
 
 		if (((here & 0xf000) >> 12) > 0x7)
-			_vm->_celer.show_one(31);
+			_vm->_celer->show_one(31);
 		if (((here & 0xf000) >> 12) == 0x9)
-			_vm->_celer.show_one(32);
+			_vm->_celer->show_one(32);
 
 		_vm->_gyro->magics[1].op = _vm->_gyro->special; /* Middle arch north. */
 		_vm->_gyro->portals[12].op = _vm->_gyro->nix; /* Door. */
@@ -775,50 +773,50 @@ void Trip::catamove(byte ped) {
 	case 0xd: /* No connection + WINDOW */
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces;
 		_vm->_gyro->portals[12].op = _vm->_gyro->nix; /* Door. */
-		_vm->_celer.show_one(14);
+		_vm->_celer->show_one(14);
 		break;
 	case 0xe: /* No connection + TORCH */
 		_vm->_gyro->magics[1].op = _vm->_gyro->bounces;
 		_vm->_gyro->portals[12].op = _vm->_gyro->nix; /* Door. */
-		_vm->_celer.show_one(8);
+		_vm->_celer->show_one(8);
 		break;
 	/* Recessed door: */
 	case 0xf:
 		_vm->_gyro->magics[1].op = _vm->_gyro->nix; /* Door to Geida's room. */
-		_vm->_celer.show_one(1);
+		_vm->_celer->show_one(1);
 		_vm->_gyro->portals[12].op = _vm->_gyro->special; /* Door. */
 		break;
 	}
 
 	switch (xy_uint16) {
 	case 514:
-		_vm->_celer.show_one(17);
+		_vm->_celer->show_one(17);
 		break;     /* [2,2] : "Art Gallery" sign over door. */
 	case 264:
-		_vm->_celer.show_one(9);
+		_vm->_celer->show_one(9);
 		break;      /* [8,1] : "The Wrong Way!" sign. */
 	case 1797:
-		_vm->_celer.show_one(2);
+		_vm->_celer->show_one(2);
 		break;      /* [5,7] : "Ite Mingite" sign. */
 	case 258:
 		for (fv = 0; fv <= 2; fv++) { /* [2,1] : Art gallery - pictures */
-			_vm->_celer.show_one_at(15, 130 + fv * 120, 70);
-			_vm->_celer.show_one_at(16, 184 + fv * 120, 78);
+			_vm->_celer->show_one_at(15, 130 + fv * 120, 70);
+			_vm->_celer->show_one_at(16, 184 + fv * 120, 78);
 		}
 		break;
 	case 1287:
 		for (fv = 10; fv <= 13; fv++)
-			_vm->_celer.show_one(fv);
+			_vm->_celer->show_one(fv);
 		break; /* [7,5] : 4 candles. */
 	case 776:
-		_vm->_celer.show_one(10);
+		_vm->_celer->show_one(10);
 		break;     /* [8,3] : 1 candle. */
 	case 2049:
-		_vm->_celer.show_one(11);
+		_vm->_celer->show_one(11);
 		break;     /* [1,8] : another candle. */
 	case 257:
-		_vm->_celer.show_one(12);
-		_vm->_celer.show_one(13);
+		_vm->_celer->show_one(12);
+		_vm->_celer->show_one(13);
 		break; /* [1,1] : the other two. */
 	}
 
@@ -843,7 +841,7 @@ void Trip::dawndelay() {
 void Trip::call_special(uint16 which) {
 	switch (which) {
 	case 1: /* _vm->_gyro->special 1: Room 22: top of stairs. */
-		_vm->_celer.show_one(1);
+		_vm->_celer->show_one(1);
 		_vm->_gyro->dna.brummie_stairs = 1;
 		_vm->_gyro->magics[10].op = _vm->_gyro->nix;
 		_vm->_timeout->set_up_timer(10, _vm->_timeout->procstairs, _vm->_timeout->reason_brummiestairs);
@@ -857,7 +855,7 @@ void Trip::call_special(uint16 which) {
 		_vm->_gyro->magics[12].data = 5;
 		_vm->_gyro->magics[4].op = _vm->_gyro->bounces; /* Now works as planned! */
 		stopwalking();
-		_vm->_visa.dixi('q', 26);
+		_vm->_visa->dixi('q', 26);
 		_vm->_gyro->dna.user_moves_avvy = true;
 		break;
 	case 3: /* _vm->_gyro->special 3: Room 71: triggers dart. */
@@ -877,20 +875,20 @@ void Trip::call_special(uint16 which) {
 		}
 		break;
 	case 4: /* This is the ghost room link. */
-		_vm->_lucerna.dusk();
+		_vm->_lucerna->dusk();
 		tr[1].turn(right); /* you'll see this after we get back from bootstrap */
 		_vm->_timeout->set_up_timer(1, _vm->_timeout->procghost_room_phew, _vm->_timeout->reason_ghost_room_phew);
-		_vm->_enid.back_to_bootstrap(3);
+		_vm->_enid->back_to_bootstrap(3);
 		break;
 	case 5:
 		if (_vm->_gyro->dna.friar_will_tie_you_up) {
 			/* _vm->_gyro->special 5: Room 42: touched tree, and get tied up. */
 			_vm->_gyro->magics[4].op = _vm->_gyro->bounces; /* Boundary effect is now working again. */
-			_vm->_visa.dixi('q', 35);
+			_vm->_visa->dixi('q', 35);
 			tr[1].done();
 			/*tr[1].vanishifstill:=true;*/
-			_vm->_celer.show_one(2);
-			_vm->_visa.dixi('q', 36);
+			_vm->_celer->show_one(2);
+			_vm->_visa->dixi('q', 36);
 			_vm->_gyro->dna.tied_up = true;
 			_vm->_gyro->dna.friar_will_tie_you_up = false;
 			tr[2].walkto(3);
@@ -912,18 +910,18 @@ void Trip::call_special(uint16 which) {
 		_vm->_gyro->magics[10].op = _vm->_gyro->nix;
 		stopwalking();
 		_vm->_timeout->lose_timer(_vm->_timeout->reason_falling_down_oubliette);
-		_vm->_lucerna.mblit(12, 80, 38, 160, 3, 0);
-		_vm->_lucerna.mblit(12, 80, 38, 160, 3, 1);
-		_vm->_scrolls.display("Oh dear, you seem to be down the bottom of an oubliette.");
+		_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);
+		_vm->_lucerna->mblit(12, 80, 38, 160, 3, 1);
+		_vm->_scrolls->display("Oh dear, you seem to be down the bottom of an oubliette.");
 		_vm->_timeout->set_up_timer(200, _vm->_timeout->procmeet_avaroid, _vm->_timeout->reason_meeting_avaroid);
 		break;
 	case 8:        /* _vm->_gyro->special 8: leave du Lustie's room. */
 		if ((_vm->_gyro->dna.geida_follows) && (!_vm->_gyro->dna.lustie_is_asleep)) {
-			_vm->_visa.dixi('q', 63);
+			_vm->_visa->dixi('q', 63);
 			tr[2].turn(down);
 			tr[2].stopwalk();
 			tr[2].call_eachstep = false; /* Geida */
-			_vm->_lucerna.gameover();
+			_vm->_lucerna->gameover();
 		}
 		break;
 	case 9: /* _vm->_gyro->special 9: lose Geida to Robin Hood... */
@@ -939,18 +937,18 @@ void Trip::call_special(uint16 which) {
 		if ((_vm->_gyro->dna.cat_x == 4) && (_vm->_gyro->dna.cat_y == 1)) {
 			/* Into Geida's room. */
 			if (_vm->_gyro->dna.obj[_vm->_gyro->key])
-				_vm->_visa.dixi('q', 62);
+				_vm->_visa->dixi('q', 62);
 			else {
-				_vm->_visa.dixi('q', 61);
+				_vm->_visa->dixi('q', 61);
 				return;
 			}
 		}
-		_vm->_lucerna.dusk();
+		_vm->_lucerna->dusk();
 		_vm->_gyro->dna.cat_y -= 1;
 		catamove(4);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
-		_vm->_lucerna.delavvy();
+		_vm->_lucerna->delavvy();
 		switch ((_vm->_gyro->catamap[_vm->_gyro->dna.cat_y][_vm->_gyro->dna.cat_x] & 0xf00) >> 8) {
 		case 0x1:
 			apped(1, 12);
@@ -965,34 +963,34 @@ void Trip::call_special(uint16 which) {
 		dawndelay();
 		break;
 	case 11: /* _vm->_gyro->special 11: transfer east in catacombs. */
-		_vm->_lucerna.dusk();
+		_vm->_lucerna->dusk();
 		_vm->_gyro->dna.cat_x += 1;
 		catamove(1);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
-		_vm->_lucerna.delavvy();
+		_vm->_lucerna->delavvy();
 		apped(1, 1);
 		getback();
 		dawndelay();
 		break;
 	case 12: /* _vm->_gyro->special 12: transfer south in catacombs. */
-		_vm->_lucerna.dusk();
+		_vm->_lucerna->dusk();
 		_vm->_gyro->dna.cat_y += 1;
 		catamove(2);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
-		_vm->_lucerna.delavvy();
+		_vm->_lucerna->delavvy();
 		apped(1, 2);
 		getback();
 		dawndelay();
 		break;
 	case 13: /* _vm->_gyro->special 13: transfer west in catacombs. */
-		_vm->_lucerna.dusk();
+		_vm->_lucerna->dusk();
 		_vm->_gyro->dna.cat_x -= 1;
 		catamove(3);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
-		_vm->_lucerna.delavvy();
+		_vm->_lucerna->delavvy();
 		apped(1, 3);
 		getback();
 		dawndelay();
@@ -1010,52 +1008,52 @@ void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
 	case r__outsideyours:
 	case r__outsidenottspub:
 	case r__outsideducks:
-		_vm->_sequence.first_show(1);
-		_vm->_sequence.then_show(2);
-		_vm->_sequence.then_show(3);
+		_vm->_sequence->first_show(1);
+		_vm->_sequence->then_show(2);
+		_vm->_sequence->then_show(3);
 		break;
 	case r__insidecardiffcastle:
-		_vm->_sequence.first_show(1);
-		_vm->_sequence.then_show(5);
+		_vm->_sequence->first_show(1);
+		_vm->_sequence->then_show(5);
 		break;
 	case r__avvysgarden:
 	case r__entrancehall:
 	case r__insideabbey:
-		_vm->_sequence.first_show(1);
-		_vm->_sequence.then_show(2);
+		_vm->_sequence->first_show(1);
+		_vm->_sequence->then_show(2);
 		break;
 	case r__musicroom:
 	case r__outsideargentpub:
-		_vm->_sequence.first_show(5);
-		_vm->_sequence.then_show(6);
+		_vm->_sequence->first_show(5);
+		_vm->_sequence->then_show(6);
 		break;
 	case r__lusties:
 		switch (magicnum) {
 		case 14:
 			if (_vm->_gyro->dna.avvys_in_the_cupboard) {
 				hide_in_the_cupboard();
-				_vm->_sequence.first_show(8);
-				_vm->_sequence.then_show(7);
-				_vm->_sequence.start_to_close();
+				_vm->_sequence->first_show(8);
+				_vm->_sequence->then_show(7);
+				_vm->_sequence->start_to_close();
 				return;
 			} else {
 				apped(1, 6);
 				tr[1].face = right; /* added by TT 12/3/1995 */
-				_vm->_sequence.first_show(8);
-				_vm->_sequence.then_show(9);
+				_vm->_sequence->first_show(8);
+				_vm->_sequence->then_show(9);
 			}
 			break;
 		case 12:
-			_vm->_sequence.first_show(4);
-			_vm->_sequence.then_show(5);
-			_vm->_sequence.then_show(6);
+			_vm->_sequence->first_show(4);
+			_vm->_sequence->then_show(5);
+			_vm->_sequence->then_show(6);
 			break;
 		}
 		break;
 	}
 
-	_vm->_sequence.then_flip(whither, ped);
-	_vm->_sequence.start_to_open();
+	_vm->_sequence->then_flip(whither, ped);
+	_vm->_sequence->start_to_open();
 }
 
 void Trip::newspeed() {
@@ -1133,10 +1131,10 @@ void Trip::getback() {
 			end;
 		*/
 
-		_vm->_lucerna.mblit(r.x1, r.y1, r.x2, r.y2, 3, 1 - _vm->_gyro->cp);
+		_vm->_lucerna->mblit(r.x1, r.y1, r.x2, r.y2, 3, 1 - _vm->_gyro->cp);
 	}
 
-	_vm->_lucerna.blitfix();
+	_vm->_lucerna->blitfix();
 
 	/*
 	if endangered then
@@ -1199,7 +1197,7 @@ void Trip::arrow_procs(byte tripnum) {
 			/* OK, it's hit him... what now? */
 
 			tr[2].call_eachstep = false; /* prevent recursion. */
-			_vm->_visa.dixi('Q', 47); /* Complaint! */
+			_vm->_visa->dixi('Q', 47); /* Complaint! */
 			tr[tripnum].done(); /* Deallocate the arrow. */
 			/*     tr[1].done; { Deallocate normal pic of Avvy. }
 
@@ -1211,14 +1209,14 @@ void Trip::arrow_procs(byte tripnum) {
 					end;
 					on;*/
 
-			_vm->_lucerna.gameover();
+			_vm->_lucerna->gameover();
 
 			_vm->_gyro->dna.user_moves_avvy = false; /* Stop the user from moving him. */
 			_vm->_timeout->set_up_timer(55, _vm->_timeout->procnaughty_duke, _vm->_timeout->reason_naughty_duke);
 		}
 	} else { /* Arrow has hit the wall! */
 		tr[tripnum].done(); /* Deallocate the arrow. */
-		_vm->_celer.show_one(3); /* Show pic of arrow stuck into the door. */
+		_vm->_celer->show_one(3); /* Show pic of arrow stuck into the door. */
 		_vm->_gyro->dna.arrow_in_the_door = true; /* So that we can pick it up. */
 	}
 		
@@ -1282,7 +1280,7 @@ void Trip::spin(byte whichway, byte &tripnum) {
 		_vm->_gyro->dna.geida_spin += 1;
 		_vm->_gyro->dna.geida_time = 20;
 		if (_vm->_gyro->dna.geida_spin == 5) {
-			_vm->_scrolls.display("Steady on, Avvy, you'll make the poor girl dizzy!");
+			_vm->_scrolls->display("Steady on, Avvy, you'll make the poor girl dizzy!");
 			_vm->_gyro->dna.geida_spin = 0;
 			_vm->_gyro->dna.geida_time = 0; /* knock out records */
 		}
@@ -1399,7 +1397,7 @@ void Trip::trippancy_link() {
 	}
 	if (mustexclaim) {
 		mustexclaim = false;
-		_vm->_visa.dixi('x', saywhat);
+		_vm->_visa->dixi('x', saywhat);
 	}
 }
 
@@ -1506,26 +1504,26 @@ void Trip::hide_in_the_cupboard() {
 
 	if (_vm->_gyro->dna.avvys_in_the_cupboard) {
 		if (_vm->_gyro->dna.wearing == nowt)
-			_vm->_scrolls.display("\6AVVY!\22 Get dressed first!");
+			_vm->_scrolls->display("\6AVVY!\22 Get dressed first!");
 		else {
 			tr[1].visible = true;
 			_vm->_gyro->dna.user_moves_avvy = true;
 			apped(1, 3); /* Walk out of the cupboard. */
-			_vm->_scrolls.display("You leave the cupboard. Nice to be out of there!");
+			_vm->_scrolls->display("You leave the cupboard. Nice to be out of there!");
 			_vm->_gyro->dna.avvys_in_the_cupboard = false;
-			_vm->_sequence.first_show(8);
-			_vm->_sequence.then_show(7);
-			_vm->_sequence.start_to_close();
+			_vm->_sequence->first_show(8);
+			_vm->_sequence->then_show(7);
+			_vm->_sequence->start_to_close();
 		}
 	} else {
 		/* Not hiding in the cupboard */
 		tr[1].visible = false;
 		_vm->_gyro->dna.user_moves_avvy = false;
-		_vm->_scrolls.display(Common::String("You walk into the room...\20It seems to be an empty, ") +
+		_vm->_scrolls->display(Common::String("You walk into the room...\20It seems to be an empty, ") +
 				"but dusty, cupboard. Hmmmm... you leave the door slightly open to " +
 				"avoid suffocation.");
 		_vm->_gyro->dna.avvys_in_the_cupboard = true;
-		_vm->_celer.show_one(8);
+		_vm->_celer->show_one(8);
 	}
 }
 
@@ -1564,8 +1562,8 @@ void Trip::fliproom(byte room, byte ped) {
 	beforex = _vm->_gyro->mx;
 	beforey = _vm->_gyro->my;
 
-	_vm->_lucerna.exitroom(_vm->_gyro->dna.room);
-	_vm->_lucerna.dusk();
+	_vm->_lucerna->exitroom(_vm->_gyro->dna.room);
+	_vm->_lucerna->dusk();
 	getsetclear();
 
 
@@ -1577,18 +1575,18 @@ void Trip::fliproom(byte room, byte ped) {
 	if (_vm->_gyro->dna.room == r__lustiesroom)
 		_vm->_gyro->dna.enter_catacombs_from_lusties_room = true;
 
-	_vm->_lucerna.enterroom(room, ped);
+	_vm->_lucerna->enterroom(room, ped);
 	apped(1, ped);
 	_vm->_gyro->dna.enter_catacombs_from_lusties_room = false;
 	_vm->_gyro->oldrw = _vm->_gyro->dna.rw;
 	_vm->_gyro->dna.rw = tr[1].face;
-	_vm->_lucerna.showrw();
+	_vm->_lucerna->showrw();
 
 	for (fv = 0; fv <= 1; fv++) {
 		_vm->_gyro->cp = 1 - _vm->_gyro->cp;
 		getback();
 	}
-	_vm->_lucerna.dawn();
+	_vm->_lucerna->dawn();
 
 	/* Tidy up after mouse. I know it's a kludge... */
 	/*  tidy_after_mouse;*/

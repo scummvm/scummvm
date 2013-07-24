@@ -69,16 +69,16 @@ void Avalot::setup() {
 	_vm->_gyro->visible = _vm->_gyro->m_no;
 	_vm->_gyro->to_do = 0;
 	_vm->_gyro->lmo = false;
-	_vm->_scrolls.resetscroll();
+	_vm->_scrolls->resetscroll();
 	_vm->_gyro->setup_vmc();
 	_vm->_gyro->on_virtual();
 	gd = 3;
 	gm = 0;
 	//initgraph(gd: gm: "");
 	_vm->_gyro->holdthedawn = true;
-	_vm->_lucerna.dusk();
+	_vm->_lucerna->dusk();
 	_vm->_gyro->cmp = 177;
-	_vm->_lucerna.mouse_init();  /*on;*/
+	_vm->_lucerna->mouse_init();  /*on;*/
 	_vm->_gyro->dropsok = true;
 	_vm->_gyro->ctrl = ckey;
 	_vm->_gyro->oldjw = 177;
@@ -86,7 +86,7 @@ void Avalot::setup() {
 	_vm->_gyro->c = 999;
 	//settextjustify(0: 0);
 	_vm->_gyro->ddmnow = false;
-	_vm->_lucerna.load_digits();
+	_vm->_lucerna->load_digits();
 	_vm->_gyro->cheat = false;
 	_vm->_gyro->cp = 0;
 	_vm->_gyro->curpos = 1;
@@ -96,8 +96,8 @@ void Avalot::setup() {
 	/* TSkellern:=0; { Replace with a more local variable sometime }*/
 	_vm->_gyro->dna.rw = _vm->_gyro->stopped;
 	_vm->_gyro->enid_filename = ""; /* undefined. */
-	_vm->_lucerna.toolbar();
-	_vm->_scrolls.state(2);
+	_vm->_lucerna->toolbar();
+	_vm->_scrolls->state(2);
 	_vm->_graphics->refreshScreen(); //_vm->_pingo->copy03(); Replace it with refreshScreen() since they 'almost' have the same functionality.
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->lastscore[i] = -1; /* impossible digits */
@@ -107,7 +107,7 @@ void Avalot::setup() {
 	  setactivepage(gd); outtextxy(7:177:chr(48+gd));
 	 end;*/
 
-	_vm->_trip.loadtrip();
+	_vm->_trip->loadtrip();
 
 	_vm->_gyro->reloaded = false; // TODO: Remove it later: when SAVE/LOAD system is implemented. Until then: we always start a new game.
 
@@ -115,18 +115,18 @@ void Avalot::setup() {
 		_vm->_gyro->newgame(); /* no game was requested- load the default */
 	else {
 		if (! _vm->_gyro->reloaded)
-			_vm->_enid.avvy_background();
-		_vm->_dropdown.standard_bar();
-		_vm->_lucerna.sprite_run();
+			_vm->_enid->avvy_background();
+		_vm->_dropdown->standard_bar();
+		_vm->_lucerna->sprite_run();
 		if (_vm->_gyro->reloaded)
-			_vm->_enid.edna_reload();
+			_vm->_enid->edna_reload();
 		else {
 			/* Filename given on the command line (or loadfirst) */
-			_vm->_enid.edna_load(_vm->_gyro->filetoload);
-			if (_vm->_enid.there_was_a_problem()) {
-				_vm->_scrolls.display("So let's start from the beginning instead...");
+			_vm->_enid->edna_load(_vm->_gyro->filetoload);
+			if (_vm->_enid->there_was_a_problem()) {
+				_vm->_scrolls->display("So let's start from the beginning instead...");
 				_vm->_gyro->holdthedawn = true;
-				_vm->_lucerna.dusk();
+				_vm->_lucerna->dusk();
 				_vm->_gyro->newgame();
 			}
 		}
@@ -134,21 +134,21 @@ void Avalot::setup() {
 
 	if (! _vm->_gyro->reloaded) {
 		_vm->_gyro->soundfx = ! _vm->_gyro->soundfx;
-		_vm->_lucerna.fxtoggle();
-		_vm->_lucerna.thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing);
+		_vm->_lucerna->fxtoggle();
+		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing);
 	}
 
-	_vm->_trip.get_back_loretta();
+	_vm->_trip->get_back_loretta();
 	//gm = getpixel(0: 0);
 	//setcolor(7);
 	_vm->_gyro->holdthedawn = false;
-	_vm->_lucerna.dawn();
+	_vm->_lucerna->dawn();
 	_vm->_gyro->cursoron = false;
-	_vm->_basher.cursor_on();
-	_vm->_trip.newspeed();
+	_vm->_basher->cursor_on();
+	_vm->_trip->newspeed();
 
 	if (! _vm->_gyro->reloaded)
-		_vm->_visa.dixi('q', 83); /* Info on the game: etc. */
+		_vm->_visa->dixi('q', 83); /* Info on the game: etc. */
 }
 
 
@@ -169,7 +169,7 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP5:
-		_vm->_trip.handleMoveKey(event); // Fallthroughs are intended.
+		_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
 		break;
 	}
 }
@@ -180,19 +180,19 @@ void Avalot::run(Common::String arg) {
 	setup();
 
 	do {
-		_vm->_lucerna.clock_lucerna();
-		_vm->_basher.keyboard_link();
-		_vm->_dropdown.menu_link();
-		_vm->_trip.readstick();
+		_vm->_lucerna->clock_lucerna();
+		_vm->_basher->keyboard_link();
+		_vm->_dropdown->menu_link();
+		_vm->_trip->readstick();
 		_vm->_gyro->force_numlock();
-		_vm->_trip.get_back_loretta();
-		_vm->_trip.trippancy_link();
-		_vm->_celer.pics_link();
-		_vm->_lucerna.checkclick();
+		_vm->_trip->get_back_loretta();
+		_vm->_trip->trippancy_link();
+		_vm->_celer->pics_link();
+		_vm->_lucerna->checkclick();
 
 		if (_vm->_gyro->visible == _vm->_gyro->m_virtual)
 			_vm->_gyro->plot_vmc(_vm->_gyro->mx, _vm->_gyro->my, _vm->_gyro->cp);
-		_vm->_lucerna.flip_page(); /* <<<! */
+		_vm->_lucerna->flip_page(); /* <<<! */
 		_vm->_gyro->slowdown();
 		if (_vm->_gyro->visible == _vm->_gyro->m_virtual) 
 			_vm->_gyro->wipe_vmc(_vm->_gyro->cp);
@@ -213,7 +213,7 @@ void Avalot::run(Common::String arg) {
 	//if (logging)
 	//	close(logfile);
 
-	_vm->_closing.end_of_program();
+	_vm->_closing->end_of_program();
 }
 
 } // End of namespace Avalanche

@@ -43,9 +43,7 @@ public:
 	static const int16 scr_nagscreen = 3;
 	static const int16 scr_twocopies = 5;
 
-	Closing();
-
-	void setParent(AvalancheEngine *vm);
+	Closing(AvalancheEngine *vm);
 
 	void quit_with(byte which, byte errorlev);
 

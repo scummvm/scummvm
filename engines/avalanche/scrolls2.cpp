@@ -47,7 +47,7 @@
 
 namespace Avalanche {
 
-void Scrolls::setParent(AvalancheEngine *vm) {
+Scrolls::Scrolls(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
@@ -154,7 +154,7 @@ void Scrolls::resetscrolldriver() {   /* phew */
 void Scrolls::dingdongbell() {   /* Pussy's in the well. Who put her in? Little... */
 	byte fv;
 
-	for (fv = 1; fv <= _vm->_gyro->scrollbells; fv ++) _vm->_lucerna.errorled(); /* ring the bell "x" times */
+	for (fv = 1; fv <= _vm->_gyro->scrollbells; fv ++) _vm->_lucerna->errorled(); /* ring the bell "x" times */
 }
 
 void Scrolls::dodgem() {     /* This moves the mouse pointer off the scroll so that you can read it. */
@@ -329,7 +329,7 @@ void Scrolls::musical_scroll() {
 	display(Common::String("To play the harp...\r\rUse these keys:\r\n") +
 	        "Q W E R T Y U I O P [ ]\r\rOr press Enter to stop playing.\4");
 
-	_vm->_lucerna.sprite_run();
+	_vm->_lucerna->sprite_run();
 
 	was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
 
