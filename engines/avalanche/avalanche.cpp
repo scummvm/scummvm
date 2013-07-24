@@ -60,6 +60,7 @@ AvalancheEngine::~AvalancheEngine() {
 
 	delete _avalot;
 	delete _gyro;
+	delete _enhanced;
 	delete _timeout;
 }
 
@@ -68,7 +69,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 
 	_avalot = new Avalot(this);
 	_gyro = new Gyro(this);
-	_enhanced.setParent(this);
+	_enhanced = new Enhanced(this);
 	_logger.setParent(this);
 	_pingo.setParent(this);
 	_scrolls.setParent(this);

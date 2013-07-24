@@ -33,7 +33,7 @@
 
 namespace Avalanche {
 
-void Enhanced::setParent(AvalancheEngine *vm) {
+Enhanced::Enhanced(AvalancheEngine *vm) {
 	_vm = vm;
 }
 

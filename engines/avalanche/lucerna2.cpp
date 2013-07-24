@@ -63,7 +63,7 @@ void Lucerna::setParent(AvalancheEngine *vm) {
 void Lucerna::init() {
 	_vm->_gyro->oh = 17717;
 	_vm->_gyro->om = 17717;
-	if (_vm->_enhanced.atbios)  _vm->_gyro->atkey = "f1";
+	if (_vm->_enhanced->atbios)  _vm->_gyro->atkey = "f1";
 	else _vm->_gyro->atkey = "alt-";
 }
 	
@@ -904,15 +904,15 @@ void Lucerna::inkey() {
 
 	if (_vm->_gyro->mousetext == "") {
 		/* read keyboard */
-		_vm->_enhanced.readkeye();
-		if ((_vm->_enhanced.inchar == ' ') && ((_vm->_enhanced.shiftstate & 8) > 0)) {
-			_vm->_enhanced.inchar = '\0';
-			_vm->_enhanced.extd = '#'; /* alt-spacebar = alt-H */
+		_vm->_enhanced->readkeye();
+		if ((_vm->_enhanced->inchar == ' ') && ((_vm->_enhanced->shiftstate & 8) > 0)) {
+			_vm->_enhanced->inchar = '\0';
+			_vm->_enhanced->extd = '#'; /* alt-spacebar = alt-H */
 		}
 	} else {
 		if (_vm->_gyro->mousetext[0] == '`')
 			_vm->_gyro->mousetext.setChar(13,0); /* Backquote = return in a macro */
-		_vm->_enhanced.inchar = _vm->_gyro->mousetext[0];
+		_vm->_enhanced->inchar = _vm->_gyro->mousetext[0];
 		_vm->_gyro->mousetext = Common::String(_vm->_gyro->mousetext.c_str() + 2, 253);
 	}
 }
