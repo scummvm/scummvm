@@ -1567,4 +1567,11 @@ void Trip::new_game_for_trippancy() {   /* Called by gyro.newgame */
 	tr[1].visible = false;
 }
 
+
+
+void Trip::handleMoveKey(const Common::Event &event) { 
+	warning("STUB: Avalot::handleMoveKey()");
+}
+
+
 } // End of namespace Avalanche.

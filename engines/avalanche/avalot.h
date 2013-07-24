@@ -46,7 +46,7 @@ public:
 
 	void handleKeyDown(const Common::Event &event);
 
-	void handleMoveKey(const Common::Event &event); // To replace Trip::tripkey().
+	
 
 
 

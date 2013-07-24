@@ -164,14 +164,10 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 	case Common::KEYCODE_PAGEDOWN:
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_END:
-		handleMoveKey(event); // Fallthroughs are intended.
+		_vm->_trip.handleMoveKey(event); // Fallthroughs are intended.
 		break;
 	}
 
-}
-
-void Avalot::handleMoveKey(const Common::Event &event) { 
-	warning("STUB: Avalot::handleMoveKey()");
 }
 
 
