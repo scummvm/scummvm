@@ -107,9 +107,6 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	const char *getCopyrightString() const;
 
-	Common::String getSavegameFilename(int slot);
-	void syncSoundSettings();
-
 	void updateEvents();
 
 protected:
