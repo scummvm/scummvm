@@ -153,7 +153,7 @@ void triptype::andexor() {
 		return;
 	byte picnum = face * a.seq + step; // There'll maybe problem because of the different array indexes in Pascal (starting from 1). 
 
-	_tr->_vm->_graph.drawSprite(_info, picnum, x, y);	
+	_tr->_vm->_graphics->drawSprite(_info, picnum, x, y);	
 }
 
 void triptype::turn(byte whichway) {

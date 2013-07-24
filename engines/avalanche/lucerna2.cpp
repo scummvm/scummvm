@@ -217,7 +217,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	_vm->_gyro.clear_vmc();
 	
-	_vm->_graph.flesh_colours();
+	_vm->_graphics->flesh_colours();
 
 	xx = _vm->_gyro.strf(n);
 	Common::String filename;
@@ -245,8 +245,8 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	::Graphics::Surface background;
 	
-	uint16 backgroundWidht = _vm->_graph.kScreenWidth;
-	byte backgroundHeight = 8 * 12080 / _vm->_graph.kScreenWidth; // With 640 width it's 151
+	uint16 backgroundWidht = _vm->_graphics->kScreenWidth;
+	byte backgroundHeight = 8 * 12080 / _vm->_graphics->kScreenWidth; // With 640 width it's 151
 	// The 8 = number of bits in a byte, and 12080 comes from the original code (see above)
 
 	background.create(backgroundWidht, backgroundHeight, ::Graphics::PixelFormat::createFormatCLUT8());
@@ -263,7 +263,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	for (uint16 y = 0; y < backgroundHeight; y++)
 		for (uint16 x = 0; x < backgroundWidht; x++)
-			*_vm->_graph.getPixel(x + 0, y + 10) = *(byte *)background.getBasePtr(x, y);	
+			*_vm->_graphics->getPixel(x + 0, y + 10) = *(byte *)background.getBasePtr(x, y);	
 
 	background.free();
 
@@ -274,9 +274,9 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	load_also(xx);
 	_vm->_celer.load_chunks(xx);
 
-	_vm->_graph.refreshScreen(); // _vm->_pingo.copy03();  -  See Avalot::setup()
+	_vm->_graphics->refreshScreen(); // _vm->_pingo.copy03();  -  See Avalot::setup()
 
-	bit = *_vm->_graph.getPixel(0,0);
+	bit = *_vm->_graphics->getPixel(0,0);
 
 	_vm->_logger.log_newroom(_vm->_gyro.roomname);
 
@@ -766,7 +766,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 
 	f.read(buffer, picsize);
 
-	_vm->_graph.drawPicture(buffer, 205, 170);
+	_vm->_graphics->drawPicture(buffer, 205, 170);
 
 	delete[] buffer;
 
@@ -823,7 +823,7 @@ void Lucerna::toolbar() {
 
 	f.read(buffer, bufferSize);
 
-	_vm->_graph.drawPicture(buffer, 5, 169);
+	_vm->_graphics->drawPicture(buffer, 5, 169);
 
 	delete[] buffer;
 
@@ -859,7 +859,7 @@ void Lucerna::showscore() {
 
 	for (byte fv = 0; fv < 3; fv ++)
 		if (_vm->_gyro.lastscore[fv] != numbers[fv]) 
-			_vm->_graph.drawPicture(_vm->_gyro.digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
+			_vm->_graphics->drawPicture(_vm->_gyro.digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
 	for (byte fv = 0; fv < 2; fv ++)
 		_vm->_trip.getset[fv].remember(scorespace);
@@ -1052,7 +1052,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	putimage(0, 161, rwlite[with.rw], 0);
 	}*/
 
-	_vm->_graph.drawPicture(_vm->_gyro.rwlite[_vm->_gyro.dna.rw], 0, 161);
+	_vm->_graphics->drawPicture(_vm->_gyro.rwlite[_vm->_gyro.dna.rw], 0, 161);
 
 	_vm->_gyro.on();
 	//setactivepage(1 - cp);

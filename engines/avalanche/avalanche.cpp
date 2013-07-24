@@ -45,12 +45,22 @@ AvalancheEngine *AvalancheEngine::s_Engine = 0;
 
 AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	_system = syst;
+	s_Engine = this;
 	_console = new AvalancheConsole(this);
 
 	_rnd = new Common::RandomSource("avalanche");
 	_rnd->setSeed(42);     
+}
 
-	_graph.setParent(this);
+AvalancheEngine::~AvalancheEngine() {
+	delete _console;
+	delete _rnd;
+
+	delete _graphics;
+}
+
+Common::ErrorCode AvalancheEngine::initialize() {
+	_graphics = new Graphics(this);
 
 	_gyro.setParent(this);
 	_enhanced.setParent(this);
@@ -69,12 +79,18 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_dropdown.setParent(this);
 	_closing.setParent(this);
 	_avalot.setParent(this);
+
+	_graphics->init();
+
+	_scrolls.init();
+	_lucerna.init();
+	_acci.init();
+	_basher.init();
+	
+
+	return Common::kNoError;
 }
 
-AvalancheEngine::~AvalancheEngine() {
-	delete _console;
-	delete _rnd;
-}
 
 GUI::Debugger *AvalancheEngine::getDebugger() {
 	return _console;
@@ -252,17 +268,10 @@ void AvalancheEngine::run_avalot() {
 
 
 Common::Error AvalancheEngine::run() {
-	s_Engine = this;
+	Common::ErrorCode err = initialize();
+	if (err != Common::kNoError)
+		return err;
 
-	_console = new AvalancheConsole(this);
-		
-	_scrolls.init();
-	_lucerna.init();
-	_acci.init();
-	_basher.init();
-	_graph.init();
-
-		
 		
 
 	// From bootstrp:

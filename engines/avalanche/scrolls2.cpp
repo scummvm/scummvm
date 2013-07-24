@@ -92,7 +92,7 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 
 	_vm->_gyro.super_off();
 
-	_vm->_graph.drawBar(419, 195, 438, 197, color);
+	_vm->_graphics->drawBar(419, 195, 438, 197, color);
 
 	_vm->_gyro.super_on();
 	_vm->_gyro.ledstatus = x;

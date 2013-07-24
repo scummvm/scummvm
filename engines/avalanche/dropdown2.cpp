@@ -197,7 +197,7 @@ void menuset::update() {
 	/*setactivepage(3);
 	setfillstyle(1, _dr->menu_b);
 	bar(0, 0, 640, 9);*/
-	_dr->_vm->_graph.drawBar(0, 0, 640, 10, _dr->menu_b);
+	_dr->_vm->_graphics->drawBar(0, 0, 640, 10, _dr->menu_b);
 
 	savecp = _dr->_vm->_gyro.cp;
 	_dr->_vm->_gyro.cp = 3;
@@ -290,7 +290,7 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 			byte pixel = ~(_vm->_gyro.little[z[fv]][ff] & ander); // Note that it's the bitwise NOT operator!
 			for (byte bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
-				*_vm->_graph.getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
+				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
 				// We don't have to bother with the planes, since they all have the same value. See the original.
 				// Note that it's the bitwise OR operator!
 			}
@@ -306,7 +306,7 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 		byte pixel = ~ ander;
 		for (byte bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
-			*_vm->_graph.getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = pixelBit | (pixelBit << 1) | (pixelBit << 2);
+			*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = pixelBit | (pixelBit << 1) | (pixelBit << 2);
 		}
 	}
 
