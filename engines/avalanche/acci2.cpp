@@ -622,7 +622,7 @@ void Acci::not_in_order() {
 
 void Acci::go_to_cauldron() {
 	_vm->_trip.tr[2].call_eachstep = false; /* Stops Geida_Procs. */
-	_vm->_timeout.set_up_timer(1, _vm->_timeout.procspludwick_goes_to_cauldron, _vm->_timeout.reason_spludwalk);
+	_vm->_timeout->set_up_timer(1, _vm->_timeout->procspludwick_goes_to_cauldron, _vm->_timeout->reason_spludwalk);
 	_vm->_trip.tr[2].walkto(2);
 }
 
@@ -726,7 +726,7 @@ void Acci::stand_up() {
 			_vm->_celer.show_one(4); /* Picture of empty pillow. */
 			_vm->_lucerna.points(1);
 			_vm->_gyro->dna.avvy_in_bed = false;
-			_vm->_timeout.lose_timer(_vm->_timeout.reason_arkata_shouts);
+			_vm->_timeout->lose_timer(_vm->_timeout->reason_arkata_shouts);
 		} else
 			already();
 		break;
@@ -824,7 +824,7 @@ void Acci::give_geida_the_lute() {
 
 	/* And the rest has been moved to Timeout... under give_lute_to_Geida. */
 
-	_vm->_timeout.set_up_timer(1, _vm->_timeout.procgive_lute_to_geida, _vm->_timeout.reason_geida_sings);
+	_vm->_timeout->set_up_timer(1, _vm->_timeout->procgive_lute_to_geida, _vm->_timeout->reason_geida_sings);
 	_vm->_enid.back_to_bootstrap(4);
 }
 
@@ -841,7 +841,7 @@ void Acci::winsequence() {
 	_vm->_sequence.then_show(8);
 	_vm->_sequence.then_show(9);
 	_vm->_sequence.start_to_close();
-	_vm->_timeout.set_up_timer(30, _vm->_timeout.procwinning, _vm->_timeout.reason_winning);
+	_vm->_timeout->set_up_timer(30, _vm->_timeout->procwinning, _vm->_timeout->reason_winning);
 }
 
 void Acci::person_speaks() {
@@ -1250,7 +1250,7 @@ void Acci::do_that() {
 	case vb_pee:
 		if (_vm->_gyro->flagset('P')) {
 			_vm->_scrolls.display("Hmm, I don't think anyone will notice...");
-			_vm->_timeout.set_up_timer(4, _vm->_timeout.procurinate, _vm->_timeout.reason_gototoilet);
+			_vm->_timeout->set_up_timer(4, _vm->_timeout->procurinate, _vm->_timeout->reason_gototoilet);
 		} else
 			_vm->_scrolls.display("It would be \6VERY\22 unwise to do that here, Avvy!");
 		break;
@@ -1274,7 +1274,7 @@ void Acci::do_that() {
 					_vm->_trip.tr[2].call_eachstep = true;
 					_vm->_trip.tr[2].eachstep = _vm->_trip.procback_and_forth;
 					_vm->_gyro->dna.avaricius_talk = 14;
-					_vm->_timeout.set_up_timer(177, _vm->_timeout.procavaricius_talks, _vm->_timeout.reason_avariciustalks);
+					_vm->_timeout->set_up_timer(177, _vm->_timeout->procavaricius_talks, _vm->_timeout->reason_avariciustalks);
 				}
 			} else
 				_vm->_scrolls.display("Nothing appears to happen...");
@@ -1339,7 +1339,7 @@ void Acci::do_that() {
 
 					_vm->_celer.show_one(10);
 					_vm->_gyro->dna.malagauche = 177;
-					_vm->_timeout.set_up_timer(27, _vm->_timeout.procbuydrinks, _vm->_timeout.reason_drinks);
+					_vm->_timeout->set_up_timer(27, _vm->_timeout->procbuydrinks, _vm->_timeout->reason_drinks);
 					break;
 				case '\64':
 					examine();
@@ -1365,7 +1365,7 @@ void Acci::do_that() {
 						_vm->_celer.show_one(10);
 						_vm->_gyro->dna.malagauche = 177;
 
-						_vm->_timeout.set_up_timer(27, _vm->_timeout.procbuywine, _vm->_timeout.reason_drinks);
+						_vm->_timeout->set_up_timer(27, _vm->_timeout->procbuywine, _vm->_timeout->reason_drinks);
 					}
 					break;
 				}
@@ -1465,7 +1465,7 @@ void Acci::do_that() {
 				else {
 					_vm->_lucerna.points(4);
 					_vm->_scrolls.display("The drawbridge opens!");
-					_vm->_timeout.set_up_timer(7, _vm->_timeout.procopen_drawbridge, _vm->_timeout.reason_drawbridgefalls);
+					_vm->_timeout->set_up_timer(7, _vm->_timeout->procopen_drawbridge, _vm->_timeout->reason_drawbridgefalls);
 					_vm->_gyro->dna.drawbridge_open = 1;
 				}
 			} else
@@ -1520,7 +1520,7 @@ void Acci::do_that() {
 		break;
 
 	case vb_jump:
-		_vm->_timeout.set_up_timer(1, _vm->_timeout.procjump, _vm->_timeout.reason_jumping);
+		_vm->_timeout->set_up_timer(1, _vm->_timeout->procjump, _vm->_timeout->reason_jumping);
 		_vm->_gyro->dna.user_moves_avvy = false;
 		break;
 
@@ -1564,7 +1564,7 @@ void Acci::do_that() {
 				_vm->_scrolls.display("You're already sitting!");
 			else {
 				_vm->_trip.tr[1].walkto(4); /* Move Avvy to the place, and sit _vm->_gyro->him down. */
-				_vm->_timeout.set_up_timer(1, _vm->_timeout.procavvy_sit_down, _vm->_timeout.reason_sitting_down);
+				_vm->_timeout->set_up_timer(1, _vm->_timeout->procavvy_sit_down, _vm->_timeout->reason_sitting_down);
 			}
 		} else {
 			/* Default doodah. */

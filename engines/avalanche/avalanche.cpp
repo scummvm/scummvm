@@ -60,6 +60,7 @@ AvalancheEngine::~AvalancheEngine() {
 
 	delete _avalot;
 	delete _gyro;
+	delete _timeout;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
@@ -76,7 +77,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_enid.setParent(this);
 	_celer.setParent(this);
 	_sequence.setParent(this);
-	_timeout.setParent(this);
+	_timeout = new Timeout(this);
 	_trip.setParent(this);
 	_acci.setParent(this);
 	_basher.setParent(this);

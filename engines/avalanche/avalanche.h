@@ -78,7 +78,7 @@ public:
 	Enid _enid;
 	Celer _celer;
 	Sequence _sequence;
-	Timeout _timeout;
+	Timeout *_timeout;
 	Trip _trip;
 	Acci _acci;
 	Basher _basher;

@@ -46,16 +46,14 @@
 
 namespace Avalanche {
 
-Timeout::Timeout() {
+Timeout::Timeout(AvalancheEngine *vm) {
+	_vm = vm;
+
 	for (int i = 0; i < sizeof(times); i++) {
 		times[i].time_left = 0;
 		times[i].then_where = 0;
 		times[i].what_for = 0;
 	}
-}
-
-void Timeout::setParent(AvalancheEngine *vm) {
-	_vm = vm;
 }
 
 void Timeout::set_up_timer(int32 howlong, byte whither, byte why) {
