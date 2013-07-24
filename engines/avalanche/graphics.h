@@ -54,7 +54,7 @@ public:
 };
 
 
-class Graph {
+class Graphics {
 public:
 	static const int16 kScreenWidth = 640;
 	static const int16 kScreenHeight = 200;
@@ -65,7 +65,7 @@ public:
 
 	void init();
 
-	~Graph();
+	~Graphics();
 
 	void flesh_colours();
 
@@ -82,7 +82,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	Graphics::Surface _surface;
+	::Graphics::Surface _surface;
 
 	static const byte _egaPaletteIndex[16];
 

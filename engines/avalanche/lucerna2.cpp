@@ -243,13 +243,13 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	move(a0, a1, 12080);
 	}*/
 
-	Graphics::Surface background;
+	::Graphics::Surface background;
 	
 	uint16 backgroundWidht = _vm->_graph.kScreenWidth;
 	byte backgroundHeight = 8 * 12080 / _vm->_graph.kScreenWidth; // With 640 width it's 151
 	// The 8 = number of bits in a byte, and 12080 comes from the original code (see above)
 
-	background.create(backgroundWidht, backgroundHeight, Graphics::PixelFormat::createFormatCLUT8());
+	background.create(backgroundWidht, backgroundHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	for (byte plane = 0; plane < 4; plane++)
 		for (uint16 y = 0; y < backgroundHeight; y++)

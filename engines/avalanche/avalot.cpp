@@ -29,7 +29,7 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/graph.h"
+#include "avalanche/graphics.h"
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/trip6.h"

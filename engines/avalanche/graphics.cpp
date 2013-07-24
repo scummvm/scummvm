@@ -28,7 +28,7 @@
 /* Replacement class for the Graph unit from Pascal. */
 
 #include "avalanche/avalanche.h"
-#include "avalanche/graph.h"
+#include "avalanche/graphics.h"
 
 #include "common/system.h"
 
@@ -39,15 +39,15 @@
 
 namespace Avalanche {
 
-const byte Graph::_egaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
+const byte Graphics::_egaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 
 
 
-void Graph::setParent(AvalancheEngine *vm) {
+void Graphics::setParent(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-void Graph::init() {
+void Graphics::init() {
 	initGraphics(kScreenWidth, kScreenHeight, true);
 
 	for (int i = 0; i < 64; ++i) {
@@ -59,30 +59,30 @@ void Graph::init() {
 	for (byte i = 0; i < 16; i++)
 		g_system->getPaletteManager()->setPalette(_egaPalette[_egaPaletteIndex[i]], i, 1);
 
-	_surface.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_surface.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 }
 
-Graph::~Graph() {
+Graphics::~Graphics() {
 	_surface.free();
 }
 
 
-void Graph::flesh_colours()
+void Graphics::flesh_colours()
 {
 	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
 	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
 }
 
 
-byte *Graph::getPixel(int16 x, int16 y) {
+byte *Graphics::getPixel(int16 x, int16 y) {
 	return (byte *)_surface.getBasePtr(x, y);
 }
 
-void Graph::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
+void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
+void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 
 	/* First we make the pixels of the spirte blank. */
 	for (byte qay = 0; qay < sprite.yl; qay++) {
@@ -112,16 +112,16 @@ void Graph::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) 
 			}
 }
 
-void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
+void Graphics::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
 	uint16 pictureWidth = READ_LE_UINT16(source) + 1;
 	uint16 pictureHeight = READ_LE_UINT16(source + 2) + 1;
 
 	uint32 i = 4;
 
-	Graphics::Surface picture; // We make a Surface object for the picture itself.
+	::Graphics::Surface picture; // We make a Surface object for the picture itself.
 
-	picture.create(pictureWidth, pictureHeight, Graphics::PixelFormat::createFormatCLUT8());
+	picture.create(pictureWidth, pictureHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	// Produce the picture.
 	for (byte y = 0; y < pictureHeight; y++)
@@ -140,7 +140,7 @@ void Graph::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
 }
 
-void Graph::refreshScreen() {
+void Graphics::refreshScreen() {
 	g_system->copyRectToScreen(_surface.pixels, _surface.pitch , 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
