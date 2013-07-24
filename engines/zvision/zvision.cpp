@@ -56,11 +56,11 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
  
 	// However this is the place to specify all default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data3", 0, 4);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "znemscr");
+	// TODO: There are 10 file clashes when we flatten the directories. From a quick look, the files are exactly the same, so it shouldn't matter. But I'm noting it here just in-case it does become a problem.
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data3", 0, 4, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx", 0, 1, true);
  
 	// Here is the right place to set up the engine specific debug channels
 	//DebugMan.addDebugChannel(kZVisionDebugExample, "example", "this is just an example for a engine specific debug channel");
