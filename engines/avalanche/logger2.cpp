@@ -75,7 +75,7 @@ const int16 Logger::divide_indent = 30;
 
 
 
-void Logger::setParent(AvalancheEngine *vm) {
+Logger::Logger(AvalancheEngine *vm) {
 	_vm = vm;
 }
 

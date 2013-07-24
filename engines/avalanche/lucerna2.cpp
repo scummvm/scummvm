@@ -278,7 +278,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	bit = *_vm->_graphics->getPixel(0,0);
 
-	_vm->_logger.log_newroom(_vm->_gyro->roomname);
+	_vm->_logger->log_newroom(_vm->_gyro->roomname);
 
 	if (was_virtual)
 		_vm->_gyro->on_virtual();
@@ -881,7 +881,7 @@ void Lucerna::points(byte num) {     /* Add on no. of points */
 	}
 	warning("STUB: Lucerna::points()");
 
-	_vm->_logger.log_score(num, _vm->_gyro->dna.score);
+	_vm->_logger->log_score(num, _vm->_gyro->dna.score);
 	showscore();
 }
 

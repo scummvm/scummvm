@@ -38,7 +38,7 @@ class AvalancheEngine;
 
 class Logger {
 public:
-	void setParent(AvalancheEngine *vm);
+	Logger(AvalancheEngine *vm);
 
 	void log_setup(Common::String name, bool printing);
 
