@@ -191,14 +191,13 @@ void triptype::walk() {
 
 
 	if (visible) {
-		{
-			r.x1 = (x / 8) - 1;
-			if (r.x1 == 255)
-				r.x1 = 0;
-			r.y1 = y - 2;
-			r.x2 = ((x + _info.xl) / 8) + 1;
-			r.y2 = y + _info.yl + 2;
-		}
+		r.x1 = (x / 8) - 1;
+		if (r.x1 == 255)
+			r.x1 = 0;
+		r.y1 = y - 2;
+		r.x2 = ((x + _info.xl) / 8) + 1;
+		r.y2 = y + _info.yl + 2;
+		
 		_tr->getset[1 - _tr->_vm->_gyro->cp].remember(r);
 	}
 
@@ -248,9 +247,9 @@ void triptype::walk() {
 	}
 
 	if (!_tr->_vm->_gyro->doing_sprite_run) {
-		count += 1;
+		count++;
 		if (((ix != 0) || (iy != 0)) && (count > 1)) {
-			step += 1;
+			step++;
 			if (step == a.seq)  step = 0;
 			count = 0;
 		}
