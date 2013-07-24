@@ -75,7 +75,6 @@ const int kAdrRightFramePic = 0x73A2;
 #define lo(v) ((v) & 0xff)
 #define hi(v) (((v) >> 8) & 0xff)
 #define swap(v) (((lo(v)) << 8) | ((hi(v)) >> 8))
-#define odd(v) (((v) % 2) == 1)
 
 // Debug channels
 enum {
