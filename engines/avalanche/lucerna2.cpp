@@ -61,10 +61,10 @@ void Lucerna::setParent(AvalancheEngine *vm) {
 }
 
 void Lucerna::init() {
-	_vm->_gyro.oh = 17717;
-	_vm->_gyro.om = 17717;
-	if (_vm->_enhanced.atbios)  _vm->_gyro.atkey = "f1";
-	else _vm->_gyro.atkey = "alt-";
+	_vm->_gyro->oh = 17717;
+	_vm->_gyro->om = 17717;
+	if (_vm->_enhanced.atbios)  _vm->_gyro->atkey = "f1";
+	else _vm->_gyro->atkey = "alt-";
 }
 	
 void Lucerna::callverb(char n) {
@@ -74,7 +74,7 @@ void Lucerna::callverb(char n) {
 			"assigned to it. You may press alt-A to see what the " +
 			"current setting of this key is.");
 	} else {
-		_vm->_gyro.weirdword = false;
+		_vm->_gyro->weirdword = false;
 		_vm->_acci.polite = true;
 		_vm->_acci.verb = n;
 		_vm->_acci.do_that();
@@ -108,10 +108,10 @@ void Lucerna::scram1(Common::String &x) {
 void Lucerna::unscramble() {
 	for (byte fv = 0; fv < 31; fv ++)
 		for (byte ff = 0; ff < 2; ff ++)
-			if (_vm->_gyro.also[fv][ff] != 0)
-				scram1(*_vm->_gyro.also[fv][ff]);
-	scram1(_vm->_gyro.listen);
-	scram1(_vm->_gyro.flags);
+			if (_vm->_gyro->also[fv][ff] != 0)
+				scram1(*_vm->_gyro->also[fv][ff]);
+	scram1(_vm->_gyro->listen);
+	scram1(_vm->_gyro->flags);
 	/*     for fz:=1 to length(also[fv,ff]^) do
 	      also[fv,ff]^[fz]:=chr(ord(also[fv,ff]^[fz]) xor 177);*/
 }
@@ -121,9 +121,9 @@ void Lucerna::load_also(Common::String n) {
 	
 	for (fv = 0; fv < 31; fv++)
 		for (ff = 0; ff < 2; ff++)
-			if (_vm->_gyro.also[fv][ff] != 0)  {
-				delete _vm->_gyro.also[fv][ff];
-				_vm->_gyro.also[fv][ff] = 0;
+			if (_vm->_gyro->also[fv][ff] != 0)  {
+				delete _vm->_gyro->also[fv][ff];
+				_vm->_gyro->also[fv][ff] = 0;
 			}
 
 	Common::String filename;
@@ -138,58 +138,58 @@ void Lucerna::load_also(Common::String n) {
 	byte minnames = f.readByte();
 	for (fv = 0; fv <= minnames; fv++) {
 		for (ff = 0; ff < 2; ff++) {
-			_vm->_gyro.also[fv][ff] = new Common::String;
-			*_vm->_gyro.also[fv][ff] = nextstring();
+			_vm->_gyro->also[fv][ff] = new Common::String;
+			*_vm->_gyro->also[fv][ff] = nextstring();
 		}
-		*_vm->_gyro.also[fv][0] = Common::String(157) + *_vm->_gyro.also[fv][0] + 157;
+		*_vm->_gyro->also[fv][0] = Common::String(157) + *_vm->_gyro->also[fv][0] + 157;
 	}
 	
-	memset(_vm->_gyro.lines, 0xFF, sizeof(_vm->_gyro.lines));
+	memset(_vm->_gyro->lines, 0xFF, sizeof(_vm->_gyro->lines));
 	
 	//fv = getpixel(0, 0);
 	fv = f.readByte();
 	for (byte i = 0; i < fv; i++) {
-		_vm->_gyro.lines[i].x1 = f.readSint16LE();
-		_vm->_gyro.lines[i].y1 = f.readSint16LE();
-		_vm->_gyro.lines[i].x2 = f.readSint16LE();
-		_vm->_gyro.lines[i].y2 = f.readSint16LE();
-		_vm->_gyro.lines[i].col = f.readByte();
+		_vm->_gyro->lines[i].x1 = f.readSint16LE();
+		_vm->_gyro->lines[i].y1 = f.readSint16LE();
+		_vm->_gyro->lines[i].x2 = f.readSint16LE();
+		_vm->_gyro->lines[i].y2 = f.readSint16LE();
+		_vm->_gyro->lines[i].col = f.readByte();
 	}
 
-	memset(_vm->_gyro.peds, 177, sizeof(_vm->_gyro.peds));
+	memset(_vm->_gyro->peds, 177, sizeof(_vm->_gyro->peds));
 	fv = f.readByte();
 	for (byte i = 0; i < fv; i++) {
-		_vm->_gyro.peds[i].x = f.readSint16LE();
-		_vm->_gyro.peds[i].y = f.readSint16LE();
-		_vm->_gyro.peds[i].dir = f.readByte();
+		_vm->_gyro->peds[i].x = f.readSint16LE();
+		_vm->_gyro->peds[i].y = f.readSint16LE();
+		_vm->_gyro->peds[i].dir = f.readByte();
 	}
 	
-	_vm->_gyro.numfields = f.readByte();
-	for (byte i = 0; i < _vm->_gyro.numfields; i++) {
-		_vm->_gyro.fields[i].x1 = f.readSint16LE();
-		_vm->_gyro.fields[i].y1 = f.readSint16LE();
-		_vm->_gyro.fields[i].x2 = f.readSint16LE();
-		_vm->_gyro.fields[i].y2 = f.readSint16LE();
+	_vm->_gyro->numfields = f.readByte();
+	for (byte i = 0; i < _vm->_gyro->numfields; i++) {
+		_vm->_gyro->fields[i].x1 = f.readSint16LE();
+		_vm->_gyro->fields[i].y1 = f.readSint16LE();
+		_vm->_gyro->fields[i].x2 = f.readSint16LE();
+		_vm->_gyro->fields[i].y2 = f.readSint16LE();
 	}
 
 	for (byte i = 0; i < 15; i++) {
-		_vm->_gyro.magics[i].op = f.readByte();
-		_vm->_gyro.magics[i].data = f.readUint16LE();
+		_vm->_gyro->magics[i].op = f.readByte();
+		_vm->_gyro->magics[i].data = f.readUint16LE();
 	}
 
 	for (byte i = 0; i < 7; i++) {
-		_vm->_gyro.portals[i].op = f.readByte();
-		_vm->_gyro.portals[i].data = f.readUint16LE();
+		_vm->_gyro->portals[i].op = f.readByte();
+		_vm->_gyro->portals[i].data = f.readUint16LE();
 	}
 
-	_vm->_gyro.flags.clear();
+	_vm->_gyro->flags.clear();
 	for (byte i = 0;  i < 26; i++)
-		_vm->_gyro.flags += f.readByte();
+		_vm->_gyro->flags += f.readByte();
 
 	int16 listen_length = f.readByte();
-	_vm->_gyro.listen.clear();
+	_vm->_gyro->listen.clear();
 	for (byte i = 0; i < listen_length; i++)
-		_vm->_gyro.listen += f.readByte();
+		_vm->_gyro->listen += f.readByte();
 	
 	draw_also_lines();
 
@@ -199,7 +199,7 @@ void Lucerna::load_also(Common::String n) {
 	f.close();
 	unscramble();
 	for (fv = 0; fv <= minnames; fv++)
-		*_vm->_gyro.also[fv][0] = Common::String(',') + *_vm->_gyro.also[fv][0] + ',';
+		*_vm->_gyro->also[fv][0] = Common::String(',') + *_vm->_gyro->also[fv][0] + ',';
 }
 
 void Lucerna::load(byte n) {     /* Load2, actually */
@@ -209,17 +209,17 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	Common::String xx;
 	bool was_virtual;
 
-	was_virtual = _vm->_gyro.visible == _vm->_gyro.m_virtual;
+	was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
 	if (was_virtual)
-		_vm->_gyro.off_virtual();
+		_vm->_gyro->off_virtual();
 	else
-		_vm->_gyro.off();
+		_vm->_gyro->off();
 
-	_vm->_gyro.clear_vmc();
+	_vm->_gyro->clear_vmc();
 	
 	_vm->_graphics->flesh_colours();
 
-	xx = _vm->_gyro.strf(n);
+	xx = _vm->_gyro->strf(n);
 	Common::String filename;
 	filename = filename.format("place%s.avd", xx.c_str());
 	if (!f.open(filename)) {
@@ -229,7 +229,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	f.seek(146);
 	for (byte i = 0; i < 30; i++)
-		_vm->_gyro.roomname += f.readByte();
+		_vm->_gyro->roomname += f.readByte();
 	/* Compression method byte follows this... */
 
 	f.seek(177);
@@ -278,12 +278,12 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	bit = *_vm->_graphics->getPixel(0,0);
 
-	_vm->_logger.log_newroom(_vm->_gyro.roomname);
+	_vm->_logger.log_newroom(_vm->_gyro->roomname);
 
 	if (was_virtual)
-		_vm->_gyro.on_virtual();
+		_vm->_gyro->on_virtual();
 	else 
-		_vm->_gyro.on();
+		_vm->_gyro->on();
 }
 
 
@@ -297,28 +297,28 @@ void Lucerna::zoomout(int16 x, int16 y) {
 
 void Lucerna::find_people(byte room) {
 	for (byte fv = 151; fv <= 178; fv++)
-		if (_vm->_gyro.whereis[fv] == room) {
+		if (_vm->_gyro->whereis[fv] == room) {
 			if (fv < 175)
-				_vm->_gyro.him = fv;
+				_vm->_gyro->him = fv;
 			else
-				_vm->_gyro.her = fv;
+				_vm->_gyro->her = fv;
 		}
 }
 
 void Lucerna::exitroom(byte x) {
 	//nosound();
 	_vm->_celer.forget_chunks();
-	_vm->_gyro.seescroll = true;  /* This stops the trippancy system working over the length of this procedure. */
+	_vm->_gyro->seescroll = true;  /* This stops the trippancy system working over the length of this procedure. */
 
 	switch (x) {
 	case r__spludwicks:
 		_vm->_timeout.lose_timer(_vm->_timeout.reason_avariciustalks);
-		 _vm->_gyro.dna.avaricius_talk = 0;
+		 _vm->_gyro->dna.avaricius_talk = 0;
 		/* He doesn't HAVE to be talking for this to work. It just deletes it IF it exists. */       
 		break;
 	case r__bridge:
-		if (_vm->_gyro.dna.drawbridge_open > 0) {
-			_vm->_gyro.dna.drawbridge_open = 4; /* Fully open. */
+		if (_vm->_gyro->dna.drawbridge_open > 0) {
+			_vm->_gyro->dna.drawbridge_open = 4; /* Fully open. */
 			_vm->_timeout.lose_timer(_vm->_timeout.reason_drawbridgefalls);
 		}
 		break;
@@ -330,39 +330,39 @@ void Lucerna::exitroom(byte x) {
 		break;
 	}
 
-	_vm->_gyro.interrogation = 0; /* Leaving the room cancels all the questions automatically. */
+	_vm->_gyro->interrogation = 0; /* Leaving the room cancels all the questions automatically. */
 
-	_vm->_gyro.seescroll = false; /* Now it can work again! */
+	_vm->_gyro->seescroll = false; /* Now it can work again! */
 
-	_vm->_gyro.dna.last_room = _vm->_gyro.dna.room;
-	if (_vm->_gyro.dna.room != r__map)
-		_vm->_gyro.dna.last_room_not_map = _vm->_gyro.dna.room;
+	_vm->_gyro->dna.last_room = _vm->_gyro->dna.room;
+	if (_vm->_gyro->dna.room != r__map)
+		_vm->_gyro->dna.last_room_not_map = _vm->_gyro->dna.room;
 }
 
 void Lucerna::new_town() {   /* You've just entered a town from the map. */
 	_vm->_dropdown.standard_bar();
 
-	switch (_vm->_gyro.dna.room) {
+	switch (_vm->_gyro->dna.room) {
 	case r__outsidenottspub: /* Entry into Nottingham. */
-		if ((_vm->_gyro.dna.rooms[r__robins] > 0) && (_vm->_gyro.dna.been_tied_up) && (! _vm->_gyro.dna.taken_mushroom))
-			_vm->_gyro.dna.mushroom_growing = true;
+		if ((_vm->_gyro->dna.rooms[r__robins] > 0) && (_vm->_gyro->dna.been_tied_up) && (! _vm->_gyro->dna.taken_mushroom))
+			_vm->_gyro->dna.mushroom_growing = true;
 		break;
 	case r__wisewomans: { /* Entry into Argent. */
-		if (_vm->_gyro.dna.talked_to_crapulus && (! _vm->_gyro.dna.lustie_is_asleep)) {
-			_vm->_gyro.dna.spludwicks_here = !((_vm->_gyro.dna.rooms[r__wisewomans] % 3) == 1);
-			_vm->_gyro.dna.crapulus_will_tell = ! _vm->_gyro.dna.spludwicks_here;
+		if (_vm->_gyro->dna.talked_to_crapulus && (! _vm->_gyro->dna.lustie_is_asleep)) {
+			_vm->_gyro->dna.spludwicks_here = !((_vm->_gyro->dna.rooms[r__wisewomans] % 3) == 1);
+			_vm->_gyro->dna.crapulus_will_tell = ! _vm->_gyro->dna.spludwicks_here;
 		} else {
-			_vm->_gyro.dna.spludwicks_here = true;
-			_vm->_gyro.dna.crapulus_will_tell = false;
+			_vm->_gyro->dna.spludwicks_here = true;
+			_vm->_gyro->dna.crapulus_will_tell = false;
 		}
-		if (_vm->_gyro.dna.box_contents == _vm->_gyro.wine)  _vm->_gyro.dna.winestate = 3; /* Vinegar */
+		if (_vm->_gyro->dna.box_contents == _vm->_gyro->wine)  _vm->_gyro->dna.winestate = 3; /* Vinegar */
 	}
 	break;
 	}
 
-	if (_vm->_gyro.dna.room != r__outsideducks) {
-		if ((_vm->_gyro.dna.obj[_vm->_gyro.onion]) && !(_vm->_gyro.dna.onion_in_vinegar))
-			_vm->_gyro.dna.rotten_onion = true; /* You're holding the onion */
+	if (_vm->_gyro->dna.room != r__outsideducks) {
+		if ((_vm->_gyro->dna.obj[_vm->_gyro->onion]) && !(_vm->_gyro->dna.onion_in_vinegar))
+			_vm->_gyro->dna.rotten_onion = true; /* You're holding the onion */
 	}
 }
 
@@ -378,33 +378,33 @@ void Lucerna::put_geida_at(byte whichped, byte &ped) {
 }
 
 void Lucerna::enterroom(byte x, byte ped) {
-	_vm->_gyro.seescroll = true;  /* This stops the trippancy system working over the length of this procedure. */
+	_vm->_gyro->seescroll = true;  /* This stops the trippancy system working over the length of this procedure. */
 
 	find_people(x);
-	_vm->_gyro.dna.room = x;
+	_vm->_gyro->dna.room = x;
 	if (ped != 0)
-		_vm->_gyro.dna.rooms[x]++;
+		_vm->_gyro->dna.rooms[x]++;
 
 	load(x);
 
-	if ((_vm->_gyro.dna.rooms[x] == 0) && (! _vm->_gyro.flagset('S')))
+	if ((_vm->_gyro->dna.rooms[x] == 0) && (! _vm->_gyro->flagset('S')))
 		points(1);
 
-	_vm->_gyro.whereis[_vm->_gyro.pavalot] = _vm->_gyro.dna.room;
+	_vm->_gyro->whereis[_vm->_gyro->pavalot] = _vm->_gyro->dna.room;
 
-	if (_vm->_gyro.dna.geida_follows)
-		_vm->_gyro.whereis[_vm->_gyro.pgeida] = x;
+	if (_vm->_gyro->dna.geida_follows)
+		_vm->_gyro->whereis[_vm->_gyro->pgeida] = x;
 
-	_vm->_gyro.roomtime = 0;
+	_vm->_gyro->roomtime = 0;
 
 	
-	if ((_vm->_gyro.dna.last_room == r__map) && (_vm->_gyro.dna.last_room_not_map != _vm->_gyro.dna.room))
+	if ((_vm->_gyro->dna.last_room == r__map) && (_vm->_gyro->dna.last_room_not_map != _vm->_gyro->dna.room))
 		new_town();
 	
 
 	switch (x) {
 	case r__yours:
-		if (_vm->_gyro.dna.avvy_in_bed) {
+		if (_vm->_gyro->dna.avvy_in_bed) {
 			_vm->_celer.show_one(3);
 			_vm->_timeout.set_up_timer(100, _vm->_timeout.procarkata_shouts, _vm->_timeout.reason_arkata_shouts);
 		}
@@ -412,12 +412,12 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__outsideyours:
 		if (ped > 0) {
-			if (! _vm->_gyro.dna.talked_to_crapulus) {
+			if (! _vm->_gyro->dna.talked_to_crapulus) {
 
-				_vm->_gyro.whereis[_vm->_gyro.pcrapulus] = r__outsideyours;
+				_vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__outsideyours;
 				_vm->_trip.tr[2].init(8, false, &_vm->_trip); /* load Crapulus */
 
-				if (_vm->_gyro.dna.rooms[r__outsideyours] == 1) {
+				if (_vm->_gyro->dna.rooms[r__outsideyours] == 1) {
 					_vm->_trip.apped(2, 4); /* Start on the right-hand side of the screen. */
 					_vm->_trip.tr[2].walkto(5); /* Walks up to greet you. */
 				} else {
@@ -428,14 +428,14 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_trip.tr[2].call_eachstep = true;
 				_vm->_trip.tr[2].eachstep = _vm->_trip.procface_avvy; /* He always faces Avvy. */
 
-			} else _vm->_gyro.whereis[_vm->_gyro.pcrapulus] = r__nowhere;
+			} else _vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__nowhere;
 
-			if (_vm->_gyro.dna.crapulus_will_tell) {
+			if (_vm->_gyro->dna.crapulus_will_tell) {
 				_vm->_trip.tr[2].init(8, false, &_vm->_trip);
 				_vm->_trip.apped(2, 2);
 				_vm->_trip.tr[2].walkto(4);
 				_vm->_timeout.set_up_timer(20, _vm->_timeout.proccrapulus_splud_out, _vm->_timeout.reason_crapulus_says_spludwick_out);
-				_vm->_gyro.dna.crapulus_will_tell = false;
+				_vm->_gyro->dna.crapulus_will_tell = false;
 			}
 		}
 		break;
@@ -443,40 +443,40 @@ void Lucerna::enterroom(byte x, byte ped) {
 	/* Need to find out which room is this!
 	 
 	 case r__outsidespludwicks:
-		if ((_vm->_gyro.dna.rooms[r__outsidespludwicks] == 1) && (ped == 1)) {
+		if ((_vm->_gyro->dna.rooms[r__outsidespludwicks] == 1) && (ped == 1)) {
 			_vm->_timeout.set_up_timer(20, _vm->_timeout.procbang, _vm->_timeout.reason_explosion);
-			_vm->_gyro.dna.spludwicks_here = true;
+			_vm->_gyro->dna.spludwicks_here = true;
 		}
 		break;*/
 
 	case r__spludwicks:
-		if (_vm->_gyro.dna.spludwicks_here) {
+		if (_vm->_gyro->dna.spludwicks_here) {
 			if (ped > 0) {
 				_vm->_trip.tr[2].init(2, false, &_vm->_trip); /* load Spludwick */
 				_vm->_trip.apped(2, 2);
-				_vm->_gyro.whereis['\227'] = r__spludwicks;
+				_vm->_gyro->whereis['\227'] = r__spludwicks;
 			}
 
-			_vm->_gyro.dna.dogfoodpos = 0;  /* _vm->_gyro.also Spludwick pos. */
+			_vm->_gyro->dna.dogfoodpos = 0;  /* _vm->_gyro->also Spludwick pos. */
 
 			_vm->_trip.tr[2].call_eachstep = true;
 			_vm->_trip.tr[2].eachstep = _vm->_trip.procgeida_procs;
-		} else _vm->_gyro.whereis['\227'] = r__nowhere;
+		} else _vm->_gyro->whereis['\227'] = r__nowhere;
 		break;
 
 	case r__brummieroad: {
-		if (_vm->_gyro.dna.geida_follows)  put_geida_at(5, ped);
-		if (_vm->_gyro.dna.cwytalot_gone) {
-			_vm->_gyro.magics[lightred].op = _vm->_gyro.nix;
-			_vm->_gyro.whereis[_vm->_gyro.pcwytalot] = r__nowhere;
+		if (_vm->_gyro->dna.geida_follows)  put_geida_at(5, ped);
+		if (_vm->_gyro->dna.cwytalot_gone) {
+			_vm->_gyro->magics[lightred].op = _vm->_gyro->nix;
+			_vm->_gyro->whereis[_vm->_gyro->pcwytalot] = r__nowhere;
 		} else {
 			if (ped > 0) {
 				_vm->_trip.tr[2].init(4, false, &_vm->_trip); /* 4=Cwytalot*/
 				_vm->_trip.tr[2].call_eachstep = true;
 				_vm->_trip.tr[2].eachstep = _vm->_trip.procfollow_avvy_y;
-				_vm->_gyro.whereis[_vm->_gyro.pcwytalot] = r__brummieroad;
+				_vm->_gyro->whereis[_vm->_gyro->pcwytalot] = r__brummieroad;
 
-				if (_vm->_gyro.dna.rooms[r__brummieroad] == 1) { /* First time here... */
+				if (_vm->_gyro->dna.rooms[r__brummieroad] == 1) { /* First time here... */
 					_vm->_trip.apped(2, 2); /* He appears on the right of the screen... */
 					_vm->_trip.tr[2].walkto(4); /* ...and he walks up... */
 				} else {
@@ -490,32 +490,32 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__argentroad: {
-		dnatype &with = _vm->_gyro.dna;
+		dnatype &with = _vm->_gyro->dna;
 		if ((with.cwytalot_gone) && (! with.cwytalot_in_herts) && (ped == 2) &&
-		        (_vm->_gyro.dna.rooms[r__argentroad] > 3)) {
+		        (_vm->_gyro->dna.rooms[r__argentroad] > 3)) {
 			_vm->_trip.tr[2].init(4, false, &_vm->_trip); /* 4=Cwytalot again*/
 			_vm->_trip.apped(2, 1);
 			_vm->_trip.tr[2].walkto(2);
 			_vm->_trip.tr[2].vanishifstill = true;
 			with.cwytalot_in_herts = true;
-			/*_vm->_gyro.whereis[#157]:=r__Nowhere;*/ /* can we fit this in? */
+			/*_vm->_gyro->whereis[#157]:=r__Nowhere;*/ /* can we fit this in? */
 			_vm->_timeout.set_up_timer(20, _vm->_timeout.proc_cwytalot_in_herts, _vm->_timeout.reason_cwytalot_in_herts);
 		}
 	}
 	break;
 
 	case r__bridge: {
-		if (_vm->_gyro.dna.drawbridge_open == 4) { /*open*/
+		if (_vm->_gyro->dna.drawbridge_open == 4) { /*open*/
 			_vm->_celer.show_one(3); /* Position of drawbridge */
-			_vm->_gyro.magics[green].op = _vm->_gyro.nix; /* You may enter the drawbridge. */
+			_vm->_gyro->magics[green].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
 		}
-		if (_vm->_gyro.dna.geida_follows)  put_geida_at(ped + 3, ped); /* load Geida */
+		if (_vm->_gyro->dna.geida_follows)  put_geida_at(ped + 3, ped); /* load Geida */
 	}
 	break;
 
 	case r__robins: {
 		if (ped > 0) {
-			if (! _vm->_gyro.dna.been_tied_up) {
+			if (! _vm->_gyro->dna.been_tied_up) {
 				/* A welcome party... or maybe not... */
 				_vm->_trip.tr[2].init(6, false, &_vm->_trip);
 				_vm->_trip.apped(2, 2);
@@ -524,22 +524,22 @@ void Lucerna::enterroom(byte x, byte ped) {
 			}
 		}
 
-		if (_vm->_gyro.dna.been_tied_up) {
-			_vm->_gyro.whereis[_vm->_gyro.probinhood] = 0;
-			_vm->_gyro.whereis[_vm->_gyro.pfriartuck] = 0;
+		if (_vm->_gyro->dna.been_tied_up) {
+			_vm->_gyro->whereis[_vm->_gyro->probinhood] = 0;
+			_vm->_gyro->whereis[_vm->_gyro->pfriartuck] = 0;
 		}
 
-		if (_vm->_gyro.dna.tied_up)
+		if (_vm->_gyro->dna.tied_up)
 			_vm->_celer.show_one(2);
 
-		if (! _vm->_gyro.dna.mushroom_growing) 
+		if (! _vm->_gyro->dna.mushroom_growing) 
 			_vm->_celer.show_one(3);
 	}
 	break;
 
 	case r__outsidecardiffcastle: {
 		if (ped > 0)
-			switch (_vm->_gyro.dna.cardiff_things) {
+			switch (_vm->_gyro->dna.cardiff_things) {
 			case 0 : { /* You've answered NONE of his questions. */
 				_vm->_trip.tr[2].init(9, false, &_vm->_trip);
 				_vm->_trip.apped(2, 2);
@@ -548,7 +548,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			}
 			break;
 			case 5 :
-				_vm->_gyro.magics[2].op = _vm->_gyro.nix;
+				_vm->_gyro->magics[2].op = _vm->_gyro->nix;
 				break; /* You've answered ALL his questions. => nothing happens. */
 			default: { /* You've answered SOME of his questions. */
 				_vm->_trip.tr[2].init(9, false, &_vm->_trip);
@@ -557,9 +557,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_timeout.set_up_timer(3, _vm->_timeout.proccardiff_return, _vm->_timeout.reason_cardiffsurvey);
 			}
 			}
-		if (_vm->_gyro.dna.cardiff_things < 5)
-			_vm->_gyro.interrogation = _vm->_gyro.dna.cardiff_things;
-		else _vm->_gyro.interrogation = 0;
+		if (_vm->_gyro->dna.cardiff_things < 5)
+			_vm->_gyro->interrogation = _vm->_gyro->dna.cardiff_things;
+		else _vm->_gyro->interrogation = 0;
 	}
 	break;
 
@@ -574,9 +574,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__argentpub: {
-		if (_vm->_gyro.dna.wonnim)  _vm->_celer.show_one(1);   /* No lute by the settle. */
-		_vm->_gyro.dna.malagauche = 0; /* Ready to boot Malagauche */
-		if (_vm->_gyro.dna.givenbadgetoiby) {
+		if (_vm->_gyro->dna.wonnim)  _vm->_celer.show_one(1);   /* No lute by the settle. */
+		_vm->_gyro->dna.malagauche = 0; /* Ready to boot Malagauche */
+		if (_vm->_gyro->dna.givenbadgetoiby) {
 			_vm->_celer.show_one(8);
 			_vm->_celer.show_one(9);
 		}
@@ -584,27 +584,27 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__lustiesroom: {
-		_vm->_gyro.dna.dogfoodpos = 1; /* Actually, du Lustie pos. */
+		_vm->_gyro->dna.dogfoodpos = 1; /* Actually, du Lustie pos. */
 		if (_vm->_trip.tr[1].whichsprite == 0) /* Avvy in his normal clothes */
 			_vm->_timeout.set_up_timer(3, _vm->_timeout.proccallsguards, _vm->_timeout.reason_du_lustie_talks);
-		else if (! _vm->_gyro.dna.entered_lusties_room_as_monk) /*already*/
+		else if (! _vm->_gyro->dna.entered_lusties_room_as_monk) /*already*/
 			/* Presumably, Avvy dressed as a monk. */
 			_vm->_timeout.set_up_timer(3, _vm->_timeout.procgreetsmonk, _vm->_timeout.reason_du_lustie_talks);
 
-		if (_vm->_gyro.dna.geida_follows) {
+		if (_vm->_gyro->dna.geida_follows) {
 			put_geida_at(5, ped);
-			if (_vm->_gyro.dna.lustie_is_asleep)  _vm->_celer.show_one(5);
+			if (_vm->_gyro->dna.lustie_is_asleep)  _vm->_celer.show_one(5);
 		}
 	}
 	break;
 
 	case r__musicroom: {
-		if (_vm->_gyro.dna.jacques_awake > 0) {
-			_vm->_gyro.dna.jacques_awake = 5;
+		if (_vm->_gyro->dna.jacques_awake > 0) {
+			_vm->_gyro->dna.jacques_awake = 5;
 			_vm->_celer.show_one(2);
 			_vm->_celer.show_one(4);
-			_vm->_gyro.magics[brown].op = _vm->_gyro.nix;
-			_vm->_gyro.whereis[_vm->_gyro.pjacques] = 0;
+			_vm->_gyro->magics[brown].op = _vm->_gyro->nix;
+			_vm->_gyro->whereis[_vm->_gyro->pjacques] = 0;
 		}
 		if (ped != 0) {
 			_vm->_celer.show_one(6);
@@ -636,7 +636,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__wisewomans: {
 		_vm->_trip.tr[2].init(11, false, &_vm->_trip);
-		if ((_vm->_gyro.dna.rooms[r__wisewomans] == 1) && (ped > 0)) {
+		if ((_vm->_gyro->dna.rooms[r__wisewomans] == 1) && (ped > 0)) {
 			_vm->_trip.apped(2, 2); /* Start on the right-hand side of the screen. */
 			_vm->_trip.tr[2].walkto(4); /* Walks up to greet you. */
 		} else {
@@ -653,18 +653,18 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (ped > 0) {
 			_vm->_trip.tr[2].init(10, false, &_vm->_trip); /* Define the dart. */
 			_vm->_sequence.first_show(1);
-			if (_vm->_gyro.dna.arrow_in_the_door)
+			if (_vm->_gyro->dna.arrow_in_the_door)
 				_vm->_sequence.then_show(3);
 			else
 				_vm->_sequence.then_show(2);
 
-			if (_vm->_gyro.dna.taken_pen)
+			if (_vm->_gyro->dna.taken_pen)
 				_vm->_celer.show_one(4);
 
 			_vm->_sequence.start_to_close();
 		} else {
 			_vm->_celer.show_one(1);
-			if (_vm->_gyro.dna.arrow_in_the_door)  _vm->_celer.show_one(3);
+			if (_vm->_gyro->dna.arrow_in_the_door)  _vm->_celer.show_one(3);
 			else _vm->_celer.show_one(2);
 		}
 		break;
@@ -689,7 +689,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		break;
 
 	case r__aylesoffice:
-		if (_vm->_gyro.dna.ayles_is_awake)
+		if (_vm->_gyro->dna.ayles_is_awake)
 			_vm->_celer.show_one(2);
 		break; /* Ayles awake. */
 
@@ -699,16 +699,16 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__easthall:
 	case r__westhall:
-		if (_vm->_gyro.dna.geida_follows)  put_geida_at(ped + 2, ped);
+		if (_vm->_gyro->dna.geida_follows)  put_geida_at(ped + 2, ped);
 		break;
 
 	case r__lusties:
-		if (_vm->_gyro.dna.geida_follows)  put_geida_at(ped + 6, ped);
+		if (_vm->_gyro->dna.geida_follows)  put_geida_at(ped + 6, ped);
 		break;
 
 	case r__nottspub: {
-		if (_vm->_gyro.dna.sitting_in_pub)  _vm->_celer.show_one(3);
-		_vm->_gyro.dna.dogfoodpos = 1; /* Actually, du Lustie pos. */
+		if (_vm->_gyro->dna.sitting_in_pub)  _vm->_celer.show_one(3);
+		_vm->_gyro->dna.dogfoodpos = 1; /* Actually, du Lustie pos. */
 	}
 	break;
 
@@ -723,12 +723,12 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 		break;
 	case r__ducks:
-		_vm->_gyro.dna.dogfoodpos = 1;
+		_vm->_gyro->dna.dogfoodpos = 1;
 		break; /* Actually, Duck pos. */
 
 	}
 
-	_vm->_gyro.seescroll = false; /* Now it can work again! */
+	_vm->_gyro->seescroll = false; /* Now it can work again! */
 
 }
 
@@ -736,10 +736,10 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	const int16 picsize = 966;
 	const bytefield thinkspace = {25, 170, 32, 200};
 
-	_vm->_gyro.thinks = z;
+	_vm->_gyro->thinks = z;
 	z--;
 
-	_vm->_gyro.wait();
+	_vm->_gyro->wait();
 
 	if (th) {
 		if (!f.open("thinks.avd")) {
@@ -772,7 +772,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 
 	f.close();
 
-	_vm->_gyro.off();
+	_vm->_gyro->off();
 
 	/*setactivepage(3);
 	putimage(x, y, p, 0);
@@ -781,8 +781,8 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	for (byte fv = 0; fv <= 1; fv ++)
 		_vm->_trip.getset[fv].remember(thinkspace);
 	
-	_vm->_gyro.on();
-	_vm->_gyro.thinkthing = th;
+	_vm->_gyro->on();
+	_vm->_gyro->thinkthing = th;
 }
 
 void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
@@ -795,13 +795,13 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 	}
 
 	for (byte fv = 0; fv < 10; fv ++) {
-		_vm->_gyro.digit[fv] = new byte[digitsize];
-		f.read(_vm->_gyro.digit[fv], digitsize);
+		_vm->_gyro->digit[fv] = new byte[digitsize];
+		f.read(_vm->_gyro->digit[fv], digitsize);
 	}
 
 	for (byte ff = 0; ff < 9; ff ++) {
-		_vm->_gyro.rwlite[ff] = new byte[rwlitesize];
-		f.read(_vm->_gyro.rwlite[ff], rwlitesize);
+		_vm->_gyro->rwlite[ff] = new byte[rwlitesize];
+		f.read(_vm->_gyro->rwlite[ff], rwlitesize);
 	}
 
 	f.close();
@@ -831,7 +831,7 @@ void Lucerna::toolbar() {
 
 	/* on;*/
 
-	_vm->_gyro.oldrw = 177;
+	_vm->_gyro->oldrw = 177;
 	showrw();
 }
 
@@ -839,10 +839,10 @@ void Lucerna::showscore() {
 
 	const bytefield scorespace = {33, 177, 39, 200};
 
-	if (_vm->_gyro.demo)
+	if (_vm->_gyro->demo)
 		return;
 
-	uint16 score = _vm->_gyro.dna.score;
+	uint16 score = _vm->_gyro->dna.score;
 	int8 numbers[3] = {0, 0, 0};
 	for (byte i = 0; i < 2; i++) {
 		byte divisor = 1;
@@ -853,27 +853,27 @@ void Lucerna::showscore() {
 	}
 	numbers[2] = score;
 
-	_vm->_gyro.off();
+	_vm->_gyro->off();
 
 	//setactivepage(3);
 
 	for (byte fv = 0; fv < 3; fv ++)
-		if (_vm->_gyro.lastscore[fv] != numbers[fv]) 
-			_vm->_graphics->drawPicture(_vm->_gyro.digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
+		if (_vm->_gyro->lastscore[fv] != numbers[fv]) 
+			_vm->_graphics->drawPicture(_vm->_gyro->digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
 	for (byte fv = 0; fv < 2; fv ++)
 		_vm->_trip.getset[fv].remember(scorespace);
 
 	//setactivepage(1 - cp);
 
-	_vm->_gyro.on();
+	_vm->_gyro->on();
 	for (byte i = 0; i < 3; i++)
-		_vm->_gyro.lastscore[i] = numbers[i];
+		_vm->_gyro->lastscore[i] = numbers[i];
 }
 
 void Lucerna::points(byte num) {     /* Add on no. of points */
 	for (byte q = 1; q <= num; q ++) {
-		_vm->_gyro.dna.score++;
+		_vm->_gyro->dna.score++;
 		/*if (soundfx)
 			for (byte fv = 1; fv <= 97; fv ++)
 				sound(177 + dna.score * 3);
@@ -881,13 +881,13 @@ void Lucerna::points(byte num) {     /* Add on no. of points */
 	}
 	warning("STUB: Lucerna::points()");
 
-	_vm->_logger.log_score(num, _vm->_gyro.dna.score);
+	_vm->_logger.log_score(num, _vm->_gyro->dna.score);
 	showscore();
 }
 
 void Lucerna::topcheck() {
 	/* Menuset */
-	_vm->_dropdown.ddm_m.getmenu(_vm->_gyro.mpx);
+	_vm->_dropdown.ddm_m.getmenu(_vm->_gyro->mpx);
 	/* Do this one */
 }
 
@@ -899,10 +899,10 @@ void Lucerna::inkey() {
 	char r;
 
 
-	if (_vm->_gyro.demo)
+	if (_vm->_gyro->demo)
 		return; /* Demo handles this itself. */
 
-	if (_vm->_gyro.mousetext == "") {
+	if (_vm->_gyro->mousetext == "") {
 		/* read keyboard */
 		_vm->_enhanced.readkeye();
 		if ((_vm->_enhanced.inchar == ' ') && ((_vm->_enhanced.shiftstate & 8) > 0)) {
@@ -910,10 +910,10 @@ void Lucerna::inkey() {
 			_vm->_enhanced.extd = '#'; /* alt-spacebar = alt-H */
 		}
 	} else {
-		if (_vm->_gyro.mousetext[0] == '`')
-			_vm->_gyro.mousetext.setChar(13,0); /* Backquote = return in a macro */
-		_vm->_enhanced.inchar = _vm->_gyro.mousetext[0];
-		_vm->_gyro.mousetext = Common::String(_vm->_gyro.mousetext.c_str() + 2, 253);
+		if (_vm->_gyro->mousetext[0] == '`')
+			_vm->_gyro->mousetext.setChar(13,0); /* Backquote = return in a macro */
+		_vm->_enhanced.inchar = _vm->_gyro->mousetext[0];
+		_vm->_gyro->mousetext = Common::String(_vm->_gyro->mousetext.c_str() + 2, 253);
 	}
 }
 
@@ -926,34 +926,34 @@ void Lucerna::fxtoggle() {
 }
 
 void Lucerna::objectlist() {
-	_vm->_gyro.dna.carrying = 0;
-	if (_vm->_gyro.thinkthing && ! _vm->_gyro.dna.obj[_vm->_gyro.thinks])
-		thinkabout(_vm->_gyro.money, _vm->_gyro.a_thing); /* you always have money */
+	_vm->_gyro->dna.carrying = 0;
+	if (_vm->_gyro->thinkthing && ! _vm->_gyro->dna.obj[_vm->_gyro->thinks])
+		thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing); /* you always have money */
 	for (byte fv = 0; fv < numobjs; fv ++)
-		if (_vm->_gyro.dna.obj[fv]) {
-			_vm->_gyro.dna.carrying ++;
-			_vm->_gyro.objlist[_vm->_gyro.dna.carrying] = fv + 1;
+		if (_vm->_gyro->dna.obj[fv]) {
+			_vm->_gyro->dna.carrying ++;
+			_vm->_gyro->objlist[_vm->_gyro->dna.carrying] = fv + 1;
 		}
 }
 
 void Lucerna::verte() {
 	byte what;
 
-	if (! _vm->_gyro.dna.user_moves_avvy) 
+	if (! _vm->_gyro->dna.user_moves_avvy) 
 		return;
 
 
 	/* _vm->_trip.tr[0] : that's the only one we're interested in here */
-	if (_vm->_gyro.mx < _vm->_trip.tr[0].x) 
+	if (_vm->_gyro->mx < _vm->_trip.tr[0].x) 
 		what = 1;
-	else if (_vm->_gyro.mx > (unsigned char)(_vm->_trip.tr[0].x + _vm->_trip.tr[0]._info.xl)) 
+	else if (_vm->_gyro->mx > (unsigned char)(_vm->_trip.tr[0].x + _vm->_trip.tr[0]._info.xl)) 
 		what = 2;
 	else
 		what = 0; /* On top */
 
-	if (_vm->_gyro.my < _vm->_trip.tr[0].y)
+	if (_vm->_gyro->my < _vm->_trip.tr[0].y)
 		what += 3;
-	else if (_vm->_gyro.my > (unsigned char)(_vm->_trip.tr[0].y + _vm->_trip.tr[0]._info.yl))
+	else if (_vm->_gyro->my > (unsigned char)(_vm->_trip.tr[0].y + _vm->_trip.tr[0]._info.yl))
 		what += 6;
 
 	switch (what) {
@@ -994,7 +994,7 @@ void Lucerna::checkclick() {
 }
 
 void Lucerna::mouse_init() {
-	_vm->_gyro.wait();
+	_vm->_gyro->wait();
 }
 
 void Lucerna::mousepage(uint16 page_) {
@@ -1042,19 +1042,19 @@ void Lucerna::dawn() {
 
 
 void Lucerna::showrw() { // It's data is loaded in load_digits().
-	if (_vm->_gyro.oldrw == _vm->_gyro.dna.rw) 
+	if (_vm->_gyro->oldrw == _vm->_gyro->dna.rw) 
 		return;
-	_vm->_gyro.oldrw = _vm->_gyro.dna.rw;
-	_vm->_gyro.off();
+	_vm->_gyro->oldrw = _vm->_gyro->dna.rw;
+	_vm->_gyro->off();
 	
 	/*	for (byte page_ = 0; page_ <= 1; page_ ++) {
 	setactivepage(page_);
 	putimage(0, 161, rwlite[with.rw], 0);
 	}*/
 
-	_vm->_graphics->drawPicture(_vm->_gyro.rwlite[_vm->_gyro.dna.rw], 0, 161);
+	_vm->_graphics->drawPicture(_vm->_gyro->rwlite[_vm->_gyro->dna.rw], 0, 161);
 
-	_vm->_gyro.on();
+	_vm->_gyro->on();
 	//setactivepage(1 - cp);
 	
 	warning("STUB: Lucerna::showrw()");
@@ -1207,21 +1207,21 @@ void Lucerna::flip_page() {
 void Lucerna::delavvy() {
 	byte page_;
 
-	_vm->_gyro.off();
+	_vm->_gyro->off();
 	
 	triptype &with = _vm->_trip.tr[0];
 	for (page_ = 0; page_ <= 1; page_ ++)
 		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
 	
 	blitfix();
-	_vm->_gyro.on();
+	_vm->_gyro->on();
 }
 
 void Lucerna::gameover() {
 	byte fv;
 	int16 sx, sy;
 
-	_vm->_gyro.dna.user_moves_avvy = false;
+	_vm->_gyro->dna.user_moves_avvy = false;
 
 	sx = _vm->_trip.tr[1].x;
 	sy = _vm->_trip.tr[1].y;
@@ -1233,7 +1233,7 @@ void Lucerna::gameover() {
 	
 	_vm->_timeout.set_up_timer(3, _vm->_timeout.procavalot_falls, _vm->_timeout.reason_falling_over);
 	/* _vm->_scrolls.display(^m^m^m^m^m^m^i^i^i^i^i^i^s'Z'^v);*/
-	_vm->_gyro.alive = false;
+	_vm->_gyro->alive = false;
 }
 
 /* OK. There are two kinds of redraw: Major and Minor. Minor is what happens
@@ -1243,15 +1243,15 @@ void Lucerna::minor_redraw() {
 	byte fv;
 
 	dusk();
-	enterroom(_vm->_gyro.dna.room, 0); /* Ped unknown or non-existant. */
+	enterroom(_vm->_gyro->dna.room, 0); /* Ped unknown or non-existant. */
 
 	for (fv = 0; fv <= 1; fv ++) {
-		_vm->_gyro.cp = 1 - _vm->_gyro.cp;
+		_vm->_gyro->cp = 1 - _vm->_gyro->cp;
 		_vm->_trip.getback();
 	}
 	
 	for (byte i = 0; i < 3; i++)
-		_vm->_gyro.lastscore[i] = -1; /* impossible digits */
+		_vm->_gyro->lastscore[i] = -1; /* impossible digits */
 	showscore();
 	
 	dawn();
@@ -1267,7 +1267,7 @@ uint16 Lucerna::bearing(byte whichped) {
 
 	uint16 bearing_result; 
 	{
-		pedtype &with = _vm->_gyro.peds[whichped];
+		pedtype &with = _vm->_gyro->peds[whichped];
 		if (_vm->_trip.tr[1].x == with.x)
 			bearing_result = 0; /* This would cause a division by zero if we let it through. */
 		else {
@@ -1290,7 +1290,7 @@ void Lucerna::sprite_run() {
   make the sprites the same on both pages. */
 	byte fv;
 
-	_vm->_gyro.doing_sprite_run = true;
+	_vm->_gyro->doing_sprite_run = true;
 
 	for (fv = 0; fv <= 1; fv ++) {
 		_vm->_trip.get_back_loretta();
@@ -1299,13 +1299,13 @@ void Lucerna::sprite_run() {
 		flip_page();
 	}
 
-	_vm->_gyro.doing_sprite_run = false;
+	_vm->_gyro->doing_sprite_run = false;
 
 }
 
 void Lucerna::fix_flashers() {
-	_vm->_gyro.ledstatus = 177;
-	_vm->_gyro.oldrw = 177;
+	_vm->_gyro->ledstatus = 177;
+	_vm->_gyro->oldrw = 177;
 	_vm->_scrolls.state(2);
 	showrw();
 }

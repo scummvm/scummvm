@@ -53,36 +53,36 @@ void Celer::setParent(AvalancheEngine *vm) {
 void Celer::pics_link() {
 	byte xx;
 
-	if (_vm->_gyro.ddmnow)
+	if (_vm->_gyro->ddmnow)
 		return; /* No animation when the menus are up. */
 
 	
-	switch (_vm->_gyro.dna.room) {
+	switch (_vm->_gyro->dna.room) {
 	case r__outsideargentpub:
-		if ((_vm->_gyro.roomtime % int32(12)) == 0)
-			show_one(int32(1) + (_vm->_gyro.roomtime / int32(12)) % int32(4));
+		if ((_vm->_gyro->roomtime % int32(12)) == 0)
+			show_one(int32(1) + (_vm->_gyro->roomtime / int32(12)) % int32(4));
 		break;
 
 	case r__brummieroad:
-		if ((_vm->_gyro.roomtime % int32(2)) == 0)
-			show_one(int32(1) + (_vm->_gyro.roomtime / int32(2)) % int32(4));
+		if ((_vm->_gyro->roomtime % int32(2)) == 0)
+			show_one(int32(1) + (_vm->_gyro->roomtime / int32(2)) % int32(4));
 		break;
 
 	case r__bridge:
-		if ((_vm->_gyro.roomtime % int32(2)) == 0)
-			show_one(int32(4) + (_vm->_gyro.roomtime / int32(2)) % int32(4));
+		if ((_vm->_gyro->roomtime % int32(2)) == 0)
+			show_one(int32(4) + (_vm->_gyro->roomtime / int32(2)) % int32(4));
 		break;
 
 	case r__yours:
-		if ((!_vm->_gyro.dna.avvy_is_awake) && ((_vm->_gyro.roomtime % int32(4)) == 0))
-			show_one(int32(1) + (_vm->_gyro.roomtime / int32(12)) % int32(2));
+		if ((!_vm->_gyro->dna.avvy_is_awake) && ((_vm->_gyro->roomtime % int32(4)) == 0))
+			show_one(int32(1) + (_vm->_gyro->roomtime / int32(12)) % int32(2));
 		break;
 
 	case r__argentpub:
-		if (((_vm->_gyro.roomtime % int32(7)) == 1) && (_vm->_gyro.dna.malagauche != 177)) {
+		if (((_vm->_gyro->roomtime % int32(7)) == 1) && (_vm->_gyro->dna.malagauche != 177)) {
 			/* Malagauche cycle */
-			_vm->_gyro.dna.malagauche += 1;
-			switch (_vm->_gyro.dna.malagauche) {
+			_vm->_gyro->dna.malagauche += 1;
+			switch (_vm->_gyro->dna.malagauche) {
 			case 1:
 			case 11:
 			case 21:
@@ -98,12 +98,12 @@ void Celer::pics_link() {
 				show_one(13);
 				break; /* Winks. */
 			case 33:
-				_vm->_gyro.dna.malagauche = 0;
+				_vm->_gyro->dna.malagauche = 0;
 				break;
 			}
 		}
 
-		switch (_vm->_gyro.roomtime % 200) {
+		switch (_vm->_gyro->roomtime % 200) {
 		case 179:
 		case 197:
 			show_one(5);
@@ -116,11 +116,11 @@ void Celer::pics_link() {
 			show_one(7);
 			break;
 		case 199:
-			_vm->_gyro.dna.dogfoodpos = 177;
+			_vm->_gyro->dna.dogfoodpos = 177;
 			break; /* Impossible value for this. */
 		}
 
-		if ((_vm->_gyro.roomtime % 200 >= 0) && (_vm->_gyro.roomtime % 200 <= 178)) { /* Normally. */
+		if ((_vm->_gyro->roomtime % 200 >= 0) && (_vm->_gyro->roomtime % 200 <= 178)) { /* Normally. */
 			if (((_vm->_lucerna.bearing(2) >= 1) && (_vm->_lucerna.bearing(2) <= 90)) || ((_vm->_lucerna.bearing(2) >= 358) && (_vm->_lucerna.bearing(2) <= 360)))
 				xx = 3;
 			else if ((_vm->_lucerna.bearing(2) >= 293) && (_vm->_lucerna.bearing(2) <= 357))
@@ -128,16 +128,16 @@ void Celer::pics_link() {
 			else if ((_vm->_lucerna.bearing(2) >= 271) && (_vm->_lucerna.bearing(2) <= 292))
 				xx = 4;
 
-			if (xx != _vm->_gyro.dna.dogfoodpos) { /* Only if it's changed.*/
+			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
 				show_one(xx);
-				_vm->_gyro.dna.dogfoodpos = xx;
+				_vm->_gyro->dna.dogfoodpos = xx;
 			}
 		}
 		break;
 
 	case r__westhall:
-		if ((_vm->_gyro.roomtime % int32(3)) == 0) {
-			switch ((_vm->_gyro.roomtime / int32(3)) % int32(6)) {
+		if ((_vm->_gyro->roomtime % int32(3)) == 0) {
+			switch ((_vm->_gyro->roomtime / int32(3)) % int32(6)) {
 			case 4:
 				show_one(1);
 				break;
@@ -155,8 +155,8 @@ void Celer::pics_link() {
 		break;
 
 	case r__lustiesroom:
-		if (!(_vm->_gyro.dna.lustie_is_asleep)) {
-			if ((_vm->_gyro.roomtime % int32(45)) > 42)
+		if (!(_vm->_gyro->dna.lustie_is_asleep)) {
+			if ((_vm->_gyro->roomtime % int32(45)) > 42)
 				xx = 4; /* du Lustie blinks */
 
 			/* Bearing of Avvy from du Lustie. */
@@ -167,16 +167,16 @@ void Celer::pics_link() {
 			else if ((_vm->_lucerna.bearing(2) >= 181) && (_vm->_lucerna.bearing(2) <= 314))
 				xx = 3; /* Right. */
 
-			if (xx != _vm->_gyro.dna.dogfoodpos) { /* Only if it's changed.*/
+			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
 				show_one(xx);
-				_vm->_gyro.dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
+				_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
 			}
 		}
 		break;
 
 	case r__aylesoffice:
-		if ((!_vm->_gyro.dna.ayles_is_awake) && (_vm->_gyro.roomtime % int32(14) == 0)) {
-			switch ((_vm->_gyro.roomtime / int32(14)) % int32(2)) {
+		if ((!_vm->_gyro->dna.ayles_is_awake) && (_vm->_gyro->roomtime % int32(14) == 0)) {
+			switch ((_vm->_gyro->roomtime / int32(14)) % int32(2)) {
 			case 0:
 				show_one(1);
 				break; /* Frame 2: EGA. */
@@ -188,8 +188,8 @@ void Celer::pics_link() {
 		break;
 
 	case r__robins:
-		if (_vm->_gyro.dna.tied_up) {
-			switch (_vm->_gyro.roomtime % int32(54)) {
+		if (_vm->_gyro->dna.tied_up) {
+			switch (_vm->_gyro->roomtime % int32(54)) {
 			case 20:
 				show_one(4);
 				break; /* Frame 4: Avalot blinks. */
@@ -209,15 +209,15 @@ void Celer::pics_link() {
 		else if ((_vm->_lucerna.bearing(5) >= 181) && (_vm->_lucerna.bearing(5) <= 314))
 			xx = 8; /* Right. */
 
-		if ((_vm->_gyro.roomtime % int32(60)) > 57)
+		if ((_vm->_gyro->roomtime % int32(60)) > 57)
 			xx--; /* Blinks */
 
-		if (xx != _vm->_gyro.dna.dogfoodpos) { /* Only if it's changed.*/
+		if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
 			show_one(xx);
-			_vm->_gyro.dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
+			_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
 		}
 
-		switch (_vm->_gyro.roomtime % 50) {
+		switch (_vm->_gyro->roomtime % 50) {
 		case 45 :
 			show_one(9);
 			break; /* Spurge blinks */
@@ -228,8 +228,8 @@ void Celer::pics_link() {
 		break;
 
 	case r__ducks:
-		if ((_vm->_gyro.roomtime % 3) == 0) /* The fire flickers */
-			show_one(1 + (_vm->_gyro.roomtime / 3) % 3);
+		if ((_vm->_gyro->roomtime % 3) == 0) /* The fire flickers */
+			show_one(1 + (_vm->_gyro->roomtime / 3) % 3);
 
 		{/* _vm->_lucerna.bearing of Avvy from Duck. */
 		if (((_vm->_lucerna.bearing(2) >= 0) && (_vm->_lucerna.bearing(2) <= 45)) || ((_vm->_lucerna.bearing(2) >= 315) && (_vm->_lucerna.bearing(2) <= 360)))
@@ -239,26 +239,26 @@ void Celer::pics_link() {
 		else if ((_vm->_lucerna.bearing(2) >= 181) && (_vm->_lucerna.bearing(2) <= 314))
 			xx = 8; /* Right. */
 
-		if ((_vm->_gyro.roomtime % int32(45)) > 42)
+		if ((_vm->_gyro->roomtime % int32(45)) > 42)
 			xx += 1; /* Duck blinks */
 
-		if (xx != _vm->_gyro.dna.dogfoodpos) { /* Only if it's changed.*/
+		if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
 			show_one(xx);
-			_vm->_gyro.dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
+			_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
 		}
 		break;
 
 	}
 }
 
-	if ((_vm->_gyro.dna.ringing_bells) && (_vm->_gyro.flagset('B'))) {
+	if ((_vm->_gyro->dna.ringing_bells) && (_vm->_gyro->flagset('B'))) {
 		/* They're ringing the bells. */
-		switch (_vm->_gyro.roomtime % int32(4)) {
+		switch (_vm->_gyro->roomtime % int32(4)) {
 		case 1:
-			if (_vm->_gyro.dna.nextbell < 5)
-				_vm->_gyro.dna.nextbell = 12;
-			_vm->_gyro.dna.nextbell -= 1;
-			_vm->_gyro.note(_vm->_gyro.notes[_vm->_gyro.dna.nextbell]);
+			if (_vm->_gyro->dna.nextbell < 5)
+				_vm->_gyro->dna.nextbell = 12;
+			_vm->_gyro->dna.nextbell -= 1;
+			_vm->_gyro->note(_vm->_gyro->notes[_vm->_gyro->dna.nextbell]);
 			break;
 		case 2:
 			//nosound;

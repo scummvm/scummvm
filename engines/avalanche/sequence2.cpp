@@ -66,8 +66,8 @@ void Sequence::then_show(byte what) {
 void Sequence::then_flip(byte where, byte ped) {
 	then_show(now_flip);
 
-	_vm->_gyro.dna.flip_to_where = where;
-	_vm->_gyro.dna.flip_to_ped = ped;
+	_vm->_gyro->dna.flip_to_where = where;
+	_vm->_gyro->dna.flip_to_ped = ped;
 }
 
 void Sequence::start_to_close() {
@@ -76,7 +76,7 @@ void Sequence::start_to_close() {
 }
 
 void Sequence::start_to_open() {
-	_vm->_gyro.dna.user_moves_avvy = false; /* They can't move. */
+	_vm->_gyro->dna.user_moves_avvy = false; /* They can't move. */
 	_vm->_trip.stopwalking(); /* And they're not moving now. */
 	start_to_close(); /* Apart from that, it's the same thing. */
 }
@@ -94,8 +94,8 @@ void Sequence::call_sequencer() {
 		return;
 		break; /* No more routines. */
 	case 177:
-		_vm->_gyro.dna.user_moves_avvy = true;
-		_vm->_trip.fliproom(_vm->_gyro.dna.flip_to_where, _vm->_gyro.dna.flip_to_ped); /* 177 = Flip room. */
+		_vm->_gyro->dna.user_moves_avvy = true;
+		_vm->_trip.fliproom(_vm->_gyro->dna.flip_to_where, _vm->_gyro->dna.flip_to_ped); /* 177 = Flip room. */
 		if (seq[0] == 177)
 			shove_left();
 		break;

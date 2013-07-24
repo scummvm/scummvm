@@ -59,7 +59,7 @@ void Scrolls::init() {
 void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 	byte page_;
 
-	if (_vm->_gyro.ledstatus == x)
+	if (_vm->_gyro->ledstatus == x)
 		return; /* Already like that! */
 
 	byte color;
@@ -90,12 +90,12 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 	//}
 	warning("STUB: Scrolls::state()");
 
-	_vm->_gyro.super_off();
+	_vm->_gyro->super_off();
 
 	_vm->_graphics->drawBar(419, 195, 438, 197, color);
 
-	_vm->_gyro.super_on();
-	_vm->_gyro.ledstatus = x;
+	_vm->_gyro->super_on();
+	_vm->_gyro->ledstatus = x;
 }
 
 void Scrolls::easteregg() {
@@ -130,7 +130,7 @@ bool Scrolls::they_match(tunetype &played) {
 	mistakes = 0;
 
 	for (fv = 1; fv <= sizeof(played); fv ++)
-		if (played[fv] != _vm->_gyro.tune[fv]) {
+		if (played[fv] != _vm->_gyro->tune[fv]) {
 			mistakes += 1;
 		}
 
@@ -144,32 +144,32 @@ void Scrolls::music_scroll() {
 /* ThatsAll, so put us back to */ /*$F-*/
 
 void Scrolls::resetscrolldriver() {   /* phew */
-	_vm->_gyro.scrollbells = 0;
+	_vm->_gyro->scrollbells = 0;
 	cfont = roman;
 	_vm->_logger.log_epsonroman();
 	use_icon = 0;
-	_vm->_gyro.interrogation = 0; /* always reset after a scroll comes up. */
+	_vm->_gyro->interrogation = 0; /* always reset after a scroll comes up. */
 }
 
 void Scrolls::dingdongbell() {   /* Pussy's in the well. Who put her in? Little... */
 	byte fv;
 
-	for (fv = 1; fv <= _vm->_gyro.scrollbells; fv ++) _vm->_lucerna.errorled(); /* ring the bell "x" times */
+	for (fv = 1; fv <= _vm->_gyro->scrollbells; fv ++) _vm->_lucerna.errorled(); /* ring the bell "x" times */
 }
 
 void Scrolls::dodgem() {     /* This moves the mouse pointer off the scroll so that you can read it. */
-	_vm->_gyro.xycheck(); /* Mx & my now contain xy pos of mouse */
-	dodgex = _vm->_gyro.mx;
-	dodgey = _vm->_gyro.my; /* Store 'em */
-	_vm->_gyro.hopto(dodgex, _vm->_gyro.underscroll); /* Move the pointer off the scroll. */
+	_vm->_gyro->xycheck(); /* Mx & my now contain xy pos of mouse */
+	dodgex = _vm->_gyro->mx;
+	dodgey = _vm->_gyro->my; /* Store 'em */
+	_vm->_gyro->hopto(dodgex, _vm->_gyro->underscroll); /* Move the pointer off the scroll. */
 }
 
 void Scrolls::undodgem() {   /* This is the opposite of Dodgem. It moves the
  mouse pointer back, IF you haven't moved it in the meantime. */
-	_vm->_gyro.xycheck();
-	if ((_vm->_gyro.mx == dodgex) && (_vm->_gyro.my == _vm->_gyro.underscroll))
+	_vm->_gyro->xycheck();
+	if ((_vm->_gyro->mx == dodgex) && (_vm->_gyro->my == _vm->_gyro->underscroll))
 		/* No change, so restore the pointer's original position. */
-		_vm->_gyro.hopto(dodgex, dodgey);
+		_vm->_gyro->hopto(dodgex, dodgey);
 }
 
 void Scrolls::geticon(int16 x, int16 y, byte which) {
@@ -200,7 +200,7 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	int16 fv;
 	uint16 st;
 
-	st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro.cp) * _vm->_gyro.pagetop);
+	st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
 
 	Common::String filename;
 	filename = filename.format("%s.avd", fn.c_str());
@@ -237,35 +237,35 @@ bool Scrolls::ask(Common::String question) {
 }
 
 void Scrolls::resetscroll() {
-	_vm->_gyro.scrolln = 1;
+	_vm->_gyro->scrolln = 1;
 	for (int j = 0; j < 15; j ++)
-		for (int i = 0; i < _vm->_gyro.scroll[j].size(); i++)
-			_vm->_gyro.scroll[j].setChar(0, i);
+		for (int i = 0; i < _vm->_gyro->scroll[j].size(); i++)
+			_vm->_gyro->scroll[j].setChar(0, i);
 }
 
 void Scrolls::natural() {   /* Natural state of bubbles */
-	_vm->_gyro.talkx = 320;
-	_vm->_gyro.talky = 200;
-	_vm->_gyro.talkb = 8;
-	_vm->_gyro.talkf = 15;
+	_vm->_gyro->talkx = 320;
+	_vm->_gyro->talky = 200;
+	_vm->_gyro->talkb = 8;
+	_vm->_gyro->talkf = 15;
 }
 
 Common::String Scrolls::lsd() {
 	Common::String x;
 
 	Common::String lsd_result;
-	if (_vm->_gyro.dna.pence < 12) {
+	if (_vm->_gyro->dna.pence < 12) {
 		/* just pence */
-		x = _vm->_gyro.strf(_vm->_gyro.dna.pence) + 'd';
-	} else if (_vm->_gyro.dna.pence < 240) {
+		x = _vm->_gyro->strf(_vm->_gyro->dna.pence) + 'd';
+	} else if (_vm->_gyro->dna.pence < 240) {
 		/* shillings & pence */
-		x = _vm->_gyro.strf(_vm->_gyro.dna.pence / int32(12)) + '/';
-		if ((_vm->_gyro.dna.pence % int32(12)) == 0)  x = x + '-';
-		else x = x + _vm->_gyro.strf(_vm->_gyro.dna.pence % int32(12));
+		x = _vm->_gyro->strf(_vm->_gyro->dna.pence / int32(12)) + '/';
+		if ((_vm->_gyro->dna.pence % int32(12)) == 0)  x = x + '-';
+		else x = x + _vm->_gyro->strf(_vm->_gyro->dna.pence % int32(12));
 	} else   /* L, s & d */
-		x = Common::String('œ') + _vm->_gyro.strf(_vm->_gyro.dna.pence / int32(240)) + '.' + _vm->_gyro.strf((_vm->_gyro.dna.pence / int32(12)) % int32(20))
-			+ '.' + _vm->_gyro.strf(_vm->_gyro.dna.pence % int32(12));
-	if (_vm->_gyro.dna.pence > 12)  x = x + " (that's " + _vm->_gyro.strf(_vm->_gyro.dna.pence) + "d)";
+		x = Common::String('œ') + _vm->_gyro->strf(_vm->_gyro->dna.pence / int32(240)) + '.' + _vm->_gyro->strf((_vm->_gyro->dna.pence / int32(12)) % int32(20))
+			+ '.' + _vm->_gyro->strf(_vm->_gyro->dna.pence % int32(12));
+	if (_vm->_gyro->dna.pence > 12)  x = x + " (that's " + _vm->_gyro->strf(_vm->_gyro->dna.pence) + "d)";
 	lsd_result = x;
 	return lsd_result;
 }
@@ -286,8 +286,8 @@ void Scrolls::calldrivers() {
 }
 
 void Scrolls::display(Common::String z) {
-	_vm->_gyro.bufsize = z.size();
-	memcpy(_vm->_gyro.buffer, z.c_str() + 1, _vm->_gyro.bufsize);
+	_vm->_gyro->bufsize = z.size();
+	memcpy(_vm->_gyro->buffer, z.c_str() + 1, _vm->_gyro->bufsize);
 	calldrivers();
 }
 
@@ -315,7 +315,7 @@ void Scrolls::loadfont() {
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(_vm->_gyro.little[i],16);
+		f.read(_vm->_gyro->little[i],16);
 	f.close();
 }
 
@@ -331,15 +331,15 @@ void Scrolls::musical_scroll() {
 
 	_vm->_lucerna.sprite_run();
 
-	was_virtual = _vm->_gyro.visible == _vm->_gyro.m_virtual;
+	was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
 
 	if (was_virtual)
-		_vm->_gyro.off_virtual();
+		_vm->_gyro->off_virtual();
 
 	drawscroll(&Avalanche::Scrolls::music_scroll);
 
 	if (was_virtual)
-		_vm->_gyro.on_virtual();
+		_vm->_gyro->on_virtual();
 	resetscroll();
 }
 

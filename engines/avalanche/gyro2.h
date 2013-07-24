@@ -610,11 +610,9 @@ public:
 	bool use_joy_a;
 
 
-	Gyro();
+	Gyro(AvalancheEngine *vm);
 
 	~Gyro();
-
-	void setParent(AvalancheEngine *vm);
 
 	void newpointer(byte m);
 
