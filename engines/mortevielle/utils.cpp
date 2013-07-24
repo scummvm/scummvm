@@ -2548,10 +2548,6 @@ void MortevielleEngine::displayPicture(const byte *pic, int x, int y) {
 		_curPict[32] = 15;
 	}
 
-	// CHECKME: Is it useful?
-	//	if ((_caff != 51) && (READ_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138]) > 0x100))
-	//		WRITE_LE_UINT16(&_mem[(kAdrCurrentPicture * 16) + 0x4138], 0x100);
-
 	_screenSurface.drawPicture(surface, x, y);
 }
 
