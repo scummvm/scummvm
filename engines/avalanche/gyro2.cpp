@@ -356,7 +356,8 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	_vm->_trip->tr[0].init(0, true, _vm->_trip);
 	alive = true;
 
-	score = 0; /*for gd:=0 to 5 do which[gd]:=1;*/
+	score = 0;
+	/*for gd:=0 to 5 do which[gd]:=1;*/
 	memset(&_vm->_gyro->dna, 0, sizeof(dnatype));
 	_vm->_scrolls->natural();
 	_vm->_basher->normal_edit();
@@ -377,7 +378,7 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	seescroll = false;
 
 	ppos[0][1] = -177; 
-	_vm->_trip->tr[0].appear(300,117,right);
+	//_vm->_trip->tr[0].appear(300,117,right);
 	//for (gd = 0; gd <= 30; gd ++) for (gm = 0; gm <= 1; gm ++) also[gd][gm] = nil;
 	/* fillchar(previous^,sizeof(previous^),#0); { blank out array } */
 	him = 254;
