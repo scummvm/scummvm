@@ -2240,7 +2240,7 @@ void MortevielleEngine::showTitleScreen() {
 void MortevielleEngine::draw(int x, int y) {
 	_mouse.hideMouse();
 	setPal(_numpal);
-	pictout(kAdrCurrentPicture, 0, x, y);
+	displayPicture(&_mem[kAdrCurrentPicture * 16], x, y);
 	_mouse.showMouse();
 }
 
@@ -2254,7 +2254,7 @@ void MortevielleEngine::drawRightFrame() {
 		_mem[(kAdrCurrentPicture * 16) + 14] = 15;
 	}
 	_mouse.hideMouse();
-	pictout(kAdrRightFramePic, 0, 0, 0);
+	displayPicture(&_mem[kAdrRightFramePic * 16], 0, 0);
 	_mouse.showMouse();
 }
 
@@ -2535,9 +2535,13 @@ void MortevielleEngine::displayControlMenu() {
 	_controlMenu = 0;
 }
 
-void MortevielleEngine::pictout(int seg, int dep, int x, int y) {
+/**
+ * Display picture at a given coordinate
+ * @remarks	Originally called 'pictout'
+ */
+void MortevielleEngine::displayPicture(const byte *pic, int x, int y) {
 	GfxSurface surface;
-	surface.decode(&_mem[(seg * 16) + dep]);
+	surface.decode(pic);
 
 	if (_currGraphicalDevice == MODE_HERCULES) {
 		_mem[(kAdrCurrentPicture * 16) + 2] = 0;
@@ -2575,16 +2579,15 @@ void MortevielleEngine::adzon() {
 
 /**
  * Returns the offset within the compressed image data resource of the desired image
+ * @remarks	Originally called 'animof'
  */
-int MortevielleEngine::animof(int ouf, int num) {
-	int nani = _mem[(kAdrAni * 16) + 1];
-	int aux = num;
-	if (ouf != 1)
-		aux += nani;
+int MortevielleEngine::getAnimOffset(int frameNum, int animNum) {
+	int animCount = _mem[(kAdrAni * 16) + 1];
+	int aux = animNum;
+	if (frameNum != 1)
+		aux += animCount;
 
-	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&_mem[(kAdrAni * 16) + (aux << 1)]);
-
-	return animof_result;
+	return (animCount << 2) + 2 + READ_BE_UINT16(&_mem[(kAdrAni * 16) + (aux << 1)]);
 }
 
 /**
@@ -2947,20 +2950,24 @@ void MortevielleEngine::displayQuestionText(Common::String s, int cmd) {
 		_screenSurface.drawString(copy(s, 1, 25), cmd);
 }
 
-void MortevielleEngine::aniof(int ouf, int num) {
-	if ((_caff == BATHROOM) && ((num == 4) || (num == 5)))
+/**
+ * Display animation frame
+ * @remarks	Originally called 'aniof'
+ */
+void MortevielleEngine::drawAnimFrame(int frameNum, int animId) {
+	if ((_caff == BATHROOM) && ((animId == 4) || (animId == 5)))
 		return;
 
-	if ((_caff == DINING_ROOM) && (num == 7))
-		num = 6;
+	if ((_caff == DINING_ROOM) && (animId == 7))
+		animId = 6;
 	else if (_caff == KITCHEN) {
-		if (num == 3)
-			num = 4;
-		else if (num == 4)
-			num = 3;
+		if (animId == 3)
+			animId = 4;
+		else if (animId == 4)
+			animId = 3;
 	}
 
-	int offset = animof(ouf, num);
+	int offset = getAnimOffset(frameNum, animId);
 
 	GfxSurface surface;
 	surface.decode(&_mem[(kAdrAni * 16) + offset]);
@@ -2987,21 +2994,21 @@ void MortevielleEngine::drawPicture() {
 		if ((_caff < 30) || (_caff > 32)) {
 			for (int cx = 1; cx <= 6; ++cx) {
 				if (_openObjects[cx] != 0)
-					aniof(1, _openObjects[cx]);
+					drawAnimFrame(1, _openObjects[cx]);
 			}
 
 			if (_caff == ATTIC) {
 				if (_coreVar._atticBallHoleObjectId == 141)
-					aniof(1, 7);
+					drawAnimFrame(1, 7);
 
 				if (_coreVar._atticRodHoleObjectId == 159)
-					aniof(1, 6);
+					drawAnimFrame(1, 6);
 			} else if ((_caff == CELLAR) && (_coreVar._cellarObjectId == 151))
-				aniof(1, 2);
+				drawAnimFrame(1, 2);
 			else if ((_caff == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143))
-				aniof(1, 1);
+				drawAnimFrame(1, 1);
 			else if ((_caff == WELL) && (_coreVar._wellObjectId != 0))
-				aniof(1, 1);
+				drawAnimFrame(1, 1);
 		}
 
 		if (_caff < ROOM26)
