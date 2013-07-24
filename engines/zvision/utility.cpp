@@ -223,7 +223,7 @@ void convertRawToWav(const Common::String &inputFile, ZVision *engine, const Com
 	output.writeUint32BE(MKTAG('d', 'a', 't', 'a'));
 	output.writeUint32LE(file.size() * 2);
 	int16 *buffer = new int16[file.size()];
-	int readBytes = audioStream->readBuffer(buffer, file.size());
+	audioStream->readBuffer(buffer, file.size());
 	output.write(buffer, file.size() * 2);
 
 	delete[] buffer;
