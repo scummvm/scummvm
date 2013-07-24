@@ -26,7 +26,6 @@
  */
 
 #include "avalanche/avalanche.h"
-#include "avalanche/avalot.h"
 
 #include "common/system.h"
 #include "common/random.h"
@@ -103,7 +102,16 @@ namespace Avalanche {
 		//	_sound->syncVolume();
 	}
 
-	
+	void AvalancheEngine::updateEvents() {
+		Common::Event event;
+
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				_avalot.handleKeyDown(event);
+			}
+		}
+	}
 
 
 
@@ -255,7 +263,7 @@ namespace Avalanche {
 		_graph.init();
 
 		
-
+		
 
 		// From bootstrp:
 
@@ -270,7 +278,7 @@ namespace Avalanche {
 		if (!zoomy)
 			call_menu();    /* Not run when zoomy. */
 
-		
+
 
 		do {
 			run_avalot();

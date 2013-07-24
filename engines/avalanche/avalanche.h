@@ -108,6 +108,8 @@ public:
 	Common::String getSavegameFilename(int slot);
 	void syncSoundSettings();
 
+	void updateEvents();
+
 protected:
 	// Engine APIs
 	Common::Error run();
