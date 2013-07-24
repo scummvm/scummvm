@@ -38,7 +38,7 @@ class AvalancheEngine;
 
 class Avalot {
 public:
-	void setParent(AvalancheEngine *vm);
+	Avalot(AvalancheEngine *vm);
 
 	void setup();
 
