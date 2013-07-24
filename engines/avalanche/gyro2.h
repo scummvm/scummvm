@@ -73,8 +73,7 @@ struct dnatype { /* here goes... */ /* Ux, uy, & ww now all belong to Trip5 */
 	char wearing; /* what you're wearing */
 	byte swore; /* number of times you've sworn */
 	byte saves; /* number of times this game has been saved */
-	byte rooms[100];     /* Add one to each every time
-											you enter a room */
+	byte rooms[100]; /* Add one to each every time you enter a room */
 	byte alcohol; /* Your blood alcohol level. */
 	byte playednim; /* How many times you've played Nim. */
 	bool wonnim; /* Have you *won* Nim? (That's harder.) */
