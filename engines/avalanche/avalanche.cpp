@@ -102,6 +102,8 @@ Common::Platform AvalancheEngine::getPlatform() const {
 	return _platform;
 }
 
+
+
 bool AvalancheEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
@@ -110,15 +112,7 @@ const char *AvalancheEngine::getCopyrightString() const {
 	return "Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.";
 }
 
-Common::String AvalancheEngine::getSavegameFilename(int slot) {
-	return _targetName + Common::String::format("-%02d.SAV", slot);
-}
 
-void AvalancheEngine::syncSoundSettings() {
-	Engine::syncSoundSettings();
-
-	//	_sound->syncVolume();
-}
 
 void AvalancheEngine::updateEvents() {
 	Common::Event event;
