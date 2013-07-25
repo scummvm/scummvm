@@ -190,7 +190,7 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 
 //////////////////////////////////////////////////////////////////////////
 Common::String BaseScriptable::debuggerToString() {
-	return "Not implemented yet";
+	return Common::String::format("0x%02x: BaseScriptable %s", this, getName());
 }
 
 
