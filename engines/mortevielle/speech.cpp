@@ -68,6 +68,11 @@ SpeechManager::SpeechManager() {
 		_queue[i]._freq = 0;
 		_queue[i]._rep = 0;
 	}
+	_noise5Buf = nullptr;
+}
+
+SpeechManager::~SpeechManager() {
+	free(_noise5Buf);
 }
 
 void SpeechManager::spfrac(int wor) {
@@ -194,10 +199,10 @@ void SpeechManager::loadNoise() {
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
-	f.read(&_vm->_mem[kAdrNoise * 16], 250 * 128);
+	f.read(&_vm->_mem[kAdrNoise * 16], 250 * 128); // 32000
 	for (i = 0; i <= 19013; ++i)
-		_vm->_mem[(kAdrNoise * 16) + 32000 + i] = _vm->_mem[(kAdrNoise5 * 16) + i];
-	f.read(&_vm->_mem[(kAdrNoise1 * 16) + kOffsetB1], 149 * 128);
+		_vm->_mem[(kAdrNoise * 16) + 32000 + i] = _noise5Buf[i];
+	f.read(&_vm->_mem[(kAdrNoise1 * 16) + kOffsetB1], 149 * 128); // 19072
 
 	f.close();
 }
