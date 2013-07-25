@@ -2254,7 +2254,7 @@ void MortevielleEngine::drawRightFrame() {
 		_curPict[14] = 15;
 
 	_mouse.hideMouse();
-	displayPicture(&_mem[kAdrRightFramePic * 16], 0, 0);
+	displayPicture(_rightFramePict, 0, 0);
 	_mouse.showMouse();
 }
 
@@ -2570,7 +2570,7 @@ void MortevielleEngine::adzon() {
 	if (!f.open("dec.mor"))
 		error("Missing file - dec.mor");
 
-	f.read(&_mem[kAdrRightFramePic * 16], 1664);
+	f.read(_rightFramePict, 1664);
 	f.close();
 }
 

@@ -67,7 +67,6 @@ const int kAdrMusic = 0x5000;
 
 const int kAdrCompMusicBuf1 = 0x7414;
 const int kAdrCompMusicBuf2 = 0x3800;
-const int kAdrRightFramePic = 0x73A2;
 
 #define ord(v) ((int) v)
 #define chr(v) ((unsigned char) v)
@@ -477,7 +476,7 @@ public:
 	// TODO: Replace the following with proper implementations, or refactor out the code using them
 	byte _mem[65536 * 16];
 	byte *_curPict;
-
+	byte _rightFramePict[1664];
 	Debugger _debugger;
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
