@@ -302,13 +302,10 @@ void Celer::load_chunks(Common::String xx) {
 
 			memory[fv] = new byte[ch.size]; // Celer::forget_chunks() deallocates it.
 
-			/*if (ch.natural) {
-			getimage(ch.x * 8, ch.y, (ch.x + ch.xl) * 8, ch.y + ch.yl, memory[fv]);
+			if (ch.natural) {
+				memos[fv].flavour = ch_natural_image; // We simply read from the screen and later, in display_it() we draw it right back.
+				//getimage(ch.x * 8, ch.y, (ch.x + ch.xl) * 8, ch.y + ch.yl, memory[fv]);
 			} else
-			blockread(f, memory[fv], ch.size);*/
-			warning("STUB: Celer::load_chunks()");
-
-			if (!ch.natural)
 				f.read(memory[fv], ch.size);
 		} else
 			memos[fv].x = on_disk;
