@@ -210,8 +210,8 @@ void Avalot::run(Common::String arg) {
 		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
-		if ((delay) <= 55)
-			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown();
+		if (delay <= 55)
+			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown(); 55 comes from 18.2 Hz (B Flight).
 
 	} while (! _vm->_gyro->lmo);
 
