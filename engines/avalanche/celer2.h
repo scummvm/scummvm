@@ -39,7 +39,7 @@ class AvalancheEngine;
 
 class Celer {
 public:
-	enum flavourtype {ch_ega, ch_bgi};
+	enum flavourtype {ch_ega, ch_bgi, ch_natural_image};
 
 	struct chunkblocktype {
 		flavourtype flavour;
