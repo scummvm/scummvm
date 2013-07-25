@@ -128,16 +128,16 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
  * Load DES (picture container) file
  * @remarks	Originally called 'chardes'
  */
-void TextHandler::loadPictureFile(Common::String filename, int32 skipSize, int length) {
-	warning("%s - pos %d size %d", filename.c_str(), skipSize, length);
+void TextHandler::loadPictureFile(Common::String filename, Common::String altFilename, int32 skipSize, int length) {
 	Common::File f;
-	if (!f.open(filename))
-		error("Missing file %s", filename.c_str());
-
-	// HACK: The original game contains a bug in the intro screen, in German DOS version.
+	if (!f.open(filename)) {
+		if (!f.open(altFilename))
+			error("Missing file: Either %s or %s", filename.c_str(), altFilename.c_str());
+	}
+	// HACK: The original game contains a bug in the 2nd intro screen, in German DOS version.
 	// The size specified in the fxx array is wrong (too short). In order to fix it, we are using
 	// the value -1 to force a variable read length.
-	if (length < 0)
+	if (length == -1)
 		length = f.size() - skipSize;
 
 	assert(skipSize + length <= f.size());
@@ -224,7 +224,7 @@ void TextHandler::taffich() {
 	_vm->_destinationOk = true;
 	_vm->_mouse.hideMouse();
 	drawingStartPos = 0;
-	Common::String filename;
+	Common::String filename, altFilename;
 
 	if ((a != 50) && (a != 51)) {
 		_vm->_maff = a;
@@ -250,12 +250,10 @@ void TextHandler::taffich() {
 			drawingStartPos += _vm->_drawingSizeArr[cx];
 		drawingSize = _vm->_drawingSizeArr[a];
 
-		filename = "DXX.mor";
+		altFilename = filename = "DXX.mor";
 	} else {
-		if (_vm->getLanguage() == Common::DE_DEU)
-			filename = "DZZALL";
-		else
-			filename = "DZZ.mor";
+		filename = "DZZ.mor";
+		altFilename = "DZZALL";
 
 		if (a == 50) {
 			// First intro screen
@@ -270,7 +268,7 @@ void TextHandler::taffich() {
 		_vm->_maff = a;
 		npal = a + 37;
 	}
-	loadPictureFile(filename, drawingStartPos, drawingSize);
+	loadPictureFile(filename, altFilename, drawingStartPos, drawingSize);
 	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
 			int palh = READ_LE_UINT16(&_vm->_curPict[2 + (i << 1)]);
