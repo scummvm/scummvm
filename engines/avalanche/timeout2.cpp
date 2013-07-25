@@ -74,13 +74,12 @@ void Timeout::one_tick() {
 	if (_vm->_gyro->ddmnow)
 		return;
 
-	for (fv = 1; fv <= 7; fv++) {
-		timetype &with = times[fv];
-		if (with.time_left > 0) {
-			with.time_left -= 1;
+	for (fv = 0; fv < 7; fv++) {
+		if (times[fv].time_left > 0) {
+			times[fv].time_left --;
 
-			if (with.time_left == 0) {
-				switch (with.then_where) {
+			if (times[fv].time_left == 0) {
+				switch (times[fv].then_where) {
 				case procopen_drawbridge :
 					open_drawbridge();
 					break;
@@ -208,8 +207,8 @@ void Timeout::one_tick() {
 			}
 		}
 	}
-	_vm->_gyro->roomtime += 1; /* Cycles since you've been in this room. */
-	_vm->_gyro->dna.total_time += 1; /* Total amount of time for this game. */
+	_vm->_gyro->roomtime++; /* Cycles since you've been in this room. */
+	_vm->_gyro->dna.total_time++; /* Total amount of time for this game. */
 }
 
 void Timeout::lose_timer(byte which) {
