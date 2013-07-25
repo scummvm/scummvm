@@ -78,6 +78,10 @@ byte *Graphics::getPixel(int16 x, int16 y) {
 	return (byte *)_surface.getBasePtr(x, y);
 }
 
+void Graphics::drawFrame(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
+	_surface.frameRect(Common::Rect(x1, y1, x2, y2), color);
+}
+
 void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
