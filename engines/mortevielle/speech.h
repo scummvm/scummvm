@@ -37,7 +37,6 @@ namespace Mortevielle {
 const int kAdrNoise  = 0x5cb0;/*2C00;*/
 const int kAdrNoise1 = 0x6924;
 const int kAdrNoise3 = 0x6ba6;/*3AF6;*/
-const int kAdrNoise5 = 0x3b50;
 const int kAdrTroct  = 0x406b;
 const int kAdrWord   = 0x4000;
 const int kOffsetB1  = 6;
@@ -79,8 +78,11 @@ public:
 	int16 *_cfiphBuffer;
 	int _tbi[256];
 	int _mlec;
+	byte *_noise5Buf;
+	int _noise5Size;
 
 	SpeechManager();
+	~SpeechManager();
 	void setParent(MortevielleEngine *vm);
 	void spfrac(int wor);
 	void charg_car(int &currWordNumb);

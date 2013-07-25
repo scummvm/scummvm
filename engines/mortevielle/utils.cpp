@@ -2134,7 +2134,10 @@ void MortevielleEngine::loadBRUIT5() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(&_mem[kAdrNoise5 * 16], 149 * 128);
+	free(_speechManager._noise5Buf);
+	_speechManager._noise5Size = f.size();
+	_speechManager._noise5Buf = (byte *)malloc(sizeof(byte) * _speechManager._noise5Size);
+	f.read(_speechManager._noise5Buf, _speechManager._noise5Size);
 	f.close();
 }
 
