@@ -263,9 +263,12 @@ Common::String DebuggerAdapter::readRes(Common::String name, int *error) { // Ha
 			_lastScript->_stack->pushString(dest.c_str()); // Todo: support ints and other stuff. Remove quotes correctly!
 			_lastScript->_stack->pushInt(1);
 
-			pos->scCallMethod(_lastScript, _lastScript->_stack, _lastScript->_thisStack, methodName.c_str());
-
-			result = _lastScript->_stack->pop();
+			if (pos->scCallMethod(_lastScript, _lastScript->_stack, _lastScript->_thisStack, methodName.c_str()) == STATUS_OK) {
+				result = _lastScript->_stack->pop();
+			} else {
+				_lastScript->_stack->pop();
+				result = 0;
+			}
 		}
 	}
 	if (!result) {
