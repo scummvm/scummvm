@@ -301,11 +301,11 @@ void Celer::load_chunks(Common::String xx) {
 
 			if (ch.natural) {
 				memos[fv].flavour = ch_natural_image; // We simply read from the screen and later, in display_it() we draw it right back.
-				memos[fv].size = ch.xl * ch.yl; 
+				memos[fv].size = memos[fv].xl * 8 * memos[fv].yl; 
 				memory[fv] = new byte[memos[fv].size]; // Celer::forget_chunks() deallocates it.
 				for (uint16 j = 0; j < memos[fv].yl; j++)
-					for (uint16 i = 0; i < memos[fv].xl; i++)
-						memory[fv][j * memos[fv].xl + i] = *_vm->_graphics->getPixel(memos[fv].x + i, memos[fv].y + j);
+					for (uint16 i = 0; i < memos[fv].xl * 8; i++)
+						memory[fv][j * memos[fv].xl * 8 + i] = *_vm->_graphics->getPixel(memos[fv].x * 8 + i, memos[fv].y + j);
 			} else {
 				memos[fv].size = ch.size;
 				memory[fv] = new byte[memos[fv].size]; // Celer::forget_chunks() deallocates it.
@@ -426,13 +426,21 @@ asm
 void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, byte *p) {
 	switch (flavour) {
 	case ch_natural_image: {
+		r.x1 = x;
+		r.y1 = y;
+		r.x2 = x + xl + 1;
+		r.y2 = y + yl;
+
+		x *= 8;
+		xl *= 8;
+
 		for (uint16 j = 0; j < yl; j++)
 			for (uint16 i = 0; i < xl; i++)
 				*_vm->_graphics->getPixel(x + i, y + j) = p[j * xl + i];
 		}
 		break;
 	case ch_bgi : {
-		_vm->_graphics->drawPicture(p, x, y);
+		_vm->_graphics->drawPicture(p, x * 8, y);
 		//putimage(x * 8, y, p, 0);
 		r.x1 = x;
 		r.y1 = y;
@@ -441,12 +449,44 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 		}
 		break;
 	case ch_ega : {
-		mdrop(x, y, xl, yl, p);
-		_vm->_lucerna->blitfix();
 		r.x1 = x;
 		r.y1 = y;
 		r.x2 = x + xl;
 		r.y2 = y + yl;
+
+
+		x *= 8;
+		xl *= 8;
+
+		
+
+		::Graphics::Surface picture; // We make a Surface object for the picture itself.
+
+		picture.create(xl, yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
+
+		uint32 h = 0;
+
+		// Produce the picture.
+		for (int8 plane = 0; plane < 4; plane++) // The planes are in the opposite way.
+			for (byte j = 0; j < yl + 1; j++)
+				for (uint16 i = 0; i < xl; i += 8) {
+					byte pixel = p[h++];
+					for (byte bit = 0; bit < 8; bit++) {
+						byte pixelBit = (pixel >> bit) & 1;
+						*(byte *)picture.getBasePtr(i + 7 - bit, j) += (pixelBit << plane);
+					} 
+				}
+
+		// Copy the picture to a given place on the screen.
+		for (uint16 j = 0; j < picture.h; j++) 
+			for (uint16 i = 0; i < picture.w; i++)
+				*_vm->_graphics->getPixel(i + x, j + y) = *(byte *)picture.getBasePtr(i, j);		
+
+		picture.free();
+
+
+
+		_vm->_lucerna->blitfix();
 		}
 		break;
 	}
