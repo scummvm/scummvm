@@ -57,11 +57,11 @@ Timeout::Timeout(AvalancheEngine *vm) {
 }
 
 void Timeout::set_up_timer(int32 howlong, byte whither, byte why) {
-	fv = 1;
-	while ((fv < 8) && (times[fv].time_left != 0))
-		fv += 1;
+	fv = 0;
+	while ((fv < 7) && (times[fv].time_left != 0))
+		fv++;
 
-	if (fv == 8)
+	if (fv == 7)
 		return; /* Oh dear... */
 
 	timetype &with = times[fv];  /* Everything's OK here! */

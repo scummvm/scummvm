@@ -1404,7 +1404,7 @@ void Trip::get_back_loretta() {
 	byte fv;
 
 	/* for fv:=1 to numtr do with tr[fv] do if quick then getback;*/
-	for (fv = 1; fv <= numtr; fv++) {
+	for (fv = 0; fv < numtr; fv++) {
 		if (tr[fv].quick) {
 			getback();
 			return;
@@ -1627,7 +1627,7 @@ bool Trip::neardoor() {       /* returns True if you're near a door! */
 }
 
 void Trip::new_game_for_trippancy() {   /* Called by gyro.newgame */
-	tr[1].visible = false;
+	tr[0].visible = false;
 }
 
 
