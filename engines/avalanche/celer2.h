@@ -89,7 +89,7 @@ private:
 
 	void mdrop(int16 x, int16 y, int16 xl, int16 yl, void *p);
 
-	void display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, void *p);
+	void display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, byte *p);
 
 	void display_it_at(int16 xl, int16 yl, flavourtype flavour, void *p, int16 &xxx, int16 &yyy);
 };
