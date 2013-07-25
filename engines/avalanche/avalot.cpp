@@ -180,6 +180,8 @@ void Avalot::run(Common::String arg) {
 	setup();
 
 	do {
+		uint32 beginLoop = _vm->_system->getMillis();
+
 		_vm->_lucerna->clock_lucerna();
 		_vm->_basher->keyboard_link();
 		_vm->_dropdown->menu_link();
@@ -193,7 +195,7 @@ void Avalot::run(Common::String arg) {
 		if (_vm->_gyro->visible == _vm->_gyro->m_virtual)
 			_vm->_gyro->plot_vmc(_vm->_gyro->mx, _vm->_gyro->my, _vm->_gyro->cp);
 		_vm->_lucerna->flip_page(); /* <<<! */
-		_vm->_gyro->slowdown();
+		
 		if (_vm->_gyro->visible == _vm->_gyro->m_virtual) 
 			_vm->_gyro->wipe_vmc(_vm->_gyro->cp);
 
@@ -206,6 +208,10 @@ void Avalot::run(Common::String arg) {
 		_vm->updateEvents(); // The event handler.
 
 		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
+
+		uint32 delay = _vm->_system->getMillis() - beginLoop;
+		if ((delay) <= 55)
+			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown();
 
 	} while (! _vm->_gyro->lmo);
 
