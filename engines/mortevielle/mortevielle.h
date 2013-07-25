@@ -476,8 +476,9 @@ public:
 	// TODO: Replace the following with proper implementations, or refactor out the code using them
 	byte _mem[65536 * 16];
 	byte *_curPict;
+	byte *_curAnim;
 	byte *_rightFramePict;
-
+	
 	Debugger _debugger;
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;

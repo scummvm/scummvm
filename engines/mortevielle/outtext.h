@@ -33,8 +33,6 @@
 namespace Mortevielle {
 class MortevielleEngine;
 
-const int kAdrAni = 0x7314;
-
 class TextHandler {
 private:
 	MortevielleEngine *_vm;
