@@ -108,6 +108,7 @@ Common::Error FullpipeEngine::run() {
 	EntranceInfo ent;
 
 	ent._sceneId = 3896;
+	//ent._sceneId = 2072;
 	sceneSwitcher(&ent);
 
 	_currentScene->draw();

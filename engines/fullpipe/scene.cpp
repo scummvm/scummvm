@@ -320,7 +320,7 @@ void Scene::setPictureObjectsFlag4() {
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if(((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_field_4 == flags)
+		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_field_4 == flags)
 			return (PictureObject *)_picObjList[i];
 	}
 
@@ -380,7 +380,7 @@ void Scene::draw() {
 
 	int priority = -1;
 	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
-		drawContent(((StaticANIObject *)s)->_priority, priority, false);
+		drawContent(((StaticANIObject *)*s)->_priority, priority, false);
 		((StaticANIObject *)*s)->draw();
 
 		priority = ((StaticANIObject *)*s)->_priority;
@@ -401,6 +401,8 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		warning("Scene palette is ignored");
 	}
 
+	debug(0, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+
 	if (_picObjList.size() > 2) { // We need to z-sort them
 		objectList_sortByPriority(_picObjList);
 	}
@@ -411,9 +413,12 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (maxPri == -1)
 		maxPri = 60000;
 
+	debug(0, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+
+	Common::Point point;
+
 	debug(0, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
-		Common::Point point;
 
 		_bigPictureArray[0][0]->getDimensions(&point);
 
@@ -449,7 +454,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 			int v51 = height * bgNumY;
 			while (1) {
 				int v25 = bgNumY;
-				for (int y = g_fullpipe->_sceneRect.top - bgOffsetY; y < g_fullpipe->_sceneRect.bottom - 1; ) {
+				for (int y = g_fullpipe->_sceneRect.top - bgOffsetY; y < g_fullpipe->_sceneRect.bottom - 1;) {
 					BigPicture *v27 = _bigPictureArray[bgNumX][v25];
 					v27->draw(bgPosX, y, 0, 0);
 					y += v27->getDimensions(&point)->y;
@@ -478,77 +483,74 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		}
     }
 
-#if 0
-	v34 = this_->bg.picObjList.m_pNodeHead;
-	if (v34) {
-		while (1) {
-			v35 = v34->pNext;
-			v36 = (PictureObject *)v34->data;
-			drawBgb = v35;
-			v37 = v36->GameObject.priority;
-			if (v37 >= minPri && v37 < maxPri) {
-				v38 = v36->GameObject.ox;
-				v39 = v36->GameObject.oy;
-				v40 = PictureObject_getDimensions(v36, &v58);
-				v41 = v40->x;
-				bgOffsetXa = v40->y;
-				if (v36->GameObject.flags & 8) {
-					while (v38 > g_sceneRect.right) {
-						v38 -= v41;
-						v36->setOXY(v38, v39);
-					}
-					for (j = v41 + v38; v41 + v38 < g_sceneRect.left; j = v41 + v38) {
-						v38 = j;
-						v36->setOXY(j, v39);
-					}
-				}
-				if (v36->GameObject.flags & 0x10) {
-					while (v39 > g_sceneRect.bottom) {
-						v39 -= bgOffsetXa;
-						v36->setOXY(v38, v39);
-					}
-					for (k = v39 + bgOffsetXa; v39 + bgOffsetXa < g_sceneRect.top; k = v39 + bgOffsetXa) {
-						v39 = k;
-						v36->setOXY(v38, k);
-					}
-				}
-				if (v36->GameObject.flags & 4)
-					v36->draw();
-				if (v36->GameObject.flags & 2) {
-					if (v38 > g_sceneRect.left) {
-						v44 = v38 - v41;
-						v36->setOXY(v44, v39);
-						v36->draw();
-						v38 = v41 + v44;
-						v36->setOXY(v38, v39);
-					}
-					if (v41 + v38 < g_sceneRect.right) {
-						v36->setOXY(v41 + v38, v39);
-						v36->draw();
-						v36->setOXY(v38, v39);
-					}
-				}
-				if (v36->GameObject.flags & 0x20) {
-					if (v39 > g_sceneRect.top) {
-						v45 = v39 - bgOffsetXa;
-						v36->setOXY(v38, v45);
-						v36->draw();
-						v39 = bgOffsetXa + v45;
-						v36->setOXY(v38, v39);
-					}
-					if (bgOffsetXa + v39 < g_sceneRect.bottom) {
-						v36->setOXY(v38, bgOffsetXa + v39);
-						v36->draw();
-						v36->setOXY(v38, v39);
-					}
-				}
+
+	for (uint i = 1; i < _picObjList.size(); i++) {
+		PictureObject *obj = (PictureObject *)_picObjList[i];
+
+		debug(0, "pri: %d", obj->_priority);
+		if (obj->_priority < minPri || obj->_priority >= maxPri)
+			continue;
+
+		int objX = obj->_ox;
+		int objY = obj->_oy;
+
+		debug(0, "obj: %d %d", objX, objY);
+
+		obj->getDimensions(&point);
+
+		int width = point.x;
+		int height = point.y;
+
+		if (obj->_flags & 8) {
+			while (objX > g_fullpipe->_sceneRect.right) {
+				objX -= width;
+				obj->setOXY(objX, objY);
 			}
-			if (!drawBgb)
-				break;
-			v34 = drawBgb;
+			for (int j = width + objX; width + objX < g_fullpipe->_sceneRect.left; j = width + objX) {
+				objX = j;
+				obj->setOXY(j, objY);
+			}
 		}
-    }
-#endif
+
+		if (obj->_flags & 0x10) {
+			while (objY > g_fullpipe->_sceneRect.bottom) {
+				objY -= height;
+				obj->setOXY(objX, objY);
+			}
+			for (int j = objY + height; objY + height < g_fullpipe->_sceneRect.top; j = objY + height) {
+				objY = j;
+				obj->setOXY(objX, j);
+			}
+		}
+		if (obj->_flags & 4)
+			obj->draw();
+
+		if (obj->_flags & 2) {
+			if (objX > g_fullpipe->_sceneRect.left) {
+				obj->setOXY(objX - width, objY);
+				obj->draw();
+				obj->setOXY(objX, objY);
+			}
+			if (width + objX < g_fullpipe->_sceneRect.right) {
+				obj->setOXY(width + objX, objY);
+				obj->draw();
+				obj->setOXY(objX, objY);
+			}
+		}
+
+		if (obj->_flags & 0x20) {
+			if (objY > g_fullpipe->_sceneRect.top) {
+				obj->setOXY(objX, objY - height);
+				obj->draw();
+				obj->setOXY(objX, objY);
+			}
+			if (height + objY < g_fullpipe->_sceneRect.bottom) {
+				obj->setOXY(objX, height + objY);
+				obj->draw();
+				obj->setOXY(objX, objY);
+			}
+		}
+	}
 }
 
 } // End of namespace Fullpipe

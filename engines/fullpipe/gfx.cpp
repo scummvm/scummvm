@@ -151,6 +151,13 @@ Common::Point *PictureObject::getDimensions(Common::Point *p) {
 	return p;
 }
 
+void PictureObject::draw() {
+	if (_flags & 1)
+		_picture->draw(_ox, _oy, 2, 0);
+	else
+		_picture->draw(_ox, _oy, 0, 0);
+}
+
 GameObject::GameObject() {
 	_field_4 = 0;
 	_flags = 0;
@@ -511,7 +518,7 @@ void Bitmap::putDibRB(int32 *palette) {
 		}
 	}
 
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1, endy + 1);
+	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
 }
 
 void Bitmap::putDibCB(int32 *palette) {
@@ -565,7 +572,7 @@ void Bitmap::putDibCB(int32 *palette) {
 		}
 	}
 
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1, endy + 1);
+	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
 }
 
 void Bitmap::colorFill(uint16 *dest, int len, int32 color) {

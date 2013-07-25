@@ -124,6 +124,7 @@ class PictureObject : public GameObject {
 	PictureObject();
 	bool load(MfcArchive &file, bool bigPicture);
 	Common::Point *getDimensions(Common::Point *p);
+	void draw();
 };
 
 class Background : public CObject {
