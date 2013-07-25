@@ -129,9 +129,16 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
  * @remarks	Originally called 'chardes'
  */
 void TextHandler::loadPictureFile(Common::String filename, int32 skipSize, int length) {
+	warning("%s - pos %d size %d", filename.c_str(), skipSize, length);
 	Common::File f;
 	if (!f.open(filename))
 		error("Missing file %s", filename.c_str());
+
+	// HACK: The original game contains a bug in the intro screen, in German DOS version.
+	// The size specified in the fxx array is wrong (too short). In order to fix it, we are using
+	// the value -1 to force a variable read length.
+	if (length < 0)
+		length = f.size() - skipSize;
 
 	assert(skipSize + length <= f.size());
 
@@ -251,11 +258,14 @@ void TextHandler::taffich() {
 			filename = "DZZ.mor";
 
 		if (a == 50) {
+			// First intro screen
 			drawingStartPos = 0;
 			drawingSize = _vm->_drawingSizeArr[87];
 		} else { // a == 51
+			// Second intro screen
 			drawingStartPos = _vm->_drawingSizeArr[87];
-			drawingSize = _vm->_drawingSizeArr[88];
+			// HACK: Force a variable size in order to fix the wrong size used by the German version
+			drawingSize = -1;
 		}
 		_vm->_maff = a;
 		npal = a + 37;
