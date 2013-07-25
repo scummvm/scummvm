@@ -298,15 +298,19 @@ void Celer::load_chunks(Common::String xx) {
 			memos[fv].y = ch.y;
 			memos[fv].yl = ch.yl;
 			memos[fv].flavour = ch.flavour;
-			memos[fv].size = ch.size;
-
-			memory[fv] = new byte[ch.size]; // Celer::forget_chunks() deallocates it.
 
 			if (ch.natural) {
 				memos[fv].flavour = ch_natural_image; // We simply read from the screen and later, in display_it() we draw it right back.
-				//getimage(ch.x * 8, ch.y, (ch.x + ch.xl) * 8, ch.y + ch.yl, memory[fv]);
-			} else
+				memos[fv].size = ch.xl * ch.yl; 
+				memory[fv] = new byte[memos[fv].size]; // Celer::forget_chunks() deallocates it.
+				for (uint16 j = 0; j < memos[fv].yl; j++)
+					for (uint16 i = 0; i < memos[fv].xl; i++)
+						memory[fv][j * memos[fv].xl + i] = *_vm->_graphics->getPixel(memos[fv].x + i, memos[fv].y + j);
+			} else {
+				memos[fv].size = ch.size;
+				memory[fv] = new byte[memos[fv].size]; // Celer::forget_chunks() deallocates it.
 				f.read(memory[fv], ch.size);
+			}
 		} else
 			memos[fv].x = on_disk;
 	}
@@ -324,7 +328,7 @@ void Celer::forget_chunks() {
 void Celer::mdrop(int16 x, int16 y, int16 xl, int16 yl, void *p) { /* assembler;
 asm
 	push ds;      { Strictly speaking, we shouldn't modify DS, so we'll save it.}
-	push bp;      { Nor BP! }
+	push bp;      { Nor BP! 
 
 
 	{ DI holds the offset on this page. It starts at the top left-hand corner. }
@@ -419,8 +423,33 @@ asm
 
 
 
-void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, void *p) {
-	warning("STUB: Celer::display_it()");
+void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, byte *p) {
+	switch (flavour) {
+	case ch_natural_image: {
+		for (uint16 j = 0; j < yl; j++)
+			for (uint16 i = 0; i < xl; i++)
+				*_vm->_graphics->getPixel(x + i, y + j) = p[j * xl + i];
+		}
+		break;
+	case ch_bgi : {
+		_vm->_graphics->drawPicture(p, x, y);
+		//putimage(x * 8, y, p, 0);
+		r.x1 = x;
+		r.y1 = y;
+		r.x2 = x + xl + 1;
+		r.y2 = y + yl;
+		}
+		break;
+	case ch_ega : {
+		mdrop(x, y, xl, yl, p);
+		_vm->_lucerna->blitfix();
+		r.x1 = x;
+		r.y1 = y;
+		r.x2 = x + xl;
+		r.y2 = y + yl;
+		}
+		break;
+	}
 }
 
 void Celer::show_one(byte which) {
