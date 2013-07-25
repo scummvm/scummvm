@@ -2581,12 +2581,12 @@ void MortevielleEngine::adzon() {
  * @remarks	Originally called 'animof'
  */
 int MortevielleEngine::getAnimOffset(int frameNum, int animNum) {
-	int animCount = _mem[(kAdrAni * 16) + 1];
+	int animCount = _curAnim[1];
 	int aux = animNum;
 	if (frameNum != 1)
 		aux += animCount;
 
-	return (animCount << 2) + 2 + READ_BE_UINT16(&_mem[(kAdrAni * 16) + (aux << 1)]);
+	return (animCount << 2) + 2 + READ_BE_UINT16(&_curAnim[aux << 1]);
 }
 
 /**
@@ -2969,7 +2969,7 @@ void MortevielleEngine::displayAnimFrame(int frameNum, int animId) {
 	int offset = getAnimOffset(frameNum, animId);
 
 	GfxSurface surface;
-	surface.decode(&_mem[(kAdrAni * 16) + offset]);
+	surface.decode(&_curAnim[offset]);
 	_screenSurface.drawPicture(surface, 0, 12);
 
 	prepareScreenType1();

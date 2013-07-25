@@ -159,8 +159,11 @@ void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int lengt
 		error("Missing file - %s", filename.c_str());
 
 	assert(skipSize + length <= f.size());
+
+	free(_vm->_curAnim);
+	_vm->_curAnim = (byte *)malloc(sizeof(byte) * length);
 	f.seek(skipSize);
-	f.read(&_vm->_mem[(kAdrAni * 16)], length);
+	f.read(_vm->_curAnim, length);
 	f.close();
 }
 

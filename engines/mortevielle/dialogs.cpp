@@ -481,9 +481,9 @@ void DialogManager::displayIntroScreen(bool drawFrame2Fl) {
  */
 void DialogManager::displayIntroFrame2() {
 	_vm->_crep = _vm->getAnimOffset(1, 1);
-	_vm->displayPicture(&_vm->_mem[(kAdrAni * 16) + _vm->_crep], 63, 12);
+	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
 	_vm->_crep = _vm->getAnimOffset(2, 1);
-	_vm->displayPicture(&_vm->_mem[(kAdrAni * 16) + _vm->_crep], 63, 12);
+	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
 	_vm->_largestClearScreen = (_vm->_resolutionScaler == 1);
 	_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
