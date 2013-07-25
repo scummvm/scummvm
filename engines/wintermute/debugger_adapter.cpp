@@ -210,7 +210,7 @@ Common::String DebuggerAdapter::readRes(Common::String name, int *error) { // Ha
 
 	Common::String mainObjectName;
 	mainObjectName = st.nextToken(); // First token
-	ScValue *result = _lastScript->getVar(const_cast<char *>(mainObjectName.c_str()));
+	ScValue *result = _lastScript->getVar(mainObjectName.c_str());
 
 	if (!result) {
 		*error = NOT_ALLOWED; // TODO: Better one

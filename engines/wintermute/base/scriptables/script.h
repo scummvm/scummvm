@@ -79,7 +79,7 @@ public:
 	ScScript *_waitScript;
 	TScriptState _state;
 	TScriptState _origState;
-	ScValue *getVar(char *name);
+	ScValue *getVar(const char *name);
 	uint32 getFuncPos(const Common::String &name);
 	uint32 getEventPos(const Common::String &name) const;
 	uint32 getMethodPos(const Common::String &name) const;

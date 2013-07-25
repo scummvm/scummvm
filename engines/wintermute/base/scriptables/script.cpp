@@ -1174,7 +1174,7 @@ uint32 ScScript::getMethodPos(const Common::String &name) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *ScScript::getVar(char *name) {
+ScValue *ScScript::getVar(const char *name) {
 	ScValue *ret = nullptr;
 
 	// scope locals
