@@ -101,8 +101,8 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_currentScene = scene;
 	scene->addStaticANIObject(_aniMan, 1);
 	_scene2 = scene;
-	_aniMan->_movementObj = 0;
-	_aniMan->_staticsObj = _aniMan->getStaticsById(ST_MAN_EMPTY);
+	_aniMan->_movement = 0;
+	_aniMan->_statics = _aniMan->getStaticsById(ST_MAN_EMPTY);
 	_aniMan->setOXY(0, 0);
 
 	if (_aniMan) {

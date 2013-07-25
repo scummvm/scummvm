@@ -107,8 +107,11 @@ Common::Error FullpipeEngine::run() {
 
 	EntranceInfo ent;
 
-	ent._sceneId = 3896;
-	//ent._sceneId = 2072;
+	if (ConfMan.hasKey("boot_param"))
+		ent._sceneId = ConfMan.getInt("boot_param");
+	else 
+		ent._sceneId = 3896;
+
 	sceneSwitcher(&ent);
 
 	_currentScene->draw();

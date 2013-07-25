@@ -24,6 +24,8 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/gfx.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/scene.h"
 
 #include "common/memstream.h"
 
@@ -698,6 +700,21 @@ bool Shadows::load(MfcArchive &file) {
 	_movementId = file.readUint32LE();
 
 	return true;
+}
+
+void Shadows::init() {
+	Scene *scene = g_fullpipe->accessScene(_sceneId);
+
+	StaticANIObject *st;
+	Movement *mov;
+
+	if (scene && (st = scene->getStaticANIObject1ById(_staticAniObjectId, -1)) != 0
+		&& ((mov = st->getMovementById(_movementId)) != 0))
+		initMovement(mov);
+}
+
+void Shadows::initMovement(Movement *mov) {
+	warning("STUB: Shadows::initMovement()");
 }
 
 

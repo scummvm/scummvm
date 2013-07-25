@@ -69,8 +69,8 @@ StaticANIObject::StaticANIObject() {
 	_messageQueueId = 0;
 	_animExFlag = 0;
 	_counter = 0;
-	_movementObj = 0;
-	_staticsObj = 0;
+	_movement = 0;
+	_statics = 0;
 	_flags = 0;
 	_callback1 = 0;
 	_callback2 = 0;
@@ -130,8 +130,8 @@ void StaticANIObject::setOXY(int x, int y) {
 	_ox = x;
 	_oy = y;
 	
-	if (_movementObj)
-		_movementObj->setOXY(x, y);
+	if (_movement)
+		_movement->setOXY(x, y);
 }
 
 void StaticANIObject::clearFlags() {
@@ -139,8 +139,8 @@ void StaticANIObject::clearFlags() {
 
 	deleteFromGlobalMessageQueue();
 	_messageQueueId = 0;
-	_movementObj = 0;
-	_staticsObj = 0;
+	_movement = 0;
+	_statics = 0;
 	_animExFlag = 0;
 	_counter = 0;
 	_messageNum = 0;
@@ -195,6 +195,11 @@ Movement *StaticANIObject::getMovementByName(char *name) {
 	return 0;
 }
 
+void Movement::draw(bool flipFlag, int angle) {
+	warning("STUB: Movement::draw(%d, %d)", flipFlag, angle);
+}
+
+
 void StaticANIObject::loadMovementsPixelData() {
 	for (uint i = 0; i < _movements.size(); i++)
 		((Movement *)_movements[i])->loadPixelData();
@@ -211,7 +216,19 @@ void StaticANIObject::draw() {
 }
 
 void StaticANIObject::draw2() {
-	warning("STUB: StaticANIObject::draw2()");
+	debug(0, "StatciANIObject::draw2()");
+
+	if ((_flags & 4) && (_flags & 0x10)) {
+		if (_movement) {
+			_movement->draw(1, 0);
+		} else {
+			Common::Point point;
+
+			_statics->getSomeXY(point);
+
+			_statics->draw(_ox - point.x, _oy - point.y, 1, 0);
+		}
+	}
 }
 
 Statics::Statics() {
@@ -227,12 +244,19 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debug(7, "statics: <%s>", transCyrillic((byte *)_staticsName));
+	debug(7, "statics: <%s> id: %d (%x)", transCyrillic((byte *)_staticsName), _staticsId, _staticsId);
 
 	_picture = new Picture();
 	_picture->load(file);
 
 	return true;
+}
+
+Common::Point *Statics::getSomeXY(Common::Point &p) {
+	p.x = _someX;
+	p.y = _someY;
+
+	return &p;
 }
 
 Movement::Movement() {

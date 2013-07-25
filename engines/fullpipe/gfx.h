@@ -27,6 +27,9 @@ class Common::ReadStream;
 
 namespace Fullpipe {
 
+class DynamicPhase;
+class Movement;
+
 class ShadowsItemArray : public CObArray {
 	// empty
 };
@@ -158,6 +161,15 @@ class Shadows : public CObject {
   public:
 	Shadows();
 	virtual bool load(MfcArchive &file);
+	void init();
+
+	void initMovement(Movement *mov);
+};
+
+struct ShadowsItem {
+	int width;
+	int height;
+	DynamicPhase *dynPhase;
 };
 
 } // End of namespace Fullpipe

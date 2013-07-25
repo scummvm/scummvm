@@ -29,8 +29,8 @@ namespace Fullpipe {
 
 class Scene : public Background {
 	friend class FullpipeEngine;
+	friend class SceneTag;
 
-  protected:
 	CPtrList _staticANIObjectList1;
 	CPtrList _staticANIObjectList2;
 	CPtrList _messageQueueList;

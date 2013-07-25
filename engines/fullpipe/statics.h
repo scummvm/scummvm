@@ -56,6 +56,7 @@ class StaticPhase : public Picture {
 
 class DynamicPhase : public StaticPhase {
 	friend class Movement;
+	friend class Statics;
 
 	int _someX;
 	int _someY;
@@ -82,6 +83,8 @@ class Statics : public DynamicPhase {
 	Statics();
 	virtual bool load(MfcArchive &file);
 	Statics *getStaticsById(int itemId);
+
+	Common::Point *getSomeXY(Common::Point &p);
 };
 
 class StaticANIObject;
@@ -122,14 +125,16 @@ class Movement : public GameObject {
 	void updateCurrDynamicPhase();
 
 	void loadPixelData();
+
+	void draw(bool flipFlag, int angle);
 };
 
 class StaticANIObject : public GameObject {
 	friend class FullpipeEngine;
 
  protected:
-	Movement *_movementObj;
-	Statics *_staticsObj;
+	Movement *_movement;
+	Statics *_statics;
 	int _shadowsOn;
 	int16 _field_30;
 	int16 _field_32;

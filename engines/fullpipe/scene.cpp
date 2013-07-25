@@ -106,6 +106,9 @@ void SceneTag::loadScene() {
 
 	_scene->load(archive);
 
+	if (_scene->_shadows)
+		_scene->_shadows->init();
+
 	delete file;
 
 	g_fullpipe->_currArchive = 0;
