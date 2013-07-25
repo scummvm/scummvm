@@ -266,7 +266,7 @@ StaticANIObject *Scene::getAniMan() {
 
 StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
-		StaticANIObject *o = (StaticANIObject *)s;
+		StaticANIObject *o = (StaticANIObject *)*s;
 		if (o->_id == obj && (a3 == -1 || o->_field_4 == a3))
 			return o;
 	}
@@ -276,7 +276,7 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 
 StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
 	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
-		StaticANIObject *o = (StaticANIObject *)s;
+		StaticANIObject *o = (StaticANIObject *)*s;
 		if (!strcmp(o->_objectName, name) && (a3 == -1 || o->_field_4 == a3))
 			return o;
 	}
@@ -375,15 +375,15 @@ void Scene::draw() {
 	objectList_sortByPriority(_staticANIObjectList2);
 
 	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
-		((StaticANIObject *)s)->draw2();
+		((StaticANIObject *)*s)->draw2();
 	}
 
 	int priority = -1;
 	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
 		drawContent(((StaticANIObject *)s)->_priority, priority, false);
-		((StaticANIObject *)s)->draw();
+		((StaticANIObject *)*s)->draw();
 
-		priority = ((StaticANIObject *)s)->_priority;
+		priority = ((StaticANIObject *)*s)->_priority;
 	}
 
 	drawContent(-1, priority, false);
@@ -411,6 +411,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (maxPri == -1)
 		maxPri = 60000;
 
+	debug(0, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
 		Common::Point point;
 
@@ -419,7 +420,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int width = point.x;
 		int height = point.y;
 
+		debug(0, "w: %d h:%d", width, height);
+
 		((PictureObject *)_picObjList[0])->getDimensions(&point);
+
+		debug(0, "w2: %d h2:%d", point.x, point.y);
 
 		int bgStX = g_fullpipe->_sceneRect.left % point.x;
 
@@ -444,7 +449,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 			int v51 = height * bgNumY;
 			while (1) {
 				int v25 = bgNumY;
-				for (int y = g_fullpipe->_sceneRect.top - point.y; y < g_fullpipe->_sceneRect.bottom - 1; ) {
+				for (int y = g_fullpipe->_sceneRect.top - bgOffsetY; y < g_fullpipe->_sceneRect.bottom - 1; ) {
 					BigPicture *v27 = _bigPictureArray[bgNumX][v25];
 					v27->draw(bgPosX, y, 0, 0);
 					y += v27->getDimensions(&point)->y;

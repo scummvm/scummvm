@@ -129,10 +129,13 @@ bool CGameLoader::load(MfcArchive &file) {
 	return true;
 }
 
-bool CGameLoader::loadScene(int num) {
+bool CGameLoader::loadScene(int sceneId) {
 	SceneTag *st;
 
-	int idx = getSceneTagBySceneId(num, &st);
+	int idx = getSceneTagBySceneId(sceneId, &st);
+
+	if (idx < 0)
+		return false;
 
 	if (st->_scene)
 		st->loadScene();
@@ -152,10 +155,23 @@ bool CGameLoader::loadScene(int num) {
 	return false;
 }
 
-int CGameLoader::getSceneTagBySceneId(int num, SceneTag **st) {
-	warning("STUB: CGameLoader::getSceneTagBySceneId()");
+int CGameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
+	if (_sc2array.size() > 0 && _gameProject->_sceneTagList->size() > 0) {
+		for (uint i = 0; i < _sc2array.size(); i++) {
+			if (_sc2array[i]._sceneId == sceneId) {
+				int num = 0;
+				for (SceneTagList::iterator s = _gameProject->_sceneTagList->begin(); s != _gameProject->_sceneTagList->end(); ++s, num++) {
+					if (s->_sceneId == sceneId) {
+						*st = &(*s);
+						return num;
+					}
+				}
+			}
+		}
+	}
 
-	return 0;
+	*st = 0;
+	return -1;
 }
 
 void CGameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount) {

@@ -249,6 +249,8 @@ bool Picture::load(MfcArchive &file) {
 		file.read(_paletteData, 1024);
 	}
 
+	getData();
+
 	debug(5, "Picture::load: <%s>", _memfilename);
 
 #if 0
@@ -317,6 +319,8 @@ Bitmap *Picture::getPixelData() {
 void Picture::draw(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
+
+	debug(0, "Picture::draw(%d, %d, %d, %d)", x, y, style, angle);
 
 	if (x != -1)
 		x1 = x;
@@ -387,6 +391,8 @@ void Picture::displayPicture() {
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {
+	debug(0, "Bitmap::putDib(%d, %d)", x, y);
+
 	_x = x - g_fullpipe->_sceneRect.left;
 	_y = y - g_fullpipe->_sceneRect.top;
 
@@ -408,10 +414,12 @@ void Bitmap::putDibRB(int32 *palette) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
+	debug(0, "Bitmap::putDibRB()");
+
 	endx = _width + _x - 1;
 	endy = _height + _y - 1;
 
-	if (_x > 799 || _width + _x - 1 < 0 || _y > 599 || endy < 0)
+	if (_x > 799 || endx < 0 || _y > 599 || endy < 0)
 		return;
 
 	if (endy > 599)
@@ -420,12 +428,20 @@ void Bitmap::putDibRB(int32 *palette) {
 	if (endx > 799)
 		endx = 799;
 
+	int startx = _x;
+	if (startx < 0)
+		startx = 0;
+
+	int starty = _y;
+	if (starty < 0)
+		starty = 0;
+
 	y = endy;
 	srcPtr = (uint16 *)_pixels;
 
 	bool breakup = false;
-	for (y = endy; y >= _y && !breakup; y--) {
-		x = _x;
+	for (y = endy; y >= starty && !breakup; y--) {
+		x = startx;
 
 		while ((pixel = *srcPtr++) != 0) {
 			if (pixel == 0x100) {
@@ -433,7 +449,7 @@ void Bitmap::putDibRB(int32 *palette) {
 				break;
 			}
 
-			while (pixel == 0x200 && y >= _y) {
+			while (pixel == 0x200 && y >= starty) {
 				uint16 value = *srcPtr++;
 
 				x += (byte)(value & 0xff);
@@ -442,7 +458,7 @@ void Bitmap::putDibRB(int32 *palette) {
 				pixel = *srcPtr++;
 			}
 
-			if (y < _y || pixel == 0)
+			if (y < starty || pixel == 0)
 				break;
 
 			start1 = x;
@@ -495,7 +511,7 @@ void Bitmap::putDibRB(int32 *palette) {
 		}
 	}
 
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(_x, _y), g_fullpipe->_backgroundSurface.pitch, _x, _y, endx + 1, endy + 1);
+	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1, endy + 1);
 }
 
 void Bitmap::putDibCB(int32 *palette) {
@@ -505,13 +521,13 @@ void Bitmap::putDibCB(int32 *palette) {
 	int bpp;
 	uint pitch;
 	bool cb05_format;
-	byte *srcPtr;
-	int start;
 
 	endx = _width + _x - 1;
 	endy = _height + _y - 1;
 
-	if (_x > 799 || _width + _x - 1 < 0 || _y > 599 || endy < 0)
+	debug(0, "Bitmap::putDibCB(): %d, %d, %d, %d [%d, %d]", _x, _y, endx, endy, _width, _height);
+
+	if (_x > 799 || endx < 0 || _y > 599 || endy < 0)
 		return;
 
 	if (endy > 599)
@@ -525,27 +541,31 @@ void Bitmap::putDibCB(int32 *palette) {
 	bpp = cb05_format ? 2 : 1;
 	pitch = (bpp * _width + 3) & 0xFFFFFFFC;
 
-	srcPtr = &_pixels[pitch * (endy - _y)];
+	byte *srcPtr = &_pixels[pitch * (endy - _y)];
 
-	start = _x;
-	if (_x < 0) {
+	int startx = _x;
+	if (startx < 0) {
 		srcPtr += bpp * -_x;
-		start = 0;
+		startx = 0;
 	}
+
+	int starty = _y;
+	if (starty < 0)
+		starty = 0;
 
 	if (_flags & 0x1000000) {
-		for (int y = _y; y < endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start, y);
-			copierKeyColor(curDestPtr, srcPtr, endx - start + 1, _flags & 0xff, (int32 *)palette, cb05_format);
+		for (int y = starty; y < endy; srcPtr -= pitch, y++) {
+			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(startx, y);
+			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, (int32 *)palette, cb05_format);
 		}
 	} else {
-		for (int y = _y; y <= endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start, y);
-			copier(curDestPtr, srcPtr, endx - start + 1, (int32 *)palette, cb05_format);
+		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
+			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(startx, y);
+			copier(curDestPtr, srcPtr, endx - startx + 1, (int32 *)palette, cb05_format);
 		}
 	}
 
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(start, _y), g_fullpipe->_backgroundSurface.pitch, start, _y, endx, endy);
+	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1, endy + 1);
 }
 
 void Bitmap::colorFill(uint16 *dest, int len, int32 color) {

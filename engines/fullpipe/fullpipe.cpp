@@ -110,15 +110,43 @@ Common::Error FullpipeEngine::run() {
 	ent._sceneId = 3896;
 	sceneSwitcher(&ent);
 
+	_currentScene->draw();
+
 	while (!g_fullpipe->_needQuit) {
 		updateEvents();
 		_system->delayMillis(10);
 		_system->updateScreen();
 
-		_currentScene->draw();
-
-		if (g_fullpipe->_keyState == ' ') {
+		switch (g_fullpipe->_keyState) {
+		case Common::KEYCODE_q:
+			g_fullpipe->_needQuit = true;
+			break;
+		case Common::KEYCODE_UP:
+			_sceneRect.moveTo(_sceneRect.left, _sceneRect.top + 10);
+			_currentScene->draw();
 			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
+			break;
+		case Common::KEYCODE_DOWN:
+			_sceneRect.moveTo(_sceneRect.left, _sceneRect.top - 10);
+			_currentScene->draw();
+			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
+			break;
+		case Common::KEYCODE_LEFT:
+			_sceneRect.moveTo(_sceneRect.left + 10, _sceneRect.top);
+			_currentScene->draw();
+			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
+			break;
+		case Common::KEYCODE_RIGHT:
+			_sceneRect.moveTo(_sceneRect.left - 10, _sceneRect.top);
+			_currentScene->draw();
+			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
+			break;
+		case Common::KEYCODE_z:
+			_sceneRect.moveTo(0, 0);
+			_currentScene->draw();
+			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
+			break;
+		default:
 			break;
 		}
 	}
