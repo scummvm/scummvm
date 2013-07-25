@@ -49,7 +49,7 @@ namespace Avalanche {
 Timeout::Timeout(AvalancheEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i < sizeof(times); i++) {
+	for (byte i = 0; i < 7; i++) {
 		times[i].time_left = 0;
 		times[i].then_where = 0;
 		times[i].what_for = 0;
@@ -64,10 +64,10 @@ void Timeout::set_up_timer(int32 howlong, byte whither, byte why) {
 	if (fv == 7)
 		return; /* Oh dear... */
 
-	timetype &with = times[fv];  /* Everything's OK here! */
-	with.time_left = howlong;
-	with.then_where = whither;
-	with.what_for = why;
+	/* Everything's OK here! */
+	times[fv].time_left = howlong;
+	times[fv].then_where = whither;
+	times[fv].what_for = why;
 }
 
 void Timeout::one_tick() {
