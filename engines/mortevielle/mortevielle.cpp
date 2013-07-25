@@ -102,10 +102,12 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 
 	memset(_mem, 0, sizeof(_mem));
 	_curPict = nullptr;
+	_rightFramePict = nullptr;
 }
 
 MortevielleEngine::~MortevielleEngine() {
 	free(_curPict);
+	free(_rightFramePict);
 }
 
 /**

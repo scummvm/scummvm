@@ -2570,7 +2570,9 @@ void MortevielleEngine::adzon() {
 	if (!f.open("dec.mor"))
 		error("Missing file - dec.mor");
 
-	f.read(_rightFramePict, 1664);
+	free(_rightFramePict);
+	_rightFramePict = (byte *)malloc(sizeof(byte) * f.size());
+	f.read(_rightFramePict, f.size());
 	f.close();
 }
 
