@@ -72,7 +72,7 @@ void Celer::pics_link() {
 
 	case r__yours:
 		if ((!_vm->_gyro->dna.avvy_is_awake) && ((_vm->_gyro->roomtime % int32(4)) == 0))
-			show_one(int32(1) + (_vm->_gyro->roomtime / int32(12)) % int32(2));
+			show_one(0 + (_vm->_gyro->roomtime / 12) % 2);
 		break;
 
 	case r__argentpub:
