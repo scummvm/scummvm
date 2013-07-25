@@ -269,9 +269,7 @@ Common::String DebuggerAdapter::readRes(Common::String name, int *error) { // Ha
 		}
 	}
 	if (!result) {
-		char *ret = new char[100]; // Hack
-		sprintf(ret, "%s has no member %s", pos->getName(), methodName.c_str()); 
-		return ret; 
+		return Common::String::format("%s has no member %s", pos->getName(), methodName.c_str());
 	} else if (result->isNULL()) {
 		return "Null";
 	} else if (result->isNative()) {
