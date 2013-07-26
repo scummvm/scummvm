@@ -27,7 +27,7 @@
 
 namespace ZVision {
 
-RenderTable::RenderTable(uint32 numRows, uint32 numColumns)
+RenderTable::RenderTable(uint32 numColumns, uint32 numRows)
 		: _numRows(numRows),
 		  _numColumns(numColumns),
 		  _renderState(RenderState::FLAT) {
@@ -97,10 +97,10 @@ void RenderTable::generatePanoramaLookupTable() {
 		for (uint32 y = 0; y < _numRows; y++) {
 			int32 newY = floor(halfHeight + (y - halfHeight) * cosX);
 
-			// Panorama images are transposed. Rather than trying to transpose the source, we know 
-			// they will be mutated by this table. Therefore we can swap the axes here
 			uint32 index = y * _numColumns + x;
 
+			// Panorama images are transposed. Rather than trying to transpose the source, we know
+			// they will be mutated by this table. Therefore we can swap the axes here
 			_internalBuffer[index].x = newY; //pixel index
 			_internalBuffer[index].y = newX; //pixel index
 		}
