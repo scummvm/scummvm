@@ -31,7 +31,7 @@
 #include "fullpipe/sound.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/input.h"
-#include "fullpipe/messagequeue.h"
+#include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
 
 #include "fullpipe/gameobj.h"

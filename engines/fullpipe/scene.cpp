@@ -25,7 +25,7 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/statics.h"
-#include "fullpipe/messagequeue.h"
+#include "fullpipe/messages.h"
 
 #include "fullpipe/gameobj.h"
 

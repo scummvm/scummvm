@@ -8,7 +8,7 @@ MODULE_OBJS = \
 	gfx.o \
 	input.o \
 	inventory.o \
-	messagequeue.o \
+	messages.o \
 	motion.o \
 	ngiarchive.o \
 	scene.o \

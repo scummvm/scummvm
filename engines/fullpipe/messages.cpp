@@ -23,7 +23,7 @@
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/objects.h"
-#include "fullpipe/messagequeue.h"
+#include "fullpipe/messages.h"
 
 namespace Fullpipe {
 

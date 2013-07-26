@@ -31,7 +31,7 @@
 #include "fullpipe/objectnames.h"
 #include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
-#include "fullpipe/messagequeue.h"
+#include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
 
 namespace Fullpipe {
