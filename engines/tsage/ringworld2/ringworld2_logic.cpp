@@ -2115,11 +2115,11 @@ void AnimationPlayerExt::synchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
-ModalDialog::ModalDialog() {
+ModalWindow::ModalWindow() {
 	_field20 = 0;
 }
 
-void ModalDialog::remove() {
+void ModalWindow::remove() {
 	R2_GLOBALS._sceneItems.remove(&_object1);
 	_object1.remove();
 
@@ -2128,13 +2128,13 @@ void ModalDialog::remove() {
 	--R2_GLOBALS._insetUp;
 }
 
-void ModalDialog::synchronize(Serializer &s) {
+void ModalWindow::synchronize(Serializer &s) {
 	SceneArea::synchronize(s);
 
 	s.syncAsByte(_field20);
 }
 
-void ModalDialog::process(Event &event) {
+void ModalWindow::process(Event &event) {
 	if (_field20 != R2_GLOBALS._insetUp)
 		return;
 
@@ -2157,7 +2157,7 @@ void ModalDialog::process(Event &event) {
 	}
 }
 
-void ModalDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	_object1.postInit();
@@ -2170,7 +2170,7 @@ void ModalDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, 
 	_field20 = R2_GLOBALS._insetUp;
 }
 
-void ModalDialog::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
@@ -2426,7 +2426,7 @@ void ScannerDialog::remove() {
 	_obj6.remove();
 	_obj7.remove();
 
-	ModalDialog::remove();
+	ModalWindow::remove();
 }
 
 void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
@@ -2435,7 +2435,7 @@ void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX
 		R2_GLOBALS._player.addMover(NULL);
 
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
-	ModalDialog::proc12(visage, stripFrameNum, frameNum, posX, posY);
+	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
 
 	proc13(100, -1, -1, -1);
 	_talkButton.setup(1);

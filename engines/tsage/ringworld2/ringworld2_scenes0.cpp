@@ -2597,8 +2597,8 @@ void Scene250::synchronize(Serializer &s) {
 }
 
 void Scene250::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(250);
+	SceneExt::postInit();
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(10);
@@ -3050,7 +3050,7 @@ bool Scene300::Seeker::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			if (R2_GLOBALS.getFlag(44)) {
+			if (!R2_GLOBALS.getFlag(44)) {
 				if (!R2_GLOBALS.getFlag(38)) {
 					R2_GLOBALS._sound1.play(69);
 					scene->_stripId = 181;

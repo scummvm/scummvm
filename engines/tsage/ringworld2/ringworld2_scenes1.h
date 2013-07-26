@@ -120,7 +120,7 @@ public:
 class Scene1200 : public SceneExt {
 	enum CrawlDirection { CRAWL_EAST = 1, CRAWL_WEST = 2, CRAWL_SOUTH = 3, CRAWL_NORTH = 4 };
 
-	class LaserPanel: public ModalDialog {
+	class LaserPanel: public ModalWindow {
 	public:
 		class Jumper : public SceneActorExt {
 		public:

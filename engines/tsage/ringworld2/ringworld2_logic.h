@@ -446,22 +446,22 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
-class ModalDialog: public SceneArea {
+class ModalWindow: public SceneArea {
 public:
 	SceneActor _object1;
 	byte _field20;
 public:
-	ModalDialog();
+	ModalWindow();
 
 	virtual void remove();
 	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "ModalDialog"; }
+	virtual Common::String getClassName() { return "ModalWindow"; }
 	virtual void process(Event &event);
 	virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 	virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
-class ScannerDialog: public ModalDialog {
+class ScannerDialog: public ModalWindow {
 
 	class Button: public SceneActor {
 	private:

@@ -416,7 +416,7 @@ SequenceManager *SequenceManager::globalManager() {
 ConversationChoiceDialog::ConversationChoiceDialog() {
 	_stdColor = 23;
 	_highlightColor = g_globals->_scenePalette._colors.background;
-	_fontNumber = 1;
+	_fontNumber = (g_vm->getGameID() == GType_Ringworld2) ? 3 : 1;
 	_savedFgColor = _savedFontNumber = 0;
 	_selectedIndex = 0;
 }
@@ -513,7 +513,11 @@ void ConversationChoiceDialog::draw() {
 
 	// Fill in the contents of the entire dialog
 	_gfxManager._bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	drawFrame();
+	
+	if (g_vm->getGameID() == GType_Ringworld2)
+		GfxElement::drawFrame();
+	else
+		drawFrame();
 
 	_gfxManager._bounds = tempRect;
 	_gfxManager._font._colors.foreground = _stdColor;
@@ -551,8 +555,8 @@ void Obj44::load(const byte *dataP) {
 		_callbackId[idx] = s.readSint16LE();
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
-		_field16 = s.readSint16LE();
-		s.skip(20);
+		for (int i = 0; i < 11; ++i)
+			_field16[i] = s.readSint16LE();
 	} else {
 		s.skip(4);
 	}
@@ -580,7 +584,9 @@ void Obj44::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_lookupIndex);
 		s.syncAsSint16LE(_field6);
 		s.syncAsSint16LE(_speakerMode);
-		s.syncAsSint16LE(_field16);
+
+		for (int i = 0; i < 11; ++i)
+			s.syncAsSint16LE(_field16[i]);
 	}
 }
 
@@ -787,25 +793,65 @@ void StripManager::signal() {
 	// Build up a list of script entries
 	int idx;
 
-	if (g_vm->getGameID() == GType_Ringworld2 && obj44._field16) {
+	if ((g_vm->getGameID() == GType_Ringworld2) && obj44._field16[0]) {
 		// Special loading mode used in Return to Ringworld
 		for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
-			int objIndex = _lookupList[obj44._field16 - 1];
-
-			if (!obj44._list[objIndex]._id)
+			int f16Index = _lookupList[obj44._field16[0] - 1];
+			Obj0A &entry = obj44._list[obj44._field16[f16Index]]; 
+			if (!entry._id)
 				break;
 
 			// Get the next one
-			choiceList.push_back((const char *)&_script[0] + obj44._list[objIndex]._scriptOffset);
+			choiceList.push_back((const char *)&_script[0] + entry._scriptOffset);
 		}
 	} else {
 		// Standard choices loading
-		for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
+		for (idx = 0; idx < OBJ0A_LIST_SIZE; ++idx) {
 			if (!obj44._list[idx]._id)
 				break;
 
 			// Get the next one
-			choiceList.push_back((const char *)&_script[0] + obj44._list[idx]._scriptOffset);
+			const char *choiceStr = (const char *)&_script[0] + obj44._list[idx]._scriptOffset;
+			
+			if (!*choiceStr) {
+				// Choice is empty
+				assert(g_vm->getGameID() == GType_Ringworld2);
+
+				if (obj44._list[1]._id) {
+					// it's a reference to another list slot
+					int listId = obj44._list[idx]._id;
+					
+					int obj44Idx = 0;
+					while (_obj44List[obj44Idx]._id != listId)
+						++obj44Idx;
+
+					if (_obj44List[obj44Idx]._field16[0]) {
+						int f16Index = _lookupList[_obj44List[obj44Idx]._field16[0] - 1];
+						listId = _obj44List[obj44Idx]._field16[f16Index];
+
+						if (_lookupList[_obj44List[obj44Idx]._field16[0] - 1]) {
+							int listIdx = 0;
+							while (_obj44List[obj44Idx]._list[listIdx]._id != listId)
+								++listIdx;
+
+							choiceStr = (const char *)&_script[0] + _obj44List[obj44Idx]._list[listIdx]._scriptOffset;
+						} else {
+							for (int listIdx = 0; listIdx < OBJ0A_LIST_SIZE; ++listIdx) {
+								obj44._list[listIdx]._id = obj44._list[listIdx + 1]._id;
+								obj44._list[listIdx]._scriptOffset = obj44._list[listIdx + 1]._scriptOffset;
+
+								if (!obj44._list[listIdx + 1]._id)
+									obj44._list[listIdx]._id = 0;
+							}
+
+							continue;
+						}
+					}
+				}
+			}
+
+			// Add entry to the list
+			choiceList.push_back(choiceStr);
 		}
 	}
 
