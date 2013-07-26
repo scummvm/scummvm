@@ -82,7 +82,7 @@ public:
 	::Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
 
 	::Graphics::Surface loadPictureRow(Common::File &file, uint16 width, uint16 height); // Reads Row-planar EGA data.
-
+	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 
 	void drawPicture(const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
 
