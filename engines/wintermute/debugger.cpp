@@ -115,13 +115,13 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 
 
 bool Console::Cmd_Info(int argc, const char **argv) {
-	if (argc == 2 && !strcmp(argv[1], "breakpoints")) {
+	if (argc == 2 && !strncmp(argv[1], "breakpoints", 10)) {
 		BaseArray<BreakpointInfo> breakpoints = ADAPTER->getBreakpoints();
 		for (int i = 0; i < breakpoints.size(); i++) {
 			DebugPrintf("%d %s:%d x%d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits);
 		}
 		return 1;
-	} else if (argc == 2 && !strcmp(argv[1], "watch")) {
+	} else if (argc == 2 && !strncmp(argv[1], "watch", 5)) {
 		BaseArray<WatchInfo>watchlist = ADAPTER->getWatchlist();
 		for (int i = 0; i < watchlist.size(); i++) {
 			DebugPrintf("%d %s:%d x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);
@@ -194,7 +194,7 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 
 
 bool Console::Cmd_Set(int argc, const char **argv) {
-	if (argc == 4 && !strcmp("=", argv[2])) {
+	if (argc == 4 && !strncmp("=", argv[2], 1)) {
 		int error = ADAPTER->setValue(argv[1], argv[3]);
 		if (!error) {
 			DebugPrintf("Ok");
