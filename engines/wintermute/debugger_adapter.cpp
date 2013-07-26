@@ -318,6 +318,8 @@ int DebuggerAdapter::setValue(const char* name, const char* value) {
 		Common::parseBool(value, valAsBool);
 		// TODO: Warn if can't parse.
 		var->setBool(valAsBool);
+	} else if (var->_type == VAL_STRING) {
+		var->setString(value);
 	} else {
 		// TODO> Not yet implemented
 	}
