@@ -241,27 +241,15 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	move(a0, a1, 12080);
 	}*/
 
-	::Graphics::Surface background;
+	
 	
 	uint16 backgroundWidht = _vm->_graphics->kScreenWidth;
 	byte backgroundHeight = 8 * 12080 / _vm->_graphics->kScreenWidth; // With 640 width it's 151
 	// The 8 = number of bits in a byte, and 12080 comes from the original code (see above)
 
-	background.create(backgroundWidht, backgroundHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+	::Graphics::Surface background = _vm->_graphics->loadPictureRow(f, backgroundWidht, backgroundHeight);
 
-	for (byte plane = 0; plane < 4; plane++)
-		for (uint16 y = 0; y < backgroundHeight; y++)
-			for (uint16 x = 0; x < backgroundWidht; x += 8) {
-				byte pixel = f.readByte();
-				for (byte i = 0; i < 8; i++) {
-					byte pixelBit = (pixel >> i) & 1;
-					*(byte *)background.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
-				}	
-			}
-
-	for (uint16 y = 0; y < backgroundHeight; y++)
-		for (uint16 x = 0; x < backgroundWidht; x++)
-			*_vm->_graphics->getPixel(x + 0, y + 10) = *(byte *)background.getBasePtr(x, y);	
+	_vm->_graphics->drawPicture(background, 0, 10);
 
 	background.free();
 
@@ -759,15 +747,13 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	}
 
 	f.seek(z * picsize + 65);
+	
+	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
 
-	byte *buffer = new byte[picsize];
+	_vm->_graphics->drawPicture(picture, 205, 170);
 
-	f.read(buffer, picsize);
-
-	_vm->_graphics->drawPicture(buffer, 205, 170);
-
-	delete[] buffer;
-
+	picture.free();
+	
 	f.close();
 
 	_vm->_gyro->off();
@@ -793,13 +779,17 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 	}
 
 	for (byte fv = 0; fv < 10; fv ++) {
-		_vm->_gyro->digit[fv] = new byte[digitsize];
-		f.read(_vm->_gyro->digit[fv], digitsize);
+		f.seek(fv * digitsize);
+		/*_vm->_gyro->digit[fv] = new byte[digitsize];
+		f.read(_vm->_gyro->digit[fv], digitsize);*/
+		_vm->_gyro->digit[fv] = _vm->_graphics->loadPictureGraphic(f);
 	}
 
 	for (byte ff = 0; ff < 9; ff ++) {
-		_vm->_gyro->rwlite[ff] = new byte[rwlitesize];
-		f.read(_vm->_gyro->rwlite[ff], rwlitesize);
+		f.seek(10 * digitsize + ff * rwlitesize);
+		/*_vm->_gyro->rwlite[ff] = new byte[rwlitesize];
+		f.read(_vm->_gyro->rwlite[ff], rwlitesize);*/
+		_vm->_gyro->rwlite[ff] = _vm->_graphics->loadPictureGraphic(f);
 	}
 
 	f.close();
@@ -815,15 +805,11 @@ void Lucerna::toolbar() {
 	
 	/* off;*/
 
-	uint32 bufferSize = f.size()-40;
+	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
 
-	byte *buffer = new byte[bufferSize];
+	_vm->_graphics->drawPicture(picture, 5, 169);
 
-	f.read(buffer, bufferSize);
-
-	_vm->_graphics->drawPicture(buffer, 5, 169);
-
-	delete[] buffer;
+	picture.free();
 
 	f.close();
 

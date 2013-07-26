@@ -326,12 +326,13 @@ void Celer::forget_chunks() {
 }
 
 void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, byte *p) {
+	r.x1 = x;
+	r.y1 = y;
+	r.y2 = y + yl;
+
 	switch (flavour) {
 	case ch_natural_image: {
-		r.x1 = x;
-		r.y1 = y;
 		r.x2 = x + xl + 1;
-		r.y2 = y + yl;
 
 		x *= 8;
 		xl *= 8;
@@ -342,19 +343,15 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 		}
 		break;
 	case ch_bgi : {
-		_vm->_graphics->drawPicture(p, x * 8, y);
-		//putimage(x * 8, y, p, 0);
-		r.x1 = x;
-		r.y1 = y;
 		r.x2 = x + xl + 1;
-		r.y2 = y + yl;
+
+		_vm->_graphics->drawPicture_old(p, x * 8, y);
+		//putimage(x * 8, y, p, 0);
 		}
 		break;
 	case ch_ega : {
-		r.x1 = x;
-		r.y1 = y;
 		r.x2 = x + xl;
-		r.y2 = y + yl;
+		
 
 
 		x *= 8;

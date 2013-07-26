@@ -261,9 +261,15 @@ Gyro::~Gyro() {
 	delete[] vmc.andpic;
 	delete[] vmc.xorpic;
 
-	for (int fv = 0; fv < 2; fv ++) {
+	for (byte fv = 0; fv < 2; fv ++) {
 		delete[] vmc.backpic[fv];
 	}
+
+	for (byte i = 0; i < 9; i++) {
+		digit[i].free();
+		rwlite[i].free();
+	}
+	digit[9].free();
 
 }
 

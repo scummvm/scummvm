@@ -34,6 +34,8 @@
 #include "common/scummsys.h"
 #include "common/file.h"
 
+#include "graphics/surface.h"
+
 #include "avalanche/roomnums.h"
 #include "avalanche/color.h"
 
@@ -521,8 +523,11 @@ public:
 	bool ontoolbar, seescroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 
 	char objlist[10];
-	byte *digit[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
-	byte *rwlite[9]; // Maybe it will be needed to move them to the class itself instead.
+
+	::Graphics::Surface digit[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
+	::Graphics::Surface rwlite[9]; // Maybe it will be needed to move them to the class itself instead.
+	// Called .free() for them in ~Gyro().
+
 	byte oldrw;
 	int8 lastscore[3];
 	byte cmp; /* current mouse-void **/
