@@ -27,6 +27,8 @@
 
 namespace Fullpipe {
 
+class ExCommand;
+
 class CStepArray : public CObject {
 	int _currPointIndex;
 	Common::Point **_points;

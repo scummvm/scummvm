@@ -25,6 +25,7 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/inventory.h"
+#include "fullpipe/messages.h"
 
 namespace Fullpipe {
 

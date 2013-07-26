@@ -27,6 +27,98 @@
 
 namespace Fullpipe {
 
+ExCommand::ExCommand() {
+	_field_3C = 1;
+	_messageNum = 0;
+	_excFlags = 0;
+	_parId = 0;
+}
+
+ExCommand::ExCommand(ExCommand *src) : Message(src) {
+	_field_3C = 1;
+	_messageNum = src->_messageNum;
+	_excFlags = src->_excFlags;
+	_parId = src->_parId;
+
+}
+
+bool ExCommand::load(MfcArchive &file) {
+	debug(5, "ExCommand::load()");
+
+	_parentId = file.readUint16LE();
+	_messageKind = file.readUint32LE();
+	_x = file.readUint32LE();
+	_y = file.readUint32LE();
+	_field_14 = file.readUint32LE();
+	_sceneClickX = file.readUint32LE();
+	_sceneClickY = file.readUint32LE();
+	_field_20 = file.readUint32LE();
+	_field_24 = file.readUint32LE();
+	_param28 = file.readUint32LE();
+	_field_2C = file.readUint32LE();
+	_field_30 = file.readUint32LE();
+	_field_34 = file.readUint32LE();
+
+	_messageNum = file.readUint32LE();
+
+	_field_3C = 0;
+
+	if (g_fullpipe->_gameProjectVersion >= 12) {
+		_excFlags = file.readUint32LE();
+		_parId = file.readUint32LE();
+	}
+
+	return true;
+}
+
+Message::Message() {
+	_messageKind = 0;
+	_parentId = 0;
+	_x = 0;
+	_y = 0;
+	_field_14 = 0;
+	_sceneClickX = 0;
+	_sceneClickY = 0;
+	_field_20 = 0;
+	_field_24 = 0;
+	_param28 = 0;
+	_field_2C = 0;
+	_field_30 = 0;
+	_field_34 = 0;
+}
+
+Message::Message(Message *src) {
+	_parentId = src->_parentId;
+	_messageKind = src->_messageKind;
+	_x = src->_x;
+	_y = src->_y;
+	_field_14 = src->_field_14;
+	_sceneClickX = src->_sceneClickX;
+	_sceneClickY = src->_sceneClickY;
+	_field_20 = src->_field_20;
+	_field_24 = src->_field_24;
+	_param28 = src->_param28;
+	_field_2C = src->_field_2C;
+	_field_30 = src->_field_30;
+	_field_34 = src->_field_34;
+}
+
+CObjstateCommand::CObjstateCommand() {
+	_value = 0;
+}
+
+bool CObjstateCommand::load(MfcArchive &file) {
+	debug(5, "CObjStateCommand::load()");
+
+	_cmd.load(file);
+
+	_value = file.readUint32LE();
+
+	_objCommandName = file.readPascalString();
+
+	return true;
+}
+
 MessageQueue::MessageQueue() {
 	_field_14 = 0;
 	_parId = 0;

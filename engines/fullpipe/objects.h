@@ -143,41 +143,6 @@ union VarValue {
 	char *stringValue;
 };
 
-class Message : public CObject {
- public:
-	int _messageKind;
-	int16 _parentId;
-	int _x;
-	int _y;
-	int _field_14;
-	int _sceneClickX;
-	int _sceneClickY;
-	int _field_20;
-	int _field_24;
-	int _param28;
-	int _field_2C;
-	int _field_30;
-	int _field_34;
-
- public:
-	Message();
-	Message(Message *src);
-};
-
-class ExCommand : public Message {
-	int _messageNum;
-	int _field_3C;
-	int _excFlags;
-	int _parId;
-
- public:
-	ExCommand();
-	ExCommand(ExCommand *src);
-	virtual ~ExCommand() {}
-
-	virtual bool load(MfcArchive &file);
-};
-
 class CGameVar : public CObject {
  public:
 	CGameVar *_nextVarObj;
@@ -209,16 +174,6 @@ struct PreloadItem {
 
 class PreloadItems : public Common::Array<PreloadItem>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
-};
-
-class CObjstateCommand : public CObject {
-	ExCommand _cmd;
-	char *_objCommandName;
-	int _value;
-
- public:
-	CObjstateCommand();
 	virtual bool load(MfcArchive &file);
 };
 
