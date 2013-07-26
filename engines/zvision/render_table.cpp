@@ -29,7 +29,8 @@ namespace ZVision {
 
 RenderTable::RenderTable(uint32 numRows, uint32 numColumns)
 		: _numRows(numRows),
-		  _numColumns(numColumns) {
+		  _numColumns(numColumns),
+		  _renderState(RenderState::FLAT) {
 	assert(numRows != 0 && numColumns != 0);
 
 	_internalBuffer = new Common::Point[numRows * numColumns];
@@ -57,6 +58,21 @@ void RenderTable::setRenderState(RenderState newState) {
 	}
 }
 
+void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 horizontalPitch, Common::Rect subRectangle) {
+	uint32 imageWidth = horizontalPitch / 2;
+
+	for (int y = subRectangle.top; y < subRectangle.bottom; y++) {
+		uint32 normalizedY = y - subRectangle.top;
+		for (int x = subRectangle.left; x < subRectangle.right; x++) {
+			uint32 normalizedX = x - subRectangle.left;
+
+			uint32 index = y * _numColumns + x;
+			uint32 sourceIndex = _internalBuffer[index].y * imageWidth + _internalBuffer[index].x;
+			destBuffer[normalizedY * subRectangle.width() + normalizedX] = sourceBuffer[sourceIndex];
+		}
+	}
+}
+
 void RenderTable::generatePanoramaLookupTable() {
 	float fieldOfView = _panoramaOptions.fieldOfView;
 	float scale = _panoramaOptions.linearScale;
@@ -70,20 +86,23 @@ void RenderTable::generatePanoramaLookupTable() {
 	float halfHeightOverTan = halfHeight / tan(fovRadians);
 	float tanOverHalfHeight = tan(fovRadians) / halfHeight;
 
-	for (uint32 x = 0; x < _numRows; x++) {
+	// TODO: Change the algorithm to write a whole row at a time instead of a whole column at a time. AKA: for(y) { for(x) {}} instead of for(x) { for(y) {}}
+	for (uint32 x = 0; x < _numColumns; x++) {
 		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
-		float xPos = (float)x - halfWidth + 0.01;
-		float tempX = atan(xPos*tanOverHalfHeight);
+		float temp = atan(tanOverHalfHeight * ((float)x - halfWidth + 0.01f));
 
-		int32 newX = floor(scale * halfHeightOverTan * tempX);// + half_w);
-		float cosX = cos(tempX);
+		int32 newX = floor((halfHeightOverTan * scale * temp) + halfWidth);
+		float cosX = cos(temp);
 
-		for (uint32 y = 0; y < _numColumns; y++) {
+		for (uint32 y = 0; y < _numRows; y++) {
 			int32 newY = floor(halfHeight + (y - halfHeight) * cosX);
 
-			uint32 index = x * _numColumns + y;
-			_internalBuffer[index].x = newX; //pixel index
-			_internalBuffer[index].y = newY; //pixel index
+			// Panorama images are transposed. Rather than trying to transpose the source, we know 
+			// they will be mutated by this table. Therefore we can swap the axes here
+			uint32 index = y * _numColumns + x;
+
+			_internalBuffer[index].x = newY; //pixel index
+			_internalBuffer[index].y = newX; //pixel index
 		}
 	}
 }

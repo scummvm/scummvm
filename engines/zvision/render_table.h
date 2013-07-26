@@ -57,13 +57,15 @@ private:
 	} _tiltOptions;
 
 public:
+	RenderState getRenderState() { return _renderState; }
 	void setRenderState(RenderState newState);
+	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 horizontalPitch, Common::Rect subRectangle);
 
 private:
 	void generatePanoramaLookupTable();
 	void generateTiltLookupTable();
 };
 
-} // End of namesapce ZVision
+} // End of namespace ZVision
 
 #endif
