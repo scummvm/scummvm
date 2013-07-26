@@ -309,8 +309,6 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 			*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = pixelBit | (pixelBit << 1) | (pixelBit << 2);
 		}
 	}
-
-	_vm->_lucerna->blitfix();
 }
 
 void Dropdown::hlchalk(int16 x, int16 y, char t, Common::String z, bool valid) {

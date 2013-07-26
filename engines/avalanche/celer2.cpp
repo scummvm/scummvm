@@ -343,8 +343,6 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 		break;
 	case ch_ega : {
 		r.x2 = x + xl;
-
-		_vm->_lucerna->blitfix();
 		}
 		break;
 	}

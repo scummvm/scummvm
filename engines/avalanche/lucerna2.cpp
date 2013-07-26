@@ -1044,118 +1044,6 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	warning("STUB: Lucerna::showrw()");
 }
 
-void Lucerna::mblit(byte x1, byte y1, byte x2, byte y2, byte f, byte t) /* assembler; */
-/* The Minstrel Blitter */
-/* asm
-{  ofsfr:=f*$4000+x1+y1*80;
-   ofsto:=t*$4000+x1+y1*80;}
-
-  mov bx,80; { We're multiplying by 80. }
-  mov al,y1;
-  mul bl;    { AX now contains y1*80. }
-  xor cx,cx; { Zero CX. }
-  mov cl,x1; { CX now equals x1 }
-  add ax,cx; { AX now contains x1+y1*80. }
-  mov si,ax;
-  mov di,ax;
-
-  mov ax,$4000;
-  mov bl,f;
-  mul bx; { Note that this is a *uint16*! }
-  add si,ax;
-
-  mov ax,$4000;
-  mov bl,t;
-  mul bx; { Note that this is a *uint16*! }
-  add di,ax;
-
-  push ds; { *** <<<< *** WE MUST PRESERVE THIS! }
-  cld;  { Clear Direction flag - we're going forwards! }
-
-  mov ax,$A000; { The screen memory. }
-  mov ds,ax;
-  mov es,ax; { The same. }
-
-  { AH stores the number of bytes to copy. }
-  { len:=(x2-x1)+1; }
-
-  mov ah,x2;
-  sub ah,x1;
-  inc ah;
-
-  { Firstly, let's decide how many times we're going round. }
-
-  mov cl,y2; { How many numbers between y1 and y2? }
-  sub cl,y1;
-  inc cl; { Inclusive reckoning (for example, from 3 to 5 is 5-3+1=3 turns. }
-
-  { We'll use SI and DI to be Ofsfr and Ofsto. }
-
-  @Y_axis_loop:
-   push cx;
-
-
-   { OK... We've changed this loop from a for-next loop. "Bit" is
-     represented by CX. }
-
-{     port[$3c4]:=2; port[$3ce]:=4; }
-   mov dx,$3c4;
-   mov al,2;
-   out dx,al;
-   mov dx,$3ce;
-   mov al,4;
-   out dx,al;
-
-   mov cx,4; { We have to copy planes 3, 2, 1 and Zero. We'll add 1 to the
-    number, because at zero it stops. }
-
-   mov bx,3; { This has a similar function to that of CX. }
-
-   @start_of_loop:
-
-    push cx;
-
-{     port[$3C5]:=1 shl bit; }
-    mov dx,$3C5;
-    mov al,1;
-    mov cl,bl; { BL = bit. }
-    shl al,cl;
-    out dx,al;
-{     port[$3CF]:=bit; }
-    mov dx,$3CF;
-    mov al,bl; { BL = bit. }
-    out dx,al;
-
-{   move(mem[$A000:ofsfr],mem[$A000:ofsto],len); }
-
-    xor ch,ch; { Clear CH. }
-    mov cl,ah;
-
-    repz movsb; { That's all we need to say! }
-
-    mov cl,ah;
-    sub si,cx; { This is MUCH, MUCH faster than pushing and popping them! }
-    sub di,cx;
-
-    pop cx; { Get the loop count back again. }
-    dec bx; { One less... }
-   loop @start_of_loop; { Until cx=0. }
-
-   add si,80; { Do the next line... }
-   add di,80;
-
-   pop cx;
-  loop @Y_axis_loop;
-
-  pop ds; { Get it back again (or we'll be in trouble with TP!) }
-*/
-{
-}
-
-void Lucerna::blitfix() {
-	warning("STUB: Lucerna::blitfix()");
-}
-
 
 
 
@@ -1194,10 +1082,9 @@ void Lucerna::delavvy() {
 	_vm->_gyro->off();
 	
 	triptype &with = _vm->_trip->tr[0];
-	for (page_ = 0; page_ <= 1; page_ ++)
-		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
+	/*for (page_ = 0; page_ <= 1; page_ ++)
+		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);*/
 	
-	blitfix();
 	_vm->_gyro->on();
 }
 

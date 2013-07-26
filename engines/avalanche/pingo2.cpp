@@ -128,7 +128,6 @@ void Pingo::winning_pic() {
 	warning("STUB: Pingo::winning_pic()");
 
 	f.close();
-	_vm->_lucerna->blitfix();
 
 	//setvisualpage(0);
 	warning("STUB: Pingo::winning_pic()");

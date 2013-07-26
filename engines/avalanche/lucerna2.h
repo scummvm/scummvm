@@ -86,10 +86,6 @@ public:
 
 	void showrw();
 
-	void mblit(byte x1, byte y1, byte x2, byte y2, byte f, byte t); /* The Minstrel Blitter */
-
-	void blitfix();
-
 	void clock_lucerna();
 
 	void flip_page();
