@@ -195,7 +195,7 @@ Common::String DebuggerAdapter::readValue(const char* name, int *error) {
 	return _lastScript->getVar(temp)->getString();
 }
 
-Common::String DebuggerAdapter::readRes(Common::String name, int *error) { // Hack
+Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) { // Hack
 	if (!_lastScript) {
 		*error = NOT_ALLOWED;
 		return nullptr;
