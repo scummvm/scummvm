@@ -79,14 +79,15 @@ public:
 	void cancelVideo();
 
 	/**
-	 * Blits the image to the screen. Actual screen updates won't happen until the end of the frame.
+	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
 	 * The image will be clipped to fit inside the window.
 	 *
-	 * @param fileName                   Name of the image file
-	 * @param x                          X position where the image should be put
-	 * @param y                          Y position where the image should be put
+	 * @param fileName        Name of the image file
+	 * @param destinationX    X position where the image should be put
+	 * @param destinationY    Y position where the image should be put
+	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
 	 */
-	void renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y);
+	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0));
 
 	/**
 	 * Set how the frame should be rendered
@@ -102,6 +103,8 @@ private:
 	 * Checks the time since the last video frame, and blits the next frame to the screen
 	 */
 	void continueVideo();
+
+	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle);
 };
 
 } // End of namespace ZVision

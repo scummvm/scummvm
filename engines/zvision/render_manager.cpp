@@ -60,7 +60,45 @@ void RenderManager::updateScreen(bool isConsoleActive) {
 	}
 }
 
-void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x, uint32 y) {
+void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle) {
+	// Panoramas are transposed
+	// The actual data is transposed in the RenderTable lookup
+	if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
+		uint32 temp = imageHeight;
+		imageHeight = imageWidth;
+		imageWidth = temp;
+	}
+	
+	// Check if we truly want a subRect of the image
+	if (subRectangle.isEmpty())
+		subRectangle = Common::Rect(imageWidth, imageHeight);
+
+	// Clip to image bounds
+	subRectangle.clip(imageWidth, imageHeight);
+	// Clip destRect to screen bounds
+	Common::Rect destRect(destinationX, destinationY, destinationX + subRectangle.width(), destinationY + subRectangle.height());
+	destRect.clip(_width, _height);
+	// Clip subRect to screen bounds
+	subRectangle.translate(destRect.left - destinationX, destRect.top - destinationY);
+	subRectangle.setWidth(destRect.width());
+	subRectangle.setHeight(destRect.height());
+
+	// Check for validity
+	if (!subRectangle.isValidRect() || subRectangle.isEmpty() || !destRect.isValidRect() || destRect.isEmpty())
+		return;
+
+	if (_renderTable.getRenderState() == RenderTable::FLAT) {
+		_system->copyRectToScreen(buffer + subRectangle.top * horizontalPitch + subRectangle.left, horizontalPitch, destRect.left, destRect.top, destRect.width(), destRect.height());
+	} else {
+		uint16 *destBuffer = new uint16[destRect.width() * destRect.height()];
+		_renderTable.mutateImage((uint16 *)buffer, destBuffer, horizontalPitch, subRectangle);
+
+		_system->copyRectToScreen(destBuffer, subRectangle.width() * sizeof(uint16), destRect.left, destRect.top, destRect.width(), destRect.height());
+		delete[] destBuffer;
+	}
+}
+
+void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
@@ -77,15 +115,16 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x
 	if (fileType == MKTAG('T', 'G', 'Z', '\0')) {
 		// TGZ files have a header and then Bitmap data that is compressed with LZSS
 		uint32 decompressedSize = file.readSint32LE();
-		uint32 width = file.readSint32LE();
-		uint32 height = file.readSint32LE();
+		uint32 imageWidth = file.readSint32LE();
+		uint32 imageHeight = file.readSint32LE();
 
 		LzssReadStream stream(&file);
 		byte *buffer = new byte[decompressedSize];
 		stream.read(buffer, decompressedSize);
 
-		_system->copyRectToScreen(buffer, width * 2, x, y, width, height);
+		uint32 horizontalPitch = imageWidth * sizeof(uint16);
 
+		renderSubRectToScreen((uint16 *)buffer, imageWidth, imageHeight, horizontalPitch, destinationX, destinationY, subRectangle);
 		delete[] buffer;
 	} else {
 		// Reset the cursor
@@ -93,12 +132,13 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 x
 
 		// Decode
 		Graphics::TGADecoder tga;
-		if (!tga.loadStream(file))
+		if (!tga.loadStream(file)) {
 			warning("Error while reading TGA image");
-		file.close();
+			return;
+		}
 
 		const Graphics::Surface *tgaSurface = tga.getSurface();
-		_system->copyRectToScreen(tgaSurface->pixels, tgaSurface->pitch, x, y, tgaSurface->w, tgaSurface->h);
+		renderSubRectToScreen((uint16 *)tgaSurface->pixels, tgaSurface->w, tgaSurface->h, tgaSurface->pitch, destinationX, destinationY, subRectangle);		
 
 		tga.destroy();
 	}
