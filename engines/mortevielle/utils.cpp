@@ -2193,14 +2193,17 @@ void MortevielleEngine::music() {
 
 	_reloadCFIEC = true;
 
-	Common::File fic;
-	if (!fic.open("mort.img"))
+	Common::File f;
+	if (!f.open("mort.img"))
 		error("Missing file - mort.img");
 
-	fic.read(&_mem[kAdrCompMusicBuf2 * 16], 623 * 128);
-	fic.close();
+	free(_compMusicBuf2);
+	int size = f.size();
+	_compMusicBuf2 = (byte *)malloc(sizeof(byte) * size);
+	f.read(_compMusicBuf2, size);
+	f.close();
 
-	_soundManager.decodeMusic(&_mem[kAdrCompMusicBuf2 * 16], &_mem[kAdrMusic * 16], 623);
+	_soundManager.decodeMusic(_compMusicBuf2, &_mem[kAdrMusic * 16], size / 128);
 	_addFix = (float)((kTempoMusic - 8)) / 256;
 	_speechManager.cctable(_speechManager._tbi);
 
