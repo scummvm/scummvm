@@ -169,36 +169,6 @@ void Graphics::drawPicture(const ::Graphics::Surface &picture, uint16 destX, uin
 			*getPixel(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
 }
 
-void Graphics::drawPicture_old(const byte *source, uint16 destX, uint16 destY) {
-	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
-	uint16 pictureWidth = READ_LE_UINT16(source) + 1;
-	uint16 pictureHeight = READ_LE_UINT16(source + 2) + 1;
-
-	uint32 i = 4;
-
-	::Graphics::Surface picture; // We make a Surface object for the picture itself.
-
-	picture.create(pictureWidth, pictureHeight, ::Graphics::PixelFormat::createFormatCLUT8());
-
-	// Produce the picture.
-	for (byte y = 0; y < pictureHeight; y++)
-		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
-			for (uint16 x = 0; x < pictureWidth; x += 8) {
-				byte pixel = source[i++];
-				for (byte bit = 0; bit < 8; bit++) {
-					byte pixelBit = (pixel >> bit) & 1;
-					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
-				} 
-			}
-
-	// Copy the picture to a given place on the screen.
-	for (uint16 y = 0; y < picture.h; y++)
-		for (uint16 x = 0; x < picture.w; x++)
-			*getPixel(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
-
-	picture.free();
-}
-
 void Graphics::refreshScreen() {
 	// These cycles are for doubling the screen height.
 	::Graphics::Surface picture;

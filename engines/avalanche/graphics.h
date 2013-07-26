@@ -86,8 +86,6 @@ public:
 
 	void drawPicture(const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
 
-	void drawPicture_old(const byte *source, uint16 destX, uint16 destY);
-
 	void refreshScreen();
 
 private:
