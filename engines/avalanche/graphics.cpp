@@ -117,6 +117,7 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 }
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
+	// This function mimics Pascal's getimage().
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
 	uint16 pictureWidth = file.readUint16LE() + 1;
 	uint16 pictureHeight = file.readUint16LE() + 1;
@@ -125,7 +126,7 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 
 	picture.create(pictureWidth, pictureHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 
-	// Produce the picture.
+	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
 	for (byte y = 0; y < pictureHeight; y++)
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
 			for (uint16 x = 0; x < pictureWidth; x += 8) {
@@ -140,6 +141,10 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 }
 
 ::Graphics::Surface Graphics::loadPictureRow(Common::File &file, uint16 width, uint16 height) {
+	// This function is our own creation, very much like the one above. The main differences are that
+	// we don't read the width and the height from the file, the planes are in a different order
+	// and we read the picture plane-by-plane.
+
 	::Graphics::Surface picture;
 
 	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
