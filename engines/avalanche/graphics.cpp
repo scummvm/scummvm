@@ -116,7 +116,55 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 			}
 }
 
-void Graphics::drawPicture(const byte *source, uint16 destX, uint16 destY) {
+::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
+	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
+	uint16 pictureWidth = file.readUint16LE() + 1;
+	uint16 pictureHeight = file.readUint16LE() + 1;
+
+	::Graphics::Surface picture; // We make a Surface object for the picture itself.
+
+	picture.create(pictureWidth, pictureHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+
+	// Produce the picture.
+	for (byte y = 0; y < pictureHeight; y++)
+		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
+			for (uint16 x = 0; x < pictureWidth; x += 8) {
+				byte pixel = file.readByte();
+				for (byte bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
+				} 
+			}
+
+	return picture;
+}
+
+::Graphics::Surface Graphics::loadPictureRow(Common::File &file, uint16 width, uint16 height) {
+	::Graphics::Surface picture;
+
+	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
+
+	for (byte plane = 0; plane < 4; plane++)
+		for (uint16 y = 0; y < height; y++)
+			for (uint16 x = 0; x < width; x += 8) {
+				byte pixel = file.readByte();
+				for (byte i = 0; i < 8; i++) {
+					byte pixelBit = (pixel >> i) & 1;
+					*(byte *)picture.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+				}	
+			}
+
+	return picture;
+}
+
+void Graphics::drawPicture(const ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
+	// Copy the picture to the given place on the screen.
+	for (uint16 y = 0; y < picture.h; y++)
+		for (uint16 x = 0; x < picture.w; x++)
+			*getPixel(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
+}
+
+void Graphics::drawPicture_old(const byte *source, uint16 destX, uint16 destY) {
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
 	uint16 pictureWidth = READ_LE_UINT16(source) + 1;
 	uint16 pictureHeight = READ_LE_UINT16(source + 2) + 1;
@@ -141,7 +189,7 @@ void Graphics::drawPicture(const byte *source, uint16 destX, uint16 destY) {
 	// Copy the picture to a given place on the screen.
 	for (uint16 y = 0; y < picture.h; y++)
 		for (uint16 x = 0; x < picture.w; x++)
-			*(byte *)_surface.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
+			*getPixel(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
 
 	picture.free();
 }
