@@ -162,13 +162,15 @@ void SpeechManager::regenbruit() {
  */
 void SpeechManager::loadMusicSound() {
 	Common::File f;
-
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
 
-	f.read(&_vm->_mem[kAdrCompMusicBuf1 * 16], 273 * 128);
+	free(_vm->_compMusicBuf1);
+	int size = f.size();
+	_vm->_compMusicBuf1 = (byte *)malloc(sizeof(byte) * size);
+	f.read(_vm->_compMusicBuf1, size);
 
-	_vm->_soundManager.decodeMusic(&_vm->_mem[kAdrCompMusicBuf1 * 16], &_vm->_mem[kAdrNoise * 16], 273);
+	_vm->_soundManager.decodeMusic(_vm->_compMusicBuf1, &_vm->_mem[kAdrNoise * 16], size / 128);
 	f.close();
 }
 

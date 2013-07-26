@@ -65,8 +65,6 @@ namespace Mortevielle {
  */
 const int kAdrMusic = 0x5000;
 
-const int kAdrCompMusicBuf1 = 0x7414;
-
 #define ord(v) ((int) v)
 #define chr(v) ((unsigned char) v)
 #define lo(v) ((v) & 0xff)
@@ -477,6 +475,7 @@ public:
 	byte *_curPict;
 	byte *_curAnim;
 	byte *_rightFramePict;
+	byte *_compMusicBuf1;
 	byte *_compMusicBuf2;
 	
 	Debugger _debugger;
