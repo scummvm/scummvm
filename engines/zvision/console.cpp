@@ -45,11 +45,14 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
-	if (argc != 4) {
-		DebugPrintf("Use loadimage <fileName> <x> <y> to load an image to the screen\n");
+	if (argc == 4)
+		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
+	else if (argc == 8)
+		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]), Common::Rect(atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7])));
+	else {
+		DebugPrintf("Use loadimage <fileName> <destinationX> <destinationY> [ <subRectX1> <subRectY2> <subRectX2> <subRectY2> ] to load an image to the screen\n");
 		return true;
 	}
-	_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
 
 	return true;
 }
