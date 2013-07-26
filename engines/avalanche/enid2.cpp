@@ -246,7 +246,6 @@ void Enid::avvy_background() {    /* Not really a filing procedure,
 		@the_end:
 		end;
 	*/
-	_vm->_lucerna->blitfix();
 }
 
 void Enid::to_sundry(sundry &sund) {

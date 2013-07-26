@@ -909,8 +909,8 @@ void Trip::call_special(uint16 which) {
 		_vm->_gyro->magics[10].op = _vm->_gyro->nix;
 		stopwalking();
 		_vm->_timeout->lose_timer(_vm->_timeout->reason_falling_down_oubliette);
-		_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);
-		_vm->_lucerna->mblit(12, 80, 38, 160, 3, 1);
+		/*_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);
+		_vm->_lucerna->mblit(12, 80, 38, 160, 3, 1);*/
 		_vm->_scrolls->display("Oh dear, you seem to be down the bottom of an oubliette.");
 		_vm->_timeout->set_up_timer(200, _vm->_timeout->procmeet_avaroid, _vm->_timeout->reason_meeting_avaroid);
 		break;
@@ -1130,11 +1130,8 @@ void Trip::getback() {
 			end;
 		*/
 
-		_vm->_lucerna->mblit(r.x1, r.y1, r.x2, r.y2, 3, 1 - _vm->_gyro->cp);
+		//_vm->_lucerna->mblit(r.x1, r.y1, r.x2, r.y2, 3, 1 - _vm->_gyro->cp);
 	}
-
-	_vm->_lucerna->blitfix();
-
 	/*
 	if endangered then
 		Super_On;
