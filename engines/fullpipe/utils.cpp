@@ -120,6 +120,12 @@ MemoryObject::MemoryObject() {
 	_data = 0;
 }
 
+MemoryObject::~MemoryObject() {
+	freeData();
+	if (_memfilename)
+		free(_memfilename);
+}
+
 bool MemoryObject::load(MfcArchive &file) {
 	debug(5, "MemoryObject::load()");
 	_memfilename = file.readPascalString();
@@ -168,8 +174,35 @@ byte *MemoryObject::getData() {
 	}
 }
 
+byte *MemoryObject::loadData() {
+	load();
+	return _data;
+}
+
+void MemoryObject::freeData() {
+	if (_data)
+		free(_data);
+
+	_data = 0;
+}
+
+bool MemoryObject::testFlags() {
+	if (_field_8)
+		return false;
+
+	if (_flags & 1)
+		return true;
+
+	return false;
+}
+
 MemoryObject2::MemoryObject2() {
 	_rows = 0;
+}
+
+MemoryObject2::~MemoryObject2() {
+	if (_rows)
+		free(_rows);
 }
 
 bool MemoryObject2::load(MfcArchive &file) {
@@ -185,6 +218,16 @@ bool MemoryObject2::load(MfcArchive &file) {
 	}
 
 	return true;
+}
+
+void MemoryObject2::copyData(byte *src, int dataSize) {
+	if (_data)
+		freeData();
+
+	_dataSize = dataSize;
+	_data = (byte *)malloc(dataSize);
+
+	memcpy(_data, src, _dataSize);
 }
 
 int MfcArchive::readCount() {

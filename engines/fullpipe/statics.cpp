@@ -28,6 +28,7 @@
 #include "fullpipe/messagequeue.h"
 
 #include "fullpipe/gameobj.h"
+#include "fullpipe/objectnames.h"
 
 namespace Fullpipe {
 
@@ -205,10 +206,16 @@ void StaticANIObject::loadMovementsPixelData() {
 		((Movement *)_movements[i])->loadPixelData();
 }
 
-Statics *StaticANIObject::addStatics(Statics *ani) {
-	warning("STUB: StaticANIObject::addStatics");
+Statics *StaticANIObject::addReverseStatics(Statics *st) {
+	Statics *res = getStaticsById(st->_staticsId ^ 0x4000);
 
-	return 0;
+	if (!res) {
+		res = new Statics(st, true);
+
+		_staticsList.push_back(res);
+	}
+
+	return res;
 }
 
 void StaticANIObject::draw() {
@@ -234,6 +241,27 @@ void StaticANIObject::draw2() {
 Statics::Statics() {
 	_staticsId = 0;
 	_picture = 0;
+	_staticsName = 0;
+}
+
+Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
+	_staticsId = src->_staticsId;
+
+	if (reverse) {
+		_staticsId ^= 0x4000;
+		int newlen = strlen(src->_staticsName) + strlen(sO_MirroredTo) + 1;
+		_staticsName = (char *)calloc(newlen, 1);
+
+		snprintf(_staticsName, newlen, "%s%s", sO_MirroredTo, src->_staticsName);
+	} else {
+		_staticsName = (char *)calloc(strlen(src->_staticsName) + 1, 1);
+		strncpy(_staticsName, src->_staticsName, strlen(src->_staticsName) + 1);
+	}
+
+	_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
+	strncpy(_memfilename, src->_memfilename, strlen(src->_memfilename) + 1);
+
+	_picture = new Picture();
 }
 
 bool Statics::load(MfcArchive &file) {
@@ -314,7 +342,7 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 		if (!_staticsObj1 && (staticsid & 0x4000)) {
 			Statics *s = ani->getStaticsById(staticsid ^ 0x4000);
-			_staticsObj1 = ani->addStatics(s);
+			_staticsObj1 = ani->addReverseStatics(s);
 		}
 
 		_mx = file.readUint32LE();
@@ -326,7 +354,7 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 		if (!_staticsObj2 && (staticsid & 0x4000)) {
 			Statics *s = ani->getStaticsById(staticsid ^ 0x4000);
-			_staticsObj2 = ani->addStatics(s);
+			_staticsObj2 = ani->addReverseStatics(s);
 		}
 
 		_m2x = file.readUint32LE();
@@ -406,8 +434,71 @@ DynamicPhase::DynamicPhase() {
 	_someX = 0;
 	_rect = 0;
 	_field_7C = 0;
-	_flags = 0;
+	_dynFlags = 0;
 	_someY = 0;
+}
+
+DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
+	_field_7C = src->_field_7C;
+	_rect = new Common::Rect();
+
+	if (reverse) {
+		if (!src->_bitmap)
+			src->init();
+
+		_bitmap = src->_bitmap->reverseImage();
+		_data = _bitmap->_pixels;
+		_dataSize = src->_dataSize;
+
+		if (g_fullpipe->_currArchive) {
+			_field_14 = 0;
+			_libHandle = g_fullpipe->_currArchive;
+		}
+
+		_flags |= 1;
+
+		_someX = src->_someX;
+		_someY = src->_someY;
+	} else {
+		_field_14 = src->_field_14;
+		_field_8 = src->_field_8;
+		_flags = src->_flags;
+
+		_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
+		strncpy(_memfilename, src->_memfilename, strlen(src->_memfilename) + 1);
+		_dataSize = src->_dataSize;
+		_field_10 = src->_field_10;
+		_libHandle = src->_libHandle;
+
+		_bitmap = src->_bitmap;
+		if (_bitmap)
+			_field_54 = 1;
+
+		_someX = src->_someX;
+		_someY = src->_someY;
+	}
+
+	_rect->top = src->_rect->top;
+	_rect->bottom = src->_rect->bottom;
+	_rect->left = src->_rect->left;
+	_rect->right = src->_rect->right;
+
+	_width = src->_width;
+	_height = src->_height;
+	_field_7C = src->_field_7C;
+
+	if (src->getExCommand())
+		_exCommand = new ExCommand(src->getExCommand());
+	else
+		_exCommand = 0;
+
+	_initialCountdown = src->_initialCountdown;
+	_field_6A = src->_field_6A;
+	_dynFlags = src->_dynFlags;
+
+	setPaletteData(getPaletteData());
+
+	copyMemoryObject2(src);
 }
 
 bool DynamicPhase::load(MfcArchive &file) {
@@ -429,7 +520,7 @@ bool DynamicPhase::load(MfcArchive &file) {
 
 	assert (g_fullpipe->_gameProjectVersion >= 12);
 
-	_flags = file.readUint32LE();
+	_dynFlags = file.readUint32LE();
 
 	return true;
 }

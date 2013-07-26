@@ -53,13 +53,16 @@ struct Bitmap {
 	void paletteFill(uint16 *dest, byte *src, int len, int32 *palette);
 	void copierKeyColor(uint16 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format);
 	void copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_format);
+
+	Bitmap *reverseImage();
 };
 
 class Picture : public MemoryObject {
 	friend class Movement;
+	friend class DynamicPhase;
 
 	Common::Rect _rect;
-	int _convertedBitmap;
+	Bitmap *_convertedBitmap;
 	int _x;
 	int _y;
 	int _field_44;
@@ -75,6 +78,10 @@ class Picture : public MemoryObject {
 
   public:
 	Picture();
+	virtual ~Picture();
+
+	void freePicture();
+
 	virtual bool load(MfcArchive &file);
 	void setAOIDs();
 	void init();
@@ -87,11 +94,16 @@ class Picture : public MemoryObject {
 	void setAlpha(byte alpha) { _alpha = alpha; }
 
 	Common::Point *getDimensions(Common::Point *p);
+
+	byte *getPaletteData() { return _paletteData; }
+	void setPaletteData(byte *pal);
+
+	void copyMemoryObject2(Picture *src);
 };
 
 class BigPicture : public Picture {
   public:
-	BigPicture();
+	BigPicture() {}
 	virtual bool load(MfcArchive &file);
 };
 

@@ -43,6 +43,8 @@ class CStepArray : public CObject {
 };
 
 class StaticPhase : public Picture {
+	friend class DynamicPhase;
+
 	int16 _initialCountdown;
 	int16 _countdown;
 	int16 _field_68;
@@ -51,7 +53,10 @@ class StaticPhase : public Picture {
 
   public:
 	StaticPhase();
+
 	virtual bool load(MfcArchive &file);
+
+	ExCommand *getExCommand() { return _exCommand; }
 };
 
 class DynamicPhase : public StaticPhase {
@@ -63,10 +68,12 @@ class DynamicPhase : public StaticPhase {
 	Common::Rect *_rect;
 	int16 _field_7C;
 	int16 _field_7E;
-	int _flags;
+	int _dynFlags;
 
   public:
 	DynamicPhase();
+	DynamicPhase(DynamicPhase *src, bool reverse);
+
 	virtual bool load(MfcArchive &file);
 };
 
@@ -81,6 +88,8 @@ class Statics : public DynamicPhase {
 
   public:
 	Statics();
+	Statics(Statics *src, bool reverse);
+
 	virtual bool load(MfcArchive &file);
 	Statics *getStaticsById(int itemId);
 
@@ -171,7 +180,7 @@ class StaticANIObject : public GameObject {
 
 	void loadMovementsPixelData();
 
-	Statics *addStatics(Statics *ani);
+	Statics *addReverseStatics(Statics *ani);
 	void draw();
 	void draw2();
 };

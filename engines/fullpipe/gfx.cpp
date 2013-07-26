@@ -225,6 +225,44 @@ Picture::Picture() {
 	_convertedBitmap = 0;
 }
 
+Picture::~Picture() {
+	freePicture();
+
+	_bitmap = 0;
+
+	if (_memoryObject2)
+		delete _memoryObject2;
+
+	if (_paletteData)
+		free(_paletteData);
+
+	if (_convertedBitmap) {
+		delete _convertedBitmap;
+		_convertedBitmap = 0;
+	}
+}
+
+void Picture::freePicture() {
+	if (_bitmap) {
+		if (testFlags() && !_field_54) {
+			freeData();
+			delete _bitmap;
+			_bitmap = 0;
+		}
+	}
+
+	if (_bitmap) {
+		_bitmap = 0;
+		_data = 0;
+	}
+
+	if (_convertedBitmap) {
+		free(_convertedBitmap->_pixels);
+		delete _convertedBitmap;
+		_convertedBitmap = 0;
+	}
+}
+
 bool Picture::load(MfcArchive &file) {
 	debug(5, "Picture::load()");
 	MemoryObject::load(file);
@@ -350,22 +388,21 @@ void Picture::draw(int x, int y, int style, int angle) {
 	switch (style) {
 	case 1:
 		//flip
-		warning("Picture::draw: style 1");
+		warning("STUB: Picture::draw: style 1");
 		break;
 	case 2:
-		error("Picture::draw: style 2");
+		error("STUB: Picture::draw: style 2");
 		break;
 	default:
-		if (angle) {
-			warning("Picture:draw: angle = %d", angle);
+		if (angle)
 			drawRotated(x1, y1, angle);
-		} else {
+		else
 			_bitmap->putDib(x1, y1, (int32 *)_paletteData);
-		}
 	}
 }
 
 void Picture::drawRotated(int x, int y, int angle) {
+	warning("STUB: Picture::drawRotated(%d, %d, %d)", x, y, angle);
 }
 
 void Picture::displayPicture() {
@@ -395,6 +432,26 @@ void Picture::displayPicture() {
 		if (g_fullpipe->_keyState == ' ') {
 			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
 			break;
+		}
+	}
+}
+
+void Picture::setPaletteData(byte *pal) {
+	if (_paletteData)
+		free(_paletteData);
+
+	if (pal) {
+		_paletteData = (byte *)malloc(1024);
+		memcpy(_paletteData, pal, 1024);
+	}
+}
+
+void Picture::copyMemoryObject2(Picture *src) {
+	if (_width == src->_width && _height == src->_height) {
+		if (src->_memoryObject2 && src->_memoryObject2->_rows && _memoryObject2) {
+			byte *data = loadData();
+			_memoryObject2->copyData(data, _dataSize);
+			setAOIDs();
 		}
 	}
 }
@@ -677,7 +734,10 @@ void Bitmap::copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_
 	}
 }
 
-BigPicture::BigPicture() {
+Bitmap *Bitmap::reverseImage() {
+	warning("STUB: Bitmap::reverseImage()");
+
+	return this;
 }
 
 bool BigPicture::load(MfcArchive &file) {

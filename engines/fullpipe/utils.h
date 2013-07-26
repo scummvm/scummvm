@@ -96,10 +96,17 @@ class MemoryObject : CObject {
 
  public:
 	MemoryObject();
+	virtual ~MemoryObject();
+
 	virtual bool load(MfcArchive &file);
 	void loadFile(char *filename);
 	void load() { loadFile(_memfilename); }
 	byte *getData();
+	byte *loadData();
+
+	bool testFlags();
+
+	void freeData();
 };
 
 class MemoryObject2 : public MemoryObject {
@@ -110,7 +117,10 @@ class MemoryObject2 : public MemoryObject {
 
  public:
 	MemoryObject2();
+	virtual ~MemoryObject2();
 	virtual bool load(MfcArchive &file);
+
+	void copyData(byte *src, int dataSize);
 };
 
 class CObArray : public Common::Array<CObject>, public CObject {

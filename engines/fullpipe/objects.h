@@ -143,7 +143,7 @@ union VarValue {
 	char *stringValue;
 };
 
-class Message {
+class Message : public CObject {
  public:
 	int _messageKind;
 	int16 _parentId;
@@ -161,17 +161,19 @@ class Message {
 
  public:
 	Message();
+	Message(Message *src);
 };
 
-class ExCommand : public CObject {
-	Message _msg;
+class ExCommand : public Message {
 	int _messageNum;
 	int _field_3C;
-	int _flags;
+	int _excFlags;
 	int _parId;
 
  public:
 	ExCommand();
+	ExCommand(ExCommand *src);
+	virtual ~ExCommand() {}
 
 	virtual bool load(MfcArchive &file);
 };
