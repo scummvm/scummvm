@@ -194,13 +194,12 @@ void SpeechManager::loadPhonemeSounds() {
  */
 void SpeechManager::loadNoise() {
 	Common::File f;
-	int i;
 
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
 	f.read(&_vm->_mem[kAdrNoise * 16], 250 * 128); // 32000
-	for (i = 0; i <= 19013; ++i)
+	for (int i = 0; i < _noise5Size; ++i)
 		_vm->_mem[(kAdrNoise * 16) + 32000 + i] = _noise5Buf[i];
 	f.read(&_vm->_mem[(kAdrNoise1 * 16) + kOffsetB1], 149 * 128); // 19072
 
@@ -582,7 +581,6 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	switch (typ) {
 	case 1:
 		loadNoise();
-		/*if zuul then zzuul(kAdrNoise,0,1095);*/
 		regenbruit();
 		break;
 	case 2:
