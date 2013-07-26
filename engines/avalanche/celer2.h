@@ -34,6 +34,8 @@
 #include "common/file.h"
 #include "common/str.h"
 
+#include "graphics/surface.h"
+
 namespace Avalanche {
 class AvalancheEngine;
 
@@ -61,12 +63,14 @@ public:
 	int32 offsets[40];
 	byte num_chunks;
 	memotype memos[40];
-	byte *memory[40];
+	::Graphics::Surface memory[40]; // .free() is called in ~Celer()
 	bytefield r;
 
 	
 
 	Celer(AvalancheEngine *vm);
+
+	~Celer();
 
 	void pics_link();
 
@@ -87,9 +91,9 @@ private:
 
 	static const int16 on_disk; /* Value of memos[fv].x when it's not in memory. */
 
-	void display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, byte *p);
+	void display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture);
 
-	void display_it_at(int16 xl, int16 yl, flavourtype flavour, void *p, int16 &xxx, int16 &yyy);
+	void display_it_at(int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture, int16 &xxx, int16 &yyy);
 };
 
 } // End of namespace Avalanche.

@@ -47,6 +47,11 @@ Celer::Celer(AvalancheEngine *vm) {
 	num_chunks = 0;
 }
 
+Celer::~Celer() {
+	for (byte i = 0; i < 40; i++)
+		memory[i].free();
+}
+
 void Celer::pics_link() {
 	byte xx;
 
@@ -302,14 +307,14 @@ void Celer::load_chunks(Common::String xx) {
 			if (ch.natural) {
 				memos[fv].flavour = ch_natural_image; // We simply read from the screen and later, in display_it() we draw it right back.
 				memos[fv].size = memos[fv].xl * 8 * memos[fv].yl; 
-				memory[fv] = new byte[memos[fv].size]; // Celer::forget_chunks() deallocates it.
+				memory[fv].create(memos[fv].xl * 8, memos[fv].yl, ::Graphics::PixelFormat::createFormatCLUT8());
+
 				for (uint16 j = 0; j < memos[fv].yl; j++)
 					for (uint16 i = 0; i < memos[fv].xl * 8; i++)
-						memory[fv][j * memos[fv].xl * 8 + i] = *_vm->_graphics->getPixel(memos[fv].x * 8 + i, memos[fv].y + j);
+						*(byte *)memory[fv].getBasePtr(i, j) = *_vm->_graphics->getPixel(memos[fv].x * 8 + i, memos[fv].y + j);
 			} else {
 				memos[fv].size = ch.size;
-				memory[fv] = new byte[memos[fv].size]; // Celer::forget_chunks() deallocates it.
-				f.read(memory[fv], ch.size);
+				memory[fv] = _vm->_graphics->loadPictureRow(f, memos[fv].xl * 8, memos[fv].yl + 1); // Celer::forget_chunks() deallocates it.
 			}
 		} else
 			memos[fv].x = on_disk;
@@ -320,80 +325,35 @@ void Celer::load_chunks(Common::String xx) {
 void Celer::forget_chunks() {
 	for (byte fv = 0; fv < num_chunks; fv ++)
 		if (memos[fv].x > on_disk)
-			delete[] memory[fv];
+			memory[fv].free();
 
 	memset(memos, 255, sizeof(memos)); /* x=-1, => on disk. */
 }
 
-void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, byte *p) {
+void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture) {
 	r.x1 = x;
 	r.y1 = y;
 	r.y2 = y + yl;
 
 	switch (flavour) {
-	case ch_natural_image: {
-		r.x2 = x + xl + 1;
-
-		x *= 8;
-		xl *= 8;
-
-		for (uint16 j = 0; j < yl; j++)
-			for (uint16 i = 0; i < xl; i++)
-				*_vm->_graphics->getPixel(x + i, y + j) = p[j * xl + i];
-		}
-		break;
+	case ch_natural_image: // Allow fallthorugh on purpose.
 	case ch_bgi : {
 		r.x2 = x + xl + 1;
-
-		_vm->_graphics->drawPicture_old(p, x * 8, y);
-		//putimage(x * 8, y, p, 0);
 		}
 		break;
 	case ch_ega : {
 		r.x2 = x + xl;
-		
-
-
-		x *= 8;
-		xl *= 8;
-
-		
-
-		::Graphics::Surface picture; // We make a Surface object for the picture itself.
-
-		picture.create(xl, yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
-
-		uint32 h = 0;
-
-		// Produce the picture.
-		for (int8 plane = 0; plane < 4; plane++) // The planes are in the opposite way.
-			for (byte j = 0; j < yl + 1; j++)
-				for (uint16 i = 0; i < xl; i += 8) {
-					byte pixel = p[h++];
-					for (byte bit = 0; bit < 8; bit++) {
-						byte pixelBit = (pixel >> bit) & 1;
-						*(byte *)picture.getBasePtr(i + 7 - bit, j) += (pixelBit << plane);
-					} 
-				}
-
-		// Copy the picture to a given place on the screen.
-		for (uint16 j = 0; j < picture.h; j++) 
-			for (uint16 i = 0; i < picture.w; i++)
-				*_vm->_graphics->getPixel(i + x, j + y) = *(byte *)picture.getBasePtr(i, j);		
-
-		picture.free();
-
-
 
 		_vm->_lucerna->blitfix();
 		}
 		break;
 	}
+
+	_vm->_graphics->drawPicture(picture, x * 8, y);
 }
 
 void Celer::show_one(byte which) {
 	chunkblocktype ch;
-	byte *p;
 	
 	//setactivepage(3);
 	warning("STUB: Celer::show_one()");
@@ -417,12 +377,11 @@ void Celer::show_one(byte which) {
 		ch.natural = f.readByte();
 		ch.memorise = f.readByte();
 
-		p = new byte[ch.size];
-		f.read(p, ch.size);
+		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(f, ch.xl * 8, ch.yl + 1); // There'll may be problems with the width!
 
-		display_it(ch.x, ch.y, ch.xl, ch.yl, ch.flavour, p);
+		display_it(ch.x, ch.y, ch.xl, ch.yl, ch.flavour, picture);
 
-		delete[] p;
+		picture.free();
 		f.close();
 	}
 
@@ -435,51 +394,12 @@ void Celer::show_one(byte which) {
 
 
 
-void Celer::display_it_at(int16 xl, int16 yl, flavourtype flavour, void *p, int16 &xxx, int16 &yyy) {
-	warning("STUB: Celer::display_it1()");
+void Celer::display_it_at(int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture, int16 &xxx, int16 &yyy) {
+	warning("STUB: Celer::display_it_at()");
 }
 
 void Celer::show_one_at(byte which, int16 xxx, int16 yyy) {
-	chunkblocktype ch;
-	byte *p;
-
-	//setactivepage(3);
 	warning("STUB: Celer::show_one_at()");
-
-	if (memos[which].x > on_disk) {
-		display_it_at(memos[which].xl, memos[which].yl, memos[which].flavour, memory[which], xxx, yyy);
-	} else {
-		if (!f.open(filename)) { /* Filename was set in load_chunks() */
-			warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
-			return;
-		}
-
-		f.seek(offsets[which]);
-		ch.flavour = flavourtype(f.readByte());
-		ch.x = f.readSint16LE();
-		ch.y = f.readSint16LE();
-		ch.xl = f.readSint16LE();
-		ch.yl = f.readSint16LE();
-		ch.size = f.readSint32LE();
-		ch.natural = f.readByte();
-		ch.memorise = f.readByte();
-
-		{
-			p = new byte[ch.size];
-			f.read(p, ch.size);
-
-			display_it_at(ch.xl, ch.yl, ch.flavour, p, xxx, yyy);
-
-			delete[] p;
-			f.close();
-		}
-	}
-
-	//setactivepage(1 - cp);
-	warning("STUB: Celer::show_one_at()");
-
-	for (byte fv = 0; fv < 2; fv ++)
-		_vm->_trip->getset[fv].remember(r);
 }
 
 
