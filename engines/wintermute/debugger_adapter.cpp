@@ -295,9 +295,7 @@ int DebuggerAdapter::setType(const char* name, int type) {
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}
-	char *temp;
-	temp = const_cast<char *>(Common::String(name).c_str());
-	ScValue *var = _lastScript->getVar(temp);
+	ScValue *var = _lastScript->getVar(Common::String(name).c_str());
 	TValType ttype = (TValType)type;
 	var->setType(ttype);
 	return 0;
@@ -308,9 +306,8 @@ int DebuggerAdapter::setValue(const char* name, const char* value) {
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}
-	char *temp;
-	temp = const_cast<char *>(Common::String(name).c_str());
-	ScValue *var = _lastScript->getVar(temp);
+
+	ScValue *var = _lastScript->getVar(Common::String(name).c_str());
 	if (var->_type == VAL_INT) {
 		var->setInt(atoi(value));
 	} else if (var->_type == VAL_FLOAT) {
