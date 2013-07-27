@@ -25,8 +25,6 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* Replacement class for the Graph unit from Pascal. */
-
 #ifndef GRAPH_H
 #define GRAPH_H
 
