@@ -41,55 +41,104 @@
 
 namespace Avalanche {
 
-	Visa::Visa(AvalancheEngine *vm) {
-		_vm = vm;
+Visa::Visa(AvalancheEngine *vm) {
+	_vm = vm;
+}
+
+bool Visa::bubbling = false;
+bool Visa::report_dixi_errors = true;
+
+void Visa::unskrimble() {
+	for (uint16  fv = 0; fv < _vm->_gyro->bufsize; fv++) 
+		_vm->_gyro->buffer[fv] = (char)((!(_vm->_gyro->buffer[fv]) - fv) % 256);
+}
+
+void Visa::do_the_bubble() {
+	_vm->_gyro->bufsize++;
+	_vm->_gyro->buffer[_vm->_gyro->bufsize] = 2;
+}
+
+void Visa::dixi(char block, byte point) {
+	Common::File indexfile, sezfile;
+	uint16 idx_offset, sez_offset;
+	bool error = false;
+
+	if (!indexfile.open("avalot.idx")) {
+		warning("AVALANCHE: Visa: File not found: avalot.idx");
+		return;
 	}
 
-	bool Visa::bubbling = false;
-	bool Visa::report_dixi_errors = true;
+	indexfile.seek((toupper(block) - 65) * 2);
+	idx_offset = indexfile.readUint16LE();
+	if (idx_offset == 0)
+		error = true;
 
-	void Visa::unskrimble() {
-		for (uint16  fv = 0; fv < _vm->_gyro->bufsize; fv++) 
-			_vm->_gyro->buffer[fv] = (char)((!(_vm->_gyro->buffer[fv]) - fv) % 256);
+	indexfile.seek(idx_offset + point * 2);
+	sez_offset = indexfile.readUint16LE();
+	if (sez_offset == 0)
+		error = true;
+
+	indexfile.close();
+
+	went_ok = !error;
+
+	if (error) {
+		if (report_dixi_errors) {
+			Common::String todisplay;
+			todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro->strf(point).c_str());
+			_vm->_scrolls->display(todisplay);
+		}
+		return;
 	}
 
-	void Visa::do_the_bubble() {
-		_vm->_gyro->bufsize++;
-		_vm->_gyro->buffer[_vm->_gyro->bufsize] = 2;
+	if (!sezfile.open("avalot.sez")) {
+		warning("AVALANCHE: Visa: File not found: avalot.sez");
+		return;
 	}
+	sezfile.seek(sez_offset);
+	_vm->_gyro->bufsize = sezfile.readUint16LE();
+	sezfile.read(_vm->_gyro->buffer, _vm->_gyro->bufsize);
+	sezfile.close();
+	unskrimble();
 
-	void Visa::dixi(char block, byte point) {
-		Common::File indexfile, sezfile;
-		uint16 idx_offset, sez_offset;
-		bool error = false;
+	if (bubbling)  do_the_bubble();
 
-		if (!indexfile.open("avalot.idx")) {
-			warning("AVALANCHE: Visa: File not found: avalot.idx");
+	_vm->_scrolls->calldrivers();
+}
+
+void Visa::speech(byte who, byte subject) {
+	Common::File indexfile, sezfile;
+	uint16 idx_offset, sez_offset, next_idx_offset;
+
+	if (subject == 0) {
+		/* No subject. */
+
+		bubbling = true;
+		report_dixi_errors = false;
+		dixi('s', who);
+		bubbling = false;
+		report_dixi_errors = true;
+	} else {
+		/* Subject given. */
+
+		went_ok = false; /* Assume that until we know otherwise. */
+
+		if (!indexfile.open("converse.avd")) {
+			warning("AVALANCHE: Visa: File not found: converse.avd");
 			return;
 		}
 
-		indexfile.seek((toupper(block) - 65) * 2);
+		indexfile.seek(who * 2 - 2);
 		idx_offset = indexfile.readUint16LE();
-		if (idx_offset == 0)
-			error = true;
+		next_idx_offset = indexfile.readUint16LE();
 
-		indexfile.seek(idx_offset + point * 2);
+		if ((idx_offset == 0) || ((((next_idx_offset - idx_offset) / 2) - 1) < subject))  return;
+
+		indexfile.seek(idx_offset + subject * 2);
 		sez_offset = indexfile.readUint16LE();
-		if (sez_offset == 0)
-			error = true;
-
-		indexfile.close();
-
-		went_ok = !error;
-
-		if (error) {
-			if (report_dixi_errors) {
-				Common::String todisplay;
-				todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro->strf(point).c_str());
-				_vm->_scrolls->display(todisplay);
-			}
+		if ((sez_offset == 0) || (indexfile.err()))
 			return;
-		}
+		indexfile.close();
 
 		if (!sezfile.open("avalot.sez")) {
 			warning("AVALANCHE: Visa: File not found: avalot.sez");
@@ -99,71 +148,22 @@ namespace Avalanche {
 		_vm->_gyro->bufsize = sezfile.readUint16LE();
 		sezfile.read(_vm->_gyro->buffer, _vm->_gyro->bufsize);
 		sezfile.close();
-		unskrimble();
 
-		if (bubbling)  do_the_bubble();
+		unskrimble();
+		do_the_bubble();
 
 		_vm->_scrolls->calldrivers();
+		went_ok = true;
 	}
 
-	void Visa::speech(byte who, byte subject) {
-		Common::File indexfile, sezfile;
-		uint16 idx_offset, sez_offset, next_idx_offset;
+	warning("STUB: Visa::speech()");
+}
 
-		if (subject == 0) {
-			/* No subject. */
+void Visa::talkto(byte whom) {
+	byte fv;
+	bool no_matches;
 
-			bubbling = true;
-			report_dixi_errors = false;
-			dixi('s', who);
-			bubbling = false;
-			report_dixi_errors = true;
-		} else {
-			/* Subject given. */
-
-			went_ok = false; /* Assume that until we know otherwise. */
-
-			if (!indexfile.open("converse.avd")) {
-				warning("AVALANCHE: Visa: File not found: converse.avd");
-				return;
-			}
-
-			indexfile.seek(who * 2 - 2);
-			idx_offset = indexfile.readUint16LE();
-			next_idx_offset = indexfile.readUint16LE();
-
-			if ((idx_offset == 0) || ((((next_idx_offset - idx_offset) / 2) - 1) < subject))  return;
-
-			indexfile.seek(idx_offset + subject * 2);
-			sez_offset = indexfile.readUint16LE();
-			if ((sez_offset == 0) || (indexfile.err()))
-				return;
-			indexfile.close();
-
-			if (!sezfile.open("avalot.sez")) {
-				warning("AVALANCHE: Visa: File not found: avalot.sez");
-				return;
-			}
-			sezfile.seek(sez_offset);
-			_vm->_gyro->bufsize = sezfile.readUint16LE();
-			sezfile.read(_vm->_gyro->buffer, _vm->_gyro->bufsize);
-			sezfile.close();
-
-			unskrimble();
-			do_the_bubble();
-
-			_vm->_scrolls->calldrivers();
-			went_ok = true;
-		}
-
-		warning("STUB: Visa::speech()");
-	}
-
-	void Visa::talkto(byte whom) {
-		byte fv;
-		bool no_matches;
-
-		warning("STUB: Visa::talkto()");
-	}
+	warning("STUB: Visa::talkto()");
+}
 
 } // End of namespace Avalanche.
