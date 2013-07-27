@@ -93,7 +93,7 @@ void Basher::plottext() {
 			for (byte bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
 				if (pixelBit != 0)
-					*_vm->_graphics->getPixel(/*x * 8 + */ 24 + i * 8 + 7 - bit, 161 + j) = white;
+					*_vm->_graphics->getPixel(24 + i * 8 + 7 - bit, 161 + j) = white;
 			}
 		}
 
@@ -205,7 +205,7 @@ void Basher::normal_edit() {
 	/*if (!_vm->_gyro->current.empty())
 		_vm->_gyro->current.clear();*/
 	left_margin = 1;
-	_vm->_gyro->curpos = 1;
+	_vm->_gyro->curpos = 0;
 }
 
 } // End of namespace Avalanche.
