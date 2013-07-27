@@ -84,8 +84,9 @@ void Basher::plottext() {
 
 	cursor_off();
 
-	_vm->_graphics->drawBar(24, 161, 640, 169, black);
+	_vm->_graphics->drawBar(24, 161, 640, 169, black); // Black out the line of the text.
 
+	// Draw the text. Similar to chalk(), but here we don't have to bother with the color of the characters.
 	for (byte i = 0; i < _vm->_gyro->current.size(); i++)
 		for (byte j = 0; j < 8; j++) {
 			byte pixel = _vm->_gyro->little[_vm->_gyro->current[i]][j];
