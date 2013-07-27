@@ -44,7 +44,7 @@ public:
 
 
 
-	void handleKeyDown(const Common::Event &event); // To replace Basher::keyboard_link().
+	void handleKeyDown(const Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
 
 	
 
