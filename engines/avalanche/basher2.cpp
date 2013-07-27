@@ -79,7 +79,25 @@ void Basher::init() {
 }
 
 void Basher::plottext() {
-	warning("STUB: Basher::plottext()");
+	if (_vm->_gyro->mouse_near_text())
+		_vm->_gyro->super_off();
+
+	cursor_off();
+
+	_vm->_graphics->drawBar(24, 161, 640, 169, black);
+
+	for (byte i = 0; i < _vm->_gyro->current.size(); i++)
+		for (byte j = 0; j < 8; j++) {
+			byte pixel = _vm->_gyro->little[_vm->_gyro->current[i]][j];
+			for (byte bit = 0; bit < 8; bit++) {
+				byte pixelBit = (pixel >> bit) & 1;
+				if (pixelBit != 0)
+					*_vm->_graphics->getPixel(/*x * 8 + */ 24 + i * 8 + 7 - bit, 161 + j) = white;
+			}
+		}
+
+	cursor_on();
+	_vm->_gyro->super_on();
 }
 
 void Basher::wipetext() {
