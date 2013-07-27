@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef GRAPHICS_H
+#define GRAPHICS_H
 
 #include "common/file.h"
 
@@ -98,4 +98,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // GRAPH_H
+#endif // GRAPHICS_H

@@ -29,11 +29,11 @@
 #include "avalanche/graphics.h"
 
 #include "common/system.h"
+#include "common/rect.h"
 
 #include "engines/util.h"
 
 #include "graphics/palette.h"
-#include "common/rect.h"
 
 namespace Avalanche {
 
