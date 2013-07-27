@@ -56,6 +56,19 @@ void Parser::handleInputText(const Common::Event &event) {
 	}
 }
 
+void Parser::handleBackspace() {
+	if (! _vm->_dropdown->ddm_o.menunow) {
+		if (_inputTextPos > _leftMargin) {
+			_inputTextPos--;
+			if ((_inputText[_inputTextPos] == '"') || (_inputText[_inputTextPos] == '`'))
+				_quote = !_quote;
+			_inputText.deleteChar(_inputTextPos);
+			plotText();
+		} else
+			_vm->_gyro->blip();
+	}
+}
+
 void Parser::plotText() {
 	if (_vm->_gyro->mouse_near_text())
 		_vm->_gyro->super_off();
