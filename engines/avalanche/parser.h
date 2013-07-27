@@ -46,6 +46,8 @@ public:
 
 	void handleInputText(const Common::Event &event);
 
+	void handleBackspace();
+
 	void plotText();
 
 private:

@@ -171,6 +171,8 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 	case Common::KEYCODE_KP5:
 		_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
 		break;
+	case Common::KEYCODE_BACKSPACE :
+		_vm->_parser->handleBackspace();
 	}
 
 	if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
