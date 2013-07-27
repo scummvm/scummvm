@@ -57,6 +57,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _rnd;
 
 	delete _graphics;
+	delete _parser;
 
 	delete _avalot;
 	delete _gyro;
@@ -79,6 +80,7 @@ AvalancheEngine::~AvalancheEngine() {
 
 Common::ErrorCode AvalancheEngine::initialize() {
 	_graphics = new Graphics(this);
+	_parser = new Parser(this);
 
 	_avalot = new Avalot(this);
 	_gyro = new Gyro(this);

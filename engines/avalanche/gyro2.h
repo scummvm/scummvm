@@ -479,10 +479,6 @@ public:
 
 
 
-
-
-	Common::String inputText;
-	byte curpos;
 	bool cursoron;
 	/* previous:^previoustype;*/
 	Common::String last;
@@ -548,7 +544,6 @@ public:
 
 	byte cp, ledstatus, defaultled;
 	raw characters;
-	bool quote; /* 66 or 99 next? */
 	bool alive;
 	char buffer[2000];
 	uint16 bufsize;
