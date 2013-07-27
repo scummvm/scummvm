@@ -173,8 +173,7 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 		break;
 	}
 
-	if (((32 <= event.kbd.ascii) && (event.kbd.ascii <= 46)) || ((48 <= event.kbd.ascii) && (event.kbd.ascii <= 223))
-		|| ((225 <= event.kbd.ascii) && (event.kbd.ascii <= 255))) {
+	if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47)) {
 			byte inChar = event.kbd.ascii;
 			if (_vm->_dropdown->ddm_o.menunow) {
 				_vm->_dropdown->parsekey(inChar, _vm->_enhanced->extd);
