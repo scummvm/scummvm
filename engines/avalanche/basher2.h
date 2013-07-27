@@ -31,6 +31,8 @@
 // to do this, define the o.c.c. RECORD. Setting gyro.demo to True will
 // cause them to be played back. 
 
+// TODO: Replace these functions gradually with ScummVM's own methods.
+
 #ifndef BASHER2_H
 #define BASHER2_H
 

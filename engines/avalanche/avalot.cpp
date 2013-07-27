@@ -182,8 +182,9 @@ void Avalot::run(Common::String arg) {
 	do {
 		uint32 beginLoop = _vm->_system->getMillis();
 
+		_vm->updateEvents(); // The event handler.
+
 		_vm->_lucerna->clock_lucerna();
-		_vm->_basher->keyboard_link();
 		_vm->_dropdown->menu_link();
 		_vm->_trip->readstick();
 		_vm->_gyro->force_numlock();
@@ -205,7 +206,7 @@ void Avalot::run(Common::String arg) {
 
 		// Not in the original:
 
-		_vm->updateEvents(); // The event handler.
+	
 
 		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 
