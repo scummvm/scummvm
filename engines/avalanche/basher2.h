@@ -73,7 +73,6 @@ private:
 	AvalancheEngine *_vm;
 
 	bool entering_filename;
-	byte left_margin;
 
 	void wipetext();
 

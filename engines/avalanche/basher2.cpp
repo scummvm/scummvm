@@ -179,10 +179,10 @@ void Basher::filename_edit() {
 
 void Basher::normal_edit() {
 	entering_filename = false;
-	left_margin = 1;
-	if (!_vm->_parser->inputText.empty())
-		_vm->_parser->inputText.clear();
-	_vm->_parser->inputTextPos = 0;
+	_vm->_parser->_leftMargin = 0;
+	if (!_vm->_parser->_inputText.empty())
+		_vm->_parser->_inputText.clear();
+	_vm->_parser->_inputTextPos = 0;
 }
 
 } // End of namespace Avalanche.

@@ -35,9 +35,10 @@ class AvalancheEngine;
 
 class Parser {
 public:
-	Common::String inputText;
-	byte inputTextPos;
-	bool quote; // 66 or 99 next?
+	Common::String _inputText;
+	byte _inputTextPos;
+	bool _quote; // 66 or 99 next?
+	byte _leftMargin;
 
 
 

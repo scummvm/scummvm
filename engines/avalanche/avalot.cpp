@@ -89,8 +89,8 @@ void Avalot::setup() {
 	_vm->_lucerna->load_digits();
 	_vm->_gyro->cheat = false;
 	_vm->_gyro->cp = 0;
-	_vm->_parser->inputTextPos = 0;
-	_vm->_parser->quote = true;
+	_vm->_parser->_inputTextPos = 0;
+	_vm->_parser->_quote = true;
 	_vm->_gyro->ledstatus = 177;
 	_vm->_gyro->defaultled = 2;
 	/* TSkellern:=0; { Replace with a more local variable sometime }*/
