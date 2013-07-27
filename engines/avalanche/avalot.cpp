@@ -89,7 +89,7 @@ void Avalot::setup() {
 	_vm->_lucerna->load_digits();
 	_vm->_gyro->cheat = false;
 	_vm->_gyro->cp = 0;
-	_vm->_gyro->curpos = 1;
+	_vm->_gyro->curpos = 0;
 	_vm->_gyro->quote = true;
 	_vm->_gyro->ledstatus = 177;
 	_vm->_gyro->defaultled = 2;
@@ -171,6 +171,29 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 	case Common::KEYCODE_KP5:
 		_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
 		break;
+	}
+
+	if (((32 <= event.kbd.ascii) && (event.kbd.ascii <= 46)) || ((48 <= event.kbd.ascii) && (event.kbd.ascii <= 223))
+		|| ((225 <= event.kbd.ascii) && (event.kbd.ascii <= 255))) {
+			byte inChar = event.kbd.ascii;
+			if (_vm->_dropdown->ddm_o.menunow) {
+				_vm->_dropdown->parsekey(inChar, _vm->_enhanced->extd);
+			} else {
+				if (_vm->_gyro->inputText.size() < 76) {
+					if ((inChar == '"') || (inChar == '`')) {
+						if (_vm->_gyro->quote)
+							inChar = '`';
+						else
+							inChar = '"';
+						_vm->_gyro->quote = !_vm->_gyro->quote;  // quote - unquote
+					}
+
+					_vm->_gyro->inputText.insertChar(inChar, _vm->_gyro->curpos);
+					_vm->_gyro->curpos++;
+					_vm->_basher->plottext();
+				} else
+					_vm->_gyro->blip();
+			}
 	}
 }
 
