@@ -103,7 +103,7 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 	}
 
 	/* Then we draw the picture to the blank places. */
-	uint16 i = 0; // Because the original siltype starts at 5!!! See Graph.h for definition.
+	uint16 i = 0; // Because the original siltype starts at 5!!! See Graphics.h for definition.
 
 	for (byte qay = 0; qay < sprite.yl; qay++)
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
