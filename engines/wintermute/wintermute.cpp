@@ -250,6 +250,9 @@ int WintermuteEngine::messageLoop() {
 			}
 			prevTime = time;
 		}
+		if (shouldQuit()) {
+			break;
+		}
 		if (_game && _game->_quitting) {
 			break;
 		}

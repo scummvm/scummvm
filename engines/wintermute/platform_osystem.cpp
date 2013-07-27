@@ -125,9 +125,12 @@ void BasePlatform::handleEvent(Common::Event *event) {
 //			_gameRef->AutoSaveOnExit();
 //			_gameRef->_quitting = true;
 //		}
-		if (_gameRef) {
-			_gameRef->onWindowClose();
-		}
+
+// The engine CAN query for closing, but we disable it for now, as the EVENT_QUIT-event
+// can't be stopped.
+//		if (_gameRef) {
+//			_gameRef->onWindowClose();
+//		}
 		break;
 	default:
 		// TODO: Do we care about any other events?
