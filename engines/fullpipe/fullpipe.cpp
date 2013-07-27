@@ -90,6 +90,11 @@ FullpipeEngine::~FullpipeEngine() {
 void FullpipeEngine::initialize() {
 	_globalMessageQueueList = new GlobalMessageQueueList;
 	_behaviorManager = new BehaviorManager;
+
+	_sceneRect.left = 0;
+	_sceneRect.top = 0;
+	_sceneRect.right = 799;
+	_sceneRect.bottom = 599;
 }
 
 Common::Error FullpipeEngine::run() {

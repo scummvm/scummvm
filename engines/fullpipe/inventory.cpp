@@ -101,7 +101,7 @@ void CInventory2::addItem(int itemId, int value) {
 }
 
 void CInventory2::rebuildItemRects() {
-	g_fullpipe->accessScene(_sceneId);
+	_scene = g_fullpipe->accessScene(_sceneId);
 
 	warning("STUB: CInventory2::rebuildItemRects()");
 }

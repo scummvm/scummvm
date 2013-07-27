@@ -60,6 +60,7 @@ struct Bitmap {
 class Picture : public MemoryObject {
 	friend class Movement;
 	friend class DynamicPhase;
+	friend class PictureObject;
 
 	Common::Rect _rect;
 	Bitmap *_convertedBitmap;
@@ -130,6 +131,7 @@ class GameObject : public CObject {
 };
 
 class PictureObject : public GameObject {
+  public:
 	Picture *_picture;
 	CPtrList *_pictureObject2List;
 	int _ox2;

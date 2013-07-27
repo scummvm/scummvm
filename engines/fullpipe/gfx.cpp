@@ -144,6 +144,10 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	_ox2 = _ox;
 	_oy2 = _oy;
 
+#if 0
+	_picture->displayPicture();
+#endif
+
 	return true;
 }
 
@@ -299,10 +303,6 @@ bool Picture::load(MfcArchive &file) {
 	getData();
 
 	debug(5, "Picture::load: <%s>", _memfilename);
-
-#if 0
-	displayPicture();
-#endif
 
 	return true;
 }

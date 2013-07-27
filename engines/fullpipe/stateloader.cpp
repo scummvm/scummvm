@@ -29,6 +29,7 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
 
 #include "fullpipe/gameobj.h"
 
@@ -104,16 +105,42 @@ bool FullpipeEngine::loadGam(const char *fname) {
 
 		_inventory->rebuildItemRects();
 
-		//for (CPtrList::iterator s = _inventory->getScene()->_picObjList.begin(); s != _inventory->getScene()->_picObjList.end(); ++s) {
-		//}
+		for (CPtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
+			((MemoryObject *)((PicPicturetureObject *)*p)->_picture)->load();
+		}
 
 		//_sceneSwitcher = sceneSwitcher;
 		//_preloadCallback = gameLoaderPreloadCallback
 		//_readSavegameCallback = gameLoaderReadSavegameCallback;
 		_aniMan = accessScene(SC_COMMON)->getAniMan();
 		_scene2 = 0;
-		
-		warning("STUB: loadGam()");
+#if 0
+		_movTable = _aniMan->preloadMovements();
+
+		_aniMan->setSpeed(1);
+
+		PictureObject *pic = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
+
+		pic->setFlags(pic->_flags & 0xFFFB);
+
+		// Not used in full game
+		//_evalVersionPic = accessScene(SC_COMMON)->getPictureObjectById(PIC_CMN_EVAL, 0);
+
+		initMaps();
+		initCursors();
+
+		setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
+
+		if (_flgPlayIntro) {
+			_gameLoader->loadScene(SC_INTRO1);
+			_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+		} else {
+			_gameLoader->loadScene(SC_1);
+			_gameLoader->gotoScene(SC_1, TrubaLeft);
+		}
+#endif
+		if (!_currentScene)
+			return false;
 	} else
 		return false;
 
