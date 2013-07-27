@@ -50,6 +50,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
 	{"thebox",          "The Box"},
+	{"tib",				"Fairy Tales About Toshechka and Boshechka"},
 	{"tradestory",		"The Trader of Stories"},
 	{"twc",             "the white chamber"},
 	{"wintermute",      "Wintermute engine game"},
@@ -587,6 +588,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("data.dcp", "ec5f0c7e8174e307701447b53afe7e2f", 108372483),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Fairy Tales About Toshechka and Boshechka
+	{
+		"tib",
+		"",
+		AD_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526),
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
