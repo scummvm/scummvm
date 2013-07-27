@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* TRIP5	Trippancy V */
+/* TRIP5	Trippancy V - the sprite animation subsystem */
 
 #include "avalanche/avalanche.h"
 
@@ -204,7 +204,8 @@ void triptype::walk() {
 	if (!_tr->_vm->_gyro->doing_sprite_run) {
 		ox[_tr->_vm->_gyro->cp] = x;
 		oy[_tr->_vm->_gyro->cp] = y;
-		if (homing)  homestep();
+		if (homing)
+			homestep();
 		x = x + ix;
 		y = y + iy;
 	}
@@ -250,7 +251,8 @@ void triptype::walk() {
 		count++;
 		if (((ix != 0) || (iy != 0)) && (count > 1)) {
 			step++;
-			if (step == a.seq)  step = 0;
+			if (step == a.seq)
+				step = 0;
 			count = 0;
 		}
 	}
@@ -1365,9 +1367,9 @@ void Trip::trippancy_link() {
 	}
 
 	call_andexors();
-	for (fv = 1; fv <= numtr; fv++) {
-		triptype &with = tr[fv];
-		if (with.quick && with.call_eachstep) {
+
+	for (fv = 0; fv < numtr; fv++) {
+		if (tr[fv].quick && tr[fv].call_eachstep) {
 			switch (tr[fv].eachstep) {
 			case procfollow_avvy_y :
 				follow_avvy_y(fv);
@@ -1391,6 +1393,7 @@ void Trip::trippancy_link() {
 			}
 		}
 	}
+
 	if (mustexclaim) {
 		mustexclaim = false;
 		_vm->_visa->dixi('x', saywhat);
