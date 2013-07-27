@@ -60,14 +60,6 @@ bool SaveLoadManager::saveFile(const Common::String &file, const void *buf, size
 	return save(file, buf, n);
 }
 
-void SaveLoadManager::initSaves() {
-	Common::String dataFilename = "HISCORE.DAT";
-	byte data[100];
-	Common::fill(&data[0], &data[100], 0);
-
-	saveFile(dataFilename, data, 100);
-}
-
 void SaveLoadManager::load(const Common::String &file, byte *buf) {
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(file);
 	if (savefile == NULL)
@@ -259,6 +251,10 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
+	if (version >= 3)
+		// Sync embedded Breakout game high score data
+		s.syncBytes(&_vm->_globals->_highScoreData[0], 100);
+
 	s.syncBytes(&_vm->_globals->_saveData->_data[0], 2050);
 	syncCharacterLocation(s, _vm->_globals->_saveData->_cloneHopkins);
 	syncCharacterLocation(s, _vm->_globals->_saveData->_realHopkins);

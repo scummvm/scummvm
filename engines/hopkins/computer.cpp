@@ -58,7 +58,7 @@ ComputerManager::ComputerManager(HopkinsEngine *vm) {
 	_minBreakoutMoveSpeed = 0;
 	_maxBreakoutMoveSpeed = 0;
 	_lastBreakoutMoveSpeed = 0;
-	_breakoutHiscore = 0;
+	_lowestHiScore = 0;
 }
 
 /**
@@ -578,27 +578,28 @@ void ComputerManager::displayGamesSubMenu() {
  * Load Highscore from file
  */
 void ComputerManager::loadHiscore() {
-	byte *ptr = _vm->_globals->allocMemory(100);
-	_vm->_saveLoad->load("HISCORE.DAT", ptr);
+	const byte *ptr = _vm->_globals->_highScoreData;
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
-		for (int i = 0; i < 5; ++i) {
+		_score[scoreIndex]._name = "      ";
+		_score[scoreIndex]._score = "         ";
+
+		for (int i = 0; i < 6; ++i) {
 			char nextChar = ptr[(16 * scoreIndex) + i];
 			if (!nextChar)
 				nextChar = ' ';
-			_score[scoreIndex]._name += nextChar;
+			_score[scoreIndex]._name.setChar(nextChar, i);
 		}
 
 		for (int i = 0; i < 9; ++i) {
 			char nextChar = ptr[(scoreIndex * 16) + 6 + i];
 			if (!nextChar)
 				nextChar = '0';
-			_score[scoreIndex]._score += nextChar;
+			_score[scoreIndex]._score.setChar(nextChar, i);
 		}
 	}
 
-	_vm->_globals->freeMemory(ptr);
-	_breakoutHiscore = atol(_score[5]._score.c_str());
+	_lowestHiScore = atol(_score[5]._score.c_str());
 }
 
 /**
@@ -779,7 +780,7 @@ void ComputerManager::playBreakout() {
 			_vm->_events->mouseOn();
 			_vm->_objectsMan->removeSprite(0);
 			_vm->_objectsMan->removeSprite(1);
-			if (_breakoutScore > _breakoutHiscore)
+			if (_breakoutScore > _lowestHiScore)
 				getScoreName();
 			if (displayHiscores() != 1)
 				break;
@@ -823,11 +824,11 @@ int ComputerManager::displayHiscores() {
 		yp += 46;
 
 		// Display the characters of the name
-		for (int i = 0; i <= 5; i++)
+		for (int i = 0; i < 6; i++)
 			displayHiscoreLine(ptr, 9 * i + 69, yp, _score[scoreIndex]._name[i]);
 
 		// Display the digits of the score
-		for (int i = 0; i <= 8; i++)
+		for (int i = 0; i < 9; i++)
 			displayHiscoreLine(ptr, 9 * i + 199, yp, _score[scoreIndex]._score[i]);
 	}
 
@@ -864,6 +865,19 @@ void ComputerManager::getScoreName() {
 	_vm->_graphicsMan->setColorPercentage(254, 0, 0, 0);
 	byte *ptr = _vm->_fileIO->loadFile("ALPHA.SPR");
 	_vm->_graphicsMan->fadeInBreakout();
+	
+	// Figure out the line to put the new high score on
+	int scoreLine = 0;
+	while (scoreLine < 5 && _breakoutScore < atol(_score[scoreLine]._score.c_str()))
+		++scoreLine;
+
+	// If it's not the lasat line, move the lines down
+	for (int line = 5; line > scoreLine; --line) {
+		_score[line]._name = _score[line - 1]._name;
+		_score[line]._score = _score[line - 1]._score;
+	}
+
+	// Get the name for the new high score
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
 
@@ -873,13 +887,15 @@ void ComputerManager::getScoreName() {
 		if ((curChar > '9') && (curChar < 'A'))
 			curChar = ' ';
 
-		_score[5]._name.setChar(curChar, strPos);
+		_score[scoreLine]._name.setChar(curChar, strPos);
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, curChar);
 
 		for (int idx = 0; idx < 12; ++idx)
 			_vm->_events->refreshScreenAndEvents();
 	}
-	_score[5]._score = "         ";
+
+	// Set up the new score
+	_score[scoreLine]._score = "         ";
 
 	char score[16];
 	sprintf(score, "%d", _breakoutScore);
@@ -888,8 +904,8 @@ void ComputerManager::getScoreName() {
 		++scoreLen;
 	while (score[scoreLen]);
 
-	for (int i = scoreLen, scorePos = 8; i >= 0; i--) {
-		_score[5]._score.setChar(score[i], scorePos--);
+	for (int i = scoreLen - 1, scorePos = 8; i >= 0; i--) {
+		_score[scoreLine]._score.setChar(score[i], scorePos--);
 	}
 	_vm->_graphicsMan->fadeOutBreakout();
 	_vm->_globals->freeMemory(ptr);
@@ -969,11 +985,11 @@ void ComputerManager::saveScore() {
 		}
 	}
 
-	byte *ptr = _vm->_globals->allocMemory(100);
+	byte *ptr = _vm->_globals->_highScoreData;
 	memset(ptr, 0, 99);
 	for (int scorePlaceIdx = 0; scorePlaceIdx <= 5; scorePlaceIdx++) {
 		int curBufPtr = 16 * scorePlaceIdx;
-		for (int namePos = 0; namePos <= 4; namePos++) {
+		for (int namePos = 0; namePos < 6; namePos++) {
 			char curChar = _score[scorePlace[scorePlaceIdx]]._name[namePos];
 			if (!curChar)
 				curChar = ' ';
@@ -990,9 +1006,6 @@ void ComputerManager::saveScore() {
 		};
 		ptr[curBufPtr + 15] = 0;
 	}
-
-	_vm->_saveLoad->saveFile("HISCORE.DAT", ptr, 100);
-	_vm->_globals->freeMemory(ptr);
 }
 
 /**

@@ -63,7 +63,7 @@ private:
 	bool _ballUpFl;
 	int _breakoutLevelNbr;
 	int _padPositionX;
-	int _breakoutHiscore;
+	int _lowestHiScore;
 	int _minBreakoutMoveSpeed;
 	int _maxBreakoutMoveSpeed;
 	int _lastBreakoutMoveSpeed;

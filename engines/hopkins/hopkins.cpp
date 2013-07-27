@@ -111,8 +111,6 @@ Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc)
 }
 
 Common::Error HopkinsEngine::run() {
-	_saveLoad->initSaves();
-
 	_globals->setConfig();
 	_fileIO->initCensorship();
 	initializeSystem();
