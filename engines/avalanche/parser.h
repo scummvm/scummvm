@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -25,67 +25,33 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* BASHER		Handles the keyboard. */
+#ifndef PARSER_H
+#define PARSER_H
 
-// Note: this unit can record keystrokes, for the demo. If you want it
-// to do this, define the o.c.c. RECORD. Setting gyro.demo to True will
-// cause them to be played back. 
-
-// TODO: Replace these functions gradually with ScummVM's own methods.
-
-#ifndef BASHER2_H
-#define BASHER2_H
-
-#include "common/scummsys.h"
+#include "common/events.h"
 
 namespace Avalanche {
 class AvalancheEngine;
 
-class Basher {
+class Parser {
 public:
-	uint16 count;
+	Common::String inputText;
+	byte inputTextPos;
+	bool quote; // 66 or 99 next?
 
 
 
-	Basher(AvalancheEngine *vm);
+	Parser(AvalancheEngine *vm);
 
-	void init();
+	void handleInputText(const Common::Event &event);
 
-	void keyboard_link();
-
-	void cursor_on();
-
-	void get_demorec();
-
-	bool demo_ready();
-
-	void cursor_off();
-
-	void filename_edit();
-
-	void normal_edit();
-
-#ifdef RECORD
-	void record_one();
-#endif
+	void plotText();
 
 private:
 	AvalancheEngine *_vm;
 
-	bool entering_filename;
-	byte left_margin;
-
-	void wipetext();
-
-	void do_cursor();
-
-	char firstchar(Common::String x);
-
-	void try_dd();
-
-	void typein();
 };
 
-} // End of namespace Avalanche.
+} // End of namespace Avalanche
 
-#endif // BASHER2_H
+#endif // PARSER_H

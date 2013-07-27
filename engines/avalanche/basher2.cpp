@@ -78,29 +78,6 @@ void Basher::init() {
 #endif
 }
 
-void Basher::plottext() {
-	if (_vm->_gyro->mouse_near_text())
-		_vm->_gyro->super_off();
-
-	cursor_off();
-
-	_vm->_graphics->drawBar(24, 161, 640, 169, black); // Black out the line of the text.
-
-	// Draw the text. Similar to chalk(), but here we don't have to bother with the color of the characters.
-	for (byte i = 0; i < _vm->_gyro->inputText.size(); i++)
-		for (byte j = 0; j < 8; j++) {
-			byte pixel = _vm->_gyro->characters[_vm->_gyro->inputText[i]][j];
-			for (byte bit = 0; bit < 8; bit++) {
-				byte pixelBit = (pixel >> bit) & 1;
-				if (pixelBit != 0)
-					*_vm->_graphics->getPixel(24 + i * 8 + 7 - bit, 161 + j) = white;
-			}
-		}
-
-	cursor_on();
-	_vm->_gyro->super_on();
-}
-
 void Basher::wipetext() {
 	warning("STUB: Basher::wipetext()");
 }
@@ -202,10 +179,10 @@ void Basher::filename_edit() {
 
 void Basher::normal_edit() {
 	entering_filename = false;
-	/*if (!_vm->_gyro->current.empty())
-		_vm->_gyro->current.clear();*/
 	left_margin = 1;
-	_vm->_gyro->curpos = 0;
+	if (!_vm->_parser->inputText.empty())
+		_vm->_parser->inputText.clear();
+	_vm->_parser->inputTextPos = 0;
 }
 
 } // End of namespace Avalanche.
