@@ -39,17 +39,17 @@ void Parser::handleInputText(const Common::Event &event) {
 	if (_vm->_dropdown->ddm_o.menunow) {
 		_vm->_dropdown->parsekey(inChar, _vm->_enhanced->extd);
 	} else {
-		if (inputText.size() < 76) {
+		if (_inputText.size() < 76) {
 			if ((inChar == '"') || (inChar == '`')) {
-				if (quote)
+				if (_quote)
 					inChar = '`';
 				else
 					inChar = '"';
-				quote = !quote;  // quote - unquote
+				_quote = !_quote;  // quote - unquote
 			}
 
-			inputText.insertChar(inChar, inputTextPos);
-			inputTextPos++;
+			_inputText.insertChar(inChar, _inputTextPos);
+			_inputTextPos++;
 			plotText();
 		} else
 			_vm->_gyro->blip();
@@ -65,9 +65,9 @@ void Parser::plotText() {
 	_vm->_graphics->drawBar(24, 161, 640, 169, black); // Black out the line of the text.
 
 	// Draw the text. Similar to chalk(), but here we don't have to bother with the color of the characters.
-	for (byte i = 0; i < _vm->_parser->inputText.size(); i++)
+	for (byte i = 0; i < _vm->_parser->_inputText.size(); i++)
 		for (byte j = 0; j < 8; j++) {
-			byte pixel = _vm->_gyro->characters[_vm->_parser->inputText[i]][j];
+			byte pixel = _vm->_gyro->characters[_vm->_parser->_inputText[i]][j];
 			for (byte bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
 				if (pixelBit != 0)
