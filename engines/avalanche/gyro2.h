@@ -481,7 +481,7 @@ public:
 
 
 
-	Common::String current;
+	Common::String inputText;
 	byte curpos;
 	bool cursoron;
 	/* previous:^previoustype;*/
@@ -547,7 +547,7 @@ public:
 	Common::String atkey; /* For XTs, set to "alt-". For ATs, set to "f1". */
 
 	byte cp, ledstatus, defaultled;
-	raw little;
+	raw characters;
 	bool quote; /* 66 or 99 next? */
 	bool alive;
 	char buffer[2000];

@@ -315,7 +315,7 @@ void Scrolls::loadfont() {
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(_vm->_gyro->little[i],16);
+		f.read(_vm->_gyro->characters[i],16);
 	f.close();
 }
 
