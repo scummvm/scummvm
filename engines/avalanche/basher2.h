@@ -74,8 +74,6 @@ private:
 
 	char firstchar(Common::String x);
 
-	void try_dd();
-
 	void typein();
 };
 

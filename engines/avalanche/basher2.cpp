@@ -56,8 +56,8 @@ Basher::Basher(AvalancheEngine *vm) {
 
 void Basher::init() {
 	/* new(previous);*/
-	if (!_vm->_gyro->last.empty())
-		_vm->_gyro->last.clear();
+	if (!_vm->_parser->_inputTextBackup.empty())
+		_vm->_parser->_inputTextBackup.clear();
 
 	normal_edit();
 
@@ -140,9 +140,7 @@ char Basher::firstchar(Common::String x) {
 }
 
 
-void Basher::try_dd() { /* This asks the Parsekey proc in Dropdown if it knows it. */
-	warning("STUB: Basher::try_dd()");
-}
+
 
 void Basher::typein() {
 	warning("STUB: Basher::typein()");
