@@ -147,8 +147,7 @@ private:
 
 	byte fv;
 
-	void checkword(Common::String &x);
-	Common::String wordnum(Common::String x);
+	byte wordnum(Common::String x);
 
 	void replace(Common::String old1, Common::String new1);
 
@@ -211,6 +210,8 @@ private:
 	void person_speaks();
 
 	void heythanks();
+
+	int16 pos(const Common::String &crit, const Common::String &src); // Returns the index of the first appearance of crit in src.
 
 };
 

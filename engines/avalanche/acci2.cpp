@@ -43,6 +43,8 @@
 
 #include "common/textconsole.h"
 
+#include <cstring>
+
 
 /*#include "NimUnit.h"*/
 /*#include "Highs.h"*/
@@ -224,27 +226,25 @@ void Acci::init() {
 	_vm->_gyro->weirdword = false;
 }
 
-void Acci::checkword(Common::String &x) { /* Checks uint16 "fv". */
-	warning("STUB: Acci::checkuint16()");
+void Acci::clearwords() {
+	for (byte i = 0; i < 11; i++)
+		if (!realwords[i].empty())
+			realwords[i].clear();
 }
 
-Common::String Acci::wordnum(Common::String x)
-{
-	char whatsit;
-	uint16 fv;
-	bool gotcha;
+byte Acci::wordnum(Common::String x) {
+	if (x.empty())
+		return 0;
 
-	Common::String wordnum_result;
-	if (x == "") {
-		wordnum_result = "";
-		return wordnum_result;
+	byte whatsit = pardon;
+	bool gotcha = false;
+	for (uint16 fv = 0; fv < nowords; fv++) {
+		if ((words[fv].w == x) || ((Common::String(words[fv].w.c_str(), x.size()) == x) && !gotcha))
+			whatsit = words[fv].n;
+		if (words[fv].w == x)
+			gotcha = true;
 	}
-	whatsit = pardon;
-	gotcha = false;
-	for (fv = nowords; fv >= 1; fv--)
-		checkword(x);
-	wordnum_result = whatsit;
-	return wordnum_result;
+	return whatsit;
 }
 
 void Acci::replace(Common::String old1, Common::String new1) {
@@ -314,7 +314,15 @@ void Acci::cheatparse(Common::String codes) {
 }
 
 void Acci::punctustrip(Common::String &x) {        /* Strips punctuation from x. */
-	warning("STUB: Acci::punctustrip()");
+	const char punct[] = "~`!@#$%^&*()_+-={}[]:\"|;'\\,./<>?";
+
+	for (byte fv = 0; fv < 32; fv++)
+		do {
+			int16 p = pos(Common::String(punct[fv]), x);
+			if (p == -1)
+				break;
+			x.deleteChar(p);
+		} while (true);
 }
 
 
@@ -370,14 +378,186 @@ void Acci::clearuint16s() {
 	warning("STUB: Acci::clearuint16s()");
 }
 
+int16 Acci::pos(const Common::String &crit, const Common::String &src) {
+	if (src.contains(crit))
+		return strstr(src.c_str(),crit.c_str()) - src.c_str();
+	else
+		return -1;
+}
+
 void Acci::parse() {
 	byte n, fv, ff;
-	Common::String c, cc, thisuint16;
+	Common::String c, cc, thisword;
 	Common::String answer;
 	bool notfound;
 
-	/* first parsing - uint16 identification */
-	warning("STUB: Acci::parse()");
+	// First parsing - word identification
+
+	thats = "";
+	c = _vm->_parser->_inputText + ' ';
+	n = 0;
+	polite = false;
+	verb = pardon;
+	thing = pardon;
+	thing2 = pardon;
+	person = pardon;
+	clearwords();
+	if (_vm->_parser->_inputText[0] == '.') {
+		// A cheat mode attempt.
+		cheatparse(_vm->_parser->_inputText);
+		thats = nowt;
+		return;
+	} // Not our department! Otherwise...
+
+	// Are we being interrogated right now?
+
+	if (_vm->_gyro->interrogation > 0) {
+		store_interrogation(_vm->_gyro->interrogation);
+		_vm->_gyro->weirdword = true;
+		return;
+	}
+
+	cc = c;
+	c.toUppercase();
+	while (!c.empty()) {
+		while ((c[0] == ' ') && (!c.empty())) {
+			c.deleteChar(0);
+			cc.deleteChar(0);
+		}
+
+		// Get the first words of the strings.
+		byte size = pos(Common::String(' '), c) + 1;
+		char *subStr = new char[size];
+		Common::strlcpy(subStr, c.c_str(), size);
+		thisword = subStr;
+		Common::strlcpy(subStr, cc.c_str(), size);
+		realwords[n] = subStr;
+		delete[] subStr;
+
+		punctustrip(c);
+
+		notfound = true;
+		if (!thisword.empty()) {
+			for (ff = 0; ff < 31; ff++) { // Check Also, FIRST!
+				if (pos(',' + thisword, *_vm->_gyro->also[ff][0]) > -1) {
+					thats = thats + Common::String(99 + ff);
+					notfound = false;
+				}
+			}
+		}
+
+		if (notfound) {
+			answer = wordnum(thisword);
+			if (answer[0] == pardon) {
+				notfound = true;
+				thats = thats + pardon;
+			} else
+				thats = thats + answer;
+			n++;
+		}
+
+		c.deleteChar(pos(c, Common::String(' ')));
+		cc.deleteChar(pos(cc, Common::String(' ')));
+	}
+
+	//if (pos("\376", thats) > 0)  unknown = realwords[pos("\376", thats)];
+	//else unknown = "";
+	//replace("\377", ""); /* zap noise words */
+	//replace(string('\15') + '\342', "\1"); /* "look at" = "examine" */
+	//replace(string('\15') + '\344', "\1"); /* "look in" = "examine" */
+	//replace(string('\4') + '\343', "\21"); /* "get up" = "stand" */
+	//replace(string('\4') + '\347', "\21"); /* "get down" = "stand"... well, why not? */
+	//replace(string('\22') + '\344', "\2"); /* "go in" = "open [door]" */
+	//replace(string('\34') + '\345', "\375"); /* "P' off" is a swear word */
+	//replace(string('\4') + '\6', "\6"); /* "Take inventory" (remember Colossal Adventure?) */
+	//replace(string('\50') + '\350', "\25"); /* "put on" = "don" */
+	//replace(string('\4') + '\345', "\24"); /* "take off" = "doff" */
+
+	//* Words that could mean more than one person */
+	//{
+	//	if (room == r__nottspub)  replace("\314", "\244"); /* Barman = Port */
+	//	else replace("\314", "\232");                  /* Barman = Malagauche */
+	//	switch (room) {
+	//	case r__aylesoffice:
+	//		replace("\313", "\243");
+	//		break;        /* Monk = Ayles */
+	//	case r__musicroom:
+	//		replace("\313", "\246");
+	//		break;          /* Monk = Jacques */
+	//	default:
+	//		replace("\313", "\242");                  /* Monk = Ibythneth */
+	//	}
+	//}
+
+	//if (do_pronouns()) {
+	//	weirdword = true;
+	//	thats = nowt;
+	//	return;
+	//}
+
+	//* second parsing - accidence */
+
+	//subject = "";
+	//subjnumber = 0; /* Find subject of conversation. */
+	//for (fv = 1; fv <= 11; fv ++)
+	//	if (set::of('`', '\'', eos).has(realwords[fv][1])) {
+	//		subjnumber = ord(thats[fv]);
+	//		thats[fv] = moved;
+	//		flush(); /* Only the second time I've used that! */
+	//	}
+
+	//if (subjnumber == 0) /* Still not found. */
+	//	for (fv = 1; fv <= 10; fv ++)
+	//		if (thats[fv] == '\374') { /* the word is "about", or something similar */
+	//			subjnumber = ord(thats[fv + 1]);
+	//			thats[fv + 1] = '\0';
+	//			flush(); /* ...Third! */
+	//		}
+
+	//if (subjnumber == 0) /* STILL not found! Must be the word after "say". */
+	//	for (fv = 1; fv <= 10; fv ++)
+	//		if ((thats[fv] == '\7') && !(set::of('\0', range('\341', '\345'), eos).has(thats[fv + 1]))) {
+	//			/* SAY not followed by a preposition */
+	//			subjnumber = ord(thats[fv + 1]);
+	//			thats[fv + 1] = '\0';
+	//			flush(); /* ...Fourth! */
+	//		}
+
+	//for (fv = length(thats); fv >= 1; fv --) /* Reverse order- so first'll be used */
+	//	switch (thats[fv]) {
+	//	case '\1' ... '\61':
+	//	case '\375':
+	//	case '\371':
+	//		verb = thats[fv];
+	//		break;
+	//	case '\62' ... '\225': {
+	//		thing2 = thing;
+	//		thing = thats[fv];
+	//							}
+	//							break;
+	//	case '\226' ... '\307':
+	//		person = thats[fv];
+	//		break;
+	//	case '\373':
+	//		polite = true;
+	//		break;
+	//}
+
+	//if ((unknown != "") && !
+	//	(set::of(vb_exam, vb_talk, vb_save, vb_load, vb_dir, eos).has(verb))) {
+	//		display(string("Sorry, but I have no idea what `") + unknown +
+	//			"\" means. Can you rephrase it?");
+	//		weirdword = true;
+	//} else weirdword = false;
+
+	//if (thats == "")  thats = nowt;
+
+	//if (thing != pardon)  it = thing;
+
+	//if (person != pardon) {
+	//	if (person < '\257')  him = person;
+	//	else her = person;
+	//}
 }
 
 void Acci::examobj() {   /* Examine a standard object-thing */
