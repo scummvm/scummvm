@@ -52,32 +52,30 @@ const byte menuConstants[8][4] = {
  * Setup a menu's contents
  * @remarks	Originally called 'menut'
  */
-void Menu::setText(int menuId, Common::String name) {
-	byte h = hi(menuId);
-	byte l = lo(menuId);
+void Menu::setText(int menuId, int actionId, Common::String name) {
 	Common::String s = name;
 
 	while (s.size() < 22)
 		s += ' ';
 
-	switch (h) {
+	switch (menuId) {
 	case MENU_INVENTORY:
-		if (l != 7) {
-			_inventoryStringArray[l] = s;
-			_inventoryStringArray[l].insertChar(' ', 0);
+		if (actionId != 7) {
+			_inventoryStringArray[actionId] = s;
+			_inventoryStringArray[actionId].insertChar(' ', 0);
 		}
 		break;
 	case MENU_MOVE:
-		_moveStringArray[l] = s;
+		_moveStringArray[actionId] = s;
 		break;
 	case MENU_ACTION:
-		_actionStringArray[l] = s;
+		_actionStringArray[actionId] = s;
 		break;
 	case MENU_SELF:
-		_selfStringArray[l] = s;
+		_selfStringArray[actionId] = s;
 		break;
 	case MENU_DISCUSS:
-		_discussStringArray[l] = s;
+		_discussStringArray[actionId] = s;
 		break;
 	default:
 		break;
@@ -99,40 +97,38 @@ void Menu::setDestinationText(int roomId) {
 		nomp = _vm->getString(_vm->_destinationArray[destinationId][roomId] + kMenuPlaceStringIndex);
 		while (nomp.size() < 20)
 			nomp += ' ';
-		setText(_moveMenu[destinationId + 1], nomp);
+		setText(_moveMenu[destinationId + 1]._menuId, _moveMenu[destinationId + 1]._actionId, nomp);
 	}
 	nomp = "*                   ";
 	for (int i = 7; i >= destinationId + 1; --i)
-		setText(_moveMenu[i], nomp);
+		setText(_moveMenu[i]._menuId, _moveMenu[i]._actionId, nomp);
 }
 
 /**
  * _disable a menu item
- * @param menuId	Hi byte represents menu number, lo byte reprsents item index
+ * @param menuId	Menu number
+ * @param actionId  Item index
  */
-void Menu::disableMenuItem(int menuId) {
-	byte h = hi(menuId);
-	byte l = lo(menuId);
-
-	switch (h) {
+void Menu::disableMenuItem(int menuId, int actionId) {
+	switch (menuId) {
 	case MENU_INVENTORY:
-		if (l > 6) {
-			_inventoryStringArray[l].setChar('<', 0);
-			_inventoryStringArray[l].setChar('>', 21);
+		if (actionId > 6) {
+			_inventoryStringArray[actionId].setChar('<', 0);
+			_inventoryStringArray[actionId].setChar('>', 21);
 		} else
-			_inventoryStringArray[l].setChar('*', 0);
+			_inventoryStringArray[actionId].setChar('*', 0);
 		break;
 	case MENU_MOVE:
-		_moveStringArray[l].setChar('*', 0);
+		_moveStringArray[actionId].setChar('*', 0);
 		break;
 	case MENU_ACTION:
-		_actionStringArray[l].setChar('*', 0);
+		_actionStringArray[actionId].setChar('*', 0);
 		break;
 	case MENU_SELF:
-		_selfStringArray[l].setChar('*', 0);
+		_selfStringArray[actionId].setChar('*', 0);
 		break;
 	case MENU_DISCUSS:
-		_discussStringArray[l].setChar('*', 0);
+		_discussStringArray[actionId].setChar('*', 0);
 		break;
 	default:
 		break;
@@ -141,31 +137,29 @@ void Menu::disableMenuItem(int menuId) {
 
 /**
  * Enable a menu item
- * @param menuId	Hi byte represents menu number, lo byte reprsents item index
+ * @param menuId	Menu number
+ * @param actionId  Item index
  * @remarks	Originally called menu_enable
  */
-void Menu::enableMenuItem(int menuId) {
-	byte h = hi(menuId);
-	byte l = lo(menuId);
-
-	switch (h) {
+void Menu::enableMenuItem(int menuId, int actionId) {
+	switch (menuId) {
 	case MENU_INVENTORY:
-		_inventoryStringArray[l].setChar(' ', 0);
-		_inventoryStringArray[l].setChar(' ', 21);
+		_inventoryStringArray[actionId].setChar(' ', 0);
+		_inventoryStringArray[actionId].setChar(' ', 21);
 		break;
 	case MENU_MOVE:
-		_moveStringArray[l].setChar(' ', 0);
+		_moveStringArray[actionId].setChar(' ', 0);
 		break;
 	case MENU_ACTION:
-		_actionStringArray[l].setChar(' ', 0);
+		_actionStringArray[actionId].setChar(' ', 0);
 		break;
 	case MENU_SELF:
-		_selfStringArray[l].setChar(' ', 0);
+		_selfStringArray[actionId].setChar(' ', 0);
 		// The original sets two times the same value. Skipped
 		// _selfStringArray[l].setChar(' ', 0);
 		break;
 	case MENU_DISCUSS:
-		_discussStringArray[l].setChar(' ', 0);
+		_discussStringArray[actionId].setChar(' ', 0);
 		break;
 	default:
 		break;
@@ -235,7 +229,7 @@ void Menu::invert(int indx) {
 	if (_msg4 == OPCODE_NONE)
 		return;
 
-	int menuIndex = lo(_msg4);
+	int menuIndex = _msg4 & 0xFF;
 
 	_vm->_screenSurface.putxy(menuConstants[_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
 
@@ -471,7 +465,7 @@ void Menu::updateMenu() {
 			// Another menu to be _displayed
 			_vm->setMouseClick(false);
 			menuUp(_msg3);
-			if (lo(_msg4) == 1)
+			if ((_msg4 & 0xFF) == 1)
 				_msg3 = MENU_SAVE;
 			else
 				_msg3 = MENU_LOAD;
@@ -531,12 +525,16 @@ void Menu::initMenu(MortevielleEngine *vm) {
 		++i;
 	} while (i != 22);
 	for (i = 1; i <= 8; ++i) {
-		_discussMenu[i] = 0x500 + i;
-		if (i < 8)
-			_moveMenu[i] = 0x200 + i;
-		_inventoryMenu[i] = 0x100 + i;
+		_discussMenu[i]._menuId = MENU_DISCUSS;
+		_discussMenu[i]._actionId = i;
+		if (i < 8) {
+			_moveMenu[i]._menuId = MENU_MOVE;
+			_moveMenu[i]._actionId = i;
+		}
+		_inventoryMenu[i]._menuId = MENU_INVENTORY;
+		_inventoryMenu[i]._actionId = i;
 		if (i > 6)
-			disableMenuItem(_inventoryMenu[i]);
+			disableMenuItem(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId);
 	}
 	_msg3 = OPCODE_NONE;
 	_msg4 = OPCODE_NONE;
@@ -551,13 +549,13 @@ void Menu::initMenu(MortevielleEngine *vm) {
  */
 void Menu::setSearchMenu() {
 	for (int i = 1; i <= 7; ++i)
-		disableMenuItem(_moveMenu[i]);
+		disableMenuItem(MENU_MOVE, _moveMenu[i]._actionId);
 
 	for (int i = 1; i <= 11; ++i)
-		disableMenuItem(_actionMenu[i]);
+		disableMenuItem(_actionMenu[i]._menuId, _actionMenu[i]._actionId);
 
-	setText(OPCODE_SOUND, _vm->getEngineString(S_SUITE));
-	setText(OPCODE_LIFT, _vm->getEngineString(S_STOP));
+	setText(OPCODE_SOUND >> 8, OPCODE_SOUND & 0xFF, _vm->getEngineString(S_SUITE));
+	setText(OPCODE_LIFT  >> 8, OPCODE_LIFT  & 0xFF, _vm->getEngineString(S_STOP));
 }
 
 /**
@@ -567,10 +565,10 @@ void Menu::setSearchMenu() {
 void Menu::unsetSearchMenu() {
 	setDestinationText(_vm->_coreVar._currPlace);
 	for (int i = 1; i <= 11; ++i)
-		enableMenuItem(_actionMenu[i]);
+		enableMenuItem(_actionMenu[i]._menuId, _actionMenu[i]._actionId);
 
-	setText(OPCODE_SOUND, _vm->getEngineString(S_PROBE));
-	setText(OPCODE_LIFT, _vm->getEngineString(S_RAISE));
+	setText(OPCODE_SOUND >> 8, OPCODE_SOUND & 0xFF, _vm->getEngineString(S_PROBE));
+	setText(OPCODE_LIFT  >> 8, OPCODE_LIFT  & 0xFF, _vm->getEngineString(S_RAISE));
 }
 
 /**
@@ -586,15 +584,15 @@ void Menu::setInventoryText() {
 			++cy;
 			int r = _vm->_coreVar._inventory[i] + 400;
 			nomp = _vm->getString(r - 501 + kInventoryStringIndex);
-			setText(_inventoryMenu[cy], nomp);
-			enableMenuItem(_inventoryMenu[i]);
+			setText(_inventoryMenu[cy]._menuId, _inventoryMenu[cy]._actionId, nomp);
+			enableMenuItem(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId);
 		}
 	}
 
 	if (cy < 6) {
 		for (int i = cy + 1; i <= 6; ++i) {
-			setText(_inventoryMenu[i], "                       ");
-			disableMenuItem(_inventoryMenu[i]);
+			setText(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId, "                       ");
+			disableMenuItem(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId);
 		}
 	}
 }

@@ -150,7 +150,7 @@ void SpeechManager::regenbruit() {
 	int i = kOffsetB3 + 8590;
 	int j = 0;
 	do {
-		_cfiphBuffer[j] = READ_LE_UINT16(&_vm->_mem[(kAdrNoise3 * 16) + i]);
+		_cfiphBuffer[j] = READ_BE_UINT16(&_vm->_mem[(kAdrNoise3 * 16) + i]);
 		i += 2;
 		++j;
 	} while (i < kOffsetB3 + 8790);
@@ -185,7 +185,7 @@ void SpeechManager::loadPhonemeSounds() {
 		error("Missing file - phbrui.mor");
 
 	for (int i = 1; i <= f.size() / 2; ++i)
-		_cfiphBuffer[i] = f.readSint16LE();
+		_cfiphBuffer[i] = f.readUint16BE();
 
 	f.close();
 }
@@ -214,7 +214,7 @@ void SpeechManager::trait_car() {
 
 	switch (_queue[1]._code) {
 	case 9:
-		if (_queue[1]._val != ord('#'))
+		if (_queue[1]._val != (int)'#')
 			for (i = 0; i <= _queue[1]._rep; ++i)
 				entroct(_queue[1]._val);
 		break;
@@ -533,13 +533,16 @@ void SpeechManager::initQueue() {
  * @remarks	Originally called 'trait_ph'
  */
 void SpeechManager::handlePhoneme() {
-	const int deca[3] = {300, 30, 40};
+	const uint16 deca[3] = {300, 30, 40};
 
-	int startPos = swap(_cfiphBuffer[_phonemeNumb - 1]) + deca[_typlec];
-	int endPos = swap(_cfiphBuffer[_phonemeNumb]) + deca[_typlec];
+	uint16 startPos = _cfiphBuffer[_phonemeNumb - 1] + deca[_typlec];
+	uint16 endPos = _cfiphBuffer[_phonemeNumb] + deca[_typlec];
 	int wordCount = endPos - startPos;
-	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
-		WRITE_LE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWord], _cfiphBuffer[i]);
+	
+	startPos /= 2;
+	endPos /= 2;
+	for (int i = startPos, currWord = 0; i < endPos; i++, currWord += 2)
+		WRITE_BE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWord], _cfiphBuffer[i]);
 
 	_ptr_oct = 0;
 	int currWord = 0;
@@ -553,7 +556,7 @@ void SpeechManager::handlePhoneme() {
 
 	moveQueue();
 	trait_car();
-	entroct(ord('#'));
+	entroct((int)'#');
 }
 
 /**
@@ -561,7 +564,7 @@ void SpeechManager::handlePhoneme() {
  * @remarks	Originally called 'parole'
  */
 void SpeechManager::startSpeech(int rep, int ht, int typ) {
-	int savph[501];
+	uint16 savph[501];
 	int tempo;
 
 	if (_vm->_soundOff)
