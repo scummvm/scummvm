@@ -235,10 +235,10 @@ void Acci::clearwords() {
 byte Acci::wordnum(Common::String x) {
 	if (x.empty())
 		return 0;
-
+	
 	byte whatsit = pardon;
 	bool gotcha = false;
-	for (uint16 fv = 0; fv < nowords; fv++) {
+	for (int32 fv = nowords - 1; fv >= 0; fv--) {
 		if ((words[fv].w == x) || ((Common::String(words[fv].w.c_str(), x.size()) == x) && !gotcha))
 			whatsit = words[fv].n;
 		if (words[fv].w == x)
@@ -388,12 +388,13 @@ int16 Acci::pos(const Common::String &crit, const Common::String &src) {
 void Acci::parse() {
 	byte n, fv, ff;
 	Common::String c, cc, thisword;
-	Common::String answer;
+	byte answer;
 	bool notfound;
 
 	// First parsing - word identification
 
-	thats = "";
+	if (!thats.empty())
+		thats.clear();
 	c = _vm->_parser->_inputText + ' ';
 	n = 0;
 	polite = false;
@@ -410,7 +411,6 @@ void Acci::parse() {
 	} // Not our department! Otherwise...
 
 	// Are we being interrogated right now?
-
 	if (_vm->_gyro->interrogation > 0) {
 		store_interrogation(_vm->_gyro->interrogation);
 		_vm->_gyro->weirdword = true;
@@ -437,9 +437,11 @@ void Acci::parse() {
 		punctustrip(c);
 
 		notfound = true;
+
+		// Check also first, which conatins words about the actual room.
 		if (!thisword.empty()) {
-			for (ff = 0; ff < 31; ff++) { // Check Also, FIRST!
-				if (pos(',' + thisword, *_vm->_gyro->also[ff][0]) > -1) {
+			for (ff = 0; ff < 31; ff++) {
+				if ((_vm->_gyro->also[ff][0] != 0) && (pos(',' + thisword, *_vm->_gyro->also[ff][0]) > -1)) {
 					thats = thats + Common::String(99 + ff);
 					notfound = false;
 				}
@@ -448,7 +450,7 @@ void Acci::parse() {
 
 		if (notfound) {
 			answer = wordnum(thisword);
-			if (answer[0] == pardon) {
+			if (answer == pardon) {
 				notfound = true;
 				thats = thats + pardon;
 			} else
@@ -456,12 +458,22 @@ void Acci::parse() {
 			n++;
 		}
 
-		c.deleteChar(pos(c, Common::String(' ')));
-		cc.deleteChar(pos(cc, Common::String(' ')));
+		int16 spacePos = pos(Common::String(' '), c);
+		if (spacePos > -1)
+			for (byte i = 0; i <= spacePos; i++)
+				c.deleteChar(0);
+		spacePos = pos(Common::String(' '), cc);
+		if (spacePos > -1)
+			for (byte i = 0; i <= spacePos; i++)
+				cc.deleteChar(0);
 	}
 
-	//if (pos("\376", thats) > 0)  unknown = realwords[pos("\376", thats)];
-	//else unknown = "";
+	if (pos(Common::String(254), thats) > -1) 
+		unknown = realwords[pos("\376", thats)];
+	else
+		if (!unknown.empty())
+			unknown.clear();
+
 	//replace("\377", ""); /* zap noise words */
 	//replace(string('\15') + '\342', "\1"); /* "look at" = "examine" */
 	//replace(string('\15') + '\344', "\1"); /* "look in" = "examine" */
