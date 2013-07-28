@@ -143,8 +143,8 @@ void Avalot::setup() {
 	//setcolor(7);
 	_vm->_gyro->holdthedawn = false;
 	_vm->_lucerna->dawn();
-	_vm->_gyro->cursoron = false;
-	_vm->_basher->cursor_on();
+	_vm->_parser->_cursorState = false;
+	_vm->_parser->cursorOn();
 	_vm->_trip->newspeed();
 
 	if (! _vm->_gyro->reloaded)
@@ -171,8 +171,12 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 	case Common::KEYCODE_KP5:
 		_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
 		break;
-	case Common::KEYCODE_BACKSPACE :
+	case Common::KEYCODE_BACKSPACE:
 		_vm->_parser->handleBackspace();
+		break;
+	case Common::KEYCODE_RETURN:
+		_vm->_parser->handleReturn();
+		break;
 	}
 
 	if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))

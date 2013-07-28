@@ -479,7 +479,6 @@ public:
 
 
 
-	bool cursoron;
 	/* previous:^previoustype;*/
 	Common::String last;
 	dnatype dna;

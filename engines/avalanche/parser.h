@@ -39,6 +39,7 @@ public:
 	byte _inputTextPos;
 	bool _quote; // 66 or 99 next?
 	byte _leftMargin;
+	bool _cursorState;
 
 
 
@@ -48,10 +49,18 @@ public:
 
 	void handleBackspace();
 
+	void handleReturn();
+
 	void plotText();
+
+	void cursorOn();
+
+	void cursorOff();
 
 private:
 	AvalancheEngine *_vm;
+
+	void drawCursor();
 
 };
 

@@ -53,13 +53,9 @@ public:
 
 	void keyboard_link();
 
-	void cursor_on();
-
 	void get_demorec();
 
 	bool demo_ready();
-
-	void cursor_off();
 
 	void filename_edit();
 
@@ -75,8 +71,6 @@ private:
 	bool entering_filename;
 
 	void wipetext();
-
-	void do_cursor();
 
 	char firstchar(Common::String x);
 
