@@ -101,11 +101,11 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 	 */
 	if (argc == 3) {
 		int error = ADAPTER->addWatch(argv[1], argv[2]);
-		if (!error) DebugPrintf("%s: OK", argv[0]);
+		if (!error) DebugPrintf("%s: OK\n", argv[0]);
 		else if (error == NO_SUCH_FILE) {
-			DebugPrintf("%s: no such file %s", argv[0], argv[1]);
+			DebugPrintf("%s: no such file %s\n", argv[0], argv[1]);
 		} else if (error == NO_SUCH_LINE) {
-			DebugPrintf("%s: %s has no line %d", argv[0], argv[1], atoi(argv[2]));
+			DebugPrintf("%s: %s has no line %d\n", argv[0], argv[1], atoi(argv[2]));
 		}
 	} else {
 		DebugPrintf("Usage: %s <file path> <name> to watch for <name> in file <file path>\n", argv[0]);
@@ -155,7 +155,7 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 		int error = ADAPTER->stepInto();
 		return false;
 	} else {
-		DebugPrintf("Usage: %s to step over/single step\n", argv[0]);
+		DebugPrintf("Usage: %s to step into\n", argv[0]);
 		return true;
 	}
 }
@@ -180,11 +180,11 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 		int error = 0;
 		Common::String temp = ADAPTER->readValue(argv[1], &error);
 		if (!error) {
-			DebugPrintf("%s = %s", argv[0], temp.c_str());
+			DebugPrintf("%s = %s \n", argv[0], temp.c_str());
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("Not allowed");
+			DebugPrintf("Not allowed\n");
 		} else {
-			DebugPrintf("Error");
+			DebugPrintf("Error\n"); // TODO: More informative
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> to print value of <name>\n", argv[0]);
@@ -197,12 +197,12 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 	if (argc == 4 && !strncmp("=", argv[2], 1)) {
 		int error = ADAPTER->setValue(argv[1], argv[3]);
 		if (!error) {
-			DebugPrintf("Ok");
+			DebugPrintf("Ok\n");
 			// DebugPrintf("%s = %s", argv[0], temp.c_str());
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("Not allowed");
+			DebugPrintf("Not allowed\n");
 		} else {
-			DebugPrintf("Error");
+			DebugPrintf("Error\n");
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
@@ -240,6 +240,7 @@ bool Console::Cmd_DumpRes(int argc, const char **argv) {
 		Common::String res = ADAPTER->readRes(Common::String(argv[1]), &error);
 		// TODO: Handle errors
 		DebugPrintf(res.c_str());
+		DebugPrintf("\n");
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
 		return true;
