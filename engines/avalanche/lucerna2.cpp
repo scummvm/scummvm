@@ -110,8 +110,6 @@ void Lucerna::unscramble() {
 				scram1(*_vm->_gyro->also[fv][ff]);
 	scram1(_vm->_gyro->listen);
 	scram1(_vm->_gyro->flags);
-	/*     for fz:=1 to length(also[fv,ff]^) do
-	      also[fv,ff]^[fz]:=chr(ord(also[fv,ff]^[fz]) xor 177);*/
 }
 
 void Lucerna::load_also(Common::String n) {

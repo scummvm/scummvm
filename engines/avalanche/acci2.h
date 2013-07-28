@@ -39,62 +39,62 @@ class AvalancheEngine;
 class Acci {
 public:
 		/* verb codes */
-	static const char vb_exam = 1;
-	static const char vb_open = 2;
-	static const char vb_pause = 3;
-	static const char vb_get = 4;
-	static const char vb_drop = 5;
-	static const char vb_inv = 6;
-	static const char vb_talk = 7;
-	static const char vb_give = 8;
-	static const char vb_drink = 9;
-	static const char vb_load = 10;
-	static const char vb_save = 11;
-	static const char vb_pay = 12;
-	static const char vb_look = 13;
-	static const char vb_break = 14;
-	static const char vb_quit = 15;
-	static const char vb_sit = 16;
-	static const char vb_stand = 17;
-	static const char vb_go = 18;
-	static const char vb_info = 19;
-	static const char vb_undress = 20;
-	static const char vb_wear = 21;
-	static const char vb_play = 22;
-	static const char vb_ring = 23;
-	static const char vb_help = 24;
-	static const char vb_larrypass = 25;
-	static const char vb_phaon = 26;
-	static const char vb_boss = 27;
-	static const char vb_pee = 28;
-	static const char vb_cheat = 29;
-	static const char vb_magic = 30;
-	static const char vb_restart = 31;
-	static const char vb_eat = 32;
-	static const char vb_listen = 33;
-	static const char vb_buy = 34;
-	static const char vb_attack = 35;
-	static const char vb_password = 36;
-	static const char vb_dir = 37;
-	static const char vb_die = 38;
-	static const char vb_score = 39;
-	static const char vb_put = 40;
-	static const char vb_kiss = 41;
-	static const char vb_climb = 42;
-	static const char vb_jump = 43;
-	static const char vb_highscores = 44;
-	static const char vb_wake = 45;
-	static const char vb_hello = 46;
-	static const char vb_thanks = 47;
+	static const byte vb_exam = 1;
+	static const byte vb_open = 2;
+	static const byte vb_pause = 3;
+	static const byte vb_get = 4;
+	static const byte vb_drop = 5;
+	static const byte vb_inv = 6;
+	static const byte vb_talk = 7;
+	static const byte vb_give = 8;
+	static const byte vb_drink = 9;
+	static const byte vb_load = 10;
+	static const byte vb_save = 11;
+	static const byte vb_pay = 12;
+	static const byte vb_look = 13;
+	static const byte vb_break = 14;
+	static const byte vb_quit = 15;
+	static const byte vb_sit = 16;
+	static const byte vb_stand = 17;
+	static const byte vb_go = 18;
+	static const byte vb_info = 19;
+	static const byte vb_undress = 20;
+	static const byte vb_wear = 21;
+	static const byte vb_play = 22;
+	static const byte vb_ring = 23;
+	static const byte vb_help = 24;
+	static const byte vb_larrypass = 25;
+	static const byte vb_phaon = 26;
+	static const byte vb_boss = 27;
+	static const byte vb_pee = 28;
+	static const byte vb_cheat = 29;
+	static const byte vb_magic = 30;
+	static const byte vb_restart = 31;
+	static const byte vb_eat = 32;
+	static const byte vb_listen = 33;
+	static const byte vb_buy = 34;
+	static const byte vb_attack = 35;
+	static const byte vb_password = 36;
+	static const byte vb_dir = 37;
+	static const byte vb_die = 38;
+	static const byte vb_score = 39;
+	static const byte vb_put = 40;
+	static const byte vb_kiss = 41;
+	static const byte vb_climb = 42;
+	static const byte vb_jump = 43;
+	static const byte vb_highscores = 44;
+	static const byte vb_wake = 45;
+	static const byte vb_hello = 46;
+	static const byte vb_thanks = 47;
 
-	static const char vb_smartalec = 249;
-	static const char vb_expletive = 253;
+	static const byte vb_smartalec = 249;
+	static const byte vb_expletive = 253;
 
-	static const char pardon = 254; /* =didn't understand / wasn't given. */
+	static const byte pardon = 254; /* =didn't understand / wasn't given. */
 
 	static const int16 nowords = 277; /* how many words does the parser know? */
-	static const char nowt = 372;
-	static const char moved = 0; /* This word was moved. (Usually because it was the subject of
+	static const byte nowt = 372;
+	static const byte moved = 0; /* This word was moved. (Usually because it was the subject of
 	  conversation.) */
 
 	static const int16 first_password = 89; /* Words[first_password] should equal "TIROS". */
