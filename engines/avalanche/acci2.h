@@ -149,7 +149,7 @@ private:
 
 	byte wordnum(Common::String x);
 
-	void replace(Common::String old1, Common::String new1);
+	void replace(Common::String old1, byte new1);
 
 	Common::String rank();
 
