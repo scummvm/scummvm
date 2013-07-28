@@ -189,10 +189,7 @@ Common::String DebuggerAdapter::readValue(const char* name, int *error) {
 		*error = NOT_ALLOWED;
 		return Common::String();
 	}
-
-	char *temp;
-	temp = const_cast<char *>(Common::String(name).c_str());
-	return _lastScript->getVar(temp)->getString();
+	return _lastScript->getVar(name)->getString();
 }
 
 Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) { // Hack
@@ -205,9 +202,6 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 	strName.trim();
 	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
 	
-	char *temp;
-	temp = const_cast<char *>(name.c_str());
-
 	Common::String mainObjectName;
 	mainObjectName = st.nextToken(); // First token
 	ScValue *result = _lastScript->getVar(mainObjectName.c_str());
@@ -295,7 +289,7 @@ int DebuggerAdapter::setType(const char* name, int type) {
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}
-	ScValue *var = _lastScript->getVar(Common::String(name).c_str());
+	ScValue *var = _lastScript->getVar(name);
 	TValType ttype = (TValType)type;
 	var->setType(ttype);
 	return 0;
@@ -307,7 +301,7 @@ int DebuggerAdapter::setValue(const char* name, const char* value) {
 		return NOT_ALLOWED;
 	}
 
-	ScValue *var = _lastScript->getVar(Common::String(name).c_str());
+	ScValue *var = _lastScript->getVar(name);
 	if (var->_type == VAL_INT) {
 		var->setInt(atoi(value));
 	} else if (var->_type == VAL_FLOAT) {
