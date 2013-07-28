@@ -384,6 +384,16 @@ bool CGameVar::addSubVar(CGameVar *subvar) {
 	return false;
 }
 
+int CGameVar::getSubVarsCount() {
+	int res;
+	CGameVar *sub = _subVars;
+
+	for (res = 0; sub; res++)
+		sub = sub->_nextVarObj;
+
+	return res;
+}
+
 Sc2::Sc2() {
 	_sceneId = 0;
 	_field_2 = 0;

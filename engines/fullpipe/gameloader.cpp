@@ -184,4 +184,11 @@ void CGameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAn
 	warning("STUB: CGameLoader::applyPicAniInfo()");
 }
 
+CGameVar *FullpipeEngine::getGameLoaderGameVar() {
+	if (_gameLoader)
+		return _gameLoader->_gameVar;
+	else
+		return 0;
+}
+
 } // End of namespace Fullpipe

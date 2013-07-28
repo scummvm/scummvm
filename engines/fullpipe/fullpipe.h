@@ -91,6 +91,8 @@ public:
 	GameProject *_gameProject;
 	bool loadGam(const char *fname);
 
+	CGameVar *getGameLoaderGameVar();
+
 	int _gameProjectVersion;
 	int _pictureScale;
 	int _scrollSpeed;

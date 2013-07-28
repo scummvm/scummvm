@@ -128,6 +128,7 @@ class GameObject : public CObject {
 	void renumPictures(CPtrList *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
+	const char *getName() { return _objectName; }
 };
 
 class PictureObject : public GameObject {

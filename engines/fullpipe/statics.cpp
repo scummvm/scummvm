@@ -239,9 +239,29 @@ void StaticANIObject::draw2() {
 }
 
 MovTable *StaticANIObject::countMovements() {
-	warning("STUB: StaticANIObject::countMovements()");
+	CGameVar *preloadSubVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
-	return 0;
+	if (preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
+		return 0;
+
+	MovTable *movTable = new MovTable;
+
+	movTable->count = _movements.size();
+	movTable->movs = (int16 *)calloc(_movements.size(), sizeof(int16));
+
+	for (uint i = 0; i < _movements.size(); i++) {
+		GameObject *obj = (GameObject *)_movements[i];
+		movTable->movs[i] = 2;
+
+		for (CGameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
+			if (scumm_stricmp(obj->getName(), sub->_varName) == 0) {
+				movTable->movs[i] = 1;
+				break;
+			}
+		}
+	}
+
+	return movTable;
 }
 
 void StaticANIObject::setSpeed(int speed) {
