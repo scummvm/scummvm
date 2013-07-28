@@ -120,15 +120,15 @@ void GfxSurface::decode(const byte *pSrc) {
 	}
 
 	// Temporary output buffer
-	byte outputBuffer[65536];
-	Common::fill(&outputBuffer[0], &outputBuffer[65536], _transparency);
+	byte *outputBuffer = (byte *)malloc(sizeof(byte) * 65536);
+	memset(outputBuffer, _transparency, 65536);
 
 	byte *pDest = &outputBuffer[0];
 	const byte *pSrcStart = pSrc;
 	const byte *pLookup = NULL;
 
-	byte lookupTable[BUFFER_SIZE];
-	byte srcBuffer[BUFFER_SIZE];
+	byte *lookupTable = (byte *)malloc(sizeof(byte) * BUFFER_SIZE);
+	byte *srcBuffer   = (byte *)malloc(sizeof(byte) * BUFFER_SIZE);
 
 	// Main processing loop
 	for (int entryIndex = 0; entryIndex < entryCount; ++entryIndex) {
@@ -427,6 +427,10 @@ void GfxSurface::decode(const byte *pSrc) {
 
 		Common::copy(copySrc, copySrc + w, copyDest);
 	}
+
+	::free(outputBuffer);
+	::free(lookupTable);
+	::free(srcBuffer);
 }
 
 void GfxSurface::majTtxTty() {
