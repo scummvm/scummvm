@@ -88,7 +88,7 @@ void SpeechManager::spfrac(int wor) {
 }
 
 void SpeechManager::charg_car(int &currWordNumb) {
-	int wor = swap(READ_LE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWordNumb]));
+	int wor = READ_BE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWordNumb]);
 	int int_ = wor & 0x3f; // 63
 
 	if ((int_ >= 0) && (int_ <= 13)) {
