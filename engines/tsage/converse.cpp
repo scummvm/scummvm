@@ -429,10 +429,12 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 	// Set up the list of choices
 	int yp = 0;
+	int xp = (g_vm->getGameID() == GType_Ringworld2) ? 40 : 25;
+
 	for (uint idx = 0; idx < choiceList.size(); ++idx) {
 		Rect tempRect;
 		_gfxManager._font.getStringBounds(choiceList[idx].c_str(), tempRect, 265);
-		tempRect.moveTo(25, yp + 10);
+		tempRect.moveTo(xp, yp + 10);
 
 		_choiceList.push_back(ChoiceEntry(choiceList[idx], tempRect));
 		yp += tempRect.height() + 5;
@@ -535,6 +537,18 @@ void ConversationChoiceDialog::draw() {
 	}
 
 	_gfxManager.deactivate();
+}
+
+void ConversationChoiceDialog::remove() {
+	if (_savedArea) {
+		// Restore the area the dialog covered
+		Rect tempRect = _bounds;
+		tempRect.collapse(-10, -10);
+		g_globals->_gfxManagerInstance.copyFrom(*_savedArea, tempRect.left, tempRect.top);
+
+		delete _savedArea;
+		_savedArea = NULL;
+	}
 }
 
 /*--------------------------------------------------------------------------*/
@@ -891,13 +905,26 @@ void StripManager::signal() {
 
 		if (g_vm->getGameID() == GType_Ringworld2) {
 			Ringworld2::VisualSpeaker *speaker = static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker);
-			speaker->_speakerMode = obj44._speakerMode;
-			if (_obj44List.size() > 0)
-				speaker->proc15();
-		}
+			
+			if (speaker) {
+				speaker->_speakerMode = obj44._speakerMode;
+				if (choiceList[strIndex].empty())
+					speaker->proc15();
+			}
 
-		_textShown = true;
-		_activeSpeaker->setText(choiceList[strIndex]);
+			if (!choiceList[strIndex].empty()) {
+				_textShown = true;
+				_activeSpeaker->setText(choiceList[strIndex]);
+			} else if (!obj44._speakerMode) {
+				_delayFrames = 1;
+			} else {
+				_delayFrames = 0;
+				speaker->proc15();
+			}
+		} else {
+			_textShown = true;
+			_activeSpeaker->setText(choiceList[strIndex]);
+		}
 	}
 
 	_obj44Index = getNewIndex(obj44._list[strIndex]._id);
@@ -964,6 +991,8 @@ Speaker *StripManager::getSpeaker(const char *speakerName) {
 
 int StripManager::getNewIndex(int id) {
 	if (id == 10000)
+		return id;
+	if ((g_vm->getGameID() == GType_Ringworld2) && (id < 0))
 		return id;
 
 	for (uint idx = 0; idx < _obj44List.size(); ++idx) {
