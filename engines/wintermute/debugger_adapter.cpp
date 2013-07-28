@@ -30,6 +30,8 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "common/tokenizer.h"
+#include <limits.h>
+#include <errno.h>
 #define SCENGINE _engine->_game->_scEngine
 #define DEBUGGER _engine->_debugger
 #define DBG_PATH "dbg"
@@ -296,16 +298,54 @@ int DebuggerAdapter::setType(const char* name, int type) {
 
 }
 
-int DebuggerAdapter::setValue(const char* name, const char* value) {
+int DebuggerAdapter::setValue(Common::String name, Common::String value) {
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}
 
-	ScValue *var = _lastScript->getVar(name);
+	value.trim();
+
+	ScValue *var = _lastScript->getVar(name.c_str());
 	if (var->_type == VAL_INT) {
-		var->setInt(atoi(value));
+		char *endptr;
+		errno = 0;
+		int res = strtol(value.c_str(), &endptr, 10); // TODO: Hex too?
+
+		if (
+			(errno == ERANGE && (res == LONG_MAX || res == LONG_MIN)) 
+			|| 
+			(errno != 0 && res == 0)
+			) {
+			// TODO: Error, bail out
+		} else if (endptr == value.c_str()) {
+			// TODO: Couldn't parse anything... bail out?
+		} else if (endptr == value.c_str() + value.size()) {
+			// We've parsed all of it, have we?
+			var->setInt(res);
+		} else {
+			assert (false);
+			// Something funny happened here.
+		}
 	} else if (var->_type == VAL_FLOAT) {
-		var->setFloat(atof(value));
+		char *endptr;
+		errno = 0;
+		float res = (float)strtod(value.c_str(), &endptr);
+
+		if (
+			(errno == ERANGE && (res == HUGE_VAL)) 
+			|| 
+			(errno != 0 && res == 0)
+			) {
+			// TODO: Error, bail out
+		} else if (endptr == value.c_str()) {
+			// TODO: Couldn't parse anything... bail out?
+		} else if (endptr == value.c_str() + value.size()) {
+			// We've parsed all of it, have we?
+			var->setFloat(res);
+		} else {
+			assert (false);
+			// Something funny happened here.
+		}
 	} else if (var->_type == VAL_BOOL) {
 		Common::String str = Common::String(value);
 		bool valAsBool;

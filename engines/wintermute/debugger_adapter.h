@@ -86,7 +86,7 @@ public:
 	int stepContinue();
 	int32 getLastLine();
 	Common::String readValue (const char* name, int *error);
-	int setValue (const char* name, const char* value);
+	int setValue (Common::String name, Common::String value);
 	int setType (const char* name, int type);
 	Common::String readRes (const Common::String &name, int *error); 
 	bool showFps(bool show);
