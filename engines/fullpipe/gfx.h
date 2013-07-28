@@ -61,6 +61,7 @@ class Picture : public MemoryObject {
 	friend class Movement;
 	friend class DynamicPhase;
 	friend class PictureObject;
+	friend class CInputController;
 
 	Common::Rect _rect;
 	Bitmap *_convertedBitmap;

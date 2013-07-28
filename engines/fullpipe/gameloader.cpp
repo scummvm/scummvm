@@ -191,4 +191,11 @@ CGameVar *FullpipeEngine::getGameLoaderGameVar() {
 		return 0;
 }
 
+CInputController *FullpipeEngine::getGameLoaderInputController() {
+	if (_gameLoader)
+		return _gameLoader->_inputController;
+	else
+		return 0;
+}
+
 } // End of namespace Fullpipe

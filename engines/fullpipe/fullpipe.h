@@ -48,6 +48,7 @@ class CGameLoader;
 class CGameVar;
 class CInputController;
 class CInventory2;
+struct CursorInfo;
 class EntranceInfo;
 class GameProject;
 class GlobalMessageQueueList;
@@ -92,6 +93,7 @@ public:
 	bool loadGam(const char *fname);
 
 	CGameVar *getGameLoaderGameVar();
+	CInputController *getGameLoaderInputController();
 
 	int _gameProjectVersion;
 	int _pictureScale;
@@ -135,6 +137,7 @@ public:
 	void setSwallowedEggsState();
 
 	void initCursors();
+	void addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY);
 
 	CGameVar *_swallowedEgg1;
 	CGameVar *_swallowedEgg2;

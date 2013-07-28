@@ -25,27 +25,44 @@
 
 namespace Fullpipe {
 
+class Picture;
+
 void setInputDisabled(bool state);
 
-class CInputControllerItemArray : public CObArray {
+struct CursorInfo {
+	int pictureId;
+	Picture *picture;
+	int hotspotX;
+	int hotspotY;
+	int itemPictureOffsX;
+	int itemPictureOffsY;
+	int width;
+	int height;
+
+	CursorInfo();
+	CursorInfo(CursorInfo *src);
 };
+
+typedef Common::Array<CursorInfo *> CursorsArray;
 
 class CInputController {
 	//CObject obj;
 	int _flag;
-	int _flags;
+	int _inputFlags;
 	int _cursorHandle;
 	int _hCursor;
 	int _field_14;
 	int _cursorId;
 	int _cursorIndex;
-	CInputControllerItemArray _cursorsArray;
+	CursorsArray _cursorsArray;
 	Common::Rect _cursorBounds;
 	int _cursorItemPicture;
 
  public:
 	CInputController();
 	void setInputDisabled(bool state);
+	void addCursor(CursorInfo *cursor);
+	void setCursorMode(bool mode);
 };
 
 } // End of namespace Fullpipe

@@ -24,6 +24,7 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/input.h"
+#include "fullpipe/gfx.h"
 
 namespace Fullpipe {
 
@@ -36,7 +37,7 @@ CInputController::CInputController() {
 	_field_14 = 0;
 	_cursorId = 0;
 	_cursorIndex = -1;
-	_flags = 1;
+	_inputFlags = 1;
 
 	_cursorBounds.left = 0;
 	_cursorBounds.top = 0;
@@ -53,6 +54,50 @@ void CInputController::setInputDisabled(bool state) {
 
 void setInputDisabled(bool state) {
 	g_fullpipe->_inputController->setInputDisabled(state);
+}
+
+void CInputController::addCursor(CursorInfo *cursor) {
+	CursorInfo *newc = new CursorInfo(cursor);
+	Common::Point p;
+	
+	cursor->picture->getDimensions(&p);
+
+	newc->width = p.x;
+	newc->height = p.y;
+
+	newc->picture->_x = -1;
+	newc->picture->_y = -1;
+
+	_cursorsArray.push_back(newc);
+}
+
+void CInputController::setCursorMode(bool enabled) {
+	if (enabled)
+		_inputFlags |= 1;
+	else
+		_inputFlags &= ~1;
+}
+
+CursorInfo::CursorInfo() {
+	pictureId = 0;
+	picture = 0;
+	hotspotX = 0;
+	hotspotY = 0;
+	itemPictureOffsX = 0;
+	itemPictureOffsY = 0;
+	width = 0;
+	height = 0;
+}
+
+CursorInfo::CursorInfo(CursorInfo *src) {
+	pictureId = src->pictureId;
+	picture = src->picture;
+	hotspotX = src->hotspotX;
+	hotspotY = src->hotspotY;
+	itemPictureOffsX = src->itemPictureOffsX;
+	itemPictureOffsY = src->itemPictureOffsY;
+	width = src->width;
+	height = src->height;
 }
 
 } // End of namespace Fullpipe
