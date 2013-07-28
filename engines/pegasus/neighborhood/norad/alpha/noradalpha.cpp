@@ -576,7 +576,7 @@ void NoradAlpha::takeItemFromRoom(Item *item) {
 		if (_fillingStationItem == item) {
 			_fillingStationItem = 0;
 			GameState.setNoradGassed(false);
-			loadAmbientLoops();
+			checkAirMask();
 			((NoradAlphaFillingStation *)_currentInteraction)->newFillingItem(0);
 			forceStridingStop(kNorad03, kEast, kAltNoradAlphaNormal);
 		}
