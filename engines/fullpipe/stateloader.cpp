@@ -38,55 +38,57 @@ namespace Fullpipe {
 bool FullpipeEngine::loadGam(const char *fname) {
 	_gameLoader = new CGameLoader();
 
-	if (_gameLoader->loadFile(fname)) {
-		g_fullpipe->_currSoundListCount = 0;
-		initObjectStates();
+	if (!_gameLoader->loadFile(fname))
+		return false;
 
-		//set_g_messageQueueCallback1(messageQueueCallback1);
-		//addMessageHandler2(global_messageHandler, 0, 4);
-		_inventory = getGameLoaderInventory();
-		_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
-		_inventory->addItem(ANI_INV_MAP, 1);
+	_currSoundListCount = 0;
+	initObjectStates();
+	// set_g_messageQueueCallback1(messageQueueCallback1);
 
-		_inventory->rebuildItemRects();
+	addMessageHandlerByIndex(global_messageHandler1, 0, 4);
 
-		for (CPtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
-			((MemoryObject *)((PictureObject *)*p)->_picture)->load();
-		}
+	_inventory = getGameLoaderInventory();
+	_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
+	_inventory->addItem(ANI_INV_MAP, 1);
 
-		//_sceneSwitcher = sceneSwitcher;
-		//_preloadCallback = gameLoaderPreloadCallback
-		//_readSavegameCallback = gameLoaderReadSavegameCallback;
-		_aniMan = accessScene(SC_COMMON)->getAniMan();
-		_scene2 = 0;
+	_inventory->rebuildItemRects();
 
-		_movTable = _aniMan->countMovements();
+	for (CPtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
+		((MemoryObject *)((PictureObject *)*p)->_picture)->load();
+	}
 
-		_aniMan->setSpeed(1);
+	// _sceneSwitcher = sceneSwitcher;
+	// _preloadCallback = gameLoaderPreloadCallback
+	// _readSavegameCallback = gameLoaderReadSavegameCallback;
 
-		PictureObject *pic = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
+	_aniMan = accessScene(SC_COMMON)->getAniMan();
+	_scene2 = 0;
 
-		pic->setFlags(pic->_flags & 0xFFFB);
+	_movTable = _aniMan->countMovements();
 
-		// Not used in full game
-		//_evalVersionPic = accessScene(SC_COMMON)->getPictureObjectById(PIC_CMN_EVAL, 0);
+	_aniMan->setSpeed(1);
 
-		initMap();
-		initCursors();
+	PictureObject *pic = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
 
-		setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
+	pic->setFlags(pic->_flags & 0xFFFB);
 
-		if (_flgPlayIntro) {
-			_gameLoader->loadScene(SC_INTRO1);
-			_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
-		} else {
-			_gameLoader->loadScene(SC_1);
-			_gameLoader->gotoScene(SC_1, TrubaLeft);
-		}
+	// Not used in full game
+	//_evalVersionPic = accessScene(SC_COMMON)->getPictureObjectById(PIC_CMN_EVAL, 0);
 
-		if (!_currentScene)
-			return false;
-	} else
+	initMap();
+	initCursors();
+
+	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
+
+	if (_flgPlayIntro) {
+		_gameLoader->loadScene(SC_INTRO1);
+		_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+	} else {
+		_gameLoader->loadScene(SC_1);
+		_gameLoader->gotoScene(SC_1, TrubaLeft);
+	}
+
+	if (!_currentScene)
 		return false;
 
 	return true;

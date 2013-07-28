@@ -624,6 +624,30 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	return true;
 }
 
+int global_messageHandler1(ExCommand *cmd) {
+	warning("STUB: global_messageHandler1()");
+
+	return 0;
+}
+
+int global_messageHandler2(ExCommand *cmd) {
+	warning("STUB: global_messageHandler2()");
+
+	return 0;
+}
+
+int global_messageHandler3(ExCommand *cmd) {
+	warning("STUB: global_messageHandler3()");
+
+	return 0;
+}
+
+int global_messageHandler4(ExCommand *cmd) {
+	warning("STUB: global_messageHandler4()");
+
+	return 0;
+}
+
 int sceneIntro_updateCursor() {
 	g_fullpipe->_cursorId = 0;
 

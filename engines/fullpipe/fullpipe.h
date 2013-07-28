@@ -50,6 +50,7 @@ class CInputController;
 class CInventory2;
 struct CursorInfo;
 class EntranceInfo;
+class ExCommand;
 class GameProject;
 class GlobalMessageQueueList;
 class MessageHandler;
@@ -58,6 +59,11 @@ class NGIArchive;
 class Scene;
 class SoundList;
 class StaticANIObject;
+
+int global_messageHandler1(ExCommand *cmd);
+int global_messageHandler2(ExCommand *cmd);
+int global_messageHandler3(ExCommand *cmd);
+int global_messageHandler4(ExCommand *cmd);
 
 class FullpipeEngine : public ::Engine {
 protected:
@@ -120,6 +126,11 @@ public:
 
 	GlobalMessageQueueList *_globalMessageQueueList;
 	MessageHandler *_messageHandlers;
+
+	int _msgX;
+	int _msgY;
+	int _msgObjectId2;
+	int _msgId;
 
 	BehaviorManager *_behaviorManager;
 

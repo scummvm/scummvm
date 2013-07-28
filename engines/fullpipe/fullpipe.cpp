@@ -77,6 +77,11 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_updateScreenCallback = 0;
 	_updateCursorCallback = 0;
 
+	_msgX = 0;
+	_msgY = 0;
+	_msgObjectId2 = 0;
+	_msgId = 0;
+
 	_behaviorManager = 0;
 
 	_cursorId = 0;

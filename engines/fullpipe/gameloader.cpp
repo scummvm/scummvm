@@ -51,9 +51,9 @@ CGameLoader::CGameLoader() {
 	_gameProject = 0;
 	//_gameName = "untitled";
 
-	//addMessageHandler2(CGameLoader_messageHandler1, 0, 0);
-	//insertMessageHandler(CGameLoader_messageHandler2, 0, 128);
-	//insertMessageHandler(CGameLoader_messageHandler3, 0, 1);
+	addMessageHandlerByIndex(global_messageHandler2, 0, 0);
+	insertMessageHandler(global_messageHandler3, 0, 128);
+	insertMessageHandler(global_messageHandler4, 0, 1);
 
 	_field_FA = 0;
 	_field_F8 = 0;
@@ -65,13 +65,10 @@ CGameLoader::CGameLoader() {
 	_preloadId2 = 0;
 	_updateCounter = 0;
 
-	//g_x = 0;
-	//g_y = 0;
-	//dword_478480 = 0;
-	//g_objectId2 = 0;
-	//g_id = 0;
-
-	warning("STUB: CGameLoader::CGameLoader()");
+	g_fullpipe->_msgX = 0;
+	g_fullpipe->_msgY = 0;
+	g_fullpipe->_msgObjectId2 = 0;
+	g_fullpipe->_msgId = 0;
 }
 
 CGameLoader::~CGameLoader() {
