@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	fullpipe.o \
 	gameloader.o \
 	gfx.o \
+	init.o \
 	input.o \
 	inventory.o \
 	messages.o \
