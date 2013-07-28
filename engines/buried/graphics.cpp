@@ -223,8 +223,7 @@ Cursor GraphicsManager::setCursor(Cursor newCursor) {
 	if (newCursor == kCursorArrow) {
 		cursor = Graphics::makeDefaultWinCursor();
 	} else if (newCursor == kCursorWait) {
-		warning("STUB: setCursor(kCursorWait)");
-		return kCursorNone;
+		cursor = Graphics::makeBusyWinCursor();
 	} else {
 		cursorGroup = _vm->_mainEXE->getCursorGroup(newCursor);
 
