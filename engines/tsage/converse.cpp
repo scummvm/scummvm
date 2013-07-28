@@ -444,7 +444,8 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	_bounds.bottom -= 10;
 	yp = 180 - _bounds.height();
 	_bounds.translate(0, yp);
-	_bounds.right = _bounds.left + 280;
+	_bounds.setWidth(textMaxWidth() + 15);
+	_bounds.moveTo(160 - (_bounds.width() / 2), _bounds.top);
 
 	// Draw the dialog
 	draw();
