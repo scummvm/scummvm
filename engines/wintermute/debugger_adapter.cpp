@@ -75,13 +75,17 @@ int SourceFile::getLength() {
 }
 
 Common::String SourceFile::getLine(int n, int *error) {
+	
+	// Line numbers are starting from 1, so... 
+	n--;
+
 	if (_err) {
 		if (error != nullptr) {
 			*error = COULD_NOT_OPEN;
 		}
 		return 0;
-	}	
-	if (n < 0 || n > _strings.size()) {
+	}
+	if (n < 0 || n >= _strings.size()) {
 		if (error != nullptr) {
 			*error = NO_SUCH_LINE;
 		}
@@ -98,8 +102,8 @@ BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int lines,
 
 BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int before, int after, int *error) {
 	*error = 0;
-	int start = MAX(center - before, 0);
-	int finish = MIN(center + after, getLength() - 1);
+	int start = MAX(center - before, 1);
+	int finish = MIN(center + after, getLength()); // Line numbers start from 1
 	BaseArray<Common::String> ret;
 	Common::String temp;
 	for (int i = start; i <= finish && *error == 0; i++) {
