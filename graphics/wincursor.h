@@ -69,6 +69,13 @@ struct WinCursorGroup {
  */
 Cursor *makeDefaultWinCursor();
 
+/**
+ * Create a Cursor for the Windows busy cursor.
+ *
+ * @note The calling code is responsible for deleting the returned pointer.
+ */
+Cursor *makeBusyWinCursor();
+
 } // End of namespace Graphics
 
 #endif
