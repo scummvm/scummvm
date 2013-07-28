@@ -57,7 +57,7 @@ void Parser::handleInputText(const Common::Event &event) {
 }
 
 void Parser::handleBackspace() {
-	if (! _vm->_dropdown->ddm_o.menunow) {
+	if (!_vm->_dropdown->ddm_o.menunow) {
 		if (_inputTextPos > _leftMargin) {
 			_inputTextPos--;
 			if ((_inputText[_inputTextPos] == '"') || (_inputText[_inputTextPos] == '`'))
@@ -69,11 +69,14 @@ void Parser::handleBackspace() {
 	}
 }
 
+void Parser::handleReturn() {
+}
+
 void Parser::plotText() {
 	if (_vm->_gyro->mouse_near_text())
 		_vm->_gyro->super_off();
 
-	_vm->_basher->cursor_off();
+	cursorOff();
 
 	_vm->_graphics->drawBar(24, 161, 640, 169, black); // Black out the line of the text.
 
@@ -88,8 +91,46 @@ void Parser::plotText() {
 			}
 		}
 
-	_vm->_basher->cursor_on();
+	cursorOn();
 	_vm->_gyro->super_on();
+}
+
+void Parser::cursorOn() {
+	if (_cursorState == true)
+		return;
+	drawCursor();
+	_cursorState = true;
+}
+
+void Parser::cursorOff() {
+	if (_cursorState == false)
+		return;
+	drawCursor();
+	_cursorState = false;
+}
+
+void Parser::drawCursor() {
+	// Draw the '_' character. Similar to plotText().
+	char cursor = '_';
+
+	for (byte j = 0; j < 8; j++) {
+		byte pixel = _vm->_gyro->characters[cursor][j];
+		for (byte bit = 0; bit < 8; bit++) {
+			byte pixelBit = (pixel >> bit) & 1;
+			if (pixelBit != 0)
+				*_vm->_graphics->getPixel(24 + _inputTextPos * 8 + 7 - bit, 161 + j) = white;
+		}
+	}
+	
+
+
+	bytefield bf;
+	bf.x1 = _inputTextPos + 1;
+	bf.x2 = _inputTextPos + 2;
+	bf.y1 = 168;
+	bf.y2 = 168;
+	for (byte fv = 0; fv <= 1; fv ++)
+		_vm->_trip->getset[fv].remember(bf);
 }
 
 } // End of namespace Avalanche

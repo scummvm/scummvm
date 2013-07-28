@@ -95,19 +95,6 @@ begin
  end else dec(curflash);
 end;*/
 
-void Basher::do_cursor() {
-	warning("STUB: Basher::do_cursor()");
-}
-
-void Basher::cursor_on() {
-	warning("STUB: Basher::cursor_on()");
-}
-
-void Basher::cursor_off() {
-	warning("STUB: Basher::cursor_off()");
-}
-
-
 void Basher::get_demorec() {
 	warning("STUB: Basher::get_demorec()");
 }
