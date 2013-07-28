@@ -135,6 +135,7 @@ public:
 	void initObjectStates();
 	void setLevelStates();
 	void setSwallowedEggsState();
+	void loadAllScenes();
 
 	void initCursors();
 	void addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY);

@@ -121,6 +121,10 @@ Common::Error FullpipeEngine::run() {
 
 	sceneSwitcher(&ent);
 
+#if 1
+	loadAllScenes();
+#endif
+
 	_currentScene->draw();
 
 	while (!g_fullpipe->_needQuit) {

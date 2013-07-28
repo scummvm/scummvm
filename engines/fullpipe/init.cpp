@@ -201,4 +201,59 @@ void FullpipeEngine::initMap() {
 	updateMapPiece(PIC_MAP_A13, 1u);
 }
 
+void FullpipeEngine::loadAllScenes() {
+	accessScene(301);
+	accessScene(302);
+	accessScene(303);
+	accessScene(304);
+	accessScene(305);
+	accessScene(321);
+	accessScene(635);
+	accessScene(649);
+	accessScene(650);
+	accessScene(651);
+	accessScene(652);
+	accessScene(653);
+	accessScene(654);
+	accessScene(655);
+	accessScene(726);
+	accessScene(858);
+	accessScene(903);
+	accessScene(1137);
+	accessScene(1138);
+	accessScene(1139);
+	accessScene(1140);
+	accessScene(1141);
+	accessScene(1142);
+	accessScene(1143);
+	accessScene(1144);
+	accessScene(1546);
+	accessScene(1547);
+	accessScene(1548);
+	accessScene(1549);
+	accessScene(1550);
+	accessScene(1551);
+	accessScene(1552);
+	accessScene(2062);
+	accessScene(2063);
+	accessScene(2064);
+	accessScene(2065);
+	accessScene(2066);
+	accessScene(2067);
+	accessScene(2068);
+	accessScene(2069);
+	accessScene(2070);
+	accessScene(2071);
+	accessScene(2072);
+	accessScene(2460);
+	accessScene(3896);
+	accessScene(3907);
+	accessScene(4620);
+	accessScene(4999);
+	accessScene(5000);
+	accessScene(5001);
+	accessScene(5166);
+	accessScene(5222);
+}
+
 } // End of namespace Fullpipe
