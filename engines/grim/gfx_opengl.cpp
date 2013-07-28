@@ -422,8 +422,7 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glFrustum(-right, right, -top, top, 1, 3276.8f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glScalef(-1.0, 1.0, -1.0);
-		glRotatef(180, 0, 0, -1);
+		glScalef(1.0, 1.0, -1.0);
 		glTranslatef(pos.x(), pos.y(), pos.z());
 	} else {
 		Math::Vector3d relPos = (pos - _currentPos);
