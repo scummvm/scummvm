@@ -334,23 +334,46 @@ void Acci::punctustrip(Common::String &x) {        /* Strips punctuation from x.
 
 
 void Acci::displaywhat(char ch, bool animate, bool &ambigous) { /* << it's an adjective! */
-	byte ff;
-	Common::String z;
-
-	warning("STUB: Acci::_vm->_scrolls->displaywhat()");
+	if (ch == pardon) {
+		ambigous = true;
+		if (animate)
+			_vm->_scrolls->display("Whom?");
+		else
+			_vm->_scrolls->display("What?");
+	} else {
+		if (animate)
+			_vm->_scrolls->display(Common::String("{ ") + _vm->_gyro->getname(ch) + " }");
+		else {
+			Common::String z = _vm->_gyro->get_better(ch);
+			if (z != "") 
+				_vm->_scrolls->display(Common::String("{ ") + z + " }");
+		}
+	}
 }
 
 bool Acci::do_pronouns() {
-	bool ambiguous;
-	byte fv;
+	bool ambiguous = false;
 
-	bool do_pronouns_result;
-	ambiguous = false;
-		
-	warning("STUB: Acci::do_pronouns()");
+	for (byte fv = 0; fv < thats.size(); fv++)
+		switch (thats[fv]) {
+		case 200: {
+			displaywhat(_vm->_gyro->him, true, ambiguous);
+			thats.setChar(_vm->_gyro->him, fv);
+			}
+			break;
+		case 201: {
+			displaywhat(_vm->_gyro->her, true, ambiguous);
+			thats.setChar(_vm->_gyro->her, fv);
+			}
+			break;
+		case 202: {
+			displaywhat(_vm->_gyro->it, false, ambiguous);
+			thats.setChar(_vm->_gyro->it, fv);
+			}
+			break;
+	}
 
-	do_pronouns_result = ambiguous;
-	return do_pronouns_result;
+	return ambiguous;
 }
 
 void Acci::lowercase() {
@@ -497,27 +520,28 @@ void Acci::parse() {
 	replace(Common::String(40) + 232, 21); // "put on" = "don"
 	replace(Common::String(4) + 229, 20); // "take off" = "doff"
 
-	//* Words that could mean more than one person */
-	//{
-	//	if (room == r__nottspub)  replace("\314", "\244"); /* Barman = Port */
-	//	else replace("\314", "\232");                  /* Barman = Malagauche */
-	//	switch (room) {
-	//	case r__aylesoffice:
-	//		replace("\313", "\243");
-	//		break;        /* Monk = Ayles */
-	//	case r__musicroom:
-	//		replace("\313", "\246");
-	//		break;          /* Monk = Jacques */
-	//	default:
-	//		replace("\313", "\242");                  /* Monk = Ibythneth */
-	//	}
-	//}
+	// Words that could mean more than one person
+	if (_vm->_gyro->dna.room == r__nottspub)
+		replace(Common::String(204), 164); // Barman = Port
+	else
+		replace(Common::String(204), 154); // Barman = Malagauche
 
-	//if (do_pronouns()) {
-	//	weirdword = true;
-	//	thats = nowt;
-	//	return;
-	//}
+	switch (_vm->_gyro->dna.room) {
+	case r__aylesoffice:
+		replace(Common::String(203), 163); // Monk = Ayles
+		break;       
+	case r__musicroom:
+		replace(Common::String(203), 166); // Monk = Jacques
+		break;          
+	default:
+		replace(Common::String(203), 162); // Monk = Ibythneth
+	}
+	
+	if (do_pronouns()) {
+		_vm->_gyro->weirdword = true;
+		thats = nowt;
+		return;
+	}
 
 	//* second parsing - accidence */
 
