@@ -282,7 +282,7 @@ void MortevielleEngine::handleAction() {
 		_menu.eraseMenu();
 		_menu._menuDisplayed = false;
 		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
-			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
+			changeGraphicalDevice((uint)((int)inkey - 1) >> 1);
 			return;
 		}
 		if (_menu._menuSelected && (_currMenu == MENU_SAVE)) {
@@ -504,48 +504,48 @@ void MortevielleEngine::showPeoplePresent(int bitIndex) {
 	int xp = 580 - (_screenSurface.getStringWidth("LEO") / 2);
 
 	for (int i = 1; i <= 8; ++i)
-		_menu.disableMenuItem(_menu._discussMenu[i]);
+		_menu.disableMenuItem(_menu._discussMenu[i]._menuId, _menu._discussMenu[i]._actionId);
 
 	clearUpperRightPart();
 	if ((bitIndex & 128) == 128) {
 		_screenSurface.putxy(xp, 24);
 		_screenSurface.drawString("LEO", 4);
-		_menu.enableMenuItem(_menu._discussMenu[1]);
+		_menu.enableMenuItem(_menu._discussMenu[1]._menuId, _menu._discussMenu[1]._actionId);
 	}
 	if ((bitIndex & 64) == 64) {
 		_screenSurface.putxy(xp, 32);
 		_screenSurface.drawString("PAT", 4);
-		_menu.enableMenuItem(_menu._discussMenu[2]);
+		_menu.enableMenuItem(_menu._discussMenu[2]._menuId, _menu._discussMenu[2]._actionId);
 	}
 	if ((bitIndex & 32) == 32) {
 		_screenSurface.putxy(xp, 40);
 		_screenSurface.drawString("GUY", 4);
-		_menu.enableMenuItem(_menu._discussMenu[3]);
+		_menu.enableMenuItem(_menu._discussMenu[3]._menuId, _menu._discussMenu[3]._actionId);
 	}
 	if ((bitIndex & 16) == 16) {
 		_screenSurface.putxy(xp, 48);
 		_screenSurface.drawString("EVA", 4);
-		_menu.enableMenuItem(_menu._discussMenu[4]);
+		_menu.enableMenuItem(_menu._discussMenu[4]._menuId, _menu._discussMenu[4]._actionId);
 	}
 	if ((bitIndex & 8) == 8) {
 		_screenSurface.putxy(xp, 56);
 		_screenSurface.drawString("BOB", 4);
-		_menu.enableMenuItem(_menu._discussMenu[5]);
+		_menu.enableMenuItem(_menu._discussMenu[5]._menuId, _menu._discussMenu[5]._actionId);
 	}
 	if ((bitIndex & 4) == 4) {
 		_screenSurface.putxy(xp, 64);
 		_screenSurface.drawString("LUC", 4);
-		_menu.enableMenuItem(_menu._discussMenu[6]);
+		_menu.enableMenuItem(_menu._discussMenu[6]._menuId, _menu._discussMenu[6]._actionId);
 	}
 	if ((bitIndex & 2) == 2) {
 		_screenSurface.putxy(xp, 72);
 		_screenSurface.drawString("IDA", 4);
-		_menu.enableMenuItem(_menu._discussMenu[7]);
+		_menu.enableMenuItem(_menu._discussMenu[7]._menuId, _menu._discussMenu[7]._actionId);
 	}
 	if ((bitIndex & 1) == 1) {
 		_screenSurface.putxy(xp, 80);
 		_screenSurface.drawString("MAX", 4);
-		_menu.enableMenuItem(_menu._discussMenu[8]);
+		_menu.enableMenuItem(_menu._discussMenu[8]._menuId, _menu._discussMenu[8]._actionId);
 	}
 	_currBitIndex = bitIndex;
 }
@@ -699,7 +699,7 @@ int MortevielleEngine::getPresenceStatsRedRoom() {
  */
 void MortevielleEngine::displayAloneText() {
 	for (int i = 1; i <= 8; ++i)
-		_menu.disableMenuItem(_menu._discussMenu[i]);
+		_menu.disableMenuItem(_menu._discussMenu[i]._menuId, _menu._discussMenu[i]._actionId);
 
 	Common::String sYou = getEngineString(S_YOU);
 	Common::String sAre = getEngineString(S_ARE);
@@ -1643,7 +1643,7 @@ void MortevielleEngine::hourToChar() {
 		minute = 1;
 	hour += day * 24;
 	minute += hour * 2;
-	_coreVar._fullHour = chr(minute);
+	_coreVar._fullHour = (unsigned char)minute;
 }
 
 /**
@@ -1651,7 +1651,7 @@ void MortevielleEngine::hourToChar() {
  * @remarks	Originally called 'theure'
  */
 void MortevielleEngine::charToHour() {
-	int fullHour = ord(_coreVar._fullHour);
+	int fullHour = _coreVar._fullHour;
 	int tmpHour = fullHour % 48;
 	_currDay = fullHour / 48;
 	_currHalfHour = tmpHour % 2;
@@ -1869,16 +1869,16 @@ bool MortevielleEngine::decryptNextChar(char &c, int &idx, byte &pt) {
 		}
 
 		if (oct == 30)
-			c = chr(cryptoArr30[ocd]);
+			c = (unsigned char)cryptoArr30[ocd];
 		else
-			c = chr(cryptoArr31[ocd]);
+			c = (unsigned char)cryptoArr31[ocd];
 
 		if (c == '\0') {
 			c = '#';
 			return true;
 		}
 	} else {
-		c = chr(cryptoArrDefault[oct]);
+		c = (unsigned char)cryptoArrDefault[oct];
 	}
 	return false;
 }
@@ -1944,7 +1944,7 @@ void MortevielleEngine::resetVariables() {
 	// Only object in inventory: a gun
 	_coreVar._inventory[1] = 113;
 
-	_coreVar._fullHour = chr(20);
+	_coreVar._fullHour = (unsigned char)20;
 
 	for (int i = 1; i <= 10; ++i)
 		_coreVar._pctHintFound[i] = ' ';
@@ -2175,10 +2175,10 @@ void MortevielleEngine::loadCFIPH() {
 			error("Missing file - *cfiph.mor");
 	}
 
-	_speechManager._cfiphBuffer = (int16 *)malloc(sizeof(int16) * (f.size() / 2));
+	_speechManager._cfiphBuffer = (uint16 *)malloc(sizeof(uint16) * (f.size() / 2));
 
 	for (int i = 0; i < (f.size() / 2); ++i)
-		_speechManager._cfiphBuffer[i] = f.readSint16LE();
+		_speechManager._cfiphBuffer[i] = f.readUint16BE();
 
 	f.close();
 }
@@ -2307,7 +2307,7 @@ void MortevielleEngine::prepareRoom() {
 		if (hintCount == 10)
 			pctStr = "10";
 		else
-			pctStr = chr(hintCount + 48);
+			pctStr = (unsigned char)(hintCount + 48);
 
 		_hintPctMessage = "[1][";
 		_hintPctMessage += getEngineString(S_SHOULD_HAVE_NOTICED);
@@ -2762,8 +2762,8 @@ void MortevielleEngine::displayItemInHand(int objId) {
 	if (objId != 500)
 		strp = getString(objId - 501 + kInventoryStringIndex);
 
-	_menu.setText(_menu._inventoryMenu[8], strp);
-	_menu.disableMenuItem(_menu._inventoryMenu[8]);
+	_menu.setText(_menu._inventoryMenu[8]._menuId, _menu._inventoryMenu[8]._actionId, strp);
+	_menu.disableMenuItem(_menu._inventoryMenu[8]._menuId, _menu._inventoryMenu[8]._actionId);
 }
 
 /**
@@ -3234,7 +3234,7 @@ L1:
 		_caff = 69 + cx;
 		_crep = _caff;
 		_currMenu = MENU_DISCUSS;
-		_currAction = _menu._discussMenu[cx];
+		_currAction = (_menu._discussMenu[cx]._menuId << 8) | _menu._discussMenu[cx]._actionId;
 		_syn = true;
 		_col = true;
 	} else {
@@ -3291,7 +3291,7 @@ void MortevielleEngine::displayStatusArrow() {
 	if (_num == 9999)
 		return;
 
-	displayStatusInDescriptionBar(chr(152));
+	displayStatusInDescriptionBar((unsigned char)152);
 	bool inRect = false;
 	do {
 		touch = '\0';
@@ -3450,7 +3450,7 @@ void MortevielleEngine::displayStatusInDescriptionBar(char stat) {
 	else
 		color = 12;
 
-	_screenSurface.writeCharacter(Common::Point(306, 193), ord(stat), color);
+	_screenSurface.writeCharacter(Common::Point(306, 193), stat, color);
 	_screenSurface.drawBox(300, 191, 16, 8, 15);
 	_mouse.showMouse();
 }
@@ -3491,7 +3491,7 @@ int MortevielleEngine::gettKeyPressed() {
 		break;
 	}
 
-	return ord(ch);
+	return (int)ch;
 }
 
 } // End of namespace Mortevielle

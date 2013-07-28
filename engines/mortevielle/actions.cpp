@@ -41,13 +41,14 @@ namespace Mortevielle {
  * @remarks	Originally called 'taller'
  */
 void MortevielleEngine::fctMove() {
-	if ((_coreVar._currPlace == ROOM26) && (_currAction == _menu._moveMenu[6])) {
+	int oldMenu = (_menu._moveMenu[6]._menuId << 8) | _menu._moveMenu[6]._actionId;
+	if ((_coreVar._currPlace == ROOM26) && (_currAction == oldMenu)) {
 		_coreVar._currPlace = LANDING;
 		_caff = _coreVar._currPlace;
 		drawPictureWithText();
 		handleDescriptionText(2, _coreVar._currPlace);
 	}
-	if ((_coreVar._currPlace == LANDING) && (_currAction == _menu._moveMenu[6])) {
+	if ((_coreVar._currPlace == LANDING) && (_currAction == oldMenu)) {
 		if (!_syn)
 			displayTextInVerbBar(getEngineString(S_GO_TO));
 		displayStatusArrow();
@@ -85,9 +86,11 @@ void MortevielleEngine::fctMove() {
 	}
 	exitRoom();
 	int menuChoice = 1;
-
-	while (_menu._moveMenu[menuChoice] != _currAction)
+	oldMenu = (_menu._moveMenu[menuChoice]._menuId << 8) | _menu._moveMenu[menuChoice]._actionId;
+	while (oldMenu != _currAction) {
 		++menuChoice;
+		oldMenu = (_menu._moveMenu[menuChoice]._menuId << 8) | _menu._moveMenu[menuChoice]._actionId;
+	}
 
 	if (_coreVar._currPlace == MOUNTAIN) {
 		if (menuChoice == 1)
@@ -300,9 +303,11 @@ void MortevielleEngine::fctTake() {
  */
 void MortevielleEngine::fctInventoryTake() {
 	int inventIndex = 0;
+	int oldMenu = 0;
 	do {
 		++inventIndex;
-	} while (_menu._inventoryMenu[inventIndex] != _currAction);
+		oldMenu = (_menu._inventoryMenu[inventIndex]._menuId << 8) | _menu._inventoryMenu[inventIndex]._actionId;
+	} while (oldMenu != _currAction);
 	int cz = 0;
 	int cy = 0;
 	do {
@@ -1154,7 +1159,7 @@ void MortevielleEngine::fctEnter() {
 				++_coreVar._faithScore;
 				_coreVar._currPlace = LANDING;
 				_currMenu = MENU_DISCUSS;
-				_currAction = _menu._discussMenu[charIndex];
+				_currAction = (_menu._discussMenu[charIndex]._menuId << 8) | _menu._discussMenu[charIndex]._actionId;
 				_syn = true;
 				if (_roomDoorId == ROOM9) {
 					_col = true;
@@ -1352,9 +1357,11 @@ void MortevielleEngine::fctDiscuss() {
 		displId = 128;
 	else {
 		cx = 0;
+		int oldMenu;
 		do {
 			++cx;
-		} while (_menu._discussMenu[cx] != _currAction);
+			oldMenu = (_menu._discussMenu[cx]._menuId << 8) | _menu._discussMenu[cx]._actionId;
+		} while (oldMenu != _currAction);
 		_caff = 69 + cx;
 		drawPictureWithText();
 		handleDescriptionText(2, _caff);

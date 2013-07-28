@@ -1113,7 +1113,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	pt.x += 1;
 	pt.y += 1;
 	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
-		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), color);
+		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), l[x - 1], color);
 		pt.x += charWidth;
 	}
 	_vm->_mouse.showMouse();

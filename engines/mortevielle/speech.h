@@ -75,7 +75,7 @@ private:
 	int _ptr_oct;
 
 public:
-	int16 *_cfiphBuffer;
+	uint16 *_cfiphBuffer;
 	int _tbi[256];
 	int _mlec;
 	byte *_noise5Buf;

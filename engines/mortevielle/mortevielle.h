@@ -65,12 +65,6 @@ namespace Mortevielle {
  */
 const int kAdrMusic = 0x5000;
 
-#define ord(v) ((int) v)
-#define chr(v) ((unsigned char) v)
-#define lo(v) ((v) & 0xff)
-#define hi(v) (((v) >> 8) & 0xff)
-#define swap(v) (((lo(v)) << 8) | ((hi(v)) >> 8))
-
 // Debug channels
 enum {
 	kMortevielleCore = 1 << 0,
@@ -136,20 +130,6 @@ const int kMenuActionStringIndex = 476;
 const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
 const int kMaxPatt = 20;
-
-const int OPCODE_NONE = 0;
-enum verbs {OPCODE_ATTACH = 0x301, OPCODE_WAIT = 0x302,  OPCODE_FORCE = 0x303,   OPCODE_SLEEP = 0x304, OPCODE_LISTEN = 0x305,
-            OPCODE_ENTER = 0x306,  OPCODE_CLOSE = 0x307, OPCODE_SEARCH = 0x308,  OPCODE_KNOCK = 0x309, OPCODE_SCRATCH = 0x30a,
-			OPCODE_READ = 0x30b,   OPCODE_EAT = 0x30c,   OPCODE_PLACE = 0x30d,   OPCODE_OPEN = 0x30e,  OPCODE_TAKE = 0x30f,
-			OPCODE_LOOK = 0x310,   OPCODE_SMELL = 0x311, OPCODE_SOUND = 0x312,   OPCODE_LEAVE = 0x313, OPCODE_LIFT = 0x314,
-			OPCODE_TURN = 0x315,   OPCODE_SHIDE = 0x401, OPCODE_SSEARCH = 0x402, OPCODE_SREAD = 0x403, OPCODE_SPUT = 0x404,
-			OPCODE_SLOOK = 0x405};
-
-static const int _actionMenu[12] = { OPCODE_NONE,
-		OPCODE_SHIDE, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP,
-		OPCODE_ENTER, OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
-		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
-};
 
 /*
 9   "A glance at the forbidden$",
