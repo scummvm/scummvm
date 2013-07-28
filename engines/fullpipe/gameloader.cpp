@@ -155,6 +155,12 @@ bool CGameLoader::loadScene(int sceneId) {
 	return false;
 }
 
+bool CGameLoader::gotoScene(int sceneId, int entranceId) {
+	warning("STUB: CGameLoader::gotoScene(%d, %d)", sceneId, entranceId);
+
+	return true;
+}
+
 int CGameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
 	if (_sc2array.size() > 0 && _gameProject->_sceneTagList->size() > 0) {
 		for (uint i = 0; i < _sc2array.size(); i++) {

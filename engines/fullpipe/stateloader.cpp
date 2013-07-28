@@ -106,7 +106,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 		_inventory->rebuildItemRects();
 
 		for (CPtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
-			((MemoryObject *)((PicPicturetureObject *)*p)->_picture)->load();
+			((MemoryObject *)((PictureObject *)*p)->_picture)->load();
 		}
 
 		//_sceneSwitcher = sceneSwitcher;
@@ -114,8 +114,8 @@ bool FullpipeEngine::loadGam(const char *fname) {
 		//_readSavegameCallback = gameLoaderReadSavegameCallback;
 		_aniMan = accessScene(SC_COMMON)->getAniMan();
 		_scene2 = 0;
-#if 0
-		_movTable = _aniMan->preloadMovements();
+
+		_movTable = _aniMan->countMovements();
 
 		_aniMan->setSpeed(1);
 
@@ -126,7 +126,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 		// Not used in full game
 		//_evalVersionPic = accessScene(SC_COMMON)->getPictureObjectById(PIC_CMN_EVAL, 0);
 
-		initMaps();
+		initMap();
 		initCursors();
 
 		setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
@@ -138,7 +138,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 			_gameLoader->loadScene(SC_1);
 			_gameLoader->gotoScene(SC_1, TrubaLeft);
 		}
-#endif
+
 		if (!_currentScene)
 			return false;
 	} else

@@ -185,6 +185,14 @@ class StaticANIObject : public GameObject {
 	Statics *addReverseStatics(Statics *ani);
 	void draw();
 	void draw2();
+
+	MovTable *countMovements();
+	void setSpeed(int speed);
+};
+
+struct MovTable {
+	int count;
+	int16 *movs;
 };
 
 } // End of namespace Fullpipe

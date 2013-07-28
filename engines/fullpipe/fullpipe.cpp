@@ -34,6 +34,8 @@
 #include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
 
+#include "fullpipe/gameobj.h"
+
 namespace Fullpipe {
 
 FullpipeEngine *g_fullpipe = 0;
@@ -63,11 +65,15 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_inputDisabled = false;
 
 	_needQuit = false;
+	_flgPlayIntro = true;
+
+	_musicAllowed = -1;
 
 	_aniMan = 0;
 	_aniMan2 = 0;
 	_currentScene = 0;
 	_scene2 = 0;
+	_movTable = 0;
 
 	_globalMessageQueueList = 0;
 	_messageHandlers = 0;
@@ -334,6 +340,32 @@ void FullpipeEngine::setObjectState(const char *name, int state) {
 	}
 
 	var->setSubVarAsInt(name, state);
+}
+
+void FullpipeEngine::initCursors() {
+	warning("STUB: FullpipeEngine::initCursors()");
+}
+
+void FullpipeEngine::initMap() {
+	memset(_mapTable, 0, sizeof(_mapTable));
+
+	updateMapPiece(PIC_MAP_S01, 1);
+	updateMapPiece(PIC_MAP_A13, 1u);
+}
+
+void FullpipeEngine::updateMapPiece(int mapId, int update) {
+	for (int i = 0; i < 200; i++) {
+		int hiWord = (_mapTable[i] >> 16) & 0xffff;
+
+		if (hiWord == mapId) {
+			_mapTable[i] |= update;
+			return;
+		}
+		if (!hiWord) {
+			_mapTable[i] = (mapId << 16) | update;
+			return;
+		}
+	}
 }
 
 } // End of namespace Fullpipe

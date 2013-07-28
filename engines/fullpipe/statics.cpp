@@ -238,6 +238,16 @@ void StaticANIObject::draw2() {
 	}
 }
 
+MovTable *StaticANIObject::countMovements() {
+	warning("STUB: StaticANIObject::countMovements()");
+
+	return 0;
+}
+
+void StaticANIObject::setSpeed(int speed) {
+	warning("STUB: StaticANIObject::setSpeed(%d)", speed);
+}
+
 Statics::Statics() {
 	_staticsId = 0;
 	_picture = 0;

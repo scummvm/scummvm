@@ -52,6 +52,7 @@ class EntranceInfo;
 class GameProject;
 class GlobalMessageQueueList;
 class MessageHandler;
+struct MovTable;
 class NGIArchive;
 class Scene;
 class SoundList;
@@ -67,6 +68,8 @@ public:
 	virtual ~FullpipeEngine();
 
 	void initialize();
+
+	void setMusicAllowed(int val) { _musicAllowed = val; }
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
@@ -116,15 +119,26 @@ public:
 
 	BehaviorManager *_behaviorManager;
 
+	MovTable *_movTable;
+
+	void initMap();
+	void updateMapPiece(int mapId, int update);
+
 	bool _needQuit;
+	bool _flgPlayIntro;
+	int _musicAllowed;
 
 	void initObjectStates();
 	void setLevelStates();
 	void setSwallowedEggsState();
 
+	void initCursors();
+
 	CGameVar *_swallowedEgg1;
 	CGameVar *_swallowedEgg2;
 	CGameVar *_swallowedEgg3;
+
+	int32 _mapTable[200];
 
 	Scene *_inventoryScene;
 	CInventory2 *_inventory;
