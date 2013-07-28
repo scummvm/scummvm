@@ -3173,6 +3173,9 @@ bool Scene300::Doorway::startAction(CursorType action, Event &event) {
 Scene300::Scene300(): SceneExt() {
 	_stripId = 0;
 	_rotation = NULL;
+
+	_stripManager.setColors(60, 255);
+	_stripManager.setFontNumber(3);
 }
 
 void Scene300::synchronize(Serializer &s) {
@@ -3194,8 +3197,6 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._characterIndex = R2_QUINN;
 	}
 
-	_stripManager.setColors(60, 255);
-	_stripManager.setFontNumber(3);
 	_stripManager.addSpeaker(&_mirandaSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);
 	_stripManager.addSpeaker(&_quinnSpeaker);
@@ -3627,6 +3628,8 @@ void Scene300::signal() {
 	case 309:
 		signal309();
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+		R2_GLOBALS._events._currentCursor = CURSOR_ARROW;
+
 		_sceneMode = 10;
 		_stripManager.start3(_stripId, this, R2_GLOBALS._stripManager_lookupList);
 		break;

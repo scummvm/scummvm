@@ -145,6 +145,10 @@ public:
 };
 
 class ConversationChoiceDialog : public ModalDialog {
+private:
+	int textLeft() const;
+	int textMaxWidth() const;
+	int numberLeft() const;
 public:
 	int _stdColor;
 	int _highlightColor;

@@ -424,17 +424,15 @@ ConversationChoiceDialog::ConversationChoiceDialog() {
 int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	_gfxManager._font.setFontNumber(_fontNumber);
 
-	_bounds = Rect(20, 0, 20, 0);
+	_bounds = Rect(40, 0, 40, 0);
 	_choiceList.clear();
 
 	// Set up the list of choices
 	int yp = 0;
-	int xp = (g_vm->getGameID() == GType_Ringworld2) ? 40 : 25;
-
 	for (uint idx = 0; idx < choiceList.size(); ++idx) {
 		Rect tempRect;
-		_gfxManager._font.getStringBounds(choiceList[idx].c_str(), tempRect, 265);
-		tempRect.moveTo(xp, yp + 10);
+		_gfxManager._font.getStringBounds(choiceList[idx].c_str(), tempRect, textMaxWidth());
+		tempRect.moveTo(textLeft(), yp + 10);
 
 		_choiceList.push_back(ChoiceEntry(choiceList[idx], tempRect));
 		yp += tempRect.height() + 5;
@@ -515,11 +513,8 @@ void ConversationChoiceDialog::draw() {
 
 	// Fill in the contents of the entire dialog
 	_gfxManager._bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	
-	if (g_vm->getGameID() == GType_Ringworld2)
-		GfxElement::drawFrame();
-	else
-		drawFrame();
+
+	drawFrame();
 
 	_gfxManager._bounds = tempRect;
 	_gfxManager._font._colors.foreground = _stdColor;
@@ -530,7 +525,7 @@ void ConversationChoiceDialog::draw() {
 		Common::String strNum = Common::String::format("%d", idx + 1);
 
 		// Write the choice number
-		_gfxManager._font.setPosition(13, _choiceList[idx]._bounds.top);
+		_gfxManager._font.setPosition(numberLeft(), _choiceList[idx]._bounds.top);
 		_gfxManager._font.writeString(strNum.c_str());
 
 		_gfxManager._font.writeLines(_choiceList[idx]._msg.c_str(), _choiceList[idx]._bounds, ALIGN_LEFT);
@@ -549,6 +544,18 @@ void ConversationChoiceDialog::remove() {
 		delete _savedArea;
 		_savedArea = NULL;
 	}
+}
+
+int ConversationChoiceDialog::textLeft() const {
+	return (g_vm->getGameID() == GType_Ringworld2) ? 20 : 25;
+}
+
+int ConversationChoiceDialog::textMaxWidth() const {
+	return (g_vm->getGameID() == GType_Ringworld2) ? 250 : 265;
+}
+
+int ConversationChoiceDialog::numberLeft() const {
+	return (g_vm->getGameID() == GType_Ringworld2) ? 6 : 13;
 }
 
 /*--------------------------------------------------------------------------*/

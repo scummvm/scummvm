@@ -137,43 +137,47 @@ void ModalDialog::drawFrame() {
 	Rect origRect = _bounds;
 	_bounds.collapse(-10, -10);
 
-	// Fill the dialog area
-	g_globals->gfxManager().fillRect(origRect, 54);
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		GfxElement::drawFrame();
+	} else {
+		// Fill the dialog area
+		g_globals->gfxManager().fillRect(origRect, 54);
 
-	// Draw top line
-	GfxSurface surface = surfaceFromRes(8, 1, 7);
-	for (int xp = _bounds.left + 10; xp < (_bounds.right - 20); xp += 10)
-		surface.draw(Common::Point(xp, _bounds.top));
-	surface.draw(Common::Point(_bounds.right - 20, _bounds.top));
+		// Draw top line
+		GfxSurface surface = surfaceFromRes(8, 1, 7);
+		for (int xp = _bounds.left + 10; xp < (_bounds.right - 20); xp += 10)
+			surface.draw(Common::Point(xp, _bounds.top));
+		surface.draw(Common::Point(_bounds.right - 20, _bounds.top));
 
-	surface = surfaceFromRes(8, 1, 1);
-	surface.draw(Common::Point(_bounds.left, _bounds.top));
+		surface = surfaceFromRes(8, 1, 1);
+		surface.draw(Common::Point(_bounds.left, _bounds.top));
 
-	surface = surfaceFromRes(8, 1, 4);
-	surface.draw(Common::Point(_bounds.right - 10, _bounds.top));
+		surface = surfaceFromRes(8, 1, 4);
+		surface.draw(Common::Point(_bounds.right - 10, _bounds.top));
 
-	// Draw vertical edges
-	surface = surfaceFromRes(8, 1, 2);
-	for (int yp = _bounds.top + 10; yp < (_bounds.bottom - 20); yp += 10)
-		surface.draw(Common::Point(_bounds.left, yp));
-	surface.draw(Common::Point(_bounds.left, _bounds.bottom - 20));
+		// Draw vertical edges
+		surface = surfaceFromRes(8, 1, 2);
+		for (int yp = _bounds.top + 10; yp < (_bounds.bottom - 20); yp += 10)
+			surface.draw(Common::Point(_bounds.left, yp));
+		surface.draw(Common::Point(_bounds.left, _bounds.bottom - 20));
 
-	surface = surfaceFromRes(8, 1, 5);
-	for (int yp = _bounds.top + 10; yp < (_bounds.bottom - 20); yp += 10)
-		surface.draw(Common::Point(_bounds.right - 10, yp));
-	surface.draw(Common::Point(_bounds.right - 10, _bounds.bottom - 20));
+		surface = surfaceFromRes(8, 1, 5);
+		for (int yp = _bounds.top + 10; yp < (_bounds.bottom - 20); yp += 10)
+			surface.draw(Common::Point(_bounds.right - 10, yp));
+		surface.draw(Common::Point(_bounds.right - 10, _bounds.bottom - 20));
 
-	// Draw bottom line
-	surface = surfaceFromRes(8, 1, 8);
-	for (int xp = _bounds.left + 10; xp < (_bounds.right - 20); xp += 10)
-		surface.draw(Common::Point(xp, _bounds.bottom - 10));
-	surface.draw(Common::Point(_bounds.right - 20, _bounds.bottom - 10));
+		// Draw bottom line
+		surface = surfaceFromRes(8, 1, 8);
+		for (int xp = _bounds.left + 10; xp < (_bounds.right - 20); xp += 10)
+			surface.draw(Common::Point(xp, _bounds.bottom - 10));
+		surface.draw(Common::Point(_bounds.right - 20, _bounds.bottom - 10));
 
-	surface = surfaceFromRes(8, 1, 3);
-	surface.draw(Common::Point(_bounds.left, _bounds.bottom - 10));
+		surface = surfaceFromRes(8, 1, 3);
+		surface.draw(Common::Point(_bounds.left, _bounds.bottom - 10));
 
-	surface = surfaceFromRes(8, 1, 6);
-	surface.draw(Common::Point(_bounds.right - 10, _bounds.bottom - 10));
+		surface = surfaceFromRes(8, 1, 6);
+		surface.draw(Common::Point(_bounds.right - 10, _bounds.bottom - 10));
+	}
 
 	// Set the dialog's manager bounds
 	_gfxManager._bounds = origRect;
