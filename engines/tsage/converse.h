@@ -168,7 +168,6 @@ public:
 	int execute(const Common::StringArray &choiceList);
 
 	virtual void draw();
-	virtual void remove();
 };
 
 class Obj0A : public Serialisable {

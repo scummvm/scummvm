@@ -535,18 +535,6 @@ void ConversationChoiceDialog::draw() {
 	_gfxManager.deactivate();
 }
 
-void ConversationChoiceDialog::remove() {
-	if (_savedArea) {
-		// Restore the area the dialog covered
-		Rect tempRect = _bounds;
-		tempRect.collapse(-10, -10);
-		g_globals->_gfxManagerInstance.copyFrom(*_savedArea, tempRect.left, tempRect.top);
-
-		delete _savedArea;
-		_savedArea = NULL;
-	}
-}
-
 int ConversationChoiceDialog::textLeft() const {
 	return (g_vm->getGameID() == GType_Ringworld2) ? 20 : 25;
 }
