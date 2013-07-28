@@ -556,7 +556,7 @@ int ConversationChoiceDialog::textMaxWidth() const {
 }
 
 int ConversationChoiceDialog::numberLeft() const {
-	return (g_vm->getGameID() == GType_Ringworld2) ? 6 : 13;
+	return (g_vm->getGameID() == GType_Ringworld2) ? 8 : 13;
 }
 
 /*--------------------------------------------------------------------------*/

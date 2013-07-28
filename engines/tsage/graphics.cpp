@@ -798,35 +798,58 @@ void GfxElement::drawFrame() {
 				lineP++;
 			}
 		}
+
+		// Draw the edge frame
+		// Outer frame border
+		surface.hLine(tempRect.left + 2, tempRect.top, tempRect.right - 2, 0); 
+		surface.hLine(tempRect.left + 2, tempRect.bottom, tempRect.right - 2, 0); 
+		surface.vLine(tempRect.left, tempRect.top + 2, tempRect.bottom - 2, 0);
+		surface.vLine(tempRect.right, tempRect.top + 2, tempRect.bottom - 2, 0);
+		*((byte *)surface.getBasePtr(tempRect.left + 1, tempRect.top + 1)) = 0;
+		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.top + 1)) = 0;
+		*((byte *)surface.getBasePtr(tempRect.left + 1, tempRect.bottom - 1)) = 0;
+		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.bottom - 1)) = 0;
+
+		// Inner frame border
+		surface.hLine(tempRect.left + 2, tempRect.top + 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColour); 
+		surface.hLine(tempRect.left + 2, tempRect.bottom - 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColour); 
+		surface.vLine(tempRect.left + 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColour);
+		surface.vLine(tempRect.right - 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColour);
+		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColour;
+		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColour;
+		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColour;
+		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColour;
+
 		gfxManager.unlockSurface();
+		gfxManager.getSurface().addDirtyRect(tempRect);
 
 	} else {
 		// Fill dialog content with specified background colour
 		gfxManager.fillRect(tempRect, _colors.background);
+
+		--tempRect.bottom; --tempRect.right;
+		gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);
+		gfxManager.fillArea(tempRect.left, tempRect.bottom, fgColor);
+		gfxManager.fillArea(tempRect.right, tempRect.top, fgColor);
+		gfxManager.fillArea(tempRect.right, tempRect.bottom, fgColor);
+
+		tempRect.collapse(-1, -1);
+		gfxManager.fillRect2(tempRect.left + 1, tempRect.top, tempRect.width() - 1, 1, bgColor);
+		gfxManager.fillRect2(tempRect.left, tempRect.top + 1, 1, tempRect.height() - 1, bgColor);
+		gfxManager.fillRect2(tempRect.left + 1, tempRect.bottom, tempRect.width() - 1, 1, fgColor);
+		gfxManager.fillRect2(tempRect.right, tempRect.top + 1, 1, tempRect.height() - 1, fgColor);
+
+		gfxManager.fillArea(tempRect.left, tempRect.top, 0);
+		gfxManager.fillArea(tempRect.left, tempRect.bottom, 0);
+		gfxManager.fillArea(tempRect.right, tempRect.top, 0);
+		gfxManager.fillArea(tempRect.right, tempRect.bottom, 0);
+
+		tempRect.collapse(-1, -1);
+		gfxManager.fillRect2(tempRect.left + 2, tempRect.top, tempRect.width() - 3, 1, 0);
+		gfxManager.fillRect2(tempRect.left, tempRect.top + 2, 1, tempRect.height() - 3, 0);
+		gfxManager.fillRect2(tempRect.left + 2, tempRect.bottom, tempRect.width() - 3, 1, 0);
+		gfxManager.fillRect2(tempRect.right, tempRect.top + 2, 1, tempRect.height() - 3, 0);
 	}
-
-	--tempRect.bottom; --tempRect.right;
-	gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);
-	gfxManager.fillArea(tempRect.left, tempRect.bottom, fgColor);
-	gfxManager.fillArea(tempRect.right, tempRect.top, fgColor);
-	gfxManager.fillArea(tempRect.right, tempRect.bottom, fgColor);
-
-	tempRect.collapse(-1, -1);
-	gfxManager.fillRect2(tempRect.left + 1, tempRect.top, tempRect.width() - 1, 1, bgColor);
-	gfxManager.fillRect2(tempRect.left, tempRect.top + 1, 1, tempRect.height() - 1, bgColor);
-	gfxManager.fillRect2(tempRect.left + 1, tempRect.bottom, tempRect.width() - 1, 1, fgColor);
-	gfxManager.fillRect2(tempRect.right, tempRect.top + 1, 1, tempRect.height() - 1, fgColor);
-
-	gfxManager.fillArea(tempRect.left, tempRect.top, 0);
-	gfxManager.fillArea(tempRect.left, tempRect.bottom, 0);
-	gfxManager.fillArea(tempRect.right, tempRect.top, 0);
-	gfxManager.fillArea(tempRect.right, tempRect.bottom, 0);
-
-	tempRect.collapse(-1, -1);
-	gfxManager.fillRect2(tempRect.left + 2, tempRect.top, tempRect.width() - 3, 1, 0);
-	gfxManager.fillRect2(tempRect.left, tempRect.top + 2, 1, tempRect.height() - 3, 0);
-	gfxManager.fillRect2(tempRect.left + 2, tempRect.bottom, tempRect.width() - 3, 1, 0);
-	gfxManager.fillRect2(tempRect.right, tempRect.top + 2, 1, tempRect.height() - 3, 0);
 
 	gfxManager.unlockSurface();
 }
