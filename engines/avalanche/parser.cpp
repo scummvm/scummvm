@@ -75,10 +75,11 @@ void Parser::handleReturn() {
 	else {
 		_vm->_logger->log_command(_inputText);
 		
-		if (!_inputText.empty())
+		if (!_inputText.empty()) {
 			_inputTextBackup = _inputText;
-		_vm->_acci->parse();
-		_vm->_acci->do_that();
+			_vm->_acci->parse();
+			_vm->_acci->do_that();
+		}
 	}
 }
 

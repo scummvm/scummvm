@@ -236,19 +236,25 @@ byte Acci::wordnum(Common::String x) {
 	if (x.empty())
 		return 0;
 	
-	byte whatsit = pardon;
-	bool gotcha = false;
-	for (int32 fv = nowords - 1; fv >= 0; fv--) {
-		if ((words[fv].w == x) || ((Common::String(words[fv].w.c_str(), x.size()) == x) && !gotcha))
-			whatsit = words[fv].n;
-		if (words[fv].w == x)
-			gotcha = true;
-	}
-	return whatsit;
+	for (int32 fv = nowords - 1; fv >= 0; fv--) 
+		if ((words[fv].w == x) || (Common::String(words[fv].w.c_str(), x.size()) == x))
+			return words[fv].n;
+
+	return pardon;
 }
 
-void Acci::replace(Common::String old1, Common::String new1) {
-	warning("STUB: Acci::replace()");
+void Acci::replace(Common::String old1, byte new1) {
+	int16 q = pos(old1, thats);
+	while (q != -1) {
+		if (new1 == 0)
+			thats.deleteChar(q);
+		else {
+			for (byte i = q; i < q + old1.size(); i++)
+				thats.deleteChar(q);
+			thats.insertChar(new1, q);
+		}
+		q = pos(old1, thats);
+	}
 }
 
 /*procedure ninetydump;
@@ -403,12 +409,14 @@ void Acci::parse() {
 	thing2 = pardon;
 	person = pardon;
 	clearwords();
+
+
+	// A cheat mode attempt.
 	if (_vm->_parser->_inputText[0] == '.') {
-		// A cheat mode attempt.
 		cheatparse(_vm->_parser->_inputText);
 		thats = nowt;
 		return;
-	} // Not our department! Otherwise...
+	}
 
 	// Are we being interrogated right now?
 	if (_vm->_gyro->interrogation > 0) {
@@ -417,6 +425,7 @@ void Acci::parse() {
 		return;
 	}
 
+	// Actually process the command.
 	cc = c;
 	c.toUppercase();
 	while (!c.empty()) {
@@ -425,7 +434,7 @@ void Acci::parse() {
 			cc.deleteChar(0);
 		}
 
-		// Get the first words of the strings.
+		// Get the following word of the strings.
 		byte size = pos(Common::String(' '), c) + 1;
 		char *subStr = new char[size];
 		Common::strlcpy(subStr, c.c_str(), size);
@@ -438,7 +447,7 @@ void Acci::parse() {
 
 		notfound = true;
 
-		// Check also first, which conatins words about the actual room.
+		// Check also[] first, which conatins words about the actual room.
 		if (!thisword.empty()) {
 			for (ff = 0; ff < 31; ff++) {
 				if ((_vm->_gyro->also[ff][0] != 0) && (pos(',' + thisword, *_vm->_gyro->also[ff][0]) > -1)) {
@@ -448,6 +457,7 @@ void Acci::parse() {
 			}
 		}
 
+		// Check Accis's own tables for "global" commands.
 		if (notfound) {
 			answer = wordnum(thisword);
 			if (answer == pardon) {
@@ -458,6 +468,7 @@ void Acci::parse() {
 			n++;
 		}
 
+		// Delete words we already processed.
 		int16 spacePos = pos(Common::String(' '), c);
 		if (spacePos > -1)
 			for (byte i = 0; i <= spacePos; i++)
@@ -469,21 +480,22 @@ void Acci::parse() {
 	}
 
 	if (pos(Common::String(254), thats) > -1) 
-		unknown = realwords[pos("\376", thats)];
+		unknown = realwords[pos(Common::String(254), thats)];
 	else
 		if (!unknown.empty())
 			unknown.clear();
 
-	//replace("\377", ""); /* zap noise words */
-	//replace(string('\15') + '\342', "\1"); /* "look at" = "examine" */
-	//replace(string('\15') + '\344', "\1"); /* "look in" = "examine" */
-	//replace(string('\4') + '\343', "\21"); /* "get up" = "stand" */
-	//replace(string('\4') + '\347', "\21"); /* "get down" = "stand"... well, why not? */
-	//replace(string('\22') + '\344', "\2"); /* "go in" = "open [door]" */
-	//replace(string('\34') + '\345', "\375"); /* "P' off" is a swear word */
-	//replace(string('\4') + '\6', "\6"); /* "Take inventory" (remember Colossal Adventure?) */
-	//replace(string('\50') + '\350', "\25"); /* "put on" = "don" */
-	//replace(string('\4') + '\345', "\24"); /* "take off" = "doff" */
+	// Replace words' codes that mean the same.
+	replace(Common::String(255), 0); /* zap noise words */
+	replace(Common::String(13) + 226, 1); // "look at" = "examine"
+	replace(Common::String(13) + 228, 1); // "look in" = "examine"
+	replace(Common::String(4) + 227, 17); // "get up" = "stand" 
+	replace(Common::String(4) + 231, 17); // "get down" = "stand"... well, why not?
+	replace(Common::String(18) + 228, 2); // "go in" = "open [door]"
+	replace(Common::String(28) + 229, 253); // "P' off" is a swear word
+	replace(Common::String(4) + 6, 6); // "Take inventory" (remember Colossal Adventure?)
+	replace(Common::String(40) + 232, 21); // "put on" = "don"
+	replace(Common::String(4) + 229, 20); // "take off" = "doff"
 
 	//* Words that could mean more than one person */
 	//{
