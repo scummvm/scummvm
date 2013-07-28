@@ -585,7 +585,7 @@ void Lua_V2::YawCamera() {
 }
 
 void Lua_V2::NukeAllScriptLocks() {
-	error("Lua_V2::NukeAllScriptLocks() - TODO: Implement opcode");
+	warning("Lua_V2::NukeAllScriptLocks() - TODO: Implement opcode");
 }
 
 void Lua_V2::FRUTEY_Begin() {
