@@ -480,7 +480,6 @@ public:
 
 
 	/* previous:^previoustype;*/
-	Common::String last;
 	dnatype dna;
 	linetype lines[50]; /* For Also. */
 	int16 c;

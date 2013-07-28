@@ -36,11 +36,12 @@ class AvalancheEngine;
 class Parser {
 public:
 	Common::String _inputText;
+	Common::String _inputTextBackup;
 	byte _inputTextPos;
 	bool _quote; // 66 or 99 next?
 	byte _leftMargin;
 	bool _cursorState;
-
+	
 
 
 	Parser(AvalancheEngine *vm);
@@ -56,6 +57,8 @@ public:
 	void cursorOn();
 
 	void cursorOff();
+
+	void tryDropdown(); // This asks the parsekey proc in Dropdown if it knows it.
 
 private:
 	AvalancheEngine *_vm;

@@ -70,6 +70,16 @@ void Parser::handleBackspace() {
 }
 
 void Parser::handleReturn() {
+	if (_vm->_dropdown->ddm_o.menunow)
+		_vm->_parser->tryDropdown();
+	else {
+		_vm->_logger->log_command(_inputText);
+		
+		if (!_inputText.empty())
+			_inputTextBackup = _inputText;
+		_vm->_acci->parse();
+		_vm->_acci->do_that();
+	}
 }
 
 void Parser::plotText() {
@@ -107,6 +117,10 @@ void Parser::cursorOff() {
 		return;
 	drawCursor();
 	_cursorState = false;
+}
+
+void Parser::tryDropdown() { 
+	warning("STUB: Parser::tryDropdown()"); // TODO: Implement at the same time with Dropdown.
 }
 
 void Parser::drawCursor() {
