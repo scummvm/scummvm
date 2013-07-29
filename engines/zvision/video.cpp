@@ -91,20 +91,27 @@ void RenderManager::startVideo(Video::VideoDecoder *videoDecoder) {
 
 void RenderManager::continueVideo() {
 	byte bytesPerPixel = _currentVideo->getPixelFormat().bytesPerPixel;
-	uint16 width = _currentVideo->getWidth();
-	uint16 height = _currentVideo->getHeight();
-	uint16 pitch = width * bytesPerPixel;
+	uint16 origWidth = _currentVideo->getWidth();
+	uint16 origHeight = _currentVideo->getHeight();
+	uint16 pitch = origWidth * bytesPerPixel;
+	bool shouldBeScaled = (origWidth * 2 <= 640 && origHeight * 2 <= 480);
+	uint16 finalWidth = shouldBeScaled ? origWidth * 2 : origWidth;
+	uint16 finalHeight = shouldBeScaled ? origHeight * 2 : origHeight;
 
-	uint16 x = (_system->getWidth() - (width * 2)) / 2;
-	uint16 y = (_system->getHeight() - (height * 2)) / 2;
+	uint16 x = (_system->getWidth() - finalWidth) / 2;
+	uint16 y = (_system->getHeight() - finalHeight) / 2;
 
 	if (!_currentVideo->endOfVideo()) {
 		if (_currentVideo->needsUpdate()) {
 			const Graphics::Surface *frame = _currentVideo->decodeNextFrame();
 
-			if (frame) {		
-				scale2x(static_cast<byte *>(frame->pixels), _scaledVideoFrameBuffer, width, height, bytesPerPixel);
-				_system->copyRectToScreen(_scaledVideoFrameBuffer, pitch * 2, x, y, width * 2, height * 2);
+			if (frame) {
+				if (shouldBeScaled) {
+					scale2x((byte *)frame->pixels, _scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel);
+					_system->copyRectToScreen(_scaledVideoFrameBuffer, pitch * 2, x, y, finalWidth, finalHeight);
+				} else {
+					_system->copyRectToScreen((byte *)frame->pixels, pitch, x, y, finalWidth, finalHeight);
+				}
 
 				_needsScreenUpdate = true;
 			}
