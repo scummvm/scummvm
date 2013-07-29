@@ -1121,13 +1121,16 @@ void Acci::do_that() {
 
 
 	if (thats == Common::String(nowt))  {
-		thats = "";
+		if (!thats.empty())
+			thats.clear();
 		return;
 	}
+
 	if (_vm->_gyro->weirdword)
 		return;
-	if (thing < '\310')
-		thing -= 49; /* "Slip" */
+
+	if (thing < 200)
+		thing -= 49; // "Slip"
 
 	/*
 	if ((!_vm->_gyro->alive) &
@@ -1760,12 +1763,12 @@ void Acci::do_that() {
 			switch (person) {
 			case pardon:
 			case _vm->_gyro->pavalot:
-			case '\0':
+			case 0:
 				if (!_vm->_gyro->dna.avvy_is_awake) {
 					_vm->_gyro->dna.avvy_is_awake = true;
 					_vm->_lucerna->points(1);
 					_vm->_gyro->dna.avvy_in_bed = true;
-					_vm->_celer->show_one(3); /* Picture of Avvy, awake in bed. */
+					_vm->_celer->show_one(2); /* Picture of Avvy, awake in bed. */
 					if (_vm->_gyro->dna.teetotal)
 						_vm->_visa->dixi('d', 13);
 				} else
