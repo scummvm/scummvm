@@ -38,13 +38,10 @@ struct Point {
 
 	Point() : x(0), y(0) {}
 	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
-	Point(const Point &p) : x(p.x), y(p.y) {}
 	bool operator==(const Point &p) const { return x == p.x && y == p.y; }
 	bool operator!=(const Point &p) const { return x != p.x || y != p.y; }
 	Point operator+(const Point &delta) const {	return Point(x + delta.x, y + delta.y);	}
 	Point operator-(const Point &delta) const {	return Point(x - delta.x, y - delta.y);	}
-
-	void copy(const Point &p) { x = p.x; y = p.y; }
 
 	void operator+=(const Point &delta) {
 		x += delta.x;
@@ -102,11 +99,8 @@ struct Rect {
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
-	Rect(const Rect &r) : top(r.top), left(r.left), bottom(r.bottom), right(r.right) {}
 	bool operator==(const Rect &rhs) const { return equals(rhs); }
 	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
-
-	void copy(const Rect &r) { top = r.top; left = r.left; bottom = r.bottom; right = r.right; }
 
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
