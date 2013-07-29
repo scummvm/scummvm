@@ -89,12 +89,7 @@ public:
 	 */
 	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0));
 
-	/**
-	 * Set how the frame should be rendered
-	 *
-	 * @param state    One of the RenderStates
-	 */
-	void setRenderState(RenderTable::RenderState state);
+	RenderTable *getRenderTable();
 
 	bool needsScreenUpdate() { return _needsScreenUpdate; };
 

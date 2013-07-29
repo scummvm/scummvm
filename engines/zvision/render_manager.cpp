@@ -146,8 +146,8 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 d
 	_needsScreenUpdate = true;
 }
 
-void RenderManager::setRenderState(RenderTable::RenderState state) {
-	_renderTable.setRenderState(state);
+RenderTable *RenderManager::getRenderTable() {
+	return &_renderTable;
 }
 
 } // End of namespace ZVision

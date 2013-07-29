@@ -108,11 +108,11 @@ bool Console::cmdSetRenderState(int argc, const char **argv) {
 	Common::String renderState(argv[1]);
 
 	if (renderState.matchString("panorama", true))
-		_engine->getRenderManager()->setRenderState(RenderTable::PANORAMA);
+		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::PANORAMA);
 	else if (renderState.matchString("tilt", true))
-		_engine->getRenderManager()->setRenderState(RenderTable::TILT);
+		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::TILT);
 	else if (renderState.matchString("flat", true))
-		_engine->getRenderManager()->setRenderState(RenderTable::FLAT);
+		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
 	else
 		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
 
