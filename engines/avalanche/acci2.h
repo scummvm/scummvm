@@ -123,7 +123,7 @@ public:
 	Common::String thats;
 	Common::String unknown;
 	Common::String realwords[11];
-	char verb, person, thing, thing2;
+	byte verb, person, thing, thing2;
 	bool polite;
 
 

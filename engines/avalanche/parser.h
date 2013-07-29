@@ -65,6 +65,8 @@ private:
 
 	void drawCursor();
 
+	void wipeText();
+
 };
 
 } // End of namespace Avalanche

@@ -70,8 +70,6 @@ private:
 
 	bool entering_filename;
 
-	void wipetext();
-
 	char firstchar(Common::String x);
 
 	void typein();

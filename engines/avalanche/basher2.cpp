@@ -78,10 +78,6 @@ void Basher::init() {
 #endif
 }
 
-void Basher::wipetext() {
-	warning("STUB: Basher::wipetext()");
-}
-
 /*procedure cursor;
 begin
  if curflash=0 then

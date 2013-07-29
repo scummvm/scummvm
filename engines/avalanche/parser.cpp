@@ -79,6 +79,8 @@ void Parser::handleReturn() {
 			_inputTextBackup = _inputText;
 			_vm->_acci->parse();
 			_vm->_acci->do_that();
+			_inputText.clear();
+			wipeText();
 		}
 	}
 }
@@ -146,6 +148,20 @@ void Parser::drawCursor() {
 	bf.y2 = 168;
 	for (byte fv = 0; fv <= 1; fv ++)
 		_vm->_trip->getset[fv].remember(bf);
+}
+
+void Parser::wipeText() {
+	if (_vm->_gyro->mouse_near_text())
+		_vm->_gyro->super_off();
+
+	cursorOff();
+	
+	_vm->_graphics->drawBar(24, 161, 640, 169, black); // Black out the line of the text.
+
+	_quote = true;
+	_inputTextPos = 0;
+	cursorOn();
+	_vm->_gyro->super_on();
 }
 
 } // End of namespace Avalanche
