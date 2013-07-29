@@ -62,6 +62,7 @@ void Graphics::init() {
 
 Graphics::~Graphics() {
 	_surface.free();
+	_background.free();
 }
 
 
@@ -85,6 +86,7 @@ void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 }
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
+	drawPicture(_background, 0, 10);
 
 	/* First we make the pixels of the spirte blank. */
 	for (byte qay = 0; qay < sprite.yl; qay++) {

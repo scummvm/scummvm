@@ -57,7 +57,9 @@ public:
 	static const int16 kScreenWidth = 640;
 	static const int16 kScreenHeight = 200;
 
-	
+	::Graphics::Surface _background;
+
+
 
 	Graphics(AvalancheEngine *vm);
 

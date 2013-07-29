@@ -245,11 +245,11 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	byte backgroundHeight = 8 * 12080 / _vm->_graphics->kScreenWidth; // With 640 width it's 151
 	// The 8 = number of bits in a byte, and 12080 comes from the original code (see above)
 
-	::Graphics::Surface background = _vm->_graphics->loadPictureRow(f, backgroundWidht, backgroundHeight);
+	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(f, backgroundWidht, backgroundHeight);
 
-	_vm->_graphics->drawPicture(background, 0, 10);
+	_vm->_graphics->drawPicture(_vm->_graphics->_background, 0, 10);
 
-	background.free();
+	_vm->_graphics->refreshScreen();
 
 	f.close();
 
