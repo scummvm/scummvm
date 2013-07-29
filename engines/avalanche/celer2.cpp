@@ -306,10 +306,10 @@ void Celer::load_chunks(Common::String xx) {
 
 			if (ch.natural) {
 				memos[fv].flavour = ch_natural_image; // We simply read from the screen and later, in display_it() we draw it right back.
-				memos[fv].size = memos[fv].xl * 8 * memos[fv].yl; 
-				memory[fv].create(memos[fv].xl * 8, memos[fv].yl, ::Graphics::PixelFormat::createFormatCLUT8());
+				memos[fv].size = memos[fv].xl * 8 * memos[fv].yl + 1; 
+				memory[fv].create(memos[fv].xl * 8, memos[fv].yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
 
-				for (uint16 j = 0; j < memos[fv].yl; j++)
+				for (uint16 j = 0; j < memos[fv].yl + 1; j++)
 					for (uint16 i = 0; i < memos[fv].xl * 8; i++)
 						*(byte *)memory[fv].getBasePtr(i, j) = *_vm->_graphics->getPixel(memos[fv].x * 8 + i, memos[fv].y + j);
 			} else {
