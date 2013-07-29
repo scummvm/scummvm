@@ -48,14 +48,14 @@ private:
 	RenderState _renderState;
 
 	struct {
-		uint16 fieldOfView;
-		uint16 linearScale;
+		float fieldOfView;
+		float linearScale;
 	} _panoramaOptions;
 
 	// TODO: See if tilt and panorama need to have separate options
 	struct {
-		uint16 fieldOfView;
-		uint16 linearScale;
+		float fieldOfView;
+		float linearScale;
 	} _tiltOptions;
 
 public:

@@ -47,7 +47,7 @@ void RenderTable::setRenderState(RenderState newState) {
 	switch (newState) {
 	case PANORAMA:
 		_panoramaOptions.fieldOfView = 60;
-		_panoramaOptions.linearScale = 1;
+		_panoramaOptions.linearScale = 0.55f;
 		generatePanoramaLookupTable();
 		break;
 	case TILT:
@@ -91,15 +91,12 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 i
 }
 
 void RenderTable::generatePanoramaLookupTable() {
-	float fieldOfView = _panoramaOptions.fieldOfView;
-	float scale = _panoramaOptions.linearScale;
-
 	memset(_internalBuffer, 0, _numRows * _numColumns * sizeof(uint16));
 
 	float halfWidth = (float)_numColumns / 2.0f;
 	float halfHeight = (float)_numRows / 2.0f;
 
-	float fovRadians = (fieldOfView * M_PI / 180.0f);
+	float fovRadians = (_panoramaOptions.fieldOfView * M_PI / 180.0f);
 	float halfHeightOverTan = halfHeight / tan(fovRadians);
 	float tanOverHalfHeight = tan(fovRadians) / halfHeight;
 
