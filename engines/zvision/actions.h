@@ -40,9 +40,7 @@ public:
 
 
 // The different types of actions
-// CROSSFADE,
 // DEBUG,
-// DELAY_RENDER,
 // DISABLE_CONTROL,
 // DISABLE_VENUS,
 // DISPLAY_MESSAGE,
@@ -127,6 +125,16 @@ private:
 	byte _oneEndVolume;
 	byte _twoEndVolume;
 	uint16 _timeInMillis;
+};
+
+class ActionDelayRender : public ResultAction {
+public:
+	ActionDelayRender(Common::String *line);
+	bool execute(ZVision *engine);
+
+private:
+	// TODO: Check if this should actually be frames or if it should be milliseconds/seconds
+	byte framesToDelay;
 };
 
 class ActionPlayAnimation : public ResultAction {
