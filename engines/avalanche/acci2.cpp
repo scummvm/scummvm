@@ -514,7 +514,7 @@ void Acci::parse() {
 	replace(Common::String(255), 0); /* zap noise words */
 	replace(Common::String(13) + 226, 1); // "look at" = "examine"
 	replace(Common::String(13) + 228, 1); // "look in" = "examine"
-	replace(Common::String(4) + 227, 17); // "get up" = "stand" 
+	replace(Common::String(4) + 230, 17); // "get up" = "stand" 
 	replace(Common::String(4) + 231, 17); // "get down" = "stand"... well, why not?
 	replace(Common::String(18) + 228, 2); // "go in" = "open [door]"
 	replace(Common::String(28) + 229, 253); // "P' off" is a swear word
@@ -946,11 +946,11 @@ void Acci::stand_up() {
 				_vm->_gyro->background(0);
 				_vm->_visa->dixi('d', 14);
 			}
-			_vm->_trip->tr[1].visible = true;
+			_vm->_trip->tr[0].visible = true;
 			_vm->_gyro->dna.user_moves_avvy = true;
-			_vm->_trip->apped(1, 2);
+			_vm->_trip->apped(0, 1);
 			_vm->_gyro->dna.rw = _vm->_gyro->left;
-			_vm->_celer->show_one(4); /* Picture of empty pillow. */
+			_vm->_celer->show_one(3); /* Picture of empty pillow. */
 			_vm->_lucerna->points(1);
 			_vm->_gyro->dna.avvy_in_bed = false;
 			_vm->_timeout->lose_timer(_vm->_timeout->reason_arkata_shouts);
