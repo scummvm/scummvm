@@ -90,14 +90,13 @@ public:
 	static const byte vb_smartalec = 249;
 	static const byte vb_expletive = 253;
 
-	static const byte pardon = 254; /* =didn't understand / wasn't given. */
+	static const byte pardon = 254; // Didn't understand / wasn't given.
 
-	static const int16 nowords = 277; /* how many words does the parser know? */
-	static const byte nowt = 372;
-	static const byte moved = 0; /* This word was moved. (Usually because it was the subject of
-	  conversation.) */
+	static const int16 nowords = 277; // How many words does the parser know?
+	static const byte nowt = 250;
+	static const byte moved = 0; // This word was moved. (Usually because it was the subject of conversation.)
 
-	static const int16 first_password = 89; /* Words[first_password] should equal "TIROS". */
+	static const int16 first_password = 89; // Words[first_password] should equal "TIROS".
 
 
 
@@ -160,7 +159,7 @@ private:
 
 	void punctustrip(Common::String &x);
 
-	void displaywhat(char ch, bool animate, bool &ambigous);
+	void displaywhat(byte ch, bool animate, bool &ambigous);
 	bool do_pronouns();
 
 	void lowercase();

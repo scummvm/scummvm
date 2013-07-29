@@ -160,7 +160,7 @@ const Acci::vocab Acci::words[nowords] = {
 	{178, "WITCH"},
 
 	/* Pronouns, 200-224 */
-	{200, "_vm->_gyro->him"},       {200, "MAN"},       {200, "GUY"},
+	{200, "HIM"},       {200, "MAN"},       {200, "GUY"},
 	{200, "DUDE"},      {200, "CHAP"},      {200, "FELLOW"},
 	{201, "HER"},       {201, "GIRL"},      {201, "WOMAN"},
 	{202, "IT"},        {202, "THING"},
@@ -333,7 +333,7 @@ void Acci::punctustrip(Common::String &x) {        /* Strips punctuation from x.
 
 
 
-void Acci::displaywhat(char ch, bool animate, bool &ambigous) { /* << it's an adjective! */
+void Acci::displaywhat(byte ch, bool animate, bool &ambigous) { /* << it's an adjective! */
 	if (ch == pardon) {
 		ambigous = true;
 		if (animate)
@@ -354,8 +354,9 @@ void Acci::displaywhat(char ch, bool animate, bool &ambigous) { /* << it's an ad
 bool Acci::do_pronouns() {
 	bool ambiguous = false;
 
-	for (byte fv = 0; fv < thats.size(); fv++)
-		switch (thats[fv]) {
+	for (byte fv = 0; fv < thats.size(); fv++) {
+		byte word = thats[fv];
+		switch (word) {
 		case 200: {
 			displaywhat(_vm->_gyro->him, true, ambiguous);
 			thats.setChar(_vm->_gyro->him, fv);
@@ -371,6 +372,7 @@ bool Acci::do_pronouns() {
 			thats.setChar(_vm->_gyro->it, fv);
 			}
 			break;
+		}
 	}
 
 	return ambiguous;
@@ -480,7 +482,7 @@ void Acci::parse() {
 			}
 		}
 
-		// Check Accis's own tables for "global" commands.
+		// Check Accis's own table (words[]) for "global" commands.
 		if (notfound) {
 			answer = wordnum(thisword);
 			if (answer == pardon) {
@@ -543,69 +545,66 @@ void Acci::parse() {
 		return;
 	}
 
-	//* second parsing - accidence */
+	// Second parsing.
+	if (!_vm->_gyro->subject.empty())
+		_vm->_gyro->subject.clear();
+	_vm->_gyro->subjnumber = 0; // Find subject of conversation.
+	
+	fv = 0;
+	while ((fv < 11) && !realwords[fv].empty()) {
+		if ((realwords[fv][0] == '\'') || (realwords[fv][0] == '\"')) {
+			_vm->_gyro->subjnumber = thats[fv];
+			thats.setChar(moved, fv);
+			break;
+		}
+		fv++;
+	}
 
-	//subject = "";
-	//subjnumber = 0; /* Find subject of conversation. */
-	//for (fv = 1; fv <= 11; fv ++)
-	//	if (set::of('`', '\'', eos).has(realwords[fv][1])) {
-	//		subjnumber = ord(thats[fv]);
-	//		thats[fv] = moved;
-	//		flush(); /* Only the second time I've used that! */
-	//	}
+	if (_vm->_gyro->subjnumber == 0) // Still not found.
+		for (fv = 0; fv < thats.size(); fv++)
+			if (thats[fv] == 252) { // The word is "about", or something similar.
+				_vm->_gyro->subjnumber = thats[fv + 1];
+				thats.setChar(0, fv + 1);
+				break;
+			}
 
-	//if (subjnumber == 0) /* Still not found. */
-	//	for (fv = 1; fv <= 10; fv ++)
-	//		if (thats[fv] == '\374') { /* the word is "about", or something similar */
-	//			subjnumber = ord(thats[fv + 1]);
-	//			thats[fv + 1] = '\0';
-	//			flush(); /* ...Third! */
-	//		}
+	if (_vm->_gyro->subjnumber == 0) // STILL not found! Must be the word after "say".
+		for (fv = 0; fv < thats.size(); fv++)
+			if ((thats[fv] == 7) && (thats[fv + 1] != 0) && !((225 <= thats[fv + 1]) && (thats[fv + 1] <= 229))) {
+				// SAY not followed by a preposition
+				_vm->_gyro->subjnumber = thats[fv + 1];
+				thats.setChar(0, fv + 1);
+				break;
+			}
 
-	//if (subjnumber == 0) /* STILL not found! Must be the word after "say". */
-	//	for (fv = 1; fv <= 10; fv ++)
-	//		if ((thats[fv] == '\7') && !(set::of('\0', range('\341', '\345'), eos).has(thats[fv + 1]))) {
-	//			/* SAY not followed by a preposition */
-	//			subjnumber = ord(thats[fv + 1]);
-	//			thats[fv + 1] = '\0';
-	//			flush(); /* ...Fourth! */
-	//		}
+	for (int8 fv = thats.size() - 1; fv >= 0; fv--) // Reverse order, so first will be used.
+		if ((thats[fv] == 253) || (thats[fv] == 249) || ((1 <= thats[fv]) && (thats[fv] <= 49)))
+			verb = thats[fv];
+		else if ((50 <= thats[fv]) && (thats[fv] <= 149)) {
+			thing2 = thing;
+			thing = thats[fv];
+		} else if ((150 <= thats[fv]) && (thats[fv] <= 199))
+			person = thats[fv];
+		else if (thats[fv] == 251)
+			polite = true;
 
-	//for (fv = length(thats); fv >= 1; fv --) /* Reverse order- so first'll be used */
-	//	switch (thats[fv]) {
-	//	case '\1' ... '\61':
-	//	case '\375':
-	//	case '\371':
-	//		verb = thats[fv];
-	//		break;
-	//	case '\62' ... '\225': {
-	//		thing2 = thing;
-	//		thing = thats[fv];
-	//							}
-	//							break;
-	//	case '\226' ... '\307':
-	//		person = thats[fv];
-	//		break;
-	//	case '\373':
-	//		polite = true;
-	//		break;
-	//}
+		if ((!unknown.empty()) && (verb != vb_exam) && (verb != vb_talk) && (verb != vb_save) && (verb != vb_load) && (verb != vb_dir)) {
+				_vm->_scrolls->display(Common::String("Sorry, but I have no idea what \"") + unknown + "\" means. Can you rephrase it?");
+				_vm->_gyro->weirdword = true;
+		} else
+			_vm->_gyro->weirdword = false;
 
-	//if ((unknown != "") && !
-	//	(set::of(vb_exam, vb_talk, vb_save, vb_load, vb_dir, eos).has(verb))) {
-	//		display(string("Sorry, but I have no idea what `") + unknown +
-	//			"\" means. Can you rephrase it?");
-	//		weirdword = true;
-	//} else weirdword = false;
+	if (thats.empty())
+		thats = nowt;
 
-	//if (thats == "")  thats = nowt;
+	if (thing != pardon)
+		_vm->_gyro->it = thing;
 
-	//if (thing != pardon)  it = thing;
-
-	//if (person != pardon) {
-	//	if (person < '\257')  him = person;
-	//	else her = person;
-	//}
+	if (person != pardon)
+		if (person < 175)
+			_vm->_gyro->him = person;
+		else
+			_vm->_gyro->her = person;
 }
 
 void Acci::examobj() {   /* Examine a standard object-thing */
