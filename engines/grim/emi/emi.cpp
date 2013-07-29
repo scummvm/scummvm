@@ -113,6 +113,9 @@ void EMIEngine::invalidateSortOrder() {
 }
 
 bool EMIEngine::compareActor(Actor *x, Actor *y) {
+	if (x->getSortOrder() == y->getSortOrder()) {
+		return x->getId() < y->getId();
+	}
 	return x->getSortOrder() > y->getSortOrder();
 }
 
