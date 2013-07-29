@@ -1077,21 +1077,20 @@ void Acci::person_speaks() {
 	char cfv;
 
 
-	if ((person == pardon) || (person == '\0')) {
+	if ((person == pardon) || (person == 0))
 		if ((_vm->_gyro->him == pardon) || (_vm->_gyro->whereis[_vm->_gyro->him] != _vm->_gyro->dna.room))
 			person = _vm->_gyro->her;
 		else
 			person = _vm->_gyro->him;
-	}
 
 	if (_vm->_gyro->whereis[person] != _vm->_gyro->dna.room) {
-		_vm->_scrolls->display("\231\4"); /* Avvy _vm->_gyro->himself! */
+		_vm->_scrolls->display("\231\4"); // Avvy himself!
 		return;
 	}
 
 	found = false; /* The person we're looking for's code is in Person. */
 
-	for (fv = 1; fv <= _vm->_trip->numtr; fv++) {
+	for (fv = 0; fv < _vm->_trip->numtr; fv++) {
 		if (_vm->_trip->tr[fv].quick && ((_vm->_trip->tr[fv].a.accinum + 149) == person)) {
 			_vm->_scrolls->display(Common::String('\23') + char(fv + 48) + '\4');
 			found = true;
@@ -1099,7 +1098,7 @@ void Acci::person_speaks() {
 	}
 
 	if (!found) {
-		for (fv = 10; fv <= 25; fv++) {
+		for (fv = 0; fv < 16; fv++) {
 			_vm->_gyro->quasipeds[fv];
 			if ((_vm->_gyro->quasipeds[fv].who == person) && (_vm->_gyro->quasipeds[fv].room == _vm->_gyro->dna.room)) {
 				_vm->_scrolls->display(Common::String('\23') + char(fv + 55) + '\4');
