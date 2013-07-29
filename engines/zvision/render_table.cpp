@@ -156,6 +156,9 @@ void RenderTable::generatePanoramaLookupTable() {
 }
 
 void RenderTable::generateTiltLookupTable() {
+
+}
+
 void RenderTable::setPanoramaFoV(float fov) {
 	assert(fov > 0.0f);
 
