@@ -91,13 +91,17 @@ void EMIEngine::drawNormalMode() {
 			background->drawLayer(currentLayer--);
 		}
 
-		if (a->isVisible())
+		if (a->isVisible() && ! a->isInOverworld())
 			a->draw();
 	}
 	while (currentLayer >= 0) {
 		background->drawLayer(currentLayer--);
 	}
 
+	foreach (Actor *a, _activeActors) {
+		if (a->isInOverworld())
+			a->draw();
+	}
 
 	flagRefreshShadowMask(false);
 
