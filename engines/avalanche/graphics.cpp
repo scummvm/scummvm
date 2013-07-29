@@ -86,20 +86,14 @@ void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 }
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
+	drawPicture(_background, 0, 10); // TODO: Remove it later, implement otherwise!!! Now it only works with one sprite on the screen.
+
 	/* First we make the pixels of the spirte blank. */
-	for (byte qay = 0; qay < sprite.yl; qay++) {
-		byte *mask = new byte[sprite.xl];
-
-		for (byte qax = 0; qax < sprite.xl; qax++) {
-			byte count = qax / 8;
-			mask[qax] = ((*sprite.sil[picnum])[qay][count] >> ((7 - qax % 8)) & 1);
-			if (mask[qax] == 0)
+	for (byte qay = 0; qay < sprite.yl; qay++)
+		for (byte qax = 0; qax < sprite.xl; qax++)
+			if (((*sprite.sil[picnum])[qay][qax / 8] >> ((7 - qax % 8)) & 1) == 0)
 				*getPixel(x + qax, y + qay) = 0;
-		}
-
-		delete[] mask;
-	}
-
+	
 	/* Then we draw the picture to the blank places. */
 	uint16 i = 0; // Because the original siltype starts at 5!!! See Graphics.h for definition.
 

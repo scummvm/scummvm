@@ -1093,7 +1093,7 @@ void Trip::rwsp(byte t, byte r) {
 }
 
 void Trip::apped(byte trn, byte np) {
-	tr[trn].appear(tr[trn].x - tr[trn]._info.xl / 2, tr[trn].y - tr[trn]._info.yl, _vm->_gyro->peds[np].dir);
+	tr[trn].appear(_vm->_gyro->peds[np].x - tr[trn]._info.xl / 2, _vm->_gyro->peds[np].y - tr[trn]._info.yl, _vm->_gyro->peds[np].dir);
 	rwsp(trn, _vm->_gyro->peds[np].dir);
 }
 
