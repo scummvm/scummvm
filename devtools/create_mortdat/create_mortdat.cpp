@@ -119,13 +119,13 @@ void openOutputFile(const char *outFilename) {
  * Write out the data for the font 
  */
 void writeFontBlock() {
-	const int knownAddr[2] = {0x36b0, 0x36c0};
+	const int knownAddr[3] = {0x30cd, 0x36b0, 0x36c0};
 	byte checkBuffer[7];
 	byte fontBuffer[121 * 6];
 
 	// Move to just prior the font data and verify that we're reading the known mort.com
-	for (int i = 0; i <= 2; ++i) {
-		if ( i == 2) {
+	for (int i = 0; i <= 3; ++i) {
+		if ( i == 3) {
 			printf("Invalid mort.com input file");
 			exit(0);
 		}
