@@ -49,10 +49,9 @@ void RenderTable::setRenderState(RenderState newState) {
 	case PANORAMA:
 		_panoramaOptions.fieldOfView = 60;
 		_panoramaOptions.linearScale = 0.55f;
-		generatePanoramaLookupTable();
 		break;
 	case TILT:
-		generateTiltLookupTable();
+
 		break;
 	case FLAT:
 		// Intentionally left empty
@@ -109,6 +108,20 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 i
 				destBuffer[normalizedY * subRectangle.width() + normalizedX] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
 			}
 		}
+	}
+}
+
+void RenderTable::generateRenderTable() {
+	switch (_renderState) {
+	case ZVision::RenderTable::PANORAMA:
+		generatePanoramaLookupTable();
+		break;
+	case ZVision::RenderTable::TILT:
+		generateTiltLookupTable();
+		break;
+	case ZVision::RenderTable::FLAT:
+		// Intentionally left empty
+		break;
 	}
 }
 

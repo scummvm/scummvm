@@ -42,6 +42,7 @@ private:
 	bool cmdLoadSound(int argc, const char **argv);
 	bool cmdRawToWav(int argc, const char **argv);
 	bool cmdSetRenderState(int argc, const char **argv);
+	bool cmdGenerateRenderTable(int argc, const char **argv);
 };
 
 } // End of namespace ZVision

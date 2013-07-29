@@ -42,6 +42,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("loadsound", WRAP_METHOD(Console, cmdLoadSound));
 	DCmd_Register("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
 	DCmd_Register("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
+	DCmd_Register("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -115,6 +116,22 @@ bool Console::cmdSetRenderState(int argc, const char **argv) {
 		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
 	else
 		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+
+	return true;
+}
+
+bool Console::cmdGenerateRenderTable(int argc, const char **argv) {
+	_engine->getRenderManager()->getRenderTable()->generateRenderTable();
+
+	return true;
+}
+
+bool Console::cmdSetPanoramaFoV(int argc, const char **argv) {
+
+	return true;
+}
+
+bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
 
 	return true;
 }

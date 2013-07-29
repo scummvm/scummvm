@@ -62,6 +62,7 @@ public:
 	RenderState getRenderState() { return _renderState; }
 	void setRenderState(RenderState newState);
 	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 imageWidth, uint32 imageHeight, Common::Rect subRectangle, Common::Rect destRectangle);
+	void generateRenderTable();
 
 private:
 	void generatePanoramaLookupTable();
