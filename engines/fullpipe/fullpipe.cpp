@@ -126,7 +126,7 @@ Common::Error FullpipeEngine::run() {
 
 	sceneSwitcher(&ent);
 
-#if 1
+#if 0
 	loadAllScenes();
 #endif
 

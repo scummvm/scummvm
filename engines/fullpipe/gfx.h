@@ -30,10 +30,6 @@ namespace Fullpipe {
 class DynamicPhase;
 class Movement;
 
-class ShadowsItemArray : public CObArray {
-	// empty
-};
-
 struct Bitmap {
 	int _x;
 	int _y;
@@ -62,6 +58,7 @@ class Picture : public MemoryObject {
 	friend class DynamicPhase;
 	friend class PictureObject;
 	friend class CInputController;
+	friend class StaticANIObject;
 
 	Common::Rect _rect;
 	Bitmap *_convertedBitmap;
@@ -168,6 +165,14 @@ class Background : public CObject {
 	void addPictureObject(PictureObject *pct);
 };
 
+struct ShadowsItem {
+	int width;
+	int height;
+	DynamicPhase *dynPhase;
+};
+
+typedef Common::Array<ShadowsItem> ShadowsItemArray;
+
 class Shadows : public CObject {
 	int _sceneId;
 	int _staticAniObjectId;
@@ -180,12 +185,7 @@ class Shadows : public CObject {
 	void init();
 
 	void initMovement(Movement *mov);
-};
-
-struct ShadowsItem {
-	int width;
-	int height;
-	DynamicPhase *dynPhase;
+	DynamicPhase *findSize(int width, int height);
 };
 
 } // End of namespace Fullpipe

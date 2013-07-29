@@ -122,6 +122,7 @@ Scene::Scene() {
 	_field_BC = 0;
 	_shadows = 0;
 	_soundList = 0;
+	_libHandle = 0;
 }
 
 bool Scene::load(MfcArchive &file) {
@@ -236,7 +237,8 @@ bool Scene::load(MfcArchive &file) {
 }
 
 void Scene::initStaticANIObjects() {
-	warning("STUB: Scene::initStaticANIObjects");
+	for (uint i = 0; i < _staticANIObjectList1.size(); i++)
+		((StaticANIObject *)_staticANIObjectList1[i])->initMovements();
 }
 
 void Scene::init() {
@@ -249,7 +251,7 @@ void Scene::init() {
 		((PictureObject *)_picObjList[i])->clearFlags();
 
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++)
-		((PictureObject *)_staticANIObjectList1[i])->clearFlags();
+		((StaticANIObject *)_staticANIObjectList1[i])->clearFlags();
 
 	if (_staticANIObjectList2.size() != _staticANIObjectList1.size()) {
 		_staticANIObjectList2.clear();

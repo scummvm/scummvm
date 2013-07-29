@@ -777,5 +777,18 @@ void Shadows::initMovement(Movement *mov) {
 	warning("STUB: Shadows::initMovement()");
 }
 
+DynamicPhase *Shadows::findSize(int width, int height) {
+	int idx = 0;
+	int min = 1000;
+
+	for (uint i = 0; i < _items.size(); i++) {
+		int w = abs(width - _items[i].width);
+		if (w < min) {
+			min = w;
+			idx = i;
+		}
+	}
+	return _items[idx].dynPhase;
+}
 
 } // End of namespace Fullpipe

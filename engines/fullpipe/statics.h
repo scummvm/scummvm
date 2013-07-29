@@ -64,6 +64,7 @@ class StaticPhase : public Picture {
 class DynamicPhase : public StaticPhase {
 	friend class Movement;
 	friend class Statics;
+	friend class StaticANIObject;
 
 	int _someX;
 	int _someY;
@@ -77,6 +78,8 @@ class DynamicPhase : public StaticPhase {
 	DynamicPhase(DynamicPhase *src, bool reverse);
 
 	virtual bool load(MfcArchive &file);
+
+	int getDynFlags() { return _dynFlags; }
 };
 
 class Statics : public DynamicPhase {
@@ -96,11 +99,14 @@ class Statics : public DynamicPhase {
 	Statics *getStaticsById(int itemId);
 
 	Common::Point *getSomeXY(Common::Point &p);
+	Common::Point *getCenter(Common::Point *p);
 };
 
 class StaticANIObject;
 
 class Movement : public GameObject {
+	friend class StaticANIObject;
+
 	int _field_24;
 	int _field_28;
 	int _lastFrameSpecialFlag;
@@ -118,7 +124,7 @@ class Movement : public GameObject {
 	CPtrList _dynamicPhases;
 	int _field_78;
 	Common::Point **_framePosOffsets;
-	Movement *_currMovementObj;
+	Movement *_currMovement;
 	int _field_84;
 	DynamicPhase *_currDynamicPhase;
 	int _field_8C;
@@ -131,9 +137,14 @@ class Movement : public GameObject {
 	bool load(MfcArchive &file, StaticANIObject *ani);
 
 	Common::Point *getCurrDynamicPhaseXY(Common::Point &p);
+	Common::Point *getCenter(Common::Point *p);
+	Common::Point *getDimensionsOfPhase(Common::Point *p, int phaseIndex);
 
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
+
+	void removeFirstPhase();
+	void gotoNextFrame(int callback1, int callback2);
 
 	void loadPixelData();
 
@@ -174,12 +185,14 @@ class StaticANIObject : public GameObject {
 	Statics *getStaticsById(int id);
 	Movement *getMovementById(int id);
 	Movement *getMovementByName(char *name);
+	Common::Point *getCurrDimensions(Common::Point &p);
 
 	void clearFlags();
 	bool isIdle();
 
 	void deleteFromGlobalMessageQueue();
 
+	void initMovements();
 	void loadMovementsPixelData();
 
 	Statics *addReverseStatics(Statics *ani);
