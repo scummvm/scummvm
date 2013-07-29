@@ -332,6 +332,14 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	return 0;
 }
 
+MessageQueue *Scene::getMessageQueueById(int messageId) {
+	for (uint i = 0; i < _messageQueueList.size(); i++)
+		if (((MessageQueue *)_messageQueueList[i])->_dataId == messageId)
+			return (MessageQueue *)_messageQueueList[i];
+
+	return 0;
+}
+
 void Scene::preloadMovements(CGameVar *var) {
 	CGameVar *preload = var->getSubVarByName("PRELOAD");
 	if (!preload)

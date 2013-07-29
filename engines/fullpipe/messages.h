@@ -50,9 +50,13 @@ class Message : public CObject {
  public:
 	Message();
 	Message(Message *src);
+	Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, int sceneClickX, int sceneClickY, int a10);
 };
 
 class ExCommand : public Message {
+	friend class CGameLoader;
+	friend class MessageQueue;
+
 	int _messageNum;
 	int _field_3C;
 	int _excFlags;
@@ -61,6 +65,7 @@ class ExCommand : public Message {
  public:
 	ExCommand();
 	ExCommand(ExCommand *src);
+	ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11);
 	virtual ~ExCommand() {}
 
 	virtual bool load(MfcArchive &file);
@@ -78,6 +83,8 @@ class CObjstateCommand : public CObject {
 
 class MessageQueue : public CObject {
 	friend class GlobalMessageQueueList;
+	friend class CGameLoader;
+	friend class Scene;
 
   protected:
 	int _id;
@@ -95,9 +102,13 @@ class MessageQueue : public CObject {
 
  public:
 	MessageQueue();
+	MessageQueue(MessageQueue *src, int parId, int field_38);
 	virtual bool load(MfcArchive &file);
 
 	int getFlags() { return _flags; }
+	void setFlags(int flags) { _flags = flags; }
+
+	bool chain(StaticANIObject *ani);
 };
 
 class GlobalMessageQueueList : public CPtrList {
@@ -105,6 +116,9 @@ class GlobalMessageQueueList : public CPtrList {
 	MessageQueue *getMessageQueueById(int id);
 	void deleteQueueById(int id);
 	void disableQueueById(int id);
+	void addMessageQueue(MessageQueue *msg);
+
+	int compact();
 };
 
 struct MessageHandler {

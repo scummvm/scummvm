@@ -25,6 +25,7 @@
 #include "fullpipe/gameloader.h"
 #include "fullpipe/scene.h"
 #include "fullpipe/input.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -153,7 +154,73 @@ bool CGameLoader::loadScene(int sceneId) {
 }
 
 bool CGameLoader::gotoScene(int sceneId, int entranceId) {
-	warning("STUB: CGameLoader::gotoScene(%d, %d)", sceneId, entranceId);
+	SceneTag *st;
+
+	int sc2idx = getSceneTagBySceneId(sceneId, &st);
+
+	if (sc2idx < 0)
+		return false;
+
+	if (!_sc2array[sc2idx]._isLoaded)
+		return 0;
+
+	if (_sc2array[sc2idx]._entranceDataCount < 1) {
+		g_fullpipe->_currentScene = st->_scene;
+		return true;
+	}
+
+	if (_sc2array[sc2idx]._entranceDataCount <= 0 )
+		return false;
+
+	int entranceIdx;
+	for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]->_field_4 != entranceId; entranceIdx++) {
+		if (entranceIdx >= _sc2array[sc2idx]._entranceDataCount)
+			return false;
+	}
+
+	CGameVar *sg = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+
+	if (sg || (sg = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0)) != 0)
+		sg->setSubVarAsInt("Entrance", entranceId);
+
+	if (!g_fullpipe->sceneSwitcher(_sc2array[sc2idx]._entranceData[entranceIdx]))
+		return 0;
+
+	g_fullpipe->_msgObjectId2 = 0;
+	g_fullpipe->_msgY = -1;
+	g_fullpipe->_msgX = -1;
+
+	g_fullpipe->_currentScene = st->_scene;
+
+	MessageQueue *mq1 = g_fullpipe->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]->_messageQueueId);
+	if (mq1) {
+		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
+
+		StaticANIObject *stobj = g_fullpipe->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		if (stobj) {
+			stobj->setFlags(stobj->_flags & 0x100);
+
+			ExCommand *ex = new ExCommand(stobj->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+
+			ex->_field_14 = 256;
+			ex->_messageNum = 0;
+			ex->_excFlags |= 3;
+
+			mq->_exCommands.push_back(ex);
+		}
+
+		mq->setFlags(mq->getFlags() | 1);
+
+		if (!mq->chain(0)) {
+			delete mq;
+
+			return false;
+		}
+	} else {
+		StaticANIObject *stobj = g_fullpipe->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		if (stobj)
+			stobj->setFlags(stobj->_flags & 0xfeff);
+	}
 
 	return true;
 }

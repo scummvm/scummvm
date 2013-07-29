@@ -42,6 +42,14 @@ ExCommand::ExCommand(ExCommand *src) : Message(src) {
 
 }
 
+ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) : 
+	Message(parentId, messageKind, x, y, a7, a8, sceneClickX, sceneClickY, a11) {
+	_field_3C = 1;
+	_messageNum = messageNum;
+	_excFlags = 0;
+	_parId = 0;
+}
+
 bool ExCommand::load(MfcArchive &file) {
 	debug(5, "ExCommand::load()");
 
@@ -103,6 +111,22 @@ Message::Message(Message *src) {
 	_field_34 = src->_field_34;
 }
 
+Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, int sceneClickX, int sceneClickY, int a10) {
+	_messageKind = messageKind;
+	_parentId = parentId;
+	_x = x;
+	_y = y;
+	_field_14 = a6;
+	_sceneClickX = sceneClickX;
+	_sceneClickY = sceneClickY;
+	_field_24 = a7;
+	_field_20 = a10;
+	_param28 = 0;
+	_field_2C = 0;
+	_field_30 = 0;
+	_field_34 = 0;
+}
+
 CObjstateCommand::CObjstateCommand() {
 	_value = 0;
 }
@@ -126,6 +150,32 @@ MessageQueue::MessageQueue() {
 	_id = 0;
 	_isFinished = 0;
 	_flags = 0;
+}
+
+MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
+	_counter = 0;
+	_field_38 = (field_38 == 0);
+
+	for (uint i = 0; i < src->_exCommands.size(); i++) {
+		ExCommand *ex = new ExCommand((ExCommand *)src->_exCommands[i]);
+		ex->_excFlags |= 2;
+
+		_exCommands.push_back(ex);
+	}
+	_field_14 = src->_field_14;
+
+	if (parId)
+		_parId = parId;
+	else
+		_parId = src->_parId;
+
+	_id = g_fullpipe->_globalMessageQueueList->compact();
+	_dataId = src->_dataId;
+	_flags = src->_flags;
+
+	g_fullpipe->_globalMessageQueueList->addMessageQueue(this);
+
+	_isFinished = 0;
 }
 
 bool MessageQueue::load(MfcArchive &file) {
@@ -153,6 +203,13 @@ bool MessageQueue::load(MfcArchive &file) {
 	return true;
 }
 
+bool MessageQueue::chain(StaticANIObject *ani) {
+	warning("STUB: MessageQueue::chain()");
+
+	return true;
+}
+
+
 MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 	for (CPtrList::iterator s = begin(); s != end(); ++s) {
 		if (((MessageQueue *)s)->_id == id)
@@ -177,6 +234,18 @@ void GlobalMessageQueueList::disableQueueById(int id) {
 		if (((MessageQueue *)s)->_parId == id)
 			((MessageQueue *)s)->_parId = 0;
 	}
+}
+
+int GlobalMessageQueueList::compact() {
+	warning("STUB: GlobalMessageQueueList::compact()");
+
+	return 0;
+}
+
+void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
+	msg->setFlags(msg->getFlags() | 2);
+
+	push_back(msg);
 }
 
 bool removeMessageHandler(int16 id, int pos) {
