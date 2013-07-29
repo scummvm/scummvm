@@ -32,7 +32,7 @@ namespace ZVision {
 RenderTable::RenderTable(uint32 numColumns, uint32 numRows)
 		: _numRows(numRows),
 		  _numColumns(numColumns),
-		  _renderState(RenderState::FLAT) {
+		  _renderState(FLAT) {
 	assert(numRows != 0 && numColumns != 0);
 
 	_internalBuffer = new Vector2[numRows * numColumns];
