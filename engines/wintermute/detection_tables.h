@@ -49,6 +49,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
+	{"shinestar",       "The Shine of a Star"},
 	{"thebox",          "The Box"},
 	{"tib",				"Fairy Tales About Toshechka and Boshechka"},
 	{"tradestory",		"The Trader of Stories"},
@@ -577,6 +578,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"rosemary",
 		"",
 		AD_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// The Shine of a Star
+	{
+		"shinestar",
+		"",
+		AD_ENTRY1s("data.dcp", "f05abe9e2427a5e4f73648fa09c4ba8e", 94113060),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
