@@ -91,7 +91,7 @@ void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uin
 		_system->copyRectToScreen(buffer + subRectangle.top * horizontalPitch + subRectangle.left, horizontalPitch, destRect.left, destRect.top, destRect.width(), destRect.height());
 	} else {
 		uint16 *destBuffer = new uint16[destRect.width() * destRect.height()];
-		_renderTable.mutateImage((uint16 *)buffer, destBuffer, horizontalPitch, subRectangle);
+		_renderTable.mutateImage((uint16 *)buffer, destBuffer, imageWidth, imageHeight, subRectangle, destRect);
 
 		_system->copyRectToScreen(destBuffer, subRectangle.width() * sizeof(uint16), destRect.left, destRect.top, destRect.width(), destRect.height());
 		delete[] destBuffer;

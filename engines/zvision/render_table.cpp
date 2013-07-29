@@ -22,8 +22,9 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/render_table.h"
 
+#include "zvision/render_table.h"
+#include "zvision/point.h"
 
 namespace ZVision {
 
@@ -33,7 +34,7 @@ RenderTable::RenderTable(uint32 numColumns, uint32 numRows)
 		  _renderState(RenderState::FLAT) {
 	assert(numRows != 0 && numColumns != 0);
 
-	_internalBuffer = new Common::Point[numRows * numColumns];
+	_internalBuffer = new Point<int16>[numRows * numColumns];
 }
 
 RenderTable::~RenderTable() {
@@ -58,17 +59,33 @@ void RenderTable::setRenderState(RenderState newState) {
 	}
 }
 
-void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 horizontalPitch, Common::Rect subRectangle) {
-	uint32 imageWidth = horizontalPitch / 2;
+void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 imageWidth, uint32 imageHeight, Common::Rect subRectangle, Common::Rect destRectangle) {
+	bool isTransposed = _renderState == RenderTable::PANORAMA || _renderState == RenderTable::TILT;
 
 	for (int y = subRectangle.top; y < subRectangle.bottom; y++) {
 		uint32 normalizedY = y - subRectangle.top;
+
 		for (int x = subRectangle.left; x < subRectangle.right; x++) {
 			uint32 normalizedX = x - subRectangle.left;
 
-			uint32 index = y * _numColumns + x;
-			uint32 sourceIndex = _internalBuffer[index].y * imageWidth + _internalBuffer[index].x;
-			destBuffer[normalizedY * subRectangle.width() + normalizedX] = sourceBuffer[sourceIndex];
+			uint32 index = (y + destRectangle.top) * _numColumns + (x + destRectangle.left);
+
+			// RenderTable only stores offsets from the original coordinates
+			uint32 sourceYIndex = y + _internalBuffer[index].y;
+			uint32 sourceXIndex = x + _internalBuffer[index].x;
+
+			// Clamp the yIndex to the size of the image
+			sourceYIndex = CLIP<uint32>(sourceYIndex, 0, imageHeight - 1);
+
+			// Clamp the xIndex to the size of the image
+			sourceXIndex = CLIP<uint32>(sourceXIndex, 0, imageWidth - 1);
+
+			// TODO: Figure out a way to not have branching every loop. The only way that comes to mind is to have a whole separate set of for loops for isTransposed, but that's ugly. The compiler might do this anyway in the end
+			if (isTransposed) {
+				destBuffer[normalizedY * subRectangle.width() + normalizedX] = sourceBuffer[sourceXIndex * imageHeight + sourceYIndex];
+			} else {
+				destBuffer[normalizedY * subRectangle.width() + normalizedX] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
+			}
 		}
 	}
 }
@@ -91,7 +108,7 @@ void RenderTable::generatePanoramaLookupTable() {
 		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
 		float temp = atan(tanOverHalfHeight * ((float)x - halfWidth + 0.01f));
 
-		int32 newX = floor((halfHeightOverTan * scale * temp) + halfWidth);
+		int32 newX = floor((halfHeightOverTan * _panoramaOptions.linearScale * temp) + halfWidth);
 		float cosX = cos(temp);
 
 		for (uint32 y = 0; y < _numRows; y++) {
@@ -99,10 +116,9 @@ void RenderTable::generatePanoramaLookupTable() {
 
 			uint32 index = y * _numColumns + x;
 
-			// Panorama images are transposed. Rather than trying to transpose the source, we know
-			// they will be mutated by this table. Therefore we can swap the axes here
-			_internalBuffer[index].x = newY; //pixel index
-			_internalBuffer[index].y = newX; //pixel index
+			// Only store the x,y offsets instead of the absolute positions
+			_internalBuffer[index].x = newX - x; //pixel index
+			_internalBuffer[index].y = newY - y; //pixel index
 		}
 	}
 }

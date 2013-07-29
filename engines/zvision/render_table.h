@@ -26,6 +26,8 @@
 #include "common/types.h"
 #include "common/rect.h"
 
+#include "zvision/point.h"
+
 namespace ZVision {
 
 class RenderTable {
@@ -42,7 +44,7 @@ public:
 
 private:
 	uint32 _numColumns, _numRows;
-	Common::Point *_internalBuffer;
+	Point<int16> *_internalBuffer;
 	RenderState _renderState;
 
 	struct {
@@ -59,7 +61,7 @@ private:
 public:
 	RenderState getRenderState() { return _renderState; }
 	void setRenderState(RenderState newState);
-	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 horizontalPitch, Common::Rect subRectangle);
+	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 imageWidth, uint32 imageHeight, Common::Rect subRectangle, Common::Rect destRectangle);
 
 private:
 	void generatePanoramaLookupTable();
