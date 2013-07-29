@@ -43,6 +43,8 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
 	DCmd_Register("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
 	DCmd_Register("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
+	DCmd_Register("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
+	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -127,11 +129,23 @@ bool Console::cmdGenerateRenderTable(int argc, const char **argv) {
 }
 
 bool Console::cmdSetPanoramaFoV(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use setpanoramafov <fieldOfView> to change the current panorama field of view\n");
+		return true;
+	}
+
+	_engine->getRenderManager()->getRenderTable()->setPanoramaFoV(atof(argv[1]));
 
 	return true;
 }
 
 bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use setpanoramascale <scale> to change the current panorama scale\n");
+		return true;
+	}
+
+	_engine->getRenderManager()->getRenderTable()->setPanoramaScale(atof(argv[1]));
 
 	return true;
 }

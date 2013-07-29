@@ -156,7 +156,16 @@ void RenderTable::generatePanoramaLookupTable() {
 }
 
 void RenderTable::generateTiltLookupTable() {
+void RenderTable::setPanoramaFoV(float fov) {
+	assert(fov > 0.0f);
 
+	_panoramaOptions.fieldOfView = fov;
+}
+
+void RenderTable::setPanoramaScale(float scale) {
+	assert(scale > 0.0f);
+
+	_panoramaOptions.linearScale = scale;
 }
 
 } // End of namespace ZVision
