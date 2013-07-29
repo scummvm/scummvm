@@ -47,7 +47,7 @@ void RenderTable::setRenderState(RenderState newState) {
 
 	switch (newState) {
 	case PANORAMA:
-		_panoramaOptions.fieldOfView = 60;
+		_panoramaOptions.fieldOfView = 27.0f;
 		_panoramaOptions.linearScale = 0.55f;
 		break;
 	case TILT:
