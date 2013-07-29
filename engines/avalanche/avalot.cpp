@@ -215,8 +215,6 @@ void Avalot::run(Common::String arg) {
 
 		// Not in the original:
 
-	
-
 		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 
 		uint32 delay = _vm->_system->getMillis() - beginLoop;

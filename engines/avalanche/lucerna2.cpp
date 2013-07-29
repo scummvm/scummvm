@@ -1161,12 +1161,8 @@ void Lucerna::sprite_run() {
 
 	_vm->_gyro->doing_sprite_run = true;
 
-	for (fv = 0; fv <= 1; fv ++) {
-		_vm->_trip->get_back_loretta();
-		_vm->_trip->trippancy_link();
-
-		flip_page();
-	}
+	_vm->_trip->get_back_loretta();
+	_vm->_trip->trippancy_link();
 
 	_vm->_gyro->doing_sprite_run = false;
 

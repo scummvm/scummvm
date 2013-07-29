@@ -1150,7 +1150,7 @@ void Acci::do_that() {
 		return;
 	}
 	*/
-
+	warning("STUB: Acci::do_that()");
 
 	switch (verb) {
 	case vb_exam:
