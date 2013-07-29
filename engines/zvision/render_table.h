@@ -26,7 +26,7 @@
 #include "common/types.h"
 #include "common/rect.h"
 
-#include "zvision/point.h"
+#include "zvision/vector2.h"
 
 namespace ZVision {
 
@@ -44,7 +44,7 @@ public:
 
 private:
 	uint32 _numColumns, _numRows;
-	Point<int16> *_internalBuffer;
+	Vector2 *_internalBuffer;
 	RenderState _renderState;
 
 	struct {

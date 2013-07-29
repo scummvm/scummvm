@@ -23,35 +23,34 @@
 #ifndef COMMON_ZVISION_POINT_H
 #define COMMON_ZVISION_POINT_H
 
-#include "common/types.h"
+#include "common/scummsys.h"
 
 namespace ZVision {
 
 /**
  * Simple class for handling both 2D position and size.
  */
-template<class T>
-class Point {
+class Vector2 {
 public:
-	T x;	///< The horizontal part of the point
-	T y;	///< The vertical part of the point
+	int16 x;	///< The horizontal part of the point
+	int16 y;	///< The vertical part of the point
 
 public:
-	Point() : x(0), y(0) {}
-	Point(T x1, T y1) : x(x1), y(y1) {}
+	Vector2() : x(0), y(0) {}
+	Vector2(int16 x1, int16 y1) : x(x1), y(y1) {}
 
 public:
-	bool operator==(const Point &p) const { return x == p.x && y == p.y; }
-	bool operator!=(const Point &p) const { return x != p.x || y != p.y; }
-	Point operator+(const Point &delta) const {	return Point(x + delta.x, y + delta.y);	}
-	Point operator-(const Point &delta) const {	return Point(x - delta.x, y - delta.y);	}
+	bool operator==(const Vector2 &p) const { return x == p.x && y == p.y; }
+	bool operator!=(const Vector2 &p) const { return x != p.x || y != p.y; }
+	Vector2 operator+(const Vector2 &delta) const {	return Vector2(x + delta.x, y + delta.y);	}
+	Vector2 operator-(const Vector2 &delta) const {	return Vector2(x - delta.x, y - delta.y);	}
 
-	void operator+=(const Point &delta) {
+	void operator+=(const Vector2 &delta) {
 		x += delta.x;
 		y += delta.y;
 	}
 
-	void operator-=(const Point &delta) {
+	void operator-=(const Vector2 &delta) {
 		x -= delta.x;
 		y -= delta.y;
 	}
@@ -62,7 +61,7 @@ public:
 	 * @param p		the other point
 	 * @return the distance between this and p
 	 */
-	uint sqrDist(const Point &p) const {
+	uint sqrDist(const Vector2 &p) const {
 		int diffx = ABS(p.x - x);
 		if (diffx >= 0x1000)
 			return 0xFFFFFF;

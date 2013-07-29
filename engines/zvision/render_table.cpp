@@ -25,7 +25,7 @@
 #include "graphics/colormasks.h"
 
 #include "zvision/render_table.h"
-#include "zvision/point.h"
+#include "zvision/vector2.h"
 
 namespace ZVision {
 
@@ -35,7 +35,7 @@ RenderTable::RenderTable(uint32 numColumns, uint32 numRows)
 		  _renderState(RenderState::FLAT) {
 	assert(numRows != 0 && numColumns != 0);
 
-	_internalBuffer = new Point<int16>[numRows * numColumns];
+	_internalBuffer = new Vector2[numRows * numColumns];
 }
 
 RenderTable::~RenderTable() {
