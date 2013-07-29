@@ -440,6 +440,8 @@ public:
 	int getTalkChore(int index) const;
 	Costume *getTalkCostume(int index) const;
 	void setMumbleChore(int choreNumber, Costume *cost);
+	bool playLastWearChore();
+	void setLastWearChore(int choreNumber, Costume *cost);
 
 	void setColormap(const char *map);
 	void pushCostume(const char *name);
@@ -628,7 +630,7 @@ private:
 	Chore _talkChore[10];
 	int _talkAnim;
 
-	Chore _mumbleChore;
+	Chore _mumbleChore, _lastWearChore;
 
 	Shadow *_shadowArray;
 	int _activeShadowSlot;

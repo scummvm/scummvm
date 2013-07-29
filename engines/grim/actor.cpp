@@ -1013,6 +1013,18 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 	_mumbleChore = Chore(cost, chore);
 }
 
+bool Actor::playLastWearChore() {
+	if (!_lastWearChore.isValid())
+		return false;
+
+	_lastWearChore.playLooping(false, 0);
+	return true;
+}
+
+void Actor::setLastWearChore(int chore, Costume *cost) {
+	_lastWearChore = Chore(cost, chore);
+}
+
 void Actor::turn(int dir) {
 	_walking = false;
 	float delta = g_grim->getPerSecond(_turnRate) * dir;

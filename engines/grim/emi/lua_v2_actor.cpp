@@ -84,6 +84,7 @@ void Lua_V2::PutActorInOverworld() {
 	Actor *actor = getactor(actorObj);
 
 	actor->setInOverworld(true);
+	actor->playLastWearChore();
 }
 
 void Lua_V2::RemoveActorFromOverworld() {
@@ -649,6 +650,10 @@ void Lua_V2::PlayActorChore() {
 	}
 
 	PoolChore *chore = (PoolChore *)costume->getChore(choreName);
+	if (0 == strncmp("wear_", choreName, 5)) {
+		actor->setLastWearChore(costume->getChoreId(choreName), costume);
+	}
+
 	if (mode) {
 		costume->playChoreLooping(choreName);
 	} else {
