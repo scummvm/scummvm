@@ -136,7 +136,7 @@ bool ScriptManager::parseCriteria(Criteria *criteria, Common::SeekableReadStream
 	return true;
 }
 
-void ScriptManager::parseResult(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {
+void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
