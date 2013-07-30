@@ -50,12 +50,14 @@ private:
 	struct {
 		float fieldOfView;
 		float linearScale;
+		bool reverse;
 	} _panoramaOptions;
 
 	// TODO: See if tilt and panorama need to have separate options
 	struct {
 		float fieldOfView;
 		float linearScale;
+		bool reverse;
 	} _tiltOptions;
 
 public:
@@ -66,9 +68,11 @@ public:
 
 	void setPanoramaFoV(float fov);
 	void setPanoramaScale(float scale);
+	void setPanoramaReverse(bool reverse);
 
 	void setTiltFoV(float fov);
 	void setTiltScale(float scale);
+	void setTiltReverse(bool reverse);
 
 private:
 	void generatePanoramaLookupTable();

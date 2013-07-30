@@ -49,6 +49,7 @@ void RenderTable::setRenderState(RenderState newState) {
 	case PANORAMA:
 		_panoramaOptions.fieldOfView = 27.0f;
 		_panoramaOptions.linearScale = 0.55f;
+		_panoramaOptions.reverse = false;
 		break;
 	case TILT:
 
@@ -171,6 +172,10 @@ void RenderTable::setPanoramaScale(float scale) {
 	_panoramaOptions.linearScale = scale;
 }
 
+void RenderTable::setPanoramaReverse(bool reverse) {
+	_panoramaOptions.reverse = reverse;
+}
+
 void RenderTable::setTiltFoV(float fov) {
 	assert(fov > 0.0f);
 
@@ -181,6 +186,10 @@ void RenderTable::setTiltScale(float scale) {
 	assert(scale > 0.0f);
 
 	_tiltOptions.linearScale = scale;
+}
+
+void RenderTable::setTiltReverse(bool reverse) {
+	_tiltOptions.reverse = reverse;
 }
 
 } // End of namespace ZVision
