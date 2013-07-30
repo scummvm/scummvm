@@ -2017,7 +2017,7 @@ Math::Vector3d Actor::getWorldPos() const {
 	Math::Quaternion q = attachedActor->getRotationQuat();
 	Math::Matrix4 attachedToWorld = q.toMatrix();
 	attachedToWorld.transpose();
-	attachedToWorld.setPosition(attachedActor->getPos());
+	attachedToWorld.setPosition(attachedActor->getWorldPos());
 
 	// If we were attached to a joint, factor in the joint's position & rotation,
 	// relative to its actor.
