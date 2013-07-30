@@ -58,10 +58,13 @@ void Graphics::init() {
 		g_system->getPaletteManager()->setPalette(_egaPalette[_egaPaletteIndex[i]], i, 1);
 
 	_surface.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+
+	_magics.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Graphics::~Graphics() {
 	_surface.free();
+	_magics.free();
 	_background.free();
 }
 
