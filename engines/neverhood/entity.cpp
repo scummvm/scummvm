@@ -47,7 +47,7 @@ Entity *MessageParam::asEntity() const {
 }
 
 Entity::Entity(NeverhoodEngine *vm, int priority)
-	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _soundResources(NULL) {
+	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(nullptr), _priority(priority), _soundResources(NULL) {
 }
 
 Entity::~Entity() {
