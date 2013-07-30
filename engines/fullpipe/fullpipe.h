@@ -142,6 +142,7 @@ public:
 	void updateScreen();
 
 	void freeGameLoader();
+	void cleanup();
 
 	bool _gameContinue;
 	bool _needRestart;

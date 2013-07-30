@@ -165,6 +165,9 @@ Common::Error FullpipeEngine::run() {
 
 	}
 
+	freeGameLoader();
+
+	cleanup();
 
 	return Common::kNoError;
 }
@@ -196,6 +199,10 @@ void FullpipeEngine::updateEvents() {
 
 void FullpipeEngine::freeGameLoader() {
 	warning("STUB: FullpipeEngine::freeGameLoader()");
+}
+
+void FullpipeEngine::cleanup() {
+	warning("STUB: FullpipeEngine::cleanup()");
 }
 
 void FullpipeEngine::updateScreen() {
