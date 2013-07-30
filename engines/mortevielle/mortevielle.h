@@ -73,9 +73,9 @@ enum {
 
 // Game languages
 enum {
-	LANG_FRENCH = 0,
-	LANG_ENGLISH = 1,
-	LANG_GERMAN = 2
+	MORTDAT_LANG_FRENCH = 0,
+	MORTDAT_LANG_ENGLISH = 1,
+	MORTDAT_LANG_GERMAN = 2
 };
 
 // Static string list

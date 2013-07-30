@@ -297,17 +297,17 @@ void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize, DataTyp
 	byte desiredLanguageId;
 	switch(getLanguage()) {
 	case Common::EN_ANY:
-		desiredLanguageId = LANG_ENGLISH;
+		desiredLanguageId = MORTDAT_LANG_ENGLISH;
 		break;
 	case Common::FR_FRA:
-		desiredLanguageId = LANG_FRENCH;
+		desiredLanguageId = MORTDAT_LANG_FRENCH;
 		break;
 	case Common::DE_DEU:
-		desiredLanguageId = LANG_GERMAN;
+		desiredLanguageId = MORTDAT_LANG_GERMAN;
 		break;
 	default:
 		warning("Language not supported, switching to English");
-		desiredLanguageId = LANG_ENGLISH;
+		desiredLanguageId = MORTDAT_LANG_ENGLISH;
 		break;
 	}
 
