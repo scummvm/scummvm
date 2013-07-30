@@ -103,7 +103,7 @@ private:
 	 * @param stream      Scr file stream
 	 * @return            Whether any criteria were read
 	 */
-	bool ScriptManager::parseCriteria(Criteria *criteria, Common::SeekableReadStream &stream) const;
+	bool ScriptManager::parseCriteria(Puzzle::Criteria *criteria, Common::SeekableReadStream &stream) const;
 
 	/**
 	 * Parses the stream into a Results object

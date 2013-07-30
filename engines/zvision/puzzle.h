@@ -29,41 +29,43 @@ namespace ZVision {
 
 class ResultAction;
 
-/** How criteria should be decided */
-enum CriteriaOperator {
-	EQUAL_TO,
-	NOT_EQUAL_TO,
-	GREATER_THAN,
-	LESS_THAN
-};
-
-/** Criteria for a Puzzle result to be fired */
-struct Criteria {
-	/** The key of a global state */
-	uint32 key;
-	/**  
-	 * What we're comparing the value of the global state against
-	 * This can either be a pure value or it can be the key of another global state
-	 */
-	uint32 argument;
-	/** How to do the comparison */
-	CriteriaOperator criteriaOperator;
-	/** Whether 'argument' is the key of a global state (true) or a pure value (false) */
-	bool argumentIsAKey;
-};
-
-enum StateFlags {
-	ONCE_PER_INST = 0x01,
-	DO_ME_NOW = 0x02,
-	DISABLED = 0x04
-};
-
 class Puzzle {
 public:
 	Puzzle() {}
 	~Puzzle();
 	Puzzle(const Puzzle &other);
+	
+public:
+	/** How criteria should be decided */
+	enum CriteriaOperator {
+		EQUAL_TO,
+		NOT_EQUAL_TO,
+		GREATER_THAN,
+		LESS_THAN
+	};
 
+	/** Criteria for a Puzzle result to be fired */
+	struct Criteria {
+		/** The key of a global state */
+		uint32 key;
+		/**  
+		 * What we're comparing the value of the global state against
+		 * This can either be a pure value or it can be the key of another global state
+		 */
+		uint32 argument;
+		/** How to do the comparison */
+		CriteriaOperator criteriaOperator;
+		/** Whether 'argument' is the key of a global state (true) or a pure value (false) */
+		bool argumentIsAKey;
+	};
+
+	enum StateFlags {
+		ONCE_PER_INST = 0x01,
+		DO_ME_NOW = 0x02,
+		DISABLED = 0x04
+	};
+
+public:
 	uint32 key;
 	Common::List<Criteria> criteriaList;
 	// This has to be list of pointers because ResultAction is abstract

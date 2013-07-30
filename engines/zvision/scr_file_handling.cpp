@@ -71,7 +71,7 @@ void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stre
 
 	while (!line.contains('}')) {
 		if (line.matchString("criteria {", true)) {
-			Criteria criteria;
+			Puzzle::Criteria criteria;
 			if (parseCriteria(&criteria, stream)) {
 				puzzle.criteriaList.push_back(criteria);
 			}
@@ -86,7 +86,7 @@ void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stre
 	}
 }
 
-bool ScriptManager::parseCriteria(Criteria *criteria, Common::SeekableReadStream &stream) const {
+bool ScriptManager::parseCriteria(Puzzle::Criteria *criteria, Common::SeekableReadStream &stream) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -108,13 +108,13 @@ bool ScriptManager::parseCriteria(Criteria *criteria, Common::SeekableReadStream
 		// Parse the operator out of the second token
 		token = tokenizer.nextToken();
 		if (token.c_str()[0] == '=')
-			criteria->criteriaOperator = EQUAL_TO;
+			criteria->criteriaOperator = Puzzle::EQUAL_TO;
 		else if (token.c_str()[0] == '!')
-			criteria->criteriaOperator = NOT_EQUAL_TO;
+			criteria->criteriaOperator = Puzzle::NOT_EQUAL_TO;
 		else if (token.c_str()[0] == '>')
-			criteria->criteriaOperator = GREATER_THAN;
+			criteria->criteriaOperator = Puzzle::GREATER_THAN;
 		else if (token.c_str()[0] == '<')
-			criteria->criteriaOperator = LESS_THAN;
+			criteria->criteriaOperator = Puzzle::LESS_THAN;
 
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
@@ -276,11 +276,11 @@ byte ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 
 	while (!line.contains('}')) {
 		if (line.matchString("ONCE_PER_INST", true)) {
-			flags |= ONCE_PER_INST;
+			flags |= Puzzle::ONCE_PER_INST;
 		} else if (line.matchString("DO_ME_NOW", true)) {
-			flags |= DO_ME_NOW;
+			flags |= Puzzle::DO_ME_NOW;
 		} else if (line.matchString("DISABLED", true)) {
-			flags |= DISABLED;
+			flags |= Puzzle::DISABLED;
 		}
 
 		line = stream.readLine();

@@ -45,7 +45,7 @@ void ScriptManager::createReferenceTable() {
 		Puzzle *puzzlePtr = &(*activePuzzleIter);
 
 		// Iterate through each Criteria and add a reference from the criteria key to the Puzzle
-		for (Common::List<Criteria>::iterator criteriaIter = activePuzzleIter->criteriaList.begin(); criteriaIter != (*activePuzzleIter).criteriaList.end(); criteriaIter++) {
+		for (Common::List<Puzzle::Criteria>::iterator criteriaIter = activePuzzleIter->criteriaList.begin(); criteriaIter != (*activePuzzleIter).criteriaList.end(); criteriaIter++) {
 			_referenceTable[criteriaIter->key].push_back(puzzlePtr);
 
 			// If the argument is a key, add a reference to it as well
@@ -80,7 +80,7 @@ void ScriptManager::checkPuzzleCriteria() {
 
 		// Check each Criteria
 		bool criteriaMet = false;
-		for (Common::List<Criteria>::iterator iter = puzzle->criteriaList.begin(); iter != puzzle->criteriaList.end(); iter++) {
+		for (Common::List<Puzzle::Criteria>::iterator iter = puzzle->criteriaList.begin(); iter != puzzle->criteriaList.end(); iter++) {
 			// Get the value to compare against
 			byte argumentValue;
 			if ((*iter).argument)
@@ -90,16 +90,16 @@ void ScriptManager::checkPuzzleCriteria() {
 
 			// Do the comparison
 			switch ((*iter).criteriaOperator) {
-			case EQUAL_TO:
+			case Puzzle::EQUAL_TO:
 				criteriaMet = getStateValue(iter->key) == argumentValue;
 				break;
-			case NOT_EQUAL_TO:
+			case Puzzle::NOT_EQUAL_TO:
 				criteriaMet = getStateValue(iter->key) != argumentValue;
 				break;
-			case GREATER_THAN:
+			case Puzzle::GREATER_THAN:
 				criteriaMet = getStateValue(iter->key) > argumentValue;
 				break;
-			case LESS_THAN:
+			case Puzzle::LESS_THAN:
 				criteriaMet = getStateValue(iter->key) < argumentValue;
 				break;
 			}
