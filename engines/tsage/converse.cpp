@@ -724,14 +724,24 @@ void StripManager::synchronize(Serializer &s) {
 }
 
 void StripManager::remove() {
+	if (g_vm->getGameID() == GType_Ringworld2) { 
+		for (int i = 0; i < _speakerList.size(); ++i) {
+			if (_activeSpeaker != _speakerList[i])
+				_speakerList[i]->proc16();
+		}
+	}
+
 	if (_textShown) {
 		if (_activeSpeaker)
 			_activeSpeaker->removeText();
 		_textShown = false;
 	}
 
-	if (_activeSpeaker)
+	if (_activeSpeaker) {
+		if (g_vm->getGameID() == GType_Ringworld2) 
+			static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker)->_speakerMode = 0xff;
 		_activeSpeaker->remove();
+	}
 
 	if (_sceneNumber != g_globals->_sceneManager._scene->_screenNumber) {
 		g_globals->_sceneManager._scene->_sceneBounds = _sceneBounds;
@@ -776,9 +786,7 @@ void StripManager::signal() {
 
 	Obj44 &obj44 = _obj44List[_obj44Index];
 
-	if (g_vm->getGameID() != GType_Ringworld2) {
-		_field2E8 = obj44._id;
-	} else {
+	if (g_vm->getGameID() == GType_Ringworld2) {
 		// Return to Ringworld specific handling
 		if (obj44._field6)
 			_field2E8 = obj44._field6;
@@ -797,22 +805,27 @@ void StripManager::signal() {
 			break;
 		}
 	}
-
+	
+	_field2E8 = obj44._id;
 	Common::StringArray choiceList;
 
 	// Build up a list of script entries
 	int idx;
+	bool delayFlag = false;
 
 	if ((g_vm->getGameID() == GType_Ringworld2) && obj44._field16[0]) {
 		// Special loading mode used in Return to Ringworld
 		for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
 			int f16Index = _lookupList[obj44._field16[0] - 1];
-			Obj0A &entry = obj44._list[obj44._field16[f16Index]]; 
-			if (!entry._id)
-				break;
+			int entryId = obj44._field16[f16Index];
 
-			// Get the next one
-			choiceList.push_back((const char *)&_script[0] + entry._scriptOffset);
+			Obj0A &entry = obj44._list[idx]; 
+			if (entry._id == entryId) {
+				// Get the next one
+				choiceList.push_back((const char *)&_script[0] + entry._scriptOffset);
+				delayFlag = true;
+				break;
+			}
 		}
 	} else {
 		// Standard choices loading
@@ -853,8 +866,6 @@ void StripManager::signal() {
 								if (!obj44._list[listIdx + 1]._id)
 									obj44._list[listIdx]._id = 0;
 							}
-
-							continue;
 						}
 					}
 				}
@@ -870,7 +881,7 @@ void StripManager::signal() {
 		// Get the user to select a conversation option
 		strIndex = _choiceDialog.execute(choiceList);
 
-	if ((choiceList.size() != 1) && !_field2E6)
+	if ((delayFlag || choiceList.size() != 1) && !_field2E6)
 		_delayFrames = 1;
 	else {
 		Speaker *speakerP = getSpeaker((const char *)&_script[0] + obj44._speakerOffset);
@@ -904,7 +915,7 @@ void StripManager::signal() {
 			
 			if (speaker) {
 				speaker->_speakerMode = obj44._speakerMode;
-				if (choiceList[strIndex].empty())
+				if (!choiceList[strIndex].empty())
 					speaker->proc15();
 			}
 

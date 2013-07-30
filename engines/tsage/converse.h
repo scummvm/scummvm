@@ -94,6 +94,7 @@ public:
 	virtual void proc12(Action *action);
 	virtual void setText(const Common::String &msg);
 	virtual void removeText();
+	virtual void proc16() {}
 
 	void setTextPos(const Common::Point &pt) { _textPos = pt; }
 };
