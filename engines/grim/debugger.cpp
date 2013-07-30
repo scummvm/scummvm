@@ -59,6 +59,7 @@ bool Debugger::cmd_lua_do(int argc, const char **argv) {
 		cmd += argv[i];
 		cmd += " ";
 	}
+	cmd.deleteLastChar();
 	DebugPrintf("Executing command: <%s>\n", cmd.c_str());
 	g_grim->debugLua(cmd);
 	return true;
@@ -69,7 +70,7 @@ bool Debugger::cmd_emi_jump(int argc, const char **argv) {
 		DebugPrintf("Usage: jump <jump target>\n");
 		return true;
 	}
-	Common::String cmd = Common::String::format("dofile(\"_jumpscripts.lua\")\njump_script(\"%s\")", argv[1]);
+	Common::String cmd = Common::String::format("dofile(\"_jumpscripts.lua\")\nstart_script(jump_script,\"%s\")", argv[1]);
 	g_grim->debugLua(cmd.c_str());
 	return true;
 }
