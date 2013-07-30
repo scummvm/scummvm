@@ -60,24 +60,9 @@ enum StateFlags {
 
 class Puzzle {
 public:
-	~Puzzle() {
-		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); iter++) {
-			delete (*iter);
-		}
-	}
-
 	Puzzle() {}
-
-	// Copy constructor
-	Puzzle(const Puzzle &other) 
-			: key(other.key),
-			  criteriaList(other.criteriaList),
-			  flags(flags) {
-		// We have to clone the ResultActions since they are on the heap
-		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); iter++) {
-			resultActions.push_back((*iter)->clone());
-		}
-	}
+	~Puzzle();
+	Puzzle(const Puzzle &other);
 
 	uint32 key;
 	Common::List<Criteria> criteriaList;
