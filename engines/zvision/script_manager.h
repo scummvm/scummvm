@@ -74,6 +74,8 @@ public:
 
 	void addActionNode(ActionNode *node);
 
+	void changeLocation(char world, char room, char node, char view, uint16 x);
+
 private:
 	void createReferenceTable();
 

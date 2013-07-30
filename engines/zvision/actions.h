@@ -113,7 +113,8 @@ public:
 private:
 	char _world;
 	char _room;
-	char _nodeview[2];
+	char _node;
+	char _view;
 	int16 _x;
 };
 

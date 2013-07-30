@@ -136,4 +136,28 @@ void ScriptManager::addActionNode(ActionNode *node) {
 	_activeNodes.push_back(node);
 }
 
+void ScriptManager::changeLocation(char world, char room, char node, char view, uint16 x) {
+	// Clear all the containers
+	_referenceTable.clear();
+	_puzzlesToCheck.clear();
+	_activePuzzles.clear();
+	// _activeControls is a list of pointers to the heap, so we have to delete the Controls before we call clear()
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		delete (*iter);
+	}
+	_activeControls.clear();
+
+	// Parse into puzzles and controls
+	Common::String fileName = Common::String::format("%c%c%c&c.scr", world, room, node, view);
+	parseScrFile(fileName);
+
+	// Create the puzzle reference table
+	createReferenceTable();
+
+	// Add all the puzzles to the stack to be checked
+	for (Common::List<Puzzle>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
+		_puzzlesToCheck.push(&(*iter));
+	}
+}
+
 } // End of namespace ZVision

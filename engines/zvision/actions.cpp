@@ -88,7 +88,7 @@ bool ActionAttenuate::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionChangeLocation::ActionChangeLocation(Common::String *line) {
-	sscanf(line->c_str(), ":change_location(%c,%c,%2c,%hu)", &_world, &_room, &_nodeview, &_x);
+	sscanf(line->c_str(), ":change_location(%c,%c,%c%c,%hu)", &_world, &_room, &_node, &_view, &_x);
 }
 
 ResultAction *ActionChangeLocation::clone() const {
