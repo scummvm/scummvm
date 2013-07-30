@@ -454,10 +454,12 @@ void Acci::parse() {
 	cc = c;
 	c.toUppercase();
 	while (!c.empty()) {
-		while ((c[0] == ' ') && (!c.empty())) {
+		while ((!c.empty()) && (c[0] == ' ')) {
 			c.deleteChar(0);
 			cc.deleteChar(0);
 		}
+		if (c.empty())
+			break;
 
 		// Get the following word of the strings.
 		byte size = pos(Common::String(' '), c) + 1;
