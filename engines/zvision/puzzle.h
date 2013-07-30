@@ -58,7 +58,27 @@ enum StateFlags {
 	DISABLED = 0x04
 };
 
-struct Puzzle {
+class Puzzle {
+public:
+	~Puzzle() {
+		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); iter++) {
+			delete (*iter);
+		}
+	}
+
+	Puzzle() {}
+
+	// Copy constructor
+	Puzzle(const Puzzle &other) 
+			: key(other.key),
+			  criteriaList(other.criteriaList),
+			  flags(flags) {
+		// We have to clone the ResultActions since they are on the heap
+		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); iter++) {
+			resultActions.push_back((*iter)->clone());
+		}
+	}
+
 	uint32 key;
 	Common::List<Criteria> criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
