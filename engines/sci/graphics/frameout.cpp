@@ -779,6 +779,14 @@ void GfxFrameout::kernelFrameout() {
 						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 					}
+
+					// TODO: For some reason, the top left nsRect coordinates get
+					// swapped in the GK1 inventory screen, investigate why.
+					// HACK: Fix the coordinates by explicitly setting them here.
+					Common::Rect objNSRect = g_sci->_gfxCompare->getNSRect(itemEntry->object);
+					if (objNSRect.top == nsRect.left && objNSRect.left == nsRect.top && nsRect.top != 0 && nsRect.left != 0) {
+						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					}
 				}
 
 				// Don't attempt to draw sprites that are outside the visible
