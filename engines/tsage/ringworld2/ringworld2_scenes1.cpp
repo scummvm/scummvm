@@ -8886,7 +8886,7 @@ void Scene1575::Hotspot1::process(Event &event) {
 
 			di -= 2;
 			scene->_field41A -= 2;
-			for (int i = 0; i < 178; i++)
+			for (int i = 0; i < 17; i++)
 				scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x - 2, scene->_arrActor[i]._position.y));
 
 			scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x - 2, scene->_actor13._position.y));
