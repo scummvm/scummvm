@@ -755,6 +755,8 @@ void StripManager::remove() {
 }
 
 void StripManager::signal() {
+	int strIndex = 0;
+
 	if (_textShown) {
 		_activeSpeaker->removeText();
 		_textShown = false;
@@ -823,6 +825,7 @@ void StripManager::signal() {
 			if (entry._id == entryId) {
 				// Get the next one
 				choiceList.push_back((const char *)&_script[0] + entry._scriptOffset);
+				strIndex = idx;
 				delayFlag = true;
 				break;
 			}
@@ -876,7 +879,6 @@ void StripManager::signal() {
 		}
 	}
 
-	int strIndex = 0;
 	if (choiceList.size() > 1)
 		// Get the user to select a conversation option
 		strIndex = _choiceDialog.execute(choiceList);
