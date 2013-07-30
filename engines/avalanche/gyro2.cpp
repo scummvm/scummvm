@@ -384,7 +384,7 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	seescroll = false;
 
 	ppos[0][1] = -177; 
-	//_vm->_trip->tr[0].appear(300,117,right);
+	_vm->_trip->tr[0].appear(300,117,right); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd ++) for (gm = 0; gm <= 1; gm ++) also[gd][gm] = nil;
 	/* fillchar(previous^,sizeof(previous^),#0); { blank out array } */
 	him = 254;

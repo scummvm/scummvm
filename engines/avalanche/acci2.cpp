@@ -940,7 +940,7 @@ void Acci::already() {
 void Acci::stand_up() {
 	switch (_vm->_gyro->dna.room) {
 	case r__yours: /* Avvy isn't asleep. */
-		if (_vm->_gyro->dna.avvy_in_bed) {  /* But he's in bed. */
+		if (_vm->_gyro->dna.avvy_is_awake && _vm->_gyro->dna.avvy_in_bed) {  /* But he's in bed. */
 			if (_vm->_gyro->dna.teetotal) {
 				_vm->_visa->dixi('d', 12);
 				_vm->_gyro->background(0);
