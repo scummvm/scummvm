@@ -143,11 +143,11 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	while (!line.contains('}')) {
 		// Parse for the action type
 		if (line.matchString("*:add*", true)) {
-			actionList.push_back(new ActionAdd(&line));
+			actionList.push_back(new ActionAdd(line));
 		} else if (line.matchString("*:animplay*", true)) {
-			actionList.push_back(new ActionPlayAnimation(&line));
+			actionList.push_back(new ActionPlayAnimation(line));
 		} else if (line.matchString("*:animpreload*", true)) {
-			actionList.push_back(new ActionPreloadAnimation(&line));
+			actionList.push_back(new ActionPreloadAnimation(line));
 		} else if (line.matchString("*:animunload*", true)) {
 			
 

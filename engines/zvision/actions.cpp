@@ -33,8 +33,8 @@ namespace ZVision {
 // ActionAdd
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAdd::ActionAdd(Common::String *line) {
 	sscanf(line->c_str(), ":add(%u,%hhu)", &_key, &_value);
+ActionAdd::ActionAdd(const Common::String &line) {
 }
 
 ResultAction *ActionAdd::clone() const {
@@ -51,8 +51,8 @@ bool ActionAdd::execute(ZVision *engine) {
 // ActionAssign
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAssign::ActionAssign(Common::String *line) {
 	sscanf(line->c_str(), ":assign(%u, %hhu)", &_key, &_value);
+ActionAssign::ActionAssign(const Common::String &line) {
 }
 
 ResultAction *ActionAssign::clone() const {
@@ -69,8 +69,8 @@ bool ActionAssign::execute(ZVision *engine) {
 // ActionAttenuate
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAttenuate::ActionAttenuate(Common::String *line) {
 	sscanf(line->c_str(), ":assign(%u, %hd)", &_key, &_attenuation);
+ActionAttenuate::ActionAttenuate(const Common::String &line) {
 }
 
 ResultAction *ActionAttenuate::clone() const {
@@ -87,8 +87,8 @@ bool ActionAttenuate::execute(ZVision *engine) {
 // ActionChangeLocation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionChangeLocation::ActionChangeLocation(Common::String *line) {
 	sscanf(line->c_str(), ":change_location(%c,%c,%c%c,%hu)", &_world, &_room, &_node, &_view, &_x);
+ActionChangeLocation::ActionChangeLocation(const Common::String &line) {
 }
 
 ResultAction *ActionChangeLocation::clone() const {
@@ -105,9 +105,9 @@ bool ActionChangeLocation::execute(ZVision *engine) {
 // ActionCrossfade
 //////////////////////////////////////////////////////////////////////////////
 
-ActionCrossfade::ActionCrossfade(Common::String *line) {
 	sscanf(line->c_str(), 
            ":crossfade(%u %u %hhu %hhu %hhu %hhu %hu)",
+ActionCrossfade::ActionCrossfade(const Common::String &line) {
            &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
 }
 
@@ -125,9 +125,9 @@ bool ActionCrossfade::execute(ZVision *engine) {
 // ActionPreloadAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPreloadAnimation::ActionPreloadAnimation(Common::String *line) {
 	// The two %*hhu are always 0 and dont seem to have a use
 	sscanf(line->c_str(), ":animpreload:%u(%s %*hhu %*hhu %u %hhu)", &_key, &_fileName, &_mask, &_framerate);
+ActionPreloadAnimation::ActionPreloadAnimation(const Common::String &line) {
 }
 
 ResultAction *ActionPreloadAnimation::clone() const {
@@ -144,10 +144,10 @@ bool ActionPreloadAnimation::execute(ZVision *engine) {
 // ActionPlayAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPlayAnimation::ActionPlayAnimation(Common::String *line) {
 	// The two %*hhu are always 0 and dont seem to have a use
 	sscanf(line->c_str(), 
            ":animplay:%u(%s %u %u %u %u %u %u %hhu %*hhu %*hhu %u %hhu)",
+ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
            &_key, &_x, &_y, &_width, &_height, &_start, &_end, &_loop, &_mask, &_framerate);
 }
 
@@ -165,8 +165,8 @@ bool ActionPlayAnimation::execute(ZVision *engine) {
 // ActionRandom
 //////////////////////////////////////////////////////////////////////////////
 
-ActionRandom::ActionRandom(Common::String *line) {
 	sscanf(line->c_str(), ":random:%u, %u)", &_key, &_max);
+ActionRandom::ActionRandom(const Common::String &line) {
 }
 
 ResultAction *ActionRandom::clone() const {
@@ -184,8 +184,8 @@ bool ActionRandom::execute(ZVision *engine) {
 // ActionTimer
 //////////////////////////////////////////////////////////////////////////////
 
-ActionTimer::ActionTimer(Common::String *line) {
 	sscanf(line->c_str(), ":timer:%u(%hu)", &_key, &_time);
+ActionTimer::ActionTimer(const Common::String &line) {
 }
 
 ResultAction *ActionTimer::clone() const {

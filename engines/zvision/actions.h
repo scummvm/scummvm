@@ -73,7 +73,7 @@ public:
 
 class ActionAdd : public ResultAction {
 public:
-	ActionAdd(Common::String *line);
+	ActionAdd(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -84,7 +84,7 @@ private:
 
 class ActionAssign : public ResultAction {
 public:
-	ActionAssign(Common::String *line);
+	ActionAssign(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -95,7 +95,7 @@ private:
 
 class ActionAttenuate : public ResultAction {
 public:
-	ActionAttenuate(Common::String *line);
+	ActionAttenuate(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -106,7 +106,7 @@ private:
 
 class ActionChangeLocation : public ResultAction {
 public:
-	ActionChangeLocation(Common::String *line);
+	ActionChangeLocation(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -120,7 +120,7 @@ private:
 
 class ActionCrossfade : public ResultAction {
 public:
-	ActionCrossfade(Common::String *line);
+	ActionCrossfade(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -136,7 +136,7 @@ private:
 
 class ActionDelayRender : public ResultAction {
 public:
-	ActionDelayRender(Common::String *line);
+	ActionDelayRender(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -147,7 +147,7 @@ private:
 
 class ActionPlayAnimation : public ResultAction {
 public:
-	ActionPlayAnimation(Common::String *line);
+	ActionPlayAnimation(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -167,7 +167,7 @@ private:
 
 class ActionPreloadAnimation : public ResultAction {
 public:
-	ActionPreloadAnimation(Common::String *line);
+	ActionPreloadAnimation(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -181,13 +181,13 @@ private:
 // TODO: See if this exists in ZGI. It doesn't in ZNem
 //class ActionUnloadAnimation : public ResultAction {
 //public:
-//	ActionUnloadAnimation(Common::String *line);
+//	ActionUnloadAnimation(const Common::String &line);
 //	bool execute(ZVision *engine);
 //};
 
 class ActionRandom : public ResultAction {
 public:
-	ActionRandom(Common::String *line);
+	ActionRandom(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
@@ -198,7 +198,7 @@ private:
 
 class ActionTimer : public ResultAction {
 public:
-	ActionTimer(Common::String *line);
+	ActionTimer(const Common::String &line);
 	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
