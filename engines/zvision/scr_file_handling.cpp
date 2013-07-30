@@ -72,21 +72,31 @@ void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stre
 	trimCommentsAndWhiteSpace(&line);
 
 	while (!line.contains('}')) {
-		if (line.matchString("criteria {", true))
-			puzzle.criteriaList.push_back(parseCriteria(stream));
-		else if (line.matchString("results {", true))
-			parseResult(stream, puzzle.resultActions);
-		else if (line.matchString("flags {", true))
+		if (line.matchString("criteria {", true)) {
+			Criteria criteria;
+			if (parseCriteria(&criteria, stream)) {
+				puzzle.criteriaList.push_back(criteria);
+			}
+		} else if (line.matchString("results {", true)) {
+			parseResults(stream, puzzle.resultActions);
+		} else if (line.matchString("flags {", true)) {
 			puzzle.flags = parseFlags(stream);
+		}
+
+		line = stream.readLine();
+		trimCommentsAndWhiteSpace(&line);
 	}
 }
 
-Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const {
-	Criteria criteria;
-
+bool ScriptManager::parseCriteria(Criteria *criteria, Common::SeekableReadStream &stream) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+
+	// Criteria can be empty
+	if (line.contains('}')) {
+		return false;
+	}
 
 	while (!line.contains('}')) {
 		// Split the string into tokens using ' ' as a delimiter
@@ -95,35 +105,35 @@ Criteria ScriptManager::parseCriteria(Common::SeekableReadStream &stream) const 
 
 		// Parse the id out of the first token
 		token = tokenizer.nextToken();
-		sscanf(token.c_str(), "[%u]", &(criteria.key));
+		sscanf(token.c_str(), "[%u]", &(criteria->key));
 
 		// Parse the operator out of the second token
 		token = tokenizer.nextToken();
 		if (token.c_str()[0] == '=')
-			criteria.criteriaOperator = EQUAL_TO;
+			criteria->criteriaOperator = EQUAL_TO;
 		else if (token.c_str()[0] == '!')
-			criteria.criteriaOperator = NOT_EQUAL_TO;
+			criteria->criteriaOperator = NOT_EQUAL_TO;
 		else if (token.c_str()[0] == '>')
-			criteria.criteriaOperator = GREATER_THAN;
+			criteria->criteriaOperator = GREATER_THAN;
 		else if (token.c_str()[0] == '<')
-			criteria.criteriaOperator = LESS_THAN;
+			criteria->criteriaOperator = LESS_THAN;
 
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
 		token = tokenizer.nextToken();
 		if (token.contains('[')) {
-			sscanf(token.c_str(), "[%u]", &(criteria.argument));
-			criteria.argumentIsAKey = true;
+			sscanf(token.c_str(), "[%u]", &(criteria->argument));
+			criteria->argumentIsAKey = true;
 		} else {
-			sscanf(token.c_str(), "%u", &(criteria.argument));
-			criteria.argumentIsAKey = false;
+			sscanf(token.c_str(), "%u", &(criteria->argument));
+			criteria->argumentIsAKey = false;
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
 
-	return criteria;
+	return true;
 }
 
 void ScriptManager::parseResult(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {

@@ -97,10 +97,11 @@ private:
 	 * Parses the stream into a Criteria object
 	 * Helper method for parsePuzzle. 
 	 *
-	 * @param stream    Scr file stream
-	 * @return          Created Criteria object
+	 * @param criteria    Pointer to the Criteria object to fill
+	 * @param stream      Scr file stream
+	 * @return            Whether any criteria were read
 	 */
-	Criteria parseCriteria(Common::SeekableReadStream &stream) const;
+	bool ScriptManager::parseCriteria(Criteria *criteria, Common::SeekableReadStream &stream) const;
 
 	/**
 	 * Parses the stream into a Results object
