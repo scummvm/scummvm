@@ -44,6 +44,7 @@ enum FullpipeGameFeatures {
 };
 
 class BehaviorManager;
+class CBaseModalObject;
 class CGameLoader;
 class CGameVar;
 class CInputController;
@@ -138,8 +139,12 @@ public:
 
 	void initMap();
 	void updateMapPiece(int mapId, int update);
+	void updateScreen();
 
-	bool _needQuit;
+	void freeGameLoader();
+
+	bool _gameContinue;
+	bool _needRestart;
 	bool _flgPlayIntro;
 	int _musicAllowed;
 
@@ -159,6 +164,10 @@ public:
 
 	Scene *_inventoryScene;
 	CInventory2 *_inventory;
+
+	int32 _updateTicks;
+
+	CBaseModalObject *_modalObject;
 
 	int (*_updateScreenCallback)(void *);
 	int (*_updateCursorCallback)();

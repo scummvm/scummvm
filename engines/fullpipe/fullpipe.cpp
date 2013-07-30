@@ -31,6 +31,7 @@
 #include "fullpipe/gameloader.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/modal.h"
 
 namespace Fullpipe {
 
@@ -52,6 +53,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_scrollSpeed = 0;
 	_currSoundListCount = 0;
 
+	_updateTicks = 0;
+
 	_currArchive = 0;
 
 	_soundEnabled = true;
@@ -60,7 +63,10 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_inputController = 0;
 	_inputDisabled = false;
 
-	_needQuit = false;
+	_modalObject = 0;
+
+	_gameContinue = true;
+	_needRestart = false;
 	_flgPlayIntro = true;
 
 	_musicAllowed = -1;
@@ -115,7 +121,8 @@ Common::Error FullpipeEngine::run() {
 
 	_isSaveAllowed = false;
 
-	loadGam("fullpipe.gam");
+	if (!loadGam("fullpipe.gam"))
+		return Common::kNoGameDataFoundError;
 
 	EntranceInfo ent;
 
@@ -132,43 +139,30 @@ Common::Error FullpipeEngine::run() {
 
 	_currentScene->draw();
 
-	while (!g_fullpipe->_needQuit) {
+	_gameContinue = true;
+
+	while (_gameContinue) {
 		updateEvents();
+
+		updateScreen();
+
+		if (_needRestart) {
+			if (_modalObject) {
+				delete _modalObject;
+				_modalObject = 0;
+			}
+
+			freeGameLoader();
+			_currentScene = 0;
+			_updateTicks = 0;
+			
+			loadGam("fullpipe.gam");
+			_needRestart = false;
+		}
+
 		_system->delayMillis(10);
 		_system->updateScreen();
 
-		switch (g_fullpipe->_keyState) {
-		case Common::KEYCODE_q:
-			g_fullpipe->_needQuit = true;
-			break;
-		case Common::KEYCODE_UP:
-			_sceneRect.moveTo(_sceneRect.left, _sceneRect.top + 10);
-			_currentScene->draw();
-			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
-			break;
-		case Common::KEYCODE_DOWN:
-			_sceneRect.moveTo(_sceneRect.left, _sceneRect.top - 10);
-			_currentScene->draw();
-			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
-			break;
-		case Common::KEYCODE_LEFT:
-			_sceneRect.moveTo(_sceneRect.left + 10, _sceneRect.top);
-			_currentScene->draw();
-			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
-			break;
-		case Common::KEYCODE_RIGHT:
-			_sceneRect.moveTo(_sceneRect.left - 10, _sceneRect.top);
-			_currentScene->draw();
-			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
-			break;
-		case Common::KEYCODE_z:
-			_sceneRect.moveTo(0, 0);
-			_currentScene->draw();
-			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
-			break;
-		default:
-			break;
-		}
 	}
 
 
@@ -192,12 +186,20 @@ void FullpipeEngine::updateEvents() {
 			_mouseY = event.mouse.y;
 			break;
 		case Common::EVENT_QUIT:
-			_needQuit = true;
+			_gameContinue = false;
 			break;
 		default:
 			break;
 		}
 	}
+}
+
+void FullpipeEngine::freeGameLoader() {
+	warning("STUB: FullpipeEngine::freeGameLoader()");
+}
+
+void FullpipeEngine::updateScreen() {
+	warning("STUB: FullpipeEngine::updateScreen()");
 }
 
 int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
