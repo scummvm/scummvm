@@ -32,7 +32,7 @@ class ZVision;
 class ActionNode {
 public:
 	virtual ~ActionNode() {}
-	virtual bool process(ZVision *engine, uint32 deltaTimeInMillis);
+	virtual bool process(ZVision *engine, uint32 deltaTimeInMillis) = 0;
 };
 
 class NodeTimer : public ActionNode {
