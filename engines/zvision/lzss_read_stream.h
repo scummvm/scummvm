@@ -43,9 +43,10 @@ public:
 	 */
 	LzssReadStream(Common::SeekableReadStream *source);
 
-public:
-	static const uint32 _npos = 0xFFFFFFFFu;
-	static const uint16 _blockSize = 0x1000u;
+private:
+	enum {
+		BLOCK_SIZE = 0x1000
+	};
 
 private:
 	Common::SeekableReadStream *_source;

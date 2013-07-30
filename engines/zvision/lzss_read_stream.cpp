@@ -32,7 +32,7 @@ LzssReadStream::LzssReadStream(Common::SeekableReadStream *source)
 		  _windowCursor(0x0FEE),
 		  _eosFlag(false) {
 	// Clear the window to null
-	memset(_window, 0, _blockSize);
+	memset(_window, 0, BLOCK_SIZE);
 }
 
 uint32 LzssReadStream::decompressBytes(byte *destination, uint32 numberOfBytes) {
