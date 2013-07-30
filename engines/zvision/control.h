@@ -25,11 +25,27 @@
 
 #include "common/types.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace ZVision {
 
-struct Control {
-	uint16 id;
+class ZVision;
 
+class Control {
+public:
+	virtual ~Control() {}
+	virtual bool execute(ZVision *engine) = 0;
+
+protected:
+	uint32 key;
+
+// Static member functions
+public:
+	static void parseFlatControl(ZVision *engine);
+	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
+	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
 };
 
 } // End of namespace ZVision
