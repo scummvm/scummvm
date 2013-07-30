@@ -67,6 +67,9 @@ public:
 	void setPanoramaFoV(float fov);
 	void setPanoramaScale(float scale);
 
+	void setTiltFoV(float fov);
+	void setTiltScale(float scale);
+
 private:
 	void generatePanoramaLookupTable();
 	void generateTiltLookupTable();

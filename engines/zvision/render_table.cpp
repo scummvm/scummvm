@@ -171,4 +171,16 @@ void RenderTable::setPanoramaScale(float scale) {
 	_panoramaOptions.linearScale = scale;
 }
 
+void RenderTable::setTiltFoV(float fov) {
+	assert(fov > 0.0f);
+
+	_tiltOptions.fieldOfView = fov;
+}
+
+void RenderTable::setTiltScale(float scale) {
+	assert(scale > 0.0f);
+
+	_tiltOptions.linearScale = scale;
+}
+
 } // End of namespace ZVision
