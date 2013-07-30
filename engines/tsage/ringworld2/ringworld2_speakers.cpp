@@ -252,8 +252,8 @@ void VisualSpeaker::proc16() {
 	_speakerMode = 0;
 	_object1.remove();
 
-	assert(_object2);
-	_object2->show();
+	if (_object2)
+		_object2->show();
 	_object2 = NULL;
 	_fieldF8 = 0;
 }
@@ -1948,7 +1948,7 @@ void SpeakerSeeker300::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3) {
+		if (R2_GLOBALS._player._characterIndex == 2) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
