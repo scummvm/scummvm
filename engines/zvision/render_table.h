@@ -32,7 +32,7 @@ namespace ZVision {
 
 class RenderTable {
 public:
-	RenderTable(uint32 numRows, uint32 numColumns);
+	RenderTable(uint numRows, uint numColumns);
 	~RenderTable();
 
 public:
@@ -43,7 +43,7 @@ public:
 	};
 
 private:
-	uint32 _numColumns, _numRows;
+	uint _numColumns, _numRows;
 	Vector2 *_internalBuffer;
 	RenderState _renderState;
 

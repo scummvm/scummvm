@@ -87,7 +87,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 
 }
 
-void ZVision::onKeyDown(uint16 keyCode) {
+void ZVision::onKeyDown(uint keyCode) {
 
 }
 

@@ -267,8 +267,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	return;
 }
 
-byte ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
-	byte flags;
+uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
+	uint flags = 0;
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();

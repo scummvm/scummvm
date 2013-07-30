@@ -73,10 +73,10 @@ RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag dis
 }
 
 int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
-	uint32 bytesRead = 0;
+	int bytesRead = 0;
 
 	// 0: Left, 1: Right
-	byte channel = 0;
+	uint channel = 0;
 
 	while (bytesRead < numSamples) {
 		byte encodedSample = _stream->readByte();

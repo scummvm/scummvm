@@ -50,7 +50,7 @@ private:
 	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a 
 	 * particular state key are checked after the key is modified.
 	 */
-	Common::HashMap<uint32, byte> _globalState;
+	Common::HashMap<uint32, uint> _globalState;
 	/** Holds the currently active ActionNodes */
 	Common::List<ActionNode *> _activeNodes;
 	/** References _globalState keys to Puzzles */
@@ -65,16 +65,16 @@ private:
 public:
 	
 	void initialize();
-	void updateNodes(uint32 deltaTimeMillis);
+	void updateNodes(uint deltaTimeMillis);
 	void checkPuzzleCriteria();
 
-	byte getStateValue(uint32 key);
-	void setStateValue(uint32 key, byte value);
-	void addToStateValue(uint32 key, byte valueToAdd);
+	uint getStateValue(uint32 key);
+	void setStateValue(uint32 key, uint value);
+	void addToStateValue(uint32 key, uint valueToAdd);
 
 	void addActionNode(ActionNode *node);
 
-	void changeLocation(char world, char room, char node, char view, uint16 x);
+	void changeLocation(char world, char room, char node, char view, uint32 x);
 
 private:
 	void createReferenceTable();
@@ -118,9 +118,9 @@ private:
 	 * Helper method for parsePuzzle. Parses the stream into a bitwise or of the StateFlags enum
 	 *
 	 * @param stream    Scr file stream
-	 * @return          Bitwise or of all the flags set within the puzzle
+	 * @return          Bitwise OR of all the flags set within the puzzle
 	 */
-	byte parseFlags(Common::SeekableReadStream &stream) const;
+	uint parseFlags(Common::SeekableReadStream &stream) const;
 
 	/**
 	 * Helper method for parseScrFile. Parses the stream into a Control object

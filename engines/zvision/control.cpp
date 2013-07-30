@@ -54,8 +54,8 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 			sscanf(line.c_str(), "angle(%f)", &scale);
 			renderTable->setPanoramaScale(scale);
 		} else if (line.matchString("reversepana*", true)) {
-			byte reverse;
-			sscanf(line.c_str(), "reversepana(%hhu)", &reverse);
+			uint reverse;
+			sscanf(line.c_str(), "reversepana(%u)", &reverse);
 			if (reverse == 1) {
 				renderTable->setPanoramaReverse(true);
 			}
@@ -86,8 +86,8 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 			sscanf(line.c_str(), "angle(%f)", &scale);
 			renderTable->setTiltScale(scale);
 		} else if (line.matchString("reversepana*", true)) {
-			byte reverse;
-			sscanf(line.c_str(), "reversepana(%hhu)", &reverse);
+			uint reverse;
+			sscanf(line.c_str(), "reversepana(%u)", &reverse);
 			if (reverse == 1) {
 				renderTable->setTiltReverse(true);
 			}

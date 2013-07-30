@@ -37,7 +37,7 @@ public:
 
 class NodeTimer : public ActionNode {
 public:
-	NodeTimer(uint32 key, uint32 timeInSeconds);
+	NodeTimer(uint32 key, uint timeInSeconds);
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
 	 * in _globalState and let this node be deleted

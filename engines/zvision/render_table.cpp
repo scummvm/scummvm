@@ -29,7 +29,7 @@
 
 namespace ZVision {
 
-RenderTable::RenderTable(uint32 numColumns, uint32 numRows)
+RenderTable::RenderTable(uint numColumns, uint numRows)
 		: _numRows(numRows),
 		  _numColumns(numColumns),
 		  _renderState(FLAT) {
@@ -85,10 +85,10 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 i
 	bool isTransposed = _renderState == RenderTable::PANORAMA || _renderState == RenderTable::TILT;
 
 	for (int y = subRectangle.top; y < subRectangle.bottom; y++) {
-		uint32 normalizedY = y - subRectangle.top;
+		uint normalizedY = y - subRectangle.top;
 
 		for (int x = subRectangle.left; x < subRectangle.right; x++) {
-			uint32 normalizedX = x - subRectangle.left;
+			uint normalizedX = x - subRectangle.left;
 
 			uint32 index = (y + destRectangle.top) * _numColumns + (x + destRectangle.left);
 
@@ -137,15 +137,15 @@ void RenderTable::generatePanoramaLookupTable() {
 	float tanOverHalfHeight = tan(fovRadians) / halfHeight;
 
 	// TODO: Change the algorithm to write a whole row at a time instead of a whole column at a time. AKA: for(y) { for(x) {}} instead of for(x) { for(y) {}}
-	for (uint32 x = 0; x < _numColumns; x++) {
+	for (uint x = 0; x < _numColumns; x++) {
 		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
 		float temp = atan(tanOverHalfHeight * ((float)x - halfWidth + 0.01f));
 
-		int32 newX = floor((halfHeightOverTan * _panoramaOptions.linearScale * temp) + halfWidth);
+		int32 newX = int32(floor((halfHeightOverTan * _panoramaOptions.linearScale * temp) + halfWidth));
 		float cosX = cos(temp);
 
-		for (uint32 y = 0; y < _numRows; y++) {
-			int32 newY = floor(halfHeight + (y - halfHeight) * cosX);
+		for (uint y = 0; y < _numRows; y++) {
+			int32 newY = int32(floor(halfHeight + ((float)y - halfHeight) * cosX));
 
 			uint32 index = y * _numColumns + x;
 

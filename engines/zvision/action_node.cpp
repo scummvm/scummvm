@@ -28,7 +28,7 @@
 
 namespace ZVision {
 
-NodeTimer::NodeTimer(uint32 key, uint32 timeInSeconds) 
+NodeTimer::NodeTimer(uint32 key, uint timeInSeconds) 
 	: _key(key), _timeLeft(timeInSeconds * 1000) {}
 
 bool NodeTimer::process(ZVision *engine, uint32 deltaTimeInMillis) {

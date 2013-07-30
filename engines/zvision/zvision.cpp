@@ -117,7 +117,7 @@ Common::Error ZVision::run() {
 	// Main loop
 	uint32 currentTime = _system->getMillis();
 	uint32 lastTime = currentTime;
-	const uint32 desiredFrameTime = 33; // ~30 fps
+	const uint desiredFrameTime = 33; // ~30 fps
 
 	while (!shouldQuit()) {
 		processEvents();

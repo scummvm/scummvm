@@ -36,7 +36,7 @@ class ZVision;
 
 struct SoundParams {
 	char identifier;
-	uint16 rate;
+	uint32 rate;
 	bool stereo;
 	bool packed;
 };
@@ -73,7 +73,7 @@ private:
 	Audio::Timestamp _playtime;                                // Calculated total play time
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
 	bool _endOfData;                                           // Whether the stream end has been reached
-	byte _stereo;
+	uint _stereo;
 
 	/** 
 	 * Holds the frequency and index from the last sample

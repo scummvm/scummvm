@@ -60,7 +60,7 @@ void ScriptManager::createReferenceTable() {
 	}
 }
 
-void ScriptManager::updateNodes(uint32 deltaTimeMillis) {
+void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
 	for (Common::List<ActionNode *>::iterator iter = _activeNodes.begin(); iter != _activeNodes.end();) {
 		if ((*iter)->process(_engine, deltaTimeMillis)) {
@@ -82,7 +82,7 @@ void ScriptManager::checkPuzzleCriteria() {
 		bool criteriaMet = false;
 		for (Common::List<Puzzle::Criteria>::iterator iter = puzzle->criteriaList.begin(); iter != puzzle->criteriaList.end(); iter++) {
 			// Get the value to compare against
-			byte argumentValue;
+			uint argumentValue;
 			if ((*iter).argument)
 				argumentValue = getStateValue(iter->argument);
 			else
@@ -119,16 +119,16 @@ void ScriptManager::checkPuzzleCriteria() {
 	}
 }
 
-byte ScriptManager::getStateValue(uint32 key) {
+uint ScriptManager::getStateValue(uint32 key) {
 	return _globalState[key];
 }
 
 // TODO: Add logic to check _referenceTable and add to _puzzlesToCheck if necessary
-void ScriptManager::setStateValue(uint32 key, byte value) {
+void ScriptManager::setStateValue(uint32 key, uint value) {
 	_globalState[key] = value;
 }
 
-void ScriptManager::addToStateValue(uint32 key, byte valueToAdd) {
+void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
 	_globalState[key] += valueToAdd;
 }
 
@@ -136,7 +136,7 @@ void ScriptManager::addActionNode(ActionNode *node) {
 	_activeNodes.push_back(node);
 }
 
-void ScriptManager::changeLocation(char world, char room, char node, char view, uint16 x) {
+void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 x) {
 	// Clear all the containers
 	_referenceTable.clear();
 	_puzzlesToCheck.clear();

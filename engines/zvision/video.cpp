@@ -33,15 +33,15 @@
 namespace ZVision {
 
 // Taken from SCI
-void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel) {
+void scale2x(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel) {
 	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
-	const int newWidth = srcWidth * 2;
-	const int pitch = newWidth * bytesPerPixel;
+	const uint32 newWidth = srcWidth * 2;
+	const uint32 pitch = newWidth * bytesPerPixel;
 	const byte *srcPtr = src;
 
 	if (bytesPerPixel == 1) {
-		for (int y = 0; y < srcHeight; y++) {
-			for (int x = 0; x < srcWidth; x++) {
+		for (uint32 y = 0; y < srcHeight; y++) {
+			for (uint32 x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
 				dst[0] = color;
 				dst[1] = color;
@@ -52,8 +52,8 @@ void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte b
 			dst += newWidth;
 		}
 	} else if (bytesPerPixel == 2) {
-		for (int y = 0; y < srcHeight; y++) {
-			for (int x = 0; x < srcWidth; x++) {
+		for (uint32 y = 0; y < srcHeight; y++) {
+			for (uint32 x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
 				const byte color2 = *srcPtr++;
 				dst[0] = color;

@@ -174,7 +174,7 @@ ResultAction *ActionRandom::clone() const {
 }
 
 bool ActionRandom::execute(ZVision *engine) {
-	uint32 randNumber = engine->getRandomSource()->getRandomNumber(_max);
+	uint randNumber = engine->getRandomSource()->getRandomNumber(_max);
 	engine->getScriptManager()->setStateValue(_key, randNumber);
 	return true;
 }

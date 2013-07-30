@@ -83,7 +83,7 @@ private:
 	void processEvents();
 	void onMouseDown(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);
-	void onKeyDown(uint16 keyCode);
+	void onKeyDown(uint keyCode);
 };
 
 } // End of namespace ZVision

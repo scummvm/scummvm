@@ -70,7 +70,7 @@ public:
 	Common::List<Criteria> criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<ResultAction *> resultActions;
-	byte flags;
+	uint flags;
 
 	// Used by the ScriptManager to allow unique-ification of _referenceTable
 	// The unique-ification is done by sorting, then iterating and removing duplicates

@@ -79,7 +79,7 @@ public:
 
 private:
 	uint32 _key;
-	byte _value;
+	uint _value;
 };
 
 class ActionAssign : public ResultAction {
@@ -90,7 +90,7 @@ public:
 
 private:
 	uint32 _key;
-	byte _value;
+	uint _value;
 };
 
 class ActionAttenuate : public ResultAction {
@@ -101,7 +101,7 @@ public:
 
 private:
 	uint32 _key;
-	int16 _attenuation;
+	int _attenuation;
 };
 
 class ActionChangeLocation : public ResultAction {
@@ -115,7 +115,7 @@ private:
 	char _room;
 	char _node;
 	char _view;
-	int16 _x;
+	uint32 _x;
 };
 
 class ActionCrossfade : public ResultAction {
@@ -127,11 +127,11 @@ public:
 private:
 	uint32 _keyOne;
 	uint32 _keyTwo;
-	byte _oneStartVolume;
-	byte _twoStartVolume;
-	byte _oneEndVolume;
-	byte _twoEndVolume;
-	uint16 _timeInMillis;
+	uint _oneStartVolume;
+	uint _twoStartVolume;
+	uint _oneEndVolume;
+	uint _twoEndVolume;
+	uint _timeInMillis;
 };
 
 class ActionDelayRender : public ResultAction {
@@ -142,7 +142,7 @@ public:
 
 private:
 	// TODO: Check if this should actually be frames or if it should be milliseconds/seconds
-	byte framesToDelay;
+	uint32 framesToDelay;
 };
 
 class ActionPlayAnimation : public ResultAction {
@@ -160,8 +160,8 @@ private:
 	uint32 _height;
 	uint32 _start;
 	uint32 _end;
-	uint32 _mask;
-	byte _framerate;
+	uint _mask;
+	uint _framerate;
 	bool _loop;
 };
 
@@ -174,8 +174,8 @@ public:
 private:
 	uint32 _key;
 	Common::String _fileName;
-	uint32 _mask;
-	byte _framerate;
+	uint _mask;
+	uint _framerate;
 };
 
 // TODO: See if this exists in ZGI. It doesn't in ZNem
@@ -193,7 +193,7 @@ public:
 
 private:
 	uint32 _key;
-	uint32 _max;
+	uint _max;
 };
 
 class ActionTimer : public ResultAction {
@@ -204,7 +204,7 @@ public:
 
 private:
 	uint32 _key;
-	uint32 _time;
+	uint _time;
 };
 
 } // End of namespace ZVision
