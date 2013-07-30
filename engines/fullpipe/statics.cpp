@@ -27,7 +27,7 @@
 #include "fullpipe/statics.h"
 #include "fullpipe/messages.h"
 
-#include "fullpipe/gameobj.h"
+#include "fullpipe/constants.h"
 #include "fullpipe/objectnames.h"
 
 namespace Fullpipe {

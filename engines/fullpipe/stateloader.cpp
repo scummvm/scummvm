@@ -31,7 +31,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/gameobj.h"
+#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 

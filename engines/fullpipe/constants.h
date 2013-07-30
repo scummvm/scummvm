@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_GAMEOBJ_H
-#define FULLPIPE_GAMEOBJ_H
+#ifndef FULLPIPE_CONSTANTS_H
+#define FULLPIPE_CONSTANTS_H
 
 namespace Fullpipe {
 
@@ -119,4 +119,4 @@ namespace Fullpipe {
 
 } // End of namespace Fullpipe
 
-#endif /* FULLPIPE_INPUT_H */
+#endif /* FULLPIPE_CONSTANTS_H */

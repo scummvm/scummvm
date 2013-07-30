@@ -27,7 +27,7 @@
 #include "fullpipe/objectnames.h"
 #include "fullpipe/input.h"
 
-#include "fullpipe/gameobj.h"
+#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 

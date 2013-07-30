@@ -34,7 +34,7 @@
 #include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
 
-#include "fullpipe/gameobj.h"
+#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 
