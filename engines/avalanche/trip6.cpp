@@ -216,7 +216,8 @@ void triptype::walk() {
 			return;
 		}
 
-		tc = _tr->checkfeet(x, x + _info.xl, oy[_tr->_vm->_gyro->cp], y, _info.yl);
+		tc = _tr->checkfeet(x, x + _info.xl, oy[_tr->_vm->_gyro->cp], y, _info.yl) - 1;
+		// -1  is becouse the modified array indexes of magics[] compared to Pascal .
 
 		if ((tc != 0) & (!_tr->_vm->_gyro->doing_sprite_run)) {
 			switch (_tr->_vm->_gyro->magics[tc].op) {
@@ -498,15 +499,15 @@ byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 		x2 = 639;
 	if (oy < y)
 		for (fv = x1; fv <= x2; fv ++)
-			for (ff = oy + yl; ff <= y + yl; ff ++) {
-				c = *_vm->_graphics->getPixel(fv, ff);
+			for (ff = oy + yl; ff <= y + yl; ff++) {
+				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
 				if (c > a) 
 					a = c;
 			}
 	else
 		for (fv = x1; fv <= x2; fv ++)
-			for (ff = y + yl; ff <= oy + yl; ff ++) {
-				c = *_vm->_graphics->getPixel(fv, ff);
+			for (ff = y + yl; ff <= oy + yl; ff++) {
+				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
 				if (c > a)
 					a = c;
 			}

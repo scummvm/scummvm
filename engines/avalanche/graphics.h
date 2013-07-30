@@ -59,6 +59,11 @@ public:
 
 	::Graphics::Surface _background;
 
+	::Graphics::Surface _magics;
+	// Lucerna::draw_also_lines() draws the "magical" lines here.
+	// Further information: https://github.com/urukgit/avalot/wiki/Also
+	
+
 
 
 	Graphics(AvalancheEngine *vm);

@@ -44,6 +44,7 @@
 #include "avalanche/acci2.h"
 #include "avalanche/roomnums.h"
 
+#include "common/rect.h"
 #include "common/system.h"
 
 #include "graphics/palette.h"
@@ -83,7 +84,41 @@ void Lucerna::draw_also_lines() {
 	byte ff;
 	byte squeaky_code;
 
-	warning("STUB: Lucerna::draw_also_lines()");
+	switch (_vm->_gyro->visible) {
+	case _vm->_gyro->m_virtual: {
+		squeaky_code = 1;
+		_vm->_gyro->off_virtual();
+		}
+		break;
+	case _vm->_gyro->m_no:
+		squeaky_code = 2;
+		break;
+	case _vm->_gyro->m_yes: {
+		squeaky_code = 3;
+		_vm->_gyro->off();
+		}
+		break;
+	}
+
+	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
+	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 639, 160), 15);
+
+	for (ff = 0; ff < 50; ff++) {
+		if (_vm->_gyro->lines[ff].x1 != 32767 /*maxint*/) {
+			_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
+		}
+	}
+
+	switch (squeaky_code) {
+	case 1 :
+		_vm->_gyro->on_virtual();
+		break;
+	case 2 :
+		break; // Zzz... it was off anyway.
+	case 3 :
+		_vm->_gyro->on();
+		break;
+	}
 }
 
 
