@@ -60,7 +60,7 @@ private:
 	/** Holds the currently active puzzles */
 	Common::List<Puzzle> _activePuzzles;
 	/** Holds the currently active controls */
-	Common::List<Control> _activeControls;
+	Common::List<Control *> _activeControls;
 
 public:
 	
@@ -123,10 +123,10 @@ private:
 	/**
 	 * Helper method for parseScrFile. Parses the stream into a Control object
 	 *
-	 * @param control    The object to store what is parsed
-	 * @param stream     Scr file stream
+	 * @param line      The line initially read
+	 * @param stream    Scr file stream
 	 */
-	void parseControl(Control &control, Common::SeekableReadStream &stream);
+	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
 
