@@ -520,23 +520,29 @@ void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, 
 	Math::Vector3d lookVector = pos - _pos;
 	lookVector.normalize();
 
-	Math::Vector3d up = actorUp();
-	if (_puckOrient) {
-		Sector *s = NULL;
-		g_grim->getCurrSet()->findClosestSector(_pos, &s, NULL);
-		if (s) {
-			up = s->getNormal();
+	if (g_grim->getGameType() == GType_GRIM) {
+		Math::Vector3d up = actorUp();
+		if (_puckOrient) {
+			Sector *s = NULL;
+			g_grim->getCurrSet()->findClosestSector(_pos, &s, NULL);
+			if (s) {
+				up = s->getNormal();
+			}
 		}
-	}
 
-	Math::Matrix3 m;
-	m.buildFromTargetDir(actorForward(), lookVector, actorUp(), up);
+		Math::Matrix3 m;
+		m.buildFromTargetDir(actorForward(), lookVector, actorUp(), up);
 
-	if (_puckOrient) {
-		m.getPitchYawRoll(pitch, yaw, roll);
+		if (_puckOrient) {
+			m.getPitchYawRoll(pitch, yaw, roll);
+		} else {
+			*pitch = _movePitch;
+			*yaw = m.getYaw();
+			*roll = _moveRoll;
+		}
 	} else {
 		*pitch = _movePitch;
-		*yaw = m.getYaw();
+		*yaw = Math::Vector3d::angle(lookVector, Math::Vector3d(0,0,1));
 		*roll = _moveRoll;
 	}
 }
