@@ -395,7 +395,7 @@ const char *gameDataEn[] =  {
 	"She got along with everyone. She loved her son dearly. As for the relations between mother-in-law and daughter-in-law...$",
 	"Apart from Leo, she got along very well with Max...$",
 	"Even if your relations were unfrequent, Jerome, there was still a place for you in her heart...$",
-	"(370) Apart from her family, not a lot of people$",
+	"Apart from her family, not a lot of people$",
 	"Oh right! I think she deeply regretted this friend's leaving... err! Marielle... or Mireille...$",
 	"No, nothing!$",
 	"No... Not that I know of$",
