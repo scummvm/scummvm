@@ -101,7 +101,7 @@ void Lucerna::draw_also_lines() {
 	}
 
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
-	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 639, 160), 15);
+	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 639, 161), 15);
 
 	for (ff = 0; ff < 50; ff++) {
 		if (_vm->_gyro->lines[ff].x1 != 32767 /*maxint*/) {
