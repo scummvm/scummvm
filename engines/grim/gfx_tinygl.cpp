@@ -665,10 +665,6 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	int *indices = (int *)face->_indexes;
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
-
-	//Transparency-Support
-	tglEnable(TGL_BLEND); // TODO: TinyGL doesn't support enough alpha-bits yet.
-
 	if (face->_hasTexture)
 		tglEnable(TGL_TEXTURE_2D);
 	else
@@ -694,7 +690,6 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
 	tglEnable(TGL_ALPHA_TEST);
-	tglDisable(TGL_BLEND);
 }
 
 void GfxTinyGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
