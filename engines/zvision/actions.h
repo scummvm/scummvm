@@ -35,6 +35,7 @@ class ZVision;
 class ResultAction {
 public:
 	virtual ~ResultAction() {}
+	virtual ResultAction *clone() const = 0;
 	virtual bool execute(ZVision *engine) = 0;
 };
 
@@ -73,6 +74,7 @@ public:
 class ActionAdd : public ResultAction {
 public:
 	ActionAdd(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -83,6 +85,7 @@ private:
 class ActionAssign : public ResultAction {
 public:
 	ActionAssign(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -93,6 +96,7 @@ private:
 class ActionAttenuate : public ResultAction {
 public:
 	ActionAttenuate(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -103,6 +107,7 @@ private:
 class ActionChangeLocation : public ResultAction {
 public:
 	ActionChangeLocation(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -115,6 +120,7 @@ private:
 class ActionCrossfade : public ResultAction {
 public:
 	ActionCrossfade(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -130,6 +136,7 @@ private:
 class ActionDelayRender : public ResultAction {
 public:
 	ActionDelayRender(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -140,6 +147,7 @@ private:
 class ActionPlayAnimation : public ResultAction {
 public:
 	ActionPlayAnimation(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -159,6 +167,7 @@ private:
 class ActionPreloadAnimation : public ResultAction {
 public:
 	ActionPreloadAnimation(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -178,6 +187,7 @@ private:
 class ActionRandom : public ResultAction {
 public:
 	ActionRandom(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -188,6 +198,7 @@ private:
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(Common::String *line);
+	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
