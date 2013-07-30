@@ -6351,12 +6351,26 @@ bool Scene800::DeviceSlot::startAction(CursorType action, Event &event) {
 			break;
 
 		R2_GLOBALS._player.disableControl();
-		scene->_reader.postInit();
+		_lookLineNum = 27;
+		scene->_sceneMode = 809;
 
 		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800)
-			scene->setAction(&scene->_sequenceManager1, scene, 814, &R2_GLOBALS._player, &scene->_reader, &scene->_opticalFibre, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 815, &R2_GLOBALS._player, &scene->_reader, &scene->_opticalFibre, NULL);
 		else
-			scene->setAction(&scene->_sequenceManager1, scene, 804, &R2_GLOBALS._player, &scene->_reader, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 809, &R2_GLOBALS._player, &scene->_reader, NULL);
+		return true;
+	case R2_READER:
+		R2_GLOBALS._player.disableControl();
+		scene->_reader.postInit();
+		scene->_sceneMode = 804;
+
+		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
+			scene->setAction(&scene->_sequenceManager1, scene, 814, &R2_GLOBALS._player, 
+				&scene->_reader, &scene->_opticalFibre, NULL);
+		} else {
+			scene->setAction(&scene->_sequenceManager1, scene, 804, &R2_GLOBALS._player, 
+				&scene->_reader, NULL);
+		}
 		return true;
 	default:
 		break;
