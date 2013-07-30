@@ -181,6 +181,12 @@ void Avalot::handleKeyDown(const Common::Event &event) {
 
 	if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
 		_vm->_parser->handleInputText(event);
+
+
+
+	_vm->_lucerna->showrw();
+	 if (_vm->_gyro->demo)
+		 _vm->_basher->get_demorec();
 }
 
 
