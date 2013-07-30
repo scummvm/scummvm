@@ -488,13 +488,31 @@ byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	int16 fv, ff;
 
 	/* if not alive then begin checkfeet:=0; exit; end;*/
-	byte checkfeet_result;
 	a = 0;
 
-	warning("STUB: Trip::checkfeet()");
-		
-	checkfeet_result = a;
-	return checkfeet_result;
+	//setactivepage(2);
+
+	if (x1 < 0)
+		x1 = 0;
+	if (x2 > 639)
+		x2 = 639;
+	if (oy < y)
+		for (fv = x1; fv <= x2; fv ++)
+			for (ff = oy + yl; ff <= y + yl; ff ++) {
+				c = *_vm->_graphics->getPixel(fv, ff);
+				if (c > a) 
+					a = c;
+			}
+	else
+		for (fv = x1; fv <= x2; fv ++)
+			for (ff = y + yl; ff <= oy + yl; ff ++) {
+				c = *_vm->_graphics->getPixel(fv, ff);
+				if (c > a)
+					a = c;
+			}
+
+	//setactivepage(1 - cp);
+	return a;
 }
 
 byte Trip::geida_ped(byte which) {
@@ -1414,10 +1432,10 @@ void Trip::get_back_loretta() {
 }
 
 void Trip::stopwalking() {
-	tr[1].stopwalk();
+	tr[0].stopwalk();
 	_vm->_gyro->dna.rw = stopped;
 	if (_vm->_gyro->alive)
-		tr[1].step = 1;
+		tr[0].step = 1;
 }
 
 void Trip::tripkey(char dir) {
