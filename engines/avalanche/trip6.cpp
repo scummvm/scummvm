@@ -492,20 +492,19 @@ byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	a = 0;
 
 	//setactivepage(2);
-
 	if (x1 < 0)
 		x1 = 0;
 	if (x2 > 639)
 		x2 = 639;
 	if (oy < y)
-		for (fv = x1; fv <= x2; fv ++)
+		for (fv = x1; fv <= x2; fv++)
 			for (ff = oy + yl; ff <= y + yl; ff++) {
 				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
 				if (c > a) 
 					a = c;
 			}
 	else
-		for (fv = x1; fv <= x2; fv ++)
+		for (fv = x1; fv <= x2; fv++)
 			for (ff = y + yl; ff <= oy + yl; ff++) {
 				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
 				if (c > a)
