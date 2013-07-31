@@ -32,7 +32,7 @@
 namespace Wintermute {
 
 
-#ifdef ENABLE_BILINEAR
+#if ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 
 			int srcW = srcRect.width();
@@ -529,7 +529,7 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 			targX += transform._hotspot.x;
 			targY += transform._hotspot.y;
 			
-#ifdef ENABLE_BILINEAR
+#if ENABLE_BILINEAR
 			copyPixelBilinear(targX, targY, x, y, srcRect, dstRect, this, target); 
 #else
 			copyPixelNearestNeighbor(targX, targY, x, y, srcRect, dstRect, this, target); 
@@ -561,7 +561,7 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 		for (int x = 0; x < dstW; x++) {
 			projX = x / (float)dstW * srcW;
 			projY = y / (float)dstH * srcH;
-#ifdef ENABLE_BILINEAR
+#if ENABLE_BILINEAR
 			copyPixelBilinear(projX, projY, x, y, srcRect, dstRect, this, target); 
 #else
 			copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target); 
