@@ -1,17 +1,21 @@
 MODULE := engines/zvision
  
 MODULE_OBJS := \
+	action_node.o \
 	actions.o \
 	console.o \
+	control.o \
 	detection.o \
 	events.o \
-	graphics.o \
-	image.o \
 	lzss_read_stream.o \
+	puzzle.o \
+	render_manager.o \
+	render_table.o \
 	scr_file_handling.o \
 	script_manager.o \
 	scripts.o \
 	single_value_container.o \
+	utility.o \
 	video.o \
 	zvision.o \
 	zfs_archive.o \
