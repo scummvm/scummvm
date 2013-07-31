@@ -294,12 +294,23 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	// James Peris: No License Nor Control
+	// James Peris: No License Nor Control (English)
 	{
 		"jamesperis",
 		"Demo",
 		AD_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507),
-		Common::UNK_LANG, // No solution in place to select language
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
+	// James Peris: No License Nor Control (Spanish)
+	{
+		"jamesperis",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507),
+		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
 		ADGF_DEMO,
