@@ -135,7 +135,7 @@ bool CGameLoader::loadScene(int sceneId) {
 	if (idx < 0)
 		return false;
 
-	if (st->_scene)
+	if (!st->_scene)
 		st->loadScene();
 
 	if (st->_scene) {
@@ -184,7 +184,7 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 		sg->setSubVarAsInt("Entrance", entranceId);
 
 	if (!g_fullpipe->sceneSwitcher(_sc2array[sc2idx]._entranceData[entranceIdx]))
-		return 0;
+		return false;
 
 	g_fullpipe->_msgObjectId2 = 0;
 	g_fullpipe->_msgY = -1;
