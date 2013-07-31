@@ -1276,11 +1276,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
-		Common::String result = initVal;
-		if (ConfMan.hasKey(privKey)) {
-			result = StringUtil::decodeSetting(ConfMan.get(key));
-		}
+		Common::String result = readRegistryString(key, initVal);
 		stack->pushString(result.c_str());
 		return STATUS_OK;
 	}
@@ -3900,6 +3896,28 @@ void BaseGame::expandStringByStringTable(char **str) const {
 
 char *BaseGame::getKeyFromStringTable(const char *str) const {
 	return _settings->getKeyFromStringTable(str);
+}
+
+Common::String BaseGame::readRegistryString(const Common::String &key, const Common::String &initValue) const {
+	// Game specific hacks:
+	Common::String result = initValue;
+	// James Peris:
+	if (BaseEngine::instance().getGameId() == "jamesperis" && key == "Language") {
+		Common::Language language = BaseEngine::instance().getLanguage();
+		if (language == Common::EN_ANY) {
+			result = "english";
+		} else if (language == Common::ES_ESP) {
+			result = "spanish";
+		} else {
+			error("Invalid language set for James Peris");
+		}
+	} else { // Just fallback to using ConfMan for now
+		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
+		if (ConfMan.hasKey(privKey)) {
+			result = StringUtil::decodeSetting(ConfMan.get(key));
+		}
+	}
+	return result;
 }
 
 } // end of namespace Wintermute

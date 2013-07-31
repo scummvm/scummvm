@@ -343,6 +343,8 @@ private:
 	bool isDoubleClick(int32 buttonIndex);
 	uint32 _usedMem;
 
+// TODO: This should be expanded into a proper class eventually:
+	Common::String readRegistryString(const Common::String &key, const Common::String &initValue) const;
 
 
 protected:
