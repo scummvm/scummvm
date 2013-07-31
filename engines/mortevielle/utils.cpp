@@ -2315,7 +2315,7 @@ void MortevielleEngine::prepareRoom() {
 		_hintPctMessage += '0';
 		_hintPctMessage += getEngineString(S_NUMBER_OF_HINTS);
 		_hintPctMessage += "][";
-		_hintPctMessage += getEngineString(S_OK);
+		_hintPctMessage += getEngineString(S_OKAY);
 		_hintPctMessage += ']';
 	}
 	if (minute > _minute) {
