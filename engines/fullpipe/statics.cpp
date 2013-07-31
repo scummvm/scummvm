@@ -352,6 +352,10 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 	return &p;
 }
 
+void StaticANIObject::update(int counterdiff) {
+	warning("STUB: StaticANIObject::update(%d)", counterdiff);
+}
+
 Statics::Statics() {
 	_staticsId = 0;
 	_picture = 0;

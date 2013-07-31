@@ -26,12 +26,20 @@
 namespace Fullpipe {
 
 class CBaseModalObject {
-	int _parentObj;
+ public:
+
+	CBaseModalObject *_parentObj;
 
  public:
  	CBaseModalObject() : _parentObj(0) {}
-};
+	virtual ~CBaseModalObject() {}
 
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual bool update();
+
+	void saveload();
+};
 
 } // End of namespace Fullpipe
 

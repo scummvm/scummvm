@@ -78,6 +78,10 @@ void CInputController::setCursorMode(bool enabled) {
 		_inputFlags &= ~1;
 }
 
+void CInputController::drawCursor(int x, int y) {
+	warning("STUB: CInputController::drawCursor(%d, %d)", x, y);
+}
+
 CursorInfo::CursorInfo() {
 	pictureId = 0;
 	picture = 0;

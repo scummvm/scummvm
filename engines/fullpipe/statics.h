@@ -195,6 +195,8 @@ class StaticANIObject : public GameObject {
 	void initMovements();
 	void loadMovementsPixelData();
 
+	void update(int counterdiff);
+
 	Statics *addReverseStatics(Statics *ani);
 	void draw();
 	void draw2();

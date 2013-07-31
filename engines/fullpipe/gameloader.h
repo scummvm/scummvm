@@ -41,6 +41,9 @@ class CGameLoader : public CObject {
 	virtual bool load(MfcArchive &file);
 	bool loadScene(int sceneId);
 	bool gotoScene(int sceneId, int entranceId);
+	bool preloadScene(int sceneId, int entranceId);
+
+	void updateSystems(int counterdiff);
 
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
 	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);

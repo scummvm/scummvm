@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	input.o \
 	inventory.o \
 	messages.o \
+	modal.o \
 	motion.o \
 	ngiarchive.o \
 	scene.o \

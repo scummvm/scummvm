@@ -79,6 +79,10 @@ bool ExCommand::load(MfcArchive &file) {
 	return true;
 }
 
+void ExCommand::handleMessage() {
+	warning("STUB: ExCommand::handleMessage()");
+}
+
 Message::Message() {
 	_messageKind = 0;
 	_parentId = 0;
@@ -413,6 +417,23 @@ void clearMessageHandlers() {
 		} while (nextItem);
 
 		g_fullpipe->_messageHandlers = 0;
+	}
+}
+
+void postMessage(ExCommand *ex) {
+	g_fullpipe->_exCommandList.push_back(ex);
+}
+
+void processMessages() {
+	if (!g_fullpipe->_isProcessingMessages) {
+		g_fullpipe->_isProcessingMessages = true;
+
+		while (g_fullpipe->_exCommandList.size()) {
+			ExCommand *ex = g_fullpipe->_exCommandList.front();
+			ex->handleMessage();
+			g_fullpipe->_exCommandList.pop_front();
+		}
+		g_fullpipe->_isProcessingMessages = false;
 	}
 }
 

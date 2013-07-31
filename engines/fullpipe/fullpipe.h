@@ -108,6 +108,7 @@ public:
 	bool _savesEnabled;
 	bool _updateFlag;
 	bool _flgCanOpenMap;
+	bool _flgSavegameMenuRequested;
 
 	Common::Rect _sceneRect;
 	int _sceneWidth;
@@ -132,6 +133,12 @@ public:
 	int _msgY;
 	int _msgObjectId2;
 	int _msgId;
+
+	Common::List<ExCommand *> _exCommandList;
+	bool _isProcessingMessages;
+
+	int _mouseVirtX;
+	int _mouseVirtY;
 
 	BehaviorManager *_behaviorManager;
 
@@ -170,7 +177,7 @@ public:
 
 	CBaseModalObject *_modalObject;
 
-	int (*_updateScreenCallback)(void *);
+	int (*_updateScreenCallback)();
 	int (*_updateCursorCallback)();
 
 	int _cursorId;

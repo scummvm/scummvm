@@ -101,6 +101,7 @@ class CInventory2 : public CInventory {
 
 	Scene *getScene() { return _scene; }
 
+	void draw();
 };
 
 } // End of namespace Fullpipe

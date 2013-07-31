@@ -97,13 +97,17 @@ bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartia
 }
 
 void CInventory2::addItem(int itemId, int value) {
-	warning("STUB: CInventory2::addItem");
+	warning("STUB: CInventory2::addItem(%d, %d)", itemId, value);
 }
 
 void CInventory2::rebuildItemRects() {
 	_scene = g_fullpipe->accessScene(_sceneId);
 
 	warning("STUB: CInventory2::rebuildItemRects()");
+}
+
+void CInventory2::draw() {
+	warning("STUB: CInventory2::draw()");
 }
 
 } // End of namespace Fullpipe

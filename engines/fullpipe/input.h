@@ -63,6 +63,8 @@ class CInputController {
 	void setInputDisabled(bool state);
 	void addCursor(CursorInfo *cursor);
 	void setCursorMode(bool mode);
+
+	void drawCursor(int x, int y);
 };
 
 } // End of namespace Fullpipe

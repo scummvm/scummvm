@@ -225,6 +225,12 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 	return true;
 }
 
+bool CGameLoader::preloadScene(int sceneId, int entranceId) {
+	warning("STUB: preloadScene(%d, %d), ", sceneId, entranceId);
+
+	return true;
+}
+
 int CGameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
 	if (_sc2array.size() > 0 && _gameProject->_sceneTagList->size() > 0) {
 		for (uint i = 0; i < _sc2array.size(); i++) {
@@ -246,6 +252,25 @@ int CGameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
 
 void CGameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount) {
 	warning("STUB: CGameLoader::applyPicAniInfo()");
+}
+
+void CGameLoader::updateSystems(int counterdiff) {
+	if (g_fullpipe->_currentScene) {
+		g_fullpipe->_currentScene->update(counterdiff);
+
+		_exCommand._messageKind = 17;
+		_updateCounter++;
+		_exCommand._messageNum = 33;
+		_exCommand._excFlags = 0;
+		postMessage(&_exCommand);
+	}
+
+	processMessages();
+
+	if (_preloadId1) {
+		processMessages();
+		preloadScene(_preloadId1, _preloadId2);
+	}
 }
 
 CGameVar *FullpipeEngine::getGameLoaderGameVar() {

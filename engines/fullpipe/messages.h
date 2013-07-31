@@ -69,6 +69,8 @@ class ExCommand : public Message {
 	virtual ~ExCommand() {}
 
 	virtual bool load(MfcArchive &file);
+
+	void handleMessage();
 };
 
 class CObjstateCommand : public CObject {
@@ -138,7 +140,8 @@ int getMessageHandlersCount();
 bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id);
 bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id);
 void clearMessageHandlers();
-
+void postMessage(ExCommand *ex);
+void processMessages();
 
 } // End of namespace Fullpipe
 

@@ -54,6 +54,8 @@ class Scene : public Background {
 	void drawContent(int minPri, int maxPri, bool drawBG);
 	void updateScrolling();
 
+	void update(int counterdiff);
+
 	StaticANIObject *getAniMan();
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
 	StaticANIObject *getStaticANIObject1ByName(char *name, int a3);

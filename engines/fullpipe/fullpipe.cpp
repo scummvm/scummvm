@@ -32,6 +32,7 @@
 #include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/modal.h"
+#include "fullpipe/input.h"
 
 namespace Fullpipe {
 
@@ -68,6 +69,9 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_gameContinue = true;
 	_needRestart = false;
 	_flgPlayIntro = true;
+	_flgSavegameMenuRequested = false;
+
+	_isProcessingMessages = false;
 
 	_musicAllowed = -1;
 
@@ -87,6 +91,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_msgY = 0;
 	_msgObjectId2 = 0;
 	_msgId = 0;
+	_mouseVirtX = 0;
+	_mouseVirtY = 0;
 
 	_behaviorManager = 0;
 
@@ -206,7 +212,45 @@ void FullpipeEngine::cleanup() {
 }
 
 void FullpipeEngine::updateScreen() {
-	warning("STUB: FullpipeEngine::updateScreen()");
+	_mouseVirtX = _mouseX + _sceneRect.left;
+	_mouseVirtY = _mouseY + _sceneRect.top;
+
+	//if (inputArFlag)
+	//	updateGame_inputArFlag();
+
+	if (_modalObject || _flgSavegameMenuRequested && (_gameLoader->updateSystems(42), _modalObject != 0)) {
+		if (_flgSavegameMenuRequested) {
+			if (_modalObject->init(42)) {
+				_modalObject->update();
+			} else {
+				_modalObject->saveload();
+				CBaseModalObject *tmp = _modalObject->_parentObj;
+
+				if (_modalObject)
+					delete _modalObject;
+
+				_modalObject = tmp;
+			}
+		}
+	} else if (_currentScene) {
+		_currentScene->draw();
+
+		if (_inventoryScene)
+			_inventory->draw();
+
+		if (_updateScreenCallback)
+			_updateScreenCallback();
+
+		//if (inputArFlag && _currentScene) {
+		//	vrtTextOut(*(_DWORD *)g_vrtHandle, smallNftData, "DEMO", 4, 380, 580);
+		//	vrtTextOut(*(_DWORD *)g_vrtHandle, smallNftData, "Alt+F4 - exit", 14, 695, 580);
+		//}
+	} else {
+		//vrtRectangle(*(_DWORD *)g_vrtHandle, 0, 0, 0, 800, 600);
+	}
+	_inputController->drawCursor(_mouseX, _mouseY);
+
+	++_updateTicks;
 }
 
 int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
