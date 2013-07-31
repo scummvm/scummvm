@@ -126,7 +126,7 @@ class Scene125: public SceneExt {
 	};
 
 	/* Items */
-	class Item4: public NamedHotspot {
+	class DiskSlot: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -135,8 +135,8 @@ public:
 	ScenePalette _palette;
 	ASoundExt _sound1;
 	NamedHotspot _background, _item2, _item3;
-	Item4 _item4;
-	SceneActor _object1, _object2, _object3, _object4, _object5, _object6, _object7;
+	DiskSlot _diskSlot;
+	SceneActor _object1, _object2, _object3, _object4, _object5, _object6, _infoDisk;
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;

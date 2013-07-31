@@ -573,23 +573,23 @@ void Scene125::Icon::hideIcon() {
 
 /*--------------------------------------------------------------------------*/
 
-bool Scene125::Item4::startAction(CursorType action, Event &event) {
+bool Scene125::DiskSlot::startAction(CursorType action, Event &event) {
 	Scene125 *scene = (Scene125 *)R2_GLOBALS._sceneManager._scene;
 	switch (action) {
 	case CURSOR_USE:
 		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[1]) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 126;
-			scene->setAction(&scene->_sequenceManager, scene, 126, &scene->_object7, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 126, &scene->_infoDisk, NULL);
 			return true;
 		}
 		break;
 	case R2_OPTO_DISK:
 		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == 1) {
 			R2_GLOBALS._player.disableControl();
-			scene->_object7.postInit();
+			scene->_infoDisk.postInit();
 			scene->_sceneMode = 125;
-			scene->setAction(&scene->_sequenceManager, scene, 125, &scene->_object7, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 125, &scene->_infoDisk, NULL);
 			return true;
 		}
 		break;
@@ -626,16 +626,16 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[1]) {
-		_object7.postInit();
-		_object7.setup(160, 3, 5);
-		_object7.setPosition(Common::Point(47, 167));
+		_infoDisk.postInit();
+		_infoDisk.setup(160, 3, 5);
+		_infoDisk.setPosition(Common::Point(47, 167));
 	}
 
 	_object6.postInit();
 	_object6.setup(162, 1, 1);
 	_object6.setPosition(Common::Point(214, 168));
 
-	_item4.setDetails(Rect(27, 145, 81, 159), 126, 9, -1, -1, 1, NULL);
+	_diskSlot.setDetails(Rect(27, 145, 81, 159), 126, 9, -1, -1, 1, NULL);
 	_item3.setDetails(Rect(144, 119, 286, 167), 126, 6, 7, 8, 1, NULL);
 	_item2.setDetails(1, 126, 3, 4, 5);
 	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 126, 0, 1, -1, 1, NULL);
@@ -782,10 +782,11 @@ void Scene125::signal() {
 		break;
 	case 125:
 		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, R2_GLOBALS._player._oldCharacterScene[1]);
+		R2_GLOBALS._player.enableControl();
 		break;
 	case 126:
 		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, 1);
-		_object7.remove();
+		_infoDisk.remove();
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 		break;
