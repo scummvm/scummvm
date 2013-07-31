@@ -150,7 +150,7 @@ public:
 	BaseScriptable *_mathClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
-	BaseGame(const Common::String &gameId);
+	BaseGame(const Common::String &targetName);
 	virtual ~BaseGame();
 
 	bool _debugDebugMode;
@@ -173,8 +173,8 @@ public:
 	// compatibility bits
 	bool _compatKillMethodThreads;
 
-	const char* getGameId() const { return _gameId.c_str(); }
-	void setGameId(const Common::String& gameId) { _gameId = gameId; }
+	const char* getGameTargetName() const { return _targetName.c_str(); }
+	void setGameTargetName(const Common::String& targetName) { _targetName = targetName; }
 	uint32 _surfaceGCCycleTime;
 	bool _smartCache; // RO
 	bool _subtitles; // RO
@@ -295,7 +295,7 @@ private:
 	uint32 _lastTime;
 	uint32 _fpsTime;
 	uint32 _framesRendered;
-	Common::String _gameId;
+	Common::String _targetName;
 
 	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = nullptr, void *data = nullptr);
 	ENGINE_LOG_CALLBACK _engineLogCallback;

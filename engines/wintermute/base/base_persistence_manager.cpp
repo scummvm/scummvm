@@ -94,7 +94,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 	if (savePrefix) {
 		_savePrefix = savePrefix;
 	} else if (_gameRef) {
-		_savePrefix = _gameRef->getGameId();
+		_savePrefix = _gameRef->getGameTargetName();
 	} else {
 		_savePrefix = "wmesav";
 	}

@@ -81,7 +81,7 @@ IMPLEMENT_PERSISTENT(BaseGame, true)
 
 
 //////////////////////////////////////////////////////////////////////
-BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gameId), _timerNormal(), _timerLive() {
+BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _targetName(targetName), _timerNormal(), _timerLive() {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
