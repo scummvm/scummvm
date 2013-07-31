@@ -239,8 +239,7 @@ bool Console::Cmd_DumpRes(int argc, const char **argv) {
 		int error = 0;
 		Common::String res = ADAPTER->readRes(Common::String(argv[1]), &error);
 		// TODO: Handle errors
-		DebugPrintf(res.c_str());
-		DebugPrintf("\n");
+		DebugPrintf("%s \n", res.c_str());
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
 		return true;
