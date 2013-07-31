@@ -180,7 +180,7 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 		int error = 0;
 		Common::String temp = ADAPTER->readValue(argv[1], &error);
 		if (!error) {
-			DebugPrintf("%s = %s \n", argv[0], temp.c_str());
+			DebugPrintf("%s = %s \n", argv[1], temp.c_str());
 		} else if (error == NOT_ALLOWED) {
 			DebugPrintf("Not allowed\n");
 		} else {
