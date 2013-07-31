@@ -343,9 +343,9 @@ ThemeEngine::~ThemeEngine() {
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
 	{ _s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled },
-	{ _s("Standard Renderer (16bpp)"), _s("Standard (16bpp)"), "normal_16bpp", kGfxStandard16bit },
+	{ _s("Standard Renderer"), _s("Standard"), "normal", kGfxStandard },
 #ifndef DISABLE_FANCY_THEMES
-	{ _s("Antialiased Renderer (16bpp)"), _s("Antialiased (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
+	{ _s("Antialiased Renderer"), _s("Antialiased"), "antialias", kGfxAntialias }
 #endif
 };
 
@@ -353,9 +353,9 @@ const uint ThemeEngine::_rendererModesSize = ARRAYSIZE(ThemeEngine::_rendererMod
 
 const ThemeEngine::GraphicsMode ThemeEngine::_defaultRendererMode =
 #ifndef DISABLE_FANCY_THEMES
-	ThemeEngine::kGfxAntialias16bit;
+	ThemeEngine::kGfxAntialias;
 #else
-	ThemeEngine::kGfxStandard16bit;
+	ThemeEngine::kGfxStandard;
 #endif
 
 ThemeEngine::GraphicsMode ThemeEngine::findMode(const Common::String &cfg) {
@@ -494,9 +494,9 @@ void ThemeEngine::disable() {
 
 void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	switch (mode) {
-	case kGfxStandard16bit:
+	case kGfxStandard:
 #ifndef DISABLE_FANCY_THEMES
-	case kGfxAntialias16bit:
+	case kGfxAntialias:
 #endif
 		_bytesPerPixel = sizeof(uint16);
 		break;
