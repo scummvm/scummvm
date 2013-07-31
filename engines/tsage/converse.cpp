@@ -556,7 +556,7 @@ void Obj44::load(const byte *dataP) {
 		_mode = s.readSint16LE();
 		_lookupValue = s.readSint16LE();
 		_lookupIndex = s.readSint16LE();
-		_field6 = s.readSint16LE();
+		_exitMode = s.readSint16LE();
 		_speakerMode = s.readSint16LE();
 	}
 
@@ -592,7 +592,7 @@ void Obj44::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_mode);
 		s.syncAsSint16LE(_lookupValue);
 		s.syncAsSint16LE(_lookupIndex);
-		s.syncAsSint16LE(_field6);
+		s.syncAsSint16LE(_exitMode);
 		s.syncAsSint16LE(_speakerMode);
 
 		for (int i = 0; i < 11; ++i)
@@ -648,6 +648,7 @@ void StripManager::reset() {
 	_activeSpeaker = NULL;
 	_textShown = false;
 	_callbackObject = NULL;
+	_exitMode = 0;
 
 	_obj44List.clear();
 	if (!_script.empty()) {
@@ -695,6 +696,8 @@ void StripManager::synchronize(Serializer &s) {
 	s.syncAsByte(_textShown);
 	s.syncAsByte(_field2E6);
 	s.syncAsSint32LE(_field2E8);
+	if (g_vm->getGameID() == GType_Ringworld2)
+		s.syncAsSint16LE(_exitMode);
 
 	// Synchronize the item list
 	int arrSize = _obj44List.size();
@@ -725,7 +728,7 @@ void StripManager::synchronize(Serializer &s) {
 
 void StripManager::remove() {
 	if (g_vm->getGameID() == GType_Ringworld2) { 
-		for (int i = 0; i < _speakerList.size(); ++i) {
+		for (uint i = 0; i < _speakerList.size(); ++i) {
 			if (_activeSpeaker != _speakerList[i])
 				_speakerList[i]->proc16();
 		}
@@ -790,8 +793,8 @@ void StripManager::signal() {
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		// Return to Ringworld specific handling
-		if (obj44._field6)
-			_field2E8 = obj44._field6;
+		if (obj44._exitMode)
+			_exitMode = obj44._exitMode;
 
 		switch (obj44._mode) {
 		case 1:

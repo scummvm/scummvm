@@ -194,7 +194,7 @@ public:
 
 	// Return to Ringworld specific field
 	int _mode;
-	int _lookupValue, _lookupIndex, _field6;
+	int _lookupValue, _lookupIndex, _exitMode;
 	int _speakerMode;
 	int _field16[11];
 public:
@@ -223,6 +223,7 @@ public:
 	bool _textShown;
 	bool _field2E6;
 	int _field2E8;
+	int _exitMode;
 	Common::Array<Obj44> _obj44List;
 	Common::Array<byte> _script;
 	StripProc _onBegin;

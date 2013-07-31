@@ -3488,27 +3488,27 @@ void Scene300::remove() {
 void Scene300::signal() {
 	switch (_sceneMode) {
 	case 10:
-		switch (_stripManager._field2E8) {
-		case 0:
+		switch (_stripManager._exitMode) {
+		case 1:
 			R2_GLOBALS._sound1.changeSound(10);
 			R2_GLOBALS.setFlag(38);
 			break;
-		case 1:
+		case 2:
 			R2_GLOBALS.setFlag(3);
 			break;
-		case 2:
+		case 3:
 			R2_GLOBALS.setFlag(4);
 			break;
-		case 3:
+		case 4:
 			R2_GLOBALS.setFlag(13);
 			if (R2_GLOBALS._stripManager_lookupList[1] == 6)
 				R2_GLOBALS.setFlag(40);
 			break;
-		case 4:
+		case 5:
 			if (R2_GLOBALS._stripManager_lookupList[1] == 6)
 				R2_GLOBALS.setFlag(40);
 			break;
-		case 5:
+		case 6:
 			R2_GLOBALS._sceneManager.changeScene(1000);
 			break;
 		default:
@@ -6874,8 +6874,9 @@ void Scene825::doButtonPress(int buttonId) {
 					_sceneText.setup(NO_TREATMENT_REQUIRED);
 				} else {
 					_button6._buttonId = 5;
-
+					_sceneMode = 827;
 					_object5.postInit();
+
 					setAction(&_sequenceManager1, this, 827, &_object5, NULL);
 				}
 			} else {
