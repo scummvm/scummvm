@@ -974,7 +974,7 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
  * Copys a given surface to the given position
  */
 void ScreenSurface::copyFrom(Graphics::Surface &src, int x, int y) {
-	Graphics::Surface destSurface = lockArea(Common::Rect(x, y, x + src.w, y + src.h));
+	lockArea(Common::Rect(x, y, x + src.w, y + src.h));
 
 	// Loop through writing
 	for (int yp = 0; yp < src.h; ++yp) {
