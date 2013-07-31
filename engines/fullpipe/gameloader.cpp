@@ -62,8 +62,8 @@ CGameLoader::CGameLoader() {
 	_preloadCallback = 0;
 	_readSavegameCallback = 0;
 	_gameVar = 0;
-	_preloadId1 = 0;
-	_preloadId2 = 0;
+	_preloadSceneId = 0;
+	_preloadEntranceId = 0;
 	_updateCounter = 0;
 
 	g_fullpipe->_msgX = 0;
@@ -267,9 +267,9 @@ void CGameLoader::updateSystems(int counterdiff) {
 
 	processMessages();
 
-	if (_preloadId1) {
+	if (_preloadSceneId) {
 		processMessages();
-		preloadScene(_preloadId1, _preloadId2);
+		preloadScene(_preloadSceneId, _preloadEntranceId);
 	}
 }
 

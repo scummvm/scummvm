@@ -63,8 +63,8 @@ class CGameLoader : public CObject {
 	char *_gameName;
 	ExCommand _exCommand;
 	int _updateCounter;
-	int _preloadId1;
-	int _preloadId2;
+	int _preloadSceneId;
+	int _preloadEntranceId;
 };
 
 CInventory2 *getGameLoaderInventory();
