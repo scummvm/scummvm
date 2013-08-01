@@ -1134,25 +1134,19 @@ void Acci::do_that() {
 	if (thing < 200)
 		thing -= 49; // "Slip"
 
-	/*
-	if ((!_vm->_gyro->alive) &
-		!(set::of(vb_load, vb_save, vb_quit, vb_info, vb_help, vb_larrypass,
-		vb_phaon, vb_boss, vb_cheat, vb_restart, vb_dir, vb_score,
-		vb_highscores, vb_smartalec, eos).has(verb))) {
-		_vm->_scrolls->display(Common::String("You're dead, so don't talk. What are you, a ghost ") +
-		"or something? Try restarting, or restoring a saved game!");
-		return;
-	}
 
-	if ((~ _vm->_gyro->dna.avvy_is_awake) &
-		!(set::of(vb_load, vb_save, vb_quit, vb_info, vb_help, vb_larrypass,
-		vb_phaon, vb_boss, vb_cheat, vb_restart, vb_dir, vb_die, vb_score,
-		vb_highscores, vb_smartalec, vb_expletive, vb_wake, eos).has(verb))) {
-		_vm->_scrolls->display("Talking in your sleep? Try waking up!");
-		return;
+	if ((verb != vb_load) && (verb != vb_save) && (verb != vb_quit) && (verb != vb_info) && (verb != vb_help)
+		&& (verb != vb_larrypass) && (verb != vb_phaon) && (verb != vb_boss) && (verb != vb_cheat) && (verb != vb_restart) && (verb != vb_dir)
+		&& (verb != vb_score) && (verb != vb_highscores) && (verb != vb_smartalec)) {
+			if (!_vm->_gyro->alive) {
+				_vm->_scrolls->display(Common::String("You're dead, so don't talk. What are you, a ghost or something? Try restarting, or restoring a saved game!"));
+				return;
+			}
+			if (!_vm->_gyro->dna.avvy_is_awake  && (verb != vb_die) && (verb != vb_expletive) && (verb != vb_wake)) {
+				_vm->_scrolls->display("Talking in your sleep? Try waking up!");
+				return;
+			}
 	}
-	*/
-	warning("STUB: Acci::do_that()");
 
 	switch (verb) {
 	case vb_exam:
