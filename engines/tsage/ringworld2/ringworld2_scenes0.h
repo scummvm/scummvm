@@ -273,13 +273,8 @@ class Scene205: public SceneExt {
 	};
 
 	/* Objects */
-	class Object: public SceneObject {
-	public:
-		int _x100, _y100;
-	public:
-		Object();
-
-		virtual void synchronize(Serializer &s);
+	class Object: public FinePositionedObject {
+		// TODO: More derived logic
 	};
 private:
 	void setup();

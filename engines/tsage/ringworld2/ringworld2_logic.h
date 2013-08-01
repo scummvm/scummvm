@@ -514,6 +514,16 @@ public:
 	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 };
 
+class FinePositionedObject: public SceneObject {
+public:
+	int _x100, _y100;
+public:
+	FinePositionedObject();
+
+	virtual Common::String getClassName() { return "FinePositionedObject"; }
+	virtual void synchronize(Serializer &s);
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

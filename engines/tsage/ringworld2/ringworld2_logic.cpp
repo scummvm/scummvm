@@ -2454,6 +2454,19 @@ void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
+FinePositionedObject::FinePositionedObject(): SceneObject() {
+	_x100 = _y100 = 0;
+}
+
+void FinePositionedObject::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+
+	s.syncAsSint32LE(_x100);
+	s.syncAsSint32LE(_y100);
+}
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

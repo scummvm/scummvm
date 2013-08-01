@@ -39,6 +39,19 @@ namespace Ringworld2 {
 
 using namespace TsAGE;
 
+class Scene1000 : public SceneExt {
+public:
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	SpeakerGameText _gameTextSpeaker;
+
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene1010 : public SceneExt {
 public:
 	SequenceManager _sequenceManager;

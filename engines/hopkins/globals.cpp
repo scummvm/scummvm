@@ -70,8 +70,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	for (int i = 0; i < 36; ++i)
 		_inventory[i] = 0;
 
-	Common::fill(&_highScoreData[0], &_highScoreData[100], 0);
-
 	// Initialize fields
 	_language = LANG_EN;
 

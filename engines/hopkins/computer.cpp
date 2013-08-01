@@ -578,7 +578,11 @@ void ComputerManager::displayGamesSubMenu() {
  * Load Highscore from file
  */
 void ComputerManager::loadHiscore() {
-	const byte *ptr = _vm->_globals->_highScoreData;
+	byte *ptr = _vm->_globals->allocMemory(100);
+	memset(ptr, 0, 100);
+
+	if (_vm->_saveLoad->saveExists(_vm->targetName() + "-highscore.dat"))
+		_vm->_saveLoad->load(_vm->targetName() + "-highscore.dat", ptr);
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		_score[scoreIndex]._name = "      ";
@@ -600,6 +604,7 @@ void ComputerManager::loadHiscore() {
 	}
 
 	_lowestHiScore = atol(_score[5]._score.c_str());
+	_vm->_globals->freeMemory(ptr);
 }
 
 /**
@@ -985,8 +990,8 @@ void ComputerManager::saveScore() {
 		}
 	}
 
-	byte *ptr = _vm->_globals->_highScoreData;
-	memset(ptr, 0, 99);
+	byte *ptr = _vm->_globals->allocMemory(100);
+	memset(ptr, 0, 100);
 	for (int scorePlaceIdx = 0; scorePlaceIdx <= 5; scorePlaceIdx++) {
 		int curBufPtr = 16 * scorePlaceIdx;
 		for (int namePos = 0; namePos < 6; namePos++) {
@@ -1006,6 +1011,9 @@ void ComputerManager::saveScore() {
 		};
 		ptr[curBufPtr + 15] = 0;
 	}
+
+	_vm->_saveLoad->saveFile(_vm->targetName() + "-highscore.dat", ptr, 100);
+	_vm->_globals->freeMemory(ptr);
 }
 
 /**

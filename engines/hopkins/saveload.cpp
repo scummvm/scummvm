@@ -55,6 +55,13 @@ bool SaveLoadManager::save(const Common::String &file, const void *buf, size_t n
 		return false;
 }
 
+bool SaveLoadManager::saveExists(const Common::String &file) {
+	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(file);
+	bool result = savefile != NULL;
+	delete savefile;
+	return result;
+}
+
 // Save File
 bool SaveLoadManager::saveFile(const Common::String &file, const void *buf, size_t n) {
 	return save(file, buf, n);
@@ -251,10 +258,6 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
-	if (version >= 3)
-		// Sync embedded Breakout game high score data
-		s.syncBytes(&_vm->_globals->_highScoreData[0], 100);
-
 	s.syncBytes(&_vm->_globals->_saveData->_data[0], 2050);
 	syncCharacterLocation(s, _vm->_globals->_saveData->_cloneHopkins);
 	syncCharacterLocation(s, _vm->_globals->_saveData->_realHopkins);

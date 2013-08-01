@@ -2312,19 +2312,6 @@ void Scene205::Action1::textLoop() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene205::Object::Object(): SceneObject() {
-	_x100 = _y100 = 0;
-}
-
-void Scene205::Object::synchronize(Serializer &s) {
-	EventHandler::synchronize(s);
-
-	s.syncAsSint32LE(_x100);
-	s.syncAsSint32LE(_y100);
-}
-
-/*--------------------------------------------------------------------------*/
-
 Scene205::Scene205(): SceneExt() {
 	_yp = 0;
 	_textIndex = 1;

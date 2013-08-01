@@ -206,7 +206,6 @@ public:
 	Common::String _zoneFilename;
 	Common::String _textFilename;
 	byte *_levelSpriteBuf;
-	byte _highScoreData[100];
 
 	EventMode _eventMode;
 
