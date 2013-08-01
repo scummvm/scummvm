@@ -56,7 +56,7 @@ bool HopkinsEngine::getIsDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
-Common::String HopkinsEngine::targetName() const {
+const Common::String &HopkinsEngine::getTargetName() const {
 	return _targetName;
 }
 

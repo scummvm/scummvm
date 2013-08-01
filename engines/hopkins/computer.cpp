@@ -581,8 +581,8 @@ void ComputerManager::loadHiscore() {
 	byte *ptr = _vm->_globals->allocMemory(100);
 	memset(ptr, 0, 100);
 
-	if (_vm->_saveLoad->saveExists(_vm->targetName() + "-highscore.dat"))
-		_vm->_saveLoad->load(_vm->targetName() + "-highscore.dat", ptr);
+	if (_vm->_saveLoad->saveExists(_vm->getTargetName() + "-highscore.dat"))
+		_vm->_saveLoad->load(_vm->getTargetName() + "-highscore.dat", ptr);
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		_score[scoreIndex]._name = "      ";
@@ -1012,7 +1012,7 @@ void ComputerManager::saveScore() {
 		ptr[curBufPtr + 15] = 0;
 	}
 
-	_vm->_saveLoad->saveFile(_vm->targetName() + "-highscore.dat", ptr, 100);
+	_vm->_saveLoad->saveFile(_vm->getTargetName() + "-highscore.dat", ptr, 100);
 	_vm->_globals->freeMemory(ptr);
 }
 
