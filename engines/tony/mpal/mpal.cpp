@@ -2035,7 +2035,13 @@ int mpalGetSaveStateSize() {
 void mpalSaveState(byte *buf) {
 	lockVar();
 	WRITE_LE_UINT32(buf, GLOBALS._nVars);
-	memcpy(buf + 4, (byte *)GLOBALS._lpmvVars, GLOBALS._nVars * sizeof(MpalVar));
+	buf += 4;
+	for (uint i = 0; i < GLOBALS._nVars; ++i) {
+		LpMpalVar var = &GLOBALS._lpmvVars[i];
+		WRITE_LE_UINT32(buf, var->_dwVal);
+		memcpy(buf + 4, var->_lpszVarName, sizeof(var->_lpszVarName));
+		buf += (4 + sizeof(var->_lpszVarName));
+	}
 	unlockVar();
 }
 
@@ -2050,10 +2056,16 @@ int mpalLoadState(byte *buf) {
 	globalFree(GLOBALS._hVars);
 
 	GLOBALS._nVars = READ_LE_UINT32(buf);
+	buf += 4;
 
 	GLOBALS._hVars = globalAllocate(GMEM_ZEROINIT | GMEM_MOVEABLE, GLOBALS._nVars * sizeof(MpalVar));
 	lockVar();
-	memcpy((byte *)GLOBALS._lpmvVars, buf + 4, GLOBALS._nVars * sizeof(MpalVar));
+	for (uint i = 0; i < GLOBALS._nVars; ++i) {
+		LpMpalVar var = &GLOBALS._lpmvVars[i];
+		var->_dwVal = READ_LE_UINT32(buf);
+		memcpy(var->_lpszVarName, buf + 4, sizeof(var->_lpszVarName));
+		buf += (4 + sizeof(var->_lpszVarName));
+	}
 	unlockVar();
 
 	return GLOBALS._nVars * sizeof(MpalVar) + 4;
