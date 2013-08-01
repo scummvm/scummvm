@@ -208,8 +208,10 @@ public:
  * 16-bit color source
  */
 class RMGfxSourceBuffer16 : public RMGfxSourceBuffer {
-protected:
+public:
 	virtual void prepareImage();
+
+protected:
 	bool _bTrasp0;
 
 public:
