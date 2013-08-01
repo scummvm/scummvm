@@ -84,7 +84,17 @@ void Surface::free() {
 
 void Surface::copyFrom(const Surface &surf) {
 	create(surf.w, surf.h, surf.format);
-	memcpy(pixels, surf.pixels, h * pitch);
+	if (surf.pitch == pitch) {
+		memcpy(pixels, surf.pixels, h * pitch);
+	} else {
+		const byte *src = (const byte *)surf.pixels;
+		byte *dst = (byte *)pixels;
+		for (int y = h; y > 0; --y) {
+			memcpy(dst, src, w * format.bytesPerPixel);
+			src += surf.pitch;
+			dst += pitch;
+		}
+	}
 }
 
 void Surface::hLine(int x, int y, int x2, uint32 color) {
