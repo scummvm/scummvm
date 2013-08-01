@@ -318,12 +318,12 @@ bool CGameVar::addSubVar(CGameVar *subvar) {
 
 		var->_nextVarObj = subvar;
 		subvar->_prevVarObj = var;
-		subvar->_parentVarObj = var;
+		subvar->_parentVarObj = this;
 
 		return true;
 	} else {
-		var->_subVars = subvar;
-		subvar->_parentVarObj = var;
+		_subVars = subvar;
+		subvar->_parentVarObj = this;
 
 		return true;
 	}
