@@ -28,6 +28,7 @@
 #include "engines/wintermute/graphics/transform_struct.h"
 
 namespace Wintermute {
+
 class TransformTools {
 public:	
 	/**
@@ -47,5 +48,6 @@ public:
 	 */
 	static Rect32 newRect (const Rect32 &oldRect, const TransformStruct &transform, Point32 *newHotspot);	
 };
+
 } // End of namespace Wintermute
 #endif

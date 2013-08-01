@@ -26,48 +26,49 @@
 
 namespace Wintermute {
 	
-	FloatPoint TransformTools::transformPoint(const FloatPoint &point, const float rotate, const Point32 &zoom, const bool mirrorX, const bool mirrorY) {
-		float rotateRad = rotate * M_PI / 180.0f;
-		FloatPoint newPoint;
-		newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad)) * zoom.x / kDefaultZoomX;
-		newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad)) * zoom.y / kDefaultZoomY;
-		if (mirrorX) {
-			newPoint.x *= -1;
-		}
-		if (mirrorY) {
-			newPoint.y *= -1;
-		}
-		return newPoint;
+FloatPoint TransformTools::transformPoint(const FloatPoint &point, const float rotate, const Point32 &zoom, const bool mirrorX, const bool mirrorY) {
+	float rotateRad = rotate * M_PI / 180.0f;
+	FloatPoint newPoint;
+	newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad)) * zoom.x / kDefaultZoomX;
+	newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad)) * zoom.y / kDefaultZoomY;
+	if (mirrorX) {
+		newPoint.x *= -1;
 	}
-
-	Rect32 TransformTools::newRect (const Rect32 &oldRect, const TransformStruct &transform, Point32 *newHotspot) {
-
-		Point32 nw(oldRect.left, oldRect.top);
-		Point32 ne(oldRect.right, oldRect.top);
-		Point32 sw(oldRect.left, oldRect.bottom);
-		Point32 se(oldRect.right, oldRect.bottom);
-		
-		FloatPoint nw1, ne1, sw1, se1;
-
-		nw1 = transformPoint(nw - transform._hotspot, transform._angle, transform._zoom);
-		ne1 = transformPoint(ne - transform._hotspot, transform._angle, transform._zoom);
-		sw1 = transformPoint(sw - transform._hotspot, transform._angle, transform._zoom);
-		se1 = transformPoint(se - transform._hotspot, transform._angle, transform._zoom);
-		
-		float top = MIN(nw1.y, MIN(ne1.y, MIN(sw1.y, se1.y)));
-		float bottom = MAX(nw1.y, MAX(ne1.y, MAX(sw1.y, se1.y)));
-		float left = MIN(nw1.x, MIN(ne1.x, MIN(sw1.x, se1.x)));
-		float right = MAX(nw1.x, MAX(ne1.x, MAX(sw1.x, se1.x)));
-
-		Rect32 res;
-		newHotspot->y = (uint32)(-floor(top));
-		newHotspot->x = (uint32)(-floor(left));
-
-		res.top = (int32)(floor(top)) + transform._hotspot.y;
-		res.bottom = (int32)(ceil(bottom)) + transform._hotspot.y; 
-		res.left = (int32)(floor(left)) + transform._hotspot.x;
-		res.right = (int32)(ceil(right)) + transform._hotspot.x;
-
-		return res;
+	if (mirrorY) {
+		newPoint.y *= -1;
 	}
+	return newPoint;
+}
+
+Rect32 TransformTools::newRect (const Rect32 &oldRect, const TransformStruct &transform, Point32 *newHotspot) {
+
+	Point32 nw(oldRect.left, oldRect.top);
+	Point32 ne(oldRect.right, oldRect.top);
+	Point32 sw(oldRect.left, oldRect.bottom);
+	Point32 se(oldRect.right, oldRect.bottom);
+		
+	FloatPoint nw1, ne1, sw1, se1;
+
+	nw1 = transformPoint(nw - transform._hotspot, transform._angle, transform._zoom);
+	ne1 = transformPoint(ne - transform._hotspot, transform._angle, transform._zoom);
+	sw1 = transformPoint(sw - transform._hotspot, transform._angle, transform._zoom);
+	se1 = transformPoint(se - transform._hotspot, transform._angle, transform._zoom);
+		
+	float top = MIN(nw1.y, MIN(ne1.y, MIN(sw1.y, se1.y)));
+	float bottom = MAX(nw1.y, MAX(ne1.y, MAX(sw1.y, se1.y)));
+	float left = MIN(nw1.x, MIN(ne1.x, MIN(sw1.x, se1.x)));
+	float right = MAX(nw1.x, MAX(ne1.x, MAX(sw1.x, se1.x)));
+
+	Rect32 res;
+	newHotspot->y = (uint32)(-floor(top));
+	newHotspot->x = (uint32)(-floor(left));
+
+	res.top = (int32)(floor(top)) + transform._hotspot.y;
+	res.bottom = (int32)(ceil(bottom)) + transform._hotspot.y; 
+	res.left = (int32)(floor(left)) + transform._hotspot.x;
+	res.right = (int32)(ceil(right)) + transform._hotspot.x;
+
+	return res;
+}
+
 } // End of namespace Wintermute
