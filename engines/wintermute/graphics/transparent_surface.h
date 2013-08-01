@@ -23,6 +23,10 @@
 #define GRAPHICS_TRANSPARENTSURFACE_H
 
 #include "graphics/surface.h"
+#include "engines/wintermute/graphics/transform_struct.h"
+
+#define ENABLE_BILINEAR 0
+
 
 /*
  * This code is based on Broken Sword 2.5 engine
@@ -49,6 +53,11 @@ struct TransparentSurface : public Graphics::Surface {
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
 
+#if ENABLE_BILINEAR
+	static void copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
+#else
+	static void copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
+#endif
 	// Enums
 	/**
 	 @brief The possible flipping parameters for the blit methode.
@@ -102,9 +111,9 @@ struct TransparentSurface : public Graphics::Surface {
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
-	// The following scale-code supports arbitrary scaling (i.e. no repeats of column 0 at the end of lines)
-	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
-	TransparentSurface *scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const;
+
+	TransparentSurface *scale (uint16 newWidth, uint16 newHeight) const;
+	TransparentSurface *rotoscale (const TransformStruct &transform) const;  
 	static byte *_lookup;
 	static void destroyLookup();
 private:

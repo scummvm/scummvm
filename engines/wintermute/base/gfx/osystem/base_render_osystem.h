@@ -33,6 +33,7 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 #include "common/list.h"
+#include "engines/wintermute/graphics/transform_struct.h"
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
@@ -56,8 +57,6 @@ public:
 
 	BaseImage *takeScreenshot() override;
 
-	void setAlphaMod(byte alpha);
-	void setColorMod(byte r, byte g, byte b);
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	void drawFromTicket(RenderTicket *renderTicket);
@@ -80,7 +79,7 @@ public:
 	virtual bool startSpriteBatch() override;
 	virtual bool endSpriteBatch() override;
 	void endSaveLoad();
-	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false) ;
+	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform); 
 	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
 	BaseSurface *createSurface() override;
 private:
