@@ -33,7 +33,7 @@ BehaviorManager::BehaviorManager() {
 }
 
 void BehaviorManager::initBehavior(Scene *scene, CGameVar *var) {
-	warning("STUB: initBehavior()");
+	warning("STUB: BehaviorManager::initBehavior()");
 }
 
 } // End of namespace Fullpipe

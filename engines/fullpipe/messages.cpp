@@ -79,8 +79,23 @@ bool ExCommand::load(MfcArchive &file) {
 	return true;
 }
 
-void ExCommand::handleMessage() {
-	warning("STUB: ExCommand::handleMessage()");
+bool ExCommand::handleMessage() {
+	int cnt = 0;
+	for (MessageHandler *m = g_fullpipe->_messageHandlers; m; m = m->nextItem)
+		cnt += m->callback(this);
+
+	if (_messageKind == 17 || (_excFlags & 1)) {
+		if (_parId) {
+			MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_parId);
+			if (m)
+				m->update();
+		}
+	}
+
+	if (_excFlags & 2)
+		delete this;
+
+	return (cnt > 0);
 }
 
 Message::Message() {
@@ -213,6 +228,25 @@ bool MessageQueue::chain(StaticANIObject *ani) {
 	return true;
 }
 
+void MessageQueue::update() {
+	if (_counter > 0)
+		_counter--;
+
+	if (_exCommands.size()) {
+		sendNextCommand();
+	} else if (_counter == 0 ) {
+		_isFinished = 1;
+		finish();
+	}
+}
+
+void MessageQueue::sendNextCommand() {
+	warning("STUB: MessageQueue::sendNextCommand()");
+}
+
+void MessageQueue::finish() {
+	warning("STUB: MessageQueue::finish()");
+}
 
 MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 	for (CPtrList::iterator s = begin(); s != end(); ++s) {

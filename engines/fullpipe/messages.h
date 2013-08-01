@@ -70,7 +70,7 @@ class ExCommand : public Message {
 
 	virtual bool load(MfcArchive &file);
 
-	void handleMessage();
+	bool handleMessage();
 };
 
 class CObjstateCommand : public CObject {
@@ -111,6 +111,9 @@ class MessageQueue : public CObject {
 	void setFlags(int flags) { _flags = flags; }
 
 	bool chain(StaticANIObject *ani);
+	void update();
+	void sendNextCommand();
+	void finish();
 };
 
 class GlobalMessageQueueList : public CPtrList {
