@@ -258,6 +258,10 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
+	// The brief version 3 had the highscores embedded. They're in a separate file now, so skip
+	if (version == 3 && s.isLoading())
+		s.skip(100);
+
 	s.syncBytes(&_vm->_globals->_saveData->_data[0], 2050);
 	syncCharacterLocation(s, _vm->_globals->_saveData->_cloneHopkins);
 	syncCharacterLocation(s, _vm->_globals->_saveData->_realHopkins);

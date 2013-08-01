@@ -35,7 +35,7 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-#define HOPKINS_SAVEGAME_VERSION 2
+#define HOPKINS_SAVEGAME_VERSION 4
 
 struct hopkinsSavegameHeader {
 	uint8 _version;
