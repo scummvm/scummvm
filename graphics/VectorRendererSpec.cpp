@@ -566,7 +566,7 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 		     | ((dG << _format.gShift) & _greenMask)
 		     | ((dB << _format.bShift) & _blueMask)
 		     | (*ptr & _alphaMask);
-	} else {
+	} else if (sizeof(PixelType) == 2) {
 		int idst = *ptr;
 		int isrc = color;
 
@@ -581,6 +581,8 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 			((int)(((int)(isrc & _blueMask) -
 			(int)(idst & _blueMask)) * alpha) >> 8))) |
 			(idst & _alphaMask));
+	} else {
+		error("Unsupported BPP format: %d", sizeof(PixelType));
 	}
 }
 
