@@ -26,22 +26,22 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/graphics/transparent_surface.h"
+
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
+#include "engines/wintermute/graphics/transform_tools.h"
+#include "common/textconsole.h"
 
 namespace Wintermute {
 
-RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) : _owner(owner),
-_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(!disableAlpha) {
-	_colorMod = 0;
+RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct transform) :
+	_owner(owner),
+	_srcRect(*srcRect),
+	_dstRect(*dstRect),
+	_drawNum(0),
+	_isValid(true),
+	_wantsDraw(true),
+	_transform(transform) {
 	_batchNum = 0;
-	_mirror = TransparentSurface::FLIP_NONE;
-	if (mirrorX) {
-		_mirror |= TransparentSurface::FLIP_V;
-	}
-	if (mirrorY) {
-		_mirror |= TransparentSurface::FLIP_H;
-	}
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
@@ -51,7 +51,13 @@ _srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(
 			memcpy(_surface->getBasePtr(0, i), surf->getBasePtr(srcRect->left, srcRect->top + i), srcRect->width() * _surface->format.bytesPerPixel);
 		}
 		// Then scale it if necessary
-		if (dstRect->width() != srcRect->width() || dstRect->height() != srcRect->height()) {
+		if (_transform._angle != kDefaultAngle) {
+			TransparentSurface src(*_surface, false);
+			Graphics::Surface *temp = src.rotoscale(transform);
+			_surface->free();
+			delete _surface;
+			_surface = temp;
+		} else if (dstRect->width() != srcRect->width() || dstRect->height() != srcRect->height()) { 
 			TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp = src.scale(dstRect->width(), dstRect->height());
 			_surface->free();
@@ -60,6 +66,14 @@ _srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(
 		}
 	} else {
 		_surface = nullptr;
+		
+		if (transform._angle != kDefaultAngle) { // Make sure comparison-tickets get the correct width
+			Rect32 newDstRect;
+			Point32 newHotspot;
+			newDstRect = TransformTools::newRect(_srcRect, transform, &newHotspot);
+			_dstRect.setWidth(newDstRect.right - newDstRect.left);
+			_dstRect.setHeight(newDstRect.bottom - newDstRect.top);
+		}
 	}
 }
 
@@ -70,32 +84,31 @@ RenderTicket::~RenderTicket() {
 	}
 }
 
-bool RenderTicket::operator==(RenderTicket &t) {
+bool RenderTicket::operator==(const RenderTicket &t) const {
 	if ((t._owner != _owner) ||
 		(t._batchNum != _batchNum) ||
-		(t._hasAlpha != _hasAlpha) ||
-		(t._mirror != _mirror) ||
-		(t._colorMod != _colorMod) ||
+		(t._transform != _transform)  || 
 		(t._dstRect != _dstRect) ||
-		(t._srcRect != _srcRect)) {
+		(t._srcRect != _srcRect) 
+	) {
 		return false;
 	}
 	return true;
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) {
+void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 	TransparentSurface src(*getSurface(), false);
 
 	Common::Rect clipRect;
 	clipRect.setWidth(getSurface()->w);
 	clipRect.setHeight(getSurface()->h);
 
-	src._enableAlphaBlit = _hasAlpha;
-	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _mirror, &clipRect, _colorMod, clipRect.width(), clipRect.height());
+	src._enableAlphaBlit = !_transform._alphaDisable;
+	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height());
 }
 
-void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) {
+void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
 	TransparentSurface src(*getSurface(), false);
 	bool doDelete = false;
 	if (!clipRect) {
@@ -105,8 +118,8 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 		clipRect->setHeight(getSurface()->h);
 	}
 
-	src._enableAlphaBlit = _hasAlpha;
-	src.blit(*_targetSurface, dstRect->left, dstRect->top, _mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
+	src._enableAlphaBlit = !_transform._alphaDisable; 
+	src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height());
 	if (doDelete) {
 		delete clipRect;
 	}
