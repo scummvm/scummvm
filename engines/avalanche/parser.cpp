@@ -126,6 +126,13 @@ void Parser::tryDropdown() {
 	warning("STUB: Parser::tryDropdown()"); // TODO: Implement at the same time with Dropdown.
 }
 
+int16 Parser::pos(const Common::String &crit, const Common::String &src) {
+	if (src.contains(crit))
+		return strstr(src.c_str(),crit.c_str()) - src.c_str();
+	else
+		return -1;
+}
+
 void Parser::drawCursor() {
 	// Draw the '_' character. Similar to plotText().
 	char cursor = '_';

@@ -244,7 +244,7 @@ byte Acci::wordnum(Common::String x) {
 }
 
 void Acci::replace(Common::String old1, byte new1) {
-	int16 q = pos(old1, thats);
+	int16 q = _vm->_parser->pos(old1, thats);
 	while (q != -1) {
 		if (new1 == 0)
 			thats.deleteChar(q);
@@ -253,7 +253,7 @@ void Acci::replace(Common::String old1, byte new1) {
 				thats.deleteChar(q);
 			thats.insertChar(new1, q);
 		}
-		q = pos(old1, thats);
+		q = _vm->_parser->pos(old1, thats);
 	}
 }
 
@@ -324,7 +324,7 @@ void Acci::punctustrip(Common::String &x) {        /* Strips punctuation from x.
 
 	for (byte fv = 0; fv < 32; fv++)
 		do {
-			int16 p = pos(Common::String(punct[fv]), x);
+			int16 p = _vm->_parser->pos(Common::String(punct[fv]), x);
 			if (p == -1)
 				break;
 			x.deleteChar(p);
@@ -409,13 +409,6 @@ void Acci::clearuint16s() {
 	warning("STUB: Acci::clearuint16s()");
 }
 
-int16 Acci::pos(const Common::String &crit, const Common::String &src) {
-	if (src.contains(crit))
-		return strstr(src.c_str(),crit.c_str()) - src.c_str();
-	else
-		return -1;
-}
-
 void Acci::parse() {
 	byte n, fv, ff;
 	Common::String c, cc, thisword;
@@ -462,7 +455,7 @@ void Acci::parse() {
 			break;
 
 		// Get the following word of the strings.
-		byte size = pos(Common::String(' '), c) + 1;
+		byte size = _vm->_parser->pos(Common::String(' '), c) + 1;
 		char *subStr = new char[size];
 		Common::strlcpy(subStr, c.c_str(), size);
 		thisword = subStr;
@@ -477,7 +470,7 @@ void Acci::parse() {
 		// Check also[] first, which conatins words about the actual room.
 		if (!thisword.empty()) {
 			for (ff = 0; ff < 31; ff++) {
-				if ((_vm->_gyro->also[ff][0] != 0) && (pos(',' + thisword, *_vm->_gyro->also[ff][0]) > -1)) {
+				if ((_vm->_gyro->also[ff][0] != 0) && (_vm->_parser->pos(',' + thisword, *_vm->_gyro->also[ff][0]) > -1)) {
 					thats = thats + Common::String(99 + ff);
 					notfound = false;
 				}
@@ -496,18 +489,18 @@ void Acci::parse() {
 		}
 
 		// Delete words we already processed.
-		int16 spacePos = pos(Common::String(' '), c);
+		int16 spacePos = _vm->_parser->pos(Common::String(' '), c);
 		if (spacePos > -1)
 			for (byte i = 0; i <= spacePos; i++)
 				c.deleteChar(0);
-		spacePos = pos(Common::String(' '), cc);
+		spacePos = _vm->_parser->pos(Common::String(' '), cc);
 		if (spacePos > -1)
 			for (byte i = 0; i <= spacePos; i++)
 				cc.deleteChar(0);
 	}
 
-	if (pos(Common::String(254), thats) > -1) 
-		unknown = realwords[pos(Common::String(254), thats)];
+	if (_vm->_parser->pos(Common::String(254), thats) > -1) 
+		unknown = realwords[_vm->_parser->pos(Common::String(254), thats)];
 	else
 		if (!unknown.empty())
 			unknown.clear();

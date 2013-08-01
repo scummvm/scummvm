@@ -60,6 +60,8 @@ public:
 
 	void tryDropdown(); // This asks the parsekey proc in Dropdown if it knows it.
 
+	int16 pos(const Common::String &crit, const Common::String &src); // Returns the index of the first appearance of crit in src.
+
 private:
 	AvalancheEngine *_vm;
 
