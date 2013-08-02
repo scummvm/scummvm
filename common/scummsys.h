@@ -144,6 +144,19 @@
 	#endif
 #endif
 
+// The following math constants are usually defined by the system math.h header, but 
+// they are not part of the ANSI C++ standards and so can NOT be relied upon to be
+// present i.e. when -std=c++11 is passed to GCC, enabling strict ANSI compliance.
+// As we rely on these being present, we define them if they are not set.
+
+#ifndef M_SQRT1_2
+	#define M_SQRT1_2 0.70710678118654752440 /* 1/sqrt(2) */
+#endif
+
+#ifndef M_PI
+	#define M_PI 3.14159265358979323846
+#endif
+
 // Include our C++11 compatability header for pre-C++11 compilers.
 #if __cplusplus < 201103L
 #include "common/c++11-compat.h"
