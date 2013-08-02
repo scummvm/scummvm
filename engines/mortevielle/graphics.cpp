@@ -1067,7 +1067,7 @@ void ScreenSurface::setPixel(const Common::Point &pt, int palIndex) {
 	assert((pt.x >= 0) && (pt.y >= 0) && (pt.x <= SCREEN_WIDTH) && (pt.y <= SCREEN_ORIG_HEIGHT));
 	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2, pt.x + 1, (pt.y + 1) * 2));
 
-	byte *destP = (byte *)destSurface.pixels;
+	byte *destP = (byte *)destSurface.getBasePtr(0, 0);
 	*destP = palIndex;
 	*(destP + SCREEN_WIDTH) = palIndex;
 }
