@@ -40,6 +40,7 @@ RenderManager::RenderManager(OSystem *system, const int width, const int height)
 	  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
 	  _currentVideo(0),
 	  _scaledVideoFrameBuffer(0),
+	  _needsScreenUpdate(false),
 	  _renderTable(width, height) {
 }
 
