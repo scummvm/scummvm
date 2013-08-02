@@ -56,7 +56,7 @@ void ScriptManager::createReferenceTable() {
 
 	// Remove duplicate entries
 	for (Common::HashMap<uint32, Common::Array<Puzzle *> >::iterator referenceTableIter = _referenceTable.begin(); referenceTableIter != _referenceTable.end(); referenceTableIter++) {
-		removeDuplicateEntries(&(referenceTableIter->_value));
+		removeDuplicateEntries(referenceTableIter->_value);
 	}
 }
 

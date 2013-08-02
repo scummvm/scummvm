@@ -67,12 +67,12 @@ void dumpEveryResultAction(const Common::String &destFile);
  * @return                
  */
 template<class T>
-void removeDuplicateEntries(Common::Array<T> *container) {
-	Common::sort(container->front(), container->back());
+void removeDuplicateEntries(Common::Array<T> &container) {
+	Common::sort(container.begin(), container.end());
 
-	for (uint i = 0; i < container->size(); i++) {
-		while (container[i] == container[i +1]) {
-			container->remove_at(i + 1);
+	for (uint i = 0; i + 1 < container.size(); i++) {
+		while (container[i] == container[i + 1]) {
+			container.remove_at(i + 1);
 		}
 	}
 }
