@@ -70,9 +70,13 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->addBreakpoint(argv[1], atoi(argv[2]));
 		if (!error) DebugPrintf("%s: OK\n", argv[0]);
 		else if (error == NO_SUCH_FILE) {
-			DebugPrintf("%s: no such file %s\n", argv[0], argv[1]);
+			DebugPrintf("WARNING: %s: no such source file: %s\n", argv[0], argv[1]);
 		} else if (error == NO_SUCH_LINE) {
-			DebugPrintf("%s: %s has no line %d\n", argv[0], argv[1], atoi(argv[2]));
+			DebugPrintf("WARNING: %s: source %s has no line %d\n", argv[0], argv[1], atoi(argv[2]));
+		} else if (error == IS_BLANK) {
+			DebugPrintf("WARNING: %s: %s:%d looks like a comment/blank line.\n", argv[0], argv[1], atoi(argv[2]));
+		} else {
+			DebugPrintf("ERROR: Error code %d", error);
 		}
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);

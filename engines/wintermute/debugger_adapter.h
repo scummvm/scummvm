@@ -38,7 +38,8 @@ enum ErrorCode {
 	NO_SUCH_LINE,
 	DUPLICATE_BREAKPOINT,
 	NO_SUCH_BREAKPOINT,
-	NOT_ALLOWED
+	NOT_ALLOWED,
+	IS_BLANK // Is blank or comment-only, actually
 };
 
 class SourceFile {
@@ -49,6 +50,7 @@ public:
 	SourceFile(Common::String filename);
 	bool loadFile(Common::String filename, int *error = nullptr);
 	int getLength();
+	bool isBlank(int line);
 	BaseArray<Common::String> getSurroundingLines(int centre, int lines, int *error = nullptr);
 	BaseArray<Common::String> getSurroundingLines(int cemtre, int before, int after, int *error = nullptr);
 	Common::String getLine(int n, int *error = nullptr);
@@ -77,6 +79,7 @@ public:
 	// Called by Console (~=View)
 	int addWatch(const char *filename, const char *symbol);
 	int addBreakpoint(const char *filename, int line);
+	int isLineLegal(const char *filename, int line);
 	int removeWatch(int id);
 	int removeBreakpoint(int id);
 	BaseArray<BreakpointInfo> getBreakpoints();

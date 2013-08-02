@@ -67,6 +67,18 @@ DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
 	_lastScript = nullptr;
 }
 
+bool SourceFile::isBlank(int line) {
+	Common::String theLine = getLine(line);
+	Common::StringTokenizer *st = new Common::StringTokenizer(theLine, "//");
+	Common::String charsBeforeComment = st->nextToken();
+	charsBeforeComment.trim();
+	if (charsBeforeComment.size() == 0) {
+		// No chars before "//" except for whitespaces... looks like a comment or an empty line
+		return true;
+	}
+	return false;
+}
+
 int SourceFile::getLength() {
 	if (_err) {
 		return 0;
@@ -115,11 +127,52 @@ BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int before
 	return ret;
 }
 
+int DebuggerAdapter::isLineLegal(const char *filename, int line) {
+	SourceFile *sf = new SourceFile(filename);
+	int error = OK;
+	sf->getLine(line, &error);
+	
+	if(!error) {
+		if (sf->isBlank(line)) {
+			return IS_BLANK;
+		} else {
+			return OK;
+		}
+	} else if (error == NO_SUCH_FILE || error == COULD_NOT_OPEN) {
+		// Okay, this does not tell us much, except that we don't have the SOURCE file.
+		// TODO: Check if the bytecode is there, at least
+		return NO_SUCH_FILE;
+	} else if (error == NO_SUCH_LINE) {
+		return NO_SUCH_LINE; // There is apparently no such line in the SOURCE file.
+		// TODO: I guess we should simply raise a WARNING for these.
+	} else {
+		return error;
+	}
+}
+
 int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
 	// TODO: Check if file exists, check if line exists
 	assert(SCENGINE);
-	SCENGINE->addBreakpoint(filename, line);
-	return OK;
+	int isLegal = isLineLegal(filename, line);
+	if (isLegal == OK) {
+		SCENGINE->addBreakpoint(filename, line);
+		return OK;
+	} else if (isLegal == IS_BLANK) {
+		// We don't have the SOURCE. A warning will do.
+		SCENGINE->addBreakpoint(filename, line);
+		return IS_BLANK;
+	} else if (isLegal == NO_SUCH_FILE) {
+		// We don't have the SOURCE. A warning will do.
+		SCENGINE->addBreakpoint(filename, line);
+		return NO_SUCH_FILE;
+	} else if (isLegal == NO_SUCH_LINE) {
+		// No line in the source A warning will do.
+		SCENGINE->addBreakpoint(filename, line);
+		return NO_SUCH_LINE;
+	} else {
+		// Something weird? Don't do anything.
+		return isLegal;
+	}
 }
 
 int DebuggerAdapter::removeBreakpoint(int id) {
