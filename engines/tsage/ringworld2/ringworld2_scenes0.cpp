@@ -5399,9 +5399,9 @@ GfxSurface Scene600::Actor4::getFrame() {
 		// Translate the frame using the scene's pixel map
 		byte *pixelMap = static_cast<Scene600 *>(R2_GLOBALS._sceneManager._scene)->_pixelMap;
 		Graphics::Surface surface = frame.lockSurface();
-		byte *srcP = (byte *)surface.pixels;
+		byte *srcP = (byte *)surface.getBasePtr(0, 0);
 
-		while (srcP < ((byte *)surface.pixels + (surface.w * surface.h))) {
+		while (srcP < ((byte *)surface.getBasePtr(0, surface.h))) {
 			*srcP = pixelMap[*srcP];
 			srcP++;
 		}

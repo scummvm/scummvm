@@ -316,7 +316,7 @@ void GfxSurface::create(int width, int height) {
 	}
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	Common::fill((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
+	Common::fill((byte *)_customSurface->getBasePtr(0, 0), (byte *)_customSurface->getBasePtr(0, height), 0);
 	_bounds = Rect(0, 0, width, height);
 }
 
@@ -363,7 +363,7 @@ void GfxSurface::synchronize(Serializer &s) {
 		if (_customSurface) {
 			s.syncAsSint16LE(_customSurface->w);
 			s.syncAsSint16LE(_customSurface->h);
-			s.syncBytes((byte *)_customSurface->pixels, _customSurface->w * _customSurface->h);
+			s.syncBytes((byte *)_customSurface->getBasePtr(0, 0), _customSurface->w * _customSurface->h);
 		} else {
 			int zero = 0;
 			s.syncAsSint16LE(zero);
@@ -380,7 +380,7 @@ void GfxSurface::synchronize(Serializer &s) {
 			_customSurface = NULL;
 		} else {
 			create(w, h);
-			s.syncBytes((byte *)_customSurface->pixels, w * h);
+			s.syncBytes((byte *)_customSurface->getBasePtr(0, 0), w * h);
 		}
 	}
 }
@@ -581,7 +581,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 		Graphics::Surface destSurface = srcImage.lockSurface();
 
 		const byte *srcP = (const byte *)srcSurface.getBasePtr(srcBounds.left, srcBounds.top);
-		byte *destP = (byte *)destSurface.pixels;
+		byte *destP = (byte *)destSurface.getBasePtr(0, 0);
 		for (int yp = srcBounds.top; yp < srcBounds.bottom; ++yp, srcP += srcSurface.pitch, destP += destSurface.pitch) {
 			Common::copy(srcP, srcP + srcBounds.width(), destP);
 		}
