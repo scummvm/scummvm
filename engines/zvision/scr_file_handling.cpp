@@ -134,7 +134,7 @@ bool ScriptManager::parseCriteria(Puzzle::Criteria *criteria, Common::SeekableRe
 	return true;
 }
 
-void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {
+void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<Common::SharedPtr<ResultAction> > &actionList) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -143,14 +143,13 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	while (!line.contains('}')) {
 		// Parse for the action type
 		if (line.matchString("*:add*", true)) {
-			actionList.push_back(new ActionAdd(line));
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionAdd(line)));
 		} else if (line.matchString("*:animplay*", true)) {
-			actionList.push_back(new ActionPlayAnimation(line));
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionPlayAnimation(line)));
 		} else if (line.matchString("*:animpreload*", true)) {
-			actionList.push_back(new ActionPreloadAnimation(line));
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionPreloadAnimation(line)));
 		} else if (line.matchString("*:animunload*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionUnloadAnimation(line)));
 		} else if (line.matchString("*:attenuate*", true)) {
 			
 

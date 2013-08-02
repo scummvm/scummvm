@@ -8,7 +8,6 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	lzss_read_stream.o \
-	puzzle.o \
 	render_manager.o \
 	render_table.o \
 	scr_file_handling.o \

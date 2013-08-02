@@ -23,19 +23,15 @@
 #ifndef ZVISION_PUZZLE_H
 #define ZVISION_PUZZLE_H
 
+
 #include "common/list.h"
+#include "common/ptr.h"
 
 namespace ZVision {
 
 class ResultAction;
 
-class Puzzle {
-public:
-	Puzzle() {}
-	~Puzzle();
-	Puzzle(const Puzzle &other);
-	
-public:
+struct Puzzle {
 	/** How criteria should be decided */
 	enum CriteriaOperator {
 		EQUAL_TO,
@@ -65,11 +61,10 @@ public:
 		DISABLED = 0x04
 	};
 
-public:
 	uint32 key;
 	Common::List<Criteria> criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
-	Common::List<ResultAction *> resultActions;
+	Common::List<Common::SharedPtr<ResultAction>> resultActions;
 	uint flags;
 
 	// Used by the ScriptManager to allow unique-ification of _referenceTable

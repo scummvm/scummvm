@@ -106,13 +106,14 @@ private:
 	bool parseCriteria(Puzzle::Criteria *criteria, Common::SeekableReadStream &stream) const;
 
 	/**
-	 * Parses the stream into a Results object
+	 * Parses the stream into a ResultAction objects
 	 * Helper method for parsePuzzle. 
 	 *
-	 * @param stream    Scr file stream
-	 * @return          Created Results object
+	 * @param stream        Scr file stream
+	 * @param actionList    The list where the results will be added
+	 * @return              Created Results object
 	 */
-	void parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const;
+	void parseResults(Common::SeekableReadStream &stream, Common::List<Common::SharedPtr<ResultAction> > &actionList) const;
 
 	/**
 	 * Helper method for parsePuzzle. Parses the stream into a bitwise or of the StateFlags enum
