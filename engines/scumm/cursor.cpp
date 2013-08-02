@@ -139,7 +139,7 @@ void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
 		return;
 	}
 
-	setCursorFromBuffer((byte *)vs->pixels + (y - vs->topline) * vs->pitch + x, w, h, vs->pitch);
+	setCursorFromBuffer((byte *)vs->getBasePtr(x, y - vs->topline), w, h, vs->pitch);
 }
 
 void ScummEngine_v6::setDefaultCursor() {
