@@ -128,8 +128,8 @@ AnimFrame::~AnimFrame() {
 }
 
 Common::Rect AnimFrame::draw(Graphics::Surface *s) {
-	byte *inp = (byte *)_image.pixels;
-	uint16 *outp = (uint16 *)s->pixels;
+	byte *inp = (byte *)_image.getBasePtr(0, 0);
+	uint16 *outp = (uint16 *)s->getBasePtr(0, 0);
 	for (int i = 0; i < 640 * 480; i++, inp++, outp++) {
 		if (*inp)
 			*outp = _palette[*inp];
