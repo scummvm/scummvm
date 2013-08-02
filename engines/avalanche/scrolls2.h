@@ -77,14 +77,34 @@ private:
 	static const int16 roman = 0;
 	static const int16 italic = 1;
 
-	static const int16 halficonwidth = 19; /* Half the width of an icon. */
+	static const int16 halficonwidth = 19; // Half the width of an icon.
+
+
+
+	// Constants to replace the command characters from Pascal:
+	// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
+	
+	static const char kControlSpeechBubble = 2; // ^B
+	static const char kControlCenter = 3; // ^C
+	static const char kControlToBuffer = 4; // ^D
+	static const char kControlBell = 7; // ^G
+	static const char kControlInsertSpaces = 9; // ^I
+	static const char kControlLeftJustified = 12; // ^L
+	static const char kControlNewLine = 13; // ^M
+	static const char kControlParagraph = 16; // ^P
+	static const char kControlQuestion = 17; // ^Q
+	static const char kControlRegister = 19; // ^S
+	static const char kControlNegative = 21; // ^U
+	static const char kControlIcon = 22; // ^V
+
+
 
 	int16 dix, diy;
 	raw ch[2];
-	byte cfont; /* Current font */
+	byte cfont; // Current font
 
 	int16 dodgex, dodgey;
-	byte param; /* For using arguments code */
+	byte param; // For using arguments code
 
 	byte use_icon;
 

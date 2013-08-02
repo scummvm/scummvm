@@ -273,21 +273,237 @@ Common::String Scrolls::lsd() {
 
 
 
-void Scrolls::strip(Common::String &q) {
-	warning("STUB: Scrolls::strip()");
+void Scrolls::strip(Common::String &q) { // Strip trailing spaces.
+	while (q[q.size() - 1] == ' ') {
+		q.deleteLastChar();
+	}
 }
 
 void Scrolls::solidify(byte n) {
-	warning("STUB: Scrolls::solidify()");
+	if (!_vm->_gyro->scroll[n].contains(' '))
+		return; // No spaces.
+
+	// So there MUST be a space there, somewhere...
+	do {
+		_vm->_gyro->scroll[n + 1] = _vm->_gyro->scroll[n][_vm->_gyro->scroll[n].size() - 1] + _vm->_gyro->scroll[n + 1];
+		_vm->_gyro->scroll[n].deleteLastChar();
+	} while (!_vm->_gyro->scroll[n][_vm->_gyro->scroll[n].size() - 1] != ' ');
+
+	strip(_vm->_gyro->scroll[n]);
 }
 
 void Scrolls::calldrivers() {
+	uint16 fv;
+	byte nn;
+	char nnn;
+	bool mouthnext;
+	bool call_spriterun; // Only call sprite_run the FIRST time.
+	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
+
+
+	//nosound();
 	warning("STUB: Scrolls::calldrivers()");
+
+	state(0);
+	_vm->_gyro->screturn = false;
+	mouthnext = false;
+	call_spriterun = true;
+
+	switch (_vm->_gyro->buffer[_vm->_gyro->bufsize - 1]) {
+	case kControlToBuffer:
+		_vm->_gyro->bufsize--;
+		break; // ^D = (D)on't include pagebreak
+	case kControlSpeechBubble:
+	case kControlQuestion:
+		break; // ^B = speech (B)ubble, ^Q = (Q)uestion in dialogue box
+	default: {
+		_vm->_gyro->bufsize++;
+		_vm->_gyro->buffer[_vm->_gyro->bufsize - 1] = kControlParagraph;
+		}
+	}
+
+	for (fv = 0; fv <= _vm->_gyro->bufsize; fv++)
+		if (mouthnext) {
+			if (_vm->_gyro->buffer[fv] == kControlRegister)
+				param = 0;
+			else
+				if (('0' < _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] < '9'))
+					param = _vm->_gyro->buffer[fv] - 48;
+				else if (('A' < _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] < 'Z'))
+					param = _vm->_gyro->buffer[fv] - 55;
+
+			mouthnext = false;
+		} else
+			switch (_vm->_gyro->buffer[fv]) {
+			case kControlParagraph: {
+				if ((_vm->_gyro->scrolln == 0) && (_vm->_gyro->scroll[0].empty()))
+					break;
+
+				if (call_spriterun)
+					_vm->_lucerna->sprite_run();
+				call_spriterun = false;
+
+				was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
+				if (was_virtual)
+					_vm->_gyro->off_virtual();
+
+				drawscroll(&Avalanche::Scrolls::normscroll);
+
+				if (was_virtual)
+					_vm->_gyro->on_virtual();
+
+				resetscroll();
+
+				if (_vm->_gyro->screturn)
+					return;
+			}
+			break;
+			case kControlBell:
+				_vm->_gyro->scrollbells++;
+				break; // #7 = "Bel"
+			case kControlSpeechBubble: {
+				if ((_vm->_gyro->scrolln == 0) && (_vm->_gyro->scroll[0].empty()))
+					break;
+
+				if (call_spriterun)
+					_vm->_lucerna->sprite_run();
+				call_spriterun = false;
+
+				if (param == 0)
+					natural();
+				else if ((1 <= param) && (param <= 9))
+					if ((param > _vm->_trip->numtr) || (!_vm->_trip->tr[param].quick)) { // Not valid.
+						_vm->_lucerna->errorled();
+						natural();
+					} else
+						_vm->_trip->tr[param].chatter(); // Normal sprite talking routine.
+				else if ((10 <= param) && (param <= 36)) {
+					/* Quasi-peds. (This routine performs the same
+					thing with QPs as triptype.chatter does with the
+					sprites.) */
+					_vm->_gyro->talkx = _vm->_gyro->peds[_vm->_gyro->quasipeds[param].whichped].x;
+					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->quasipeds[param].whichped].y; // Position.
+		
+					_vm->_gyro->talkf = _vm->_gyro->quasipeds[param].fgc;
+					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param].bgc; // Colours.
+				} else {
+					_vm->_lucerna->errorled(); // Not valid.
+					natural();
+				}
+
+				was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
+				if (was_virtual)
+					_vm->_gyro->off_virtual();
+
+				bubble(&Avalanche::Scrolls::normscroll);
+
+				if (was_virtual)
+					_vm->_gyro->on_virtual();
+
+				resetscroll();
+
+				if (_vm->_gyro->screturn)
+					return;
+			}
+			break;
+			case kControlNegative: {
+				switch (param) {
+				case 1:
+					display(lsd() + kControlToBuffer);
+					break; /* insert cash balance (recursion) */
+				case 2:
+					display(_vm->_acci->words[_vm->_acci->first_password + _vm->_gyro->dna.pass_num].w + kControlToBuffer);
+					break;
+				case 3:
+					display(_vm->_gyro->dna.like2drink + kControlToBuffer);
+					break;
+				case 4:
+					display(_vm->_gyro->dna.favourite_song + kControlToBuffer);
+					break;
+				case 5:
+					display(_vm->_gyro->dna.worst_place_on_earth + kControlToBuffer);
+					break;
+				case 6:
+					display(_vm->_gyro->dna.spare_evening + kControlToBuffer);
+					break;
+				case 9:
+					display(_vm->_gyro->strf(_vm->_gyro->dna.cat_x) + ',' + _vm->_gyro->strf(_vm->_gyro->dna.cat_y) + kControlToBuffer);
+					break;
+				case 10:
+					switch (_vm->_gyro->dna.box_contents) {
+					case 0: { // Sixpence.
+						_vm->_visa->dixi('q', 37); // You find the sixpence.
+						_vm->_gyro->dna.pence += 6;
+						_vm->_gyro->dna.box_contents = _vm->_acci->nowt;
+						_vm->_lucerna->points(2);
+						return;
+					}
+					break;
+					case _vm->_acci->nowt:
+						display("nothing at all. It's completely empty.");
+						break;
+					default:
+						display(_vm->_gyro->get_better(_vm->_gyro->dna.box_contents) + '.');
+					}
+					break;
+				case 11: {
+					nn = 1;
+					for (nnn = 0; nnn < numobjs; nnn++)
+						if (_vm->_gyro->dna.obj[nnn]) {
+							nn ++;
+							display(_vm->_gyro->get_better(nnn) + ", " + kControlToBuffer);
+						}
+					}
+					break;
+				}
+				
+				}
+				break;
+			case kControlIcon:
+				use_icon = param;
+				break;
+			case kControlNewLine:
+				_vm->_gyro->scrolln++;
+				break;
+			case kControlQuestion: {
+				if (call_spriterun)
+					_vm->_lucerna->sprite_run();
+				call_spriterun = false;
+
+				_vm->_gyro->scrolln++;
+				_vm->_gyro->scroll[_vm->_gyro->scrolln] = kControlQuestion;
+
+				was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
+				if (was_virtual)
+					_vm->_gyro->off_virtual();
+
+				drawscroll(&Avalanche::Scrolls::dialogue);
+
+				if (was_virtual)
+					_vm->_gyro->on_virtual();
+
+				resetscroll();
+				}
+				break;
+			case kControlRegister:
+				mouthnext = true;
+				break;
+			case kControlInsertSpaces:
+				for (nn = 0; nn < 9; nn++) _vm->_gyro->scroll[_vm->_gyro->scrolln] = _vm->_gyro->scroll[_vm->_gyro->scrolln] + ' ';
+				break;
+			default: { // Add new char.
+				if (_vm->_gyro->scroll[_vm->_gyro->scrolln].size() == 50) {
+					solidify(_vm->_gyro->scrolln);
+					_vm->_gyro->scrolln++;
+				}
+				_vm->_gyro->scroll[_vm->_gyro->scrolln] = _vm->_gyro->scroll[_vm->_gyro->scrolln] + _vm->_gyro->buffer[fv];
+				}
+			}
 }
 
 void Scrolls::display(Common::String z) {
 	_vm->_gyro->bufsize = z.size();
-	memcpy(_vm->_gyro->buffer, z.c_str() + 1, _vm->_gyro->bufsize);
+	memcpy(_vm->_gyro->buffer, z.c_str(), _vm->_gyro->bufsize);
 	calldrivers();
 }
 
