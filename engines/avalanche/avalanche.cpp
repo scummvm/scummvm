@@ -170,11 +170,6 @@ void AvalancheEngine::quit() {
 	cursor_on();
 }
 
-Common::String AvalancheEngine::strf(int32 x) {
-	Common::String q = Common::String::format("%d", x);
-	return q;
-}
-
 // Needed in dos_shell(). TODO: Remove later.
 Common::String AvalancheEngine::command_com() {
 	warning("STUB: command_com()");

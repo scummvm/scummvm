@@ -611,6 +611,8 @@ public:
 
 	~Gyro();
 
+	Common::String strf(int32 x);
+
 	void newpointer(byte m);
 
 	void wait();    /* makes hourglass */
@@ -632,8 +634,6 @@ public:
 	void note(uint16 hertz);
 
 	void blip();
-
-	Common::String strf(int32 x);
 
 	void shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
 

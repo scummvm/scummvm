@@ -273,6 +273,11 @@ Gyro::~Gyro() {
 
 }
 
+Common::String Gyro::strf(int32 x) {
+	Common::String q = Common::String::format("%d", x);
+	return q;
+}
+
 void Gyro::newpointer(byte m) {
 	if (m == cmp)  return;
 	cmp = m;
@@ -337,11 +342,6 @@ void Gyro::note(uint16 hertz) {
 
 void Gyro::blip() {
 	warning("STUB: Gyro::blip()");
-}
-
-Common::String Gyro::strf(int32 x) {
-	Common::String q = Common::String::format("%d", x);
-	return q;
 }
 
 void Gyro::shadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc) {
