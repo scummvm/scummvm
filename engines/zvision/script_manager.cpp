@@ -148,7 +148,7 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	_activeControls.clear();
 
 	// Parse into puzzles and controls
-	Common::String fileName = Common::String::format("%c%c%c&c.scr", world, room, node, view);
+	Common::String fileName = Common::String::format("%c%c%c%c.scr", world, room, node, view);
 	parseScrFile(fileName);
 
 	// Create the puzzle reference table
