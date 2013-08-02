@@ -98,6 +98,12 @@ bool ExCommand::handleMessage() {
 	return (cnt > 0);
 }
 
+void ExCommand::sendMessage() {
+	g_fullpipe->_exCommandList.push_back(this);
+
+	processMessages();
+}
+
 Message::Message() {
 	_messageKind = 0;
 	_parentId = 0;
@@ -240,8 +246,29 @@ void MessageQueue::update() {
 	}
 }
 
+void MessageQueue::messageQueueCallback1(int par) {
+	warning("STUB: MessageQueue::messageQueueCallback1()");
+}
+
 void MessageQueue::sendNextCommand() {
-	warning("STUB: MessageQueue::sendNextCommand()");
+	if (_exCommands.size()) {
+		if (!(_flags & 4) && (_flags & 1)) {
+			messageQueueCallback1(16);
+		}
+		ExCommand *ex = (ExCommand *)_exCommands.front();
+		_exCommands.remove_at(0);
+
+		ex->handleMessage();
+		_counter++;
+		ex->_parId = _id;
+		ex->_excFlags |= (ex->_field_24 == 0 ? 1 : 0) | (ex->_field_3C != 0 ? 2 : 0);
+
+		_flags |= 4;
+		ex->sendMessage();
+	} else if (_counter <= 0) {
+		_isFinished = 1;
+		finish();
+	}
 }
 
 void MessageQueue::finish() {

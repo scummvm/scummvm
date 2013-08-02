@@ -71,6 +71,7 @@ class ExCommand : public Message {
 	virtual bool load(MfcArchive &file);
 
 	bool handleMessage();
+	void sendMessage();
 };
 
 class CObjstateCommand : public CObject {
@@ -114,6 +115,8 @@ class MessageQueue : public CObject {
 	void update();
 	void sendNextCommand();
 	void finish();
+
+	void messageQueueCallback1(int par);
 };
 
 class GlobalMessageQueueList : public CPtrList {
