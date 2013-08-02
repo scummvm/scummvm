@@ -30,9 +30,437 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 /*--------------------------------------------------------------------------
+ * Scene 1000 - Cutscene: Ship moving
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene1000::Scene1000(): SceneExt() {
+	R2_GLOBALS._sceneManager._hasPalette = false;
+	R2_GLOBALS._uiElements._active = false;
+	_gameTextSpeaker._displayMode = 9;
+	_fieldD2E = 0;
+}
+
+void Scene1000::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.disableControl();
+
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 300:
+		_sceneMode = R2_GLOBALS.getFlag(57) ? 40 : 0;
+		break;
+	case 1010:
+		_sceneMode = 30;
+		break;
+	case 1100:
+		_sceneMode = 10;
+		break;
+	case 1530:
+		_sceneMode = 20;
+		break;
+	case 2500:
+		_sceneMode = 100;
+		break;
+	case 2800:
+		_sceneMode = 2800;
+		break;
+	case 3100:
+		if (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 1000)
+			_sceneMode = 90;
+		else
+			_sceneMode = 80;
+		break;
+	case 3500:
+		_sceneMode = 50;
+		break;
+	case 3700:
+		_sceneMode = 60;
+		break;
+	default:
+		_sceneMode = 999;
+		break;
+	}
+
+	setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
+}
+
+void Scene1000::remove() {
+	R2_GLOBALS._scenePalette.loadPalette(0);
+	R2_GLOBALS._scenePalette.setEntry(255, 0xff, 0xff, 0xff);
+	SceneExt::remove();
+}
+
+void Scene1000::signal() {
+	ScenePalette scenePalette1, scenePalette2;
+	uint32 black = 0;
+	
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 0:
+		// TODO: Sort out values
+		R2_GLOBALS._gfxColors.foreground = 191;
+		R2_GLOBALS._gfxColors.background = 144;
+		R2_GLOBALS._fontColors.background = 224;
+		R2_GLOBALS._fontColors.foreground = 119;
+
+		_dataManager._field56 = 2;
+		_dataManager._field3C = 2;
+		_dataManager.load(5);
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+
+		_dataManager.dispatch();
+		_fieldD2E = 1;
+		
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, true, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		R2_GLOBALS._sound1.play(67);
+		break;
+
+	case 1:
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+
+		// TODO: Sort out values
+		R2_GLOBALS._gfxColors.foreground = 191;
+		R2_GLOBALS._gfxColors.background = 144;
+		R2_GLOBALS._fontColors.background = 224;
+		R2_GLOBALS._fontColors.foreground = 119;
+
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		loadScene(9999);
+
+		R2_GLOBALS._player.setup(1140, 1, 1);
+		R2_GLOBALS._player.setPosition(Common::Point(160, 100));
+		R2_GLOBALS._player.show();
+
+		_field412 = 0;
+		_stripManager.start(29, this);
+		break;
+
+	case 2:
+		if (R2_GLOBALS._speechSubtitles & SPEECH_TEXT) {
+			setAction(&_sequenceManager1, this, &R2_GLOBALS._player, NULL);
+		} else {
+			if (++_field412 < 3)
+				_sceneMode = 2;
+
+			setAction(&_sequenceManager1, this, &R2_GLOBALS._player, NULL);
+		}
+		break;
+
+	case 3:
+		// TODO: Sort out values
+		R2_GLOBALS._gfxColors.foreground = 191;
+		R2_GLOBALS._gfxColors.background = 144;
+		R2_GLOBALS._fontColors.background = 224;
+		R2_GLOBALS._fontColors.foreground = 119;
+
+		for (int percent = 100; percent >= 0; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(7);
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		R2_GLOBALS._sound2.play(81);
+		R2_GLOBALS._sound1.play(80);
+		break;
+
+	case 4:
+		// TODO: Sort out values
+		R2_GLOBALS._gfxColors.foreground = 191;
+		R2_GLOBALS._gfxColors.background = 144;
+		R2_GLOBALS._fontColors.background = 224;
+		R2_GLOBALS._fontColors.foreground = 119;
+
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._sceneManager.changeScene(1100);
+		break;
+
+	case 10:
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(6);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		R2_GLOBALS._sound1.play(55);
+		break;
+
+	case 11:
+		R2_GLOBALS._scenePalette.loadPalette(NULL);
+		R2_GLOBALS._sceneManager.changeScene(300);
+		break;
+
+	case 20:
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(8);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+		break;
+
+	case 21:
+		R2_GLOBALS._scenePalette.loadPalette(NULL);
+		R2_GLOBALS._sceneManager.changeScene(1530);
+		break;
+
+	case 30:
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(17);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		R2_GLOBALS._sound2.play(91);
+		break;
+
+	case 31:
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS.setFlag(51);
+		R2_GLOBALS._sceneManager.changeScene(300);
+		break;
+
+	case 40:
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(18);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		R2_GLOBALS._sound2.play(90);
+		break;
+
+	case 41:
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._sceneManager.changeScene(1010);
+		break;
+
+	case 50:
+		R2_GLOBALS._sound2.play(306);
+		for (int percent = 100; percent >= 0; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(13);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+		break;
+
+	case 51:
+		R2_GLOBALS._sound2.stop();
+		R2_GLOBALS._sound2.play(307);
+		R2_GLOBALS._sound1.play(308);
+
+		for (int percent = 100; percent >= 0; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(14);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+		break;
+
+	case 52:
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._sceneManager.changeScene(3350);
+		break;
+
+	case 60:
+		R2_GLOBALS._sound1.play(333);
+		
+		for (int percent = 100; percent >= 0; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(12);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+		break;
+
+	case 61:
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._sceneManager.changeScene(160);
+		break;
+
+	case 70:
+		R2_GLOBALS._sound2.play(113);
+		for (int percent = 100; percent >= 0; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(9);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+		break;
+
+	case 71:
+	case 81:
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._sceneManager.changeScene(3100);
+		break;
+
+	case 80:
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(10);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		R2_GLOBALS._sound1.play(242);
+		R2_GLOBALS._sound2.play(286);
+		break;
+
+	case 90:
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(11);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+
+		R2_GLOBALS._sound1.play(277);
+		break;
+
+	case 91:
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._player._characterIndex = R2_SEEKER;
+		R2_GLOBALS._player._oldCharacterScene[R2_SEEKER] = 3100;
+		R2_GLOBALS._sceneManager.changeScene(2500);
+		break;
+
+	case 100:
+		R2_GLOBALS._sound1.play(304);
+		R2_GLOBALS._sound2.play(82);
+
+		_dataManager._field3C = 2;
+		_dataManager._field56 = 2;
+		_dataManager.load(19);
+
+		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._sceneManager._hasPalette = false;
+		_dataManager.dispatch();
+
+		_fieldD2E = 1;
+		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
+		for (int percent = 0; percent < 100; percent += 5)
+			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
+		break;		
+
+	case 101:
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._sceneManager.changeScene(3500);
+		break;
+	}
+}
+
+void Scene1000::dispatch() {
+
+}
+
+
+/*--------------------------------------------------------------------------
  * Scene 1010 - Cutscene: A pixel lost in space!
  *
  *--------------------------------------------------------------------------*/
+
 void Scene1010::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(1010);

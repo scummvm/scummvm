@@ -273,8 +273,11 @@ class Scene205: public SceneExt {
 	};
 
 	/* Objects */
-	class Object: public FinePositionedObject {
-		// TODO: More derived logic
+	class Object: public SceneObject {
+	public:
+		int _x100, _y100;
+	public:
+		// TODO: Check if this derives from DataManager? and flesh out
 	};
 private:
 	void setup();

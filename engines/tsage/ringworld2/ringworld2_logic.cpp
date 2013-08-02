@@ -108,7 +108,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #1 */
 	//
 	case 1000:
-		error("Missing scene %d from group 1", sceneNumber);
+		// Cutscene: Ship moving
+		return new Scene1000();
 	case 1010:
 		// Cutscene - trip in space
 		return new Scene1010();
@@ -2456,15 +2457,24 @@ void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX
 
 /*--------------------------------------------------------------------------*/
 
-FinePositionedObject::FinePositionedObject(): SceneObject() {
-	_x100 = _y100 = 0;
+DataManager::DataManager(): EventHandler() {
+
 }
 
-void FinePositionedObject::synchronize(Serializer &s) {
+void DataManager::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
 
-	s.syncAsSint32LE(_x100);
-	s.syncAsSint32LE(_y100);
+}
+
+void DataManager::load(int v) {
+	warning("TODO");
+}
+
+void DataManager::remove() {
+	if (_endHandler)
+		_endHandler->signal();
+
+	_endHandler = NULL;
 }
 
 } // End of namespace Ringworld2

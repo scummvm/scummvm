@@ -514,14 +514,23 @@ public:
 	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 };
 
-class FinePositionedObject: public SceneObject {
+class DataManager: public EventHandler {
 public:
-	int _x100, _y100;
-public:
-	FinePositionedObject();
+	int _field3C;
+	int _field56;
 
-	virtual Common::String getClassName() { return "FinePositionedObject"; }
+	int _palStart;
+	int _palLength;
+	byte _palData[256 * 3];
+	EventHandler *_endHandler;
+public:
+	DataManager();
+
+	virtual Common::String getClassName() { return "DataManager"; }
 	virtual void synchronize(Serializer &s);
+	virtual void remove();
+
+	void load(int v);
 };
 
 } // End of namespace Ringworld2
