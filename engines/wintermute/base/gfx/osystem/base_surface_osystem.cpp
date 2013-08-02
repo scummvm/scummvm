@@ -234,7 +234,7 @@ uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) 
 	warning("BaseSurfaceOSystem::GetPixel - Not ported yet");
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	uint8 *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	uint8 *p = (uint8 *)surface->getBasePtr(x, y);
 
 	switch (bpp) {
 	case 1:
