@@ -287,7 +287,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = scale(srcImage, width, height);
-		savedPixels = (byte *)img->pixels;
+		savedPixels = (byte *)img->getBasePtr(0, 0);
 	} else {
 		img = &srcImage;
 	}

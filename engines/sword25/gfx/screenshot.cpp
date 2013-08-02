@@ -85,7 +85,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	uint x, y;
 	x = y = 0;
 
-	for (byte *pDest = (byte *)thumbnail.pixels; pDest < ((byte *)thumbnail.pixels + thumbnail.pitch * thumbnail.h); ) {
+	for (byte *pDest = (byte *)thumbnail.getBasePtr(0, 0); pDest < ((byte *)thumbnail.getBasePtr(0, thumbnail.h)); ) {
 		// Get an average over a 4x4 pixel block in the source image
 		int alpha, red, green, blue;
 		alpha = red = green = blue = 0;
