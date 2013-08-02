@@ -278,7 +278,7 @@ public:
 	 * Clears the active surface.
 	 */
 	virtual void clearSurface() {
-		byte *src = (byte *)_activeSurface->pixels;
+		byte *src = (byte *)_activeSurface->getBasePtr(0, 0);
 		memset(src, 0, _activeSurface->pitch * _activeSurface->h);
 	}
 
