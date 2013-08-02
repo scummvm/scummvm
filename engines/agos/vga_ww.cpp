@@ -143,7 +143,7 @@ void AGOSEngine::vc61() {
 	uint h, tmp;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dstPtr = (byte *)screen->pixels;
+	dstPtr = (byte *)screen->getBasePtr(0, 0);
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
