@@ -145,9 +145,9 @@ static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
 				const float xDiff = xFrac - x1;
 				const float yDiff = yFrac - y1;
 
-				uint8 pR = ((1 - yDiff) * ((1 - xDiff) * p1R + xDiff * p2R) + yDiff * ((1 - xDiff) * p3R + xDiff * p4R));
-				uint8 pG = ((1 - yDiff) * ((1 - xDiff) * p1G + xDiff * p2G) + yDiff * ((1 - xDiff) * p3G + xDiff * p4G));
-				uint8 pB = ((1 - yDiff) * ((1 - xDiff) * p1B + xDiff * p2B) + yDiff * ((1 - xDiff) * p3B + xDiff * p4B));
+				uint8 pR = (uint8)((1 - yDiff) * ((1 - xDiff) * p1R + xDiff * p2R) + yDiff * ((1 - xDiff) * p3R + xDiff * p4R));
+				uint8 pG = (uint8)((1 - yDiff) * ((1 - xDiff) * p1G + xDiff * p2G) + yDiff * ((1 - xDiff) * p3G + xDiff * p4G));
+				uint8 pB = (uint8)((1 - yDiff) * ((1 - xDiff) * p1B + xDiff * p2B) + yDiff * ((1 - xDiff) * p3B + xDiff * p4B));
 
 
 				WRITE_UINT16(dst, Graphics::RGBToColor<Graphics::ColorMasks<565> >(pR, pG, pB));
