@@ -54,7 +54,7 @@ void Screen::update() {
 
 	if (_fullRefresh) {
 		// NOTE When playing a fullscreen/doubled Smacker video usually a full screen refresh is needed
-		_vm->_system->copyRectToScreen((const byte*)_backScreen->pixels, _backScreen->pitch, 0, 0, 640, 480);
+		_vm->_system->copyRectToScreen((const byte*)_backScreen->getBasePtr(0, 0), _backScreen->pitch, 0, 0, 640, 480);
 		_fullRefresh = false;
 		return;
 	}
@@ -174,7 +174,7 @@ void Screen::updatePalette() {
 }
 
 void Screen::clear() {
-	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
+	memset(_backScreen->getBasePtr(0, 0), 0, _backScreen->pitch * _backScreen->h);
 	_fullRefresh = true;
 	clearRenderQueue();
 }
