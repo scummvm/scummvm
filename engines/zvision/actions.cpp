@@ -145,10 +145,14 @@ bool ActionPreloadAnimation::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
+	char fileName[25];
+
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
            ":animplay:%u(%s %u %u %u %u %u %u %u %*u %*u %u %u)",
-           &_key, &_x, &_y, &_width, &_height, &_start, &_end, &_loop, &_mask, &_framerate);
+           &_key, fileName, &_x, &_y, &_width, &_height, &_start, &_end, &_loop, &_mask, &_framerate);
+
+	_fileName = Common::String(fileName);
 }
 
 ResultAction *ActionPlayAnimation::clone() const {
