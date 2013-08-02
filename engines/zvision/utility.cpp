@@ -174,8 +174,8 @@ void dumpEveryResultAction(const Common::String &destFile) {
 			trimCommentsAndWhiteSpace(&line);
 		}
 
-		for (Common::HashMap<Common::String, bool>::iterator iter = fileAlreadyUsed.begin(); iter != fileAlreadyUsed.end(); ++iter) {
-			iter->_value = false;
+		for (Common::HashMap<Common::String, bool>::iterator fileUsedIter = fileAlreadyUsed.begin(); fileUsedIter != fileAlreadyUsed.end(); ++fileUsedIter) {
+			fileUsedIter->_value = false;
 		}
 	}
 
