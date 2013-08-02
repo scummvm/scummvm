@@ -44,7 +44,7 @@ public:
 		UINT32,
 		FLOAT,
 		DOUBLE,
-		STRING,
+		STRING
 	};
 
 	// Constructors
