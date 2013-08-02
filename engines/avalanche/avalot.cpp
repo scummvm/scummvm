@@ -147,8 +147,10 @@ void Avalot::setup() {
 	_vm->_parser->cursorOn();
 	_vm->_trip->newspeed();
 
-	if (! _vm->_gyro->reloaded)
-		_vm->_visa->dixi('q', 83); /* Info on the game: etc. */
+	//if (! _vm->_gyro->reloaded)
+	//	_vm->_visa->dixi('q', 83); /* Info on the game: etc. */
+	//
+	// TODO: UNCOMMENT THIS! ONLY COMMENTED OUT FOR TESTING!!!
 }
 
 

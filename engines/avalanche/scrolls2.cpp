@@ -237,10 +237,10 @@ bool Scrolls::ask(Common::String question) {
 }
 
 void Scrolls::resetscroll() {
-	_vm->_gyro->scrolln = 1;
+	_vm->_gyro->scrolln = 0;
 	for (int j = 0; j < 15; j ++)
-		for (int i = 0; i < _vm->_gyro->scroll[j].size(); i++)
-			_vm->_gyro->scroll[j].setChar(0, i);
+		if (!_vm->_gyro->scroll[j].empty())
+			_vm->_gyro->scroll[j].clear();
 }
 
 void Scrolls::natural() {   /* Natural state of bubbles */
@@ -496,12 +496,12 @@ void Scrolls::calldrivers() {
 					solidify(_vm->_gyro->scrolln);
 					_vm->_gyro->scrolln++;
 				}
-				_vm->_gyro->scroll[_vm->_gyro->scrolln] = _vm->_gyro->scroll[_vm->_gyro->scrolln] + _vm->_gyro->buffer[fv];
+				_vm->_gyro->scroll[_vm->_gyro->scrolln] += _vm->_gyro->buffer[fv];
 				}
 			}
 }
 
-void Scrolls::display(Common::String z) {
+void Scrolls::display(Common::String z) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
 	_vm->_gyro->bufsize = z.size();
 	memcpy(_vm->_gyro->buffer, z.c_str(), _vm->_gyro->bufsize);
 	calldrivers();
