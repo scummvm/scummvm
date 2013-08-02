@@ -1340,8 +1340,8 @@ void SurfaceSdlGraphicsManager::unlockScreen() {
 
 void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
 	Graphics::Surface *screen = lockScreen();
-	if (screen && screen->pixels)
-		memset(screen->pixels, col, screen->h * screen->pitch);
+	if (screen && screen->getBasePtr(0, 0))
+		memset(screen->getBasePtr(0, 0), col, screen->h * screen->pitch);
 	unlockScreen();
 }
 
