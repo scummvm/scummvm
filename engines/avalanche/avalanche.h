@@ -161,8 +161,6 @@ private:
 
 	void quit();
 
-	Common::String strf(int32 x);
-
 	Common::String command_com();
 
 	void explain(byte error);
