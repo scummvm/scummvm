@@ -313,7 +313,7 @@ void PegasusEngine::runIntro() {
 				const Graphics::Surface *frame = video->decodeNextFrame();
 
 				if (frame) {
-					_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+					_system->copyRectToScreen((const byte *)frame->getBasePtr(0, 0), frame->pitch, 0, 0, frame->w, frame->h);
 					_system->updateScreen();
 				}
 			}
@@ -1367,7 +1367,7 @@ bool PegasusEngine::playMovieScaled(Video::VideoDecoder *video, uint16 x, uint16
 				if (frame->w <= 320 && frame->h <= 240) {
 					drawScaledFrame(frame, x, y);
 				} else {
-					_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+					_system->copyRectToScreen((const byte *)frame->getBasePtr(0, 0), frame->pitch, x, y, frame->w, frame->h);
 					_system->updateScreen();
 				}
 			}
@@ -2270,11 +2270,11 @@ void PegasusEngine::drawScaledFrame(const Graphics::Surface *frame, uint16 x, ui
 	scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
 
 	if (frame->format.bytesPerPixel == 2)
-		scaleFrame<uint16>((uint16 *)frame->pixels, (uint16 *)scaledFrame.pixels, frame->w, frame->h, frame->pitch);
+		scaleFrame<uint16>((const uint16 *)frame->getBasePtr(0, 0), (uint16 *)scaledFrame.getBasePtr(0, 0), frame->w, frame->h, frame->pitch);
 	else
-		scaleFrame<uint32>((uint32 *)frame->pixels, (uint32 *)scaledFrame.pixels, frame->w, frame->h, frame->pitch);
+		scaleFrame<uint32>((const uint32 *)frame->getBasePtr(0, 0), (uint32 *)scaledFrame.getBasePtr(0, 0), frame->w, frame->h, frame->pitch);
 
-	_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+	_system->copyRectToScreen((byte *)scaledFrame.getBasePtr(0, 0), scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
 	_system->updateScreen();
 	scaledFrame.free();
 }
