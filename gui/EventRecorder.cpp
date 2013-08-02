@@ -522,7 +522,7 @@ bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5
 		warning("Can't save screenshot");
 		return false;
 	}
-	Common::MemoryReadStream bitmapStream((const byte*)screen.pixels, screen.w * screen.h * screen.format.bytesPerPixel);
+	Common::MemoryReadStream bitmapStream((const byte*)screen.getBasePtr(0, 0), screen.w * screen.h * screen.format.bytesPerPixel);
 	computeStreamMD5(bitmapStream, md5);
 	return true;
 }

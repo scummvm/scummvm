@@ -389,7 +389,7 @@ bool ThemeEngine::init() {
 	_overlayFormat = _system->getOverlayFormat();
 	setGraphicsMode(_graphicsMode);
 
-	if (_screen.pixels && _backBuffer.pixels) {
+	if (_screen.getBasePtr(0, 0) && _backBuffer.getBasePtr(0, 0)) {
 		_initOk = true;
 	}
 
@@ -439,7 +439,7 @@ bool ThemeEngine::init() {
 void ThemeEngine::clearAll() {
 	if (_initOk) {
 		_system->clearOverlay();
-		_system->grabOverlay(_screen.pixels, _screen.pitch);
+		_system->grabOverlay(_screen.getBasePtr(0, 0), _screen.pitch);
 	}
 }
 
@@ -1326,7 +1326,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	// to 8 bit mode, and have to create a suitable palette on the fly.
 	uint colorsFound = 0;
 	Common::HashMap<int, int> colorToIndex;
-	const OverlayColor *src = (const OverlayColor *)cursor->pixels;
+	const OverlayColor *src = (const OverlayColor *)cursor->getBasePtr(0, 0);
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
 			byte r, g, b;
