@@ -149,7 +149,6 @@ static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
 				uint8 pG = (uint8)((1 - yDiff) * ((1 - xDiff) * p1G + xDiff * p2G) + yDiff * ((1 - xDiff) * p3G + xDiff * p4G));
 				uint8 pB = (uint8)((1 - yDiff) * ((1 - xDiff) * p1B + xDiff * p2B) + yDiff * ((1 - xDiff) * p3B + xDiff * p4B));
 
-
 				WRITE_UINT16(dst, Graphics::RGBToColor<Graphics::ColorMasks<565> >(pR, pG, pB));
 				dst += 2;
 			}
@@ -165,7 +164,7 @@ static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
  * Copies the current screen contents to a new surface, using RGB565 format.
  * WARNING: surf->free() must be called by the user to avoid leaking.
  *
- * @param surf		the surface to store the data in it
+ * @param surf      the surface to store the data in it
  */
 static bool grabScreen565(Graphics::Surface *surf) {
 	Graphics::Surface *screen = g_system->lockScreen();
