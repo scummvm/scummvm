@@ -492,8 +492,8 @@ void MortevielleEngine::resetPresenceInRooms(int roomId) {
 		_toiletsPresenceBobMax = false;
 	if (roomId != BATHROOM)
 		_bathRoomPresenceBobMax = false;
-	if (roomId != ROOM9)
-		_room9PresenceLeo = false;
+	if (roomId != JULIA_ROOM)
+		_juliaRoomPresenceLeo = false;
 }
 
 /**
@@ -870,7 +870,7 @@ void MortevielleEngine::setPresencePurpleRoom() {
 	if (_place == PURPLE_ROOM)
 		_purpleRoomPresenceLeo = true;
 	else
-		_room9PresenceLeo = true;
+		_juliaRoomPresenceLeo = true;
 
 	_currBitIndex = 10;
 }
@@ -976,7 +976,7 @@ int MortevielleEngine::setPresenceLanding() {
 	int rand = 0;
 	do {
 		rand = getRandomNumber(1, 8);
-		test = (((rand == 1) && (_purpleRoomPresenceLeo || _room9PresenceLeo)) ||
+		test = (((rand == 1) && (_purpleRoomPresenceLeo || _juliaRoomPresenceLeo)) ||
 		        ((rand == 2) && _roomPresencePat) ||
 		        ((rand == 3) && _roomPresenceGuy) ||
 		        ((rand == 4) && _roomPresenceEva) ||
@@ -1050,7 +1050,7 @@ int MortevielleEngine::getPresenceBitIndex(int roomId) {
 		if (_roomPresenceIda)
 			bitIndex = 2;  // IDA
 	} else if ( ((roomId == PURPLE_ROOM) && (_purpleRoomPresenceLeo))
-			 || ((roomId == ROOM9) && (_room9PresenceLeo)))
+			 || ((roomId == JULIA_ROOM) && (_juliaRoomPresenceLeo)))
 		bitIndex = 128;    // LEO
 	else if (roomId == DARKBLUE_ROOM) {
 		if (_roomPresenceGuy)
@@ -1152,8 +1152,8 @@ void MortevielleEngine::setRandomPresenceRedRoom(int faithScore) {
  * Engine function - Set Random Presence - Room 9
  * @remarks	Originally called 'pl9'
  */
-void MortevielleEngine::setRandomPresenceRoom9(int faithScore) {
-	if (!_room9PresenceLeo) {
+void MortevielleEngine::setRandomPresenceJuliaRoom(int faithScore) {
+	if (!_juliaRoomPresenceLeo) {
 		faithScore = -10;
 		if (getRandomNumber(1, 100) > faithScore) // always true?
 			displayAloneText();
@@ -2361,8 +2361,8 @@ void MortevielleEngine::prepareRoom() {
 			case GREEN_ROOM2:
 				setRandomPresenceRedRoom(_coreVar._faithScore);
 				break;
-			case ROOM9:
-				setRandomPresenceRoom9(_coreVar._faithScore);
+			case JULIA_ROOM:
+				setRandomPresenceJuliaRoom(_coreVar._faithScore);
 				break;
 			case DINING_ROOM:
 				setRandomPresenceDiningRoom(_coreVar._faithScore);
@@ -2816,7 +2816,7 @@ int MortevielleEngine::getPresenceStats(int &rand, int faithScore, int roomId) {
 	if ( ((roomId == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda))
 	  || ((roomId == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)) )
 		retVal = getPresenceStatsGreenRoom();
-	if ((roomId == PURPLE_ROOM) && (!_purpleRoomPresenceLeo) && (!_room9PresenceLeo))
+	if ((roomId == PURPLE_ROOM) && (!_purpleRoomPresenceLeo) && (!_juliaRoomPresenceLeo))
 		retVal = getPresenceStatsPurpleRoom();
 	if ( ((roomId == TOILETS) && (!_toiletsPresenceBobMax))
 	  || ((roomId == BATHROOM) && (!_bathRoomPresenceBobMax)) )
@@ -2826,10 +2826,10 @@ int MortevielleEngine::getPresenceStats(int &rand, int faithScore, int roomId) {
 	if ( ((roomId == RED_ROOM) && (!_roomPresenceBob))
 	  || ((roomId == GREEN_ROOM2) && (!_roomPresencePat)))
 		retVal = getPresenceStatsRedRoom();
-	if ((roomId == ROOM9) && (!_room9PresenceLeo) && (!_purpleRoomPresenceLeo))
+	if ((roomId == JULIA_ROOM) && (!_juliaRoomPresenceLeo) && (!_purpleRoomPresenceLeo))
 		retVal = 10;
-	if ( ((roomId == PURPLE_ROOM) && (_room9PresenceLeo))
-	  || ((roomId == ROOM9) && (_purpleRoomPresenceLeo)))
+	if ( ((roomId == PURPLE_ROOM) && (_juliaRoomPresenceLeo))
+	  || ((roomId == JULIA_ROOM) && (_purpleRoomPresenceLeo)))
 		retVal = -400;
 	if (retVal != -500) {
 		retVal += faithScore;
@@ -2869,8 +2869,8 @@ void MortevielleEngine::setPresenceFlags(int roomId) {
 		_bathRoomPresenceBobMax = true;
 	else if (roomId == GREEN_ROOM2)
 		_roomPresencePat = true;
-	else if (roomId == ROOM9)
-		_room9PresenceLeo = true;
+	else if (roomId == JULIA_ROOM)
+		_juliaRoomPresenceLeo = true;
 }
 
 /**
@@ -2907,7 +2907,7 @@ int MortevielleEngine::getPresence(int roomId) {
 			retVal = getPresenceBitIndex(_place);
 	}
 
-	if (roomId > ROOM9) {
+	if (roomId > JULIA_ROOM) {
 		if ((roomId > LANDING) && (roomId != CHAPEL) && (roomId != ROOM26))
 			displayAloneText();
 		else {

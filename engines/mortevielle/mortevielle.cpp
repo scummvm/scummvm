@@ -74,7 +74,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_roomPresencePat = false;
 	_toiletsPresenceBobMax = false;
 	_bathRoomPresenceBobMax = false;
-	_room9PresenceLeo = false;
+	_juliaRoomPresenceLeo = false;
 
 	_soundOff = false;
 	_largestClearScreen = false;

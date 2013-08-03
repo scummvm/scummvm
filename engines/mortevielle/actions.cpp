@@ -283,7 +283,7 @@ void MortevielleEngine::fctTake() {
 		  || ((_coreVar._currPlace == RED_ROOM)  && (_num == 2))
 		  || ((_coreVar._currPlace == BATHROOM)  && (_num == 6))
 		  || ((_coreVar._currPlace == GREEN_ROOM2)  && (_num == 4))
-		  || ((_coreVar._currPlace == ROOM9) && (_num == 4))
+		  || ((_coreVar._currPlace == JULIA_ROOM) && (_num == 4))
 		  || ((_coreVar._currPlace == DINING_ROOM) && (_num > 2))
 		  || ((_coreVar._currPlace == BUREAU) && (_num == 7))
 		  || ((_coreVar._currPlace == KITCHEN) && (_num == 6))
@@ -457,7 +457,7 @@ void MortevielleEngine::fctLook() {
 		treg(147);
 	if ((_coreVar._currPlace == GREEN_ROOM2) && (_num == 3))
 		treg(149);
-	if ((_coreVar._currPlace == ROOM9) && (_num == 2))
+	if ((_coreVar._currPlace == JULIA_ROOM) && (_num == 2))
 		treg(30);
 	if ((_coreVar._currPlace == DINING_ROOM) && (_num == 3))
 		treg(31);
@@ -611,7 +611,7 @@ void MortevielleEngine::fctOpen() {
 			;
 		if (_openObjects[i] != _num) {
 			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
-				                 || (_coreVar._currPlace == ROOM9)
+				                 || (_coreVar._currPlace == JULIA_ROOM)
 								 || (_coreVar._currPlace == BLUE_ROOM)
 								 || (_coreVar._currPlace == BATHROOM)))
 			    || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM)
@@ -1134,7 +1134,7 @@ void MortevielleEngine::fctEnter() {
 		showMoveMenuAlert();
 	else if (_roomDoorId == OWN_ROOM)
 		_crep = 997;
-	else if ((_roomDoorId == ROOM9) && (_coreVar._selectedObjectId != 136)) {
+	else if ((_roomDoorId == JULIA_ROOM) && (_coreVar._selectedObjectId != 136)) {
 		_crep = 189;
 		_coreVar._availableQuestion[8] = '*';
 	} else {
@@ -1155,7 +1155,7 @@ void MortevielleEngine::fctEnter() {
 				_currMenu = MENU_DISCUSS;
 				_currAction = (_menu._discussMenu[charIndex]._menuId << 8) | _menu._discussMenu[charIndex]._actionId;
 				_syn = true;
-				if (_roomDoorId == ROOM9) {
+				if (_roomDoorId == JULIA_ROOM) {
 					_col = true;
 					_caff = 70;
 					drawPictureWithText();

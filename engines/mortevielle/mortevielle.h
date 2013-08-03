@@ -138,7 +138,7 @@ const int kMaxPatt = 20;
 */
 enum Places {
 	OWN_ROOM = 0,     GREEN_ROOM = 1,   PURPLE_ROOM = 2,     TOILETS = 3,      DARKBLUE_ROOM = 4,
-	BLUE_ROOM = 5,    RED_ROOM = 6,     BATHROOM = 7,        GREEN_ROOM2 = 8,  ROOM9 = 9,
+	BLUE_ROOM = 5,    RED_ROOM = 6,     BATHROOM = 7,        GREEN_ROOM2 = 8,  JULIA_ROOM = 9,
 	DINING_ROOM = 10, BUREAU = 11,      KITCHEN = 12,        ATTIC = 13,       CELLAR = 14,
 	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17, ROOM18 = 18,      MOUNTAIN = 19,
 	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,     INSIDE_WELL = 23, WELL = 24,
@@ -213,7 +213,7 @@ private:
 	bool _roomPresencePat;
 	bool _toiletsPresenceBobMax;
 	bool _bathRoomPresenceBobMax;
-	bool _room9PresenceLeo;
+	bool _juliaRoomPresenceLeo;
 	bool _hiddenHero;
 	bool _heroSearching;
 	bool _keyPressedEsc;
@@ -352,7 +352,7 @@ private:
 	void setRandomPresencePurpleRoom(int faithScore);
 	void setRandomPresenceBlueRoom(int faithScore);
 	void setRandomPresenceRedRoom(int faithScore);
-	void setRandomPresenceRoom9(int faithScore);
+	void setRandomPresenceJuliaRoom(int faithScore);
 	void setRandomPresenceDiningRoom(int faithScore);
 	void setRandomPresenceBureau(int faithScore);
 	void setRandomPresenceKitchen(int faithScore);
