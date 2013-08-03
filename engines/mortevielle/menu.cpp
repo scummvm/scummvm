@@ -393,7 +393,7 @@ void Menu::menuUp(int msgId) {
 		// Get a pointer to the source and destination of the area to restore
 		const byte *pSrc = (const byte *)_vm->_backgroundSurface.getBasePtr(0, 10);
 		Graphics::Surface destArea = _vm->_screenSurface.lockArea(Common::Rect(0, 10, SCREEN_WIDTH, SCREEN_HEIGHT));
-		byte *pDest = (byte *)destArea.getBasePtr(0, 0);
+		byte *pDest = (byte *)destArea.getPixels();
 
 		// Copy the data
 		Common::copy(pSrc, pSrc + (400 - 10) * SCREEN_WIDTH, pDest);
