@@ -57,7 +57,7 @@ void BaseBackend::initBackend() {
 
 void BaseBackend::fillScreen(uint32 col) {
 	Graphics::Surface *screen = lockScreen();
-	if (screen && screen->getBasePtr(0, 0))
-		memset(screen->getBasePtr(0, 0), col, screen->h * screen->pitch);
+	if (screen && screen->getPixels())
+		memset(screen->getPixels(), col, screen->h * screen->pitch);
 	unlockScreen();
 }
