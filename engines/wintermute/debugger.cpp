@@ -68,8 +68,11 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 	 */
 	if (argc == 3) {
 		int error = ADAPTER->addBreakpoint(argv[1], atoi(argv[2]));
-		if (!error) DebugPrintf("%s: OK\n", argv[0]);
-		else if (error == NO_SUCH_FILE) {
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == NO_SUCH_SCRIPT) {
+			DebugPrintf("ERROR: %s: no such script: %s, breakpoint NOT created\n", argv[0], argv[1]);
+		} else if (error == NO_SUCH_SOURCE) {
 			DebugPrintf("WARNING: %s: no such source file: %s\n", argv[0], argv[1]);
 		} else if (error == NO_SUCH_LINE) {
 			DebugPrintf("WARNING: %s: source %s has no line %d\n", argv[0], argv[1], atoi(argv[2]));
@@ -106,10 +109,8 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 	if (argc == 3) {
 		int error = ADAPTER->addWatch(argv[1], argv[2]);
 		if (!error) DebugPrintf("%s: OK\n", argv[0]);
-		else if (error == NO_SUCH_FILE) {
+		else if (error == NO_SUCH_SCRIPT) {
 			DebugPrintf("%s: no such file %s\n", argv[0], argv[1]);
-		} else if (error == NO_SUCH_LINE) {
-			DebugPrintf("%s: %s has no line %d\n", argv[0], argv[1], atoi(argv[2]));
 		}
 	} else {
 		DebugPrintf("Usage: %s <file path> <name> to watch for <name> in file <file path>\n", argv[0]);

@@ -33,13 +33,14 @@ class ScScript;
 
 enum ErrorCode {
 	OK,
-	NO_SUCH_FILE,
+	NO_SUCH_SOURCE,
 	COULD_NOT_OPEN,
 	NO_SUCH_LINE,
 	DUPLICATE_BREAKPOINT,
 	NO_SUCH_BREAKPOINT,
 	NOT_ALLOWED,
-	IS_BLANK // Is blank or comment-only, actually
+	IS_BLANK, // Is blank or comment-only, actually
+	NO_SUCH_SCRIPT 
 };
 
 class SourceFile {
@@ -79,7 +80,7 @@ public:
 	// Called by Console (~=View)
 	int addWatch(const char *filename, const char *symbol);
 	int addBreakpoint(const char *filename, int line);
-	int isLineLegal(const char *filename, int line);
+	int isBreakpointLegal(const char *filename, int line);
 	int removeWatch(int id);
 	int removeBreakpoint(int id);
 	BaseArray<BreakpointInfo> getBreakpoints();
@@ -95,6 +96,7 @@ public:
 	bool showFps(bool show);
 	SourceFile *_lastSource;
 private:
+	bool compiledExists(Common::String filename);
 	WintermuteEngine *_engine;
 	int32 _lastDepth;
 	ScScript *_lastScript;

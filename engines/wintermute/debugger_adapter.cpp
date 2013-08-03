@@ -126,8 +126,22 @@ BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int before
 	}
 	return ret;
 }
+bool DebuggerAdapter::compiledExists(Common::String filename) {
+	uint32 compSize;
+	byte *compBuffer = SCENGINE->getCompiledScript(filename.c_str(), &compSize);
+	if (!compBuffer) {
+		return false;
+	} else {
+		return true;
+	}
+}
+int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 
-int DebuggerAdapter::isLineLegal(const char *filename, int line) {
+	// First of all: does the compiled even exist?
+	// Otherwise, well... it's very much not legal.
+
+	if (!compiledExists(filename)) return NO_SUCH_SCRIPT;
+
 	SourceFile *sf = new SourceFile(filename);
 	int error = OK;
 	sf->getLine(line, &error);
@@ -138,10 +152,10 @@ int DebuggerAdapter::isLineLegal(const char *filename, int line) {
 		} else {
 			return OK;
 		}
-	} else if (error == NO_SUCH_FILE || error == COULD_NOT_OPEN) {
+	} else if (error == NO_SUCH_SOURCE || error == COULD_NOT_OPEN) {
 		// Okay, this does not tell us much, except that we don't have the SOURCE file.
 		// TODO: Check if the bytecode is there, at least
-		return NO_SUCH_FILE;
+		return NO_SUCH_SOURCE;
 	} else if (error == NO_SUCH_LINE) {
 		return NO_SUCH_LINE; // There is apparently no such line in the SOURCE file.
 		// TODO: I guess we should simply raise a WARNING for these.
@@ -153,7 +167,10 @@ int DebuggerAdapter::isLineLegal(const char *filename, int line) {
 int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
 	// TODO: Check if file exists, check if line exists
 	assert(SCENGINE);
-	int isLegal = isLineLegal(filename, line);
+	if (!compiledExists(filename)) {
+		return NO_SUCH_SCRIPT;
+	}
+	int isLegal = isBreakpointLegal(filename, line);
 	if (isLegal == OK) {
 		SCENGINE->addBreakpoint(filename, line);
 		return OK;
@@ -161,10 +178,10 @@ int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
 		// We don't have the SOURCE. A warning will do.
 		SCENGINE->addBreakpoint(filename, line);
 		return IS_BLANK;
-	} else if (isLegal == NO_SUCH_FILE) {
+	} else if (isLegal == NO_SUCH_SOURCE) {
 		// We don't have the SOURCE. A warning will do.
 		SCENGINE->addBreakpoint(filename, line);
-		return NO_SUCH_FILE;
+		return NO_SUCH_SOURCE;
 	} else if (isLegal == NO_SUCH_LINE) {
 		// No line in the source A warning will do.
 		SCENGINE->addBreakpoint(filename, line);
