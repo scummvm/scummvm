@@ -202,7 +202,7 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->getBasePtr(0, 0);
+	dst = (byte *)screen->getPixels();
 
 	dst += 110;
 	dst += x;
@@ -228,7 +228,7 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->getBasePtr(0, 0);
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 25 + window->y) * screen->pitch;
@@ -256,7 +256,7 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->getBasePtr(0, 0);
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 20 + window->y) * screen->pitch;
@@ -284,7 +284,7 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->getBasePtr(0, 0);
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * screen->pitch;
@@ -312,7 +312,7 @@ void AGOSEngine_Elvira1::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->getBasePtr(0, 0);
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * screen->pitch;

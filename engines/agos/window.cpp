@@ -232,7 +232,7 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	uint i;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->getBasePtr(0, 0);
+	dst = (byte *)screen->getPixels();
 	src = getBackGround();
 
 	dst += y * screen->pitch;

@@ -1179,7 +1179,7 @@ void AGOSEngine::vc32_saveScreen() {
 	if (getGameType() == GType_PN) {
 		Graphics::Surface *screen = _system->lockScreen();
 		byte *dst = getBackGround();
-		byte *src = (byte *)screen->getBasePtr(0, 0);
+		byte *src = (byte *)screen->getPixels();
 		for (int i = 0; i < _screenHeight; i++) {
 			memcpy(dst, src, _screenWidth);
 			dst += _backGroundBuf->pitch;
@@ -1193,7 +1193,7 @@ void AGOSEngine::vc32_saveScreen() {
 		uint16 height = _videoWindows[4 * 4 + 3];
 
 		byte *dst = (byte *)_backGroundBuf->getBasePtr(xoffs, yoffs);
-		byte *src = (byte *)_window4BackScn->getBasePtr(0, 0);
+		byte *src = (byte *)_window4BackScn->getPixels();
 		uint16 srcWidth = _videoWindows[4 * 4 + 2] * 16;
 		for (; height > 0; height--) {
 			memcpy(dst, src, width);
@@ -1247,7 +1247,7 @@ void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 
 	if (getGameType() == GType_ELVIRA1 && num == 3) {
 		Graphics::Surface *screen = _system->lockScreen();
-		byte *dst = (byte *)screen->getBasePtr(0, 0);
+		byte *dst = (byte *)screen->getPixels();
 		for (int i = 0; i < _screenHeight; i++) {
 			memset(dst, color, _screenWidth);
 			dst += screen->pitch;

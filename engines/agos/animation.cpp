@@ -272,7 +272,7 @@ void MoviePlayerDXA::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	if (!surface)
 		return;
 
-	const byte *src = (const byte *)surface->getBasePtr(0, 0);
+	const byte *src = (const byte *)surface->getPixels();
 	dst += y * pitch + x;
 
 	do {
@@ -344,7 +344,7 @@ void MoviePlayerDXA::handleNextFrame() {
 
 bool MoviePlayerDXA::processFrame() {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
-	copyFrameToBuffer((byte *)screen->getBasePtr(0, 0), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, screen->pitch);
+	copyFrameToBuffer((byte *)screen->getPixels(), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, screen->pitch);
 	_vm->_system->unlockScreen();
 
 	uint32 soundTime = _mixer->getSoundElapsedTime(_bgSound);
@@ -443,7 +443,7 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	if (!surface)
 		return;
 
-	const byte *src = (const byte *)surface->getBasePtr(0, 0);
+	const byte *src = (const byte *)surface->getPixels();
 	dst += y * pitch + x;
 
 	do {
@@ -495,7 +495,7 @@ void MoviePlayerSMK::nextFrame() {
 
 bool MoviePlayerSMK::processFrame() {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
-	copyFrameToBuffer((byte *)screen->getBasePtr(0, 0), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, screen->pitch);
+	copyFrameToBuffer((byte *)screen->getPixels(), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, screen->pitch);
 	_vm->_system->unlockScreen();
 
 	uint32 waitTime = getTimeToNextFrame();

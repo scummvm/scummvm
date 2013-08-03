@@ -155,7 +155,7 @@ void AGOSEngine::vc48_specialEffect() {
 	if (getPlatform() == Common::kPlatformDOS) {
 		if (num == 1) {
 			Graphics::Surface *screen = _system->lockScreen();
-			byte *dst = (byte *)screen->getBasePtr(0, 0);
+			byte *dst = (byte *)screen->getPixels();
 
 			for (uint h = 0; h < _screenHeight; h++) {
 				for (uint w = 0; w < _screenWidth; w++) {

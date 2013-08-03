@@ -76,7 +76,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 	uint8 height = vlut[3];
 
 	if (num == 4) {
-		byte *dst = (byte *)_window4BackScn->getBasePtr(0, 0);
+		byte *dst = (byte *)_window4BackScn->getPixels();
 
 		for (uint8 h = 0; h < height; h++) {
 			for (uint8 w = 0; w < width; w++) {
@@ -378,7 +378,7 @@ void AGOSEngine::fullFade() {
 
 void AGOSEngine::vc56_fullScreen() {
 	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->getBasePtr(0, 0);
+	byte *dst = (byte *)screen->getPixels();
 	byte *src = _curVgaFile2 + 800;
 
 	for (int i = 0; i < _screenHeight; i++) {
