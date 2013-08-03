@@ -62,12 +62,10 @@ void ScriptManager::createReferenceTable() {
 
 void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
-	for (Common::List<ActionNode *>::iterator iter = _activeNodes.begin(); iter != _activeNodes.end();) {
+	for (Common::List<Common::SharedPtr<ActionNode> >::iterator iter = _activeNodes.begin(); iter != _activeNodes.end();) {
 		if ((*iter)->process(_engine, deltaTimeMillis)) {
-			// Remove the node from _activeNodes, then delete it
-			ActionNode *node = *iter;
+			// Remove the node from _activeNodes, the SharedPtr destructor will delete the actual ActionNode
 			iter = _activeNodes.erase(iter);
-			delete node;
 		} else {
 			iter++;
 		}
@@ -132,7 +130,7 @@ void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
 	_globalState[key] += valueToAdd;
 }
 
-void ScriptManager::addActionNode(ActionNode *node) {
+void ScriptManager::addActionNode(const Common::SharedPtr<ActionNode> &node) {
 	_activeNodes.push_back(node);
 }
 
@@ -141,10 +139,7 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	_referenceTable.clear();
 	_puzzlesToCheck.clear();
 	_activePuzzles.clear();
-	// _activeControls is a list of pointers to the heap, so we have to delete the Controls before we call clear()
-	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
-		delete (*iter);
-	}
+	// We can clear without deleting from the heap because we use SharedPtr
 	_activeControls.clear();
 
 	// Parse into puzzles and controls

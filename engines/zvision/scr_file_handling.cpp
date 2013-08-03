@@ -56,9 +56,10 @@ void ScriptManager::parseScrFile(Common::String fileName) {
 			parsePuzzle(puzzle, file);
 			_activePuzzles.push_back(puzzle);
 		} else if (line.matchString("control:*", true)) {
-			Control *control = parseControl(line, file);
+			Common::SharedPtr<Control> control;
+
 			// Some controls don't require nodes. They just initialize the scene
-			if (control != 0) {
+			if (parseControl(line, file, control)) {
 				_activeControls.push_back(control);
 			}
 		}
@@ -289,8 +290,7 @@ uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	return flags;
 }
 
-Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream) {
-	Control *control = 0;
+bool ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream, Common::SharedPtr<Control> &control) {
 	uint32 key;
 	char controlTypeBuffer[20];
 
@@ -302,17 +302,17 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 
 	} else if (controlType.equalsIgnoreCase("flat")) {
 		Control::parseFlatControl(_engine);
-		return 0;
+		return false;
 	} else if (controlType.equalsIgnoreCase("pana")) {
 		Control::parsePanoramaControl(_engine, stream);
-		return 0;
+		return false;
 	}
 	else if (controlType.equalsIgnoreCase("tilt")) {
 		Control::parseTiltControl(_engine, stream);
-		return 0;
+		return false;
 	}
 
-	return control;
+	return true;
 }
 
 } // End of namespace ZVision

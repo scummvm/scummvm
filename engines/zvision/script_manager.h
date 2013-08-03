@@ -52,7 +52,7 @@ private:
 	 */
 	Common::HashMap<uint32, uint> _globalState;
 	/** Holds the currently active ActionNodes */
-	Common::List<ActionNode *> _activeNodes;
+	Common::List<Common::SharedPtr<ActionNode> > _activeNodes;
 	/** References _globalState keys to Puzzles */
 	Common::HashMap<uint32, Common::Array<Puzzle *> > _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
@@ -60,7 +60,7 @@ private:
 	/** Holds the currently active puzzles */
 	Common::List<Puzzle> _activePuzzles;
 	/** Holds the currently active controls */
-	Common::List<Control *> _activeControls;
+	Common::List<Common::SharedPtr<Control> > _activeControls;
 
 public:
 	
@@ -72,7 +72,7 @@ public:
 	void setStateValue(uint32 key, uint value);
 	void addToStateValue(uint32 key, uint valueToAdd);
 
-	void addActionNode(ActionNode *node);
+	void addActionNode(const Common::SharedPtr<ActionNode> &node);
 
 	void changeLocation(char world, char room, char node, char view, uint32 x);
 
@@ -129,7 +129,7 @@ private:
 	 * @param line      The line initially read
 	 * @param stream    Scr file stream
 	 */
-	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
+	bool parseControl(Common::String &line, Common::SeekableReadStream &stream, Common::SharedPtr<Control> &control);
 };
 
 
