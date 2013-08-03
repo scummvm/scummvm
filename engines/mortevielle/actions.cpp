@@ -503,13 +503,10 @@ void MortevielleEngine::fctSearch() {
 	if (_num == 0) {
 		setCoordinates(7);
 		if (_num != 0) {
-			int cx = 0;
-			do {
-				++cx;
-			} while ((cx <= 6) && (_num != _openObjects[cx]));
-			if (_num != _openObjects[cx])
-				_crep = 187;
-			else {
+			int i;
+			for (i = 1; (i <= 6) && (_num != _openObjects[i]); i++)
+				;
+			if (_num == _openObjects[i]) {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 
@@ -521,7 +518,8 @@ void MortevielleEngine::fctSearch() {
 					tsuiv();
 				} else
 					_crep = 997;
-			}
+			} else
+				_crep = 187;
 		} else {
 			setCoordinates(8);
 			_crep = 997;
@@ -608,11 +606,10 @@ void MortevielleEngine::fctOpen() {
 		if (_currBitIndex > 0)
 			_coreVar._faithScore += 2;
 		++_openObjCount;
-		int tmpPlace = 0;
-		do {
-			++tmpPlace;
-		} while (!((tmpPlace > 6) || (_openObjects[tmpPlace] == 0) || (_openObjects[tmpPlace] == _num)));
-		if (_openObjects[tmpPlace] != _num) {
+		int i;
+		for (i = 1; !(i <= 6) && (_openObjects[i] != 0) && (_openObjects[i] != _num); i++)
+			;
+		if (_openObjects[i] != _num) {
 			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
 				                 || (_coreVar._currPlace == ROOM9)
 								 || (_coreVar._currPlace == BLUE_ROOM)
@@ -635,10 +632,10 @@ void MortevielleEngine::fctOpen() {
 					if (getRandomNumber(1, 4) == 3)
 						_speechManager.startSpeech(7, 9, 1);
 				}
-				_openObjects[tmpPlace] = _num;
+				_openObjects[i] = _num;
 				displayAnimFrame(1, _num);
 			}
-			tmpPlace = _coreVar._currPlace;
+			int tmpPlace = _coreVar._currPlace;
 			if (_coreVar._currPlace == CRYPT)
 				tmpPlace = CELLAR;
 			_crep = _tabdon[kAouvr + (tmpPlace * 7) + _num - 1];
@@ -886,14 +883,13 @@ void MortevielleEngine::fctClose() {
 			return;
 		setCoordinates(7);
 		if (_num != 0) {
-			int cx = 0;
-			do {
-				++cx;
-			} while ((cx <= 6) && (_num != _openObjects[cx]));
-			if (_num == _openObjects[cx]) {
+			int i;
+			for (i = 1; (i <= 6) && (_num != _openObjects[i]); ++i)
+				;
+			if (_num == _openObjects[i]) {
 				displayAnimFrame(2, _num);
 				_crep = 998;
-				_openObjects[cx] = 0;
+				_openObjects[i] = 0;
 				--_openObjCount;
 				if (_openObjCount < 0)
 					_openObjCount = 0;
@@ -983,16 +979,14 @@ void MortevielleEngine::fctSelfPut() {
 			if (chai == 0)
 				_crep = 997;
 			else {
-				int cx = 0;
-				do {
-					++cx;
-				} while ((cx <= 6) && (_num != _openObjects[cx]));
-				if (_num != _openObjects[cx])
-					_crep = 187;
-				else {
+				int i;
+				for (i = 1; (i <= 6) && (_num != _openObjects[i]); i++)
+					;
+				if (_num == _openObjects[i]) {
 					_mchai = chai;
 					_crep = 999;
-				}
+				} else
+					_crep = 187;
 			}
 		} else {
 			setCoordinates(8);

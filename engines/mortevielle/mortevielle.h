@@ -257,7 +257,7 @@ private:
 	Common::String _hintPctMessage;
 	byte  *_cfiecBuffer;
 	int    _cfiecBufferSize;
-	int    _openObjects[8];
+	int    _openObjects[7];
 	uint16 _dialogIndexArray[kMaxDialogIndex + 1];
 	Hint   _dialogHintArray[kMaxDialogHint + 1];
 

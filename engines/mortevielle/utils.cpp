@@ -2717,8 +2717,8 @@ void MortevielleEngine::mapMessageId(int &mesgId) {
  * @remarks	Originally called 'initouv'
  */
 void MortevielleEngine::resetOpenObjects() {
-	for (int cx = 1; cx <= 7; ++cx)
-		_openObjects[cx] = 0;
+	for (int i = 1; i <= 6; ++i)
+		_openObjects[i] = 0;
 	_openObjCount = 0;
 }
 
@@ -2997,9 +2997,9 @@ void MortevielleEngine::drawPicture() {
 		draw(0, 12);
 		prepareScreenType1();
 		if ((_caff < 30) || (_caff > 32)) {
-			for (int cx = 1; cx <= 6; ++cx) {
-				if (_openObjects[cx] != 0)
-					displayAnimFrame(1, _openObjects[cx]);
+			for (int i = 1; i <= 6; ++i) {
+				if (_openObjects[i] != 0)
+					displayAnimFrame(1, _openObjects[i]);
 			}
 
 			if (_caff == ATTIC) {
@@ -3230,11 +3230,11 @@ L1:
 			_coreVar._faithScore += 3 * (_coreVar._faithScore / 10);
 		exitRoom();
 		_menu.setDestinationText(LANDING);
-		int cx = convertBitIndexToCharacterIndex(_currBitIndex);
-		_caff = 69 + cx;
+		int charIdx = convertBitIndexToCharacterIndex(_currBitIndex);
+		_caff = 69 + charIdx;
 		_crep = _caff;
 		_currMenu = MENU_DISCUSS;
-		_currAction = (_menu._discussMenu[cx]._menuId << 8) | _menu._discussMenu[cx]._actionId;
+		_currAction = (_menu._discussMenu[charIdx]._menuId << 8) | _menu._discussMenu[charIdx]._actionId;
 		_syn = true;
 		_col = true;
 	} else {
