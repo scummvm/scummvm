@@ -63,16 +63,16 @@ struct TransparentSurface : public Graphics::Surface {
 	 @brief The possible flipping parameters for the blit methode.
 	 */
 	enum FLIP_FLAGS {
-	    /// The image will not be flipped.
-	    FLIP_NONE = 0,
-	    /// The image will be flipped at the horizontal axis.
-	    FLIP_H = 1,
-	    /// The image will be flipped at the vertical axis.
-	    FLIP_V = 2,
-	    /// The image will be flipped at the horizontal and vertical axis.
-	    FLIP_HV = FLIP_H | FLIP_V,
-	    /// The image will be flipped at the horizontal and vertical axis.
-	    FLIP_VH = FLIP_H | FLIP_V
+		/// The image will not be flipped.
+		FLIP_NONE = 0,
+		/// The image will be flipped at the horizontal axis.
+		FLIP_H = 1,
+		/// The image will be flipped at the vertical axis.
+		FLIP_V = 2,
+		/// The image will be flipped at the horizontal and vertical axis.
+		FLIP_HV = FLIP_H | FLIP_V,
+		/// The image will be flipped at the horizontal and vertical axis.
+		FLIP_VH = FLIP_H | FLIP_V
 	};
 
 	bool _enableAlphaBlit;
