@@ -97,6 +97,34 @@ void Surface::copyFrom(const Surface &surf) {
 	}
 }
 
+Surface Surface::getSubArea(const Common::Rect &area) {
+	Common::Rect effectiveArea(area);
+	effectiveArea.clip(w, h);
+
+	Surface subSurface;
+	subSurface.w = effectiveArea.width();
+	subSurface.h = effectiveArea.height();
+	subSurface.pitch = pitch;
+	subSurface.pixels = getBasePtr(area.left, area.top);
+	subSurface.format = format;
+	return subSurface;
+}
+
+const Surface Surface::getSubArea(const Common::Rect &area) const {
+	Common::Rect effectiveArea(area);
+	effectiveArea.clip(w, h);
+
+	Surface subSurface;
+	subSurface.w = effectiveArea.width();
+	subSurface.h = effectiveArea.height();
+	subSurface.pitch = pitch;
+	// We need to cast the const away here because a Surface always has a
+	// pointer to modifiable pixel data.
+	subSurface.pixels = const_cast<void *>(getBasePtr(area.left, area.top));
+	subSurface.format = format;
+	return subSurface;
+}
+
 void Surface::hLine(int x, int y, int x2, uint32 color) {
 	// Clipping
 	if (y < 0 || y >= h)
