@@ -121,9 +121,14 @@ uint ScriptManager::getStateValue(uint32 key) {
 	return _globalState[key];
 }
 
-// TODO: Add logic to check _referenceTable and add to _puzzlesToCheck if necessary
 void ScriptManager::setStateValue(uint32 key, uint value) {
 	_globalState[key] = value;
+
+	if (_referenceTable.contains(key)) {
+		for (Common::Array<Puzzle *>::iterator iter = _referenceTable[key].begin(); iter != _referenceTable[key].end(); iter++) {
+			_puzzlesToCheck.push((*iter));
+		}
+	}
 }
 
 void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
