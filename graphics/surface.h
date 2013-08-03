@@ -135,10 +135,42 @@ struct Surface {
 	void copyFrom(const Surface &surf);
 
 	/**
+	 * Creates a Surface which represents a sub-area of this Surface object.
+	 *
+	 * The pixel (0, 0) of the returned Surface will be the same as Pixel
+	 * (area.x, area.y) of this Surface. Changes to any of the Surface objects
+	 * will change the shared pixel data.
+	 *
+	 * Note that the Surface returned is only valid as long as this Surface
+	 * object is still alive (i.e. its pixel data is not destroyed or
+	 * reallocated). Do *never* try to free the returned Surface.
+	 *
+	 * @param area The area which should be represented. Note that the area
+	 *             will get clipped in case it does not fit!
+	 */
+	Surface getSubArea(const Common::Rect &area);
+
+	/**
+	 * Creates a Surface which represents a sub-area of this Surface object.
+	 *
+	 * The pixel (0, 0) of the returned Surface will be the same as Pixel
+	 * (area.x, area.y) of this Surface.
+	 *
+	 * Note that the Surface returned is only valid as long as this Surface
+	 * object is still alive (i.e. its pixel data is not destroyed or
+	 * reallocated). Do *never* try to free the returned Surface.
+	 *
+	 * @param area The area which should be represented. Note that the area
+	 *             will get clipped in case it does not fit!
+	 */
+	const Surface getSubArea(const Common::Rect &area) const;
+
+	/**
 	 * Convert the data to another pixel format.
 	 *
 	 * This works in-place. This means it will not create an additional buffer
-	 * for the conversion process. The value of pixels might change though.
+	 * for the conversion process. The value of 'pixels' might change though
+	 * (that means it might realloc the pixel data).
 	 *
 	 * Note that you should only use this, when you created the Surface data via
 	 * create! Otherwise this function has undefined behavior.
