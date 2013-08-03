@@ -347,13 +347,13 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int)img->h - -posY);
-		img->pixels = (byte *)img->getBasePtr(0, -posY);
+		img->setPixels((byte *)img->getBasePtr(0, -posY));
 		posY = 0;
 	}
 
 	if (posX < 0) {
 		img->w = MAX(0, (int)img->w - -posX);
-		img->pixels = (byte *)img->getBasePtr(-posX, 0);
+		img->setPixels((byte *)img->getBasePtr(-posX, 0));
 		posX = 0;
 	}
 
@@ -490,7 +490,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	retSize.setHeight(img->h);
 
 	if (imgScaled) {
-		imgScaled->pixels = savedPixels;
+		imgScaled->setPixels(savedPixels);
 		imgScaled->free();
 		delete imgScaled;
 	}
