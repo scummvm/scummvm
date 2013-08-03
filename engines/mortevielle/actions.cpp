@@ -209,8 +209,8 @@ void MortevielleEngine::fctTake() {
 				_obpart = false;
 				prepareDisplayText();
 			} else {
-				_tabdon[kAcha + ((_mchai - 1) * 10) + _searchCount - 1] = 0;
-				tsuiv();
+				_tabdon[kAcha + ((_curSearchObjId - 1) * 10) + _searchCount - 1] = 0;
+				prepareNextObject();
 				++_takeObjCount;
 				if (_takeObjCount > 6) {
 					_coreVar._faithScore += 2;
@@ -510,12 +510,12 @@ void MortevielleEngine::fctSearch() {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 
-				_mchai = rechai();
-				if (_mchai != 0) {
+				_curSearchObjId = getFirstObject();
+				if (_curSearchObjId != 0) {
 					_searchCount = 0;
 					_heroSearching = true;
 					_menu.setSearchMenu();
-					tsuiv();
+					prepareNextObject();
 				} else
 					_crep = 997;
 			} else
@@ -893,9 +893,9 @@ void MortevielleEngine::fctClose() {
 				--_openObjCount;
 				if (_openObjCount < 0)
 					_openObjCount = 0;
-				int chai = rechai();
-				if (_mchai == chai)
-					_mchai = 0;
+				int objId = getFirstObject();
+				if (_curSearchObjId == objId)
+					_curSearchObjId = 0;
 			} else {
 				_crep = 187;
 			}
@@ -964,7 +964,7 @@ void MortevielleEngine::fctSelfPut() {
 	else {
 		if (_caff > 99) {
 			_crep = 999;
-			ajchai();
+			putObject();
 			if (_crep != 192)
 				displayEmptyHand();
 			return;
@@ -975,15 +975,15 @@ void MortevielleEngine::fctSelfPut() {
 		setCoordinates(7);
 		_crep = 124;
 		if (_num != 0) {
-			int chai = rechai();
-			if (chai == 0)
+			int objId = getFirstObject();
+			if (objId == 0)
 				_crep = 997;
 			else {
 				int i;
 				for (i = 1; (i <= 6) && (_num != _openObjects[i]); i++)
 					;
 				if (_num == _openObjects[i]) {
-					_mchai = chai;
+					_curSearchObjId = objId;
 					_crep = 999;
 				} else
 					_crep = 187;
@@ -1036,7 +1036,7 @@ void MortevielleEngine::fctSelfPut() {
 			_crep = 185;
 		if ((_crep == 999) || (_crep == 185) || (_crep == 998)) {
 			if (_crep == 999)
-				ajchai();
+				putObject();
 			if (_crep != 192)
 				displayEmptyHand();
 		}

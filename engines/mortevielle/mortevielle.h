@@ -112,7 +112,7 @@ const int kFleche = 1758;
 
 const int kAsoul = 154;
 const int kAouvr = 282;
-const int kAchai = 387;
+const int kAsearch = 387;
 const int kArcf = 1272;
 const int kArep = 1314;
 const int kAmzon = 1650;
@@ -234,7 +234,7 @@ private:
 	int  _day;
 	int  _hour;
 	int  _minute;
-	int  _mchai;
+	int  _curSearchObjId;
 	int  _controlMenu;
 	int  _startHour;
 	int  _endHour;
@@ -411,17 +411,17 @@ private:
 	void putInHand(int &objId);
 	void initMaxAnswer();
 	void displayAnimFrame(int frameNum, int animId);
+	int  getFirstObject();
+	void prepareNextObject();
+	void putObject();
+	void resetObjectPlace();
 
-	void copcha();
 	void adzon();
 	void premtet();
-	void ajchai();
 	void ecr2(Common::String text);
 	void tlu(int af, int ob);
 	void mennor();
-	void tsuiv();
 	void treg(int objId);
-	int  rechai();
 
 public:
 	Common::Point _prevPos;

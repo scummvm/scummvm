@@ -332,7 +332,7 @@ void MortevielleEngine::handleAction() {
 							_caff = _coreVar._currPlace;
 							_crep = 998;
 						} else
-							tsuiv();
+							prepareNextObject();
 						mennor();
 					}
 				}
@@ -1284,7 +1284,7 @@ void MortevielleEngine::startMusicOrSpeech(int so) {
 void MortevielleEngine::loseGame() {
 	resetOpenObjects();
 	_roomDoorId = OWN_ROOM;
-	_mchai = 0;
+	_curSearchObjId = 0;
 	_menu.unsetSearchMenu();
 	if (!_blo)
 		getPresence(MANOR_FRONT);
@@ -1497,7 +1497,7 @@ void MortevielleEngine::gameLoaded() {
 	_roomDoorId = OWN_ROOM;
 	_syn = true;
 	_heroSearching = true;
-	_mchai = 0;
+	_curSearchObjId = 0;
 	_manorDistance = 0;
 	resetOpenObjects();
 	_takeObjCount = 0;
@@ -1914,7 +1914,11 @@ Common::String MortevielleEngine::getString(int num) {
 	return wrkStr;
 }
 
-void MortevielleEngine::copcha() {
+/**
+ * Reset object place
+ * @remarks	Originally called 'copcha'
+ */
+void MortevielleEngine::resetObjectPlace() {
 	for (int i = kAcha; i < kAcha + 390; i++)
 		_tabdon[i] = _tabdon[i + 390];
 }
@@ -1924,7 +1928,7 @@ void MortevielleEngine::copcha() {
  * @remarks	Originally called 'inzon'
  */
 void MortevielleEngine::resetVariables() {
-	copcha();
+	resetObjectPlace();
 
 	_coreVar._alreadyEnteredManor = false;
 	_coreVar._selectedObjectId = 0;
@@ -3098,7 +3102,7 @@ void MortevielleEngine::exitRoom() {
 	resetOpenObjects();
 
 	_roomDoorId = OWN_ROOM;
-	_mchai = 0;
+	_curSearchObjId = 0;
 	resetRoomVariables(_coreVar._currPlace);
 }
 
@@ -3171,15 +3175,18 @@ void MortevielleEngine::premtet() {
 	_screenSurface.drawBox(18, 79, 155, 92, 15);
 }
 
-void MortevielleEngine::ajchai() {
-	int cy = kAcha + ((_mchai - 1) * 10) - 1;
-	int cx = 0;
-	do {
-		++cx;
-	} while ((cx <= 9) && (_tabdon[cy + cx] != 0));
+/**
+ * Try to put an object somewhere
+ * @remarks	Originally called 'ajchai'
+ */
+void MortevielleEngine::putObject() {
+	int putId = kAcha + ((_curSearchObjId - 1) * 10) - 1;
+	int i;
+	for (i = 1; (i <= 9) && (_tabdon[putId + i] != 0); i++)
+		;
 
-	if (_tabdon[cy + cx] == 0)
-		_tabdon[cy + cx] = _coreVar._selectedObjectId;
+	if (_tabdon[putId + i] == 0)
+		_tabdon[putId + i] = _coreVar._selectedObjectId;
 	else
 		_crep = 192;
 }
@@ -3189,10 +3196,10 @@ void MortevielleEngine::ajchai() {
  * @remarks	Originally called 'ajjer'
  */
 void MortevielleEngine::addObjectToInventory(int objectId) {
-	int i = 0;
-	do {
-		++i;
-	} while ((i <= 5) && (_coreVar._inventory[i] != 0));
+	int i;
+	
+	for (i = 1; (i <= 5) && (_coreVar._inventory[i] != 0); i++)
+		;
 
 	if (_coreVar._inventory[i] == 0) {
 		_coreVar._inventory[i] = objectId;
@@ -3256,26 +3263,30 @@ L1:
 		_menu.drawMenu();
 }
 
-void MortevielleEngine::tsuiv() {
-	int tbcl;
-	int cy = kAcha + ((_mchai - 1) * 10) - 1;
-	int cx = 0;
+/**
+ * Search - Prepare next object
+ * @remarks	Originally called 'tsuiv'
+ */
+void MortevielleEngine::prepareNextObject() {
+	int objId;
+	int tabIdx = kAcha + ((_curSearchObjId - 1) * 10) - 1;
+	int localSeearchCount = 0;
 	do {
-		++cx;
+		++localSeearchCount;
 		++_searchCount;
-		int cl = cy + _searchCount;
-		tbcl = _tabdon[cl];
-	} while ((tbcl == 0) && (_searchCount <= 9));
+		objId = _tabdon[tabIdx + _searchCount];
+	} while ((objId == 0) && (_searchCount <= 9));
 
-	if ((tbcl != 0) && (_searchCount < 11)) {
-		_caff = tbcl;
+	if ((objId != 0) && (_searchCount < 11)) {
+		_caff = objId;
 		_crep = _caff + 400;
 		if (_currBitIndex != 0)
+			// Someone is present in the room
 			_coreVar._faithScore += 2;
 	} else {
 		prepareDisplayText();
 		endSearch();
-		if (cx > 9)
+		if (localSeearchCount > 9)
 			_crep = 131;
 	}
 }
@@ -3413,13 +3424,17 @@ void MortevielleEngine::putInHand(int &objId) {
 	}
 }
 
-int MortevielleEngine::rechai() {
+/**
+ * Search - Get the first object
+ * @remarks	Originally called 'rechai'
+ */
+int MortevielleEngine::getFirstObject() {
 	int tmpPlace = _coreVar._currPlace;
 
 	if (_coreVar._currPlace == CRYPT)
 		tmpPlace = CELLAR;
 
-	return _tabdon[kAchai + (tmpPlace * 7) + _num - 1];
+	return _tabdon[kAsearch + (tmpPlace * 7) + _num - 1];
 }
 
 /**
