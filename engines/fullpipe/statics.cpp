@@ -562,7 +562,31 @@ Common::Point *Movement::getDimensionsOfPhase(Common::Point *p, int phaseIndex) 
 }
 
 void Movement::initStatics(StaticANIObject *ani) {
-	warning("STUB: Movement::initStatics");
+	if (!_currMovement)
+		return;
+
+	_staticsObj2 = ani->addReverseStatics(_currMovement->_staticsObj2);
+	_staticsObj1 = ani->addReverseStatics(_currMovement->_staticsObj1);
+	
+	_mx = _currMovement->_mx;
+	_my = _currMovement->_my;
+
+	_currMovement->setDynamicPhaseIndex(_currMovement->_updateFlag1 != 0 ? 1 : 0);
+
+	Common::Point point;
+
+	int x1 = _currMovement->_staticsObj1->getDimensions(&point)->x - _mx;
+
+	_mx = x1 - _currMovement->_currDynamicPhase->getDimensions(&point)->x;
+
+	_currMovement->setDynamicPhaseIndex(_currMovement->_currDynamicPhaseIndex);
+
+	_m2x = _currMovement->_m2x;
+	_m2y = _currMovement->_m2y;
+	_currMovement->gotoLastFrame();
+
+	x1 = _currMovement->_staticsObj2->getDimensions(&point)->x;
+	_m2x = _currMovement->_currDynamicPhase->getDimensions(&point)->x - _m2x - x1;
 }
 
 void Movement::updateCurrDynamicPhase() {
@@ -572,6 +596,10 @@ void Movement::updateCurrDynamicPhase() {
 	if (_dynamicPhases[_currDynamicPhaseIndex]) {
 		_currDynamicPhase = (DynamicPhase *)_dynamicPhases[_currDynamicPhaseIndex];
 	}
+}
+
+void Movement::setDynamicPhaseIndex(int index) {
+	warning("STUB: Movement::setDynamicPhaseIndex(%d)", index);
 }
 
 void Movement::loadPixelData() {
@@ -610,6 +638,10 @@ void Movement::removeFirstPhase() {
 
 void Movement::gotoNextFrame(int callback1, int callback2) {
 	warning("STUB: Movement::gotoNextFrame()");
+}
+
+void Movement::gotoLastFrame() {
+	warning("STUB: Movement::gotoLastFrame()");
 }
 
 Common::Point *Movement::getCenter(Common::Point *p) {

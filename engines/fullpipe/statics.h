@@ -143,8 +143,11 @@ class Movement : public GameObject {
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
 
+	void setDynamicPhaseIndex(int index);
+
 	void removeFirstPhase();
 	void gotoNextFrame(int callback1, int callback2);
+	void gotoLastFrame();
 
 	void loadPixelData();
 
