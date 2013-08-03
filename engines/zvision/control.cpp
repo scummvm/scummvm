@@ -51,7 +51,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 			renderTable->setPanoramaFoV(fov);
 		} else if (line.matchString("linscale*", true)) {
 			float scale;
-			sscanf(line.c_str(), "angle(%f)", &scale);
+			sscanf(line.c_str(), "linscale(%f)", &scale);
 			renderTable->setPanoramaScale(scale);
 		} else if (line.matchString("reversepana*", true)) {
 			uint reverse;
@@ -83,7 +83,7 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 			renderTable->setTiltFoV(fov);
 		} else if (line.matchString("linscale*", true)) {
 			float scale;
-			sscanf(line.c_str(), "angle(%f)", &scale);
+			sscanf(line.c_str(), "linscale(%f)", &scale);
 			renderTable->setTiltScale(scale);
 		} else if (line.matchString("reversepana*", true)) {
 			uint reverse;
