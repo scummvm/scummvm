@@ -39,7 +39,7 @@ bool Sprite::contains(const Common::Point &pos) const {
 		return false;
 	if (adjustedPos.y < 0 || adjustedPos.y >= _surface.h)
 		return false;
-	const byte *pixels = (const byte *)_surface.getBasePtr(0, 0);
+	const byte *pixels = (const byte *)_surface.getPixels();
 	return (pixels[(_surface.h - adjustedPos.y - 1) * _surface.w + adjustedPos.x] != 0);
 }
 
@@ -794,7 +794,7 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 
 	if (width > 0 && height > 0) {
 		sprite._surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-		decompressBitmap(type, stream, (byte *)sprite._surface.getBasePtr(0, 0), size, width, height);
+		decompressBitmap(type, stream, (byte *)sprite._surface.getPixels(), size, width, height);
 	} else {
 		// there are some sprites (e.g. a -998x-998 one in Gregory's title screen)
 		// which have an invalid size, but the original engine doesn't notice for
@@ -814,7 +814,7 @@ void ComposerEngine::drawSprite(const Sprite &sprite) {
 	int y = sprite._pos.y;
 
 	// incoming data is BMP-style (bottom-up), so flip it
-	byte *pixels = (byte *)_screen.getBasePtr(0, 0);
+	byte *pixels = (byte *)_screen.getPixels();
 	for (int j = 0; j < sprite._surface.h; j++) {
 		if (j + y < 0)
 			continue;
