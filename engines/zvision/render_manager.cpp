@@ -63,14 +63,14 @@ void RenderManager::updateScreen(bool isConsoleActive) {
 
 void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle) {
 	// Panoramas are transposed
-	// The actual data is transposed in the RenderTable lookup
+	// The actual data is transposed in mutateImage
 	if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
 		uint32 temp = imageHeight;
 		imageHeight = imageWidth;
 		imageWidth = temp;
 	}
 	
-	// Check if we truly want a subRect of the image
+	// If subRect is empty, use the entire image
 	if (subRectangle.isEmpty())
 		subRectangle = Common::Rect(imageWidth, imageHeight);
 
@@ -107,19 +107,23 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 d
 		return;
 	}
 
+	renderImageToScreen(file, destinationX, destinationY, subRectangle);
+}
+
+void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle) {
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
 	uint32 fileType;
-	fileType = file.readUint32BE();
+	fileType = stream.readUint32BE();
 
 	// Check for TGZ files
 	if (fileType == MKTAG('T', 'G', 'Z', '\0')) {
 		// TGZ files have a header and then Bitmap data that is compressed with LZSS
-		uint32 decompressedSize = file.readSint32LE();
-		uint32 imageWidth = file.readSint32LE();
-		uint32 imageHeight = file.readSint32LE();
+		uint32 decompressedSize = stream.readSint32LE();
+		uint32 imageWidth = stream.readSint32LE();
+		uint32 imageHeight = stream.readSint32LE();
 
-		LzssReadStream stream(&file);
+		LzssReadStream stream(&stream);
 		byte *buffer = new byte[decompressedSize];
 		stream.read(buffer, decompressedSize);
 
@@ -129,11 +133,11 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 d
 		delete[] buffer;
 	} else {
 		// Reset the cursor
-		file.seek(0);
+		stream.seek(0);
 
 		// Decode
 		Graphics::TGADecoder tga;
-		if (!tga.loadStream(file)) {
+		if (!tga.loadStream(stream)) {
 			warning("Error while reading TGA image");
 			return;
 		}

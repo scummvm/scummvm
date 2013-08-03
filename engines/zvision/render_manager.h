@@ -34,6 +34,7 @@ class OSystem;
 
 namespace Common {
 class String;
+class SeekableReadStream;
 }
 
 namespace Video {
@@ -88,6 +89,17 @@ public:
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
 	 */
 	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0));
+
+	/**
+	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
+	 * The image will be clipped to fit inside the window.
+	 *
+	 * @param stream          Stream to read the image data from
+	 * @param destinationX    X position where the image should be put
+	 * @param destinationY    Y position where the image should be put
+	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
+	 */
+	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0));
 
 	RenderTable *getRenderTable();
 
