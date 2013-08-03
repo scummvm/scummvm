@@ -29,6 +29,7 @@
 
 #include "zvision/console.h"
 #include "zvision/zvision.h"
+#include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/zork_raw.h"
@@ -45,6 +46,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
 	DCmd_Register("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
 	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
+	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -146,6 +148,17 @@ bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
 	}
 
 	_engine->getRenderManager()->getRenderTable()->setPanoramaScale(atof(argv[1]));
+
+	return true;
+}
+
+bool Console::cmdChangeLocation(int argc, const char **argv) {
+	if (argc != 6) {
+		DebugPrintf("Use changelocation <char: world> <char: room> <char:node> <char:view> <int: x position> to change your location");
+		return true;
+	}
+
+	_engine->getScriptManager()->changeLocation(*(argv[1]), *(argv[2]), *(argv[3]), *(argv[4]), atoi(argv[5]));
 
 	return true;
 }
