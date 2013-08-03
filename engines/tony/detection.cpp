@@ -158,9 +158,9 @@ SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int s
 	Graphics::Surface *to = new Graphics::Surface();
 	to->create(160, 120, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
-	if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slot, (byte *)to->getBasePtr(0, 0), saveName, difficulty)) {
+	if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slot, (byte *)to->getPixels(), saveName, difficulty)) {
 #ifdef SCUMM_BIG_ENDIAN
-		uint16 *pixels = (uint16 *)to->getBasePtr(0, 0);
+		uint16 *pixels = (uint16 *)to->getPixels();
 		for (int i = 0; i < to->w * to->h; ++i)
 			pixels[i] = READ_LE_UINT16(pixels + i);
 #endif
