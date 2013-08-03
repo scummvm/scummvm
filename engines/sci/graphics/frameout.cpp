@@ -532,7 +532,7 @@ void GfxFrameout::showVideo() {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
-				g_system->copyRectToScreen(frame->getBasePtr(0, 0), frame->pitch, x, y, frame->w, frame->h);
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 
 				if (videoDecoder->hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
