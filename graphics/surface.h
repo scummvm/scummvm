@@ -98,7 +98,7 @@ struct Surface {
 	/**
 	 * Sets the pixel data.
 	 *
-	 * Note that this is a simply setter. Be careful what you are doing!
+	 * Note that this is a simply a setter. Be careful what you are doing!
 	 *
 	 * @param newPixels The new pixel data.
 	 */
