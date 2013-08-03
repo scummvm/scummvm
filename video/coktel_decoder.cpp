@@ -2399,7 +2399,10 @@ void VMDDecoder::blit16(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 
 	Graphics::PixelFormat pixelFormat = getPixelFormat();
 
-	const byte *src = (const byte *)srcSurf.getBasePtr(srcRect.left, srcRect.top);
+	// We cannot use getBasePtr here because srcSurf.format.bytesPerPixel is
+	// different from _bytesPerPixel.
+	const byte *src = (const byte *)srcSurf.getPixels() +
+		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
 	byte *dst = (byte *)_surface.getBasePtr(_x + rect.left, _y + rect.top);
 
 	for (int i = 0; i < rect.height(); i++) {
@@ -2437,7 +2440,10 @@ void VMDDecoder::blit24(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 
 	Graphics::PixelFormat pixelFormat = getPixelFormat();
 
-	const byte *src = (const byte *)srcSurf.getBasePtr(srcRect.left, srcRect.top);
+	// We cannot use getBasePtr here because srcSurf.format.bytesPerPixel is
+	// different from _bytesPerPixel.
+	const byte *src = (const byte *)srcSurf.getPixels() +
+		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
 	byte *dst = (byte *)_surface.getBasePtr(_x + rect.left, _y + rect.top);
 
 	for (int i = 0; i < rect.height(); i++) {
