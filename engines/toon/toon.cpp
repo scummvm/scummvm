@@ -499,7 +499,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 
 	if (_dirtyAll || _gameState->_currentScrollValue != lastScroll) {
 		// we have to refresh everything in case of scrolling.
-		_system->copyRectToScreen((byte *)_mainSurface->getBasePtr(0, 0) + state()->_currentScrollValue, TOON_BACKBUFFER_WIDTH, 0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
+		_system->copyRectToScreen((byte *)_mainSurface->getPixels() + state()->_currentScrollValue, TOON_BACKBUFFER_WIDTH, 0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 	} else {
 
 		int32 offX = 0;

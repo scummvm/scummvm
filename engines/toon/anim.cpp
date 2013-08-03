@@ -231,7 +231,7 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	int32 destPitch = surface.pitch;
 	int32 destPitchMask = mask->getWidth();
 	uint8 *c = _frames[frame]._data;
-	uint8 *curRow = (uint8 *)surface.getBasePtr(0, 0);
+	uint8 *curRow = (uint8 *)surface.getPixels();
 	uint8 *curRowMask = mask->getDataPtr();
 
 	bool shadowFlag = false;
