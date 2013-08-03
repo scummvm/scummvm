@@ -522,7 +522,7 @@ void SceneExt::refreshBackground(int xAmount, int yAmount) {
 	assert(screenSize == (s.w * s.h));
 
 	// Copy the data
-	byte *destP = (byte *)s.getBasePtr(0, 0);
+	byte *destP = (byte *)s.getPixels();
 	Common::copy(dataP, dataP + (s.w * s.h), destP);
 	_backSurface.unlockSurface();
 
