@@ -150,8 +150,8 @@ void RenderTable::generatePanoramaLookupTable() {
 			uint32 index = y * _numColumns + x;
 
 			// Only store the x,y offsets instead of the absolute positions
-			_internalBuffer[index].x = newX - x; //pixel index
-			_internalBuffer[index].y = newY - y; //pixel index
+			_internalBuffer[index].x = newX - x;
+			_internalBuffer[index].y = newY - y;
 		}
 	}
 }
