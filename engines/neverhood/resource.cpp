@@ -39,7 +39,7 @@ SpriteResource::~SpriteResource() {
 
 void SpriteResource::draw(Graphics::Surface *destSurface, bool flipX, bool flipY) {
 	if (_pixels) {
-		byte *dest = (byte*)destSurface->getBasePtr(0, 0);
+		byte *dest = (byte*)destSurface->getPixels();
 		const int destPitch = destSurface->pitch;
 		if (_rle)
 			unpackSpriteRle(_pixels, _dimensions.width, _dimensions.height, dest, destPitch, flipX, flipY);
@@ -116,7 +116,7 @@ AnimResource::~AnimResource() {
 
 void AnimResource::draw(uint frameIndex, Graphics::Surface *destSurface, bool flipX, bool flipY) {
 	const AnimFrameInfo frameInfo = _frames[frameIndex];
-	byte *dest = (byte*)destSurface->getBasePtr(0, 0);
+	byte *dest = (byte*)destSurface->getPixels();
 	const int destPitch = destSurface->pitch;
 	_currSpriteData = _spriteData + frameInfo.spriteDataOffs;
 	_width = frameInfo.drawOffset.width;
@@ -298,7 +298,7 @@ void MouseCursorResource::draw(int frameNum, Graphics::Surface *destSurface) {
 		const int sourcePitch = (_cursorSprite.getDimensions().width + 3) & 0xFFFC; // 4 byte alignment
 		const int destPitch = destSurface->pitch;
 		const byte *source = _cursorSprite.getPixels() + _cursorNum * (sourcePitch * 32) + frameNum * 32;
-		byte *dest = (byte*)destSurface->getBasePtr(0, 0);
+		byte *dest = (byte*)destSurface->getPixels();
 		for (int16 yc = 0; yc < 32; yc++) {
 			memcpy(dest, source, 32);
 			source += sourcePitch;
