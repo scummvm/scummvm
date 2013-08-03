@@ -130,7 +130,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
 
 	if (bitsPerPixel == 8) {
-		byte *dst = (byte *)_surface->getBasePtr(0, 0);
+		byte *dst = (byte *)_surface->getPixels();
 
 		for (int32 i = 0; i < height; i++) {
 			stream.read(dst + (height - i - 1) * width, width);

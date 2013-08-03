@@ -77,13 +77,13 @@ void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 
 static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
 	while (in.w / out.w >= 4 || in.h / out.h >= 4) {
-		createThumbnail_4<565>((const uint8 *)in.getBasePtr(0, 0), in.pitch, (uint8 *)in.getBasePtr(0, 0), in.pitch, in.w, in.h);
+		createThumbnail_4<565>((const uint8 *)in.getPixels(), in.pitch, (uint8 *)in.getPixels(), in.pitch, in.w, in.h);
 		in.w /= 4;
 		in.h /= 4;
 	}
 
 	while (in.w / out.w >= 2 || in.h / out.h >= 2) {
-		createThumbnail_2<565>((const uint8 *)in.getBasePtr(0, 0), in.pitch, (uint8 *)in.getBasePtr(0, 0), in.pitch, in.w, in.h);
+		createThumbnail_2<565>((const uint8 *)in.getPixels(), in.pitch, (uint8 *)in.getPixels(), in.pitch, in.w, in.h);
 		in.w /= 2;
 		in.h /= 2;
 	}
@@ -91,7 +91,7 @@ static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
 	if ((in.w == out.w && in.h < out.h) || (in.w < out.w && in.h == out.h)) {
 		// In this case we simply center the input surface in the output
 		uint8 *dst = (uint8 *)out.getBasePtr((out.w - in.w) / 2, (out.h - in.h) / 2);
-		const uint8 *src = (const uint8 *)in.getBasePtr(0, 0);
+		const uint8 *src = (const uint8 *)in.getPixels();
 
 		for (int y = 0; y < in.h; ++y) {
 			memcpy(dst, src, in.w * in.format.bytesPerPixel);
@@ -172,7 +172,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 		return false;
 
 	assert(screen->format.bytesPerPixel == 1 || screen->format.bytesPerPixel == 2);
-	assert(screen->getBasePtr(0, 0) != 0);
+	assert(screen->getPixels() != 0);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
