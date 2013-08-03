@@ -612,7 +612,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	// Some paranoia checks
 	assert(top >= 0 && bottom <= vs->h);
 	assert(x >= 0 && width <= vs->pitch);
-	assert(_textSurface.getBasePtr(0, 0));
+	assert(_textSurface.getPixels());
 
 	// Perform some clipping
 	if (width > vs->w - x)
@@ -1135,7 +1135,7 @@ void ScummEngine::clearTextSurface() {
 		_townsScreen->fillLayerRect(1, 0, 0, _textSurface.w, _textSurface.h, 0);
 #endif
 
-	fill((byte *)_textSurface.getBasePtr(0, 0),  _textSurface.pitch,
+	fill((byte *)_textSurface.getPixels(),  _textSurface.pitch,
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		_game.platform == Common::kPlatformFMTowns ? 0 :
 #endif

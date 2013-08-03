@@ -90,7 +90,7 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 	if (!surface)
 		return;
 
-	const byte *src = (const byte *)surface->getBasePtr(0, 0);
+	const byte *src = (const byte *)surface->getPixels();
 
 	if (_video->hasDirtyPalette())
 		_vm->setPaletteFromPtr(_video->getPalette(), 256);
