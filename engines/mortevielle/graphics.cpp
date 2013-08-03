@@ -897,12 +897,7 @@ Graphics::Surface ScreenSurface::lockArea(const Common::Rect &bounds) {
 	_dirtyRects.push_back(bounds);
 
 	Graphics::Surface s;
-	s.format = format;
-	s.pixels = getBasePtr(bounds.left, bounds.top);
-	s.pitch = pitch;
-	s.w = bounds.width();
-	s.h = bounds.height();
-
+	s.init(bounds.width(), bounds.height(), pitch, getBasePtr(bounds.left, bounds.top), format);
 	return s;
 }
 
