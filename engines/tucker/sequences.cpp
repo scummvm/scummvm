@@ -811,7 +811,7 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	if (surface)
 		for (int i = 0; i < kScreenWidth * kScreenHeight; ++i)
 			if (_offscreenBuffer[i] == 0)
-				_offscreenBuffer[i] = *((const byte *)surface->getBasePtr(0, 0) + i);
+				_offscreenBuffer[i] = *((const byte *)surface->getPixels() + i);
 
 	if (!framesLeft)
 		_changeToNextSequence = true;
