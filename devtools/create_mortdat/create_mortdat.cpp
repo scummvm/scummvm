@@ -41,6 +41,7 @@
 #include "create_mortdat.h"
 #include "enginetext.h"
 #include "gametext.h"
+#include "menudata.h"
 
 
 bool File::open(const char *filename, AccessMode mode) {
@@ -200,10 +201,36 @@ void writeGameStrings() {
 	writeStaticStrings(gameDataDe, kGameStrings, 2);
 }
 
+/**
+ * Write out the data for the English menu
+ */
+void writeMenuBlock() {
+	// Write out a section header to the output file and the font data
+	const char menuHeader[4] = { 'M', 'E', 'N', 'U' };
+	outputFile.write(menuHeader, 4);				// Section Id
+	outputFile.writeWord(strlen(menuDataEn) / 8);	// Section size
+	// Write each 8-characters block as a byte (one bit per character)
+	// ' ' -> 0, anything else -> 1
+	byte value;
+	int valueCpt = 0;
+	const char* str = menuDataEn;
+	while (*str != 0) {
+		if (*(str++) != ' ')
+			value |= (1 << (7 - valueCpt));
+		++valueCpt;
+		if (valueCpt == 8) {
+			outputFile.writeByte(value);
+			value = 0;
+			valueCpt = 0;
+		}
+	}
+}
+
 void process() {
 	writeFontBlock();
 	writeGameStrings();
 	writeEngineStrings();
+	writeMenuBlock();
 }
 
 /**

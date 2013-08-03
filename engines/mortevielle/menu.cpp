@@ -491,14 +491,56 @@ void Menu::initMenu(MortevielleEngine *vm) {
 
 	int i;
 	Common::File f;
+	
+	bool enMenuLoaded = false;
+	if (_vm->getLanguage() == Common::EN_ANY) {
+		// Open the mort.dat file
+		if (!f.open(MORT_DAT))
+			warning("File %s not found. Using default menu from game data", MORT_DAT);
+		else {
+			// Validate the data file header
+			char fileId[4];
+			f.read(fileId, 4);
+			// Do not display warnings here. They would already have been displayed in MortevielleEngine::loadMortDat().
+			if (strncmp(fileId, "MORT", 4) == 0 && f.readByte() >= MORT_DAT_REQUIRED_VERSION) {
+				f.readByte();		// Minor version
+				// Loop to load resources from the data file
+				while (f.pos() < f.size()) {
+					// Get the Id and size of the next resource
+					char dataType[4];
+					int dataSize;
+					f.read(dataType, 4);
+					dataSize = f.readUint16LE();
+					if (!strncmp(dataType, "MENU", 4)) {
+						// MENU section
+						if (dataSize <= 7 * 24) {
+							f.read(_charArr, dataSize);
+							enMenuLoaded = true;
+						} else
+							warning("Wrong size %d for menu data. Expected %d or less", dataSize, 7*24);
+						break;
+					} else {
+						// Other sections
+						f.skip(dataSize);
+					}
+				}
+			}
+			// Close the file
+			f.close();
+			if (!enMenuLoaded)
+				warning("Failed to load English menu. Will use default menu from game data instead");
+		}
+	}
 
-	if (!f.open("menufr.mor"))
-		if (!f.open("menual.mor"))
-			if (!f.open("menu.mor"))
-				error("Missing file - menufr.mor or menual.mor or menu.mor");
+	if (!enMenuLoaded) {
+		if (!f.open("menufr.mor"))
+			if (!f.open("menual.mor"))
+				if (!f.open("menu.mor"))
+					error("Missing file - menufr.mor or menual.mor or menu.mor");
 
-	f.read(_charArr, 7 * 24);
-	f.close();
+		f.read(_charArr, 7 * 24);
+		f.close();
+	}
 
 	// Skipped: dialog asking to swap floppy
 
