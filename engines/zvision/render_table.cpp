@@ -90,7 +90,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 i
 		for (int x = subRectangle.left; x < subRectangle.right; x++) {
 			uint normalizedX = x - subRectangle.left;
 
-			uint32 index = (y + destRectangle.top) * _numColumns + (x + destRectangle.left);
+			uint32 index = (normalizedY + destRectangle.top) * _numColumns + (normalizedX + destRectangle.left);
 
 			// RenderTable only stores offsets from the original coordinates
 			uint32 sourceYIndex = y + _internalBuffer[index].y;
