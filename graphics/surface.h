@@ -78,6 +78,24 @@ struct Surface {
 	}
 
 	/**
+	 * Return a pointer to the pixel data.
+	 *
+	 * @return Pointer to the pixel data.
+	 */
+	inline const void *getPixels() const {
+		return pixels;
+	}
+
+	/**
+	 * Return a pointer to the pixel data.
+	 *
+	 * @return Pointer to the pixel data.
+	 */
+	inline void *getPixels() {
+		return pixels;
+	}
+
+	/**
 	 * Return a pointer to the pixel at the specified point.
 	 *
 	 * @param x The x coordinate of the pixel.
