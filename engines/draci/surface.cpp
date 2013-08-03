@@ -80,7 +80,7 @@ void Surface::markClean() {
  * @brief Fills the surface with the specified color
  */
 void Surface::fill(uint color) {
-	byte *ptr = (byte *)getBasePtr(0, 0);
+	byte *ptr = (byte *)getPixels();
 
 	memset(ptr, color, w * h);
 }
