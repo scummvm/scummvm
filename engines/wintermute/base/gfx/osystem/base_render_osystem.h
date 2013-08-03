@@ -118,6 +118,6 @@ private:
 	bool _skipThisFrame;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

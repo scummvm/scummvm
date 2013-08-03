@@ -66,6 +66,6 @@ private:
 	bool _richSavedGames;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

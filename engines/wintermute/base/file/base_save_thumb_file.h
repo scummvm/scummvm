@@ -47,6 +47,6 @@ private:
 	byte *_data;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

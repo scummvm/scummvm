@@ -124,4 +124,4 @@ const Timer *BaseEngine::getLiveTimer() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

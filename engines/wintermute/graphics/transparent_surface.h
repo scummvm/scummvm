@@ -134,7 +134,7 @@ private:
 };*/
 
 
-} // End of namespace Graphics
+} // End of namespace Wintermute
 
 
 #endif

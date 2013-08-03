@@ -1134,4 +1134,4 @@ bool AdEntity::setSprite(const char *filename) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

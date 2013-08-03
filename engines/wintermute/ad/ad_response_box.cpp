@@ -737,4 +737,4 @@ bool AdResponseBox::getObjects(BaseArray<UIObject *> &objects, bool interactiveO
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

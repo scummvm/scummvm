@@ -57,6 +57,6 @@ protected:
 	Common::HashMap<Common::String, Common::String>::iterator _editorPropsIter;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

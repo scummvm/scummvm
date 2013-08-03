@@ -64,6 +64,6 @@ private:
 	Common::Rect _srcRect;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

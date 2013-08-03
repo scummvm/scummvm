@@ -106,4 +106,4 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *subtitleFile) 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

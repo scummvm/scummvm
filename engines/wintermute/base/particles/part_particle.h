@@ -85,6 +85,6 @@ private:
 	int32 _fadeStartAlpha;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

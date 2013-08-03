@@ -253,4 +253,4 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

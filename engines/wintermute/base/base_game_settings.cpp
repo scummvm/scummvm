@@ -219,4 +219,4 @@ char *BaseGameSettings::getKeyFromStringTable(const char *str) const {
 	return _stringTable->getKey(str);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

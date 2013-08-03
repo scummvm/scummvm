@@ -109,4 +109,4 @@ void BaseActiveRect::clipRect() {
 	BasePlatform::intersectRect(&_rect, &_rect, &rc);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

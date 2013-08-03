@@ -2282,4 +2282,4 @@ bool AdGame::onScriptShutdown(ScScript *script) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

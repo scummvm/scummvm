@@ -51,6 +51,6 @@ private:
 	Common::String _strRep;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

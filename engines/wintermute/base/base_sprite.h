@@ -89,6 +89,6 @@ private:
 	bool killAllSounds();
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

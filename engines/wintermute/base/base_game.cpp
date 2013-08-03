@@ -3920,4 +3920,4 @@ Common::String BaseGame::readRegistryString(const Common::String &key, const Com
 	return result;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

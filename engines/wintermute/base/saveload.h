@@ -52,6 +52,6 @@ private:
 	static void afterLoadScript(void *script, void *data);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

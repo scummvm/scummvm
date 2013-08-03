@@ -333,4 +333,4 @@ void SystemClassRegistry::dumpClasses(Common::WriteStream *stream) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

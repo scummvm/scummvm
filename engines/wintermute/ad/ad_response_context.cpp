@@ -68,4 +68,4 @@ void AdResponseContext::setContext(const char *context) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

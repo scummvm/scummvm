@@ -116,6 +116,6 @@ struct Rect32 {
 	}
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

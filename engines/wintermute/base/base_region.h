@@ -65,6 +65,6 @@ private:
 	int32 _lastMimicY;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -70,6 +70,6 @@ private:
 	static WintermuteEngine *_engineRef;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

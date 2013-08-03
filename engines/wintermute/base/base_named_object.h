@@ -46,6 +46,6 @@ public:
 	void setName(const char *name);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -70,4 +70,4 @@ BaseFileEntry::~BaseFileEntry() {
 	_package = nullptr; // ref only
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -1465,4 +1465,4 @@ void ScScript::afterLoad() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

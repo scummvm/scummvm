@@ -71,6 +71,6 @@ private:
 	Common::KeyCode vKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

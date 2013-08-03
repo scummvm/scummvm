@@ -49,4 +49,4 @@ float MathUtil::roundUp(float val) {
 	return result;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

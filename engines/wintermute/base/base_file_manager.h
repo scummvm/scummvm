@@ -74,6 +74,6 @@ private:
 	// the detector too, without launching the entire engine:
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

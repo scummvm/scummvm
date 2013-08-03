@@ -85,6 +85,6 @@ public:
 	    BaseArray<CVidSubtitle *, CVidSubtitle *> _subtitles;*/
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

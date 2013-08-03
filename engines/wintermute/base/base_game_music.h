@@ -68,6 +68,6 @@ private:
 	int32 _musicCrossfadeChannel2;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

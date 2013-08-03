@@ -192,4 +192,4 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	return nullptr;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

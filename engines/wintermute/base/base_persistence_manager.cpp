@@ -887,4 +887,4 @@ bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte ver
 	return true;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

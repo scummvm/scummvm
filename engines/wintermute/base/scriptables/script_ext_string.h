@@ -53,6 +53,6 @@ private:
 	int32 _capacity;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

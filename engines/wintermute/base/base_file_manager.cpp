@@ -360,4 +360,4 @@ BaseFileManager *BaseFileManager::getEngineInstance() {
 	return nullptr;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

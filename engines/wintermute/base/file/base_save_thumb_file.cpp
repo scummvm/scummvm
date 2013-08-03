@@ -150,4 +150,4 @@ bool BaseSaveThumbFile::seek(uint32 pos, int whence) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

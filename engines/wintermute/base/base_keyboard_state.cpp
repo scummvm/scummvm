@@ -310,4 +310,4 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

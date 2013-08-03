@@ -125,4 +125,4 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

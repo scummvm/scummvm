@@ -55,6 +55,6 @@ private:
 	bool checkBounds(ScScript *script, int start, int length);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -605,4 +605,4 @@ void ScEngine::dumpStats() {
 	    }*/
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

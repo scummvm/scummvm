@@ -273,4 +273,4 @@ Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::
 	return nullptr;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

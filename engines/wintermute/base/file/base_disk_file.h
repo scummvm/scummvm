@@ -36,6 +36,6 @@ namespace Wintermute {
 Common::SeekableReadStream *openDiskFile(const Common::String &filename);
 bool diskFileExists(const Common::String &filename);
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

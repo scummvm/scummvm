@@ -71,6 +71,6 @@ public:
 	virtual bool sendEvent(const char *eventName);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

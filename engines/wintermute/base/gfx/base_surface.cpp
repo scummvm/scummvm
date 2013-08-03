@@ -146,4 +146,4 @@ void BaseSurface::setSize(int width, int height) {
 	_height = height;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

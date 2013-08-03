@@ -358,4 +358,4 @@ bool AdSentence::canSkip() {
 	return (_gameRef->getTimer()->getTime() - _startTime) > 300;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

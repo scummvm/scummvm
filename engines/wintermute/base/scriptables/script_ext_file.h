@@ -61,6 +61,6 @@ private:
 	Common::WriteStream *openForAppend(const Common::String &filename, bool binary);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

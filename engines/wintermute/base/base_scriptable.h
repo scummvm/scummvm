@@ -78,6 +78,6 @@ BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXStore(BaseGame *inGame);
 BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack);
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

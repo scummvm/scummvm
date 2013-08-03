@@ -287,4 +287,4 @@ float BaseSoundMgr::posToPan(int x, int y) {
 	return minPan + relPos * (maxPan - minPan);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

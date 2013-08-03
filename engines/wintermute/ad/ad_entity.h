@@ -68,6 +68,6 @@ private:
 	TEntityType _subtype;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

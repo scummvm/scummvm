@@ -673,4 +673,4 @@ bool BaseSubFrame::setSurfaceSimple() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

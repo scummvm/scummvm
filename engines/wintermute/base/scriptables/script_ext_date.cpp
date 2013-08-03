@@ -307,4 +307,4 @@ int SXDate::scCompare(BaseScriptable *Value) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

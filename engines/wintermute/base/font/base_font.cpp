@@ -137,4 +137,4 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	return ret;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

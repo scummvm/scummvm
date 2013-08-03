@@ -48,6 +48,6 @@ private:
 	BaseArray<AdNodeState *> _nodeStates;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

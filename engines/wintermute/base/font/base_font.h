@@ -56,6 +56,6 @@ private:
 	static bool isTrueType(BaseGame *game, const Common::String &filename);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

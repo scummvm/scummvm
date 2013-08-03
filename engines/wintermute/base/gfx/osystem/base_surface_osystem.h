@@ -96,6 +96,6 @@ private:
 	byte *_alphaMask;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

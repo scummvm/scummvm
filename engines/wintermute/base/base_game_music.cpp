@@ -503,4 +503,4 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

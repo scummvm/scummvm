@@ -75,6 +75,6 @@ public:
 	Common::Language getLanguage() const { return _language; }
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

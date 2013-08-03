@@ -1242,4 +1242,4 @@ bool BaseObject::afterMove() {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

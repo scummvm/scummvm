@@ -267,4 +267,4 @@ bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int arg
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

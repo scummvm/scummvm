@@ -597,4 +597,4 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 	}
 }
 
-} // End of namespace Graphics
+} // End of namespace Wintermute

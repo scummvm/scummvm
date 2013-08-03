@@ -52,4 +52,4 @@ float Vector2::length() const {
 	return (float)sqrt(x * x + y * y);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

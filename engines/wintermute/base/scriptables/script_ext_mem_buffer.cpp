@@ -526,4 +526,4 @@ int SXMemBuffer::scCompare(BaseScriptable *val) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

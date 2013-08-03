@@ -53,6 +53,6 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

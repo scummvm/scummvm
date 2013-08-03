@@ -135,6 +135,6 @@ private:
 	BaseArray<char *> _sprites;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

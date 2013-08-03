@@ -97,4 +97,4 @@ int BaseViewport::getHeight() const {
 	return _rect.bottom - _rect.top;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

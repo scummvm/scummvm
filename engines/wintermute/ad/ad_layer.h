@@ -53,6 +53,6 @@ public:
 	virtual const char *scToString() override;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

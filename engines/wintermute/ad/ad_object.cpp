@@ -1299,4 +1299,4 @@ bool AdObject::updatePartEmitter() {
 	return _partEmitter->update();
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

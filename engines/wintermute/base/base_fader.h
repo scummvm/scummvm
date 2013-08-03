@@ -58,6 +58,6 @@ private:
 	uint32 _startTime;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

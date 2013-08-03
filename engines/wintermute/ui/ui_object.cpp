@@ -648,4 +648,4 @@ bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

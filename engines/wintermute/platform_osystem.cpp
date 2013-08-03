@@ -275,4 +275,4 @@ char *BasePlatform::strlwr(char *string) {
 	return string;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

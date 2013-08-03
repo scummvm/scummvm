@@ -83,4 +83,4 @@ void Matrix4::transformVector2(Vector2 &vec) {
 	vec.y = y;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

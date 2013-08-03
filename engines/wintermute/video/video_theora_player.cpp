@@ -529,4 +529,4 @@ BaseSurface *VideoTheoraPlayer::getTexture() const {
 	return _texture;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

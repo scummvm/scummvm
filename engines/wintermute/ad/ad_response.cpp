@@ -175,4 +175,4 @@ const char *AdResponse::getTextOrig() const {
 	return _textOrig;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

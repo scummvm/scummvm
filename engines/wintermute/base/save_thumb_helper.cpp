@@ -107,4 +107,4 @@ bool SaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
