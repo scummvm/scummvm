@@ -66,6 +66,8 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
+	renderTable->generateRenderTable();
 }
 
 void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream) {
@@ -96,6 +98,8 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
+	renderTable->generateRenderTable();
 }
 
 } // End of namespace ZVision
