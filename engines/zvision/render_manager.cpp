@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "common/stream.h"
 
 #include "engines/util.h"
 #include "graphics/decoders/tga.h"
@@ -39,6 +40,7 @@ RenderManager::RenderManager(OSystem *system, const int width, const int height)
 	  _height(height),
 	  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
 	  _currentVideo(0),
+	  _currentBackground(0),
 	  _scaledVideoFrameBuffer(0),
 	  _needsScreenUpdate(false),
 	  _renderTable(width, height) {
@@ -153,6 +155,20 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 
 RenderTable *RenderManager::getRenderTable() {
 	return &_renderTable;
+}
+
+void RenderManager::setBackgroundImage(const Common::String &fileName) {
+	Common::File *file = new Common::File;
+
+	if (!file->open(fileName)) {
+		warning("Could not open file %s", fileName.c_str());
+		return;
+	}
+
+	_currentBackground = file;
+
+	// TODO: Check if all the panoramas are the same height. AKA: can we hardcode the vertical centering to 80px?
+	renderImageToScreen(*_currentBackground, 0, 80);
 }
 
 } // End of namespace ZVision

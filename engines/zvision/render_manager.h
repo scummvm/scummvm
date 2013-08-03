@@ -54,6 +54,8 @@ private:
 	const Graphics::PixelFormat _pixelFormat;
 	RenderTable _renderTable;
 
+	Common::SeekableReadStream *_currentBackground;
+
 	Video::VideoDecoder *_currentVideo;
 	byte *_scaledVideoFrameBuffer;
 
@@ -100,6 +102,14 @@ public:
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
 	 */
 	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0));
+
+	/**
+	 * Sets the current background image to be used by the RenderManager and immediately
+	 * blits it to the screen. (It won't show up until the end of the frame)
+	 *
+	 * @param fileName    The name of the image file
+	 */
+	void setBackgroundImage(const Common::String &fileName);
 
 	RenderTable *getRenderTable();
 
