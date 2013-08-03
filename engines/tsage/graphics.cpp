@@ -332,12 +332,7 @@ Graphics::Surface GfxSurface::lockSurface() {
 	// Setup the returned surface either as one pointing to the same pixels as the source, or
 	// as a subset of the source one based on the currently set bounds
 	Graphics::Surface result;
-	result.w = _bounds.width();
-	result.h = _bounds.height();
-	result.pitch = src->pitch;
-	result.format = src->format;
-	result.pixels = src->getBasePtr(_bounds.left, _bounds.top);
-
+	result.init(_bounds.width(), _bounds.height(), src->pitch, src->getBasePtr(_bounds.left, _bounds.top), src->format);
 	return result;
 }
 
