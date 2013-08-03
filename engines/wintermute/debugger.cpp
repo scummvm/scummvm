@@ -152,7 +152,7 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 	if (argc == 2 && !strncmp(argv[1], "breakpoints", 10)) {
 		BaseArray<BreakpointInfo> breakpoints = ADAPTER->getBreakpoints();
 		for (int i = 0; i < breakpoints.size(); i++) {
-			DebugPrintf("%d %s:%d x%d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits);
+			DebugPrintf("%d %s:%d x%d, enabled: %d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits, breakpoints[i]._enabled);
 		}
 		return 1;
 	} else if (argc == 2 && !strncmp(argv[1], "watch", 5)) {

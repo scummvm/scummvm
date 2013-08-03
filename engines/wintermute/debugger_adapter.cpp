@@ -468,6 +468,7 @@ BaseArray<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
 		bp_info._filename = SCENGINE->_breakpoints[i]._filename;
 		bp_info._line = SCENGINE->_breakpoints[i]._line;
 		bp_info._hits = SCENGINE->_breakpoints[i]._hits;
+		bp_info._enabled = SCENGINE->_breakpoints[i]._enabled;
 		breakpoints.add(bp_info);
 	}
 	return breakpoints;
