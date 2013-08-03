@@ -233,8 +233,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:set_screen*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionSetScreen(line)));
 		} else if (line.matchString("*:set_venus*", true)) {
 			
 

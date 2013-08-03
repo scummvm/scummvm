@@ -25,6 +25,7 @@
 #include "zvision/actions.h"
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
 #include "zvision/action_node.h"
 
 namespace ZVision {
@@ -157,17 +158,34 @@ bool ActionRandom::execute(ZVision *engine) {
 
 
 //////////////////////////////////////////////////////////////////////////////
+// ActionSetScreen
+//////////////////////////////////////////////////////////////////////////////
+
+ActionSetScreen::ActionSetScreen(const Common::String &line) {
+	char fileName[25];
+	sscanf(line.c_str(), "%*[^(](%25[^)])", fileName);
+
+	_fileName = Common::String(fileName);
+}
+
+bool ActionSetScreen::execute(ZVision *engine) {
+	RenderManager *renderManager = engine->getRenderManager();
+	renderManager->setBackgroundImage(_fileName);
+
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionTimer
 //////////////////////////////////////////////////////////////////////////////
 
 ActionTimer::ActionTimer(const Common::String &line) {
-}
-
 	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%u)", &_key, &_time);
 }
 
 bool ActionTimer::execute(ZVision *engine) {
-	engine->getScriptManager()->addActionNode(new NodeTimer(_key, _time));
+	engine->getScriptManager()->addActionNode(Common::SharedPtr<ActionNode>(new NodeTimer(_key, _time)));
 	return true;
 }
 

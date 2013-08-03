@@ -186,6 +186,15 @@ private:
 	uint _max;
 };
 
+class ActionSetScreen : public ResultAction {
+public:
+	ActionSetScreen(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+	Common::String _fileName;
+};
+
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(const Common::String &line);
