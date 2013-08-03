@@ -607,7 +607,7 @@ void MortevielleEngine::fctOpen() {
 			_coreVar._faithScore += 2;
 		++_openObjCount;
 		int i;
-		for (i = 1; !(i <= 6) && (_openObjects[i] != 0) && (_openObjects[i] != _num); i++)
+		for (i = 1; (i <= 6) && (_openObjects[i] != 0) && (_openObjects[i] != _num); i++)
 			;
 		if (_openObjects[i] != _num) {
 			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
@@ -1135,8 +1135,8 @@ void MortevielleEngine::fctEnter() {
 	else if (_roomDoorId == OWN_ROOM)
 		_crep = 997;
 	else if ((_roomDoorId == ROOM9) && (_coreVar._selectedObjectId != 136)) {
-			_crep = 189;
-			_coreVar._availableQuestion[8] = '*';
+		_crep = 189;
+		_coreVar._availableQuestion[8] = '*';
 	} else {
 		int z = 0;
 		if (!_blo)
