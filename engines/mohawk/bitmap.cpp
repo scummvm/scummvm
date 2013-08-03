@@ -779,7 +779,7 @@ MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	}
 
 	Graphics::Surface *surface = createSurface(_header.width, _header.height);
-	memset(surface->getBasePtr(0, 0), 0, _header.width * _header.height);
+	memset(surface->getPixels(), 0, _header.width * _header.height);
 
 	// Expand the <8bpp data to one byte per pixel
 	switch (getBitsPerPixel()) {
@@ -801,7 +801,7 @@ MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
 void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
 	assert(surface->format.bytesPerPixel == 1);
 
-	byte *dst = (byte *)surface->getBasePtr(0, 0);
+	byte *dst = (byte *)surface->getPixels();
 
 	// Expand the 8 pixels in a byte into a full byte per pixel
 
@@ -830,7 +830,7 @@ void DOSBitmap::expandEGAPlanes(Graphics::Surface *surface, Common::SeekableRead
 	// Note that the image is in EGA planar form and not just standard 4bpp
 	// This seems to contradict the PoP specs which seem to do something else
 
-	byte *dst = (byte *)surface->getBasePtr(0, 0);
+	byte *dst = (byte *)surface->getPixels();
 
 	for (uint32 i = 0; i < surface->h; i++) {
 		uint x = 0;
