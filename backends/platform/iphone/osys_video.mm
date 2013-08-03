@@ -310,7 +310,7 @@ void OSystem_IPHONE::hideOverlay() {
 
 void OSystem_IPHONE::clearOverlay() {
 	//printf("clearOverlay()\n");
-	bzero(_videoContext->overlayTexture.getBasePtr(0, 0), _videoContext->overlayTexture.h * _videoContext->overlayTexture.pitch);
+	bzero(_videoContext->overlayTexture.getPixels(), _videoContext->overlayTexture.h * _videoContext->overlayTexture.pitch);
 	dirtyFullOverlayScreen();
 }
 
@@ -319,7 +319,7 @@ void OSystem_IPHONE::grabOverlay(void *buf, int pitch) {
 	int h = _videoContext->overlayHeight;
 
 	byte *dst = (byte *)buf;
-	const byte *src = (const byte *)_videoContext->overlayTexture.getBasePtr(0, 0);
+	const byte *src = (const byte *)_videoContext->overlayTexture.getPixels();
 	do {
 		memcpy(dst, src, _videoContext->overlayWidth * sizeof(uint16));
 		src += _videoContext->overlayTexture.pitch;
@@ -428,7 +428,7 @@ void OSystem_IPHONE::setMouseCursor(const void *buf, uint w, uint h, int hotspot
 
 	_mouseKeyColor = keycolor;
 
-	memcpy(_mouseBuffer.getBasePtr(0, 0), buf, h * _mouseBuffer.pitch);
+	memcpy(_mouseBuffer.getPixels(), buf, h * _mouseBuffer.pitch);
 
 	_mouseDirty = true;
 	_mouseNeedTextureUpdate = true;
@@ -464,7 +464,7 @@ void OSystem_IPHONE::updateMouseTexture() {
 		else
 			palette = _gamePaletteRGBA5551;
 
-		uint16 *mouseBuf = (uint16 *)mouseTexture.getBasePtr(0, 0);
+		uint16 *mouseBuf = (uint16 *)mouseTexture.getPixels();
 		for (uint x = 0; x < _videoContext->mouseWidth; ++x) {
 			for (uint y = 0; y < _videoContext->mouseHeight; ++y) {
 				const byte color = *(const byte *)_mouseBuffer.getBasePtr(x, y);
@@ -475,12 +475,12 @@ void OSystem_IPHONE::updateMouseTexture() {
 			}
 		}
 	} else {
-		if (crossBlit((byte *)mouseTexture.getBasePtr(0, 0), (const byte *)_mouseBuffer.getBasePtr(0, 0), mouseTexture.pitch,
+		if (crossBlit((byte *)mouseTexture.getPixels(), (const byte *)_mouseBuffer.getPixels(), mouseTexture.pitch,
 			          _mouseBuffer.pitch, _mouseBuffer.w, _mouseBuffer.h, mouseTexture.format, _mouseBuffer.format)) {
 			if (!_mouseBuffer.format.aBits()) {
 				// Apply color keying since the original cursor had no alpha channel.
-				const uint16 *src = (const uint16 *)_mouseBuffer.getBasePtr(0, 0);
-				uint8 *dstRaw = (uint8 *)mouseTexture.getBasePtr(0, 0);
+				const uint16 *src = (const uint16 *)_mouseBuffer.getPixels();
+				uint8 *dstRaw = (uint8 *)mouseTexture.getPixels();
 
 				for (uint y = 0; y < _mouseBuffer.h; ++y, dstRaw += mouseTexture.pitch) {
 					uint16 *dst = (uint16 *)dstRaw;
@@ -495,7 +495,7 @@ void OSystem_IPHONE::updateMouseTexture() {
 		} else {
 			// TODO: Log this!
 			// Make the cursor all transparent... we really need a better fallback ;-).
-			memset(mouseTexture.getBasePtr(0, 0), 0, mouseTexture.h * mouseTexture.pitch);
+			memset(mouseTexture.getPixels(), 0, mouseTexture.h * mouseTexture.pitch);
 		}
 	}
 
