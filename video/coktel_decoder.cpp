@@ -122,7 +122,7 @@ const Graphics::Surface *CoktelDecoder::getSurface() const {
 }
 
 bool CoktelDecoder::hasSurface() {
-	return _surface.getBasePtr(0, 0);
+	return _surface.getPixels();
 }
 
 void CoktelDecoder::createSurface() {
@@ -1458,7 +1458,7 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 			const int offsetY = (_y + rect.top) * _surface.pitch;
 			const int offset  = offsetX + offsetY;
 
-			if (deLZ77((byte *)_surface.getBasePtr(0, 0) + offset, dataPtr, dataSize,
+			if (deLZ77((byte *)_surface.getPixels() + offset, dataPtr, dataSize,
 			           _surface.w * _surface.h * _surface.format.bytesPerPixel - offset))
 				return true;
 		}
@@ -2277,7 +2277,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		rect = Common::Rect(_x, _y, _x + codecSurf->w, _y + codecSurf->h);
 		rect.clip(Common::Rect(_x, _y, _x + _width, _y + _height));
 
-		renderBlockWhole(_surface, (const byte *)codecSurf->getBasePtr(0, 0), rect);
+		renderBlockWhole(_surface, (const byte *)codecSurf->getPixels(), rect);
 		return true;
 	}
 
@@ -2298,7 +2298,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 			const int offsetY = (_y + rect.top) * _surface.pitch;
 			const int offset  = offsetX + offsetY;
 
-			if (deLZ77((byte *)_surface.getBasePtr(0, 0) + offset, dataPtr, dataSize,
+			if (deLZ77((byte *)_surface.getPixels() + offset, dataPtr, dataSize,
 			           _surface.w * _surface.h * _surface.format.bytesPerPixel - offset))
 				return true;
 		}

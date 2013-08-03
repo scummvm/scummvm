@@ -58,7 +58,7 @@ RPZADecoder::~RPZADecoder() {
 
 #define PUT_PIXEL(color) \
 	if ((int32)blockPtr < _surface->w * _surface->h) \
-		WRITE_UINT16((uint16 *)_surface->getBasePtr(0, 0) + blockPtr, color); \
+		WRITE_UINT16((uint16 *)_surface->getPixels() + blockPtr, color); \
 	blockPtr++
 
 const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {

@@ -252,7 +252,7 @@ void FlicDecoder::FlicVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch)
 }
 
 void FlicDecoder::FlicVideoTrack::copyFrame(uint8 *data) {
-	memcpy((byte *)_surface->getBasePtr(0, 0), data, getWidth() * getHeight());
+	memcpy((byte *)_surface->getPixels(), data, getWidth() * getHeight());
 
 	// Redraw
 	_dirtyRects.clear();
@@ -260,8 +260,8 @@ void FlicDecoder::FlicVideoTrack::copyFrame(uint8 *data) {
 }
 
 void FlicDecoder::FlicVideoTrack::decodeByteRun(uint8 *data) {
-	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
-	while ((int32)(ptr - (byte *)_surface->getBasePtr(0, 0)) < (getWidth() * getHeight())) {
+	byte *ptr = (byte *)_surface->getPixels();
+	while ((int32)(ptr - (byte *)_surface->getPixels()) < (getWidth() * getHeight())) {
 		int chunks = *data++;
 		while (chunks--) {
 			int count = (int8)*data++;
