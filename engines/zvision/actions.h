@@ -35,7 +35,6 @@ class ZVision;
 class ResultAction {
 public:
 	virtual ~ResultAction() {}
-	virtual ResultAction *clone() const = 0;
 	virtual bool execute(ZVision *engine) = 0;
 };
 
@@ -74,7 +73,6 @@ public:
 class ActionAdd : public ResultAction {
 public:
 	ActionAdd(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -85,7 +83,6 @@ private:
 class ActionAssign : public ResultAction {
 public:
 	ActionAssign(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -96,7 +93,6 @@ private:
 class ActionAttenuate : public ResultAction {
 public:
 	ActionAttenuate(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -107,7 +103,6 @@ private:
 class ActionChangeLocation : public ResultAction {
 public:
 	ActionChangeLocation(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -121,7 +116,6 @@ private:
 class ActionCrossfade : public ResultAction {
 public:
 	ActionCrossfade(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -137,7 +131,6 @@ private:
 class ActionDelayRender : public ResultAction {
 public:
 	ActionDelayRender(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -148,7 +141,6 @@ private:
 class ActionPlayAnimation : public ResultAction {
 public:
 	ActionPlayAnimation(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -168,7 +160,6 @@ private:
 class ActionPreloadAnimation : public ResultAction {
 public:
 	ActionPreloadAnimation(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -188,7 +179,6 @@ private:
 class ActionRandom : public ResultAction {
 public:
 	ActionRandom(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:
@@ -199,7 +189,6 @@ private:
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(const Common::String &line);
-	ResultAction *clone() const;
 	bool execute(ZVision *engine);
 
 private:

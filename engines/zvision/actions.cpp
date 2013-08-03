@@ -37,10 +37,6 @@ ActionAdd::ActionAdd(const Common::String &line) {
 	sscanf(line.c_str(), ":add(%u,%u)", &_key, &_value);
 }
 
-ResultAction *ActionAdd::clone() const {
-	return new ActionAdd(*this);
-}
-
 bool ActionAdd::execute(ZVision *engine) {
 	engine->getScriptManager()->addToStateValue(_key, _value);
 	return true;
@@ -53,10 +49,6 @@ bool ActionAdd::execute(ZVision *engine) {
 
 ActionAssign::ActionAssign(const Common::String &line) {
 	sscanf(line.c_str(), ":assign(%u, %u)", &_key, &_value);
-}
-
-ResultAction *ActionAssign::clone() const {
-	return new ActionAssign(*this);
 }
 
 bool ActionAssign::execute(ZVision *engine) {
@@ -73,10 +65,6 @@ ActionAttenuate::ActionAttenuate(const Common::String &line) {
 	sscanf(line.c_str(), ":assign(%u, %d)", &_key, &_attenuation);
 }
 
-ResultAction *ActionAttenuate::clone() const {
-	return new ActionAttenuate(*this);
-}
-
 bool ActionAttenuate::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
@@ -89,10 +77,6 @@ bool ActionAttenuate::execute(ZVision *engine) {
 
 ActionChangeLocation::ActionChangeLocation(const Common::String &line) {
 	sscanf(line.c_str(), ":change_location(%c,%c,%c%c,%u)", &_world, &_room, &_node, &_view, &_x);
-}
-
-ResultAction *ActionChangeLocation::clone() const {
-	return new ActionChangeLocation(*this);
 }
 
 bool ActionChangeLocation::execute(ZVision *engine) {
@@ -111,10 +95,6 @@ ActionCrossfade::ActionCrossfade(const Common::String &line) {
            &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
 }
 
-ResultAction *ActionCrossfade::clone() const {
-	return new ActionCrossfade(*this);
-}
-
 bool ActionCrossfade::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
@@ -128,10 +108,7 @@ bool ActionCrossfade::execute(ZVision *engine) {
 ActionPreloadAnimation::ActionPreloadAnimation(const Common::String &line) {
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(), ":animpreload:%u(%s %*u %*u %u %u)", &_key, &_fileName, &_mask, &_framerate);
-}
 
-ResultAction *ActionPreloadAnimation::clone() const {
-	return new ActionPreloadAnimation(*this);
 }
 
 bool ActionPreloadAnimation::execute(ZVision *engine) {
@@ -155,10 +132,6 @@ ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
 	_fileName = Common::String(fileName);
 }
 
-ResultAction *ActionPlayAnimation::clone() const {
-	return new ActionPlayAnimation(*this);
-}
-
 bool ActionPlayAnimation::execute(ZVision *engine) {
 	// TODO: Implement
 	return true;
@@ -171,10 +144,6 @@ bool ActionPlayAnimation::execute(ZVision *engine) {
 
 ActionRandom::ActionRandom(const Common::String &line) {
 	sscanf(line.c_str(), ":random:%u, %u)", &_key, &_max);
-}
-
-ResultAction *ActionRandom::clone() const {
-	return new ActionRandom(*this);
 }
 
 bool ActionRandom::execute(ZVision *engine) {
@@ -192,8 +161,6 @@ ActionTimer::ActionTimer(const Common::String &line) {
 	sscanf(line.c_str(), ":timer:%u(%u)", &_key, &_time);
 }
 
-ResultAction *ActionTimer::clone() const {
-	return new ActionTimer(*this);
 }
 
 bool ActionTimer::execute(ZVision *engine) {
