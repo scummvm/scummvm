@@ -383,11 +383,15 @@ AndroidAssetArchive::AndroidAssetArchive(jobject am) {
 	MID_list = env->GetMethodID(cls, "list",
 								"(Ljava/lang/String;)[Ljava/lang/String;");
 	assert(MID_list);
+
+	_cachedMembers = NULL;
 }
 
 AndroidAssetArchive::~AndroidAssetArchive() {
 	JNIEnv *env = JNI::getEnv();
 	env->DeleteGlobalRef(_am);
+	delete _cachedMembers;
+	_cachedMembers = NULL;
 }
 
 bool AndroidAssetArchive::hasFile(const Common::String &name) const {
@@ -411,6 +415,11 @@ bool AndroidAssetArchive::hasFile(const Common::String &name) const {
 }
 
 int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) const {
+	if (_cachedMembers) {
+		member_list.insert(member_list.end(), _cachedMembers->begin(), _cachedMembers->end());
+		return _cachedMembers->size();
+	}
+
 	JNIEnv *env = JNI::getEnv();
 	Common::List<Common::String> dirlist;
 	dirlist.push_back("");
@@ -463,6 +472,8 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 
 		env->DeleteLocalRef(jpathlist);
 	}
+
+	_cachedMembers = new Common::ArchiveMemberList(member_list);
 
 	return count;
 }
