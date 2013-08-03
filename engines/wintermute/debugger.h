@@ -44,11 +44,13 @@ public:
 	bool Cmd_Print(int argc, const char **argv);
 	bool Cmd_Set(int argc, const char **argv);
 	bool Cmd_SetType(int argc, const char **argv);
-	/** 
+	/**
 	 * Add a breakpoint.
 	 */
 	bool Cmd_AddBreakpoint(int argc, const char **argv);
 	bool Cmd_RemoveBreakpoint(int argc, const char **argv);
+	bool Cmd_EnableBreakpoint(int argc, const char **argv);
+	bool Cmd_DisableBreakpoint(int argc, const char **argv);
 	/**
 	 * List all scripts running ATM.
 	 * Also, which line are they on and if they have any breakpoints.

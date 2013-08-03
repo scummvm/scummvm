@@ -75,6 +75,7 @@ public:
 		Common::String _filename;
 		int _line; 
 		int _hits;
+		int _enabled;
 	};
 
 	class CScWatch {
@@ -87,6 +88,7 @@ public:
 		Common::String _symbol;
 		ScValue* _lastvalue; 
 		int _hits;
+		int _enabled;
 	};
 
 
@@ -117,12 +119,16 @@ public:
 
 	bool addBreakpoint(const char *filename, int line);
 	bool removeBreakpoint(int id);
+	bool enableBreakpoint(int id);
+	bool disableBreakpoint(int id);
 	int incrementBreakpoint(int id);
 	int resetBreakpoint(int id);
 	bool refreshBreakpoints();
 
 	bool addWatch(const char *filename, const char *name);
 	bool removeWatch(int id);
+	bool enableWatch(int id);
+	bool disableWatch(int id);
 	int incrementWatch(int id);
 	int resetWatch(int id);
 	bool refreshWatchlist();

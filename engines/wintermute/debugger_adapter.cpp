@@ -38,7 +38,7 @@
 
 namespace Wintermute {
 
-SourceFile::SourceFile (Common::String filename) {
+SourceFile::SourceFile(Common::String filename) {
 
 	_err = 0;
 
@@ -46,7 +46,7 @@ SourceFile::SourceFile (Common::String filename) {
 	dst = Common::String(DBG_PATH) + Common::String("\\") + filename;
 
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(dst);
-	
+
 	if (!file) {
 		_err = 1;
 	} else {
@@ -55,7 +55,7 @@ SourceFile::SourceFile (Common::String filename) {
 		}
 		while (!file->eos()) {
 			_strings.add(file->readLine());
-			if (file->err()) { 
+			if (file->err()) {
 				_err = file->err();
 			}
 		}
@@ -87,8 +87,8 @@ int SourceFile::getLength() {
 }
 
 Common::String SourceFile::getLine(int n, int *error) {
-	
-	// Line numbers are starting from 1, so... 
+
+	// Line numbers are starting from 1, so...
 	n--;
 
 	if (_err) {
@@ -145,8 +145,8 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 	SourceFile *sf = new SourceFile(filename);
 	int error = OK;
 	sf->getLine(line, &error);
-	
-	if(!error) {
+
+	if (!error) {
 		if (sf->isBlank(line)) {
 			return IS_BLANK;
 		} else {
@@ -203,6 +203,27 @@ int DebuggerAdapter::removeBreakpoint(int id) {
 	}
 }
 
+int DebuggerAdapter::disableBreakpoint(int id) {
+	// TODO: Check blah.
+	assert(SCENGINE);
+
+	if (SCENGINE->disableBreakpoint(id)) {
+		return OK;
+	} else {
+		return NO_SUCH_BREAKPOINT;
+	}
+}
+
+int DebuggerAdapter::enableBreakpoint(int id) {
+	// TODO: Check blah.
+	assert(SCENGINE);
+
+	if (SCENGINE->enableBreakpoint(id)) {
+		return OK;
+	} else {
+		return NO_SUCH_BREAKPOINT;
+	}
+}
 int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	// TODO: Check if file exists, check if symbol exists
 	assert(SCENGINE);
@@ -260,7 +281,7 @@ int DebuggerAdapter::stepContinue() {
 	return OK;
 }
 
-Common::String DebuggerAdapter::readValue(const char* name, int *error) {
+Common::String DebuggerAdapter::readValue(const char *name, int *error) {
 	if (!_lastScript) {
 		*error = NOT_ALLOWED;
 		return Common::String();
@@ -277,7 +298,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 	Common::String strName = Common::String(name);
 	strName.trim();
 	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
-	
+
 	Common::String mainObjectName;
 	mainObjectName = st.nextToken(); // First token
 	ScValue *result = _lastScript->getVar(mainObjectName.c_str());
@@ -286,13 +307,13 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 		*error = NOT_ALLOWED; // TODO: Better one
 		return nullptr;
 	}
-	
+
 
 	if (!result->isNative()) {
 		*error = NOT_ALLOWED; // TODO: Better one
 		return nullptr;
 	}
-	
+
 	BaseScriptable *pos; //  = mainObject->getNative();
 	// Now we split tokens like foo(bar)
 
@@ -319,7 +340,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 			arg = argSt.nextToken();
 			if (argSt.empty()) {
 				// OK
-			} else { 
+			} else {
 				// WTF? This should not happen.
 				assert(false);
 			}
@@ -359,7 +380,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 }
 
 
-int DebuggerAdapter::setType(const char* name, int type) {
+int DebuggerAdapter::setType(const char *name, int type) {
 	// TODO: Less sucky way to pass types
 
 	if (!_lastScript) {
@@ -386,10 +407,10 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value) {
 		int res = strtol(value.c_str(), &endptr, 10); // TODO: Hex too?
 
 		if (
-			(errno == ERANGE && (res == LONG_MAX || res == LONG_MIN)) 
-			|| 
-			(errno != 0 && res == 0)
-			) {
+		    (errno == ERANGE && (res == LONG_MAX || res == LONG_MIN))
+		    ||
+		    (errno != 0 && res == 0)
+		) {
 			// TODO: Error, bail out
 		} else if (endptr == value.c_str()) {
 			// TODO: Couldn't parse anything... bail out?
@@ -397,7 +418,7 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value) {
 			// We've parsed all of it, have we?
 			var->setInt(res);
 		} else {
-			assert (false);
+			assert(false);
 			// Something funny happened here.
 		}
 	} else if (var->_type == VAL_FLOAT) {
@@ -406,10 +427,10 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value) {
 		float res = (float)strtod(value.c_str(), &endptr);
 
 		if (
-			(errno == ERANGE && (res == HUGE_VAL)) 
-			|| 
-			(errno != 0 && res == 0)
-			) {
+		    (errno == ERANGE && (res == HUGE_VAL))
+		    ||
+		    (errno != 0 && res == 0)
+		) {
 			// TODO: Error, bail out
 		} else if (endptr == value.c_str()) {
 			// TODO: Couldn't parse anything... bail out?
@@ -417,7 +438,7 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value) {
 			// We've parsed all of it, have we?
 			var->setFloat(res);
 		} else {
-			assert (false);
+			assert(false);
 			// Something funny happened here.
 		}
 	} else if (var->_type == VAL_BOOL) {

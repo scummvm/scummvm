@@ -40,7 +40,7 @@ enum ErrorCode {
 	NO_SUCH_BREAKPOINT,
 	NOT_ALLOWED,
 	IS_BLANK, // Is blank or comment-only, actually
-	NO_SUCH_SCRIPT 
+	NO_SUCH_SCRIPT
 };
 
 class SourceFile {
@@ -61,12 +61,14 @@ struct BreakpointInfo {
 	Common::String _filename;
 	int _line;
 	int _hits;
+	bool _enabled;
 };
 
 struct WatchInfo {
 	Common::String _filename;
 	Common::String _symbol;
 	int _hits;
+	bool _enabled;
 };
 
 class DebuggerAdapter {
@@ -83,16 +85,18 @@ public:
 	int isBreakpointLegal(const char *filename, int line);
 	int removeWatch(int id);
 	int removeBreakpoint(int id);
+	int disableBreakpoint(int id);
+	int enableBreakpoint(int id);
 	BaseArray<BreakpointInfo> getBreakpoints();
 	BaseArray<WatchInfo> getWatchlist();
 	int stepOver();
 	int stepInto();
 	int stepContinue();
 	int32 getLastLine();
-	Common::String readValue (const char* name, int *error);
-	int setValue (Common::String name, Common::String value);
-	int setType (const char* name, int type);
-	Common::String readRes (const Common::String &name, int *error); 
+	Common::String readValue(const char *name, int *error);
+	int setValue(Common::String name, Common::String value);
+	int setType(const char *name, int type);
+	Common::String readRes(const Common::String &name, int *error);
 	bool showFps(bool show);
 	SourceFile *_lastSource;
 private:

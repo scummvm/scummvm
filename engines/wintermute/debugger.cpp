@@ -51,6 +51,8 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("watch", WRAP_METHOD(Console, Cmd_Watch));
 	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
 	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
+	DCmd_Register("disable", WRAP_METHOD(Console, Cmd_DisableBreakpoint));
+	DCmd_Register("enable", WRAP_METHOD(Console, Cmd_EnableBreakpoint));
 	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
 	DCmd_Register("set", WRAP_METHOD(Console, Cmd_Set));
 	DCmd_Register("set-type", WRAP_METHOD(Console, Cmd_SetType));
@@ -96,6 +98,34 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 		}
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
+	}
+
+	return true;
+}
+
+bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
+	if (argc == 2) {
+		int error = ADAPTER->enableBreakpoint(atoi(argv[1]));
+		if (!error) DebugPrintf("%s: OK\n", argv[0]);
+		else if (error == NO_SUCH_BREAKPOINT) {
+			DebugPrintf("%s: no such breakpoint %d\n", argv[0], atoi(argv[1]));
+		}
+	} else {
+		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
+	}
+
+	return true;
+}
+
+bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
+	if (argc == 2) {
+		int error = ADAPTER->disableBreakpoint(atoi(argv[1]));
+		if (!error) DebugPrintf("%s: OK\n", argv[0]);
+		else if (error == NO_SUCH_BREAKPOINT) {
+			DebugPrintf("%s: no such breakpoint %d\n", argv[0], atoi(argv[1]));
+		}
+	} else {
+		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
 	}
 
 	return true;

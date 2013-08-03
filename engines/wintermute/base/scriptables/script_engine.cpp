@@ -221,6 +221,18 @@ bool ScEngine::removeBreakpoint(int id) {
 	return 1;
 }
 
+bool ScEngine::enableBreakpoint(int id) {
+	if (id >= _breakpoints.size()) return 0;
+	_breakpoints[id]._enabled = true;
+	return 1;
+}
+
+bool ScEngine::disableBreakpoint(int id) {
+	if (id >= _breakpoints.size()) return 0;
+	_breakpoints[id]._enabled = false;
+	return 1;
+}
+
 int ScEngine::incrementWatch(int id) {
 	// TODO: Check if existing
 	_watchlist[id]._hits = 0;
