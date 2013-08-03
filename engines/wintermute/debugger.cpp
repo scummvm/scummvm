@@ -43,8 +43,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
-
-	DCmd_Register("rmb", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
+	DCmd_Register("del", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
 	DCmd_Register("top", WRAP_METHOD(Console, Cmd_Top));
 	DCmd_Register("next", WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepInto));
@@ -312,7 +311,7 @@ void Console::printSource(int n) {
 	BaseArray<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
 	if (error != 0) {
 		DebugPrintf("Error retrieving source file\n");
-	} 
+	}
 	for (int i = 0; i < strings.size(); i++) {
 		DebugPrintf(strings[i].c_str());
 		DebugPrintf("\n");
