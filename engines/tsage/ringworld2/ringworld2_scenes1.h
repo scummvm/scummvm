@@ -44,7 +44,7 @@ public:
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	SpeakerGameText _gameTextSpeaker;
-	DataManager _dataManager;
+	AnimationPlayer _animationPlayer;
 
 	int _field412;
 	int _fieldD2E;

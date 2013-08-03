@@ -106,13 +106,13 @@ void Scene1000::signal() {
 		R2_GLOBALS._fontColors.background = 224;
 		R2_GLOBALS._fontColors.foreground = 119;
 
-		_dataManager._field56 = 2;
-		_dataManager._field3C = 2;
-		_dataManager.load(5);
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer.load(5);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
 
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 		_fieldD2E = 1;
 		
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, true, 0);
@@ -163,13 +163,13 @@ void Scene1000::signal() {
 		for (int percent = 100; percent >= 0; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(7);
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(7);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
 
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -193,13 +193,13 @@ void Scene1000::signal() {
 		break;
 
 	case 10:
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(6);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(6);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -210,18 +210,18 @@ void Scene1000::signal() {
 		break;
 
 	case 11:
-		R2_GLOBALS._scenePalette.loadPalette(NULL);
+		R2_GLOBALS._scenePalette.loadPalette(0);
 		R2_GLOBALS._sceneManager.changeScene(300);
 		break;
 
 	case 20:
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(8);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(8);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -230,18 +230,18 @@ void Scene1000::signal() {
 		break;
 
 	case 21:
-		R2_GLOBALS._scenePalette.loadPalette(NULL);
+		R2_GLOBALS._scenePalette.loadPalette(0);
 		R2_GLOBALS._sceneManager.changeScene(1530);
 		break;
 
 	case 30:
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(17);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(17);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -260,13 +260,13 @@ void Scene1000::signal() {
 		break;
 
 	case 40:
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(18);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(18);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -286,13 +286,13 @@ void Scene1000::signal() {
 		for (int percent = 100; percent >= 0; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(13);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(13);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -308,13 +308,13 @@ void Scene1000::signal() {
 		for (int percent = 100; percent >= 0; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(14);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(14);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -335,13 +335,13 @@ void Scene1000::signal() {
 		for (int percent = 100; percent >= 0; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(12);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(12);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -360,13 +360,13 @@ void Scene1000::signal() {
 		for (int percent = 100; percent >= 0; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(9);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(9);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -383,13 +383,13 @@ void Scene1000::signal() {
 		break;
 
 	case 80:
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(10);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(10);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -401,13 +401,13 @@ void Scene1000::signal() {
 		break;
 
 	case 90:
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(11);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(11);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
@@ -428,13 +428,13 @@ void Scene1000::signal() {
 		R2_GLOBALS._sound1.play(304);
 		R2_GLOBALS._sound2.play(82);
 
-		_dataManager._field3C = 2;
-		_dataManager._field56 = 2;
-		_dataManager.load(19);
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = ANIMOBJMODE_2;
+		_animationPlayer.load(19);
 
-		R2_GLOBALS._scenePalette.loadPalette(_dataManager._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
-		_dataManager.dispatch();
+		_animationPlayer.dispatch();
 
 		_fieldD2E = 1;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);

@@ -1554,7 +1554,7 @@ void Scene180::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = true;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._v = 1;
-		_animationPlayer._objectMode = 1;
+		_animationPlayer._objectMode = ANIMOBJMODE_1;
 		R2_GLOBALS._scene180Mode = 1;
 
 		_animationPlayer.load(1);
@@ -1597,7 +1597,7 @@ void Scene180::signal() {
 	case 5:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._v = 1;
-		_animationPlayer._objectMode = 1;
+		_animationPlayer._objectMode = ANIMOBJMODE_1;
 		R2_GLOBALS._scene180Mode = 2;
 		_animationPlayer.load(2);
 
@@ -1702,7 +1702,7 @@ void Scene180::signal() {
 		_field412 = 1;
 		_animationPlayer._paletteMode = ANIMPALMODE_REPLACE_PALETTE;
 		_animationPlayer._v = 1;
-		_animationPlayer._objectMode = 42;
+		_animationPlayer._objectMode = ANIMOBJMODE_42;
 		R2_GLOBALS._scene180Mode = 3;
 		_animationPlayer.load(3);
 		break;
@@ -1801,7 +1801,7 @@ void Scene180::signal() {
 
 	case 40:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
-		_animationPlayer._objectMode = 1;
+		_animationPlayer._objectMode = ANIMOBJMODE_1;
 		R2_GLOBALS._scene180Mode = 4;
 		if (_animationPlayer.load(4)) {
 			_animationPlayer.dispatch();
@@ -1840,7 +1840,7 @@ void Scene180::signal() {
 		_field412 = 1;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._v = 1;
-		_animationPlayer._objectMode = 1;
+		_animationPlayer._objectMode = ANIMOBJMODE_1;
 		R2_GLOBALS._scene180Mode = 15;
 		_animationPlayer.load(15, NULL);
 

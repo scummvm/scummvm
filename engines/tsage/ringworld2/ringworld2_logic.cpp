@@ -2457,26 +2457,6 @@ void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX
 
 /*--------------------------------------------------------------------------*/
 
-DataManager::DataManager(): EventHandler() {
-
-}
-
-void DataManager::synchronize(Serializer &s) {
-	EventHandler::synchronize(s);
-
-}
-
-void DataManager::load(int v) {
-	warning("TODO");
-}
-
-void DataManager::remove() {
-	if (_endHandler)
-		_endHandler->signal();
-
-	_endHandler = NULL;
-}
-
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

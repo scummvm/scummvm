@@ -392,6 +392,8 @@ public:
 enum AnimationPaletteMode { ANIMPALMODE_REPLACE_PALETTE = 0, ANIMPALMODE_CURR_PALETTE = 1,
 		ANIMPALMODE_NONE = 2 };
 
+enum AnimationObjectMode { ANIMOBJMODE_1 = 1, ANIMOBJMODE_2 = 2, ANIMOBJMODE_42 = 42 };
+
 class AnimationPlayer: public EventHandler {
 private:
 	void rleDecode(const byte *pSrc, byte *pDest, int size);
@@ -406,8 +408,9 @@ public:
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
 	int _field38;
-	int _field3A, _paletteMode;
-	int _objectMode;
+	int _field3A;
+	AnimationPaletteMode _paletteMode;
+	AnimationObjectMode _objectMode;
 	int _field58, _sliceHeight;
 	byte _palIndexes[256];
 	ScenePalette _palette;
@@ -512,25 +515,6 @@ public:
 	virtual Common::String getClassName() { return "ScannerDialog"; }
 	virtual void remove();
 	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-};
-
-class DataManager: public EventHandler {
-public:
-	int _field3C;
-	int _field56;
-
-	int _palStart;
-	int _palLength;
-	byte _palData[256 * 3];
-	EventHandler *_endHandler;
-public:
-	DataManager();
-
-	virtual Common::String getClassName() { return "DataManager"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-
-	void load(int v);
 };
 
 } // End of namespace Ringworld2
