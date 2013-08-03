@@ -160,8 +160,8 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 		format = surf.format;
 		// We need to cast the const qualifier away here because 'pixels'
 		// always needs to be writable. 'surf' however is a constant Surface,
-		// thus getBasePtr will always return const pixel data.
-		pixels = const_cast<void *>(surf.getBasePtr(0, 0));
+		// thus getPixels will always return const pixel data.
+		pixels = const_cast<void *>(surf.getPixels());
 	}
 }
 
@@ -339,7 +339,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = srcImage.scale(width, height);
-		savedPixels = (byte *)img->getBasePtr(0, 0);
+		savedPixels = (byte *)img->getPixels();
 	} else {
 		img = &srcImage;
 	}
