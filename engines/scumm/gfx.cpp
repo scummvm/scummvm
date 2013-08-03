@@ -421,7 +421,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	}
 
 	_res->createResource(rtBuffer, slot + 1, size);
-	vs->pixels = getResourceAddress(rtBuffer, slot + 1);
+	vs->setPixels(getResourceAddress(rtBuffer, slot + 1));
 	memset(vs->getPixels(0, 0), 0, size);	// reset background
 
 	if (twobufs) {
