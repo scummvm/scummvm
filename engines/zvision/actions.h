@@ -128,6 +128,14 @@ private:
 	uint _timeInMillis;
 };
 
+class ActionDebug : public ResultAction {
+public:
+	ActionDebug(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+};
+
 class ActionDelayRender : public ResultAction {
 public:
 	ActionDelayRender(const Common::String &line);
@@ -136,6 +144,54 @@ public:
 private:
 	// TODO: Check if this should actually be frames or if it should be milliseconds/seconds
 	uint32 framesToDelay;
+};
+
+class ActionDisableControl : public ResultAction {
+public:
+	ActionDisableControl(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+};
+
+class ActionDisableVenus : public ResultAction {
+public:
+	ActionDisableVenus(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+};
+
+class ActionDisplayMessage : public ResultAction {
+public:
+	ActionDisplayMessage(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+};
+
+class ActionDissolve : public ResultAction {
+public:
+	ActionDissolve(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+};
+
+class ActionDistort : public ResultAction {
+public:
+	ActionDistort(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+};
+
+class ActionEnableControl : public ResultAction {
+public:
+	ActionEnableControl(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
 };
 
 class ActionPlayAnimation : public ResultAction {
@@ -170,11 +226,11 @@ private:
 };
 
 // TODO: See if this exists in ZGI. It doesn't in ZNem
-//class ActionUnloadAnimation : public ResultAction {
-//public:
-//	ActionUnloadAnimation(const Common::String &line);
-//	bool execute(ZVision *engine);
-//};
+class ActionUnloadAnimation : public ResultAction {
+public:
+	ActionUnloadAnimation(const Common::String &line);
+	bool execute(ZVision *engine);
+};
 
 class ActionRandom : public ResultAction {
 public:
