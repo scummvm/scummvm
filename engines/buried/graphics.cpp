@@ -24,10 +24,13 @@
 #ifdef MACOSX
 #include "common/macresman.h"
 #endif
+#include "common/system.h"
 #include "graphics/cursorman.h"
-#include "graphics/wincursor.h"
 #include "graphics/font.h"
+#include "graphics/surface.h"
+#include "graphics/wincursor.h"
 #include "graphics/fonts/ttf.h"
+#include "image/bmp.h"
 
 #include "buried/buried.h"
 #include "buried/database.h"
@@ -210,7 +213,7 @@ Graphics::Font *GraphicsManager::createFont(int size) const {
 	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
 	// with the TrueType font on Win7/Win8 (at least)
 	// TODO: shift-jis (code page 932) for the Japanese version (again, buy for clone2727)
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 0, Graphics::kTTFRenderModeMonochrome, s_codePage1252);
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 0, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
 	delete stream;
 	return font;
 }
@@ -249,6 +252,31 @@ Cursor GraphicsManager::setCursor(Cursor newCursor) {
 
 	_curCursor = newCursor;
 	return oldCursor;
+}
+
+Graphics::Surface *GraphicsManager::getBitmap(uint32 bitmapID) {
+	Common::SeekableReadStream *stream = _vm->getBitmapStream(bitmapID);
+
+	if (!stream)
+		error("Could not find bitmap %d", bitmapID);
+
+	Image::BitmapDecoder decoder;
+	if (!decoder.loadStream(*stream))
+		error("Failed to decode bitmap %d", bitmapID);
+
+	delete stream;
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->copyFrom(*decoder.getSurface());
+	return surface;
+}
+
+uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
+	if (_vm->isTrueColor())
+		return g_system->getScreenFormat().RGBToColor(r, g, b);
+
+	// TODO
+	return 0;
 }
 
 } // End of namespace Buried

@@ -67,6 +67,8 @@ public:
 	byte *getDefaultPalette() const;
 	Graphics::Font *createFont(int size) const;
 	Cursor setCursor(Cursor newCursor);
+	Graphics::Surface *getBitmap(uint32 bitmapID);
+	uint32 getColor(byte r, byte g, byte b);
 
 private:
 	BuriedEngine *_vm;
