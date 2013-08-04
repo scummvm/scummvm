@@ -87,12 +87,14 @@ private:
 	static const char kControlSpeechBubble = 2; // ^B
 	static const char kControlCenter = 3; // ^C
 	static const char kControlToBuffer = 4; // ^D
+	static const char kControlItalic = 6; // ^F
 	static const char kControlBell = 7; // ^G
 	static const char kControlInsertSpaces = 9; // ^I
 	static const char kControlLeftJustified = 12; // ^L
 	static const char kControlNewLine = 13; // ^M
 	static const char kControlParagraph = 16; // ^P
 	static const char kControlQuestion = 17; // ^Q
+	static const char kControlRoman = 18; // ^R
 	static const char kControlRegister = 19; // ^S
 	static const char kControlNegative = 21; // ^U
 	static const char kControlIcon = 22; // ^V
@@ -134,9 +136,9 @@ private:
 
 	void block_drop(Common::String fn, int16 xl, int16 yl, int16 y);
 
-	void strip(Common::String &q);
+	void strip(Common::String &q); // Strip trailing spaces.
 
-	void solidify(byte n);
+	void solidify(byte n); // Does the word wrapping.
 
 	void loadfont();
 };
