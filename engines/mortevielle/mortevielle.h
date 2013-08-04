@@ -272,7 +272,7 @@ private:
 	void mainGame();
 	void playGame();
 	void handleAction();
-	void displayCGAPattern(int n, Pattern p, nhom *pal);
+	void displayCGAPattern(int n, Pattern *p, nhom *pal);
 	void loadPalette();
 	void loadTexts();
 	void loadBRUIT5();

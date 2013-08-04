@@ -1997,7 +1997,7 @@ void MortevielleEngine::setPal(int n) {
 			palette(_cgaPal[n]._p);
 
 		for (int i = 0; i <= 15; ++i)
-			displayCGAPattern(i, _patternArr[pal[i]._id], pal);
+			displayCGAPattern(i, &_patternArr[pal[i]._id], pal);
 		}
 		break;
 	default:
@@ -2009,15 +2009,15 @@ void MortevielleEngine::setPal(int n) {
  * Engine function - Display a CGA pattern, using a specified palette
  * @remarks	Originally called 'outbloc'
  */
-void MortevielleEngine::displayCGAPattern(int n, Pattern p, nhom *pal) {
+void MortevielleEngine::displayCGAPattern(int n, Pattern *p, nhom *pal) {
 	int addr = n * 404 + 0xd700;
 
-	WRITE_LE_UINT16(&_curPict[addr], p._tax);
-	WRITE_LE_UINT16(&_curPict[addr + 2], p._tay);
+	WRITE_LE_UINT16(&_curPict[addr], p->_tax);
+	WRITE_LE_UINT16(&_curPict[addr + 2], p->_tay);
 	addr += 4;
-	for (int i = 0; i < p._tax; ++i) {
-		for (int j = 0; j < p._tay; ++j)
-			_curPict[addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
+	for (int i = 0; i < p->_tax; ++i) {
+		for (int j = 0; j < p->_tay; ++j)
+			_curPict[addr + j * p->_tax + i] = pal[n]._hom[p->_des[i + 1][j + 1]];
 	}
 }
 
