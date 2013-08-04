@@ -61,6 +61,7 @@ bool Debugger::cmd_lua_do(int argc, const char **argv) {
 	}
 	cmd.deleteLastChar();
 	DebugPrintf("Executing command: <%s>\n", cmd.c_str());
+	cmd = Common::String::format("__temp_fn__ = function()\n%s\nend\nstart_script(__temp_fn__)", cmd.c_str());
 	g_grim->debugLua(cmd);
 	return true;
 }
