@@ -2207,7 +2207,7 @@ void MortevielleEngine::music() {
 	f.read(compMusicBuf, size);
 	f.close();
 
-	_soundManager.decodeMusic(compMusicBuf, musicBuf, size);
+	int musicSize = _soundManager.decodeMusic(compMusicBuf, musicBuf, size);
 	free(compMusicBuf);
 
 	_addFix = (float)((kTempoMusic - 8)) / 256;
@@ -2217,7 +2217,7 @@ void MortevielleEngine::music() {
 	int k = 0;
 	do {
 		fin = keyPressed();
-		_soundManager.playSong(musicBuf, size * 2);
+		_soundManager.playSong(musicBuf, musicSize);
 		++k;
 		fin = fin | keyPressed() | (k >= 5);
 	} while (!fin);

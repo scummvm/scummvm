@@ -105,7 +105,7 @@ public:
 	void setParent(MortevielleEngine *vm);
 	void playNote(int frequency, int32 length);
 
-	void decodeMusic(const byte *PSrc, byte *PDest, int size);
+	int decodeMusic(const byte *PSrc, byte *PDest, int size);
 	void playSong(const byte *buf, int size);
 
 	void litph(tablint &t, int typ, int tempo);

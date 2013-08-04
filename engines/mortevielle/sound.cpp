@@ -148,11 +148,13 @@ SoundManager::~SoundManager() {
 /**
  * Decode music data
  */
-void SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int size) {
+int SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int size) {
 	static const int tab[16] = { -96, -72, -48, -32, -20, -12, -8, -4, 0, 4, 8, 12, 20, 32, 48, 72 };
 
 	uint seed = 128;
 	int v;
+	int decompSize = 0;
+	int skipSize = 0;
 
 	for (int idx1 = 0; idx1 < size; ++idx1) {
 		byte srcByte = *PSrc++;
@@ -163,7 +165,15 @@ void SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int size) {
 		v = tab[srcByte & 0xf];
 		seed += v;
 		*PDest++ = seed & 0xff;
+
+		if (srcByte == 0)
+			skipSize += 2;
+		else {
+			decompSize += skipSize + 2;
+			skipSize = 0;
+		}
 	}
+	return decompSize;
 }
 
 void SoundManager::litph(tablint &t, int typ, int tempo) {
