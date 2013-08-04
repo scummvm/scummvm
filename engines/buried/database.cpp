@@ -82,6 +82,10 @@ Graphics::WinCursorGroup *DatabaseNE::getCursorGroup(uint32 cursorGroupID) {
 	return Graphics::WinCursorGroup::createCursorGroup(*_exe, cursorGroupID);
 }
 
+Common::SeekableReadStream *DatabaseNE::getResourceStream(const Common::String &resourceType, uint32 resourceID) {
+	return _exe->getResource(resourceType, resourceID);
+}
+
 bool DatabaseNECompressed::load(const Common::String &fileName) {
 	return _exe->loadFromCompressedEXE(fileName);
 }

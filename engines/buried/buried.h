@@ -59,6 +59,14 @@ public:
 	Common::String getString(uint32 stringID);
 	Common::String getFilePath(uint32 stringID);
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
+	Common::SeekableReadStream *getNavData(uint32 resourceID);
+	Common::SeekableReadStream *getSndData(uint32 resourceID);
+	Common::SeekableReadStream *getAnimData(uint32 resourceID);
+	Common::SeekableReadStream *getAIData(uint32 resourceID);
+	Common::SeekableReadStream *getItemData(uint32 resourceID);
+	Common::SeekableReadStream *getBookData(uint32 resourceID);
+	Common::SeekableReadStream *getFileBCData(uint32 resourceID);
+	Common::SeekableReadStream *getINNData(uint32 resourceID);
 
 	GraphicsManager *_gfx;
 	Database *_mainEXE;
