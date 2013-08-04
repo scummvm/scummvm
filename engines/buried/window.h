@@ -65,6 +65,8 @@ public:
 	const Common::Rect &getRect() const { return _rect; }
 	Common::Rect getClientRect() const;
 	void updateWindow() { onPaint(); }
+	void enableWindow(bool enable);
+	bool isWindowEnabled() const;
 
 	// TODO:
 	// SetTimer
@@ -82,9 +84,9 @@ private:
 	BuriedEngine *_vm;
 	Common::Queue<Message *> _queue;
 
-	// TODO: Something about children?
 	Window *_parent;
 	Common::Rect _rect;
+	bool _enabled;
 };
 
 } // End of namespace Buried

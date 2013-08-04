@@ -31,6 +31,7 @@ namespace Buried {
 
 Window::Window(BuriedEngine *vm) : _vm(vm) {
 	_parent = 0;
+	_enabled = true;
 }
 
 Window::~Window() {
@@ -108,6 +109,20 @@ void Window::dispatchAllMessages() {
 
 		delete message;
 	}
+}
+
+void Window::enableWindow(bool enable) {
+	if (_enabled != enable) {
+		_enabled = enable;
+		sendMessage(new EnableMessage(enable));
+	}
+}
+
+bool Window::isWindowEnabled() const {
+	if (_parent && !_parent->isWindowEnabled())
+		return false;
+
+	return _enabled;
 }
 
 } // End of namespace Buried
