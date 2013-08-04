@@ -49,22 +49,6 @@
 
 namespace Mortevielle {
 
-/*---------------------------------------------------------------------------*/
-/*-------------------           MEMORY  MAP          ------------------------*/
-/*---------------------------------------------------------------------------*/
-/* The following is a list of physical addresses in memory currently used
- * by the game.
- *
- * Address
- * -------
- * 5000:0 - Music data
- * 6000:0 - Decompressed current image
- * 7000:0+ - Compressed images
- * 7000:2 - 16 words representing palette map
- * 7000:4138 - width, height, x/y offset of decoded image
- */
-const int kAdrMusic = 0x5000;
-
 // Debug channels
 enum {
 	kMortevielleCore = 1 << 0,
@@ -197,7 +181,6 @@ private:
 	Pattern _patternArr[15];
 	int _menuOpcode;
 
-	bool _mouseClick;
 	bool _inMainGameLoop;	// Flag when the main game loop is active
 	bool _quitGame;			// Quit game flag. Originally called 'arret'
 	bool _endGame;			// End game flag. Originally called 'solu'
@@ -441,6 +424,7 @@ public:
 	int  _savedBitIndex;
 	int  _numpal;
 	int  _key;
+	bool _mouseClick;
 	SaveStruct _coreVar, _saveStruct;
 
 	int _maff;
@@ -456,7 +440,6 @@ public:
 	byte *_curAnim;
 	byte *_rightFramePict;
 	byte *_compMusicBuf1;
-	byte *_compMusicBuf2;
 	
 	Debugger _debugger;
 	ScreenSurface _screenSurface;

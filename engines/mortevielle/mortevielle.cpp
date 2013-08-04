@@ -105,7 +105,6 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_curAnim = nullptr;
 	_rightFramePict = nullptr;
 	_compMusicBuf1 = nullptr;
-	_compMusicBuf2 = nullptr;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -113,7 +112,6 @@ MortevielleEngine::~MortevielleEngine() {
 	free(_curAnim);
 	free(_rightFramePict);
 	free(_compMusicBuf1);
-	free(_compMusicBuf2);
 }
 
 /**
@@ -388,10 +386,9 @@ void MortevielleEngine::showIntroduction() {
 	if (shouldQuit())
 		return;
 
-	// TODO: Once music (Amiga/Atari ports) is implemented, only use the below delay if music is turned off
 	showTitleScreen();
-	delay(3000);
 	music();
+	_mixer->stopAll();
 }
 
 /**

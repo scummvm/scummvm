@@ -2201,13 +2201,15 @@ void MortevielleEngine::music() {
 	if (!f.open("mort.img"))
 		error("Missing file - mort.img");
 
-	free(_compMusicBuf2);
 	int size = f.size();
-	_compMusicBuf2 = (byte *)malloc(sizeof(byte) * size);
-	f.read(_compMusicBuf2, size);
+	byte *compMusicBuf = (byte *)malloc(sizeof(byte) * size);
+	byte *musicBuf = (byte *)malloc(sizeof(byte) * size * 2);
+	f.read(compMusicBuf, size);
 	f.close();
 
-	_soundManager.decodeMusic(_compMusicBuf2, &_mem[kAdrMusic * 16], size / 128);
+	_soundManager.decodeMusic(compMusicBuf, musicBuf, size);
+	free(compMusicBuf);
+
 	_addFix = (float)((kTempoMusic - 8)) / 256;
 	_speechManager.cctable(_speechManager._tbi);
 
@@ -2215,12 +2217,14 @@ void MortevielleEngine::music() {
 	int k = 0;
 	do {
 		fin = keyPressed();
-		_soundManager.musyc(_speechManager._tbi, 9958, kTempoMusic);
+		_soundManager.playSong(musicBuf, size * 2);
 		++k;
 		fin = fin | keyPressed() | (k >= 5);
 	} while (!fin);
 	while (keyPressed())
 		getChar();
+
+	free(musicBuf);
 }
 
 /**

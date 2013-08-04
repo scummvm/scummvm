@@ -170,7 +170,7 @@ void SpeechManager::loadMusicSound() {
 	_vm->_compMusicBuf1 = (byte *)malloc(sizeof(byte) * size);
 	f.read(_vm->_compMusicBuf1, size);
 
-	_vm->_soundManager.decodeMusic(_vm->_compMusicBuf1, &_vm->_mem[kAdrNoise * 16], size / 128);
+	_vm->_soundManager.decodeMusic(_vm->_compMusicBuf1, &_vm->_mem[kAdrNoise * 16], size);
 	f.close();
 }
 

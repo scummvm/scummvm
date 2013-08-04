@@ -28,6 +28,7 @@
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/sound.h"
 
+#include "audio/decoders/raw.h"
 #include "common/scummsys.h"
 
 namespace Mortevielle {
@@ -128,8 +129,6 @@ int8 PCSpeaker::generateSquare(uint32 x, uint32 oscLength) {
 
 /*-------------------------------------------------------------------------*/
 
-const int tab[16] = { -96, -72, -48, -32, -20, -12, -8, -4, 0, 4, 8, 12, 20, 32, 48, 72 };
-
 // The PC timer chip works at a frequency of 1.19318Mhz
 #define TIMER_FREQUENCY 1193180
 
@@ -149,21 +148,21 @@ SoundManager::~SoundManager() {
 /**
  * Decode music data
  */
-void SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int NbreSeg) {
-	int seed = 128;
+void SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int size) {
+	static const int tab[16] = { -96, -72, -48, -32, -20, -12, -8, -4, 0, 4, 8, 12, 20, 32, 48, 72 };
+
+	uint seed = 128;
 	int v;
 
-	for (int idx1 = 0; idx1 < (NbreSeg * 2); ++idx1) {
-		for (int idx2 = 0; idx2 < 64; ++idx2) {
-			byte srcByte = *PSrc++;
-			v = tab[srcByte >> 4];
-			seed += v;
-			*PDest++ = seed & 0xff;
+	for (int idx1 = 0; idx1 < size; ++idx1) {
+		byte srcByte = *PSrc++;
+		v = tab[srcByte >> 4];
+		seed += v;
+		*PDest++ = seed & 0xff;
 
-			v = tab[srcByte & 0xf];
-			seed += v;
-			*PDest++ = seed & 0xff;
-		}
+		v = tab[srcByte & 0xf];
+		seed += v;
+		*PDest++ = seed & 0xff;
 	}
 }
 
@@ -176,27 +175,12 @@ void SoundManager::playNote(int frequency, int32 length) {
 }
 
 
-void SoundManager::musyc(tablint &tb, int nbseg, int att) {
-#ifdef DEBUG
-	const byte *pSrc = &_vm->_mem[kAdrMusic * 16];
+void SoundManager::playSong(const byte* buf, int size) {
+	Audio::AudioStream *stream = Audio::makeRawStream(buf, size, 11025 / 2, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
-	// Convert the countdown amount to a tempo rate, and then to note length in microseconds
-	int tempo = TIMER_FREQUENCY / att;
-	int length = 1000000 / tempo;
-
-	for (int noteIndex = 0; noteIndex < (nbseg * 16); ++noteIndex) {
-		int lookupValue = *pSrc++;
-		int noteCountdown = tb[lookupValue];
-		int noteFrequency = TIMER_FREQUENCY / noteCountdown;
-
-		playNote(noteFrequency, length);
-	}
-
-	// Keep waiting until the song has been finished
-	while (_speakerStream->isPlaying() && !_vm->shouldQuit()) {
-		_vm->delay(10);
-	}
-#endif
+	while (_mixer->isSoundHandleActive(_speakerHandle) && !_vm->keyPressed() && !_vm->_mouseClick)
+		;
 }
 
 void SoundManager::setParent(MortevielleEngine *vm) {

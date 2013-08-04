@@ -105,9 +105,10 @@ public:
 	void setParent(MortevielleEngine *vm);
 	void playNote(int frequency, int32 length);
 
-	void decodeMusic(const byte *PSrc, byte *PDest, int NbreSeg);
+	void decodeMusic(const byte *PSrc, byte *PDest, int size);
+	void playSong(const byte *buf, int size);
+
 	void litph(tablint &t, int typ, int tempo);
-	void musyc(tablint &tb, int nbseg, int att);
 };
 
 } // End of namespace Mortevielle
