@@ -215,12 +215,48 @@ void find_script() {
 	lua_pushnumber(0.0f);
 }
 
+void pause_script() {
+	lua_Object taskObj = lua_getparam(1);
+	lua_Type type = taskObj == LUA_NOOBJECT ? LUA_T_NIL : ttype(Address(taskObj));
+	if (type != LUA_T_TASK) {
+		lua_error("Bad argument to pause_script");
+		return;
+	}
+
+	uint32 task = (uint32)nvalue(Address(taskObj));
+	LState *state;
+	for (state = lua_rootState->next; state != NULL; state = state->next) {
+		if (state->id == task) {
+			state->paused = true;
+			return;
+		}
+	}
+}
+
 void pause_scripts() {
 	LState *t;
 
 	for (t = lua_rootState->next; t != NULL; t = t->next) {
 		if (lua_state != t)
 			t->paused = true;
+	}
+}
+
+void unpause_script() {
+	lua_Object taskObj = lua_getparam(1);
+	lua_Type type = taskObj == LUA_NOOBJECT ? LUA_T_NIL : ttype(Address(taskObj));
+	if (type != LUA_T_TASK) {
+		lua_error("Bad argument to unpause_script");
+		return;
+	}
+
+	uint32 task = (uint32)nvalue(Address(taskObj));
+	LState *state;
+	for (state = lua_rootState->next; state != NULL; state = state->next) {
+		if (state->id == task) {
+			state->paused = false;
+			return;
+		}
 	}
 }
 
