@@ -146,12 +146,12 @@ void Scene1000::signal() {
 
 	case 2:
 		if (R2_GLOBALS._speechSubtitles & SPEECH_TEXT) {
-			setAction(&_sequenceManager1, this, &R2_GLOBALS._player, NULL);
+			setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
 		} else {
 			if (++_field412 < 3)
 				_sceneMode = 2;
 
-			setAction(&_sequenceManager1, this, &R2_GLOBALS._player, NULL);
+			setAction(&_sequenceManager1, this, 2, &R2_GLOBALS._player, NULL);
 		}
 		break;
 
@@ -162,7 +162,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._fontColors.background = 224;
 		R2_GLOBALS._fontColors.foreground = 119;
 
-		for (int percent = 100; percent >= 0; percent += 5)
+		for (int percent = 100; percent >= 0; percent -= 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
@@ -285,7 +285,7 @@ void Scene1000::signal() {
 
 	case 50:
 		R2_GLOBALS._sound2.play(306);
-		for (int percent = 100; percent >= 0; percent += 5)
+		for (int percent = 100; percent >= 0; percent -= 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
@@ -307,7 +307,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sound2.play(307);
 		R2_GLOBALS._sound1.play(308);
 
-		for (int percent = 100; percent >= 0; percent += 5)
+		for (int percent = 100; percent >= 0; percent -= 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
@@ -334,7 +334,7 @@ void Scene1000::signal() {
 	case 60:
 		R2_GLOBALS._sound1.play(333);
 		
-		for (int percent = 100; percent >= 0; percent += 5)
+		for (int percent = 100; percent >= 0; percent -= 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
@@ -359,7 +359,7 @@ void Scene1000::signal() {
 
 	case 70:
 		R2_GLOBALS._sound2.play(113);
-		for (int percent = 100; percent >= 0; percent += 5)
+		for (int percent = 100; percent >= 0; percent -= 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
