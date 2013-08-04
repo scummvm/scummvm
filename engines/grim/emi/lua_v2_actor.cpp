@@ -379,7 +379,6 @@ void Lua_V2::ActorStopMoving() {
 }
 
 void Lua_V2::GetActorWorldPos() {
-	Lua_V1::GetActorPos();
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
