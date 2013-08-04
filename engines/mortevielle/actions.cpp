@@ -1448,7 +1448,7 @@ void MortevielleEngine::fctDiscuss() {
 							displayQuestionText(lib[choice], 1);
 						questionAsked[choice] = ! questionAsked[choice];
 					}
-					if ((_coreVar._availableQuestion[ix] == '*') || (ix == 46)) {
+					if ((ix == 46) || (_coreVar._availableQuestion[ix] == '*')) {
 						posY = ((ix - 1) % 23) << 3;
 						if (ix > 23)
 							posX = 320;
