@@ -641,7 +641,108 @@ void Movement::removeFirstPhase() {
 }
 
 void Movement::gotoNextFrame(int callback1, int callback2) {
-	warning("STUB: Movement::gotoNextFrame()");
+	if (!callback2) {
+		if (_currMovement) {
+			if ((uint)_currDynamicPhaseIndex == _currMovement->_dynamicPhases.size() - 1
+				&& !(((DynamicPhase *)(_currMovement->_dynamicPhases.back()))->_countdown))
+				return;
+		} else if ((uint)_currDynamicPhaseIndex == _dynamicPhases.size() - 1
+					&& !(((DynamicPhase *)(_dynamicPhases.back()))->_countdown))
+			return;
+	}
+
+	if (_currDynamicPhase->_countdown) {
+		_currDynamicPhase->_countdown--;
+		return;
+	}
+
+	Common::Point point;
+
+	getCurrDynamicPhaseXY(point);
+	_ox -= point.x;
+	_oy -= point.y;
+
+	int deltax = 0;
+
+	if (_currMovement)
+		deltax = _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
+
+	int oldDynIndex = _currDynamicPhaseIndex;
+
+	if (callback2)
+		; //callback2(&_currDynamicPhaseIndex);
+	else
+		_currDynamicPhaseIndex++;
+
+	if (_currMovement) {
+		if (_currMovement->_dynamicPhases.size() <= (uint)_currDynamicPhaseIndex)
+			_currDynamicPhaseIndex = _currMovement->_dynamicPhases.size() - 1;
+		if (_currDynamicPhaseIndex < 0)
+			_currDynamicPhaseIndex = 0;
+		if (_currMovement->_framePosOffsets) {
+			if (callback1) {
+				point = *_currMovement->_framePosOffsets[_currDynamicPhaseIndex];
+				//callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
+
+				_ox += deltax - point.x;
+				_oy += point.y;
+
+				_ox -= _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
+			} else if (oldDynIndex >= _currDynamicPhaseIndex) {
+				while (oldDynIndex > _currDynamicPhaseIndex) {
+					_ox += deltax;
+					deltax = _currMovement->getDimensionsOfPhase(&point, oldDynIndex)->x;
+
+					_ox += _currMovement->_framePosOffsets[oldDynIndex]->x;
+					_oy -= _currMovement->_framePosOffsets[oldDynIndex]->y;
+					oldDynIndex--;
+
+					_ox -= _currMovement->getDimensionsOfPhase(&point, oldDynIndex)->x;
+				}
+			} else {
+				for (int i = oldDynIndex + 1; i <= _currDynamicPhaseIndex; i++) {
+					_ox += deltax;
+					deltax = _currMovement->getDimensionsOfPhase(&point, i)->x;
+					_ox -= _currMovement->_framePosOffsets[i]->x;
+					_oy += _currMovement->_framePosOffsets[i]->y;
+					_ox -= _currMovement->getDimensionsOfPhase(&point, i)->x;
+				}
+			}
+		}
+	} else {
+		if (_dynamicPhases.size() <= (uint)_currDynamicPhaseIndex)
+			_currDynamicPhaseIndex = _dynamicPhases.size() - 1;
+		if (_currDynamicPhaseIndex < 0)
+			_currDynamicPhaseIndex = 0;
+
+		if (_framePosOffsets) {
+			if (callback1) {
+				point.x = _framePosOffsets[_currDynamicPhaseIndex]->x;
+				point.y = _framePosOffsets[_currDynamicPhaseIndex]->y;
+
+				//callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
+				_ox += point.x;
+				_oy += point.y;
+			} else if (oldDynIndex >= _currDynamicPhaseIndex) {
+				for (int i = oldDynIndex; i > _currDynamicPhaseIndex; i--) {
+					_ox -= _framePosOffsets[i]->x;
+					_oy -= _framePosOffsets[i]->y;
+				}
+			} else {
+				for (int i = oldDynIndex + 1; i <= _currDynamicPhaseIndex; i++) {
+					_ox += _framePosOffsets[i]->x;
+					_oy += _framePosOffsets[i]->y;
+				}
+			}
+		}
+	}
+
+	updateCurrDynamicPhase();
+	getCurrDynamicPhaseXY(point);
+	_ox += point.x;
+	_oy += point.y;
+
+	_currDynamicPhase->_countdown = _currDynamicPhase->_initialCountdown;
 }
 
 void Movement::gotoPrevFrame(int callback1, int callback2) {

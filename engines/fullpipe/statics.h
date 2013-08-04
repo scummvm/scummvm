@@ -46,6 +46,7 @@ class CStepArray : public CObject {
 
 class StaticPhase : public Picture {
 	friend class DynamicPhase;
+	friend class Movement;
 
 	int16 _initialCountdown;
 	int16 _countdown;
