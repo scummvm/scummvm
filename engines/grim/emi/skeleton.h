@@ -47,6 +47,7 @@ struct Joint {
 	Math::Matrix4 _absMatrix;
 	Math::Matrix4 _relMatrix;
 	Math::Matrix4 _finalMatrix;
+	Math::Quaternion _finalQuat;
 };
 
 class Skeleton : public Object {

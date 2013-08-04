@@ -2042,9 +2042,19 @@ Math::Vector3d Actor::getWorldPos() const {
 Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		Math::Quaternion ret = Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
+
 		if (isAttached()) {
 			Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
-			ret = ret * attachedActor->getRotationQuat();
+			const Math::Quaternion &attachedQuat = attachedActor->getRotationQuat();
+
+			EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
+			if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
+				Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+				const Math::Quaternion &jointQuat = j->_finalQuat;
+				ret = ret * jointQuat * attachedQuat;
+			} else {
+				ret = ret * attachedQuat;
+			}
 		}
 		return ret;
 	} else {

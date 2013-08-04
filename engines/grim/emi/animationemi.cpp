@@ -67,6 +67,7 @@ void AnimationEmi::animate(Skeleton *skel, float delta) {
 			curBone._target = skel->getJointNamed(curBone._boneName);
 
 		Math::Matrix4 &relFinal = curBone._target->_finalMatrix;
+		Math::Quaternion &quatFinal = curBone._target->_finalQuat;
 
 		if (curBone._rotations) {
 			int keyfIdx = 0;
@@ -92,6 +93,7 @@ void AnimationEmi::animate(Skeleton *skel, float delta) {
 				quat = curBone._rotations[keyfIdx]._quat.slerpQuat(curBone._rotations[keyfIdx - 1]._quat, interpVal);
 			}
 			quat.toMatrix(relFinal);
+			quatFinal = quat;
 			relFinal.setPosition(relPos);
 		}
 

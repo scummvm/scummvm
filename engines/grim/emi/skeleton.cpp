@@ -86,6 +86,7 @@ void Skeleton::initBones() {
 void Skeleton::resetAnim() {
 	for (int i = 0; i < _numJoints; ++i) {
 		_joints[i]._finalMatrix = _joints[i]._relMatrix;
+		_joints[i]._finalQuat = _joints[i]._quat;
 	}
 }
 
@@ -94,6 +95,7 @@ void Skeleton::commitAnim() {
 		const Joint *parent = getParentJoint(&_joints[m]);
 		if (parent) {
 			_joints[m]._finalMatrix = parent->_finalMatrix * _joints[m]._finalMatrix;
+			_joints[m]._finalQuat = parent->_finalQuat * _joints[m]._finalQuat;
 		}
 	}
 }
