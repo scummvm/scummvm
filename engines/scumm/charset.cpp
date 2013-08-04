@@ -1242,6 +1242,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	if (ignoreCharsetMask) {
 		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 		s = *vs;
+		s.setPixels(vs->getPixels(0, 0));
 	} else {
 		s = _vm->_textSurface;
 		drawTop -= _vm->_screenTop;

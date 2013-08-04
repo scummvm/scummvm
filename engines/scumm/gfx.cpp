@@ -422,7 +422,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 
 	_res->createResource(rtBuffer, slot + 1, size);
 	vs->setPixels(getResourceAddress(rtBuffer, slot + 1));
-	memset(vs->getPixels(0, 0), 0, size);	// reset background
+	memset(vs->getBasePtr(0, 0), 0, size);	// reset background
 
 	if (twobufs) {
 		vs->backBuf = _res->createResource(rtBuffer, slot + 5, size);
@@ -1590,7 +1590,7 @@ void GdiV2::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 	if (vs->hasTwoBuffers)
 		dst = vs->backBuf + y * vs->pitch + x * 8;
 	else
-		dst = (byte *)vs->getPixels(x * 8, y);
+		dst = (byte *)vs->getBasePtr(x * 8, y);
 
 	mask_ptr = getMaskBuffer(x, y, 1);
 
@@ -1827,7 +1827,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		if (vs->hasTwoBuffers)
 			dstPtr = vs->backBuf + y * vs->pitch + (x * 8 * vs->format.bytesPerPixel);
 		else
-			dstPtr = (byte *)vs->getPixels(x * 8, y);
+			dstPtr = (byte *)vs->getBasePtr(x * 8, y);
 
 		transpStrip = drawStrip(dstPtr, vs, x, y, width, height, stripnr, smap_ptr);
 
@@ -1836,7 +1836,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 			transpStrip = true;
 
 		if (vs->hasTwoBuffers) {
-			byte *frontBuf = (byte *)vs->getPixels(x * 8, y);
+			byte *frontBuf = (byte *)vs->getBasePtr(x * 8, y);
 			if (lightsOn)
 				copy8Col(frontBuf, vs->pitch, dstPtr, height, vs->format.bytesPerPixel);
 			else
@@ -2262,7 +2262,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 		vs->bdirty[strip] = bottom;
 
 	bgbak_ptr = (byte *)vs->backBuf + top * vs->pitch + (strip + vs->xstart/8) * 8 * vs->format.bytesPerPixel;
-	backbuff_ptr = (byte *)vs->getPixels((strip + vs->xstart/8) * 8, top);
+	backbuff_ptr = (byte *)vs->getBasePtr((strip + vs->xstart/8) * 8, top);
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
