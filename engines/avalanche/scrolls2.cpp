@@ -106,7 +106,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	warning("STUB: Scrolls::say()");
 }
 
-/* Here are the func2edures that Scroll calls */ /* So they must be... */ /*$F+*/
+/* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
 
 void Scrolls::normscroll() {
 	warning("STUB: Scrolls::normscroll()");
@@ -223,7 +223,141 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	f.close();
 }
 
-void Scrolls::drawscroll(func2 gotoit) {     /* This is one of the oldest func2s in the game. */
+void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in the game.
+	byte b, groi;
+	int16 lx, ly, mx, my, ex, ey;
+	bool centre;
+	byte icon_indent;
+
+	_vm->_gyro->off_virtual();
+	//setvisualpage(cp);
+	//setactivepage(1 - cp);
+	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
+	_vm->_logger->log_epsonroman(); /* Scrolls always START with Roman. */
+
+	lx = 0;
+	ly = (_vm->_gyro->scrolln + 1) * 6;
+	for (b = 0; b <= _vm->_gyro->scrolln; b++) {
+		ex = _vm->_gyro->scroll[b].size() * 8;
+		if (lx < ex)
+			lx = ex;
+	}
+	mx = 320;
+	my = 100; // Getmaxx & getmaxy div 2, both.
+	lx = lx / 2;
+	ly -= 2;
+
+	if ((1 <= use_icon) && (use_icon <= 34))
+		lx += halficonwidth;
+		
+	_vm->_gyro->off();
+	/* mblit(mx-lx-46,my-ly-6,mx+lx+15,my+ly+6,0,3);*/
+	/*setfillstyle(1, 7);
+	setcolor(7);
+	pieslice(mx + lx, my - ly, 360, 90, 15);
+	pieslice(mx + lx, my + ly, 270, 360, 15);
+	setcolor(4);
+	arc(mx + lx, my - ly, 360, 90, 15);
+	arc(mx + lx, my + ly, 270, 360, 15);*/
+	_vm->_graphics->drawBar(mx - lx - 30, my + ly, mx + lx, my + ly + 6, lightgray);
+	_vm->_graphics->drawBar(mx - lx - 30, my - ly - 6, mx + lx, my - ly, lightgray);
+	_vm->_graphics->drawBar(mx - lx - 15, my - ly, mx + lx + 15, my + ly, lightgray);
+	/*setfillstyle(1, 8);
+	pieslice(mx - lx - 31, my - ly, 360, 180, 15);
+	pieslice(mx - lx - 31, my + ly, 180, 360, 15);
+	setfillstyle(1, 4);*/
+	_vm->_graphics->drawBar(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5, red);
+	_vm->_graphics->drawBar(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7, red);
+	_vm->_graphics->drawBar(mx - lx - 15, my - ly, mx - lx - 14, my + ly, red);
+	_vm->_graphics->drawBar(mx + lx + 15, my - ly, mx + lx + 16, my + ly, red);
+	ex = mx - lx;
+	ey = my - ly;
+	mx -= lx;
+	my -= ly + 2;
+	//setcolor(0);
+	centre = false;
+
+	switch (use_icon) {
+	case 0:
+		icon_indent = 0;
+		break; /* No icon. */
+	case 34: {
+		block_drop("about", 28, 76, 15);
+		icon_indent = 0;
+		}
+		break;
+	case 35: {
+		block_drop("gameover", 52, 59, 71);
+		icon_indent = 0;
+		}
+		break;
+	}
+
+	if ((1 <= use_icon) && (use_icon <= 33)) { // Standard icon.
+		geticon(mx, my + ly / 2, use_icon);
+		icon_indent = 53;
+	}
+
+
+	for (b = 0; b <= _vm->_gyro->scrolln; b++) {
+		switch (_vm->_gyro->scroll[b][_vm->_gyro->scroll[b].size() - 1]) {
+		case kControlCenter: {
+			centre = true;
+			_vm->_gyro->scroll[b].deleteLastChar();
+			}
+			break;
+		case kControlLeftJustified: {
+			centre = false;
+			_vm->_gyro->scroll[b].deleteLastChar();
+			}
+			break;
+		case kControlQuestion: {
+			//settextjustify(1, 1);
+			dix = mx + lx;
+			diy = my + ly;
+			_vm->_gyro->scroll[b].setChar(' ', 0);
+			groi = *_vm->_graphics->getPixel(0, 0);
+			// inc(diy,14);
+			_vm->_gyro->shbox(dix - 65, diy - 24, dix - 5, diy - 10, "Yes.");
+			_vm->_gyro->shbox(dix + 5, diy - 24, dix + 65, diy - 10, "No.");
+			}
+			break;
+		}
+
+		if (centre)
+			say(320 - _vm->_gyro->scroll[b].size() * 4 + icon_indent, my, _vm->_gyro->scroll[b]);
+		else
+			say(mx + icon_indent, my, _vm->_gyro->scroll[b]);
+
+		_vm->_logger->log_scrollendline(centre);
+		my += 12;
+	}
+
+	_vm->_gyro->underscroll = my + 3;
+	//setvisualpage(1 - cp);
+	dingdongbell();
+	//my = getpixel(0, 0);
+	_vm->_gyro->dropsok = false;
+	dodgem();
+
+	(this->*gotoit)();
+
+	undodgem();
+	_vm->_gyro->dropsok = true;
+	_vm->_logger->log_divider();
+	//setvisualpage(cp);
+	//mousepage(cp);
+	_vm->_gyro->off();
+	/* mblit(ex-46,ey-6,ex+lx*2+15,ey+ly*2+6,3,0);*/
+	//mblit((ex - 46) / 8, ey - 6, 1 + (ex + lx * 2 + 15) / 8, ey + ly * 2 + 6, cp, 1 - cp);
+	//blitfix();
+	_vm->_gyro->oncandopageswap = true; // Normality again.
+	_vm->_gyro->on();
+	//settextjustify(0, 0); /*sink*/
+	resetscrolldriver();
+	if (_vm->_gyro->mpress > 0)
+		_vm->_gyro->after_the_scroll = true;
+
 	warning("STUB: Scrolls::drawscroll()");
 }
 
@@ -273,7 +407,7 @@ Common::String Scrolls::lsd() {
 
 
 
-void Scrolls::strip(Common::String &q) { // Strip trailing spaces.
+void Scrolls::strip(Common::String &q) {
 	while (q[q.size() - 1] == ' ') {
 		q.deleteLastChar();
 	}
@@ -287,7 +421,7 @@ void Scrolls::solidify(byte n) {
 	do {
 		_vm->_gyro->scroll[n + 1] = _vm->_gyro->scroll[n][_vm->_gyro->scroll[n].size() - 1] + _vm->_gyro->scroll[n + 1];
 		_vm->_gyro->scroll[n].deleteLastChar();
-	} while (!_vm->_gyro->scroll[n][_vm->_gyro->scroll[n].size() - 1] != ' ');
+	} while (_vm->_gyro->scroll[n][_vm->_gyro->scroll[n].size() - 1] != ' ');
 
 	strip(_vm->_gyro->scroll[n]);
 }

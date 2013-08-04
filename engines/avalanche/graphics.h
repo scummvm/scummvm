@@ -76,7 +76,7 @@ public:
 
 	byte *getPixel(int16 x, int16 y);
 
-	void drawFrame(int16 x1, int16 y1, int16 x2, int16 y2, int16 color); // Solely for testing purposes!
+	void drawFrame(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
 
 	void drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
 
