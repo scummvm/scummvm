@@ -147,6 +147,7 @@ class Movement : public GameObject {
 
 	void removeFirstPhase();
 	void gotoNextFrame(int callback1, int callback2);
+	void gotoPrevFrame(int callback1, int callback2);
 	void gotoLastFrame();
 
 	void loadPixelData();

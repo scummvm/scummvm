@@ -599,7 +599,11 @@ void Movement::updateCurrDynamicPhase() {
 }
 
 void Movement::setDynamicPhaseIndex(int index) {
-	warning("STUB: Movement::setDynamicPhaseIndex(%d)", index);
+	while (_currDynamicPhaseIndex < index)
+		gotoNextFrame(0, 0);
+
+	while (_currDynamicPhaseIndex > index)
+		gotoPrevFrame(0, 0);
 }
 
 void Movement::loadPixelData() {
@@ -640,8 +644,18 @@ void Movement::gotoNextFrame(int callback1, int callback2) {
 	warning("STUB: Movement::gotoNextFrame()");
 }
 
+void Movement::gotoPrevFrame(int callback1, int callback2) {
+	warning("STUB: Movement::gotoPrevFrame()");
+}
+
 void Movement::gotoLastFrame() {
-	warning("STUB: Movement::gotoLastFrame()");
+	if (_currMovement) {
+		while ((uint)_currDynamicPhaseIndex != _currMovement->_dynamicPhases.size())
+			gotoNextFrame(0, 0);
+	} else {
+		while ((uint)_currDynamicPhaseIndex != _dynamicPhases.size())
+			gotoNextFrame(0, 0);
+	}
 }
 
 Common::Point *Movement::getCenter(Common::Point *p) {
