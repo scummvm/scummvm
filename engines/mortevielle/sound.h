@@ -106,7 +106,7 @@ public:
 	void playNote(int frequency, int32 length);
 
 	int decodeMusic(const byte *PSrc, byte *PDest, int size);
-	void playSong(const byte *buf, int size, int loops = 1);
+	void playSong(const byte *buf, uint usize, uint loops);
 
 	void litph(tablint &t, int typ, int tempo);
 };
