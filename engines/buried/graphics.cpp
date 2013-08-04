@@ -43,9 +43,14 @@ GraphicsManager::GraphicsManager(BuriedEngine *vm) : _vm(vm) {
 
 	setCursor(kCursorArrow);
 	CursorMan.showMouse(true);
+
+	_screen = new Graphics::Surface();
+	_screen->create(640, 480, g_system->getScreenFormat());
 }
 
 GraphicsManager::~GraphicsManager() {
+	_screen->free();
+	delete _screen;
 }
 
 byte *GraphicsManager::getDefaultPalette() const {
@@ -277,6 +282,11 @@ uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 
 	// TODO
 	return 0;
+}
+
+void GraphicsManager::invalidateRect(const Common::Rect &rect, bool erase) {
+	_dirtyRect.extend(rect);
+	// TODO: Erase?
 }
 
 } // End of namespace Buried

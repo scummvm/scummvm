@@ -87,6 +87,12 @@ Common::Error BuriedEngine::run() {
 	_gfx = new GraphicsManager(this);
 	_sound = new SoundManager(this);
 
+	// TODO: Event loop
+	// - Dispatch window events
+	// - Poll events
+	// - Call UpdateWindow for the windows
+	// - Update timers
+
 	return Common::kNoError;
 }
 

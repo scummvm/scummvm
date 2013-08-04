@@ -23,20 +23,22 @@
 #ifndef BURIED_WINDOW_H
 #define BURIED_WINDOW_H
 
+#include "common/rect.h"
 #include "common/queue.h"
 
 namespace Common {
 struct KeyState;
-struct Point;
 }
 
 namespace Buried {
 
+class BuriedEngine;
 struct Message;
 
 class Window {
 public:
-	virtual ~Window() {}
+	Window(BuriedEngine *vm);
+	virtual ~Window();
 
 	// The message types used by Buried in Time's windows
 	virtual bool onEraseBackground() { return false; }
@@ -57,26 +59,32 @@ public:
 	virtual bool onSetCursor(Window *window, uint cursor) { return false; }
 	virtual void onEnable(bool enable) {}
 
+	void invalidateRect(const Common::Rect &rect, bool erase = true);
+	void createChild(const Common::Rect &rect, Window *parent);
+	Window *getParent() const { return _parent; }
+	const Common::Rect &getRect() const { return _rect; }
+	Common::Rect getClientRect() const;
+	void updateWindow() { onPaint(); }
+
 	// TODO:
 	// SetTimer
 	// ShowWindow
-	// UpdateWindow
-	// GetClientRect
 	// KillTimer
-	// InvalidateRect
 	// BeginPaint (?)
 	// EndPaint (?)
 	// Create
-	// GetParent
 	// ...
 
 	void sendMessage(Message *message) { _queue.push(message); }
-	void dispatchMessage();
+	void dispatchAllMessages();
 
 private:
+	BuriedEngine *_vm;
 	Common::Queue<Message *> _queue;
 
-	// TODO: Something about children? Parents?
+	// TODO: Something about children?
+	Window *_parent;
+	Common::Rect _rect;
 };
 
 } // End of namespace Buried
