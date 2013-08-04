@@ -76,7 +76,7 @@ void Timeout::one_tick() {
 
 	for (fv = 0; fv < 7; fv++) {
 		if (times[fv].time_left > 0) {
-			times[fv].time_left --;
+			times[fv].time_left--;
 
 			if (times[fv].time_left == 0) {
 				switch (times[fv].then_where) {

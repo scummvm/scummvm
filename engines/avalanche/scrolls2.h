@@ -81,7 +81,7 @@ private:
 
 
 
-	// Constants to replace the command characters from Pascal:
+	// Constants to replace the command characters from Pascal.
 	// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
 	
 	static const char kControlSpeechBubble = 2; // ^B

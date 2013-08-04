@@ -152,14 +152,14 @@ void Logger::log_scrollchar(Common::String x) {     /* print one character */
 	if (!_vm->_gyro->logging)
 		return;
 
-	switch (x[1]) {
-	case '`':
+	switch (x[0]) {
+	case '\'':
 		z = quote;
 		break; /* Open quotes: "66" */
-	case '"':
+	case '\"':
 		z = unquote;
 		break; /* Close quotes: "99" */
-	case '\357':
+	case 239:
 		z = copyright;
 		break; /* Copyright sign. */
 	default:
