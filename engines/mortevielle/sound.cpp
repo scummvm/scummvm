@@ -185,8 +185,8 @@ void SoundManager::playNote(int frequency, int32 length) {
 }
 
 
-void SoundManager::playSong(const byte* buf, int size) {
-	Audio::AudioStream *stream = Audio::makeRawStream(buf, size, 11025 / 2, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS);
+void SoundManager::playSong(const byte* buf, int size, int loops) {
+	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(Audio::makeRawStream(buf, size, 11025 / 2, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS), loops);
 	Audio::SoundHandle songHandle;
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &songHandle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 

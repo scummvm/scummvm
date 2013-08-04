@@ -2213,14 +2213,7 @@ void MortevielleEngine::music() {
 	_addFix = (float)((kTempoMusic - 8)) / 256;
 	_speechManager.cctable(_speechManager._tbi);
 
-	bool fin = false;
-	int k = 0;
-	do {
-		fin = keyPressed();
-		_soundManager.playSong(musicBuf, musicSize);
-		++k;
-		fin = fin | keyPressed() | (k >= 5);
-	} while (!fin);
+	_soundManager.playSong(musicBuf, musicSize, 5);
 	while (keyPressed())
 		getChar();
 
