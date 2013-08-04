@@ -30,6 +30,10 @@
 
 class OSystem;
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Buried {
 
 struct BuriedGameDescription;

@@ -23,10 +23,12 @@
 #ifndef BURIED_GRAPHICS_H
 #define BURIED_GRAPHICS_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 namespace Graphics {
 class Font;
+struct Surface;
 }
 
 namespace Buried {
@@ -70,9 +72,16 @@ public:
 	Graphics::Surface *getBitmap(uint32 bitmapID);
 	uint32 getColor(byte r, byte g, byte b);
 
+	void invalidateRect(const Common::Rect &rect, bool erase = true);
+
+	Graphics::Surface *getScreen() const { return _screen; }
+
 private:
 	BuriedEngine *_vm;
 	Cursor _curCursor;
+
+	Common::Rect _dirtyRect;
+	Graphics::Surface *_screen;
 };
 
 } // End of namespace Buried
