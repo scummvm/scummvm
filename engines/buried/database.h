@@ -49,6 +49,7 @@ public:
 	virtual Common::String loadString(uint32 stringID) = 0;
 	virtual Common::SeekableReadStream *getBitmapStream(uint32 bitmapID) = 0;
 	virtual Graphics::WinCursorGroup *getCursorGroup(uint32 cursorGroupID) = 0;
+	virtual Common::SeekableReadStream *getResourceStream(const Common::String &resourceType, uint32 resourceID) = 0;
 };
 
 /**
@@ -65,6 +66,7 @@ public:
 	Common::String loadString(uint32 stringID);
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 	Graphics::WinCursorGroup *getCursorGroup(uint32 cursorGroupID);
+	Common::SeekableReadStream *getResourceStream(const Common::String &resourceType, uint32 resourceID);
 
 protected:
 	Common::NEResources *_exe;

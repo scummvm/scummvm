@@ -127,4 +127,36 @@ Common::SeekableReadStream *BuriedEngine::getBitmapStream(uint32 bitmapID) {
 	return _library->getBitmapStream(bitmapID);
 }
 
+Common::SeekableReadStream *BuriedEngine::getNavData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("NAVDATA", resourceID);
+}
+
+Common::SeekableReadStream *BuriedEngine::getSndData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("SNDDATA", resourceID);
+}
+
+Common::SeekableReadStream *BuriedEngine::getAnimData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("ANIMDATA", resourceID);
+}
+
+Common::SeekableReadStream *BuriedEngine::getAIData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("AIDATA", resourceID);
+}
+
+Common::SeekableReadStream *BuriedEngine::getItemData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("ITEMDATA", resourceID);
+}
+
+Common::SeekableReadStream *BuriedEngine::getBookData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("BOOKDATA", resourceID);
+}
+
+Common::SeekableReadStream *BuriedEngine::getFileBCData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("FILEBCDATA", resourceID);
+}
+
+Common::SeekableReadStream *BuriedEngine::getINNData(uint32 resourceID) {
+	return _mainEXE->getResourceStream("INNDATA", resourceID);
+}
+
 } // End of namespace Buried
