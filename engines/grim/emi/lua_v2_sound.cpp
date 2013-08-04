@@ -348,19 +348,26 @@ void Lua_V2::SetSoundVolume() {
 
 // TODO: Implement, verify, and rename parameters
 void Lua_V2::UpdateSoundPosition() {
-	lua_Object param1 = lua_getparam(1);
+	lua_Object idObj = lua_getparam(1);
 	lua_Object param2 = lua_getparam(2);
 	lua_Object param3 = lua_getparam(3);
 	lua_Object param4 = lua_getparam(4);
 
-	if (lua_isuserdata(param1) && lua_isnumber(param2) && lua_isnumber(param3) && lua_isnumber(param4)) {
-		float x = lua_getnumber(param2);
-		float y = lua_getnumber(param3);
-		float z = lua_getnumber(param4);
-		error("Lua_V2::UpdateSoundPosition(???, %f, %f, %f) - TODO: Implement opcode", x, y, z);
-	} else {
-		error("Lua_V2::UpdateSoundPosition - ERROR: Unknown parameters");
-	}
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
+		return;
+
+	if (!lua_isnumber(param2) || !lua_isnumber(param3) || !lua_isnumber(param4))
+		return;
+	
+	float x = lua_getnumber(param2);
+	float y = lua_getnumber(param3);
+	float z = lua_getnumber(param4);
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
+	if (!sound)
+		return;
+
+//	FIXME: Disable for now, *way* too spammy.
+//	warning("Lua_V2::UpdateSoundPosition(%s, %f, %f, %f): Implement opcode", sound->_filename.c_str(), x, y, z);
 }
 
 void Lua_V2::ImSetMusicVol() {
