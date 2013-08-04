@@ -3080,10 +3080,10 @@ bool Scene300::Seeker::startAction(CursorType action, Event &event) {
 		} else {
 			R2_GLOBALS._player.disableControl();
 			scene->_stripId = 171;
-		}
 
-		scene->_sceneMode = 310;
-		scene->setAction(&scene->_sequenceManager1, scene, 310, &R2_GLOBALS._player, NULL);
+			scene->_sceneMode = 310;
+			scene->setAction(&scene->_sequenceManager1, scene, 310, &R2_GLOBALS._player, NULL);
+		}
 		return true;
 
 	case R2_READER:

@@ -108,6 +108,7 @@ public:
 	void fadeOut();
 	void clearScreen();
 	void scalePalette(int RFactor, int GFactor, int BFactor);
+	void loadBlankScene();
 };
 
 class SceneHandlerExt: public SceneHandler {
@@ -434,6 +435,7 @@ public:
 	virtual void flipPane() {}
 	virtual void changePane() {}
 	virtual void closing() {}
+
 
 	bool load(int animId, Action *endAction = NULL);
 	bool isCompleted();

@@ -30,7 +30,7 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 /*--------------------------------------------------------------------------
- * Scene 1000 - Cutscene: Ship moving
+ * Scene 1000 - Cutscene scene
  *
  *--------------------------------------------------------------------------*/
 
@@ -42,6 +42,7 @@ Scene1000::Scene1000(): SceneExt() {
 }
 
 void Scene1000::postInit(SceneObjectList *OwnerList) {
+	loadBlankScene();
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_gameTextSpeaker);
@@ -85,6 +86,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		break;
 	}
 
+	R2_GLOBALS._uiElements._active = false;
 	setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
 }
 
@@ -98,7 +100,7 @@ void Scene1000::signal() {
 	ScenePalette scenePalette1, scenePalette2;
 	uint32 black = 0;
 	
-	switch (R2_GLOBALS._sceneManager._previousScene) {
+	switch (_sceneMode++) {
 	case 0:
 		// TODO: Sort out values
 		R2_GLOBALS._gfxColors.foreground = 191;
@@ -108,7 +110,7 @@ void Scene1000::signal() {
 
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
-		_animationPlayer.load(5);
+		_animationPlayer.load(5, this);
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
 
@@ -165,7 +167,7 @@ void Scene1000::signal() {
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(7);
+		_animationPlayer.load(7, this);
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
 
@@ -195,7 +197,7 @@ void Scene1000::signal() {
 	case 10:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(6);
+		_animationPlayer.load(6, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -217,7 +219,7 @@ void Scene1000::signal() {
 	case 20:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(8);
+		_animationPlayer.load(8, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -237,7 +239,7 @@ void Scene1000::signal() {
 	case 30:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(17);
+		_animationPlayer.load(17, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -262,7 +264,7 @@ void Scene1000::signal() {
 	case 40:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(18);
+		_animationPlayer.load(18, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -288,7 +290,7 @@ void Scene1000::signal() {
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(13);
+		_animationPlayer.load(13, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -310,7 +312,7 @@ void Scene1000::signal() {
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(14);
+		_animationPlayer.load(14, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -337,7 +339,7 @@ void Scene1000::signal() {
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(12);
+		_animationPlayer.load(12, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -362,7 +364,7 @@ void Scene1000::signal() {
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(9);
+		_animationPlayer.load(9, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -385,7 +387,7 @@ void Scene1000::signal() {
 	case 80:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(10);
+		_animationPlayer.load(10, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -403,7 +405,7 @@ void Scene1000::signal() {
 	case 90:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(11);
+		_animationPlayer.load(11, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -430,7 +432,7 @@ void Scene1000::signal() {
 
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._objectMode = ANIMOBJMODE_2;
-		_animationPlayer.load(19);
+		_animationPlayer.load(19, this);
 
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 		R2_GLOBALS._sceneManager._hasPalette = false;
@@ -452,7 +454,20 @@ void Scene1000::signal() {
 }
 
 void Scene1000::dispatch() {
+	if (_fieldD2E) {
+		if (_animationPlayer.isCompleted()) {
+			_fieldD2E = 0;
+			_animationPlayer.close();
+			_animationPlayer.remove();
 
+			if (_sceneMode == 52)
+				_endHandler = this;
+		} else {
+			_animationPlayer.dispatch();
+		}
+	}
+
+	Scene::dispatch();
 }
 
 

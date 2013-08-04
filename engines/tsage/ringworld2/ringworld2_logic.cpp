@@ -108,7 +108,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #1 */
 	//
 	case 1000:
-		// Cutscene: Ship moving
+		// Cutscene scene
 		return new Scene1000();
 	case 1010:
 		// Cutscene - trip in space
@@ -568,6 +568,13 @@ void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 		}
 		this->_field312[i] = varD;
 	}
+}
+
+void SceneExt::loadBlankScene() {
+	_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT * 3 / 2);
+	_backSurface.fillRect(_backSurface.getBounds(), 0);
+
+	R2_GLOBALS._screenSurface.fillRect(R2_GLOBALS._screenSurface.getBounds(), 0);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1750,7 +1757,7 @@ AnimationPlayer::~AnimationPlayer() {
 
 void AnimationPlayer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
-	warning("TODO AnimationPlayer::load");
+	warning("TODO AnimationPlayer::synchronize");
 }
 
 void AnimationPlayer::remove() {
