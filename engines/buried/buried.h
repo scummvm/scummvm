@@ -56,6 +56,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const;
 
+	Common::String getString(uint32 stringID);
 	Common::String getFilePath(uint32 stringID);
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 

@@ -90,8 +90,12 @@ Common::Error BuriedEngine::run() {
 	return Common::kNoError;
 }
 
+Common::String BuriedEngine::getString(uint32 stringID) {
+	return _mainEXE->loadString(stringID);
+}
+
 Common::String BuriedEngine::getFilePath(uint32 stringID) {
-	Common::String path = _mainEXE->loadString(stringID);
+	Common::String path = getString(stringID);
 	Common::String output;
 
 	if (path.empty())
