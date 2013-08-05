@@ -103,19 +103,13 @@ void Scrolls::easteregg() {
 }
 
 void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwriting */
-	const byte locol = 2;
-	byte xx, yy, ox, bit, lz, t;
-	int16 yp;
-	bool offset;
 	byte itw[12][80];
-
-	offset = x % 8 == 4;
-	x = x / 8;
-	lz = z.size();
-	ox = 0;
+	byte lz = z.size();
+	byte ox = 0;
+	
 	_vm->_logger->log_scrollline();
 
-	for (xx = 0; xx < lz; xx++) {
+	for (byte xx = 0; xx < lz; xx++) {
 		switch (z[xx]) {
 		case kControlRoman: {
 			cfont = roman;
@@ -128,7 +122,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			}
 			break;
 		default: {
-			for (yy = 0; yy < 12; yy ++)
+			for (byte yy = 0; yy < 12; yy++)
 				itw[yy][ox] = ~ch[cfont][z[xx]][yy + 2];
 			ox++;
 			_vm->_logger->log_scrollchar(Common::String(z[xx]));
@@ -136,44 +130,21 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 		}
 	}
 
+	bool offset = x % 8 == 4;
 	lz = ox;
-	if (offset) {
-		/* offsetting routine */
-		for (yy = 0; yy < 12; yy++) {
-			bit = 240;
-			itw[yy][lz] = 255;
-			for (xx = 0; xx < lz; xx++) {
-				t = itw[yy][xx];
-				itw[yy][xx] = bit + t / 16;
-				bit = t << 4;
-			}
-		}
-		lz++;
-	}
-
+	x = x / 8;
 	y++;
-	for (byte fv = 0; fv < z.size(); fv++)
+	// Similar to Dropdown::chalk().
+	for (byte fv = 0; fv < lz; fv++)
 		for (byte ff = 0; ff < 12; ff++) {
-			byte pixel = itw[ff][fv]; // Note that it's the bitwise NOT operator!
+			byte pixel = itw[ff][fv]; 
 			for (byte bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
-				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
-				// We don't have to bother with the planes, since they all have the same value. See the original.
-				// Note that it's the bitwise OR operator!
+				uint16 xa = x * 8 + fv * 8 + 7 - bit + offset * 4;
+				uint16 ya = y + ff;
+				*(byte *)_vm->_graphics->_scrolls.getBasePtr(xa, ya) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
 			}
 		}
-
-	/*yp = x + y * 80 + (1 - _vm->_gyro->cp) * _vm->_gyro->pagetop;
-	for (yy = 0; yy < 12; yy++) {
-	yp += 80;
-	for (bit = 0; bit <= locol; bit ++) {
-	port[0x3c4] = 2;
-	port[0x3ce] = 4;
-	port[0x3c5] = 1 << bit;
-	port[0x3cf] = bit;
-	move(itw[yy], mem[0xa000 * yp], lz);
-	}
-	}*/
 }
 
 /* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
@@ -193,6 +164,24 @@ void Scrolls::normscroll() {
 
 	if (_vm->_gyro->demo)
 		_vm->_basher->get_demorec();
+
+
+
+	::Graphics::Surface temp;
+	temp.copyFrom(_vm->_graphics->_surface);
+	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls);
+	_vm->_graphics->refreshScreen();
+
+	Common::Event event;
+	while (true) {
+		_vm->getEvent(event);
+		if ((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) || (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) || (event.kbd.keycode == Common::KEYCODE_PLUS)))
+			break;
+	}
+
+	_vm->_graphics->_surface.copyFrom(temp);
+
+
 
 //	do {
 //		do {
@@ -371,7 +360,10 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	if ((1 <= use_icon) && (use_icon <= 34))
 		lx += halficonwidth;
-		
+	
+
+	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
+
 	_vm->_gyro->off();
 	/* mblit(mx-lx-46,my-ly-6,mx+lx+15,my+ly+6,0,3);*/
 	/*setfillstyle(1, 7);
@@ -381,17 +373,28 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	setcolor(4);
 	arc(mx + lx, my - ly, 360, 90, 15);
 	arc(mx + lx, my + ly, 270, 360, 15);*/
-	_vm->_graphics->drawBar(mx - lx - 30, my + ly, mx + lx, my + ly + 6, lightgray);
+
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), lightgray);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly), lightgray);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly), lightgray);
+	/*_vm->_graphics->drawBar(mx - lx - 30, my + ly, mx + lx, my + ly + 6, lightgray);
 	_vm->_graphics->drawBar(mx - lx - 30, my - ly - 6, mx + lx, my - ly, lightgray);
-	_vm->_graphics->drawBar(mx - lx - 15, my - ly, mx + lx + 15, my + ly, lightgray);
+	_vm->_graphics->drawBar(mx - lx - 15, my - ly, mx + lx + 15, my + ly, lightgray);*/
+
 	/*setfillstyle(1, 8);
 	pieslice(mx - lx - 31, my - ly, 360, 180, 15);
 	pieslice(mx - lx - 31, my + ly, 180, 360, 15);
 	setfillstyle(1, 4);*/
-	_vm->_graphics->drawBar(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5, red);
+
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5), red);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7), red);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), red);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), red);
+	/*_vm->_graphics->drawBar(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5, red);
 	_vm->_graphics->drawBar(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7, red);
 	_vm->_graphics->drawBar(mx - lx - 15, my - ly, mx - lx - 14, my + ly, red);
-	_vm->_graphics->drawBar(mx + lx + 15, my - ly, mx + lx + 16, my + ly, red);
+	_vm->_graphics->drawBar(mx + lx + 15, my - ly, mx + lx + 16, my + ly, red);*/
+
 	ex = mx - lx;
 	ey = my - ly;
 	mx -= lx;

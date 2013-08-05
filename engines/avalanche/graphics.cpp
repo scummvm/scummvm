@@ -62,6 +62,8 @@ void Graphics::init() {
 	_magics.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	_screen.create(kScreenWidth, kScreenHeight * 2, ::Graphics::PixelFormat::createFormatCLUT8());
+
+	_scrolls.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Graphics::~Graphics() {
@@ -69,6 +71,7 @@ Graphics::~Graphics() {
 	_magics.free();
 	_background.free();
 	_screen.free();
+	_scrolls.free();
 }
 
 
