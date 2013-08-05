@@ -112,9 +112,9 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 		uint32 imageWidth = stream.readSint32LE();
 		uint32 imageHeight = stream.readSint32LE();
 
-		LzssReadStream stream(&stream);
+		LzssReadStream lzssStream(&stream);
 		byte *buffer = new byte[decompressedSize];
-		stream.read(buffer, decompressedSize);
+		lzssStream.read(buffer, decompressedSize);
 
 		uint32 horizontalPitch = imageWidth * sizeof(uint16);
 
