@@ -39,15 +39,14 @@ Clock::Clock(OSystem *system)
 
 void Clock::update() {
 	uint32 currentTime = _system->getMillis();
-	_deltaTime = currentTime - _lastTime - _pausedTime;
-	if (_deltaTime < 0) {
-		_deltaTime = 0;
+
+	_deltaTime = (currentTime - _lastTime);
+	if (_paused) {
+		_deltaTime -= (currentTime - _pausedTime);
 	}
 
-	if (_paused) {
-		_pausedTime += _deltaTime;
-	} else if (_pausedTime > 0) {
-		_pausedTime = 0;
+	if (_deltaTime < 0) {
+		_deltaTime = 0;
 	}
 
 	_lastTime = currentTime;
@@ -55,12 +54,14 @@ void Clock::update() {
 
 void Clock::start() {
 	if (_paused) {
+		_lastTime = _system->getMillis();
 		_paused = false;
 	}
 }
 
 void Clock::stop() {
 	if (!_paused) {
+		_pausedTime = _system->getMillis();
 		_paused = true;
 	}
 }
