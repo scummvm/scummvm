@@ -80,12 +80,14 @@ public:
 	void sendMessage(Message *message) { _queue.push(message); }
 	void dispatchAllMessages();
 
-private:
+protected:
 	BuriedEngine *_vm;
-	Common::Queue<Message *> _queue;
 
 	Window *_parent;
 	Common::Rect _rect;
+
+private:
+	Common::Queue<Message *> _queue;
 	bool _enabled;
 };
 
