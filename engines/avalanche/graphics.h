@@ -63,6 +63,8 @@ public:
 	// Lucerna::draw_also_lines() draws the "magical" lines here.
 	// Further information: https://github.com/urukgit/avalot/wiki/Also
 	
+	::Graphics::Surface _screen;
+
 
 
 
