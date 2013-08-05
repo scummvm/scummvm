@@ -262,30 +262,28 @@ bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
 int DebuggerAdapter::stepOver() {
 	if (!_lastScript) return NOT_ALLOWED;
 	_lastScript->_step = _lastDepth;
-	// Reset
-	_lastScript = nullptr;
-	_lastLine = NULL;
-	_lastDepth = NULL;
+	reset();
 	return OK;
 }
 
 int DebuggerAdapter::stepInto() {
 	if (!_lastScript) return NOT_ALLOWED;
 	_lastScript->_step = _lastDepth + 1;
-	// Reset
-	_lastScript = nullptr;
-	_lastLine = NULL;
-	_lastDepth = NULL;
+	reset();
 	return OK;
 }
 
 int DebuggerAdapter::stepContinue() {
 	if (!_lastScript) return NOT_ALLOWED;
 	_lastScript->_step = -2;
+	return OK;
+}
+
+int DebuggerAdapter::stepFinish() {
+	if (!_lastScript) return NOT_ALLOWED;
+	_lastScript->_step = _lastDepth - 1;
 	// Reset
-	_lastScript = nullptr;
-	_lastLine = NULL;
-	_lastDepth = NULL;
+	reset();
 	return OK;
 }
 
@@ -293,16 +291,6 @@ void DebuggerAdapter::reset() {
 	_lastScript = nullptr;
 	_lastLine = -1;
 	_lastDepth = -3;
-}
-
-int DebuggerAdapter::stepFinish() {
-	if (!_lastScript) return NOT_ALLOWED;
-	_lastScript->_step = _lastDepth - 1;
-	// Reset
-	_lastScript = nullptr;
-	_lastLine = NULL;
-	_lastDepth = NULL;
-	return OK;
 }
 
 Common::String DebuggerAdapter::readValue(const char *name, int *error) {
@@ -417,7 +405,7 @@ int DebuggerAdapter::setType(const char *name, int type) {
 
 }
 
-int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue *var) {
+int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue * &var) {
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}

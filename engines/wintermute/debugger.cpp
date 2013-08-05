@@ -276,10 +276,11 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 
 bool Console::Cmd_Set(int argc, const char **argv) {
 	if (argc == 4 && !strncmp("=", argv[2], 1)) {
-		int error = ADAPTER->setValue(argv[1], argv[3]);
+		ScValue *val = nullptr;
+		int error = ADAPTER->setValue(argv[1], argv[3], val);
 		if (!error) {
-			DebugPrintf("Ok\n");
-			// DebugPrintf("%s = %s", argv[0], temp.c_str());
+			assert(val);
+			DebugPrintf("%s = %s\n", argv[1], val->getString());
 		} else if (error == NOT_ALLOWED) {
 			DebugPrintf("Not allowed\n");
 		} else {
