@@ -3,6 +3,7 @@ MODULE := engines/zvision
 MODULE_OBJS := \
 	action_node.o \
 	actions.o \
+	clock.o \
 	console.o \
 	control.o \
 	detection.o \
