@@ -30,6 +30,7 @@
 
 namespace Wintermute {
 class ScScript;
+class ScValue;
 
 enum ErrorCode {
 	OK,
@@ -98,7 +99,7 @@ public:
 	int stepFinish();
 	int32 getLastLine();
 	Common::String readValue(const char *name, int *error);
-	int setValue(Common::String name, Common::String value);
+	int setValue(Common::String name, Common::String value, ScValue *var = nullptr);
 	int setType(const char *name, int type);
 	Common::String readRes(const Common::String &name, int *error);
 	bool showFps(bool show);
