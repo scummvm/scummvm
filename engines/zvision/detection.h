@@ -28,8 +28,9 @@
 namespace ZVision {
 
 enum ZVisionGameId {
-	ZorkNemesis,
-	ZorkGrandInquisitor
+	None = 0,
+	ZorkNemesis = 1,
+	ZorkGrandInquisitor = 2
 };
 
 struct ZVisionGameDescription {
