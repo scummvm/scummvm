@@ -423,13 +423,14 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// But no checking is in place for that yet.
 
 	// TODO: Optimize by not doing alpha-blits if we lack or disable alpha
-
+	/*
 	bool hasAlpha = false;
 
 	if (_hasAlpha && !transform._alphaDisable) {
 		hasAlpha = true;
 	}      
-	
+	*/
+
 	if (transform._alphaDisable) {
 		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}
