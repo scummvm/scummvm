@@ -52,7 +52,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		  _width(640),
 		  _height(480),
 		  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /*RGB 555*/
-		  _desiredFrameTime(33) /* ~30 fps */ {
+		  _desiredFrameTime(33), /* ~30 fps */
+		  _clock(_system) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from run().
@@ -80,9 +81,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	_scriptManager = new ScriptManager(this);
 	_renderManager = new RenderManager(_system, _width, _height);
 
-	// Create clock
-	_clock = new Clock(_system);
-
 	debug("ZVision::ZVision");
 }
 
@@ -91,7 +89,6 @@ ZVision::~ZVision() {
  
 	// Dispose of resources
 	delete _console;
-	delete _clock;
 	delete _renderManager;
 	delete _scriptManager;
 	delete _rnd;
@@ -126,12 +123,12 @@ Common::Error ZVision::run() {
 
 	// Main loop
 	while (!shouldQuit()) {
-		_clock->update();
-		uint32 currentTime = _clock->getLastMeasuredTime();
+		_clock.update();
+		uint32 currentTime = _clock.getLastMeasuredTime();
 		
 		processEvents();
 
-		_scriptManager->updateNodes(_clock->getDeltaTime());
+		_scriptManager->updateNodes(_clock.getDeltaTime());
 		_scriptManager->checkPuzzleCriteria();
 
 		// Render a frame

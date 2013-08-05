@@ -32,6 +32,7 @@
 #include "graphics/pixelformat.h"
 
 #include "zvision/detection.h"
+#include "zvision/clock.h"
 
 #include "gui/debugger.h"
 
@@ -46,7 +47,6 @@ struct ZVisionGameDescription;
 class Console;
 class ScriptManager;
 class RenderManager;
-class Clock;
  
 // our engine debug channels
 enum {
@@ -78,7 +78,7 @@ private:
 	RenderManager *_renderManager;
 
 	// Clock
-	Clock *_clock;
+	Clock _clock;
 
 	// To prevent allocation every time we process events
 	Common::Event _event;

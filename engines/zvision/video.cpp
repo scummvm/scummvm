@@ -94,13 +94,13 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 	uint16 x = (_width - finalWidth) / 2;
 	uint16 y = (_height - finalHeight) / 2;
 
-	_clock->stop();
+	_clock.stop();
 	videoDecoder.start();
 
 	// Only continue while the video is still playing
 	while (videoDecoder.isPlaying()) {
-		_clock->update();
-		uint32 currentTime = _clock->getLastMeasuredTime();
+		_clock.update();
+		uint32 currentTime = _clock.getLastMeasuredTime();
 
 		// Check for engine quit and video stop key presses
 		while (_eventMan->pollEvent(_event)) {
@@ -140,7 +140,7 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 		_system->delayMillis(delay);
 	}
 
-	_clock->stop();
+	_clock.stop();
 
 	// Reset the pixel format to the original state
 	initGraphics(_width, _height, true, &_pixelFormat);
