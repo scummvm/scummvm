@@ -144,6 +144,16 @@ Common::Error ZVision::run() {
 	return Common::kNoError;
 }
 
+void ZVision::pauseEngineIntern(bool pause) {
+	_mixer->pauseAll(pause);
+
+	if (pause) {
+		_clock.stop();
+	} else {
+		_clock.start();
+	}
+}
+
 ScriptManager *ZVision::getScriptManager() const {
 	return _scriptManager;
 }

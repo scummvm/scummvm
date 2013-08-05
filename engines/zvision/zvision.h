@@ -87,6 +87,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Error run();
+	void pauseEngineIntern(bool pause);
 
 	ScriptManager *getScriptManager() const;
 	RenderManager *getRenderManager() const;
