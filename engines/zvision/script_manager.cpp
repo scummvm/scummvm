@@ -118,7 +118,10 @@ void ScriptManager::checkPuzzleCriteria() {
 }
 
 uint ScriptManager::getStateValue(uint32 key) {
-	return _globalState[key];
+	if (_globalState.contains(key))
+		return _globalState[key];
+	else
+		return 0;
 }
 
 void ScriptManager::setStateValue(uint32 key, uint value) {
