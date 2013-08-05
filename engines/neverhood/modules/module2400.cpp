@@ -168,11 +168,11 @@ static const uint32 kScene2401FileHashes3[] = {
 };
 
 static const NRect kScene2401Rects[] = {
-	NRect(369, 331, 394, 389),
-	NRect(395, 331, 419, 389),
-	NRect(420, 331, 441, 389),
-	NRect(442, 331, 464, 389),
-	NRect(465, 331, 491, 389)
+	{ 369, 331, 394, 389 },
+	{ 395, 331, 419, 389 },
+	{ 420, 331, 441, 389 },
+	{ 442, 331, 464, 389 },
+	{ 465, 331, 491, 389 }
 };
 
 static const uint32 kAsScene2401WaterSpitFileHashes2[] = {

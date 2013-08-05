@@ -26,14 +26,14 @@
 
 namespace Neverhood {
 
-static const NRect kScene2710ClipRect = NRect(0, 0, 626, 480);
+static const NRect kScene2710ClipRect = { 0, 0, 626, 480 };
 
 static const uint32 kScene2710StaticSprites[] = {
 	0x0D2016C0,
 	0
 };
 
-static const NRect kScene2711ClipRect = NRect(0, 0, 521, 480);
+static const NRect kScene2711ClipRect = { 0, 0, 521, 480 };
 
 static const uint32 kScene2711FileHashes1[] = {
 	0,
@@ -68,14 +68,14 @@ static const uint32 kScene2711FileHashes3[] = {
 	0
 };
 
-static const NRect kScene2724ClipRect = NRect(0, 141, 640, 480);
+static const NRect kScene2724ClipRect = { 0, 141, 640, 480 };
 
 static const uint32 kScene2724StaticSprites[] = {
 	0xC20D00A5,
 	0
 };
 
-static const NRect kScene2725ClipRect = NRect(0, 0, 640, 413);
+static const NRect kScene2725ClipRect = { 0, 0, 640, 413 };
 
 static const uint32 kScene2725StaticSprites[] = {
 	0xC20E00A5,

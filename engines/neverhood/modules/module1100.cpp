@@ -555,19 +555,19 @@ void Scene1105::createObjects() {
 	_ssSymbolDice[1] = insertSprite<SsScene1105SymbolDie>(1, 339, 304);
 	_ssSymbolDice[2] = insertSprite<SsScene1105SymbolDie>(2, 485, 304);
 
-	_ssSymbol1UpButton = insertSprite<SsScene1105Button>(this, 0x08002860, NRect(146, 362, 192, 403));
+	_ssSymbol1UpButton = insertSprite<SsScene1105Button>(this, 0x08002860, NRect::make(146, 362, 192, 403));
 	addCollisionSprite(_ssSymbol1UpButton);
-	_ssSymbol1DownButton = insertSprite<SsScene1105Button>(this, 0x42012460, NRect(147, 404, 191, 442));
+	_ssSymbol1DownButton = insertSprite<SsScene1105Button>(this, 0x42012460, NRect::make(147, 404, 191, 442));
 	addCollisionSprite(_ssSymbol1DownButton);
-	_ssSymbol2UpButton = insertSprite<SsScene1105Button>(this, 0x100030A0, NRect(308, 361, 355, 402));
+	_ssSymbol2UpButton = insertSprite<SsScene1105Button>(this, 0x100030A0, NRect::make(308, 361, 355, 402));
 	addCollisionSprite(_ssSymbol2UpButton);
-	_ssSymbol2DownButton = insertSprite<SsScene1105Button>(this, 0x840228A0, NRect(306, 406, 352, 445));
+	_ssSymbol2DownButton = insertSprite<SsScene1105Button>(this, 0x840228A0, NRect::make(306, 406, 352, 445));
 	addCollisionSprite(_ssSymbol2DownButton);
-	_ssSymbol3UpButton = insertSprite<SsScene1105Button>(this, 0x20000120, NRect(476, 358, 509, 394));
+	_ssSymbol3UpButton = insertSprite<SsScene1105Button>(this, 0x20000120, NRect::make(476, 358, 509, 394));
 	addCollisionSprite(_ssSymbol3UpButton);
-	_ssSymbol3DownButton = insertSprite<SsScene1105Button>(this, 0x08043121, NRect(463, 401, 508, 438));
+	_ssSymbol3DownButton = insertSprite<SsScene1105Button>(this, 0x08043121, NRect::make(463, 401, 508, 438));
 	addCollisionSprite(_ssSymbol3DownButton);
-	_ssActionButton = insertSprite<SsScene1105Button>(this, 0x8248AD35, NRect(280, 170, 354, 245));
+	_ssActionButton = insertSprite<SsScene1105Button>(this, 0x8248AD35, NRect::make(280, 170, 354, 245));
 	addCollisionSprite(_ssActionButton);
 
 	_isPanelOpen = true;
