@@ -641,14 +641,18 @@ void Movement::removeFirstPhase() {
 }
 
 void Movement::gotoNextFrame(int callback1, int callback2) {
+	debug(0, "Movement::gotoNextFrame(%d, %d)", callback1, callback2);
+
 	if (!callback2) {
 		if (_currMovement) {
 			if ((uint)_currDynamicPhaseIndex == _currMovement->_dynamicPhases.size() - 1
-				&& !(((DynamicPhase *)(_currMovement->_dynamicPhases.back()))->_countdown))
+				&& !(((DynamicPhase *)(_currMovement->_dynamicPhases.back()))->_countdown)) {
 				return;
+			}
 		} else if ((uint)_currDynamicPhaseIndex == _dynamicPhases.size() - 1
-					&& !(((DynamicPhase *)(_dynamicPhases.back()))->_countdown))
+				   && !(((DynamicPhase *)(_dynamicPhases.back()))->_countdown)) {
 			return;
+		}
 	}
 
 	if (_currDynamicPhase->_countdown) {
@@ -751,10 +755,10 @@ void Movement::gotoPrevFrame(int callback1, int callback2) {
 
 void Movement::gotoLastFrame() {
 	if (_currMovement) {
-		while ((uint)_currDynamicPhaseIndex != _currMovement->_dynamicPhases.size())
+		while ((uint)_currDynamicPhaseIndex != _currMovement->_dynamicPhases.size() - 1)
 			gotoNextFrame(0, 0);
 	} else {
-		while ((uint)_currDynamicPhaseIndex != _dynamicPhases.size())
+		while ((uint)_currDynamicPhaseIndex != _dynamicPhases.size() - 1)
 			gotoNextFrame(0, 0);
 	}
 }
