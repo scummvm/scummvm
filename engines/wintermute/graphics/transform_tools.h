@@ -30,10 +30,10 @@
 namespace Wintermute {
 
 class TransformTools {
-public:	
+public:
 	/**
 	 * Basic transform (scale + rotate) for a single point
-	 */	
+	 */
 	static FloatPoint transformPoint(const FloatPoint &point, const float rotate, const Point32 &zoom, const bool mirrorX = false, const bool mirrorY = false);
 
 	/**
@@ -46,7 +46,7 @@ public:
 	 * and, as a side-effect, "newHotspot" will tell you where the hotspot will
 	 * have ended up in the new rect, for centering.
 	 */
-	static Rect32 newRect (const Rect32 &oldRect, const TransformStruct &transform, Point32 *newHotspot);	
+	static Rect32 newRect(const Rect32 &oldRect, const TransformStruct &transform, Point32 *newHotspot);
 };
 
 } // End of namespace Wintermute
