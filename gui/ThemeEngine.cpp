@@ -498,9 +498,13 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 #ifndef DISABLE_FANCY_THEMES
 	case kGfxAntialias:
 #endif
-		_bytesPerPixel = sizeof(uint16);
-		break;
-
+		if (g_system->getOverlayFormat().bytesPerPixel == 4) {
+			_bytesPerPixel = sizeof(uint32);
+			break;
+		} else if (g_system->getOverlayFormat().bytesPerPixel == 2) {
+			_bytesPerPixel = sizeof(uint16);
+			break;
+		}
 	default:
 		error("Invalid graphics mode");
 	}
