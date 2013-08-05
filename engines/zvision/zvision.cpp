@@ -38,7 +38,6 @@
 #include "zvision/console.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
-#include "zvision/clock.h"
 #include "zvision/zfs_archive.h"
 #include "zvision/detection.h"
 
