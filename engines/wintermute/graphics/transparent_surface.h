@@ -112,12 +112,12 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int width = -1, int height = -1);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
-	TransparentSurface *scale (uint16 newWidth, uint16 newHeight) const;
-	TransparentSurface *rotoscale (const TransformStruct &transform) const;  
+	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
+	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 	static byte *_lookup;
 	static void destroyLookup();
 private:
-	static void doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
+	static void doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 	static void generateLookup();
 };
 
