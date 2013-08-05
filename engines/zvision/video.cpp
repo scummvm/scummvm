@@ -111,7 +111,11 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 				case Common::KEYCODE_SPACE:
 					videoDecoder.stop();
 					break;
+				default:
+					break;
 				}
+			default:
+				break;
 			}
 		}
 
