@@ -200,8 +200,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:music*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionMusic(line)));
 		} else if (line.matchString("*:pan_track*", true)) {
 			
 

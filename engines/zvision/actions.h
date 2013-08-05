@@ -25,7 +25,11 @@
 
 #include "common/scummsys.h"
 
-#include "common/str.h"
+#include "audio/mixer.h"
+
+namespace Common {
+class String;
+}
 
 namespace ZVision {
 
@@ -192,6 +196,19 @@ public:
 	bool execute(ZVision *engine);
 
 private:
+};
+
+class ActionMusic : public ResultAction {
+public:
+	ActionMusic(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+	uint32 _key;
+	Audio::Mixer::SoundType _soundType;
+	Common::String _fileName;
+	bool _loop;
+	byte _volume;
 };
 
 class ActionPlayAnimation : public ResultAction {

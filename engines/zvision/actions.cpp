@@ -22,11 +22,16 @@
 
 #include "common/scummsys.h"
 
+#include "common/file.h"
+
+#include "audio/decoders/wave.h"
+
 #include "zvision/actions.h"
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/action_node.h"
+#include "zvision/zork_raw.h"
 
 namespace ZVision {
 
@@ -98,6 +103,60 @@ ActionCrossfade::ActionCrossfade(const Common::String &line) {
 
 bool ActionCrossfade::execute(ZVision *engine) {
 	// TODO: Implement
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionMusic
+//////////////////////////////////////////////////////////////////////////////
+
+ActionMusic::ActionMusic(const Common::String &line) : _volume(255) {
+	uint type;
+	char fileNameBuffer[25];
+	uint loop;
+	uint volume = 255;
+
+	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%u %25s %u %u)", &_key, &type, fileNameBuffer, &loop, &volume);
+
+	// type 4 are midi sound effect files
+	if (type == 4) {
+		_soundType = Audio::Mixer::kSFXSoundType;
+		_fileName = Common::String::format("midi/%s/%u.wav", fileNameBuffer, loop);
+		_loop = false;
+	} else {
+		// TODO: See what the other types are so we can specify the correct Mixer::SoundType. In the meantime use kPlainSoundType
+		_soundType = Audio::Mixer::kPlainSoundType;
+		_fileName = Common::String(fileNameBuffer);
+		_loop = loop == 1 ? true : false;
+	}
+
+	// Volume is optional. If it doesn't appear, assume full volume
+	if (volume != 255) {
+		// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
+		_volume = volume * 255 / 100;
+	}
+}
+
+bool ActionMusic::execute(ZVision *engine) {
+	Audio::RewindableAudioStream *audioStream;
+
+	if (_fileName.contains(".wav")) {
+		Common::File file;
+		if (file.open(_fileName)) {
+			audioStream = Audio::makeWAVStream(&file, DisposeAfterUse::NO);
+		}
+	} else {
+		audioStream = makeRawZorkStream(_fileName, engine);
+	}
+	
+	if (_loop) {
+		Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+		engine->_mixer->playStream(_soundType, 0, loopingAudioStream, -1, _volume);
+	} else {
+		engine->_mixer->playStream(_soundType, 0, audioStream, -1, _volume);
+	}
+
 	return true;
 }
 
