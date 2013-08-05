@@ -178,7 +178,16 @@ bool Console::Cmd_Top(int argc, const char **argv) {
 bool Console::Cmd_StepOver(int argc, const char **argv) {
 	if (argc == 1) {
 		int error = ADAPTER->stepOver();
-		return false;
+		if (error == OK) {
+			return false;
+		} else if (error == NOT_ALLOWED) {
+			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
+			return true;
+		} else {
+			DebugPrintf("%s: unknown error %d\n", argv[0], error);
+			return true;
+		}
+
 	} else {
 		DebugPrintf("Usage: %s to step over/single step\n", argv[0]);
 		return true;
@@ -188,7 +197,16 @@ bool Console::Cmd_StepOver(int argc, const char **argv) {
 bool Console::Cmd_StepInto(int argc, const char **argv) {
 	if (argc == 1) {
 		int error = ADAPTER->stepInto();
-		return false;
+		if (error == OK) {
+			return false;
+		} else if (error == NOT_ALLOWED) {
+			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
+			return true;
+		} else {
+			DebugPrintf("%s: unknown error %d\n", argv[0], error);
+			return true;
+		}
+
 	} else {
 		DebugPrintf("Usage: %s to step into\n", argv[0]);
 		return true;
@@ -198,7 +216,16 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 bool Console::Cmd_Continue(int argc, const char **argv) {
 	if (argc == 1) {
 		int error = ADAPTER->stepContinue();
-		return false;
+		if (error == OK) {
+			return false;
+		} else if (error == NOT_ALLOWED) {
+			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
+			return true;
+		} else {
+			DebugPrintf("%s: unknown error %d\n", argv[0], error);
+			return true;
+		}
+
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -207,8 +234,17 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
+		
 		int error = ADAPTER->stepFinish();
-		return false;
+		if (error == OK) {
+			return false;
+		} else if (error == NOT_ALLOWED) {
+			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
+			return true;
+		} else {
+			DebugPrintf("%s: unknown error %d\n", argv[0], error);
+			return true;
+		}
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
