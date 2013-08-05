@@ -38,7 +38,7 @@ public:
 private:
 	OSystem *_system;
 	uint32 _lastTime;
-	uint32 _deltaTime;
+	int32 _deltaTime;
 	uint32 _pausedTime;
 	bool _paused;
 
