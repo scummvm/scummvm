@@ -289,4 +289,11 @@ void GraphicsManager::invalidateRect(const Common::Rect &rect, bool erase) {
 	// TODO: Erase?
 }
 
+void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y) {
+	assert(surface->format.bytesPerPixel == _screen->format.bytesPerPixel);
+
+	for (int i = 0; i < surface->h; i++)
+		memcpy(_screen->getBasePtr(x, y + i), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
+}
+
 } // End of namespace Buried
