@@ -47,6 +47,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
 	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
 	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
+	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -159,6 +160,17 @@ bool Console::cmdChangeLocation(int argc, const char **argv) {
 	}
 
 	_engine->getScriptManager()->changeLocation(*(argv[1]), *(argv[2]), *(argv[3]), *(argv[4]), atoi(argv[5]));
+
+	return true;
+}
+
+bool Console::cmdDumpFile(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use dumpfile <fileName> to dump a file");
+		return true;
+	}
+
+	writeFileContentsToFile(argv[1], argv[1]);
 
 	return true;
 }

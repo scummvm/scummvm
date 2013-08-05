@@ -46,6 +46,7 @@ private:
 	bool cmdSetPanoramaFoV(int argc, const char **argv);
 	bool cmdSetPanoramaScale(int argc, const char **argv);
 	bool cmdChangeLocation(int argc, const char **argv);
+	bool cmdDumpFile(int argc, const char **argv);
 };
 
 } // End of namespace ZVision
