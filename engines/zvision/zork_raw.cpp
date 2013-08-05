@@ -155,7 +155,7 @@ Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
 	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, stereo, DisposeAfterUse::YES);
 }
 
-Audio::AudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine) {
+Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine) {
 	Common::File *file = new Common::File();
 	assert(file->open(filePath));
 
