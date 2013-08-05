@@ -103,6 +103,67 @@ void Scrolls::easteregg() {
 }
 
 void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwriting */
+	const byte locol = 2;
+	byte xx, yy, ox, bit, lz, t;
+	int16 yp;
+	bool offset;
+	byte itw[12][80];
+
+	offset = x % 8 == 4;
+	x = x / 8;
+	lz = z.size();
+	ox = 0;
+	_vm->_logger->log_scrollline();
+
+	for (xx = 0; xx < lz; xx++) {
+		switch (z[xx]) {
+		case kControlRoman: {
+			cfont = roman;
+			_vm->_logger->log_roman();
+			}
+			break;
+		case kControlItalic: {
+			cfont = italic;
+			_vm->_logger->log_italic();
+			}
+			break;
+		default: {
+			for (yy = 0; yy < 12; yy ++)
+				itw[yy][ox] = ~ch[cfont][z[xx]][yy + 1];
+			ox++;
+			_vm->_logger->log_scrollchar(Common::String(z[xx]));
+			}
+		}
+	}
+
+	lz = ox;
+	if (offset) {
+		/* offsetting routine */
+		for (yy = 0; yy < 12; yy++) {
+			bit = 240;
+			itw[yy][lz] = 255;
+			for (xx = 0; xx < lz; xx++) {
+				t = itw[yy][xx];
+				itw[yy][xx] = bit + t / 16;
+				bit = t << 4;
+			}
+		}
+		lz++;
+	}
+
+	/*yp = x + y * 80 + (1 - _vm->_gyro->cp) * _vm->_gyro->pagetop;
+	for (yy = 0; yy < 12; yy++) {
+	yp += 80;
+	for (bit = 0; bit <= locol; bit ++) {
+	port[0x3c4] = 2;
+	port[0x3ce] = 4;
+	port[0x3c5] = 1 << bit;
+	port[0x3cf] = bit;
+	move(itw[yy], mem[0xa000 * yp], lz);
+	}
+	}*/
+
+
 	warning("STUB: Scrolls::say()");
 }
 
@@ -227,7 +288,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	byte b, groi;
 	int16 lx, ly, mx, my, ex, ey;
 	bool centre;
-	byte icon_indent;
+	byte icon_indent = 0;
 
 	_vm->_gyro->off_virtual();
 	//setvisualpage(cp);
@@ -456,7 +517,7 @@ void Scrolls::calldrivers() {
 		}
 	}
 
-	for (fv = 0; fv <= _vm->_gyro->bufsize; fv++)
+	for (fv = 0; fv < _vm->_gyro->bufsize; fv++)
 		if (mouthnext) {
 			if (_vm->_gyro->buffer[fv] == kControlRegister)
 				param = 0;

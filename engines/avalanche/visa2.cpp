@@ -50,12 +50,12 @@ bool Visa::report_dixi_errors = true;
 
 void Visa::unskrimble() {
 	for (uint16  fv = 0; fv < _vm->_gyro->bufsize; fv++) 
-		_vm->_gyro->buffer[fv] = (char)((!(_vm->_gyro->buffer[fv]) - fv) % 256);
+		_vm->_gyro->buffer[fv] = (~(_vm->_gyro->buffer[fv]) - fv + 1) % 256;
 }
 
 void Visa::do_the_bubble() {
 	_vm->_gyro->bufsize++;
-	_vm->_gyro->buffer[_vm->_gyro->bufsize] = 2;
+	_vm->_gyro->buffer[_vm->_gyro->bufsize - 1] = 2;
 }
 
 void Visa::dixi(char block, byte point) {
@@ -101,7 +101,8 @@ void Visa::dixi(char block, byte point) {
 	sezfile.close();
 	unskrimble();
 
-	if (bubbling)  do_the_bubble();
+	if (bubbling)
+		do_the_bubble();
 
 	_vm->_scrolls->calldrivers();
 }
