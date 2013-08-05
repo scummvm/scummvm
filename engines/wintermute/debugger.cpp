@@ -234,7 +234,7 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
-		
+
 		int error = ADAPTER->stepFinish();
 		if (error == OK) {
 			return false;
@@ -319,11 +319,17 @@ bool Console::Cmd_DumpRes(int argc, const char **argv) {
 	if (argc == 2) {
 		int error = 0;
 		Common::String res = ADAPTER->readRes(Common::String(argv[1]), &error);
-		// TODO: Handle errors
-		DebugPrintf("%s \n", res.c_str());
+		if (error == OK) {
+			DebugPrintf("%s = %s \n", argv[1], res.c_str());
+		} else if (error == NOT_ALLOWED) {
+			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
+		} else if (error == WRONG_TYPE) {
+			DebugPrintf("%s: wrong type - perhaps not a native?", argv[1]);
+		} else {
+			DebugPrintf("%s: unrecognized error %d", argv[0], error);
+		}
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
-		return true;
 	}
 	return true;
 }

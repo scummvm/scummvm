@@ -40,7 +40,10 @@ enum ErrorCode {
 	NO_SUCH_BREAKPOINT,
 	NOT_ALLOWED,
 	IS_BLANK, // Is blank or comment-only, actually
-	NO_SUCH_SCRIPT
+	NO_SUCH_SCRIPT,
+	WRONG_TYPE,
+	PARSE_ERROR,
+	NOT_YET_IMPLEMENTED
 };
 
 class SourceFile {

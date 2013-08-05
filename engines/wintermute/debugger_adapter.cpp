@@ -335,7 +335,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 
 
 	if (!result->isNative()) {
-		*error = NOT_ALLOWED; // TODO: Better one
+		*error = WRONG_TYPE; // TODO: Better one
 		return nullptr;
 	}
 
@@ -430,52 +430,54 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value) {
 		char *endptr;
 		errno = 0;
 		int res = strtol(value.c_str(), &endptr, 10); // TODO: Hex too?
-
 		if (
 		    (errno == ERANGE && (res == LONG_MAX || res == LONG_MIN))
 		    ||
 		    (errno != 0 && res == 0)
 		) {
-			// TODO: Error, bail out
+			return PARSE_ERROR;
 		} else if (endptr == value.c_str()) {
-			// TODO: Couldn't parse anything... bail out?
+			return PARSE_ERROR;
 		} else if (endptr == value.c_str() + value.size()) {
 			// We've parsed all of it, have we?
 			var->setInt(res);
 		} else {
 			assert(false);
+			return PARSE_ERROR;
 			// Something funny happened here.
 		}
 	} else if (var->_type == VAL_FLOAT) {
 		char *endptr;
 		errno = 0;
 		float res = (float)strtod(value.c_str(), &endptr);
-
 		if (
 		    (errno == ERANGE && (res == HUGE_VAL))
 		    ||
 		    (errno != 0 && res == 0)
 		) {
-			// TODO: Error, bail out
+			return PARSE_ERROR;
 		} else if (endptr == value.c_str()) {
-			// TODO: Couldn't parse anything... bail out?
+			return PARSE_ERROR;
 		} else if (endptr == value.c_str() + value.size()) {
 			// We've parsed all of it, have we?
 			var->setFloat(res);
 		} else {
+			return PARSE_ERROR;
 			assert(false);
 			// Something funny happened here.
 		}
 	} else if (var->_type == VAL_BOOL) {
 		Common::String str = Common::String(value);
 		bool valAsBool;
-		Common::parseBool(value, valAsBool);
-		// TODO: Warn if can't parse.
-		var->setBool(valAsBool);
+		if (Common::parseBool(value, valAsBool)) {
+			var->setBool(valAsBool);
+		} else {
+			return PARSE_ERROR;
+		}
 	} else if (var->_type == VAL_STRING) {
 		var->setString(value);
 	} else {
-		// TODO> Not yet implemented
+		return NOT_YET_IMPLEMENTED;
 	}
 	return 0;
 }
