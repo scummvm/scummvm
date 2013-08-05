@@ -48,6 +48,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("next", WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
+	DCmd_Register("finish", WRAP_METHOD(Console, Cmd_Finish));
 	DCmd_Register("watch", WRAP_METHOD(Console, Cmd_Watch));
 	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
 	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
@@ -197,6 +198,16 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 bool Console::Cmd_Continue(int argc, const char **argv) {
 	if (argc == 1) {
 		int error = ADAPTER->stepContinue();
+		return false;
+	} else {
+		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		return true;
+	}
+}
+
+bool Console::Cmd_Finish(int argc, const char **argv) {
+	if (argc == 1) {
+		int error = ADAPTER->stepFinish();
 		return false;
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);

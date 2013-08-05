@@ -40,6 +40,7 @@ public:
 	bool Cmd_StepInto(int argc, const char **argv);
 	bool Cmd_StepOver(int argc, const char **argv);
 	bool Cmd_Continue(int argc, const char **argv);
+	bool Cmd_Finish(int argc, const char **argv);
 	bool Cmd_Watch(int argc, const char **argv);
 	bool Cmd_Print(int argc, const char **argv);
 	bool Cmd_Set(int argc, const char **argv);

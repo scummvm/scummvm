@@ -277,6 +277,19 @@ int DebuggerAdapter::stepInto() {
 int DebuggerAdapter::stepContinue() {
 	// TODO: Check if allowed
 	assert(_lastScript);
+	_lastScript->_step = -2;
+	return OK;
+}
+
+void DebuggerAdapter::reset() {
+	_lastScript = nullptr;
+	_lastLine = -1;
+	_lastDepth = -3;
+}
+
+int DebuggerAdapter::stepFinish() {
+	// TODO: Check if allowed
+	assert(_lastScript);
 	_lastScript->_step = _lastDepth - 1;
 	return OK;
 }

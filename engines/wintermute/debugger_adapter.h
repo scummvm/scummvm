@@ -92,6 +92,7 @@ public:
 	int stepOver();
 	int stepInto();
 	int stepContinue();
+	int stepFinish();
 	int32 getLastLine();
 	Common::String readValue(const char *name, int *error);
 	int setValue(Common::String name, Common::String value);
@@ -105,6 +106,7 @@ private:
 	int32 _lastDepth;
 	ScScript *_lastScript;
 	int32 _lastLine;
+	void reset();
 };
 }
 
