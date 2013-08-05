@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	database.o \
 	detection.o \
 	graphics.o \
+	livetext.o \
 	sound.o \
 	window.o
 
