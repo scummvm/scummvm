@@ -79,6 +79,10 @@ StaticANIObject::StaticANIObject() {
 	_someDynamicPhaseIndex = -1;
 }
 
+StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
+	warning("STUB: StaticANIObject(src)");
+}
+
 bool StaticANIObject::load(MfcArchive &file) {
 	debug(5, "StaticANIObject::load()");
 
@@ -269,7 +273,7 @@ void StaticANIObject::draw() {
 			angle = _field_30 ^ 0x4000;
 	}
 
-	if (!_movement || _flags & 0x20) {
+	if (!_movement || (_flags & 0x20)) {
 		_statics->getSomeXY(point);
 		_statics->_x = _ox - point.x;
 		_statics->_y = _oy - point.y;
@@ -354,6 +358,43 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 
 void StaticANIObject::update(int counterdiff) {
 	warning("STUB: StaticANIObject::update(%d)", counterdiff);
+}
+
+bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
+	if (!(picAniInfo->type & 3)) {
+		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+
+		return false;
+	}
+
+	if (picAniInfo->type & 3) {
+		setOXY(picAniInfo->ox, picAniInfo->oy);
+		_priority = picAniInfo->priority;
+		_field_4 = picAniInfo->field_8;
+		setFlags(picAniInfo->flags);
+		_field_8 = picAniInfo->field_24;
+	}
+
+	if (picAniInfo->type & 1) {
+		_messageQueueId = picAniInfo->type >> 16;
+
+		if (picAniInfo->staticsId)
+			_statics = getStaticsById(picAniInfo->staticsId);
+		else
+			_statics = 0;
+
+		if (picAniInfo->movementId) {
+			_movement = getMovementById(picAniInfo->movementId);
+			if (_movement)
+				_movement->setDynamicPhaseIndex(picAniInfo->dynamicPhaseIndex);
+		} else {
+			_movement = 0;
+		}
+
+		setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
+	}
+
+	return true;
 }
 
 Statics::Statics() {

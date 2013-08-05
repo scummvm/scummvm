@@ -420,7 +420,7 @@ bool PicAniInfo::load(MfcArchive &file) {
 	objectId = file.readUint16LE();
 	field_6 = file.readUint16LE();
 	field_8 = file.readUint32LE();
-	field_C = file.readUint16LE();
+	sceneId = file.readUint16LE();
 	field_E = file.readUint16LE();
 	ox = file.readUint32LE();
 	oy = file.readUint32LE();

@@ -251,7 +251,52 @@ int CGameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
 }
 
 void CGameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount) {
-	warning("STUB: CGameLoader::applyPicAniInfo()");
+	if (picAniInfoCount <= 0)
+		return;
+
+	PictureObject *pict;
+	StaticANIObject *ani;
+
+	for (int i = 0; i < picAniInfoCount; i++) {
+		if (picAniInfo[i]->type & 2) {
+			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
+			if (pict) {
+				pict->setPicAniInfo(picAniInfo[i]);
+				continue;
+			}
+			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, 0);
+			if (pict) {
+				PictureObject *pictNew = new PictureObject(pict);
+
+				sc->_picObjList.push_back(pictNew);
+				pictNew->setPicAniInfo(picAniInfo[i]);
+				continue;
+			}
+		} else {
+			if (!(picAniInfo[i]->type & 1))
+				continue;
+
+			Scene *scNew = g_fullpipe->accessScene(picAniInfo[i]->sceneId);
+			if (!scNew)
+				continue;
+
+			ani = sc->getStaticANIObject1ById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
+			if (ani) {
+				ani->setPicAniInfo(picAniInfo[i]);
+				continue;
+			}
+
+			ani = scNew->getStaticANIObject1ById(picAniInfo[i]->objectId, 0);
+			if (ani) {
+				StaticANIObject *aniNew = new StaticANIObject(ani);
+
+				sc->addStaticANIObject(aniNew, 1);
+
+				aniNew->setPicAniInfo(picAniInfo[i]);
+				continue;
+			}
+		}
+	}
 }
 
 void CGameLoader::updateSystems(int counterdiff) {

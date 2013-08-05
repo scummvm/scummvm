@@ -184,6 +184,8 @@ class StaticANIObject : public GameObject {
 
   public:
 	StaticANIObject();
+	StaticANIObject(StaticANIObject *src);
+
 	virtual bool load(MfcArchive &file);
 
 	void setOXY(int x, int y);
@@ -199,6 +201,10 @@ class StaticANIObject : public GameObject {
 
 	void initMovements();
 	void loadMovementsPixelData();
+
+	bool setPicAniInfo(PicAniInfo *picAniInfo);
+
+	void setSomeDynamicPhaseIndex(int val) { _someDynamicPhaseIndex = val; }
 
 	void update(int counterdiff);
 

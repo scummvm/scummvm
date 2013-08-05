@@ -29,6 +29,7 @@ namespace Fullpipe {
 
 class DynamicPhase;
 class Movement;
+struct PicAniInfo;
 
 struct Bitmap {
 	int _x;
@@ -121,6 +122,8 @@ class GameObject : public CObject {
 
   public:
 	GameObject();
+	GameObject(GameObject *src);
+
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
 	void renumPictures(CPtrList *lst);
@@ -138,9 +141,13 @@ class PictureObject : public GameObject {
 
   public:
 	PictureObject();
+	PictureObject(PictureObject *src);
+
 	bool load(MfcArchive &file, bool bigPicture);
 	Common::Point *getDimensions(Common::Point *p);
 	void draw();
+
+	bool setPicAniInfo(PicAniInfo *picAniInfo);
 };
 
 class Background : public CObject {

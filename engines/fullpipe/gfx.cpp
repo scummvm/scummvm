@@ -119,6 +119,13 @@ PictureObject::PictureObject() {
 	_picture = 0;
 }
 
+PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
+	_picture = src->_picture;
+	_ox2 = _ox;
+	_oy2 = _oy;
+	_pictureObject2List = src->_pictureObject2List;
+}
+
 bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	debug(5, "PictureObject::load()");
 	GameObject::load(file);
@@ -164,6 +171,26 @@ void PictureObject::draw() {
 		_picture->draw(_ox, _oy, 0, 0);
 }
 
+bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
+	if (!(picAniInfo->type & 2) || (picAniInfo->type & 1)) {
+		error("Picture::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+
+		return false;
+	}
+
+	if (picAniInfo->type & 2) {
+		setOXY(picAniInfo->ox, picAniInfo->oy);
+		_priority = picAniInfo->priority;
+		_field_4 = picAniInfo->field_8;
+		setFlags(picAniInfo->flags);
+		_field_8 = picAniInfo->field_24;
+
+		return true;
+	}
+
+	return false;
+}
+
 GameObject::GameObject() {
 	_field_4 = 0;
 	_flags = 0;
@@ -173,6 +200,21 @@ GameObject::GameObject() {
 	_priority = 0;
 	_field_20 = 0;
 	_field_8 = 0;
+}
+
+GameObject::GameObject(GameObject *src) {
+	_field_4 = 1;
+	_flags = 0;
+	_id = src->_id;
+
+	_objectName = (char *)calloc(strlen(src->_objectName) + 1, 1);
+	strncpy(_objectName, src->_objectName, strlen(src->_objectName));
+
+	_ox = src->_ox;
+	_oy = src->_oy;
+	_priority = src->_priority;
+	_field_20 = 1;
+	_field_8 = src->_field_8;
 }
 
 bool GameObject::load(MfcArchive &file) {

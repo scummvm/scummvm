@@ -86,7 +86,7 @@ struct PicAniInfo {
 	int16 objectId;
 	int16 field_6;
 	int32 field_8;
-	int16 field_C;
+	int16 sceneId;
 	int16 field_E;
 	int32 ox;
 	int32 oy;
