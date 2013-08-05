@@ -138,7 +138,8 @@ Common::SeekableReadStream *ZfsArchive::createReadStreamForMember(const Common::
 	zfsArchive.open(_fileName);
 	zfsArchive.seek(entryHeader->offset);
 
-	byte* buffer = new byte[entryHeader->size];
+	// This *HAS* to be malloc (not new[]) because MemoryReadStream uses free() to free the memory
+	byte* buffer = (byte *)malloc(entryHeader->size);
 	zfsArchive.read(buffer, entryHeader->size);
 	// Decrypt the data in place
 	if (_header.xorKey != 0)
