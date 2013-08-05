@@ -85,7 +85,10 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		ZorkGrandInquisitor
 	},
 
-	{ AD_TABLE_END_MARKER }
+	{
+		AD_TABLE_END_MARKER,
+		None
+	}
 };
 
 } // End of namespace ZVision
