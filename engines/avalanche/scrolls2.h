@@ -89,6 +89,7 @@ private:
 	static const char kControlToBuffer = 4; // ^D
 	static const char kControlItalic = 6; // ^F
 	static const char kControlBell = 7; // ^G
+	static const char kControlBackspace = 8; // ^H
 	static const char kControlInsertSpaces = 9; // ^I
 	static const char kControlLeftJustified = 12; // ^L
 	static const char kControlNewLine = 13; // ^M

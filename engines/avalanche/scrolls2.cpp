@@ -129,7 +129,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			break;
 		default: {
 			for (yy = 0; yy < 12; yy ++)
-				itw[yy][ox] = ~ch[cfont][z[xx]][yy + 1];
+				itw[yy][ox] = ~ch[cfont][z[xx]][yy + 2];
 			ox++;
 			_vm->_logger->log_scrollchar(Common::String(z[xx]));
 			}
@@ -151,6 +151,18 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 		lz++;
 	}
 
+	y++;
+	for (byte fv = 0; fv < z.size(); fv++)
+		for (byte ff = 0; ff < 12; ff++) {
+			byte pixel = itw[ff][fv]; // Note that it's the bitwise NOT operator!
+			for (byte bit = 0; bit < 8; bit++) {
+				byte pixelBit = (pixel >> bit) & 1;
+				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
+				// We don't have to bother with the planes, since they all have the same value. See the original.
+				// Note that it's the bitwise OR operator!
+			}
+		}
+
 	/*yp = x + y * 80 + (1 - _vm->_gyro->cp) * _vm->_gyro->pagetop;
 	for (yy = 0; yy < 12; yy++) {
 	yp += 80;
@@ -162,14 +174,63 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	move(itw[yy], mem[0xa000 * yp], lz);
 	}
 	}*/
-
-
-	warning("STUB: Scrolls::say()");
 }
 
 /* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
 
 void Scrolls::normscroll() {
+	Common::String egg = Common::String(kControlParagraph) + kControlLeftJustified + kControlNegative + kControlBell + kControlBackspace + "***";
+	Common::String e = "(c) 1994";
+	char r;
+	bool oktoexit;
+
+	state(3);
+	_vm->_gyro->seescroll = true;
+	_vm->_gyro->off_virtual();
+	_vm->_gyro->on();
+	_vm->_gyro->newpointer(4);
+	_vm->_lucerna->mousepage(1 - _vm->_gyro->cp);
+
+	if (_vm->_gyro->demo)
+		_vm->_basher->get_demorec();
+
+//	do {
+//		do {
+//			_vm->_gyro->check(); /* was "checkclick;" */
+//
+//#ifdef RECORD slowdown(); basher::count += 1; #endif
+//
+//			if (_vm->_gyro->demo) {
+//				if (_vm->_basher->demo_ready())
+//					break;
+//				if (_vm->_enhanced->keypressede())
+//					return;
+//			} else if (_vm->_enhanced->keypressede())
+//				break;
+//		} while (!((mrelease > 0) || (buttona1()) || (buttonb1())));
+//
+//
+//		if (mrelease == 0) {
+//			inkey();
+//			if (aboutscroll) {
+//				move(e[2 - 1], e[1 - 1], 7);
+//				e[8 - 1] = inchar;
+//				if (egg == e)  easteregg();
+//			}
+//			oktoexit = set::of('\15', '\33', '+', '#', eos).has(inchar);
+//			if (! oktoexit)  errorled();
+//		}
+//
+//	} while (!((oktoexit) || (mrelease > 0)));
+//
+//#ifdef RECORD record_one(); #endif
+//
+	//_vm->_gyro->screturn = r == '#'; /* "back door" */
+	state(0);
+	_vm->_gyro->seescroll = false;
+	_vm->_lucerna->mousepage(_vm->_gyro->cp);
+	_vm->_gyro->off();
+
 	warning("STUB: Scrolls::normscroll()");
 }
 
