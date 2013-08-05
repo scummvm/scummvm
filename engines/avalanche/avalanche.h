@@ -111,6 +111,8 @@ public:
 
 	void updateEvents();
 
+	bool getEvent(Common::Event &event); // A warpper around _eventMan->pollEvent(), se we can use it in Scrolls::normscroll() for example.
+
 protected:
 	// Engine APIs
 	Common::Error run();

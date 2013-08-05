@@ -143,6 +143,10 @@ void AvalancheEngine::updateEvents() {
 	}
 }
 
+bool AvalancheEngine::getEvent(Common::Event &event) {
+	return _eventMan->pollEvent(event);
+}
+
 
 
 
