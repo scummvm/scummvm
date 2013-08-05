@@ -26,8 +26,6 @@
 #include "common/types.h"
 #include "common/rect.h"
 
-#include "graphics/pixelformat.h"
-
 #include "zvision/render_table.h"
 
 class OSystem;
@@ -51,7 +49,6 @@ private:
 	OSystem *_system;
 	const int _width;
 	const int _height;
-	const Graphics::PixelFormat _pixelFormat;
 	RenderTable _renderTable;
 
 	Common::SeekableReadStream *_currentBackground;
@@ -64,22 +61,6 @@ private:
 public:
 	void initialize();
 	void updateScreen(bool isConsoleActive);
-
-	/**
-	 * Start a video playing. It will also load the first frame of the video.
-	 *
-	 * @param videoDecoder    The video to play
-	 */
-	void startVideo(Video::VideoDecoder *videoDecoder);
-	/**
-	 * @return    Is a video currently being played
-	 */
-	bool isVideoPlaying() { return _currentVideo == 0; }
-	/**
-	 * Cancels a video prematurely. Any sound remaining in the queue will continue to play.
-	 * The last frame of the video will remain on the screen until something else overwrites it
-	 */
-	void cancelVideo();
 
 	/**
 	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
@@ -116,11 +97,6 @@ public:
 	bool needsScreenUpdate() { return _needsScreenUpdate; };
 
 private:
-	/**
-	 * Checks the time since the last video frame, and blits the next frame to the screen
-	 */
-	void continueVideo();
-
 	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle);
 };
 

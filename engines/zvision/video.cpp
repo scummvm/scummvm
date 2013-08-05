@@ -27,7 +27,9 @@
 #include "engines/util.h"
 #include "graphics/surface.h"
 
+#include "zvision/clock.h"
 #include "zvision/render_manager.h"
+#include "zvision/zvision.h"
 
 
 namespace ZVision {
@@ -71,62 +73,77 @@ void scale2x(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, byte
 	}
 }
 
-void RenderManager::startVideo(Video::VideoDecoder *videoDecoder) {
-	if (!videoDecoder)
-		return;
-
-	_currentVideo = videoDecoder;
-
+void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
+	// Videos use a different pixel format
 	Common::List<Graphics::PixelFormat> formats;
-	formats.push_back(videoDecoder->getPixelFormat());
+	formats.push_back(videoDecoder.getPixelFormat());
 	initGraphics(_width, _height, true, formats);
-	
-	_scaledVideoFrameBuffer = new byte[_currentVideo->getWidth() * _currentVideo->getHeight() * _currentVideo->getPixelFormat().bytesPerPixel * 4];
 
-	_currentVideo->start();
-
-	// Load the first frame
-	continueVideo();
-}
-
-void RenderManager::continueVideo() {
-	byte bytesPerPixel = _currentVideo->getPixelFormat().bytesPerPixel;
-	uint16 origWidth = _currentVideo->getWidth();
-	uint16 origHeight = _currentVideo->getHeight();
+	byte bytesPerPixel = videoDecoder.getPixelFormat().bytesPerPixel;
+	uint16 origWidth = videoDecoder.getWidth();
+	uint16 origHeight = videoDecoder.getHeight();
 	uint16 pitch = origWidth * bytesPerPixel;
+
+	// Most videos are very small. Therefore we do a simple 2x scale
 	bool shouldBeScaled = (origWidth * 2 <= 640 && origHeight * 2 <= 480);
 	uint16 finalWidth = shouldBeScaled ? origWidth * 2 : origWidth;
 	uint16 finalHeight = shouldBeScaled ? origHeight * 2 : origHeight;
 
-	uint16 x = (_system->getWidth() - finalWidth) / 2;
-	uint16 y = (_system->getHeight() - finalHeight) / 2;
+	byte *scaledVideoFrameBuffer = new byte[origHeight * pitch * 4];
 
-	if (!_currentVideo->endOfVideo()) {
-		if (_currentVideo->needsUpdate()) {
-			const Graphics::Surface *frame = _currentVideo->decodeNextFrame();
+	uint16 x = (_width - finalWidth) / 2;
+	uint16 y = (_height - finalHeight) / 2;
+
+	_clock->stop();
+	videoDecoder.start();
+
+	// Only continue while the video is still playing
+	while (videoDecoder.isPlaying()) {
+		_clock->update();
+		uint32 currentTime = _clock->getLastMeasuredTime();
+
+		// Check for engine quit and video stop key presses
+		while (_eventMan->pollEvent(_event)) {
+			switch (_event.type) {
+			case Common::EVENT_KEYDOWN:
+				switch (_event.kbd.keycode) {
+				case Common::KEYCODE_q:
+					if (_event.kbd.hasFlags(Common::KBD_CTRL))
+						quitGame();
+					break;
+				case Common::KEYCODE_SPACE:
+					videoDecoder.stop();
+					break;
+				}
+			}
+		}
+
+		if (videoDecoder.needsUpdate()) {
+			const Graphics::Surface *frame = videoDecoder.decodeNextFrame();
 
 			if (frame) {
 				if (shouldBeScaled) {
-					scale2x((byte *)frame->pixels, _scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel);
-					_system->copyRectToScreen(_scaledVideoFrameBuffer, pitch * 2, x, y, finalWidth, finalHeight);
+					scale2x((byte *)frame->pixels, scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel);
+					_system->copyRectToScreen(scaledVideoFrameBuffer, pitch * 2, x, y, finalWidth, finalHeight);
 				} else {
 					_system->copyRectToScreen((byte *)frame->pixels, pitch, x, y, finalWidth, finalHeight);
 				}
 
-				_needsScreenUpdate = true;
+				_system->updateScreen();
 			}
 		}
-	} else {
-		cancelVideo();
-	}
-}
 
-void RenderManager::cancelVideo() {
+		// Calculate the frame delay based off a desired frame time
+		int delay = _desiredFrameTime - (currentTime - _system->getMillis());
+		// Ensure non-negative
+		delay = delay < 0 ? 0 : delay;
+		_system->delayMillis(delay);
+	}
+
+	_clock->stop();
+
+	// Reset the pixel format to the original state
 	initGraphics(_width, _height, true, &_pixelFormat);
-	delete _currentVideo;
-	_currentVideo = 0;
-	delete[] _scaledVideoFrameBuffer;
-	_scaledVideoFrameBuffer = 0;
 }
 
 } // End of namespace ZVision

@@ -29,16 +29,24 @@
 
 #include "engines/engine.h"
 
+#include "graphics/pixelformat.h"
+
 #include "zvision/detection.h"
 
 #include "gui/debugger.h"
- 
+
+
+namespace Video {
+class VideoDecoder;
+}
+
 namespace ZVision {
 
 struct ZVisionGameDescription;
 class Console;
 class ScriptManager;
 class RenderManager;
+class Clock;
  
 // our engine debug channels
 enum {
@@ -58,12 +66,19 @@ private:
 	const ZVisionGameDescription *_gameDescription;
 	const int _width;
 	const int _height;
+	const Graphics::PixelFormat _pixelFormat;
+
+	const uint _desiredFrameTime;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
+
 	// Managers
 	ScriptManager *_scriptManager;
 	RenderManager *_renderManager;
+
+	// Clock
+	Clock *_clock;
 
 	// To prevent allocation every time we process events
 	Common::Event _event;
@@ -71,11 +86,14 @@ private:
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
-	virtual Common::Error run();
+	Common::Error run();
+
 	ScriptManager *getScriptManager() const;
 	RenderManager *getRenderManager() const;
 	Common::RandomSource *getRandomSource() const;
 	ZVisionGameId getGameId() const;
+
+	void playVideo(Video::VideoDecoder &videoDecoder);
 
 private:
 	void initialize();

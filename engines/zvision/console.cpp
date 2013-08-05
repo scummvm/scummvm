@@ -69,9 +69,9 @@ bool Console::cmdLoadVideo(int argc, const char **argv) {
 		return true;
 	}
 
-	Video::VideoDecoder *videoDecoder = new ZorkAVIDecoder();
-	if (videoDecoder && videoDecoder->loadFile(argv[1])) {
-		_engine->getRenderManager()->startVideo(videoDecoder);
+	ZorkAVIDecoder videoDecoder;
+	if (videoDecoder.loadFile(argv[1])) {
+		_engine->playVideo(videoDecoder);
 	}
 
 	return true;

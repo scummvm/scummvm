@@ -31,11 +31,14 @@
 #include "common/file.h"
 
 #include "engines/util.h"
+
+#include "audio/mixer.h"
  
 #include "zvision/zvision.h"
 #include "zvision/console.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
+#include "zvision/clock.h"
 #include "zvision/zfs_archive.h"
 #include "zvision/detection.h"
 
@@ -47,7 +50,9 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		: Engine(syst),
 		  _gameDescription(gameDesc),
 		  _width(640),
-		  _height(480) {
+		  _height(480),
+		  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /*RGB 555*/
+		  _desiredFrameTime(33) /* ~30 fps */ {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from run().
@@ -75,14 +80,19 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	_scriptManager = new ScriptManager(this);
 	_renderManager = new RenderManager(_system, _width, _height);
 
+	// Create clock
+	_clock = new Clock(_system);
+
 	debug("ZVision::ZVision");
 }
- 
+
 ZVision::~ZVision() {
 	debug("ZVision::~ZVision");
  
 	// Dispose of resources
 	delete _console;
+	delete _clock;
+	delete _renderManager;
 	delete _scriptManager;
 	delete _rnd;
  
@@ -103,7 +113,7 @@ void ZVision::initialize() {
 		SearchMan.add(name, archive);
 	}
 
-	_renderManager->initialize();
+	initGraphics(_width, _height, true, &_pixelFormat);
 
 	_scriptManager->initialize();
 
@@ -115,25 +125,20 @@ Common::Error ZVision::run() {
 	initialize();
 
 	// Main loop
-	uint32 currentTime = _system->getMillis();
-	uint32 lastTime = currentTime;
-	const uint desiredFrameTime = 33; // ~30 fps
-
 	while (!shouldQuit()) {
-		processEvents();
+		_clock->update();
+		uint32 currentTime = _clock->getLastMeasuredTime();
 		
-		currentTime = _system->getMillis();
-		uint32 deltaTime = currentTime - lastTime;
-		lastTime = currentTime;
+		processEvents();
 
-		_scriptManager->updateNodes(deltaTime);
+		_scriptManager->updateNodes(_clock->getDeltaTime());
 		_scriptManager->checkPuzzleCriteria();
 
 		// Render a frame
 		_renderManager->updateScreen(_console->isActive());
 		
 		// Calculate the frame delay based off a desired frame time
-		int delay = desiredFrameTime - (currentTime - _system->getMillis());
+		int delay = _desiredFrameTime - (currentTime - _system->getMillis());
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
 		_system->delayMillis(delay);

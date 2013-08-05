@@ -38,25 +38,12 @@ RenderManager::RenderManager(OSystem *system, const int width, const int height)
 	: _system(system),
 	  _width(width),
 	  _height(height),
-	  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
-	  _currentVideo(0),
 	  _currentBackground(0),
-	  _scaledVideoFrameBuffer(0),
 	  _needsScreenUpdate(false),
 	  _renderTable(width, height) {
 }
 
-/**
- * Initialize graphics
- */
-void RenderManager::initialize() {
-	initGraphics(_width, _height, true, &_pixelFormat);
-}
-
 void RenderManager::updateScreen(bool isConsoleActive) {
-	if (_currentVideo != 0)
-		continueVideo();
-
 	if (_needsScreenUpdate || isConsoleActive) {
 		_system->updateScreen();
 		_needsScreenUpdate = false;
