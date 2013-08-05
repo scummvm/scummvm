@@ -44,6 +44,7 @@ namespace ZVision {
 class RenderManager {
 public:
 	RenderManager(OSystem *system, const int width, const int height);
+	~RenderManager();
 
 private:
 	OSystem *_system;

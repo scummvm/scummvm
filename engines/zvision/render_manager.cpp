@@ -43,6 +43,12 @@ RenderManager::RenderManager(OSystem *system, const int width, const int height)
 	  _renderTable(width, height) {
 }
 
+RenderManager::~RenderManager() {
+	if (_currentBackground != 0) {
+		delete _currentBackground;
+	}
+}
+
 void RenderManager::updateScreen(bool isConsoleActive) {
 	if (_needsScreenUpdate || isConsoleActive) {
 		_system->updateScreen();
