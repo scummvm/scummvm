@@ -33,7 +33,7 @@
 
 namespace ZVision {
 
-void ScriptManager::parseScrFile(Common::String fileName) {
+void ScriptManager::parseScrFile(const Common::String &fileName) {
 	Common::File file;
 	if (!file.open(fileName))
 		return; // File.open already throws a warning if the file doesn't exist, so there is no need to throw another

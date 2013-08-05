@@ -84,7 +84,7 @@ private:
 	 *
 	 * @param fileName		Name of the .scr file
 	 */
-	void parseScrFile(Common::String fileName);
+	void parseScrFile(const Common::String &fileName);
 
 	/**
 	 * Parses the stream into a Puzzle object
