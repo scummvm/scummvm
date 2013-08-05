@@ -76,6 +76,8 @@ public:
 
 	Graphics::Surface *getScreen() const { return _screen; }
 
+	void blit(const Graphics::Surface *surface, int x, int y);
+
 private:
 	BuriedEngine *_vm;
 	Cursor _curCursor;
