@@ -1110,8 +1110,8 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
-	double expFactor = (_activeSurface->format.bytesPerPixel > 2) ? 1.60 : 1.25;
-	double alpha = (_activeSurface->format.bytesPerPixel > 2) ? 1 : 8;
+	uint8 expFactor = 3;
+	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
 
 	int xstart = x1;
 	int ystart = y1;
@@ -1141,26 +1141,26 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 			BE_ALGORITHM();
 
 			if (((1 << x) & hb) == 0) {
-				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, alpha);
+				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
 				hb |= (1 << x);
 			}
 
 			if (((1 << y) & hb) == 0) {
-				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, alpha);
+				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
 				hb |= (1 << y);
 			}
 		}
 	
 		ptr_fill += pitch * r;
 		while (short_h--) {
-			blendFill(ptr_fill, ptr_fill + width + 1, color, alpha);
+			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
 			ptr_fill += pitch;
 		}
 
 		// Move shadow one pixel upward each iteration
 		xstart += 1;
-
-		alpha = alpha * expFactor;
+		// Multiply with expfactor
+		alpha = (alpha * (expFactor << 8)) >> 9;
 	}
 }
 	
@@ -1807,8 +1807,8 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
-	double expFactor = (_activeSurface->format.bytesPerPixel > 2) ? 1.60 : 1.25;
-	double alpha = (_activeSurface->format.bytesPerPixel > 2) ? 1 : 8;
+	uint8 expFactor = 3;
+	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
 	
 	// These constants ensure a border of 2px on the left and of each rounded square
 	int xstart = (x1 > 2) ? x1 - 2 : x1;
@@ -1872,7 +1872,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		
 		if (_shadowFillMode == kShadowExponential)
 			// Multiply with expfactor
-			alpha = alpha * expFactor;
+			alpha = (alpha * (expFactor << 8)) >> 9;
 	}
 }
 
