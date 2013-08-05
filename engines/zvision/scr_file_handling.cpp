@@ -150,7 +150,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:animpreload*", true)) {
 			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionPreloadAnimation(line)));
 		} else if (line.matchString("*:animunload*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionUnloadAnimation(line)));
+			//actionList.push_back(Common::SharedPtr<ResultAction>(new ActionUnloadAnimation(line)));
 		} else if (line.matchString("*:attenuate*", true)) {
 			
 
