@@ -99,9 +99,6 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 
 	// Only continue while the video is still playing
 	while (videoDecoder.isPlaying()) {
-		_clock.update();
-		uint32 currentTime = _clock.getLastMeasuredTime();
-
 		// Check for engine quit and video stop key presses
 		while (_eventMan->pollEvent(_event)) {
 			switch (_event.type) {
@@ -133,11 +130,7 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 			}
 		}
 
-		// Calculate the frame delay based off a desired frame time
-		int delay = _desiredFrameTime - (currentTime - _system->getMillis());
-		// Ensure non-negative
-		delay = delay < 0 ? 0 : delay;
-		_system->delayMillis(delay);
+		_system->delayMillis(videoDecoder.getTimeToNextFrame());
 	}
 
 	_clock.stop();
