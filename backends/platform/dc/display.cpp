@@ -711,11 +711,7 @@ Graphics::Surface *OSystem_Dreamcast::lockScreen()
   if (!screen)
     return 0;
 
-  _framebuffer.pixels = screen;
-  _framebuffer.w = _screen_w;
-  _framebuffer.h = _screen_h;
-  _framebuffer.pitch = SCREEN_W*2;
-  _framebuffer.format = screenFormats[_screenFormat];
+  _framebuffer.init(_screen_w, _screen_h, SCREEN_W*2, screen, screenFormats[_screenFormat]);
 
   return &_framebuffer;
 }
