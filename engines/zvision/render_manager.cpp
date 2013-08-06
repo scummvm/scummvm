@@ -56,7 +56,7 @@ void RenderManager::updateScreen(bool isConsoleActive) {
 	}
 }
 
-void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle) {
+void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter) {
 	// Panoramas are transposed
 	// The actual data is transposed in mutateImage
 	if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
@@ -83,6 +83,11 @@ void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uin
 	if (!subRectangle.isValidRect() || subRectangle.isEmpty() || !destRect.isValidRect() || destRect.isEmpty())
 		return;
 
+	// Center the image on the screen if asked
+	if (autoCenter) {
+		destRect.moveTo((_width - subRectangle.width()) / 2, (_height - subRectangle.height()) / 2);
+	}
+
 	if (_renderTable.getRenderState() == RenderTable::FLAT) {
 		_system->copyRectToScreen(buffer + subRectangle.top * horizontalPitch + subRectangle.left, horizontalPitch, destRect.left, destRect.top, destRect.width(), destRect.height());
 	} else {
@@ -94,7 +99,7 @@ void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uin
 	}
 }
 
-void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle) {
+void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
@@ -102,10 +107,10 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 d
 		return;
 	}
 
-	renderImageToScreen(file, destinationX, destinationY, subRectangle);
+	renderImageToScreen(file, destinationX, destinationY, subRectangle, autoCenter);
 }
 
-void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle) {
+void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter) {
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
 	uint32 fileType;
@@ -124,7 +129,7 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 
 		uint32 horizontalPitch = imageWidth * sizeof(uint16);
 
-		renderSubRectToScreen((uint16 *)buffer, imageWidth, imageHeight, horizontalPitch, destinationX, destinationY, subRectangle);
+		renderSubRectToScreen((uint16 *)buffer, imageWidth, imageHeight, horizontalPitch, destinationX, destinationY, subRectangle, autoCenter);
 		delete[] buffer;
 	} else {
 		// Reset the cursor
@@ -138,7 +143,7 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 		}
 
 		const Graphics::Surface *tgaSurface = tga.getSurface();
-		renderSubRectToScreen((uint16 *)tgaSurface->pixels, tgaSurface->w, tgaSurface->h, tgaSurface->pitch, destinationX, destinationY, subRectangle);		
+		renderSubRectToScreen((uint16 *)tgaSurface->pixels, tgaSurface->w, tgaSurface->h, tgaSurface->pitch, destinationX, destinationY, subRectangle, autoCenter);
 
 		tga.destroy();
 	}
@@ -160,8 +165,7 @@ void RenderManager::setBackgroundImage(const Common::String &fileName) {
 
 	_currentBackground = file;
 
-	// TODO: Check if all the panoramas are the same height. AKA: can we hardcode the vertical centering to 80px?
-	renderImageToScreen(*_currentBackground, 0, 80);
+	renderImageToScreen(*_currentBackground, 0, 0, Common::Rect(), true);
 }
 
 } // End of namespace ZVision

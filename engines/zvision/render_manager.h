@@ -72,7 +72,7 @@ public:
 	 * @param destinationY    Y position where the image should be put
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
 	 */
-	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0));
+	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool autoCenter = false);
 
 	/**
 	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
@@ -83,7 +83,7 @@ public:
 	 * @param destinationY    Y position where the image should be put
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
 	 */
-	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0));
+	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool autoCenter = false);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
@@ -98,7 +98,7 @@ public:
 	bool needsScreenUpdate() { return _needsScreenUpdate; };
 
 private:
-	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle);
+	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter);
 };
 
 } // End of namespace ZVision
