@@ -73,15 +73,20 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 		if (!error) {
 			DebugPrintf("%s: OK\n", argv[0]);
 		} else if (error == NO_SUCH_SCRIPT) {
-			DebugPrintf("ERROR: %s: no such script: %s, breakpoint NOT created\n", argv[0], argv[1]);
+			Common::String msg = Common::String::format("no such script: %s, breakpoint NOT created\n", argv[1]);
+			debugWarning(argv[0], ERROR, msg);
 		} else if (error == NO_SUCH_SOURCE) {
-			DebugPrintf("WARNING: %s: no such source file: %s\n", argv[0], argv[1]);
+			Common::String msg = Common::String::format("no such source file: %s\n", argv[1]);
+			debugWarning(argv[0], WARNING, msg);
 		} else if (error == NO_SUCH_LINE) {
-			DebugPrintf("WARNING: %s: source %s has no line %d\n", argv[0], argv[1], atoi(argv[2]));
+			Common::String msg = Common::String::format("source %s has no line %d\n", argv[1], atoi(argv[2]));
+			debugWarning(argv[0], WARNING, msg);
 		} else if (error == IS_BLANK) {
-			DebugPrintf("WARNING: %s: %s:%d looks like a comment/blank line.\n", argv[0], argv[1], atoi(argv[2]));
+			Common::String msg = Common::String::format("%s:%d looks like a comment/blank line.\n", argv[1], atoi(argv[2]));
+			debugWarning(argv[0], WARNING, msg);
 		} else {
-			DebugPrintf("ERROR: Error code %d", error);
+			Common::String msg = Common::String::format("Error code %d", error);
+			debugWarning(argv[0], WARNING, msg);
 		}
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
@@ -95,7 +100,8 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->removeBreakpoint(atoi(argv[1]));
 		if (!error) DebugPrintf("%s: OK\n", argv[0]);
 		else if (error == NO_SUCH_BREAKPOINT) {
-			DebugPrintf("%s: no such breakpoint %d\n", argv[0], atoi(argv[1]));
+			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
+			debugWarning(argv[0], ERROR, msg);
 		}
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
@@ -109,7 +115,8 @@ bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->enableBreakpoint(atoi(argv[1]));
 		if (!error) DebugPrintf("%s: OK\n", argv[0]);
 		else if (error == NO_SUCH_BREAKPOINT) {
-			DebugPrintf("%s: no such breakpoint %d\n", argv[0], atoi(argv[1]));
+			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
+			debugWarning(argv[0], ERROR, msg);
 		}
 	} else {
 		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
@@ -123,7 +130,8 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->disableBreakpoint(atoi(argv[1]));
 		if (!error) DebugPrintf("%s: OK\n", argv[0]);
 		else if (error == NO_SUCH_BREAKPOINT) {
-			DebugPrintf("%s: no such breakpoint %d\n", argv[0], atoi(argv[1]));
+			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
+			debugWarning(argv[0], ERROR, msg);
 		}
 	} else {
 		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
@@ -140,7 +148,8 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 		int error = ADAPTER->addWatch(argv[1], argv[2]);
 		if (!error) DebugPrintf("%s: OK\n", argv[0]);
 		else if (error == NO_SUCH_SCRIPT) {
-			DebugPrintf("%s: no such file %s\n", argv[0], argv[1]);
+			Common::String msg = Common::String::format("no such file %s\n", argv[1]);
+			debugWarning(argv[0], ERROR, msg);
 		}
 	} else {
 		DebugPrintf("Usage: %s <file path> <name> to watch for <name> in file <file path>\n", argv[0]);
@@ -181,13 +190,10 @@ bool Console::Cmd_StepOver(int argc, const char **argv) {
 		if (error == OK) {
 			return false;
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
-			return true;
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
-			DebugPrintf("%s: unknown error %d\n", argv[0], error);
-			return true;
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
-
 	} else {
 		DebugPrintf("Usage: %s to step over/single step\n", argv[0]);
 		return true;
@@ -200,13 +206,10 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 		if (error == OK) {
 			return false;
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
-			return true;
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
-			DebugPrintf("%s: unknown error %d\n", argv[0], error);
-			return true;
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
-
 	} else {
 		DebugPrintf("Usage: %s to step into\n", argv[0]);
 		return true;
@@ -219,12 +222,11 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 		if (error == OK) {
 			return false;
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
-			return true;
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
-			DebugPrintf("%s: unknown error %d\n", argv[0], error);
-			return true;
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
+
 
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
@@ -239,11 +241,9 @@ bool Console::Cmd_Finish(int argc, const char **argv) {
 		if (error == OK) {
 			return false;
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
-			return true;
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
-			DebugPrintf("%s: unknown error %d\n", argv[0], error);
-			return true;
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
@@ -263,9 +263,9 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 		if (!error) {
 			DebugPrintf("%s = %s \n", argv[1], temp.c_str());
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("Not allowed\n");
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
-			DebugPrintf("Error\n"); // TODO: More informative
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> to print value of <name>\n", argv[0]);
@@ -282,9 +282,9 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 			assert(val);
 			DebugPrintf("%s = %s\n", argv[1], val->getString());
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("Not allowed\n");
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
-			DebugPrintf("Error\n");
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
@@ -323,11 +323,11 @@ bool Console::Cmd_DumpRes(int argc, const char **argv) {
 		if (error == OK) {
 			DebugPrintf("%s = %s \n", argv[1], res.c_str());
 		} else if (error == NOT_ALLOWED) {
-			DebugPrintf("%s: not allowed here. Perhaps did not break?\n", argv[0]);
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else if (error == WRONG_TYPE) {
-			DebugPrintf("%s: wrong type - perhaps not a native?", argv[1]);
+			debugWarning(argv[0], ERROR, "Wrong type. Perhaps not a native?\n");
 		} else {
-			DebugPrintf("%s: unrecognized error %d", argv[0], error);
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
@@ -402,7 +402,7 @@ void Console::printSource(int n) {
 	}
 }
 
-void Console::warning(Common::String command, int warning_level, Common::String message) {
+void Console::debugWarning(Common::String command, int warning_level, Common::String message) {
 	Common::String level;
 	switch (warning_level) {
 	case NOTICE:
