@@ -61,11 +61,13 @@ struct Surface {
 	 */
 	uint16 pitch;
 
+protected:
 	/**
 	 * The surface's pixel data.
 	 */
 	void *pixels;
 
+public:
 	/**
 	 * The pixel format of the surface.
 	 */
