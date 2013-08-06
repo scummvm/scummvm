@@ -528,16 +528,13 @@ void OSystem_Wii::updateScreen() {
 }
 
 Graphics::Surface *OSystem_Wii::lockScreen() {
-	_surface.pixels = _gamePixels;
-	_surface.w = _gameWidth;
-	_surface.h = _gameHeight;
+	_surface.init(_gameWidth, _gameHeight,
 #ifdef USE_RGB_COLOR
-	_surface.pitch = _gameWidth * _pfGame.bytesPerPixel;
-	_surface.format = _pfGame;
+	              _gameWidth * _pfGame.bytesPerPixel, _gamePixels, _pfGame
 #else
-	_surface.pitch = _gameWidth;
-	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
+	              _gameWidth, _gamePixels, Graphics::PixelFormat::createFormatCLUT8()
 #endif
+	             );
 
 	return &_surface;
 }
