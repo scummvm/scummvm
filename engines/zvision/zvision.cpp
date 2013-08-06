@@ -134,7 +134,7 @@ Common::Error ZVision::run() {
 		_renderManager->updateScreen(_console->isActive());
 		
 		// Calculate the frame delay based off a desired frame time
-		int delay = _desiredFrameTime - (currentTime - _system->getMillis());
+		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
 		_system->delayMillis(delay);

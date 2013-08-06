@@ -68,7 +68,7 @@ private:
 	const int _height;
 	const Graphics::PixelFormat _pixelFormat;
 
-	const uint _desiredFrameTime;
+	const int _desiredFrameTime;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
