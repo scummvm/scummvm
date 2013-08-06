@@ -118,6 +118,9 @@ void ScriptManager::checkPuzzleCriteria() {
 			for (Common::List<Common::SharedPtr<ResultAction> >::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); resultIter++) {
 				(*resultIter)->execute(_engine);
 			}
+
+			// Set the puzzle as completed
+			setStateValue(puzzle->key, 1);
 		}
 	}
 }
