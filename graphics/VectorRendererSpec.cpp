@@ -738,7 +738,12 @@ drawString(const Graphics::Font *font, const Common::String &text, const Common:
 		// the text (area).
 		drawArea = textDrawableArea.findIntersectingRect(area);
 	}
-	
+
+	// Better safe than sorry. We intersect with the actual surface boundaries
+	// to avoid any ugly clipping in _activeSurface->getSubArea which messes
+	// up the calculation of the x and y coordinates where to draw the string.
+	drawArea = drawArea.findIntersectingRect(Common::Rect(0, 0, _activeSurface->w, _activeSurface->h));
+
 	if (!drawArea.isEmpty()) {
 		Surface textAreaSurface = _activeSurface->getSubArea(drawArea);
 		font->drawString(&textAreaSurface, text, area.left - drawArea.left, offset - drawArea.top, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
