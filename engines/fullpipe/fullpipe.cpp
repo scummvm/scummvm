@@ -33,10 +33,12 @@
 #include "fullpipe/behavior.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/input.h"
+#include "fullpipe/scenes.h"
 
 namespace Fullpipe {
 
 FullpipeEngine *g_fullpipe = 0;
+Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	// Setup mixer
@@ -60,6 +62,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_soundEnabled = true;
 	_flgSoundList = true;
+
+	_sfxVolume = 0;
 
 	_inputController = 0;
 	_inputDisabled = false;
@@ -99,6 +103,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_cursorId = 0;
 
 	g_fullpipe = this;
+	g_vars = new Vars;
 }
 
 FullpipeEngine::~FullpipeEngine() {

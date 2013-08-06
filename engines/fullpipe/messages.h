@@ -42,7 +42,7 @@ class Message : public CObject {
 	int _sceneClickY;
 	int _field_20;
 	int _field_24;
-	int _param28;
+	int _keyCode;
 	int _field_2C;
 	int _field_30;
 	int _field_34;
@@ -54,15 +54,13 @@ class Message : public CObject {
 };
 
 class ExCommand : public Message {
-	friend class CGameLoader;
-	friend class MessageQueue;
+ public:
 
 	int _messageNum;
 	int _field_3C;
 	int _excFlags;
 	int _parId;
 
- public:
 	ExCommand();
 	ExCommand(ExCommand *src);
 	ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11);

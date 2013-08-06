@@ -27,6 +27,8 @@
 
 namespace Fullpipe {
 
+class MessageQueue;
+
 class Scene : public Background {
 	friend class FullpipeEngine;
 	friend class SceneTag;

@@ -60,6 +60,7 @@ class NGIArchive;
 class Scene;
 class SoundList;
 class StaticANIObject;
+class Vars;
 
 int global_messageHandler1(ExCommand *cmd);
 int global_messageHandler2(ExCommand *cmd);
@@ -125,6 +126,8 @@ public:
 	int _currSoundListCount;
 	bool _soundEnabled;
 	bool _flgSoundList;
+
+	int _sfxVolume;
 
 	GlobalMessageQueueList *_globalMessageQueueList;
 	MessageHandler *_messageHandlers;
@@ -201,6 +204,7 @@ public:
 };
 
 extern FullpipeEngine *g_fullpipe;
+extern Vars *g_vars;
 
 } // End of namespace Fullpipe
 

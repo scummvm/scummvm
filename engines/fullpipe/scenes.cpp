@@ -35,12 +35,23 @@
 #include "fullpipe/behavior.h"
 
 #include "fullpipe/constants.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/modal.h"
 
 namespace Fullpipe {
 
 int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
 int sceneHandlerIntro(ExCommand *cmd);
+
+Vars::Vars() {
+	sceneIntro_aniin1man = 0;
+	sceneIntro_needSleep = true;
+	sceneIntro_needGetup = false;
+	sceneIntro_skipIntro = true;
+	sceneIntro_playing = false;
+	sceneIntro_needBlackout = false;
+}
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	CGameVar *sceneVar;
@@ -657,20 +668,18 @@ int sceneIntro_updateCursor() {
 void sceneIntro_initScene(Scene *sc) {
 	g_fullpipe->_gameLoader->loadScene(SC_INTRO2);
 
-	warning("STUB: sceneIntro_initScene()");
+	g_vars->sceneIntro_aniin1man = sc->getStaticANIObject1ById(ANI_IN1MAN, -1);
+	g_vars->sceneIntro_needSleep = true;
+	g_vars->sceneIntro_needGetup = false;
+	g_vars->sceneIntro_playing = true;
+	g_vars->sceneIntro_needBlackout = false;
 
 #if 0
-	sceneIntro_aniin1man = sc->_getStaticANIObject1ById(ANI_IN1MAN, -1);
-	sceneIntro_needSleep = 1;
-	sceneIntro_needGetup = 0;
-	sceneIntro_dword_477938 = 1;
-	sceneIntro_dword_477934 = 0;
-
 	if (g_fullpipe->_recordEvents || g_fullpipe->_inputArFlag)
-		sceneIntro_skipIntro = 0;
+		g_vars->sceneIntro_skipIntro = false;
+#endif
 
 	g_fullpipe->_modalObject = new CModalIntro;
-#endif
 }
 
 int sceneHandlerIntro(ExCommand *cmd) {

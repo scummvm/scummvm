@@ -62,7 +62,7 @@ bool ExCommand::load(MfcArchive &file) {
 	_sceneClickY = file.readUint32LE();
 	_field_20 = file.readUint32LE();
 	_field_24 = file.readUint32LE();
-	_param28 = file.readUint32LE();
+	_keyCode = file.readUint32LE();
 	_field_2C = file.readUint32LE();
 	_field_30 = file.readUint32LE();
 	_field_34 = file.readUint32LE();
@@ -114,7 +114,7 @@ Message::Message() {
 	_sceneClickY = 0;
 	_field_20 = 0;
 	_field_24 = 0;
-	_param28 = 0;
+	_keyCode = 0;
 	_field_2C = 0;
 	_field_30 = 0;
 	_field_34 = 0;
@@ -130,7 +130,7 @@ Message::Message(Message *src) {
 	_sceneClickY = src->_sceneClickY;
 	_field_20 = src->_field_20;
 	_field_24 = src->_field_24;
-	_param28 = src->_param28;
+	_keyCode = src->_keyCode;
 	_field_2C = src->_field_2C;
 	_field_30 = src->_field_30;
 	_field_34 = src->_field_34;
@@ -146,7 +146,7 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 	_sceneClickY = sceneClickY;
 	_field_24 = a7;
 	_field_20 = a10;
-	_param28 = 0;
+	_keyCode = 0;
 	_field_2C = 0;
 	_field_30 = 0;
 	_field_34 = 0;

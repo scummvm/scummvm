@@ -20,40 +20,25 @@
  *
  */
 
-#ifndef FULLPIPE_MODAL_H
-#define FULLPIPE_MODAL_H
+#ifndef FULLPIPE_SCENES_H
+#define FULLPIPE_SCENES_H
 
 namespace Fullpipe {
 
-class CBaseModalObject {
+class StaticANIObject;
+
+class Vars {
  public:
+	Vars();
 
-	CBaseModalObject *_parentObj;
-
- public:
- 	CBaseModalObject() : _parentObj(0) {}
-	virtual ~CBaseModalObject() {}
-
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual bool update();
-
-	void saveload();
-};
-
-class CModalIntro : public CBaseModalObject {
-	int _field_8;
-	int _introFlags;
-	int _countDown;
-	int _needRedraw;
-	int _sfxVolume;
-
- public:
-	CModalIntro();
-
-	virtual bool handleMessage(ExCommand *message);
+	StaticANIObject *sceneIntro_aniin1man;
+	bool sceneIntro_needSleep;
+	bool sceneIntro_needGetup;
+	bool sceneIntro_skipIntro;
+	bool sceneIntro_playing;
+	bool sceneIntro_needBlackout;
 };
 
 } // End of namespace Fullpipe
 
-#endif /* FULLPIPE_MODAL_H */
+#endif /* FULLPIPE_SCENES_H */
