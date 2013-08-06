@@ -30,6 +30,7 @@
 #include "backends/events/default/default-events.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-dialog.h"
+#include "backends/touchmapper/touchmapper.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
@@ -66,6 +67,10 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_remap = false;
 #else
 	_dispatcher.registerMapper(new Common::DefaultEventMapper());
+#endif
+#ifdef ENABLE_TOUCHMAPPER
+	_touchmapper = new Common::Touchmapper(this);
+	_dispatcher.registerMapper(_touchmapper);
 #endif
 }
 
