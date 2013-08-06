@@ -726,19 +726,22 @@ drawString(const Graphics::Font *font, const Common::String &text, const Common:
 		}
 	}
 
+	Common::Rect drawArea;
 	if (textDrawableArea.isEmpty()) {
-		font->drawString(_activeSurface, text, area.left, offset, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
+		// In case no special area to draw to is given we only draw in the
+		// area specified by the user.
+		drawArea = area;
 		// warning("there is no text drawable area. Please set this area for clipping");
 	} else {
 		// The area we can draw to is the intersection between the allowed
 		// drawing area (textDrawableArea) and the area where we try to draw
 		// the text (area).
-		Common::Rect drawArea = textDrawableArea.findIntersectingRect(area);
-
-		if (!drawArea.isEmpty()) {
-			Surface textAreaSurface = _activeSurface->getSubArea(drawArea);
-			font->drawString(&textAreaSurface, text, area.left - drawArea.left, offset - drawArea.top, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
-		}
+		drawArea = textDrawableArea.findIntersectingRect(area);
+	}
+	
+	if (!drawArea.isEmpty()) {
+		Surface textAreaSurface = _activeSurface->getSubArea(drawArea);
+		font->drawString(&textAreaSurface, text, area.left - drawArea.left, offset - drawArea.top, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
 	}
 }
 
