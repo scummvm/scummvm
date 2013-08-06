@@ -310,7 +310,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	if (pPartRect) {
-		srcImage.pixels = getBasePtr(pPartRect->top, pPartRect->left);
+		srcImage.pixels = getBasePtr(pPartRect->left, pPartRect->top);
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
 
