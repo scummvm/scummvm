@@ -84,7 +84,7 @@ void ScriptManager::checkPuzzleCriteria() {
 		for (Common::List<Puzzle::Criteria>::iterator iter = puzzle->criteriaList.begin(); iter != puzzle->criteriaList.end(); iter++) {
 			// Get the value to compare against
 			uint argumentValue;
-			if ((*iter).argument)
+			if ((*iter).argumentIsAKey)
 				argumentValue = getStateValue(iter->argument);
 			else
 				argumentValue = iter->argument;
