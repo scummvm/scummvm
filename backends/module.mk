@@ -40,6 +40,11 @@ MODULE_OBJS += \
 	keymapper/remap-dialog.o
 endif
 
+ifdef ENABLE_TOUCHMAPPER
+MODULE_OBJS += \
+	touchmapper/touchmapper.o
+endif
+
 ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/opengl/glerrorcheck.o \
