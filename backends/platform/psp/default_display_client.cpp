@@ -192,11 +192,8 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 Graphics::Surface *Screen::lockAndGetForEditing() {
 	DEBUG_ENTER_FUNC();
 
-	_frameBuffer.pixels = _buffer.getPixels();
-	_frameBuffer.w = _buffer.getSourceWidth();
-	_frameBuffer.h = _buffer.getSourceHeight();
-	_frameBuffer.pitch = _buffer.getBytesPerPixel() * _buffer.getWidth();
-	_frameBuffer.format = _pixelFormat;
+	_frameBuffer.init(_buffer.getSourceWidth(), _buffer.getSourceHeight(), _buffer.getBytesPerPixel() * _buffer.getWidth(),
+	                  _buffer.getPixels(), _pixelFormat);
 	// We'll set to dirty once we unlock the screen
 
 	return &_frameBuffer;
