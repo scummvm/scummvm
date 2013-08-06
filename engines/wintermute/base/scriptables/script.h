@@ -42,6 +42,7 @@ class BaseObject;
 class ScEngine;
 class ScStack;
 class DebuggerAdapter;
+const int kDefaultStep = -2;
 class ScScript : public BaseClass {
 public:
 	BaseArray<ScEngine::CScWatch> _watchlist; 
@@ -51,7 +52,6 @@ public:
 	bool _unbreakable;
 	bool finishThreads();
 	bool copyParameters(ScStack *stack);
-
 	void afterLoad();
 private:
 	ScValue *_operand;

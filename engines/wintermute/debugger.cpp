@@ -91,7 +91,6 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
 	}
-
 	return true;
 }
 
@@ -121,7 +120,6 @@ bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
 	}
-
 	return true;
 }
 
@@ -136,7 +134,6 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
 	}
-
 	return true;
 }
 
@@ -174,7 +171,7 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: %s [watch|breakpoints]\n", argv[0]);
 	}
-
+	return 0;
 }
 
 
@@ -196,8 +193,8 @@ bool Console::Cmd_StepOver(int argc, const char **argv) {
 		}
 	} else {
 		DebugPrintf("Usage: %s to step over/single step\n", argv[0]);
-		return true;
 	}
+	return true;
 }
 
 bool Console::Cmd_StepInto(int argc, const char **argv) {
@@ -212,8 +209,8 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 		}
 	} else {
 		DebugPrintf("Usage: %s to step into\n", argv[0]);
-		return true;
 	}
+	return true;
 }
 
 bool Console::Cmd_Continue(int argc, const char **argv) {
@@ -226,12 +223,10 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 		} else {
 			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}
-
-
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
-		return true;
 	}
+	return true;
 }
 
 bool Console::Cmd_Finish(int argc, const char **argv) {
@@ -247,8 +242,8 @@ bool Console::Cmd_Finish(int argc, const char **argv) {
 		}
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
-		return true;
 	}
+	return true;
 }
 
 bool Console::Cmd_List(int argc, const char **argv) {
@@ -269,8 +264,8 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> to print value of <name>\n", argv[0]);
-		return true;
 	}
+	return true;
 }
 
 
@@ -288,8 +283,8 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
-		return true;
 	}
+	return true;
 }
 
 bool Console::Cmd_SetType(int argc, const char **argv) {
@@ -311,7 +306,6 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 		}
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
-		return true;
 	}
 	return true;
 }
@@ -402,7 +396,7 @@ void Console::printSource(int n) {
 	}
 }
 
-void Console::debugWarning(Common::String command, int warning_level, Common::String message) {
+void Console::debugWarning(const Common::String &command, int warning_level, const Common::String &message) {
 	Common::String level;
 	switch (warning_level) {
 	case NOTICE:

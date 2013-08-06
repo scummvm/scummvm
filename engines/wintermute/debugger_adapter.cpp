@@ -290,7 +290,7 @@ int DebuggerAdapter::stepFinish() {
 void DebuggerAdapter::reset() {
 	_lastScript = nullptr;
 	_lastLine = -1;
-	_lastDepth = -3;
+	_lastDepth = kDefaultStep - 1;
 }
 
 Common::String DebuggerAdapter::readValue(const char *name, int *error) {
@@ -405,7 +405,7 @@ int DebuggerAdapter::setType(const char *name, int type) {
 
 }
 
-int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue * &var) {
+int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue *&var) {
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}

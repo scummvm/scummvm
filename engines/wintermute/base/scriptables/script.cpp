@@ -96,7 +96,7 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_adapter = _gameRef->_adapter; // HACK
 
 	_tracingMode = false;
-	_step = -2;
+	_step = kDefaultStep;
 }
 
 
@@ -335,7 +335,7 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 			_watchlist.add(_engine->_watchlist[i]);
 	}
 
-	_step = -2;
+	_step = kDefaultStep;
 
 	return STATUS_OK;
 }
