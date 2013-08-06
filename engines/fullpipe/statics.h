@@ -134,6 +134,9 @@ class Movement : public GameObject {
 
   public:
 	Movement();
+	Movement(Movement *src, StaticANIObject *ani);
+	Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani);
+
 	virtual bool load(MfcArchive &file);
 	bool load(MfcArchive &file, StaticANIObject *ani);
 
@@ -191,6 +194,7 @@ class StaticANIObject : public GameObject {
 	void setOXY(int x, int y);
 	Statics *getStaticsById(int id);
 	Movement *getMovementById(int id);
+	int getMovementIdById(int itemId);
 	Movement *getMovementByName(char *name);
 	Common::Point *getCurrDimensions(Common::Point &p);
 

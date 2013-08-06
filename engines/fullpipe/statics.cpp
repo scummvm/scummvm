@@ -80,7 +80,36 @@ StaticANIObject::StaticANIObject() {
 }
 
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
-	warning("STUB: StaticANIObject(src)");
+	_shadowsOn = src->_shadowsOn;
+	_field_30 = src->_field_30;
+	_field_34 = 1;
+	_initialCounter = 0;
+
+	_messageQueueId = 0;
+	_animExFlag = 0;
+	_counter = 0;
+	_someDynamicPhaseIndex = -1;
+	_sceneId = src->_sceneId;
+	_callback1 = src->_callback1;
+	_callback2 = src->_callback2;
+
+	for (uint i = 0; i < src->_staticsList.size(); i++)
+		_staticsList.push_back(new Statics((Statics *)src->_staticsList[i], 0));
+
+	_movement = 0;
+	_statics = 0;
+
+	for (uint i = 0; i < src->_movements.size(); i++) {
+		Movement *mov;
+		if (((Movement *)src->_movements[i])->_currMovement) {
+			mov = new Movement(getMovementById(src->getMovementIdById(((Movement *)src->_movements[i])->_id)), this);
+			mov->_id = ((Movement *)src->_movements[i])->_id;
+		} else {
+			mov = new Movement(((Movement *)src->_movements[i]), 0, -1, this);
+		}
+
+		_movements.push_back(mov);
+	}
 }
 
 bool StaticANIObject::load(MfcArchive &file) {
@@ -188,6 +217,20 @@ Movement *StaticANIObject::getMovementById(int itemId) {
 	for (uint i = 0; i < _movements.size(); i++)
 		if (((Movement *)_movements[i])->_id == itemId)
 			return (Movement *)_movements[i];
+
+	return 0;
+}
+
+int StaticANIObject::getMovementIdById(int itemId) {
+	for (uint i = 0; i < _movements.size(); i++) {
+		Movement *mov = (Movement *)_movements[i];
+		if (mov->_currMovement) {
+			if (mov->_id == itemId)
+				return mov->_id;
+			if (mov->_currMovement->_id == itemId)
+				return mov->_id;
+		}
+	}
 
 	return 0;
 }
@@ -485,6 +528,42 @@ Movement::Movement() {
 	_currMovement = 0;
 	_counter = 0;
 	_counterMax = 83;
+}
+
+Movement::Movement(Movement *src, StaticANIObject *ani) {
+	_lastFrameSpecialFlag = 0;
+	_flipFlag = src->_flipFlag;
+	_updateFlag1 = src->_updateFlag1;
+	_staticsObj1 = 0;
+	_staticsObj2 = 0;
+	_mx = 0;
+	_my = 0;
+	_m2x = 0;
+	_m2y = 0;
+
+	_field_78 = 0;
+	_framePosOffsets = 0;
+	_field_84 = 0;
+	_currDynamicPhase = 0;
+	_field_8C = 0;
+	_currDynamicPhaseIndex = src->_currDynamicPhaseIndex;
+	_field_94 = 0;
+
+	_currMovement = src;
+	_ox = src->_ox;
+	_oy = src->_oy;
+
+	initStatics(ani);
+
+	_counterMax = src->_counterMax;
+	_counter = src->_counter;
+	_field_50 = src->_field_50;
+
+	updateCurrDynamicPhase();
+}
+
+Movement::Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani) {
+	warning("STUB: Movement(src, %p, %d, ani)", (void *)flag1, flag2);
 }
 
 bool Movement::load(MfcArchive &file) {
