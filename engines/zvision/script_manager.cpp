@@ -24,6 +24,7 @@
 
 #include "common/algorithm.h"
 #include "common/hashmap.h"
+#include "common/debug.h"
 
 #include "zvision/script_manager.h"
 #include "zvision/actions.h"
@@ -76,6 +77,8 @@ void ScriptManager::checkPuzzleCriteria() {
 	while (!_puzzlesToCheck.empty()) {
 		Puzzle *puzzle = _puzzlesToCheck.pop();
 
+		debug("Checking puzzle: %u", puzzle->key);
+
 		// Check each Criteria
 		bool criteriaMet = false;
 		for (Common::List<Puzzle::Criteria>::iterator iter = puzzle->criteriaList.begin(); iter != puzzle->criteriaList.end(); iter++) {
@@ -110,6 +113,8 @@ void ScriptManager::checkPuzzleCriteria() {
 		// TODO: Add logic for the different Flags (aka, ONCE_PER_INST)
 		// criteriaList can be empty. Aka, the puzzle should be executed immediately
 		if (puzzle->criteriaList.empty() || criteriaMet) {
+			debug("Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
+
 			for (Common::List<Common::SharedPtr<ResultAction> >::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); resultIter++) {
 				(*resultIter)->execute(_engine);
 			}
