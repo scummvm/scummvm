@@ -98,9 +98,9 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 	videoDecoder.start();
 
 	// Only continue while the video is still playing
-	while (videoDecoder.isPlaying()) {
+	while (!shouldQuit() && !videoDecoder.endOfVideo() && videoDecoder.isPlaying()) {
 		// Check for engine quit and video stop key presses
-		while (_eventMan->pollEvent(_event)) {
+		while (!videoDecoder.endOfVideo() && videoDecoder.isPlaying() && _eventMan->pollEvent(_event)) {
 			switch (_event.type) {
 			case Common::EVENT_KEYDOWN:
 				switch (_event.kbd.keycode) {
