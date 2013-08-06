@@ -392,12 +392,8 @@ void Gs2dScreen::copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w
 Graphics::Surface *Gs2dScreen::lockScreen() {
 	WaitSema(g_DmacSema);
 
-	_framebuffer.pixels = _screenBuf;
-	_framebuffer.w = _width;
-	_framebuffer.h = _height;
-	_framebuffer.pitch = _width; // -not- _pitch; ! It's EE mem, not Tex
-	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
-
+	// -not- _pitch; ! It's EE mem, not Tex
+	_framebuffer.init(_width, _height, _width, _screenBuf, Graphics::PixelFormat::createFormatCLUT8());
 	return &_framebuffer;
 }
 
