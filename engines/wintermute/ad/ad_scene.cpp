@@ -2991,6 +2991,6 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 
 
 Common::String AdScene::debuggerToString() {
-	return Common::String::format("0x%02x: Scene \"%s\", paralax: %d, autoscroll: %d", this, getName(), _paralaxScrolling, _autoScroll);
+	return Common::String::format("%p: Scene \"%s\", paralax: %d, autoscroll: %d", (void *)this, getName(), _paralaxScrolling, _autoScroll);
 }
 } // end of namespace Wintermute
