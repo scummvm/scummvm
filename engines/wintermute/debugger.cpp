@@ -401,4 +401,17 @@ void Console::printSource(int n) {
 		DebugPrintf("\n");
 	}
 }
+
+void Console::warning(Common::String command, int warning_level, Common::String message) {
+	Common::String level;
+	switch (warning_level) {
+	case NOTICE:
+		level = Common::String("NOTICE");
+	case WARNING:
+		level = Common::String("WARNING");
+	default:
+		level = Common::String("ERROR");
+	}
+	DebugPrintf("%s %s: %s", level.c_str(), command.c_str(), message.c_str());
+}
 } // end of namespace Wintermute

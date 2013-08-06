@@ -30,6 +30,11 @@
 namespace Wintermute {
 class WintermuteEngine;
 class Adapter;
+enum WarningLevel {
+	NOTICE,
+	WARNING,
+	ERROR
+};
 class Console : public GUI::Debugger {
 public:
 	Console(WintermuteEngine *vm);
@@ -61,6 +66,7 @@ public:
 	bool Cmd_List(int argc, const char **argv);
 	bool Cmd_DumpRes(int argc, const char **argv);
 	void printSource(int n = DEFAULT_SOURCE_PADDING);
+	void warning(Common::String command, int warning_level, Common::String message);
 	// For use by the Adapter
 	void notifyBreakpoint(const char *filename, int line);
 	void notifyStep(const char *filename, int line);
