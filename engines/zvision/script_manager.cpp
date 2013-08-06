@@ -77,6 +77,15 @@ void ScriptManager::checkPuzzleCriteria() {
 	while (!_puzzlesToCheck.empty()) {
 		Puzzle *puzzle = _puzzlesToCheck.pop();
 
+		// Check if the puzzle is already finished
+		// If it doesn't have the flag ONCE_PER_INST it can be done more than once
+		// Also check that the puzzle isn't disabled
+		if (getStateValue(puzzle->key) == 1 &&
+		    (puzzle->flags & Puzzle::StateFlags::ONCE_PER_INST) == Puzzle::StateFlags::ONCE_PER_INST &&
+		    (puzzle->flags & Puzzle::StateFlags::DISABLED) == 0) {
+			continue;
+		}
+
 		debug("Checking puzzle: %u", puzzle->key);
 
 		// Check each Criteria
