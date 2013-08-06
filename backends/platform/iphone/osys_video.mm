@@ -76,8 +76,8 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 
 	// In case we use the screen texture as frame buffer we reset the pixels
 	// pointer here to avoid freeing the screen texture.
-	if (_framebuffer.pixels == _videoContext->screenTexture.pixels)
-		_framebuffer.pixels = 0;
+	if (_framebuffer.getPixels() == _videoContext->screenTexture.getPixels())
+		_framebuffer.setPixels(0);
 
 	// Create the screen texture right here. We need to do this here, since
 	// when a game requests hi-color mode, we actually set the framebuffer
@@ -417,7 +417,7 @@ void OSystem_IPHONE::setMouseCursor(const void *buf, uint w, uint h, int hotspot
 #endif
 	assert(pixelFormat.bytesPerPixel == 1 || pixelFormat.bytesPerPixel == 2);
 
-	if (_mouseBuffer.w != w || _mouseBuffer.h != h || _mouseBuffer.format != pixelFormat || !_mouseBuffer.pixels)
+	if (_mouseBuffer.w != w || _mouseBuffer.h != h || _mouseBuffer.format != pixelFormat || !_mouseBuffer.getPixels())
 		_mouseBuffer.create(w, h, pixelFormat);
 
 	_videoContext->mouseWidth = w;
