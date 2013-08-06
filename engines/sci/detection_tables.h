@@ -1054,6 +1054,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO4(GUIO_MIDIGM, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_FB01_MIDI, GAMEOPTION_JONES_CDAUDIO)	},
 
+	// Jones in the Fast Lane - English DOS US CD (alternate version)
+	// Supplied by collector9 in bug #3614668
+	{"jones", "CD", {
+		{"resource.map", 0, "4344ff3f796707843b992adec2c87663", 4878},
+		{"resource.001", 0, "3876da2ce16fb7dea2f5d943d946fa84", 1652062},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO1(GAMEOPTION_JONES_CDAUDIO)	},
+
+	// Jones in the Fast Lane - English DOS US CD (alternate version)
+	// Same entry as the DOS version above. This one is used for the alternate
+	// General MIDI music tracks in the Windows version
+	{"jones", "CD", {
+		{"resource.map", 0, "4344ff3f796707843b992adec2c87663", 4878},
+		{"resource.001", 0, "3876da2ce16fb7dea2f5d943d946fa84", 1652062},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO4(GUIO_MIDIGM, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_FB01_MIDI, GAMEOPTION_JONES_CDAUDIO)	},
+
 	// King's Quest 1 SCI Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.003.007"
 	// SCI interpreter version 0.001.010
