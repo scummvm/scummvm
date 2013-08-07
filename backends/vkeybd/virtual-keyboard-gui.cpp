@@ -36,7 +36,7 @@ static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16
 	if (surf_dst->format.bytesPerPixel != sizeof(OverlayColor) || surf_src->format.bytesPerPixel != sizeof(OverlayColor))
 		return;
 
-	const OverlayColor *src = (const OverlayColor *)surf_src->pixels;
+	const OverlayColor *src = (const OverlayColor *)surf_src->getPixels();
 	int blitW = surf_src->w;
 	int blitH = surf_src->h;
 
@@ -161,7 +161,7 @@ void VirtualKeyboardGUI::run() {
 		_system->clearOverlay();
 	}
 	_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-	_system->grabOverlay(_overlayBackup.pixels, _overlayBackup.pitch);
+	_system->grabOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch);
 
 	setupCursor();
 
@@ -171,7 +171,7 @@ void VirtualKeyboardGUI::run() {
 
 	removeCursor();
 
-	_system->copyRectToOverlay(_overlayBackup.pixels, _overlayBackup.pitch, 0, 0, _overlayBackup.w, _overlayBackup.h);
+	_system->copyRectToOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch, 0, 0, _overlayBackup.w, _overlayBackup.h);
 	if (!g_gui.isActive()) _system->hideOverlay();
 
 	_overlayBackup.free();
@@ -262,7 +262,7 @@ void VirtualKeyboardGUI::screenChanged() {
 		_screenH = newScreenH;
 
 		_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-		_system->grabOverlay(_overlayBackup.pixels, _overlayBackup.pitch);
+		_system->grabOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch);
 
 		if (!_kbd->checkModeResolutions()) {
 			_displaying = false;
@@ -356,7 +356,7 @@ void VirtualKeyboardGUI::redraw() {
 	Graphics::Surface surf;
 	surf.create(w, h, _system->getOverlayFormat());
 
-	OverlayColor *dst = (OverlayColor *)surf.pixels;
+	OverlayColor *dst = (OverlayColor *)surf.getPixels();
 	const OverlayColor *src = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
 
 	while (h--) {
@@ -371,7 +371,7 @@ void VirtualKeyboardGUI::redraw() {
 		blit(&surf, &_dispSurface, _dispX - _dirtyRect.left,
 		     _dispY - _dirtyRect.top, _dispBackColor);
 	}
-	_system->copyRectToOverlay(surf.pixels, surf.pitch,
+	_system->copyRectToOverlay(surf.getPixels(), surf.pitch,
 	                           _dirtyRect.left, _dirtyRect.top, surf.w, surf.h);
 
 	surf.free();

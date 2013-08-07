@@ -325,7 +325,7 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 
 	// Copy out the dimensions and pixels of the decoded surface
 	_largeScreenFl = s->w > SCREEN_WIDTH;
-	Common::copy((byte *)s->pixels, (byte *)s->pixels + (s->pitch * s->h), surface);
+	Common::copy((const byte *)s->getPixels(), (const byte *)s->getBasePtr(0, s->h), surface);
 
 	// Copy out the palette
 	const byte *palSrc = pcxDecoder.getPalette();
@@ -1202,7 +1202,7 @@ void GraphicsManager::displayZones() {
 void GraphicsManager::displayLines() {
 	Graphics::Surface *screenSurface = g_system->lockScreen();
 
-	uint16* pixels = (uint16*)screenSurface->pixels;
+	uint16 *pixels = (uint16 *)screenSurface->getPixels();
 
 	for (int lineIndex = 0; lineIndex < _vm->_linesMan->_linesNumb; lineIndex++) {
 		int i = 0;

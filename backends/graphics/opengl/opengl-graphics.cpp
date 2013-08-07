@@ -357,7 +357,7 @@ void OpenGLGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, 
 
 	// Copy buffer data to game screen internal buffer
 	const byte *src = (const byte *)buf;
-	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch + x * _screenData.format.bytesPerPixel;
+	byte *dst = (byte *)_screenData.getBasePtr(x, y);
 	for (int i = 0; i < h; i++) {
 		memcpy(dst, src, w * _screenData.format.bytesPerPixel);
 		src += pitch;
@@ -385,15 +385,15 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 
 #ifdef USE_RGB_COLOR
 	if (_screenFormat.bytesPerPixel == 1) {
-		memset(_screenData.pixels, col, _screenData.h * _screenData.pitch);
+		memset(_screenData.getPixels(), col, _screenData.h * _screenData.pitch);
 	} else if (_screenFormat.bytesPerPixel == 2) {
-		uint16 *pixels = (uint16 *)_screenData.pixels;
+		uint16 *pixels = (uint16 *)_screenData.getPixels();
 		uint16 col16 = (uint16)col;
 		for (int i = 0; i < _screenData.w * _screenData.h; i++) {
 			pixels[i] = col16;
 		}
 	} else if (_screenFormat.bytesPerPixel == 3) {
-		uint8 *pixels = (uint8 *)_screenData.pixels;
+		uint8 *pixels = (uint8 *)_screenData.getPixels();
 		byte r = (col >> 16) & 0xFF;
 		byte g = (col >> 8) & 0xFF;
 		byte b = col & 0xFF;
@@ -404,13 +404,13 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 			pixels += 3;
 		}
 	} else if (_screenFormat.bytesPerPixel == 4) {
-		uint32 *pixels = (uint32 *)_screenData.pixels;
+		uint32 *pixels = (uint32 *)_screenData.getPixels();
 		for (int i = 0; i < _screenData.w * _screenData.h; i++) {
 			pixels[i] = col;
 		}
 	}
 #else
-	memset(_screenData.pixels, col, _screenData.h * _screenData.pitch);
+	memset(_screenData.getPixels(), col, _screenData.h * _screenData.pitch);
 #endif
 	_screenNeedsRedraw = true;
 }
@@ -463,12 +463,12 @@ Graphics::PixelFormat OpenGLGraphicsManager::getOverlayFormat() const {
 
 void OpenGLGraphicsManager::clearOverlay() {
 	// Set all pixels to 0
-	memset(_overlayData.pixels, 0, _overlayData.h * _overlayData.pitch);
+	memset(_overlayData.getPixels(), 0, _overlayData.h * _overlayData.pitch);
 	_overlayNeedsRedraw = true;
 }
 
 void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) {
-	const byte *src = (byte *)_overlayData.pixels;
+	const byte *src = (byte *)_overlayData.getPixels();
 	byte *dst = (byte *)buf;
 	for (int i = 0; i < _overlayData.h; i++) {
 		// Copy overlay data to buffer
@@ -509,7 +509,7 @@ void OpenGLGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x,
 		return;
 
 	// Copy buffer data to internal overlay surface
-	byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
+	byte *dst = (byte *)_overlayData.getBasePtr(0, y);
 	for (int i = 0; i < h; i++) {
 		memcpy(dst + x * _overlayData.format.bytesPerPixel, src, w * _overlayData.format.bytesPerPixel);
 		src += pitch;
@@ -609,7 +609,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		_cursorData.create(w, h, _cursorFormat);
 
 	// Save cursor data
-	memcpy(_cursorData.pixels, buf, h * _cursorData.pitch);
+	memcpy(_cursorData.getPixels(), buf, h * _cursorData.pitch);
 
 	// Set cursor info
 	_cursorState.w = w;
@@ -688,7 +688,7 @@ void OpenGLGraphicsManager::refreshGameScreen() {
 		byte *surface = new byte[w * h * 3];
 
 		// Convert the paletted buffer to RGB888
-		const byte *src = (byte *)_screenData.pixels + y * _screenData.pitch;
+		const byte *src = (byte *)_screenData.getBasePtr(0, y);
 		src += x * _screenData.format.bytesPerPixel;
 		byte *dst = surface;
 		for (int i = 0; i < h; i++) {
@@ -708,8 +708,7 @@ void OpenGLGraphicsManager::refreshGameScreen() {
 		delete[] surface;
 	} else {
 		// Update the texture
-		_gameTexture->updateBuffer((byte *)_screenData.pixels + y * _screenData.pitch +
-		                           x * _screenData.format.bytesPerPixel, _screenData.pitch, x, y, w, h);
+		_gameTexture->updateBuffer((byte *)_screenData.getBasePtr(x, y), _screenData.pitch, x, y, w, h);
 	}
 
 	_screenNeedsRedraw = false;
@@ -730,7 +729,7 @@ void OpenGLGraphicsManager::refreshOverlay() {
 		byte *surface = new byte[w * h * 3];
 
 		// Convert the paletted buffer to RGB888
-		const byte *src = (byte *)_overlayData.pixels + y * _overlayData.pitch;
+		const byte *src = (byte *)_overlayData.getBasePtr(0, y);
 		src += x * _overlayData.format.bytesPerPixel;
 		byte *dst = surface;
 		for (int i = 0; i < h; i++) {
@@ -750,8 +749,7 @@ void OpenGLGraphicsManager::refreshOverlay() {
 		delete[] surface;
 	} else {
 		// Update the texture
-		_overlayTexture->updateBuffer((byte *)_overlayData.pixels + y * _overlayData.pitch +
-		                              x * _overlayData.format.bytesPerPixel, _overlayData.pitch, x, y, w, h);
+		_overlayTexture->updateBuffer((byte *)_overlayData.getBasePtr(x, y), _overlayData.pitch, x, y, w, h);
 	}
 
 	_overlayNeedsRedraw = false;
@@ -780,7 +778,7 @@ void OpenGLGraphicsManager::refreshCursor() {
 			palette = _cursorPalette;
 
 		// Convert the paletted cursor to RGBA8888
-		const byte *src = (byte *)_cursorData.pixels;
+		const byte *src = (byte *)_cursorData.getPixels();
 		for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
 			// Check for keycolor
 			if (src[i] != _cursorKeyColor) {
@@ -796,7 +794,7 @@ void OpenGLGraphicsManager::refreshCursor() {
 
 		// Convert the RGB cursor to RGBA8888
 		if (_cursorFormat.bytesPerPixel == 2) {
-			const uint16 *src = (uint16 *)_cursorData.pixels;
+			const uint16 *src = (uint16 *)_cursorData.getPixels();
 			for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
 				// Check for keycolor
 				if (src[i] != _cursorKeyColor) {
@@ -808,7 +806,7 @@ void OpenGLGraphicsManager::refreshCursor() {
 				dst += 4;
 			}
 		} else if (_cursorFormat.bytesPerPixel == 4) {
-			const uint32 *src = (uint32 *)_cursorData.pixels;
+			const uint32 *src = (uint32 *)_cursorData.getPixels();
 			for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
 				// Check for keycolor
 				if (src[i] != _cursorKeyColor) {
@@ -1356,7 +1354,7 @@ void OpenGLGraphicsManager::updateOSD() {
 		_osdSurface.create(_osdTexture->getWidth(), _osdTexture->getHeight(), _overlayFormat);
 	else
 		// Clear everything
-		memset(_osdSurface.pixels, 0, _osdSurface.h * _osdSurface.pitch);
+		memset(_osdSurface.getPixels(), 0, _osdSurface.h * _osdSurface.pitch);
 
 	// Determine a rect which would contain the message string (clipped to the
 	// screen dimensions).
@@ -1390,7 +1388,7 @@ void OpenGLGraphicsManager::updateOSD() {
 	}
 
 	// Update the texture
-	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0,
+	_osdTexture->updateBuffer(_osdSurface.getPixels(), _osdSurface.pitch, 0, 0,
 	                          _osdSurface.w, _osdSurface.h);
 }
 #endif

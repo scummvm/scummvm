@@ -61,11 +61,13 @@ struct Surface {
 	 */
 	uint16 pitch;
 
+protected:
 	/**
 	 * The surface's pixel data.
 	 */
 	void *pixels;
 
+public:
 	/**
 	 * The pixel format of the surface.
 	 */
@@ -76,6 +78,33 @@ struct Surface {
 	 */
 	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
 	}
+
+	/**
+	 * Return a pointer to the pixel data.
+	 *
+	 * @return Pointer to the pixel data.
+	 */
+	inline const void *getPixels() const {
+		return pixels;
+	}
+
+	/**
+	 * Return a pointer to the pixel data.
+	 *
+	 * @return Pointer to the pixel data.
+	 */
+	inline void *getPixels() {
+		return pixels;
+	}
+
+	/**
+	 * Sets the pixel data.
+	 *
+	 * Note that this is a simply a setter. Be careful what you are doing!
+	 *
+	 * @param newPixels The new pixel data.
+	 */
+	void setPixels(void *newPixels) { pixels = newPixels; }
 
 	/**
 	 * Return a pointer to the pixel at the specified point.
@@ -120,6 +149,20 @@ struct Surface {
 	 * @see create
 	 */
 	void free();
+
+	/**
+	 * Set up the Surface with user specified data.
+	 *
+	 * Note that this simply sets the 'internal' attributes of the Surface. It
+	 * will not take care of freeing old data via free or similar!
+	 *
+	 * @param width Width of the pixel data.
+	 * @param height Height of the pixel data.
+	 * @param pitch The pitch of the pixel data.
+	 * @param pixels The pixel data itself.
+	 * @param format The pixel format of the pixel data.
+	 */
+	void init(uint16 width, uint16 height, uint16 pitch, void *pixels, const PixelFormat &format);
 
 	/**
 	 * Copy the data from another Surface.

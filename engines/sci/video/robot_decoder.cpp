@@ -210,7 +210,7 @@ void RobotDecoder::readNextPacket() {
 
 	// Copy over the decompressed frame
 	byte *inFrame = decompressedFrame;
-	byte *outFrame = (byte *)surface->pixels;
+	byte *outFrame = (byte *)surface->getPixels();
 
 	// Black out the surface
 	memset(outFrame, 0, surface->w * surface->h);

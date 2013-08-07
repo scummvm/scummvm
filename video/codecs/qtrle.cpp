@@ -61,7 +61,7 @@ QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Cod
 
 void QTRLEDecoder::decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	byte *rgb = (byte *)_surface->pixels;
+	byte *rgb = (byte *)_surface->getPixels();
 
 	while (linesToChange) {
 		CHECK_STREAM_PTR(2);
@@ -105,7 +105,7 @@ void QTRLEDecoder::decode1(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 
 void QTRLEDecoder::decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp) {
 	uint32 pixelPtr = 0;
-	byte *rgb = (byte *)_surface->pixels;
+	byte *rgb = (byte *)_surface->getPixels();
 	byte numPixels = (bpp == 4) ? 8 : 16;
 
 	while (linesToChange--) {
@@ -165,7 +165,7 @@ void QTRLEDecoder::decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, 
 
 void QTRLEDecoder::decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	byte *rgb = (byte *)_surface->pixels;
+	byte *rgb = (byte *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -210,7 +210,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 
 void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	uint16 *rgb = (uint16 *)_surface->pixels;
+	uint16 *rgb = (uint16 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -248,7 +248,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	uint32 *rgb = (uint32 *)_surface->pixels;
+	uint32 *rgb = (uint32 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -294,7 +294,7 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	uint32 *rgb = (uint32 *)_surface->pixels;
+	uint32 *rgb = (uint32 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);

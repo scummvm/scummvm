@@ -119,7 +119,7 @@ const Graphics::Surface *SEQDecoder::SEQVideoTrack::decodeNextFrame() {
 	_fileStream->seek(offset);
 
 	if (frameType == kSeqFrameFull) {
-		byte *dst = (byte *)_surface->pixels + frameTop * SEQ_SCREEN_WIDTH + frameLeft;
+		byte *dst = (byte *)_surface->getBasePtr(frameLeft, frameTop);
 
 		byte *linebuf = new byte[frameWidth];
 
@@ -133,7 +133,7 @@ const Graphics::Surface *SEQDecoder::SEQVideoTrack::decodeNextFrame() {
 	} else {
 		byte *buf = new byte[frameSize];
 		_fileStream->read(buf, frameSize);
-		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, (byte *)_surface->pixels + SEQ_SCREEN_WIDTH * frameTop, frameLeft, frameWidth, frameHeight, colorKey);
+		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, (byte *)_surface->getBasePtr(0, frameTop), frameLeft, frameWidth, frameHeight, colorKey);
 		delete[] buf;
 	}
 

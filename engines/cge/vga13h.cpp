@@ -826,7 +826,7 @@ void Vga::update() {
 		}
 	}
 
-	g_system->copyRectToScreen(Vga::_page[0]->getBasePtr(0, 0), kScrWidth, 0, 0, kScrWidth, kScrHeight);
+	g_system->copyRectToScreen(Vga::_page[0]->getPixels(), kScrWidth, 0, 0, kScrWidth, kScrHeight);
 	g_system->updateScreen();
 }
 
@@ -845,7 +845,7 @@ void Bitmap::xShow(int16 x, int16 y) {
 	debugC(4, kCGEDebugBitmap, "Bitmap::xShow(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)_vm->_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
+	byte *destEndP = (byte *)_vm->_vga->_page[1]->getBasePtr(0, kScrHeight);
 	byte *lookupTable = _m;
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
@@ -898,7 +898,7 @@ void Bitmap::show(int16 x, int16 y) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::show(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)_vm->_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
+	byte *destEndP = (byte *)_vm->_vga->_page[1]->getBasePtr(0, kScrHeight);
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data

@@ -373,7 +373,7 @@ void SegmentMap::loadSegmapMaskRectSurface(byte *maskData, SegmapMaskRect &maskR
 	maskRect.surface->create(maskRect.width, maskRect.height, Graphics::PixelFormat::createFormatCLUT8());
 
 	byte *backScreen = _vm->_screen->_backScreen + maskRect.x + (maskRect.y * _vm->_sceneWidth);
-	byte *dest = (byte *)maskRect.surface->getBasePtr(0, 0);
+	byte *dest = (byte *)maskRect.surface->getPixels();
 
 	for (int16 h = 0; h < maskRect.height; h++) {
 		int16 w = maskRect.width;

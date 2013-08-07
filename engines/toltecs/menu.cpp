@@ -69,7 +69,7 @@ int MenuSystem::run(MenuID menuId) {
 	_vm->_screen->blastSprite(0x140 + _vm->_cameraX, 0x175 + _vm->_cameraY, 0, 1, 0x4000);
 	shadeRect(60, 39, 520, 247, 225, 229);
 
-	memcpy(_background->pixels, _vm->_screen->_frontScreen, 640 * 400);
+	memcpy(_background->getPixels(), _vm->_screen->_frontScreen, 640 * 400);
 
 	while (_running) {
 		update();
@@ -229,7 +229,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 
 	_items.clear();
 
-	memcpy(_vm->_screen->_frontScreen, _background->pixels, 640 * 400);
+	memcpy(_vm->_screen->_frontScreen, _background->getPixels(), 640 * 400);
 
 	switch (menuID) {
 	case kMenuIdMain:

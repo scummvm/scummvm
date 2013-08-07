@@ -170,7 +170,7 @@ void IFFDecoder::loadBitmap(Common::SeekableReadStream &stream) {
 	if (_type == TYPE_ILBM) {
 		uint32 scanlinePitch = ((_header.width + 15) >> 4) << 1;
 		byte *scanlines = new byte[scanlinePitch * _header.numPlanes];
-		byte *data = (byte *)_surface->pixels;
+		byte *data = (byte *)_surface->getPixels();
 
 		for (uint16 i = 0; i < _header.height; ++i) {
 			byte *scanline = scanlines;
@@ -194,7 +194,7 @@ void IFFDecoder::loadBitmap(Common::SeekableReadStream &stream) {
 
 		delete[] scanlines;
 	} else if (_type == TYPE_PBM) {
-		byte *data = (byte *)_surface->pixels;
+		byte *data = (byte *)_surface->getPixels();
 		uint32 outSize = _header.width * _header.height;
 
 		if (_header.compression) {

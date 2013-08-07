@@ -691,7 +691,7 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 			Graphics::Surface thumb8;
 			_vm->_saveLoad->convertThumb16To8(header._thumbnail, &thumb8);
 
-			byte *thumb = (byte *)thumb8.pixels;
+			byte *thumb = (byte *)thumb8.getPixels();
 
 			int16 startPosX_ = _vm->_events->_startPos.x;
 			switch (slotNumber) {

@@ -131,11 +131,11 @@ void GraphicsManager::mergePlanes() {
 	// Clear screen surface
 	_screen.fillRect(Common::Rect(640, 480), 0);
 
-	uint16 *screen = (uint16 *)_screen.pixels;
-	uint16 *inventory = (uint16 *)_inventory.pixels;
-	uint16 *overlay = (uint16 *)_overlay.pixels;
-	uint16 *backgroundC = (uint16 *)_backgroundC.pixels;
-	uint16 *backgroundA = (uint16 *)_backgroundA.pixels;
+	uint16 *screen = (uint16 *)_screen.getPixels();
+	uint16 *inventory = (uint16 *)_inventory.getPixels();
+	uint16 *overlay = (uint16 *)_overlay.getPixels();
+	uint16 *backgroundC = (uint16 *)_backgroundC.getPixels();
+	uint16 *backgroundA = (uint16 *)_backgroundA.getPixels();
 
 	for (int i = 0; i < 640 * 480; i++) {
 
@@ -160,7 +160,7 @@ void GraphicsManager::mergePlanes() {
 
 void GraphicsManager::updateScreen() {
 	g_system->fillScreen(0);
-	g_system->copyRectToScreen(_screen.getBasePtr(0, 0), 640 * 2, 0, 0, 640, 480);
+	g_system->copyRectToScreen(_screen.getPixels(), 640 * 2, 0, 0, 640, 480);
 }
 
 } // End of namespace LastExpress

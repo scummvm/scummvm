@@ -1308,15 +1308,13 @@ Graphics::Surface *SurfaceSdlGraphicsManager::lockScreen() {
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	_framebuffer.pixels = _screen->pixels;
-	_framebuffer.w = _screen->w;
-	_framebuffer.h = _screen->h;
-	_framebuffer.pitch = _screen->pitch;
+	_framebuffer.init(_screen->w, _screen->h, _screen->pitch, _screen->pixels,
 #ifdef USE_RGB_COLOR
-	_framebuffer.format = _screenFormat;
+	                  _screenFormat
 #else
-	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
+	                  Graphics::PixelFormat::createFormatCLUT8()
 #endif
+	                 );
 
 	return &_framebuffer;
 }
@@ -1340,8 +1338,8 @@ void SurfaceSdlGraphicsManager::unlockScreen() {
 
 void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
 	Graphics::Surface *screen = lockScreen();
-	if (screen && screen->pixels)
-		memset(screen->pixels, col, screen->h * screen->pitch);
+	if (screen && screen->getPixels())
+		memset(screen->getPixels(), col, screen->h * screen->pitch);
 	unlockScreen();
 }
 
@@ -2062,15 +2060,12 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
 
 	Graphics::Surface dst;
-	dst.pixels = _osdSurface->pixels;
-	dst.w = _osdSurface->w;
-	dst.h = _osdSurface->h;
-	dst.pitch = _osdSurface->pitch;
-	dst.format = Graphics::PixelFormat(_osdSurface->format->BytesPerPixel,
-	                                   8 - _osdSurface->format->Rloss, 8 - _osdSurface->format->Gloss,
-	                                   8 - _osdSurface->format->Bloss, 8 - _osdSurface->format->Aloss,
-	                                   _osdSurface->format->Rshift, _osdSurface->format->Gshift,
-	                                   _osdSurface->format->Bshift, _osdSurface->format->Ashift);
+	dst.init(_osdSurface->w, _osdSurface->h, _osdSurface->pitch, _osdSurface->pixels,
+	         Graphics::PixelFormat(_osdSurface->format->BytesPerPixel,
+	                               8 - _osdSurface->format->Rloss, 8 - _osdSurface->format->Gloss,
+	                               8 - _osdSurface->format->Bloss, 8 - _osdSurface->format->Aloss,
+	                               _osdSurface->format->Rshift, _osdSurface->format->Gshift,
+	                               _osdSurface->format->Bshift, _osdSurface->format->Ashift));
 
 	// The font we are going to use:
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);

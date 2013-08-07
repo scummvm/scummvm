@@ -157,7 +157,10 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 		h = surf.h;
 		pitch = surf.pitch;
 		format = surf.format;
-		pixels = surf.pixels;
+		// We need to cast the const qualifier away here because 'pixels'
+		// always needs to be writable. 'surf' however is a constant Surface,
+		// thus getPixels will always return const pixel data.
+		pixels = const_cast<void *>(surf.getPixels());
 	}
 }
 
@@ -306,7 +309,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	if (pPartRect) {
-		srcImage.pixels = &((char *)pixels)[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
+		srcImage.pixels = getBasePtr(pPartRect->left, pPartRect->top);
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
 
@@ -335,7 +338,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = srcImage.scale(width, height);
-		savedPixels = (byte *)img->pixels;
+		savedPixels = (byte *)img->getPixels();
 	} else {
 		img = &srcImage;
 	}
@@ -343,13 +346,13 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int)img->h - -posY);
-		img->pixels = (byte *)img->pixels + img->pitch * -posY;
+		img->setPixels((byte *)img->getBasePtr(0, -posY));
 		posY = 0;
 	}
 
 	if (posX < 0) {
 		img->w = MAX(0, (int)img->w - -posX);
-		img->pixels = (byte *)img->pixels + (-posX * 4);
+		img->setPixels((byte *)img->getBasePtr(-posX, 0));
 		posX = 0;
 	}
 
@@ -486,7 +489,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	retSize.setHeight(img->h);
 
 	if (imgScaled) {
-		imgScaled->pixels = savedPixels;
+		imgScaled->setPixels(savedPixels);
 		imgScaled->free();
 		delete imgScaled;
 	}

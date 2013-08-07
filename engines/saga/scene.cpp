@@ -468,7 +468,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 					pal = decoder.getPalette();
 					rect.setWidth(decoder.getSurface()->w);
 					rect.setHeight(decoder.getSurface()->h);
-					_vm->_gfx->drawRegion(rect, (const byte *)decoder.getSurface()->pixels);
+					_vm->_gfx->drawRegion(rect, (const byte *)decoder.getSurface()->getPixels());
 					for (int j = 0; j < PAL_ENTRIES; j++) {
 						cPal[j].red = *pal++;
 						cPal[j].green = *pal++;
@@ -1120,9 +1120,9 @@ void Scene::draw() {
 		_vm->_render->getBackGroundSurface()->getRect(rect);
 		rect.bottom = (_sceneClip.bottom < rect.bottom) ? getHeight() : rect.bottom;
 		if (_vm->_render->isFullRefresh())
-			_vm->_gfx->drawRegion(rect, (const byte *)_vm->_render->getBackGroundSurface()->pixels);
+			_vm->_gfx->drawRegion(rect, (const byte *)_vm->_render->getBackGroundSurface()->getPixels());
 		else
-			_vm->_gfx->drawBgRegion(rect, (const byte *)_vm->_render->getBackGroundSurface()->pixels);
+			_vm->_gfx->drawBgRegion(rect, (const byte *)_vm->_render->getBackGroundSurface()->getPixels());
 	}
 }
 

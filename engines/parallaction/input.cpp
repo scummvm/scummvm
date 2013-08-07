@@ -499,7 +499,7 @@ void Input::initCursors() {
 			// TODO: scale mouse cursor (see staticres.cpp)
 			Graphics::Surface *surf2 = new Graphics::Surface;
 			surf2->create(32, 16, Graphics::PixelFormat::createFormatCLUT8());
-			memcpy(surf2->pixels, _resMouseArrow_BR_Amiga, 32*16);
+			memcpy(surf2->getPixels(), _resMouseArrow_BR_Amiga, 32*16);
 			_mouseArrow = new SurfaceToFrames(surf2);
 		}
 		break;

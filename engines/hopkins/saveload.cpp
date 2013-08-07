@@ -233,14 +233,14 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	Graphics::Surface thumb8;
 	thumb8.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
-	_vm->_graphicsMan->reduceScreenPart(_vm->_graphicsMan->_frontBuffer, (byte *)thumb8.pixels,
+	_vm->_graphicsMan->reduceScreenPart(_vm->_graphicsMan->_frontBuffer, (byte *)thumb8.getPixels(),
 		_vm->_events->_startPos.x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
 
 	// Convert the 8-bit pixel to 16 bit surface
 	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
-	const byte *srcP = (const byte *)thumb8.pixels;
-	uint16 *destP = (uint16 *)s->pixels;
+	const byte *srcP = (const byte *)thumb8.getPixels();
+	uint16 *destP = (uint16 *)s->getPixels();
 
 	for (int yp = 0; yp < h; ++yp) {
 		// Copy over the line, using the source pixels as lookups into the pixels palette
@@ -299,8 +299,8 @@ void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Su
 		pixelFormat16.colorToRGB(p, paletteR[palIndex], paletteG[palIndex], paletteB[palIndex]);
 	}
 
-	const uint16 *srcP = (const uint16 *)thumb16->pixels;
-	byte *destP = (byte *)thumb8->pixels;
+	const uint16 *srcP = (const uint16 *)thumb16->getPixels();
+	byte *destP = (byte *)thumb8->getPixels();
 
 	for (int yp = 0; yp < thumb16->h; ++yp) {
 		const uint16 *lineSrcP = srcP;

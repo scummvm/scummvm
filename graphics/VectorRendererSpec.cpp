@@ -397,7 +397,7 @@ gradientFill(PixelType *ptr, int width, int x, int y) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 fillSurface() {
-	byte *ptr = (byte *)_activeSurface->getBasePtr(0, 0);
+	byte *ptr = (byte *)_activeSurface->getPixels();
 
 	int h = _activeSurface->h;
 	int pitch = _activeSurface->pitch;
@@ -453,7 +453,7 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
-	const byte *src_ptr = (const byte *)source->getBasePtr(0, 0);
+	const byte *src_ptr = (const byte *)source->getPixels();
 
 	const int dst_pitch = _activeSurface->pitch;
 	const int src_pitch = source->pitch;
@@ -481,7 +481,7 @@ blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 		y = y + (r.height() >> 1) - (source->h >> 1);
 
 	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
-	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(0, 0);
+	const PixelType *src_ptr = (const PixelType *)source->getPixels();
 
 	int dst_pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int src_pitch = source->pitch / source->format.bytesPerPixel;
@@ -508,7 +508,7 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	int pixels = _activeSurface->w * _activeSurface->h;
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
+	PixelType *ptr = (PixelType *)_activeSurface->getPixels();
 	uint8 r, g, b;
 	uint lum;
 

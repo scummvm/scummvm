@@ -170,7 +170,7 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->pixels + y * screen->pitch + x;
+	byte *dst = (byte *)screen->getBasePtr(x, y);
 
 	uint8 color = window->fillColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
@@ -232,7 +232,7 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	uint i;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->pixels;
+	dst = (byte *)screen->getPixels();
 	src = getBackGround();
 
 	dst += y * screen->pitch;

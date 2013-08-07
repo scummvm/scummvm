@@ -132,7 +132,7 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 
 	byte *prevFrame = (byte *)malloc(64000);
 	Graphics::Surface *screenSurf = _system->lockScreen();
-	byte *screenBuffer = (byte *)screenSurf->pixels;
+	byte *screenBuffer = (byte *)screenSurf->getPixels();
 	uint16 screenPitch = screenSurf->pitch;
 	for (int y = 0; y < 200; y++) {
 		memcpy(prevFrame+y*320, screenBuffer+y*screenPitch, 320);
@@ -449,7 +449,7 @@ void DrasculaEngine::screenSaver() {
 		int x1_, y1_, off1, off2;
 
 		Graphics::Surface *screenSurf = _system->lockScreen();
-		byte *screenBuffer = (byte *)screenSurf->pixels;
+		byte *screenBuffer = (byte *)screenSurf->getPixels();
 		uint16 screenPitch = screenSurf->pitch;
 		for (int i = 0; i < 200; i++) {
 			for (int j = 0; j < 320; j++) {
@@ -538,7 +538,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 			waitFrameSSN();
 
 			Graphics::Surface *screenSurf = _system->lockScreen();
-			byte *screenBuffer = (byte *)screenSurf->pixels;
+			byte *screenBuffer = (byte *)screenSurf->getPixels();
 			uint16 screenPitch = screenSurf->pitch;
 			if (FrameSSN)
 				mixVideo(screenBuffer, screenSurface, screenPitch);
@@ -557,7 +557,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 				free(BufferSSN);
 				waitFrameSSN();
 				Graphics::Surface *screenSurf = _system->lockScreen();
-				byte *screenBuffer = (byte *)screenSurf->pixels;
+				byte *screenBuffer = (byte *)screenSurf->getPixels();
 				uint16 screenPitch = screenSurf->pitch;
 				if (FrameSSN)
 					mixVideo(screenBuffer, screenSurface, screenPitch);

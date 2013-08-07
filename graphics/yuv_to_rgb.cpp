@@ -229,7 +229,7 @@ void convertYUV444ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 
 void YUVToRGBManager::convert444(Graphics::Surface *dst, YUVToRGBManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
-	assert(dst && dst->pixels);
+	assert(dst && dst->getPixels());
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 	assert(ySrc && uSrc && vSrc);
 
@@ -237,9 +237,9 @@ void YUVToRGBManager::convert444(Graphics::Surface *dst, YUVToRGBManager::Lumina
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
-		convertYUV444ToRGB<uint16>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUV444ToRGB<uint16>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 	else
-		convertYUV444ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUV444ToRGB<uint32>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
 template<typename PixelInt>
@@ -283,7 +283,7 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 
 void YUVToRGBManager::convert420(Graphics::Surface *dst, YUVToRGBManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
-	assert(dst && dst->pixels);
+	assert(dst && dst->getPixels());
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 	assert(ySrc && uSrc && vSrc);
 	assert((yWidth & 1) == 0);
@@ -293,9 +293,9 @@ void YUVToRGBManager::convert420(Graphics::Surface *dst, YUVToRGBManager::Lumina
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
-		convertYUV420ToRGB<uint16>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUV420ToRGB<uint16>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 	else
-		convertYUV420ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUV420ToRGB<uint32>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
 #define READ_QUAD(ptr, prefix) \
@@ -368,7 +368,7 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 
 void YUVToRGBManager::convert410(Graphics::Surface *dst, YUVToRGBManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
-	assert(dst && dst->pixels);
+	assert(dst && dst->getPixels());
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 	assert(ySrc && uSrc && vSrc);
 	assert((yWidth & 3) == 0);
@@ -378,9 +378,9 @@ void YUVToRGBManager::convert410(Graphics::Surface *dst, YUVToRGBManager::Lumina
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
-		convertYUV410ToRGB<uint16>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUV410ToRGB<uint16>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 	else
-		convertYUV410ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUV410ToRGB<uint32>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
 } // End of namespace Graphics
