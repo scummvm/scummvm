@@ -48,6 +48,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
 	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
 	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
+	DCmd_Register("dumpcursorfilenames", WRAP_METHOD(Console, cmdDumpAllCursorFileNames));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -171,6 +172,22 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 	}
 
 	writeFileContentsToFile(argv[1], argv[1]);
+
+	return true;
+}
+
+bool Console::cmdDumpAllCursorFileNames(int argc, const char **argv) {
+	Common::DumpFile outputFile;
+	outputFile.open("cursorFileNames.txt");
+	
+	Common::ArchiveMemberList list;
+	SearchMan.listMatchingMembers(list, "*.zcr");
+
+	// Register the file entries within the zfs archives with the SearchMan
+	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+		outputFile.writeString((*iter)->getName());
+		outputFile.writeByte('\n');
+	}
 
 	return true;
 }
