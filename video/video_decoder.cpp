@@ -336,9 +336,9 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	if (isPlaying())
 		stopAudio();
 
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if (!(*it)->seek(time))
-			return false;
+	// Do the actual seeking
+	if (!seekIntern(time))
+		return false;
 
 	_lastTimeChange = time;
 
@@ -469,6 +469,14 @@ Audio::Timestamp VideoDecoder::getDuration() const {
 	}
 
 	return maxDuration;
+}
+
+bool VideoDecoder::seekIntern(const Audio::Timestamp &time) {
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if (!(*it)->seek(time))
+			return false;
+
+	return true;
 }
 
 VideoDecoder::Track::Track() {

@@ -168,14 +168,15 @@ public:
 	/**
 	 * Seek to a given time in the video.
 	 *
-	 * If the video is playing, it will continue to play. The default
-	 * implementation will seek each track and must still be called
-	 * from any other implementation.
+	 * If the video is playing, it will continue to play. This calls
+	 * seekIntern(), which can be overriden. By default, seekIntern()
+	 * will call Track::seek() on all tracks with the time passed to
+	 * this function.
 	 *
 	 * @param time The time to seek to
 	 * @return true on success, false otherwise
 	 */
-	virtual bool seek(const Audio::Timestamp &time);
+	bool seek(const Audio::Timestamp &time);
 
 	/**
 	 * Seek to a given frame.
@@ -819,6 +820,15 @@ protected:
 	 * Get the end iterator of the tracks
 	 */
 	TrackListIterator getTrackListEnd() { return _tracks.end(); }
+
+	/**
+	 * The internal seek function that does the actual seeking.
+	 *
+	 * @see seek()
+	 *
+	 * @return true on success, false otherwise
+	 */
+	virtual bool seekIntern(const Audio::Timestamp &time);
 
 private:
 	// Tracks owned by this VideoDecoder
