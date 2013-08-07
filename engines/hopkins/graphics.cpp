@@ -1202,15 +1202,13 @@ void GraphicsManager::displayZones() {
 void GraphicsManager::displayLines() {
 	Graphics::Surface *screenSurface = g_system->lockScreen();
 
-	uint16 *pixels = (uint16 *)screenSurface->getPixels();
-
 	for (int lineIndex = 0; lineIndex < _vm->_linesMan->_linesNumb; lineIndex++) {
 		int i = 0;
 		do {
 			int x = _vm->_linesMan->_lineItem[lineIndex]._lineData[i] - _scrollPosX;
 			int y = _vm->_linesMan->_lineItem[lineIndex]._lineData[i+1];
 			if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
-				pixels[ y * screenSurface->w + x ] = 0xffff;
+				WRITE_UINT16(screenSurface->getBasePtr(x, y), 0xffff);
 			}
 			i += 2;
 		}
