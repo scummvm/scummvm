@@ -625,11 +625,13 @@ void Timeout::winning() {
 }
 
 void Timeout::avalot_falls() {
-	if (_vm->_trip->tr[1].step < 5) {
-		_vm->_trip->tr[1].step += 1;
+	if (_vm->_trip->tr[0].step < 5) {
+		_vm->_trip->tr[0].step += 1;
 		set_up_timer(3, procavalot_falls, reason_falling_over);
 	} else
-		_vm->_scrolls->display("\r\r\r\r\r\r\n\n\n\n\n\n\23Z\26");
+		//_vm->_scrolls->display("\r\r\r\r\r\r\n\n\n\n\n\n\23Z\26");
+
+	warning("STUB: Timeout::avalot_falls()");
 }
 
 void Timeout::spludwick_goes_to_cauldron() {

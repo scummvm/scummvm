@@ -426,13 +426,14 @@ triptype *triptype::done() {
 	uint16 soa;
 
 	/*  nds:=num div seq;*/
+	totalnum--;
 	_info.xw = _info.xl / 8;
 	if ((_info.xl % 8) > 0)
 		_info.xw += 1;
-	for (aa = 1; aa <= /*nds*seq*/ a.num; aa++) {
+	for (aa = 0; aa < /*nds*seq*/ a.num; aa++) {
 		totalnum--;
-		free(_info.mani[totalnum]);
-		free(_info.sil[totalnum]); /* <<- Width of a siltype. */
+		delete _info.mani[totalnum];
+		delete _info.sil[totalnum];
 	}
 
 	quick = false;

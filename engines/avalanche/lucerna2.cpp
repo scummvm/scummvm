@@ -1127,16 +1127,19 @@ void Lucerna::gameover() {
 
 	_vm->_gyro->dna.user_moves_avvy = false;
 
-	sx = _vm->_trip->tr[1].x;
-	sy = _vm->_trip->tr[1].y;
+	sx = _vm->_trip->tr[0].x;
+	sy = _vm->_trip->tr[0].y;
 	
-	_vm->_trip->tr[1].done();
-	_vm->_trip->tr[1].init(12, true, _vm->_trip);       /* 12 = Avalot falls */
-	_vm->_trip->tr[1].step = 0;
-	_vm->_trip->tr[1].appear(sx, sy, 0);
+	_vm->_trip->tr[0].done();
+	_vm->_trip->tr[0].init(12, true, _vm->_trip);       /* 12 = Avalot falls */
+	_vm->_trip->tr[0].step = 0;
+	_vm->_trip->tr[0].appear(sx, sy, 0);
 	
 	_vm->_timeout->set_up_timer(3, _vm->_timeout->procavalot_falls, _vm->_timeout->reason_falling_over);
+
 	/* _vm->_scrolls->display(^m^m^m^m^m^m^i^i^i^i^i^i^s'Z'^v);*/
+	warning("STUB: Timeout::avalot_falls()");
+
 	_vm->_gyro->alive = false;
 }
 
