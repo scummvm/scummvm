@@ -1,15 +1,16 @@
+# This file was automatically generated and should NEVER be edited manually!
+
 ifdef ENABLE_SCUMM
 DEFINES += -DENABLE_SCUMM=$(ENABLE_SCUMM)
 MODULES += engines/scumm
-
-ifdef ENABLE_SCUMM_7_8
-DEFINES += -DENABLE_SCUMM_7_8
-endif
 
 ifdef ENABLE_HE
 DEFINES += -DENABLE_HE
 endif
 
+ifdef ENABLE_SCUMM_7_8
+DEFINES += -DENABLE_SCUMM_7_8
+endif
 endif
 
 ifdef ENABLE_AGI
@@ -89,12 +90,12 @@ ifdef ENABLE_KYRA
 DEFINES += -DENABLE_KYRA=$(ENABLE_KYRA)
 MODULES += engines/kyra
 
-ifdef ENABLE_LOL
-DEFINES += -DENABLE_LOL
-endif
-
 ifdef ENABLE_EOB
 DEFINES += -DENABLE_EOB
+endif
+
+ifdef ENABLE_LOL
+DEFINES += -DENABLE_LOL
 endif
 endif
 
@@ -130,14 +131,14 @@ DEFINES += -DENABLE_RIVEN
 endif
 endif
 
-ifdef ENABLE_NEVERHOOD
-DEFINES += -DENABLE_NEVERHOOD=$(ENABLE_NEVERHOOD)
-MODULES += engines/neverhood
-endif
-
 ifdef ENABLE_MORTEVIELLE
 DEFINES += -DENABLE_MORTEVIELLE=$(ENABLE_MORTEVIELLE)
 MODULES += engines/mortevielle
+endif
+
+ifdef ENABLE_NEVERHOOD
+DEFINES += -DENABLE_NEVERHOOD=$(ENABLE_NEVERHOOD)
+MODULES += engines/neverhood
 endif
 
 ifdef ENABLE_PARALLACTION
@@ -197,14 +198,14 @@ DEFINES += -DENABLE_SWORD25=$(ENABLE_SWORD25)
 MODULES += engines/sword25
 endif
 
-ifdef ENABLE_TESTBED
-DEFINES += -DENABLE_TESTBED=$(ENABLE_TESTBED)
-MODULES += engines/testbed
-endif
-
 ifdef ENABLE_TEENAGENT
 DEFINES += -DENABLE_TEENAGENT=$(ENABLE_TEENAGENT)
 MODULES += engines/teenagent
+endif
+
+ifdef ENABLE_TESTBED
+DEFINES += -DENABLE_TESTBED=$(ENABLE_TESTBED)
+MODULES += engines/testbed
 endif
 
 ifdef ENABLE_TINSEL
