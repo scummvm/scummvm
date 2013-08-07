@@ -362,7 +362,7 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 		w = window->width * 8;
 		h = (window->height -1) * 8;
 
-		dst = (byte *)screen->pixels + window->y * screen->pitch + window->x * 8;
+		dst = (byte *)screen->getBasePtr(window->x * 8, window->y);
 		src = dst + 8 * screen->pitch;
 
 		do {

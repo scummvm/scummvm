@@ -54,7 +54,7 @@ void Screen::update() {
 
 	if (_fullRefresh) {
 		// NOTE When playing a fullscreen/doubled Smacker video usually a full screen refresh is needed
-		_vm->_system->copyRectToScreen((const byte*)_backScreen->pixels, _backScreen->pitch, 0, 0, 640, 480);
+		_vm->_system->copyRectToScreen((const byte*)_backScreen->getPixels(), _backScreen->pitch, 0, 0, 640, 480);
 		_fullRefresh = false;
 		return;
 	}
@@ -174,7 +174,7 @@ void Screen::updatePalette() {
 }
 
 void Screen::clear() {
-	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
+	memset(_backScreen->getPixels(), 0, _backScreen->pitch * _backScreen->h);
 	_fullRefresh = true;
 	clearRenderQueue();
 }
@@ -257,7 +257,7 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 
 void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect) {
 
-	const byte *source = (const byte*)surface->getBasePtr(0, 0);
+	const byte *source = (const byte*)surface->getPixels();
 	byte *dest = (byte*)_backScreen->getBasePtr(drawRect.x, drawRect.y);
 
 	for (int16 yc = 0; yc < surface->h; yc++) {

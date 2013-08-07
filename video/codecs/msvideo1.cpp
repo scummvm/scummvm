@@ -48,7 +48,7 @@ MSVideo1Decoder::~MSVideo1Decoder() {
 
 void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
     byte colors[8];
-    byte *pixels = (byte *)_surface->pixels;
+    byte *pixels = (byte *)_surface->getPixels();
     uint16 stride = _surface->w;
 
     int skipBlocks = 0;

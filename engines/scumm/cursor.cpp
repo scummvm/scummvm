@@ -139,7 +139,7 @@ void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
 		return;
 	}
 
-	setCursorFromBuffer((byte *)vs->pixels + (y - vs->topline) * vs->pitch + x, w, h, vs->pitch);
+	setCursorFromBuffer((byte *)vs->getBasePtr(x, y - vs->topline), w, h, vs->pitch);
 }
 
 void ScummEngine_v6::setDefaultCursor() {
@@ -417,13 +417,11 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		Graphics::Surface s;
 		byte buf[16*17];
 		memset(buf, 123, 16*17);
-		s.pixels = buf;
-		s.w = _charset->getCharWidth(chr);
-		s.h = _charset->getFontHeight();
-		s.pitch = s.w;
+		s.init(_charset->getCharWidth(chr), _charset->getFontHeight(),
+		       _charset->getCharWidth(chr), buf,
+		       Graphics::PixelFormat::createFormatCLUT8());
 		// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
 		assert(s.w <= 16 && s.h <= 17);
-		s.format = Graphics::PixelFormat::createFormatCLUT8();
 
 		_charset->drawChar(chr, s, 0, 0);
 

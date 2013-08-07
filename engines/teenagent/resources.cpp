@@ -160,7 +160,7 @@ void Resources::loadOff(Graphics::Surface &surface, byte *palette, int id) {
 	off.read(id, buf, bufferSize);
 
 	byte *src = buf;
-	byte *dst = (byte *)surface.pixels;
+	byte *dst = (byte *)surface.getPixels();
 	memcpy(dst, src, 64000);
 	memcpy(palette, buf + 64000, 768);
 

@@ -605,11 +605,7 @@ void OSystem_N64::updateScreen() {
 }
 
 Graphics::Surface *OSystem_N64::lockScreen() {
-	_framebuffer.pixels = _offscreen_pal;
-	_framebuffer.w = _gameWidth;
-	_framebuffer.h = _gameHeight;
-	_framebuffer.pitch = _screenWidth;
-	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
+	_framebuffer.init(_gameWidth, _gameHeight, _screenWidth, _offscreen_pal, Graphics::PixelFormat::createFormatCLUT8());
 
 	return &_framebuffer;
 }

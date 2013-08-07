@@ -821,7 +821,7 @@ bool Surface::loadIFF(Common::SeekableReadStream &stream) {
 		return false;
 
 	resize(decoder.getSurface()->w, decoder.getSurface()->h);
-	memcpy(_vidMem, decoder.getSurface()->pixels, decoder.getSurface()->w * decoder.getSurface()->h);
+	memcpy(_vidMem, decoder.getSurface()->getPixels(), decoder.getSurface()->w * decoder.getSurface()->h);
 
 	return true;
 }

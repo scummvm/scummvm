@@ -251,14 +251,10 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	// Create an encapsulating surface for the data
 	Graphics::Surface srcImage;
 	// TODO: Is the data really in the screen format?
-	srcImage.format = g_system->getScreenFormat();
-	srcImage.pitch = _width * 4;
-	srcImage.w = _width;
-	srcImage.h = _height;
-	srcImage.pixels = _data;
+	srcImage.init(_width, _height, _width * 4, _data, g_system->getScreenFormat());
 
 	if (pPartRect) {
-		srcImage.pixels = &_data[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
+		srcImage.setPixels(&_data[pPartRect->top * srcImage.pitch + pPartRect->left * 4]);
 		srcImage.w = pPartRect->right - pPartRect->left;
 		srcImage.h = pPartRect->bottom - pPartRect->top;
 
@@ -287,7 +283,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = scale(srcImage, width, height);
-		savedPixels = (byte *)img->pixels;
+		savedPixels = (byte *)img->getPixels();
 	} else {
 		img = &srcImage;
 	}
@@ -464,7 +460,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	}
 
 	if (imgScaled) {
-		imgScaled->pixels = savedPixels;
+		imgScaled->setPixels(savedPixels);
 		imgScaled->free();
 		delete imgScaled;
 	}

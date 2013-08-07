@@ -85,9 +85,9 @@ void Cursor::setCurrentFrameIndex(int32 index) {
 
 			if (_info[index].surface->format.bytesPerPixel == 1) {
 				CursorMan.replaceCursorPalette(_info[index].palette, 0, _info[index].colorCount);
-				CursorMan.replaceCursor(_info[index].surface->pixels, _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, 0);
+				CursorMan.replaceCursor(_info[index].surface->getPixels(), _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, 0);
 			} else {
-				CursorMan.replaceCursor(_info[index].surface->pixels, _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, _info[index].surface->format.RGBToColor(0xFF, 0xFF, 0xFF), false, &_info[index].surface->format);
+				CursorMan.replaceCursor(_info[index].surface->getPixels(), _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, _info[index].surface->format.RGBToColor(0xFF, 0xFF, 0xFF), false, &_info[index].surface->format);
 			}
 
 			((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
@@ -203,7 +203,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	// PixMap data
 	if (pixMap.pixelSize == 8) {
 		cursorInfo.surface->create(pixMap.rowBytes, pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
-		cicnStream->read(cursorInfo.surface->pixels, pixMap.rowBytes * pixMap.bounds.height());
+		cicnStream->read(cursorInfo.surface->getPixels(), pixMap.rowBytes * pixMap.bounds.height());
 
 		// While this looks sensible, it actually doesn't work for some cursors
 		// (ie. the 'can grab' hand)

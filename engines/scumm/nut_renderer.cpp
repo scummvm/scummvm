@@ -357,7 +357,10 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 }
 
 void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color) {
-	byte *dst = (byte *)s.pixels + y * s.pitch + x;
+	// FIXME: This gets passed a const destination Surface. Intuitively this
+	// should never get written to. But sadly it does... For now we simply
+	// cast the const qualifier away.
+	byte *dst = (byte *)const_cast<void *>(s.getBasePtr(x, y));
 	const int width = MIN((int)_chars[c].width, s.w - x);
 	const int height = MIN((int)_chars[c].height, s.h - y);
 	const byte *src = unpackChar(c);
@@ -391,7 +394,10 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 }
 
 void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color) {
-	byte *dst = (byte *)s.pixels + y * s.pitch + x;
+	// FIXME: This gets passed a const destination Surface. Intuitively this
+	// should never get written to. But sadly it does... For now we simply
+	// cast the const qualifier away.
+	byte *dst = (byte *)const_cast<void *>(s.getBasePtr(x, y));
 	const int width = _vm->_2byteWidth;
 	const int height = MIN(_vm->_2byteHeight, s.h - y);
 	const byte *src = _vm->get2byteCharPtr(c);

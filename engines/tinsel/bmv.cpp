@@ -1031,7 +1031,7 @@ void BMVPlayer::CopyMovieToScreen() {
 	// The movie surface is slightly less high than the output screen (429 rows versus 432).
 	// Because of this, there's some extra line clearing above and below the displayed area
 	int yStart = (SCREEN_HEIGHT - SCREEN_HIGH) / 2;
-	memset(_vm->screen().getBasePtr(0, 0), 0, yStart * SCREEN_WIDTH);
+	memset(_vm->screen().getPixels(), 0, yStart * SCREEN_WIDTH);
 	memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH);
 	memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0,
 		(SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH);

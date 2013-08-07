@@ -82,6 +82,14 @@ void Surface::free() {
 	format = PixelFormat();
 }
 
+void Surface::init(uint16 width, uint16 height, uint16 newPitch, void *newPixels, const PixelFormat &f) {
+	w = width;
+	h = height;
+	pitch = newPitch;
+	pixels = newPixels;
+	format = f;
+}
+
 void Surface::copyFrom(const Surface &surf) {
 	create(surf.w, surf.h, surf.format);
 	if (surf.pitch == pitch) {

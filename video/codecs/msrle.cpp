@@ -53,7 +53,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 	int x = 0;
 	int y = _surface->h - 1;
 
-	byte *data = (byte *) _surface->pixels;
+	byte *data = (byte *) _surface->getPixels();
 	uint16 width  = _surface->w;
 	uint16 height = _surface->h;
 

@@ -164,7 +164,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		png_set_packing(pngPtr);
 	} else {
 		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-		if (!_outputSurface->pixels) {
+		if (!_outputSurface->getPixels()) {
 			error("Could not allocate memory for output image.");
 		}
 		if (bitDepth == 16)

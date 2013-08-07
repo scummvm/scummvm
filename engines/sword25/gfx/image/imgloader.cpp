@@ -50,7 +50,7 @@ bool ImgLoader::decodePNGImage(const byte *fileDataPtr, uint fileSize, byte *&un
 	width = pngSurface->w;
 	height = pngSurface->h;
 	uncompressedDataPtr = new byte[pngSurface->pitch * pngSurface->h];
-	memcpy(uncompressedDataPtr, (byte *)pngSurface->pixels, pngSurface->pitch * pngSurface->h);
+	memcpy(uncompressedDataPtr, (byte *)pngSurface->getPixels(), pngSurface->pitch * pngSurface->h);
 	pngSurface->free();
 
 	delete pngSurface;

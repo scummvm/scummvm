@@ -298,7 +298,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 	for (uint i = 0; i < actions.size(); i++) {
 		CDToonsAction &action = actions[i];
 		if (i == 0 && action.blockId == 0)
-			memset(_surface->pixels, backgroundColor, _surface->w * _surface->h);
+			memset(_surface->getPixels(), backgroundColor, _surface->w * _surface->h);
 		if (!_blocks.contains(action.blockId))
 			continue;
 		if (!action.rect.right)

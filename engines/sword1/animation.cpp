@@ -314,7 +314,7 @@ bool MoviePlayer::playVideo() {
 				if (_decoderType == kVideoDecoderPSX)
 					drawFramePSX(frame);
 				else
-					_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 			}
 
 			if (_decoder->hasDirtyPalette()) {
@@ -407,7 +407,7 @@ bool MoviePlayer::playVideo() {
 			}
 
 			Graphics::Surface *screen = _vm->_system->lockScreen();
-			performPostProcessing((byte *)screen->pixels);
+			performPostProcessing((byte *)screen->getPixels());
 			_vm->_system->unlockScreen();
 			_vm->_system->updateScreen();
 		}
@@ -498,7 +498,7 @@ void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
 	uint16 x = (g_system->getWidth() - scaledFrame.w) / 2;
 	uint16 y = (g_system->getHeight() - scaledFrame.h) / 2;
 
-	_vm->_system->copyRectToScreen(scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+	_vm->_system->copyRectToScreen(scaledFrame.getPixels(), scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
 
 	scaledFrame.free();
 }
