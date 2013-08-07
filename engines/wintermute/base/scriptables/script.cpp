@@ -325,12 +325,12 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 
 	// TODO: Factor this out?
 	/*
-	for (int i = 0; i < _engine->_breakpoints.size(); i++) {
+	for (uint i = 0; i < _engine->_breakpoints.size(); i++) {
 		if (!strcmp(_engine->_breakpoints[i]._filename.c_str(), _filename))
 			_breakpoints.add(_engine->_breakpoints[i]);
 	}
 	*/
-	for (int i = 0; i < _engine->_watchlist.size(); i++) {
+	for (uint i = 0; i < _engine->_watchlist.size(); i++) {
 		if (!strcmp(_engine->_watchlist[i]._filename.c_str(), _filename))
 			_watchlist.add(_engine->_watchlist[i]);
 	}
@@ -1104,7 +1104,7 @@ bool ScScript::executeInstruction() {
 		}
 		if (1) { // TODO: If debugger...
 			
-			for (int j = 0; j < _engine->_breakpoints.size(); j++) {
+			for (uint j = 0; j < _engine->_breakpoints.size(); j++) {
 				if (_engine->_breakpoints[j]._line == _currentLine &&
 					!strcmp(_engine->_breakpoints[j]._filename.c_str(), _filename) &&
 					_engine->_breakpoints[j]._enabled
@@ -1125,7 +1125,7 @@ bool ScScript::executeInstruction() {
 		if (1) { // TODO: If debugger...
 			if (1) { // TODO: If watch
 				// TODO: Watch inheritance!
-				for (int i = 0; i < _watchlist.size(); i++) {
+				for (uint i = 0; i < _watchlist.size(); i++) {
 					if (ScValue::compare(resolveName((char *)_watchlist[i]._symbol.c_str()), _watchlist[i]._lastvalue) &&
 						_watchlist[i]._enabled) {
 						// _gameRef->_debugger->watch(this, (char *)_watchlist[i]._symbol.c_str());

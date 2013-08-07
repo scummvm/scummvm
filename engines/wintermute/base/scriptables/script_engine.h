@@ -118,19 +118,19 @@ public:
 	ScEngine(BaseGame *inGame);
 
 	bool addBreakpoint(const char *filename, int line);
-	bool removeBreakpoint(int id);
-	bool enableBreakpoint(int id);
-	bool disableBreakpoint(int id);
-	int incrementBreakpoint(int id);
-	int resetBreakpoint(int id);
+	bool removeBreakpoint(uint id);
+	bool enableBreakpoint(uint id);
+	bool disableBreakpoint(uint id);
+	int incrementBreakpoint(uint id);
+	int resetBreakpoint(uint id);
 	bool refreshBreakpoints();
 
 	bool addWatch(const char *filename, const char *name);
-	bool removeWatch(int id);
-	bool enableWatch(int id);
-	bool disableWatch(int id);
-	int incrementWatch(int id);
-	int resetWatch(int id);
+	bool removeWatch(uint id);
+	bool enableWatch(uint id);
+	bool disableWatch(uint id);
+	int incrementWatch(uint id);
+	int resetWatch(uint id);
 	bool refreshWatchlist();
 
 	virtual ~ScEngine();

@@ -58,7 +58,7 @@ public:
 	bool isBlank(int line);
 	BaseArray<Common::String> getSurroundingLines(int centre, int lines, int *error = nullptr);
 	BaseArray<Common::String> getSurroundingLines(int cemtre, int before, int after, int *error = nullptr);
-	Common::String getLine(int n, int *error = nullptr);
+	Common::String getLine(uint n, int *error = nullptr);
 };
 
 struct BreakpointInfo {

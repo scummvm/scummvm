@@ -165,7 +165,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 		// TODO: Add a function for this. 
 		// TODO-TODO: Or just rip refreshBreakpoints() off original
 
-		for (int i = 0; i < _watchlist.size(); i++) {
+		for (uint i = 0; i < _watchlist.size(); i++) {
 			if (!strcmp(filename, _watchlist[i]._filename.c_str())) {
 				script->_watchlist.add(_watchlist[i]);
 			}
@@ -185,7 +185,7 @@ bool ScEngine::addWatch(const char *filename, const char *name) {
 	return 0;
 }
 
-bool ScEngine::removeWatch(int id) {
+bool ScEngine::removeWatch(uint id) {
 	if (id >= _watchlist.size()) return 0;
 	_watchlist.remove_at(id);
 	refreshWatchlist();
@@ -193,9 +193,9 @@ bool ScEngine::removeWatch(int id) {
 }
 
 bool ScEngine::refreshWatchlist() {
-	for (int i = 0; i < _scripts.size(); i++) {
+	for (uint i = 0; i < _scripts.size(); i++) {
 		_scripts[i]->_watchlist.clear();
-		for (int j = 0; j < _watchlist.size(); j++) {
+		for (uint j = 0; j < _watchlist.size(); j++) {
 			if (!strcmp(_scripts[i]->_filename, _watchlist[j]._filename.c_str())) {
 				_scripts[i]->_watchlist.add(_watchlist[j]);
 
@@ -215,43 +215,43 @@ bool ScEngine::addBreakpoint(const char *filename, int line) {
 	return 1;
 }
 
-bool ScEngine::removeBreakpoint(int id) {
+bool ScEngine::removeBreakpoint(uint id) {
 	if (id >= _breakpoints.size()) return 0;
 	_breakpoints.remove_at(id);
 	return 1;
 }
 
-bool ScEngine::enableBreakpoint(int id) {
+bool ScEngine::enableBreakpoint(uint id) {
 	if (id >= _breakpoints.size()) return 0;
 	_breakpoints[id]._enabled = true;
 	return 1;
 }
 
-bool ScEngine::disableBreakpoint(int id) {
+bool ScEngine::disableBreakpoint(uint id) {
 	if (id >= _breakpoints.size()) return 0;
 	_breakpoints[id]._enabled = false;
 	return 1;
 }
 
-int ScEngine::incrementWatch(int id) {
+int ScEngine::incrementWatch(uint id) {
 	// TODO: Check if existing
 	_watchlist[id]._hits = 0;
 	return 0;
 }
 
-int ScEngine::incrementBreakpoint(int id) {
+int ScEngine::incrementBreakpoint(uint id) {
 	// TODO: Check if existing
 	_breakpoints[id]._hits = 0;
 	return 0;
 }
 
-int ScEngine::resetWatch(int id) {
+int ScEngine::resetWatch(uint id) {
 	// TODO: Check if existing
 	_watchlist[id]._hits = 0;
 	return 0;
 }
 
-int ScEngine::resetBreakpoint(int id) {
+int ScEngine::resetBreakpoint(uint id) {
 	// TODO: Check if existing
 	_breakpoints[id]._hits = 0;
 	return 0;

@@ -158,14 +158,14 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 bool Console::Cmd_Info(int argc, const char **argv) {
 	if (argc == 2 && !strncmp(argv[1], "breakpoints", 10)) {
 		BaseArray<BreakpointInfo> breakpoints = ADAPTER->getBreakpoints();
-		for (int i = 0; i < breakpoints.size(); i++) {
+		for (uint i = 0; i < breakpoints.size(); i++) {
 			DebugPrintf("%d %s:%d x%d, enabled: %d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits, breakpoints[i]._enabled);
 		}
 		return 1;
 	} else if (argc == 2 && !strncmp(argv[1], "watch", 5)) {
 		BaseArray<WatchInfo>watchlist = ADAPTER->getWatchlist();
-		for (int i = 0; i < watchlist.size(); i++) {
-			DebugPrintf("%d %s:%d x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);
+		for (uint i = 0; i < watchlist.size(); i++) {
+			DebugPrintf("%d %s:%s x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);
 		}
 		return 1;
 	} else {
@@ -390,7 +390,7 @@ void Console::printSource(int n) {
 	if (error != 0) {
 		DebugPrintf("Error retrieving source file\n");
 	}
-	for (int i = 0; i < strings.size(); i++) {
+	for (uint i = 0; i < strings.size(); i++) {
 		DebugPrintf(strings[i].c_str());
 		DebugPrintf("\n");
 	}

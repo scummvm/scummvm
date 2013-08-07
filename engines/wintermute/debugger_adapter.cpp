@@ -85,7 +85,7 @@ int SourceFile::getLength() {
 	return _strings.size();
 }
 
-Common::String SourceFile::getLine(int n, int *error) {
+Common::String SourceFile::getLine(uint n, int *error) {
 
 	// Line numbers are starting from 1, so...
 	n--;
@@ -96,7 +96,7 @@ Common::String SourceFile::getLine(int n, int *error) {
 		}
 		return 0;
 	}
-	if (n < 0 || n >= _strings.size()) {
+	if (n >= _strings.size()) { // also n < 0 if type ever changes
 		if (error != nullptr) {
 			*error = NO_SUCH_LINE;
 		}
@@ -463,7 +463,7 @@ bool DebuggerAdapter::showFps(bool show) {
 BaseArray<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
 	assert(SCENGINE);
 	BaseArray<BreakpointInfo> breakpoints;
-	for (int i = 0; i < SCENGINE->_breakpoints.size(); i++) {
+	for (uint i = 0; i < SCENGINE->_breakpoints.size(); i++) {
 		BreakpointInfo bp_info;
 		bp_info._filename = SCENGINE->_breakpoints[i]._filename;
 		bp_info._line = SCENGINE->_breakpoints[i]._line;
@@ -476,7 +476,7 @@ BaseArray<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
 
 BaseArray<WatchInfo> DebuggerAdapter::getWatchlist() {
 	BaseArray<WatchInfo> watchlist;
-	for (int i = 0; i < SCENGINE->_watchlist.size(); i++) {
+	for (uint i = 0; i < SCENGINE->_watchlist.size(); i++) {
 		WatchInfo watch_info;
 		watch_info._filename = SCENGINE->_watchlist[i]._filename;
 		watch_info._symbol = SCENGINE->_watchlist[i]._symbol;
