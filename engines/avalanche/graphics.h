@@ -90,6 +90,8 @@ public:
 	void drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 
+	void drawPieSlice(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
+
 
 	// The caller has to .free() the returned Surfaces!!!
 	::Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
