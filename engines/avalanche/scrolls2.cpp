@@ -329,6 +329,7 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	blockread(f, mem[0xa000 * st + (fv * 80)], xl);
 	}
 	bit = getpixel(0, 0);*/
+
 	warning("STUB: Scrolls::block_drop()");
 
 	f.close();
@@ -360,7 +361,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	if ((1 <= use_icon) && (use_icon <= 34))
 		lx += halficonwidth;
-	
 
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
 
@@ -377,9 +377,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), lightgray);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly), lightgray);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly), lightgray);
-	/*_vm->_graphics->drawBar(mx - lx - 30, my + ly, mx + lx, my + ly + 6, lightgray);
-	_vm->_graphics->drawBar(mx - lx - 30, my - ly - 6, mx + lx, my - ly, lightgray);
-	_vm->_graphics->drawBar(mx - lx - 15, my - ly, mx + lx + 15, my + ly, lightgray);*/
 
 	/*setfillstyle(1, 8);
 	pieslice(mx - lx - 31, my - ly, 360, 180, 15);
@@ -390,10 +387,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7), red);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), red);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), red);
-	/*_vm->_graphics->drawBar(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5, red);
-	_vm->_graphics->drawBar(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7, red);
-	_vm->_graphics->drawBar(mx - lx - 15, my - ly, mx - lx - 14, my + ly, red);
-	_vm->_graphics->drawBar(mx + lx + 15, my - ly, mx + lx + 16, my + ly, red);*/
 
 	ex = mx - lx;
 	ey = my - ly;
@@ -425,29 +418,30 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 
 	for (b = 0; b <= _vm->_gyro->scrolln; b++) {
-		switch (_vm->_gyro->scroll[b][_vm->_gyro->scroll[b].size() - 1]) {
-		case kControlCenter: {
-			centre = true;
-			_vm->_gyro->scroll[b].deleteLastChar();
+		if (!_vm->_gyro->scroll[b].empty())
+			switch (_vm->_gyro->scroll[b][_vm->_gyro->scroll[b].size() - 1]) {
+			case kControlCenter: {
+				centre = true;
+				_vm->_gyro->scroll[b].deleteLastChar();
+				}
+				break;
+			case kControlLeftJustified: {
+				centre = false;
+				_vm->_gyro->scroll[b].deleteLastChar();
+				}
+				break;
+			case kControlQuestion: {
+				//settextjustify(1, 1);
+				dix = mx + lx;
+				diy = my + ly;
+				_vm->_gyro->scroll[b].setChar(' ', 0);
+				groi = *_vm->_graphics->getPixel(0, 0);
+				// inc(diy,14);
+				_vm->_gyro->shbox(dix - 65, diy - 24, dix - 5, diy - 10, "Yes.");
+				_vm->_gyro->shbox(dix + 5, diy - 24, dix + 65, diy - 10, "No.");
+				}
+				break;
 			}
-			break;
-		case kControlLeftJustified: {
-			centre = false;
-			_vm->_gyro->scroll[b].deleteLastChar();
-			}
-			break;
-		case kControlQuestion: {
-			//settextjustify(1, 1);
-			dix = mx + lx;
-			diy = my + ly;
-			_vm->_gyro->scroll[b].setChar(' ', 0);
-			groi = *_vm->_graphics->getPixel(0, 0);
-			// inc(diy,14);
-			_vm->_gyro->shbox(dix - 65, diy - 24, dix - 5, diy - 10, "Yes.");
-			_vm->_gyro->shbox(dix + 5, diy - 24, dix + 65, diy - 10, "No.");
-			}
-			break;
-		}
 
 		if (centre)
 			say(320 - _vm->_gyro->scroll[b].size() * 4 + icon_indent, my, _vm->_gyro->scroll[b]);
@@ -586,9 +580,9 @@ void Scrolls::calldrivers() {
 			if (_vm->_gyro->buffer[fv] == kControlRegister)
 				param = 0;
 			else
-				if (('0' < _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] < '9'))
+				if (('0' <= _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] <= '9'))
 					param = _vm->_gyro->buffer[fv] - 48;
-				else if (('A' < _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] < 'Z'))
+				else if (('A' <= _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] <= 'Z'))
 					param = _vm->_gyro->buffer[fv] - 55;
 
 			mouthnext = false;
@@ -748,7 +742,8 @@ void Scrolls::calldrivers() {
 				mouthnext = true;
 				break;
 			case kControlInsertSpaces:
-				for (nn = 0; nn < 9; nn++) _vm->_gyro->scroll[_vm->_gyro->scrolln] = _vm->_gyro->scroll[_vm->_gyro->scrolln] + ' ';
+				for (nn = 0; nn < 9; nn++)
+					_vm->_gyro->scroll[_vm->_gyro->scrolln] += ' ';
 				break;
 			default: { // Add new char.
 				if (_vm->_gyro->scroll[_vm->_gyro->scrolln].size() == 50) {
