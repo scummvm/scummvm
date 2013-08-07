@@ -1,0 +1,11 @@
+{
+	"description": "Groovie",
+	"status": "stable",
+	"games": "7th Guest",
+	"subengines": {
+		"groovie2": {
+			"description": "Groovie 2 games",
+			"status": "unstable"
+		}
+	}
+}

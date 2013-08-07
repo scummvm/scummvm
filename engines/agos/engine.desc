@@ -1,0 +1,11 @@
+{
+	"description": "AGOS",
+	"status": "stable",
+	"games": "AGOS 1 games",
+	"subengines": {
+		"agos2": {
+			"description": "AGOS 2 games",
+			"status": "stable"
+		}
+	}
+}

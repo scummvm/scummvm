@@ -1,0 +1,5 @@
+{
+	"description": "The Journeyman Project: Pegasus Prime",
+	"status": "stable",
+	"dependencies": ["16bit"]
+}

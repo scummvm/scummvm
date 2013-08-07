@@ -1,0 +1,5 @@
+{
+	"description": "Hopkins FBI",
+	"status": "stable",
+	"dependencies": ["16bit"]
+}

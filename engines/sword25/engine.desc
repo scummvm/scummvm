@@ -1,0 +1,5 @@
+{
+	"description": "Broken Sword 2.5",
+	"status": "unstable",
+	"dependencies": ["png", "zlib", "16bit"]
+}

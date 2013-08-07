@@ -1,0 +1,15 @@
+{
+	"description": "Kyra",
+	"status": "stable",
+	"games": "Legend of Kyrandia 1-3",
+	"subengines": {
+		"lol": {
+			"description": "Lands of Lore",
+			"status": "stable"
+		},
+		"eob": {
+			"description": "Eye of the Beholder",
+			"status": "stable"
+		}
+	}
+}

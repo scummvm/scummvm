@@ -1,0 +1,5 @@
+{
+	"description": "Wintermute",
+	"status": "unstable",
+	"dependencies": ["png", "zlib", "vorbis", "16bit"]
+}

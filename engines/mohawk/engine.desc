@@ -1,0 +1,21 @@
+{
+	"description": "Mohawk",
+	"status": "stable",
+	"games": "Living Books",
+	"subengines": {
+		"cstime": {
+			"description": "Where in Time is Carmen Sandiego?",
+			"status": "unstable"
+		},
+		"myst": {
+			"description": "Myst",
+			"status": "unstable",
+			"dependencies": ["16bit"]
+		},
+		"riven": {
+			"description": "Riven: The Sequel to Myst",
+			"status": "unstable",
+			"dependencies": ["16bit"]
+		}
+	}
+}

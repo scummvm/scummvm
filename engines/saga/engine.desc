@@ -1,0 +1,15 @@
+{
+	"description": "SAGA",
+	"status": "stable",
+	"games": "ITE",
+	"subengines": {
+		"ihnm": {
+			"description": "IHNM",
+			"status": "stable"
+		},
+		"saga2": {
+			"description": "SAGA 2 games",
+			"status": "unstable"
+		}
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"description": "SCI",
+	"status": "stable",
+	"games": "SCI 0-1.1 games",
+	"subengines": {
+		"sci32": {
+			"description": "SCI32 games",
+			"status": "unstable"
+		}
+	}
+}
