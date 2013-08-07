@@ -254,10 +254,13 @@ void CGameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAn
 	if (picAniInfoCount <= 0)
 		return;
 
+	debug(0, "CGameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfoCount);
+
 	PictureObject *pict;
 	StaticANIObject *ani;
 
 	for (int i = 0; i < picAniInfoCount; i++) {
+		debug(0, "PicAniInfo: id: %d type: %d", picAniInfo[i]->objectId, picAniInfo[i]->type);
 		if (picAniInfo[i]->type & 2) {
 			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
 			if (pict) {

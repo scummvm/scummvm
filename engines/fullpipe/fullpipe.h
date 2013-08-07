@@ -98,7 +98,7 @@ public:
 
 	CGameLoader *_gameLoader;
 	GameProject *_gameProject;
-	bool loadGam(const char *fname);
+	bool loadGam(const char *fname, int scene = 0);
 
 	CGameVar *getGameLoaderGameVar();
 	CInputController *getGameLoaderInputController();

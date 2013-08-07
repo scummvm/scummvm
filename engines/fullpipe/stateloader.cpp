@@ -35,7 +35,7 @@
 
 namespace Fullpipe {
 
-bool FullpipeEngine::loadGam(const char *fname) {
+bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_gameLoader = new CGameLoader();
 
 	if (!_gameLoader->loadFile(fname))
@@ -43,7 +43,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 
 	_currSoundListCount = 0;
 	initObjectStates();
-	// set_g_messageQueueCallback1(messageQueueCallback1);
+	// set_g_messageQueueCallback1(messageQueueCallback1); // substituted with direct call
 
 	addMessageHandlerByIndex(global_messageHandler1, 0, 4);
 
@@ -57,7 +57,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 		((MemoryObject *)((PictureObject *)*p)->_picture)->load();
 	}
 
-	// _sceneSwitcher = sceneSwitcher;
+	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	// _preloadCallback = gameLoaderPreloadCallback
 	// _readSavegameCallback = gameLoaderReadSavegameCallback;
 
@@ -80,12 +80,17 @@ bool FullpipeEngine::loadGam(const char *fname) {
 
 	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
 
-	if (_flgPlayIntro) {
-		_gameLoader->loadScene(SC_INTRO1);
-		_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+	if (scene) {
+		_gameLoader->loadScene(scene);
+		_gameLoader->gotoScene(scene, TrubaLeft);
 	} else {
-		_gameLoader->loadScene(SC_1);
-		_gameLoader->gotoScene(SC_1, TrubaLeft);
+		if (_flgPlayIntro) {
+			_gameLoader->loadScene(SC_INTRO1);
+			_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+		} else {
+			_gameLoader->loadScene(SC_1);
+			_gameLoader->gotoScene(SC_1, TrubaLeft);
+		}
 	}
 
 	if (!_currentScene)

@@ -133,23 +133,16 @@ Common::Error FullpipeEngine::run() {
 
 	_isSaveAllowed = false;
 
-	if (!loadGam("fullpipe.gam"))
-		return Common::kNoGameDataFoundError;
-
-	EntranceInfo ent;
-
+	int scene = 0;
 	if (ConfMan.hasKey("boot_param"))
-		ent._sceneId = ConfMan.getInt("boot_param");
-	else 
-		ent._sceneId = 3896;
+		scene = ConfMan.getInt("boot_param");
 
-	sceneSwitcher(&ent);
+	if (!loadGam("fullpipe.gam", scene))
+		return Common::kNoGameDataFoundError;
 
 #if 0
 	loadAllScenes();
 #endif
-
-	_currentScene->draw();
 
 	_gameContinue = true;
 

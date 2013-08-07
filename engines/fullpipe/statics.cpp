@@ -272,17 +272,22 @@ void StaticANIObject::draw() {
 	Common::Point point;
 	Common::Rect rect;
 
-	debug(0, "StaticANIObject::draw()");
+	debug(0, "StaticANIObject::draw() (%s) [%d]", transCyrillic((byte *)_objectName), _id);
 
 	if (_shadowsOn && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_shadows
 		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
 
 		DynamicPhase *dyn;
 
-		if (!_movement || _flags & 0x20 )
+		if (!_movement || _flags & 0x20)
 			dyn = _statics;
 		else
 			dyn = _movement->_currDynamicPhase;
+
+		if (!dyn) {
+			warning("HACK: StaticANIObject::draw(): dyn is missing");
+			return;
+		}
 
 		if (dyn->getDynFlags() & 4) {
 			rect = *dyn->_rect;
@@ -410,6 +415,8 @@ bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 		return false;
 	}
 
+	debug(0, "StaticANIObject::setPicAniInfo() (%s [%d])", transCyrillic((byte *)_objectName), _id);
+
 	if (picAniInfo->type & 3) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
@@ -421,10 +428,11 @@ bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (picAniInfo->type & 1) {
 		_messageQueueId = picAniInfo->type >> 16;
 
-		if (picAniInfo->staticsId)
+		if (picAniInfo->staticsId) {
 			_statics = getStaticsById(picAniInfo->staticsId);
-		else
+		} else {
 			_statics = 0;
+		}
 
 		if (picAniInfo->movementId) {
 			_movement = getMovementById(picAniInfo->movementId);

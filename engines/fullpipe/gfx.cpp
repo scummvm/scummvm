@@ -381,7 +381,7 @@ Common::Point *Picture::getDimensions(Common::Point *p) {
 void Picture::getDibInfo() {
 	int off = _dataSize & ~0xf;
 
-	debug(0, "Picture::getDibInfo: _dataSize: %d", _dataSize);
+	debug(9, "Picture::getDibInfo: _dataSize: %d", _dataSize);
 
 	if (!_dataSize) {
 		warning("Picture::getDibInfo(): Empty data size");
@@ -409,7 +409,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
 
-	debug(0, "Picture::draw(%d, %d, %d, %d)", x, y, style, angle);
+	debug(0, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
 
 	if (x != -1)
 		x1 = x;
@@ -430,10 +430,8 @@ void Picture::draw(int x, int y, int style, int angle) {
 	byte *pal = _paletteData;
 
 	if (!pal) {
+		warning("Picture:draw: using global palette");
 		pal = g_fullpipe->_globalPalette;
-
-		if (!pal)
-			error("Picture::draw(): Both global and local palettes are empty");
 	}
 
 	switch (style) {
@@ -447,8 +445,9 @@ void Picture::draw(int x, int y, int style, int angle) {
 	default:
 		if (angle)
 			drawRotated(x1, y1, angle);
-		else
+		else {
 			_bitmap->putDib(x1, y1, (int32 *)pal);
+		}
 	}
 }
 
@@ -531,7 +530,10 @@ void Bitmap::putDibRB(int32 *palette) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
-	debug(0, "Bitmap::putDibRB()");
+	if (!palette)
+		error("Bitmap::putDibRB(): Both global and local palettes are empty");
+
+	debug(8, "Bitmap::putDibRB()");
 
 	endx = _width + _x - 1;
 	endy = _height + _y - 1;
@@ -642,7 +644,7 @@ void Bitmap::putDibCB(int32 *palette) {
 	endx = _width + _x - 1;
 	endy = _height + _y - 1;
 
-	debug(0, "Bitmap::putDibCB(): %d, %d, %d, %d [%d, %d]", _x, _y, endx, endy, _width, _height);
+	debug(8, "Bitmap::putDibCB(): %d, %d, %d, %d [%d, %d]", _x, _y, endx, endy, _width, _height);
 
 	if (_x > 799 || endx < 0 || _y > 599 || endy < 0)
 		return;
@@ -654,6 +656,9 @@ void Bitmap::putDibCB(int32 *palette) {
 		endx = 799;
 
 	cb05_format = (_type == MKTAG('C', 'B', '\05', 'e'));
+
+	if (!palette && !cb05_format)
+		error("Bitmap::putDibCB(): Both global and local palettes are empty");
 
 	bpp = cb05_format ? 2 : 1;
 	pitch = (bpp * _width + 3) & 0xFFFFFFFC;

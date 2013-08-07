@@ -419,7 +419,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		g_fullpipe->_globalPalette = _palette->_data;
 	}
 
-	debug(0, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debug(8, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	if (_picObjList.size() > 2) { // We need to z-sort them
 		objectList_sortByPriority(_picObjList);
@@ -431,11 +431,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (maxPri == -1)
 		maxPri = 60000;
 
-	debug(0, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debug(8, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	Common::Point point;
 
-	debug(0, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
+	debug(8, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
 
 		_bigPictureArray[0][0]->getDimensions(&point);
@@ -443,11 +443,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int width = point.x;
 		int height = point.y;
 
-		debug(0, "w: %d h:%d", width, height);
+		debug(8, "w: %d h:%d", width, height);
 
 		((PictureObject *)_picObjList[0])->getDimensions(&point);
 
-		debug(0, "w2: %d h2:%d", point.x, point.y);
+		debug(8, "w2: %d h2:%d", point.x, point.y);
 
 		int bgStX = g_fullpipe->_sceneRect.left % point.x;
 
@@ -505,14 +505,14 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
 		PictureObject *obj = (PictureObject *)_picObjList[i];
 
-		debug(0, "pri: %d", obj->_priority);
+		debug(8, "pri: %d", obj->_priority);
 		if (obj->_priority < minPri || obj->_priority >= maxPri)
 			continue;
 
 		int objX = obj->_ox;
 		int objY = obj->_oy;
 
-		debug(0, "obj: %d %d", objX, objY);
+		debug(8, "obj: %d %d", objX, objY);
 
 		obj->getDimensions(&point);
 
