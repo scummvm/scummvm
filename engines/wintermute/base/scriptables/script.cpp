@@ -1126,12 +1126,12 @@ bool ScScript::executeInstruction() {
 			if (1) { // TODO: If watch
 				// TODO: Watch inheritance!
 				for (uint i = 0; i < _watchlist.size(); i++) {
-					if (ScValue::compare(resolveName((char *)_watchlist[i]._symbol.c_str()), _watchlist[i]._lastvalue) &&
+					if (ScValue::compare(resolveName(_watchlist[i]._symbol.c_str()), _watchlist[i]._lastvalue) &&
 						_watchlist[i]._enabled) {
 						// _gameRef->_debugger->watch(this, (char *)_watchlist[i]._symbol.c_str());
-						_adapter->triggerWatch(this, (char *)_watchlist[i]._symbol.c_str());
+						_adapter->triggerWatch(this, _watchlist[i]._symbol.c_str());
 						// TODO: This is sometimes spuriouosly called when no change is apparent. Investigate.
-						_watchlist[i]._lastvalue->copy(resolveName((char *)_watchlist[i]._symbol.c_str()));
+						_watchlist[i]._lastvalue->copy(resolveName(_watchlist[i]._symbol.c_str()));
 					}
 				}
 			}
@@ -1533,7 +1533,7 @@ ScValue *ScScript::resolveName(const char *name) {
 	value = getVar(const_cast<char *>(varName.c_str()));
 
 	while(!st.empty() && (value->isNative() || value->isObject())) {
-		value = value->getProp((char *)st.nextToken().c_str());
+		value = value->getProp(st.nextToken().c_str());
 	}
 
 	return value;
