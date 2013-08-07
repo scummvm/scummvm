@@ -79,6 +79,7 @@ class CObList : public Common::List<CObject>, public CObject {
 
 class MemoryObject : CObject {
 	friend class Picture;
+	friend class Scene;
 
  protected:
 	char *_memfilename;

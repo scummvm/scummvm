@@ -25,6 +25,7 @@
 
 namespace Fullpipe {
 
+#define ANI_BOOT_1 4231
 #define ANI_IN1MAN 5110
 #define ANI_INV_MAP 5321
 #define ANI_MAN 322
@@ -60,6 +61,9 @@ namespace Fullpipe {
 #define PIC_INV_MENU 991
 #define PIC_MAP_A13 5275
 #define PIC_MAP_S01 5223
+#define PIC_SC1_KUCHKA 1321
+#define PIC_SC1_OSK 1018
+#define PIC_SC1_OSK2 2932
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
@@ -112,6 +116,7 @@ namespace Fullpipe {
 #define SC_MAP 5222
 #define SC_TEST 903
 #define SC_TITLES 5166
+#define ST_LBN_2N 2756
 #define ST_MAN_EMPTY 476
 #define TrubaDown 697
 #define TrubaLeft 474

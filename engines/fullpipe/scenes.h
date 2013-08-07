@@ -37,6 +37,10 @@ class Vars {
 	bool sceneIntro_skipIntro;
 	bool sceneIntro_playing;
 	bool sceneIntro_needBlackout;
+
+	int scene01_unused;
+	PictureObject *scene01_picSc01Osk;
+	PictureObject *scene01_picSc01Osk2;
 };
 
 } // End of namespace Fullpipe

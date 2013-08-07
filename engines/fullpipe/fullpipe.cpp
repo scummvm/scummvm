@@ -55,6 +55,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_pictureScale = 8;
 	_scrollSpeed = 0;
 	_currSoundListCount = 0;
+	_globalPalette = 0;
 
 	_updateTicks = 0;
 
@@ -72,7 +73,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_gameContinue = true;
 	_needRestart = false;
-	_flgPlayIntro = true;
+	_flgPlayIntro = false;
 	_flgSavegameMenuRequested = false;
 
 	_isProcessingMessages = false;
@@ -273,6 +274,15 @@ int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
 	}
 
 	return 0;
+}
+
+int FullpipeEngine::getObjectState(const char *objname) {
+	CGameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
+
+	if (var)
+		return var->getSubVarAsInt(objname);
+
+  return 0;
 }
 
 void FullpipeEngine::setObjectState(const char *name, int state) {

@@ -35,7 +35,7 @@ void FullpipeEngine::initObjectStates() {
 	setLevelStates();
 
 	setObjectState(sO_Dude, getObjectEnumState(sO_Dude, sO_NotCarryingEgg));
-	setObjectState(sO_EggCracker, getObjectEnumState(sO_EggCracker, sO_NotCrackedEggs));
+	setObjectState(sO_EggCracker, getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg));
 	setObjectState(sO_GuvTheDrawer, getObjectEnumState(sO_GuvTheDrawer, sO_Awaken));
 	setObjectState(sO_EggGulper, getObjectEnumState(sO_EggGulper, sO_First));
 	setObjectState(sO_EggGulperGaveCoin, getObjectEnumState(sO_EggGulperGaveCoin, sO_No));

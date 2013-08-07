@@ -416,7 +416,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		return;
 
 	if (_palette) {
-		warning("Scene palette is ignored");
+		g_fullpipe->_globalPalette = _palette->_data;
 	}
 
 	debug(0, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);

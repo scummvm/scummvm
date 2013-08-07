@@ -118,6 +118,7 @@ public:
 	Scene *_scene2;
 	StaticANIObject *_aniMan;
 	StaticANIObject *_aniMan2;
+	byte *_globalPalette;
 
 	CInputController *_inputController;
 	bool _inputDisabled;
@@ -185,6 +186,7 @@ public:
 
 	int _cursorId;
 
+	int getObjectState(const char *objname);
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);
 

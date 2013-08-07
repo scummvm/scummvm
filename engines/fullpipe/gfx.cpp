@@ -427,6 +427,15 @@ void Picture::draw(int x, int y, int style, int angle) {
 		warning("Picture:draw: alpha = %0x", _alpha);
 	}
 
+	byte *pal = _paletteData;
+
+	if (!pal) {
+		pal = g_fullpipe->_globalPalette;
+
+		if (!pal)
+			error("Picture::draw(): Both global and local palettes are empty");
+	}
+
 	switch (style) {
 	case 1:
 		//flip
@@ -439,7 +448,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		if (angle)
 			drawRotated(x1, y1, angle);
 		else
-			_bitmap->putDib(x1, y1, (int32 *)_paletteData);
+			_bitmap->putDib(x1, y1, (int32 *)pal);
 	}
 }
 

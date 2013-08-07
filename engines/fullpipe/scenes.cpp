@@ -35,14 +35,22 @@
 #include "fullpipe/behavior.h"
 
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/modal.h"
 
 namespace Fullpipe {
 
+int defaultUpdateCursor();
+void setElevatorButton(const char *name, int state);
+
 int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
 int sceneHandlerIntro(ExCommand *cmd);
+
+void scene01_fixEntrance();
+void scene01_initScene(Scene *sc, int entrance);
+int sceneHandler01(ExCommand *cmd);
 
 Vars::Vars() {
 	sceneIntro_aniin1man = 0;
@@ -153,19 +161,19 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = sceneIntro_updateCursor;
 		break;
 
-#if 0
 	case SC_1:
-		scene01_sub_40E160();
+		scene01_fixEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_1");
 		scene->preloadMovements(sceneVar);
-		scene01_initScene(scene, entrance->field_4);
+		scene01_initScene(scene, entrance->_field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_1");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler01, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
+#if 0
 	case SC_2:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_2");
 		scene->preloadMovements(sceneVar);
@@ -174,7 +182,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_2");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler02, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_3:
@@ -208,7 +216,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_5");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler05, 2, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_6:
@@ -231,7 +239,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_7");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler07, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_8:
@@ -288,7 +296,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_12");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler12, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_13:
@@ -299,7 +307,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_13");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler13, 2, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_14:
@@ -397,7 +405,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_20");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler20, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_21:
@@ -444,7 +452,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler24, 2);
 		scene24_sub_423DD0();
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_25:
@@ -523,7 +531,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_31");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler31, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_32:
@@ -570,7 +578,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_35");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler35, 2, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_36:
@@ -603,7 +611,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_38");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler38, 2);
-		_updateCursorCallback = defaultUpdateCursorCallback;
+		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
 	case SC_FINAL1:
@@ -635,6 +643,13 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	return true;
 }
 
+void setElevatorButton(const char *name, int state) {
+	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+
+	if (var)
+		var->setSubVarAsInt(name, state);
+}
+
 int global_messageHandler1(ExCommand *cmd) {
 	warning("STUB: global_messageHandler1()");
 
@@ -657,6 +672,12 @@ int global_messageHandler4(ExCommand *cmd) {
 	warning("STUB: global_messageHandler4()");
 
 	return 0;
+}
+
+int defaultUpdateCursor() {
+	warning("STUB: defaultUpdateCursor");
+
+	return g_fullpipe->_cursorId;
 }
 
 int sceneIntro_updateCursor() {
@@ -684,6 +705,42 @@ void sceneIntro_initScene(Scene *sc) {
 
 int sceneHandlerIntro(ExCommand *cmd) {
 	warning("STUB: sceneHandlerIntro()");
+
+	return 0;
+}
+
+void scene01_fixEntrance() {
+	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+	if (var->getSubVarAsInt("Entrance") == TrubaLeft)
+		var->setSubVarAsInt("Entrance", TrubaRight);
+}
+
+void scene01_initScene(Scene *sc, int entrance) {
+	g_vars->scene01_unused = 0;
+
+	g_vars->scene01_picSc01Osk = sc->getPictureObjectById(PIC_SC1_OSK, 0);
+	g_vars->scene01_picSc01Osk->_flags &= 0xFFFB;
+
+	g_vars->scene01_picSc01Osk2 = sc->getPictureObjectById(PIC_SC1_OSK2, 0);
+	g_vars->scene01_picSc01Osk2->_flags &= 0xFFFB;
+
+	if (g_fullpipe->getObjectState(sO_EggCracker) == g_fullpipe->getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg)) {
+		PictureObject *pic = sc->getPictureObjectById(PIC_SC1_KUCHKA, 0);
+		if (pic)
+			pic->_flags &= 0xFFFB;
+	}
+
+	if (entrance != TrubaLeft ) {
+		StaticANIObject *bootAnim = sc->getStaticANIObject1ById(ANI_BOOT_1, -1);
+		if (bootAnim)
+			bootAnim->_flags &= 0xFFFB;
+	}
+
+	setElevatorButton(sO_Level2, ST_LBN_2N);
+}
+
+int sceneHandler01(ExCommand *cmd) {
+	warning("STUB: sceneHandler01()");
 
 	return 0;
 }
