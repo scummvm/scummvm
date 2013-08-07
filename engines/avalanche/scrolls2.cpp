@@ -373,7 +373,9 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	setcolor(4);
 	arc(mx + lx, my - ly, 360, 90, 15);
 	arc(mx + lx, my + ly, 270, 360, 15);*/
-
+	_vm->_graphics->drawArc(_vm->_graphics->_scrolls,mx + lx, my - ly, 0, 90, 15, red);
+	_vm->_graphics->drawArc(_vm->_graphics->_scrolls,mx + lx, my + ly, 270, 360, 15, red);
+	
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), lightgray);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly), lightgray);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly), lightgray);

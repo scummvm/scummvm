@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+#include "math.h"
+
 #include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
 
@@ -116,6 +118,88 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 				} 
 			}
 }
+
+void Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
+	const double pi = 3.14;
+	const double convfac = pi / 180.0;
+
+	int32 xRadius = radius;
+	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
+
+	if (xRadius == 0)
+		xRadius ++;
+	if (yRadius == 0)
+		yRadius ++;
+
+	/* check for an ellipse with negligable x and y radius */
+	if ((xRadius <= 1) && (yRadius <= 1)) 
+	{
+		*(byte *)_scrolls.getBasePtr(x,y) = color;
+		return;
+	}
+
+	/* check if valid angles */
+	stAngle = stAngle % 361;
+	endAngle = endAngle % 361;
+
+	/* if impossible angles then swap them! */
+	if (endAngle < stAngle) 
+	{
+		uint16 tmpAngle=endAngle;
+		endAngle=stAngle;
+		stAngle=tmpAngle;
+	}
+
+	/* approximate the number of pixels required by using the circumference */
+	/* equation of an ellipse.                                              */
+	uint16 numOfPixels=floor(sqrt(3.0)*sqrt(pow(float(xRadius), 2)+pow(float(yRadius), 2)) + 0.5);
+
+	/* Calculate the angle precision required */
+	double delta = 90.0 / numOfPixels;
+
+	/* Always just go over the first 90 degrees. Could be optimized a   */
+	/* bit if startAngle and endAngle lie in the same quadrant, left as an */
+	/* exercise for the reader :) (JM)                                  */
+	double j = 0;
+
+	/* calculate stop position, go 1 further than 90 because otherwise */
+	/* 1 pixel is sometimes not drawn (JM)                             */
+	uint16 deltaEnd = 91;
+
+	/* Calculate points */
+	int16 xNext = xRadius;
+	int16 yNext = 0;
+	do {
+		int16 xTemp = xNext;
+		int16 yTemp = yNext;
+		/* this is used by both sin and cos */
+		double tempTerm = (j+delta)*convfac;
+		/* Calculate points */
+		xNext = floor(xRadius*cos(tempTerm) + 0.5);
+		yNext = floor(yRadius*sin(tempTerm + pi) + 0.5);
+
+		int16 xp = x + xTemp;
+		int16 xm = x - xTemp;
+		int16 yp = y + yTemp;
+		int16 ym = y - yTemp;
+		if ((j >= stAngle) && (j <= endAngle)) 
+			*(byte *)_scrolls.getBasePtr(xp,yp) = color;
+		
+		if (((180-j) >= stAngle) && ((180-j) <= endAngle)) 
+			*(byte *)_scrolls.getBasePtr(xm,yp) = color;
+		
+		if (((j+180) >= stAngle) && ((j+180) <= endAngle)) 
+			*(byte *)_scrolls.getBasePtr(xm,ym) = color;
+		
+		if (((360-j) >= stAngle) && ((360-j) <= endAngle)) 
+			*(byte *)_scrolls.getBasePtr(xp,ym) = color;
+		
+		j += delta;
+	} while (j <= deltaEnd);
+}
+
+
+
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
 	// This function mimics Pascal's getimage().
