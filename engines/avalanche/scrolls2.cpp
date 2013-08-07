@@ -169,11 +169,11 @@ void Scrolls::normscroll() {
 
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
-	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls);
+	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
 	_vm->_graphics->refreshScreen();
 
 	Common::Event event;
-	while (true) {
+	while (!_vm->shouldQuit()) {
 		_vm->getEvent(event);
 		if ((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) || (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) || (event.kbd.keycode == Common::KEYCODE_PLUS)))
 			break;
