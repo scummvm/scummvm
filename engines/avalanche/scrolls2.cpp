@@ -365,26 +365,27 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
 
 	_vm->_gyro->off();
-	/* mblit(mx-lx-46,my-ly-6,mx+lx+15,my+ly+6,0,3);*/
-	/*setfillstyle(1, 7);
-	setcolor(7);
-	pieslice(mx + lx, my - ly, 360, 90, 15);
-	pieslice(mx + lx, my + ly, 270, 360, 15);
-	setcolor(4);
-	arc(mx + lx, my - ly, 360, 90, 15);
-	arc(mx + lx, my + ly, 270, 360, 15);*/
-	_vm->_graphics->drawArc(_vm->_graphics->_scrolls,mx + lx, my - ly, 0, 90, 15, red);
-	_vm->_graphics->drawArc(_vm->_graphics->_scrolls,mx + lx, my + ly, 270, 360, 15, red);
+
+	// The right corners of the scroll.
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx - 2, my - ly, 0, 90, 15, lightgray);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx - 2, my + ly, 270, 360, 15, lightgray);
+	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, red);
+	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, red);
 	
+	// The body of the scroll.
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), lightgray);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly), lightgray);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly), lightgray);
 
-	/*setfillstyle(1, 8);
-	pieslice(mx - lx - 31, my - ly, 360, 180, 15);
-	pieslice(mx - lx - 31, my + ly, 180, 360, 15);
-	setfillstyle(1, 4);*/
+	// The left corners of the scroll.
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx - lx - 31, my - ly, 0, 180, 15, darkgray);
+	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx - lx - 31, my - ly, 0, 180, 15, red);
+	_vm->_graphics->_scrolls.drawLine(mx - lx - 31 - 15, my - ly, mx - lx - 31 + 15, my - ly, red);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx - lx - 31, my + ly, 180, 360, 15, darkgray);
+	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx - lx - 31, my + ly, 180, 360, 15, red);
+	_vm->_graphics->_scrolls.drawLine(mx - lx - 31 - 15, my + ly, mx - lx - 31 + 15, my + ly, red);
 
+	// The rear borders of the scroll.
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5), red);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7), red);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), red);
@@ -394,7 +395,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	ey = my - ly;
 	mx -= lx;
 	my -= ly + 2;
-	//setcolor(0);
+	
 	centre = false;
 
 	switch (use_icon) {
