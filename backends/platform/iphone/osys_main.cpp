@@ -77,8 +77,8 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	delete _mixer;
 	// Prevent accidental freeing of the screen texture here. This needs to be
 	// checked since we might use the screen texture as framebuffer in the case
-	// of hi-color games for example.
-	if (_framebuffer.getPixels() == _videoContext->screenTexture.getPixels())
+	// of hi-color games for example. Otherwise this can lead to a double free.
+	if (_framebuffer.getPixels() != _videoContext->screenTexture.getPixels())
 		_framebuffer.free();
 	_mouseBuffer.free();
 }
