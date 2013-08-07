@@ -552,6 +552,7 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		tglLoadIdentity();
 		tglScalef(1.0, 1.0, -1.0);
 		tglTranslatef(pos.x(), pos.y(), pos.z());
+		tglMultMatrixf(quat.toMatrix().getData());
 	} else {
 		Math::Vector3d relPos = (pos - _currentPos);
 
@@ -713,20 +714,22 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglPushMatrix();
 	tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 
-	TGLfloat modelview[16];
-	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
+	if (g_grim->getGameType() == GType_GRIM) {
+		TGLfloat modelview[16];
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
 
-	// We want screen-aligned sprites so reset the rotation part of the matrix.
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			if (i == j) {
-				modelview[i * 4 + j] = 1.0f;
-			} else {
-				modelview[i * 4 + j] = 0.0f;
+		// We want screen-aligned sprites so reset the rotation part of the matrix.
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (i == j) {
+					modelview[i * 4 + j] = 1.0f;
+				} else {
+					modelview[i * 4 + j] = 0.0f;
+				}
 			}
 		}
-	}
 	tglLoadMatrixf(modelview);
+	}
 
 	tglDisable(TGL_LIGHTING);
 
