@@ -22,10 +22,17 @@
 
 /**
  * @file
- * YUV to RGB conversion used in engines:
- * - mohawk
- * - scumm (he)
- * - sword25
+ * YUV to RGB conversion.
+ *
+ * Used in graphics:
+ * - JPEGDecoder
+ *
+ * Used in video:
+ * - BinkDecoder
+ * - Indeo3Decoder
+ * - PSXStreamDecoder
+ * - TheoraDecoder
+ * - SVQ1Decoder
  */
 
 #ifndef GRAPHICS_YUV_TO_RGB_H
@@ -78,7 +85,7 @@ public:
 	void convert420(Graphics::Surface *dst, LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
 	/**
-	 * Convert a YUV410 image to an RGB surface	
+	 * Convert a YUV410 image to an RGB surface
 	 *
 	 * Since the chroma has a very low resolution in 410, we perform bilinear scaling
 	 * on the two chroma planes to produce the image. The chroma planes must have

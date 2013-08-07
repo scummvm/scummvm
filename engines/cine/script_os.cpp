@@ -421,7 +421,7 @@ int FWScript::o2_playSampleAlt() {
 		size = g_cine->_animDataTable[num]._width * g_cine->_animDataTable[num]._height;
 	}
 	if (g_cine->_animDataTable[num].data()) {
-		if (g_cine->getPlatform() == Common::kPlatformPC) {
+		if (g_cine->getPlatform() == Common::kPlatformDOS) {
 			// if speaker output is available, play sound on it
 			// if it's another device, don't play anything
 			// TODO: implement this, it's used in the introduction for example

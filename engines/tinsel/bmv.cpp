@@ -529,9 +529,9 @@ int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 	if (cmd & CD_PRINT) {
 		PRINT_CMD *pCmd = (PRINT_CMD *)(bigBuffer + commandOffset);
 
-		MovieText(Common::nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
-				(int16)READ_LE_UINT16(&pCmd->x),
-				(int16)READ_LE_UINT16(&pCmd->y),
+		MovieText(Common::nullContext, (int16)READ_16(&pCmd->stringId),
+				(int16)READ_16(&pCmd->x),
+				(int16)READ_16(&pCmd->y),
 				pCmd->fontId,
 				NULL,
 				pCmd->duration);
@@ -542,9 +542,9 @@ int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 			TALK_CMD *pCmd = (TALK_CMD *)(bigBuffer + commandOffset);
 			talkColor = TINSEL_RGB(pCmd->r, pCmd->g, pCmd->b);
 
-			MovieText(Common::nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
-					(int16)READ_LE_UINT16(&pCmd->x),
-					(int16)READ_LE_UINT16(&pCmd->y),
+			MovieText(Common::nullContext, (int16)READ_16(&pCmd->stringId),
+					(int16)READ_16(&pCmd->x),
+					(int16)READ_16(&pCmd->y),
 					0,
 					&talkColor,
 					pCmd->duration);
@@ -622,7 +622,7 @@ int BMVPlayer::FollowingPacket(int thisPacket, bool bReallyImportant) {
 			if (nextReadSlot*SLOT_SIZE >= thisPacket && thisPacket+3 >= nextReadSlot*SLOT_SIZE)
 				return thisPacket + 3;
 		}
-		length = (int32)READ_LE_UINT32(bigBuffer + thisPacket + 1);
+		length = (int32)READ_32(bigBuffer + thisPacket + 1);
 		length &= 0x00ffffff;
 		return thisPacket + length + 4;
 	}
@@ -886,7 +886,7 @@ bool BMVPlayer::DoBMVFrame() {
 		return true;
 
 	default:
-		length = (int32)READ_LE_UINT32(data + 1);
+		length = (int32)READ_32(data + 1);
 		length &= 0x00ffffff;
 
 		graphOffset = nextUseOffset + 4;	// Skip command byte and length
@@ -922,7 +922,7 @@ bool BMVPlayer::DoBMVFrame() {
 		}
 
 		if (*data & CD_XSCR) {
-			xscr = (int16)READ_LE_UINT16(bigBuffer + graphOffset);
+			xscr = (int16)READ_16(bigBuffer + graphOffset);
 			graphOffset += sz_XSCR_pkt;	// Skip scroll offset
 			length -= sz_XSCR_pkt;
 		} else if (*data & BIT0)
@@ -1031,7 +1031,7 @@ void BMVPlayer::CopyMovieToScreen() {
 	// The movie surface is slightly less high than the output screen (429 rows versus 432).
 	// Because of this, there's some extra line clearing above and below the displayed area
 	int yStart = (SCREEN_HEIGHT - SCREEN_HIGH) / 2;
-	memset(_vm->screen().getBasePtr(0, 0), 0, yStart * SCREEN_WIDTH);
+	memset(_vm->screen().getPixels(), 0, yStart * SCREEN_WIDTH);
 	memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH);
 	memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0,
 		(SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH);

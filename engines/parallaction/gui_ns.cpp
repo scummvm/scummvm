@@ -787,7 +787,7 @@ public:
 		}
 
 		destroyLabels();
-		_engineFlags &= ~kEngineBlockInput;
+		g_engineFlags &= ~kEngineBlockInput;
 		return _helper->getState("selectcharacter");
 	}
 

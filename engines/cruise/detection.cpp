@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -34,21 +32,12 @@ namespace Cruise {
 
 struct CRUISEGameDescription {
 	ADGameDescription desc;
-
-	int gameType;
-	uint32 features;
 };
 
 const char *CruiseEngine::getGameId() const {
 	return _gameDescription->desc.gameid;
 }
 
-int CruiseEngine::getGameType() const {
-	return _gameDescription->gameType;
-}
-uint32 CruiseEngine::getFeatures() const {
-	return _gameDescription->features;
-}
 Common::Language CruiseEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
@@ -73,12 +62,10 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"16 colors",
 			AD_ENTRY1("D1", "cd29a4cd9162076e9a18495fe56a48f3"),
 			Common::EN_GRB,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -86,12 +73,10 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"16 colors",
 			AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -99,12 +84,10 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"256 colors",
 			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -112,12 +95,10 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"256 colors",
 			AD_ENTRY1("D1", "e258865807ea31b2d523340e6f0a606b"),
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -125,12 +106,10 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"16 colors",
 			AD_ENTRY1("D1", "287d2ec1799e2f881dee23c70be96e81"),
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -138,12 +117,10 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"256 colors",
 			AD_ENTRY1("D1", "f2a26522d49983c4ae32bcccbb801b02"),
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -155,8 +132,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{ // Amiga English US GOLD edition.
 		{
@@ -168,8 +143,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{ // Amiga Italian US GOLD edition.
 		{
@@ -181,8 +154,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{ // AtariST English KixxXL edition.
 		{
@@ -194,8 +165,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -203,12 +172,10 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"256 colors",
 			AD_ENTRY1("D1", "e19a4ab2e24a69087e4ea994a5506231"),
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -216,14 +183,12 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"256 colors",
 			AD_ENTRY1("D1", "9a302ada55600d96061fda1d63a6ccda"),
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
-	{AD_TABLE_END_MARKER, 0, 0}
+	{AD_TABLE_END_MARKER}
 };
 
 }
@@ -295,7 +260,7 @@ void CruiseMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 		Cruise::CruiseEngine::getSavegameFile(slot));
-	
+
 	if (f) {
 		Cruise::CruiseSavegameHeader header;
 		Cruise::readSavegameHeader(f, header);

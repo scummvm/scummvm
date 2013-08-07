@@ -187,12 +187,14 @@ void AgiEngine::oldInputMode() {
 }
 
 // If main_cycle returns false, don't process more events!
-int AgiEngine::mainCycle() {
+int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	unsigned int key, kascii;
 	VtEntry *v = &_game.viewTable[0];
 
-	pollTimer();
-	updateTimer();
+	if (!onlyCheckForEvents) {
+		pollTimer();
+		updateTimer();
+	}
 
 	key = doPollKeyboard();
 
@@ -205,7 +207,13 @@ int AgiEngine::mainCycle() {
 		_game.vars[29] = _mouse.y;
 	//}
 
-	if (key == KEY_PRIORITY) {
+	if (key == KEY_STATUSLN) {	// F11
+		_debug.statusline = !_debug.statusline;
+		writeStatus();
+		key = 0;
+	}
+
+	if (key == KEY_PRIORITY) {	// F12
 		_sprites->eraseBoth();
 		_debug.priority = !_debug.priority;
 		_picture->showPic();
@@ -214,14 +222,8 @@ int AgiEngine::mainCycle() {
 		key = 0;
 	}
 
-	if (key == KEY_STATUSLN) {
-		_debug.statusline = !_debug.statusline;
-		writeStatus();
-		key = 0;
-	}
-
 	// Click-to-walk mouse interface
-	if (_game.playerControl && v->flags & fAdjEgoXY) {
+	if (_game.playerControl && (v->flags & fAdjEgoXY)) {
 		int toX = v->parm1;
 		int toY = v->parm2;
 
@@ -289,10 +291,13 @@ int AgiEngine::mainCycle() {
 			break;
 		}
 	} while (restartProcessKey);
-	_gfx->doUpdate();
 
-	if (_game.msgBoxTicks > 0)
-		_game.msgBoxTicks--;
+	if (!onlyCheckForEvents) {
+		_gfx->doUpdate();
+
+		if (_game.msgBoxTicks > 0)
+			_game.msgBoxTicks--;
+	}
 
 	return true;
 }
@@ -412,7 +417,7 @@ int AgiEngine::runGame() {
 			else
 				setvar(vSoundgen, kAgiSoundTandy);
 			break;
-		case Common::kPlatformPC:
+		case Common::kPlatformDOS:
 		default:
 			setvar(vComputer, kAgiComputerPC);
 			setvar(vSoundgen, kAgiSoundPC);

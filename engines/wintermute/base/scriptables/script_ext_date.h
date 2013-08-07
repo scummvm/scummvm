@@ -40,7 +40,7 @@ public:
 	DECLARE_PERSISTENT(SXDate, BaseScriptable)
 	SXDate(BaseGame *inGame, ScStack *Stack);
 	virtual ~SXDate();
-	ScValue *scGetProperty(const char *name);
+	ScValue *scGetProperty(const Common::String &name);
 	bool scSetProperty(const char *name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
@@ -49,6 +49,6 @@ private:
 	Common::String _strRep;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

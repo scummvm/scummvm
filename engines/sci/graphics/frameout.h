@@ -97,11 +97,18 @@ struct ScrollTextEntry {
 
 typedef Common::Array<ScrollTextEntry> ScrollTextList;
 
+enum ViewScaleSignals32 {
+	kScaleSignalDoScaling32				= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
+	kScaleSignalUnk1					= 0x0002, // unknown
+	kScaleSignalDisableGlobalScaling32	= 0x0004
+};
+
 class GfxCache;
 class GfxCoordAdjuster32;
 class GfxPaint32;
 class GfxPalette;
 class GfxScreen;
+
 /**
  * Frameout class, kFrameout and relevant functions for SCI32 games
  */
@@ -113,6 +120,7 @@ public:
 	void kernelAddPlane(reg_t object);
 	void kernelUpdatePlane(reg_t object);
 	void kernelDeletePlane(reg_t object);
+	void applyGlobalScaling(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 celHeight);
 	void kernelAddScreenItem(reg_t object);
 	void kernelUpdateScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);

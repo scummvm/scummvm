@@ -58,7 +58,7 @@ RPZADecoder::~RPZADecoder() {
 
 #define PUT_PIXEL(color) \
 	if ((int32)blockPtr < _surface->w * _surface->h) \
-		WRITE_UINT16((uint16 *)_surface->pixels + blockPtr, color); \
+		WRITE_UINT16((uint16 *)_surface->getPixels() + blockPtr, color); \
 	blockPtr++
 
 const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {
@@ -163,7 +163,7 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 				blockPtr = rowPtr + pixelPtr;
 				for (byte pixel_y = 0; pixel_y < 4; pixel_y++) {
 					byte index = stream->readByte();
-					for (byte pixel_x = 0; pixel_x < 4; pixel_x++){
+					for (byte pixel_x = 0; pixel_x < 4; pixel_x++) {
 						byte idx = (index >> (2 * (3 - pixel_x))) & 0x03;
 						PUT_PIXEL(color4[idx]);
 					}
@@ -177,7 +177,7 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 		case 0x00:
 			blockPtr = rowPtr + pixelPtr;
 			for (byte pixel_y = 0; pixel_y < 4; pixel_y++) {
-				for (byte pixel_x = 0; pixel_x < 4; pixel_x++){
+				for (byte pixel_x = 0; pixel_x < 4; pixel_x++) {
 					// We already have color of upper left pixel
 					if (pixel_y != 0 || pixel_x != 0)
 						colorA = stream->readUint16BE();

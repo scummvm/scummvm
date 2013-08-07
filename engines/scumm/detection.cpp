@@ -242,6 +242,10 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 	return result;
 }
 
+bool ScummEngine::isMacM68kIMuse() const {
+	return _game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && !(_game.features & GF_MAC_CONTAINER);
+}
+
 struct DetectorDesc {
 	Common::FSNode node;
 	Common::String md5;
@@ -473,6 +477,11 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 				if (dr.language == UNK_LANG) {
 					dr.language = detectLanguage(fslist, dr.game.id);
 				}
+
+				// HACK: Detect between 68k and PPC versions
+				if (dr.game.platform == Common::kPlatformMacintosh && dr.game.version >= 5 && dr.game.heversion == 0 && strstr(gfp->pattern, "Data"))
+					dr.game.features |= GF_MAC_CONTAINER;
+
 				break;
 			}
 		}
@@ -954,7 +963,7 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	}
 
 	// Append the platform, if a non-standard one has been specified.
-	if (x.game.platform != Common::kPlatformPC && x.game.platform != Common::kPlatformUnknown) {
+	if (x.game.platform != Common::kPlatformDOS && x.game.platform != Common::kPlatformUnknown) {
 		// HACK: For CoMI, it's pointless to encode the fact that it's for Windows
 		if (x.game.id != GID_CMI)
 			res = res + "-" + Common::getPlatformAbbrev(x.game.platform);

@@ -44,6 +44,6 @@ public:
 	static AnsiString getExtension(const AnsiString &path);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

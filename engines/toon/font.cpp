@@ -116,15 +116,15 @@ void FontRenderer::computeSize(const Common::String &origText, int16 *retX, int1
 	const byte *text = (const byte *)origText.c_str();
 	while (*text) {
 		byte curChar = *text;
-		if (curChar < 32) {
-			text++;
-			continue;
-		} else if (curChar == 13) {
+		if (curChar == 13) {
 			totalWidth = MAX(totalWidth, lineWidth);
 			totalHeight += lineHeight;
 			lineHeight = 0;
 			lineWidth = 0;
 			lastLineHeight = 0;
+		} else if (curChar < 32) {
+			text++;
+			continue;
 		} else {
 			curChar = textToFont(curChar);
 			int16 charWidth = _currentFont->getFrameWidth(curChar) - 1;

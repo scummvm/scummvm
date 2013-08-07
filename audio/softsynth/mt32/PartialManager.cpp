@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +20,7 @@
 #include "mt32emu.h"
 #include "PartialManager.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 PartialManager::PartialManager(Synth *useSynth, Part **useParts) {
 	synth = useSynth;
@@ -148,7 +148,7 @@ bool PartialManager::abortFirstPolyPreferHeldWhereReserveExceeded(int minPart) {
 bool PartialManager::freePartials(unsigned int needed, int partNum) {
 	// CONFIRMED: Barring bugs, this matches the real LAPC-I according to information from Mok.
 
-	// BUG: There's a bug in the LAPC-I implementation: 
+	// BUG: There's a bug in the LAPC-I implementation:
 	// When allocating for rhythm part, or when allocating for a part that is using fewer partials than it has reserved,
 	// held and playing polys on the rhythm part can potentially be aborted before releasing polys on the rhythm part.
 	// This bug isn't present on MT-32.
@@ -247,4 +247,6 @@ const Partial *PartialManager::getPartial(unsigned int partialNum) const {
 		return NULL;
 	}
 	return partialTable[partialNum];
+}
+
 }

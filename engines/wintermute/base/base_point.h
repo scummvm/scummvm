@@ -39,12 +39,12 @@ public:
 	DECLARE_PERSISTENT(BasePoint, BaseClass)
 	BasePoint();
 	BasePoint(int initX, int initY);
-	int y;
-	int x;
+	int32 y;
+	int32 x;
 	virtual ~BasePoint();
 
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

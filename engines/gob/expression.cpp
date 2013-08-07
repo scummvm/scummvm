@@ -21,6 +21,7 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
 
 #include "gob/gob.h"
 #include "gob/expression.h"
@@ -491,7 +492,7 @@ int Expression::cmpHelper(const StackFrame &stackFrame) {
 		cmpTemp = (int)stackFrame.values[-3] - (int)stackFrame.values[-1];
 	} else if (type == OP_LOAD_IMM_STR) {
 		if ((char *)decodePtr(stackFrame.values[-3]) != _resultStr) {
-			strcpy(_resultStr, (char *)decodePtr(stackFrame.values[-3]));
+			Common::strlcpy(_resultStr, (char *)decodePtr(stackFrame.values[-3]), sizeof(_resultStr));
 			stackFrame.values[-3] = encodePtr((byte *)_resultStr, kResStr);
 		}
 		cmpTemp = strcmp(_resultStr, (char *)decodePtr(stackFrame.values[-1]));
@@ -795,10 +796,10 @@ void Expression::simpleArithmetic1(StackFrame &stackFrame) {
 	case OP_ADD:
 		if (stackFrame.opers[-2] == OP_LOAD_IMM_STR) {
 			if ((char *)decodePtr(stackFrame.values[-2]) != _resultStr) {
-				strcpy(_resultStr, (char *)decodePtr(stackFrame.values[-2]));
+				Common::strlcpy(_resultStr, (char *)decodePtr(stackFrame.values[-2]), sizeof(_resultStr));
 				stackFrame.values[-2] = encodePtr((byte *)_resultStr, kResStr);
 			}
-			strcat(_resultStr, (char *)decodePtr(stackFrame.values[0]));
+			Common::strlcat(_resultStr, (char *)decodePtr(stackFrame.values[0]), sizeof(_resultStr));
 			stackFrame.pop(2);
 		}
 		break;
@@ -871,11 +872,11 @@ bool Expression::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 b
 			stack.values[brackStart] += stackFrame.values[-1];
 		} else if (stack.opers[brackStart] == OP_LOAD_IMM_STR) {
 			if ((char *)decodePtr(stack.values[brackStart]) != _resultStr) {
-				strcpy(_resultStr, (char *)decodePtr(stack.values[brackStart]));
+				Common::strlcpy(_resultStr, (char *)decodePtr(stack.values[brackStart]), sizeof(_resultStr));
 				stack.values[brackStart] =
 					encodePtr((byte *)_resultStr, kResStr);
 			}
-			strcat(_resultStr, (char *)decodePtr(stackFrame.values[-1]));
+			Common::strlcat(_resultStr, (char *)decodePtr(stackFrame.values[-1]), sizeof(_resultStr));
 		}
 		stackFrame.pop(2);
 		break;
@@ -980,7 +981,7 @@ void Expression::getResult(byte operation, int32 value, byte *type) {
 
 	case OP_LOAD_IMM_STR:
 		if ((char *)decodePtr(value) != _resultStr)
-			strcpy(_resultStr, (char *)decodePtr(value));
+			Common::strlcpy(_resultStr, (char *)decodePtr(value), sizeof(_resultStr));
 		break;
 
 	case OP_LOAD_VAR_INT32:
@@ -1109,10 +1110,10 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 						stackFrame.values[-3] += stackFrame.values[-1];
 					} else if (stackFrame.opers[-3] == OP_LOAD_IMM_STR) {
 						if ((char *)decodePtr(stackFrame.values[-3]) != _resultStr) {
-							strcpy(_resultStr, (char *)decodePtr(stackFrame.values[-3]));
+							Common::strlcpy(_resultStr, (char *)decodePtr(stackFrame.values[-3]), sizeof(_resultStr));
 							stackFrame.values[-3] = encodePtr((byte *)_resultStr, kResStr);
 						}
-						strcat(_resultStr, (char *)decodePtr(stackFrame.values[-1]));
+						Common::strlcat(_resultStr, (char *)decodePtr(stackFrame.values[-1]), sizeof(_resultStr));
 					}
 					stackFrame.pop(2);
 

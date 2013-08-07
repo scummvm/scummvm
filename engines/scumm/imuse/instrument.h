@@ -52,7 +52,8 @@ public:
 		itProgram = 1,
 		itAdLib = 2,
 		itRoland = 3,
-		itPcSpk = 4
+		itPcSpk = 4,
+		itMacSfx = 5
 	};
 
 	Instrument() : _type(0), _instrument(0) { }
@@ -72,6 +73,7 @@ public:
 	void adlib(const byte *instrument);
 	void roland(const byte *instrument);
 	void pcspk(const byte *instrument);
+	void macSfx(byte program);
 
 	byte getType() { return _type; }
 	bool isValid() { return (_instrument ? _instrument->is_valid() : false); }

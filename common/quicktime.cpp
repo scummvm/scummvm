@@ -165,6 +165,8 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readWAVE,    MKTAG('w', 'a', 'v', 'e') },
 		{ &QuickTimeParser::readESDS,    MKTAG('e', 's', 'd', 's') },
 		{ &QuickTimeParser::readSMI,     MKTAG('S', 'M', 'I', ' ') },
+		{ &QuickTimeParser::readDefault, MKTAG('g', 'm', 'h', 'd') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('g', 'm', 'i', 'n') },
 		{ 0, 0 }
 	};
 
@@ -442,7 +444,7 @@ int QuickTimeParser::readELST(Atom atom) {
 
 	uint32 offset = 0;
 
-	for (uint32 i = 0; i < track->editCount; i++){
+	for (uint32 i = 0; i < track->editCount; i++) {
 		track->editList[i].trackDuration = _fd->readUint32BE();
 		track->editList[i].mediaTime = _fd->readSint32BE();
 		track->editList[i].mediaRate = Rational(_fd->readUint32BE(), 0x10000);
@@ -477,6 +479,8 @@ int QuickTimeParser::readHDLR(Atom atom) {
 		track->codecType = CODEC_TYPE_VIDEO;
 	else if (type == MKTAG('s', 'o', 'u', 'n'))
 		track->codecType = CODEC_TYPE_AUDIO;
+	else if (type == MKTAG('m', 'u', 's', 'i'))
+		track->codecType = CODEC_TYPE_MIDI;
 
 	_fd->readUint32BE(); // component manufacture
 	_fd->readUint32BE(); // component flags
@@ -540,7 +544,7 @@ int QuickTimeParser::readSTSD(Atom atom) {
 		_fd->readUint16BE(); // reserved
 		_fd->readUint16BE(); // index
 
-		track->sampleDescs[i] = readSampleDesc(track, format);
+		track->sampleDescs[i] = readSampleDesc(track, format, size - 16);
 
 		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), track->codecType);
 

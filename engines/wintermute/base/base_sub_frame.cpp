@@ -33,10 +33,13 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/graphics/transform_tools.h"
+#include "engines/wintermute/graphics/transform_struct.h"
 
 namespace Wintermute {
 
@@ -44,9 +47,10 @@ IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 
 //////////////////////////////////////////////////////////////////////////
 BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
-	_surface = NULL;
-	_hotspotX = _hotspotY = 0;
-	_alpha = 0xFFFFFFFF;
+	_surface = nullptr;
+	_hotspotX = kDefaultHotspotX;
+	_hotspotY = kDefaultHotspotY;
+	_alpha = kDefaultRgbaMod;
 	_transparent = 0xFFFF00FF;
 
 	_wantsDefaultRect = false;
@@ -54,7 +58,7 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 
 	_editorSelected = false;
 
-	_surfaceFilename = NULL;
+	_surfaceFilename = nullptr;
 	_cKDefault = true;
 	_cKRed = _cKBlue = _cKGreen = 0;
 	_lifeTime = -1;
@@ -73,7 +77,7 @@ BaseSubFrame::~BaseSubFrame() {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
 	}
 	delete[] _surfaceFilename;
-	_surfaceFilename = NULL;
+	_surfaceFilename = nullptr;
 }
 
 
@@ -118,10 +122,10 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
 	BasePlatform::setRectEmpty(&rect);
-	char *surfaceFile = NULL;
+	char *surfaceFile = nullptr;
 
 	delete _surface;
-	_surface = NULL;
+	_surface = nullptr;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -180,11 +184,11 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in SUBFRAME definition");
+		BaseEngine::LOG(0, "Syntax error in SUBFRAME definition");
 		return STATUS_FAILED;
 	}
 
-	if (surfaceFile != NULL) {
+	if (surfaceFile != nullptr) {
 		if (custoTrans) {
 			setSurface(surfaceFile, false, r, g, b, lifeTime, keepLoaded);
 		} else {
@@ -198,9 +202,9 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	}
 
 	/*
-	if (_surface == NULL)
+	if (_surface == nullptr)
 	{
-	    _gameRef->LOG(0, "Error parsing sub-frame. Image not set.");
+	    BaseEngine::LOG(0, "Error parsing sub-frame. Image not set.");
 	    return STATUS_FAILED;
 	}
 	*/
@@ -226,38 +230,54 @@ void BaseSubFrame::setRect(Rect32 rect) {
 	_rect = rect;
 }
 
+const char* BaseSubFrame::getSurfaceFilename() {
+	return _surfaceFilename;
+}
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
+	
+	rotate = fmod(rotate, 360.0f);
+	if (rotate < 0) {
+		rotate += 360.0f;
+	}
+
 	if (!_surface) {
 		return STATUS_OK;
 	}
 
-	if (registerOwner != NULL && !_decoration) {
-		if (zoomX == 100 && zoomY == 100) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
+	if (registerOwner != nullptr && !_decoration) {
+		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
+			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
+			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
-	if (_gameRef->_suspendedRendering) {
+	if (_gameRef->getSuspendedRendering()) {
 		return STATUS_OK;
 	}
 
 	bool res;
 
 	//if (Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
-	if (_alpha != 0xFFFFFFFF) {
+	if (_alpha != kDefaultRgbaMod) {
 		alpha = _alpha;
 	}
 
-	if (rotate != 0.0f) {
-		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
+	if (rotate != kDefaultAngle) {
+		Point32 boxOffset, rotatedHotspot, hotspotOffset, newOrigin;
+		Point32 origin(x, y);
+		Rect32 oldRect = getRect();
+		Point32 newHotspot;
+		TransformStruct transform = TransformStruct(zoomX, zoomY, rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
+		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
+		newOrigin = origin - newHotspot;
+		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
 	} else {
-		if (zoomX == 100 && zoomY == 100) {
+		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
 		} else {
-			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / kDefaultZoomX)), (int)(y - _hotspotY * (zoomY / kDefaultZoomY)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 		}
 	}
 
@@ -423,7 +443,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 				_gameRef->_surfaceStorage->removeSurface(_surface);
 			}
 			delete[] _surfaceFilename;
-			_surfaceFilename = NULL;
+			_surfaceFilename = nullptr;
 			stack->pushBool(true);
 		} else {
 			const char *filename = val->getString();
@@ -443,7 +463,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseSubFrame::scGetProperty(const char *name) {
+ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
 		_scValue = new ScValue(_gameRef);
 	}
@@ -452,7 +472,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("subframe");
 		return _scValue;
 	}
@@ -460,7 +480,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AlphaColor") == 0) {
+	else if (name == "AlphaColor") {
 
 		_scValue->setInt((int)_alpha);
 		return _scValue;
@@ -469,7 +489,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TransparentColor (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TransparentColor") == 0) {
+	else if (name == "TransparentColor") {
 		_scValue->setInt((int)_transparent);
 		return _scValue;
 	}
@@ -477,7 +497,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Is2DOnly") == 0) {
+	else if (name == "Is2DOnly") {
 		_scValue->setBool(_2DOnly);
 		return _scValue;
 	}
@@ -485,7 +505,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Is3DOnly") == 0) {
+	else if (name == "Is3DOnly") {
 		_scValue->setBool(_3DOnly);
 		return _scValue;
 	}
@@ -493,7 +513,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MirrorX") == 0) {
+	else if (name == "MirrorX") {
 		_scValue->setBool(_mirrorX);
 		return _scValue;
 	}
@@ -501,7 +521,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MirrorY") == 0) {
+	else if (name == "MirrorY") {
 		_scValue->setBool(_mirrorY);
 		return _scValue;
 	}
@@ -509,7 +529,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Decoration") == 0) {
+	else if (name == "Decoration") {
 		_scValue->setBool(_decoration);
 		return _scValue;
 	}
@@ -517,7 +537,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HotspotX") == 0) {
+	else if (name == "HotspotX") {
 		_scValue->setInt(_hotspotX);
 		return _scValue;
 	}
@@ -525,7 +545,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HotspotY") == 0) {
+	else if (name == "HotspotY") {
 		_scValue->setInt(_hotspotY);
 		return _scValue;
 	} else {
@@ -614,11 +634,11 @@ const char *BaseSubFrame::scToString() {
 bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
-		_surface = NULL;
+		_surface = nullptr;
 	}
 
 	delete[] _surfaceFilename;
-	_surfaceFilename = NULL;
+	_surfaceFilename = nullptr;
 
 	_surface = _gameRef->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
@@ -642,7 +662,7 @@ bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, by
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurfaceSimple() {
 	if (!_surfaceFilename) {
-		_surface = NULL;
+		_surface = nullptr;
 		return STATUS_OK;
 	}
 	_surface = _gameRef->_surfaceStorage->addSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
@@ -653,4 +673,4 @@ bool BaseSubFrame::setSurfaceSimple() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

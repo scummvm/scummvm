@@ -78,7 +78,7 @@ endif
 $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
-distclean: clean
+distclean: clean clean-devtools
 	$(RM) config.h config.mk config.log
 
 clean:
@@ -171,7 +171,7 @@ ifeq ($(origin VER_REV), undefined)
 # Are there uncommitted changes? (describe --dirty is only available since 1.6.6)
 VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/null 2>&1; git diff-index --quiet HEAD || echo "-dirty")
 # Get the working copy base revision
-VER_REV := $(shell cd $(srcdir); git describe --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
+VER_REV := $(shell cd $(srcdir); git describe --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
 GITROOT := git://github.com/scummvm/scummvm.git
@@ -253,6 +253,12 @@ endif
 ifdef ENABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
 endif
+ifdef ENABLE_MORTEVIELLE
+DIST_FILES_ENGINEDATA+=mort.dat
+endif
+ifdef ENABLE_NEVERHOOD
+DIST_FILES_ENGINEDATA+=neverhood.dat
+endif
 ifdef ENABLE_QUEEN
 DIST_FILES_ENGINEDATA+=queen.tbl
 endif
@@ -262,8 +268,14 @@ endif
 ifdef ENABLE_TEENAGENT
 DIST_FILES_ENGINEDATA+=teenagent.dat
 endif
+ifdef ENABLE_TONY
+DIST_FILES_ENGINEDATA+=tony.dat
+endif
 ifdef ENABLE_TOON
 DIST_FILES_ENGINEDATA+=toon.dat
+endif
+ifdef ENABLE_WINTERMUTE
+DIST_FILES_ENGINEDATA+=wintermute.zip
 endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 

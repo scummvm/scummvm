@@ -38,14 +38,15 @@ class BaseSubFrame;
 class UITiledImage : public BaseObject {
 public:
 	DECLARE_PERSISTENT(UITiledImage, BaseObject)
-	void correctSize(int *width, int *height);
+	void correctSize(int32 *width, int32 *height);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	bool display(int x, int y, int width, int height);
-	UITiledImage(BaseGame *inGame = NULL);
+	UITiledImage(BaseGame *inGame = nullptr);
 	virtual ~UITiledImage();
+private:
 	BaseSubFrame *_image;
 	Rect32 _upLeft;
 	Rect32 _upMiddle;
@@ -58,6 +59,6 @@ public:
 	Rect32 _downRight;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

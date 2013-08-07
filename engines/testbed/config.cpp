@@ -304,4 +304,4 @@ void TestbedConfigManager::selectTestsuites() {
 	_configFileInterface.clear();
 }
 
-}	// End of namespace Testbed
+} // End of namespace Testbed

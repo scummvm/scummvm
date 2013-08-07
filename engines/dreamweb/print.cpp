@@ -49,7 +49,9 @@ uint8 DreamWebEngine::getNextWord(const GraphicsFile &charSet, const uint8 *stri
 			return 0;
 		}
 		firstChar = modifyChar(firstChar);
-		if (firstChar != 255) {
+		// WORKAROUND: Also filter out invalid characters here (refer to the
+		// workaround in printChar() below for more info).
+		if (firstChar >= 32 && firstChar != 255) {
 			uint8 secondChar = *string;
 			uint8 width = charSet._frames[firstChar - 32 + _charShift].width;
 			width = kernChars(firstChar, secondChar, width);
@@ -59,7 +61,11 @@ uint8 DreamWebEngine::getNextWord(const GraphicsFile &charSet, const uint8 *stri
 }
 
 void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
-	if (c == 255)
+	// WORKAROUND: Some texts contain leftover tab characters, which will cause
+	// OOB memory access when showing a character, as all the printable ones are
+	// from 32 onwards. We compensate for that here by ignoring all the invalid
+	// characters (0 - 31).
+	if (c < 32 || c == 255)
 		return;
 
 	uint8 dummyWidth, dummyHeight;
@@ -212,7 +218,7 @@ const char *DreamWebEngine::monPrint(const char *string) {
 	while (!done) {
 
 		uint16 count = getNumber(_monitorCharset, (const uint8 *)iterator, 166, false, &x);
-		do {	
+		do {
 			char c = *iterator++;
 			if (c == ':')
 				break;
@@ -315,7 +321,7 @@ void DreamWebEngine::rollEndCreditsGameLost() {
 			waitForVSync();
 			multiDump(25, 20, 160, 160);
 
-			if (_lastHardKey == 1)
+			if (_lastHardKey == Common::KEYCODE_ESCAPE)
 				return;
 		}
 
@@ -325,7 +331,7 @@ void DreamWebEngine::rollEndCreditsGameLost() {
 			c = *string++;
 		} while (c != ':' && c != 0);
 
-		if (_lastHardKey == 1)
+		if (_lastHardKey == Common::KEYCODE_ESCAPE)
 			return;
 	}
 

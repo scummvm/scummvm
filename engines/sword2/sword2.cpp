@@ -144,22 +144,52 @@ GameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor(g->gameid, g->description);
 }
 
-GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
+bool isFullGame(const Common::FSList &fslist) {
+	Common::FSList::const_iterator file;
+
+	// We distinguish between the two versions by the presense of paris.clu
+	for (file = fslist.begin(); file != fslist.end(); ++file) {
+		if (!file->isDirectory()) {
+			if (file->getName().equalsIgnoreCase("paris.clu"))
+				return true;
+		}
+	}
+
+	return false;
+}
+
+GameList detectGamesImpl(const Common::FSList &fslist, bool recursion = false) {
 	GameList detectedGames;
 	const Sword2::GameSettings *g;
 	Common::FSList::const_iterator file;
-
-	// TODO: It would be nice if we had code here which distinguishes
-	// between the 'sword2' and 'sword2demo' targets. The current code
-	// can't do that since they use the same detectname.
+	bool isFullVersion = isFullGame(fslist);
 
 	for (g = Sword2::sword2_settings; g->gameid; ++g) {
 		// Iterate over all files in the given directory
 		for (file = fslist.begin(); file != fslist.end(); ++file) {
 			if (!file->isDirectory()) {
-				const char *fileName = file->getName().c_str();
+				// The required game data files can be located in the game directory, or in
+				// a subdirectory called "clusters". In the latter case, we don't want to
+				// detect the game in that subdirectory, as this will detect the game twice
+				// when mass add is searching inside a directory. In this case, the first
+				// result (the game directory) will be correct, but the second result (the
+				// clusters subdirectory) will be wrong, as the optional speech, music and
+				// video data files will be ignored. Note that this fix will skip the game
+				// data files if the user has placed them inside a "clusters" subdirectory,
+				// or if he/she points ScummVM directly to the "clusters" directory of the
+				// game CD. Fixes bug #3049336.
+				Common::String directory = file->getParent().getName();
+				directory.toLowercase();
+				if (directory.hasPrefix("clusters") && directory.size() <= 9 && !recursion)
+					continue;
 
-				if (0 == scumm_stricmp(g->detectname, fileName)) {
+				if (file->getName().equalsIgnoreCase(g->detectname)) {
+					// Make sure that the sword2 demo is not mixed up with the
+					// full version, since they use the same filename for detection
+					if ((g->features == Sword2::GF_DEMO && isFullVersion) ||
+						(g->features == 0 && !isFullVersion))
+						continue;
+
 					// Match found, add to list of candidates, then abort inner loop.
 					detectedGames.push_back(GameDescriptor(g->gameid, g->description, Common::UNK_LANG, Common::kPlatformUnknown, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 					break;
@@ -174,12 +204,10 @@ GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 		// present e.g. if the user copied the data straight from CD.
 		for (file = fslist.begin(); file != fslist.end(); ++file) {
 			if (file->isDirectory()) {
-				const char *fileName = file->getName().c_str();
-
-				if (0 == scumm_stricmp("clusters", fileName)) {
+				if (file->getName().equalsIgnoreCase("clusters")) {
 					Common::FSList recList;
 					if (file->getChildren(recList, Common::FSNode::kListAll)) {
-						GameList recGames(detectGames(recList));
+						GameList recGames(detectGamesImpl(recList, true));
 						if (!recGames.empty()) {
 							detectedGames.push_back(recGames);
 							break;
@@ -192,6 +220,10 @@ GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 
 
 	return detectedGames;
+}
+
+GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
+	return detectGamesImpl(fslist);
 }
 
 SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
@@ -282,7 +314,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psx") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		Sword2Engine::_platform = Common::kPlatformPSX;
 	else
-		Sword2Engine::_platform = Common::kPlatformPC;
+		Sword2Engine::_platform = Common::kPlatformWindows;
 
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
@@ -418,7 +450,7 @@ Common::Error Sword2Engine::run() {
 
 	_debugger = new Debugger(this);
 
-	_memory = new MemoryManager(this);
+	_memory = new MemoryManager();
 	_resman = new ResourceManager(this);
 
 	if (!_resman->init())

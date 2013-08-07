@@ -43,7 +43,7 @@ IMPLEMENT_PERSISTENT(UIEntity, false)
 //////////////////////////////////////////////////////////////////////////
 UIEntity::UIEntity(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_CUSTOM;
-	_entity = NULL;
+	_entity = nullptr;
 }
 
 
@@ -52,14 +52,14 @@ UIEntity::~UIEntity() {
 	if (_entity) {
 		_gameRef->unregisterObject(_entity);
 	}
-	_entity = NULL;
+	_entity = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -223,7 +223,7 @@ bool UIEntity::setEntity(const char *filename) {
 	_entity = new AdEntity(_gameRef);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
 		delete _entity;
-		_entity = NULL;
+		_entity = nullptr;
 		return STATUS_FAILED;
 	} else {
 		_entity->_nonIntMouseEvents = true;
@@ -305,13 +305,13 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIEntity::scGetProperty(const char *name) {
+ScValue *UIEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("entity container");
 		return _scValue;
 	}
@@ -319,7 +319,7 @@ ScValue *UIEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Freezable") == 0) {
+	else if (name == "Freezable") {
 		if (_entity) {
 			_scValue->setBool(_entity->_freezable);
 		} else {
@@ -359,8 +359,8 @@ bool UIEntity::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_entity));
+	persistMgr->transferPtr(TMEMBER_PTR(_entity));
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

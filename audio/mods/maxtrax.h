@@ -214,6 +214,6 @@ private:
 	static void outPutEvent(const Event &ev, int num = -1);
 	static void outPutScore(const Score &sc, int num = -1);
 };
-}	// End of namespace Audio
+} // End of namespace Audio
 
 #endif // !defined(AUDIO_MODS_MAXTRAX_H)

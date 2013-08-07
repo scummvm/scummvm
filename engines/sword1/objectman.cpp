@@ -107,7 +107,7 @@ char *ObjectMan::lockText(uint32 textId) {
 				warning("Missing translation for textId %u (\"%s\")", textId, text);
 			unlockText(textId, BS1_ENGLISH);
 		}
-		
+
 		return _missingSubTitleStr;
 	}
 	return text;
@@ -164,7 +164,7 @@ char *ObjectMan::lockText(uint32 textId, uint8 lang) {
 		// We use the hardcoded text in this case.
 		if (textId == 2950145)
 			return const_cast<char *>(_translationId2950145[lang]);
-		
+
 		warning("ObjectMan::lockText(%d): text number has no text lines", textId);
 		return NULL;
 	}

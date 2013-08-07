@@ -23,6 +23,7 @@
 #include "graphics/scaler.h"
 #include "graphics/colormasks.h"
 #include "common/endian.h"
+#include "common/algorithm.h"
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -30,19 +31,28 @@
 namespace Graphics {
 
 namespace {
-#define THMB_VERSION 1
+#define THMB_VERSION 2
 
 struct ThumbnailHeader {
 	uint32 type;
 	uint32 size;
 	byte version;
 	uint16 width, height;
-	byte bpp;
+	PixelFormat format;
 };
 
-#define ThumbnailHeaderSize (4+4+1+2+2+1)
+#define ThumbnailHeaderSize (4+4+1+2+2+(1+4+4))
 
-bool loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool outputWarnings) {
+enum HeaderState {
+	/// There is no header present
+	kHeaderNone,
+	/// The header present only has reliable values for version and size
+	kHeaderUnsupported,
+	/// The header is present and the version is supported
+	kHeaderPresent
+};
+
+HeaderState loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool outputWarnings) {
 	header.type = in.readUint32BE();
 	// We also accept the bad 'BMHT' header here, for the sake of compatibility
 	// with some older savegames which were written incorrectly due to a bug in
@@ -50,23 +60,58 @@ bool loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool ou
 	if (header.type != MKTAG('T','H','M','B') && header.type != MKTAG('B','M','H','T')) {
 		if (outputWarnings)
 			warning("couldn't find thumbnail header type");
-		return false;
+		return kHeaderNone;
 	}
 
 	header.size = in.readUint32BE();
 	header.version = in.readByte();
 
+	// Do a check whether any read errors had occured. If so we cannot use the
+	// values obtained for size and version because they might be bad.
+	if (in.err() || in.eos()) {
+		// TODO: We fake that there is no header. This is actually not quite
+		// correct since we found the start of the header and then things
+		// started to break. Right no we leave detection of this to the client.
+		// Since this case is caused by broken files, the client code should
+		// catch it anyway... If there is a nicer solution here, we should
+		// implement it.
+		return kHeaderNone;
+	}
+
 	if (header.version > THMB_VERSION) {
 		if (outputWarnings)
 			warning("trying to load a newer thumbnail version: %d instead of %d", header.version, THMB_VERSION);
-		return false;
+		return kHeaderUnsupported;
 	}
 
 	header.width = in.readUint16BE();
 	header.height = in.readUint16BE();
-	header.bpp = in.readByte();
+	header.format.bytesPerPixel = in.readByte();
+	// Starting from version 2 on we serialize the whole PixelFormat.
+	if (header.version >= 2) {
+		header.format.rLoss = in.readByte();
+		header.format.gLoss = in.readByte();
+		header.format.bLoss = in.readByte();
+		header.format.aLoss = in.readByte();
 
-	return true;
+		header.format.rShift = in.readByte();
+		header.format.gShift = in.readByte();
+		header.format.bShift = in.readByte();
+		header.format.aShift = in.readByte();
+	} else {
+		// Version 1 used a hardcoded RGB565.
+		header.format = createPixelFormat<565>();
+	}
+
+	if (in.err() || in.eos()) {
+		// When we reached this point we know that at least the size and
+		// version field was loaded successfully, thus we tell this header
+		// is not supported and silently hope that the client code is
+		// prepared to handle read errors.
+		return kHeaderUnsupported;
+	} else {
+		return kHeaderPresent;
+	}
 }
 } // end of anonymous namespace
 
@@ -74,7 +119,12 @@ bool checkThumbnailHeader(Common::SeekableReadStream &in) {
 	uint32 position = in.pos();
 	ThumbnailHeader header;
 
-	bool hasHeader = loadHeader(in, header, false);
+	// TODO: It is not clear whether this is the best semantics. Now
+	// checkThumbnailHeader will return true even when the thumbnail header
+	// found is actually not usable. However, most engines seem to use this
+	// to detect the presence of any header and if there is none it wont even
+	// try to skip it. Thus, this looks like the best solution for now...
+	bool hasHeader = (loadHeader(in, header, false) != kHeaderNone);
 
 	in.seek(position, SEEK_SET);
 
@@ -85,7 +135,9 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	uint32 position = in.pos();
 	ThumbnailHeader header;
 
-	if (!loadHeader(in, header, false)) {
+	// We can skip unsupported and supported headers. So we only seek back
+	// to the old position in case there is no header at all.
+	if (loadHeader(in, header, false) == kHeaderNone) {
 		in.seek(position, SEEK_SET);
 		return false;
 	}
@@ -95,31 +147,52 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 }
 
 Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
+	const uint32 position = in.pos();
 	ThumbnailHeader header;
+	HeaderState headerState = loadHeader(in, header, true);
 
-	if (!loadHeader(in, header, true))
+	// Try to handle unsupported/broken headers gracefully. If there is no
+	// header at all, we seek back and return at this point. If there is an
+	// unsupported/broken header, we skip the actual data and return. The
+	// downside is that we might reset the end of stream flag with this and
+	// the client code would not be able to notice a read past the end of the
+	// stream at this point then.
+	if (headerState == kHeaderNone) {
+		in.seek(position, SEEK_SET);
 		return 0;
-
-	if (header.bpp != 2) {
-		warning("trying to load thumbnail with unsupported bit depth %d", header.bpp);
+	} else if (headerState == kHeaderUnsupported) {
+		in.seek(header.size - (in.pos() - position), SEEK_CUR);
 		return 0;
 	}
 
-	Graphics::PixelFormat format = g_system->getOverlayFormat();
+	if (header.format.bytesPerPixel != 2 && header.format.bytesPerPixel != 4) {
+		warning("trying to load thumbnail with unsupported bit depth %d", header.format.bytesPerPixel);
+		return 0;
+	}
+
 	Graphics::Surface *const to = new Graphics::Surface();
-	to->create(header.width, header.height, format);
+	to->create(header.width, header.height, header.format);
 
-	OverlayColor *pixels = (OverlayColor *)to->pixels;
 	for (int y = 0; y < to->h; ++y) {
-		for (int x = 0; x < to->w; ++x) {
-			uint8 r, g, b;
-			colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
+		switch (header.format.bytesPerPixel) {
+		case 2: {
+			uint16 *pixels = (uint16 *)to->getBasePtr(0, y);
+			for (uint x = 0; x < to->w; ++x) {
+				*pixels++ = in.readUint16BE();
+			}
+			} break;
 
-			// converting to current OSystem Color
-			*pixels++ = format.RGBToColor(r, g, b);
+		case 4: {
+			uint32 *pixels = (uint32 *)to->getBasePtr(0, y);
+			for (uint x = 0; x < to->w; ++x) {
+				*pixels++ = in.readUint32BE();
+			}
+			} break;
+
+		default:
+			assert(0);
 		}
 	}
-
 	return to;
 }
 
@@ -138,8 +211,8 @@ bool saveThumbnail(Common::WriteStream &out) {
 }
 
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
-	if (thumb.format.bytesPerPixel != 2) {
-		warning("trying to save thumbnail with bpp different than 2");
+	if (thumb.format.bytesPerPixel != 2 && thumb.format.bytesPerPixel != 4) {
+		warning("trying to save thumbnail with bpp %u", thumb.format.bytesPerPixel);
 		return false;
 	}
 
@@ -149,21 +222,98 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	header.version = THMB_VERSION;
 	header.width = thumb.w;
 	header.height = thumb.h;
-	header.bpp = thumb.format.bytesPerPixel;
 
 	out.writeUint32BE(header.type);
 	out.writeUint32BE(header.size);
 	out.writeByte(header.version);
 	out.writeUint16BE(header.width);
 	out.writeUint16BE(header.height);
-	out.writeByte(header.bpp);
 
-	// TODO: for later this shouldn't be casted to uint16...
-	uint16 *pixels = (uint16 *)thumb.pixels;
-	for (uint16 p = 0; p < thumb.w*thumb.h; ++p, ++pixels)
-		out.writeUint16BE(*pixels);
+	// Serialize the PixelFormat
+	out.writeByte(thumb.format.bytesPerPixel);
+	out.writeByte(thumb.format.rLoss);
+	out.writeByte(thumb.format.gLoss);
+	out.writeByte(thumb.format.bLoss);
+	out.writeByte(thumb.format.aLoss);
+	out.writeByte(thumb.format.rShift);
+	out.writeByte(thumb.format.gShift);
+	out.writeByte(thumb.format.bShift);
+	out.writeByte(thumb.format.aShift);
+
+	// Serialize the pixel data
+	for (uint y = 0; y < thumb.h; ++y) {
+		switch (thumb.format.bytesPerPixel) {
+		case 2: {
+			const uint16 *pixels = (const uint16 *)thumb.getBasePtr(0, y);
+			for (uint x = 0; x < thumb.w; ++x) {
+				out.writeUint16BE(*pixels++);
+			}
+			} break;
+
+		case 4: {
+			const uint32 *pixels = (const uint32 *)thumb.getBasePtr(0, y);
+			for (uint x = 0; x < thumb.w; ++x) {
+				out.writeUint32BE(*pixels++);
+			}
+			} break;
+
+		default:
+			assert(0);
+		}
+	}
 
 	return true;
+}
+
+
+/**
+ * Returns an array indicating which pixels of a source image horizontally or vertically get
+ * included in a scaled image
+ */
+int *scaleLine(int size, int srcSize) {
+	int scale = 100 * size / srcSize;
+	assert(scale > 0);
+	int *v = new int[size];
+	Common::fill(v, &v[size], 0);
+
+	int distCtr = 0;
+	int *destP = v;
+	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
+		distCtr += scale;
+		while (distCtr >= 100) {
+			assert(destP < &v[size]);
+			*destP++ = distIndex;
+			distCtr -= 100;
+		}
+	}
+
+	return v;
+}
+
+Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(xSize, ySize, srcImage.format);
+
+	int *horizUsage = scaleLine(xSize, srcImage.w);
+	int *vertUsage = scaleLine(ySize, srcImage.h);
+
+	// Loop to create scaled version
+	for (int yp = 0; yp < ySize; ++yp) {
+		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
+		byte *destP = (byte *)s->getBasePtr(0, yp);
+
+		for (int xp = 0; xp < xSize; ++xp) {
+			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
+			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
+				*destP++ = *tempSrcP++;
+			}
+		}
+	}
+
+	// Delete arrays and return surface
+	delete[] horizUsage;
+	delete[] vertUsage;
+	return s;
 }
 
 } // End of namespace Graphics

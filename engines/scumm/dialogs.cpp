@@ -180,7 +180,7 @@ static const ResString string_map_table_v345[] = {
 	// "Moechten Sie wirklich neu starten?  (J/N)J"
 	// Will react to J as 'Yes'
 	{5, _s("Are you sure you want to restart?  (Y/N)")},
-	// I18N: you may specify 'Yes' symbol at the end of the line. See previous comment 
+	// I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 	{6, _s("Are you sure you want to quit?  (Y/N)")},
 
 	// Added in SCUMM4

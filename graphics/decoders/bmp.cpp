@@ -130,14 +130,14 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
 
 	if (bitsPerPixel == 8) {
-		byte *dst = (byte *)_surface->pixels;
+		byte *dst = (byte *)_surface->getPixels();
 
 		for (int32 i = 0; i < height; i++) {
 			stream.read(dst + (height - i - 1) * width, width);
 			stream.skip(extraDataLength);
 		}
 	} else if (bitsPerPixel == 24) {
-		byte *dst = (byte *)_surface->pixels + (height - 1) * _surface->pitch;
+		byte *dst = (byte *)_surface->getBasePtr(0, height - 1);
 
 		for (int32 i = 0; i < height; i++) {
 			for (uint32 j = 0; j < width; j++) {
@@ -154,8 +154,8 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 			dst -= _surface->pitch * 2;
 		}
 	} else { // 32 bpp
-		byte *dst = (byte *)_surface->pixels + (height - 1) * _surface->pitch;
-		
+		byte *dst = (byte *)_surface->getBasePtr(0, height - 1);
+
 		for (int32 i = 0; i < height; i++) {
 			for (uint32 j = 0; j < width; j++) {
 				byte b = stream.readByte();
@@ -166,11 +166,11 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 				// ref: http://msdn.microsoft.com/en-us/library/windows/desktop/dd183376%28v=vs.85%29.aspx
 				stream.readByte();
 				uint32 color = format.RGBToColor(r, g, b);
-				
+
 				*((uint32 *)dst) = color;
 				dst += format.bytesPerPixel;
 			}
-			
+
 			stream.skip(extraDataLength);
 			dst -= _surface->pitch * 2;
 		}

@@ -78,7 +78,7 @@ enum TinselGameFeatures {
 /**
  * The following is the ScummVM definitions of the various Tinsel versions:
  * TINSEL_V0 - This was an early engine version that was only used in the Discworld 1
- *			demo. It is not currently supported.
+ *			demo.
  * TINSEL_V1 - This was the engine version used by Discworld 1. Note that there were two
  *			major releases: an earlier version that used *.gra files, and a later one that
  *			used *.scn files, and contained certain script and engine bugfixes. In ScummVM,
@@ -135,6 +135,9 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 
 #define READ_16(v) (TinselV1Mac ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
 #define READ_32(v) (TinselV1Mac ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
+#define FROM_16(v) (TinselV1Mac ? FROM_BE_16(v) : FROM_LE_16(v))
+#define FROM_32(v) (TinselV1Mac ? FROM_BE_32(v) : FROM_LE_32(v))
+#define TO_32(v)   (TinselV1Mac ? TO_BE_32(v) : TO_LE_32(v))
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;
@@ -181,7 +184,7 @@ public:
 	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
 	bool getIsADGFDemo() const;
-	bool isCD() const;
+	bool isV1CD() const;
 
 	const char *getSampleIndex(LANGUAGE lang);
 	const char *getSampleFile(LANGUAGE lang);
@@ -223,7 +226,11 @@ public:
 	Graphics::Surface &screen() { return _screenSurface; }
 
 	Common::Point getMousePosition() const { return _mousePos; }
-	void setMousePosition(const Common::Point &pt) {
+	void setMousePosition(Common::Point pt) {
+		// Clip mouse position to be within the screen coordinates
+		pt.x = CLIP<int16>(pt.x, 0, SCREEN_WIDTH - 1);
+		pt.y = CLIP<int16>(pt.y, 0, SCREEN_HEIGHT - 1);
+
 		int yOffset = TinselV2 ? (g_system->getHeight() - _screenSurface.h) / 2 : 0;
 		g_system->warpMouse(pt.x, pt.y + yOffset);
 		_mousePos = pt;

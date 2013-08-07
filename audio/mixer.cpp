@@ -20,6 +20,8 @@
  *
  */
 
+#include "gui/EventRecorder.h"
+
 #include "common/util.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -171,9 +173,9 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-
+// TODO: parameter "system" is unused
 MixerImpl::MixerImpl(OSystem *system, uint sampleRate)
-	: _syst(system), _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
+	: _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 
@@ -427,6 +429,11 @@ void MixerImpl::pauseHandle(SoundHandle handle, bool paused) {
 
 bool MixerImpl::isSoundIDActive(int id) {
 	Common::StackLock lock(_mutex);
+
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.updateSubsystems();
+#endif
+
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->getId() == id)
 			return true;
@@ -443,6 +450,11 @@ int MixerImpl::getSoundID(SoundHandle handle) {
 
 bool MixerImpl::isSoundHandleActive(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
+
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.updateSubsystems();
+#endif
+
 	const int index = handle._val % NUM_CHANNELS;
 	return _channels[index] && _channels[index]->getHandle()._val == handle._val;
 }
@@ -491,7 +503,7 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *stream,
                  DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent)
     : _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
       _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
-      _pauseStartTime(0), _pauseTime(0), _converter(0),
+      _pauseStartTime(0), _pauseTime(0), _converter(0), _volL(0), _volR(0),
       _stream(stream, autofreeStream) {
 	assert(mixer);
 	assert(stream);
@@ -556,12 +568,12 @@ void Channel::pause(bool paused) {
 		_pauseLevel++;
 
 		if (_pauseLevel == 1)
-			_pauseStartTime = g_system->getMillis();
+			_pauseStartTime = g_system->getMillis(true);
 	} else if (_pauseLevel > 0) {
 		_pauseLevel--;
 
 		if (!_pauseLevel) {
-			_pauseTime = (g_system->getMillis() - _pauseStartTime);
+			_pauseTime = (g_system->getMillis(true) - _pauseStartTime);
 			_pauseStartTime = 0;
 		}
 	}
@@ -579,7 +591,7 @@ Timestamp Channel::getElapsedTime() {
 	if (isPaused())
 		delta = _pauseStartTime - _mixerTimeStamp;
 	else
-		delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
+		delta = g_system->getMillis(true) - _mixerTimeStamp - _pauseTime;
 
 	// Convert the number of samples into a time duration.
 
@@ -599,13 +611,12 @@ int Channel::mix(int16 *data, uint len) {
 	assert(_stream);
 
 	int res = 0;
-
 	if (_stream->endOfData()) {
 		// TODO: call drain method
 	} else {
 		assert(_converter);
 		_samplesConsumed = _samplesDecoded;
-		_mixerTimeStamp = g_system->getMillis();
+		_mixerTimeStamp = g_system->getMillis(true);
 		_pauseTime = 0;
 		res = _converter->flow(*_stream, data, len, _volL, _volR);
 		_samplesDecoded += res;

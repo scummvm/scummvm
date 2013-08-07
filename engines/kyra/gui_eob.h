@@ -156,7 +156,7 @@ private:
 	static const uint8 _highlightColorTableEGA[];
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB
 

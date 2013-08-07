@@ -33,7 +33,6 @@
 namespace Toltecs {
 
 Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
-
 	_frontScreen = new byte[268800];
 	_backScreen = new byte[870400];
 
@@ -43,9 +42,11 @@ Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
 
 	// Screen shaking
 	_shakeActive = false;
+	_shakeTime = 0;
 	_shakeCounterInit = 0;
 	_shakeCounter = 0;
 	_shakePos = 0;
+	_shakeTime = 0;
 
 	// Verb line
 	_verbLineNum = 0;
@@ -66,16 +67,13 @@ Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
 	_renderQueue = new RenderQueue(_vm);
 	_fullRefresh = false;
 	_guiRefresh = false;
-
 }
 
 Screen::~Screen() {
-
 	delete[] _frontScreen;
 	delete[] _backScreen;
-	
-	delete _renderQueue;
 
+	delete _renderQueue;
 }
 
 void Screen::unpackRle(byte *source, byte *dest, uint16 width, uint16 height) {
@@ -118,7 +116,6 @@ void Screen::loadMouseCursor(uint resIndex) {
 }
 
 void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
-
 	byte *imageData = _vm->_res->load(resIndex)->data;
 	int16 headerSize = READ_LE_UINT16(imageData);
 	int16 width = imageData[2];
@@ -129,7 +126,7 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 	byte *dest = _frontScreen + x + (y + _vm->_cameraHeight) * 640;
 
 	//debug(0, "Screen::drawGuiImage() x = %d; y = %d; w = %d; h = %d; resIndex = %d", x, y, width, height, resIndex);
-	
+
 	while (workHeight > 0) {
 		int count = 1;
 		byte pixel = *imageData++;
@@ -151,11 +148,11 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 	}
 
 	_guiRefresh = true;
-
 }
 
 void Screen::startShakeScreen(int16 shakeCounter) {
 	_shakeActive = true;
+	_shakeTime = 0;
 	_shakeCounterInit = shakeCounter;
 	_shakeCounter = shakeCounter;
 	_shakePos = 0;
@@ -166,19 +163,22 @@ void Screen::stopShakeScreen() {
 	_vm->_system->setShakePos(0);
 }
 
-void Screen::updateShakeScreen() {
-	if (_shakeActive) {
+bool Screen::updateShakeScreen() {
+	// Assume shaking happens no more often than 50 times per second
+	if (_shakeActive && _vm->_system->getMillis() - _shakeTime >= 20) {
+		_shakeTime = _vm->_system->getMillis();
 		_shakeCounter--;
 		if (_shakeCounter == 0) {
 			_shakeCounter = _shakeCounterInit;
 			_shakePos ^= 8;
 			_vm->_system->setShakePos(_shakePos);
+			return true;
 		}
 	}
+	return false;
 }
 
 void Screen::addStaticSprite(byte *spriteItem) {
-
 	DrawRequest drawRequest;
 	memset(&drawRequest, 0, sizeof(drawRequest));
 
@@ -193,11 +193,9 @@ void Screen::addStaticSprite(byte *spriteItem) {
 	debug(0, "Screen::addStaticSprite() x = %d; y = %d; baseColor = %d; resIndex = %d; flags = %04X", drawRequest.x, drawRequest.y, drawRequest.baseColor, drawRequest.resIndex, drawRequest.flags);
 
 	addDrawRequest(drawRequest);
-
 }
 
 void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, int16 *spriteArray, bool loop, int mode) {
-
 	//debug(0, "Screen::addAnimatedSprite(%d, %d, %d)", x, y, fragmentId);
 
 	DrawRequest drawRequest;
@@ -247,20 +245,13 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 		} else {
 			loopNum |= 0x8000;
 		}
-		
+
 		WRITE_LE_UINT16(spriteItem + 0, loopNum);
 		WRITE_LE_UINT16(spriteItem + 4, frameNum);
-
 	}
-
-}
-
-void Screen::clearSprites() {
-
 }
 
 void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uint16 flags) {
-
 	DrawRequest drawRequest;
 	SpriteDrawItem sprite;
 
@@ -276,11 +267,9 @@ void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uin
 		sprite.y -= _vm->_cameraY;
 		drawSprite(sprite);
 	}
-
 }
 
 void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
-
 	debug(0, "Screen::updateVerbLine() _verbLineNum = %d; _verbLineX = %d; _verbLineY = %d; _verbLineWidth = %d; _verbLineCount = %d",
 		_verbLineNum, _verbLineX, _verbLineY, _verbLineWidth, _verbLineCount);
 
@@ -308,9 +297,9 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	wrapState.len2 = 0;
 
 	y = _verbLineY;
-	
+
 	memset(wrapState.textBuffer, 0, sizeof(wrapState.textBuffer));
-	
+
 	for (int16 i = 0; i <= _verbLineNum; i++) {
 		wrapState.sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
 		len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
@@ -331,30 +320,28 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 			wrapState.sourceString++;
 			wrapState.len1 -= len;
 			wrapState.len2 = len + 1;
-			
-			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
+
+			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y - 1, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 			wrapState.destString = wrapState.textBuffer;
 			wrapState.width = 0;
 			len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
 			wrapState.len1 += len;
-			
+
 			y += 9;
 		}
 		y += 9;
 	}
-	
+
 	wrapState.len1 -= len;
 	wrapState.len2 = len;
 
-	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
+	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y - 1, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 	_guiRefresh = true;
-
 }
 
-void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
-
+void Screen::updateTalkText(int16 slotIndex, int16 slotOffset, bool alwaysDisplayed) {
 	int16 x, y, maxWidth, width, length;
 	byte durationModifier = 1;
 	byte *textData = _vm->_script->getSlotData(slotIndex) + slotOffset;
@@ -363,6 +350,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 
 	item->fontNum = 0;
 	item->color = _talkTextFontColor;
+	item->alwaysDisplayed = alwaysDisplayed;
 
 	x = CLIP<int16>(_talkTextX - _vm->_cameraX, 120, _talkTextMaxWidth);
 	y = CLIP<int16>(_talkTextY - _vm->_cameraY, 4, _vm->_cameraHeight - 16);
@@ -448,11 +436,9 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 		textDurationMultiplier += 100;
 	}
 	item->duration = 4 * textDurationMultiplier * durationModifier;
-
 }
 
 void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item) {
-
 	if (width > 0) {
 		TextRect *textRect = &item->lines[item->lineCount];
 		width = width + 1 - font.getSpacing();
@@ -463,9 +449,8 @@ void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 
 		textRect->x = CLIP<int16>(x - width / 2, 0, 640);
 		item->lineCount++;
 	}
-	
-	y += font.getHeight() - 1;
 
+	y += font.getHeight() - 1;
 }
 
 void Screen::addTalkTextItemsToRenderQueue() {
@@ -481,7 +466,7 @@ void Screen::addTalkTextItemsToRenderQueue() {
 		if (item->duration < 0)
 			item->duration = 0;
 
-		if (!_vm->_cfgText)
+		if (!_vm->_cfgText && !item->alwaysDisplayed)
 			return;
 
 		for (byte j = 0; j < item->lineCount; j++) {
@@ -492,8 +477,25 @@ void Screen::addTalkTextItemsToRenderQueue() {
 	}
 }
 
+bool Screen::isTalkTextActive(int16 slotIndex) {
+	for (int16 i = 0; i <= _talkTextItemNum; i++) {
+		if (_talkTextItems[i].slotIndex == slotIndex && _talkTextItems[i].duration > 0)
+			return true;
+	}
+
+	return false;
+}
+
 int16 Screen::getTalkTextDuration() {
 	return _talkTextItems[_talkTextItemNum].duration;
+}
+
+void Screen::finishTalkTextItem(int16 slotIndex) {
+	for (int16 i = 0; i <= _talkTextItemNum; i++) {
+		if (_talkTextItems[i].slotIndex == slotIndex) {
+			_talkTextItems[i].duration = 0;
+		}
+	}
 }
 
 void Screen::finishTalkTextItems() {
@@ -517,7 +519,6 @@ void Screen::registerFont(uint fontIndex, uint resIndex) {
 }
 
 void Screen::drawGuiTextMulti(byte *textData) {
-
 	int16 x = 0, y = 0;
 
 	// Really strange stuff.
@@ -547,19 +548,18 @@ void Screen::drawGuiTextMulti(byte *textData) {
 			wrapState.width = 0;
 			wrapState.len1 = 0;
 			wrapState.len2 = wrapGuiText(_fontResIndexArray[1], 640, wrapState);
-			drawGuiText(x - wrapState.width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1], wrapState);
+			drawGuiText(x - wrapState.width / 2, y - 1, _fontColor1, _fontColor2, _fontResIndexArray[1], wrapState);
 		}
 	} while (*wrapState.sourceString != 0xFF);
 
 	_guiRefresh = true;
-
 }
 
 int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState) {
 
 	Font font(_vm->_res->load(fontResIndex)->data);
 	int16 len = 0;
-	
+
 	while (*wrapState.sourceString >= 0x20 && *wrapState.sourceString < 0xF0) {
 		byte ch = *wrapState.sourceString;
 		byte charWidth;
@@ -573,9 +573,8 @@ int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wra
 		wrapState.width += charWidth;
 		*wrapState.destString++ = *wrapState.sourceString++;
 	}
-	
+
 	return len;
-	
 }
 
 void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState) {
@@ -586,11 +585,9 @@ void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uin
 
 	x = drawString(x + 1, y + _vm->_cameraHeight, fontColor1, fontResIndex, wrapState.textBuffer, wrapState.len1, &ywobble, false);
 	x = drawString(x, y + _vm->_cameraHeight, fontColor2, fontResIndex, wrapState.textBuffer + wrapState.len1, wrapState.len2, &ywobble, false);
-
 }
 
 int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const byte *text, int len, int16 *ywobble, bool outline) {
-
 	//debug(0, "Screen::drawString(%d, %d, %d, %d)", x, y, color, fontResIndex);
 
 	Font font(_vm->_res->load(fontResIndex)->data);
@@ -607,7 +604,7 @@ int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const 
 		if (ch <= 0x20) {
 			x += font.getWidth();
 		} else {
-			drawChar(font, _frontScreen, x, y - yadd, ch, color, outline);
+			drawChar(font, _frontScreen, x, y + yadd, ch, color, outline);
 			x += font.getCharWidth(ch) + font.getSpacing() - 1;
 			yadd = -yadd;
 		}
@@ -617,11 +614,9 @@ int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const 
 		*ywobble = yadd;
 
 	return x;
-
 }
 
 void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline) {
-
 	int16 charWidth, charHeight;
 	byte *charData;
 
@@ -650,15 +645,13 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 		}
 		dest += 640 - charWidth;
 	}
-
 }
 
 void Screen::drawSurface(int16 x, int16 y, Graphics::Surface *surface) {
-
 	int16 skipX = 0;
 	int16 width = surface->w;
 	int16 height = surface->h;
-	byte *surfacePixels = (byte *)surface->getBasePtr(0, 0);
+	byte *surfacePixels = (byte *)surface->getPixels();
 	byte *frontScreen;
 
 	// Not on screen, skip
@@ -699,11 +692,9 @@ void Screen::drawSurface(int16 x, int16 y, Graphics::Surface *surface) {
 		frontScreen += 640 - width;
 		surfacePixels += surface->w - width - skipX;
 	}
-
 }
 
 void Screen::saveState(Common::WriteStream *out) {
-
 	// Save verb line
 	out->writeUint16LE(_verbLineNum);
 	out->writeUint16LE(_verbLineX);
@@ -750,11 +741,9 @@ void Screen::saveState(Common::WriteStream *out) {
 		out->writeUint32LE(_fontResIndexArray[i]);
 	out->writeByte(_fontColor1);
 	out->writeByte(_fontColor2);
-
 }
 
 void Screen::loadState(Common::ReadStream *in) {
-
 	// Load verb line
 	_verbLineNum = in->readUint16LE();
 	_verbLineX = in->readUint16LE();
@@ -765,7 +754,7 @@ void Screen::loadState(Common::ReadStream *in) {
 		_verbLineItems[i].slotIndex = in->readUint16LE();
 		_verbLineItems[i].slotOffset = in->readUint16LE();
 	}
-	
+
 	// Load talk text items
 	_talkTextX = in->readUint16LE();
 	_talkTextY = in->readUint16LE();
@@ -779,6 +768,7 @@ void Screen::loadState(Common::ReadStream *in) {
 		_talkTextItems[i].fontNum = in->readUint16LE();
 		_talkTextItems[i].color = in->readByte();
 		_talkTextItems[i].lineCount = in->readByte();
+		_talkTextItems[i].alwaysDisplayed = false;
 		for (int j = 0; j < _talkTextItems[i].lineCount; j++) {
 			_talkTextItems[i].lines[j].x = in->readUint16LE();
 			_talkTextItems[i].lines[j].y = in->readUint16LE();
@@ -786,7 +776,7 @@ void Screen::loadState(Common::ReadStream *in) {
 			_talkTextItems[i].lines[j].length = in->readUint16LE();
 		}
 	}
-	
+
 	// Load GUI bitmap
 	{
 		byte *gui = _frontScreen + _vm->_cameraHeight * 640;
@@ -802,7 +792,6 @@ void Screen::loadState(Common::ReadStream *in) {
 		_fontResIndexArray[i] = in->readUint32LE();
 	_fontColor1 = in->readByte();
 	_fontColor2 = in->readByte();
-
 }
 
 } // End of namespace Toltecs

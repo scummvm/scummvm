@@ -90,7 +90,7 @@ void WinnieEngine::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
 uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	Common::String fileName;
 
-	if (getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformDOS)
 		fileName = Common::String::format(IDS_WTP_ROOM_DOS, iRoom);
 	else if (getPlatform() == Common::kPlatformAmiga)
 		fileName = Common::String::format(IDS_WTP_ROOM_AMIGA, iRoom);
@@ -123,7 +123,7 @@ uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
 	Common::String fileName;
 
-	if (getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformDOS)
 		fileName = Common::String::format(IDS_WTP_OBJ_DOS, iObj);
 	else if (getPlatform() == Common::kPlatformAmiga)
 		fileName = Common::String::format(IDS_WTP_OBJ_AMIGA, iObj);
@@ -985,6 +985,7 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 						}
 						break;
 					}
+					break;
 				default:
 					if (!event.kbd.flags) {	// if the control/alt/shift keys are not pressed
 						keyHelp();
@@ -1118,7 +1119,7 @@ void WinnieEngine::drawRoomPic() {
 
 bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	// TODO: Only DOS sound is supported, currently
-	if (getPlatform() != Common::kPlatformPC) {
+	if (getPlatform() != Common::kPlatformDOS) {
 		warning("STUB: playSound(%d)", iSound);
 		return false;
 	}
@@ -1134,7 +1135,7 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	file.read(data, size);
 	file.close();
 
-	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, *_sound, _soundemu);
+	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, _soundemu);
 	_sound->startSound(0, 0);
 
 	bool cursorShowing = CursorMan.showMouse(false);
@@ -1334,7 +1335,6 @@ void WinnieEngine::init() {
 	}
 
 	_sound = new SoundMgr(this, _mixer);
-	_sound->initSound();
 	setflag(fSoundOn, true); // enable sound
 
 	memset(&_gameStateWinnie, 0, sizeof(_gameStateWinnie));

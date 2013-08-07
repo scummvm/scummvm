@@ -174,7 +174,6 @@ public:
 	int loadState(byte *state);
 };
 
-
 class RMInterface : public RMGfxSourceBuffer8RLEByte {
 private:
 	bool _bActive;

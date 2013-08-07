@@ -164,7 +164,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		png_set_packing(pngPtr);
 	} else {
 		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-		if (!_outputSurface->pixels) {
+		if (!_outputSurface->getPixels()) {
 			error("Could not allocate memory for output image.");
 		}
 		if (bitDepth == 16)
@@ -227,7 +227,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	png_read_end(pngPtr, NULL);
 
 	// Destroy libpng structures
-	png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
+	png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
 
 	// We no longer need the file stream, thus close it here
 	_stream = 0;

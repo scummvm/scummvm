@@ -1,13 +1,13 @@
 MODULE := engines/parallaction
 
 MODULE_OBJS := \
+	adlib.o \
 	balloons.o \
 	callables_br.o \
 	callables_ns.o \
 	debug.o \
 	detection.o \
 	dialogue.o \
-	disk.o \
 	disk_br.o \
 	disk_ns.o \
 	exec.o \

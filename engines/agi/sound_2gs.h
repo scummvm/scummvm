@@ -144,7 +144,7 @@ public:
 
 class IIgsMidi : public AgiSound {
 public:
-	IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	IIgsMidi(uint8 *data, uint32 len, int resnum);
 	~IIgsMidi() { if (_data != NULL) free(_data); }
 	virtual uint16 type() { return _type; }
 	virtual const uint8 *getPtr() { return _ptr; }
@@ -161,7 +161,7 @@ public:
 
 class IIgsSample : public AgiSound {
 public:
-	IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	IIgsSample(uint8 *data, uint32 len, int resnum);
 	~IIgsSample() { delete[] _sample; }
 	virtual uint16 type() { return _header.type; }
 	const IIgsSampleHeader &getHeader() const { return _header; }

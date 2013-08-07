@@ -64,7 +64,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 			// Note: there were extra checks for *m being a cursor character
 			// here (1, 2 or 3), which have been removed, as the cursor
-			// character is no longer printed via this function. 
+			// character is no longer printed via this function.
 			if (*m >= 0x20) {
 				int ypos = (y1 * CHAR_LINES) + yoff;
 
@@ -73,7 +73,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 					if (xpos >= GFX_WIDTH)
 						continue;
-					 
+
 					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg, checkerboard);
 
 					if (x1 > maxx)

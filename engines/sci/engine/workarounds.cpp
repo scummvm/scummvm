@@ -51,8 +51,8 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",  -1,    0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #3039656). Moves the cursor to the view with the ID returned (in this case, the robot hand)
-	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3 - temps 504 and 505
-	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
+	{ GID_CNICK_KQ,       -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers/backgammon, like in hoyle 3 - temps 504 and 505 - bug #3606025
+	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering the control menu, like in hoyle 3
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",       -1,   20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
@@ -140,7 +140,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG2,          260,   260,  0,            "jabbarS", "changeState",0x2d22,   -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Jabbar is about to enter the house (where you have to hide in the wardrobe), bug #3040469, temps 1 and 2
 	{ GID_QFG2,          500,   500,  0,   "lightNextCandleS", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // Inside the last room, while Ad Avis performs the ritual to summon the genie - bug #3148418
 	{ GID_QFG2,           -1,   700,  0,                 NULL, "showSign",       -1,   10, { WORKAROUND_FAKE,   0 } }, // Occurs sometimes when reading a sign in Raseir, Shapeir et al - bugs #3272735, #3275413
-	{ GID_QFG3,          510,   510,  0,         "awardPrize", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Simbani warrior challenge, after throwing the spears and retrieving the ring - bug #3049435
+	{ GID_QFG3,          510,   510,  0,         "awardPrize", "changeState",    -1,    0, { WORKAROUND_FAKE,   1 } }, // Simbani warrior challenge, after throwing the spears and retrieving the ring - bug #3049435. Must be non-zero, otherwise the prize is awarded twice - bug #3575570.
 	{ GID_QFG3,          140,   140,  0,              "rm140", "init",       0x1008,    0, { WORKAROUND_FAKE,   0 } }, // when importing a character and selecting the previous profession - bug #3040460
 	{ GID_QFG3,          330,   330, -1,             "Teller", "doChild",        -1,   -1, { WORKAROUND_FAKE,   0 } }, // when talking to King Rajah about "Rajah" (bug #3036390, temp 1) or "Tarna" (temp 0), or when clicking on yourself and saying "Greet" (bug #3039774, temp 1)
 	{ GID_QFG3,          700,   700, -1,      "monsterIsDead", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // in the jungle, after winning any fight, bug #3040624
@@ -151,6 +151,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",  -1,    5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
 	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, happens sometimes in fight scenes
+	{ GID_QFG4,          520, 64950,  0,             "fLake2", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // CD version, at the lake, when meeting the Rusalka and attempting to leave
+	{ GID_QFG4,          800, 64950,  0,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // CD version, in the room with the spider pillar, when climbing on the pillar
 	{ GID_RAMA,           12, 64950, -1,   "InterfaceFeature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
 	{ GID_RAMA,           12, 64950, -1,      "hiliteOptText", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
 	{ GID_RAMA,           12, 64950, -1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
@@ -243,12 +245,11 @@ const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
-	{ GID_CAMELOT,        -1,   989,  0,            "rmMusic", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called frequently with a NULL reference (i.e. 0:0) - bug #3035149
-	{ GID_KQ1,            -1,   989,  0,          "gameSound", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called in several scenes (e.g. graham cracker) with 0:0
-	{ GID_KQ4,            -1,   989,  0,            "mySound", "",               -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called in the demo when trying to open the non-existent menu with 0:0 - bug #3036942
 	{ GID_KQ5,           213,   989,  0,       "globalSound3", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // english floppy: when bandits leave the secret temple, parameter 4 is an object - bug #3037594
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
 	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object - bug #3034567
+	{ GID_QFG4,           -1, 64989,  0,           "longSong", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // CD version: many places, parameter 4 is an object (longSong)
+	{ GID_SQ5,           800,   989,  0,          "sq5Music1", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when cutting the wrong part of Goliath with the laser - bug #3614145
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

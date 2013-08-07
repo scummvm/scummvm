@@ -29,14 +29,12 @@
 #ifndef WINTERMUTE_BASE_DYNAMIC_BUFFER_H
 #define WINTERMUTE_BASE_DYNAMIC_BUFFER_H
 
-
 #include "engines/wintermute/base/base.h"
 
 namespace Wintermute {
 
 class BaseDynamicBuffer {
 public:
-	bool _initialized;
 	void putText(const char *fmt, ...);
 	void putTextIndent(int indent, const char *fmt, ...);
 	uint32 getDWORD();
@@ -45,15 +43,16 @@ public:
 	void putString(const char *val);
 	bool getBytes(byte *buffer, uint32 size);
 	bool putBytes(const byte *buffer, uint32 size);
-	uint32 getSize();
+	uint32 getSize() const;
 	bool init(uint32 initSize = 0);
 	void cleanup();
-	uint32 _size;
-	byte *_buffer;
 	BaseDynamicBuffer(BaseGame *inGame, uint32 initSize = 1000, uint32 growBy = 1000);
 	virtual ~BaseDynamicBuffer();
 
 private:
+	uint32 _size;
+	byte *_buffer;
+	bool _initialized;
 	uint32 _realSize;
 	uint32 _growBy;
 	uint32 _initSize;
@@ -61,6 +60,6 @@ private:
 	void putTextForm(const char *format, va_list argptr);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

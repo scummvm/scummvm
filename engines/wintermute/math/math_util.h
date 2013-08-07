@@ -37,6 +37,6 @@ public:
 	static float roundUp(float val);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

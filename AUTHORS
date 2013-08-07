@@ -106,6 +106,10 @@ ScummVM Team
        Scott Thomas
        Jordi Vilalta Prat
 
+    Hopkins:
+       Arnaud Boutonne
+       Paul Gilbert
+
     Hugo:
        Arnaud Boutonne
        Oystein Eftevaag
@@ -140,6 +144,9 @@ ScummVM Team
 
     Parallaction:
        peres
+
+    Pegasus:
+       Matthew Hoops
 
     Queen:
        David Eriksson          - (retired)
@@ -200,6 +207,15 @@ ScummVM Team
        Filippos Karapetis
        Joost Peters
 
+    Toltecs:
+       Benjamin Haisch
+       Filippos Karapetis
+
+    Tony:
+       Arnaud Boutonne
+       Paul Gilbert
+       Alyssa Milburn
+
     Toon:
        Sylvain Dupont
 
@@ -221,9 +237,6 @@ ScummVM Team
     Android:
        Andre Heider
        Angus Lees
-
-    BADA:
-       Chris Warren-Smith
 
     Dreamcast:
        Marcus Comstedt
@@ -272,6 +285,9 @@ ScummVM Team
        Jurgen Braam
        Lars Persson
 
+    Tizen / BADA:
+       Chris Warren-Smith
+
     WebOS:
        Klaus Reimer
 
@@ -299,6 +315,8 @@ ScummVM Team
        Benjamin Haisch         - Heavily improved de-/encoder for DXA videos
        Jochen Hoenicke         - Speaker & PCjr sound support, AdLib work
                                  (retired)
+       Daniel ter Laan         - Restoring original Drascula tracks, and
+                                 writing convert_dxa.bat
        Chris Page              - Return to launcher, savestate improvements,
                                  leak fixes, ... (GSoC 2008 task) (retired)
        Robin Watts             - ARM assembly routines for nice speedups on
@@ -403,6 +421,9 @@ Other contributions
     Basque:
        Mikel Iturbe Urretxa
 
+    Belarusian:
+       Ivan Lukyanov
+
     Catalan:
        Jordi Vilalta Prat
 
@@ -412,6 +433,9 @@ Other contributions
     Danish:
        Steffen Nyeland
 
+    Finnish:
+       Toni Saarela
+
     French:
        Thierry Crozat
 
@@ -420,7 +444,7 @@ Other contributions
 
     German:
        Simon Sawatzki
-       Lothar Serra Mari
+       Lothar Serra Mari       - (retired)
 
     Hungarian:
        Alex Bevilacqua
@@ -620,4 +644,7 @@ Special thanks to
 
    Jan Nedoma for providing the sources to the Wintermute-engine, and for his
    support while porting the engine to ScummVM.
+
+   Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing
+   the source code of The Journeyman Project: Pegasus Prime.
 

@@ -88,7 +88,7 @@ protected:
 
 	private:
 		QuickTimeAudioDecoder *_decoder;
-		Track *_parentTrack; 
+		Track *_parentTrack;
 		QueuingAudioStream *_queue;
 		uint _curChunk;
 		Timestamp _curMediaPos, _skipSamples;
@@ -115,7 +115,7 @@ protected:
 		~AudioSampleDesc();
 
 		bool isAudioCodecSupported() const;
-		
+
 		AudioStream *createAudioStream(Common::SeekableReadStream *stream) const;
 		void initCodec();
 
@@ -131,7 +131,7 @@ protected:
 	};
 
 	// Common::QuickTimeParser API
-	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
+	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize);
 
 	void init();
 

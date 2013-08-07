@@ -496,7 +496,7 @@ public:
 	void advSrcBitsBy1();
 	void advSrcBitsByIndex(uint8 newIndex);
 
-	uint8 getKeyLower() const { return _key & 0xff; }
+	uint8 getKeyLower() const { return _key & 0xFF; }
 	void setIndex(uint8 index) { _index = index; }
 	uint16 getKeyMasked(uint8 newIndex);
 	uint16 keyMaskedAlign(uint16 val);
@@ -515,7 +515,7 @@ void FileExpanderSource::advSrcBitsBy1() {
 	_key >>= 1;
 	if (!--_bitsLeft) {
 		if (_dataPtr < _endofBuffer)
-			_key = ((*_dataPtr++) << 8) | (_key & 0xff);
+			_key = ((*_dataPtr++) << 8) | (_key & 0xFF);
 		_bitsLeft = 8;
 	}
 }
@@ -528,7 +528,7 @@ void FileExpanderSource::advSrcBitsByIndex(uint8 newIndex) {
 		_index = -_bitsLeft;
 		_bitsLeft = 8 - _index;
 		if (_dataPtr < _endofBuffer)
-			_key = (*_dataPtr++ << 8) | (_key & 0xff);
+			_key = (*_dataPtr++ << 8) | (_key & 0xFF);
 	}
 	_key >>= _index;
 }
@@ -540,13 +540,13 @@ uint16 FileExpanderSource::getKeyMasked(uint8 newIndex) {
 
 	if (_index > 8) {
 		newIndex = _index - 8;
-		res = (_key & 0xff) & mskTable[8];
+		res = (_key & 0xFF) & mskTable[8];
 		advSrcBitsByIndex(8);
 		_index = newIndex;
-		res |= (((_key & 0xff) & mskTable[_index]) << 8);
+		res |= (((_key & 0xFF) & mskTable[_index]) << 8);
 		advSrcBitsByIndex(_index);
 	} else {
-		res = (_key & 0xff) & mskTable[_index];
+		res = (_key & 0xFF) & mskTable[_index];
 		advSrcBitsByIndex(_index);
 	}
 
@@ -568,10 +568,10 @@ void FileExpanderSource::copyBytes(uint8 *& dst) {
 
 uint16 FileExpanderSource::keyMaskedAlign(uint16 val) {
 	val -= 0x101;
-	_index = (val & 0xff) >> 2;
+	_index = (val & 0xFF) >> 2;
 	int16 b = ((_bitsLeft << 8) | _index) - 1;
 	_bitsLeft = b >> 8;
-	_index = b & 0xff;
+	_index = b & 0xFF;
 	uint16 res = (((val & 3) + 4) << _index) + 0x101;
 	return res + getKeyMasked(_index);
 }
@@ -727,20 +727,20 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 			cmd = ((int16 *)_tables[2])[_src->getKeyLower()];
 			_src->advSrcBitsByIndex(cmd < 0 ? calcCmdAndIndex(_tables[3], cmd) : _tables[0][cmd]);
 
-			if (cmd == 0x11d) {
+			if (cmd == 0x11D) {
 				cmd = 0x200;
 			} else if (cmd > 0x108) {
 				cmd = _src->keyMaskedAlign(cmd);
 			}
 
 			if (!(cmd >> 8)) {
-				*d++ = cmd & 0xff;
+				*d++ = cmd & 0xFF;
 			} else if (cmd != 0x100) {
-				cmd -= 0xfe;
+				cmd -= 0xFE;
 				int16 offset = ((int16 *)_tables[4])[_src->getKeyLower()];
 				_src->advSrcBitsByIndex(offset < 0 ? calcCmdAndIndex(_tables[5], offset) : _tables[1][offset]);
-				if ((offset & 0xff) >= 4) {
-					uint8 newIndex = ((offset & 0xff) >> 1) - 1;
+				if ((offset & 0xFF) >= 4) {
+					uint8 newIndex = ((offset & 0xFF) >> 1) - 1;
 					offset = (((offset & 1) + 2) << newIndex);
 					offset += _src->getKeyMasked(newIndex);
 				}
@@ -775,7 +775,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex2, int cnt) {
 	uint8 *tbl1 = _tables[srcIndex];
 	uint8 *tbl2 = _tables[dstIndex];
-	uint8 *tbl3 = dstIndex2 == 0xff ? 0 : _tables[dstIndex2];
+	uint8 *tbl3 = dstIndex2 == 0xFF ? 0 : _tables[dstIndex2];
 
 	if (!cnt)
 		return;
@@ -859,7 +859,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 			do {
 				s2[o] = cnt;
 				o += inc;
-			} while (!(o & 0xf00));
+			} while (!(o & 0xF00));
 
 		} else if (t > 8) {
 			if (!bt)
@@ -868,7 +868,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 			t -= 8;
 			uint8 shiftCnt = 1;
 			uint8 v = (*d) >> 8;
-			s2 = &((uint16 *)tbl2)[*d & 0xff];
+			s2 = &((uint16 *)tbl2)[*d & 0xFF];
 
 			do {
 				if (!*s2) {
@@ -897,7 +897,7 @@ uint8 FileExpander::calcCmdAndIndex(const uint8 *tbl, int16 &para) {
 
 	do {
 		newIndex++;
-		para = t[((~para) & 0xfffe) | (v & 1)];
+		para = t[((~para) & 0xFFFE) | (v & 1)];
 		v >>= 1;
 	} while (para < 0);
 
@@ -1020,7 +1020,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 
 	pos = 0;
 
-	const uint32 kExecSize = 0x0bba;
+	const uint32 kExecSize = 0x0BBA;
 	const uint32 kHeaderSize = 30;
 	const uint32 kHeaderSize2 = 46;
 

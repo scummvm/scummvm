@@ -56,7 +56,7 @@ public:
 
 protected:
 	MessageReader(const byte *data, uint size, uint headerSize, uint recordSize)
-		: _data(data), _size(size), _headerSize(headerSize), _recordSize(recordSize) { }
+		: _data(data), _size(size), _headerSize(headerSize), _recordSize(recordSize), _messageCount(0) { }
 
 	const byte *_data;
 	const uint _size;
@@ -202,6 +202,45 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 
 	while (1) {
 		MessageTuple &t = stack.top();
+
+		// Fix known incorrect message tuples
+		if (g_sci->getGameId() == GID_QFG1VGA && stack.getModule() == 322 &&
+			t.noun == 14 && t.verb == 1 && t.cond == 19 && t.seq == 1) {
+			// Talking to Kaspar the shopkeeper - bug #3604944
+			t.verb = 2;
+		}
+
+		if (g_sci->getGameId() == GID_PQ1 && stack.getModule() == 38 &&
+			t.noun == 10 && t.verb == 4 && t.cond == 8 && t.seq == 1) {
+			// Using the hand icon on Keith in the Blue Room - bug #3605654
+			t.cond = 9;
+		}
+
+		if (g_sci->getGameId() == GID_PQ1 && stack.getModule() == 38 &&
+			t.noun == 10 && t.verb == 1 && t.cond == 0 && t.seq == 1) {
+			// Using the eye icon on Keith in the Blue Room - bug #3605654
+			t.cond = 13;
+		}
+
+		// Fill in known missing message tuples
+		if (g_sci->getGameId() == GID_SQ4 && stack.getModule() == 16 &&
+			t.noun == 7 && t.verb == 0 && t.cond == 3 && t.seq == 1) {
+			// This fixes the error message shown when speech and subtitles are
+			// enabled simultaneously in SQ4 - the (very) long dialog when Roger
+			// is talking with the aliens is missing - bug #3538416.
+			record.tuple = t;
+			record.refTuple = MessageTuple();
+			record.talker = 7;	// Roger
+			// The missing text is just too big to fit in one speech bubble, and
+			// if it's added here manually and drawn on screen, it's painted over
+			// the entrance in the back where the Sequel Police enters, so it
+			// looks very ugly. Perhaps this is why this particular text is missing,
+			// as the text shown in this screen is very short (one-liners).
+			// Just output an empty string here instead of showing an error.
+			record.string = "";
+			delete reader;
+			return true;
+		}
 
 		if (!reader->findRecord(t, record)) {
 			// Tuple not found

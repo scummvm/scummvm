@@ -164,7 +164,6 @@ RMOptionSlide::RMOptionSlide(const RMPoint &pt, int nRange, int nStartValue, int
 	_pushRight = new RMOptionButton(RMRect(pt._x + _nSlideSize, pt._y, pt._x + _nSlideSize + 5 + 22, pt._y + 26));
 }
 
-
 RMOptionSlide::~RMOptionSlide() {
 	delete _sliderCenter;
 	_sliderCenter = NULL;
@@ -509,7 +508,8 @@ void RMOptionScreen::refreshThumbnails() {
 			_curThumb[i] = NULL;
 			_curThumbName[i].clear();
 			_curThumbDiff[i] = 11;
-		}
+		} else
+			_curThumb[i]->prepareImage();
 	}
 }
 
@@ -973,8 +973,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-
-	// If it is fully open, do nothing
+	// If it is not fully open, do nothing
 	if (_fadeStep != 6)
 		return;
 
@@ -1043,8 +1042,8 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 
-#define KEYPRESS(c)     (g_vm->getEngine()->getInput().getAsyncKeyState(c))
-#define PROCESS_CHAR(cod, c)  if (KEYPRESS(cod)) { \
+#define KEYPRESS(c) (g_vm->getEngine()->getInput().getAsyncKeyState(c))
+#define PROCESS_CHAR(cod, c) if (KEYPRESS(cod)) { \
 		_editName[strlen(_editName) + 1] = '\0'; _editName[strlen(_editName)] = c; _ctx->bRefresh = true; }
 
 	// State Buttons
@@ -1058,7 +1057,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 
 		for (_ctx->i = 0; _ctx->i < 26 && strlen(_editName) < 12; _ctx->i++) {
 			if (KEYPRESS(Common::KEYCODE_LSHIFT) ||
-			        KEYPRESS(Common::KEYCODE_RSHIFT)) {
+			    KEYPRESS(Common::KEYCODE_RSHIFT)) {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'A');
 			} else {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'a');
@@ -1222,7 +1221,6 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 	CORO_END_CODE;
 }
 
-
 void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	int curTime;
@@ -1233,7 +1231,7 @@ void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 	_ctx->curTime = g_vm->getTime();
 
 #define FADE_SPEED 20
-#define SYNC    (_ctx->curTime - _fadeTime) / 25
+#define SYNC (_ctx->curTime - _fadeTime) / 25
 
 	if (_bExit)
 		return;
@@ -1333,7 +1331,6 @@ void RMOptionScreen::removeThis(CORO_PARAM, bool &result) {
 	else
 		result = false;
 }
-
 
 bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, Common::String &name, byte &diff) {
 	char namebuf[256];

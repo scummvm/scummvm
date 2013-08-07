@@ -37,32 +37,37 @@ class AdEntity : public AdTalkHolder {
 public:
 	VideoTheoraPlayer *_theora;
 	bool setSprite(const char *filename);
-	int _walkToX;
-	int _walkToY;
-	TDirection _walkToDir;
 	void setItem(const char *itemName);
-	char *_item;
 	DECLARE_PERSISTENT(AdEntity, AdTalkHolder)
 	void updatePosition();
 	virtual int getHeight();
 	BaseRegion *_region;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	virtual bool update();
 	virtual bool display();
 	AdEntity(BaseGame *inGame);
 	virtual ~AdEntity();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	TEntityType _subtype;
+
+	int32 getWalkToX() const;
+	int32 getWalkToY() const;
+	TDirection getWalkToDir() const;
+	const char* getItemName() const;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
-
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
+private:
+	int32 _walkToX;
+	int32 _walkToY;
+	TDirection _walkToDir;
+	char *_item;
+	TEntityType _subtype;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

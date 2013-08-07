@@ -535,7 +535,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		openMainMenuDialog();		// Display global main menu
 
-		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 
 	} else if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {

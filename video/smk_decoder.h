@@ -122,7 +122,6 @@ protected:
 
 	Common::SeekableReadStream *_fileStream;
 
-private:
 	enum AudioCompression {
 		kCompressionNone,
 		kCompressionDPCM,
@@ -151,6 +150,10 @@ private:
 		uint32 dummy;
 	} _header;
 
+	uint32 *_frameSizes;
+
+private:
+
 	class SmackerAudioTrack : public AudioTrack {
 	public:
 		SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType);
@@ -173,7 +176,6 @@ private:
 		AudioInfo _audioInfo;
 	};
 
-	uint32 *_frameSizes;
 	// The FrameTypes section of a Smacker file contains an array of bytes, where
 	// the 8 bits of each byte describe the contents of the corresponding frame.
 	// The highest 7 bits correspond to audio frames (bit 7 is track 6, bit 6 track 5

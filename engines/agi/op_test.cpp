@@ -82,7 +82,7 @@ void condIsSet(AgiGame *state, uint8 *p) {
 }
 
 void condIsSetV(AgiGame *state, uint8 *p) {
-	state->testResult = testIsSet(getvar(p[1]));
+	state->testResult = testIsSet(getvar(p[0]));
 }
 
 void condIsSetV1(AgiGame *state, uint8 *p) {
@@ -259,7 +259,12 @@ uint8 AgiEngine::testKeypressed() {
 		InputMode mode = _game.inputMode;
 
 		_game.inputMode = INPUT_NONE;
-		mainCycle();
+		// Only check for events here, without updating the game cycle,
+		// otherwise the animations in some games are drawn too quickly
+		// like, for example, Manannan's lightnings in the intro of KQ3
+		// and the bullets opened in the logo of PQ1, during its intro.
+		// Fixes bug #3600733
+		mainCycle(true);
 		_game.inputMode = mode;
 	}
 
@@ -403,7 +408,7 @@ int AgiEngine::testIfCode(int lognum) {
 		case 0xFF:
 			endTest = true;
 			continue;
-		
+
 		default:
 			// Evaluate the command and skip the rest of the instruction
 			_agiCondCommands[op](state, p);

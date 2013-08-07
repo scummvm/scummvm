@@ -47,10 +47,10 @@ public:
 	AdPath(BaseGame *inGame);
 	virtual ~AdPath();
 	BaseArray<BasePoint *> _points;
-	int _currIndex;
+	int32 _currIndex;
 	bool _ready;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

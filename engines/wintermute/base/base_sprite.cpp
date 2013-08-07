@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_sub_frame.h"
@@ -64,7 +65,7 @@ void BaseSprite::setDefaults() {
 	_currentFrame = -1;
 	_looping = false;
 	_lastFrameTime = 0;
-	setFilename(NULL);
+	setFilename(nullptr);
 	_finished = false;
 	_changed = false;
 	_paused = false;
@@ -72,7 +73,7 @@ void BaseSprite::setDefaults() {
 	_moveX = _moveY = 0;
 
 	_editorMuted = false;
-	_editorBgFile = NULL;
+	_editorBgFile = nullptr;
 	_editorBgOffsetX = _editorBgOffsetY = 0;
 	_editorBgAlpha = 0xFF;
 	_streamed = false;
@@ -94,7 +95,7 @@ void BaseSprite::cleanup() {
 	_frames.clear();
 
 	delete[] _editorBgFile;
-	_editorBgFile = NULL;
+	_editorBgFile = nullptr;
 
 	setDefaults();
 }
@@ -121,12 +122,19 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 	return display(x, y, registerOwner, zoomX, zoomY, alpha);
 }
 
+bool BaseSprite::isChanged() {
+	return _changed;
+}
+
+bool BaseSprite::isFinished() {
+	return _finished;
+}
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename);
 	if (!file) {
-		_gameRef->LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename.c_str());
+		BaseEngine::LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename.c_str());
 		if (_gameRef->_debugDebugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		} else {
@@ -134,7 +142,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		}
 	} else {
 		BaseFileManager::getEngineInstance()->closeFile(file);
-		file = NULL;
+		file = nullptr;
 	}
 
 	bool ret = STATUS_FAILED;
@@ -147,8 +155,8 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		BaseFrame *frame = new BaseFrame(_gameRef);
 		BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
-		if (subframe->_surface == NULL) {
-			_gameRef->LOG(0, "Error loading simple sprite '%s'", filename.c_str());
+		if (subframe->_surface == nullptr) {
+			BaseEngine::LOG(0, "Error loading simple sprite '%s'", filename.c_str());
 			ret = STATUS_FAILED;
 			delete frame;
 			delete subframe;
@@ -163,7 +171,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
-				_gameRef->LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
+				BaseEngine::LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
 			} else {
 				ret = STATUS_OK;
 			}
@@ -224,7 +232,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
-			_gameRef->LOG(0, "'SPRITE' keyword expected.");
+			BaseEngine::LOG(0, "'SPRITE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -290,8 +298,8 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 		case TOKEN_EDITOR_BG_ALPHA:
 			parser.scanStr((char *)params, "%d", &_editorBgAlpha);
-			_editorBgAlpha = MIN(_editorBgAlpha, 255);
-			_editorBgAlpha = MAX(_editorBgAlpha, 0);
+			_editorBgAlpha = MIN<int32>(_editorBgAlpha, 255);
+			_editorBgAlpha = MAX<int32>(_editorBgAlpha, 0);
 			break;
 
 		case TOKEN_FRAME: {
@@ -304,7 +312,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 			if (DID_FAIL(frame->loadBuffer(params, frameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
-				_gameRef->LOG(0, "Error parsing frame %d", frameCount);
+				BaseEngine::LOG(0, "Error parsing frame %d", frameCount);
 				return STATUS_FAILED;
 			}
 
@@ -323,7 +331,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in SPRITE definition");
+		BaseEngine::LOG(0, "Syntax error in SPRITE definition");
 		return STATUS_FAILED;
 	}
 	_canBreak = !_continuous;
@@ -358,9 +366,9 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 
 	uint32 timer;
 	if (_owner && _owner->_freezable) {
-		timer = _gameRef->_timer;
+		timer = _gameRef->getTimer()->getTime();
 	} else {
-		timer = _gameRef->_liveTimer;
+		timer = _gameRef->getLiveTimer()->getTime();
 	}
 
 	int lastFrame = _currentFrame;
@@ -433,7 +441,7 @@ bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, flo
 BaseSurface *BaseSprite::getSurface() {
 	// only used for animated textures for 3D models
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
-		return NULL;
+		return nullptr;
 	}
 	BaseFrame *frame = _frames[_currentFrame];
 	if (frame && frame->_subframes.size() > 0) {
@@ -441,10 +449,10 @@ BaseSurface *BaseSprite::getSurface() {
 		if (subframe) {
 			return subframe->_surface;
 		} else {
-			return NULL;
+			return nullptr;
 		}
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -531,7 +539,7 @@ bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_moveX));
 	persistMgr->transfer(TMEMBER(_moveY));
-	persistMgr->transfer(TMEMBER(_owner));
+	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transfer(TMEMBER(_precise));
 	persistMgr->transfer(TMEMBER(_streamed));
 	persistMgr->transfer(TMEMBER(_streamedKeepLoaded));
@@ -604,13 +612,13 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "AddFrame") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		const char *filename = NULL;
+		const char *filename = nullptr;
 		if (!val->isNULL()) {
 			filename = val->getString();
 		}
 
 		BaseFrame *frame = new BaseFrame(_gameRef);
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				sub->setDefaultRect();
@@ -636,13 +644,13 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 
 		ScValue *val = stack->pop();
-		const char *filename = NULL;
+		const char *filename = nullptr;
 		if (!val->isNULL()) {
 			filename = val->getString();
 		}
 
 		BaseFrame *frame = new BaseFrame(_gameRef);
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				frame->_subframes.add(sub);
@@ -686,13 +694,13 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseSprite::scGetProperty(const char *name) {
+ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("sprite");
 		return _scValue;
 	}
@@ -700,7 +708,7 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumFrames (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumFrames") == 0) {
+	else if (name == "NumFrames") {
 		_scValue->setInt(_frames.size());
 		return _scValue;
 	}
@@ -708,7 +716,7 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CurrentFrame") == 0) {
+	else if (name == "CurrentFrame") {
 		_scValue->setInt(_currentFrame);
 		return _scValue;
 	}
@@ -716,7 +724,7 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PixelPerfect") == 0) {
+	else if (name == "PixelPerfect") {
 		_scValue->setBool(_precise);
 		return _scValue;
 	}
@@ -724,7 +732,7 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Looping
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Looping") == 0) {
+	else if (name == "Looping") {
 		_scValue->setBool(_looping);
 		return _scValue;
 	}
@@ -732,8 +740,8 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Owner (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Owner") == 0) {
-		if (_owner == NULL) {
+	else if (name == "Owner") {
+		if (_owner == nullptr) {
 			_scValue->setNULL();
 		} else {
 			_scValue->setNative(_owner, true);
@@ -744,7 +752,7 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Finished (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Finished") == 0) {
+	else if (name == "Finished") {
 		_scValue->setBool(_finished);
 		return _scValue;
 	}
@@ -752,7 +760,7 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Paused (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Paused") == 0) {
+	else if (name == "Paused") {
 		_scValue->setBool(_paused);
 		return _scValue;
 	} else {
@@ -804,11 +812,9 @@ const char *BaseSprite::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {
 	for (uint32 i = 0; i < _frames.size(); i++) {
-		if (_frames[i]->_sound) {
-			_frames[i]->_sound->stop();
-		}
+		_frames[i]->stopSound();
 	}
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -125,7 +125,7 @@ static void InitCurTrailObj(int i, int x, int y) {
 
 	pim = GetImageFromFilm(g_hCursorFilm, i+1, &pfr, &pmi, &pfilm);// Get pointer to image
 	assert(BgPal()); // No background palette
-	pim->hImgPal = TO_LE_32(BgPal());
+	pim->hImgPal = TO_32(BgPal());
 
 	// Initialize and insert the object, set its Z-pos, and hide it
 	g_ntrailData[i].trailObj = MultiInitObject(pmi);
@@ -134,7 +134,7 @@ static void InitCurTrailObj(int i, int x, int y) {
 	MultiSetAniXY(g_ntrailData[i].trailObj, x, y);
 
 	// Initialize the animation script
-	InitStepAnimScript(&g_ntrailData[i].trailAnim, g_ntrailData[i].trailObj, FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+	InitStepAnimScript(&g_ntrailData[i].trailAnim, g_ntrailData[i].trailObj, FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
 	StepAnimScript(&g_ntrailData[i].trailAnim);
 }
 
@@ -237,7 +237,7 @@ void RestoreMainCursor() {
 	if (g_McurObj != NULL) {
 		pfilm = (const FILM *)LockMem(g_hCursorFilm);
 
-		InitStepAnimScript(&g_McurAnim, g_McurObj, FROM_LE_32(pfilm->reels->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+		InitStepAnimScript(&g_McurAnim, g_McurObj, FROM_32(pfilm->reels->script), ONE_SECOND / FROM_32(pfilm->frate));
 		StepAnimScript(&g_McurAnim);
 	}
 	g_bHiddenCursor = false;
@@ -324,14 +324,14 @@ IMAGE *GetImageFromReel(const FREEL *pfr, const MULTI_INIT **ppmi) {
 	const MULTI_INIT *pmi;
 	const FRAME *pFrame;
 
-	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pfr->mobj));
+	pmi = (const MULTI_INIT *)LockMem(FROM_32(pfr->mobj));
 	if (ppmi)
 		*ppmi = pmi;
 
-	pFrame = (const FRAME *)LockMem(FROM_LE_32(pmi->hMulFrame));
+	pFrame = (const FRAME *)LockMem(FROM_32(pmi->hMulFrame));
 
 	// get pointer to image
-	return (IMAGE *)LockMem(READ_LE_UINT32(pFrame));
+	return (IMAGE *)LockMem(READ_32(pFrame));
 }
 
 /**
@@ -379,18 +379,18 @@ void SetAuxCursor(SCNHANDLE hFilm) {
 
 	pim = GetImageFromFilm(hFilm, 0, &pfr, &pmi, &pfilm);// Get pointer to image
 	assert(BgPal()); // no background palette
-	pim->hImgPal = TO_LE_32(BgPal());			// Poke in the background palette
+	pim->hImgPal = TO_32(BgPal());			// Poke in the background palette
 
-	g_ACoX = (short)(FROM_LE_16(pim->imgWidth)/2 - ((int16) FROM_LE_16(pim->anioffX)));
-	g_ACoY = (short)((FROM_LE_16(pim->imgHeight) & ~C16_FLAG_MASK)/2 -
-		((int16) FROM_LE_16(pim->anioffY)));
+	g_ACoX = (short)(FROM_16(pim->imgWidth)/2 - ((int16) FROM_16(pim->anioffX)));
+	g_ACoY = (short)((FROM_16(pim->imgHeight) & ~C16_FLAG_MASK)/2 -
+		((int16) FROM_16(pim->anioffY)));
 
 	// Initialize and insert the auxillary cursor object
 	g_AcurObj = MultiInitObject(pmi);
 	MultiInsertObject(GetPlayfieldList(FIELD_STATUS), g_AcurObj);
 
 	// Initialize the animation and set its position
-	InitStepAnimScript(&g_AcurAnim, g_AcurObj, FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+	InitStepAnimScript(&g_AcurAnim, g_AcurObj, FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
 	MultiSetAniXY(g_AcurObj, x - g_ACoX, y - g_ACoY);
 	MultiSetZPosition(g_AcurObj, Z_ACURSOR);
 
@@ -481,14 +481,14 @@ static void InitCurObj() {
 	if (TinselV2) {
 		pFilm = (const FILM *)LockMem(g_hCursorFilm);
 		pfr = (const FREEL *)&pFilm->reels[0];
-		pmi = (MULTI_INIT *)LockMem(FROM_LE_32(pfr->mobj));
+		pmi = (MULTI_INIT *)LockMem(FROM_32(pfr->mobj));
 
 		PokeInPalette(pmi);
 	} else {
 		assert(BgPal()); // no background palette
 
 		pim = GetImageFromFilm(g_hCursorFilm, 0, &pfr, &pmi, &pFilm);// Get pointer to image
-		pim->hImgPal = TO_LE_32(BgPal());
+		pim->hImgPal = TO_32(BgPal());
 
 		g_AcurObj = NULL;		// No auxillary cursor
 	}
@@ -496,7 +496,7 @@ static void InitCurObj() {
 	g_McurObj = MultiInitObject(pmi);
 	MultiInsertObject(GetPlayfieldList(FIELD_STATUS), g_McurObj);
 
-	InitStepAnimScript(&g_McurAnim, g_McurObj, FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pFilm->frate));
+	InitStepAnimScript(&g_McurAnim, g_McurObj, FROM_32(pfr->script), ONE_SECOND / FROM_32(pFilm->frate));
 }
 
 /**
@@ -620,7 +620,7 @@ void DwInitCursor(SCNHANDLE bfilm) {
 	g_hCursorFilm = bfilm;
 
 	pfilm = (const FILM *)LockMem(g_hCursorFilm);
-	g_numTrails = FROM_LE_32(pfilm->numreels) - 1;
+	g_numTrails = FROM_32(pfilm->numreels) - 1;
 
 	assert(g_numTrails <= MAX_TRAILERS);
 }

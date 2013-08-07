@@ -30,7 +30,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
-#include "common/EventRecorder.h"
+#include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 
@@ -97,7 +97,15 @@ OSystem_SDL::~OSystem_SDL() {
 	_audiocdManager = 0;
 	delete _mixerManager;
 	_mixerManager = 0;
+
+#ifdef ENABLE_EVENTRECORDER
+	// HACK HACK HACK
+	// This is nasty.
+	delete g_eventRec.getTimerManager();
+#else
 	delete _timerManager;
+#endif
+
 	_timerManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
@@ -130,9 +138,6 @@ void OSystem_SDL::init() {
 	// (we check for this to allow subclasses to provide their own).
 	if (_mutexManager == 0)
 		_mutexManager = new SdlMutexManager();
-
-	if (_timerManager == 0)
-		_timerManager = new SdlTimerManager();
 
 #if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)
@@ -191,10 +196,18 @@ void OSystem_SDL::initBackend() {
 
 	if (_mixerManager == 0) {
 		_mixerManager = new SdlMixerManager();
-
 		// Setup and start mixer
 		_mixerManager->init();
 	}
+
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.registerMixerManager(_mixerManager);
+
+	g_eventRec.registerTimerManager(new SdlTimerManager());
+#else
+	if (_timerManager == 0)
+		_timerManager = new SdlTimerManager();
+#endif
 
 	if (_audiocdManager == 0) {
 		// Audio CD support was removed with SDL 1.3
@@ -466,14 +479,21 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
-uint32 OSystem_SDL::getMillis() {
+
+uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
+
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.processMillis(millis, skipRecord);
+#endif
+
 	return millis;
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
-	if (!g_eventRec.processDelayMillis(msecs))
+#ifdef ENABLE_EVENTRECORDER
+	if (!g_eventRec.processDelayMillis())
+#endif
 		SDL_Delay(msecs);
 }
 
@@ -491,12 +511,25 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 
 Audio::Mixer *OSystem_SDL::getMixer() {
 	assert(_mixerManager);
-	return _mixerManager->getMixer();
+	return getMixerManager()->getMixer();
 }
 
 SdlMixerManager *OSystem_SDL::getMixerManager() {
 	assert(_mixerManager);
+
+#ifdef ENABLE_EVENTRECORDER
+	return g_eventRec.getMixerManager();
+#else
 	return _mixerManager;
+#endif
+}
+
+Common::TimerManager *OSystem_SDL::getTimerManager() {
+#ifdef ENABLE_EVENTRECORDER
+	return g_eventRec.getTimerManager();
+#else
+	return _timerManager;
+#endif
 }
 
 #ifdef USE_OPENGL

@@ -69,6 +69,10 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 		_useSilverSQ4CDCursors = ConfMan.getBool("silver_cursors");
 	else
 		_useSilverSQ4CDCursors = false;
+
+	// _coordAdjuster and _event will be initialized later on
+	_coordAdjuster = NULL;
+	_event = NULL;
 }
 
 GfxCursor::~GfxCursor() {
@@ -277,16 +281,16 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	delete cursorHotspot;
 }
 
-// this list contains all mandatory set cursor changes, that need special handling
-//  ffs. GfxCursor::setPosition (below)
-//    Game,            newPosition, validRect
+// This list contains all mandatory set cursor changes, that need special handling
+// Refer to GfxCursor::setPosition() below
+//    Game,            newPosition,  validRect
 static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
-	{ GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu
-	{ GID_ISLANDBRAIN,143, 135,     57, 102, 163, 218 },// island of dr. brain / pause menu within copy protection
-	{ GID_LSL5,        23, 171,     0, 0, 26, 320 },    // larry 5 / skip forward helper
-	{ GID_QFG1VGA,     64, 174,     40, 37, 74, 284 },  // Quest For Glory 1 VGA / run/walk/sleep sub-menu
-	{ GID_QFG3,        70, 170,     40, 61, 81, 258 },  // Quest For Glory 3 / run/walk/sleep sub-menu
-	{ (SciGameId)0,    -1, -1,     -1, -1, -1, -1 }
+	{ GID_ISLANDBRAIN,  84, 109,     46,  76, 174, 243 },  // Island of Dr. Brain, game menu
+	{ GID_ISLANDBRAIN, 143, 135,     57, 102, 163, 218 },  // Island of Dr. Brain, pause menu within copy protection
+	{ GID_LSL5,         23, 171,      0,   0,  26, 320 },  // Larry 5, skip forward helper pop-up
+	{ GID_QFG1VGA,      64, 174,     40,  37,  74, 284 },  // Quest For Glory 1 VGA, run/walk/sleep sub-menu
+	{ GID_QFG3,         70, 170,     40,  61,  81, 258 },  // Quest For Glory 3, run/walk/sleep sub-menu
+	{ (SciGameId)0,     -1,  -1,     -1,  -1,  -1,  -1 }
 };
 
 void GfxCursor::setPosition(Common::Point pos) {
@@ -306,16 +310,24 @@ void GfxCursor::setPosition(Common::Point pos) {
 		g_system->warpMouse(pos.x, pos.y);
 	}
 
+	// WORKAROUNDS for games with windows that are hidden when the mouse cursor
+	// is moved outside them - also check setPositionWorkarounds above.
+	//
 	// Some games display a new menu, set mouse position somewhere within and
-	//  expect it to be in there. This is fine for a real mouse, but on wii using
-	//  wii-mote or touch interfaces this won't work. In fact on those platforms
-	//  the menus will close immediately because of that behavior.
-	// We identify those cases and set a reaction-rect. If the mouse it outside
-	//  of that rect, we won't report the position back to the scripts.
-	//  As soon as the mouse was inside once, we will revert to normal behavior
-	// Currently this code is enabled for all platforms, especially because we can't
-	//  differentiate between e.g. Windows used via mouse and Windows used via touchscreen
-	// The workaround won't hurt real-mouse platforms
+	// expect it to be in there. This is fine for a real mouse, but on platforms
+	// without a mouse, such as a Wii with a Wii Remote, or touch interfaces,
+	// this won't work. In these platforms, the affected menus will close
+	// immediately, because the mouse cursor's position won't be what the game
+	// scripts expect.
+	// We identify these cases via the cursor position set. If the mouse position
+	// is outside the expected rectangle, we report back to the game scripts that
+	// it's actually inside it, the first time that the mouse position is polled,
+	// as the scripts expect. In subsequent mouse position poll attempts, we
+	// return back the actual mouse coordinates.
+	// Currently this code is enabled for all platforms, as we can't differentiate
+	// between ones that have normal mouse input, and platforms that have
+	// alternative mouse input methods, like a touch screen. Platforms that have
+	// a normal mouse for input won't be affected by this workaround.
 	const SciGameId gameId = g_sci->getGameId();
 	const SciCursorSetPositionWorkarounds *workaround;
 	workaround = setPositionWorkarounds;
@@ -481,7 +493,7 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 	_event->getSciEvent(SCI_EVENT_PEEK);
 }
 
-void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
+void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum) {
 	// Here we try to map the view number onto the cursor. What they did was keep the
 	// kSetCursor calls the same, but perform remapping on the cursors. They also took
 	// it a step further and added a new kPlatform sub-subop that handles remapping
@@ -532,6 +544,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	if (!macCursor->readFromStream(resStream)) {
 		warning("Failed to load Mac cursor %d", viewNum);
+		delete macCursor;
 		return;
 	}
 

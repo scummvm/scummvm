@@ -246,8 +246,8 @@ void PCSound::playSong(int16 songNum) {
 	if (!musicOn())
 		return;
 
-	int override = (_vm->resource()->isDemo()) ? _songDemo[songNum - 1].override : _song[songNum - 1].override;
-	switch (override) {
+	int overrideCmd = (_vm->resource()->isDemo()) ? _songDemo[songNum - 1].overrideCmd : _song[songNum - 1].overrideCmd;
+	switch (overrideCmd) {
 	// Override all songs
 	case  1:
 		break;
@@ -771,4 +771,4 @@ bool AmigaSound::playSpecialSfx(int16 sfx) {
 	return true;
 }
 
-} //End of namespace Queen
+} // End of namespace Queen

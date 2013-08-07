@@ -84,7 +84,7 @@ int ScummEngine_v0::verbPrepIdType(int verbid) {
 	switch (verbid) {
 	case kVerbUse: // depends on object1
 		return kVerbPrepObject;
-	case kVerbGive: 
+	case kVerbGive:
 		return kVerbPrepTo;
 	case kVerbUnlock: case kVerbFix:
 		return kVerbPrepWith;
@@ -693,7 +693,7 @@ void ScummEngine_v0::verbExec() {
 
 	if (_activeVerb == kVerbWhatIs)
 		return;
-		
+
 	if (!(_activeVerb == kVerbWalkTo && _activeObject == 0)) {
 		doSentence(_activeVerb, _activeObject, _activeObject2);
 		if (_activeVerb != kVerbWalkTo) {

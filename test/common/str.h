@@ -243,6 +243,14 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str, "012345678923456789012345678901");
 	}
 
+	void test_erase() {
+		Common::String str("01234567890123456789012345678901");
+		str.erase(18);
+		TS_ASSERT_EQUALS(str, "012345678901234567");
+		str.erase(7, 5);
+		TS_ASSERT_EQUALS(str, "0123456234567");
+	}
+
 	void test_sharing() {
 		Common::String str("01234567890123456789012345678901");
 		Common::String str2(str);

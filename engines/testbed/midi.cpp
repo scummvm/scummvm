@@ -96,10 +96,14 @@ TestExitStatus MidiTests::playMidiMusic() {
 		Common::String errMsg = MidiDriver::getErrorName(errCode);
 		Testsuite::writeOnScreen(errMsg, Common::Point(0, 100));
 		Testsuite::logPrintf("Error! %s", errMsg.c_str());
+
+		delete smfParser;
+		delete driver;
+
 		return kTestFailed;
 	}
 
-	Testsuite::logDetailedPrintf("Info! Midi: Succesfully opened the driver\n");
+	Testsuite::logDetailedPrintf("Info! Midi: Successfully opened the driver\n");
 
 	Common::MemoryWriteStreamDynamic ws(DisposeAfterUse::YES);
 	loadMusicInMemory(&ws);

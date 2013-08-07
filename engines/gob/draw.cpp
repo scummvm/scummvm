@@ -488,7 +488,7 @@ void Draw::oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, in
 	int16 width;
 	char tmpStr[128];
 
-	strcpy(tmpStr, paramStr);
+	Common::strlcpy(tmpStr, paramStr, 128);
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right,  &bottom);
 

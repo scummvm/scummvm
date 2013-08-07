@@ -78,8 +78,10 @@ bool Animation::loadAnimation(const Common::String &file) {
 		delete[] _frames;
 		_frames = new AnimationFrame[_numFrames];
 		for (int32 e = 0; e < _numFrames; e++) {
-			if (READ_LE_UINT32(data) != 0x12345678)
+			if (READ_LE_UINT32(data) != 0x12345678) {
+				delete[] finalBuffer;
 				return false;
+			}
 
 			int32 oldRef = READ_LE_UINT32(data + 4);
 			uint32 compressedSize = READ_LE_UINT32(data + 8);
@@ -188,7 +190,7 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int16 xx, int
 
 	int32 destPitch = surface.pitch;
 	uint8 *srcRow = _frames[frame]._data + offsX + (_frames[frame]._x2 - _frames[frame]._x1) * offsY;
-	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1 + offsY) * destPitch + (xx + _x1 + _frames[frame]._x1 + offsX);
+	uint8 *curRow = (uint8 *)surface.getBasePtr(xx + _x1 + _frames[frame]._x1 + offsX, yy + _frames[frame]._y1 + _y1 + offsY);
 	for (int16 y = 0; y < rectY; y++) {
 		uint8 *cur = curRow;
 		uint8 *c = srcRow + y * (_frames[frame]._x2 - _frames[frame]._x1);
@@ -229,7 +231,7 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	int32 destPitch = surface.pitch;
 	int32 destPitchMask = mask->getWidth();
 	uint8 *c = _frames[frame]._data;
-	uint8 *curRow = (uint8 *)surface.pixels;
+	uint8 *curRow = (uint8 *)surface.getPixels();
 	uint8 *curRowMask = mask->getDataPtr();
 
 	bool shadowFlag = false;
@@ -339,7 +341,7 @@ void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int16 xx,
 
 	int32 destPitch = surface.pitch;
 	uint8 *c = _frames[frame]._data;
-	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1);
+	uint8 *curRow = (uint8 *)surface.getBasePtr(xx + _x1 + _frames[frame]._x1, yy + _frames[frame]._y1 + _y1);
 	for (int16 y = 0; y < rectY; y++) {
 		unsigned char *cur = curRow;
 		for (int16 x = 0; x < rectX; x++) {

@@ -105,6 +105,7 @@ public:
 
 	void scrollTo(int item);
 	void scrollToEnd();
+	int getCurrentScrollPos() const { return _currentPos; }
 
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
 	String getQuickSelectString() const 		{ return _quickSelectStr; }
@@ -144,6 +145,7 @@ protected:
 
 	void receivedFocusWidget();
 	void lostFocusWidget();
+	void checkBounds();
 	void scrollToCurrent();
 
 	int *_textWidth;

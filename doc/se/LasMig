@@ -214,10 +214,15 @@ MADE-spel från Activision:
      Discworld 2: Missing Presumed ...!?         [dw2]
      Dragon History                              [draci]
      Drascula: The Vampire Strikes Back          [drascula]
+     Eye of the Beholder                         [eob]
+     Eye of the Beholder II: The Legend of
+         Darkmoon                                [eob2]
      Flight of the Amazon Queen                  [queen]
      Future Wars                                 [fw]
      Inherit the Earth: Quest for the Orb        [ite]
      Nippon Safes Inc.                           [nippon]
+     Lands of Lore: The Throne of Chaos          [lol]
+     The Journeyman Project: Pegasus Prime       [pegasus] 
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
@@ -317,21 +322,24 @@ I vissa fall visar ScummVM fortfarande skärmen för kopieringsskydd. Försök a
 
 ScummVM skippar kopieringsskyddet för följande spel:
 
-  * Maniac Mansion
-  * Zak McKracken and the Alien Mindbenders
-  * Loom (EGA)
-  * The Secret of Monkey Island (VGA)
-  * Monkey Island 2: LeChuck's Revenge
   * Beneath a Steel Sky
       -- överskridit med tillstånd från Revolution Software.
+  * Dreamweb
+      -- en lista med tillgängliga kommandon i spelets terminaler visas nu
+         när spelaren använder 'help'-kommandot. 
   * Inherit the Earth: Quest for the Orb (Diskettversionen)
       -- överskridit med tillstånd från Wyrmkeep Entertainment,
          då det överskridits på alla CD-utgåvor av spelet.
+  * Loom (EGA DOS)
+  * Maniac Mansion
+  * Monkey Island 2: LeChuck's Revenge
   * Simon the Sorcerer 1 (Diskettversionen)
   * Simon the Sorcerer 2 (Diskettversionen)
       -- överskridit med tillstånd från Adventure Soft,
          då det överskridits på alla CD-utgåvor av spelet.
+  * The Secret of Monkey Island (VGA)
   * Waxworks
+  * Zak McKracken and the Alien Mindbenders
 
 
 3.2) Notiser om Commodore64-spel:
@@ -889,9 +897,9 @@ ScummVM stöder ett antal kortkommandon medan du spelar. De är olika för SCUMM
     - och +                - Texthastighet långsammare/snabbare
     F5                     - Visar en ladda/spara-ruta
     Alt-F5                 - Visar spelets originalruta för att ladda/spara,
-                             förutsatt att det finns en. Du kan ladda och spara
-                             på det här viset, men det rekommenderas ej då det
-                             kan orsaka krascher.
+                             förutsatt att det finns en. Du kan ladda och
+                             spara på det här viset, men det
+                             rekommenderas ej då det kan orsaka krascher.
     i                      - Visar IQ-poäng (Indiana Jones and the Last
                              Crusade och Indiana Jones and the Fate of
                              Atlantis)
@@ -1512,7 +1520,8 @@ Ett exempel på en konfigurationsfil ser ut så här:
 Följande nyckelord kan användas:
 
     path               string   Sökvägen dit spelets datafiler ligger
-    autosave_period    number   Antal sekunder mellan autosparningar (standard: 300)
+    autosave_period    number   Antal sekunder mellan autosparningar 
+                                (standard: 300)
     save_slot          number   Positionsnumret för spardata att ladda vid
                                 uppstart.
     savepath           string   Sökvägen där spelet lagrar sina spardata.
@@ -1527,24 +1536,29 @@ Följande nyckelord kan användas:
 
     language           string   Bestäm språk (en, us, de, fr, it, pt, es,
                                 jp, zh, kr, se, gb, hb, cz, ru)
-    speech_mute        bool     Ställ in till “true” för att stänga av röster
-    subtitles          bool     Ställ in till “true” för att visa undertexter
-    talkspeed          number   Textfördröjning i SCUMM-spel, eller texthastighet
-                                i andra spel.
+    speech_mute        bool     Ställ in till “true” för att
+                                stänga av röster
+    subtitles          bool     Ställ in till “true” för att
+                                visa undertexter
+    talkspeed          number   Textfördröjning i SCUMM-spel, eller
+                                texthastighet i andra spel.
 
     fullscreen         bool     Fullskärmsläge
     aspect_ratio       bool     Aktivera korrektion av bildförhållande
     gfx_mode           string   Grafikläge (normalt, 2x, 3x, 2xsai,
-                                super2xsai, supereagle, advmame2x, advmame3x,
-                                hq2x, hq3x, tv2x, dotmatrix)
+                                super2xsai, supereagle, advmame2x,
+                                advmame3x, hq2x, hq3x, tv2x, dotmatrix)
 
-    confirm_exit       bool     Be om bekräftelse från användaren innan avslutnig
-                                (endast SDL-back-end).
-    console            bool     Öppna konsolfönstret (standard: på) (endast Windows)
-    cdrom              number   Nummer på CD-ROM enhet för använding av ljud.
-                                Försök inte använda CD-ROM enheten om detta numret
-                                är negativt.
-    joystick_num       number   Nummer på joystick-enhet att använda för input
+    confirm_exit       bool     Be om bekräftelse från användaren innan
+                                avslutnig (endast SDL-back-end).
+    console            bool     Öppna konsolfönstret (standard: på)
+                                (endast Windows)
+    cdrom              number   Nummer på CD-ROM enhet för
+                                använding av ljud.
+                                Försök inte använda CD-ROM enheten om
+                                detta numret är negativt.
+    joystick_num       number   Nummer på joystick-enhet att använda
+                                för input
     music_driver       string   Musikenheten att använda.
     opl_driver         string   AdLib (OPL)-emulatorn att använda.
     output_rate        number   Uppspelningsvärdet i Hz. Lämpliga värden är
@@ -1554,28 +1568,30 @@ Följande nyckelord kan användas:
     music_volume       number   Musikvolym (0-255)
     multi_midi         bool     Ställ in till “true” för att kombinera AdLib
                                 och Native MIDI.
-    soundfont          string   SoundFont att använda för MIDI-uppspelning. (Stöds
-                                endast av vissa MIDI-drivers.)
+    soundfont          string   SoundFont att använda för MIDI-uppspelning.
+                                (Stöds endast av vissa MIDI-drivers.)
     native_mt32        bool     Ställ in till “true” för att deaktivera GM-
-                                emulation och utgå ifrån att en verklig Roland
-                                MT-32 finns tillhanda.
-    enable_gs          bool     Ställ in till “true” för att aktivera Roland GS-
-                                specifika funktioner för att förbättra GM-
-                                emulation. Om native_mt32 även ställts till ”true”
-                                kommer GS-enheten att välja en MT-32 karta för att
-                                spela rätt instrument.
+                                emulation och utgå ifrån att en verklig
+                                Roland MT-32 finns tillhanda.
+    enable_gs          bool     Ställ in till “true” för att aktivera
+                                Roland GS-specifika funktioner för att
+                                förbättra GM-emulation. Om native_mt32 även
+                                ställts till ”true” så kommer GS-enheten att
+                                välja en MT-32 karta för att spela
+                                rätt instrument.
     sfx_volume         number   Ljudeffektsvolym (0-255)
     tempo              number   Musiktempo (50-200) (standard: 100)
     speech_volume      number   Röstvolym (0-255)
-    midi_gain          number   MIDI gain (0-1000) (standard: 100) (Stöds endast
-                                av vissa MIDI-drivers.)
+    midi_gain          number   MIDI gain (0-1000) (standard: 100)
+                                (Stöds endast av vissa MIDI-drivers.)
 
-    copy_protection    bool     Aktiverar kopieringsskyddet för vissa spel i fall
-                                där ScummVM automatiskt deaktiverar det.
+    copy_protection    bool     Aktiverar kopieringsskyddet för vissa spel
+                                i fall där ScummVM automatiskt
+                                deaktiverar det.
     demo_mode          bool     Öppna demon i Maniac Mansion
-    alt_intro          bool     Använd alternativt intro för CD-versionerna av
-                                Beneath a Steel Sky och Flight of the Amazon
-                                Queen
+    alt_intro          bool     Använd alternativt intro för
+                                CD-versionerna av Beneath a Steel Sky
+                                och Flight of the Amazon Queen
 
     boot_param         number   Skicka det här numret till boot script
 
@@ -1605,9 +1621,10 @@ Sierra-spel som använder SCI-motorn använder även följande nyckelord:
 Broken Sword II lägger till följande nyckelord:
 
     gfx_details        number   Grafisk detalj (0-3)
-    music_mute         bool     Ställ in till “true” för att deaktivera musik
-    object_labels      bool     Ställ in till “true” för att aktivera etiketter för                          
-                                föremål
+    music_mute         bool     Ställ in till “true” för att
+                                deaktivera musik
+    object_labels      bool     Ställ in till “true” för att aktivera
+                                etiketter för föremål
     reverse_stereo     bool     Ställ in till “true” för att ivertera  
                                 stereokanalerna
     sfx_mute           bool     Ställ in till “true” för att deaktivera      
@@ -1615,9 +1632,10 @@ Broken Sword II lägger till följande nyckelord:
 
 Flight of the Amazon Queen lägger till följande nyckelord:
 
-    music_mute         bool     Ställ in till “true” för att deaktivera musik
-    sfx_mute           bool     Ställ in till “true” för att deaktivera      
-                                ljudeffekter
+    music_mute         bool     Ställ in till “true” för att
+                                deaktivera musik
+    sfx_mute           bool     Ställ in till “true” för att
+                                deaktivera ljudeffekter
 
 
 Jones in the Fast Lane använder även följande nyckelord:
@@ -1628,10 +1646,12 @@ Jones in the Fast Lane använder även följande nyckelord:
 
 King's Quest VI Windows lägger till följande nyckelord:
 
-    windows_cursors    bool     Ställ in till “true” för att använda de svartvita
-                                Windows-muspekarna istället för DOS-muspekarna.
-                                Ställ in till ”false” för att använda de uppskalade
-                                muspekarna som matchar resten av grafiken.
+    windows_cursors    bool     Ställ in till “true” för att använda
+                                de svartvita Windows-muspekarna istället
+                                för DOS-muspekarna.
+                                Ställ in till ”false” för att använda
+                                de uppskalade muspekarna som matchar
+                                resten av grafiken.
     
 
 Lands of Lore: The Throne of Chaos använder även följande nyckelord:
@@ -1654,18 +1674,25 @@ Space Quest IV CD använder även följande nyckelord:
 
 Simon the Sorcerer 1 och 2 lägger till följande nyckelord:
 
-    music_mute         bool     Ställ in till “true” för att deaktivera musik
-    sfx_mute           bool     Ställ in till “true” för att deaktivera      
-                                ljudeffekter
+    music_mute         bool     Ställ in till “true” för att
+                                deaktivera musik
+    sfx_mute           bool     Ställ in till “true” för att
+                                deaktivera ljudeffekter
 
 
 The Legend of Kyrandia lägger till följande nyckelord:
 
-    walkspeed          int      Gånghastighet (0-4)
+    walkspeed          number   Gånghastighet (0-4)
 
+The Legend of Kyrandia: The Hand of Fate använder även följande nyckelord:
+
+    walkspeed          number   Gånghastighet (3 eller 5, för fast
+                                eller långsamt)
 
 The Legend of Kyrandia: Malcolm's Revenge använder även följande nyckelord:
 
+    walkspeed          number   Gånghastighet (3 eller 5, för fast
+                                eller långsamt)
     studio_audience    bool     Ställ in till “true” för att höra
                                 skratt och applåder när Malcolm
                                 berättar ett skämt
@@ -1676,9 +1703,13 @@ The Legend of Kyrandia: Malcolm's Revenge använder även följande nyckelord:
 
 The 7th Guest använder även följande nyckelord:
 
-    t7g_speed          string   Hastighet på videouppspelning
-                                (normal, tweaked, im_an_ios)
 
+    fast_movie_speed   bool     Ställ in till true för att spela filmer
+                                med högre hastighet för att matcha
+                                hastigheten av iOS-versionen.
+                                Filmer utan ljud spelas fortfarande
+                                med dess normala hastighet för att
+                                undvika problem med musiksynkronisering.
 
 8.2) Spelinställningar som kan aktiveras via användargränssnittet
 ---- ------------------------------------------------------------

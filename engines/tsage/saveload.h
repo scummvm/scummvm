@@ -150,6 +150,16 @@ public:
 		if (i != this->end()) ++i;
 		this->insert(i, newItem);
 	}
+
+	bool contains(T item) {
+		typename SynchronizedList<T>::iterator i = this->begin();
+		for (; i != this->end(); ++i) {
+			if (*i == item)
+				return true;
+		}
+
+		return false;
+	}
 };
 
 /**

@@ -190,6 +190,7 @@ void TrollEngine::inventory() {
 		break;
 	case IDI_TRO_MAX_TREASURE:
 		drawStr(3, 17, kColorDefault, IDS_TRO_TREASURE_2);
+		break;
 	default:
 		sprintf(tmp, IDS_TRO_TREASURE_4, _treasuresLeft);
 		drawStr(20, 10, kColorDefault, tmp);
@@ -219,6 +220,7 @@ void TrollEngine::waitAnyKeyIntro() {
 		switch (iMsg) {
 		case 200:
 			iMsg = 0;
+			// fall through
 		case 0:
 			drawStr(22, 3, kColorDefault, IDS_TRO_INTRO_2);
 			_gfx->doUpdate();

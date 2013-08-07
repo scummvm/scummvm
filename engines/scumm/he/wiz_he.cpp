@@ -1548,12 +1548,18 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		if (rScreen.intersects(clip)) {
 			rScreen.clip(clip);
 		} else {
+			if (flags & kWIFBlitToMemBuffer)
+				free(dst);
+
 			return 0;
 		}
 	} else if (_rectOverrideEnabled) {
 		if (rScreen.intersects(_rectOverride)) {
 			rScreen.clip(_rectOverride);
 		} else {
+			if (flags & kWIFBlitToMemBuffer)
+				free(dst);
+
 			return 0;
 		}
 	}
@@ -2286,8 +2292,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			lineP.depth = bitDepth;
 
 			if (params->processFlags & kWPFParams) {
-				assert (params->params2 == 1); // Catch untested usage
-				Graphics::drawThickLine(x1, y1, x2, y2, params->params1, color, drawProc, &lineP);
+				Graphics::drawThickLine(x1, y1, x2, y2, params->params1, params->params2, color, drawProc, &lineP);
 			} else {
 				Graphics::drawLine(x1, y1, x2, y2, color, drawProc, &lineP);
 			}

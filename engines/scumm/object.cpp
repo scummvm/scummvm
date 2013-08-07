@@ -335,7 +335,7 @@ int ScummEngine::whereIsObject(int object) const {
 		return WIO_NOT_FOUND;
 
 	if ((_game.version != 0 || OBJECT_V0_TYPE(object) == 0) &&
-		 _objectOwnerTable[object] != OF_OWNER_ROOM) 
+		 _objectOwnerTable[object] != OF_OWNER_ROOM)
 	{
 		for (i = 0; i < _numInventory; i++)
 			if (_inventory[i] == object)
@@ -433,10 +433,14 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
 	} else if (_game.version <= 2) {
-		if (od.actordir) {
-			x = od.walk_x;
-			y = od.walk_y;
-		} else {
+		x = od.walk_x;
+		y = od.walk_y;
+
+		// Adjust x, y when no actor direction is set, but only perform this
+		// adjustment for V0 games (e.g. MM C64), otherwise certain scenes in
+		// newer games are affected as well (e.g. the interior of the Shuttle
+		// Bus scene in Zak V2, where no actor is present). Refer to bug #3526089.
+		if (!od.actordir && _game.version == 0) {
 			x = od.x_pos + od.width / 2;
 			y = od.y_pos + od.height / 2;
 		}
@@ -1225,7 +1229,7 @@ byte *ScummEngine::getOBCDFromObject(int obj, bool v0CheckInventory) {
 	byte *ptr;
 
 	if ((_game.version != 0 || OBJECT_V0_TYPE(obj) == 0) &&
-		_objectOwnerTable[obj] != OF_OWNER_ROOM) 
+		_objectOwnerTable[obj] != OF_OWNER_ROOM)
 	{
 		if (_game.version == 0 && !v0CheckInventory)
 			return 0;
@@ -1711,7 +1715,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 		error("object %d is not a blast object", eo->number);
 
 	bdd.dst = *vs;
-	bdd.dst.pixels = vs->getPixels(0, 0);
+	bdd.dst.setPixels(vs->getPixels(0, 0));
 	bdd.x = eo->rect.left;
 	bdd.y = eo->rect.top;
 

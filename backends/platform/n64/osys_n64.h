@@ -104,9 +104,7 @@ protected:
 	bool _cursorPaletteDisabled;
 	bool _dirtyPalette;
 
-	// FIXME: This must be left as "int" for now, to fix the sign-comparison problem
-	// there is a little more work involved than an int->uint change
-	int _cursorWidth, _cursorHeight;
+	uint _cursorWidth, _cursorHeight;
 
 	int _cursorKeycolor;
 
@@ -186,7 +184,7 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual bool pollEvent(Common::Event &event);
-	virtual uint32 getMillis();
+	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 
 	virtual MutexRef createMutex(void);

@@ -101,6 +101,15 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 		case 0x9: // note on
 			info.basic.param1 = *_position._playPos++;
 			info.basic.param2 = *_position._playPos++;
+			// Rewrite note on events with velocity 0 as note off events.
+			// This is the actual meaning of this, but theoretically this
+			// should not need to be rewritten, since all MIDI devices should
+			// interpret it like that. On the other hand all our MidiParser
+			// implementations do it and there seems to be code in MidiParser
+			// which relies on this for tracking active notes.
+			if (info.basic.param2 == 0) {
+				info.event = info.channel() | 0x80;
+			}
 			break;
 
 		case 0xA: { // loop control

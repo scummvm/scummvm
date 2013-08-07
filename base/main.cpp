@@ -42,8 +42,11 @@
 #include "common/debug.h"
 #include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
-#include "common/EventRecorder.h"
+#include "gui/EventRecorder.h"
 #include "common/fs.h"
+#ifdef ENABLE_EVENTRECORDER
+#include "common/recorderfile.h"
+#endif
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
@@ -409,7 +412,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			settings["gfx-mode"] = "default";
 		}
 	}
-
+	if (settings.contains("disable-display")) {
+		ConfMan.setInt("disable-display", 1, Common::ConfigManager::kTransientDomain);
+	}
 	setupGraphics(system);
 
 	// Init the different managers that are used by the engines.
@@ -422,13 +427,15 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
 
+#ifdef ENABLE_EVENTRECORDER
 	// Directly after initializing the event manager, we will initialize our
 	// event recorder.
 	//
 	// TODO: This is just to match the current behavior, when we further extend
 	// our event recorder, we might do this at another place. Or even change
 	// the whole API for that ;-).
-	g_eventRec.init();
+	g_eventRec.RegisterEventSource();
+#endif
 
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
@@ -448,12 +455,29 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// to save memory
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
 
+#ifdef ENABLE_EVENTRECORDER
+			Common::String recordMode = ConfMan.get("record_mode");
+			Common::String recordFileName = ConfMan.get("record_file_name");
+
+			if (recordMode == "record") {
+				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), GUI::EventRecorder::kRecorderRecord);
+			} else if (recordMode == "playback") {
+				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderPlayback);
+			} else if ((recordMode == "info") && (!recordFileName.empty())) {
+				Common::PlaybackFile record;
+				record.openRead(recordFileName);
+				debug("info:author=%s name=%s description=%s", record.getHeader().author.c_str(), record.getHeader().name.c_str(), record.getHeader().description.c_str());
+				break;
+			}
+#endif
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
+#ifdef ENABLE_EVENTRECORDER
 			// Flush Event recorder file. The recorder does not get reinitialized for next game
 			// which is intentional. Only single game per session is allowed.
 			g_eventRec.deinit();
+#endif
 
 		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can
@@ -478,6 +502,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			#ifdef FORCE_RTL
 			g_system->getEventManager()->resetQuit();
 			#endif
+			#ifdef ENABLE_EVENTRECORDER
+			if (g_eventRec.checkForContinueGame()) {
+				continue;
+			}
+			#endif
 
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.
@@ -501,7 +530,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::DebugManager::destroy();
-	Common::EventRecorder::destroy();
+#ifdef ENABLE_EVENTRECORDER
+	GUI::EventRecorder::destroy();
+#endif
 	Common::SearchManager::destroy();
 #ifdef USE_TRANSLATION
 	Common::TranslationManager::destroy();

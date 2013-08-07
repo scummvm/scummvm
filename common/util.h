@@ -41,10 +41,10 @@
 #undef MAX
 #endif
 
-template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
-template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
-template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
-template<typename T> inline T CLIP (T v, T amin, T amax)
+template<typename T> inline T ABS(T x)		{ return (x >= 0) ? x : -x; }
+template<typename T> inline T MIN(T a, T b)	{ return (a < b) ? a : b; }
+template<typename T> inline T MAX(T a, T b)	{ return (a > b) ? a : b; }
+template<typename T> inline T CLIP(T v, T amin, T amax)
 		{ if (v < amin) return amin; else if (v > amax) return amax; else return v; }
 
 /**
@@ -165,6 +165,17 @@ bool isSpace(int c);
  */
 bool isUpper(int c);
 
-}	// End of namespace Common
+/**
+ * Test whether the given character is printable. This includes the space
+ * character (' ').
+ *
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is printable, false otherwise.
+ */
+bool isPrint(int c);
+} // End of namespace Common
 
 #endif

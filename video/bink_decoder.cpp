@@ -236,7 +236,7 @@ BinkDecoder::AudioInfo::~AudioInfo() {
 
 BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const Graphics::PixelFormat &format, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id) :
 		_frameCount(frameCount), _frameRate(frameRate), _swapPlanes(swapPlanes), _hasAlpha(hasAlpha), _id(id) {
-	_curFrame = -1;	
+	_curFrame = -1;
 
 	for (int i = 0; i < 16; i++)
 		_huffman[i] = 0;
@@ -557,8 +557,8 @@ void BinkDecoder::BinkVideoTrack::initBundles() {
 		_bundles[i].dataEnd = _bundles[i].data + blocks * 64;
 	}
 
-	uint32 cbw[2] = { (_surface.w + 7) >> 3, (_surface.w  + 15) >> 4 };
-	uint32 cw [2] = {  _surface.w          ,  _surface.w        >> 1 };
+	uint32 cbw[2] = { (uint32)((_surface.w + 7) >> 3), (uint32)((_surface.w  + 15) >> 4) };
+	uint32 cw [2] = { (uint32)( _surface.w          ), (uint32)( _surface.w        >> 1) };
 
 	// Calculate the lengths of an element count in bits
 	for (int i = 0; i < 2; i++) {

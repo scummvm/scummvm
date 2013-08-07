@@ -227,7 +227,10 @@ Header *ResMan::lockScript(uint32 scrID) {
 #else
 	openScriptResourceLittleEndian(scrID);
 #endif
-	return (Header *)resHandle(scrID)->data;
+	MemHandle *handle = resHandle(scrID);
+	if (!handle)
+		error("Script resource handle %d not found", scrID);
+	return (Header *)handle->data;
 }
 
 void ResMan::unlockScript(uint32 scrID) {
@@ -343,8 +346,8 @@ MemHandle *ResMan::resHandle(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
 
-	// There is a know case of reading beyond array boundaries when trying to use
-	// portuguese subtitles (cluster file 2, group 6) with a version that do not
+	// There is a known case of reading beyond array boundaries when trying to use
+	// portuguese subtitles (cluster file 2, group 6) with a version that does not
 	// contain subtitles for this languages (i.e. has only 6 languages and not 7).
 	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
 		return NULL;

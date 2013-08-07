@@ -361,8 +361,8 @@ void View::idleView() {
 
 void View::setModule(Module *module) {
 	if (_currentModule) {
-		module->shutdown();
-		delete module;
+		_currentModule->shutdown();
+		delete _currentModule;
 	}
 
 	_currentModule = NULL;

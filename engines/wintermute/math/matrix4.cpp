@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/math/matrix4.h"
 #include "engines/wintermute/math/vector2.h"
-#include <math.h>
+#include "common/scummsys.h"
 
 namespace Wintermute {
 
@@ -83,4 +83,4 @@ void Matrix4::transformVector2(Vector2 &vec) {
 	vec.y = y;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

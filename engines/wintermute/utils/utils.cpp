@@ -96,7 +96,7 @@ char *BaseUtils::setString(char **string, const char *value) {
 char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 	int numEntries = 0;
 
-	const char *start = NULL;
+	const char *start = nullptr;
 	int len = 0;
 
 	for (uint32 i = 0; i <= strlen(str); i++) {
@@ -117,7 +117,7 @@ char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -258,4 +258,4 @@ float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
 	return (v1);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

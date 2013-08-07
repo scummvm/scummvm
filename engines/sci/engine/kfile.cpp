@@ -340,7 +340,7 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 
 	if (argv[0] == SIGNAL_REG)
 		return s->r_acc;
-	
+
 	uint16 handle = argv[0].toUint16();
 
 #ifdef ENABLE_SCI32
@@ -624,7 +624,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	// Special case for KQ6 Mac: The game checks for two video files to see
 	// if they exist before it plays them. Since we support multiple naming
 	// schemes for resource fork files, we also need to support that here in
-	// case someone has a "HalfDome.bin" file, etc. 
+	// case someone has a "HalfDome.bin" file, etc.
 	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
 			(name == "HalfDome" || name == "Kq6Movie"))
 		exists = Common::MacResManager::exists(name);
@@ -770,7 +770,10 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 				return NULL_REG;
 		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
 			// virtualId is low, we assume that scripts expect us to create new slot
-			if (virtualId == s->_lastSaveVirtualId) {
+			if (g_sci->getGameId() == GID_JONES) {
+				// Jones has one save slot only
+				savegameId = 0;
+			} else if (virtualId == s->_lastSaveVirtualId) {
 				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
 				savegameId = s->_lastSaveNewId;
 			} else {
@@ -848,12 +851,17 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	} else {
 		if (argv[2].isNull())
 			error("kRestoreGame: called with parameter 2 being NULL");
-		// Real call from script, we need to adjust ID
-		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
-			warning("Savegame ID %d is not allowed", savegameId);
-			return TRUE_REG;
+		if (g_sci->getGameId() == GID_JONES) {
+			// Jones has one save slot only
+			savegameId = 0;
+		} else {
+			// Real call from script, we need to adjust ID
+			if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
+				warning("Savegame ID %d is not allowed", savegameId);
+				return TRUE_REG;
+			}
+			savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
 		}
-		savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
 	}
 
 	s->r_acc = NULL_REG; // signals success
@@ -922,10 +930,16 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	if (virtualId == 0)
 		return NULL_REG;
 
-	// Find saved-game
-	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-		error("kCheckSaveGame: called with invalid savegameId");
-	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	uint savegameId = 0;
+	if (g_sci->getGameId() == GID_JONES) {
+		// Jones has one save slot only
+	} else {
+		// Find saved game
+		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+			error("kCheckSaveGame: called with invalid savegame ID (%d)", virtualId);
+		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	}
+
 	int savegameNr = findSavegame(saves, savegameId);
 	if (savegameNr == -1)
 		return NULL_REG;
@@ -964,7 +978,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	char *saveNamePtr = saveNames;
 
 	for (uint i = 0; i < totalSaves; i++) {
-		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame ID ffs. see above
+		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame ID (see above)
 		strcpy(saveNamePtr, saves[i].name);
 		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
 	}
@@ -998,7 +1012,7 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
 		error("kMakeSaveFileName: invalid savegame ID specified");
 	uint saveSlot = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-	
+
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 

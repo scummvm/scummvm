@@ -50,9 +50,9 @@ public:
 	BaseArray<AdTalkNode *> _nodes;
 	char *_defaultSpriteFilename;
 	BaseSprite *_defaultSprite;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

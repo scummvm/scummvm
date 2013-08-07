@@ -57,6 +57,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_signalToSet = 0;
 	_dataincAdd = false;
 	_dataincToAdd = 0;
+	_jumpToHoldTick = false;
 	_resetOnPause = false;
 	_pSnd = 0;
 }
@@ -251,15 +252,14 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			if (curChannel != 0xF)
 				containsMidiData = true;
 
-			if (command != kEndOfTrack) {
-				// Write delta
-				while (delta > 240) {
-					*outData++ = 0xF8;
-					delta -= 240;
-				}
-				*outData++ = (byte)delta;
-				delta = 0;
+			// Write delta
+			while (delta > 240) {
+				*outData++ = 0xF8;
+				delta -= 240;
 			}
+			*outData++ = (byte)delta;
+			delta = 0;
+
 			// Write command
 			switch (command) {
 			case 0xF0: // sysEx
@@ -302,7 +302,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	}
 
 	// Insert stop event
-	*outData++ = 0;    // Delta
+	// (Delta is already output above)
 	*outData++ = 0xFF; // Meta event
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
@@ -453,6 +453,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 
 		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
+	if (_jumpToHoldTick) {
+		_jumpToHoldTick = false;
+		jumpToTick(_loopTick, false, false);
+	}
 
 	info.start = _position._playPos;
 	info.delta = 0;
@@ -487,6 +491,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// though, so ignoring these signals in SCI0 games will result
 				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
 				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
+				// FIXME: SSCI doesn't start playing at the very beginning
+				// of the stream, but at a fixed location a few commands later.
+				// That is probably why this signal isn't triggered
+				// immediately there.
 				if (_soundVersion <= SCI_VERSION_0_LATE ||
 					_position._playTick || info.delta) {
 					_signalSet = true;
@@ -532,8 +540,16 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// Check if the hold ID marker is the same as the hold ID
 				// marker set for that song by cmdSetSoundHold.
 				// If it is, loop back, but don't stop notes when jumping.
-				if (info.basic.param2 == _pSnd->hold)
-					jumpToTick(_loopTick, false, false);
+				// We need to wait for the delta of the current event before
+				// jumping, thus the jump will be performed on the next
+				// parseNextEvent() call, like with the signal set events.
+				// In LSL6, room 360, song 381, this ends up jumping forward
+				// one tick (the hold marker occurs at playtick 27, with
+				// _loopTick being 15 and the event itself having a delta of
+				// 13, total = 28) - bug #3614566.
+				if (info.basic.param2 == _pSnd->hold) {
+					_jumpToHoldTick = true;
+				}
 				break;
 			case kUpdateCue:
 				_dataincAdd = true;
@@ -635,8 +651,17 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// (e.g. song 110, during the intro). The original interpreter
 				// treats this case as an infinite loop (bug #3311911).
 				if (_pSnd->loop || _pSnd->hold > 0) {
-					// We need to play it again...
+					// TODO: this jump is also vulnerable to the same lockup as
+					// the MIDI hold one above. However, we can't perform the
+					// jump on the next tick like with the MIDI hold jump above,
+					// as there aren't any subsequent MIDI events after this one.
+					// This assert is here to detect cases where the song ends
+					// up jumping forward, like with bug #3614566 (see above).
+					assert(_loopTick + info.delta < _position._playTick);
+
+					uint32 extraDelta = info.delta;
 					jumpToTick(_loopTick);
+					_nextEvent.delta += extraDelta;
 				} else {
 					_pSnd->status = kSoundStopped;
 					_pSnd->setSignal(SIGNAL_OFFSET);

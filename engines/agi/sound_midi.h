@@ -33,7 +33,7 @@ namespace Agi {
 
 class MIDISound : public AgiSound {
 public:
-	MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	MIDISound(uint8 *data, uint32 len, int resnum);
 	~MIDISound() { free(_data); }
 	virtual uint16 type() { return _type; }
 	uint8 *_data; ///< Raw sound resource data
@@ -61,8 +61,6 @@ public:
 
 private:
 	bool _isGM;
-
-	SoundMgr *_manager;
 };
 
 } // End of namespace Agi

@@ -132,7 +132,14 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 			Channel &ch = _voice[voice];
 			int16 *p = buffer;
 			int neededSamples = nSamples;
-			assert(ch.offset.int_off < ch.length);
+
+			// NOTE: A Protracker (or other module format) player might actually
+			// push the offset past the sample length in its interrupt(), in which
+			// case the first mixBuffer() call should not mix anything, and the loop
+			// should be triggered.
+			// Thus, doing an assert(ch.offset.int_off < ch.length) here is wrong.
+			// An example where this happens is a certain Protracker module played
+			// by the OS/2 version of Hopkins FBI.
 
 			// Mix the generated samples into the output buffer
 			neededSamples -= mixBuffer<stereo>(p, ch.data, ch.offset, rate, neededSamples, ch.length, ch.volume, ch.panning);

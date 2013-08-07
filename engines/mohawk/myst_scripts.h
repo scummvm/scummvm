@@ -86,10 +86,16 @@ public:
 	// Common opcodes
 	DECLARE_OPCODE(o_toggleVar);
 	DECLARE_OPCODE(o_setVar);
-	DECLARE_OPCODE(o_changeCardSwitch);
+	DECLARE_OPCODE(o_changeCardSwitch4);
+	DECLARE_OPCODE(o_changeCardSwitchLtR);
+	DECLARE_OPCODE(o_changeCardSwitchRtL);
 	DECLARE_OPCODE(o_takePage);
 	DECLARE_OPCODE(o_redrawCard);
 	DECLARE_OPCODE(o_goToDest);
+	DECLARE_OPCODE(o_goToDestForward);
+	DECLARE_OPCODE(o_goToDestLeft);
+	DECLARE_OPCODE(o_goToDestRight);
+	DECLARE_OPCODE(o_goToDestUp);
 	DECLARE_OPCODE(o_triggerMovie);
 	DECLARE_OPCODE(o_toggleVarNoRedraw);
 	DECLARE_OPCODE(o_drawAreaState);

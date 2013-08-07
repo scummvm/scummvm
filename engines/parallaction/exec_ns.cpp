@@ -126,9 +126,7 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 	inst->_a->getFrameRect(r);
 
 	Graphics::Surface v18;
-	v18.w = r.width();
-	v18.h = r.height();
-	v18.pixels = inst->_a->getFrameData();
+	v18.init(r.width(), r.height(), r.width(), inst->_a->getFrameData(), Graphics::PixelFormat::createFormatCLUT8());
 
 	int16 x = inst->_opA.getValue();
 	int16 y = inst->_opB.getValue();
@@ -151,7 +149,7 @@ DECLARE_INSTRUCTION_OPCODE(call) {
 
 
 DECLARE_INSTRUCTION_OPCODE(wait) {
-	if (_engineFlags & kEngineWalking) {
+	if (g_engineFlags & kEngineWalking) {
 		ctxt._ip--;
 		ctxt._suspend = true;
 	}
@@ -198,7 +196,7 @@ DECLARE_COMMAND_OPCODE(invalid) {
 DECLARE_COMMAND_OPCODE(set) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
 		ctxt._cmd->_flags &= ~kFlagsGlobal;
-		_globalFlags |= ctxt._cmd->_flags;
+		g_globalFlags |= ctxt._cmd->_flags;
 	} else {
 		_vm->setLocationFlags(ctxt._cmd->_flags);
 	}
@@ -208,7 +206,7 @@ DECLARE_COMMAND_OPCODE(set) {
 DECLARE_COMMAND_OPCODE(clear) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
 		ctxt._cmd->_flags &= ~kFlagsGlobal;
-		_globalFlags &= ~ctxt._cmd->_flags;
+		g_globalFlags &= ~ctxt._cmd->_flags;
 	} else {
 		_vm->clearLocationFlags(ctxt._cmd->_flags);
 	}
@@ -267,7 +265,7 @@ DECLARE_COMMAND_OPCODE(call) {
 DECLARE_COMMAND_OPCODE(toggle) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
 		ctxt._cmd->_flags &= ~kFlagsGlobal;
-		_globalFlags ^= ctxt._cmd->_flags;
+		g_globalFlags ^= ctxt._cmd->_flags;
 	} else {
 		_vm->toggleLocationFlags(ctxt._cmd->_flags);
 	}

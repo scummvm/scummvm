@@ -70,7 +70,7 @@ DECLARE_INTERFACE_(IPropertyStore, IUnknown) {
 	STDMETHOD (GetValue) (REFPROPERTYKEY key, PROPVARIANT *pv) PURE;
 	STDMETHOD (SetValue) (REFPROPERTYKEY key, REFPROPVARIANT propvar) PURE;
 	STDMETHOD (Commit) (void) PURE;
-	
+
 private:
 	~IPropertyStore();
 };
@@ -137,7 +137,7 @@ DECLARE_INTERFACE_(ITaskbarList3, IUnknown) {
 	STDMETHOD (SetOverlayIcon) (THIS_ HWND hwnd, HICON hIcon, LPCWSTR pszDescription) PURE;
 	STDMETHOD (SetThumbnailTooltip) (THIS_ HWND hwnd, LPCWSTR pszTip) PURE;
 	STDMETHOD (SetThumbnailClip) (THIS_ HWND hwnd, RECT *prcClip) PURE;
-	
+
 private:
 	~ITaskbarList3();
 };

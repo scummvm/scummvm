@@ -361,6 +361,25 @@ void String::deleteChar(uint32 p) {
 	_size--;
 }
 
+void String::erase(uint32 p, uint32 len) {
+	assert(p < _size);
+
+	makeUnique();
+	// If len == npos or p + len is over the end, remove all the way to the end
+	if (len == npos || p + len >= _size) {
+		// Delete char at p as well. So _size = (p - 1) + 1
+		_size = p;
+		// Null terminate
+		_str[_size] = 0;
+		return;
+	}
+
+	for ( ; p + len <= _size; p++) {
+		_str[p] = _str[p + len];
+	}
+	_size -= len;
+}
+
 void String::clear() {
 	decRefCount(_extern._refCount);
 
@@ -370,7 +389,7 @@ void String::clear() {
 }
 
 void String::setChar(char c, uint32 p) {
-	assert(p <= _size);
+	assert(p < _size);
 
 	makeUnique();
 	_str[p] = c;
@@ -764,7 +783,7 @@ String tag2string(uint32 tag) {
 	str[4] = '\0';
 	// Replace non-printable chars by dot
 	for (int i = 0; i < 4; ++i) {
-		if (!isprint((unsigned char)str[i]))
+		if (!Common::isPrint(str[i]))
 			str[i] = '.';
 	}
 	return String(str);
@@ -850,7 +869,7 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 	return dstLength + (src - srcStart);
 }
 
-}	// End of namespace Common
+} // End of namespace Common
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.
 // TODO: Rename this to Common::strcasecmp

@@ -39,7 +39,7 @@ bool Sprite::contains(const Common::Point &pos) const {
 		return false;
 	if (adjustedPos.y < 0 || adjustedPos.y >= _surface.h)
 		return false;
-	byte *pixels = (byte *)_surface.pixels;
+	const byte *pixels = (const byte *)_surface.getPixels();
 	return (pixels[(_surface.h - adjustedPos.y - 1) * _surface.w + adjustedPos.x] != 0);
 }
 
@@ -507,7 +507,7 @@ const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
 
 void ComposerEngine::dirtySprite(const Sprite &sprite) {
 	Common::Rect rect(sprite._pos.x, sprite._pos.y, sprite._pos.x + sprite._surface.w, sprite._pos.y + sprite._surface.h);
-	rect.clip(_surface.w, _surface.h);
+	rect.clip(_screen.w, _screen.h);
 	if (rect.isEmpty())
 		return;
 
@@ -541,8 +541,8 @@ void ComposerEngine::redraw() {
 
 	for (uint i = 0; i < _dirtyRects.size(); i++) {
 		const Common::Rect &rect = _dirtyRects[i];
-		byte *pixels = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
-		_system->copyRectToScreen(pixels, _surface.pitch, rect.left, rect.top, rect.width(), rect.height());
+		byte *pixels = (byte *)_screen.getBasePtr(rect.left, rect.top);
+		_system->copyRectToScreen(pixels, _screen.pitch, rect.left, rect.top, rect.width(), rect.height());
 	}
 	_system->updateScreen();
 
@@ -794,7 +794,7 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 
 	if (width > 0 && height > 0) {
 		sprite._surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-		decompressBitmap(type, stream, (byte *)sprite._surface.pixels, size, width, height);
+		decompressBitmap(type, stream, (byte *)sprite._surface.getPixels(), size, width, height);
 	} else {
 		// there are some sprites (e.g. a -998x-998 one in Gregory's title screen)
 		// which have an invalid size, but the original engine doesn't notice for
@@ -814,16 +814,16 @@ void ComposerEngine::drawSprite(const Sprite &sprite) {
 	int y = sprite._pos.y;
 
 	// incoming data is BMP-style (bottom-up), so flip it
-	byte *pixels = (byte *)_surface.pixels;
+	byte *pixels = (byte *)_screen.getPixels();
 	for (int j = 0; j < sprite._surface.h; j++) {
 		if (j + y < 0)
 			continue;
-		if (j + y >= _surface.h)
+		if (j + y >= _screen.h)
 			break;
-		byte *in = (byte *)sprite._surface.pixels + (sprite._surface.h - j - 1) * sprite._surface.w;
-		byte *out = pixels + ((j + y) * _surface.w) + x;
+		const byte *in = (const byte *)sprite._surface.getBasePtr(0, sprite._surface.h - j - 1);
+		byte *out = pixels + ((j + y) * _screen.w) + x;
 		for (int i = 0; i < sprite._surface.w; i++)
-			if ((x + i >= 0) && (x + i < _surface.w) && in[i])
+			if ((x + i >= 0) && (x + i < _screen.w) && in[i])
 				out[i] = in[i];
 	}
 }

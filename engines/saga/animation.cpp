@@ -185,7 +185,7 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.time = (40 / 3) * 1000 / _cutawayList[cut].frameRate;
 
 		if (fade)
-			eventColumns = _vm->_events->chain(eventColumns, event);
+			_vm->_events->chain(eventColumns, event);
 		else
 			_vm->_events->queue(event);
 	}
@@ -501,7 +501,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	}
 
 	anim = getAnimation(animId);
-	displayBuffer = (byte *)_vm->_render->getBackGroundSurface()->pixels;
+	displayBuffer = (byte *)_vm->_render->getBackGroundSurface()->getPixels();
 
 	if (playing) {
 		anim->state = ANIM_PLAYING;

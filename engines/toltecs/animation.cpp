@@ -53,7 +53,7 @@ void AnimationPlayer::start(uint resIndex) {
 	_vm->_arc->closeResource();
 
 	debug(1, "AnimationPlayer::start() width = %d; height = %d; frameCount = %d", _width, _height, _frameCount);
-	
+
 	_vm->_sceneWidth = _width;
 	_vm->_sceneHeight = _height;
 
@@ -63,7 +63,7 @@ void AnimationPlayer::start(uint resIndex) {
 	_frameNumber = 0;
 	// TODO mov screenFlag01, 0FFFFh
 	// TODO mov animDrawFrameFlag, 0FFFFh
-	
+
 	_firstNextFrameOffset = _nextFrameOffset;
 	_firstCurFrameSize = _curFrameSize;
 	_firstNextFrameSize = _nextFrameSize;
@@ -81,25 +81,25 @@ void AnimationPlayer::nextFrame() {
 	} else {
 		_frameNumber++;
 	}
-	
+
 	debug(1, "AnimationPlayer::nextFrame() frameNumber = %d", _frameNumber);
 
 	if (_keepFrameCounter > 0) {
 		_keepFrameCounter--;
 		return;
 	}
-	
+
 	_vm->_arc->openResource(_resIndex);
 	_vm->_arc->seek(_nextFrameOffset, SEEK_CUR);
 	_curFrameSize = _nextFrameSize;
-	
+
 	if (_curFrameSize == 0)
 		_curFrameSize = 1;
-	
+
 	_vm->_arc->read(_animBuffer, _curFrameSize);
 	_nextFrameSize = _vm->_arc->readUint32LE();
 	_nextFrameOffset += _curFrameSize + 4;
-	
+
 	if (_curFrameSize > 1) {
 		unpackFrame();
 		// TODO mov animDrawFrameFlag, 0FFFFh

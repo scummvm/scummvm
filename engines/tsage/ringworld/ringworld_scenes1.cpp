@@ -2273,6 +2273,7 @@ void Scene60::Item1::doAction(int action) {
 		} else {
 			scene->setAction(&scene->_action2);
 		}
+		break;
 	default:
 		SceneHotspot::doAction(action);
 		break;

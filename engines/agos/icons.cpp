@@ -202,7 +202,7 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->pixels;
+	dst = (byte *)screen->getPixels();
 
 	dst += 110;
 	dst += x;
@@ -228,7 +228,7 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->pixels;
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 25 + window->y) * screen->pitch;
@@ -256,7 +256,7 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->pixels;
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 20 + window->y) * screen->pitch;
@@ -284,7 +284,7 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->pixels;
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * screen->pitch;
@@ -312,7 +312,7 @@ void AGOSEngine_Elvira1::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->pixels;
+	dst = (byte *)screen->getPixels();
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * screen->pitch;
@@ -339,7 +339,7 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	dst = (byte *)screen->pixels + y * screen->pitch + x * 8;
+	dst = (byte *)screen->getBasePtr(x * 8, y);
 	src = _iconFilePtr + icon * 146;
 
 	if (icon == 0xFF) {
@@ -951,7 +951,7 @@ void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
 	}
 
 	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->pixels + y * screen->pitch + x * 8;
+	byte *dst = (byte *)screen->getBasePtr(x * 8, y);
 
 	for (h = 0; h < 19; h++) {
 		for (w = 0; w < 16; w++) {
@@ -1042,9 +1042,9 @@ static const byte hitBarData[12 * 7] = {
 // Personal Nightmare specific
 void AGOSEngine_PN::drawIconHitBar() {
 	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->pixels + 3 * screen->pitch + 6 * 8;
+	byte *dst = (byte *)screen->getBasePtr(6 * 8, 3);
 	const byte *src = hitBarData;
-	uint8 color = (getPlatform() == Common::kPlatformPC) ? 7 : 15;
+	uint8 color = (getPlatform() == Common::kPlatformDOS) ? 7 : 15;
 
 	for (int h = 0; h < 7; h++) {
 		for (int w = 0; w < 12; w++) {

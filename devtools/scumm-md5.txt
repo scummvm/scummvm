@@ -346,7 +346,8 @@ ft	Full Throttle
 	4bedb49943df95a9c900a5a82ccbe9de	-1	fr	All?	-	-	-	cyx
 	8bdb0bf87b5e303dd35693afb9351215	-1	de	All?	-	-	-	dhewg
 	55518cd73cf9c6d23ea29c51ee06bdfe	-1	it	All?	-	-	-	delfino
-	55e4cc866ff9046824e1c638ba2b8c7f	-1	ru	All?	-	-	-	sev
+	55e4cc866ff9046824e1c638ba2b8c7f	-1	ru	All?	-	Akella	-	sev
+	291fb06071e65897f755846611f5ad40	19697	ru	All?	-	7-Wolf	-	sev
 	e72bb4c2b613db2cf50f89ff6350e70a	-1	es	All?	-	-	-	
 	fe381e45117878b1e942cb876b050fd6	513243679	en	Mac	-	-	Mac bundle	Fingolfin
 	04401d747f1a2c1c4b388daff71ed378	535405461	de	Mac	-	-	Mac bundle	Fingolfin
@@ -546,6 +547,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	a336134914eaab4892d35625aa15ad1d	-1	ru	Windows	HE 99	-	-	George Kormendi
 	b5298a5c15ffbe8b381d51ea4e26d35c	-1	de	All	HE 99	-	-	Joachim Eberhard
 	4f138ac6f9b2ac5a41bc68b2c3296064	-1	fr	Windows	HE 99	-	-	gist974
+	e9271b3d0694c7101f10d675ab7c0133	-1	it	Windows	HE 99	-	-	George Q. Greg
 	78bd5f036ea35a878b74e4f47941f784	-1	ru	Windows	HE 99	-	-	sev
 
 	7c2e76087027eeee9c8f8985f93a1cc5	13584	en	All	-	Demo	-	khalek
@@ -560,6 +562,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	e03ed1474ec14de78359970e0457a820	-1	gb	Windows	HE 99	Demo	-	eriktorbjorn
 	d54622d31255619d207dd245d3f92327	-1	fr	Windows	HE 99	Demo	-	Mevi
 	dcf0119a90451a7d6e0f1920931ba130	-1	fr	Windows	HE 99	Demo	-	Mevi
+	47e041521d35c7a801bb1c010d84da9d	-1	it	Windows	HE 99	Demo	-	Kirben
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
@@ -623,7 +626,8 @@ jungle	Let's Explore the Jungle with Buzzy
 	8801fb4a1200b347f7a38523339526dd	-1	en	Windows	-	-	-	Kirben
 
 moonbase	Moonbase Commander
-	cf400d20769fb70eb21766582f4924f7	-1	en	Windows	-	-	-	Kirben
+	cf400d20769fb70eb21766582f4924f7	-1	en	Windows	1.0	1.0	-	Kirben
+	e1c9998826ce7fa8bde5cc3a5023edec	-1	en	Windows	1.1	1.1	-	fuzzie
 	ef71a322b6530ac45b1a070f7c0795f7	-1	en	Windows	Demo	Demo	-	Kirben
 
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
@@ -651,6 +655,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	e5563c8358443c4352fcddf7402a5e0a	-1	fr	Windows	HE 98.5	-	-	gist974
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
+	7477bc23d0383516c5e310cd8771dcc9	-1	fr	Windows	HE 99	-	-	Strangerke
 	32709cbeeb3044b34129950860a83f14	-1	ru	Windows	HE 99	-	-	sev
 	1af4eb581a33d808707d66d50e084dca	-1	he	Windows	HE 99	-	-	Matan Bareket
 
@@ -715,6 +720,7 @@ puttrace	Putt-Putt Enters the Race
 	c8575e0b973ff1723aba6cd92c642db2	-1	fr	Windows	HE 99	Demo	-	Mevi
 	3769b56c9a22f5521d74525ee459f88d	13108	de	Windows	HE 99	Demo	-	George Kormendi
 	7c8100e360e8ef05f88069d4cfa0afd1	13108	gb	Windows	HE 99	Demo	-	eriktorbjorn
+	9778341eefc6feb447ca07e7be21791c	-1	it	Windows	HE 99	Demo	-	Kirben
 	6b27dbcd8d5697d5c918eeca0f68ef6a	3901484	All	All	HE CUP	Preview	-	sev
 
 puttmoon	Putt-Putt Goes to the Moon

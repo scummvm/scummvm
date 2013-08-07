@@ -104,17 +104,17 @@ struct PARALLACTIONGameDescription;
 
 
 
-extern uint32		_engineFlags;
-extern char			_saveData1[];
-extern uint32		_globalFlags;
-extern const char	*_dinoName;
-extern const char	*_donnaName;
-extern const char	*_doughName;
-extern const char	*_drkiName;
-extern const char	*_minidinoName;
-extern const char	*_minidonnaName;
-extern const char	*_minidoughName;
-extern const char	*_minidrkiName;
+extern uint32		g_engineFlags;
+extern char			g_saveData1[];
+extern uint32		g_globalFlags;
+extern const char	*g_dinoName;
+extern const char	*g_donnaName;
+extern const char	*g_doughName;
+extern const char	*g_drkiName;
+extern const char	*g_minidinoName;
+extern const char	*g_minidonnaName;
+extern const char	*g_minidoughName;
+extern const char	*g_minidrkiName;
 
 
 
@@ -601,7 +601,7 @@ private:
 	void _c_password(void *);
 };
 
-extern Parallaction *_vm;
+extern Parallaction *g_vm;
 
 
 } // End of namespace Parallaction

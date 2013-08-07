@@ -206,7 +206,7 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 	// Create group
 	std::string name = getLastPathComponent(dir.name);
 	Object *group = new Object(this, "PBXGroup_" + name , "PBXGroup", "PBXGroup", "", name);
-	
+
 	// List of children
 	Property children;
 	children.hasOrder = true;
@@ -225,7 +225,7 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 		ADD_SETTING_ORDER_NOVALUE(children, getHash(id), node->name, order++);
 		ADD_BUILD_FILE(id, node->name, node->name + " in Sources");
 		ADD_FILE_REFERENCE(node->name, property);
-		
+
 		// Process child nodes
 		if (!node->children.empty())
 			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');

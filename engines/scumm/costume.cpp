@@ -293,7 +293,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		return 2;
 	}
 
-	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x * _vm->_bytesPerPixel;
+	v1.destptr = (byte *)_out.getBasePtr(v1.x, v1.y);
 
 	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, _zbuf);
 
@@ -826,7 +826,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 				int my = _actorY + y + ty;
 				int mx = _actorX + x + tx;
 				if (!(_zbuf && (maskBuf[my * _numStrips + mx / 8] & revBitMask(mx & 7))))
-					*((byte *)_out.pixels + my * _out.pitch + mx) = palette[c];
+					*((byte *)_out.getBasePtr(mx, my)) = palette[c];
 			}
 		}
 	}
@@ -1188,7 +1188,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 		_draw_top = 200;
 		_draw_bottom = 0;
 	}
-	
+
 	// Invalid current position?
 	if (a->_cost.curpos[limb] == 0xFFFF)
 		return 0;
@@ -1238,7 +1238,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 			int destY = ypos + y;
 
 			if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
-				byte *dst = (byte *)_out.pixels + destY * _out.pitch + destX;
+				byte *dst = (byte *)_out.getBasePtr(destX, destY);
 				byte *mask = _vm->getMaskBuffer(0, destY, _zbuf);
 				if (a0->_limb_flipped[limb]) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
@@ -1377,7 +1377,7 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 			// Reset the comstume command
 			a0->_costCommandNew = 0xFF;
 			a0->_costCommand = 0xFF;
-			
+
 			// Set the frame/start to invalid
 			a0->_cost.frame[limb] = 0xFFFF;
 			a0->_cost.start[limb] = 0xFFFF;

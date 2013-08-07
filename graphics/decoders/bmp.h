@@ -24,6 +24,7 @@
  * Image decoder used in engines:
  *  - hugo
  *  - mohawk
+ *  - wintermute
  */
 
 #ifndef GRAPHICS_DECODERS_BMP_H

@@ -1095,7 +1095,7 @@ int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
 	return -1;
 }
 
-}	// End of namespace Audio
+} // End of namespace Audio
 
 // some debugging functions
 #if 0

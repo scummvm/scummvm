@@ -32,7 +32,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM UIQ3"},(0xA0000657),1,40,0
+#{"ScummVM UIQ3"},(0xA0000657),1,60,0
 
 ; ProductID for UIQ 3.0
 ; Product/platform version UID, Major, Minor, Build, Product ID
@@ -61,7 +61,6 @@
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\shared\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\shared\scummvm\lure.dat"
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\shared\scummvm\drascula.dat"
-"..\..\..\..\dists\engine-data\m4.dat"-"c:\shared\scummvm\m4.dat"
 "..\..\..\..\dists\engine-data\teenagent.dat"-"c:\shared\scummvm\teenagent.dat"
 "..\..\..\..\dists\engine-data\toon.dat"-"c:\shared\scummvm\toon.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\shared\scummvm\vkeybd_default.zip"

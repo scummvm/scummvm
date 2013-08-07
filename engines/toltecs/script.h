@@ -49,7 +49,6 @@ public:
 
 	byte *getSlotData(int slotIndex) const { return _slots[slotIndex].data; }
 
-	VarType getGameVarType(uint variable);
 	int16 getGameVar(uint variable);
 	void setGameVar(uint variable, int16 value);
 
@@ -90,13 +89,13 @@ protected:
 	bool _cmpBitTest;
 
 	ScriptSlot _slots[kMaxScriptSlots];
-	
+
 	ScriptRegs _regs;
 	int16 _savedSp;
 
 	byte readByte();
 	int16 readInt16();
-	
+
 	void execOpcode(byte opcode);
 
 	void setupScriptFunctions();

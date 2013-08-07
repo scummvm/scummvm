@@ -41,7 +41,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	SaveHeader header;
 	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
 	if (!saveFile) {
-		_txt->printMessage(2, "%s", getLangString(0x425d));
+		_txt->printMessage(2, "%s", getLangString(0x425D));
 		return Common::kNoError;
 	}
 
@@ -437,7 +437,7 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 
 		out->write(l->wallsXorData, 4096);
 		for (int ii = 0; ii < 1024; ii++)
-			out->writeByte(l->flags[ii] & 0xff);
+			out->writeByte(l->flags[ii] & 0xFF);
 
 		LoLMonster *lm = (LoLMonster *)_lvlTempData[i]->monsters;
 		FlyingObject *lf = (FlyingObject *)_lvlTempData[i]->flyingObjects;
@@ -547,7 +547,7 @@ void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
 	if (_lvlTempData[index]->monsterDifficulty == _monsterDifficulty)
 		return;
 
-	uint16 d = (_monsterModifiers[_lvlTempData[index]->monsterDifficulty] << 8) / _monsterModifiers[_monsterDifficulty];
+	uint16 d = (_monsterModifiers1[_lvlTempData[index]->monsterDifficulty] << 8) / _monsterModifiers1[_monsterDifficulty];
 
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].mode >= 14 || _monsters[i].block == 0 || _monsters[i].hitPoints <= 0)

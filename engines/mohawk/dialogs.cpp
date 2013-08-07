@@ -137,12 +137,6 @@ void MystOptionsDialog::open() {
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kZipCmd:
-		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
-		break;
-	case kTransCmd:
-		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
-		break;
 	case kDropCmd:
 		_vm->_needsPageDrop = true;
 		close();
@@ -155,8 +149,10 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		_vm->_needsShowDemoMenu = true;
 		close();
 	break;
-	case GUI::kCloseCmd:
-		close();
+	case GUI::kOKCmd:
+		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
+		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
+		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 		break;
 	default:
 		GUI::OptionsDialog::handleCommand(sender, cmd, data);

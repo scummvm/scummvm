@@ -26,6 +26,7 @@
 namespace Sword1 {
 
 SwordConsole::SwordConsole(SwordEngine *vm) : GUI::Debugger(), _vm(vm) {
+	assert(_vm);
 }
 
 SwordConsole::~SwordConsole() {

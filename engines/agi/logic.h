@@ -37,6 +37,6 @@ struct AgiLogic {
 	const char **texts;		/**< message list */
 };
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
 #endif /* AGI_LOGIC_H */

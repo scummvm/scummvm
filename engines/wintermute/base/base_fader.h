@@ -36,8 +36,7 @@ namespace Wintermute {
 
 class BaseFader : public BaseObject {
 public:
-	bool _system;
-	uint32 getCurrentColor();
+	uint32 getCurrentColor() const;
 	bool fadeOut(uint32 targetColor, uint32 duration, bool system = false);
 	bool fadeIn(uint32 sourceColor, uint32 duration, bool system = false);
 	bool deactivate();
@@ -47,6 +46,7 @@ public:
 	BaseFader(BaseGame *inGame);
 	virtual ~BaseFader();
 private:
+	bool _system;
 	bool _active;
 	byte _red;
 	byte _green;
@@ -58,6 +58,6 @@ private:
 	uint32 _startTime;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

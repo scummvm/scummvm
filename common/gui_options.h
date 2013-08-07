@@ -55,7 +55,7 @@
 #define GUIO_RENDERPC9821	"\037"
 #define GUIO_RENDERPC9801	"\040"
 
-// Special GUIO flags for the AdvancedDetector's caching of game specific 
+// Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
 #define GUIO_GAMEOPTIONS1	"\041"
 #define GUIO_GAMEOPTIONS2	"\042"

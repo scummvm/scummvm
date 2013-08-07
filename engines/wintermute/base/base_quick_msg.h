@@ -29,20 +29,21 @@
 #ifndef WINTERMUTE_BASE_QUICKMSG_H
 #define WINTERMUTE_BASE_QUICKMSG_H
 
-#include "engines/wintermute/base/base.h"
+#include "common/str.h"
 
 namespace Wintermute {
 
-class BaseQuickMsg : public BaseClass {
+class BaseQuickMsg {
 public:
-	char *getText();
-	uint32 _startTime;
-	char *_text;
-	BaseQuickMsg(BaseGame *inGame, const char *Text);
+	const char *getText() const;
+	uint32 getStartTime() const;
+	BaseQuickMsg(uint32 startTime, const char *text);
 	virtual ~BaseQuickMsg();
-
+private:
+	Common::String _text;
+	uint32 _startTime;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

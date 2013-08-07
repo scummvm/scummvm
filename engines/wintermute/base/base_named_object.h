@@ -42,10 +42,10 @@ public:
 	virtual ~BaseNamedObject(void);
 	BaseNamedObject(TDynamicConstructor, TDynamicConstructor);
 
-	const char *getName() { return _name; }
+	const char *getName() const { return _name; }
 	void setName(const char *name);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

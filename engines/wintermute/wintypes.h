@@ -48,6 +48,6 @@ namespace Wintermute {
 
 #define MAX_PATH_LENGTH 512
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

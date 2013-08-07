@@ -114,7 +114,7 @@ void RenderQueue::addMask(SegmapMaskRect &mask) {
 void RenderQueue::update() {
 
 	bool doFullRefresh = _vm->_screen->_fullRefresh;
-	
+
 	_updateUta->clear();
 
 	if (!doFullRefresh) {
@@ -166,7 +166,7 @@ void RenderQueue::update() {
 
 	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
 		const RenderQueueItem *item = &(*iter);
-		
+
 		if (item->flags == kRefresh || doFullRefresh) {
 
 			switch (item->type) {
@@ -200,7 +200,7 @@ void RenderQueue::update() {
 
 	SWAP(_currQueue, _prevQueue);
 	_currQueue->clear();
-	
+
 }
 
 void RenderQueue::clear() {
@@ -249,16 +249,16 @@ bool RenderQueue::hasItemChanged(const RenderQueueItem &item1, const RenderQueue
 
 	if (item1.type != item2.type)
 		return true;
-		
+
 	if (item1.rect.left != item2.rect.left ||
 		item1.rect.top != item2.rect.top ||
 		item1.rect.right != item2.rect.right ||
 		item1.rect.bottom != item2.rect.bottom)
 		return true;
-		
+
 	if (item1.type == kText && item1.text.color != item2.text.color)
 		return true;
-		
+
 	return false;
 }
 
@@ -268,7 +268,7 @@ void RenderQueue::invalidateItemsByRect(const Common::Rect &rect, const RenderQu
 		if (item != subItem &&
 			subItem->flags == kUnchanged &&
 			rect.intersects(subItem->rect)) {
-			
+
 			subItem->flags = kRefresh;
 			invalidateItemsByRect(subItem->rect, subItem);
 		}

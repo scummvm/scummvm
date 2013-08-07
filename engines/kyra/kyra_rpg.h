@@ -222,7 +222,6 @@ protected:
 	uint16 _decorationCount;
 	int16 _mappedDecorationsCount;
 	uint16 *_vmpPtr;
-	uint16 _vmpSize;
 	uint8 *_vcnBlocks;
 	uint8 *_vcfBlocks;
 	uint8 *_vcnTransitionMask;
@@ -232,10 +231,6 @@ protected:
 	uint8 *_sceneWindowBuffer;
 	uint8 _blockBrightness;
 	uint8 _wllVcnOffset;
-	uint8 _vcnBlockWidth;
-	uint8 _vcnBlockHeight;
-	uint8 _vcnFlip0;
-	uint8 _vcnFlip1;
 
 	uint8 **_doorShapes;
 
@@ -288,7 +283,7 @@ protected:
 	void removeInputTop();
 	void gui_drawBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor);
 	virtual void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2);
-	void gui_initButtonsFromList(const int16 *list);
+	void gui_initButtonsFromList(const uint8 *list);
 	virtual void gui_initButton(int index, int x = -1, int y = -1, int val = -1) = 0;
 	void gui_resetButtonList();
 	void gui_notifyButtonListChanged();
@@ -385,7 +380,7 @@ protected:
 	bool lineIsPassable(int, int) { return false; }
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB || ENABLE_LOL
 

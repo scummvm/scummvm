@@ -37,6 +37,8 @@ struct Event;
 
 namespace GUI {
 
+class EventRecorder;
+
 class Widget;
 
 // Some "common" commands sent to handleCommand()
@@ -47,6 +49,7 @@ enum {
 
 class Dialog : public GuiObject {
 	friend class GuiManager;
+	friend class EventRecorder;
 	friend class Tooltip;
 protected:
 	Widget	*_mouseWidget;

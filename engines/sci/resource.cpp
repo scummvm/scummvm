@@ -158,24 +158,24 @@ static const ResourceType s_resTypeMapSci21[] = {
 ResourceType ResourceManager::convertResType(byte type) {
 	type &= 0x7f;
 
-	if (_mapVersion < kResVersionSci2) {
+	bool forceSci0 = false;
+
+	// LSL6 hires doesn't have the chunk resource type, to match
+	// the resource types of the lowres version, thus we use the
+	// older resource types here.
+	// PQ4 CD and QFG4 CD are SCI2.1, but use the resource types of the
+	// corresponding SCI2 floppy disk versions.
+	if (g_sci && (g_sci->getGameId() == GID_LSL6HIRES ||
+	        g_sci->getGameId() == GID_QFG4 || g_sci->getGameId() == GID_PQ4))
+		forceSci0 = true;
+
+	if (_mapVersion < kResVersionSci2 || forceSci0) {
 		// SCI0 - SCI2
 		if (type < ARRAYSIZE(s_resTypeMapSci0))
 			return s_resTypeMapSci0[type];
 	} else {
-		// SCI2.1+
-		if (type < ARRAYSIZE(s_resTypeMapSci21)) {
-			// LSL6 hires doesn't have the chunk resource type, to match
-			// the resource types of the lowres version, thus we use the
-			// older resource types here.
-			// PQ4 CD and QFG4 CD are SCI2.1, but use the resource types of the
-			// corresponding SCI2 floppy disk versions.
-			if (g_sci && (g_sci->getGameId() == GID_LSL6HIRES ||
-				g_sci->getGameId() == GID_QFG4 || g_sci->getGameId() == GID_PQ4))
-				return s_resTypeMapSci0[type];
-			else
-				return s_resTypeMapSci21[type];
-		}
+		if (type < ARRAYSIZE(s_resTypeMapSci21))
+			return s_resTypeMapSci21[type];
 	}
 
 	return kResourceTypeInvalid;
@@ -1152,7 +1152,6 @@ ResVersion ResourceManager::detectMapVersion() {
 			}
 			break;
 		} else if (rsrc->getSourceType() == kSourceMacResourceFork) {
-			delete fileStream;
 			return kResVersionSci11Mac;
 		}
 	}

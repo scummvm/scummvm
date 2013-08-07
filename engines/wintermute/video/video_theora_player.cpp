@@ -51,7 +51,7 @@ VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 void VideoTheoraPlayer::SetDefaults() {
 
-	_file = NULL;
+	_file = nullptr;
 	_filename = "";
 	_startTime = 0;
 	_looping = false;
@@ -68,8 +68,8 @@ void VideoTheoraPlayer::SetDefaults() {
 	_playbackStarted = false;
 	_dontDropFrames = false;
 
-	_texture = NULL;
-	_alphaImage = NULL;
+	_texture = nullptr;
+	_alphaImage = nullptr;
 	_alphaFilename = "";
 
 	_frameRendered = false;
@@ -84,10 +84,10 @@ void VideoTheoraPlayer::SetDefaults() {
 	_savedState = THEORA_STATE_NONE;
 	_savedPos = 0;
 	_volume = 100;
-	_theoraDecoder = NULL;
+	_theoraDecoder = nullptr;
 
 	// TODO: Add subtitles-support
-	//_subtitler = NULL;
+	//_subtitler = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ VideoTheoraPlayer::~VideoTheoraPlayer(void) {
 void VideoTheoraPlayer::cleanup() {
 	if (_file) {
 		BaseFileManager::getEngineInstance()->closeFile(_file);
-		_file = NULL;
+		_file = nullptr;
 	}
 
 	_surface.free();
@@ -108,11 +108,11 @@ void VideoTheoraPlayer::cleanup() {
 		_theoraDecoder->close();
 	}
 	delete _theoraDecoder;
-	_theoraDecoder = NULL;
+	_theoraDecoder = nullptr;
 	delete _alphaImage;
-	_alphaImage = NULL;
+	_alphaImage = nullptr;
 	delete _texture;
-	_texture = NULL;
+	_texture = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,32 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::resetStream() {
-	warning("VidTheoraPlayer::resetStream - stubbed");
+	warning("VidTheoraPlayer::resetStream - hacked");
+	// HACK: Just reopen the same file again.
+	if (_theoraDecoder) {
+		_theoraDecoder->close();
+	}
+	delete _theoraDecoder;
+	_theoraDecoder = nullptr;
+
+	_file = BaseFileManager::getEngineInstance()->openFile(_filename, true, false);
+	if (!_file) {
+		return STATUS_FAILED;
+	}
+
+#if defined (USE_THEORADEC)
+	_theoraDecoder = new Video::TheoraDecoder();
+#else
+	return STATUS_FAILED;
+#endif
+	_theoraDecoder->loadStream(_file);
+
+	if (!_theoraDecoder->isVideoLoaded()) {
+		return STATUS_FAILED;
+	}
+
+	return play(_playbackType, _posX, _posY, false, false, _looping, 0, _playZoom);
+	// End of hack.
 #if 0 // Stubbed for now, as theora isn't seekable
 	if (_sound) {
 		_sound->Stop();
@@ -199,8 +224,8 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		width = (float)_theoraDecoder->getWidth();
 		height = (float)_theoraDecoder->getHeight();
 	} else {
-		width = (float)_gameRef->_renderer->_width;
-		height = (float)_gameRef->_renderer->_height;
+		width = (float)_gameRef->_renderer->getWidth();
+		height = (float)_gameRef->_renderer->getHeight();
 	}
 
 	switch (type) {
@@ -211,18 +236,18 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		break;
 
 	case VID_PLAY_STRETCH: {
-		float zoomX = (float)((float)_gameRef->_renderer->_width / width * 100);
-		float zoomY = (float)((float)_gameRef->_renderer->_height / height * 100);
+		float zoomX = (float)((float)_gameRef->_renderer->getWidth() / width * 100);
+		float zoomY = (float)((float)_gameRef->_renderer->getHeight() / height * 100);
 		_playZoom = MIN(zoomX, zoomY);
-		_posX = (int)((_gameRef->_renderer->_width - width * (_playZoom / 100)) / 2);
-		_posY = (int)((_gameRef->_renderer->_height - height * (_playZoom / 100)) / 2);
+		_posX = (int)((_gameRef->_renderer->getWidth() - width * (_playZoom / 100)) / 2);
+		_posY = (int)((_gameRef->_renderer->getHeight() - height * (_playZoom / 100)) / 2);
 	}
 	break;
 
 	case VID_PLAY_CENTER:
 		_playZoom = 100.0f;
-		_posX = (int)((_gameRef->_renderer->_width - width) / 2);
-		_posY = (int)((_gameRef->_renderer->_height - height) / 2);
+		_posX = (int)((_gameRef->_renderer->getWidth() - width) / 2);
+		_posY = (int)((_gameRef->_renderer->getHeight() - height) / 2);
 		break;
 	}
 	_theoraDecoder->start();
@@ -249,7 +274,7 @@ bool VideoTheoraPlayer::stop() {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::update() {
-	_currentTime = _freezeGame ? _gameRef->_liveTimer : _gameRef->_timer;
+	_currentTime = _freezeGame ? _gameRef->getLiveTimer()->getTime() : _gameRef->getTimer()->getTime();
 
 	if (!isPlaying()) {
 		return STATUS_OK;
@@ -265,8 +290,10 @@ bool VideoTheoraPlayer::update() {
 
 	if (_theoraDecoder) {
 		if (_theoraDecoder->endOfVideo() && _looping) {
-			warning("Should loop movie %s", _filename.c_str());
+			warning("Should loop movie %s, hacked for now", _filename.c_str());
 			_theoraDecoder->rewind();
+			//HACK: Just reinitialize the same video again:
+			return resetStream();
 		} else if (_theoraDecoder->endOfVideo() && !_looping) {
 			debugC(kWintermuteDebugLog, "Finished movie %s", _filename.c_str());
 			_state = THEORA_STATE_FINISHED;
@@ -290,7 +317,7 @@ bool VideoTheoraPlayer::update() {
 		}
 	}
 	// Skip the busy-loop?
-	if ((!_texture || !_videoFrameReady) && !_theoraDecoder->endOfVideo()) {
+	if ((!_texture || !_videoFrameReady) && _theoraDecoder && !_theoraDecoder->endOfVideo()) {
 		// end playback
 		if (!_looping) {
 			_state = THEORA_STATE_FINISHED;
@@ -308,7 +335,7 @@ bool VideoTheoraPlayer::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 VideoTheoraPlayer::getMovieTime() {
+uint32 VideoTheoraPlayer::getMovieTime() const {
 	if (!_playbackStarted) {
 		return 0;
 	} else {
@@ -342,14 +369,14 @@ void VideoTheoraPlayer::writeAlpha() {
 	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);
-		const byte *alphaData = (const byte *)_alphaImage->getSurface()->getBasePtr(0, 0);
+		const byte *alphaData = (const byte *)_alphaImage->getSurface()->getPixels();
 #ifdef SCUMM_LITTLE_ENDIAN
 		int alphaPlace = (_alphaImage->getSurface()->format.aShift / 8);
 #else
 		int alphaPlace = 3 - (_alphaImage->getSurface()->format.aShift / 8);
 #endif
 		alphaData += alphaPlace;
-		byte *imgData = (byte *)_surface.getBasePtr(0, 0);
+		byte *imgData = (byte *)_surface.getPixels();
 #ifdef SCUMM_LITTLE_ENDIAN
 		imgData += (_surface.format.aShift / 8);
 #else
@@ -392,7 +419,7 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	_alphaImage = new BaseImage();
 	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
-		_alphaImage = NULL;
+		_alphaImage = nullptr;
 		_alphaFilename = "";
 		return STATUS_FAILED;
 	}
@@ -405,7 +432,7 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-byte VideoTheoraPlayer::getAlphaAt(int x, int y) {
+byte VideoTheoraPlayer::getAlphaAt(int x, int y) const {
 	if (_alphaImage) {
 		return _alphaImage->getAlphaAt(x, y);
 	} else {
@@ -464,7 +491,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 		SetDefaults();
 	}
 
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 	persistMgr->transfer(TMEMBER(_savedPos));
 	persistMgr->transfer(TMEMBER(_savedState));
 	persistMgr->transfer(TMEMBER(_filename));
@@ -498,8 +525,8 @@ bool VideoTheoraPlayer::initializeSimple() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSurface *VideoTheoraPlayer::getTexture() {
+BaseSurface *VideoTheoraPlayer::getTexture() const {
 	return _texture;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

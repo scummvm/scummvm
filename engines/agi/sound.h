@@ -93,7 +93,7 @@ public:
  */
 class AgiSound {
 public:
-	AgiSound(SoundMgr &manager) : _manager(manager), _isPlaying(false), _isValid(false) {}
+	AgiSound() : _isPlaying(false), _isValid(false) {}
 	virtual ~AgiSound() {}
 	virtual void play()      { _isPlaying = true; }
 	virtual void stop()      { _isPlaying = false; }
@@ -108,17 +108,16 @@ public:
 	 * from memory using free() or delegate the responsibility onwards to some other
 	 * function!
 	 */
-	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager, int soundemu);
+	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu);
 
 protected:
-	SoundMgr &_manager; ///< AGI sound manager object
 	bool _isPlaying;    ///< Is the sound playing?
 	bool _isValid;      ///< Is this a valid sound object?
 };
 
 class PCjrSound : public AgiSound {
 public:
-	PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	PCjrSound(uint8 *data, uint32 len, int resnum);
 	~PCjrSound() { free(_data); }
 	virtual uint16 type() { return _type; }
 	const uint8 *getVoicePointer(uint voiceNum);
@@ -140,8 +139,6 @@ public:
 
 	void unloadSound(int);
 	void playSound();
-	int initSound();
-	void deinitSound();
 	void startSound(int, int);
 	void stopSound();
 

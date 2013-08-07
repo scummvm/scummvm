@@ -31,7 +31,6 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/persistent.h"
 #include "common/math.h"
-#include <math.h>
 
 namespace Wintermute {
 
@@ -250,13 +249,13 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXMath::scGetProperty(const char *name) {
+ScValue *SXMath::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("math");
 		return _scValue;
 	}
@@ -264,7 +263,7 @@ ScValue *SXMath::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PI
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PI") == 0) {
+	else if (name == "PI") {
 		_scValue->setFloat(M_PI);
 		return _scValue;
 	} else {
@@ -292,4 +291,4 @@ bool SXMath::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -717,12 +717,12 @@ void CoroutineScheduler::pulseEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (!evt)
 		return;
-	
+
 	// Set the event as signalled and pulsing
 	evt->signalled = true;
 	evt->pulsing = true;
 
-	// If there's an active process, and it's not the first in the queue, then reschedule all 
+	// If there's an active process, and it's not the first in the queue, then reschedule all
 	// the other prcoesses in the queue to run again this frame
 	if (pCurrent && pCurrent != active->pNext)
 		rescheduleAll();

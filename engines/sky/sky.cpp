@@ -187,9 +187,14 @@ Common::Error SkyEngine::go() {
 		}
 
 		if (!shouldQuit()) {
-			_skyLogic->initScreen0();
+			// restartGame() takes us to the first scene, without showing the
+			// initial animation where Foster is being chased. initScreen0()
+			// shows the first scene together with that animation. We can't
+			// call both, as they both load the same scene.
 			if (introSkipped)
 				_skyControl->restartGame();
+			else
+				_skyLogic->initScreen0();
 		}
 	}
 

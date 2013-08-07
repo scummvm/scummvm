@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
 #include "graphics/thumbnail.h"
 
@@ -52,7 +53,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{NULL, 0, NULL, 0}
 		},
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOSPEECH)
 	},
@@ -72,7 +73,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{NULL, 0, NULL, 0}
 		},
 		Common::CZ_CZE,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_CD,
 		GUIO0()
 	},
@@ -168,7 +169,7 @@ public:
 
 		Common::String desc = buf;
 
-		in->seek(0x777a);
+		in->seek(TeenAgent::saveStateSize);
 		if (!Graphics::checkThumbnailHeader(*in))
 			return SaveStateDescriptor(slot, desc);
 

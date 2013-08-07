@@ -262,11 +262,8 @@ TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(const Graphics::PixelFormat &f
 	_surface.create(theoraInfo.frame_width, theoraInfo.frame_height, format);
 
 	// Set up a display surface
-	_displaySurface.pixels = _surface.getBasePtr(theoraInfo.pic_x, theoraInfo.pic_y);
-	_displaySurface.w = theoraInfo.pic_width;
-	_displaySurface.h = theoraInfo.pic_height;
-	_displaySurface.format = format;
-	_displaySurface.pitch = _surface.pitch;
+	_displaySurface.init(theoraInfo.pic_width, theoraInfo.pic_height, _surface.pitch,
+	                    _surface.getBasePtr(theoraInfo.pic_x, theoraInfo.pic_y), format);
 
 	// Set the frame rate
 	_frameRate = Common::Rational(theoraInfo.fps_numerator, theoraInfo.fps_denominator);
@@ -280,7 +277,7 @@ TheoraDecoder::TheoraVideoTrack::~TheoraVideoTrack() {
 	th_decode_free(_theoraDecode);
 
 	_surface.free();
-	_displaySurface.pixels = 0;
+	_displaySurface.setPixels(0);
 }
 
 bool TheoraDecoder::TheoraVideoTrack::decodePacket(ogg_packet &oggPacket) {
@@ -302,7 +299,7 @@ bool TheoraDecoder::TheoraVideoTrack::decodePacket(ogg_packet &oggPacket) {
 			_nextFrameStartTime += _frameRate.getInverse().toDouble();
 		else
 			_nextFrameStartTime = time;
-	
+
 		return true;
 	}
 

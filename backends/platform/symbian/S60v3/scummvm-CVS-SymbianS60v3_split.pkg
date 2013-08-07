@@ -36,7 +36,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM S60v3"},(0xA0000657),1,40,0
+#{"ScummVM S60v3"},(0xA0000657),1,60,0
 
 ;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
@@ -71,9 +71,10 @@
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\data\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\data\scummvm\lure.dat"
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\data\scummvm\drascula.dat"
-"..\..\..\..\dists\engine-data\m4.dat"-"c:\data\scummvm\m4.dat"
 "..\..\..\..\dists\engine-data\teenagent.dat"-"c:\data\scummvm\teenagent.dat"
 "..\..\..\..\dists\engine-data\toon.dat"-"c:\data\scummvm\toon.dat"
+"..\..\..\..\dists\engine-data\wintermute.zip-"c:\data\scummvm\wintermute.zip"
+"..\..\..\..\dists\engine-data\tony.dat-"c:\data\scummvm\tony.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\data\scummvm\vkeybd_default.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\data\scummvm\translations.dat"
 "..\..\..\..\gui\themes\scummmodern.zip"-"c:\data\scummvm\scummmodern.zip"

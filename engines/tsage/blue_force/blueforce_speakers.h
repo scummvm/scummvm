@@ -290,7 +290,7 @@ public:
 	virtual Common::String getClassName() { return "FBI"; }
 	virtual void setText(const Common::String &msg);
 };
-		
+
 class SpeakerNico: public VisualSpeaker {
 public:
 	SpeakerNico();
@@ -340,7 +340,7 @@ public:
 class SpeakerKate: public VisualSpeaker {
 public:
 	SpeakerKate();
-	
+
 	virtual Common::String getClassName() { return "SpeakerKate"; }
 	virtual void setText(const Common::String &msg);
 };
@@ -348,7 +348,7 @@ public:
 class SpeakerTony: public VisualSpeaker {
 public:
 	SpeakerTony();
-	
+
 	virtual Common::String getClassName() { return "SpeakerTony"; }
 	virtual void setText(const Common::String &msg);
 };

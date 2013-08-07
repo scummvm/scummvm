@@ -43,27 +43,27 @@ IMPLEMENT_PERSISTENT(UIObject, false)
 
 //////////////////////////////////////////////////////////////////////////
 UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
-	_back = NULL;
-	_image = NULL;
-	_font = NULL;
-	_text = NULL;
+	_back = nullptr;
+	_image = nullptr;
+	_font = nullptr;
+	_text = nullptr;
 	_sharedFonts = _sharedImages = false;
 
 	_width = _height = 0;
 
-	_listenerObject = NULL;
-	_listenerParamObject = NULL;
+	_listenerObject = nullptr;
+	_listenerParamObject = nullptr;
 	_listenerParamDWORD = 0;
 
 	_disable = false;
 	_visible = true;
 
 	_type = UI_UNKNOWN;
-	_parent = NULL;
+	_parent = nullptr;
 
 	_parentNotify = false;
 
-	_focusedWidget = NULL;
+	_focusedWidget = nullptr;
 
 	_canFocus = false;
 	_nonIntMouseEvents = true;
@@ -91,7 +91,7 @@ UIObject::~UIObject() {
 		delete[] _text;
 	}
 
-	_focusedWidget = NULL; // ref only
+	_focusedWidget = nullptr; // ref only
 }
 
 
@@ -168,11 +168,11 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			_gameRef->_fontStorage->removeFont(_font);
 		}
 		if (val->isNULL()) {
-			_font = NULL;
+			_font = nullptr;
 			stack->pushBool(true);
 		} else {
 			_font = _gameRef->_fontStorage->addFont(val->getString());
-			stack->pushBool(_font != NULL);
+			stack->pushBool(_font != nullptr);
 		}
 		return STATUS_OK;
 	}
@@ -187,7 +187,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		/* const char *filename = */ val->getString();
 
 		delete _image;
-		_image = NULL;
+		_image = nullptr;
 		if (val->isNULL()) {
 			stack->pushBool(true);
 			return STATUS_OK;
@@ -196,7 +196,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_image = new BaseSprite(_gameRef);
 		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
 			delete _image;
-			_image = NULL;
+			_image = nullptr;
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -360,13 +360,13 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIObject::scGetProperty(const char *name) {
+ScValue *UIObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("ui_object");
 		return _scValue;
 	}
@@ -374,7 +374,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Name") == 0) {
+	else if (name == "Name") {
 		_scValue->setString(getName());
 		return _scValue;
 	}
@@ -382,7 +382,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Parent (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Parent") == 0) {
+	else if (name == "Parent") {
 		_scValue->setNative(_parent, true);
 		return _scValue;
 	}
@@ -390,7 +390,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ParentNotify") == 0) {
+	else if (name == "ParentNotify") {
 		_scValue->setBool(_parentNotify);
 		return _scValue;
 	}
@@ -398,7 +398,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Width") == 0) {
+	else if (name == "Width") {
 		_scValue->setInt(_width);
 		return _scValue;
 	}
@@ -406,7 +406,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Height") == 0) {
+	else if (name == "Height") {
 		_scValue->setInt(_height);
 		return _scValue;
 	}
@@ -414,7 +414,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Visible") == 0) {
+	else if (name == "Visible") {
 		_scValue->setBool(_visible);
 		return _scValue;
 	}
@@ -422,7 +422,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Disabled") == 0) {
+	else if (name == "Disabled") {
 		_scValue->setBool(_disable);
 		return _scValue;
 	}
@@ -430,7 +430,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Text") == 0) {
+	else if (name == "Text") {
 		_scValue->setString(_text);
 		return _scValue;
 	}
@@ -438,13 +438,13 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NextSibling (RO) / PrevSibling (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NextSibling") == 0 || strcmp(name, "PrevSibling") == 0) {
+	else if (name == "NextSibling" || name == "PrevSibling") {
 		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
 			for (uint32 i = 0; i < win->_widgets.size(); i++) {
 				if (win->_widgets[i] == this) {
-					if (strcmp(name, "NextSibling") == 0) {
+					if (name == "NextSibling") {
 						if (i < win->_widgets.size() - 1) {
 							_scValue->setNative(win->_widgets[i + 1], true);
 						}
@@ -621,17 +621,17 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_back));
+	persistMgr->transferPtr(TMEMBER_PTR(_back));
 	persistMgr->transfer(TMEMBER(_canFocus));
 	persistMgr->transfer(TMEMBER(_disable));
-	persistMgr->transfer(TMEMBER(_focusedWidget));
-	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transferPtr(TMEMBER_PTR(_focusedWidget));
+	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transfer(TMEMBER(_height));
-	persistMgr->transfer(TMEMBER(_image));
-	persistMgr->transfer(TMEMBER(_listenerObject));
-	persistMgr->transfer(TMEMBER(_listenerParamObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_image));
+	persistMgr->transferPtr(TMEMBER_PTR(_listenerObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_listenerParamObject));
 	persistMgr->transfer(TMEMBER(_listenerParamDWORD));
-	persistMgr->transfer(TMEMBER(_parent));
+	persistMgr->transferPtr(TMEMBER_PTR(_parent));
 	persistMgr->transfer(TMEMBER(_parentNotify));
 	persistMgr->transfer(TMEMBER(_sharedFonts));
 	persistMgr->transfer(TMEMBER(_sharedImages));
@@ -648,4 +648,4 @@ bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

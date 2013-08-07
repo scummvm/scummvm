@@ -105,14 +105,75 @@ void DreamWebEngine::useMon() {
 	workToScreenM();
 }
 
+int DreamWebEngine::findCommand(const char *const cmdList[]) {
+	// Loop over all commands in the list and see if we get a match
+	int cmd = 0;
+	while (cmdList[cmd] != NULL) {
+		const char *cmdStr = cmdList[cmd];
+		const char *inputStr = _inputLine;
+		// Compare the command, char by char, to see if we get a match.
+		// We only care about the prefix matching, though.
+		char inputChar, cmdChar;
+		do {
+			inputChar = *inputStr; inputStr += 2;
+			cmdChar = *cmdStr++;
+			if (cmdChar == 0)
+				return cmd;
+		} while (inputChar == cmdChar);
+		++cmd;
+	}
+	return -1;
+}
+
 bool DreamWebEngine::execCommand() {
-	static const char *comlist[] = {
+	static const char *const comlist[] = {
 		"EXIT",
 		"HELP",
 		"LIST",
 		"READ",
 		"LOGON",
-		"KEYS"
+		"KEYS",
+		NULL
+	};
+
+	static const char *const comlistFR[] = {
+		"SORTIR",
+		"AIDE",
+		"LISTE",
+		"LIRE",
+		"CONNEXION",
+		"TOUCHES", // should be CLES but it is translated as TOUCHES in the game...
+		NULL
+	};
+
+	static const char *const comlistDE[] = {
+		"ENDE",
+		"HILF",
+		"LISTE",
+		"LIES",
+		"ZUGRIFF",
+		"DATEN",
+		NULL
+	};
+
+	static const char *const comlistIT[] = {
+		"ESCI",
+		"AIUTO",
+		"ELENCA",
+		"LEGGI",
+		"ACCEDI",
+		"CHIAVI",
+		NULL
+	};
+
+	static const char *const comlistES[] = {
+		"SALIR",
+		"AYUDA",
+		"LISTA",
+		"LEER",
+		"ACCESO",
+		"CLAVES",
+		NULL
 	};
 
 	if (_inputLine[0] == 0) {
@@ -121,26 +182,25 @@ bool DreamWebEngine::execCommand() {
 		return false;
 	}
 
-	int cmd;
-	bool done = false;
-	// Loop over all commands in the list and see if we get a match
-	for (cmd = 0; cmd < ARRAYSIZE(comlist); ++cmd) {
-		const char *cmdStr = comlist[cmd];
-		const char *inputStr = _inputLine;
-		// Compare the command, char by char, to see if we get a match.
-		// We only care about the prefix matching, though.
-		char inputChar, cmdChar;
-		do {
-			inputChar = *inputStr; inputStr += 2;
-			cmdChar = *cmdStr++;
-			if (cmdChar == 0) {
-				done = true;
-				break;
-			}
-		} while (inputChar == cmdChar);
-
-		if (done)
+	int cmd = findCommand(comlist);
+	if (cmd == -1) {
+		// This did not match an english command. Try to find a localized one.
+		switch (getLanguage()) {
+		case Common::FR_FRA:
+			cmd = findCommand(comlistFR);
 			break;
+		case Common::DE_DEU:
+			cmd = findCommand(comlistDE);
+			break;
+		case Common::IT_ITA:
+			cmd = findCommand(comlistIT);
+			break;
+		case Common::ES_ESP:
+			cmd = findCommand(comlistES);
+			break;
+		default:
+			break;
+		}
 	}
 
 	// Execute the selected command
@@ -149,6 +209,27 @@ bool DreamWebEngine::execCommand() {
 		return true;
 	case 1:
 		monMessage(6);
+		// An extra addition in ScummVM: available commands.
+		// Since the reference to the game manual is a form of copy protection,
+		// this extra text is wrapped around the common copy protection check,
+		// to keep it faithful to the original, if requested.
+		if (!_copyProtection) {
+			switch (getLanguage()) {
+			case Common::FR_FRA:
+				monPrint("LES COMMANDES VALIDES SONT SORTIR, AIDE, LISTE, LIRE, CONNEXION, TOUCHES");
+				break;
+			case Common::DE_DEU:
+				monPrint("G\232LTIGE BEFEHLE SIND ENDE, HILFE, LISTE, LIES, ZUGRIFF, DATEN");
+				break;
+			case Common::IT_ITA:
+				monPrint("I COMANDI VALIDI SONO ESCI, AIUTO, ELENCA, LEGGI, ACCEDI, CHIAVI");
+				break;
+			case Common::ES_ESP:
+			default:
+				monPrint("VALID COMMANDS ARE EXIT, HELP, LIST, READ, LOGON, KEYS");
+				break;
+			}
+		}
 		break;
 	case 2:
 		dirCom();
@@ -168,7 +249,6 @@ bool DreamWebEngine::execCommand() {
 	}
 	return false;
 }
-
 
 
 void DreamWebEngine::monitorLogo() {
@@ -366,7 +446,7 @@ void DreamWebEngine::lockLightOff() {
 }
 
 void DreamWebEngine::turnOnPower() {
-	for (size_t i = 0; i < 3; ++i) {
+	for (uint i = 0; i < 3; ++i) {
 		powerLightOn();
 		hangOn(30);
 		powerLightOff();

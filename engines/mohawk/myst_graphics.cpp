@@ -209,15 +209,15 @@ void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 	_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
-void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
+void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay) {
 
 	// Do not artificially delay during transitions
 	int oldEnableDrawingTimeSimulation = _enableDrawingTimeSimulation;
 	_enableDrawingTimeSimulation = 0;
 
 	switch (type) {
-	case 0:	{
-			debugC(kDebugScript, "Left to Right");
+	case kTransitionLeftToRight:	{
+			debugC(kDebugView, "Left to Right");
 
 			uint16 step = (rect.right - rect.left) / steps;
 			Common::Rect area = rect;
@@ -239,8 +239,8 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	case 1:	{
-			debugC(kDebugScript, "Right to Left");
+	case kTransitionRightToLeft:	{
+			debugC(kDebugView, "Right to Left");
 
 			uint16 step = (rect.right - rect.left) / steps;
 			Common::Rect area = rect;
@@ -262,8 +262,25 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	case 5:	{
-			debugC(kDebugScript, "Top to Bottom");
+	case kTransitionSlideToLeft:
+		debugC(kDebugView, "Slide to left");
+		transitionSlideToLeft(rect, steps, delay);
+		break;
+	case kTransitionSlideToRight:
+		debugC(kDebugView, "Slide to right");
+		transitionSlideToRight(rect, steps, delay);
+		break;
+	case kTransitionDissolve: {
+			debugC(kDebugView, "Dissolve");
+
+			for (int16 step = 0; step < 8; step++) {
+				simulatePreviousDrawDelay(rect);
+				transitionDissolve(rect, step);
+			}
+		}
+		break;
+	case kTransitionTopToBottom:	{
+			debugC(kDebugView, "Top to Bottom");
 
 			uint16 step = (rect.bottom - rect.top) / steps;
 			Common::Rect area = rect;
@@ -285,8 +302,8 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	case 6:	{
-			debugC(kDebugScript, "Bottom to Top");
+	case kTransitionBottomToTop:	{
+			debugC(kDebugView, "Bottom to Top");
 
 			uint16 step = (rect.bottom - rect.top) / steps;
 			Common::Rect area = rect;
@@ -308,16 +325,258 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	default:
-		warning("Unknown Update Direction");
+	case kTransitionSlideToTop:
+		debugC(kDebugView, "Slide to top");
+		transitionSlideToTop(rect, steps, delay);
+		break;
+	case kTransitionSlideToBottom:
+		debugC(kDebugView, "Slide to bottom");
+		transitionSlideToBottom(rect, steps, delay);
+		break;
+	case kTransitionPartToRight: {
+			debugC(kDebugView, "Partial left to right");
 
-		//TODO: Replace minimal implementation
+			transitionPartialToRight(rect, 75, 3);
+		}
+		break;
+	case kTransitionPartToLeft: {
+			debugC(kDebugView, "Partial right to left");
+
+			transitionPartialToLeft(rect, 75, 3);
+		}
+		break;
+	case kTransitionCopy:
 		copyBackBufferToScreen(rect);
 		_vm->_system->updateScreen();
 		break;
+	default:
+		error("Unknown transition %d", type);
 	}
 
 	_enableDrawingTimeSimulation = oldEnableDrawingTimeSimulation;
+}
+
+void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
+	static const bool pattern[][4][4] = {
+		{
+			{ true,  false, false, false },
+			{ false, false, false, false },
+			{ false, false, true,  false },
+			{ false, false, false, false }
+		},
+		{
+			{ false, false, true,  false },
+			{ false, false, false, false },
+			{ true,  false, false, false },
+			{ false, false, false, false }
+		},
+		{
+			{ false, false, false, false },
+			{ false, true,  false, false },
+			{ false, false, false, false },
+			{ false, false, false, true  }
+		},
+		{
+			{ false, false, false, false },
+			{ false, false, false, true  },
+			{ false, false, false, false },
+			{ false, true,  false, false }
+		},
+		{
+			{ false, false, false, false },
+			{ false, false, true,  false },
+			{ false, true,  false, false },
+			{ false, false, false, false }
+		},
+		{
+			{ false, true,  false, false },
+			{ false, false, false, false },
+			{ false, false, false, false },
+			{ false, false, true,  false }
+		},
+		{
+			{ false, false, false, false },
+			{ true,  false, false, false },
+			{ false, false, false, true  },
+			{ false, false, false, false }
+		},
+		{
+			{ false, false, false, true  },
+			{ false, false, false, false },
+			{ false, false, false, false },
+			{ true,  false, false, false }
+		}
+	};
+
+	rect.clip(_viewport);
+
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+
+	for (uint16 y = rect.top; y < rect.bottom; y++) {
+		const bool *linePattern = pattern[step][y % 4];
+
+		if (!linePattern[0] && !linePattern[1] && !linePattern[2] && !linePattern[3])
+			continue;
+
+		for (uint16 x = rect.left; x < rect.right; x++) {
+			if (linePattern[x % 4]) {
+				if (_pixelFormat.bytesPerPixel == 2) {
+					uint16 *dst = (uint16 *)screen->getBasePtr(x, y);
+					*dst = *(const uint16 *)_backBuffer->getBasePtr(x, y);
+				} else {
+					uint32 *dst = (uint32 *)screen->getBasePtr(x, y);
+					*dst = *(const uint32 *)_backBuffer->getBasePtr(x, y);
+				}
+			}
+		}
+	}
+
+	_vm->_system->unlockScreen();
+	_vm->_system->updateScreen();
+}
+
+void MystGraphics::transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay) {
+	rect.clip(_viewport);
+
+	uint32 stepWidth = (rect.right - rect.left) / steps;
+	Common::Rect srcRect = Common::Rect(rect.right, rect.top, rect.right, rect.bottom);
+	Common::Rect dstRect = Common::Rect(rect.left, rect.top, rect.left, rect.bottom);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.right = dstRect.left + step * stepWidth;
+		srcRect.left = srcRect.right - step * stepWidth;
+
+		_vm->_system->delayMillis(delay);
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+	if (dstRect.right != rect.right) {
+		copyBackBufferToScreen(rect);
+		_vm->_system->updateScreen();
+	}
+}
+
+void MystGraphics::transitionSlideToRight(Common::Rect rect, uint16 steps, uint16 delay) {
+	rect.clip(_viewport);
+
+	uint32 stepWidth = (rect.right - rect.left) / steps;
+	Common::Rect srcRect = Common::Rect(rect.left, rect.top, rect.left, rect.bottom);
+	Common::Rect dstRect = Common::Rect(rect.right, rect.top, rect.right, rect.bottom);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.left = dstRect.right - step * stepWidth;
+		srcRect.right = srcRect.left + step * stepWidth;
+
+		_vm->_system->delayMillis(delay);
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+	if (dstRect.left != rect.left) {
+		copyBackBufferToScreen(rect);
+		_vm->_system->updateScreen();
+	}
+}
+
+void MystGraphics::transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 delay) {
+	rect.clip(_viewport);
+
+	uint32 stepWidth = (rect.bottom - rect.top) / steps;
+	Common::Rect srcRect = Common::Rect(rect.left, rect.bottom, rect.right, rect.bottom);
+	Common::Rect dstRect = Common::Rect(rect.left, rect.top, rect.right, rect.top);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.bottom = dstRect.top + step * stepWidth;
+		srcRect.top = srcRect.bottom - step * stepWidth;
+
+		_vm->_system->delayMillis(delay);
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+
+	if (dstRect.bottom < rect.bottom) {
+		copyBackBufferToScreen(rect);
+		_vm->_system->updateScreen();
+	}
+}
+
+void MystGraphics::transitionSlideToBottom(Common::Rect rect, uint16 steps, uint16 delay) {
+	rect.clip(_viewport);
+
+	uint32 stepWidth = (rect.bottom - rect.top) / steps;
+	Common::Rect srcRect = Common::Rect(rect.left, rect.top, rect.right, rect.top);
+	Common::Rect dstRect = Common::Rect(rect.left, rect.bottom, rect.right, rect.bottom);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.top = dstRect.bottom - step * stepWidth;
+		srcRect.bottom = srcRect.top + step * stepWidth;
+
+		_vm->_system->delayMillis(delay);
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+
+	if (dstRect.top > rect.top) {
+		copyBackBufferToScreen(rect);
+		_vm->_system->updateScreen();
+	}
+}
+
+void MystGraphics::transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps) {
+	rect.clip(_viewport);
+
+	uint32 stepWidth = width / steps;
+	Common::Rect srcRect = Common::Rect(rect.right, rect.top, rect.right, rect.bottom);
+	Common::Rect dstRect = Common::Rect(rect.left, rect.top, rect.left, rect.bottom);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.right = dstRect.left + step * stepWidth;
+		srcRect.left = srcRect.right - step * stepWidth;
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+	copyBackBufferToScreen(rect);
+	_vm->_system->updateScreen();
+}
+
+void MystGraphics::transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps) {
+	rect.clip(_viewport);
+
+	uint32 stepWidth = width / steps;
+	Common::Rect srcRect = Common::Rect(rect.left, rect.top, rect.left, rect.bottom);
+	Common::Rect dstRect = Common::Rect(rect.right, rect.top, rect.right, rect.bottom);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.left = dstRect.right - step * stepWidth;
+		srcRect.right = srcRect.left + step * stepWidth;
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+	copyBackBufferToScreen(rect);
+	_vm->_system->updateScreen();
 }
 
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {

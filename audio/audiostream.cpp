@@ -98,6 +98,10 @@ LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops
 		// TODO: Properly indicate error
 		_loops = _completeIterations = 1;
 	}
+	if (stream->endOfData()) {
+		// Apparently this is an empty stream
+		_loops = _completeIterations = 1;
+	}
 }
 
 int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -117,6 +121,10 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			// TODO: Properly indicate error
 			_loops = _completeIterations = 1;
 			return samplesRead;
+		}
+		if (_parent->endOfData()) {
+			// Apparently this is an empty stream
+			_loops = _completeIterations = 1;
 		}
 
 		return samplesRead + readBuffer(buffer + samplesRead, remainingSamples);
@@ -402,7 +410,7 @@ public:
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) {
-		// Cap us off so we don't read past _totalSamples					
+		// Cap us off so we don't read past _totalSamples
 		int samplesRead = _parentStream->readBuffer(buffer, MIN<int>(numSamples, _totalSamples - _samplesRead));
 		_samplesRead += samplesRead;
 		return samplesRead;
@@ -413,7 +421,7 @@ public:
 	int getRate() const { return _parentStream->getRate(); }
 
 private:
-	int getChannels() const { return isStereo() ? 2 : 1; } 
+	int getChannels() const { return isStereo() ? 2 : 1; }
 
 	AudioStream *_parentStream;
 	DisposeAfterUse::Flag _disposeAfterUse;

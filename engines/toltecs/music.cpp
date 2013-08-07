@@ -60,7 +60,7 @@ void MusicPlayer::playMIDI(const byte *data, uint32 size, bool loop) {
 	memcpy(_buffer, data, size);
 
 	MidiParser *parser;
-	
+
 	if (!memcmp(data, "FORM", 4))
 		parser = MidiParser::createParser_XMIDI(NULL);
 	else

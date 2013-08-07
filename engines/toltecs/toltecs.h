@@ -42,6 +42,7 @@ struct ToltecsGameDescription;
 
 class AnimationPlayer;
 class ArchiveReader;
+class Console;
 class Input;
 class MenuSystem;
 class MoviePlayer;
@@ -134,8 +135,8 @@ public:
 	void talk(int16 slotIndex, int16 slotOffset);
 
 	void walk(byte *walkData);
-	
-	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize, 
+
+	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize,
 		byte *rectDataEnd);
 
 	int _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume;
@@ -144,6 +145,7 @@ public:
 
 	AnimationPlayer *_anim;
 	ArchiveReader *_arc;
+	Console *_console;
 	Input *_input;
 	MenuSystem *_menuSystem;
 	MoviePlayer *_moviePlayer;
@@ -163,7 +165,7 @@ public:
 
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;
-	
+
 	int _counter01, _counter02;
 	bool _movieSceneFlag;
 	byte _flag01;
@@ -174,7 +176,7 @@ public:
 	int16 _guiHeight;
 
 	bool _doSpeech, _doText;
-	
+
 	int16 _walkSpeedY, _walkSpeedX;
 
 	Common::KeyState _keyState;

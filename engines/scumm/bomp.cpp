@@ -231,7 +231,10 @@ void drawBomp(const BompDrawData &bd) {
 	}
 
 	src = bd.src;
-	dst = (byte *)bd.dst.pixels + bd.y * bd.dst.pitch + (bd.x + clip.left);
+	// FIXME: This gets passed a const destination Surface. Intuitively this
+	// should never get written to. But sadly it does... For now we simply
+	// cast the const qualifier away.
+	dst = (byte *)const_cast<void *>(bd.dst.getBasePtr((bd.x + clip.left), bd.y));
 
 	const byte maskbit = revBitMask((bd.x + clip.left) & 7);
 

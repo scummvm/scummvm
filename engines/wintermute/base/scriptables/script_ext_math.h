@@ -39,7 +39,7 @@ public:
 	DECLARE_PERSISTENT(SXMath, BaseScriptable)
 	SXMath(BaseGame *inGame);
 	virtual ~SXMath();
-	virtual ScValue *scGetProperty(const char *name);
+	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 
 private:
@@ -48,6 +48,6 @@ private:
 
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

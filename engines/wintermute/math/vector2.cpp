@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/math/vector2.h"
-#include <math.h>
+#include "common/scummsys.h"
 
 namespace Wintermute {
 
@@ -52,4 +52,4 @@ float Vector2::length() const {
 	return (float)sqrt(x * x + y * y);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

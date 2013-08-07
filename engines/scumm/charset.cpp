@@ -69,7 +69,7 @@ void ScummEngine::loadCJKFont() {
 
 		_cjkFont->setDrawingMode(Graphics::FontSJIS::kShadowMode);
 		_2byteWidth = _2byteHeight = 12;
-		_useCJKMode = true;		
+		_useCJKMode = true;
 #endif
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN) {
 		int numChar = 1413;
@@ -499,7 +499,7 @@ int CharsetRendererV3::getCharWidth(uint16 chr) {
 
 	if (_vm->_useCJKMode && (chr & 0x80))
 		spacing = _vm->_2byteWidth / 2;
-	
+
 	if (!spacing)
 		spacing = *(_widthTable + chr);
 
@@ -644,7 +644,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
 	else
 		drawBits1(_vm->_textSurface, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, charPtr, drawTop, origWidth, origHeight);
-	
+
 	if (is2byte) {
 		origWidth /= _vm->_textSurfaceMultiplier;
 		height /= _vm->_textSurfaceMultiplier;
@@ -799,7 +799,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
-			dstPtr = (byte *)_vm->_textSurface.pixels;
+			dstPtr = (byte *)_vm->_textSurface.getPixels();
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -829,7 +829,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
 			dstSurface = _vm->_textSurface;
-			dstPtr = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch * _vm->_textSurfaceMultiplier + _left * _vm->_textSurfaceMultiplier;
+			dstPtr = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier);
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -907,7 +907,7 @@ bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	if (!prepareDraw(chr))
 		return;
-	byte *dst = (byte *)s.pixels + y * s.pitch + x;
+	byte *dst = (byte *)s.getBasePtr(x, y);
 	drawBitsN(s, dst, _charPtr, *_fontPtr, y, _width, _height);
 }
 
@@ -1242,7 +1242,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	if (ignoreCharsetMask) {
 		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 		s = *vs;
-		s.pixels = vs->getPixels(0, 0);
+		s.setPixels(vs->getPixels(0, 0));
 	} else {
 		s = _vm->_textSurface;
 		drawTop -= _vm->_screenTop;
@@ -1399,9 +1399,9 @@ void CharsetRendererTownsClassic::drawBitsN(const Graphics::Surface&, byte *dst,
 		_vm->_cjkFont->drawChar(_vm->_textSurface, _sjisCurChar, _left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier, _vm->_townsCharsetColorMap[1], _shadowColor);
 		return;
 	}
-	
+
 	bool scale2x = (_vm->_textSurfaceMultiplier == 2);
-	dst = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch * _vm->_textSurfaceMultiplier + _left * _vm->_textSurfaceMultiplier;
+	dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier);
 
 	int y, x;
 	int color;

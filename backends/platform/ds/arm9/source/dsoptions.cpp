@@ -432,4 +432,4 @@ void setOptions() {
 	firstLoad = false;
 }
 
-}	// End of namespace DS
+} // End of namespace DS

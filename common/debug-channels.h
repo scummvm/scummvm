@@ -124,6 +124,6 @@ private:
 /** Shortcut for accessing the debug manager. */
 #define DebugMan		Common::DebugManager::instance()
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

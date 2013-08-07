@@ -197,7 +197,7 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			} else {
 				it->planeOffsetX = 0;
 			}
-			
+
 			if (it->planeRect.top < 0) {
 				it->planeOffsetY = -it->planeRect.top;
 				it->planeRect.top = 0;
@@ -349,6 +349,36 @@ void GfxFrameout::deletePlaneLine(reg_t object, reg_t hunkId) {
 	}
 }
 
+// Adapted from GfxAnimate::applyGlobalScaling()
+void GfxFrameout::applyGlobalScaling(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 celHeight) {
+	// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+	int16 maxScale = readSelectorValue(_segMan, itemEntry->object, SELECTOR(maxScale));
+	int16 maxCelHeight = (maxScale * celHeight) >> 7;
+	reg_t globalVar2 = g_sci->getEngineState()->variables[VAR_GLOBAL][2]; // current room object
+	int16 vanishingY = readSelectorValue(_segMan, globalVar2, SELECTOR(vanishingY));
+
+	int16 fixedPortY = planeRect.bottom - vanishingY;
+	int16 fixedEntryY = itemEntry->y - vanishingY;
+	if (!fixedEntryY)
+		fixedEntryY = 1;
+
+	if ((celHeight == 0) || (fixedPortY == 0))
+		error("global scaling panic");
+
+	itemEntry->scaleY = (maxCelHeight * fixedEntryY) / fixedPortY;
+	itemEntry->scaleY = (itemEntry->scaleY * maxScale) / celHeight;
+
+	// Make sure that the calculated value is sane
+	if (itemEntry->scaleY < 1 /*|| itemEntry->scaleY > 128*/)
+		itemEntry->scaleY = 128;
+
+	itemEntry->scaleX = itemEntry->scaleY;
+
+	// and set objects scale selectors
+	//writeSelectorValue(_segMan, itemEntry->object, SELECTOR(scaleX), itemEntry->scaleX);
+	//writeSelectorValue(_segMan, itemEntry->object, SELECTOR(scaleY), itemEntry->scaleY);
+}
+
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	// Ignore invalid items
 	if (!_segMan->isObject(object)) {
@@ -390,8 +420,15 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 		itemEntry->priority = itemEntry->y;
 
 	itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
-	itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
-	itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+	itemEntry->scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal));
+
+	if (itemEntry->scaleSignal & kScaleSignalDoScaling32) {
+		itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
+		itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+	} else {
+		itemEntry->scaleX = 128;
+		itemEntry->scaleY = 128;
+	}
 	itemEntry->visible = true;
 
 	// Check if the entry can be hidden
@@ -420,7 +457,7 @@ void GfxFrameout::deletePlaneItems(reg_t planeObject) {
 		} else {
 			objectMatches = true;
 		}
-		
+
 		if (objectMatches) {
 			FrameoutEntry *itemEntry = *listIterator;
 			listIterator = _screenItems.erase(listIterator);
@@ -495,7 +532,7 @@ void GfxFrameout::showVideo() {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
-				g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 
 				if (videoDecoder->hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
@@ -650,7 +687,13 @@ void GfxFrameout::kernelFrameout() {
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		_coordAdjuster->pictureSetDisplayArea(it->planeRect);
-		_palette->drewPicture(it->pictureId);
+		// Invoking drewPicture() with an invalid picture ID in SCI32 results in
+		// invalidating the palVary palette when a palVary effect is active. This
+		// is quite obvious in QFG4, where the day time palette is incorrectly
+		// shown when exiting the caves, and the correct night time palette
+		// flashes briefly each time that kPalVaryInit is called.
+		if (it->pictureId != 0xFFFF)
+			_palette->drewPicture(it->pictureId);
 
 		FrameoutList itemList;
 
@@ -661,7 +704,7 @@ void GfxFrameout::kernelFrameout() {
 
 			if (!itemEntry->visible)
 				continue;
-			
+
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
 				_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
@@ -699,25 +742,26 @@ void GfxFrameout::kernelFrameout() {
 					// TODO: maybe we should clip the cels rect with this, i'm not sure
 					//  the only currently known usage is game menu of gk1
 				} else if (view) {
+					// Process global scaling, if needed.
+					// TODO: Seems like SCI32 always processes global scaling for scaled objects
+					// TODO: We can only process symmetrical scaling for now (i.e. same value for scaleX/scaleY)
+					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) &&
+					   !(itemEntry->scaleSignal & kScaleSignalDisableGlobalScaling32) &&
+					    (itemEntry->scaleX == itemEntry->scaleY) &&
+						itemEntry->scaleX != 128)
+						applyGlobalScaling(itemEntry, it->planeRect, view->getHeight(itemEntry->loopNo, itemEntry->celNo));
+
 					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
 						view->getCelRect(itemEntry->loopNo, itemEntry->celNo,
 							itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
 					else
-						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, 
+						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo,
 							itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX,
 							itemEntry->scaleY, itemEntry->celRect);
 
 					Common::Rect nsRect = itemEntry->celRect;
 					// Translate back to actual coordinate within scrollable plane
 					nsRect.translate(it->planeOffsetX, it->planeOffsetY);
-
-					if (view && view->isSci2Hires()) {
-						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
-						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
-					} else if (getSciVersion() >= SCI_VERSION_2_1) {
-						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
-						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
-					}
 
 					if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
 						// HACK: Some (?) objects in Phantasmagoria 2 have no NS rect. Skip them for now.
@@ -726,7 +770,23 @@ void GfxFrameout::kernelFrameout() {
 							continue;
 					}
 
-					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					if (view && view->isSci2Hires()) {
+						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
+						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
+						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					} else if (getSciVersion() >= SCI_VERSION_2_1 && _resMan->detectHires()) {
+						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
+						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
+						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					}
+
+					// TODO: For some reason, the top left nsRect coordinates get
+					// swapped in the GK1 inventory screen, investigate why.
+					// HACK: Fix the coordinates by explicitly setting them here.
+					Common::Rect objNSRect = g_sci->_gfxCompare->getNSRect(itemEntry->object);
+					if (objNSRect.top == nsRect.left && objNSRect.left == nsRect.top && nsRect.top != 0 && nsRect.left != 0) {
+						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					}
 				}
 
 				// Don't attempt to draw sprites that are outside the visible
@@ -755,10 +815,10 @@ void GfxFrameout::kernelFrameout() {
 				if (view) {
 					if (!clipRect.isEmpty()) {
 						if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-							view->draw(itemEntry->celRect, clipRect, translatedClipRect, 
+							view->draw(itemEntry->celRect, clipRect, translatedClipRect,
 								itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
 						else
-							view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect, 
+							view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect,
 								itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
 					}
 				}
@@ -817,7 +877,7 @@ void GfxFrameout::printPlaneItemList(Console *con, reg_t planeObject) {
 	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
 		FrameoutEntry *e = *listIterator;
 		reg_t itemPlane = readSelector(_segMan, e->object, SELECTOR(plane));
-			
+
 		if (planeObject == itemPlane) {
 			Common::String curItemName = _segMan->getObjectName(e->object);
 			Common::Rect icr = e->celRect;

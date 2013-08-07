@@ -493,7 +493,15 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		_sprK2->step(newRandom(6));
 		_sprK3->step(newRandom(6));
 
+		// check the ALT key as it's the solution of the puzzle
+		// the test has been restricted to some specific OSes
+		// in order to avoid some obvious issues (like Android, iOS, NDS, N64...)
+		// Not perfect, but at least better than nothing.
+#if defined(WIN32) || defined(UNIX) || defined(MACOSX) || defined(MOTOEZX) || defined(LINUPY) || defined(LINUXMOTO_SDL)
 		if (spr->_ref == 1 && _keyboard->_keyAlt) {
+#else
+		if (spr->_ref == 1 && _gameCase2Cpt > 1) {
+#endif
 			_sprK1->step(5);
 			_sprK2->step(5);
 			_sprK3->step(5);
@@ -1191,6 +1199,8 @@ void CGEEngine::snFlash(bool on) {
 			}
 			_vga->setColors(pal, 64);
 		}
+
+		free(pal);
 	} else
 		_vga->setColors(_vga->_sysPal, 64);
 	_dark = false;

@@ -41,6 +41,7 @@ namespace Hugo {
 
 IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm), _introX(0), _introY(0) {
 	_introXSize = 0;
+	_introTicks = 0;
 }
 
 IntroHandler::~IntroHandler() {
@@ -76,6 +77,7 @@ void IntroHandler::freeIntroData() {
 }
 
 intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {
+	_introState = 0;
 }
 
 intro_v1d::~intro_v1d() {
@@ -87,11 +89,7 @@ void intro_v1d::preNewGame() {
 void intro_v1d::introInit() {
 	_introState = 0;
 	_introTicks = 0;
-	_surf.w = 320;
-	_surf.h = 200;
-	_surf.pixels = _vm->_screen->getFrontBuffer();
-	_surf.pitch = 320;
-	_surf.format = Graphics::PixelFormat::createFormatCLUT8();
+	_surf.init(320, 200, 320, _vm->_screen->getFrontBuffer(), Graphics::PixelFormat::createFormatCLUT8());
 	_vm->_screen->displayList(kDisplayInit);
 }
 
@@ -241,11 +239,7 @@ void intro_v2d::preNewGame() {
 void intro_v2d::introInit() {
 	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
-	_surf.w = 320;
-	_surf.h = 200;
-	_surf.pixels = _vm->_screen->getFrontBuffer();
-	_surf.pitch = 320;
-	_surf.format = Graphics::PixelFormat::createFormatCLUT8();
+	_surf.init(320, 200, 320, _vm->_screen->getFrontBuffer(), Graphics::PixelFormat::createFormatCLUT8());
 
 	char buffer[128];
 
@@ -287,11 +281,7 @@ void intro_v3d::preNewGame() {
 void intro_v3d::introInit() {
 	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
-	_surf.w = 320;
-	_surf.h = 200;
-	_surf.pixels = _vm->_screen->getFrontBuffer();
-	_surf.pitch = 320;
-	_surf.format = Graphics::PixelFormat::createFormatCLUT8();
+	_surf.init(320, 200, 320, _vm->_screen->getFrontBuffer(), Graphics::PixelFormat::createFormatCLUT8());
 
 	char buffer[128];
 	if (_vm->_boot._registered)

@@ -46,6 +46,7 @@ _numTracks(0),
 _activeTrack(255),
 _abortParse(0) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
+	memset(_tracks, 0, sizeof(_tracks));
 	_nextEvent.start = NULL;
 	_nextEvent.delta = 0;
 	_nextEvent.event = 0;

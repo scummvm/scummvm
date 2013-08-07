@@ -61,7 +61,7 @@ static bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) 
 	uint32 bytesRead = startPos;
 
 	while (bytesRead < fileSize - 16) {
-		uint32 toRead = MIN((unsigned int)32768, fileSize - bytesRead);
+		uint32 toRead = MIN<unsigned int>((unsigned int)32768, fileSize - bytesRead);
 		f->seek((int32)startPos, SEEK_SET);
 		uint32 actuallyRead = f->read(buf, toRead);
 		if (actuallyRead != toRead) {
@@ -86,16 +86,16 @@ void TPackageHeader::readFromStream(Common::ReadStream *stream) {
 	_magic1 = stream->readUint32LE();
 	_magic2 = stream->readUint32LE();
 	_packageVersion = stream->readUint32LE();
-	
+
 	_gameVersion = stream->readUint32LE();
-	
+
 	_priority = stream->readByte();
 	_cd = stream->readByte();
 	_masterIndex = stream->readByte();
 	stream->readByte(); // To align the next byte...
-	
+
 	_creationTime = stream->readUint32LE();
-	
+
 	stream->read(_desc, 100);
 	_numDirs = stream->readUint32LE();
 }
@@ -157,7 +157,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		pkg->_cd = stream->readByte();
 		pkg->_priority = hdr._priority;
 		delete[] pkgName;
-		pkgName = NULL;
+		pkgName = nullptr;
 
 		if (!hdr._masterIndex) {
 			pkg->_cd = 0;    // override CD to fixed disk
@@ -186,7 +186,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			Common::String upcName = name;
 			upcName.toUppercase();
 			delete[] name;
-			name = NULL;
+			name = nullptr;
 
 			offset = stream->readUint32LE();
 			offset += absoluteOffset;
@@ -270,7 +270,7 @@ Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::
 	if (it != _files.end()) {
 		return it->_value->createReadStream();
 	}
-	return NULL;
+	return nullptr;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

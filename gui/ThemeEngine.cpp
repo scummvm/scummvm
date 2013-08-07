@@ -50,6 +50,14 @@ const char * const ThemeEngine::kImageEraser = "eraser.bmp";
 const char * const ThemeEngine::kImageDelbtn = "delbtn.bmp";
 const char * const ThemeEngine::kImageList = "list.bmp";
 const char * const ThemeEngine::kImageGrid = "grid.bmp";
+const char * const ThemeEngine::kImageStopbtn = "stopbtn.bmp";
+const char * const ThemeEngine::kImageEditbtn = "editbtn.bmp";
+const char * const ThemeEngine::kImageSwitchModebtn = "switchbtn.bmp";
+const char * const ThemeEngine::kImageFastReplaybtn = "fastreplay.bmp";
+const char * const ThemeEngine::kImageStopSmallbtn = "stopbtn_small.bmp";
+const char * const ThemeEngine::kImageEditSmallbtn = "editbtn_small.bmp";
+const char * const ThemeEngine::kImageSwitchModeSmallbtn = "switchbtn_small.bmp";
+const char * const ThemeEngine::kImageFastReplaySmallbtn = "fastreplay_small.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -381,7 +389,7 @@ bool ThemeEngine::init() {
 	_overlayFormat = _system->getOverlayFormat();
 	setGraphicsMode(_graphicsMode);
 
-	if (_screen.pixels && _backBuffer.pixels) {
+	if (_screen.getPixels() && _backBuffer.getPixels()) {
 		_initOk = true;
 	}
 
@@ -431,7 +439,7 @@ bool ThemeEngine::init() {
 void ThemeEngine::clearAll() {
 	if (_initOk) {
 		_system->clearOverlay();
-		_system->grabOverlay(_screen.pixels, _screen.pitch);
+		_system->grabOverlay(_screen.getPixels(), _screen.pitch);
 	}
 }
 
@@ -465,11 +473,7 @@ void ThemeEngine::enable() {
 	if (_enabled)
 		return;
 
-	if (_useCursor) {
-		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
-		CursorMan.showMouse(true);
-	}
+	showCursor();
 
 	_system->showOverlay();
 	clearAll();
@@ -482,10 +486,8 @@ void ThemeEngine::disable() {
 
 	_system->hideOverlay();
 
-	if (_useCursor) {
-		CursorMan.popCursorPalette();
-		CursorMan.popCursor();
-	}
+	hideCursor();
+
 
 	_enabled = false;
 }
@@ -1217,7 +1219,7 @@ void ThemeEngine::updateScreen(bool render) {
 		}
 
 		_vectorRenderer->setSurface(&_screen);
-		memcpy(_screen.getBasePtr(0, 0), _backBuffer.getBasePtr(0, 0), _screen.pitch * _screen.h);
+		memcpy(_screen.getPixels(), _backBuffer.getPixels(), _screen.pitch * _screen.h);
 		_bufferQueue.clear();
 	}
 
@@ -1285,7 +1287,7 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 		addDirtyRect(Common::Rect(0, 0, _screen.w, _screen.h));
 	}
 
-	memcpy(_backBuffer.getBasePtr(0, 0), _screen.getBasePtr(0, 0), _screen.pitch * _screen.h);
+	memcpy(_backBuffer.getPixels(), _screen.getPixels(), _screen.pitch * _screen.h);
 	_vectorRenderer->setSurface(&_screen);
 }
 
@@ -1324,7 +1326,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	// to 8 bit mode, and have to create a suitable palette on the fly.
 	uint colorsFound = 0;
 	Common::HashMap<int, int> colorToIndex;
-	const OverlayColor *src = (const OverlayColor *)cursor->pixels;
+	const OverlayColor *src = (const OverlayColor *)cursor->getPixels();
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
 			byte r, g, b;
@@ -1784,6 +1786,21 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 		return id;
 	} else {
 		return node.getName();
+	}
+}
+
+void ThemeEngine::showCursor() {
+	if (_useCursor) {
+		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
+		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
+		CursorMan.showMouse(true);
+	}
+}
+
+void ThemeEngine::hideCursor() {
+	if (_useCursor) {
+		CursorMan.popCursorPalette();
+		CursorMan.popCursor();
 	}
 }
 

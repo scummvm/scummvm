@@ -32,7 +32,7 @@ public:
 	virtual bool hasFeature(Feature f);
 
 	virtual bool displayLogFile();
-	
+
 	virtual Common::String getSystemLanguage() const;
 
 	virtual void initBackend();

@@ -69,4 +69,4 @@ void ConfigParams::deleteWriteStream() {
 	}
 }
 
-}	// End of namespace Testbed
+} // End of namespace Testbed

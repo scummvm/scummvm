@@ -30,6 +30,9 @@
 #include "common/taskbar.h"
 #include "common/updates.h"
 #include "common/textconsole.h"
+#ifdef ENABLE_EVENTRECORDER
+#include "gui/EventRecorder.h"
+#endif
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
@@ -84,7 +87,7 @@ void OSystem::initBackend() {
 		error("Backend failed to instantiate audio CD manager");
 	if (!_eventManager)
 		error("Backend failed to instantiate event manager");
-	if (!_timerManager)
+	if (!getTimerManager())
 		error("Backend failed to instantiate timer manager");
 
 	// TODO: We currently don't check _savefileManager, because at least
@@ -151,4 +154,16 @@ Common::String OSystem::getDefaultConfigFileName() {
 
 Common::String OSystem::getSystemLanguage() const {
 	return "en_US";
+}
+
+Common::TimerManager *OSystem::getTimerManager() {
+	return _timerManager;
+}
+
+Common::SaveFileManager *OSystem::getSavefileManager() {
+#ifdef ENABLE_EVENTRECORDER
+	return g_eventRec.getSaveManager(_savefileManager);
+#else
+	return _savefileManager;
+#endif
 }

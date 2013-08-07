@@ -941,7 +941,7 @@ void TuckerEngine::fadeOutPalette(int colorsCount) {
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 3 + i]) + kFadePaletteStep * 3;
+			const int c = int(pal[color * 3 + i]) + kFadePaletteStep * 4;
 			pal[color * 3 + i] = MIN<int>(c, _currentPalette[color * 3 + i]);
 		}
 	}
@@ -954,7 +954,7 @@ void TuckerEngine::fadeInPalette(int colorsCount) {
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 3 + i]) - kFadePaletteStep * 3;
+			const int c = int(pal[color * 3 + i]) - kFadePaletteStep * 4;
 			pal[color * 3 + i] = MAX<int>(c, 0);
 		}
 	}
@@ -2991,6 +2991,7 @@ enum TableInstructionCode {
 	kCode_gfg,
 	kCode_gv,
 	kCode_loc,
+	kCode_mof,
 	kCode_opt,
 	kCode_opf,
 	kCode_ofg,
@@ -3041,6 +3042,7 @@ static const struct {
 	{ "gfg", kCode_gfg },
 	{ "gv",  kCode_gv  },
 	{ "loc", kCode_loc },
+	{ "mof", kCode_mof },
 	{ "opt", kCode_opt },
 	{ "opf", kCode_opf },
 	{ "ofg", kCode_ofg },
@@ -3062,8 +3064,9 @@ static const struct {
 
 int TuckerEngine::readTableInstructionCode(int *index) {
 	bool match = false;
+	int nameLen = 0;
 	for (int i = 0; _instructions[i].name; ++i) {
-		const int nameLen = strlen(_instructions[i].name);
+		nameLen = strlen(_instructions[i].name);
 		if (_instructions[i].name[1] == '0') {
 			if (_instructions[i].name[0] == _tableInstructionsPtr[0] && _instructions[i].name[2] == _tableInstructionsPtr[2]) {
 				const char digit = _tableInstructionsPtr[1];
@@ -3083,6 +3086,7 @@ int TuckerEngine::readTableInstructionCode(int *index) {
 		}
 	}
 	warning("Unhandled instruction '%c%c%c'", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
+	_tableInstructionsPtr += nameLen + 1;
 	return kCode_invalid;
 }
 
@@ -3232,6 +3236,9 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_loc:
 		_nextLocationNum = readTableInstructionParam(2);
 		return 1;
+	case kCode_mof:
+		// TODO: Unknown opcode in Spanish version. Identify if this has any function.
+		return 0;
 	case kCode_opt:
 		_conversationOptionsCount = readTableInstructionParam(2);
 		for (i = 0; i < _conversationOptionsCount; ++i) {

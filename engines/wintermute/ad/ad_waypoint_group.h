@@ -35,24 +35,27 @@ namespace Wintermute {
 class BasePoint;
 class AdWaypointGroup : public BaseObject {
 public:
-	float _lastMimicScale;
-	int _lastMimicX;
-	int _lastMimicY;
 	void cleanup();
 	bool mimic(AdWaypointGroup *wpt, float scale = 100.0f, int x = 0, int y = 0);
 	DECLARE_PERSISTENT(AdWaypointGroup, BaseObject)
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
-	bool _active;
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	AdWaypointGroup(BaseGame *inGame);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	virtual ~AdWaypointGroup();
+
+	bool _active;
 	BaseArray<BasePoint *> _points;
-	int _editorSelectedPoint;
-	virtual ScValue *scGetProperty(const char *name);
+
+	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scSetProperty(const char *name, ScValue *value);
+private:
+	int32 _editorSelectedPoint;
+	float _lastMimicScale;
+	int32 _lastMimicX;
+	int32 _lastMimicY;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

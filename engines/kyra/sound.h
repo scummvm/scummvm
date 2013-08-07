@@ -37,6 +37,35 @@ class SeekableAudioStream;
 
 namespace Kyra {
 
+// Helper structs to format the data passed to the various initAudioResourceInfo() implementations
+struct SoundResourceInfo_PC {
+	SoundResourceInfo_PC(const char *const *files, int numFiles) : fileList(files), fileListSize(numFiles) {}
+	const char *const *fileList;
+	uint fileListSize;
+};
+
+struct SoundResourceInfo_Towns {
+	SoundResourceInfo_Towns(const char *const *files, int numFiles, const int32 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
+	const char *const *fileList;
+	uint fileListSize;
+	const int32 *cdaTable;
+	uint cdaTableSize;
+};
+
+struct SoundResourceInfo_PC98 {
+	SoundResourceInfo_PC98(const char *fileNamePattern) : pattern(fileNamePattern) {}
+	const char *pattern;
+};
+
+struct SoundResourceInfo_TownsPC98V2 {
+	SoundResourceInfo_TownsPC98V2(const char *const *files, int numFiles, const char *fileNamePattern, const uint16 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), pattern(fileNamePattern), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
+	const char *const *fileList;
+	uint fileListSize;
+	const char *pattern;
+	const uint16 *cdaTable;
+	uint cdaTableSize;
+};
+
 /**
  * Analog audio output device API for Kyrandia games.
  * It contains functionality to play music tracks,
@@ -78,12 +107,20 @@ public:
 	virtual void updateVolumeSettings() {}
 
 	/**
-	 * Sets the soundfiles the output device will use
-	 * when playing a track and/or sound effect.
+	 * Assigns static resource data with information on how to load
+	 * audio resources to
 	 *
-	 * @param list soundfile list
+	 * @param	set				value defined in AudioResourceSet enum
+	 *			info			various types of resource info data (file list, file name pattern, struct, etc. - depending on the inheriting driver type)
 	 */
-	virtual void setSoundList(const AudioDataStruct *list);
+	virtual void initAudioResourceInfo(int set, void *info) = 0;
+
+	/**
+	 * Select audio resource set.
+	 *
+	 * @param	set				value defined in AudioResourceSet enum
+	 */
+	virtual void selectAudioResourceSet(int set) = 0;
 
 	/**
 	 * Checks if a given sound file is present.
@@ -91,7 +128,7 @@ public:
 	 * @param track track number
 	 * @return true if available, false otherwise
 	 */
-	virtual bool hasSoundFile(uint file) const;
+	virtual bool hasSoundFile(uint file) const = 0;
 
 	/**
 	 * Load a specifc sound file for use of
@@ -128,7 +165,7 @@ public:
 	 *
 	 * @param track sound effect id
 	 */
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff) = 0;
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF) = 0;
 
 	/**
 	 * Stop playback of all sfx tracks.
@@ -184,11 +221,11 @@ public:
 	 * @param handle    store a copy of the sound handle
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, uint8 priority = 255, bool isSfx = false);
 
 	Audio::SeekableAudioStream *getVoiceStream(const char *file) const;
 
-	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
+	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, uint8 priority = 255, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
@@ -228,17 +265,17 @@ public:
 	 */
 	virtual void resetTrigger() {}
 protected:
-	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->fileListLen) ? _soundDataList->fileList[file] : ""; }
-	int fileListLen() const { return _soundDataList->fileListLen; }
-	const void *cdaData() const { return _soundDataList != 0 ? _soundDataList->cdaTracks : 0; }
-	int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->cdaNumTracks : 0; }
-	int extraOffset() const { return _soundDataList != 0 ? _soundDataList->extraOffset : 0; }
-
 	enum {
 		kNumChannelHandles = 4
 	};
 
-	Audio::SoundHandle _soundChannels[kNumChannelHandles];
+	struct SoundChannel {
+		SoundChannel() : handle(), priority(0) {}
+		Audio::SoundHandle handle;
+		int priority;
+	};
+
+	SoundChannel _soundChannels[kNumChannelHandles];
 
 	int _musicEnabled;
 	bool _sfxEnabled;
@@ -247,8 +284,6 @@ protected:
 	Audio::Mixer *_mixer;
 
 private:
-	const AudioDataStruct *_soundDataList;
-
 	struct SpeechCodecs {
 		const char *fileext;
 		Audio::SeekableAudioStream *(*streamFunc)(
@@ -272,7 +307,8 @@ public:
 
 	virtual void updateVolumeSettings();
 
-	virtual void setSoundList(const AudioDataStruct *list);
+	virtual void initAudioResourceInfo(int set, void *info);
+	virtual void selectAudioResourceSet(int set);
 	virtual bool hasSoundFile(uint file) const;
 	virtual void loadSoundFile(uint file);
 	virtual void loadSoundFile(Common::String file);
@@ -283,7 +319,7 @@ public:
 	virtual void haltTrack();
 	virtual bool isPlaying() const;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
 
 	virtual void stopAllSoundEffects();
 
@@ -291,88 +327,6 @@ public:
 	virtual void pause(bool paused);
 private:
 	Sound *_music, *_sfx;
-};
-
-// Digital Audio
-class AUDStream;
-class KyraAudioStream;
-class KyraEngine_MR;
-
-/**
- * Digital audio output device.
- *
- * This is just used for Kyrandia 3.
- */
-class SoundDigital {
-public:
-	SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer);
-	~SoundDigital();
-
-	bool init() { return true; }
-
-	/**
-	 * Plays a sound.
-	 *
-	 * @param filename  file to be played
-	 * @param priority  priority of the sound
-	 * @param type      type
-	 * @param volume    channel volume
-	 * @param loop      true if the sound should loop (endlessly)
-	 * @param channel   tell the sound player to use a specific channel for playback
-	 *
-	 * @return channel playing the sound
-	 */
-	int playSound(const char *filename, uint8 priority, Audio::Mixer::SoundType type, int volume = 255, bool loop = false, int channel = -1);
-
-	/**
-	 * Checks if a given channel is playing a sound.
-	 *
-	 * @param channel channel number to check
-	 * @return true if playing, else false
-	 */
-	bool isPlaying(int channel);
-
-	/**
-	 * Stop the playback of a sound in the given
-	 * channel.
-	 *
-	 * @param channel channel number
-	 */
-	void stopSound(int channel);
-
-	/**
-	 * Stops playback of all sounds.
-	 */
-	void stopAllSounds();
-
-	/**
-	 * Makes the sound in a given channel
-	 * fading out.
-	 *
-	 * @param channel channel number
-	 * @param ticks   fadeout time
-	 */
-	void beginFadeOut(int channel, int ticks);
-private:
-	KyraEngine_MR *_vm;
-	Audio::Mixer *_mixer;
-
-	struct Sound {
-		Audio::SoundHandle handle;
-
-		char filename[16];
-		uint8 priority;
-		KyraAudioStream *stream;
-	} _sounds[4];
-
-	struct AudioCodecs {
-		const char *fileext;
-		Audio::SeekableAudioStream *(*streamFunc)(
-			Common::SeekableReadStream *stream,
-			DisposeAfterUse::Flag disposeAfterUse);
-	};
-
-	static const AudioCodecs _supportedCodecs[];
 };
 
 } // End of namespace Kyra

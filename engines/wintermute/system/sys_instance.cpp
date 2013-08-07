@@ -46,4 +46,4 @@ SystemInstance::SystemInstance(void *instance, int id, SystemClass *sysClass) {
 SystemInstance::~SystemInstance() {
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

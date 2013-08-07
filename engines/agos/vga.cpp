@@ -1179,7 +1179,7 @@ void AGOSEngine::vc32_saveScreen() {
 	if (getGameType() == GType_PN) {
 		Graphics::Surface *screen = _system->lockScreen();
 		byte *dst = getBackGround();
-		byte *src = (byte *)screen->pixels;
+		byte *src = (byte *)screen->getPixels();
 		for (int i = 0; i < _screenHeight; i++) {
 			memcpy(dst, src, _screenWidth);
 			dst += _backGroundBuf->pitch;
@@ -1193,7 +1193,7 @@ void AGOSEngine::vc32_saveScreen() {
 		uint16 height = _videoWindows[4 * 4 + 3];
 
 		byte *dst = (byte *)_backGroundBuf->getBasePtr(xoffs, yoffs);
-		byte *src = (byte *)_window4BackScn->pixels;
+		byte *src = (byte *)_window4BackScn->getPixels();
 		uint16 srcWidth = _videoWindows[4 * 4 + 2] * 16;
 		for (; height > 0; height--) {
 			memcpy(dst, src, width);
@@ -1247,7 +1247,7 @@ void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 
 	if (getGameType() == GType_ELVIRA1 && num == 3) {
 		Graphics::Surface *screen = _system->lockScreen();
-		byte *dst = (byte *)screen->pixels;
+		byte *dst = (byte *)screen->getPixels();
 		for (int i = 0; i < _screenHeight; i++) {
 			memset(dst, color, _screenWidth);
 			dst += screen->pitch;
@@ -1258,7 +1258,10 @@ void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 		uint16 xoffs = (vlut[0] - _videoWindows[16]) * 16;
 		uint16 yoffs = (vlut[1] - _videoWindows[17]);
 		uint16 dstWidth = _videoWindows[18] * 16;
-		byte *dst = (byte *)_window4BackScn->pixels + xoffs + yoffs * dstWidth;
+		// TODO: Is there any known connection between dstWidth and the pitch
+		// of the _window4BackScn Surface? If so, we might be able to pass
+		// yoffs as proper y parameter to getBasePtr.
+		byte *dst = (byte *)_window4BackScn->getBasePtr(xoffs, 0) + yoffs * dstWidth;
 
 		setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
 

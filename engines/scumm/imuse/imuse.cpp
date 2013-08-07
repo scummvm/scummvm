@@ -46,7 +46,6 @@ namespace Scumm {
 IMuseInternal::IMuseInternal() :
 	_native_mt32(false),
 	_enable_gs(false),
-	_sc55(false),
 	_midi_adlib(NULL),
 	_midi_native(NULL),
 	_sysex(NULL),
@@ -164,7 +163,7 @@ bool IMuseInternal::isMT32(int sound) {
 		return true;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
-		return true;
+		return false;
 
 	case MKTAG('G', 'M', 'D', ' '):
 		return false;
@@ -207,6 +206,45 @@ bool IMuseInternal::isMIDI(int sound) {
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		return true;
+
+	case MKTAG('G', 'M', 'D', ' '):
+	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
+		return true;
+	}
+
+	// Old style 'RO' has equivalent properties to 'ROL'
+	if (ptr[0] == 'R' && ptr[1] == 'O')
+		return true;
+	// Euphony tracks show as 'SO' and have equivalent properties to 'ADL'
+	// FIXME: Right now we're pretending it's GM.
+	if (ptr[4] == 'S' && ptr[5] == 'O')
+		return true;
+
+	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
+
+	return false;
+}
+
+bool IMuseInternal::supportsPercussion(int sound) {
+	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
+	if (ptr == NULL)
+		return false;
+
+	uint32 tag = READ_BE_UINT32(ptr);
+	switch (tag) {
+	case MKTAG('A', 'D', 'L', ' '):
+	case MKTAG('A', 'S', 'F', 'X'): // Special AD class for old AdLib sound effects
+	case MKTAG('S', 'P', 'K', ' '):
+		return false;
+
+	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('R', 'O', 'L', ' '):
+		return true;
+
+	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
+		// This is MIDI, i.e. uses MIDI style program changes, but without a
+		// special percussion channel.
+		return false;
 
 	case MKTAG('G', 'M', 'D', ' '):
 	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
@@ -324,7 +362,7 @@ void IMuseInternal::pause(bool paused) {
 	_paused = paused;
 }
 
-int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
+int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAfterLoad) {
 	Common::StackLock lock(_mutex, "IMuseInternal::save_or_load()");
 	const SaveLoadEntry mainEntries[] = {
 		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
@@ -401,7 +439,16 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	for (i = 0; i < 8; ++i)
 		ser->saveLoadEntries(0, volumeFaderEntries);
 
-	if (ser->isLoading()) {
+	// Normally, we have to fix up the data structures after loading a
+	// saved game. But there are cases where we don't. For instance, The
+	// Macintosh version of Monkey Island 1 used to convert the Mac0 music
+	// resources to General MIDI and play it through iMUSE as a rough
+	// approximation. Now it has its own player, but old savegame still
+	// have the iMUSE data in them. We have to skip that data, using a
+	// dummy iMUSE object, but since the resource is no longer recognizable
+	// to iMUSE, the fixup fails hard. So yes, this is a bit of a hack.
+
+	if (ser->isLoading() && fixAfterLoad) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		fix_parts_after_load();
@@ -447,12 +494,9 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_GS:
 		_enable_gs = (value > 0);
 
-		// If True Roland MT-32 is not selected, run in GM or GS mode.
-		// If it is selected, change the Roland GS synth to MT-32 mode.
-		if (_midi_native && !_native_mt32)
-			initGM(_midi_native);
-		else if (_midi_native && _native_mt32 && _enable_gs) {
-			_sc55 = true;
+		// GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
+		if (_midi_native && _enable_gs) {
+			_native_mt32 = true;
 			initGM(_midi_native);
 		}
 		break;
@@ -1439,7 +1483,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 }
 
 void IMuseInternal::initGM(MidiDriver *midi) {
-	byte buffer[11];
+	byte buffer[12];
 	int i;
 
 	// General MIDI System On message
@@ -1451,7 +1495,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 
 	if (_enable_gs) {
 		// All GS devices recognize the GS Reset command,
-		// even with Roland's ID. It is impractical to
+		// even using Roland's ID. It is impractical to
 		// support other manufacturers' devices for
 		// further GS settings, as there are limitless
 		// numbers of them out there that would each
@@ -1466,29 +1510,27 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		debug(2, "GS SysEx: GS Reset");
 		_system->delayMillis(200);
 
-		if (_sc55) {
-			// This mode is for GS devices that support an MT-32-compatible
-			// Map, such as the Roland Sound Canvas line of modules. It
-			// will allow them to work with True MT-32 mode, but will
-			// obviously still ignore MT-32 SysEx (and thus custom
-			// instruments).
+		// Set global Master Tune to 442.0kHz, as on the MT-32
+		memcpy(&buffer[4], "\x40\x00\x00\x00\x04\x04\x0F\x29", 8);
+		midi->sysEx(buffer, 12);
+		debug(2, "GS SysEx: Master Tune set to 442.0kHz");
 
-			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
-			for (i = 0; i < 16; ++i) {
-				midi->send((127 << 16) | (0  << 8) | (0xB0 | i));
-				midi->send((1   << 16) | (32 << 8) | (0xB0 | i));
-				midi->send((0   << 16) | (0  << 8) | (0xC0 | i));
-			}
-			debug(2, "GS Program Change: CM-64/32L Map Selected");
+		// Note: All Roland GS devices support CM-64/32L maps
 
-			// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
-			// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
-			midi->getPercussionChannel()->controlChange(0, 0);
-			midi->getPercussionChannel()->controlChange(32, 1);
-			midi->send(127 << 8 | 0xC0 | 9);
-			debug(2, "GS Program Change: Drum Map is CM-64/32L");
-
+		// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
+		for (i = 0; i < 16; ++i) {
+			midi->send((127 << 16) | (0  << 8) | (0xB0 | i));
+			midi->send((1   << 16) | (32 << 8) | (0xB0 | i));
+			midi->send((0   << 16) | (0  << 8) | (0xC0 | i));
 		}
+		debug(2, "GS Program Change: CM-64/32L Map Selected");
+
+		// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
+		// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
+		midi->getPercussionChannel()->controlChange(0, 0);
+		midi->getPercussionChannel()->controlChange(32, 1);
+		midi->send(127 << 8 | 0xC0 | 9);
+		debug(2, "GS Program Change: Drum Map is CM-64/32L");
 
 		// Set Master Chorus to 0. The MT-32 has no chorus capability.
 		memcpy(&buffer[4], "\x40\x01\x3A\x00\x05", 5);
@@ -1498,7 +1540,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		// Set Channels 1-16 Reverb to 64, which is the
 		// equivalent of MT-32 default Reverb Level 5
 		for (i = 0; i < 16; ++i)
-			midi->send((64   << 16) | (91 << 8) | (0xB0 | i));
+			midi->send((64 << 16) | (91 << 8) | (0xB0 | i));
 		debug(2, "GM Controller 91 Change: Channels 1-16 Reverb Level is 64");
 
 		// Set Channels 1-16 Pitch Bend Sensitivity to
@@ -1693,10 +1735,10 @@ void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 		// In case we have an valid instrument set up, copy it to the part.
 		_global_instruments[slot].copy_to(dest);
 	} else if (_pcSpeaker) {
-		debug(0, "Trying to use non-existant global PC Speaker instrument %d", slot);
+		debug(0, "Trying to use non-existent global PC Speaker instrument %d", slot);
 		dest->pcspk(defaultInstr);
 	} else {
-		debug(0, "Trying to use non-existant global AdLib instrument %d", slot);
+		debug(0, "Trying to use non-existent global AdLib instrument %d", slot);
 		dest->adlib(defaultInstr);
 	}
 }

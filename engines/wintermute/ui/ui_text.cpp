@@ -69,14 +69,14 @@ bool UIText::display(int offsetX, int offsetY) {
 
 	BaseFont *font = _font;
 	if (!font) {
-		font = _gameRef->_systemFont;
+		font = _gameRef->getSystemFont();
 	}
 
 	if (_back) {
 		_back->display(offsetX + _posX, offsetY + _posY, _width, _height);
 	}
 	if (_image) {
-		_image->draw(offsetX + _posX, offsetY + _posY, NULL);
+		_image->draw(offsetX + _posX, offsetY + _posY, nullptr);
 	}
 
 	if (font && _text) {
@@ -104,7 +104,7 @@ bool UIText::display(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 bool UIText::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIText::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -203,7 +203,7 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
-				_back = NULL;
+				_back = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -213,7 +213,7 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
-				_image = NULL;
+				_image = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -230,7 +230,7 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TEXT:
 			setText((char *)params);
-			_gameRef->_stringTable->expand(&_text);
+			_gameRef->expandStringByStringTable(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
@@ -274,7 +274,7 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -431,13 +431,13 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIText::scGetProperty(const char *name) {
+ScValue *UIText::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("static");
 		return _scValue;
 	}
@@ -445,7 +445,7 @@ ScValue *UIText::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TextAlign") == 0) {
+	else if (name == "TextAlign") {
 		_scValue->setInt(_textAlign);
 		return _scValue;
 	}
@@ -453,7 +453,7 @@ ScValue *UIText::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "VerticalAlign") == 0) {
+	else if (name == "VerticalAlign") {
 		_scValue->setInt(_verticalAlign);
 		return _scValue;
 	} else {
@@ -519,4 +519,4 @@ bool UIText::sizeToFit() {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

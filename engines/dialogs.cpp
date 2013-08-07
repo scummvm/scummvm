@@ -229,7 +229,7 @@ void MainMenuDialog::save() {
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
-			dialog.runModal();			
+			dialog.runModal();
 		}
 
 		close();

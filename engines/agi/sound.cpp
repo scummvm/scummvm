@@ -36,25 +36,25 @@ namespace Agi {
 // TODO: add support for variable sampling rate in the output device
 //
 
-AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager, int soundemu) {
+AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu) {
 	if (data == NULL || len < 2) // Check for too small resource or no resource at all
 		return NULL;
 	uint16 type = READ_LE_UINT16(data);
 
 	// For V1 sound resources
 	if (type != AGI_SOUND_SAMPLE && (type & 0xFF) == 0x01)
-		return new PCjrSound(data, len, resnum, manager);
+		return new PCjrSound(data, len, resnum);
 
 	switch (type) { // Create a sound object based on the type
 	case AGI_SOUND_SAMPLE:
-		return new IIgsSample(data, len, resnum, manager);
+		return new IIgsSample(data, len, resnum);
 	case AGI_SOUND_MIDI:
-		return new IIgsMidi(data, len, resnum, manager);
+		return new IIgsMidi(data, len, resnum);
 	case AGI_SOUND_4CHN:
 		if (soundemu == SOUND_EMU_MIDI) {
-			return new MIDISound(data, len, resnum, manager);
+			return new MIDISound(data, len, resnum);
 		} else {
-			return new PCjrSound(data, len, resnum, manager);
+			return new PCjrSound(data, len, resnum);
 		}
 	}
 
@@ -62,7 +62,7 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, S
 	return NULL;
 }
 
-PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
+PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum) : AgiSound() {
 	_data = data; // Save the resource pointer
 	_len  = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
@@ -167,16 +167,6 @@ void SoundMgr::stopSound() {
 	_endflag = -1;
 }
 
-int SoundMgr::initSound() {
-	return -1;
-}
-
-void SoundMgr::deinitSound() {
-	stopSound();
-
-	delete _soundGen;
-}
-
 void SoundMgr::soundIsFinished() {
 	if (_endflag != -1)
 		_vm->setflag(_endflag, true);
@@ -219,6 +209,9 @@ void SoundMgr::setVolume(uint8 volume) {
 }
 
 SoundMgr::~SoundMgr() {
+	stopSound();
+
+	delete _soundGen;
 }
 
 } // End of namespace Agi

@@ -36,22 +36,26 @@ public:
 	~MoviePlayer();
 
 	void playMovie(uint resIndex);
-	
+
+	bool isPlaying() { return _isPlaying; }
+
 protected:
 	ToltecsEngine *_vm;
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
 
-	uint32 _chunkCount, _frameCount, _lastPrefetchOfs;
-	uint32 _soundChunkFramesLeft, _framesPerSoundChunk;
+	bool _isPlaying;
+
+	uint32 _framesPerSoundChunk;
+	int32 _lastPrefetchOfs, _endPos;
 
 	void unpackPalette(byte *source, byte *dest, int elemCount, int elemSize);
 	void unpackRle(byte *source, byte *dest);
-	
+
 	void fetchAudioChunks();
-	
+
 	bool handleInput();
-	
+
 };
 
 } // End of namespace Toltecs

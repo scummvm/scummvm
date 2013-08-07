@@ -103,10 +103,10 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 			if (frame) {
 				if (scaleBuffer) {
 					// TODO: Probably should do aspect ratio correction in e.g. GK1 Windows
-					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
+					g_sci->_gfxScreen->scale2x((const byte *)frame->getPixels(), scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
 					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
 				} else {
-					g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, width, height);
+					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, width, height);
 				}
 
 				if (videoDecoder->hasDirtyPalette()) {
@@ -275,7 +275,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			// Signal the engine scripts that the video is done
 			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
 		} else {
-			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);	
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
 		}
 		break;
 	default:

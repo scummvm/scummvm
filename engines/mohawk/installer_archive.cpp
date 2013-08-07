@@ -133,4 +133,4 @@ Common::SeekableReadStream *InstallerArchive::createReadStreamForMember(const Co
 	return Common::decompressDCL(_stream, entry.compressedSize, entry.uncompressedSize);
 }
 
-}	// End of namespace Mohawk
+} // End of namespace Mohawk

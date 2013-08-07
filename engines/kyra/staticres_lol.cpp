@@ -24,6 +24,7 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/gui_lol.h"
+#include "kyra/sound_intern.h"
 
 #ifdef ENABLE_LOL
 
@@ -213,30 +214,39 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 }
 
 void LoLEngine::initStaticResource() {
-	// assign music data
-	static const char *const pcMusicFileListIntro[] = { "LOREINTR" };
-	static const char *const pcMusicFileListFinale[] = { "LOREFINL" };
-	static const char *const pcMusicFileListIngame[] = { "LORE%02d%c" };
-
-	static const char *const pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
-	static const char *const pc98MusicFileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
-	static const char *const pc98MusicFileListIngame[] = { "lore%02d.86" };
-
-	memset(_soundData, 0, sizeof(_soundData));
-	if (_flags.platform == Common::kPlatformPC) {
-		_soundData[0].fileList = pcMusicFileListIntro;
-		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListIntro);
-		_soundData[1].fileList = pcMusicFileListIngame;
-		_soundData[1].fileListLen = ARRAYSIZE(pcMusicFileListIngame);
-		_soundData[2].fileList = pcMusicFileListFinale;
-		_soundData[2].fileListLen = ARRAYSIZE(pcMusicFileListFinale);
+	// assign music resource data.
+	if (_flags.platform == Common::kPlatformDOS) {
+		if (_flags.isDemo) {
+			static const char *const file[] = { "LOREDEMO" };
+			SoundResourceInfo_PC resInfoDemo(file, ARRAYSIZE(file));
+			_sound->initAudioResourceInfo(kMusicIntro, &resInfoDemo);
+		} else {
+			static const char *const intro[] = { "LOREINTR" };
+			static const char *const finale[] = { "LOREFINL" };
+			SoundResourceInfo_PC resInfoIntro(intro, ARRAYSIZE(intro));
+			SoundResourceInfo_PC resInfoFinale(finale, ARRAYSIZE(finale));
+			_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+			// In game music file handling is different, thus does not need a file list.
+			_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
+		}
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_soundData[0].fileList = pc98MusicFileListIntro;
-		_soundData[0].fileListLen = ARRAYSIZE(pc98MusicFileListIntro);
-		_soundData[1].fileList = pc98MusicFileListIngame;
-		_soundData[1].fileListLen = ARRAYSIZE(pc98MusicFileListIngame);
-		_soundData[2].fileList = pc98MusicFileListFinale;
-		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);
+		static const char *const fileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
+		static const char *const fileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "lore%02d.86", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(fileListFinale, ARRAYSIZE(fileListFinale), 0, 0, 0);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		static const char *const fileListIntro[] = { 0, "lore84.twn", "lore82.twn", 0, 0, 0, "lore83.twn", "lore81.twn" };
+		static const char *const fileListFinale[] = { 0, 0, "lore85.twn", "lore86.twn", "lore87.twn" };
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "lore%02d.twn", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(fileListFinale, ARRAYSIZE(fileListFinale), 0, 0, 0);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	}
 
 	if (_flags.isDemo)
@@ -260,7 +270,10 @@ void LoLEngine::initStaticResource() {
 	_charDefsKieran = _staticres->loadRawDataBe16(kLoLCharDefsKieran, tempSize);
 	_charDefsAkshel = _staticres->loadRawDataBe16(kLoLCharDefsAkshel, tempSize);
 	_expRequirements = (const int32 *)_staticres->loadRawDataBe32(kLoLExpRequirements, tempSize);
-	_monsterModifiers = _staticres->loadRawDataBe16(kLoLMonsterModifiers, tempSize);
+	_monsterModifiers1 = _staticres->loadRawDataBe16(kLoLMonsterModifiers1, tempSize);
+	_monsterModifiers2 = _staticres->loadRawDataBe16(kLoLMonsterModifiers2, tempSize);
+	_monsterModifiers3 = _staticres->loadRawDataBe16(kLoLMonsterModifiers3, tempSize);
+	_monsterModifiers4 = _staticres->loadRawDataBe16(kLoLMonsterModifiers4, tempSize);
 	_monsterShiftOffs = (const int8 *)_staticres->loadRawData(kLoLMonsterShiftOffsets, tempSize);
 	_monsterDirFlags = _staticres->loadRawData(kLoLMonsterDirFlags, tempSize);
 	_monsterScaleX = _staticres->loadRawData(kLoLMonsterScaleX, tempSize);
@@ -303,14 +316,14 @@ void LoLEngine::initStaticResource() {
 	}
 
 	_buttonData = _staticres->loadButtonDefs(kLoLButtonDefs, tempSize);
-	_buttonList1 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList1, tempSize);
-	_buttonList2 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList2, tempSize);
-	_buttonList3 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList3, tempSize);
-	_buttonList4 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList4, tempSize);
-	_buttonList5 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList5, tempSize);
-	_buttonList6 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList6, tempSize);
-	_buttonList7 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList7, tempSize);
-	_buttonList8 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList8, tempSize);
+	_buttonList1 = _staticres->loadRawData(kLoLButtonList1, tempSize);
+	_buttonList2 = _staticres->loadRawData(kLoLButtonList2, tempSize);
+	_buttonList3 = _staticres->loadRawData(kLoLButtonList3, tempSize);
+	_buttonList4 = _staticres->loadRawData(kLoLButtonList4, tempSize);
+	_buttonList5 = _staticres->loadRawData(kLoLButtonList5, tempSize);
+	_buttonList6 = _staticres->loadRawData(kLoLButtonList6, tempSize);
+	_buttonList7 = _staticres->loadRawData(kLoLButtonList7, tempSize);
+	_buttonList8 = _staticres->loadRawData(kLoLButtonList8, tempSize);
 
 	_autoMapStrings = _staticres->loadRawDataBe16(kLoLMapStringId, tempSize);
 
@@ -457,11 +470,11 @@ void LoLEngine::initStaticResource() {
 }
 
 void GUI_LoL::initStaticData() {
-	GUI_V2_BUTTON(_scrollUpButton, 20, 96, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xfe, 0x01, 0xfe, 0x01, 0xfe, 0x01, 0);
-	GUI_V2_BUTTON(_scrollDownButton, 21, 98, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xfe, 0x01, 0xfe, 0x01, 0xfe, 0x01, 0);
+	GUI_V2_BUTTON(_scrollUpButton, 20, 96, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0);
+	GUI_V2_BUTTON(_scrollDownButton, 21, 98, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0);
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
-		GUI_V2_BUTTON(_menuButtons[i], i, 0, 0, 0, 0, 0, 0x4487, 0, 0, 0, 0, 0, 0xfe, 0x01, 0xfe, 0x01, 0xfe, 0x01, 0);
+		GUI_V2_BUTTON(_menuButtons[i], i, 0, 0, 0, 0, 0, 0x4487, 0, 0, 0, 0, 0, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0);
 
 	if (_vm->gameFlags().isTalkie)
 		GUI_LOL_MENU(_mainMenu, 9, 0x4000, 0, 7, -1, -1, -1, -1);
@@ -486,61 +499,61 @@ void GUI_LoL::initStaticData() {
 	for (int i = 0; i < _mainMenu.numberOfItems; ++i)
 		_mainMenu.item[i].callback = mainMenuFunctor;
 
-	GUI_LOL_MENU(_loadMenu, 10, 0x400e, 1, 5, 128, 20, 128, 118);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[0], 0xfffe, 8, 39, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[1], 0xfffd, 8, 56, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[2], 0xfffc, 8, 73, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[3], 0xfffb, 8, 90, 256, 15, 0, 0);
+	GUI_LOL_MENU(_loadMenu, 10, 0x400E, 1, 5, 128, 20, 128, 118);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[0], 0xFFFE, 8, 39, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[1], 0xFFFD, 8, 56, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[2], 0xFFFC, 8, 73, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[3], 0xFFFB, 8, 90, 256, 15, 0, 0);
 	GUI_LOL_MENU_ITEM(_loadMenu.item[4], 0x4011, 168, 118, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	Button::Callback loadMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedLoadMenu);
 	for (int i = 0; i < 5; ++i)
 		_loadMenu.item[i].callback = loadMenuFunctor;
 
-	GUI_LOL_MENU(_saveMenu, 10, 0x400d, 1, 5, 128, 20, 128, 118);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[0], 0xfffe, 8, 39, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[1], 0xfffd, 8, 56, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[2], 0xfffc, 8, 73, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[3], 0xfffb, 8, 90, 256, 15, 0, 0);
+	GUI_LOL_MENU(_saveMenu, 10, 0x400D, 1, 5, 128, 20, 128, 118);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[0], 0xFFFE, 8, 39, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[1], 0xFFFD, 8, 56, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[2], 0xFFFC, 8, 73, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[3], 0xFFFB, 8, 90, 256, 15, 0, 0);
 	GUI_LOL_MENU_ITEM(_saveMenu.item[4], 0x4011, 168, 118, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	Button::Callback saveMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedSaveMenu);
 	for (int i = 0; i < 5; ++i)
 		_saveMenu.item[i].callback = saveMenuFunctor;
 
-	GUI_LOL_MENU(_deleteMenu, 10, 0x400f, 1, 5, 128, 20, 128, 118);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[0], 0xfffe, 8, 39, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[1], 0xfffd, 8, 56, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[2], 0xfffc, 8, 73, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[3], 0xfffb, 8, 90, 256, 15, 0, 0);
+	GUI_LOL_MENU(_deleteMenu, 10, 0x400F, 1, 5, 128, 20, 128, 118);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[0], 0xFFFE, 8, 39, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[1], 0xFFFD, 8, 56, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[2], 0xFFFC, 8, 73, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[3], 0xFFFB, 8, 90, 256, 15, 0, 0);
 	GUI_LOL_MENU_ITEM(_deleteMenu.item[4], 0x4011, 168, 118, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	Button::Callback deleteMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedDeleteMenu);
 	for (int i = 0; i < 5; ++i)
 		_deleteMenu.item[i].callback = deleteMenuFunctor;
 
-	GUI_LOL_MENU(_gameOptions, 17, 0x400c, 0, 6, -1, -1, -1, -1);
+	GUI_LOL_MENU(_gameOptions, 17, 0x400C, 0, 6, -1, -1, -1, -1);
 	if (_vm->gameFlags().isTalkie) {
-		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xfff7, 120, 22, 80, 15, 0x406e, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xfff6, 120, 39, 80, 15, 0x406c, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xfff5, 120, 56, 80, 15, 0x406d, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xfff4, 120, 73, 80, 15, 0x42d5, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xfff3, 120, 90, 80, 15, 0x42d2, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xFFF7, 120, 22, 80, 15, 0x406E, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xFFF6, 120, 39, 80, 15, 0x406C, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xFFF5, 120, 56, 80, 15, 0x406D, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xFFF4, 120, 73, 80, 15, 0x42D5, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xFFF3, 120, 90, 80, 15, 0x42D2, 0);
 		GUI_LOL_MENU_ITEM(_gameOptions.item[5], 0x4072, 104, 110, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	} else {
-		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xfff9, 120, 22, 80, 15, 0x406a, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xfff8, 120, 39, 80, 15, 0x406b, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xfff7, 120, 56, 80, 15, 0x406e, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xfff6, 120, 73, 80, 15, 0x406c, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xfff5, 120, 90, 80, 15, 0x406d, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xFFF9, 120, 22, 80, 15, 0x406A, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xFFF8, 120, 39, 80, 15, 0x406B, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xFFF7, 120, 56, 80, 15, 0x406E, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xFFF6, 120, 73, 80, 15, 0x406C, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xFFF5, 120, 90, 80, 15, 0x406D, 0);
 		GUI_LOL_MENU_ITEM(_gameOptions.item[5], 0x4072, 104, 110, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	}
 	Button::Callback optionsMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedOptionsMenu);
 	for (int i = 0; i < _gameOptions.numberOfItems; ++i)
 		_gameOptions.item[i].callback = optionsMenuFunctor;
 
-	GUI_LOL_MENU(_audioOptions, 18, 0x42d9, 2, 1, -1, -1, -1, -1);
+	GUI_LOL_MENU(_audioOptions, 18, 0x42D9, 2, 1, -1, -1, -1, -1);
 	GUI_LOL_MENU_ITEM(_audioOptions.item[0], 0x4072, 152, 76, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
-	GUI_LOL_MENU_ITEM(_audioOptions.item[1], 3, 128, 22, 114, 14, 0x42db, 0);
-	GUI_LOL_MENU_ITEM(_audioOptions.item[2], 4, 128, 39, 114, 14, 0x42da, 0);
-	GUI_LOL_MENU_ITEM(_audioOptions.item[3], 5, 128, 56, 114, 14, 0x42dc, 0);
+	GUI_LOL_MENU_ITEM(_audioOptions.item[1], 3, 128, 22, 114, 14, 0x42DB, 0);
+	GUI_LOL_MENU_ITEM(_audioOptions.item[2], 4, 128, 39, 114, 14, 0x42DA, 0);
+	GUI_LOL_MENU_ITEM(_audioOptions.item[3], 5, 128, 56, 114, 14, 0x42DC, 0);
 	Button::Callback audioMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedAudioMenu);
 	for (int i = 0; i < 4; ++i)
 		_audioOptions.item[i].callback = audioMenuFunctor;
@@ -658,11 +671,11 @@ const uint16 LoLEngine::_charPosXPC98[] = {
 	92, 152, 212, 268
 };
 
-const uint8 LoLEngine::_charNamesPC98[][11] = {
-	{ 0x83, 0x41, 0x83, 0x4E, 0x83, 0x56, 0x83, 0x46, 0x83, 0x8B, 0x00 },
-	{ 0x83, 0x7D, 0x83, 0x43, 0x83, 0x50, 0x83, 0x8B, 0x00, 0x00, 0x00 },
-	{ 0x83, 0x4C, 0x81, 0x5B, 0x83, 0x89, 0x83, 0x93, 0x00, 0x00, 0x00 },
-	{ 0x83, 0x52, 0x83, 0x93, 0x83, 0x89, 0x83, 0x62, 0x83, 0x68, 0x00 }
+const char *const LoLEngine::_charNamesJapanese[] = {
+	"\x83\x41\x83\x4E\x83\x56\x83\x46\x83\x8B\0",
+	"\x83\x7D\x83\x43\x83\x50\x83\x8B\x00\x00\0",
+	"\x83\x4C\x81\x5B\x83\x89\x83\x93\x00\x00\0",
+	"\x83\x52\x83\x93\x83\x89\x83\x62\x83\x68\0"
 };
 
 const uint8 LoLEngine::_chargenFrameTableTalkie[] = {

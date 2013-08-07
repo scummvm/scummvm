@@ -87,7 +87,7 @@ void Player_Towns::restoreAfterLoad() {
 
 		if (!_v2)
 			restoredSounds.push_back(_pcmCurrentSound[i].index);
-		
+
 		uint8 *ptr = _vm->getResourceAddress(rtSound, _pcmCurrentSound[i].index);
 		if (!ptr)
 			continue;

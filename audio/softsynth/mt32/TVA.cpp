@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -30,7 +30,7 @@ namespace MT32Emu {
 static Bit8u biasLevelToAmpSubtractionCoeff[13] = {255, 187, 137, 100, 74, 54, 40, 29, 21, 15, 10, 5, 0};
 
 TVA::TVA(const Partial *usePartial, LA32Ramp *useAmpRamp) :
-	partial(usePartial), ampRamp(useAmpRamp), system_(&usePartial->getSynth()->mt32ram.system) {
+	partial(usePartial), ampRamp(useAmpRamp), system_(&usePartial->getSynth()->mt32ram.system), phase(TVA_PHASE_DEAD) {
 }
 
 void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
@@ -154,7 +154,7 @@ void TVA::reset(const Part *newPart, const TimbreParam::PartialParam *newPartial
 
 	playing = true;
 
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 
 	int key = partial->getPoly()->getKey();
 	int velocity = partial->getPoly()->getVelocity();
@@ -215,7 +215,7 @@ void TVA::recalcSustain() {
 		return;
 	}
 	// We're sustaining. Recalculate all the values
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 	int newTarget = calcBasicAmp(tables, partial, system_, partialParam, patchTemp, rhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
 	newTarget += partialParam->tva.envLevel[3];
 	// Since we're in TVA_PHASE_SUSTAIN at this point, we know that target has been reached and an interrupt fired, so we can rely on it being the current amp.
@@ -241,7 +241,7 @@ int TVA::getPhase() const {
 }
 
 void TVA::nextPhase() {
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 
 	if (phase >= TVA_PHASE_DEAD || !playing) {
 		partial->getSynth()->printDebug("TVA::nextPhase(): Shouldn't have got here with phase %d, playing=%s", phase, playing ? "true" : "false");
@@ -274,7 +274,7 @@ void TVA::nextPhase() {
 	}
 
 	int newTarget;
-	int newIncrement = 0;
+	int newIncrement = 0; // Initialised to please compilers
 	int envPointIndex = phase;
 
 	if (!allLevelsZeroFromNowOn) {

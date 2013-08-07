@@ -91,7 +91,7 @@ typedef int HPOLYGON;
 #define MAX_SAVED_ALIVES 512	// Saves actors'lives
 #define MAX_SAVED_ACTOR_Z 512	// Saves actors' Z-ness
 
-// Legal non-existant entrance number for LoadScene()
+// Legal non-existent entrance number for LoadScene()
 #define NO_ENTRY_NUM	(-3458)	// Magic unlikely number
 
 

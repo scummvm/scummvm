@@ -706,7 +706,7 @@ void EoBIntroPlayer::waterdeepExit() {
 	_vm->delay(60 * _vm->_tickLength);
 
 	for (int i = 0; i < 56 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
-		uint32 end = _vm->_system->getMillis() +_vm->_tickLength;
+		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->copyRegion(0, 136 + i, 80, 16, 160, 56 - i, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(160, 0, 80, 72 - i, 160, 96 + i, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -1061,7 +1061,7 @@ void EoBEngine::seq_playFinale() {
 	gui_drawBox(0, 0, 176, 175, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_txt->printDialogueText(51, _moreStrings[0]);
 
-	if (!checkScriptFlags(0x1ffe)) {
+	if (!checkScriptFlags(0x1FFE)) {
 		_screen->fadeToBlack();
 		return;
 	}

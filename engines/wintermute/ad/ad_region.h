@@ -36,23 +36,29 @@ namespace Wintermute {
 class AdRegion : public BaseRegion {
 public:
 	DECLARE_PERSISTENT(AdRegion, BaseRegion)
-	uint32 _alpha;
-	float _zoom;
-	bool _blocked;
-	bool _decoration;
+
 	AdRegion(BaseGame *inGame);
 	virtual ~AdRegion();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
+	bool hasDecoration() const;
+	bool isBlocked() const;
+	uint32 getAlpha() const;
+	float getZoom() const;
 	// scripting interface
-	virtual ScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
+private:
+	uint32 _alpha;
+	float _zoom;
+	bool _blocked;
+	bool _decoration;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

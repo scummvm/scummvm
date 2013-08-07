@@ -102,16 +102,16 @@ void FettleFontPal(SCNHANDLE fontPal) {
 	assert(g_hTalkFont); // Talk font not declared
 
 	pFont = (const FONT *)LockMem(g_hTagFont);
-	pImg = (IMAGE *)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
 	if (!TinselV2)
-		pImg->hImgPal = TO_LE_32(fontPal);
+		pImg->hImgPal = TO_32(fontPal);
 	else
 		pImg->hImgPal = 0;
 
 	pFont = (const FONT *)LockMem(g_hTalkFont);
-	pImg = (IMAGE *)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
 	if (!TinselV2)
-		pImg->hImgPal = TO_LE_32(fontPal);
+		pImg->hImgPal = TO_32(fontPal);
 	else
 		pImg->hImgPal = 0;
 

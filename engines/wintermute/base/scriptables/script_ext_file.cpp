@@ -52,13 +52,13 @@ SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	ScValue *val = stack->pop();
 
-	_filename = NULL;
+	_filename = nullptr;
 	if (!val->isNULL()) {
 		BaseUtils::setString(&_filename, val->getString());
 	}
 
-	_readFile = NULL;
-	_writeFile = NULL;
+	_readFile = nullptr;
+	_writeFile = nullptr;
 
 	_mode = 0;
 	_textMode = false;
@@ -73,7 +73,7 @@ SXFile::~SXFile() {
 //////////////////////////////////////////////////////////////////////////
 void SXFile::cleanup() {
 	delete[] _filename;
-	_filename = NULL;
+	_filename = nullptr;
 	close();
 }
 
@@ -82,12 +82,12 @@ void SXFile::cleanup() {
 void SXFile::close() {
 	if (_readFile) {
 		BaseFileManager::getEngineInstance()->closeFile(_readFile);
-		_readFile = NULL;
+		_readFile = nullptr;
 	}
 	if (_writeFile) {
 		_writeFile->finalize();
 		delete _writeFile;
-		_writeFile = NULL;
+		_writeFile = nullptr;
 	}
 	_mode = 0;
 	_textMode = false;
@@ -640,13 +640,13 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXFile::scGetProperty(const char *name) {
+ScValue *SXFile::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("file");
 		return _scValue;
 	}
@@ -654,7 +654,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Filename (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Filename") == 0) {
+	if (name == "Filename") {
 		_scValue->setString(_filename);
 		return _scValue;
 	}
@@ -662,7 +662,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Position (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Position") == 0) {
+	else if (name == "Position") {
 		_scValue->setInt(getPos());
 		return _scValue;
 	}
@@ -670,7 +670,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Length") == 0) {
+	else if (name == "Length") {
 		_scValue->setInt(getLength());
 		return _scValue;
 	}
@@ -678,7 +678,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TextMode") == 0) {
+	else if (name == "TextMode") {
 		_scValue->setBool(_textMode);
 		return _scValue;
 	}
@@ -686,7 +686,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccessMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccessMode") == 0) {
+	else if (name == "AccessMode") {
 		_scValue->setInt(_mode);
 		return _scValue;
 	} else {
@@ -701,13 +701,13 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Length")==0){
+	if (strcmp(name, "Length")==0) {
 	    int origLength = _length;
 	    _length = max(value->getInt(0), 0);
 
 	    char propName[20];
-	    if (_length < OrigLength){
-	        for(int i=_length; i<OrigLength; i++){
+	    if (_length < OrigLength) {
+	        for(int i=_length; i<OrigLength; i++) {
 	            sprintf(PropName, "%d", i);
 	            _values->DeleteProp(PropName);
 	        }
@@ -778,8 +778,8 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transfer(TMEMBER(pos));
 
 		// try to re-open file if needed
-		_writeFile = NULL;
-		_readFile = NULL;
+		_writeFile = nullptr;
+		_readFile = nullptr;
 
 		if (_mode != 0) {
 			// open for reading
@@ -825,4 +825,4 @@ Common::WriteStream *SXFile::openForAppend(const Common::String &filename, bool 
 	error("SXFile::openForAppend - WriteFiles not supported");
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -40,7 +40,7 @@ class BaseFile;
 class SXFile : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SXFile, BaseScriptable)
-	ScValue *scGetProperty(const char *name);
+	ScValue *scGetProperty(const Common::String &name);
 	bool scSetProperty(const char *name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
@@ -49,7 +49,7 @@ public:
 private:
 	Common::SeekableReadStream *_readFile;
 	Common::WriteStream *_writeFile;
-	int _mode; // 0..none, 1..read, 2..write, 3..append
+	int32 _mode; // 0..none, 1..read, 2..write, 3..append
 	bool _textMode;
 	void close();
 	void cleanup();
@@ -61,6 +61,6 @@ private:
 	Common::WriteStream *openForAppend(const Common::String &filename, bool binary);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

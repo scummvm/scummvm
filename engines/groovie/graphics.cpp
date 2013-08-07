@@ -82,8 +82,8 @@ void GraphicsMan::mergeFgAndBg() {
 	uint32 i;
 	byte *countf, *countb;
 
-	countf = (byte *)_foreground.getBasePtr(0, 0);
-	countb = (byte *)_background.getBasePtr(0, 0);
+	countf = (byte *)_foreground.getPixels();
+	countb = (byte *)_background.getPixels();
 	for (i = 640 * 320; i; i--) {
 		if (255 == *(countf)) {
 			*(countf) = *(countb);
@@ -94,7 +94,7 @@ void GraphicsMan::mergeFgAndBg() {
 }
 
 void GraphicsMan::updateScreen(Graphics::Surface *source) {
-	_vm->_system->copyRectToScreen(source->getBasePtr(0, 0), 640, 0, 80, 640, 320);
+	_vm->_system->copyRectToScreen(source->getPixels(), 640, 0, 80, 640, 320);
 	change();
 }
 

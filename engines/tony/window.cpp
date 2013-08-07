@@ -35,7 +35,6 @@
 
 namespace Tony {
 
-
 /****************************************************************************\
 *       RMWindow Methods
 \****************************************************************************/
@@ -111,7 +110,7 @@ void RMWindow::repaint() {
  */
 void RMWindow::wipeEffect(Common::Rect &rcBoundEllipse) {
 	if ((rcBoundEllipse.left == 0) && (rcBoundEllipse.top == 0) &&
-	        (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
+	    (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
 		// Full screen clear wanted, so use shortcut method
 		g_system->fillScreen(0);
 	} else {
@@ -256,7 +255,7 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 }
 
 void RMWindow::showDirtyRects(bool v) {
-	_showDirtyRects = v; 
+	_showDirtyRects = v;
 }
 
 /****************************************************************************\
@@ -331,6 +330,14 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 				src += RM_BBX * dezoom;
 		}
 	}
+
+#ifdef SCUMM_BIG_ENDIAN
+	if (lpDestBuf != NULL) {
+		for (int i = 0; i < dimx * dimy; i++) {
+			lpDestBuf[i] = SWAP_BYTES_16(lpDestBuf[i]);
+		}
+	}
+#endif
 }
 
 } // End of namespace Tony

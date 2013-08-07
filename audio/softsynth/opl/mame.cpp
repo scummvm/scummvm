@@ -223,7 +223,7 @@ static int *ENV_CURVE;
 
 
 /* multiple table */
-#define ML(a) (int)(a * 2)
+#define ML(a) (uint)(a * 2)
 static const uint MUL_TABLE[16]= {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15 */
 	ML(0.50), ML(1.00), ML(2.00),  ML(3.00), ML(4.00), ML(5.00), ML(6.00), ML(7.00),

@@ -214,7 +214,7 @@ Graphics::~Graphics() {
 }
 
 void Graphics::unpackControlBank() {
-	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
 		_vm->bankMan()->load("CONTROL.BBK",17);
 
 		// unpack mouse pointer frame
@@ -231,7 +231,7 @@ void Graphics::unpackControlBank() {
 }
 
 void Graphics::setupArrows() {
-	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
 		int scrollX = _vm->display()->horizontalScroll();
 		BobSlot *arrow;
 		arrow = bob(ARROW_BOB_UP);
@@ -1250,7 +1250,7 @@ void BamScene::updateFightAnimation() {
 			break;
 		case 99: // end of BAM data
 			_lastSoundIndex = _index = 0;
-			if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+			if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
 				_fightData = fightDataBlocks[_vm->randomizer.getRandomNumber(2)];
 			}
 			if (_flag == F_REQ_STOP) {

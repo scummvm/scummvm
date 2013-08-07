@@ -75,6 +75,6 @@ v2:    uint32 TimeDate1
 
 */
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

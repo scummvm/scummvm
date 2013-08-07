@@ -30,72 +30,110 @@
 
 static const PlainGameDescriptor CGEGames[] = {
 	{ "soltys", "Soltys" },
+	{ "sfinx", "Sfinx" },
 	{ 0, 0 }
 };
 
 namespace CGE {
 
-static const ADGameDescription gameDescriptions[] = {
+struct CgeGameDescription {
+	ADGameDescription desc;
+	GameType gameType;
+};
+
+static const CgeGameDescription gameDescriptions[] = {
 
 	{
-		"soltys", "",
 		{
-			{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437572},
-			AD_LISTEND
+			"soltys", "",
+			{
+				{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
+				{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437572},
+				AD_LISTEND
+			},
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
+		kGameTypeSoltys
 	},
 	{
-		"soltys", "Soltys Freeware",
 		{
-			{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676},
-			AD_LISTEND
+			"soltys", "Soltys Freeware",
+			{
+				{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
+				{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676},
+				AD_LISTEND
+			},
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
+		kGameTypeSoltys
 	},
 	{
-		"soltys", "Soltys Demo (not supported)",
 		{
-			{"vol.cat", 0, "1e077c8ff58109a187f07ac54b0c873a", 18788},
-			{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
-			AD_LISTEND
+			"soltys", "Soltys Demo (not supported)",
+			{
+				{"vol.cat", 0, "1e077c8ff58109a187f07ac54b0c873a", 18788},
+				{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
+				AD_LISTEND
+			},
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO , GUIO0()
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO , GUIO0()
+		kGameTypeSoltys
 	},
 	{
-		"soltys", "Soltys Demo (not supported)",
 		{
-			{"vol.cat", 0, "f17987487fab1ebddd781d8d02fedecc", 7168},
-			{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
-			AD_LISTEND
+			"soltys", "Soltys Demo (not supported)",
+			{
+				{"vol.cat", 0, "f17987487fab1ebddd781d8d02fedecc", 7168},
+				{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
+				AD_LISTEND
+			},
+			Common::PL_POL, Common::kPlatformDOS, ADGF_DEMO , GUIO0()
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO0()
+		kGameTypeSoltys
 	},
 	{
-		"soltys", "Soltys Freeware v1.0",
 		{
-			{"vol.cat", 0, "f1675684c68ab90272f5776f8f2c3974", 50176},
-			{"vol.dat", 0, "4ffeff4abc99ac5999b55ccfc56ab1df", 8430868},
-			AD_LISTEND
+			"soltys", "Soltys Freeware v1.0",
+			{
+				{"vol.cat", 0, "f1675684c68ab90272f5776f8f2c3974", 50176},
+				{"vol.dat", 0, "4ffeff4abc99ac5999b55ccfc56ab1df", 8430868},
+				AD_LISTEND
+			},
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO0()
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS , GUIO0()
+		kGameTypeSoltys
 	},
 	{
-		"soltys", "Soltys Freeware v1.0",
 		{
-			{"vol.cat", 0, "20fdce799adb618100ef9ee2362be875", 50176},
-			{"vol.dat", 0, "0e43331c846094d77f5dd201827e0a3b", 8439339},
-			AD_LISTEND
+			"soltys", "Soltys Freeware v1.0",
+			{
+				{"vol.cat", 0, "20fdce799adb618100ef9ee2362be875", 50176},
+				{"vol.dat", 0, "0e43331c846094d77f5dd201827e0a3b", 8439339},
+				AD_LISTEND
+			},
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
+		kGameTypeSoltys
 	},
-	AD_TABLE_END_MARKER
+	{
+		{
+			// Polish version, provided by Strangerke
+			"sfinx", "Sfinx Freeware",
+			{
+				{"vol.cat", 0, "21197b287d397c53261b6616bf0dd880", 129024},
+				{"vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844},
+				AD_LISTEND
+			},
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		},
+		kGameTypeSfinx
+	},
+
+	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &gameDescriptions[0], { "vol.cat", "vol.dat", 0 } },
+	{ &gameDescriptions[0].desc, { "vol.cat", "vol.dat", 0 } },
 	{ 0, { 0 } }
 };
 
@@ -103,7 +141,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 class CGEMetaEngine : public AdvancedMetaEngine {
 public:
-	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames) {
+	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(CGE::CgeGameDescription), CGEGames) {
 		_singleid = "soltys";
 	}
 
@@ -198,7 +236,7 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-	
+
 	if (f) {
 		CGE::SavegameHeader header;
 
@@ -229,7 +267,7 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 			return desc;
 		}
 	}
-	
+
 	return SaveStateDescriptor();
 }
 

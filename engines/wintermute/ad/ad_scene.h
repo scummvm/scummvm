@@ -67,27 +67,27 @@ public:
 	bool pointInViewport(int x, int y);
 	int getOffsetTop();
 	int getOffsetLeft();
-	bool getViewportSize(int *width = NULL, int *height = NULL);
-	bool getViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
+	bool getViewportSize(int32 *width = nullptr, int32 *height = nullptr);
+	bool getViewportOffset(int32 *offsetX = nullptr, int32 *offsetY = nullptr);
 	BaseViewport *_viewport;
 	BaseFader *_fader;
-	int _pfPointsNum;
+	int32 _pfPointsNum;
 	void pfPointsAdd(int x, int y, int distance);
 	void pfPointsStart();
 	bool _initialized;
-	bool correctTargetPoint(int startX, int startY, int *x, int *y, bool checkFreeObjects = false, BaseObject *requester = NULL);
-	bool correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, BaseObject *requester);
+	bool correctTargetPoint(int32 startX, int32 startY, int32 *x, int32 *y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
+	bool correctTargetPoint2(int32 startX, int32 startY, int32 *targetX, int32 *targetY, bool checkFreeObjects, BaseObject *requester);
 	DECLARE_PERSISTENT(AdScene, BaseObject)
-	bool displayRegionContent(AdRegion *region = NULL, bool display3DOnly = false);
-	bool displayRegionContentOld(AdRegion *region = NULL);
-	static int compareObjs(const void *obj1, const void *obj2);
+	bool displayRegionContent(AdRegion *region = nullptr, bool display3DOnly = false);
+	bool displayRegionContentOld(AdRegion *region = nullptr);
+	static bool compareObjs(const AdObject *obj1, const AdObject *obj2);
 
 	bool updateFreeObjects();
 	bool traverseNodes(bool update = false);
 	float getScaleAt(int y);
 	bool sortScaleLevels();
 	bool sortRotLevels();
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	uint32 getAlphaAt(int x, int y, bool colorCheck = false);
 	bool _paralaxScrolling;
 	void skipTo(int offsetX, int offsetY);
@@ -96,16 +96,16 @@ public:
 	void skipToObject(BaseObject *object);
 	void scrollToObject(BaseObject *object);
 	void scrollTo(int offsetX, int offsetY);
-	virtual bool update();
+	virtual bool update() override;
 	bool _autoScroll;
-	int _targetOffsetTop;
-	int _targetOffsetLeft;
+	int32 _targetOffsetTop;
+	int32 _targetOffsetLeft;
 
-	int _scrollPixelsV;
+	int32 _scrollPixelsV;
 	uint32 _scrollTimeV;
 	uint32 _lastTimeV;
 
-	int _scrollPixelsH;
+	int32 _scrollPixelsH;
 	uint32 _scrollTimeH;
 	uint32 _lastTimeH;
 
@@ -113,11 +113,11 @@ public:
 	uint32 _pfMaxTime;
 	bool initLoop();
 	void pathFinderStep();
-	bool isBlockedAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = NULL);
-	bool isWalkableAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = NULL);
+	bool isBlockedAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
+	bool isWalkableAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
 	AdLayer *_mainLayer;
 	float getZoomAt(int x, int y);
-	bool getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester = NULL);
+	bool getPath(const BasePoint &source, const BasePoint &target, AdPath *path, BaseObject *requester = nullptr);
 	AdScene(BaseGame *inGame);
 	virtual ~AdScene();
 	BaseArray<AdLayer *> _layers;
@@ -125,12 +125,12 @@ public:
 	BaseArray<AdWaypointGroup *> _waypointGroups;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	int _width;
-	int _height;
+	int32 _width;
+	int32 _height;
 	bool addObject(AdObject *Object);
 	bool removeObject(AdObject *Object);
-	int _editorMarginH;
-	int _editorMarginV;
+	int32 _editorMarginH;
+	int32 _editorMarginV;
 	uint32 _editorColFrame;
 	uint32 _editorColEntity;
 	uint32 _editorColRegion;
@@ -153,29 +153,29 @@ public:
 	BaseArray<AdRotLevel *> _rotLevels;
 
 	virtual bool restoreDeviceObjects();
-	int getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester = NULL);
+	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 
 
 private:
 	bool persistState(bool saving = true);
-	void pfAddWaypointGroup(AdWaypointGroup *Wpt, BaseObject *requester = NULL);
+	void pfAddWaypointGroup(AdWaypointGroup *Wpt, BaseObject *requester = nullptr);
 	bool _pfReady;
 	BasePoint *_pfTarget;
 	AdPath *_pfTargetPath;
 	BaseObject *_pfRequester;
 	BaseArray<AdPathPoint *> _pfPath;
 
-	int _offsetTop;
-	int _offsetLeft;
+	int32 _offsetTop;
+	int32 _offsetLeft;
 
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

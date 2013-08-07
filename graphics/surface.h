@@ -61,11 +61,13 @@ struct Surface {
 	 */
 	uint16 pitch;
 
+protected:
 	/**
 	 * The surface's pixel data.
 	 */
 	void *pixels;
 
+public:
 	/**
 	 * The pixel format of the surface.
 	 */
@@ -76,6 +78,33 @@ struct Surface {
 	 */
 	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
 	}
+
+	/**
+	 * Return a pointer to the pixel data.
+	 *
+	 * @return Pointer to the pixel data.
+	 */
+	inline const void *getPixels() const {
+		return pixels;
+	}
+
+	/**
+	 * Return a pointer to the pixel data.
+	 *
+	 * @return Pointer to the pixel data.
+	 */
+	inline void *getPixels() {
+		return pixels;
+	}
+
+	/**
+	 * Sets the pixel data.
+	 *
+	 * Note that this is a simply a setter. Be careful what you are doing!
+	 *
+	 * @param newPixels The new pixel data.
+	 */
+	void setPixels(void *newPixels) { pixels = newPixels; }
 
 	/**
 	 * Return a pointer to the pixel at the specified point.
@@ -122,6 +151,20 @@ struct Surface {
 	void free();
 
 	/**
+	 * Set up the Surface with user specified data.
+	 *
+	 * Note that this simply sets the 'internal' attributes of the Surface. It
+	 * will not take care of freeing old data via free or similar!
+	 *
+	 * @param width Width of the pixel data.
+	 * @param height Height of the pixel data.
+	 * @param pitch The pitch of the pixel data.
+	 * @param pixels The pixel data itself.
+	 * @param format The pixel format of the pixel data.
+	 */
+	void init(uint16 width, uint16 height, uint16 pitch, void *pixels, const PixelFormat &format);
+
+	/**
 	 * Copy the data from another Surface.
 	 *
 	 * Note that this calls free on the current surface, to assure it being
@@ -133,6 +176,52 @@ struct Surface {
 	 * @param surf Surface to copy from.
 	 */
 	void copyFrom(const Surface &surf);
+
+	/**
+	 * Creates a Surface which represents a sub-area of this Surface object.
+	 *
+	 * The pixel (0, 0) of the returned Surface will be the same as Pixel
+	 * (area.x, area.y) of this Surface. Changes to any of the Surface objects
+	 * will change the shared pixel data.
+	 *
+	 * Note that the Surface returned is only valid as long as this Surface
+	 * object is still alive (i.e. its pixel data is not destroyed or
+	 * reallocated). Do *never* try to free the returned Surface.
+	 *
+	 * @param area The area which should be represented. Note that the area
+	 *             will get clipped in case it does not fit!
+	 */
+	Surface getSubArea(const Common::Rect &area);
+
+	/**
+	 * Creates a Surface which represents a sub-area of this Surface object.
+	 *
+	 * The pixel (0, 0) of the returned Surface will be the same as Pixel
+	 * (area.x, area.y) of this Surface.
+	 *
+	 * Note that the Surface returned is only valid as long as this Surface
+	 * object is still alive (i.e. its pixel data is not destroyed or
+	 * reallocated). Do *never* try to free the returned Surface.
+	 *
+	 * @param area The area which should be represented. Note that the area
+	 *             will get clipped in case it does not fit!
+	 */
+	const Surface getSubArea(const Common::Rect &area) const;
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
+	 * This works in-place. This means it will not create an additional buffer
+	 * for the conversion process. The value of 'pixels' might change though
+	 * (that means it might realloc the pixel data).
+	 *
+	 * Note that you should only use this, when you created the Surface data via
+	 * create! Otherwise this function has undefined behavior.
+	 *
+	 * @param dstFormat The desired format
+	 * @param palette   The palette (in RGB888), if the source format has a Bpp of 1
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0);
 
 	/**
 	 * Convert the data to another pixel format.
@@ -153,8 +242,24 @@ struct Surface {
 	 * @param x1 The x coordinate of the end point.
 	 * @param y1 The y coordinate of the end point.
 	 * @param color The color of the line.
+	 * @note This is just a wrapper around Graphics::drawLine
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
+
+	/**
+	 * Draw a thick line.
+	 *
+	 * @param x0 The x coordinate of the start point.
+	 * @param y0 The y coordiante of the start point.
+	 * @param x1 The x coordinate of the end point.
+	 * @param y1 The y coordinate of the end point.
+	 * @param penX The width of the pen (thickness in the x direction)
+	 * @param penY The height of the pen (thickness in the y direction)
+	 * @param color The color of the line.
+	 * @note This is just a wrapper around Graphics::drawThickLine
+	 * @note The x/y coordinates of the start and end points are the upper-left most part of the pen
+	 */
+	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color);
 
 	/**
 	 * Draw a horizontal line.

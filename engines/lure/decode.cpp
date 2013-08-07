@@ -255,7 +255,7 @@ MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 					decrCtr();
 					if (shlCarry())
 						break;
-			
+
 					AL = dataIn->data()[BP + 3];
 				} else {
 					decrCtr();
@@ -375,7 +375,7 @@ uint32 AnimationDecoder::decode_data(MemoryBlock *src, MemoryBlock *dest, uint32
 	// Main loop
 	bool loopFlag = true;
 	while (loopFlag) {
-		for (;;) {		
+		for (;;) {
 			carry = false;
 			rcl(currData, carry);
 			if (--bitCtr == 0) {

@@ -80,7 +80,7 @@ DefaultTimerManager::~DefaultTimerManager() {
 void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
 
-	const uint32 curTime = g_system->getMillis();
+	uint32 curTime = g_system->getMillis(true);
 
 	// Repeat as long as there is a TimerSlot that is scheduled to fire.
 	TimerSlot *slot = _head->next;
@@ -156,7 +156,7 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	}
 
 	// We need to remove all names referencing the timer proc here.
-	// 
+	//
 	// Else we run into troubles, when the client code removes and readds timer
 	// callbacks.
 	//

@@ -69,7 +69,7 @@ SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 //////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
 	delete _values;
-	_values = NULL;
+	_values = nullptr;
 }
 
 
@@ -140,13 +140,13 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXArray::scGetProperty(const char *name) {
+ScValue *SXArray::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("array");
 		return _scValue;
 	}
@@ -154,7 +154,7 @@ ScValue *SXArray::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Length") == 0) {
+	else if (name == "Length") {
 		_scValue->setInt(_length);
 		return _scValue;
 	}
@@ -164,7 +164,7 @@ ScValue *SXArray::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		char paramName[20];
-		if (validNumber(name, paramName)) {
+		if (validNumber(name.c_str(), paramName)) { // TODO: Change to Common::String
 			return _values->getProp(paramName);
 		} else {
 			return _scValue;
@@ -215,7 +215,7 @@ bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_length));
-	persistMgr->transfer(TMEMBER(_values));
+	persistMgr->transferPtr(TMEMBER_PTR(_values));
 
 	return STATUS_OK;
 }
@@ -249,4 +249,4 @@ bool SXArray::push(ScValue *val) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

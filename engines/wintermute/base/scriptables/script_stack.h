@@ -57,10 +57,10 @@ public:
 	ScStack(BaseGame *inGame);
 	virtual ~ScStack();
 	BaseArray<ScValue *> _values;
-	int _sP;
+	int32 _sP;
 
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

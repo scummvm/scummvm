@@ -119,8 +119,6 @@ Common::Rect * MicroTileArray::getRectangles(int *num_rects, int min_x, int min_
 
 	for (y = 0; y < _tilesH; ++y) {
 		for (x = 0; x < _tilesW; ++x) {
-
-			int start;
 			int finish = 0;
 			BoundingBox boundingBox;
 
@@ -138,11 +136,9 @@ Common::Rect * MicroTileArray::getRectangles(int *num_rects, int min_x, int min_
 			x0 = CLIP (x0, min_x, max_x);
 			y0 = CLIP (y0, min_y, max_y);
 			y1 = CLIP (y1, min_y, max_y);
-			
+
 			// FIXME: Why is the following code in an #if block?
 #if 1
-			start = i;
-
 			if (TileX1(boundingBox) == TileSize - 1 && x != _tilesW - 1) {	// check if the tile continues
 				while (!finish) {
 					++x;

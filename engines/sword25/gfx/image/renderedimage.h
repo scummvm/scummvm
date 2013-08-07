@@ -75,7 +75,8 @@ public:
 	                  int flipping = Image::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1);
+	                  int width = -1, int height = -1,
+					  RectangleList *updateRects = 0);
 	virtual bool fill(const Common::Rect *pFillRect, uint color);
 	virtual bool setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0);
 	void replaceContent(byte *pixeldata, int width, int height);
@@ -103,17 +104,19 @@ public:
 		return true;
 	}
 
-	static Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize);
+	void setIsTransparent(bool isTransparent) { _isTransparent = isTransparent; }
+	virtual bool isSolid() const { return !_isTransparent; }
 
 private:
 	byte *_data;
 	int  _width;
 	int  _height;
 	bool _doCleanup;
+	bool _isTransparent;
 
 	Graphics::Surface *_backSurface;
 
-	static int *scaleLine(int size, int srcSize);
+	void checkForTransparency();
 };
 
 } // End of namespace Sword25

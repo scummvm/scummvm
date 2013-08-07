@@ -804,7 +804,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	byte *snd1Ptr, *snd2Ptr;
 	byte *sbng1Ptr, *sbng2Ptr;
 	byte *sdat1Ptr, *sdat2Ptr;
-	byte *src, *dst, *tmp;
+	byte *src, *dst;
 	int len, offs, size;
 	int sdat1size, sdat2size;
 
@@ -844,6 +844,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
 		if (chan != -1 && ((SoundHE *)_sound)->_heChannel[chan].codeOffs > 0) {
+			// Copy any code left over to the beginning of the code block
 			int curOffs = ((SoundHE *)_sound)->_heChannel[chan].codeOffs;
 
 			src = snd1Ptr + curOffs;
@@ -851,29 +852,33 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			size = READ_BE_UINT32(sbng1Ptr + 4);
 			len = sbng1Ptr - snd1Ptr + size - curOffs;
 
-			byte *data = (byte *)malloc(len);
-			memcpy(data, src, len);
-			memcpy(dst, data, len);
-			free(data);
+			memmove(dst, src, len);
 
+			// Now seek to the end of this code block
 			dst = sbng1Ptr + 8;
 			while ((size = READ_LE_UINT16(dst)) != 0)
 				dst += size;
 		} else {
+			// We're going to overwrite the code block completely
 			dst = sbng1Ptr + 8;
 		}
 
-		((SoundHE *)_sound)->_heChannel[chan].codeOffs = sbng1Ptr - snd1Ptr + 8;
+		// Reset the current code offset to the beginning of the code block
+		if (chan >= 0)
+			((SoundHE *)_sound)->_heChannel[chan].codeOffs = sbng1Ptr - snd1Ptr + 8;
 
-		tmp = sbng2Ptr + 8;
+		// Seek to the end of the code block for sound 2
+		byte *tmp = sbng2Ptr + 8;
 		while ((offs = READ_LE_UINT16(tmp)) != 0) {
 			tmp += offs;
 		}
 
+		// Copy the code block for sound 2 to the code block for sound 1
 		src = sbng2Ptr + 8;
 		len = tmp - sbng2Ptr - 6;
 		memcpy(dst, src, len);
 
+		// Rewrite the time for this new code block to be after the sound 1 code block
 		int32 time;
 		while ((size = READ_LE_UINT16(dst)) != 0) {
 			time = READ_LE_UINT32(dst + 2);
@@ -883,6 +888,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		}
 	}
 
+	// Find the data pointers and sizes
 	if (findSoundTag(MKTAG('d','a','t','a'), snd1Ptr)) {
 		sdat1Ptr = findSoundTag(MKTAG('d','a','t','a'), snd1Ptr);
 		assert(sdat1Ptr);
@@ -906,6 +912,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 	sdat1size = _sndDataSize - _sndPtrOffs;
 	if (sdat2size < sdat1size) {
+		// We have space leftover at the end of sound 1
+		// -> Just append sound 2
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndPtrOffs;
 		len = sdat2size;
@@ -915,6 +923,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		_sndPtrOffs += sdat2size;
 		_sndTmrOffs += sdat2size;
 	} else {
+		// We might not have enough space leftover at the end of sound 1
+		// -> Append as much of possible of sound 2 to sound 1
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndPtrOffs;
 		len = sdat1size;
@@ -922,6 +932,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		memcpy(dst, src, len);
 
 		if (sdat2size != sdat1size) {
+			// We don't have enough space
+			// -> Start overwriting the beginning of the sound again
 			src = sdat2Ptr + 8 + sdat1size;
 			dst = sdat1Ptr + 8;
 			len = sdat2size - sdat1size;

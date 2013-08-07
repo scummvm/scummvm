@@ -482,12 +482,21 @@ Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_EoB::initialize() {
-	DCmd_Register("import_savefile",         WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+	DCmd_Register("import_savefile", WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+	DCmd_Register("save_original", WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
+	DCmd_Register("list_monsters", WRAP_METHOD(Debugger_EoB, cmd_listMonsters));
+	DCmd_Register("show_position", WRAP_METHOD(Debugger_EoB, cmd_showPosition));
+	DCmd_Register("set_position", WRAP_METHOD(Debugger_EoB, cmd_setPosition));
+	DCmd_Register("open_door", WRAP_METHOD(Debugger_EoB, cmd_openDoor));
+	DCmd_Register("close_door", WRAP_METHOD(Debugger_EoB, cmd_closeDoor));
+	DCmd_Register("list_flags", WRAP_METHOD(Debugger_EoB, cmd_listFlags));
+	DCmd_Register("set_flag", WRAP_METHOD(Debugger_EoB, cmd_setFlag));
+	DCmd_Register("clear_flag", WRAP_METHOD(Debugger_EoB, cmd_clearFlag));
 }
 
 bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
 	if (!_vm->_allowImport) {
-		DebugPrintf("This command may only be used from the main menu.\n");
+		DebugPrintf("This command only works from the main menu.\n");
 		return true;
 	}
 
@@ -502,6 +511,185 @@ bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
 		_vm->loadItemDefs();
 	} else {
 		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
+	}
+
+	return true;
+}
+
+bool Debugger_EoB::cmd_saveOriginal(int argc, const char **argv) {
+	if (!_vm->_runFlag) {
+		DebugPrintf("This command doesn't work during intro or outro sequences,\nfrom the main menu or from the character generation.\n");
+		return true;
+	}
+
+	Common::String dir = ConfMan.get("savepath");
+	if (dir == "None")
+		dir.clear();
+
+	Common::FSNode nd(dir);
+	if (!nd.isDirectory())
+		return false;
+
+	if (_vm->game() == GI_EOB1) {
+		if (argc == 1) {
+			if (_vm->saveAsOriginalSaveFile()) {
+				Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA.SAV"));
+				if (nf.isReadable())
+					DebugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+				else
+					DebugPrintf("Failure.\n");
+			} else {
+				DebugPrintf("Failure.\n");
+			}
+		} else {
+			DebugPrintf("Syntax:   save_original\n          (Saves game in original file format to a file which can be used with the orginal game executable.)\n\n");
+		}
+		return true;
+
+	} else if (argc == 2) {
+		int slot = atoi(argv[1]);
+		if (slot < 0 || slot > 5) {
+			DebugPrintf("Slot must be between (including) 0 and 5.\n");
+		} else if (_vm->saveAsOriginalSaveFile(slot)) {
+			Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA%d.SAV", slot));
+			if (nf.isReadable())
+				DebugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+			else
+				DebugPrintf("Failure.\n");
+		} else {
+			DebugPrintf("Failure.\n");
+		}
+		return true;
+	}
+
+	DebugPrintf("Syntax:   save_original <slot>\n          (Saves game in original file format to a file which can be used with the orginal game executable.\n          A save slot between 0 and 5 must be specified.)\n\n");
+	return true;
+}
+
+bool Debugger_EoB::cmd_listMonsters(int, const char **) {
+	DebugPrintf("\nCurrent level: %d\n----------------------\n\n", _vm->_currentLevel);
+	DebugPrintf("Id        Type      Unit      Block     Position  Direction Sub Level Mode      Dst.block HP        Flags\n--------------------------------------------------------------------------------------------------------------\n");
+
+	for (int i = 0; i < 30; i++) {
+		EoBMonsterInPlay *m = &_vm->_monsters[i];
+		DebugPrintf("%.02d        %.02d        %.02d        0x%.04x    %d         %d         %d         %.02d        0x%.04x    %.03d/%.03d   0x%.02x\n", i, m->type, m->unit, m->block, m->pos, m->dir, m->sub, m->mode, m->dest, m->hitPointsCur, m->hitPointsMax, m->flags);
+	}
+
+	DebugPrintf("\n");
+
+	return true;
+}
+
+bool Debugger_EoB::cmd_showPosition(int, const char **) {
+	DebugPrintf("\nCurrent level:      %d\nCurrent Sub Level:  %d\nCurrent block:      %d (0x%.04x)\nNext block:         %d (0x%.04x)\nCurrent direction:  %d\n\n", _vm->_currentLevel, _vm->_currentSub, _vm->_currentBlock, _vm->_currentBlock, _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->_currentDirection);
+	return true;
+}
+
+bool Debugger_EoB::cmd_setPosition(int argc, const char **argv) {
+	if (argc == 4) {
+		_vm->_currentBlock = atoi(argv[3]);
+		int sub = atoi(argv[2]);
+		int level = atoi(argv[1]);
+
+		int maxLevel = (_vm->game() == GI_EOB1) ? 12 : 16;
+		if (level < 1 || level > maxLevel) {
+			DebugPrintf("<level> must be a value from 1 to %d.\n\n", maxLevel);
+			return true;
+		}
+
+		if (level != _vm->_currentLevel || sub != _vm->_currentSub) {
+			_vm->completeDoorOperations();
+			_vm->generateTempData();
+			_vm->txt()->removePageBreakFlag();
+			_vm->screen()->setScreenDim(7);
+
+			_vm->loadLevel(level, sub);
+
+			if (_vm->_dialogueField)
+				_vm->restoreAfterDialogueSequence();
+		}
+
+		_vm->moveParty(_vm->_currentBlock);
+
+		_vm->_sceneUpdateRequired = true;
+		_vm->gui_drawAllCharPortraitsWithStats();
+		DebugPrintf("Success.\n\n");
+
+	} else {
+		DebugPrintf("Syntax:   set_position <level>, <sub level>, <block>\n");
+		DebugPrintf("          (Warning: The sub level and block position parameters will not be checked. Invalid parameters may cause problems.)\n\n");
+	}
+	return true;
+}
+
+bool Debugger_EoB::cmd_openDoor(int, const char **) {
+	DebugPrintf("Warning: Using this command may cause glitches.\n");
+	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
+	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
+	int v = _vm->_levelBlockProperties[block].walls[c];
+	int flg = (_vm->_flags.gameID == GI_EOB1) ? 1 : 0x10;
+	if (_vm->_wllWallFlags[v] & flg) {
+		DebugPrintf("Couldn't open any door. Make sure you're facing the door you wish to open and standing right in front of it.\n\n");
+	} else {
+		_vm->openDoor(block);
+		DebugPrintf("Trying to open door at block %d.\n\n", block);
+	}
+	return true;
+}
+
+bool Debugger_EoB::cmd_closeDoor(int, const char **) {
+	DebugPrintf("Warning: Using this command may cause glitches.\n");
+	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
+	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
+	int v = _vm->_levelBlockProperties[block].walls[c];
+	if ((_vm->_flags.gameID == GI_EOB1 && !(_vm->_wllWallFlags[v] & 1)) || (_vm->_flags.gameID == GI_EOB2 && (_vm->_wllWallFlags[v] & 0x20))) {
+		DebugPrintf("Couldn't close any door. Make sure you're facing the door you wish to close and standing right in front of it.\n\n");
+	} else {
+		_vm->closeDoor(block);
+		DebugPrintf("Trying to close door at block %d.\n\n", block);
+	}
+	return true;
+}
+
+bool Debugger_EoB::cmd_listFlags(int, const char **) {
+	DebugPrintf("Flag           Status\n----------------------\n\n");
+	for (int i = 0; i < 32; i++) {
+		uint32 flag = 1 << i;
+		DebugPrintf("%.2d             %s\n", i, _vm->checkScriptFlags(flag) ? "TRUE" : "FALSE");
+	}
+	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger_EoB::cmd_setFlag(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Syntax:   set_flag <flag>\n\n");
+		return true;
+	}
+
+	int flag = atoi(argv[1]);
+	if (flag < 0 || flag > 31) {
+		DebugPrintf("<flag> must be a value from 0 to 31.\n\n");
+	} else {
+		_vm->setScriptFlags(1 << flag);
+		DebugPrintf("Flag '%.2d' has been set.\n\n", flag);
+	}
+
+	return true;
+}
+
+bool Debugger_EoB::cmd_clearFlag(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Syntax:   clear_flag <flag>\n\n");
+		return true;
+	}
+
+	int flag = atoi(argv[1]);
+	if (flag < 0 || flag > 31) {
+		DebugPrintf("<flag> must be a value from 0 to 31.\n\n");
+	} else {
+		_vm->clearScriptFlags(1 << flag);
+		DebugPrintf("Flag '%.2d' has been cleared.\n\n", flag);
 	}
 
 	return true;

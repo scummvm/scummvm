@@ -51,15 +51,17 @@ public:
 		return _color;
 	}
 	void setColor(uint color) {
-		_color = color;
-		forceRefresh();
+		if (_color != color) {
+			_color = color;
+			forceRefresh();
+		}
 	}
 
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool doRender();
+	virtual bool doRender(RectangleList *updateRects);
 
 private:
 	uint _color;

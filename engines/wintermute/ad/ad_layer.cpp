@@ -63,7 +63,7 @@ AdLayer::~AdLayer() {
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdLayer::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -174,8 +174,8 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 				delete region;
 				delete node;
-				region = NULL;
-				node = NULL;
+				region = nullptr;
+				node = nullptr;
 			} else {
 				node->setRegion(region);
 				_nodes.add(node);
@@ -193,8 +193,8 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
 				delete node;
-				entity = NULL;
-				node = NULL;
+				entity = nullptr;
+				node = nullptr;
 			} else {
 				node->setEntity(entity);
 				_nodes.add(node);
@@ -339,7 +339,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		AdSceneNode *toDelete = NULL;
+		AdSceneNode *toDelete = nullptr;
 		if (val->isNative()) {
 			BaseScriptable *temp = val->getNative();
 			for (uint32 i = 0; i < _nodes.size(); i++) {
@@ -354,7 +354,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 				toDelete = _nodes[index];
 			}
 		}
-		if (toDelete == NULL) {
+		if (toDelete == nullptr) {
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -362,7 +362,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		for (uint32 i = 0; i < _nodes.size(); i++) {
 			if (_nodes[i] == toDelete) {
 				delete _nodes[i];
-				_nodes[i] = NULL;
+				_nodes[i] = nullptr;
 				_nodes.remove_at(i);
 				break;
 			}
@@ -376,13 +376,13 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdLayer::scGetProperty(const char *name) {
+ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("layer");
 		return _scValue;
 	}
@@ -390,7 +390,7 @@ ScValue *AdLayer::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumNodes") == 0) {
+	else if (name == "NumNodes") {
 		_scValue->setInt(_nodes.size());
 		return _scValue;
 	}
@@ -398,7 +398,7 @@ ScValue *AdLayer::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Width") == 0) {
+	else if (name == "Width") {
 		_scValue->setInt(_width);
 		return _scValue;
 	}
@@ -406,7 +406,7 @@ ScValue *AdLayer::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Height") == 0) {
+	else if (name == "Height") {
 		_scValue->setInt(_height);
 		return _scValue;
 	}
@@ -414,7 +414,7 @@ ScValue *AdLayer::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Main (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Main") == 0) {
+	else if (name == "Main") {
 		_scValue->setBool(_main);
 		return _scValue;
 	}
@@ -422,7 +422,7 @@ ScValue *AdLayer::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CloseUp") == 0) {
+	else if (name == "CloseUp") {
 		_scValue->setBool(_closeUp);
 		return _scValue;
 	}
@@ -430,7 +430,7 @@ ScValue *AdLayer::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Active") == 0) {
+	else if (name == "Active") {
 		_scValue->setBool(_active);
 		return _scValue;
 	} else {
@@ -561,4 +561,4 @@ bool AdLayer::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

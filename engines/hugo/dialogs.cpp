@@ -140,8 +140,8 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		_arrayBmp[i * 2] = bitmapSrc->convertTo(g_system->getOverlayFormat());
 		_arrayBmp[i * 2 + 1] = new Graphics::Surface();
 		_arrayBmp[i * 2 + 1]->create(_arrayBmp[i * 2]->w * 2, _arrayBmp[i * 2]->h * 2, g_system->getOverlayFormat());
-		byte *src = (byte *)_arrayBmp[i * 2]->pixels;
-		byte *dst = (byte *)_arrayBmp[i * 2 + 1]->pixels;
+		byte *src = (byte *)_arrayBmp[i * 2]->getPixels();
+		byte *dst = (byte *)_arrayBmp[i * 2 + 1]->getPixels();
 
 		for (int j = 0; j < _arrayBmp[i * 2]->h; j++) {
 			src = (byte *)_arrayBmp[i * 2]->getBasePtr(0, j);

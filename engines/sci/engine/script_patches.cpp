@@ -23,6 +23,7 @@
 #include "sci/sci.h"
 #include "sci/engine/script.h"
 #include "sci/engine/state.h"
+#include "sci/engine/features.h"
 
 #include "common/util.h"
 
@@ -62,7 +63,7 @@ struct SciScriptSignature {
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
 //  is also hanging because the cue won't get sent out
-//  This also happens in sierra sci - ffs. bug #3038387
+//  This also happens in sierra sci - refer to bug #3038387
 const byte ecoquest1SignatureStayAndHelp[] = {
 	40,
 	0x3f, 0x01,        // link 01
@@ -128,7 +129,7 @@ const SciScriptSignature ecoquest1Signatures[] = {
 //  ecorder. This is done by reusing temp-space, that was filled on state 1.
 //  this worked in sierra sci just by accident. In our sci, the temp space
 //  is resetted every time, which means the previous text isn't available
-//  anymore. We have to patch the code because of that ffs. bug #3035386
+//  anymore. We have to patch the code because of that - bug #3035386
 const byte ecoquest2SignatureEcorder[] = {
 	35,
 	0x31, 0x22,        // bnt [next state]
@@ -363,10 +364,42 @@ const uint16 freddypharkasPatchLadderEvent[] = {
 	PATCH_END
 };
 
+// In the Macintosh version of Freddy Pharkas, kRespondsTo is broken for
+// property selectors. They hacked the script to work around the issue,
+// so we revert the script back to using the values of the DOS script.
+const byte freddypharkasSignatureMacInventory[] = {
+	10,
+	0x39, 0x23,       // pushi 23
+	0x39, 0x74,       // pushi 74
+	0x78,             // push1
+	0x38, 0x01, 0x74, // pushi 0174
+	0x85, 0x15,       // lat 15
+	0
+};
+
+const uint16 freddypharkasPatchMacInventory[] = {
+	0x39, 0x02,       // pushi 02 (now matches the DOS version)
+	0x39, 0x74,       // pushi 74
+	0x78,             // push1
+	0x38, 0x01, 0x74, // pushi 0174
+	0x85, 0x15,       // lat 15
+	0x4a, 0x06,       // send 06
+	0x31, 0x08,       // bnt 08
+	0x38, 0x01, 0x74, // pushi 0174
+	0x76,             // push0
+	0x85, 0x15,       // lat 15
+	0x4a, 0x04,       // send 04
+	0x02,             // add
+	0xa5, 0x12,       // sat 12
+	0x39, 0x04,       // pushi 04 (now matches the DOS version)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature freddypharkasSignatures[] = {
 	{      0, "CD: score early disposal",                    1, PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{    235, "CD: canister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),     -4, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
+	{     15, "Mac: broken inventory",                       1, PATCH_MAGICDWORD(0x39, 0x23, 0x39, 0x74),     0, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
+	{    235, "CD: canister pickup hang",                    3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
 	{    320, "ladder event issue",                          2, PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -590,10 +623,45 @@ const uint16 kq5PatchWitchCageInit[] = {
 	PATCH_END
 };
 
+
+// In the final battle, the DOS version uses signals in the music to handle
+// timing, while in the Windows version another method is used and the GM
+// tracks do not contain these signals.
+// The original kq5 interpreter used global 400 to distinguish between
+// Windows (1) and DOS (0) versions.
+// We replace the 4 relevant checks for global 400 by a fixed true when
+// we use these GM tracks.
+//
+// Instead, we could have set global 400, but this has the possibly unwanted
+// side effects of switching to black&white cursors (which also needs complex
+// changes to GameFeatures::detectsetCursorType() ) and breaking savegame
+// compatibilty between the DOS and Windows CD versions of KQ5.
+// TODO: Investigate these side effects more closely.
+const byte kq5SignatureWinGMSignals[] = {
+	9,
+	0x80, 0x90, 0x01, // lag 0x190
+	0x18,             // not
+	0x30, 0x1b, 0x00, // bnt +0x001B
+	0x89, 0x57,       // lsg 0x57
+	0
+};
+
+const uint16 kq5PatchWinGMSignals[] = {
+	0x34, 0x01, 0x00, // ldi 0x0001
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature kq5Signatures[] = {
 	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
 	{    200, "CD: witch cage init",                         1, PATCH_MAGICDWORD(0x7a, 0x00, 0xc8, 0x00),   -10, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+const SciScriptSignature kq5WinGMSignatures[] = {
+	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	{    200, "CD: witch cage init",                         1, PATCH_MAGICDWORD(0x7a, 0x00, 0xc8, 0x00),   -10, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	{    124, "Win: GM Music signal checks",                 4, PATCH_MAGICDWORD(0x80, 0x90, 0x01, 0x18),     0, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -848,10 +916,73 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	PATCH_END
 };
 
+// Script 814 of QFG1VGA is responsible for showing dialogs. However, the death
+// screen message shown when the hero dies in room 64 (ghost room) is too large
+// (254 chars long). Since the window header and main text are both stored in
+// temp space, this is an issue, as the scripts read the window header, then the
+// window text, which erases the window header text because of its length. To
+// fix that, we allocate more temp space and move the pointer used for the
+// window header a little bit, wherever it's used in script 814.
+// Fixes bug #3568431.
+
+// Patch 1: Increase temp space
+const byte qfg1vgaSignatureTempSpace[] = {
+	4,
+	0x3f, 0xba,       // link 0xba
+	0x87, 0x00,       // lap 0
+	0
+};
+
+const uint16 qfg1vgaPatchTempSpace[] = {
+	0x3f, 0xca,       // link 0xca
+	PATCH_END
+};
+
+// Patch 2: Move the pointer used for the window header a little bit
+const byte qfg1vgaSignatureDialogHeader[] = {
+	4,
+	0x5b, 0x04, 0x80,  // lea temp[0x80]
+	0x36,              // push
+	0
+};
+
+const uint16 qfg1vgaPatchDialogHeader[] = {
+	0x5b, 0x04, 0x90,  // lea temp[0x90]
+	PATCH_END
+};
+
+// When clicking on the crusher in room 331, Ego approaches him to talk to him,
+// an action that is handled by moveToCrusher::changeState in script 331. The
+// scripts set Ego to move close to the crusher, but when Ego is running instead
+// of walking, the target coordinates specified by script 331 are never reached,
+// as Ego is making larger steps, and never reaches the required spot. This is an
+// edge case that can occur when Ego is set to run. Normally, when clicking on
+// the crusher, ego is supposed to move close to position 79, 165. We change it
+// to 85, 165, which is not an edge case thus the freeze is avoided.
+// Fixes bug #3585189.
+const byte qfg1vgaSignatureMoveToCrusher[] = {
+	9,
+	0x51, 0x1f,       // class Motion
+	0x36,             // push
+	0x39, 0x4f,       // pushi 4f (79 - x)
+	0x38, 0xa5, 0x00, // pushi 00a5 (165 - y)
+	0x7c,             // pushSelf
+	0
+};
+
+const uint16 qfg1vgaPatchMoveToCrusher[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x39, 0x55,       // pushi 55 (85 - x)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
 	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
+	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,         qfg1vgaPatchTempSpace },
+	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,      qfg1vgaPatchDialogHeader },
+	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,     qfg1vgaPatchMoveToCrusher },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -915,9 +1046,53 @@ const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
+
+
+// ===========================================================================
+// Patch for the Woo dialog option in Uhura's conversation. Bug #3040722
+// Problem: The Woo dialog option (0xffb5) is negative, and therefore
+// treated as an option opening a submenu. This leads to uhuraTell::doChild
+// being called, which calls hero::solvePuzzle and then proceeds with
+// Teller::doChild to open the submenu. However, there is no actual submenu
+// defined for option -75 since -75 does not show up in uhuraTell::keys.
+// This will cause Teller::doChild to run out of bounds while scanning through
+// uhuraTell::keys.
+// Strategy: there is another conversation option in uhuraTell::doChild calling
+// hero::solvePuzzle (0xfffc) which does a ret afterwards without going to
+// Teller::doChild. We jump to this call of hero::solvePuzzle to get that same
+// behaviour.
+
+const byte qfg3SignatureWooDialog[] = {
+	30,
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0xb6,       // ldi b6
+	0x1a,             // eq?
+	0x2f, 0x05,       // bt 05
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0x9b,       // ldi 9b
+	0x1a,             // eq?
+	0x31, 0x0c,       // bnt 0c
+	0x38, 0x97, 0x02, // pushi 0297
+	0x7a,             // push2
+	0x38, 0x0c, 0x01, // pushi 010c
+	0x7a,             // push2
+	0x81, 0x00,       // lag 00
+	0x4a, 0x08,       // send 08
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0xb5,       // ldi b5
+	0
+};
+
+const uint16 qfg3PatchWooDialog[] = {
+	PATCH_ADDTOOFFSET | +0x29,
+	0x33, 0x11, // jmp to 0x6a2, the call to hero::solvePuzzle for 0xFFFC
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
 	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
+	{    440, "dialog crash when asking about Woo",             1, PATCH_MAGICDWORD(0x67, 0x12, 0x35, 0xb5),  -26, qfg3SignatureWooDialog,         qfg3PatchWooDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -927,7 +1102,7 @@ const SciScriptSignature qfg3Signatures[] = {
 //   adds it to nest::x. The problem is that the script also checks if x exceeds
 //   we never reach that of course, so the pterodactyl-flight will go endlessly
 //   we could either calculate property count differently somehow fixing this
-//   but I think just patching it out is cleaner (ffs. bug #3037938)
+//   but I think just patching it out is cleaner (bug #3037938)
 const byte sq4FloppySignatureEndlessFlight[] = {
 	8,
 	0x39, 0x04,       // pushi 04 (selector x)
@@ -938,7 +1113,7 @@ const byte sq4FloppySignatureEndlessFlight[] = {
 	0
 };
 
-// Similar to the above, for the German version (ffs. bug #3110215)
+// Similar to the above, for the German version (bug #3110215)
 const byte sq4FloppySignatureEndlessFlightGerman[] = {
 	8,
 	0x39, 0x04,       // pushi 04 (selector x)
@@ -1210,7 +1385,11 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		signatureTable = gk1Signatures;
 		break;
 	case GID_KQ5:
-		signatureTable = kq5Signatures;
+		// See the explanation in the kq5SignatureWinGMSignals comment
+		if (g_sci->_features->useAltWinGMSound())
+			signatureTable = kq5WinGMSignatures;
+		else
+			signatureTable = kq5Signatures;
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;

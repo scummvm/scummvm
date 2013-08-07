@@ -41,7 +41,7 @@ public:
 	bool _boundToExe;
 	byte _priority;
 	Common::String _name;
-	int _cd;
+	int32 _cd;
 	BasePackage();
 };
 
@@ -85,6 +85,6 @@ private:
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::iterator _filesIter;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -221,13 +221,16 @@ struct BuildSetup {
 
 	StringList defines;   ///< List of all defines for the build.
 	StringList libraries; ///< List of all external libraries required for the build.
+	StringList testDirs;  ///< List of all folders containing tests
 
 	bool devTools;         ///< Generate project files for the tools
+	bool tests;             ///< Generate project files for the tests
 	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
 	bool createInstaller;  ///< Create NSIS installer after the build
 
 	BuildSetup() {
 		devTools        = false;
+		tests           = false;
 		runBuildEvents  = false;
 		createInstaller = false;
 	}
@@ -339,7 +342,7 @@ public:
 	 *
 	 * @param setup Description of the desired build setup.
 	 */
-	void createProject(const BuildSetup &setup);
+	void createProject(BuildSetup &setup);
 
 	/**
 	 * Returns the last path component.
@@ -430,10 +433,11 @@ protected:
 	 *
 	 * @param moduleDir Path to the module.
 	 * @param defines List of set defines.
+	 * @param testDirs List of folders containing tests.
 	 * @param includeList Reference to a list, where included files should be added.
 	 * @param excludeList Reference to a list, where excluded files should be added.
 	 */
-	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &includeList, StringList &excludeList) const;
+	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList) const;
 
 	/**
 	 * Creates an UUID for every enabled engine of the
@@ -448,7 +452,7 @@ protected:
 	 * Creates an UUID for every enabled tool of the
 	 * passed build description.
 	 *
-	 * @return A map, which includes UUIDs for all enabled engines.
+	 * @return A map, which includes UUIDs for all enabled tools.
 	 */
 	UUIDMap createToolsUUIDMap() const;
 

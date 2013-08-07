@@ -52,6 +52,6 @@ public:
 	bool persist(BasePersistenceManager *PersistMgr);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

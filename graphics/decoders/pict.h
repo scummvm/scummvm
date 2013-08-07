@@ -24,6 +24,7 @@
  * @file
  * Image decoder used in engines:
  *  - mohawk
+ *  - pegasus
  *  - sci
  */
 

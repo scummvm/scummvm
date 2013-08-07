@@ -45,7 +45,7 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 	else if (g_vm->getGameID() == GType_BlueForce)
 		_debugger = new BlueForceDebugger();
 	else if (g_vm->getGameID() == GType_Ringworld2)
-		_debugger = new Ringworld2Debugger();	
+		_debugger = new Ringworld2Debugger();
 }
 
 Common::Error TSageEngine::init() {
@@ -92,7 +92,7 @@ void TSageEngine::initialize() {
 			g_resourceManager->addLib("TSAGE.RLB");
 		}
 		g_globals = new BlueForce::BlueForceGlobals();
-		
+
 		// Setup the user interface
 		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
 
@@ -107,7 +107,7 @@ void TSageEngine::initialize() {
 
 		// Reset all global variables
 		R2_GLOBALS.reset();
-	}		
+	}
 
 	g_globals->gfxManager().setDefaults();
 

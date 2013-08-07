@@ -149,6 +149,8 @@ protected:
 public:
 	AudioVolumeResourceSource(ResourceManager *resMan, const Common::String &name, ResourceSource *map, int volNum);
 
+	virtual ~AudioVolumeResourceSource();
+
 	virtual void loadResource(ResourceManager *resMan, Resource *res);
 
 	virtual uint32 getAudioCompressionType() const;

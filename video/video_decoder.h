@@ -26,6 +26,7 @@
 #include "audio/mixer.h"
 #include "audio/timestamp.h"	// TODO: Move this to common/ ?
 #include "common/array.h"
+#include "common/rational.h"
 #include "common/str.h"
 #include "graphics/pixelformat.h"
 
@@ -36,7 +37,6 @@ class SeekableAudioStream;
 }
 
 namespace Common {
-class Rational;
 class SeekableReadStream;
 }
 
@@ -100,7 +100,7 @@ public:
 	/////////////////////////////////////////
 
 	/**
-	 * Begin playback of the video.
+	 * Begin playback of the video at normal speed.
 	 *
 	 * @note This has no effect if the video is already playing.
 	 */
@@ -114,6 +114,26 @@ public:
 	void stop();
 
 	/**
+	 * Set the rate of playback.
+	 *
+	 * For instance, a rate of 0 would stop the video, while a rate of 1
+	 * would play the video normally. Passing 2 to this function would
+	 * play the video at twice the normal speed.
+	 *
+	 * @note This function does not work for non-0/1 rates on videos that
+	 * have audio tracks.
+	 *
+	 * @todo This currently does not implement backwards playback, but will
+	 * be implemented soon.
+	 */
+	void setRate(const Common::Rational &rate);
+
+	/**
+	 * Returns the rate at which the video is being played.
+	 */
+	Common::Rational getRate() const { return _playbackRate; }
+
+	/**
 	 * Returns if the video is currently playing or not.
 	 *
 	 * This is not equivalent to the inverse of endOfVideo(). A video keeps
@@ -121,7 +141,7 @@ public:
 	 * return true after calling start() and will continue to return true
 	 * until stop() (or close()) is called.
 	 */
-	bool isPlaying() const { return _isPlaying; }
+	bool isPlaying() const;
 
 	/**
 	 * Returns if a video is rewindable or not. The default implementation
@@ -148,14 +168,23 @@ public:
 	/**
 	 * Seek to a given time in the video.
 	 *
-	 * If the video is playing, it will continue to play. The default
-	 * implementation will seek each track and must still be called
-	 * from any other implementation.
+	 * If the video is playing, it will continue to play. This calls
+	 * seekIntern(), which can be overriden. By default, seekIntern()
+	 * will call Track::seek() on all tracks with the time passed to
+	 * this function.
 	 *
 	 * @param time The time to seek to
 	 * @return true on success, false otherwise
 	 */
-	virtual bool seek(const Audio::Timestamp &time);
+	bool seek(const Audio::Timestamp &time);
+
+	/**
+	 * Seek to a given frame.
+	 *
+	 * This only works when one video track is present, and that track
+	 * supports getFrameTime(). This calls seek() internally.
+	 */
+	bool seekToFrame(uint frame);
 
 	/**
 	 * Pause or resume the video. This should stop/resume any audio playback
@@ -204,7 +233,7 @@ public:
 	 * Returns the current frame number of the video.
 	 * @return the last frame decoded by the video
 	 */
-	int32 getCurFrame() const;
+	int getCurFrame() const;
 
 	/**
 	 * Returns the number of frames in the video.
@@ -325,6 +354,17 @@ public:
 	 */
 	void setDefaultHighColorFormat(const Graphics::PixelFormat &format) { _defaultHighColorFormat = format; }
 
+	/**
+	 * Set the video to decode frames in reverse.
+	 *
+	 * By default, VideoDecoder will decode forward.
+	 *
+	 * @note This is used by setRate()
+	 * @note This will not work if an audio track is present
+	 * @param reverse true for reverse, false for forward
+	 * @return true on success, false otherwise
+	 */
+	bool setReverse(bool reverse);
 
 	/////////////////////////////////////////
 	// Audio Control
@@ -367,14 +407,10 @@ public:
 	 */
 	bool addStreamFileTrack(const Common::String &baseName);
 
-
-	// Future API
-	//void setRate(const Common::Rational &rate);
-	//Common::Rational getRate() const;
-
 protected:
 	/**
-	 * An abstract representation of a track in a movie.
+	 * An abstract representation of a track in a movie. Since tracks here are designed
+	 * to work independently, they should not reference any other track(s) in the video.
 	 */
 	class Track {
 	public:
@@ -433,7 +469,7 @@ protected:
 		/**
 		 * Set the pause status of the track.
 		 */
-		void pause(bool shouldPause) {}
+		void pause(bool shouldPause);
 
 		/**
 		 * Return if the track is paused.
@@ -451,7 +487,7 @@ protected:
 		/**
 		 * Function called by pause() for subclasses to implement.
 		 */
-		void pauseIntern(bool pause);
+		virtual void pauseIntern(bool shouldPause) {}
 
 	private:
 		bool _paused;
@@ -519,6 +555,29 @@ protected:
 		 * Does the palette currently in use by this track need to be updated?
 		 */
 		virtual bool hasDirtyPalette() const { return false; }
+
+		/**
+		 * Get the time the given frame should be shown.
+		 *
+		 * By default, this returns a negative (invalid) value. This function
+		 * should only be used by VideoDecoder::seekToFrame().
+		 */
+		virtual Audio::Timestamp getFrameTime(uint frame) const;
+
+		/**
+		 * Set the video track to play in reverse or forward.
+		 *
+		 * By default, a VideoTrack must decode forward.
+		 *
+		 * @param reverse true for reverse, false for forward
+		 * @return true for success, false for failure
+		 */
+		virtual bool setReverse(bool reverse) { return !reverse; }
+
+		/**
+		 * Is the video track set to play in reverse?
+		 */
+		virtual bool isReversed() const { return false; }
 	};
 
 	/**
@@ -533,12 +592,19 @@ protected:
 
 		uint32 getNextFrameStartTime() const;
 		virtual Audio::Timestamp getDuration() const;
+		Audio::Timestamp getFrameTime(uint frame) const;
 
 	protected:
 		/**
 		 * Get the rate at which this track is played.
 		 */
 		virtual Common::Rational getFrameRate() const = 0;
+
+		/**
+		 * Get the frame that should be displaying at the given time. This is
+		 * helpful for someone implementing seek().
+		 */
+		uint getFrameAtTime(const Audio::Timestamp &time) const;
 	};
 
 	/**
@@ -597,7 +663,7 @@ protected:
 		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
 
 	protected:
-		void pauseIntern(bool pause);
+		void pauseIntern(bool shouldPause);
 
 		/**
 		 * Get the AudioStream that is the representation of this AudioTrack
@@ -685,9 +751,9 @@ protected:
 	/**
 	 * Decode enough data for the next frame and enough audio to last that long.
 	 *
-	 * This function is used by the decodeNextFrame() function. A subclass
+	 * This function is used by this class' decodeNextFrame() function. A subclass
 	 * of a Track may decide to just have its decodeNextFrame() function read
-	 * and decode the frame.
+	 * and decode the frame, but only if it is the only track in the video.
 	 */
 	virtual void readNextPacket() {}
 
@@ -733,14 +799,11 @@ protected:
 	Graphics::PixelFormat getDefaultHighColorFormat() const { return _defaultHighColorFormat; }
 
 	/**
-	 * Find the video track with the lowest start time for the next frame
+	 * Set _nextVideoTrack to the video track with the lowest start time for the next frame.
+	 *
+	 * @return _nextVideoTrack
 	 */
 	VideoTrack *findNextVideoTrack();
-
-	/**
-	 * Find the video track with the lowest start time for the next frame
-	 */
-	const VideoTrack *findNextVideoTrack() const;
 
 	/**
 	 * Typedef helpers for accessing tracks
@@ -758,14 +821,25 @@ protected:
 	 */
 	TrackListIterator getTrackListEnd() { return _tracks.end(); }
 
+	/**
+	 * The internal seek function that does the actual seeking.
+	 *
+	 * @see seek()
+	 *
+	 * @return true on success, false otherwise
+	 */
+	virtual bool seekIntern(const Audio::Timestamp &time);
+
 private:
 	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
 
 	// Current playback status
-	bool _isPlaying, _needsUpdate;
+	bool _needsUpdate;
 	Audio::Timestamp _lastTimeChange, _endTime;
 	bool _endTimeSet;
+	Common::Rational _playbackRate;
+	VideoTrack *_nextVideoTrack;
 
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
@@ -779,6 +853,7 @@ private:
 	void startAudio();
 	void startAudioLimit(const Audio::Timestamp &limit);
 	bool hasFramesLeft() const;
+	bool hasAudio() const;
 
 	int32 _startTime;
 	uint32 _pauseLevel;

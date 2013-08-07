@@ -71,7 +71,7 @@ bool Picture::loadPicture(const Common::String &file) {
 		_data = new uint8[decSize + 100];
 		_paletteEntries = READ_LE_UINT16(fileData + 14) / 3;
 		_useFullPalette = (_paletteEntries == 256);
-		
+
 		if (_paletteEntries) {
 			_palette = new uint8[_paletteEntries * 3];
 			memcpy(_palette, fileData + 16, _paletteEntries * 3);
@@ -170,7 +170,7 @@ void Picture::drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, i
 	int32 destPitch = surface.pitch;
 	int32 srcPitch = _width;
 	uint8 *c = _data + _width * dy + dx;
-	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
+	uint8 *curRow = (uint8 *)surface.getBasePtr(x, y);
 
 	for (int16 yy = 0; yy < ry; yy++) {
 		uint8 *curSrc = c;
@@ -205,7 +205,7 @@ void Picture::drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int
 		int16 fillRy = MIN<int32>(ry, rect.bottom - rect.top);
 
 		uint8 *c = _data + _width * (dy + rect.top) + (dx + rect.left);
-		uint8 *curRow = (uint8 *)surface.pixels + (y + rect.top) * destPitch + (x + rect.left);
+		uint8 *curRow = (uint8 *)surface.getBasePtr(x + rect.left, y + rect.top);
 
 		for (int16 yy = 0; yy < fillRy; yy++) {
 			uint8 *curSrc = c;
@@ -233,7 +233,7 @@ void Picture::draw(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16
 	int32 destPitch = surface.pitch;
 	int32 srcPitch = _width;
 	uint8 *c = _data + _width * dy + dx;
-	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
+	uint8 *curRow = (uint8 *)surface.getBasePtr(x, y);
 
 	for (int16 yy = 0; yy < ry; yy++) {
 		uint8 *curSrc = c;

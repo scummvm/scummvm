@@ -304,10 +304,15 @@ Andere Spiele:
      Discworld 2: Vermutlich vermisst            [dw2]
      Drači Historie                              [draci]
      Drascula: The Vampire Strikes Back          [drascula]
+     Eye of the Beholder                         [eob]
+     Eye of the Beholder II: The Legend of
+         Darkmoon                                [eob2]
      Flight of the Amazon Queen                  [queen]
      Future Wars                                 [fw]
      Erben der Erde: Die große Suche             [ite]
      Nippon Safes Inc.                           [nippon]
+     Lands of Lore: The Throne of Chaos          [lol]
+     The Journeyman Project: Pegasus Prime       [pegasus]
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
@@ -425,21 +430,25 @@ akzeptiert wird.
 
 ScummVM wird den Kopierschutz in folgenden Spielen überspringen:
 
-  * Maniac Mansion
-  * Zak McKracken and the Alien Mindbenders
-  * Loom (EGA)
-  * The Secret of Monkey Island (VGA)
-  * Monkey Island 2: LeChuck's Revenge
   * Beneath a Steel Sky
       -- umgangen mit freundlicher Genehmigung von Revolution Software.
+  * Dreamweb
+      -- eine Liste der verfügbaren Befehle in den Terminals im Spiel wird nun
+         angezeigt, wenn der Spieler den Befehl „HILFE“ oder „HELP“ verwendet.
   * Erben der Erde: Die große Suche (Diskettenversion)
       -- umgangen mit freundlicher Genehmigung von Wyrmkeep Entertainment,
          da er in allen CD-Versionen des Spiels umgangen wurde.
+  * Loom (EGA)
+  * Maniac Mansion
+  * Monkey Island 2: LeChuck's Revenge
   * Simon the Sorcerer 1 (Diskettenversion)
   * Simon the Sorcerer 2 (Diskettenversion)
       -- umgangen mit freundlicher Genehmigung von Adventure Soft,
          da er in allen CD-Versionen des Spiels umgangen wurde.
+  * The Secret of Monkey Island (VGA)
   * Waxworks
+  * Zak McKracken and the Alien Mindbenders
+
 
 3.2) Hinweise zu Commodore64-Spielen:
 ---- --------------------------------
@@ -2305,9 +2314,17 @@ Schlüsselwort:
 
     walkspeed          Zahl     Bewegungsgeschwindigkeit (0-4)
 
+The Legend of Kyrandia: The Hand of Fate verfügt zusätzlich über folgendes nicht
+standardmäßiges Schlüsselwort:
+
+    walkspeed          Zahl     Bewegungsgeschwindigkeit (3 oder 5,
+                                entsprechend schnell oder langsam)
+
 The Legend of Kyrandia: Malcolm's Revenge verfügt zusätzlich über folgende nicht
 standardmäßige Schlüsselwörter:
 
+    walkspeed          Zahl     Bewegungsgeschwindigkeit (3 oder 5,
+                                entsprechend schnell oder langsam)
     studio_audience    Bool     Falls „true“, hört man stets Applaus- und
                                 Jubelgeräusche, wenn Malcolm einen Scherz macht.
     skip_support       Bool     Falls „true“, kann der Spieler Textteile und
@@ -2318,9 +2335,12 @@ standardmäßige Schlüsselwörter:
 The 7th Guest verfügt zusätzlich über folgendes nicht standardmäßiges
 Schlüsselwort:
 
-    t7g_speed          Text     Videowiedergabe-Geschwindigkeit
-                                (normal, tweaked [optimiert],
-                                im_an_ios [ich bin ein iOS])
+    fast_movie_speed   Bool     Falls „true“, werden Filme in erhöhter
+                                Geschwindigkeit wiedergegeben, die der
+                                Geschwindigkeit der iOS-Version entspricht.
+                                Filme ohne Ton werden weiterhin in normaler
+                                Geschwindigkeit wiedergegeben, um Probleme bei
+                                der Musik-Synchronität zu vermeiden.
 
 
 8.2) Spielspezifische Optionen bei der grafischen Benutzeroberfläche

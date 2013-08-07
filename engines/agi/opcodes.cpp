@@ -130,7 +130,7 @@ AgiInstruction insV1[] = {
 	{ "...",				"",			&cmdUnknown },			// 4E  # show.obj
 	{ "load.logics",		"n",		&cmdLoadLogic },		// 4F # load.global.logics
 	{ "display",			"nnns",		&cmdDisplay },			// 50 TODO: 4 vs 3 args
-	{ "prevent.input???",	"",			&cmdUnknown },			// 51 
+	{ "prevent.input???",	"",			&cmdUnknown },			// 51
 	{ "...",				"",			&cmdUnknown },			// 52 # nop
 	{ "...",				"n",		&cmdUnknown },			// 53 # text.screen
 	{ "...",				"",			&cmdUnknown },			// 54 ???
@@ -375,6 +375,18 @@ void AgiEngine::setupOpcodes() {
 
 		logicNamesTest = insV1Test;
 		logicNamesCmd = insV1;
+	}
+
+	// Alter opcode parameters for specific games
+	// TODO: This could be either turned into a game feature, or a version
+	// specific check, instead of a game version check
+
+	// The Apple IIGS versions of MH1 and Goldrush both have a parameter for
+	// show.mouse and hide.mouse. Fixes bugs #3577754 and #3426946.
+	if ((getGameID() == GID_MH1 || getGameID() == GID_GOLDRUSH) &&
+		getPlatform() == Common::kPlatformApple2GS) {
+		logicNamesCmd[176].args = "n";	// hide.mouse
+		logicNamesCmd[178].args = "n";	// show.mouse
 	}
 }
 

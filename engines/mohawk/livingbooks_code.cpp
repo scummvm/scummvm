@@ -519,9 +519,17 @@ void LBCode::parseMain() {
 				*val = _stack.pop();
 				_stack.push(*val);
 			} else
-				_stack.push(LBValue());
-		} else if (_currToken == kTokenAndEquals) {
-			debugN(" &= ");
+				error("assignment failed, no dest");
+//				_stack.push(LBValue());
+		} else if (_currToken == kTokenPlusEquals || _currToken == kTokenMinusEquals || _currToken == kTokenAndEquals) {
+			// FIXME: do +=/-= belong here?
+			byte token = _currToken;
+			if (_currToken == kTokenPlusEquals)
+				debugN(" += ");
+			else if (_currToken == kTokenMinusEquals)
+				debugN(" -= ");
+			else if (_currToken == kTokenAndEquals)
+				debugN(" &= ");
 			nextToken();
 			parseStatement();
 			if (!_stack.size())
@@ -532,9 +540,19 @@ void LBCode::parseMain() {
 			else
 				val = &_vm->_variables[varname];
 			if (val) {
-				if (val->type != kLBValueString)
-					error("operator &= used on non-string");
-				val->string = val->string + _stack.pop().toString();
+				if (token == kTokenAndEquals) {
+					if (val->type != kLBValueString)
+						error("operator &= used on non-string");
+					val->string = val->string + _stack.pop().toString();
+				} else {
+					// FIXME: non-integers
+					if (val->type != kLBValueInteger)
+						error("operator used on non-integer");
+					if (token == kTokenPlusEquals)
+						val->integer = val->integer + _stack.pop().toInt();
+					else
+						val->integer = val->integer - _stack.pop().toInt();
+				}
 				_stack.push(*val);
 			} else
 				_stack.push(LBValue());
@@ -581,6 +599,7 @@ void LBCode::parseMain() {
 			debugN("--");
 		nextToken();
 
+		// FIXME: do we need to handle indexing?
 		if (_currToken != kTokenIdentifier)
 			error("expected identifier");
 		assert(_currValue.type == kLBValueString);
@@ -669,6 +688,24 @@ void LBCode::parseMain() {
 		_stack.push(_stack.pop().isZero() ? 1 : 0);
 		break;
 
+	case kTokenEval:
+		// FIXME: original token?
+		debugN("..");
+		nextToken();
+		parseStatement();
+		if (!_stack.size())
+			error("eval op failed");
+		{
+		// FIXME: XXX
+		LBValue in = _stack.pop();
+		if (in.type != kLBValueString)
+			error("eval op on non-string");
+		Common::String varname = in.string;
+		LBValue &val = _vm->_variables[varname];
+		_stack.push(val);
+		}
+		break;
+
 	case kTokenGeneralCommand:
 		runGeneralCommand();
 		break;
@@ -692,9 +729,7 @@ void LBCode::parseMain() {
 		assert(val.isNumeric());
 		// FIXME
 		if (prefix == kTokenMinus)
-			val.integer--;
-		else
-			val.integer++;
+			val.integer = -val.integer;
 		_stack.push(val);
 	}
 }
@@ -1554,12 +1589,32 @@ uint LBCode::nextFreeString() {
 	error("nextFreeString couldn't find a space");
 }
 
+static const char *const functionNameAliases[][2] = {
+	{ "makerect", "getRect" },
+	{ "makepair", "makePt" },
+	{ "getframerect", "getFrameBounds" },
+	{ "dragbegin", "dragBeginFrom" },
+	{ "x", "xpos" },
+	{ "y", "ypos" }
+};
+
 /*
  * Helper function for parseCode:
  * Given a name, appends the appropriate data to the provided code array and
  * returns true if it's a function, or false otherwise.
  */
-bool LBCode::parseCodeSymbol(const Common::String &name, uint &pos, Common::Array<byte> &code) {
+bool LBCode::parseCodeSymbol(Common::String name, uint &pos, Common::Array<byte> &code, bool useAllAliases) {
+	// Check to see if we have one of the older function names
+	// and remap it to the newer function names
+	for (uint i = 0; i < ARRAYSIZE(functionNameAliases); i++) {
+		if (name.equalsIgnoreCase(functionNameAliases[i][0])) {
+			if (name.size() == 1 && !useAllAliases)
+				continue;
+			name = functionNameAliases[i][1];
+			break;
+		}
+	}
+
 	// first, check whether the name matches a known function
 	for (uint i = 0; i < 2; i++) {
 		byte cmdToken;
@@ -1770,7 +1825,7 @@ uint LBCode::parseCode(const Common::String &source) {
 					break;
 				tempString += source[pos++];
 			}
-			wasFunction = parseCodeSymbol(tempString, pos, code);
+			wasFunction = parseCodeSymbol(tempString, pos, code, true);
 			if (!wasFunction)
 				error("while parsing script '%s', encountered explicit function call to unknown function '%s'",
 					source.c_str(), tempString.c_str());
@@ -1805,7 +1860,7 @@ uint LBCode::parseCode(const Common::String &source) {
 				} else if (tempString.equalsIgnoreCase("false")) {
 					code.push_back(kTokenFalse);
 				} else {
-					wasFunction = parseCodeSymbol(tempString, pos, code);
+					wasFunction = parseCodeSymbol(tempString, pos, code, false);
 				}
 			} else {
 				error("while parsing script '%s', couldn't parse '%c'", source.c_str(), token);

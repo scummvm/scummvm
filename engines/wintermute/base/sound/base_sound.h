@@ -67,7 +67,7 @@ private:
 	Common::String _soundFilename;
 	bool _soundStreamed;
 	Audio::Mixer::SoundType _soundType;
-	int _soundPrivateVolume;
+	int32 _soundPrivateVolume;
 	uint32 _soundLoopStart;
 	uint32 _soundPosition;
 	bool _soundPlaying;
@@ -82,6 +82,6 @@ private:
 	BaseSoundBuffer *_sound;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

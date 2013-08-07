@@ -415,7 +415,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 				char* ptr;
 				int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
 				ptr = (char *)getStringAddress(slot + firstSlot - 1);
-				strncpy(name, ptr, sizeof(name));
+				Common::strlcpy(name, ptr, sizeof(name));
 			}
 
 			if (savePreparedSavegame(slot, name))

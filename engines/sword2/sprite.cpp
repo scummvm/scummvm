@@ -590,8 +590,11 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 					s->w = (decompData / (s->h / 2));
 					sprite = (byte *)malloc(s->w * s->h);
 
-					if (!sprite)
+					if (!sprite) {
+						free(tempBuf);
+
 						return RDERR_OUTOFMEMORY;
+					}
 
 					resizePsxSprite(sprite, tempBuf, s->w, s->h);
 					free(tempBuf);
@@ -772,7 +775,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	src = sprite + rs.top * srcPitch + rs.left;
 	dst = _buffer + _screenWide * rd.top + rd.left;
 
-	if (s->type & RDSPR_BLEND) { 
+	if (s->type & RDSPR_BLEND) {
 		// The original code had two different blending cases. One for
 		// s->blend & 0x01 and one for s->blend & 0x02. However, the
 		// only values that actually appear in the cluster files are
@@ -783,7 +786,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 		// The only correct way to simulate this would be using 16-bit mode.
 		// As this is not yet available for this engine, fake transparency is used
 		// as placeholder.
-		if (!(_renderCaps & RDBLTFX_SPRITEBLEND) || Sword2Engine::isPsx()) { 
+		if (!(_renderCaps & RDBLTFX_SPRITEBLEND) || Sword2Engine::isPsx()) {
 			for (i = 0; i < rs.height(); i++) {
 				for (j = 0; j < rs.width(); j++) {
 					if (src[j] && ((i & 1) == (j & 1)))

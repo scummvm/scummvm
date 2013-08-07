@@ -58,7 +58,7 @@ enum AbortGameState {
 };
 
 // We assume that scripts give us savegameId 0->99 for creating a new save slot
-//  and savegameId 100->199 for existing save slots ffs. kfile.cpp
+//  and savegameId 100->199 for existing save slots. Refer to kfile.cpp
 enum {
 	SAVEGAMEID_OFFICIALRANGE_START = 100,
 	SAVEGAMEID_OFFICIALRANGE_END = 199
@@ -133,7 +133,7 @@ public:
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
-	bool _cursorWorkaroundActive; // ffs. GfxCursor::setPosition()
+	bool _cursorWorkaroundActive; // Refer to GfxCursor::setPosition()
 	Common::Point _cursorWorkaroundPoint;
 	Common::Rect _cursorWorkaroundRect;
 

@@ -22,9 +22,11 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/iff_container.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
+#include "graphics/decoders/iff.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 
@@ -262,8 +264,15 @@ Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 
 Script* Disk_ns::loadLocation(const char *name) {
 	char path[PATH_LEN];
+	const char *charName = _vm->_char.getBaseName();
 
-	sprintf(path, "%s%s/%s.loc", _vm->_char.getBaseName(), _language.c_str(), name);
+	// WORKAROUND: Special case for the Multilingual DOS version: during the ending
+	// sequence, it tries to load a non-existing file using "Dinor" as a character
+	// name. In this case, the character name should be just "dino".
+	if (!strcmp(charName, "Dinor"))
+		charName = "dino";
+
+	sprintf(path, "%s%s/%s.loc", charName, _language.c_str(), name);
 	debugC(3, kDebugDisk, "Disk_ns::loadLocation(%s): trying '%s'", name, path);
 	Common::SeekableReadStream *stream = tryOpenFile(path);
 
@@ -305,7 +314,7 @@ void DosDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 he
 	int32 decsize = numFrames * width * height;
 	bool packed = (stream->size() - stream->pos()) != decsize;
 	if (packed) {
-		Graphics::PackBitsReadStream decoder(*stream);
+		Common::PackBitsReadStream decoder(*stream);
 		decoder.read(data, decsize);
 	} else {
 		stream->read(data, decsize);
@@ -328,7 +337,7 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 	}
 
 	char v20[30];
-	if (_engineFlags & kEngineTransformedDonna) {
+	if (g_engineFlags & kEngineTransformedDonna) {
 		sprintf(v20, "%stta.cnv", name);
 	} else {
 		sprintf(v20, "%stal.cnv", name);
@@ -385,7 +394,7 @@ Frames* DosDisk_ns::loadFrames(const char* name) {
 	- path data [bit 8] (walkable areas)
 */
 void DosDisk_ns::unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path) {
-	byte storage[127];
+	byte storage[128];
 	uint32 storageLen = 0, len = 0;
 	uint32 j = 0;
 
@@ -473,7 +482,7 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	// read bitmap, mask and path data and extract them into the 3 buffers
 	info.bg.create(info.width, info.height, Graphics::PixelFormat::createFormatCLUT8());
 	createMaskAndPathBuffers(info);
-	unpackBackground(stream, (byte *)info.bg.pixels, info._mask->data, info._path->data);
+	unpackBackground(stream, (byte *)info.bg.getPixels(), info._mask->data, info._path->data);
 
 	delete stream;
 }
@@ -907,17 +916,15 @@ void AmigaDisk_ns::buildMask(byte* buf) {
 
 
 void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
-	PaletteFxRange ranges[6];
-	byte pal[768];
-
 	Common::SeekableReadStream *s = openFile(name);
-	ILBMLoader loader(&info.bg, pal, ranges);
-	loader.load(s, true);
+	Graphics::IFFDecoder decoder;
+	decoder.loadStream(*s);
 
+	info.bg.copyFrom(*decoder.getSurface());
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
-	byte *p = pal;
+	const byte *p = decoder.getPalette();
 	for (uint i = 0; i < 32; i++) {
 		byte r = *p >> 2;
 		p++;
@@ -928,8 +935,15 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 		info.palette.setEntry(i, r, g, b);
 	}
 
-	for (uint j = 0; j < 6; j++) {
-		info.setPaletteRange(j, ranges[j]);
+	const Common::Array<Graphics::IFFDecoder::PaletteRange> &paletteRanges = decoder.getPaletteRanges();
+	for (uint j = 0; j < 6 && j < paletteRanges.size(); j++) {
+		PaletteFxRange range;
+		range._timer = paletteRanges[j].timer;
+		range._step = paletteRanges[j].step;
+		range._flags = paletteRanges[j].flags;
+		range._first = paletteRanges[j].first;
+		range._last = paletteRanges[j].last;
+		info.setPaletteRange(j, range);
 	}
 }
 
@@ -945,19 +959,25 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing mask files: not every location has one
 	}
 
-	byte pal[768];
-	ILBMLoader loader(ILBMLoader::BODYMODE_MASKBUFFER, pal);
-	loader.load(s, true);
+	Graphics::IFFDecoder decoder;
+	decoder.setNumRelevantPlanes(2); // use only 2 first bits from each pixel
+	decoder.setPixelPacking(true); // pack 4 2bit pixels into 1 byte
+	decoder.loadStream(*s);
 
+	const byte *p = decoder.getPalette();
 	byte r, g, b;
 	for (uint i = 0; i < 4; i++) {
-		r = pal[i*3];
-		g = pal[i*3+1];
-		b = pal[i*3+2];
+		r = p[i*3];
+		g = p[i*3+1];
+		b = p[i*3+2];
 		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
 
-	info._mask = loader._maskBuffer;
+	info._mask = new MaskBuffer;
+	// surface width was shrunk to 1/4th of the bitmap width due to the pixel packing
+	info._mask->create(decoder.getSurface()->w * 4, decoder.getSurface()->h);
+	memcpy(info._mask->data, decoder.getSurface()->getPixels(), info._mask->size);
+	info._mask->bigEndian = true;
 }
 
 void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
@@ -970,9 +990,15 @@ void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing path files: not every location has one
 	}
 
-	ILBMLoader loader(ILBMLoader::BODYMODE_PATHBUFFER);
-	loader.load(s, true);
-	info._path = loader._pathBuffer;
+	Graphics::IFFDecoder decoder;
+	decoder.setNumRelevantPlanes(1); // use only first bit from each pixel
+	decoder.setPixelPacking(true); // pack 8 1bit pixels into 1 byte
+	decoder.loadStream(*s);
+
+	info._path = new PathBuffer;
+	// surface width was shrunk to 1/8th of the bitmap width due to the pixel packing
+	info._path->create(decoder.getSurface()->w * 8, decoder.getSurface()->h);
+	memcpy(info._path->data, decoder.getSurface()->getPixels(), info._path->size);
 	info._path->bigEndian = true;
 }
 

@@ -460,6 +460,10 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 			_activeFullscreenMode = -2;
 			setFullscreenMode(!isFullscreen);
 		}
+
+		// HACK: We need to force a refresh here, since we change the
+		// fullscreen mode.
+		_transactionDetails.needRefresh = true;
 	endGFXTransaction();
 
 	// Ignore resize events for the next 10 frames
@@ -665,7 +669,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	adjustMousePosition(point.x, point.y);
 }
- 
+
 void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 	setMousePosition(mouse.x, mouse.y);
 }

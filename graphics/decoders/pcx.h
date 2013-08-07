@@ -57,7 +57,7 @@ public:
 
 private:
 	void decodeRLE(Common::SeekableReadStream &stream, byte *dst, uint32 bytesPerScanline, bool compressed);
-	
+
 	Surface *_surface;
 	byte *_palette;
 	uint16 _paletteColorCount;

@@ -34,7 +34,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	if (width <= 0 || height <= 0)
 		return;
 
-	assert(_textSurface.pixels);
+	assert(_textSurface.getPixels());
 
 	int m = _textSurfaceMultiplier;
 

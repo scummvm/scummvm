@@ -112,7 +112,7 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 					}
 					_vm->_system->unlockScreen();
 				} else {
-					_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 
 					// WORKAROUND: There is an encoding glitch in the first intro video. This hides this using the adjacent pixels.
 					if (isFirstIntroVideo) {

@@ -234,8 +234,8 @@ enum PARTS_INDEX {
 #define NM_RS_R_INSET		4
 #define NM_RS_THICKNESS		5
 #define NM_MOVE_AREA_B_Y	30
-#define NM_SLIDE_INSET		(TinselV2 ? 18 : 15)	// X offset (from right) of left of scroll region
-#define NM_SLIDE_THICKNESS	(TinselV2 ? 13 : 4)		// thickness of scroll region
+#define NM_SLIDE_INSET		(TinselV2 ? 18 : 9)	// X offset (from right) of left of scroll region
+#define NM_SLIDE_THICKNESS	(TinselV2 ? 13 : 7)		// thickness of scroll region
 #define NM_UP_ARROW_TOP		34	// Y offset of top of up arrow
 #define NM_UP_ARROW_BOTTOM	49	// Y offset of bottom of up arrow
 #define NM_DN_ARROW_TOP		22	// Y offset (from bottom) of top of down arrow
@@ -1143,7 +1143,7 @@ static void FirstScene(int first) {
 	// Fill in the rest
 	for (i = 0; i < NUM_RGROUP_BOXES && i + first < g_numScenes; i++) {
 		cd.box[i].textMethod = TM_STRINGNUM;
-		cd.box[i].ixText = FROM_LE_32(g_pHopper[i + first].hSceneDesc);
+		cd.box[i].ixText = FROM_32(g_pHopper[i + first].hSceneDesc);
 	}
 	// Blank out the spare ones (if any)
 	while (i < NUM_RGROUP_BOXES) {
@@ -1166,10 +1166,10 @@ static void SetChosenScene() {
 static void FirstEntry(int first) {
 	int	i;
 
-	g_InvD[INV_MENU].hInvTitle = FROM_LE_32(g_pChosenScene->hSceneDesc);
+	g_InvD[INV_MENU].hInvTitle = FROM_32(g_pChosenScene->hSceneDesc);
 
 	// get number of entrances
-	g_numEntries = FROM_LE_32(g_pChosenScene->numEntries);
+	g_numEntries = FROM_32(g_pChosenScene->numEntries);
 
 	// Force first to a sensible value
 	if (first > g_numEntries-NUM_RGROUP_BOXES)
@@ -1179,7 +1179,7 @@ static void FirstEntry(int first) {
 
 	for (i = 0; i < NUM_RGROUP_BOXES && i < g_numEntries; i++) {
 		cd.box[i].textMethod = TM_STRINGNUM;
-		cd.box[i].ixText = FROM_LE_32(g_pEntries[FROM_LE_32(g_pChosenScene->entryIndex) + i + first].hDesc);
+		cd.box[i].ixText = FROM_32(g_pEntries[FROM_32(g_pChosenScene->entryIndex) + i + first].hDesc);
 	}
 	// Blank out the spare ones (if any)
 	while (i < NUM_RGROUP_BOXES) {
@@ -1191,17 +1191,17 @@ static void FirstEntry(int first) {
 }
 
 static void HopAction() {
-	PHOPENTRY pEntry = g_pEntries + FROM_LE_32(g_pChosenScene->entryIndex) + cd.selBox + cd.extraBase;
+	PHOPENTRY pEntry = g_pEntries + FROM_32(g_pChosenScene->entryIndex) + cd.selBox + cd.extraBase;
 
-	uint32 hScene = FROM_LE_32(g_pChosenScene->hScene);
-	uint32 eNumber = FROM_LE_32(pEntry->eNumber);
+	uint32 hScene = FROM_32(g_pChosenScene->hScene);
+	uint32 eNumber = FROM_32(pEntry->eNumber);
 	debugC(DEBUG_BASIC, kTinselDebugAnimations, "Scene hopper chose scene %xh,%d\n", hScene, eNumber);
 
-	if (FROM_LE_32(pEntry->flags) & fCall) {
+	if (FROM_32(pEntry->flags) & fCall) {
 		SaveScene(Common::nullContext);
 		NewScene(Common::nullContext, g_pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
 	}
-	else if (FROM_LE_32(pEntry->flags) & fHook)
+	else if (FROM_32(pEntry->flags) & fHook)
 		HookScene(hScene, eNumber, TRANS_FADE);
 	else
 		NewScene(Common::nullContext, hScene, eNumber, TRANS_CUT);
@@ -2568,7 +2568,7 @@ static OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 	pim = GetImageFromFilm(invObj->hIconFilm, 0, pfreel, &pmi, pfilm);
 
 	// Poke in the background palette
-	pim->hImgPal = TO_LE_32(BgPal());
+	pim->hImgPal = TO_32(BgPal());
 
 	// Set up the multi-object
 	pPlayObj = MultiInitObject(pmi);
@@ -2609,7 +2609,7 @@ static void FillInInventory() {
 				MultiSetAniXY(g_iconArray[n], g_InvD[g_ino].inventoryX + xpos , g_InvD[g_ino].inventoryY + ypos);
 				MultiSetZPosition(g_iconArray[n], Z_INV_ICONS);
 
-				InitStepAnimScript(&g_iconAnims[n], g_iconArray[n], FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+				InitStepAnimScript(&g_iconAnims[n], g_iconArray[n], FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
 
 				n++;
 			}
@@ -2697,17 +2697,17 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 	pim = GetImageFromReel(pfreel, &pmi);
 
 	// Poke in the background palette
-	pim->hImgPal = TO_LE_32(BgPal());
+	pim->hImgPal = TO_32(BgPal());
 
 	// Horrible bodge involving global variables to save
 	// width and/or height of some window frame components
 	if (num == g_TL) {
-		g_TLwidth = FROM_LE_16(pim->imgWidth);
-		g_TLheight = FROM_LE_16(pim->imgHeight) & ~C16_FLAG_MASK;
+		g_TLwidth = FROM_16(pim->imgWidth);
+		g_TLheight = FROM_16(pim->imgHeight) & ~C16_FLAG_MASK;
 	} else if (num == g_TR) {
-		g_TRwidth = FROM_LE_16(pim->imgWidth);
+		g_TRwidth = FROM_16(pim->imgWidth);
 	} else if (num == g_BL) {
-		g_BLheight = FROM_LE_16(pim->imgHeight) & ~C16_FLAG_MASK;
+		g_BLheight = FROM_16(pim->imgHeight) & ~C16_FLAG_MASK;
 	}
 
 	// Set up and insert the multi-object
@@ -2723,7 +2723,7 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 
 static void AddSlider(OBJECT **slide, const FILM *pfilm) {
 	g_SlideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
-	MultiSetAniXY(*slide, MultiRightmost(g_RectObject) + (TinselV2 ? NM_SLX : -M_SXOFF + 2) - 1,
+	MultiSetAniXY(*slide, MultiRightmost(g_RectObject) + (TinselV2 ? NM_SLX : -M_SXOFF + 2),
 		g_InvD[g_ino].inventoryY + g_sliderYpos);
 	MultiSetZPosition(*slide, Z_INV_MFRAME);
 }
@@ -3318,7 +3318,7 @@ static void ConstructInventory(InventoryType filling) {
 				}
 			}
 		} else if (g_InvD[g_ino].NoofItems > g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons) {
-			g_sliderYmin = g_TLheight - (TinselV2 ? 2 : 1);
+			g_sliderYmin = g_TLheight - (TinselV2 ? 1 : 2);
 			g_sliderYmax = g_TLheight + eV + (TinselV2 ? 12 : 10);
 			AddSlider(&retObj[n++], pfilm);
 		}
@@ -3406,9 +3406,9 @@ static void AlterCursor(int num) {
 	pim = GetImageFromFilm(g_hWinParts, num, &pfreel);
 
 	// Poke in the background palette
-	pim->hImgPal = TO_LE_32(BgPal());
+	pim->hImgPal = TO_32(BgPal());
 
-	SetTempCursor(FROM_LE_32(pfreel->script));
+	SetTempCursor(FROM_32(pfreel->script));
 }
 
 enum InvCursorFN {IC_AREA, IC_DROP};
@@ -3655,10 +3655,10 @@ extern void HideConversation(bool bHide) {
 	if (g_InventoryState == ACTIVE_INV && g_ino == INV_CONV) {
 		if (bHide) {
 			// Move all the window and icons off-screen
-			for (i = 0; g_objArray[i] && i < MAX_WCOMP; i++) {
+			for (i = 0; i < MAX_WCOMP && g_objArray[i]; i++) {
 				MultiAdjustXY(g_objArray[i], 2 * SCREEN_WIDTH, 0);
 			}
-			for (i = 0; g_iconArray[i] && i < MAX_ICONS; i++) {
+			for (i = 0; i < MAX_ICONS && g_iconArray[i]; i++) {
 				MultiAdjustXY(g_iconArray[i], 2 * SCREEN_WIDTH, 0);
 			}
 
@@ -4861,48 +4861,99 @@ static void InvDragEnd() {
 	g_Xchange = g_Ychange = 0;		// Probably no need, but does no harm!
 }
 
-static void MenuPageDown() {
+static bool MenuDown(int lines) {
 	if (cd.box == loadBox || cd.box == saveBox) {
-		if (cd.extraBase < MAX_SAVED_FILES-NUM_RGROUP_BOXES) {
-			FirstFile(cd.extraBase+(NUM_RGROUP_BOXES - 1));
+		if (cd.extraBase < MAX_SAVED_FILES - NUM_RGROUP_BOXES) {
+			FirstFile(cd.extraBase + lines);
 			AddBoxes(true);
-			cd.selBox = NUM_RGROUP_BOXES - 1;
-			Select(cd.selBox, true);
+			return true;
 		}
 	} else if (cd.box == hopperBox1) {
 		if (cd.extraBase < g_numScenes - NUM_RGROUP_BOXES) {
-			FirstScene(cd.extraBase + (NUM_RGROUP_BOXES - 1));
+			FirstScene(cd.extraBase + lines);
 			AddBoxes(true);
-			if (cd.selBox)
-				cd.selBox = NUM_RGROUP_BOXES - 1;
-			Select(cd.selBox, true);
+			return true;
 		}
 	} else if (cd.box == hopperBox2) {
 		if (cd.extraBase < g_numEntries - NUM_RGROUP_BOXES) {
-			FirstEntry(cd.extraBase+(NUM_RGROUP_BOXES - 1));
+			FirstEntry(cd.extraBase + lines);
 			AddBoxes(true);
-			if (cd.selBox)
-				cd.selBox = NUM_RGROUP_BOXES - 1;
-			Select(cd.selBox, true);
+			return true;
 		}
+	}
+	return false;
+}
+
+static bool MenuUp(int lines) {
+	if (cd.extraBase > 0) {
+		if (cd.box == loadBox || cd.box == saveBox)
+			FirstFile(cd.extraBase - lines);
+		else if (cd.box == hopperBox1)
+			FirstScene(cd.extraBase - lines);
+		else if (cd.box == hopperBox2)
+			FirstEntry(cd.extraBase - lines);
+		else
+			return false;
+
+		AddBoxes(true);
+		return true;
+	}
+	return false;
+}
+
+static void MenuRollDown() {
+	if (MenuDown(1)) {
+		if (cd.selBox > 0)
+			cd.selBox--;
+		Select(cd.selBox, true);
+	}
+}
+
+static void MenuRollUp() {
+	if (MenuUp(1)) {
+		if (cd.selBox < NUM_RGROUP_BOXES - 1)
+			cd.selBox++;
+		Select(cd.selBox, true);
+	}
+}
+
+static void MenuPageDown() {
+	if (MenuDown(NUM_RGROUP_BOXES - 1)) {
+		cd.selBox = NUM_RGROUP_BOXES - 1;
+		Select(cd.selBox, true);
 	}
 }
 
 static void MenuPageUp() {
-	if (cd.extraBase > 0) {
-		if (cd.box == loadBox || cd.box == saveBox)
-			FirstFile(cd.extraBase-(NUM_RGROUP_BOXES - 1));
-		else if (cd.box == hopperBox1)
-			FirstScene(cd.extraBase-(NUM_RGROUP_BOXES - 1));
-		else if (cd.box == hopperBox2)
-			FirstEntry(cd.extraBase-(NUM_RGROUP_BOXES - 1));
-		else
-			return;
-
-		AddBoxes(true);
+	if (MenuUp(NUM_RGROUP_BOXES - 1)) {
 		cd.selBox = 0;
 		Select(cd.selBox, true);
 	}
+}
+
+static void InventoryDown() {
+	// This code is a copy of the IB_SLIDE_DOWN case in InvWalkTo
+	// TODO: So share this duplicate code
+	if (g_InvD[g_ino].NoofVicons == 1)
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
+	for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++) {
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
+	}
+	g_ItemsChanged = true;
+}
+
+static void InventoryUp() {
+	// This code is a copy of the I_SLIDE_UP case in InvWalkTo
+	// TODO: So share this duplicate code
+	if (g_InvD[g_ino].NoofVicons == 1)
+		g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
+	for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++)
+		g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
+	if (g_InvD[g_ino].FirstDisp < 0)
+		g_InvD[g_ino].FirstDisp = 0;
+	g_ItemsChanged = true;
 }
 
 /**************************************************************************/
@@ -5399,42 +5450,47 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	case PLR_PGDN:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			MenuPageDown();
 		} else {
-			// This code is a copy of the IB_SLIDE_DOWN case in InvWalkTo
-			// TODO: So share this duplicate code
-			if (g_InvD[g_ino].NoofVicons == 1)
-				if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
-					g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
-			for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++) {
-				if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
-					g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
-			}
-			g_ItemsChanged = true;
+			// Inventory window
+			InventoryDown();
 		}
 		break;
 
 	case PLR_PGUP:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			MenuPageUp();
 		} else {
-			// This code is a copy of the I_SLIDE_UP case in InvWalkTo
-			// TODO: So share this duplicate code
-			if (g_InvD[g_ino].NoofVicons == 1)
-				g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
-			for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++)
-				g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
-			if (g_InvD[g_ino].FirstDisp < 0)
-				g_InvD[g_ino].FirstDisp = 0;
-			g_ItemsChanged = true;
+			// Inventory window
+			InventoryUp();
+		}
+		break;
+
+	case PLR_WHEEL_DOWN:
+		if (g_ino == INV_MENU) {
+			// Load or Save screen
+			MenuRollDown();
+		} else {
+			// Inventory window
+			InventoryDown();
+		}
+		break;
+
+	case PLR_WHEEL_UP:
+		if (g_ino == INV_MENU) {
+			// Load or Save screen
+			MenuRollUp();
+		} else {
+			// Inventory window
+			InventoryUp();
 		}
 		break;
 
 	case PLR_HOME:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			if (cd.box == loadBox || cd.box == saveBox)
 				FirstFile(0);
 			else if (cd.box == hopperBox1)
@@ -5448,6 +5504,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			cd.selBox = 0;
 			Select(cd.selBox, true);
 		} else {
+			// Inventory window
 			g_InvD[g_ino].FirstDisp = 0;
 			g_ItemsChanged = true;
 		}
@@ -5455,6 +5512,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	case PLR_END:
 		if (g_ino == INV_MENU) {
+			// Load or Save screen
 			if (cd.box == loadBox || cd.box == saveBox)
 				FirstFile(MAX_SAVED_FILES);	// Will get reduced to appropriate value
 			else if (cd.box == hopperBox1)
@@ -5468,6 +5526,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			cd.selBox = 0;
 			Select(cd.selBox, true);
 		} else {
+			// Inventory window
 			g_InvD[g_ino].FirstDisp = g_InvD[g_ino].NoofItems - g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons;
 			if (g_InvD[g_ino].FirstDisp < 0)
 				g_InvD[g_ino].FirstDisp = 0;
@@ -5560,21 +5619,6 @@ extern void RegisterIcons(void *cptr, int num) {
 			memmove(destP, srcP, 12);
 			destP->attribute = 0;
 		}
-	} else if (TinselV1Mac) {
-		// Macintosh version has BE encoded resources, so the values need to be byte swapped
-		MEM_NODE *node = MemoryAllocFixed(g_numObjects * sizeof(INV_OBJECT));
-		assert(node);
-		g_invObjects = (INV_OBJECT *)MemoryDeref(node);
-		assert(g_invObjects);
-		INV_OBJECT *srcP = (INV_OBJECT *)cptr;
-		INV_OBJECT *destP = (INV_OBJECT *)g_invObjects;
-
-		for (int i = 0; i < num; ++i, ++destP, ++srcP) {
-			destP->id = FROM_BE_32(srcP->id);
-			destP->hIconFilm = FROM_BE_32(srcP->hIconFilm);
-			destP->hScript = FROM_BE_32(srcP->hScript);
-			destP->attribute = FROM_BE_32(srcP->attribute);
-		}
 	} else if (TinselV2) {
 		if (g_invFilms == NULL) {
 			// First time - allocate memory
@@ -5613,7 +5657,7 @@ extern void setInvWinParts(SCNHANDLE hf) {
 
 #ifdef DEBUG
 	pfilm = (const FILM *)LockMem(hf);
-	assert(FROM_LE_32(pfilm->numreels) >= (uint32)(TinselV2 ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
+	assert(FROM_32(pfilm->numreels) >= (uint32)(TinselV2 ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
 #endif
 }
 
@@ -5630,7 +5674,7 @@ extern void setFlagFilms(SCNHANDLE hf) {
 
 #ifdef DEBUG
 	pfilm = (const FILM *)LockMem(hf);
-	assert(FROM_LE_32(pfilm->numreels) >= HOPEDFORFREELS); // not as many reels as expected
+	assert(FROM_32(pfilm->numreels) >= HOPEDFORFREELS); // not as many reels as expected
 #endif
 }
 

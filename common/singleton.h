@@ -97,6 +97,6 @@ protected:
 #define DECLARE_SINGLETON(T) \
 	template<> T *Singleton<T>::_singleton = 0
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

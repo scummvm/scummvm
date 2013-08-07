@@ -370,7 +370,7 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 		int loopStart;
 		int loopEnd;
 		uint layer;
-		
+
 		reader.readString(fileName);
 		reader.read(sndType);
 		reader.read(volume);

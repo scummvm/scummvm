@@ -36,10 +36,12 @@ struct Surface;
 
 namespace Video {
 
-// Motion JPEG Decoder
-// Basically a wrapper around JPEG which converts to RGB and also functions
-// as a Codec.
-
+/**
+ * Motion JPEG decoder.
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
+ */
 class JPEGDecoder : public Codec {
 public:
 	JPEGDecoder();

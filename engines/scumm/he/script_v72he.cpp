@@ -1779,8 +1779,11 @@ void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, 
 				copyArrayHelper(ah, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
 				copyArrayHelper(ah, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
 			} else {
+				// start at the end, so we copy backwards (in case the indices overlap)
 				copyArrayHelper(ah, a1_dim2end, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
 				copyArrayHelper(ah, a2_dim2end, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
+				dstPitch = -dstPitch;
+				srcPitch = -srcPitch;
 			}
 			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
 				memcpy(dst, src, rowSize);

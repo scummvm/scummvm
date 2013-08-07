@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "freeverb.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 FreeverbModel::FreeverbModel(float useScaleTuning, float useFiltVal, float useWet, Bit8u useRoom, float useDamp) {
 	freeverb = NULL;
@@ -35,9 +35,7 @@ FreeverbModel::~FreeverbModel() {
 	delete freeverb;
 }
 
-void FreeverbModel::open(unsigned int /*sampleRate*/) {
-	// FIXME: scaleTuning must be multiplied by sample rate to 32000Hz ratio
-	// IIR filter values depend on sample rate as well
+void FreeverbModel::open() {
 	if (freeverb == NULL) {
 		freeverb = new revmodel(scaleTuning);
 	}
@@ -75,4 +73,6 @@ void FreeverbModel::setParameters(Bit8u time, Bit8u level) {
 bool FreeverbModel::isActive() const {
 	// FIXME: Not bothering to do this properly since we'll be replacing Freeverb soon...
 	return false;
+}
+
 }

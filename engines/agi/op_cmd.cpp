@@ -1146,7 +1146,7 @@ void cmdFollowEgo(AgiGame *state, uint8 *p) {
 	vt.parm1 = p1 > vt.stepSize ? p1 : vt.stepSize;
 	vt.parm2 = p2;
 	vt.parm3 = 0xff;
-	
+
 	if (getVersion() < 0x2000) {
 		_v[p2] = 0;
 		vt.flags |= fUpdate | fAnimated;
@@ -1219,7 +1219,7 @@ void cmdWander(AgiGame *state, uint8 *p) {
 
 void cmdSetGameID(AgiGame *state, uint8 *p) {
 	if (state->_curLogic->texts && (p0 - 1) <= state->_curLogic->numTexts)
-		strncpy(state->id, state->_curLogic->texts[p0 - 1], 8);
+		Common::strlcpy(state->id, state->_curLogic->texts[p0 - 1], 8);
 	else
 		state->id[0] = 0;
 
@@ -1270,7 +1270,7 @@ void cmdVersion(AgiGame *state, uint8 *p) {
 	// no Sierra as it wraps textbox
 
 	Common::String verMsg = TITLE " v%s";
-	
+
 	int ver = getVersion();
 	int maj = (ver >> 12) & 0xf;
 	int min = ver & 0xfff;
@@ -1399,7 +1399,7 @@ void cmdDistance(AgiGame *state, uint8 *p) {
 		// a zombie or the zombie getting turned away by the scarab) we make it appear the
 		// zombie is far away from Rosella if the zombie is not already up and chasing her.
 		enum zombieStates {ZOMBIE_SET_TO_RISE_UP, ZOMBIE_RISING_UP, ZOMBIE_CHASING_EGO};
-		uint8 zombieStateVarNumList[] = {155, 156, (_v[vCurRoom] == 16) ? 162 : 158};
+		uint8 zombieStateVarNumList[] = {155, 156, (uint8)((_v[vCurRoom] == 16) ? 162 : 158)};
 		uint8 zombieNum         = p2 - 221;                         // Zombie's number (In range 0-2)
 		uint8 zombieStateVarNum = zombieStateVarNumList[zombieNum]; // Number of the variable containing zombie's state
 		uint8 zombieState       = _v[zombieStateVarNum];            // Zombie's state
@@ -1705,7 +1705,9 @@ void cmdCallV1(AgiGame *state, uint8 *p) {
 	// FIXME: The following instruction looks incomplete.
 	// Maybe something is meant to be assigned to, or read from,
 	// the logic_list entry?
-	state->logic_list[++state->max_logics];
+//	state->logic_list[++state->max_logics];
+	// For now, just do the increment, to silence a clang warning
+	++state->max_logics;
 	_v[13] = 1;
 }
 
@@ -1839,7 +1841,7 @@ int AgiEngine::runLogic(int n) {
 //			ip = 2;
 //			warning("running logic %d\n", n);
 //		}
-		
+
 		if (_game.exitAllLogics)
 			break;
 	}

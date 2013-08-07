@@ -177,7 +177,7 @@ Common::Error MohawkEngine_Riven::run() {
 		}
 	} else {
 		// Otherwise, start us off at aspit's card 1 (the main menu)
-        changeToStack(aspit);
+		changeToStack(aspit);
 		changeToCard(1);
 	}
 
@@ -830,7 +830,7 @@ static void sunnersTopStairsTimer(MohawkEngine_Riven *vm) {
 		} else if (sunnerTime < vm->getTotalPlayTime()) {
 			VideoHandle handle = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(1, 3));
 
-			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(2, 15) * 1000;
+			timerTime = vm->_video->getDuration(handle).msecs() + vm->_rnd->getRandomNumberRng(2, 15) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();
@@ -868,7 +868,7 @@ static void sunnersMidStairsTimer(MohawkEngine_Riven *vm) {
 
 			VideoHandle handle = vm->_video->playMovieRiven(movie);
 
-			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(1, 10) * 1000;
+			timerTime = vm->_video->getDuration(handle).msecs() + vm->_rnd->getRandomNumberRng(1, 10) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();
@@ -898,7 +898,7 @@ static void sunnersLowerStairsTimer(MohawkEngine_Riven *vm) {
 		} else if (sunnerTime < vm->getTotalPlayTime()) {
 			VideoHandle handle = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(3, 5));
 
-			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+			timerTime = vm->_video->getDuration(handle).msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();
@@ -932,7 +932,7 @@ static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
 			vm->_video->activateMLST(mlstID, vm->getCurCard());
 			VideoHandle handle = vm->_video->playMovieRiven(mlstID);
 
-			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+			timerTime = vm->_video->getDuration(handle).msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();

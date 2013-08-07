@@ -633,12 +633,12 @@ class Scene3500 : public SceneExt {
 		// TODO: double check if nothing specific is present, then remove this class
 	};
 
-	class UnkObject3500 : public UnkObject1200 {
+	class MazeUI3500 : public MazeUI {
 	public:
-		int sub1097C9(int arg1);
-		int sub1097EF(int arg1);
-		int sub109C09(Common::Point pt);
-		int sub109C5E(int &x, int &y);
+		int cellFromX(int arg1);
+		int cellFromY(int arg1);
+		int getCellFromMapXY(Common::Point pt);
+		bool setMazePosition2(Common::Point &p);
 	};
 public:
 	Action1 _action1;
@@ -650,6 +650,7 @@ public:
 	Item4 _item5;
 	Item4 _item6;
 	Item4 _item7;
+	// Glyph of vessel on top of the maze ui
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;
@@ -660,20 +661,19 @@ public:
 	Actor8 _actor8;
 	Actor8 _actor9;
 	ASoundExt _aSound1;
-	UnkObject3500 _unkObj1;
+	MazeUI3500 _mazeUI;
 	SequenceManager _sequenceManager;
 
 	int _fieldAF8;
 	int _fieldB9E;
 	PaletteRotation *_rotation;
-	int _field126E;
+	int _mazeChangeAmount;
 	int _field1270;
 	int _field1272;
 	int _field1274;
-	int _field1276;
+	int _mazeDirection;
 	int _field1278;
-	int _field127A;
-	int _field127C;
+	Common::Point _mazePosition;
 	int _field127E;
 	int _field1280;
 	int _field1282;

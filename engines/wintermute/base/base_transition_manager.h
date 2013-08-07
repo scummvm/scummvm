@@ -41,7 +41,7 @@ public:
 	bool _preserveInteractive;
 	bool update();
 	bool start(TTransitionType type, bool nonInteractive = false);
-	bool isReady();
+	bool isReady() const;
 	TTransMgrState _state;
 	BaseTransitionMgr(BaseGame *inGame);
 	virtual ~BaseTransitionMgr();
@@ -49,6 +49,6 @@ public:
 
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

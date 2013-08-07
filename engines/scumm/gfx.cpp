@@ -421,8 +421,8 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	}
 
 	_res->createResource(rtBuffer, slot + 1, size);
-	vs->pixels = getResourceAddress(rtBuffer, slot + 1);
-	memset(vs->pixels, 0, size);	// reset background
+	vs->setPixels(getResourceAddress(rtBuffer, slot + 1));
+	memset(vs->getBasePtr(0, 0), 0, size);	// reset background
 
 	if (twobufs) {
 		vs->backBuf = _res->createResource(rtBuffer, slot + 5, size);
@@ -612,7 +612,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	// Some paranoia checks
 	assert(top >= 0 && bottom <= vs->h);
 	assert(x >= 0 && width <= vs->pitch);
-	assert(_textSurface.pixels);
+	assert(_textSurface.getPixels());
 
 	// Perform some clipping
 	if (width > vs->w - x)
@@ -1135,7 +1135,7 @@ void ScummEngine::clearTextSurface() {
 		_townsScreen->fillLayerRect(1, 0, 0, _textSurface.w, _textSurface.h, 0);
 #endif
 
-	fill((byte *)_textSurface.pixels,  _textSurface.pitch,
+	fill((byte *)_textSurface.getPixels(),  _textSurface.pitch,
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		_game.platform == Common::kPlatformFMTowns ? 0 :
 #endif
@@ -1590,7 +1590,7 @@ void GdiV2::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 	if (vs->hasTwoBuffers)
 		dst = vs->backBuf + y * vs->pitch + x * 8;
 	else
-		dst = (byte *)vs->pixels + y * vs->pitch + x * 8;
+		dst = (byte *)vs->getBasePtr(x * 8, y);
 
 	mask_ptr = getMaskBuffer(x, y, 1);
 
@@ -1827,7 +1827,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		if (vs->hasTwoBuffers)
 			dstPtr = vs->backBuf + y * vs->pitch + (x * 8 * vs->format.bytesPerPixel);
 		else
-			dstPtr = (byte *)vs->pixels + y * vs->pitch + (x * 8 * vs->format.bytesPerPixel);
+			dstPtr = (byte *)vs->getBasePtr(x * 8, y);
 
 		transpStrip = drawStrip(dstPtr, vs, x, y, width, height, stripnr, smap_ptr);
 
@@ -1836,7 +1836,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 			transpStrip = true;
 
 		if (vs->hasTwoBuffers) {
-			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + (x * 8 * vs->format.bytesPerPixel);
+			byte *frontBuf = (byte *)vs->getBasePtr(x * 8, y);
 			if (lightsOn)
 				copy8Col(frontBuf, vs->pitch, dstPtr, height, vs->format.bytesPerPixel);
 			else
@@ -2262,7 +2262,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 		vs->bdirty[strip] = bottom;
 
 	bgbak_ptr = (byte *)vs->backBuf + top * vs->pitch + (strip + vs->xstart/8) * 8 * vs->format.bytesPerPixel;
-	backbuff_ptr = (byte *)vs->pixels + top * vs->pitch + (strip + vs->xstart/8) * 8 * vs->format.bytesPerPixel;
+	backbuff_ptr = (byte *)vs->getBasePtr((strip + vs->xstart/8) * 8, top);
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
@@ -3609,7 +3609,7 @@ void Gdi::unkDecode9(byte *dst, int dstPitch, const byte *src, int height) const
 	int i;
 	uint buffer = 0, mask = 128;
 	int h = height;
-	i = run = 0;
+	run = 0;
 
 	int x = 8;
 	for (;;) {

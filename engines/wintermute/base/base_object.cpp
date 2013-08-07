@@ -33,7 +33,6 @@
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
 
@@ -60,18 +59,18 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 
 	_ready = true;
 
-	_soundEvent = NULL;
+	_soundEvent = nullptr;
 
 	_iD = _gameRef->getSequence();
 
 	BasePlatform::setRectEmpty(&_rect);
 	_rectSet = false;
 
-	_cursor = NULL;
-	_activeCursor = NULL;
+	_cursor = nullptr;
+	_activeCursor = nullptr;
 	_sharedCursors = false;
 
-	_sFX = NULL;
+	_sFX = nullptr;
 	_sFXStart = 0;
 	_sFXVolume = 100;
 	_autoSoundPanning = true;
@@ -86,7 +85,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_relativeRotate = 0.0f;
 
 	for (int i = 0; i < 7; i++) {
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 	_saveState = true;
 
@@ -109,25 +108,25 @@ BaseObject::~BaseObject() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::cleanup() {
 	if (_gameRef && _gameRef->_activeObject == this) {
-		_gameRef->_activeObject = NULL;
+		_gameRef->_activeObject = nullptr;
 	}
 
 	BaseScriptHolder::cleanup();
 	delete[] _soundEvent;
-	_soundEvent = NULL;
+	_soundEvent = nullptr;
 
 	if (!_sharedCursors) {
 		delete _cursor;
 		delete _activeCursor;
-		_cursor = NULL;
-		_activeCursor = NULL;
+		_cursor = nullptr;
+		_activeCursor = nullptr;
 	}
 	delete _sFX;
-	_sFX = NULL;
+	_sFX = nullptr;
 
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 
 	_sFXType = SFX_NONE;
@@ -150,7 +149,7 @@ void BaseObject::setCaption(const char *caption, int caseVal) {
 	_caption[caseVal - 1] = new char[strlen(caption) + 1];
 	if (_caption[caseVal - 1]) {
 		strcpy(_caption[caseVal - 1], caption);
-		_gameRef->_stringTable->expand(&_caption[caseVal - 1]);
+		_gameRef->expandStringByStringTable(&_caption[caseVal - 1]);
 	}
 }
 
@@ -160,7 +159,7 @@ const char *BaseObject::getCaption(int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
 	}
-	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL) {
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == nullptr) {
 		return "";
 	} else {
 		return _caption[caseVal - 1];
@@ -223,9 +222,9 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(0);
 		if (!_sharedCursors) {
 			delete _cursor;
-			_cursor = NULL;
+			_cursor = nullptr;
 		} else {
-			_cursor = NULL;
+			_cursor = nullptr;
 
 		}
 		stack->pushNULL();
@@ -317,12 +316,12 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *val3 = stack->pop();
 
 		if (val1->_type == VAL_BOOL) {
-			filename = NULL;
+			filename = nullptr;
 			looping = val1->getBool();
 			loopStart = val2->getInt();
 		} else {
 			if (val1->isNULL()) {
-				filename = NULL;
+				filename = nullptr;
 			} else {
 				filename = val1->getString();
 			}
@@ -351,7 +350,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *val2 = stack->pop();
 
 		if (val2->isNULL()) {
-			filename = NULL;
+			filename = nullptr;
 			eventName = val1->getString();
 		} else {
 			filename = val1->getString();
@@ -531,13 +530,13 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseObject::scGetProperty(const char *name) {
+ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("object");
 		return _scValue;
 	}
@@ -545,7 +544,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Caption") == 0) {
+	else if (name == "Caption") {
 		_scValue->setString(getCaption(1));
 		return _scValue;
 	}
@@ -553,7 +552,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "X") == 0) {
+	else if (name == "X") {
 		_scValue->setInt(_posX);
 		return _scValue;
 	}
@@ -561,7 +560,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Y") == 0) {
+	else if (name == "Y") {
 		_scValue->setInt(_posY);
 		return _scValue;
 	}
@@ -569,7 +568,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Height") == 0) {
+	else if (name == "Height") {
 		_scValue->setInt(getHeight());
 		return _scValue;
 	}
@@ -577,7 +576,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Ready (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Ready") == 0) {
+	else if (name == "Ready") {
 		_scValue->setBool(_ready);
 		return _scValue;
 	}
@@ -585,7 +584,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Movable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Movable") == 0) {
+	else if (name == "Movable") {
 		_scValue->setBool(_movable);
 		return _scValue;
 	}
@@ -593,7 +592,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Registrable/Interactive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Registrable") == 0 || strcmp(name, "Interactive") == 0) {
+	else if (name == "Registrable" || name == "Interactive") {
 		_scValue->setBool(_registrable);
 		return _scValue;
 	}
@@ -601,21 +600,21 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Zoomable/Scalable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Zoomable") == 0 || strcmp(name, "Scalable") == 0) {
+	else if (name == "Zoomable" || name == "Scalable") {
 		_scValue->setBool(_zoomable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotatable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Rotatable") == 0) {
+	else if (name == "Rotatable") {
 		_scValue->setBool(_rotatable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AlphaColor") == 0) {
+	else if (name == "AlphaColor") {
 		_scValue->setInt((int)_alphaColor);
 		return _scValue;
 	}
@@ -623,7 +622,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// BlendMode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "BlendMode") == 0) {
+	else if (name == "BlendMode") {
 		_scValue->setInt((int)_blendMode);
 		return _scValue;
 	}
@@ -631,7 +630,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Scale") == 0) {
+	else if (name == "Scale") {
 		if (_scale < 0) {
 			_scValue->setNULL();
 		} else {
@@ -643,7 +642,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScaleX") == 0) {
+	else if (name == "ScaleX") {
 		if (_scaleX < 0) {
 			_scValue->setNULL();
 		} else {
@@ -655,7 +654,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScaleY") == 0) {
+	else if (name == "ScaleY") {
 		if (_scaleY < 0) {
 			_scValue->setNULL();
 		} else {
@@ -667,7 +666,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeScale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RelativeScale") == 0) {
+	else if (name == "RelativeScale") {
 		_scValue->setFloat((double)_relativeScale);
 		return _scValue;
 	}
@@ -675,7 +674,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Rotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Rotate") == 0) {
+	else if (name == "Rotate") {
 		if (!_rotateValid) {
 			_scValue->setNULL();
 		} else {
@@ -687,7 +686,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeRotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RelativeRotate") == 0) {
+	else if (name == "RelativeRotate") {
 		_scValue->setFloat((double)_relativeRotate);
 		return _scValue;
 	}
@@ -695,14 +694,14 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Colorable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Colorable") == 0) {
+	else if (name == "Colorable") {
 		_scValue->setBool(_shadowable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SoundPanning
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SoundPanning") == 0) {
+	else if (name == "SoundPanning") {
 		_scValue->setBool(_autoSoundPanning);
 		return _scValue;
 	}
@@ -710,7 +709,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SaveState
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SaveState") == 0) {
+	else if (name == "SaveState") {
 		_scValue->setBool(_saveState);
 		return _scValue;
 	}
@@ -718,7 +717,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NonIntMouseEvents
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NonIntMouseEvents") == 0) {
+	else if (name == "NonIntMouseEvents") {
 		_scValue->setBool(_nonIntMouseEvents);
 		return _scValue;
 	}
@@ -726,7 +725,7 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccCaption") == 0) {
+	else if (name == "AccCaption") {
 		_scValue->setNULL();
 		return _scValue;
 	} else {
@@ -956,10 +955,10 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	for (int i = 0; i < 7; i++) {
 		persistMgr->transfer(TMEMBER(_caption[i]));
 	}
-	persistMgr->transfer(TMEMBER(_activeCursor));
+	persistMgr->transferPtr(TMEMBER_PTR(_activeCursor));
 	persistMgr->transfer(TMEMBER(_alphaColor));
 	persistMgr->transfer(TMEMBER(_autoSoundPanning));
-	persistMgr->transfer(TMEMBER(_cursor));
+	persistMgr->transferPtr(TMEMBER_PTR(_cursor));
 	persistMgr->transfer(TMEMBER(_sharedCursors));
 	persistMgr->transfer(TMEMBER(_editorAlwaysRegister));
 	persistMgr->transfer(TMEMBER(_editorOnly));
@@ -972,7 +971,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_relativeScale));
 	persistMgr->transfer(TMEMBER(_rotatable));
 	persistMgr->transfer(TMEMBER(_scale));
-	persistMgr->transfer(TMEMBER(_sFX));
+	persistMgr->transferPtr(TMEMBER_PTR(_sFX));
 	persistMgr->transfer(TMEMBER(_sFXStart));
 	persistMgr->transfer(TMEMBER(_sFXVolume));
 	persistMgr->transfer(TMEMBER(_ready));
@@ -1010,14 +1009,14 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 bool BaseObject::setCursor(const char *filename) {
 	if (!_sharedCursors) {
 		delete _cursor;
-		_cursor = NULL;
+		_cursor = nullptr;
 	}
 
 	_sharedCursors = false;
 	_cursor = new BaseSprite(_gameRef);
 	if (!_cursor || DID_FAIL(_cursor->loadFile(filename))) {
 		delete _cursor;
-		_cursor = NULL;
+		_cursor = nullptr;
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -1031,7 +1030,7 @@ bool BaseObject::setActiveCursor(const char *filename) {
 	_activeCursor = new BaseSprite(_gameRef);
 	if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(filename))) {
 		delete _activeCursor;
-		_activeCursor = NULL;
+		_activeCursor = nullptr;
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -1066,7 +1065,7 @@ bool BaseObject::handleMouseWheel(int delta) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
 	// just play loaded sound
-	if (filename == NULL && _sFX) {
+	if (filename == nullptr && _sFX) {
 		if (_gameRef->_editorMode || _sFXStart) {
 			_sFX->setVolumePercent(_sFXVolume);
 			_sFX->setPositionTime(_sFXStart);
@@ -1085,7 +1084,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 		}
 	}
 
-	if (filename == NULL) {
+	if (filename == nullptr) {
 		return STATUS_FAILED;
 	}
 
@@ -1111,7 +1110,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 		}
 	} else {
 		delete _sFX;
-		_sFX = NULL;
+		_sFX = nullptr;
 		return STATUS_FAILED;
 	}
 }
@@ -1123,7 +1122,7 @@ bool BaseObject::stopSFX(bool deleteSound) {
 		_sFX->stop();
 		if (deleteSound) {
 			delete _sFX;
-			_sFX = NULL;
+			_sFX = nullptr;
 		}
 		return STATUS_OK;
 	} else {
@@ -1179,7 +1178,7 @@ bool BaseObject::updateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->isPlaying()) {
 			applyEvent(_soundEvent);
-			setSoundEvent(NULL);
+			setSoundEvent(nullptr);
 		}
 	}
 
@@ -1229,7 +1228,7 @@ bool BaseObject::isReady() {
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setSoundEvent(const char *eventName) {
 	delete[] _soundEvent;
-	_soundEvent = NULL;
+	_soundEvent = nullptr;
 	if (eventName) {
 		_soundEvent = new char[strlen(eventName) + 1];
 		if (_soundEvent) {
@@ -1243,4 +1242,4 @@ bool BaseObject::afterMove() {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

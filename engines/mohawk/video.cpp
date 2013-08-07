@@ -245,7 +245,7 @@ bool VideoManager::updateMovies() {
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
 				uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
 				uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
-				_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
+				_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
 
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;
@@ -478,7 +478,7 @@ VideoHandle VideoManager::findVideoHandle(const Common::String &filename) {
 	return NULL_VID_HANDLE;
 }
 
-int32 VideoManager::getCurFrame(VideoHandle handle) {
+int VideoManager::getCurFrame(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
 	return _videoStreams[handle]->getCurFrame();
 }
@@ -493,9 +493,9 @@ uint32 VideoManager::getTime(VideoHandle handle) {
 	return _videoStreams[handle]->getTime();
 }
 
-uint32 VideoManager::getDuration(VideoHandle handle) {
+Audio::Timestamp VideoManager::getDuration(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
-	return _videoStreams[handle]->getDuration().msecs();
+	return _videoStreams[handle]->getDuration();
 }
 
 bool VideoManager::endOfVideo(VideoHandle handle) {
@@ -534,6 +534,16 @@ void VideoManager::seekToTime(VideoHandle handle, Audio::Timestamp time) {
 void VideoManager::setVideoLooping(VideoHandle handle, bool loop) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].loop = loop;
+}
+
+Common::Rational VideoManager::getVideoRate(VideoHandle handle) const {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getRate();
+}
+
+void VideoManager::setVideoRate(VideoHandle handle, const Common::Rational &rate) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle]->setRate(rate);
 }
 
 void VideoManager::pauseMovie(VideoHandle handle, bool pause) {

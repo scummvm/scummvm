@@ -56,7 +56,7 @@ SMCDecoder::~SMCDecoder() {
 }
 
 const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
-	byte *pixels = (byte *)_surface->pixels;
+	byte *pixels = (byte *)_surface->getPixels();
 
 	uint32 numBlocks = 0;
 	uint32 colorFlags = 0;

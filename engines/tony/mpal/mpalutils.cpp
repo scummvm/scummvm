@@ -81,7 +81,7 @@ Common::SeekableReadStream *RMRes::getReadStream() {
 }
 
 bool RMRes::isValid() {
-	return _h != NULL; 
+	return _h != NULL;
 }
 
 /****************************************************************************\
