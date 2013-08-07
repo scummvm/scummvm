@@ -31,7 +31,8 @@ RESOURCES = \
 	$(PATH_RESOURCES)/layout/splash.xml \
 	$(PATH_RESOURCES)/drawable/gradient.xml \
 	$(PATH_RESOURCES)/drawable/scummvm.png \
-	$(PATH_RESOURCES)/drawable/scummvm_big.png
+	$(PATH_RESOURCES)/drawable/scummvm_big.png \
+	$(PATH_RESOURCES)/drawable-xhdpi/ouya_icon.png
 
 PLUGIN_RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
