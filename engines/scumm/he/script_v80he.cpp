@@ -23,7 +23,7 @@
 #ifdef ENABLE_HE
 
 #include "common/archive.h"
-#include "common/config-file.h"
+#include "common/ini-file.h"
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/savefile.h"
@@ -180,7 +180,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 		}
 	} else {
 		// Normal Windows INI files
-		Common::ConfigFile confFile;
+		Common::INIFile confFile;
 		if (!strcmp((char *)filename + r, "map.ini"))
 			confFile.loadFromFile((const char *)filename + r);
 		else
@@ -250,7 +250,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 			memcpy(section, "BluesTreasureHunt-Disc2\0", 24);
 	}
 
-	Common::ConfigFile ConfFile;
+	Common::INIFile ConfFile;
 	ConfFile.loadFromSaveFile((const char *)filename + r);
 	ConfFile.setKey((char *)option, (char *)section, (char *)string);
 	ConfFile.saveToSaveFile((const char *)filename + r);

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef COMMON_CONFIG_FILE_H
-#define COMMON_CONFIG_FILE_H
+#ifndef COMMON_INI_FILE_H
+#define COMMON_INI_FILE_H
 
 #include "common/hash-str.h"
 #include "common/list.h"
@@ -34,9 +34,6 @@ class WriteStream;
 
 /**
  * This class allows reading/writing INI style config files.
- * It is used by the ConfigManager for storage, but can also
- * be used by other code if it needs to read/write custom INI
- * files.
  *
  * Lines starting with a '#' are ignored (i.e. treated as comments).
  * Some effort is made to preserve comments, though.
@@ -47,10 +44,8 @@ class WriteStream;
  * from/to files, but of course is not appropriate for fast access.
  * The main reason is that this class is indeed geared toward doing precisely
  * that!
- * If you need fast access to the game config, use higher level APIs, like the
- * one provided by ConfigManager.
  */
-class ConfigFile {
+class INIFile {
 public:
 	struct KeyValue {
 		String key;
@@ -60,12 +55,12 @@ public:
 
 	typedef List<KeyValue> SectionKeyList;
 
-	/** A section in a config file. I.e. corresponds to something like this:
+	/** A section in a ini file. I.e. corresponds to something like this:
 	 *   [mySection]
 	 *   key=value
 	 *
 	 * Comments are also stored, to keep users happy who like editing their
-	 * config files manually.
+	 * ini files manually.
 	 */
 	struct Section {
 		String name;
@@ -82,8 +77,8 @@ public:
 	typedef List<Section> SectionList;
 
 public:
-	ConfigFile();
-	~ConfigFile();
+	INIFile();
+	~INIFile();
 
 	// TODO: Maybe add a copy constructor etc.?
 
@@ -95,7 +90,7 @@ public:
 	 */
 	static bool isValidName(const String &name);
 
-	/** Reset everything stored in this config file. */
+	/** Reset everything stored in this ini file. */
 	void	clear();
 
 	bool	loadFromFile(const String &filename);
@@ -126,14 +121,6 @@ private:
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;
 };
-
-/*
-- ConfigMan owns a config file
-- allow direct access to that config file (for the launcher)
-- simplify and unify the regular ConfigMan API in exchange
-
-
-*/
 
 } // End of namespace Common
 
