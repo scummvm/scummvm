@@ -132,7 +132,7 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 	if (yRadius == 0)
 		yRadius ++;
 
-	/* check for an ellipse with negligable x and y radius */
+	// Check for an ellipse with negligable x and y radius.
 	if ((xRadius <= 1) && (yRadius <= 1)) 
 	{
 		*(byte *)_scrolls.getBasePtr(x, y) = color;
@@ -141,11 +141,11 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 		return endPoint;
 	}
 
-	/* check if valid angles */
+	// Check if valid angles.
 	stAngle = stAngle % 361;
 	endAngle = endAngle % 361;
 
-	/* if impossible angles then swap them! */
+	// If impossible angles, then swap them! 
 	if (endAngle < stAngle) 
 	{
 		uint16 tmpAngle=endAngle;
@@ -153,20 +153,18 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 		stAngle=tmpAngle;
 	}
 
-	/* approximate the number of pixels required by using the circumference */
-	/* equation of an ellipse.                                              */
+	// Approximate the number of pixels required by using the circumference equation of an ellipse.                                              
 	uint16 numOfPixels=floor(sqrt(3.0)*sqrt(pow(double(xRadius), 2)+pow(double(yRadius), 2)) + 0.5);
 
-	/* Calculate the angle precision required */
+	// Calculate the angle precision required.
 	double delta = 90.0 / numOfPixels;
 
-	/* Always just go over the first 90 degrees. Could be optimized a   */
-	/* bit if startAngle and endAngle lie in the same quadrant, left as an */
-	/* exercise for the reader :) (JM)                                  */
+	// Always just go over the first 90 degrees. Could be optimized a   
+	// bit if startAngle and endAngle lie in the same quadrant, left as an 
+	// exercise for the reader. :)                             
 	double j = 0;
 
-	/* calculate stop position, go 1 further than 90 because otherwise */
-	/* 1 pixel is sometimes not drawn (JM)                             */
+	// Calculate stop position, go 1 further than 90 because otherwise 1 pixel is sometimes not drawn.                            
 	uint16 deltaEnd = 91;
 
 	// Set the end point.
@@ -174,15 +172,15 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 	endPoint.x = floor(xRadius * cos(tempTerm) + 0.5) + x;
 	endPoint.y = floor(yRadius * sin(tempTerm + pi) + 0.5) + y;
 
-	/* Calculate points */
+	// Calculate points. 
 	int16 xNext = xRadius;
 	int16 yNext = 0;
 	do {
 		int16 xTemp = xNext;
 		int16 yTemp = yNext;
-		/* this is used by both sin and cos */
+		// This is used by both sin and cos.
 		double tempTerm = (j+delta)*convfac;
-		/* Calculate points */
+		
 		xNext = floor(xRadius*cos(tempTerm) + 0.5);
 		yNext = floor(yRadius*sin(tempTerm + pi) + 0.5);
 
@@ -190,16 +188,14 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 		int16 xm = x - xTemp;
 		int16 yp = y + yTemp;
 		int16 ym = y - yTemp;
+
 		if ((j >= stAngle) && (j <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xp,yp) = color;
-		
-		if (((180-j) >= stAngle) && ((180-j) <= endAngle)) 
+		else if (((180-j) >= stAngle) && ((180-j) <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xm,yp) = color;
-		
-		if (((j+180) >= stAngle) && ((j+180) <= endAngle)) 
+		else if (((j+180) >= stAngle) && ((j+180) <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xm,ym) = color;
-		
-		if (((360-j) >= stAngle) && ((360-j) <= endAngle)) 
+		else if (((360-j) >= stAngle) && ((360-j) <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xp,ym) = color;
 		
 		j += delta;
