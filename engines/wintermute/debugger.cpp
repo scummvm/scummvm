@@ -289,7 +289,8 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 
 bool Console::Cmd_SetType(int argc, const char **argv) {
 	if (argc == 3) {
-		ADAPTER->setType(argv[1], atoi(argv[2]));
+		Common::String type = Common::String(argv[2]);
+		ADAPTER->setType(Common::String(argv[1]), type);
 		// TODO: Sanity check
 	} else {
 		DebugPrintf("Usage ... ");

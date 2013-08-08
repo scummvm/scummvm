@@ -392,17 +392,43 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 }
 
 
-int DebuggerAdapter::setType(const char *name, int type) {
-	// TODO: Less sucky way to pass types
+int DebuggerAdapter::setType(const Common::String &name, Common::String &type) {
+
+	type.trim();
 
 	if (!_lastScript) {
 		return NOT_ALLOWED;
 	}
-	ScValue *var = _lastScript->getVar(name);
-	TValType ttype = (TValType)type;
-	var->setType(ttype);
-	return 0;
 
+	ScValue *var = _lastScript->getVar(name.c_str());
+
+	if (type == "VAL_NULL") {
+		var->setType(VAL_NULL);
+		return OK;
+	} else if (type == "VAL_STRING") {
+		var->setType(VAL_STRING);
+		return OK;
+	} else if (type == "VAL_INT") {
+		var->setType(VAL_INT);
+		return OK;
+	} else if (type == "VAL_BOOL") {
+		var->setType(VAL_BOOL);
+		return OK;
+	} else if (type == "VAL_FLOAT") {
+		var->setType(VAL_FLOAT);
+		return OK;
+	} else if (type == "VAL_OBJECT") {
+		var->setType(VAL_OBJECT);
+		return OK;
+	} else if (type == "VAL_NATIVE") {
+		var->setType(VAL_NATIVE);
+		return OK;
+	} else if (type == "VAL_VARIABLE_REF") {
+		var->setType(VAL_VARIABLE_REF);
+		return OK;
+	}
+
+	return PARSE_ERROR;
 }
 
 int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue *&var) {
