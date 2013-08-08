@@ -211,7 +211,6 @@ bool ScEngine::addBreakpoint(const char *filename, int line) {
 	breakpoint._line = (line);
 	breakpoint._hits = 0;
 	_breakpoints.add(breakpoint);
-	// refreshBreakpoints();
 	return 1;
 }
 
@@ -234,25 +233,25 @@ bool ScEngine::disableBreakpoint(uint id) {
 }
 
 int ScEngine::incrementWatch(uint id) {
-	// TODO: Check if existing
-	_watchlist[id]._hits = 0;
+	if (id >= _watchlist.size()) return 0;
+	_watchlist[id]._hits = _watchlist[id]._hits + 1;
 	return 0;
 }
 
 int ScEngine::incrementBreakpoint(uint id) {
-	// TODO: Check if existing
-	_breakpoints[id]._hits = 0;
+	if (id >= _breakpoints.size()) return 0;
+	_breakpoints[id]._hits = _breakpoints[id]._hits + 1;
 	return 0;
 }
 
 int ScEngine::resetWatch(uint id) {
-	// TODO: Check if existing
+	if (id >= _watchlist.size()) return 0;
 	_watchlist[id]._hits = 0;
 	return 0;
 }
 
 int ScEngine::resetBreakpoint(uint id) {
-	// TODO: Check if existing
+	if (id >= _breakpoints.size()) return 0;
 	_breakpoints[id]._hits = 0;
 	return 0;
 }
