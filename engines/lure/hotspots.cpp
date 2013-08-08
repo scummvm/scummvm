@@ -260,8 +260,10 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	_anim = NULL;
 	_numFrames = 0;
 	_frameNumber = 0;
-	if (!newRecord) return;
-	if (!disk.exists(newRecord->animId)) return;
+	if (!newRecord)
+		return;
+	if (!disk.exists(newRecord->animId))
+		return;
 
 	// Scan for any size overrides - some animations get their size set after decoding, but
 	// we want it in advance so we can decode the animation straight to a graphic surface
@@ -516,7 +518,8 @@ void Hotspot::endAction() {
 }
 
 void Hotspot::setDirection(Direction dir) {
-	if ((_numFrames == 0) || (_direction == dir)) return;
+	if ((_numFrames == 0) || (_direction == dir))
+		return;
 	uint8 newFrameNumber = 0;
 
 	switch (dir) {
@@ -634,7 +637,8 @@ void Hotspot::setOccupied(bool occupiedFlag) {
 	if (xp < 0) {
 		xp = -xp;
 		widthVal -= xp;
-		if (widthVal <= 0) return;
+		if (widthVal <= 0)
+			return;
 		xp = 0;
 	}
 
@@ -642,7 +646,8 @@ void Hotspot::setOccupied(bool occupiedFlag) {
 	int x2 = xp + widthVal - ROOM_PATHS_WIDTH - 1;
 	if (x2 >= 0) {
 		widthVal -= (x2 + 1);
-		if (widthVal <= 0) return;
+		if (widthVal <= 0)
+			return;
 	}
 
 	RoomPathsData &paths = Resources::getReference().getRoom(_roomNumber)->paths;
@@ -656,14 +661,16 @@ void Hotspot::setOccupied(bool occupiedFlag) {
 // walks the character a single step in a sequence defined by the walking list
 
 bool Hotspot::walkingStep() {
-	if (_pathFinder.isEmpty())	return true;
+	if (_pathFinder.isEmpty())
+		return true;
 
 	// Check to see if the end of the next straight walking slice
 	if (_pathFinder.stepCtr() >= _pathFinder.top().numSteps()) {
 		// Move to next slice in walking sequence
 		_pathFinder.stepCtr() = 0;
 		_pathFinder.pop();
-		if (_pathFinder.isEmpty())	return true;
+		if (_pathFinder.isEmpty())
+			return true;
 	}
 
 	if (_pathFinder.stepCtr() == 0)
@@ -782,13 +789,15 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 	uint16 *v = (uint16 *) (msgData + READ_LE_UINT16(msgData + idx + sizeof(uint16)));
 	while ((idVal = READ_LE_UINT16(v)) != 0xffff) {
 		++v;
-		if (READ_LE_UINT16(v) == messageId) break;
+		if (READ_LE_UINT16(v) == messageId)
+			break;
 		++v;
 	}
 
 	// default response if a specific response not found
 
-	if (idVal == 0xffff) idVal = 0x8c4;
+	if (idVal == 0xffff)
+		idVal = 0x8c4;
 	debugC(ERROR_DETAILED, kLureDebugStrings, "Hotspot::showMessage idVal=%xh", idVal);
 
 	if (idVal == 0x76) {
@@ -826,7 +835,8 @@ void Hotspot::handleTalkDialog() {
 	Room &room = Room::getReference();
 
 	// Return if no talk dialog is necessary
-	if (_data->talkCountdown == 0) return;
+	if (_data->talkCountdown == 0)
+		return;
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk countdown = %d", _data->talkCountdown);
 
 	if (_data->talkCountdown == CONVERSE_COUNTDOWN_SIZE) {
@@ -933,7 +943,8 @@ static const uint16 validRoomExitHotspots[] = {0x2711, 0x2712, 0x2714, 0x2715, 0
 
 bool Hotspot::isRoomExit(uint16 id) {
 	for (const uint16 *p = &validRoomExitHotspots[0]; *p != 0; ++p)
-		if (*p == id) return true;
+		if (*p == id)
+			return true;
 	return false;
 }
 
@@ -1043,7 +1054,7 @@ BarPlaceResult Hotspot::getBarPlace() {
 		index = -1;
 		while (++index < NUM_SERVE_CUSTOMERS) {
 			if (barEntry.customers[index].hotspotId == 0)
-			break;
+				break;
 		}
 
 		if (index == NUM_SERVE_CUSTOMERS)
@@ -1391,7 +1402,8 @@ void Hotspot::doGet(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1409,7 +1421,8 @@ void Hotspot::doGet(HotspotData *hotspot) {
 	if (sequenceOffset != 0) {
 		uint16 execResult = Script::execute(sequenceOffset);
 
-		if (execResult == 1) return;
+		if (execResult == 1)
+			return;
 		else if (execResult != 0) {
 			showMessage(execResult);
 			return;
@@ -1432,7 +1445,8 @@ void Hotspot::doOperate(HotspotData *hotspot) {
 	Action action = currentActions().top().supportData().action();
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1467,7 +1481,8 @@ void Hotspot::doOpen(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1487,7 +1502,8 @@ void Hotspot::doOpen(HotspotData *hotspot) {
 	if (sequenceOffset != 0) {
 		sequenceOffset = Script::execute(sequenceOffset);
 
-		if (sequenceOffset == 1) return;
+		if (sequenceOffset == 1)
+			return;
 		if (sequenceOffset != 0) {
 			if (_exitCtr != 0)
 				_exitCtr = 4;
@@ -1522,7 +1538,8 @@ void Hotspot::doClose(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1575,7 +1592,8 @@ void Hotspot::doUse(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1616,7 +1634,8 @@ void Hotspot::doGive(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1662,7 +1681,8 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 		(hotspot->hotspotId != BLACKSMITH_ID))) {
 
 		HotspotPrecheckResult result = actionPrecheck(hotspot);
-		if (result == PC_WAIT) return;
+		if (result == PC_WAIT)
+			return;
 		else if (result != PC_EXECUTE) {
 			endAction();
 			return;
@@ -1706,7 +1726,8 @@ void Hotspot::doTell(HotspotData *hotspot) {
 	assert(character);
 
 	HotspotPrecheckResult hsResult = actionPrecheck(hotspot);
-	if (hsResult == PC_WAIT) return;
+	if (hsResult == PC_WAIT)
+		return;
 	else if (hsResult != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1800,7 +1821,8 @@ void Hotspot::doAsk(HotspotData *hotspot) {
 	_data->useHotspotId = usedId;
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1886,14 +1908,17 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 		HotspotData const &rec = **i;
 
 		if (rec.roomNumber == PLAYER_ID) {
-			if (numItems++ == 0) strcat(buffer, ": ");
-			else strcat(buffer, ", ");
+			if (numItems++ == 0)
+				strcat(buffer, ": ");
+			else
+				strcat(buffer, ", ");
 			strings.getString(rec.nameId, buffer + strlen(buffer));
 		}
 	}
 
 	// If there were no items, add in the word 'nothing'
-	if (numItems == 0) strcat(buffer, stringList.getString(S_INV_NOTHING));
+	if (numItems == 0)
+		strcat(buffer, stringList.getString(S_INV_NOTHING));
 
 	// If the player has money, add it in
 	uint16 numGroats = res.fieldList().numGroats();
@@ -1943,7 +1968,8 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1968,7 +1994,8 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 	sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, BRIBE);
 	if (sequenceOffset != 0) {
 		sequenceOffset = Script::execute(sequenceOffset);
-		if (sequenceOffset != 0) return;
+		if (sequenceOffset != 0)
+			return;
 	}
 
 	uint16 talkIndex = res.fieldList().getField(TALK_INDEX);
@@ -2004,7 +2031,8 @@ void Hotspot::doLockUnlock(HotspotData *hotspot) {
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -2156,7 +2184,8 @@ void Hotspot::npcTalkNpcToNpc(HotspotData *hotspot) {
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_WAIT) return;
+	if (result == PC_WAIT)
+		return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -2594,7 +2623,8 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 
 		if (h.characterMode() == CHARMODE_PLAYER_WAIT) {
 			h.updateMovement();
-			if (bumpedPlayer) return;
+			if (bumpedPlayer)
+				return;
 		} else {
 			// All other character modes
 			if (h.delayCtr() > 0) {
@@ -2691,7 +2721,8 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		res.pausedList().scan(h);
 
 		pfResult = pathFinder.process();
-		if (pfResult == PF_UNFINISHED) break;
+		if (pfResult == PF_UNFINISHED)
+			break;
 
 		debugC(ERROR_DETAILED, kLureDebugAnimations,
 			"pathFinder done: result = %d", pfResult);
@@ -2863,7 +2894,8 @@ void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
 	Room &room = Room::getReference();
 
 	RoomExitJoinData *rec = res.getExitJoin(h.hotspotId());
-	if (!rec) return;
+	if (!rec)
+		return;
 	RoomExitJoinStruct &rs = (rec->hotspots[0].hotspotId == h.hotspotId()) ?
 		rec->hotspots[0] : rec->hotspots[1];
 
@@ -3036,7 +3068,8 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		res.pausedList().scan(h);
 
 		pfResult = pathFinder.process();
-		if (pfResult == PF_UNFINISHED) break;
+		if (pfResult == PF_UNFINISHED)
+			break;
 
 		// Pathfinding is now complete
 		buffer = pathFinder.getDebugInfo();
@@ -3474,7 +3507,8 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 				showSelections |= (entry->descId & 0x3fff) != TALK_MAGIC_ID;
 			}
 
-			if ((entry->preSequenceId & 0x8000) != 0) break;
+			if ((entry->preSequenceId & 0x8000) != 0)
+				break;
 		}
 
 		if (showSelections && (numLines > 1)) {
@@ -3584,7 +3618,8 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character response pre id = %xh",
 				_talkResponse->preSequenceId);
 
-			if (!_talkResponse->preSequenceId) break;
+			if (!_talkResponse->preSequenceId)
+				break;
 			responseNumber = Script::execute(_talkResponse->preSequenceId);
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character response new response = %d",
 				responseNumber);
@@ -3680,9 +3715,12 @@ void HotspotTickHandlers::grubAnimHandler(Hotspot &h) {
 			character = ratpouch;
 	}
 
-	if (character->x() < 72) frameNumber = 0;
-	else if (character->x() < 172) frameNumber = 1;
-	else frameNumber = 2;
+	if (character->x() < 72)
+		frameNumber = 0;
+	else if (character->x() < 172)
+		frameNumber = 1;
+	else
+		frameNumber = 2;
 
 	h.setActionCtr(frameNumber);
 	h.setFrameNumber(frameNumber);
@@ -3782,7 +3820,8 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 				// Moving right
 				h.setPosition(h.x() + 2, h.y());
 				h.setActionCtr(h.actionCtr() + 1);
-				if (h.actionCtr() >= 6) h.setActionCtr(0);
+				if (h.actionCtr() >= 6)
+					h.setActionCtr(0);
 			}
 		} else {
 			// Stop the barman moving
@@ -4231,7 +4270,8 @@ PathFinderResult PathFinder::process() {
 
 		while (1) {
 			// Loop through to process cells in the given area
-			if (!returnFlag) _yCtr = 0;
+			if (!returnFlag)
+				_yCtr = 0;
 			while (returnFlag || (_yCtr < ROOM_PATHS_HEIGHT)) {
 				if (!returnFlag) _xCtr = 0;
 
@@ -4239,7 +4279,8 @@ PathFinderResult PathFinder::process() {
 					if (!returnFlag) {
 						processCell(&_layer[(_yChangeStart + _yCtr * _yChangeInc) * DECODED_PATHS_WIDTH +
 							(_xChangeStart + _xCtr * _xChangeInc)]);
-						if (breakFlag && (_countdownCtr <= 0)) return PF_UNFINISHED;
+						if (breakFlag && (_countdownCtr <= 0))
+							return PF_UNFINISHED;
 					} else {
 						returnFlag = false;
 					}
@@ -4249,7 +4290,8 @@ PathFinderResult PathFinder::process() {
 			}
 
 			// If the destination cell has been filled in, then break out of loop
-			if (*_pDest != 0) break;
+			if (*_pDest != 0)
+				break;
 
 			if (_cellPopulated) {
 				// At least one cell populated, so go repeat loop
@@ -4307,27 +4349,37 @@ PathFinderResult PathFinder::process() {
 			currDirection = NO_DIRECTION;
 			while (1) {
 				v = *pCurrent - 1;
-				if (v == 0) break;
+				if (v == 0)
+					break;
 
 				newDirection = NO_DIRECTION;
 				if (!altFlag && (currDirection != LEFT) && (currDirection != RIGHT)) {
 					// Standard order direction checking
-					if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
-					else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
-					else if (*(pCurrent + 1) == v) newDirection = LEFT;
-					else if (*(pCurrent - 1) == v) newDirection = RIGHT;
+					if (*(pCurrent - DECODED_PATHS_WIDTH) == v)
+						newDirection = DOWN;
+					else if (*(pCurrent + DECODED_PATHS_WIDTH) == v)
+						newDirection = UP;
+					else if (*(pCurrent + 1) == v)
+						newDirection = LEFT;
+					else if (*(pCurrent - 1) == v)
+						newDirection = RIGHT;
 				} else {
 					// Alternate order direction checking
-					if (*(pCurrent + 1) == v) newDirection = LEFT;
-					else if (*(pCurrent - 1) == v) newDirection = RIGHT;
-					else if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
-					else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
+					if (*(pCurrent + 1) == v)
+						newDirection = LEFT;
+					else if (*(pCurrent - 1) == v)
+						newDirection = RIGHT;
+					else if (*(pCurrent - DECODED_PATHS_WIDTH) == v)
+						newDirection = DOWN;
+					else if (*(pCurrent + DECODED_PATHS_WIDTH) == v)
+						newDirection = UP;
 				}
 				if (newDirection == NO_DIRECTION)
 					error("Path finding process failed");
 
 				// Process for the specified direction
-				if (newDirection != currDirection) add(newDirection, 0);
+				if (newDirection != currDirection)
+					add(newDirection, 0);
 
 				switch (newDirection) {
 				case UP:
@@ -4374,8 +4426,10 @@ PathFinderResult PathFinder::process() {
 	}
 
 	// Final Step
-	if (_xPos < 0) add(RIGHT, -_xPos);
-	else if (_xPos > 0) add(LEFT, _xPos);
+	if (_xPos < 0)
+		add(RIGHT, -_xPos);
+	else if (_xPos > 0)
+		add(LEFT, _xPos);
 
 	return result;
 }
@@ -4402,16 +4456,20 @@ void PathFinder::processCell(uint16 *p) {
 		// Check the surrounding cells (up,down,left,right) for values
 		// Up
 		vTemp = *(p - DECODED_PATHS_WIDTH);
-		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+		if ((vTemp != 0) && (vTemp < vMax))
+			vMax = vTemp;
 		// Down
 		vTemp = *(p + DECODED_PATHS_WIDTH);
-		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+		if ((vTemp != 0) && (vTemp < vMax))
+			vMax = vTemp;
 		// Left
 		vTemp = *(p - 1);
-		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+		if ((vTemp != 0) && (vTemp < vMax))
+			vMax = vTemp;
 		// Right
 		vTemp = *(p + 1);
-		if ((vTemp != 0) && (vTemp < vMax)) vMax = vTemp;
+		if ((vTemp != 0) && (vTemp < vMax))
+			vMax = vTemp;
 
 		if (vMax != 0xffff) {
 			// A surrounding cell with a value was found
@@ -4433,7 +4491,8 @@ void PathFinder::scanLine(int numScans, int changeAmount, uint16 *&pEnd, int &v)
 	for (int ctr = 1; ctr <= numScans; ++ctr) {
 		pTemp += changeAmount;
 		if ((*pTemp != 0) && (*pTemp != 0xffff)) {
-			if ((v < ctr) || ((v == ctr) && (*pTemp >= *pEnd))) return;
+			if ((v < ctr) || ((v == ctr) && (*pTemp >= *pEnd)))
+				return;
 			pEnd = pTemp;
 			v = ctr;
 			break;
@@ -4448,11 +4507,15 @@ void PathFinder::initVars() {
 	_destX = _hotspot->destX();
 	_destY = _hotspot->destY();
 
-	if (_destX < 10) _destX -= 50;
-	if (_destX >= FULL_SCREEN_WIDTH-10) _destX += 50;
+	if (_destX < 10)
+		_destX -= 50;
+	if (_destX >= FULL_SCREEN_WIDTH-10)
+		_destX += 50;
 
-	_xPos = 0; _yPos = 0;
-	_xDestPos = 0; _yDestPos = 0;
+	_xPos = 0;
+	_yPos = 0;
+	_xDestPos = 0;
+	_yDestPos = 0;
 
 	_xCurrent = _hotspot->x();
 	if (_xCurrent < 0) {
@@ -4622,7 +4685,8 @@ void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber,
 
 	if (h.hotspotId() == PLAYER_ID) {
 		// Room change code for the player
-		if (room.cursorState() != CS_NONE) return;
+		if (room.cursorState() != CS_NONE)
+			return;
 		PlayerNewPosition &p = fields.playerNewPos();
 
 		if (checkForIntersectingCharacter(h, newX, newY - 48, roomNumber)) {
@@ -4679,7 +4743,8 @@ bool Support::charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot
 
 bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
 	while (numEntries-- > 0)
-		if (*lst++ == charId) return true;
+		if (*lst++ == charId)
+			return true;
 	return false;
 }
 
