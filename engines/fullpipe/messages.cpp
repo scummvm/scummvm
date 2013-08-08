@@ -24,6 +24,7 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/modal.h"
 
 namespace Fullpipe {
 
@@ -104,9 +105,20 @@ void ExCommand::sendMessage() {
 	processMessages();
 }
 
+void ExCommand::handle() {
+	if (g_fullpipe->_modalObject) {
+		g_fullpipe->_modalObject->handleMessage(this);
+
+		delete this;
+	} else {
+		postMessage(this);
+	}
+}
+
 Message::Message() {
 	_messageKind = 0;
-	_parentId = 0;
+	_parentId = 0;		
+
 	_x = 0;
 	_y = 0;
 	_field_14 = 0;

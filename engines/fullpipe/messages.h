@@ -70,6 +70,7 @@ class ExCommand : public Message {
 
 	bool handleMessage();
 	void sendMessage();
+	void handle();
 };
 
 class CObjstateCommand : public CObject {

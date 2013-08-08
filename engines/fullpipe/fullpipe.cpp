@@ -58,6 +58,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_globalPalette = 0;
 
 	_updateTicks = 0;
+	_lastInputTicks = 0;
+	_lastButtonUpTicks = 0;
 
 	_currArchive = 0;
 
@@ -74,6 +76,10 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_gameContinue = true;
 	_needRestart = false;
 	_flgPlayIntro = false;
+	_gamePaused = false;
+	_inputArFlag = false;
+	_recordEvents = false;
+
 	_flgSavegameMenuRequested = false;
 
 	_isProcessingMessages = false;
@@ -180,26 +186,117 @@ Common::Error FullpipeEngine::run() {
 void FullpipeEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
+	ExCommand *ex;
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_keyState = event.kbd.keycode;
-			break;
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_SPACE:
+				if (_gamePaused) {
+					if (_modalObject) {
+						if (_modalObject->init(42)) {
+							_modalObject->update();
+						} else {
+							_modalObject->saveload();
+							CBaseModalObject *obj = _modalObject->_parentObj;
+							if (obj)
+								delete _modalObject;
+							_modalObject = obj;
+						}
+					} else {
+						_gameLoader->updateSystems(42);
+					}
+					return;
+				}
+
+				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+				ex->_keyCode = 32;
+				ex->_excFlags |= 3;
+				ex->handle();
+				break;
+			case Common::KEYCODE_s:
+				if (_gamePaused) {
+					_gamePaused = 0;
+					_flgSavegameMenuRequested = true;
+					return;
+				}
+
+				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+				ex->_keyCode = 83;
+				ex->_excFlags |= 3;
+				ex->handle();
+				break;
+			case Common::KEYCODE_q:
+				return;
+				break;
+			default:
+				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+				ex->_keyCode = event.kbd.keycode;
+				ex->_excFlags |= 3;
+				ex->handle();
+				break;
+			}
 		case Common::EVENT_KEYUP:
+			if (!_inputArFlag) {
+				ex = new ExCommand(0, 17, 37, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 3;
+				ex->handle();
+			}
 			_keyState = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+			if (_recordEvents) {
+				ex = new ExCommand(0, 17, 31, event.mouse.x, event.mouse.x, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 3;
+				ex->handle();
+			}
 			break;
 		case Common::EVENT_QUIT:
 			_gameContinue = false;
+			break;
+			case Common::EVENT_RBUTTONDOWN:
+			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
+				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.x, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 3;
+				_lastInputTicks = _updateTicks;
+				ex->handle();
+			}
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
+				ex = new ExCommand(0, 17, 29, event.mouse.x, event.mouse.x, 0, 1, 0, 0, 0);
+
+				ex->_sceneClickX = _sceneRect.left + ex->_x;
+				ex->_sceneClickY = _sceneRect.top + ex->_y;
+				ex->_keyCode = getGameLoaderInventory()->getSelectedItemId();
+				ex->_excFlags |= 3;
+				_lastInputTicks = _updateTicks;
+				ex->handle();
+			}
+			break;
+		case Common::EVENT_LBUTTONUP:
+			if (!_inputArFlag && (_updateTicks - _lastButtonUpTicks) >= 2) {
+				ex = new ExCommand(0, 17, 30, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 3;
+				_lastButtonUpTicks = _updateTicks;
+				ex->handle();
+			}
 			break;
 		default:
 			break;
 		}
 	}
+
+		
+#if 0
+	warning("STUB: FullpipeEngine::updateEvents() <mainWindowProc>");
+	if (Msg == MSG_SC11_SHOWSWING && _modalObject) {
+		_modalObject->method14();
+	}
+#endif
 }
 
 void FullpipeEngine::freeGameLoader() {

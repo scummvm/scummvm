@@ -100,6 +100,7 @@ class CInventory2 : public CInventory {
 	void rebuildItemRects();
 
 	Scene *getScene() { return _scene; }
+	int getSelectedItemId() { return _selectedId < 0 ? 0 : _selectedId; }
 
 	void draw();
 };

@@ -109,7 +109,10 @@ public:
 	bool _savesEnabled;
 	bool _updateFlag;
 	bool _flgCanOpenMap;
+	bool _gamePaused;
 	bool _flgSavegameMenuRequested;
+	bool _inputArFlag;
+	bool _recordEvents;
 
 	Common::Rect _sceneRect;
 	int _sceneWidth;
@@ -178,6 +181,8 @@ public:
 	CInventory2 *_inventory;
 
 	int32 _updateTicks;
+	int32 _lastInputTicks;
+	int32 _lastButtonUpTicks;
 
 	CBaseModalObject *_modalObject;
 
