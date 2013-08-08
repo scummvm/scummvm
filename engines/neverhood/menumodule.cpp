@@ -338,15 +338,15 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	};
 
 	static const NRect kMenuButtonCollisionBounds[] = {
-		NRect(52, 121, 110, 156),
-		NRect(52, 192, 109, 222),
-		NRect(60, 257, 119, 286),
-		NRect(67, 326, 120, 354),
-		NRect(70, 389, 128, 416),
-		NRect(523, 113, 580, 144),
-		NRect(525, 176, 577, 206),
-		NRect(527, 384, 580, 412),
-		NRect(522, 255, 580, 289)
+		{  52, 121, 110, 156 },
+		{  52, 192, 109, 222 },
+		{  60, 257, 119, 286 },
+		{  67, 326, 120, 354 },
+		{  70, 389, 128, 416 },
+		{ 523, 113, 580, 144 },
+		{ 525, 176, 577, 206 },
+		{ 527, 384, 580, 412 },
+		{ 522, 255, 580, 289 }
 	};
 
 	setBackground(0x08C0020C);
@@ -1026,17 +1026,17 @@ static const uint32 kSaveGameMenuButtonFileHashes[] = {
 };
 
 static const NRect kSaveGameMenuButtonCollisionBounds[] = {
-	NRect(518, 106, 602, 160),
-	NRect(516, 378, 596, 434),
-	NRect(394, 108, 458, 206),
-	NRect(400, 204, 458, 276),
-	NRect(398, 292, 456, 352),
-	NRect(396, 352, 460, 444)
+	{ 518, 106, 602, 160 },
+	{ 516, 378, 596, 434 },
+	{ 394, 108, 458, 206 },
+	{ 400, 204, 458, 276 },
+	{ 398, 292, 456, 352 },
+	{ 396, 352, 460, 444 }
 };
 
-static const NRect kSaveGameMenuListBoxRect(0, 0, 320, 272);
-static const NRect kSaveGameMenuTextEditRect(0, 0, 377, 17);
-static const NRect kSaveGameMenuMouseRect(50, 47, 427, 64);
+static const NRect kSaveGameMenuListBoxRect = { 0, 0, 320, 272 };
+static const NRect kSaveGameMenuTextEditRect = { 0, 0, 377, 17 };
+static const NRect kSaveGameMenuMouseRect = { 50, 47, 427, 64 };
 
 SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	:  GameStateMenu(vm, parentModule, savegameList, kSaveGameMenuButtonFileHashes, kSaveGameMenuButtonCollisionBounds,
@@ -1060,17 +1060,17 @@ static const uint32 kLoadGameMenuButtonFileHashes[] = {
 };
 
 static const NRect kLoadGameMenuButtonCollisionBounds[] = {
-	NRect( 44, 115, 108, 147),
-	NRect( 52, 396, 112, 426),
-	NRect(188, 116, 245, 196),
-	NRect(189, 209, 239, 269),
-	NRect(187, 301, 233, 349),
-	NRect(182, 358, 241, 433)
+	{  44, 115, 108, 147 },
+	{  52, 396, 112, 426 },
+	{ 188, 116, 245, 196 },
+	{ 189, 209, 239, 269 },
+	{ 187, 301, 233, 349 },
+	{ 182, 358, 241, 433 }
 };
 
-static const NRect kLoadGameMenuListBoxRect(0, 0, 320, 271);
-static const NRect kLoadGameMenuTextEditRect(0, 0, 320, 17);
-static const NRect kLoadGameMenuMouseRect(263, 48, 583, 65);
+static const NRect kLoadGameMenuListBoxRect = { 0, 0, 320, 271 };
+static const NRect kLoadGameMenuTextEditRect = { 0, 0, 320, 17 };
+static const NRect kLoadGameMenuMouseRect = { 263, 48, 583, 65 };
 
 LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: GameStateMenu(vm, parentModule, savegameList, kLoadGameMenuButtonFileHashes, kLoadGameMenuButtonCollisionBounds,
@@ -1093,16 +1093,16 @@ static const uint32 kDeleteGameMenuButtonFileHashes[] = {
 };
 
 static const NRect kDeleteGameMenuButtonCollisionBounds[] = {
-	NRect(518,  46, 595,  91),
-	NRect(524, 322, 599, 369),
-	NRect(395,  40, 462, 127),
-	NRect(405, 126, 460, 185),
-	NRect(397, 205, 456, 273),
-	NRect(395, 278, 452, 372)
+	{ 518,  46, 595,  91 },
+	{ 524, 322, 599, 369 },
+	{ 395,  40, 462, 127 },
+	{ 405, 126, 460, 185 },
+	{ 397, 205, 456, 273 },
+	{ 395, 278, 452, 372 }
 };
 
-static const NRect kDeleteGameMenuListBoxRect(0, 0, 320, 271);
-static const NRect kDeleteGameMenuTextEditRect(0, 0, 320, 17);
+static const NRect kDeleteGameMenuListBoxRect = { 0, 0, 320, 271 };
+static const NRect kDeleteGameMenuTextEditRect = { 0, 0, 320, 17 };
 
 DeleteGameMenu::DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: GameStateMenu(vm, parentModule, savegameList, kDeleteGameMenuButtonFileHashes, kDeleteGameMenuButtonCollisionBounds,
@@ -1128,8 +1128,8 @@ QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule
 	};
 
 	static const NRect kQueryOverwriteMenuCollisionBounds[] = {
-		NRect(145, 334, 260, 385),
-		NRect(365, 340, 477, 388)
+		{ 145, 334, 260, 385 },
+		{ 365, 340, 477, 388 }
 	};
 
 	setBackground(0x043692C4);

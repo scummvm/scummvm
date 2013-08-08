@@ -43,9 +43,11 @@ struct NDimensions {
 struct NRect {
 	int16 x1, y1, x2, y2;
 
-	NRect() : x1(0), y1(0), x2(0), y2(0) {}
-
-	NRect(int16 x01, int16 y01, int16 x02, int16 y02) : x1(x01), y1(y01), x2(x02), y2(y02) {}
+    static NRect make(int16 x01, int16 y01, int16 x02, int16 y02) {
+        NRect r;
+        r.set(x01, y01, x02, y02);
+		return r;
+    }
 
 	void set(int16 x01, int16 y01, int16 x02, int16 y02) {
 		x1 = x01;
