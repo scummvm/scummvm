@@ -162,7 +162,8 @@ public:
 	bool				hasMiscDomain(const String &domName) const;
 
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
-	DomainMap &			getGameDomains() { return _gameDomains; }
+	DomainMap::iterator beginGameDomains() { return _gameDomains.begin(); }
+	DomainMap::iterator endGameDomains() { return _gameDomains.end(); }
 
 	static void			defragment();	// move in memory to reduce fragmentation
 	void 				copyFrom(ConfigManager &source);
