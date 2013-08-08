@@ -247,7 +247,7 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 			g = palette[pixels[y * w + x] * 3 + 1];
 			b = palette[pixels[y * w + x] * 3 + 2];
 
-			*((uint16 *)screen.getBasePtr(y, x)) = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+			*((uint16 *)screen.getBasePtr(x, y)) = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
 
