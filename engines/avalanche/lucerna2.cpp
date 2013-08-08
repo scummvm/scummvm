@@ -1082,24 +1082,77 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 
 
 
-void Lucerna::calchand(uint16 ang, uint16 length, /*arccoordstype &a,*/ byte c) {
-	warning("STUB: Lucerna::calchand()");
+void Lucerna::calchand(uint16 ang, uint16 length, Common::Point &a, byte c) {
+	if (ang > 900) {
+		a.x = 177;
+		return;
+	}
+
+	a = _vm->_graphics->drawArc(_vm->_graphics->_surface, xm, ym, 449 - ang, 450 - ang, length, c);
 }
 
-void Lucerna::hand(/*arccoordstype a,*/ byte c) {
-	warning("STUB: Lucerna::hand()");
+void Lucerna::hand(const Common::Point &a, byte c) {
+	if (a.x == 177)
+		return;
+
+	_vm->_graphics->_surface.drawLine(xm, ym, a.x, a.y, c);
+}
+
+void Lucerna::refresh_hands() {
+	const bytefield clockspace = {61, 166, 66, 200};
+
+	for (byte page_ = 0; page_ < 2; page_++)
+		_vm->_trip->getset[page_].remember(clockspace);
+}
+
+void Lucerna::plothands() {
+	/*   off;*/
+	//setactivepage(3);
+	calchand(_vm->_gyro->onh, 14, ah, yellow);
+	calchand(_vm->_gyro->om * 6, 17, am, yellow);
+	hand(ah, brown);
+	hand(am, brown);
+
+	calchand(nh, 14, ah, brown);
+	calchand(_vm->_gyro->m * 6, 17, am, brown);
+	hand(ah, yellow);
+	hand(am, yellow);
+
+	//setactivepage(1 - cp);
+
+	refresh_hands();
+
+	/*   on;*/
 }
 
 void Lucerna::chime() {
 	warning("STUB: Lucerna::chime()");
 }
 
-void Lucerna::plothands() {
-	warning("STUB: Lucerna::plothands()");
-}
-
 void Lucerna::clock_lucerna() {
-	warning("STUB: Lucerna::clock_lucerna()");
+	/* ...Clock. */
+	TimeDate t;
+	_vm->_system->getTimeAndDate(t);
+	_vm->_gyro->h = t.tm_hour;
+	_vm->_gyro->m = t.tm_min;
+	_vm->_gyro->s = t.tm_sec;
+
+	nh = (_vm->_gyro->h % 12) * 30 + _vm->_gyro->m / 2;
+
+	if (_vm->_gyro->oh != _vm->_gyro->h)  {
+		plothands();
+		chime();
+	}
+
+	if (_vm->_gyro->om != _vm->_gyro->m)
+		plothands();
+
+	if ((_vm->_gyro->h == 0) && (_vm->_gyro->oh != 0) && (_vm->_gyro->oh != 17717))
+		_vm->_scrolls->display(Common::String("Good morning!") + 13 + 13 + "Yes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!");
+	
+	_vm->_gyro->oh = _vm->_gyro->h;
+	_vm->_gyro->onh = nh;
+	_vm->_gyro->om = _vm->_gyro->m;
 }
 
 

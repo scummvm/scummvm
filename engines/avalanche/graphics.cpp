@@ -119,7 +119,8 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 			}
 }
 
-void Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
+Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
+	Common::Point endPoint;
 	const double pi = 3.14;
 	const double convfac = pi / 180.0;
 
@@ -134,8 +135,10 @@ void Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int
 	/* check for an ellipse with negligable x and y radius */
 	if ((xRadius <= 1) && (yRadius <= 1)) 
 	{
-		*(byte *)_scrolls.getBasePtr(x,y) = color;
-		return;
+		*(byte *)_scrolls.getBasePtr(x, y) = color;
+		endPoint.x = x;
+		endPoint.y = y;
+		return endPoint;
 	}
 
 	/* check if valid angles */
@@ -152,7 +155,7 @@ void Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int
 
 	/* approximate the number of pixels required by using the circumference */
 	/* equation of an ellipse.                                              */
-	uint16 numOfPixels=floor(sqrt(3.0)*sqrt(pow(float(xRadius), 2)+pow(float(yRadius), 2)) + 0.5);
+	uint16 numOfPixels=floor(sqrt(3.0)*sqrt(pow(double(xRadius), 2)+pow(double(yRadius), 2)) + 0.5);
 
 	/* Calculate the angle precision required */
 	double delta = 90.0 / numOfPixels;
@@ -165,6 +168,11 @@ void Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int
 	/* calculate stop position, go 1 further than 90 because otherwise */
 	/* 1 pixel is sometimes not drawn (JM)                             */
 	uint16 deltaEnd = 91;
+
+	// Set the end point.
+	double tempTerm = endAngle * convfac;
+	endPoint.x = floor(xRadius * cos(tempTerm) + 0.5) + x;
+	endPoint.y = floor(yRadius * sin(tempTerm + pi) + 0.5) + y;
 
 	/* Calculate points */
 	int16 xNext = xRadius;
@@ -196,6 +204,8 @@ void Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int
 		
 		j += delta;
 	} while (j <= deltaEnd);
+
+	return endPoint;
 }
 
 void Graphics::drawPieSlice(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {

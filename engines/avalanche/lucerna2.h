@@ -125,7 +125,7 @@ private:
 	//Clock
 	static const int16 xm = 510;
 	static const int16 ym = 183;
-	//arccoordstype ah, am; http://www.freepascal.org/docs-html/rtl/graph/arccoordstype.html
+	Common::Point ah, am;
 	uint16 nh;
 
 
@@ -159,11 +159,11 @@ private:
 	void fadein(byte n);
 
 	// clock_lucerna
-	void calchand(uint16 ang, uint16 length,/* arccoordstype &a,*/ byte c);
-	void hand(/*arccoordstype a,*/ byte c);
-	void chime();
+	void calchand(uint16 ang, uint16 length, Common::Point &a, byte c);
+	void hand(const Common::Point &a, byte c);
 	void refresh_hands();
 	void plothands();
+	void chime();
 
 };
 
