@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef COMMON_CONFIG_FILE_H
-#define COMMON_CONFIG_FILE_H
+#ifndef COMMON_INI_FILE_H
+#define COMMON_INI_FILE_H
 
 #include "common/hash-str.h"
 #include "common/list.h"
@@ -50,7 +50,7 @@ class WriteStream;
  * If you need fast access to the game config, use higher level APIs, like the
  * one provided by ConfigManager.
  */
-class ConfigFile {
+class INIFile {
 public:
 	struct KeyValue {
 		String key;
@@ -60,12 +60,12 @@ public:
 
 	typedef List<KeyValue> SectionKeyList;
 
-	/** A section in a config file. I.e. corresponds to something like this:
+	/** A section in a ini file. I.e. corresponds to something like this:
 	 *   [mySection]
 	 *   key=value
 	 *
 	 * Comments are also stored, to keep users happy who like editing their
-	 * config files manually.
+	 * ini files manually.
 	 */
 	struct Section {
 		String name;
@@ -82,8 +82,8 @@ public:
 	typedef List<Section> SectionList;
 
 public:
-	ConfigFile();
-	~ConfigFile();
+	INIFile();
+	~INIFile();
 
 	// TODO: Maybe add a copy constructor etc.?
 
@@ -95,7 +95,7 @@ public:
 	 */
 	static bool isValidName(const String &name);
 
-	/** Reset everything stored in this config file. */
+	/** Reset everything stored in this ini file. */
 	void	clear();
 
 	bool	loadFromFile(const String &filename);

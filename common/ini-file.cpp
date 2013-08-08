@@ -20,7 +20,7 @@
  *
  */
 
-#include "common/config-file.h"
+#include "common/ini-file.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -28,24 +28,24 @@
 
 namespace Common {
 
-bool ConfigFile::isValidName(const String &name) {
+bool INIFile::isValidName(const String &name) {
 	const char *p = name.c_str();
 	while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.'))
 		p++;
 	return *p == 0;
 }
 
-ConfigFile::ConfigFile() {
+INIFile::INIFile() {
 }
 
-ConfigFile::~ConfigFile() {
+INIFile::~INIFile() {
 }
 
-void ConfigFile::clear() {
+void INIFile::clear() {
 	_sections.clear();
 }
 
-bool ConfigFile::loadFromFile(const String &filename) {
+bool INIFile::loadFromFile(const String &filename) {
 	File file;
 	if (file.open(filename))
 		return loadFromStream(file);
@@ -53,7 +53,7 @@ bool ConfigFile::loadFromFile(const String &filename) {
 		return false;
 }
 
-bool ConfigFile::loadFromSaveFile(const char *filename) {
+bool INIFile::loadFromSaveFile(const char *filename) {
 	assert(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SeekableReadStream *loadFile;
@@ -67,7 +67,7 @@ bool ConfigFile::loadFromSaveFile(const char *filename) {
 	return status;
 }
 
-bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
+bool INIFile::loadFromStream(SeekableReadStream &stream) {
 	Section section;
 	KeyValue kv;
 	String comment;
@@ -112,9 +112,9 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 				p++;
 
 			if (*p == '\0')
-				error("ConfigFile::loadFromStream: missing ] in line %d", lineno);
+				error("INIFile::loadFromStream: missing ] in line %d", lineno);
 			else if (*p != ']')
-				error("ConfigFile::loadFromStream: Invalid character '%c' occurred in section name in line %d", *p, lineno);
+				error("INIFile::loadFromStream: Invalid character '%c' occurred in section name in line %d", *p, lineno);
 
 			// Previous section is finished now, store it.
 			if (!section.name.empty())
@@ -140,7 +140,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 
 			// If no section has been set, this config file is invalid!
 			if (section.name.empty()) {
-				error("ConfigFile::loadFromStream: Key/value pair found outside a section in line %d", lineno);
+				error("INIFile::loadFromStream: Key/value pair found outside a section in line %d", lineno);
 			}
 
 			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
@@ -173,7 +173,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 	return (!stream.err() || stream.eos());
 }
 
-bool ConfigFile::saveToFile(const String &filename) {
+bool INIFile::saveToFile(const String &filename) {
 	DumpFile file;
 	if (file.open(filename))
 		return saveToStream(file);
@@ -181,7 +181,7 @@ bool ConfigFile::saveToFile(const String &filename) {
 		return false;
 }
 
-bool ConfigFile::saveToSaveFile(const char *filename) {
+bool INIFile::saveToSaveFile(const char *filename) {
 	assert(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	WriteStream *saveFile;
@@ -195,7 +195,7 @@ bool ConfigFile::saveToSaveFile(const char *filename) {
 	return status;
 }
 
-bool ConfigFile::saveToStream(WriteStream &stream) {
+bool INIFile::saveToStream(WriteStream &stream) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		// Write out the section comment, if any
 		if (! i->comment.empty()) {
@@ -226,7 +226,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 	return !stream.err();
 }
 
-void ConfigFile::addSection(const String &section) {
+void INIFile::addSection(const String &section) {
 	Section *s = getSection(section);
 	if (s)
 		return;
@@ -236,7 +236,7 @@ void ConfigFile::addSection(const String &section) {
 	_sections.push_back(newSection);
 }
 
-void ConfigFile::removeSection(const String &section) {
+void INIFile::removeSection(const String &section) {
 	assert(isValidName(section));
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		if (section.equalsIgnoreCase(i->name)) {
@@ -246,13 +246,13 @@ void ConfigFile::removeSection(const String &section) {
 	}
 }
 
-bool ConfigFile::hasSection(const String &section) const {
+bool INIFile::hasSection(const String &section) const {
 	assert(isValidName(section));
 	const Section *s = getSection(section);
 	return s != 0;
 }
 
-void ConfigFile::renameSection(const String &oldName, const String &newName) {
+void INIFile::renameSection(const String &oldName, const String &newName) {
 	assert(isValidName(oldName));
 	assert(isValidName(newName));
 
@@ -262,7 +262,7 @@ void ConfigFile::renameSection(const String &oldName, const String &newName) {
 		// HACK: For now we just print a warning, for more info see the TODO
 		// below.
 		if (ns)
-			warning("ConfigFile::renameSection: Section name \"%s\" already used", newName.c_str());
+			warning("INIFile::renameSection: Section name \"%s\" already used", newName.c_str());
 		else
 			os->name = newName;
 	}
@@ -274,7 +274,7 @@ void ConfigFile::renameSection(const String &oldName, const String &newName) {
 }
 
 
-bool ConfigFile::hasKey(const String &key, const String &section) const {
+bool INIFile::hasKey(const String &key, const String &section) const {
 	assert(isValidName(key));
 	assert(isValidName(section));
 
@@ -284,7 +284,7 @@ bool ConfigFile::hasKey(const String &key, const String &section) const {
 	return s->hasKey(key);
 }
 
-void ConfigFile::removeKey(const String &key, const String &section) {
+void INIFile::removeKey(const String &key, const String &section) {
 	assert(isValidName(key));
 	assert(isValidName(section));
 
@@ -293,7 +293,7 @@ void ConfigFile::removeKey(const String &key, const String &section) {
 		 s->removeKey(key);
 }
 
-bool ConfigFile::getKey(const String &key, const String &section, String &value) const {
+bool INIFile::getKey(const String &key, const String &section, String &value) const {
 	assert(isValidName(key));
 	assert(isValidName(section));
 
@@ -307,7 +307,7 @@ bool ConfigFile::getKey(const String &key, const String &section, String &value)
 	return true;
 }
 
-void ConfigFile::setKey(const String &key, const String &section, const String &value) {
+void INIFile::setKey(const String &key, const String &section, const String &value) {
 	assert(isValidName(key));
 	assert(isValidName(section));
 	// TODO: Verify that value is valid, too. In particular, it shouldn't
@@ -329,13 +329,13 @@ void ConfigFile::setKey(const String &key, const String &section, const String &
 	}
 }
 
-const ConfigFile::SectionKeyList ConfigFile::getKeys(const String &section) const {
+const INIFile::SectionKeyList INIFile::getKeys(const String &section) const {
 	const Section *s = getSection(section);
 
 	return s->getKeys();
 }
 
-ConfigFile::Section *ConfigFile::getSection(const String &section) {
+INIFile::Section *INIFile::getSection(const String &section) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		if (section.equalsIgnoreCase(i->name)) {
 			return &(*i);
@@ -344,7 +344,7 @@ ConfigFile::Section *ConfigFile::getSection(const String &section) {
 	return 0;
 }
 
-const ConfigFile::Section *ConfigFile::getSection(const String &section) const {
+const INIFile::Section *INIFile::getSection(const String &section) const {
 	for (List<Section>::const_iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		if (section.equalsIgnoreCase(i->name)) {
 			return &(*i);
@@ -353,11 +353,11 @@ const ConfigFile::Section *ConfigFile::getSection(const String &section) const {
 	return 0;
 }
 
-bool ConfigFile::Section::hasKey(const String &key) const {
+bool INIFile::Section::hasKey(const String &key) const {
 	return getKey(key) != 0;
 }
 
-const ConfigFile::KeyValue* ConfigFile::Section::getKey(const String &key) const {
+const INIFile::KeyValue* INIFile::Section::getKey(const String &key) const {
 	for (List<KeyValue>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (key.equalsIgnoreCase(i->key)) {
 			return &(*i);
@@ -366,7 +366,7 @@ const ConfigFile::KeyValue* ConfigFile::Section::getKey(const String &key) const
 	return 0;
 }
 
-void ConfigFile::Section::setKey(const String &key, const String &value) {
+void INIFile::Section::setKey(const String &key, const String &value) {
 	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (key.equalsIgnoreCase(i->key)) {
 			i->value = value;
@@ -380,7 +380,7 @@ void ConfigFile::Section::setKey(const String &key, const String &value) {
 	keys.push_back(newKV);
 }
 
-void ConfigFile::Section::removeKey(const String &key) {
+void INIFile::Section::removeKey(const String &key) {
 	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (key.equalsIgnoreCase(i->key)) {
 			keys.erase(i);

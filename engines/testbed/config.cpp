@@ -213,22 +213,22 @@ void TestbedConfigManager::parseConfigFile() {
 		return;
 	}
 	_configFileInterface.loadFromStream(*rs);
-	Common::ConfigFile::SectionList sections = _configFileInterface.getSections();
+	Common::INIFile::SectionList sections = _configFileInterface.getSections();
 	Testsuite *currTS = 0;
 
-	for (Common::ConfigFile::SectionList::const_iterator i = sections.begin(); i != sections.end(); i++) {
+	for (Common::INIFile::SectionList::const_iterator i = sections.begin(); i != sections.end(); i++) {
 		if (i->name.equalsIgnoreCase("Global")) {
 			// Global params may be directly queried, ignore them
 		} else {
 			// A testsuite, process it.
 			currTS = getTestsuiteByName(i->name);
-			Common::ConfigFile::SectionKeyList kList = i->getKeys();
+			Common::INIFile::SectionKeyList kList = i->getKeys();
 			if (!currTS) {
 				Testsuite::logPrintf("Warning! Error in config: Testsuite %s not found\n", i->name.c_str());
 				continue;
 			}
 
-			for (Common::ConfigFile::SectionKeyList::const_iterator j = kList.begin(); j != kList.end(); j++) {
+			for (Common::INIFile::SectionKeyList::const_iterator j = kList.begin(); j != kList.end(); j++) {
 				if (j->key.equalsIgnoreCase("this")) {
 					currTS->enable(stringToBool(j->value));
 				} else {
