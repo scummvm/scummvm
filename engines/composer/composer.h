@@ -23,7 +23,7 @@
 #ifndef COMPOSER_H
 #define COMPOSER_H
 
-#include "common/config-file.h"
+#include "common/ini-file.h"
 #include "common/random.h"
 #include "common/system.h"
 #include "common/debug.h"
@@ -174,7 +174,7 @@ private:
 	Common::List<Sprite> _sprites;
 
 	uint _directoriesToStrip;
-	Common::ConfigFile _bookIni;
+	Common::INIFile _bookIni;
 	Common::String _bookGroup;
 	Common::List<Library> _libraries;
 	Common::Array<PendingPageChange> _pendingPageChanges;

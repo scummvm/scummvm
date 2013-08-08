@@ -33,7 +33,7 @@ public:
 	bool call(uint callId, const Common::Array<LBValue> &params, LBValue &result);
 
 protected:
-	Common::ConfigFile _dataFile;
+	Common::INIFile _dataFile;
 	Common::String _curSection;
 
 	void open(const Common::String &filename);
@@ -77,8 +77,8 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 	case kLBXDataFileGetSectionList:
 		{
 		Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
-		Common::ConfigFile::SectionList sections = _dataFile.getSections();
-		for (Common::List<Common::ConfigFile::Section>::const_iterator i = sections.begin(); i != sections.end(); ++i)
+		Common::INIFile::SectionList sections = _dataFile.getSections();
+		for (Common::List<Common::INIFile::Section>::const_iterator i = sections.begin(); i != sections.end(); ++i)
 			list->array.push_back(LBValue(i->name));
 		result = LBValue(list);
 		}
@@ -103,8 +103,8 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 			error("incorrect number of parameters (%d) to LBXDataFile::loadCurSectionVars", params.size());
 
 		{
-		const Common::ConfigFile::SectionKeyList globals = _dataFile.getKeys(_curSection);
-		for (Common::ConfigFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
+		const Common::INIFile::SectionKeyList globals = _dataFile.getKeys(_curSection);
+		for (Common::INIFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
 			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
 			LBCode tempCode(_vm, 0);
 			uint offset = tempCode.parseCode(command);

@@ -24,7 +24,6 @@
 #define COMMON_CONFIG_MANAGER_H
 
 #include "common/array.h"
-//#include "common/config-file.h"
 #include "common/hashmap.h"
 #include "common/singleton.h"
 #include "common/str.h"
