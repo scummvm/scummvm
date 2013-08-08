@@ -31,6 +31,7 @@ public class ScummVMEvents implements
 	public static final int JE_RMB_DOWN = 11;
 	public static final int JE_RMB_UP = 12;
 	public static final int JE_MOUSE_MOVE = 13;
+	public static final int JE_GAMEPAD = 14;
 	public static final int JE_QUIT = 0x1000;
 
 	final protected Context _context;
@@ -174,6 +175,25 @@ public class ScummVMEvents implements
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 		case KeyEvent.KEYCODE_DPAD_CENTER:
 			_scummvm.pushEvent(JE_DPAD, action, keyCode,
+								(int)(e.getEventTime() - e.getDownTime()),
+								e.getRepeatCount(), 0);
+			return true;
+		case KeyEvent.KEYCODE_BUTTON_A:
+		case KeyEvent.KEYCODE_BUTTON_B:
+		case KeyEvent.KEYCODE_BUTTON_C:
+		case KeyEvent.KEYCODE_BUTTON_X:
+		case KeyEvent.KEYCODE_BUTTON_Y:
+		case KeyEvent.KEYCODE_BUTTON_Z:
+		case KeyEvent.KEYCODE_BUTTON_L1:
+		case KeyEvent.KEYCODE_BUTTON_R1:
+		case KeyEvent.KEYCODE_BUTTON_L2:
+		case KeyEvent.KEYCODE_BUTTON_R2:
+		case KeyEvent.KEYCODE_BUTTON_THUMBL:
+		case KeyEvent.KEYCODE_BUTTON_THUMBR:
+		case KeyEvent.KEYCODE_BUTTON_START:
+		case KeyEvent.KEYCODE_BUTTON_SELECT:
+		case KeyEvent.KEYCODE_BUTTON_MODE:
+			_scummvm.pushEvent(JE_GAMEPAD, action, keyCode,
 								(int)(e.getEventTime() - e.getDownTime()),
 								e.getRepeatCount(), 0);
 			return true;
