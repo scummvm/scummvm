@@ -62,8 +62,7 @@ public:
 
 		bool contains(const String &key) const { return _entries.contains(key); }
 
-		String &operator[](const String &key) { return _entries[key]; }
-		const String &operator[](const String &key) const { return _entries[key]; }
+		void setVal(const String &key, const String &val) { _entries[key] = val; }
 
 		String &getVal(const String &key) { return _entries.getVal(key); }
 		const String &getVal(const String &key) const { return _entries.getVal(key); }
