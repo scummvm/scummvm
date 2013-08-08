@@ -34,9 +34,6 @@ class WriteStream;
 
 /**
  * This class allows reading/writing INI style config files.
- * It is used by the ConfigManager for storage, but can also
- * be used by other code if it needs to read/write custom INI
- * files.
  *
  * Lines starting with a '#' are ignored (i.e. treated as comments).
  * Some effort is made to preserve comments, though.
@@ -47,8 +44,6 @@ class WriteStream;
  * from/to files, but of course is not appropriate for fast access.
  * The main reason is that this class is indeed geared toward doing precisely
  * that!
- * If you need fast access to the game config, use higher level APIs, like the
- * one provided by ConfigManager.
  */
 class INIFile {
 public:
@@ -126,14 +121,6 @@ private:
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;
 };
-
-/*
-- ConfigMan owns a config file
-- allow direct access to that config file (for the launcher)
-- simplify and unify the regular ConfigMan API in exchange
-
-
-*/
 
 } // End of namespace Common
 
