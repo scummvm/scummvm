@@ -66,6 +66,8 @@ enum {
 	JE_MOUSE_MOVE = 13,
 	JE_GAMEPAD = 14,
 	JE_JOYSTICK = 15,
+	JE_MMB_DOWN = 16,
+	JE_MMB_UP = 17,
 	JE_QUIT = 0x1000
 };
 
@@ -919,6 +921,20 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		lockMutex(_event_queue_lock);
 		_event_queue.push(e);
 		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_MMB_DOWN:
+		e.type = Common::EVENT_MAINMENU;
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_MMB_UP:
+		// No action
 
 		return;
 
