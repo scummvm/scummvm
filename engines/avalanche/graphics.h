@@ -31,6 +31,7 @@
 #include "common/file.h"
 
 #include "graphics/surface.h"
+#include "common/rect.h"
 
 namespace Avalanche {
 class AvalancheEngine;
@@ -87,8 +88,9 @@ public:
 
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
 
-	void drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
+	Common::Point drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
+	// Returns the end point of the arc. (Needed in Lucerna::lucerna_clock().)
 
 	void drawPieSlice(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
 
