@@ -827,9 +827,8 @@ void upgradeTargets() {
 
 	printf("Upgrading all your existing targets\n");
 
-	Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	Common::ConfigManager::DomainMap::iterator iter = domains.begin();
-	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+	Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
+	for (; iter != ConfMan.endGameDomains(); ++iter) {
 		Common::ConfigManager::Domain &dom = iter->_value;
 		Common::String name(iter->_key);
 		Common::String gameid(dom.getVal("gameid"));
