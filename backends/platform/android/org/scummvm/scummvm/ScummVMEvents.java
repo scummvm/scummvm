@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.GestureDetector;
+import android.view.InputDevice;
 import android.view.inputmethod.InputMethodManager;
 
 public class ScummVMEvents implements
@@ -32,6 +33,7 @@ public class ScummVMEvents implements
 	public static final int JE_RMB_UP = 12;
 	public static final int JE_MOUSE_MOVE = 13;
 	public static final int JE_GAMEPAD = 14;
+	public static final int JE_JOYSTICK = 15;
 	public static final int JE_QUIT = 0x1000;
 
 	final protected Context _context;
@@ -62,6 +64,18 @@ public class ScummVMEvents implements
 							(int)(e.getY() * e.getYPrecision() * 100),
 							0, 0);
 		return true;
+	}
+
+	public boolean onGenericMotionEvent(final MotionEvent e) {
+		if((e.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
+			_scummvm.pushEvent(JE_JOYSTICK, e.getAction(),
+					   (int)(e.getAxisValue(MotionEvent.AXIS_X)*100),
+					   (int)(e.getAxisValue(MotionEvent.AXIS_Y)*100),
+					   0, 0);
+			return true;
+		}
+
+		return false;
 	}
 
 	final static int MSG_MENU_LONG_PRESS = 1;

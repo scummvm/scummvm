@@ -65,6 +65,7 @@ enum {
 	JE_RMB_UP = 12,
 	JE_MOUSE_MOVE = 13,
 	JE_GAMEPAD = 14,
+	JE_JOYSTICK = 15,
 	JE_QUIT = 0x1000
 };
 
@@ -895,6 +896,31 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		unlockMutex(_event_queue_lock);
 
 		break;
+
+	case JE_JOYSTICK:
+		e.mouse = getEventManager()->getMousePos();
+
+		switch (arg1) {
+		case JACTION_MULTIPLE:
+			e.type = Common::EVENT_MOUSEMOVE;
+
+			// already multiplied by 100
+			e.mouse.x += arg2 * _joystick_scale / _eventScaleX;
+			e.mouse.y += arg3 * _joystick_scale / _eventScaleY;
+
+			clipMouse(e.mouse);
+
+			break;
+		default:
+			LOGE("unhandled jaction on joystick: %d", arg1);
+			return;
+		}
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
 
 	case JE_QUIT:
 		e.type = Common::EVENT_QUIT;
