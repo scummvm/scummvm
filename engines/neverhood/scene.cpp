@@ -212,7 +212,7 @@ Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
 }
 
 void Scene::insertScreenMouse(uint32 fileHash, const NRect *mouseRect) {
-	NRect rect(-1, -1, -1, -1);
+	NRect rect = NRect::make(-1, -1, -1, -1);
 	if (mouseRect)
 		rect = *mouseRect;
 	insertMouse(new Mouse(_vm, fileHash, rect));

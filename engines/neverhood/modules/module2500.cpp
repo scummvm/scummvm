@@ -29,25 +29,25 @@ static const uint32 kScene2505StaticSprites[] = {
 	0x4000A226, 0
 };
 
-static const NRect kScene2505ClipRect = NRect(0, 0, 564, 480);
+static const NRect kScene2505ClipRect = { 0, 0, 564, 480 };
 
 static const uint32 kScene2506StaticSprites[] = {
 	0x4027AF02, 0
 };
 
-static const NRect kScene2506ClipRect = NRect(0, 0, 640, 441);
+static const NRect kScene2506ClipRect = { 0, 0, 640, 441 };
 
 static const uint32 kScene2508StaticSprites1[] = {
 	0x2F08E610, 0xD844E6A0, 0
 };
 
-static const NRect kScene2508ClipRect1 = NRect(0, 0, 594, 448);
+static const NRect kScene2508ClipRect1 = { 0, 0, 594, 448 };
 
 static const uint32 kScene2508StaticSprites2[] = {
 	0x2F08E610, 0
 };
 
-static const NRect kScene2508ClipRect2 = NRect(0, 0, 594, 448);
+static const NRect kScene2508ClipRect2 = { 0, 0, 594, 448 };
 
 Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundIndex(0) {
