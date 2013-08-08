@@ -191,11 +191,14 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 
 		if ((j >= stAngle) && (j <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xp,yp) = color;
-		else if (((180-j) >= stAngle) && ((180-j) <= endAngle)) 
+
+		if (((180-j) >= stAngle) && ((180-j) <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xm,yp) = color;
-		else if (((j+180) >= stAngle) && ((j+180) <= endAngle)) 
+
+		if (((j+180) >= stAngle) && ((j+180) <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xm,ym) = color;
-		else if (((360-j) >= stAngle) && ((360-j) <= endAngle)) 
+
+		if (((360-j) >= stAngle) && ((360-j) <= endAngle)) 
 			*(byte *)_scrolls.getBasePtr(xp,ym) = color;
 		
 		j += delta;
