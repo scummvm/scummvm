@@ -367,8 +367,8 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_gyro->off();
 
 	// The right corners of the scroll.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx - 2, my - ly, 0, 90, 15, lightgray);
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx - 2, my + ly, 270, 360, 15, lightgray);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, lightgray);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, lightgray);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, red);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, red);
 	

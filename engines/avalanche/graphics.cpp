@@ -211,7 +211,7 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 void Graphics::drawPieSlice(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
 	while (radius > 0)
 		drawArc(surface, x, y, stAngle, endAngle, radius--, color);
-	//*(byte *)surface.getBasePtr(x + 1, y) = color;
+	*(byte *)surface.getBasePtr(x + 1, y) = color;
 }
 
 
