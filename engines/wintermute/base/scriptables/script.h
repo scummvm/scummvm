@@ -165,7 +165,7 @@ private:
 	uint32 _numFunctions;
 	uint32 _numMethods;
 	uint32 _numEvents;
-
+	void mapWatchList();
 	bool initScript();
 	bool initTables();
 
