@@ -265,7 +265,8 @@ void Scrolls::resetscrolldriver() {   /* phew */
 void Scrolls::dingdongbell() {   /* Pussy's in the well. Who put her in? Little... */
 	byte fv;
 
-	for (fv = 1; fv <= _vm->_gyro->scrollbells; fv ++) _vm->_lucerna->errorled(); /* ring the bell "x" times */
+	for (fv = 0; fv < _vm->_gyro->scrollbells; fv++)
+		_vm->_lucerna->errorled(); /* ring the bell "x" times */
 }
 
 void Scrolls::dodgem() {     /* This moves the mouse pointer off the scroll so that you can read it. */
@@ -348,8 +349,8 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_logger->log_epsonroman(); /* Scrolls always START with Roman. */
 
 	lx = 0;
-	ly = (_vm->_gyro->scrolln + 1) * 6;
-	for (b = 0; b <= _vm->_gyro->scrolln; b++) {
+	ly = (_vm->_gyro->scrolln) * 6;
+	for (b = 0; b < _vm->_gyro->scrolln; b++) {
 		ex = _vm->_gyro->scroll[b].size() * 8;
 		if (lx < ex)
 			lx = ex;
@@ -420,7 +421,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	}
 
 
-	for (b = 0; b <= _vm->_gyro->scrolln; b++) {
+	for (b = 0; b < _vm->_gyro->scrolln; b++) {
 		if (!_vm->_gyro->scroll[b].empty())
 			switch (_vm->_gyro->scroll[b][_vm->_gyro->scroll[b].size() - 1]) {
 			case kControlCenter: {
@@ -493,7 +494,7 @@ bool Scrolls::ask(Common::String question) {
 }
 
 void Scrolls::resetscroll() {
-	_vm->_gyro->scrolln = 0;
+	_vm->_gyro->scrolln = 1;
 	for (int j = 0; j < 15; j ++)
 		if (!_vm->_gyro->scroll[j].empty())
 			_vm->_gyro->scroll[j].clear();
@@ -592,7 +593,7 @@ void Scrolls::calldrivers() {
 		} else
 			switch (_vm->_gyro->buffer[fv]) {
 			case kControlParagraph: {
-				if ((_vm->_gyro->scrolln == 0) && (_vm->_gyro->scroll[0].empty()))
+				if ((_vm->_gyro->scrolln == 1) && (_vm->_gyro->scroll[0].empty()))
 					break;
 
 				if (call_spriterun)
@@ -618,7 +619,7 @@ void Scrolls::calldrivers() {
 				_vm->_gyro->scrollbells++;
 				break; // #7 = "Bel"
 			case kControlSpeechBubble: {
-				if ((_vm->_gyro->scrolln == 0) && (_vm->_gyro->scroll[0].empty()))
+				if ((_vm->_gyro->scrolln == 1) && (_vm->_gyro->scroll[0].empty()))
 					break;
 
 				if (call_spriterun)
@@ -727,7 +728,7 @@ void Scrolls::calldrivers() {
 				call_spriterun = false;
 
 				_vm->_gyro->scrolln++;
-				_vm->_gyro->scroll[_vm->_gyro->scrolln] = kControlQuestion;
+				_vm->_gyro->scroll[_vm->_gyro->scrolln - 1] = kControlQuestion;
 
 				was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
 				if (was_virtual)
@@ -746,14 +747,14 @@ void Scrolls::calldrivers() {
 				break;
 			case kControlInsertSpaces:
 				for (nn = 0; nn < 9; nn++)
-					_vm->_gyro->scroll[_vm->_gyro->scrolln] += ' ';
+					_vm->_gyro->scroll[_vm->_gyro->scrolln - 1] += ' ';
 				break;
 			default: { // Add new char.
-				if (_vm->_gyro->scroll[_vm->_gyro->scrolln].size() == 50) {
-					solidify(_vm->_gyro->scrolln);
+				if (_vm->_gyro->scroll[_vm->_gyro->scrolln - 1].size() == 50) {
+					solidify(_vm->_gyro->scrolln - 1);
 					_vm->_gyro->scrolln++;
 				}
-				_vm->_gyro->scroll[_vm->_gyro->scrolln] += _vm->_gyro->buffer[fv];
+				_vm->_gyro->scroll[_vm->_gyro->scrolln - 1] += _vm->_gyro->buffer[fv];
 				}
 			}
 }

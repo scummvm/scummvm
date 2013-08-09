@@ -543,7 +543,7 @@ public:
 	byte cp, ledstatus, defaultled;
 	raw characters;
 	bool alive;
-	char buffer[2000];
+	byte buffer[2000];
 	uint16 bufsize;
 
 	byte oldjw; /* Old joystick-way */

@@ -607,8 +607,8 @@ void Timeout::arkata_shouts() {
 	if (_vm->_gyro->dna.teetotal)
 		return;
 
-	// _vm->_visa->dixi('q', 76);
-	warning("STUB: Timeout::arkata_shouts()");
+	_vm->_visa->dixi('q', 76);
+	
 	set_up_timer(160, procarkata_shouts, reason_arkata_shouts);
 }
 
