@@ -96,8 +96,9 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		int error = ADAPTER->removeBreakpoint(atoi(argv[1]));
-		if (!error) DebugPrintf("%s: OK\n", argv[0]);
-		else if (error == NO_SUCH_BREAKPOINT) {
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == NO_SUCH_BREAKPOINT) {
 			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
 			debugWarning(argv[0], ERROR, msg);
 		}
@@ -111,8 +112,9 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		int error = ADAPTER->enableBreakpoint(atoi(argv[1]));
-		if (!error) DebugPrintf("%s: OK\n", argv[0]);
-		else if (error == NO_SUCH_BREAKPOINT) {
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == NO_SUCH_BREAKPOINT) {
 			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
 			debugWarning(argv[0], ERROR, msg);
 		}
@@ -125,8 +127,9 @@ bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		int error = ADAPTER->disableBreakpoint(atoi(argv[1]));
-		if (!error) DebugPrintf("%s: OK\n", argv[0]);
-		else if (error == NO_SUCH_BREAKPOINT) {
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == NO_SUCH_BREAKPOINT) {
 			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
 			debugWarning(argv[0], ERROR, msg);
 		}
@@ -142,8 +145,9 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 	 */
 	if (argc == 3) {
 		int error = ADAPTER->addWatch(argv[1], argv[2]);
-		if (!error) DebugPrintf("%s: OK\n", argv[0]);
-		else if (error == NO_SUCH_SCRIPT) {
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == NO_SUCH_SCRIPT) {
 			Common::String msg = Common::String::format("no such file %s\n", argv[1]);
 			debugWarning(argv[0], ERROR, msg);
 		}
