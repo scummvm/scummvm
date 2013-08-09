@@ -66,7 +66,7 @@ public:
 	GraphicsManager(BuriedEngine *vm);
 	~GraphicsManager();
 
-	byte *getDefaultPalette() const;
+	byte *getDefaultPalette() const { return _palette; }
 	Graphics::Font *createFont(int size) const;
 	Cursor setCursor(Cursor newCursor);
 	Graphics::Surface *getBitmap(uint32 bitmapID);
@@ -84,6 +84,9 @@ private:
 
 	Common::Rect _dirtyRect;
 	Graphics::Surface *_screen;
+	byte *_palette;
+	
+	byte *createDefaultPalette() const;
 };
 
 } // End of namespace Buried
