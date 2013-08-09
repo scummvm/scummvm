@@ -255,8 +255,24 @@ uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 	if (_vm->isTrueColor())
 		return g_system->getScreenFormat().RGBToColor(r, g, b);
 
-	// TODO
-	return 0;
+	// Find the best match color
+	int diff = 0x7FFFFFFF;
+	byte best = 0;
+
+	for (uint i = 0; i < 256 && diff > 0; i++) {
+		int rDiff = (int)_palette[i * 3] - (int)r;
+		int gDiff = (int)_palette[i * 3 + 1] - (int)g;
+		int bDiff = (int)_palette[i * 3 + 2] - (int)b;
+
+		int curDiff = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
+
+		if (curDiff < diff) {
+			best = i;
+			diff = curDiff;
+		}
+	}
+
+	return best;
 }
 
 void GraphicsManager::invalidateRect(const Common::Rect &rect, bool erase) {
