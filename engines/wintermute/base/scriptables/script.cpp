@@ -322,18 +322,7 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 	_engine = original->_engine;
 	_parentScript = original;
 
-
-	// TODO: Factor this out?
-	/*
-	for (uint i = 0; i < _engine->_breakpoints.size(); i++) {
-		if (!strcmp(_engine->_breakpoints[i]._filename.c_str(), _filename))
-			_breakpoints.add(_engine->_breakpoints[i]);
-	}
-	*/
-	for (uint i = 0; i < _engine->_watchlist.size(); i++) {
-		if (!strcmp(_engine->_watchlist[i]._filename.c_str(), _filename))
-			_watchlist.add(_engine->_watchlist[i]);
-	}
+	mapWatchList();
 
 	_step = kDefaultStep;
 
@@ -341,7 +330,12 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 }
 
 
-
+void ScScript::mapWatchList () {
+	for (uint i = 0; i < _engine->_watchlist.size(); i++) {
+		if (!strcmp(_engine->_watchlist[i]._filename.c_str(), _filename))
+			_watchlist.add(_engine->_watchlist[i]);
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::createMethodThread(ScScript *original, const Common::String &methodName) {
