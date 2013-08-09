@@ -90,6 +90,11 @@ ScEngine::~ScEngine() {
 }
 
 
+ScEngine::CScWatch::~CScWatch() {
+	delete _lastvalue;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::cleanup() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -179,7 +184,6 @@ bool ScEngine::addWatch(const char *filename, const char *name) {
 	CScWatch watch = CScWatch(filename);
 	watch._symbol = name;
 	watch._lastvalue = new ScValue(_gameRef);
-	// TODO: This leaks?
 	_watchlist.add(watch);
 	refreshWatchlist();
 	return 0;
