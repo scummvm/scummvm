@@ -219,7 +219,7 @@ void triptype::walk() {
 		tc = _tr->checkfeet(x, x + _info.xl, oy[_tr->_vm->_gyro->cp], y, _info.yl) - 1;
 		// -1  is becouse the modified array indexes of magics[] compared to Pascal .
 
-		if ((tc != 0) & (!_tr->_vm->_gyro->doing_sprite_run)) {
+		if ((tc != 255) & (!_tr->_vm->_gyro->doing_sprite_run)) {
 			switch (_tr->_vm->_gyro->magics[tc].op) {
 			case _tr->_vm->_gyro->exclaim: {
 				bounce();
@@ -1358,7 +1358,7 @@ void Trip::call_andexors() {
 	do {
 		ok = true;
 		for (fv = 0; fv < 4; fv++) {
-			if (((order[fv] != 0) && (order[fv + 1] != 0))
+			if (((order[fv] != -1) && (order[fv + 1] != -1))
 					&& (tr[order[fv]].y > tr[order[fv + 1]].y)) {
 				/* Swap them! */
 				temp = order[fv];
@@ -1368,6 +1368,17 @@ void Trip::call_andexors() {
 			}
 		}
 	} while (!ok);
+
+	// We redraw the background only if we have at least one moving character.
+	bool drawBG = false;
+	for (fv = 0; fv < 5; fv++) {
+		if (order[fv] > -1) {
+			drawBG = true;
+			break;
+		}
+	}
+	if (drawBG)
+		_vm->_graphics->drawPicture(_vm->_graphics->_background, 0, 10);
 
 	for (fv = 0; fv < 5; fv++) {
 		if (order[fv] > -1)
@@ -1560,8 +1571,8 @@ void Trip::fliproom(byte room, byte ped) {
 
 	if (!_vm->_gyro->alive) {
 		/* You can't leave the room if you're dead. */
-		tr[1].ix = 0;
-		tr[1].iy = 0; /* Stop him from moving. */
+		tr[0].ix = 0;
+		tr[0].iy = 0; /* Stop him from moving. */
 		return;
 	}
 
@@ -1572,7 +1583,7 @@ void Trip::fliproom(byte room, byte ped) {
 
 	if ((_vm->_gyro->dna.jumpstatus > 0) && (_vm->_gyro->dna.room == r__insidecardiffcastle)) {
 		/* You can't *jump* out of Cardiff Castle! */
-		tr[1].ix = 0;
+		tr[0].ix = 0;
 		return;
 	}
 
@@ -1585,7 +1596,7 @@ void Trip::fliproom(byte room, byte ped) {
 	getsetclear();
 
 
-	for (fv = 2; fv <= numtr; fv++) {
+	for (fv = 1; fv < numtr; fv++) {
 		if (tr[fv].quick)
 			tr[fv].done();
 	} /* Deallocate sprite */
@@ -1594,10 +1605,10 @@ void Trip::fliproom(byte room, byte ped) {
 		_vm->_gyro->dna.enter_catacombs_from_lusties_room = true;
 
 	_vm->_lucerna->enterroom(room, ped);
-	apped(1, ped);
+	apped(0, ped - 1);
 	_vm->_gyro->dna.enter_catacombs_from_lusties_room = false;
 	_vm->_gyro->oldrw = _vm->_gyro->dna.rw;
-	_vm->_gyro->dna.rw = tr[1].face;
+	_vm->_gyro->dna.rw = tr[0].face;
 	_vm->_lucerna->showrw();
 
 	for (fv = 0; fv <= 1; fv++) {
