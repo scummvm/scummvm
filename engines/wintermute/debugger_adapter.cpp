@@ -481,9 +481,8 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue
 	return 0;
 }
 
-bool DebuggerAdapter::showFps(bool show) {
+void DebuggerAdapter::showFps(bool show) {
 	_engine->_game->setShowFPS(show);
-	return true;
 }
 
 BaseArray<BreakpointInfo> DebuggerAdapter::getBreakpoints() {

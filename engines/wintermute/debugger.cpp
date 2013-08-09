@@ -312,9 +312,9 @@ bool Console::Cmd_SetType(int argc, const char **argv) {
 bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	if (argc == 2) {
 		if (Common::String(argv[1]) == "true") {
-			// ADAPTER->setShowFPS(true);
+			ADAPTER->showFps(true);
 		} else if (Common::String(argv[1]) == "false") {
-			// ADAPTER->setShowFPS(false);
+			ADAPTER->showFps(false);
 		}
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
