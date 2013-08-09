@@ -556,7 +556,7 @@ void Acci::parse() {
 	}
 
 	if (_vm->_gyro->subjnumber == 0) // Still not found.
-		for (fv = 0; fv < thats.size(); fv++)
+		for (fv = 0; fv < thats.size() - 1; fv++)
 			if (thats[fv] == 252) { // The word is "about", or something similar.
 				_vm->_gyro->subjnumber = thats[fv + 1];
 				thats.setChar(0, fv + 1);
@@ -564,7 +564,7 @@ void Acci::parse() {
 			}
 
 	if (_vm->_gyro->subjnumber == 0) // STILL not found! Must be the word after "say".
-		for (fv = 0; fv < thats.size(); fv++)
+		for (fv = 0; fv < thats.size() - 1; fv++)
 			if ((thats[fv] == 7) && (thats[fv + 1] != 0) && !((225 <= thats[fv + 1]) && (thats[fv + 1] <= 229))) {
 				// SAY not followed by a preposition
 				_vm->_gyro->subjnumber = thats[fv + 1];
