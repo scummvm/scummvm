@@ -166,9 +166,6 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 		script->_globals->setProp("self", &val);
 		script->_globals->setProp("this", &val);
 
-		// We need to carry over breakpoints, otherwise the new thread won't break
-		// TODO: Add a function for this. 
-		// TODO-TODO: Or just rip refreshBreakpoints() off original
 		script->mapWatchList();
 		_scripts.add(script);
 		return script;
