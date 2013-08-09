@@ -83,7 +83,7 @@ public:
 		CScWatch(const char *filename) {
 			_filename = filename;
 		}
-
+		~CScWatch();
 		Common::String _filename;
 		Common::String _symbol;
 		ScValue* _lastvalue; 
