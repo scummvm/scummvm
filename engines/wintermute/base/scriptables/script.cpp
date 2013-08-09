@@ -93,7 +93,7 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_unbreakable = false;
 	_parentScript = nullptr;
 	
-	_adapter = _gameRef->_adapter; // HACK
+	_adapter = _gameRef->_adapter;
 
 	_tracingMode = false;
 	_step = kDefaultStep;
