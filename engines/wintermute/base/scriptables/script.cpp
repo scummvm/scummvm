@@ -1120,10 +1120,10 @@ bool ScScript::executeInstruction() {
 		}
 
 		for (uint i = 0; i < _watchlist.size(); i++) {
-			if (ScValue::compare(resolveName(_watchlist[i]._symbol.c_str()), _watchlist[i]._lastvalue) &&
+			if (ScValue::compare(resolveName(_watchlist[i]._symbol.c_str()), _watchlist[i]._lastValue) &&
 			    _watchlist[i]._enabled) {
 				_adapter->triggerWatch(this, _watchlist[i]._symbol.c_str());
-				_watchlist[i]._lastvalue->copy(resolveName(_watchlist[i]._symbol.c_str()));
+				_watchlist[i]._lastValue->copy(resolveName(_watchlist[i]._symbol.c_str()));
 			}
 		}
 
