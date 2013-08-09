@@ -82,6 +82,43 @@ namespace Buried {
 
 static const BuriedGameDescription gameDescriptions[] = {
 	// Windows 3.11 8BPP
+	// Installed
+	{
+		{
+			"buried",
+			"8BPP",
+			{
+				{ "BIT816.EXE",  0, "57a14461c77d9c77534bd418043db1ec", 1163776 },
+				{ "BIT8LIB.DLL", 0, "31bcd9e5cc32df00b09ce626e6d9106e", 2420480 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// Windows 3.11 24BPP
+	// Installed
+	{
+		{
+			"buried",
+			"24BPP",
+			{
+				{ "BIT2416.EXE",  0, "dcbfb3f2916ad902043942fc00d2017f", 1159680 },
+				{ "BIT24LIB.DLL", 0, "74ac9dae92f415fea8cdbd220ba8795c", 5211648 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			GF_TRUECOLOR,
+			GUIO0()
+		},
+	},
+
+	// Windows 3.11 8BPP
+	// Not Installed
 	{
 		{
 			"buried",
@@ -99,6 +136,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 	},
 
 	// Windows 3.11 24BPP
+	// Not Installed
 	{
 		{
 			"buried",
