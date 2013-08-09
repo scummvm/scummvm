@@ -97,8 +97,6 @@ void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 }
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
-	drawPicture(_background, 0, 10); // TODO: Remove it later, implement otherwise!!! Now it only works with one sprite on the screen.
-
 	/* First we make the pixels of the spirte blank. */
 	for (byte qay = 0; qay < sprite.yl; qay++)
 		for (byte qax = 0; qax < sprite.xl; qax++)

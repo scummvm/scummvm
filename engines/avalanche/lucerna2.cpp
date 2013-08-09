@@ -103,11 +103,9 @@ void Lucerna::draw_also_lines() {
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 639, 161), 15);
 
-	for (ff = 0; ff < 50; ff++) {
-		if (_vm->_gyro->lines[ff].x1 != 32767 /*maxint*/) {
+	for (ff = 0; ff < 50; ff++)
+		if (_vm->_gyro->lines[ff].x1 != 32767 /*maxint*/)
 			_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
-		}
-	}
 
 	switch (squeaky_code) {
 	case 1 :
@@ -434,14 +432,14 @@ void Lucerna::enterroom(byte x, byte ped) {
 			if (! _vm->_gyro->dna.talked_to_crapulus) {
 
 				_vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__outsideyours;
-				_vm->_trip->tr[2].init(8, false, _vm->_trip); /* load Crapulus */
+				_vm->_trip->tr[1].init(8, false, _vm->_trip); /* load Crapulus */
 
 				if (_vm->_gyro->dna.rooms[r__outsideyours] == 1) {
-					_vm->_trip->apped(2, 4); /* Start on the right-hand side of the screen. */
-					_vm->_trip->tr[2].walkto(5); /* Walks up to greet you. */
+					_vm->_trip->apped(1, 3); /* Start on the right-hand side of the screen. */
+					_vm->_trip->tr[1].walkto(4); /* Walks up to greet you. */
 				} else {
-					_vm->_trip->apped(2, 5); /* Starts where he was before. */
-					_vm->_trip->tr[2].face = 3;
+					_vm->_trip->apped(1, 4); /* Starts where he was before. */
+					_vm->_trip->tr[1].face = 3;
 				}
 
 				_vm->_trip->tr[2].call_eachstep = true;
@@ -450,9 +448,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 			} else _vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__nowhere;
 
 			if (_vm->_gyro->dna.crapulus_will_tell) {
-				_vm->_trip->tr[2].init(8, false, _vm->_trip);
-				_vm->_trip->apped(2, 2);
-				_vm->_trip->tr[2].walkto(4);
+				_vm->_trip->tr[1].init(8, false, _vm->_trip);
+				_vm->_trip->apped(1, 1);
+				_vm->_trip->tr[1].walkto(3);
 				_vm->_timeout->set_up_timer(20, _vm->_timeout->proccrapulus_splud_out, _vm->_timeout->reason_crapulus_says_spludwick_out);
 				_vm->_gyro->dna.crapulus_will_tell = false;
 			}
