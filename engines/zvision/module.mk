@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	clock.o \
 	console.o \
 	control.o \
+	cursor.o \
 	detection.o \
 	events.o \
 	lzss_read_stream.o \
