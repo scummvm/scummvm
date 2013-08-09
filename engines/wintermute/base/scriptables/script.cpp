@@ -1505,7 +1505,7 @@ void ScScript::afterLoad() {
 
 ////////////////////////////////////////////////
 ScValue *ScScript::resolveName(const char *name) {
-	// TODO: Polish this. Edge cases?
+	// TODO: Some edge cases still left?
 	Common::String strName = Common::String(name);
 	strName.trim();
 	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
@@ -1515,11 +1515,13 @@ ScValue *ScScript::resolveName(const char *name) {
 
 	varName = st.nextToken();
 	value = getVar(const_cast<char *>(varName.c_str()));
-
-	while(!st.empty() && (value->isNative() || value->isObject())) {
+	
+	if (value == nullptr) return nullptr;
+	
+	while(value != nullptr && !st.empty() && (value->isNative() || value->isObject())) {
 		value = value->getProp(st.nextToken().c_str());
 	}
-
+	
 	return value;
 
 }
