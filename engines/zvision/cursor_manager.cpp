@@ -74,7 +74,7 @@ void CursorManager::changeCursor(Common::String &cursorName, bool pushed) {
 			if (_cursorNames[i] == cursorName) {
 				// ZNem uses a/b at the end of the file to signify not pushed/pushed respectively
 				Common::String pushedFlag = pushed ? "b" : "a";
-				Common::String name = Common::String::format("%s%s.zcr", _zNemCursorFileNames[i], pushedFlag);
+				Common::String name = Common::String::format("%s%s.zcr", _zNemCursorFileNames[i], pushedFlag.c_str());
 
 				changeCursor(ZorkCursor(name));
 				return;
