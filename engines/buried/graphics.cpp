@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/wincursor.h"
 #include "graphics/fonts/ttf.h"
@@ -46,50 +47,24 @@ GraphicsManager::GraphicsManager(BuriedEngine *vm) : _vm(vm) {
 
 	_screen = new Graphics::Surface();
 	_screen->create(640, 480, g_system->getScreenFormat());
+
+	if (_vm->isTrueColor()) {
+		// No palette to deal with
+		_palette = 0;
+	} else {
+		// Grab the palette from our EXE bitmap
+		_palette = createDefaultPalette();
+
+		// Then apply it. The only time we'll use this call even.
+		g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+	}
 }
 
 GraphicsManager::~GraphicsManager() {
 	_screen->free();
 	delete _screen;
-}
 
-byte *GraphicsManager::getDefaultPalette() const {
-	Common::SeekableReadStream *stream = _vm->getBitmapStream(700);
-
-	if (!stream)
-		error("Couldn't find bitmap 700");
-
-	stream->skip(14);
-
-	if (stream->readUint16LE() != 8)
-		error("Trying to load palette from non-8bpp image 700");
-
-	stream->skip(16);
-
-	uint32 colorsUsed = stream->readUint32LE();
-
-	if (colorsUsed != 0 && colorsUsed != 256)
-		error("Bitmap 700 is missing a full palette");
-
-	stream->skip(4);
-	byte *palette = new byte[256 * 3];
-	byte *ptr = palette;
-
-	for (uint32 i = 0; i < 256; i++) {
-		ptr[2] = stream->readByte();
-		ptr[1] = stream->readByte();
-		ptr[0] = stream->readByte();
-		stream->readByte();
-		ptr += 3;
-	}
-
-	delete stream;
-
-	// Make sure the first entry is black and the last is white
-	palette[0]   = palette[1]   = palette[2]   = 0x00;
-	palette[253] = palette[254] = palette[255] = 0xFF;
-
-	return palette;
+	delete[] _palette;
 }
 
 #define REQUIRED(x) (((uint32)(x)) | 0x80000000)
@@ -294,6 +269,45 @@ void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y) {
 
 	for (int i = 0; i < surface->h; i++)
 		memcpy(_screen->getBasePtr(x, y + i), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
+}
+
+byte *GraphicsManager::createDefaultPalette() const {
+	Common::SeekableReadStream *stream = _vm->getBitmapStream(700);
+
+	if (!stream)
+		error("Couldn't find bitmap 700");
+
+	stream->skip(14);
+
+	if (stream->readUint16LE() != 8)
+		error("Trying to load palette from non-8bpp image 700");
+
+	stream->skip(16);
+
+	uint32 colorsUsed = stream->readUint32LE();
+
+	if (colorsUsed != 0 && colorsUsed != 256)
+		error("Bitmap 700 is missing a full palette");
+
+	stream->skip(4);
+	byte *palette = new byte[256 * 3];
+	byte *ptr = palette;
+
+	for (uint32 i = 0; i < 256; i++) {
+		ptr[2] = stream->readByte();
+		ptr[1] = stream->readByte();
+		ptr[0] = stream->readByte();
+		stream->readByte();
+		ptr += 3;
+	}
+
+	delete stream;
+
+	// Make sure the first entry is black and the last is white
+	palette[0]   = palette[1]   = palette[2]   = 0x00;
+	palette[253] = palette[254] = palette[255] = 0xFF;
+
+	return palette;
 }
 
 } // End of namespace Buried
