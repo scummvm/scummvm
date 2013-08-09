@@ -33,7 +33,10 @@ namespace ZVision {
 
 void writeFileContentsToFile(const Common::String &sourceFile, const Common::String &destFile) {
 	Common::File f;
-	f.open(sourceFile);
+	if (!f.open(sourceFile)) {
+		return;
+	}
+
 	byte* buffer = new byte[f.size()];
 	f.read(buffer, f.size());
 
