@@ -27,7 +27,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 
-#include "zvision/render_manager.h"
+#include "zvision/cursor_manager.h"
 
 namespace ZVision {
 
@@ -39,6 +39,7 @@ void ZVision::processEvents() {
 			break;
 
 		case Common::EVENT_LBUTTONUP:
+			onMouseUp(_event.mouse);
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
@@ -78,7 +79,11 @@ void ZVision::processEvents() {
 }
 
 void ZVision::onMouseDown(const Common::Point &pos) {
+	_cursorManager->cursorDown(true);
+}
 
+void ZVision::onMouseUp(const Common::Point &pos) {
+	_cursorManager->cursorDown(false);
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {

@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	console.o \
 	control.o \
 	cursor.o \
+	cursor_manager.o \
 	detection.o \
 	events.o \
 	lzss_read_stream.o \

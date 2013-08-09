@@ -38,9 +38,9 @@
 #include "zvision/console.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
+#include "zvision/cursor_manager.h"
 #include "zvision/zfs_archive.h"
 #include "zvision/detection.h"
-#include "zvision/cursor.h"
 
 #include "zvision/utility.h"
 
@@ -81,6 +81,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	// Create managers
 	_scriptManager = new ScriptManager(this);
 	_renderManager = new RenderManager(_system, _width, _height);
+	_cursorManager = new CursorManager(this, &_pixelFormat);
 
 	debug("ZVision::ZVision");
 }
@@ -90,6 +91,7 @@ ZVision::~ZVision() {
  
 	// Dispose of resources
 	delete _console;
+	delete _cursorManager;
 	delete _renderManager;
 	delete _scriptManager;
 	delete _rnd;
@@ -114,6 +116,8 @@ void ZVision::initialize() {
 	initGraphics(_width, _height, true, &_pixelFormat);
 
 	_scriptManager->initialize();
+	// Has to be done after graphics has been initialized
+	_cursorManager->initialize();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

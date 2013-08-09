@@ -47,6 +47,7 @@ struct ZVisionGameDescription;
 class Console;
 class ScriptManager;
 class RenderManager;
+class CursorManager;
  
 // our engine debug channels
 enum {
@@ -76,6 +77,7 @@ private:
 	// Managers
 	ScriptManager *_scriptManager;
 	RenderManager *_renderManager;
+	CursorManager *_cursorManager;
 
 	// Clock
 	Clock _clock;
@@ -91,6 +93,7 @@ public:
 
 	ScriptManager *getScriptManager() const;
 	RenderManager *getRenderManager() const;
+	CursorManager *getCursorManager() const;
 	Common::RandomSource *getRandomSource() const;
 	ZVisionGameId getGameId() const;
 
@@ -103,6 +106,7 @@ private:
 
 	void processEvents();
 	void onMouseDown(const Common::Point &pos);
+	void onMouseUp(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);
 	void onKeyDown(uint keyCode);
 };
