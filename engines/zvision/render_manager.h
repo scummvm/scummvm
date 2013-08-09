@@ -61,7 +61,6 @@ private:
 
 public:
 	void initialize();
-	void updateScreen(bool isConsoleActive);
 
 	/**
 	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.

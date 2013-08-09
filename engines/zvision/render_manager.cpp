@@ -49,13 +49,6 @@ RenderManager::~RenderManager() {
 	}
 }
 
-void RenderManager::updateScreen(bool isConsoleActive) {
-	if (_needsScreenUpdate || isConsoleActive) {
-		_system->updateScreen();
-		_needsScreenUpdate = false;
-	}
-}
-
 void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter) {
 	// Panoramas are transposed
 	// The actual data is transposed in mutateImage

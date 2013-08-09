@@ -130,9 +130,9 @@ Common::Error ZVision::run() {
 		_scriptManager->updateNodes(_clock.getDeltaTime());
 		_scriptManager->checkPuzzleCriteria();
 
-		// Render a frame
-		_renderManager->updateScreen(_console->isActive());
-		
+		// Update the screen
+		_system->updateScreen();
+
 		// Calculate the frame delay based off a desired frame time
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
