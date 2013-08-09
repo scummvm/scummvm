@@ -417,7 +417,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	delete _alphaImage;
 	_alphaImage = new BaseImage();
-	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
+	if (filename == "" || !_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
 		_alphaImage = nullptr;
 		_alphaFilename = "";
