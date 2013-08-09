@@ -436,7 +436,9 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 
 	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
 	jpg->loadStream(*_file);
-	const byte *y = (const byte *)jpg->getComponent(1)->getPixels();
+
+#if 0
+	const byte *y = (const byte *)jpg->getComPonent(1)->getPixels();
 	const byte *u = (const byte *)jpg->getComponent(2)->getPixels();
 	const byte *v = (const byte *)jpg->getComponent(3)->getPixels();
 
@@ -446,6 +448,7 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 		*ptr++ = *u++;
 		*ptr++ = *v++;
 	}
+#endif
 
 	delete jpg;
 	return true;
