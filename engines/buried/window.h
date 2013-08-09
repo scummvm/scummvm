@@ -47,7 +47,6 @@ public:
 	virtual void onTimer(uint timer) {}
 	virtual void onKillFocus(Window *newWindow) {}
 	virtual void onSetFocus(Window *oldWindow) {}
-	virtual bool onQueryNewPalette() { return false; }
 	virtual void onPaint() {}
 	virtual void onLButtonUp(const Common::Point &point, uint flags) {}
 	virtual void onLButtonDown(const Common::Point &point, uint flags) {}
