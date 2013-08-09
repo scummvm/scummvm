@@ -304,8 +304,8 @@ byte *GraphicsManager::createDefaultPalette() const {
 	delete stream;
 
 	// Make sure the first entry is black and the last is white
-	palette[0]   = palette[1]   = palette[2]   = 0x00;
-	palette[253] = palette[254] = palette[255] = 0xFF;
+	palette[0 * 3]   = palette[0 * 3 + 1]   = palette[0 * 3 + 2]   = 0x00;
+	palette[255 * 3] = palette[255 * 3 + 1] = palette[255 * 3 + 2] = 0xFF;
 
 	return palette;
 }
