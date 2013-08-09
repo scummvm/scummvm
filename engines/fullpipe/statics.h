@@ -42,12 +42,12 @@ class CStepArray : public CObject {
 	void clear();
 
 	int getCurrPointIndex() { return _currPointIndex; }
+	Common::Point *getCurrPoint(Common::Point *point);
+	bool gotoNextPoint();
 };
 
 class StaticPhase : public Picture {
-	friend class DynamicPhase;
-	friend class Movement;
-
+ public:
 	int16 _initialCountdown;
 	int16 _countdown;
 	int16 _field_68;
@@ -63,10 +63,7 @@ class StaticPhase : public Picture {
 };
 
 class DynamicPhase : public StaticPhase {
-	friend class Movement;
-	friend class Statics;
-	friend class StaticANIObject;
-
+ public:
 	int _someX;
 	int _someY;
 	Common::Rect *_rect;
@@ -150,8 +147,9 @@ class Movement : public GameObject {
 	void setDynamicPhaseIndex(int index);
 
 	void removeFirstPhase();
-	void gotoNextFrame(int callback1, int callback2);
-	void gotoPrevFrame(int callback1, int callback2);
+	bool gotoNextFrame(int callback1, int callback2);
+	bool gotoPrevFrame();
+	void gotoFirstFrame();
 	void gotoLastFrame();
 
 	void loadPixelData();
@@ -218,6 +216,9 @@ class StaticANIObject : public GameObject {
 
 	MovTable *countMovements();
 	void setSpeed(int speed);
+
+	void stopAnim_maybe();
+	void adjustSomeXY();
 };
 
 struct MovTable {

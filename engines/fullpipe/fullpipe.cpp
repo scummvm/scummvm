@@ -329,6 +329,7 @@ void FullpipeEngine::updateScreen() {
 			}
 		}
 	} else if (_currentScene) {
+		_currentScene->update(42);  // HACK. FIXME
 		_currentScene->draw();
 
 		if (_inventoryScene)

@@ -510,4 +510,11 @@ void processMessages() {
 	}
 }
 
+void updateGlobalMessageQueue(int id, int objid) {
+	MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(id);  
+	if (m) {
+		m->update();
+	}
+}
+
 } // End of namespace Fullpipe

@@ -407,6 +407,8 @@ void Scene::updateScrolling() {
 }
 
 void Scene::update(int counterdiff) {
+	debug(0, "Scene::update(%d)", counterdiff);
+
 	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
 		((StaticANIObject *)*s)->update(counterdiff);
 }

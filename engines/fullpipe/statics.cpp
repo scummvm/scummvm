@@ -62,6 +62,26 @@ void CStepArray::clear() {
 	}
 }
 
+Common::Point *CStepArray::getCurrPoint(Common::Point *point) {
+	if (_isEos || _points == 0) {
+		point->x = 0;
+		point->y = 0;
+	} else {
+		point = _points[_currPointIndex];
+	}
+	return point;
+}
+
+bool CStepArray::gotoNextPoint() {
+	if (_currPointIndex < _maxPointIndex) {
+		_currPointIndex++;
+		return true;
+	} else {
+		_isEos = 1;
+		return false;
+	}
+}
+
 StaticANIObject::StaticANIObject() {
 	_shadowsOn = 1;
 	_field_30 = 0;
@@ -405,7 +425,116 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 }
 
 void StaticANIObject::update(int counterdiff) {
-	warning("STUB: StaticANIObject::update(%d)", counterdiff);
+	int mqid;
+
+	debug(0, "StaticANIObject::update()");
+
+	if (_flags & 2) {
+		_messageNum--;
+		if (_messageNum)
+			return;
+
+		mqid = _messageQueueId;
+		_messageQueueId = 0;
+		_flags ^= 2;
+
+		updateGlobalMessageQueue(mqid, _id);
+		return;
+	}
+
+	Common::Point point;
+	ExCommand *ex, *newex, *newex1, *newex2;
+
+	if (_movement) {
+		_movement->_counter += counterdiff;
+		if (_movement->_counter >= _movement->_counterMax) {
+			_movement->_counter = 0;
+
+			if (_flags & 1) {
+				if (_counter) {
+					_counter--;
+				} else {
+					DynamicPhase *dyn = _movement->_currDynamicPhase;
+					if (dyn->_initialCountdown != dyn->_countdown)
+						goto LABEL_40;
+					ex = dyn->getExCommand();
+					if (!ex || ex->_messageKind == 35)
+						goto LABEL_40;
+					newex = new ExCommand(ex);
+					newex->_excFlags |= 2;
+					if (newex->_messageKind == 17) {
+						newex->_parentId = _id;
+						newex->_keyCode = _field_4;
+					}
+					ex->sendMessage();
+					if (_movement) {
+					LABEL_40:
+						if (dyn->_initialCountdown != dyn->_countdown
+							 || dyn->_field_68 == 0
+							 || (newex1 = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0)),
+								 newex1->_excFlags = 2,
+								 newex1->_keyCode = _field_4,
+								 newex1->sendMessage(),
+								 (_movement != 0)) {
+							if (_movement->gotoNextFrame(_callback1, _callback2)) {
+								setOXY(_movement->_ox, _movement->_oy);
+								_counter = _initialCounter;
+								if (dyn->_initialCountdown == dyn->_countdown) {
+									ex = dyn->getExCommand();
+									if (ex) {
+										if (ex->_messageKind == 35) {
+											newex2 = new ExCommand(ex);
+											ex->_excFlags |= 2;
+											ex->sendMessage();
+										}
+									}
+								}
+							} else {
+								stopAnim_maybe();
+							}
+							if (_movement) {
+								_stepArray.getCurrPoint(&point);
+								setOXY(point.x + _ox, point.y + _oy);
+								_stepArray.gotoNextPoint();
+								if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
+									adjustSomeXY();
+							}
+						}
+					}
+				}
+			} else if (_flags & 0x20) {
+				_flags ^= 0x20;
+				_flags |= 1;
+				_movement->gotoFirstFrame();
+				_movement->getCurrDynamicPhaseXY(point);
+
+				Common::Point pointS;
+				_statics->getSomeXY(pointS);
+				setOXY(_ox + point.x + _movement->_mx - pointS.x,
+					   _oy + point.y + _movement->_my - pointS.y);
+			}
+		}
+	} else {
+		if (_statics) {
+			if (_messageQueueId) {
+				if (_statics->_countdown) {
+					_statics->_countdown--;
+					return;
+				}
+				mqid = _messageQueueId;
+				_messageQueueId = 0;
+				updateGlobalMessageQueue(mqid, _id);
+			}
+		}
+	}
+}
+
+void StaticANIObject::stopAnim_maybe() {
+	warning("STUB: StaticANIObject::stopAnim_maybe()");
+}
+
+void StaticANIObject::adjustSomeXY() {
+	warning("STUB: StaticANIObject::adjustSomeXY()");
 }
 
 bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
@@ -731,7 +860,7 @@ void Movement::setDynamicPhaseIndex(int index) {
 		gotoNextFrame(0, 0);
 
 	while (_currDynamicPhaseIndex > index)
-		gotoPrevFrame(0, 0);
+		gotoPrevFrame();
 }
 
 void Movement::loadPixelData() {
@@ -768,24 +897,24 @@ void Movement::removeFirstPhase() {
 	_updateFlag1 = 0;
 }
 
-void Movement::gotoNextFrame(int callback1, int callback2) {
+bool Movement::gotoNextFrame(int callback1, int callback2) {
 	debug(0, "Movement::gotoNextFrame(%d, %d)", callback1, callback2);
 
 	if (!callback2) {
 		if (_currMovement) {
 			if ((uint)_currDynamicPhaseIndex == _currMovement->_dynamicPhases.size() - 1
 				&& !(((DynamicPhase *)(_currMovement->_dynamicPhases.back()))->_countdown)) {
-				return;
+				return false;
 			}
 		} else if ((uint)_currDynamicPhaseIndex == _dynamicPhases.size() - 1
 				   && !(((DynamicPhase *)(_dynamicPhases.back()))->_countdown)) {
-			return;
+			return false;
 		}
 	}
 
 	if (_currDynamicPhase->_countdown) {
 		_currDynamicPhase->_countdown--;
-		return;
+		return true;
 	}
 
 	Common::Point point;
@@ -806,11 +935,17 @@ void Movement::gotoNextFrame(int callback1, int callback2) {
 	else
 		_currDynamicPhaseIndex++;
 
+	bool result = true;
+
 	if (_currMovement) {
-		if (_currMovement->_dynamicPhases.size() <= (uint)_currDynamicPhaseIndex)
+		if (_currMovement->_dynamicPhases.size() <= (uint)_currDynamicPhaseIndex) {
 			_currDynamicPhaseIndex = _currMovement->_dynamicPhases.size() - 1;
-		if (_currDynamicPhaseIndex < 0)
+			result = (callback2 == 0);
+		}
+		if (_currDynamicPhaseIndex < 0) {
 			_currDynamicPhaseIndex = 0;
+			result = false;
+		}
 		if (_currMovement->_framePosOffsets) {
 			if (callback1) {
 				point = *_currMovement->_framePosOffsets[_currDynamicPhaseIndex];
@@ -842,10 +977,14 @@ void Movement::gotoNextFrame(int callback1, int callback2) {
 			}
 		}
 	} else {
-		if (_dynamicPhases.size() <= (uint)_currDynamicPhaseIndex)
+		if (_dynamicPhases.size() <= (uint)_currDynamicPhaseIndex) {
 			_currDynamicPhaseIndex = _dynamicPhases.size() - 1;
-		if (_currDynamicPhaseIndex < 0)
+			result = (callback2 == 0);
+		}
+		if (_currDynamicPhaseIndex < 0) {
 			_currDynamicPhaseIndex = 0;
+			result = false;
+		}
 
 		if (_framePosOffsets) {
 			if (callback1) {
@@ -875,10 +1014,19 @@ void Movement::gotoNextFrame(int callback1, int callback2) {
 	_oy += point.y;
 
 	_currDynamicPhase->_countdown = _currDynamicPhase->_initialCountdown;
+
+	return result;
 }
 
-void Movement::gotoPrevFrame(int callback1, int callback2) {
+bool Movement::gotoPrevFrame() {
 	warning("STUB: Movement::gotoPrevFrame()");
+
+	return true;
+}
+
+void Movement::gotoFirstFrame() {
+	while (_currDynamicPhaseIndex)
+			gotoPrevFrame();
 }
 
 void Movement::gotoLastFrame() {

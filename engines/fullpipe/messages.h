@@ -147,6 +147,7 @@ bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id);
 void clearMessageHandlers();
 void postMessage(ExCommand *ex);
 void processMessages();
+void updateGlobalMessageQueue(int id, int objid);
 
 } // End of namespace Fullpipe
 
