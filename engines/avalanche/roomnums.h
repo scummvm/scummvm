@@ -35,6 +35,7 @@ namespace Avalanche {
 const byte r__nowhere = 0;
 const byte r__yours = 1;
 const byte r__outsideyours = 2;
+const byte r__outsidespludwicks = 3;
 /*{ a corridor in your castle. = 3 }
 { outside your castle = 5; }*/
 const byte r__musicroom = 7;
