@@ -69,6 +69,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets1", 0, 2, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets2", 0, 2, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx", 0, 1, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "zgi", 0, 4, true);
  
 	// Here is the right place to set up the engine specific debug channels
 	//DebugMan.addDebugChannel(kZVisionDebugExample, "example", "this is just an example for a engine specific debug channel");
