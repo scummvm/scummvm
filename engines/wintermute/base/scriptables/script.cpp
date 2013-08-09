@@ -1514,7 +1514,7 @@ ScValue *ScScript::resolveName(const char *name) {
 	ScValue *value; 
 
 	varName = st.nextToken();
-	value = getVar(const_cast<char *>(varName.c_str()));
+	value = getVar(varName.c_str());
 	
 	if (value == nullptr) return nullptr;
 	
