@@ -76,9 +76,6 @@ void Window::dispatchAllMessages() {
 		case kMessageTypeKillFocus:
 			onKillFocus(((KillFocusMessage *)message)->getWindow());
 			break;
-		case kMessageTypeQueryNewPalette:
-			onQueryNewPalette();
-			break;
 		case kMessageTypeLButtonUp:
 			onLButtonUp(((LButtonUpMessage *)message)->getPoint(), ((LButtonUpMessage *)message)->getFlags());
 			break;
