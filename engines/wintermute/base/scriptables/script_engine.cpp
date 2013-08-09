@@ -169,12 +169,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 		// We need to carry over breakpoints, otherwise the new thread won't break
 		// TODO: Add a function for this. 
 		// TODO-TODO: Or just rip refreshBreakpoints() off original
-
-		for (uint i = 0; i < _watchlist.size(); i++) {
-			if (!strcmp(filename, _watchlist[i]._filename.c_str())) {
-				script->_watchlist.add(_watchlist[i]);
-			}
-		}
+		script->mapWatchList();
 		_scripts.add(script);
 		return script;
 	}
