@@ -819,7 +819,7 @@ bool BaseSprite::killAllSounds() {
 
 
 ////////////////////////
-Common::String BaseSprite::debuggerToString() {
+Common::String BaseSprite::debuggerToString() const {
 	return Common::String::format("%p: Sprite \"%s\"", (void *)this, getName());
 }
 
