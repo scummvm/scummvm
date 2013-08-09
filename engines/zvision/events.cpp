@@ -61,6 +61,9 @@ void ZVision::processEvents() {
 				if (_event.kbd.hasFlags(Common::KBD_CTRL))
 					quitGame();
 				break;
+			case Common::KEYCODE_F1:
+				cycleThroughCursors();
+				break;
 			default:
 				break;
 			}

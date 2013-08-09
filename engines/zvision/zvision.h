@@ -96,6 +96,8 @@ public:
 
 	void playVideo(Video::VideoDecoder &videoDecoder);
 
+	void cycleThroughCursors();
+
 private:
 	void initialize();
 
