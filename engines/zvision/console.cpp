@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 
+#include "common/system.h"
 #include "gui/debugger.h"
 #include "common/file.h"
 #include "common/bufferedstream.h"
@@ -34,6 +35,8 @@
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/zork_raw.h"
 #include "zvision/utility.h"
+#include "zvision/cursor.h"
+
 
 namespace ZVision {
 
@@ -49,6 +52,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
 	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
 	DCmd_Register("dumpcursorfilenames", WRAP_METHOD(Console, cmdDumpAllCursorFileNames));
+	DCmd_Register("showcursor", WRAP_METHOD(Console, cmdShowCursor));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -188,6 +192,14 @@ bool Console::cmdDumpAllCursorFileNames(int argc, const char **argv) {
 		outputFile.writeString((*iter)->getName());
 		outputFile.writeByte('\n');
 	}
+
+	return true;
+}
+
+bool Console::cmdShowCursor(int argc, const char **argv) {
+	ZorkCursor cursor(argv[1]);
+
+	_engine->_system->copyRectToScreen(cursor.getSurface(), cursor.getWidth() * 2, 0, 0, cursor.getWidth(), cursor.getHeight());
 
 	return true;
 }
