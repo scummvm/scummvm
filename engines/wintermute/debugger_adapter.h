@@ -102,7 +102,7 @@ public:
 	int setValue(Common::String name, Common::String value, ScValue * &var);
 	int setType(const Common::String &name, Common::String &type);
 	Common::String readRes(const Common::String &name, int *error);
-	bool showFps(bool show);
+	void showFps(bool show);
 	SourceFile *_lastSource;
 private:
 	bool compiledExists(Common::String filename);
