@@ -91,7 +91,7 @@ ScEngine::~ScEngine() {
 
 
 ScEngine::CScWatch::~CScWatch() {
-	delete _lastvalue;
+	delete _lastValue;
 }
 
 
@@ -183,7 +183,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 bool ScEngine::addWatch(const char *filename, const char *name) {
 	CScWatch watch = CScWatch(filename);
 	watch._symbol = name;
-	watch._lastvalue = new ScValue(_gameRef);
+	watch._lastValue = new ScValue(_gameRef);
 	_watchlist.add(watch);
 	refreshWatchlist();
 	return 0;

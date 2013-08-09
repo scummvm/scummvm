@@ -86,7 +86,7 @@ public:
 		~CScWatch();
 		Common::String _filename;
 		Common::String _symbol;
-		ScValue* _lastvalue; 
+		ScValue *_lastValue; 
 		int _hits;
 		int _enabled;
 	};
