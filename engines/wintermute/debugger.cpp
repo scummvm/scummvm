@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "engines/wintermute/debugger.h"
 #include "engines/wintermute/debugger_adapter.h"
 #include "engines/wintermute/wintermute.h"
