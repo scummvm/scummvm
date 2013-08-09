@@ -44,6 +44,7 @@ BaseEngine::BaseEngine() {
 	_classReg = nullptr;
 	_rnd = nullptr;
 	_gameId = "";
+	_language = Common::UNK_LANG;
 }
 
 void BaseEngine::init() {
