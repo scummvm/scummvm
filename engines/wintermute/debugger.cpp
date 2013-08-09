@@ -293,10 +293,18 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 bool Console::Cmd_SetType(int argc, const char **argv) {
 	if (argc == 3) {
 		Common::String type = Common::String(argv[2]);
-		ADAPTER->setType(Common::String(argv[1]), type);
-		// TODO: Sanity check
+		int error = ADAPTER->setType(Common::String(argv[1]), type);
+		if (error == OK) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == NOT_ALLOWED) {
+			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
+		} else if (error == PARSE_ERROR) {
+			debugWarning(argv[0], ERROR, "Couldn't parse type\n");
+		} else {
+			debugWarning(argv[0], ERROR, "Unrecognized error\n");
+		}
 	} else {
-		DebugPrintf("Usage ... ");
+		DebugPrintf("Usage: %s <name> <value> to set type of <name>", argv[0]);
 	}
 
 	return 1;
