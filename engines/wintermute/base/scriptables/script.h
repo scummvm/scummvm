@@ -156,7 +156,7 @@ public:
 	char **_symbols;
 	uint32 _numSymbols;
 	ScValue *resolveName(const char *name);
-		void mapWatchList();
+	void mapWatchList();
 private:
 	TFunctionPos *_functions;
 	TMethodPos *_methods;
@@ -166,6 +166,7 @@ private:
 	uint32 _numFunctions;
 	uint32 _numMethods;
 	uint32 _numEvents;
+
 	bool initScript();
 	bool initTables();
 
