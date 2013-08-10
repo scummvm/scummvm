@@ -347,7 +347,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 		Common::String callStr = st.nextToken();
 		// Okay - now let's see if it's a call
 		Common::StringTokenizer callSt = Common::StringTokenizer(callStr.c_str(), "(");
-		methodName =  callSt.nextToken();
+		methodName = callSt.nextToken();
 		Common::String arg;
 		if (callSt.empty()) {
 			result = pos->scGetProperty(methodName);
