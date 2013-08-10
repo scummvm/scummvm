@@ -97,7 +97,7 @@ public:
 	Common::RandomSource *getRandomSource() const;
 	ZVisionGameId getGameId() const;
 
-	void playVideo(Video::VideoDecoder &videoDecoder);
+	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
 
 	void cycleThroughCursors();
 

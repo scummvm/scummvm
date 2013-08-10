@@ -34,10 +34,11 @@
 
 namespace ZVision {
 
-// Taken from SCI
-void scale2x(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel) {
+// Taken/modified from SCI
+void scaleBuffer(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint scaleAmount) {
 	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
-	const uint32 newWidth = srcWidth * 2;
+
+	const uint32 newWidth = srcWidth * scaleAmount;
 	const uint32 pitch = newWidth * bytesPerPixel;
 	const byte *srcPtr = src;
 
@@ -45,54 +46,70 @@ void scale2x(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, byte
 		for (uint32 y = 0; y < srcHeight; y++) {
 			for (uint32 x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
-				dst[0] = color;
-				dst[1] = color;
-				dst[newWidth] = color;
-				dst[newWidth + 1] = color;
-				dst += 2;
+
+				for (int i = 0; i < scaleAmount; i++) {
+					dst[i] = color;
+					dst[pitch + i] = color;
+				}
+				dst += scaleAmount;
 			}
-			dst += newWidth;
+			dst += pitch;
 		}
 	} else if (bytesPerPixel == 2) {
 		for (uint32 y = 0; y < srcHeight; y++) {
 			for (uint32 x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
 				const byte color2 = *srcPtr++;
-				dst[0] = color;
-				dst[1] = color2;
-				dst[2] = color;
-				dst[3] = color2;
-				dst[pitch] = color;
-				dst[pitch + 1] = color2;
-				dst[pitch + 2] = color;
-				dst[pitch + 3] = color2;
-				dst += 4;
+
+				for (int i = 0; i < scaleAmount; i++) {
+					dst[i] = color;
+					dst[i + 1] = color2;
+					dst[pitch + i] = color;
+					dst[pitch + i + 1] = color2;
+				}
+				dst += 2 * scaleAmount;
 			}
 			dst += pitch;
 		}
 	}
 }
 
-void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
+void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect, bool skippable) {
 	// Videos use a different pixel format
 	Common::List<Graphics::PixelFormat> formats;
 	formats.push_back(videoDecoder.getPixelFormat());
 	initGraphics(_width, _height, true, formats);
 
 	byte bytesPerPixel = videoDecoder.getPixelFormat().bytesPerPixel;
+
 	uint16 origWidth = videoDecoder.getWidth();
 	uint16 origHeight = videoDecoder.getHeight();
+
+	uint scale = 1;
+	// If destRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
+	if (destRect.isEmpty()) {
+		// Most videos are very small. Therefore we do a simple 2x scale
+		if (origWidth * 2 <= 640 && origHeight * 2 <= 480) {
+			scale = 2;
+		}
+	} else {
+		// Assume bilinear scaling. AKA calculate the scale from just the width.
+		// Also assume that the scaling is in integral intervals. AKA no 1.5x scaling
+		// TODO: Test ^these^ assumptions
+		uint scale = destRect.width() / origWidth;
+
+		// TODO: Test if we need to support downscale.
+	}
+
 	uint16 pitch = origWidth * bytesPerPixel;
 
-	// Most videos are very small. Therefore we do a simple 2x scale
-	bool shouldBeScaled = (origWidth * 2 <= 640 && origHeight * 2 <= 480);
-	uint16 finalWidth = shouldBeScaled ? origWidth * 2 : origWidth;
-	uint16 finalHeight = shouldBeScaled ? origHeight * 2 : origHeight;
+	uint16 finalWidth = origWidth * scale;
+	uint16 finalHeight = origHeight * scale;
 
-	byte *scaledVideoFrameBuffer = new byte[origHeight * pitch * 4];
+	byte *scaledVideoFrameBuffer = new byte[finalWidth * finalHeight * bytesPerPixel];
 
-	uint16 x = (_width - finalWidth) / 2;
-	uint16 y = (_height - finalHeight) / 2;
+	uint16 x = ((_width - finalWidth) / 2) + destRect.left;
+	uint16 y = ((_height - finalHeight) / 2) + destRect.top;
 
 	_clock.stop();
 	videoDecoder.start();
@@ -109,7 +126,9 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 						quitGame();
 					break;
 				case Common::KEYCODE_SPACE:
-					videoDecoder.stop();
+					if (skippable) {
+						videoDecoder.stop();
+					}
 					break;
 				default:
 					break;
@@ -123,8 +142,8 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder) {
 			const Graphics::Surface *frame = videoDecoder.decodeNextFrame();
 
 			if (frame) {
-				if (shouldBeScaled) {
-					scale2x((byte *)frame->pixels, scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel);
+				if (scale != 1) {
+					scaleBuffer((byte *)frame->pixels, scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel, scale);
 					_system->copyRectToScreen(scaledVideoFrameBuffer, pitch * 2, x, y, finalWidth, finalHeight);
 				} else {
 					_system->copyRectToScreen((byte *)frame->pixels, pitch, x, y, finalWidth, finalHeight);
