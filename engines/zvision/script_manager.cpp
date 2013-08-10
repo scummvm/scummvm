@@ -142,17 +142,21 @@ void ScriptManager::checkPuzzleCriteria() {
 			}
 		}
 
-		// TODO: Add logic for the different Flags (aka, ONCE_PER_INST)
 		// criteriaList can be empty. Aka, the puzzle should be executed immediately
 		if (puzzle->criteriaList.empty() || criteriaMet) {
 			debug("Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
+			bool shouldContinue = true;
 			for (Common::List<Common::SharedPtr<ResultAction> >::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); resultIter++) {
-				(*resultIter)->execute(_engine);
+				shouldContinue = shouldContinue && (*resultIter)->execute(_engine);
 			}
 
 			// Set the puzzle as completed
 			setStateValue(puzzle->key, 1);
+
+			if (!shouldContinue) {
+				break;
+			}
 		}
 	}
 }
