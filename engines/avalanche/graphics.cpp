@@ -117,7 +117,7 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 			}
 }
 
-Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
+Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
 	Common::Point endPoint;
 	const double pi = 3.14;
 	const double convfac = pi / 180.0;
@@ -205,12 +205,12 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 	return endPoint;
 }
 
-void Graphics::drawPieSlice(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
+void Graphics::drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
 	while (radius > 0)
 		drawArc(surface, x, y, stAngle, endAngle, radius--, color);
 }
 
-void Graphics::drawTriangle(const ::Graphics::Surface &surface, Common::Point *p, byte color) {
+void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte color) {
 	// Draw the borders with a marking color.
 	_scrolls.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, 255);
 	_scrolls.drawLine(p[1].x, p[1].y, p[2].x, p[2].y, 255);
