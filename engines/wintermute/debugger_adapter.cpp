@@ -294,7 +294,7 @@ int DebuggerAdapter::stepFinish() {
 void DebuggerAdapter::reset() {
 	_lastScript = nullptr;
 	_lastLine = -1;
-	_lastDepth = kDefaultStep - 1;
+	_lastDepth = kDefaultStep;
 }
 
 Common::String DebuggerAdapter::readValue(const char *name, int *error) {
