@@ -67,8 +67,8 @@ DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
 
 bool SourceFile::isBlank(int line) {
 	Common::String theLine = getLine(line);
-	Common::StringTokenizer *st = new Common::StringTokenizer(theLine, "//");
-	Common::String charsBeforeComment = st->nextToken();
+	Common::StringTokenizer st(theLine, "//");
+	Common::String charsBeforeComment = st.nextToken();
 	charsBeforeComment.trim();
 	if (charsBeforeComment.size() == 0) {
 		// No chars before "//" except for whitespaces... looks like a comment or an empty line
