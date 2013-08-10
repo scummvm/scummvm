@@ -36,9 +36,21 @@ namespace ZVision {
 // Forward declaration of ZVision. This file is included before ZVision is declared
 class ZVision;
 
+/**
+  * The base class that represents any action that a Puzzle can take.
+  * This class is purely virtual.
+  */
 class ResultAction {
 public:
 	virtual ~ResultAction() {}
+	/**
+	 * This is called by the script system whenever a Puzzle's criteria are found to be true.
+	 * It should execute any necessary actions and return a value indicating whether the script
+	 * system should continue to test puzzles. In 99% of cases this will be 'true'.
+	 *
+	 * @param engine    A pointer to the base engine so the ResultAction can access all the necessary methods
+	 * @return          Should the script system continue to test any remaining puzzles (true) or immediately break and go on to the next frame (false)
+	 */
 	virtual bool execute(ZVision *engine) = 0;
 };
 
