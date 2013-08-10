@@ -333,7 +333,7 @@ bool Picture::load(MfcArchive &file) {
 
 	assert (g_fullpipe->_gameProjectVersion >= 12);
 
-	_alpha = file.readUint32LE();
+	_alpha = file.readUint32LE() & 0xff;
 
 	int havePal = file.readUint32LE();
 
@@ -423,7 +423,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	if (!_bitmap)
 		return;
 
-	if (_alpha < 0xff) {
+	if ((_alpha & 0xff) < 0xff) {
 		warning("Picture:draw: alpha = %0x", _alpha);
 	}
 

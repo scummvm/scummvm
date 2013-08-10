@@ -381,6 +381,7 @@ void Scene::objectList_sortByPriority(CPtrList &list) {
 }
 
 void Scene::draw() {
+	debug(0, ">>>>> Scene::draw()");
 	updateScrolling();
 
 	drawContent(60000, 0, true);

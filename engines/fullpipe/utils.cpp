@@ -155,7 +155,7 @@ void MemoryObject::loadFile(char *filename) {
 
 			_dataSize = s->size();
 
-			debug(0, "Loading %s (%d bytes)", filename, _dataSize);
+			debug(5, "Loading %s (%d bytes)", filename, _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
 

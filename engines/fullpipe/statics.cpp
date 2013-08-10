@@ -574,7 +574,7 @@ bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 		return false;
 	}
 
-	debug(0, "StaticANIObject::setPicAniInfo() (%s [%d])", transCyrillic((byte *)_objectName), _id);
+	debug(0, "StaticANIObject::setPicAniInfo() (%s [%d]) type: %d, statid: %d, movid: %d", transCyrillic((byte *)_objectName), _id, picAniInfo->type, picAniInfo->staticsId, picAniInfo->movementId);
 
 	if (picAniInfo->type & 3) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
@@ -585,7 +585,7 @@ bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	}
 
 	if (picAniInfo->type & 1) {
-		_messageQueueId = picAniInfo->type >> 16;
+		_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
 
 		if (picAniInfo->staticsId) {
 			_statics = getStaticsById(picAniInfo->staticsId);
@@ -928,7 +928,7 @@ void Movement::removeFirstPhase() {
 }
 
 bool Movement::gotoNextFrame(int callback1, int callback2) {
-	debug(0, "Movement::gotoNextFrame(%d, %d)", callback1, callback2);
+	debug(8, "Movement::gotoNextFrame(%d, %d)", callback1, callback2);
 
 	if (!callback2) {
 		if (_currMovement) {
@@ -1151,7 +1151,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_6A = src->_field_6A;
 	_dynFlags = src->_dynFlags;
 
-	setPaletteData(getPaletteData());
+	setPaletteData(src->getPaletteData());
 
 	copyMemoryObject2(src);
 }

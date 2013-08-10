@@ -88,9 +88,9 @@ bool ExCommand::handleMessage() {
 
 	if (_messageKind == 17 || (_excFlags & 1)) {
 		if (_parId) {
-			MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_parId);
-			if (m)
-				m->update();
+			MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_parId);
+			if (mq)
+				mq->update();
 		}
 	}
 
