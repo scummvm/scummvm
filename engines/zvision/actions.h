@@ -286,6 +286,21 @@ private:
 	Common::String _fileName;
 };
 
+class ActionStreamVideo : public ResultAction {
+public:
+	ActionStreamVideo(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+	Common::String _fileName;
+	uint _x;
+	uint _y;
+	uint _width;
+	uint _height;
+	uint _flags;
+	bool _skippable;
+};
+
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(const Common::String &line);

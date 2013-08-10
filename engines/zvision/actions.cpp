@@ -32,6 +32,7 @@
 #include "zvision/render_manager.h"
 #include "zvision/action_node.h"
 #include "zvision/zork_raw.h"
+#include "zvision/zork_avi_decoder.h"
 
 namespace ZVision {
 
@@ -244,6 +245,36 @@ bool ActionSetScreen::execute(ZVision *engine) {
 	RenderManager *renderManager = engine->getRenderManager();
 	renderManager->setBackgroundImage(_fileName);
 
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionStreamVideo
+//////////////////////////////////////////////////////////////////////////////
+
+ActionStreamVideo::ActionStreamVideo(const Common::String &line) {
+	char fileName[25];
+	uint skippable;
+
+	sscanf(line.c_str(), "%*[^(](%25s %u %u %u %u %u %u)", fileName, &_x, &_y, &_width, &_height, &_flags, &skippable);
+
+	_fileName = Common::String(fileName);
+	_skippable = (skippable == 0) ? false : true;
+}
+
+bool ActionStreamVideo::execute(ZVision *engine) {
+	ZorkAVIDecoder decoder;
+	if (!decoder.loadFile(_fileName)) {
+		return true;
+	}
+
+	Common::Rect destRect;
+	if ((_flags & 0x1) == 0x1) {
+		destRect = Common::Rect(_x, _y, _x + _width, _y + _height);
+	}
+
+	engine->playVideo(decoder, destRect, _skippable);
 	return true;
 }
 

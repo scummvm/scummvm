@@ -239,8 +239,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:streamvideo*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionStreamVideo(line)));
 		} else if (line.matchString("*:syncsound*", true)) {
 			
 
