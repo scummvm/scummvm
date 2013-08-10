@@ -147,16 +147,6 @@ void SpeechManager::cctable(tablint &t) {
 	}
 }
 
-void SpeechManager::regenbruit() {
-	int i = kOffsetB3 + 8590;
-	int j = 0;
-	do {
-		_cfiphBuffer[j] = READ_BE_UINT16(&_vm->_mem[(kAdrNoise3 * 16) + i]);
-		i += 2;
-		++j;
-	} while (i < kOffsetB3 + 8790);
-}
-
 /**
  * Load phoneme sound file
  * @remarks	Originally called 'charge_phbruit'
@@ -169,24 +159,6 @@ void SpeechManager::loadPhonemeSounds() {
 
 	for (int i = 1; i <= f.size() / 2; ++i)
 		_cfiphBuffer[i] = f.readUint16BE();
-
-	f.close();
-}
-
-/**
- * Speech function - Load Noise file
- * @remarks	Originally called 'charge_bruit'
- */
-void SpeechManager::loadNoise() {
-	Common::File f;
-
-	if (!f.open("bruits"))               //Translation: "noise"
-		error("Missing file - bruits");
-
-	f.read(&_vm->_mem[kAdrNoise * 16], 250 * 128); // 32000
-	for (int i = 0; i < _noise5Size; ++i)
-		_vm->_mem[(kAdrNoise * 16) + 32000 + i] = _noise5Buf[i];
-	f.read(&_vm->_mem[(kAdrNoise1 * 16) + kOffsetB1], 149 * 128); // 19072
 
 	f.close();
 }
@@ -570,8 +542,8 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	cctable(_tbi);
 	switch (typ) {
 	case 1:
-		loadNoise();
-		regenbruit();
+		_vm->_soundManager.loadNoise();
+		_vm->_soundManager.regenbruit();
 		break;
 	case 2:
 		//TODO: Only call it once

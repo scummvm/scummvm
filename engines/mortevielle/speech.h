@@ -34,13 +34,8 @@
 
 namespace Mortevielle {
 
-const int kAdrNoise  = 0x5cb0;/*2C00;*/
-const int kAdrNoise1 = 0x6924;
-const int kAdrNoise3 = 0x6ba6;/*3AF6;*/
 const int kAdrTroct  = 0x406b;
 const int kAdrWord   = 0x4000;
-const int kOffsetB1  = 6;
-const int kOffsetB3  = 6;
 
 const float kfreq0 = 1.19318e6;
 const int kNullValue = 255;
@@ -48,13 +43,6 @@ const int kTempoMusic = 71;
 const int kTempoNoise = 78;
 const int kTempoF = 80;
 const int kTempoM = 89;
-
-// Useless constants
-//const int segdon = 0x6c00;
-//const int adbruit2 = 0x6b30;/*3A80;*/
-//const int adson2 = 0x60b0;/*3000;*/
-//const int seg_syst = 0x6fed;
-//const int offsetb2 = 4;
 
 struct SpeechQueue {
 	int _val;
@@ -88,9 +76,7 @@ public:
 	void entroct(byte o);
 	void veracf(byte b);
 	void cctable(tablint &t);
-	void regenbruit();
 	void loadPhonemeSounds();
-	void loadNoise();
 	void trait_car();
 
 	void moveQueue();

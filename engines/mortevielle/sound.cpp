@@ -139,6 +139,7 @@ SoundManager::SoundManager(Audio::Mixer *mixer) {
 							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	_audioStream = nullptr;
 	_ambiantNoiseBuf = nullptr;
+	_noiseBuf = nullptr;
 }
 
 SoundManager::~SoundManager() {
@@ -147,6 +148,7 @@ SoundManager::~SoundManager() {
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;	
 	free(_ambiantNoiseBuf);
+	free(_noiseBuf);
 }
 
 /**
@@ -200,6 +202,37 @@ void SoundManager::loadAmbiantSounds() {
 	free(compMusicBuf1);
 }
 
+/**
+ * Speech function - Load Noise file
+ * @remarks	Originally called 'charge_bruit'
+ */
+void SoundManager::loadNoise() {
+	Common::File f1, f2;
+
+	if (!f1.open("bruits"))               //Translation: "noise"
+		error("Missing file - bruits");
+	if (!f2.open("bruit5"))
+		error("Missing file - bruit5");
+
+	_noiseBuf = (byte *)malloc(sizeof(byte) * (f1.size() + f2.size()));
+	assert(f1.size() > 32000);
+
+	f1.read(_noiseBuf, 32000); // 250 * 128
+	f2.read(&_noiseBuf[32000], f2.size());
+	f1.read(&_noiseBuf[32000 + f2.size()], f1.size() - 32000); // 19072
+
+	f1.close();
+	f2.close();
+}
+
+void SoundManager::regenbruit() {
+	int i = 69876;
+	for (int j = 0; j < 100; j++) {
+		_vm->_speechManager._cfiphBuffer[j] = READ_BE_UINT16(&_noiseBuf[i]);
+		i += 2;
+	}
+}
+
 void SoundManager::litph(tablint &t, int typ, int tempo) {
 	// Skip speech
 	if (_vm->_speechManager._typlec == 0)
@@ -215,7 +248,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			int val = _vm->_mem[(kAdrTroct * 16) + i];
 			i++;
 			if (_vm->_speechManager._typlec == 0)
-				warning("vclas");
+				warning("TODO: vclas");
 			else if (_vm->_speechManager._typlec == 1) {
 				debugC(5, kMortevielleSounds, "litph - duson");
 				const static int noiseAdr[] = {0,     17224,
@@ -229,7 +262,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 				} else {
 					if (!_audioStream)
 						_audioStream = Audio::makeQueuingAudioStream(freq, false);
-					_audioStream->queueBuffer(&_vm->_mem[(kAdrNoise * 16) + noiseAdr[val * 2]], noiseAdr[(val * 2) + 1] - noiseAdr[(val * 2)], DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
+					_audioStream->queueBuffer(&_noiseBuf[noiseAdr[val * 2]], noiseAdr[(val * 2) + 1] - noiseAdr[(val * 2)], DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
 				}
 			} else { // 2
 				debugC(5, kMortevielleSounds, "litph - vadson");
@@ -271,11 +304,11 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			}
 			break;
 		case 6:
-			warning("pari2");
+			warning("TODO: pari2");
 			break;
 		default:
 			if (idx == 62)
-				warning("blab");
+				warning("TODO: blab");
 			else if (idx == 35) {
 				if (i < _vm->_speechManager._ptr_oct)
 					warning("unexpected 35");

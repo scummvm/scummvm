@@ -98,6 +98,7 @@ private:
 	PCSpeaker *_speakerStream;
 	Audio::SoundHandle _speakerHandle;
 	byte *_ambiantNoiseBuf;
+	byte *_noiseBuf;
 
 public:
 	Audio::Mixer *_mixer;
@@ -112,7 +113,9 @@ public:
 	int decodeMusic(const byte *PSrc, byte *PDest, int size);
 	void playSong(const byte *buf, uint usize, uint loops);
 	void loadAmbiantSounds();
+	void loadNoise();
 
+	void regenbruit();
 	void litph(tablint &t, int typ, int tempo);
 };
 
