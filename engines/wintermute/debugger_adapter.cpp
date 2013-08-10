@@ -30,7 +30,6 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "common/tokenizer.h"
-#include <limits.h>
 #define SCENGINE _engine->_game->_scEngine
 #define DEBUGGER _engine->_debugger
 #define DBG_PATH "dbg"
