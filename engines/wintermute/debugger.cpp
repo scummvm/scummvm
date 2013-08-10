@@ -158,13 +158,13 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 
 bool Console::Cmd_Info(int argc, const char **argv) {
 	if (argc == 2 && !strncmp(argv[1], "breakpoints", 10)) {
-		BaseArray<BreakpointInfo> breakpoints = ADAPTER->getBreakpoints();
+		Common::Array<BreakpointInfo> breakpoints = ADAPTER->getBreakpoints();
 		for (uint i = 0; i < breakpoints.size(); i++) {
 			DebugPrintf("%d %s:%d x%d, enabled: %d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits, breakpoints[i]._enabled);
 		}
 		return 1;
 	} else if (argc == 2 && !strncmp(argv[1], "watch", 5)) {
-		BaseArray<WatchInfo>watchlist = ADAPTER->getWatchlist();
+		Common::Array<WatchInfo>watchlist = ADAPTER->getWatchlist();
 		for (uint i = 0; i < watchlist.size(); i++) {
 			DebugPrintf("%d %s:%s x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);
 		}
@@ -398,7 +398,7 @@ void Console::notifyWatch(const char *filename, const char *symbol, const char *
 void Console::printSource(int n) {
 	int error = 0;
 	int *perror = &error;
-	BaseArray<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
+	Common::Array<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
 	if (error != 0) {
 		DebugPrintf("Error retrieving source file\n");
 	}

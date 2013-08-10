@@ -52,7 +52,7 @@ SourceFile::SourceFile(const Common::String &filename) {
 			_err = file->err();
 		}
 		while (!file->eos()) {
-			_strings.add(file->readLine());
+			_strings[_strings.size()] = file->readLine();
 			if (file->err()) {
 				_err = file->err();
 			}
@@ -105,12 +105,12 @@ Common::String SourceFile::getLine(uint n, int *error) {
 }
 
 
-BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int lines, int *error) {
+Common::Array<Common::String> SourceFile::getSurroundingLines(int center, int lines, int *error) {
 	return getSurroundingLines(center, lines, lines, error);
 }
 
 
-BaseArray<Common::String> SourceFile::getSurroundingLines(int center, int before, int after, int *error) {
+Common::Array<Common::String> SourceFile::getSurroundingLines(int center, int before, int after, int *error) {
 	*error = 0;
 	int start = MAX(center - before, 1);
 	int finish = MIN(center + after, getLength()); // Line numbers start from 1
@@ -493,28 +493,28 @@ void DebuggerAdapter::showFps(bool show) {
 	_engine->_game->setShowFPS(show);
 }
 
-BaseArray<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
+Common::Array<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
 	assert(SCENGINE);
-	BaseArray<BreakpointInfo> breakpoints;
+	Common::Array<BreakpointInfo> breakpoints;
 	for (uint i = 0; i < SCENGINE->_breakpoints.size(); i++) {
 		BreakpointInfo bp_info;
 		bp_info._filename = SCENGINE->_breakpoints[i]._filename;
 		bp_info._line = SCENGINE->_breakpoints[i]._line;
 		bp_info._hits = SCENGINE->_breakpoints[i]._hits;
 		bp_info._enabled = SCENGINE->_breakpoints[i]._enabled;
-		breakpoints.add(bp_info);
+		breakpoints[breakpoints.size()] = bp_info;
 	}
 	return breakpoints;
 }
 
-BaseArray<WatchInfo> DebuggerAdapter::getWatchlist() {
-	BaseArray<WatchInfo> watchlist;
+Common::Array<WatchInfo> DebuggerAdapter::getWatchlist() {
+	Common::Array<WatchInfo> watchlist;
 	for (uint i = 0; i < SCENGINE->_watchlist.size(); i++) {
 		WatchInfo watch_info;
 		watch_info._filename = SCENGINE->_watchlist[i]._filename;
 		watch_info._symbol = SCENGINE->_watchlist[i]._symbol;
 		watch_info._hits = SCENGINE->_breakpoints[i]._hits;
-		watchlist.add(watch_info);
+		watchlist[watchlist.size()] = watch_info;
 	}
 	return watchlist;
 }
