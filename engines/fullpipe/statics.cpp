@@ -214,6 +214,26 @@ void StaticANIObject::deleteFromGlobalMessageQueue() {
 	}
 }
 
+void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
+	if (isIdle() && !(_flags & 0x80)) {
+		deleteFromGlobalMessageQueue();
+		_messageQueueId = 0;
+		_messageNum = 0;
+		if (_flags & 2) {
+			_flags ^= 2;
+		}
+		if (mq) {
+			_animExFlag = 0;
+			if (_movement)
+				_messageQueueId = mq->_id;
+			else
+				mq->sendNextCommand();
+		} else {
+			_messageQueueId = 0;
+		}
+	}
+}
+
 bool StaticANIObject::isIdle() {
 	if (_messageQueueId) {
 		MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
@@ -427,7 +447,7 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 void StaticANIObject::update(int counterdiff) {
 	int mqid;
 
-	debug(0, "StaticANIObject::update()");
+	debug(0, "StaticANIObject::update() (%x)", _flags);
 
 	if (_flags & 2) {
 		_messageNum--;
@@ -443,76 +463,86 @@ void StaticANIObject::update(int counterdiff) {
 	}
 
 	Common::Point point;
-	ExCommand *ex, *newex, *newex1, *newex2;
+	ExCommand *ex, *newex;
 
 	if (_movement) {
 		_movement->_counter += counterdiff;
-		if (_movement->_counter >= _movement->_counterMax) {
-			_movement->_counter = 0;
 
-			if (_flags & 1) {
-				if (_counter) {
-					_counter--;
-				} else {
-					DynamicPhase *dyn = _movement->_currDynamicPhase;
-					if (dyn->_initialCountdown != dyn->_countdown)
-						goto LABEL_40;
-					ex = dyn->getExCommand();
-					if (!ex || ex->_messageKind == 35)
-						goto LABEL_40;
+		if (_movement->_counter < _movement->_counterMax)
+			return;
+
+		_movement->_counter = 0;
+
+		if (_flags & 1) {
+			if (_counter) {
+				_counter--;
+
+				return;
+			}
+
+			DynamicPhase *dyn = _movement->_currDynamicPhase;
+			if (dyn->_initialCountdown == dyn->_countdown) {
+
+				ex = dyn->getExCommand();
+				if (ex && ex->_messageKind == 35) {
 					newex = new ExCommand(ex);
 					newex->_excFlags |= 2;
 					if (newex->_messageKind == 17) {
 						newex->_parentId = _id;
 						newex->_keyCode = _field_4;
 					}
-					ex->sendMessage();
-					if (_movement) {
-					LABEL_40:
-						if (dyn->_initialCountdown != dyn->_countdown
-							 || dyn->_field_68 == 0
-							 || (newex1 = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0)),
-								 newex1->_excFlags = 2,
-								 newex1->_keyCode = _field_4,
-								 newex1->sendMessage(),
-								 (_movement != 0)) {
-							if (_movement->gotoNextFrame(_callback1, _callback2)) {
-								setOXY(_movement->_ox, _movement->_oy);
-								_counter = _initialCounter;
-								if (dyn->_initialCountdown == dyn->_countdown) {
-									ex = dyn->getExCommand();
-									if (ex) {
-										if (ex->_messageKind == 35) {
-											newex2 = new ExCommand(ex);
-											ex->_excFlags |= 2;
-											ex->sendMessage();
-										}
-									}
-								}
-							} else {
-								stopAnim_maybe();
-							}
-							if (_movement) {
-								_stepArray.getCurrPoint(&point);
-								setOXY(point.x + _ox, point.y + _oy);
-								_stepArray.gotoNextPoint();
-								if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
-									adjustSomeXY();
+					newex->sendMessage();
+
+					if (!_movement)
+						return;
+				}
+
+				if (dyn->_initialCountdown == dyn->_countdown && dyn->_field_68 == 0) {
+					newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
+					newex->_excFlags = 2;
+					newex->_keyCode = _field_4;
+					newex->sendMessage();
+
+					if (!_movement)
+						return;
+				}
+
+				if (!_movement->gotoNextFrame(_callback1, _callback2)) {
+						stopAnim_maybe();
+				} else {
+					setOXY(_movement->_ox, _movement->_oy);
+					_counter = _initialCounter;
+
+					if (dyn->_initialCountdown == dyn->_countdown) {
+						ex = dyn->getExCommand();
+						if (ex) {
+							if (ex->_messageKind == 35) {
+								newex = new ExCommand(ex);
+								newex->_excFlags |= 2;
+								newex->sendMessage();
 							}
 						}
 					}
-				}
-			} else if (_flags & 0x20) {
-				_flags ^= 0x20;
-				_flags |= 1;
-				_movement->gotoFirstFrame();
-				_movement->getCurrDynamicPhaseXY(point);
+					if (!_movement)
+						return;
 
-				Common::Point pointS;
-				_statics->getSomeXY(pointS);
-				setOXY(_ox + point.x + _movement->_mx - pointS.x,
-					   _oy + point.y + _movement->_my - pointS.y);
+					_stepArray.getCurrPoint(&point);
+					setOXY(point.x + _ox, point.y + _oy);
+					_stepArray.gotoNextPoint();
+					if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
+						adjustSomeXY();
+				}
 			}
+		} else if (_flags & 0x20) {
+			_flags ^= 0x20;
+			_flags |= 1;
+			_movement->gotoFirstFrame();
+			_movement->getCurrDynamicPhaseXY(point);
+
+			Common::Point pointS;
+			_statics->getSomeXY(pointS);
+			setOXY(_ox + point.x + _movement->_mx - pointS.x,
+				   _oy + point.y + _movement->_my - pointS.y);
 		}
 	} else {
 		if (_statics) {

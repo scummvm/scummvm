@@ -253,6 +253,9 @@ void FullpipeEngine::updateEvents() {
 				ex->_excFlags |= 3;
 				ex->handle();
 			}
+
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			break;
 		case Common::EVENT_QUIT:
 			_gameContinue = false;
@@ -329,7 +332,7 @@ void FullpipeEngine::updateScreen() {
 			}
 		}
 	} else if (_currentScene) {
-		_currentScene->update(42);  // HACK. FIXME
+		//_currentScene->update(42);  // HACK. FIXME
 		_currentScene->draw();
 
 		if (_inventoryScene)

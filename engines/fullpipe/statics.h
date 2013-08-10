@@ -200,6 +200,7 @@ class StaticANIObject : public GameObject {
 	bool isIdle();
 
 	void deleteFromGlobalMessageQueue();
+	void queueMessageQueue(MessageQueue *msg);
 
 	void initMovements();
 	void loadMovementsPixelData();
