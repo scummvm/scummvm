@@ -2877,8 +2877,10 @@ void MortevielleEngine::setPresenceFlags(int roomId) {
 void MortevielleEngine::initMaxAnswer() {
 	static const byte maxAnswer[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
 
-	for (int idx = 0; idx < 9; ++idx)
+	for (int idx = 0; idx < 9; ++idx) {
 		_charAnswerMax[idx] = maxAnswer[idx];
+		_charAnswerCount[idx] = 0;
+	}
 }
 
 /**
