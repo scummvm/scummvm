@@ -208,8 +208,45 @@ Common::Point Graphics::drawArc(const ::Graphics::Surface &surface, int16 x, int
 void Graphics::drawPieSlice(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
 	while (radius > 0)
 		drawArc(surface, x, y, stAngle, endAngle, radius--, color);
-	*(byte *)surface.getBasePtr(x + 1, y) = color;
 }
+
+void Graphics::drawTriangle(const ::Graphics::Surface &surface, Common::Point *p, byte color) {
+	// Draw the borders with a marking color.
+	_scrolls.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, 255);
+	_scrolls.drawLine(p[1].x, p[1].y, p[2].x, p[2].y, 255);
+	_scrolls.drawLine(p[2].x, p[2].y, p[0].x, p[0].y, 255);
+
+	// Get the top and the bottom of the triangle.
+	uint16 maxY = p[0].y, minY = p[0].y;
+	for (byte i = 1; i < 3; i++) {
+		if (p[i].y < minY)
+			minY = p[i].y;
+		if (p[i].y > maxY)
+			maxY = p[i].y;
+	}
+
+	// Fill the triangle.
+	for (uint16 y = minY; y <= maxY; y++) {
+		uint16 x = 0;
+		while (*(byte *)_scrolls.getBasePtr(x, y) != 255)
+			x++;
+		uint16 minX = x;
+		uint16 maxX = x;
+		x++;
+		while ((*(byte *)_scrolls.getBasePtr(x, y) != 255) && (x != 639))
+			x++;
+		if (x != 639)
+			maxX = x;
+		if (minX != maxX)
+			_scrolls.drawLine(minX, y, maxX, y, color);
+	}
+
+	// Redraw the borders with the actual color.
+	_scrolls.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, color);
+	_scrolls.drawLine(p[1].x, p[1].y, p[2].x, p[2].y, color);
+	_scrolls.drawLine(p[2].x, p[2].y, p[0].x, p[0].y, color);
+}
+
 
 
 
