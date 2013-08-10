@@ -49,15 +49,15 @@ enum ErrorCode {
 
 class SourceFile {
 private:
-	BaseArray<Common::String> _strings;
+	Common::Array<Common::String> _strings;
 	bool _err;
 public:
 	SourceFile(const Common::String &filename);
 	bool loadFile(Common::String filename, int *error = nullptr);
 	int getLength();
 	bool isBlank(int line);
-	BaseArray<Common::String> getSurroundingLines(int centre, int lines, int *error = nullptr);
-	BaseArray<Common::String> getSurroundingLines(int cemtre, int before, int after, int *error = nullptr);
+	Common::Array<Common::String> getSurroundingLines(int centre, int lines, int *error = nullptr);
+	Common::Array<Common::String> getSurroundingLines(int cemtre, int before, int after, int *error = nullptr);
 	Common::String getLine(uint n, int *error = nullptr);
 };
 
@@ -91,8 +91,8 @@ public:
 	int removeBreakpoint(int id);
 	int disableBreakpoint(int id);
 	int enableBreakpoint(int id);
-	BaseArray<BreakpointInfo> getBreakpoints();
-	BaseArray<WatchInfo> getWatchlist();
+	Common::Array<BreakpointInfo> getBreakpoints();
+	Common::Array<WatchInfo> getWatchlist();
 	int stepOver();
 	int stepInto();
 	int stepContinue();
