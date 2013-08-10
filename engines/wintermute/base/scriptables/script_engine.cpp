@@ -178,16 +178,16 @@ bool ScEngine::addWatch(const char *filename, const char *name) {
 	watch._lastValue = new ScValue(_gameRef);
 	_watchlist.add(watch);
 	refreshWatchlist();
-	return 0;
+	return false;
 }
 
 bool ScEngine::removeWatch(uint id) {
 	if (id >= _watchlist.size()) {
-		return 0;
+		return false;
 	}
 	_watchlist.remove_at(id);
 	refreshWatchlist();
-	return 1;
+	return true;
 }
 
 bool ScEngine::refreshWatchlist() {
@@ -200,7 +200,7 @@ bool ScEngine::refreshWatchlist() {
 			}
 		}
 	}
-	return 1;
+	return true;
 }
 
 bool ScEngine::addBreakpoint(const char *filename, int line) {
@@ -209,25 +209,25 @@ bool ScEngine::addBreakpoint(const char *filename, int line) {
 	breakpoint._line = (line);
 	breakpoint._hits = 0;
 	_breakpoints.add(breakpoint);
-	return 1;
+	return true;
 }
 
 bool ScEngine::removeBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return 0;
+	if (id >= _breakpoints.size()) return false;
 	_breakpoints.remove_at(id);
-	return 1;
+	return true;
 }
 
 bool ScEngine::enableBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return 0;
+	if (id >= _breakpoints.size()) return false;
 	_breakpoints[id]._enabled = true;
-	return 1;
+	return true;
 }
 
 bool ScEngine::disableBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return 0;
+	if (id >= _breakpoints.size()) return false;
 	_breakpoints[id]._enabled = false;
-	return 1;
+	return true;
 }
 
 int ScEngine::incrementWatch(uint id) {
