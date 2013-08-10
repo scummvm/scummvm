@@ -1,4 +1,7 @@
 {
 	"description": "Cinematique evo 2",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"menu.cpp"
+	]
 }

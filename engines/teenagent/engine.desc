@@ -1,4 +1,7 @@
 {
 	"description": "Teen Agent",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"resources.cpp"
+	]
 }

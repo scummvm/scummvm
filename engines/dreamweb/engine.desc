@@ -1,4 +1,7 @@
 {
 	"description": "Dreamweb",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"detection.cpp"
+	]
 }

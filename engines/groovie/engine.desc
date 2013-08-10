@@ -7,5 +7,9 @@
 			"description": "Groovie 2 games",
 			"status": "unstable"
 		}
-	}
+	},
+	"translation": [
+		"detection.cpp",
+		"script.cpp"
+	]
 }

@@ -1,4 +1,8 @@
 {
 	"description": "Neverhood",
-	"status": "unstable"
+	"status": "unstable",
+	"translation": [
+		"detection.cpp",
+		"menumodule.cpp"
+	]
 }

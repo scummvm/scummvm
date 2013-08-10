@@ -7,5 +7,9 @@
 			"description": "SCI32 games",
 			"status": "unstable"
 		}
-	}
+	},
+	"translation": [
+		"detection.cpp",
+		"engine/kfile.cpp"
+	]
 }

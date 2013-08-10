@@ -11,5 +11,10 @@
 			"description": "HE71+ games",
 			"status": "stable"
 		}
-	}
+	},
+	"translation": [
+		"dialogs.cpp",
+		"help.cpp",
+		"scumm.cpp"
+	]
 }

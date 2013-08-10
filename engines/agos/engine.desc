@@ -7,5 +7,9 @@
 			"description": "AGOS 2 games",
 			"status": "stable"
 		}
-	}
+	},
+	"translation": [
+		"saveload.cpp",
+		"animation.cpp"
+	]
 }

@@ -1,5 +1,8 @@
 {
 	"description": "The Journeyman Project: Pegasus Prime",
 	"status": "stable",
-	"dependencies": ["16bit"]
+	"dependencies": ["16bit"],
+	"translation": [
+		"pegasus.cpp"
+	]
 }

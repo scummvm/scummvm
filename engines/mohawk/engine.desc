@@ -17,5 +17,10 @@
 			"status": "unstable",
 			"dependencies": ["16bit"]
 		}
-	}
+	},
+	"translation": [
+		"dialogs.cpp",
+		"myst.cpp",
+		"riven.cpp"
+	]
 }

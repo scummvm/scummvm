@@ -1,4 +1,9 @@
 {
 	"description": "Gobli*ns",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"inter_playtoons.cpp",
+		"inter_v2.cpp",
+		"inter_v5.cpp"
+	]
 }

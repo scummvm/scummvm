@@ -3,6 +3,7 @@
 import glob
 import json
 import sys
+import re
 
 # Show the tool usage and exit with error code
 def show_usage():
@@ -123,6 +124,24 @@ def create_configure_engines(engines):
 		lines = lines + create_configure_engines_entry(engine, engines[engine])
 	return lines
 
+# Create translation file list for a specific engine
+def create_translation_files_entry(name, engine):
+	# In case no translation files are given do nothing
+	if not ("translation" in engine):
+		return ""
+	# Otherwise add all the files given in their proper path
+	lines = ""
+	for filename in engine["translation"]:
+		lines = lines + "engines/" + name + "/" + filename + "\n"
+	return lines
+
+# Create the translation file list
+def create_translation_files(engines):
+	lines = ""
+	for engine in sort_engines(engines):
+		lines = lines + create_translation_files_entry(engine, engines[engine])
+	return lines
+
 if len(sys.argv) != 2:
 	show_usage()
 
@@ -150,4 +169,17 @@ with open(engines_path + "engines.mk", "w") as f:
 print("Creating configure.engines...")
 lines = create_configure_engines(engines)
 with open(engines_path + "configure.engines", "w") as f:
+	f.write(lines)
+
+# Do replacement of all the misc utilitiy files which depend on engine
+# specific data.
+
+# Create the proper POTFILES file
+print("Creating po/POTFILES...")
+lines = create_translation_files(engines)
+with open("po/POTFILES.in", "r") as f:
+	p = re.compile("@ENGINE_TRANSLATION_FILES@\n")
+	lines = p.sub(lines, f.read())
+with open("po/POTFILES", "w") as f:
+	f.write("# This file was automatically generated and should NEVER be edited manually!\n")
 	f.write(lines)

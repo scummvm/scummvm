@@ -1,4 +1,7 @@
 {
 	"description": "Parallaction",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"saveload.cpp"
+	]
 }

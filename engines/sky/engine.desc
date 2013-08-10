@@ -1,4 +1,8 @@
 {
 	"description": "Beneath a Steel Sky",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"compact.cpp",
+		"detection.cpp"
+	]
 }

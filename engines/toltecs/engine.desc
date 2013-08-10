@@ -1,4 +1,8 @@
 {
 	"description": "3 Skulls of the Toltecs",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"detection.cpp",
+		"menu.cpp"
+	]
 }

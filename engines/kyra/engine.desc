@@ -11,5 +11,10 @@
 			"description": "Eye of the Beholder",
 			"status": "stable"
 		}
-	}
+	},
+	"translation": [
+		"detection.cpp",
+		"lol.cpp",
+		"sound_midi.cpp"
+	]
 }

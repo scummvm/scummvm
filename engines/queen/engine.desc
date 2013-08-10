@@ -1,4 +1,7 @@
 {
 	"description": "Flight of the Amazon Queen",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"queen.cpp"
+	]
 }

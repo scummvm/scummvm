@@ -1,4 +1,8 @@
 {
 	"description": "Broken Sword II",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"animation.cpp",
+		"sword2.cpp"
+	]
 }

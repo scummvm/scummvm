@@ -1,4 +1,8 @@
 {
 	"description": "Drascula: The Vampire Strikes Back",
-	"status": "stable"
+	"status": "stable",
+	"translation": [
+		"detection.cpp",
+		"saveload.cpp"
+	]
 }
