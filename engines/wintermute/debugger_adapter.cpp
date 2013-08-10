@@ -140,12 +140,12 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 
 	if (!compiledExists(filename)) return NO_SUCH_SCRIPT;
 
-	SourceFile *sf = new SourceFile(filename);
+	SourceFile sf(filename);
 	int error = OK;
-	sf->getLine(line, &error);
+	sf.getLine(line, &error);
 
 	if (!error) {
-		if (sf->isBlank(line)) {
+		if (sf.isBlank(line)) {
 			return IS_BLANK;
 		} else {
 			return OK;
