@@ -213,9 +213,7 @@ int DebuggerAdapter::disableBreakpoint(int id) {
 }
 
 int DebuggerAdapter::enableBreakpoint(int id) {
-	// TODO: Check blah.
 	assert(SCENGINE);
-
 	if (SCENGINE->enableBreakpoint(id)) {
 		return OK;
 	} else {
@@ -233,8 +231,10 @@ bool DebuggerAdapter::triggerBreakpoint(ScScript *script) {
 	_lastDepth = script->getCallDepth();
 	_lastScript = script;
 	_lastLine = script->_currentLine;
+	if (_lastSource != nullptr) {
+		delete _lastSource;
+	}
 	_lastSource = new SourceFile(script->_filename);
-	// Todo: leak?
 	DEBUGGER->notifyBreakpoint(script->dbgGetFilename(), script->_currentLine);
 	return 1;
 }
@@ -243,8 +243,10 @@ bool DebuggerAdapter::triggerStep(ScScript *script) {
 	_lastDepth = script->getCallDepth();
 	_lastScript = script; // If script has changed do we still care?
 	_lastLine = script->_currentLine;
+	if (_lastSource != nullptr) {
+		delete _lastSource;
+	}
 	_lastSource = new SourceFile(script->_filename);
-	// Todo: leak?
 	DEBUGGER->notifyStep(script->dbgGetFilename(), script->_currentLine);
 	return 1;
 }
@@ -253,6 +255,9 @@ bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
 	_lastDepth = script->getCallDepth();
 	_lastScript = script; // If script has changed do we still care?
 	_lastLine = script->_currentLine;
+	if (_lastSource != nullptr) {
+		delete _lastSource;
+	}
 	_lastSource = new SourceFile(script->_filename);
 	DEBUGGER->notifyWatch(script->dbgGetFilename(), symbol, script->resolveName(symbol)->getString());
 	return 1;
