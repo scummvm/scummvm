@@ -542,12 +542,9 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	cctable(_tbi);
 	switch (typ) {
 	case 1:
-		_vm->_soundManager.loadNoise();
 		_vm->_soundManager.regenbruit();
 		break;
 	case 2:
-		//TODO: Only call it once
-		_vm->_soundManager.loadAmbiantSounds();
 		loadPhonemeSounds();
 		break;
 	default:

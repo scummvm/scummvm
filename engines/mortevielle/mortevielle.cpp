@@ -227,6 +227,9 @@ Common::ErrorCode MortevielleEngine::initialize() {
 		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
 
+	_soundManager.loadNoise();
+	_soundManager.loadAmbiantSounds();
+
 	return Common::kNoError;
 }
 
