@@ -89,7 +89,6 @@ public:
 	void veracf(byte b);
 	void cctable(tablint &t);
 	void regenbruit();
-	void loadMusicSound();
 	void loadPhonemeSounds();
 	void loadNoise();
 	void trait_car();

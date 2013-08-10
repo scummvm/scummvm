@@ -138,6 +138,7 @@ SoundManager::SoundManager(Audio::Mixer *mixer) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	_audioStream = nullptr;
+	_ambiantNoiseBuf = nullptr;
 }
 
 SoundManager::~SoundManager() {
@@ -145,6 +146,7 @@ SoundManager::~SoundManager() {
 		_audioStream->finish();
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;	
+	free(_ambiantNoiseBuf);
 }
 
 /**
@@ -176,6 +178,26 @@ int SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int size) {
 		}
 	}
 	return decompSize;
+}
+
+/**
+ * Load sonmus.mor file
+ * @remarks	Originally called 'charge_son'
+ */
+void SoundManager::loadAmbiantSounds() {
+	Common::File f;
+	if (!f.open("sonmus.mor"))
+		error("Missing file - sonmus.mor");
+
+	free(_ambiantNoiseBuf);
+	int size = f.size();
+	byte *compMusicBuf1 = (byte *)malloc(sizeof(byte) * size);
+	_ambiantNoiseBuf = (byte *)malloc(sizeof(byte) * size * 2);
+	f.read(compMusicBuf1, size);
+	f.close();
+
+	decodeMusic(compMusicBuf1, _ambiantNoiseBuf, size);
+	free(compMusicBuf1);
 }
 
 void SoundManager::litph(tablint &t, int typ, int tempo) {
@@ -225,7 +247,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 				} else {
 					if (!_audioStream)
 						_audioStream = Audio::makeQueuingAudioStream(22428, false);
-					_audioStream->queueBuffer(&_vm->_noiseBuf[ambiantNoiseAdr[val * 2]], ambiantNoiseAdr[(val * 2) + 1] - ambiantNoiseAdr[(val * 2)], DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
+					_audioStream->queueBuffer(&_ambiantNoiseBuf[ambiantNoiseAdr[val * 2]], ambiantNoiseAdr[(val * 2) + 1] - ambiantNoiseAdr[(val * 2)], DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
 //					Audio::SeekableAudioStream *raw = nullptr;
 //					raw = Audio::makeRawStream(&_vm->_mem[(kAdrNoise * 16)] + ambiantNoiseAdr[val * 2], ambiantNoiseAdr[(val * 2) + 1], 22428, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 //					Audio::SoundHandle soundHandle;

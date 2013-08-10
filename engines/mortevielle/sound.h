@@ -97,6 +97,8 @@ private:
 	MortevielleEngine *_vm;
 	PCSpeaker *_speakerStream;
 	Audio::SoundHandle _speakerHandle;
+	byte *_ambiantNoiseBuf;
+
 public:
 	Audio::Mixer *_mixer;
 	Audio::QueuingAudioStream *_audioStream;
@@ -109,6 +111,7 @@ public:
 
 	int decodeMusic(const byte *PSrc, byte *PDest, int size);
 	void playSong(const byte *buf, uint usize, uint loops);
+	void loadAmbiantSounds();
 
 	void litph(tablint &t, int typ, int tempo);
 };

@@ -158,26 +158,6 @@ void SpeechManager::regenbruit() {
 }
 
 /**
- * Load sonmus.mor file
- * @remarks	Originally called 'charge_son'
- */
-void SpeechManager::loadMusicSound() {
-	Common::File f;
-	if (!f.open("sonmus.mor"))
-		error("Missing file - sonmus.mor");
-
-	free(_vm->_compMusicBuf1);
-	free(_vm->_noiseBuf);
-	int size = f.size();
-	_vm->_compMusicBuf1 = (byte *)malloc(sizeof(byte) * size);
-	_vm->_noiseBuf = (byte *)malloc(sizeof(byte) * size * 2);
-	f.read(_vm->_compMusicBuf1, size);
-
-	_vm->_soundManager.decodeMusic(_vm->_compMusicBuf1, _vm->_noiseBuf, size);
-	f.close();
-}
-
-/**
  * Load phoneme sound file
  * @remarks	Originally called 'charge_phbruit'
  */
@@ -597,7 +577,8 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		regenbruit();
 		break;
 	case 2:
-		loadMusicSound();
+		//TODO: Only call it once
+		_vm->_soundManager.loadAmbiantSounds();
 		loadPhonemeSounds();
 		break;
 	default:
