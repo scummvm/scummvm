@@ -182,7 +182,9 @@ bool ScEngine::addWatch(const char *filename, const char *name) {
 }
 
 bool ScEngine::removeWatch(uint id) {
-	if (id >= _watchlist.size()) return 0;
+	if (id >= _watchlist.size()) {
+		return 0;
+	}
 	_watchlist.remove_at(id);
 	refreshWatchlist();
 	return 1;
