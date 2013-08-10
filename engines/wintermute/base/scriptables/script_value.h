@@ -92,7 +92,7 @@ private:
 	char *_valString;
 public:
 	TValType _type;
-	void setType (TValType type);
+	void setType(TValType type);
 	ScValue(BaseGame *inGame);
 	ScValue(BaseGame *inGame, bool Val);
 	ScValue(BaseGame *inGame, int32 Val);
