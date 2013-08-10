@@ -35,9 +35,7 @@
 
 namespace Wintermute {
 
-// Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
-	// ADAPTER = new Adapter (vm);
 	_engineRef = vm;
 
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
