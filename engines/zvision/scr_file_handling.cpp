@@ -211,8 +211,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:quit*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionQuit()));
 		} else if (line.matchString("*:random*", true)) {
 			
 

@@ -254,6 +254,12 @@ private:
 	uint _framerate;
 };
 
+class ActionQuit : public ResultAction {
+public:
+	ActionQuit() {}
+	bool execute(ZVision *engine);
+};
+
 // TODO: See if this exists in ZGI. It doesn't in ZNem
 class ActionUnloadAnimation : public ResultAction {
 public:
