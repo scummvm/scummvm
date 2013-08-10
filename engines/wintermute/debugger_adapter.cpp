@@ -36,7 +36,7 @@
 
 namespace Wintermute {
 
-SourceFile::SourceFile(Common::String filename) {
+SourceFile::SourceFile(const Common::String &filename) {
 
 	_err = 0;
 

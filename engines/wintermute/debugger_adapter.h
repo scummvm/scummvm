@@ -52,7 +52,7 @@ private:
 	BaseArray<Common::String> _strings;
 	bool _err;
 public:
-	SourceFile(Common::String filename);
+	SourceFile(const Common::String &filename);
 	bool loadFile(Common::String filename, int *error = nullptr);
 	int getLength();
 	bool isBlank(int line);
