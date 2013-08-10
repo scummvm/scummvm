@@ -334,7 +334,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 		return nullptr;
 	}
 
-	BaseScriptable *pos; //  = mainObject->getNative();
+	BaseScriptable *pos;
 	// Now we split tokens like foo(bar)
 
 	pos = result->getNative();
