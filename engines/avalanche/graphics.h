@@ -95,6 +95,9 @@ public:
 
 	void drawPieSlice(const ::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
 
+	void drawTriangle(const ::Graphics::Surface &surface, Common::Point *p, byte color);
+
+
 
 	// The caller has to .free() the returned Surfaces!!!
 	::Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.

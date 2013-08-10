@@ -375,8 +375,8 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	
 	// The body of the scroll.
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), lightgray);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly), lightgray);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly), lightgray);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly + 1), lightgray);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly + 1), lightgray);
 
 	// The left corners of the scroll.
 	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx - lx - 31, my - ly, 0, 180, 15, darkgray);
@@ -485,6 +485,101 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 }
 
 void Scrolls::bubble(func2 gotoit) {
+	int16 xl, yl, my, xw, yw;
+	byte fv;
+	Common::Point p[3];
+	byte *rp1, *rp2; /* replace: 1=bubble, 2=pointer */
+	int16 xc; /* x correction */
+
+	/*setvisualpage(cp);
+	setactivepage(1 - cp);*/
+	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
+	//mousepage(1 - cp); /* Mousepage */
+
+	//setfillstyle(1, talkb);
+	//setcolor(talkb);
+	_vm->_gyro->off();
+
+	xl = 0;
+	yl = _vm->_gyro->scrolln * 5;
+	for (int8 fv = 0; fv < _vm->_gyro->scrolln; fv++) {
+		uint16 textWidth = _vm->_gyro->scroll[fv].size() * 8;
+		if (textWidth > xl)
+			xl = textWidth;
+	}
+	xl = xl / 2;
+
+	xw = xl + 18;
+	yw = yl + 7;
+	my = yw * 2 - 2;
+	xc = 0;
+
+	if ((_vm->_gyro->talkx - xw) < 0)
+		xc = -(_vm->_gyro->talkx - xw);
+	if ((_vm->_gyro->talkx + xw) > 639)
+		xc = 639 - (_vm->_gyro->talkx + xw);
+
+	p[0].x = _vm->_gyro->talkx - 10;
+	p[0].y = yw;
+	p[1].x = _vm->_gyro->talkx + 10;
+	p[1].y = yw;
+	p[2].x = _vm->_gyro->talkx;
+	p[2].y = _vm->_gyro->talky;
+
+	/* mblit(talkx-xw+xc,7,talkx+xw+xc,my,0,3);
+	 mblit(talkx-10,my,talkx+10,talky,0,3);*/
+
+	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
+
+	// The body of the bubble.
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_gyro->talkx - xw + 9, 7, _vm->_gyro->talkx + xw - 8 + xc, my + 1), _vm->_gyro->talkb);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_gyro->talkx - xw - 1, 12, _vm->_gyro->talkx + xw + xc + 2, my - 4), _vm->_gyro->talkb);
+
+	// Top right corner of the bubble.
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->talkx + xw - 10, 11, 0, 90, 9, _vm->_gyro->talkb);
+	// Bottom right corner of the bubble.
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->talkx + xw - 10, my - 4, 270, 360, 9, _vm->_gyro->talkb);
+	// Top left corner of the bubble.
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->talkx - xw + 10, 11, 90, 180, 9, _vm->_gyro->talkb);
+	// Bottom left corner of the bubble.
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->talkx - xw + 10, my - 4, 180, 270, 9, _vm->_gyro->talkb);
+
+	// "Tail" of the speech bubble.
+	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, p, _vm->_gyro->talkb);
+
+	//setcolor(talkf);
+	yl -= 3;
+	//settextjustify(1, 2);
+	/*for (fv = 0; fv < _vm->_gyro->scrolln; fv++)
+	outtextxy(_vm->_gyro->talkx + xc, (fv * 10) + 12, _vm->_gyro->scroll[fv + 1]);*/
+
+	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) /* These should be separate loops. */
+		_vm->_logger->log_bubbleline(fv, param, _vm->_gyro->scroll[fv]);
+
+	_vm->_logger->log_divider();
+
+	//setvisualpage(1 - cp);
+	dingdongbell();
+	_vm->_gyro->oncandopageswap = false;
+	_vm->_gyro->on();
+	_vm->_gyro->dropsok = false;
+
+	(this->*gotoit)();
+
+	_vm->_gyro->off();
+	_vm->_gyro->dropsok = true;
+	/*mblit((talkx - xw + xc) / 8, 7, 1 + (talkx + xw + xc) / 8, my, 3, 1 - cp);
+	mblit((talkx - 10) / 8, my, 1 + (talkx + 10) / 8, talky, 3, 1 - cp);
+	blitfix();*/
+
+	/*setvisualpage(cp);
+	settextjustify(0, 0);*/
+	_vm->_gyro->on(); /*sink;*/
+	_vm->_gyro->oncandopageswap = true;
+	resetscrolldriver();
+	if (_vm->_gyro->mpress > 0)
+		_vm->_gyro->after_the_scroll = true;
+
 	warning("STUB: Scrolls::bubble()");
 }
 
@@ -629,7 +724,7 @@ void Scrolls::calldrivers() {
 				if (param == 0)
 					natural();
 				else if ((1 <= param) && (param <= 9))
-					if ((param > _vm->_trip->numtr) || (!_vm->_trip->tr[param].quick)) { // Not valid.
+					if ((param > _vm->_trip->numtr) || (!_vm->_trip->tr[param - 1].quick)) { // Not valid.
 						_vm->_lucerna->errorled();
 						natural();
 					} else
@@ -638,11 +733,11 @@ void Scrolls::calldrivers() {
 					/* Quasi-peds. (This routine performs the same
 					thing with QPs as triptype.chatter does with the
 					sprites.) */
-					_vm->_gyro->talkx = _vm->_gyro->peds[_vm->_gyro->quasipeds[param].whichped].x;
-					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->quasipeds[param].whichped].y; // Position.
+					_vm->_gyro->talkx = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].x;
+					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].y; // Position.
 		
-					_vm->_gyro->talkf = _vm->_gyro->quasipeds[param].fgc;
-					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param].bgc; // Colours.
+					_vm->_gyro->talkf = _vm->_gyro->quasipeds[param - 10].fgc;
+					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param - 10].bgc; // Colours.
 				} else {
 					_vm->_lucerna->errorled(); // Not valid.
 					natural();
