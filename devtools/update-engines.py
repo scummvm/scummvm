@@ -18,13 +18,34 @@ def engine_name_key(engine):
 			self.obj = obj
 
 		def __lt__(self, other):
-			return (self.obj == self.NAME) and True or (self.obj > other)
+			if self.obj == self.NAME:
+				return other != self.NAME
+			else:
+				return self.obj < other
 
 		def __gt__(self, other):
-			return (self.obj == self.NAME) and False or (self.obj < other)
+			if self.obj == self.NAME:
+				return False
+			else:
+				return self.obj > other
 
 		def __eq__(self, other):
-			return self.obj == self.other
+			return self.obj == other
+
+		def __le__(self, other):
+			if self.obj == self.NAME:
+				return True
+			else:
+				return self.obj > other
+
+		def __ge__(self, other):
+			if other == self.NAME:
+				return True
+			else:
+				self.obj >= other
+
+		def __ne__(self, other):
+			return self.obj != other
 	return sorter(engine)
 
 # Sort engines dictionary. This is a HACK due to difference in sorted between
