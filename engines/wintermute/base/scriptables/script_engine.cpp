@@ -213,43 +213,57 @@ bool ScEngine::addBreakpoint(const char *filename, int line) {
 }
 
 bool ScEngine::removeBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return false;
+	if (id >= _breakpoints.size()) {
+		return false;
+	}
 	_breakpoints.remove_at(id);
 	return true;
 }
 
 bool ScEngine::enableBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return false;
+	if (id >= _breakpoints.size()) {
+		return false;
+	}
 	_breakpoints[id]._enabled = true;
 	return true;
 }
 
 bool ScEngine::disableBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return false;
+	if (id >= _breakpoints.size()) {
+		return false;
+	}
 	_breakpoints[id]._enabled = false;
 	return true;
 }
 
 int ScEngine::incrementWatch(uint id) {
-	if (id >= _watchlist.size()) return 0;
+	if (id >= _watchlist.size()) {
+		return 0;
+	}
 	_watchlist[id]._hits = _watchlist[id]._hits + 1;
 	return 0;
 }
 
 int ScEngine::incrementBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return 0;
+	if (id >= _breakpoints.size()) {
+		return 0;
+	}
 	_breakpoints[id]._hits = _breakpoints[id]._hits + 1;
 	return 0;
 }
 
 int ScEngine::resetWatch(uint id) {
-	if (id >= _watchlist.size()) return 0;
+	if (id >= _watchlist.size()) { 
+		return 0;
+	}
 	_watchlist[id]._hits = 0;
 	return 0;
 }
 
 int ScEngine::resetBreakpoint(uint id) {
-	if (id >= _breakpoints.size()) return 0;
+	if (id >= _breakpoints.size()) {
+		return 0;
+	}
 	_breakpoints[id]._hits = 0;
 	return 0;
 }
