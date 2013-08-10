@@ -84,7 +84,7 @@ public:
 	bool isLeftDoubleClick();
 	bool isRightDoubleClick();
 
-	Wintermute::DebuggerAdapter* _adapter;
+	DebuggerAdapter* _adapter;
 	bool _autorunDisabled;
 
 	uint32 _lastMiniUpdate;
