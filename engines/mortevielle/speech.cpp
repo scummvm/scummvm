@@ -536,9 +536,6 @@ void SpeechManager::handlePhoneme() {
 	do {
 		moveQueue();
 		charg_car(currWord);
-		if (_typlec == 2)
-			warning("%d %d %d %d %d", _queue[2]._acc, _queue[2]._code, _queue[2]._freq, _queue[2]._rep, _queue[2]._val);
-
 		trait_car();
 	} while (currWord < wordCount);
 
@@ -587,7 +584,7 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	handlePhoneme();
 	_vm->_soundManager.litph(_tbi, typ, tempo);
 
-	if (typ == 2) {
+	if (typ != 0) {
 		Audio::SoundHandle soundHandle;
 		_vm->_soundManager._mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle, _vm->_soundManager._audioStream);
 		while (_vm->_soundManager._mixer->isSoundHandleActive(soundHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())

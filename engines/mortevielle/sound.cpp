@@ -201,38 +201,38 @@ void SoundManager::loadAmbiantSounds() {
 }
 
 void SoundManager::litph(tablint &t, int typ, int tempo) {
-	if (_vm->_speechManager._typlec == 2) {
-		warning("--->");
-		for (int i = 0; i < _vm->_speechManager._ptr_oct; i++)
-			warning("%d", _vm->_mem[(kAdrTroct * 16) + i]);
-		warning("---<");
-	} else
+	// Skip speech
+	if (_vm->_speechManager._typlec == 0)
 		return;
 
+	int freq = tempo * 10 * 25.2;
 	int i = 0;
 	while (i < _vm->_speechManager._ptr_oct) {
 		int idx = _vm->_mem[(kAdrTroct * 16) + i];
 		i++;
 		switch(idx) {
 		case 0: {
-			warning("IPCX");
-/*			adbrui 
-			dw 5CB0h,     0, 17224
-			dw 6000h,  3656, 20108
-			dw 6000h, 20108, 37446
-			dw 6924h,     6,  8388
-			dw 6B30h,     4,  1893
-			dw 6BA6h,     6,  8595
-*/
 			int val = _vm->_mem[(kAdrTroct * 16) + i];
 			i++;
-			warning("idx %d", val);
 			if (_vm->_speechManager._typlec == 0)
 				warning("vclas");
-			else if (!_vm->_speechManager._typlec == 1)
-				warning("duson");
-			else { // 2
-				warning("vadson");
+			else if (_vm->_speechManager._typlec == 1) {
+				debugC(5, kMortevielleSounds, "litph - duson");
+				const static int noiseAdr[] = {0,     17224,
+											   17224, 33676,
+											   33676, 51014,
+											   51014, 59396,
+											   59396, 61286,
+											   61286, 69875};
+				if (val > 5) {
+					warning("unhandled index %d", val);
+				} else {
+					if (!_audioStream)
+						_audioStream = Audio::makeQueuingAudioStream(freq, false);
+					_audioStream->queueBuffer(&_vm->_mem[(kAdrNoise * 16) + noiseAdr[val * 2]], noiseAdr[(val * 2) + 1] - noiseAdr[(val * 2)], DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
+				}
+			} else { // 2
+				debugC(5, kMortevielleSounds, "litph - vadson");
 				const static int ambiantNoiseAdr[] = {0,     14020, 
 													  14020, 18994,
 													  18994, 19630,
@@ -246,37 +246,27 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 					warning("unhandled index %d", val);
 				} else {
 					if (!_audioStream)
-						_audioStream = Audio::makeQueuingAudioStream(22428, false);
+						_audioStream = Audio::makeQueuingAudioStream(freq, false);
 					_audioStream->queueBuffer(&_ambiantNoiseBuf[ambiantNoiseAdr[val * 2]], ambiantNoiseAdr[(val * 2) + 1] - ambiantNoiseAdr[(val * 2)], DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
-//					Audio::SeekableAudioStream *raw = nullptr;
-//					raw = Audio::makeRawStream(&_vm->_mem[(kAdrNoise * 16)] + ambiantNoiseAdr[val * 2], ambiantNoiseAdr[(val * 2) + 1], 22428, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-//					Audio::SoundHandle soundHandle;
-//					_mixer->playStream(Audio::Mixer::kSFXSoundType, &songHandle, raw, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
-//					while (_mixer->isSoundHandleActive(songHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
-//						;
-
 				}
 			}
 			break;
 			}
 		case 2: {
-			warning("parc");
 			int val = _vm->_mem[(kAdrTroct * 16) + i];
 			i++;
 			int tmpidx = (val * 12) + 268;
 			val = _vm->_mem[(kAdrTroct * 16) + i];
 			i++;
-			warning("%d %d", tmpidx, val);
-			warning("reech");
+			warning("TODO: reech %d %d", tmpidx, val);
 			}
 			break;
 		case 4:
 			if (_vm->_speechManager._typlec) {
-				warning("Skip interphoneme: %d %d", _vm->_mem[(kAdrTroct * 16) + i], _vm->_mem[(kAdrTroct * 16) + i + 1]);
 				i += 2;
 			} else {
 				// Speech
-				warning("Interphoneme: consonne:%d voyelle:%d", _vm->_mem[(kAdrTroct * 16) + i], _vm->_mem[(kAdrTroct * 16) + i + 1]);
+				warning("TODO: Interphoneme: consonne:%d voyelle:%d", _vm->_mem[(kAdrTroct * 16) + i], _vm->_mem[(kAdrTroct * 16) + i + 1]);
 				i += 2;
 			}
 			break;

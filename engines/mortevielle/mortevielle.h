@@ -52,7 +52,8 @@ namespace Mortevielle {
 // Debug channels
 enum {
 	kMortevielleCore = 1 << 0,
-	kMortevielleGraphics = 1 << 1
+	kMortevielleGraphics = 1 << 1,
+	kMortevielleSounds = 1 << 2
 };
 
 // Game languages
