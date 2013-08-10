@@ -67,8 +67,7 @@ private:
 public:
 	
 	void initialize();
-	void updateNodes(uint deltaTimeMillis);
-	void checkPuzzleCriteria();
+	void update(uint deltaTimeMillis);
 
 	uint getStateValue(uint32 key);
 	void setStateValue(uint32 key, uint value);
@@ -80,6 +79,8 @@ public:
 
 private:
 	void createReferenceTable();
+	void updateNodes(uint deltaTimeMillis);
+	void checkPuzzleCriteria();
 
 	/**
 	 * Parses a script file into triggers and events

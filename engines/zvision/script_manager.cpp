@@ -39,6 +39,11 @@ void ScriptManager::initialize() {
 	parseScrFile("universe.scr", true);
 }
 
+void ScriptManager::update(uint deltaTimeMillis) {
+	updateNodes(deltaTimeMillis);
+	checkPuzzleCriteria();
+}
+
 void ScriptManager::createReferenceTable() {
 	// Iterate through each local Puzzle
 	for (Common::List<Puzzle>::iterator activePuzzleIter = _activePuzzles.begin(); activePuzzleIter != _activePuzzles.end(); activePuzzleIter++) {

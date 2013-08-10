@@ -133,8 +133,7 @@ Common::Error ZVision::run() {
 		
 		processEvents();
 
-		_scriptManager->updateNodes(_clock.getDeltaTime());
-		_scriptManager->checkPuzzleCriteria();
+		_scriptManager->update(_clock.getDeltaTime());
 
 		// Update the screen
 		_system->updateScreen();
