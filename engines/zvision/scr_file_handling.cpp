@@ -255,6 +255,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:universe_music*", true)) {
 			
 
+		} else if (line.matchString("*:copy_file*", true)) {
+			// Not used. Purposely left empty
 		} else {
 			warning("Unhandled result action type: %s", line.c_str());
 		}
