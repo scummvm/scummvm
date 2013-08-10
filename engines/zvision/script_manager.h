@@ -39,6 +39,14 @@ namespace ZVision {
 class ZVision;
 class ActionNode;
 
+struct Location {
+	char world;
+	char room;
+	char node;
+	char view;
+	uint32 x;
+};
+
 class ScriptManager {
 public:
 	ScriptManager(ZVision *engine);
@@ -64,6 +72,9 @@ private:
 	/** Holds the currently active controls */
 	Common::List<Common::SharedPtr<Control> > _activeControls;
 
+	Location _nextLocation;
+	bool _changeLocation;
+
 public:
 	
 	void initialize();
@@ -79,6 +90,7 @@ public:
 
 private:
 	void createReferenceTable();
+	void changeLocationIntern();
 	void updateNodes(uint deltaTimeMillis);
 	void checkPuzzleCriteria();
 

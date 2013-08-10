@@ -33,7 +33,7 @@
 
 namespace ZVision {
 
-ScriptManager::ScriptManager(ZVision *engine) : _engine(engine) {}
+ScriptManager::ScriptManager(ZVision *engine) : _engine(engine), _changeLocation(false) {}
 
 void ScriptManager::initialize() {
 	parseScrFile("universe.scr", true);
@@ -42,6 +42,11 @@ void ScriptManager::initialize() {
 void ScriptManager::update(uint deltaTimeMillis) {
 	updateNodes(deltaTimeMillis);
 	checkPuzzleCriteria();
+
+	if (_changeLocation) {
+		changeLocationIntern();
+		_changeLocation = false;
+	}
 }
 
 void ScriptManager::createReferenceTable() {
@@ -178,6 +183,19 @@ void ScriptManager::addActionNode(const Common::SharedPtr<ActionNode> &node) {
 }
 
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 x) {
+	_nextLocation.world = world;
+	_nextLocation.room = room;
+	_nextLocation.node = node;
+	_nextLocation.view = view;
+	_nextLocation.x = x;
+
+	_changeLocation = true;
+}
+
+void ScriptManager::changeLocationIntern() {
+	assert(_nextLocation.world != 0);
+	debug("Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.x);
+
 	// Clear all the containers
 	_referenceTable.clear();
 	_puzzlesToCheck.clear();
@@ -186,14 +204,19 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	_activeControls.clear();
 
 	// Parse into puzzles and controls
-	Common::String fileName = Common::String::format("%c%c%c%c.scr", world, room, node, view);
+	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
 	parseScrFile(fileName);
 
 	// Create the puzzle reference table
 	createReferenceTable();
 
-	// Add all the puzzles to the stack to be checked
+	// Add all the local puzzles to the stack to be checked
 	for (Common::List<Puzzle>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
+		_puzzlesToCheck.push(&(*iter));
+	}
+
+	// Add all the global puzzles to the stack to be checked
+	for (Common::List<Puzzle>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
 		_puzzlesToCheck.push(&(*iter));
 	}
 }
