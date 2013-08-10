@@ -33,7 +33,7 @@
 
 namespace ZVision {
 
-void ScriptManager::parseScrFile(const Common::String &fileName) {
+void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) {
 	Common::File file;
 	if (!file.open(fileName))
 		return; // File.open already throws a warning if the file doesn't exist, so there is no need to throw another
@@ -54,7 +54,11 @@ void ScriptManager::parseScrFile(const Common::String &fileName) {
 			sscanf(line.c_str(),"puzzle:%u",&(puzzle.key));
 
 			parsePuzzle(puzzle, file);
-			_activePuzzles.push_back(puzzle);
+			if (isGlobal) {
+				_globalPuzzles.push_back(puzzle);
+			} else {
+				_activePuzzles.push_back(puzzle);
+			}
 		} else if (line.matchString("control:*", true)) {
 			Common::SharedPtr<Control> control;
 

@@ -35,13 +35,12 @@ namespace ZVision {
 
 ScriptManager::ScriptManager(ZVision *engine) : _engine(engine) {}
 
-// TODO: Actually do something in the initialize or remove it
 void ScriptManager::initialize() {
-	
+	parseScrFile("universe.scr", true);
 }
 
 void ScriptManager::createReferenceTable() {
-	// Iterate through each Puzzle
+	// Iterate through each local Puzzle
 	for (Common::List<Puzzle>::iterator activePuzzleIter = _activePuzzles.begin(); activePuzzleIter != _activePuzzles.end(); activePuzzleIter++) {
 		Puzzle *puzzlePtr = &(*activePuzzleIter);
 
@@ -50,7 +49,21 @@ void ScriptManager::createReferenceTable() {
 			_referenceTable[criteriaIter->key].push_back(puzzlePtr);
 
 			// If the argument is a key, add a reference to it as well
-			if (criteriaIter->argument)
+			if (criteriaIter->argumentIsAKey)
+				_referenceTable[criteriaIter->argument].push_back(puzzlePtr);
+		}
+	}
+
+	// Iterate through each global Puzzle
+	for (Common::List<Puzzle>::iterator globalPuzzleIter = _globalPuzzles.begin(); globalPuzzleIter != _globalPuzzles.end(); globalPuzzleIter++) {
+		Puzzle *puzzlePtr = &(*globalPuzzleIter);
+
+		// Iterate through each Criteria and add a reference from the criteria key to the Puzzle
+		for (Common::List<Puzzle::Criteria>::iterator criteriaIter = globalPuzzleIter->criteriaList.begin(); criteriaIter != (*globalPuzzleIter).criteriaList.end(); criteriaIter++) {
+			_referenceTable[criteriaIter->key].push_back(puzzlePtr);
+
+			// If the argument is a key, add a reference to it as well
+			if (criteriaIter->argumentIsAKey)
 				_referenceTable[criteriaIter->argument].push_back(puzzlePtr);
 		}
 	}

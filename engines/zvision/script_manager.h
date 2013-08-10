@@ -59,6 +59,8 @@ private:
 	Common::Stack<Puzzle *> _puzzlesToCheck;
 	/** Holds the currently active puzzles */
 	Common::List<Puzzle> _activePuzzles;
+	/** Holds the global puzzles */
+	Common::List<Puzzle>_globalPuzzles;
 	/** Holds the currently active controls */
 	Common::List<Common::SharedPtr<Control> > _activeControls;
 
@@ -82,9 +84,10 @@ private:
 	/**
 	 * Parses a script file into triggers and events
 	 *
-	 * @param fileName		Name of the .scr file
+	 * @param fileName    Name of the .scr file
+	 * @param isGlobal    Are the puzzles included in the file global (true). AKA, the won't be purged during location changes
 	 */
-	void parseScrFile(const Common::String &fileName);
+	void parseScrFile(const Common::String &fileName, bool isGlobal = false);
 
 	/**
 	 * Parses the stream into a Puzzle object
