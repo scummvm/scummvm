@@ -1510,12 +1510,9 @@ ScValue *ScScript::resolveName(const char *name) {
 	strName.trim();
 	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
 	
-	Common::String varName;
-	ScValue *value; 
+	Common::String varName = st.nextToken();
+	ScValue *value = getVar(varName.c_str());
 
-	varName = st.nextToken();
-	value = getVar(varName.c_str());
-	
 	if (value == nullptr) {
 		return nullptr;
 	}
