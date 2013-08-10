@@ -287,7 +287,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd), _lastTime(0) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
