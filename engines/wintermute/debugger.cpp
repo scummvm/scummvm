@@ -332,6 +332,8 @@ bool Console::Cmd_DumpRes(int argc, const char **argv) {
 			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else if (error == WRONG_TYPE) {
 			debugWarning(argv[0], ERROR, "Wrong type. Perhaps not a native?\n");
+		} else if (error == PARSE_ERROR) {
+			debugWarning(argv[0], ERROR, "Could not parse input\n");
 		} else {
 			debugWarning(argv[0], ERROR, "Unrecognized error\n");
 		}

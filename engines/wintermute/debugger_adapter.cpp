@@ -358,11 +358,10 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 			Common::String argList = callSt.nextToken();
 			Common::StringTokenizer argSt = Common::StringTokenizer(argList.c_str(), ")");
 			arg = argSt.nextToken();
-			if (argSt.empty()) {
-				// OK
-			} else {
+			if (!argSt.empty()) {
 				// WTF? This should not happen.
-				assert(false);
+				*error = PARSE_ERROR;
+				return false;
 			}
 
 			Common::StringTokenizer st3 = Common::StringTokenizer(arg, "\"");
