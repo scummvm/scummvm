@@ -30,6 +30,7 @@
 #include "mortevielle/speech.h"
 #include "mortevielle/sound.h"
 
+#include "audio/decoders/raw.h"
 #include "common/endian.h"
 #include "common/file.h"
 
@@ -98,7 +99,7 @@ void SpeechManager::charg_car(int &currWordNumb) {
 		_queue[2]._val = int_;
 		_queue[2]._code = 6;
 	} else if ((int_ >= 22) && (int_ <= 47)) {
-		int_ = int_ - 22;
+		int_ -= 22;
 		_queue[2]._val = int_;
 		_queue[2]._code = _typcon[int_];
 	} else if ((int_ >= 48) && (int_ <= 56)) {
@@ -166,11 +167,13 @@ void SpeechManager::loadMusicSound() {
 		error("Missing file - sonmus.mor");
 
 	free(_vm->_compMusicBuf1);
+	free(_vm->_noiseBuf);
 	int size = f.size();
 	_vm->_compMusicBuf1 = (byte *)malloc(sizeof(byte) * size);
+	_vm->_noiseBuf = (byte *)malloc(sizeof(byte) * size * 2);
 	f.read(_vm->_compMusicBuf1, size);
 
-	_vm->_soundManager.decodeMusic(_vm->_compMusicBuf1, &_vm->_mem[kAdrNoise * 16], size);
+	_vm->_soundManager.decodeMusic(_vm->_compMusicBuf1, _vm->_noiseBuf, size);
 	f.close();
 }
 
@@ -274,6 +277,7 @@ void SpeechManager::trait_car() {
 				entroct(_queue[1]._val);
 				entroct(3);
 			}
+
 			break;
 		case 7:
 		case 8:
@@ -321,6 +325,7 @@ void SpeechManager::trait_car() {
 				entroct(0);
 			else
 				entroct(1);
+
 			break;
 		default:
 			break;
@@ -551,6 +556,9 @@ void SpeechManager::handlePhoneme() {
 	do {
 		moveQueue();
 		charg_car(currWord);
+		if (_typlec == 2)
+			warning("%d %d %d %d %d", _queue[2]._acc, _queue[2]._code, _queue[2]._freq, _queue[2]._rep, _queue[2]._val);
+
 		trait_car();
 	} while (currWord < wordCount);
 
@@ -597,6 +605,17 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	}
 	handlePhoneme();
 	_vm->_soundManager.litph(_tbi, typ, tempo);
+
+	if (typ == 2) {
+		Audio::SoundHandle soundHandle;
+		_vm->_soundManager._mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle, _vm->_soundManager._audioStream);
+		while (_vm->_soundManager._mixer->isSoundHandleActive(soundHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
+			;
+		_vm->_soundManager._audioStream->finish();
+		_vm->_soundManager._mixer->stopHandle(soundHandle);
+		_vm->_soundManager._audioStream = nullptr;
+	}
+
 	if (_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
 			_cfiphBuffer[i] = savph[i];

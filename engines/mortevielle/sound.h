@@ -95,10 +95,12 @@ public:
 class SoundManager {
 private:
 	MortevielleEngine *_vm;
-	Audio::Mixer *_mixer;
 	PCSpeaker *_speakerStream;
 	Audio::SoundHandle _speakerHandle;
 public:
+	Audio::Mixer *_mixer;
+	Audio::QueuingAudioStream *_audioStream;
+
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 

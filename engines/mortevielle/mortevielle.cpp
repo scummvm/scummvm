@@ -105,6 +105,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_curAnim = nullptr;
 	_rightFramePict = nullptr;
 	_compMusicBuf1 = nullptr;
+	_noiseBuf = nullptr;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -112,6 +113,7 @@ MortevielleEngine::~MortevielleEngine() {
 	free(_curAnim);
 	free(_rightFramePict);
 	free(_compMusicBuf1);
+	free(_noiseBuf);
 }
 
 /**

@@ -68,13 +68,12 @@ class SpeechManager {
 private:
 	MortevielleEngine *_vm;
 
-	int _typlec;
 	int _phonemeNumb;
-
 	SpeechQueue _queue[3];
-	int _ptr_oct;
 
 public:
+	int _typlec;
+	int _ptr_oct;
 	uint16 *_cfiphBuffer;
 	int _tbi[256];
 	int _mlec;

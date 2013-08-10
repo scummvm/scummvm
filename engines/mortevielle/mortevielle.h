@@ -440,6 +440,7 @@ public:
 	byte *_curAnim;
 	byte *_rightFramePict;
 	byte *_compMusicBuf1;
+	byte *_noiseBuf;
 	
 	Debugger _debugger;
 	ScreenSurface _screenSurface;
