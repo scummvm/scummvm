@@ -138,7 +138,9 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 	// First of all: does the compiled even exist?
 	// Otherwise, well... it's very much not legal.
 
-	if (!compiledExists(filename)) return NO_SUCH_SCRIPT;
+	if (!compiledExists(filename)) {
+		return NO_SUCH_SCRIPT;
+	}
 
 	SourceFile sf(filename);
 	int error = OK;
@@ -258,27 +260,35 @@ bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
 }
 
 int DebuggerAdapter::stepOver() {
-	if (!_lastScript) return NOT_ALLOWED;
+	if (!_lastScript) {
+		return NOT_ALLOWED;
+	}
 	_lastScript->_step = _lastDepth;
 	reset();
 	return OK;
 }
 
 int DebuggerAdapter::stepInto() {
-	if (!_lastScript) return NOT_ALLOWED;
+	if (!_lastScript) {
+		return NOT_ALLOWED;
+	}
 	_lastScript->_step = _lastDepth + 1;
 	reset();
 	return OK;
 }
 
 int DebuggerAdapter::stepContinue() {
-	if (!_lastScript) return NOT_ALLOWED;
+	if (!_lastScript) {
+		return NOT_ALLOWED;
+	}
 	_lastScript->_step = -2;
 	return OK;
 }
 
 int DebuggerAdapter::stepFinish() {
-	if (!_lastScript) return NOT_ALLOWED;
+	if (!_lastScript) {
+		return NOT_ALLOWED;
+	}
 	_lastScript->_step = _lastDepth - 1;
 	// Reset
 	reset();
