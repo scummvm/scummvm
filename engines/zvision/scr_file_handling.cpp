@@ -162,8 +162,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:change_location*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionChangeLocation(line)));
 		} else if (line.matchString("*:crossfade*", true)) {
 			
 
