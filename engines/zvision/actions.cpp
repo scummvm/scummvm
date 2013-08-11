@@ -259,7 +259,7 @@ ActionStreamVideo::ActionStreamVideo(const Common::String &line) {
 	char fileName[25];
 	uint skippable;
 
-	sscanf(line.c_str(), "%*[^(](%25s %u %u %u %u %u %u)", fileName, &_x, &_y, &_width, &_height, &_flags, &skippable);
+	sscanf(line.c_str(), "%*[^(](%25s %u %u %u %u %u %u)", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skippable);
 
 	_fileName = Common::String(fileName);
 	_skippable = (skippable == 0) ? false : true;
@@ -272,8 +272,9 @@ bool ActionStreamVideo::execute(ZVision *engine) {
 	}
 
 	Common::Rect destRect;
+	// 0x1 flags that the destRect dimensions are different from the original video dimensions
 	if ((_flags & 0x1) == 0x1) {
-		destRect = Common::Rect(_x, _y, _x + _width, _y + _height);
+		destRect = Common::Rect(_x1, _y1, _x2, _y2);
 	}
 
 	engine->playVideo(decoder, destRect, _skippable);

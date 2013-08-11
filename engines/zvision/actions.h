@@ -293,10 +293,10 @@ public:
 
 private:
 	Common::String _fileName;
-	uint _x;
-	uint _y;
-	uint _width;
-	uint _height;
+	uint _x1;
+	uint _y1;
+	uint _x2;
+	uint _y2;
 	uint _flags;
 	bool _skippable;
 };
