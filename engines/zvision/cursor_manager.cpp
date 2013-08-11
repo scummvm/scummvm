@@ -32,31 +32,31 @@
 
 namespace ZVision {
 
-const char *CursorManager::_cursorNames[] = { "active", "arrow", "backward", "downarrow", "forward", "handpt", "handpu", "hdown", "hleft",
-                                              "hright", "hup", "idle", "leftarrow", "rightarrow", "suggest_surround", "suggest_tilt", "turnaround", "zuparrow" };
+const char *CursorManager::_cursorNames[NUM_CURSORS] = { "active", "arrow", "backward", "downarrow", "forward", "handpt", "handpu", "hdown", "hleft",
+                                                         "hright", "hup", "idle", "leftarrow", "rightarrow", "suggest_surround", "suggest_tilt", "turnaround", "zuparrow" };
 
-const char *CursorManager::_zgiCursorFileNames[] = { "g0gbc011.zcr", "g0gac001.zcr", "g0gac021.zcr", "g0gac031.zcr", "g0gac041.zcr", "g0gac051.zcr", "g0gac061.zcr", "g0gac071.zcr", "g0gac081.zcr",
-                                                     "g0gac091.zcr", "g0gac101.zcr", "g0gac011.zcr", "g0gac111.zcr", "g0gac121.zcr", "g0gac131.zcr", "g0gac141.zcr", "g0gac151.zcr", "g0gac161.zcr" };
+const char *CursorManager::_zgiCursorFileNames[NUM_CURSORS] = { "g0gbc011.zcr", "g0gac001.zcr", "g0gac021.zcr", "g0gac031.zcr", "g0gac041.zcr", "g0gac051.zcr", "g0gac061.zcr", "g0gac071.zcr", "g0gac081.zcr",
+                                                                "g0gac091.zcr", "g0gac101.zcr", "g0gac011.zcr", "g0gac111.zcr", "g0gac121.zcr", "g0gac131.zcr", "g0gac141.zcr", "g0gac151.zcr", "g0gac161.zcr" };
 
-const char *CursorManager::_zNemCursorFileNames[] = { "00act", "arrow", "back", "down", "forw", "handpt", "handpu", "hdown", "hleft",
-                                                      "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up" };
+const char *CursorManager::_zNemCursorFileNames[NUM_CURSORS] = { "00act", "arrow", "back", "down", "forw", "handpt", "handpu", "hdown", "hleft",
+                                                                 "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up" };
 
 
 CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat)
 		: _engine(engine),
 		  _pixelFormat(pixelFormat),
 		  _cursorIsPushed(false) {
-	// WARNING: The index 11 is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
+	// WARNING: The index IDLE_CURSOR_INDEX is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
 	if (_engine->getGameId() == ZorkNemesis) {
-		Common::String name(Common::String::format("%sa.zcr", _zNemCursorFileNames[11]));
+		Common::String name(Common::String::format("%sa.zcr", _zNemCursorFileNames[IDLE_CURSOR_INDEX]));
 		_idleCursor = ZorkCursor(name);
 	} else if (_engine->getGameId() == ZorkGrandInquisitor) {
-		_idleCursor = ZorkCursor(_zgiCursorFileNames[11]);
+		_idleCursor = ZorkCursor(_zgiCursorFileNames[IDLE_CURSOR_INDEX]);
 	}
-	revertToIdle();
 }
 
 void CursorManager::initialize() {
+	revertToIdle();
 	CursorMan.showMouse(true);
 }
 
@@ -73,8 +73,7 @@ void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) 
 		return;
 	}
 
-	// WARNING: The range of this loop is hardcoded to the length of _cursorNames
-	for (int i = 0; i < 18; i++) {
+	for (int i = 0; i < NUM_CURSORS; i++) {
 		if (_engine->getGameId() == ZorkNemesis) {
 			if (cursorName.equals(_cursorNames[i])) {
 				_currentCursor = cursorName;

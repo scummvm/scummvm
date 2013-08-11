@@ -47,6 +47,12 @@ public:
 	CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat);
 
 private:
+	enum {
+		NUM_CURSORS = 18,
+		// WARNING: The index 11 is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
+		IDLE_CURSOR_INDEX = 11
+	};
+
 	ZVision *_engine;
 	const Graphics::PixelFormat *_pixelFormat;
 	ZorkCursor _idleCursor;
