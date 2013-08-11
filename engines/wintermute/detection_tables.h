@@ -141,6 +141,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Carol Reed 7 - Blue Madonna (Demo)
+	{
+		"carolreed7",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "0372ad0c775266f6355e9e8ae397a2f1", 103719442),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// Carol Reed 7 - Blue Madonna
 	{
 		"carolreed7",
