@@ -59,14 +59,12 @@ private:
 	int _phonemeNumb;
 	SpeechQueue _queue[3];
 public:
-	int _typlec;
+	int _soundType;
+	bool _buildingSentence;
+
 	int _ptr_oct;
 	uint16 *_cfiphBuffer;
 	int _tbi[256];
-	int _mlec;
-	byte *_noise5Buf;
-	int _noise5Size;
-	bool _buildingSentence;
 
 	SpeechManager();
 	~SpeechManager();

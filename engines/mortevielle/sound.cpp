@@ -99,8 +99,8 @@ void SoundManager::loadAmbiantSounds() {
 }
 
 /**
- * Speech function - Load Noise file
- * @remarks	Originally called 'charge_bruit'
+ * Speech function - Load Noise files
+ * @remarks	Originally called 'charge_bruit' and 'charge_bruit5'
  */
 void SoundManager::loadNoise() {
 	Common::File f1, f2;
@@ -131,7 +131,7 @@ void SoundManager::regenbruit() {
 
 void SoundManager::litph(tablint &t, int typ, int tempo) {
 	// Skip speech
-	if (_vm->_speechManager._typlec == 0)
+	if (_vm->_speechManager._soundType == 0)
 		return;
 
 	if (!_vm->_speechManager._buildingSentence) {
@@ -148,9 +148,9 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 		case 0: {
 			int val = _vm->_mem[(kAdrTroct * 16) + i];
 			i++;
-			if (_vm->_speechManager._typlec == 0)
+			if (_vm->_speechManager._soundType == 0)
 				warning("TODO: vclas");
-			else if (_vm->_speechManager._typlec == 1) {
+			else if (_vm->_speechManager._soundType == 1) {
 				debugC(5, kMortevielleSounds, "litph - duson");
 				const static int noiseAdr[] = {0,     17224,
 											   17224, 33676,
@@ -196,7 +196,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			}
 			break;
 		case 4:
-			if (_vm->_speechManager._typlec) {
+			if (_vm->_speechManager._soundType) {
 				i += 2;
 			} else {
 				// Speech

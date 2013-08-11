@@ -377,7 +377,6 @@ Common::Error MortevielleEngine::run() {
  */
 void MortevielleEngine::showIntroduction() {
 	_dialogManager.displayIntroScreen(false);
-	_speechManager._mlec = 0;
 	_dialogManager.checkForF8(142, false);
 	if (shouldQuit())
 		return;
@@ -403,7 +402,6 @@ void MortevielleEngine::mainGame() {
 	for (_crep = 1; _crep <= _x26KeyCount; ++_crep)
 		decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 
-	loadBRUIT5();
 	_menu.initMenu(this);
 
 	charToHour();

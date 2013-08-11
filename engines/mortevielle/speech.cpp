@@ -59,7 +59,7 @@ const byte _tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
 const byte _tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
 
 SpeechManager::SpeechManager() {
-	_typlec = 0;
+	_soundType = 0;
 	_phonemeNumb = 0;
 
 	for (int i = 0; i < 3; i++) {
@@ -69,17 +69,15 @@ SpeechManager::SpeechManager() {
 		_queue[i]._freq = 0;
 		_queue[i]._rep = 0;
 	}
-	_noise5Buf = nullptr;
 	_buildingSentence = false;
 }
 
 SpeechManager::~SpeechManager() {
-	free(_noise5Buf);
 }
 
 void SpeechManager::spfrac(int wor) {
 	_queue[2]._rep = (uint)wor >> 12;
-	if ((_typlec == 0) && (_queue[2]._code != 9))
+	if ((_soundType == 0) && (_queue[2]._code != 9))
 		if (((_queue[2]._code > 4) && (_queue[2]._val != 20) && (_queue[2]._rep != 3) && (_queue[2]._rep != 6) && (_queue[2]._rep != 9)) ||
 				((_queue[2]._code < 5) && ((_queue[2]._val != 19) && (_queue[2]._val != 22) && (_queue[2]._rep != 4) && (_queue[2]._rep != 9)))) {
 			++_queue[2]._rep;
@@ -493,8 +491,8 @@ void SpeechManager::initQueue() {
 void SpeechManager::handlePhoneme() {
 	const uint16 deca[3] = {300, 30, 40};
 
-	uint16 startPos = _cfiphBuffer[_phonemeNumb - 1] + deca[_typlec];
-	uint16 endPos = _cfiphBuffer[_phonemeNumb] + deca[_typlec];
+	uint16 startPos = _cfiphBuffer[_phonemeNumb - 1] + deca[_soundType];
+	uint16 endPos = _cfiphBuffer[_phonemeNumb] + deca[_soundType];
 	int wordCount = endPos - startPos;
 	
 	startPos /= 2;
@@ -530,8 +528,8 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 
 	_phonemeNumb = rep;
 	int haut = ht;
-	_typlec = typ;
-	if (_typlec != 0) {
+	_soundType = typ;
+	if (_soundType != 0) {
 		for (int i = 0; i <= 500; ++i)
 			savph[i] = _cfiphBuffer[i];
 		tempo = kTempoNoise;
@@ -561,11 +559,10 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		_vm->_soundManager._audioStream = nullptr;
 	}
 
-	if (_typlec != 0)
-		for (int i = 0; i <= 500; ++i) {
+	if (_soundType != 0) {
+		for (int i = 0; i <= 500; ++i)
 			_cfiphBuffer[i] = savph[i];
-			_mlec = _typlec;
-		}
+	}
 	_vm->setPal(_vm->_numpal);
 }
 

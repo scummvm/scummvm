@@ -259,7 +259,6 @@ private:
 	void displayCGAPattern(int n, Pattern *p, nhom *pal);
 	void loadPalette();
 	void loadTexts();
-	void loadBRUIT5();
 	void loadCFIEC();
 	void loadCFIPH();
 	void showTitleScreen();
