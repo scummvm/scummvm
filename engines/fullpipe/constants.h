@@ -29,9 +29,24 @@ namespace Fullpipe {
 #define ANI_IN1MAN 5110
 #define ANI_INV_MAP 5321
 #define ANI_MAN 322
+#define MSG_DISABLESAVES 5201
+#define MSG_ENABLESAVES 5202
+#define MSG_HMRKICK_METAL 4764
+#define MSG_HMRKICK_STUCCO 4765
+#define MSG_MANSHADOWSOFF 5196
+#define MSG_MANSHADOWSON 5197
 #define MSG_SC1_SHOWOSK 1019
 #define MSG_SC1_SHOWOSK2 468
 #define MSG_SC1_UTRUBACLICK 1100
+#define MV_MAN_GOLADDER 451
+#define MV_MAN_GOLADDER2 2844
+#define MV_MAN_LOOKUP 4773
+#define MV_MAN_STARTLADDER 452
+#define MV_MAN_STARTLADDER2 2842
+#define MV_MAN_STOPLADDER 454
+#define MV_MAN_STOPLADDER2 2845
+#define MV_MAN_TOLADDER 448
+#define MV_MAN_TOLADDER2 2841
 #define MV_MAN_TURN_LU 486
 #define PIC_CMN_EVAL 3468
 #define PIC_CSR_ARCADE1 4901
@@ -120,12 +135,16 @@ namespace Fullpipe {
 #define SC_MAP 5222
 #define SC_TEST 903
 #define SC_TITLES 5166
+#define SND_CMN_031 3516
+#define SND_CMN_070 5199
 #define ST_LBN_2N 2756
 #define ST_MAN_EMPTY 476
+#define ST_MAN_RIGHT 325
 #define TrubaDown 697
 #define TrubaLeft 474
 #define TrubaRight 696
 #define TrubaUp 680
+#define rMV_MAN_LOOKUP 4775
 
 } // End of namespace Fullpipe
 

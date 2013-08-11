@@ -91,4 +91,16 @@ bool CModalIntro::handleMessage(ExCommand *message) {
 	return true;
 }
 
+void FullpipeEngine::openMap() {
+	warning("STUB: FullpipeEngine::openMap()");
+}
+
+void FullpipeEngine::openHelp() {
+	warning("STUB: FullpipeEngine::openHelp()");
+}
+
+void FullpipeEngine::openMainMenu() {
+	warning("STUB: FullpipeEngine::openMainMenu()");
+}
+
 } // End of namespace Fullpipe

@@ -91,7 +91,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	_scrollSpeed = 8;
 
-	_savesEnabled = true;
+	_isSaveAllowed = true;
 	_updateFlag = true;
 	_flgCanOpenMap = true;
 
@@ -651,8 +651,173 @@ void setElevatorButton(const char *name, int state) {
 		var->setSubVarAsInt(name, state);
 }
 
+void global_messageHandler_KickStucco() {
+	warning("STUB: global_messageHandler_KickStucco()");
+}
+
+void global_messageHandler_KickMetal() {
+	warning("STUB: global_messageHandler_KickMetal()");
+}
+
 int global_messageHandler1(ExCommand *cmd) {
-	warning("STUB: global_messageHandler1()");
+	if (cmd->_excFlags & 0x10000) {
+		if (cmd->_messageNum == MV_MAN_TOLADDER)
+			cmd->_messageNum = MV_MAN_TOLADDER2;
+		if (cmd->_messageNum == MV_MAN_STARTLADDER)
+			cmd->_messageNum = MV_MAN_STARTLADDER2;
+		if (cmd->_messageNum == MV_MAN_GOLADDER)
+			cmd->_messageNum = MV_MAN_GOLADDER2;
+		if (cmd->_messageNum == MV_MAN_STOPLADDER)
+			cmd->_messageNum = MV_MAN_STOPLADDER2;
+	}
+
+	if (g_fullpipe->_inputDisabled) {
+		if (cmd->_messageKind == 17) {
+			switch (cmd->_messageNum) {
+			case 29:
+			case 30:
+			case 36:
+			case 106:
+				cmd->_messageKind = 0;
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (cmd->_messageKind == 17) {
+		switch (cmd->_messageNum) {
+		case MSG_MANSHADOWSON:
+			g_fullpipe->_aniMan->_shadowsOn = 1;
+			break;
+		case MSG_HMRKICK_STUCCO:
+			global_messageHandler_KickStucco();
+			break;
+		case MSG_MANSHADOWSOFF:
+			g_fullpipe->_aniMan->_shadowsOn = 0;
+			break;
+		case MSG_DISABLESAVES:
+			g_fullpipe->disableSaves(cmd);
+			break;
+		case MSG_ENABLESAVES:
+			g_fullpipe->enableSaves();
+			break;
+		case MSG_HMRKICK_METAL:
+			global_messageHandler_KickMetal();
+			break;
+		case 29: // left mouse
+			if (g_fullpipe->_inventoryScene) {
+				if (getGameLoaderInventory()->handleLeftClick(cmd))
+					cmd->_messageKind = 0;
+			}
+			break;
+		case 107: // right mouse
+			if (getGameLoaderInventory()->getSelectedItemId()) {
+				getGameLoaderInventory()->unselectItem(0);
+				cmd->_messageKind = 0;
+			}
+			break;
+		case 36: // keydown
+			switch (cmd->_keyCode) {
+			case '\x1B': // ESC
+				if (g_fullpipe->_currentScene) {
+					getGameLoaderInventory()->unselectItem(0);
+					g_fullpipe->openMainMenu();
+					cmd->_messageKind = 0;
+				}
+				break;
+			case 't':
+				g_fullpipe->stopAllSounds();
+				cmd->_messageKind = 0;
+				break;
+			case 'u':
+				g_fullpipe->toggleMute();
+				cmd->_messageKind = 0;
+				break;
+			case ' ':
+				if (getGameLoaderInventory()->getIsLocked()) {
+					if (getGameLoaderInventory()->getIsInventoryOut()) {
+						getGameLoaderInventory()->setIsLocked(0);
+					}
+				} else {
+					getGameLoaderInventory()->slideOut();
+					getGameLoaderInventory()->setIsLocked(1);
+				}
+				break;
+			case '\t':
+				if (g_fullpipe->_flgCanOpenMap)
+					g_fullpipe->openMap();
+				cmd->_messageKind = 0;
+				break;
+			case 'p':
+				if (g_fullpipe->_flgCanOpenMap)
+					g_fullpipe->openHelp();
+				cmd->_messageKind = 0;
+				break;
+			default:
+				g_fullpipe->defHandleKeyDown(cmd->_keyCode);
+				break;
+			}
+			break;
+		case 33:
+			if (!g_fullpipe->_inventoryScene)
+				break;
+
+			int invItem;
+
+			if (g_fullpipe->_updateFlag && (invItem = g_fullpipe->_inventory->getHoveredItem(&g_fullpipe->_mouseScreenPos))) {
+				g_fullpipe->_cursorId = PIC_CSR_ITN;
+				if (!g_fullpipe->_currSelectedInventoryItemId && !g_fullpipe->_aniMan->_movement && 
+					!(g_fullpipe->_aniMan->_flags & 0x100) && g_fullpipe->_aniMan->isIdle()) {
+					int st = g_fullpipe->_aniMan->_statics->_staticsId;
+					ExCommand *newex;
+
+					if (st == ST_MAN_RIGHT) {
+						newex = new ExCommand(g_fullpipe->_aniMan->_id, 1, rMV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
+					} else if (st == (0x4000 | ST_MAN_RIGHT)) {
+						newex = new ExCommand(g_fullpipe->_aniMan->_id, 1, MV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
+					}
+					newex->_keyCode = g_fullpipe->_aniMan->_field_4;
+					newex->_excFlags |= 3;
+					newex->postMessage();
+				}
+
+				if (g_fullpipe->_currSelectedInventoryItemId != invItem)
+					g_fullpipe->playSound(SND_CMN_070, 0);
+
+				g_fullpipe->_currSelectedInventoryItemId = invItem;
+				g_fullpipe->setCursor(g_fullpipe->_cursorId);
+				break;
+			}
+			if (g_fullpipe->_updateCursorCallback)
+				g_fullpipe->_updateCursorCallback();
+
+			g_fullpipe->_currSelectedInventoryItemId = 0;
+			g_fullpipe->setCursor(g_fullpipe->_cursorId);
+			break;
+		case 65: // open map
+			if (cmd->_field_2C == 11 && cmd->_field_14 == ANI_INV_MAP && g_fullpipe->_flgCanOpenMap)
+				g_fullpipe->openMap();
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (cmd->_messageKind == 56) {
+		getGameLoaderInventory()->rebuildItemRects();
+
+		ExCommand *newex = new ExCommand(0, 35, SND_CMN_031, 0, 0, 0, 1, 0, 0, 0);
+
+		newex->_field_14 = 1;
+		newex->_excFlags |= 3;
+		newex->postMessage();
+
+		return 1;
+	} else if (cmd->_messageKind == 57) {
+		getGameLoaderInventory()->rebuildItemRects();
+
+		return 1;
+	}
 
 	return 0;
 }
@@ -784,7 +949,7 @@ int sceneHandler01(ExCommand *cmd) {
 	}
 	g_fullpipe->_behaviorManager->updateBehaviors();
 
-	startSceneTrack();
+	g_fullpipe->startSceneTrack();
 
 	return res;
 }

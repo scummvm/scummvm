@@ -81,9 +81,7 @@ class DynamicPhase : public StaticPhase {
 };
 
 class Statics : public DynamicPhase {
-	friend class StaticANIObject;
-	friend class Movement;
-
+ public:
  	int16 _staticsId;
 	int16 _field_86;
 	char *_staticsName;
@@ -158,9 +156,7 @@ class Movement : public GameObject {
 };
 
 class StaticANIObject : public GameObject {
-	friend class FullpipeEngine;
-
- protected:
+ public:
 	Movement *_movement;
 	Statics *_statics;
 	int _shadowsOn;

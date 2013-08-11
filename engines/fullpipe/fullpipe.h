@@ -88,7 +88,6 @@ public:
 
 	Common::RandomSource *_rnd;
 
-	int _mouseX, _mouseY;
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
 
@@ -106,7 +105,6 @@ public:
 	int _gameProjectVersion;
 	int _pictureScale;
 	int _scrollSpeed;
-	bool _savesEnabled;
 	bool _updateFlag;
 	bool _flgCanOpenMap;
 	bool _gamePaused;
@@ -126,10 +124,17 @@ public:
 	CInputController *_inputController;
 	bool _inputDisabled;
 
+	void defHandleKeyDown(int key);
+
 	SoundList *_currSoundList1[11];
 	int _currSoundListCount;
 	bool _soundEnabled;
 	bool _flgSoundList;
+
+	void stopAllSounds();
+	void toggleMute();
+	void playSound(int id, int flag);
+	void startSceneTrack();
 
 	int _sfxVolume;
 
@@ -146,6 +151,7 @@ public:
 
 	int _mouseVirtX;
 	int _mouseVirtY;
+	Common::Point _mouseScreenPos;
 
 	BehaviorManager *_behaviorManager;
 
@@ -163,6 +169,9 @@ public:
 	bool _flgPlayIntro;
 	int _musicAllowed;
 
+	void enableSaves() { _isSaveAllowed = true; }
+	void disableSaves(ExCommand *ex);
+
 	void initObjectStates();
 	void setLevelStates();
 	void setSwallowedEggsState();
@@ -179,6 +188,7 @@ public:
 
 	Scene *_inventoryScene;
 	CInventory2 *_inventory;
+	int _currSelectedInventoryItemId;
 
 	int32 _updateTicks;
 	int32 _lastInputTicks;
@@ -190,6 +200,7 @@ public:
 	int (*_updateCursorCallback)();
 
 	int _cursorId;
+	void setCursor(int id);
 
 	int getObjectState(const char *objname);
 	void setObjectState(const char *name, int state);
@@ -200,6 +211,10 @@ public:
 	void setSceneMusicParameters(CGameVar *var);
 
 	NGIArchive *_currArchive;
+
+	void openMap();
+	void openHelp();
+	void openMainMenu();
 
 public:
 

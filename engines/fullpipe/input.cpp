@@ -82,6 +82,10 @@ void CInputController::drawCursor(int x, int y) {
 	warning("STUB: CInputController::drawCursor(%d, %d)", x, y);
 }
 
+void CInputController::setCursor(int id) {
+	warning("STUB: CInputController::setCursor(%d)", id);
+}
+
 CursorInfo::CursorInfo() {
 	pictureId = 0;
 	picture = 0;
@@ -102,6 +106,15 @@ CursorInfo::CursorInfo(CursorInfo *src) {
 	itemPictureOffsY = src->itemPictureOffsY;
 	width = src->width;
 	height = src->height;
+}
+
+void FullpipeEngine::setCursor(int id) {
+	if (_inputController)
+		_inputController->setCursor(id);
+}
+
+void FullpipeEngine::defHandleKeyDown(int key) {
+	warning("STUB: FullpipeEngine::defHandleKeyDown(%d)", key);
 }
 
 } // End of namespace Fullpipe

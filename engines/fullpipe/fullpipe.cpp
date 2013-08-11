@@ -105,6 +105,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_mouseVirtX = 0;
 	_mouseVirtY = 0;
 
+	_currSelectedInventoryItemId = 0;
+
 	_behaviorManager = 0;
 
 	_cursorId = 0;
@@ -254,8 +256,7 @@ void FullpipeEngine::updateEvents() {
 				ex->handle();
 			}
 
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+			_mouseScreenPos = event.mouse;
 			break;
 		case Common::EVENT_QUIT:
 			_gameContinue = false;
@@ -311,8 +312,8 @@ void FullpipeEngine::cleanup() {
 }
 
 void FullpipeEngine::updateScreen() {
-	_mouseVirtX = _mouseX + _sceneRect.left;
-	_mouseVirtY = _mouseY + _sceneRect.top;
+	_mouseVirtX = _mouseScreenPos.x + _sceneRect.left;
+	_mouseVirtY = _mouseScreenPos.y + _sceneRect.top;
 
 	//if (inputArFlag)
 	//	updateGame_inputArFlag();
@@ -348,7 +349,7 @@ void FullpipeEngine::updateScreen() {
 	} else {
 		//vrtRectangle(*(_DWORD *)g_vrtHandle, 0, 0, 0, 800, 600);
 	}
-	_inputController->drawCursor(_mouseX, _mouseY);
+	_inputController->drawCursor(_mouseScreenPos.x, _mouseScreenPos.y);
 
 	++_updateTicks;
 }
@@ -403,5 +404,10 @@ void FullpipeEngine::updateMapPiece(int mapId, int update) {
 		}
 	}
 }
+
+void FullpipeEngine::disableSaves(ExCommand *ex) {
+	warning("STUB: FullpipeEngine::disableSaves()");
+}
+
 
 } // End of namespace Fullpipe

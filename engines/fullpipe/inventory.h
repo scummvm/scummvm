@@ -87,8 +87,8 @@ class CInventory2 : public CInventory {
 	InventoryIcons _inventoryIcons;
 	int _selectedId;
 	int _field_48;
-	int _isInventoryOut;
-	int _isLocked;
+	bool _isInventoryOut;
+	bool _isLocked;
 	int _topOffset;
 	Scene *_scene;
 	BigPicture *_picture;
@@ -100,7 +100,16 @@ class CInventory2 : public CInventory {
 	void rebuildItemRects();
 
 	Scene *getScene() { return _scene; }
+	bool getIsLocked() { return _isLocked; }
+	void setIsLocked(bool val) { _isLocked = val; }
+	bool getIsInventoryOut() { return _isInventoryOut; }
+
 	int getSelectedItemId() { return _selectedId < 0 ? 0 : _selectedId; }
+	int getHoveredItem(Common::Point *point);
+	void slideOut();
+
+	int handleLeftClick(ExCommand *cmd);
+	int unselectItem(bool flag);
 
 	void draw();
 };

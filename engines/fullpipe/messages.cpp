@@ -106,13 +106,17 @@ void ExCommand::sendMessage() {
 	processMessages();
 }
 
+void ExCommand::postMessage() {
+	g_fullpipe->_exCommandList.push_back(this);
+}
+
 void ExCommand::handle() {
 	if (g_fullpipe->_modalObject) {
 		g_fullpipe->_modalObject->handleMessage(this);
 
 		delete this;
 	} else {
-		postMessage(this);
+		postMessage();
 	}
 }
 
@@ -622,10 +626,6 @@ void clearMessageHandlers() {
 
 		g_fullpipe->_messageHandlers = 0;
 	}
-}
-
-void postMessage(ExCommand *ex) {
-	g_fullpipe->_exCommandList.push_back(ex);
 }
 
 void processMessages() {

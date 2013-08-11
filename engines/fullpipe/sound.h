@@ -25,8 +25,6 @@
 
 namespace Fullpipe {
 
-void startSceneTrack();
-
 class Sound : public MemoryObject {
 	int _id;
 	char *_description;

@@ -110,8 +110,22 @@ void FullpipeEngine::setSceneMusicParameters(CGameVar *var) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
 }
 
-void startSceneTrack() {
-	warning("STUB: startSceneTrack()");
+void FullpipeEngine::startSceneTrack() {
+	warning("STUB: FullpipeEngine::startSceneTrack()");
 }
+
+void FullpipeEngine::stopAllSounds() {
+	warning("STUB: FullpipeEngine::stopAllSounds()");
+}
+
+void FullpipeEngine::toggleMute() {
+	warning("STUB: FullpipeEngine::toggleMute()");
+}
+
+void FullpipeEngine::playSound(int id, int flag) {
+	warning("STUB: FullpipeEngine::playSounds(%d, %d)", id, flag);
+}
+
+
 
 } // End of namespace Fullpipe

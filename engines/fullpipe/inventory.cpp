@@ -110,4 +110,34 @@ void CInventory2::draw() {
 	warning("STUB: CInventory2::draw()");
 }
 
+void CInventory2::slideOut() {
+	_isInventoryOut = true;
+
+	ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_field_2C = 10;
+	ex->_field_14 = _isInventoryOut;
+	ex->_field_20 = !_isInventoryOut;
+	ex->_excFlags |= 3;
+	ex->postMessage();
+}
+
+int CInventory2::handleLeftClick(ExCommand *cmd) {
+	warning("STUB: CInventory2::handleLeftClick()");
+
+	return 0;
+}
+
+int CInventory2::unselectItem(bool flag) {
+	warning("STUB: CInventory2::unselectItem()");
+
+	return 0;
+}
+
+int CInventory2::getHoveredItem(Common::Point *point) {
+	warning("STUB: CInventory2::getHoveredItem()");
+
+	return 0;
+}
+
 } // End of namespace Fullpipe

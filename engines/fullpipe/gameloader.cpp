@@ -311,7 +311,7 @@ void CGameLoader::updateSystems(int counterdiff) {
 		_updateCounter++;
 		_exCommand._messageNum = 33;
 		_exCommand._excFlags = 0;
-		postMessage(&_exCommand);
+		_exCommand.postMessage();
 	}
 
 	processMessages();
