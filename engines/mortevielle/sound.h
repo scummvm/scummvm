@@ -77,7 +77,6 @@ private:
 	void spfrac(int wor);
 	void charg_car(int &currWordNumb);
 	void entroct(byte o);
-	void veracf(byte b);
 	void cctable(tablint &t);
 	void trait_car();
 

@@ -274,11 +274,12 @@ void SoundManager::setParent(MortevielleEngine *vm) {
 
 void SoundManager::spfrac(int wor) {
 	_queue[2]._rep = (uint)wor >> 12;
-	if ((_soundType == 0) && (_queue[2]._code != 9))
+	if ((_soundType == 0) && (_queue[2]._code != 9)) {
 		if (((_queue[2]._code > 4) && (_queue[2]._val != 20) && (_queue[2]._rep != 3) && (_queue[2]._rep != 6) && (_queue[2]._rep != 9)) ||
 				((_queue[2]._code < 5) && ((_queue[2]._val != 19) && (_queue[2]._val != 22) && (_queue[2]._rep != 4) && (_queue[2]._rep != 9)))) {
 			++_queue[2]._rep;
 		}
+	}
 
 	_queue[2]._freq = ((uint)wor >> 6) & 7;
 	_queue[2]._acc = ((uint)wor >> 9) & 7;
@@ -331,10 +332,6 @@ void SoundManager::entroct(byte o) {
 	++_ptr_oct;
 }
 
-void SoundManager::veracf(byte b) {
-	;
-}
-
 void SoundManager::cctable(tablint &t) {
 	float tb[257];
 
@@ -378,7 +375,6 @@ void SoundManager::trait_car() {
 		else
 			d3 = kNullValue;
 		if (_queue[0]._code >= 5) {
-			veracf(_queue[1]._acc);
 			if (_queue[0]._code == 9) {
 				entroct(4);
 				if (d3 == kNullValue)
@@ -486,7 +482,6 @@ void SoundManager::trait_car() {
 	case 3:
 		d3 = _queue[1]._code + 5; //  7 ou 8  => Corresponding vowel
 		if (_queue[0]._code > 4) {
-			veracf(_queue[1]._acc);
 			if (_queue[0]._code == 9) {
 				entroct(4);
 				entroct(d3);
@@ -503,7 +498,6 @@ void SoundManager::trait_car() {
 				entroct(3);
 			} while (i > 0);
 		}
-		veracf(_queue[2]._acc);
 		if (_queue[2]._code == 6) {
 			entroct(4);
 			entroct(_tabdph[(_queue[2]._val - 14) << 1]);
@@ -519,7 +513,6 @@ void SoundManager::trait_car() {
 		break;
 	case 0:
 	case 1:
-		veracf(_queue[1]._acc);
 		switch (_queue[2]._code) {
 		case 2:
 			d2 = 7;
@@ -578,7 +571,6 @@ void SoundManager::trait_car() {
 			entroct(_queue[1]._val);
 			entroct(5);
 		} else if ((_queue[2]._code != 0) && (_queue[2]._code != 1) && (_queue[2]._code != 4)) {
-			veracf(_queue[2]._acc);
 			switch (_queue[2]._code) {
 			case 3:
 				d2 = 8;
@@ -609,7 +601,6 @@ void SoundManager::trait_car() {
 
 		break;
 	case 4:
-		veracf(_queue[1]._acc);
 		i = _queue[1]._rep;
 		if (i != 0) {
 			do {
@@ -627,7 +618,6 @@ void SoundManager::trait_car() {
 			entroct(_queue[1]._val);
 			entroct(5);
 		} else if ((_queue[2]._code != 0) && (_queue[2]._code != 1) && (_queue[2]._code != 4)) {
-			veracf(_queue[2]._acc);
 			switch (_queue[2]._code) {
 			case 3:
 				d2 = 8;
