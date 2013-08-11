@@ -33,7 +33,7 @@ class String;
 
 namespace ZVision {
 
-class ZorkCursor : public Graphics::Cursor {
+class ZorkCursor {
 public:
 	ZorkCursor();
 	ZorkCursor(const Common::String &fileName);
@@ -56,9 +56,6 @@ public:
 	uint16 getHotspotY() const { return _hotspotY; }
 	byte getKeyColor() const { return 0; }
 	const byte *getSurface() const { return _surface; }
-	const byte *getPalette() const { return 0; }
-	byte getPaletteStartIndex() const { return 0; }
-	uint16 getPaletteCount() const { return 0; }
 };
 
 } // End of namespace ZVision
