@@ -51,52 +51,9 @@ struct SpeakerNote {
 	}
 };
 
-/**
- * This is a modified PC Speaker class that allows the queueing of an entire song
- * sequence one note at a time.
- */
-class PCSpeaker : public Audio::AudioStream {
-private:
-	Common::Queue<SpeakerNote> _pendingNotes;
-	Common::Mutex _mutex;
-
-	int _rate;
-	uint32 _oscLength;
-	uint32 _oscSamples;
-	uint32 _remainingSamples;
-	uint32 _mixedSamples;
-	byte _volume;
-
-	void dequeueNote();
-protected:
-	static int8 generateSquare(uint32 x, uint32 oscLength);
-public:
-	PCSpeaker(int rate = 44100);
-	~PCSpeaker();
-
-	/** Play a note for length microseconds.
-	 */
-	void play(int freq, uint32 length);
-	/** Stop the currently playing sequence */
-	void stop();
-	/** Adjust the volume. */
-	void setVolume(byte volume);
-
-	bool isPlaying() const;
-
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool isStereo() const	{ return false; }
-	bool endOfData() const	{ return false; }
-	bool endOfStream() const { return false; }
-	int getRate() const	{ return _rate; }
-};
-
 class SoundManager {
 private:
 	MortevielleEngine *_vm;
-	PCSpeaker *_speakerStream;
-	Audio::SoundHandle _speakerHandle;
 	byte *_ambiantNoiseBuf;
 	byte *_noiseBuf;
 
@@ -110,7 +67,6 @@ public:
 	~SoundManager();
 
 	void setParent(MortevielleEngine *vm);
-	void playNote(int frequency, int32 length);
 
 	int decodeMusic(const byte *PSrc, byte *PDest, int size);
 	void playSong(const byte *buf, uint usize, uint loops);

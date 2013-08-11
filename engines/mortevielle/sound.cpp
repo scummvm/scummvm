@@ -33,110 +33,8 @@
 
 namespace Mortevielle {
 
-/**
- * Constructor
- */
-PCSpeaker::PCSpeaker(int rate) {
-	_rate = rate;
-	_oscLength = 0;
-	_oscSamples = 0;
-	_remainingSamples = 0;
-	_volume = 255;
-}
-
-/**
- * Destructor
- */
-PCSpeaker::~PCSpeaker() {
-}
-
-/**
- * Adds a new note to the queue of notes to be played.
- */
-void PCSpeaker::play(int freq, uint32 length) {
-	assert((freq > 0) && (length > 0));
-	Common::StackLock lock(_mutex);
-
-	_pendingNotes.push(SpeakerNote(freq, length));
-}
-
-/**
- * Stops the currently playing song
- */
-void PCSpeaker::stop() {
-	Common::StackLock lock(_mutex);
-
-	_remainingSamples = 0;
-	_pendingNotes.clear();
-}
-
-void PCSpeaker::setVolume(byte volume) {
-	_volume = volume;
-}
-
-/**
- * Return true if a song is currently playing
- */
-bool PCSpeaker::isPlaying() const {
-	return !_pendingNotes.empty() || (_remainingSamples != 0);
-}
-
-/**
- * Method used by the mixer to pull off pending samples to play
- */
-int PCSpeaker::readBuffer(int16 *buffer, const int numSamples) {
-	Common::StackLock lock(_mutex);
-
-	int i;
-
-	for (i = 0; (_remainingSamples || !_pendingNotes.empty())  && (i < numSamples); ++i) {
-		if (!_remainingSamples)
-			// Used up the current note, so queue the next one
-			dequeueNote();
-
-		buffer[i] = generateSquare(_oscSamples, _oscLength) * _volume;
-		if (_oscSamples++ >= _oscLength)
-			_oscSamples = 0;
-
-		_remainingSamples--;
-	}
-
-	// Clear the rest of the buffer
-	if (i < numSamples)
-		memset(buffer + i, 0, (numSamples - i) * sizeof(int16));
-
-	return numSamples;
-}
-
-/**
- * Dequeues a note from the pending note list
- */
-void PCSpeaker::dequeueNote() {
-	SpeakerNote note = _pendingNotes.pop();
-
-	_oscLength = _rate / note.freq;
-	_oscSamples = 0;
-	_remainingSamples = (_rate * note.length) / 1000000;
-	assert((_oscLength > 0) && (_remainingSamples > 0));
-}
-
-/**
- * Support method for generating a square wave
- */
-int8 PCSpeaker::generateSquare(uint32 x, uint32 oscLength) {
-	return (x < (oscLength / 2)) ? 127 : -128;
-}
-
-/*-------------------------------------------------------------------------*/
-
-// The PC timer chip works at a frequency of 1.19318Mhz
-#define TIMER_FREQUENCY 1193180
-
 SoundManager::SoundManager(Audio::Mixer *mixer) {
 	_mixer = mixer;
-	_speakerStream = new PCSpeaker(mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	_audioStream = nullptr;
 	_ambiantNoiseBuf = nullptr;
 	_noiseBuf = nullptr;
@@ -145,8 +43,6 @@ SoundManager::SoundManager(Audio::Mixer *mixer) {
 SoundManager::~SoundManager() {
 	if (_audioStream)
 		_audioStream->finish();
-	_mixer->stopHandle(_speakerHandle);
-	delete _speakerStream;	
 	free(_ambiantNoiseBuf);
 	free(_noiseBuf);
 }
@@ -240,7 +136,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 
 	if (!_vm->_speechManager._buildingSentence) {
 		if (!_mixer->isSoundHandleActive(_soundHandle))
-			_mixer->stopHandle(_speakerHandle);
+			_mixer->stopHandle(_soundHandle);
 		_vm->_speechManager._buildingSentence = true;
 	}
 	int freq = tempo * 10 * 25.2;
@@ -324,11 +220,6 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 		}
 	}
 }
-
-void SoundManager::playNote(int frequency, int32 length) {
-	_speakerStream->play(frequency, length);
-}
-
 
 void SoundManager::playSong(const byte* buf, uint size, uint loops) {
 	int freq = kTempoMusic * 10 * 25.2;
