@@ -35,8 +35,10 @@ namespace ZVision {
 
 void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) {
 	Common::File file;
-	if (!file.open(fileName))
-		return; // File.open already throws a warning if the file doesn't exist, so there is no need to throw another
+	if (!file.open(fileName)) {
+		warning("Script file not found: %s", fileName.c_str());
+		return;
+	}
 
 	while(!file.eos()) {
 		Common::String line = file.readLine();
