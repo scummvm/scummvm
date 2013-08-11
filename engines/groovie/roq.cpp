@@ -436,9 +436,9 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 
 	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
 	jpg->loadStream(*_file);
-	const byte *y = (const byte *)jpg->getComponent(1)->getPixels();
-	const byte *u = (const byte *)jpg->getComponent(2)->getPixels();
-	const byte *v = (const byte *)jpg->getComponent(3)->getPixels();
+	const byte *y = (const byte *)jpg->getYComponent().getPixels();
+	const byte *u = (const byte *)jpg->getUComponent().getPixels();
+	const byte *v = (const byte *)jpg->getVComponent().getPixels();
 
 	byte *ptr = (byte *)_currBuf->getPixels();
 	for (int i = 0; i < _currBuf->w * _currBuf->h; i++) {
