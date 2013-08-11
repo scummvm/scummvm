@@ -106,7 +106,10 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 	uint16 finalWidth = origWidth * scale;
 	uint16 finalHeight = origHeight * scale;
 
-	byte *scaledVideoFrameBuffer = new byte[finalWidth * finalHeight * bytesPerPixel];
+	byte *scaledVideoFrameBuffer;
+	if (scale != 1) {
+		scaledVideoFrameBuffer = new byte[finalWidth * finalHeight * bytesPerPixel];
+	}
 
 	uint16 x = ((_width - finalWidth) / 2) + destRect.left;
 	uint16 y = ((_height - finalHeight) / 2) + destRect.top;
@@ -158,7 +161,9 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 
 	_clock.start();
 
-	delete[] scaledVideoFrameBuffer;
+	if (scale != 1) {
+		delete[] scaledVideoFrameBuffer;
+	}
 
 	// Reset the pixel format to the original state
 	initGraphics(_width, _height, true, &_pixelFormat);
