@@ -55,6 +55,7 @@ class Scene : public Background {
 	void draw();
 	void drawContent(int minPri, int maxPri, bool drawBG);
 	void updateScrolling();
+	void updateScrolling2();
 
 	void update(int counterdiff);
 

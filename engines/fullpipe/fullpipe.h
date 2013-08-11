@@ -66,6 +66,8 @@ int global_messageHandler1(ExCommand *cmd);
 int global_messageHandler2(ExCommand *cmd);
 int global_messageHandler3(ExCommand *cmd);
 int global_messageHandler4(ExCommand *cmd);
+void global_messageHandler_handleSound(ExCommand *cmd);
+
 
 class FullpipeEngine : public ::Engine {
 protected:

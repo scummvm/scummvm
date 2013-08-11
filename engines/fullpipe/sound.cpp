@@ -126,6 +126,10 @@ void FullpipeEngine::playSound(int id, int flag) {
 	warning("STUB: FullpipeEngine::playSounds(%d, %d)", id, flag);
 }
 
+void global_messageHandler_handleSound(ExCommand *cmd) {
+	warning("STUB: global_messageHandler_handleSound()");
+}
+
 
 
 } // End of namespace Fullpipe

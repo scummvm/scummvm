@@ -197,6 +197,8 @@ class StaticANIObject : public GameObject {
 
 	void deleteFromGlobalMessageQueue();
 	void queueMessageQueue(MessageQueue *msg);
+	MessageQueue *getMessageQueue();
+	bool trySetMessageQueue(int msgNum, int qId);
 
 	void initMovements();
 	void loadMovementsPixelData();
@@ -204,7 +206,16 @@ class StaticANIObject : public GameObject {
 	bool setPicAniInfo(PicAniInfo *picAniInfo);
 
 	void setSomeDynamicPhaseIndex(int val) { _someDynamicPhaseIndex = val; }
+	void adjustSomeXY();
 
+	bool startAnim(int movementId, int messageQueueId, int dynPhaseIdx);
+	bool startAnimEx(int movid, int parId, int flag1, int flag2);
+	void startAnimSteps(int movementId, int messageQueueId, int x, int y, Common::Point **points, int pointsCount, int someDynamicPhaseIndex);
+
+	void hide();
+	void show1(int x, int y, int movementId, int mqId);
+	void show2(int x, int y, int movementId, int mqId);
+	void playIdle();
 	void update(int counterdiff);
 
 	Statics *addReverseStatics(Statics *ani);
@@ -215,7 +226,9 @@ class StaticANIObject : public GameObject {
 	void setSpeed(int speed);
 
 	void stopAnim_maybe();
-	void adjustSomeXY();
+
+	MessageQueue *changeStatics1(int msgNum);
+	void changeStatics2(int objId);
 };
 
 struct MovTable {

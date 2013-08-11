@@ -76,6 +76,12 @@ class ExCommand : public Message {
 	void handle();
 };
 
+class ExCommand2 : public ExCommand {
+ public:
+	Common::Point **_points;
+	int _pointsSize;
+};
+
 class CObjstateCommand : public CObject {
 	ExCommand _cmd;
 	char *_objCommandName;

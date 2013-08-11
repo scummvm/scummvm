@@ -407,6 +407,10 @@ void Scene::updateScrolling() {
 	warning("STUB Scene::updateScrolling()");
 }
 
+void Scene::updateScrolling2() {
+	warning("STUB Scene::updateScrolling2()");
+}
+
 void Scene::update(int counterdiff) {
 	debug(0, "Scene::update(%d)", counterdiff);
 

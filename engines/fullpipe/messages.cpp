@@ -629,6 +629,7 @@ void clearMessageHandlers() {
 }
 
 void processMessages() {
+	warning("###################### processing");
 	if (!g_fullpipe->_isProcessingMessages) {
 		g_fullpipe->_isProcessingMessages = true;
 

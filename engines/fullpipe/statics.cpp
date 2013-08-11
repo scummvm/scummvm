@@ -234,6 +234,26 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 	}
 }
 
+MessageQueue *StaticANIObject::getMessageQueue() {
+	if (this->_messageQueueId <= 0 )
+		return 0;
+
+	return g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+}
+
+bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
+	if (_messageQueueId || !msgNum) {
+		updateGlobalMessageQueue(qId, _id);
+		return false;
+	}
+
+	_flags |= 2;
+	_messageNum = msgNum;
+	_messageQueueId = qId;
+
+	return true;
+}
+
 bool StaticANIObject::isIdle() {
 	if (_messageQueueId) {
 		MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
@@ -603,6 +623,154 @@ bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 
 		setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
 	}
+
+	return true;
+}
+
+MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
+	warning("STUB: StaticANIObject::changeStatics1(%d)", msgNum);
+
+	return 0;
+}
+
+void StaticANIObject::changeStatics2(int objId) {
+	warning("STUB: StaticANIObject::changeStatics2(%d)", objId);
+}
+
+void StaticANIObject::hide() {
+	if (!_messageQueueId) {
+		if (_flags & 4)
+			_flags ^= 4;
+	}
+}
+
+void StaticANIObject::show1(int x, int y, int movementId, int mqId) {
+	warning("STUB: StaticANIObject::show1(%d, %d, %d, %d)", x, y, movementId, mqId);
+}
+
+void StaticANIObject::show2(int x, int y, int movementId, int mqId) {
+	warning("STUB: StaticANIObject::show2(%d, %d, %d, %d)", x, y, movementId, mqId);
+}
+
+void StaticANIObject::playIdle() {
+	if (isIdle())
+		adjustSomeXY();
+}
+
+void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, int y, Common::Point **points, int pointsCount, int someDynamicPhaseIndex) {
+	warning("STUB: StaticANIObject::startAnimSteps()");
+}
+
+bool StaticANIObject::startAnimEx(int movid, int parId, int flag1, int flag2) {
+	bool res = startAnim(movid, parId, -1);
+	if (res)
+		_animExFlag = 1;
+
+	_someDynamicPhaseIndex = -1;
+	return res;
+}
+
+bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhaseIdx) {
+	if (_flags & 0x80)
+		return false;
+
+	warning("STUB: StaticANIObject::startAnim(%d, %d, %d)", movementId, messageQueueId, dynPhaseIdx);
+
+	if (_messageQueueId) {
+		updateGlobalMessageQueue(messageQueueId, _id);
+		return false;
+	}
+
+	bool found = false;
+	Movement *mov;
+
+	for (uint i = 0; i < _movements.size(); i++) {
+		mov = (Movement *)_movements[i];
+
+		if (mov->_id != movementId) {
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		updateGlobalMessageQueue(messageQueueId, _id);
+		return false;
+	}
+
+	if (mov == _movement) {
+		_flags |= 1;
+		_messageQueueId = messageQueueId;
+
+		return 1;
+	}
+
+	int newx = _ox;
+	int newy = _oy;
+	Common::Point point;
+
+	if (_movement) {
+		_movement->getCurrDynamicPhaseXY(point);
+	} else if (_statics) {
+		_statics->getSomeXY(point);
+
+		newx -= point.x;
+		newy -= point.y;
+	}
+
+	_movement = mov;
+
+	_stepArray.clear();
+
+	if (_flags & 0x40)
+		_movement->gotoLastFrame();
+	else
+		_movement->gotoFirstFrame();
+
+	if (!(_flags & 0x40)) {
+		if (!_movement->_currDynamicPhaseIndex) {
+			_stepArray.getCurrPoint(&point);
+			newx += point.x + _movement->_mx;
+			newy += point.y + _movement->_my;
+
+			_stepArray.gotoNextPoint();
+
+			ExCommand *ex = _movement->_currDynamicPhase->getExCommand();
+			if (ex) {
+				if (ex->_messageKind == 35) {
+					ExCommand *newex = new ExCommand(ex);
+					newex->_excFlags |= 2;
+					newex->sendMessage();
+				}
+			}
+		}
+	}
+
+	_movement->getCurrDynamicPhaseXY(point);
+	setOXY(point.x + newx, point.y + newy);
+
+	if (_movement->_staticsObj2->_staticsId & 0x4000)
+		_flags |= 8;
+	else
+		_flags &= 0xFFF7;
+
+	_flags |= 1;
+
+	_messageQueueId = messageQueueId;
+	_movement->_currDynamicPhase->_countdown = _movement->_currDynamicPhase->_initialCountdown;
+	_movement->_counter = 0;
+
+	_counter = _initialCounter;
+	_someDynamicPhaseIndex = dynPhaseIdx;
+
+	_stepArray.clear();
+
+	ExCommand *newex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
+
+	newex->_keyCode = _field_4;
+	newex->_excFlags = 2;
+
+	newex->postMessage();
 
 	return true;
 }
