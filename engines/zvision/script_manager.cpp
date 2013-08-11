@@ -107,8 +107,8 @@ void ScriptManager::checkPuzzleCriteria() {
 		// If it doesn't have the flag ONCE_PER_INST it can be done more than once
 		// Also check that the puzzle isn't disabled
 		if (getStateValue(puzzle->key) == 1 &&
-		    (puzzle->flags & Puzzle::StateFlags::ONCE_PER_INST) == Puzzle::StateFlags::ONCE_PER_INST &&
-		    (puzzle->flags & Puzzle::StateFlags::DISABLED) == 0) {
+		    (puzzle->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST &&
+		    (puzzle->flags & Puzzle::DISABLED) == 0) {
 			continue;
 		}
 
