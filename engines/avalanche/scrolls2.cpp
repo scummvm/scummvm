@@ -103,7 +103,6 @@ void Scrolls::easteregg() {
 }
 
 void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwriting */
-	//byte itw[12][80];
 	Common::String text;
 	fontType itw;
 	byte lz = z.size();
@@ -137,7 +136,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	x = x / 8;
 	y++;
 
-	_vm->_graphics->drawText(_vm->_graphics->_scrolls, text, itw, 12, x * 8 + offset *4, y, black);
+	_vm->_graphics->drawText(_vm->_graphics->_scrolls, text, itw, 12, x * 8 + offset * 4, y, black);
 }
 
 /* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
@@ -489,8 +488,6 @@ void Scrolls::bubble(func2 gotoit) {
 	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
 	//mousepage(1 - cp); /* Mousepage */
 
-	//setfillstyle(1, talkb);
-	//setcolor(talkb);
 	_vm->_gyro->off();
 
 	xl = 0;
@@ -519,9 +516,6 @@ void Scrolls::bubble(func2 gotoit) {
 	p[2].x = _vm->_gyro->talkx;
 	p[2].y = _vm->_gyro->talky;
 
-	/* mblit(talkx-xw+xc,7,talkx+xw+xc,my,0,3);
-	 mblit(talkx-10,my,talkx+10,talky,0,3);*/
-
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
 
 	// The body of the bubble.
@@ -540,11 +534,15 @@ void Scrolls::bubble(func2 gotoit) {
 	// "Tail" of the speech bubble.
 	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, p, _vm->_gyro->talkb);
 
-	//setcolor(talkf);
+	
 	yl -= 3;
-	//settextjustify(1, 2);
-	/*for (fv = 0; fv < _vm->_gyro->scrolln; fv++)
-	outtextxy(_vm->_gyro->talkx + xc, (fv * 10) + 12, _vm->_gyro->scroll[fv + 1]);*/
+
+	// Draw the text of the bubble.
+	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) {
+		int16 x = _vm->_gyro->talkx - _vm->_gyro->scroll[fv].size() / 2 * 8;
+		bool offset = _vm->_gyro->scroll[fv].size() % 2;
+		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->scroll[fv], _vm->_gyro->characters, 8, x - offset * 12, (fv * 10) + 12, white);
+	}
 
 	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) /* These should be separate loops. */
 		_vm->_logger->log_bubbleline(fv, param, _vm->_gyro->scroll[fv]);
@@ -561,19 +559,13 @@ void Scrolls::bubble(func2 gotoit) {
 
 	_vm->_gyro->off();
 	_vm->_gyro->dropsok = true;
-	/*mblit((talkx - xw + xc) / 8, 7, 1 + (talkx + xw + xc) / 8, my, 3, 1 - cp);
-	mblit((talkx - 10) / 8, my, 1 + (talkx + 10) / 8, talky, 3, 1 - cp);
-	blitfix();*/
 
 	/*setvisualpage(cp);
-	settextjustify(0, 0);*/
 	_vm->_gyro->on(); /*sink;*/
 	_vm->_gyro->oncandopageswap = true;
 	resetscrolldriver();
 	if (_vm->_gyro->mpress > 0)
 		_vm->_gyro->after_the_scroll = true;
-
-	warning("STUB: Scrolls::bubble()");
 }
 
 bool Scrolls::ask(Common::String question) {
