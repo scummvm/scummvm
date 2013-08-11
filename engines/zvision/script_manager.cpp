@@ -33,7 +33,10 @@
 
 namespace ZVision {
 
-ScriptManager::ScriptManager(ZVision *engine) : _engine(engine), _changeLocation(false) {}
+ScriptManager::ScriptManager(ZVision *engine)
+	: _engine(engine),
+	  _changeLocation(false) {
+}
 
 void ScriptManager::initialize() {
 	parseScrFile("universe.scr", true);
