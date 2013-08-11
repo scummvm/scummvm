@@ -516,6 +516,7 @@ void Scrolls::bubble(func2 gotoit) {
 	p[2].x = _vm->_gyro->talkx;
 	p[2].y = _vm->_gyro->talky;
 
+	// Backup the screen before drawing the bubble.
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
 
 	// The body of the bubble.
@@ -537,7 +538,9 @@ void Scrolls::bubble(func2 gotoit) {
 	
 	yl -= 3;
 
-	// Draw the text of the bubble.
+	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
+	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.
+	// It's almost the same, only notable differences are '?', '!', etc.
 	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) {
 		int16 x = _vm->_gyro->talkx - _vm->_gyro->scroll[fv].size() / 2 * 8;
 		bool offset = _vm->_gyro->scroll[fv].size() % 2;
@@ -555,6 +558,7 @@ void Scrolls::bubble(func2 gotoit) {
 	_vm->_gyro->on();
 	_vm->_gyro->dropsok = false;
 
+	// This does the actual drawing to the screen.
 	(this->*gotoit)();
 
 	_vm->_gyro->off();
