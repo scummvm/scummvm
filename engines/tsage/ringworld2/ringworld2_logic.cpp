@@ -323,6 +323,12 @@ SceneExt::SceneExt(): Scene() {
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
 	_focusObject = NULL;
+
+	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
+	// counter as scene changes unless the playing animation explicitly finishes. For now,
+	// to make inter-scene debugging easier, I'm explicitly resetting the _animationCtr
+	// on scene start, since scene objects aren't drawn while it's non-zero
+	R2_GLOBALS._animationCtr = 0;
 }
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
