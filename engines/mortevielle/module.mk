@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	outtext.o \
 	saveload.o \
 	sound.o \
-	speech.o \
 	utils.o
 
 # This module can be built as a plugin

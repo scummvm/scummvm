@@ -30,7 +30,6 @@
 #include "mortevielle/dialogs.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/speech.h"
 
 #include "common/str.h"
 
@@ -428,7 +427,7 @@ void DialogManager::drawF3F8() {
 void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 	_vm->testKeyboard();
 	do {
-		_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
+		_vm->_soundManager.startSpeech(SpeechNum, 0, 0);
 		_vm->_key = waitForF3F8();
 		if (_vm->shouldQuit())
 			return;

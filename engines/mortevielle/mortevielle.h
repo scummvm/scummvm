@@ -44,7 +44,6 @@
 #include "mortevielle/mouse.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
-#include "mortevielle/speech.h"
 #include "mortevielle/outtext.h"
 
 namespace Mortevielle {
@@ -445,7 +444,6 @@ public:
 	Common::RandomSource _randomSource;
 	SoundManager _soundManager;
 	SavegameManager _savegameManager;
-	SpeechManager _speechManager;
 	Menu _menu;
 	MouseHandler _mouse;
 	TextHandler _text;

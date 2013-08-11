@@ -31,7 +31,6 @@
 #include "mortevielle/menu.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/speech.h"
 
 #include "common/scummsys.h"
 #include "graphics/cursorman.h"
@@ -1259,24 +1258,24 @@ void MortevielleEngine::startMusicOrSpeech(int so) {
 		;
 	} else if ((!_introSpeechPlayed) && (!_coreVar._alreadyEnteredManor)) {
 		// Type 1: Speech
-		_speechManager.startSpeech(10, 1, 1);
+		_soundManager.startSpeech(10, 1, 1);
 		_introSpeechPlayed = true;
 	} else {
 		if (((_coreVar._currPlace == MOUNTAIN) || (_coreVar._currPlace == MANOR_FRONT) || (_coreVar._currPlace == MANOR_BACK)) && (getRandomNumber(1, 3) == 2))
 			// Type 1: Speech
-			_speechManager.startSpeech(9, getRandomNumber(2, 4), 1);
+			_soundManager.startSpeech(9, getRandomNumber(2, 4), 1);
 		else if ((_coreVar._currPlace == CHAPEL) && (getRandomNumber(1, 2) == 1))
 			// Type 1: Speech
-			_speechManager.startSpeech(8, 1, 1);
+			_soundManager.startSpeech(8, 1, 1);
 		else if ((_coreVar._currPlace == WELL) && (getRandomNumber(1, 2) == 2))
 			// Type 1: Speech
-			_speechManager.startSpeech(12, 1, 1);
+			_soundManager.startSpeech(12, 1, 1);
 		else if (_coreVar._currPlace == INSIDE_WELL)
 			// Type 1: Speech
-			_speechManager.startSpeech(13, 1, 1);
+			_soundManager.startSpeech(13, 1, 1);
 		else
 			// Type 2 : music
-			_speechManager.startSpeech(getRandomNumber(1, 17), 1, 2);
+			_soundManager.startSpeech(getRandomNumber(1, 17), 1, 2);
 	}
 }
 
@@ -1344,7 +1343,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 
 	key = 0;
 	do {
-		_speechManager.startSpeech(rep, haut[_caff - 69], 0);
+		_soundManager.startSpeech(rep, haut[_caff - 69], 0);
 		key = _dialogManager.waitForF3F8();
 		if (shouldQuit())
 			return;
@@ -2169,10 +2168,10 @@ void MortevielleEngine::loadCFIPH() {
 			error("Missing file - *cfiph.mor");
 	}
 
-	_speechManager._cfiphBuffer = (uint16 *)malloc(sizeof(uint16) * (f.size() / 2));
+	_soundManager._cfiphBuffer = (uint16 *)malloc(sizeof(uint16) * (f.size() / 2));
 
 	for (int i = 0; i < (f.size() / 2); ++i)
-		_speechManager._cfiphBuffer[i] = f.readUint16BE();
+		_soundManager._cfiphBuffer[i] = f.readUint16BE();
 
 	f.close();
 }
@@ -2199,9 +2198,6 @@ void MortevielleEngine::music() {
 
 	int musicSize = _soundManager.decodeMusic(compMusicBuf, musicBuf, size);
 	free(compMusicBuf);
-
-	_addFix = (float)((kTempoMusic - 8)) / 256;
-	_speechManager.cctable(_speechManager._tbi);
 
 	_soundManager.playSong(musicBuf, musicSize, 5);
 	while (keyPressed())
@@ -2388,7 +2384,7 @@ void MortevielleEngine::prepareRoom() {
 							prepareScreenType2();
 							displayTextInVerbBar(getEngineString(S_HEAR_NOISE));
 							int rand = (getRandomNumber(0, 4)) - 2;
-							_speechManager.startSpeech(1, rand, 1);
+							_soundManager.startSpeech(1, rand, 1);
 							clearVerbBar();
 						}
 					}
@@ -2514,7 +2510,7 @@ void MortevielleEngine::initCaveOrCellar() {
 	prepareScreenType2();
 	displayTextInVerbBar(getEngineString(S_SOMEONE_ENTERS));
 	int rand = (getRandomNumber(0, 4)) - 2;
-	_speechManager.startSpeech(2, rand, 1);
+	_soundManager.startSpeech(2, rand, 1);
 
 	// The original was doing here a useless loop.
 	// It has been removed
@@ -3214,9 +3210,9 @@ L1:
 			_crep = 138;
 		handleDescriptionText(2, _crep);
 		if (_crep == 138)
-			_speechManager.startSpeech(5, 2, 1);
+			_soundManager.startSpeech(5, 2, 1);
 		else
-			_speechManager.startSpeech(4, 4, 1);
+			_soundManager.startSpeech(4, 4, 1);
 
 		if (_openObjCount == 0)
 			_coreVar._faithScore += 2;
@@ -3241,7 +3237,7 @@ L1:
 		} else {
 			handleDescriptionText(2, 136);
 			int rand = (getRandomNumber(0, 4)) - 2;
-			_speechManager.startSpeech(3, rand, 1);
+			_soundManager.startSpeech(3, rand, 1);
 			clearDescriptionBar();
 			displayAloneText();
 			resetRoomVariables(MANOR_FRONT);

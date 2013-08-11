@@ -33,11 +33,45 @@
 
 namespace Mortevielle {
 
+	const byte _tnocon[364] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	};
+
+	const byte _intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+	const byte _typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
+	const byte _tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
+	const byte _tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
+
 SoundManager::SoundManager(Audio::Mixer *mixer) {
 	_mixer = mixer;
 	_audioStream = nullptr;
 	_ambiantNoiseBuf = nullptr;
 	_noiseBuf = nullptr;
+
+	_soundType = 0;
+	_phonemeNumb = 0;
+
+	for (int i = 0; i < 3; i++) {
+		_queue[i]._val = 0;
+		_queue[i]._code = 0;
+		_queue[i]._acc = 0;
+		_queue[i]._freq = 0;
+		_queue[i]._rep = 0;
+	}
+	_buildingSentence = false;
 }
 
 SoundManager::~SoundManager() {
@@ -124,33 +158,33 @@ void SoundManager::loadNoise() {
 void SoundManager::regenbruit() {
 	int i = 69876;
 	for (int j = 0; j < 100; j++) {
-		_vm->_speechManager._cfiphBuffer[j] = READ_BE_UINT16(&_noiseBuf[i]);
+		_cfiphBuffer[j] = READ_BE_UINT16(&_noiseBuf[i]);
 		i += 2;
 	}
 }
 
 void SoundManager::litph(tablint &t, int typ, int tempo) {
 	// Skip speech
-	if (_vm->_speechManager._soundType == 0)
+	if (_soundType == 0)
 		return;
 
-	if (!_vm->_speechManager._buildingSentence) {
+	if (!_buildingSentence) {
 		if (_mixer->isSoundHandleActive(_soundHandle))
 			_mixer->stopHandle(_soundHandle);
-		_vm->_speechManager._buildingSentence = true;
+		_buildingSentence = true;
 	}
 	int freq = tempo * 252; // 25.2 * 10
 	int i = 0;
-	while (i < _vm->_speechManager._ptr_oct) {
-		int idx = _vm->_speechManager._troctBuf[i];
+	while (i < _ptr_oct) {
+		int idx = _troctBuf[i];
 		i++;
 		switch(idx) {
 		case 0: {
-			int val = _vm->_speechManager._troctBuf[i];
+			int val = _troctBuf[i];
 			i++;
-			if (_vm->_speechManager._soundType == 0)
+			if (_soundType == 0)
 				warning("TODO: vclas");
-			else if (_vm->_speechManager._soundType == 1) {
+			else if (_soundType == 1) {
 				debugC(5, kMortevielleSounds, "litph - duson");
 				const static int noiseAdr[] = {0,     17224,
 											   17224, 33676,
@@ -187,20 +221,20 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			break;
 			}
 		case 2: {
-			int val = _vm->_speechManager._troctBuf[i];
+			int val = _troctBuf[i];
 			i++;
 			int tmpidx = (val * 12) + 268;
-			val = _vm->_speechManager._troctBuf[i];
+			val = _troctBuf[i];
 			i++;
 			warning("TODO: reech %d %d", tmpidx, val);
 			}
 			break;
 		case 4:
-			if (_vm->_speechManager._soundType) {
+			if (_soundType) {
 				i += 2;
 			} else {
 				// Speech
-				warning("TODO: Interphoneme: consonne:%d voyelle:%d", _vm->_speechManager._troctBuf[i], _vm->_speechManager._troctBuf[i + 1]);
+				warning("TODO: Interphoneme: consonne:%d voyelle:%d", _troctBuf[i], _troctBuf[i + 1]);
 				i += 2;
 			}
 			break;
@@ -211,9 +245,9 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			if (idx == 62)
 				warning("TODO: blab");
 			else if (idx == 35) {
-				if (i < _vm->_speechManager._ptr_oct)
+				if (i < _ptr_oct)
 					warning("unexpected 35");
-				i = _vm->_speechManager._ptr_oct;
+				i = _ptr_oct;
 			} else
 				warning("Other code: %d", idx);
 			break;
@@ -237,4 +271,499 @@ void SoundManager::playSong(const byte* buf, uint size, uint loops) {
 void SoundManager::setParent(MortevielleEngine *vm) {
 	_vm = vm;
 }
+
+void SoundManager::spfrac(int wor) {
+	_queue[2]._rep = (uint)wor >> 12;
+	if ((_soundType == 0) && (_queue[2]._code != 9))
+		if (((_queue[2]._code > 4) && (_queue[2]._val != 20) && (_queue[2]._rep != 3) && (_queue[2]._rep != 6) && (_queue[2]._rep != 9)) ||
+				((_queue[2]._code < 5) && ((_queue[2]._val != 19) && (_queue[2]._val != 22) && (_queue[2]._rep != 4) && (_queue[2]._rep != 9)))) {
+			++_queue[2]._rep;
+		}
+
+	_queue[2]._freq = ((uint)wor >> 6) & 7;
+	_queue[2]._acc = ((uint)wor >> 9) & 7;
+}
+
+void SoundManager::charg_car(int &currWordNumb) {
+	assert(currWordNumb < 1712);
+	int wor = READ_BE_UINT16(&_wordBuf[currWordNumb]);
+	int int_ = wor & 0x3f; // 63
+
+	if ((int_ >= 0) && (int_ <= 13)) {
+		_queue[2]._val = int_;
+		_queue[2]._code = 5;
+	} else if ((int_ >= 14) && (int_ <= 21)) {
+		_queue[2]._val = int_;
+		_queue[2]._code = 6;
+	} else if ((int_ >= 22) && (int_ <= 47)) {
+		int_ -= 22;
+		_queue[2]._val = int_;
+		_queue[2]._code = _typcon[int_];
+	} else if ((int_ >= 48) && (int_ <= 56)) {
+		_queue[2]._val = int_ - 22;
+		_queue[2]._code = 4;
+	} else {
+		switch (int_) {
+		case 60:
+			_queue[2]._val = 32;  /*  " "  */
+			_queue[2]._code = 9;
+			break;
+		case 61:
+			_queue[2]._val = 46;  /*  "."  */
+			_queue[2]._code = 9;
+			break;
+		case 62:
+			_queue[2]._val = 35;  /*  "#"  */
+			_queue[2]._code = 9;
+		default:
+			break;
+		}
+	}
+
+	spfrac(wor);
+	currWordNumb += 2;
+}
+
+
+void SoundManager::entroct(byte o) {
+	assert(_ptr_oct < 10576);
+	_troctBuf[_ptr_oct] = o;
+	++_ptr_oct;
+}
+
+void SoundManager::veracf(byte b) {
+	;
+}
+
+void SoundManager::cctable(tablint &t) {
+	float tb[257];
+
+	tb[0] = 0;
+	for (int k = 0; k <= 255; ++k) {
+		tb[k + 1] = _vm->_addFix + tb[k];
+		t[255 - k] = abs((int)tb[k] + 1);
+	}
+}
+
+/**
+ * Load phoneme sound file
+ * @remarks	Originally called 'charge_phbruit'
+ */
+void SoundManager::loadPhonemeSounds() {
+	Common::File f;
+
+	if (!f.open("phbrui.mor"))
+		error("Missing file - phbrui.mor");
+
+	for (int i = 1; i <= f.size() / 2; ++i)
+		_cfiphBuffer[i] = f.readUint16BE();
+
+	f.close();
+}
+
+void SoundManager::trait_car() {
+	byte d3;
+	int d2, i;
+
+	switch (_queue[1]._code) {
+	case 9:
+		if (_queue[1]._val != (int)'#')
+			for (i = 0; i <= _queue[1]._rep; ++i)
+				entroct(_queue[1]._val);
+		break;
+	case 5:
+	case 6:
+		if (_queue[1]._code == 6)
+			d3 = _tabdph[(_queue[1]._val - 14) << 1];
+		else
+			d3 = kNullValue;
+		if (_queue[0]._code >= 5) {
+			veracf(_queue[1]._acc);
+			if (_queue[0]._code == 9) {
+				entroct(4);
+				if (d3 == kNullValue)
+					entroct(_queue[1]._val);
+				else
+					entroct(d3);
+				entroct(22);
+			}
+		}
+
+		switch (_queue[1]._rep) {
+		case 0:
+			entroct(0);
+			entroct(_queue[1]._val);
+			if (d3 == kNullValue)
+				if (_queue[2]._code == 9)
+					entroct(2);
+				else
+					entroct(4);
+			else if (_queue[2]._code == 9)
+				entroct(0);
+			else
+				entroct(1);
+			break;
+		case 4:
+		case 5:
+		case 6:
+			if (_queue[1]._rep != 4) {
+				i = _queue[1]._rep - 5;
+				do {
+					--i;
+					entroct(0);
+					if (d3 == kNullValue)
+						entroct(_queue[1]._val);
+					else
+						entroct(d3);
+					entroct(3);
+				} while (i >= 0);
+			}
+			if (d3 == kNullValue) {
+				entroct(4);
+				entroct(_queue[1]._val);
+				entroct(0);
+			} else {
+				entroct(0);
+				entroct(_queue[1]._val);
+				entroct(3);
+			}
+
+			break;
+		case 7:
+		case 8:
+		case 9:
+			if (_queue[1]._rep != 7) {
+				i = _queue[1]._rep - 8;
+				do {
+					--i;
+					entroct(0);
+					if (d3 == kNullValue)
+						entroct(_queue[1]._val);
+					else
+						entroct(d3);
+					entroct(3);
+				} while (i >= 0);
+			}
+			if (d3 == kNullValue) {
+				entroct(0);
+				entroct(_queue[1]._val);
+				entroct(2);
+			} else {
+				entroct(0);
+				entroct(_queue[1]._val);
+				entroct(0);
+			}
+			break;
+		case 1:
+		case 2:
+		case 3:
+			if (_queue[1]._rep != 1) {
+				i = _queue[1]._rep - 2;
+				do {
+					--i;
+					entroct(0);
+					if (d3 == kNullValue)
+						entroct(_queue[1]._val);
+					else
+						entroct(d3);
+					entroct(3);
+				} while (i >= 0);
+			}
+			entroct(0);
+			entroct(_queue[1]._val);
+			if (_queue[2]._code == 9)
+				entroct(0);
+			else
+				entroct(1);
+
+			break;
+		default:
+			break;
+		}     //  switch  c2.rep
+		break;
+
+	case 2:
+	case 3:
+		d3 = _queue[1]._code + 5; //  7 ou 8  => Corresponding vowel
+		if (_queue[0]._code > 4) {
+			veracf(_queue[1]._acc);
+			if (_queue[0]._code == 9) {
+				entroct(4);
+				entroct(d3);
+				entroct(22);
+			}
+		}
+		i = _queue[1]._rep;
+		assert(i >= 0);
+		if (i != 0) {
+			do {
+				--i;
+				entroct(0);
+				entroct(d3);
+				entroct(3);
+			} while (i > 0);
+		}
+		veracf(_queue[2]._acc);
+		if (_queue[2]._code == 6) {
+			entroct(4);
+			entroct(_tabdph[(_queue[2]._val - 14) << 1]);
+			entroct(_queue[1]._val);
+		} else {
+			entroct(4);
+			if (_queue[2]._val == 4)
+				entroct(3);
+			else
+				entroct(_queue[2]._val);
+			entroct(_queue[1]._val);
+		}
+		break;
+	case 0:
+	case 1:
+		veracf(_queue[1]._acc);
+		switch (_queue[2]._code) {
+		case 2:
+			d2 = 7;
+			break;
+		case 3:
+			d2 = 8;
+			break;
+		case 6:
+			d2 = _tabdph[(_queue[2]._val - 14) << 1];
+			break;
+		case 5:
+			d2 = _queue[2]._val;
+			break;
+		default:
+			d2 = 10;
+			break;
+		}       //  switch  c3._code
+		d2 = (d2 * 26) + _queue[1]._val;
+		if (_tnocon[d2] == 0)
+			d3 = 2;
+		else
+			d3 = 6;
+		if (_queue[1]._rep >= 5) {
+			_queue[1]._rep -= 5;
+			d3 = 8 - d3;       // Swap 2 and 6
+		}
+		if (_queue[1]._code == 0) {
+			i = _queue[1]._rep;
+			if (i != 0) {
+				do {
+					--i;
+					entroct(d3);
+					entroct(_queue[1]._val);
+					entroct(3);
+				} while (i > 0);
+			}
+			entroct(d3);
+			entroct(_queue[1]._val);
+			entroct(4);
+		} else {
+			entroct(d3);
+			entroct(_queue[1]._val);
+			entroct(3);
+			i = _queue[1]._rep;
+			if (i != 0) {
+				do {
+					--i;
+					entroct(d3);
+					entroct(_queue[1]._val);
+					entroct(4);
+				} while (i > 0);
+			}
+		}
+		if (_queue[2]._code == 9) {
+			entroct(d3);
+			entroct(_queue[1]._val);
+			entroct(5);
+		} else if ((_queue[2]._code != 0) && (_queue[2]._code != 1) && (_queue[2]._code != 4)) {
+			veracf(_queue[2]._acc);
+			switch (_queue[2]._code) {
+			case 3:
+				d2 = 8;
+				break;
+			case 6:
+				d2 = _tabdph[(_queue[2]._val - 14) << 1];
+				break;
+			case 5:
+				d2 = _queue[2]._val;
+				break;
+			default:
+				d2 = 7;
+				break;
+			}     //  switch c3._code
+			if (d2 == 4)
+				d2 = 3;
+
+			if (_intcon[_queue[1]._val] != 0)
+				++_queue[1]._val;
+
+			if ((_queue[1]._val == 17) || (_queue[1]._val == 18))
+				_queue[1]._val = 16;
+
+			entroct(4);
+			entroct(d2);
+			entroct(_queue[1]._val);
+		}
+
+		break;
+	case 4:
+		veracf(_queue[1]._acc);
+		i = _queue[1]._rep;
+		if (i != 0) {
+			do {
+				--i;
+				entroct(2);
+				entroct(_queue[1]._val);
+				entroct(3);
+			} while (i > 0);
+		}
+		entroct(2);
+		entroct(_queue[1]._val);
+		entroct(4);
+		if (_queue[2]._code == 9) {
+			entroct(2);
+			entroct(_queue[1]._val);
+			entroct(5);
+		} else if ((_queue[2]._code != 0) && (_queue[2]._code != 1) && (_queue[2]._code != 4)) {
+			veracf(_queue[2]._acc);
+			switch (_queue[2]._code) {
+			case 3:
+				d2 = 8;
+				break;
+			case 6:
+				d2 = _tabdph[(_queue[2]._val - 14) << 1];
+				break;
+			case 5:
+				d2 = _queue[2]._val;
+				break;
+			default:
+				d2 = 7;
+				break;
+			}     //  switch c3._code
+
+			if (d2 == 4)
+				d2 = 3;
+
+			if (_intcon[_queue[1]._val] != 0)
+				++_queue[1]._val;
+
+			entroct(4);
+			entroct(d2);
+			entroct(_tabdbc[((_queue[1]._val - 26) << 1) + 1]);
+		}
+
+		break;
+	default:
+		break;
+	}     // switch c2.code
+}
+
+/**
+ * Make the queue evolve by 1 value
+ * @remarks	Originally called 'rot_chariot'
+ */
+void SoundManager::moveQueue() {
+	_queue[0] = _queue[1];
+	_queue[1] = _queue[2];
+	_queue[2]._val = 32;
+	_queue[2]._code = 9;
+}
+
+/**
+ * initialize the queue
+ * @remarks	Originally called 'init_chariot'
+ */
+void SoundManager::initQueue() {
+	_queue[2]._rep = 0;
+	_queue[2]._freq = 0;
+	_queue[2]._acc = 0;
+	moveQueue();
+	moveQueue();
+}
+
+/**
+ * Handle a phoneme
+ * @remarks	Originally called 'trait_ph'
+ */
+void SoundManager::handlePhoneme() {
+	const uint16 deca[3] = {300, 30, 40};
+
+	uint16 startPos = _cfiphBuffer[_phonemeNumb - 1] + deca[_soundType];
+	uint16 endPos = _cfiphBuffer[_phonemeNumb] + deca[_soundType];
+	int wordCount = endPos - startPos;
+	
+	startPos /= 2;
+	endPos /= 2;
+	assert((endPos - startPos) < 1711);
+	for (int i = startPos, currWord = 0; i < endPos; i++, currWord += 2)
+		WRITE_BE_UINT16(&_wordBuf[currWord], _cfiphBuffer[i]);
+
+	_ptr_oct = 0;
+	int currWord = 0;
+	initQueue();
+
+	do {
+		moveQueue();
+		charg_car(currWord);
+		trait_car();
+	} while (currWord < wordCount);
+
+	moveQueue();
+	trait_car();
+	entroct((int)'#');
+}
+
+/**
+ * Start speech
+ * @remarks	Originally called 'parole'
+ */
+void SoundManager::startSpeech(int rep, int ht, int typ) {
+	uint16 savph[501];
+	int tempo;
+
+	if (_vm->_soundOff)
+		return;
+
+	_phonemeNumb = rep;
+	int haut = ht;
+	_soundType = typ;
+	if (_soundType != 0) {
+		for (int i = 0; i <= 500; ++i)
+			savph[i] = _cfiphBuffer[i];
+		tempo = kTempoNoise;
+	} else if (haut > 5)
+		tempo = kTempoF;
+	else
+		tempo = kTempoM;
+	_vm->_addFix = (float)((tempo - 8)) / 256;
+	cctable(_tbi);
+	switch (typ) {
+	case 1:
+		regenbruit();
+		break;
+	case 2:
+		loadPhonemeSounds();
+		break;
+	default:
+		break;
+	}
+	handlePhoneme();
+	litph(_tbi, typ, tempo);
+
+	_buildingSentence = false;
+	if (typ != 0) {
+		_audioStream->finish();
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+		_audioStream = nullptr;
+	}
+
+	if (_soundType != 0) {
+		for (int i = 0; i <= 500; ++i)
+			_cfiphBuffer[i] = savph[i];
+	}
+	_vm->setPal(_vm->_numpal);
+}
+
 } // End of namespace Mortevielle
