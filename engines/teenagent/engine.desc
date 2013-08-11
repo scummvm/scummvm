@@ -3,5 +3,20 @@
 	"status": "stable",
 	"translation": [
 		"resources.cpp"
-	]
+	],
+	"credits": {
+		"name": "TeenAgent",
+		"authors": [
+			{
+				"name": "Robert Megone",
+				"nick": "sanguine",
+				"desc": "Help with callback rewriting"
+			},
+			{
+				"name": "Vladimir Menshakov",
+				"nick": "whoozle",
+				"desc": "(retired)"
+			}
+		]
+	}
 }

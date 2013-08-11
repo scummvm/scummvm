@@ -4,5 +4,19 @@
 	"dependencies": ["16bit"],
 	"translation": [
 		"pegasus.cpp"
-	]
+	],
+	"credits": {
+		"name": "Pegasus",
+		"authors": [
+			{
+				"name": "Matthew Hoops",
+				"nick": "clone2727",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing",
+			"the source code of The Journeyman Project: Pegasus Prime."
+		]
+	}
 }

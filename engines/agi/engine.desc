@@ -4,5 +4,50 @@
 	"translation": [
 		"detection.cpp",
 		"saveload.cpp"
-	]
+	],
+	"credits": {
+		"name": "AGI",
+		"authors": [
+			{
+				"name": "Stuart George",
+				"nick": "darkfiber",
+				"desc": ""
+			},
+			{
+				"name": "Matthew Hoops",
+				"nick": "clone2727",
+				"desc": ""
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Pawe&#322; Ko&#322;odziejski",
+				"nick": "aquadran",
+				"desc": ""
+			},
+			{
+				"name": "Walter van Niftrik",
+				"nick": "waltervn",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Kari Salminen",
+				"nick": "Buddha^",
+				"desc": ""
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": ""
+			},
+			{
+				"name": "David Symonds",
+				"nick": "dsymonds",
+				"desc": "(retired)"
+			}
+		]
+	}
 }

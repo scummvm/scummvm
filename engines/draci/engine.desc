@@ -1,4 +1,19 @@
 {
 	"description": "Dragon History",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "Draci",
+		"authors": [
+			{
+				"name": "Denis Kasak",
+				"nick": "dkasak13",
+				"desc": ""
+			},
+			{
+				"name": "Robert &Scaron;palek",
+				"nick": "spalek",
+				"desc": ""
+			}
+		]
+	}
 }

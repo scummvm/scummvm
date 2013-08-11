@@ -1,5 +1,39 @@
 {
 	"description": "Broken Sword 2.5",
 	"status": "unstable",
-	"dependencies": ["png", "zlib", "16bit"]
+	"dependencies": ["png", "zlib", "16bit"],
+	"credits": {
+		"name": "Sword25",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": ""
+			},
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			},
+			{
+				"name": "Max Horn",
+				"nick": "Fingolfin",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Broken Sword 2.5 team for providing sources of their engine and their great",
+			"support."
+		]
+	}
 }

@@ -6,5 +6,25 @@
 		"control.cpp",
 		"logic.cpp",
 		"sword1.cpp"
-	]
+	],
+	"credits": {
+		"name": "Sword1",
+		"authors": [
+			{
+				"name": "Fabio Battaglia",
+				"nick": "Hkz",
+				"desc": "PSX version support"
+			},
+			{
+				"name": "Thierry Crozat",
+				"nick": "criezy",
+				"desc": "Mac version support"
+			},
+			{
+				"name": "Robert G&ouml;ffringmann",
+				"nick": "lavosspawn",
+				"desc": "(retired)"
+			}
+		]
+	}
 }

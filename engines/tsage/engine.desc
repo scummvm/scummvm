@@ -1,4 +1,19 @@
 {
 	"description": "TsAGE",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "TsAGE",
+		"authors": [
+			{
+				"name": "Arnaud Boutonn&eacute;",
+				"nick": "Strangerke",
+				"desc": ""
+			},
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			}
+		]
+	}
 }

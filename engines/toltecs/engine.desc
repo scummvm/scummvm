@@ -4,5 +4,20 @@
 	"translation": [
 		"detection.cpp",
 		"menu.cpp"
-	]
+	],
+	"credits": {
+		"name": "Toltecs",
+		"authors": [
+			{
+				"name": "Benjamin Haisch",
+				"nick": "john_doe",
+				"desc": ""
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			}
+		]
+	}
 }

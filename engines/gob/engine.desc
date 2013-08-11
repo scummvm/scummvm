@@ -5,5 +5,30 @@
 		"inter_playtoons.cpp",
 		"inter_v2.cpp",
 		"inter_v5.cpp"
-	]
+	],
+	"credits": {
+		"name": "Gob",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": ""
+			},
+			{
+				"name": "Arnaud Boutonn&eacute;",
+				"nick": "Strangerke",
+				"desc": ""
+			},
+			{
+				"name": "Sven Hesse",
+				"nick": "DrMcCoy",
+				"desc": ""
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": ""
+			}
+		]
+	}
 }

@@ -1,4 +1,14 @@
 {
 	"description": "Lure of the Temptress",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "Lure",
+		"authors": [
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			}
+		]
+	}
 }

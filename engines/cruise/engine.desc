@@ -3,5 +3,20 @@
 	"status": "stable",
 	"translation": [
 		"menu.cpp"
-	]
+	],
+	"credits": {
+		"name": "CruisE",
+		"authors": [
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			},
+			{
+				"name": "Vincent Hamm",
+				"nick": "yaz0r",
+				"desc": "(retired)"
+			}
+		]
+	}
 }

@@ -1,4 +1,14 @@
 {
 	"description": "Touche: The Adventures of the Fifth Musketeer",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "Touch&eacute;",
+		"authors": [
+			{
+				"name": "Gregory Montoir",
+				"nick": "cyx",
+				"desc": "(retired)"
+			}
+		]
+	}
 }

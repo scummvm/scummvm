@@ -11,5 +11,55 @@
 	"translation": [
 		"detection.cpp",
 		"engine/kfile.cpp"
-	]
+	],
+	"credits": {
+		"name": "SCI",
+		"authors": [
+			{
+				"name": "Greg Frieger",
+				"nick": "_FRG_",
+				"desc": ""
+			},
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			},
+			{
+				"name": "Max Horn",
+				"nick": "Fingolfin",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Martin Kiewitz",
+				"nick": "m_kiewitz",
+				"desc": ""
+			},
+			{
+				"name": "Walter van Niftrik",
+				"nick": "waltervn",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Willem Jan Palenstijn",
+				"nick": "wjp",
+				"desc": ""
+			},
+			{
+				"name": "Jordi Vilalta Prat",
+				"nick": "jvprat",
+				"desc": ""
+			},
+			{
+				"name": "Lars Skovlund",
+				"nick": "lskovlun",
+				"desc": ""
+			}
+		]
+	}
 }

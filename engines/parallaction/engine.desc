@@ -3,5 +3,15 @@
 	"status": "stable",
 	"translation": [
 		"saveload.cpp"
-	]
+	],
+	"credits": {
+		"name": "Parallaction",
+		"authors": [
+			{
+				"name": "",
+				"nick": "peres",
+				"desc": ""
+			}
+		]
+	}
 }

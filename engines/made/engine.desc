@@ -1,4 +1,19 @@
 {
 	"description": "MADE",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "MADE",
+		"authors": [
+			{
+				"name": "Benjamin Haisch",
+				"nick": "john_doe",
+				"desc": ""
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			}
+		]
+	}
 }

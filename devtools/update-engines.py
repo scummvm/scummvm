@@ -163,6 +163,65 @@ def create_translation_files(engines):
 		lines = lines + create_translation_files_entry(engine, engines[engine])
 	return lines
 
+# Create the authors section for a specific engine (and its subengines)
+def create_credits_team_entry(engine):
+	# There might not be special credits in case of sub-engines.
+	if "credits" not in engine:
+		return ""
+	credits = engine["credits"]
+	lines = ""
+	lines = lines + "\t\t\tbegin_section(\"" + credits["name"] + "\");\n"
+	for author in credits["authors"]:
+		lines = lines + "\t\t\t\tadd_person(\"" + author["name"] + "\", \"" + author["nick"] + "\", \"" + author["desc"] + "\");\n"
+	lines = lines + "\t\t\tend_section();\n"
+	lines = lines + "\n"
+	# Last but not least add all subengines now
+	if "subengines" in engine:
+		for subengine in sorted(engine["subengines"]):
+			lines = lines + create_credits_team_entry(engine["subengines"][subengine])
+	return lines
+
+# Create the authors section for all engines
+def create_credits_team(engines):
+	lines = ""
+	for engine in sort_engines(engines):
+		lines = lines + create_credits_team_entry(engines[engine])
+	return lines
+
+# Create special thanks paragraph for a specific engine
+def create_credits_thanks_entry(engine):
+	# There might not be special credits in case of sub-engines.
+	if "credits" not in engine:
+		return ""
+	credits = engine["credits"]
+	# There might not be a special thanks section in every engine.
+	if "thanks" not in credits:
+		return ""
+	lines = ""
+	lines = lines + "\tadd_paragraph(\n"
+	first = True
+	for line in credits["thanks"]:
+		if first:
+			first = False
+		else:
+			lines = lines + ".\n"
+		lines = lines + "\t"
+		lines = lines + "\"" + line + "\""
+	lines = lines + ");\n"
+	lines = lines + "\n"
+	# Last but not least add all subengines now
+	if "subengines" in engine:
+		for subengine in sorted(engine["subengines"]):
+			lines = lines + create_credits_thanks_entry(engine["subengines"][subengine])
+	return lines
+
+# Create the special thanks paragraphs for all engines
+def create_credits_thanks(engines):
+	lines = ""
+	for engine in sort_engines(engines):
+		lines = lines + create_credits_thanks_entry(engines[engine])
+	return lines
+
 if len(sys.argv) != 2:
 	show_usage()
 
@@ -204,3 +263,22 @@ with open("po/POTFILES.in", "r") as f:
 with open("po/POTFILES", "w") as f:
 	f.write("# This file was automatically generated and should NEVER be edited manually!\n")
 	f.write(lines)
+
+# Create the credits.pl tool
+print("Creating devtools/credits.pl...")
+teams = create_credits_team(engines)
+thanks = create_credits_thanks(engines)
+with open("devtools/credits.pl.in", "r") as f:
+	p = re.compile("@ENGINE_TEAMS_CREDITS@\n")
+	lines = p.sub(teams, f.read())
+	p = re.compile("@ENGINE_THANKS@\n")
+	lines = p.sub(thanks, lines)
+with open("devtools/credits.pl", "w") as f:
+	first = True
+	for line in lines.splitlines(True):
+		if first:
+			f.write(line)
+			f.write("# This file was automatically generated and should NEVER be edited manually!\n")
+			first = False
+		else:
+			f.write(line)

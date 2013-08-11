@@ -1,4 +1,34 @@
 {
 	"description": "Cinematique evo 1",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "Cine",
+		"authors": [
+			{
+				"name": "Vincent Hamm",
+				"nick": "yaz0r",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Pawe&#322; Ko&#322;odziejski",
+				"nick": "aquadran",
+				"desc": ""
+			},
+			{
+				"name": "Gregory Montoir",
+				"nick": "cyx",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Kari Salminen",
+				"nick": "Buddha^",
+				"desc": ""
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": ""
+			}
+		]
+	}
 }

@@ -1,4 +1,24 @@
 {
 	"description": "CGE",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "CGE",
+		"authors": [
+			{
+				"name": "Arnaud Boutonn&eacute;",
+				"nick": "Strangerke",
+				"desc": ""
+			},
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium",
+			"Komputerowe Avalon for providing full source code for So&#322;tys and",
+			"letting us redistribute the game."
+		]
+	}
 }

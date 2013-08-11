@@ -11,5 +11,25 @@
 	"translation": [
 		"detection.cpp",
 		"script.cpp"
-	]
+	],
+	"credits": {
+		"name": "Groovie",
+		"authors": [
+			{
+				"name": "Henry Bush",
+				"nick": "spookypeanut",
+				"desc": ""
+			},
+			{
+				"name": "Scott Thomas",
+				"nick": "ST",
+				"desc": ""
+			},
+			{
+				"name": "Jordi Vilalta Prat",
+				"nick": "jvprat",
+				"desc": ""
+			}
+		]
+	}
 }

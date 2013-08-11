@@ -3,5 +3,49 @@
 	"status": "stable",
 	"translation": [
 		"saveload.cpp"
-	]
+	],
+	"credits": {
+		"name": "Tinsel",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": ""
+			},
+			{
+				"name": "Fabio Battaglia",
+				"nick": "Hkz",
+				"desc": "PSX version support"
+			},
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			},
+			{
+				"name": "Sven Hesse",
+				"nick": "DrMcCoy",
+				"desc": ""
+			},
+			{
+				"name": "Max Horn",
+				"nick": "Fingolfin",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Joost Peters",
+				"nick": "joostp",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"John Young, Colin Smythe and especially Terry Pratchett himself for sharing",
+			"the source code of Discworld I &amp; II with us."
+		]
+	}
 }

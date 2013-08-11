@@ -1,4 +1,14 @@
 {
 	"description": "Bud Tucker in Double Trouble",
-	"status": "stable"
+	"status": "stable",
+	"credits": {
+		"name": "Tucker",
+		"authors": [
+			{
+				"name": "Gregory Montoir",
+				"nick": "cyx",
+				"desc": "(retired)"
+			}
+		]
+	}
 }

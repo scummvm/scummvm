@@ -3,5 +3,30 @@
 	"status": "stable",
 	"translation": [
 		"queen.cpp"
-	]
+	],
+	"credits": {
+		"name": "Queen",
+		"authors": [
+			{
+				"name": "David Eriksson",
+				"nick": "twogood",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Gregory Montoir",
+				"nick": "cyx",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Joost Peters",
+				"nick": "joostp",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"John Passfield and Steve Stamatiadis for sharing the source of their",
+			"classic title, Flight of the Amazon Queen and also being incredibly",
+			"supportive."
+		]
+	}
 }
