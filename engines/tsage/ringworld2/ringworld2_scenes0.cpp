@@ -3394,9 +3394,11 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 			if (R2_GLOBALS.getFlag(51)) {
+				// Things don't seem right
 				_sceneMode = 13;
 				_stripManager.start3(300, this, R2_GLOBALS._stripManager_lookupList);
 			} else {
+				// Back in Ringworld space
 				_sceneMode = 11;
 				_stripManager.start3(200, this, R2_GLOBALS._stripManager_lookupList);
 			}
