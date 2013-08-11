@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# This file was automatically generated and should NEVER be edited manually!
 #
 # This tools is kind of a hack to be able to maintain the credits list of
 # ScummVM in a single central location. We then generate the various versions
@@ -1147,63 +1148,63 @@ begin_credits("Credits");
 		end_persons();
 
 	add_paragraph(
-    "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".
-    "with us the source of some of their brilliant games, allowing us to ".
-    "release Beneath a Steel Sky as freeware... and generally being ".
-    "supportive above and beyond the call of duty.");
+	"Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at".
+	"LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it".
+	"is today. Feel free to drop us a line and tell us what you think, guys!");
 
 	add_paragraph(
-    "John Passfield and Steve Stamatiadis for sharing the source of their ".
-    "classic title, Flight of the Amazon Queen and also being incredibly ".
-    "supportive.");
+	"Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing".
+	"the source code of some of their games with us.");
 
 	add_paragraph(
-    "Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source ".
-    "of their famous title Inherit the Earth and always prompt replies to ".
-    "our questions.");
+	"Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium".
+	"Komputerowe Avalon for providing full source code for So&#322;tys and".
+	"letting us redistribute the game.");
 
 	add_paragraph(
-    "Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at ".
-    "LucasFilm/LucasArts who made SCUMM the insane mess to reimplement ".
-    "that it is today. Feel free to drop us a line and tell us what you ".
-    "think, guys!");
+	"Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code".
+	"of Drascula: The Vampire Strikes Back with us and his generosity with".
+	"freewaring the game.");
 
 	add_paragraph(
-    "Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for ".
-    "sharing the source code of some of their games with us.");
+	"Neil Dodwell and David Dew from Creative Reality for providing the source".
+	"of Dreamweb and for their tremendous support.");
 
 	add_paragraph(
-    "John Young, Colin Smythe and especially Terry Pratchett himself for ".
-    "sharing the source code of Discworld I &amp; II with us.");
+	"David P. Gray from Gray Design Associates for sharing the source code of".
+	"the Hugo trilogy.");
 
 	add_paragraph(
-    "Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code ".
-    "of Drascula: The Vampire Strikes Back with us and his generosity with ".
-    "freewaring the game.");
+	"Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing".
+	"the source code of The Journeyman Project: Pegasus Prime.");
 
 	add_paragraph(
-    "David P. Gray from Gray Design Associates for sharing the source code ".
-    "of the Hugo trilogy.");
+	"John Passfield and Steve Stamatiadis for sharing the source of their".
+	"classic title, Flight of the Amazon Queen and also being incredibly".
+	"supportive.");
 
 	add_paragraph(
-    "Broken Sword 2.5 team for providing sources of their engine and their great ".
-    "support.");
+	"Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source of".
+	"their famous title Inherit the Earth and always prompt replies to our".
+	"questions.");
 
 	add_paragraph(
-    "Neil Dodwell and David Dew from Creative Reality for providing the source ".
-    "of Dreamweb and for their tremendous support.");
+	"Tony Warriner and everyone at Revolution Software Ltd. for sharing with us".
+	"the source of some of their brilliant games, allowing us to release Beneath".
+	"a Steel Sky as freeware... and generally being supportive above and beyond".
+	"the call of duty.");
 
 	add_paragraph(
-    "Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon ".
-    "for providing full source code for So&#322;tys and letting us redistribute the game.");
+	"Broken Sword 2.5 team for providing sources of their engine and their great".
+	"support.");
 
 	add_paragraph(
-    "Jan Nedoma for providing the sources to the Wintermute-engine, and for his ".
-    "support while porting the engine to ScummVM.");
+	"John Young, Colin Smythe and especially Terry Pratchett himself for sharing".
+	"the source code of Discworld I &amp; II with us.");
 
 	add_paragraph(
-    "Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for ".
-    "providing the source code of The Journeyman Project: Pegasus Prime.");
+	"Jan Nedoma for providing the sources to the Wintermute-engine, and for his".
+	"support while porting the engine to ScummVM.");
 
 	end_section();
 
