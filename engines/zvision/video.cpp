@@ -96,7 +96,7 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 		// Assume bilinear scaling. AKA calculate the scale from just the width.
 		// Also assume that the scaling is in integral intervals. AKA no 1.5x scaling
 		// TODO: Test ^these^ assumptions
-		uint scale = destRect.width() / origWidth;
+		scale = destRect.width() / origWidth;
 
 		// TODO: Test if we need to support downscale.
 	}
