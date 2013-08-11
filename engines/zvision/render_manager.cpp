@@ -166,6 +166,9 @@ void RenderManager::setBackgroundImage(const Common::String &fileName) {
 		return;
 	}
 
+	if (_currentBackground != 0) {
+		delete _currentBackground;
+	}
 	_currentBackground = file;
 
 	renderImageToScreen(*_currentBackground, 0, 0, Common::Rect(), true);
