@@ -112,8 +112,6 @@ void ScriptManager::checkPuzzleCriteria() {
 			continue;
 		}
 
-		debug("Checking puzzle: %u", puzzle->key);
-
 		// Check each Criteria
 		bool criteriaMet = false;
 		for (Common::List<Puzzle::Criteria>::iterator iter = puzzle->criteriaList.begin(); iter != puzzle->criteriaList.end(); iter++) {
