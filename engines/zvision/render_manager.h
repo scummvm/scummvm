@@ -53,6 +53,7 @@ private:
 	RenderTable _renderTable;
 
 	Common::SeekableReadStream *_currentBackground;
+	Common::Point _backgroundOffset;
 
 	Video::VideoDecoder *_currentVideo;
 	byte *_scaledVideoFrameBuffer;
@@ -90,8 +91,9 @@ public:
 	 */
 	void setBackgroundImage(const Common::String &fileName);
 
-	RenderTable *getRenderTable();
+	const Common::Point convertToImageCoords(const Common::Point &point);
 
+	RenderTable *getRenderTable();
 
 private:
 	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter);

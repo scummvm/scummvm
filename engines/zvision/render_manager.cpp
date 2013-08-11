@@ -80,6 +80,8 @@ void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uin
 		destRect.moveTo((_width - subRectangle.width()) / 2, (_height - subRectangle.height()) / 2);
 	}
 
+	_backgroundOffset = Common::Point(destRect.left, destRect.top);
+
 	if (_renderTable.getRenderState() == RenderTable::FLAT) {
 		_system->copyRectToScreen(buffer + subRectangle.top * horizontalPitch + subRectangle.left, horizontalPitch, destRect.left, destRect.top, destRect.width(), destRect.height());
 	} else {
@@ -139,7 +141,17 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 
 		tga.destroy();
 	}
+}
 
+const Common::Point RenderManager::convertToImageCoords(const Common::Point &point) {
+	Common::Point newPoint(point);
+
+	if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
+		newPoint = _renderTable.convertWarpedPointToFlatCoords(newPoint);
+	}
+
+	newPoint -= _backgroundOffset;
+	return newPoint;
 }
 
 RenderTable *RenderManager::getRenderTable() {

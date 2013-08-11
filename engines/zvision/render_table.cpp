@@ -60,6 +60,16 @@ void RenderTable::setRenderState(RenderState newState) {
 	}
 }
 
+const Common::Point RenderTable::convertWarpedPointToFlatCoords(const Common::Point &point) {
+	uint32 index = point.y * _numColumns + point.x;
+
+	Common::Point newPoint(point);
+	newPoint.x += _internalBuffer[index].x;
+	newPoint.y += _internalBuffer[index].y;
+
+	return newPoint;
+}
+
 uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 	assert(percentColorOne < 1.0f);
 
@@ -157,7 +167,14 @@ void RenderTable::generatePanoramaLookupTable() {
 }
 
 void RenderTable::generateTiltLookupTable() {
+	for (uint x = 0; x < _numColumns; x++) {
+		for (uint y = 0; y < _numRows; y++) {
+			uint32 index = y * _numColumns + x;
 
+			_internalBuffer[index].x = 0;
+			_internalBuffer[index].y = 0;
+		}
+	}
 }
 
 void RenderTable::setPanoramaFoV(float fov) {
