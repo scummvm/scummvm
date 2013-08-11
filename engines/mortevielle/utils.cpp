@@ -276,7 +276,7 @@ void MortevielleEngine::handleAction() {
 			if (shouldQuit())
 				return;
 			++temps;
-			if (!_soundManager._mixer->isSoundHandleActive(_soundManager._soundHandle) || keyPressed() || _mouseClick) {
+			if (keyPressed() || _mouseClick) {
 				_soundManager._mixer->stopHandle(_soundManager._soundHandle);
 			}
 		} while (!((_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));

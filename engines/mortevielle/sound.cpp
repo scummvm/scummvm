@@ -135,7 +135,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 		return;
 
 	if (!_vm->_speechManager._buildingSentence) {
-		if (!_mixer->isSoundHandleActive(_soundHandle))
+		if (_mixer->isSoundHandleActive(_soundHandle))
 			_mixer->stopHandle(_soundHandle);
 		_vm->_speechManager._buildingSentence = true;
 	}
