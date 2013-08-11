@@ -249,6 +249,19 @@ void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte
 
 
 
+void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text, fontType font, byte fontHeight, int16 x, int16 y, byte color) {
+	for (byte i = 0; i < text.size(); i++)
+		for (byte j = 0; j < fontHeight; j++) {
+			byte pixel = font[text[i]][j];
+			for (byte bit = 0; bit < 8; bit++) {
+				byte pixelBit = (pixel >> bit) & 1;
+				if (pixelBit)
+					*(byte *)surface.getBasePtr(x + i * 8 + 7 - bit, y + j) = color;
+			}
+		}
+}
+
+
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
 	// This function mimics Pascal's getimage().

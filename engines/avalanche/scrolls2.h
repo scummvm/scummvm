@@ -103,7 +103,7 @@ private:
 
 
 	int16 dix, diy;
-	raw ch[2];
+	fontType ch[2];
 	byte cfont; // Current font
 
 	int16 dodgex, dodgey;

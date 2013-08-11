@@ -212,9 +212,7 @@ void Timeout::one_tick() {
 }
 
 void Timeout::lose_timer(byte which) {
-	byte fv;
-
-	for (fv = 0; fv < 7; fv++) {
+	for (byte fv = 0; fv < 7; fv++) {
 		if (times[fv].what_for == which)
 			times[fv].time_left = 0; // Cancel this one!
 	}

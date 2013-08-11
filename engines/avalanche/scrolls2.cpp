@@ -103,9 +103,10 @@ void Scrolls::easteregg() {
 }
 
 void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwriting */
-	byte itw[12][80];
+	//byte itw[12][80];
+	Common::String text;
+	fontType itw;
 	byte lz = z.size();
-	byte ox = 0;
 	
 	_vm->_logger->log_scrollline();
 
@@ -123,28 +124,20 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			break;
 		default: {
 			for (byte yy = 0; yy < 12; yy++)
-				itw[yy][ox] = ~ch[cfont][z[xx]][yy + 2];
-			ox++;
+				itw[z[xx]][yy] = ch[cfont][z[xx]][yy + 2];
+
+			text += z[xx];
+			
 			_vm->_logger->log_scrollchar(Common::String(z[xx]));
 			}
 		}
 	}
 
 	bool offset = x % 8 == 4;
-	lz = ox;
 	x = x / 8;
 	y++;
-	// Similar to Dropdown::chalk().
-	for (byte fv = 0; fv < lz; fv++)
-		for (byte ff = 0; ff < 12; ff++) {
-			byte pixel = itw[ff][fv]; 
-			for (byte bit = 0; bit < 8; bit++) {
-				byte pixelBit = (pixel >> bit) & 1;
-				uint16 xa = x * 8 + fv * 8 + 7 - bit + offset * 4;
-				uint16 ya = y + ff;
-				*(byte *)_vm->_graphics->_scrolls.getBasePtr(xa, ya) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
-			}
-		}
+
+	_vm->_graphics->drawText(_vm->_graphics->_scrolls, text, itw, 12, x * 8 + offset *4, y, black);
 }
 
 /* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/

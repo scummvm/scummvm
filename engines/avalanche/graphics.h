@@ -36,6 +36,8 @@
 namespace Avalanche {
 class AvalancheEngine;
 
+typedef byte fontType[256][16]; // raw font type
+
 typedef byte manitype[2049]; // manitype = array[5..2053] of byte; 
 // Be aware!!!
 
@@ -96,6 +98,10 @@ public:
 	void drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
 
 	void drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte color);
+
+
+
+	void drawText(::Graphics::Surface &surface, const Common::String &text, fontType font, byte fontHeight, int16 x, int16 y, byte color);
 
 
 
