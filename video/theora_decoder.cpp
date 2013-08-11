@@ -335,7 +335,7 @@ TheoraDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundT
 	vorbis_block_init(&_vorbisDSP, &_vorbisBlock);
 	info = &vorbisInfo;
 
-	_audStream = Audio::makeQueuingAudioStream(vorbisInfo.rate, vorbisInfo.channels);
+	_audStream = Audio::makeQueuingAudioStream(vorbisInfo.rate, vorbisInfo.channels != 1);
 
 	_audioBufferFill = 0;
 	_audioBuffer = 0;
