@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	lzss_read_stream.o \
+	mouse_event.o \
 	render_manager.o \
 	render_table.o \
 	scr_file_handling.o \
