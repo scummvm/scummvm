@@ -24,6 +24,7 @@
 
 #include "common/system.h"
 #include "graphics/pixelformat.h"
+#include "graphics/cursorman.h"
 
 #include "zvision/zvision.h"
 #include "zvision/cursor_manager.h"
@@ -44,8 +45,7 @@ const char *CursorManager::_zNemCursorFileNames[] = { "00act", "arrow", "back", 
 CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat)
 		: _engine(engine),
 		  _pixelFormat(pixelFormat),
-		  _cursorIsPushed(false),
-		  _currentCursor("idle") {
+		  _cursorIsPushed(false) {
 	// WARNING: The index 11 is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
 	if (_engine->getGameId() == ZorkNemesis) {
 		Common::String name(Common::String::format("%sa.zcr", _zNemCursorFileNames[11]));
@@ -53,15 +53,20 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixel
 	} else if (_engine->getGameId() == ZorkGrandInquisitor) {
 		_idleCursor = ZorkCursor(_zgiCursorFileNames[11]);
 	}
+	revertToIdle();
 }
 
 void CursorManager::initialize() {
-	_engine->_system->setMouseCursor(_idleCursor.getSurface(), _idleCursor.getWidth(), _idleCursor.getHeight(), _idleCursor.getHotspotX(), _idleCursor.getHotspotY(), _idleCursor.getKeyColor(), false, _pixelFormat);
-	_engine->_system->showMouse(true);
+	CursorMan.showMouse(true);
 }
 
-void CursorManager::changeCursor(Common::String &cursorName, bool pushed) {
-	_cursorIsPushed = pushed;
+void CursorManager::changeCursor(const Common::String &cursorName) {
+	changeCursor(cursorName, _cursorIsPushed);
+}
+
+void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) {
+	if (_cursorIsPushed != pushed)
+		_cursorIsPushed = pushed;
 
 	if (cursorName == "idle" && !pushed) {
 		revertToIdle();
@@ -71,7 +76,9 @@ void CursorManager::changeCursor(Common::String &cursorName, bool pushed) {
 	// WARNING: The range of this loop is hardcoded to the length of _cursorNames
 	for (int i = 0; i < 18; i++) {
 		if (_engine->getGameId() == ZorkNemesis) {
-			if (_cursorNames[i] == cursorName) {
+			if (cursorName.equals(_cursorNames[i])) {
+				_currentCursor = cursorName;
+
 				// ZNem uses a/b at the end of the file to signify not pushed/pushed respectively
 				Common::String pushedFlag = pushed ? "b" : "a";
 				Common::String name = Common::String::format("%s%s.zcr", _zNemCursorFileNames[i], pushedFlag.c_str());
@@ -80,7 +87,9 @@ void CursorManager::changeCursor(Common::String &cursorName, bool pushed) {
 				return;
 			}
 		} else if (_engine->getGameId() == ZorkGrandInquisitor) {
-			if (_cursorNames[i] == cursorName) {
+			if (cursorName.equals(_cursorNames[i])) {
+				_currentCursor = cursorName;
+
 				if (!pushed) {
 					changeCursor(ZorkCursor(_zgiCursorFileNames[i]));
 				} else {
@@ -100,7 +109,7 @@ void CursorManager::changeCursor(Common::String &cursorName, bool pushed) {
 }
 
 void CursorManager::changeCursor(const ZorkCursor &cursor) {
-	_engine->_system->setMouseCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, _pixelFormat);
+	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, _pixelFormat);
 }
 
 void CursorManager::cursorDown(bool pushed) {
@@ -113,7 +122,7 @@ void CursorManager::cursorDown(bool pushed) {
 
 void CursorManager::revertToIdle() {
 	_currentCursor = "idle";
-	_engine->_system->setMouseCursor(_idleCursor.getSurface(), _idleCursor.getWidth(), _idleCursor.getHeight(), _idleCursor.getHotspotX(), _idleCursor.getHotspotY(), _idleCursor.getKeyColor(), false, _pixelFormat);
+	CursorMan.replaceCursor(_idleCursor.getSurface(), _idleCursor.getWidth(), _idleCursor.getHeight(), _idleCursor.getHotspotX(), _idleCursor.getHotspotY(), _idleCursor.getKeyColor(), false, _pixelFormat);
 }
 
 } // End of namespace ZVision

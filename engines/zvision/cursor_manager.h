@@ -36,6 +36,12 @@ namespace ZVision {
 
 class ZVision;
 
+/**
+ * Class to manage cursor changes. The actual changes have to be done
+ * through CursorMan. Otherwise the cursor will disappear after GMM
+ * or debug console.
+ * TODO: Figure out a way to get rid of the extraneous data copying due to having to use CursorMan
+ */
 class CursorManager {
 public:
 	CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat);
@@ -54,7 +60,8 @@ private:
 public:
 	void initialize();
 
-	void changeCursor(Common::String &cursorName, bool pushed);
+	void changeCursor(const Common::String &cursorName);
+	void changeCursor(const Common::String &cursorName, bool pushed);
 	void cursorDown(bool pushed);
 	void revertToIdle();
 
