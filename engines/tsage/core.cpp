@@ -2762,8 +2762,8 @@ void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, 
 	fixPriority(priority);
 }
 
-void BackgroundSceneObject::proc27() {
-	warning("STUB: BackgroundSceneObject::proc27()");
+void BackgroundSceneObject::copySceneToBackground() {
+	GLOBALS._sceneManager._scene->_backSurface.copyFrom(g_globals->gfxManager().getSurface(), 0, 0);
 }
 
 /*--------------------------------------------------------------------------*/

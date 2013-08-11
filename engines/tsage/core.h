@@ -613,7 +613,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
 	void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10);
-	void proc27();
+	static void copySceneToBackground();
 };
 
 class SceneText : public SceneObject {

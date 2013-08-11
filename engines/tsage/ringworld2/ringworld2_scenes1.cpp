@@ -1062,7 +1062,7 @@ void Scene1100::signal() {
 		setAction(&_sequenceManager1, this, 1105, &R2_GLOBALS._player, &_actor10, &_actor11, &_actor18, NULL);
 		break;
 	case 9:
-		_object1.proc27();
+		_object1.copySceneToBackground();
 
 		_actor15.postInit();
 		_actor15.setup(1103, 2, 1);
@@ -1076,7 +1076,7 @@ void Scene1100::signal() {
 		_actor13.setAction(&_sequenceManager2, this, 1108, &_actor13, NULL);
 		break;
 	case 11: {
-		setAction(&_sequenceManager1, this, 1116, &_actor11, &_actor10, &_actor12, NULL);
+		setAction(&_sequenceManager1, this, 1106, &_actor11, &_actor10, &_actor12, NULL);
 		R2_GLOBALS._player._effect = 5;
 		R2_GLOBALS._player.setup(1102, 3, 2);
 		R2_GLOBALS._player.setPosition(Common::Point(-50, 131));
