@@ -88,7 +88,8 @@ void SpeechManager::spfrac(int wor) {
 }
 
 void SpeechManager::charg_car(int &currWordNumb) {
-	int wor = READ_BE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWordNumb]);
+	assert(currWordNumb < 1712);
+	int wor = READ_BE_UINT16(&_wordBuf[currWordNumb]);
 	int int_ = wor & 0x3f; // 63
 
 	if ((int_ >= 0) && (int_ <= 13)) {
@@ -128,7 +129,8 @@ void SpeechManager::charg_car(int &currWordNumb) {
 
 
 void SpeechManager::entroct(byte o) {
-	_vm->_mem[(kAdrTroct * 16) + _ptr_oct] = o;
+	assert(_ptr_oct < 10576);
+	_troctBuf[_ptr_oct] = o;
 	++_ptr_oct;
 }
 
@@ -497,8 +499,9 @@ void SpeechManager::handlePhoneme() {
 	
 	startPos /= 2;
 	endPos /= 2;
+	assert((endPos - startPos) < 1711);
 	for (int i = startPos, currWord = 0; i < endPos; i++, currWord += 2)
-		WRITE_BE_UINT16(&_vm->_mem[(kAdrWord * 16) + currWord], _cfiphBuffer[i]);
+		WRITE_BE_UINT16(&_wordBuf[currWord], _cfiphBuffer[i]);
 
 	_ptr_oct = 0;
 	int currWord = 0;

@@ -142,11 +142,11 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 	int freq = tempo * 252; // 25.2 * 10
 	int i = 0;
 	while (i < _vm->_speechManager._ptr_oct) {
-		int idx = _vm->_mem[(kAdrTroct * 16) + i];
+		int idx = _vm->_speechManager._troctBuf[i];
 		i++;
 		switch(idx) {
 		case 0: {
-			int val = _vm->_mem[(kAdrTroct * 16) + i];
+			int val = _vm->_speechManager._troctBuf[i];
 			i++;
 			if (_vm->_speechManager._soundType == 0)
 				warning("TODO: vclas");
@@ -187,10 +187,10 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			break;
 			}
 		case 2: {
-			int val = _vm->_mem[(kAdrTroct * 16) + i];
+			int val = _vm->_speechManager._troctBuf[i];
 			i++;
 			int tmpidx = (val * 12) + 268;
-			val = _vm->_mem[(kAdrTroct * 16) + i];
+			val = _vm->_speechManager._troctBuf[i];
 			i++;
 			warning("TODO: reech %d %d", tmpidx, val);
 			}
@@ -200,7 +200,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 				i += 2;
 			} else {
 				// Speech
-				warning("TODO: Interphoneme: consonne:%d voyelle:%d", _vm->_mem[(kAdrTroct * 16) + i], _vm->_mem[(kAdrTroct * 16) + i + 1]);
+				warning("TODO: Interphoneme: consonne:%d voyelle:%d", _vm->_speechManager._troctBuf[i], _vm->_speechManager._troctBuf[i + 1]);
 				i += 2;
 			}
 			break;

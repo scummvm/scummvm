@@ -34,9 +34,6 @@
 
 namespace Mortevielle {
 
-const int kAdrTroct  = 0x406b;
-const int kAdrWord   = 0x4000;
-
 const float kfreq0 = 1.19318e6;
 const int kNullValue = 255;
 const int kTempoMusic = 71;
@@ -58,7 +55,9 @@ private:
 
 	int _phonemeNumb;
 	SpeechQueue _queue[3];
+	byte _wordBuf[1712];
 public:
+	byte _troctBuf[10576];
 	int _soundType;
 	bool _buildingSentence;
 

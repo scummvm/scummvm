@@ -100,7 +100,6 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_caff = -1;
 	_day = 0;
 
-	memset(_mem, 0, sizeof(_mem));
 	_curPict = nullptr;
 	_curAnim = nullptr;
 	_rightFramePict = nullptr;
