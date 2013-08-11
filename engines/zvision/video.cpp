@@ -47,7 +47,7 @@ void scaleBuffer(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, 
 			for (uint32 x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
 
-				for (int i = 0; i < scaleAmount; i++) {
+				for (uint i = 0; i < scaleAmount; i++) {
 					dst[i] = color;
 					dst[pitch + i] = color;
 				}
@@ -61,11 +61,11 @@ void scaleBuffer(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, 
 				const byte color = *srcPtr++;
 				const byte color2 = *srcPtr++;
 
-				for (int i = 0; i < scaleAmount; i++) {
 					dst[i] = color;
 					dst[i + 1] = color2;
 					dst[pitch + i] = color;
 					dst[pitch + i + 1] = color2;
+				for (uint i = 0; i < scaleAmount; i++) {
 				}
 				dst += 2 * scaleAmount;
 			}
