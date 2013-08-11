@@ -148,6 +148,13 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
 	while (!line.contains('}')) {
+		if (line.empty()) {
+			line = stream.readLine();
+			trimCommentsAndWhiteSpace(&line);
+
+			continue;
+		}
+
 		// Parse for the action type
 		if (line.matchString("*:add*", true)) {
 			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionAdd(line)));
