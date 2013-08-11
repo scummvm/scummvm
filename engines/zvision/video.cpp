@@ -158,6 +158,8 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 
 	_clock.start();
 
+	delete[] scaledVideoFrameBuffer;
+
 	// Reset the pixel format to the original state
 	initGraphics(_width, _height, true, &_pixelFormat);
 }
