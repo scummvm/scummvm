@@ -58,7 +58,6 @@ private:
 
 	int _phonemeNumb;
 	SpeechQueue _queue[3];
-
 public:
 	int _typlec;
 	int _ptr_oct;
@@ -67,6 +66,7 @@ public:
 	int _mlec;
 	byte *_noise5Buf;
 	int _noise5Size;
+	bool _buildingSentence;
 
 	SpeechManager();
 	~SpeechManager();

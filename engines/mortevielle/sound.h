@@ -103,6 +103,8 @@ private:
 public:
 	Audio::Mixer *_mixer;
 	Audio::QueuingAudioStream *_audioStream;
+	Audio::SoundHandle _soundHandle;
+
 
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();

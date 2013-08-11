@@ -70,6 +70,7 @@ SpeechManager::SpeechManager() {
 		_queue[i]._rep = 0;
 	}
 	_noise5Buf = nullptr;
+	_buildingSentence = false;
 }
 
 SpeechManager::~SpeechManager() {
@@ -553,13 +554,10 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	handlePhoneme();
 	_vm->_soundManager.litph(_tbi, typ, tempo);
 
+	_vm->_speechManager._buildingSentence = false;
 	if (typ != 0) {
-		Audio::SoundHandle soundHandle;
 		_vm->_soundManager._audioStream->finish();
-		_vm->_soundManager._mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle, _vm->_soundManager._audioStream);
-		while (_vm->_soundManager._mixer->isSoundHandleActive(soundHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
-			;
-		_vm->_soundManager._mixer->stopHandle(soundHandle);
+		_vm->_soundManager._mixer->playStream(Audio::Mixer::kSFXSoundType, &_vm->_soundManager._soundHandle, _vm->_soundManager._audioStream);
 		_vm->_soundManager._audioStream = nullptr;
 	}
 

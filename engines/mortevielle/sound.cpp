@@ -238,6 +238,11 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 	if (_vm->_speechManager._typlec == 0)
 		return;
 
+	if (!_vm->_speechManager._buildingSentence) {
+		if (!_mixer->isSoundHandleActive(_soundHandle))
+			_mixer->stopHandle(_speakerHandle);
+		_vm->_speechManager._buildingSentence = true;
+	}
 	int freq = tempo * 10 * 25.2;
 	int i = 0;
 	while (i < _vm->_speechManager._ptr_oct) {
