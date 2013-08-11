@@ -548,12 +548,24 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 	case JE_DOWN:
+#ifndef ENABLE_TOUCHMAPPER
 		_touch_pt_down = getEventManager()->getMousePos();
 		_touch_pt_scroll.x = -1;
 		_touch_pt_scroll.y = -1;
+#else
+		e.type = Common::EVENT_TAPDOWN;
+		
+		scaleMouse(e.finger[0].position, arg1, arg2);
+		_touch_pt_scroll.x = e.finger[0].position.x;
+		_touch_pt_scroll.y = e.finger[0].position.y;
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+#endif
 		break;
 
 	case JE_SCROLL:
+#ifndef ENABLE_TOUCHMAPPER
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -572,6 +584,17 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			clipMouse(e.mouse);
 		}
 
+#else
+		e.type = Common::EVENT_FINGERMOVE;
+		// arg1 and arg2 contains original finger position
+		scaleMouse(e.finger[0].position, arg3, arg4);
+		
+		e.finger[0].deltax = e.finger[0].position.x - _touch_pt_scroll.x;
+		e.finger[0].deltay = e.finger[0].position.y - _touch_pt_scroll.y;
+
+		_touch_pt_scroll.x = e.finger[0].position.x;
+		_touch_pt_scroll.y = e.finger[0].position.y;
+#endif		
 		lockMutex(_event_queue_lock);
 		_event_queue.push(e);
 		unlockMutex(_event_queue_lock);
@@ -584,6 +607,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 		}
 
+#ifndef ENABLE_TOUCHMAPPER
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -625,10 +649,42 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			unlockMutex(_event_queue_lock);
 		}
+#else		
+		Common::EventType down, up;
 
+		// TODO put these values in some option dlg?
+		if (arg3 > 1000) {
+			down = Common::EVENT_SIMULATE_MBUTTONDOWN;
+			up = Common::EVENT_SIMULATE_MBUTTONUP;
+		} else if (arg3 > 500) {
+			down = Common::EVENT_SIMULATE_RBUTTONDOWN;
+			up = Common::EVENT_SIMULATE_RBUTTONUP;
+		} else {
+			// Note: SINGLETAP is used by UI aswell
+			// TAPDOWN cannot be used since it is called when the
+			// user touches the screen
+			down = Common::EVENT_SIMULATE_LBUTTONDOWN;
+			up = Common::EVENT_SINGLETAP;
+		}
+		scaleMouse(e.finger[0].position, arg1, arg2);
+		lockMutex(_event_queue_lock);
+
+		if (_queuedEventTime)
+			_event_queue.push(_queuedEvent);
+
+		e.type = down;
+		_event_queue.push(e);
+		
+		e.type = up;
+		_queuedEvent = e;
+		_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+
+		unlockMutex(_event_queue_lock);
+#endif
 		return;
 
 	case JE_DOUBLE_TAP:
+#ifndef ENABLE_TOUCHMAPPER
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -681,6 +737,17 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			unlockMutex(_event_queue_lock);
 		}
 
+#else	
+		switch(arg3) {
+		case JACTION_UP:
+			e.type = Common::EVENT_DOUBLETAP;
+			scaleMouse(e.finger[0].position, arg1, arg2);
+			lockMutex(_event_queue_lock);
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
+			break;
+		}
+#endif
 		return;
 
 	case JE_MULTI:
