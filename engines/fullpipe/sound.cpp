@@ -110,4 +110,8 @@ void FullpipeEngine::setSceneMusicParameters(CGameVar *var) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
 }
 
+void startSceneTrack() {
+	warning("STUB: startSceneTrack()");
+}
+
 } // End of namespace Fullpipe

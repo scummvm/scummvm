@@ -151,12 +151,9 @@ class PictureObject : public GameObject {
 };
 
 class Background : public CObject {
-	friend class FullpipeEngine;
-
   public:
 	CPtrList _picObjList;
 
-  protected:
 	char *_bgname;
 	int _x;
 	int _y;

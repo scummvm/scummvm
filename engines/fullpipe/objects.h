@@ -43,44 +43,6 @@ class GameProject : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class CInteraction : public CObject {
-	int16 _objectId1;
-	int16 _objectId2;
-	int16 _objectId3;
-	int16 _staticsId1;
-	int16 _staticsId2;
-	int16 _field_E;
-	int _objectState1;
-	int _objectState2;
-	int _xOffs;
-	int _yOffs;
-	MessageQueue *_messageQueue;
-	int _sceneId;
-	int _field_28;
-	int _flags;
-	char *_actionName;
-
- public:
-	CInteraction();
-	virtual bool load(MfcArchive &file);
-};
-
-class CInteractionController : public CObject {
-	CObList _interactions;
-	int16 _field_20;
-	bool _flag24;
-
- public:
-	CInteractionController() : _field_20(0), _flag24(true) {}
-
-	virtual bool load(MfcArchive &file);
-
-	void enableFlag24() { _flag24 = true; }
-	void disableFlag24() { _flag24 = false; }
-
-	void sortInteractions(int sceneId);
-};
-
 struct PicAniInfo {
 	int32 type;
 	int16 objectId;
@@ -97,16 +59,6 @@ struct PicAniInfo {
 	int16 flags;
 	int32 field_24;
 	int32 someDynamicPhaseIndex;
-
-	bool load(MfcArchive &file);
-};
-
-struct EntranceInfo {
-	int32 _sceneId;
-	int32 _field_4;
-	int32 _messageQueueId;
-	byte _gap_C[292]; // FIXME
-	int32 _field_130;
 
 	bool load(MfcArchive &file);
 };

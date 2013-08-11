@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	gfx.o \
 	init.o \
 	input.o \
+	interaction.o \
 	inventory.o \
 	messages.o \
 	modal.o \

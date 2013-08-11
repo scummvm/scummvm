@@ -29,6 +29,9 @@ namespace Fullpipe {
 #define ANI_IN1MAN 5110
 #define ANI_INV_MAP 5321
 #define ANI_MAN 322
+#define MSG_SC1_SHOWOSK 1019
+#define MSG_SC1_SHOWOSK2 468
+#define MSG_SC1_UTRUBACLICK 1100
 #define MV_MAN_TURN_LU 486
 #define PIC_CMN_EVAL 3468
 #define PIC_CSR_ARCADE1 4901
@@ -62,6 +65,7 @@ namespace Fullpipe {
 #define PIC_MAP_A13 5275
 #define PIC_MAP_S01 5223
 #define PIC_SC1_KUCHKA 1321
+#define PIC_SC1_LADDER 1091
 #define PIC_SC1_OSK 1018
 #define PIC_SC1_OSK2 2932
 #define SC_1 301

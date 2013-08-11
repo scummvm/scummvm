@@ -29,6 +29,7 @@
 #include "fullpipe/motion.h"
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 

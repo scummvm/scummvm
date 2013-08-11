@@ -507,8 +507,7 @@ void addMessageHandler(int (*callback)(ExCommand *), int16 id) {
 	allocMessageHandler(curItem, id, callback, index);
 
 	if (curItem)
-      updateMessageHandlerIndex(curItem->nextItem->nextItem, 1);
-
+		updateMessageHandlerIndex(curItem->nextItem->nextItem, 1);
 }
 
 MessageHandler *getMessageHandlerById(int16 id) {

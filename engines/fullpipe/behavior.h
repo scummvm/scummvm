@@ -34,6 +34,7 @@ class BehaviorManager : public CObject {
 	BehaviorManager();
 
 	void initBehavior(Scene *scene, CGameVar *var);
+	void updateBehaviors();
 };
 
 struct BehaviorEntryInfo {

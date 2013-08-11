@@ -26,6 +26,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/input.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 

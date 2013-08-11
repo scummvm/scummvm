@@ -38,6 +38,7 @@
 #include "fullpipe/objectnames.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/modal.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -695,10 +696,8 @@ void sceneIntro_initScene(Scene *sc) {
 	g_vars->sceneIntro_playing = true;
 	g_vars->sceneIntro_needBlackout = false;
 
-#if 0
 	if (g_fullpipe->_recordEvents || g_fullpipe->_inputArFlag)
 		g_vars->sceneIntro_skipIntro = false;
-#endif
 
 	g_fullpipe->_modalObject = new CModalIntro;
 }
@@ -740,9 +739,54 @@ void scene01_initScene(Scene *sc, int entrance) {
 }
 
 int sceneHandler01(ExCommand *cmd) {
-	warning("STUB: sceneHandler01()");
+	int res = 0;
 
-	return 0;
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	if (cmd->_messageNum > MSG_SC1_SHOWOSK) {
+		if (cmd->_messageNum == MSG_SC1_UTRUBACLICK)
+			handleObjectInteraction(g_fullpipe->_aniMan, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC1_LADDER, 0), 0);
+
+		return 0;
+	}
+
+	if (cmd->_messageNum == MSG_SC1_SHOWOSK) {
+		g_vars->scene01_picSc01Osk->_flags |= 4;
+
+		g_vars->scene01_picSc01Osk->_priority = 20;
+		g_vars->scene01_picSc01Osk2->_priority = 21;
+
+		return 0;
+	}
+
+	if (cmd->_messageNum != 0x21) {
+		if (cmd->_messageNum == MSG_SC1_SHOWOSK2) {
+			g_vars->scene01_picSc01Osk2->_flags |= 4;
+			g_vars->scene01_picSc01Osk2->_priority = 20;
+			g_vars->scene01_picSc01Osk->_priority = 21;
+
+			return 0;
+		}
+
+		return 0;
+	}
+
+	if (g_fullpipe->_aniMan2) {
+		if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200) {
+			g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+		}
+
+		if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
+			g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+
+		res = 1;
+	}
+	g_fullpipe->_behaviorManager->updateBehaviors();
+
+	startSceneTrack();
+
+	return res;
 }
 
 } // End of namespace Fullpipe
