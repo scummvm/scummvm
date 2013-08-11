@@ -200,8 +200,6 @@ public:
 	byte col;
 };
 
-typedef byte raw[256][16]; /* raw_font_type */
-
 enum controllers {cjoy, ckey};
 
 typedef Common::String previoustype[20];
@@ -541,7 +539,7 @@ public:
 	Common::String atkey; /* For XTs, set to "alt-". For ATs, set to "f1". */
 
 	byte cp, ledstatus, defaultled;
-	raw characters;
+	fontType characters;
 	bool alive;
 	byte buffer[2000];
 	uint16 bufsize;

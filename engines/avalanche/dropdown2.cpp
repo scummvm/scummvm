@@ -285,28 +285,25 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 	else
 		ander = 170;
 
+	fontType font;
 	for (byte fv = 0; fv < z.size(); fv++)
-		for (byte ff = 0; ff < 8; ff++) {
-			byte pixel = ~(_vm->_gyro->characters[z[fv]][ff] & ander); // Note that it's the bitwise NOT operator!
-			for (byte bit = 0; bit < 8; bit++) {
-				byte pixelBit = (pixel >> bit) & 1;
-				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + ff) = pixelBit + (pixelBit << 1) + (pixelBit << 2);
-				// We don't have to bother with the planes, since they all have the same value. See the original.
-				// Note that it's the bitwise OR operator!
-			}
-		}
+		for (byte ff = 0; ff < 8; ff++)
+			font[z[fv]][ff] = _vm->_gyro->characters[z[fv]][ff] & ander;
 
+	_vm->_graphics->drawText(_vm->_graphics->_surface, z, font, 8, x * 8, y, black);
+	
+	// Underline the selected character.
 	if (! z.contains(t))
 		return;
 	else {
 		byte fv;
 		for (fv = 0; z[fv] != t; fv++); // Search for the character in the string.
 	
-		// Similar to the cycle before.
-		byte pixel = ~ ander;
+		byte pixel = ander;
 		for (byte bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
-			*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = pixelBit | (pixelBit << 1) | (pixelBit << 2);
+			if (pixelBit)
+				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = black;
 		}
 	}
 }
