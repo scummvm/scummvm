@@ -39,7 +39,6 @@ RenderManager::RenderManager(OSystem *system, const int width, const int height)
 	  _width(width),
 	  _height(height),
 	  _currentBackground(0),
-	  _needsScreenUpdate(false),
 	  _renderTable(width, height) {
 }
 
@@ -141,7 +140,6 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 		tga.destroy();
 	}
 
-	_needsScreenUpdate = true;
 }
 
 RenderTable *RenderManager::getRenderTable() {

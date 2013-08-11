@@ -57,8 +57,6 @@ private:
 	Video::VideoDecoder *_currentVideo;
 	byte *_scaledVideoFrameBuffer;
 
-	bool _needsScreenUpdate;
-
 public:
 	void initialize();
 
@@ -94,7 +92,6 @@ public:
 
 	RenderTable *getRenderTable();
 
-	bool needsScreenUpdate() { return _needsScreenUpdate; };
 
 private:
 	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter);
