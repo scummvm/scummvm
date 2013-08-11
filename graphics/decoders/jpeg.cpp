@@ -25,7 +25,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "graphics/pixelformat.h"
-#include "graphics/yuv_to_rgb.h"
 #include "graphics/decoders/jpeg.h"
 
 #include "common/debug.h"
@@ -45,7 +44,7 @@ extern "C" {
 
 namespace Graphics {
 
-JPEGDecoder::JPEGDecoder() : ImageDecoder(), _rgbSurface(nullptr) {
+JPEGDecoder::JPEGDecoder() : ImageDecoder(), _surface(), _colorSpace(kColorSpaceRGBA) {
 }
 
 JPEGDecoder::~JPEGDecoder() {
@@ -53,31 +52,11 @@ JPEGDecoder::~JPEGDecoder() {
 }
 
 const Surface *JPEGDecoder::getSurface() const {
-	// Make sure we have loaded data
-	if (!_yComponent.getPixels())
-		return 0;
-
-	if (_rgbSurface)
-		return _rgbSurface;
-
-	// Create an RGBA8888 surface
-	_rgbSurface = new Graphics::Surface();
-	_rgbSurface->create(_yComponent.w, _yComponent.h, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
-
-	YUVToRGBMan.convert444(_rgbSurface, Graphics::YUVToRGBManager::kScaleFull, (const byte *)_yComponent.getPixels(), (const byte *)_uComponent.getPixels(), (const byte *)_vComponent.getPixels(), _yComponent.w, _yComponent.h, _yComponent.pitch, _uComponent.pitch);
-
-	return _rgbSurface;
+	return &_surface;
 }
 
 void JPEGDecoder::destroy() {
-	if (_rgbSurface) {
-		_rgbSurface->free();
-		delete _rgbSurface;
-	}
-
-	_yComponent.free();
-	_uComponent.free();
-	_vComponent.free();
+	_surface.free();
 }
 
 #ifdef USE_JPEG
@@ -206,16 +185,33 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// Read the file header
 	jpeg_read_header(&cinfo, TRUE);
 
-	// We request YUV output because Groovie requires it
-	cinfo.out_color_space = JCS_YCbCr;
+	// We can request YUV output because Groovie requires it
+	switch (_colorSpace) {
+	case kColorSpaceRGBA:
+		cinfo.out_color_space = JCS_RGB;
+		break;
+
+	case kColorSpaceYUV:
+		cinfo.out_color_space = JCS_YCbCr;
+		break;
+	}
 
 	// Actually start decompressing the image
 	jpeg_start_decompress(&cinfo);
 
-	// Allocate buffers for the YUV components
-	_yComponent.create(cinfo.output_width, cinfo.output_height, Graphics::PixelFormat::createFormatCLUT8());
-	_uComponent.create(cinfo.output_width, cinfo.output_height, Graphics::PixelFormat::createFormatCLUT8());
-	_vComponent.create(cinfo.output_width, cinfo.output_height, Graphics::PixelFormat::createFormatCLUT8());
+	// Allocate buffers for the output data
+	switch (_colorSpace) {
+	case kColorSpaceRGBA:
+		// We use RGBA8888 in this scenario
+		_surface.create(cinfo.output_width, cinfo.output_height, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
+		break;
+
+	case kColorSpaceYUV:
+		// We use YUV with 3 bytes per pixel otherwise.
+		// This is pretty ugly since our PixelFormat cannot express YUV...
+		_surface.create(cinfo.output_width, cinfo.output_height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
+		break;
+	}
 
 	// Allocate buffer for one scanline
 	JDIMENSION pitch = cinfo.output_width * cinfo.output_components;
@@ -223,17 +219,35 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Go through the image data scanline by scanline
 	while (cinfo.output_scanline < cinfo.output_height) {
-		byte *yPtr = (byte *)_yComponent.getBasePtr(0, cinfo.output_scanline);
-		byte *uPtr = (byte *)_uComponent.getBasePtr(0, cinfo.output_scanline);
-		byte *vPtr = (byte *)_vComponent.getBasePtr(0, cinfo.output_scanline);
+		byte *dst = (byte *)_surface.getBasePtr(0, cinfo.output_scanline);
 
 		jpeg_read_scanlines(&cinfo, buffer, 1);
 
 		const byte *src = buffer[0];
-		for (int remaining = cinfo.output_width; remaining > 0; --remaining) {
-			*yPtr++ = *src++;
-			*uPtr++ = *src++;
-			*vPtr++ = *src++;
+		switch (_colorSpace) {
+		case kColorSpaceRGBA: {
+			for (int remaining = cinfo.output_width; remaining > 0; --remaining) {
+				byte r = *src++;
+				byte g = *src++;
+				byte b = *src++;
+				// We need to insert a alpha value of 255 (opaque) here.
+#ifdef SCUMM_BIG_ENDIAN
+				*dst++ = r;
+				*dst++ = g;
+				*dst++ = b;
+				*dst++ = 0xFF;
+#else
+				*dst++ = 0xFF;
+				*dst++ = b;
+				*dst++ = g;
+				*dst++ = r;
+#endif
+			}
+			} break;
+
+		case kColorSpaceYUV:
+			memcpy(dst, src, _surface.pitch);
+			break;
 		}
 	}
 

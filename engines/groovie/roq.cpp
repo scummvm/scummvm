@@ -435,17 +435,13 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	warning("Groovie::ROQ: JPEG frame (unfinished)");
 
 	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
+	jpg->setOutputColorSpace(Graphics::JPEGDecoder::kColorSpaceYUV);
 	jpg->loadStream(*_file);
-	const byte *y = (const byte *)jpg->getYComponent().getPixels();
-	const byte *u = (const byte *)jpg->getUComponent().getPixels();
-	const byte *v = (const byte *)jpg->getVComponent().getPixels();
 
+	const Graphics::Surface *srcSurf = jpg->getSurface();
+	const byte *src = (const byte *)srcSurf->getPixels();
 	byte *ptr = (byte *)_currBuf->getPixels();
-	for (int i = 0; i < _currBuf->w * _currBuf->h; i++) {
-		*ptr++ = *y++;
-		*ptr++ = *u++;
-		*ptr++ = *v++;
-	}
+	memcpy(ptr, src, _currBuf->w * _currBuf->h);
 
 	delete jpg;
 	return true;

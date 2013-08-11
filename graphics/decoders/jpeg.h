@@ -46,23 +46,48 @@ public:
 	~JPEGDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	bool loadStream(Common::SeekableReadStream &str);
-	const Surface *getSurface() const;
+	virtual void destroy();
+	virtual bool loadStream(Common::SeekableReadStream &str);
+	virtual const Surface *getSurface() const;
 
-	const Surface &getYComponent() const { return _yComponent; }
-	const Surface &getUComponent() const { return _uComponent; }
-	const Surface &getVComponent() const { return _vComponent; }
+	// Special API for JPEG
+	enum ColorSpace {
+		/**
+		 * Output 32bit RGBA data.
+		 *
+		 * This is the default output.
+		 */
+		kColorSpaceRGBA,
+
+		/**
+		 * Output (interleaved) YUV data.
+		 *
+		 * Be aware that some images cannot be output in YUV mode.
+		 * These are (non-standard) JPEG images which are in RGB colorspace.
+		 *
+		 * The resulting Surface will have a PixelFormat with 3 bytes per
+		 * pixel and the remaining entries are completely zeroed. This works
+		 * around the fact that PixelFormat can only describe RGB formats.
+		 *
+		 * You should only use this when you are really aware of what you are
+		 * doing!
+		 */
+		kColorSpaceYUV
+	};
+
+	/**
+	 * Request the output color space. This can be used to obtain raw YUV
+	 * data from the JPEG file. But this might not work for all files!
+	 *
+	 * The decoder itself defaults to RGBA.
+	 *
+	 * @param outSpace The color space to output.
+	 */
+	void setOutputColorSpace(ColorSpace outSpace) { _colorSpace = outSpace; }
 
 private:
-	// mutable so that we can convert to RGB only during
-	// a getSurface() call while still upholding the
-	// const requirement in other ImageDecoders
-	mutable Graphics::Surface *_rgbSurface;
-
-	Graphics::Surface _yComponent;
-	Graphics::Surface _uComponent;
-	Graphics::Surface _vComponent;
+	Graphics::Surface _surface;
+	ColorSpace _colorSpace;
 };
 
 } // End of Graphics namespace
