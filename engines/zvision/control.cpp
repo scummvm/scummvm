@@ -102,4 +102,39 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 	renderTable->generateRenderTable();
 }
 
+void Control::parsePushToggleControl(uint32 key, ZVision *engine, Common::SeekableReadStream &stream) {
+	Common::Rect hotspot;
+	Common::String cursorName;
+	
+	// Loop until we find the closing brace
+	Common::String line = stream.readLine();
+	trimCommentsAndWhiteSpace(&line);
+
+	while (!line.contains('}')) {
+		if (line.matchString("*_hotspot*", true)) {
+			uint x;
+			uint y;
+			uint width;
+			uint height;
+
+			sscanf(line.c_str(), "%*[^(](%u,%u,%u,%u)", &x, &y, &width, &height);
+			
+			hotspot = Common::Rect(x, y, x + width, y + height);
+		} else if (line.matchString("cursor*", true)) {
+			char nameBuffer[25];
+
+			sscanf(line.c_str(), "%*[^(](%25[^)])", nameBuffer);
+
+			cursorName = Common::String(nameBuffer);
+		}
+
+		line = stream.readLine();
+		trimCommentsAndWhiteSpace(&line);
+	}
+
+	if (!hotspot.isEmpty() && !cursorName.empty()) {
+		engine->registerMouseEvent(MouseEvent(key, hotspot, cursorName));
+	}
+}
+
 } // End of namespace ZVision

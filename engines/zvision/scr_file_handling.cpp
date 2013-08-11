@@ -309,7 +309,8 @@ bool ScriptManager::parseControl(Common::String &line, Common::SeekableReadStrea
 	Common::String controlType(controlTypeBuffer);
 
 	if (controlType.equalsIgnoreCase("push_toggle")) {
-
+		Control::parsePushToggleControl(key, _engine, stream);
+		return false;
 	} else if (controlType.equalsIgnoreCase("flat")) {
 		Control::parseFlatControl(_engine);
 		return false;
