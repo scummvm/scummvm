@@ -214,11 +214,10 @@ void Timeout::one_tick() {
 void Timeout::lose_timer(byte which) {
 	byte fv;
 
-	for (fv = 1; fv <= 7; fv++) {
-		timetype &with = times[fv];
-		if (with.what_for == which)
-			with.time_left = 0;
-	} /* Cancel this one! */
+	for (fv = 0; fv < 7; fv++) {
+		if (times[fv].what_for == which)
+			times[fv].time_left = 0; // Cancel this one!
+	}
 }
 
 /*function timer_is_on(which:byte):boolean;
