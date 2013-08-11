@@ -110,7 +110,7 @@ public:
 	bool _updateFlag;
 	bool _flgCanOpenMap;
 	bool _gamePaused;
-	bool _flgSavegameMenuRequested;
+	bool _flgGameIsRunning;
 	bool _inputArFlag;
 	bool _recordEvents;
 

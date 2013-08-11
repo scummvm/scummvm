@@ -837,6 +837,7 @@ int global_messageHandler3(ExCommand *cmd) {
 int global_messageHandler4(ExCommand *cmd) {
 	StaticANIObject *ani = 0;
 
+	debug(0, "global_messageHandler4: %d %d", cmd->_messageKind, cmd->_messageNum);
 	switch (cmd->_messageKind) {
 	case 18: {
 		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(cmd->_messageNum), cmd->_parId, 0);

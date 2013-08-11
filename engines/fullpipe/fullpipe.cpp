@@ -80,7 +80,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_inputArFlag = false;
 	_recordEvents = false;
 
-	_flgSavegameMenuRequested = false;
+	_flgGameIsRunning = true;
 
 	_isProcessingMessages = false;
 
@@ -222,7 +222,7 @@ void FullpipeEngine::updateEvents() {
 			case Common::KEYCODE_s:
 				if (_gamePaused) {
 					_gamePaused = 0;
-					_flgSavegameMenuRequested = true;
+					_flgGameIsRunning = true;
 					return;
 				}
 
@@ -318,8 +318,8 @@ void FullpipeEngine::updateScreen() {
 	//if (inputArFlag)
 	//	updateGame_inputArFlag();
 
-	if (_modalObject || _flgSavegameMenuRequested && (_gameLoader->updateSystems(42), _modalObject != 0)) {
-		if (_flgSavegameMenuRequested) {
+	if (_modalObject || _flgGameIsRunning && (_gameLoader->updateSystems(42), _modalObject != 0)) {
+		if (_flgGameIsRunning) {
 			if (_modalObject->init(42)) {
 				_modalObject->update();
 			} else {
