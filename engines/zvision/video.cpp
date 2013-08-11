@@ -61,11 +61,13 @@ void scaleBuffer(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, 
 				const byte color = *srcPtr++;
 				const byte color2 = *srcPtr++;
 
-					dst[i] = color;
-					dst[i + 1] = color2;
-					dst[pitch + i] = color;
-					dst[pitch + i + 1] = color2;
 				for (uint i = 0; i < scaleAmount; i++) {
+					uint index = i *2;
+
+					dst[index] = color;
+					dst[index + 1] = color2;
+					dst[pitch + index] = color;
+					dst[pitch + index + 1] = color2;
 				}
 				dst += 2 * scaleAmount;
 			}
