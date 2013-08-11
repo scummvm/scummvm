@@ -107,7 +107,10 @@ void ZVision::initialize() {
 	// Register the file entries within the zfs archives with the SearchMan
 	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 		Common::String name = (*iter)->getName();
-		ZfsArchive *archive = new ZfsArchive(name, (*iter)->createReadStream());
+		Common::SeekableReadStream *stream = (*iter)->createReadStream();
+		ZfsArchive *archive = new ZfsArchive(name, stream);
+
+		delete stream;
 
 		SearchMan.add(name, archive);
 	}
