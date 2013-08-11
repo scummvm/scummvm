@@ -28,8 +28,18 @@
 #include "engines/util.h"
 
 #include "zvision/cursor_manager.h"
+#include "zvision/render_manager.h"
+#include "zvision/mouse_event.h"
 
 namespace ZVision {
+
+void ZVision::registerMouseEvent(const MouseEvent &event) {
+	_mouseEvents.push_back(event);
+}
+
+void ZVision::clearAllMouseEvents() {
+	_mouseEvents.clear();
+}
 
 void ZVision::processEvents() {
 	while (_eventMan->pollEvent(_event)) {
@@ -84,10 +94,32 @@ void ZVision::onMouseDown(const Common::Point &pos) {
 
 void ZVision::onMouseUp(const Common::Point &pos) {
 	_cursorManager->cursorDown(false);
+
+	Common::Point imageCoord(_renderManager->convertToImageCoords(pos));
+
+	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		if (iter->withinHotspot(imageCoord)) {
+			iter->onClick(this);
+		}
+	}
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
+	Common::Point imageCoord(_renderManager->convertToImageCoords(pos));
 
+	bool isWithinAHotspot = false;
+	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		if (iter->withinHotspot(imageCoord)) {
+			_cursorManager->changeCursor(iter->getHoverCursor());
+			isWithinAHotspot = true;
+		}
+	}
+
+
+
+	if (!isWithinAHotspot) {
+		_cursorManager->revertToIdle();
+	}
 }
 
 void ZVision::onKeyDown(uint keyCode) {

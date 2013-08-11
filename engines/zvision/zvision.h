@@ -33,6 +33,7 @@
 
 #include "zvision/detection.h"
 #include "zvision/clock.h"
+#include "zvision/mouse_event.h"
 
 #include "gui/debugger.h"
 
@@ -82,6 +83,9 @@ private:
 	// Clock
 	Clock _clock;
 
+	// To store the current mouse events
+	Common::List<MouseEvent> _mouseEvents;
+
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
@@ -98,6 +102,9 @@ public:
 	ZVisionGameId getGameId() const;
 
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
+
+	void registerMouseEvent(const MouseEvent &event);
+	void clearAllMouseEvents();
 
 	void cycleThroughCursors();
 

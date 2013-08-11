@@ -26,6 +26,7 @@
 #include "common/hashmap.h"
 #include "common/debug.h"
 
+#include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/actions.h"
 #include "zvision/action_node.h"
@@ -207,6 +208,7 @@ void ScriptManager::changeLocationIntern() {
 	_activePuzzles.clear();
 	// We can clear without deleting from the heap because we use SharedPtr
 	_activeControls.clear();
+	_engine->clearAllMouseEvents();
 
 	// Parse into puzzles and controls
 	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
