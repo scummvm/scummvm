@@ -139,7 +139,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			_mixer->stopHandle(_soundHandle);
 		_vm->_speechManager._buildingSentence = true;
 	}
-	int freq = tempo * 10 * 25.2;
+	int freq = tempo * 252; // 25.2 * 10
 	int i = 0;
 	while (i < _vm->_speechManager._ptr_oct) {
 		int idx = _vm->_mem[(kAdrTroct * 16) + i];
@@ -222,7 +222,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 }
 
 void SoundManager::playSong(const byte* buf, uint size, uint loops) {
-	int freq = kTempoMusic * 10 * 25.2;
+	int freq = kTempoMusic * 252; // 25.2 * 10
 	Audio::SeekableAudioStream *raw = Audio::makeRawStream(buf, size, freq, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(raw, loops);
 	Audio::SoundHandle songHandle;
