@@ -60,17 +60,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
  
 	// Do not initialize graphics here
  
-	// However this is the place to specify all default directories
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	// TODO: There are 10 file clashes when we flatten the directories. From a quick look, the files are exactly the same, so it shouldn't matter. But I'm noting it here just in-case it does become a problem.
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data3", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets1", 0, 2, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets2", 0, 2, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx", 0, 1, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zgi", 0, 4, true);
- 
 	// Here is the right place to set up the engine specific debug channels
 	//DebugMan.addDebugChannel(kZVisionDebugExample, "example", "this is just an example for a engine specific debug channel");
 	//DebugMan.addDebugChannel(kZVisionDebugExample2, "example2", "also an example");
@@ -101,6 +90,16 @@ ZVision::~ZVision() {
 }
 
 void ZVision::initialize() {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	// TODO: There are 10 file clashes when we flatten the directories. From a quick look, the files are exactly the same, so it shouldn't matter. But I'm noting it here just in-case it does become a problem.
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data3", 0, 4, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets1", 0, 2, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets2", 0, 2, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx", 0, 1, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "zgi", 0, 4, true);
+
 	// Find zfs archive files
 	Common::ArchiveMemberList list;
 	SearchMan.listMatchingMembers(list, "*.zfs");
