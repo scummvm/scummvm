@@ -718,6 +718,13 @@ void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upF
 		_vm->delay((delayAcc >> 8) * 1000 / 60);
 		delayAcc &= 0xFF;
 	}
+
+	// In case we should quit we setup the final palette here. This avoids
+	// ugly palette glitches when quitting while fading. This can for example
+	// be noticed when quitting while viewing the family album in Kyra3.
+	if (_vm->shouldQuit()) {
+		setScreenPalette(pal);
+	}
 }
 
 void Screen::getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) {
