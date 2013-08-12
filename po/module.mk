@@ -2,8 +2,10 @@ POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 CPFILES := $(wildcard $(srcdir)/po/*.cp)
 
+ENGINE_INPUT_POTFILES := $(wildcard $(srcdir)/engines/*/POTFILES)
 updatepot:
-	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c --add-comments=I18N\
+	cat $(srcdir)/po/POTFILES $(ENGINE_INPUT_POTFILES) | \
+	xgettext -f - -D $(srcdir) -d scummvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c --add-comments=I18N\
 		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(POTFILE) \
 		--copyright-holder="ScummVM Team" --package-name=ScummVM \
 		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.sf.net -o $(POTFILE)_

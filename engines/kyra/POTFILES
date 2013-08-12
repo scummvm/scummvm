@@ -1,0 +1,3 @@
+engines/kyra/detection.cpp
+engines/kyra/lol.cpp
+engines/kyra/sound_midi.cpp

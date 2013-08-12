@@ -1,0 +1,3 @@
+engines/scumm/dialogs.cpp
+engines/scumm/help.cpp
+engines/scumm/scumm.cpp
