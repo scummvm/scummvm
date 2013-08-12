@@ -46,12 +46,31 @@ class ConfigManager : public Singleton<ConfigManager> {
 
 public:
 
-	class Domain : public StringMap {
+	class Domain {
 	private:
+		StringMap _entries;
 		StringMap _keyValueComments;
 		String _domainComment;
 
 	public:
+		typedef StringMap::const_iterator const_iterator;
+		const_iterator begin() const { return _entries.begin(); }
+		const_iterator end()   const { return _entries.end(); }
+
+		bool empty() const { return _entries.empty(); }
+
+		bool contains(const String &key) const { return _entries.contains(key); }
+
+		String &operator[](const String &key) { return _entries[key]; }
+		const String &operator[](const String &key) const { return _entries[key]; }
+
+		String &getVal(const String &key) { return _entries.getVal(key); }
+		const String &getVal(const String &key) const { return _entries.getVal(key); }
+
+		void clear() { _entries.clear(); }
+
+		void erase(const String &key) { _entries.erase(key); }
+
 		void setDomainComment(const String &comment);
 		const String &getDomainComment() const;
 
@@ -142,7 +161,8 @@ public:
 	bool				hasMiscDomain(const String &domName) const;
 
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
-	DomainMap &			getGameDomains() { return _gameDomains; }
+	DomainMap::iterator beginGameDomains() { return _gameDomains.begin(); }
+	DomainMap::iterator endGameDomains() { return _gameDomains.end(); }
 
 	static void			defragment();	// move in memory to reduce fragmentation
 	void 				copyFrom(ConfigManager &source);

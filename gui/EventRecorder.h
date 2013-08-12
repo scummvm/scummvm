@@ -199,7 +199,7 @@ private:
 	void setFileHeader();
 	void setGameMd5(const ADGameDescription *gameDesc);
 	void getConfig();
-	void getConfigFromDomain(Common::ConfigManager::Domain *domain);
+	void getConfigFromDomain(const Common::ConfigManager::Domain *domain);
 	void removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain);
 	void applyPlaybackSettings();
 
