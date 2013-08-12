@@ -499,6 +499,11 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	int button;
 	uint32 time;
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+
+#ifdef ENABLE_TOUCHMAPPER
+	Common::Point finger(event.finger[0].position.x - activeDialog->_x, event.finger[0].position.y - activeDialog->_y);
+#endif
+	
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		activeDialog->handleKeyDown(event.kbd);
@@ -547,6 +552,37 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	case Common::EVENT_SCREEN_CHANGED:
 		screenChange();
 		break;
+	
+/* Touch events */
+#ifdef ENABLE_TOUCHMAPPER
+	case Common::EVENT_FINGERMOVE:
+		activeDialog->handleMouseMoved(finger.x, finger.y, 0);
+		if (finger.x != _lastMousePosition.x || finger.y != _lastMousePosition.y) {
+			_lastMousePosition.x = finger.x;
+			_lastMousePosition.y = finger.y;
+			_lastMousePosition.time = _system->getMillis(true);
+		}
+		break;
+	case Common::EVENT_TAPDOWN:
+		time = _system->getMillis(true);
+		if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
+			&& ABS(_lastClick.x - event.finger[0].position.x) < 3
+			&& ABS(_lastClick.y - event.finger[0].position.y) < 3) {
+				_lastClick.count++;
+		} else {
+			_lastClick.x = event.finger[0].position.x;
+			_lastClick.y = event.finger[0].position.y;
+			_lastClick.count = 1;
+		}
+		_lastClick.time = time;
+		activeDialog->handleMouseDown(finger.x , finger.y, 1, _lastClick.count);
+		break;
+	case Common::EVENT_TAPUP:
+		// 1 is left button, we use this when tapping with one finger
+		activeDialog->handleMouseUp(finger.x, finger.y, 1, _lastClick.count);
+		break;
+	/* End of touch-events */
+#endif
 	default:
 	#ifdef ENABLE_KEYMAPPER
 		activeDialog->handleOtherEvent(event);
