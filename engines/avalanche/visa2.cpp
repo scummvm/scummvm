@@ -172,7 +172,6 @@ void Visa::talkto(byte whom) {
 	if (_vm->_gyro->subjnumber == 0)
 		switch (whom) {
 		case _vm->_gyro->pspludwick:
-
 			if ((_vm->_gyro->dna.lustie_is_asleep) & (!_vm->_gyro->dna.obj[_vm->_gyro->potion])) {
 				dixi('q', 68);
 				_vm->_gyro->dna.obj[_vm->_gyro->potion] = true;
@@ -202,7 +201,6 @@ void Visa::talkto(byte whom) {
 				}
 			}
 			break;
-
 		case _vm->_gyro->pibythneth:
 			if (_vm->_gyro->dna.givenbadgetoiby) {
 				dixi('q', 33); // Thanks a lot!
@@ -277,7 +275,7 @@ void Visa::talkto(byte whom) {
 	if (!went_ok)
 		dixi('n', whom); // File not found!
 
-	if ((_vm->_gyro->subjnumber == 0) && ((whom + 227) == _vm->_gyro->pcrapulus)) { // Crapulus: get the badge - first time only
+	if ((_vm->_gyro->subjnumber == 0) && ((whom + 149) == _vm->_gyro->pcrapulus)) { // Crapulus: get the badge - first time only
 		_vm->_gyro->dna.obj[_vm->_gyro->badge] = true;
 		_vm->_lucerna->objectlist();
 		dixi('q', 1); // Circular from Cardiff.

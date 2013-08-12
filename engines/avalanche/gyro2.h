@@ -309,38 +309,38 @@ public:
 	static const char chastity = 5;
 	static const char bolt = 6;
 	static const char crossbow = 7;
-	static const char lute = 10;
-	static const char badge = 11;
-	static const char mushroom = 12;
-	static const char key = 13;
-	static const char bell = 14;
-	static const char prescription = 15;
-	static const char pen = 16;
-	static const char ink = 17;
-	static const char clothes = 20;
-	static const char habit = 21;
-	static const char onion = 22;
+	static const char lute = 8;
+	static const char badge = 9;
+	static const char mushroom = 10;
+	static const char key = 11;
+	static const char bell = 12;
+	static const char prescription = 13;
+	static const char pen = 14;
+	static const char ink = 15;
+	static const char clothes = 16;
+	static const char habit = 17;
+	static const char onion = 18;
 
 	/* People who hang around this game. */
 
 	/* Boys: */
-	static const uint16 pavalot = 226;
-	static const uint16 pspludwick = 227;
-	static const uint16 pcrapulus = 230;
-	static const uint16 pdrduck = 231;
-	static const uint16 pmalagauche = 232;
-	static const uint16 pfriartuck = 233;
-	static const uint16 probinhood = 234;
-	static const uint16 pcwytalot = 235;
-	static const uint16 pdulustie = 236;
-	static const uint16 pduke = 237;
-	static const uint16 pdogfood = 240;
-	static const uint16 ptrader = 241;
-	static const uint16 pibythneth = 242;
-	static const uint16 payles = 243;
-	static const uint16 pport = 244;
-	static const uint16 pspurge = 245;
-	static const uint16 pjacques = 246;
+	static const uint16 pavalot = 150;
+	static const uint16 pspludwick = 151;
+	static const uint16 pcrapulus = 152;
+	static const uint16 pdrduck = 153;
+	static const uint16 pmalagauche = 154;
+	static const uint16 pfriartuck = 155;
+	static const uint16 probinhood = 156;
+	static const uint16 pcwytalot = 157;
+	static const uint16 pdulustie = 158;
+	static const uint16 pduke = 159;
+	static const uint16 pdogfood = 160;
+	static const uint16 ptrader = 161;
+	static const uint16 pibythneth = 162;
+	static const uint16 payles = 163;
+	static const uint16 pport = 164;
+	static const uint16 pspurge = 165;
+	static const uint16 pjacques = 166;
 
 	/* Girls: */
 	static const uint16 parkata = 257;

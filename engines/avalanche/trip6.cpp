@@ -1192,7 +1192,7 @@ void Trip::back_and_forth(byte tripnum) {
 
 void Trip::face_avvy(byte tripnum) {
 	if (!tr[tripnum].homing) {
-		if (tr[1].x >= tr[tripnum].x)
+		if (tr[0].x >= tr[tripnum].x)
 			tr[tripnum].face = right;
 		else
 			tr[tripnum].face = left;
@@ -1306,19 +1306,19 @@ void Trip::spin(byte whichway, byte &tripnum) {
 
 void Trip::geida_procs(byte tripnum) {
 	if (_vm->_gyro->dna.geida_time > 0) {
-		_vm->_gyro->dna.geida_time -= 1;
+		_vm->_gyro->dna.geida_time --;
 		if (_vm->_gyro->dna.geida_time == 0)
 			_vm->_gyro->dna.geida_spin = 0;
 	}
 
-	if (tr[tripnum].y < (tr[1].y - 2)) {
+	if (tr[tripnum].y < (tr[0].y - 2)) {
 		/* Geida is further from the screen than Avvy. */
 		spin(down, tripnum);
 		tr[tripnum].iy = 1;
 		tr[tripnum].ix = 0;
 		take_a_step(tripnum);
 		return;
-	} else if (tr[tripnum].y > (tr[1].y + 2)) {
+	} else if (tr[tripnum].y > (tr[0].y + 2)) {
 		/* Avvy is further from the screen than Geida. */
 		spin(up, tripnum);
 		tr[tripnum].iy = -1;
@@ -1328,12 +1328,14 @@ void Trip::geida_procs(byte tripnum) {
 	}
 
 	tr[tripnum].iy = 0;
-	if (tr[tripnum].x < tr[1].x - tr[1].xs * 8) {
-		tr[tripnum].ix = tr[1].xs;
+	// These 12-s are not in the original, I added them to make the following method more "smooth".
+	// Now the NPC which is following Avvy won't block his way and will walk next to him properly.
+	if (tr[tripnum].x < tr[0].x - tr[0].xs * 8 - 12) {
+		tr[tripnum].ix = tr[0].xs;
 		spin(right, tripnum);
 		take_a_step(tripnum);
-	} else if (tr[tripnum].x > tr[1].x + tr[1].xs * 8) {
-		tr[tripnum].ix = -tr[1].xs;
+	} else if (tr[tripnum].x > tr[0].x + tr[0].xs * 8 + 12) {
+		tr[tripnum].ix = -tr[0].xs;
 		spin(left, tripnum);
 		take_a_step(tripnum);
 	} else
