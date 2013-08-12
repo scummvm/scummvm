@@ -277,7 +277,7 @@ void Visa::talkto(byte whom) {
 	if (!went_ok)
 		dixi('n', whom); // File not found!
 
-	if ((_vm->_gyro->subjnumber == 0) && ((whom + 149) == _vm->_gyro->pcrapulus)) { // Crapulus: get the badge - first time only
+	if ((_vm->_gyro->subjnumber == 0) && ((whom + 227) == _vm->_gyro->pcrapulus)) { // Crapulus: get the badge - first time only
 		_vm->_gyro->dna.obj[_vm->_gyro->badge] = true;
 		_vm->_lucerna->objectlist();
 		dixi('q', 1); // Circular from Cardiff.

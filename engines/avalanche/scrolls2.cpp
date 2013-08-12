@@ -544,7 +544,7 @@ void Scrolls::bubble(func2 gotoit) {
 	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) {
 		int16 x = _vm->_gyro->talkx - _vm->_gyro->scroll[fv].size() / 2 * 8;
 		bool offset = _vm->_gyro->scroll[fv].size() % 2;
-		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->scroll[fv], _vm->_gyro->characters, 8, x - offset * 12, (fv * 10) + 12, white);
+		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->scroll[fv], _vm->_gyro->characters, 8, x - offset * 4, (fv * 10) + 12, _vm->_gyro->talkf);
 	}
 
 	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) /* These should be separate loops. */
