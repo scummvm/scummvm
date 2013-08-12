@@ -272,7 +272,7 @@ StaticANIObject *Scene::getAniMan() {
 StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
 		StaticANIObject *o = (StaticANIObject *)*s;
-		if (o->_id == obj && (a3 == -1 || o->_field_4 == a3))
+		if (o->_id == obj && (a3 == -1 || o->_okeyCode == a3))
 			return o;
 	}
 
@@ -282,7 +282,7 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
 	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
 		StaticANIObject *o = (StaticANIObject *)*s;
-		if (!strcmp(o->_objectName, name) && (a3 == -1 || o->_field_4 == a3))
+		if (!strcmp(o->_objectName, name) && (a3 == -1 || o->_okeyCode == a3))
 			return o;
 	}
 
@@ -304,13 +304,13 @@ void Scene::deleteStaticANIObject(StaticANIObject *obj) {
 }
 
 void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
-	if (obj->_field_4)
+	if (obj->_okeyCode)
 		obj->renumPictures(&_staticANIObjectList1);
 
 	_staticANIObjectList1.push_back(obj);
 
 	if (addList2) {
-		if (!obj->_field_4)
+		if (!obj->_okeyCode)
 			obj->clearFlags();
 
 		_staticANIObjectList2.push_back(obj);
@@ -325,7 +325,7 @@ void Scene::setPictureObjectsFlag4() {
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_field_4 == flags)
+		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_okeyCode == flags)
 			return (PictureObject *)_picObjList[i];
 	}
 

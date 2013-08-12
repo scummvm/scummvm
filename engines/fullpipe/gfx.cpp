@@ -96,7 +96,7 @@ bool Background::load(MfcArchive &file) {
 }
 
 void Background::addPictureObject(PictureObject *pct) {
-	if (pct->_field_4)
+	if (pct->_okeyCode)
 		pct->renumPictures(&_picObjList);
 
 	bool inserted = false;
@@ -181,7 +181,7 @@ bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (picAniInfo->type & 2) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
-		_field_4 = picAniInfo->field_8;
+		_okeyCode = picAniInfo->field_8;
 		setFlags(picAniInfo->flags);
 		_field_8 = picAniInfo->field_24;
 
@@ -192,7 +192,7 @@ bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 }
 
 GameObject::GameObject() {
-	_field_4 = 0;
+	_okeyCode = 0;
 	_flags = 0;
 	_id = 0;
 	_ox = 0;
@@ -203,7 +203,7 @@ GameObject::GameObject() {
 }
 
 GameObject::GameObject(GameObject *src) {
-	_field_4 = 1;
+	_okeyCode = 1;
 	_flags = 0;
 	_id = src->_id;
 
@@ -219,7 +219,7 @@ GameObject::GameObject(GameObject *src) {
 
 bool GameObject::load(MfcArchive &file) {
 	debug(5, "GameObject::load()");
-	_field_4 = 0;
+	_okeyCode = 0;
 	_flags = 0;
 	_field_20 = 0;
 	
@@ -247,14 +247,14 @@ void GameObject::renumPictures(CPtrList *lst) {
 
 	for (uint i = 0; i < lst->size(); i++) {
 		if (_id == ((PictureObject *)((*lst)[i]))->_id)
-			buf[((PictureObject *)((*lst)[i]))->_field_4] = 1;
+			buf[((PictureObject *)((*lst)[i]))->_okeyCode] = 1;
 	}
 
-	if (buf[_field_4]) {
+	if (buf[_okeyCode]) {
 		uint count;
 		for (count = 1; buf[count] && count < lst->size() + 2; count++)
 			;
-		_field_4 = count;
+		_okeyCode = count;
 	}
 
 	free(buf);
@@ -322,7 +322,7 @@ bool Picture::load(MfcArchive &file) {
 	_width = file.readUint32LE();
 	_height = file.readUint32LE();
 
-	_flags |= 1;
+	_mflags |= 1;
 
 	_memoryObject2 = new MemoryObject2;
 	_memoryObject2->load(file);

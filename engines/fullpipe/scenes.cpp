@@ -776,7 +776,7 @@ int global_messageHandler1(ExCommand *cmd) {
 					} else if (st == (0x4000 | ST_MAN_RIGHT)) {
 						newex = new ExCommand(g_fullpipe->_aniMan->_id, 1, MV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
 					}
-					newex->_keyCode = g_fullpipe->_aniMan->_field_4;
+					newex->_keyCode = g_fullpipe->_aniMan->_okeyCode;
 					newex->_excFlags |= 3;
 					newex->postMessage();
 				}

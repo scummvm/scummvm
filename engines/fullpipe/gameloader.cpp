@@ -199,7 +199,7 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 
 		StaticANIObject *stobj = g_fullpipe->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj) {
-			stobj->setFlags(stobj->_flags & 0x100);
+			stobj->_flags &= 0x100;
 
 			ExCommand *ex = new ExCommand(stobj->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
@@ -220,7 +220,7 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 	} else {
 		StaticANIObject *stobj = g_fullpipe->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj)
-			stobj->setFlags(stobj->_flags & 0xfeff);
+			stobj->_flags &= 0xfeff;
 	}
 
 	return true;

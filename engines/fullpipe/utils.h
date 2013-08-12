@@ -83,16 +83,16 @@ class MemoryObject : CObject {
 
  protected:
 	char *_memfilename;
-	int _field_8;
-	int _field_C;
-	int _field_10;
-	char _field_14;
-	char _field_15;
-	char _field_16;
-	char _field_17;
+	int _mfield_8;
+	int _mfield_C;
+	int _mfield_10;
+	char _mfield_14;
+	char _mfield_15;
+	char _mfield_16;
+	char _mfield_17;
 	byte *_data;
 	int _dataSize;
-	int _flags;
+	int _mflags;
 	NGIArchive *_libHandle;
 
  public:

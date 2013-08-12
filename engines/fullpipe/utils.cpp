@@ -111,12 +111,12 @@ char *MfcArchive::readPascalString(bool twoByte) {
 
 MemoryObject::MemoryObject() {
 	_memfilename = 0;
-	_field_8 = 0;
-	_field_C = 0;
-	_field_10 = -1;
-	_field_14 = 1;
+	_mfield_8 = 0;
+	_mfield_C = 0;
+	_mfield_10 = -1;
+	_mfield_14 = 1;
 	_dataSize = 0;
-	_flags = 0;
+	_mflags = 0;
 	_libHandle = 0;
 	_data = 0;
 }
@@ -139,7 +139,7 @@ bool MemoryObject::load(MfcArchive &file) {
 	}
 
 	if (g_fullpipe->_currArchive) {
-		_field_14 = 0;
+		_mfield_14 = 0;
 		_libHandle = g_fullpipe->_currArchive;
 	}
 
@@ -168,7 +168,7 @@ void MemoryObject::loadFile(char *filename) {
 byte *MemoryObject::getData() {
 	load();
 
-	if (_field_14 || _flags & 1) {
+	if (_mfield_14 || _mflags & 1) {
 		return _data;
 	} else {
 		error("Unhandled packed data");
@@ -188,10 +188,10 @@ void MemoryObject::freeData() {
 }
 
 bool MemoryObject::testFlags() {
-	if (_field_8)
+	if (_mfield_8)
 		return false;
 
-	if (_flags & 1)
+	if (_mflags & 1)
 		return true;
 
 	return false;
@@ -210,7 +210,7 @@ bool MemoryObject2::load(MfcArchive &file) {
 	debug(5, "MemoryObject2::load()");
 	MemoryObject::load(file);
 
-	_flags |= 1;
+	_mflags |= 1;
 
 	debug(5, "MemoryObject2::load: <%s>", _memfilename);
 

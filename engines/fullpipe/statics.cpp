@@ -509,7 +509,7 @@ void StaticANIObject::update(int counterdiff) {
 					newex->_excFlags |= 2;
 					if (newex->_messageKind == 17) {
 						newex->_parentId = _id;
-						newex->_keyCode = _field_4;
+						newex->_keyCode = _okeyCode;
 					}
 					newex->sendMessage();
 
@@ -520,7 +520,7 @@ void StaticANIObject::update(int counterdiff) {
 				if (dyn->_initialCountdown == dyn->_countdown && dyn->_field_68 == 0) {
 					newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
 					newex->_excFlags = 2;
-					newex->_keyCode = _field_4;
+					newex->_keyCode = _okeyCode;
 					newex->sendMessage();
 
 					if (!_movement)
@@ -599,7 +599,7 @@ bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (picAniInfo->type & 3) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
-		_field_4 = picAniInfo->field_8;
+		_okeyCode = picAniInfo->field_8;
 		setFlags(picAniInfo->flags);
 		_field_8 = picAniInfo->field_24;
 	}
@@ -767,7 +767,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 
 	ExCommand *newex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
 
-	newex->_keyCode = _field_4;
+	newex->_keyCode = _okeyCode;
 	newex->_excFlags = 2;
 
 	newex->postMessage();
@@ -1277,23 +1277,23 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_dataSize = src->_dataSize;
 
 		if (g_fullpipe->_currArchive) {
-			_field_14 = 0;
+			_mfield_14 = 0;
 			_libHandle = g_fullpipe->_currArchive;
 		}
 
-		_flags |= 1;
+		_mflags |= 1;
 
 		_someX = src->_someX;
 		_someY = src->_someY;
 	} else {
-		_field_14 = src->_field_14;
-		_field_8 = src->_field_8;
-		_flags = src->_flags;
+		_mfield_14 = src->_mfield_14;
+		_mfield_8 = src->_mfield_8;
+		_mflags = src->_mflags;
 
 		_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
 		strncpy(_memfilename, src->_memfilename, strlen(src->_memfilename) + 1);
 		_dataSize = src->_dataSize;
-		_field_10 = src->_field_10;
+		_mfield_10 = src->_mfield_10;
 		_libHandle = src->_libHandle;
 
 		_bitmap = src->_bitmap;
