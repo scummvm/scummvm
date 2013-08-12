@@ -164,7 +164,132 @@ void Visa::talkto(byte whom) {
 	byte fv;
 	bool no_matches;
 
-	warning("STUB: Visa::talkto()");
+	if (_vm->_acci->person == _vm->_acci->pardon) {
+		_vm->_acci->person = _vm->_gyro->subjnumber;
+		_vm->_gyro->subjnumber = 0;
+	}
+
+	if (_vm->_gyro->subjnumber == 0)
+		switch (whom) {
+		case _vm->_gyro->pspludwick:
+
+			if ((_vm->_gyro->dna.lustie_is_asleep) & (!_vm->_gyro->dna.obj[_vm->_gyro->potion])) {
+				dixi('q', 68);
+				_vm->_gyro->dna.obj[_vm->_gyro->potion] = true;
+				_vm->_lucerna->objectlist();
+				_vm->_lucerna->points(3);
+				return;
+			} else {
+				if (_vm->_gyro->dna.talked_to_crapulus)
+					// Spludwick - what does he need?
+					// 0 - let it through to use normal routine.
+					switch (_vm->_gyro->dna.given2spludwick) { 
+					case 1: // Falltrough is intended.
+					case 2:{
+						_vm->_scrolls->display(Common::String("Can you get me ") + _vm->_gyro->get_better(_vm->_gyro->spludwick_order[_vm->_gyro->dna.given2spludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
+						return;
+						}
+						break;
+					case 3: {
+						dixi('q', 30); // Need any help with the game?
+						return;
+						}
+						break;
+				}
+				else {
+					dixi('q', 42); // Haven't talked to Crapulus. Go and talk to him.
+					return;
+				}
+			}
+			break;
+
+		case _vm->_gyro->pibythneth:
+			if (_vm->_gyro->dna.givenbadgetoiby) {
+				dixi('q', 33); // Thanks a lot!
+				return; // And leave the proc.
+			}
+			break; // Or... just continue, 'cos he hasn't got it.
+		case _vm->_gyro->pdogfood:
+			if (_vm->_gyro->dna.wonnim) { // We've won the game.
+				dixi('q', 6); // "I'm Not Playing!"
+				return; // Zap back.
+			} else
+				_vm->_gyro->dna.asked_dogfood_about_nim = true;
+			break;
+		case _vm->_gyro->payles:
+			if (!_vm->_gyro->dna.ayles_is_awake) {
+				dixi('q', 43); // He's fast asleep!
+				return;
+			} else if (!_vm->_gyro->dna.given_pen_to_ayles) {
+				dixi('q', 44); // Can you get me a pen, Avvy?
+				return;
+			}
+			break;
+
+		case _vm->_gyro->pjacques: {
+			dixi('q', 43);
+			return;
+			}
+		case _vm->_gyro->pgeida:
+			if (_vm->_gyro->dna.geida_given_potion)
+				_vm->_gyro->dna.geida_follows = true;
+			else {
+				dixi('u', 17);
+				return;
+			}
+			break;
+		case _vm->_gyro->pspurge:
+			if (~ _vm->_gyro->dna.sitting_in_pub) {
+				dixi('q', 71); // Try going over and sitting down.
+				return;
+			} else {
+				if (_vm->_gyro->dna.spurge_talk < 5)
+					_vm->_gyro->dna.spurge_talk++;
+				if (_vm->_gyro->dna.spurge_talk > 1) { // no. 1 falls through
+					dixi('q', 70 + _vm->_gyro->dna.spurge_talk);
+					return;
+				}
+			}
+			break;
+	}
+	// On a subject. Is there any reason to block it?
+	else if ((whom == _vm->_gyro->payles) && (!_vm->_gyro->dna.ayles_is_awake)) { 
+			dixi('q', 43); // He's fast asleep!
+			return;
+		}
+
+	if (whom > 149)
+		whom -= 149;
+
+	no_matches = true;
+	for (fv = 0; fv <= _vm->_trip->numtr; fv++)
+		if (_vm->_trip->tr[fv].a.accinum == whom) {
+			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + (fv + 49) + _vm->_scrolls->kControlToBuffer);
+			no_matches = false;
+			break;
+		}
+
+	if (no_matches)
+		_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + _vm->_scrolls->kControlRegister + _vm->_scrolls->kControlToBuffer);
+
+	speech(whom, _vm->_gyro->subjnumber);
+
+	if (!went_ok)
+		dixi('n', whom); // File not found!
+
+	if ((_vm->_gyro->subjnumber == 0) && ((whom + 149) == _vm->_gyro->pcrapulus)) { // Crapulus: get the badge - first time only
+		_vm->_gyro->dna.obj[_vm->_gyro->badge] = true;
+		_vm->_lucerna->objectlist();
+		dixi('q', 1); // Circular from Cardiff.
+		_vm->_gyro->dna.talked_to_crapulus = true;
+
+		_vm->_gyro->whereis[_vm->_gyro->pcrapulus] = 177; // Crapulus walks off.
+
+		_vm->_trip->tr[1].vanishifstill = true;
+		_vm->_trip->tr[1].walkto(3); // Walks away.
+
+		_vm->_lucerna->points(2);
+	}
 }
 
 } // End of namespace Avalanche.

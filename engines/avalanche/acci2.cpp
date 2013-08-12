@@ -606,9 +606,17 @@ void Acci::examobj() {   /* Examine a standard object-thing */
 	warning("STUB: Acci::examobj()");
 }
 
-bool Acci::personshere() {       /* Person equivalent of "holding" */
-	warning("STUB: Acci::personshere()");
-	return true;
+bool Acci::personshere() { // Person equivalent of "holding".
+	if ((person == pardon) || (person == 0) || (_vm->_gyro->whereis[person] == _vm->_gyro->dna.room))
+		return true;
+	else {
+		if (person < 175)
+			_vm->_scrolls->display(Common::String('H') + _vm->_scrolls->kControlToBuffer);
+		else
+			_vm->_scrolls->display(Common::String("Sh") + _vm->_scrolls->kControlToBuffer);
+		_vm->_scrolls->display("e isn't around at the moment.");
+		return false;
+	}
 }
 
 void Acci::exampers() {
@@ -1178,30 +1186,31 @@ void Acci::do_that() {
 		break;
 	case vb_talk:
 		if (person == pardon) {
-			if (_vm->_gyro->subjnumber == 99) /* They typed "say passuint16". */
-				_vm->_scrolls->display("Yes, but what \6is\22 the passuint16?");
-			/*
-			else if (set::of(range(1, 49), 253, 249, eos).has(subjnumber)) {
-				Delete(thats, 1, 1);
-				move(realuint16s[2], realuint16s[1], sizeof(realuint16s) - sizeof(realuint16s[1]));
-				verb = chr(subjnumber);
+			if (_vm->_gyro->subjnumber == 99) /* They typed "say password". */
+				_vm->_scrolls->display(Common::String("Yes, but what ") + _vm->_scrolls->kControlItalic + "is" + _vm->_scrolls->kControlRoman + " the password?");
+			else if (((1 <= _vm->_gyro->subjnumber) && (_vm->_gyro->subjnumber <= 49)) || (_vm->_gyro->subjnumber == 253) || (_vm->_gyro->subjnumber == 449)) {
+				thats.deleteChar(0);
+
+				for (byte i = 0; i < 10; i++)
+					realwords[i] = realwords[i + 1];
+				//move(realwords[2], realwords[1], sizeof(realwords) - sizeof(realwords[1]));
+
+				verb = _vm->_gyro->subjnumber;
 				do_that();
 				return;
 			} else {
 				person = _vm->_gyro->subjnumber;
-				subjnumber = 0;
-				if (set::of(pardon, '\0', eos).has(person))
+				_vm->_gyro->subjnumber = 0;
+				if ((person == 0) || (person == pardon))
 					_vm->_scrolls->display("Talk to whom?");
 				else if (personshere())
-					talkto(ord(person));
+					_vm->_visa->talkto(person);
 			}
-			*/
-			else if (person == pardon)
-				_vm->_scrolls->display("Talk to whom?");
-		} else if (personshere())
+		} else if (person == pardon)
+			_vm->_scrolls->display("Talk to whom?");
+		else if (personshere())
 			_vm->_visa->talkto(person);
 		break;
-
 	case vb_give:
 		if (holding()) {
 			if (person == pardon)
