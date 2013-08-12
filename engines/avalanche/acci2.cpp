@@ -548,7 +548,7 @@ void Acci::parse() {
 	fv = 0;
 	while ((fv < 11) && !realwords[fv].empty()) {
 		if ((realwords[fv][0] == '\'') || (realwords[fv][0] == '\"')) {
-			_vm->_gyro->subjnumber = thats[fv];
+			_vm->_gyro->subjnumber = (byte)thats[fv];
 			thats.setChar(moved, fv);
 			break;
 		}
@@ -557,30 +557,30 @@ void Acci::parse() {
 
 	if (_vm->_gyro->subjnumber == 0) // Still not found.
 		for (fv = 0; fv < thats.size() - 1; fv++)
-			if (thats[fv] == 252) { // The word is "about", or something similar.
-				_vm->_gyro->subjnumber = thats[fv + 1];
+			if ((byte)thats[fv] == 252) { // The word is "about", or something similar.
+				_vm->_gyro->subjnumber = (byte)thats[fv + 1];
 				thats.setChar(0, fv + 1);
 				break;
 			}
 
 	if (_vm->_gyro->subjnumber == 0) // STILL not found! Must be the word after "say".
 		for (fv = 0; fv < thats.size() - 1; fv++)
-			if ((thats[fv] == 7) && (thats[fv + 1] != 0) && !((225 <= thats[fv + 1]) && (thats[fv + 1] <= 229))) {
+			if (((byte)thats[fv] == 7) && ((byte)thats[fv + 1] != 0) && !((225 <= (byte)thats[fv + 1]) && ((byte)thats[fv + 1] <= 229))) {
 				// SAY not followed by a preposition
-				_vm->_gyro->subjnumber = thats[fv + 1];
+				_vm->_gyro->subjnumber = (byte)thats[fv + 1];
 				thats.setChar(0, fv + 1);
 				break;
 			}
 
 	for (int8 fv = thats.size() - 1; fv >= 0; fv--) // Reverse order, so first will be used.
-		if ((thats[fv] == 253) || (thats[fv] == 249) || ((1 <= thats[fv]) && (thats[fv] <= 49)))
-			verb = thats[fv];
-		else if ((50 <= thats[fv]) && (thats[fv] <= 149)) {
+		if (((byte)thats[fv] == 253) || ((byte)thats[fv] == 249) || ((1 <= (byte)thats[fv]) && ((byte)thats[fv] <= 49)))
+			verb = (byte)thats[fv];
+		else if ((50 <= (byte)thats[fv]) && ((byte)thats[fv] <= 149)) {
 			thing2 = thing;
-			thing = thats[fv];
-		} else if ((150 <= thats[fv]) && (thats[fv] <= 199))
-			person = thats[fv];
-		else if (thats[fv] == 251)
+			thing = (byte)thats[fv];
+		} else if ((150 <= (byte)thats[fv]) && ((byte)thats[fv] <= 199))
+			person = (byte)thats[fv];
+		else if ((byte)thats[fv] == 251)
 			polite = true;
 
 		if ((!unknown.empty()) && (verb != vb_exam) && (verb != vb_talk) && (verb != vb_save) && (verb != vb_load) && (verb != vb_dir)) {
@@ -607,7 +607,7 @@ void Acci::examobj() {   /* Examine a standard object-thing */
 }
 
 bool Acci::personshere() { // Person equivalent of "holding".
-	if ((person == pardon) || (person == 0) || (_vm->_gyro->whereis[person] == _vm->_gyro->dna.room))
+	if ((person == pardon) || (person == 0) || (_vm->_gyro->whereis[person - 150] == _vm->_gyro->dna.room))
 		return true;
 	else {
 		if (person < 175)
