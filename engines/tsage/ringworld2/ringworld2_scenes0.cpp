@@ -3887,7 +3887,7 @@ Scene325::Scene325(): SceneExt() {
 	_field412 = 7;
 	_iconFontNumber = 50;
 	_field416 = _field418 = 0;
-	_field41A = _field41C = _field41E = _field420 = 0;
+	_field41A = _field41C = _field41E = _scannerLocation = 0;
 	_soundCount = _soundIndex = 0;
 
 	for (int idx = 0; idx < 10; ++idx)
@@ -3922,7 +3922,7 @@ void Scene325::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field41A);
 	s.syncAsSint16LE(_field41C);
 	s.syncAsSint16LE(_field41E);
-	s.syncAsSint16LE(_field420);
+	s.syncAsSint16LE(_scannerLocation);
 	s.syncAsSint16LE(_soundCount);
 	s.syncAsSint16LE(_soundIndex);
 
@@ -4025,17 +4025,17 @@ void Scene325::signal() {
 				if (v != 13) {
 					setMessage(328, v);
 				} else {
-					_field420 = 864;
+					_scannerLocation = 864;
 
 					_object12.postInit();
-					_object2.setup(326, 4, 1);
+					_object12.setup(326, 4, 1);
 					_object12.setPosition(Common::Point(149, 128));
 					_object12.fixPriority(20);
 
-					_object13.postInit();
-					_object13.setup(326, 4, 2);
-					_object13.setPosition(Common::Point(149, 22 + (int)(_field420 * ADJUST_FACTOR)));
-					_object13.fixPriority(21);
+					_scannerTab.postInit();
+					_scannerTab.setup(326, 4, 2);
+					_scannerTab.setPosition(Common::Point(149, 22 + (int)(_scannerLocation * ADJUST_FACTOR)));
+					_scannerTab.fixPriority(21);
 
 					_object10.postInit();
 					_object10.setup(326, 1, 1);
@@ -4283,7 +4283,7 @@ void Scene325::consoleAction(int id) {
 			_icon4.hideIcon();
 
 			_object12.remove();
-			_object13.remove();
+			_scannerTab.remove();
 			_object10.remove();
 			_object1.remove();
 			_object2.remove();
@@ -4336,7 +4336,7 @@ void Scene325::consoleAction(int id) {
 		case 18:
 		case 19:
 		case 20:
-			if (_field420) {
+			if (_scannerLocation) {
 				R2_GLOBALS._player.disableControl();
 				_field41A = 1296;
 				_field41E = 1;
@@ -4356,7 +4356,7 @@ void Scene325::consoleAction(int id) {
 		case 18:
 		case 19:
 		case 20:
-			if (_field420 < 1620) {
+			if (_scannerLocation < 1620) {
 				R2_GLOBALS._player.disableControl();
 				_field41A = 1296;
 				_field41E = -1;
@@ -4452,21 +4452,21 @@ void Scene325::dispatch() {
 
 		if (yp >= 30) {
 			yp -= 12;
-			--_field420;
+			--_scannerLocation;
 			flag = true;
 		}
 		if (yp <= 10) {
 			yp += 12;
-			++_field420;
+			++_scannerLocation;
 			flag = true;
 		}
-		_object3.setPosition(Common::Point(149, (int)(_field420 * ADJUST_FACTOR) + 22));
+		_scannerTab.setPosition(Common::Point(149, 22 + (int)(_scannerLocation * ADJUST_FACTOR)));
 
 		for (int idx = 0; idx < 4; ++idx)
 			_objList[idx].remove();
 
 		if (flag) {
-			int v = _field420 - 758;
+			int v = _scannerLocation - 758;
 			_object10.setFrame((v++ <= 0) ? 1 : v);
 			_object1.setFrame((v++ <= 0) ? 1 : v);
 			_object2.setFrame((v++ <= 0) ? 1 : v);
@@ -4506,7 +4506,7 @@ void Scene325::dispatch() {
 			R2_GLOBALS._sound3.stop();
 			_field41C = 0;
 
-			if (_field420 == 756) {
+			if (_scannerLocation == 756) {
 				R2_GLOBALS._player.disableControl();
 				R2_GLOBALS._events.setCursor(CURSOR_USE);
 				_sceneMode = 12;

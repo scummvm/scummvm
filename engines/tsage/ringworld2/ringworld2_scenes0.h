@@ -451,7 +451,7 @@ private:
 	Common::String parseMessage(const Common::String &msg);
 public:
 	int _field412, _iconFontNumber, _field416, _field418;
-	int _field41A, _field41C, _field41E, _field420;
+	int _field41A, _field41C, _field41E, _scannerLocation;
 	int _soundCount, _soundIndex;
 	int _soundQueue[10];
 	SpeakerQuinn _quinnSpeaker;
@@ -459,7 +459,7 @@ public:
 	SceneHotspot _background, _item2;
 	SceneObject _object1, _object2, _object3, _object4, _object5;
 	SceneObject _object6, _object7, _object8, _object9, _object10;
-	SceneObject _object11, _object12, _object13;
+	SceneObject _object11, _object12, _scannerTab;
 	SceneObject _objList[4];
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5, _icon6;
 	ASoundExt _sound1;
