@@ -2976,7 +2976,7 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 			} else if (!R2_GLOBALS.getFlag(55)) {
 				R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 				scene->_sceneMode = 10;
-				scene->_stripManager.start3(scene->_stripId, scene, R2_GLOBALS._stripManager_lookupList);
+				scene->_stripManager.start3(201, scene, R2_GLOBALS._stripManager_lookupList);
 			} else {
 				scene->_sceneMode = 16;
 
@@ -3357,7 +3357,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			break;
 		case 325:
 			if (!R2_GLOBALS.getFlag(44) || R2_GLOBALS.getFlag(25))
-				setAction(&_sequenceManager1, this, 309, &R2_GLOBALS._player, NULL);
+				setAction(&_sequenceManager1, this, 307, &R2_GLOBALS._player, NULL);
 			else {
 				R2_GLOBALS.setFlag(60);
 				R2_GLOBALS._player.setup(302, 3, 1);
@@ -3895,8 +3895,8 @@ Scene325::Scene325(): SceneExt() {
 }
 
 void Scene325::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(325);
+	SceneExt::postInit();
 
 	R2_GLOBALS.clearFlag(50);
 	_stripManager.addSpeaker(&_quinnSpeaker);
@@ -4023,7 +4023,7 @@ void Scene325::signal() {
 
 			if (R2_GLOBALS.getFlag(44) && !R2_GLOBALS.getFlag(51)) {
 				if (v != 13) {
-					setMessage(328, 0);
+					setMessage(328, v);
 				} else {
 					_field420 = 864;
 
@@ -4034,7 +4034,7 @@ void Scene325::signal() {
 
 					_object13.postInit();
 					_object13.setup(326, 4, 2);
-					_object13.setPosition(Common::Point(149, (int)(_field420 * ADJUST_FACTOR)));
+					_object13.setPosition(Common::Point(149, 22 + (int)(_field420 * ADJUST_FACTOR)));
 					_object13.fixPriority(21);
 
 					_object10.postInit();
@@ -4045,7 +4045,7 @@ void Scene325::signal() {
 					_object1.postInit();
 					_object1.setup(326, 1, 1);
 					_object1.setPosition(Common::Point(210, 32));
-					_object10.fixPriority(10);
+					_object1.fixPriority(10);
 
 					_object2.postInit();
 					_object2.setup(326, 1, 1);
@@ -4095,7 +4095,7 @@ void Scene325::signal() {
 			} else if (R2_GLOBALS.getFlag(51)) {
 				setMessage(329, (v == 12) ? 10 : v);
 			} else {
-				setMessage(327, (v < 15) ? 1 : v);
+				setMessage(327, (v >= 15) ? 1 : v);
 			}
 			break;
 		}
@@ -4136,12 +4136,12 @@ void Scene325::signal() {
 			setMessage(128, _field416);
 			break;
 		default:
-			R2_GLOBALS._player.enableControl();
-			R2_GLOBALS._player._canWalk = false;
-			_field416 = 105;
-			setMessage(128, _field416);
+			_field416 = 0;
 			break;
 		}
+
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 10:
 		R2_GLOBALS._player.enableControl();
@@ -4223,31 +4223,50 @@ void Scene325::consoleAction(int id) {
 		_icon1.hideIcon();
 		_icon2.hideIcon();
 		_icon3.hideIcon();
-		// TODO: Finish
+
+		if (id == 2 || (id == 19 && _field418 == 5 && R2_GLOBALS.getFlag(50) &&
+				R2_GLOBALS.getFlag(44) && !R2_GLOBALS.getFlag(51))) {
+			_icon5.setIcon(13);
+			_icon4.setPosition(Common::Point(52, 107));
+			_icon4._sceneRegionId = 9;
+			_icon4.setIcon(14);
+			_icon4._object2.hide();
+
+		} else {
+			_icon4.hideIcon();
+			_icon5.hideIcon();
+		}
+
+		_icon6.setIcon(12);
+		_sceneMode = 10;
+		_palette.loadPalette(161);
+		BF_GLOBALS._scenePalette.addFader(&_palette._palette[0], 256, 5, this);
 		break;
-	case 3:
-		_icon1.setIcon(5);
-		_icon2.setIcon(6);
-		_icon3.setIcon(R2_GLOBALS.getFlag(50) ? 16 : 15);
+
+	case 22:
+	case 23:
+	case 24:
+	case 25:
+		R2_GLOBALS._player.disableControl();
+		consoleAction(2);
+		_field412 = id;
+		_icon1.hideIcon();
+		_icon2.hideIcon();
+		_icon3.hideIcon();
+		_icon4.hideIcon();
+
+		_icon5.setIcon(13);
+		_icon4.setPosition(Common::Point(52, 107));
+		_icon4._sceneRegionId = 9;
+		_icon4.setIcon(14);
+		_icon4._object2.hide();
+
+		_icon6.setIcon(12);
+		_sceneMode = 10;
+		_palette.loadPalette(161);
+		BF_GLOBALS._scenePalette.addFader(&_palette._palette[0], 256, 5, this);
 		break;
-	case 4:
-	case 5:
-		_field418 = id;
-		_icon1.setIcon(17);
-		_icon2.setIcon(18);
-		_icon3.setIcon(19);
-		break;
-	case 7:
-		consoleAction(((_field412 == 5) || (_field412 == 6) || (_field412 == 15)) ? 4 : 7);
-		break;
-	case 8:
-		R2_GLOBALS._sceneManager.changeScene(300);
-	case 9:
-	case 10:
-		_iconFontNumber = (id - 1) == 9 ? 50 : 52;
-		_text1.remove();
-		_icon6.setIcon(7);
-		break;
+
 	case 11:
 		if (R2_GLOBALS.getFlag(57) && (R2_GLOBALS._player._characterIndex == 1) && !R2_GLOBALS.getFlag(25)) {
 			R2_GLOBALS._player.disableControl();
@@ -4256,6 +4275,7 @@ void Scene325::consoleAction(int id) {
 			_stripManager.start(403, this);
 		} else {
 			R2_GLOBALS._player.disableControl();
+			id = 8;
 			_text1.remove();
 
 			_icon4.setPosition(Common::Point(80, 62));
@@ -4281,6 +4301,31 @@ void Scene325::consoleAction(int id) {
 
 			BF_GLOBALS._scenePalette.addFader(&_palette._palette[0], 256, 5, this);
 		}
+		break;
+
+	case 3:
+		_icon1.setIcon(5);
+		_icon2.setIcon(6);
+		_icon3.setIcon(R2_GLOBALS.getFlag(50) ? 16 : 15);
+		break;
+	case 4:
+	case 5:
+		_field418 = id;
+		_icon1.setIcon(17);
+		_icon2.setIcon(18);
+		_icon3.setIcon(19);
+		_icon4.setIcon(20);
+		break;
+	case 7:
+		consoleAction(((_field412 == 5) || (_field412 == 6) || (_field412 == 15)) ? 4 : 7);
+		break;
+	case 8:
+		R2_GLOBALS._sceneManager.changeScene(300);
+	case 9:
+	case 10:
+		_iconFontNumber = (id - 1) == 9 ? 50 : 52;
+		_text1.remove();
+		_icon6.setIcon(7);
 		break;
 	case 12:
 		_icon4.setIcon(14);
@@ -4332,31 +4377,6 @@ void Scene325::consoleAction(int id) {
 		R2_GLOBALS.clearFlag(50);
 		consoleAction(4);
 		id = 4;
-		break;
-	case 22:
-	case 23:
-	case 24:
-	case 25:
-		R2_GLOBALS._player.disableControl();
-		consoleAction(2);
-		_field412 = id;
-
-		_icon1.hideIcon();
-		_icon2.hideIcon();
-		_icon3.hideIcon();
-		_icon4.hideIcon();
-
-		_icon5.setIcon(13);
-		_icon4.setPosition(Common::Point(52, 107));
-		_icon4._sceneRegionId = 9;
-		_icon4.setIcon(14);
-		_icon4._object2.hide();
-
-		_icon6.setIcon(12);
-		_sceneMode = 10;
-		_palette.loadPalette(161);
-
-		BF_GLOBALS._scenePalette.addFader(&_palette._palette[0], 256, 5, this);
 		break;
 	case 6:
 	default:
