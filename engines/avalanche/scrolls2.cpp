@@ -717,7 +717,7 @@ void Scrolls::calldrivers() {
 						_vm->_lucerna->errorled();
 						natural();
 					} else
-						_vm->_trip->tr[param].chatter(); // Normal sprite talking routine.
+						_vm->_trip->tr[param - 1].chatter(); // Normal sprite talking routine.
 				else if ((10 <= param) && (param <= 36)) {
 					/* Quasi-peds. (This routine performs the same
 					thing with QPs as triptype.chatter does with the
