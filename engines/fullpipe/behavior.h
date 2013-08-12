@@ -25,22 +25,10 @@
 
 namespace Fullpipe {
 
-class BehaviorManager : public CObject {
-	CObArray _behaviors;
-	Scene *_scene;
-	bool _isActive;
-
-  public:
-	BehaviorManager();
-
-	void initBehavior(Scene *scene, CGameVar *var);
-	void updateBehaviors();
-};
-
 struct BehaviorEntryInfo {
-	int _messageQueue;
+	MessageQueue *_messageQueue;
 	int _delay;
-	int _percent;
+	uint _percent;
 	int _flags;
 };
 
@@ -48,7 +36,7 @@ struct BehaviorEntry {
 	int _staticsId;
 	int _itemsCount;
 	int _flags;
-	BehaviorEntryInfo *_items;
+	BehaviorEntryInfo **_items;
 };
 
 struct BehaviorInfo {
@@ -59,7 +47,21 @@ struct BehaviorInfo {
 	int _flags;
 	int _subIndex;
 	int _itemsCount;
-	BehaviorEntryInfo *_items;
+	Common::Array<BehaviorEntry *> _bheItems;
+};
+
+class BehaviorManager : public CObject {
+	Common::Array<BehaviorInfo *> _behaviors;
+	Scene *_scene;
+	bool _isActive;
+
+  public:
+	BehaviorManager();
+
+	void initBehavior(Scene *scene, CGameVar *var);
+	void updateBehaviors();
+	void updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry);
+	void updateStaticAniBehavior(StaticANIObject *ani, unsigned int delay, BehaviorEntry *behaviorEntry);
 };
 
 } // End of namespace Fullpipe

@@ -24,6 +24,8 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/messages.h"
 
 namespace Fullpipe {
 
@@ -37,7 +39,69 @@ void BehaviorManager::initBehavior(Scene *scene, CGameVar *var) {
 }
 
 void BehaviorManager::updateBehaviors() {
-	warning("STUB: BehaviorManager::updateBehaviors()");
+	if (!_isActive)
+		return;
+
+	for (uint i = 0; i < _behaviors.size(); i++) {
+		BehaviorInfo *beh = _behaviors[i];
+
+		if (!beh->_ani) {
+			beh->_counter++;
+			if (beh->_counter >= beh->_counterMax)
+				updateBehavior(beh, beh->_bheItems[0]);
+
+			continue;
+		}
+
+		if (beh->_ani->_movement || !(beh->_ani->_flags & 4) || (beh->_ani->_flags & 2)) {
+			beh->_staticsId = 0;
+			continue;
+		}
+
+		if (beh->_ani->_statics->_staticsId == beh->_staticsId) {
+			beh->_counter++;
+			if (beh->_counter >= beh->_counterMax) {
+				if (beh->_subIndex >= 0 && !(beh->_flags & 1) && beh->_ani->_messageQueueId <= 0)
+					updateStaticAniBehavior(beh->_ani, beh->_counter, beh->_bheItems[beh->_subIndex]);
+			}
+		} else {
+			beh->_staticsId = beh->_ani->_statics->_staticsId;
+			beh->_counter = 0;
+			beh->_subIndex = -1;
+
+			for (int j = 0; j < beh->_itemsCount; j++)
+				if (beh->_bheItems[j]->_staticsId == beh->_staticsId) {
+					beh->_subIndex = j;
+					break;
+				}
+
+		}
+	}
+}
+
+void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry) {
+	for (int i = 0; i < entry->_itemsCount; i++) {
+		BehaviorEntryInfo *bhi = entry->_items[i];
+		if (!(bhi->_flags & 1)) {
+			if (bhi->_flags & 2) {
+				MessageQueue *mq = new MessageQueue(entry->_items[i]->_messageQueue, 0, 1);
+
+				mq->sendNextCommand();
+
+				entry->_items[i]->_flags &= 0xFFFFFFFD;
+			} else if (behaviorInfo->_counter >= bhi->_delay && bhi->_percent && g_fullpipe->_rnd->getRandomNumber(32767) <= entry->_items[i]->_percent) {
+				MessageQueue *mq = new MessageQueue(entry->_items[i]->_messageQueue, 0, 1);
+
+				mq->sendNextCommand();
+
+				behaviorInfo->_counter = 0;
+			}
+		}
+	}
+}
+
+void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, unsigned int delay, BehaviorEntry *behaviorEntry) {
+	warning("STUB: BehaviorManager::updateStaticAniBehavior()");
 }
 
 } // End of namespace Fullpipe
