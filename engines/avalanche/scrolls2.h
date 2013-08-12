@@ -41,6 +41,27 @@ typedef void (Scrolls::*func2)();
 
 class Scrolls {
 public:
+	// Constants to replace the command characters from Pascal.
+	// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
+
+	static const char kControlSpeechBubble = 2; // ^B
+	static const char kControlCenter = 3; // ^C
+	static const char kControlToBuffer = 4; // ^D
+	static const char kControlItalic = 6; // ^F
+	static const char kControlBell = 7; // ^G
+	static const char kControlBackspace = 8; // ^H
+	static const char kControlInsertSpaces = 9; // ^I
+	static const char kControlLeftJustified = 12; // ^L
+	static const char kControlNewLine = 13; // ^M
+	static const char kControlParagraph = 16; // ^P
+	static const char kControlQuestion = 17; // ^Q
+	static const char kControlRoman = 18; // ^R
+	static const char kControlRegister = 19; // ^S
+	static const char kControlNegative = 21; // ^U
+	static const char kControlIcon = 22; // ^V
+
+
+
 	bool aboutscroll; /* Is this the about box? */
 
 
@@ -71,6 +92,8 @@ public:
 
 	void musical_scroll();
 
+	fontType ch[2];
+
 private:
 	AvalancheEngine *_vm;
 
@@ -81,35 +104,16 @@ private:
 
 
 
-	// Constants to replace the command characters from Pascal.
-	// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
-	
-	static const char kControlSpeechBubble = 2; // ^B
-	static const char kControlCenter = 3; // ^C
-	static const char kControlToBuffer = 4; // ^D
-	static const char kControlItalic = 6; // ^F
-	static const char kControlBell = 7; // ^G
-	static const char kControlBackspace = 8; // ^H
-	static const char kControlInsertSpaces = 9; // ^I
-	static const char kControlLeftJustified = 12; // ^L
-	static const char kControlNewLine = 13; // ^M
-	static const char kControlParagraph = 16; // ^P
-	static const char kControlQuestion = 17; // ^Q
-	static const char kControlRoman = 18; // ^R
-	static const char kControlRegister = 19; // ^S
-	static const char kControlNegative = 21; // ^U
-	static const char kControlIcon = 22; // ^V
-
-
-
 	int16 dix, diy;
-	fontType ch[2];
+	
 	byte cfont; // Current font
 
 	int16 dodgex, dodgey;
 	byte param; // For using arguments code
 
 	byte use_icon;
+
+
 
 	void easteregg();
 
