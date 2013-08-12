@@ -343,9 +343,9 @@ ThemeEngine::~ThemeEngine() {
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
 	{ _s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled },
-	{ _s("Standard Renderer (16bpp)"), _s("Standard (16bpp)"), "normal_16bpp", kGfxStandard16bit },
+	{ _s("Standard Renderer"), _s("Standard"), "normal", kGfxStandard },
 #ifndef DISABLE_FANCY_THEMES
-	{ _s("Antialiased Renderer (16bpp)"), _s("Antialiased (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
+	{ _s("Antialiased Renderer"), _s("Antialiased"), "antialias", kGfxAntialias }
 #endif
 };
 
@@ -353,9 +353,9 @@ const uint ThemeEngine::_rendererModesSize = ARRAYSIZE(ThemeEngine::_rendererMod
 
 const ThemeEngine::GraphicsMode ThemeEngine::_defaultRendererMode =
 #ifndef DISABLE_FANCY_THEMES
-	ThemeEngine::kGfxAntialias16bit;
+	ThemeEngine::kGfxAntialias;
 #else
-	ThemeEngine::kGfxStandard16bit;
+	ThemeEngine::kGfxStandard;
 #endif
 
 ThemeEngine::GraphicsMode ThemeEngine::findMode(const Common::String &cfg) {
@@ -494,13 +494,17 @@ void ThemeEngine::disable() {
 
 void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	switch (mode) {
-	case kGfxStandard16bit:
+	case kGfxStandard:
 #ifndef DISABLE_FANCY_THEMES
-	case kGfxAntialias16bit:
+	case kGfxAntialias:
 #endif
-		_bytesPerPixel = sizeof(uint16);
-		break;
-
+		if (g_system->getOverlayFormat().bytesPerPixel == 4) {
+			_bytesPerPixel = sizeof(uint32);
+			break;
+		} else if (g_system->getOverlayFormat().bytesPerPixel == 2) {
+			_bytesPerPixel = sizeof(uint16);
+			break;
+		}
 	default:
 		error("Invalid graphics mode");
 	}
@@ -1320,22 +1324,31 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	memset(_cursor, 0xFF, sizeof(byte) * _cursorWidth * _cursorHeight);
 
 	// the transparent color is 0xFF00FF
-	const int colTransparent = _overlayFormat.RGBToColor(0xFF, 0, 0xFF);
+	const uint32 colTransparent = _overlayFormat.RGBToColor(0xFF, 0, 0xFF);
 
 	// Now, scan the bitmap. We have to convert it from 16 bit color mode
 	// to 8 bit mode, and have to create a suitable palette on the fly.
 	uint colorsFound = 0;
 	Common::HashMap<int, int> colorToIndex;
-	const OverlayColor *src = (const OverlayColor *)cursor->getPixels();
+	const byte *src = (const byte *)cursor->getPixels();
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
+			uint32 color = colTransparent;
 			byte r, g, b;
 
+			if (cursor->format.bytesPerPixel == 2) {
+				color = READ_UINT16(src);
+			} else if (cursor->format.bytesPerPixel == 4) {
+				color = READ_UINT32(src);
+			}
+
+			src += cursor->format.bytesPerPixel;
+
 			// Skip transparency
-			if (src[x] == colTransparent)
+			if (color == colTransparent)
 				continue;
 
-			_overlayFormat.colorToRGB(src[x], r, g, b);
+			cursor->format.colorToRGB(color, r, g, b);
 			const int col = (r << 16) | (g << 8) | b;
 
 			// If there is no entry yet for this color in the palette: Add one
@@ -1357,7 +1370,6 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 			const int index = colorToIndex[col];
 			_cursor[y * _cursorWidth + x] = index;
 		}
-		src += _cursorWidth;
 	}
 
 	_useCursor = true;
