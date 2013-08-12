@@ -218,6 +218,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 					_audioStream->queueBuffer(&_ambiantNoiseBuf[ambiantNoiseAdr[val * 2]], ambiantNoiseAdr[(val * 2) + 1] - ambiantNoiseAdr[(val * 2)], DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
 				}
 			}
+			i++;
 			break;
 			}
 		case 2: {
@@ -240,16 +241,28 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			break;
 		case 6:
 			warning("TODO: pari2");
+			i += 2;
 			break;
 		default:
+			static byte emptyBuf[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 			if (idx == 62)
 				warning("TODO: blab");
-			else if (idx == 35) {
+			else if (idx == 32) {
+				if (!_audioStream)
+					_audioStream = Audio::makeQueuingAudioStream(freq, false);
+				_audioStream->queueBuffer(emptyBuf, 19, DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
+			} else if (idx == 35) {
 				if (i < _ptr_oct)
-					warning("unexpected 35");
+					warning("unexpected 35 - stop the buffering");
 				i = _ptr_oct;
-			} else
-				warning("Other code: %d", idx);
+			} else if (idx == 46) {
+				if (!_audioStream)
+					_audioStream = Audio::makeQueuingAudioStream(freq, false);
+				for (int i = 0; i < 10; i++)
+					_audioStream->queueBuffer(emptyBuf, 19, DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
+			} else {
+				warning("Other code: %d - %d %d", idx, _troctBuf[i], _troctBuf[i + 1]);
+			}
 			break;
 		}
 	}
@@ -364,9 +377,10 @@ void SoundManager::trait_car() {
 
 	switch (_queue[1]._code) {
 	case 9:
-		if (_queue[1]._val != (int)'#')
+		if (_queue[1]._val != (int)'#') {
 			for (i = 0; i <= _queue[1]._rep; ++i)
 				entroct(_queue[1]._val);
+		}
 		break;
 	case 5:
 	case 6:
@@ -703,6 +717,20 @@ void SoundManager::handlePhoneme() {
 	moveQueue();
 	trait_car();
 	entroct((int)'#');
+
+#ifdef DEBUG
+	warning("---");
+	for (int i = 0; i < _ptr_oct; ) {
+		if ((_troctBuf[i] == 32) || (_troctBuf[i] == 35) || (_troctBuf[i] == 46)) {
+			warning("%d", _troctBuf[i]);
+			i++;
+		} else {
+			warning("%d %d %d", _troctBuf[i], _troctBuf[i + 1], _troctBuf[i + 1]);
+			i += 3;
+		}
+	}
+	warning("---");
+#endif
 }
 
 /**
