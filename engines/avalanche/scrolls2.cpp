@@ -103,12 +103,15 @@ void Scrolls::easteregg() {
 }
 
 void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwriting */
-	Common::String text;
 	fontType itw;
 	byte lz = z.size();
 	
 	_vm->_logger->log_scrollline();
 
+	bool offset = x % 8 == 4;
+	x = x / 8;
+	y++;
+	int16 i = 0;
 	for (byte xx = 0; xx < lz; xx++) {
 		switch (z[xx]) {
 		case kControlRoman: {
@@ -125,18 +128,15 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			for (byte yy = 0; yy < 12; yy++)
 				itw[(byte)z[xx]][yy] = ch[cfont][(byte)z[xx]][yy + 2];
 
-			text += z[xx];
-			
+			// We have to draw the characters one-by-one because of the accidental font changes.
+			i++;
+			Common::String chr(z[xx]);
+			_vm->_graphics->drawText(_vm->_graphics->_scrolls, chr, itw, 12, x * 8 + offset * 4 + i * 8, y, black);
+
 			_vm->_logger->log_scrollchar(Common::String(z[xx]));
 			}
 		}
 	}
-
-	bool offset = x % 8 == 4;
-	x = x / 8;
-	y++;
-
-	_vm->_graphics->drawText(_vm->_graphics->_scrolls, text, itw, 12, x * 8 + offset * 4, y, black);
 }
 
 /* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
