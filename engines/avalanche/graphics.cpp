@@ -252,7 +252,7 @@ void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte
 void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text, fontType font, byte fontHeight, int16 x, int16 y, byte color) {
 	for (byte i = 0; i < text.size(); i++)
 		for (byte j = 0; j < fontHeight; j++) {
-			byte pixel = font[text[i]][j];
+			byte pixel = font[(byte)text[i]][j];	
 			for (byte bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
 				if (pixelBit)

@@ -123,7 +123,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			break;
 		default: {
 			for (byte yy = 0; yy < 12; yy++)
-				itw[z[xx]][yy] = ch[cfont][z[xx]][yy + 2];
+				itw[(byte)z[xx]][yy] = ch[cfont][(byte)z[xx]][yy + 2];
 
 			text += z[xx];
 			
@@ -857,7 +857,7 @@ void Scrolls::loadfont() {
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(ch[0][i],16);
+		f.read(ch[0][i], 16);
 	f.close();
 
 	if (!f.open("avitalic.fnt")) {
@@ -865,7 +865,7 @@ void Scrolls::loadfont() {
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(ch[1][i],16);
+		f.read(ch[1][i], 16);
 	f.close();
 	
 	if (!f.open("ttsmall.fnt")) {
