@@ -64,6 +64,8 @@ public:
 		String &operator[](const String &key) { return _entries[key]; }
 		const String &operator[](const String &key) const { return _entries[key]; }
 
+		void setVal(const String &key, const String &value) { _entries.setVal(key, value); }
+
 		String &getVal(const String &key) { return _entries.getVal(key); }
 		const String &getVal(const String &key) const { return _entries.getVal(key); }
 
