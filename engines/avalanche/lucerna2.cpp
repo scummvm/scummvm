@@ -442,8 +442,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 					_vm->_trip->tr[1].face = 3;
 				}
 
-				_vm->_trip->tr[2].call_eachstep = true;
-				_vm->_trip->tr[2].eachstep = _vm->_trip->procface_avvy; /* He always faces Avvy. */
+				_vm->_trip->tr[1].call_eachstep = true;
+				_vm->_trip->tr[1].eachstep = _vm->_trip->procface_avvy; /* He always faces Avvy. */
 
 			} else _vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__nowhere;
 
