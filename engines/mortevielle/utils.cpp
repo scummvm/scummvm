@@ -2385,6 +2385,7 @@ void MortevielleEngine::prepareRoom() {
 							displayTextInVerbBar(getEngineString(S_HEAR_NOISE));
 							int rand = (getRandomNumber(0, 4)) - 2;
 							_soundManager.startSpeech(1, rand, 1);
+							_soundManager.waitSpeech();
 							clearVerbBar();
 						}
 					}
@@ -2511,7 +2512,7 @@ void MortevielleEngine::initCaveOrCellar() {
 	displayTextInVerbBar(getEngineString(S_SOMEONE_ENTERS));
 	int rand = (getRandomNumber(0, 4)) - 2;
 	_soundManager.startSpeech(2, rand, 1);
-
+	_soundManager.waitSpeech();
 	// The original was doing here a useless loop.
 	// It has been removed
 

@@ -633,6 +633,7 @@ void MortevielleEngine::fctOpen() {
 				}
 				_openObjects[i] = _num;
 				displayAnimFrame(1, _num);
+				_soundManager.waitSpeech();
 			}
 			int tmpPlace = _coreVar._currPlace;
 			if (_coreVar._currPlace == CRYPT)
@@ -1147,10 +1148,7 @@ void MortevielleEngine::fctEnter() {
 				int randVal = (getRandomNumber(0, 10)) - 5;
 				_soundManager.startSpeech(7, randVal, 1);
 				displayAnimFrame(1, 1);
-				while (_mixer->isSoundHandleActive(_soundManager._soundHandle) && !keyPressed() && !_mouseClick && !shouldQuit())
-					;
-				// In case the handle is still active, stop it.
-				_mixer->stopHandle(_soundManager._soundHandle);
+				_soundManager.waitSpeech();
 
 				int charIndex = convertBitIndexToCharacterIndex(z);
 				++_coreVar._faithScore;
@@ -1172,10 +1170,7 @@ void MortevielleEngine::fctEnter() {
 			int randVal = (getRandomNumber(0, 10)) - 5;
 			_soundManager.startSpeech(7, randVal, 1);
 			displayAnimFrame(1, 1);
-			while (_mixer->isSoundHandleActive(_soundManager._soundHandle) && !keyPressed() && !_mouseClick && !shouldQuit())
-				;
-			// In case the handle is still active, stop it.
-			_mixer->stopHandle(_soundManager._soundHandle);
+			_soundManager.waitSpeech();
 
 			_coreVar._currPlace = _roomDoorId;
 			prepareDisplayText();

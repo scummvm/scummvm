@@ -784,4 +784,13 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 	_vm->setPal(_vm->_numpal);
 }
 
+void SoundManager::waitSpeech() {
+	while (_mixer->isSoundHandleActive(_soundHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
+		;
+	// In case the handle is still active, stop it.
+	_mixer->stopHandle(_soundHandle);
+
+	if (!_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
+		g_system->delayMillis(600);
+}
 } // End of namespace Mortevielle

@@ -98,6 +98,7 @@ public:
 	void loadAmbiantSounds();
 	void loadNoise();
 	void startSpeech(int rep, int ht, int typ);
+	void waitSpeech();
 };
 
 } // End of namespace Mortevielle
