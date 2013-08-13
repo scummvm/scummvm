@@ -99,7 +99,7 @@ private:
 	VirtualKeyboard *_kbd;
 	Rect _kbdBound;
 	Graphics::Surface *_kbdSurface;
-	OverlayColor _kbdTransparentColor;
+	uint32 _kbdTransparentColor;
 
 	Point _dragPoint;
 	bool _drag;
@@ -113,7 +113,7 @@ private:
 	const Graphics::Font *_dispFont;
 	int16 _dispX, _dispY;
 	uint _dispI;
-	OverlayColor _dispForeColor, _dispBackColor;
+	uint32 _dispForeColor, _dispBackColor;
 
 	int _lastScreenChanged;
 	int16 _screenW, _screenH;
@@ -121,7 +121,7 @@ private:
 	bool _displaying;
 	bool _firstRun;
 
-	void setupDisplayArea(Rect &r, OverlayColor forecolor);
+	void setupDisplayArea(Rect &r, uint32 forecolor);
 	void move(int16 x, int16 y);
 	void moveToDefaultPosition();
 	void screenChanged();
