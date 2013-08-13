@@ -117,12 +117,14 @@ project.xcworkspace
 /devtools/create_kyradat/create_kyradat
 /devtools/create_lure/create_lure
 /devtools/create_mads/create_mads
+/devtools/create_mortdat/create_mortdat
 /devtools/create_neverhood/create_neverhood
 /devtools/create_project/create_project
 /devtools/create_teenagent/create_teenagent
 /devtools/create_tony/create_tony
 /devtools/create_toon/create_toon
 /devtools/create_translations/create_translations
+/devtools/extract_mort/extract_mort
 /devtools/qtable/qtable
 /devtools/skycpt/skycpt
 
