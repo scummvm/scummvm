@@ -598,7 +598,9 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 
 					// Handle right-click to interrupt sequence
 					Common::Event ev;
-					_engine->getEventManager()->pollEvent(ev);
+					if (!_engine->getEventManager()->pollEvent(ev))
+						break;
+
 					if (ev.type == Common::EVENT_RBUTTONUP)
 						break;
 
