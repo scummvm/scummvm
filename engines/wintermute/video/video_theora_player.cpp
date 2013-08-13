@@ -498,7 +498,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alphaFilename));
 	persistMgr->transfer(TMEMBER(_posX));
 	persistMgr->transfer(TMEMBER(_posY));
-	persistMgr->transfer(TMEMBER(_playZoom));
+	persistMgr->transferFloat(TMEMBER(_playZoom));
 	persistMgr->transfer(TMEMBER_INT(_playbackType));
 	persistMgr->transfer(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_volume));

@@ -637,7 +637,7 @@ bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // float
-bool BasePersistenceManager::transfer(const char *name, float *val) {
+bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 	if (_saving) {
 		putFloat(*val);
 		if (_saveStream->err()) {

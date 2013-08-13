@@ -3068,8 +3068,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_offsetX));
 	persistMgr->transfer(TMEMBER(_offsetY));
-	persistMgr->transfer(TMEMBER(_offsetPercentX));
-	persistMgr->transfer(TMEMBER(_offsetPercentY));
+	persistMgr->transferFloat(TMEMBER(_offsetPercentX));
+	persistMgr->transferFloat(TMEMBER(_offsetPercentY));
 
 	persistMgr->transfer(TMEMBER(_origInteractive));
 	persistMgr->transfer(TMEMBER_INT(_origState));
