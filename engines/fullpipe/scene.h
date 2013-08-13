@@ -30,10 +30,7 @@ namespace Fullpipe {
 class MessageQueue;
 
 class Scene : public Background {
-	friend class FullpipeEngine;
-	friend class SceneTag;
-	friend class StaticANIObject;
-
+ public:
 	CPtrList _staticANIObjectList1;
 	CPtrList _staticANIObjectList2;
 	CPtrList _messageQueueList;

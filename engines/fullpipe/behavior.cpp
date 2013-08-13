@@ -34,8 +34,49 @@ BehaviorManager::BehaviorManager() {
 	_isActive = 1;
 }
 
-void BehaviorManager::initBehavior(Scene *scene, CGameVar *var) {
-	warning("STUB: BehaviorManager::initBehavior()");
+BehaviorManager::~BehaviorManager() {
+	clear();
+}
+
+void BehaviorManager::clear() {
+	for (uint i = 0; i < _behaviors.size(); i++) {
+		for (int j = 0; j < _behaviors[i]->_itemsCount; j++)
+			delete _behaviors[i]->_bheItems[j];
+
+		delete _behaviors[i];
+	}
+	_behaviors.clear();
+}
+
+void BehaviorManager::initBehavior(Scene *sc, CGameVar *var) {
+	clear();
+	_scene = sc;
+
+	BehaviorInfo *behinfo;
+
+	CGameVar *behvar = var->getSubVarByName("BEHAVIOR");
+	if (!behvar)
+		return;
+
+	for (CGameVar *subvar = behvar->_subVars; subvar; subvar = subvar->_nextVarObj) {
+		if (!strcmp(subvar->_varName, "AMBIENT")) {
+			behinfo = new BehaviorInfo;
+			behinfo->initAmbientBehavior(subvar);
+
+			_behaviors.push_back(behinfo);
+		} else {
+			StaticANIObject *ani = sc->getStaticANIObject1ByName(subvar->_varName, -1);
+			if (ani)
+				for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++)
+					if (((StaticANIObject *)sc->_staticANIObjectList1[i])->_id == ani->_id) {
+						behinfo = new BehaviorInfo;
+						behinfo->initObjectBehavior(subvar, sc, ani);
+						behinfo->_ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+
+						_behaviors.push_back(behinfo);
+					}
+		}
+	}
 }
 
 void BehaviorManager::updateBehaviors() {
@@ -102,6 +143,14 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *
 
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, unsigned int delay, BehaviorEntry *behaviorEntry) {
 	warning("STUB: BehaviorManager::updateStaticAniBehavior()");
+}
+
+void BehaviorInfo::initAmbientBehavior(CGameVar *var) {
+	warning("STUB: BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
+}
+
+void BehaviorInfo::initObjectBehavior(CGameVar *var, Scene *sceneObj, StaticANIObject *ani) {
+	warning("STUB: BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
 }
 
 } // End of namespace Fullpipe

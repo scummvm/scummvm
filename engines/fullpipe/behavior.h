@@ -48,6 +48,9 @@ struct BehaviorInfo {
 	int _subIndex;
 	int _itemsCount;
 	Common::Array<BehaviorEntry *> _bheItems;
+
+	void initAmbientBehavior(CGameVar *var);
+	void initObjectBehavior(CGameVar *var, Scene *sceneObj, StaticANIObject *ani);
 };
 
 class BehaviorManager : public CObject {
@@ -57,8 +60,12 @@ class BehaviorManager : public CObject {
 
   public:
 	BehaviorManager();
+	~BehaviorManager();
+
+	void clear();
 
 	void initBehavior(Scene *scene, CGameVar *var);
+
 	void updateBehaviors();
 	void updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry);
 	void updateStaticAniBehavior(StaticANIObject *ani, unsigned int delay, BehaviorEntry *behaviorEntry);
