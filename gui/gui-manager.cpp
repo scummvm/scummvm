@@ -556,7 +556,7 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 /* Touch events */
 #ifdef ENABLE_TOUCHMAPPER
 	case Common::EVENT_FINGERMOVE:
-		activeDialog->handleMouseMoved(finger.x, finger.y, 0);
+		activeDialog->handleFingerMoved(finger.x, finger.y, event.finger[0].deltax, event.finger[0].deltay, 0);
 		if (finger.x != _lastMousePosition.x || finger.y != _lastMousePosition.y) {
 			_lastMousePosition.x = finger.x;
 			_lastMousePosition.y = finger.y;
@@ -575,11 +575,11 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 			_lastClick.count = 1;
 		}
 		_lastClick.time = time;
-		activeDialog->handleMouseDown(finger.x , finger.y, 1, _lastClick.count);
+		activeDialog->handleFingerDown(finger.x , finger.y, 1, _lastClick.count);
 		break;
-	case Common::EVENT_TAPUP:
+	case Common::EVENT_SINGLETAP:
 		// 1 is left button, we use this when tapping with one finger
-		activeDialog->handleMouseUp(finger.x, finger.y, 1, _lastClick.count);
+		activeDialog->handleFingerSingleTap(finger.x, finger.y, 1, _lastClick.count);
 		break;
 	/* End of touch-events */
 #endif

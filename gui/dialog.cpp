@@ -166,6 +166,72 @@ void Dialog::drawDialog() {
 	}
 }
 
+#ifdef ENABLE_TOUCHMAPPER
+
+void Dialog::handleFingerDown(int x, int y, int button, int clickCount) {
+	Widget *w;
+
+	w = findWidget(x, y);
+
+	if (w && !(w->getFlags() & WIDGET_IGNORE_DRAG))
+		_dragWidget = w;
+
+	// If the click occurred inside a widget which is not the currently
+	// focused one, change the focus to that widget.
+	if (w && w != _focusedWidget && w->wantsFocus()) {
+		setFocusWidget(w);
+	}
+
+	if (w)
+		w->handleFingerDown(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
+}
+
+void Dialog::handleFingerSingleTap(int x, int y, int button, int clickCount) {
+	Widget *w;
+
+	if (_focusedWidget) {
+		//w = _focusedWidget;
+
+		// Lose focus on mouseup unless the widget requested to retain the focus
+		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
+			releaseFocus();
+		}
+	}
+
+	if (_dragWidget)
+		w = _dragWidget;
+	else
+		w = findWidget(x, y);
+
+	if (w)
+		w->handleFingerSingleTap(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
+
+	_dragWidget = 0;
+}
+	
+void Dialog::handleFingerMoved(int x, int y, int deltax, int deltay, int button) {
+	Widget *w;
+
+	if (_focusedWidget && !_dragWidget) {
+		w = _focusedWidget;
+		int wx = w->getAbsX() - _x;
+		int wy = w->getAbsY() - _y;
+
+		w->handleFingerMoved(x - wx, y - wy, deltax, deltay, button);
+	}
+
+	if (!_dragWidget || !(_dragWidget->getFlags() & WIDGET_TRACK_MOUSE))
+		w = findWidget(x, y);
+	else
+		w = _dragWidget;
+
+	// We only sent mouse move events when the widget requests to be informed about them.
+	if (w)
+		w->handleFingerMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), deltax, deltay, button);
+}
+
+#endif
+
 void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	Widget *w;
 
