@@ -286,7 +286,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 	if (isRelease) {
 		properties << "\t\tEnableIntrinsicFunctions=\"true\"\n"
 		              "\t\tWholeProgramOptimization=\"true\"\n"
-		              "\t\tPreprocessorDefinitions=\"WIN32;RELEASE_BUILD\"\n"
+		              "\t\tPreprocessorDefinitions=\"WIN32;DISABLE_GUI_BUILTIN_THEME;RELEASE_BUILD\"\n"
 		              "\t\tStringPooling=\"true\"\n"
 		              "\t\tBufferSecurityCheck=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"0\"\n"
@@ -300,7 +300,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tSetChecksum=\"true\"\n";
 	} else {
 		properties << "\t\tOptimization=\"0\"\n"
-		              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+		              "\t\tPreprocessorDefinitions=\"WIN32;DISABLE_GUI_BUILTIN_THEME\"\n"
 		              "\t\tMinimalRebuild=\"true\"\n"
 		              "\t\tBasicRuntimeChecks=\"3\"\n"
 		              "\t\tRuntimeLibrary=\"1\"\n"
