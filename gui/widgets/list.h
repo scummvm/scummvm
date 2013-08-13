@@ -65,6 +65,8 @@ protected:
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 
+	int				_scrollOffset;
+
 	String			_quickSelectStr;
 	uint32			_quickSelectTime;
 
@@ -127,6 +129,12 @@ public:
 	virtual bool handleKeyDown(Common::KeyState state);
 	virtual bool handleKeyUp(Common::KeyState state);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	
+#ifdef ENABLE_TOUCHMAPPER
+	virtual void handleFingerMoved(int x, int y, int deltax, int deltay, int button);
+	virtual void handleFingerSingleTap(int x, int y, int button, int clickCount);
+	virtual void handleFingerDown(int x, int y, int button, int clickCount);
+#endif
 
 	virtual void reflowLayout();
 
