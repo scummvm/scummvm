@@ -42,6 +42,16 @@ public:
 
 	// EventMapper interface
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
+
+	enum InputMode {
+		kDirectInput = 0,
+		kTouchpadMode = 1
+	};
+
+	InputMode inputMode;
+
+private:
+	bool _dragAndDrop;
 };
 
 } // End of namespace Common
