@@ -46,7 +46,7 @@ namespace Mortevielle {
 
 MortevielleEngine *g_vm;
 
-MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc):
+MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc):
 		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle"),
 		_soundManager(_mixer) {
 	g_vm = this;

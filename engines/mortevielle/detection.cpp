@@ -24,13 +24,17 @@
 #include "engines/advancedDetector.h"
 
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/detection_tables.h"
 #include "mortevielle/saveload.h"
 
 namespace Mortevielle {
-uint32 MortevielleEngine::getGameFlags() const { return _gameDescription->flags; }
+struct MortevielleGameDescription {
+	ADGameDescription desc;
+	Common::Language originalLanguage;
+};
 
-Common::Language MortevielleEngine::getLanguage() const { return _gameDescription->language; }
+uint32 MortevielleEngine::getGameFlags() const { return _gameDescription->desc.flags; }
+
+Common::Language MortevielleEngine::getLanguage() const { return _gameDescription->desc.language; }
 
 }
 
@@ -39,9 +43,11 @@ static const PlainGameDescriptor MortevielleGame[] = {
 	{0, 0}
 };
 
+#include "mortevielle/detection_tables.h"
+
 class MortevielleMetaEngine : public AdvancedMetaEngine {
 public:
-	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(ADGameDescription),
+	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
 		MortevielleGame) {
 		_md5Bytes = 512;
 		_singleid = "mortevielle";
@@ -63,7 +69,7 @@ public:
 
 bool MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-		*engine = new Mortevielle::MortevielleEngine(syst, desc);
+		*engine = new Mortevielle::MortevielleEngine(syst, (const Mortevielle::MortevielleGameDescription *)desc);
 	}
 	return desc != 0;
 }

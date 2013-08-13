@@ -169,9 +169,11 @@ struct Hint {
 	byte _point;
 };
 
+struct MortevielleGameDescription;
+
 class MortevielleEngine : public Engine {
 private:
-	const ADGameDescription *_gameDescription;
+	const MortevielleGameDescription *_gameDescription;
 	Common::Stack<int> _keypresses;
 	uint32 _lastGameFrame;
 	Common::Point _mousePos;
@@ -449,7 +451,7 @@ public:
 	TextHandler _text;
 	DialogManager _dialogManager;
 
-	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
+	MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc);
 	~MortevielleEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual bool canLoadGameStateCurrently();
