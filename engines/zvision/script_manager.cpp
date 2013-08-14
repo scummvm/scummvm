@@ -28,6 +28,8 @@
 
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
+#include "zvision/cursor_manager.h"
 #include "zvision/actions.h"
 #include "zvision/action_node.h"
 #include "zvision/utility.h"
@@ -210,6 +212,15 @@ void ScriptManager::changeLocationIntern() {
 	// We can clear without deleting from the heap because we use SharedPtr
 	_activeControls.clear();
 	_engine->clearAllMouseEvents();
+
+	// Revert to the idle cursor
+	_engine->getCursorManager()->revertToIdle();
+
+	// Change the background position
+	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.x);
+
+	// Reset the background velocity
+	_engine->getRenderManager()->setBackgroundVelocity(0);
 
 	// Parse into puzzles and controls
 	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
