@@ -122,6 +122,22 @@ void CursorManager::cursorDown(bool pushed) {
 	changeCursor(_currentCursor, pushed);
 }
 
+void CursorManager::setLeftCursor() {
+	changeCursor("leftarrow");
+}
+
+void CursorManager::setRightCursor() {
+	changeCursor("rightarrow");
+}
+
+void CursorManager::setUpCursor() {
+	changeCursor("zuparrow");
+}
+
+void CursorManager::setDownCursor() {
+	changeCursor("downarrow");
+}
+
 void CursorManager::revertToIdle() {
 	_currentCursor = "idle";
 	if (!_cursorIsPushed)

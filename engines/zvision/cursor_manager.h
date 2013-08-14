@@ -69,6 +69,12 @@ public:
 	void changeCursor(const Common::String &cursorName);
 	void changeCursor(const Common::String &cursorName, bool pushed);
 	void cursorDown(bool pushed);
+
+	void setLeftCursor();
+	void setRightCursor();
+	void setUpCursor();
+	void setDownCursor();
+
 	void revertToIdle();
 
 private:
