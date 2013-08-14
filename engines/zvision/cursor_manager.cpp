@@ -65,6 +65,9 @@ void CursorManager::changeCursor(const Common::String &cursorName) {
 }
 
 void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) {
+	if (_currentCursor.equals(cursorName) && _cursorIsPushed == pushed)
+		return;
+
 	if (_cursorIsPushed != pushed)
 		_cursorIsPushed = pushed;
 
