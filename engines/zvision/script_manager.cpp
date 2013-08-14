@@ -41,6 +41,7 @@ ScriptManager::ScriptManager(ZVision *engine)
 
 void ScriptManager::initialize() {
 	parseScrFile("universe.scr", true);
+	changeLocation('g', 'a', 'r', 'y', 0);
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
