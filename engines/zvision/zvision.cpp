@@ -116,9 +116,8 @@ void ZVision::initialize() {
 
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
 
-	_scriptManager->initialize();
-	// Has to be done after graphics has been initialized
 	_cursorManager->initialize();
+	_scriptManager->initialize();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -131,10 +130,12 @@ Common::Error ZVision::run() {
 	while (!shouldQuit()) {
 		_clock.update();
 		uint32 currentTime = _clock.getLastMeasuredTime();
-		
+		uint32 deltaTime = _clock.getDeltaTime();
+
 		processEvents();
 
-		_scriptManager->update(_clock.getDeltaTime());
+		_scriptManager->update(deltaTime);
+		_renderManager->update(deltaTime);
 
 		// Update the screen
 		_system->updateScreen();
