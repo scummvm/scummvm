@@ -134,8 +134,8 @@ void writeFontBlock() {
 		mortCom.seek(knownAddr[i]);
 		mortCom.read(checkBuffer, 7);
 
-		if ((checkBuffer[0] == 0x59) && (checkBuffer[1] == 0x5B) && (checkBuffer[2] == 0x58) ||
-			(checkBuffer[3] == 0xC3) && (checkBuffer[4] == 0xE8) && (checkBuffer[5] == 0xD6) ||
+		if ((checkBuffer[0] == 0x59) && (checkBuffer[1] == 0x5B) && (checkBuffer[2] == 0x58) &&
+			(checkBuffer[3] == 0xC3) && (checkBuffer[4] == 0xE8) && (checkBuffer[5] == 0xD6) &&
 			(checkBuffer[6] == 0x02)) {
 			break;
 		}
