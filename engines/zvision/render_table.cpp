@@ -149,26 +149,32 @@ void RenderTable::generatePanoramaLookupTable() {
 	float halfWidth = (float)_numColumns / 2.0f;
 	float halfHeight = (float)_numRows / 2.0f;
 
-	float fovRadians = (_panoramaOptions.fieldOfView * M_PI / 180.0f);
-	float halfHeightOverTan = halfHeight / tan(fovRadians);
-	float tanOverHalfHeight = tan(fovRadians) / halfHeight;
+	float fovInRadians = (_panoramaOptions.fieldOfView * M_PI / 180.0f);
+	float cylinderRadius = halfHeight / tan(fovInRadians);
 
 	// TODO: Change the algorithm to write a whole row at a time instead of a whole column at a time. AKA: for(y) { for(x) {}} instead of for(x) { for(y) {}}
 	for (uint x = 0; x < _numColumns; x++) {
 		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
-		float temp = atan(tanOverHalfHeight * ((float)x - halfWidth + 0.01f));
+		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and x
+		float alpha = atan(((float)x - halfWidth + 0.01f) / cylinderRadius);
 
-		int32 newX = int32(floor((halfHeightOverTan * _panoramaOptions.linearScale * temp) + halfWidth));
-		float cosX = cos(temp);
+		// To get x in cylinder coordinates, we just need to calculate the arc length
+		// We also scale it by _panoramaOptions.linearScale
+		int32 xInCylinderCoords = int32(floor((cylinderRadius * _panoramaOptions.linearScale * alpha) + halfWidth));
+		
+
+		float cosAlpha = cos(alpha);
 
 		for (uint y = 0; y < _numRows; y++) {
-			int32 newY = int32(floor(halfHeight + ((float)y - halfHeight) * cosX));
+			// To calculate y in cylinder coordinates, we can do similar triangles comparison, 
+			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
+			int32 yInCylinderCoords = int32(floor(halfHeight + ((float)y - halfHeight) * cosAlpha));
 
 			uint32 index = y * _numColumns + x;
 
-			// Only store the x,y offsets instead of the absolute positions
-			_internalBuffer[index].x = newX - x;
-			_internalBuffer[index].y = newY - y;
+			// Only store the (x,y) offsets instead of the absolute positions
+			_internalBuffer[index].x = xInCylinderCoords - x;
+			_internalBuffer[index].y = yInCylinderCoords - y;
 		}
 	}
 }
