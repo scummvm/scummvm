@@ -171,6 +171,7 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 
 CObjstateCommand::CObjstateCommand() {
 	_value = 0;
+	_objCommandName = 0;
 }
 
 bool CObjstateCommand::load(MfcArchive &file) {
@@ -192,6 +193,7 @@ MessageQueue::MessageQueue() {
 	_id = 0;
 	_isFinished = 0;
 	_flags = 0;
+	_queueName = 0;
 }
 
 MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {

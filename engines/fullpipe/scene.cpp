@@ -70,6 +70,7 @@ bool SceneTagList::load(MfcArchive &file) {
 SceneTag::SceneTag() {
 	_field_4 = 0;
 	_scene = 0;
+	_tag = 0;
 }
 
 bool SceneTag::load(MfcArchive &file) {
@@ -123,6 +124,7 @@ Scene::Scene() {
 	_shadows = 0;
 	_soundList = 0;
 	_libHandle = 0;
+	_sceneName = 0;
 }
 
 bool Scene::load(MfcArchive &file) {

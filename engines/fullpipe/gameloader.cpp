@@ -51,7 +51,7 @@ CGameLoader::CGameLoader() {
 	_inputController = new CInputController();
 
 	_gameProject = 0;
-	//_gameName = "untitled";
+	_gameName = 0;
 
 	addMessageHandlerByIndex(global_messageHandler2, 0, 0);
 	insertMessageHandler(global_messageHandler3, 0, 128);

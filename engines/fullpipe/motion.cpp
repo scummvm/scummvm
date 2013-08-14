@@ -122,6 +122,7 @@ CMovGraphLink::CMovGraphLink() {
 	_field_3C = 0;
 	_field_38 = 0;
 	_movGraphReact = 0;
+	_name = 0;
 }
 
 bool CMovGraphLink::load(MfcArchive &file) {

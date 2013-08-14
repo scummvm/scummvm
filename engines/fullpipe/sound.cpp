@@ -73,7 +73,8 @@ Sound::Sound() {
 	_directSoundBuffer = 0;
 	_soundData = 0;
 	_objectId = 0;
-	 memset(_directSoundBuffers, 0, sizeof(_directSoundBuffers));
+	memset(_directSoundBuffers, 0, sizeof(_directSoundBuffers));
+	_description = 0;
 }
 
 

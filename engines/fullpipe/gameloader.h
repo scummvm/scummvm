@@ -32,7 +32,7 @@ namespace Fullpipe {
 class SceneTag;
 class CMctlCompound;
 class CInputController;
- class CInteractionController;
+class CInteractionController;
 
 class CGameLoader : public CObject {
  public:

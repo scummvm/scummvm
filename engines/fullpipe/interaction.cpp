@@ -61,6 +61,7 @@ CInteraction::CInteraction() {
 	_staticsId2 = 0;
 	_field_28 = 0;
 	_sceneId = -1;
+	_actionName = 0;
 }
 
 bool CInteraction::load(MfcArchive &file) {

@@ -171,6 +171,7 @@ CGameVar::CGameVar() {
 	_field_14 = 0;
 	_varType = 0;
 	_value.floatValue = 0;
+	_varName = 0;
 }
 
 bool CGameVar::load(MfcArchive &file) {
