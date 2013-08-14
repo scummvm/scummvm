@@ -47,11 +47,11 @@ private:
 
 	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo);
 
-	private:
-		// Audio Codecs
-		enum {
-			kWaveFormatZorkPCM = 17	// special Zork PCM audio format (clashes with MS IMA ADPCM)
-		};
+private:
+	// Audio Codecs
+	enum {
+		kWaveFormatZorkPCM = 17	// special Zork PCM audio format (clashes with MS IMA ADPCM)
+	};
 };
 
 } // End of namespace ZVision
