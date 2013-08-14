@@ -145,12 +145,57 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, unsigned int
 	warning("STUB: BehaviorManager::updateStaticAniBehavior()");
 }
 
+void BehaviorInfo::clear() {
+	_ani = 0;
+	_staticsId = 0;
+	_counter = 0;
+	_counterMax = 0;
+	_flags = 0;
+	_subIndex = 0;
+	_itemsCount = 0;
+
+	_bheItems.clear();
+}
+
 void BehaviorInfo::initAmbientBehavior(CGameVar *var) {
 	warning("STUB: BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
 }
 
-void BehaviorInfo::initObjectBehavior(CGameVar *var, Scene *sceneObj, StaticANIObject *ani) {
-	warning("STUB: BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
+void BehaviorInfo::initObjectBehavior(CGameVar *var, Scene *sc, StaticANIObject *ani) {
+	debug(0, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
+
+	clear();
+
+	_itemsCount = var->getSubVarsCount();
+	_counterMax = -1;
+
+	while (var->_varType == 2) {
+		if (strcmp(var->_value.stringValue, "ROOT"))
+			break;
+
+		CGameVar *v1 = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
+		if (v1 == var)
+			return;
+
+		sc = g_fullpipe->accessScene(ani->_sceneId);
+		clear();
+		var = v1;
+		_itemsCount = var->getSubVarsCount();
+		_counterMax = -1;
+	}
+
+	for (int i = 0; i < _itemsCount; i++) {
+		int maxDelay;
+
+		_bheItems.push_back(new BehaviorEntry(var->getSubVarByIndex(i), sc, ani, &maxDelay));
+
+		if (maxDelay < _counterMax )
+			_counterMax = maxDelay;
+	}
+}
+
+BehaviorEntry::BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *maxDelay) {
+	warning("STUB: BehaviorEntry::BehaviorEntry()");
 }
 
 } // End of namespace Fullpipe

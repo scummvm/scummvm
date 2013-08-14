@@ -115,6 +115,7 @@ class CGameVar : public CObject {
 	CGameVar *addSubVarAsInt(const char *name, int value);
 	bool addSubVar(CGameVar *subvar);
 	int getSubVarsCount();
+	CGameVar *getSubVarByIndex(int idx);
 };
 
 struct PreloadItem {

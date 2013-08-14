@@ -300,6 +300,19 @@ int CGameVar::getSubVarsCount() {
 	return res;
 }
 
+CGameVar *CGameVar::getSubVarByIndex(int idx) {
+	CGameVar *sub = _subVars;
+
+	while (idx--) {
+		sub = sub->_nextVarObj;
+
+		if (!sub)
+			return 0;
+	}
+
+	return sub;
+}
+
 Sc2::Sc2() {
 	_sceneId = 0;
 	_field_2 = 0;

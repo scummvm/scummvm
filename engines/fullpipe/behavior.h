@@ -37,6 +37,8 @@ struct BehaviorEntry {
 	int _itemsCount;
 	int _flags;
 	BehaviorEntryInfo **_items;
+
+	BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *maxDelay);
 };
 
 struct BehaviorInfo {
@@ -49,8 +51,11 @@ struct BehaviorInfo {
 	int _itemsCount;
 	Common::Array<BehaviorEntry *> _bheItems;
 
+	BehaviorInfo() { clear(); }
+
+	void clear();
 	void initAmbientBehavior(CGameVar *var);
-	void initObjectBehavior(CGameVar *var, Scene *sceneObj, StaticANIObject *ani);
+	void initObjectBehavior(CGameVar *var, Scene *sc, StaticANIObject *ani);
 };
 
 class BehaviorManager : public CObject {
