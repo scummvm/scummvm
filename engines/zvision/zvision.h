@@ -64,10 +64,19 @@ public:
 	~ZVision();
 
 private:
+	enum {
+		WINDOW_WIDTH = 640,
+		WINDOW_HEIGHT = 480,
+		WORKING_WINDOW_WIDTH = 512,
+		WORKING_WINDOW_HEIGHT = 320,
+
+		ROTATION_SCREEN_EDGE_OFFSET = 60,
+		MAX_ROTATION_SPEED = 150 // Pixels per second
+	};
+
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
-	const int _width;
-	const int _height;
+	const Common::Rect _workingWindow;
 	const Graphics::PixelFormat _pixelFormat;
 
 	const int _desiredFrameTime;

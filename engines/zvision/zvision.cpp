@@ -49,8 +49,7 @@ namespace ZVision {
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		: Engine(syst),
 		  _gameDescription(gameDesc),
-		  _width(640),
-		  _height(480),
+		  _workingWindow((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2) + WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2) + WORKING_WINDOW_HEIGHT),
 		  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /*RGB 555*/
 		  _desiredFrameTime(33), /* ~30 fps */
 		  _clock(_system) {
@@ -69,7 +68,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(_system, _width, _height);
+	_renderManager = new RenderManager(_system, _workingWindow);
 	_cursorManager = new CursorManager(this, &_pixelFormat);
 
 	debug("ZVision::ZVision");
@@ -115,7 +114,7 @@ void ZVision::initialize() {
 		SearchMan.add(name, archive);
 	}
 
-	initGraphics(_width, _height, true, &_pixelFormat);
+	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
 
 	_scriptManager->initialize();
 	// Has to be done after graphics has been initialized

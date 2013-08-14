@@ -43,13 +43,14 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(OSystem *system, const int width, const int height);
+	RenderManager(OSystem *system, const Common::Rect workingWindow);
 	~RenderManager();
 
 private:
 	OSystem *_system;
-	const int _width;
-	const int _height;
+	const int _workingWidth;
+	const int _workingHeight;
+	const Common::Rect _workingWindow;
 	RenderTable _renderTable;
 
 	Common::SeekableReadStream *_currentBackground;
@@ -63,23 +64,23 @@ public:
 
 	/**
 	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
-	 * The image will be clipped to fit inside the window.
+	 * The image will be clipped to fit inside the working window. Coords are in working window space, not screen space!
 	 *
 	 * @param fileName        Name of the image file
-	 * @param destinationX    X position where the image should be put
-	 * @param destinationY    Y position where the image should be put
-	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
+	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
+	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
 	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool autoCenter = false);
 
 	/**
 	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
-	 * The image will be clipped to fit inside the window.
+	 * The image will be clipped to fit inside the working window. Coords are in working window space, not screen space!
 	 *
 	 * @param stream          Stream to read the image data from
-	 * @param destinationX    X position where the image should be put
-	 * @param destinationY    Y position where the image should be put
-	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image.
+	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
+	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
 	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool autoCenter = false);
 
@@ -91,7 +92,7 @@ public:
 	 */
 	void setBackgroundImage(const Common::String &fileName);
 
-	const Common::Point convertToImageCoords(const Common::Point &point);
+	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
 
 	RenderTable *getRenderTable();
 

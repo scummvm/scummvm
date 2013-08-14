@@ -34,12 +34,13 @@
 
 namespace ZVision {
 
-RenderManager::RenderManager(OSystem *system, const int width, const int height)
+RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow)
 	: _system(system),
-	  _width(width),
-	  _height(height),
+	  _workingWidth(workingWindow.width()),
+	  _workingHeight(workingWindow.height()),
+	  _workingWindow(workingWindow),
 	  _currentBackground(0),
-	  _renderTable(width, height) {
+	  _renderTable(workingWindow.width(), workingWindow.height()) {
 }
 
 RenderManager::~RenderManager() {
@@ -75,20 +76,19 @@ void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uin
 	if (!subRectangle.isValidRect() || subRectangle.isEmpty() || !destRect.isValidRect() || destRect.isEmpty())
 		return;
 
-	// Center the image on the screen if asked
-	if (autoCenter) {
-		destRect.moveTo((_width - subRectangle.width()) / 2, (_height - subRectangle.height()) / 2);
 	}
 
 	_backgroundOffset = Common::Point(destRect.left, destRect.top);
 
 	if (_renderTable.getRenderState() == RenderTable::FLAT) {
-		_system->copyRectToScreen(buffer + subRectangle.top * horizontalPitch + subRectangle.left, horizontalPitch, destRect.left, destRect.top, destRect.width(), destRect.height());
+		// Convert destRect to screen space by adding _workingWindowOffset
+		_system->copyRectToScreen(buffer + subRectangle.top * horizontalPitch + subRectangle.left, horizontalPitch, destRect.left + _workingWindow.left, destRect.top + _workingWindow.top, destRect.width(), destRect.height());
 	} else {
 		uint16 *destBuffer = new uint16[destRect.width() * destRect.height()];
 		_renderTable.mutateImage((uint16 *)buffer, destBuffer, imageWidth, imageHeight, subRectangle, destRect);
 
-		_system->copyRectToScreen(destBuffer, subRectangle.width() * sizeof(uint16), destRect.left, destRect.top, destRect.width(), destRect.height());
+		// Convert destRect to screen space by adding _workingWindow offest
+		_system->copyRectToScreen(destBuffer, subRectangle.width() * sizeof(uint16), destRect.left + _workingWindow.left, destRect.top + _workingWindow.top, destRect.width(), destRect.height());
 		delete[] destBuffer;
 	}
 }
@@ -143,14 +143,20 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 	}
 }
 
-const Common::Point RenderManager::convertToImageCoords(const Common::Point &point) {
-	Common::Point newPoint(point);
+const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
+	// Convert from screen space to working window space
+	Common::Point newPoint(point - Common::Point(_workingWindow.left, _workingWindow.top));
 
 	if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
-		newPoint = _renderTable.convertWarpedPointToFlatCoords(newPoint);
+		newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
 	}
 
 	newPoint -= _backgroundOffset;
+	if (newPoint.x < 0)
+		newPoint.x += _backgroundWidth;
+	if (newPoint.y < 0)
+		newPoint.y += _backgroundHeight;
+
 	return newPoint;
 }
 

@@ -80,7 +80,7 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 	// Videos use a different pixel format
 	Common::List<Graphics::PixelFormat> formats;
 	formats.push_back(videoDecoder.getPixelFormat());
-	initGraphics(_width, _height, true, formats);
+	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, formats);
 
 	byte bytesPerPixel = videoDecoder.getPixelFormat().bytesPerPixel;
 
@@ -113,8 +113,8 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 		scaledVideoFrameBuffer = new byte[finalWidth * finalHeight * bytesPerPixel];
 	}
 
-	uint16 x = ((_width - finalWidth) / 2) + destRect.left;
-	uint16 y = ((_height - finalHeight) / 2) + destRect.top;
+	uint16 x = ((WINDOW_WIDTH - finalWidth) / 2) + destRect.left;
+	uint16 y = ((WINDOW_HEIGHT - finalHeight) / 2) + destRect.top;
 
 	_clock.stop();
 	videoDecoder.start();
@@ -168,7 +168,7 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 	}
 
 	// Reset the pixel format to the original state
-	initGraphics(_width, _height, true, &_pixelFormat);
+	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
 }
 
 } // End of namespace ZVision
