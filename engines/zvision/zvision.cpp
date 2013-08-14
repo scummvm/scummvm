@@ -167,6 +167,10 @@ RenderManager *ZVision::getRenderManager() const {
 	return _renderManager;
 }
 
+CursorManager *ZVision::getCursorManager() const {
+	return _cursorManager;
+}
+
 Common::RandomSource *ZVision::getRandomSource() const {
 	return _rnd;
 }
