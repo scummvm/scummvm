@@ -61,7 +61,6 @@ private:
 	int _backgroundInverseVelocity;
 	uint _accumulatedVelocityMilliseconds;
 
-	Video::VideoDecoder *_currentVideo;
 	byte *_scaledVideoFrameBuffer;
 
 public:
@@ -77,7 +76,7 @@ public:
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
-	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool autoCenter = false);
+	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
 
 	/**
 	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
@@ -88,7 +87,7 @@ public:
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
-	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool autoCenter = false);
+	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
@@ -99,7 +98,7 @@ public:
 	void setBackgroundImage(const Common::String &fileName);
 
 	void setBackgroundPosition(int offset);
-
+	
 	void setBackgroundVelocity(int velocity);
 
 	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
@@ -107,7 +106,9 @@ public:
 	RenderTable *getRenderTable();
 
 private:
-	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter);
+	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap);
+
+	void moveBackground(int offset);
 };
 
 } // End of namespace ZVision

@@ -53,13 +53,6 @@ RenderManager::~RenderManager() {
 	}
 }
 
-void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter) {
-	// Panoramas are transposed
-	// The actual data is transposed in mutateImage
-	if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
-		uint32 temp = imageHeight;
-		imageHeight = imageWidth;
-		imageWidth = temp;
 void RenderManager::update(uint deltaTimeInMillis) {
 	// An inverse velocity of 0 would be infinitely fast, so we'll let 0 mean no velocity.
 	if (_backgroundInverseVelocity == 0)
@@ -78,29 +71,72 @@ void RenderManager::update(uint deltaTimeInMillis) {
 	// Choose the direction of movement using the sign of the velocity
 	moveBackground(_backgroundInverseVelocity < 0 ? -numberOfSteps : numberOfSteps);
 }
+
+void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap) {
+	if (wrap) {
+		_backgroundWidth = imageWidth;
+		_backgroundHeight = imageHeight;
 	}
 	
 	// If subRect is empty, use the entire image
 	if (subRectangle.isEmpty())
-		subRectangle = Common::Rect(imageWidth, imageHeight);
+		subRectangle = Common::Rect(subRectangle.left, subRectangle.top, subRectangle.left + imageWidth, subRectangle.top + imageHeight);
 
-	// Clip to image bounds
-	subRectangle.clip(imageWidth, imageHeight);
-	// Clip destRect to screen bounds
+	// Clip destRect to working window bounds
 	Common::Rect destRect(destinationX, destinationY, destinationX + subRectangle.width(), destinationY + subRectangle.height());
-	destRect.clip(_width, _height);
-	// Clip subRect to screen bounds
+	destRect.clip(_workingWidth, _workingHeight);
+	// Clip subRect to working window bounds
 	subRectangle.translate(destRect.left - destinationX, destRect.top - destinationY);
 	subRectangle.setWidth(destRect.width());
 	subRectangle.setHeight(destRect.height());
+	// Clip to image bounds
+	Common::Point subRectOrigOrigin(subRectangle.left, subRectangle.top);
+	subRectangle.clip(imageWidth, imageHeight);
 
-	// Check for validity
-	if (!subRectangle.isValidRect() || subRectangle.isEmpty() || !destRect.isValidRect() || destRect.isEmpty())
-		return;
+	// If the image is to be wrapped, check if it's smaller than destRect
+	// If it is, then call renderSubRectToScreen with a subRect representing wrapping
+	if (wrap && subRectangle.width() < destRect.width()) {
+		uint32 wrapDestX;
+		uint32 wrapDestY; 
+		Common::Rect wrapSubRect;
 
+		if (_backgroundWidth - subRectangle.left < destRect.width()) {
+			wrapDestX = destRect.left + subRectangle.width();
+			wrapDestY = destRect.top;
+			wrapSubRect = Common::Rect(0, 0, destRect.width() - subRectangle.width(), subRectangle.bottom);
+		} else {
+			wrapDestX = destRect.left;
+			wrapDestY = destRect.top;
+			wrapSubRect = Common::Rect(_backgroundWidth - subRectangle.width(), 0, _backgroundWidth - 1, subRectangle.bottom);
+		}
+
+		renderSubRectToScreen(buffer, imageWidth, imageHeight, horizontalPitch, wrapDestX, wrapDestY, wrapSubRect, false);
+	} else if (wrap && subRectangle.height() < destRect.height()) {
+		uint32 wrapDestX;
+		uint32 wrapDestY; 
+		Common::Rect wrapSubRect;
+
+		if (_backgroundHeight - subRectangle.top < destRect.height()) {
+			wrapDestX = destRect.left;
+			wrapDestY = destRect.height() - subRectangle.height();
+			wrapSubRect = Common::Rect(0, 0, subRectangle.right, destRect.height() - subRectangle.height());
+		} else {
+			wrapDestX = destRect.left;
+			wrapDestY = destRect.top;
+			wrapSubRect = Common::Rect(0, _backgroundHeight - subRectangle.height(), subRectangle.right, _backgroundHeight - 1);
+		}
+
+		renderSubRectToScreen(buffer, imageWidth, imageHeight, horizontalPitch, wrapDestX, wrapDestY, wrapSubRect, false);
 	}
 
-	_backgroundOffset = Common::Point(destRect.left, destRect.top);
+	// Clip destRect to image bounds
+	destRect.translate(subRectangle.left - subRectOrigOrigin.x, subRectangle.top - subRectOrigOrigin.y);
+	destRect.setWidth(subRectangle.width());
+	destRect.setHeight(subRectangle.height());
+
+	// Check all Rects for validity
+	if (!subRectangle.isValidRect() || subRectangle.isEmpty() || !destRect.isValidRect() || destRect.isEmpty())
+		return;
 
 	if (_renderTable.getRenderState() == RenderTable::FLAT) {
 		// Convert destRect to screen space by adding _workingWindowOffset
@@ -109,13 +145,13 @@ void RenderManager::update(uint deltaTimeInMillis) {
 		uint16 *destBuffer = new uint16[destRect.width() * destRect.height()];
 		_renderTable.mutateImage((uint16 *)buffer, destBuffer, imageWidth, imageHeight, subRectangle, destRect);
 
-		// Convert destRect to screen space by adding _workingWindow offest
+		// Convert destRect to screen space by adding _workingWindow offset
 		_system->copyRectToScreen(destBuffer, subRectangle.width() * sizeof(uint16), destRect.left + _workingWindow.left, destRect.top + _workingWindow.top, destRect.width(), destRect.height());
 		delete[] destBuffer;
 	}
 }
 
-void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter) {
+void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
@@ -123,10 +159,10 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 d
 		return;
 	}
 
-	renderImageToScreen(file, destinationX, destinationY, subRectangle, autoCenter);
+	renderImageToScreen(file, destinationX, destinationY, subRectangle);
 }
 
-void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool autoCenter) {
+void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap) {
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
 	uint32 fileType;
@@ -145,7 +181,15 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 
 		uint32 horizontalPitch = imageWidth * sizeof(uint16);
 
-		renderSubRectToScreen((uint16 *)buffer, imageWidth, imageHeight, horizontalPitch, destinationX, destinationY, subRectangle, autoCenter);
+		// Panoramas are transposed
+		// The actual data is transposed in mutateImage
+		if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
+			uint32 temp = imageHeight;
+			imageHeight = imageWidth;
+			imageWidth = temp;
+		}
+
+		renderSubRectToScreen((uint16 *)buffer, imageWidth, imageHeight, horizontalPitch, destinationX, destinationY, subRectangle, wrap);
 		delete[] buffer;
 	} else {
 		// Reset the cursor
@@ -159,8 +203,19 @@ void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint
 		}
 
 		const Graphics::Surface *tgaSurface = tga.getSurface();
-		renderSubRectToScreen((uint16 *)tgaSurface->pixels, tgaSurface->w, tgaSurface->h, tgaSurface->pitch, destinationX, destinationY, subRectangle, autoCenter);
 
+		uint32 imageWidth = tgaSurface->w;
+		uint32 imageHeight = tgaSurface->h;
+
+		// Panoramas are transposed
+		// The actual data is transposed in mutateImage
+		if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
+			uint32 temp = imageHeight;
+			imageHeight = imageWidth;
+			imageWidth = temp;
+		}
+
+		renderSubRectToScreen((uint16 *)tgaSurface->pixels, tgaSurface->w, tgaSurface->h, tgaSurface->pitch, destinationX, destinationY, subRectangle, wrap);
 		tga.destroy();
 	}
 }
@@ -199,7 +254,10 @@ void RenderManager::setBackgroundImage(const Common::String &fileName) {
 	}
 	_currentBackground = file;
 
-	renderImageToScreen(*_currentBackground, 0, 0, Common::Rect(), true);
+	// Purposely make the subRectangle empty. renderImageToScreen will then set the width and height automatically.
+	renderImageToScreen(*_currentBackground, 0, 0, Common::Rect(_backgroundOffset.x, _backgroundOffset.y, _backgroundOffset.x, _backgroundOffset.y), true);
+}
+
 void RenderManager::setBackgroundPosition(int offset) {
 	if (_renderTable.getRenderState() == RenderTable::TILT) {
 		_backgroundOffset = Common::Point(0, offset);
