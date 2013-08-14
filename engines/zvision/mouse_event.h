@@ -48,8 +48,24 @@ private:
 	Common::String _hoverCursor;
 
 public:
+	/**
+	 * Does a simple Rect::contains() using _hotspot
+	 *
+	 * @param point    The point to check against _hotspot
+	 * @return         The point is inside _hotspot (true) or not (false)
+	 */
 	bool withinHotspot(const Common::Point &point);
+	/**
+	 * Calls ScriptManager::setStateValue(_key, 1)
+	 *
+	 * @param engine    The base engine
+	 */
 	void onClick(ZVision *engine);
+	/**
+	 * Gets the name of the cursor that should be displayed when withinHotspot returns true
+	 *
+	 * @return    The name of the cursor. This should correspond to one of the names in CursorManager::_cursorNames[]
+	 */
 	const Common::String getHoverCursor() { return _hoverCursor; }
 };
 

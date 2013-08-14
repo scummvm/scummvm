@@ -64,20 +64,48 @@ private:
 	static const char *_zNemCursorFileNames[];
 
 public:
+	/** Creates the idle cursor and shows it */
 	void initialize();
 
+	/**
+	 * Parses a cursor name into a cursor file then creates and shows that cursor.
+	 * It will use the current _isCursorPushed state to choose the correct cursor
+	 *
+	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[]
+	 */
 	void changeCursor(const Common::String &cursorName);
+	/**
+	 * Parses a cursor name into a cursor file then creates and shows that cursor.
+	 *
+	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[] 
+	 * @param pushed        Should the cursor be pushed (true) or not pushed (false) (Another way to say it: down or up)
+	 */
 	void changeCursor(const Common::String &cursorName, bool pushed);
+	/**
+	 * Change the cursor to a certain push state. If the cursor is already in the specified push state, nothing will happen.
+	 *
+	 * @param pushed    Should the cursor be pushed (true) or not pushed (false) (Another way to say it: down or up)
+	 */
 	void cursorDown(bool pushed);
 
+	/** Set the cursor to 'Left Arrow'. It will retain the current _isCursorPushed state */
 	void setLeftCursor();
+	/** Set the cursor to 'Right Arrow'. It will retain the current _isCursorPushed state */
 	void setRightCursor();
+	/** Set the cursor to 'Up Arrow'. It will retain the current _isCursorPushed state */
 	void setUpCursor();
+	/** Set the cursor to 'Down Arrow'. It will retain the current _isCursorPushed state */
 	void setDownCursor();
 
+	/** Set the cursor to 'Idle'. It will retain the current _isCursorPushed state */
 	void revertToIdle();
 
 private:
+	/**
+	 * Calls CursorMan.replaceCursor() using the data in cursor
+	 *
+	 * @param cursor    The cursor to show
+	 */
 	void changeCursor(const ZorkCursor &cursor);
 };
 

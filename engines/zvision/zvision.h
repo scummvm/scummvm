@@ -76,6 +76,11 @@ private:
 
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
+	/** 
+	 * A Rectangle centered inside the actual window. All in-game coordinates
+	 * are given in this coordinate space. Also, all images are clipped to the
+	 * edges of this Rectangle
+	 */
 	const Common::Rect _workingWindow;
 	const Graphics::PixelFormat _pixelFormat;
 
@@ -110,17 +115,40 @@ public:
 	Common::RandomSource *getRandomSource() const;
 	ZVisionGameId getGameId() const;
 
+	/**
+	 * Play a video until it is finished. This is a blocking call. It will call
+	 * _clock.stop() when the video starts and _clock.start() when the video finishes.
+	 * It will also consume all events during video playback.
+	 *
+	 * @param videoDecoder    The video to play
+	 * @param destRect        Where to put the video. (In working window coords)
+	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
+	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
 
+	/**
+	 * Register a MouseEvent with the event system. These will be checked at every
+	 * MOUSE_UP, MOUSE_DOWN, MOUSE_MOVE, etc.
+	 *
+	 * @param event    The event to register
+	 */
 	void registerMouseEvent(const MouseEvent &event);
+	/** Remove all MouseEvents from the event system */
 	void clearAllMouseEvents();
 
+	/**
+	 * Utility method to cycle through all the cursors in the game. After
+	 * calling, use Left and Right arrows to cycle. Esc to quit. This is a
+	 * blocking function call.              
+	 */
 	void cycleThroughCursors();
 
 private:
 	void initialize();
 
+	/** Called every frame from ZVision::run() to process any events from EventMan */
 	void processEvents();
+
 	void onMouseDown(const Common::Point &pos);
 	void onMouseUp(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);

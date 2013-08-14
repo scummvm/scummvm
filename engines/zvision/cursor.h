@@ -33,6 +33,10 @@ class String;
 
 namespace ZVision {
 
+/** 
+ * Utility class to parse and hold cursor data
+ * Modeled off Graphics::Cursor
+ */
 class ZorkCursor {
 public:
 	ZorkCursor();

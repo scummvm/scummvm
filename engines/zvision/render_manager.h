@@ -48,23 +48,45 @@ public:
 
 private:
 	OSystem *_system;
+
+	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _workingWidth;
+	/** Height of the working window. Saved to prevent extraneous calls to _workingWindow.height() */
 	const int _workingHeight;
+	/** 
+	 * A Rectangle centered inside the actual window. All in-game coordinates
+	 * are given in this coordinate space. Also, all images are clipped to the
+	 * edges of this Rectangle
+	 */
 	const Common::Rect _workingWindow;
+	/** Used to warp the background image */
 	RenderTable _renderTable;
 
 	Common::SeekableReadStream *_currentBackground;
+	/** The (x1,y1) coordinates of the subRectangle of the background that is currently displayed on the screen */
 	Common::Point _backgroundOffset;
+	/** The width of the current background image */
 	uint16 _backgroundWidth;
+	/** The height of the current background image */
 	uint16 _backgroundHeight;
 
+	/** 
+	 * The "velocity" at which the background image is panning. We actually store the inverse of velocity (ms/pixel instead of pixels/ms)
+	 * because it allows you to accumulate whole pixels 'steps' instead of rounding pixels every frame
+	 */
 	int _backgroundInverseVelocity;
+	/** Holds any 'leftover' milliseconds between frames */
 	uint _accumulatedVelocityMilliseconds;
 
 	byte *_scaledVideoFrameBuffer;
 
 public:
 	void initialize();
+	/**
+	 * Rotates the background image in accordance to the current _backgroundInverseVelocity
+	 *
+	 * @param deltaTimeInMillis    The amount of time that has passed since the last frame
+	 */
 	void update(uint deltaTimeInMillis);
 
 	/**
@@ -97,15 +119,50 @@ public:
 	 */
 	void setBackgroundImage(const Common::String &fileName);
 
+	/**
+	 * Set the background position (_backgroundOffset). If the current RenderState is PANORAMA, the offset
+	 * will be in the horizontal direction. If the current RenderState is TILT, the offset will be in the
+	 * vertical direction. 
+	 *
+	 * This method will not render anything on the screen. So if nothing else is called that renders the 
+	 * background, the change won't be seen until next frame.
+	 *
+	 * @param offset The amount to offset the background
+	 */
 	void setBackgroundPosition(int offset);
 	
+	/**
+	 * Set the background scroll velocity. Negative velocities correspond to left / up scrolling and 
+	 * positive velocities correspond to right / down scrolling
+	 *
+	 * @param velocity    Velocity
+	 */
 	void setBackgroundVelocity(int velocity);
 
+	/**
+	 * Converts a point in screen coordinate space to image coordinate space
+	 *
+	 * @param point    Point in screen coordinate space
+	 * @return         Point in image coordinate space
+	 */
 	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
 
 	RenderTable *getRenderTable();
 
 private:
+	/**
+	 * Renders a subRectangle of an image to the screen. The destinationRect and SubRect
+	 * will be clipped to image bound and to working window bounds
+	 *
+	 * @param buffer             Pointer to (0, 0) of the image data
+	 * @param imageWidth         The width of the original image (not of the subRectangle)
+	 * @param imageHeight        The width of the original image (not of the subRectangle)
+	 * @param horizontalPitch    The horizontal pitch of the original image
+	 * @param destinationX       The x coordinate (in working window space) of where to put the final image
+	 * @param destinationY       The y coordinate (in working window space) of where to put the final image
+	 * @param subRectangle       A rectangle representing the part of the image that should be rendered
+	 * @param wrap               Should the image wrap (tile) if it doesn't completely fill the screen?
+	 */
 	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap);
 
 	void moveBackground(int offset);
