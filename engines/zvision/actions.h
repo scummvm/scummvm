@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ZVISION_RESULT_ACTION_H
-#define ZVISION_RESULT_ACTION_H
+#ifndef ZVISION_ACTIONS_H
+#define ZVISION_ACTIONS_H
 
 #include "common/scummsys.h"
 

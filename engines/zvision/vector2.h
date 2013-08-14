@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef COMMON_ZVISION_POINT_H
-#define COMMON_ZVISION_POINT_H
+#ifndef ZVISION_VECTOR2_H
+#define ZVISION_VECTOR2_H
 
 #include "common/scummsys.h"
 

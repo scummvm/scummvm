@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ZVISION_OBJECT_H
-#define ZVISION_OBJECT_H
+#ifndef ZVISION_SINGLE_VALUE_CONTAINER_H
+#define ZVISION_SINGLE_VALUE_CONTAINER_H
 
 namespace Common {
 class String;
