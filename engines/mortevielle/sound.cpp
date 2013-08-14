@@ -258,7 +258,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			} else if (idx == 46) {
 				if (!_audioStream)
 					_audioStream = Audio::makeQueuingAudioStream(freq, false);
-				for (int i = 0; i < 10; i++)
+				for (int j = 0; j < 10; j++)
 					_audioStream->queueBuffer(emptyBuf, 19, DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
 			} else {
 				warning("Other code: %d - %d %d", idx, _troctBuf[i], _troctBuf[i + 1]);
