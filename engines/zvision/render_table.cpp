@@ -60,7 +60,7 @@ void RenderTable::setRenderState(RenderState newState) {
 	}
 }
 
-const Common::Point RenderTable::convertWarpedPointToFlatCoords(const Common::Point &point) {
+const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Point &point) {
 	uint32 index = point.y * _numColumns + point.x;
 
 	Common::Point newPoint(point);
