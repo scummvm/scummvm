@@ -309,7 +309,19 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	if (pPartRect) {
-		srcImage.pixels = getBasePtr(pPartRect->left, pPartRect->top);
+
+		int xOffset = pPartRect->left;
+		int yOffset = pPartRect->top;
+
+		if (flipping & FLIP_V) {
+			yOffset = srcImage.h - pPartRect->bottom;
+		}
+
+		if (flipping & FLIP_H) {
+			xOffset = srcImage.w - pPartRect->right;
+		}
+
+		srcImage.pixels = getBasePtr(xOffset, yOffset);
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
 
