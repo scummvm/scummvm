@@ -55,12 +55,18 @@ private:
 
 	Common::SeekableReadStream *_currentBackground;
 	Common::Point _backgroundOffset;
+	uint16 _backgroundWidth;
+	uint16 _backgroundHeight;
+
+	int _backgroundInverseVelocity;
+	uint _accumulatedVelocityMilliseconds;
 
 	Video::VideoDecoder *_currentVideo;
 	byte *_scaledVideoFrameBuffer;
 
 public:
 	void initialize();
+	void update(uint deltaTimeInMillis);
 
 	/**
 	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
@@ -91,6 +97,10 @@ public:
 	 * @param fileName    The name of the image file
 	 */
 	void setBackgroundImage(const Common::String &fileName);
+
+	void setBackgroundPosition(int offset);
+
+	void setBackgroundVelocity(int velocity);
 
 	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
 

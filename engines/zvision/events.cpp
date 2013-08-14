@@ -26,6 +26,8 @@
 #include "zvision/console.h"
 #include "common/events.h"
 #include "engines/util.h"
+#include "common/system.h"
+#include "common/rational.h"
 
 #include "zvision/cursor_manager.h"
 #include "zvision/render_manager.h"
@@ -95,7 +97,7 @@ void ZVision::onMouseDown(const Common::Point &pos) {
 void ZVision::onMouseUp(const Common::Point &pos) {
 	_cursorManager->cursorDown(false);
 
-	Common::Point imageCoord(_renderManager->convertToImageCoords(pos));
+	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
 	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
 		if (iter->withinHotspot(imageCoord)) {
@@ -105,17 +107,93 @@ void ZVision::onMouseUp(const Common::Point &pos) {
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
-	Common::Point imageCoord(_renderManager->convertToImageCoords(pos));
+	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
 	bool isWithinAHotspot = false;
-	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		if (iter->withinHotspot(imageCoord)) {
-			_cursorManager->changeCursor(iter->getHoverCursor());
-			isWithinAHotspot = true;
+	if (_workingWindow.contains(pos)) {
+		for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+			if (iter->withinHotspot(imageCoord)) {
+				_cursorManager->changeCursor(iter->getHoverCursor());
+				isWithinAHotspot = true;
+			}
 		}
 	}
 
+	// Graph of the function governing rotation velocity:
+	//
+	//                                     |--------------- working window -----------------|
+	//               ^                     |--------|
+	//               |                          |
+	// +Max velocity |                        rotation screen edge offset                    _____________________
+	//               |                                                                      /
+	//               |                                                                     /
+	//               |                                                                    /
+	//               |                                                                   /
+	//               |                                                                  /
+	//               |                                                                 /
+	//               |                                                                /
+	//               |                                                               /
+	//               |                                                              /
+	// Zero velocity |______________________________ ______________________________/____________________________________>
+	//               | Position ->                  /
+	//               |                             /
+	//               |                            /
+	//               |                           /
+	//               |                          /
+	//               |                         /
+	//               |                        /
+	//               |                       /
+	//               |                      /
+	// -Max velocity |_____________________/
+	//               |
+	//               |
+	//               ^
 
+	// NOTE: RenderManger uses the inverse of velocity (ms/pixel instead of pixels/ms) because it allows you to accumulate whole
+	// pixels 'steps' instead of rounding pixels every frame
+
+	if (_workingWindow.contains(pos)) {
+		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
+		if (renderState == RenderTable::PANORAMA) {
+			if (pos.x >= _workingWindow.left && pos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
+				// Linear function of distance to the left edge (y = -mx + b)
+				// We use fixed point math to get better accuracy
+				Common::Rational velocity = (Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.x - _workingWindow.left)) - MAX_ROTATION_SPEED;
+				_renderManager->setBackgroundVelocity(velocity.toInt());
+				_cursorManager->setLeftCursor();
+				isWithinAHotspot = true;
+			} else if (pos.x <= _workingWindow.right && pos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
+				// Linear function of distance to the right edge (y = mx)
+				// We use fixed point math to get better accuracy
+				Common::Rational velocity = Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET);
+				_renderManager->setBackgroundVelocity(velocity.toInt());
+				_cursorManager->setRightCursor();
+				isWithinAHotspot = true;
+			} else {
+				_renderManager->setBackgroundVelocity(0);
+			}
+		} else if (renderState == RenderTable::TILT) {
+			if (pos.y >= _workingWindow.top && pos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
+				// Linear function of distance to top edge
+				// We use fixed point math to get better accuracy
+				Common::Rational velocity = (Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - MAX_ROTATION_SPEED;
+				_renderManager->setBackgroundVelocity(velocity.toInt());
+				_cursorManager->setUpCursor();
+				isWithinAHotspot = true;
+			} else if (pos.y <= _workingWindow.bottom && pos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
+				// Linear function of distance to the bottom edge (y = mx)
+				// We use fixed point math to get better accuracy
+				Common::Rational velocity = Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.bottom + ROTATION_SCREEN_EDGE_OFFSET);
+				_renderManager->setBackgroundVelocity(velocity.toInt());
+				_cursorManager->setDownCursor();
+				isWithinAHotspot = true;
+			} else {
+				_renderManager->setBackgroundVelocity(0);
+			}
+		}
+	} else {
+		_renderManager->setBackgroundVelocity(0);
+	}
 
 	if (!isWithinAHotspot) {
 		_cursorManager->revertToIdle();

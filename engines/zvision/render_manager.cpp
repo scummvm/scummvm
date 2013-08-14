@@ -40,6 +40,10 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow)
 	  _workingHeight(workingWindow.height()),
 	  _workingWindow(workingWindow),
 	  _currentBackground(0),
+	  _backgroundWidth(0),
+	  _backgroundHeight(0),
+	  _backgroundInverseVelocity(0),
+	  _accumulatedVelocityMilliseconds(0),
 	  _renderTable(workingWindow.width(), workingWindow.height()) {
 }
 
@@ -56,6 +60,24 @@ void RenderManager::renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uin
 		uint32 temp = imageHeight;
 		imageHeight = imageWidth;
 		imageWidth = temp;
+void RenderManager::update(uint deltaTimeInMillis) {
+	// An inverse velocity of 0 would be infinitely fast, so we'll let 0 mean no velocity.
+	if (_backgroundInverseVelocity == 0)
+		return;
+
+	_accumulatedVelocityMilliseconds += deltaTimeInMillis;
+
+	int absVelocity = abs(_backgroundInverseVelocity);
+
+	uint numberOfSteps = 0;
+	while (_accumulatedVelocityMilliseconds >= absVelocity) {
+		_accumulatedVelocityMilliseconds -= absVelocity;
+		numberOfSteps++;
+	}
+
+	// Choose the direction of movement using the sign of the velocity
+	moveBackground(_backgroundInverseVelocity < 0 ? -numberOfSteps : numberOfSteps);
+}
 	}
 	
 	// If subRect is empty, use the entire image
@@ -178,6 +200,46 @@ void RenderManager::setBackgroundImage(const Common::String &fileName) {
 	_currentBackground = file;
 
 	renderImageToScreen(*_currentBackground, 0, 0, Common::Rect(), true);
+void RenderManager::setBackgroundPosition(int offset) {
+	if (_renderTable.getRenderState() == RenderTable::TILT) {
+		_backgroundOffset = Common::Point(0, offset);
+	} else {
+		_backgroundOffset = Common::Point(offset, 0);
+	}
+}
+
+void RenderManager::setBackgroundVelocity(int velocity) {
+	// setBackgroundVelocity(0) will be called quite often, so make sure
+	// _backgroundInverseVelocity isn't already 0 to prevent an extraneous assignment
+	if (velocity == 0) {
+		if (_backgroundInverseVelocity != 0) {
+			_backgroundInverseVelocity = 0;
+		}
+	} else {
+		_backgroundInverseVelocity = 1000 / velocity;
+	}
+}
+
+void RenderManager::moveBackground(int offset) {
+	if (_renderTable.getRenderState() == RenderTable::TILT) {
+		_backgroundOffset += Common::Point(0, offset);
+	} else {
+		_backgroundOffset += Common::Point(offset, 0);
+	}
+
+	// Make sure the offset is within image bounds
+	if (_backgroundOffset.x < 0)
+		_backgroundOffset.x += _backgroundWidth;
+	if (_backgroundOffset.x > _backgroundWidth)
+		_backgroundOffset.x -= _backgroundWidth;
+	if (_backgroundOffset.y < 0)
+		_backgroundOffset.y += _backgroundHeight;
+	if (_backgroundOffset.y > _backgroundHeight)
+		_backgroundOffset.y -= _backgroundHeight;
+
+	_currentBackground->seek(0);
+	// Purposely make the subRectangle empty. renderImageToScreen will then set the width and height automatically.
+	renderImageToScreen(*_currentBackground, 0, 0, Common::Rect(_backgroundOffset.x, _backgroundOffset.y, _backgroundOffset.x, _backgroundOffset.y), true);
 }
 
 } // End of namespace ZVision
