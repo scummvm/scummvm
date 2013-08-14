@@ -121,36 +121,33 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 
 	// Graph of the function governing rotation velocity:
 	//
-	//                                     |--------------- working window -----------------|
-	//               ^                     |--------|
+	//                                    |---------------- working window ------------------|
+	//               ^                    |---------|
 	//               |                          |
-	// +Max velocity |                        rotation screen edge offset                    _____________________
-	//               |                                                                      /
-	//               |                                                                     /
-	//               |                                                                    /
-	//               |                                                                   /
-	//               |                                                                  /
-	//               |                                                                 /
-	//               |                                                                /
-	//               |                                                               /
-	//               |                                                              /
-	// Zero velocity |______________________________ ______________________________/____________________________________>
-	//               | Position ->                  /
-	//               |                             /
-	//               |                            /
-	//               |                           /
-	//               |                          /
-	//               |                         /
-	//               |                        /
-	//               |                       /
-	//               |                      /
-	// -Max velocity |_____________________/
+	// +Max velocity |                        rotation screen edge offset
+	//               |                                                                      /|
+	//               |                                                                     / |
+	//               |                                                                    /  |
+	//               |                                                                   /   |
+	//               |                                                                  /    |
+	//               |                                                                 /     |
+	//               |                                                                /      |
+	//               |                                                               /       |
+	//               |                                                              /        |
+	// Zero velocity |______________________________ ______________________________/_________|__________________________>
+	//               | Position ->        |         /
+	//               |                    |        /
+	//               |                    |       /
+	//               |                    |      /
+	//               |                    |     /
+	//               |                    |    /
+	//               |                    |   /
+	//               |                    |  /
+	//               |                    | /
+	// -Max velocity |                    |/
 	//               |
 	//               |
 	//               ^
-
-	// NOTE: RenderManger uses the inverse of velocity (ms/pixel instead of pixels/ms) because it allows you to accumulate whole
-	// pixels 'steps' instead of rounding pixels every frame
 
 	if (_workingWindow.contains(pos)) {
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
