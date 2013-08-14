@@ -194,8 +194,57 @@ void BehaviorInfo::initObjectBehavior(CGameVar *var, Scene *sc, StaticANIObject 
 	}
 }
 
-BehaviorEntry::BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *maxDelay) {
-	warning("STUB: BehaviorEntry::BehaviorEntry()");
+BehaviorEntry::BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay) {
+	_staticsId = 0;
+	_itemsCount = 0;
+
+	*minDelay = -1;
+
+	int totalPercent = 0;
+	_flags = 0;
+	_items = 0;
+
+	Statics *st = ani->getStaticsByName(var->_varName);
+	if (st)
+		_staticsId = st->_staticsId;
+
+	_itemsCount = var->getSubVarsCount();
+	if (_itemsCount) {
+		_items = (BehaviorEntryInfo**)calloc(_itemsCount, sizeof(BehaviorEntryInfo *));
+
+		for (int i = 0; i < _itemsCount; i++) {
+			CGameVar *subvar = var->getSubVarByIndex(i);
+
+			_items[i] = new BehaviorEntryInfo(subvar, sc);
+			totalPercent += _items[i]->_percent;
+
+			if (_items[i]->_delay < *minDelay)
+				*minDelay = _items[i]->_delay;
+		}
+
+		if (!*minDelay && totalPercent == 1000)
+			_flags |= 1;
+	}
+}
+
+BehaviorEntryInfo::BehaviorEntryInfo(CGameVar *subvar, Scene *sc) {
+	_messageQueue = 0;
+	_delay = 0;
+	_percent = 0;
+	_flags = 0;
+	_messageQueue = sc->getMessageQueueByName(subvar->_varName);
+
+	CGameVar *vart = subvar->getSubVarByName("dwDelay");
+	if (vart)
+		_delay = vart->_value.intValue;
+
+	vart = subvar->getSubVarByName("dwPercent");
+	if (vart)
+		_percent = 0x7FFF * vart->_value.intValue / 1000;
+	
+	vart = subvar->getSubVarByName("dwFlags");
+	if (vart && vart->_varType == 2 && strstr(vart->_value.stringValue, "QDESC_AUTOSTART"))
+		_flags |= 2;
 }
 
 } // End of namespace Fullpipe

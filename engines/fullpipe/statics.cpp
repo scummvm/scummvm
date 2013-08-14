@@ -273,6 +273,14 @@ Statics *StaticANIObject::getStaticsById(int itemId) {
 	return 0;
 }
 
+Statics *StaticANIObject::getStaticsByName(char *name) {
+	for (uint i = 0; i < _staticsList.size(); i++)
+		if (!strcmp(((Statics *)_staticsList[i])->_staticsName, name))
+			return (Statics *)_staticsList[i];
+
+	return 0;
+}
+
 Movement *StaticANIObject::getMovementById(int itemId) {
 	for (uint i = 0; i < _movements.size(); i++)
 		if (((Movement *)_movements[i])->_id == itemId)

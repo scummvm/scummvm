@@ -187,6 +187,7 @@ class StaticANIObject : public GameObject {
 
 	void setOXY(int x, int y);
 	Statics *getStaticsById(int id);
+	Statics *getStaticsByName(char *name);
 	Movement *getMovementById(int id);
 	int getMovementIdById(int itemId);
 	Movement *getMovementByName(char *name);

@@ -200,6 +200,7 @@ GameObject::GameObject() {
 	_priority = 0;
 	_field_20 = 0;
 	_field_8 = 0;
+	_objectName = 0;
 }
 
 GameObject::GameObject(GameObject *src) {

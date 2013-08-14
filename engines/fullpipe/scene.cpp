@@ -280,8 +280,8 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 }
 
 StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
-	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
-		StaticANIObject *o = (StaticANIObject *)*s;
+	for (uint n = 0; n < _staticANIObjectList1.size(); n++) {
+		StaticANIObject *o = (StaticANIObject *)_staticANIObjectList1[n];
 		if (!strcmp(o->_objectName, name) && (a3 == -1 || o->_okeyCode == a3))
 			return o;
 	}
@@ -335,6 +335,14 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 MessageQueue *Scene::getMessageQueueById(int messageId) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
 		if (((MessageQueue *)_messageQueueList[i])->_dataId == messageId)
+			return (MessageQueue *)_messageQueueList[i];
+
+	return 0;
+}
+
+MessageQueue *Scene::getMessageQueueByName(char *name) {
+	for (uint i = 0; i < _messageQueueList.size(); i++)
+		if (!strcmp(((MessageQueue *)_messageQueueList[i])->_queueName, name))
 			return (MessageQueue *)_messageQueueList[i];
 
 	return 0;

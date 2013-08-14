@@ -30,6 +30,8 @@ struct BehaviorEntryInfo {
 	int _delay;
 	uint _percent;
 	int _flags;
+
+	BehaviorEntryInfo(CGameVar *subvar, Scene *sc);
 };
 
 struct BehaviorEntry {
@@ -38,7 +40,7 @@ struct BehaviorEntry {
 	int _flags;
 	BehaviorEntryInfo **_items;
 
-	BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *maxDelay);
+	BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
 };
 
 struct BehaviorInfo {

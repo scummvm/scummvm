@@ -60,6 +60,7 @@ class Scene : public Background {
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
 	StaticANIObject *getStaticANIObject1ByName(char *name, int a3);
 	MessageQueue *getMessageQueueById(int messageId);
+	MessageQueue *getMessageQueueByName(char *name);
 
 	void deleteStaticANIObject(StaticANIObject *obj);
 	void addStaticANIObject(StaticANIObject *obj, bool addList2);
