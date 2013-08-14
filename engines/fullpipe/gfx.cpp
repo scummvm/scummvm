@@ -199,6 +199,7 @@ GameObject::GameObject() {
 	_oy = 0;
 	_priority = 0;
 	_field_20 = 0;
+	_field_6 = 0;
 	_field_8 = 0;
 	_objectName = 0;
 }

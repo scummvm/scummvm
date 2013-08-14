@@ -1225,7 +1225,48 @@ bool Movement::gotoNextFrame(int callback1, int callback2) {
 }
 
 bool Movement::gotoPrevFrame() {
-	warning("STUB: Movement::gotoPrevFrame()");
+	debug(8, "Movement::gotoPrevFrame()");
+
+	if (!_currDynamicPhaseIndex) {
+		gotoLastFrame();
+		return false;
+	}
+
+	Common::Point point;
+
+	getCurrDynamicPhaseXY(point);
+
+	_ox -= point.x;
+	_oy -= point.y;
+
+	if (_currMovement) {
+		if (_currMovement->_framePosOffsets) {
+			_ox += _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
+			_ox += _currMovement->_framePosOffsets[_currDynamicPhaseIndex]->x;
+			_oy -= _currMovement->_framePosOffsets[_currDynamicPhaseIndex]->y;
+		}
+
+		_currDynamicPhaseIndex--;
+		if (_currDynamicPhaseIndex < 0)
+			_currDynamicPhaseIndex = _currMovement->_dynamicPhases.size() - 1;
+
+		_ox -= _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
+	} else {
+		if (_framePosOffsets) {
+			_ox -= _framePosOffsets[_currDynamicPhaseIndex]->x;
+			_oy -= _framePosOffsets[_currDynamicPhaseIndex]->y;
+		}
+
+		_currDynamicPhaseIndex--;
+		if (_currDynamicPhaseIndex < 0)
+			_currDynamicPhaseIndex = _currMovement->_dynamicPhases.size() - 1;
+	}
+
+	updateCurrDynamicPhase();
+	getCurrDynamicPhaseXY(point);
+
+	_ox += point.x;
+	_oy += point.y;
 
 	return true;
 }

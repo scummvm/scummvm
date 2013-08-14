@@ -28,10 +28,10 @@ namespace Fullpipe {
 struct BehaviorEntryInfo {
 	MessageQueue *_messageQueue;
 	int _delay;
-	uint _percent;
+	uint32 _percent;
 	int _flags;
 
-	BehaviorEntryInfo(CGameVar *subvar, Scene *sc);
+	BehaviorEntryInfo(CGameVar *subvar, Scene *sc, int *delay);
 };
 
 struct BehaviorEntry {
@@ -40,6 +40,7 @@ struct BehaviorEntry {
 	int _flags;
 	BehaviorEntryInfo **_items;
 
+	BehaviorEntry();
 	BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
 };
 
@@ -56,7 +57,7 @@ struct BehaviorInfo {
 	BehaviorInfo() { clear(); }
 
 	void clear();
-	void initAmbientBehavior(CGameVar *var);
+	void initAmbientBehavior(CGameVar *var, Scene *sc);
 	void initObjectBehavior(CGameVar *var, Scene *sc, StaticANIObject *ani);
 };
 
@@ -75,7 +76,7 @@ class BehaviorManager : public CObject {
 
 	void updateBehaviors();
 	void updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry);
-	void updateStaticAniBehavior(StaticANIObject *ani, unsigned int delay, BehaviorEntry *behaviorEntry);
+	void updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorEntry *beh);
 };
 
 } // End of namespace Fullpipe

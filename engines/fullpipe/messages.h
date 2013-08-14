@@ -121,6 +121,8 @@ class MessageQueue : public CObject {
 
 	ExCommand *getExCommandByIndex(uint idx);
 
+	void replaceKeyCode(int key1, int key2);
+
 	bool chain(StaticANIObject *ani);
 	void update();
 	void sendNextCommand();

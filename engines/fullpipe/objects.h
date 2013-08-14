@@ -91,7 +91,7 @@ class Sc2Array : public Common::Array<Sc2> {
 
 union VarValue {
 	float floatValue;
-	int intValue;
+	int32 intValue;
 	char *stringValue;
 };
 

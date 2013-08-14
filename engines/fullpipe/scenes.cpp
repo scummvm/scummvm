@@ -141,7 +141,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	for (CPtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {
 		StaticANIObject *o = (StaticANIObject *)*s;
-		o->setFlags(o->_field_6 & 0xFE7F);
+		o->setFlags(o->_flags & 0xFE7F);
 	}
 
 	PictureObject *p = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);

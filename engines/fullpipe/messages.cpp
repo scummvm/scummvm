@@ -414,10 +414,20 @@ void MessageQueue::finish() {
 	warning("STUB: MessageQueue::finish()");
 }
 
+void MessageQueue::replaceKeyCode(int key1, int key2) {
+	for (uint i = 0; i < getCount(); i++) {
+		ExCommand *ex = getExCommandByIndex(i);
+		int k = ex->_messageKind;
+		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
+					&& ex->_keyCode == key1)
+			ex->_keyCode = key2;
+    }
+}
+
 MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 	for (CPtrList::iterator s = begin(); s != end(); ++s) {
-		if (((MessageQueue *)s)->_id == id)
-			return (MessageQueue *)s;
+		if (((MessageQueue *)*s)->_id == id)
+			return (MessageQueue *)*s;
 	}
 
 	return 0;
@@ -446,8 +456,8 @@ void GlobalMessageQueueList::removeQueueById(int id) {
 
 void GlobalMessageQueueList::disableQueueById(int id) {
 	for (CPtrList::iterator s = begin(); s != end(); ++s) {
-		if (((MessageQueue *)s)->_parId == id)
-			((MessageQueue *)s)->_parId = 0;
+		if (((MessageQueue *)*s)->_parId == id)
+			((MessageQueue *)*s)->_parId = 0;
 	}
 }
 
