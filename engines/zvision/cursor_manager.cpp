@@ -72,7 +72,7 @@ void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) 
 		_cursorIsPushed = pushed;
 
 	if (cursorName == "idle" && !pushed) {
-		revertToIdle();
+		CursorMan.replaceCursor(_idleCursor.getSurface(), _idleCursor.getWidth(), _idleCursor.getHeight(), _idleCursor.getHotspotX(), _idleCursor.getHotspotY(), _idleCursor.getKeyColor(), false, _pixelFormat);
 		return;
 	}
 
@@ -124,7 +124,10 @@ void CursorManager::cursorDown(bool pushed) {
 
 void CursorManager::revertToIdle() {
 	_currentCursor = "idle";
-	CursorMan.replaceCursor(_idleCursor.getSurface(), _idleCursor.getWidth(), _idleCursor.getHeight(), _idleCursor.getHotspotX(), _idleCursor.getHotspotY(), _idleCursor.getKeyColor(), false, _pixelFormat);
+	if (!_cursorIsPushed)
+		CursorMan.replaceCursor(_idleCursor.getSurface(), _idleCursor.getWidth(), _idleCursor.getHeight(), _idleCursor.getHotspotX(), _idleCursor.getHotspotY(), _idleCursor.getKeyColor(), false, _pixelFormat);
+	else
+		changeCursor(_currentCursor, _cursorIsPushed);
 }
 
 } // End of namespace ZVision
