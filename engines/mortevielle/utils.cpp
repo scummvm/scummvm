@@ -335,7 +335,7 @@ void MortevielleEngine::handleAction() {
 							_crep = 998;
 						} else
 							prepareNextObject();
-						mennor();
+						menuUp();
 					}
 				}
 			}
@@ -1348,7 +1348,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 		if (shouldQuit())
 			return;
 	} while (key != 66);
-	hirs();
+	clearScreen();
 	_mouse.showMouse();
 }
 
@@ -1385,10 +1385,10 @@ void MortevielleEngine::gotoDiningRoom() {
 		_screenSurface.drawBox(223, 47, 155, 92, 15);
 		handleDescriptionText(2, 33);
 		testKey(false);
-		mennor();
+		menuUp();
 		_mouse.hideMouse();
-		hirs();
-		premtet();
+		clearScreen();
+		drawDiscussionBox();
 		startDialog(140);
 		drawRightFrame();
 		drawClock();
@@ -1456,7 +1456,7 @@ void MortevielleEngine::floodedInWell() {
 void MortevielleEngine::changeGraphicalDevice(int newDevice) {
 	_mouse.hideMouse();
 	_currGraphicalDevice = newDevice;
-	hirs();
+	clearScreen();
 	_mouse.initMouse();
 	_mouse.showMouse();
 	drawRightFrame();
@@ -1538,7 +1538,7 @@ void MortevielleEngine::handleOpcode() {
 		if (_uptodatePresence) {
 			if ((_currMenu == MENU_MOVE) || (_currAction == OPCODE_LEAVE) || (_currAction == OPCODE_SLEEP) || (_currAction == OPCODE_EAT)) {
 				_controlMenu = 4;
-				mennor();
+				menuUp();
 				return;
 			}
 		}
@@ -1606,7 +1606,7 @@ void MortevielleEngine::handleOpcode() {
 		if (_anyone) {
 			interactNPC();
 			_anyone = false;
-			mennor();
+			menuUp();
 			return;
 		}
 	}
@@ -1630,7 +1630,7 @@ void MortevielleEngine::handleOpcode() {
 			loseGame();
 		}
 	}
-	mennor();
+	menuUp();
 }
 
 /**
@@ -2211,14 +2211,14 @@ void MortevielleEngine::music() {
  * @remarks	Originally called 'suite'
  */
 void MortevielleEngine::showTitleScreen() {
-	hirs();
+	clearScreen();
 	handleDescriptionText(7, 2035);
 	_caff = 51;
 	_text.taffich();
 	testKeyboard();
 	if (_newGraphicalDevice != _currGraphicalDevice)
 		_currGraphicalDevice = _newGraphicalDevice;
-	hirs();
+	clearScreen();
 	draw(0, 0);
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
@@ -2481,7 +2481,11 @@ Common::String MortevielleEngine::copy(const Common::String &s, int idx, size_t 
 	return result;
 }
 
-void MortevielleEngine::hirs() {
+/**
+ * Clear Screen
+ * @remarks	Originally called 'hirs'
+ */
+void MortevielleEngine::clearScreen() {
 	// Note: The original used this to set the graphics mode and clear the screen, both at
 	// the start of the game, and whenever the screen need to be cleared. As such, this
 	// method is deprecated in favour of clearing the screen
@@ -2710,7 +2714,11 @@ void MortevielleEngine::resetOpenObjects() {
 	_openObjCount = 0;
 }
 
-void MortevielleEngine::ecr2(Common::String text) {
+/**
+ * Display Text Block
+ * @remarks	Originally called 'ecr2'
+ */
+void MortevielleEngine::displayTextBlock(Common::String text) {
 	// Some dead code was present in the original: removed
 	_screenSurface.putxy(8, 177);
 	int tlig = 59 + (_resolutionScaler - 1) * 36;
@@ -2878,11 +2886,11 @@ int MortevielleEngine::getPresence(int roomId) {
 	int retVal = 0;
 	int rand;
 
-	int p = getPresenceStats(rand, _coreVar._faithScore, roomId);
+	int pres = getPresenceStats(rand, _coreVar._faithScore, roomId);
 	_place = roomId;
 	if ((roomId > OWN_ROOM) && (roomId < DINING_ROOM)) {
-		if (p != -500) {
-			if (rand > p) {
+		if (pres != -500) {
+			if (rand > pres) {
 				displayAloneText();
 				retVal = 0;
 			} else {
@@ -2899,34 +2907,34 @@ int MortevielleEngine::getPresence(int roomId) {
 		else {
 			int h = 0;
 			if (roomId == DINING_ROOM)
-				p = getPresenceStatsDiningRoom(h);
+				pres = getPresenceStatsDiningRoom(h);
 			else if (roomId == BUREAU)
-				p = getPresenceStatsBureau(h);
+				pres = getPresenceStatsBureau(h);
 			else if (roomId == KITCHEN)
-				p = getPresenceStatsKitchen();
+				pres = getPresenceStatsKitchen();
 			else if ((roomId == ATTIC) || (roomId == CELLAR))
-				p = getPresenceStatsAttic();
+				pres = getPresenceStatsAttic();
 			else if ((roomId == LANDING) || (roomId == ROOM26))
-				p = getPresenceStatsLanding();
+				pres = getPresenceStatsLanding();
 			else if (roomId == CHAPEL)
-				p = getPresenceStatsChapel(h);
-			p += _coreVar._faithScore;
+				pres = getPresenceStatsChapel(h);
+			pres += _coreVar._faithScore;
 			rand = getRandomNumber(1, 100);
-			if (rand > p) {
+			if (rand > pres) {
 				displayAloneText();
 				retVal = 0;
 			} else {
 				if (roomId == DINING_ROOM)
-					p = setPresenceDiningRoom(h);
+					pres = setPresenceDiningRoom(h);
 				else if (roomId == BUREAU)
-					p = setPresenceBureau(h);
+					pres = setPresenceBureau(h);
 				else if ((roomId == KITCHEN) || (roomId == ATTIC) || (roomId == CELLAR))
-					p = setPresenceKitchen();
+					pres = setPresenceKitchen();
 				else if ((roomId == LANDING) || (roomId == ROOM26))
-					p = setPresenceLanding();
+					pres = setPresenceLanding();
 				else if (roomId == CHAPEL)
-					p = setPresenceChapel(h);
-				retVal = p;
+					pres = setPresenceChapel(h);
+				retVal = pres;
 			}
 		}
 	}
@@ -3053,7 +3061,11 @@ void MortevielleEngine::testKey(bool d) {
 	_mouse.showMouse();
 }
 
-void MortevielleEngine::tlu(int af, int ob) {
+/**
+ * Display Narrative Picture
+ * @remarks	Originally called 'tlu'
+ */
+void MortevielleEngine::displayNarrativePicture(int af, int ob) {
 	_caff = 32;
 	drawPictureWithText();
 	handleDescriptionText(6, ob + 4000);
@@ -3119,7 +3131,7 @@ void MortevielleEngine::getReadDescription(int objId) {
 	case 157:
 	case 160:
 	case 161 :
-		tlu(_caff, objId);
+		displayNarrativePicture(_caff, objId);
 		break;
 	default:
 		break;
@@ -3152,11 +3164,19 @@ void MortevielleEngine::getSearchDescription(int objId) {
 	}
 }
 
-void MortevielleEngine::mennor() {
+/**
+ * Menu up
+ * @remarks	Originally called 'mennor'
+ */
+void MortevielleEngine::menuUp() {
 	_menu.menuUp(_currMenu);
 }
 
-void MortevielleEngine::premtet() {
+/**
+ * Draw discussion box
+ * @remarks	Originally called 'premtet'
+ */
+void MortevielleEngine::drawDiscussionBox() {
 	draw(10, 80);
 	_screenSurface.drawBox(18, 79, 155, 92, 15);
 }
@@ -3372,7 +3392,11 @@ void MortevielleEngine::setCoordinates(int sx) {
 	_crep = 997;
 }
 
-void MortevielleEngine::treg(int objId) {
+/**
+ * Display LOOK Screen
+ * @remarks	Originally called 'treg'
+ */
+void MortevielleEngine::displayLookScreen(int objId) {
 	int mdes = _caff;
 	_caff = objId;
 

@@ -386,6 +386,7 @@ private:
 	void displayQuestionText(Common::String s, int cmd);
 	void displayTextInDescriptionBar(int x, int y, int nb, int mesgId);
 	void displayTextInVerbBar(Common::String text);
+	void displayTextBlock(Common::String text);
 	void mapMessageId(int &mesgId);
 	void resetOpenObjects();
 	void setCoordinates(int sx);
@@ -399,13 +400,12 @@ private:
 	void prepareNextObject();
 	void putObject();
 	void resetObjectPlace();
+	void drawDiscussionBox();
+	void displayNarrativePicture(int af, int ob);
+	void menuUp();
+	void displayLookScreen(int objId);
 
 	void adzon();
-	void premtet();
-	void ecr2(Common::String text);
-	void tlu(int af, int ob);
-	void mennor();
-	void treg(int objId);
 
 public:
 	Common::Point _prevPos;
@@ -492,7 +492,7 @@ public:
 	void handleDescriptionText(int f, int mesgId);
 	int  getAnimOffset(int frameNum, int animNum);
 
-	void hirs();
+	void clearScreen();
 };
 
 extern MortevielleEngine *g_vm;

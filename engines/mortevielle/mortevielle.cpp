@@ -223,7 +223,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	testKeyboard();
 	if (_newGraphicalDevice != _currGraphicalDevice)
 		_currGraphicalDevice = _newGraphicalDevice;
-	hirs();
+	clearScreen();
 
 	_soundManager.loadNoise();
 	_soundManager.loadAmbiantSounds();
@@ -404,7 +404,7 @@ void MortevielleEngine::mainGame() {
 
 	charToHour();
 	initGame();
-	hirs();
+	clearScreen();
 	drawRightFrame();
 	_mouse.showMouse();
 

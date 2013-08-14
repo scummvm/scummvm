@@ -300,7 +300,7 @@ bool DialogManager::showKnowledgeCheck() {
 
 	for (int indx = 0; indx < 10; ++indx) {
 		_vm->_mouse.hideMouse();
-		_vm->hirs();
+		_vm->clearScreen();
 		_vm->_mouse.showMouse();
 		int dialogHeight;
 		if (_vm->_resolutionScaler == 1)
@@ -434,7 +434,7 @@ void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 
 		if (_vm->_newGraphicalDevice != _vm->_currGraphicalDevice) {
 			_vm->_currGraphicalDevice = _vm->_newGraphicalDevice;
-			_vm->hirs();
+			_vm->clearScreen();
 			displayIntroScreen(drawFrame2Fl);
 		}
 	} while (_vm->_key != 66); // keycode for F8
