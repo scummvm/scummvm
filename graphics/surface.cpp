@@ -133,6 +133,24 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	return subSurface;
 }
 
+void Surface::copyRectToSurface(const void *buffer, int pitch, int x, int y, int width, int height) {
+	assert(buffer);
+
+	assert(x >= 0 && x < w);
+	assert(y >= 0 && y < h);
+	assert(height > 0 && y + height <= h);
+	assert(width > 0 && x + width <= w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)getBasePtr(x, y);
+	for (int i = 0; i < height; i++) {
+		memcpy(dst, src, width * format.bytesPerPixel);
+		src += pitch;
+		dst += this->pitch;
+	}
+}
+
 void Surface::hLine(int x, int y, int x2, uint32 color) {
 	// Clipping
 	if (y < 0 || y >= h)
