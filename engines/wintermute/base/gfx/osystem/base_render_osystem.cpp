@@ -631,15 +631,13 @@ Rect32 BaseRenderOSystem::getViewPort() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
-	// FIXME: This is wrong in quite a few ways right now, and ends up
-	// breaking the notebook in Dirty Split, so we disable the correction
-	// for now, this will need fixing when a game with odd aspect-ratios
-	// show up.
 	return;
-	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft - _renderRect.left);
-	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop - _renderRect.top);
-	rect->setWidth((int16)MathUtil::roundUp(rect->width() * _ratioX));
-	rect->setHeight((int16)MathUtil::roundUp(rect->height() * _ratioY));
+	int newWidth = (int16)MathUtil::roundUp(rect->width() * _ratioX);
+	int newHeight = (int16)MathUtil::roundUp(rect->height() * _ratioY);
+	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft);
+	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop);
+	rect->setWidth(newWidth);
+	rect->setHeight(newHeight);
 }
 
 //////////////////////////////////////////////////////////////////////////
