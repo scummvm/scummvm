@@ -314,7 +314,7 @@ void TextHandler::taffich() {
 		loadAniFile(filename, drawingStartPos, drawingSize);
 	}
 	_vm->_mouse.showMouse();
-	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != OPCODE_ENTER)) {
+	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != _vm->_menu.OPCODE_ENTER)) {
 		if ((a == ATTIC) || (a == CELLAR))
 			_vm->displayAloneText();
 		else if (!_vm->_blo)

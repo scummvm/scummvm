@@ -48,6 +48,109 @@ const byte menuConstants[8][4] = {
 	{62, 46, 13, 10}
 };
 
+Menu::Menu() {
+	OPCODE_ATTACH = OPCODE_WAIT = OPCODE_FORCE = OPCODE_SLEEP = OPCODE_NONE;
+	OPCODE_LISTEN = OPCODE_ENTER = OPCODE_CLOSE = OPCODE_SEARCH = OPCODE_NONE;
+	OPCODE_KNOCK = OPCODE_SCRATCH = OPCODE_READ = OPCODE_EAT = OPCODE_NONE;
+	OPCODE_PLACE = OPCODE_OPEN = OPCODE_TAKE = OPCODE_LOOK = OPCODE_NONE;
+	OPCODE_SMELL = OPCODE_SOUND = OPCODE_LEAVE = OPCODE_LIFT = OPCODE_NONE;
+	OPCODE_TURN = OPCODE_SHIDE = OPCODE_SSEARCH = OPCODE_SREAD = OPCODE_NONE;
+	OPCODE_SPUT = OPCODE_SLOOK = OPCODE_NONE;
+}
+
+void Menu::readVerbNums(Common::File &f, int dataSize) {
+	// Figure out what language Id is needed
+	byte desiredLanguageId;
+	switch(_vm->getLanguage()) {
+	case Common::EN_ANY:
+		desiredLanguageId = MORTDAT_LANG_ENGLISH;
+		break;
+	case Common::FR_FRA:
+		desiredLanguageId = MORTDAT_LANG_FRENCH;
+		break;
+	case Common::DE_DEU:
+		desiredLanguageId = MORTDAT_LANG_GERMAN;
+		break;
+	default:
+		warning("Language not supported, switching to English");
+		desiredLanguageId = MORTDAT_LANG_ENGLISH;
+		break;
+	}
+	// Read in the language
+	byte languageId = f.readByte();
+	--dataSize;
+
+	// If the language isn't correct, then skip the entire block
+	if (languageId != desiredLanguageId) {
+		f.skip(dataSize);
+		return;
+	}
+
+	assert(dataSize == 52);
+	OPCODE_ATTACH  = f.readUint16LE();
+	OPCODE_WAIT    = f.readUint16LE();
+	OPCODE_FORCE   = f.readUint16LE();
+	OPCODE_SLEEP   = f.readUint16LE();
+	OPCODE_LISTEN  = f.readUint16LE();
+	OPCODE_ENTER   = f.readUint16LE();
+	OPCODE_CLOSE   = f.readUint16LE();
+	OPCODE_SEARCH  = f.readUint16LE();
+	OPCODE_KNOCK   = f.readUint16LE();
+	OPCODE_SCRATCH = f.readUint16LE();
+	OPCODE_READ    = f.readUint16LE();
+	OPCODE_EAT     = f.readUint16LE();
+	OPCODE_PLACE   = f.readUint16LE();
+	OPCODE_OPEN    = f.readUint16LE();
+	OPCODE_TAKE    = f.readUint16LE();
+	OPCODE_LOOK    = f.readUint16LE();
+	OPCODE_SMELL   = f.readUint16LE();
+	OPCODE_SOUND   = f.readUint16LE();
+	OPCODE_LEAVE   = f.readUint16LE();
+	OPCODE_LIFT    = f.readUint16LE();
+	OPCODE_TURN    = f.readUint16LE();
+	OPCODE_SHIDE   = f.readUint16LE();
+	OPCODE_SSEARCH = f.readUint16LE();
+	OPCODE_SREAD   = f.readUint16LE();
+	OPCODE_SPUT    = f.readUint16LE();
+	OPCODE_SLOOK   = f.readUint16LE();
+
+	_actionMenu[0]._menuId   = OPCODE_NONE   >> 8;
+	_actionMenu[0]._actionId = OPCODE_NONE   & 0xFF;
+
+	_actionMenu[1]._menuId   = OPCODE_SHIDE  >> 8;
+	_actionMenu[1]._actionId = OPCODE_SHIDE  & 0xFF;
+
+	_actionMenu[2]._menuId   = OPCODE_ATTACH >> 8;
+	_actionMenu[2]._actionId = OPCODE_ATTACH & 0xFF; 
+
+	_actionMenu[3]._menuId   = OPCODE_FORCE  >> 8;
+	_actionMenu[3]._actionId = OPCODE_FORCE  & 0xFF; 
+
+	_actionMenu[4]._menuId   = OPCODE_SLEEP  >> 8;
+	_actionMenu[4]._actionId = OPCODE_SLEEP  & 0xFF;
+
+	_actionMenu[5]._menuId   = OPCODE_ENTER  >> 8;
+	_actionMenu[5]._actionId = OPCODE_ENTER  & 0xFF; 
+
+	_actionMenu[6]._menuId   = OPCODE_CLOSE  >> 8;
+	_actionMenu[6]._menuId   = OPCODE_CLOSE  & 0xFF; 
+
+	_actionMenu[7]._menuId   = OPCODE_KNOCK  >> 8;
+	_actionMenu[7]._menuId   = OPCODE_KNOCK  & 0xFF;
+
+	_actionMenu[8]._menuId   = OPCODE_EAT    >> 8;
+	_actionMenu[8]._menuId   = OPCODE_EAT    & 0xFF;
+
+	_actionMenu[9]._menuId   = OPCODE_PLACE  >> 8;
+	_actionMenu[9]._menuId   = OPCODE_PLACE  & 0xFF;
+
+	_actionMenu[10]._menuId  = OPCODE_OPEN   >> 8;
+	_actionMenu[10]._menuId  = OPCODE_OPEN   & 0xFF;
+
+	_actionMenu[11]._menuId  = OPCODE_LEAVE  >> 8;
+	_actionMenu[11]._menuId  = OPCODE_LEAVE  & 0xFF;
+}
+
 /**
  * Setup a menu's contents
  * @remarks	Originally called 'menut'
@@ -486,9 +589,11 @@ void Menu::updateMenu() {
 	}
 }
 
-void Menu::initMenu(MortevielleEngine *vm) {
+void Menu::setParent(MortevielleEngine *vm) {
 	_vm = vm;
+}
 
+void Menu::initMenu() {
 	int i;
 	Common::File f;
 	

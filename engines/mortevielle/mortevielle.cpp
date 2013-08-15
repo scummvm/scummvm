@@ -57,6 +57,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_text.setParent(this);
 	_soundManager.setParent(this);
 	_savegameManager.setParent(this);
+	_menu.setParent(this);
 
 	_lastGameFrame = 0;
 	_mouseClick = false;
@@ -273,6 +274,8 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 			readStaticStrings(f, dataSize, kStaticStrings);
 		} else if ((!strncmp(dataType, "GSTR", 4)) && (!_txxFileFl)) {
 			readStaticStrings(f, dataSize, kGameStrings);
+		} else if (!strncmp(dataType, "VERB", 4)) {
+			_menu.readVerbNums(f, dataSize);
 		} else {
 			// Unknown section
 			f.skip(dataSize);
@@ -285,6 +288,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	assert(_engineStrings.size() > 0);
 	return Common::kNoError;
 }
+
 
 /**
  * Read in a static strings block, and if the language matches, load up the static strings
@@ -400,7 +404,7 @@ void MortevielleEngine::mainGame() {
 	for (_crep = 1; _crep <= _x26KeyCount; ++_crep)
 		decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 
-	_menu.initMenu(this);
+	_menu.initMenu();
 
 	charToHour();
 	initGame();
