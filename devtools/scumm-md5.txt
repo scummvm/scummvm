@@ -775,6 +775,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 99	Updated	-	Adrian
 	c5cc7cba02a2fbd539c4439e775b0536	43470	de	Windows	HE 99	Updated	-	Lightkey
 	5c9cecbd2952ccec14c9ecebf5822a34	-1	en	iOS	HE 100	-	-	clone2727
+	7b4ee071eecadc2d8cd0c3509110825c	-1	en	Windows	HE 100	Remastered	-	Kirben
 
 	3486ede0f904789267d4bcc5537a46d4	14337	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
