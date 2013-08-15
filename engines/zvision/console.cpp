@@ -1,0 +1,207 @@
+/* ScummVM - Graphic Adventure Engine
+*
+* ScummVM is the legal property of its developers, whose names
+* are too numerous to list here. Please refer to the COPYRIGHT
+* file distributed with this source distribution.
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*
+*/
+
+#include "common/scummsys.h"
+
+#include "common/system.h"
+#include "gui/debugger.h"
+#include "common/file.h"
+#include "common/bufferedstream.h"
+#include "audio/mixer.h"
+
+#include "zvision/console.h"
+#include "zvision/zvision.h"
+#include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
+#include "zvision/zork_avi_decoder.h"
+#include "zvision/zork_raw.h"
+#include "zvision/utility.h"
+#include "zvision/cursor.h"
+
+
+namespace ZVision {
+
+Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
+	DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
+	DCmd_Register("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
+	DCmd_Register("loadsound", WRAP_METHOD(Console, cmdLoadSound));
+	DCmd_Register("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
+	DCmd_Register("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
+	DCmd_Register("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
+	DCmd_Register("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
+	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
+	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
+	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
+	DCmd_Register("dumpcursorfilenames", WRAP_METHOD(Console, cmdDumpAllCursorFileNames));
+	DCmd_Register("showcursor", WRAP_METHOD(Console, cmdShowCursor));
+}
+
+bool Console::cmdLoadImage(int argc, const char **argv) {
+	if (argc == 4)
+		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
+	else if (argc == 8)
+		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]), Common::Rect(atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7])));
+	else {
+		DebugPrintf("Use loadimage <fileName> <destinationX> <destinationY> [ <subRectX1> <subRectY2> <subRectX2> <subRectY2> ] to load an image to the screen\n");
+		return true;
+	}
+
+	return true;
+}
+
+bool Console::cmdLoadVideo(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use loadvideo <fileName> to load a video to the screen\n");
+		return true;
+	}
+
+	ZorkAVIDecoder videoDecoder;
+	if (videoDecoder.loadFile(argv[1])) {
+		_engine->playVideo(videoDecoder);
+	}
+
+	return true;
+}
+
+bool Console::cmdLoadSound(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use loadsound <fileName> to load a sound\n");
+		return true;
+	}
+
+	if (!Common::File::exists(argv[1])) {
+		DebugPrintf("File does not exist\n");
+		return true;
+	}
+
+	Audio::AudioStream *soundStream = makeRawZorkStream(argv[1], _engine);
+	Audio::SoundHandle handle;
+	_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
+
+	return true;
+}
+
+bool Console::cmdRawToWav(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Use raw2wav <rawFilePath> <wavFileName> to dump a .RAW file to .WAV\n");
+		return true;
+	}
+
+	convertRawToWav(argv[1], _engine, argv[2]);
+	return true;
+}
+
+bool Console::cmdSetRenderState(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+		return true;
+	}
+
+	Common::String renderState(argv[1]);
+
+	if (renderState.matchString("panorama", true))
+		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::PANORAMA);
+	else if (renderState.matchString("tilt", true))
+		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::TILT);
+	else if (renderState.matchString("flat", true))
+		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
+	else
+		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+
+	return true;
+}
+
+bool Console::cmdGenerateRenderTable(int argc, const char **argv) {
+	_engine->getRenderManager()->getRenderTable()->generateRenderTable();
+
+	return true;
+}
+
+bool Console::cmdSetPanoramaFoV(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use setpanoramafov <fieldOfView> to change the current panorama field of view\n");
+		return true;
+	}
+
+	_engine->getRenderManager()->getRenderTable()->setPanoramaFoV(atof(argv[1]));
+
+	return true;
+}
+
+bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use setpanoramascale <scale> to change the current panorama scale\n");
+		return true;
+	}
+
+	_engine->getRenderManager()->getRenderTable()->setPanoramaScale(atof(argv[1]));
+
+	return true;
+}
+
+bool Console::cmdChangeLocation(int argc, const char **argv) {
+	if (argc != 6) {
+		DebugPrintf("Use changelocation <char: world> <char: room> <char:node> <char:view> <int: x position> to change your location");
+		return true;
+	}
+
+	_engine->getScriptManager()->changeLocation(*(argv[1]), *(argv[2]), *(argv[3]), *(argv[4]), atoi(argv[5]));
+
+	return true;
+}
+
+bool Console::cmdDumpFile(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Use dumpfile <fileName> to dump a file");
+		return true;
+	}
+
+	writeFileContentsToFile(argv[1], argv[1]);
+
+	return true;
+}
+
+bool Console::cmdDumpAllCursorFileNames(int argc, const char **argv) {
+	Common::DumpFile outputFile;
+	outputFile.open("cursorFileNames.txt");
+	
+	Common::ArchiveMemberList list;
+	SearchMan.listMatchingMembers(list, "*.zcr");
+
+	// Register the file entries within the zfs archives with the SearchMan
+	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+		outputFile.writeString((*iter)->getName());
+		outputFile.writeByte('\n');
+	}
+
+	return true;
+}
+
+bool Console::cmdShowCursor(int argc, const char **argv) {
+	ZorkCursor cursor(argv[1]);
+
+	_engine->_system->copyRectToScreen(cursor.getSurface(), cursor.getWidth() * 2, 0, 0, cursor.getWidth(), cursor.getHeight());
+
+	return true;
+}
+
+} // End of namespace ZVision
