@@ -638,7 +638,70 @@ void StaticANIObject::update(int counterdiff) {
 }
 
 void StaticANIObject::stopAnim_maybe() {
-	warning("STUB: StaticANIObject::stopAnim_maybe()");
+	debug(0, "StaticANIObject::stopAnim_maybe()");
+
+	if (!(_flags & 1))
+		return;
+
+	_flags ^= 1;
+
+	int oid = 0;
+	int oldmqid = _messageQueueId;
+	Common::Point point;
+
+	if (_movement) {
+		setOXY(_movement->_ox, _movement->_oy);
+
+		if (_flags & 0x40) {
+			if (!_movement->_currMovement && !_movement->_currDynamicPhaseIndex) {
+				_statics = _movement->_staticsObj1;
+				_movement->getCurrDynamicPhaseXY(point);
+				_ox -= point.x;
+				_oy -= point.y;
+
+				_ox -= _movement->_mx;
+				_oy -= _movement->_my;
+
+				if (_movement->_currMovement) {
+					_oy += point.y;
+					_ox -= point.x;
+					_ox += _statics->getDimensions(&point)->x;
+				} else {
+					_statics->getSomeXY(point);
+					_ox += point.x;
+					_oy += point.y;
+				}
+			}
+		}
+
+		if (_movement->_currDynamicPhaseIndex || !(_flags & 0x40))
+			_statics = _movement->_staticsObj2;
+
+		_statics->getSomeXY(point);
+
+		_statics->_x = _ox - point.x;
+		_statics->_y = _oy - point.y;
+		oid = _movement->_id;
+		_movement = 0;
+
+		ExCommand *ex = new ExCommand(oid, 17, 24, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = _okeyCode;
+		ex->_excFlags = 2;
+		ex->postMessage();
+	}
+
+	int mqid = _messageQueueId;
+
+	if (_animExFlag) {
+		_messageQueueId = 0;
+		startAnimEx(oid, mqid, -1, -1);
+	} else {
+		if (_messageQueueId == oldmqid) {
+			_messageQueueId = 0;
+			if (_field_34 == 1)
+				updateGlobalMessageQueue(mqid, oldmqid);
+		}
+	}
 }
 
 void StaticANIObject::adjustSomeXY() {
