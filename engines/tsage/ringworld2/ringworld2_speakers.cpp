@@ -360,7 +360,7 @@ void SpeakerChief1100::proc15() {
 	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor18;
+		_object2 = &scene->_chief;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1231,7 +1231,7 @@ void SpeakerQuinn1100::proc15() {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor16;
+			_object2 = &scene->_seeker;
 		}
 
 		_object2->hide();
@@ -1991,7 +1991,7 @@ void SpeakerSeeker1100::proc15() {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor16;
+			_object2 = &scene->_seeker;
 		}
 
 		_object2->hide();

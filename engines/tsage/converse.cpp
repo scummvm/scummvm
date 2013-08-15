@@ -754,6 +754,9 @@ void StripManager::remove() {
 	if (_onEnd)
 		_onEnd();
 
+	if (g_vm->getGameID() == GType_Ringworld2)
+		_endHandler = NULL;
+
 	Action::remove();
 }
 

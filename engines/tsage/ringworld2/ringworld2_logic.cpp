@@ -358,6 +358,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 void SceneExt::remove() {
 	_sceneAreas.clear();
 	Scene::remove();
+	R2_GLOBALS._uiElements._active = true;
 }
 
 void SceneExt::process(Event &event) {

@@ -75,15 +75,15 @@ public:
 };
 
 class Scene1100 : public SceneExt {
-	class Actor16 : public SceneActor {
+	class Seeker : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor17 : public SceneActor {
+	class Trooper : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor18 : public SceneActor {
+	class Chief : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -118,9 +118,9 @@ public:
 	SceneActor _actor15;
 	BackgroundSceneObject _object1;
 	BackgroundSceneObject _object2;
-	Actor16 _actor16;
-	Actor17 _actor17;
-	Actor18 _actor18;
+	Seeker _seeker;
+	Trooper _trooper;
+	Chief _chief;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	SequenceManager _sequenceManager3;
