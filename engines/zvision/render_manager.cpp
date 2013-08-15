@@ -152,7 +152,7 @@ void RenderManager::renderSubRectToBackbuffer(Graphics::Surface &surface, uint32
 	if (isTransposed) {
 		copyTransposedRectToBackbuffer((uint16 *)surface.getBasePtr(subRectangle.left, subRectangle.right), surface.w, destRect.left, destRect.top, destRect.width(), destRect.height());
 	} else {
-		_backbuffer.copyRectToSurface(surface.getBasePtr(subRectangle.left, subRectangle.right), surface.pitch, destRect.left, destRect.top, destRect.width(), destRect.height());
+		_backbuffer.copyRectToSurface(surface.getBasePtr(subRectangle.left, subRectangle.top), surface.pitch, destRect.left, destRect.top, destRect.width(), destRect.height());
 	}
 }
 
