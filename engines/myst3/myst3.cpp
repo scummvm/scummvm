@@ -1040,17 +1040,8 @@ Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
 		error("Could not decode Myst III JPEG");
 	delete jpegStream;
 
-	Graphics::Surface *bitmap = new Graphics::Surface();
-	bitmap->create(jpeg.getComponent(1)->w, jpeg.getComponent(1)->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	const byte *y = (const byte *)jpeg.getComponent(1)->getBasePtr(0, 0);
-	const byte *u = (const byte *)jpeg.getComponent(2)->getBasePtr(0, 0);
-	const byte *v = (const byte *)jpeg.getComponent(3)->getBasePtr(0, 0);
-
-	YUVToRGBMan.convert444(bitmap, Graphics::YUVToRGBManager::kScaleFull, y, u, v,
-			bitmap->w, bitmap->h, jpeg.getComponent(1)->pitch, jpeg.getComponent(2)->pitch);
-
-	return bitmap;
+	const Graphics::Surface *bitmap = jpeg.getSurface();
+	return bitmap->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 }
 
 int16 Myst3Engine::openDialog(uint16 id) {
