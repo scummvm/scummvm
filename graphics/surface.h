@@ -209,6 +209,19 @@ public:
 	const Surface getSubArea(const Common::Rect &area) const;
 
 	/**
+	 * Copies a bitmap to the Surface internal buffer. The pixel format
+	 * of buffer must match the pixel format of the Surface.
+	 *
+	 * @param buffer    The buffer containing the graphics data source
+	 * @param pitch     The pitch of the buffer (number of bytes in a scanline)
+	 * @param x         The x coordinate of the destination rectangle
+	 * @param y         The y coordinate of the destination rectangle
+	 * @param width     The width of the destination rectangle
+	 * @param height    The height of the destination rectangle
+	 */
+	void copyRectToSurface(const void *buffer, int pitch, int x, int y, int width, int height);
+
+	/**
 	 * Convert the data to another pixel format.
 	 *
 	 * This works in-place. This means it will not create an additional buffer
