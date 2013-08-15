@@ -40,14 +40,6 @@ MODULE_OBJS += \
 	keymapper/remap-dialog.o
 endif
 
-ifdef USE_OPENGL
-MODULE_OBJS += \
-	graphics/opengl/glerrorcheck.o \
-	graphics/opengl/gltexture.o \
-	graphics/opengl/opengl-graphics.o \
-	graphics/openglsdl/openglsdl-graphics.o
-endif
-
 ifdef ENABLE_VKEYBD
 MODULE_OBJS += \
 	vkeybd/image-map.o \
