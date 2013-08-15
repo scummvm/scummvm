@@ -52,6 +52,10 @@ struct Bitmap {
 	void copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_format);
 
 	Bitmap *reverseImage();
+	Bitmap *flipVertical();
+
+	void drawShaded(int type, int x, int y, byte *palette);
+	void drawRotated(int x, int y, int angle, byte *palette);
 };
 
 class Picture : public MemoryObject {

@@ -313,6 +313,56 @@ Movement *StaticANIObject::getMovementByName(char *name) {
 
 void Movement::draw(bool flipFlag, int angle) {
 	warning("STUB: Movement::draw(%d, %d)", flipFlag, angle);
+
+	Common::Point point;
+
+	getCurrDynamicPhaseXY(point);
+
+	int x = _ox - point.x;
+	int y = _oy - point.y;
+
+	if (_currDynamicPhase->getPaletteData())
+		g_fullpipe->_globalPalette = _currDynamicPhase->getPaletteData();
+
+	if (_currDynamicPhase->getAlpha() < 0xFF) {
+		warning("Movement::draw: alpha < 0xff: %d", _currDynamicPhase->getAlpha());
+		//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, _currDynamicPhase->getAlpha());
+	}
+
+	Bitmap *bmp;
+	if (_currMovement) {
+		bmp = _currDynamicPhase->getPixelData()->reverseImage();
+	} else {
+		bmp = _currDynamicPhase->getPixelData();
+	}
+
+	if (flipFlag) {
+		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->_paletteData);
+	} if (angle) {
+		bmp->drawRotated(x, y, angle, _currDynamicPhase->_paletteData);
+	} else {
+		bmp->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
+	}
+
+	if (_currDynamicPhase->_rect->top) {
+		if (!_currDynamicPhase->_convertedBitmap) {
+			//v12 = Picture_getPixelData(v5);
+			//v13 = Bitmap_convertTo16Bit565(v12, (unsigned int *)&_currDynamicPhase->rect);
+			//_currDynamicPhase->convertedBitmap = v13;
+		}
+
+		if (_currDynamicPhase->_convertedBitmap) {
+			if (_currMovement) {
+				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
+				_currDynamicPhase->_convertedBitmap->reverseImage()->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
+				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
+			} else {
+				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
+				_currDynamicPhase->_convertedBitmap->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
+				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
+			}
+		}
+	}
 }
 
 

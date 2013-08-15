@@ -798,6 +798,24 @@ Bitmap *Bitmap::reverseImage() {
 	return this;
 }
 
+Bitmap *Bitmap::flipVertical() {
+	warning("STUB: Bitmap::flipVertical()");
+
+	return this;
+}
+
+	void Bitmap::drawShaded(int type, int x, int y, byte *palette) {
+	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", type, x, y);
+
+	putDib(x, y, (int32 *)palette);
+}
+
+	void Bitmap::drawRotated(int x, int y, int angle, byte *palette) {
+	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", x, y, angle);
+
+	putDib(x, y, (int32 *)palette);
+}
+
 bool BigPicture::load(MfcArchive &file) {
 	debug(5, "BigPicture::load()");
 	Picture::load(file);
