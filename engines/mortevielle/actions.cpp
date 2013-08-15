@@ -584,7 +584,7 @@ void MortevielleEngine::fctOpen() {
 
 	if (_caff == ROOM26) {
 		if (_roomDoorId != OWN_ROOM) {
-			_currAction = _menu.OPCODE_ENTER;
+			_currAction = _menu._opcodeEnter;
 			_syn = true;
 		} else
 			_crep = 997;

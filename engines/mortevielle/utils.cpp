@@ -327,9 +327,9 @@ void MortevielleEngine::handleAction() {
 					if (_mouse._pos.y < 12)
 						return;
 
-					if ((_currAction == _menu.OPCODE_SOUND) || (_currAction == _menu.OPCODE_LIFT)) {
+					if ((_currAction == _menu._opcodeSound) || (_currAction == _menu._opcodeLift)) {
 						handledOpcodeFl = true;
-						if ((_currAction == _menu.OPCODE_LIFT) || (_obpart)) {
+						if ((_currAction == _menu._opcodeLift) || (_obpart)) {
 							endSearch();
 							_caff = _coreVar._currPlace;
 							_crep = 998;
@@ -1536,7 +1536,7 @@ void MortevielleEngine::handleOpcode() {
 	_keyPressedEsc = false;
 	if (!_anyone) {
 		if (_uptodatePresence) {
-			if ((_currMenu == MENU_MOVE) || (_currAction == _menu.OPCODE_LEAVE) || (_currAction == _menu.OPCODE_SLEEP) || (_currAction == _menu.OPCODE_EAT)) {
+			if ((_currMenu == MENU_MOVE) || (_currAction == _menu._opcodeLeave) || (_currAction == _menu._opcodeSleep) || (_currAction == _menu._opcodeEat)) {
 				_controlMenu = 4;
 				menuUp();
 				return;
@@ -1548,59 +1548,59 @@ void MortevielleEngine::handleOpcode() {
 			fctDiscuss();
 		if (_currMenu == MENU_INVENTORY)
 			fctInventoryTake();
-		if (_currAction == _menu.OPCODE_ATTACH)
+		if (_currAction == _menu._opcodeAttach)
 			fctAttach();
-		if (_currAction == _menu.OPCODE_WAIT)
+		if (_currAction == _menu._opcodeWait)
 			fctWait();
-		if (_currAction == _menu.OPCODE_FORCE)
+		if (_currAction == _menu._opcodeForce)
 			fctForce();
-		if (_currAction == _menu.OPCODE_SLEEP)
+		if (_currAction == _menu._opcodeSleep)
 			fctSleep();
-		if (_currAction == _menu.OPCODE_LISTEN)
+		if (_currAction == _menu._opcodeListen)
 			fctListen();
-		if (_currAction == _menu.OPCODE_ENTER)
+		if (_currAction == _menu._opcodeEnter)
 			fctEnter();
-		if (_currAction == _menu.OPCODE_CLOSE)
+		if (_currAction == _menu._opcodeClose)
 			fctClose();
-		if (_currAction == _menu.OPCODE_SEARCH)
+		if (_currAction == _menu._opcodeSearch)
 			fctSearch();
-		if (_currAction == _menu.OPCODE_KNOCK)
+		if (_currAction == _menu._opcodeKnock)
 			fctKnock();
-		if (_currAction == _menu.OPCODE_SCRATCH)
+		if (_currAction == _menu._opcodeScratch)
 			fctScratch();
-		if (_currAction == _menu.OPCODE_READ)
+		if (_currAction == _menu._opcodeRead)
 			fctRead();
-		if (_currAction == _menu.OPCODE_EAT)
+		if (_currAction == _menu._opcodeEat)
 			fctEat();
-		if (_currAction == _menu.OPCODE_PLACE)
+		if (_currAction == _menu._opcodePlace)
 			fctPlace();
-		if (_currAction == _menu.OPCODE_OPEN)
+		if (_currAction == _menu._opcodeOpen)
 			fctOpen();
-		if (_currAction == _menu.OPCODE_TAKE)
+		if (_currAction == _menu._opcodeTake)
 			fctTake();
-		if (_currAction == _menu.OPCODE_LOOK)
+		if (_currAction == _menu._opcodeLook)
 			fctLook();
-		if (_currAction == _menu.OPCODE_SMELL)
+		if (_currAction == _menu._opcodeSmell)
 			fctSmell();
-		if (_currAction == _menu.OPCODE_SOUND)
+		if (_currAction == _menu._opcodeSound)
 			fctSound();
-		if (_currAction == _menu.OPCODE_LEAVE)
+		if (_currAction == _menu._opcodeLeave)
 			fctLeave();
-		if (_currAction == _menu.OPCODE_LIFT)
+		if (_currAction == _menu._opcodeLift)
 			fctLift();
-		if (_currAction == _menu.OPCODE_TURN)
+		if (_currAction == _menu._opcodeTurn)
 			fctTurn();
-		if (_currAction == _menu.OPCODE_SSEARCH)
+		if (_currAction == _menu._opcodeSSearch)
 			fctSelfSearch();
-		if (_currAction == _menu.OPCODE_SREAD)
+		if (_currAction == _menu._opcodeSRead)
 			fctSelfRead();
-		if (_currAction == _menu.OPCODE_SPUT)
+		if (_currAction == _menu._opcodeSPut)
 			fctSelfPut();
-		if (_currAction == _menu.OPCODE_SLOOK)
+		if (_currAction == _menu._opcodeSLook)
 			fctSelftLook();
 		_hiddenHero = false;
 
-		if (_currAction == _menu.OPCODE_SHIDE)
+		if (_currAction == _menu._opcodeSHide)
 			fctSelfHide();
 	} else {
 		if (_anyone) {
@@ -3400,7 +3400,7 @@ void MortevielleEngine::displayLookScreen(int objId) {
 	int mdes = _caff;
 	_caff = objId;
 
-	if (((_caff > 29) && (_caff < 33)) || (_caff == 144) || (_caff == 147) || (_caff == 149) || (_currAction == _menu.OPCODE_SLOOK)) {
+	if (((_caff > 29) && (_caff < 33)) || (_caff == 144) || (_caff == 147) || (_caff == 149) || (_currAction == _menu._opcodeSLook)) {
 		drawPictureWithText();
 		if ((_caff > 29) && (_caff < 33))
 			handleDescriptionText(2, _caff);

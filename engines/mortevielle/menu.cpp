@@ -49,13 +49,13 @@ const byte menuConstants[8][4] = {
 };
 
 Menu::Menu() {
-	OPCODE_ATTACH = OPCODE_WAIT = OPCODE_FORCE = OPCODE_SLEEP = OPCODE_NONE;
-	OPCODE_LISTEN = OPCODE_ENTER = OPCODE_CLOSE = OPCODE_SEARCH = OPCODE_NONE;
-	OPCODE_KNOCK = OPCODE_SCRATCH = OPCODE_READ = OPCODE_EAT = OPCODE_NONE;
-	OPCODE_PLACE = OPCODE_OPEN = OPCODE_TAKE = OPCODE_LOOK = OPCODE_NONE;
-	OPCODE_SMELL = OPCODE_SOUND = OPCODE_LEAVE = OPCODE_LIFT = OPCODE_NONE;
-	OPCODE_TURN = OPCODE_SHIDE = OPCODE_SSEARCH = OPCODE_SREAD = OPCODE_NONE;
-	OPCODE_SPUT = OPCODE_SLOOK = OPCODE_NONE;
+	_opcodeAttach = _opcodeWait = _opcodeForce = _opcodeSleep = OPCODE_NONE;
+	_opcodeListen = _opcodeEnter = _opcodeClose = _opcodeSearch = OPCODE_NONE;
+	_opcodeKnock = _opcodeScratch = _opcodeRead = _opcodeEat = OPCODE_NONE;
+	_opcodePlace = _opcodeOpen = _opcodeTake = _opcodeLook = OPCODE_NONE;
+	_opcodeSmell = _opcodeSound = _opcodeLeave = _opcodeLift = OPCODE_NONE;
+	_opcodeTurn = _opcodeSHide = _opcodeSSearch = _opcodeSRead = OPCODE_NONE;
+	_opcodeSPut = _opcodeSLook = OPCODE_NONE;
 }
 
 void Menu::readVerbNums(Common::File &f, int dataSize) {
@@ -87,68 +87,68 @@ void Menu::readVerbNums(Common::File &f, int dataSize) {
 	}
 
 	assert(dataSize == 52);
-	OPCODE_ATTACH  = f.readUint16LE();
-	OPCODE_WAIT    = f.readUint16LE();
-	OPCODE_FORCE   = f.readUint16LE();
-	OPCODE_SLEEP   = f.readUint16LE();
-	OPCODE_LISTEN  = f.readUint16LE();
-	OPCODE_ENTER   = f.readUint16LE();
-	OPCODE_CLOSE   = f.readUint16LE();
-	OPCODE_SEARCH  = f.readUint16LE();
-	OPCODE_KNOCK   = f.readUint16LE();
-	OPCODE_SCRATCH = f.readUint16LE();
-	OPCODE_READ    = f.readUint16LE();
-	OPCODE_EAT     = f.readUint16LE();
-	OPCODE_PLACE   = f.readUint16LE();
-	OPCODE_OPEN    = f.readUint16LE();
-	OPCODE_TAKE    = f.readUint16LE();
-	OPCODE_LOOK    = f.readUint16LE();
-	OPCODE_SMELL   = f.readUint16LE();
-	OPCODE_SOUND   = f.readUint16LE();
-	OPCODE_LEAVE   = f.readUint16LE();
-	OPCODE_LIFT    = f.readUint16LE();
-	OPCODE_TURN    = f.readUint16LE();
-	OPCODE_SHIDE   = f.readUint16LE();
-	OPCODE_SSEARCH = f.readUint16LE();
-	OPCODE_SREAD   = f.readUint16LE();
-	OPCODE_SPUT    = f.readUint16LE();
-	OPCODE_SLOOK   = f.readUint16LE();
+	_opcodeAttach  = f.readUint16LE();
+	_opcodeWait    = f.readUint16LE();
+	_opcodeForce   = f.readUint16LE();
+	_opcodeSleep   = f.readUint16LE();
+	_opcodeListen  = f.readUint16LE();
+	_opcodeEnter   = f.readUint16LE();
+	_opcodeClose   = f.readUint16LE();
+	_opcodeSearch  = f.readUint16LE();
+	_opcodeKnock   = f.readUint16LE();
+	_opcodeScratch = f.readUint16LE();
+	_opcodeRead    = f.readUint16LE();
+	_opcodeEat     = f.readUint16LE();
+	_opcodePlace   = f.readUint16LE();
+	_opcodeOpen    = f.readUint16LE();
+	_opcodeTake    = f.readUint16LE();
+	_opcodeLook    = f.readUint16LE();
+	_opcodeSmell   = f.readUint16LE();
+	_opcodeSound   = f.readUint16LE();
+	_opcodeLeave   = f.readUint16LE();
+	_opcodeLift    = f.readUint16LE();
+	_opcodeTurn    = f.readUint16LE();
+	_opcodeSHide   = f.readUint16LE();
+	_opcodeSSearch = f.readUint16LE();
+	_opcodeSRead   = f.readUint16LE();
+	_opcodeSPut    = f.readUint16LE();
+	_opcodeSLook   = f.readUint16LE();
 
 	_actionMenu[0]._menuId   = OPCODE_NONE   >> 8;
 	_actionMenu[0]._actionId = OPCODE_NONE   & 0xFF;
 
-	_actionMenu[1]._menuId   = OPCODE_SHIDE  >> 8;
-	_actionMenu[1]._actionId = OPCODE_SHIDE  & 0xFF;
+	_actionMenu[1]._menuId   = _opcodeSHide  >> 8;
+	_actionMenu[1]._actionId = _opcodeSHide  & 0xFF;
 
-	_actionMenu[2]._menuId   = OPCODE_ATTACH >> 8;
-	_actionMenu[2]._actionId = OPCODE_ATTACH & 0xFF; 
+	_actionMenu[2]._menuId   = _opcodeAttach >> 8;
+	_actionMenu[2]._actionId = _opcodeAttach & 0xFF; 
 
-	_actionMenu[3]._menuId   = OPCODE_FORCE  >> 8;
-	_actionMenu[3]._actionId = OPCODE_FORCE  & 0xFF; 
+	_actionMenu[3]._menuId   = _opcodeForce  >> 8;
+	_actionMenu[3]._actionId = _opcodeForce  & 0xFF; 
 
-	_actionMenu[4]._menuId   = OPCODE_SLEEP  >> 8;
-	_actionMenu[4]._actionId = OPCODE_SLEEP  & 0xFF;
+	_actionMenu[4]._menuId   = _opcodeSleep  >> 8;
+	_actionMenu[4]._actionId = _opcodeSleep  & 0xFF;
 
-	_actionMenu[5]._menuId   = OPCODE_ENTER  >> 8;
-	_actionMenu[5]._actionId = OPCODE_ENTER  & 0xFF; 
+	_actionMenu[5]._menuId   = _opcodeEnter  >> 8;
+	_actionMenu[5]._actionId = _opcodeEnter  & 0xFF; 
 
-	_actionMenu[6]._menuId   = OPCODE_CLOSE  >> 8;
-	_actionMenu[6]._menuId   = OPCODE_CLOSE  & 0xFF; 
+	_actionMenu[6]._menuId   = _opcodeClose  >> 8;
+	_actionMenu[6]._menuId   = _opcodeClose  & 0xFF; 
 
-	_actionMenu[7]._menuId   = OPCODE_KNOCK  >> 8;
-	_actionMenu[7]._menuId   = OPCODE_KNOCK  & 0xFF;
+	_actionMenu[7]._menuId   = _opcodeKnock  >> 8;
+	_actionMenu[7]._menuId   = _opcodeKnock  & 0xFF;
 
-	_actionMenu[8]._menuId   = OPCODE_EAT    >> 8;
-	_actionMenu[8]._menuId   = OPCODE_EAT    & 0xFF;
+	_actionMenu[8]._menuId   = _opcodeEat    >> 8;
+	_actionMenu[8]._menuId   = _opcodeEat    & 0xFF;
 
-	_actionMenu[9]._menuId   = OPCODE_PLACE  >> 8;
-	_actionMenu[9]._menuId   = OPCODE_PLACE  & 0xFF;
+	_actionMenu[9]._menuId   = _opcodePlace  >> 8;
+	_actionMenu[9]._menuId   = _opcodePlace  & 0xFF;
 
-	_actionMenu[10]._menuId  = OPCODE_OPEN   >> 8;
-	_actionMenu[10]._menuId  = OPCODE_OPEN   & 0xFF;
+	_actionMenu[10]._menuId  = _opcodeOpen   >> 8;
+	_actionMenu[10]._menuId  = _opcodeOpen   & 0xFF;
 
-	_actionMenu[11]._menuId  = OPCODE_LEAVE  >> 8;
-	_actionMenu[11]._menuId  = OPCODE_LEAVE  & 0xFF;
+	_actionMenu[11]._menuId  = _opcodeLeave  >> 8;
+	_actionMenu[11]._menuId  = _opcodeLeave  & 0xFF;
 }
 
 /**
@@ -701,8 +701,8 @@ void Menu::setSearchMenu() {
 	for (int i = 1; i <= 11; ++i)
 		disableMenuItem(_actionMenu[i]._menuId, _actionMenu[i]._actionId);
 
-	setText(OPCODE_SOUND >> 8, OPCODE_SOUND & 0xFF, _vm->getEngineString(S_SUITE));
-	setText(OPCODE_LIFT  >> 8, OPCODE_LIFT  & 0xFF, _vm->getEngineString(S_STOP));
+	setText(_opcodeSound >> 8, _opcodeSound & 0xFF, _vm->getEngineString(S_SUITE));
+	setText(_opcodeLift  >> 8, _opcodeLift  & 0xFF, _vm->getEngineString(S_STOP));
 }
 
 /**
@@ -714,8 +714,8 @@ void Menu::unsetSearchMenu() {
 	for (int i = 1; i <= 11; ++i)
 		enableMenuItem(_actionMenu[i]._menuId, _actionMenu[i]._actionId);
 
-	setText(OPCODE_SOUND >> 8, OPCODE_SOUND & 0xFF, _vm->getEngineString(S_PROBE));
-	setText(OPCODE_LIFT  >> 8, OPCODE_LIFT  & 0xFF, _vm->getEngineString(S_RAISE));
+	setText(_opcodeSound >> 8, _opcodeSound & 0xFF, _vm->getEngineString(S_PROBE));
+	setText(_opcodeLift  >> 8, _opcodeLift  & 0xFF, _vm->getEngineString(S_RAISE));
 }
 
 /**
