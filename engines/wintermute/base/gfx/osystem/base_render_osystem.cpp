@@ -613,8 +613,8 @@ bool BaseRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 	// TODO: Hopefully this is the same logic that ScummVM uses.
 	rect.left = (int16)(left + _borderLeft);
 	rect.top = (int16)(top + _borderTop);
-	rect.right = (int16)((right - left) * _ratioX);
-	rect.bottom = (int16)((bottom - top) * _ratioY);
+	rect.setWidth((int16)((right - left) * _ratioX));
+	rect.setHeight((int16)((bottom - top) * _ratioY));
 
 	_renderRect = rect;
 	return STATUS_OK;
