@@ -68,7 +68,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(_system, _workingWindow);
+	_renderManager = new RenderManager(_system, _workingWindow, _pixelFormat);
 	_cursorManager = new CursorManager(this, &_pixelFormat);
 
 	debug("ZVision::ZVision");

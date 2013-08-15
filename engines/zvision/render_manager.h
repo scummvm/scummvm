@@ -26,6 +26,8 @@
 #include "common/types.h"
 #include "common/rect.h"
 
+#include "graphics/surface.h"
+
 #include "zvision/render_table.h"
 
 class OSystem;
@@ -43,11 +45,15 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(OSystem *system, const Common::Rect workingWindow);
+	RenderManager(OSystem *system, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat);
 	~RenderManager();
 
 private:
 	OSystem *_system;
+	const Graphics::PixelFormat _pixelFormat;
+
+	Graphics::Surface _backbuffer;
+	uint16 *_warpedBackbuffer;
 
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _workingWidth;
@@ -90,7 +96,7 @@ public:
 	void update(uint deltaTimeInMillis);
 
 	/**
-	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
+	 * Blits the image or a portion of the image to the backbuffer. Actual screen updates won't happen until the end of the frame.
 	 * The image will be clipped to fit inside the working window. Coords are in working window space, not screen space!
 	 *
 	 * @param fileName        Name of the image file
@@ -98,10 +104,10 @@ public:
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
-	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
+	void renderImageToBackbuffer(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
 
 	/**
-	 * Blits the image or a portion of the image to the screen. Actual screen updates won't happen until the end of the frame.
+	 * Blits the image or a portion of the image to the backbuffer. Actual screen updates won't happen until the end of the frame.
 	 * The image will be clipped to fit inside the working window. Coords are in working window space, not screen space!
 	 *
 	 * @param stream          Stream to read the image data from
@@ -109,7 +115,7 @@ public:
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
-	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
+	void renderImageToBackbuffer(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
@@ -151,7 +157,7 @@ public:
 
 private:
 	/**
-	 * Renders a subRectangle of an image to the screen. The destinationRect and SubRect
+	 * Renders a subRectangle of an image to the backbuffer. The destinationRect and SubRect
 	 * will be clipped to image bound and to working window bounds
 	 *
 	 * @param buffer             Pointer to (0, 0) of the image data
@@ -163,7 +169,9 @@ private:
 	 * @param subRectangle       A rectangle representing the part of the image that should be rendered
 	 * @param wrap               Should the image wrap (tile) if it doesn't completely fill the screen?
 	 */
-	void renderSubRectToScreen(uint16 *buffer, uint32 imageWidth, uint32 imageHeight, uint32 horizontalPitch, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap);
+	void renderSubRectToBackbuffer(Graphics::Surface &surface, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap, bool isTransposed);
+
+	void copyTransposedRectToBackbuffer(const uint16 *buffer, int imageHeight, int x, int y, int width, int height);
 
 	void moveBackground(int offset);
 };

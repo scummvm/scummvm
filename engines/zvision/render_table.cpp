@@ -98,16 +98,10 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 	return returnColor;
 }
 
-void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 imageWidth, uint32 imageHeight, Common::Rect subRectangle, Common::Rect destRectangle) {
-	bool isTransposed = _renderState == RenderTable::PANORAMA || _renderState == RenderTable::TILT;
-
-	for (int y = subRectangle.top; y < subRectangle.bottom; y++) {
-		uint normalizedY = y - subRectangle.top;
-
-		for (int x = subRectangle.left; x < subRectangle.right; x++) {
-			uint normalizedX = x - subRectangle.left;
-
-			uint32 index = (normalizedY + destRectangle.top) * _numColumns + (normalizedX + destRectangle.left);
+void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 imageWidth, uint32 imageHeight) {
+	for (uint32 y = 0; y < imageHeight; y++) {
+		for (uint32 x = 0; x < imageWidth; x++) {
+			uint32 index = y * _numColumns + x;
 
 			// RenderTable only stores offsets from the original coordinates
 			uint32 sourceYIndex = y + _internalBuffer[index].y;
@@ -119,12 +113,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 i
 			// Clamp the xIndex to the size of the image
 			sourceXIndex = CLIP<uint32>(sourceXIndex, 0, imageWidth - 1);
 
-			// TODO: Figure out a way to not have branching every loop. The only way that comes to mind is to have a whole separate set of for loops for isTransposed, but that's ugly. The compiler might do this anyway in the end
-			if (isTransposed) {
-				destBuffer[normalizedY * subRectangle.width() + normalizedX] = sourceBuffer[sourceXIndex * imageHeight + sourceYIndex];
-			} else {
-				destBuffer[normalizedY * subRectangle.width() + normalizedX] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
-			}
+			destBuffer[index] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
 		}
 	}
 }
