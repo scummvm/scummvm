@@ -98,21 +98,21 @@ void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 	/* First we make the pixels of the spirte blank. */
-	for (byte qay = 0; qay < sprite.yl; qay++)
-		for (byte qax = 0; qax < sprite.xl; qax++)
-			if (((*sprite.sil[picnum])[qay][qax / 8] >> ((7 - qax % 8)) & 1) == 0)
-				*getPixel(x + qax, y + qay) = 0;
+	for (byte j = 0; j < sprite.yl; j++)
+		for (byte i = 0; i < sprite.xl; i++)
+			if (((*sprite.sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
+				*getPixel(x + i, y + j) = 0;
 	
 	/* Then we draw the picture to the blank places. */
-	uint16 i = 0; // Because the original siltype starts at 5!!! See Graphics.h for definition.
+	uint16 maniPos = 0; // Because the original manitype starts at 5!!! See Graphics.h for definition.
 
-	for (byte qay = 0; qay < sprite.yl; qay++)
+	for (byte j = 0; j < sprite.yl; j++)
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
-			for (uint16 qax = 0; qax  < sprite.xl; qax += 8) {
-				byte pixel = (*sprite.mani[picnum])[i++];
+			for (uint16 i = 0; i  < sprite.xl; i += 8) {
+				byte pixel = (*sprite.mani[picnum])[maniPos++];
 				for (byte bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					*getPixel(x + qax + 7 - bit, y + qay) += (pixelBit << plane);
+					*getPixel(x + i + 7 - bit, y + j) += (pixelBit << plane);
 				} 
 			}
 }
