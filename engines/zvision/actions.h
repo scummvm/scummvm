@@ -126,7 +126,7 @@ private:
 	char _room;
 	char _node;
 	char _view;
-	uint32 _x;
+	uint32 _offset;
 };
 
 class ActionCrossfade : public ResultAction {

@@ -44,7 +44,7 @@ struct Location {
 	char room;
 	char node;
 	char view;
-	uint32 x;
+	uint32 offset;
 };
 
 class ScriptManager {
@@ -86,7 +86,7 @@ public:
 
 	void addActionNode(const Common::SharedPtr<ActionNode> &node);
 
-	void changeLocation(char world, char room, char node, char view, uint32 x);
+	void changeLocation(char world, char room, char node, char view, uint32 offset);
 
 private:
 	void createReferenceTable();

@@ -191,19 +191,19 @@ void ScriptManager::addActionNode(const Common::SharedPtr<ActionNode> &node) {
 	_activeNodes.push_back(node);
 }
 
-void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 x) {
+void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
 	_nextLocation.world = world;
 	_nextLocation.room = room;
 	_nextLocation.node = node;
 	_nextLocation.view = view;
-	_nextLocation.x = x;
+	_nextLocation.offset = offset;
 
 	_changeLocation = true;
 }
 
 void ScriptManager::changeLocationIntern() {
 	assert(_nextLocation.world != 0);
-	debug("Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.x);
+	debug("Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
 	// Clear all the containers
 	_referenceTable.clear();
@@ -217,7 +217,7 @@ void ScriptManager::changeLocationIntern() {
 	_engine->getCursorManager()->revertToIdle();
 
 	// Change the background position
-	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.x);
+	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
 	// Reset the background velocity
 	_engine->getRenderManager()->setBackgroundVelocity(0);

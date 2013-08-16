@@ -83,12 +83,12 @@ bool ActionAttenuate::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionChangeLocation::ActionChangeLocation(const Common::String &line) {
-	sscanf(line.c_str(), "%*[^(](%c,%c,%c%c,%u)", &_world, &_room, &_node, &_view, &_x);
+	sscanf(line.c_str(), "%*[^(](%c,%c,%c%c,%u)", &_world, &_room, &_node, &_view, &_offset);
 }
 
 bool ActionChangeLocation::execute(ZVision *engine) {
 	// We can't directly call ScriptManager::ChangeLocationIntern() because doing so clears all the Puzzles, and thus would corrupt the current puzzle checking
-	engine->getScriptManager()->changeLocation(_world, _room, _node, _view, _x);
+	engine->getScriptManager()->changeLocation(_world, _room, _node, _view, _offset);
 	// Tell the puzzle system to stop checking any more puzzles
 	return false;
 }
