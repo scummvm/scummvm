@@ -114,41 +114,41 @@ void Menu::readVerbNums(Common::File &f, int dataSize) {
 	_opcodeSPut    = f.readUint16LE();
 	_opcodeSLook   = f.readUint16LE();
 
-	_actionMenu[0]._menuId   = OPCODE_NONE   >> 8;
-	_actionMenu[0]._actionId = OPCODE_NONE   & 0xFF;
+	_actionMenu[0]._menuId    = OPCODE_NONE   >> 8;
+	_actionMenu[0]._actionId  = OPCODE_NONE   & 0xFF;
 
-	_actionMenu[1]._menuId   = _opcodeSHide  >> 8;
-	_actionMenu[1]._actionId = _opcodeSHide  & 0xFF;
+	_actionMenu[1]._menuId    = _opcodeSHide  >> 8;
+	_actionMenu[1]._actionId  = _opcodeSHide  & 0xFF;
 
-	_actionMenu[2]._menuId   = _opcodeAttach >> 8;
-	_actionMenu[2]._actionId = _opcodeAttach & 0xFF; 
+	_actionMenu[2]._menuId    = _opcodeAttach >> 8;
+	_actionMenu[2]._actionId  = _opcodeAttach & 0xFF; 
 
-	_actionMenu[3]._menuId   = _opcodeForce  >> 8;
-	_actionMenu[3]._actionId = _opcodeForce  & 0xFF; 
+	_actionMenu[3]._menuId    = _opcodeForce  >> 8;
+	_actionMenu[3]._actionId  = _opcodeForce  & 0xFF; 
 
-	_actionMenu[4]._menuId   = _opcodeSleep  >> 8;
-	_actionMenu[4]._actionId = _opcodeSleep  & 0xFF;
+	_actionMenu[4]._menuId    = _opcodeSleep  >> 8;
+	_actionMenu[4]._actionId  = _opcodeSleep  & 0xFF;
 
-	_actionMenu[5]._menuId   = _opcodeEnter  >> 8;
-	_actionMenu[5]._actionId = _opcodeEnter  & 0xFF; 
+	_actionMenu[5]._menuId    = _opcodeEnter  >> 8;
+	_actionMenu[5]._actionId  = _opcodeEnter  & 0xFF; 
 
-	_actionMenu[6]._menuId   = _opcodeClose  >> 8;
-	_actionMenu[6]._menuId   = _opcodeClose  & 0xFF; 
+	_actionMenu[6]._menuId    = _opcodeClose  >> 8;
+	_actionMenu[6]._actionId  = _opcodeClose  & 0xFF; 
 
-	_actionMenu[7]._menuId   = _opcodeKnock  >> 8;
-	_actionMenu[7]._menuId   = _opcodeKnock  & 0xFF;
+	_actionMenu[7]._menuId    = _opcodeKnock  >> 8;
+	_actionMenu[7]._actionId  = _opcodeKnock  & 0xFF;
 
-	_actionMenu[8]._menuId   = _opcodeEat    >> 8;
-	_actionMenu[8]._menuId   = _opcodeEat    & 0xFF;
+	_actionMenu[8]._menuId    = _opcodeEat    >> 8;
+	_actionMenu[8]._actionId  = _opcodeEat    & 0xFF;
 
-	_actionMenu[9]._menuId   = _opcodePlace  >> 8;
-	_actionMenu[9]._menuId   = _opcodePlace  & 0xFF;
+	_actionMenu[9]._menuId    = _opcodePlace  >> 8;
+	_actionMenu[9]._actionId  = _opcodePlace  & 0xFF;
 
-	_actionMenu[10]._menuId  = _opcodeOpen   >> 8;
-	_actionMenu[10]._menuId  = _opcodeOpen   & 0xFF;
+	_actionMenu[10]._menuId   = _opcodeOpen   >> 8;
+	_actionMenu[10]._actionId = _opcodeOpen   & 0xFF;
 
-	_actionMenu[11]._menuId  = _opcodeLeave  >> 8;
-	_actionMenu[11]._menuId  = _opcodeLeave  & 0xFF;
+	_actionMenu[11]._menuId   = _opcodeLeave  >> 8;
+	_actionMenu[11]._actionId = _opcodeLeave  & 0xFF;
 }
 
 /**
