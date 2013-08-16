@@ -60,21 +60,20 @@ RenderManager::~RenderManager() {
 
 void RenderManager::update(uint deltaTimeInMillis) {
 	// An inverse velocity of 0 would be infinitely fast, so we'll let 0 mean no velocity.
-	if (_backgroundInverseVelocity == 0)
-		return;
+	if (_backgroundInverseVelocity != 0) {
+		_accumulatedVelocityMilliseconds += deltaTimeInMillis;
 
-	_accumulatedVelocityMilliseconds += deltaTimeInMillis;
+		int absVelocity = abs(_backgroundInverseVelocity);
 
-	int absVelocity = abs(_backgroundInverseVelocity);
+		int numberOfSteps = 0;
+		while (_accumulatedVelocityMilliseconds >= absVelocity) {
+			_accumulatedVelocityMilliseconds -= absVelocity;
+			numberOfSteps++;
+		}
 
-	int numberOfSteps = 0;
-	while (_accumulatedVelocityMilliseconds >= absVelocity) {
-		_accumulatedVelocityMilliseconds -= absVelocity;
-		numberOfSteps++;
+		// Choose the direction of movement using the sign of the velocity
+		moveBackground(_backgroundInverseVelocity < 0 ? -numberOfSteps : numberOfSteps);
 	}
-
-	// Choose the direction of movement using the sign of the velocity
-	moveBackground(_backgroundInverseVelocity < 0 ? -numberOfSteps : numberOfSteps);
 
 	// Warp the entire backbuffer
 	_renderTable.mutateImage((uint16 *)_backbuffer.getBasePtr(0, 0), _warpedBackbuffer, _workingWidth, _workingHeight);
