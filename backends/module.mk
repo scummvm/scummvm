@@ -49,6 +49,15 @@ MODULE_OBJS += \
 	vkeybd/virtual-keyboard-parser.o
 endif
 
+# OpenGL specific source files.
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o
+endif
+
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends
 # derive from the SDL backend, and they all need the following files.
