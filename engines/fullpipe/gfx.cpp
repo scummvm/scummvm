@@ -436,13 +436,20 @@ void Picture::draw(int x, int y, int style, int angle) {
 		pal = g_fullpipe->_globalPalette;
 	}
 
+	Common::Point point;
+
 	switch (style) {
 	case 1:
 		//flip
-		warning("STUB: Picture::draw: style 1");
+		getDimensions(&point);
+		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + point.y, pal);
 		break;
 	case 2:
-		error("STUB: Picture::draw: style 2");
+		//vrtSetFadeRatio(g_vrtDrawHandle, 0.34999999);
+		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F88, 1.0, 1000.0, 0, 0);
+		_bitmap->drawShaded(2, x1, y1, pal);
+		//vrtSetFadeRatio(g_vrtDrawHandle, 0.0);
+		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F90, 1.0, 1000.0, 0, 0);
 		break;
 	default:
 		if (angle)
@@ -804,7 +811,7 @@ Bitmap *Bitmap::flipVertical() {
 	return this;
 }
 
-	void Bitmap::drawShaded(int type, int x, int y, byte *palette) {
+void Bitmap::drawShaded(int type, int x, int y, byte *palette) {
 	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", type, x, y);
 
 	putDib(x, y, (int32 *)palette);
