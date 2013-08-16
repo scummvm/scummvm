@@ -61,6 +61,76 @@ Avalot::Avalot(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
+void Avalot::handleKeyDown(Common::Event &event) {
+	//if (keyboardclick)
+	//	click();
+	//	
+	// To be implemented later with the sounds, I assume.
+
+	if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
+		_vm->_parser->handleInputText(event);
+	else
+		switch (event.kbd.keycode) { // We can control Avvy with the numpad as well.
+		case Common::KEYCODE_KP8:
+			event.kbd.keycode = Common::KEYCODE_UP;
+			break;
+		case Common::KEYCODE_KP2:
+			event.kbd.keycode = Common::KEYCODE_DOWN;
+			break;
+		case Common::KEYCODE_KP6:
+			event.kbd.keycode = Common::KEYCODE_RIGHT;
+			break;
+		case Common::KEYCODE_KP4:
+			event.kbd.keycode = Common::KEYCODE_LEFT;
+			break;
+		case Common::KEYCODE_KP9:
+			event.kbd.keycode = Common::KEYCODE_PAGEUP;
+			break;
+		case Common::KEYCODE_KP3:
+			event.kbd.keycode = Common::KEYCODE_PAGEDOWN;
+			break;
+		case Common::KEYCODE_KP7:
+			event.kbd.keycode = Common::KEYCODE_HOME;
+			break;
+		case Common::KEYCODE_KP1:
+			event.kbd.keycode = Common::KEYCODE_END;
+			break;
+	}
+
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP5:
+		if (_vm->_gyro->alive) {
+			_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
+			_vm->_lucerna->showrw();
+			if (_vm->_gyro->demo)
+				_vm->_basher->get_demorec();
+			return;
+		}
+	case Common::KEYCODE_BACKSPACE:
+		_vm->_parser->handleBackspace();
+		break;
+	case Common::KEYCODE_RETURN:
+		_vm->_parser->handleReturn();
+		break;
+	}
+
+	_vm->_lucerna->showrw();
+	if (_vm->_gyro->demo)
+		_vm->_basher->get_demorec();
+}
+
+
+
+
+
 
 void Avalot::setup() {
 	int16 gd, gm;
@@ -149,76 +219,6 @@ void Avalot::setup() {
 	if (! _vm->_gyro->reloaded)
 		_vm->_visa->dixi('q', 83); // Info on the game, etc. 
 }
-
-
-
-void Avalot::handleKeyDown(Common::Event &event) {
-	//if (keyboardclick)
-	//	click();
-	//	
-	// To be implemented later with the sounds, I assume.
-	
-	if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
-		_vm->_parser->handleInputText(event);
-	else
-		switch (event.kbd.keycode) { // We can control Avvy with the numpad as well.
-		case Common::KEYCODE_KP8:
-			event.kbd.keycode = Common::KEYCODE_UP;
-			break;
-		case Common::KEYCODE_KP2:
-			event.kbd.keycode = Common::KEYCODE_DOWN;
-			break;
-		case Common::KEYCODE_KP6:
-			event.kbd.keycode = Common::KEYCODE_RIGHT;
-			break;
-		case Common::KEYCODE_KP4:
-			event.kbd.keycode = Common::KEYCODE_LEFT;
-			break;
-		case Common::KEYCODE_KP9:
-			event.kbd.keycode = Common::KEYCODE_PAGEUP;
-			break;
-		case Common::KEYCODE_KP3:
-			event.kbd.keycode = Common::KEYCODE_PAGEDOWN;
-			break;
-		case Common::KEYCODE_KP7:
-			event.kbd.keycode = Common::KEYCODE_HOME;
-			break;
-		case Common::KEYCODE_KP1:
-			event.kbd.keycode = Common::KEYCODE_END;
-			break;
-		}
-
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_RIGHT:
-		case Common::KEYCODE_LEFT:
-		case Common::KEYCODE_PAGEUP:
-		case Common::KEYCODE_PAGEDOWN:
-		case Common::KEYCODE_HOME:
-		case Common::KEYCODE_END:
-		case Common::KEYCODE_KP5:
-			if (_vm->_gyro->alive) {
-				_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
-				_vm->_lucerna->showrw();
-				if (_vm->_gyro->demo)
-					_vm->_basher->get_demorec();
-				return;
-			}
-		case Common::KEYCODE_BACKSPACE:
-			_vm->_parser->handleBackspace();
-			break;
-		case Common::KEYCODE_RETURN:
-			_vm->_parser->handleReturn();
-			break;
-		}
-
-	_vm->_lucerna->showrw();
-	 if (_vm->_gyro->demo)
-		 _vm->_basher->get_demorec();
-}
-
-
 
 void Avalot::run(Common::String arg) {
 	setup();
