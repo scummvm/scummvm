@@ -614,26 +614,11 @@ void Gyro::hang_around_for_a_while() {
 	afterwards. */
 
 void Gyro::super_off() {
-	super_was_off = visible == m_no;
-	if (super_was_off)
-		return;
-
-	super_was_virtual = visible == m_virtual;
-
-	if (visible == m_virtual)
-		off_virtual();
-	else
-		off();
+	warning("STUB: Gyro::super_off()");
 }
 
 void Gyro::super_on() {
-	if ((visible != m_no) || (super_was_off))
-		return;
-
-	if (super_was_virtual)
-		on_virtual();
-	else
-		on();
+	warning("STUB: Gyro::super_on()");
 }
 
 bool Gyro::mouse_near_text() {

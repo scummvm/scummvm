@@ -54,6 +54,8 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
+#include "graphics/cursorman.h"
+
 namespace Common {
 class RandomSource;
 }
