@@ -192,7 +192,7 @@ void Menu::setText(int menuId, int actionId, Common::String name) {
 void Menu::setDestinationText(int roomId) {
 	Common::String nomp;
 
-	if (roomId == 26)
+	if (roomId == ROOM26)
 		roomId = LANDING;
 
 	int destinationId = 0;
@@ -258,8 +258,6 @@ void Menu::enableMenuItem(int menuId, int actionId) {
 		break;
 	case MENU_SELF:
 		_selfStringArray[actionId].setChar(' ', 0);
-		// The original sets two times the same value. Skipped
-		// _selfStringArray[l].setChar(' ', 0);
 		break;
 	case MENU_DISCUSS:
 		_discussStringArray[actionId].setChar(' ', 0);
@@ -270,44 +268,38 @@ void Menu::enableMenuItem(int menuId, int actionId) {
 }
 
 void Menu::displayMenu() {
-	int ind_tabl, k, col;
-
-	int pt, x, y, color, msk, num_letr;
-
 	_vm->_mouse.hideMouse();
-
 	_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
-	col = 28 * _vm->_resolutionScaler;
+
+	int col = 28 * _vm->_resolutionScaler;
+	int color;
 	if (_vm->_currGraphicalDevice == MODE_CGA)
 		color = 1;
 	else
 		color = 9;
-	num_letr = 0;
-	do {       // One character after the other
-		++num_letr;
-		ind_tabl = 0;
-		y = 1;
-		do {     // One column after the other
-			k = 0;
-			x = col;
-			do {   // One line after the other
-				msk = 0x80;
-				for (pt = 0; pt <= 7; ++pt) {
-					if ((_charArr[num_letr - 1][ind_tabl] & msk) != 0) {
+	for (int charNum = 0; charNum < 6; charNum++) {
+	// One character after the other
+		int idx = 0;
+		for (int y = 1; y < 9; ++y) {
+		// One column after the other
+			int x = col;
+			for (int k = 0; k < 3; ++k) {
+			// One line after the other
+				uint msk = 0x80;
+				for (int pt = 0; pt <= 7; ++pt) {
+					if ((_charArr[charNum][idx] & msk) != 0) {
 						_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
 						_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
 						_vm->_screenSurface.setPixel(Common::Point(x, y), color);
 					}
-					msk = (uint)msk >> 1;
+					msk >>= 1;
 					++x;
 				}
-				++ind_tabl;
-				++k;
-			} while (k != 3);
-			++y;
-		} while (y != 9);
+				++idx;
+			}
+		}
 		col += 48 * _vm->_resolutionScaler;
-	} while (num_letr != 6);
+	}
 	_vm->_mouse.showMouse();
 }
 
@@ -408,79 +400,74 @@ void Menu::util(Common::Point pos) {
  * Draw a menu
  */
 void Menu::menuDown(int ii) {
-	int cx, xcc, xco;
-	int lignNumb;
-
 	// Make a copy of the current screen surface for later restore
 	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
 
 	// Draw the menu
-	xco = menuConstants[ii - 1][0];
-	lignNumb = menuConstants[ii - 1][3];
+	int minX = menuConstants[ii - 1][0] << 3;
+	int lineNum = menuConstants[ii - 1][3];
 	_vm->_mouse.hideMouse();
-	xco = xco << 3;
+	int deltaX;
 	if (_vm->_resolutionScaler == 1)
-		cx = 10;
+		deltaX = 10;
 	else
-		cx = 6;
-	xcc = xco + (menuConstants[ii - 1][2] * cx) + 6;
+		deltaX = 6;
+	int maxX = minX + (menuConstants[ii - 1][2] * deltaX) + 6;
 	if ((ii == 4) && (_vm->getLanguage() == Common::EN_ANY))
 		// Extra width needed for Self menu in English version
-		xcc = 435;
+		maxX = 435;
 
-	_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.putxy(xco, 16);
-	cx = 0;
-	do {
-		++cx;
+	_vm->_screenSurface.fillRect(15, Common::Rect(minX, 12, maxX, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.fillRect(0, Common::Rect(maxX, 12, maxX + 4, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.fillRect(0, Common::Rect(minX, 8 + (menuConstants[ii - 1][1] << 1), maxX + 4, 12 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.putxy(minX, 16);
+	for (int i = 1; i <= lineNum; i++) {
 		switch (ii) {
 		case 1:
-			if (_inventoryStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_inventoryStringArray[cx], 4);
+			if (_inventoryStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_inventoryStringArray[i], 4);
 			break;
 		case 2:
-			if (_moveStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_moveStringArray[cx], 4);
+			if (_moveStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_moveStringArray[i], 4);
 			break;
 		case 3:
-			if (_actionStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_actionStringArray[cx], 4);
+			if (_actionStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_actionStringArray[i], 4);
 			break;
 		case 4:
-			if (_selfStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_selfStringArray[cx], 4);
+			if (_selfStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_selfStringArray[i], 4);
 			break;
 		case 5:
-			if (_discussStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_discussStringArray[cx], 4);
+			if (_discussStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_discussStringArray[i], 4);
 			break;
 		case 6:
-			_vm->_screenSurface.drawString(_vm->getEngineString(S_SAVE_LOAD + cx), 4);
+			_vm->_screenSurface.drawString(_vm->getEngineString(S_SAVE_LOAD + i), 4);
 			break;
 		case 7: {
 			Common::String s = _vm->getEngineString(S_SAVE_LOAD + 1);
 			s += ' ';
-			s += (char)(48 + cx);
+			s += (char)(48 + i);
 			_vm->_screenSurface.drawString(s, 4);
 			}
 			break;
 		case 8:
-			if (cx == 1)
+			if (i == 1)
 				_vm->_screenSurface.drawString(_vm->getEngineString(S_RESTART), 4);
 			else {
 				Common::String s = _vm->getEngineString(S_SAVE_LOAD + 2);
 				s += ' ';
-				s += (char)(47 + cx);
+				s += (char)(47 + i);
 				_vm->_screenSurface.drawString(s, 4);
 			}
 			break;
 		default:
 			break;
 		}
-		_vm->_screenSurface.putxy(xco, _vm->_screenSurface._textPos.y + 8);
-	} while (cx != lignNumb);
+		_vm->_screenSurface.putxy(minX, _vm->_screenSurface._textPos.y + 8);
+	}
 	_multiTitle = true;
 	_vm->_mouse.showMouse();
 }
@@ -594,7 +581,6 @@ void Menu::setParent(MortevielleEngine *vm) {
 }
 
 void Menu::initMenu() {
-	int i;
 	Common::File f;
 	
 	bool enMenuLoaded = false;
@@ -651,13 +637,12 @@ void Menu::initMenu() {
 
 	// Skipped: dialog asking to swap floppy
 
-	for (i = 1; i <= 8; ++i)
+	for (int i = 1; i <= 8; ++i)
 		_inventoryStringArray[i] = "*                     ";
 	_inventoryStringArray[7] = "< -*-*-*-*-*-*-*-*-*- ";
-	for (i = 1; i <= 7; ++i)
+	for (int i = 1; i <= 7; ++i)
 		_moveStringArray[i] = "*                       ";
-	i = 1;
-	do {
+	for (int i = 1; i < 22; i++) {
 		_actionStringArray[i] = _vm->getString(i + kMenuActionStringIndex);
 
 		while (_actionStringArray[i].size() < 10)
@@ -671,9 +656,8 @@ void Menu::initMenu() {
 			}
 			_discussStringArray[i] = _vm->getString(i + kMenuSayStringIndex) + ' ';
 		}
-		++i;
-	} while (i != 22);
-	for (i = 1; i <= 8; ++i) {
+	}
+	for (int i = 1; i <= 8; ++i) {
 		_discussMenu[i]._menuId = MENU_DISCUSS;
 		_discussMenu[i]._actionId = i;
 		if (i < 8) {
