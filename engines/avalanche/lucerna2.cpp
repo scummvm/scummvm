@@ -978,6 +978,109 @@ void Lucerna::verte() {
 }
 
 void Lucerna::checkclick() {
+	bytefield b;
+
+	Common::Point cursorPos = _vm->getMousePos();
+	_vm->_gyro->ontoolbar = _vm->_gyro->slow_computer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
+	
+	if (_vm->_gyro->mrelease > 0)
+		_vm->_gyro->after_the_scroll = false;
+
+	if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
+		_vm->_gyro->newpointer(1); // up arrow
+	else if ((317 <= cursorPos.y) && (cursorPos.y <= 339))
+		_vm->_gyro->newpointer(8); //I-beam
+	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
+		_vm->_gyro->newpointer(2); // screwdriver
+	else if (!_vm->_gyro->ddmnow) { // Dropdown can handle its own pointers.
+		if (holdLeftMouse) {
+			_vm->_gyro->newpointer(7); // Mark's crosshairs
+			verte(); // Normally, if you click on the picture, you're guiding Avvy around.
+		} else
+			_vm->_gyro->newpointer(4); // fletch
+	}
+
+
+
+	//if (_vm->_gyro->mpress > 0) {
+	//	switch (_vm->_gyro->mpy) {
+	//	case RANGE_11(0, 10):
+	//		if (_vm->_gyro->dropsok)  topcheck();
+	//		break;
+	//	case 11 ... 158:
+	//		if (!_vm->_gyro->dropsok)
+	//			_vm->_gyro->mousetext = Common::String('\15') + _vm->_gyro->mousetext;
+	//		break;                    /* But otherwise, it's
+ //                                      equivalent to pressing Enter. */
+	//	case RANGE_11(159, 169): { /* Click on command line */
+	//		cursor_off();
+	//		curpos = (_vm->_gyro->mx - 16) / 8;
+	//		if (curpos > length(current) + 1)
+	//			curpos = length(current) + 1;
+	//		if (curpos < 1)
+	//			curpos = 1;
+	//		cursor_on();
+	//	}
+	//	break;
+	//	case 170 ... 200:
+	//		switch (_vm->_gyro->mpx) { /* bottom check */
+	//		case 0 ... 207:
+	//			mouseway();
+	//			break;
+	//		case 208 ... 260: { /* Examine the thing */
+	//			do {
+	//				_vm->_gyro->check();
+	//			} while (!(_vm->_gyro->mrelease > 0));
+	//			if (_vm->_gyro->thinkthing) {
+	//				_vm->_acci->thing = _vm->_gyro->thinks;
+	//				_vm->_acci->thing += 49;
+	//				_vm->_acci->person = _vm->_acci->pardon;
+	//			} else {
+	//				_vm->_acci->person = _vm->_gyro->thinks;
+	//				_vm->_acci->thing = _vm->_acci->pardon;
+	//			}
+	//			callverb(_vm->_acci->vb_exam);
+	//		}
+	//		break;
+	//		case 261 ... 319: {
+	//			do {
+	//				checkclick();
+	//			} while (!(_vm->_gyro->mrelease > 0));
+	//			callverb(_vm->_acci->vb_score);
+	//		}
+	//		break;
+	//		case 320 ... 357: {
+	//			_vm->_trip->tr[0].xs = _vm->_gyro->walk;
+	//			_vm->_trip->newspeed();
+	//		}
+	//		break;
+	//		case 358 ... 395: {
+	//			_vm->_trip->tr[0].xs = _vm->_gyro->run;
+	//			_vm->_trip->newspeed();
+	//		}
+	//		break;
+	//		case 396 ... 483:
+	//			fxtoggle();
+	//			break; /* "sound" */
+	//			/*              484..534: begin { clock }
+	//			                         off; if getpixel(mx,my)=14 then mousetext:='#'+mousetext; on;
+	//			                        end;*/
+	//		case 535 ... 640:
+	//			_vm->_gyro->mousetext = Common::String('\15') + _vm->_gyro->mousetext;
+	//			break;
+	//		}
+	//		break;
+	//	}
+	//}
+
+	/* if mrelease>0 then
+	 begin
+	  if (cw<>177) and (mry>10) then
+	   begin to_do:=(((mrx-20) div 100)*20)+(mry div 10); closewin; end;
+	 end;*/
+
+
+
 	warning("STUB: Lucerna::checkclick()");
 }
 

@@ -549,7 +549,7 @@ void Gyro::load_a_mouse(byte which) {
 
 
 
-	CursorMan.replaceCursor(cursor.pixels, 16, 32, mps[which].horzhotspot, mps[which].verthotspot, 255, false);
+	CursorMan.replaceCursor(cursor.pixels, 16, 32, mps[which - 1].horzhotspot, mps[which - 1].verthotspot * 2, 255, false);
 
 	cursor.free();
 }

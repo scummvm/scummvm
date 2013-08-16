@@ -213,6 +213,7 @@ void Scrolls::normscroll() {
 	_vm->_gyro->seescroll = false;
 	_vm->_lucerna->mousepage(_vm->_gyro->cp);
 	CursorMan.showMouse(false);
+	_vm->_lucerna->holdLeftMouse = false; // Used in Lucerna::checkclick().
 
 	warning("STUB: Scrolls::normscroll()");
 }
