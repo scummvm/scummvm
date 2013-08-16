@@ -154,7 +154,7 @@ private:
 
 	void topcheck();
 
-	void verte();
+	void verte(Common::Point cursorPos);
 
 	int8 fades(int8 x);
 
