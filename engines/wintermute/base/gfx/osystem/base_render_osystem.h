@@ -30,6 +30,7 @@
 #define WINTERMUTE_BASE_RENDERER_SDL_H
 
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 #include "common/list.h"
@@ -121,7 +122,7 @@ private:
 	// Dirty-rects:
 	void drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
 	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
-	Common::Rect *_dirtyRect;
+	DirtyRectContainer *_dirtyRects;
 	Common::List<RenderTicket *> _renderQueue;
 	RenderQueueIterator _lastAddedTicket;
 	RenderTicket *_previousTicket;

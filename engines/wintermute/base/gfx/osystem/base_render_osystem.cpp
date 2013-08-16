@@ -61,7 +61,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
 	_colorMod = kDefaultRgbaMod;
-	_dirtyRect = nullptr;
+	_dirtyRects = new DirtyRectContainer;
 	_disableDirtyRects = false;
 	_tempDisableDirtyRects = 0;
 	if (ConfMan.hasKey("dirty_rects")) {
@@ -78,7 +78,7 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 		delete ticket;
 	}
 
-	delete _dirtyRect;
+	_dirtyRects->reset();
 
 	_renderSurface->free();
 	delete _renderSurface;
@@ -161,8 +161,7 @@ bool BaseRenderOSystem::flip() {
 	}
 	if (_skipThisFrame) {
 		_skipThisFrame = false;
-		delete _dirtyRect;
-		_dirtyRect = nullptr;
+		_dirtyRects->reset();
 		g_system->updateScreen();
 		_needsFlip = false;
 		_drawNum = 1;
@@ -190,8 +189,7 @@ bool BaseRenderOSystem::flip() {
 			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
 		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
-		delete _dirtyRect;
-		_dirtyRect = nullptr;
+		_dirtyRects->reset();
 		g_system->updateScreen();
 		_needsFlip = false;
 	}
@@ -458,12 +456,9 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 }
 
 void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
-	if (!_dirtyRect) {
-		_dirtyRect = new Common::Rect(rect);
-	} else {
-		_dirtyRect->extend(rect);
-	}
-	_dirtyRect->clip(_renderRect);
+	_dirtyRects->addDirtyRect(rect, &_renderRect);
+	// TODO: Ugly hack!
+	// TODO: this has become useless?
 }
 
 void BaseRenderOSystem::drawTickets() {
@@ -485,7 +480,9 @@ void BaseRenderOSystem::drawTickets() {
 			++it;
 		}
 	}
-	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0) {
+
+	if (!_dirtyRects->getSize()) {
+		// TODO: Watch for 0-size rects!
 		it = _renderQueue.begin();
 		while (it != _renderQueue.end()) {
 			RenderTicket *ticket = *it;
@@ -499,32 +496,35 @@ void BaseRenderOSystem::drawTickets() {
 	uint32 oldColorMod = _colorMod;
 
 	// Apply the clear-color to the dirty rect.
-	_renderSurface->fillRect(*_dirtyRect, _clearColor);
-	_drawNum = 1;
-	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
-		RenderTicket *ticket = *it;
-		assert(ticket->_drawNum == _drawNum);
-		++_drawNum;
-		if (ticket->_dstRect.intersects(*_dirtyRect)) {
-			// dstClip is the area we want redrawn.
-			Common::Rect dstClip(ticket->_dstRect);
-			// reduce it to the dirty rect
-			dstClip.clip(*_dirtyRect);
-			// we need to keep track of the position to redraw the dirty rect
-			Common::Rect pos(dstClip);
-			int16 offsetX = ticket->_dstRect.left;
-			int16 offsetY = ticket->_dstRect.top;
-			// convert from screen-coords to surface-coords.
-			dstClip.translate(-offsetX, -offsetY);
+	for (int i = 0; i < _dirtyRects->getSize(); i++) {
+		Common::Rect *_dirtyRect = _dirtyRects->getRect(i);
+		_renderSurface->fillRect(*_dirtyRect, _clearColor);
+		_drawNum = i + 1;
+		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
+			RenderTicket *ticket = *it;
+			assert(ticket->_drawNum == _drawNum);
+			++_drawNum;
+			if (ticket->_dstRect.intersects(*_dirtyRect)) {
+				// dstClip is the area we want redrawn.
+				Common::Rect dstClip(ticket->_dstRect);
+				// reduce it to the dirty rect
+				dstClip.clip(*_dirtyRect);
+				// we need to keep track of the position to redraw the dirty rect
+				Common::Rect pos(dstClip);
+				int16 offsetX = ticket->_dstRect.left;
+				int16 offsetY = ticket->_dstRect.top;
+				// convert from screen-coords to surface-coords.
+				dstClip.translate(-offsetX, -offsetY);
 
-			_colorMod = ticket->_transform._rgbaMod; 
-			drawFromSurface(ticket, &pos, &dstClip);
-			_needsFlip = true;
+				_colorMod = ticket->_transform._rgbaMod; 
+				drawFromSurface(ticket, &pos, &dstClip);
+				_needsFlip = true;
+			}
+			// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
+			ticket->_wantsDraw = false;
 		}
-		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
-		ticket->_wantsDraw = false;
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 	}
-	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 
 	// Revert the colorMod-state.
 	_colorMod = oldColorMod;
