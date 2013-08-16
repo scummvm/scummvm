@@ -171,7 +171,7 @@ private:
 	 */
 	void renderSubRectToBackbuffer(Graphics::Surface &surface, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap, bool isTransposed);
 
-	void copyTransposedRectToBackbuffer(const uint16 *buffer, int imageHeight, int x, int y, int width, int height);
+	void copyTransposedRectToBackbuffer(const uint16 *buffer, int imageWidth, int destinationX, int destinationY, int width, int height, const Common::Rect &subRect);
 
 	void moveBackground(int offset);
 };
