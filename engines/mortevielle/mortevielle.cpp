@@ -350,7 +350,10 @@ Common::Error MortevielleEngine::run() {
 
 	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
-	_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
+	if (loadSlot != 0)
+		_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
+	else
+		resetVariables();
 
 	// Run the main game loop
 	mainGame();
