@@ -147,7 +147,9 @@ bool AvalancheEngine::getEvent(Common::Event &event) {
 	return _eventMan->pollEvent(event);
 }
 
-
+Common::Point AvalancheEngine::getMousePos() {
+	return _eventMan->getMousePos();
+}
 
 
 
