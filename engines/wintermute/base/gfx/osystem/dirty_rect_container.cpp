@@ -31,7 +31,8 @@
 namespace Wintermute {
 
 const int kMaxRects = 32;
-const int kMaxPercentWaste = 10;
+const int kMaxAcceptableWaste = 15;
+const int kMinAcceptableWaste = 5;
 
 DirtyRectContainer::DirtyRectContainer() {
 }
@@ -40,6 +41,10 @@ DirtyRectContainer::~DirtyRectContainer() {
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect *clipRect) {
+	// TODO: Ignore 0-size rects?
+	// TODO: Maybe check if really big (like == viewport)
+	// and avoid the whole dance altogether.
+
 	assert(clipRect != nullptr);
 	Common::Rect *tmp = new Common::Rect(rect);
 	int target = getSize();
@@ -68,37 +73,69 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	Common::Array<Common::Rect *> ret;
 
 	for (int i = 0; i < getSize(); i++) {
-		// See if this rect is contained by another - if so, discard;
-		bool contained = false;
 		Common::Rect *candidate = _rectArray[i];
 
-		for (uint j = 0; j < ret.size() && !contained; j++) {
+		if (candidate->width() == 0 || candidate->height() == 0) {
+			// We have no use for this
+			continue;
+		}
+		
+		// TODO: if really big then just use a single rect and avoid 
+		// all these unnecessary calculations (e.g. Rosemary fades)
+
+		if (ret.size() > kMaxRects) {
+			// Simply extend one (hack: the first one) and avoid rect soup & calculations;
+			ret[0]->extend(*candidate);
+			continue;
+		}
+
+		// See if it's contained or containes
+		for (uint j = 0; j < ret.size(); j++) {
+
 			if (ret[j]->contains(*candidate) || ret[j]->equals(*candidate)) {
-				contained = true;
+				// It's contained - continue!
+				continue;
 			}
-		}
 
-		if (contained) {
-			continue;
-		}
-
-		// See if this rect containes another - if so, extend the latter and discard this one;
-		int contains = -1;
-
-		for (uint j = 0; j < ret.size() && contains == -1; j++) {
 			if (candidate->contains(*(ret[j]))) {
-				contains = j;
+				// Contains an existing one.
+				// Extend the pre-existing one and discard this.
+				ret[j]->extend(*candidate);
+				continue;
 			}
 		}
 
-		if (contains != -1) {
-			ret[contains]->extend(*candidate);
-			continue;
+		// See if we can extend an existing one wasting < kMaxWaste percent space
+
+		int extendable = -1;
+		int bestRatio = 999999;
+
+		for (uint j = 0; j < ret.size(); j++) {
+			Common::Rect original = *ret[j];
+			Common::Rect extended = Common::Rect(original);
+			extended.extend(*candidate);
+			int originalArea = original.width() * original.height();
+			int candidateArea = candidate->width() * candidate->height();
+			int extendedArea = extended.width() * extended.height();
+			int ratioScaled = extendedArea * 10 / (originalArea + candidateArea);
+			if (ratioScaled <= kMaxAcceptableWaste / 10 &&
+			        ratioScaled < bestRatio) {
+				// This is a good candidate for extending.
+				bestRatio = ratioScaled;
+				extendable = j;
+				if (ratioScaled <= kMinAcceptableWaste / 10) {
+					// This is so good that we can actually
+					// avoid traversing the rest of the array,
+					// we would gain peanuts
+					continue;
+				}
+			}
+
 		}
 
-		// TODO: Find close relative with < kMaxPercentWaste wasted
-		for (int j = 0; false; j++) {
-			// NOOP
+		if (extendable != -1) {
+			ret[extendable]->extend(*candidate);
+			continue;
 		}
 
 		// If we ended up here, there's really nothing we can do
