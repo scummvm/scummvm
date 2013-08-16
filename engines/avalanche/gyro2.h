@@ -619,10 +619,6 @@ public:
 
 	void off();
 
-	void on_virtual();
-
-	void off_virtual();
-
 	void xycheck(); // Only updates mx & my, not all other mouse vars.
 
 	void hopto(int16 x, int16 y); // Moves mouse pointer to x,y.
@@ -672,10 +668,6 @@ public:
 	void background(byte x);
 
 	void hang_around_for_a_while();
-
-	void super_off();
-
-	void super_on();
 
 	bool mouse_near_text();
 

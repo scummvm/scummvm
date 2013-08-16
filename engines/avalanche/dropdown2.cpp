@@ -58,14 +58,13 @@ headtype *headtype::init(char trig, char alttrig, Common::String name, byte p, f
 }
 
 void headtype::display() {
-	_dr->_vm->_gyro->off(); /*MT*/
+	CursorMan.showMouse(false); /*MT*/
 	_dr->chalk(xpos, 1, trigger, title, true);
-	_dr->_vm->_gyro->on(); /*MT*/
+	CursorMan.showMouse(true); /*MT*/
 }
 
 void headtype::highlight() {
-	_dr->_vm->_gyro->off();
-	_dr->_vm->_gyro->off_virtual();
+	CursorMan.showMouse(false);
 
 	//nosound();
 	//setactivepage(cp);

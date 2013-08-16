@@ -87,7 +87,7 @@ void Parser::handleReturn() {
 
 void Parser::plotText() {
 	if (_vm->_gyro->mouse_near_text())
-		_vm->_gyro->super_off();
+		CursorMan.showMouse(false);
 
 	cursorOff();
 
@@ -96,7 +96,7 @@ void Parser::plotText() {
 	_vm->_graphics->drawText(_vm->_graphics->_surface, _vm->_parser->_inputText, _vm->_gyro->characters, 8, 24, 161, white);
 
 	cursorOn();
-	_vm->_gyro->super_on();
+	CursorMan.showMouse(true);
 }
 
 void Parser::cursorOn() {
@@ -140,7 +140,7 @@ void Parser::drawCursor() {
 
 void Parser::wipeText() {
 	if (_vm->_gyro->mouse_near_text())
-		_vm->_gyro->super_off();
+		CursorMan.showMouse(false);
 
 	cursorOff();
 	
@@ -149,7 +149,7 @@ void Parser::wipeText() {
 	_quote = true;
 	_inputTextPos = 0;
 	cursorOn();
-	_vm->_gyro->super_on();
+	CursorMan.showMouse(true);
 }
 
 } // End of namespace Avalanche
