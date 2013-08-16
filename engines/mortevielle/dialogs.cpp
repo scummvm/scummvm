@@ -431,12 +431,6 @@ void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 		_vm->_key = waitForF3F8();
 		if (_vm->shouldQuit())
 			return;
-
-		if (_vm->_newGraphicalDevice != _vm->_currGraphicalDevice) {
-			_vm->_currGraphicalDevice = _vm->_newGraphicalDevice;
-			_vm->clearScreen();
-			displayIntroScreen(drawFrame2Fl);
-		}
 	} while (_vm->_key != 66); // keycode for F8
 }
 

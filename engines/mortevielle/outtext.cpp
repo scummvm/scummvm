@@ -175,7 +175,6 @@ void TextHandler::taffich() {
 
 	int cx, drawingSize, npal;
 	int32 drawingStartPos;
-	int alllum[16];
 
 	int a = _vm->_caff;
 	if ((a >= 153) && (a <= 161))
@@ -272,21 +271,6 @@ void TextHandler::taffich() {
 		npal = a + 37;
 	}
 	loadPictureFile(filename, altFilename, drawingStartPos, drawingSize);
-	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
-		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&_vm->_curPict[2 + (i << 1)]);
-			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
-		}
-		for (int i = 0; i <= 15; ++i) {
-			int k = 0;
-			for (int j = 0; j <= 15; ++j) {
-				if (alllum[j] > alllum[k])
-					k = j;
-			}
-			_vm->_curPict[2 + (k << 1)] = rang[i];
-			alllum[k] = -1;
-		}
-	}
 	_vm->_numpal = npal;
 	_vm->setPal(npal);
 

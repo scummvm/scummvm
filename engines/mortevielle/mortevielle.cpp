@@ -92,8 +92,6 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_uptodatePresence = false;
 
 	_textColor = 0;
-	_currGraphicalDevice = -1;
-	_newGraphicalDevice = -1;
 	_place = -1;
 
 	_x26KeyCount = -1;
@@ -181,7 +179,6 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Set the screen mode
-	_currGraphicalDevice = MODE_EGA;
 	_resolutionScaler = 2;
 
 	_txxFileFl = false;
@@ -204,8 +201,6 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	// Setup the mouse cursor
 	initMouse();
 
-	_currGraphicalDevice = MODE_EGA;
-	_newGraphicalDevice = _currGraphicalDevice;
 	loadPalette();
 	loadCFIPH();
 	loadCFIEC();
@@ -220,10 +215,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 
 	testKeyboard();
 	showConfigScreen();
-	_newGraphicalDevice = _currGraphicalDevice;
 	testKeyboard();
-	if (_newGraphicalDevice != _currGraphicalDevice)
-		_currGraphicalDevice = _newGraphicalDevice;
 	clearScreen();
 
 	_soundManager.loadNoise();

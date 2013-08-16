@@ -129,8 +129,6 @@ enum Places {
 	DOOR = 25,        ROOM26 = 26,      COAT_ARMS = 27
 };
 
-enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCULES = 3, MODE_TANDY = 4 };
-
 struct nhom {
 	byte _id;     /* number between 0 and 32 */
 	byte _hom[4];
@@ -278,7 +276,6 @@ private:
 	void getReadDescription(int objId);
 	void getSearchDescription(int objId);
 	int  checkLeaveSecretPassage();
-	void changeGraphicalDevice(int newDevice);
 	void startDialog(int16 rep);
 	void endSearch();
 	int convertCharacterIndexToBitIndex(int characterIndex);
@@ -419,8 +416,6 @@ public:
 	bool _blo;
 	bool _destinationOk;
 	bool _largestClearScreen;
-	int  _currGraphicalDevice;
-	int  _newGraphicalDevice;
 	float _addFix;
 	int  _savedBitIndex;
 	int  _numpal;

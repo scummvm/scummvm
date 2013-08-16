@@ -283,10 +283,6 @@ void MortevielleEngine::handleAction() {
 
 		_menu.eraseMenu();
 		_menu._menuDisplayed = false;
-		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
-			changeGraphicalDevice((uint)((int)inkey - 1) >> 1);
-			return;
-		}
 		if (_menu._menuSelected && (_currMenu == MENU_SAVE)) {
 			Common::String saveName = Common::String::format("Savegame #%d", _currAction & 15);
 			_savegameManager.saveGame(_currAction & 15, saveName);
@@ -1450,31 +1446,6 @@ void MortevielleEngine::floodedInWell() {
 }
 
 /**
- * Engine function - Change Graphical Device
- * @remarks	Originally called 'change_gd'
- */
-void MortevielleEngine::changeGraphicalDevice(int newDevice) {
-	_mouse.hideMouse();
-	_currGraphicalDevice = newDevice;
-	clearScreen();
-	_mouse.initMouse();
-	_mouse.showMouse();
-	drawRightFrame();
-	prepareRoom();
-	drawClock();
-	if (_currBitIndex != 0)
-		showPeoplePresent(_currBitIndex);
-	else
-		displayAloneText();
-	clearDescriptionBar();
-	clearVerbBar();
-	_maff = 68;
-	drawPictureWithText();
-	handleDescriptionText(2, _crep);
-	_menu.displayMenu();
-}
-
-/**
  * Called when a savegame has been loaded.
  * @remarks	Originally called 'antegame'
  */
@@ -1980,30 +1951,9 @@ void MortevielleEngine::resetVariables() {
  * @remarks	Originally called 'writepal'
  */
 void MortevielleEngine::setPal(int n) {
-	switch (_currGraphicalDevice) {
-	case MODE_TANDY:
-	case MODE_EGA:
-	case MODE_AMSTRAD1512:
-		for (int i = 1; i <= 16; ++i) {
-			_curPict[(2 * i)] = _stdPal[n][i].x;
-			_curPict[(2 * i) + 1] = _stdPal[n][i].y;
-		}
-		break;
-	case MODE_CGA: {
-		nhom pal[16];
-		for (int i = 0; i < 16; ++i) {
-			pal[i] = _cgaPal[n]._a[i];
-		}
-
-		if (n < 89)
-			palette(_cgaPal[n]._p);
-
-		for (int i = 0; i <= 15; ++i)
-			displayCGAPattern(i, &_patternArr[pal[i]._id], pal);
-		}
-		break;
-	default:
-		break;
+	for (int i = 1; i <= 16; ++i) {
+		_curPict[(2 * i)] = _stdPal[n][i].x;
+		_curPict[(2 * i) + 1] = _stdPal[n][i].y;
 	}
 }
 
@@ -2216,8 +2166,6 @@ void MortevielleEngine::showTitleScreen() {
 	_caff = 51;
 	_text.taffich();
 	testKeyboard();
-	if (_newGraphicalDevice != _currGraphicalDevice)
-		_currGraphicalDevice = _newGraphicalDevice;
 	clearScreen();
 	draw(0, 0);
 
@@ -2243,9 +2191,6 @@ void MortevielleEngine::draw(int x, int y) {
  */
 void MortevielleEngine::drawRightFrame() {
 	setPal(89);
-	if (_currGraphicalDevice == MODE_HERCULES)
-		_curPict[14] = 15;
-
 	_mouse.hideMouse();
 	displayPicture(_rightFramePict, 0, 0);
 	_mouse.showMouse();
@@ -2418,21 +2363,16 @@ void MortevielleEngine::drawClock() {
 	const int x = 580;
 	const int y = 123;
 	const int rg = 9;
-	int hourColor;
 
 	_mouse.hideMouse();
 
 	_screenSurface.drawRectangle(570, 118, 20, 10);
 	_screenSurface.drawRectangle(578, 114, 6, 18);
-	if ((_currGraphicalDevice == MODE_CGA) || (_currGraphicalDevice == MODE_HERCULES))
-		hourColor = 0;
-	else
-		hourColor = 1;
 
 	if (_minute == 0)
-		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y - rg), hourColor);
+		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y - rg), 1);
 	else
-		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y + rg), hourColor);
+		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y + rg), 1);
 
 	int hour12 = _hour;
 	if (hour12 > 12)
@@ -2440,7 +2380,7 @@ void MortevielleEngine::drawClock() {
 	if (hour12 == 0)
 		hour12 = 12;
 
-	_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)(x + cv[0][hour12 - 1]) >> 1) * _resolutionScaler, y + cv[1][hour12 - 1], hourColor);
+	_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)(x + cv[0][hour12 - 1]) >> 1) * _resolutionScaler, y + cv[1][hour12 - 1], 1);
 	_mouse.showMouse();
 	_screenSurface.putxy(568, 154);
 
@@ -2486,20 +2426,6 @@ Common::String MortevielleEngine::copy(const Common::String &s, int idx, size_t 
  * @remarks	Originally called 'hirs'
  */
 void MortevielleEngine::clearScreen() {
-	// Note: The original used this to set the graphics mode and clear the screen, both at
-	// the start of the game, and whenever the screen need to be cleared. As such, this
-	// method is deprecated in favour of clearing the screen
-	debugC(1, kMortevielleCore, "TODO: hirs is deprecated in favour of ScreenSurface::clearScreen");
-
-	if (_currGraphicalDevice == MODE_TANDY) {
-		_screenSurface.fillRect(0, Common::Rect(0, 0, 639, 200));
-		_resolutionScaler = 1;
-	} else if (_currGraphicalDevice == MODE_CGA) {
-		palette(1);
-		_resolutionScaler = 1;
-	} else
-		_resolutionScaler = 2;
-
 	_screenSurface.clearScreen();
 }
 
@@ -2540,12 +2466,6 @@ void MortevielleEngine::displayControlMenu() {
 void MortevielleEngine::displayPicture(const byte *pic, int x, int y) {
 	GfxSurface surface;
 	surface.decode(pic);
-
-	if (_currGraphicalDevice == MODE_HERCULES) {
-		_curPict[2] = 0;
-		_curPict[32] = 15;
-	}
-
 	_screenSurface.drawPicture(surface, x, y);
 }
 
@@ -3465,17 +3385,8 @@ int MortevielleEngine::checkLeaveSecretPassage() {
  * @remarks	Originally called 'fenat'
  */
 void MortevielleEngine::displayStatusInDescriptionBar(char stat) {
-	int color;
-
 	_mouse.hideMouse();
-	if (_currGraphicalDevice == MODE_CGA)
-		color = 2;
-	else if (_currGraphicalDevice == MODE_HERCULES)
-		color = 1;
-	else
-		color = 12;
-
-	_screenSurface.writeCharacter(Common::Point(306, 193), stat, color);
+	_screenSurface.writeCharacter(Common::Point(306, 193), stat, 12);
 	_screenSurface.drawBox(300, 191, 16, 8, 15);
 	_mouse.showMouse();
 }

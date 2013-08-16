@@ -1165,13 +1165,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
  * @remarks	Originally called 'paint_rect'
  */
 void ScreenSurface::drawRectangle(int x, int y, int dx, int dy) {
-	int co;
-
-	if (_vm->_currGraphicalDevice == MODE_CGA)
-		co = 3;
-	else
-		co = 11;
-	_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
+	_vm->_screenSurface.fillRect(11, Common::Rect(x, y, x + dx, y + dy));
 }
 
 void ScreenSurface::setParent(MortevielleEngine *vm) {

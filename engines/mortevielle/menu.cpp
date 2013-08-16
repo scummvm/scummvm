@@ -272,11 +272,6 @@ void Menu::displayMenu() {
 	_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 
 	int col = 28 * _vm->_resolutionScaler;
-	int color;
-	if (_vm->_currGraphicalDevice == MODE_CGA)
-		color = 1;
-	else
-		color = 9;
 	for (int charNum = 0; charNum < 6; charNum++) {
 	// One character after the other
 		int idx = 0;
@@ -290,7 +285,7 @@ void Menu::displayMenu() {
 					if ((_charArr[charNum][idx] & msk) != 0) {
 						_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
 						_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
-						_vm->_screenSurface.setPixel(Common::Point(x, y), color);
+						_vm->_screenSurface.setPixel(Common::Point(x, y), 9);
 					}
 					msk >>= 1;
 					++x;
