@@ -69,7 +69,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	// Create managers
 	_scriptManager = new ScriptManager(this);
 	_renderManager = new RenderManager(_system, _workingWindow, _pixelFormat);
-	_cursorManager = new CursorManager(this, &_pixelFormat);
 
 	debug("ZVision::ZVision");
 }
@@ -116,6 +115,8 @@ void ZVision::initialize() {
 
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
 
+	// CursorManager must be created after all the directories have been added
+	_cursorManager = new CursorManager(this, &_pixelFormat);
 	_cursorManager->initialize();
 	_scriptManager->initialize();
 
