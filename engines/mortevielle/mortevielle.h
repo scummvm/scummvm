@@ -461,6 +461,7 @@ public:
 	virtual Common::Error run();
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
+	Common::Language getOriginalLanguage() const;
 	static Common::String generateSaveFilename(const Common::String &target, int slot);
 	Common::String generateSaveFilename(int slot) { return generateSaveFilename(_targetName, slot); }
 

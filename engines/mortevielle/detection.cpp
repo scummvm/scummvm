@@ -36,6 +36,8 @@ uint32 MortevielleEngine::getGameFlags() const { return _gameDescription->desc.f
 
 Common::Language MortevielleEngine::getLanguage() const { return _gameDescription->desc.language; }
 
+Common::Language MortevielleEngine::getOriginalLanguage() const { return _gameDescription->originalLanguage; }
+
 }
 
 static const PlainGameDescriptor MortevielleGame[] = {

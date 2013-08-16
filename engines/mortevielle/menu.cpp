@@ -638,11 +638,13 @@ void Menu::initMenu() {
 	}
 
 	if (!enMenuLoaded) {
-		if (!f.open("menufr.mor"))
+		if (_vm->getOriginalLanguage() == Common::FR_FRA) {
+			if (!f.open("menufr.mor"))
+				error("Missing file - menufr.mor");
+		} else { // Common::DE_DEU
 			if (!f.open("menual.mor"))
-				if (!f.open("menu.mor"))
-					error("Missing file - menufr.mor or menual.mor or menu.mor");
-
+				error("Missing file - menual.mor");
+		}
 		f.read(_charArr, 7 * 24);
 		f.close();
 	}
