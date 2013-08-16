@@ -71,10 +71,7 @@ int DialogManager::show(const Common::String &msg, int n) {
 			while ((alertStr[i + 1] != '\174') && (alertStr[i + 1] != '\135')) {
 				++i;
 				displayStr += alertStr[i];
-				if (_vm->_resolutionScaler == 2)
-					curPos.x -= 3;
-				else
-					curPos.x -= 5;
+				curPos.x -= 3;
 			}
 			_vm->_screenSurface.putxy(curPos.x, _vm->_screenSurface._textPos.y);
 			_vm->_screenSurface._textPos.y += 6;
@@ -95,12 +92,12 @@ int DialogManager::show(const Common::String &msg, int n) {
 	int limit[3][3];
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 
-	limit[1][1] = ((uint)(coldep) / 2) * _vm->_resolutionScaler;
+	limit[1][1] = ((uint)(coldep) / 2) * kResolutionScaler;
 	limit[1][2] = limit[1][1] + 40;
 	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * _vm->_resolutionScaler;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * kResolutionScaler;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
 	_vm->_mouse.showMouse();
@@ -221,10 +218,7 @@ void DialogManager::decodeAlertDetails(Common::String inputStr, int &choiceNumb,
 	}
 
 	choiceListStr = Common::String(inputStr.c_str() + i);
-	if (_vm->_resolutionScaler == 2)
-		col *= 6;
-	else
-		col *= 10;
+	col *= 6;
 }
 
 void DialogManager::setPosition(int ji, int coldep, int esp) {
@@ -302,11 +296,7 @@ bool DialogManager::showKnowledgeCheck() {
 		_vm->_mouse.hideMouse();
 		_vm->clearScreen();
 		_vm->_mouse.showMouse();
-		int dialogHeight;
-		if (_vm->_resolutionScaler == 1)
-			dialogHeight = 29;
-		else
-			dialogHeight = 23;
+		int dialogHeight = 23;
 		_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = _vm->getString(textIndexArr[indx]);
 		_vm->_text.displayStr(tmpStr, 20, 15, 100, 2, 0);
@@ -335,7 +325,7 @@ bool DialogManager::showKnowledgeCheck() {
 		}
 
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			coor[j]._rect = Common::Rect(45 * _vm->_resolutionScaler, 27 + j * 8, (maxLength * 3 + 55) * _vm->_resolutionScaler, 34 + j * 8);
+			coor[j]._rect = Common::Rect(45 * kResolutionScaler, 27 + j * 8, (maxLength * 3 + 55) * kResolutionScaler, 34 + j * 8);
 			coor[j]._enabled = true;
 
 			while ((int)choiceArray[j].size() < maxLength) {
@@ -343,11 +333,7 @@ bool DialogManager::showKnowledgeCheck() {
 			}
 		}
 		coor[lastOption - firstOption + 2]._enabled = false;
-		int rep;
-		if (_vm->_resolutionScaler == 1)
-			rep = 10;
-		else
-			rep = 6;
+		int rep = 6;
 		_vm->_screenSurface.drawBox(80, 33, 40 + (maxLength * rep), (lastOption - firstOption) * 8 + 16, 15);
 		rep = 0;
 
@@ -477,7 +463,7 @@ void DialogManager::displayIntroFrame2() {
 	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
 	_vm->_crep = _vm->getAnimOffset(2, 1);
 	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
-	_vm->_largestClearScreen = (_vm->_resolutionScaler == 1);
+	_vm->_largestClearScreen = false;
 	_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
 

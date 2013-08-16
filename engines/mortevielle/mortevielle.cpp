@@ -178,9 +178,6 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	// Set up an intermediate screen surface
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
-	// Set the screen mode
-	_resolutionScaler = 2;
-
 	_txxFileFl = false;
 	// Load texts from TXX files
 	loadTexts();

@@ -53,7 +53,6 @@ int TextHandler::nextWord(int p, const char *ch, int &tab) {
  * @remarks	Originally called 'afftex'
  */
 void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) {
-	int tab;
 	Common::String s;
 	int i, j;
 
@@ -61,10 +60,7 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	inputStr += '$';
 
 	_vm->_screenSurface.putxy(x, y);
-	if (_vm->_resolutionScaler == 1)
-		tab = 10;
-	else
-		tab = 6;
+	int tab = 6;
 	dx *= 6;
 	dy *= 6;
 	int xc = x;

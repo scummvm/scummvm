@@ -1679,19 +1679,12 @@ void MortevielleEngine::clearVerbBar() {
  * @remarks	Originally called 'clsf10'
  */
 void MortevielleEngine::clearUpperRightPart() {
-	int x1, x2;
 	Common::String st;
 
 	_mouse.hideMouse();
-	if (_resolutionScaler == 1) {
-		x2 = 634;
-		x1 = 534;
-	} else {
-		x2 = 600;
-		x1 = 544;
-	}
+
 	// Clear ambiance description
-	_screenSurface.fillRect(15, Common::Rect(x1, 93, x2, 98));
+	_screenSurface.fillRect(15, Common::Rect(600, 93, 544, 98));
 	if (_coreVar._faithScore < 33)
 		st = getEngineString(S_COOL);
 	else if (_coreVar._faithScore < 66)
@@ -1699,7 +1692,7 @@ void MortevielleEngine::clearUpperRightPart() {
 	else if (_coreVar._faithScore > 65)
 		st = getEngineString(S_MALSAINE);
 
-	x1 = 580 - (_screenSurface.getStringWidth(st) / 2);
+	int x1 = 580 - (_screenSurface.getStringWidth(st) / 2);
 	_screenSurface.putxy(x1, 92);
 	_screenSurface.drawString(st, 4);
 
@@ -2170,7 +2163,7 @@ void MortevielleEngine::showTitleScreen() {
 	draw(0, 0);
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
-	_screenSurface.putxy(104 + 72 * _resolutionScaler, 185);
+	_screenSurface.putxy(104 + 72 * kResolutionScaler, 185);
 	_screenSurface.drawString(cpr, 0);
 }
 
@@ -2370,9 +2363,9 @@ void MortevielleEngine::drawClock() {
 	_screenSurface.drawRectangle(578, 114, 6, 18);
 
 	if (_minute == 0)
-		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y - rg), 1);
+		_screenSurface.drawLine(((uint)x >> 1) * kResolutionScaler, y, ((uint)x >> 1) * kResolutionScaler, (y - rg), 1);
 	else
-		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y + rg), 1);
+		_screenSurface.drawLine(((uint)x >> 1) * kResolutionScaler, y, ((uint)x >> 1) * kResolutionScaler, (y + rg), 1);
 
 	int hour12 = _hour;
 	if (hour12 > 12)
@@ -2380,7 +2373,7 @@ void MortevielleEngine::drawClock() {
 	if (hour12 == 0)
 		hour12 = 12;
 
-	_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)(x + cv[0][hour12 - 1]) >> 1) * _resolutionScaler, y + cv[1][hour12 - 1], 1);
+	_screenSurface.drawLine(((uint)x >> 1) * kResolutionScaler, y, ((uint)(x + cv[0][hour12 - 1]) >> 1) * kResolutionScaler, y + cv[1][hour12 - 1], 1);
 	_mouse.showMouse();
 	_screenSurface.putxy(568, 154);
 
@@ -2512,14 +2505,8 @@ int MortevielleEngine::getAnimOffset(int frameNum, int animNum) {
  * @remarks	Originally called 'text1'
  */
 void MortevielleEngine::displayTextInDescriptionBar(int x, int y, int nb, int mesgId) {
-	int co;
-
-	if (_resolutionScaler == 1)
-		co = 10;
-	else
-		co = 6;
 	Common::String tmpStr = getString(mesgId);
-	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
+	if ((y == 182) && ((int) tmpStr.size() > nb))
 		y = 176;
 	_text.displayStr(tmpStr, x, y, nb, 20, _textColor);
 }
@@ -2532,7 +2519,7 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 	if ((mesgId > 499) && (mesgId < 563)) {
 		Common::String tmpStr = getString(mesgId - 501 + kInventoryStringIndex);
 
-		if ((int) tmpStr.size() > ((58 + (_resolutionScaler - 1) * 37) << 1))
+		if ((int) tmpStr.size() > ((58 + (kResolutionScaler - 1) * 37) << 1))
 			_largestClearScreen = true;
 		else
 			_largestClearScreen = false;
@@ -2641,7 +2628,7 @@ void MortevielleEngine::resetOpenObjects() {
 void MortevielleEngine::displayTextBlock(Common::String text) {
 	// Some dead code was present in the original: removed
 	_screenSurface.putxy(8, 177);
-	int tlig = 59 + (_resolutionScaler - 1) * 36;
+	int tlig = 59 + (kResolutionScaler - 1) * 36;
 
 	if ((int)text.size() < tlig)
 		_screenSurface.drawString(text, 5);
@@ -2867,10 +2854,7 @@ int MortevielleEngine::getPresence(int roomId) {
  * @remarks	Originally called 'writetp'
  */
 void MortevielleEngine::displayQuestionText(Common::String s, int cmd) {
-	if (_resolutionScaler == 2)
-		_screenSurface.drawString(s, cmd);
-	else
-		_screenSurface.drawString(copy(s, 1, 25), cmd);
+	_screenSurface.drawString(s, cmd);
 }
 
 /**
@@ -3239,7 +3223,7 @@ void MortevielleEngine::displayStatusArrow() {
 				return;
 
 			if (getMouseClick())
-				inRect = (_mouse._pos.x < 256 * _resolutionScaler) && (_mouse._pos.y < 176) && (_mouse._pos.y > 12);
+				inRect = (_mouse._pos.x < 256 * kResolutionScaler) && (_mouse._pos.y < 176) && (_mouse._pos.y > 12);
 			prepareRoom();
 		} while (!(qust || inRect || _anyone));
 
@@ -3296,10 +3280,10 @@ void MortevielleEngine::setCoordinates(int sx) {
 	cy = 1;
 	do {
 		cb += 2;
-		sx = _tabdon[a + cb] * _resolutionScaler;
+		sx = _tabdon[a + cb] * kResolutionScaler;
 		sy = _tabdon[(a + cb + 1)];
 		cb += 2;
-		ix = _tabdon[a + cb] * _resolutionScaler;
+		ix = _tabdon[a + cb] * kResolutionScaler;
 		iy = _tabdon[(a + cb + 1)];
 		++cy;
 	} while (!(((_x >= sx) && (_x <= ix) && (_y >= sy) && (_y <= iy)) || (cy > ib)));

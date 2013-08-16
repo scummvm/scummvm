@@ -1015,11 +1015,6 @@ void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, in
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
-	if (_vm->_resolutionScaler == 1) {
-		x = (uint)x >> 1;
-		dx = (uint)dx >> 1;
-	}
-
 	Graphics::Surface destSurface = lockArea(Common::Rect(x, y * 2, x + dx, (y + dy) * 2));
 
 	destSurface.hLine(0, 0, dx, col);
@@ -1078,11 +1073,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	_vm->_mouse.hideMouse();
 	Common::Point pt = _textPos;
 
-	int charWidth;
-	if (_vm->_resolutionScaler == 2)
-		charWidth = 6;
-	else
-		charWidth = 10;
+	int charWidth = 6;
 
 	int x = pt.x + charWidth * l.size();
 	int color = 0;
@@ -1118,7 +1109,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
  * Gets the width in pixels of the specified string
  */
 int ScreenSurface::getStringWidth(const Common::String &s) {
-	int charWidth = (_vm->_resolutionScaler == 2) ? 6 : 10;
+	int charWidth = 6;
 
 	return s.size() * charWidth;
 }

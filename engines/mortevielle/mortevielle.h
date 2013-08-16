@@ -115,6 +115,7 @@ const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
 const int kMaxPatt = 20;
 
+const int kResolutionScaler = 2;
 /*
 9   "A glance at the forbidden$",
 18  "It's already open$",
@@ -427,7 +428,6 @@ public:
 	int _caff;
 	int _crep;
 
-	int _resolutionScaler;
 	byte _destinationArray[7][25];
 
 	byte *_curPict;

@@ -1408,7 +1408,7 @@ void MortevielleEngine::fctDiscuss() {
 				return;
 
 			_mouse.getMousePosition(x, y, click);
-			x *= (3 - _resolutionScaler);
+			x *= (3 - kResolutionScaler);
 			if (x > 319)
 				cx = 41;
 			else

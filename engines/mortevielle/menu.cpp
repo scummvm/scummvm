@@ -271,7 +271,7 @@ void Menu::displayMenu() {
 	_vm->_mouse.hideMouse();
 	_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 
-	int col = 28 * _vm->_resolutionScaler;
+	int col = 28 * kResolutionScaler;
 	for (int charNum = 0; charNum < 6; charNum++) {
 	// One character after the other
 		int idx = 0;
@@ -293,7 +293,7 @@ void Menu::displayMenu() {
 				++idx;
 			}
 		}
-		col += 48 * _vm->_resolutionScaler;
+		col += 48 * kResolutionScaler;
 	}
 	_vm->_mouse.showMouse();
 }
@@ -370,16 +370,12 @@ void Menu::util(Common::Point pos) {
 
 	int ymx = (menuConstants[_msg3 - 1][3] << 3) + 16;
 	int dxcar = menuConstants[_msg3 - 1][2];
-	int xmn = (menuConstants[_msg3 - 1][0] << 2) * _vm->_resolutionScaler;
+	int xmn = (menuConstants[_msg3 - 1][0] << 2) * kResolutionScaler;
 
-	int ix;
-	if (_vm->_resolutionScaler == 1)
-		ix = 5;
-	else
-		ix = 3;
-	int xmx = dxcar * ix * _vm->_resolutionScaler + xmn + 2;
+	int charWidth = 6;
+	int xmx = dxcar * charWidth + xmn + 2;
 	if ((pos.x > xmn) && (pos.x < xmx) && (pos.y < ymx) && (pos.y > 15)) {
-		ix = (((uint)pos.y >> 3) - 1) + (_msg3 << 8);
+		int ix = (((uint)pos.y >> 3) - 1) + (_msg3 << 8);
 		if (ix != _msg4) {
 			invert(1);
 			_msg4 = ix;
@@ -402,11 +398,7 @@ void Menu::menuDown(int ii) {
 	int minX = menuConstants[ii - 1][0] << 3;
 	int lineNum = menuConstants[ii - 1][3];
 	_vm->_mouse.hideMouse();
-	int deltaX;
-	if (_vm->_resolutionScaler == 1)
-		deltaX = 10;
-	else
-		deltaX = 6;
+	int deltaX = 6;
 	int maxX = minX + (menuConstants[ii - 1][2] * deltaX) + 6;
 	if ((ii == 4) && (_vm->getLanguage() == Common::EN_ANY))
 		// Extra width needed for Self menu in English version
@@ -512,24 +504,24 @@ void Menu::updateMenu() {
 			_vm->_prevPos = curPos;
 
 		bool tes =  (curPos.y < 11)
-		   && ((curPos.x >= (28 * _vm->_resolutionScaler) && curPos.x <= (28 * _vm->_resolutionScaler + 24))
-		   ||  (curPos.x >= (76 * _vm->_resolutionScaler) && curPos.x <= (76 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 124 * _vm->_resolutionScaler) && (curPos.x < 124 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 172 * _vm->_resolutionScaler) && (curPos.x < 172 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 220 * _vm->_resolutionScaler) && (curPos.x < 220 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 268 * _vm->_resolutionScaler) && (curPos.x < 268 * _vm->_resolutionScaler + 24)));
+		   && ((curPos.x >= (28 * kResolutionScaler) && curPos.x <= (28 * kResolutionScaler + 24))
+		   ||  (curPos.x >= (76 * kResolutionScaler) && curPos.x <= (76 * kResolutionScaler + 24))
+		   || ((curPos.x > 124 * kResolutionScaler) && (curPos.x < 124 * kResolutionScaler + 24))
+		   || ((curPos.x > 172 * kResolutionScaler) && (curPos.x < 172 * kResolutionScaler + 24))
+		   || ((curPos.x > 220 * kResolutionScaler) && (curPos.x < 220 * kResolutionScaler + 24))
+		   || ((curPos.x > 268 * kResolutionScaler) && (curPos.x < 268 * kResolutionScaler + 24)));
 		if (tes) {
 			int ix;
 
-			if (curPos.x < 76 * _vm->_resolutionScaler)
+			if (curPos.x < 76 * kResolutionScaler)
 				ix = MENU_INVENTORY;
-			else if (curPos.x < 124 * _vm->_resolutionScaler)
+			else if (curPos.x < 124 * kResolutionScaler)
 				ix = MENU_MOVE;
-			else if (curPos.x < 172 * _vm->_resolutionScaler)
+			else if (curPos.x < 172 * kResolutionScaler)
 				ix = MENU_ACTION;
-			else if (curPos.x < 220 * _vm->_resolutionScaler)
+			else if (curPos.x < 220 * kResolutionScaler)
 				ix = MENU_SELF;
-			else if (curPos.x < 268 * _vm->_resolutionScaler)
+			else if (curPos.x < 268 * kResolutionScaler)
 				ix = MENU_DISCUSS;
 			else
 				ix = MENU_FILE;
