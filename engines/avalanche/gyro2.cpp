@@ -291,10 +291,6 @@ void Gyro::xycheck() {
 	warning("STUB: Gyro::xycheck()");
 }
 
-void Gyro::hopto(int16 x, int16 y) {
-	warning("STUB: Gyro::hopto()");
-}
-
 void Gyro::check() {
 	warning("STUB: Gyro::check()");
 }

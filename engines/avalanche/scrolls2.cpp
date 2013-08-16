@@ -260,19 +260,15 @@ void Scrolls::dingdongbell() {   /* Pussy's in the well. Who put her in? Little.
 		_vm->_lucerna->errorled(); /* ring the bell "x" times */
 }
 
-void Scrolls::dodgem() {     /* This moves the mouse pointer off the scroll so that you can read it. */
-	_vm->_gyro->xycheck(); /* Mx & my now contain xy pos of mouse */
-	dodgex = _vm->_gyro->mx;
-	dodgey = _vm->_gyro->my; /* Store 'em */
-	_vm->_gyro->hopto(dodgex, _vm->_gyro->underscroll); /* Move the pointer off the scroll. */
+void Scrolls::dodgem() {     
+	dodgeCoord = _vm->getMousePos();
+	g_system->warpMouse(dodgeCoord.x, _vm->_gyro->underscroll); // Move the pointer off the scroll.
 }
 
-void Scrolls::undodgem() {   /* This is the opposite of Dodgem. It moves the
- mouse pointer back, IF you haven't moved it in the meantime. */
-	_vm->_gyro->xycheck();
-	if ((_vm->_gyro->mx == dodgex) && (_vm->_gyro->my == _vm->_gyro->underscroll))
-		/* No change, so restore the pointer's original position. */
-		_vm->_gyro->hopto(dodgex, dodgey);
+void Scrolls::undodgem() {   
+	Common::Point actCoord = _vm->getMousePos();
+	if ((actCoord.x == dodgeCoord.x) && (actCoord.y == _vm->_gyro->underscroll))
+		g_system->warpMouse(dodgeCoord.x, dodgeCoord.y); // No change, so restore the pointer's original position.
 }
 
 void Scrolls::geticon(int16 x, int16 y, byte which) {
@@ -446,7 +442,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 		my += 12;
 	}
 
-	_vm->_gyro->underscroll = my + 3;
+	_vm->_gyro->underscroll = my * 2 + 12 + 1; // Multiplying because of the doubled screen height.
 	//setvisualpage(1 - cp);
 	dingdongbell();
 	//my = getpixel(0, 0);

@@ -621,8 +621,6 @@ public:
 
 	void xycheck(); // Only updates mx & my, not all other mouse vars.
 
-	void hopto(int16 x, int16 y); // Moves mouse pointer to x,y.
-
 	void check();
 
 	void note(uint16 hertz);

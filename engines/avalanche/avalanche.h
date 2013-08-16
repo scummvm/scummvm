@@ -115,6 +115,8 @@ public:
 
 	bool getEvent(Common::Event &event); // A warpper around _eventMan->pollEvent(), se we can use it in Scrolls::normscroll() for example.
 
+	Common::Point getMousePos();
+
 protected:
 	// Engine APIs
 	Common::Error run();

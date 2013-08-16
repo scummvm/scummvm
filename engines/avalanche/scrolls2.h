@@ -108,7 +108,7 @@ private:
 	
 	byte cfont; // Current font
 
-	int16 dodgex, dodgey;
+	Common::Point dodgeCoord;
 	byte param; // For using arguments code
 
 	byte use_icon;
@@ -133,9 +133,9 @@ private:
 
 	void dingdongbell();
 
-	void dodgem();
+	void dodgem(); // This moves the mouse pointer off the scroll so that you can read it.
 
-	void undodgem();
+	void undodgem(); // This is the opposite of Dodgem. It moves the mouse pointer back, IF you haven't moved it in the meantime.
 
 	void geticon(int16 x, int16 y, byte which);
 
