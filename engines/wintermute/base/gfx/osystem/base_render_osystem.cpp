@@ -495,9 +495,10 @@ void BaseRenderOSystem::drawTickets() {
 	// draw, we need to keep track of what it was prior to draw.
 	uint32 oldColorMod = _colorMod;
 
+	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
 
-	for (int i = 0; i < _dirtyRects->getSize(); i++) {
-		Common::Rect *_dirtyRect = _dirtyRects->getRect(i);
+	for (uint i = 0; i < optimized.size(); i++) {
+		Common::Rect *_dirtyRect = optimized[i];
 		// Apply the clear-color to the dirty rect.
 		_renderSurface->fillRect(*_dirtyRect, _clearColor);
 		_drawNum = 1;

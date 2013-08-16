@@ -42,6 +42,7 @@ public:
 	int getSize();
 	Common::Rect *getRect(int id);
 	Common::Array<Common::Rect *> getOptimizedRects();
+	Common::Array<Common::Rect *> getOptimized();
 private:
 	Common::Array<Common::Rect *> _rectArray;
 };

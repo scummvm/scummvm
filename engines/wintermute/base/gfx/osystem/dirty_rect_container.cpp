@@ -59,5 +59,13 @@ Common::Rect *DirtyRectContainer::getRect(int id) {
 	return _rectArray[id];
 }
 
+Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
+	// TODO: Dummy algo
+	Common::Array<Common::Rect *> ret;
+	for (int i = 0; i < getSize(); i++) {
+		ret.insert_at(i, _rectArray[i]);
+	}
+	return ret;
+}
 } // End of namespace Wintermute
 
