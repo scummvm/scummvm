@@ -924,55 +924,55 @@ void Lucerna::objectlist() {
 		}
 }
 
-void Lucerna::verte() {
-	byte what;
-
+void Lucerna::verte(Common::Point cursorPos) {
 	if (! _vm->_gyro->dna.user_moves_avvy) 
 		return;
 
+	cursorPos.y /= 2;
+	byte what;
 
-	/* _vm->_trip->tr[0] : that's the only one we're interested in here */
-	if (_vm->_gyro->mx < _vm->_trip->tr[0].x) 
+	// _vm->_trip->tr[0] : that's the only one we're interested in here. (It's Avalot.)
+	if (cursorPos.x < _vm->_trip->tr[0].x) 
 		what = 1;
-	else if (_vm->_gyro->mx > (unsigned char)(_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info.xl)) 
+	else if (cursorPos.x > (_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info.xl)) 
 		what = 2;
 	else
-		what = 0; /* On top */
+		what = 0; // On top
 
-	if (_vm->_gyro->my < _vm->_trip->tr[0].y)
+	if (cursorPos.y < _vm->_trip->tr[0].y)
 		what += 3;
-	else if (_vm->_gyro->my > (unsigned char)(_vm->_trip->tr[0].y + _vm->_trip->tr[0]._info.yl))
+	else if (cursorPos.y > (_vm->_trip->tr[0].y + _vm->_trip->tr[0]._info.yl))
 		what += 6;
 
 	switch (what) {
 	case 0:
 		_vm->_trip->stopwalking();
-		break; /* Clicked on Avvy- no movement */
+		break; // Clicked on Avvy: no movement.
 	case 1:
-		_vm->_trip->rwsp(1, _vm->_trip->left);
+		_vm->_trip->rwsp(0, _vm->_trip->left);
 		break;
 	case 2:
-		_vm->_trip->rwsp(1, _vm->_trip->right);
+		_vm->_trip->rwsp(0, _vm->_trip->right);
 		break;
 	case 3:
-		_vm->_trip->rwsp(1, _vm->_trip->up);
+		_vm->_trip->rwsp(0, _vm->_trip->up);
 		break;
 	case 4:
-		_vm->_trip->rwsp(1, _vm->_trip->ul);
+		_vm->_trip->rwsp(0, _vm->_trip->ul);
 		break;
 	case 5:
-		_vm->_trip->rwsp(1, _vm->_trip->ur);
+		_vm->_trip->rwsp(0, _vm->_trip->ur);
 		break;
 	case 6:
-		_vm->_trip->rwsp(1, _vm->_trip->down);
+		_vm->_trip->rwsp(0, _vm->_trip->down);
 		break;
 	case 7:
-		_vm->_trip->rwsp(1, _vm->_trip->dl);
+		_vm->_trip->rwsp(0, _vm->_trip->dl);
 		break;
 	case 8:
-		_vm->_trip->rwsp(1, _vm->_trip->dr);
+		_vm->_trip->rwsp(0, _vm->_trip->dr);
 		break;
-	}    /* no other values are possible... */
+	}    // No other values are possible.
 
 	showrw();
 }
@@ -995,7 +995,7 @@ void Lucerna::checkclick() {
 	else if (!_vm->_gyro->ddmnow) { // Dropdown can handle its own pointers.
 		if (holdLeftMouse) {
 			_vm->_gyro->newpointer(7); // Mark's crosshairs
-			verte(); // Normally, if you click on the picture, you're guiding Avvy around.
+			verte(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
 		} else
 			_vm->_gyro->newpointer(4); // fletch
 	}
