@@ -76,7 +76,10 @@ void RenderManager::update(uint deltaTimeInMillis) {
 	}
 
 	// Warp the entire backbuffer
-	_renderTable.mutateImage((uint16 *)_backbuffer.getBasePtr(0, 0), _warpedBackbuffer, _workingWidth, _workingHeight);
+	//RenderTable::RenderState state = _renderTable.getRenderState();
+	//if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+	//	_renderTable.mutateImage((uint16 *)_backbuffer.getBasePtr(0, 0), _warpedBackbuffer, _workingWidth, _workingHeight);
+	//}
 
 	// Blit the backbuffer to the screen
 	_system->copyRectToScreen(_backbuffer.getBasePtr(0, 0), _backbuffer.pitch, _workingWindow.left, _workingWindow.top, _backbuffer.w, _backbuffer.h);
