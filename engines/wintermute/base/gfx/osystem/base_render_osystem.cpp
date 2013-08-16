@@ -495,11 +495,12 @@ void BaseRenderOSystem::drawTickets() {
 	// draw, we need to keep track of what it was prior to draw.
 	uint32 oldColorMod = _colorMod;
 
-	// Apply the clear-color to the dirty rect.
+
 	for (int i = 0; i < _dirtyRects->getSize(); i++) {
 		Common::Rect *_dirtyRect = _dirtyRects->getRect(i);
+		// Apply the clear-color to the dirty rect.
 		_renderSurface->fillRect(*_dirtyRect, _clearColor);
-		_drawNum = i + 1;
+		_drawNum = 1;
 		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 			RenderTicket *ticket = *it;
 			assert(ticket->_drawNum == _drawNum);

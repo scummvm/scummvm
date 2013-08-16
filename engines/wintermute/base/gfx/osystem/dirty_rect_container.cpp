@@ -36,18 +36,12 @@ DirtyRectContainer::~DirtyRectContainer() {
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect *clipRect) {
+	assert(clipRect != nullptr);
 	Common::Rect *tmp = new Common::Rect(rect);
-	if (_rectArray.size() == 0) {
-		_rectArray.insert_at(0, tmp);
-	} else {
-		_rectArray[0]->extend(*tmp);
-	}
-
-	assert (clipRect != nullptr);
-	
-	_rectArray[_rectArray.size() - 1]->clip(*clipRect);
-	
-	// Stub to emulate single dirtyRect for the time being
+	int target = getSize();
+	_rectArray.insert_at(target, tmp);
+	_rectArray[target]->clip(*clipRect);
+	// TODO: Upper limit?
 }
 
 void DirtyRectContainer::reset() {
