@@ -56,6 +56,7 @@ RenderManager::~RenderManager() {
 	}
 
 	_backbuffer.free();
+	delete[] _warpedBackbuffer;
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
