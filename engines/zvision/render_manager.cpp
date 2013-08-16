@@ -152,21 +152,23 @@ void RenderManager::renderSubRectToBackbuffer(Graphics::Surface &surface, uint32
 		return;
 
 	if (isTransposed) {
-		copyTransposedRectToBackbuffer((uint16 *)surface.getBasePtr(subRectangle.left, subRectangle.right), surface.w, destRect.left, destRect.top, destRect.width(), destRect.height());
+		copyTransposedRectToBackbuffer((uint16 *)surface.getBasePtr(subRectangle.left, subRectangle.top), surface.h, destRect.left, destRect.top, destRect.width(), destRect.height());
 	} else {
 		_backbuffer.copyRectToSurface(surface.getBasePtr(subRectangle.left, subRectangle.top), surface.pitch, destRect.left, destRect.top, destRect.width(), destRect.height());
 	}
 }
 
-void RenderManager::copyTransposedRectToBackbuffer(const uint16 *buffer, int imageHeight, int x, int y, int width, int height) {
+void RenderManager::copyTransposedRectToBackbuffer(const uint16 *buffer, int imageWidth, int x, int y, int width, int height) {
 	uint16 *dest = (uint16 *)_backbuffer.getBasePtr(x, y);
 
-	for (int x = 0; x < width; x++) {
-		int columnOffset = x * imageHeight;
-		for (int y = 0; y < height; y++) {
-			*dest = buffer[columnOffset + y];
+	for (int i = 0; i < width; i++) {
+		int columnOffset = i * imageWidth;
+		for (int j = 0; j < height; j++) {
+			*dest = buffer[columnOffset + j];
 			dest++;
 		}
+
+		dest += _backbuffer.w;
 	}
 }
 
