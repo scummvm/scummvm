@@ -255,21 +255,11 @@ Gyro::Gyro(AvalancheEngine *vm) : interrogation(0), oncandopageswap(true) {
 }
 
 Gyro::~Gyro() {
-	/* These are allocated in Gyro::setup_vmc */
-
-	delete[] vmc.andpic;
-	delete[] vmc.xorpic;
-
-	for (byte fv = 0; fv < 2; fv ++) {
-		delete[] vmc.backpic[fv];
-	}
-
 	for (byte i = 0; i < 9; i++) {
 		digit[i].free();
 		rwlite[i].free();
 	}
 	digit[9].free();
-
 }
 
 Common::String Gyro::strf(int32 x) {
@@ -281,21 +271,11 @@ void Gyro::newpointer(byte m) {
 	if (m == cmp)
 		return;
 	cmp = m;
-	
-	/*r.ax = 9;
-	r.bx = (word)(mps[m].horzhotspot);
-	r.cx = (word)(mps[m].verthotspot);
-	r.es = seg(mps[m].mask);
-	r.dx = ofs(mps[m].mask);
-	intr(0x33, r);
-	
-	r is a 'registers' type variable of Gyro in the Pascal code.*/
 
-	warning("STUB: Gyro::newpointer()");
 	load_a_mouse(m);
 }
 
-void Gyro::wait() {   // Makes hourglass.
+void Gyro::wait() {
 	newpointer(5);
 }
 
@@ -304,16 +284,7 @@ void Gyro::on() {
 }
 
 void Gyro::on_virtual() {
-	switch (visible) {
-	case m_virtual:
-		return;
-		break;
-	case m_yes:
-		off();
-		break;
-	}
-
-	visible = m_virtual;
+	warning("STUB: Gyro::on_virtual()");
 }
 
 void Gyro::off() {
@@ -324,11 +295,11 @@ void Gyro::off_virtual() {
 	warning("STUB: Gyro::off_virtual()");
 }
 
-void Gyro::xycheck() {   /* only updates mx & my, not all other mouse vars */
+void Gyro::xycheck() { 
 	warning("STUB: Gyro::xycheck()");
 }
 
-void Gyro::hopto(int16 x, int16 y) { /* Moves mouse void *to x,y */
+void Gyro::hopto(int16 x, int16 y) {
 	warning("STUB: Gyro::hopto()");
 }
 
@@ -352,12 +323,12 @@ void Gyro::shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
 	warning("STUB: Gyro::shbox()");
 }
 
-void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
+void Gyro::newgame() { 
 	for (byte gm = 0; gm < numtr; gm ++) {
 		if (_vm->_trip->tr[gm].quick)
 			_vm->_trip->tr[gm].done();
 	}
-	/* Deallocate sprite. Sorry, beta testers! */
+	// Deallocate sprite. Sorry, beta testers!
 
 	_vm->_trip->tr[0].init(0, true, _vm->_trip);
 	alive = true;
@@ -391,7 +362,7 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	her = 254;
 	it = 254;
 	last_person = 254; /* = Pardon? */
-	dna.pass_num = _vm->_rnd->getRandomNumber(30) + 1;//Random(30) + 1;
+	dna.pass_num = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
 	after_the_scroll = false;
 	dna.user_moves_avvy = false;
 	doing_sprite_run = false;
@@ -412,7 +383,7 @@ void Gyro::newgame() {   /* This sets up the DNA for a completely new game. */
 	_vm->_lucerna->sprite_run();
 }
 
-void Gyro::click() {   /* "Audio keyboard feedback" */
+void Gyro::click() { 
 	warning("STUB: Gyro::click()");
 }
 
@@ -539,15 +510,12 @@ Common::String Gyro::get_better(byte which) {
 	return get_better_result;
 }
 
-// Get back here after finished with acci.pas, where vb_-s are resided.
-Common::String Gyro::f5_does()
-/* This procedure determines what f5 does. */
-{
+
+Common::String Gyro::f5_does() {
 	warning("STUB: Gyro::f5_does()");
 	return "STUB: Gyro::f5_does()";
 }
 
-// Pobably vmc functions will deal with the mouse cursor.
 void Gyro::plot_vmc(int16 xx, int16 yy, byte page_) {
 	warning("STUB: Gyro::plot_vmc()");
 }
@@ -557,14 +525,7 @@ void Gyro::wipe_vmc(byte page_) {
 }
 
 void Gyro::setup_vmc() {
-	vmc.andpic = new byte[mouse_size];
-	vmc.xorpic = new byte[mouse_size];
-
-	/* Released in Gyro's destructor. */
-	for (int fv = 0; fv < 2; fv ++) {
-		vmc.backpic[fv] = new byte[mouse_size];
-		vmc.wherewas[fv].x = 32767;
-	}
+	warning("STUB: Gyro::setup_vmc()");
 }
 
 void Gyro::clear_vmc() {

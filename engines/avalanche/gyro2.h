@@ -614,7 +614,7 @@ public:
 
 	void newpointer(byte m);
 
-	void wait();    /* makes hourglass */
+	void wait();    // Makes hourglass.
 
 	void on();
 
@@ -624,9 +624,9 @@ public:
 
 	void off_virtual();
 
-	void xycheck();
+	void xycheck(); // Only updates mx & my, not all other mouse vars.
 
-	void hopto(int16 x, int16 y); /* Moves mouse pointer to x,y */
+	void hopto(int16 x, int16 y); // Moves mouse pointer to x,y.
 
 	void check();
 
@@ -636,9 +636,9 @@ public:
 
 	void shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
 
-	void newgame();
+	void newgame(); // This sets up the DNA for a completely new game.
 
-	void click();
+	void click(); // "Audio keyboard feedback"
 
 	void slowdown();
 
@@ -658,7 +658,7 @@ public:
 
 	Common::String get_better(byte which);
 
-	Common::String f5_does();
+	Common::String f5_does(); // This procedure determines what f5 does.
 
 	void plot_vmc(int16 xx, int16 yy, byte page_);
 
