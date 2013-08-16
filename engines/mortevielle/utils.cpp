@@ -1513,73 +1513,73 @@ void MortevielleEngine::handleOpcode() {
 				return;
 			}
 		}
+
 		if (_currMenu == MENU_MOVE)
 			fctMove();
-		if (_currMenu == MENU_DISCUSS)
+		else if (_currMenu == MENU_DISCUSS)
 			fctDiscuss();
-		if (_currMenu == MENU_INVENTORY)
+		else if (_currMenu == MENU_INVENTORY)
 			fctInventoryTake();
-		if (_currAction == _menu._opcodeAttach)
+		else if (_currAction == _menu._opcodeAttach)
 			fctAttach();
-		if (_currAction == _menu._opcodeWait)
+		else if (_currAction == _menu._opcodeWait)
 			fctWait();
-		if (_currAction == _menu._opcodeForce)
+		else if (_currAction == _menu._opcodeForce)
 			fctForce();
-		if (_currAction == _menu._opcodeSleep)
+		else if (_currAction == _menu._opcodeSleep)
 			fctSleep();
-		if (_currAction == _menu._opcodeListen)
+		else if (_currAction == _menu._opcodeListen)
 			fctListen();
-		if (_currAction == _menu._opcodeEnter)
+		else if (_currAction == _menu._opcodeEnter)
 			fctEnter();
-		if (_currAction == _menu._opcodeClose)
+		else if (_currAction == _menu._opcodeClose)
 			fctClose();
-		if (_currAction == _menu._opcodeSearch)
+		else if (_currAction == _menu._opcodeSearch)
 			fctSearch();
-		if (_currAction == _menu._opcodeKnock)
+		else if (_currAction == _menu._opcodeKnock)
 			fctKnock();
-		if (_currAction == _menu._opcodeScratch)
+		else if (_currAction == _menu._opcodeScratch)
 			fctScratch();
-		if (_currAction == _menu._opcodeRead)
+		else if (_currAction == _menu._opcodeRead)
 			fctRead();
-		if (_currAction == _menu._opcodeEat)
+		else if (_currAction == _menu._opcodeEat)
 			fctEat();
-		if (_currAction == _menu._opcodePlace)
+		else if (_currAction == _menu._opcodePlace)
 			fctPlace();
-		if (_currAction == _menu._opcodeOpen)
+		else if (_currAction == _menu._opcodeOpen)
 			fctOpen();
-		if (_currAction == _menu._opcodeTake)
+		else if (_currAction == _menu._opcodeTake)
 			fctTake();
-		if (_currAction == _menu._opcodeLook)
+		else if (_currAction == _menu._opcodeLook)
 			fctLook();
-		if (_currAction == _menu._opcodeSmell)
+		else if (_currAction == _menu._opcodeSmell)
 			fctSmell();
-		if (_currAction == _menu._opcodeSound)
+		else if (_currAction == _menu._opcodeSound)
 			fctSound();
-		if (_currAction == _menu._opcodeLeave)
+		else if (_currAction == _menu._opcodeLeave)
 			fctLeave();
-		if (_currAction == _menu._opcodeLift)
+		else if (_currAction == _menu._opcodeLift)
 			fctLift();
-		if (_currAction == _menu._opcodeTurn)
+		else if (_currAction == _menu._opcodeTurn)
 			fctTurn();
-		if (_currAction == _menu._opcodeSSearch)
+		else if (_currAction == _menu._opcodeSSearch)
 			fctSelfSearch();
-		if (_currAction == _menu._opcodeSRead)
+		else if (_currAction == _menu._opcodeSRead)
 			fctSelfRead();
-		if (_currAction == _menu._opcodeSPut)
+		else if (_currAction == _menu._opcodeSPut)
 			fctSelfPut();
-		if (_currAction == _menu._opcodeSLook)
+		else if (_currAction == _menu._opcodeSLook)
 			fctSelftLook();
+
 		_hiddenHero = false;
 
 		if (_currAction == _menu._opcodeSHide)
 			fctSelfHide();
-	} else {
-		if (_anyone) {
-			interactNPC();
-			_anyone = false;
-			menuUp();
-			return;
-		}
+	} else if (_anyone) {
+		interactNPC();
+		_anyone = false;
+		menuUp();
+		return;
 	}
 	int hour, day, minute;
 	updateHour(day, hour, minute);
@@ -1591,12 +1591,10 @@ void MortevielleEngine::handleOpcode() {
 		if ((_coreVar._faithScore > 99) && (hour > 8) && (hour < 16)) {
 			_crep = 1501;
 			loseGame();
-		}
-		if ((_coreVar._faithScore > 99) && (hour > 0) && (hour < 9)) {
+		} else if ((_coreVar._faithScore > 99) && (hour > 0) && (hour < 9)) {
 			_crep = 1508;
 			loseGame();
-		}
-		if ((day > 1) && (hour > 8) && (!_loseGame)) {
+		} else if ((day > 1) && (hour > 8) && (!_loseGame)) {
 			_crep = 1502;
 			loseGame();
 		}
@@ -1684,7 +1682,7 @@ void MortevielleEngine::clearUpperRightPart() {
 	_mouse.hideMouse();
 
 	// Clear ambiance description
-	_screenSurface.fillRect(15, Common::Rect(600, 93, 544, 98));
+	_screenSurface.fillRect(15, Common::Rect(544, 93, 600, 98));
 	if (_coreVar._faithScore < 33)
 		st = getEngineString(S_COOL);
 	else if (_coreVar._faithScore < 66)
