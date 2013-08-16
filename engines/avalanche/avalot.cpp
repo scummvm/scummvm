@@ -236,14 +236,7 @@ void Avalot::run(Common::String arg) {
 		_vm->_trip->trippancy_link();
 		_vm->_celer->pics_link();
 		_vm->_lucerna->checkclick();
-
-		if (_vm->_gyro->visible == _vm->_gyro->m_virtual)
-			_vm->_gyro->plot_vmc(_vm->_gyro->mx, _vm->_gyro->my, _vm->_gyro->cp);
-		_vm->_lucerna->flip_page(); /* <<<! */
 		
-		if (_vm->_gyro->visible == _vm->_gyro->m_virtual) 
-			_vm->_gyro->wipe_vmc(_vm->_gyro->cp);
-
 		_vm->_timeout->one_tick();
 
 

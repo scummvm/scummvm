@@ -217,8 +217,6 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	Common::String xx;
 	
 	CursorMan.showMouse(false);
-
-	_vm->_gyro->clear_vmc();
 	
 	_vm->_graphics->flesh_colours();
 
@@ -1129,11 +1127,6 @@ void Lucerna::clock_lucerna() {
 }
 
 
-
-
-void Lucerna::flip_page() {
-	warning("STUB: Lucerna::flip_page()");
-}
 
 void Lucerna::delavvy() {
 	byte page_;

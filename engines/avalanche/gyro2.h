@@ -655,14 +655,6 @@ public:
 
 	Common::String f5_does(); // This procedure determines what f5 does.
 
-	void plot_vmc(int16 xx, int16 yy, byte page_);
-
-	void wipe_vmc(byte page_);
-
-	void setup_vmc();
-
-	void clear_vmc();
-
 	void load_a_mouse(byte which);
 
 	void background(byte x);
@@ -683,11 +675,6 @@ private:
 	static const char betterchar[];
 
 	void shadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
-
-	void setminmaxhorzcurspos(uint16 min, uint16 max);
-
-	void setminmaxvertcurspos(uint16 min, uint16 max);
-
 };
 
 } // End of namespace Avalanche

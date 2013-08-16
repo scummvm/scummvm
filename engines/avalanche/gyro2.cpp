@@ -508,30 +508,6 @@ Common::String Gyro::f5_does() {
 	return "STUB: Gyro::f5_does()";
 }
 
-void Gyro::plot_vmc(int16 xx, int16 yy, byte page_) {
-	warning("STUB: Gyro::plot_vmc()");
-}
-
-void Gyro::wipe_vmc(byte page_) {
-	warning("STUB: Gyro::wipe_vmc()");
-}
-
-void Gyro::setup_vmc() {
-	warning("STUB: Gyro::setup_vmc()");
-}
-
-void Gyro::clear_vmc() {
-	warning("STUB: Gyro::clear_vmc()");
-}
-
-void Gyro::setminmaxhorzcurspos(uint16 min, uint16 max) { /* phew */
-	warning("STUB: Gyro::setminmaxhorzcurspos()");
-}
-
-void Gyro::setminmaxvertcurspos(uint16 min, uint16 max) {
-	warning("STUB: Gyro::setminmaxvertcurspos()");
-}
-
 void Gyro::load_a_mouse(byte which) {
 	Common::File f;
 
@@ -580,14 +556,6 @@ void Gyro::load_a_mouse(byte which) {
 	CursorMan.replaceCursor(cursor.pixels, 16, 32, mps[which].horzhotspot, mps[which].verthotspot, 255, false);
 
 	cursor.free();
-
-
-	
-	vmc.ofsx = -mps[which].horzhotspot;
-	vmc.ofsy = -mps[which].verthotspot;
-
-	setminmaxhorzcurspos(mps[which].horzhotspot + 3, 624 + mps[which].horzhotspot);
-	setminmaxvertcurspos(mps[which].verthotspot, 199);
 }
 
 void Gyro::background(byte x) {

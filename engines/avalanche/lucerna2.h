@@ -88,8 +88,6 @@ public:
 
 	void clock_lucerna();
 
-	void flip_page();
-
 	void delavvy();
 
 	void gameover();
