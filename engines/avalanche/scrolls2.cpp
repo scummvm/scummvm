@@ -161,12 +161,14 @@ void Scrolls::normscroll() {
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
 	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
-	_vm->_graphics->refreshScreen();
-
+	
 	Common::Event event;
 	while (!_vm->shouldQuit()) {
+		_vm->_graphics->refreshScreen();
+
 		_vm->getEvent(event);
-		if ((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) || (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) || (event.kbd.keycode == Common::KEYCODE_PLUS)))
+		if ((event.type == Common::EVENT_LBUTTONUP) ||
+			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) || (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) || (event.kbd.keycode == Common::KEYCODE_PLUS))))
 			break;
 	}
 
@@ -205,7 +207,8 @@ void Scrolls::normscroll() {
 //
 //#ifdef RECORD record_one(); #endif
 //
-	//_vm->_gyro->screturn = r == '#'; /* "back door" */
+//	_vm->_gyro->screturn = r == '#'; /* "back door" */
+
 	state(0);
 	_vm->_gyro->seescroll = false;
 	_vm->_lucerna->mousepage(_vm->_gyro->cp);
@@ -558,7 +561,7 @@ void Scrolls::bubble(func2 gotoit) {
 	CursorMan.showMouse(false);
 	_vm->_gyro->dropsok = true;
 
-	/*setvisualpage(cp);
+	//setvisualpage(cp);
 	CursorMan.showMouse(true); /*sink;*/
 	_vm->_gyro->oncandopageswap = true;
 	resetscrolldriver();
