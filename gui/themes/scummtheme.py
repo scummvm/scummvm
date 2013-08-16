@@ -40,7 +40,10 @@ def parseSTX(theme_file, def_file):
 	strlitcount = 0
 	output = ""
 	for line in theme_file:
-		output +=  line.rstrip("\r\n\t ").lstrip() + " \n"
+		output +=  line.rstrip("\r\n\t ").lstrip()
+		if not output.endswith('>'):
+			output += ' '
+		output += "\n"
 
 	output = re.sub(comm, "", output)
 	output = re.sub(head, "", output)
