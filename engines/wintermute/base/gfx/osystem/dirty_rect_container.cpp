@@ -29,6 +29,10 @@
 #include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 
 namespace Wintermute {
+
+const int kMaxRects = 32;
+const int kMaxPercentWaste = 10;
+
 DirtyRectContainer::DirtyRectContainer() {
 }
 
@@ -60,10 +64,46 @@ Common::Rect *DirtyRectContainer::getRect(int id) {
 }
 
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
-	// TODO: Dummy algo
+
 	Common::Array<Common::Rect *> ret;
+
 	for (int i = 0; i < getSize(); i++) {
-		ret.insert_at(i, _rectArray[i]);
+		// See if this rect is contained by another - if so, discard;
+		bool contained = false;
+		Common::Rect *candidate = _rectArray[i];
+
+		for (uint j = 0; j < ret.size() && !contained; j++) {
+			if (ret[j]->contains(*candidate) || ret[j]->equals(*candidate)) {
+				contained = true;
+			}
+		}
+
+		if (contained) {
+			continue;
+		}
+
+		// See if this rect containes another - if so, extend the latter and discard this one;
+		int contains = -1;
+
+		for (uint j = 0; j < ret.size() && contains == -1; j++) {
+			if (candidate->contains(*(ret[j]))) {
+				contains = j;
+			}
+		}
+
+		if (contains != -1) {
+			ret[contains]->extend(*candidate);
+			continue;
+		}
+
+		// TODO: Find close relative with < kMaxPercentWaste wasted
+		for (int j = 0; false; j++) {
+			// NOOP
+		}
+
+		// If we ended up here, there's really nothing we can do
+		int target = ret.size();
+		ret.insert_at(target, candidate);
 	}
 	return ret;
 }
