@@ -35,6 +35,7 @@
 #include "common/file.h"
 
 #include "graphics/surface.h"
+#include "graphics/cursorman.h"
 
 #include "avalanche/roomnums.h"
 #include "avalanche/color.h"
