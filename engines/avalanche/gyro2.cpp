@@ -283,16 +283,8 @@ void Gyro::on() {
 	warning("STUB: Gyro::on()");
 }
 
-void Gyro::on_virtual() {
-	warning("STUB: Gyro::on_virtual()");
-}
-
 void Gyro::off() {
 	warning("STUB: Gyro::off()");
-}
-
-void Gyro::off_virtual() {
-	warning("STUB: Gyro::off_virtual()");
 }
 
 void Gyro::xycheck() { 
@@ -607,18 +599,6 @@ void Gyro::hang_around_for_a_while() {
 
 	for (fv = 1; fv <= 28; fv++)
 		slowdown();
-}
-
-/* Super_Off and Super_On are two very useful procedures. Super_Off switches
-	the mouse cursor off, WHATEVER it's like. Super_On restores it again
-	afterwards. */
-
-void Gyro::super_off() {
-	warning("STUB: Gyro::super_off()");
-}
-
-void Gyro::super_on() {
-	warning("STUB: Gyro::super_on()");
 }
 
 bool Gyro::mouse_near_text() {

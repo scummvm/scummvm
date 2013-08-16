@@ -90,11 +90,11 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 	//}
 	warning("STUB: Scrolls::state()");
 
-	_vm->_gyro->super_off();
+	CursorMan.showMouse(false);
 
 	_vm->_graphics->drawBar(419, 195, 438, 197, color);
 
-	_vm->_gyro->super_on();
+	CursorMan.showMouse(true);
 	_vm->_gyro->ledstatus = x;
 }
 
@@ -149,8 +149,7 @@ void Scrolls::normscroll() {
 
 	state(3);
 	_vm->_gyro->seescroll = true;
-	_vm->_gyro->off_virtual();
-	_vm->_gyro->on();
+	CursorMan.showMouse(true);
 	_vm->_gyro->newpointer(4);
 	_vm->_lucerna->mousepage(1 - _vm->_gyro->cp);
 
@@ -210,7 +209,7 @@ void Scrolls::normscroll() {
 	state(0);
 	_vm->_gyro->seescroll = false;
 	_vm->_lucerna->mousepage(_vm->_gyro->cp);
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 
 	warning("STUB: Scrolls::normscroll()");
 }
@@ -334,7 +333,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	bool centre;
 	byte icon_indent = 0;
 
-	_vm->_gyro->off_virtual();
 	//setvisualpage(cp);
 	//setactivepage(1 - cp);
 	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
@@ -357,7 +355,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
 
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 
 	// The right corners of the scroll.
 	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, lightgray);
@@ -462,12 +460,12 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_logger->log_divider();
 	//setvisualpage(cp);
 	//mousepage(cp);
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 	/* mblit(ex-46,ey-6,ex+lx*2+15,ey+ly*2+6,3,0);*/
 	//mblit((ex - 46) / 8, ey - 6, 1 + (ex + lx * 2 + 15) / 8, ey + ly * 2 + 6, cp, 1 - cp);
 	//blitfix();
 	_vm->_gyro->oncandopageswap = true; // Normality again.
-	_vm->_gyro->on();
+	CursorMan.showMouse(true);
 	//settextjustify(0, 0); /*sink*/
 	resetscrolldriver();
 	if (_vm->_gyro->mpress > 0)
@@ -488,7 +486,7 @@ void Scrolls::bubble(func2 gotoit) {
 	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
 	//mousepage(1 - cp); /* Mousepage */
 
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 
 	xl = 0;
 	yl = _vm->_gyro->scrolln * 5;
@@ -555,17 +553,17 @@ void Scrolls::bubble(func2 gotoit) {
 	//setvisualpage(1 - cp);
 	dingdongbell();
 	_vm->_gyro->oncandopageswap = false;
-	_vm->_gyro->on();
+	CursorMan.showMouse(true);
 	_vm->_gyro->dropsok = false;
 
 	// This does the actual drawing to the screen.
 	(this->*gotoit)();
 
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 	_vm->_gyro->dropsok = true;
 
 	/*setvisualpage(cp);
-	_vm->_gyro->on(); /*sink;*/
+	CursorMan.showMouse(true); /*sink;*/
 	_vm->_gyro->oncandopageswap = true;
 	resetscrolldriver();
 	if (_vm->_gyro->mpress > 0)
@@ -684,14 +682,7 @@ void Scrolls::calldrivers() {
 					_vm->_lucerna->sprite_run();
 				call_spriterun = false;
 
-				was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
-				if (was_virtual)
-					_vm->_gyro->off_virtual();
-
 				drawscroll(&Avalanche::Scrolls::normscroll);
-
-				if (was_virtual)
-					_vm->_gyro->on_virtual();
 
 				resetscroll();
 
@@ -732,14 +723,7 @@ void Scrolls::calldrivers() {
 					natural();
 				}
 
-				was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
-				if (was_virtual)
-					_vm->_gyro->off_virtual();
-
 				bubble(&Avalanche::Scrolls::normscroll);
-
-				if (was_virtual)
-					_vm->_gyro->on_virtual();
 
 				resetscroll();
 
@@ -814,14 +798,7 @@ void Scrolls::calldrivers() {
 				_vm->_gyro->scrolln++;
 				_vm->_gyro->scroll[_vm->_gyro->scrolln - 1] = kControlQuestion;
 
-				was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
-				if (was_virtual)
-					_vm->_gyro->off_virtual();
-
 				drawscroll(&Avalanche::Scrolls::dialogue);
-
-				if (was_virtual)
-					_vm->_gyro->on_virtual();
 
 				resetscroll();
 				}
@@ -891,13 +868,8 @@ void Scrolls::musical_scroll() {
 
 	was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
 
-	if (was_virtual)
-		_vm->_gyro->off_virtual();
-
 	drawscroll(&Avalanche::Scrolls::music_scroll);
 
-	if (was_virtual)
-		_vm->_gyro->on_virtual();
 	resetscroll();
 }
 

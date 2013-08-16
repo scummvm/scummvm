@@ -70,8 +70,7 @@ void Avalot::setup() {
 	_vm->_gyro->to_do = 0;
 	_vm->_gyro->lmo = false;
 	_vm->_scrolls->resetscroll();
-	_vm->_gyro->setup_vmc();
-	_vm->_gyro->on_virtual();
+	CursorMan.showMouse(true);
 	gd = 3;
 	gm = 0;
 	//initgraph(gd: gm: "");

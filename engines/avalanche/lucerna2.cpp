@@ -84,21 +84,8 @@ void Lucerna::draw_also_lines() {
 	byte ff;
 	byte squeaky_code;
 
-	switch (_vm->_gyro->visible) {
-	case _vm->_gyro->m_virtual: {
-		squeaky_code = 1;
-		_vm->_gyro->off_virtual();
-		}
-		break;
-	case _vm->_gyro->m_no:
-		squeaky_code = 2;
-		break;
-	case _vm->_gyro->m_yes: {
-		squeaky_code = 3;
-		_vm->_gyro->off();
-		}
-		break;
-	}
+	
+	CursorMan.showMouse(false);
 
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 639, 161), 15);
@@ -107,16 +94,8 @@ void Lucerna::draw_also_lines() {
 		if (_vm->_gyro->lines[ff].x1 != 32767 /*maxint*/)
 			_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
 
-	switch (squeaky_code) {
-	case 1 :
-		_vm->_gyro->on_virtual();
-		break;
-	case 2 :
-		break; // Zzz... it was off anyway.
-	case 3 :
-		_vm->_gyro->on();
-		break;
-	}
+
+	CursorMan.showMouse(true);
 }
 
 
@@ -236,13 +215,8 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	byte a1;  /*absolute $A000:17184;*/
 	byte bit;
 	Common::String xx;
-	bool was_virtual;
-
-	was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
-	if (was_virtual)
-		_vm->_gyro->off_virtual();
-	else
-		_vm->_gyro->off();
+	
+	CursorMan.showMouse(false);
 
 	_vm->_gyro->clear_vmc();
 	
@@ -297,10 +271,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	_vm->_logger->log_newroom(_vm->_gyro->roomname);
 
-	if (was_virtual)
-		_vm->_gyro->on_virtual();
-	else 
-		_vm->_gyro->on();
+	CursorMan.showMouse(true);
 }
 
 
@@ -791,7 +762,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	
 	f.close();
 
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 
 	/*setactivepage(3);
 	putimage(x, y, p, 0);
@@ -800,7 +771,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	for (byte fv = 0; fv <= 1; fv ++)
 		_vm->_trip->getset[fv].remember(thinkspace);
 	
-	_vm->_gyro->on();
+	CursorMan.showMouse(true);
 	_vm->_gyro->thinkthing = th;
 }
 
@@ -872,7 +843,7 @@ void Lucerna::showscore() {
 	}
 	numbers[2] = score;
 
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 
 	//setactivepage(3);
 
@@ -885,7 +856,7 @@ void Lucerna::showscore() {
 
 	//setactivepage(1 - cp);
 
-	_vm->_gyro->on();
+	CursorMan.showMouse(true);
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->lastscore[i] = numbers[i];
 }
@@ -1064,7 +1035,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	if (_vm->_gyro->oldrw == _vm->_gyro->dna.rw) 
 		return;
 	_vm->_gyro->oldrw = _vm->_gyro->dna.rw;
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 	
 	/*	for (byte page_ = 0; page_ <= 1; page_ ++) {
 	setactivepage(page_);
@@ -1073,7 +1044,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 
 	_vm->_graphics->drawPicture(_vm->_gyro->rwlite[_vm->_gyro->dna.rw], 0, 161);
 
-	_vm->_gyro->on();
+	CursorMan.showMouse(true);
 	//setactivepage(1 - cp);
 	
 	warning("STUB: Lucerna::showrw()");
@@ -1167,13 +1138,13 @@ void Lucerna::flip_page() {
 void Lucerna::delavvy() {
 	byte page_;
 
-	_vm->_gyro->off();
+	CursorMan.showMouse(false);
 	
 	triptype &with = _vm->_trip->tr[0];
 	/*for (page_ = 0; page_ <= 1; page_ ++)
 		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);*/
 	
-	_vm->_gyro->on();
+	CursorMan.showMouse(true);
 }
 
 void Lucerna::gameover() {
