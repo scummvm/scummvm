@@ -39,12 +39,6 @@
 namespace Avalanche {
 class AvalancheEngine;
 
-
-typedef byte manitype[2049]; // manitype = array[5..2053] of byte; 
-// Be aware!!!
-
-typedef byte siltype[51][11]; /* 35, 4 */
-
 struct adxtype { /* Second revision of ADX type */
 	Common::String name/*[13]*/; /* name of character */ // uruk: Note to self: TRAILING /0 !!! Real size: 12
 	Common::String comment/*[17]*/; /* comment */ // uruk: Same here, but 16.
