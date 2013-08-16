@@ -38,6 +38,10 @@ class AvalancheEngine;
 
 class Lucerna {
 public:
+	bool holdLeftMouse;
+
+
+
 	Lucerna(AvalancheEngine *vm);
 
 	void init();
@@ -132,6 +136,8 @@ private:
 	bool fxhidden;
 
 	Common::File f;
+
+
 
 
 	Common::String nextstring();
