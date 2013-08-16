@@ -1199,7 +1199,7 @@ void ScummEngine_v72he::o72_systemOps() {
 		break;
 	case 160:
 		// Confirm shutdown
-		quitGame();
+		confirmExitDialog();
 		break;
 	case 244:
 		quitGame();
