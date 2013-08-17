@@ -174,17 +174,29 @@ void Menu::setText(MenuItem item, Common::String name) {
 
 		_moveStringArray[item._actionId] = s;
 		break;
-	case MENU_ACTION:
+	case MENU_ACTION: {
+		// If the first character isn't '*' or ' ' then it's missing a heading space
+		char c = s[0];
+		if (c != '*' && c != ' ')
+			s = ' ' + s;
+
 		while (s.size() < 10)
 			s += ' ';
 
 		_actionStringArray[item._actionId] = s;
+		}
 		break;
-	case MENU_SELF:
+	case MENU_SELF: {
+		// If the first character isn't '*' or ' ' then it's missing a heading space
+		char c = s[0];
+		if (c != '*' && c != ' ')
+			s = ' ' + s;
+
 		while (s.size() < 10)
 			s += ' ';
 
 		_selfStringArray[item._actionId] = s;
+		}
 		break;
 	case MENU_DISCUSS:
 		_discussStringArray[item._actionId] = s;
