@@ -1077,9 +1077,29 @@ void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
 }
 
 void Trip::newspeed() {
-/* Given that you've just changed the speed in triptype.xs, this adjusts
-	ix. */
-	warning("STUB: Trip::newspeed()");
+	// Given that you've just changed the speed in triptype.xs, this adjusts ix.
+	const bytefield lightspace = {40, 199, 47, 199};
+	byte page_;
+
+	tr[0].ix = (tr[0].ix / 3) * tr[0].xs;
+	//setactivepage(3);
+
+	if (tr[0].xs == _vm->_gyro->run)
+		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, yellow);
+	else
+		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, yellow);
+
+	if (tr[0].xs == _vm->_gyro->run)
+		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, lightblue);
+	else
+		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, lightblue);
+
+	_vm->_graphics->refreshScreen();
+
+	//setactivepage(1 - cp);
+	for (page_ = 0; page_ <= 1; page_ ++)
+		getset[page_].remember(lightspace);
+	
 }
 
 void Trip::rwsp(byte t, byte r) {
