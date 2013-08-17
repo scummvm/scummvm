@@ -65,9 +65,10 @@ namespace Video {
 #define ID_VEDT MKTAG('v','e','d','t')
 #define ID_IDX1 MKTAG('i','d','x','1')
 #define ID_STRD MKTAG('s','t','r','d')
-//#define ID_INFO MKTAG('I','N','F','O')
+#define ID_INFO MKTAG('I','N','F','O')
 #define ID_ISFT MKTAG('I','S','F','T')
 #define ID_DISP MKTAG('D','I','S','P')
+#define ID_PRMI MKTAG('P','R','M','I')
 
 // Codec tags
 #define ID_RLE  MKTAG('R','L','E',' ')
@@ -174,15 +175,25 @@ void AVIDecoder::handleList(uint32 listSize) {
 
 	debug(0, "Found LIST of type %s", tag2str(listType));
 
-	if (listType == ID_MOVI) {
-		// If we found the movie block
+	switch (listType) {
+	case ID_MOVI: // Movie List
+		// We found the movie block
 		_foundMovieList = true;
 		_movieListStart = curPos;
 		_fileStream->skip(listSize);
 		return;
-	} else if (listType == ID_HDRL) {
+	case ID_HDRL: // Header List
 		// Mark the header as decoded
 		_decodedHeader = true;
+		break;
+	case ID_INFO: // Metadata
+	case ID_PRMI: // Unknown (ZEngine)
+		// Ignore metadata
+		_fileStream->skip(listSize);
+		return;
+	case ID_STRL: // Stream list
+	default:      // (Just hope we can parse it!)
+		break;
 	}
 
 	while ((_fileStream->pos() - curPos) < listSize)
