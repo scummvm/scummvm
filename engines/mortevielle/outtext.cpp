@@ -164,8 +164,6 @@ void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int lengt
 }
 
 void TextHandler::taffich() {
-	static const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
-
 	static const byte tran1[] = { 121, 121, 138, 139, 120 };
 	static const byte tran2[] = { 150, 150, 152, 152, 100, 110, 159, 100, 100 };
 

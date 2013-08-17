@@ -130,16 +130,6 @@ enum Places {
 	DOOR = 25,        ROOM26 = 26,      COAT_ARMS = 27
 };
 
-struct nhom {
-	byte _id;     /* number between 0 and 32 */
-	byte _hom[4];
-};
-
-struct CgaPalette {
-	byte _p;
-	nhom _a[16];
-};
-
 struct Pattern {
 	byte _tay, _tax;
 	byte _des[kMaxPatt + 1][kMaxPatt + 1];
@@ -179,7 +169,6 @@ private:
 	Common::StringArray _engineStrings;
 	Common::StringArray _gameStrings;
 
-	Pattern _patternArr[15];
 	int _menuOpcode;
 
 	bool _inMainGameLoop;	// Flag when the main game loop is active
@@ -223,7 +212,6 @@ private:
 	int  _startHour;
 	int  _endHour;
 	Common::Point _stdPal[91][17];
-	CgaPalette _cgaPal[91];
 
 	int  _x26KeyCount;
 	int  _roomDoorId;
@@ -256,7 +244,6 @@ private:
 	void mainGame();
 	void playGame();
 	void handleAction();
-	void displayCGAPattern(int n, Pattern *p, nhom *pal);
 	void loadPalette();
 	void loadTexts();
 	void loadCFIEC();

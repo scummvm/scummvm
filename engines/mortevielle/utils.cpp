@@ -1949,28 +1949,11 @@ void MortevielleEngine::setPal(int n) {
 }
 
 /**
- * Engine function - Display a CGA pattern, using a specified palette
- * @remarks	Originally called 'outbloc'
- */
-void MortevielleEngine::displayCGAPattern(int n, Pattern *p, nhom *pal) {
-	int addr = n * 404 + 0xd700;
-
-	WRITE_LE_UINT16(&_curPict[addr], p->_tax);
-	WRITE_LE_UINT16(&_curPict[addr + 2], p->_tay);
-	addr += 4;
-	for (int i = 0; i < p->_tax; ++i) {
-		for (int j = 0; j < p->_tay; ++j)
-			_curPict[addr + j * p->_tax + i] = pal[n]._hom[p->_des[i + 1][j + 1]];
-	}
-}
-
-/**
  * Engine function - Load Palette from File
  * @remarks	Originally called 'charpal'
  */
 void MortevielleEngine::loadPalette() {
 	Common::File f;
-	byte b;
 
 	if (!f.open("fxx.mor")) {
 		if (f.open("mfxx.mor"))
@@ -1996,27 +1979,8 @@ void MortevielleEngine::loadPalette() {
 	if (!f.open("cxx.mor"))
 		error("Missing file - cxx.mor");
 
-	for (int j = 0; j <= 90; ++j) {
-		_cgaPal[j]._p = f.readByte();
-		for (int i = 0; i <= 15; ++i) {
-			nhom &with = _cgaPal[j]._a[i];
+	// Skip CGA Palette and Patterns
 
-			b = f.readByte();
-			with._id = (uint)b >> 4;
-			with._hom[0] = ((uint)b >> 2) & 3;
-			with._hom[1] = b & 3;
-		}
-	}
-
-	_cgaPal[10]._a[9] = _cgaPal[10]._a[5];
-	for (int j = 0; j <= 14; ++j) {
-		_patternArr[j]._tax = f.readByte();
-		_patternArr[j]._tay = f.readByte();
-		for (int i = 1; i <= 20; ++i) {
-			for (int k = 1; k <= 20; ++k)
-				_patternArr[j]._des[i][k] = f.readByte();
-		}
-	}
 	f.close();
 }
 
