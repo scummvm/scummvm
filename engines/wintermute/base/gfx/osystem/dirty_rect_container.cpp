@@ -30,14 +30,20 @@
 
 namespace Wintermute {
 
-const int kMaxRects = 32;
+const int kMaxOutputRects = 32;
+const int kMaxInputRects = 64;
 const int kMaxAcceptableWaste = 15;
 const int kMinAcceptableWaste = 5;
+const int kThresholdWidthPercent = 90;
+const int kThresholdHeigthPercent = 90;
 
 DirtyRectContainer::DirtyRectContainer() {
+	_disableDirtyRects = false;
+	_clipRect = nullptr;
 }
 
 DirtyRectContainer::~DirtyRectContainer() {
+	delete _clipRect;
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect *clipRect) {
@@ -46,8 +52,17 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	// and avoid the whole dance altogether.
 
 	assert(clipRect != nullptr);
+	if (_clipRect == nullptr) {
+		_clipRect = new Common::Rect(*clipRect);
+	} else {
+		assert (clipRect->equals(*_clipRect));
+	}
+
 	Common::Rect *tmp = new Common::Rect(rect);
 	int target = getSize();
+	if (target > kMaxInputRects) {
+		_disableDirtyRects = true;
+	}
 	_rectArray.insert_at(target, tmp);
 	_rectArray[target]->clip(*clipRect);
 	// TODO: Upper limit?
@@ -58,6 +73,9 @@ void DirtyRectContainer::reset() {
 		delete _rectArray[i];
 		_rectArray.remove_at(i);
 	}
+	_disableDirtyRects = false;
+	delete _clipRect;
+	_clipRect = nullptr;
 }
 
 int DirtyRectContainer::getSize() {
@@ -68,11 +86,27 @@ Common::Rect *DirtyRectContainer::getRect(int id) {
 	return _rectArray[id];
 }
 
+Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
+	Common::Array<Common::Rect *> singleret;
+	singleret.insert_at(0, _clipRect);
+	return singleret;
+}
+
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 	Common::Array<Common::Rect *> ret;
 
 	for (int i = 0; i < getSize(); i++) {
+
+		if (_disableDirtyRects) {
+			return getFallback();
+		}
+
+		if (i > kMaxOutputRects) {
+			return getFallback();
+		}
+
+		Common::Rect *lastModified = nullptr;
 		Common::Rect *candidate = _rectArray[i];
 
 		if (candidate->width() == 0 || candidate->height() == 0) {
@@ -83,17 +117,18 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		// TODO: if really big then just use a single rect and avoid 
 		// all these unnecessary calculations (e.g. Rosemary fades)
 
-		if (ret.size() > kMaxRects) {
+		if (ret.size() > kMaxOutputRects) {
 			// Simply extend one (hack: the first one) and avoid rect soup & calculations;
 			ret[0]->extend(*candidate);
-			continue;
+			lastModified = ret[0];
 		}
 
 		// See if it's contained or containes
-		for (uint j = 0; j < ret.size(); j++) {
+		for (uint j = 0; j < ret.size() && lastModified == nullptr; j++) {
 
 			if (ret[j]->contains(*candidate) || ret[j]->equals(*candidate)) {
 				// It's contained - continue!
+				lastModified = ret[j];
 				continue;
 			}
 
@@ -101,6 +136,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				// Contains an existing one.
 				// Extend the pre-existing one and discard this.
 				ret[j]->extend(*candidate);
+				lastModified = ret[j];
 				continue;
 			}
 		}
@@ -110,7 +146,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		int extendable = -1;
 		int bestRatio = 999999;
 
-		for (uint j = 0; j < ret.size(); j++) {
+		for (uint j = 0; j < ret.size()  && lastModified == nullptr; j++) {
 			Common::Rect original = *ret[j];
 			Common::Rect extended = Common::Rect(original);
 			extended.extend(*candidate);
@@ -127,7 +163,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					// This is so good that we can actually
 					// avoid traversing the rest of the array,
 					// we would gain peanuts
-					continue;
+					break;
 				}
 			}
 
@@ -135,9 +171,28 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 		if (extendable != -1) {
 			ret[extendable]->extend(*candidate);
-			continue;
+			lastModified = ret[extendable];
+		}
+		// Do checks on lastModified
+
+		int hugeXThreshold = 800; // Hack
+		int hugeYThreshold = 600; // Hack
+
+		if (lastModified != nullptr && lastModified->width() >= hugeXThreshold &&
+			lastModified->height() >= hugeYThreshold) {
+				// This one is so huge that we can as well redraw the entire screen
+				_disableDirtyRects = true;
+				return getFallback();
+				break;
 		}
 
+		if (candidate->width() >= hugeXThreshold &&
+			candidate->height() >= hugeYThreshold) {
+				// This one is so huge that we can as well redraw the entire screen
+				_disableDirtyRects = true;
+				return getFallback();
+				break;
+		}
 		// If we ended up here, there's really nothing we can do
 		int target = ret.size();
 		ret.insert_at(target, candidate);

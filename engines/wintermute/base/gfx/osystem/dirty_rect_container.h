@@ -40,11 +40,13 @@ public:
 	void addDirtyRect(const Common::Rect &rect, const Common::Rect *clipRect);
 	void reset();
 	int getSize();
+	bool _disableDirtyRects;
 	Common::Rect *getRect(int id);
-	Common::Array<Common::Rect *> getOptimizedRects();
 	Common::Array<Common::Rect *> getOptimized();
+	Common::Array<Common::Rect *> getFallback();
 private:
 	Common::Array<Common::Rect *> _rectArray;
+	Common::Rect *_clipRect;
 };
 } // End of namespace Wintermute
 
