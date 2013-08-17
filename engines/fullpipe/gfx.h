@@ -38,8 +38,11 @@ struct Bitmap {
 	int _height;
 	byte *_pixels;
 	int _type;
-	int _field_18;
+	int _dataSize;
 	int _flags;
+
+	Bitmap();
+	Bitmap(Bitmap *src);
 
 	void load(Common::ReadStream *s);
 	void putDib(int x, int y, int32 *palette);
@@ -52,6 +55,9 @@ struct Bitmap {
 	void copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_format);
 
 	Bitmap *reverseImage();
+	Bitmap *reverseImageRB();
+	Bitmap *reverseImageCB();
+	Bitmap *reverseImageCB05();
 	Bitmap *flipVertical();
 
 	void drawShaded(int type, int x, int y, byte *palette);

@@ -31,6 +31,28 @@
 
 namespace Fullpipe {
 
+Bitmap::Bitmap() {
+	_x = 0;
+	_y = 0;
+	_width = 0;
+	_height = 0;
+	_pixels = 0;
+	_type = 0;
+	_dataSize = 0;
+	_flags = 0;
+}
+
+Bitmap::Bitmap(Bitmap *src) {
+	_x = src->_x;
+	_y = src->_y;
+	_flags = src->_flags;
+	_dataSize = src->_dataSize;
+	_type = src->_type;
+	_width = src->_width;
+	_height = src->_height;
+	_pixels = src->_pixels;
+}
+
 void Bitmap::load(Common::ReadStream *s) {
 	debug(5, "Bitmap::load()");
 
@@ -40,10 +62,10 @@ void Bitmap::load(Common::ReadStream *s) {
 	_height = s->readUint32LE();
 	s->readUint32LE(); // pixels
 	_type = s->readUint32LE();
-	_field_18 = s->readUint32LE();
+	_dataSize = s->readUint32LE();
 	_flags = s->readUint32LE();
 
-	debug(8, "Bitmap: x: %d y: %d w: %d h: %d field_18: 0x%x", _x, _y, _width, _height, _field_18);
+	debug(8, "Bitmap: x: %d y: %d w: %d h: %d dataSize: 0x%x", _x, _y, _width, _height, _dataSize);
 	debug(8, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
 }
 
@@ -565,6 +587,7 @@ void Bitmap::putDibRB(int32 *palette) {
 		starty = 0;
 
 	y = endy;
+
 	srcPtr = (uint16 *)_pixels;
 
 	bool breakup = false;
@@ -606,6 +629,7 @@ void Bitmap::putDibRB(int32 *palette) {
 					if (x <= 799 + 1 || (fillLen += 799 - x + 1, fillLen > 0)) {
 						if (y <= endy) {
 							curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, y);
+
 							int bgcolor = palette[(pixel >> 8) & 0xff];
 							colorFill(curDestPtr, fillLen, bgcolor);
 						}
@@ -800,7 +824,68 @@ void Bitmap::copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_
 }
 
 Bitmap *Bitmap::reverseImage() {
-	warning("STUB: Bitmap::reverseImage()");
+	switch (_type) {
+	case MKTAG('R', 'B', '\0', '\0'):
+		return reverseImageRB();
+	case MKTAG('C', 'B', '\0', '\0'):
+		return reverseImageCB();
+	case MKTAG('C', 'B', '\05', 'e'):
+		return reverseImageCB05();
+	default:
+		error("Bitmap::reverseImage: Unknown image type: %x", _type);
+	}
+
+	return 0;
+}
+
+Bitmap *Bitmap::reverseImageRB() {
+	uint16 *newpixels = (uint16 *)calloc(((_dataSize + 15) & 0xfffffff0) + sizeof(Bitmap), 1);
+	uint16 *srcPtr = (uint16 *)_pixels;
+
+	int idx = 0;
+	while (srcPtr[idx] != 0x100) {
+		uint16 *srcPtr2 = &srcPtr[idx];
+
+		int prevIdx = idx;
+		int i = idx;
+
+		while (*srcPtr2) {
+			++srcPtr2;
+			++idx;
+		}
+
+		int idx2 = idx;
+
+		newpixels[idx] = srcPtr[idx];
+
+		while (i != idx) {
+			int fillLen = 2 - ((srcPtr[prevIdx] & 0xff) != 0 ? 1 : 0);
+			idx2 -= fillLen;
+			memcpy(&newpixels[idx2], &srcPtr[prevIdx], 2 * fillLen);
+			prevIdx = fillLen + i;
+			i += fillLen;
+		}
+		++idx;
+	}
+	newpixels[idx] = 256;
+
+	int oldBmp = ((_dataSize + 15) >> 1) & 0x7FFFFFF8;
+	memcpy(&newpixels[oldBmp], &srcPtr[oldBmp], sizeof(Bitmap));
+
+	Bitmap *res = new Bitmap(this);
+	res->_pixels = (byte *)newpixels;
+
+	return res;
+}
+
+Bitmap *Bitmap::reverseImageCB() {
+	warning("STUB: Bitmap::reverseImageCB()");
+
+	return this;
+}
+
+Bitmap *Bitmap::reverseImageCB05() {
+	warning("STUB: Bitmap::reverseImageCB05()");
 
 	return this;
 }
