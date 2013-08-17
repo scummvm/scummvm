@@ -42,7 +42,7 @@ enum {
 
 const int OPCODE_NONE = 0;
 
-struct menuItem {
+struct MenuItem {
 	int _menuId;
 	int _actionId;
 };
@@ -71,9 +71,9 @@ public:
 	Common::String _actionStringArray[22];
 	Common::String _selfStringArray[7];
 	Common::String _discussStringArray[9];
-	menuItem _discussMenu[9];
-	menuItem _inventoryMenu[9];
-	menuItem _moveMenu[8];
+	MenuItem _discussMenu[9];
+	MenuItem _inventoryMenu[9];
+	MenuItem _moveMenu[8];
 
 	int _opcodeAttach;
 	int _opcodeWait;
@@ -101,15 +101,15 @@ public:
 	int _opcodeSRead;
 	int _opcodeSPut;
 	int _opcodeSLook;
-	menuItem _actionMenu[12];
+	MenuItem _actionMenu[12];
 
 	void setParent(MortevielleEngine *vm);
 	void readVerbNums(Common::File &f, int dataSize);
-	void setText(int menuId, int actionId, Common::String name);
+	void setText(MenuItem item, Common::String name);
 	void setDestinationText(int roomId);
 	void setInventoryText();
-	void disableMenuItem(int menuId, int actionId);
-	void enableMenuItem(int menuId, int actionId);
+	void disableMenuItem(MenuItem item);
+	void enableMenuItem(MenuItem item);
 	void displayMenu();
 	void drawMenu();
 	void menuUp(int msgId);

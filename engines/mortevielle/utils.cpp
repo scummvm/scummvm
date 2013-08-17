@@ -502,48 +502,48 @@ void MortevielleEngine::showPeoplePresent(int bitIndex) {
 	int xp = 580 - (_screenSurface.getStringWidth("LEO") / 2);
 
 	for (int i = 1; i <= 8; ++i)
-		_menu.disableMenuItem(_menu._discussMenu[i]._menuId, _menu._discussMenu[i]._actionId);
+		_menu.disableMenuItem(_menu._discussMenu[i]);
 
 	clearUpperRightPart();
 	if ((bitIndex & 128) == 128) {
 		_screenSurface.putxy(xp, 24);
 		_screenSurface.drawString("LEO", 4);
-		_menu.enableMenuItem(_menu._discussMenu[1]._menuId, _menu._discussMenu[1]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[1]);
 	}
 	if ((bitIndex & 64) == 64) {
 		_screenSurface.putxy(xp, 32);
 		_screenSurface.drawString("PAT", 4);
-		_menu.enableMenuItem(_menu._discussMenu[2]._menuId, _menu._discussMenu[2]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[2]);
 	}
 	if ((bitIndex & 32) == 32) {
 		_screenSurface.putxy(xp, 40);
 		_screenSurface.drawString("GUY", 4);
-		_menu.enableMenuItem(_menu._discussMenu[3]._menuId, _menu._discussMenu[3]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[3]);
 	}
 	if ((bitIndex & 16) == 16) {
 		_screenSurface.putxy(xp, 48);
 		_screenSurface.drawString("EVA", 4);
-		_menu.enableMenuItem(_menu._discussMenu[4]._menuId, _menu._discussMenu[4]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[4]);
 	}
 	if ((bitIndex & 8) == 8) {
 		_screenSurface.putxy(xp, 56);
 		_screenSurface.drawString("BOB", 4);
-		_menu.enableMenuItem(_menu._discussMenu[5]._menuId, _menu._discussMenu[5]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[5]);
 	}
 	if ((bitIndex & 4) == 4) {
 		_screenSurface.putxy(xp, 64);
 		_screenSurface.drawString("LUC", 4);
-		_menu.enableMenuItem(_menu._discussMenu[6]._menuId, _menu._discussMenu[6]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[6]);
 	}
 	if ((bitIndex & 2) == 2) {
 		_screenSurface.putxy(xp, 72);
 		_screenSurface.drawString("IDA", 4);
-		_menu.enableMenuItem(_menu._discussMenu[7]._menuId, _menu._discussMenu[7]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[7]);
 	}
 	if ((bitIndex & 1) == 1) {
 		_screenSurface.putxy(xp, 80);
 		_screenSurface.drawString("MAX", 4);
-		_menu.enableMenuItem(_menu._discussMenu[8]._menuId, _menu._discussMenu[8]._actionId);
+		_menu.enableMenuItem(_menu._discussMenu[8]);
 	}
 	_currBitIndex = bitIndex;
 }
@@ -697,7 +697,7 @@ int MortevielleEngine::getPresenceStatsRedRoom() {
  */
 void MortevielleEngine::displayAloneText() {
 	for (int i = 1; i <= 8; ++i)
-		_menu.disableMenuItem(_menu._discussMenu[i]._menuId, _menu._discussMenu[i]._actionId);
+		_menu.disableMenuItem(_menu._discussMenu[i]);
 
 	Common::String sYou = getEngineString(S_YOU);
 	Common::String sAre = getEngineString(S_ARE);
@@ -2663,8 +2663,8 @@ void MortevielleEngine::displayItemInHand(int objId) {
 	if (objId != 500)
 		strp = getString(objId - 501 + kInventoryStringIndex);
 
-	_menu.setText(_menu._inventoryMenu[8]._menuId, _menu._inventoryMenu[8]._actionId, strp);
-	_menu.disableMenuItem(_menu._inventoryMenu[8]._menuId, _menu._inventoryMenu[8]._actionId);
+	_menu.setText(_menu._inventoryMenu[8], strp);
+	_menu.disableMenuItem(_menu._inventoryMenu[8]);
 }
 
 /**
