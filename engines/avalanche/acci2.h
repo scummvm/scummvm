@@ -169,7 +169,7 @@ private:
 
 	void clearuint16s();
 
-	void examobj();
+	void examobj(); // Examine a standard object-thing
 
 	bool personshere();
 

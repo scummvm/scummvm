@@ -44,6 +44,7 @@
 #include "common/textconsole.h"
 
 #include <cstring>
+#include <cmath>
 
 
 /*#include "NimUnit.h"*/
@@ -274,33 +275,38 @@ begin
 end;*/
 
 Common::String Acci::rank() {
-	byte fv;
-
-	Common::String rank_result = "";
-	for (fv = 1; fv <= 8; fv++) {
+	for (byte fv = 0; fv < 8; fv++) {
 		if ((_vm->_gyro->dna.score >= ranks[fv].score) && (_vm->_gyro->dna.score < ranks[fv + 1].score)) {
-			rank_result = ranks[fv].title;
-			return rank_result;
+			return ranks[fv].title;
 		}
 	}
-	
-	return rank_result;
+	return "";
 }
 
 Common::String Acci::totaltime() {
-	const double ticks_in_1_sec = double(65535) / 3600;
+	const double ticks_in_1_sec = (double)(65535) / 3600;
 	uint16 h, m, s;
 	Common::String a;
 
-	/* There are 65535 clock ticks in a second,
-		1092.25 in a minute, and
-		65535 in an hour. */
-	Common::String totaltime_result;
-		
-	warning("STUB: Acci::totaltime()");
+	// There are 65535 clock ticks in a second, 1092.25 in a minute, and 65535 in an hour.
+	h = _vm->_gyro->dna.total_time / ticks_in_1_sec; // No. of seconds.
+	if (h < 0)
+		h = ceil((float)h);
+	else
+		h = floor((float)h);
+	m = h % 3600;
+	h = h / 3600;
+	s = m % 60;
+	m = m / 60;
 
-	totaltime_result = a;
-	return totaltime_result;
+	a = "You've been playing for ";
+	if (h > 0)
+		a = a + _vm->_gyro->strf(h) + " hours, ";
+	if ((m > 0) || (h != 0))
+		a = a + _vm->_gyro->strf(m) + " minutes and ";
+	a = a + _vm->_gyro->strf(s) + " seconds.";
+
+	return a;
 }
 
 
@@ -602,8 +608,32 @@ void Acci::parse() {
 			_vm->_gyro->her = person;
 }
 
-void Acci::examobj() {   /* Examine a standard object-thing */
-	warning("STUB: Acci::examobj()");
+void Acci::examobj() {   
+	if (thing != _vm->_gyro->thinks)
+		_vm->_lucerna->thinkabout(thing, _vm->_gyro->a_thing);
+	switch (thing) {
+	case _vm->_gyro->wine :
+		switch (_vm->_gyro->dna.winestate) {// 4 is perfect wine. 0 is not holding the wine.
+		case 1:
+			_vm->_visa->dixi('t', 1); // Normal examine wine scroll
+			break; 
+		case 2:
+			_vm->_visa->dixi('d', 6); // Bad wine
+			break;
+		case 3:
+			_vm->_visa->dixi('d', 7); // Vinegar
+			break;
+		}
+		break;
+	case _vm->_gyro->onion:
+		if (_vm->_gyro->dna.rotten_onion)
+			_vm->_visa->dixi('q', 21); // Yucky onion.
+		else
+			_vm->_visa->dixi('t', 18);  // Normal onion scroll
+		break;       
+	default:
+		_vm->_visa->dixi('t', thing); // <<< Ordinarily
+	}
 }
 
 bool Acci::personshere() { // Person equivalent of "holding".
@@ -624,8 +654,19 @@ void Acci::exampers() {
 }
 
 bool Acci::holding() {
-	warning("STUB: Acci::holding()");
-	return true;
+	if ((51 <= thing) && (thing <= 99)) // Also.
+		return true;
+
+	bool holdingResult = false;
+
+	if (thing > 100)
+		_vm->_scrolls->display("Be reasonable!");
+	else if (!_vm->_gyro->dna.obj[thing])  // Verbs that need "thing" to be in the inventory.
+		_vm->_scrolls->display("You're not holding it, Avvy.");
+	else 
+		holdingResult = true;
+
+	return holdingResult;
 }
 
 
@@ -635,9 +676,21 @@ void Acci::special(bool before) {
 }
 
 void Acci::examine() {
-	/* Examine. EITHER it's an object OR it's an Also OR it's a person OR
-		it's something else. */
-	warning("STUB: Acci::examine()");
+	// EITHER it's an object OR it's an Also OR it's a person OR it's something else.
+	if ((person == pardon) && (thing != pardon)) {
+		if (holding()) {
+			// Remember: it's been Slipped! Ie subtract 49.
+			if ((1 <= thing) && (thing <= 49)) // Standard object
+				examobj();
+			else if ((50 <= thing) && (thing <= 100)) { // Also thing
+				special(true);
+				_vm->_scrolls->display(*_vm->_gyro->also[thing - 51][0]);
+				special(false);
+			}
+		}
+	} else if (person != pardon)
+		exampers();
+	else _vm->_scrolls->display("It's just as it looks on the picture.");  // Don't know: guess.
 }
 
 
@@ -1706,9 +1759,9 @@ void Acci::do_that() {
 		_vm->_lucerna->gameover();
 		break;
 	case vb_score:
-		_vm->_scrolls->display(Common::String("Your score is ") + _vm->_gyro->strf(_vm->_gyro->dna.score) + ",\3\rout of a " +
-				"possible 128.\r\rThis gives you a rank of " + rank() +
-				".\r\r" + totaltime());
+		_vm->_scrolls->display(Common::String("Your score is ") + _vm->_gyro->strf(_vm->_gyro->dna.score) + ',' + _vm->_scrolls->kControlCenter
+			+ _vm->_scrolls->kControlNewLine + "out of a possible 128." + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
+			+ "This gives you a rank of " + rank() + '.' + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + totaltime());
 		break;
 	case vb_put:
 		putproc();

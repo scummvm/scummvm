@@ -879,8 +879,43 @@ void Lucerna::topcheck() {
 	/* Do this one */
 }
 
-void Lucerna::mouseway() {
-	warning("STUB: Lucerna::mouseway()");
+void Lucerna::mouseway(const Common::Point &cursorPos) {
+	byte col = *(byte *)_vm->_graphics->_surface.getBasePtr(cursorPos.x, cursorPos.y / 2);
+
+	switch (col) {
+	case green: {
+			_vm->_gyro->dna.rw = _vm->_trip->up;
+			_vm->_trip->rwsp(0, _vm->_trip->up);
+			showrw();
+		}
+		break;
+	case brown: {
+			_vm->_gyro->dna.rw = _vm->_trip->down;
+			_vm->_trip->rwsp(0, _vm->_trip->down);
+			showrw();
+		}
+		break;
+	case cyan: {
+			_vm->_gyro->dna.rw = _vm->_trip->left;
+			_vm->_trip->rwsp(0, _vm->_trip->left);
+			showrw();
+		}
+		break;
+	case lightmagenta: {
+			_vm->_gyro->dna.rw = _vm->_trip->right;
+			_vm->_trip->rwsp(0, _vm->_trip->right);
+			showrw();
+		}
+		break;
+	case red:
+	case white:
+	case lightcyan:
+	case yellow: { // Fall-throughs are intended.
+			_vm->_trip->stopwalking();
+			showrw();
+		}
+		break;
+	}
 }
 
 void Lucerna::inkey() {
@@ -1000,88 +1035,54 @@ void Lucerna::checkclick() {
 			_vm->_gyro->newpointer(4); // fletch
 	}
 
+	if (holdLeftMouse)
+		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Clink on the dropdown menu.
+			if (_vm->_gyro->dropsok)
+				topcheck();
+		} else if ((317 <= cursorPos.y) && (cursorPos.y <= 339)) { // Click on the command line.
+			_vm->_parser->_inputTextPos = (cursorPos.x - 23) / 8;
+			if (_vm->_parser->_inputTextPos > _vm->_parser->_inputText.size() + 1)
+				_vm->_parser->_inputTextPos = _vm->_parser->_inputText.size() + 1;
+			if (_vm->_parser->_inputTextPos < 1)
+				_vm->_parser->_inputTextPos = 1;
+			_vm->_parser->_inputTextPos--;
+			_vm->_parser->plotText();
+		} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399)) { // Check the toolbar.
+			if ((137 <= cursorPos.x) && (cursorPos.x <= 207)) { // Control Avvy with the compass.
+				if (_vm->_gyro->alive && _vm->_gyro->dna.avvy_is_awake)
+					mouseway(cursorPos);
+			} else if ((208 <= cursorPos.x) && (cursorPos.x <= 260)) { // Examine the thing.
+				do {
+					_vm->updateEvents();
+				} while (holdLeftMouse);
 
+				if (_vm->_gyro->thinkthing) {
+					_vm->_acci->thing = _vm->_gyro->thinks;
+					_vm->_acci->thing += 49;
+					_vm->_acci->person = _vm->_acci->pardon;
+				} else {
+					_vm->_acci->person = _vm->_gyro->thinks;
+					_vm->_acci->thing = _vm->_acci->pardon;
+				}
+				callverb(_vm->_acci->vb_exam);
+			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
+				do {
+					_vm->updateEvents();
+				} while (holdLeftMouse);
 
-	//if (_vm->_gyro->mpress > 0) {
-	//	switch (_vm->_gyro->mpy) {
-	//	case RANGE_11(0, 10):
-	//		if (_vm->_gyro->dropsok)  topcheck();
-	//		break;
-	//	case 11 ... 158:
-	//		if (!_vm->_gyro->dropsok)
-	//			_vm->_gyro->mousetext = Common::String('\15') + _vm->_gyro->mousetext;
-	//		break;                    /* But otherwise, it's
- //                                      equivalent to pressing Enter. */
-	//	case RANGE_11(159, 169): { /* Click on command line */
-	//		cursor_off();
-	//		curpos = (_vm->_gyro->mx - 16) / 8;
-	//		if (curpos > length(current) + 1)
-	//			curpos = length(current) + 1;
-	//		if (curpos < 1)
-	//			curpos = 1;
-	//		cursor_on();
-	//	}
-	//	break;
-	//	case 170 ... 200:
-	//		switch (_vm->_gyro->mpx) { /* bottom check */
-	//		case 0 ... 207:
-	//			mouseway();
-	//			break;
-	//		case 208 ... 260: { /* Examine the thing */
-	//			do {
-	//				_vm->_gyro->check();
-	//			} while (!(_vm->_gyro->mrelease > 0));
-	//			if (_vm->_gyro->thinkthing) {
-	//				_vm->_acci->thing = _vm->_gyro->thinks;
-	//				_vm->_acci->thing += 49;
-	//				_vm->_acci->person = _vm->_acci->pardon;
-	//			} else {
-	//				_vm->_acci->person = _vm->_gyro->thinks;
-	//				_vm->_acci->thing = _vm->_acci->pardon;
-	//			}
-	//			callverb(_vm->_acci->vb_exam);
-	//		}
-	//		break;
-	//		case 261 ... 319: {
-	//			do {
-	//				checkclick();
-	//			} while (!(_vm->_gyro->mrelease > 0));
-	//			callverb(_vm->_acci->vb_score);
-	//		}
-	//		break;
-	//		case 320 ... 357: {
-	//			_vm->_trip->tr[0].xs = _vm->_gyro->walk;
-	//			_vm->_trip->newspeed();
-	//		}
-	//		break;
-	//		case 358 ... 395: {
-	//			_vm->_trip->tr[0].xs = _vm->_gyro->run;
-	//			_vm->_trip->newspeed();
-	//		}
-	//		break;
-	//		case 396 ... 483:
-	//			fxtoggle();
-	//			break; /* "sound" */
-	//			/*              484..534: begin { clock }
-	//			                         off; if getpixel(mx,my)=14 then mousetext:='#'+mousetext; on;
-	//			                        end;*/
-	//		case 535 ... 640:
-	//			_vm->_gyro->mousetext = Common::String('\15') + _vm->_gyro->mousetext;
-	//			break;
-	//		}
-	//		break;
-	//	}
-	//}
-
-	/* if mrelease>0 then
-	 begin
-	  if (cw<>177) and (mry>10) then
-	   begin to_do:=(((mrx-20) div 100)*20)+(mry div 10); closewin; end;
-	 end;*/
-
-
-
-	warning("STUB: Lucerna::checkclick()");
+				callverb(_vm->_acci->vb_score);
+			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
+				_vm->_trip->tr[0].xs = _vm->_gyro->walk;
+				_vm->_trip->newspeed();
+			} else if ((358 <= cursorPos.x) && (cursorPos.x <= 395)) { // Change speed.
+				_vm->_trip->tr[0].xs = _vm->_gyro->run;
+				_vm->_trip->newspeed();
+			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
+				fxtoggle();
+			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
+				_vm->_gyro->mousetext = Common::String(13) + _vm->_gyro->mousetext;
+		} else if (!_vm->_gyro->dropsok)
+			_vm->_gyro->mousetext = Common::String(13) + _vm->_gyro->mousetext;
 }
 
 void Lucerna::mouse_init() {

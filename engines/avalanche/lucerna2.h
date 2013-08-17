@@ -70,7 +70,7 @@ public:
 
 	void points(byte num);      /* Add on no. of points */
 
-	void mouseway();
+	void mouseway(const Common::Point &cursorPos);
 
 	void inkey();
 
