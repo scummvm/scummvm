@@ -216,15 +216,15 @@ void ScriptManager::changeLocationIntern() {
 	// Revert to the idle cursor
 	_engine->getCursorManager()->revertToIdle();
 
-	// Change the background position
-	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
-
 	// Reset the background velocity
 	_engine->getRenderManager()->setBackgroundVelocity(0);
 
 	// Parse into puzzles and controls
 	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
 	parseScrFile(fileName);
+
+	// Change the background position
+	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
 	// Create the puzzle reference table
 	createReferenceTable();
