@@ -83,19 +83,29 @@ bool Console::cmdLoadVideo(int argc, const char **argv) {
 }
 
 bool Console::cmdLoadSound(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Use loadsound <fileName> to load a sound\n");
-		return true;
-	}
-
 	if (!Common::File::exists(argv[1])) {
 		DebugPrintf("File does not exist\n");
 		return true;
 	}
 
-	Audio::AudioStream *soundStream = makeRawZorkStream(argv[1], _engine);
-	Audio::SoundHandle handle;
-	_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
+	if (argc == 2) {
+		Audio::AudioStream *soundStream = makeRawZorkStream(argv[1], _engine);
+		Audio::SoundHandle handle;
+		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
+
+	} else if (argc == 4) {
+		int isStereo = atoi(argv[3]);
+
+		Common::File *file = new Common::File();
+		file->open(argv[1]);
+
+		Audio::AudioStream *soundStream = makeRawZorkStream(file, atoi(argv[2]), isStereo == 0 ? false : true);
+		Audio::SoundHandle handle;
+		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
+	} else {
+		DebugPrintf("Use loadsound <fileName> [<rate> <isStereo: 1 or 0>] to load a sound\n");
+		return true;
+	}
 
 	return true;
 }
