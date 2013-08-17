@@ -34,8 +34,10 @@ const int kMaxOutputRects = 32;
 const int kMaxInputRects = 64;
 const int kMaxAcceptableWaste = 15;
 const int kMinAcceptableWaste = 5;
-const int kThresholdWidthPercent = 90;
-const int kThresholdHeigthPercent = 90;
+const int kHugeWidthPercent = 90;
+const int kHugeHeigthPercent = 90;
+const int kHugeWidthFixed = 1024;
+const int kHugeHeightFixed = 768;
 
 DirtyRectContainer::DirtyRectContainer() {
 	_disableDirtyRects = false;
@@ -92,6 +94,25 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	return singleret;
 }
 
+bool DirtyRectContainer::isHuge(Common::Rect *rect) {
+	// It's huge if it exceeds kHuge[Height|Width]Fixed
+	// or is within kHuge[Width|Height]PErcent of the cliprect
+
+	assert (rect != nullptr);
+
+	if (rect->width() > kHugeWidthFixed && rect->height() > kHugeHeightFixed) {
+		return true;
+	}
+
+	int wThreshold = _clipRect->width() * (kHugeWidthFixed * 10) / 100;
+	int hThreshold = _clipRect->height() * (kHugeHeightFixed * 10)/ 100;
+
+	if (rect->width() * 10 > wThreshold && rect->height() * 10 > hThreshold) {
+		return true;
+	}
+
+	return false;
+}
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 	Common::Array<Common::Rect *> ret;
@@ -114,9 +135,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			continue;
 		}
 		
-		// TODO: if really big then just use a single rect and avoid 
-		// all these unnecessary calculations (e.g. Rosemary fades)
-
 		if (ret.size() > kMaxOutputRects) {
 			// Simply extend one (hack: the first one) and avoid rect soup & calculations;
 			ret[0]->extend(*candidate);
@@ -175,19 +193,14 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		}
 		// Do checks on lastModified
 
-		int hugeXThreshold = 800; // Hack
-		int hugeYThreshold = 600; // Hack
-
-		if (lastModified != nullptr && lastModified->width() >= hugeXThreshold &&
-			lastModified->height() >= hugeYThreshold) {
+		if (lastModified != nullptr && isHuge(lastModified)) {
 				// This one is so huge that we can as well redraw the entire screen
 				_disableDirtyRects = true;
 				return getFallback();
 				break;
 		}
 
-		if (candidate->width() >= hugeXThreshold &&
-			candidate->height() >= hugeYThreshold) {
+		if (isHuge(candidate)) {
 				// This one is so huge that we can as well redraw the entire screen
 				_disableDirtyRects = true;
 				return getFallback();
