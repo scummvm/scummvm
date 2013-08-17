@@ -35,9 +35,9 @@ class AvalancheEngine;
 
 class Parser {
 public:
-	Common::String _inputText;
+	Common::String _inputText; // Original name: current
 	Common::String _inputTextBackup;
-	byte _inputTextPos;
+	byte _inputTextPos; // Original name: curpos
 	bool _quote; // 66 or 99 next?
 	byte _leftMargin;
 	bool _cursorState;

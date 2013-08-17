@@ -107,7 +107,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP5:
-		if (_vm->_gyro->alive) {
+		if (_vm->_gyro->alive && _vm->_gyro->dna.avvy_is_awake) {
 			_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
 			_vm->_lucerna->showrw();
 			if (_vm->_gyro->demo)
