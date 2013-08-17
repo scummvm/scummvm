@@ -446,7 +446,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 		my += 12;
 	}
 
-	_vm->_gyro->underscroll = my * 2 + 12 + 1; // Multiplying because of the doubled screen height.
+	_vm->_gyro->underscroll = my * 2 + 6; // Multiplying because of the doubled screen height.
 	//setvisualpage(1 - cp);
 	dingdongbell();
 	//my = getpixel(0, 0);
