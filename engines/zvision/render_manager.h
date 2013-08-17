@@ -52,13 +52,17 @@ private:
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
 
-	Graphics::Surface _backbuffer;
-	uint16 *_warpedBackbuffer;
+	uint16 *_warpedBuffer;
 
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _workingWidth;
 	/** Height of the working window. Saved to prevent extraneous calls to _workingWindow.height() */
 	const int _workingHeight;
+	/** Center of the screen in the x direction */
+	const int _screenCenterX;
+	/** Center of the screen in the y direction */
+	const int _screenCenterY;
+
 	/** 
 	 * A Rectangle centered inside the actual window. All in-game coordinates
 	 * are given in this coordinate space. Also, all images are clipped to the
@@ -102,9 +106,8 @@ public:
 	 * @param fileName        Name of the image file
 	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
-	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
-	void renderImageToBackbuffer(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
+	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, bool wrap = false);
 
 	/**
 	 * Blits the image or a portion of the image to the backbuffer. Actual screen updates won't happen until the end of the frame.
@@ -113,9 +116,8 @@ public:
 	 * @param stream          Stream to read the image data from
 	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
-	 * @param subRectangle    The subrectangle of the image that should be rendered. If this is an empty rectangle, it will blit the entire image. Coords are in working window space, not screen space!
 	 */
-	void renderImageToBackbuffer(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle = Common::Rect(0, 0, 0, 0), bool wrap = false);
+	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, bool wrap = false);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
@@ -169,9 +171,7 @@ private:
 	 * @param subRectangle       A rectangle representing the part of the image that should be rendered
 	 * @param wrap               Should the image wrap (tile) if it doesn't completely fill the screen?
 	 */
-	void renderSubRectToBackbuffer(Graphics::Surface &surface, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap, bool isTransposed);
-
-	void copyTransposedRectToBackbuffer(const uint16 *buffer, int imageWidth, int destinationX, int destinationY, int width, int height, const Common::Rect &subRect);
+	void renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap, bool isTransposed);
 
 	void moveBackground(int offset);
 };

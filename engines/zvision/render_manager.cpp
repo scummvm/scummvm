@@ -38,16 +38,19 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, 
 		: _system(system),
 		  _workingWidth(workingWindow.width()),
 		  _workingHeight(workingWindow.height()),
+		  _screenCenterX((workingWindow.left + workingWindow.right) /2),
+		  _screenCenterY((workingWindow.top + workingWindow.bottom) /2),
 		  _workingWindow(workingWindow),
 		  _pixelFormat(pixelFormat),
 		  _currentBackground(0),
 		  _backgroundWidth(0),
 		  _backgroundHeight(0),
 		  _backgroundInverseVelocity(0),
+		  _backgroundOffset(0, 0),
 		  _accumulatedVelocityMilliseconds(0),
-		  _renderTable(workingWindow.width(), workingWindow.height()) {
-	_backbuffer.create(_workingWidth, _workingHeight, pixelFormat);
-	_warpedBackbuffer = new uint16[_workingWidth *_workingHeight];
+		  _renderTable(_workingWidth, _workingHeight) {
+
+	_warpedBuffer = new uint16[_workingWidth *_workingHeight];
 }
 
 RenderManager::~RenderManager() {
@@ -55,8 +58,7 @@ RenderManager::~RenderManager() {
 		delete _currentBackground;
 	}
 
-	_backbuffer.free();
-	delete[] _warpedBackbuffer;
+	delete[] _warpedBuffer;
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
@@ -73,111 +75,83 @@ void RenderManager::update(uint deltaTimeInMillis) {
 		}
 
 		// Choose the direction of movement using the sign of the velocity
-		moveBackground(_backgroundInverseVelocity < 0 ? -numberOfSteps : numberOfSteps);
+		moveBackground(_backgroundInverseVelocity < 0 ? numberOfSteps : -numberOfSteps);
 	}
-
-	// Warp the entire backbuffer
-	RenderTable::RenderState state = _renderTable.getRenderState();
-	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-		_renderTable.mutateImage((uint16 *)_backbuffer.getBasePtr(0, 0), _warpedBackbuffer, _workingWidth, _workingHeight);
-		_system->copyRectToScreen(_warpedBackbuffer, _backbuffer.pitch, _workingWindow.left, _workingWindow.top, _backbuffer.w, _backbuffer.h);
-	} else {
-		_system->copyRectToScreen(_backbuffer.getBasePtr(0, 0), _backbuffer.pitch, _workingWindow.left, _workingWindow.top, _backbuffer.w, _backbuffer.h);
-	}
-
-	// Blit the backbuffer to the screen
-	
 }
 
-void RenderManager::renderSubRectToBackbuffer(Graphics::Surface &surface, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap, bool isTransposed) {	
+void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap, bool isTransposed) {	
+	int16 subRectX = 0;
+	int16 subRectY = 0;
+
+	// Take care of negative destinations
+	if (destinationX < 0) {
+		subRectX = destinationX + surface.w;
+		destinationX = 0;
+		if (wrap) {
+			_backgroundOffset.x += surface.w;
+		}
+	} else if (destinationX >= surface.w) {
+		// Take care of extreme positive destinations
+		destinationX -= surface.w;
+		if (wrap) {
+			_backgroundOffset.x -= surface.w;
+		}
+	}
+
+	// Take care of negative destinations
+	if (destinationY < 0) {
+		subRectY = destinationY + surface.h;
+		destinationY = 0;
+		if (wrap) {
+			_backgroundOffset.y += surface.h;
+		}
+	} else if (destinationY >= surface.h) {
+		// Take care of extreme positive destinations
+		destinationY -= surface.h;
+		if (wrap) {
+			_backgroundOffset.y -= surface.h;
+		}
+	}
+
 	if (wrap) {
 		_backgroundWidth = surface.w;
 		_backgroundHeight = surface.h;
-	}
 	
-	// If subRect is empty, use the entire image
-	if (subRectangle.isEmpty())
-		subRectangle = Common::Rect(subRectangle.left, subRectangle.top, subRectangle.left + surface.w, subRectangle.top + surface.h);
-
-	// Clip destRect to working window bounds
-	Common::Rect destRect(destinationX, destinationY, destinationX + subRectangle.width(), destinationY + subRectangle.height());
-	destRect.clip(_workingWidth, _workingHeight);
-	// Clip subRect to working window bounds
-	subRectangle.translate(destRect.left - destinationX, destRect.top - destinationY);
-	subRectangle.setWidth(destRect.width());
-	subRectangle.setHeight(destRect.height());
-	// Clip to image bounds
-	Common::Point subRectOrigOrigin(subRectangle.left, subRectangle.top);
-	subRectangle.clip(surface.w, surface.h);
-
-	// If the image is to be wrapped, check if it's smaller than destRect
-	// If it is, then call renderSubRectToScreen with a subRect representing wrapping
-	if (wrap && subRectangle.width() < destRect.width()) {
-		uint32 wrapDestX;
-		uint32 wrapDestY; 
-		Common::Rect wrapSubRect;
-
-		if (_backgroundWidth - subRectangle.left < destRect.width()) {
-			wrapDestX = destRect.left + subRectangle.width();
-			wrapDestY = destRect.top;
-			wrapSubRect = Common::Rect(0, 0, destRect.width() - subRectangle.width(), subRectangle.bottom);
-		} else {
-			wrapDestX = destRect.left;
-			wrapDestY = destRect.top;
-			wrapSubRect = Common::Rect(_backgroundWidth - subRectangle.width(), 0, _backgroundWidth - 1, subRectangle.bottom);
+		if (destinationX > 0) { 
+			// Move destinationX to 0
+			subRectX = surface.w - destinationX;
+			destinationX = 0;
 		}
 
-		renderSubRectToBackbuffer(surface, wrapDestX, wrapDestY, wrapSubRect, false, isTransposed);
-	} else if (wrap && subRectangle.height() < destRect.height()) {
-		uint32 wrapDestX;
-		uint32 wrapDestY; 
-		Common::Rect wrapSubRect;
-
-		if (_backgroundHeight - subRectangle.top < destRect.height()) {
-			wrapDestX = destRect.left;
-			wrapDestY = destRect.height() - subRectangle.height();
-			wrapSubRect = Common::Rect(0, 0, subRectangle.right, destRect.height() - subRectangle.height());
-		} else {
-			wrapDestX = destRect.left;
-			wrapDestY = destRect.top;
-			wrapSubRect = Common::Rect(0, _backgroundHeight - subRectangle.height(), subRectangle.right, _backgroundHeight - 1);
+		if (destinationY > 0) {
+			// Move destinationY to 0
+			subRectX = surface.w - destinationX;
+			destinationY = 0;
 		}
-
-		renderSubRectToBackbuffer(surface, wrapDestX, wrapDestY, wrapSubRect, false, isTransposed);
-	} else {
-		// Clip destRect to image bounds
-		destRect.translate(subRectangle.left - subRectOrigOrigin.x, subRectangle.top - subRectOrigOrigin.y);
-		destRect.setWidth(subRectangle.width());
-		destRect.setHeight(subRectangle.height());
 	}
 
-	// Check all Rects for validity
-	if (!subRectangle.isValidRect() || subRectangle.isEmpty() || !destRect.isValidRect() || destRect.isEmpty())
+	// Clip subRect to working window bounds
+	Common::Rect subRect(subRectX, subRectY, subRectX + _workingWidth, subRectY + _workingHeight);
+
+	if (!wrap) {
+		// Clip to image bounds
+		subRect.clip(surface.w, surface.h);
+	}
+
+	// Check destRect for validity
+	if (!subRect.isValidRect() || subRect.isEmpty())
 		return;
 
-	if (isTransposed) {
-		copyTransposedRectToBackbuffer((uint16 *)surface.getBasePtr(0, 0), surface.h, destRect.left, destRect.top, destRect.width(), destRect.height(), subRectangle);
+	if (_renderTable.getRenderState() == RenderTable::FLAT) {
+		_system->copyRectToScreen(surface.getBasePtr(subRect.left, subRect.top), surface.pitch, destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
 	} else {
-		_backbuffer.copyRectToSurface(surface.getBasePtr(subRectangle.left, subRectangle.top), surface.pitch, destRect.left, destRect.top, destRect.width(), destRect.height());
+		_renderTable.mutateImage((uint16 *)surface.getBasePtr(0, 0), _warpedBuffer, surface.w, surface.h, destinationX, destinationY, subRect, wrap, isTransposed);
+
+		_system->copyRectToScreen(_warpedBuffer, _workingWidth * sizeof(uint16), destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
 	}
 }
 
-void RenderManager::copyTransposedRectToBackbuffer(const uint16 *buffer, int imageWidth, int destinationX, int destinationY, int width, int height, const Common::Rect &subRect) {
-	uint16 *dest = (uint16 *)_backbuffer.getBasePtr(0, 0);
-	
-	for (int16 x = subRect.left; x < subRect.right; x++) {
-		int16 normalizedX = x - subRect.left + destinationX;
-		int columnOffset = x * imageWidth;
-
-		for (int16 y = subRect.top; y < subRect.bottom; y++) {
-			int16 normalizeY = y - subRect.top + destinationY;
-
-			dest[normalizeY * _backbuffer.w + normalizedX] = buffer[columnOffset + y];
-		}
-	}
-}
-
-void RenderManager::renderImageToBackbuffer(const Common::String &fileName, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap) {
+void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, bool wrap) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
@@ -185,10 +159,10 @@ void RenderManager::renderImageToBackbuffer(const Common::String &fileName, uint
 		return;
 	}
 
-	renderImageToBackbuffer(file, destinationX, destinationY, subRectangle);
+	renderImageToScreen(file, destinationX, destinationY);
 }
 
-void RenderManager::renderImageToBackbuffer(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, Common::Rect subRectangle, bool wrap) {
+void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, bool wrap) {
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
 	uint32 fileType;
@@ -217,7 +191,7 @@ void RenderManager::renderImageToBackbuffer(Common::SeekableReadStream &stream, 
 		Graphics::Surface surface;
 		surface.init(imageWidth, imageHeight, pitch, buffer, _pixelFormat);
 
-		renderSubRectToBackbuffer(surface, destinationX, destinationY, subRectangle, wrap, isTransposed);
+		renderSubRectToScreen(surface, destinationX, destinationY, wrap, isTransposed);
 
 		// We have to use delete[] instead of calling surface.free() because we created the memory with new[]
 		delete[] buffer;
@@ -241,7 +215,7 @@ void RenderManager::renderImageToBackbuffer(Common::SeekableReadStream &stream, 
 			tgaSurface.w = temp;
 		}
 
-		renderSubRectToBackbuffer(tgaSurface, destinationX, destinationY, subRectangle, wrap, isTransposed);
+		renderSubRectToScreen(tgaSurface, destinationX, destinationY, wrap, isTransposed);
 		tga.destroy();
 	}
 }
@@ -280,15 +254,20 @@ void RenderManager::setBackgroundImage(const Common::String &fileName) {
 	}
 	_currentBackground = file;
 
-	// Purposely make the subRectangle empty. renderImageToScreen will then set the width and height automatically.
-	renderImageToBackbuffer(*_currentBackground, 0, 0, Common::Rect(_backgroundOffset.x, _backgroundOffset.y, _backgroundOffset.x, _backgroundOffset.y), true);
+	renderImageToScreen(*_currentBackground, _backgroundOffset.x, _backgroundOffset.y, true);
 }
 
 void RenderManager::setBackgroundPosition(int offset) {
-	if (_renderTable.getRenderState() == RenderTable::TILT) {
-		_backgroundOffset = Common::Point(0, offset);
+	RenderTable::RenderState state = _renderTable.getRenderState();
+	if (state == RenderTable::TILT) {
+		_backgroundOffset.x = 0;
+		_backgroundOffset.y = _screenCenterY - offset;
+	} else if (state == RenderTable::PANORAMA) {
+		_backgroundOffset.x = _screenCenterX - offset;
+		_backgroundOffset.y = 0;
 	} else {
-		_backgroundOffset = Common::Point(offset, 0);
+		_backgroundOffset.x = 0;
+		_backgroundOffset.y = 0;
 	}
 }
 
@@ -305,25 +284,20 @@ void RenderManager::setBackgroundVelocity(int velocity) {
 }
 
 void RenderManager::moveBackground(int offset) {
-	if (_renderTable.getRenderState() == RenderTable::TILT) {
-		_backgroundOffset += Common::Point(0, offset);
-	} else {
-		_backgroundOffset += Common::Point(offset, 0);
-	}
-
-	// Make sure the offset is within image bounds
-	if (_backgroundOffset.x < 0)
-		_backgroundOffset.x += _backgroundWidth;
-	if (_backgroundOffset.x > _backgroundWidth)
-		_backgroundOffset.x -= _backgroundWidth;
-	if (_backgroundOffset.y < 0)
-		_backgroundOffset.y += _backgroundHeight;
-	if (_backgroundOffset.y > _backgroundHeight)
-		_backgroundOffset.y -= _backgroundHeight;
-
 	_currentBackground->seek(0);
-	// Purposely make the subRectangle empty. renderImageToScreen will then set the width and height automatically.
-	renderImageToBackbuffer(*_currentBackground, 0, 0, Common::Rect(_backgroundOffset.x, _backgroundOffset.y, _backgroundOffset.x, _backgroundOffset.y), true);
+
+	RenderTable::RenderState state = _renderTable.getRenderState();
+	if (state == RenderTable::TILT) {
+		_backgroundOffset += Common::Point(0, offset);
+
+		renderImageToScreen(*_currentBackground, 0, _backgroundOffset.y, true);
+	} else if (state == RenderTable::PANORAMA) {
+		_backgroundOffset += Common::Point(offset, 0);
+
+		renderImageToScreen(*_currentBackground, _backgroundOffset.x, 0, true);
+	} else {
+		renderImageToScreen(*_currentBackground, 0, 0);
+	}
 }
 
 } // End of namespace ZVision

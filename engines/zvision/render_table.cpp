@@ -98,22 +98,46 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 	return returnColor;
 }
 
-void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 imageWidth, uint32 imageHeight) {
-	for (uint32 y = 0; y < imageHeight; y++) {
-		for (uint32 x = 0; x < imageWidth; x++) {
-			uint32 index = y * _numColumns + x;
+void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 imageWidth, int16 imageHeight, int16 destinationX, int16 destinationY, const Common::Rect &subRect, bool wrap, bool isTransposed) {
+	for (int16 y = subRect.top; y < subRect.bottom; y++) {
+		uint16 normalizedY = y - subRect.top;
+		uint32 internalColumnIndex = (normalizedY + destinationY) * _numColumns;
+		uint32 destColumnIndex = normalizedY * _numColumns;
+
+		for (int16 x = subRect.left; x < subRect.right; x++) {
+			uint16 normalizedX = x - subRect.left;
+
+			uint32 index = internalColumnIndex + normalizedX + destinationX;
 
 			// RenderTable only stores offsets from the original coordinates
-			uint32 sourceYIndex = y + _internalBuffer[index].y;
-			uint32 sourceXIndex = x + _internalBuffer[index].x;
+			uint16 sourceYIndex = y + _internalBuffer[index].y;
+			uint16 sourceXIndex = x + _internalBuffer[index].x;
 
-			// Clamp the yIndex to the size of the image
-			sourceYIndex = CLIP<uint32>(sourceYIndex, 0, imageHeight - 1);
+			if (wrap) {
+				if (sourceXIndex >= imageWidth) {
+					sourceXIndex -= imageWidth;
+				} else if (sourceXIndex < 0) {
+					sourceXIndex += imageWidth;
+				}
 
-			// Clamp the xIndex to the size of the image
-			sourceXIndex = CLIP<uint32>(sourceXIndex, 0, imageWidth - 1);
+				if (sourceYIndex >= imageHeight) {
+					sourceYIndex -= imageHeight;
+				} else if (sourceYIndex < 0) {
+					sourceYIndex += imageHeight;
+				}
+			} else {
+				// Clamp the yIndex to the size of the image
+				sourceYIndex = CLIP<uint32>(sourceYIndex, 0, imageHeight - 1);
 
-			destBuffer[index] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
+				// Clamp the xIndex to the size of the image
+				sourceXIndex = CLIP<uint32>(sourceXIndex, 0, imageWidth - 1);
+			}
+			
+			if (isTransposed) {
+				destBuffer[destColumnIndex + normalizedX] = sourceBuffer[sourceXIndex * imageHeight + sourceYIndex];
+			} else {
+				destBuffer[destColumnIndex + normalizedX] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
+			}
 		}
 	}
 }
