@@ -30,10 +30,10 @@
 
 namespace Wintermute {
 
-const int kMaxOutputRects = 32;
-const int kMaxInputRects = 64;
-const int kMaxAcceptableWaste = 15;
-const int kMinAcceptableWaste = 5;
+const int kMaxOutputRects = 96;
+const int kMaxInputRects = 512;
+const int kMaxAcceptableWaste = 10;
+const int kMinAcceptableWaste = 3;
 const int kHugeWidthPercent = 90;
 const int kHugeHeigthPercent = 90;
 const int kHugeWidthFixed = 1024;
@@ -123,7 +123,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			return getFallback();
 		}
 
-		if (i > kMaxOutputRects) {
+		if (ret.size() > kMaxOutputRects) {
 			return getFallback();
 		}
 
@@ -172,12 +172,12 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			int candidateArea = candidate->width() * candidate->height();
 			int extendedArea = extended.width() * extended.height();
 			int ratioScaled = extendedArea * 10 / (originalArea + candidateArea);
-			if (ratioScaled <= kMaxAcceptableWaste / 10 &&
+			if (ratioScaled <= kMaxAcceptableWaste * 10 &&
 			        ratioScaled < bestRatio) {
 				// This is a good candidate for extending.
 				bestRatio = ratioScaled;
 				extendable = j;
-				if (ratioScaled <= kMinAcceptableWaste / 10) {
+				if (ratioScaled <= kMinAcceptableWaste * 10) {
 					// This is so good that we can actually
 					// avoid traversing the rest of the array,
 					// we would gain peanuts
@@ -200,15 +200,18 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				break;
 		}
 
-		if (isHuge(candidate)) {
+		if (lastModified == nullptr && isHuge(candidate)) {
 				// This one is so huge that we can as well redraw the entire screen
 				_disableDirtyRects = true;
 				return getFallback();
 				break;
 		}
 		// If we ended up here, there's really nothing we can do
-		int target = ret.size();
-		ret.insert_at(target, candidate);
+
+		if (lastModified == nullptr) {
+			int target = ret.size();
+			ret.insert_at(target, candidate);
+		}
 	}
 	return ret;
 }
