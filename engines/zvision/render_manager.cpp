@@ -38,8 +38,8 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, 
 		: _system(system),
 		  _workingWidth(workingWindow.width()),
 		  _workingHeight(workingWindow.height()),
-		  _screenCenterX((workingWindow.left + workingWindow.right) /2),
-		  _screenCenterY((workingWindow.top + workingWindow.bottom) /2),
+		  _screenCenterX(_workingWidth / 2),
+		  _screenCenterY(_workingHeight / 2),
 		  _workingWindow(workingWindow),
 		  _pixelFormat(pixelFormat),
 		  _currentBackground(0),
@@ -75,7 +75,7 @@ void RenderManager::update(uint deltaTimeInMillis) {
 		}
 
 		// Choose the direction of movement using the sign of the velocity
-		moveBackground(_backgroundInverseVelocity < 0 ? numberOfSteps : -numberOfSteps);
+		moveBackground(_backgroundInverseVelocity < 0 ? -numberOfSteps : numberOfSteps);
 	}
 }
 
@@ -85,32 +85,20 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 
 	// Take care of negative destinations
 	if (destinationX < 0) {
-		subRectX = destinationX + surface.w;
+		subRectX = -destinationX;
 		destinationX = 0;
-		if (wrap) {
-			_backgroundOffset.x += surface.w;
-		}
 	} else if (destinationX >= surface.w) {
 		// Take care of extreme positive destinations
 		destinationX -= surface.w;
-		if (wrap) {
-			_backgroundOffset.x -= surface.w;
-		}
 	}
 
 	// Take care of negative destinations
 	if (destinationY < 0) {
-		subRectY = destinationY + surface.h;
+		subRectY = -destinationY;
 		destinationY = 0;
-		if (wrap) {
-			_backgroundOffset.y += surface.h;
-		}
 	} else if (destinationY >= surface.h) {
 		// Take care of extreme positive destinations
 		destinationY -= surface.h;
-		if (wrap) {
-			_backgroundOffset.y -= surface.h;
-		}
 	}
 
 	if (wrap) {
@@ -224,15 +212,25 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
 	// Convert from screen space to working window space
 	Common::Point newPoint(point - Common::Point(_workingWindow.left, _workingWindow.top));
 
-	if (_renderTable.getRenderState() == RenderTable::PANORAMA || _renderTable.getRenderState() == RenderTable::TILT) {
+	RenderTable::RenderState state = _renderTable.getRenderState();
+	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
 		newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
 	}
 
-	newPoint -= _backgroundOffset;
+	if (state == RenderTable::PANORAMA) {
+		newPoint -= (Common::Point(_screenCenterX, 0) - _backgroundOffset);
+	} else if (state == RenderTable::TILT) {
+		newPoint -= (Common::Point(0, _screenCenterY) - _backgroundOffset);
+	}
+
 	if (newPoint.x < 0)
 		newPoint.x += _backgroundWidth;
+	else if (newPoint.x >= _backgroundWidth)
+		newPoint.x -= _backgroundWidth;
 	if (newPoint.y < 0)
 		newPoint.y += _backgroundHeight;
+	else if (newPoint.y >= _backgroundHeight)
+		newPoint.y -= _backgroundHeight;
 
 	return newPoint;
 }
@@ -254,16 +252,16 @@ void RenderManager::setBackgroundImage(const Common::String &fileName) {
 	}
 	_currentBackground = file;
 
-	renderImageToScreen(*_currentBackground, _backgroundOffset.x, _backgroundOffset.y, true);
+	moveBackground(0);
 }
 
 void RenderManager::setBackgroundPosition(int offset) {
 	RenderTable::RenderState state = _renderTable.getRenderState();
 	if (state == RenderTable::TILT) {
 		_backgroundOffset.x = 0;
-		_backgroundOffset.y = _screenCenterY - offset;
+		_backgroundOffset.y = offset;
 	} else if (state == RenderTable::PANORAMA) {
-		_backgroundOffset.x = _screenCenterX - offset;
+		_backgroundOffset.x = offset;
 		_backgroundOffset.y = 0;
 	} else {
 		_backgroundOffset.x = 0;
@@ -290,11 +288,31 @@ void RenderManager::moveBackground(int offset) {
 	if (state == RenderTable::TILT) {
 		_backgroundOffset += Common::Point(0, offset);
 
-		renderImageToScreen(*_currentBackground, 0, _backgroundOffset.y, true);
+		if (_backgroundOffset.x <= -_backgroundWidth)
+			_backgroundOffset.x += _backgroundWidth;
+		else if (_backgroundOffset.x >= _backgroundWidth)
+			_backgroundOffset.x += _backgroundWidth;
+
+		if (_backgroundOffset.y <= -_backgroundHeight)
+			_backgroundOffset.y += _backgroundHeight;
+		else if (_backgroundOffset.y >= _backgroundHeight)
+			_backgroundOffset.y += _backgroundHeight;
+
+		renderImageToScreen(*_currentBackground, 0, _screenCenterY - _backgroundOffset.y, true);
 	} else if (state == RenderTable::PANORAMA) {
 		_backgroundOffset += Common::Point(offset, 0);
 
-		renderImageToScreen(*_currentBackground, _backgroundOffset.x, 0, true);
+		if (_backgroundOffset.x <= -_backgroundWidth)
+			_backgroundOffset.x += _backgroundWidth;
+		else if (_backgroundOffset.x >= _backgroundWidth)
+			_backgroundOffset.x += _backgroundWidth;
+
+		if (_backgroundOffset.y <= -_backgroundHeight)
+			_backgroundOffset.y += _backgroundHeight;
+		else if (_backgroundOffset.y >= _backgroundHeight)
+			_backgroundOffset.y += _backgroundHeight;
+
+		renderImageToScreen(*_currentBackground, _screenCenterX - _backgroundOffset.x, 0, true);
 	} else {
 		renderImageToScreen(*_currentBackground, 0, 0);
 	}
