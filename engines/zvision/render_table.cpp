@@ -100,18 +100,18 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 imageWidth, int16 imageHeight, int16 destinationX, int16 destinationY, const Common::Rect &subRect, bool wrap, bool isTransposed) {
 	for (int16 y = subRect.top; y < subRect.bottom; y++) {
-		uint16 normalizedY = y - subRect.top;
-		uint32 internalColumnIndex = (normalizedY + destinationY) * _numColumns;
-		uint32 destColumnIndex = normalizedY * _numColumns;
+		int16 normalizedY = y - subRect.top;
+		int32 internalColumnIndex = (normalizedY + destinationY) * _numColumns;
+		int32 destColumnIndex = normalizedY * _numColumns;
 
 		for (int16 x = subRect.left; x < subRect.right; x++) {
-			uint16 normalizedX = x - subRect.left;
+			int16 normalizedX = x - subRect.left;
 
-			uint32 index = internalColumnIndex + normalizedX + destinationX;
+			int32 index = internalColumnIndex + normalizedX + destinationX;
 
 			// RenderTable only stores offsets from the original coordinates
-			uint16 sourceYIndex = y + _internalBuffer[index].y;
-			uint16 sourceXIndex = x + _internalBuffer[index].x;
+			int16 sourceYIndex = y + _internalBuffer[index].y;
+			int16 sourceXIndex = x + _internalBuffer[index].x;
 
 			if (wrap) {
 				if (sourceXIndex >= imageWidth) {
@@ -127,10 +127,10 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 im
 				}
 			} else {
 				// Clamp the yIndex to the size of the image
-				sourceYIndex = CLIP<uint32>(sourceYIndex, 0, imageHeight - 1);
+				sourceYIndex = CLIP<int32>(sourceYIndex, 0, imageHeight - 1);
 
 				// Clamp the xIndex to the size of the image
-				sourceXIndex = CLIP<uint32>(sourceXIndex, 0, imageWidth - 1);
+				sourceXIndex = CLIP<int32>(sourceXIndex, 0, imageWidth - 1);
 			}
 			
 			if (isTransposed) {
