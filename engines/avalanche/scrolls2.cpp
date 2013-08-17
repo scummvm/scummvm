@@ -131,7 +131,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			// We have to draw the characters one-by-one because of the accidental font changes.
 			i++;
 			Common::String chr(z[xx]);
-			_vm->_graphics->drawText(_vm->_graphics->_scrolls, chr, itw, 12, x * 8 + offset * 4 + i * 8, y, black);
+			_vm->_graphics->drawText(_vm->_graphics->_scrolls, chr, itw, 12, (x - 1) * 8 + offset * 4 + i * 8, y, black);
 
 			_vm->_logger->log_scrollchar(Common::String(z[xx]));
 			}
@@ -592,21 +592,21 @@ void Scrolls::natural() {   /* Natural state of bubbles */
 Common::String Scrolls::lsd() {
 	Common::String x;
 
-	Common::String lsd_result;
-	if (_vm->_gyro->dna.pence < 12) {
-		/* just pence */
+	if (_vm->_gyro->dna.pence < 12) { // just pence
 		x = _vm->_gyro->strf(_vm->_gyro->dna.pence) + 'd';
-	} else if (_vm->_gyro->dna.pence < 240) {
-		/* shillings & pence */
-		x = _vm->_gyro->strf(_vm->_gyro->dna.pence / int32(12)) + '/';
-		if ((_vm->_gyro->dna.pence % int32(12)) == 0)  x = x + '-';
-		else x = x + _vm->_gyro->strf(_vm->_gyro->dna.pence % int32(12));
-	} else   /* L, s & d */
-		x = Common::String('œ') + _vm->_gyro->strf(_vm->_gyro->dna.pence / int32(240)) + '.' + _vm->_gyro->strf((_vm->_gyro->dna.pence / int32(12)) % int32(20))
-			+ '.' + _vm->_gyro->strf(_vm->_gyro->dna.pence % int32(12));
-	if (_vm->_gyro->dna.pence > 12)  x = x + " (that's " + _vm->_gyro->strf(_vm->_gyro->dna.pence) + "d)";
-	lsd_result = x;
-	return lsd_result;
+	} else if (_vm->_gyro->dna.pence < 240) { // shillings & pence
+		x = _vm->_gyro->strf(_vm->_gyro->dna.pence / 12) + '/';
+		if ((_vm->_gyro->dna.pence % 12) == 0)
+			x = x + '-';
+		else
+			x = x + _vm->_gyro->strf(_vm->_gyro->dna.pence % 12);
+	} else // L, s & d
+		x = Common::String('œ') + _vm->_gyro->strf(_vm->_gyro->dna.pence / 240) + '.' + _vm->_gyro->strf((_vm->_gyro->dna.pence / 12) % 20)
+			+ '.' + _vm->_gyro->strf(_vm->_gyro->dna.pence % 12);
+	if (_vm->_gyro->dna.pence > 12)
+		x = x + " (that's " + _vm->_gyro->strf(_vm->_gyro->dna.pence) + "d)";
+	
+	return x;
 }
 
 
@@ -661,7 +661,9 @@ void Scrolls::calldrivers() {
 		}
 	}
 
-	for (fv = 0; fv < _vm->_gyro->bufsize; fv++)
+	uint16 size = _vm->_gyro->bufsize;
+
+	for (fv = 0; fv < size; fv++)
 		if (mouthnext) {
 			if (_vm->_gyro->buffer[fv] == kControlRegister)
 				param = 0;
@@ -734,8 +736,8 @@ void Scrolls::calldrivers() {
 			case kControlNegative: {
 				switch (param) {
 				case 1:
-					display(lsd() + kControlToBuffer);
-					break; /* insert cash balance (recursion) */
+					display(lsd() + kControlToBuffer); // Insert cash balance. (Recursion)
+					break; 
 				case 2:
 					display(_vm->_acci->words[_vm->_acci->first_password + _vm->_gyro->dna.pass_num].w + kControlToBuffer);
 					break;
