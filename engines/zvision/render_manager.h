@@ -107,7 +107,7 @@ public:
 	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 */
-	void renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, bool wrap = false);
+	void renderImageToScreen(const Common::String &fileName, int16 destinationX, int16 destinationY, bool wrap = false);
 
 	/**
 	 * Blits the image or a portion of the image to the backbuffer. Actual screen updates won't happen until the end of the frame.
@@ -117,7 +117,7 @@ public:
 	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 */
-	void renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, bool wrap = false);
+	void renderImageToScreen(Common::SeekableReadStream &stream, int16 destinationX, int16 destinationY, bool wrap = false);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately

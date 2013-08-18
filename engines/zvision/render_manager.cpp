@@ -139,7 +139,7 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	}
 }
 
-void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 destinationX, uint32 destinationY, bool wrap) {
+void RenderManager::renderImageToScreen(const Common::String &fileName, int16 destinationX, int16 destinationY, bool wrap) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
@@ -150,7 +150,7 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, uint32 d
 	renderImageToScreen(file, destinationX, destinationY);
 }
 
-void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, uint32 destinationX, uint32 destinationY, bool wrap) {
+void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, int16 destinationX, int16 destinationY, bool wrap) {
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
 	uint32 fileType;
