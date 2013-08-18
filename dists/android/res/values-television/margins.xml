@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="verticalMargin">45px</dimen>
+	<dimen name="horizontalMargin">80px</dimen>
+</resources>
