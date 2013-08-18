@@ -39,6 +39,17 @@ void ZVision::registerMouseEvent(const MouseEvent &event) {
 	_mouseEvents.push_back(event);
 }
 
+bool ZVision::removeMouseEvent(const uint32 key) {
+	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		if ((*iter)._key == key) {
+			_mouseEvents.erase(iter);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void ZVision::clearAllMouseEvents() {
 	_mouseEvents.clear();
 }

@@ -133,6 +133,9 @@ public:
 	 * @param event    The event to register
 	 */
 	void registerMouseEvent(const MouseEvent &event);
+
+	bool removeMouseEvent(const uint32 key);
+
 	/** Remove all MouseEvents from the event system */
 	void clearAllMouseEvents();
 
