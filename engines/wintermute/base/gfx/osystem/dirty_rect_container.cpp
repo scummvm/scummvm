@@ -30,7 +30,7 @@
 
 namespace Wintermute {
 
-const int kMaxOutputRects = 96;
+const int kMaxOutputRects = 256;
 const int kMaxInputRects = 512;
 const int kMaxAcceptableWaste = 10;
 const int kMinAcceptableWaste = 3;
@@ -120,14 +120,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 	for (int i = 0; i < getSize(); i++) {
 
-		if (_disableDirtyRects) {
-			return getFallback();
-		}
-
-		if (ret.size() > kMaxOutputRects) {
-			return getFallback();
-		}
-
 		Common::Rect *lastModified = nullptr;
 		Common::Rect *candidate = _rectArray[i];
 
@@ -181,34 +173,115 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			if (new_ret[j]->left <= temp->left &&
 			        new_ret[j]->top <= temp->top &&
 			        new_ret[j]->bottom >= temp->bottom &&
-			        new_ret[j]->right <= temp->right) {
+			        new_ret[j]->right <= temp->right &&
+			        new_ret[j]->right >= temp->left
+			   ) {
 				temp->left = new_ret[j]->right;
+				assert(new_ret[j]->isValidRect());
+				assert(temp->isValidRect());
 			}
 
 			if (new_ret[j]->left >= temp->left &&
 			        new_ret[j]->top <= temp->top &&
 			        new_ret[j]->bottom >= temp->bottom &&
-			        new_ret[j]->right >= temp->right) {
+			        new_ret[j]->right >= temp->right &&
+			        new_ret[j]->left <= temp->right
+			   ) {
 				temp->right = new_ret[j]->left;
+				assert(new_ret[j]->isValidRect());
+				assert(temp->isValidRect());
 			}
 
 			if (new_ret[j]->left <= temp->left &&
 			        new_ret[j]->top >= temp->top &&
 			        new_ret[j]->bottom >= temp->bottom &&
-			        new_ret[j]->right >= temp->right) {
+			        new_ret[j]->right >= temp->right &&
+			        new_ret[j]->top <= temp->bottom
+			   ) {
+
 				temp->bottom = new_ret[j]->top;
+				assert(new_ret[j]->isValidRect());
+				assert(temp->isValidRect());
 			}
 
 			if (new_ret[j]->left <= temp->left &&
 			        new_ret[j]->top <= temp->top &&
 			        new_ret[j]->bottom <= temp->bottom &&
-			        new_ret[j]->right >= temp->right) {
+			        new_ret[j]->right >= temp->right &&
+			        new_ret[j]->bottom >= temp->top
+			   ) {
 				temp->top = new_ret[j]->bottom;
+				assert(new_ret[j]->isValidRect());
+				assert(temp->isValidRect());
 			}
+
+
+
+
+			Common::Rect *temp2 = new_ret[j];
+			// Cross-shaped stuff that has a center rect in common
+			if (temp2->left <= temp->left &&
+			        temp2->right >= temp->right &&
+			        temp2->top >= temp->top &&
+			        temp2->bottom <= temp->bottom) {
+				Common::Rect *top_slice = new Common::Rect(*temp);
+				Common::Rect *bottom_slice = new Common::Rect(*temp);
+				top_slice->bottom = temp2->top;
+				bottom_slice->top = temp2->bottom;
+
+
+				if (top_slice->height() > 0 && top_slice->width() > 0) {
+					ret.insert_at(ret.size(), top_slice);
+					temp->left = 0;
+					temp->right = 0;
+					temp->bottom = 0;
+					temp->top = 0;
+					continue;
+				}
+				if (bottom_slice->height() > 0 && bottom_slice->width() > 0) {
+					ret.insert_at(ret.size(), bottom_slice);
+					temp->left = 0;
+					temp->right = 0;
+					temp->bottom = 0;
+					temp->top = 0;
+					continue;
+				}
+
+			} else
+
+				if (temp2->left >= temp->left &&
+				        temp2->right <= temp->right &&
+				        temp2->top <= temp->top &&
+				        temp2->bottom >= temp->bottom) {
+					Common::Rect *left_slice = new Common::Rect(*temp);
+					left_slice->right = temp2->left;
+					if (left_slice->height() > 0 && left_slice->width() > 0)
+						ret.insert_at(ret.size(), left_slice);
+
+					Common::Rect *right_slice = new Common::Rect(*temp);
+					right_slice->right = temp2->left;
+					if (right_slice->height() > 0 && right_slice->width() > 0)
+						ret.insert_at(ret.size(), right_slice);
+
+					temp->left = 0;
+					temp->right = 0;
+					temp->bottom = 0;
+					temp->top = 0;
+				}
+
+
 		}
 		if (temp->width() > 0 && temp->height() > 0) {
 			new_ret.insert_at(new_ret.size(), temp);
 		}
+	}
+	
+	if (_disableDirtyRects) {
+		return getFallback();
+	}
+
+	if (new_ret.size() > kMaxOutputRects) {
+		return getFallback();
 	}
 
 	return new_ret;
