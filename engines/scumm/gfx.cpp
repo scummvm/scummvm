@@ -1888,7 +1888,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 		if (stripnr * 4 + 4 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
 	} else {
-		smapLen = READ_BE_UINT32(smap_ptr);
+		smapLen = READ_BE_UINT32(smap_ptr + 4);
 		if (stripnr * 4 + 8 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 	}
