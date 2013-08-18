@@ -168,7 +168,7 @@ bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
 
 bool Console::cmdChangeLocation(int argc, const char **argv) {
 	if (argc != 6) {
-		DebugPrintf("Use changelocation <char: world> <char: room> <char:node> <char:view> <int: x position> to change your location");
+		DebugPrintf("Use changelocation <char: world> <char: room> <char:node> <char:view> <int: x position> to change your location\n");
 		return true;
 	}
 
@@ -179,7 +179,7 @@ bool Console::cmdChangeLocation(int argc, const char **argv) {
 
 bool Console::cmdDumpFile(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Use dumpfile <fileName> to dump a file");
+		DebugPrintf("Use dumpfile <fileName> to dump a file\n");
 		return true;
 	}
 
