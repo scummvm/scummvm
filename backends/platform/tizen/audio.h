@@ -54,6 +54,7 @@ public:
 	bool isSilentMode();
 	void setMute(bool on);
 
+private:
 	bool OnStart(void);
 	void OnStop(void);
 	void OnAudioOutErrorOccurred(Tizen::Media::AudioOut &src, result r);
@@ -62,12 +63,11 @@ public:
 	void OnAudioOutBufferEndReached(Tizen::Media::AudioOut &src);
 	void OnTimerExpired(Timer &timer);
 
-private:
 	Audio::MixerImpl *_mixer;
 	Tizen::Base::Runtime::Timer *_timer;
 	Tizen::Media::AudioOut *_audioOut;
 	Tizen::Base::ByteBuffer _audioBuffer[NUM_AUDIO_BUFFERS];
-	int _head, _tail, _ready, _interval, _playing;
+	int _head, _tail, _ready, _interval, _playing, _size;
 	bool _muted;
 };
 

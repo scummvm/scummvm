@@ -52,7 +52,7 @@ TizenAppForm::TizenAppForm() :
 	_eventQueueLock(NULL),
 	_state(kInitState),
 	_buttonState(kLeftButton),
-	_shortcut(kShowKeypad) {
+	_shortcut(kEscapeKey) {
 }
 
 result TizenAppForm::Construct() {
@@ -157,6 +157,8 @@ result TizenAppForm::OnInitializing(void) {
 	AddOrientationEventListener(*this);
 	AddTouchEventListener(*this);
 	SetMultipointTouchEnabled(true);
+	SetFormBackEventListener(this);
+	SetFormMenuEventListener(this);
 
 	// set focus to enable receiving key events
 	SetEnabled(true);
@@ -316,16 +318,16 @@ void TizenAppForm::invokeShortcut() {
 	case kControlMouse:
 		setButtonShortcut();
 		break;
-
+		
 	case kEscapeKey:
 		pushKey(Common::KEYCODE_ESCAPE);
 		break;
-
+		
 	case kGameMenu:
 		_buttonState = kLeftButton;
 		pushKey(Common::KEYCODE_F5);
 		break;
-
+		
 	case kShowKeypad:
 		showKeypad();
 		break;
@@ -352,8 +354,6 @@ int TizenAppForm::getTouchCount() {
 void TizenAppForm::OnTouchDoublePressed(const Control &source,
 		const Point &currentPosition, const TouchEventInfo &touchInfo) {
 	if (_buttonState != kMoveOnly) {
-		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
-							currentPosition);
 		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
 							currentPosition);
 	}
@@ -417,3 +417,16 @@ void TizenAppForm::OnTouchReleased(const Control &source,
 	}
 }
 
+void TizenAppForm::OnFormBackRequested(Form &source) {
+	logEntered();
+	if (_state == kActiveState) {
+		invokeShortcut();
+	}
+}
+
+void TizenAppForm::OnFormMenuRequested(Form &source) {
+	logEntered();
+	if (_state == kActiveState) {
+		setShortcut();
+	}
+}
