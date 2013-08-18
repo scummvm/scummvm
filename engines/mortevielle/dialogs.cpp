@@ -57,13 +57,12 @@ int DialogManager::show(const Common::String &msg, int n) {
 
 	decodeAlertDetails(msg, caseNumb, lignNumb, colNumb, alertStr, caseStr);
 
-	int i = 0;
 	Common::Point curPos;
 	if (alertStr == "") {
 		drawAlertBox(10, 5, colNumb);
 	} else {
 		drawAlertBox(8, 7, colNumb);
-		i = 0;
+		int i = 0;
 		_vm->_screenSurface._textPos.y = 70;
 		do {
 			curPos.x = 320;
@@ -229,13 +228,13 @@ void DialogManager::setPosition(int ji, int coldep, int esp) {
  * Alert function - Draw Alert Box
  * @remarks	Originally called 'fait_boite'
  */
-void DialogManager::drawAlertBox(int lidep, int nli, int tx) {
-	if (tx > 640)
-		tx = 640;
-	int x = 320 - ((uint)tx / 2);
-	int y = (lidep - 1) * 8;
-	int xx = x + tx;
-	int yy = y + (nli * 8);
+void DialogManager::drawAlertBox(int firstLine, int lineNum, int width) {
+	if (width > 640)
+		width = 640;
+	int x = 320 - ((uint)width / 2);
+	int y = (firstLine - 1) * 8;
+	int xx = x + width;
+	int yy = y + (lineNum * 8);
 	_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
 	_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
 	_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
