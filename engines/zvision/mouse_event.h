@@ -34,9 +34,9 @@ class ZVision;
 
 class MouseEvent {
 public:
+	MouseEvent() : _key(0) {}
 	MouseEvent(uint32 key, const Common::Rect &hotspot, const Common::String hoverCursor);
 
-private:
 	/** The Control key */
 	uint32 _key;
 	/** 
@@ -47,7 +47,6 @@ private:
 	/** The cursor to use when hovering over _hotspot */
 	Common::String _hoverCursor;
 
-public:
 	/**
 	 * Does a simple Rect::contains() using _hotspot
 	 *
