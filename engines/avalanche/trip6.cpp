@@ -1082,6 +1082,7 @@ void Trip::newspeed() {
 	byte page_;
 
 	tr[0].ix = (tr[0].ix / 3) * tr[0].xs;
+
 	//setactivepage(3);
 
 	if (tr[0].xs == _vm->_gyro->run)
@@ -1094,9 +1095,8 @@ void Trip::newspeed() {
 	else
 		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, lightblue);
 
-	_vm->_graphics->refreshScreen();
-
 	//setactivepage(1 - cp);
+
 	for (page_ = 0; page_ <= 1; page_ ++)
 		getset[page_].remember(lightspace);
 	
