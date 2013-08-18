@@ -2026,7 +2026,7 @@ void Scene200::EastExit::changeScene() {
 	Scene200 *scene = (Scene200 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
-	R2_GLOBALS._player.disableControl();
+	R2_GLOBALS._player.disableControl(CURSOR_WALK);
 	scene->_sceneMode = 206;
 	scene->setAction(&scene->_sequenceManager, scene, 206, &R2_GLOBALS._player, NULL);
 }
@@ -2035,7 +2035,7 @@ void Scene200::WestExit::changeScene() {
 	Scene200 *scene = (Scene200 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
-	R2_GLOBALS._player.disableControl();
+	R2_GLOBALS._player.disableControl(CURSOR_WALK);
 	scene->_sceneMode = 208;
 	scene->setAction(&scene->_sequenceManager, scene, 208, &R2_GLOBALS._player, NULL);
 }
