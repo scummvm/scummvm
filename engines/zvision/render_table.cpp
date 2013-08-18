@@ -129,10 +129,10 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 im
 				}
 			} else {
 				// Clamp the yIndex to the size of the image
-				sourceYIndex = CLIP<int32>(sourceYIndex, 0, imageHeight - 1);
+				sourceYIndex = CLIP<int16>(sourceYIndex, 0, imageHeight - 1);
 
 				// Clamp the xIndex to the size of the image
-				sourceXIndex = CLIP<int32>(sourceXIndex, 0, imageWidth - 1);
+				sourceXIndex = CLIP<int16>(sourceXIndex, 0, imageWidth - 1);
 			}
 			
 			if (isTransposed) {
