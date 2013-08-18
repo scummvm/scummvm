@@ -24,6 +24,9 @@
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
+#ifdef USE_OSD
+#include "common/translation.h"
+#endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource)
     : SdlGraphicsManager(eventSource), _lastVideoModeLoad(0), _hwScreen(nullptr), _lastRequestedWidth(0), _lastRequestedHeight(0),
@@ -342,6 +345,14 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				beginGFXTransaction();
 					setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
 				endGFXTransaction();
+
+#ifdef USE_OSD
+				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
+					displayMessageOnOSD("Fullscreen mode");
+				} else {
+					displayMessageOnOSD("Windowed mode");
+				}
+#endif
 				return true;
 			}
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
@@ -407,6 +418,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					}
 				}
 
+#ifdef USE_OSD
+				const Common::String osdMsg = Common::String::format("Resolution: %dx%d", _hwScreen->w, _hwScreen->h);
+				displayMessageOnOSD(osdMsg.c_str());
+#endif
+
 				return true;
 			} else if (event.kbd.keycode == Common::KEYCODE_a) {
 				// In case the user changed the window size manually we will
@@ -421,6 +437,12 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				// Make sure we do not ignore the next resize. This
 				// effectively checks whether loadVideoMode has been called.
 				assert(!_ignoreLoadVideoMode);
+
+#ifdef USE_OSD
+				Common::String osdMsg = "Aspect ratio correction: ";
+				osdMsg += getFeatureState(OSystem::kFeatureAspectRatioCorrection) ? "enabled" : "disabled";
+				displayMessageOnOSD(osdMsg.c_str());
+#endif
 
 				return true;
 			} else if (event.kbd.keycode == Common::KEYCODE_f) {
@@ -461,6 +483,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				// Make sure we do not ignore the next resize. This
 				// effectively checks whether loadVideoMode has been called.
 				assert(!_ignoreLoadVideoMode);
+
+#ifdef USE_OSD
+				const Common::String osdMsg = Common::String::format("Graphics mode: %s", _(modeDesc->description));
+				displayMessageOnOSD(osdMsg.c_str());
+#endif
 
 				return true;
 			}
