@@ -114,15 +114,17 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 im
 			int16 sourceXIndex = x + _internalBuffer[index].x;
 
 			if (wrap) {
-				if (sourceXIndex >= imageWidth) {
+				while (sourceXIndex >= imageWidth) {
 					sourceXIndex -= imageWidth;
-				} else if (sourceXIndex < 0) {
+				}
+				while (sourceXIndex < 0) {
 					sourceXIndex += imageWidth;
 				}
 
-				if (sourceYIndex >= imageHeight) {
+				while (sourceYIndex >= imageHeight) {
 					sourceYIndex -= imageHeight;
-				} else if (sourceYIndex < 0) {
+				}
+				while (sourceYIndex < 0) {
 					sourceYIndex += imageHeight;
 				}
 			} else {
