@@ -148,10 +148,10 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 
 			if (frame) {
 				if (scale != 1) {
-					scaleBuffer((byte *)frame->getBasePtr(0, 0), scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel, scale);
+					scaleBuffer((const byte *)frame->getBasePtr(0, 0), scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel, scale);
 					_system->copyRectToScreen(scaledVideoFrameBuffer, pitch * 2, x, y, finalWidth, finalHeight);
 				} else {
-					_system->copyRectToScreen((byte *)frame->getBasePtr(0, 0), pitch, x, y, finalWidth, finalHeight);
+					_system->copyRectToScreen((const byte *)frame->getBasePtr(0, 0), pitch, x, y, finalWidth, finalHeight);
 				}
 
 				_system->updateScreen();
