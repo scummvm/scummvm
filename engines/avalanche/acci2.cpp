@@ -1209,9 +1209,9 @@ void Acci::do_that() {
 	case vb_open:
 		opendoor();
 		break;
-	case vb_pause:
-		_vm->_scrolls->display(Common::String("Game paused.") + '\3' + '\15' + '\15' + "Press Enter, Esc, or click " +
-				"the mouse on the `O.K.\" box to continue.");
+	case vb_pause: // Note that the original game doesn't care about the "O.K." box neither, it accepts clicks from everywhere on the screen to continue. Just like my code.
+		_vm->_scrolls->display(Common::String("Game paused.") + _vm->_scrolls->kControlCenter + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
+			+ "Press Enter, Esc, or click the mouse on the \"O.K.\" box to continue.");
 		break;
 	case vb_get:
 		if (thing != pardon) {

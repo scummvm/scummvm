@@ -874,9 +874,7 @@ void Lucerna::points(byte num) {     /* Add on no. of points */
 }
 
 void Lucerna::topcheck() {
-	/* Menuset */
 	_vm->_dropdown->ddm_m.getmenu(_vm->_gyro->mpx);
-	/* Do this one */
 }
 
 void Lucerna::mouseway(const Common::Point &cursorPos) {
