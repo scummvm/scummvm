@@ -31,6 +31,7 @@
 
 #include "zvision/cursor_manager.h"
 #include "zvision/render_manager.h"
+#include "zvision/script_manager.h"
 #include "zvision/mouse_event.h"
 
 namespace ZVision {
@@ -42,6 +43,7 @@ void ZVision::registerMouseEvent(const MouseEvent &event) {
 bool ZVision::removeMouseEvent(const uint32 key) {
 	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
 		if ((*iter)._key == key) {
+			_scriptManager->setStateValue((*iter)._key, 0);
 			_mouseEvents.erase(iter);
 			return true;
 		}
@@ -51,6 +53,11 @@ bool ZVision::removeMouseEvent(const uint32 key) {
 }
 
 void ZVision::clearAllMouseEvents() {
+	// Clear the state values of all the events
+	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		_scriptManager->setStateValue((*iter)._key, 0);
+	}
+
 	_mouseEvents.clear();
 }
 
