@@ -27,8 +27,18 @@
 #include "backends/graphics/graphics.h"
 
 #include "common/frac.h"
+#include "common/mutex.h"
+
+namespace Graphics {
+class Font;
+} // End of namespace Graphics
 
 namespace OpenGL {
+
+// HACK: We use glColor in the OSD code. This might not be working on GL ES but
+// we still enable it because Tizen already shipped with it. Also, the
+// SurfaceSDL backend enables it and disabling it can cause issues in sdl.cpp.
+#define USE_OSD 1
 
 class Texture;
 
@@ -415,6 +425,44 @@ private:
 	 * The special cursor palette in case enabled.
 	 */
 	byte _cursorPalette[3 * 256];
+
+#ifdef USE_OSD
+	//
+	// OSD
+	//
+protected:
+	/**
+	 * Returns the font used for on screen display
+	 */
+	virtual const Graphics::Font *getFontOSD();
+
+private:
+	/**
+	 * The OSD's contents.
+	 */
+	Texture *_osd;
+
+	/**
+	 * Current opacity level of the OSD.
+	 */
+	uint8 _osdAlpha;
+
+	/**
+	 * When fading the OSD has started.
+	 */
+	uint32 _osdFadeStartTime;
+
+	/**
+	 * Mutex to allow displayMessageOnOSD to be used from the audio thread.
+	 */
+	Common::Mutex _osdMutex;
+
+	enum {
+		kOSDFadeOutDelay = 2 * 1000,
+		kOSDFadeOutDuration = 500,
+		kOSDInitialAlpha = 80
+	};
+#endif
 };
 
 } // End of namespace OpenGL

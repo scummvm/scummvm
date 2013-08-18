@@ -29,8 +29,16 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/algorithm.h"
+#ifdef USE_OSD
+#include "common/tokenizer.h"
+#include "common/rect.h"
+#endif
 
 #include "graphics/conversion.h"
+#ifdef USE_OSD
+#include "graphics/fontman.h"
+#include "graphics/font.h"
+#endif
 
 namespace OpenGL {
 
@@ -42,7 +50,11 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _overlayVisible(false), _cursor(nullptr),
       _cursorX(0), _cursorY(0), _cursorHotspotX(0), _cursorHotspotY(0), _cursorHotspotXScaled(0),
       _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0), _cursorKeyColor(0),
-      _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false) {
+      _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false)
+#ifdef USE_OSD
+      , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
+#endif
+    {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
 }
 
@@ -50,6 +62,9 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	delete _gameScreen;
 	delete _overlay;
 	delete _cursor;
+#ifdef USE_OSD
+	delete _osd;
+#endif
 }
 
 bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -137,6 +152,12 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 		if (_cursor) {
 			_cursor->enableLinearFiltering(mode == GFX_LINEAR);
 		}
+
+#ifdef USE_OSD
+		if (_osd) {
+			_osd->enableLinearFiltering(mode == GFX_LINEAR);
+		}
+#endif
 		return true;
 
 	default:
@@ -374,6 +395,34 @@ void OpenGLGraphicsManager::updateScreen() {
 
 		glPopMatrix();
 	}
+
+#ifdef USE_OSD
+	// Fourth step: Draw the OSD.
+	if (_osdAlpha > 0) {
+		Common::StackLock lock(_osdMutex);
+
+		// Update alpha value.
+		const int diff = g_system->getMillis(false) - _osdFadeStartTime;
+		if (diff > 0) {
+			if (diff >= kOSDFadeOutDuration) {
+				// Back to full transparency.
+				_osdAlpha = 0;
+			} else {
+				// Do a fade out.
+				_osdAlpha = kOSDInitialAlpha - diff * kOSDInitialAlpha / kOSDFadeOutDuration;
+			}
+		}
+
+		// Set the OSD transparency.
+		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f));
+
+		// Draw the OSD texture.
+		_osd->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
+
+		// Reset color.
+		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+#endif
 }
 
 Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
@@ -617,6 +666,59 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 }
 
 void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
+#ifdef USE_OSD
+	// HACK: Actually no client code should use graphics functions from
+	// another thread. But the MT-32 emulator still does, thus we need to
+	// make sure this doesn't happen while a updateScreen call is done.
+	Common::StackLock lock(_osdMutex);
+
+	// Slip up the lines.
+	Common::Array<Common::String> osdLines;
+	Common::StringTokenizer tokenizer(msg, "\n");
+	while (!tokenizer.empty()) {
+		osdLines.push_back(tokenizer.nextToken());
+	}
+
+	// Do the actual drawing like the SDL backend.
+	const Graphics::Font *font = getFontOSD();
+	Graphics::Surface *dst = _osd->getSurface();
+	_osd->fill(0);
+	_osd->flagDirty();
+
+	// Determine a rect which would contain the message string (clipped to the
+	// screen dimensions).
+	const int vOffset = 6;
+	const int lineSpacing = 1;
+	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
+	int width = 0;
+	int height = lineHeight * osdLines.size() + 2 * vOffset;
+	for (uint i = 0; i < osdLines.size(); i++) {
+		width = MAX(width, font->getStringWidth(osdLines[i]) + 14);
+	}
+
+	// Clip the rect
+	width  = MIN<int>(width,  dst->w);
+	height = MIN<int>(height, dst->h);
+
+	int dstX = (dst->w - width) / 2;
+	int dstY = (dst->h - height) / 2;
+
+	// Draw a dark gray rect.
+	const uint32 color = dst->format.RGBToColor(40, 40, 40);
+	dst->fillRect(Common::Rect(dstX, dstY, dstX + width, dstY + height), color);
+
+	// Render the message, centered, and in white
+	const uint32 white = dst->format.RGBToColor(255, 255, 255);
+	for (uint i = 0; i < osdLines.size(); ++i) {
+		font->drawString(dst, osdLines[i],
+		                 dstX, dstY + i * lineHeight + vOffset + lineSpacing, width,
+		                 white, Graphics::kTextAlignCenter);
+	}
+
+	// Init the OSD display parameters.
+	_osdAlpha = kOSDInitialAlpha;
+	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;
+#endif
 }
 
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
@@ -671,6 +773,21 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	}
 	_overlay->allocate(overlayWidth, overlayHeight);
 	_overlay->fill(0);
+
+#ifdef USE_OSD
+	if (!_osd || _osd->getFormat() != _defaultFormatAlpha) {
+		delete _osd;
+		_osd = nullptr;
+
+		GLenum glIntFormat, glFormat, glType;
+		const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
+		assert(supported);
+		_osd = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
+		_osd->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
+	}
+	_osd->allocate(_outputScreenWidth, _outputScreenHeight);
+	_osd->fill(0);
+#endif
 
 	// Re-setup the scaling for the screen and cursor
 	recalculateDisplayArea();
@@ -729,6 +846,12 @@ void OpenGLGraphicsManager::notifyContextChange(const Graphics::PixelFormat &def
 	if (_cursor) {
 		_cursor->recreateInternalTexture();
 	}
+
+#ifdef USE_OSD
+	if (_osd) {
+		_osd->recreateInternalTexture();
+	}
+#endif
 }
 
 void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
@@ -922,5 +1045,11 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 		_cursorHeightScaled   = (_cursorHeightScaled   * screenScaleFactorY) / 10000;
 	}
 }
+
+#ifdef USE_OSD
+const Graphics::Font *OpenGLGraphicsManager::getFontOSD() {
+	return FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+}
+#endif
 
 } // End of namespace OpenGL
