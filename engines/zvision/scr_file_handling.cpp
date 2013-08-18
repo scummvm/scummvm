@@ -76,7 +76,7 @@ void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stre
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
-	while (!line.contains('}')) {
+	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("criteria {", true)) {
 			Puzzle::Criteria criteria;
 			if (parseCriteria(&criteria, stream)) {
@@ -103,7 +103,7 @@ bool ScriptManager::parseCriteria(Puzzle::Criteria *criteria, Common::SeekableRe
 		return false;
 	}
 
-	while (!line.contains('}')) {
+	while (!stream.eos() && !line.contains('}')) {
 		// Split the string into tokens using ' ' as a delimiter
 		Common::StringTokenizer tokenizer(line);
 		Common::String token;
@@ -147,7 +147,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	trimCommentsAndWhiteSpace(&line);
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
-	while (!line.contains('}')) {
+	while (!stream.eos() && !line.contains('}')) {
 		if (line.empty()) {
 			line = stream.readLine();
 			trimCommentsAndWhiteSpace(&line);
@@ -284,7 +284,7 @@ uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
-	while (!line.contains('}')) {
+	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("ONCE_PER_INST", true)) {
 			flags |= Puzzle::ONCE_PER_INST;
 		} else if (line.matchString("DO_ME_NOW", true)) {

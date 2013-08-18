@@ -44,7 +44,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
-	while (!line.contains('}')) {
+	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
 			float fov;
 			sscanf(line.c_str(), "angle(%f)", &fov);
@@ -78,7 +78,7 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
-	while (!line.contains('}')) {
+	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
 			float fov;
 			sscanf(line.c_str(), "angle(%f)", &fov);
@@ -110,7 +110,7 @@ void Control::parsePushToggleControl(uint32 key, ZVision *engine, Common::Seekab
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
-	while (!line.contains('}')) {
+	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("*_hotspot*", true)) {
 			uint x;
 			uint y;
