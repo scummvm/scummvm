@@ -265,7 +265,7 @@ void ScriptManager::changeLocationIntern() {
 	// Add all the local puzzles to the queue to be checked
 	for (Common::List<Puzzle>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if ((*iter).flags & Puzzle::ONCE_PER_INST == Puzzle::ONCE_PER_INST) {
+		if (((*iter).flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
 			setStateValue((*iter).key, 0);
 		}
 
@@ -275,7 +275,7 @@ void ScriptManager::changeLocationIntern() {
 	// Add all the global puzzles to the queue to be checked
 	for (Common::List<Puzzle>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if ((*iter).flags & Puzzle::ONCE_PER_INST == Puzzle::ONCE_PER_INST) {
+		if (((*iter).flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
 			setStateValue((*iter).key, 0);
 		}
 
