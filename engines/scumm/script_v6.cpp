@@ -394,7 +394,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 int ScummEngine_v6::readArray(int array, int idx, int base) {
 	ArrayHeader *ah = getArray(array);
 
-	if (ah == NULL || ah->data == NULL)
+	if (!ah)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
 	// WORKAROUND bug #645711. This is clearly a script bug, as this script
