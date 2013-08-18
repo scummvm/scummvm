@@ -84,6 +84,9 @@ public:
 	void setStateValue(uint32 key, uint value);
 	void addToStateValue(uint32 key, uint valueToAdd);
 
+	bool enableControl(uint32 key);
+	bool disableControl(uint32 key);
+
 	void addActionNode(const Common::SharedPtr<ActionNode> &node);
 
 	void changeLocation(char world, char room, char node, char view, uint32 offset);

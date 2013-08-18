@@ -185,6 +185,22 @@ void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
 	_globalState[key] += valueToAdd;
 }
 
+bool ScriptManager::enableControl(uint32 key) {
+	if (!_activeControls.contains(key)) {
+		return false;
+	} else {
+		return _activeControls[key]->enable(_engine);
+	}
+}
+
+bool ScriptManager::disableControl(uint32 key) {
+	if (!_activeControls.contains(key)) {
+		return false;
+	} else {
+		return _activeControls[key]->disable(_engine);
+	}
+}
+
 void ScriptManager::addActionNode(const Common::SharedPtr<ActionNode> &node) {
 	_activeNodes.push_back(node);
 }
@@ -225,6 +241,11 @@ void ScriptManager::changeLocationIntern() {
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
 	// Add all the local puzzles to the stack to be checked
+	// Enable all the controls
+	for (Common::HashMap<uint32, Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		(*iter)._value->enable(_engine);
+	}
+
 	for (Common::List<Puzzle>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
 		if ((*iter).flags & Puzzle::ONCE_PER_INST == Puzzle::ONCE_PER_INST) {
