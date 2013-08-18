@@ -106,6 +106,10 @@ const OSystem::GraphicsMode glGraphicsModes[] = {
 
 } // End of anonymous namespace
 
+const OSystem::GraphicsMode *OpenGLGraphicsManager::supportedGraphicsModes() {
+	return glGraphicsModes;
+}
+
 const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedGraphicsModes() const {
 	return glGraphicsModes;
 }

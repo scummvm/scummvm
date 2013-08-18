@@ -77,6 +77,11 @@ ifndef USE_SDL13
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o
 endif
+
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/openglsdl/openglsdl-graphics.o
+endif
 endif
 
 ifdef POSIX

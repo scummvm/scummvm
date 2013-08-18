@@ -104,6 +104,25 @@ protected:
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }
 	Backends::Log::Log *_logger;
+
+#ifdef USE_OPENGL
+	int _desktopWidth, _desktopHeight;
+
+	OSystem::GraphicsMode *_graphicsModes;
+	int _graphicsMode;
+	int _sdlModesCount;
+	int _glModesCount;
+
+	/**
+	 * Creates the merged graphics modes list
+	 */
+	virtual void setupGraphicsModes();
+
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool setGraphicsMode(int mode);
+	virtual int getGraphicsMode() const;
+#endif
 };
 
 #endif
