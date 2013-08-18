@@ -57,7 +57,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	if (_clipRect == nullptr) {
 		_clipRect = new Common::Rect(*clipRect);
 	} else {
-		assert (clipRect->equals(*_clipRect));
+		assert(clipRect->equals(*_clipRect));
 	}
 
 	Common::Rect *tmp = new Common::Rect(rect);
@@ -98,14 +98,14 @@ bool DirtyRectContainer::isHuge(Common::Rect *rect) {
 	// It's huge if it exceeds kHuge[Height|Width]Fixed
 	// or is within kHuge[Width|Height]PErcent of the cliprect
 
-	assert (rect != nullptr);
+	assert(rect != nullptr);
 
 	if (rect->width() > kHugeWidthFixed && rect->height() > kHugeHeightFixed) {
 		return true;
 	}
 
 	int wThreshold = _clipRect->width() * (kHugeWidthFixed * 10) / 100;
-	int hThreshold = _clipRect->height() * (kHugeHeightFixed * 10)/ 100;
+	int hThreshold = _clipRect->height() * (kHugeHeightFixed * 10) / 100;
 
 	if (rect->width() * 10 > wThreshold && rect->height() * 10 > hThreshold) {
 		return true;
@@ -116,6 +116,7 @@ bool DirtyRectContainer::isHuge(Common::Rect *rect) {
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 	Common::Array<Common::Rect *> ret;
+	ret.clear();
 
 	for (int i = 0; i < getSize(); i++) {
 
@@ -134,7 +135,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			// We have no use for this
 			continue;
 		}
-		
+
 		if (ret.size() > kMaxOutputRects) {
 			// Simply extend one (hack: the first one) and avoid rect soup & calculations;
 			ret[0]->extend(*candidate);
@@ -147,7 +148,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			if (ret[j]->contains(*candidate) || ret[j]->equals(*candidate)) {
 				// It's contained - continue!
 				lastModified = ret[j];
-				continue;
+				break;
 			}
 
 			if (candidate->contains(*(ret[j]))) {
@@ -155,57 +156,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				// Extend the pre-existing one and discard this.
 				ret[j]->extend(*candidate);
 				lastModified = ret[j];
-				continue;
+				break;
 			}
 		}
 
-		// See if we can extend an existing one wasting < kMaxWaste percent space
-
-		int extendable = -1;
-		int bestRatio = 999999;
-
-		for (uint j = 0; j < ret.size()  && lastModified == nullptr; j++) {
-			Common::Rect original = *ret[j];
-			Common::Rect extended = Common::Rect(original);
-			extended.extend(*candidate);
-			int originalArea = original.width() * original.height();
-			int candidateArea = candidate->width() * candidate->height();
-			int extendedArea = extended.width() * extended.height();
-			int ratioScaled = extendedArea * 10 / (originalArea + candidateArea);
-			if (ratioScaled <= kMaxAcceptableWaste * 10 &&
-			        ratioScaled < bestRatio) {
-				// This is a good candidate for extending.
-				bestRatio = ratioScaled;
-				extendable = j;
-				if (ratioScaled <= kMinAcceptableWaste * 10) {
-					// This is so good that we can actually
-					// avoid traversing the rest of the array,
-					// we would gain peanuts
-					break;
-				}
-			}
-
-		}
-
-		if (extendable != -1) {
-			ret[extendable]->extend(*candidate);
-			lastModified = ret[extendable];
-		}
-		// Do checks on lastModified
-
-		if (lastModified != nullptr && isHuge(lastModified)) {
-				// This one is so huge that we can as well redraw the entire screen
-				_disableDirtyRects = true;
-				return getFallback();
-				break;
-		}
-
-		if (lastModified == nullptr && isHuge(candidate)) {
-				// This one is so huge that we can as well redraw the entire screen
-				_disableDirtyRects = true;
-				return getFallback();
-				break;
-		}
 		// If we ended up here, there's really nothing we can do
 
 		if (lastModified == nullptr) {
@@ -213,7 +167,51 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			ret.insert_at(target, candidate);
 		}
 	}
-	return ret;
+
+	// Exclude areas in common, if any.
+	// TODO: Splice if intersection exists but removing it
+	// Would result in non-rectangular shape
+
+	Common::Array<Common::Rect *> new_ret;
+	new_ret.clear();
+
+	for (uint i = 0; i < ret.size(); i++) {
+		Common::Rect *temp = ret[i];
+		for (uint j = 0; j < new_ret.size(); j++) {
+			if (new_ret[j]->left <= temp->left &&
+			        new_ret[j]->top <= temp->top &&
+			        new_ret[j]->bottom >= temp->bottom &&
+			        new_ret[j]->right <= temp->right) {
+				temp->left = new_ret[j]->right;
+			}
+
+			if (new_ret[j]->left >= temp->left &&
+			        new_ret[j]->top <= temp->top &&
+			        new_ret[j]->bottom >= temp->bottom &&
+			        new_ret[j]->right >= temp->right) {
+				temp->right = new_ret[j]->left;
+			}
+
+			if (new_ret[j]->left <= temp->left &&
+			        new_ret[j]->top >= temp->top &&
+			        new_ret[j]->bottom >= temp->bottom &&
+			        new_ret[j]->right >= temp->right) {
+				temp->bottom = new_ret[j]->top;
+			}
+
+			if (new_ret[j]->left <= temp->left &&
+			        new_ret[j]->top <= temp->top &&
+			        new_ret[j]->bottom <= temp->bottom &&
+			        new_ret[j]->right >= temp->right) {
+				temp->top = new_ret[j]->bottom;
+			}
+		}
+		if (temp->width() > 0 && temp->height() > 0) {
+			new_ret.insert_at(new_ret.size(), temp);
+		}
+	}
+
+	return new_ret;
 }
 } // End of namespace Wintermute
 
