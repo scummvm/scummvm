@@ -4242,9 +4242,10 @@ void SceneHandler::process(Event &event) {
 			// Scan the item list to find one the mouse is within
 			SynchronizedList<SceneItem *>::iterator i;
 			for (i = g_globals->_sceneItems.begin(); i != g_globals->_sceneItems.end(); ++i) {
-				if ((*i)->contains(event.mousePos)) {
+				SceneItem *item = *i;				
+				if (item->contains(event.mousePos)) {
 					// Pass the action to the item
-					bool handled = (*i)->startAction(g_globals->_events.getCursor(), event);
+					bool handled = item->startAction(g_globals->_events.getCursor(), event);
 					if (!handled)
 						// Item wasn't handled, keep scanning
 						continue;

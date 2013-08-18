@@ -280,7 +280,7 @@ public:
 	byte _v566A4;
 	byte _v566A5;
 	int _v566A6;
-	byte _v566A3;
+	byte _landerSuitNumber;
 	byte _v566A8;
 	byte _v566A9;
 	byte _v566AA;

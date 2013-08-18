@@ -449,7 +449,7 @@ void Ringworld2Globals::reset() {
 	_v56613[(17 * 4) + 1] = 1;
 
 	_v566A6 = 3800;
-	_v566A3 = 2;
+	_landerSuitNumber = 2;
 	_v566A4 = 1;
 	_v566A5 = 0;
 	_v566A8 = 5;
@@ -523,7 +523,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v565F6);
 	s.syncAsSint16LE(_v565F8);
 	s.syncAsSint16LE(_v565FA);
-	s.syncAsSint16LE(_v566A3);
+	s.syncAsSint16LE(_landerSuitNumber);
 	s.syncAsSint16LE(_v566A6);
 	s.syncAsSint16LE(_v56A93);
 	s.syncAsSint16LE(_scene1925CurrLevel); // _v56A9C

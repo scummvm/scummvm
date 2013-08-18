@@ -5054,11 +5054,153 @@ bool Scene500::Locker2::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene500::Object::startAction(CursorType action, Event &event) {
+/*--------------------------------------------------------------------------*/
+
+void Scene500::PanelDialog::setDetails(int visage, int strip, int frameNumber, 
+		const Common::Point &pt) {
+	SceneAreaObject::setDetails(visage, strip, frameNumber, pt);
+	SceneAreaObject::setDetails(500, 43, 32, 45);
+
+	_button1.setupButton(1);
+	_button2.setupButton(2);
+	_button3.setupButton(3);
+}
+
+void Scene500::PanelDialog::remove() {
+	Scene500 *scene = (Scene500 *)BF_GLOBALS._sceneManager._scene;
+	scene->_sceneAreas.remove(&_button1);
+	scene->_sceneAreas.remove(&_button2);
+	scene->_sceneAreas.remove(&_button3);
+
+	_button1.remove();
+	_button2.remove();
+	_button3.remove();
+
+	SceneAreaObject::remove();
+
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 511;
+	scene->setAction(&scene->_sequenceManager1, scene, 511, &R2_GLOBALS._player, NULL);
+}
+
+bool Scene500::PanelDialog::Button::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE) {
 		return false;
 	} else {
 		return SceneActor::startAction(action, event);
+	}
+}
+
+void Scene500::PanelDialog::Button::setupButton(int buttonId) {
+	_buttonId = buttonId;
+	_buttonDown = false;
+	SceneActor::postInit();
+	setup(500, 7, 1);
+	fixPriority(251);
+
+	switch (_buttonId) {
+	case 1:
+		setPosition(Common::Point(139, 78));
+		break;
+	case 2:
+		setPosition(Common::Point(139, 96));
+		break;
+	case 3:
+		setPosition(Common::Point(139, 114));
+		break;
+	default:
+		break;
+	}
+
+	Scene500 *scene = (Scene500 *)BF_GLOBALS._sceneManager._scene;
+	scene->_sceneAreas.push_front(this);
+}
+
+void Scene500::PanelDialog::Button::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+
+	s.syncAsSint16LE(_buttonId);
+	s.syncAsSint16LE(_buttonDown);
+}
+
+void Scene500::PanelDialog::Button::process(Event &event) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && 
+			(R2_GLOBALS._events.getCursor() == CURSOR_USE) &&
+			_bounds.contains(event.mousePos) && !_buttonDown) {
+		_buttonDown = true;
+		event.handled = true;
+		setFrame(2);
+	}
+
+	if ((event.eventType == EVENT_BUTTON_UP) && _buttonDown) {
+		setFrame(1);
+		_buttonDown = false;
+		event.handled = true;
+
+		doButtonPress();
+	}
+}
+
+void Scene500::PanelDialog::Button::doButtonPress() {
+	Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
+
+	if (R2_GLOBALS.getFlag(28)) {
+		SceneItem::display2(500, 48);
+	} else {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = _buttonId;
+
+		switch (_buttonId) {
+		case 1:
+			if (--R2_GLOBALS._landerSuitNumber == 0)
+				R2_GLOBALS._landerSuitNumber = 3;
+
+			if (R2_GLOBALS.getFlag(35)) {
+				scene->_sceneMode = 5;
+				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
+					&scene->_object3, &scene->_object8, NULL);
+			} else {
+				scene->_sound1.play(127);
+				scene->_object1.animate(ANIM_MODE_6, scene);
+			}
+			break;
+
+		case 2:
+			if (++R2_GLOBALS._landerSuitNumber == 4)
+				R2_GLOBALS._v566A4 = 1;
+
+			if (R2_GLOBALS.getFlag(35)) {
+				scene->_sceneMode = 6;
+				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
+					&scene->_object3, &scene->_object8, NULL);
+			} else {
+				scene->_sound1.play(127);
+				scene->_object1.animate(ANIM_MODE_6, scene);
+			}
+			break;
+		
+		case 3:
+			if (R2_GLOBALS.getFlag(35)) {
+				scene->_sceneMode = 509;
+				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
+					&scene->_object3, &scene->_object8, NULL);
+			} else {
+				scene->_object3.postInit();
+				scene->_object3.hide();
+				scene->_object3._effect = 1;
+				scene->_object3.setDetails(500, -1, -1, -1, 2, NULL);
+				scene->_object3.setup(502, R2_GLOBALS._landerSuitNumber + 2, 1);
+
+				scene->setAction(&scene->_sequenceManager1, scene, 508,
+					&R2_GLOBALS._player, &scene->_object1, &scene->_object3, 
+					&scene->_object8, NULL);
+				R2_GLOBALS.setFlag(35);
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
@@ -5185,7 +5327,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 			if (R2_GLOBALS.getFlag(28))
 				_object3.setup(502, 7, 2);
 			else
-				_object3.setup(502, R2_GLOBALS._v566A3 + 2, 7);
+				_object3.setup(502, R2_GLOBALS._landerSuitNumber + 2, 7);
 		}
 	}
 
@@ -5301,7 +5443,7 @@ void Scene500::signal() {
 		break;
 	case 510:
 		R2_GLOBALS._player.enableControl();
-		_area1.setDetails(500, 6, 1, Common::Point(160, 120));
+		_panelDialog.setDetails(500, 6, 1, Common::Point(160, 120));
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 513:

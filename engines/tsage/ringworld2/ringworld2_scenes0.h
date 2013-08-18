@@ -524,6 +524,30 @@ public:
 };
 
 class Scene500: public SceneExt {
+	/* Dialogs */
+	class PanelDialog: public SceneAreaObject {
+		class Button: public SceneActor {
+		private:
+			int _buttonId;
+			bool _buttonDown;
+
+			void doButtonPress();		
+		public:
+			virtual Common::String getClassName() { return "Scene500_Button"; }
+			virtual void process(Event &event);
+			virtual bool startAction(CursorType action, Event &event);
+			virtual void synchronize(Serializer &s);
+
+			void setupButton(int buttonId);
+		};
+	public:
+		Button _button1, _button2, _button3;
+
+		virtual Common::String getClassName() { return "Scene500_PanelWindow"; }
+		virtual void remove();
+		void setDetails(int visage, int strip, int frameNumber, const Common::Point &pt);
+	};
+
 	/* Items */
 	class ControlPanel: public SceneHotspot {
 	public:
@@ -570,10 +594,6 @@ class Scene500: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object: public SceneActor {
-	public:
-		virtual bool startAction(CursorType action, Event &event);
-	};
 public:
 	int _stripNumber;
 	byte _buffer[2710];
@@ -592,8 +612,7 @@ public:
 	SonicStunner _sonicStunner;
 	Locker1 _locker1;
 	Locker2 _locker2;
-	SceneAreaObject _area1;
-	Object _obj1, _obj2, _obj3;
+	PanelDialog _panelDialog;
 	ASoundExt _sound1;
 	SequenceManager _sequenceManager1, _sequenceManager2;
 public:

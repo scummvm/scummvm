@@ -1438,19 +1438,22 @@ void SceneAreaObject::process(Event &event) {
 	if (_insetCount == R2_GLOBALS._insetUp) {
 		CursorType cursor = R2_GLOBALS._events.getCursor();
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_object1._bounds.contains(event.mousePos)) {
 			// Cursor moving in bounded area
 			if (cursor == _cursorNum) {
 				R2_GLOBALS._events.setCursor(_savedCursorNum);
 			}
 		} else if (event.mousePos.y < 168) {
-			if (_cursorNum != cursor)
+			if (_cursorNum != cursor) {
 				// Cursor moved outside bounded area
-				R2_GLOBALS._events.setCursor(_savedCursorNum);
-
+				_savedCursorNum = R2_GLOBALS._events.getCursor();
+				R2_GLOBALS._events.setCursor(CURSOR_INVALID);
+			}
+				
 			if (event.eventType == EVENT_BUTTON_DOWN) {
-				R2_GLOBALS._events.setCursor(_savedCursorNum);
 				event.handled = true;
+				R2_GLOBALS._events.setCursor(_savedCursorNum);
+				remove();
 			}
 		}
 	}
