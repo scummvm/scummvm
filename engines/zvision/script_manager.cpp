@@ -108,11 +108,9 @@ void ScriptManager::checkPuzzleCriteria() {
 		Puzzle *puzzle = _puzzlesToCheck.pop();
 
 		// Check if the puzzle is already finished
-		// If it doesn't have the flag ONCE_PER_INST it can be done more than once
 		// Also check that the puzzle isn't disabled
 		if (getStateValue(puzzle->key) == 1 &&
-		    (puzzle->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST &&
-		    (puzzle->flags & Puzzle::DISABLED) == 0) {
+			(puzzle->flags & Puzzle::DISABLED) == 0) {
 			continue;
 		}
 
@@ -226,18 +224,28 @@ void ScriptManager::changeLocationIntern() {
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	// Create the puzzle reference table
-	createReferenceTable();
-
 	// Add all the local puzzles to the stack to be checked
 	for (Common::List<Puzzle>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
+		// Reset any Puzzles that have the flag ONCE_PER_INST
+		if ((*iter).flags & Puzzle::ONCE_PER_INST == Puzzle::ONCE_PER_INST) {
+			setStateValue((*iter).key, 0);
+		}
+
 		_puzzlesToCheck.push(&(*iter));
 	}
 
 	// Add all the global puzzles to the stack to be checked
 	for (Common::List<Puzzle>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
+		// Reset any Puzzles that have the flag ONCE_PER_INST
+		if ((*iter).flags & Puzzle::ONCE_PER_INST == Puzzle::ONCE_PER_INST) {
+			setStateValue((*iter).key, 0);
+		}
+
 		_puzzlesToCheck.push(&(*iter));
 	}
+
+	// Create the puzzle reference table
+	createReferenceTable();
 }
 
 } // End of namespace ZVision
