@@ -27,6 +27,7 @@
 #include "zvision/zvision.h"
 #include "zvision/render_manager.h"
 #include "zvision/render_table.h"
+#include "zvision/script_manager.h"
 #include "zvision/control.h"
 #include "zvision/utility.h"
 
@@ -103,6 +104,8 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 }
 
 void Control::parsePushToggleControl(uint32 key, ZVision *engine, Common::SeekableReadStream &stream) {
+	engine->getScriptManager()->setStateValue(key, 0);
+
 	Common::Rect hotspot;
 	Common::String cursorName;
 	
