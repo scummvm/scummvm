@@ -214,7 +214,9 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// Allocate buffer for one scanline
+	assert(cinfo.output_components == 3);
 	JDIMENSION pitch = cinfo.output_width * cinfo.output_components;
+	assert(_surface.pitch >= pitch);
 	JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, pitch, 1);
 
 	// Go through the image data scanline by scanline
@@ -246,7 +248,7 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			} break;
 
 		case kColorSpaceYUV:
-			memcpy(dst, src, _surface.pitch);
+			memcpy(dst, src, pitch);
 			break;
 		}
 	}
