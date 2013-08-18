@@ -25,6 +25,8 @@
 
 #include "common/types.h"
 
+#include "zvision/mouse_event.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -52,6 +54,16 @@ public:
 	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parsePushToggleControl(uint32 key, ZVision *engine, Common::SeekableReadStream &stream);
+};
+
+class PushToggleControl : public Control {
+public:
+	PushToggleControl(uint32 key, Common::SeekableReadStream &stream);
+	bool enable(ZVision *engine);
+	bool disable(ZVision *engine);
+
+private:
+	MouseEvent _event;
 };
 
 } // End of namespace ZVision

@@ -103,12 +103,15 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 	renderTable->generateRenderTable();
 }
 
-void Control::parsePushToggleControl(uint32 key, ZVision *engine, Common::SeekableReadStream &stream) {
-	engine->getScriptManager()->setStateValue(key, 0);
 
-	Common::Rect hotspot;
-	Common::String cursorName;
-	
+//////////////////////////////////////////////////////////////////////////////
+// PushToggleControl
+//////////////////////////////////////////////////////////////////////////////
+
+PushToggleControl::PushToggleControl(uint32 key, Common::SeekableReadStream &stream)
+		: Control() {
+	_event._key = _key = key;
+
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -121,23 +124,49 @@ void Control::parsePushToggleControl(uint32 key, ZVision *engine, Common::Seekab
 			uint height;
 
 			sscanf(line.c_str(), "%*[^(](%u,%u,%u,%u)", &x, &y, &width, &height);
-			
-			hotspot = Common::Rect(x, y, x + width, y + height);
+
+			_event._hotspot = Common::Rect(x, y, x + width, y + height);
 		} else if (line.matchString("cursor*", true)) {
 			char nameBuffer[25];
 
 			sscanf(line.c_str(), "%*[^(](%25[^)])", nameBuffer);
 
-			cursorName = Common::String(nameBuffer);
+			_event._hoverCursor = Common::String(nameBuffer);
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
 
-	if (!hotspot.isEmpty() && !cursorName.empty()) {
-		engine->registerMouseEvent(MouseEvent(key, hotspot, cursorName));
+	if (_event._hotspot.isEmpty() || _event._hoverCursor.empty()) {
+		warning("Push_toggle cursor %u was parsed incorrectly", &key);
 	}
+}
+
+bool PushToggleControl::enable(ZVision *engine) {
+	if (!_enabled) {
+		engine->registerMouseEvent(_event);
+		_enabled = true;
+		return true;
+	}
+
+	debug("Control %u is already enabled", _key);
+	return false;
+}
+
+bool PushToggleControl::disable(ZVision *engine) {
+	if (_enabled) {
+		engine->removeMouseEvent(_key);
+		_enabled = false;
+		return true;
+	}
+
+	debug("Control %u is already disabled", _key);
+	return false;
+}
+
+void Control::parsePushToggleControl(uint32 key, ZVision *engine, Common::SeekableReadStream &stream) {
+
 }
 
 } // End of namespace ZVision
