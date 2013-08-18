@@ -3142,7 +3142,7 @@ bool Scene300::Doorway::startAction(CursorType action, Event &event) {
 
 	if (action == CURSOR_USE) {
 		if ((R2_GLOBALS._player._characterIndex == R2_QUINN) &&
-				(!R2_GLOBALS.getFlag(44) || R2_GLOBALS._player._characterScene[R2_MIRANDA] == 500)) {
+				(!R2_GLOBALS.getFlag(44) || R2_GLOBALS._player._characterScene[R2_SEEKER] == 500)) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 301;
 			scene->setAction(&scene->_sequenceManager1, scene, 301, &R2_GLOBALS._player, this, NULL);
@@ -3559,7 +3559,7 @@ void Scene300::signal() {
 		break;
 
 	case 16:
-		if (_stripManager._field2E8 == 1) {
+		if (_stripManager._exitMode == 1) {
 			R2_GLOBALS._player.setAction(NULL);
 			R2_GLOBALS._sceneManager.changeScene(1000);
 		} else {
