@@ -24,7 +24,7 @@
 #define ZVISION_SCRIPT_MANAGER_H
 
 #include "common/hashmap.h"
-#include "common/stack.h"
+#include "common/queue.h"
 
 #include "zvision/puzzle.h"
 #include "zvision/control.h"
@@ -64,7 +64,7 @@ private:
 	/** References _globalState keys to Puzzles */
 	Common::HashMap<uint32, Common::Array<Puzzle *> > _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
-	Common::Stack<Puzzle *> _puzzlesToCheck;
+	Common::Queue<Puzzle *> _puzzlesToCheck;
 	/** Holds the currently active puzzles */
 	Common::List<Puzzle> _activePuzzles;
 	/** Holds the global puzzles */

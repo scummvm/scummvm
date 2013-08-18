@@ -257,12 +257,12 @@ void ScriptManager::changeLocationIntern() {
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	// Add all the local puzzles to the stack to be checked
 	// Enable all the controls
 	for (Common::HashMap<uint32, Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
 		(*iter)._value->enable(_engine);
 	}
 
+	// Add all the local puzzles to the queue to be checked
 	for (Common::List<Puzzle>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
 		if ((*iter).flags & Puzzle::ONCE_PER_INST == Puzzle::ONCE_PER_INST) {
@@ -272,7 +272,7 @@ void ScriptManager::changeLocationIntern() {
 		_puzzlesToCheck.push(&(*iter));
 	}
 
-	// Add all the global puzzles to the stack to be checked
+	// Add all the global puzzles to the queue to be checked
 	for (Common::List<Puzzle>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
 		if ((*iter).flags & Puzzle::ONCE_PER_INST == Puzzle::ONCE_PER_INST) {
