@@ -62,12 +62,7 @@ void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) 
 				_activePuzzles.push_back(puzzle);
 			}
 		} else if (line.matchString("control:*", true)) {
-			Common::SharedPtr<Control> control;
-
-			// Some controls don't require nodes. They just initialize the scene
-			if (parseControl(line, file, control)) {
-				_activeControls.push_back(control);
-			}
+			parseControl(line, file);
 		}
 	}
 }
@@ -300,7 +295,7 @@ uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	return flags;
 }
 
-bool ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream, Common::SharedPtr<Control> &control) {
+void ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream) {
 	uint32 key;
 	char controlTypeBuffer[20];
 
@@ -309,21 +304,19 @@ bool ScriptManager::parseControl(Common::String &line, Common::SeekableReadStrea
 	Common::String controlType(controlTypeBuffer);
 
 	if (controlType.equalsIgnoreCase("push_toggle")) {
-		Control::parsePushToggleControl(key, _engine, stream);
-		return false;
+		_activeControls[key] = new PushToggleControl(key, stream);
+		return;
 	} else if (controlType.equalsIgnoreCase("flat")) {
 		Control::parseFlatControl(_engine);
-		return false;
+		return;
 	} else if (controlType.equalsIgnoreCase("pana")) {
 		Control::parsePanoramaControl(_engine, stream);
-		return false;
+		return;
 	}
 	else if (controlType.equalsIgnoreCase("tilt")) {
 		Control::parseTiltControl(_engine, stream);
-		return false;
+		return;
 	}
-
-	return true;
 }
 
 } // End of namespace ZVision

@@ -70,7 +70,7 @@ private:
 	/** Holds the global puzzles */
 	Common::List<Puzzle>_globalPuzzles;
 	/** Holds the currently active controls */
-	Common::List<Common::SharedPtr<Control> > _activeControls;
+	Common::HashMap<uint32, Control *> _activeControls;
 
 	Location _nextLocation;
 	bool _changeLocation;
@@ -145,7 +145,7 @@ private:
 	 * @param line      The line initially read
 	 * @param stream    Scr file stream
 	 */
-	bool parseControl(Common::String &line, Common::SeekableReadStream &stream, Common::SharedPtr<Control> &control);
+	void parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
 
