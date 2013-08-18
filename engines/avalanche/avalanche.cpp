@@ -123,11 +123,29 @@ Common::Platform AvalancheEngine::getPlatform() const {
 
 
 bool AvalancheEngine::hasFeature(EngineFeature f) const {
-	return false;
+	return (f == kSupportsSavingDuringRuntime) || (f == kSupportsLoadingDuringRuntime);
 }
 
 const char *AvalancheEngine::getCopyrightString() const {
 	return "Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.";
+}
+
+
+
+bool AvalancheEngine::canSaveGameStateCurrently() {
+	return true;
+}
+
+Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {
+	return Common::kNoError;
+}
+
+bool AvalancheEngine::canLoadGameStateCurrently() {
+	return true;
+}
+
+Common::Error AvalancheEngine::loadGameState(int slot, const Common::String &desc) {
+	return Common::kNoError;
 }
 
 

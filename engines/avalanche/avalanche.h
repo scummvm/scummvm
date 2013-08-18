@@ -111,10 +111,16 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	const char *getCopyrightString() const;
 
+
+
+	virtual bool canSaveGameStateCurrently();
+	Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canLoadGameStateCurrently();
+	Common::Error loadGameState(int slot, const Common::String &desc);
+
+
 	void updateEvents();
-
 	bool getEvent(Common::Event &event); // A warpper around _eventMan->pollEvent(), se we can use it in Scrolls::normscroll() for example.
-
 	Common::Point getMousePos();
 
 protected:
