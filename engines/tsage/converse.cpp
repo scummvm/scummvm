@@ -858,6 +858,11 @@ void StripManager::signal() {
 						++obj44Idx;
 
 					if (_obj44List[obj44Idx]._field16[0]) {
+						// WORKAROUND: The _lookupList isn't always correctly initialised. But it always
+						// seems to be set to the R2_GLOBALS._stripManager_lookupList, so manually set it
+						if (!_lookupList)
+							_lookupList = R2_GLOBALS._stripManager_lookupList;
+						
 						int f16Index = _lookupList[_obj44List[obj44Idx]._field16[0] - 1];
 						listId = _obj44List[obj44Idx]._field16[f16Index];
 
@@ -868,13 +873,16 @@ void StripManager::signal() {
 
 							choiceStr = (const char *)&_script[0] + _obj44List[obj44Idx]._list[listIdx]._scriptOffset;
 						} else {
-							for (int listIdx = 0; listIdx < OBJ0A_LIST_SIZE; ++listIdx) {
+							for (int listIdx = idx; listIdx < (OBJ0A_LIST_SIZE - 1); ++listIdx) {
 								obj44._list[listIdx]._id = obj44._list[listIdx + 1]._id;
 								obj44._list[listIdx]._scriptOffset = obj44._list[listIdx + 1]._scriptOffset;
 
 								if (!obj44._list[listIdx + 1]._id)
 									obj44._list[listIdx]._id = 0;
 							}
+
+							--idx;
+							continue;
 						}
 					}
 				}

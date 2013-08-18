@@ -1203,7 +1203,7 @@ void Scene1100::signal() {
 		}
 		break;
 	case 54:
-		if (_stripManager._field2E8 == 1) {
+		if (_stripManager._exitMode == 1) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1125;
 			setAction(&_sequenceManager1, this, 1125, &R2_GLOBALS._player, &_seeker, NULL);
