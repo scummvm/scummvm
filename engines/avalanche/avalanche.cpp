@@ -123,7 +123,7 @@ Common::Platform AvalancheEngine::getPlatform() const {
 
 
 bool AvalancheEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+	return false;
 }
 
 const char *AvalancheEngine::getCopyrightString() const {
