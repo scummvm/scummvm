@@ -61,13 +61,16 @@ void ScriptManager::createReferenceTable() {
 	for (Common::List<Puzzle>::iterator activePuzzleIter = _activePuzzles.begin(); activePuzzleIter != _activePuzzles.end(); activePuzzleIter++) {
 		Puzzle *puzzlePtr = &(*activePuzzleIter);
 
-		// Iterate through each Criteria and add a reference from the criteria key to the Puzzle
-		for (Common::List<Puzzle::Criteria>::iterator criteriaIter = activePuzzleIter->criteriaList.begin(); criteriaIter != (*activePuzzleIter).criteriaList.end(); criteriaIter++) {
-			_referenceTable[criteriaIter->key].push_back(puzzlePtr);
+		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
+		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = activePuzzleIter->criteriaList.begin(); criteriaIter != (*activePuzzleIter).criteriaList.end(); criteriaIter++) {
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
+				_referenceTable[entryIter->key].push_back(puzzlePtr);
 
-			// If the argument is a key, add a reference to it as well
-			if (criteriaIter->argumentIsAKey)
-				_referenceTable[criteriaIter->argument].push_back(puzzlePtr);
+				// If the argument is a key, add a reference to it as well
+				if (entryIter->argumentIsAKey) {
+					_referenceTable[entryIter->argument].push_back(puzzlePtr);
+				}
+			}
 		}
 	}
 
@@ -75,13 +78,16 @@ void ScriptManager::createReferenceTable() {
 	for (Common::List<Puzzle>::iterator globalPuzzleIter = _globalPuzzles.begin(); globalPuzzleIter != _globalPuzzles.end(); globalPuzzleIter++) {
 		Puzzle *puzzlePtr = &(*globalPuzzleIter);
 
-		// Iterate through each Criteria and add a reference from the criteria key to the Puzzle
-		for (Common::List<Puzzle::Criteria>::iterator criteriaIter = globalPuzzleIter->criteriaList.begin(); criteriaIter != (*globalPuzzleIter).criteriaList.end(); criteriaIter++) {
-			_referenceTable[criteriaIter->key].push_back(puzzlePtr);
+		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
+		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = globalPuzzleIter->criteriaList.begin(); criteriaIter != (*globalPuzzleIter).criteriaList.end(); criteriaIter++) {
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
+				_referenceTable[entryIter->key].push_back(puzzlePtr);
 
-			// If the argument is a key, add a reference to it as well
-			if (criteriaIter->argumentIsAKey)
-				_referenceTable[criteriaIter->argument].push_back(puzzlePtr);
+				// If the argument is a key, add a reference to it as well
+				if (entryIter->argumentIsAKey) {
+					_referenceTable[entryIter->argument].push_back(puzzlePtr);
+				}
+			}
 		}
 	}
 
@@ -115,32 +121,43 @@ void ScriptManager::checkPuzzleCriteria() {
 		}
 
 		// Check each Criteria
-		bool criteriaMet = false;
-		for (Common::List<Puzzle::Criteria>::iterator iter = puzzle->criteriaList.begin(); iter != puzzle->criteriaList.end(); iter++) {
-			// Get the value to compare against
-			uint argumentValue;
-			if ((*iter).argumentIsAKey)
-				argumentValue = getStateValue(iter->argument);
-			else
-				argumentValue = iter->argument;
 
-			// Do the comparison
-			switch ((*iter).criteriaOperator) {
-			case Puzzle::EQUAL_TO:
-				criteriaMet = getStateValue(iter->key) == argumentValue;
-				break;
-			case Puzzle::NOT_EQUAL_TO:
-				criteriaMet = getStateValue(iter->key) != argumentValue;
-				break;
-			case Puzzle::GREATER_THAN:
-				criteriaMet = getStateValue(iter->key) > argumentValue;
-				break;
-			case Puzzle::LESS_THAN:
-				criteriaMet = getStateValue(iter->key) < argumentValue;
-				break;
+		bool criteriaMet = false;
+		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); criteriaIter++) {
+			criteriaMet = false;
+
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
+				// Get the value to compare against
+				uint argumentValue;
+				if ((*entryIter).argumentIsAKey)
+					argumentValue = getStateValue(entryIter->argument);
+				else
+					argumentValue = entryIter->argument;
+
+				// Do the comparison
+				switch ((*entryIter).criteriaOperator) {
+				case Puzzle::EQUAL_TO:
+					criteriaMet = getStateValue(entryIter->key) == argumentValue;
+					break;
+				case Puzzle::NOT_EQUAL_TO:
+					criteriaMet = getStateValue(entryIter->key) != argumentValue;
+					break;
+				case Puzzle::GREATER_THAN:
+					criteriaMet = getStateValue(entryIter->key) > argumentValue;
+					break;
+				case Puzzle::LESS_THAN:
+					criteriaMet = getStateValue(entryIter->key) < argumentValue;
+					break;
+				}
+
+				// If one check returns false, don't keep checking
+				if (!criteriaMet) {
+					break;
+				}
 			}
 
-			if (!criteriaMet) {
+			// If any of the Criteria are *fully* met, then execute the results
+			if (criteriaMet) {
 				break;
 			}
 		}

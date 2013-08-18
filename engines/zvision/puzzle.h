@@ -41,7 +41,7 @@ struct Puzzle {
 	};
 
 	/** Criteria for a Puzzle result to be fired */
-	struct Criteria {
+	struct CriteriaEntry {
 		/** The key of a global state */
 		uint32 key;
 		/**  
@@ -62,7 +62,7 @@ struct Puzzle {
 	};
 
 	uint32 key;
-	Common::List<Criteria> criteriaList;
+	Common::List<Common::List <CriteriaEntry> > criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<Common::SharedPtr<ResultAction> > resultActions;
 	uint flags;

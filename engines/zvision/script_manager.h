@@ -122,7 +122,7 @@ private:
 	 * @param stream      Scr file stream
 	 * @return            Whether any criteria were read
 	 */
-	bool parseCriteria(Puzzle::Criteria *criteria, Common::SeekableReadStream &stream) const;
+	bool parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const;
 
 	/**
 	 * Parses the stream into a ResultAction objects

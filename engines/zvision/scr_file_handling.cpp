@@ -73,10 +73,7 @@ void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stre
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("criteria {", true)) {
-			Puzzle::Criteria criteria;
-			if (parseCriteria(&criteria, stream)) {
-				puzzle.criteriaList.push_back(criteria);
-			}
+			parseCriteria(stream, puzzle.criteriaList);
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle.resultActions);
 		} else if (line.matchString("flags {", true)) {
@@ -88,7 +85,7 @@ void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stre
 	}
 }
 
-bool ScriptManager::parseCriteria(Puzzle::Criteria *criteria, Common::SeekableReadStream &stream) const {
+bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -98,36 +95,43 @@ bool ScriptManager::parseCriteria(Puzzle::Criteria *criteria, Common::SeekableRe
 		return false;
 	}
 
+	// Create a new List to hold the CriteriaEntries
+	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
+
 	while (!stream.eos() && !line.contains('}')) {
+		Puzzle::CriteriaEntry entry;
+
 		// Split the string into tokens using ' ' as a delimiter
 		Common::StringTokenizer tokenizer(line);
 		Common::String token;
 
 		// Parse the id out of the first token
 		token = tokenizer.nextToken();
-		sscanf(token.c_str(), "[%u]", &(criteria->key));
+		sscanf(token.c_str(), "[%u]", &(entry.key));
 
 		// Parse the operator out of the second token
 		token = tokenizer.nextToken();
 		if (token.c_str()[0] == '=')
-			criteria->criteriaOperator = Puzzle::EQUAL_TO;
+			entry.criteriaOperator = Puzzle::EQUAL_TO;
 		else if (token.c_str()[0] == '!')
-			criteria->criteriaOperator = Puzzle::NOT_EQUAL_TO;
+			entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
 		else if (token.c_str()[0] == '>')
-			criteria->criteriaOperator = Puzzle::GREATER_THAN;
+			entry.criteriaOperator = Puzzle::GREATER_THAN;
 		else if (token.c_str()[0] == '<')
-			criteria->criteriaOperator = Puzzle::LESS_THAN;
+			entry.criteriaOperator = Puzzle::LESS_THAN;
 
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
 		token = tokenizer.nextToken();
 		if (token.contains('[')) {
-			sscanf(token.c_str(), "[%u]", &(criteria->argument));
-			criteria->argumentIsAKey = true;
+			sscanf(token.c_str(), "[%u]", &(entry.argument));
+			entry.argumentIsAKey = true;
 		} else {
-			sscanf(token.c_str(), "%u", &(criteria->argument));
-			criteria->argumentIsAKey = false;
+			sscanf(token.c_str(), "%u", &(entry.argument));
+			entry.argumentIsAKey = false;
 		}
+
+		criteriaList.back().push_back(entry);
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
