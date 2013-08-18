@@ -177,8 +177,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:disable_control*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionDisableControl(line)));
 		} else if (line.matchString("*:disable_venus*", true)) {
 			
 
@@ -192,8 +191,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:enable_control*", true)) {
-			
-
+			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionEnableControl(line)));
 		} else if (line.matchString("*:flush_mouse_events*", true)) {
 			
 

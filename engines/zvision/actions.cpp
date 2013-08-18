@@ -111,6 +111,40 @@ bool ActionCrossfade::execute(ZVision *engine) {
 
 
 //////////////////////////////////////////////////////////////////////////////
+// ActionDisableControl
+//////////////////////////////////////////////////////////////////////////////
+
+ActionDisableControl::ActionDisableControl(const Common::String &line) {
+	sscanf(line.c_str(), "%*[^(](%u)", &_key);
+}
+
+bool ActionDisableControl::execute(ZVision *engine) {
+	debug("Disabling control %u", _key);
+	
+	engine->getScriptManager()->disableControl(_key);
+
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionEnableControl
+//////////////////////////////////////////////////////////////////////////////
+
+ActionEnableControl::ActionEnableControl(const Common::String &line) {
+	sscanf(line.c_str(), "%*[^(](%u)", &_key);
+}
+
+bool ActionEnableControl::execute(ZVision *engine) {
+	debug("Enabling control %u", _key);
+
+	engine->getScriptManager()->enableControl(_key);
+
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionMusic
 //////////////////////////////////////////////////////////////////////////////
 

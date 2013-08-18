@@ -168,6 +168,7 @@ public:
 	bool execute(ZVision *engine);
 
 private:
+	uint32 _key;
 };
 
 class ActionDisableVenus : public ResultAction {
@@ -188,10 +189,8 @@ private:
 
 class ActionDissolve : public ResultAction {
 public:
-	ActionDissolve(const Common::String &line);
+	ActionDissolve();
 	bool execute(ZVision *engine);
-
-private:
 };
 
 class ActionDistort : public ResultAction {
@@ -208,6 +207,7 @@ public:
 	bool execute(ZVision *engine);
 
 private:
+	uint32 _key;
 };
 
 class ActionMusic : public ResultAction {
