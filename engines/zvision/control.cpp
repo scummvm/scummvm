@@ -139,7 +139,7 @@ PushToggleControl::PushToggleControl(uint32 key, Common::SeekableReadStream &str
 	}
 
 	if (_event._hotspot.isEmpty() || _event._hoverCursor.empty()) {
-		warning("Push_toggle cursor %u was parsed incorrectly", &key);
+		warning("Push_toggle cursor %u was parsed incorrectly", key);
 	}
 }
 
