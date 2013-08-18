@@ -404,7 +404,7 @@ void Ringworld2Globals::reset() {
 	_v565E7 = 0;
 	_v565E9 = -5;
 	_v565EB = 26;
-	_v565F5 = 0;
+	_foodCount = 0;
 	_v565F6 = 0;
 	_v565F8 = 0;
 	_v565FA = 0;
@@ -519,7 +519,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v565E7);
 	s.syncAsSint16LE(_v565E9);
 	s.syncAsSint16LE(_v565EB);
-	s.syncAsSint16LE(_v565F5);
+	s.syncAsSint16LE(_foodCount);
 	s.syncAsSint16LE(_v565F6);
 	s.syncAsSint16LE(_v565F8);
 	s.syncAsSint16LE(_v565FA);

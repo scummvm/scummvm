@@ -392,11 +392,11 @@ void Scene100::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene125::Object5::startAction(CursorType action, Event &event) {
+bool Scene125::Food::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE)
 		return true;
-	else
-		return SceneActor::startAction(action, event);
+
+	return SceneActor::startAction(action, event);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -631,9 +631,9 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 		_infoDisk.setPosition(Common::Point(47, 167));
 	}
 
-	_object6.postInit();
-	_object6.setup(162, 1, 1);
-	_object6.setPosition(Common::Point(214, 168));
+	_foodDispenser.postInit();
+	_foodDispenser.setup(162, 1, 1);
+	_foodDispenser.setPosition(Common::Point(214, 168));
 
 	_diskSlot.setDetails(Rect(27, 145, 81, 159), 126, 9, -1, -1, 1, NULL);
 	_item3.setDetails(Rect(144, 119, 286, 167), 126, 6, 7, 8, 1, NULL);
@@ -656,8 +656,8 @@ void Scene125::signal() {
 		_icon4.postInit();
 		_icon4._sceneRegionId = 5;
 
-		_sceneMode = 2;
 		setAction(&_sequenceManager, this, 127, &_icon1, &_icon2, &_icon3, &_icon4, &R2_GLOBALS._player, NULL);
+		_sceneMode = 2;
 		break;
 	case 2:
 		_icon1.setup(160, 1, 1);
@@ -698,7 +698,7 @@ void Scene125::signal() {
 		_icon6._sceneRegionId = 8;
 
 		consoleAction(5);
-		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 10:
@@ -971,14 +971,17 @@ void Scene125::consoleAction(int id) {
 	case 15:
 		consoleAction(3);
 
-		if (R2_GLOBALS._v565F5 < 3) {
+		if (R2_GLOBALS._foodCount < 3) {
 			R2_GLOBALS._player.disableControl();
-			_object5.postInit();
-			_object5.setup(162, 2, 2);
-			_object5.setPosition(Common::Point(216, UI_INTERFACE_Y));
+			_food.postInit();
+			_food.setup(162, 2, 2);
+			_food.setPosition(Common::Point(216, UI_INTERFACE_Y));
 
-			R2_GLOBALS._v565F5 += 2;
-		} else if (R2_GLOBALS._v565F5 == 3) {
+			R2_GLOBALS._foodCount += 2;
+
+			_sceneMode = 128;
+			this->setAction(&_sequenceManager, this, 128, &_foodDispenser, &_food, NULL);
+		} else if (R2_GLOBALS._foodCount == 3) {
 			SceneItem::display2(126, 13);
 		} else {
 			SceneItem::display2(126, 14);
@@ -987,13 +990,16 @@ void Scene125::consoleAction(int id) {
 	case 16:
 		consoleAction(3);
 
-		if (R2_GLOBALS._v565F5 < 4) {
+		if (R2_GLOBALS._foodCount < 4) {
 			R2_GLOBALS._player.disableControl();
-			_object5.postInit();
-			_object5.setup(162, 2, 3);
-			_object5.setPosition(Common::Point(218, UI_INTERFACE_Y));
+			_food.postInit();
+			_food.setup(162, 2, 3);
+			_food.setPosition(Common::Point(218, UI_INTERFACE_Y));
 
-			++R2_GLOBALS._v565F5;
+			++R2_GLOBALS._foodCount;
+
+			_sceneMode = 128;
+			this->setAction(&_sequenceManager, this, 128, &_foodDispenser, &_food, NULL);
 		} else {
 			SceneItem::display2(126, 15);
 		}
@@ -1001,13 +1007,16 @@ void Scene125::consoleAction(int id) {
 	case 17:
 		consoleAction(3);
 
-		if (R2_GLOBALS._v565F5 < 4) {
+		if (R2_GLOBALS._foodCount < 4) {
 			R2_GLOBALS._player.disableControl();
-			_object5.postInit();
-			_object5.setup(162, 2, 1);
-			_object5.setPosition(Common::Point(215, UI_INTERFACE_Y));
+			_food.postInit();
+			_food.setup(162, 2, 1);
+			_food.setPosition(Common::Point(215, UI_INTERFACE_Y));
 
-			++R2_GLOBALS._v565F5;
+			++R2_GLOBALS._foodCount;
+
+			_sceneMode = 128;
+			this->setAction(&_sequenceManager, this, 128, &_foodDispenser, &_food, NULL);
 		} else {
 			SceneItem::display2(126, 16);
 		}

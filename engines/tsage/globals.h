@@ -269,7 +269,7 @@ public:
 	int _v565E7;
 	int _v565E9;
 	int _v565EB;
-	int _v565F5;
+	int _foodCount;
 	int _v565F6;
 	int _v565F8;
 	int _v565FA;

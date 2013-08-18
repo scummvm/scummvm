@@ -102,7 +102,7 @@ public:
 
 class Scene125: public SceneExt {
 	/* Objects */
-	class Object5: public SceneActor {
+	class Food: public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -136,7 +136,7 @@ public:
 	ASoundExt _sound1;
 	NamedHotspot _background, _item2, _item3;
 	DiskSlot _diskSlot;
-	SceneActor _object1, _object2, _object3, _object4, _object5, _object6, _infoDisk;
+	SceneActor _object1, _object2, _object3, _object4, _food, _foodDispenser, _infoDisk;
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;
