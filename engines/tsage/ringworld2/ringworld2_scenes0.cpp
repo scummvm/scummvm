@@ -4862,7 +4862,7 @@ bool Scene500::Object2::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene500::Object3::startAction(CursorType action, Event &event) {
+bool Scene500::Suit::startAction(CursorType action, Event &event) {
 	Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -4886,7 +4886,7 @@ bool Scene500::Object3::startAction(CursorType action, Event &event) {
 			else {
 				R2_GLOBALS._player.disableControl();
 				scene->_sceneMode = 512;
-				scene->setAction(&scene->_sequenceManager1, scene, 524, &R2_GLOBALS._player, &scene->_object3, NULL);
+				scene->setAction(&scene->_sequenceManager1, scene, 524, &R2_GLOBALS._player, &scene->_suit, NULL);
 				R2_GLOBALS.setFlag(26);
 			}
 		} else {
@@ -4902,7 +4902,7 @@ bool Scene500::Object3::startAction(CursorType action, Event &event) {
 		else {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 515;
-			scene->setAction(&scene->_sequenceManager1, scene, 515, &R2_GLOBALS._player, &scene->_object3, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 515, &R2_GLOBALS._player, &scene->_suit, NULL);
 			R2_GLOBALS.setFlag(28);
 		}
 		return true;
@@ -5158,7 +5158,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 5;
 				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
-					&scene->_object3, &scene->_object8, NULL);
+					&scene->_suit, &scene->_object8, NULL);
 			} else {
 				scene->_sound1.play(127);
 				scene->_object1.animate(ANIM_MODE_6, scene);
@@ -5172,7 +5172,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 6;
 				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
-					&scene->_object3, &scene->_object8, NULL);
+					&scene->_suit, &scene->_object8, NULL);
 			} else {
 				scene->_sound1.play(127);
 				scene->_object1.animate(ANIM_MODE_6, scene);
@@ -5183,16 +5183,16 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 509;
 				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
-					&scene->_object3, &scene->_object8, NULL);
+					&scene->_suit, &scene->_object8, NULL);
 			} else {
-				scene->_object3.postInit();
-				scene->_object3.hide();
-				scene->_object3._effect = 1;
-				scene->_object3.setDetails(500, -1, -1, -1, 2, NULL);
-				scene->_object3.setup(502, R2_GLOBALS._landerSuitNumber + 2, 1);
+				scene->_suit.postInit();
+				scene->_suit.hide();
+				scene->_suit._effect = 1;
+				scene->_suit.setDetails(500, -1, -1, -1, 2, (SceneItem *)NULL);
+				scene->_suit.setup(502, R2_GLOBALS._landerSuitNumber + 2, 1);
 
 				scene->setAction(&scene->_sequenceManager1, scene, 508,
-					&R2_GLOBALS._player, &scene->_object1, &scene->_object3, 
+					&R2_GLOBALS._player, &scene->_object1, &scene->_suit, 
 					&scene->_object8, NULL);
 				R2_GLOBALS.setFlag(35);
 			}
@@ -5318,16 +5318,16 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 	} else {
 		_object8.setup(500, 8, 7);
 
-		_object3.postInit();
-		_object3._effect = 1;
-		_object3.setPosition(Common::Point(247, 52));
-		_object3.setDetails(500, -1, -1, -1, 2, (SceneItem *)NULL);
+		_suit.postInit();
+		_suit._effect = 1;
+		_suit.setPosition(Common::Point(247, 52));
+		_suit.setDetails(500, -1, -1, -1, 2, (SceneItem *)NULL);
 
 		if (!R2_GLOBALS.getFlag(26)) {
 			if (R2_GLOBALS.getFlag(28))
-				_object3.setup(502, 7, 2);
+				_suit.setup(502, 7, 2);
 			else
-				_object3.setup(502, R2_GLOBALS._landerSuitNumber + 2, 7);
+				_suit.setup(502, R2_GLOBALS._landerSuitNumber + 2, 7);
 		}
 	}
 
@@ -5373,7 +5373,7 @@ void Scene500::signal() {
 		_object1.animate(ANIM_MODE_6, this);
 
 		R2_GLOBALS.clearFlag(35);
-		_object3.remove();
+		_suit.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 6:
@@ -5382,7 +5382,7 @@ void Scene500::signal() {
 		_object1.animate(ANIM_MODE_5, this);
 
 		R2_GLOBALS.clearFlag(35);
-		_object3.remove();
+		_suit.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 7:
@@ -5390,7 +5390,7 @@ void Scene500::signal() {
 		_object8.animate(ANIM_MODE_6, this);
 
 		R2_GLOBALS.clearFlag(35);
-		_object3.remove();
+		_suit.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 500:
@@ -5438,7 +5438,7 @@ void Scene500::signal() {
 		break;
 	case 509:
 		R2_GLOBALS.clearFlag(35);
-		_object3.remove();
+		_suit.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 510:

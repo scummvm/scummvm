@@ -559,7 +559,7 @@ class Scene500: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object3: public SceneActor {
+	class Suit: public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -603,7 +603,7 @@ public:
 	ControlPanel _controlPanel;
 	SceneActor _object1;
 	Object2 _object2;
-	Object3 _object3;
+	Suit _suit;
 	Doorway _doorway;
 	OxygenTanks _tanks1, _tanks2;
 	AirLock _airLock;

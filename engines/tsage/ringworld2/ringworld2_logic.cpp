@@ -1429,6 +1429,7 @@ void SceneExit::process(Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void SceneAreaObject::remove() {
+	R2_GLOBALS._sceneItems.remove(this);
 	_object1.remove();
 	SceneArea::remove();
 	--R2_GLOBALS._insetUp;
@@ -1473,7 +1474,7 @@ void SceneAreaObject::setDetails(int visage, int strip, int frameNumber, const C
 }
 
 void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	((SceneHotspot *)(this))->setDetails(resNum, lookLineNum, talkLineNum, useLineNum,
+	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum,
 		2, (SceneItem *)NULL);
 }
 
