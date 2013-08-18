@@ -454,7 +454,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	byte *pal = _paletteData;
 
 	if (!pal) {
-		warning("Picture:draw: using global palette");
+		//warning("Picture:draw: using global palette");
 		pal = g_fullpipe->_globalPalette;
 	}
 
@@ -535,6 +535,14 @@ void Picture::copyMemoryObject2(Picture *src) {
 			setAOIDs();
 		}
 	}
+}
+
+bool Picture::isPointInside(int x, int y) {
+	if (x >= _x) {
+		if (y >= _y && x < _x + _width && y < _y + _height)
+			return true;
+	}
+	return false;
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {

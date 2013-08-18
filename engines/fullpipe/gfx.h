@@ -104,6 +104,7 @@ class Picture : public MemoryObject {
 	void setAlpha(byte alpha) { _alpha = alpha; }
 
 	Common::Point *getDimensions(Common::Point *p);
+	bool isPointInside(int x, int y);
 
 	byte *getPaletteData() { return _paletteData; }
 	void setPaletteData(byte *pal);

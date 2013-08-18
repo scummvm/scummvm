@@ -312,7 +312,7 @@ Movement *StaticANIObject::getMovementByName(char *name) {
 }
 
 void Movement::draw(bool flipFlag, int angle) {
-	warning("STUB: Movement::draw(%d, %d)", flipFlag, angle);
+	debug(3, "Movement::draw(%d, %d)", flipFlag, angle);
 
 	Common::Point point;
 
