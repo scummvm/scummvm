@@ -521,6 +521,12 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	delete _vectorRenderer;
 	_vectorRenderer = Graphics::createRenderer(mode);
 	_vectorRenderer->setSurface(&_screen);
+
+	// Since we reinitialized our screen surfaces we know nothing has been
+	// drawn so far. Sometimes we still end up with dirty screen bits in the
+	// list. Clearing it avoids invalid overlay writes when the backend
+	// resizes the overlay.
+	_dirtyScreen.clear();
 }
 
 void WidgetDrawData::calcBackgroundOffset() {
