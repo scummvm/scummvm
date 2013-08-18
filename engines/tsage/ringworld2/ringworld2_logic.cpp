@@ -1429,7 +1429,8 @@ void SceneExit::process(Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void SceneAreaObject::remove() {
-	R2_GLOBALS._sceneItems.remove(this);
+	// TODO: This needs to be investigated.. SceneArea doesn't derive from SceneItem??
+//	R2_GLOBALS._sceneItems.remove(this);
 	_object1.remove();
 	SceneArea::remove();
 	--R2_GLOBALS._insetUp;

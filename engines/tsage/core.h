@@ -782,7 +782,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class SceneItemList : public SynchronizedList<EventHandler *> {
+class SceneItemList : public SynchronizedList<SceneItem *> {
 public:
 	void addItems(SceneItem *first, ...);
 };
