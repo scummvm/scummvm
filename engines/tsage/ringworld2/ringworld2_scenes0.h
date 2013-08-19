@@ -555,7 +555,7 @@ class Scene500: public SceneExt {
 	};
 
 	/* Objects */
-	class Object2: public SceneActor {
+	class Seeker: public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -602,7 +602,7 @@ public:
 	SceneHotspot _background, _item2;
 	ControlPanel _controlPanel;
 	SceneActor _object1;
-	Object2 _object2;
+	Seeker _seeker;
 	Suit _suit;
 	Doorway _doorway;
 	OxygenTanks _tanks1, _tanks2;

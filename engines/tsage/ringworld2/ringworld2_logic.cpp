@@ -1325,7 +1325,7 @@ GfxSurface SceneActor::getFrame() {
 
 /*--------------------------------------------------------------------------*/
 
-SceneArea::SceneArea(): EventHandler() {
+SceneArea::SceneArea(): SceneItem() {
 	_enabled = true;
 	_insideArea = false;
 	_savedCursorNum = CURSOR_NONE;
@@ -1429,8 +1429,7 @@ void SceneExit::process(Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void SceneAreaObject::remove() {
-	// TODO: This needs to be investigated.. SceneArea doesn't derive from SceneItem??
-//	R2_GLOBALS._sceneItems.remove(this);
+	R2_GLOBALS._sceneItems.remove(this);
 	_object1.remove();
 	SceneArea::remove();
 	--R2_GLOBALS._insetUp;

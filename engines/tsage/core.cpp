@@ -2111,8 +2111,13 @@ int SceneObject::getFrameCount() {
 
 void SceneObject::animEnded() {
 	_animateMode = ANIM_MODE_NONE;
-	if (_endAction)
-		_endAction->signal();
+	if (_endAction) {
+		Action *endAction = _endAction;
+		if (g_vm->getGameID() == GType_Ringworld2)
+			_endAction = NULL;
+
+		endAction->signal();
+	}
 }
 
 int SceneObject::changeFrame() {

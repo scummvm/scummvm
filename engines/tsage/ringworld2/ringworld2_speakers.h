@@ -274,6 +274,7 @@ class SpeakerQuinn : public VisualSpeaker {
 public:
 	SpeakerQuinn();
 	virtual Common::String getClassName() { return "SpeakerQuinn"; }
+	virtual void proc15();
 };
 
 class SpeakerQuinn300 : public SpeakerQuinn {
@@ -412,6 +413,7 @@ class SpeakerSeeker : public VisualSpeaker {
 public:
 	SpeakerSeeker();
 	virtual Common::String getClassName() { return "SpeakerSeeker"; }
+	virtual void proc15();
 };
 
 class SpeakerSeeker300 : public SpeakerSeeker {

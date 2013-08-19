@@ -204,13 +204,12 @@ void VisualSpeaker::setText(const Common::String &msg) {
 	_sceneText._textMode = _textMode;
 	_sceneText.setup(s);
 
-	//_sceneText.clone();
-
 	_sceneText.setPosition(_textPos);
 	_sceneText.fixPriority(256);
 
 	// If subtitles are turned off, don't show the text
-	if (!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
+	if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) &&  
+			!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
 		_sceneText.hide();
 	}
 
@@ -1173,6 +1172,51 @@ SpeakerQuinn::SpeakerQuinn(): VisualSpeaker() {
 	_numFrames = 0;
 }
 
+void SpeakerQuinn::proc15() {
+	int v = _speakerMode;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 500);
+			Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_seeker;
+		}
+
+		_object2->hide();
+
+		_object1.postInit();
+		_object1._effect = _object2->_effect;
+		_object1._shade = _object2->_shade;
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+
+		switch (_object2->_visage) {
+		case 10:
+			_object1.setup(4021, (v == 1) ? 5 : 7, 1);
+			break;
+
+		case 1500:
+			_object1.setup(4021, (v == 1) ? 1 : 3, 1);
+			break;
+
+		default:
+			break;
+		}
+
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 void SpeakerQuinn300::proc15() {
 	int v = _speakerMode;
 
@@ -1942,6 +1986,43 @@ SpeakerSeeker::SpeakerSeeker(): VisualSpeaker() {
 	_object2 = NULL;
 	_displayMode = 1;
 	_numFrames = 0;
+}
+
+void SpeakerSeeker::proc15() {
+	int v = _speakerMode;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 500);
+			Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_seeker;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+
+		_object1._effect = _object2->_effect;
+		_object1._shade = _object2->_shade;
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+
+		if (v == 1)
+			_object1.setup(4041, 3, 1);
+		else
+			_object1.setup(4041, 1, 1);
+
+		_object1.animate(ANIM_MODE_5, this);
+	}
 }
 
 void SpeakerSeeker300::proc15() {

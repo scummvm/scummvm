@@ -42,9 +42,8 @@ public:
 	static Scene *createScene(int sceneNumber);
 };
 
-class SceneArea: public EventHandler {
+class SceneArea: public SceneItem {
 public:
-	Rect _bounds;
 	bool _enabled;
 	bool _insideArea;
 	CursorType _cursorNum;
@@ -54,9 +53,12 @@ public:
 	SceneArea();
 	void setDetails(const Rect &bounds, CursorType cursor);
 
+	virtual Common::String getClassName() { return "SceneArea"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void process(Event &event);
+	virtual bool startAction(CursorType action, Event &event) { return false; }
+	virtual void doAction(int action) {}
 };
 
 class SceneExit: public SceneArea {
