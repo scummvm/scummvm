@@ -417,6 +417,7 @@ void Lua_V2::PutActorInSet() {
 	} else {
 		if (!actor->isInSet(set)) {
 			actor->putInSet(set);
+			actor->playLastWearChore();
 		}
 		lua_pushnumber(1.0);
 	}

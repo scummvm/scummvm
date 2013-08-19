@@ -1028,7 +1028,9 @@ bool Actor::playLastWearChore() {
 }
 
 void Actor::setLastWearChore(int chore, Costume *cost) {
-	_lastWearChore = Chore(cost, chore);
+	if (! _costumeStack.empty() && cost == _costumeStack.back()) {
+		_lastWearChore = Chore(cost, chore);
+	}
 }
 
 void Actor::turn(int dir) {
