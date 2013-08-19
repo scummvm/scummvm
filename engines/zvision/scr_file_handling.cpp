@@ -140,7 +140,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	return true;
 }
 
-void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<Common::SharedPtr<ResultAction> > &actionList) const {
+void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -156,13 +156,13 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 
 		// Parse for the action type
 		if (line.matchString("*:add*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionAdd(line)));
+			actionList.push_back(new ActionAdd(line));
 		} else if (line.matchString("*:animplay*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionPlayAnimation(line)));
+			actionList.push_back(new ActionPlayAnimation(line));
 		} else if (line.matchString("*:animpreload*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionPreloadAnimation(line)));
+			actionList.push_back(new ActionPreloadAnimation(line));
 		} else if (line.matchString("*:animunload*", true)) {
-			//actionList.push_back(Common::SharedPtr<ResultAction>(new ActionUnloadAnimation(line)));
+			//actionList.push_back(new ActionUnloadAnimation(line));
 		} else if (line.matchString("*:attenuate*", true)) {
 			
 
@@ -170,7 +170,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:change_location*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionChangeLocation(line)));
+			actionList.push_back(new ActionChangeLocation(line));
 		} else if (line.matchString("*:crossfade*", true)) {
 			
 
@@ -181,7 +181,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:disable_control*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionDisableControl(line)));
+			actionList.push_back(new ActionDisableControl(line));
 		} else if (line.matchString("*:disable_venus*", true)) {
 			
 
@@ -195,7 +195,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:enable_control*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionEnableControl(line)));
+			actionList.push_back(new ActionEnableControl(line));
 		} else if (line.matchString("*:flush_mouse_events*", true)) {
 			
 
@@ -209,7 +209,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:music*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionMusic(line)));
+			actionList.push_back(new ActionMusic(line));
 		} else if (line.matchString("*:pan_track*", true)) {
 			
 
@@ -220,7 +220,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:quit*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionQuit()));
+			actionList.push_back(new ActionQuit());
 		} else if (line.matchString("*:random*", true)) {
 			
 
@@ -240,7 +240,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:set_screen*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionSetScreen(line)));
+			actionList.push_back(new ActionSetScreen(line));
 		} else if (line.matchString("*:set_venus*", true)) {
 			
 
@@ -248,7 +248,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 			
 
 		} else if (line.matchString("*:streamvideo*", true)) {
-			actionList.push_back(Common::SharedPtr<ResultAction>(new ActionStreamVideo(line)));
+			actionList.push_back(new ActionStreamVideo(line));
 		} else if (line.matchString("*:syncsound*", true)) {
 			
 

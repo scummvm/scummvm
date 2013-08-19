@@ -64,7 +64,7 @@ struct Puzzle {
 	uint32 key;
 	Common::List<Common::List <CriteriaEntry> > criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
-	Common::List<Common::SharedPtr<ResultAction> > resultActions;
+	Common::List<ResultAction *> resultActions;
 	uint flags;
 
 	// Used by the ScriptManager to allow unique-ification of _referenceTable

@@ -167,7 +167,7 @@ void ScriptManager::checkPuzzleCriteria() {
 			debug("Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
 			bool shouldContinue = true;
-			for (Common::List<Common::SharedPtr<ResultAction> >::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); resultIter++) {
+			for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); resultIter++) {
 				shouldContinue = shouldContinue && (*resultIter)->execute(_engine);
 			}
 
