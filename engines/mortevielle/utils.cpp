@@ -1334,7 +1334,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 
 	_mouse.hideMouse();
 	Common::String dialogStr = getString(rep + kDialogStringIndex);
-	_text.displayStr(dialogStr, 230, 4, 65, 24, 5);
+	_text.displayStr(dialogStr, 230, 4, 65, 26, 5);
 	_dialogManager.drawF3F8();
 
 	key = 0;
