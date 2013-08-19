@@ -83,6 +83,10 @@ public:
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 	bool hasFeature(MetaEngineFeature f) const;
+
+	int getMaximumSaveSlot() const { return 99; }
+	SaveStateList listSaves(const char *target) const;
+	void removeSaveState(const char *target, int slot) const;
 };
 
 bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -92,7 +96,63 @@ bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 }
 
 bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave);
+}
+
+SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern = target;
+	pattern.toUppercase();
+	pattern += "-??.SAV";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	char slot[3];
+	int slotNum = 0;
+	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+		slot[0] = filename->c_str()[filename->size() - 6];
+		slot[1] = filename->c_str()[filename->size() - 5];
+		slot[2] = '\0';
+		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
+		slotNum = atoi(slot);
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			if (file) {
+				/*int saveVersion = file->readByte();
+
+				if (saveVersion != kSavegameVersion) {
+				warning("Savegame of incompatible version");
+				delete file;
+				continue;
+				}*/
+
+				// Read name
+				file->seek(4); // We skip the "AVAL" signature.
+				uint32 nameSize = file->readUint32LE();
+				if (nameSize >= 255) {
+					delete file;
+					continue;
+				}
+				char *name = new char[nameSize + 1];
+				file->read(name, nameSize);
+				name[nameSize] = 0;
+
+				saveList.push_back(SaveStateDescriptor(slotNum, name));
+				delete[] name;
+				delete file;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 } // End of namespace Avalanche
