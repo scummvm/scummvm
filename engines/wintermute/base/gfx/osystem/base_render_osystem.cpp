@@ -84,7 +84,6 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	delete _renderSurface;
 	_blankSurface->free();
 	delete _blankSurface;
-	TransparentSurface::destroyLookup();
 }
 
 //////////////////////////////////////////////////////////////////////////

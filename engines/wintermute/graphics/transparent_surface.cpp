@@ -140,13 +140,6 @@ void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int 
 }
 #endif
 
-byte *TransparentSurface::_lookup = nullptr;
-
-void TransparentSurface::destroyLookup() {
-	delete[] _lookup;
-	_lookup = nullptr;
-}
-
 TransparentSurface::TransparentSurface() : Surface(), _enableAlphaBlit(true) {}
 
 TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _enableAlphaBlit(true) {
@@ -186,21 +179,8 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void TransparentSurface::generateLookup() {
-	_lookup = new byte[256 * 256];
-	for (int i = 0; i < 256; i++) {
-		for (int j = 0; j < 256; j++) {
-			_lookup[(i << 8) + j] = (i * j) >> 8;
-		}
-	}
-}
-
 void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
-
-	if (!_lookup) {
-		generateLookup();
-	}
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	const int aIndex = 3;
@@ -255,13 +235,9 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 
 				default: // alpha blending
 					outa = 255;
-
-					outb = _lookup[(((oPix >> bShiftTarget) & 0xff)) + ((255 - a) << 8)];
-					outg = _lookup[(((oPix >> gShiftTarget) & 0xff)) + ((255 - a) << 8)];
-					outr = _lookup[(((oPix >> rShiftTarget) & 0xff)) + ((255 - a) << 8)];
-					outb += _lookup[b + (a << 8)];
-					outg += _lookup[g + (a << 8)];
-					outr += _lookup[r + (a << 8)];
+					outb = ((b * a) + ((oPix >> bShiftTarget) & 0xff) * (255-a)) >> 8;
+					outg = ((g * a) + ((oPix >> gShiftTarget) & 0xff) * (255-a)) >> 8;
+					outr = ((r * a) + ((oPix >> rShiftTarget) & 0xff) * (255-a)) >> 8;
 
 					out[aIndex] = outa;
 					out[bIndex] = outb;
