@@ -34,6 +34,9 @@
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/savefile.h"
+
+
 
 #include "engines/util.h"
 
@@ -132,15 +135,252 @@ const char *AvalancheEngine::getCopyrightString() const {
 
 
 
-bool AvalancheEngine::canSaveGameStateCurrently() {
+void AvalancheEngine::synchronize(Common::Serializer &sz) {
+	Common::String signature;
+	if (sz.isSaving()) {
+		signature = "AVAL";
+		for (uint16 i = 0; i < 4; i++) {
+			char actChr = signature[i];
+			sz.syncAsByte(actChr);
+		}
+	} else {
+		if (!signature.empty())
+			signature.clear();
+		for (uint16 i = 0; i < 4; i++) {
+			char actChr;
+			sz.syncAsByte(actChr);
+			signature += actChr;
+		}
+		if (signature != "AVAL")
+			error("Corrupted save file!");
+	}
+
+	//blockwrite(f, dna, sizeof(dna));
+	sz.syncAsByte(_gyro->dna.rw);
+	sz.syncAsByte(_gyro->dna.carrying);
+	for (byte i = 0; i < numobjs; i++)
+		sz.syncAsByte(_gyro->dna.obj[i]);
+	sz.syncAsSint16LE(_gyro->dna.score);
+	sz.syncAsSint32LE(_gyro->dna.pence);
+	sz.syncAsByte(_gyro->dna.room);
+	sz.syncAsByte(_gyro->dna.wearing);
+	sz.syncAsByte(_gyro->dna.swore);
+	sz.syncAsByte(_gyro->dna.saves);
+	sz.syncBytes(_gyro->dna.rooms, 100);
+	sz.syncAsByte(_gyro->dna.alcohol);
+	sz.syncAsByte(_gyro->dna.playednim);
+	sz.syncAsByte(_gyro->dna.wonnim);
+	sz.syncAsByte(_gyro->dna.winestate);
+	sz.syncAsByte(_gyro->dna.cwytalot_gone);
+	sz.syncAsByte(_gyro->dna.pass_num);
+	sz.syncAsByte(_gyro->dna.ayles_is_awake);
+	sz.syncAsByte(_gyro->dna.drawbridge_open);
+	sz.syncAsByte(_gyro->dna.avaricius_talk);
+	sz.syncAsByte(_gyro->dna.bought_onion);
+	sz.syncAsByte(_gyro->dna.rotten_onion);
+	sz.syncAsByte(_gyro->dna.onion_in_vinegar);
+	sz.syncAsByte(_gyro->dna.given2spludwick);
+	sz.syncAsByte(_gyro->dna.brummie_stairs);
+	sz.syncAsByte(_gyro->dna.cardiff_things);
+	sz.syncAsByte(_gyro->dna.cwytalot_in_herts);
+	sz.syncAsByte(_gyro->dna.avvy_is_awake);
+	sz.syncAsByte(_gyro->dna.avvy_in_bed);
+	sz.syncAsByte(_gyro->dna.user_moves_avvy);
+	sz.syncAsByte(_gyro->dna.dogfoodpos);
+	sz.syncAsByte(_gyro->dna.givenbadgetoiby);
+	sz.syncAsByte(_gyro->dna.friar_will_tie_you_up);
+	sz.syncAsByte(_gyro->dna.tied_up);
+	sz.syncAsByte(_gyro->dna.box_contents);
+	sz.syncAsByte(_gyro->dna.talked_to_crapulus);
+	sz.syncAsByte(_gyro->dna.jacques_awake);
+	sz.syncAsByte(_gyro->dna.ringing_bells);
+	sz.syncAsByte(_gyro->dna.standing_on_dais);
+	sz.syncAsByte(_gyro->dna.taken_pen);
+	sz.syncAsByte(_gyro->dna.arrow_triggered);
+	sz.syncAsByte(_gyro->dna.arrow_in_the_door);
+
+	if (sz.isSaving()) {
+		uint16 like2drinkSize = _gyro->dna.like2drink.size();
+		sz.syncAsUint16LE(like2drinkSize);
+		for (uint16 i = 0; i < like2drinkSize; i++) {
+			char actChr = _gyro->dna.like2drink[i];
+			sz.syncAsByte(actChr);
+		}
+
+		uint16 favourite_songSize = _gyro->dna.favourite_song.size();
+		sz.syncAsUint16LE(favourite_songSize);
+		for (uint16 i = 0; i < favourite_songSize; i++) {
+			char actChr = _gyro->dna.favourite_song[i];
+			sz.syncAsByte(actChr);
+		}
+
+		uint16 worst_place_on_earthSize = _gyro->dna.worst_place_on_earth.size();
+		sz.syncAsUint16LE(worst_place_on_earthSize);
+		for (uint16 i = 0; i < worst_place_on_earthSize; i++) {
+			char actChr = _gyro->dna.worst_place_on_earth[i];
+			sz.syncAsByte(actChr);
+		}
+
+		uint16 spare_eveningSize = _gyro->dna.spare_evening.size();
+		sz.syncAsUint16LE(spare_eveningSize);
+		for (uint16 i = 0; i < spare_eveningSize; i++) {
+			char actChr = _gyro->dna.spare_evening[i];
+			sz.syncAsByte(actChr);
+		}
+	} else {
+		if (!_gyro->dna.like2drink.empty())
+			_gyro->dna.like2drink.clear();
+		uint16 like2drinkSize;
+		sz.syncAsUint16LE(like2drinkSize);
+		for (uint16 i = 0; i < like2drinkSize; i++) {
+			char actChr;
+			sz.syncAsByte(actChr);
+			_gyro->dna.like2drink += actChr;
+		}
+
+		if (!_gyro->dna.favourite_song.empty())
+			_gyro->dna.favourite_song.clear();
+		uint16 favourite_songSize;
+		sz.syncAsUint16LE(favourite_songSize);
+		for (uint16 i = 0; i < favourite_songSize; i++) {
+			char actChr;
+			sz.syncAsByte(actChr);
+			_gyro->dna.favourite_song += actChr;
+		}
+
+		if (!_gyro->dna.worst_place_on_earth.empty())
+			_gyro->dna.worst_place_on_earth.clear();
+		uint16 worst_place_on_earthSize;
+		sz.syncAsUint16LE(worst_place_on_earthSize);
+		for (uint16 i = 0; i < worst_place_on_earthSize; i++) {
+			char actChr;
+			sz.syncAsByte(actChr);
+			_gyro->dna.worst_place_on_earth += actChr;
+		}
+
+		if (!_gyro->dna.spare_evening.empty())
+			_gyro->dna.spare_evening.clear();
+		uint16 spare_eveningSize;
+		sz.syncAsUint16LE(spare_eveningSize);
+		for (uint16 i = 0; i < spare_eveningSize; i++) {
+			char actChr;
+			sz.syncAsByte(actChr);
+			_gyro->dna.spare_evening += actChr;
+		}
+	}
+	
+	sz.syncAsSint32LE(_gyro->dna.total_time);
+	sz.syncAsByte(_gyro->dna.jumpstatus);
+	sz.syncAsByte(_gyro->dna.mushroom_growing);
+	sz.syncAsByte(_gyro->dna.spludwicks_here);
+	sz.syncAsByte(_gyro->dna.last_room);
+	sz.syncAsByte(_gyro->dna.last_room_not_map);
+	sz.syncAsByte(_gyro->dna.crapulus_will_tell);
+	sz.syncAsByte(_gyro->dna.enter_catacombs_from_lusties_room);
+	sz.syncAsByte(_gyro->dna.teetotal);
+	sz.syncAsByte(_gyro->dna.malagauche);
+	sz.syncAsByte(_gyro->dna.drinking);
+	sz.syncAsByte(_gyro->dna.entered_lusties_room_as_monk);
+	sz.syncAsByte(_gyro->dna.cat_x);
+	sz.syncAsByte(_gyro->dna.cat_y);
+	sz.syncAsByte(_gyro->dna.avvys_in_the_cupboard);
+	sz.syncAsByte(_gyro->dna.geida_follows);
+	sz.syncAsByte(_gyro->dna.geida_spin);
+	sz.syncAsByte(_gyro->dna.geida_time);
+	sz.syncAsByte(_gyro->dna.nextbell);
+	sz.syncAsByte(_gyro->dna.geida_given_potion);
+	sz.syncAsByte(_gyro->dna.lustie_is_asleep);
+	sz.syncAsByte(_gyro->dna.flip_to_where);
+	sz.syncAsByte(_gyro->dna.flip_to_ped);
+	sz.syncAsByte(_gyro->dna.been_tied_up);
+	sz.syncAsByte(_gyro->dna.sitting_in_pub);
+	sz.syncAsByte(_gyro->dna.spurge_talk);
+	sz.syncAsByte(_gyro->dna.met_avaroid);
+	sz.syncAsByte(_gyro->dna.taken_mushroom);
+	sz.syncAsByte(_gyro->dna.given_pen_to_ayles);
+	sz.syncAsByte(_gyro->dna.asked_dogfood_about_nim);
+
+
+	//for (byte groi = 0; groi < numtr; groi ++) {
+	//	if (tr[groi].quick) {
+	//		blockwrite(f, groi, 1);
+	//		tr[groi].savedata(f);
+	//	}
+	//}
+	for (byte i = 0; i < _trip->numtr; i++)
+		if (_trip->tr[i].quick) {
+			sz.syncAsByte(_trip->tr[i].whichsprite);
+			sz.syncAsByte(_trip->tr[i].face);
+			sz.syncAsByte(_trip->tr[i].step);
+			sz.syncAsSint16LE(_trip->tr[i].x);
+			sz.syncAsSint16LE(_trip->tr[i].y);
+			sz.syncAsByte(_trip->tr[i].ix);
+			sz.syncAsByte(_trip->tr[i].iy);
+			sz.syncAsByte(_trip->tr[i].visible);
+			sz.syncAsByte(_trip->tr[i].homing);
+			sz.syncAsByte(_trip->tr[i].check_me);
+			sz.syncAsByte(_trip->tr[i].count);
+			sz.syncAsByte(_trip->tr[i]._info.xw);
+			sz.syncAsByte(_trip->tr[i].xs);
+			sz.syncAsByte(_trip->tr[i].ys);
+			sz.syncAsByte(_trip->tr[i].totalnum);
+			sz.syncAsSint16LE(_trip->tr[i].hx);
+			sz.syncAsSint16LE(_trip->tr[i].hy);
+			sz.syncAsByte(_trip->tr[i].call_eachstep);
+			sz.syncAsByte(_trip->tr[i].eachstep);
+			sz.syncAsByte(_trip->tr[i].vanishifstill);
+		}
+
+	//groi = 177;
+	//blockwrite(f, groi, 1);
+
+	//blockwrite(f, times, sizeof(times)); // Timeout.times: Timers.
+	for (byte i = 0; i < 7; i++) {
+		sz.syncAsSint32LE(_timeout->times[i].time_left);
+		sz.syncAsByte(_timeout->times[i].then_where);
+		sz.syncAsByte(_timeout->times[i].what_for);
+	}
+
+	//blockwrite(f, seq, sizeof(seq)); // Sequencer information.
+	sz.syncBytes(_sequence->seq, _sequence->seq_length);
+}
+
+bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
 	return true;
 }
 
 Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {
-	return Common::kNoError;
+	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 }
 
-bool AvalancheEngine::canLoadGameStateCurrently() {
+Common::String AvalancheEngine::generateSaveFileName(Common::String name, const int slot) {
+	name.toUppercase();
+	return Common::String::format("%s-%d.ASG", name.c_str(), slot);
+}
+
+bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
+	Common::String fileName = generateSaveFileName(desc, slot);
+	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(fileName);
+
+	if (!f) {
+		warning("Can't create file '%s', game not saved.", fileName.c_str());
+		return false;
+	}
+
+	Common::Serializer sz(NULL, f);
+
+	synchronize(sz);
+	
+	f->finalize();
+
+	delete f;
+
+	return true;
+}
+
+
+
+bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
 	return true;
 }
 
