@@ -51,10 +51,13 @@
 #include "avalanche/dropdown2.h"
 #include "avalanche/closing2.h"
 
+#include "common/serializer.h"
+
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
 #include "graphics/cursorman.h"
+
 
 namespace Common {
 class RandomSource;
@@ -113,14 +116,18 @@ public:
 
 
 
+	void synchronize(Common::Serializer &sz);
 	virtual bool canSaveGameStateCurrently();
 	Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::String generateSaveFileName(Common::String name, const int slot);
+	bool saveGame(const int16 slot, const Common::String &desc);
+
 	virtual bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot, const Common::String &desc);
 
 
 	void updateEvents();
-	bool getEvent(Common::Event &event); // A warpper around _eventMan->pollEvent(), se we can use it in Scrolls::normscroll() for example.
+	bool getEvent(Common::Event &event); // A wrapper around _eventMan->pollEvent(), so we can use it in Scrolls::normscroll() for example.
 	Common::Point getMousePos();
 
 protected:
