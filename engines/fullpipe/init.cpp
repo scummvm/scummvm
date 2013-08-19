@@ -139,18 +139,6 @@ void FullpipeEngine::setLevelStates() {
 	}
 }
 
-void FullpipeEngine::setSwallowedEggsState() {
-	CGameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
-
-	_swallowedEgg1 = v->getSubVarByName(sO_Egg1);
-	_swallowedEgg2 = v->getSubVarByName(sO_Egg2);
-	_swallowedEgg3 = v->getSubVarByName(sO_Egg3);
-
-	_swallowedEgg1->_value.intValue = 0;
-	_swallowedEgg2->_value.intValue = 0;
-	_swallowedEgg3->_value.intValue = 0;
-}
-
 void FullpipeEngine::addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY) {
 	cursorInfo->pictureId = pictureId;
 	cursorInfo->picture = inv->getPictureObjectById(pictureId, 0)->_picture;

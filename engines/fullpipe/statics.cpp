@@ -393,7 +393,7 @@ Statics *StaticANIObject::addReverseStatics(Statics *st) {
 }
 
 void StaticANIObject::draw() {
-	if (_flags & 4 == 0)
+	if ((_flags & 4) == 0)
 		return;
 
 	Common::Point point;

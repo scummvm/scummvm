@@ -44,7 +44,7 @@ bool CInventory::load(MfcArchive &file) {
 		t->flags = file.readUint32LE();
 		t->field_C = 0;
 		t->field_A = -536;
-		_itemsPool.push_back(*t);
+		_itemsPool.push_back(t);
 	}
 
 	return true;
@@ -55,7 +55,7 @@ int CInventory::getInventoryPoolItemIndexById(int itemId) {
 		return -1;
 
 	for (uint i = 0; i < _itemsPool.size(); i++) {
-		if (_itemsPool[i].id == itemId)
+		if (_itemsPool[i]->id == itemId)
 			return i;
 	}
 
@@ -68,7 +68,7 @@ bool CInventory::setItemFlags(int itemId, int flags) {
 	if (idx < 0)
 		return false;
 	else
-		_itemsPool[idx].flags = flags;
+		_itemsPool[idx]->flags = flags;
 
 	return true;
 }
@@ -90,7 +90,7 @@ bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartia
 		InventoryItem *t = new InventoryItem();
 		t->itemId = file.readUint16LE();
 		t->count = file.readUint16LE();
-		_inventoryItems.push_back(*t);
+		_inventoryItems.push_back(t);
 	}
 
 	return true;

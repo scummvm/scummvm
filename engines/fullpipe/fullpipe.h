@@ -182,10 +182,6 @@ public:
 	void initCursors();
 	void addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY);
 
-	CGameVar *_swallowedEgg1;
-	CGameVar *_swallowedEgg2;
-	CGameVar *_swallowedEgg3;
-
 	int32 _mapTable[200];
 
 	Scene *_inventoryScene;

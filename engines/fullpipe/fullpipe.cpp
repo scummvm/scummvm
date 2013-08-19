@@ -111,6 +111,29 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_cursorId = 0;
 
+	_keyState = Common::KEYCODE_INVALID;
+	_buttonState = 0;
+
+	_gameLoader = 0;
+	_gameProject = 0;
+
+	_updateFlag = true;
+	_flgCanOpenMap = true;
+
+	_sceneWidth = 1;
+	_sceneHeight = 1;
+
+	for (int i = 0; i < 11; i++)
+		_currSoundList1[i] = 0;
+	
+	for (int i = 0; i < 200; i++)
+		_mapTable[i] = 0;
+
+	_inventoryScene = 0;
+	_inventory = 0;
+
+	_isSaveAllowed = true;
+
 	g_fullpipe = this;
 	g_vars = new Vars;
 }
@@ -241,6 +264,7 @@ void FullpipeEngine::updateEvents() {
 				ex->handle();
 				break;
 			}
+			break;
 		case Common::EVENT_KEYUP:
 			if (!_inputArFlag) {
 				ex = new ExCommand(0, 17, 37, 0, 0, 0, 1, 0, 0, 0);
@@ -326,8 +350,7 @@ void FullpipeEngine::updateScreen() {
 				_modalObject->saveload();
 				CBaseModalObject *tmp = _modalObject->_parentObj;
 
-				if (_modalObject)
-					delete _modalObject;
+				delete _modalObject;
 
 				_modalObject = tmp;
 			}

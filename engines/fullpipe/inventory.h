@@ -41,12 +41,11 @@ struct InventoryPoolItem {
 	int flags;
 };
 
-typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
+typedef Common::Array<InventoryPoolItem *> InventoryPoolItems;
 
 class CInventory : public CObject {
  protected:
 	int16 _sceneId;
-	int16 _field_6;
 	InventoryPoolItems _itemsPool;
 
  public:
@@ -62,7 +61,7 @@ struct InventoryItem {
 	int16 count;
 };
 
-typedef Common::Array<InventoryItem> InventoryItems;
+typedef Common::Array<InventoryItem *> InventoryItems;
 
 class PictureObject;
 

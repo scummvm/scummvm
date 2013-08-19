@@ -370,7 +370,7 @@ bool Sc2::load(MfcArchive &file) {
 	debug(4, "_entranceData: %d", _entranceDataCount);
 
 	if (_entranceDataCount > 0) {
-		_entranceData = (EntranceInfo **)malloc(_defPicAniInfosCount * sizeof(EntranceInfo *));
+		_entranceData = (EntranceInfo **)malloc(_entranceDataCount * sizeof(EntranceInfo *));
 
 		for (int i = 0; i < _entranceDataCount; i++) {
 			_entranceData[i] = new EntranceInfo();

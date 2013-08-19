@@ -31,6 +31,10 @@ class Vars {
  public:
 	Vars();
 
+	CGameVar *swallowedEgg1;
+	CGameVar *swallowedEgg2;
+	CGameVar *swallowedEgg3;
+
 	StaticANIObject *sceneIntro_aniin1man;
 	bool sceneIntro_needSleep;
 	bool sceneIntro_needGetup;
@@ -38,7 +42,6 @@ class Vars {
 	bool sceneIntro_playing;
 	bool sceneIntro_needBlackout;
 
-	int scene01_unused;
 	PictureObject *scene01_picSc01Osk;
 	PictureObject *scene01_picSc01Osk2;
 };

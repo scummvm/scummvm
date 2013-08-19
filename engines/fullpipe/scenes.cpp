@@ -60,6 +60,13 @@ Vars::Vars() {
 	sceneIntro_skipIntro = true;
 	sceneIntro_playing = false;
 	sceneIntro_needBlackout = false;
+
+	swallowedEgg1 = 0;
+	swallowedEgg2 = 0;
+	swallowedEgg3 = 0;
+
+	scene01_picSc01Osk = 0;
+	scene01_picSc01Osk2 = 0;
 }
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
@@ -1141,6 +1148,18 @@ int sceneIntro_updateCursor() {
 	return 0;
 }
 
+void FullpipeEngine::setSwallowedEggsState() {
+	CGameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
+
+	g_vars->swallowedEgg1 = v->getSubVarByName(sO_Egg1);
+	g_vars->swallowedEgg2 = v->getSubVarByName(sO_Egg2);
+	g_vars->swallowedEgg3 = v->getSubVarByName(sO_Egg3);
+
+	g_vars->swallowedEgg1->_value.intValue = 0;
+	g_vars->swallowedEgg2->_value.intValue = 0;
+	g_vars->swallowedEgg3->_value.intValue = 0;
+}
+
 void sceneIntro_initScene(Scene *sc) {
 	g_fullpipe->_gameLoader->loadScene(SC_INTRO2);
 
@@ -1169,8 +1188,6 @@ void scene01_fixEntrance() {
 }
 
 void scene01_initScene(Scene *sc, int entrance) {
-	g_vars->scene01_unused = 0;
-
 	g_vars->scene01_picSc01Osk = sc->getPictureObjectById(PIC_SC1_OSK, 0);
 	g_vars->scene01_picSc01Osk->_flags &= 0xFFFB;
 

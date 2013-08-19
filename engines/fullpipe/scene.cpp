@@ -507,7 +507,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 				bgNumX++;
 
 				if (bgNumX >= _bigPictureArray1Count) {
-					if (!((PictureObject *)_picObjList[0])->_flags & 0x2)
+					if (!(((PictureObject *)_picObjList[0])->_flags & 0x2))
 						break;
 					bgNumX = 0;
 				}

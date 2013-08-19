@@ -139,6 +139,9 @@ PictureObject::PictureObject() {
 	_ox = 0;
 	_oy = 0;
 	_picture = 0;
+	_ox2 = 0;
+	_oy2 = 0;
+	_pictureObject2List = 0;
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
@@ -237,7 +240,6 @@ GameObject::GameObject() {
 	_oy = 0;
 	_priority = 0;
 	_field_20 = 0;
-	_field_6 = 0;
 	_field_8 = 0;
 	_objectName = 0;
 }
@@ -255,6 +257,10 @@ GameObject::GameObject(GameObject *src) {
 	_priority = src->_priority;
 	_field_20 = 1;
 	_field_8 = src->_field_8;
+}
+
+GameObject::~GameObject() {
+	free(_objectName);
 }
 
 bool GameObject::load(MfcArchive &file) {
@@ -309,6 +315,9 @@ Picture::Picture() {
 	_alpha = -1;
 	_paletteData = 0;
 	_convertedBitmap = 0;
+	_memoryObject2 = 0;
+	_width = 0;
+	_height = 0;
 }
 
 Picture::~Picture() {

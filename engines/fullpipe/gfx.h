@@ -23,8 +23,6 @@
 #ifndef FULLPIPE_GFX_H
 #define FULLPIPE_GFX_H
 
-class Common::ReadStream;
-
 namespace Fullpipe {
 
 class DynamicPhase;
@@ -121,7 +119,6 @@ class BigPicture : public Picture {
 class GameObject : public CObject {
   public:
 	int16 _okeyCode;
-	int16 _field_6;
 	int _field_8;
 	int16 _flags;
 	int16 _id;
@@ -134,6 +131,7 @@ class GameObject : public CObject {
   public:
 	GameObject();
 	GameObject(GameObject *src);
+	~GameObject();
 
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);

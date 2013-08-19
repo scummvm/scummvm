@@ -39,7 +39,6 @@ class CInteraction : public CObject {
 	int16 _objectId3;
 	int16 _staticsId1;
 	int16 _staticsId2;
-	int16 _field_E;
 	int _objectState1;
 	int _objectState2;
 	int _xOffs;

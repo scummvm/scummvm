@@ -300,11 +300,12 @@ BehaviorEntryInfo::BehaviorEntryInfo(CGameVar *subvar, Scene *sc, int *delay) {
 	if (vart)
 		_delay = vart->_value.intValue;
 
+	*delay = 0;
 	vart = subvar->getSubVarByName("dwPercent");
-	if (vart)
+	if (vart) {
 		_percent = 0x7FFF * vart->_value.intValue / 1000;
-
-	*delay = vart->_value.intValue;
+		*delay = vart->_value.intValue;
+	}
 
 	vart = subvar->getSubVarByName("dwFlags");
 	if (vart && vart->_varType == 2 && strstr(vart->_value.stringValue, "QDESC_AUTOSTART"))
