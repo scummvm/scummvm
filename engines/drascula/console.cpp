@@ -41,7 +41,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 
 	int roomNum = atoi(argv[1]);
 
-	_vm->loadedDifferentChapter = 0;
+	_vm->_loadedDifferentChapter = false;
 	_vm->enterRoom(roomNum);
 	_vm->selectVerb(kVerbNone);
 	_vm->clearRoom();

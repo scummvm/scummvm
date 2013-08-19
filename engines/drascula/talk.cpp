@@ -381,11 +381,11 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	int face;
 
 	if (currentChapter == 6) {
-		if (flags[0] == 0 && roomNumber == 102) {
+		if (flags[0] == 0 && _roomNumber == 102) {
 			talk_pen(said, filename, 0);
 			return;
 		}
-		if (flags[0] == 0 && roomNumber == 58) {
+		if (flags[0] == 0 && _roomNumber == 58) {
 			talk_pen(said, filename, 1);
 			return;
 		}
@@ -397,7 +397,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	}
 
 	if (currentChapter == 4) {
-		if (roomNumber == 24 || flags[29] == 0) {
+		if (_roomNumber == 24 || flags[29] == 0) {
 			color_abc(kColorYellow);
 		}
 	} else {
@@ -413,59 +413,59 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
-			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, talkHeight - 1, screenSurface, drawSurface3);
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, TALK_HEIGHT - 1, screenSurface, drawSurface3);
 		else
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[MIN(201, curY + curHeight)]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
+					   (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
 						   screenSurface, drawSurface3);
 
 		moveCharacters();
 
 		if (currentChapter == 2) {
 			if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
-				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);
+				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, TALK_HEIGHT - 1, drawSurface3, screenSurface);
 		} else {
 			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[MIN(201, curY + curHeight)]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
+					   (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
 						   drawSurface3, screenSurface);
 		}
 
 		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight,
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, TALK_WIDTH, TALK_HEIGHT,
 						extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk, curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-						curY, talkWidth, talkHeight, factor_red[MIN(201, curY + curHeight)],
+						curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
 						extraSurface, screenSurface);
 
 			updateRefresh();
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT,
 					extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-					curY, talkWidth, talkHeight, factor_red[MIN(201, curY + curHeight)], extraSurface, screenSurface);
+					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
 						talkOffset + curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-						curY, talkWidth, talkHeight, factor_red[MIN(201, curY + curHeight)],
+						curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
 						frontSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight,
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, TALK_WIDTH, TALK_HEIGHT,
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
 						talkOffset + curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-						curY, talkWidth,talkHeight, factor_red[MIN(201, curY + curHeight)],
+						curY, TALK_WIDTH,TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
 						frontSurface, screenSurface);
 			updateRefresh();
 		}
@@ -827,47 +827,47 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
-			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, talkHeight - 1, screenSurface, drawSurface3);
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, TALK_HEIGHT - 1, screenSurface, drawSurface3);
 		else
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
-				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), screenSurface, drawSurface3);
+				(int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[curY + curHeight]), screenSurface, drawSurface3);
 		moveCharacters();
 		if (currentChapter == 2) {
 			if (curHeight != 56)
-				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);
+				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, TALK_HEIGHT - 1, drawSurface3, screenSurface);
 		} else
 			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
-				(int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]), drawSurface3, screenSurface);
+				(int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[curY + curHeight]), drawSurface3, screenSurface);
 
 		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight, extraSurface, screenSurface);
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, TALK_WIDTH, TALK_HEIGHT, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(curX + (8.0f / 100) * factor_red[curY + curHeight]),
-							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
+							curY, TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, extraSurface, screenSurface);
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(curX + (12.0f / 100) * factor_red[curY + curHeight]),
-							curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
+							curY, TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight, frontSurface, screenSurface);
+				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
 						(int)(talkOffset + curX + (12.0f / 100) * factor_red[curY + curHeight]), curY,
-						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
+						TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
-				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, talkWidth, talkHeight, frontSurface, screenSurface);
+				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, TALK_WIDTH, TALK_HEIGHT, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
 						(int)(talkOffset + curX + (8.0f / 100) * factor_red[curY + curHeight]), curY,
-						talkWidth, talkHeight, factor_red[curY + curHeight], frontSurface, screenSurface);
+						TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		}
 

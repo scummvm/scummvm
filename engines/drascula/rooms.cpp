@@ -1087,7 +1087,7 @@ bool DrasculaEngine::room_102(int fl) {
 void DrasculaEngine::updateRefresh() {
 	// Check generic updaters
 	for (int i = 0; i < _roomUpdatesSize; i++) {
-		if (_roomUpdates[i].roomNum == roomNumber) {
+		if (_roomUpdates[i].roomNum == _roomNumber) {
 			if (_roomUpdates[i].flag < 0 ||
 				flags[_roomUpdates[i].flag] == _roomUpdates[i].flagValue) {
 				if (_roomUpdates[i].type == 0) {
@@ -1107,25 +1107,25 @@ void DrasculaEngine::updateRefresh() {
 
 	// Call room-specific updater
 	char rm[20];
-	sprintf(rm, "update_%d", roomNumber);
+	sprintf(rm, "update_%d", _roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomUpdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomUpdaters[i]->desc)) {
-			debug(8, "Calling room updater %d", roomNumber);
+			debug(8, "Calling room updater %d", _roomNumber);
 			(this->*(_roomHandlers->roomUpdaters[i]->proc))();
 			break;
 		}
 	}
 
-	if (roomNumber == 10)
+	if (_roomNumber == 10)
 		showMap();
-	else if (roomNumber == 45)
+	else if (_roomNumber == 45)
 		showMap();
 }
 
 void DrasculaEngine::updateRefresh_pre() {
 	// Check generic preupdaters
 	for (int i = 0; i < _roomPreUpdatesSize; i++) {
-		if (_roomPreUpdates[i].roomNum == roomNumber) {
+		if (_roomPreUpdates[i].roomNum == _roomNumber) {
 			if (_roomPreUpdates[i].flag < 0 ||
 				flags[_roomPreUpdates[i].flag] == _roomPreUpdates[i].flagValue) {
 				if (_roomPreUpdates[i].type == 0) {
@@ -1145,16 +1145,16 @@ void DrasculaEngine::updateRefresh_pre() {
 
 	// Call room-specific preupdater
 	char rm[20];
-	sprintf(rm, "update_%d_pre", roomNumber);
+	sprintf(rm, "update_%d_pre", _roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomPreupdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomPreupdaters[i]->desc)) {
-			debug(8, "Calling room preupdater %d", roomNumber);
+			debug(8, "Calling room preupdater %d", _roomNumber);
 			(this->*(_roomHandlers->roomPreupdaters[i]->proc))();
 			break;
 		}
 	}
 
-	if (currentChapter == 1 && roomNumber == 16)
+	if (currentChapter == 1 && _roomNumber == 16)
 		placeBJ();
 }
 
@@ -1577,12 +1577,12 @@ bool DrasculaEngine::checkAction(int fl) {
 			hasAnswer = 0;
 		} else if (currentChapter == 2) {
 			// Note: the original check was strcmp(num_room, "18.alg")
-			if (pickedObject == 11 && fl == 50 && flags[22] == 0 && roomNumber != 18)
+			if (pickedObject == 11 && fl == 50 && flags[22] == 0 && _roomNumber != 18)
 				talk(315);
 			else
 				hasAnswer = 0;
 		} else if (currentChapter == 3) {
-			if (roomNumber == 13) {
+			if (_roomNumber == 13) {
 				if (room(13, fl)) {
 					showCursor();
 					return true;
@@ -1590,13 +1590,13 @@ bool DrasculaEngine::checkAction(int fl) {
 			} else
 				hasAnswer = 0;
 		} else if (currentChapter == 4) {
-			if (roomNumber == 28)
+			if (_roomNumber == 28)
 				talk(178);
 			else if (pickedObject == 8 && fl == 50 && flags[18] == 0)
 				talk(481);
 			else if (pickedObject == 12 && fl == 50 && flags[18] == 0)
 				talk(487);
-			else if (roomNumber == 21) {
+			else if (_roomNumber == 21) {
 				if (room(21, fl)) {
 					showCursor();
 					return true;
@@ -1604,7 +1604,7 @@ bool DrasculaEngine::checkAction(int fl) {
 			} else
 				hasAnswer = 0;
 		} else if (currentChapter == 5) {
-			if (roomNumber == 56) {
+			if (_roomNumber == 56) {
 				if (room(56, fl)) {
 					showCursor();
 					return true;
@@ -1616,9 +1616,9 @@ bool DrasculaEngine::checkAction(int fl) {
 				talk(308);
 			else if (pickedObject == kVerbLook && fl == 50 && flags[0] == 0)
 				talk(310);
-			else if (roomNumber == 102)
+			else if (_roomNumber == 102)
 				room(102, fl);
-			else if (roomNumber == 60) {
+			else if (_roomNumber == 60) {
 				if (room(60, fl)) {
 					showCursor();
 					return true;
@@ -1632,7 +1632,7 @@ bool DrasculaEngine::checkAction(int fl) {
 	if (hasAnswer == 0) {
 		hasAnswer = 1;
 
-		room(roomNumber, fl);
+		room(_roomNumber, fl);
 	}
 
 	if (hasAnswer == 0 && (_hasName || _menuScreen))
@@ -1684,7 +1684,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	TextResourceParser p(stream, DisposeAfterUse::YES);
 
-	p.parseInt(roomNumber);
+	p.parseInt(_roomNumber);
 	p.parseInt(roomMusic);
 	p.parseString(roomDisk);
 	p.parseInt(palLevel);
@@ -1778,7 +1778,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	}
 
 	loadPic(roomDisk, drawSurface3);
-	loadPic(roomNumber, bgSurface, HALF_PAL);
+	loadPic(_roomNumber, bgSurface, HALF_PAL);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
@@ -1808,14 +1808,14 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		}
 	}
 
-	if (roomNumber == 24) {
+	if (_roomNumber == 24) {
 		for (l = floorY1 - 1; l > 74; l--) {
 			factor_red[l] = (int)(upperLimit - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
-	if (currentChapter == 5 && roomNumber == 54) {
+	if (currentChapter == 5 && _roomNumber == 54) {
 		for (l = floorY1 - 1; l > 84; l--) {
 			factor_red[l] = (int)(upperLimit - pequegnez);
 			pequegnez = pequegnez + chiquez;
@@ -1853,13 +1853,13 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		isDoor[7] = 0;
 
 	if (currentChapter == 2) {
-		if (roomNumber == 14 && flags[39] == 1)
+		if (_roomNumber == 14 && flags[39] == 1)
 			roomMusic = 16;
-		else if (roomNumber == 15 && flags[39] == 1)
+		else if (_roomNumber == 15 && flags[39] == 1)
 			roomMusic = 16;
-		if (roomNumber == 14 && flags[5] == 1)
+		if (_roomNumber == 14 && flags[5] == 1)
 			roomMusic = 0;
-		else if (roomNumber == 15 && flags[5] == 1)
+		else if (_roomNumber == 15 && flags[5] == 1)
 			roomMusic = 0;
 
 		if (previousMusic != roomMusic && roomMusic != 0)
@@ -1872,21 +1872,21 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	}
 
 	if (currentChapter == 2) {
-		if (roomNumber == 9 || roomNumber == 2 || roomNumber == 14 || roomNumber == 18)
+		if (_roomNumber == 9 || _roomNumber == 2 || _roomNumber == 14 || _roomNumber == 18)
 			savedTime = getTime();
 	}
 	if (currentChapter == 4) {
-		if (roomNumber == 26)
+		if (_roomNumber == 26)
 			savedTime = getTime();
 	}
 
-	if (currentChapter == 4 && roomNumber == 24 && flags[29] == 1)
+	if (currentChapter == 4 && _roomNumber == 24 && flags[29] == 1)
 		animation_7_4();
 
 	if (currentChapter == 5) {
-		if (roomNumber == 45)
+		if (_roomNumber == 45)
 			hare_se_ve = 0;
-		if (roomNumber == 49 && flags[7] == 0) {
+		if (_roomNumber == 49 && flags[7] == 0) {
 			playTalkSequence(4);	// sequence 4, chapter 5
 		}
 	}

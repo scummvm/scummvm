@@ -51,7 +51,7 @@ bool DrasculaEngine::isCursorVisible() {
 
 void DrasculaEngine::selectVerbFromBar() {
 	for (int n = 0; n < 7; n++) {
-		if (mouseX > _verbBarX[n] && mouseX < _verbBarX[n + 1] && n > 0) {
+		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1] && n > 0) {
 			selectVerb(n);
 			return;
 		}
@@ -143,7 +143,7 @@ void DrasculaEngine::clearMenu() {
 	int n, verbActivated = 1;
 
 	for (n = 0; n < 7; n++) {
-		if (mouseX > _verbBarX[n] && mouseX < _verbBarX[n + 1])
+		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1])
 			verbActivated = 0;
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
@@ -165,8 +165,8 @@ void DrasculaEngine::showMap() {
 	_hasName = false;
 
 	for (int l = 0; l < numRoomObjs; l++) {
-		if (mouseX > _objectX1[l] && mouseY > _objectY1[l]
-				&& mouseX < _objectX2[l] && mouseY < _objectY2[l]
+		if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
+				&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l]
 				&& visible[l] == 1) {
 			strcpy(textName, objName[l]);
 			_hasName = true;
