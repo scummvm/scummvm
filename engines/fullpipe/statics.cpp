@@ -201,6 +201,15 @@ void StaticANIObject::clearFlags() {
 	_stepArray.clear();
 }
 
+void StaticANIObject::setFlags40(bool state) {
+	if (state) {
+		_flags |= 0x40;
+	} else {
+		if (_flags & 0x40)
+			_flags ^= 0x40;
+	}
+}
+
 void StaticANIObject::deleteFromGlobalMessageQueue() {
 	while (_messageQueueId) {
 		if (g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId)) {
@@ -1216,8 +1225,8 @@ void Movement::removeFirstPhase() {
 	_updateFlag1 = 0;
 }
 
-bool Movement::gotoNextFrame(int callback1, int callback2) {
-	debug(8, "Movement::gotoNextFrame(%d, %d)", callback1, callback2);
+bool Movement::gotoNextFrame(int callback1, void (*callback2)(int *)) {
+	debug(8, "Movement::gotoNextFrame()");
 
 	if (!callback2) {
 		if (_currMovement) {
@@ -1250,7 +1259,7 @@ bool Movement::gotoNextFrame(int callback1, int callback2) {
 	int oldDynIndex = _currDynamicPhaseIndex;
 
 	if (callback2)
-		; //callback2(&_currDynamicPhaseIndex);
+		callback2(&_currDynamicPhaseIndex);
 	else
 		_currDynamicPhaseIndex++;
 

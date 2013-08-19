@@ -107,6 +107,10 @@ void Sound::updateVolume() {
 	warning("STUB Sound::updateVolume()");
 }
 
+void Sound::setPanAndVolumeByStaticAni() {
+	warning("STUB Sound::setPanAndVolumeByStaticAni()");
+}
+
 void FullpipeEngine::setSceneMusicParameters(CGameVar *var) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
 }

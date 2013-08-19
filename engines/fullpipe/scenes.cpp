@@ -822,10 +822,77 @@ int global_messageHandler1(ExCommand *cmd) {
 	return 0;
 }
 
-int global_messageHandler2(ExCommand *cmd) {
-	warning("STUB: global_messageHandler2()");
+void staticANIObjectCallback(int *arg) {
+	*arg--;
+}
 
-	return 0;
+int global_messageHandler2(ExCommand *cmd) {
+	debug(0, "global_messageHandler2()");
+
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	int res = 0;
+	StaticANIObject *ani;
+
+	switch (cmd->_messageNum) {
+	case 0x44c8:
+		// Unk3_sub_4477A0(&unk3, _parentId, _field_14 != 0);
+		break;
+
+	case 28:
+		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		if (ani)
+			ani->_priority = cmd->_field_14;
+		break;
+
+	case 25:
+		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		if (ani) {
+			if (cmd->_field_14) {
+				ani->setFlags40(true);
+				ani->_callback2 = staticANIObjectCallback;
+			} else {
+				ani->setFlags40(false);
+				ani->_callback2 = 0;
+			}
+		}
+		break;
+
+	case 26:
+		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		if (ani) {
+			Movement *mov = ani->_movement;
+			if (mov)
+				mov->_currDynamicPhase->_field_68 = 0;
+		}
+		break;
+
+	default:
+#if 0
+		// We never put anything into _defMsgArray
+		while (::iterator it = g_fullpipe->_defMsgArray.begin(); it != g_fullpipe->_defMsgArray.end(); ++it)
+			if (((ExCommand *)*it)->_field_24 == _messageNum) {
+				((ExCommand *)*it)->firef34(v13);
+				res = 1;
+			}
+#endif
+
+		//debug_msg(_messageNum);
+
+		if (!g_fullpipe->_soundEnabled || cmd->_messageNum != 33 || g_fullpipe->_currSoundListCount <= 0)
+			return res;
+
+		for (int snd = 0; snd < g_fullpipe->_currSoundListCount; snd++) {
+			SoundList *s = g_fullpipe->_currSoundList1[snd];
+		    int ms = s->getCount();
+			for (int i = 0; i < ms; i++) {
+				s->getSoundByIndex(i)->setPanAndVolumeByStaticAni();
+			}
+		}
+	}
+
+	return res;
 }
 
 int global_messageHandler3(ExCommand *cmd) {

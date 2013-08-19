@@ -38,6 +38,8 @@ class Sound : public MemoryObject {
 	Sound();
 	bool load(MfcArchive &file, NGIArchive *archive);
 	void updateVolume();
+
+	void setPanAndVolumeByStaticAni();
 };
 
 class SoundList : public CObject {

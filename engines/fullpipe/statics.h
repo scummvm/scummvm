@@ -101,8 +101,7 @@ class Statics : public DynamicPhase {
 class StaticANIObject;
 
 class Movement : public GameObject {
-	friend class StaticANIObject;
-
+  public:
 	int _field_24;
 	int _field_28;
 	int _lastFrameSpecialFlag;
@@ -145,7 +144,7 @@ class Movement : public GameObject {
 	void setDynamicPhaseIndex(int index);
 
 	void removeFirstPhase();
-	bool gotoNextFrame(int callback1, int callback2);
+	bool gotoNextFrame(int callback1, void (*callback2)(int *));
 	bool gotoPrevFrame();
 	void gotoFirstFrame();
 	void gotoLastFrame();
@@ -165,7 +164,7 @@ class StaticANIObject : public GameObject {
 	int _field_34;
 	int _initialCounter;
 	int _callback1;
-	int _callback2;
+	void (*_callback2)(int *);
 	CPtrList _movements;
 	CPtrList _staticsList;
 	CStepArray _stepArray;
@@ -194,6 +193,7 @@ class StaticANIObject : public GameObject {
 	Common::Point *getCurrDimensions(Common::Point &p);
 
 	void clearFlags();
+	void setFlags40(bool state);
 	bool isIdle();
 
 	void deleteFromGlobalMessageQueue();
