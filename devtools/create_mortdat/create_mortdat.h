@@ -24,7 +24,7 @@
  */
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 1
+#define VERSION_MINOR 2
 
 enum AccessMode {
 	kFileReadMode = 1,
