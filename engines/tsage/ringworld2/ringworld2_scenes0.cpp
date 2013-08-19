@@ -5424,7 +5424,7 @@ void Scene500::signal() {
 		break;
 	case 506:
 	case 518:
-		R2_GLOBALS.setFlag(11);
+		R2_GLOBALS.setFlag(12);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 507:
