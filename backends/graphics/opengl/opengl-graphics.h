@@ -154,6 +154,11 @@ protected:
 	void setMousePosition(int x, int y) { _cursorX = x; _cursorY = y; }
 
 	/**
+	 * Query the mouse position in physical coordinates.
+	 */
+	void getMousePosition(int16 &x, int16 &y) const { x = _cursorX; y = _cursorY; }
+
+	/**
 	 * Set up the mouse position for the (event) system.
 	 *
 	 * @param x X coordinate in physical coordinates.
