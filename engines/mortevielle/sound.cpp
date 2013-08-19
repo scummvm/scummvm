@@ -741,6 +741,10 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 	uint16 savph[501];
 	int tempo;
 
+	// Hack to avoid a crash in the ending version. To be removed when the speech are implemented
+	if ((rep == 141) && (typ == 0))
+		return;
+
 	if (_vm->_soundOff)
 		return;
 
