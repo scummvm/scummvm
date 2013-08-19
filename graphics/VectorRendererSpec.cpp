@@ -287,12 +287,14 @@ VectorRenderer *createRenderer(int mode) {
 			return new VectorRendererSpec<uint32>(format);
 		else if (g_system->getOverlayFormat().bytesPerPixel == 2)
 			return new VectorRendererSpec<uint16>(format);
+		break;
 #ifndef DISABLE_FANCY_THEMES
 	case GUI::ThemeEngine::kGfxAntialias:
 		if (g_system->getOverlayFormat().bytesPerPixel == 4)
 			return new VectorRendererAA<uint32>(format);
 		else if (g_system->getOverlayFormat().bytesPerPixel == 2)
 			return new VectorRendererAA<uint16>(format);
+		break;
 #endif
 	default:
 		break;
