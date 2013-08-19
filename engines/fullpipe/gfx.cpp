@@ -213,6 +213,22 @@ bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	return false;
 }
 
+bool PictureObject::isPointInside(int x, int y) {
+	bool res;
+	int oldx = _picture->_x;
+	int oldy = _picture->_y;
+
+	_picture->_x = _ox;
+	_picture->_y = _oy;
+
+	res = _picture->isPointInside(x, y);
+
+	_picture->_x = oldx;
+	_picture->_y = oldy;
+
+	return res;
+}
+
 GameObject::GameObject() {
 	_okeyCode = 0;
 	_flags = 0;

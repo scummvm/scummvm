@@ -159,6 +159,7 @@ class PictureObject : public GameObject {
 	void draw();
 
 	bool setPicAniInfo(PicAniInfo *picAniInfo);
+	bool isPointInside(int x, int y);
 };
 
 class Background : public CObject {
