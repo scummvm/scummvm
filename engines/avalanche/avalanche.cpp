@@ -36,10 +36,9 @@
 #include "common/textconsole.h"
 #include "common/savefile.h"
 
-
-
 #include "engines/util.h"
 
+#include "gui/saveload.h"
 
 
 namespace Avalanche {
@@ -136,25 +135,6 @@ const char *AvalancheEngine::getCopyrightString() const {
 
 
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
-	Common::String signature;
-	if (sz.isSaving()) {
-		signature = "AVAL";
-		for (uint16 i = 0; i < 4; i++) {
-			char actChr = signature[i];
-			sz.syncAsByte(actChr);
-		}
-	} else {
-		if (!signature.empty())
-			signature.clear();
-		for (uint16 i = 0; i < 4; i++) {
-			char actChr;
-			sz.syncAsByte(actChr);
-			signature += actChr;
-		}
-		if (signature != "AVAL")
-			error("Corrupted save file!");
-	}
-
 	//blockwrite(f, dna, sizeof(dna));
 	sz.syncAsByte(_gyro->dna.rw);
 	sz.syncAsByte(_gyro->dna.carrying);
@@ -353,19 +333,22 @@ Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &des
 	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 }
 
-Common::String AvalancheEngine::generateSaveFileName(Common::String name, const int slot) {
-	name.toUppercase();
-	return Common::String::format("%s-%d.ASG", name.c_str(), slot);
-}
-
 bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
-	Common::String fileName = generateSaveFileName(desc, slot);
+	Common::String fileName = getSaveFileName(slot);
 	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(fileName);
 
 	if (!f) {
 		warning("Can't create file '%s', game not saved.", fileName.c_str());
 		return false;
 	}
+
+	char *signature = "AVAL";
+
+	f->write(signature, 4);
+
+	f->writeUint32LE(desc.size());
+
+	f->write(desc.c_str(), desc.size());
 
 	Common::Serializer sz(NULL, f);
 
@@ -380,12 +363,47 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 
 
 
+Common::String AvalancheEngine::getSaveFileName(const int slot) {
+	Common::String upperName = _targetName;
+	upperName.toUppercase();
+	return upperName+ Common::String::format("-%02d.SAV", slot);
+}
+
+
+
 bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
 	return true;
 }
 
-Common::Error AvalancheEngine::loadGameState(int slot, const Common::String &desc) {
-	return Common::kNoError;
+Common::Error AvalancheEngine::loadGameState(int slot) {
+	return (loadGame(slot) ? Common::kNoError : Common::kReadingFailed);
+}
+
+bool AvalancheEngine::loadGame(const int16 slot) {
+	Common::String fileName = getSaveFileName(slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (!f)
+		return false;
+	
+	// Check for our signature.
+	Common::String signature;
+	for (byte i = 0; i < 4; i++)
+		signature += f->readByte();
+	if (signature != "AVAL")
+		return false;
+
+	// We dont care about the description here.
+	uint32 descSize = f->readUint32LE();
+	f->skip(descSize);
+
+	Common::Serializer sz(f, NULL);
+
+	synchronize(sz);
+
+	delete f;
+
+	return true;
 }
 
 

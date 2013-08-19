@@ -117,13 +117,16 @@ public:
 
 
 	void synchronize(Common::Serializer &sz);
+
 	virtual bool canSaveGameStateCurrently();
 	Common::Error saveGameState(int slot, const Common::String &desc);
-	Common::String generateSaveFileName(Common::String name, const int slot);
 	bool saveGame(const int16 slot, const Common::String &desc);
 
+	Common::String getSaveFileName(const int slot);
+
 	virtual bool canLoadGameStateCurrently();
-	Common::Error loadGameState(int slot, const Common::String &desc);
+	Common::Error loadGameState(int slot);
+	bool loadGame(const int16 slot);
 
 
 	void updateEvents();
