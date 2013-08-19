@@ -62,8 +62,22 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 
 	Common::Rect *tmp = new Common::Rect(rect);
 	int target = getSize();
+	
+	if (_disableDirtyRects) {
+		return;
+	}
 	if (target > kMaxInputRects) {
 		_disableDirtyRects = true;
+		return;
+	}
+
+	if (isHuge(&rect)) {
+		_disableDirtyRects = true;
+		return;
+	}
+
+	if (rect.width() == 0 || rect.height() == 0) {
+		return;
 	}
 	_rectArray.insert_at(target, tmp);
 	_rectArray[target]->clip(*clipRect);
@@ -94,7 +108,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	return singleret;
 }
 
-bool DirtyRectContainer::isHuge(Common::Rect *rect) {
+bool DirtyRectContainer::isHuge(const Common::Rect *rect) {
 	// It's huge if it exceeds kHuge[Height|Width]Fixed
 	// or is within kHuge[Width|Height]PErcent of the cliprect
 

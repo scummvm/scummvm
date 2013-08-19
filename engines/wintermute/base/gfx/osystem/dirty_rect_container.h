@@ -47,7 +47,7 @@ public:
 private:
 	Common::Array<Common::Rect *> _rectArray;
 	Common::Rect *_clipRect;
-	bool isHuge(Common::Rect *rect);
+	bool isHuge(const Common::Rect *rect);
 };
 } // End of namespace Wintermute
 
