@@ -52,7 +52,9 @@ private:
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
 
-	uint16 *_warpedBuffer;
+	// A buffer the exact same size as the workingWindow
+	// It's used for panorama/tilt warping and for clearing the workingWindow to a single color
+	uint16 *_workingWindowBuffer;
 
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _workingWidth;
@@ -88,6 +90,7 @@ private:
 	/** Holds any 'leftover' milliseconds between frames */
 	uint _accumulatedVelocityMilliseconds;
 
+	// TODO: Potentially merge this buffer and _workingWindowBuffer
 	byte *_scaledVideoFrameBuffer;
 
 public:

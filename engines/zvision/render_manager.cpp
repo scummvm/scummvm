@@ -50,7 +50,7 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, 
 		  _accumulatedVelocityMilliseconds(0),
 		  _renderTable(_workingWidth, _workingHeight) {
 
-	_warpedBuffer = new uint16[_workingWidth *_workingHeight];
+	_workingWindowBuffer = new uint16[_workingWidth *_workingHeight];
 }
 
 RenderManager::~RenderManager() {
@@ -58,7 +58,7 @@ RenderManager::~RenderManager() {
 		delete _currentBackground;
 	}
 
-	delete[] _warpedBuffer;
+	delete[] _workingWindowBuffer;
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
@@ -133,9 +133,9 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (_renderTable.getRenderState() == RenderTable::FLAT) {
 		_system->copyRectToScreen(surface.getBasePtr(subRect.left, subRect.top), surface.pitch, destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
 	} else {
-		_renderTable.mutateImage((uint16 *)surface.getBasePtr(0, 0), _warpedBuffer, surface.w, surface.h, destinationX, destinationY, subRect, wrap, isTransposed);
+		_renderTable.mutateImage((uint16 *)surface.getBasePtr(0, 0), _workingWindowBuffer, surface.w, surface.h, destinationX, destinationY, subRect, wrap, isTransposed);
 
-		_system->copyRectToScreen(_warpedBuffer, _workingWidth * sizeof(uint16), destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
+		_system->copyRectToScreen(_workingWindowBuffer, _workingWidth * sizeof(uint16), destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
 	}
 }
 
