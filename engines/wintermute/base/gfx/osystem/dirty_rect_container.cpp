@@ -55,34 +55,30 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	// TODO: Maybe check if really big (like == viewport)
 	// and avoid the whole dance altogether.
 
-	assert(clipRect != nullptr);
-	if (_clipRect == nullptr) {
-		_clipRect = new Common::Rect(*clipRect);
-	} else {
-		assert(clipRect->equals(*_clipRect));
-	}
+		assert(clipRect != nullptr);
+		if (_clipRect == nullptr) {
+			_clipRect = new Common::Rect(*clipRect);
+		} else {
+			assert(clipRect->equals(*_clipRect));
+		}
 
-	Common::Rect *tmp = new Common::Rect(rect);
-	int target = getSize();
 
-	if (_disableDirtyRects) {
-		return;
-	}
-	if (target > kMaxInputRects) {
-		_disableDirtyRects = true;
-		return;
-	}
+		Common::Rect *tmp = new Common::Rect(rect);
+		int target = getSize();
 
-	if (isHuge(&rect)) {
-		_disableDirtyRects = true;
-		return;
-	}
-
-	if (rect.width() == 0 || rect.height() == 0) {
-		return;
-	}
-	_rectArray.insert_at(target, tmp);
-	_rectArray[target]->clip(*clipRect);
+		if (target > kMaxInputRects) {
+			_disableDirtyRects = true;
+			// return;
+		} else if (isHuge(&rect)) {
+			_disableDirtyRects = true;
+			// return;
+		} else if (rect.width() == 0 || rect.height() == 0) {
+			// return;
+		} else {
+			_rectArray.insert_at(target, tmp);
+			_rectArray[target]->clip(*clipRect);
+		}
+	
 	// TODO: Upper limit?
 }
 
@@ -106,24 +102,26 @@ Common::Rect *DirtyRectContainer::getRect(int id) {
 
 Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	Common::Array<Common::Rect *> singleret;
-	singleret.insert_at(0, _clipRect);
+	Common::Rect *temp = new Common::Rect(*_clipRect);
+	singleret.insert_at(0, temp);
 	return singleret;
 }
 
 bool DirtyRectContainer::isHuge(const Common::Rect *rect) {
 	// It's huge if it exceeds kHuge[Height|Width]Fixed
 	// or is within kHuge[Width|Height]PErcent of the cliprect
-
+	
 	assert(rect != nullptr);
-
+	assert(_clipRect);
+	
 	if (rect->width() > kHugeWidthFixed && rect->height() > kHugeHeightFixed) {
 		return true;
 	}
 
-	int wThreshold = _clipRect->width() * (kHugeWidthFixed * 10) / 100;
-	int hThreshold = _clipRect->height() * (kHugeHeightFixed * 10) / 100;
+	int wThreshold = _clipRect->width() * (kHugeWidthPercent) / 100;
+	int hThreshold = _clipRect->height() * (kHugeHeigthPercent) / 100;
 
-	if (rect->width() * 10 > wThreshold && rect->height() * 10 > hThreshold) {
+	if (rect->width() > wThreshold && rect->height() > hThreshold) {
 		return true;
 	}
 
@@ -294,10 +292,15 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			} // End of intersecting test
 
 		} // End loop
-
+		/*
+		if (isHuge(candidate)) {
+				return getFallback();
+		}
+		*/
 		if (candidate->width() > 0 && candidate->height() > 0) {
 			ret.insert_at(ret.size(), candidate);
 		}
+
 	} // End loop
 
 	return ret;
