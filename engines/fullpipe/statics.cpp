@@ -774,8 +774,51 @@ void StaticANIObject::hide() {
 	}
 }
 
-void StaticANIObject::show1(int x, int y, int movementId, int mqId) {
-	warning("STUB: StaticANIObject::show1(%d, %d, %d, %d)", x, y, movementId, mqId);
+void StaticANIObject::show1(int x, int y, int movId, int mqId) {
+	debug(0, "StaticANIObject::show1(%d, %d, %d, %d)", x, y, movId, mqId);
+
+	if (_messageQueueId)
+		return;
+
+	if (movId == -1) {
+		_flags |= 4u;
+		if (x != -1 && y != -1)
+			setOXY(x, y);
+
+		return;
+	}
+
+	Movement *mov = getMovementById(movId);
+	if (!mov)
+		return;
+
+	if (x != -1 && y != -1)
+		setOXY(x, y);
+
+	_statics = mov->_staticsObj1;
+
+	Common::Point point;
+
+	mov->_staticsObj1->getSomeXY(point);
+	_statics->_x = x - point.x;
+	_statics->_y = y - point.y;
+
+	_statics->_countdown = _statics->_initialCountdown;
+
+	_flags |= 4;
+	_ox = x;
+	_oy = y;
+	_movement = 0;
+
+	if (mov->_currMovement)
+		_flags |= 8;
+	else if (_flags & 8)
+		_flags ^= 8;
+
+	if (_flags & 1)
+		_flags ^= 1;
+
+	_messageQueueId = mqId;
 }
 
 void StaticANIObject::show2(int x, int y, int movementId, int mqId) {

@@ -302,7 +302,8 @@ void MessageQueue::update() {
 }
 
 void MessageQueue::messageQueueCallback1(int par) {
-	warning("STUB: MessageQueue::messageQueueCallback1()");
+	// Autosave
+	debug(3, "STUB: MessageQueue::messageQueueCallback1()");
 }
 
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
