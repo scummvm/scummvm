@@ -135,8 +135,10 @@ Common::Error ZVision::run() {
 
 		processEvents();
 
-		_scriptManager->update(deltaTime);
+		// Call _renderManager->update() first so the background renders 
+		// before anything that puzzles/controls will render
 		_renderManager->update(deltaTime);
+		_scriptManager->update(deltaTime);
 
 		// Update the screen
 		_system->updateScreen();
