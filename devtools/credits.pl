@@ -638,6 +638,11 @@ begin_credits("Credits");
 				add_person("David Turner", "digitall", "");
 			end_section();
 
+			begin_section("Neverhood");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
 			begin_section("Parallaction");
 				add_person("", "peres", "");
 			end_section();
