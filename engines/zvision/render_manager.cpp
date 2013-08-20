@@ -163,8 +163,7 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, int16 de
 void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, int16 destinationX, int16 destinationY, bool wrap) {
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
-	uint32 fileType;
-	fileType = stream.readUint32BE();
+	uint32 fileType = stream.readUint32BE();
 
 	// Check for TGZ files
 	if (fileType == MKTAG('T', 'G', 'Z', '\0')) {
