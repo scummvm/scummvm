@@ -114,8 +114,6 @@ struct TransparentSurface : public Graphics::Surface {
 
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
-private:
-	static void doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 };
 
 /**
