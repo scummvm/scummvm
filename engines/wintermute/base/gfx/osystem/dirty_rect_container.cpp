@@ -55,30 +55,30 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	// TODO: Maybe check if really big (like == viewport)
 	// and avoid the whole dance altogether.
 
-		assert(clipRect != nullptr);
-		if (_clipRect == nullptr) {
-			_clipRect = new Common::Rect(*clipRect);
-		} else {
-			assert(clipRect->equals(*_clipRect));
-		}
+	assert(clipRect != nullptr);
+	if (_clipRect == nullptr) {
+		_clipRect = new Common::Rect(*clipRect);
+	} else {
+		assert(clipRect->equals(*_clipRect));
+	}
 
 
-		Common::Rect *tmp = new Common::Rect(rect);
-		int target = getSize();
+	Common::Rect *tmp = new Common::Rect(rect);
+	int target = getSize();
 
-		if (target > kMaxInputRects) {
-			_disableDirtyRects = true;
-			// return;
-		} else if (isHuge(&rect)) {
-			_disableDirtyRects = true;
-			// return;
-		} else if (rect.width() == 0 || rect.height() == 0) {
-			// return;
-		} else {
-			_rectArray.insert_at(target, tmp);
-			_rectArray[target]->clip(*clipRect);
-		}
-	
+	if (target > kMaxInputRects) {
+		_disableDirtyRects = true;
+		// return;
+	} else if (isHuge(&rect)) {
+		_disableDirtyRects = true;
+		// return;
+	} else if (rect.width() == 0 || rect.height() == 0) {
+		// return;
+	} else {
+		_rectArray.insert_at(target, tmp);
+		_rectArray[target]->clip(*clipRect);
+	}
+
 	// TODO: Upper limit?
 }
 
@@ -110,10 +110,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 bool DirtyRectContainer::isHuge(const Common::Rect *rect) {
 	// It's huge if it exceeds kHuge[Height|Width]Fixed
 	// or is within kHuge[Width|Height]PErcent of the cliprect
-	
+
 	assert(rect != nullptr);
 	assert(_clipRect);
-	
+
 	if (rect->width() > kHugeWidthFixed && rect->height() > kHugeHeightFixed) {
 		return true;
 	}
@@ -141,21 +141,27 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		queue.insert_at(queue.size(), _rectArray[i]);
 	}
 
-	for (int j = 0; j < queue.size(); j++) {
+	int j = 0;
+	while (j < queue.size()) {
 
 		Common::Rect *candidate = queue[j];
 
 		if (candidate->width() == 0 || candidate->height() == 0) {
 			// We have no use for this
+			queue.remove_at(j);
 			continue;
 		}
 
 		if (ret.size() > kMaxOutputRects) {
+			_disableDirtyRects = true;
 			return getFallback();
 		}
 
+		bool discard = false;
+
 		// See if it's contained or containes
-		for (uint i = 0; i < ret.size(); i++) {
+		for (uint i = 0; i < ret.size() && !discard; i++) {
+			assert(!discard);
 
 			Common::Rect *existing = ret[i];
 
@@ -163,14 +169,16 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			// We don't want to put useless garbage in here.
 
 			if (existing->contains(*candidate) || existing->equals(*candidate)) {
-				break;
+				discard = true;
+				continue;
 			}
 
 			if (candidate->contains(*(existing))) {
 				// Contains an existing one.
 				// Extend the pre-existing one and discard this.
 				existing->extend(*candidate);
-				break;
+				discard = true;
+				continue;
 			}
 
 			// Okay, we now see if we have an overlapping corner and slice accordingly.
@@ -197,6 +205,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					}
 					candidate->right = intersecting.left;
 					assert(neslice->isValidRect());
+					if (candidate->width() == 0) {
+						discard = true;
+					}
+					assert(candidate->height() != 0);
 					assert(candidate->isValidRect());
 				} else if (intersecting.top == candidate->top &&
 				           intersecting.left >= candidate->left &&
@@ -212,6 +224,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 						queue.insert_at(queue.size(), seslice);
 					}
 					candidate->right = intersecting.left;
+					if (candidate->width() == 0) {
+						discard = true;
+					}
+					assert(candidate->height() != 0);
+
 					assert(candidate->isValidRect());
 				} else if (intersecting.top == candidate->top &&
 				           intersecting.left == candidate->left &&
@@ -227,6 +244,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 						queue.insert_at(queue.size(), swslice);
 					}
 					candidate->left = intersecting.right;
+					if (candidate->width() == 0) {
+						discard = true;
+					}
+					assert(candidate->height() != 0);
 					assert(candidate->isValidRect());
 				} else if (intersecting.top >= candidate->top &&
 				           intersecting.left == candidate->left &&
@@ -243,6 +264,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					}
 					candidate->left = intersecting.right;
 					assert(candidate->isValidRect());
+					if (candidate->width() == 0) {
+						discard = true;
+					}
+					assert(candidate->height() != 0);
 				} else if (existing->left <= candidate->left &&
 				           existing->right >= candidate->right &&
 				           existing->top >= candidate->top &&
@@ -254,21 +279,15 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 					if (top_slice->height() > 0 && top_slice->width() > 0) {
 						queue.insert_at(queue.size(), top_slice);
-						candidate->left = 0;
-						candidate->right = 0;
-						candidate->bottom = 0;
-						candidate->top = 0;
-						continue;
 					}
 
 					if (bottom_slice->height() > 0 && bottom_slice->width() > 0) {
 						queue.insert_at(queue.size(), bottom_slice);
-						candidate->left = 0;
-						candidate->right = 0;
-						candidate->bottom = 0;
-						candidate->top = 0;
-						continue;
 					}
+
+					discard = true;
+					continue;
+
 
 				} else if (existing->left >= candidate->left &&
 				           existing->right <= candidate->right &&
@@ -284,23 +303,23 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					if (right_slice->height() > 0 && right_slice->width() > 0)
 						queue.insert_at(queue.size(), right_slice);
 
-					candidate->left = 0;
-					candidate->right = 0;
-					candidate->bottom = 0;
-					candidate->top = 0;
+					discard = true;
+					continue;
 				}
 			} // End of intersecting test
 
 		} // End loop
-		/*
-		if (isHuge(candidate)) {
+		if (discard) {
+			queue.remove_at(j);
+		} else {
+			assert(candidate->width() > 0 && candidate->height() > 0);
+			if (isHuge(candidate)) {
+				_disableDirtyRects = true;
 				return getFallback();
-		}
-		*/
-		if (candidate->width() > 0 && candidate->height() > 0) {
+			}
 			ret.insert_at(ret.size(), candidate);
+			j++;
 		}
-
 	} // End loop
 
 	return ret;
