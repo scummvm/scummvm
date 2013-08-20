@@ -127,6 +127,8 @@ public:
 	virtual bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	bool loadGame(const int16 slot);
+	Common::String expandDate(int d, int m, int y);
+
 
 
 	void updateEvents();
