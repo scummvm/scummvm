@@ -33,6 +33,7 @@
 #include "zvision/render_manager.h"
 #include "zvision/script_manager.h"
 #include "zvision/mouse_event.h"
+#include "zvision/rlf_animation.h"
 
 namespace ZVision {
 
@@ -95,6 +96,12 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_F1:
 				cycleThroughCursors();
 				break;
+			case Common::KEYCODE_F2:
+				{
+					RlfAnimation *animation = new RlfAnimation("te2ea21c.rlf");
+					playAnimation(animation, 0, 0);
+					break;
+				}
 			default:
 				break;
 			}
