@@ -287,29 +287,59 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	//		tr[groi].savedata(f);
 	//	}
 	//}
-	for (byte i = 0; i < _trip->numtr; i++)
-		if (_trip->tr[i].quick) {
-			sz.syncAsByte(_trip->tr[i].whichsprite);
-			sz.syncAsByte(_trip->tr[i].face);
-			sz.syncAsByte(_trip->tr[i].step);
-			sz.syncAsSint16LE(_trip->tr[i].x);
-			sz.syncAsSint16LE(_trip->tr[i].y);
-			sz.syncAsByte(_trip->tr[i].ix);
-			sz.syncAsByte(_trip->tr[i].iy);
-			sz.syncAsByte(_trip->tr[i].visible);
-			sz.syncAsByte(_trip->tr[i].homing);
-			sz.syncAsByte(_trip->tr[i].check_me);
-			sz.syncAsByte(_trip->tr[i].count);
-			sz.syncAsByte(_trip->tr[i]._info.xw);
-			sz.syncAsByte(_trip->tr[i].xs);
-			sz.syncAsByte(_trip->tr[i].ys);
-			sz.syncAsByte(_trip->tr[i].totalnum);
-			sz.syncAsSint16LE(_trip->tr[i].hx);
-			sz.syncAsSint16LE(_trip->tr[i].hy);
-			sz.syncAsByte(_trip->tr[i].call_eachstep);
-			sz.syncAsByte(_trip->tr[i].eachstep);
-			sz.syncAsByte(_trip->tr[i].vanishifstill);
+	
+	byte spriteNum;
+	if (sz.isSaving()) {
+		spriteNum = 0;
+		for (byte i = 0; i < _trip->numtr; i++)
+			if (_trip->tr[i].quick)
+				spriteNum++;
+	}
+	sz.syncAsByte(spriteNum);
+	
+	if (sz.isLoading())
+		for (byte i = 0; i < _trip->numtr; i++) { // Deallocate sprites.
+			if (_trip->tr[i].quick)
+				_trip->tr[i].done();
 		}
+
+	for (byte i = 0; i < spriteNum; i++) {
+		sz.syncAsByte(_trip->tr[i].whichsprite);
+		sz.syncAsByte(_trip->tr[i].check_me);
+		
+	
+		if (sz.isLoading()) {
+			_trip->tr[i].quick = true;
+			_trip->tr[i].init(_trip->tr[i].whichsprite, _trip->tr[i].check_me, _trip);
+		}
+
+		sz.syncAsByte(_trip->tr[i].ix);
+		sz.syncAsByte(_trip->tr[i].iy);
+		sz.syncAsByte(_trip->tr[i].face);
+		sz.syncAsByte(_trip->tr[i].step);
+		sz.syncAsByte(_trip->tr[i].visible);
+		sz.syncAsByte(_trip->tr[i].homing);
+		sz.syncAsByte(_trip->tr[i].count);
+		sz.syncAsByte(_trip->tr[i]._info.xw);
+		sz.syncAsByte(_trip->tr[i].xs);
+		sz.syncAsByte(_trip->tr[i].ys);
+		sz.syncAsByte(_trip->tr[i].totalnum);
+		sz.syncAsSint16LE(_trip->tr[i].hx);
+		sz.syncAsSint16LE(_trip->tr[i].hy);
+		sz.syncAsByte(_trip->tr[i].call_eachstep);
+		sz.syncAsByte(_trip->tr[i].eachstep);
+		sz.syncAsByte(_trip->tr[i].vanishifstill);
+
+		sz.syncAsSint16LE(_trip->tr[i].x);
+		sz.syncAsSint16LE(_trip->tr[i].y);
+
+		if (sz.isLoading() && _trip->tr[i].visible)
+			_trip->tr[i].appear(_trip->tr[i].x, _trip->tr[i].y, _trip->tr[i].face);
+	}
+
+	
+
+
 
 	//groi = 177;
 	//blockwrite(f, groi, 1);
@@ -326,7 +356,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 }
 
 bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
-	return true;
+	return (!_gyro->seescroll);
 }
 
 Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {
@@ -372,7 +402,7 @@ Common::String AvalancheEngine::getSaveFileName(const int slot) {
 
 
 bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
-	return true;
+	return (!_gyro->seescroll);
 }
 
 Common::Error AvalancheEngine::loadGameState(int slot) {
@@ -402,6 +432,27 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	synchronize(sz);
 
 	delete f;
+
+	_gyro->seescroll = true;  // This prevents display of the new sprites before the new picture is loaded.
+
+	if (_gyro->holdthedawn) {
+		_gyro->holdthedawn = false;
+		_lucerna->dawn();
+	}
+
+	_celer->forget_chunks();
+
+	_lucerna->minor_redraw();
+
+	_gyro->whereis[0] = _gyro->dna.room;
+	
+	_gyro->alive = true;
+
+	_lucerna->objectlist();
+
+	_trip->newspeed();
+
+	_lucerna->showrw();
 
 	return true;
 }

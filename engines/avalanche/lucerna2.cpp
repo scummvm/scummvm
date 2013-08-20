@@ -1268,12 +1268,11 @@ void Lucerna::gameover() {
   when you load a game, etc. Major redraws EVERYTHING. */
 
 void Lucerna::minor_redraw() {
-	byte fv;
-
 	dusk();
+
 	enterroom(_vm->_gyro->dna.room, 0); /* Ped unknown or non-existant. */
 
-	for (fv = 0; fv <= 1; fv ++) {
+	for (byte fv = 0; fv <= 1; fv ++) {
 		_vm->_gyro->cp = 1 - _vm->_gyro->cp;
 		_vm->_trip->getback();
 	}
