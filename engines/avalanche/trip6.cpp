@@ -1415,7 +1415,7 @@ void Trip::trippancy_link() {
 	if (_vm->_gyro->ddmnow | _vm->_gyro->ontoolbar | _vm->_gyro->seescroll)
 		return;
 	for (fv = 0; fv < numtr; fv++) {
-		if (tr[fv].quick)
+		if (tr[fv].quick && tr[fv].visible)
 			tr[fv].walk();
 	}
 
