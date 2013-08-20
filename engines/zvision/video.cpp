@@ -153,10 +153,11 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 				} else {
 					_system->copyRectToScreen((const byte *)frame->getBasePtr(0, 0), pitch, x, y, finalWidth, finalHeight);
 				}
-
-				_system->updateScreen();
 			}
 		}
+
+		// Always update the screen so the mouse continues to render
+		_system->updateScreen();
 
 		_system->delayMillis(videoDecoder.getTimeToNextFrame());
 	}
