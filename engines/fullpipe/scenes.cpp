@@ -830,7 +830,7 @@ int global_messageHandler1(ExCommand *cmd) {
 }
 
 void staticANIObjectCallback(int *arg) {
-	*arg--;
+	(*arg)--;
 }
 
 int global_messageHandler2(ExCommand *cmd) {
