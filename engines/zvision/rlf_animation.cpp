@@ -54,7 +54,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName)
 
 	// Since we don't need any of the data, we can just seek right to the
 	// entries we need rather than read in all the individual entries.
-	file.seek(136, file.pos());
+	file.seek(136, SEEK_CUR);
 
 	//// Read CIN header
 	//file.readUint32BE();			// Magic number FNIC
@@ -62,13 +62,13 @@ RlfAnimation::RlfAnimation(const Common::String &fileName)
 	//file.readUint32LE();			// Unknown3
 	//file.readUint32LE();			// Unknown4
 	//file.readUint32LE();			// Unknown5
-	//file.seek(0x18, file.pos());	// VRLE
+	//file.seek(0x18, SEEK_CUR);	// VRLE
 	//file.readUint32LE();			// LRVD
 	//file.readUint32LE();			// Unknown6
-	//file.seek(0x18, file.pos());	// HRLE
+	//file.seek(0x18, SEEK_CUR);	// HRLE
 	//file.readUint32LE();			// ELHD
 	//file.readUint32LE();			// Unknown7
-	//file.seek(0x18, file.pos());	// HKEY
+	//file.seek(0x18, SEEK_CUR);	// HKEY
 	//file.readUint32LE();			// ELRH
 
 	//// Read MIN info header
