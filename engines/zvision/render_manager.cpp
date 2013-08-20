@@ -79,6 +79,16 @@ void RenderManager::update(uint deltaTimeInMillis) {
 	}
 }
 
+void RenderManager::clearWorkingWindowToColor(uint16 color) {
+	uint32 workingWindowSize = _workingWidth * _workingHeight;
+
+	for (uint32 i = 0; i < workingWindowSize; i++) {
+		_workingWindowBuffer[i] = color;
+	}
+
+	_system->copyRectToScreen(_workingWindowBuffer, _workingWidth * sizeof(uint16), _workingWindow.left, _workingWindow.top, _workingWidth, _workingHeight);
+}
+
 void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap, bool isTransposed) {	
 	int16 subRectX = 0;
 	int16 subRectY = 0;

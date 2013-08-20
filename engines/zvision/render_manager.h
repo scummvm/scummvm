@@ -103,6 +103,13 @@ public:
 	void update(uint deltaTimeInMillis);
 
 	/**
+	 * Fills the entire workingWindow with the specified color
+	 *
+	 * @param color    The color to fill the working window with. (In RGB 555)
+	 */
+	void clearWorkingWindowToColor(uint16 color);
+
+	/**
 	 * Blits the image or a portion of the image to the backbuffer. Actual screen updates won't happen until the end of the frame.
 	 * The image will be clipped to fit inside the working window. Coords are in working window space, not screen space!
 	 *
