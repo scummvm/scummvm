@@ -47,56 +47,56 @@ RlfAnimation::RlfAnimation(const Common::String &fileName)
 	}
 
 	// Read the header
-	file.readUint32LE();				// Size1
-	file.readUint32LE();				// Unknown1
-	file.readUint32LE();				// Unknown2
-	_frameCount = file.readUint32LE();	// Frame count
+	file.readUint32LE();                // Size1
+	file.readUint32LE();                // Unknown1
+	file.readUint32LE();                // Unknown2
+	_frameCount = file.readUint32LE();  // Frame count
 
 	// Since we don't need any of the data, we can just seek right to the
 	// entries we need rather than read in all the individual entries.
 	file.seek(136, SEEK_CUR);
 
 	//// Read CIN header
-	//file.readUint32BE();			// Magic number FNIC
-	//file.readUint32LE();			// Size2
-	//file.readUint32LE();			// Unknown3
-	//file.readUint32LE();			// Unknown4
-	//file.readUint32LE();			// Unknown5
-	//file.seek(0x18, SEEK_CUR);	// VRLE
-	//file.readUint32LE();			// LRVD
-	//file.readUint32LE();			// Unknown6
-	//file.seek(0x18, SEEK_CUR);	// HRLE
-	//file.readUint32LE();			// ELHD
-	//file.readUint32LE();			// Unknown7
-	//file.seek(0x18, SEEK_CUR);	// HKEY
-	//file.readUint32LE();			// ELRH
+	//file.readUint32BE();          // Magic number FNIC
+	//file.readUint32LE();          // Size2
+	//file.readUint32LE();          // Unknown3
+	//file.readUint32LE();          // Unknown4
+	//file.readUint32LE();          // Unknown5
+	//file.seek(0x18, SEEK_CUR);    // VRLE
+	//file.readUint32LE();          // LRVD
+	//file.readUint32LE();          // Unknown6
+	//file.seek(0x18, SEEK_CUR);    // HRLE
+	//file.readUint32LE();          // ELHD
+	//file.readUint32LE();          // Unknown7
+	//file.seek(0x18, SEEK_CUR);    // HKEY
+	//file.readUint32LE();          // ELRH
 
 	//// Read MIN info header
-	//file.readUint32BE();			// Magic number FNIM
-	//file.readUint32LE();			// Size3
-	//file.readUint32LE();			// OEDV
-	//file.readUint32LE();			// Unknown8
-	//file.readUint32LE();			// Unknown9
-	//file.readUint32LE();			// Unknown10
-	_width = file.readUint32LE();	// Width
-	_height = file.readUint32LE();	// Height
+	//file.readUint32BE();          // Magic number FNIM
+	//file.readUint32LE();          // Size3
+	//file.readUint32LE();          // OEDV
+	//file.readUint32LE();          // Unknown8
+	//file.readUint32LE();          // Unknown9
+	//file.readUint32LE();          // Unknown10
+	_width = file.readUint32LE();   // Width
+	_height = file.readUint32LE();  // Height
 	
 	// Read time header
-	file.readUint32BE(); // Magic number EMIT
-	file.readUint32LE(); // Size4
-	file.readUint32LE(); // Unknown11
-	_frameTime = file.readUint32LE() / 10; // Frame time in microseconds
+	file.readUint32BE();                    // Magic number EMIT
+	file.readUint32LE();                    // Size4
+	file.readUint32LE();                    // Unknown11
+	_frameTime = file.readUint32LE() / 10;  // Frame time in microseconds
 
 	// Read in each frame
 	_frames = new uint16 *[_frameCount];
 	for (uint i = 0; i < _frameCount; i++) {
-		file.readUint32BE();					// Magic number MARF
-		uint32 size = file.readUint32LE();		// Size
-		file.readUint32LE();					// Unknown1
-		file.readUint32LE();					// Unknown2
-		uint32 type = file.readUint32BE();		// Either ELHD or ELRH
-		uint32 offset = file.readUint32LE();	// Offset from the beginning of this frame to the frame data. Should always be 28
-		file.readUint32LE();					// Unknown3
+		file.readUint32BE();                        // Magic number MARF
+		uint32 size = file.readUint32LE();          // Size
+		file.readUint32LE();                        // Unknown1
+		file.readUint32LE();                        // Unknown2
+		uint32 type = file.readUint32BE();          // Either ELHD or ELRH
+		uint32 headerSize = file.readUint32LE();    // Offset from the beginning of this frame to the frame data. Should always be 28
+		file.readUint32LE();                        // Unknown3
 
 		int8 *buffer = new int8[size - headerSize];
 		file.read(buffer, size - headerSize);
