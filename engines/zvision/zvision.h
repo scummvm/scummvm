@@ -49,6 +49,7 @@ class Console;
 class ScriptManager;
 class RenderManager;
 class CursorManager;
+class RlfAnimation;
  
 // our engine debug channels
 enum {
@@ -125,6 +126,8 @@ public:
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
+
+	void playAnimation(RlfAnimation *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 	/**
 	 * Register a MouseEvent with the event system. These will be checked at every
