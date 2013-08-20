@@ -105,6 +105,7 @@ class CInventory2 : public CInventory {
 
 	int getSelectedItemId() { return _selectedId < 0 ? 0 : _selectedId; }
 	int getHoveredItem(Common::Point *point);
+	void slideIn();
 	void slideOut();
 
 	int handleLeftClick(ExCommand *cmd);
