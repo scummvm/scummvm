@@ -90,7 +90,7 @@ private:
 	uint32 getPixelAt(Graphics::Surface *surface, int x, int y);
 
 	uint32 _rotation;
-	bool _hasAlpha;
+	AlphaType _alphaType;
 	void *_lockPixels;
 	int _lockPitch;
 	byte *_alphaMask;

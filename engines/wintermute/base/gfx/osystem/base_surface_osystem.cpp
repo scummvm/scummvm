@@ -48,7 +48,7 @@ namespace Wintermute {
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
-	_hasAlpha = true;
+	_alphaType = ALPHA_FULL;
 	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
@@ -71,22 +71,37 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	renderer->invalidateTicketsFromSurface(this);
 }
 
-bool hasTransparency(Graphics::Surface *surf) {
+AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 	if (surf->format.bytesPerPixel != 4) {
-		warning("hasTransparency:: non 32 bpp surface passed as argument");
-		return false;
+		warning("hasTransparencyType:: non 32 bpp surface passed as argument");
+		return ALPHA_OPAQUE;
 	}
 	uint8 r, g, b, a;
+	bool seenAlpha = false;
+	bool seenFullAlpha = false;
 	for (int i = 0; i < surf->h; i++) {
+		if (seenFullAlpha) {
+			break;
+		}
 		for (int j = 0; j < surf->w; j++) {
 			uint32 pix = *(uint32 *)surf->getBasePtr(j, i);
 			surf->format.colorToARGB(pix, a, r, g, b);
 			if (a != 255) {
-				return true;
+				seenAlpha = true;
+				if (a != 0) {
+					seenFullAlpha = true;
+					break;
+				}
 			}
 		}
 	}
-	return false;
+	if (seenFullAlpha) {
+		return ALPHA_FULL;
+	} else if (seenAlpha) {
+		return ALPHA_BINARY;
+	} else {
+		return ALPHA_OPAQUE;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -170,7 +185,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
 	}
 
-	_hasAlpha = hasTransparency(_surface);
+	_alphaType = hasTransparencyType(_surface);
 	_valid = true;
 
 	_gameRef->addMem(_width * _height * 4);
@@ -422,17 +437,11 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.
 
-	// TODO: Optimize by not doing alpha-blits if we lack or disable alpha
-
-	bool hasAlpha = false;
-
-	if (_hasAlpha && !transform._alphaDisable) {
-		hasAlpha = true;
-	}      
-	
-	if (transform._alphaDisable) {
-		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
+	// Optimize by not doing alpha-blits if we lack alpha
+	if (_alphaType == ALPHA_OPAQUE && !transform._alphaDisable) {
+		transform._alphaDisable = true;
 	}
+
 	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
 	return STATUS_OK;
 }
@@ -447,7 +456,11 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	_loaded = true;
 	_surface->free();
 	_surface->copyFrom(surface);
-	_hasAlpha = hasAlpha;
+	if (hasAlpha) {
+		_alphaType = ALPHA_FULL;
+	} else {
+		_alphaType = ALPHA_OPAQUE;
+	}
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 
