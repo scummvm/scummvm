@@ -347,13 +347,16 @@ Common::Error MortevielleEngine::run() {
 	if (loadSlot == 0)
 		// Show the game introduction
 		showIntroduction();
+	else {
+		_caff = 51;
+		_text.taffich();
+	}
 
 	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
+	resetVariables();
 	if (loadSlot != 0)
 		_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
-	else
-		resetVariables();
 
 	// Run the main game loop
 	mainGame();
