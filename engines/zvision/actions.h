@@ -277,6 +277,18 @@ private:
 	uint _max;
 };
 
+class ActionSetPartialScreen : public ResultAction {
+public:
+	ActionSetPartialScreen(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+	uint _x;
+	uint _y;
+	Common::String _fileName;
+	uint16 _backgroundColor;
+};
+
 class ActionSetScreen : public ResultAction {
 public:
 	ActionSetScreen(const Common::String &line);

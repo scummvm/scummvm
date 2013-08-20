@@ -267,6 +267,36 @@ bool ActionRandom::execute(ZVision *engine) {
 
 
 //////////////////////////////////////////////////////////////////////////////
+// ActionSetPartialScreen
+//////////////////////////////////////////////////////////////////////////////
+
+ActionSetPartialScreen::ActionSetPartialScreen(const Common::String &line) {
+	char fileName[25];
+	uint color;
+
+	sscanf(line.c_str(), "%*[^(](%u %u %25s %*u %u)", &_x, &_y, fileName, &color);
+
+	_fileName = Common::String(fileName);
+
+	if (color > 0xFFFF) {
+		warning("Background color for ActionSetPartialScreen is bigger than a uint16");
+	}
+	_backgroundColor = color;
+}
+
+bool ActionSetPartialScreen::execute(ZVision *engine) {
+	RenderManager *renderManager = engine->getRenderManager();
+	
+	if (_backgroundColor > 0) {
+		renderManager->clearWorkingWindowToColor(_backgroundColor);
+	}
+	renderManager->renderImageToScreen(_fileName, _x, _y);
+
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionSetScreen
 //////////////////////////////////////////////////////////////////////////////
 
@@ -278,8 +308,7 @@ ActionSetScreen::ActionSetScreen(const Common::String &line) {
 }
 
 bool ActionSetScreen::execute(ZVision *engine) {
-	RenderManager *renderManager = engine->getRenderManager();
-	renderManager->setBackgroundImage(_fileName);
+	engine->getRenderManager()->setBackgroundImage(_fileName);
 
 	return true;
 }
