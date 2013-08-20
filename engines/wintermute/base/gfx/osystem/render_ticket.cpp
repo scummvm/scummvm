@@ -28,6 +28,7 @@
 
 
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
+#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/graphics/transform_tools.h"
 #include "common/textconsole.h"
 
@@ -104,7 +105,13 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 	clipRect.setWidth(getSurface()->w);
 	clipRect.setHeight(getSurface()->h);
 
-	src._enableAlphaBlit = !_transform._alphaDisable;
+	if (_owner) {
+		if (_transform._alphaDisable) {
+			src._alphaMode = TransparentSurface::ALPHA_OPAQUE;
+		} else {
+			src._alphaMode = _owner->getAlphaType();
+		}
+	}
 	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height());
 }
 
@@ -118,7 +125,13 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 		clipRect->setHeight(getSurface()->h);
 	}
 
-	src._enableAlphaBlit = !_transform._alphaDisable; 
+	if (_owner) {
+		if (_transform._alphaDisable) {
+			src._alphaMode = TransparentSurface::ALPHA_OPAQUE;
+		} else {
+			src._alphaMode = _owner->getAlphaType();
+		}
+	}
 	src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height());
 	if (doDelete) {
 		delete clipRect;

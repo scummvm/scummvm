@@ -140,9 +140,9 @@ void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int 
 }
 #endif
 
-TransparentSurface::TransparentSurface() : Surface(), _enableAlphaBlit(true) {}
+TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
-TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _enableAlphaBlit(true) {
+TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _alphaMode(ALPHA_FULL) {
 	if (copyData) {
 		copyFrom(surf);
 	} else {
@@ -173,6 +173,37 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 		for (uint32 j = 0; j < width; j++) {
 			out[aIndex] = 0xFF;
 			out += 4;
+		}
+		outo += pitch;
+		ino += inoStep;
+	}
+}
+
+void doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+	byte *in, *out;
+	
+#ifdef SCUMM_LITTLE_ENDIAN
+	const int aIndex = 0;
+#else
+	const int aIndex = 3;
+#endif
+	const int aShift = 0;//img->format.aShift;
+
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (uint32 j = 0; j < width; j++) {
+			uint32 pix = *(uint32 *)in;
+			int a = (pix >> aShift) & 0xff;
+			in += inStep;
+
+			if (a == 0) { // Full transparency
+				out += 4;
+			} else { // Full opacity (Any value not exactly 0 is Opaque here)
+				*(uint32 *)out = pix;
+				out[aIndex] = 0xFF;
+				out += 4;
+			}
 		}
 		outo += pitch;
 		ino += inoStep;
@@ -388,9 +419,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		const int rShiftTarget = 24;//target.format.rShift;
 
 		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
-			if (_enableAlphaBlit) {
+			if (_alphaMode == ALPHA_FULL) {
 				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
-			} else {
+			} else if (_alphaMode == ALPHA_BINARY) {
+				doBlitBinary(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			} else if (_alphaMode == ALPHA_OPAQUE) {
 				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 			}
 		} else {

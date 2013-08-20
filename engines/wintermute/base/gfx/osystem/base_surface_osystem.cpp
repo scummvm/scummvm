@@ -48,7 +48,7 @@ namespace Wintermute {
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
-	_alphaType = ALPHA_FULL;
+	_alphaType = TransparentSurface::ALPHA_FULL;
 	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
@@ -71,10 +71,10 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	renderer->invalidateTicketsFromSurface(this);
 }
 
-AlphaType hasTransparencyType(const Graphics::Surface *surf) {
+TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 	if (surf->format.bytesPerPixel != 4) {
 		warning("hasTransparencyType:: non 32 bpp surface passed as argument");
-		return ALPHA_OPAQUE;
+		return TransparentSurface::ALPHA_OPAQUE;
 	}
 	uint8 r, g, b, a;
 	bool seenAlpha = false;
@@ -96,11 +96,11 @@ AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 		}
 	}
 	if (seenFullAlpha) {
-		return ALPHA_FULL;
+		return TransparentSurface::ALPHA_FULL;
 	} else if (seenAlpha) {
-		return ALPHA_BINARY;
+		return TransparentSurface::ALPHA_BINARY;
 	} else {
-		return ALPHA_OPAQUE;
+		return TransparentSurface::ALPHA_OPAQUE;
 	}
 }
 
@@ -438,7 +438,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// But no checking is in place for that yet.
 
 	// Optimize by not doing alpha-blits if we lack alpha
-	if (_alphaType == ALPHA_OPAQUE && !transform._alphaDisable) {
+	if (_alphaType == TransparentSurface::ALPHA_OPAQUE && !transform._alphaDisable) {
 		transform._alphaDisable = true;
 	}
 
@@ -457,9 +457,9 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	_surface->free();
 	_surface->copyFrom(surface);
 	if (hasAlpha) {
-		_alphaType = ALPHA_FULL;
+		_alphaType = TransparentSurface::ALPHA_FULL;
 	} else {
-		_alphaType = ALPHA_OPAQUE;
+		_alphaType = TransparentSurface::ALPHA_OPAQUE;
 	}
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);

@@ -75,7 +75,13 @@ struct TransparentSurface : public Graphics::Surface {
 		FLIP_VH = FLIP_H | FLIP_V
 	};
 
-	bool _enableAlphaBlit;
+	enum AlphaType {
+		ALPHA_OPAQUE = 0,
+		ALPHA_BINARY = 1,
+		ALPHA_FULL = 2
+	};
+
+	AlphaType _alphaMode;
 
 	/**
 	 @brief renders the surface to another surface

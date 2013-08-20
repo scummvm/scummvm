@@ -30,6 +30,7 @@
 #define WINTERMUTE_BASE_SURFACESDL_H
 
 #include "graphics/surface.h"
+#include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "common/list.h"
 
@@ -81,6 +82,7 @@ public:
 		return _height;
 	}
 
+	TransparentSurface::AlphaType getAlphaType() const { return _alphaType; }
 private:
 	Graphics::Surface *_surface;
 	bool _loaded;
@@ -90,7 +92,7 @@ private:
 	uint32 getPixelAt(Graphics::Surface *surface, int x, int y);
 
 	uint32 _rotation;
-	AlphaType _alphaType;
+	TransparentSurface::AlphaType _alphaType;
 	void *_lockPixels;
 	int _lockPitch;
 	byte *_alphaMask;
