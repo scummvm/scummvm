@@ -1002,12 +1002,15 @@ void MortevielleEngine::fctSelfPut() {
 					if (_num == 1) {
 						if (_coreVar._atticBallHoleObjectId != 0)
 							_crep = 188;
-						else
+						else {
 							_coreVar._atticBallHoleObjectId = _coreVar._selectedObjectId;
+							displayAnimFrame(1, 7);
+						}
 					} else if (_coreVar._atticRodHoleObjectId != 0) {
 						_crep = 188;
 					} else {
 						_coreVar._atticRodHoleObjectId = _coreVar._selectedObjectId;
+						displayAnimFrame(1, 6);
 					}
 				}
 
