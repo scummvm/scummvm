@@ -141,7 +141,7 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 		// If numberOfSamples is negative, the next abs(numberOfSamples) samples should
 		// be copied directly from source to dest
 		if (numberOfSamples < 0) {
-			numberOfSamples = abs(numberOfSamples);
+			numberOfSamples = ABS(numberOfSamples);
 
 			while (numberOfSamples > 0) {
 				if (sourceOffset + 1 >= sourceSize) {
@@ -184,7 +184,7 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 		// If numberOfSamples is negative, the next abs(numberOfSamples) samples should
 		// be copied directly from source to dest
 		if (numberOfSamples < 0) {
-			numberOfSamples = abs(numberOfSamples);
+			numberOfSamples = ABS(numberOfSamples);
 
 			while (numberOfSamples > 0) {
 				if (sourceOffset + 1 >= sourceSize) {
