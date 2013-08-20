@@ -168,17 +168,23 @@ void Menu::setText(MenuItem item, Common::String name) {
 			_inventoryStringArray[item._actionId].insertChar(' ', 0);
 		}
 		break;
-	case MENU_MOVE:
+	case MENU_MOVE: {
+		// If the first character isn't '*' or ' ' then it's missing a heading space
+		char c = s[0];
+		if (c != '*' && c != ' ')
+			s.insertChar(' ', 0);
+
 		while (s.size() < 22)
 			s += ' ';
 
 		_moveStringArray[item._actionId] = s;
+		}
 		break;
 	case MENU_ACTION: {
 		// If the first character isn't '*' or ' ' then it's missing a heading space
 		char c = s[0];
 		if (c != '*' && c != ' ')
-			s = ' ' + s;
+			s.insertChar(' ', 0);
 
 		while (s.size() < 10)
 			s += ' ';
@@ -190,7 +196,7 @@ void Menu::setText(MenuItem item, Common::String name) {
 		// If the first character isn't '*' or ' ' then it's missing a heading space
 		char c = s[0];
 		if (c != '*' && c != ' ')
-			s = ' ' + s;
+			s.insertChar(' ', 0);
 
 		while (s.size() < 10)
 			s += ' ';
@@ -677,13 +683,16 @@ void Menu::initMenu() {
 		_moveStringArray[i] = "*                       ";
 	for (int i = 1; i < 22; i++) {
 		_actionStringArray[i] = _vm->getString(i + kMenuActionStringIndex);
-
+		if ((_actionStringArray[i][0] != '*') && (_actionStringArray[i][0] != ' '))
+			_actionStringArray[i].insertChar(' ', 0);
 		while (_actionStringArray[i].size() < 10)
 			_actionStringArray[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
 				_selfStringArray[i] = _vm->getString(i + kMenuSelfStringIndex);
+				if ((_selfStringArray[i][0] != '*') && (_selfStringArray[i][0] != ' '))
+					_selfStringArray[i].insertChar(' ', 0);
 				while (_selfStringArray[i].size() < 10)
 					_selfStringArray[i] += ' ';
 			}
