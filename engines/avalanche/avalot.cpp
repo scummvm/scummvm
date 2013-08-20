@@ -50,6 +50,7 @@
 
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "common/config-manager.h"
 
 
 
@@ -167,7 +168,6 @@ void Avalot::setup() {
 	_vm->_gyro->enid_filename = ""; /* undefined. */
 	_vm->_lucerna->toolbar();
 	_vm->_scrolls->state(2);
-	_vm->_graphics->refreshScreen(); //_vm->_pingo->copy03(); Replace it with refreshScreen() since they 'almost' have the same functionality.
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->lastscore[i] = -1; /* impossible digits */
 
@@ -178,35 +178,6 @@ void Avalot::setup() {
 
 	_vm->_trip->loadtrip();
 
-	_vm->_gyro->reloaded = false; // TODO: Remove it later: when SAVE/LOAD system is implemented. Until then: we always start a new game.
-
-	if ((_vm->_gyro->filetoload.empty()) && (! _vm->_gyro->reloaded))
-		_vm->_gyro->newgame(); /* no game was requested- load the default */
-	else {
-		if (! _vm->_gyro->reloaded)
-			_vm->_enid->avvy_background();
-		_vm->_dropdown->standard_bar();
-		_vm->_lucerna->sprite_run();
-		if (_vm->_gyro->reloaded)
-			_vm->_enid->edna_reload();
-		else {
-			/* Filename given on the command line (or loadfirst) */
-			_vm->_enid->edna_load(_vm->_gyro->filetoload);
-			if (_vm->_enid->there_was_a_problem()) {
-				_vm->_scrolls->display("So let's start from the beginning instead...");
-				_vm->_gyro->holdthedawn = true;
-				_vm->_lucerna->dusk();
-				_vm->_gyro->newgame();
-			}
-		}
-	}
-
-	if (! _vm->_gyro->reloaded) {
-		_vm->_gyro->soundfx = ! _vm->_gyro->soundfx;
-		_vm->_lucerna->fxtoggle();
-		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing);
-	}
-
 	_vm->_trip->get_back_loretta();
 	//gm = getpixel(0: 0);
 	//setcolor(7);
@@ -216,12 +187,33 @@ void Avalot::setup() {
 	_vm->_parser->cursorOn();
 	_vm->_trip->newspeed();
 
-	if (! _vm->_gyro->reloaded)
+
+
+	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
+	if (loadSlot >= 0) {		
+		_vm->loadGame(loadSlot);
+
+		_vm->_gyro->reloaded = true;
+	} else
+		_vm->_gyro->reloaded = false;
+
+
+
+	if (!_vm->_gyro->reloaded) {
+		_vm->_gyro->newgame(); // No game was requested- load the default.
+
+		_vm->_gyro->soundfx = ! _vm->_gyro->soundfx;
+		_vm->_lucerna->fxtoggle();
+		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing);
+
 		_vm->_visa->dixi('q', 83); // Info on the game, etc. 
+	}	
 }
 
 void Avalot::run(Common::String arg) {
 	setup();
+
+	
 
 	do {
 		uint32 beginLoop = _vm->_system->getMillis();
@@ -248,6 +240,11 @@ void Avalot::run(Common::String arg) {
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
 		if (delay <= 55)
 			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown(); 55 comes from 18.2 Hz (B Flight).
+
+		
+
+
+
 
 	} while (! _vm->_gyro->lmo);
 

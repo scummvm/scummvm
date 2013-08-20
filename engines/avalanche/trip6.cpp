@@ -79,7 +79,8 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 
 	inf.skip(2); // Replace variable named 'soa' in the original code.
 	
-	//inf.skip(1); // We don't need to read the size of the string as in the original code.
+	if (!a.name.empty())
+		a.name.clear();
 	byte nameSize = inf.readByte();
 	for (byte i = 0; i < nameSize; i++) 
 		a.name += inf.readByte();

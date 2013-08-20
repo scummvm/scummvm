@@ -96,7 +96,7 @@ bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 }
 
 bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave) || (f == kSupportsLoadingDuringStartup);
 }
 
 SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {

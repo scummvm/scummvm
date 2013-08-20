@@ -108,7 +108,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_lucerna->init();
 	_acci->init();
 	_basher->init();
-	
 
 	return Common::kNoError;
 }
@@ -337,10 +336,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 			_trip->tr[i].appear(_trip->tr[i].x, _trip->tr[i].y, _trip->tr[i].face);
 	}
 
-	
-
-
-
 	//groi = 177;
 	//blockwrite(f, groi, 1);
 
@@ -379,6 +374,12 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	f->writeUint32LE(desc.size());
 
 	f->write(desc.c_str(), desc.size());
+
+	TimeDate t;
+	_system->getTimeAndDate(t);
+	f->writeSint16LE(t.tm_mday);
+	f->writeSint16LE(t.tm_mon);
+	f->writeSint16LE(t.tm_year);
 
 	Common::Serializer sz(NULL, f);
 
@@ -423,9 +424,19 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	if (signature != "AVAL")
 		return false;
 
-	// We dont care about the description here.
+	// Read the description.
 	uint32 descSize = f->readUint32LE();
-	f->skip(descSize);
+	Common::String description;
+	for (uint32 i = 0; i < descSize; i++) {
+		char actChar = f->readByte();
+		description += actChar;
+	}
+	description.toUppercase();
+
+	TimeDate t;
+	t.tm_mday = f->readSint16LE();
+	t.tm_mon = f->readSint16LE();
+	t.tm_year = f->readSint16LE();
 
 	Common::Serializer sz(f, NULL);
 
@@ -444,6 +455,8 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_lucerna->minor_redraw();
 
+	_dropdown->standard_bar();
+
 	_gyro->whereis[0] = _gyro->dna.room;
 	
 	_gyro->alive = true;
@@ -454,7 +467,47 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_lucerna->showrw();
 
+	_gyro->ontoolbar = false;
+	_trip->trippancy_link();
+
+	_celer->pics_link();
+	
+	_scrolls->display(Common::String(_scrolls->kControlItalic) + "Loaded: " + _scrolls->kControlRoman + description + ".ASG"
+		+ _scrolls->kControlCenter + _scrolls->kControlNewLine + _scrolls->kControlNewLine
+		+ _gyro->roomname + _scrolls->kControlNewLine + _scrolls->kControlNewLine
+		+ "saved on " + expandDate(t.tm_mday, t.tm_mon, t.tm_year) + '.');
+
+	if (_trip->tr[0].quick && _trip->tr[0].visible)
+		_trip->rwsp(0, _gyro->dna.rw);
+
 	return true;
+}
+
+Common::String AvalancheEngine::expandDate(int d, int m, int y) {
+	const Common::String months[12] = {
+		"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+	};
+
+	Common::String month = months[m];
+
+	Common::String day = _gyro->strf(d);
+
+	if (((1 <= d) && (d <= 9)) || ((21 <= d) && (d <= 31)))
+		switch (d % 10) {
+		case 1:
+			day = day + "st";
+			break;
+		case 2:
+			day = day + "nd";
+			break;
+		case 3:
+			day = day + "rd";
+			break;
+		default:
+			day = day + "th";
+		}
+
+	return day + ' ' + month + ' ' + _gyro->strf(y + 1900);
 }
 
 
@@ -620,7 +673,7 @@ Common::Error AvalancheEngine::run() {
 	if (err != Common::kNoError)
 		return err;
 
-		
+	
 
 	// From bootstrp:
 

@@ -229,8 +229,13 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	}
 
 	f.seek(146);
-	for (byte i = 0; i < 30; i++)
-		_vm->_gyro->roomname += f.readByte();
+	if (!_vm->_gyro->roomname.empty())
+		_vm->_gyro->roomname.clear();
+	for (byte i = 0; i < 30; i++) {
+		char actChar = f.readByte();
+		if ((32 <= actChar) && (actChar <= 126))
+			_vm->_gyro->roomname += actChar;
+	}
 	/* Compression method byte follows this... */
 
 	f.seek(177);
@@ -254,16 +259,13 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	_vm->_graphics->drawPicture(_vm->_graphics->_background, 0, 10);
 
-	_vm->_graphics->refreshScreen();
-
 	f.close();
 
 
 
 	load_also(xx);
-	_vm->_celer->load_chunks(xx);
 
-	_vm->_graphics->refreshScreen(); // _vm->_pingo->copy03();  -  See Avalot::setup()
+	_vm->_celer->load_chunks(xx);
 
 	bit = *_vm->_graphics->getPixel(0,0);
 
@@ -948,11 +950,11 @@ void Lucerna::fxtoggle() {
 
 void Lucerna::objectlist() {
 	_vm->_gyro->dna.carrying = 0;
-	if (_vm->_gyro->thinkthing && ! _vm->_gyro->dna.obj[_vm->_gyro->thinks])
+	if (_vm->_gyro->thinkthing && !_vm->_gyro->dna.obj[_vm->_gyro->thinks])
 		thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing); /* you always have money */
-	for (byte fv = 0; fv < numobjs; fv ++)
+	for (byte fv = 0; fv < numobjs; fv++)
 		if (_vm->_gyro->dna.obj[fv]) {
-			_vm->_gyro->dna.carrying ++;
+			_vm->_gyro->dna.carrying++;
 			_vm->_gyro->objlist[_vm->_gyro->dna.carrying] = fv + 1;
 		}
 }
