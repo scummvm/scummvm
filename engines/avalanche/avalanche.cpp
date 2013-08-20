@@ -39,6 +39,7 @@
 #include "engines/util.h"
 
 #include "gui/saveload.h"
+#include "graphics/thumbnail.h"
 
 
 namespace Avalanche {
@@ -361,19 +362,20 @@ Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &des
 bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	Common::String fileName = getSaveFileName(slot);
 	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(fileName);
-
 	if (!f) {
 		warning("Can't create file '%s', game not saved.", fileName.c_str());
 		return false;
 	}
 
 	char *signature = "AVAL";
-
 	f->write(signature, 4);
 
-	f->writeUint32LE(desc.size());
+	// Write version. We can't restore from obsolete versions.
+	f->writeByte(kSavegameVersion);
 
+	f->writeUint32LE(desc.size());
 	f->write(desc.c_str(), desc.size());
+	::Graphics::saveThumbnail(*f);
 
 	TimeDate t;
 	_system->getTimeAndDate(t);
@@ -413,16 +415,23 @@ Common::Error AvalancheEngine::loadGameState(int slot) {
 bool AvalancheEngine::loadGame(const int16 slot) {
 	Common::String fileName = getSaveFileName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-
 	if (!f)
 		return false;
-	
+
 	// Check for our signature.
 	Common::String signature;
 	for (byte i = 0; i < 4; i++)
 		signature += f->readByte();
 	if (signature != "AVAL")
 		return false;
+
+	// Check version. We can't restore from obsolete versions.
+	byte saveVersion = f->readByte();
+	if (saveVersion != kSavegameVersion) {
+		warning("Savegame of incompatible version!");
+		delete f;
+		return false;
+	}
 
 	// Read the description.
 	uint32 descSize = f->readUint32LE();
@@ -433,6 +442,9 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	}
 	description.toUppercase();
 
+	::Graphics::skipThumbnail(*f);
+
+	// Read the time the game was saved.
 	TimeDate t;
 	t.tm_mday = f->readSint16LE();
 	t.tm_mon = f->readSint16LE();
@@ -478,7 +490,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		+ "saved on " + expandDate(t.tm_mday, t.tm_mon, t.tm_year) + '.');
 
 	if (_trip->tr[0].quick && _trip->tr[0].visible)
-		_trip->rwsp(0, _gyro->dna.rw);
+		_trip->rwsp(0, _gyro->dna.rw); // We push Avvy in the right direction is he was moving.
 
 	return true;
 }

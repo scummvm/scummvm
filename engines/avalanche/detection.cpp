@@ -87,6 +87,7 @@ public:
 	int getMaximumSaveSlot() const { return 99; }
 	SaveStateList listSaves(const char *target) const;
 	void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -96,7 +97,12 @@ bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 }
 
 bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave) || (f == kSupportsLoadingDuringStartup);
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
 }
 
 SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
@@ -121,16 +127,25 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
-				/*int saveVersion = file->readByte();
+				// Check for our signature.
+				Common::String signature;
+				for (byte i = 0; i < 4; i++)
+					signature += file->readByte();
+				if (signature != "AVAL") {
+					warning("Savegame of incompatible type!");
+					delete file;
+					continue;
+				}
 
+				// Check version.
+				byte saveVersion = file->readByte();
 				if (saveVersion != kSavegameVersion) {
-				warning("Savegame of incompatible version");
-				delete file;
-				continue;
-				}*/
+					warning("Savegame of incompatible version!");
+					delete file;
+					continue;
+				}
 
-				// Read name
-				file->seek(4); // We skip the "AVAL" signature.
+				// Read name.
 				uint32 nameSize = file->readUint32LE();
 				if (nameSize >= 255) {
 					delete file;
@@ -153,6 +168,48 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (f) {
+		// Check for our signature.
+		Common::String signature;
+		for (byte i = 0; i < 4; i++)
+			signature += f->readByte();
+		if (signature != "AVAL") {
+			warning("Savegame of incompatible type!");
+			delete f;
+			return SaveStateDescriptor();
+		}
+
+		// Check version.
+		byte saveVersion = f->readByte();
+		if (saveVersion != kSavegameVersion) {
+			warning("Savegame of incompatible version!");
+			delete f;
+			return SaveStateDescriptor();
+		}
+
+		// Read the description.
+		uint32 descSize = f->readUint32LE();
+		Common::String description;
+		for (uint32 i = 0; i < descSize; i++) {
+			char actChar = f->readByte();
+			description += actChar;
+		}
+
+		SaveStateDescriptor desc(slot, description);
+
+		::Graphics::Surface *const thumbnail = ::Graphics::loadThumbnail(*f);
+		desc.setThumbnail(thumbnail);
+
+		delete f;
+		return desc;
+	}
+	return SaveStateDescriptor();
 }
 
 } // End of namespace Avalanche
