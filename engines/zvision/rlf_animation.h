@@ -36,21 +36,41 @@ public:
 	~RlfAnimation();
 
 private:
+	enum EncodingType {
+		Masked,
+		Simple
+	};
+
+	struct Frame {
+		EncodingType type;
+		int8 *encodedData;
+		uint32 encodedSize;
+	};
+
 private:
 	uint _frameCount;
 	uint _width;
 	uint _height;
 	uint32 _frameTime; // In milliseconds
-	uint16 **_frames;
+	Frame *_frames;
+	Common::List<uint> _completeFrames;
+
+	int _currentFrame;
+	uint16 *_currentFrameBuffer;
+	uint32 _frameBufferByteSize;
 
 public:
 	uint frameCount() { return _frameCount; }
 	uint width() { return _width; }
 	uint height() { return _height; }
 	uint32 frameTime() { return _frameTime; }
-	const uint16 *getFrameData(uint frameNumber) const { return _frames[frameNumber]; }
+	const uint16 *getFrameData(uint frameNumber);
+	const uint16 *getNextFrame();
+	bool endOfAnimation() { return _currentFrame == _frameCount - 1; }
 
 private:
+	void applyFrameToCurrent(uint frameNumber);
+
 	void decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;
 	void decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;
 };

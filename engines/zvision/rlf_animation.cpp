@@ -34,7 +34,14 @@
 namespace ZVision {
 
 RlfAnimation::RlfAnimation(const Common::String &fileName) 
-		: _frames(0) {
+		: _frameCount(0),
+		  _width(0),
+		  _height(0),
+		  _frameTime(0),
+		  _frames(0),
+		  _currentFrameBuffer(0),
+		  _currentFrame(-1),
+		  _frameBufferByteSize(0) {
 	Common::File file;
 	if (!file.open(fileName)) {
 		warning("RLF animation file %s could not be opened", fileName.c_str());
@@ -87,8 +94,11 @@ RlfAnimation::RlfAnimation(const Common::String &fileName)
 	file.readUint32LE();                    // Unknown11
 	_frameTime = file.readUint32LE() / 10;  // Frame time in microseconds
 
+	_frames = new Frame[_frameCount];
+	_currentFrameBuffer = new uint16[_width * _height];
+	_frameBufferByteSize = _width * _height * sizeof(uint16);
+
 	// Read in each frame
-	_frames = new uint16 *[_frameCount];
 	for (uint i = 0; i < _frameCount; i++) {
 		file.readUint32BE();                        // Magic number MARF
 		uint32 size = file.readUint32LE();          // Size
@@ -98,27 +108,19 @@ RlfAnimation::RlfAnimation(const Common::String &fileName)
 		uint32 headerSize = file.readUint32LE();    // Offset from the beginning of this frame to the frame data. Should always be 28
 		file.readUint32LE();                        // Unknown3
 
-		int8 *buffer = new int8[size - headerSize];
-		file.read(buffer, size - headerSize);
-
-		_frames[i] = new uint16[_width * _height];
-		uint frameByteSize = _width * _height * sizeof(uint16);
-		memset(_frames[i], 0x7C00, frameByteSize);
-		// Decode the data
-		debug("Decoding frame %u", i);
+		_frames[i].encodedSize = size - headerSize;
+		_frames[i].encodedData = new int8[_frames[i].encodedSize];
+		file.read(_frames[i].encodedData, _frames[i].encodedSize);
+		
 		if (type == MKTAG('E', 'L', 'H', 'D')) {
-			debug("Decoding with masked RLE");
-			decodeMaskedRunLengthEncoding(buffer, (int8 *)_frames[i], size - headerSize, frameByteSize);
+			_frames[i].type = Masked;
 		} else if (type == MKTAG('E', 'L', 'R', 'H')) {
-			debug("Decoding with simple RLE");
-			decodeSimpleRunLengthEncoding(buffer, (int8 *)_frames[i], size - headerSize, frameByteSize);
+			_frames[i].type = Simple;
+			_completeFrames.push_back(i);
 		} else {
 			warning("Frame %u of %s doesn't have type that can be decoded", i, fileName.c_str());
 			return;
 		}
-
-		// Cleanup
-		delete[] buffer;
 	}
 };
 
@@ -126,9 +128,58 @@ RlfAnimation::~RlfAnimation() {
 	if (_frames != 0) {
 		delete[] _frames;
 	}
+	if (_currentFrameBuffer != 0) {
+		delete[] _currentFrameBuffer;
+	}
 }
 
+const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
+	assert(frameNumber < _frameCount && frameNumber >= 0);
 
+	if (frameNumber == _currentFrame) {
+		return _currentFrameBuffer;
+	}
+
+	uint closestFrame = _currentFrame;
+	uint distance = ABS(_currentFrame - frameNumber);
+	for (Common::List<uint>::const_iterator iter = _completeFrames.begin(); iter != _completeFrames.end(); iter++) {
+		uint newDistance = ABS((*iter) - frameNumber);
+		if (closestFrame == -1 || newDistance < distance) {
+			closestFrame = (*iter);
+			distance = newDistance;
+		}
+	}
+
+	bool forwards = frameNumber > closestFrame;
+	if (forwards) {
+		for (uint i = closestFrame; i <= frameNumber; i++) {
+			applyFrameToCurrent(i);
+		}
+	} else {
+		for (uint i = closestFrame; i >= frameNumber; i--) {
+			applyFrameToCurrent(i);
+		}
+	}
+
+	return _currentFrameBuffer;
+}
+
+const uint16 *RlfAnimation::getNextFrame() {
+	assert(_currentFrame + 1 < _frameCount);
+
+	applyFrameToCurrent(_currentFrame + 1);
+	return _currentFrameBuffer;
+}
+
+void RlfAnimation::applyFrameToCurrent(uint frameNumber) {
+	if (_frames[frameNumber].type == Masked) {
+		decodeMaskedRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer, _frames[frameNumber].encodedSize, _frameBufferByteSize);
+	} else if (_frames[frameNumber].type == Simple) {
+		decodeSimpleRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer, _frames[frameNumber].encodedSize, _frameBufferByteSize);
+	}
+
+	_currentFrame = frameNumber;
+}
 
 void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
 	uint32 sourceOffset = 0;
@@ -225,6 +276,5 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 		}
 	}
 }
-
 
 } // End of namespace ZVision

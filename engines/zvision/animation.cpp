@@ -31,8 +31,6 @@
 namespace ZVision {
 
 void ZVision::playAnimation(RlfAnimation *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse) {
-	uint currentFrame = 0;
-	uint lastFrame = animation->frameCount();
 	bool skip = false;
 	uint32 frameTime = animation->frameTime();
 	uint width = animation->width();
@@ -44,7 +42,7 @@ void ZVision::playAnimation(RlfAnimation *animation, uint16 x, uint16 y, Dispose
 	uint32 accumulatedTime = 0;
 
 	// Only continue while the video is still playing
-	while (!shouldQuit() && !skip && currentFrame < lastFrame) {
+	while (!shouldQuit() && !skip && !animation->endOfAnimation()) {
 		_clock.update();
 		uint32 currentTime = _clock.getLastMeasuredTime();
 		accumulatedTime += _clock.getDeltaTime();
@@ -69,11 +67,10 @@ void ZVision::playAnimation(RlfAnimation *animation, uint16 x, uint16 y, Dispose
 			}
 		}
 
-		if (accumulatedTime >= frameTime) {
+		while (accumulatedTime >= frameTime && !animation->endOfAnimation()) {
 			accumulatedTime -= frameTime;
 
-			_system->copyRectToScreen(animation->getFrameData(currentFrame), width * sizeof(uint16), newX, newY, width, height);
-			currentFrame++;
+			_system->copyRectToScreen(animation->getNextFrame(), width * sizeof(uint16), newX, newY, width, height);
 		}
 
 		// Always update the screen so the mouse continues to render
