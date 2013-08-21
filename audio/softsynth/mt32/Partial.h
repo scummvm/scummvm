@@ -44,8 +44,6 @@ private:
 	int structurePosition; // 0 or 1 of a structure pair
 	StereoVolume stereoVolume;
 
-	Bit16s myBuffer[MAX_SAMPLES_PER_RUN];
-
 	// Only used for PCM partials
 	int pcmNum;
 	// FIXME: Give this a better name (e.g. pcmWaveInfo)
@@ -56,6 +54,11 @@ private:
 	int pulseWidthVal;
 
 	Poly *poly;
+	Partial *pair;
+
+	TVA *tva;
+	TVP *tvp;
+	TVF *tvf;
 
 	LA32Ramp ampRamp;
 	LA32Ramp cutoffModifierRamp;
@@ -63,18 +66,13 @@ private:
 	// TODO: This should be owned by PartialPair
 	LA32PartialPair la32Pair;
 
+	const PatchCache *patchCache;
+	PatchCache cachebackup;
+
 	Bit32u getAmpValue();
 	Bit32u getCutoffValue();
 
 public:
-	const PatchCache *patchCache;
-	TVA *tva;
-	TVP *tvp;
-	TVF *tvf;
-
-	PatchCache cachebackup;
-
-	Partial *pair;
 	bool alreadyOutputed;
 
 	Partial(Synth *synth, int debugPartialNum);
@@ -97,14 +95,17 @@ public:
 	bool isPCM() const;
 	const ControlROMPCMStruct *getControlROMPCMStruct() const;
 	Synth *getSynth() const;
+	TVA *getTVA() const;
+
+	void backupCache(const PatchCache &cache);
 
 	// Returns true only if data written to buffer
 	// This function (unlike the one below it) returns processed stereo samples
 	// made from combining this single partial with its pair, if it has one.
-	bool produceOutput(float *leftBuf, float *rightBuf, unsigned long length);
+	bool produceOutput(Sample *leftBuf, Sample *rightBuf, unsigned long length);
 
 	// This function writes mono sample output to the provided buffer, and returns the number of samples written
-	unsigned long generateSamples(Bit16s *partialBuf, unsigned long length);
+	unsigned long generateSamples(Sample *partialBuf, unsigned long length);
 };
 
 }

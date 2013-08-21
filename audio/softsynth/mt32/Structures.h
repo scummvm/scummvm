@@ -38,6 +38,12 @@ typedef   signed short int Bit16s;
 typedef unsigned char      Bit8u;
 typedef   signed char      Bit8s;
 
+#if MT32EMU_USE_FLOAT_SAMPLES
+typedef float Sample;
+#else
+typedef Bit16s Sample;
+#endif
+
 // The following structures represent the MT-32's memory
 // Since sysex allows this memory to be written to in blocks of bytes,
 // we keep this packed so that we can copy data into the various

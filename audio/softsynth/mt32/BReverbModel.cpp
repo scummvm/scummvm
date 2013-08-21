@@ -15,10 +15,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//#include <memory.h>
 #include "mt32emu.h"
-
-#if MT32EMU_USE_REVERBMODEL == 2
-
 #include "BReverbModel.h"
 
 // Analysing of state of reverb RAM address lines gives exact sizes of the buffers of filters used. This also indicates that
@@ -62,9 +60,9 @@ static const Bit32u MODE_1_OUTL[] = {2618, 1760, 4518};
 static const Bit32u MODE_1_OUTR[] = {1300, 3532, 2274};
 static const Bit32u MODE_1_COMB_FACTOR[] = {0x80, 0x60, 0x60, 0x60};
 static const Bit32u MODE_1_COMB_FEEDBACK[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-											  0x28, 0x48, 0x60, 0x70, 0x78, 0x80, 0x90, 0x98,
-											  0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98,
-											  0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98};
+                                              0x28, 0x48, 0x60, 0x70, 0x78, 0x80, 0x90, 0x98,
+                                              0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98,
+                                              0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98};
 static const Bit32u MODE_1_DRY_AMP[] = {0xA0, 0xA0, 0xB0, 0xB0, 0xB0, 0xB0, 0xB0, 0xE0};
 static const Bit32u MODE_1_WET_AMP[] = {0x10, 0x30, 0x50, 0x70, 0x90, 0xC0, 0xF0, 0xF0};
 static const Bit32u MODE_1_LPF_AMP = 0x60;
@@ -103,7 +101,11 @@ static const BReverbSettings * const REVERB_SETTINGS[] = {&REVERB_MODE_0_SETTING
 
 // This algorithm tries to emulate exactly Boss multiplication operation (at least this is what we see on reverb RAM data lines).
 // Also LA32 is suspected to use the similar one to perform PCM interpolation and ring modulation.
-static Bit32s weirdMul(Bit32s a, Bit8u addMask, Bit8u carryMask) {
+static Sample weirdMul(Sample a, Bit8u addMask, Bit8u carryMask) {
+	(void)carryMask;
+#if MT32EMU_USE_FLOAT_SAMPLES
+	return a * addMask / 256.0f;
+#elif MT32EMU_BOSS_REVERB_PRECISE_MODE
 	Bit8u mask = 0x80;
 	Bit32s res = 0;
 	for (int i = 0; i < 8; i++) {
@@ -113,10 +115,13 @@ static Bit32s weirdMul(Bit32s a, Bit8u addMask, Bit8u carryMask) {
 		mask >>= 1;
 	}
 	return res;
+#else
+	return Sample(((Bit32s)a * addMask) >> 8);
+#endif
 }
 
 RingBuffer::RingBuffer(Bit32u newsize) : size(newsize), index(0) {
-	buffer = new Bit16s[size];
+	buffer = new Sample[size];
 }
 
 RingBuffer::~RingBuffer() {
@@ -124,7 +129,7 @@ RingBuffer::~RingBuffer() {
 	buffer = NULL;
 }
 
-Bit32s RingBuffer::next() {
+Sample RingBuffer::next() {
 	if (++index >= size) {
 		index = 0;
 	}
@@ -134,52 +139,69 @@ Bit32s RingBuffer::next() {
 bool RingBuffer::isEmpty() const {
 	if (buffer == NULL) return true;
 
-	Bit16s *buf = buffer;
+#if MT32EMU_USE_FLOAT_SAMPLES
+	Sample max = 0.001f;
+#else
+	Sample max = 8;
+#endif
+	Sample *buf = buffer;
 	for (Bit32u i = 0; i < size; i++) {
-		if (*buf < -8 || *buf > 8) return false;
+		if (*buf < -max || *buf > max) return false;
 		buf++;
 	}
 	return true;
 }
 
 void RingBuffer::mute() {
-	Bit16s *buf = buffer;
+#if MT32EMU_USE_FLOAT_SAMPLES
+	Sample *buf = buffer;
 	for (Bit32u i = 0; i < size; i++) {
 		*buf++ = 0;
 	}
+#else
+	memset(buffer, 0, size * sizeof(Sample));
+#endif
 }
 
 AllpassFilter::AllpassFilter(const Bit32u useSize) : RingBuffer(useSize) {}
 
-Bit32s AllpassFilter::process(const Bit32s in) {
+Sample AllpassFilter::process(const Sample in) {
 	// This model corresponds to the allpass filter implementation of the real CM-32L device
 	// found from sample analysis
 
-	Bit16s bufferOut = next();
+	const Sample bufferOut = next();
 
+#if MT32EMU_USE_FLOAT_SAMPLES
+	// store input - feedback / 2
+	buffer[index] = in - 0.5f * bufferOut;
+
+	// return buffer output + feedforward / 2
+	return bufferOut + 0.5f * buffer[index];
+#else
 	// store input - feedback / 2
 	buffer[index] = in - (bufferOut >> 1);
 
 	// return buffer output + feedforward / 2
 	return bufferOut + (buffer[index] >> 1);
+#endif
 }
 
 CombFilter::CombFilter(const Bit32u useSize, const Bit32u useFilterFactor) : RingBuffer(useSize), filterFactor(useFilterFactor) {}
 
-void CombFilter::process(const Bit32s in) {
+void CombFilter::process(const Sample in) {
 	// This model corresponds to the comb filter implementation of the real CM-32L device
 
 	// the previously stored value
-	Bit32s last = buffer[index];
+	const Sample last = buffer[index];
 
 	// prepare input + feedback
-	Bit32s filterIn = in + weirdMul(next(), feedbackFactor, 0xF0 /* Maybe 0x80 ? */);
+	const Sample filterIn = in + weirdMul(next(), feedbackFactor, 0xF0 /* Maybe 0x80 ? */);
 
 	// store input + feedback processed by a low-pass filter
 	buffer[index] = weirdMul(last, filterFactor, 0x40) - filterIn;
 }
 
-Bit32s CombFilter::getOutputAt(const Bit32u outIndex) const {
+Sample CombFilter::getOutputAt(const Bit32u outIndex) const {
 	return buffer[(size + index - outIndex) % size];
 }
 
@@ -190,15 +212,15 @@ void CombFilter::setFeedbackFactor(const Bit32u useFeedbackFactor) {
 DelayWithLowPassFilter::DelayWithLowPassFilter(const Bit32u useSize, const Bit32u useFilterFactor, const Bit32u useAmp)
 	: CombFilter(useSize, useFilterFactor), amp(useAmp) {}
 
-void DelayWithLowPassFilter::process(const Bit32s in) {
+void DelayWithLowPassFilter::process(const Sample in) {
 	// the previously stored value
-	Bit32s last = buffer[index];
+	const Sample last = buffer[index];
 
 	// move to the next index
 	next();
 
 	// low-pass filter process
-	Bit32s lpfOut = weirdMul(last, filterFactor, 0xFF) + in;
+	Sample lpfOut = weirdMul(last, filterFactor, 0xFF) + in;
 
 	// store lpfOut multiplied by LPF amp factor
 	buffer[index] = weirdMul(lpfOut, amp, 0xFF);
@@ -206,26 +228,26 @@ void DelayWithLowPassFilter::process(const Bit32s in) {
 
 TapDelayCombFilter::TapDelayCombFilter(const Bit32u useSize, const Bit32u useFilterFactor) : CombFilter(useSize, useFilterFactor) {}
 
-void TapDelayCombFilter::process(const Bit32s in) {
+void TapDelayCombFilter::process(const Sample in) {
 	// the previously stored value
-	Bit32s last = buffer[index];
+	const Sample last = buffer[index];
 
 	// move to the next index
 	next();
 
 	// prepare input + feedback
 	// Actually, the size of the filter varies with the TIME parameter, the feedback sample is taken from the position just below the right output
-	Bit32s filterIn = in + weirdMul(getOutputAt(outR + MODE_3_FEEDBACK_DELAY), feedbackFactor, 0xF0);
+	const Sample filterIn = in + weirdMul(getOutputAt(outR + MODE_3_FEEDBACK_DELAY), feedbackFactor, 0xF0);
 
 	// store input + feedback processed by a low-pass filter
 	buffer[index] = weirdMul(last, filterFactor, 0xF0) - filterIn;
 }
 
-Bit32s TapDelayCombFilter::getLeftOutput() const {
+Sample TapDelayCombFilter::getLeftOutput() const {
 	return getOutputAt(outL + PROCESS_DELAY + MODE_3_ADDITIONAL_DELAY);
 }
 
-Bit32s TapDelayCombFilter::getRightOutput() const {
+Sample TapDelayCombFilter::getRightOutput() const {
 	return getOutputAt(outR + PROCESS_DELAY + MODE_3_ADDITIONAL_DELAY);
 }
 
@@ -327,14 +349,14 @@ bool BReverbModel::isActive() const {
 	return false;
 }
 
-void BReverbModel::process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples) {
-	Bit32s dry, link, outL1, outR1;
+void BReverbModel::process(const Sample *inLeft, const Sample *inRight, Sample *outLeft, Sample *outRight, unsigned long numSamples) {
+	Sample dry;
 
-	for (unsigned long i = 0; i < numSamples; i++) {
+	while (numSamples > 0) {
 		if (tapDelayMode) {
-			dry = Bit32s(*inLeft * 8192.0f) + Bit32s(*inRight * 8192.0f);
+			dry = *inLeft + *inRight;
 		} else {
-			dry = Bit32s(*inLeft * 8192.0f) / 2 + Bit32s(*inRight * 8192.0f) / 2;
+			dry = *inLeft / 2 + *inRight / 2;
 		}
 
 		// Looks like dryAmp doesn't change in MT-32 but it does in CM-32L / LAPC-I
@@ -343,44 +365,53 @@ void BReverbModel::process(const float *inLeft, const float *inRight, float *out
 		if (tapDelayMode) {
 			TapDelayCombFilter *comb = static_cast<TapDelayCombFilter *> (*combs);
 			comb->process(dry);
-			*outLeft = weirdMul(comb->getLeftOutput(), wetLevel, 0xFF) / 8192.0f;
-			*outRight = weirdMul(comb->getRightOutput(), wetLevel, 0xFF) / 8192.0f;
+			*outLeft = weirdMul(comb->getLeftOutput(), wetLevel, 0xFF);
+			*outRight = weirdMul(comb->getRightOutput(), wetLevel, 0xFF);
 		} else {
-			// Get the last stored sample before processing in order not to loose it
-			link = combs[0]->getOutputAt(currentSettings.combSizes[0] - 1);
+			// If the output position is equal to the comb size, get it now in order not to loose it
+			Sample link = combs[0]->getOutputAt(currentSettings.combSizes[0] - 1);
 
 			// Entrance LPF. Note, comb.process() differs a bit here.
 			combs[0]->process(dry);
 
+#if !MT32EMU_USE_FLOAT_SAMPLES
 			// This introduces reverb noise which actually makes output from the real Boss chip nondeterministic
 			link = link - 1;
+#endif
 			link = allpasses[0]->process(link);
 			link = allpasses[1]->process(link);
 			link = allpasses[2]->process(link);
 
 			// If the output position is equal to the comb size, get it now in order not to loose it
-			outL1 = combs[1]->getOutputAt(currentSettings.outLPositions[0] - 1);
-			outL1 += outL1 >> 1;
+			Sample outL1 = combs[1]->getOutputAt(currentSettings.outLPositions[0] - 1);
 
 			combs[1]->process(link);
 			combs[2]->process(link);
 			combs[3]->process(link);
 
-			link = combs[2]->getOutputAt(currentSettings.outLPositions[1]);
-			link += link >> 1;
-			link += outL1;
-			link += combs[3]->getOutputAt(currentSettings.outLPositions[2]);
-			*outLeft = weirdMul(link, wetLevel, 0xFF) / 8192.0f;
+			Sample outL2 = combs[2]->getOutputAt(currentSettings.outLPositions[1]);
+			Sample outL3 = combs[3]->getOutputAt(currentSettings.outLPositions[2]);
+			Sample outR1 = combs[1]->getOutputAt(currentSettings.outRPositions[0]);
+			Sample outR2 = combs[2]->getOutputAt(currentSettings.outRPositions[1]);
+			Sample outR3 = combs[3]->getOutputAt(currentSettings.outRPositions[2]);
 
-			outR1 = combs[1]->getOutputAt(currentSettings.outRPositions[0]);
+#if MT32EMU_USE_FLOAT_SAMPLES
+			*outLeft = 1.5f * (outL1 + outL2) + outL3;
+			*outRight = 1.5f * (outR1 + outR2) + outR3;
+#else
+			outL1 += outL1 >> 1;
+			outL2 += outL2 >> 1;
+			*outLeft = outL1 + outL2 + outL3;
+
 			outR1 += outR1 >> 1;
-			link = combs[2]->getOutputAt(currentSettings.outRPositions[1]);
-			link += link >> 1;
-			link += outR1;
-			link += combs[3]->getOutputAt(currentSettings.outRPositions[2]);
-			*outRight = weirdMul(link, wetLevel, 0xFF) / 8192.0f;
+			outR2 += outR2 >> 1;
+			*outRight = outR1 + outR2 + outR3;
+#endif
+			*outLeft = weirdMul(*outLeft, wetLevel, 0xFF);
+			*outRight = weirdMul(*outRight, wetLevel, 0xFF);
 		}
 
+		numSamples--;
 		inLeft++;
 		inRight++;
 		outLeft++;
@@ -389,5 +420,3 @@ void BReverbModel::process(const float *inLeft, const float *inRight, float *out
 }
 
 }
-
-#endif

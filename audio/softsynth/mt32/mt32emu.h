@@ -60,27 +60,24 @@
 #define MT32EMU_MONITOR_TVF 0
 
 // Configuration
-// The maximum number of partials playing simultaneously
-#define MT32EMU_MAX_PARTIALS 32
-// The maximum number of notes playing simultaneously per part.
-// No point making it more than MT32EMU_MAX_PARTIALS, since each note needs at least one partial.
-#define MT32EMU_MAX_POLY 32
 
 // If non-zero, deletes reverb buffers that are not in use to save memory.
 // If zero, keeps reverb buffers for all modes around all the time to avoid allocating/freeing in the critical path.
 #define MT32EMU_REDUCE_REVERB_MEMORY 1
 
-// 0: Use legacy Freeverb
-// 1: Use Accurate Reverb model aka AReverb
-// 2: Use Bit-perfect Boss Reverb model aka BReverb (for developers, not much practical use)
-#define MT32EMU_USE_REVERBMODEL 1
+// 0: Maximum speed at the cost of a bit lower emulation accuracy.
+// 1: Maximum achievable emulation accuracy.
+#define MT32EMU_BOSS_REVERB_PRECISE_MODE 0
 
-// 0: Use refined wave generator based on logarithmic fixed-point computations and LUTs
-// 1: Use legacy accurate wave generator based on float computations
-#define MT32EMU_ACCURATE_WG 0
+// 0: Use 16-bit signed samples and refined wave generator based on logarithmic fixed-point computations and LUTs. Maximum emulation accuracy and speed.
+// 1: Use float samples in the wave generator and renderer. Maximum output quality and minimum noise.
+#define MT32EMU_USE_FLOAT_SAMPLES 0
 
 namespace MT32Emu
 {
+// The default value for the maximum number of partials playing simultaneously.
+const unsigned int DEFAULT_MAX_PARTIALS = 32;
+
 // The higher this number, the more memory will be used, but the more samples can be processed in one run -
 // various parts of sample generation can be processed more efficiently in a single run.
 // A run's maximum length is that given to Synth::render(), so giving a value here higher than render() is ever
@@ -90,11 +87,14 @@ namespace MT32Emu
 // This value must be >= 1.
 const unsigned int MAX_SAMPLES_PER_RUN = 4096;
 
-// This determines the amount of memory available for simulating delays.
-// If set too low, partials aborted to allow other partials to play will not end gracefully, but will terminate
-// abruptly and potentially cause a pop/crackle in the audio output.
-// This value must be >= 1.
-const unsigned int MAX_PRERENDER_SAMPLES = 1024;
+// The default size of the internal MIDI event queue.
+// It holds the incoming MIDI events before the rendering engine actually processes them.
+// The main goal is to fairly emulate the real hardware behaviour which obviously
+// uses an internal MIDI event queue to gather incoming data as well as the delays
+// introduced by transferring data via the MIDI interface.
+// This also facilitates building of an external rendering loop
+// as the queue stores timestamped MIDI events.
+const unsigned int DEFAULT_MIDI_EVENT_QUEUE_SIZE = 1024;
 }
 
 #include "Structures.h"
@@ -103,7 +103,6 @@ const unsigned int MAX_PRERENDER_SAMPLES = 1024;
 #include "Poly.h"
 #include "LA32Ramp.h"
 #include "LA32WaveGenerator.h"
-#include "LegacyWaveGenerator.h"
 #include "TVA.h"
 #include "TVP.h"
 #include "TVF.h"

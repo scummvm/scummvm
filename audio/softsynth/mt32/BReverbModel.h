@@ -36,14 +36,14 @@ struct BReverbSettings {
 
 class RingBuffer {
 protected:
-	Bit16s *buffer;
+	Sample *buffer;
 	const Bit32u size;
 	Bit32u index;
 
 public:
 	RingBuffer(const Bit32u size);
 	virtual ~RingBuffer();
-	Bit32s next();
+	Sample next();
 	bool isEmpty() const;
 	void mute();
 };
@@ -51,7 +51,7 @@ public:
 class AllpassFilter : public RingBuffer {
 public:
 	AllpassFilter(const Bit32u size);
-	Bit32s process(const Bit32s in);
+	Sample process(const Sample in);
 };
 
 class CombFilter : public RingBuffer {
@@ -61,8 +61,8 @@ protected:
 
 public:
 	CombFilter(const Bit32u size, const Bit32u useFilterFactor);
-	virtual void process(const Bit32s in); // Actually, no need to make it virtual, but for sure
-	Bit32s getOutputAt(const Bit32u outIndex) const;
+	virtual void process(const Sample in);
+	Sample getOutputAt(const Bit32u outIndex) const;
 	void setFeedbackFactor(const Bit32u useFeedbackFactor);
 };
 
@@ -71,7 +71,7 @@ class DelayWithLowPassFilter : public CombFilter {
 
 public:
 	DelayWithLowPassFilter(const Bit32u useSize, const Bit32u useFilterFactor, const Bit32u useAmp);
-	void process(const Bit32s in);
+	void process(const Sample in);
 	void setFeedbackFactor(const Bit32u) {}
 };
 
@@ -81,13 +81,13 @@ class TapDelayCombFilter : public CombFilter {
 
 public:
 	TapDelayCombFilter(const Bit32u useSize, const Bit32u useFilterFactor);
-	void process(const Bit32s in);
-	Bit32s getLeftOutput() const;
-	Bit32s getRightOutput() const;
+	void process(const Sample in);
+	Sample getLeftOutput() const;
+	Sample getRightOutput() const;
 	void setOutputPositions(const Bit32u useOutL, const Bit32u useOutR);
 };
 
-class BReverbModel : public ReverbModel {
+class BReverbModel {
 	AllpassFilter **allpasses;
 	CombFilter **combs;
 
@@ -100,10 +100,12 @@ class BReverbModel : public ReverbModel {
 public:
 	BReverbModel(const ReverbMode mode);
 	~BReverbModel();
+	// After construction or a close(), open() must be called at least once before any other call (with the exception of close()).
 	void open();
+	// May be called multiple times without an open() in between.
 	void close();
 	void setParameters(Bit8u time, Bit8u level);
-	void process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples);
+	void process(const Sample *inLeft, const Sample *inRight, Sample *outLeft, Sample *outRight, unsigned long numSamples);
 	bool isActive() const;
 };
 
