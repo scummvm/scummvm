@@ -3,6 +3,7 @@ MODULE := engines/zvision
 MODULE_OBJS := \
 	action_node.o \
 	actions.o \
+	animation.o \
 	clock.o \
 	console.o \
 	control.o \
@@ -14,6 +15,7 @@ MODULE_OBJS := \
 	mouse_event.o \
 	render_manager.o \
 	render_table.o \
+	rlf_animation.o \
 	scr_file_handling.o \
 	script_manager.o \
 	scripts.o \
