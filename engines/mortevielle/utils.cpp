@@ -67,9 +67,10 @@ bool MortevielleEngine::keyPressed() {
  * @remarks	Originally called 'get_ch'
  */
 int MortevielleEngine::getChar() {
+	bool end = false;
 	// If there isn't any pending keypress, wait until there is
-	while (!shouldQuit() && _keypresses.empty()) {
-		keyPressed();
+	while (!shouldQuit() && !end) {
+		end = keyPressed();
 	}
 
 	// Return the top keypress
