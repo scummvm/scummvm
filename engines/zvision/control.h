@@ -66,6 +66,16 @@ private:
 	MouseEvent _event;
 };
 
+// TODO: Implement InputControl
+// TODO: Implement SaveControl
+// TODO: Implement SlotControl
+// TODO: Implement LeverControl
+// TODO: Implement SafeControl
+// TODO: Implement FistControl
+// TODO: Implement HotMovieControl
+// TODO: Implement PaintControl
+// TODO: Implement TilterControl
+
 } // End of namespace ZVision
 
 #endif
