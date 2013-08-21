@@ -769,6 +769,7 @@ Scene2000::Scene2000(): SceneExt() {
 	}
 
 	_exitingFlag = false;
+	_mazePlayerMode = 0;
 }
 
 void Scene2000::postInit(SceneObjectList *OwnerList) {
