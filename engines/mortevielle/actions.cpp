@@ -631,7 +631,7 @@ void MortevielleEngine::fctOpen() {
 				break;
 		}
 
-		if (i > 7) {
+		if (i > 6) {
 			warning("Unexpected action: Too many open objects");
 			return;
 		}
