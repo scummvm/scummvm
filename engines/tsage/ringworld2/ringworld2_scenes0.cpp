@@ -5699,7 +5699,8 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 bool Scene600::Aerosol::startAction(CursorType action, Event &event) {
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action < CURSOR_WALK) && (action >= R2CURSORS_START)) {
+	// CHECKME: The original is checking is action == 0. To be verified.
+	if (action == INV_NONE) {
 		return false;
 	} else if (action == CURSOR_USE) {
 		R2_GLOBALS._player.disableControl();
