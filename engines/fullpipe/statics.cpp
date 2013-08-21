@@ -671,12 +671,12 @@ void StaticANIObject::stopAnim_maybe() {
 				_ox -= _movement->_mx;
 				_oy -= _movement->_my;
 
+				_statics->getSomeXY(point);
 				if (_movement->_currMovement) {
 					_oy += point.y;
 					_ox -= point.x;
 					_ox += _statics->getDimensions(&point)->x;
 				} else {
-					_statics->getSomeXY(point);
 					_ox += point.x;
 					_oy += point.y;
 				}
@@ -693,7 +693,7 @@ void StaticANIObject::stopAnim_maybe() {
 		oid = _movement->_id;
 		_movement = 0;
 
-		ExCommand *ex = new ExCommand(oid, 17, 24, 0, 0, 0, 1, 0, 0, 0);
+		ExCommand *ex = new ExCommand(_id, 17, 24, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = _okeyCode;
 		ex->_excFlags = 2;
 		ex->postMessage();
@@ -708,7 +708,7 @@ void StaticANIObject::stopAnim_maybe() {
 		if (_messageQueueId == oldmqid) {
 			_messageQueueId = 0;
 			if (_field_34 == 1)
-				updateGlobalMessageQueue(mqid, oldmqid);
+				updateGlobalMessageQueue(mqid, _id);
 		}
 	}
 }
