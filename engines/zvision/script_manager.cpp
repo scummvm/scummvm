@@ -248,6 +248,9 @@ void ScriptManager::changeLocationIntern() {
 	// Clear all the containers
 	_referenceTable.clear();
 	_puzzlesToCheck.clear();
+	for (Common::List<Puzzle *>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
+		delete (*iter);
+	}
 	_activePuzzles.clear();
 	// We can clear without deleting from the heap because we use SharedPtr
 	_activeControls.clear();
