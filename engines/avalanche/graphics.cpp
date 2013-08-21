@@ -309,11 +309,11 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	return picture;
 }
 
-void Graphics::drawPicture(const ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
+void Graphics::drawPicture(const ::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
 	for (uint16 y = 0; y < picture.h; y++)
 		for (uint16 x = 0; x < picture.w; x++)
-			*getPixel(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
+			*(byte *)target.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
 }
 
 void Graphics::refreshScreen() {

@@ -54,8 +54,7 @@ void Sequence::first_show(byte what) {
 }
 
 void Sequence::then_show(byte what) {
-	byte fv;
-	for (fv = 1; fv <= seq_length; fv++) {
+	for (byte fv = 0; fv < seq_length; fv++) {
 		if (seq[fv] == 0) {
 			seq[fv] = what;
 			return;
@@ -103,7 +102,7 @@ void Sequence::call_sequencer() {
 
 	if ((seq[0] >= 1) && (seq[0] <= 176)) {
 		/* Show a frame. */
-		_vm->_celer->show_one(seq[1]);
+		_vm->_celer->show_one(seq[0] - 1);
 		shove_left();
 	}
 	

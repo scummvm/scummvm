@@ -1392,16 +1392,8 @@ void Trip::call_andexors() {
 		}
 	} while (!ok);
 
-	// We redraw the background only if we have at least one moving character.
-	bool drawBG = false;
-	for (fv = 0; fv < 5; fv++) {
-		if (order[fv] > -1) {
-			drawBG = true;
-			break;
-		}
-	}
-	if (drawBG)
-		_vm->_graphics->drawPicture(_vm->_graphics->_background, 0, 10);
+	
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_graphics->_background, 0, 10);
 
 	for (fv = 0; fv < 5; fv++) {
 		if (order[fv] > -1)
@@ -1646,9 +1638,9 @@ void Trip::fliproom(byte room, byte ped) {
 
 bool Trip::infield(byte which) {
 /* returns True if you're within field "which" */
-	int16 yy = tr[1].y + tr[1]._info.yl;
+	int16 yy = tr[0].y + tr[0]._info.yl;
 
-	return (tr[1].x >= _vm->_gyro->fields[which].x1) && (tr[1].x <= _vm->_gyro->fields[which].x2)
+	return (tr[0].x >= _vm->_gyro->fields[which].x1) && (tr[0].x <= _vm->_gyro->fields[which].x2)
 		&& (yy >= _vm->_gyro->fields[which].y1) && (yy <= _vm->_gyro->fields[which].y2);
 
 }

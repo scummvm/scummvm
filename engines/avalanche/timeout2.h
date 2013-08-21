@@ -162,6 +162,8 @@ public:
 
 	timetype times[7];
 	
+	bool timerLost; // Is the timer "lost"?
+
 
 	
 	Timeout(AvalancheEngine *vm);

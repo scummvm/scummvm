@@ -758,7 +758,7 @@ void Acci::opendoor() {   /* so whaddya THINK this does?! */
 
 	switch (_vm->_gyro->dna.room) {   /* Special cases. */
 	case r__yours:
-		if (_vm->_trip->infield(2)) {
+		if (_vm->_trip->infield(1)) {
 			/* Opening the box. */
 			thing = 54; /* The box. */ person = pardon;
 			examine();
@@ -777,33 +777,32 @@ void Acci::opendoor() {   /* so whaddya THINK this does?! */
 	if ((!_vm->_gyro->dna.user_moves_avvy) && (_vm->_gyro->dna.room != r__lusties))
 		return; /* No doors can open if you can't move Avvy. */
 
-	for (fv = 9; fv <= 15; fv++) {
+	for (fv = 8; fv < 15; fv++)
 		if (_vm->_trip->infield(fv)) {
-			{
-				_vm->_gyro->portals[fv];
-				switch (_vm->_gyro->portals[fv].op) {
-				case _vm->_gyro->exclaim:
-					_vm->_trip->tr[1].bounce();
-					_vm->_visa->dixi('x', _vm->_gyro->portals[fv].data);
-					break;
-				case _vm->_gyro->transport:
-					_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8 /*High byte*/, (_vm->_gyro->portals[fv].data) & 0x0F /*Low byte*/);
-					break;
-				case _vm->_gyro->unfinished:
-					_vm->_trip->tr[1].bounce();
-					_vm->_scrolls->display("Sorry. This place is not available yet!");
-					break;
-				case _vm->_gyro->special:
-					_vm->_trip->call_special(_vm->_gyro->portals[fv].data);
-					break;
-				case _vm->_gyro->mopendoor:
-					_vm->_trip->open_the_door((_vm->_gyro->portals[fv].data) >> 8, (_vm->_gyro->portals[fv].data) & 0x0F, fv);
-					break;
-				}
+			fv -= 8;
+
+			switch (_vm->_gyro->portals[fv].op) {
+			case _vm->_gyro->exclaim:
+				_vm->_trip->tr[0].bounce();
+				_vm->_visa->dixi('x', _vm->_gyro->portals[fv].data);
+				break;
+			case _vm->_gyro->transport:
+				_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8 /*High byte*/, (_vm->_gyro->portals[fv].data) & 0x0F /*Low byte*/);
+				break;
+			case _vm->_gyro->unfinished:
+				_vm->_trip->tr[0].bounce();
+				_vm->_scrolls->display("Sorry. This place is not available yet!");
+				break;
+			case _vm->_gyro->special:
+				_vm->_trip->call_special(_vm->_gyro->portals[fv].data);
+				break;
+			case _vm->_gyro->mopendoor:
+				_vm->_trip->open_the_door((_vm->_gyro->portals[fv].data) >> 8, (_vm->_gyro->portals[fv].data) & 0x0F, fv);
+				break;
 			}
+			
 			return;
 		}
-	}
 
 	if (_vm->_gyro->dna.room == r__map)
 		_vm->_scrolls->display(Common::String("Avvy, you can complete the whole game without ever going "

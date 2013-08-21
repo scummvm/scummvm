@@ -57,7 +57,7 @@ Timeout::Timeout(AvalancheEngine *vm) {
 }
 
 void Timeout::set_up_timer(int32 howlong, byte whither, byte why) {
-	if (_vm->_gyro->isLoaded == false) {
+	if ((_vm->_gyro->isLoaded == false) || (timerLost == true)) {
 		byte i = 0;
 		while ((i < 7) && (times[i].time_left != 0))
 			i++;
@@ -221,6 +221,8 @@ void Timeout::lose_timer(byte which) {
 		if (times[fv].what_for == which)
 			times[fv].time_left = 0; // Cancel this one!
 	}
+
+	timerLost = true;
 }
 
 /*function timer_is_on(which:byte):boolean;
