@@ -671,8 +671,23 @@ bool Acci::holding() {
 
 
 
-void Acci::special(bool before) {
-	warning("STUB: Acci::special()");
+void Acci::openBox(bool before) {
+	if ((_vm->_gyro->dna.room == r__yours) && (thing == 54)) {
+		_vm->_celer->show_one(4);
+
+		_vm->_celer->pics_link();
+		_vm->_trip->trippancy_link();
+		_vm->_graphics->refreshScreen();
+
+		_vm->_system->delayMillis(55);
+
+		if (!before) {
+			_vm->_celer->show_one(5);
+			_vm->_celer->pics_link();
+			_vm->_trip->trippancy_link();
+			_vm->_graphics->refreshScreen();
+		}
+	}
 }
 
 void Acci::examine() {
@@ -683,9 +698,9 @@ void Acci::examine() {
 			if ((1 <= thing) && (thing <= 49)) // Standard object
 				examobj();
 			else if ((50 <= thing) && (thing <= 100)) { // Also thing
-				special(true);
-				_vm->_scrolls->display(*_vm->_gyro->also[thing - 51][0]);
-				special(false);
+				openBox(true);
+				_vm->_scrolls->display(*_vm->_gyro->also[thing - 50][1]);
+				openBox(false);
 			}
 		}
 	} else if (person != pardon)
@@ -754,8 +769,6 @@ void Acci::lookaround() {
 }
 
 void Acci::opendoor() {   /* so whaddya THINK this does?! */
-	byte fv;
-
 	switch (_vm->_gyro->dna.room) {   /* Special cases. */
 	case r__yours:
 		if (_vm->_trip->infield(1)) {
@@ -777,7 +790,7 @@ void Acci::opendoor() {   /* so whaddya THINK this does?! */
 	if ((!_vm->_gyro->dna.user_moves_avvy) && (_vm->_gyro->dna.room != r__lusties))
 		return; /* No doors can open if you can't move Avvy. */
 
-	for (fv = 8; fv < 15; fv++)
+	for (byte fv = 8; fv < 15; fv++)
 		if (_vm->_trip->infield(fv)) {
 			fv -= 8;
 

@@ -109,7 +109,7 @@ struct dnatype { /* here goes... */ /* Ux, uy, & ww now all belong to Trip5 */
 	bool friar_will_tie_you_up; /* If you're going to get tied up. */
 	bool tied_up; /* You ARE tied up! */
 
-	char box_contents; /* 0 = money (sixpence), 254 = empty, any
+	byte box_contents; /* 0 = money (sixpence), 254 = empty, any
 				other number implies the contents of the box. */
 
 	bool talked_to_crapulus; /* Pretty self-explanatory. */
