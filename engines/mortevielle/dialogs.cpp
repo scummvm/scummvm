@@ -39,7 +39,7 @@ namespace Mortevielle {
  * Alert function - Show
  * @remarks	Originally called 'do_alert'
  */
-int DialogManager::show(const Common::String &msg, int n) {
+int DialogManager::show(const Common::String &msg) {
 	// Make a copy of the current screen surface for later restore
 	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
 
@@ -164,10 +164,10 @@ int DialogManager::show(const Common::String &msg, int n) {
 	_vm->setMouseClick(false);
 	_vm->_mouse.hideMouse();
 	if (!test3)  {
-		id = n;
-		setPosition(n, coldep, esp);
+		id = 1;
+		setPosition(1, coldep, esp);
 		Common::String tmp4(" ");
-		tmp4 += buttonStr[n];
+		tmp4 += buttonStr[1];
 		tmp4 += " ";
 		_vm->_screenSurface.drawString(tmp4, 1);
 	}

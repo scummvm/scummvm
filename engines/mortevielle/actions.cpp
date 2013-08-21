@@ -702,10 +702,10 @@ void MortevielleEngine::fctPlace() {
 					_soundManager.startSpeech(6, -9, 1);
 
 					// Do you want to enter the hidden passage?
-					int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+					int answer = _dialogManager.show(getEngineString(S_YES_NO));
 					if (answer == 1) {
 						Common::String alertTxt = getString(582);
-						_dialogManager.show(alertTxt, 1);
+						_dialogManager.show(alertTxt);
 
 						bool enterPassageFl = _dialogManager.showKnowledgeCheck();
 						_mouse.hideMouse();
@@ -732,7 +732,7 @@ void MortevielleEngine::fctPlace() {
 							displayAnimFrame(1, 2);
 							displayAnimFrame(1, 1);
 							alertTxt = getString(577);
-							_dialogManager.show(alertTxt, 1);
+							_dialogManager.show(alertTxt);
 							displayAnimFrame(2, 1);
 							_crep = 166;
 						}
@@ -801,7 +801,7 @@ void MortevielleEngine::fctTurn() {
 		if ((_coreVar._currPlace == ATTIC) && (_coreVar._atticRodHoleObjectId == 159) && (_coreVar._atticBallHoleObjectId == 141)) {
 			handleDescriptionText(2, 167);
 			_soundManager.startSpeech(7, 9, 1);
-			int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+			int answer = _dialogManager.show(getEngineString(S_YES_NO));
 			if (answer == 1)
 				_endGame = true;
 			else
@@ -811,7 +811,7 @@ void MortevielleEngine::fctTurn() {
 			handleDescriptionText(2, 175);
 			clearVerbBar();
 			_soundManager.startSpeech(6, -9, 1);
-			int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+			int answer = _dialogManager.show(getEngineString(S_YES_NO));
 			if (answer == 1) {
 				_coreVar._currPlace = CRYPT;
 				prepareDisplayText();
@@ -914,7 +914,7 @@ void MortevielleEngine::fctKnock() {
 		displayTextInVerbBar(getEngineString(S_HIT));
 
 	if (_coreVar._currPlace == LANDING) {
-		_dialogManager.show(getEngineString(S_BEFORE_USE_DEP_MENU), 1);
+		_dialogManager.show(getEngineString(S_BEFORE_USE_DEP_MENU));
 		return;
 	}
 
@@ -1223,7 +1223,7 @@ void MortevielleEngine::fctSleep() {
 		if (hour > 23)
 			hour = 0;
 		prepareRoom();
-		answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+		answer = _dialogManager.show(getEngineString(S_YES_NO));
 		_anyone = false;
 	} while (answer != 1);
 	_crep = 998;
@@ -1313,7 +1313,7 @@ void MortevielleEngine::fctWait() {
 			return;
 		}
 		handleDescriptionText(2, 102);
-		answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+		answer = _dialogManager.show(getEngineString(S_YES_NO));
 	} while (answer != 2);
 	_crep = 998;
 	if (!_anyone)
@@ -1629,7 +1629,7 @@ void MortevielleEngine::askRestart() {
 	_day = 0;
 	handleDescriptionText(2, 180);
 
-	int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+	int answer = _dialogManager.show(getEngineString(S_YES_NO));
 	_quitGame = (answer != 1);
 }
 

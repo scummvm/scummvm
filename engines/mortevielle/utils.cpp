@@ -290,7 +290,7 @@ void MortevielleEngine::handleAction() {
 		if (_menu._menuSelected && (_currMenu == MENU_LOAD))
 			_savegameManager.loadGame((_currAction & 15) - 1);
 		if (inkey == '\103') {       /* F9 */
-			temps = _dialogManager.show(_hintPctMessage, 1);
+			temps = _dialogManager.show(_hintPctMessage);
 			return;
 		} else if (inkey == '\77') {
 			if ((_menuOpcode != OPCODE_NONE) && ((_currMenu == MENU_ACTION) || (_currMenu == MENU_SELF))) {
@@ -1712,7 +1712,7 @@ int MortevielleEngine::getRandomNumber(int minval, int maxval) {
  * @remarks	Originally called 'aldepl'
  */
 void MortevielleEngine::showMoveMenuAlert() {
-	_dialogManager.show(getEngineString(S_USE_DEP_MENU), 1);
+	_dialogManager.show(getEngineString(S_USE_DEP_MENU));
 }
 
 /**
@@ -3190,7 +3190,7 @@ void MortevielleEngine::displayStatusArrow() {
 		} while (!(qust || inRect || _anyone));
 
 		if (qust && (touch == '\103'))
-			_dialogManager.show(_hintPctMessage, 1);
+			_dialogManager.show(_hintPctMessage);
 	} while (!((touch == '\73') || ((touch == '\104') && (_x != 0) && (_y != 0)) || (_anyone) || (inRect)));
 
 	if (touch == '\73')

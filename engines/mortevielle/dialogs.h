@@ -52,7 +52,7 @@ private:
 	void setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
 public:
 	void setParent(MortevielleEngine *vm);
-	int show(const Common::String &msg, int n);
+	int show(const Common::String &msg);
 	void drawF3F8();
 	void checkForF8(int SpeechNum, bool drawFrame2Fl);
 	int waitForF3F8();
