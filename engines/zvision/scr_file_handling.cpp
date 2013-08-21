@@ -52,8 +52,8 @@ void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) 
 			continue;
 
 		if (line.matchString("puzzle:*", true)) {
-			Puzzle puzzle;
-			sscanf(line.c_str(),"puzzle:%u",&(puzzle.key));
+			Puzzle *puzzle = new Puzzle();
+			sscanf(line.c_str(),"puzzle:%u",&(puzzle->key));
 
 			parsePuzzle(puzzle, file);
 			if (isGlobal) {
@@ -67,17 +67,17 @@ void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) 
 	}
 }
 
-void ScriptManager::parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stream) {
+void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream) {
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("criteria {", true)) {
-			parseCriteria(stream, puzzle.criteriaList);
+			parseCriteria(stream, puzzle->criteriaList);
 		} else if (line.matchString("results {", true)) {
-			parseResults(stream, puzzle.resultActions);
+			parseResults(stream, puzzle->resultActions);
 		} else if (line.matchString("flags {", true)) {
-			puzzle.flags = parseFlags(stream);
+			puzzle->flags = parseFlags(stream);
 		}
 
 		line = stream.readLine();

@@ -41,6 +41,15 @@ ScriptManager::ScriptManager(ZVision *engine)
 	  _changeLocation(false) {
 }
 
+ScriptManager::~ScriptManager() {
+	for (Common::List<Puzzle *>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
+		delete (*iter);
+	}
+	for (Common::List<Puzzle *>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
+		delete (*iter);
+	}
+}
+
 void ScriptManager::initialize() {
 	parseScrFile("universe.scr", true);
 	changeLocation('g', 'a', 'r', 'y', 0);
@@ -58,11 +67,11 @@ void ScriptManager::update(uint deltaTimeMillis) {
 
 void ScriptManager::createReferenceTable() {
 	// Iterate through each local Puzzle
-	for (Common::List<Puzzle>::iterator activePuzzleIter = _activePuzzles.begin(); activePuzzleIter != _activePuzzles.end(); activePuzzleIter++) {
-		Puzzle *puzzlePtr = &(*activePuzzleIter);
+	for (Common::List<Puzzle *>::iterator activePuzzleIter = _activePuzzles.begin(); activePuzzleIter != _activePuzzles.end(); activePuzzleIter++) {
+		Puzzle *puzzlePtr = (*activePuzzleIter);
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = activePuzzleIter->criteriaList.begin(); criteriaIter != (*activePuzzleIter).criteriaList.end(); criteriaIter++) {
+		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*activePuzzleIter)->criteriaList.begin(); criteriaIter != (*activePuzzleIter)->criteriaList.end(); criteriaIter++) {
 			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
 				_referenceTable[entryIter->key].push_back(puzzlePtr);
 
@@ -75,11 +84,11 @@ void ScriptManager::createReferenceTable() {
 	}
 
 	// Iterate through each global Puzzle
-	for (Common::List<Puzzle>::iterator globalPuzzleIter = _globalPuzzles.begin(); globalPuzzleIter != _globalPuzzles.end(); globalPuzzleIter++) {
-		Puzzle *puzzlePtr = &(*globalPuzzleIter);
+	for (Common::List<Puzzle *>::iterator globalPuzzleIter = _globalPuzzles.begin(); globalPuzzleIter != _globalPuzzles.end(); globalPuzzleIter++) {
+		Puzzle *puzzlePtr = (*globalPuzzleIter);
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = globalPuzzleIter->criteriaList.begin(); criteriaIter != (*globalPuzzleIter).criteriaList.end(); criteriaIter++) {
+		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*globalPuzzleIter)->criteriaList.begin(); criteriaIter != (*globalPuzzleIter)->criteriaList.end(); criteriaIter++) {
 			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
 				_referenceTable[entryIter->key].push_back(puzzlePtr);
 
@@ -263,23 +272,23 @@ void ScriptManager::changeLocationIntern() {
 	}
 
 	// Add all the local puzzles to the queue to be checked
-	for (Common::List<Puzzle>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
+	for (Common::List<Puzzle *>::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); iter++) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if (((*iter).flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
-			setStateValue((*iter).key, 0);
+		if (((*iter)->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
+			setStateValue((*iter)->key, 0);
 		}
 
-		_puzzlesToCheck.push(&(*iter));
+		_puzzlesToCheck.push((*iter));
 	}
 
 	// Add all the global puzzles to the queue to be checked
-	for (Common::List<Puzzle>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
+	for (Common::List<Puzzle *>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if (((*iter).flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
-			setStateValue((*iter).key, 0);
+		if (((*iter)->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
+			setStateValue((*iter)->key, 0);
 		}
 
-		_puzzlesToCheck.push(&(*iter));
+		_puzzlesToCheck.push((*iter));
 	}
 
 	// Create the puzzle reference table

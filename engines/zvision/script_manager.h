@@ -50,6 +50,7 @@ struct Location {
 class ScriptManager {
 public:
 	ScriptManager(ZVision *engine);
+	~ScriptManager();
 
 private:
 	ZVision *_engine;
@@ -66,9 +67,9 @@ private:
 	/** Holds the Puzzles that should be checked this frame */
 	Common::Queue<Puzzle *> _puzzlesToCheck;
 	/** Holds the currently active puzzles */
-	Common::List<Puzzle> _activePuzzles;
+	Common::List<Puzzle *> _activePuzzles;
 	/** Holds the global puzzles */
-	Common::List<Puzzle>_globalPuzzles;
+	Common::List<Puzzle *>_globalPuzzles;
 	/** Holds the currently active controls */
 	Common::HashMap<uint32, Control *> _activeControls;
 
@@ -112,7 +113,7 @@ private:
 	 * @param puzzle    The object to store what is parsed
 	 * @param stream    Scr file stream
 	 */
-	void parsePuzzle(Puzzle &puzzle, Common::SeekableReadStream &stream);
+	void parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream);
 
 	/**
 	 * Parses the stream into a Criteria object
