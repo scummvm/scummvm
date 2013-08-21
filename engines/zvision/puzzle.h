@@ -27,11 +27,17 @@
 #include "common/list.h"
 #include "common/ptr.h"
 
+#include "zvision/actions.h"
+
 namespace ZVision {
 
-class ResultAction;
-
 struct Puzzle {
+	~Puzzle() {
+		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); iter++) {
+			delete (*iter);
+		}
+	}
+
 	/** How criteria should be decided */
 	enum CriteriaOperator {
 		EQUAL_TO,
