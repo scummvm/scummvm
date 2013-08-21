@@ -39,6 +39,7 @@ Scene1000::Scene1000(): SceneExt() {
 	R2_GLOBALS._uiElements._active = false;
 	_gameTextSpeaker._displayMode = 9;
 	_fieldD2E = 0;
+	_field412 = 0;
 }
 
 void Scene1000::postInit(SceneObjectList *OwnerList) {
