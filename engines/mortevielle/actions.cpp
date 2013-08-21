@@ -523,9 +523,12 @@ void MortevielleEngine::fctSearch() {
 		setCoordinates(7);
 		if (_num != 0) {
 			int i;
-			for (i = 1; (i <= 6) && (_num != _openObjects[i]); i++)
-				;
-			if (_num == _openObjects[i]) {
+			for (i = 1; i <= 6; i++) {
+				if (_num == _openObjects[i])
+					break;
+			}
+
+			if (i <= 6) {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 
@@ -913,9 +916,12 @@ void MortevielleEngine::fctClose() {
 		setCoordinates(7);
 		if (_num != 0) {
 			int i;
-			for (i = 1; (i <= 6) && (_num != _openObjects[i]); ++i)
-				;
-			if (_num == _openObjects[i]) {
+			for (i = 1; i <= 6; ++i) {
+				if (_num == _openObjects[i])
+					break;
+			}
+
+			if (i <= 6) {
 				displayAnimFrame(2, _num);
 				_crep = 998;
 				_openObjects[i] = 0;
