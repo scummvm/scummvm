@@ -479,6 +479,7 @@ public:
 
 	/* previous:^previoustype;*/
 	dnatype dna;
+	byte lineNum; // Number of lines.
 	linetype lines[50]; /* For Also. */
 	int16 c;
 	//registers r; // http://www.freepascal.org/docs-html/rtl/dos/registers.html

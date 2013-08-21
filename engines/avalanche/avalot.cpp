@@ -223,8 +223,8 @@ void Avalot::run(Common::String arg) {
 		_vm->_trip->readstick();
 		_vm->_gyro->force_numlock();
 		_vm->_trip->get_back_loretta();
-		_vm->_trip->trippancy_link();
 		_vm->_celer->pics_link();
+		_vm->_trip->trippancy_link();
 		_vm->_lucerna->checkclick();
 		
 		_vm->_timeout->one_tick();

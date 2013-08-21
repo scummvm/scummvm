@@ -60,6 +60,10 @@ public:
 	static const int16 kScreenWidth = 640;
 	static const int16 kScreenHeight = 200;
 
+	static const uint16 kBackgroundWidth = kScreenWidth;
+	static const byte kBackgroundHeight = 8 * 12080 / kScreenWidth; // With 640 width it's 151
+	// The 8 = number of bits in a byte, and 12080 comes from Lucerna::load().
+
 	::Graphics::Surface _surface;
 
 	::Graphics::Surface _background;
@@ -111,7 +115,7 @@ public:
 	::Graphics::Surface loadPictureRow(Common::File &file, uint16 width, uint16 height); // Reads Row-planar EGA data.
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 
-	void drawPicture(const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
+	void drawPicture(const ::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
 
 	void refreshScreen();
 

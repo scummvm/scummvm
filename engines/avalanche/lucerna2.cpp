@@ -88,13 +88,11 @@ void Lucerna::draw_also_lines() {
 	CursorMan.showMouse(false);
 
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
-	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 639, 161), 15);
+	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
-	for (ff = 0; ff < 50; ff++)
-		if (_vm->_gyro->lines[ff].x1 != 32767 /*maxint*/)
-			_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
-
-
+	for (ff = 0; ff < _vm->_gyro->lineNum; ff++)
+		_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
+		
 	CursorMan.showMouse(true);
 }
 
@@ -155,8 +153,8 @@ void Lucerna::load_also(Common::String n) {
 	memset(_vm->_gyro->lines, 0xFF, sizeof(_vm->_gyro->lines));
 	
 	//fv = getpixel(0, 0);
-	fv = f.readByte();
-	for (byte i = 0; i < fv; i++) {
+	_vm->_gyro->lineNum = f.readByte();
+	for (byte i = 0; i < _vm->_gyro->lineNum; i++) {
 		_vm->_gyro->lines[i].x1 = f.readSint16LE();
 		_vm->_gyro->lines[i].y1 = f.readSint16LE();
 		_vm->_gyro->lines[i].x2 = f.readSint16LE();
@@ -171,7 +169,7 @@ void Lucerna::load_also(Common::String n) {
 		_vm->_gyro->peds[i].y = f.readSint16LE();
 		_vm->_gyro->peds[i].dir = f.readByte();
 	}
-	
+
 	_vm->_gyro->numfields = f.readByte();
 	for (byte i = 0; i < _vm->_gyro->numfields; i++) {
 		_vm->_gyro->fields[i].x1 = f.readSint16LE();
@@ -251,13 +249,9 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	
 	
-	uint16 backgroundWidht = _vm->_graphics->kScreenWidth;
-	byte backgroundHeight = 8 * 12080 / _vm->_graphics->kScreenWidth; // With 640 width it's 151
-	// The 8 = number of bits in a byte, and 12080 comes from the original code (see above)
+	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(f, _vm->_graphics->kBackgroundWidth, _vm->_graphics->kBackgroundHeight);
 
-	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(f, backgroundWidht, backgroundHeight);
-
-	_vm->_graphics->drawPicture(_vm->_graphics->_background, 0, 10);
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_graphics->_background, 0, 10);
 
 	f.close();
 
@@ -756,7 +750,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	
 	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
 
-	_vm->_graphics->drawPicture(picture, 205, 170);
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 205, 170);
 
 	picture.free();
 	
@@ -813,7 +807,7 @@ void Lucerna::toolbar() {
 
 	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
 
-	_vm->_graphics->drawPicture(picture, 5, 169);
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 5, 169);
 
 	picture.free();
 
@@ -849,7 +843,7 @@ void Lucerna::showscore() {
 
 	for (byte fv = 0; fv < 3; fv ++)
 		if (_vm->_gyro->lastscore[fv] != numbers[fv]) 
-			_vm->_graphics->drawPicture(_vm->_gyro->digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
+			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
 	for (byte fv = 0; fv < 2; fv ++)
 		_vm->_trip->getset[fv].remember(scorespace);
@@ -1144,7 +1138,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	putimage(0, 161, rwlite[with.rw], 0);
 	}*/
 
-	_vm->_graphics->drawPicture(_vm->_gyro->rwlite[_vm->_gyro->dna.rw], 0, 161);
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->rwlite[_vm->_gyro->dna.rw], 0, 161);
 
 	CursorMan.showMouse(true);
 	//setactivepage(1 - cp);

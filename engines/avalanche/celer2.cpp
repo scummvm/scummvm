@@ -347,7 +347,8 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 		break;
 	}
 
-	_vm->_graphics->drawPicture(picture, x * 8, y);
+	// These pictures are practically parts of the background. -10 is for the drop-down menu.
+	_vm->_graphics->drawPicture(_vm->_graphics->_background, picture, x * 8, y - 10);
 }
 
 void Celer::show_one(byte which) {
