@@ -7775,7 +7775,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == -1)
-		R2_GLOBALS.setFlag(R2_ATTRACTOR_CABLE_HARNESS);
+		R2_GLOBALS.setFlag(16);
 
 	if ((R2_GLOBALS._player._characterScene[1] != 1550) && (R2_GLOBALS._player._characterScene[1] != 1580)) {
 		R2_GLOBALS._player._characterScene[1] = 1550;
