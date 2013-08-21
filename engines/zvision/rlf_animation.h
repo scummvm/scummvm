@@ -23,6 +23,10 @@
 #ifndef ZVISION_RLF_ANIMATION_H
 #define ZVISION_RLF_ANIMATION_H
 
+#include "common/types.h"
+
+#include "common/file.h"
+
 
 namespace Common {
 class String;
@@ -32,7 +36,7 @@ namespace ZVision {
 
 class RlfAnimation {
 public:
-	RlfAnimation(const Common::String &fileName);
+	RlfAnimation(const Common::String &fileName, bool stream = true);
 	~RlfAnimation();
 
 private:
@@ -48,6 +52,10 @@ private:
 	};
 
 private:
+	Common::File _file;
+	bool _stream;
+	uint _lastFrameRead;
+
 	uint _frameCount;
 	uint _width;
 	uint _height;
@@ -64,12 +72,20 @@ public:
 	uint width() { return _width; }
 	uint height() { return _height; }
 	uint32 frameTime() { return _frameTime; }
+
 	const uint16 *getFrameData(uint frameNumber);
+
 	const uint16 *getNextFrame();
+	const uint16 *getPreviousFrame();
+
 	bool endOfAnimation() { return _currentFrame == _frameCount - 1; }
 
 private:
+	bool readHeader();
+	Frame readNextFrame();
+
 	void applyFrameToCurrent(uint frameNumber);
+	void applyFrameToCurrent(const RlfAnimation::Frame &frame);
 
 	void decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;
 	void decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;

@@ -33,8 +33,10 @@
 
 namespace ZVision {
 
-RlfAnimation::RlfAnimation(const Common::String &fileName) 
-		: _frameCount(0),
+RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream) 
+		: _stream(stream),
+		  _lastFrameRead(0),
+		  _frameCount(0),
 		  _width(0),
 		  _height(0),
 		  _frameTime(0),
@@ -42,84 +44,25 @@ RlfAnimation::RlfAnimation(const Common::String &fileName)
 		  _currentFrameBuffer(0),
 		  _currentFrame(-1),
 		  _frameBufferByteSize(0) {
-	Common::File file;
-	if (!file.open(fileName)) {
+	if (!_file.open(fileName)) {
 		warning("RLF animation file %s could not be opened", fileName.c_str());
 		return;
 	}
 
-	if (file.readUint32BE() != MKTAG('F', 'E', 'L', 'R')) {
+	if (!readHeader()) {
 		warning("%s is not a RLF animation file. Wrong magic number", fileName.c_str());
 		return;
 	}
 
-	// Read the header
-	file.readUint32LE();                // Size1
-	file.readUint32LE();                // Unknown1
-	file.readUint32LE();                // Unknown2
-	_frameCount = file.readUint32LE();  // Frame count
-
-	// Since we don't need any of the data, we can just seek right to the
-	// entries we need rather than read in all the individual entries.
-	file.seek(136, SEEK_CUR);
-
-	//// Read CIN header
-	//file.readUint32BE();          // Magic number FNIC
-	//file.readUint32LE();          // Size2
-	//file.readUint32LE();          // Unknown3
-	//file.readUint32LE();          // Unknown4
-	//file.readUint32LE();          // Unknown5
-	//file.seek(0x18, SEEK_CUR);    // VRLE
-	//file.readUint32LE();          // LRVD
-	//file.readUint32LE();          // Unknown6
-	//file.seek(0x18, SEEK_CUR);    // HRLE
-	//file.readUint32LE();          // ELHD
-	//file.readUint32LE();          // Unknown7
-	//file.seek(0x18, SEEK_CUR);    // HKEY
-	//file.readUint32LE();          // ELRH
-
-	//// Read MIN info header
-	//file.readUint32BE();          // Magic number FNIM
-	//file.readUint32LE();          // Size3
-	//file.readUint32LE();          // OEDV
-	//file.readUint32LE();          // Unknown8
-	//file.readUint32LE();          // Unknown9
-	//file.readUint32LE();          // Unknown10
-	_width = file.readUint32LE();   // Width
-	_height = file.readUint32LE();  // Height
-	
-	// Read time header
-	file.readUint32BE();                    // Magic number EMIT
-	file.readUint32LE();                    // Size4
-	file.readUint32LE();                    // Unknown11
-	_frameTime = file.readUint32LE() / 10;  // Frame time in microseconds
-
-	_frames = new Frame[_frameCount];
 	_currentFrameBuffer = new uint16[_width * _height];
 	_frameBufferByteSize = _width * _height * sizeof(uint16);
 
-	// Read in each frame
-	for (uint i = 0; i < _frameCount; i++) {
-		file.readUint32BE();                        // Magic number MARF
-		uint32 size = file.readUint32LE();          // Size
-		file.readUint32LE();                        // Unknown1
-		file.readUint32LE();                        // Unknown2
-		uint32 type = file.readUint32BE();          // Either ELHD or ELRH
-		uint32 headerSize = file.readUint32LE();    // Offset from the beginning of this frame to the frame data. Should always be 28
-		file.readUint32LE();                        // Unknown3
+	if (!stream) {
+		_frames = new Frame[_frameCount];
 
-		_frames[i].encodedSize = size - headerSize;
-		_frames[i].encodedData = new int8[_frames[i].encodedSize];
-		file.read(_frames[i].encodedData, _frames[i].encodedSize);
-		
-		if (type == MKTAG('E', 'L', 'H', 'D')) {
-			_frames[i].type = Masked;
-		} else if (type == MKTAG('E', 'L', 'R', 'H')) {
-			_frames[i].type = Simple;
-			_completeFrames.push_back(i);
-		} else {
-			warning("Frame %u of %s doesn't have type that can be decoded", i, fileName.c_str());
-			return;
+		// Read in each frame
+		for (uint i = 0; i < _frameCount; i++) {
+			_frames[i] = readNextFrame();
 		}
 	}
 };
@@ -133,7 +76,85 @@ RlfAnimation::~RlfAnimation() {
 	}
 }
 
+bool RlfAnimation::readHeader() {
+	if (_file.readUint32BE() != MKTAG('F', 'E', 'L', 'R')) {
+		return false;
+	}
+
+	// Read the header
+	_file.readUint32LE();                // Size1
+	_file.readUint32LE();                // Unknown1
+	_file.readUint32LE();                // Unknown2
+	_frameCount = _file.readUint32LE();  // Frame count
+
+	// Since we don't need any of the data, we can just seek right to the
+	// entries we need rather than read in all the individual entries.
+	_file.seek(136, SEEK_CUR);
+
+	//// Read CIN header
+	//_file.readUint32BE();          // Magic number FNIC
+	//_file.readUint32LE();          // Size2
+	//_file.readUint32LE();          // Unknown3
+	//_file.readUint32LE();          // Unknown4
+	//_file.readUint32LE();          // Unknown5
+	//_file.seek(0x18, SEEK_CUR);    // VRLE
+	//_file.readUint32LE();          // LRVD
+	//_file.readUint32LE();          // Unknown6
+	//_file.seek(0x18, SEEK_CUR);    // HRLE
+	//_file.readUint32LE();          // ELHD
+	//_file.readUint32LE();          // Unknown7
+	//_file.seek(0x18, SEEK_CUR);    // HKEY
+	//_file.readUint32LE();          // ELRH
+
+	//// Read MIN info header
+	//_file.readUint32BE();          // Magic number FNIM
+	//_file.readUint32LE();          // Size3
+	//_file.readUint32LE();          // OEDV
+	//_file.readUint32LE();          // Unknown8
+	//_file.readUint32LE();          // Unknown9
+	//_file.readUint32LE();          // Unknown10
+	_width = _file.readUint32LE();   // Width
+	_height = _file.readUint32LE();  // Height
+
+	// Read time header
+	_file.readUint32BE();                    // Magic number EMIT
+	_file.readUint32LE();                    // Size4
+	_file.readUint32LE();                    // Unknown11
+	_frameTime = _file.readUint32LE() / 10;  // Frame time in microseconds
+
+	return true;
+}
+
+RlfAnimation::Frame RlfAnimation::readNextFrame() {
+	RlfAnimation::Frame frame;
+
+	_file.readUint32BE();                        // Magic number MARF
+	uint32 size = _file.readUint32LE();          // Size
+	_file.readUint32LE();                        // Unknown1
+	_file.readUint32LE();                        // Unknown2
+	uint32 type = _file.readUint32BE();          // Either ELHD or ELRH
+	uint32 headerSize = _file.readUint32LE();    // Offset from the beginning of this frame to the frame data. Should always be 28
+	_file.readUint32LE();                        // Unknown3
+
+	frame.encodedSize = size - headerSize;
+	frame.encodedData = new int8[frame.encodedSize];
+	_file.read(frame.encodedData, frame.encodedSize);
+
+	if (type == MKTAG('E', 'L', 'H', 'D')) {
+		frame.type = Masked;
+	} else if (type == MKTAG('E', 'L', 'R', 'H')) {
+		frame.type = Simple;
+		_completeFrames.push_back(_lastFrameRead);
+	} else {
+		warning("Frame %u doesn't have type that can be decoded", _lastFrameRead);
+	}
+
+	_lastFrameRead++;
+	return frame;
+}
+
 const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
+	assert(!_stream);
 	assert(frameNumber < _frameCount && frameNumber >= 0);
 
 	if (frameNumber == _currentFrame) {
@@ -161,13 +182,29 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 		}
 	}
 
+	_currentFrame = frameNumber;
 	return _currentFrameBuffer;
 }
 
 const uint16 *RlfAnimation::getNextFrame() {
 	assert(_currentFrame + 1 < _frameCount);
 
-	applyFrameToCurrent(_currentFrame + 1);
+	if (_stream) {
+		applyFrameToCurrent(readNextFrame());
+	} else {
+		applyFrameToCurrent(_currentFrame + 1);
+	}
+
+	_currentFrame -= 1;
+	return _currentFrameBuffer;
+}
+
+const uint16 *RlfAnimation::getPreviousFrame() {
+	assert(!_stream);
+	assert(_currentFrame - 1 >= 0);
+
+	applyFrameToCurrent(_currentFrame - 1);
+	_currentFrame =- 1;
 	return _currentFrameBuffer;
 }
 
@@ -177,8 +214,14 @@ void RlfAnimation::applyFrameToCurrent(uint frameNumber) {
 	} else if (_frames[frameNumber].type == Simple) {
 		decodeSimpleRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer, _frames[frameNumber].encodedSize, _frameBufferByteSize);
 	}
+}
 
-	_currentFrame = frameNumber;
+void RlfAnimation::applyFrameToCurrent(const RlfAnimation::Frame &frame) {
+	if (frame.type == Masked) {
+		decodeMaskedRunLengthEncoding(frame.encodedData, (int8 *)_currentFrameBuffer, frame.encodedSize, _frameBufferByteSize);
+	} else if (frame.type == Simple) {
+		decodeSimpleRunLengthEncoding(frame.encodedData, (int8 *)_currentFrameBuffer, frame.encodedSize, _frameBufferByteSize);
+	}
 }
 
 void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
