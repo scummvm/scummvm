@@ -1013,12 +1013,7 @@ void MortevielleEngine::fctSelfPut() {
 						break;
 				}
 
-				if (i > 6) {
-					warning("Unexpected action: Too many open objects");
-					return;
-				}
-
-				if (_num == _openObjects[i]) {
+				if (i <= 6) {
 					_curSearchObjId = objId;
 					_crep = 999;
 				} else
