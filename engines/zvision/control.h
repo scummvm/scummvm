@@ -53,7 +53,6 @@ public:
 	static void parseFlatControl(ZVision *engine);
 	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
-	static void parsePushToggleControl(uint32 key, ZVision *engine, Common::SeekableReadStream &stream);
 };
 
 class PushToggleControl : public Control {

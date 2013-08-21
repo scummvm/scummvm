@@ -165,8 +165,4 @@ bool PushToggleControl::disable(ZVision *engine) {
 	return false;
 }
 
-void Control::parsePushToggleControl(uint32 key, ZVision *engine, Common::SeekableReadStream &stream) {
-
-}
-
 } // End of namespace ZVision
