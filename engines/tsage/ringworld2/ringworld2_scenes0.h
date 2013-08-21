@@ -533,6 +533,7 @@ class Scene500: public SceneExt {
 
 			void doButtonPress();		
 		public:
+			Button();
 			virtual Common::String getClassName() { return "Scene500_Button"; }
 			virtual void process(Event &event);
 			virtual bool startAction(CursorType action, Event &event);

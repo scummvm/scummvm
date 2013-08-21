@@ -4822,6 +4822,11 @@ void Scene400::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
+Scene500::PanelDialog::Button::Button() {
+	_buttonId = 0;
+	_buttonDown = false;
+}
+
 bool Scene500::ControlPanel::startAction(CursorType action, Event &event) {
 	Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
 
