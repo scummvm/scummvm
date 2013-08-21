@@ -626,9 +626,20 @@ void MortevielleEngine::fctOpen() {
 			_coreVar._faithScore += 2;
 		++_openObjCount;
 		int i;
-		for (i = 1; (i <= 6) && (_openObjects[i] != 0) && (_openObjects[i] != _num); i++)
-			;
-		if (_openObjects[i] != _num) {
+		for (i = 1; (i <= 6); i++) {
+			if ((_openObjects[i] == 0) || (_openObjects[i] == _num))
+				break;
+		}
+
+		if (i > 7) {
+			warning("Unexpected action: Too many open objects");
+			return;
+		}
+
+		if (_openObjects[i] == _num)
+			// display "Already Opened"
+			_crep = 18;
+		else {
 			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
 				                 || (_coreVar._currPlace == JULIA_ROOM)
 								 || (_coreVar._currPlace == BLUE_ROOM)
@@ -661,9 +672,7 @@ void MortevielleEngine::fctOpen() {
 			_crep = _tabdon[kAouvr + (tmpPlace * 7) + _num - 1];
 			if (_crep == 254)
 				_crep = 999;
-		} else
-			// display "Already Opened"
-			_crep = 18;
+		}
 	}
 }
 
