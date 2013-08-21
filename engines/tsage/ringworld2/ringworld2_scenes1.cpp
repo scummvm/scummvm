@@ -5977,7 +5977,8 @@ void Scene1337::subCF31D() {
 			if ((_arrunkObj1337[1]._arr2[i]._field34 == 0) && (!subC2687(_arrunkObj1337[1]._arr3[0]._field34))) {
 				subC340B(&_arrunkObj1337[1]._arr1[tmpVal], &_arrunkObj1337[1]._arr2[i]);
 				found = true;
-			}
+				break;
+			} 
 		}
 	}
 
@@ -5987,8 +5988,10 @@ void Scene1337::subCF31D() {
 	tmpVal = subC274D(1);
 	int tmpVal2 = subC331B(1);
 
-	if ((tmpVal != -1) && ( tmpVal2 != -1))
+	if ((tmpVal != -1) && ( tmpVal2 != -1)) {
 		subC358E(&_arrunkObj1337[1]._arr1[tmpVal], tmpVal2);
+		found = true;
+	}
 
 	if (found)
 		return;
