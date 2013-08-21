@@ -57,17 +57,22 @@ Timeout::Timeout(AvalancheEngine *vm) {
 }
 
 void Timeout::set_up_timer(int32 howlong, byte whither, byte why) {
-	fv = 0;
-	while ((fv < 7) && (times[fv].time_left != 0))
-		fv++;
+	if (_vm->_gyro->isLoaded == false) {
+		byte i = 0;
+		while ((i < 7) && (times[i].time_left != 0))
+			i++;
 
-	if (fv == 7)
-		return; /* Oh dear... */
+		if (i == 7)
+			return; // Oh dear...
 
-	/* Everything's OK here! */
-	times[fv].time_left = howlong;
-	times[fv].then_where = whither;
-	times[fv].what_for = why;
+		// Everything's OK here!
+		times[i].time_left = howlong;
+		times[i].then_where = whither;
+		times[i].what_for = why;
+	} else {
+		_vm->_gyro->isLoaded = false;
+		return;
+	}
 }
 
 void Timeout::one_tick() {

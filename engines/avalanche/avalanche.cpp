@@ -456,6 +456,8 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	delete f;
 
+	_gyro->isLoaded = true;
+
 	_gyro->seescroll = true;  // This prevents display of the new sprites before the new picture is loaded.
 
 	if (_gyro->holdthedawn) {

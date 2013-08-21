@@ -594,7 +594,7 @@ public:
 
 	uint16 storage_seg, storage_ofs; /* Seg and ofs of the Storage area. */
 	uint16 skellern; /* Offset of the timer variable - 1 more than storage_OFS */
-	bool reloaded; /* Is this NOT the primary loading? */
+	bool isLoaded; // Is it a loaded gamestate?
 
 	bool super_was_virtual, super_was_off; /* Used by Super_Off and Super_On */
 
