@@ -91,31 +91,41 @@ void MortevielleEngine::fctMove() {
 		oldMenu = (_menu._moveMenu[menuChoice]._menuId << 8) | _menu._moveMenu[menuChoice]._actionId;
 	}
 
-	if (_coreVar._currPlace == MOUNTAIN) {
+	switch (_coreVar._currPlace) {
+	case MOUNTAIN:
 		if (menuChoice == 1)
 			gotoManorFront();
 		else if (menuChoice == 2)
 			checkManorDistance();
 		_menu.setDestinationText(_coreVar._currPlace);
 		return;
-	} else if (_coreVar._currPlace == INSIDE_WELL) {
+	case INSIDE_WELL:
 		if (menuChoice == 1)
 			floodedInWell();
 		else if (menuChoice == 2)
 			gotoManorBack();
 		_menu.setDestinationText(_coreVar._currPlace);
 		return;
-	} else if ((_coreVar._currPlace == BUREAU) && (menuChoice == 1))
-		menuChoice = 6;
-	else if (_coreVar._currPlace == KITCHEN) {
+	case BUREAU:
+		if (menuChoice == 1)
+			menuChoice = 6;
+		break;
+	case KITCHEN:
 		if (menuChoice == 2)
 			menuChoice = 6;
 		else if (menuChoice == 5)
 			menuChoice = 16;
-	} else if ((_coreVar._currPlace == CELLAR) && (menuChoice == 3))
-		menuChoice = 6;
-	else if (((_coreVar._currPlace == LANDING) || (_coreVar._currPlace == ROOM26)) && (menuChoice == 4))
-		menuChoice = 6;
+		break;
+	case CELLAR:
+		if (menuChoice == 3)
+			menuChoice = 6;
+		break;
+	case LANDING:
+	case ROOM26:
+		if (menuChoice == 4)
+			menuChoice = 6;
+		break;
+	}
 
 	if ((_coreVar._currPlace > MOUNTAIN) && (_coreVar._currPlace != ROOM26))
 		menuChoice += 10;
@@ -132,32 +142,40 @@ void MortevielleEngine::fctMove() {
 	else if ((_coreVar._currPlace == WELL) && (menuChoice > 13) && (menuChoice != 17))
 		menuChoice = 15;
 
-	if (menuChoice == 1)
+	switch (menuChoice) {
+	case 1:
 		_coreVar._currPlace = BUREAU;
-	else if (menuChoice == 2)
+		break;
+	case 2:
 		_coreVar._currPlace = KITCHEN;
-	else if (menuChoice == 3)
+		break;
+	case 3:
 		_coreVar._currPlace = CELLAR;
-	else if (menuChoice == 4)
+		break;
+	case 4:
 		_coreVar._currPlace = LANDING;
-	else if (menuChoice == 5)
-		menuChoice = 12;
-	else if (menuChoice == 6)
-		menuChoice = 11;
-
-	if (menuChoice == 11)
-		gotoDiningRoom();
-	else if (menuChoice == 12)
+		break;
+	case 5:
+	case 12:
 		gotoManorFront();
-	else if (menuChoice == 13)
+		break;
+	case 6:
+	case 11:
+		gotoDiningRoom();
+		break;
+	case 13:
 		_coreVar._currPlace = CHAPEL;
-	else if (menuChoice == 14)
+		break;
+	case 14:
 		_coreVar._currPlace = WELL;
-	else if (menuChoice == 15)
+		break;
+	case 15:
 		checkManorDistance();
-	else if (menuChoice == 16)
+		break;
+	case 16:
 		gotoManorBack();
-	else if (menuChoice == 17) {
+		break;
+	case 17:
 		if ((_coreVar._wellObjectId != 120) && (_coreVar._wellObjectId != 140))
 			_crep = 997;
 		else if (_coreVar._wellObjectId == 120)
@@ -169,7 +187,9 @@ void MortevielleEngine::fctMove() {
 			_coreVar._currPlace = INSIDE_WELL;
 			prepareDisplayText();
 		}
+		break;
 	}
+
 	if ((menuChoice < 5) || (menuChoice == 13) || (menuChoice == 14))
 		prepareDisplayText();
 	resetRoomVariables(_coreVar._currPlace);

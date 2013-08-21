@@ -2498,7 +2498,7 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 			displayTextInDescriptionBar(8, 182, 103, mesgId);
 			if ((mesgId == 68) || (mesgId == 69))
 				_coreVar._availableQuestion[40] = '*';
-			if ((mesgId == 104) && (_caff == CELLAR)) {
+			else if ((mesgId == 104) && (_caff == CELLAR)) {
 				_coreVar._availableQuestion[36] = '*';
 				if (_coreVar._availableQuestion[39] == '*') {
 					_coreVar._pctHintFound[3] = '*';
@@ -2775,34 +2775,54 @@ int MortevielleEngine::getPresence(int roomId) {
 			displayAloneText();
 		else {
 			int h = 0;
-			if (roomId == DINING_ROOM)
+			switch (roomId) {
+			case DINING_ROOM:
 				pres = getPresenceStatsDiningRoom(h);
-			else if (roomId == BUREAU)
+				break;
+			case BUREAU:
 				pres = getPresenceStatsBureau(h);
-			else if (roomId == KITCHEN)
+				break;
+			case KITCHEN:
 				pres = getPresenceStatsKitchen();
-			else if ((roomId == ATTIC) || (roomId == CELLAR))
+				break;
+			case ATTIC:
+			case CELLAR:
 				pres = getPresenceStatsAttic();
-			else if ((roomId == LANDING) || (roomId == ROOM26))
+				break;
+			case LANDING:
+			case ROOM26:
 				pres = getPresenceStatsLanding();
-			else if (roomId == CHAPEL)
+				break;
+			case CHAPEL:
 				pres = getPresenceStatsChapel(h);
+				break;
+			}
 			pres += _coreVar._faithScore;
 			rand = getRandomNumber(1, 100);
 			if (rand > pres) {
 				displayAloneText();
 				retVal = 0;
 			} else {
-				if (roomId == DINING_ROOM)
+				switch (roomId) {
+				case DINING_ROOM:
 					pres = setPresenceDiningRoom(h);
-				else if (roomId == BUREAU)
+					break;
+				case BUREAU:
 					pres = setPresenceBureau(h);
-				else if ((roomId == KITCHEN) || (roomId == ATTIC) || (roomId == CELLAR))
+					break;
+				case KITCHEN:
+				case ATTIC:
+				case CELLAR:
 					pres = setPresenceKitchen();
-				else if ((roomId == LANDING) || (roomId == ROOM26))
+					break;
+				case LANDING:
+				case ROOM26:
 					pres = setPresenceLanding();
-				else if (roomId == CHAPEL)
+					break;
+				case CHAPEL:
 					pres = setPresenceChapel(h);
+					break;
+				}
 				retVal = pres;
 			}
 		}
@@ -2866,18 +2886,27 @@ void MortevielleEngine::drawPicture() {
 					displayAnimFrame(1, _openObjects[i]);
 			}
 
-			if (_caff == ATTIC) {
+			switch (_caff) {
+			case ATTIC:
 				if (_coreVar._atticBallHoleObjectId == 141)
 					displayAnimFrame(1, 7);
 
 				if (_coreVar._atticRodHoleObjectId == 159)
 					displayAnimFrame(1, 6);
-			} else if ((_caff == CELLAR) && (_coreVar._cellarObjectId == 151))
-				displayAnimFrame(1, 2);
-			else if ((_caff == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143))
-				displayAnimFrame(1, 1);
-			else if ((_caff == WELL) && (_coreVar._wellObjectId != 0))
-				displayAnimFrame(1, 1);
+				break;
+			case CELLAR:
+				if (_coreVar._cellarObjectId == 151)
+					displayAnimFrame(1, 2);
+				break;
+			case SECRET_PASSAGE:
+				if (_coreVar._secretPassageObjectId == 143)
+					displayAnimFrame(1, 1);
+				break;
+			case WELL:
+				if (_coreVar._wellObjectId != 0)
+					displayAnimFrame(1, 1);
+				break;
+			}
 		}
 
 		if (_caff < ROOM26)
