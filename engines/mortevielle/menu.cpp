@@ -598,67 +598,69 @@ void Menu::initMenu() {
 	Common::File f;
 	
 	bool menuLoaded = false;
-	// First try to read it from mort.dat
-	if (!f.open(MORT_DAT))
-		warning("File %s not found. Using default menu from game data", MORT_DAT);
-	else {
-		// Figure out what language Id is needed
-		byte desiredLanguageId;
-		switch(_vm->getLanguage()) {
-		case Common::EN_ANY:
-			desiredLanguageId = MORTDAT_LANG_ENGLISH;
-			break;
-		case Common::FR_FRA:
-			desiredLanguageId = MORTDAT_LANG_FRENCH;
-			break;
-		case Common::DE_DEU:
-			desiredLanguageId = MORTDAT_LANG_GERMAN;
-			break;
-		default:
-			warning("Language not supported, switching to English");
-			desiredLanguageId = MORTDAT_LANG_ENGLISH;
-			break;
-		}
+	// First try to read it from mort.dat if useOriginalData() is false
+	if (!_vm->useOriginalData()) {
+		if (!f.open(MORT_DAT))
+			warning("File %s not found. Using default menu from game data", MORT_DAT);
+		else {
+			// Figure out what language Id is needed
+			byte desiredLanguageId;
+			switch(_vm->getLanguage()) {
+			case Common::EN_ANY:
+				desiredLanguageId = MORTDAT_LANG_ENGLISH;
+				break;
+			case Common::FR_FRA:
+				desiredLanguageId = MORTDAT_LANG_FRENCH;
+				break;
+			case Common::DE_DEU:
+				desiredLanguageId = MORTDAT_LANG_GERMAN;
+				break;
+			default:
+				warning("Language not supported, switching to English");
+				desiredLanguageId = MORTDAT_LANG_ENGLISH;
+				break;
+			}
 		
-		// Validate the data file header
-		char fileId[4];
-		f.read(fileId, 4);
-		// Do not display warnings here. They would already have been displayed in MortevielleEngine::loadMortDat().
-		if (strncmp(fileId, "MORT", 4) == 0 && f.readByte() >= MORT_DAT_REQUIRED_VERSION) {
-			f.readByte();		// Minor version
-			// Loop to load resources from the data file
-			while (f.pos() < f.size()) {
-				// Get the Id and size of the next resource
-				char dataType[4];
-				int dataSize;
-				f.read(dataType, 4);
-				dataSize = f.readUint16LE();
-				if (!strncmp(dataType, "MENU", 4)) {
-					// Read in the language
-					byte languageId = f.readByte();
-					--dataSize;
+			// Validate the data file header
+			char fileId[4];
+			f.read(fileId, 4);
+			// Do not display warnings here. They would already have been displayed in MortevielleEngine::loadMortDat().
+			if (strncmp(fileId, "MORT", 4) == 0 && f.readByte() >= MORT_DAT_REQUIRED_VERSION) {
+				f.readByte();		// Minor version
+				// Loop to load resources from the data file
+				while (f.pos() < f.size()) {
+					// Get the Id and size of the next resource
+					char dataType[4];
+					int dataSize;
+					f.read(dataType, 4);
+					dataSize = f.readUint16LE();
+					if (!strncmp(dataType, "MENU", 4)) {
+						// Read in the language
+						byte languageId = f.readByte();
+						--dataSize;
 					
-					// If the language isn't correct, then skip the entire block
-					if (languageId != desiredLanguageId) {
+						// If the language isn't correct, then skip the entire block
+						if (languageId != desiredLanguageId) {
+							f.skip(dataSize);
+							continue;
+						}
+						if (dataSize == 6 * 24) {
+							f.read(_charArr, dataSize);
+							menuLoaded = true;
+						} else
+							warning("Wrong size %d for menu data. Expected %d or less", dataSize, 6 * 24);
+						break;
+					} else {
+						// Other sections
 						f.skip(dataSize);
-						continue;
 					}
-					if (dataSize == 6 * 24) {
-						f.read(_charArr, dataSize);
-						menuLoaded = true;
-					} else
-						warning("Wrong size %d for menu data. Expected %d or less", dataSize, 6 * 24);
-					break;
-				} else {
-					// Other sections
-					f.skip(dataSize);
 				}
 			}
+			// Close the file
+			f.close();
+			if (!menuLoaded)
+				warning("Failed to load menu from mort.dat. Will use default menu from game data instead.");
 		}
-		// Close the file
-		f.close();
-		if (!menuLoaded)
-			warning("Failed to load menu from mort.dat. Will use default menu from game data instead.");
 	}
 
 	if (!menuLoaded) {

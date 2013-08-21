@@ -62,6 +62,11 @@ enum {
 	MORTDAT_LANG_GERMAN = 2
 };
 
+enum {
+	kUseOriginalData = 0,
+	kUseEngineDataFile = 1
+};
+
 // Static string list
 enum {
 	S_YES_NO = 0, S_GO_TO = 1, S_SOMEONE_ENTERS = 2, S_COOL = 3, S_LOURDE = 4,
@@ -444,6 +449,7 @@ public:
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
+	bool useOriginalData() const;
 	static Common::String generateSaveFilename(const Common::String &target, int slot);
 	Common::String generateSaveFilename(int slot) { return generateSaveFilename(_targetName, slot); }
 

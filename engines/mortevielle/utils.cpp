@@ -1993,8 +1993,8 @@ void MortevielleEngine::loadTexts() {
 	Common::File ntpFile;
 
 	_txxFileFl = false;
-	if (getLanguage() == Common::EN_ANY) {
-		warning("English version expected - Switching to DAT file");
+	if (!useOriginalData()) {
+		warning("Using improved translation from DAT file");
 		return;
 	}
 
