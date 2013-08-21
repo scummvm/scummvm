@@ -5587,7 +5587,8 @@ GfxSurface Scene600::Actor4::getFrame() {
 }
 
 bool Scene600::Doorway::startAction(CursorType action, Event &event) {
-	if ((action < CURSOR_WALK) && (action >= R2CURSORS_START))
+	// CHECKME: The original is checking is action == 0. To be verified.
+	if (action == INV_NONE)
 		return false;
 
 	if (action != CURSOR_USE)
