@@ -1008,8 +1008,16 @@ void MortevielleEngine::fctSelfPut() {
 				_crep = 997;
 			else {
 				int i;
-				for (i = 1; (i <= 6) && (_num != _openObjects[i]); i++)
-					;
+				for (i = 1; i <= 6; i++) {
+					if (_num == _openObjects[i])
+						break;
+				}
+
+				if (i > 6) {
+					warning("Unexpected action: Too many open objects");
+					return;
+				}
+
 				if (_num == _openObjects[i]) {
 					_curSearchObjId = objId;
 					_crep = 999;
