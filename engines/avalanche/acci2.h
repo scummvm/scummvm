@@ -177,7 +177,7 @@ private:
 
 	bool holding();
 
-	void special(bool before);
+	void openBox(bool before);
 	void examine();
 
 	void inv();

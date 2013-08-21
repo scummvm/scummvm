@@ -490,7 +490,7 @@ Common::String Gyro::get_better(byte which) {
 			get_better_result = better[which];
 		break;
 	default:
-		if ((which < numobjs) && (which > '\0'))
+		if ((which < numobjs) && (which > 0))
 			get_better_result = better[which];
 		else
 			get_better_result = "";
