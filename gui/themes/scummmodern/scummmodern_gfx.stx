@@ -178,6 +178,10 @@
 				color = '128, 128, 128'
 		/>
 
+		<text_color	id = 'color_button_hover'
+				color = 'white'
+		/>
+	
 		<text_color	id = 'color_alternative_inverted'
 				color = 'white'
 		/>
