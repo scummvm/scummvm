@@ -128,7 +128,7 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 		w = getCharWidth(cur);
 		if (x+w > rightX)
 			break;
-		if (x >= leftX)
+		if (x+w >= leftX)
 			drawChar(dst, str[i], x, y, color);
 		x += w;
 	}
