@@ -1,0 +1,34 @@
+{
+	"description": "Beneath a Steel Sky",
+	"status": "stable",
+	"translation": [
+		"compact.cpp",
+		"detection.cpp"
+	],
+	"credits": {
+		"name": "Sky",
+		"authors": [
+			{
+				"name": "Robert G&ouml;ffringmann",
+				"nick": "lavosspawn",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Oliver Kiehl",
+				"nick": "olki",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Joost Peters",
+				"nick": "joostp",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Tony Warriner and everyone at Revolution Software Ltd. for sharing with us",
+			"the source of some of their brilliant games, allowing us to release Beneath",
+			"a Steel Sky as freeware... and generally being supportive above and beyond",
+			"the call of duty."
+		]
+	}
+}

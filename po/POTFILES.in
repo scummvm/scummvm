@@ -1,4 +1,3 @@
-# This file was automatically generated and should NEVER be edited manually!
 #TODO: help_string & usage_string:
 
 gui/about.cpp
@@ -25,47 +24,7 @@ common/util.cpp
 engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp
-engines/scumm/dialogs.cpp
-engines/scumm/help.cpp
-engines/scumm/scumm.cpp
-engines/agi/detection.cpp
-engines/agi/saveload.cpp
-engines/agos/saveload.cpp
-engines/agos/animation.cpp
-engines/cruise/menu.cpp
-engines/drascula/detection.cpp
-engines/drascula/saveload.cpp
-engines/dreamweb/detection.cpp
-engines/gob/inter_playtoons.cpp
-engines/gob/inter_v2.cpp
-engines/gob/inter_v5.cpp
-engines/groovie/detection.cpp
-engines/groovie/script.cpp
-engines/kyra/detection.cpp
-engines/kyra/lol.cpp
-engines/kyra/sound_midi.cpp
-engines/mohawk/dialogs.cpp
-engines/mohawk/myst.cpp
-engines/mohawk/riven.cpp
-engines/neverhood/detection.cpp
-engines/neverhood/menumodule.cpp
-engines/parallaction/saveload.cpp
-engines/pegasus/pegasus.cpp
-engines/queen/queen.cpp
-engines/sci/detection.cpp
-engines/sci/engine/kfile.cpp
-engines/sky/compact.cpp
-engines/sky/detection.cpp
-engines/sword1/animation.cpp
-engines/sword1/control.cpp
-engines/sword1/logic.cpp
-engines/sword1/sword1.cpp
-engines/sword2/animation.cpp
-engines/sword2/sword2.cpp
-engines/teenagent/resources.cpp
-engines/tinsel/saveload.cpp
-engines/toltecs/detection.cpp
-engines/toltecs/menu.cpp
+@ENGINE_TRANSLATION_FILES@
 
 audio/fmopl.cpp
 audio/mididrv.cpp
@@ -100,5 +59,5 @@ backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/openpandora/op-events.cpp
 backends/updates/macosx/macosx-updates.mm
-backends/platform/tizen/form.cpp
+backends/platform/bada/form.cpp
 backends/events/maemosdl/maemosdl-events.cpp

@@ -1,0 +1,20 @@
+{
+	"description": "Hopkins FBI",
+	"status": "stable",
+	"dependencies": ["16bit"],
+	"credits": {
+		"name": "Hopkins",
+		"authors": [
+			{
+				"name": "Arnaud Boutonn&eacute;",
+				"nick": "Strangerke",
+				"desc": ""
+			},
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			}
+		]
+	}
+}

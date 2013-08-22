@@ -1,0 +1,61 @@
+{
+	"description": "Mohawk",
+	"status": "stable",
+	"games": "Living Books",
+	"subengines": {
+		"cstime": {
+			"description": "Where in Time is Carmen Sandiego?",
+			"status": "unstable"
+		},
+		"myst": {
+			"description": "Myst",
+			"status": "unstable",
+			"dependencies": ["16bit"]
+		},
+		"riven": {
+			"description": "Riven: The Sequel to Myst",
+			"status": "unstable",
+			"dependencies": ["16bit"]
+		}
+	},
+	"translation": [
+		"dialogs.cpp",
+		"myst.cpp",
+		"riven.cpp"
+	],
+	"credits": {
+		"name": "Mohawk",
+		"authors": [
+			{
+				"name": "Bastien Bouclet",
+				"nick": "bgk",
+				"desc": ""
+			},
+			{
+				"name": "Matthew Hoops",
+				"nick": "clone2727",
+				"desc": ""
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Alyssa Milburn",
+				"nick": "fuzzie",
+				"desc": ""
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": ""
+			},
+			{
+				"name": "David Turner",
+				"nick": "digitall",
+				"desc": ""
+			}
+		]
+	}
+}

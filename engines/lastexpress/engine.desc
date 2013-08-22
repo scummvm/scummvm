@@ -1,0 +1,25 @@
+{
+	"description": "The Last Express",
+	"status": "unstable",
+	"dependencies": ["16bit"],
+	"credits": {
+		"name": "Lastexpress",
+		"authors": [
+			{
+				"name": "Matthew Hoops",
+				"nick": "clone2727",
+				"desc": ""
+			},
+			{
+				"name": "Jordi Vilalta Prat",
+				"nick": "jvprat",
+				"desc": ""
+			},
+			{
+				"name": "Julien Templier",
+				"nick": "littleboy",
+				"desc": ""
+			}
+		]
+	}
+}

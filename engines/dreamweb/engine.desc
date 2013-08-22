@@ -1,0 +1,41 @@
+{
+	"description": "Dreamweb",
+	"status": "stable",
+	"translation": [
+		"detection.cpp"
+	],
+	"credits": {
+		"name": "DreamWeb",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": ""
+			},
+			{
+				"name": "Bertrand Augereau",
+				"nick": "Tramb",
+				"desc": ""
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Vladimir Menshakov",
+				"nick": "whoozle",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Willem Jan Palenstijn",
+				"nick": "wjp",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Neil Dodwell and David Dew from Creative Reality for providing the source",
+			"of Dreamweb and for their tremendous support."
+		]
+	}
+}

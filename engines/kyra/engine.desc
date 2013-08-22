@@ -1,0 +1,50 @@
+{
+	"description": "Kyra",
+	"status": "stable",
+	"games": "Legend of Kyrandia 1-3",
+	"subengines": {
+		"lol": {
+			"description": "Lands of Lore",
+			"status": "stable"
+		},
+		"eob": {
+			"description": "Eye of the Beholder",
+			"status": "stable"
+		}
+	},
+	"translation": [
+		"detection.cpp",
+		"lol.cpp",
+		"sound_midi.cpp"
+	],
+	"credits": {
+		"name": "Kyra",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": "VQA Player"
+			},
+			{
+				"name": "Oystein Eftevaag",
+				"nick": "vinterstum",
+				"desc": ""
+			},
+			{
+				"name": "Florian Kagerer",
+				"nick": "athrxx",
+				"desc": ""
+			},
+			{
+				"name": "Gregory Montoir",
+				"nick": "cyx",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Johannes Schickel",
+				"nick": "LordHoto",
+				"desc": ""
+			}
+		]
+	}
+}

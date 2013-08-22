@@ -1,0 +1,49 @@
+{
+	"description": "AGOS",
+	"status": "stable",
+	"games": "AGOS 1 games",
+	"subengines": {
+		"agos2": {
+			"description": "AGOS 2 games",
+			"status": "stable"
+		}
+	},
+	"translation": [
+		"saveload.cpp",
+		"animation.cpp"
+	],
+	"credits": {
+		"name": "AGOS",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": ""
+			},
+			{
+				"name": "Paul Gilbert",
+				"nick": "dreammaster",
+				"desc": ""
+			},
+			{
+				"name": "Travis Howell",
+				"nick": "Kirben",
+				"desc": ""
+			},
+			{
+				"name": "Oliver Kiehl",
+				"nick": "olki",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Ludvig Strigeus",
+				"nick": "ludde",
+				"desc": "(retired)"
+			}
+		],
+		"thanks": [
+			"Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing",
+			"the source code of some of their games with us."
+		]
+	}
+}

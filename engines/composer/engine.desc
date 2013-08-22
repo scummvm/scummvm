@@ -1,0 +1,14 @@
+{
+	"description": "Magic Composer",
+	"status": "stable",
+	"credits": {
+		"name": "Composer",
+		"authors": [
+			{
+				"name": "Alyssa Milburn",
+				"nick": "fuzzie",
+				"desc": ""
+			}
+		]
+	}
+}

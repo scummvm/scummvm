@@ -1,0 +1,28 @@
+{
+	"description": "Drascula: The Vampire Strikes Back",
+	"status": "stable",
+	"translation": [
+		"detection.cpp",
+		"saveload.cpp"
+	],
+	"credits": {
+		"name": "Drascula",
+		"authors": [
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Pawe&#322; Ko&#322;odziejski",
+				"nick": "aquadran",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code",
+			"of Drascula: The Vampire Strikes Back with us and his generosity with",
+			"freewaring the game."
+		]
+	}
+}

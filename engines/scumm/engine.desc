@@ -1,0 +1,105 @@
+{
+	"description": "SCUMM",
+	"status": "stable",
+	"games": "v0-v6 games",
+	"subengines": {
+		"scumm_7_8": {
+			"description": "v7 & v8 games",
+			"status": "stable"
+		},
+		"he": {
+			"description": "HE71+ games",
+			"status": "stable",
+			"credits": {
+				"name": "HE",
+				"authors": [
+					{
+						"name": "Jonathan Gray",
+						"nick": "khalek",
+						"desc": "(retired)"
+					},
+					{
+						"name": "Travis Howell",
+						"nick": "Kirben",
+						"desc": ""
+					},
+					{
+						"name": "Gregory Montoir",
+						"nick": "cyx",
+						"desc": "(retired)"
+					},
+					{
+						"name": "Eugene Sandulenko",
+						"nick": "sev",
+						"desc": ""
+					}
+				]
+			}
+		}
+	},
+	"translation": [
+		"dialogs.cpp",
+		"help.cpp",
+		"scumm.cpp"
+	],
+	"credits": {
+		"name": "SCUMM",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": ""
+			},
+			{
+				"name": "James Brown",
+				"nick": "ender",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Jonathan Gray",
+				"nick": "khalek",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Vincent Hamm",
+				"nick": "yaz0r",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Max Horn",
+				"nick": "Fingolfin",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Travis Howell",
+				"nick": "Kirben",
+				"desc": ""
+			},
+			{
+				"name": "Pawe&#322; Ko&#322;odziejski",
+				"nick": "aquadran",
+				"desc": "Codecs, iMUSE, Smush, etc."
+			},
+			{
+				"name": "Gregory Montoir",
+				"nick": "cyx",
+				"desc": "(retired)"
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": "FT INSANE, MM NES, MM C64, game detection, Herc/CGA"
+			},
+			{
+				"name": "Ludvig Strigeus",
+				"nick": "ludde",
+				"desc": "(retired)"
+			}
+		],
+		"thanks": [
+			"Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at",
+			"LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it",
+			"is today. Feel free to drop us a line and tell us what you think, guys!"
+		]
+	}
+}

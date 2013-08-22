@@ -1,0 +1,14 @@
+{
+	"description": "Toonstruck",
+	"status": "stable",
+	"credits": {
+		"name": "Toon",
+		"authors": [
+			{
+				"name": "Sylvain Dupont",
+				"nick": "SylvainTV",
+				"desc": ""
+			}
+		]
+	}
+}

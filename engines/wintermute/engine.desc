@@ -1,0 +1,19 @@
+{
+	"description": "Wintermute",
+	"status": "unstable",
+	"dependencies": ["png", "zlib", "vorbis", "16bit"],
+	"credits": {
+		"name": "Wintermute",
+		"authors": [
+			{
+				"name": "Einar Johan T. S&oslash;m&aring;en",
+				"nick": "somaen",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Jan Nedoma for providing the sources to the Wintermute-engine, and for his",
+			"support while porting the engine to ScummVM."
+		]
+	}
+}

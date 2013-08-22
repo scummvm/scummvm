@@ -1,0 +1,50 @@
+{
+	"description": "SAGA",
+	"status": "stable",
+	"games": "ITE",
+	"subengines": {
+		"ihnm": {
+			"description": "IHNM",
+			"status": "stable"
+		},
+		"saga2": {
+			"description": "SAGA 2 games",
+			"status": "unstable"
+		}
+	},
+	"credits": {
+		"name": "SAGA",
+		"authors": [
+			{
+				"name": "Torbj&ouml;rn Andersson",
+				"nick": "eriktorbjorn",
+				"desc": ""
+			},
+			{
+				"name": "Daniel Balsom",
+				"nick": "DanielFox",
+				"desc": "Original engine reimplementation author (retired)"
+			},
+			{
+				"name": "Filippos Karapetis",
+				"nick": "[md5]",
+				"desc": ""
+			},
+			{
+				"name": "Andrew Kurushin",
+				"nick": "ajax16384",
+				"desc": ""
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source of",
+			"their famous title Inherit the Earth and always prompt replies to our",
+			"questions."
+		]
+	}
+}

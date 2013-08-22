@@ -1,0 +1,28 @@
+{
+	"description": "Hugo Trilogy",
+	"status": "stable",
+	"credits": {
+		"name": "Hugo",
+		"authors": [
+			{
+				"name": "Arnaud Boutonn&eacute;",
+				"nick": "Strangerke",
+				"desc": ""
+			},
+			{
+				"name": "Oystein Eftevaag",
+				"nick": "vinterstum",
+				"desc": ""
+			},
+			{
+				"name": "Eugene Sandulenko",
+				"nick": "sev",
+				"desc": ""
+			}
+		],
+		"thanks": [
+			"David P. Gray from Gray Design Associates for sharing the source code of",
+			"the Hugo trilogy."
+		]
+	}
+}
