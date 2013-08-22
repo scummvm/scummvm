@@ -5551,14 +5551,14 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene600::Actor4::signal() {
+void Scene600::Smoke::signal() {
 	Common::Point pt(177 + R2_GLOBALS._randomSource.getRandomNumber(5),
 		108 + R2_GLOBALS._randomSource.getRandomNumber(3));
 	NpcMover *mover = new NpcMover();
 	addMover(mover, &pt, this);
 }
 
-bool Scene600::Actor4::startAction(CursorType action, Event &event) {
+bool Scene600::Smoke::startAction(CursorType action, Event &event) {
 	if (action >= CURSOR_WALK)
 	// Only action cursors
 		return SceneActor::startAction(action, event);
@@ -5566,7 +5566,7 @@ bool Scene600::Actor4::startAction(CursorType action, Event &event) {
 	return false;
 }
 
-GfxSurface Scene600::Actor4::getFrame() {
+GfxSurface Scene600::Smoke::getFrame() {
 	GfxSurface frame = SceneActor::getFrame();
 
 	if (_effect) {
@@ -5656,17 +5656,17 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 				scene->_aerosol.postInit();
 				scene->_aerosol.setDetails(600, 27, -1, -1, 5, &scene->_laser);
 
-				scene->_actor4.postInit();
-				scene->_actor4.setup(601, 3, 1);
-				scene->_actor4._effect = 3;
-				scene->_actor4._moveDiff = Common::Point(1, 1);
-				scene->_actor4._moveRate = 2;
-				scene->_actor4._numFrames = 3;
-				scene->_actor4.setDetails(600, 24, 25, 26, 5, &scene->_aerosol);
+				scene->_smoke.postInit();
+				scene->_smoke.setup(601, 3, 1);
+				scene->_smoke._effect = 3;
+				scene->_smoke._moveDiff = Common::Point(1, 1);
+				scene->_smoke._moveRate = 2;
+				scene->_smoke._numFrames = 3;
+				scene->_smoke.setDetails(600, 24, 25, 26, 5, &scene->_aerosol);
 
 				scene->_sceneMode = 605;
 
-				scene->setAction(&scene->_sequenceManager1, scene, 605, &R2_GLOBALS._player, &scene->_aerosol, &scene->_actor4, &scene->_doorway, NULL);
+				scene->setAction(&scene->_sequenceManager1, scene, 605, &R2_GLOBALS._player, &scene->_aerosol, &scene->_smoke, &scene->_doorway, NULL);
 				return true;
 			}
 			break;
@@ -5739,7 +5739,7 @@ bool Scene600::Actor8::startAction(CursorType action, Event &event) {
 	} else if ((action == R2_SONIC_STUNNER) && (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600) && (R2_GLOBALS._scannerFrequencies[1] == 2) && (!R2_GLOBALS.getFlag(8))){
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 608;
-		scene->setAction(&scene->_sequenceManager1, scene, 608, &R2_GLOBALS._player, &scene->_actor4, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 608, &R2_GLOBALS._player, &scene->_smoke, NULL);
 	} else {
 		return SceneActor::startAction(action, event);
 	}
@@ -5828,17 +5828,17 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 				_actor2.animate(ANIM_MODE_2, NULL);_actor2.fixPriority(11);
 			}
 		} else {
-			_actor4.postInit();
-			_actor4.setup(601, 1, 1);
-			_actor4.setPosition(Common::Point(180, 110));
-			_actor4._moveDiff = Common::Point(1, 1);
-			_actor4._moveRate = 2;
-			_actor4._numFrames = 3;
-			_actor4.animate(ANIM_MODE_2, NULL);
-			_actor4.fixPriority(130);
-			_actor4._effect = 3;
-			_actor4.setDetails(600, 24, 25, 26, 1, (SceneItem *) NULL);
-			_actor4.signal();
+			_smoke.postInit();
+			_smoke.setup(601, 1, 1);
+			_smoke.setPosition(Common::Point(180, 110));
+			_smoke._moveDiff = Common::Point(1, 1);
+			_smoke._moveRate = 2;
+			_smoke._numFrames = 3;
+			_smoke.animate(ANIM_MODE_2, NULL);
+			_smoke.fixPriority(130);
+			_smoke._effect = 3;
+			_smoke.setDetails(600, 24, 25, 26, 1, (SceneItem *) NULL);
+			_smoke.signal();
 		}
 	}
 
@@ -5906,8 +5906,8 @@ void Scene600::signal() {
 		R2_INVENTORY.setObjectScene(R2_AEROSOL, 600);
 		R2_GLOBALS.setFlag(5);
 
-		_actor4._effect = 3;
-		_actor4.signal();
+		_smoke._effect = 3;
+		_smoke.signal();
 		break;
 	case 606:
 		R2_INVENTORY.setObjectScene(R2_CLAMP, 600);
@@ -5919,7 +5919,7 @@ void Scene600::signal() {
 		break;
 	case 608:
 		R2_GLOBALS.setFlag(8);
-		_actor4.remove();
+		_smoke.remove();
 		R2_GLOBALS._walkRegions.disableRegion(6);
 		R2_GLOBALS._walkRegions.disableRegion(9);
 		R2_GLOBALS._walkRegions.disableRegion(10);
@@ -5997,7 +5997,7 @@ void Scene600::dispatch() {
 		_aSound1.play(40);
 
 	Scene::dispatch();
-	if ((_actor4._strip == 3) && (_actor4._frame == 3)) {
+	if ((_smoke._strip == 3) && (_smoke._frame == 3)) {
 		_actor1.setStrip(4);
 		_actor1.setFrame(1);
 	}
