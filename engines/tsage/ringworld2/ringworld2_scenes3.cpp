@@ -535,7 +535,7 @@ void Scene3150::Exit2::changeScene() {
 void Scene3150::postInit(SceneObjectList *OwnerList) {
 	loadScene(3150);
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
-		R2_INVENTORY.setObjectScene(35, 2000);
+		R2_INVENTORY.setObjectScene(R2_ANCIENT_SCROLLS, 2000);
 		R2_GLOBALS._player._oldCharacterScene[1] = 3100;
 		R2_GLOBALS._player._oldCharacterScene[3] = 0;
 		R2_GLOBALS._player._characterIndex = R2_MIRANDA;
@@ -713,7 +713,7 @@ void Scene3150::signal() {
 		break;
 	case 3151:
 		_actor1.remove();
-		R2_INVENTORY.setObjectScene(41, 3);
+		R2_INVENTORY.setObjectScene(R2_PILLOW, 3);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3153:
@@ -726,37 +726,37 @@ void Scene3150::signal() {
 		break;
 	case 3154:
 		_actor3.remove();
-		R2_INVENTORY.setObjectScene(47, 3);
+		R2_INVENTORY.setObjectScene(R2_LIGHT_BULB, 3);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3155:
-		R2_INVENTORY.setObjectScene(40, 3150);
+		R2_INVENTORY.setObjectScene(R2_SUPERCONDUCTOR_WIRE, 3150);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3156:
 		_actor5.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
-		R2_INVENTORY.setObjectScene(42, 3150);
+		R2_INVENTORY.setObjectScene(R2_FOOD_TRAY, 3150);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3157:
 		_actor5.remove();
-		R2_INVENTORY.setObjectScene(42, 3);
+		R2_INVENTORY.setObjectScene(R2_FOOD_TRAY, 3);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3158:
 		R2_GLOBALS.setFlag(75);
-		R2_INVENTORY.setObjectScene(41, 3150);
+		R2_INVENTORY.setObjectScene(R2_PILLOW, 3150);
 		_actor4.fixPriority(110);
 		_actor4.setDetails(3150, 13, -1, -1, 2, (SceneItem *)NULL);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3159:
 		R2_GLOBALS.setFlag(77);
-		R2_INVENTORY.setObjectScene(42, 3150);
+		R2_INVENTORY.setObjectScene(R2_FOOD_TRAY, 3150);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3160:
-		R2_INVENTORY.setObjectScene(52, 3150);
+		R2_INVENTORY.setObjectScene(R2_TOOLBOX, 3150);
 		R2_GLOBALS.setFlag(80);
 		R2_GLOBALS._sceneManager.changeScene(1200);
 		break;
@@ -1524,8 +1524,8 @@ void Scene3260::signal() {
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 		SceneItem::display(3260, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
 		R2_GLOBALS._player.disableControl();
-		R2_INVENTORY.setObjectScene(52, 3);
-		R2_INVENTORY.setObjectScene(43, 3);
+		R2_INVENTORY.setObjectScene(R2_TOOLBOX, 3);
+		R2_INVENTORY.setObjectScene(R2_LASER_HACKSAW, 3);
 		setAction(&_sequenceManager, this, 3273, &R2_GLOBALS._player, &_actor14, NULL);
 		break;
 	case 3273:
@@ -2771,7 +2771,7 @@ void Scene3400::signal() {
 		_actor2.setStrip(6);
 		_actor3.setStrip(3);
 		_actor4.setStrip(1);
-		R2_INVENTORY.setObjectScene(34, 0);
+		R2_INVENTORY.setObjectScene(R2_SAPPHIRE_BLUE, 0);
 		_stripManager.start(3307, this);
 		if (R2_GLOBALS._player._characterIndex == 2) {
 			_sceneMode = 3400;

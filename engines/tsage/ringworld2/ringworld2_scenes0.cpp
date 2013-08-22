@@ -5910,11 +5910,11 @@ void Scene600::signal() {
 		_actor4.signal();
 		break;
 	case 606:
-		R2_INVENTORY.setObjectScene(15, 600);
+		R2_INVENTORY.setObjectScene(R2_CLAMP, 600);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 607:
-		R2_INVENTORY.setObjectScene(9, 600);
+		R2_INVENTORY.setObjectScene(R2_COM_SCANNER, 600);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 608:
@@ -5936,12 +5936,12 @@ void Scene600::signal() {
 	case 614:
 		R2_GLOBALS._player.enableControl();
 		_aerosol.remove();
-		R2_INVENTORY.setObjectScene(12, 1);
+		R2_INVENTORY.setObjectScene(R2_AEROSOL, 1);
 		R2_GLOBALS._walkRegions.disableRegion(7);
 		break;
 	case 615:
 		_actor8.remove();
-		R2_INVENTORY.setObjectScene(9, 1);
+		R2_INVENTORY.setObjectScene(R2_COM_SCANNER, 1);
 		R2_GLOBALS._player.enableControl();
 		break;
 	default:

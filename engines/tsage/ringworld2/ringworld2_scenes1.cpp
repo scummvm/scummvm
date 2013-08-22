@@ -7944,22 +7944,22 @@ void Scene1550::signal() {
 		warning("TODO: unknown use of arrUnkObj15501[0]._fieldA6");
 		switch (_arrUnkObj15501[0]._frame - 1) {
 		case 0:
-			R2_INVENTORY.setObjectScene(26, R2_GLOBALS._player._characterIndex);
+			R2_INVENTORY.setObjectScene(R2_JOYSTICK, R2_GLOBALS._player._characterIndex);
 			break;
 		case 1:
-			R2_INVENTORY.setObjectScene(17, R2_GLOBALS._player._characterIndex);
+			R2_INVENTORY.setObjectScene(R2_FUEL_CELL, R2_GLOBALS._player._characterIndex);
 			break;
 		case 2:
-			R2_INVENTORY.setObjectScene(22, R2_GLOBALS._player._characterIndex);
+			R2_INVENTORY.setObjectScene(R2_GUIDANCE_MODULE, R2_GLOBALS._player._characterIndex);
 			break;
 		case 3:
-			R2_INVENTORY.setObjectScene(25, R2_GLOBALS._player._characterIndex);
+			R2_INVENTORY.setObjectScene(R2_RADAR_MECHANISM, R2_GLOBALS._player._characterIndex);
 			break;
 		case 4:
-			R2_INVENTORY.setObjectScene(45, R2_GLOBALS._player._characterIndex);
+			R2_INVENTORY.setObjectScene(R2_BATTERY, R2_GLOBALS._player._characterIndex);
 			break;
 		case 5:
-			R2_INVENTORY.setObjectScene(28, R2_GLOBALS._player._characterIndex);
+			R2_INVENTORY.setObjectScene(R2_DIAGNOSTICS_DISPLAY, R2_GLOBALS._player._characterIndex);
 			break;
 		default:
 			break;
@@ -9643,7 +9643,7 @@ bool Scene1580::Hotspot1::startAction(CursorType action, Event &event) {
 	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == R2_JOYSTICK) {
-		R2_INVENTORY.setObjectScene(26, 1580);
+		R2_INVENTORY.setObjectScene(R2_JOYSTICK, 1580);
 		R2_GLOBALS._sceneItems.remove(&scene->_item1);
 		scene->_actor2.postInit();
 		scene->_actor2.setup(1580, 1, 4);
@@ -9662,7 +9662,7 @@ bool Scene1580::Hotspot2::startAction(CursorType action, Event &event) {
 	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == R2_DIAGNOSTICS_DISPLAY) {
-		R2_INVENTORY.setObjectScene(28, 1580);
+		R2_INVENTORY.setObjectScene(R2_DIAGNOSTICS_DISPLAY, 1580);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._sceneItems.remove(&scene->_item2);
 
@@ -9714,7 +9714,7 @@ bool Scene1580::Actor3::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(R2_BROKEN_DISPLAY) == 1580)) {
 		Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
-		R2_INVENTORY.setObjectScene(51, R2_GLOBALS._player._characterIndex);
+		R2_INVENTORY.setObjectScene(R2_BROKEN_DISPLAY, R2_GLOBALS._player._characterIndex);
 		scene->_item2.setDetails(Rect(69, 29, 177, 108), 1550, 82, -1, -1, 2, NULL);
 		scene->_actor1.remove();
 		remove();
@@ -9758,7 +9758,7 @@ bool Scene1580::Actor6::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (R2_GLOBALS._player._characterIndex == 1) {
-			R2_INVENTORY.setObjectScene(23, 1);
+			R2_INVENTORY.setObjectScene(R2_THRUSTER_VALVE, 1);
 			remove();
 			return true;
 		}
@@ -9790,7 +9790,7 @@ bool Scene1580::Actor7::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (R2_GLOBALS._player._characterIndex == 1) {
-			R2_INVENTORY.setObjectScene(27, 1);
+			R2_INVENTORY.setObjectScene(R2_IGNITOR, 1);
 			remove();
 			return true;
 		}
@@ -10204,7 +10204,7 @@ void Scene1625::signal() {
 		_actor6.postInit();
 		warning("_actor6._actorName = \"arm\";");
 
-		R2_INVENTORY.setObjectScene(40, 3);
+		R2_INVENTORY.setObjectScene(R2_SUPERCONDUCTOR_WIRE, 3);
 		_sceneMode = 14;
 
 		setAction(&_sequenceManager, this, 1625, &_actor1, &_actor6, NULL);
@@ -12762,7 +12762,7 @@ void Scene1900::signal() {
 		R2_GLOBALS._sceneManager.changeScene(1925);
 		break;
 	case 1910:
-		R2_INVENTORY.setObjectScene(22, 2535);
+		R2_INVENTORY.setObjectScene(R2_GUIDANCE_MODULE, 2535);
 		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 		R2_GLOBALS._player._oldCharacterScene[1] = 1900;
 		R2_GLOBALS._player._oldCharacterScene[2] = 1900;
@@ -13613,7 +13613,7 @@ bool Scene1950::Actor2::startAction(CursorType action, Event &event) {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
-	R2_INVENTORY.setObjectScene(31, 0);
+	R2_INVENTORY.setObjectScene(R2_SCRITH_KEY, 0);
 	scene->_sceneMode = 1958;
 	scene->setAction(&scene->_sequenceManager, scene, 1958, &R2_GLOBALS._player, &scene->_actor2, NULL);
 	return true;
@@ -15131,7 +15131,7 @@ void Scene1950::signal() {
 		_exit8._enabled = true;
 		break;
 	case 1959:
-		R2_INVENTORY.setObjectScene(46, 0);
+		R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, 0);
 		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
 		_exit8._enabled = true;
@@ -15162,7 +15162,7 @@ void Scene1950::signal() {
 		_actor5.setDetails(1950, 9, -1, -1, 2, (SceneItem *) NULL);
 	case 1967: {
 		_sceneMode = 0;
-		R2_INVENTORY.setObjectScene(34, 2);
+		R2_INVENTORY.setObjectScene(R2_SAPPHIRE_BLUE, 2);
 		_actor5.remove();
 		if (R2_GLOBALS.getFlag(36))
 			R2_GLOBALS._player.setVisage(20);
@@ -15177,7 +15177,7 @@ void Scene1950::signal() {
 		break;
 	case 1968:
 		R2_GLOBALS._player.disableControl();
-		R2_INVENTORY.setObjectScene(35, 2);
+		R2_INVENTORY.setObjectScene(R2_ANCIENT_SCROLLS, 2);
 		_actor3.setFrame(2);
 		if (R2_GLOBALS.getFlag(36))
 			R2_GLOBALS._player.setVisage(20);
