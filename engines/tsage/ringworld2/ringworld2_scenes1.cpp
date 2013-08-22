@@ -8238,7 +8238,7 @@ void Scene1550::dispatch() {
 
 	if ((R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex] == 15) && (R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex + 2] == 16)) {
 		R2_GLOBALS._player._shade = 0;
-		// Original game contains a switch based on an uninitialised variable.
+		// Original game contains a switch based on an uninitialized variable.
 		// Until we understand what should really happen there, this code is unused on purpose
 		int missingVariable = 0;
 		switch (missingVariable) {

@@ -483,7 +483,7 @@ void Ringworld2Globals::reset() {
 	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
 	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
-	_frameEdgeColour = 2;
+	_frameEdgeColor = 2;
 	Common::fill(&_stripManager_lookupList[0], &_stripManager_lookupList[12], 0);
 	_stripManager_lookupList[0] = 1;
 	_stripManager_lookupList[1] = 1;
@@ -566,7 +566,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 		s.syncAsByte(_stripManager_lookupList[i]);
 
 	s.syncAsSint16LE(_insetUp);
-	s.syncAsByte(_frameEdgeColour);
+	s.syncAsByte(_frameEdgeColor);
 }
 
 } // end of namespace Ringworld2

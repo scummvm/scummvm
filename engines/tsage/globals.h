@@ -258,7 +258,7 @@ public:
 	byte _fadePaletteMap[10][256];
 	byte _paletteMap[4096];
 	int _insetUp;
-	int _frameEdgeColour;	// _v421e
+	int _frameEdgeColor;	// _v421e
 	Rect _v5589E;
 	Rect _v558B6;
 	int _v558C2;

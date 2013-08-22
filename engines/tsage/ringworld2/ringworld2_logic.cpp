@@ -337,7 +337,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	// Exclude the bottom area of the screen to allow room for the UI
 	T2_GLOBALS._interfaceY = UI_INTERFACE_Y;
 
-	// Initialise fields
+	// Initialize fields
 	_action = NULL;
 	_field12 = 0;
 	_sceneMode = 0;
@@ -621,7 +621,7 @@ void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeL
 		R2_GLOBALS._gfxColors.foreground = 59;
 		R2_GLOBALS._fontColors.background = 4;
 		R2_GLOBALS._fontColors.foreground = 15;
-		R2_GLOBALS._frameEdgeColour = 2;
+		R2_GLOBALS._frameEdgeColor = 2;
 
 		R2_GLOBALS._scenePalette.loadPalette(0);
 		R2_GLOBALS._scenePalette.setEntry(255, 0xff, 0xff, 0xff);
@@ -665,7 +665,7 @@ void SceneHandlerExt::setupPaletteMaps() {
 					break;
 				}
 
-				// Scan for the palette index with the closest matching colour
+				// Scan for the palette index with the closest matching color
 				int threshold = 769;
 				int foundIndex = -1;
 				for (int pIndex2 = 223; pIndex2 >= 0; --pIndex2) {
@@ -1886,7 +1886,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 
 	default:
 		// ANIMPALMODE_CURR_PALETTE
-		// Use the closest matching colours in the currently active palette to those specified in the animation
+		// Use the closest matching colors in the currently active palette to those specified in the animation
 		for (int idx = _subData._palStart; idx < (_subData._palStart + _subData._palSize); ++idx) {
 			byte r = _subData._palData[idx * 3];
 			byte g = _subData._palData[idx * 3 + 1];

@@ -506,7 +506,7 @@ public:
 
 class SpeakerSoldier : public VisualSpeaker {
 public:
-	SpeakerSoldier(int colour);
+	SpeakerSoldier(int color);
 	virtual Common::String getClassName() { return "SpeakerSoldier"; }
 };
 
@@ -581,7 +581,7 @@ public:
 
 class SpeakerWebbster : public VisualSpeaker {
 public:
-	SpeakerWebbster(int colour);
+	SpeakerWebbster(int color);
 	virtual Common::String getClassName() { return "SpeakerWebbster"; }
 };
 

@@ -1933,7 +1933,7 @@ void Scene180::restore() {
 		R2_GLOBALS._gfxColors.foreground = 4;
 		R2_GLOBALS._gfxColors.background = 3;
 		R2_GLOBALS._fontColors.background = 3;
-		R2_GLOBALS._frameEdgeColour = 3;
+		R2_GLOBALS._frameEdgeColor = 3;
 		break;
 
 	case 1:
@@ -1942,7 +1942,7 @@ void Scene180::restore() {
 		R2_GLOBALS._gfxColors.foreground = 25;
 		R2_GLOBALS._gfxColors.background = 43;
 		R2_GLOBALS._fontColors.background = 48;
-		R2_GLOBALS._frameEdgeColour = 48;
+		R2_GLOBALS._frameEdgeColor = 48;
 		break;
 
 	case 2:
@@ -1952,7 +1952,7 @@ void Scene180::restore() {
 		R2_GLOBALS._gfxColors.background = 136;
 		R2_GLOBALS._fontColors.background = 48;
 		R2_GLOBALS._fontColors.foreground = 253;
-		R2_GLOBALS._frameEdgeColour = 48;
+		R2_GLOBALS._frameEdgeColor = 48;
 		break;
 
 	case 3:
@@ -1961,7 +1961,7 @@ void Scene180::restore() {
 		R2_GLOBALS._gfxColors.foreground = 84;
 		R2_GLOBALS._gfxColors.background = 118;
 		R2_GLOBALS._fontColors.background = 47;
-		R2_GLOBALS._frameEdgeColour = 48;
+		R2_GLOBALS._frameEdgeColor = 48;
 		break;
 
 	case 14:
@@ -1971,7 +1971,7 @@ void Scene180::restore() {
 		R2_GLOBALS._fontColors.foreground = 38;
 		R2_GLOBALS._gfxColors.foreground = 192;
 		R2_GLOBALS._gfxColors.background = 30;
-		R2_GLOBALS._frameEdgeColour = 48;
+		R2_GLOBALS._frameEdgeColor = 48;
 		break;
 
 	default:
@@ -5754,7 +5754,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._walkRegions.enableRegion(3);
 	_field412 = 0;
 
-	// Initialise pixel map for the obscuring effect
+	// Initialize pixel map for the obscuring effect
 	ScenePalette &pal = R2_GLOBALS._scenePalette;
 	uint r, g, b;
 	for (int i = 0; i < 256; ++i) {

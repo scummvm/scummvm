@@ -2573,9 +2573,9 @@ void SpeakerSocko3200::proc15() {
 // Classes related to SOLDIER
 //----------------------------------------------------------------------------
 
-SpeakerSoldier::SpeakerSoldier(int colour) {
+SpeakerSoldier::SpeakerSoldier(int color) {
 	_speakerName = "SOLDIER";
-	_color1 = colour;
+	_color1 = color;
 	_color2 = 0;
 	_speakerMode = 0;
 	_textWidth = 300;
@@ -2869,9 +2869,9 @@ void SpeakerTomko3245::proc15() {
 // Classes related to WEBBSTER
 //----------------------------------------------------------------------------
 
-SpeakerWebbster::SpeakerWebbster(int colour) {
+SpeakerWebbster::SpeakerWebbster(int color) {
 	_speakerName = "WEBBSTER";
-	_color1 = colour;
+	_color1 = color;
 	_color2 = 0;
 	_speakerMode = 0;
 	_textWidth = 300;
