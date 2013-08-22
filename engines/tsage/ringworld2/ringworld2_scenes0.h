@@ -699,7 +699,7 @@ class Scene700: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item12 : public NamedHotspot {
+	class HandGrip : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -716,7 +716,7 @@ class Scene700: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor5 : public SceneActor {
+	class Cable : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -736,12 +736,12 @@ public:
 	NamedHotspot _item9;
 	NamedHotspot _item10;
 	Item11 _item11;
-	Item12 _item12;
+	HandGrip _handGrip;
 	SceneActor _actor1;
 	Actor2 _actor2;
 	Actor3 _actor3;
 	Actor4 _actor4;
-	Actor5 _actor5;
+	Cable _cable;
 	Actor6 _actor6;
 	Actor6 _actor7;
 	Actor6 _actor8;

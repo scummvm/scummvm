@@ -6022,26 +6022,26 @@ bool Scene700::Item11::startAction(CursorType action, Event &event) {
 	return NamedHotspot::startAction(action, event);
 }
 
-bool Scene700::Item12::startAction(CursorType action, Event &event) {
+bool Scene700::HandGrip::startAction(CursorType action, Event &event) {
 	Scene700 *scene = (Scene700 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case R2_CABLE_HARNESS:
 		R2_GLOBALS._player.disableControl();
-		scene->_actor5.postInit();
-		scene->_actor5.setup(701, 3, 2);
-		scene->_actor5.setPosition(Common::Point(243, 98));
-		scene->_actor5.setDetails(700, 37, -1, -1, 2, (SceneItem *) NULL);
-		scene->_actor5.hide();
+		scene->_cable.postInit();
+		scene->_cable.setup(701, 3, 2);
+		scene->_cable.setPosition(Common::Point(243, 98));
+		scene->_cable.setDetails(700, 37, -1, -1, 2, (SceneItem *) NULL);
+		scene->_cable.hide();
 		scene->_sceneMode = 20;
 		break;
 	case R2_ATTRACTOR_CABLE_HARNESS:
 		R2_GLOBALS._player.disableControl();
-		scene->_actor5.postInit();
-		scene->_actor5.setup(701, 2, 8);
-		scene->_actor5.setPosition(Common::Point(243, 98));
-		scene->_actor5.setDetails(700, 38, -1, -1, 2, (SceneItem *) NULL);
-		scene->_actor5.hide();
+		scene->_cable.postInit();
+		scene->_cable.setup(701, 2, 8);
+		scene->_cable.setPosition(Common::Point(243, 98));
+		scene->_cable.setDetails(700, 38, -1, -1, 2, (SceneItem *) NULL);
+		scene->_cable.hide();
 		scene->_sceneMode = 21;
 		break;
 	default:
@@ -6049,7 +6049,7 @@ bool Scene700::Item12::startAction(CursorType action, Event &event) {
 		break;
 	}
 
-	scene->setAction(&scene->_sequenceManager, scene, 707, &R2_GLOBALS._player, &scene->_actor5, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 707, &R2_GLOBALS._player, &scene->_cable, NULL);
 	return true;
 }
 
@@ -6101,7 +6101,7 @@ bool Scene700::Actor4::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene700::Actor5::startAction(CursorType action, Event &event) {
+bool Scene700::Cable::startAction(CursorType action, Event &event) {
 	Scene700 *scene = (Scene700 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -6135,9 +6135,9 @@ bool Scene700::Actor5::startAction(CursorType action, Event &event) {
 		break;
 	case R2_ATTRACTOR_UNIT:
 		R2_GLOBALS._player.disableControl();
-		if (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 700) {
+		if (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) != 700) {
 			scene->_sceneMode = 706;
-			scene->setAction(&scene->_sequenceManager, scene, 706, &R2_GLOBALS._player, &scene->_actor5, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 706, &R2_GLOBALS._player, &scene->_cable, NULL);
 		} else {
 			scene->_sceneMode = 15;
 			Common::Point pt(_position.x - 12, _position.y + 1);
@@ -6219,20 +6219,20 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 	_actor9.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
 
 	if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) != 1) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) != 1)) {
-		_actor5.postInit();
-		_actor5.fixPriority(10);
+		_cable.postInit();
+		_cable.fixPriority(10);
 		switch (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS)) {
 		case 0:
 			switch (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS)) {
 			case 0:
-				_actor5.setup(701, 3, 2);
-				_actor5.setPosition(Common::Point(243, 98));
-				_actor5.setDetails(700, 37, -1, -1, 1, (SceneItem *) NULL);
+				_cable.setup(701, 3, 2);
+				_cable.setPosition(Common::Point(243, 98));
+				_cable.setDetails(700, 37, -1, -1, 1, (SceneItem *) NULL);
 				break;
 			case 700:
-				_actor5.setup(701, 3, 1);
-				_actor5.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
-				_actor5.setDetails(700, 37, -1, -1, 1, (SceneItem *) NULL);
+				_cable.setup(701, 3, 1);
+				_cable.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
+				_cable.setDetails(700, 37, -1, -1, 1, (SceneItem *) NULL);
 				break;
 			default:
 				break;
@@ -6242,22 +6242,22 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 			switch (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS)) {
 			case 0:
 				if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
-					_actor5.setup(701, 2, 1);
+					_cable.setup(701, 2, 1);
 				else
-					_actor5.setup(701, 2, 8);
-				_actor5.setPosition(Common::Point(243, 98));
-				_actor5.fixPriority(77);
-				_actor5.setDetails(700, 38, -1, -1, 1, (SceneItem *) NULL);
+					_cable.setup(701, 2, 8);
+				_cable.setPosition(Common::Point(243, 98));
+				_cable.fixPriority(77);
+				_cable.setDetails(700, 38, -1, -1, 1, (SceneItem *) NULL);
 				break;
 			case 700:
-				_actor5.setup(701, 1, 8);
+				_cable.setup(701, 1, 8);
 				if (R2_GLOBALS._v565E7 == 0) {
-					_actor5.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
+					_cable.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
 				} else {
-					_actor5.setup(701, 1, 1);
-					_actor5.setPosition(Common::Point(_actor1._position.x + 1, _actor1._position.y + 120));
+					_cable.setup(701, 1, 1);
+					_cable.setPosition(Common::Point(_actor1._position.x + 1, _actor1._position.y + 120));
 				}
-				_actor5.setDetails(700, 38, -1, -1, 1, (SceneItem *) NULL);
+				_cable.setDetails(700, 38, -1, -1, 1, (SceneItem *) NULL);
 				break;
 			default:
 				break;
@@ -6272,7 +6272,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 	_actor4.setPosition(Common::Point(454, 117));
 	_actor4.setDetails(700, 27, -1, -1, 1, (SceneItem *) NULL);
 
-	_item12.setDetails(Rect(234, 90, 252, 110), 700, 39, -1, -1, 1, NULL);
+	_handGrip.setDetails(Rect(234, 90, 252, 110), 700, 39, -1, -1, 1, NULL);
 	_item6.setDetails(Rect(91, 158, 385, 167), 700, 6, -1, 8, 1, NULL);
 	_item2.setDetails(Rect(47, 115, 149, 124), 700, 40, -1, 41, 1, NULL);
 	_item3.setDetails(Rect(151, 108, 187, 124), 700, 40, -1, 41, 1, NULL);
@@ -6377,7 +6377,7 @@ void Scene700::signal() {
 		break;
 	case 11:
 		_sceneMode = 12;
-		_actor5.remove();
+		_cable.remove();
 		R2_GLOBALS._player.animate(ANIM_MODE_6, this);
 		break;
 	case 12:
@@ -6402,13 +6402,13 @@ void Scene700::signal() {
 		break;
 	case 16:
 		_sceneMode = 17;
-		_actor5.setup(701, 1, 8);
-		_actor5.setDetails(700, 38, -1, -1, 3, (SceneItem *) NULL);
-		if ((R2_GLOBALS._v565E5 != 0) && (_actor5._position.x == _actor1._position.x + 1) && (_actor5._position.x == 148 - (((R2_GLOBALS._electromagnetChangeAmount + 10) / 5) * 4))) {
-			_actor5.animate(ANIM_MODE_6, NULL);
-			Common::Point pt(_actor5._position.x, _actor1._position.y + 120);
+		_cable.setup(701, 1, 8);
+		_cable.setDetails(700, 38, -1, -1, 3, (SceneItem *) NULL);
+		if ((R2_GLOBALS._v565E5 != 0) && (_cable._position.x == _actor1._position.x + 1) && (_cable._position.x == 148 - (((R2_GLOBALS._electromagnetChangeAmount + 10) / 5) * 4))) {
+			_cable.animate(ANIM_MODE_6, NULL);
+			Common::Point pt(_cable._position.x, _actor1._position.y + 120);
 			NpcMover *mover = new NpcMover();
-			_actor5.addMover(mover, &pt, NULL);
+			_cable.addMover(mover, &pt, NULL);
 			R2_GLOBALS._v565E7 = 1;
 		}
 		R2_GLOBALS._player.animate(ANIM_MODE_6, this);
@@ -6428,9 +6428,9 @@ void Scene700::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 21:
-		_actor5.fixPriority(77);
+		_cable.fixPriority(77);
 		if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
-			_actor5.animate(ANIM_MODE_6, NULL);
+			_cable.animate(ANIM_MODE_6, NULL);
 
 		R2_INVENTORY.setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 700);
 		R2_GLOBALS._player.enableControl();
@@ -6445,10 +6445,10 @@ void Scene700::signal() {
 		R2_GLOBALS._sceneManager.changeScene(900);
 		break;
 	case 706:
-		_actor5.setDetails(700, 38, -1, -1, 3, (SceneItem *) NULL);
-		_actor5.fixPriority(77);
+		_cable.setDetails(700, 38, -1, -1, 3, (SceneItem *) NULL);
+		_cable.fixPriority(77);
 		if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
-			_actor5.animate(ANIM_MODE_6, NULL);
+			_cable.animate(ANIM_MODE_6, NULL);
 		R2_INVENTORY.setObjectScene(R2_ATTRACTOR_UNIT, 0);
 		R2_INVENTORY.setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 700);
 		R2_GLOBALS._player.enableControl();
