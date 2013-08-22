@@ -59,6 +59,9 @@ class CInventory : public CObject {
 struct InventoryItem {
 	int16 itemId;
 	int16 count;
+
+	InventoryItem() { itemId = count = 0; }
+	InventoryItem(int id, int cnt) : itemId(id), count(cnt) {}
 };
 
 typedef Common::Array<InventoryItem *> InventoryItems;
@@ -95,7 +98,7 @@ class CInventory2 : public CInventory {
  public:
 	CInventory2();
 	bool loadPartial(MfcArchive &file);
-	void addItem(int itemId, int value);
+	void addItem(int itemId, int count);
 	void rebuildItemRects();
 
 	Scene *getScene() { return _scene; }

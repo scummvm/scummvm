@@ -96,8 +96,9 @@ bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartia
 	return true;
 }
 
-void CInventory2::addItem(int itemId, int value) {
-	warning("STUB: CInventory2::addItem(%d, %d)", itemId, value);
+void CInventory2::addItem(int itemId, int count) {
+	if (getInventoryPoolItemIndexById(itemId) >= 0)
+		_inventoryItems.push_back(new InventoryItem(itemId, count));
 }
 
 void CInventory2::rebuildItemRects() {
