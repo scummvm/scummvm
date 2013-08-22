@@ -102,6 +102,12 @@ Common::Rect *DirtyRectContainer::getRect(int id) {
 
 Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	Common::Array<Common::Rect *> singleret;
+	if (_clipRect == nullptr) {
+		// TODO: Hack - this basically makes no sense,
+		// but getFallback does get called when there is no _clipRect
+		// and no dirtyRect when doing fade ins/outs,.
+		return singleret;
+	}
 	Common::Rect *temp = new Common::Rect(*_clipRect);
 	singleret.insert_at(0, temp);
 	return singleret;
@@ -128,6 +134,14 @@ bool DirtyRectContainer::isHuge(const Common::Rect *rect) {
 	return false;
 }
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
+
+	if (_clipRect == nullptr) {
+		// TODO: Okay, this is an hack for fades
+		// getOptimized shouldn't really be called at all if we are working sans
+		// dirtyRects, fix this at the upper level and remove.
+
+		return getFallback();
+	}
 
 	if (_disableDirtyRects) {
 		return getFallback();

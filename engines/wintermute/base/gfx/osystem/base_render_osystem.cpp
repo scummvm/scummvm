@@ -455,7 +455,17 @@ void BaseRenderOSystem::drawTickets() {
 		}
 	}
 
-	if (!_dirtyRects->getSize()) {
+
+
+	// The color-mods are stored in the RenderTickets on add, since we set that state again during
+	// draw, we need to keep track of what it was prior to draw.
+	uint32 oldColorMod = _colorMod;
+
+	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
+	
+	// TODO: Hack, find a better way to tell fades from regular drawing.
+
+	if (!optimized.size()) {
 		// TODO: Watch for 0-size rects!
 		it = _renderQueue.begin();
 		while (it != _renderQueue.end()) {
@@ -464,12 +474,7 @@ void BaseRenderOSystem::drawTickets() {
 			++it;
 		}
 		return;
-	}
-	// The color-mods are stored in the RenderTickets on add, since we set that state again during
-	// draw, we need to keep track of what it was prior to draw.
-	uint32 oldColorMod = _colorMod;
-
-	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
+	}	
 
 	for (uint i = 0; i < optimized.size(); i++) {
 		Common::Rect *_dirtyRect = optimized[i];
