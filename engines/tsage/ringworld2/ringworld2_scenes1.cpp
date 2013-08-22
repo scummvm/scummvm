@@ -9671,7 +9671,7 @@ bool Scene1580::Hotspot2::startAction(CursorType action, Event &event) {
 		scene->_actor3.setPosition(Common::Point(124, 108));
 		scene->_actor3.fixPriority(10);
 
-		if (R2_INVENTORY.getObjectScene(26) == 1580)
+		if (R2_INVENTORY.getObjectScene(R2_JOYSTICK) == 1580)
 			scene->_actor3.setDetails(1550, 14, -1, -1, 5, &scene->_actor2);
 		else
 			scene->_actor3.setDetails(1550, 14, -1, -1, 2, (SceneItem *)NULL);
@@ -9691,10 +9691,10 @@ bool Scene1580::Hotspot2::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1580::Actor2::startAction(CursorType action, Event &event) {
-	if ( (action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(28) == 1580)
-		&& (R2_INVENTORY.getObjectScene(17) == 0) && (R2_INVENTORY.getObjectScene(22) == 0)
-		&& (R2_INVENTORY.getObjectScene(25) == 0) && (R2_INVENTORY.getObjectScene(18) == 0)
-		&& (R2_INVENTORY.getObjectScene(23) == 0) && (R2_INVENTORY.getObjectScene(27) == 0)) {
+	if ( (action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(R2_DIAGNOSTICS_DISPLAY) == 1580)
+		&& (R2_INVENTORY.getObjectScene(R2_FUEL_CELL) == 0) && (R2_INVENTORY.getObjectScene(R2_GUIDANCE_MODULE) == 0)
+		&& (R2_INVENTORY.getObjectScene(R2_RADAR_MECHANISM) == 0) && (R2_INVENTORY.getObjectScene(R2_GYROSCOPE) == 0)
+		&& (R2_INVENTORY.getObjectScene(R2_THRUSTER_VALVE) == 0) && (R2_INVENTORY.getObjectScene(R2_IGNITOR) == 0)) {
 		Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 		scene->_sceneMode = 31;
 		R2_GLOBALS._player.disableControl();
@@ -9711,7 +9711,7 @@ bool Scene1580::Actor2::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1580::Actor3::startAction(CursorType action, Event &event) {
-	if ((action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(51) == 1580)) {
+	if ((action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(R2_BROKEN_DISPLAY) == 1580)) {
 		Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 		R2_INVENTORY.setObjectScene(51, R2_GLOBALS._player._characterIndex);
@@ -9830,7 +9830,7 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 	_sceneMode = 0;
 
 	R2_GLOBALS._player.disableControl();
-	if (R2_INVENTORY.getObjectScene(26) == 1580) {
+	if (R2_INVENTORY.getObjectScene(R2_JOYSTICK) == 1580) {
 		_actor2.postInit();
 		_actor2.setup(1580, 1, 4);
 		_actor2.setPosition(Common::Point(159, 163));
@@ -9839,7 +9839,7 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 		_item1.setDetails(Rect(141, 148, 179, 167), 1550, 79, -1, -1, 1, NULL);
 	}
 
-	if (R2_INVENTORY.getObjectScene(51) == 1580) {
+	if (R2_INVENTORY.getObjectScene(R2_BROKEN_DISPLAY) == 1580) {
 		_actor3.postInit();
 		_actor3.setup(1580, 1, 1);
 		_actor3.setPosition(Common::Point(124, 108));
@@ -9850,7 +9850,7 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 		_actor1.setup(1580, 1, 3);
 		_actor1.setPosition(Common::Point(124, 96));
 		_actor1.fixPriority(20);
-	} else if (R2_INVENTORY.getObjectScene(28) == 1580) {
+	} else if (R2_INVENTORY.getObjectScene(R2_DIAGNOSTICS_DISPLAY) == 1580) {
 		_actor3.postInit();
 		_actor3.setup(1580, 1, 1);
 		_actor3.setPosition(Common::Point(124, 108));
@@ -9884,7 +9884,7 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 	_actor5.fixPriority(100);
 	_actor5.setDetails(1550, 81, -1, -1, 1, (SceneItem *) NULL);
 
-	if (R2_INVENTORY.getObjectScene(23) == 1580) {
+	if (R2_INVENTORY.getObjectScene(R2_THRUSTER_VALVE) == 1580) {
 		_actor6.postInit();
 		_actor6.setup(1580, 6, 2);
 		_actor6.setPosition(Common::Point(222, 108));
@@ -9892,7 +9892,7 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 		_actor6.setDetails(1550, 32, -1, 34, 1, (SceneItem *) NULL);
 	}
 
-	if (R2_INVENTORY.getObjectScene(27) == 1580) {
+	if (R2_INVENTORY.getObjectScene(R2_IGNITOR) == 1580) {
 		_actor7.postInit();
 		_actor7.setup(1580, 6, 1);
 		_actor7.setPosition(Common::Point(195, 108));
@@ -9917,49 +9917,49 @@ void Scene1580::signal() {
 		_actor1.setup(1580, 1, 2);
 		_actor1.setPosition(Common::Point(124, 94));
 
-		if (R2_INVENTORY.getObjectScene(18) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_GYROSCOPE) != 0) {
 			_arrActor[0].postInit();
 			_arrActor[0].setup(1580, 2, 1);
 			_arrActor[0].setPosition(Common::Point(138, 56));
 		}
 
-		if (R2_INVENTORY.getObjectScene(25) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_RADAR_MECHANISM) != 0) {
 			_arrActor[1].postInit();
 			_arrActor[1].setup(1580, 2, 2);
 			_arrActor[1].setPosition(Common::Point(140, 66));
 		}
 
-		if (R2_INVENTORY.getObjectScene(27) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_IGNITOR) != 0) {
 			_arrActor[2].postInit();
 			_arrActor[2].setup(1580, 2, 3);
 			_arrActor[2].setPosition(Common::Point(142, 85));
 		}
 
-		if (R2_INVENTORY.getObjectScene(23) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_THRUSTER_VALVE) != 0) {
 			_arrActor[3].postInit();
 			_arrActor[3].setup(1580, 2, 4);
 			_arrActor[3].setPosition(Common::Point(142, 92));
 		}
 
-		if (R2_INVENTORY.getObjectScene(22) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_GUIDANCE_MODULE) != 0) {
 			_arrActor[4].postInit();
 			_arrActor[4].setup(1580, 2, 5);
 			_arrActor[4].setPosition(Common::Point(108, 54));
 		}
 
-		if (R2_INVENTORY.getObjectScene(26) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_JOYSTICK) != 0) {
 			_arrActor[5].postInit();
 			_arrActor[5].setup(1580, 2, 6);
 			_arrActor[5].setPosition(Common::Point(110, 64));
 		}
 
-		if (R2_INVENTORY.getObjectScene(45) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_BATTERY) != 0) {
 			_arrActor[6].postInit();
 			_arrActor[6].setup(1580, 2, 7);
 			_arrActor[6].setPosition(Common::Point(108, 80));
 		}
 
-		if (R2_INVENTORY.getObjectScene(17) != 0) {
+		if (R2_INVENTORY.getObjectScene(R2_FUEL_CELL) != 0) {
 			_arrActor[7].postInit();
 			_arrActor[7].setup(1580, 2, 8);
 			_arrActor[7].setPosition(Common::Point(111, 92));
@@ -13620,7 +13620,7 @@ bool Scene1950::Actor2::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1950::Actor3::startAction(CursorType action, Event &event) {
-	if ((action != CURSOR_USE) || (R2_INVENTORY.getObjectScene(35) != 1950))
+	if ((action != CURSOR_USE) || (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) != 1950))
 		return SceneActor::startAction(action, event);
 
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
@@ -13889,7 +13889,7 @@ void Scene1950::Exit6::changeScene() {
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	R2_GLOBALS._v566A5 = 5;
 	if (R2_GLOBALS._v566A4 == 2) {
-		if ((R2_GLOBALS.getFlag(36)) && (R2_INVENTORY.getObjectScene(34) == 2) && (R2_INVENTORY.getObjectScene(35) == 2)) {
+		if ((R2_GLOBALS.getFlag(36)) && (R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 2) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2)) {
 			scene->_sceneMode = 1961;
 			Common::Point pt(-20, 160);
 			NpcMover *mover = new NpcMover();
@@ -13897,7 +13897,7 @@ void Scene1950::Exit6::changeScene() {
 		} else {
 			if (!R2_GLOBALS.getFlag(36))
 				SceneItem::display(1950, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
-			if ((R2_INVENTORY.getObjectScene(34) == 1950) || (R2_INVENTORY.getObjectScene(35) == 1950))
+			if ((R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 1950) || (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 1950))
 				SceneItem::display(1950, 34, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			scene->_sceneMode = 0;
 			Common::Point pt(30, 160);
@@ -14208,7 +14208,7 @@ void Scene1950::subBDC1E() {
 	switch (R2_GLOBALS._v566A4 - 1) {
 	case 0:
 		_exit7._enabled = true;
-		if ((R2_INVENTORY.getObjectScene(31) == 0) && (R2_INVENTORY.getObjectScene(34) == 1950))
+		if ((R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0) && (R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 1950))
 			_exit8._enabled = true;
 		R2_GLOBALS._walkRegions.enableRegion(2);
 		R2_GLOBALS._walkRegions.enableRegion(3);
@@ -14726,7 +14726,7 @@ void Scene1950::subBE59B() {
 			_field416 = 1;
 		}
 	}
-	if ((R2_GLOBALS._v566A4 == 1) && (R2_INVENTORY.getObjectScene(31) != 0)) {
+	if ((R2_GLOBALS._v566A4 == 1) && (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) != 0)) {
 		_actor2.postInit();
 		_actor2.setVisage(1948);
 		_actor2.setStrip(3);
@@ -14762,7 +14762,7 @@ void Scene1950::subBE59B() {
 
 		_item2.setDetails(Rect(188, 124, 199, 133), 1950, 27, 28, -1, 2, NULL);
 
-		if (R2_INVENTORY.getObjectScene(34) == 1950) {
+		if (R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 1950) {
 			_actor5.postInit();
 			_actor5.setVisage(1970);
 			_actor5.setStrip(1);
@@ -14793,7 +14793,7 @@ void Scene1950::subBE59B() {
 		_actor3.setPosition(Common::Point(76, 94));
 		_actor3.fixPriority(25);
 		_actor3.setDetails(1950, 30, -1, -1, 2, (SceneItem *) NULL);
-		if (R2_INVENTORY.getObjectScene(35) == 2)
+		if (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2)
 			_actor3.setFrame(2);
 		else
 			_actor3.setFrame(1);
@@ -14812,7 +14812,7 @@ void Scene1950::subBE59B() {
 	switch (R2_GLOBALS._v566A5) {
 	case 0:
 		_sceneMode = 1950;
-		if (R2_INVENTORY.getObjectScene(31) == 0) {
+		if (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0) {
 			R2_GLOBALS._v56AAB = 0;
 			R2_GLOBALS._player.enableControl(CURSOR_ARROW);
 		} else {
@@ -15027,8 +15027,8 @@ void Scene1950::postInit(SceneObjectList *OwnerList) {
 	_exit8.setDest(Common::Point(268, 149));
 
 	R2_GLOBALS._player.postInit();
-	if ( (R2_INVENTORY.getObjectScene(32) == 0) && (R2_INVENTORY.getObjectScene(33) == 0)
-		&& (R2_INVENTORY.getObjectScene(46) == 0) && (!R2_GLOBALS.getFlag(36)) )
+	if ( (R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 0) && (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 0)
+		&& (R2_INVENTORY.getObjectScene(R2_SOAKED_FACEMASK) == 0) && (!R2_GLOBALS.getFlag(36)) )
 		R2_GLOBALS._player.setVisage(22);
 	else
 		R2_GLOBALS._player.setVisage(20);
@@ -15197,7 +15197,7 @@ void Scene1950::process(Event &event) {
 		&& (R2_GLOBALS._player._uiEnabled)
 		&& (R2_GLOBALS._events.getCursor() == R2_LIGHT_BULB)
 		&& (R2_GLOBALS._player._bounds.contains(event.mousePos))
-		&& (R2_INVENTORY.getObjectScene(31) == 0)) {
+		&& (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0)) {
 		event.handled = true;
 		R2_GLOBALS._player.disableControl();
 		_exit7._enabled = false;

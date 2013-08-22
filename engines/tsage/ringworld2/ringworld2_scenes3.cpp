@@ -378,7 +378,7 @@ bool Scene3150::Item5::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (R2_INVENTORY.getObjectScene(47) != 3150)
+		if (R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150)
 			return SceneHotspot::startAction(action, event);
 
 		R2_GLOBALS._player.disableControl();
@@ -386,7 +386,7 @@ bool Scene3150::Item5::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_sequenceManager, scene, 3154, &R2_GLOBALS._player, &scene->_actor3, NULL);
 		return true;
 	case R2_SUPERCONDUCTOR_WIRE:
-		if ((R2_INVENTORY.getObjectScene(47) != 3150) && (R2_GLOBALS.getFlag(75))) {
+		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && (R2_GLOBALS.getFlag(75))) {
 			R2_GLOBALS._player.disableControl();
 			scene->_actor3.postInit();
 			scene->_actor3._effect = 3;
@@ -417,7 +417,7 @@ bool Scene3150::Item6::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_sequenceManager, scene, 3158, &R2_GLOBALS._player, &scene->_actor4, NULL);
 		return true;
 	case R2_FOOD_TRAY:
-		if ((R2_INVENTORY.getObjectScene(47) != 3150) && (R2_INVENTORY.getObjectScene(40) == 3150) && (R2_GLOBALS.getFlag(75))) {
+		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && (R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) && (R2_GLOBALS.getFlag(75))) {
 			scene->_actor5.postInit();
 			scene->_actor5._effect = 6;
 			scene->_actor5._shade = 3;
@@ -583,7 +583,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 	_actor7.fixPriority(50);
 	_actor7.setDetails(3150, 17, -1, 19, 1, (SceneItem *)NULL);
 
-	if (R2_INVENTORY.getObjectScene(41) == 3150) {
+	if (R2_INVENTORY.getObjectScene(R2_PILLOW) == 3150) {
 		_actor4.postInit();
 		if (R2_GLOBALS.getFlag(75)) {
 			if (R2_GLOBALS.getFlag(76)) {
@@ -608,13 +608,13 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	if (R2_INVENTORY.getObjectScene(47) == 3150) {
+	if (R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) == 3150) {
 		_actor3.postInit();
 		_actor3.setup(3152, 7, 1);
 		_actor3.setPosition(Common::Point(73, 83));
 	}
 
-	if (R2_INVENTORY.getObjectScene(40) == 3150) {
+	if (R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) {
 		_actor3.postInit();
 		_actor3.setup(3152, 7, 3);
 		_actor3.setPosition(Common::Point(70, 55));
@@ -623,7 +623,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		_actor3._shade = 5;
 	}
 
-	if (R2_INVENTORY.getObjectScene(42) == 3150) {
+	if (R2_INVENTORY.getObjectScene(R2_FOOD_TRAY) == 3150) {
 		_actor5.postInit();
 		if (R2_GLOBALS.getFlag(77)) {
 			_actor5.setup(3152, 7, 8);
@@ -675,7 +675,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		break;
 		}
 	default:
-		if ((R2_GLOBALS._v56AA0 == 1) && (R2_INVENTORY.getObjectScene(35) == 2000) && (R2_GLOBALS._player._oldCharacterScene[1] == 3100)) {
+		if ((R2_GLOBALS._v56AA0 == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000) && (R2_GLOBALS._player._oldCharacterScene[1] == 3100)) {
 			++R2_GLOBALS._v56AA0;
 			_sceneMode = 3156;
 			_actor1.postInit();
@@ -1407,7 +1407,7 @@ void Scene3260::postInit(SceneObjectList *OwnerList) {
 	_actor13.setPosition(Common::Point(40, 106));
 	_actor13.setDetails(3260, 18, 1, -1, 1, (SceneItem *)NULL);
 
-	if (R2_INVENTORY.getObjectScene(52) == 3260) {
+	if (R2_INVENTORY.getObjectScene(R2_TOOLBOX) == 3260) {
 		_actor14.postInit();
 		_actor14.setup(3260, 7, 1);
 		_actor14.setPosition(Common::Point(202, 66));

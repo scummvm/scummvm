@@ -5587,8 +5587,8 @@ GfxSurface Scene600::Actor4::getFrame() {
 }
 
 bool Scene600::Doorway::startAction(CursorType action, Event &event) {
-	// CHECKME: The original is checking is action == 0. To be verified.
-	if (action == INV_NONE)
+	// Only action cursors
+	if (action < CURSOR_WALK)
 		return false;
 
 	if (action != CURSOR_USE)
@@ -5700,10 +5700,11 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 bool Scene600::Aerosol::startAction(CursorType action, Event &event) {
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
-	// CHECKME: The original is checking is action == 0. To be verified.
-	if (action == INV_NONE) {
+	// Only action cursors
+	if (action < CURSOR_WALK)
 		return false;
-	} else if (action == CURSOR_USE) {
+
+	if (action == CURSOR_USE) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 614;
 		scene->setAction(&scene->_sequenceManager1, scene, 614, &R2_GLOBALS._player, &scene->_aerosol, NULL);
@@ -5731,11 +5732,11 @@ void Scene600::synchronize(Serializer &s) {
 bool Scene600::Actor8::startAction(CursorType action, Event &event) {
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(9) == 600)) {
+	if ((action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600)) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 615;
 		scene->setAction(&scene->_sequenceManager1, scene, 615, &R2_GLOBALS._player, &scene->_actor8, NULL);
-	} else if ((action == R2_SONIC_STUNNER) && (R2_INVENTORY.getObjectScene(9) == 600) && (R2_GLOBALS._scannerFrequencies[1] == 2) && (!R2_GLOBALS.getFlag(8))){
+	} else if ((action == R2_SONIC_STUNNER) && (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600) && (R2_GLOBALS._scannerFrequencies[1] == 2) && (!R2_GLOBALS.getFlag(8))){
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 608;
 		scene->setAction(&scene->_sequenceManager1, scene, 608, &R2_GLOBALS._player, &scene->_actor4, NULL);
@@ -5772,7 +5773,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	_laser.postInit();
 	_laser.setPosition(Common::Point(246, 41));
 
-	if (R2_INVENTORY.getObjectScene(9) == 600) {
+	if (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600) {
 		_actor8.postInit();
 		_actor8.setup(602, 5, 1);
 		_actor8.setPosition(Common::Point(246, 41));
@@ -5812,7 +5813,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 		_object1.setup2(603, 1, 1, 244, 50, 10, 0);
 
 	if (R2_GLOBALS.getFlag(5)) {
-		if (R2_INVENTORY.getObjectScene(12) == 600) {
+		if (R2_INVENTORY.getObjectScene(R2_AEROSOL) == 600) {
 			_aerosol.postInit();
 			_aerosol.setup(602, 2, 2);
 			_aerosol.setPosition(Common::Point(189, 95));
@@ -5881,7 +5882,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene600::remove() {
-	if (R2_INVENTORY.getObjectScene(9) == 600)
+	if (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600)
 		R2_GLOBALS._sound4.fadeOut2(NULL);
 	SceneExt::remove();
 }
