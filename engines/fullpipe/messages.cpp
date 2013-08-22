@@ -295,7 +295,7 @@ void MessageQueue::update() {
 
 	if (_exCommands.size()) {
 		sendNextCommand();
-	} else if (_counter == 0 ) {
+	} else if (_counter == 0) {
 		_isFinished = 1;
 		finish();
 	}
