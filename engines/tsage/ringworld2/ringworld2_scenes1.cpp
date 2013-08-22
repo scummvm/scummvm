@@ -9868,7 +9868,7 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_actor4.postInit();
-	if (R2_INVENTORY.getObjectScene(58) == 0) {
+	if (R2_GLOBALS.getFlag(58) == 0) {
 		_actor4.setup(1580, 5, 1);
 		_actor4.setDetails(1550, 80, -1, -1, 1, (SceneItem *) NULL);
 	} else {
