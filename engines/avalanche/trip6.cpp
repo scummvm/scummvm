@@ -1135,6 +1135,8 @@ void Trip::rwsp(byte t, byte r) {
 }
 
 void Trip::apped(byte trn, byte np) {
+	trn--;
+	np--;
 	tr[trn].appear(_vm->_gyro->peds[np].x - tr[trn]._info.xl / 2, _vm->_gyro->peds[np].y - tr[trn]._info.yl, _vm->_gyro->peds[np].dir);
 	rwsp(trn, _vm->_gyro->peds[np].dir);
 }
@@ -1622,7 +1624,7 @@ void Trip::fliproom(byte room, byte ped) {
 		_vm->_gyro->dna.enter_catacombs_from_lusties_room = true;
 
 	_vm->_lucerna->enterroom(room, ped);
-	apped(0, ped - 1);
+	apped(1, ped);
 	_vm->_gyro->dna.enter_catacombs_from_lusties_room = false;
 	_vm->_gyro->oldrw = _vm->_gyro->dna.rw;
 	_vm->_gyro->dna.rw = tr[0].face;

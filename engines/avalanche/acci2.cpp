@@ -1016,9 +1016,9 @@ void Acci::stand_up() {
 			}
 			_vm->_trip->tr[0].visible = true;
 			_vm->_gyro->dna.user_moves_avvy = true;
-			_vm->_trip->apped(0, 1);
+			_vm->_trip->apped(1, 2);
 			_vm->_gyro->dna.rw = _vm->_gyro->left;
-			_vm->_celer->show_one(3); /* Picture of empty pillow. */
+			_vm->_celer->show_one(4); /* Picture of empty pillow. */
 			_vm->_lucerna->points(1);
 			_vm->_gyro->dna.avvy_in_bed = false;
 			_vm->_timeout->lose_timer(_vm->_timeout->reason_arkata_shouts);
@@ -1831,7 +1831,7 @@ void Acci::do_that() {
 					_vm->_gyro->dna.avvy_is_awake = true;
 					_vm->_lucerna->points(1);
 					_vm->_gyro->dna.avvy_in_bed = true;
-					_vm->_celer->show_one(2); /* Picture of Avvy, awake in bed. */
+					_vm->_celer->show_one(3); /* Picture of Avvy, awake in bed. */
 					if (_vm->_gyro->dna.teetotal)
 						_vm->_visa->dixi('d', 13);
 				} else
