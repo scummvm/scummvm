@@ -37,6 +37,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xce0,    0, { WORKAROUND_FAKE,   0 } }, // Same as above, for the Spanish version - bug #3313962
 	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,    0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #3038913
 	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",           -1,    0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
+	{ GID_HOYLE4,         700,   -1,  1,               "Code", "doit",           -1,    0, { WORKAROUND_FAKE,   1 } }, // op_add: while bidding in Bridge, an object ("Bid") is added to an object in another segment ("hand3")
 	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
 	{ GID_MOTHERGOOSE256,  -1,  999,  0,              "Event", "new",            -1,    0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
 	{ GID_MOTHERGOOSE256,  -1,    4,  0,              "rm004", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #3038228
@@ -74,9 +75,11 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,         -1,     0,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when selecting "Control" from the menu (temp vars 0-3) - bug #3039294
 	{ GID_HOYLE4,        910,    18,  0,                 NULL, "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // during tutorial - bug #3042756
 	{ GID_HOYLE4,        910,   910,  0,                 NULL, "setup",          -1,    3, { WORKAROUND_FAKE,   0 } }, // when selecting "Tutorial" from the main menu - bug #3039294
-	{ GID_HOYLE4,        700,   718,  0,       "compete_tree", "doit",           -1,   75, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge - bug #3292332
-	{ GID_HOYLE4,        700,   716,  0,        "other1_tree", "doit",           -1,   46, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
-	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",        -1,    3, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
+	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",        -1,    3, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always)
+	{ GID_HOYLE4,        700,   710,  1, "BridgeStrategyPlay", "checkSplitTops", -1,   10, { WORKAROUND_FAKE,   0 } }, // while playing bridge, objects LeadReturn_Trump, SecondSeat_Trump, ThirdSeat_Trump and others - bug #3361925
+	{ GID_HOYLE4,        700,    -1,  1,      "BridgeDefense", "think",          -1,   -1, { WORKAROUND_FAKE,   0 } }, // sometimes while playing bridge, temp var 3, 17 and others, objects LeadReturn_Trump, ThirdSeat_Trump and others
+	{ GID_HOYLE4,        700,   730,  1,      "BridgeDefense", "beatTheirBest",  -1,    3, { WORKAROUND_FAKE,   0 } }, // rarely while playing bridge
+	{ GID_HOYLE4,        700,    -1,  1,               "Code", "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always), temp var 11, 24, 27, 46, 75, objects compete_tree, compwe_tree, other1_tree, b1 - bugs #3292332 and #3361925
 	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,    0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #3292334
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #3292327
