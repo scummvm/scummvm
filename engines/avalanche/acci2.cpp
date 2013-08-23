@@ -1839,11 +1839,11 @@ void Acci::do_that() {
 				break;
 			case _vm->_gyro->payles:
 				if (!_vm->_gyro->dna.ayles_is_awake)
-					_vm->_scrolls->display("You can't seem to wake _vm->_gyro->him by yourself.");
+					_vm->_scrolls->display("You can't seem to wake him by yourself.");
 				break;
 			case _vm->_gyro->pjacques:
-				_vm->_scrolls->display(Common::String("Brother Jacques, Brother Jacques, are you asleep?\231\2") +
-					"Hmmm... that doesn't seem to do any good...");
+				_vm->_scrolls->display(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + _vm->_scrolls->kControlRegister + '1' + 
+					_vm->_scrolls->kControlSpeechBubble + "Hmmm... that doesn't seem to do any good...");
 				break;
 			default:
 				_vm->_scrolls->display("It's difficult to awaken people who aren't asleep...!");
