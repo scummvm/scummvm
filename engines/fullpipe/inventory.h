@@ -29,7 +29,6 @@ class Scene;
 class BigPicture;
 
 struct InventoryPoolItem {
- public:
 	int16 id;
 	int16 pictureObjectNormalId;
 	int16 pictureObjectId1;
@@ -68,21 +67,21 @@ typedef Common::Array<InventoryItem *> InventoryItems;
 
 class PictureObject;
 
-class InventoryIcon {
-	PictureObject *_pictureObjectNormal;
-	InventoryIcon **_icons;
-	int _numIcons;
-	int _x1;
-	int _y1;
-	int _x2;
-	int _y2;
-	int16 _inventoryItemId;
-	int16 _field_1E;
-	int _isSelected;
-	int _isMouseInside;
+struct InventoryIcon {
+	PictureObject *pictureObjectNormal;
+	InventoryIcon **icons;
+	int numIcons;
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+	int16 inventoryItemId;
+	int16 field_1E;
+	int isSelected;
+	int isMouseInside;
 };
 
-typedef Common::Array<InventoryIcon> InventoryIcons;
+typedef Common::Array<InventoryIcon *> InventoryIcons;
 
 class CInventory2 : public CInventory {
 	InventoryItems _inventoryItems;
