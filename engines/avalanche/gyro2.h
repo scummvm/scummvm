@@ -570,7 +570,7 @@ public:
 
 	bool keyboardclick; /* Is a keyboard click noise wanted? */
 
-	char him, her, it;
+	byte him, her, it;
 	int32 roomtime; /* Set to 0 when you enter a room, added to in every loop.*/
 
 	bool after_the_scroll;

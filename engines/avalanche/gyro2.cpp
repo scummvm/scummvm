@@ -401,12 +401,10 @@ bool Gyro::pennycheck(uint16 howmuchby) {
 // There'll may be problems with calling these functions becouse of the conversion of the arrays!!!
 // Keep an eye open!
 Common::String Gyro::getname(byte whose) { 
-	Common::String getname_result;
-	if (whose < 17)
-		getname_result = lads[whose];
+	if (whose < 175)
+		return lads[whose - 150];
 	else
-		getname_result = lasses[whose-17];
-	return getname_result;
+		return lasses[whose - 175];
 }
 
 // Keep an eye open! ^

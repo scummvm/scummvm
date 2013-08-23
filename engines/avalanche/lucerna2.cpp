@@ -281,9 +281,9 @@ void Lucerna::find_people(byte room) {
 	for (byte fv = 1; fv < 29; fv++) // There'll may be problems with this.
 		if (_vm->_gyro->whereis[fv] == room) {
 			if (fv < 25) // And this. See definition of whereis[].
-				_vm->_gyro->him = fv;
+				_vm->_gyro->him = fv + 150;
 			else
-				_vm->_gyro->her = fv;
+				_vm->_gyro->her = fv + 150;
 		}
 }
 

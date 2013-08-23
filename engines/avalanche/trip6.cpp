@@ -284,6 +284,7 @@ int8 triptype::sgn(int16 x) {
 }
 
 void triptype::walkto(byte pednum) {
+	pednum--; // Pascal -> C conversion: different array indexes.
 	speed(sgn(_tr->_vm->_gyro->peds[pednum].x - x) * 4, sgn(_tr->_vm->_gyro->peds[pednum].y - y));
 	hx = _tr->_vm->_gyro->peds[pednum].x - _info.xl / 2;
 	hy = _tr->_vm->_gyro->peds[pednum].y - _info.yl;
