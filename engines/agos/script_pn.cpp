@@ -381,7 +381,8 @@ void AGOSEngine_PN::opn_opcode31() {
 		case 0:
 			getFilename();
 			slot = matchSaveGame(_saveFile, countSaveGames());
-			strcpy(bf, genSaveName(slot));
+			strncpy(bf, genSaveName(slot), sizeof(bf));
+			bf[sizeof(bf) - 1] = 0;
 			break;
 		case 1:
 			strcpy(bf, "pn.sav");
@@ -419,9 +420,10 @@ void AGOSEngine_PN::opn_opcode32() {
 			getFilename();
 			slot = matchSaveGame(_saveFile, curSlot);
 			if (slot != -1)
-				strcpy(bf, genSaveName(slot));
+				strncpy(bf, genSaveName(slot), sizeof(bf));
 			else
-				strcpy(bf, genSaveName(curSlot));
+				strncpy(bf, genSaveName(curSlot), sizeof(bf));
+			bf[sizeof(bf) - 1] = 0;
 			break;
 		case 1:
 			strcpy(bf, "pn.sav");
