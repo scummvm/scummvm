@@ -79,7 +79,7 @@ void Timeout::one_tick() {
 	if (_vm->_gyro->ddmnow)
 		return;
 
-	for (fv = 0; fv < 7; fv++) {
+	for (byte fv = 0; fv < 7; fv++) {
 		if (times[fv].time_left > 0) {
 			times[fv].time_left--;
 

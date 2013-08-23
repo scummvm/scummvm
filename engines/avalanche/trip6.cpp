@@ -1040,6 +1040,7 @@ void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
 	case r__avvysgarden:
 	case r__entrancehall:
 	case r__insideabbey:
+	case r__yourhall:
 		_vm->_sequence->first_show(1);
 		_vm->_sequence->then_show(2);
 		break;
@@ -1393,7 +1394,7 @@ void Trip::call_andexors() {
 	} while (!ok);
 
 	
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_graphics->_background, 0, 10);
+	_vm->_graphics->refreshBackground();
 
 	for (fv = 0; fv < 5; fv++) {
 		if (order[fv] > -1)

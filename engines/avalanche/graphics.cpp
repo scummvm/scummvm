@@ -328,5 +328,8 @@ void Graphics::refreshScreen() {
 	g_system->updateScreen();
 }
 
+void Graphics::refreshBackground() {
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_graphics->_background, 0, 10);
+}
 
 } // End of namespace Avalanche

@@ -119,6 +119,8 @@ public:
 
 	void refreshScreen();
 
+	void refreshBackground();
+
 private:
 	AvalancheEngine *_vm;
 

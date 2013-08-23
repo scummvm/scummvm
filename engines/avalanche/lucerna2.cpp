@@ -251,7 +251,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	
 	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(f, _vm->_graphics->kBackgroundWidth, _vm->_graphics->kBackgroundHeight);
 
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_graphics->_background, 0, 10);
+	_vm->_graphics->refreshBackground();
 
 	f.close();
 
@@ -388,6 +388,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__yours:
 		if (_vm->_gyro->dna.avvy_in_bed) {
 			_vm->_celer->show_one(3);
+			_vm->_graphics->refreshBackground();
 			_vm->_timeout->set_up_timer(100, _vm->_timeout->procarkata_shouts, _vm->_timeout->reason_arkata_shouts);
 		}
 		break;
@@ -489,6 +490,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__bridge: {
 		if (_vm->_gyro->dna.drawbridge_open == 4) { /*open*/
 			_vm->_celer->show_one(3); /* Position of drawbridge */
+			_vm->_graphics->refreshBackground();
 			_vm->_gyro->magics[green].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
 		}
 		if (_vm->_gyro->dna.geida_follows)
@@ -517,6 +519,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 		if (! _vm->_gyro->dna.mushroom_growing) 
 			_vm->_celer->show_one(3);
+		_vm->_graphics->refreshBackground();
 	}
 	break;
 
@@ -557,12 +560,14 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__argentpub: {
-		if (_vm->_gyro->dna.wonnim)  _vm->_celer->show_one(1);   /* No lute by the settle. */
+		if (_vm->_gyro->dna.wonnim)
+			_vm->_celer->show_one(1);   /* No lute by the settle. */
 		_vm->_gyro->dna.malagauche = 0; /* Ready to boot Malagauche */
 		if (_vm->_gyro->dna.givenbadgetoiby) {
 			_vm->_celer->show_one(8);
 			_vm->_celer->show_one(9);
 		}
+		_vm->_graphics->refreshBackground();
 	}
 	break;
 
@@ -576,8 +581,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 		if (_vm->_gyro->dna.geida_follows) {
 			put_geida_at(4, ped);
-			if (_vm->_gyro->dna.lustie_is_asleep)
+			if (_vm->_gyro->dna.lustie_is_asleep) {
 				_vm->_celer->show_one(5);
+				_vm->_graphics->refreshBackground();
+			}
 		}
 	}
 	break;
@@ -586,13 +593,16 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.jacques_awake > 0) {
 			_vm->_gyro->dna.jacques_awake = 5;
 			_vm->_celer->show_one(2);
+			_vm->_graphics->refreshBackground();
 			_vm->_celer->show_one(4);
 			_vm->_gyro->magics[brown].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pjacques] = 0;
 		}
 		if (ped != 0) {
 			_vm->_celer->show_one(6);
-			_vm->_sequence->first_show(5);
+			_vm->_graphics->refreshBackground();
+			_vm->_sequence->first_show(6);
+			_vm->_sequence->then_show(5);
 			_vm->_sequence->then_show(7);
 			_vm->_sequence->start_to_close();
 		}
@@ -602,7 +612,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__outsidenottspub:
 		if (ped == 2) {
 			_vm->_celer->show_one(3);
-			_vm->_sequence->first_show(2);
+			_vm->_graphics->refreshBackground();
+			_vm->_sequence->first_show(3);
+			_vm->_sequence->then_show(2);
 			_vm->_sequence->then_show(1);
 			_vm->_sequence->then_show(4);
 			_vm->_sequence->start_to_close();
@@ -612,7 +624,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__outsideargentpub:
 		if (ped == 2)  {
 			_vm->_celer->show_one(6);
-			_vm->_sequence->first_show(5);
+			_vm->_graphics->refreshBackground();
+			_vm->_sequence->first_show(6);
+			_vm->_sequence->then_show(5);
 			_vm->_sequence->then_show(7);
 			_vm->_sequence->start_to_close();
 		}
@@ -636,6 +650,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__insidecardiffcastle:
 		if (ped > 0) {
 			_vm->_trip->tr[1].init(10, false, _vm->_trip); /* Define the dart. */
+			_vm->_celer->show_one(1);
+			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(1);
 			if (_vm->_gyro->dna.arrow_in_the_door)
 				_vm->_sequence->then_show(3);
@@ -648,25 +664,39 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_sequence->start_to_close();
 		} else {
 			_vm->_celer->show_one(1);
-			if (_vm->_gyro->dna.arrow_in_the_door)  _vm->_celer->show_one(3);
-			else _vm->_celer->show_one(2);
+			if (_vm->_gyro->dna.arrow_in_the_door)
+				_vm->_celer->show_one(3);
+			else
+				_vm->_celer->show_one(2);
+			_vm->_graphics->refreshBackground();
 		}
 		break;
 
 	case r__avvysgarden:
 		if (ped == 1)  {
 			_vm->_celer->show_one(2);
-			_vm->_sequence->first_show(1);
+			_vm->_graphics->refreshBackground();
+			_vm->_sequence->first_show(2);
+			_vm->_sequence->then_show(1);
 			_vm->_sequence->then_show(3);
 			_vm->_sequence->start_to_close();
 		}
 		break;
-
+	
 	case r__entrancehall:
 	case r__insideabbey:
+	case r__yourhall:
 		if (ped == 2)  {
+			/* It was the original:
 			_vm->_celer->show_one(2);
 			_vm->_sequence->first_show(1);
+			_vm->_sequence->then_show(3);
+			_vm->_sequence->start_to_close();*/
+
+			_vm->_celer->show_one(2);
+			_vm->_graphics->refreshBackground();
+			_vm->_sequence->first_show(2);
+			_vm->_sequence->then_show(1);
 			_vm->_sequence->then_show(3);
 			_vm->_sequence->start_to_close();
 		}
@@ -675,6 +705,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__aylesoffice:
 		if (_vm->_gyro->dna.ayles_is_awake)
 			_vm->_celer->show_one(2);
+		_vm->_graphics->refreshBackground();
 		break; /* Ayles awake. */
 
 	case r__geidas:
@@ -702,6 +733,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (ped == 2) {
 			/* Shut the door */
 			_vm->_celer->show_one(3);
+			_vm->_graphics->refreshBackground();
+			_vm->_sequence->first_show(3);
 			_vm->_sequence->first_show(2);
 			_vm->_sequence->then_show(1);
 			_vm->_sequence->then_show(4);
@@ -1291,16 +1324,16 @@ uint16 Lucerna::bearing(byte whichped) {
 	uint16 bearing_result; 
 	{
 		pedtype &with = _vm->_gyro->peds[whichped];
-		if (_vm->_trip->tr[1].x == with.x)
+		if (_vm->_trip->tr[0].x == with.x)
 			bearing_result = 0; /* This would cause a division by zero if we let it through. */
 		else {
 			/*
 			 bearing:=trunc(((arctan((_vm->_trip->tr[1].y-y)/(_vm->_trip->tr[1].x-x)))*rad2deg)+90) mod 360*/
 		
-			if (_vm->_trip->tr[1].x < with.x)
-				bearing_result = (atan(double((_vm->_trip->tr[1].y - with.y)) / (_vm->_trip->tr[1].x - with.x)) * rad2deg) + 90;
+			if (_vm->_trip->tr[0].x < with.x)
+				bearing_result = (atan(double((_vm->_trip->tr[0].y - with.y)) / (_vm->_trip->tr[0].x - with.x)) * rad2deg) + 90;
 			else
-				bearing_result = (atan(double((_vm->_trip->tr[1].y - with.y)) / (_vm->_trip->tr[1].x - with.x)) * rad2deg) + 270;
+				bearing_result = (atan(double((_vm->_trip->tr[0].y - with.y)) / (_vm->_trip->tr[0].x - with.x)) * rad2deg) + 270;
 		}
 	}
 	return bearing_result;

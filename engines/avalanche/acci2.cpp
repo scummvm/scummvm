@@ -673,7 +673,7 @@ bool Acci::holding() {
 
 void Acci::openBox(bool before) {
 	if ((_vm->_gyro->dna.room == r__yours) && (thing == 54)) {
-		_vm->_celer->show_one(4);
+		_vm->_celer->show_one(5);
 
 		_vm->_celer->pics_link();
 		_vm->_trip->trippancy_link();
@@ -682,7 +682,7 @@ void Acci::openBox(bool before) {
 		_vm->_system->delayMillis(55);
 
 		if (!before) {
-			_vm->_celer->show_one(5);
+			_vm->_celer->show_one(6);
 			_vm->_celer->pics_link();
 			_vm->_trip->trippancy_link();
 			_vm->_graphics->refreshScreen();
