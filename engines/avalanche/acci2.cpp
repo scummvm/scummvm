@@ -771,7 +771,7 @@ void Acci::lookaround() {
 void Acci::opendoor() {   /* so whaddya THINK this does?! */
 	switch (_vm->_gyro->dna.room) {   /* Special cases. */
 	case r__yours:
-		if (_vm->_trip->infield(1)) {
+		if (_vm->_trip->infield(2)) {
 			/* Opening the box. */
 			thing = 54; /* The box. */ person = pardon;
 			examine();
@@ -791,7 +791,7 @@ void Acci::opendoor() {   /* so whaddya THINK this does?! */
 		return; /* No doors can open if you can't move Avvy. */
 
 	for (byte fv = 8; fv < 15; fv++)
-		if (_vm->_trip->infield(fv)) {
+		if (_vm->_trip->infield(fv + 1)) {
 			fv -= 8;
 
 			switch (_vm->_gyro->portals[fv].op) {

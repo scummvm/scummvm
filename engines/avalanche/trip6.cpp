@@ -1641,7 +1641,8 @@ void Trip::fliproom(byte room, byte ped) {
 }
 
 bool Trip::infield(byte which) {
-/* returns True if you're within field "which" */
+	which--; // Pascal -> C: different array indexes.
+
 	int16 yy = tr[0].y + tr[0]._info.yl;
 
 	return (tr[0].x >= _vm->_gyro->fields[which].x1) && (tr[0].x <= _vm->_gyro->fields[which].x2)
@@ -1649,29 +1650,19 @@ bool Trip::infield(byte which) {
 
 }
 
-bool Trip::neardoor() {       /* returns True if you're near a door! */
-	int16 ux, uy;
-	byte fv;
-	bool nd;
-
-	bool neardoor_result;
+bool Trip::neardoor() {
 	if (_vm->_gyro->numfields < 9) {
 		/* there ARE no doors here! */
-		neardoor_result = false;
-		return neardoor_result;
+		return false;
 	}
 		
-	ux = tr[1].x;
-	uy = tr[1].y + tr[1]._info.yl;
-		
-	nd = false;
-	for (fv = 9; fv <= _vm->_gyro->numfields; fv++) {
-		_vm->_gyro->fields[fv];
-
+	int16 ux = tr[0].x;
+	int16 uy = tr[0].y + tr[0]._info.yl;
+	bool nd = false;
+	for (byte fv = 9; fv <= _vm->_gyro->numfields; fv++)
 		if ((ux >= _vm->_gyro->fields[fv].x1) && (ux <= _vm->_gyro->fields[fv].x2)
 			&& (uy >= _vm->_gyro->fields[fv].y1) && (uy <= _vm->_gyro->fields[fv].y2)) 
 			nd = true;
-	}
 	return nd;
 }
 

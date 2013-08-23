@@ -549,7 +549,23 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__map: {
-		warning("STUB: Lucerna::enterroom() - case: r__map");
+		/* You're entering the map. */
+		dawn();
+		//setactivepage(cp);
+		if (ped > 0)
+			zoomout(_vm->_gyro->peds[ped - 1].x, _vm->_gyro->peds[ped - 1].y);
+		//setactivepage(1 - cp);
+
+		{
+			dnatype &with = _vm->_gyro->dna;
+			if ((_vm->_gyro->dna.obj[_vm->_gyro->wine]) && (_vm->_gyro->dna.winestate != 3)) {
+				_vm->_visa->dixi('q', 9); /* Don't want to waste the wine! */
+				_vm->_gyro->dna.obj[_vm->_gyro->wine] = false;
+				objectlist();
+			}
+		}
+
+		_vm->_visa->dixi('q', 69);
 	}
 	break;
 

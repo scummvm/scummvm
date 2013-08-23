@@ -85,6 +85,20 @@ void Parser::handleReturn() {
 	}
 }
 
+void Parser::handleFunctionKey(const Common::Event &event) {
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_F5: {
+		_vm->_acci->person = _vm->_acci->pardon;
+		_vm->_acci->thing = _vm->_acci->pardon;
+		_vm->_lucerna->callverb(_vm->_gyro->f5_does()[0]);
+		}
+		break;
+	case Common::KEYCODE_F7:
+		_vm->_lucerna->callverb(_vm->_acci->vb_open);
+		break;
+	}
+}
+
 void Parser::plotText() {
 	if (_vm->_gyro->mouse_near_text())
 		CursorMan.showMouse(false);

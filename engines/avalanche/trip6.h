@@ -206,9 +206,9 @@ public:
 
 	void fliproom(byte room, byte ped);
 
-	bool infield(byte which);          /* returns True if you're within field "which" */
+	bool infield(byte which); // Returns true if you're within field "which".
 
-	bool neardoor();        /* returns True if you're near a door! */
+	bool neardoor(); // Returns True if you're near a door.
 
 	void readstick();
 

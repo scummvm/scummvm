@@ -67,8 +67,11 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	//	click();
 	//	
 	// To be implemented later with the sounds, I assume.
+	
 
-	if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
+	if ((Common::KEYCODE_F1 <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_F15))
+		_vm->_parser->handleFunctionKey(event);
+	else if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
 		_vm->_parser->handleInputText(event);
 	else
 		switch (event.kbd.keycode) { // We can control Avvy with the numpad as well.
@@ -211,12 +214,12 @@ void Avalot::setup() {
 void Avalot::run(Common::String arg) {
 	setup();
 
-	
-
 	do {
 		uint32 beginLoop = _vm->_system->getMillis();
 
 		_vm->updateEvents(); // The event handler.
+
+
 
 		_vm->_lucerna->clock_lucerna();
 		_vm->_dropdown->menu_link();
@@ -226,24 +229,27 @@ void Avalot::run(Common::String arg) {
 		_vm->_celer->pics_link();
 		_vm->_trip->trippancy_link();
 		_vm->_lucerna->checkclick();
-		
 		_vm->_timeout->one_tick();
 
 
 
-		// Not in the original:
+		// ONLY FOR TESTING!!!
+		for (byte i = 0; i < _vm->_gyro->lineNum; i++) 
+			_vm->_graphics->_surface.drawLine(_vm->_gyro->lines[i].x1, _vm->_gyro->lines[i].y1, _vm->_gyro->lines[i].x2, _vm->_gyro->lines[i].y2, _vm->_gyro->lines[i].col);
+
+		for (byte i = 0; i < _vm->_gyro->numfields; i++) {
+			if (_vm->_gyro->fields[i].x1 < 640)
+				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), lightmagenta);
+		}
+		// ONYL FOR TESTING!!!
+
+
 
 		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
 		if (delay <= 55)
 			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown(); 55 comes from 18.2 Hz (B Flight).
-
-		
-
-
-
-
 	} while (! _vm->_gyro->lmo);
 
 	//restorecrtmode();
