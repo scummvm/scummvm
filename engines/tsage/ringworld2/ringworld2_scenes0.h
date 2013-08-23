@@ -660,7 +660,7 @@ class Scene600 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor8 : public SceneActor {
+	class Scanner : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -674,12 +674,12 @@ public:
 	BackgroundSceneObject _object1;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	SceneActor _actor3;
+	SceneActor _stasisField;
 	Smoke _smoke;
 	Doorway _doorway;
 	Laser _laser;
 	Aerosol _aerosol;
-	Actor8 _actor8;
+	Scanner _scanner;
 	ASoundExt _aSound1;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;

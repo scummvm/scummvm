@@ -5543,11 +5543,11 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_object1.setup2(603, 3, 1, 239, 54, 10, 0);
-	scene->_actor3.postInit();
+	scene->_stasisField.postInit();
 	scene->_actor2.postInit();
 
 	scene->_sceneMode = 612;
-	scene->setAction(&scene->_sequenceManager1, scene, 612, &scene->_actor3, &scene->_actor2, &R2_GLOBALS._player, NULL);
+	scene->setAction(&scene->_sequenceManager1, scene, 612, &scene->_stasisField, &scene->_actor2, &R2_GLOBALS._player, NULL);
 	return true;
 }
 
@@ -5631,16 +5631,17 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 	if (action < CURSOR_WALK) {
 		switch (action) {
 		case R2_COM_SCANNER:
+			// If laser is destroyed
 			if (R2_GLOBALS.getFlag(6)) {
 				if (R2_GLOBALS.getFlag(8)) {
 					SceneItem::display(600, 29, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 					return true;
 				} else {
 					R2_GLOBALS._player.disableControl();
-					scene->_actor8.postInit();
-					scene->_actor8.setDetails(600, 20, -1, -1, 4, &scene->_laser);
+					scene->_scanner.postInit();
+					scene->_scanner.setDetails(600, 20, -1, -1, 4, &scene->_laser);
 					scene->_sceneMode = 607;
-					scene->setAction(&scene->_sequenceManager1, scene, 607, &R2_GLOBALS._player, &scene->_actor8, NULL);
+					scene->setAction(&scene->_sequenceManager1, scene, 607, &R2_GLOBALS._player, &scene->_scanner, NULL);
 					return true;
 				}
 			} else {
@@ -5671,6 +5672,7 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 			}
 			break;
 		case R2_CLAMP:
+			// If cloud is active
 			if (R2_GLOBALS.getFlag(5)) {
 				R2_GLOBALS._player.disableControl();
 				scene->_sceneMode = 606;
@@ -5729,13 +5731,13 @@ void Scene600::synchronize(Serializer &s) {
 		s.syncAsByte(_pixelMap[i]);
 }
 
-bool Scene600::Actor8::startAction(CursorType action, Event &event) {
+bool Scene600::Scanner::startAction(CursorType action, Event &event) {
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600)) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 615;
-		scene->setAction(&scene->_sequenceManager1, scene, 615, &R2_GLOBALS._player, &scene->_actor8, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 615, &R2_GLOBALS._player, &scene->_scanner, NULL);
 	} else if ((action == R2_SONIC_STUNNER) && (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600) && (R2_GLOBALS._scannerFrequencies[1] == 2) && (!R2_GLOBALS.getFlag(8))){
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 608;
@@ -5774,10 +5776,10 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	_laser.setPosition(Common::Point(246, 41));
 
 	if (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600) {
-		_actor8.postInit();
-		_actor8.setup(602, 5, 1);
-		_actor8.setPosition(Common::Point(246, 41));
-		_actor8.setDetails(600, 20, -1, -1, 1, (SceneItem *) NULL);
+		_scanner.postInit();
+		_scanner.setup(602, 5, 1);
+		_scanner.setPosition(Common::Point(246, 41));
+		_scanner.setDetails(600, 20, -1, -1, 1, (SceneItem *) NULL);
 		switch (R2_GLOBALS._scannerFrequencies[1] - 2) {
 		case 0:
 			R2_GLOBALS._sound4.play(45);
@@ -5825,7 +5827,8 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 				_actor2.postInit();
 				_actor2.setup(603, 2, 1);
 				_actor2.setPosition(Common::Point(233, 45));
-				_actor2.animate(ANIM_MODE_2, NULL);_actor2.fixPriority(11);
+				_actor2.animate(ANIM_MODE_2, NULL);
+				_actor2.fixPriority(11);
 			}
 		} else {
 			_smoke.postInit();
@@ -5897,6 +5900,7 @@ void Scene600::signal() {
 		R2_GLOBALS._sceneManager.changeScene(700);
 		break;
 	case 605:
+	// After cloud is active
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._walkRegions.enableRegion(6);
 		R2_GLOBALS._walkRegions.enableRegion(7);
@@ -5910,14 +5914,17 @@ void Scene600::signal() {
 		_smoke.signal();
 		break;
 	case 606:
+	// After Clamp is put on laser
 		R2_INVENTORY.setObjectScene(R2_CLAMP, 600);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 607:
+	// After scanner is put on laser
 		R2_INVENTORY.setObjectScene(R2_COM_SCANNER, 600);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 608:
+	// deactivate cloud
 		R2_GLOBALS.setFlag(8);
 		_smoke.remove();
 		R2_GLOBALS._walkRegions.disableRegion(6);
@@ -5926,21 +5933,24 @@ void Scene600::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 612:
+	// Deactivate stasis field
 		R2_GLOBALS.setFlag(9);
-		_actor3.remove();
+		_stasisField.remove();
 		R2_GLOBALS._sceneItems.remove(&_item4);
 		_actor2.setDetails(600, 21, -1, 23, 4, &_item4);
 		_background.setDetails(600, 7, -1, -1, 3, (SceneItem *) NULL);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		break;
 	case 614:
+	// Pick up Aerosol
 		R2_GLOBALS._player.enableControl();
 		_aerosol.remove();
 		R2_INVENTORY.setObjectScene(R2_AEROSOL, 1);
 		R2_GLOBALS._walkRegions.disableRegion(7);
 		break;
 	case 615:
-		_actor8.remove();
+	// Pick up Com Scanner
+		_scanner.remove();
 		R2_INVENTORY.setObjectScene(R2_COM_SCANNER, 1);
 		R2_GLOBALS._player.enableControl();
 		break;
