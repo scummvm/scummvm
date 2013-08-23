@@ -33,6 +33,9 @@
 
 namespace AGOS {
 
+
+// FIXME: This code counts savegames, but callers in many cases assume
+// that the return value + 1 indicates an empty slot.
 int AGOSEngine::countSaveGames() {
 	Common::InSaveFile *f = NULL;
 	Common::StringArray filenames;
@@ -57,6 +60,8 @@ int AGOSEngine::countSaveGames() {
 			marks[slotNum] = true;	//mark this slot as valid
 	}
 
+	// FIXME: Why does this already try to actually open the savegames?
+	// Historical accident?
 	while (i < 256) {
 		if (marks[i] &&
 		    (f = _saveFileMan->openForLoading(genSaveName(i)))) {
