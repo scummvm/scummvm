@@ -61,27 +61,27 @@ void Celer::pics_link() {
 	
 	switch (_vm->_gyro->dna.room) {
 	case r__outsideargentpub:
-		if ((_vm->_gyro->roomtime % int32(12)) == 0)
-			show_one(int32(1) + (_vm->_gyro->roomtime / int32(12)) % int32(4));
+		if ((_vm->_gyro->roomtime % 12) == 0)
+			show_one(1 + (_vm->_gyro->roomtime / 12) % 4);
 		break;
 
 	case r__brummieroad:
-		if ((_vm->_gyro->roomtime % int32(2)) == 0)
-			show_one(int32(1) + (_vm->_gyro->roomtime / int32(2)) % int32(4));
+		if ((_vm->_gyro->roomtime % 2) == 0)
+			show_one(1 + (_vm->_gyro->roomtime / 2) % 4);
 		break;
 
 	case r__bridge:
-		if ((_vm->_gyro->roomtime % int32(2)) == 0)
-			show_one(int32(4) + (_vm->_gyro->roomtime / int32(2)) % int32(4));
+		if ((_vm->_gyro->roomtime % 2) == 0)
+			show_one(4 + (_vm->_gyro->roomtime / 2) % 4);
 		break;
 
 	case r__yours:
-		if ((!_vm->_gyro->dna.avvy_is_awake) && ((_vm->_gyro->roomtime % int32(4)) == 0))
-			show_one(0 + (_vm->_gyro->roomtime / 12) % 2);
+		if ((!_vm->_gyro->dna.avvy_is_awake) && ((_vm->_gyro->roomtime % 4) == 0))
+			show_one(1 + (_vm->_gyro->roomtime / 12) % 2);
 		break;
 
 	case r__argentpub:
-		if (((_vm->_gyro->roomtime % int32(7)) == 1) && (_vm->_gyro->dna.malagauche != 177)) {
+		if (((_vm->_gyro->roomtime % 7) == 1) && (_vm->_gyro->dna.malagauche != 177)) {
 			/* Malagauche cycle */
 			_vm->_gyro->dna.malagauche += 1;
 			switch (_vm->_gyro->dna.malagauche) {
@@ -138,7 +138,7 @@ void Celer::pics_link() {
 		break;
 
 	case r__westhall:
-		if ((_vm->_gyro->roomtime % int32(3)) == 0) {
+		if ((_vm->_gyro->roomtime % 3) == 0) {
 			switch ((_vm->_gyro->roomtime / int32(3)) % int32(6)) {
 			case 4:
 				show_one(1);
@@ -158,7 +158,7 @@ void Celer::pics_link() {
 
 	case r__lustiesroom:
 		if (!(_vm->_gyro->dna.lustie_is_asleep)) {
-			if ((_vm->_gyro->roomtime % int32(45)) > 42)
+			if ((_vm->_gyro->roomtime % 45) > 42)
 				xx = 4; /* du Lustie blinks */
 
 			/* Bearing of Avvy from du Lustie. */
@@ -177,8 +177,8 @@ void Celer::pics_link() {
 		break;
 
 	case r__aylesoffice:
-		if ((!_vm->_gyro->dna.ayles_is_awake) && (_vm->_gyro->roomtime % int32(14) == 0)) {
-			switch ((_vm->_gyro->roomtime / int32(14)) % int32(2)) {
+		if ((!_vm->_gyro->dna.ayles_is_awake) && (_vm->_gyro->roomtime % 14 == 0)) {
+			switch ((_vm->_gyro->roomtime / 14) % 2) {
 			case 0:
 				show_one(1);
 				break; /* Frame 2: EGA. */
@@ -191,7 +191,7 @@ void Celer::pics_link() {
 
 	case r__robins:
 		if (_vm->_gyro->dna.tied_up) {
-			switch (_vm->_gyro->roomtime % int32(54)) {
+			switch (_vm->_gyro->roomtime % 54) {
 			case 20:
 				show_one(4);
 				break; /* Frame 4: Avalot blinks. */
@@ -241,7 +241,7 @@ void Celer::pics_link() {
 		else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
 			xx = 8; /* Right. */
 
-		if ((_vm->_gyro->roomtime % int32(45)) > 42)
+		if ((_vm->_gyro->roomtime % 45) > 42)
 			xx += 1; /* Duck blinks */
 
 		if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
@@ -255,7 +255,7 @@ void Celer::pics_link() {
 
 	if ((_vm->_gyro->dna.ringing_bells) && (_vm->_gyro->flagset('B'))) {
 		/* They're ringing the bells. */
-		switch (_vm->_gyro->roomtime % int32(4)) {
+		switch (_vm->_gyro->roomtime % 4) {
 		case 1:
 			if (_vm->_gyro->dna.nextbell < 5)
 				_vm->_gyro->dna.nextbell = 12;
@@ -353,7 +353,7 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 
 void Celer::show_one(byte which) {
 	chunkblocktype ch;
-	
+	which--; // For the difference between the Pascal and C array indexes.
 	//setactivepage(3);
 	warning("STUB: Celer::show_one()");
 
@@ -376,7 +376,7 @@ void Celer::show_one(byte which) {
 		ch.natural = f.readByte();
 		ch.memorise = f.readByte();
 
-		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(f, ch.xl * 8, ch.yl + 1); // There'll may be problems with the width!
+		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(f, ch.xl * 8, ch.yl + 1);
 
 		display_it(ch.x, ch.y, ch.xl, ch.yl, ch.flavour, picture);
 
