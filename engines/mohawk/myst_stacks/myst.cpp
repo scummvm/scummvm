@@ -3201,13 +3201,21 @@ Common::Point Myst::towerRotationMapComputeCoords(const Common::Point &center, u
 }
 
 void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end) {
-	Graphics::PixelFormat pf = _vm->_system->getScreenFormat();
-	uint32 color = 0;
+	uint32 color;
 
-	if (!_towerRotationOverSpot)
-		color = pf.RGBToColor(0xFF, 0xFF, 0xFF); // White
-	else
-		color = pf.RGBToColor(0xFF, 0, 0); // Red
+	if (_vm->getFeatures() & GF_ME) {
+		Graphics::PixelFormat pf = _vm->_system->getScreenFormat();
+
+		if (!_towerRotationOverSpot)
+			color = pf.RGBToColor(0xFF, 0xFF, 0xFF); // White
+		else
+			color = pf.RGBToColor(0xFF, 0, 0); // Red
+	} else {
+		if (!_towerRotationOverSpot)
+			color = 0x00; // White
+		else
+			color = 0xF9; // Red
+	}
 
 	const Common::Rect rect = Common::Rect(106, 42, 459, 273);
 

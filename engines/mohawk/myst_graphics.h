@@ -40,7 +40,7 @@ enum RectState {
 
 class MystGraphics : public GraphicsManager {
 public:
-	MystGraphics(MohawkEngine_Myst*);
+	MystGraphics(MohawkEngine_Myst *vm);
 	~MystGraphics();
 
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
@@ -55,18 +55,15 @@ public:
 	void fadeToBlack();
 	void fadeFromBlack();
 
+	void clearScreenPalette();
+	void setBasePalette();
+	void setPaletteToScreen();
+	const byte *getPalette() const { return _palette; }
+
 protected:
 	MohawkSurface *decodeImage(uint16 id);
 	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
-	void simulatePreviousDrawDelay(const Common::Rect &dest);
-	void copyBackBufferToScreenWithSaturation(int16 saturation);
-	void transitionDissolve(Common::Rect rect, uint step);
-	void transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionSlideToRight(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionSlideToBottom(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps);
-	void transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps);
+
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
@@ -74,11 +71,21 @@ private:
 	Graphics::Surface *_backBuffer;
 	Graphics::PixelFormat _pixelFormat;
 	Common::Rect _viewport;
+	byte _palette[256 * 3];
 
 	int _enableDrawingTimeSimulation;
 	uint32 _nextAllowedDrawTime;
 	static const uint _constantDrawDelay = 10; // ms
 	static const uint _proportionalDrawDelay = 500; // pixels per ms
+
+	void simulatePreviousDrawDelay(const Common::Rect &dest);
+	void transitionDissolve(Common::Rect rect, uint step);
+	void transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToRight(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToBottom(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps);
+	void transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps);
 };
 
 } // End of namespace Mohawk
