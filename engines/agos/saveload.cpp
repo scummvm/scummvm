@@ -40,9 +40,12 @@ int AGOSEngine::countSaveGames() {
 	int slotNum;
 	bool marks[256];
 
-	char *prefix = genSaveName(998);
-	prefix[strlen(prefix)-3] = '*';
-	prefix[strlen(prefix)-2] = '\0';
+	// Get the name of (possibly non-existent) savegame slot 998, and replace
+	// the extension by * to get a pattern.
+	Common::String tmp = genSaveName(998);
+	assert(tmp.size() >= 4 && tmp[tmp.size()-4] == '.');
+	Common::String prefix = Common::String(tmp.c_str(), tmp.size()-3) + "*";
+
 	memset(marks, false, 256 * sizeof(bool));	//assume no savegames for this title
 	filenames = _saveFileMan->listSavefiles(prefix);
 
@@ -67,68 +70,46 @@ int AGOSEngine::countSaveGames() {
 }
 
 #ifdef ENABLE_AGOS2
-char *AGOSEngine_PuzzlePack::genSaveName(int slot) {
-	static char buf[20];
-
+Common::String AGOSEngine_PuzzlePack::genSaveName(int slot) const {
 	if (getGameId() == GID_DIMP)
-		sprintf(buf, "dimp.sav");
+		return "dimp.sav";
 	else
-		sprintf(buf, "swampy.sav");
-
-	return buf;
+		return "swampy.sav";
 }
 
-char *AGOSEngine_Feeble::genSaveName(int slot) {
-	static char buf[20];
-	sprintf(buf, "feeble.%.3d", slot);
-	return buf;
+Common::String AGOSEngine_Feeble::genSaveName(int slot) const {
+	return Common::String::format("feeble.%.3d", slot);
 }
 #endif
 
-char *AGOSEngine_Simon2::genSaveName(int slot) {
-	static char buf[20];
-	sprintf(buf, "simon2.%.3d", slot);
-	return buf;
+Common::String AGOSEngine_Simon2::genSaveName(int slot) const {
+	return Common::String::format("simon2.%.3d", slot);
 }
 
-char *AGOSEngine_Simon1::genSaveName(int slot) {
-	static char buf[20];
-	sprintf(buf, "simon1.%.3d", slot);
-	return buf;
+Common::String AGOSEngine_Simon1::genSaveName(int slot) const {
+	return Common::String::format("simon1.%.3d", slot);
 }
 
-char *AGOSEngine_Waxworks::genSaveName(int slot) {
-	static char buf[20];
-
+Common::String AGOSEngine_Waxworks::genSaveName(int slot) const {
 	if (getPlatform() == Common::kPlatformDOS)
-		sprintf(buf, "waxworks-pc.%.3d", slot);
+		return Common::String::format("waxworks-pc.%.3d", slot);
 	else
-		sprintf(buf, "waxworks.%.3d", slot);
-
-	return buf;
+		return Common::String::format("waxworks.%.3d", slot);
 }
 
-char *AGOSEngine_Elvira2::genSaveName(int slot) {
-	static char buf[20];
-
+Common::String AGOSEngine_Elvira2::genSaveName(int slot) const {
 	if (getPlatform() == Common::kPlatformDOS)
-		sprintf(buf, "elvira2-pc.%.3d", slot);
+		return Common::String::format("elvira2-pc.%.3d", slot);
 	else
-		sprintf(buf, "elvira2.%.3d", slot);
-
-	return buf;
+		return Common::String::format("elvira2.%.3d", slot);
 }
 
-char *AGOSEngine_Elvira1::genSaveName(int slot) {
-	static char buf[20];
-	sprintf(buf, "elvira1.%.3d", slot);
-	return buf;
+Common::String AGOSEngine_Elvira1::genSaveName(int slot) const {
+	return Common::String::format("elvira1.%.3d", slot);
 }
 
-char *AGOSEngine::genSaveName(int slot) {
-	static char buf[20];
-	sprintf(buf, "pn.%.3d", slot);
-	return buf;
+Common::String AGOSEngine::genSaveName(int slot) const {
+	return Common::String::format("pn.%.3d", slot);
 }
 
 #ifdef ENABLE_AGOS2
@@ -172,12 +153,12 @@ void AGOSEngine::quickLoadOrSave() {
 		waitForSync(1122);
 	}
 
-	char *filename = genSaveName(_saveLoadSlot);
+	Common::String filename = genSaveName(_saveLoadSlot);
 	if (_saveLoadType == 2) {
 		Subroutine *sub;
 		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
-			buf = Common::String::format(_("Failed to load game state from file:\n\n%s"), filename);
+			buf = Common::String::format(_("Failed to load game state from file:\n\n%s"), filename.c_str());
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			drawIconArray(2, me(), 0, 0);
 			setBitFlag(97, true);
@@ -212,7 +193,7 @@ void AGOSEngine::quickLoadOrSave() {
 	} else {
 		success = saveGame(_saveLoadSlot, _saveLoadName);
 		if (!success)
-			buf = Common::String::format(_("Failed to save game state to file:\n\n%s"), filename);
+			buf = Common::String::format(_("Failed to save game state to file:\n\n%s"), filename.c_str());
 	}
 
 	if (!success) {
@@ -220,7 +201,7 @@ void AGOSEngine::quickLoadOrSave() {
 		dialog.runModal();
 
 	} else if (_saveLoadType == 1) {
-		buf = Common::String::format(_("Successfully saved game state in file:\n\n%s"), filename);
+		buf = Common::String::format(_("Successfully saved game state in file:\n\n%s"), filename.c_str());
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
 
@@ -1036,7 +1017,7 @@ void writeItemID(Common::WriteStream *f, uint16 val) {
 		f->writeUint32BE(val - 1);
 }
 
-bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
+bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i;
@@ -1210,7 +1191,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	return result;
 }
 
-bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
+bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMode) {
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
@@ -1628,7 +1609,7 @@ void AGOSEngine_PN::getFilename() {
 	}
 }
 
-int AGOSEngine_PN::loadFile(char *name) {
+int AGOSEngine_PN::loadFile(const Common::String &name) {
 	Common::InSaveFile *f;
 	haltAnimation();
 
@@ -1661,7 +1642,7 @@ int AGOSEngine_PN::loadFile(char *name) {
 	return 0;
 }
 
-int AGOSEngine_PN::saveFile(char *name) {
+int AGOSEngine_PN::saveFile(const Common::String &name) {
 	Common::OutSaveFile *f;
 	sysftodb();
 	haltAnimation();
