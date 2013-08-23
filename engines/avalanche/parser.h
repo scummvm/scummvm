@@ -52,6 +52,8 @@ public:
 
 	void handleReturn();
 
+	void handleFunctionKey(const Common::Event &event);
+
 	void plotText();
 
 	void cursorOn();

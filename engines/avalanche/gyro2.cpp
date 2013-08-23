@@ -498,8 +498,34 @@ Common::String Gyro::get_better(byte which) {
 
 
 Common::String Gyro::f5_does() {
-	warning("STUB: Gyro::f5_does()");
-	return "STUB: Gyro::f5_does()";
+	Common::String f5_does_result;
+	switch (dna.room) {
+	case r__yours: {
+			if (!dna.avvy_is_awake)
+				return Common::String(_vm->_acci->vb_wake) + "WWake up";
+			else if (dna.avvy_in_bed)
+				return Common::String(_vm->_acci->vb_stand) + "GGet up";
+		}
+		break;
+	case r__insidecardiffcastle: 
+		if (dna.standing_on_dais)
+			return Common::String(_vm->_acci->vb_climb) + "CClimb down";
+		else
+			return Common::String(_vm->_acci->vb_climb) + "CClimb up";
+		break;
+	case r__nottspub:
+		if (dna.sitting_in_pub)
+			return Common::String(_vm->_acci->vb_stand) + "SStand up";
+		else
+			return Common::String(_vm->_acci->vb_sit) + "SSit down";
+		break;
+	case r__musicroom:
+		if (_vm->_trip->infield(7))
+			return Common::String(_vm->_acci->vb_play) + "PPlay the harp";
+		break;
+	}
+
+	return Common::String(_vm->_acci->pardon); /* If all else fails... */
 }
 
 void Gyro::load_a_mouse(byte which) {
