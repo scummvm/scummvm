@@ -37,10 +37,10 @@ bool CInventory::load(MfcArchive &file) {
 	for (int i = 0; i < numInvs; i++) {
 		InventoryPoolItem *t = new InventoryPoolItem();
 		t->id = file.readUint16LE();
-		t->pictureObjectNormalId = file.readUint16LE();
+		t->pictureObjectNormal = file.readUint16LE();
 		t->pictureObjectId1 = file.readUint16LE();
-		t->pictureObjectMouseHover = file.readUint16LE();
-		t->pictureObjectId3 = file.readUint16LE();
+		t->pictureObjectHover = file.readUint16LE();
+		t->pictureObjectSelected = file.readUint16LE();
 		t->flags = file.readUint32LE();
 		t->field_C = 0;
 		t->field_A = -536;
@@ -117,7 +117,7 @@ void CInventory2::rebuildItemRects() {
 		PictureObject *pic = (PictureObject *)_scene->_picObjList[i];
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
-			if (_itemsPool[j]->pictureObjectNormalId == pic->_id) {
+			if (_itemsPool[j]->pictureObjectNormal == pic->_id) {
 				if (pic->_okeyCode)
 					_scene->deletePictureObject(pic);
 				else
@@ -135,9 +135,9 @@ void CInventory2::rebuildItemRects() {
 
 		icn->inventoryItemId = _itemsPool[idx]->id;
 		
-		icn->pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormalId, 0);
-		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectMouseHover, 0);
-		icn->pictureObjectId3 = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId3, 0);
+		icn->pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormal, 0);
+		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
+		icn->pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
 
 		icn->pictureObjectNormal->getDimensions(&point);
 
@@ -164,7 +164,76 @@ void CInventory2::rebuildItemRects() {
 }
 
 void CInventory2::draw() {
-	warning("STUB: CInventory2::draw()");
+	if (!_scene)
+		return;
+
+	int oldScLeft = g_fullpipe->_sceneRect.left;
+	int oldScTop = g_fullpipe->_sceneRect.top;
+
+	g_fullpipe->_sceneRect.top = -_topOffset;
+	g_fullpipe->_sceneRect.left = 0;
+
+	_picture->draw(-1, -1, 0, 0);
+
+	for (uint i = 0; i < _inventoryIcons.size(); i++) {
+		InventoryIcon *icn = _inventoryIcons[i];
+
+		if (icn->isSelected) {
+			icn->pictureObjectSelected->drawAt(icn->x1, icn->y1 + 10);
+		} else {
+			if (icn->isMouseHover)
+				icn->pictureObjectHover->drawAt(icn->x1, icn->y1 + 10);
+			else
+				icn->pictureObjectNormal->drawAt(icn->x1, icn->y1 + 10);
+		}
+    }
+
+	if (!_isInventoryOut)
+		goto LABEL_30;
+
+	int v10, v11, v12;
+
+	if (_topOffset != -10) {
+		if (_topOffset < -10) {
+			v10 = -10;
+			goto LABEL_13;
+		}
+		if (_topOffset + 10 >= 20) {
+			v11 = -20;
+cont:
+			_topOffset += v11;
+			goto reset;
+		}
+		v12 = -10;
+		goto LABEL_25;
+	}
+	if (!_isInventoryOut) {
+LABEL_30:
+		if (_topOffset != -65) {
+			if (_topOffset < -65) {
+				v10 = -65;
+LABEL_13:
+				v11 = v10 - _topOffset;
+				if (v11 >= 20)
+					v11 = 20;
+				goto cont;
+			}
+			if (_topOffset + 65 >= 20) {
+				v11 = -20;
+				goto cont;
+			}
+			v12 = -65;
+LABEL_25:
+			v11 = v12 - _topOffset;
+			goto cont;
+		}
+	}
+
+reset:
+
+	g_fullpipe->_sceneRect.top = oldScTop;
+	g_fullpipe->_sceneRect.left = oldScLeft;
+
 }
 
 void CInventory2::slideIn() {

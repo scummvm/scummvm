@@ -196,6 +196,21 @@ void PictureObject::draw() {
 		_picture->draw(_ox, _oy, 0, 0);
 }
 
+void PictureObject::drawAt(int x, int y) {
+	if (x == -1)
+		x = _ox;
+	if (y == -1)
+		y = _oy;
+
+	_picture->_x = x;
+	_picture->_y = y;
+
+	if (_flags & 1)
+		_picture->draw(x, y, 2, 0);
+	else
+		_picture->draw(x, y, 0, 0);
+}
+
 bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (!(picAniInfo->type & 2) || (picAniInfo->type & 1)) {
 		error("Picture::setPicAniInfo(): Wrong type: %d", picAniInfo->type);

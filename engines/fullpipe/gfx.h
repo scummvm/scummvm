@@ -155,6 +155,7 @@ class PictureObject : public GameObject {
 	bool load(MfcArchive &file, bool bigPicture);
 	Common::Point *getDimensions(Common::Point *p);
 	void draw();
+	void drawAt(int x, int y);
 
 	bool setPicAniInfo(PicAniInfo *picAniInfo);
 	bool isPointInside(int x, int y);

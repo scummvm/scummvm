@@ -30,10 +30,10 @@ class BigPicture;
 
 struct InventoryPoolItem {
 	int16 id;
-	int16 pictureObjectNormalId;
+	int16 pictureObjectNormal;
 	int16 pictureObjectId1;
-	int16 pictureObjectMouseHover;
-	int16 pictureObjectId3;
+	int16 pictureObjectHover;
+	int16 pictureObjectSelected;
 	int16 field_A;
 	int field_C;
 	int obj;
@@ -70,15 +70,14 @@ class PictureObject;
 struct InventoryIcon {
 	PictureObject *pictureObjectNormal;
 	PictureObject *pictureObjectHover;
-	PictureObject *pictureObjectId3;
+	PictureObject *pictureObjectSelected;
 	int x1;
 	int y1;
 	int x2;
 	int y2;
 	int16 inventoryItemId;
-	int16 field_1E;
 	int isSelected;
-	int isMouseInside;
+	int isMouseHover;
 };
 
 typedef Common::Array<InventoryIcon *> InventoryIcons;
