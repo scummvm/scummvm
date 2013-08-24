@@ -84,7 +84,7 @@ TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf)
 			break;
 		}
 		for (int j = 0; j < surf->w; j++) {
-			uint32 pix = *(uint32 *)surf->getBasePtr(j, i);
+			uint32 pix = *(const uint32 *)surf->getBasePtr(j, i);
 			surf->format.colorToARGB(pix, a, r, g, b);
 			if (a != 255) {
 				seenAlpha = true;
