@@ -51,6 +51,12 @@ CInputController::CInputController() {
 	_cursorItemPicture = 0;
 }
 
+CInputController::~CInputController() {
+	removeMessageHandler(126, -1);
+
+	g_fullpipe->_inputController = 0;
+}
+
 void CInputController::setInputDisabled(bool state) {
 	_flag = state;
 	g_fullpipe->_inputDisabled = state;

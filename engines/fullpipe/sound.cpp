@@ -116,7 +116,7 @@ void FullpipeEngine::setSceneMusicParameters(CGameVar *var) {
 }
 
 void FullpipeEngine::startSceneTrack() {
-	warning("STUB: FullpipeEngine::startSceneTrack()");
+	debug(3, "STUB: FullpipeEngine::startSceneTrack()");
 }
 
 void FullpipeEngine::stopAllSounds() {
