@@ -253,7 +253,9 @@ void ScriptManager::changeLocationIntern() {
 		delete (*iter);
 	}
 	_activePuzzles.clear();
-	// We can clear without deleting from the heap because we use SharedPtr
+	for (Common::HashMap<uint32, Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		delete (*iter)._value;
+	}
 	_activeControls.clear();
 	_engine->clearAllMouseEvents();
 
