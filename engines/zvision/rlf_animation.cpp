@@ -193,7 +193,7 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 }
 
 const uint16 *RlfAnimation::getNextFrame() {
-	assert(_currentFrame + 1 < _frameCount);
+	assert(_currentFrame + 1 < (int)_frameCount);
 
 	if (_stream) {
 		applyFrameToCurrent(readNextFrame());
