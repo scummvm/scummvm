@@ -26,6 +26,7 @@
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/gameloader.h"
 
 #include "fullpipe/constants.h"
 
@@ -326,8 +327,17 @@ void Scene::setPictureObjectsFlag4() {
 }
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
-	for (uint i = 1; i < _picObjList.size(); i++) {
+	for (uint i = 0; i < _picObjList.size(); i++) {
 		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_okeyCode == flags)
+			return (PictureObject *)_picObjList[i];
+	}
+
+	return 0;
+}
+
+PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && ((PictureObject *)_picObjList[i])->_okeyCode == flags || flags == -1)
 			return (PictureObject *)_picObjList[i];
 	}
 
@@ -386,8 +396,41 @@ void Scene::preloadMovements(CGameVar *var) {
     }
 }
 
-void Scene::initObjectCursors(const char *name) {
-	warning("STUB: Scene::initObjectCursors(%s)", name);
+void Scene::initObjectCursors(const char *varname) {
+	CGameVar *cursorsVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("CURSORS");
+
+	if (!cursorsVar || !cursorsVar->_subVars)
+		return;
+
+	int maxId = 0;
+	int minId = 0xffff;
+
+	for (CGameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
+		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
+
+		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != 0) {
+          if (obj->_id < minId)
+            minId = obj->_id;
+          if (obj->_id > maxId)
+            maxId = obj->_id;
+        }
+    }
+
+	g_fullpipe->_minCursorId = minId;
+
+	g_fullpipe->_objectIdCursors.resize(maxId - minId + 1);
+
+	for (CGameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
+		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
+
+		if (!obj)
+			obj = getStaticANIObject1ByName(sub->_varName, -1);
+
+		PictureObject *pic = getGameLoaderInventory()->getScene()->getPictureObjectByName(sub->_value.stringValue, -1);
+
+		if (obj && pic)
+			g_fullpipe->_objectIdCursors[obj->_id - minId] = pic->_id;
+	}
 }
 
 bool Scene::compareObjPriority(const void *p1, const void *p2) {

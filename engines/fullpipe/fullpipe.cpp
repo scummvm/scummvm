@@ -132,6 +132,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_inventoryScene = 0;
 	_inventory = 0;
 
+	_minCursorId = 0;
+
 	_isSaveAllowed = true;
 
 	g_fullpipe = this;

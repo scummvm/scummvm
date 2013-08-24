@@ -53,6 +53,7 @@ struct CursorInfo;
 class EntranceInfo;
 class ExCommand;
 class GameProject;
+class GameObject;
 class GlobalMessageQueueList;
 class MessageHandler;
 struct MovTable;
@@ -198,7 +199,11 @@ public:
 	int (*_updateCursorCallback)();
 
 	int _cursorId;
+	int _minCursorId;
+	Common::Array<int> _objectIdCursors;
+
 	void setCursor(int id);
+	void updateCursorsCommon();
 
 	int getObjectState(const char *objname);
 	void setObjectState(const char *name, int state);

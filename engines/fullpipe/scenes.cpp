@@ -1137,7 +1137,7 @@ int global_messageHandler4(ExCommand *cmd) {
 }
 
 int defaultUpdateCursor() {
-	warning("STUB: defaultUpdateCursor");
+	g_fullpipe->updateCursorsCommon();
 
 	return g_fullpipe->_cursorId;
 }

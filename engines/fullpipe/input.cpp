@@ -117,4 +117,8 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 	warning("STUB: FullpipeEngine::defHandleKeyDown(%d)", key);
 }
 
+void FullpipeEngine::updateCursorsCommon() {
+	
+}
+
 } // End of namespace Fullpipe
