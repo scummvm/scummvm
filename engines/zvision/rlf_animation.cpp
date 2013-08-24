@@ -159,11 +159,11 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 
 	// Since this method is so expensive, first check to see if we can use
 	// getNextFrame() or getPreviousFrame() since they are cheap.
-	if (frameNumber == _currentFrame) {
+	if ((int)frameNumber == _currentFrame) {
 		return _currentFrameBuffer;
-	} else if (_currentFrame + 1 == frameNumber) {
+	} else if (_currentFrame + 1 == (int)frameNumber) {
 		return getNextFrame();
-	} else if (_currentFrame - 1 == frameNumber) {
+	} else if (_currentFrame - 1 == (int)frameNumber) {
 		return getPreviousFrame();
 	}
 
