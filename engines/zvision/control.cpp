@@ -108,10 +108,9 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 // PushToggleControl
 //////////////////////////////////////////////////////////////////////////////
 
-PushToggleControl::PushToggleControl(uint32 key, Common::SeekableReadStream &stream)
-		: Control() {
-	_event._key = _key = key;
-
+PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
+		: MouseEvent(key),
+		  _engine(engine) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -125,27 +124,27 @@ PushToggleControl::PushToggleControl(uint32 key, Common::SeekableReadStream &str
 
 			sscanf(line.c_str(), "%*[^(](%u,%u,%u,%u)", &x, &y, &width, &height);
 
-			_event._hotspot = Common::Rect(x, y, x + width, y + height);
+			_hotspot = Common::Rect(x, y, x + width, y + height);
 		} else if (line.matchString("cursor*", true)) {
 			char nameBuffer[25];
 
 			sscanf(line.c_str(), "%*[^(](%25[^)])", nameBuffer);
 
-			_event._hoverCursor = Common::String(nameBuffer);
+			_hoverCursor = Common::String(nameBuffer);
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
 
-	if (_event._hotspot.isEmpty() || _event._hoverCursor.empty()) {
+	if (_hotspot.isEmpty() || _hoverCursor.empty()) {
 		warning("Push_toggle cursor %u was parsed incorrectly", key);
 	}
 }
 
-bool PushToggleControl::enable(ZVision *engine) {
+bool PushToggleControl::enable() {
 	if (!_enabled) {
-		engine->registerMouseEvent(_event);
+		_engine->registerMouseEvent(this);
 		_enabled = true;
 		return true;
 	}
@@ -154,9 +153,9 @@ bool PushToggleControl::enable(ZVision *engine) {
 	return false;
 }
 
-bool PushToggleControl::disable(ZVision *engine) {
+bool PushToggleControl::disable() {
 	if (_enabled) {
-		engine->removeMouseEvent(_key);
+		_engine->removeMouseEvent(_key);
 		_enabled = false;
 		return true;
 	}
@@ -165,4 +164,16 @@ bool PushToggleControl::disable(ZVision *engine) {
 	return false;
 }
 
+void PushToggleControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) {
+	_engine->getScriptManager()->setStateValue(_key, 1);
+}
+
+bool PushToggleControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) {
+	if (_hotspot.contains(backgroundImageSpacePos)) {
+		_engine->getCursorManager()->changeCursor(_hoverCursor);
+		return true;
+	}
+
+	return false;
+}
 } // End of namespace ZVision

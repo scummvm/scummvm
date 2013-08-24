@@ -52,14 +52,51 @@ public:
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
 };
 
-class PushToggleControl : public Control {
+
+class PushToggleControl : public Control, public MouseEvent {
 public:
-	PushToggleControl(uint32 key, Common::SeekableReadStream &stream);
-	bool enable(ZVision *engine);
-	bool disable(ZVision *engine);
+	PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
+	bool enable();
+	bool disable();
+
+	/**
+	 * Called when LeftMouse is pushed. Calls ScriptManager::setStateValue(_key, 1);
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 */
+	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos);
+	/**
+	 * Called when LeftMouse is lifted. Does nothing
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 */
+	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) {}
+	/**
+	 * Called on every MouseMove. Tests if the mouse is inside _hotspot, and if so, sets the cursor.
+	 *
+	 * @param engine                     The base engine
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 * @return                           Was the cursor changed?
+	 */
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos);
 
 private:
-	MouseEvent _event;
+	ZVision * _engine;
+	/**
+	 * The area that will trigger the event
+	 * This is in image space coordinates, NOT screen space
+	 */
+	Common::Rect _hotspot;
+	/** The cursor to use when hovering over _hotspot */
+	Common::String _hoverCursor;
+};
+
+public:
+
+private:
 };
 
 // TODO: Implement InputControl
