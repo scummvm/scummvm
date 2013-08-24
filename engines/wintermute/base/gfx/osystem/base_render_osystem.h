@@ -128,6 +128,7 @@ private:
 
 	bool _needsFlip;
 	uint32 _drawNum; ///< The global number of the current draw-operation.
+	RenderQueueIterator _lastFrameIter;
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
 	Graphics::Surface *_blankSurface;
