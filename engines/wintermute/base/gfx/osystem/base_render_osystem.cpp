@@ -378,7 +378,7 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	{
 		++_lastFrameIter;
 		// In-order
-		if (_renderQueue.empty() || _drawNum > (_renderQueue.back())->_drawNum) {
+		if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
 			assert(_renderQueue.empty() || _lastFrameIter == _renderQueue.end());
 			_lastFrameIter--;
 			renderTicket->_drawNum = _drawNum++;
@@ -389,12 +389,7 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 			++_lastAddedTicket;
 		} else {
 			// Before something
-			RenderQueueIterator pos;
-			for (pos = _renderQueue.begin(); pos != _renderQueue.end(); pos++) {
-				if ((*pos)->_drawNum >= _drawNum) {
-					break;
-				}
-			}
+			RenderQueueIterator pos = _lastFrameIter;
 			assert(!_renderQueue.empty() && _lastFrameIter != _renderQueue.end());
 			assert(pos == _lastFrameIter);
 			_renderQueue.insert(pos, renderTicket);
@@ -421,7 +416,7 @@ void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) 
 	{
 		++_lastFrameIter;
 		// Was drawn last round, still in the same order
-		if (_drawNum == renderTicket->_drawNum) {
+		if (*_lastFrameIter == renderTicket) {
 			assert((*_lastFrameIter)->_drawNum == _drawNum);
 			assert(*_lastFrameIter == renderTicket);
 			_drawNum++;
