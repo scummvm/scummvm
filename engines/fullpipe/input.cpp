@@ -86,8 +86,17 @@ void CInputController::drawCursor(int x, int y) {
 	warning("STUB: CInputController::drawCursor(%d, %d)", x, y);
 }
 
-void CInputController::setCursor(int id) {
-	warning("STUB: CInputController::setCursor(%d)", id);
+void CInputController::setCursor(int cursorId) {
+	if (_cursorIndex == -1 || _cursorsArray[_cursorIndex]->pictureId != cursorId) {
+		_cursorIndex = -1;
+
+		for (uint i = 0; i < _cursorsArray.size(); i++) {
+			if (_cursorsArray[i]->pictureId == cursorId) {
+				_cursorIndex = i;
+				break;
+			}
+		}
+	}
 }
 
 CursorInfo::CursorInfo() {

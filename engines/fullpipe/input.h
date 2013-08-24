@@ -56,7 +56,7 @@ class CInputController {
 	int _cursorIndex;
 	CursorsArray _cursorsArray;
 	Common::Rect _cursorBounds;
-	int _cursorItemPicture;
+	Picture *_cursorItemPicture;
 
  public:
 	CInputController();
