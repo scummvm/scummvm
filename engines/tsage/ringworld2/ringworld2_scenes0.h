@@ -598,8 +598,8 @@ class Scene500: public SceneExt {
 public:
 	int _stripNumber;
 	byte _buffer[2710];
-	SpeakerSeeker _seekerSpeaker;
-	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker500 _seekerSpeaker;
+	SpeakerQuinn500 _quinnSpeaker;
 	SceneHotspot _background, _item2;
 	ControlPanel _controlPanel;
 	SceneActor _object1;
