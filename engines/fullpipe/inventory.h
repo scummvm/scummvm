@@ -32,7 +32,7 @@ struct InventoryPoolItem {
 	int16 id;
 	int16 pictureObjectNormalId;
 	int16 pictureObjectId1;
-	int16 pictureObjectMouseInsideId;
+	int16 pictureObjectMouseHover;
 	int16 pictureObjectId3;
 	int16 field_A;
 	int field_C;
@@ -69,8 +69,8 @@ class PictureObject;
 
 struct InventoryIcon {
 	PictureObject *pictureObjectNormal;
-	InventoryIcon **icons;
-	int numIcons;
+	PictureObject *pictureObjectHover;
+	PictureObject *pictureObjectId3;
 	int x1;
 	int y1;
 	int x2;

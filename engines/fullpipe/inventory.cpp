@@ -39,7 +39,7 @@ bool CInventory::load(MfcArchive &file) {
 		t->id = file.readUint16LE();
 		t->pictureObjectNormalId = file.readUint16LE();
 		t->pictureObjectId1 = file.readUint16LE();
-		t->pictureObjectMouseInsideId = file.readUint16LE();
+		t->pictureObjectMouseHover = file.readUint16LE();
 		t->pictureObjectId3 = file.readUint16LE();
 		t->flags = file.readUint32LE();
 		t->field_C = 0;
@@ -118,7 +118,7 @@ void CInventory2::rebuildItemRects() {
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
 			if (_itemsPool[j]->pictureObjectNormalId == pic->_id) {
-				if (pic->okeyCode)
+				if (pic->_okeyCode)
 					_scene->deletePictureObject(pic);
 				else
 					pic->_flags &= 0xFFFB;
@@ -129,21 +129,17 @@ void CInventory2::rebuildItemRects() {
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
 		Common::Point point;
 
-		idx = getInventoryPoolItemIndexById(_inventoryItems[i]->itemId);
+		int idx = getInventoryPoolItemIndexById(_inventoryItems[i]->itemId);
 
 		InventoryIcon *icn = new InventoryIcon();
 
 		icn->inventoryItemId = _itemsPool[idx]->id;
 		
-		PictureObject *pic = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormalId, 0);
+		icn->pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormalId, 0);
+		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectMouseHover, 0);
+		icn->pictureObjectId3 = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId3, 0);
 
-		icn->pictureObjectNormal = pic;
-
-		icn->icons = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectMouseInsideId, 0);
-
-		icn->numIcons = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId3, 0); // Weird
-
-		pic->getDimensions(point);
+		icn->pictureObjectNormal->getDimensions(&point);
 
 		if (_itemsPool[idx]->flags & 0x10000) {
 			icn->x1 = 730;
@@ -157,63 +153,10 @@ void CInventory2::rebuildItemRects() {
 			itemX = icn->x2 + 1;
 			icn->y2 = point.y + itemY + 10;
 		}
-		v22 = _inventoryIcons->numIcons;
-		_inventoryIcons->numIcons++;
-		v38 = v23;
-		v24 = v23 + 1;
-		if (v24) {
-			v25 = _inventoryIcons->icons;
-			if (v25) {
-				v27 = _inventoryIcons->x1;
-				if (v24 > v27) {
-					v28 = _inventoryIcons->y1;
-					if (!v28) {
-						v28 = v22 / 8;
-						if (v22 / 8 >= 4) {
-							if (v28 > 1024)
-								v28 = 1024;
-						} else {
-							v28 = 4;
-						}
-					}
-					v29 = v27 + v28;
-					if (v24 >= v29) {
-						v34 = v24;
-						v29 = v24;
-					} else {
-						v34 = v29;
-					}
-					v30 = operator new(40 * v29);
-					memcpy(v30, _inventoryIcons->icons, 40 * _inventoryIcons->numIcons);
-					memset((char *)v30 + 40 * _inventoryIcons->numIcons, 0, 4 * ((unsigned int)(40 * (v24 - _inventoryIcons->numIcons)) >> 2));
-					CObjectFree(_inventoryIcons->icons);
-					_inventoryIcons->icons = (InventoryIcon **)v30;
-					_inventoryIcons->numIcons = v24;
-					_inventoryIcons->x1 = v34;
-				} else if (v22 >= v24) {
-					_inventoryIcons->numIcons = v24;
-				} else {
-					memset(&v25[10 * v22], 0, 40 * (v24 - v22));
-					_inventoryIcons->numIcons = v24;
-				}
-			} else {
-				v26 = (InventoryIcon **)operator new(40 * v24);
-				_inventoryIcons->icons = v26;
-				memset(v26, 0, 4 * ((unsigned int)(40 * v24) >> 2));
-				_inventoryIcons->x1 = v24;
-				_inventoryIcons->numIcons = v24;
-			}
-		} else {
-			if (_inventoryIcons->icons) {
-				CObjectFree(_inventoryIcons->icons);
-				_inventoryIcons->icons = 0;
-			}
-			_inventoryIcons->x1 = 0;
-			_inventoryIcons->numIcons = 0;
-		}
-		v31 = icn->x1;
-		memcpy(&_inventoryIcons->icons[10 * v38], &inventoryIcon, 0x28u);
-		if (itemX >= 2 * (v31 - icn->x2) + 800) {
+
+		_inventoryIcons.push_back(icn);
+
+		if (itemX >= 2 * (icn->x1 - icn->x2) + 800) {
 			itemX = 9;
 			itemY = icn->y2 + 1;
 		}

@@ -177,6 +177,8 @@ class Background : public CObject {
 	Background();
 	virtual bool load(MfcArchive &file);
 	void addPictureObject(PictureObject *pct);
+
+	BigPicture *getBigPicture(int x, int y) { return _bigPictureArray[x][y]; }
 };
 
 struct ShadowsItem {

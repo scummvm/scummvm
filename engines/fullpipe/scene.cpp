@@ -334,6 +334,17 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	return 0;
 }
 
+void Scene::deletePictureObject(PictureObject *obj) {
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		if (((PictureObject *)_picObjList[i]) == obj) {
+			_picObjList.remove_at(i);
+			delete obj;
+
+			return;
+		}
+	}
+}
+
 MessageQueue *Scene::getMessageQueueById(int messageId) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
 		if (((MessageQueue *)_messageQueueList[i])->_dataId == messageId)

@@ -67,6 +67,7 @@ class Scene : public Background {
 
 	void setPictureObjectsFlag4();
 	PictureObject *getPictureObjectById(int objId, int flags);
+	void deletePictureObject(PictureObject *obj);
 	void preloadMovements(CGameVar *var);
 
 	void initObjectCursors(const char *name);
