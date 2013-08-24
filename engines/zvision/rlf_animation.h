@@ -78,7 +78,7 @@ public:
 	const uint16 *getNextFrame();
 	const uint16 *getPreviousFrame();
 
-	bool endOfAnimation() { return _currentFrame == _frameCount - 1; }
+	bool endOfAnimation() { return _currentFrame == (int)_frameCount - 1; }
 
 private:
 	bool readHeader();
