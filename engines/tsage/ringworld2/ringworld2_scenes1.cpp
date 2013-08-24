@@ -7596,7 +7596,7 @@ bool Scene1550::Hotspot3::startAction(CursorType action, Event &event) {
 	return SceneHotspot::startAction(action, event);
 }
 
-bool Scene1550::Actor6::startAction(CursorType action, Event &event) {
+bool Scene1550::Wreckage::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
@@ -8592,7 +8592,7 @@ void Scene1550::enterArea() {
 	for (int i = 0; i < 8; ++i)
 		_arrUnkObj15501[i].remove();
 
-	_actor6.remove();
+	_wreckage.remove();
 
 	for (int i = 0; i < 8; ++i)
 		_arrUnkObj15502[i].remove();
@@ -8613,6 +8613,7 @@ void Scene1550::enterArea() {
 	_actor12.remove();
 	_actor4.remove();
 
+	// Set up of special walk regions for certain areas
 	switch (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y) {
 	case 0:
 		switch (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x) {
@@ -9073,11 +9074,11 @@ void Scene1550::enterArea() {
 				R2_GLOBALS._walkRegions.enableRegion(k5A78A[15]);
 				break;
 			case 2:
-				_actor6.postInit();
-				_actor6.setup(1550, 1, 1);
-				_actor6.setPosition(Common::Point(259, 55));
-				_actor6.fixPriority(133);
-				_actor6.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 1, 1);
+				_wreckage.setPosition(Common::Point(259, 55));
+				_wreckage.fixPriority(133);
+				_wreckage.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 
 				_landingStrut.postInit();
 				_landingStrut.setup(1550, 1, 2);
@@ -9093,11 +9094,11 @@ void Scene1550::enterArea() {
 				}
 				break;
 			case 3:
-				_actor6.postInit();
-				_actor6.setup(1550, 1, 4);
-				_actor6.setPosition(Common::Point(76, 131));
-				_actor6.fixPriority(10);
-				_actor6.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 1, 4);
+				_wreckage.setPosition(Common::Point(76, 131));
+				_wreckage.fixPriority(10);
+				_wreckage.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 
 				_landingStrut.postInit();
 				_landingStrut.setup(1550, 1, 3);
@@ -9121,11 +9122,11 @@ void Scene1550::enterArea() {
 				}
 				break;
 			case 4:
-				_actor6.postInit();
-				_actor6.setup(1550, 2, 4);
-				_actor6.setPosition(Common::Point(243, 131));
-				_actor6.fixPriority(10);
-				_actor6.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 2, 4);
+				_wreckage.setPosition(Common::Point(243, 131));
+				_wreckage.fixPriority(10);
+				_wreckage.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 
 				_landingStrut.postInit();
 				_landingStrut.setup(1550, 2, 3);
@@ -9133,11 +9134,11 @@ void Scene1550::enterArea() {
 				_landingStrut.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 				break;
 			case 5:
-				_actor6.postInit();
-				_actor6.setup(1550, 2, 1);
-				_actor6.setPosition(Common::Point(60, 55));
-				_actor6.fixPriority(133);
-				_actor6.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 2, 1);
+				_wreckage.setPosition(Common::Point(60, 55));
+				_wreckage.fixPriority(133);
+				_wreckage.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 
 				_landingStrut.postInit();
 				_landingStrut.setup(1550, 2, 2);
@@ -9146,17 +9147,17 @@ void Scene1550::enterArea() {
 				_landingStrut.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 				break;
 			case 6:
-				_actor6.postInit();
-				_actor6.setup(1550, 3, 1);
-				_actor6.setPosition(Common::Point(281, 132));
-				_actor6.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 3, 1);
+				_wreckage.setPosition(Common::Point(281, 132));
+				_wreckage.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 				break;
 			case 7:
-				_actor6.postInit();
-				_actor6.setup(1550, 3, 2);
-				_actor6.setPosition(Common::Point(57, 96));
-				_actor6.fixPriority(70);
-				_actor6.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 3, 2);
+				_wreckage.setPosition(Common::Point(57, 96));
+				_wreckage.fixPriority(70);
+				_wreckage.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 
 				_landingStrut.postInit();
 				_landingStrut.setup(1550, 3, 3);
@@ -9176,11 +9177,11 @@ void Scene1550::enterArea() {
 				_actor3.fixPriority(45);
 				break;
 			case 8:
-				_actor6.postInit();
-				_actor6.setup(1550, 4, 2);
-				_actor6.setPosition(Common::Point(262, 96));
-				_actor6.fixPriority(70);
-				_actor6.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 4, 2);
+				_wreckage.setPosition(Common::Point(262, 96));
+				_wreckage.fixPriority(70);
+				_wreckage.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 
 				_landingStrut.postInit();
 				_landingStrut.setup(1550, 4, 3);
@@ -9200,10 +9201,10 @@ void Scene1550::enterArea() {
 				_actor3.fixPriority(45);
 				break;
 			case 9:
-				_actor6.postInit();
-				_actor6.setup(1550, 4, 1);
-				_actor6.setPosition(Common::Point(38, 132));
-				_actor6.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
+				_wreckage.postInit();
+				_wreckage.setup(1550, 4, 1);
+				_wreckage.setPosition(Common::Point(38, 132));
+				_wreckage.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 				break;
 			case 11:
 				_arrUnkObj15502[7].subA5CDF(8);
