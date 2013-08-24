@@ -392,12 +392,6 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 			_renderQueue.insert(pos, renderTicket);
 			--_lastFrameIter;
 			assert(*_lastFrameIter == renderTicket);
-			// Increment the following tickets, so they still are in line
-			RenderQueueIterator it;
-			for (it = pos; it != _renderQueue.end(); ++it) {
-				assert((*it)->_wantsDraw == false);
-				(*it)->_wantsDraw = false;
-			}
 			addDirtyRect(renderTicket->_dstRect);
 			_lastAddedTicket = pos;
 		}
