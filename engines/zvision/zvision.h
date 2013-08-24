@@ -64,6 +64,15 @@ public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
 	~ZVision();
 
+public:
+	/**
+	 * A Rectangle centered inside the actual window. All in-game coordinates
+	 * are given in this coordinate space. Also, all images are clipped to the
+	 * edges of this Rectangle
+	 */
+	const Common::Rect _workingWindow;
+	const Graphics::PixelFormat _pixelFormat;
+
 private:
 	enum {
 		WINDOW_WIDTH = 640,
@@ -72,18 +81,11 @@ private:
 		WORKING_WINDOW_HEIGHT = 320,
 
 		ROTATION_SCREEN_EDGE_OFFSET = 60,
-		MAX_ROTATION_SPEED = 150 // Pixels per second
+		MAX_ROTATION_SPEED = 250 // Pixels per second
 	};
 
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
-	/** 
-	 * A Rectangle centered inside the actual window. All in-game coordinates
-	 * are given in this coordinate space. Also, all images are clipped to the
-	 * edges of this Rectangle
-	 */
-	const Common::Rect _workingWindow;
-	const Graphics::PixelFormat _pixelFormat;
 
 	const int _desiredFrameTime;
 
