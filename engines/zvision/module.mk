@@ -11,7 +11,9 @@ MODULE_OBJS := \
 	cursor_manager.o \
 	detection.o \
 	events.o \
+	lever_control.o \
 	lzss_read_stream.o \
+	push_toggle_control.o \
 	render_manager.o \
 	render_table.o \
 	rlf_animation.o \

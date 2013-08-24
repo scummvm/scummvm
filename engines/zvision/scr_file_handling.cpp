@@ -26,6 +26,7 @@
 #include "zvision/utility.h"
 #include "zvision/puzzle.h"
 #include "zvision/actions.h"
+#include "zvision/push_toggle_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
