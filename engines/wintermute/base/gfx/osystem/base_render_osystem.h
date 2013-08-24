@@ -62,6 +62,8 @@ public:
 	BaseRenderOSystem(BaseGame *inGame);
 	~BaseRenderOSystem();
 
+	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
+
 	Common::String getName() const;
 
 	bool initRenderer(int width, int height, bool windowed) override;
@@ -79,11 +81,16 @@ public:
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	/**
-	 * Insert a ticket into the queue, adding a dirty rect if it's
-	 * new, or out-of-order from last draw from the ticket.
+	 * Insert a new ticket into the queue, adding a dirty rect
 	 * param renderTicket the ticket to be added.
 	 */
 	void drawFromTicket(RenderTicket *renderTicket);
+	/**
+	 * Re-insert an existing ticket into the queue, adding a dirty rect
+	 * out-of-order from last draw from the ticket.
+	 * param ticket iterator pointing to the ticket to be added.
+	 */
+	void drawFromQueuedTicket(const RenderQueueIterator &ticket);
 
 	bool setViewport(int left, int top, int right, int bottom) override;
 	bool setViewport(Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
@@ -120,7 +127,6 @@ private:
 	void drawFromSurface(RenderTicket *ticket);
 	// Dirty-rects:
 	void drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
-	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket *> _renderQueue;
 	RenderQueueIterator _lastAddedTicket;
