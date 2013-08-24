@@ -373,15 +373,12 @@ void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 
 void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
-	// A new item always has _drawNum == 0
-	assert(renderTicket->_drawNum == 0);
 	{
 		++_lastFrameIter;
 		// In-order
 		if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
 			assert(_renderQueue.empty() || _lastFrameIter == _renderQueue.end());
 			_lastFrameIter--;
-			renderTicket->_drawNum = _drawNum++;
 			_renderQueue.push_back(renderTicket);
 			++_lastFrameIter;
 			assert(*_lastFrameIter == renderTicket);
@@ -393,13 +390,11 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 			assert(!_renderQueue.empty() && _lastFrameIter != _renderQueue.end());
 			assert(pos == _lastFrameIter);
 			_renderQueue.insert(pos, renderTicket);
-			renderTicket->_drawNum = _drawNum++;
 			--_lastFrameIter;
 			assert(*_lastFrameIter == renderTicket);
 			// Increment the following tickets, so they still are in line
 			RenderQueueIterator it;
 			for (it = pos; it != _renderQueue.end(); ++it) {
-				(*it)->_drawNum++;
 				assert((*it)->_wantsDraw == false);
 				(*it)->_wantsDraw = false;
 			}
@@ -412,29 +407,19 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
 	RenderTicket *renderTicket = *ticket;
 	renderTicket->_wantsDraw = true;
-	assert(renderTicket->_drawNum != 0);
 	{
 		++_lastFrameIter;
 		// Was drawn last round, still in the same order
 		if (*_lastFrameIter == renderTicket) {
-			assert((*_lastFrameIter)->_drawNum == _drawNum);
 			assert(*_lastFrameIter == renderTicket);
 			_drawNum++;
 			++_lastAddedTicket;
 		} else {
 			assert(*_lastFrameIter != renderTicket);
 			--_lastFrameIter;
-			assert(_drawNum < renderTicket->_drawNum);
 			// Remove the ticket from the list
-			RenderQueueIterator it = _renderQueue.erase(ticket);
-			if (it != _renderQueue.end()) {
-				// Decreement the following tickets.
-				for (; it != _renderQueue.end(); ++it) {
-					(*it)->_drawNum--;
-				}
-			}
+			_renderQueue.erase(ticket);
 			// Is not in order, so readd it as if it was a new ticket
-			renderTicket->_drawNum = 0;
 			drawFromTicket(renderTicket);
 		}
 	}
@@ -464,7 +449,6 @@ void BaseRenderOSystem::drawTickets() {
 			delete ticket;
 			decrement++;
 		} else {
-			(*it)->_drawNum -= decrement;
 			++it;
 		}
 	}
@@ -487,7 +471,6 @@ void BaseRenderOSystem::drawTickets() {
 	_lastFrameIter = _renderQueue.end();
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		RenderTicket *ticket = *it;
-		assert(ticket->_drawNum == _drawNum);
 		++_drawNum;
 		if (ticket->_dstRect.intersects(*_dirtyRect)) {
 			// dstClip is the area we want redrawn.
@@ -524,7 +507,6 @@ void BaseRenderOSystem::drawTickets() {
 			delete ticket;
 			decrement++;
 		} else {
-			(*it)->_drawNum -= decrement;
 			++it;
 		}
 	}
