@@ -83,7 +83,18 @@ void CInputController::setCursorMode(bool enabled) {
 }
 
 void CInputController::drawCursor(int x, int y) {
-	warning("STUB: CInputController::drawCursor(%d, %d)", x, y);
+	if (_cursorIndex == -1)
+		return;
+
+	_cursorBounds.left = g_fullpipe->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
+	_cursorBounds.top = g_fullpipe->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
+	_cursorBounds.right = _cursorBounds.left + _cursorsArray[_cursorIndex]->width;
+	_cursorBounds.bottom = _cursorBounds.top + _cursorsArray[_cursorIndex]->height;
+
+	_cursorsArray[_cursorIndex]->picture->draw(_cursorBounds.left, _cursorBounds.top, 0, 0);
+
+	if (_cursorItemPicture)
+		_cursorItemPicture->draw(_cursorsArray[_cursorIndex]->itemPictureOffsX, _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
 }
 
 void CInputController::setCursor(int cursorId) {
