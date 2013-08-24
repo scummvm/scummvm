@@ -195,7 +195,7 @@ const uint16 *RlfAnimation::getNextFrame() {
 		applyFrameToCurrent(_currentFrame + 1);
 	}
 
-	_currentFrame -= 1;
+	_currentFrame++;
 	return _currentFrameBuffer;
 }
 
@@ -204,7 +204,7 @@ const uint16 *RlfAnimation::getPreviousFrame() {
 	assert(_currentFrame - 1 >= 0);
 
 	applyFrameToCurrent(_currentFrame - 1);
-	_currentFrame =- 1;
+	_currentFrame--;
 	return _currentFrameBuffer;
 }
 
