@@ -140,7 +140,7 @@ void ZVision::onMouseUp(const Common::Point &pos) {
 void ZVision::onMouseMove(const Common::Point &pos) {
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
-	bool isWithinAHotspot = false;
+	bool cursorWasChanged = false;
 	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
 		cursorWasChanged = cursorWasChanged || (*iter)->onMouseMove(pos, imageCoord);
 	}
@@ -184,14 +184,14 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				Common::Rational velocity = (Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.x - _workingWindow.left)) - MAX_ROTATION_SPEED;
 				_renderManager->setBackgroundVelocity(velocity.toInt());
 				_cursorManager->setLeftCursor();
-				isWithinAHotspot = true;
+				cursorWasChanged = true;
 			} else if (pos.x <= _workingWindow.right && pos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
 				// Linear function of distance to the right edge (y = mx)
 				// We use fixed point math to get better accuracy
 				Common::Rational velocity = Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET);
 				_renderManager->setBackgroundVelocity(velocity.toInt());
 				_cursorManager->setRightCursor();
-				isWithinAHotspot = true;
+				cursorWasChanged = true;
 			} else {
 				_renderManager->setBackgroundVelocity(0);
 			}
@@ -202,14 +202,14 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				Common::Rational velocity = (Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - MAX_ROTATION_SPEED;
 				_renderManager->setBackgroundVelocity(velocity.toInt());
 				_cursorManager->setUpCursor();
-				isWithinAHotspot = true;
+				cursorWasChanged = true;
 			} else if (pos.y <= _workingWindow.bottom && pos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
 				// Linear function of distance to the bottom edge (y = mx)
 				// We use fixed point math to get better accuracy
 				Common::Rational velocity = Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.bottom + ROTATION_SCREEN_EDGE_OFFSET);
 				_renderManager->setBackgroundVelocity(velocity.toInt());
 				_cursorManager->setDownCursor();
-				isWithinAHotspot = true;
+				cursorWasChanged = true;
 			} else {
 				_renderManager->setBackgroundVelocity(0);
 			}
@@ -218,7 +218,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 		_renderManager->setBackgroundVelocity(0);
 	}
 
-	if (!isWithinAHotspot) {
+	if (!cursorWasChanged) {
 		_cursorManager->revertToIdle();
 	}
 }
