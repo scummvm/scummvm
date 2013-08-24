@@ -71,6 +71,9 @@ class Scene : public Background {
 	void deletePictureObject(PictureObject *obj);
 	void preloadMovements(CGameVar *var);
 
+	StaticANIObject *getStaticANIObjectAtPos(int x, int y);
+	PictureObject *getPictureObjectAtPos(int x, int y);
+
 	void initObjectCursors(const char *name);
 
   private:

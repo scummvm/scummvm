@@ -417,6 +417,7 @@ void Scene::initObjectCursors(const char *varname) {
     }
 
 	g_fullpipe->_minCursorId = minId;
+	g_fullpipe->_maxCursorId = maxId;
 
 	g_fullpipe->_objectIdCursors.resize(maxId - minId + 1);
 
@@ -473,6 +474,18 @@ void Scene::updateScrolling() {
 
 void Scene::updateScrolling2() {
 	warning("STUB Scene::updateScrolling2()");
+}
+
+StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
+	warning("STUB: Scene::getStaticANIObjectAtPos(%d, %d)", x, y);
+
+	return 0;
+}
+
+PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
+	warning("STUB: Scene::getPictureObjectAtPos(%d, %d)", x, y);
+
+	return 0;
 }
 
 void Scene::update(int counterdiff) {

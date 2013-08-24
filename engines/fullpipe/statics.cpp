@@ -312,6 +312,12 @@ int StaticANIObject::getMovementIdById(int itemId) {
 	return 0;
 }
 
+bool StaticANIObject::canInteractAny(GameObject *obj2, int a3) {
+	warning("STUB: StaticANIObject::canInteractAny()");
+	return false;
+}
+
+
 Movement *StaticANIObject::getMovementByName(char *name) {
 	for (uint i = 0; i < _movements.size(); i++)
 		if (!strcmp(((Movement *)_movements[i])->_objectName, name))

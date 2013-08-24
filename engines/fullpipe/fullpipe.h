@@ -200,7 +200,10 @@ public:
 
 	int _cursorId;
 	int _minCursorId;
+	int _maxCursorId;
 	Common::Array<int> _objectIdCursors;
+	GameObject *_objectAtCursor;
+	int _objectIdAtCursor;
 
 	void setCursor(int id);
 	void updateCursorsCommon();
@@ -218,6 +221,8 @@ public:
 	void openMap();
 	void openHelp();
 	void openMainMenu();
+
+	int lift_getButtonIdP(int objid);
 
 public:
 

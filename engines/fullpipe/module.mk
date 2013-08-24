@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	input.o \
 	interaction.o \
 	inventory.o \
+	lift.o \
 	messages.o \
 	modal.o \
 	motion.o \

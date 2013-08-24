@@ -25,6 +25,10 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/input.h"
 #include "fullpipe/gfx.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 
@@ -118,7 +122,66 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 }
 
 void FullpipeEngine::updateCursorsCommon() {
-	
+	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
+
+	GameObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
+	if (!ani || pic && pic->_priority < ani->_priority )
+		ani = pic;
+
+	int selId = getGameLoaderInventory()->getSelectedItemId();
+
+	_objectAtCursor = ani;
+
+	if (ani) {
+		_objectIdAtCursor = ani->_id;
+
+		if (!selId && ani->_id >= _minCursorId && ani->_id <= _maxCursorId) {
+			selId = _objectIdCursors[ani->_id - _minCursorId];
+			if (selId) {
+				_cursorId = selId;
+				return;
+			}
+		}
+		if (_aniMan->canInteractAny(ani, selId)) {
+			_cursorId = selId > 0 ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
+			return;
+		}
+		if (selId) {
+			_cursorId = PIC_CSR_DEFAULT_INV;
+			return;
+		}
+		if (_objectIdAtCursor == ANI_LIFTBUTTON && lift_getButtonIdP(((StaticANIObject *)ani)->_statics->_staticsId)) {
+			_cursorId = PIC_CSR_LIFT;
+			return;
+		}
+		if (_sceneRect.right - _mouseVirtX < 47 && _sceneRect.right < _sceneWidth - 1) {
+			_cursorId = PIC_CSR_GOFAR_R;
+			return;
+		}
+		if (_mouseVirtX - _sceneRect.left < 47 && _sceneRect.left > 0) {
+			_cursorId = PIC_CSR_GOFAR_L;
+			return;
+		}
+		_cursorId = PIC_CSR_DEFAULT;
+		return;
+	} else {
+		_objectIdAtCursor = 0;
+
+		if (selId) {
+			_cursorId = PIC_CSR_DEFAULT_INV;
+			return;
+		}
+		if (_sceneRect.right - _mouseVirtX < 47 && _sceneRect.right < _sceneWidth - 1) {
+			_cursorId = PIC_CSR_GOFAR_R;
+			return;
+		}
+		if (_mouseVirtX - _sceneRect.left < 47 && _sceneRect.left > 0 ) {
+			_cursorId = PIC_CSR_GOFAR_L;
+			return;
+		}
+	}
+
+	_cursorId = PIC_CSR_DEFAULT_INV;
 }
 
 } // End of namespace Fullpipe
