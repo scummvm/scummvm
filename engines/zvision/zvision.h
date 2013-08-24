@@ -101,7 +101,7 @@ private:
 	Clock _clock;
 
 	// To store the current mouse events
-	Common::List<MouseEvent> _mouseEvents;
+	Common::List<MouseEvent *> _mouseEvents;
 
 	// To prevent allocation every time we process events
 	Common::Event _event;
@@ -137,7 +137,7 @@ public:
 	 *
 	 * @param event    The event to register
 	 */
-	void registerMouseEvent(const MouseEvent &event);
+	void registerMouseEvent(MouseEvent *event);
 
 	bool removeMouseEvent(const uint32 key);
 

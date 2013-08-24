@@ -37,14 +37,14 @@
 
 namespace ZVision {
 
-void ZVision::registerMouseEvent(const MouseEvent &event) {
+void ZVision::registerMouseEvent(MouseEvent *event) {
 	_mouseEvents.push_back(event);
 }
 
 bool ZVision::removeMouseEvent(const uint32 key) {
-	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		if ((*iter)._key == key) {
-			_scriptManager->setStateValue((*iter)._key, 0);
+	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		if ((*iter)->_key == key) {
+			_scriptManager->setStateValue((*iter)->_key, 0);
 			_mouseEvents.erase(iter);
 			return true;
 		}
@@ -55,8 +55,10 @@ bool ZVision::removeMouseEvent(const uint32 key) {
 
 void ZVision::clearAllMouseEvents() {
 	// Clear the state values of all the events
-	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		_scriptManager->setStateValue((*iter)._key, 0);
+	// Then delete the nodes
+	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		_scriptManager->setStateValue((*iter)->_key, 0);
+		delete (*iter);
 	}
 
 	_mouseEvents.clear();
@@ -117,6 +119,12 @@ void ZVision::processEvents() {
 
 void ZVision::onMouseDown(const Common::Point &pos) {
 	_cursorManager->cursorDown(true);
+
+	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
+
+	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		(*iter)->onMouseDown(pos, imageCoord);
+	}
 }
 
 void ZVision::onMouseUp(const Common::Point &pos) {
@@ -124,10 +132,8 @@ void ZVision::onMouseUp(const Common::Point &pos) {
 
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
-	for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		if (iter->withinHotspot(imageCoord)) {
-			iter->onClick(this);
-		}
+	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		(*iter)->onMouseUp(pos, imageCoord);
 	}
 }
 
@@ -135,13 +141,8 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
 	bool isWithinAHotspot = false;
-	if (_workingWindow.contains(pos)) {
-		for (Common::List<MouseEvent>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-			if (iter->withinHotspot(imageCoord)) {
-				_cursorManager->changeCursor(iter->getHoverCursor());
-				isWithinAHotspot = true;
-			}
-		}
+	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
+		cursorWasChanged = cursorWasChanged || (*iter)->onMouseMove(pos, imageCoord);
 	}
 
 	// Graph of the function governing rotation velocity:
