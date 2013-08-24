@@ -78,7 +78,7 @@ CInventory2::CInventory2() {
 	_field_48 = -1;
 	_scene = 0;
 	_picture = 0;
-	_isInventoryOut = 0;
+	_isInventoryOut = false;
 	_isLocked = 0;
 	_topOffset = -65;
 }
@@ -273,7 +273,35 @@ int CInventory2::unselectItem(bool flag) {
 }
 
 int CInventory2::getHoveredItem(Common::Point *point) {
-	warning("STUB: CInventory2::getHoveredItem()");
+	int selId = getSelectedItemId();
+
+	if (point->y <= 20 && !_isInventoryOut && !_isLocked )
+		slideOut();
+
+	if (!selId && point->y >= 55) {
+		if (!_isInventoryOut)
+			return 0;
+
+		if (!_isLocked)
+			slideIn();
+	}
+
+	if (!_isInventoryOut)
+		return 0;
+
+	for (uint i = 0; i < _inventoryIcons.size(); i++) {
+		InventoryIcon *icn = _inventoryIcons[i];
+		if (selId ||
+			point->x < icn->x1 ||
+			point->x > icn->x2 ||
+			point->y < _topOffset + icn->y1 ||
+			point->y > _topOffset + icn->y2) {
+			icn->isMouseHover = 0;
+		} else {
+			icn->isMouseHover = 1;
+			return icn->inventoryItemId;
+		}
+    }
 
 	return 0;
 }
