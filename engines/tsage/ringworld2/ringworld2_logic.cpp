@@ -133,6 +133,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Elevator
 		return new Scene1530();
 	case 1550:
+		// Spaceport
 		return new Scene1550();
 	case 1575:
 		return new Scene1575();

@@ -427,12 +427,12 @@ class Scene1550 : public SceneExt {
 		void subA4D14(int frameNumber, int strip);
 	};
 
-	class UnkObj15501 : public SceneActor {
+	class Junk : public SceneActor {
 	public:
 		int _fieldA4;
 		int _fieldA6;
 
-		UnkObj15501();
+		Junk();
 		void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
@@ -522,7 +522,7 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor14 : public SceneActor1550 {
+	class Wall : public SceneActor1550 {
 		// Nothing specific found in the original
 		// TODO: check if it's an useless class
 	};
@@ -546,13 +546,13 @@ public:
 	Actor11 _actor11;
 	Actor12 _actor12;
 	Actor13 _actor13;
-	UnkObj15501 _arrUnkObj15501[8];
-	Actor14 _actor14;
-	Actor14 _actor15;
-	Actor14 _actor16;
-	Actor14 _actor17;
-	Actor14 _actor18;
-	Actor14 _actor19;
+	Junk _junk[8];
+	Wall _actor14;
+	Wall _northWall;
+	Wall _actor16;
+	Wall _actor17;
+	Wall _eastWall;
+	Wall _actor19;
 	UnkObj15502 _arrUnkObj15502[8];
 	UnkArea1550 _unkArea1;
 	SequenceManager _sequenceManager1;

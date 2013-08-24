@@ -200,7 +200,7 @@ extern char const *const WRONG_ANSWER_MSG;
 
 // Scene 1550 arrays of constants
 extern const byte k562CC[];
-extern const byte k5A4D6[];
+extern const byte scene1550AreaMap[];
 extern const byte k5A72E[];
 extern const byte k5A73F[];
 extern const byte k5A750[];
