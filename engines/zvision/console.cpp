@@ -53,6 +53,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
 	DCmd_Register("dumpcursorfilenames", WRAP_METHOD(Console, cmdDumpAllCursorFileNames));
 	DCmd_Register("showcursor", WRAP_METHOD(Console, cmdShowCursor));
+	DCmd_Register("dumpalllevfiles", WRAP_METHOD(Console, cmdDumpAllLevFiles));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -208,6 +209,18 @@ bool Console::cmdShowCursor(int argc, const char **argv) {
 	ZorkCursor cursor(argv[1]);
 
 	_engine->_system->copyRectToScreen(cursor.getSurface(), cursor.getWidth() * 2, 0, 0, cursor.getWidth(), cursor.getHeight());
+
+	return true;
+}
+
+bool Console::cmdDumpAllLevFiles(int argc, const char **argv) {
+	Common::ArchiveMemberList list;
+	SearchMan.listMatchingMembers(list, "*.lev");
+	
+	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+		Common::String fileName = (*iter)->getName();
+		writeFileContentsToFile(fileName, fileName);
+	}
 
 	return true;
 }
