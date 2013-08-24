@@ -216,7 +216,7 @@ bool ScriptManager::enableControl(uint32 key) {
 	if (!_activeControls.contains(key)) {
 		return false;
 	} else {
-		return _activeControls[key]->enable(_engine);
+		return _activeControls[key]->enable();
 	}
 }
 
@@ -272,7 +272,7 @@ void ScriptManager::changeLocationIntern() {
 
 	// Enable all the controls
 	for (Common::HashMap<uint32, Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
-		(*iter)._value->enable(_engine);
+		(*iter)._value->enable();
 	}
 
 	// Add all the local puzzles to the queue to be checked

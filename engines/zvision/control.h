@@ -37,13 +37,10 @@ class ZVision;
 
 class Control {
 public:
-	Control() : _key(0), _enabled(false) {}
+	Control() : _enabled(false) {}
 	virtual ~Control() {}
-	virtual bool enable(ZVision *engine) = 0;
-	virtual bool disable(ZVision *engine) { return true; }
-
-public:
-	uint32 _key;
+	virtual bool enable() = 0;
+	virtual bool disable() = 0;
 
 protected:
 	bool _enabled;
