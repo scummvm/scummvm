@@ -377,21 +377,16 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 		++_lastFrameIter;
 		// In-order
 		if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
-			assert(_renderQueue.empty() || _lastFrameIter == _renderQueue.end());
 			_lastFrameIter--;
 			_renderQueue.push_back(renderTicket);
 			++_lastFrameIter;
-			assert(*_lastFrameIter == renderTicket);
 			addDirtyRect(renderTicket->_dstRect);
 			++_lastAddedTicket;
 		} else {
 			// Before something
 			RenderQueueIterator pos = _lastFrameIter;
-			assert(!_renderQueue.empty() && _lastFrameIter != _renderQueue.end());
-			assert(pos == _lastFrameIter);
 			_renderQueue.insert(pos, renderTicket);
 			--_lastFrameIter;
-			assert(*_lastFrameIter == renderTicket);
 			addDirtyRect(renderTicket->_dstRect);
 			_lastAddedTicket = pos;
 		}
@@ -405,11 +400,9 @@ void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) 
 		++_lastFrameIter;
 		// Was drawn last round, still in the same order
 		if (*_lastFrameIter == renderTicket) {
-			assert(*_lastFrameIter == renderTicket);
 			_drawNum++;
 			++_lastAddedTicket;
 		} else {
-			assert(*_lastFrameIter != renderTicket);
 			--_lastFrameIter;
 			// Remove the ticket from the list
 			_renderQueue.erase(ticket);
