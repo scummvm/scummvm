@@ -61,7 +61,7 @@ private:
 	 */
 	Common::HashMap<uint32, uint> _globalState;
 	/** Holds the currently active ActionNodes */
-	Common::List<Common::SharedPtr<ActionNode> > _activeNodes;
+	Common::List<ActionNode *> _activeNodes;
 	/** References _globalState keys to Puzzles */
 	Common::HashMap<uint32, Common::Array<Puzzle *> > _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
@@ -88,7 +88,7 @@ public:
 	bool enableControl(uint32 key);
 	bool disableControl(uint32 key);
 
-	void addActionNode(const Common::SharedPtr<ActionNode> &node);
+	void addActionNode(ActionNode *node);
 
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 

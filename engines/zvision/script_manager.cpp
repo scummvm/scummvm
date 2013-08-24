@@ -108,9 +108,10 @@ void ScriptManager::createReferenceTable() {
 
 void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
-	for (Common::List<Common::SharedPtr<ActionNode> >::iterator iter = _activeNodes.begin(); iter != _activeNodes.end();) {
-		if ((*iter)->process(_engine, deltaTimeMillis)) {
-			// Remove the node from _activeNodes, the SharedPtr destructor will delete the actual ActionNode
+	for (Common::List<ActionNode *>::iterator iter = _activeNodes.begin(); iter != _activeNodes.end();) {
+		if ((*iter)->process(deltaTimeMillis)) {
+			// Delete the node then remove the pointer
+			delete (*iter);
 			iter = _activeNodes.erase(iter);
 		} else {
 			iter++;
@@ -223,11 +224,11 @@ bool ScriptManager::disableControl(uint32 key) {
 	if (!_activeControls.contains(key)) {
 		return false;
 	} else {
-		return _activeControls[key]->disable(_engine);
+		return _activeControls[key]->disable();
 	}
 }
 
-void ScriptManager::addActionNode(const Common::SharedPtr<ActionNode> &node) {
+void ScriptManager::addActionNode(ActionNode *node) {
 	_activeNodes.push_back(node);
 }
 

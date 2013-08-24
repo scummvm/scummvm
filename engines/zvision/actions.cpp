@@ -354,7 +354,7 @@ ActionTimer::ActionTimer(const Common::String &line) {
 }
 
 bool ActionTimer::execute(ZVision *engine) {
-	engine->getScriptManager()->addActionNode(Common::SharedPtr<ActionNode>(new NodeTimer(_key, _time)));
+	engine->getScriptManager()->addActionNode(new TimerNode(engine, _key, _time));
 	return true;
 }
 
