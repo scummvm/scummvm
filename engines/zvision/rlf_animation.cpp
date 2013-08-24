@@ -157,8 +157,14 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 	assert(!_stream);
 	assert(frameNumber < _frameCount && frameNumber >= 0);
 
+	// Since this method is so expensive, first check to see if we can use
+	// getNextFrame() or getPreviousFrame() since they are cheap.
 	if (frameNumber == _currentFrame) {
 		return _currentFrameBuffer;
+	} else if (_currentFrame + 1 == frameNumber) {
+		return getNextFrame();
+	} else if (_currentFrame - 1 == frameNumber) {
+		return getPreviousFrame();
 	}
 
 	uint closestFrame = _currentFrame;
