@@ -28,14 +28,15 @@
 
 namespace ZVision {
 
-NodeTimer::NodeTimer(uint32 key, uint timeInSeconds) 
-	: _key(key), _timeLeft(timeInSeconds * 1000) {}
+TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds) 
+	: _engine(engine), _key(key), _timeLeft(timeInSeconds * 1000) {
+}
 
-bool NodeTimer::process(ZVision *engine, uint32 deltaTimeInMillis) {
+bool TimerNode::process(uint32 deltaTimeInMillis) {
 	_timeLeft -= deltaTimeInMillis;
 
 	if (_timeLeft <= 0) {
-		engine->getScriptManager()->setStateValue(_key, 0);
+		_engine->getScriptManager()->setStateValue(_key, 0);
 		return true;
 	}
 

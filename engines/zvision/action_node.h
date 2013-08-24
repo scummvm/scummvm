@@ -32,23 +32,29 @@ class ZVision;
 class ActionNode {
 public:
 	virtual ~ActionNode() {}
-	virtual bool process(ZVision *engine, uint32 deltaTimeInMillis) = 0;
+	/**
+	 * Processes the node given the deltaTime since last frame
+	 *
+	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
+	 * @return                     If true, the node can be deleted after process() finishes
+	 */
+	virtual bool process(uint32 deltaTimeInMillis) = 0;
 };
 
-class NodeTimer : public ActionNode {
+class TimerNode : public ActionNode {
 public:
-	NodeTimer(uint32 key, uint timeInSeconds);
+	TimerNode(ZVision *engine, uint32 key, uint timeInSeconds);
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
 	 * in _globalState and let this node be deleted
 	 *
-	 * @param engine               Pointer to the ZVision instance
-	 * @param deltaTimeInMillis    Amount of time that has passed since the last frame
-	 * @return    Node should be deleted after this (true) or kept (false)
+	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
+	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	bool process(ZVision *engine, uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis);
 
 private:
+	ZVision *_engine;
 	uint32 _key;
 	uint32 _timeLeft;
 };
