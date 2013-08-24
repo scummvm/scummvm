@@ -258,6 +258,7 @@ void ScriptManager::changeLocationIntern() {
 	}
 	_activeControls.clear();
 	_engine->clearAllMouseEvents();
+	// TODO: See if we need to clear _activeNodes as well. And if so, remember to delete the nodes before clearing the list
 
 	// Revert to the idle cursor
 	_engine->getCursorManager()->revertToIdle();
