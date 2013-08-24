@@ -2274,14 +2274,14 @@ void ScannerDialog::Button::reset() {
 
 			scanner._obj5.postInit();
 			scanner._obj5.setup(4, 4, 1);
-			scanner._obj5.setPosition(Common::Point(R2_GLOBALS._v565EC[1] + 145,
-				R2_GLOBALS._v565EC[3] + 59));
+			scanner._obj5.setPosition(Common::Point(R2_GLOBALS._s1550PlayerArea[R2_QUINN].x + 145,
+				R2_GLOBALS._s1550PlayerArea[R2_QUINN].y + 59));
 			scanner._obj5.fixPriority(257);
 
 			scanner._obj6.postInit();
 			scanner._obj6.setup(4, 4, 2);
-			scanner._obj6.setPosition(Common::Point(R2_GLOBALS._v565EC[2] + 145,
-				R2_GLOBALS._v565EC[4] + 59));
+			scanner._obj6.setPosition(Common::Point(R2_GLOBALS._s1550PlayerArea[R2_SEEKER].x + 145,
+				R2_GLOBALS._s1550PlayerArea[R2_SEEKER].y + 59));
 			scanner._obj6.fixPriority(257);
 			break;
 		case 1700:

@@ -304,7 +304,7 @@ public:
 	int _v57810;
 	int _v57C2C;
 	int _speechSubtitles;
-	byte _v565EC[5];
+	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker
 	byte _scannerFrequencies[4];
 	byte _stripManager_lookupList[12];
 	ScannerDialog *_scannerDialog;

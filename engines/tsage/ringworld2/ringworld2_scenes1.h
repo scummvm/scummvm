@@ -487,7 +487,7 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor7 : public SceneActor {
+	class Companion : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -533,13 +533,13 @@ public:
 	Hotspot1 _item1;
 	Hotspot1 _item2;
 	Hotspot3 _item3;
-	SceneActor _actor1;
+	SceneActor _landingStrut;
 	SceneActor _actor2;
 	SceneActor _actor3;
 	SceneActor _actor4;
 	SceneActor _actor5;
 	Actor6 _actor6;
-	Actor7 _actor7;
+	Companion _companion;
 	Actor8 _actor8;
 	Actor9 _actor9;
 	Actor10 _actor10;
@@ -566,7 +566,7 @@ public:
 
 	Scene1550();
 	void synchronize(Serializer &s);
-	void subA2B2F();
+	void enterArea();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
