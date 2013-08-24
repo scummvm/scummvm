@@ -168,9 +168,9 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 	}
 
 	uint closestFrame = _currentFrame;
-	uint distance = ABS(_currentFrame - frameNumber);
+	int distance = ABS(_currentFrame - (int)frameNumber);
 	for (Common::List<uint>::const_iterator iter = _completeFrames.begin(); iter != _completeFrames.end(); iter++) {
-		uint newDistance = ABS((*iter) - frameNumber);
+		int newDistance = ABS((int)(*iter) - (int)frameNumber);
 		if (closestFrame == -1 || newDistance < distance) {
 			closestFrame = (*iter);
 			distance = newDistance;
