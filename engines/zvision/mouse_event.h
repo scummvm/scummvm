@@ -35,37 +35,35 @@ class ZVision;
 class MouseEvent {
 public:
 	MouseEvent() : _key(0) {}
-	MouseEvent(uint32 key, const Common::Rect &hotspot, const Common::String hoverCursor);
+	MouseEvent(uint32 key) : _key(key) {}
+	virtual ~MouseEvent() {}
 
-	/** The Control key */
+public:
 	uint32 _key;
-	/** 
-	 * The area that will trigger the event
-	 * This is in image space coordinates, NOT screen space 
-	 */
-	Common::Rect _hotspot;
-	/** The cursor to use when hovering over _hotspot */
-	Common::String _hoverCursor;
 
+public:
 	/**
-	 * Does a simple Rect::contains() using _hotspot
+	 * Called when LeftMouse is pushed.
 	 *
-	 * @param point    The point to check against _hotspot
-	 * @return         The point is inside _hotspot (true) or not (false)
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	bool withinHotspot(const Common::Point &point);
+	virtual void onMouseDown(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) = 0;
 	/**
-	 * Calls ScriptManager::setStateValue(_key, 1)
+	 * Called when LeftMouse is lifted.
 	 *
-	 * @param engine    The base engine
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	void onClick(ZVision *engine);
+	virtual void onMouseUp(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) = 0;
 	/**
-	 * Gets the name of the cursor that should be displayed when withinHotspot returns true
+	 * Called on every MouseMove.
 	 *
-	 * @return    The name of the cursor. This should correspond to one of the names in CursorManager::_cursorNames[]
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 * @return                           Was the cursor changed?
 	 */
-	const Common::String getHoverCursor() { return _hoverCursor; }
+	virtual bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) = 0;
 };
 
 } // End of namespace ZVision
