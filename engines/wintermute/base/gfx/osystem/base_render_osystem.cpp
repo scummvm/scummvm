@@ -67,6 +67,8 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
+
+	_swapped = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +86,8 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	delete _renderSurface;
 	_blankSurface->free();
 	delete _blankSurface;
+
+	_swapped = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -683,16 +687,35 @@ void BaseRenderOSystem::endSaveLoad() {
 	g_system->updateScreen();
 }
 
-bool BaseRenderOSystem::startSpriteBatch() {
+bool BaseRenderOSystem::startSpriteBatch(bool swap) {
+	if (swap) {
+		_swapped = true;
+		_auxSurface = _renderSurface;
+		_renderSurface = new Graphics::Surface();
+	}
 	_spriteBatch = true;
 	_batchNum = 1;
 	return STATUS_OK;
 }
 
-bool BaseRenderOSystem::endSpriteBatch() {
+bool BaseRenderOSystem::endSpriteBatch(bool swap) {
+	if (_swapped) {
+		_swapped = false;
+		Graphics::Surface *temp;
+		temp = _renderSurface;
+		_renderSurface = _auxSurface;
+		_auxSurface = temp;
+	}
 	_spriteBatch = false;
 	_batchNum = 0;
 	return STATUS_OK;
+}
+
+Graphics::Surface *BaseRenderOSystem::getAuxSurface() {
+	return _auxSurface;
+}
+void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){
+	_auxSurface = auxSurface;
 }
 
 } // End of namespace Wintermute

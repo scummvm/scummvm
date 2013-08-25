@@ -36,6 +36,9 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
 
+#include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
+#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UITiledImage, false)
@@ -43,6 +46,7 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = nullptr;
+	_cache = nullptr;
 
 	BasePlatform::setRectEmpty(&_upLeft);
 	BasePlatform::setRectEmpty(&_upMiddle);
@@ -75,44 +79,56 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	int nuColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
 	int nuRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
+	BaseRenderOSystem *_rendererOSystem = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+
 	int col, row;
 
-	_gameRef->_renderer->startSpriteBatch();
+	if (_cache == nullptr) {
+		_rendererOSystem->startSpriteBatch(true);
 
-	// top left/right
-	_image->_surface->displayTrans(x,                                                       y, _upLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
+		// top left/right
+		_image->_surface->displayTrans(x,                                                       y, _upLeft);
+		_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
 
-	// bottom left/right
-	_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
+		// bottom left/right
+		_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
+		_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
 
-	// left/right
-	int yyy = y + (_upMiddle.bottom - _upMiddle.top);
-	for (row = 0; row < nuRows; row++) {
-		_image->_surface->displayTrans(x,                                                       yyy, _middleLeft);
-		_image->_surface->displayTrans(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight);
-		yyy += tileWidth;
+		// left/right
+		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
+		for (row = 0; row < nuRows; row++) {
+			_image->_surface->displayTrans(x,                                                       yyy, _middleLeft);
+			_image->_surface->displayTrans(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight);
+			yyy += tileWidth;
+		}
+
+		// top/bottom
+		int xxx = x + (_upLeft.right - _upLeft.left);
+		for (col = 0; col < nuColumns; col++) {
+			_image->_surface->displayTrans(xxx, y, _upMiddle);
+			_image->_surface->displayTrans(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle);
+			xxx += tileWidth;
+		}
+
+		// tiles
+		if (nuRows > 0 && nuColumns > 0) {
+			yyy = y + (_upMiddle.bottom - _upMiddle.top);
+			xxx = x + (_upLeft.right - _upLeft.left);
+			_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
+			_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
+		}
+
+		_rendererOSystem->endSpriteBatch(false);
+		_cache = _rendererOSystem->getAuxSurface();
+
+	} else {
+		_rendererOSystem->startSpriteBatch(true);
+		BaseSurfaceOSystem surfaceOSystem(_gameRef);
+
+		surfaceOSystem.putSurface(*_cache);
+		surfaceOSystem.displayTrans(x, y, _upLeft);
+		_rendererOSystem->endSpriteBatch(false);
 	}
-
-	// top/bottom
-	int xxx = x + (_upLeft.right - _upLeft.left);
-	for (col = 0; col < nuColumns; col++) {
-		_image->_surface->displayTrans(xxx, y, _upMiddle);
-		_image->_surface->displayTrans(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle);
-		xxx += tileWidth;
-	}
-
-	// tiles
-	if (nuRows > 0 && nuColumns > 0) {
-		yyy = y + (_upMiddle.bottom - _upMiddle.top);
-		xxx = x + (_upLeft.right - _upLeft.left);
-		_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
-		_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
-	}
-
-	_gameRef->_renderer->endSpriteBatch();
-
 	return STATUS_OK;
 }
 

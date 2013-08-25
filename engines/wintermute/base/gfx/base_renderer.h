@@ -157,10 +157,10 @@ public:
 	BaseObject *getObjectAt(int x, int y);
 	void deleteRectList();
 
-	virtual bool startSpriteBatch() {
+	virtual bool startSpriteBatch(bool swap = false) {
 		return STATUS_OK;
 	};
-	virtual bool endSpriteBatch() {
+	virtual bool endSpriteBatch(bool swap = false) {
 		return STATUS_OK;
 	};
 	bool pointInViewport(Point32 *P);

@@ -57,6 +57,7 @@ private:
 	Rect32 _downLeft;
 	Rect32 _downMiddle;
 	Rect32 _downRight;
+	Graphics::Surface *_cache;
 };
 
 } // End of namespace Wintermute
