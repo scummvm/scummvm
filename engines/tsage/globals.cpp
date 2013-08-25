@@ -574,7 +574,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_insetUp);
 	s.syncAsByte(_frameEdgeColor);
 
-	for (int i = 0; i < 508; i += 4)
+	for (i = 0; i < 508; i += 4)
 		s.syncAsByte(_scene1550JunkLocations[i + 2]);
 }
 
