@@ -472,7 +472,7 @@ class Scene1550 : public SceneExt {
 		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
-	class Hotspot1 : public NamedHotspot {
+	class WorkingShip : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -530,8 +530,8 @@ class Scene1550 : public SceneExt {
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	Hotspot1 _item1;
-	Hotspot1 _item2;
+	WorkingShip _shipHull;
+	WorkingShip _item2;
 	Hotspot3 _item3;
 	SceneActor _landingStrut;
 	SceneActor _actor2;

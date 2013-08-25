@@ -7518,19 +7518,16 @@ void Scene1550::UnkArea1550::process(Event &event) {
 
 	if (_areaActor._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
 		if (cursor == _cursorNum) {
-			warning("TODO: _cursorState = ???");
-			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
 		}
 	} else if (event.mousePos.y < 168) {
 		if (cursor != _cursorNum) {
 			_savedCursorNum = cursor;
-			warning("TODO: _cursorState = ???");
 			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
 		}
 		if (event.eventType == EVENT_BUTTON_DOWN) {
 			event.handled = true;
-			warning("TODO: _cursorState = ???");
-			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
 			remove();
 		}
 	}
@@ -7578,7 +7575,7 @@ void Scene1550::UnkArea1550::proc13(int resNum, int lookLineNum, int talkLineNum
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
-bool Scene1550::Hotspot1::startAction(CursorType action, Event &event) {
+bool Scene1550::WorkingShip::startAction(CursorType action, Event &event) {
 	return SceneHotspot::startAction(action, event);
 }
 
@@ -7768,16 +7765,19 @@ void Scene1550::synchronize(Serializer &s) {
 }
 
 void Scene1550::postInit(SceneObjectList *OwnerList) {
-	if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == 9) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == 11))
+	if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == 9) && 
+			(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == 11))
+		// Exiting the intact spaceship
 		loadScene(1234);
 	else
+		// Normal scene entry
 		loadScene(1550);
+	SceneExt::postInit();
 
 	scalePalette(65, 65, 65);
 	setZoomPercents(30, 75, 170, 100);
 	_field417 = 1550;
 	_field419 = 0;
-	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == -1)
 		R2_GLOBALS.setFlag(16);
@@ -7802,7 +7802,8 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
 
-	if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == 9) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == 11))
+	if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == 9) && 
+			(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == 11))
 		R2_GLOBALS._player.setPosition(Common::Point(157, 135));
 	else
 		R2_GLOBALS._player.setPosition(Common::Point(160, 100));
@@ -7826,6 +7827,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._sound1.play(105);
 		break;
 	case 1580:
+		// Leaving intact ship
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1580) {
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._player.animate(ANIM_MODE_NONE, NULL);
@@ -7852,7 +7854,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 
 	enterArea();
 
-	_item1.setDetails(16, 1550, 10, -1, -1);
+	_shipHull.setDetails(16, 1550, 10, -1, -1);
 	_item2.setDetails(24, 1550, 10, -1, -1);
 	_item3.setDetails(Rect(0, 0, 320, 200), 1550, 0, 1, -1, 1, NULL);
 
@@ -8796,14 +8798,14 @@ void Scene1550::enterArea() {
 
 	if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == 9) && 
 			(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == 11)) {
-		if (R2_GLOBALS._sceneManager._sceneNumber != 1234) {
+		if (_screenNumber != 1234) {
 			R2_GLOBALS._sceneManager._fadeMode = FADEMODE_IMMEDIATE;
 			loadScene(1234);
 			R2_GLOBALS._sceneManager._hasPalette = false;
 			_field414 = 0;
 		}
 	} else {
-		if (R2_GLOBALS._sceneManager._sceneNumber == 1234) {
+		if (_screenNumber == 1234) {
 			R2_GLOBALS._sceneManager._fadeMode = FADEMODE_IMMEDIATE;
 			loadScene(1550);
 			R2_GLOBALS._sceneManager._hasPalette = false;
@@ -13537,7 +13539,6 @@ void Scene1950::Area1::remove() {
 	_areaActor.remove();
 	SceneArea::remove();
 	R2_GLOBALS._insetUp--;
-	//
 
 	if (!R2_GLOBALS.getFlag(37))
 		R2_GLOBALS._sound2.play(278);
@@ -13557,7 +13558,7 @@ void Scene1950::Area1::remove() {
 }
 
 void Scene1950::Area1::process(Event &event) {
-// This is a copy of Scene1200::LaserPanel::process
+	// This is a copy of Scene1200::LaserPanel::process
 	if (_field20 != R2_GLOBALS._insetUp)
 		return;
 
@@ -13565,19 +13566,16 @@ void Scene1950::Area1::process(Event &event) {
 
 	if (_areaActor._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
 		if (cursor == _cursorNum) {
-			warning("TODO: _cursorState = ???");
-			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
 		}
 	} else if (event.mousePos.y < 168) {
 		if (cursor != _cursorNum) {
 			_savedCursorNum = cursor;
-			warning("TODO: _cursorState = ???");
 			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
 		}
 		if (event.eventType == EVENT_BUTTON_DOWN) {
 			event.handled = true;
-			warning("TODO: _cursorState = ???");
-			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
 			remove();
 		}
 	}
