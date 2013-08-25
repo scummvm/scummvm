@@ -903,9 +903,184 @@ int global_messageHandler2(ExCommand *cmd) {
 }
 
 int global_messageHandler3(ExCommand *cmd) {
-	warning("STUB: global_messageHandler3()");
+	result = 0;
 
-	return 0;
+	if (cmd->_messageKind == 17) {
+		switch (cmd->_messageNum) {
+		case 29:
+		case 30:
+		case 31:
+		case 32:
+		case 36:
+			if (g_fullpipe->_inputDisabled)
+				cmd->_messageKind = 0;
+			break;
+		default:
+			break;
+		}
+	}
+
+	switch (cmd->_messageKind) {
+	case 17:
+		switch (cmd->_messageNum) {
+		case 61:
+			return gameLoaderPreloadScene(cmd->_parentId, cmd->_keyCode);
+		case 62:
+			return gameLoaderGotoScene(cmd->_parentId, cmd->_keyCode);
+		case 64:
+			if (g_fullpipe->_currentScene && g_fullpipe->_msgObjectId2
+					&& (!(cmd->_keyCode & 4) || g_fullpipe->_msgObjectId2 != cmd->_field_14 || g_fullpipe->_msgId != cmd->_field_20)) {
+				ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_msgObjectId2, g_fullpipe->_msgId);
+				if (ani) {
+					ani->_flags &= 0xFF7F;
+					ani->_flags &= 0xFEFF;
+					ani->deleteFromGlobalMessageQueue();
+				}
+			}
+			g_fullpipe->_msgX = 0;
+			g_fullpipe->_msgY = 0;
+			g_fullpipe->_msgObjectId2 = 0;
+			g_fullpipe->_msgId = 0;
+			if (cmd->_keyCode & 1 || cmd->_keyCode & 2) {
+				g_fullpipe->_msgX = cmd->_x;
+				g_fullpipe->_msgY = cmd->_y;
+			}
+			if (cmd->_keyCode & 4) {
+				g_fullpipe->_msgObjectId2 = cmd->_field_14;
+				g_fullpipe->_msgId = cmd->_field_20;
+			}
+			return result;
+		case 29:
+			if (g_fullpipe->_gameLoader->interactionController->_flag24 && g_fullpipe->_currentScene) {
+				ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				ani2 = g_fullpipe->_currentScene->getStaticANIObject1ById(getGameLoaderFieldFA(), -1);
+				if (ani) {
+					if (g_fullpipe->_msgObjectId2 == ani->_id && g_fullpipe->_msgId == ani->_okeyCode) {
+						cmd->_messageKind = 0;
+						return result;
+					}
+					if (ani2->canInteractAny(ani, cmd->_keyCode)) {
+						ani2->handleObjectInteraction(ani, cmd->_keyCode);
+						return 1;
+					}
+				} else {
+					ani2 = g_fullpipe->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+					ani = g_fullpipe->_currentScene->getPictureObjectById(ani2, 0);
+					if (ani) {
+						if (g_fullpipe->_msgObjectId2 == ani->_id && g_fullpipe->_msgId == ani->_okeyCode) {
+							cmd->_messageKind = 0;
+							return result;
+						}
+						if (ani2->canInteractAny(ani, cmd->_keyCode)) {
+							if (!ani2 || ani->isIdle() && !(ani2->_flags & 0x80) && !(ani2->_flags & 0x100))
+								ani2->handleObjectInteraction(ani, cmd->_keyCode);
+							return 1;
+						}
+					}
+				}
+			}
+			if (*((_DWORD *)getCurrSceneSc2MotionController() + 2) && cmd->cmd.msg.keyCode <= 0) {
+				if (g_fullpipe->_msgX != cmd->cmd.msg.sceneClickX || g_fullpipe->_msgY != cmd->cmd.msg.sceneClickY) {
+					v13 = getGameLoaderFieldFA();
+					ani_ = Scene_getStaticANIObject1ById(g_fullpipe->_currentScene, (Objects)(unsigned __int16)v13, -1);
+					v15 = ani_;
+					if (!ani_
+						|| (LOBYTE(v16) = StaticANIObject_isIdle(ani_), v16)
+						&& (v17 = v15->GameObject.flags, !(v17 & 0x80))
+						&& !(v17 & 0x100)) {
+						v18 = cmd->cmd.msg.sceneClickY;
+						v19 = cmd->cmd.msg.sceneClickX;
+						v20 = getGameLoaderFieldFA();
+						result = startWalkTo(v20, -1, v19, v18, 0);
+						if (result) {
+							v21 = (ExCommand *)operator new(sizeof(ExCommand));
+							if (v21) {
+								v22 = getGameLoaderFieldFA();
+								v23 = ExCommand_ctor(v21, v22, 17, 64, 0, 0, 0, 1, 0, 0, 0);
+							} else {
+								v23 = 0;
+							}
+							v24 = v23->excFlags;
+							v23->msg.keyCode = 1;
+							v23->excFlags = v24 | 3;
+							v23->msg.x = cmd->cmd.msg.sceneClickX;
+							v23->msg.y = cmd->cmd.msg.sceneClickY;
+							ExCommand_postMessage(v23);
+						}
+					}
+				} elae {
+					cmd->cmd.msg.messageKind = 0;
+				}
+			}
+			return result;
+		default:
+			return result;
+		}
+	case 58:
+		input_setCursor(cmd->_keyCode);
+		return result;
+	case 59:
+		setInputDisabled(1);
+		return result;
+	case 60:
+		setInputDisabled(0);
+		return result;
+	case 56:
+		if (cmd->_field_2C) {
+			ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+			if (ani) {
+				getGameLoaderInventory()->addItem2(ani);
+				result = 1;
+			}
+		} else {
+			result = 1;
+			getGameLoaderInventory()->addItem(cmd->_parentId, 1);
+		}
+		getGameLoaderInventory()->rebuildItemRects();
+		return result;
+	case 57:
+		if (cmd->_field_2C) {
+			if (!cmd->_field_20) {
+				getGameLoaderInventory()->removeItem2(g_fullpipe->_currentScene, cmd->_parentId, cmd->_x, cmd->_y, cmd->_field_14);
+				getGameLoaderInventory()->rebuildItemRects();
+				return 1;
+			}
+			ani = g_fullpipe->_currentScene->getStaticANIObject1ById(getGameLoaderFieldFA(), -1);
+			if (ani) {
+				getGameLoaderInventory()->removeItem2(g_fullpipe->_currentScene, cmd->_parentId, ani->_ox + cmd->_x, ani->_oy + cmd->_y, ani->_priority + cmd->_field_14);
+				getGameLoaderInventory()->rebuildItemRects();
+				return 1;
+			}
+		} else {
+			getGameLoaderInventory()->removeItem(cmd->_parentId, 1);
+		}
+		getGameLoaderInventory()->rebuildItemRects();
+		return 1;
+	case 55:
+		if (g_fullpipe->_currentScene) {
+			if (cmd->_field_14)
+				ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_x, cmd->_y);
+			else
+				ani = g_fullpipe->_currentScene->getPictureObjectById(cmd->_x, cmd->_y);
+			g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode)->handleObjectInteraction(ani, cmd->_field_20);
+			result = 1;
+		}
+		return result;
+	case 51:
+		return startWalkTo(cmd->_parentId, cmd->_keyCode, cmd->_x, cmd->_y, cmd->_field_20);
+	case 52:
+		return sub_457F60(cmd->_parentId, cmd->_keyCode, cmd->_field_20);
+	case 53:
+		return sub_457FA0(cmd->_parentId, cmd->_keyCode);
+	case 63:
+		if (CObject::IsKindOf(cmd, &RTCObjstateCommand)) {
+			result = 1;
+			setObjectState((char *)&cmd->objCommandName->m_pchData, cmd->value);
+		}
+		return result;
+	default:
+		return result;
+	}
 }
 
 int global_messageHandler4(ExCommand *cmd) {
