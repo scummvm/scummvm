@@ -307,6 +307,7 @@ public:
 	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker
 	byte _scannerFrequencies[4];
 	byte _stripManager_lookupList[12];
+	byte _scene1550JunkLocations[508];
 	ScannerDialog *_scannerDialog;
 
 	Ringworld2Globals();

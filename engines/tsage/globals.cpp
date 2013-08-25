@@ -26,6 +26,7 @@
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/staticres.h"
 
 namespace TsAGE {
 
@@ -493,6 +494,10 @@ void Ringworld2Globals::reset() {
 	_stripManager_lookupList[10] = 1;
 	_stripManager_lookupList[11] = 1;
 
+	// Reset junk/component data in scene 1550
+	Common::copy(&scene1550JunkLocationsDefault[0], &scene1550JunkLocationsDefault[508],
+		&_scene1550JunkLocations[0]);
+
 	// Reset fields stored in the player class
 	_player._characterIndex = R2_QUINN;
 	_player._characterScene[1] = 100;
@@ -568,6 +573,9 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_insetUp);
 	s.syncAsByte(_frameEdgeColor);
+
+	for (int i = 0; i < 508; i += 4)
+		s.syncAsByte(_scene1550JunkLocations[i + 2]);
 }
 
 } // end of namespace Ringworld2

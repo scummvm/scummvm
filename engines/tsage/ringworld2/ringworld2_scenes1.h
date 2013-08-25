@@ -430,7 +430,7 @@ class Scene1550 : public SceneExt {
 	class Junk : public SceneActor {
 	public:
 		int _fieldA4;
-		int _fieldA6;
+		int _junkNumber;
 
 		Junk();
 		void synchronize(Serializer &s);
@@ -548,11 +548,11 @@ public:
 	Actor13 _actor13;
 	Junk _junk[8];
 	Wall _actor14;
-	Wall _northWall;
+	Wall _northWall;	// Is also reused for landing strip
 	Wall _actor16;
-	Wall _actor17;
+	Wall _westWall;		// Is also reused for left hand space
 	Wall _eastWall;
-	Wall _actor19;
+	Wall _southWall;
 	UnkObj15502 _arrUnkObj15502[8];
 	UnkArea1550 _unkArea1;
 	SequenceManager _sequenceManager1;

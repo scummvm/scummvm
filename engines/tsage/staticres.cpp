@@ -244,7 +244,7 @@ char const *const USE_INTERCEPTOR = "Do you want to use your interceptor card?";
 char const *const USE_DOUBLE_AGENT = "Do you want to use your double agent?";
 char const *const NEED_INSTRUCTIONS = "Do you want instructions?";
 char const *const WRONG_ANSWER_MSG = "Wrong respond value sent.";
-const byte k562CC[] = {
+const byte scene1550JunkLocationsDefault[] = {
 	20, 7,  41, 6,
 	3,  6,  42, 11,
 	10, 15, 43, 6,
@@ -409,7 +409,7 @@ const byte k5A76D[] = {
 	3, 3,  3, 7,  3, 7, 3,  3, 3, 3,
 	3, 3,  3, 3,  3, 3, 3,  3, 3
 };
-const byte k5A78A[] = {0,  8,  15,  16,  12,  7,  18,  17,  13,  6,  19,  20,  14,  5,   11,  10,  9};
+const byte scene1550JunkRegions[] = {0,  8,  15,  16,  12,  7,  18,  17,  13,  6,  19,  20,  14,  5,   11,  10,  9};
 const byte k5A79B[] = {
 	23, 3,  1,
 	23, 4,  1,

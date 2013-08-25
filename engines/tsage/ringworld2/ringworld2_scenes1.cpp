@@ -7015,7 +7015,7 @@ void Scene1500::signal() {
 		}
 		break;
 	case 24:
-		R2_GLOBALS._sceneManager.changeScene(300);
+		R2_GLOBALS._sceneManager.changeScene(1550);
 		break;
 	default:
 		break;
@@ -7181,14 +7181,14 @@ void Scene1530::dispatch() {
  *--------------------------------------------------------------------------*/
 
 Scene1550::Junk::Junk() {
-	_fieldA4 = _fieldA6 = 0;
+	_fieldA4 = _junkNumber = 0;
 }
 
 void Scene1550::Junk::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
 	s.syncAsSint16LE(_fieldA4);
-	s.syncAsSint16LE(_fieldA6);
+	s.syncAsSint16LE(_junkNumber);
 }
 
 bool Scene1550::Junk::startAction(CursorType action, Event &event) {
@@ -7944,36 +7944,41 @@ void Scene1550::signal() {
 		}
 		R2_GLOBALS._player.animate(ANIM_MODE_5, this);
 		break;
-	case 42:
+
+	case 42: {
 		_sceneMode = 43;
-		warning("TODO: unknown use of arrUnkObj15501[0]._fieldA6");
-		switch (_junk[0]._frame - 1) {
-		case 0:
+		int junkRegionIndex = R2_GLOBALS._scene1550JunkLocations[_junk[0]._junkNumber + 3];
+		R2_GLOBALS._walkRegions.disableRegion(scene1550JunkRegions[junkRegionIndex]);
+
+		switch (_junk[0]._frame) {
+		case 1:
 			R2_INVENTORY.setObjectScene(R2_JOYSTICK, R2_GLOBALS._player._characterIndex);
 			break;
-		case 1:
+		case 2:
 			R2_INVENTORY.setObjectScene(R2_FUEL_CELL, R2_GLOBALS._player._characterIndex);
 			break;
-		case 2:
+		case 3:
 			R2_INVENTORY.setObjectScene(R2_GUIDANCE_MODULE, R2_GLOBALS._player._characterIndex);
 			break;
-		case 3:
+		case 4:
 			R2_INVENTORY.setObjectScene(R2_RADAR_MECHANISM, R2_GLOBALS._player._characterIndex);
 			break;
-		case 4:
+		case 5:
 			R2_INVENTORY.setObjectScene(R2_BATTERY, R2_GLOBALS._player._characterIndex);
 			break;
-		case 5:
+		case 6:
 			R2_INVENTORY.setObjectScene(R2_DIAGNOSTICS_DISPLAY, R2_GLOBALS._player._characterIndex);
 			break;
 		default:
 			break;
 		}
+
 		_junk[0].remove();
 		R2_GLOBALS._player.animate(ANIM_MODE_6, this);
 		break;
+	}
 	case 43:
-		warning("TODO: unknown use of arrUnkObj15501[0]._fieldA6");
+		R2_GLOBALS._scene1550JunkLocations[_junk[0]._junkNumber + 2] = 0;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			R2_GLOBALS._player.setVisage(1500);
 		else {
@@ -8584,9 +8589,9 @@ void Scene1550::enterArea() {
 	tmpRect = R2_GLOBALS._v5589E;
 
 	_actor14.remove();
-	_actor17.remove();
+	_westWall.remove();
 	_northWall.remove();
-	_actor19.remove();
+	_southWall.remove();
 	_actor16.remove();
 	_eastWall.remove();
 
@@ -8870,7 +8875,7 @@ void Scene1550::enterArea() {
 		R2_GLOBALS._walkRegions.load(1561);
 		_field419 = 1561;
 		_actor14.subA4D14(2, 1);
-		_actor17.subA4D14(2, 2);
+		_westWall.subA4D14(2, 2);
 		_northWall.subA4D14(1, 3);
 		_actor16.subA4D14(2, 5);
 		break;
@@ -8890,31 +8895,31 @@ void Scene1550::enterArea() {
 	case 5:
 		R2_GLOBALS._walkRegions.load(1564);
 		_field419 = 1564;
-		_actor19.subA4D14(2, 4);
+		_southWall.subA4D14(2, 4);
 		break;
 	case 6:
 		R2_GLOBALS._walkRegions.load(1565);
 		_field419 = 1565;
 		_actor14.subA4D14(1, 1);
-		_actor17.subA4D14(1, 2);
+		_westWall.subA4D14(1, 2);
 		_northWall.subA4D14(3, 3);
 		break;
 	case 7:
 		R2_GLOBALS._walkRegions.load(1566);
 		_field419 = 1566;
 		_actor14.subA4D14(1, 1);
-		_actor17.subA4D14(1, 2);
+		_westWall.subA4D14(1, 2);
 		_northWall.subA4D14(2, 4);
 		break;
 	case 8:
 		R2_GLOBALS._walkRegions.load(1567);
 		_field419 = 1567;
-		_actor17.subA4D14(5, 2);
+		_westWall.subA4D14(5, 2);
 		break;
 	case 9:
 		R2_GLOBALS._walkRegions.load(1568);
 		_field419 = 1568;
-		_actor17.subA4D14(4, 2);
+		_westWall.subA4D14(4, 2);
 		break;
 	case 10:
 		R2_GLOBALS._walkRegions.load(1569);
@@ -8925,7 +8930,7 @@ void Scene1550::enterArea() {
 		R2_GLOBALS._walkRegions.load(1570);
 		_field419 = 1570;
 		_actor14.subA4D14(1, 1);
-		_actor17.subA4D14(1, 2);
+		_westWall.subA4D14(1, 2);
 		break;
 	case 12:
 		R2_GLOBALS._walkRegions.load(1571);
@@ -8937,32 +8942,33 @@ void Scene1550::enterArea() {
 		R2_GLOBALS._walkRegions.load(1572);
 		_field419 = 1572;
 		_actor14.subA4D14(1, 1);
-		_actor17.subA4D14(1, 2);
-		_actor19.subA4D14(1, 4);
+		_westWall.subA4D14(1, 2);
+		_southWall.subA4D14(1, 4);
 		break;
 	case 14:
 		R2_GLOBALS._walkRegions.load(1573);
 		_field419 = 1573;
-		_actor19.subA4D14(1, 4);
+		_southWall.subA4D14(1, 4);
 		_actor16.subA4D14(1, 5);
 		_eastWall.subA4D14(1, 6);
 		break;
 	case 15:
+		// South wall
 		R2_GLOBALS._walkRegions.load(1574);
 		_field419 = 1574;
-		_actor19.subA4D14(1, 4);
+		_southWall.subA4D14(1, 4);
 		break;
 	case 16:
 		R2_GLOBALS._walkRegions.load(1570);
 		_field419 = 1570;
 		_actor14.subA4D14(2, 1);
-		_actor17.subA4D14(2, 2);
+		_westWall.subA4D14(2, 2);
 		break;
 	case 17:
 		R2_GLOBALS._walkRegions.load(1570);
 		_field419 = 1570;
 		_actor14.subA4D14(2, 1);
-		_actor17.subA4D14(3, 2);
+		_westWall.subA4D14(3, 2);
 		break;
 	case 18:
 		R2_GLOBALS._walkRegions.load(1571);
@@ -8982,24 +8988,27 @@ void Scene1550::enterArea() {
 
 	int di = 0;
 	int tmpIdx = 0;
-	// Original game was checking "i < 129" but it was clearly a bug as it's out of bounds
 	for (int i = 0; i < 129 * 4; i += 4) {
-		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == k562CC[i]) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == k562CC[i + 1]) && (k562CC[i + 2] != 0)) {
-			tmpIdx = k562CC[i + 3];
+		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == R2_GLOBALS._scene1550JunkLocations[i]) && 
+				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == R2_GLOBALS._scene1550JunkLocations[i + 1]) && 
+				(R2_GLOBALS._scene1550JunkLocations[i + 2] != 0)) {
+			tmpIdx = R2_GLOBALS._scene1550JunkLocations[i + 3];
 			_junk[di].postInit();
 			_junk[di]._effect = 6;
 			_junk[di]._shade = 0;
 			_junk[di]._fieldA4 = tmpIdx;
-			_junk[di]._fieldA6 = i;
+			_junk[di]._junkNumber = i;
 			_junk[di].setDetails(1550, 62, -1, 63, 2, (SceneItem *) NULL);
-			if (k562CC[i + 2] == 41) {
+			if (R2_GLOBALS._scene1550JunkLocations[i + 2] == 41) {
 				_junk[di].changeZoom(-1);
 				_junk[di].setPosition(Common::Point(150, 70));
 				_junk[di].setup(1562, 1, 1);
+
 				R2_GLOBALS._walkRegions.enableRegion(k5A78C);
 				R2_GLOBALS._walkRegions.enableRegion(k5A78D);
 				R2_GLOBALS._walkRegions.enableRegion(k5A790);
 				R2_GLOBALS._walkRegions.enableRegion(k5A791);
+
 				if (R2_INVENTORY.getObjectScene(R2_JOYSTICK) == 1550) {
 					_actor9.postInit();
 					_actor9.setup(1562, 3, 1);
@@ -9008,16 +9017,16 @@ void Scene1550::enterArea() {
 					_actor9.setDetails(1550, 41, -1, 42, 2, (SceneItem *) NULL);
 				}
 			} else {
-				if (k562CC[i + 2] > 40) {
+				if (R2_GLOBALS._scene1550JunkLocations[i + 2] > 40) {
 					_junk[di].changeZoom(100);
-					_junk[di].setup(1561, 1, k562CC[i + 2] - 40);
+					_junk[di].setup(1561, 1, R2_GLOBALS._scene1550JunkLocations[i + 2] - 40);
 				} else {
 					_junk[di].changeZoom(-1);
-					_junk[di].setup(1552, ((k562CC[i + 2] - 1) / 5) + 1, ((k562CC[i + 2] - 1) % 5) + 1);
+					_junk[di].setup(1552, ((R2_GLOBALS._scene1550JunkLocations[i + 2] - 1) / 5) + 1, ((R2_GLOBALS._scene1550JunkLocations[i + 2] - 1) % 5) + 1);
 				}
 				_junk[di].setPosition(Common::Point(k5A72E[tmpIdx], k5A73F[tmpIdx]));
-				if (k5A78A[tmpIdx] != 0)
-					R2_GLOBALS._walkRegions.enableRegion(k5A78A[tmpIdx]);
+				if (scene1550JunkRegions[tmpIdx] != 0)
+					R2_GLOBALS._walkRegions.enableRegion(scene1550JunkRegions[tmpIdx]);
 				di++;
 			}
 		}
@@ -9076,7 +9085,7 @@ void Scene1550::enterArea() {
 
 				_actor4.setPosition(Common::Point(172, 48));
 				_actor4.fixPriority(169);
-				R2_GLOBALS._walkRegions.enableRegion(k5A78A[15]);
+				R2_GLOBALS._walkRegions.enableRegion(scene1550JunkRegions[15]);
 				break;
 			case 2:
 				_wreckage.postInit();
