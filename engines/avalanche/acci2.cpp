@@ -1364,8 +1364,8 @@ void Acci::do_that() {
 						if (thing == _vm->_gyro->badge) {
 							_vm->_visa->dixi('q', 32); /* Thanks! Wow! */
 							_vm->_lucerna->points(3);
-							_vm->_gyro->dna.obj[_vm->_gyro->badge] = false;
-							_vm->_gyro->dna.obj[_vm->_gyro->habit] = true;
+							_vm->_gyro->dna.obj[_vm->_gyro->badge - 1] = false;
+							_vm->_gyro->dna.obj[_vm->_gyro->habit - 1] = true;
 							_vm->_gyro->dna.givenbadgetoiby = true;
 							_vm->_celer->show_one(8);
 							_vm->_celer->show_one(9);
@@ -1375,9 +1375,9 @@ void Acci::do_that() {
 					case _vm->_gyro->payles:
 						if (_vm->_gyro->dna.ayles_is_awake) {
 							if (thing == _vm->_gyro->pen) {
-								_vm->_gyro->dna.obj[_vm->_gyro->pen] = false;
+								_vm->_gyro->dna.obj[_vm->_gyro->pen - 1] = false;
 								_vm->_visa->dixi('q', 54);
-								_vm->_gyro->dna.obj[_vm->_gyro->ink] = true;
+								_vm->_gyro->dna.obj[_vm->_gyro->ink - 1] = true;
 								_vm->_gyro->dna.given_pen_to_ayles = true;
 								_vm->_lucerna->objectlist();
 								_vm->_lucerna->points(2);
@@ -1389,7 +1389,7 @@ void Acci::do_that() {
 					case _vm->_gyro->pgeida:
 						switch (thing) {
 						case _vm->_gyro->potion:
-							_vm->_gyro->dna.obj[_vm->_gyro->potion] = false;
+							_vm->_gyro->dna.obj[_vm->_gyro->potion - 1] = false;
 							_vm->_visa->dixi('u', 16); /* She drinks it. */
 							_vm->_lucerna->points(2);
 							_vm->_gyro->dna.geida_given_potion = true;
@@ -1674,7 +1674,7 @@ void Acci::do_that() {
 						_vm->_lucerna->points(3);
 
 					_vm->_celer->show_one(12);
-					_vm->_scrolls->display(booze[thing] + ", please." + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
+					_vm->_scrolls->display(booze[thing - 51] + ", please." + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
 					_vm->_gyro->dna.drinking = thing;
 
 					_vm->_celer->show_one(10);
@@ -1685,7 +1685,7 @@ void Acci::do_that() {
 					examine();
 					break; // We have a right one here - buy Pepsi??!
 				case _vm->_gyro->wine:
-					if (_vm->_gyro->dna.obj[_vm->_gyro->wine])  // We've already got the wine!
+					if (_vm->_gyro->dna.obj[_vm->_gyro->wine - 1])  // We've already got the wine!
 						_vm->_visa->dixi('D', 2); // 1 bottle's shufishent!
 					else {
 						if (_vm->_gyro->dna.malagauche == 177) { // Already getting us one.
@@ -1751,7 +1751,7 @@ void Acci::do_that() {
 		if ((_vm->_gyro->dna.room == r__brummieroad) &&
 				((person == 157) || (thing == _vm->_gyro->crossbow) || (thing == _vm->_gyro->bolt))
 				&& (_vm->_gyro->whereis[7] == _vm->_gyro->dna.room)) {
-			switch (_vm->_gyro->dna.obj[_vm->_gyro->bolt] + _vm->_gyro->dna.obj[_vm->_gyro->crossbow] * 2) {
+			switch (_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] + _vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] * 2) {
 				// 0 = neither, 1 = only bolt, 2 = only crossbow, 3 = both.
 			case 0:
 				_vm->_visa->dixi('Q', 10);
@@ -1788,10 +1788,10 @@ void Acci::do_that() {
 		else {
 			ok = true;
 			for (ff = 0; ff < thats.size(); ff++) {
-				for (fv = 0; fv < words[_vm->_gyro->dna.pass_num + first_password].w.size(); fv++) {
+				for (fv = 0; fv < words[_vm->_gyro->dna.pass_num + first_password - 1].w.size(); fv++) {
 					Common::String temp = realwords[ff];
 					temp.toUppercase();
-					if (words[_vm->_gyro->dna.pass_num + first_password].w[fv] != temp[fv])
+					if (words[_vm->_gyro->dna.pass_num + first_password - 1].w[fv] != temp[fv])
 						ok = false;
 				}
 			}

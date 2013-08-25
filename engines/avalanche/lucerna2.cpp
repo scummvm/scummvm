@@ -766,6 +766,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	_vm->_gyro->seescroll = false; /* Now it can work again! */
 
+	if (_vm->_gyro->isLoaded)
+		_vm->_gyro->isLoaded = false;
 }
 
 void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! */
