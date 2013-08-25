@@ -468,21 +468,21 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 						outg = ((o_pix >> gShiftTarget) & 0xff) * (255 - a);
 						outr = ((o_pix >> rShiftTarget) & 0xff) * (255 - a);
 						if (cb == 0)
-							outb = 0;
+							outb = outb >> 8;
 						else if (cb != 255)
-							outb = ((outb + b * a) * cb) >> 16;
+							outb = ((outb<<8) + b * a * cb) >> 16;
 						else
 							outb = (outb + b * a) >> 8;
 						if (cg == 0)
-							outg = 0;
+							outg = outg >> 8;
 						else if (cg != 255)
-							outg = ((outg + g * a) * cg) >> 16;
+							outg = ((outg<<8) + g * a * cg) >> 16;
 						else
 							outg = (outg + g * a) >> 8;
 						if (cr == 0)
-							outr = 0;
+							outr = outr >> 8;
 						else if (cr != 255)
-							outr = ((outr + r * a) * cr) >> 16;
+							outr = ((outr<<8) + r * a * cr) >> 16;
 						else
 							outr = (outr + r * a) >> 8;
 						out[aIndex] = outa;
