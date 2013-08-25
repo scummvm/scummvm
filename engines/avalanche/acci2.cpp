@@ -655,7 +655,27 @@ bool Acci::personshere() { // Person equivalent of "holding".
 }
 
 void Acci::exampers() {
-	warning("STUB: Acci::exampers()");
+	if (personshere()) {
+		if (thing != _vm->_gyro->thinks)
+			_vm->_lucerna->thinkabout(person, _vm->_gyro->a_person);
+		person -= 149;
+		switch (person) { /* Special cases */
+		case 11:
+			if (_vm->_gyro->dna.wonnim)
+				_vm->_visa->dixi('Q', 8); // "I'm Not Playing!"
+			return;
+		case 99:
+			if (_vm->_gyro->dna.lustie_is_asleep)
+				_vm->_visa->dixi('Q', 65); // He's asleep. (65! Wow!)
+			return;
+		}
+		// Otherwise...
+		_vm->_visa->dixi('p', person);
+	} 
+	
+	// And afterwards...
+	if ((person == 14) && (!_vm->_gyro->dna.ayles_is_awake))
+		_vm->_visa->dixi('Q', 13);
 }
 
 bool Acci::holding() {
