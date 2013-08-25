@@ -69,6 +69,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	}
 
 	_swapped = false;
+	_auxSurface = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -687,11 +688,12 @@ void BaseRenderOSystem::endSaveLoad() {
 	g_system->updateScreen();
 }
 
-bool BaseRenderOSystem::startSpriteBatch(bool swap) {
+bool BaseRenderOSystem::startSpriteBatch(bool swap, int width, int height) {
 	if (swap) {
 		_swapped = true;
 		_auxSurface = _renderSurface;
 		_renderSurface = new Graphics::Surface();
+		_renderSurface->create(width, height, _auxSurface->format);
 	}
 	_spriteBatch = true;
 	_batchNum = 1;
@@ -711,11 +713,14 @@ bool BaseRenderOSystem::endSpriteBatch(bool swap) {
 	return STATUS_OK;
 }
 
-Graphics::Surface *BaseRenderOSystem::getAuxSurface() {
-	return _auxSurface;
+BaseSurface *BaseRenderOSystem::getAuxSurface() {
+	assert(_auxSurface != nullptr);
+	BaseSurfaceOSystem *surface = new BaseSurfaceOSystem(_gameRef);
+	surface->putSurface(*_auxSurface);
+	return surface;
 }
-void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){
+/*void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){
 	_auxSurface = auxSurface;
 }
-
+*/
 } // End of namespace Wintermute

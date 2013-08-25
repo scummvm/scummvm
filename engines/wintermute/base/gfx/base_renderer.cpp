@@ -35,6 +35,9 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
+
+#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
@@ -400,5 +403,11 @@ bool BaseRenderer::displayIndicator() {
 	}
 	return STATUS_OK;
 }
+
+/*void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){
+	_auxSurface = auxSurface;
+}
+*/
+
 
 } // End of namespace Wintermute

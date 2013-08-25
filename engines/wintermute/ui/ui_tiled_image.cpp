@@ -47,7 +47,8 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = nullptr;
 	_cache = nullptr;
-
+	_width = 0;
+	_height = 0;
 	BasePlatform::setRectEmpty(&_upLeft);
 	BasePlatform::setRectEmpty(&_upMiddle);
 	BasePlatform::setRectEmpty(&_upRight);
@@ -79,13 +80,17 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	int nuColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
 	int nuRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	BaseRenderOSystem *_rendererOSystem = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-
 	int col, row;
 
-	if (_cache == nullptr) {
-		_rendererOSystem->startSpriteBatch(true);
+	assert (width != 0);
+	assert (height != 0);
 
+	if (_cache == nullptr || width != _width || height != _height) {
+		_gameRef->_renderer->startSpriteBatch(true, width, height);
+		int x = 0; 
+		int y = 0;
+		_width = width;
+		_height = height;
 		// top left/right
 		_image->_surface->displayTrans(x,                                                       y, _upLeft);
 		_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
@@ -118,17 +123,19 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 			_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
 		}
 
-		_rendererOSystem->endSpriteBatch(false);
-		_cache = _rendererOSystem->getAuxSurface();
+		_gameRef->_renderer->endSpriteBatch(false);
+	
+		_cache = _gameRef->_renderer->getAuxSurface();
 
-	} else {
-		_rendererOSystem->startSpriteBatch(true);
-		BaseSurfaceOSystem surfaceOSystem(_gameRef);
-
-		surfaceOSystem.putSurface(*_cache);
-		surfaceOSystem.displayTrans(x, y, _upLeft);
-		_rendererOSystem->endSpriteBatch(false);
 	}
+
+	Rect32 dst;
+	dst.top = 0;
+	dst.left = 0;
+	dst.setWidth(width);
+	dst.setHeight(height);
+	_cache->displayTrans(x, y, dst);
+	
 	return STATUS_OK;
 }
 
