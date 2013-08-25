@@ -278,9 +278,9 @@ void Lucerna::zoomout(int16 x, int16 y) {
 }
 
 void Lucerna::find_people(byte room) {
-	for (byte fv = 1; fv < 29; fv++) // There'll may be problems with this.
+	for (byte fv = 1; fv < 29; fv++)
 		if (_vm->_gyro->whereis[fv] == room) {
-			if (fv < 25) // And this. See definition of whereis[].
+			if (fv < 25)
 				_vm->_gyro->him = fv + 150;
 			else
 				_vm->_gyro->her = fv + 150;
@@ -326,7 +326,7 @@ void Lucerna::new_town() {   /* You've just entered a town from the map. */
 
 	switch (_vm->_gyro->dna.room) {
 	case r__outsidenottspub: /* Entry into Nottingham. */
-		if ((_vm->_gyro->dna.rooms[r__robins] > 0) && (_vm->_gyro->dna.been_tied_up) && (! _vm->_gyro->dna.taken_mushroom))
+		if ((_vm->_gyro->dna.rooms[r__robins] > 0) && (_vm->_gyro->dna.been_tied_up) && (!_vm->_gyro->dna.taken_mushroom))
 			_vm->_gyro->dna.mushroom_growing = true;
 		break;
 	case r__wisewomans: { /* Entry into Argent. */
@@ -337,7 +337,8 @@ void Lucerna::new_town() {   /* You've just entered a town from the map. */
 			_vm->_gyro->dna.spludwicks_here = true;
 			_vm->_gyro->dna.crapulus_will_tell = false;
 		}
-		if (_vm->_gyro->dna.box_contents == _vm->_gyro->wine)  _vm->_gyro->dna.winestate = 3; /* Vinegar */
+		if (_vm->_gyro->dna.box_contents == _vm->_gyro->wine)
+			_vm->_gyro->dna.winestate = 3; /* Vinegar */
 	}
 	break;
 	}
@@ -1297,14 +1298,11 @@ void Lucerna::gameover() {
 	sy = _vm->_trip->tr[0].y;
 	
 	_vm->_trip->tr[0].done();
-	_vm->_trip->tr[0].init(12, true, _vm->_trip);       /* 12 = Avalot falls */
+	_vm->_trip->tr[0].init(12, true, _vm->_trip); // 12 = Avalot falls
 	_vm->_trip->tr[0].step = 0;
 	_vm->_trip->tr[0].appear(sx, sy, 0);
 	
 	_vm->_timeout->set_up_timer(3, _vm->_timeout->procavalot_falls, _vm->_timeout->reason_falling_over);
-
-	/* _vm->_scrolls->display(^m^m^m^m^m^m^i^i^i^i^i^i^s'Z'^v);*/
-	warning("STUB: Timeout::avalot_falls()");
 
 	_vm->_gyro->alive = false;
 }

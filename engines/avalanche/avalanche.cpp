@@ -352,7 +352,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 }
 
 bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
-	return (!_gyro->seescroll);
+	return (!_gyro->seescroll && _gyro->alive);
 }
 
 Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {

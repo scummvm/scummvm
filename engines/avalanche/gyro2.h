@@ -343,9 +343,9 @@ public:
 	static const uint16 pjacques = 166;
 
 	/* Girls: */
-	static const uint16 parkata = 257;
-	static const uint16 pgeida = 260;
-	static const uint16 pwisewoman = 262;
+	static const uint16 parkata = 175;
+	static const uint16 pgeida = 176;
+	static const uint16 pwisewoman = 178;
 
 	static const int16 xw = 30;
 	static const int16 yw = 36; /* x width & y whatsit */
