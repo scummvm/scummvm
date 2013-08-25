@@ -486,7 +486,7 @@ void UIElements::updateInventory(int objectNumber) {
 	// Handle changing the page, if necessary, to ensure an optionally supplied
 	// object number will be on-screen
 	if (objectNumber != 0) {
-		for (int idx = 0; idx < _itemList.size(); ++idx) {
+		for (uint idx = 0; idx < _itemList.size(); ++idx) {
 			if (_itemList[idx] == objectNumber) {
 				_slotStart = idx / 4;
 				break;
