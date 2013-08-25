@@ -2423,7 +2423,7 @@ void ScannerDialog::remove() {
 	switch (R2_GLOBALS._sceneManager._sceneNumber) {
 	case 1550:
 	case 1700:
-		R2_GLOBALS._events.setCursor(R2_GLOBALS._player._canWalk ? CURSOR_ARROW : CURSOR_USE);
+		R2_GLOBALS._events.setCursor(R2_GLOBALS._player._canWalk ? CURSOR_WALK : CURSOR_USE);
 		break;
 	case 3800:
 	case 3900: {
