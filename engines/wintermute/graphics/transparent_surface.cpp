@@ -299,14 +299,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	int cg = (color >> 8) & 0xff;
 	int cb = (color >> 0) & 0xff;
 
-	// Compensate for transparency. Since we're coming
-	// down to 255 alpha, we just compensate for the colors here
-	if (ca != 255) {
-		cr = cr * ca >> 8;
-		cg = cg * ca >> 8;
-		cb = cb * ca >> 8;
-	}
-
 	// Create an encapsulating surface for the data
 	TransparentSurface srcImage(*this, false);
 	// TODO: Is the data really in the screen format?
@@ -443,7 +435,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 					if (ca != 255) {
 						a = a * ca >> 8;
 					}
-
 					switch (a) {
 					case 0: // Full transparency
 						out += 4;
@@ -473,27 +464,27 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 					default: // alpha blending
 						outa = 255;
-						outb = (o_pix >> bShiftTarget) & 0xff;
-						outg = (o_pix >> gShiftTarget) & 0xff;
-						outr = (o_pix >> rShiftTarget) & 0xff;
+						outb = ((o_pix >> bShiftTarget) & 0xff) * (255 - a);
+						outg = ((o_pix >> gShiftTarget) & 0xff) * (255 - a);
+						outr = ((o_pix >> rShiftTarget) & 0xff) * (255 - a);
 						if (cb == 0)
 							outb = 0;
 						else if (cb != 255)
-							outb += ((b - outb) * a * cb) >> 16;
+							outb = ((outb + b * a) * cb) >> 16;
 						else
-							outb += ((b - outb) * a) >> 8;
+							outb = (outb + b * a) >> 8;
 						if (cg == 0)
 							outg = 0;
 						else if (cg != 255)
-							outg += ((g - outg) * a * cg) >> 16;
+							outg = ((outg + g * a) * cg) >> 16;
 						else
-							outg += ((g - outg) * a) >> 8;
+							outg = (outg + g * a) >> 8;
 						if (cr == 0)
 							outr = 0;
 						else if (cr != 255)
-							outr += ((r - outr) * a * cr) >> 16;
+							outr = ((outr + r * a) * cr) >> 16;
 						else
-							outr += ((r - outr) * a) >> 8;
+							outr = (outr + r * a) >> 8;
 						out[aIndex] = outa;
 						out[bIndex] = outb;
 						out[gIndex] = outg;
