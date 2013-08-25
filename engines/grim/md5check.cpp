@@ -216,6 +216,14 @@ const char *emi_local[] = {
 const char *emi_patch[] = {
 	"067100a100b3ca9283b796480aa39b52", // english patched
 };
+const char *emi_update[] = {
+	"7c7dbd2349d49e382a2dea40bed448e0", // english
+	"dc1376baf7c8be28854a6fa620ad2278", // german
+	"12c5db7d07d198d1506ab8b141dd594d", // spanish
+	"cc5ff3bb8f78a0eb4b8e0feb9cdd2e87", // french
+	"943ad57c2873b5eb9928e6b04a5b48d4", // italian
+	"6d2516abcdce4266ad3ae873040258ab", // portuguese
+};
 const char *emi_sfx[] = {
 	"a5d2ded26255518b82030466c2368168", // english patched
 };
@@ -399,13 +407,16 @@ void MD5Check::init() {
 			MD5SUM("artMon.m4b", emi_artMon)
 			MD5SUM("lip.m4b", emi_lip)
 			MD5SUM("local.m4b", emi_local)
-			MD5SUM("patch.m4b", emi_patch)
 			MD5SUM("sfx.m4b", emi_sfx)
 			MD5SUM("voiceAll.m4b", emi_voiceAll)
 			MD5SUM("voiceJam.m4b", emi_voiceJam)
 			MD5SUM("voiceLuc.m4b", emi_voiceLuc)
 			MD5SUM("voiceMel.m4b", emi_voiceMel)
 			MD5SUM("voiceMon.m4b", emi_voiceMon)
+
+			const char *updateFilename = g_grim->getUpdateFilename();
+			if (updateFilename)
+				MD5SUM(updateFilename, emi_update)
 		}
 	}
 
