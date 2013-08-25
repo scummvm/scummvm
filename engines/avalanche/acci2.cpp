@@ -238,7 +238,12 @@ byte Acci::wordnum(Common::String x) {
 		return 0;
 	
 	for (int32 fv = nowords - 1; fv >= 0; fv--) 
-		if ((words[fv].w == x) || (Common::String(words[fv].w.c_str(), x.size()) == x))
+		if (words[fv].w == x)
+			return words[fv].n;
+
+	// If not found as a whole, we look for it as a substring.
+	for (int32 fv = nowords - 1; fv >= 0; fv--) 
+		if (Common::String(words[fv].w.c_str(), x.size()) == x)
 			return words[fv].n;
 
 	return pardon;
@@ -561,7 +566,7 @@ void Acci::parse() {
 		fv++;
 	}
 
-	if (_vm->_gyro->subjnumber == 0) // Still not found.
+	if ((_vm->_gyro->subjnumber == 0) && !thats.empty()) // Still not found.
 		for (fv = 0; fv < thats.size() - 1; fv++)
 			if ((byte)thats[fv] == 252) { // The word is "about", or something similar.
 				_vm->_gyro->subjnumber = (byte)thats[fv + 1];
@@ -569,7 +574,7 @@ void Acci::parse() {
 				break;
 			}
 
-	if (_vm->_gyro->subjnumber == 0) // STILL not found! Must be the word after "say".
+	if ((_vm->_gyro->subjnumber == 0) && !thats.empty())// STILL not found! Must be the word after "say".
 		for (fv = 0; fv < thats.size() - 1; fv++)
 			if (((byte)thats[fv] == 7) && ((byte)thats[fv + 1] != 0) && !((225 <= (byte)thats[fv + 1]) && ((byte)thats[fv + 1] <= 229))) {
 				// SAY not followed by a preposition
