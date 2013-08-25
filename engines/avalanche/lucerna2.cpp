@@ -1332,25 +1332,19 @@ void Lucerna::major_redraw() {
 }
 
 uint16 Lucerna::bearing(byte whichped) {
-/* Returns the bearing from ped Whichped to Avvy, in degrees. */
-	const double rad2deg = 180 / 3.14/*Pi*/;
+	whichped--; // Different array indexes in Pascal and C.
 
-	uint16 bearing_result; 
-	{
-		pedtype &with = _vm->_gyro->peds[whichped];
-		if (_vm->_trip->tr[0].x == with.x)
-			bearing_result = 0; /* This would cause a division by zero if we let it through. */
-		else {
-			/*
-			 bearing:=trunc(((arctan((_vm->_trip->tr[1].y-y)/(_vm->_trip->tr[1].x-x)))*rad2deg)+90) mod 360*/
+	const double rad2deg = 180 / 3.14 /*Pi*/;
 		
-			if (_vm->_trip->tr[0].x < with.x)
-				bearing_result = (atan(double((_vm->_trip->tr[0].y - with.y)) / (_vm->_trip->tr[0].x - with.x)) * rad2deg) + 90;
-			else
-				bearing_result = (atan(double((_vm->_trip->tr[0].y - with.y)) / (_vm->_trip->tr[0].x - with.x)) * rad2deg) + 270;
-		}
-	}
-	return bearing_result;
+	if (_vm->_trip->tr[0].x == _vm->_gyro->peds[whichped].x)
+		return 0;
+	else 
+		if (_vm->_trip->tr[0].x < _vm->_gyro->peds[whichped].x)
+			return (atan(double((_vm->_trip->tr[0].y - _vm->_gyro->peds[whichped].y))
+					/ (_vm->_trip->tr[0].x - _vm->_gyro->peds[whichped].x)) * rad2deg) + 90;
+		else
+			return (atan(double((_vm->_trip->tr[0].y - _vm->_gyro->peds[whichped].y))
+					/ (_vm->_trip->tr[0].x - _vm->_gyro->peds[whichped].x)) * rad2deg) + 270;
 }
 
 void Lucerna::sprite_run() {
