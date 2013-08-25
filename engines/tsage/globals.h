@@ -242,11 +242,6 @@ namespace Ringworld2 {
 #define SPEECH_TEXT 1
 #define SPEECH_VOICE 2
 
-#define k5A78C 15
-#define k5A78D 16
-#define k5A790 18
-#define k5A791 17
-
 class ScannerDialog;
 
 class Ringworld2Globals: public TsAGE2Globals {

@@ -8990,7 +8990,7 @@ void Scene1550::enterArea() {
 
 	int di = 0;
 	int tmpIdx = 0;
-	for (int i = 0; i < 129 * 4; i += 4) {
+	for (int i = 0; i < 127 * 4; i += 4) {
 		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == R2_GLOBALS._scene1550JunkLocations[i]) && 
 				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == R2_GLOBALS._scene1550JunkLocations[i + 1]) && 
 				(R2_GLOBALS._scene1550JunkLocations[i + 2] != 0)) {
@@ -9006,10 +9006,10 @@ void Scene1550::enterArea() {
 				_junk[di].setPosition(Common::Point(150, 70));
 				_junk[di].setup(1562, 1, 1);
 
-				R2_GLOBALS._walkRegions.enableRegion(k5A78C);
-				R2_GLOBALS._walkRegions.enableRegion(k5A78D);
-				R2_GLOBALS._walkRegions.enableRegion(k5A790);
-				R2_GLOBALS._walkRegions.enableRegion(k5A791);
+				R2_GLOBALS._walkRegions.enableRegion(scene1550JunkRegions[2]);
+				R2_GLOBALS._walkRegions.enableRegion(scene1550JunkRegions[3]);
+				R2_GLOBALS._walkRegions.enableRegion(scene1550JunkRegions[6]);
+				R2_GLOBALS._walkRegions.enableRegion(scene1550JunkRegions[7]);
 
 				if (R2_INVENTORY.getObjectScene(R2_JOYSTICK) == 1550) {
 					_actor9.postInit();
