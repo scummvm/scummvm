@@ -100,7 +100,7 @@ public:
 
 	void major_redraw();
 
-	uint16 bearing(byte whichped);
+	uint16 bearing(byte whichped); // Returns the bearing from ped Whichped to Avvy, in degrees.
 
 	void flesh_colours();
 
