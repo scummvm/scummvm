@@ -394,8 +394,13 @@ void Gyro::force_numlock() {
 }
 
 bool Gyro::pennycheck(uint16 howmuchby) {
-	warning("STUB: Gyro::pennycheck()");
-	return true;
+	dna.pence -= howmuchby;
+	if (dna.pence < 0) {
+		_vm->_visa->dixi('Q', 2); // "You are now denariusless!"
+		_vm->_lucerna->gameover();
+		return false;
+	} else
+		return true;
 }
 
 // There'll may be problems with calling these functions becouse of the conversion of the arrays!!!
@@ -472,7 +477,7 @@ Common::String Gyro::get_better(byte which) {
 		case 0:
 		case 1:
 		case 4:
-			get_better_result = better[which];
+			get_better_result = better[which - 1];
 			break;
 		case 3:
 			get_better_result = "some vinegar";
@@ -485,11 +490,11 @@ Common::String Gyro::get_better(byte which) {
 		else if (dna.onion_in_vinegar)
 			get_better_result = "a pickled onion (in the vinegar)";
 		else
-			get_better_result = better[which];
+			get_better_result = better[which - 1];
 		break;
 	default:
 		if ((which < numobjs) && (which > 0))
-			get_better_result = better[which];
+			get_better_result = better[which - 1];
 		else
 			get_better_result = "";
 	}
@@ -583,9 +588,7 @@ void Gyro::background(byte x) {
 }
 
 void Gyro::hang_around_for_a_while() {
-	byte fv;
-
-	for (fv = 1; fv <= 28; fv++)
+	for (byte i = 0; i < 28; i++)
 		slowdown();
 }
 
