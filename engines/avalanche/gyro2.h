@@ -500,7 +500,7 @@ public:
 	bool lmo, mousemade;
 	Common::String scroll[15];
 	byte scrolln, score, whichwas;
-	char thinks;
+	byte thinks;
 	bool thinkthing;
 
 	/* pp:array[1..1000] of postype;

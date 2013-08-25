@@ -195,12 +195,8 @@ void Avalot::setup() {
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {		
 		_vm->loadGame(loadSlot);
-	} else
+	} else {
 		_vm->_gyro->isLoaded = false; // Set to true in _vm->loadGame().
-
-
-
-	if (!_vm->_gyro->isLoaded) {
 		_vm->_gyro->newgame(); // No game was requested- load the default.
 
 		_vm->_gyro->soundfx = ! _vm->_gyro->soundfx;
