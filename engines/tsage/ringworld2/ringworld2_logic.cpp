@@ -972,7 +972,8 @@ void Ringworld2InvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
 
 	// Update the user interface if necessary
-	T2_GLOBALS._uiElements.updateInventory();
+	T2_GLOBALS._uiElements.updateInventory(
+		(sceneNumber == R2_GLOBALS._player._characterIndex) ? objectNum : 0);
 }
 
 /**
