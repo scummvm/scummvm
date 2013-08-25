@@ -594,17 +594,17 @@ protected:
 		virtual Audio::Timestamp getDuration() const;
 		Audio::Timestamp getFrameTime(uint frame) const;
 
-	protected:
-		/**
-		 * Get the rate at which this track is played.
-		 */
-		virtual Common::Rational getFrameRate() const = 0;
-
 		/**
 		 * Get the frame that should be displaying at the given time. This is
 		 * helpful for someone implementing seek().
 		 */
 		uint getFrameAtTime(const Audio::Timestamp &time) const;
+
+	protected:
+		/**
+		 * Get the rate at which this track is played.
+		 */
+		virtual Common::Rational getFrameRate() const = 0;
 	};
 
 	/**
