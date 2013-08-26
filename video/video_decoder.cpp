@@ -363,12 +363,12 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 }
 
 bool VideoDecoder::seekToFrame(uint frame) {
+	if (!isSeekable())
+		return false;
+
 	VideoTrack *track = 0;
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-		if (!(*it)->isSeekable())
-			return false;
-
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo) {
 			// We only allow seeking by frame when one video track
 			// is present
