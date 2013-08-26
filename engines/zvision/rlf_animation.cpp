@@ -155,7 +155,7 @@ RlfAnimation::Frame RlfAnimation::readNextFrame() {
 
 const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 	assert(!_stream);
-	assert(frameNumber < _frameCount && frameNumber >= 0);
+	assert(frameNumber < _frameCount);
 
 	// Since this method is so expensive, first check to see if we can use
 	// getNextFrame() or getPreviousFrame() since they are cheap.
@@ -167,7 +167,7 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 		return getPreviousFrame();
 	}
 
-	uint closestFrame = _currentFrame;
+	int closestFrame = _currentFrame;
 	int distance = ABS(_currentFrame - (int)frameNumber);
 	for (Common::List<uint>::const_iterator iter = _completeFrames.begin(); iter != _completeFrames.end(); iter++) {
 		int newDistance = ABS((int)(*iter) - (int)frameNumber);
@@ -177,7 +177,7 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 		}
 	}
 
-	bool forwards = frameNumber > closestFrame;
+	bool forwards = (int)frameNumber > closestFrame;
 	if (forwards) {
 		for (uint i = closestFrame; i <= frameNumber; i++) {
 			applyFrameToCurrent(i);
