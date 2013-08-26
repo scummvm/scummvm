@@ -40,11 +40,11 @@ public:
 	Control() : _engine(0), _key(0), _enabled(false) {}
 	Control(ZVision *engine, uint32 key) : _engine(engine), _key(key), _enabled(false) {}
 	virtual ~Control() {}
-	virtual bool enable() = 0;
-	virtual bool disable() = 0;
 
 	uint32 getKey() { return _key; }
 
+	virtual void enable();
+	virtual void disable();
 	/**
 	 * Called when LeftMouse is pushed. Default is NOP.
 	 *
