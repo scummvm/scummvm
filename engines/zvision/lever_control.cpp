@@ -108,7 +108,13 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 		} else if (line.matchString("*skipcolor*", true)) {
 			// Not used
 		} else if (line.matchString("*anim_coords*", true)) {
-			sscanf(line.c_str(), "%*[^:]:%u %u %u %u~", &_animationCoords.left, &_animationCoords.top, &_animationCoords.right, &_animationCoords.bottom);
+			int left, top, right, bottom;
+			sscanf(line.c_str(), "%*[^:]:%d %d %d %d~", &left, &top, &right, &bottom);
+
+			_animationCoords.left = left;
+			_animationCoords.top = top;
+			_animationCoords.right = right;
+			_animationCoords.bottom = bottom;
 		} else if (line.matchString("*mirrored*", true)) {
 			uint mirrored;
 			sscanf(line.c_str(), "%*[^:]:%u~", &mirrored);
