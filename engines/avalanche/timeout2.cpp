@@ -293,15 +293,15 @@ void Timeout::stairs() {
 }
 
 void Timeout::cardiff_survey() {
-	switch (_vm->_gyro->dna.cardiff_things) {
-	case 0:
-		_vm->_gyro->dna.cardiff_things += 1;
+	if (_vm->_gyro->dna.cardiff_things == 0) {
+		_vm->_gyro->dna.cardiff_things++;
 		_vm->_visa->dixi('q', 27);
-		break;
 	}
+
 	_vm->_visa->dixi('z', _vm->_gyro->dna.cardiff_things);
 
 	_vm->_gyro->interrogation = _vm->_gyro->dna.cardiff_things;
+
 	set_up_timer(182, proccardiffsurvey, reason_cardiffsurvey);
 }
 

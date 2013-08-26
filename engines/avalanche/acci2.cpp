@@ -389,29 +389,85 @@ bool Acci::do_pronouns() {
 	return ambiguous;
 }
 
-void Acci::lowercase() {
-	byte fv;
 
-	warning("STUB: Acci::lowercase()");
+
+void Acci::lowercase() {
+	_vm->_parser->_inputText.toLowercase();
 }
 
 void Acci::propernouns() {
-	byte fv;
-
 	lowercase();
-	warning("STUB: Acci::propernouns()");
+
+	// We set every word's first character to uppercase.
+	for (byte i = 1; i < (_vm->_parser->_inputText.size() - 1); i++)
+		if (_vm->_parser->_inputText[i] == ' ')
+			_vm->_parser->_inputText.setChar(toupper(_vm->_parser->_inputText[i + 1]), i + 1);
+	// And the first character as well.
+	_vm->_parser->_inputText.setChar(toupper(_vm->_parser->_inputText[0]), 0);
 }
 
 void Acci::sayit() { /* This makes Avalot say the response. */
-	Common::String x;
-
-	warning("STUB: Acci::sayit()");
+	Common::String x = _vm->_parser->_inputText;
+	x.setChar(toupper(x[0]), 0);
+	_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + '1' + x 
+		+ '.' + _vm->_scrolls->kControlSpeechBubble + _vm->_scrolls->kControlRegister + '2');
 }
 
 void Acci::store_interrogation(byte interrogation) {
-	byte fv;
+	if (_vm->_parser->_inputText.empty())
+		return;
 
-	warning("STUB: Acci::store_interrogation()");
+	/* Strip _vm->_parser->_inputText: */
+	while ((_vm->_parser->_inputText[0] == ' ') && (!_vm->_parser->_inputText.empty()))
+		_vm->_parser->_inputText.deleteChar(0);
+	while ((_vm->_parser->_inputText.lastChar() == ' ') && (!_vm->_parser->_inputText.empty()))
+		_vm->_parser->_inputText.deleteLastChar();
+	
+	_vm->_timeout->lose_timer(_vm->_timeout->reason_cardiffsurvey); // if you want to use any other timer, put this into the case statement. */
+
+	switch (interrogation) {
+	case 1: {
+			lowercase();
+			sayit();
+			_vm->_gyro->dna.like2drink = _vm->_parser->_inputText;
+			_vm->_gyro->dna.cardiff_things = 2;
+		}
+		break;
+	case 2: {
+			propernouns();
+			sayit();
+			_vm->_gyro->dna.favourite_song = _vm->_parser->_inputText;
+			_vm->_gyro->dna.cardiff_things = 3;
+		}
+		break;
+	case 3: {
+			propernouns();
+			sayit();
+			_vm->_gyro->dna.worst_place_on_earth = _vm->_parser->_inputText;
+			_vm->_gyro->dna.cardiff_things = 4;
+		}
+		break;
+	case 4: {
+			lowercase();
+			sayit();
+			if (!_vm->_gyro->dna.spare_evening.empty())
+				_vm->_gyro->dna.spare_evening.clear();
+			_vm->_gyro->dna.spare_evening = _vm->_parser->_inputText;
+			_vm->_visa->dixi('z', 5); /* His closing statement... */
+			_vm->_trip->tr[1].walkto(4); /* The end of the drawbridge */
+			_vm->_trip->tr[1].vanishifstill = true; /* Then go away! */
+			_vm->_gyro->magics[1].op = _vm->_gyro->nix;
+			_vm->_gyro->dna.cardiff_things = 5;
+		}
+		break;
+	case 99:
+		//store_high(_vm->_parser->_inputText);
+		warning("STUB: Acci::store_interrogation()");
+		break;
+	}
+
+	if (interrogation < 4)
+		_vm->_timeout->cardiff_survey();
 }
 
 
@@ -686,7 +742,7 @@ bool Acci::holding() {
 
 	if (thing > 100)
 		_vm->_scrolls->display("Be reasonable!");
-	else if (!_vm->_gyro->dna.obj[thing])  // Verbs that need "thing" to be in the inventory.
+	else if (!_vm->_gyro->dna.obj[thing - 1])  // Verbs that need "thing" to be in the inventory.
 		_vm->_scrolls->display("You're not holding it, Avvy.");
 	else 
 		holdingResult = true;
