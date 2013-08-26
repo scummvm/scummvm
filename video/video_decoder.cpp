@@ -531,10 +531,9 @@ Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getFrameTime(uint frame) con
 	if (frameRate == frameRate.toInt()) // The nice case (a whole number)
 		return Audio::Timestamp(0, frame, frameRate.toInt());
 
-	// Just convert to milliseconds.
-	Common::Rational time = frame * 1000;
-	time /= frameRate;
-	return Audio::Timestamp(time.toInt(), 1000);
+	// Convert as best as possible
+	Common::Rational time = frameRate.getInverse() * frame;
+	return Audio::Timestamp(0, time.getNumerator(), time.getDenominator());
 }
 
 uint VideoDecoder::FixedRateVideoTrack::getFrameAtTime(const Audio::Timestamp &time) const {
@@ -544,8 +543,10 @@ uint VideoDecoder::FixedRateVideoTrack::getFrameAtTime(const Audio::Timestamp &t
 	if (frameRate == time.framerate())
 		return time.totalNumberOfFrames();
 
-	// Default case
-	return (time.totalNumberOfFrames() * frameRate / time.framerate()).toInt();
+	// Create the rational based on the time first to hopefully cancel out
+	// *something* when multiplying by the frameRate (which can be large in
+	// some AVI videos).
+	return (Common::Rational(time.totalNumberOfFrames(), time.framerate()) * frameRate).toInt();
 }
 
 Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
