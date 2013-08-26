@@ -62,6 +62,8 @@ void VideoDecoder::close() {
 		delete *it;
 
 	_tracks.clear();
+	_internalTracks.clear();
+	_externalTracks.clear();
 	_dirtyPalette = false;
 	_palette = 0;
 	_startTime = 0;
@@ -340,6 +342,11 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	if (!seekIntern(time))
 		return false;
 
+	// Seek any external track too
+	for (TrackListIterator it = _externalTracks.begin(); it != _externalTracks.end(); it++)
+		if (!(*it)->seek(time))
+			return false;
+
 	_lastTimeChange = time;
 
 	// Now that we've seeked, start all tracks again
@@ -472,7 +479,7 @@ Audio::Timestamp VideoDecoder::getDuration() const {
 }
 
 bool VideoDecoder::seekIntern(const Audio::Timestamp &time) {
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+	for (TrackList::iterator it = _internalTracks.begin(); it != _internalTracks.end(); it++)
 		if (!(*it)->seek(time))
 			return false;
 
@@ -649,8 +656,13 @@ bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &base
 	return _stream != 0;
 }
 
-void VideoDecoder::addTrack(Track *track) {
+void VideoDecoder::addTrack(Track *track, bool isExternal) {
 	_tracks.push_back(track);
+
+	if (isExternal)
+		_externalTracks.push_back(track);
+	else
+		_internalTracks.push_back(track);
 
 	if (track->getTrackType() == Track::kTrackTypeAudio) {
 		// Update volume settings if it's an audio track
@@ -681,7 +693,7 @@ bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 	bool result = track->loadFromFile(baseName);
 
 	if (result)
-		addTrack(track);
+		addTrack(track, true);
 	else
 		delete track;
 
@@ -712,17 +724,17 @@ void VideoDecoder::setEndTime(const Audio::Timestamp &endTime) {
 }
 
 VideoDecoder::Track *VideoDecoder::getTrack(uint track) {
-	if (track > _tracks.size())
+	if (track > _internalTracks.size())
 		return 0;
 
-	return _tracks[track];
+	return _internalTracks[track];
 }
 
 const VideoDecoder::Track *VideoDecoder::getTrack(uint track) const {
-	if (track > _tracks.size())
+	if (track > _internalTracks.size())
 		return 0;
 
-	return _tracks[track];
+	return _internalTracks[track];
 }
 
 bool VideoDecoder::endOfVideoTracks() const {

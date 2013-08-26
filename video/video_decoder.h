@@ -761,8 +761,11 @@ protected:
 	 * Define a track to be used by this class.
 	 *
 	 * The pointer is then owned by this base class.
+	 *
+	 * @param track The track to add
+	 * @param isExternal Is this an external track not found by loadStream()?
 	 */
-	void addTrack(Track *track);
+	void addTrack(Track *track, bool isExternal = false);
 
 	/**
 	 * Whether or not getTime() will sync with a playing audio track.
@@ -814,12 +817,12 @@ protected:
 	/**
 	 * Get the begin iterator of the tracks
 	 */
-	TrackListIterator getTrackListBegin() { return _tracks.begin(); }
+	TrackListIterator getTrackListBegin() { return _internalTracks.begin(); }
 
 	/**
 	 * Get the end iterator of the tracks
 	 */
-	TrackListIterator getTrackListEnd() { return _tracks.end(); }
+	TrackListIterator getTrackListEnd() { return _internalTracks.end(); }
 
 	/**
 	 * The internal seek function that does the actual seeking.
@@ -833,6 +836,8 @@ protected:
 private:
 	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
+	TrackList _internalTracks;
+	TrackList _externalTracks;
 
 	// Current playback status
 	bool _needsUpdate;
