@@ -97,13 +97,13 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 			char fileNameBuffer[25];
 			sscanf(line.c_str(), "%*[^:]:%25[^~]~", fileNameBuffer);
 
-			Common::String fileName(fileNameBuffer);
+			Common::String animationFileName(fileNameBuffer);
 
-			if (fileName.hasSuffix(".avi")) {
+			if (animationFileName.hasSuffix(".avi")) {
 				_animation.avi = new ZorkAVIDecoder();
-				_animation.avi->loadFile(fileName);
-			} else if (fileName.hasSuffix(".rlf")) {
-				_animation.rlf = new RlfAnimation(fileNameBuffer, false);
+				_animation.avi->loadFile(animationFileName);
+			} else if (animationFileName.hasSuffix(".rlf")) {
+				_animation.rlf = new RlfAnimation(animationFileName, false);
 			}
 		} else if (line.matchString("*skipcolor*", true)) {
 			// Not used
