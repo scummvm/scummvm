@@ -142,8 +142,10 @@ ResourceLoader::ResourceLoader() {
 				}
 			}
 
-			SearchMan.listMatchingMembers(files, "patch.m4b");
+			//Keep i9n.m4b before patch.m4b for a better efficiency
+			//in decompressing from Monkey Update.exe
 			SearchMan.listMatchingMembers(files, "i9n.m4b");
+			SearchMan.listMatchingMembers(files, "patch.m4b");
 			SearchMan.listMatchingMembers(files, "art???.m4b");
 			SearchMan.listMatchingMembers(files, "lip.m4b");
 			SearchMan.listMatchingMembers(files, "local.m4b");
