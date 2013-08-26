@@ -65,7 +65,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 			_frames[i] = readNextFrame();
 		}
 	}
-};
+}
 
 RlfAnimation::~RlfAnimation() {
 	if (_frames != 0) {
