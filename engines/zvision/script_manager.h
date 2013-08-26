@@ -86,6 +86,29 @@ public:
 	void enableControl(uint32 key);
 	void disableControl(uint32 key);
 
+	/**
+	 * Called when LeftMouse is pushed.
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 */
+	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	/**
+	 * Called when LeftMouse is lifted.
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 */
+	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	/**
+	 * Called on every MouseMove.
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 * @return                           Was the cursor changed?
+	 */
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 
 private:

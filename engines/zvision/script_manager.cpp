@@ -233,6 +233,25 @@ void ScriptManager::disableControl(uint32 key) {
 	}
 }
 
+void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		(*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos);
+	}
+}
+
+void ScriptManager::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		(*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos);
+	}
+}
+
+bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	bool cursorWasChanged = false;
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		cursorWasChanged = cursorWasChanged || (*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos);
+	}
+
+	return cursorWasChanged;
 }
 
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
