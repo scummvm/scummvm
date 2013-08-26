@@ -32,37 +32,9 @@
 #include "zvision/cursor_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/script_manager.h"
-#include "zvision/mouse_event.h"
 #include "zvision/rlf_animation.h"
 
 namespace ZVision {
-
-void ZVision::registerMouseEvent(MouseEvent *event) {
-	_mouseEvents.push_back(event);
-}
-
-bool ZVision::removeMouseEvent(const uint32 key) {
-	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		if ((*iter)->_key == key) {
-			_scriptManager->setStateValue((*iter)->_key, 0);
-			_mouseEvents.erase(iter);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void ZVision::clearAllMouseEvents() {
-	// Clear the state values of all the events
-	// Then delete the nodes
-	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		_scriptManager->setStateValue((*iter)->_key, 0);
-		delete (*iter);
-	}
-
-	_mouseEvents.clear();
-}
 
 void ZVision::processEvents() {
 	while (_eventMan->pollEvent(_event)) {
@@ -121,29 +93,20 @@ void ZVision::onMouseDown(const Common::Point &pos) {
 	_cursorManager->cursorDown(true);
 
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
-
-	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		(*iter)->onMouseDown(pos, imageCoord);
-	}
+	_scriptManager->onMouseDown(pos, imageCoord);
 }
 
 void ZVision::onMouseUp(const Common::Point &pos) {
 	_cursorManager->cursorDown(false);
 
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
-
-	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		(*iter)->onMouseUp(pos, imageCoord);
-	}
+	_scriptManager->onMouseUp(pos, imageCoord);
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
-	bool cursorWasChanged = false;
-	for (Common::List<MouseEvent *>::iterator iter = _mouseEvents.begin(); iter != _mouseEvents.end(); iter++) {
-		cursorWasChanged = cursorWasChanged || (*iter)->onMouseMove(pos, imageCoord);
-	}
+	bool cursorWasChanged = _scriptManager->onMouseMove(pos, imageCoord);
 
 	// Graph of the function governing rotation velocity:
 	//

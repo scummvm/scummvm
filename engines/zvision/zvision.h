@@ -33,7 +33,6 @@
 
 #include "zvision/detection.h"
 #include "zvision/clock.h"
-#include "zvision/mouse_event.h"
 
 #include "gui/debugger.h"
 
@@ -100,9 +99,6 @@ private:
 	// Clock
 	Clock _clock;
 
-	// To store the current mouse events
-	Common::List<MouseEvent *> _mouseEvents;
-
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
@@ -130,19 +126,6 @@ public:
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
 
 	void playAnimation(RlfAnimation *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-
-	/**
-	 * Register a MouseEvent with the event system. These will be checked at every
-	 * MOUSE_UP, MOUSE_DOWN, MOUSE_MOVE, etc.
-	 *
-	 * @param event    The event to register
-	 */
-	void registerMouseEvent(MouseEvent *event);
-
-	bool removeMouseEvent(const uint32 key);
-
-	/** Remove all MouseEvents from the event system */
-	void clearAllMouseEvents();
 
 	/**
 	 * Utility method to cycle through all the cursors in the game. After
