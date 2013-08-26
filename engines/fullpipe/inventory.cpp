@@ -25,6 +25,7 @@
 #include "fullpipe/utils.h"
 #include "fullpipe/inventory.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -99,6 +100,41 @@ bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartia
 void CInventory2::addItem(int itemId, int count) {
 	if (getInventoryPoolItemIndexById(itemId) >= 0)
 		_inventoryItems.push_back(new InventoryItem(itemId, count));
+}
+
+void CInventory2::addItem2(StaticANIObject *obj) {
+	if (getInventoryPoolItemIndexById(obj->_id) >= 0 && getInventoryPoolItemFieldCById(obj->_id) != 2) {
+		addItem(obj->_id, 1);
+		obj->hide();
+	}
+}
+
+void CInventory2::removeItem(int itemId, int count) {
+	warning("STUB: CInventory2::removeItem(%d, %d)", itemId, count);
+}
+
+void CInventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority) {
+	warning("STUB: void removeItem2(sc, %d, %d, %d, %d)", itemId, x, y, priority);
+}
+
+int CInventory2::getCountItemsWithId(int itemId) {
+	int res = 0;
+
+	for (uint i = 0; i < _inventoryItems.size(); i++) {
+		if (_inventoryItems[i]->itemId == itemId)
+			res += _inventoryItems[i]->count;
+	}
+
+	return res;
+}
+
+int CInventory2::getInventoryPoolItemFieldCById(int itemId) {
+	for (uint i = 0; i < _itemsPool.size(); i++) {
+		if (_itemsPool[i]->id == itemId)
+			return _itemsPool[i]->field_C;
+	}
+
+	return 0;
 }
 
 void CInventory2::rebuildItemRects() {

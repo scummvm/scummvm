@@ -903,7 +903,7 @@ int global_messageHandler2(ExCommand *cmd) {
 }
 
 int global_messageHandler3(ExCommand *cmd) {
-	result = 0;
+	int result = 0;
 
 	if (cmd->_messageKind == 17) {
 		switch (cmd->_messageNum) {
@@ -919,6 +919,8 @@ int global_messageHandler3(ExCommand *cmd) {
 			break;
 		}
 	}
+
+	StaticANIObject *ani, *ani2;
 
 	switch (cmd->_messageKind) {
 	case 17:
@@ -941,7 +943,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			g_fullpipe->_msgY = 0;
 			g_fullpipe->_msgObjectId2 = 0;
 			g_fullpipe->_msgId = 0;
-			if (cmd->_keyCode & 1 || cmd->_keyCode & 2) {
+			if ((cmd->_keyCode & 1) || (cmd->_keyCode & 2)) {
 				g_fullpipe->_msgX = cmd->_x;
 				g_fullpipe->_msgY = cmd->_y;
 			}
@@ -951,7 +953,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			}
 			return result;
 		case 29:
-			if (g_fullpipe->_gameLoader->interactionController->_flag24 && g_fullpipe->_currentScene) {
+			if (g_fullpipe->_gameLoader->_interactionController->_flag24 && g_fullpipe->_currentScene) {
 				ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				ani2 = g_fullpipe->_currentScene->getStaticANIObject1ById(getGameLoaderFieldFA(), -1);
 				if (ani) {
@@ -964,8 +966,8 @@ int global_messageHandler3(ExCommand *cmd) {
 						return 1;
 					}
 				} else {
-					ani2 = g_fullpipe->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-					ani = g_fullpipe->_currentScene->getPictureObjectById(ani2, 0);
+					int id = g_fullpipe->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+					ani = g_fullpipe->_currentScene->getPictureObjectById(id, 0);
 					if (ani) {
 						if (g_fullpipe->_msgObjectId2 == ani->_id && g_fullpipe->_msgId == ani->_okeyCode) {
 							cmd->_messageKind = 0;
@@ -979,37 +981,23 @@ int global_messageHandler3(ExCommand *cmd) {
 					}
 				}
 			}
-			if (*((_DWORD *)getCurrSceneSc2MotionController() + 2) && cmd->cmd.msg.keyCode <= 0) {
-				if (g_fullpipe->_msgX != cmd->cmd.msg.sceneClickX || g_fullpipe->_msgY != cmd->cmd.msg.sceneClickY) {
-					v13 = getGameLoaderFieldFA();
-					ani_ = Scene_getStaticANIObject1ById(g_fullpipe->_currentScene, (Objects)(unsigned __int16)v13, -1);
-					v15 = ani_;
-					if (!ani_
-						|| (LOBYTE(v16) = StaticANIObject_isIdle(ani_), v16)
-						&& (v17 = v15->GameObject.flags, !(v17 & 0x80))
-						&& !(v17 & 0x100)) {
-						v18 = cmd->cmd.msg.sceneClickY;
-						v19 = cmd->cmd.msg.sceneClickX;
-						v20 = getGameLoaderFieldFA();
-						result = startWalkTo(v20, -1, v19, v18, 0);
+			if (getCurrSceneSc2MotionController()->_isEnabled && cmd->_keyCode <= 0) {
+				if (g_fullpipe->_msgX != cmd->_sceneClickX || g_fullpipe->_msgY != cmd->_sceneClickY) {
+					ani = g_fullpipe->_currentScene->getStaticANIObject1ById(getGameLoaderFieldFA(), -1);
+					if (!ani || ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100)) {
+						result = startWalkTo(getGameLoaderFieldFA(), -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
-							v21 = (ExCommand *)operator new(sizeof(ExCommand));
-							if (v21) {
-								v22 = getGameLoaderFieldFA();
-								v23 = ExCommand_ctor(v21, v22, 17, 64, 0, 0, 0, 1, 0, 0, 0);
-							} else {
-								v23 = 0;
-							}
-							v24 = v23->excFlags;
-							v23->msg.keyCode = 1;
-							v23->excFlags = v24 | 3;
-							v23->msg.x = cmd->cmd.msg.sceneClickX;
-							v23->msg.y = cmd->cmd.msg.sceneClickY;
-							ExCommand_postMessage(v23);
+							ExCommand *ex = new ExCommand(getGameLoaderFieldFA(), 17, 64, 0, 0, 0, 1, 0, 0, 0);
+
+							ex->_keyCode = 1;
+							ex->_excFlags |= 3;
+							ex->_x = cmd->_sceneClickX;
+							ex->_y = cmd->_sceneClickY;
+							ex->postMessage();
 						}
 					}
-				} elae {
-					cmd->cmd.msg.messageKind = 0;
+				} else {
+					cmd->_messageKind = 0;
 				}
 			}
 			return result;
@@ -1017,7 +1005,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			return result;
 		}
 	case 58:
-		input_setCursor(cmd->_keyCode);
+		g_fullpipe->setCursor(cmd->_keyCode);
 		return result;
 	case 59:
 		setInputDisabled(1);
@@ -1075,7 +1063,7 @@ int global_messageHandler3(ExCommand *cmd) {
 	case 63:
 		if (CObject::IsKindOf(cmd, &RTCObjstateCommand)) {
 			result = 1;
-			setObjectState((char *)&cmd->objCommandName->m_pchData, cmd->value);
+			g_fullpipe->setObjectState(cmd->_objCommandName, cmd->_value);
 		}
 		return result;
 	default:

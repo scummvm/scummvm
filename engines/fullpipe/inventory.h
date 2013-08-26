@@ -97,6 +97,13 @@ class CInventory2 : public CInventory {
 	CInventory2();
 	bool loadPartial(MfcArchive &file);
 	void addItem(int itemId, int count);
+	void addItem2(StaticANIObject *obj);
+	void removeItem(int itemId, int count);
+	void removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority);
+
+	int getInventoryPoolItemFieldCById(int itemId);
+	int getCountItemsWithId(int itemId);
+
 	void rebuildItemRects();
 
 	Scene *getScene() { return _scene; }
