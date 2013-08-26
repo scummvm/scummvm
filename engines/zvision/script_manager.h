@@ -37,7 +37,6 @@ class SeekableReadStream;
 namespace ZVision {
 
 class ZVision;
-class ActionNode;
 
 struct Location {
 	char world;
@@ -60,8 +59,6 @@ private:
 	 * particular state key are checked after the key is modified.
 	 */
 	Common::HashMap<uint32, uint> _globalState;
-	/** Holds the currently active ActionNodes */
-	Common::List<ActionNode *> _activeNodes;
 	/** References _globalState keys to Puzzles */
 	Common::HashMap<uint32, Common::Array<Puzzle *> > _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
@@ -71,13 +68,12 @@ private:
 	/** Holds the global puzzles */
 	Common::List<Puzzle *>_globalPuzzles;
 	/** Holds the currently active controls */
-	Common::HashMap<uint32, Control *> _activeControls;
+	Common::List<Control *> _activeControls;
 
 	Location _nextLocation;
 	bool _changeLocation;
 
 public:
-	
 	void initialize();
 	void update(uint deltaTimeMillis);
 

@@ -108,11 +108,10 @@ void ScriptManager::createReferenceTable() {
 
 void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
-	for (Common::List<ActionNode *>::iterator iter = _activeNodes.begin(); iter != _activeNodes.end();) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end();) {
 		if ((*iter)->process(deltaTimeMillis)) {
-			// Delete the node then remove the pointer
-			delete (*iter);
-			iter = _activeNodes.erase(iter);
+			// Remove the node
+			iter = _activeControls.erase(iter);
 		} else {
 			iter++;
 		}
@@ -257,12 +256,10 @@ void ScriptManager::changeLocationIntern() {
 		delete (*iter);
 	}
 	_activePuzzles.clear();
-	for (Common::HashMap<uint32, Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
-		delete (*iter)._value;
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		delete (*iter);
 	}
 	_activeControls.clear();
-	_engine->clearAllMouseEvents();
-	// TODO: See if we need to clear _activeNodes as well. And if so, remember to delete the nodes before clearing the list
 
 	// Revert to the idle cursor
 	_engine->getCursorManager()->revertToIdle();
@@ -278,8 +275,8 @@ void ScriptManager::changeLocationIntern() {
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
 	// Enable all the controls
-	for (Common::HashMap<uint32, Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
-		(*iter)._value->enable();
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		(*iter)->enable();
 	}
 
 	// Add all the local puzzles to the queue to be checked
