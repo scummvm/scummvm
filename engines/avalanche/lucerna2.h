@@ -46,7 +46,7 @@ public:
 
 	void init();
 
-	void callverb(char n);
+	void callverb(byte n);
 
 	void draw_also_lines();
 

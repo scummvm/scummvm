@@ -66,7 +66,7 @@ void Lucerna::init() {
 	else _vm->_gyro->atkey = "alt-";
 }
 	
-void Lucerna::callverb(char n) {
+void Lucerna::callverb(byte n) {
 	if (n == _vm->_acci->pardon) {
 		_vm->_scrolls->display(Common::String("The f5 key lets you do a particular action in certain ") +
 			"situations. However, at the moment there is nothing " +
