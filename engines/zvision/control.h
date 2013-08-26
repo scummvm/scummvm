@@ -25,8 +25,10 @@
 
 #include "common/types.h"
 
+
 namespace Common {
 class SeekableReadStream;
+struct Point;
 }
 
 namespace ZVision {
@@ -35,12 +37,47 @@ class ZVision;
 
 class Control {
 public:
-	Control() : _enabled(false) {}
+	Control() : _engine(0), _key(0), _enabled(false) {}
+	Control(ZVision *engine, uint32 key) : _engine(engine), _key(key), _enabled(false) {}
 	virtual ~Control() {}
 	virtual bool enable() = 0;
 	virtual bool disable() = 0;
 
+	uint32 getKey() { return _key; }
+
+	/**
+	 * Called when LeftMouse is pushed. Default is NOP.
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 */
+	virtual void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {}
+	/**
+	 * Called when LeftMouse is lifted. Default is NOP.
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 */
+	virtual void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {}
+	/**
+	 * Called on every MouseMove. Default is NOP.
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 * @return                           Was the cursor changed?
+	 */
+	virtual bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) { return false; }
+	/**
+	 * Processes the node given the deltaTime since last frame. Default is NOP.
+	 *
+	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
+	 * @return                     If true, the node can be deleted after process() finishes
+	 */
+	virtual bool process(uint32 deltaTimeInMillis) { return false; }
+
 protected:
+	ZVision * _engine;
+	uint32 _key;
 	bool _enabled;
 
 // Static member functions

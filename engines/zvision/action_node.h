@@ -29,17 +29,6 @@ namespace ZVision {
 
 class ZVision;
 
-class ActionNode {
-public:
-	virtual ~ActionNode() {}
-	/**
-	 * Processes the node given the deltaTime since last frame
-	 *
-	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
-	 * @return                     If true, the node can be deleted after process() finishes
-	 */
-	virtual bool process(uint32 deltaTimeInMillis) = 0;
-};
 
 class TimerNode : public ActionNode {
 public:
