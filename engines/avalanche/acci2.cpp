@@ -734,10 +734,25 @@ void Acci::examine() {
 
 
 void Acci::inv() {   /* the time-honoured command... */
-	char fv;
 	byte q = 0;
-
-	warning("STUB: Acci::inv()");
+	_vm->_scrolls->display(Common::String("You're carrying ") + _vm->_scrolls->kControlToBuffer);
+	{
+		for (byte fv = 0; fv < numobjs; fv++)
+			if (_vm->_gyro->dna.obj[fv]) {
+				q++;
+				if (q == _vm->_gyro->dna.carrying)
+					_vm->_scrolls->display(Common::String("and ") + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->display(_vm->_gyro->get_better(fv) + _vm->_scrolls->kControlToBuffer);
+				if (fv == _vm->_gyro->dna.wearing)
+					_vm->_scrolls->display(Common::String(", which you're wearing") + _vm->_scrolls->kControlToBuffer);
+				if (q < _vm->_gyro->dna.carrying)
+					_vm->_scrolls->display(Common::String(", ") + _vm->_scrolls->kControlToBuffer);
+			}
+			if (_vm->_gyro->dna.wearing == nowt)
+				_vm->_scrolls->display(Common::String("...") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "...and you're stark naked!");
+			else
+				_vm->_scrolls->display(".");
+	}
 }
 
 void Acci::swallow() {   /* Eat something. */
