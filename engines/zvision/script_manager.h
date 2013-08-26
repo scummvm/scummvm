@@ -85,10 +85,10 @@ public:
 	void setStateValue(uint32 key, uint value);
 	void addToStateValue(uint32 key, uint valueToAdd);
 
-	bool enableControl(uint32 key);
-	bool disableControl(uint32 key);
+	void addControl(Control *control);
 
-	void addActionNode(ActionNode *node);
+	void enableControl(uint32 key);
+	void disableControl(uint32 key);
 
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 

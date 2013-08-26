@@ -212,24 +212,28 @@ void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
 	_globalState[key] += valueToAdd;
 }
 
-bool ScriptManager::enableControl(uint32 key) {
-	if (!_activeControls.contains(key)) {
-		return false;
-	} else {
-		return _activeControls[key]->enable();
+void ScriptManager::addControl(Control *control) {
+	_activeControls.push_back(control);
+}
+
+void ScriptManager::enableControl(uint32 key) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		if ((*iter)->getKey() == key) {
+			(*iter)->enable();
+			break;
+		}
 	}
 }
 
-bool ScriptManager::disableControl(uint32 key) {
-	if (!_activeControls.contains(key)) {
-		return false;
-	} else {
-		return _activeControls[key]->disable();
+void ScriptManager::disableControl(uint32 key) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		if ((*iter)->getKey() == key) {
+			(*iter)->disable();
+			break;
+		}
 	}
 }
 
-void ScriptManager::addActionNode(ActionNode *node) {
-	_activeNodes.push_back(node);
 }
 
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
