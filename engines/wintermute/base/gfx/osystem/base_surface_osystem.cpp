@@ -143,7 +143,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	_width = image->getSurface()->w;
 	_height = image->getSurface()->h;
 
-	bool isSaveGameGrayscale = scumm_strnicmp(_filename.c_str(), "savegame:", 9) == 0 && (_filename.c_str()[_filename.size() - 1] == 'g' || _filename.c_str()[_filename.size() - 1] == 'G');
+	bool isSaveGameGrayscale = _filename.matchString("savegame:*g", true);
 	if (isSaveGameGrayscale) {
 		warning("grayscaleConversion not yet implemented");
 		// FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img); TODO
