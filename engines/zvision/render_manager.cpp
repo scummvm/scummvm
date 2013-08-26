@@ -66,7 +66,7 @@ void RenderManager::update(uint deltaTimeInMillis) {
 	if (_backgroundInverseVelocity != 0) {
 		_accumulatedVelocityMilliseconds += deltaTimeInMillis;
 
-		int absVelocity = abs(_backgroundInverseVelocity);
+		uint absVelocity = uint(abs(_backgroundInverseVelocity));
 
 		int numberOfSteps = 0;
 		while (_accumulatedVelocityMilliseconds >= absVelocity) {
