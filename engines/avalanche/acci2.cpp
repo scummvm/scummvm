@@ -742,8 +742,8 @@ void Acci::inv() {   /* the time-honoured command... */
 				q++;
 				if (q == _vm->_gyro->dna.carrying)
 					_vm->_scrolls->display(Common::String("and ") + _vm->_scrolls->kControlToBuffer);
-				_vm->_scrolls->display(_vm->_gyro->get_better(fv) + _vm->_scrolls->kControlToBuffer);
-				if (fv == _vm->_gyro->dna.wearing)
+				_vm->_scrolls->display(_vm->_gyro->get_better(fv + 1) + _vm->_scrolls->kControlToBuffer);
+				if ((fv + 1) == _vm->_gyro->dna.wearing)
 					_vm->_scrolls->display(Common::String(", which you're wearing") + _vm->_scrolls->kControlToBuffer);
 				if (q < _vm->_gyro->dna.carrying)
 					_vm->_scrolls->display(Common::String(", ") + _vm->_scrolls->kControlToBuffer);
@@ -767,7 +767,7 @@ void Acci::swallow() {   /* Eat something. */
 			_vm->_visa->dixi('U', 1);
 			_vm->_pingo->wobble();
 			_vm->_visa->dixi('U', 2);
-			_vm->_gyro->dna.obj[_vm->_gyro->wine] = false;
+			_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
 			_vm->_lucerna->objectlist();
 			have_a_drink();
 				}
@@ -800,7 +800,7 @@ void Acci::swallow() {   /* Eat something. */
 		if (_vm->_gyro->dna.rotten_onion)  _vm->_visa->dixi('U', 11);
 		else {
 			_vm->_visa->dixi('U', 8);
-			_vm->_gyro->dna.obj[_vm->_gyro->onion] = false;
+			_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = false;
 			_vm->_lucerna->objectlist();
 		}
 		break;
@@ -1023,7 +1023,7 @@ bool Acci::give2spludwick() {
 
 	switch (thing) {
 	case _vm->_gyro->onion:
-		_vm->_gyro->dna.obj[_vm->_gyro->onion] = false;
+		_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = false;
 		if (_vm->_gyro->dna.rotten_onion)
 			_vm->_visa->dixi('q', 22);
 		else {
@@ -1035,7 +1035,7 @@ bool Acci::give2spludwick() {
 		_vm->_lucerna->objectlist();
 		break;
 	case _vm->_gyro->ink:
-		_vm->_gyro->dna.obj[_vm->_gyro->ink] = false;
+		_vm->_gyro->dna.obj[_vm->_gyro->ink - 1] = false;
 		_vm->_lucerna->objectlist();
 		_vm->_gyro->dna.given2spludwick++;
 		_vm->_visa->dixi('q', 24);
@@ -1043,12 +1043,12 @@ bool Acci::give2spludwick() {
 		_vm->_lucerna->points(3);
 		break;
 	case _vm->_gyro->mushroom:
-		_vm->_gyro->dna.obj[_vm->_gyro->mushroom] = false;
+		_vm->_gyro->dna.obj[_vm->_gyro->mushroom - 1] = false;
 		_vm->_visa->dixi('q', 25);
 		_vm->_lucerna->points(5);
 		_vm->_gyro->dna.given2spludwick++;
 		go_to_cauldron();
-		_vm->_gyro->dna.obj[_vm->_gyro->potion] = true;
+		_vm->_gyro->dna.obj[_vm->_gyro->potion - 1] = true;
 		_vm->_lucerna->objectlist();
 		break;
 	default:
@@ -1061,7 +1061,7 @@ bool Acci::give2spludwick() {
 void Acci::have_a_drink() {
 	_vm->_gyro->dna.alcohol += 1;
 	if (_vm->_gyro->dna.alcohol == 5) {
-		_vm->_gyro->dna.obj[_vm->_gyro->key] = true; /* Get the key. */
+		_vm->_gyro->dna.obj[_vm->_gyro->key - 1] = true; /* Get the key. */
 		_vm->_gyro->dna.teetotal = true;
 		_vm->_gyro->dna.avvy_is_awake = false;
 		_vm->_gyro->dna.avvy_in_bed = true;
@@ -1142,7 +1142,7 @@ void Acci::getproc(char thing) {
 			if (_vm->_gyro->dna.box_contents == thing) {
 				_vm->_celer->show_one(5);
 				_vm->_scrolls->display("OK, I've got it.");
-				_vm->_gyro->dna.obj[thing] = true;
+				_vm->_gyro->dna.obj[thing - 1] = true;
 				_vm->_lucerna->objectlist();
 				_vm->_gyro->dna.box_contents = nowt;
 				_vm->_celer->show_one(6);
@@ -1164,7 +1164,7 @@ void Acci::getproc(char thing) {
 					_vm->_celer->show_one(4); /* No pen there now. */
 					_vm->_trip->call_special(3); /* Zap! */
 					_vm->_gyro->dna.taken_pen = true;
-					_vm->_gyro->dna.obj[_vm->_gyro->pen] = true;
+					_vm->_gyro->dna.obj[_vm->_gyro->pen - 1] = true;
 					_vm->_lucerna->objectlist();
 					_vm->_scrolls->display("Taken.");
 				}
@@ -1186,7 +1186,7 @@ void Acci::getproc(char thing) {
 			_vm->_scrolls->display("Got it!");
 			_vm->_gyro->dna.mushroom_growing = false;
 			_vm->_gyro->dna.taken_mushroom = true;
-			_vm->_gyro->dna.obj[_vm->_gyro->mushroom] = true;
+			_vm->_gyro->dna.obj[_vm->_gyro->mushroom - 1] = true;
 			_vm->_lucerna->objectlist();
 			_vm->_lucerna->points(3);
 		} else
@@ -1202,7 +1202,7 @@ void Acci::give_geida_the_lute() {
 		_vm->_scrolls->display("Not yet. Try later!\232\2");
 		return;
 	}
-	_vm->_gyro->dna.obj[_vm->_gyro->lute] = false;
+	_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = false;
 	_vm->_lucerna->objectlist();
 	_vm->_visa->dixi('q', 64); /* She plays it. */
 
@@ -1263,7 +1263,7 @@ void Acci::person_speaks() {
 void Acci::heythanks() {
 	person_speaks();
 	_vm->_scrolls->display(Common::String("Hey, thanks!") + _vm->_scrolls->kControlSpeechBubble + "(But now, you've lost it!)");
-	_vm->_gyro->dna.obj[thing] = false;
+	_vm->_gyro->dna.obj[thing - 1] = false;
 }
 
 void Acci::do_that() {
@@ -1381,7 +1381,7 @@ void Acci::do_that() {
 					case _vm->_gyro->pcrapulus:
 						if (thing == _vm->_gyro->wine) {
 							_vm->_scrolls->display("Crapulus grabs the wine and gulps it down.");
-							_vm->_gyro->dna.obj[_vm->_gyro->wine] = false;
+							_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
 						} else
 							heythanks();
 						break;
@@ -1763,7 +1763,7 @@ void Acci::do_that() {
 							_vm->_lucerna->points(3);
 						}
 						_vm->_gyro->pennycheck(3); // It costs thruppence.
-						_vm->_gyro->dna.obj[_vm->_gyro->onion] = true;
+						_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = true;
 						_vm->_lucerna->objectlist();
 						_vm->_gyro->dna.bought_onion = true;
 						_vm->_gyro->dna.rotten_onion = false; // It's OK when it leaves the stall!
@@ -1801,8 +1801,8 @@ void Acci::do_that() {
 			case 3:
 				_vm->_visa->dixi('Q', 11);
 				_vm->_gyro->dna.cwytalot_gone = true;
-				_vm->_gyro->dna.obj[_vm->_gyro->bolt] = false;
-				_vm->_gyro->dna.obj[_vm->_gyro->crossbow] = false;
+				_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] = false;
+				_vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] = false;
 				_vm->_lucerna->objectlist();
 				_vm->_gyro->magics[11].op = _vm->_gyro->nix;
 				_vm->_lucerna->points(7);

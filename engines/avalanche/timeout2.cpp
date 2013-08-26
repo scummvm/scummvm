@@ -361,7 +361,37 @@ void Timeout::hang_around2() {
 }
 
 void Timeout::after_the_shootemup() {
+	
+	_vm->_trip->fliproom(_vm->_gyro->dna.room, 0);
+	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
+
+	_vm->_trip->tr[0].init(0, true, _vm->_trip); /* Avalot. */
+	_vm->_trip->apped(1, 2);
+	_vm->_gyro->dna.user_moves_avvy = true;
+	_vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] = true;
+	_vm->_lucerna->objectlist();
+
+	// Same as the added line above: TODO: Remove it later!!!
+	_vm->_scrolls->display(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
+		+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Peter (uruk)");
+
+	//byte shootscore, gain;
+
+	//shootscore = mem[storage_seg * storage_ofs];
+	//gain = (shootscore + 5) / 10; /* Rounding up. */
+
+	//display(string("\6Your score was ") + strf(shootscore) + '.' + "\r\rYou gain (" +
+	//	strf(shootscore) + " ö 10) = " + strf(gain) + " points.");
+
+	//if (gain > 20) {
+	//	display("But we won't let you have more than 20 points!");
+	//	points(20);
+	//} else
+	//	points(gain);
+
 	warning("STUB: Timeout::after_the_shootemup()");
+
+	_vm->_visa->dixi('q', 70);
 }
 
 void Timeout::jacques_wakes_up() {
@@ -470,7 +500,7 @@ void Timeout::jump() {
 		else {
 			_vm->_celer->show_one(2);
 			_vm->_gyro->dna.arrow_in_the_door = false; /* You've got it. */
-			_vm->_gyro->dna.obj[_vm->_gyro->bolt] = true;
+			_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] = true;
 			_vm->_lucerna->objectlist();
 			_vm->_visa->dixi('q', 50);
 			_vm->_lucerna->points(3);
@@ -503,7 +533,7 @@ void Timeout::buywine() {
 	_vm->_visa->dixi('D', 1); /* It'll be thruppence. */
 	if (_vm->_gyro->pennycheck(3)) {
 		_vm->_visa->dixi('D', 4); /* You paid up. */
-		_vm->_gyro->dna.obj[_vm->_gyro->wine] = true;
+		_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = true;
 		_vm->_lucerna->objectlist();
 		_vm->_gyro->dna.winestate = 1; /* OK Wine */
 	}

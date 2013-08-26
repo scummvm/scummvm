@@ -344,7 +344,7 @@ void Lucerna::new_town() {   /* You've just entered a town from the map. */
 	}
 
 	if (_vm->_gyro->dna.room != r__outsideducks) {
-		if ((_vm->_gyro->dna.obj[_vm->_gyro->onion]) && !(_vm->_gyro->dna.onion_in_vinegar))
+		if ((_vm->_gyro->dna.obj[_vm->_gyro->onion - 1]) && !(_vm->_gyro->dna.onion_in_vinegar))
 			_vm->_gyro->dna.rotten_onion = true; /* You're holding the onion */
 	}
 }
@@ -559,9 +559,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 		{
 			dnatype &with = _vm->_gyro->dna;
-			if ((_vm->_gyro->dna.obj[_vm->_gyro->wine]) && (_vm->_gyro->dna.winestate != 3)) {
+			if ((_vm->_gyro->dna.obj[_vm->_gyro->wine - 1]) && (_vm->_gyro->dna.winestate != 3)) {
 				_vm->_visa->dixi('q', 9); /* Don't want to waste the wine! */
-				_vm->_gyro->dna.obj[_vm->_gyro->wine] = false;
+				_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
 				objectlist();
 			}
 		}
@@ -996,7 +996,7 @@ void Lucerna::fxtoggle() {
 
 void Lucerna::objectlist() {
 	_vm->_gyro->dna.carrying = 0;
-	if (_vm->_gyro->thinkthing && !_vm->_gyro->dna.obj[_vm->_gyro->thinks])
+	if (_vm->_gyro->thinkthing && !_vm->_gyro->dna.obj[_vm->_gyro->thinks - 1])
 		thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing); /* you always have money */
 	for (byte fv = 0; fv < numobjs; fv++)
 		if (_vm->_gyro->dna.obj[fv]) {

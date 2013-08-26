@@ -332,10 +332,10 @@ void Gyro::newgame() {
 
 	dna.pence = 30; /* 2/6 */ dna.rw = stopped;
 	dna.wearing = clothes;
-	dna.obj[money] = true;
-	dna.obj[bodkin] = true;
-	dna.obj[bell] = true;
-	dna.obj[clothes] = true;
+	dna.obj[money - 1] = true;
+	dna.obj[bodkin - 1] = true;
+	dna.obj[bell - 1] = true;
+	dna.obj[clothes - 1] = true;
 	
 	thinks = 2;
 	_vm->_lucerna->objectlist();

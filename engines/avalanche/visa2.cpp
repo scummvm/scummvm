@@ -172,9 +172,9 @@ void Visa::talkto(byte whom) {
 	if (_vm->_gyro->subjnumber == 0)
 		switch (whom) {
 		case _vm->_gyro->pspludwick:
-			if ((_vm->_gyro->dna.lustie_is_asleep) & (!_vm->_gyro->dna.obj[_vm->_gyro->potion])) {
+			if ((_vm->_gyro->dna.lustie_is_asleep) & (!_vm->_gyro->dna.obj[_vm->_gyro->potion - 1])) {
 				dixi('q', 68);
-				_vm->_gyro->dna.obj[_vm->_gyro->potion] = true;
+				_vm->_gyro->dna.obj[_vm->_gyro->potion - 1] = true;
 				_vm->_lucerna->objectlist();
 				_vm->_lucerna->points(3);
 				return;
@@ -276,7 +276,7 @@ void Visa::talkto(byte whom) {
 		dixi('n', whom); // File not found!
 
 	if ((_vm->_gyro->subjnumber == 0) && ((whom + 149) == _vm->_gyro->pcrapulus)) { // Crapulus: get the badge - first time only
-		_vm->_gyro->dna.obj[_vm->_gyro->badge] = true;
+		_vm->_gyro->dna.obj[_vm->_gyro->badge - 1] = true;
 		_vm->_lucerna->objectlist();
 		dixi('q', 1); // Circular from Cardiff.
 		_vm->_gyro->dna.talked_to_crapulus = true;

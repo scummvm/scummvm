@@ -952,7 +952,7 @@ void Trip::call_special(uint16 which) {
 	case 10: /* _vm->_gyro->special 10: transfer north in catacombs. */
 		if ((_vm->_gyro->dna.cat_x == 4) && (_vm->_gyro->dna.cat_y == 1)) {
 			/* Into Geida's room. */
-			if (_vm->_gyro->dna.obj[_vm->_gyro->key])
+			if (_vm->_gyro->dna.obj[_vm->_gyro->key - 1])
 				_vm->_visa->dixi('q', 62);
 			else {
 				_vm->_visa->dixi('q', 61);
@@ -1277,7 +1277,7 @@ void Trip::grab_avvy(byte tripnum) {     /* For Friar Tuck, in Nottingham. */
 	int16 tox, toy;
 			
 	tox = tr[0].x + 17;
-	toy = tr[0].y--;
+	toy = tr[0].y - 1;
 	if ((tr[tripnum].x == tox) && (tr[tripnum].y == toy)) {
 		tr[tripnum].call_eachstep = false;
 		tr[tripnum].face = left;
@@ -1601,6 +1601,9 @@ void Trip::new_game_for_trippancy() {   /* Called by gyro.newgame */
 
 
 void Trip::handleMoveKey(const Common::Event &event) { 
+	if (!_vm->_gyro->dna.user_moves_avvy)
+		return;
+
 	if (_vm->_dropdown->ddm_o.menunow)
 		_vm->_parser->tryDropdown();
 	else
