@@ -25,14 +25,16 @@
 
 #include "common/types.h"
 
+#include "zvision/control.h"
+
 namespace ZVision {
 
 class ZVision;
 
-
-class TimerNode : public ActionNode {
+class TimerNode : public Control {
 public:
 	TimerNode(ZVision *engine, uint32 key, uint timeInSeconds);
+
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
 	 * in _globalState and let this node be deleted
@@ -43,8 +45,6 @@ public:
 	bool process(uint32 deltaTimeInMillis);
 
 private:
-	ZVision *_engine;
-	uint32 _key;
 	uint32 _timeLeft;
 };
 

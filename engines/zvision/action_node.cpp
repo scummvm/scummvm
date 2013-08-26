@@ -29,7 +29,7 @@
 namespace ZVision {
 
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds) 
-	: _engine(engine), _key(key), _timeLeft(timeInSeconds * 1000) {
+	: Control(engine, key), _timeLeft(timeInSeconds * 1000) {
 }
 
 bool TimerNode::process(uint32 deltaTimeInMillis) {
