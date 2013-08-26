@@ -26,10 +26,9 @@
 #include "common/types.h"
 
 #include "common/list.h"
+#include "common/rect.h"
 
 #include "zvision/control.h"
-#include "zvision/mouse_event.h"
-#include "zvision/action_node.h"
 
 
 namespace ZVision {
@@ -37,7 +36,7 @@ namespace ZVision {
 class ZorkAVIDecoder;
 class RlfAnimation;
 
-class LeverControl : public Control, public MouseEvent, public ActionNode {
+class LeverControl : public Control {
 public:
 	LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
 	~LeverControl();
@@ -66,8 +65,6 @@ private:
 	};
 
 private:
-	ZVision *_engine;
-
 	union {
 		RlfAnimation *rlf;
 		ZorkAVIDecoder *avi;
@@ -89,11 +86,9 @@ private:
 	Common::List<uint>::iterator _returnRoutesCurrentProgress;
 
 public:
-	bool enable();
-	bool disable();
-	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos);
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos);
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos);
+	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	bool process(uint32 deltaTimeInMillis);
 
 private:

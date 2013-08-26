@@ -38,8 +38,7 @@
 namespace ZVision {
 
 LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-		: MouseEvent(key),
-		  _engine(engine),
+		: Control(engine, key),
 		  _frameInfo(0),
 		  _frameCount(0),
 		  _startFrame(0),
@@ -69,8 +68,6 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	}
 
 	renderFrame(_currentFrame);
-
-	_engine->getScriptManager()->addActionNode(this);
 }
 
 LeverControl::~LeverControl() {
@@ -175,14 +172,14 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 	}
 }
 
-void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) {
+void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_mouseIsCaptured = true;
 		_lastMousePos = backgroundImageSpacePos;
 	}
 }
 
-void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) {
+void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	_mouseIsCaptured = false;
 	_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 
@@ -193,7 +190,7 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 	// TODO: Animation reversal back to origin
 }
 
-bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) {
+bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
@@ -334,16 +331,6 @@ void LeverControl::renderFrame(uint frameNumber) {
 	}
 
 	_engine->_system->copyRectToScreen(frameData, pitch, x + _engine->_workingWindow.left, y + _engine->_workingWindow.top, width, height);
-}
-
-bool LeverControl::enable() {
-	// TODO: Implement
-	return true;
-}
-
-bool LeverControl::disable() {
-	// TODO: Implement
-	return true;
 }
 
 } // End of namespace ZVision
