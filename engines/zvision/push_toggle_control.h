@@ -25,32 +25,25 @@
 
 #include "common/types.h"
 
+#include "common/rect.h"
+
 #include "zvision/control.h"
-#include "zvision/mouse_event.h"
 
 
 namespace ZVision {
 
-class PushToggleControl : public Control, public MouseEvent {
+class PushToggleControl : public Control {
 public:
 	PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
-	bool enable();
-	bool disable();
+	~PushToggleControl();
 
 	/**
-	 * Called when LeftMouse is pushed. Calls ScriptManager::setStateValue(_key, 1);
+	 * Called when LeftMouse is lifted. Calls ScriptManager::setStateValue(_key, 1);
 	 *
 	 * @param screenSpacePos             The position of the mouse in screen space
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos);
-	/**
-	 * Called when LeftMouse is lifted. Does nothing
-	 *
-	 * @param screenSpacePos             The position of the mouse in screen space
-	 * @param backgroundImageSpacePos    The position of the mouse in background image space
-	 */
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos) {}
+	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	/**
 	 * Called on every MouseMove. Tests if the mouse is inside _hotspot, and if so, sets the cursor.
 	 *
@@ -59,10 +52,9 @@ public:
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 * @return                           Was the cursor changed?
 	 */
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point backgroundImageSpacePos);
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 
 private:
-	ZVision * _engine;
 	/**
 	 * The area that will trigger the event
 	 * This is in image space coordinates, NOT screen space
