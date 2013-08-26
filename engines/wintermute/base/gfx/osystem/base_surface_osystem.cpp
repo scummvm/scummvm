@@ -149,33 +149,30 @@ bool BaseSurfaceOSystem::finishLoad() {
 		// FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img); TODO
 	}
 
-	// no alpha, set color key
-	/*  if (surface->format.bytesPerPixel != 4)
-	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
-
-	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
-	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
 	_surface->free();
 	delete _surface;
 
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
-	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		needsColorKey = true;
-		replaceAlpha = false;
-	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		needsColorKey = true;
-	} else if (image->getSurface()->format.bytesPerPixel >= 3 && image->getSurface()->format != g_system->getScreenFormat()) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
-		if (image->getSurface()->format.bytesPerPixel == 3) {
-			needsColorKey = true;
+	if (image->getSurface()->format.bytesPerPixel == 1) {
+		if (!image->getPalette()) {
+			error("Missing palette while loading 8bit image %s", _filename.c_str());
 		}
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
+		needsColorKey = true;
 	} else {
-		_surface = new Graphics::Surface();
-		_surface->copyFrom(*image->getSurface());
-		if (_surface->format.aBits() == 0) {
+		if (image->getSurface()->format != g_system->getScreenFormat()) {
+			_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
+		} else {
+			_surface = new Graphics::Surface();
+			_surface->copyFrom(*image->getSurface());
+		}
+
+		if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
+			// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
+			needsColorKey = true;
+			replaceAlpha = false;
+		} else if (image->getSurface()->format.aBits() == 0) {
 			needsColorKey = true;
 		}
 	}
