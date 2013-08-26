@@ -287,12 +287,12 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		// 180 <----------------------------------------> 0
 		//                angle ( /|\ ) -angle
 		//                       / | \
-				//                      /  |  \
-				// Quadrant 1          /   |   \         Quadrant 0
+		//                      /  |  \
+		// Quadrant 1          /   |   \         Quadrant 0
 		//                    /    |    \
-				//                   /     |     \
-				//                  /      |      \
-				//                 *       |       *
+		//                   /     |     \
+		//                  /      |      \
+		//                 *       |       *
 		//                         ^
 		//                        270
 
