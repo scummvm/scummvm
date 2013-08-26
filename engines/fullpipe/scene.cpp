@@ -488,6 +488,12 @@ PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
 	return 0;
 }
 
+int Scene::getPictureObjectIdAtPos(int x, int y) {
+	warning("STUB: Scene::getPictureObjectIdAtPos(%d, %d)", x, y);
+
+	return 0;
+}
+
 void Scene::update(int counterdiff) {
 	debug(0, "Scene::update(%d)", counterdiff);
 

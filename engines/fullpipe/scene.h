@@ -73,6 +73,7 @@ class Scene : public Background {
 
 	StaticANIObject *getStaticANIObjectAtPos(int x, int y);
 	PictureObject *getPictureObjectAtPos(int x, int y);
+	int getPictureObjectIdAtPos(int x, int y);
 
 	void initObjectCursors(const char *name);
 

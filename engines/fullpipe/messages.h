@@ -83,6 +83,7 @@ class ExCommand2 : public ExCommand {
 };
 
 class CObjstateCommand : public CObject {
+ public:
 	ExCommand _cmd;
 	char *_objCommandName;
 	int _value;

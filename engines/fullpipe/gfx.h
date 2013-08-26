@@ -139,6 +139,8 @@ class GameObject : public CObject {
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
 	const char *getName() { return _objectName; }
+
+	bool canInteractAny(GameObject *obj2, int a3);
 };
 
 class PictureObject : public GameObject {

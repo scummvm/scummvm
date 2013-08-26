@@ -64,8 +64,16 @@ class MfcArchive : public Common::SeekableReadStream {
 	virtual bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
 };
 
+enum ObjType {
+	kObjTypeDefault,
+	kObjTypeObjstateCommand
+};
+
 class CObject {
  public:
+	ObjType _objtype;
+
+	CObject() : _objtype(kObjTypeDefault) {}
 	virtual bool load(MfcArchive &in) { return true; }
 	virtual ~CObject() {}
 

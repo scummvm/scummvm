@@ -926,9 +926,9 @@ int global_messageHandler3(ExCommand *cmd) {
 	case 17:
 		switch (cmd->_messageNum) {
 		case 61:
-			return gameLoaderPreloadScene(cmd->_parentId, cmd->_keyCode);
+			return g_fullpipe->_gameLoader->preloadScene(cmd->_parentId, cmd->_keyCode);
 		case 62:
-			return gameLoaderGotoScene(cmd->_parentId, cmd->_keyCode);
+			return g_fullpipe->_gameLoader->gotoScene(cmd->_parentId, cmd->_keyCode);
 		case 64:
 			if (g_fullpipe->_currentScene && g_fullpipe->_msgObjectId2
 					&& (!(cmd->_keyCode & 4) || g_fullpipe->_msgObjectId2 != cmd->_field_14 || g_fullpipe->_msgId != cmd->_field_20)) {
@@ -955,39 +955,39 @@ int global_messageHandler3(ExCommand *cmd) {
 		case 29:
 			if (g_fullpipe->_gameLoader->_interactionController->_flag24 && g_fullpipe->_currentScene) {
 				ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				ani2 = g_fullpipe->_currentScene->getStaticANIObject1ById(getGameLoaderFieldFA(), -1);
+				ani2 = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
 				if (ani) {
 					if (g_fullpipe->_msgObjectId2 == ani->_id && g_fullpipe->_msgId == ani->_okeyCode) {
 						cmd->_messageKind = 0;
 						return result;
 					}
 					if (ani2->canInteractAny(ani, cmd->_keyCode)) {
-						ani2->handleObjectInteraction(ani, cmd->_keyCode);
+						handleObjectInteraction(ani2, ani, cmd->_keyCode);
 						return 1;
 					}
 				} else {
 					int id = g_fullpipe->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-					ani = g_fullpipe->_currentScene->getPictureObjectById(id, 0);
-					if (ani) {
-						if (g_fullpipe->_msgObjectId2 == ani->_id && g_fullpipe->_msgId == ani->_okeyCode) {
+					PictureObject *pic = g_fullpipe->_currentScene->getPictureObjectById(id, 0);
+					if (pic) {
+						if (g_fullpipe->_msgObjectId2 == pic->_id && g_fullpipe->_msgId == pic->_okeyCode) {
 							cmd->_messageKind = 0;
 							return result;
 						}
-						if (ani2->canInteractAny(ani, cmd->_keyCode)) {
-							if (!ani2 || ani->isIdle() && !(ani2->_flags & 0x80) && !(ani2->_flags & 0x100))
-								ani2->handleObjectInteraction(ani, cmd->_keyCode);
+						if (ani2->canInteractAny(pic, cmd->_keyCode)) {
+							if (!ani2 || ani2->isIdle() && !(ani2->_flags & 0x80) && !(ani2->_flags & 0x100))
+								handleObjectInteraction(ani2, pic, cmd->_keyCode);
 							return 1;
 						}
 					}
 				}
 			}
-			if (getCurrSceneSc2MotionController()->_isEnabled && cmd->_keyCode <= 0) {
+			if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_isEnabled && cmd->_keyCode <= 0) {
 				if (g_fullpipe->_msgX != cmd->_sceneClickX || g_fullpipe->_msgY != cmd->_sceneClickY) {
-					ani = g_fullpipe->_currentScene->getStaticANIObject1ById(getGameLoaderFieldFA(), -1);
+					ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
 					if (!ani || ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100)) {
-						result = startWalkTo(getGameLoaderFieldFA(), -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
+						result = startWalkTo(g_fullpipe->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
-							ExCommand *ex = new ExCommand(getGameLoaderFieldFA(), 17, 64, 0, 0, 0, 1, 0, 0, 0);
+							ExCommand *ex = new ExCommand(g_fullpipe->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);
 
 							ex->_keyCode = 1;
 							ex->_excFlags |= 3;
@@ -1033,7 +1033,7 @@ int global_messageHandler3(ExCommand *cmd) {
 				getGameLoaderInventory()->rebuildItemRects();
 				return 1;
 			}
-			ani = g_fullpipe->_currentScene->getStaticANIObject1ById(getGameLoaderFieldFA(), -1);
+			ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
 			if (ani) {
 				getGameLoaderInventory()->removeItem2(g_fullpipe->_currentScene, cmd->_parentId, ani->_ox + cmd->_x, ani->_oy + cmd->_y, ani->_priority + cmd->_field_14);
 				getGameLoaderInventory()->rebuildItemRects();
@@ -1046,24 +1046,26 @@ int global_messageHandler3(ExCommand *cmd) {
 		return 1;
 	case 55:
 		if (g_fullpipe->_currentScene) {
+			GameObject *obj;
 			if (cmd->_field_14)
-				ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_x, cmd->_y);
+				obj = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_x, cmd->_y);
 			else
-				ani = g_fullpipe->_currentScene->getPictureObjectById(cmd->_x, cmd->_y);
-			g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode)->handleObjectInteraction(ani, cmd->_field_20);
+				obj = g_fullpipe->_currentScene->getPictureObjectById(cmd->_x, cmd->_y);
+			handleObjectInteraction(g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode), obj, cmd->_field_20);
 			result = 1;
 		}
 		return result;
 	case 51:
 		return startWalkTo(cmd->_parentId, cmd->_keyCode, cmd->_x, cmd->_y, cmd->_field_20);
 	case 52:
-		return sub_457F60(cmd->_parentId, cmd->_keyCode, cmd->_field_20);
+		return doSomeAnimation(cmd->_parentId, cmd->_keyCode, cmd->_field_20);
 	case 53:
-		return sub_457FA0(cmd->_parentId, cmd->_keyCode);
+		return doSomeAnimation2(cmd->_parentId, cmd->_keyCode);
 	case 63:
-		if (CObject::IsKindOf(cmd, &RTCObjstateCommand)) {
+		if (cmd->_objtype == kObjTypeObjstateCommand) {
+			CObjstateCommand *c = (CObjstateCommand *)cmd;
 			result = 1;
-			g_fullpipe->setObjectState(cmd->_objCommandName, cmd->_value);
+			g_fullpipe->setObjectState(c->_objCommandName, c->_value);
 		}
 		return result;
 	default:

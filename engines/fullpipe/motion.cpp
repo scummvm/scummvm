@@ -248,4 +248,20 @@ void CReactPolygonal::createRegion() {
 	}
 }
 
+int startWalkTo(int objId, int objKey, int x, int y, int a5) {
+	warning("STUB: startWalkTo(%d, %d, %d, %d, %d)", objId, objKey, x, y, a5);
+
+	return 0;
+}
+
+int doSomeAnimation(int objId, int objKey, int a3) {
+	warning("STUB: doSomeAnimation(%d, %d, %d)", objId, objKey, a3);
+
+	return 0;
+}
+
+int doSomeAnimation2(int objId, int objKey) {
+	return doSomeAnimation(objId, objKey, 0);
+}
+
 } // End of namespace Fullpipe

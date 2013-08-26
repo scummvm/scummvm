@@ -177,6 +177,8 @@ CObjstateCommand::CObjstateCommand() {
 bool CObjstateCommand::load(MfcArchive &file) {
 	debug(5, "CObjStateCommand::load()");
 
+	_objtype = kObjTypeObjstateCommand;
+
 	_cmd.load(file);
 
 	_value = file.readUint32LE();

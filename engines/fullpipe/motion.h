@@ -25,7 +25,12 @@
 
 namespace Fullpipe {
 
+int startWalkTo(int objId, int objKey, int x, int y, int a5);
+int doSomeAnimation(int objId, int objKey, int a3);
+int doSomeAnimation2(int objId, int objKey);
+
 class CMotionController : public CObject {
+ public:
 	int _field_4;
 	bool _isEnabled;
 

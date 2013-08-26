@@ -230,8 +230,6 @@ class StaticANIObject : public GameObject {
 
 	MessageQueue *changeStatics1(int msgNum);
 	void changeStatics2(int objId);
-
-	bool canInteractAny(GameObject *obj2, int a3);
 };
 
 struct MovTable {

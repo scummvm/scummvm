@@ -321,6 +321,11 @@ void GameObject::renumPictures(CPtrList *lst) {
 	free(buf);
 }
 
+bool GameObject::canInteractAny(GameObject *obj2, int a3) {
+	warning("STUB: GameObject::canInteractAny()");
+	return false;
+}
+
 Picture::Picture() {
 	_x = 0;
 	_y = 0;
