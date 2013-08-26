@@ -421,8 +421,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	if (newRect) {
 		position.top = y;
 		position.left = x;
-		position.right = x + newRect->width();
-		position.bottom = y + newRect->height();
 		position.setWidth(newRect->width());
 		position.setHeight(newRect->height());
 	} else {
