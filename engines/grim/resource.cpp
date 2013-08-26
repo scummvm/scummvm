@@ -143,6 +143,12 @@ ResourceLoader::ResourceLoader() {
 			}
 		}
 	} else if (g_grim->getGameType() == GType_MONKEY4) {
+		const char *emi_patches_filename = "residualvm-emi-patch.m4b";
+		if (!SearchMan.hasFile(emi_patches_filename))
+			error("%s not found", emi_patches_filename);
+
+		SearchMan.listMatchingMembers(files, emi_patches_filename);
+
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
 			SearchMan.listMatchingMembers(files, "i9n.lab");
 			SearchMan.listMatchingMembers(files, "lip.lab");
@@ -150,6 +156,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "tile.lab");
 			SearchMan.listMatchingMembers(files, "voice.lab");
 		} else {
+
 			//Keep i9n.m4b before patch.m4b for a better efficiency
 			//in decompressing from Monkey Update.exe
 			SearchMan.listMatchingMembers(files, "i9n.m4b");
