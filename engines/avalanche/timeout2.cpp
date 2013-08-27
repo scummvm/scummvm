@@ -405,7 +405,7 @@ void Timeout::jacques_wakes_up() {
 	case 2 : /* Going through the door. */
 		_vm->_celer->show_one(2); /* Not on the floor. */
 		_vm->_celer->show_one(3); /* But going through the door. */
-		_vm->_gyro->magics[6].op = _vm->_gyro->nix; /* You can't wake him up now. */
+		_vm->_gyro->magics[5].op = _vm->_gyro->nix; /* You can't wake him up now. */
 		break;
 	case 3 :  /* Gone through the door. */
 		_vm->_celer->show_one(2); /* Not on the floor, either. */

@@ -244,7 +244,28 @@ bool Scrolls::they_match(tunetype &played) {
 }
 
 void Scrolls::music_scroll() {
+	state(3);
+	_vm->_gyro->seescroll = true;
+	_vm->_gyro->on();
+	_vm->_gyro->newpointer(4);
+
+	// Since there are no sounds in the game yet, it's pretty pointless to implement this function further. 
+	// For now we act like the player just played the right tone.
+	//if (they_match(played)) {
+		_vm->_gyro->screturn = true;
+		_vm->_gyro->off();
+		state(0);
+		_vm->_gyro->seescroll = false;
+
+		_vm->_timeout->set_up_timer(8, _vm->_timeout->procjacques_wakes_up, _vm->_timeout->reason_jacques_waking_up);
+		return;
+	//}
 	warning("STUB: Scrolls::music_scroll()");
+
+	_vm->_gyro->screturn = false;
+	_vm->_gyro->off();
+	state(0);
+	_vm->_gyro->seescroll = false;
 }
 
 /* ThatsAll, so put us back to */ /*$F-*/
@@ -861,19 +882,15 @@ void Scrolls::okay() {
 }
 
 void Scrolls::musical_scroll() {
-	bool was_virtual;
-
-	display(Common::String("To play the harp...\r\rUse these keys:\r\n") +
-	        "Q W E R T Y U I O P [ ]\r\rOr press Enter to stop playing.\4");
+	display(Common::String("To play the harp...") + kControlNewLine + kControlNewLine + "Use these keys:" + + kControlNewLine
+		+ kControlInsertSpaces + "Q W E R T Y U I O P [ ]" + kControlNewLine + kControlNewLine + "Or press Enter to stop playing."
+		+ kControlToBuffer);
 
 	_vm->_lucerna->sprite_run();
-
-	was_virtual = _vm->_gyro->visible == _vm->_gyro->m_virtual;
 
 	drawscroll(&Avalanche::Scrolls::music_scroll);
 
 	resetscroll();
 }
-
 
 } // End of namespace Avalanche
