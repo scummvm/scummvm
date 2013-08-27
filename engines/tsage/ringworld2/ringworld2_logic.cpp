@@ -384,27 +384,6 @@ void SceneExt::dispatch() {
 	Scene::dispatch();
 }
 
-void SceneExt::loadScene(int sceneNum) {
-	Scene::loadScene(sceneNum);
-
-	_v51C34.top = 0;
-	_v51C34.bottom = 300;
-
-	int prevScene = R2_GLOBALS._sceneManager._previousScene;
-	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
-
-	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50)) ||
-			(sceneNumber == 50) || ((prevScene == 205) && (sceneNumber == 100)) ||
-			((prevScene == 180) && (sceneNumber == 100))) {
-		// TODO: sub_17875
-		R2_GLOBALS._uiElements._active = true;
-		R2_GLOBALS._uiElements.show();
-	} else {
-		// Update the user interface
-		R2_GLOBALS._uiElements.updateInventory();
-	}
-}
-
 bool SceneExt::display(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_CROSSHAIRS:

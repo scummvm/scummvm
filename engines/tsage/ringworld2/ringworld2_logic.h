@@ -101,7 +101,6 @@ public:
 	virtual void remove();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
 	virtual void saveCharacter(int characterIndex);
 	virtual void restore() {}
