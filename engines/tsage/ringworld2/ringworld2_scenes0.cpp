@@ -5544,10 +5544,10 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 
 	scene->_object1.setup2(603, 3, 1, 239, 54, 10, 0);
 	scene->_stasisField.postInit();
-	scene->_actor2.postInit();
+	scene->_computer.postInit();
 
 	scene->_sceneMode = 612;
-	scene->setAction(&scene->_sequenceManager1, scene, 612, &scene->_stasisField, &scene->_actor2, &R2_GLOBALS._player, NULL);
+	scene->setAction(&scene->_sequenceManager1, scene, 612, &scene->_stasisField, &scene->_computer, &R2_GLOBALS._player, NULL);
 	return true;
 }
 
@@ -5824,11 +5824,12 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 
 		if (R2_GLOBALS.getFlag(8)) {
 			if (R2_GLOBALS.getFlag(9)) {
-				_actor2.postInit();
-				_actor2.setup(603, 2, 1);
-				_actor2.setPosition(Common::Point(233, 45));
-				_actor2.animate(ANIM_MODE_2, NULL);
-				_actor2.fixPriority(11);
+				// Computer is active
+				_computer.postInit();
+				_computer.setup(603, 2, 1);
+				_computer.setPosition(Common::Point(233, 45));
+				_computer.animate(ANIM_MODE_2, NULL);
+				_computer.fixPriority(11);
 			}
 		} else {
 			_smoke.postInit();
@@ -5937,7 +5938,7 @@ void Scene600::signal() {
 		R2_GLOBALS.setFlag(9);
 		_stasisField.remove();
 		R2_GLOBALS._sceneItems.remove(&_item4);
-		_actor2.setDetails(600, 21, -1, 23, 4, &_item4);
+		_computer.setDetails(600, 21, -1, 23, 4, &_item4);
 		_background.setDetails(600, 7, -1, -1, 3, (SceneItem *) NULL);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		break;

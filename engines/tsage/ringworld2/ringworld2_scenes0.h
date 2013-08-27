@@ -673,7 +673,7 @@ public:
 	CompartmentHotspot _item5;
 	BackgroundSceneObject _object1;
 	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _computer;
 	SceneActor _stasisField;
 	Smoke _smoke;
 	Doorway _doorway;
