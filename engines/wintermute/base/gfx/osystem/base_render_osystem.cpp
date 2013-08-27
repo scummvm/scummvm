@@ -299,6 +299,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 			_previousTicket = ticket;
 			drawFromSurface(ticket);
 		} else {
+			ticket->_transform._blendMode = BLEND_ADDITIVE;
 			drawFromSurface(ticket);
 			delete ticket;
 		}
@@ -699,6 +700,12 @@ bool BaseRenderOSystem::startSpriteBatch(bool swap, int width, int height) {
 		_auxSurface = _renderSurface;
 		_renderSurface = new Graphics::Surface();
 		_renderSurface->create(width, height, _auxSurface->format);
+		Common::Rect r;
+		r.top = 0;
+		r.left = 0;
+		r.setWidth(width);
+		r.setHeight(height);
+		_renderSurface->fillRect(r, 0);
 	}
 	_spriteBatch = true;
 	_batchNum = 1;
@@ -722,7 +729,7 @@ BaseSurface *BaseRenderOSystem::getAuxSurface() {
 	assert(_auxSurface != nullptr);
 	BaseSurfaceOSystem *surface = new BaseSurfaceOSystem(_gameRef);
 	surface->putSurface(*_auxSurface);
-	surface->setAlphaType(ALPHA_BINARY);
+	surface->setAlphaType(ALPHA_FULL);
 	return surface;
 }
 /*void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){

@@ -105,7 +105,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 	clipRect.setHeight(getSurface()->h);
 
 	src._enableAlphaBlit = !_transform._alphaDisable;
-	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height());
+	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height(), _transform._blendMode);
 }
 
 void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
@@ -117,7 +117,6 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 		clipRect->setWidth(getSurface()->w);
 		clipRect->setHeight(getSurface()->h);
 	}
-
 	src._enableAlphaBlit = !_transform._alphaDisable; 
 	src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height());
 	if (doDelete) {

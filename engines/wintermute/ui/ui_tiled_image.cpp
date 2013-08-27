@@ -87,6 +87,9 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 
 	if (_cache == nullptr || width != _width || height != _height) {
 		_gameRef->_renderer->startSpriteBatch(true, width, height);
+		
+		// TODO: Ugly.
+ 		((BaseSurfaceOSystem *)_image->_surface)->setAlphaType(ALPHA_FULL);
 
 		int x = 0; 
 		int y = 0;

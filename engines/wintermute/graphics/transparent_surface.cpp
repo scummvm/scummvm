@@ -179,7 +179,7 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -234,16 +234,30 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 					break;
 
 				default: // alpha blending
-					outa = 255;
-					outb = ((b * a) + ((oPix >> bShiftTarget) & 0xff) * (255-a)) >> 8;
-					outg = ((g * a) + ((oPix >> gShiftTarget) & 0xff) * (255-a)) >> 8;
-					outr = ((r * a) + ((oPix >> rShiftTarget) & 0xff) * (255-a)) >> 8;
+					// TODO: turn special case into something more fleshed out
+					if (blendMode == BLEND_ADDITIVE) {
+						outa = a;
+						outb = ((b * 255) + ((oPix >> bShiftTarget) & 0xff) * (255-a)) >> 8;
+						outg = ((g * 255) + ((oPix >> gShiftTarget) & 0xff) * (255-a)) >> 8;
+						outr = ((r * 255) + ((oPix >> rShiftTarget) & 0xff) * (255-a)) >> 8;
 
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
-					out += 4;
+						out[aIndex] = outa;
+						out[bIndex] = outb;
+						out[gIndex] = outg;
+						out[rIndex] = outr;
+						out += 4;
+					} else {
+						outa = 255;
+						outb = ((b * a) + ((oPix >> bShiftTarget) & 0xff) * (255-a)) >> 8;
+						outg = ((g * a) + ((oPix >> gShiftTarget) & 0xff) * (255-a)) >> 8;
+						outr = ((r * a) + ((oPix >> rShiftTarget) & 0xff) * (255-a)) >> 8;
+
+						out[aIndex] = outa;
+						out[bIndex] = outb;
+						out[gIndex] = outg;
+						out[rIndex] = outr;
+						out += 4;
+					}
 			}
 		}
 		outo += pitch;
@@ -252,7 +266,7 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 }
 
 
-Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
+Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 	int ca = (color >> 24) & 0xff;
 
 	Common::Rect retSize;
@@ -388,7 +402,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
 			if (_enableAlphaBlit) {
-				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, blendMode);
 			} else {
 				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 			}
