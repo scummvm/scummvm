@@ -450,7 +450,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(4, ped);
 		if (_vm->_gyro->dna.cwytalot_gone) {
-			_vm->_gyro->magics[lightred - 11].op = _vm->_gyro->nix;
+			_vm->_gyro->magics[lightred - 1].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] = r__nowhere;
 		} else {
 			if (ped > 0) {
@@ -473,14 +473,13 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__argentroad: {
-		dnatype &with = _vm->_gyro->dna;
-		if ((with.cwytalot_gone) && (! with.cwytalot_in_herts) && (ped == 2) &&
+		if ((_vm->_gyro->dna.cwytalot_gone) && (! _vm->_gyro->dna.cwytalot_in_herts) && (ped == 2) &&
 		        (_vm->_gyro->dna.rooms[r__argentroad] > 3)) {
 			_vm->_trip->tr[1].init(4, false, _vm->_trip); /* 4=Cwytalot again*/
 			_vm->_trip->apped(2, 1);
 			_vm->_trip->tr[1].walkto(2);
 			_vm->_trip->tr[1].vanishifstill = true;
-			with.cwytalot_in_herts = true;
+			_vm->_gyro->dna.cwytalot_in_herts = true;
 			/*_vm->_gyro->whereis[#157]:=r__Nowhere;*/ /* can we fit this in? */
 			_vm->_timeout->set_up_timer(20, _vm->_timeout->proc_cwytalot_in_herts, _vm->_timeout->reason_cwytalot_in_herts);
 		}
@@ -491,7 +490,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.drawbridge_open == 4) { /*open*/
 			_vm->_celer->show_one(3); /* Position of drawbridge */
 			_vm->_graphics->refreshBackground();
-			_vm->_gyro->magics[green].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
+			_vm->_gyro->magics[green - 1].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
 		}
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(ped + 2, ped); /* load Geida */
@@ -611,7 +610,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_celer->show_one(2);
 			_vm->_graphics->refreshBackground();
 			_vm->_celer->show_one(4);
-			_vm->_gyro->magics[brown].op = _vm->_gyro->nix;
+			_vm->_gyro->magics[brown - 1].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0;
 		}
 		if (ped != 0) {
