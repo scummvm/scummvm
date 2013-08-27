@@ -910,7 +910,7 @@ void Trip::call_special(uint16 which) {
 			tr[1].walkto(3);
 			tr[1].vanishifstill = true;
 			tr[1].check_me = true; /* One of them must have Check_Me switched on. */
-			_vm->_gyro->whereis[_vm->_gyro->pfriartuck] = 177; /* Not here, then. */
+			_vm->_gyro->whereis[_vm->_gyro->pfriartuck - 150] = 177; /* Not here, then. */
 			_vm->_timeout->set_up_timer(364, _vm->_timeout->prochang_around, _vm->_timeout->reason_hanging_around);
 		}
 		break;

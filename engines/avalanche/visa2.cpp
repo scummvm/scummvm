@@ -281,7 +281,7 @@ void Visa::talkto(byte whom) {
 		dixi('q', 1); // Circular from Cardiff.
 		_vm->_gyro->dna.talked_to_crapulus = true;
 
-		_vm->_gyro->whereis[_vm->_gyro->pcrapulus] = 177; // Crapulus walks off.
+		_vm->_gyro->whereis[_vm->_gyro->pcrapulus - 150] = 177; // Crapulus walks off.
 
 		_vm->_trip->tr[1].vanishifstill = true;
 		_vm->_trip->tr[1].walkto(3); // Walks away.
