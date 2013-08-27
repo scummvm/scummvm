@@ -157,7 +157,7 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -179,7 +179,7 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 	
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -210,7 +210,7 @@ void doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -283,7 +283,7 @@ void doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitc
 }
 
 
-Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
+Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 	int ca = (color >> 24) & 0xff;
 
 	Common::Rect retSize;
