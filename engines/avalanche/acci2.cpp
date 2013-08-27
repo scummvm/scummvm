@@ -717,13 +717,17 @@ void Acci::exampers() {
 		person -= 149;
 		switch (person) { /* Special cases */
 		case 11:
-			if (_vm->_gyro->dna.wonnim)
+			if (_vm->_gyro->dna.wonnim) {
 				_vm->_visa->dixi('Q', 8); // "I'm Not Playing!"
-			return;
+				return;
+			}
+			break;
 		case 99:
-			if (_vm->_gyro->dna.lustie_is_asleep)
+			if (_vm->_gyro->dna.lustie_is_asleep) {
 				_vm->_visa->dixi('Q', 65); // He's asleep. (65! Wow!)
-			return;
+				return;
+			}
+			break;
 		}
 		// Otherwise...
 		_vm->_visa->dixi('p', person);
@@ -753,19 +757,21 @@ bool Acci::holding() {
 
 
 void Acci::openBox(bool before) {
-	_vm->_celer->show_one(5);
+	if ((_vm->_gyro->dna.room == r__yours) && (thing == 54)) {
+		_vm->_celer->show_one(5);
 
-	_vm->_celer->pics_link();
-	_vm->_trip->trippancy_link();
-	_vm->_graphics->refreshScreen();
-
-	_vm->_system->delayMillis(55);
-
-	if (!before) {
-		_vm->_celer->show_one(6);
 		_vm->_celer->pics_link();
 		_vm->_trip->trippancy_link();
 		_vm->_graphics->refreshScreen();
+
+		_vm->_system->delayMillis(55);
+
+		if (!before) {
+			_vm->_celer->show_one(6);
+			_vm->_celer->pics_link();
+			_vm->_trip->trippancy_link();
+			_vm->_graphics->refreshScreen();
+		}
 	}
 }
 
@@ -1790,7 +1796,7 @@ void Acci::do_that() {
 						}
 
 						_vm->_celer->show_one(12);
-						_vm->_scrolls->display("Wine, please." + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
+						_vm->_scrolls->display(Common::String("Wine, please.") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
 						if (_vm->_gyro->dna.alcohol == 0)
 							_vm->_lucerna->points(3);
 						_vm->_celer->show_one(10);
