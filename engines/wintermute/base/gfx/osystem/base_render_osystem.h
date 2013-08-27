@@ -108,6 +108,9 @@ public:
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
 	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
 	BaseSurface *createSurface() override;
+
+	void disableDirtyRects (bool disable);
+
 private:
 	/**
 	 * Mark a specified rect of the screen as dirty.

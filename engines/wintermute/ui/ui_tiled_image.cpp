@@ -87,6 +87,8 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 
 	if (_cache == nullptr || width != _width || height != _height) {
 		_gameRef->_renderer->startSpriteBatch(true, width, height);
+		// TODO: Hack!
+		((BaseRenderOSystem *)_gameRef->_renderer)->disableDirtyRects(true);
 		int x = 0; 
 		int y = 0;
 		_width = width;
@@ -119,12 +121,17 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 		if (nuRows > 0 && nuColumns > 0) {
 			yyy = y + (_upMiddle.bottom - _upMiddle.top);
 			xxx = x + (_upLeft.right - _upLeft.left);
-			_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
-			_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
+
+			for (row = 0; row < nuRows; row++) {
+				for (col = 0; col < nuColumns; col++) {
+					_image->_surface->displayTrans(xxx + col * _middleMiddle.width(), yyy + row * _middleMiddle.height(), _middleMiddle);
+				}
+			}
 		}
 
 		_gameRef->_renderer->endSpriteBatch(false);
-	
+		// TODO: Hack!
+		((BaseRenderOSystem *)_gameRef->_renderer)->disableDirtyRects(false);	
 		_cache = _gameRef->_renderer->getAuxSurface();
 
 	}

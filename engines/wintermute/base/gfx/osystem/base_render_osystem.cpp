@@ -294,8 +294,8 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
 		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
-		_renderQueue.push_back(ticket);
-		_previousTicket = ticket;
+		// _renderQueue.push_back(ticket);
+		// _previousTicket = ticket;
 		drawFromSurface(ticket);
 		return;
 	}
@@ -723,4 +723,9 @@ BaseSurface *BaseRenderOSystem::getAuxSurface() {
 	_auxSurface = auxSurface;
 }
 */
+// TODO: Ugly hack is ugly 
+void BaseRenderOSystem::disableDirtyRects (bool disable) {
+	_disableDirtyRects = disable;
+}
+
 } // End of namespace Wintermute
