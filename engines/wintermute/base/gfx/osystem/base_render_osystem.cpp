@@ -290,13 +290,18 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 
 void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) { 
 
-	if (_tempDisableDirtyRects || _disableDirtyRects) {
+	if (_tempDisableDirtyRects || _disableDirtyRects || _swapped) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
 		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
-		// _renderQueue.push_back(ticket);
-		// _previousTicket = ticket;
-		drawFromSurface(ticket);
+		if (!_swapped) {
+			_renderQueue.push_back(ticket);
+			_previousTicket = ticket;
+			drawFromSurface(ticket);
+		} else {
+			drawFromSurface(ticket);
+			delete ticket;
+		}
 		return;
 	}
 
@@ -717,6 +722,7 @@ BaseSurface *BaseRenderOSystem::getAuxSurface() {
 	assert(_auxSurface != nullptr);
 	BaseSurfaceOSystem *surface = new BaseSurfaceOSystem(_gameRef);
 	surface->putSurface(*_auxSurface);
+	surface->setAlphaType(ALPHA_BINARY);
 	return surface;
 }
 /*void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){

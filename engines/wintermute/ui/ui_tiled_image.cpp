@@ -87,8 +87,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 
 	if (_cache == nullptr || width != _width || height != _height) {
 		_gameRef->_renderer->startSpriteBatch(true, width, height);
-		// TODO: Hack!
-		((BaseRenderOSystem *)_gameRef->_renderer)->disableDirtyRects(true);
+
 		int x = 0; 
 		int y = 0;
 		_width = width;
@@ -130,10 +129,8 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 		}
 
 		_gameRef->_renderer->endSpriteBatch(false);
-		// TODO: Hack!
-		((BaseRenderOSystem *)_gameRef->_renderer)->disableDirtyRects(false);	
+		// TODO: Hack!	
 		_cache = _gameRef->_renderer->getAuxSurface();
-
 	}
 
 	Rect32 dst;

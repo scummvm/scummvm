@@ -81,6 +81,10 @@ public:
 		return _height;
 	}
 
+	void setAlphaType (AlphaType type) {
+		_alphaType = type;
+	}
+
 private:
 	Graphics::Surface *_surface;
 	bool _loaded;
