@@ -373,10 +373,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 	if ((_vm->_gyro->dna.rooms[x] == 0) && (! _vm->_gyro->flagset('S')))
 		points(1);
 
-	_vm->_gyro->whereis[_vm->_gyro->pavalot] = _vm->_gyro->dna.room;
+	_vm->_gyro->whereis[_vm->_gyro->pavalot - 150] = _vm->_gyro->dna.room;
 
 	if (_vm->_gyro->dna.geida_follows)
-		_vm->_gyro->whereis[_vm->_gyro->pgeida] = x;
+		_vm->_gyro->whereis[_vm->_gyro->pgeida - 150] = x;
 
 	_vm->_gyro->roomtime = 0;
 
@@ -398,7 +398,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (ped > 0) {
 			if (! _vm->_gyro->dna.talked_to_crapulus) {
 
-				_vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__outsideyours;
+				_vm->_gyro->whereis[_vm->_gyro->pcrapulus - 150] = r__outsideyours;
 				_vm->_trip->tr[1].init(8, false, _vm->_trip); /* load Crapulus */
 
 				if (_vm->_gyro->dna.rooms[r__outsideyours] == 1) {
@@ -412,7 +412,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_trip->tr[1].call_eachstep = true;
 				_vm->_trip->tr[1].eachstep = _vm->_trip->procface_avvy; /* He always faces Avvy. */
 
-			} else _vm->_gyro->whereis[_vm->_gyro->pcrapulus] = r__nowhere;
+			} else _vm->_gyro->whereis[_vm->_gyro->pcrapulus - 150] = r__nowhere;
 
 			if (_vm->_gyro->dna.crapulus_will_tell) {
 				_vm->_trip->tr[1].init(8, false, _vm->_trip);
@@ -450,14 +450,14 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(4, ped);
 		if (_vm->_gyro->dna.cwytalot_gone) {
-			_vm->_gyro->magics[lightred].op = _vm->_gyro->nix;
-			_vm->_gyro->whereis[_vm->_gyro->pcwytalot] = r__nowhere;
+			_vm->_gyro->magics[lightred - 11].op = _vm->_gyro->nix;
+			_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] = r__nowhere;
 		} else {
 			if (ped > 0) {
 				_vm->_trip->tr[1].init(4, false, _vm->_trip); /* 4=Cwytalot*/
 				_vm->_trip->tr[1].call_eachstep = true;
 				_vm->_trip->tr[1].eachstep = _vm->_trip->procfollow_avvy_y;
-				_vm->_gyro->whereis[_vm->_gyro->pcwytalot] = r__brummieroad;
+				_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] = r__brummieroad;
 
 				if (_vm->_gyro->dna.rooms[r__brummieroad] == 1) { /* First time here... */
 					_vm->_trip->apped(2, 2); /* He appears on the right of the screen... */
@@ -510,14 +510,14 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 
 		if (_vm->_gyro->dna.been_tied_up) {
-			_vm->_gyro->whereis[_vm->_gyro->probinhood] = 0;
-			_vm->_gyro->whereis[_vm->_gyro->pfriartuck] = 0;
+			_vm->_gyro->whereis[_vm->_gyro->probinhood - 150] = 0;
+			_vm->_gyro->whereis[_vm->_gyro->pfriartuck - 150] = 0;
 		}
 
 		if (_vm->_gyro->dna.tied_up)
 			_vm->_celer->show_one(2);
 
-		if (! _vm->_gyro->dna.mushroom_growing) 
+		if (!_vm->_gyro->dna.mushroom_growing) 
 			_vm->_celer->show_one(3);
 		_vm->_graphics->refreshBackground();
 	}
@@ -612,7 +612,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_graphics->refreshBackground();
 			_vm->_celer->show_one(4);
 			_vm->_gyro->magics[brown].op = _vm->_gyro->nix;
-			_vm->_gyro->whereis[_vm->_gyro->pjacques] = 0;
+			_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0;
 		}
 		if (ped != 0) {
 			_vm->_celer->show_one(6);

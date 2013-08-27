@@ -336,7 +336,7 @@ void Timeout::get_tied_up2() {
 void Timeout::hang_around() {
 	_vm->_trip->tr[1].check_me = false;
 	_vm->_trip->tr[0].init(7, true, _vm->_trip); /* Robin Hood */
-	_vm->_gyro->whereis[_vm->_gyro->probinhood] = r__robins;
+	_vm->_gyro->whereis[_vm->_gyro->probinhood - 150] = r__robins;
 	_vm->_trip->apped(1, 2);
 	_vm->_visa->dixi('q', 39);
 	_vm->_trip->tr[0].walkto(7);
@@ -347,7 +347,7 @@ void Timeout::hang_around2() {
 	_vm->_visa->dixi('q', 40);
 	_vm->_trip->tr[1].vanishifstill = false;
 	_vm->_trip->tr[1].walkto(4);
-	_vm->_gyro->whereis[_vm->_gyro->pfriartuck] = r__robins;
+	_vm->_gyro->whereis[_vm->_gyro->pfriartuck - 150] = r__robins;
 	_vm->_visa->dixi('q', 41);
 	_vm->_trip->tr[0].done();
 	_vm->_trip->tr[1].done(); /* Get rid of Robin Hood and Friar Tuck. */
@@ -410,7 +410,7 @@ void Timeout::jacques_wakes_up() {
 	case 3 :  /* Gone through the door. */
 		_vm->_celer->show_one(2); /* Not on the floor, either. */
 		_vm->_celer->show_one(4); /* He's gone... so the door's open. */
-		_vm->_gyro->whereis[_vm->_gyro->pjacques - 1] = 0; /* Gone! */
+		_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0; /* Gone! */
 		break;
 	}
 
