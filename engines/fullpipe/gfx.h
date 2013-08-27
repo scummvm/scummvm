@@ -60,6 +60,8 @@ struct Bitmap {
 
 	void drawShaded(int type, int x, int y, byte *palette);
 	void drawRotated(int x, int y, int angle, byte *palette);
+
+	bool isPixelHitAtPos(int x, int y);
 };
 
 class Picture : public MemoryObject {
@@ -103,6 +105,7 @@ class Picture : public MemoryObject {
 
 	Common::Point *getDimensions(Common::Point *p);
 	bool isPointInside(int x, int y);
+	bool isPixelHitAtPos(int x, int y);
 
 	byte *getPaletteData() { return _paletteData; }
 	void setPaletteData(byte *pal);
@@ -161,6 +164,7 @@ class PictureObject : public GameObject {
 
 	bool setPicAniInfo(PicAniInfo *picAniInfo);
 	bool isPointInside(int x, int y);
+	bool isPixelHitAtPos(int x, int y);
 };
 
 class Background : public CObject {

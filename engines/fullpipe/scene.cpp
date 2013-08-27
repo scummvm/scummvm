@@ -483,15 +483,34 @@ StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
 }
 
 PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
-	warning("STUB: Scene::getPictureObjectAtPos(%d, %d)", x, y);
+	PictureObject *res = 0;
 
-	return 0;
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		PictureObject *p = (PictureObject *)_picObjList[i];
+		if ((p->_field_8 & 1) && (p->_flags & 4) &&
+				p->isPixelHitAtPos(x, y) &&
+				(!res || res->_priority >= p->_priority))
+			res = p;
+	}
+
+	return res;
 }
 
 int Scene::getPictureObjectIdAtPos(int x, int y) {
-	warning("STUB: Scene::getPictureObjectIdAtPos(%d, %d)", x, y);
+	PictureObject *resp = 0;
+	int res = 0;
 
-	return 0;
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		PictureObject *p = (PictureObject *)_picObjList[i];
+		if ((p->_field_8 & 1) && (p->_flags & 4) &&
+				p->isPixelHitAtPos(x, y) &&
+				(!res || resp->_priority >= p->_priority)) {
+			resp = p;
+			res = p->_id;
+		}
+	}
+
+	return res;
 }
 
 void Scene::update(int counterdiff) {

@@ -247,6 +247,19 @@ bool PictureObject::isPointInside(int x, int y) {
 	return res;
 }
 
+bool PictureObject::isPixelHitAtPos(int x, int y) {
+	int oldx = _picture->_x;
+	int oldy = _picture->_y;
+
+	_picture->_x = _ox;
+	_picture->_y = _oy;
+	bool res = _picture->isPixelHitAtPos(x, y);
+	_picture->_x = oldx;
+	_picture->_y = oldy;
+
+	return res;
+}
+
 GameObject::GameObject() {
 	_okeyCode = 0;
 	_flags = 0;
@@ -587,6 +600,25 @@ bool Picture::isPointInside(int x, int y) {
 		if (y >= _y && x < _x + _width && y < _y + _height)
 			return true;
 	}
+	return false;
+}
+
+bool Picture::isPixelHitAtPos(int x, int y) {
+	if (x < _x || y < _y || x >= _x + _width || y >= _y + _height)
+		return false;
+
+	if (!_bitmap )
+		init();
+
+	_bitmap->_x = _x;
+	_bitmap->_y = _y;
+
+	return _bitmap->isPixelHitAtPos(x, y);
+}
+
+bool Bitmap::isPixelHitAtPos(int x, int y) {
+	debug(0, "STUB: Bitmap::isPixelHitAtPos(%d, %d)", x, y);
+
 	return false;
 }
 
