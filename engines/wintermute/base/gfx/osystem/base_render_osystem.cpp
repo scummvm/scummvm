@@ -455,20 +455,9 @@ void BaseRenderOSystem::drawTickets() {
 		}
 	}
 
-	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
-	
-	// TODO: Hack, find a better way to tell fades from regular drawing.
 
-	if (!optimized.size()) {
-		// TODO: Watch for 0-size rects!
-		it = _renderQueue.begin();
-		while (it != _renderQueue.end()) {
-			RenderTicket *ticket = *it;
-			ticket->_wantsDraw = false;
-			++it;
-		}
-		return;
-	}	
+
+	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
 
 	for (uint i = 0; i < optimized.size(); i++) {
 		Common::Rect *_dirtyRect = optimized[i];
@@ -499,21 +488,22 @@ void BaseRenderOSystem::drawTickets() {
 			ticket->_wantsDraw = false;
 		}
 		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
-	}
+		
 
-	it = _renderQueue.begin();
-	// Clean out the old tickets
-	decrement = 0;
-	while (it != _renderQueue.end()) {
-		if ((*it)->_isValid == false) {
-			RenderTicket *ticket = *it;
-			addDirtyRect((*it)->_dstRect);
-			it = _renderQueue.erase(it);
-			delete ticket;
-			decrement++;
-		} else {
-			(*it)->_drawNum -= decrement;
-			++it;
+		it = _renderQueue.begin();
+		// Clean out the old tickets
+		decrement = 0;
+		while (it != _renderQueue.end()) {
+			if ((*it)->_isValid == false) {
+				RenderTicket *ticket = *it;
+				addDirtyRect((*it)->_dstRect);
+				it = _renderQueue.erase(it);
+				delete ticket;
+				decrement++;
+			} else {
+				(*it)->_drawNum -= decrement;
+				++it;
+			}
 		}
 	}
 
