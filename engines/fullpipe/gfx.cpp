@@ -783,15 +783,17 @@ void Bitmap::putDibCB(int32 *palette) {
 
 	byte *srcPtr = &_pixels[pitch * (endy - _y)];
 
+	int starty = _y;
+	if (starty < 0) {
+		starty = 0;
+		srcPtr = &_pixels[pitch * (_height + _y)];
+	}
+
 	int startx = _x;
 	if (startx < 0) {
 		srcPtr += bpp * -_x;
 		startx = 0;
 	}
-
-	int starty = _y;
-	if (starty < 0)
-		starty = 0;
 
 	if (_flags & 0x1000000) {
 		for (int y = starty; y < endy; srcPtr -= pitch, y++) {
