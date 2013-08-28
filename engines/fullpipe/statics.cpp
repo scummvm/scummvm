@@ -321,6 +321,65 @@ Movement *StaticANIObject::getMovementByName(char *name) {
 	return 0;
 }
 
+bool StaticANIObject::getPixelAtPos(int x, int y, int *pixel) {
+	bool res = false;
+	Picture *pic;
+
+	if (_movement)
+		pic = _movement->_currDynamicPhase;
+	else
+		pic = _statics;
+
+	if (!pic)
+		return false;
+
+	int ongoing;
+	int xani, yani;
+	int oxani, oyani;
+	Common::Point point;
+
+	if (_movement)
+		ongoing = _movement->_currMovement != 0;
+	else
+		ongoing = _statics->_staticsId & 0x4000;
+
+	if (_movement) {
+		_movement->getCurrDynamicPhaseXY(point);
+		xani = point.x;
+		yani = point.y;
+		oxani = _movement->_ox;
+		oyani = _movement->_oy;
+	} else {
+		_statics->getSomeXY(point);
+		xani = point.x;
+		yani = point.y;
+		oxani = _ox;
+		oyani = _oy;
+	}
+
+	int xtarget = x - (oxani - xani);
+	int ytarget = y - (oyani - yani);
+
+	if (ongoing && _movement)
+		xtarget = pic->getDimensions(&point)->x - xtarget;
+
+	x = pic->_x;
+	y = pic->_y;
+	pic->_x = 0;
+	pic->_y = 0;
+	if (pic->isPixelHitAtPos(xtarget, ytarget)) {
+		*pixel = pic->getPixelAtPos(xtarget, ytarget);
+
+		res = true;
+	} else {
+		res = false;
+	}
+	pic->_x = x;
+	pic->_y = y;
+
+	return res;
+}
+
 void Movement::draw(bool flipFlag, int angle) {
 	debug(3, "Movement::draw(%d, %d)", flipFlag, angle);
 

@@ -106,6 +106,8 @@ class Picture : public MemoryObject {
 	Common::Point *getDimensions(Common::Point *p);
 	bool isPointInside(int x, int y);
 	bool isPixelHitAtPos(int x, int y);
+	int getPixelAtPos(int x, int y);
+	int getPixelAtPosEx(int x, int y);
 
 	byte *getPaletteData() { return _paletteData; }
 	void setPaletteData(byte *pal);

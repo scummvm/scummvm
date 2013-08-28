@@ -616,6 +616,27 @@ bool Picture::isPixelHitAtPos(int x, int y) {
 	return _bitmap->isPixelHitAtPos(x, y);
 }
 
+int Picture::getPixelAtPos(int x, int y) {
+	return getPixelAtPosEx(x / g_fullpipe->_pictureScale, y / g_fullpipe->_pictureScale);
+
+	return false;
+}
+
+int Picture::getPixelAtPosEx(int x, int y) {
+#if 0
+	if (x < 0 || y < 0)
+		return 0;
+
+	v5 = ictureScale + this->width - 1;
+	if ( x < v5 / g_fullpipe->_pictureScale
+		 && (v6 = g_fullpipe->_pictureScale + this_->height - 1, y < v6 / (unsigned __int16)getPictureScale())
+		 && (v7 = this_->memoryObject2) != 0
+		 && (v8 = v7->rows) != 0 )
+		return = *(_WORD *)&v8[x][2 * y];
+#endif
+	return 0;
+}
+
 bool Bitmap::isPixelHitAtPos(int x, int y) {
 	debug(0, "STUB: Bitmap::isPixelHitAtPos(%d, %d)", x, y);
 

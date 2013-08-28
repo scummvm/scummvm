@@ -477,9 +477,19 @@ void Scene::updateScrolling2() {
 }
 
 StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
-	warning("STUB: Scene::getStaticANIObjectAtPos(%d, %d)", x, y);
+	StaticANIObject *res = 0;
 
-	return 0;
+	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
+		StaticANIObject *p = (StaticANIObject *)_staticANIObjectList1[i];
+		int pixel;
+
+		if ((p->_field_8 & 1) && (p->_flags & 4) &&
+				p->getPixelAtPos(x, y, &pixel) &&
+				(!res || res->_priority >= p->_priority))
+			res = p;
+	}
+
+	return res;
 }
 
 PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
