@@ -80,7 +80,7 @@ private:
 		WORKING_WINDOW_HEIGHT = 320,
 
 		ROTATION_SCREEN_EDGE_OFFSET = 60,
-		MAX_ROTATION_SPEED = 250 // Pixels per second
+		MAX_ROTATION_SPEED = 400 // Pixels per second
 	};
 
 	Console *_console;
