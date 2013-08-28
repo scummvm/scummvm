@@ -455,12 +455,6 @@ void BaseRenderOSystem::drawTickets() {
 		}
 	}
 
-
-
-	// The color-mods are stored in the RenderTickets on add, since we set that state again during
-	// draw, we need to keep track of what it was prior to draw.
-	uint32 oldColorMod = _colorMod;
-
 	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
 	
 	// TODO: Hack, find a better way to tell fades from regular drawing.
@@ -506,9 +500,6 @@ void BaseRenderOSystem::drawTickets() {
 		}
 		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 	}
-
-	// Revert the colorMod-state.
-	_colorMod = oldColorMod;
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets
