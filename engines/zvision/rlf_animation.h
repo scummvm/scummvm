@@ -74,9 +74,7 @@ public:
 	uint32 frameTime() { return _frameTime; }
 
 	const uint16 *getFrameData(uint frameNumber);
-
 	const uint16 *getNextFrame();
-	const uint16 *getPreviousFrame();
 
 	bool endOfAnimation() { return _currentFrame == (int)_frameCount - 1; }
 
