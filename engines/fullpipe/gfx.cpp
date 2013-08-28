@@ -623,17 +623,14 @@ int Picture::getPixelAtPos(int x, int y) {
 }
 
 int Picture::getPixelAtPosEx(int x, int y) {
-#if 0
 	if (x < 0 || y < 0)
 		return 0;
 
-	v5 = ictureScale + this->width - 1;
-	if ( x < v5 / g_fullpipe->_pictureScale
-		 && (v6 = g_fullpipe->_pictureScale + this_->height - 1, y < v6 / (unsigned __int16)getPictureScale())
-		 && (v7 = this_->memoryObject2) != 0
-		 && (v8 = v7->rows) != 0 )
-		return = *(_WORD *)&v8[x][2 * y];
-#endif
+	if (x < (g_fullpipe->_pictureScale + _width - 1) / g_fullpipe->_pictureScale &&
+			y < (g_fullpipe->_pictureScale + _height - 1) / g_fullpipe->_pictureScale &&
+			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
+		return _memoryObject2->_rows[x][2 * y];
+
 	return 0;
 }
 
