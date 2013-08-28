@@ -907,26 +907,24 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	if (_flags & 0x80)
 		return false;
 
-	warning("STUB: StaticANIObject::startAnim(%d, %d, %d)", movementId, messageQueueId, dynPhaseIdx);
+	debug(0, "StaticANIObject::startAnim(%d, %d, %d)", movementId, messageQueueId, dynPhaseIdx);
 
 	if (_messageQueueId) {
 		updateGlobalMessageQueue(messageQueueId, _id);
 		return false;
 	}
 
-	bool found = false;
-	Movement *mov;
+	Movement *mov = 0;
 
 	for (uint i = 0; i < _movements.size(); i++) {
-		mov = (Movement *)_movements[i];
 
-		if (mov->_id != movementId) {
-			found = true;
+		if (((Movement *)_movements[i])->_id == movementId) {
+			mov = (Movement *)_movements[i];
 			break;
 		}
 	}
 
-	if (!found) {
+	if (!mov) {
 		updateGlobalMessageQueue(messageQueueId, _id);
 		return false;
 	}
@@ -935,7 +933,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 		_flags |= 1;
 		_messageQueueId = messageQueueId;
 
-		return 1;
+		return true;
 	}
 
 	int newx = _ox;
@@ -944,6 +942,9 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 
 	if (_movement) {
 		_movement->getCurrDynamicPhaseXY(point);
+
+		newx -= point.x;
+		newy -= point.y;
 	} else if (_statics) {
 		_statics->getSomeXY(point);
 

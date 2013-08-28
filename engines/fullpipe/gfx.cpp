@@ -506,7 +506,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		return;
 
 	if ((_alpha & 0xff) < 0xff) {
-		warning("Picture:draw: alpha = %0x", _alpha);
+		debug(0, "Picture:draw: alpha = %0x", _alpha);
 	}
 
 	byte *pal = _paletteData;

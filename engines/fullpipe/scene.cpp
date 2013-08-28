@@ -469,7 +469,7 @@ void Scene::draw() {
 }
 
 void Scene::updateScrolling() {
-	warning("STUB Scene::updateScrolling()");
+	debug(0, "STUB Scene::updateScrolling()");
 }
 
 void Scene::updateScrolling2() {
