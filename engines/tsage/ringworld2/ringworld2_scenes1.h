@@ -438,15 +438,15 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class UnkObj15502 : public SceneActor {
+	class ShipComponent : public SceneActor {
 	public:
-		int _fieldA4;
+		int _componentId;
 
-		UnkObj15502();
+		ShipComponent();
 		void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
-		void subA5CDF(int strip);
+		void setupShipComponent(int componentId);
 	};
 
 	class UnkObj15503 : public SceneActor {
@@ -553,7 +553,7 @@ public:
 	Wall _westWall;		// Is also reused for left hand space
 	Wall _eastWall;
 	Wall _southWall;
-	UnkObj15502 _arrUnkObj15502[8];
+	ShipComponent _shipComponents[8];
 	UnkArea1550 _unkArea1;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;

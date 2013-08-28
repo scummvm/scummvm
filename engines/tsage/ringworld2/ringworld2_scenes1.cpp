@@ -7244,36 +7244,36 @@ bool Scene1550::Junk::startAction(CursorType action, Event &event) {
 	}
 }
 
-Scene1550::UnkObj15502::UnkObj15502() {
-	_fieldA4 = 0;
+Scene1550::ShipComponent::ShipComponent() {
+	_componentId = 0;
 }
 
-void Scene1550::UnkObj15502::synchronize(Serializer &s) {
+void Scene1550::ShipComponent::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
-	s.syncAsSint16LE(_fieldA4);
+	s.syncAsSint16LE(_componentId);
 }
 
-bool Scene1550::UnkObj15502::startAction(CursorType action, Event &event) {
+bool Scene1550::ShipComponent::startAction(CursorType action, Event &event) {
 	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_USE:
-		if (_fieldA4 == 8) {
+		if (_componentId == 8) {
 			scene->_field412 = 1;
 			R2_GLOBALS._player.disableControl();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_sceneMode = 1576;
 			else
 				scene->_sceneMode = 1584;
-			// strcpy(scene->_arrUnkObj15502[7]._actorName, 'hatch');
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[7], NULL);
+			// strcpy(scene->_shipComponents[7]._actorName, 'hatch');
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[7], NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
 		break;
 	case CURSOR_LOOK:
-		if (_fieldA4 == 8)
+		if (_componentId == 8)
 			SceneItem::display(1550, 75, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 		else if (_frame == 1)
 			SceneItem::display(1550, 70, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
@@ -7283,92 +7283,92 @@ bool Scene1550::UnkObj15502::startAction(CursorType action, Event &event) {
 		break;
 	case R2_FUEL_CELL:
 		scene->_field412 = 1;
-		if (_fieldA4 == 6) {
+		if (_componentId == 6) {
 			R2_GLOBALS._player.disableControl();
 			scene->_landingStrut.postInit();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_sceneMode = 1574;
 			else
 				scene->_sceneMode = 1582;
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[5], &scene->_landingStrut, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[5], &scene->_landingStrut, NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
 		break;
 	case R2_GYROSCOPE:
 		scene->_field412 = 1;
-		if (_fieldA4 == 3) {
+		if (_componentId == 3) {
 			R2_GLOBALS._player.disableControl();
 			scene->_landingStrut.postInit();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_sceneMode = 1571;
 			else
 				scene->_sceneMode = 1581;
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[2], &scene->_landingStrut, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[2], &scene->_landingStrut, NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
 		break;
 	case R2_GUIDANCE_MODULE:
 		scene->_field412 = 1;
-		if (_fieldA4 == 1) {
+		if (_componentId == 1) {
 			R2_GLOBALS._player.disableControl();
 			scene->_landingStrut.postInit();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_sceneMode = 1569;
 			else
 				scene->_sceneMode = 1579;
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[0], &scene->_landingStrut, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[0], &scene->_landingStrut, NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
 		break;
 	case R2_THRUSTER_VALVE:
 		scene->_field412 = 1;
-		if (_fieldA4 == 4) {
+		if (_componentId == 4) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1572;
 			scene->_landingStrut.postInit();
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[3], &scene->_landingStrut, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[3], &scene->_landingStrut, NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
 		break;
 	case R2_RADAR_MECHANISM:
 		scene->_field412 = 1;
-		if (_fieldA4 == 2) {
+		if (_componentId == 2) {
 			R2_GLOBALS._player.disableControl();
 			scene->_landingStrut.postInit();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_sceneMode = 1570;
 			else
 				scene->_sceneMode = 1580;
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[1], &scene->_landingStrut, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[1], &scene->_landingStrut, NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
 		break;
 	case R2_IGNITOR:
 		scene->_field412 = 1;
-		if (_fieldA4 == 5) {
+		if (_componentId == 5) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1573;
 			scene->_landingStrut.postInit();
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[4], &scene->_landingStrut, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[4], &scene->_landingStrut, NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
 		break;
 	case R2_BATTERY:
 		scene->_field412 = 1;
-		if (_fieldA4 == 7) {
+		if (_componentId == 7) {
 			R2_GLOBALS._player.disableControl();
 			scene->_landingStrut.postInit();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_sceneMode = 1575;
 			else
 				scene->_sceneMode = 1583;
-			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_arrUnkObj15502[6], &scene->_landingStrut, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_shipComponents[6], &scene->_landingStrut, NULL);
 			return true;
 		}
 		return SceneActor::startAction(action, event);
@@ -7379,11 +7379,12 @@ bool Scene1550::UnkObj15502::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene1550::UnkObj15502::subA5CDF(int strip) {
-	_fieldA4 = strip;
+void Scene1550::ShipComponent::setupShipComponent(int componentId) {
+	_componentId = componentId;
 	postInit();
-	setup(1517, _fieldA4, 1);
-	switch (_fieldA4 - 1) {
+	setup(1517, _componentId, 1);
+
+	switch (_componentId - 1) {
 	case 0:
 		if (R2_INVENTORY.getObjectScene(R2_GUIDANCE_MODULE) == 0)
 			setFrame(5);
@@ -7835,14 +7836,14 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 			_field412 = 1;
 
 			_landingStrut.postInit();
-			_arrUnkObj15502[7].subA5CDF(8);
-			_arrUnkObj15502[7].hide();
+			_shipComponents[7].setupShipComponent(8);
+			_shipComponents[7].hide();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				_sceneMode = 1577;
 			else
 				_sceneMode = 1578;
 
-			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_landingStrut, &_arrUnkObj15502[7], NULL);
+			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_landingStrut, &_shipComponents[7], NULL);
 			R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 1550;
 		} else {
 			R2_GLOBALS._player.enableControl();
@@ -8603,7 +8604,7 @@ void Scene1550::enterArea() {
 	_wreckage.remove();
 
 	for (int i = 0; i < 8; ++i)
-		_arrUnkObj15502[i].remove();
+		_shipComponents[i].remove();
 
 	_actor8.remove();
 	_actor9.remove();
@@ -9223,14 +9224,15 @@ void Scene1550::enterArea() {
 				_wreckage.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 				break;
 			case 11:
-				_arrUnkObj15502[7].subA5CDF(8);
-				_arrUnkObj15502[0].subA5CDF(1);
-				_arrUnkObj15502[1].subA5CDF(2);
-				_arrUnkObj15502[2].subA5CDF(3);
-				_arrUnkObj15502[3].subA5CDF(4);
-				_arrUnkObj15502[4].subA5CDF(5);
-				_arrUnkObj15502[5].subA5CDF(6);
-				_arrUnkObj15502[6].subA5CDF(7);
+				// Intact ship
+				_shipComponents[7].setupShipComponent(8);
+				_shipComponents[0].setupShipComponent(1);
+				_shipComponents[1].setupShipComponent(2);
+				_shipComponents[2].setupShipComponent(3);
+				_shipComponents[3].setupShipComponent(4);
+				_shipComponents[4].setupShipComponent(5);
+				_shipComponents[5].setupShipComponent(6);
+				_shipComponents[6].setupShipComponent(7);
 			default:
 				break;
 			}
@@ -9251,7 +9253,7 @@ void Scene1550::enterArea() {
 				_companion.setPosition(Common::Point(272, 94));
 				_companion.fixPriority(91);
 				_companion.changeZoom(100);
-				_companion.setDetails(1550, -1, -1, -1, 5, &_arrUnkObj15502[7]);
+				_companion.setDetails(1550, -1, -1, -1, 5, &_shipComponents[7]);
 			} else {
 				_companion.setup(1505, 6, 1);
 				_companion.setDetails(1550, -1, -1, -1, 2, (SceneItem *) NULL);
@@ -9262,7 +9264,7 @@ void Scene1550::enterArea() {
 				_companion.setPosition(Common::Point(276, 97));
 				_companion.fixPriority(91);
 				_companion.changeZoom(100);
-				_companion.setDetails(1550, -1, -1, -1, 5, &_arrUnkObj15502[7]);
+				_companion.setDetails(1550, -1, -1, -1, 5, &_shipComponents[7]);
 			} else {
 				_companion.setup(1500, 6, 1);
 				_companion.setDetails(1550, -1, -1, -1, 2, (SceneItem *) NULL);
