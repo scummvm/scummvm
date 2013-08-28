@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ZVISION_PUSH_TOGGLE_CONTROL_H
-#define ZVISION_PUSH_TOGGLE_CONTROL_H
+#ifndef ZVISION_LEVER_CONTROL_H
+#define ZVISION_LEVER_CONTROL_H
 
 #include "common/types.h"
 
