@@ -45,6 +45,7 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		  _frameCount(0),
 		  _startFrame(0),
 		  _currentFrame(0),
+		  _lastRenderedFrame(0),
 		  _mouseIsCaptured(false),
 		  _isReturning(false) {
 
@@ -318,6 +319,10 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 }
 
 void LeverControl::renderFrame(uint frameNumber) {
+	if (frameNumber < _lastRenderedFrame && _mirrored) {
+		frameNumber = (_frameCount * 2) - 1 - frameNumber;
+	}
+
 	const uint16 *frameData;
 	int pitch;
 	int x = _animationCoords.left;
@@ -341,6 +346,7 @@ void LeverControl::renderFrame(uint frameNumber) {
 	}
 
 	_engine->_system->copyRectToScreen(frameData, pitch, x + _engine->_workingWindow.left, y + _engine->_workingWindow.top, width, height);
+	_lastRenderedFrame = frameNumber;
 }
 
 } // End of namespace ZVision

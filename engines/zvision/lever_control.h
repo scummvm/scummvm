@@ -80,6 +80,7 @@ private:
 	FrameInfo *_frameInfo;
 
 	uint _currentFrame;
+	uint _lastRenderedFrame;
 	bool _mouseIsCaptured;
 	bool _isReturning;
 	Common::Point _lastMousePos;
