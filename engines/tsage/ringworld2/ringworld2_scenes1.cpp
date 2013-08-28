@@ -9910,7 +9910,7 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 	_actor5.setPosition(Common::Point(291, 147));
 	_actor5.fixPriority(100);
 	_actor5.setDetails(1550, 81, -1, -1, 1, (SceneItem *) NULL);
-
+		
 	if (R2_INVENTORY.getObjectScene(R2_THRUSTER_VALVE) == 1580) {
 		_actor6.postInit();
 		_actor6.setup(1580, 6, 2);
@@ -9928,11 +9928,9 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 	}
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 1580;
 	R2_GLOBALS._player.hide();
 	setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
 	_item3.setDetails(Rect(0, 0, 320, 200), 1550, 50, -1, -1, 1, NULL);
-
 }
 
 void Scene1580::signal() {
