@@ -105,8 +105,10 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 			if (animationFileName.hasSuffix(".avi")) {
 				_animation.avi = new ZorkAVIDecoder();
 				_animation.avi->loadFile(animationFileName);
+				_fileType = AVI;
 			} else if (animationFileName.hasSuffix(".rlf")) {
 				_animation.rlf = new RlfAnimation(animationFileName, false);
+				_fileType = RLF;
 			}
 		} else if (line.matchString("*skipcolor*", true)) {
 			// Not used
