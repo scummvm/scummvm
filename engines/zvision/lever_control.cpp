@@ -27,6 +27,8 @@
 #include "common/tokenizer.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "zvision/lever_control.h"
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
@@ -318,21 +320,24 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 void LeverControl::renderFrame(uint frameNumber) {
 	const uint16 *frameData;
 	int pitch;
-	int x;
-	int y;
+	int x = _animationCoords.left;
+	int y = _animationCoords.top;
 	int width;
 	int height;
 
 	if (_fileType == RLF) {
 		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
-		frameData = _animation.rlf->getFrameData(_currentFrame);
+		frameData = _animation.rlf->getFrameData(frameNumber);
 		pitch = _animation.rlf->width() * sizeof(uint16);
-		x = _animationCoords.left;
-		y = _animationCoords.right;
 		width = _animation.rlf->width(); // Use the animation width instead of _animationCoords.width()
 		height = _animation.rlf->height(); // Use the animation height instead of _animationCoords.height()			
 	} else if (_fileType == AVI) {
-		// Cry because AVI seeking isn't implemented (yet)
+		_animation.avi->seekToFrame(frameNumber);
+		const Graphics::Surface *surface = _animation.avi->decodeNextFrame();
+		frameData = (const uint16 *)surface->getBasePtr(0, 0);
+		pitch = surface->pitch;
+		width = surface->w;
+		height = surface->h;
 	}
 
 	_engine->_system->copyRectToScreen(frameData, pitch, x + _engine->_workingWindow.left, y + _engine->_workingWindow.top, width, height);
