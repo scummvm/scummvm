@@ -27,6 +27,7 @@
 #include "zvision/puzzle.h"
 #include "zvision/actions.h"
 #include "zvision/push_toggle_control.h"
+#include "zvision/lever_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -287,9 +288,11 @@ void ScriptManager::parseControl(Common::String &line, Common::SeekableReadStrea
 	} else if (controlType.equalsIgnoreCase("pana")) {
 		Control::parsePanoramaControl(_engine, stream);
 		return;
-	}
-	else if (controlType.equalsIgnoreCase("tilt")) {
+	} else if (controlType.equalsIgnoreCase("tilt")) {
 		Control::parseTiltControl(_engine, stream);
+		return;
+	} else if (controlType.equalsIgnoreCase("lever")) {
+		_activeControls.push_back(new LeverControl(_engine, key, stream));
 		return;
 	}
 }
