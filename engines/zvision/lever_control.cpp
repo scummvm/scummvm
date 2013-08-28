@@ -247,10 +247,9 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		int16 xDist = pointTwo.x - pointOne.x;
 		int16 yDist = pointTwo.y - pointOne.y;
 
-		int angle = int(atan((float)yDist / (float)xDist));
-
-		// Convert to degrees. (180 / 3.14159 = 57.2958)
-		angle *= 57;
+		// Calculate the angle using arctan
+		// Then convert to degrees. (180 / 3.14159 = 57.2958)
+		int angle = int(atan((float)yDist / (float)xDist) * 57);
 
 		// Calculate what quadrant pointTwo is in
 		uint quadrant = ((yDist > 0 ? 1 : 0) << 1) | (xDist < 0 ? 1 : 0);
