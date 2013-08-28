@@ -776,16 +776,19 @@ int global_messageHandler1(ExCommand *cmd) {
 				if (!g_fullpipe->_currSelectedInventoryItemId && !g_fullpipe->_aniMan->_movement && 
 					!(g_fullpipe->_aniMan->_flags & 0x100) && g_fullpipe->_aniMan->isIdle()) {
 					int st = g_fullpipe->_aniMan->_statics->_staticsId;
-					ExCommand *newex;
+					ExCommand *newex = 0;
 
 					if (st == ST_MAN_RIGHT) {
 						newex = new ExCommand(g_fullpipe->_aniMan->_id, 1, rMV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
 					} else if (st == (0x4000 | ST_MAN_RIGHT)) {
 						newex = new ExCommand(g_fullpipe->_aniMan->_id, 1, MV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
 					}
-					newex->_keyCode = g_fullpipe->_aniMan->_okeyCode;
-					newex->_excFlags |= 3;
-					newex->postMessage();
+
+					if (newex) {
+						newex->_keyCode = g_fullpipe->_aniMan->_okeyCode;
+						newex->_excFlags |= 3;
+						newex->postMessage();
+					}
 				}
 
 				if (g_fullpipe->_currSelectedInventoryItemId != invItem)
@@ -953,7 +956,10 @@ int global_messageHandler3(ExCommand *cmd) {
 			}
 			return result;
 		case 29:
-			if (g_fullpipe->_gameLoader->_interactionController->_flag24 && g_fullpipe->_currentScene) {
+			if (!g_fullpipe->_currentScene)
+				return result;
+
+			if (g_fullpipe->_gameLoader->_interactionController->_flag24) {
 				ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				ani2 = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
 				if (ani) {
