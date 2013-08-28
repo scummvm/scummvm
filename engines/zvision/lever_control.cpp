@@ -233,7 +233,7 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 	if (pointOne.x == pointTwo.x && pointOne.y == pointTwo.y)
 		return -1; // This should never happen
 	else if (pointOne.x == pointTwo.x) {
-		if (pointTwo.y > pointOne.y)
+		if (pointTwo.y < pointOne.y)
 			return 90;
 		else
 			return 270;
@@ -279,15 +279,15 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		//                  \      |      /
 		//                   \     |     /
 		//                    \    |    /
-		// Quadrant 3          \   |   /         Quadrant 2
+		// Quadrant 1          \   |   /         Quadrant 0
 		//                      \  |  /
 		//                       \ | /
-		//               -angle ( \|/ )  angle
+		//                angle ( \|/ ) -angle
 		// 180 <----------------------------------------> 0
-		//                angle ( /|\ ) -angle
+		//               -angle ( /|\ )  angle
 		//                       / | \
 		//                      /  |  \
-		// Quadrant 1          /   |   \         Quadrant 0
+		// Quadrant 3          /   |   \         Quadrant 2
 		//                    /    |    \
 		//                   /     |     \
 		//                  /      |      \
@@ -298,16 +298,16 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		// Convert the local angles to unit circle angles
 		switch (quadrant) {
 		case 0:
-			angle = 360 + angle;
+			angle = 180 + angle;
 			break;
 		case 1:
-			angle = 180 + angle;
+			// Do nothing
 			break;
 		case 2:
 			angle = 180 + angle;
 			break;
 		case 3:
-			// Do nothing
+			angle = 360 + angle;
 			break;
 		}
 
