@@ -48,7 +48,7 @@ const byte r__avvysgarden = 15;
 const byte r__aylesoffice = 16;
 const byte r__argentpub = 19;
 const byte r__brummieroad = 20;
-const byte r__lusties = 21; /*{ ? not sure }*/
+const byte r__bridge = 21; /*{ ? not sure }*/
 const byte r__entrancehall = 22;
 const byte r__lustiesroom = 23;
 const byte r__westhall = 25;
@@ -59,7 +59,7 @@ const byte r__catacombs = 29;
 
 //{ -------------- }
 
-const byte r__bridge = 40;
+const byte r__lusties = 40;
 const byte r__robins = 42;
 const byte r__outsidenottspub = 46;
 const byte r__nottspub = 47;

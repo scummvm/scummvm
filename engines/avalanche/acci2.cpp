@@ -1885,12 +1885,11 @@ void Acci::do_that() {
 		else {
 			ok = true;
 			for (ff = 0; ff < thats.size(); ff++) {
-				for (fv = 0; fv < words[_vm->_gyro->dna.pass_num + first_password - 1].w.size(); fv++) {
-					Common::String temp = realwords[ff];
-					temp.toUppercase();
-					if (words[_vm->_gyro->dna.pass_num + first_password - 1].w[fv] != temp[fv])
+				Common::String temp = realwords[ff];
+				temp.toUppercase();
+				for (fv = 0; fv < words[_vm->_gyro->dna.pass_num + first_password].w.size(); fv++)
+					if (words[_vm->_gyro->dna.pass_num + first_password].w[fv] != temp[fv])
 						ok = false;
-				}
 			}
 
 			if (ok) {

@@ -443,7 +443,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 			_vm->_trip->tr[1].call_eachstep = true;
 			_vm->_trip->tr[1].eachstep = _vm->_trip->procgeida_procs;
-		} else _vm->_gyro->whereis[1] = r__nowhere;
+		} else
+			_vm->_gyro->whereis[1] = r__nowhere;
 		break;
 
 	case r__brummieroad: {
