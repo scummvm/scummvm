@@ -244,6 +244,9 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	} else {
 		tga.destroy();
 	}
+
+	// Convert in place to RGB 565 from RGB 555
+	destination.convertToInPlace(_pixelFormat);
 }
 
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
