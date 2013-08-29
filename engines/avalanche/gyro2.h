@@ -82,7 +82,7 @@ struct dnatype { /* here goes... */ /* Ux, uy, & ww now all belong to Trip5 */
 	byte winestate; /* 0=good (Notts), 1=passable(Argent) ... 3=vinegar.*/
 	bool cwytalot_gone; /* Has Cwytalot rushed off to Jerusalem yet?*/
 
-	byte pass_num; /* Number of the passuint16 for this game. */
+	byte pass_num; /* Number of the passw for this game. */
 	bool ayles_is_awake; /* pretty obvious! */
 	byte drawbridge_open; /* Between 0 (shut) and 4 (open). */
 	byte avaricius_talk; /* How much Avaricius has said to you. */

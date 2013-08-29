@@ -90,11 +90,11 @@ void Sequence::shove_left() {
 void Sequence::call_sequencer() {
 	switch (seq[0]) {
 	case 0:
-		return;
-		break; /* No more routines. */
-	case 177:
+		return; // No more routines.
+		break; 
+	case 177: // Flip room.
 		_vm->_gyro->dna.user_moves_avvy = true;
-		_vm->_trip->fliproom(_vm->_gyro->dna.flip_to_where, _vm->_gyro->dna.flip_to_ped); /* 177 = Flip room. */
+		_vm->_trip->fliproom(_vm->_gyro->dna.flip_to_where, _vm->_gyro->dna.flip_to_ped); 
 		if (seq[0] == 177)
 			shove_left();
 		break;
