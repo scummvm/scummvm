@@ -26,6 +26,7 @@
 #include "common/types.h"
 
 #include "common/file.h"
+#include "graphics/surface.h"
 
 
 namespace Common {
@@ -50,6 +51,9 @@ private:
 		int8 *encodedData;
 		uint32 encodedSize;
 	};
+
+	const static Graphics::PixelFormat _pixelFormat555;
+	const static Graphics::PixelFormat _pixelFormat565;
 
 private:
 	Common::File _file;

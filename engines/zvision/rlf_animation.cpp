@@ -33,6 +33,9 @@
 
 namespace ZVision {
 
+const Graphics::PixelFormat RlfAnimation::_pixelFormat555 = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+const Graphics::PixelFormat RlfAnimation::_pixelFormat565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
 RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream) 
 		: _stream(stream),
 		  _lastFrameRead(0),
@@ -41,8 +44,8 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 		  _height(0),
 		  _frameTime(0),
 		  _frames(0),
-		  _currentFrameBuffer(0),
 		  _currentFrame(-1),
+		  _currentFrameBuffer(0),
 		  _frameBufferByteSize(0) {
 	if (!_file.open(fileName)) {
 		warning("RLF animation file %s could not be opened", fileName.c_str());
@@ -68,12 +71,8 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 }
 
 RlfAnimation::~RlfAnimation() {
-	if (_frames != 0) {
-		delete[] _frames;
-	}
-	if (_currentFrameBuffer != 0) {
-		delete[] _currentFrameBuffer;
-	}
+	delete[] _currentFrameBuffer;
+	delete[] _frames;
 }
 
 bool RlfAnimation::readHeader() {
@@ -230,11 +229,14 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 					return;
 				} else if (destOffset + 1 >= destSize) {
 					// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-					warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 
-				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
+				byte r, g, b;
+				_pixelFormat555.colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = _pixelFormat565.RGBToColor(r, g, b);
+				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
 				destOffset += 2;
@@ -248,7 +250,7 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 				return;
 			} else if (destOffset + 1 >= destSize) {
 				// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-				warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+				//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 				return;
 			}
 
@@ -275,11 +277,14 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 					return;
 				} else if (destOffset + 1 >= destSize) {
 					// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-					warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 
-				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
+				byte r, g, b;
+				_pixelFormat555.colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = _pixelFormat565.RGBToColor(r, g, b);
+				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
 				destOffset += 2;
@@ -293,14 +298,16 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 				return;
 			}
 
-			uint16 sampleColor = READ_LE_UINT16(source + sourceOffset);
+			byte r, g, b;
+			_pixelFormat555.colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
+			uint16 sampleColor = _pixelFormat565.RGBToColor(r, g, b);
 			sourceOffset += 2;
 
 			numberOfSamples += 2;
 			while (numberOfSamples > 0) {
 				if (destOffset + 1 >= destSize) {
 					// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-					warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 
