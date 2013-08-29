@@ -50,9 +50,10 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		: Engine(syst),
 		  _gameDescription(gameDesc),
 		  _workingWindow((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2) + WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2) + WORKING_WINDOW_HEIGHT),
-		  _pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /*RGB 555*/
+		  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
 		  _desiredFrameTime(33), /* ~30 fps */
 		  _clock(_system) {
+
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from run().

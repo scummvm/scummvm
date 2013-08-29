@@ -77,11 +77,6 @@ void scaleBuffer(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, 
 }
 
 void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect, bool skippable) {
-	// Videos use a different pixel format
-	Common::List<Graphics::PixelFormat> formats;
-	formats.push_back(videoDecoder.getPixelFormat());
-	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, formats);
-
 	byte bytesPerPixel = videoDecoder.getPixelFormat().bytesPerPixel;
 
 	uint16 origWidth = videoDecoder.getWidth();
@@ -167,9 +162,6 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 	if (scale != 1) {
 		delete[] scaledVideoFrameBuffer;
 	}
-
-	// Reset the pixel format to the original state
-	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
 }
 
 } // End of namespace ZVision
