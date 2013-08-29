@@ -223,37 +223,10 @@ void GrimEngine::createRenderer() {
 }
 
 const char *GrimEngine::getUpdateFilename() {
-	if (getGamePlatform() != Common::kPlatformWindows || (getGameFlags() & ADGF_DEMO))
-		return 0;
-
-	if (getGameType() == GType_GRIM)
+	if (!(getGameFlags() & ADGF_DEMO))
 		return "gfupd101.exe";
-	else if (getGameType() == GType_MONKEY4) {
-		switch (getGameLanguage()) {
-			case Common::FR_FRA:
-				return "MonkeyUpdate_FRA.exe";
-				break;
-			case Common::DE_DEU:
-				return "MonkeyUpdate_DEU.exe";
-				break;
-			case Common::IT_ITA:
-				return "MonkeyUpdate_ITA.exe";
-				break;
-			case Common::PT_BRA:
-				return "MonkeyUpdate_BRZ.exe";
-				break;
-			case Common::ES_ESP:
-				return "MonkeyUpdate_ESP.exe";
-				break;
-			case Common::EN_ANY:
-			case Common::EN_GRB:
-			case Common::EN_USA:
-			default:
-				return "MonkeyUpdate.exe";
-				break;
-		}
-	}
-	return 0;
+	else
+		return 0;
 }
 
 Common::Error GrimEngine::run() {

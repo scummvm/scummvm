@@ -48,6 +48,35 @@ LuaBase *EMIEngine::createLua() {
 	return new Lua_V2();
 }
 
+const char *EMIEngine::getUpdateFilename() {
+	if (getGamePlatform() == Common::kPlatformWindows && !(getGameFlags() & ADGF_DEMO)) {
+		switch (getGameLanguage()) {
+			case Common::FR_FRA:
+				return "MonkeyUpdate_FRA.exe";
+				break;
+			case Common::DE_DEU:
+				return "MonkeyUpdate_DEU.exe";
+				break;
+			case Common::IT_ITA:
+				return "MonkeyUpdate_ITA.exe";
+				break;
+			case Common::PT_BRA:
+				return "MonkeyUpdate_BRZ.exe";
+				break;
+			case Common::ES_ESP:
+				return "MonkeyUpdate_ESP.exe";
+				break;
+			case Common::EN_ANY:
+			case Common::EN_GRB:
+			case Common::EN_USA:
+			default:
+				return "MonkeyUpdate.exe";
+				break;
+		}
+	} else
+		return 0;
+}
+
 void EMIEngine::pushText(Common::List<TextObject *> *objects) {
 	_textstack.push_back(objects);
 }
