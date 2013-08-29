@@ -322,8 +322,13 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 }
 
 void LeverControl::renderFrame(uint frameNumber) {
-	if (frameNumber < _lastRenderedFrame && _mirrored) {
-		frameNumber = (_frameCount * 2) - 1 - frameNumber;
+	if (frameNumber == 0) {
+		_lastRenderedFrame = frameNumber;
+	} else if (frameNumber < _lastRenderedFrame && _mirrored) {
+		_lastRenderedFrame = frameNumber;
+		frameNumber = (_frameCount * 2) - frameNumber - 1;
+	} else {
+		_lastRenderedFrame = frameNumber;
 	}
 
 	const uint16 *frameData;
@@ -342,14 +347,13 @@ void LeverControl::renderFrame(uint frameNumber) {
 	} else if (_fileType == AVI) {
 		_animation.avi->seekToFrame(frameNumber);
 		const Graphics::Surface *surface = _animation.avi->decodeNextFrame();
-		frameData = (const uint16 *)surface->getBasePtr(0, 0);
+		frameData = (const uint16 *)surface->getPixels();
 		pitch = surface->pitch;
 		width = surface->w;
 		height = surface->h;
 	}
 
 	_engine->_system->copyRectToScreen(frameData, pitch, x + _engine->_workingWindow.left, y + _engine->_workingWindow.top, width, height);
-	_lastRenderedFrame = frameNumber;
 }
 
 } // End of namespace ZVision
