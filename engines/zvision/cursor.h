@@ -25,7 +25,7 @@
 
 #include "common/types.h"
 
-#include "graphics/cursor.h"
+#include "graphics/surface.h"
 
 namespace Common {
 class String;
@@ -42,14 +42,13 @@ public:
 	ZorkCursor();
 	ZorkCursor(const Common::String &fileName);
 	ZorkCursor(const ZorkCursor &other);
-	~ZorkCursor();
 
 private:
 	uint16 _width;
 	uint16 _height;
 	uint16 _hotspotX;
 	uint16 _hotspotY;
-	byte *_surface;
+	Graphics::Surface _surface;
 
 public:
 	ZorkCursor &operator=(const ZorkCursor &other);
@@ -59,7 +58,7 @@ public:
 	uint16 getHotspotX() const { return _hotspotX; }
 	uint16 getHotspotY() const { return _hotspotY; }
 	byte getKeyColor() const { return 0; }
-	const byte *getSurface() const { return _surface; }
+	const byte *getSurface() const { return (const byte *)_surface.getPixels(); }
 };
 
 } // End of namespace ZVision

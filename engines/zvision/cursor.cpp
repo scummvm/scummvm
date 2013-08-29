@@ -34,16 +34,14 @@ ZorkCursor::ZorkCursor()
 	: _width(0),
 	  _height(0),
 	  _hotspotX(0),
-	  _hotspotY(0),
-	  _surface(0) {
+	  _hotspotY(0) {
 }
 
 ZorkCursor::ZorkCursor(const Common::String &fileName) 
 		: _width(0),
 		  _height(0),
 		  _hotspotX(0),
-		  _hotspotY(0),
-		  _surface(0) {
+		  _hotspotY(0) {
 	Common::File file;
 	if (!file.open(fileName))
 		return;
@@ -59,10 +57,13 @@ ZorkCursor::ZorkCursor(const Common::String &fileName)
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
 
-	uint dataSize = _width * _height * 2;
-	_surface = new byte[dataSize];
-	uint32 bytesRead = file.read(_surface, dataSize);
+	uint dataSize = _width * _height * sizeof(uint16);
+	_surface.create(_width, _height, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+	uint32 bytesRead = file.read(_surface.getPixels(), dataSize);
 	assert(bytesRead == dataSize);
+
+	// Convert to RGB 565
+	_surface.convertToInPlace(Graphics::PixelFormat(2, 5, 6, 6, 0, 11, 5, 0, 0));
 }
 
 ZorkCursor::ZorkCursor(const ZorkCursor &other) {
@@ -71,10 +72,7 @@ ZorkCursor::ZorkCursor(const ZorkCursor &other) {
 	_hotspotX = other._hotspotX;
 	_hotspotY = other._hotspotY;
 
-	uint dataSize = _width * _height * 2;
-	_surface = new byte[dataSize];
-
-	memcpy(_surface, other._surface, dataSize);
+	_surface.copyFrom(other._surface);
 }
 
 ZorkCursor &ZorkCursor::operator=(const ZorkCursor &other) {
@@ -83,18 +81,9 @@ ZorkCursor &ZorkCursor::operator=(const ZorkCursor &other) {
 	_hotspotX = other._hotspotX;
 	_hotspotY = other._hotspotY;
 
-	uint dataSize = _width * _height * 2;
-	_surface = new byte[dataSize];
-
-	memcpy(_surface, other._surface, dataSize);
+	_surface.copyFrom(other._surface);
 
 	return *this;
-}
-
-ZorkCursor::~ZorkCursor() {
-	if (_surface != 0) {
-		delete[] _surface;
-	}
 }
 
 } // End of namespace ZVision
