@@ -1279,11 +1279,18 @@ void Movement::initStatics(StaticANIObject *ani) {
 }
 
 void Movement::updateCurrDynamicPhase() {
-	if (_dynamicPhases.size() == 0)
-		return;
+	if (_currMovement) {
+		if (_currMovement->_dynamicPhases.size() == 0)
+			return;
 
-	if (_dynamicPhases[_currDynamicPhaseIndex]) {
-		_currDynamicPhase = (DynamicPhase *)_dynamicPhases[_currDynamicPhaseIndex];
+		if (_currMovement->_dynamicPhases[_currDynamicPhaseIndex])
+			_currDynamicPhase = (DynamicPhase *)_currMovement->_dynamicPhases[_currDynamicPhaseIndex];
+	} else {
+		if (_dynamicPhases.size() == 0)
+			return;
+
+		if (_dynamicPhases[_currDynamicPhaseIndex])
+			_currDynamicPhase = (DynamicPhase *)_dynamicPhases[_currDynamicPhaseIndex];
 	}
 }
 

@@ -1054,6 +1054,9 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 	int idx = 0;
 	int min = 1000;
 
+	if (!_items.size())
+		return 0;
+
 	for (uint i = 0; i < _items.size(); i++) {
 		int w = abs(width - _items[i].width);
 		if (w < min) {
