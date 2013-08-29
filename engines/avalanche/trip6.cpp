@@ -1055,7 +1055,7 @@ void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
 				return;
 			} else {
 				apped(1, 6);
-				tr[1].face = right; /* added by TT 12/3/1995 */
+				tr[0].face = right; /* added by TT 12/3/1995 */
 				_vm->_sequence->first_show(8);
 				_vm->_sequence->then_show(9);
 			}
@@ -1523,7 +1523,7 @@ void Trip::fliproom(byte room, byte ped) {
 		return;
 	}
 
-	if ((ped == 177) && (_vm->_gyro->dna.room == r__lusties)) {
+	if ((room == 177) && (_vm->_gyro->dna.room == r__lusties)) {
 		hide_in_the_cupboard();
 		return;
 	}

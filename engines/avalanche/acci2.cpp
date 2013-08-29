@@ -964,7 +964,7 @@ void Acci::opendoor() {   /* so whaddya THINK this does?! */
 				_vm->_trip->call_special(_vm->_gyro->portals[fv].data);
 				break;
 			case _vm->_gyro->mopendoor:
-				_vm->_trip->open_the_door((_vm->_gyro->portals[fv].data) >> 8, (_vm->_gyro->portals[fv].data) & 0x0F, fv);
+				_vm->_trip->open_the_door((_vm->_gyro->portals[fv].data) >> 8, (_vm->_gyro->portals[fv].data) & 0x0F, fv + 9);
 				break;
 			}
 			
