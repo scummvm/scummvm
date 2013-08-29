@@ -74,7 +74,7 @@ private:
 	/** Used to warp the background image */
 	RenderTable _renderTable;
 
-	Common::SeekableReadStream *_currentBackground;
+	Graphics::Surface _currentBackground;
 	/** The (x1,y1) coordinates of the subRectangle of the background that is currently displayed on the screen */
 	Common::Point _backgroundOffset;
 	/** The width of the current background image */
@@ -123,11 +123,11 @@ public:
 	 * Blits the image or a portion of the image to the backbuffer. Actual screen updates won't happen until the end of the frame.
 	 * The image will be clipped to fit inside the working window. Coords are in working window space, not screen space!
 	 *
-	 * @param stream          Stream to read the image data from
+	 * @param stream          Surface to read the image data from
 	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 */
-	void renderImageToScreen(Common::SeekableReadStream &stream, int16 destinationX, int16 destinationY, bool wrap = false);
+	void renderImageToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap = false);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
@@ -181,7 +181,9 @@ private:
 	 * @param subRectangle       A rectangle representing the part of the image that should be rendered
 	 * @param wrap               Should the image wrap (tile) if it doesn't completely fill the screen?
 	 */
-	void renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap, bool isTransposed);
+	void renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap);
+
+	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
 
 	void moveBackground(int offset);
 };

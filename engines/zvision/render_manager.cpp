@@ -42,7 +42,6 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, 
 		  _screenCenterY(_workingHeight / 2),
 		  _workingWindow(workingWindow),
 		  _pixelFormat(pixelFormat),
-		  _currentBackground(0),
 		  _backgroundWidth(0),
 		  _backgroundHeight(0),
 		  _backgroundInverseVelocity(0),
@@ -54,10 +53,6 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, 
 }
 
 RenderManager::~RenderManager() {
-	if (_currentBackground != 0) {
-		delete _currentBackground;
-	}
-
 	delete[] _workingWindowBuffer;
 }
 
@@ -89,7 +84,7 @@ void RenderManager::clearWorkingWindowToColor(uint16 color) {
 	_system->copyRectToScreen(_workingWindowBuffer, _workingWidth * sizeof(uint16), _workingWindow.left, _workingWindow.top, _workingWidth, _workingHeight);
 }
 
-void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap, bool isTransposed) {	
+void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {	
 	int16 subRectX = 0;
 	int16 subRectY = 0;
 
@@ -143,13 +138,24 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (_renderTable.getRenderState() == RenderTable::FLAT) {
 		_system->copyRectToScreen(surface.getBasePtr(subRect.left, subRect.top), surface.pitch, destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
 	} else {
-		_renderTable.mutateImage((uint16 *)surface.getBasePtr(0, 0), _workingWindowBuffer, surface.w, surface.h, destinationX, destinationY, subRect, wrap, isTransposed);
+		_renderTable.mutateImage((uint16 *)surface.getPixels(), _workingWindowBuffer, surface.w, surface.h, destinationX, destinationY, subRect, wrap);
 
 		_system->copyRectToScreen(_workingWindowBuffer, _workingWidth * sizeof(uint16), destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
 	}
 }
 
 void RenderManager::renderImageToScreen(const Common::String &fileName, int16 destinationX, int16 destinationY, bool wrap) {
+	Graphics::Surface surface;
+	readImageToSurface(fileName, surface);
+
+	renderSubRectToScreen(surface, destinationX, destinationY, wrap);
+}
+
+void RenderManager::renderImageToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {
+	renderSubRectToScreen(surface, destinationX, destinationY, wrap);
+}
+
+void RenderManager::readImageToSurface(const Common::String &fileName, Graphics::Surface &destination) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
@@ -157,62 +163,85 @@ void RenderManager::renderImageToScreen(const Common::String &fileName, int16 de
 		return;
 	}
 
-	renderImageToScreen(file, destinationX, destinationY);
-}
-
-void RenderManager::renderImageToScreen(Common::SeekableReadStream &stream, int16 destinationX, int16 destinationY, bool wrap) {
 	// Read the magic number
 	// Some files are true TGA, while others are TGZ
-	uint32 fileType = stream.readUint32BE();
+	uint32 fileType = file.readUint32BE();
+
+	uint32 imageWidth;
+	uint32 imageHeight;
+	Graphics::TGADecoder tga;
+	uint16 *buffer;
+	bool isTransposed = _renderTable.getRenderState() == RenderTable::PANORAMA;
+	// All ZVision images are in RGB 555
+	Graphics::PixelFormat pixelFormat555 = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	destination.format = pixelFormat555;
+
+	bool isTGZ;
 
 	// Check for TGZ files
 	if (fileType == MKTAG('T', 'G', 'Z', '\0')) {
+		isTGZ = true;
+
 		// TGZ files have a header and then Bitmap data that is compressed with LZSS
-		uint32 decompressedSize = stream.readSint32LE();
-		uint32 imageWidth = stream.readSint32LE();
-		uint32 imageHeight = stream.readSint32LE();
+		uint32 decompressedSize = file.readSint32LE();
+		imageWidth = file.readSint32LE();
+		imageHeight = file.readSint32LE();
 
-		LzssReadStream lzssStream(&stream);
-		byte *buffer = new byte[decompressedSize];
+		LzssReadStream lzssStream(&file);
+		buffer = (uint16 *)(new uint16[decompressedSize]);
 		lzssStream.read(buffer, decompressedSize);
-
-		uint32 pitch = imageWidth * sizeof(uint16);
-		bool isTransposed = _renderTable.getRenderState() == RenderTable::PANORAMA;
-
-		if (isTransposed) {
-			uint16 temp = imageHeight;
-			imageHeight = imageWidth;
-			imageWidth = temp;
-		}
-
-		Graphics::Surface surface;
-		surface.init(imageWidth, imageHeight, pitch, buffer, _pixelFormat);
-
-		renderSubRectToScreen(surface, destinationX, destinationY, wrap, isTransposed);
-
-		// We have to use delete[] instead of calling surface.free() because we created the memory with new[]
-		delete[] buffer;
 	} else {
+		isTGZ = false;
+
 		// Reset the cursor
-		stream.seek(0);
+		file.seek(0);
 
 		// Decode
-		Graphics::TGADecoder tga;
-		if (!tga.loadStream(stream)) {
+		if (!tga.loadStream(file)) {
 			warning("Error while reading TGA image");
 			return;
 		}
 
 		Graphics::Surface tgaSurface = *(tga.getSurface());
-		bool isTransposed = _renderTable.getRenderState() == RenderTable::PANORAMA;
+		imageWidth = tgaSurface.w;
+		imageHeight = tgaSurface.h;
 
-		if (isTransposed) {
-			uint16 temp = tgaSurface.h;
-			tgaSurface.h = tgaSurface.w;
-			tgaSurface.w = temp;
+		buffer = (uint16 *)tgaSurface.getPixels();
+	}
+
+	// Flip the width and height if transposed
+	if (isTransposed) {
+		uint16 temp = imageHeight;
+		imageHeight = imageWidth;
+		imageWidth = temp;
+	}
+
+	// If the destination internal buffer is the same size as what we're copying into it,
+	// there is no need to free() and re-create
+	if (imageWidth != destination.w || imageHeight != destination.h) {
+		destination.create(imageWidth, imageHeight, pixelFormat555);
+	}
+
+	// If transposed, 'un-transpose' the data while copying it to the destination
+	// Otherwise, just do a simple copy
+	if (isTransposed) {
+		uint16 *dest = (uint16 *)destination.getPixels();
+
+		for (uint32 y = 0; y < imageHeight; y++) {
+			uint32 columnIndex = y * imageWidth;
+
+			for (uint32 x = 0; x < imageWidth; x++) {
+				dest[columnIndex + x] = buffer[x * imageHeight + y];
+			}
 		}
+	} else {
+		memcpy(destination.getPixels(), buffer, imageWidth * imageHeight * _pixelFormat.bytesPerPixel);
+	}
 
-		renderSubRectToScreen(tgaSurface, destinationX, destinationY, wrap, isTransposed);
+	// Cleanup
+	if (isTGZ) {
+		delete[] buffer;
+	} else {
 		tga.destroy();
 	}
 }
@@ -256,10 +285,7 @@ void RenderManager::setBackgroundImage(const Common::String &fileName) {
 		return;
 	}
 
-	if (_currentBackground != 0) {
-		delete _currentBackground;
-	}
-	_currentBackground = file;
+	readImageToSurface(fileName, _currentBackground);
 
 	moveBackground(0);
 }
@@ -291,8 +317,6 @@ void RenderManager::setBackgroundVelocity(int velocity) {
 }
 
 void RenderManager::moveBackground(int offset) {
-	_currentBackground->seek(0);
-
 	RenderTable::RenderState state = _renderTable.getRenderState();
 	if (state == RenderTable::TILT) {
 		_backgroundOffset += Common::Point(0, offset);
@@ -307,7 +331,7 @@ void RenderManager::moveBackground(int offset) {
 		else if (_backgroundOffset.y >= _backgroundHeight)
 			_backgroundOffset.y += _backgroundHeight;
 
-		renderImageToScreen(*_currentBackground, 0, _screenCenterY - _backgroundOffset.y, true);
+		renderImageToScreen(_currentBackground, 0, _screenCenterY - _backgroundOffset.y, true);
 	} else if (state == RenderTable::PANORAMA) {
 		_backgroundOffset += Common::Point(offset, 0);
 
@@ -321,9 +345,9 @@ void RenderManager::moveBackground(int offset) {
 		else if (_backgroundOffset.y >= _backgroundHeight)
 			_backgroundOffset.y += _backgroundHeight;
 
-		renderImageToScreen(*_currentBackground, _screenCenterX - _backgroundOffset.x, 0, true);
+		renderImageToScreen(_currentBackground, _screenCenterX - _backgroundOffset.x, 0, true);
 	} else {
-		renderImageToScreen(*_currentBackground, 0, 0);
+		renderImageToScreen(_currentBackground, 0, 0);
 	}
 }
 
