@@ -571,7 +571,30 @@ void Lucerna::enterroom(byte x, byte ped) {
 	break;
 
 	case r__catacombs: {
-		warning("STUB: Lucerna::enterroom() - case: r__catacombs");
+		if ((ped == 0) || (ped == 3) || (ped == 5) || (ped == 6)) {
+
+			switch (ped) {
+			case 3: { // Enter from oubliette
+				_vm->_gyro->dna.cat_x = 8;
+				_vm->_gyro->dna.cat_y = 4;
+			}
+			break; 
+			case 5: { // Enter from du Lustie's
+				_vm->_gyro->dna.cat_x = 8;
+				_vm->_gyro->dna.cat_y = 7;
+			}
+			break; 
+			case 6: { // Enter from Geida's
+				_vm->_gyro->dna.cat_x = 4;
+				_vm->_gyro->dna.cat_y = 1;
+			}
+			break; 
+			}
+
+			_vm->_gyro->dna.enter_catacombs_from_lusties_room = true;
+			_vm->_trip->catamove(ped);
+			_vm->_gyro->dna.enter_catacombs_from_lusties_room = false;
+		}
 	}
 	break;
 
@@ -761,7 +784,6 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__ducks:
 		_vm->_gyro->dna.dogfoodpos = 1;
 		break; /* Actually, Duck pos. */
-
 	}
 
 	_vm->_gyro->seescroll = false; /* Now it can work again! */
