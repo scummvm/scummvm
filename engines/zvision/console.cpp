@@ -54,6 +54,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("dumpcursorfilenames", WRAP_METHOD(Console, cmdDumpAllCursorFileNames));
 	DCmd_Register("showcursor", WRAP_METHOD(Console, cmdShowCursor));
 	DCmd_Register("dumpalllevfiles", WRAP_METHOD(Console, cmdDumpAllLevFiles));
+	DCmd_Register("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -220,6 +221,17 @@ bool Console::cmdDumpAllLevFiles(int argc, const char **argv) {
 	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 		Common::String fileName = (*iter)->getName();
 		writeFileContentsToFile(fileName, fileName);
+	}
+
+	return true;
+}
+
+bool Console::cmdParseAllScrFiles(int argc, const char **argv) {
+	Common::ArchiveMemberList list;
+	SearchMan.listMatchingMembers(list, "*.scr");
+
+	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+		_engine->getScriptManager()->parseScrFile((*iter)->getName());
 	}
 
 	return true;

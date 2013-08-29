@@ -117,6 +117,8 @@ private:
 	void updateNodes(uint deltaTimeMillis);
 	void checkPuzzleCriteria();
 
+// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
+public:
 	/**
 	 * Parses a script file into triggers and events
 	 *
@@ -125,6 +127,7 @@ private:
 	 */
 	void parseScrFile(const Common::String &fileName, bool isGlobal = false);
 
+private:
 	/**
 	 * Parses the stream into a Puzzle object
 	 * Helper method for parseScrFile. 
