@@ -98,7 +98,7 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 	return returnColor;
 }
 
-void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 imageWidth, int16 imageHeight, int16 destinationX, int16 destinationY, const Common::Rect &subRect, bool wrap, bool isTransposed) {
+void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 imageWidth, int16 imageHeight, int16 destinationX, int16 destinationY, const Common::Rect &subRect, bool wrap) {
 	for (int16 y = subRect.top; y < subRect.bottom; y++) {
 		int16 normalizedY = y - subRect.top;
 		int32 internalColumnIndex = (normalizedY + destinationY) * _numColumns;
@@ -135,11 +135,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 im
 				sourceXIndex = CLIP<int16>(sourceXIndex, 0, imageWidth - 1);
 			}
 			
-			if (isTransposed) {
-				destBuffer[destColumnIndex + normalizedX] = sourceBuffer[sourceXIndex * imageHeight + sourceYIndex];
-			} else {
-				destBuffer[destColumnIndex + normalizedX] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
-			}
+			destBuffer[destColumnIndex + normalizedX] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
 		}
 	}
 }
