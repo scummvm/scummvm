@@ -79,9 +79,8 @@ LeverControl::~LeverControl() {
 	} else if (_fileType == RLF) {
 		delete _animation.rlf;
 	}
-	if (_frameInfo != 0) {
-		delete[] _frameInfo;
-	}
+	
+	delete[] _frameInfo;
 }
 
 void LeverControl::parseLevFile(const Common::String &fileName) {
