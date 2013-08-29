@@ -517,24 +517,18 @@ byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 }
 
 byte Trip::geida_ped(byte which) {
-	byte geida_ped_result;
 	switch (which) {
 	case 1:
-		geida_ped_result = 7;
-		break;
+		return 7;
 	case 2:
 	case 6:
-		geida_ped_result = 8;
-		break;
+		return 8;
 	case 3:
 	case 5:
-		geida_ped_result = 9;
-		break;
+		return 9;
 	case 4:
-		geida_ped_result = 10;
-		break;
+		return 10;	
 	}
-	return geida_ped_result;
 }
 
 void Trip::catamove(byte ped) {
@@ -561,7 +555,7 @@ void Trip::catamove(byte ped) {
 		return;
 	case 1033: /* Oubliette */
 		fliproom(r__oubliette, 1);
-		_vm->_scrolls->display("Oh, NO!\231\2");
+		_vm->_scrolls->display(Common::String("Oh, NO!") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
 		return;
 	case 4:
 		fliproom(r__geidas, 1);
@@ -577,7 +571,7 @@ void Trip::catamove(byte ped) {
 
 	if (!_vm->_gyro->dna.enter_catacombs_from_lusties_room)
 		_vm->_lucerna->load(29);
-	here = _vm->_gyro->catamap[_vm->_gyro->dna.cat_y][_vm->_gyro->dna.cat_x];
+	here = _vm->_gyro->catamap[_vm->_gyro->dna.cat_y - 1][_vm->_gyro->dna.cat_x - 1];
 
 	switch (here & 0xf) { /* West. */
 	case 0: /* no connection (wall) */
@@ -691,7 +685,7 @@ void Trip::catamove(byte ped) {
 		_vm->_celer->show_one(18); /* ...torches. */
 		break;
 	case 0xf: /* straight-through corridor. */
-		_vm->_gyro->magics[3].op = _vm->_gyro->nix; /* Sloping wall. */
+		_vm->_gyro->magics[4].op = _vm->_gyro->nix; /* Sloping wall. */
 		_vm->_gyro->magics[5].op = _vm->_gyro->special; /* Straight wall. */
 		_vm->_gyro->portals[6].op = _vm->_gyro->nix; /* Door. */
 		break;
@@ -708,7 +702,7 @@ void Trip::catamove(byte ped) {
 	case 0x1:
 		_vm->_celer->show_one(22);
 			
-		if ((xy_uint16 == 2051) & (_vm->_gyro->dna.geida_follows))
+		if ((xy_uint16 == 2051) && (_vm->_gyro->dna.geida_follows))
 			_vm->_gyro->magics[12].op = _vm->_gyro->exclaim;
 		else
 			_vm->_gyro->magics[12].op = _vm->_gyro->special; /* Right exit south. */
@@ -838,7 +832,7 @@ void Trip::catamove(byte ped) {
 		break; /* [1,1] : the other two. */
 	}
 
-	if ((_vm->_gyro->dna.geida_follows) & (ped > 0)) {
+	if ((_vm->_gyro->dna.geida_follows) && (ped > 0)) {
 		if (!tr[1].quick)  /* If we don't already have her... */
 			tr[1].init(5, true, this); /* ...Load Geida. */
 		apped(2, geida_ped(ped));
@@ -960,12 +954,12 @@ void Trip::call_special(uint16 which) {
 			}
 		}
 		_vm->_lucerna->dusk();
-		_vm->_gyro->dna.cat_y -= 1;
+		_vm->_gyro->dna.cat_y --;
 		catamove(4);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
 		_vm->_lucerna->delavvy();
-		switch ((_vm->_gyro->catamap[_vm->_gyro->dna.cat_y][_vm->_gyro->dna.cat_x] & 0xf00) >> 8) {
+		switch ((_vm->_gyro->catamap[_vm->_gyro->dna.cat_y - 1][_vm->_gyro->dna.cat_x - 1] & 0xf00) >> 8) {
 		case 0x1:
 			apped(1, 12);
 			break;
@@ -980,7 +974,7 @@ void Trip::call_special(uint16 which) {
 		break;
 	case 11: /* _vm->_gyro->special 11: transfer east in catacombs. */
 		_vm->_lucerna->dusk();
-		_vm->_gyro->dna.cat_x += 1;
+		_vm->_gyro->dna.cat_x++;
 		catamove(1);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
