@@ -72,7 +72,7 @@ struct dnatype { /* here goes... */ /* Ux, uy, & ww now all belong to Trip5 */
 	int16 score; /* your score, of course */
 	int32 pence; /* your current amount of dosh */
 	byte room; /* your current room */
-	char wearing; /* what you're wearing */
+	byte wearing; /* what you're wearing */
 	byte swore; /* number of times you've sworn */
 	byte saves; /* number of times this game has been saved */
 	byte rooms[100]; /* Add one to each every time you enter a room */
