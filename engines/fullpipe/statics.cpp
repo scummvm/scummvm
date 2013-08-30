@@ -98,6 +98,10 @@ StaticANIObject::StaticANIObject() {
 	_callback2 = 0;
 	_sceneId = -1;
 	_someDynamicPhaseIndex = -1;
+
+	_field_32 = 0;
+	_field_96 = 0;
+	_messageNum = 0;
 }
 
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
@@ -105,6 +109,10 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_field_30 = src->_field_30;
 	_field_34 = 1;
 	_initialCounter = 0;
+
+	_field_32 = 0;
+	_field_96 = 0;
+	_messageNum = 0;
 
 	_messageQueueId = 0;
 	_animExFlag = 0;
@@ -1097,6 +1105,9 @@ Movement::Movement() {
 	_currMovement = 0;
 	_counter = 0;
 	_counterMax = 83;
+
+	_field_24 = 0;
+	_field_28 = 0;
 }
 
 Movement::Movement(Movement *src, StaticANIObject *ani) {
@@ -1542,12 +1553,14 @@ DynamicPhase::DynamicPhase() {
 	_someX = 0;
 	_rect = 0;
 	_field_7C = 0;
+	_field_7E = 0;
 	_dynFlags = 0;
 	_someY = 0;
 }
 
 DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
+	_field_7E = 0;
 	_rect = new Common::Rect();
 
 	if (reverse) {

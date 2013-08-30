@@ -83,7 +83,6 @@ class DynamicPhase : public StaticPhase {
 class Statics : public DynamicPhase {
  public:
  	int16 _staticsId;
-	int16 _field_86;
 	char *_staticsName;
 	Picture *_picture;
 
