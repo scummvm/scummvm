@@ -91,6 +91,7 @@ void Lucerna::draw_also_lines() {
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
 	for (ff = 0; ff < _vm->_gyro->lineNum; ff++)
+		// We had to check if the lines are within the borders of the screen.
 		if ((_vm->_gyro->lines[ff].x1 >= 0) && (_vm->_gyro->lines[ff].x1 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y1 >= 0) && (_vm->_gyro->lines[ff].y1 < _vm->_graphics->kScreenHeight)
 			&& (_vm->_gyro->lines[ff].x2 >= 0) && (_vm->_gyro->lines[ff].x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y2 >= 0) && (_vm->_gyro->lines[ff].y2 < _vm->_graphics->kScreenHeight))
 				_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
