@@ -183,6 +183,10 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 }
 
 void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (!_enabled) {
+		return;
+	}
+	
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_mouseIsCaptured = true;
 		_lastMousePos = backgroundImageSpacePos;
@@ -190,6 +194,10 @@ void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 }
 
 void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (!_enabled) {
+		return;
+	}
+	
 	_mouseIsCaptured = false;
 	_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 
@@ -201,6 +209,10 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 }
 
 bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (!_enabled) {
+		return false;
+	}
+	
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
@@ -228,6 +240,10 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 }
 
 bool LeverControl::process(uint32 deltaTimeInMillis) {
+	if (!_enabled) {
+		return false;
+	}
+
 	// TODO: Implement reversal over time
 
 	return false;
