@@ -63,7 +63,7 @@ ZorkCursor::ZorkCursor(const Common::String &fileName)
 	assert(bytesRead == dataSize);
 
 	// Convert to RGB 565
-	_surface.convertToInPlace(Graphics::PixelFormat(2, 5, 6, 6, 0, 11, 5, 0, 0));
+	_surface.convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 }
 
 ZorkCursor::ZorkCursor(const ZorkCursor &other) {
