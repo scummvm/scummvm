@@ -62,7 +62,7 @@ void RenderTable::setRenderState(RenderState newState) {
 
 const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Point &point) {
 	// If we're outside the range of the RenderTable, no warping is happening. Return the maximum image coords
-	if (point.x >= (int16)_numColumns || point.y >= (int16)_numRows || point.x < 0 || point.y , 0) {
+	if (point.x >= (int16)_numColumns || point.y >= (int16)_numRows || point.x < 0 || point.y < 0) {
 		int16 x = CLIP<int16>(point.x, 0, (int16)_numColumns);
 		int16 y = CLIP<int16>(point.y, 0, (int16)_numRows);
 		return Common::Point(x, y);
