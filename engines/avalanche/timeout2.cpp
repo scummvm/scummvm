@@ -551,14 +551,15 @@ void Timeout::greetsmonk() {
 
 void Timeout::fall_down_oubliette() {
 	_vm->_gyro->magics[8].op = _vm->_gyro->nix;
-	_vm->_trip->tr[0].iy += 1; /* increments dx/dy! */
-	_vm->_trip->tr[0].y += _vm->_trip->tr[1].iy;   /* Dowwwn we go... */
+	_vm->_trip->tr[0].iy++; /* increments dx/dy! */
+	_vm->_trip->tr[0].y += _vm->_trip->tr[0].iy;   /* Dowwwn we go... */
 	set_up_timer(3, procfall_down_oubliette, reason_falling_down_oubliette);
 }
 
 void Timeout::meet_avaroid() {
 	if (_vm->_gyro->dna.met_avaroid) {
-		_vm->_scrolls->display("You can't expect to be \6that\22 lucky twice in a row!");
+		_vm->_scrolls->display(Common::String("You can't expect to be ") + _vm->_scrolls->kControlItalic + "that"
+			+ _vm->_scrolls->kControlRoman + " lucky twice in a row!");
 		_vm->_lucerna->gameover();
 	} else {
 		_vm->_visa->dixi('Q', 60);
@@ -626,7 +627,8 @@ void Timeout::avvy_sit_down() {
 }
 
 void Timeout::ghost_room_phew() {
-	_vm->_scrolls->display("\6PHEW!\22 You're glad to get out of \6there!");
+	_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "PHEW!" + _vm->_scrolls->kControlRoman
+		+ " You're glad to get out of " + _vm->_scrolls->kControlItalic + "there!");
 }
 
 void Timeout::arkata_shouts() {

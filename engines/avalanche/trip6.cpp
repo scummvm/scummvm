@@ -917,7 +917,7 @@ void Trip::call_special(uint16 which) {
 		break;
 	case 7: /* _vm->_gyro->special 7: stop falling down oubliette. */
 		tr[0].visible = false;
-		_vm->_gyro->magics[10].op = _vm->_gyro->nix;
+		_vm->_gyro->magics[9].op = _vm->_gyro->nix;
 		stopwalking();
 		_vm->_timeout->lose_timer(_vm->_timeout->reason_falling_down_oubliette);
 		/*_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);

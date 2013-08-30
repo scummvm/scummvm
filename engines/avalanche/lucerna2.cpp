@@ -91,7 +91,9 @@ void Lucerna::draw_also_lines() {
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
 	for (ff = 0; ff < _vm->_gyro->lineNum; ff++)
-		_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
+		if ((_vm->_gyro->lines[ff].x1 >= 0) && (_vm->_gyro->lines[ff].x1 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y1 >= 0) && (_vm->_gyro->lines[ff].y1 < _vm->_graphics->kScreenHeight)
+			&& (_vm->_gyro->lines[ff].x2 >= 0) && (_vm->_gyro->lines[ff].x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y2 >= 0) && (_vm->_gyro->lines[ff].y2 < _vm->_graphics->kScreenHeight))
+				_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
 		
 	CursorMan.showMouse(true);
 }
@@ -449,7 +451,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__brummieroad: {
 		if (_vm->_gyro->dna.geida_follows)
-			put_geida_at(4, ped);
+			put_geida_at(5, ped);
 		if (_vm->_gyro->dna.cwytalot_gone) {
 			_vm->_gyro->magics[lightred - 1].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] = r__nowhere;
@@ -494,7 +496,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_gyro->magics[green - 1].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
 		}
 		if (_vm->_gyro->dna.geida_follows)
-			put_geida_at(ped + 2, ped); /* load Geida */
+			put_geida_at(ped + 3, ped); /* load Geida */
 	}
 	break;
 
@@ -619,7 +621,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_timeout->set_up_timer(3, _vm->_timeout->procgreetsmonk, _vm->_timeout->reason_du_lustie_talks);
 
 		if (_vm->_gyro->dna.geida_follows) {
-			put_geida_at(4, ped);
+			put_geida_at(5, ped);
 			if (_vm->_gyro->dna.lustie_is_asleep) {
 				_vm->_celer->show_one(5);
 				_vm->_graphics->refreshBackground();
@@ -748,18 +750,18 @@ void Lucerna::enterroom(byte x, byte ped) {
 		break; /* Ayles awake. */
 
 	case r__geidas:
-		put_geida_at(1, ped);
+		put_geida_at(2, ped);
 		break; /* load Geida */
 
 	case r__easthall:
 	case r__westhall:
 		if (_vm->_gyro->dna.geida_follows)
-			put_geida_at(ped + 1, ped);
+			put_geida_at(ped + 2, ped);
 		break;
 
 	case r__lusties:
 		if (_vm->_gyro->dna.geida_follows)
-			put_geida_at(ped + 5, ped);
+			put_geida_at(ped + 6, ped);
 		break;
 
 	case r__nottspub: {
