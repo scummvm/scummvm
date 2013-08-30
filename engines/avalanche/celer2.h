@@ -78,9 +78,10 @@ public:
 
 	void forget_chunks();
 
-	void show_one(byte which);
-
-	void show_one_at(byte which, int16 xxx, int16 yyy);
+	// Settint the destination to -1,-1 means the picture should be drawn to it's original position.
+	// If you give it positive values, the picture will be plotted to the desired coordinates on the screen.
+	// By that we get rid of show_one_at(), which would be almost identical and cause a lot of code duplication.
+	void show_one(int16 destX, int16 destY, byte which);
 
 private:
 	AvalancheEngine *_vm;
@@ -92,8 +93,6 @@ private:
 	static const int16 on_disk; /* Value of memos[fv].x when it's not in memory. */
 
 	void display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture);
-
-	void display_it_at(int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture, int16 &xxx, int16 &yyy);
 };
 
 } // End of namespace Avalanche.

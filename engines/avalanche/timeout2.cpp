@@ -242,7 +242,7 @@ end;*/
 
 void Timeout::open_drawbridge() {
 	_vm->_gyro->dna.drawbridge_open++;
-	_vm->_celer->show_one(_vm->_gyro->dna.drawbridge_open - 1);
+	_vm->_celer->show_one(-1, -1, _vm->_gyro->dna.drawbridge_open - 1);
 
 	if (_vm->_gyro->dna.drawbridge_open == 4)
 		_vm->_gyro->magics[1].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
@@ -285,7 +285,7 @@ void Timeout::bang2() {
 void Timeout::stairs() {
 	_vm->_gyro->blip();
 	_vm->_trip->tr[0].walkto(4);
-	_vm->_celer->show_one(2);
+	_vm->_celer->show_one(-1, -1, 2);
 	_vm->_gyro->dna.brummie_stairs = 2;
 	_vm->_gyro->magics[10].op = _vm->_gyro->special;
 	_vm->_gyro->magics[10].data = 2; /* Reached the bottom of the stairs. */
@@ -399,17 +399,17 @@ void Timeout::jacques_wakes_up() {
 
 	switch (_vm->_gyro->dna.jacques_awake) { /* Additional pictures. */
 	case 1 :
-		_vm->_celer->show_one(1); /* Eyes open. */
+		_vm->_celer->show_one(-1, -1, 1); /* Eyes open. */
 		_vm->_visa->dixi('Q', 45);
 		break;
 	case 2 : /* Going through the door. */
-		_vm->_celer->show_one(2); /* Not on the floor. */
-		_vm->_celer->show_one(3); /* But going through the door. */
+		_vm->_celer->show_one(-1, -1, 2); /* Not on the floor. */
+		_vm->_celer->show_one(-1, -1, 3); /* But going through the door. */
 		_vm->_gyro->magics[5].op = _vm->_gyro->nix; /* You can't wake him up now. */
 		break;
 	case 3 :  /* Gone through the door. */
-		_vm->_celer->show_one(2); /* Not on the floor, either. */
-		_vm->_celer->show_one(4); /* He's gone... so the door's open. */
+		_vm->_celer->show_one(-1, -1, 2); /* Not on the floor, either. */
+		_vm->_celer->show_one(-1, -1, 4); /* He's gone... so the door's open. */
 		_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0; /* Gone! */
 		break;
 	}
@@ -441,7 +441,7 @@ void Timeout::naughty_duke() {
 	_vm->_trip->tr[1].walkto(3); /* He walks over to you. */
 
 	/* Let's get the door opening. */
-	_vm->_celer->show_one(1);
+	_vm->_celer->show_one(-1, -1, 1);
 	_vm->_sequence->first_show(2);
 	_vm->_sequence->start_to_close();
 
@@ -456,7 +456,7 @@ void Timeout::naughty_duke2() {
 }
 
 void Timeout::naughty_duke3() {
-	_vm->_celer->show_one(1);
+	_vm->_celer->show_one(-1, -1, 1);
 	_vm->_sequence->first_show(2);
 	_vm->_sequence->start_to_close();
 }
@@ -498,7 +498,7 @@ void Timeout::jump() {
 		if (_vm->_gyro->dna.carrying >= maxobjs)
 			_vm->_scrolls->display("You fail to grab it, because your hands are full.");
 		else {
-			_vm->_celer->show_one(2);
+			_vm->_celer->show_one(-1, -1, 2);
 			_vm->_gyro->dna.arrow_in_the_door = false; /* You've got it. */
 			_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] = true;
 			_vm->_lucerna->objectlist();
@@ -514,7 +514,7 @@ void Timeout::crapulus_says_splud_out() {
 }
 
 void Timeout::buydrinks() {
-	_vm->_celer->show_one(11); /* Malagauche gets up again. */
+	_vm->_celer->show_one(-1, -1, 11); /* Malagauche gets up again. */
 	_vm->_gyro->dna.malagauche = 0;
 
 	_vm->_visa->dixi('D', _vm->_gyro->dna.drinking); /* _vm->_scrolls->display message about it. */
@@ -526,7 +526,7 @@ void Timeout::buydrinks() {
 }
 
 void Timeout::buywine() {
-	_vm->_celer->show_one(11); /* Malagauche gets up again. */
+	_vm->_celer->show_one(-1, -1, 11); /* Malagauche gets up again. */
 	_vm->_gyro->dna.malagauche = 0;
 
 	_vm->_visa->dixi('D', 50); /* You buy the wine. */
@@ -619,7 +619,7 @@ void Timeout::avvy_sit_down() {
 	if (_vm->_trip->tr[0].homing)    /* Still walking */
 		set_up_timer(1, procavvy_sit_down, reason_sitting_down);
 	else {
-		_vm->_celer->show_one(3);
+		_vm->_celer->show_one(-1, -1, 3);
 		_vm->_gyro->dna.sitting_in_pub = true;
 		_vm->_gyro->dna.user_moves_avvy = false;
 		_vm->_trip->tr[0].visible = false;
