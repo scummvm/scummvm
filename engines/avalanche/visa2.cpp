@@ -237,7 +237,7 @@ void Visa::talkto(byte whom) {
 			}
 			break;
 		case _vm->_gyro->pspurge:
-			if (~ _vm->_gyro->dna.sitting_in_pub) {
+			if (!_vm->_gyro->dna.sitting_in_pub) {
 				dixi('q', 71); // Try going over and sitting down.
 				return;
 			} else {
