@@ -1261,7 +1261,7 @@ void Acci::getproc(char thing) {
 
 void Acci::give_geida_the_lute() {
 	if (_vm->_gyro->dna.room != r__lustiesroom) {
-		_vm->_scrolls->display("Not yet. Try later!\232\2");
+		_vm->_scrolls->display(Common::String("Not yet. Try later!") + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
 		return;
 	}
 	_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = false;
