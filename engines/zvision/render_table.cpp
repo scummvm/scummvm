@@ -163,7 +163,6 @@ void RenderTable::generatePanoramaLookupTable() {
 	float fovInRadians = (_panoramaOptions.fieldOfView * M_PI / 180.0f);
 	float cylinderRadius = halfHeight / tan(fovInRadians);
 
-	// TODO: Change the algorithm to write a whole row at a time instead of a whole column at a time. AKA: for(y) { for(x) {}} instead of for(x) { for(y) {}}
 	for (uint x = 0; x < _numColumns; x++) {
 		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
 		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and x
@@ -173,7 +172,6 @@ void RenderTable::generatePanoramaLookupTable() {
 		// We also scale it by _panoramaOptions.linearScale
 		int32 xInCylinderCoords = int32(floor((cylinderRadius * _panoramaOptions.linearScale * alpha) + halfWidth));
 		
-
 		float cosAlpha = cos(alpha);
 
 		for (uint y = 0; y < _numRows; y++) {
