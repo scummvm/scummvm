@@ -1624,10 +1624,43 @@ void Acci::do_that() {
 	case vb_play:
 		if (thing == pardon) {
 			switch (_vm->_gyro->dna.room) { /* They just typed "play"... */
-			case r__argentpub:
-				// play_nim();
-				warning("STUB: Acci::do_that() - case vb_play");
-				break; /* ...in the pub, => play Nim. */
+			case r__argentpub: { /* ...in the pub, => play Nim. */
+					warning("STUB: Acci::do_that() - case vb_play");
+					// play_nim();
+					// The following parts are copied from play_nim().
+					// The player automatically wins the game everytime he wins, until I implement the mini-game.
+
+					if (_vm->_gyro->dna.wonnim) {
+						/* Already won the game. */
+						_vm->_visa->dixi('Q', 6);
+						return;
+					}
+
+					if (!_vm->_gyro->dna.asked_dogfood_about_nim) {
+						_vm->_visa->dixi('q', 84);
+						return;
+					}
+
+					_vm->_visa->dixi('Q', 3);
+					_vm->_gyro->dna.playednim++;
+
+					/* You won - strange! */
+					_vm->_logger->log_aside("You won.");
+					_vm->_visa->dixi('Q', 7); /* You won! Give us a lute! */
+					_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = true;
+					_vm->_lucerna->objectlist();
+					_vm->_gyro->dna.wonnim = true;
+					_vm->_celer->show_one(-1, -1, 1); /* Show the settle with no lute on it. */
+					_vm->_lucerna->points(7); /* 7 points for winning! */
+
+					if (_vm->_gyro->dna.playednim == 1)
+						_vm->_lucerna->points(3); /* 3 points for playing your 1st game. */
+
+					// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
+					_vm->_scrolls->display(Common::String("P.S.: There should have been the mini-game called \"Nim\", but I haven't implemented it yet: you win and get the lute automatically.")
+						+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Peter (uruk)");
+				}
+				break; 
 			case r__musicroom:
 				play_harp();
 				break;
