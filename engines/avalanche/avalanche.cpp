@@ -724,7 +724,7 @@ Common::Error AvalancheEngine::run() {
 			break;
 		}
 
-	} while (true);
+	} while (false);
 
 
 
