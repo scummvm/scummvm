@@ -26,6 +26,7 @@
 #include "fullpipe/inventory.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/input.h"
 
 namespace Fullpipe {
 
@@ -128,6 +129,15 @@ int CInventory2::getCountItemsWithId(int itemId) {
 	return res;
 }
 
+int CInventory2::getInventoryItemIndexById(int itemId) {
+	for (uint i = 0; i < _inventoryItems.size(); i++) {
+		if (_inventoryItems[i]->itemId == itemId)
+			return i;
+	}
+
+	return -1;
+}
+
 int CInventory2::getInventoryPoolItemFieldCById(int itemId) {
 	for (uint i = 0; i < _itemsPool.size(); i++) {
 		if (_itemsPool[i]->id == itemId)
@@ -135,6 +145,15 @@ int CInventory2::getInventoryPoolItemFieldCById(int itemId) {
 	}
 
 	return 0;
+}
+
+int CInventory2::getItemFlags(int itemId) {
+	int idx = getInventoryPoolItemIndexById(itemId);
+
+	if (idx < 0)
+		return 0;
+
+	return _itemsPool[idx]->flags;
 }
 
 void CInventory2::rebuildItemRects() {
@@ -296,16 +315,72 @@ void CInventory2::slideOut() {
 	ex->postMessage();
 }
 
-int CInventory2::handleLeftClick(ExCommand *cmd) {
-	warning("STUB: CInventory2::handleLeftClick()");
+bool CInventory2::handleLeftClick(ExCommand *cmd) {
+	if (!_isInventoryOut)
+		return false;
 
-	return 0;
+    bool res = false;
+
+	for (uint i = 0; i < _inventoryIcons.size(); i++) {
+		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 && 
+			cmd->_y >= _inventoryIcons[i]->y1 && cmd->_y <= _inventoryIcons[i]->y2) {
+			if (getSelectedItemId()) {
+				if (getSelectedItemId() != _inventoryIcons[i]->inventoryItemId)
+					unselectItem(0);
+			}
+			if (getItemFlags(_inventoryIcons[i]->inventoryItemId) & 1) {
+				ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
+				ex->_field_2C = 11;
+				ex->_field_14 = _inventoryIcons[i]->inventoryItemId;
+				ex->_excFlags |= 3;
+				ex->postMessage();
+			}
+			if (!(getItemFlags(_inventoryIcons[i]->inventoryItemId) & 2)) {
+				selectItem(_inventoryIcons[i]->inventoryItemId);
+				_inventoryIcons[i]->isSelected = true;
+			}
+			res = true;
+		}
+	}
+
+    if (!res)
+		unselectItem(this);
+
+	return res;
 }
 
-int CInventory2::unselectItem(bool flag) {
-	warning("STUB: CInventory2::unselectItem()");
+int CInventory2::selectItem(int itemId) {
+	if (getInventoryItemIndexById(itemId) < 0)
+		return -1;
 
-	return 0;
+	unselectItem(0);
+
+	_selectedId = itemId;
+
+	if (_scene) {
+		int idx = getInventoryPoolItemIndexById(itemId);
+
+		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId1, 0)->_picture;
+		g_fullpipe->getGameLoaderInputController()->setCursorItemPicture(pic);
+	}
+
+	return _selectedId;
+}
+
+bool CInventory2::unselectItem(bool flag) {
+	if (_selectedId < 0)
+		return false;
+
+	_selectedId = -1;
+
+	for (uint i = 0; i < _inventoryIcons.size(); i++) {
+		if (_inventoryIcons[i]->isSelected)
+			_inventoryIcons[i]->isSelected = false;
+   }
+
+	g_fullpipe->getGameLoaderInputController()->setCursorItemPicture(0);
+
+	return true;
 }
 
 int CInventory2::getHoveredItem(Common::Point *point) {
@@ -332,9 +407,9 @@ int CInventory2::getHoveredItem(Common::Point *point) {
 			point->x > icn->x2 ||
 			point->y < _topOffset + icn->y1 ||
 			point->y > _topOffset + icn->y2) {
-			icn->isMouseHover = 0;
+			icn->isMouseHover = false;
 		} else {
-			icn->isMouseHover = 1;
+			icn->isMouseHover = true;
 			return icn->inventoryItemId;
 		}
     }

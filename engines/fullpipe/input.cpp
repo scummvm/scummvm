@@ -100,7 +100,8 @@ void CInputController::drawCursor(int x, int y) {
 	_cursorsArray[_cursorIndex]->picture->draw(_cursorBounds.left, _cursorBounds.top, 0, 0);
 
 	if (_cursorItemPicture)
-		_cursorItemPicture->draw(_cursorsArray[_cursorIndex]->itemPictureOffsX, _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
+		_cursorItemPicture->draw(_cursorBounds.left + _cursorsArray[_cursorIndex]->itemPictureOffsX,
+								 _cursorBounds.top + _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
 }
 
 void CInputController::setCursor(int cursorId) {

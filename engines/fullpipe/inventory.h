@@ -76,8 +76,8 @@ struct InventoryIcon {
 	int x2;
 	int y2;
 	int16 inventoryItemId;
-	int isSelected;
-	int isMouseHover;
+	bool isSelected;
+	bool isMouseHover;
 };
 
 typedef Common::Array<InventoryIcon *> InventoryIcons;
@@ -101,8 +101,10 @@ class CInventory2 : public CInventory {
 	void removeItem(int itemId, int count);
 	void removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority);
 
+	int getInventoryItemIndexById(int itemId);
 	int getInventoryPoolItemFieldCById(int itemId);
 	int getCountItemsWithId(int itemId);
+	int getItemFlags(int itemId);
 
 	void rebuildItemRects();
 
@@ -116,8 +118,9 @@ class CInventory2 : public CInventory {
 	void slideIn();
 	void slideOut();
 
-	int handleLeftClick(ExCommand *cmd);
-	int unselectItem(bool flag);
+	bool handleLeftClick(ExCommand *cmd);
+	int selectItem(int itemId);
+	bool unselectItem(bool flag);
 
 	void draw();
 };
