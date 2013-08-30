@@ -189,12 +189,35 @@ void RenderTable::generatePanoramaLookupTable() {
 }
 
 void RenderTable::generateTiltLookupTable() {
-	for (uint x = 0; x < _numColumns; x++) {
-		for (uint y = 0; y < _numRows; y++) {
-			uint32 index = y * _numColumns + x;
+	float halfWidth = (float)_numColumns / 2.0f;
+	float halfHeight = (float)_numRows / 2.0f;
 
-			_internalBuffer[index].x = 0;
-			_internalBuffer[index].y = 0;
+	float fovInRadians = (_tiltOptions.fieldOfView * M_PI / 180.0f);
+	float cylinderRadius = halfWidth / tan(fovInRadians);
+
+	for (uint y = 0; y < _numRows; y++) {
+	
+		// Add an offset of 0.01 to overcome zero tan/atan issue (horizontal line on half of screen)
+		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and y
+		float alpha = atan(((float)y - halfHeight + 0.01f) / cylinderRadius);
+
+		// To get y in cylinder coordinates, we just need to calculate the arc length
+		// We also scale it by _tiltOptions.linearScale
+		int32 yInCylinderCoords = int32(floor((cylinderRadius * _tiltOptions.linearScale * alpha) + halfHeight));
+
+		float cosAlpha = cos(alpha);
+		uint32 columnIndex = y * _numColumns;
+
+		for (uint x = 0; x < _numColumns; x++) {
+			// To calculate x in cylinder coordinates, we can do similar triangles comparison, 
+			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
+			int32 xInCylinderCoords = int32(floor(halfWidth + ((float)x - halfWidth) * cosAlpha));
+
+			uint32 index = columnIndex + x;
+
+			// Only store the (x,y) offsets instead of the absolute positions
+			_internalBuffer[index].x = xInCylinderCoords - x;
+			_internalBuffer[index].y = yInCylinderCoords - y;
 		}
 	}
 }
