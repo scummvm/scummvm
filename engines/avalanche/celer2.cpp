@@ -62,22 +62,22 @@ void Celer::pics_link() {
 	switch (_vm->_gyro->dna.room) {
 	case r__outsideargentpub:
 		if ((_vm->_gyro->roomtime % 12) == 0)
-			show_one(1 + (_vm->_gyro->roomtime / 12) % 4);
+			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 4);
 		break;
 
 	case r__brummieroad:
 		if ((_vm->_gyro->roomtime % 2) == 0)
-			show_one(1 + (_vm->_gyro->roomtime / 2) % 4);
+			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 2) % 4);
 		break;
 
 	case r__bridge:
 		if ((_vm->_gyro->roomtime % 2) == 0)
-			show_one(4 + (_vm->_gyro->roomtime / 2) % 4);
+			show_one(-1, -1, 4 + (_vm->_gyro->roomtime / 2) % 4);
 		break;
 
 	case r__yours:
 		if ((!_vm->_gyro->dna.avvy_is_awake) && ((_vm->_gyro->roomtime % 4) == 0))
-			show_one(1 + (_vm->_gyro->roomtime / 12) % 2);
+			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 2);
 		break;
 
 	case r__argentpub:
@@ -88,16 +88,16 @@ void Celer::pics_link() {
 			case 1:
 			case 11:
 			case 21:
-				show_one(12);
+				show_one(-1, -1, 12);
 				break; /* Looks forwards. */
 			case 8:
 			case 18:
 			case 28:
 			case 32:
-				show_one(11);
+				show_one(-1, -1, 11);
 				break; /* Looks at you. */
 			case 30:
-				show_one(13);
+				show_one(-1, -1, 13);
 				break; /* Winks. */
 			case 33:
 				_vm->_gyro->dna.malagauche = 0;
@@ -108,14 +108,14 @@ void Celer::pics_link() {
 		switch (_vm->_gyro->roomtime % 200) {
 		case 179:
 		case 197:
-			show_one(5);
+			show_one(-1, -1, 5);
 			break; /* Dogfood's drinking cycle */
 		case 182:
 		case 194:
-			show_one(6);
+			show_one(-1, -1, 6);
 			break;
 		case 185:
-			show_one(7);
+			show_one(-1, -1, 7);
 			break;
 		case 199:
 			_vm->_gyro->dna.dogfoodpos = 177;
@@ -131,7 +131,7 @@ void Celer::pics_link() {
 				xx = 4;
 
 			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-				show_one(xx);
+				show_one(-1, -1, xx);
 				_vm->_gyro->dna.dogfoodpos = xx;
 			}
 		}
@@ -141,16 +141,16 @@ void Celer::pics_link() {
 		if ((_vm->_gyro->roomtime % 3) == 0) {
 			switch ((_vm->_gyro->roomtime / int32(3)) % int32(6)) {
 			case 4:
-				show_one(1);
+				show_one(-1, -1, 1);
 				break;
 			case 1:
 			case 3:
 			case 5:
-				show_one(2);
+				show_one(-1, -1, 2);
 				break;
 			case 0:
 			case 2:
-				show_one(3);
+				show_one(-1, -1, 3);
 				break;
 			}
 		}
@@ -170,7 +170,7 @@ void Celer::pics_link() {
 				xx = 3; /* Right. */
 
 			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-				show_one(xx);
+				show_one(-1, -1, xx);
 				_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
 			}
 		}
@@ -180,10 +180,10 @@ void Celer::pics_link() {
 		if ((!_vm->_gyro->dna.ayles_is_awake) && (_vm->_gyro->roomtime % 14 == 0)) {
 			switch ((_vm->_gyro->roomtime / 14) % 2) {
 			case 0:
-				show_one(1);
+				show_one(-1, -1, 1);
 				break; /* Frame 2: EGA. */
 			case 1:
-				show_one(3);
+				show_one(-1, -1, 3);
 				break; /* Frame 1: Natural. */
 			}
 		}
@@ -193,10 +193,10 @@ void Celer::pics_link() {
 		if (_vm->_gyro->dna.tied_up) {
 			switch (_vm->_gyro->roomtime % 54) {
 			case 20:
-				show_one(4);
+				show_one(-1, -1, 4);
 				break; /* Frame 4: Avalot blinks. */
 			case 23:
-				show_one(2);
+				show_one(-1, -1, 2);
 				break; /* Frame 1: Back to normal. */
 			}
 		}
@@ -215,23 +215,23 @@ void Celer::pics_link() {
 			xx--; /* Blinks */
 
 		if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-			show_one(xx);
+			show_one(-1, -1, xx);
 			_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
 		}
 
 		switch (_vm->_gyro->roomtime % 50) {
 		case 45 :
-			show_one(9);
+			show_one(-1, -1, 9);
 			break; /* Spurge blinks */
 		case 49 :
-			show_one(10);
+			show_one(-1, -1, 10);
 			break;
 		}
 		break;
 
 	case r__ducks:
 		if ((_vm->_gyro->roomtime % 3) == 0) /* The fire flickers */
-			show_one(1 + (_vm->_gyro->roomtime / 3) % 3);
+			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 3) % 3);
 
 		{/* _vm->_lucerna->bearing of Avvy from Duck. */
 		if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
@@ -245,7 +245,7 @@ void Celer::pics_link() {
 			xx += 1; /* Duck blinks */
 
 		if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-			show_one(xx);
+			show_one(-1, -1, xx);
 			_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
 		}
 		break;
@@ -348,18 +348,22 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 	}
 
 	// These pictures are practically parts of the background. -10 is for the drop-down menu.
-	_vm->_graphics->drawPicture(_vm->_graphics->_background, picture, x * 8, y - 10);
+	_vm->_graphics->drawPicture(_vm->_graphics->_background, picture, x, y - 10);
 }
 
-void Celer::show_one(byte which) {
+void Celer::show_one(int16 destX, int16 destY, byte which) {
 	chunkblocktype ch;
 	which--; // For the difference between the Pascal and C array indexes.
 	//setactivepage(3);
 	warning("STUB: Celer::show_one()");
 
-	if (memos[which].x > on_disk)
-		display_it(memos[which].x, memos[which].y, memos[which].xl, memos[which].yl, memos[which].flavour, memory[which]);
-	else {
+	if (memos[which].x > on_disk) {
+		if (destX == -1) {
+			destX = memos[which].x * 8;
+			destY = memos[which].y;
+		}
+		display_it(destX, destY, memos[which].xl, memos[which].yl, memos[which].flavour, memory[which]);
+	} else {
 		if (!f.open(filename)) { /* Filename was set in load_chunks() */
 			warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
 			return;
@@ -378,7 +382,11 @@ void Celer::show_one(byte which) {
 
 		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(f, ch.xl * 8, ch.yl + 1);
 
-		display_it(ch.x, ch.y, ch.xl, ch.yl, ch.flavour, picture);
+		if (destX == -1) {
+			destX = ch.x * 8;
+			destY = ch.y;
+		}
+		display_it(destX, destY, ch.xl, ch.yl, ch.flavour, picture);
 
 		picture.free();
 		f.close();
@@ -389,16 +397,6 @@ void Celer::show_one(byte which) {
 
 	for (byte fv = 0; fv < 2; fv ++)
 		_vm->_trip->getset[fv].remember(r);
-}
-
-
-
-void Celer::display_it_at(int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture, int16 &xxx, int16 &yyy) {
-	warning("STUB: Celer::display_it_at()");
-}
-
-void Celer::show_one_at(byte which, int16 xxx, int16 yyy) {
-	warning("STUB: Celer::show_one_at()");
 }
 
 
