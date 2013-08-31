@@ -27,11 +27,14 @@
  */
 
 #include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
+#include <limits.h>
 
 namespace Wintermute {
 
-const int kMaxOutputRects = 256;
-const int kMaxInputRects = 512;
+const uint kMaxOutputRects = UINT_MAX; 
+// We have convened that we are not worried about lotsa rects 
+// anymore thanks to wjp's patch... but overflow is still a remote risk.
+const uint kMaxInputRects = 512;
 const int kMaxAcceptableWaste = 10;
 const int kMinAcceptableWaste = 3;
 const int kMaxSplicingX = 5;
@@ -64,7 +67,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 
 
 	Common::Rect *tmp = new Common::Rect(rect);
-	int target = getSize();
+	uint target = getSize();
 
 	if (target > kMaxInputRects) {
 		_disableDirtyRects = true;
@@ -141,11 +144,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	ret.clear();
 	Common::Array<Common::Rect *> queue;
 
-	for (int i = 0; i < _rectArray.size(); i++) {
+	for (uint i = 0; i < _rectArray.size(); i++) {
 		queue.insert_at(queue.size(), _rectArray[i]);
 	}
 
-	int j = 0;
+	uint j = 0;
 	while (j < queue.size()) {
 
 		Common::Rect *candidate = queue[j];
