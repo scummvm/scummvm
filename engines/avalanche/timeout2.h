@@ -71,85 +71,45 @@ public:
 	/* procx now runs between 1 and 41. */
 
 	static const int16 procopen_drawbridge = 3;
-
 	static const int16 procavaricius_talks = 4;
-
 	static const int16 procurinate = 5;
-
 	static const int16 proctoilet2 = 6;
-
 	static const int16 procbang = 7;
-
 	static const int16 procbang2 = 8;
-
 	static const int16 procstairs = 9;
-
 	static const int16 proccardiffsurvey = 10;
-
 	static const int16 proccardiff_return = 11;
-
 	static const int16 proc_cwytalot_in_herts = 12;
-
 	static const int16 procget_tied_up = 13;
-
 	static const int16 procget_tied_up2 = 1;
-
 	static const int16 prochang_around = 14;
-
 	static const int16 prochang_around2 = 15;
-
 	static const int16 procafter_the_shootemup = 32;
-
 	static const int16 procjacques_wakes_up = 16;
-
 	static const int16 procnaughty_duke = 17;
-
 	static const int16 procnaughty_duke2 = 18;
-
 	static const int16 procnaughty_duke3 = 38;
-
 	static const int16 procjump = 19;
-
 	static const int16 procsequence = 20;
-
 	static const int16 proccrapulus_splud_out = 21;
-
 	static const int16 procdawn_delay = 22;
-
 	static const int16 procbuydrinks = 23;
-
 	static const int16 procbuywine = 24;
-
 	static const int16 proccallsguards = 25;
-
 	static const int16 procgreetsmonk = 26;
-
 	static const int16 procfall_down_oubliette = 27;
-
 	static const int16 procmeet_avaroid = 28;
-
 	static const int16 procrise_up_oubliette = 29;
-
 	static const int16 procrobin_hood_and_geida = 2;
-
 	static const int16 procrobin_hood_and_geida_talk = 30;
-
 	static const int16 procavalot_returns = 31;
-
 	static const int16 procavvy_sit_down = 33; /* In Nottingham. */
-
 	static const int16 procghost_room_phew = 34;
-
 	static const int16 procarkata_shouts = 35;
-
 	static const int16 procwinning = 36;
-
 	static const int16 procavalot_falls = 37;
-
 	static const int16 procspludwick_goes_to_cauldron = 39;
-
 	static const int16 procspludwick_leaves_cauldron = 40;
-
 	static const int16 procgive_lute_to_geida = 41;
 
 	struct timetype {
@@ -162,7 +122,7 @@ public:
 
 	timetype times[7];
 	
-	bool timerLost; // Is the timer "lost"?
+	bool timerLost; // Is the timer "lost"? (Because of using lose_timer())
 
 
 	
@@ -176,9 +136,7 @@ public:
 
 	void lose_timer(byte which);
 
-	/*function timer_is_on(which:byte):boolean;*/
-
-	/* procedures to do things at the end of amounts of time: */
+	// Procedures to do things at the end of amounts of time:
 
 	void open_drawbridge();
 
@@ -260,8 +218,6 @@ public:
 
 private:
 	AvalancheEngine *_vm;
-
-	byte fv;
 };
 
 } // End of namespace Avalanche.
