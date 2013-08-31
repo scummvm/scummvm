@@ -639,7 +639,7 @@ void StaticANIObject::update(int counterdiff) {
 			if (dyn->_initialCountdown == dyn->_countdown) {
 
 				ex = dyn->getExCommand();
-				if (ex && ex->_messageKind == 35) {
+				if (ex && ex->_messageKind != 35) {
 					newex = new ExCommand(ex);
 					newex->_excFlags |= 2;
 					if (newex->_messageKind == 17) {
@@ -651,42 +651,42 @@ void StaticANIObject::update(int counterdiff) {
 					if (!_movement)
 						return;
 				}
+			}
 
-				if (dyn->_initialCountdown == dyn->_countdown && dyn->_field_68 == 0) {
-					newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
-					newex->_excFlags = 2;
-					newex->_keyCode = _okeyCode;
-					newex->sendMessage();
+			if (dyn->_initialCountdown != dyn->_countdown || dyn->_field_68 == 0) {
+				newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
+				newex->_excFlags = 2;
+				newex->_keyCode = _okeyCode;
+				newex->sendMessage();
 
-					if (!_movement)
-						return;
-				}
+				if (!_movement)
+					return;
+			}
 
-				if (!_movement->gotoNextFrame(_callback1, _callback2)) {
-						stopAnim_maybe();
-				} else {
-					setOXY(_movement->_ox, _movement->_oy);
-					_counter = _initialCounter;
+			if (!_movement->gotoNextFrame(_callback1, _callback2)) {
+				stopAnim_maybe();
+			} else {
+				setOXY(_movement->_ox, _movement->_oy);
+				_counter = _initialCounter;
 
-					if (dyn->_initialCountdown == dyn->_countdown) {
-						ex = dyn->getExCommand();
-						if (ex) {
-							if (ex->_messageKind == 35) {
-								newex = new ExCommand(ex);
-								newex->_excFlags |= 2;
-								newex->sendMessage();
-							}
+				if (dyn->_initialCountdown == dyn->_countdown) {
+					ex = dyn->getExCommand();
+					if (ex) {
+						if (ex->_messageKind == 35) {
+							newex = new ExCommand(ex);
+							newex->_excFlags |= 2;
+							newex->sendMessage();
 						}
 					}
-					if (!_movement)
-						return;
-
-					_stepArray.getCurrPoint(&point);
-					setOXY(point.x + _ox, point.y + _oy);
-					_stepArray.gotoNextPoint();
-					if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
-						adjustSomeXY();
 				}
+				if (!_movement)
+					return;
+
+				_stepArray.getCurrPoint(&point);
+				setOXY(point.x + _ox, point.y + _oy);
+				_stepArray.gotoNextPoint();
+				if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
+					adjustSomeXY();
 			}
 		} else if (_flags & 0x20) {
 			_flags ^= 0x20;
@@ -696,8 +696,8 @@ void StaticANIObject::update(int counterdiff) {
 
 			Common::Point pointS;
 			_statics->getSomeXY(pointS);
-			setOXY(_ox + point.x + _movement->_mx - pointS.x,
-				   _oy + point.y + _movement->_my - pointS.y);
+			_movement->setOXY(_ox + point.x + _movement->_mx - pointS.x,
+							  _oy + point.y + _movement->_my - pointS.y);
 		}
 	} else {
 		if (_statics) {
@@ -1265,6 +1265,8 @@ void Movement::initStatics(StaticANIObject *ani) {
 	if (!_currMovement)
 		return;
 
+	debug(7, "Movement::initStatics()");
+
 	_staticsObj2 = ani->addReverseStatics(_currMovement->_staticsObj2);
 	_staticsObj1 = ani->addReverseStatics(_currMovement->_staticsObj1);
 	
@@ -1290,6 +1292,8 @@ void Movement::initStatics(StaticANIObject *ani) {
 }
 
 void Movement::updateCurrDynamicPhase() {
+	debug(7, "Movement::updateCurrDynamicPhase()");
+
 	if (_currMovement) {
 		if (_currMovement->_dynamicPhases.size() == 0)
 			return;
@@ -1306,6 +1310,7 @@ void Movement::updateCurrDynamicPhase() {
 }
 
 void Movement::setDynamicPhaseIndex(int index) {
+	debug(7, "Movement::setDynamicPhaseIndex(%d)", index);
 	while (_currDynamicPhaseIndex < index)
 		gotoNextFrame(0, 0);
 
