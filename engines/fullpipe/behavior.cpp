@@ -153,7 +153,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 		uint runPercent = 0;
 		for (int i = 0; i < bhe->_itemsCount; i++) {
 			if (!(bhe->_items[i]->_flags & 1) && bhe->_items[i]->_percent) {
-				if (rnd >= runPercent && rnd <= runPercent + bhe->_items[i]->_percent || i == bhe->_itemsCount - 1) {
+				if ((rnd >= runPercent && rnd <= runPercent + bhe->_items[i]->_percent) || i == bhe->_itemsCount - 1) {
 					mq = new MessageQueue(bhe->_items[i]->_messageQueue, 0, 1);
 					break;
 				}

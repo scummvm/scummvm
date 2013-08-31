@@ -347,7 +347,7 @@ void FullpipeEngine::updateScreen() {
 	//if (inputArFlag)
 	//	updateGame_inputArFlag();
 
-	if (_modalObject || _flgGameIsRunning && (_gameLoader->updateSystems(42), _modalObject != 0)) {
+	if (_modalObject || (_flgGameIsRunning && (_gameLoader->updateSystems(42), _modalObject != 0))) {
 		if (_flgGameIsRunning) {
 			if (_modalObject->init(42)) {
 				_modalObject->update();

@@ -337,7 +337,7 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 
 PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && ((PictureObject *)_picObjList[i])->_okeyCode == flags || flags == -1)
+		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && (((PictureObject *)_picObjList[i])->_okeyCode == flags || flags == -1))
 			return (PictureObject *)_picObjList[i];
 	}
 
@@ -587,8 +587,6 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int bgPosX = g_fullpipe->_sceneRect.left - bgOffsetX;
 
 		if (bgPosX < g_fullpipe->_sceneRect.right - 1) {
-			int v24 = height * bgNumY;
-			int v51 = height * bgNumY;
 			while (1) {
 				int v25 = bgNumY;
 				for (int y = g_fullpipe->_sceneRect.top - bgOffsetY; y < g_fullpipe->_sceneRect.bottom - 1;) {
@@ -615,7 +613,6 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 				}
 				if (v32 >= g_fullpipe->_sceneRect.right - 1)
 					break;
-				v24 = v51;
 			}
 		}
     }

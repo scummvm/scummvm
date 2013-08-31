@@ -980,7 +980,7 @@ int global_messageHandler3(ExCommand *cmd) {
 							return result;
 						}
 						if (ani2->canInteractAny(pic, cmd->_keyCode)) {
-							if (!ani2 || ani2->isIdle() && !(ani2->_flags & 0x80) && !(ani2->_flags & 0x100))
+							if (!ani2 || (ani2->isIdle() && !(ani2->_flags & 0x80) && !(ani2->_flags & 0x100)))
 								handleObjectInteraction(ani2, pic, cmd->_keyCode);
 							return 1;
 						}
@@ -990,7 +990,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_isEnabled && cmd->_keyCode <= 0) {
 				if (g_fullpipe->_msgX != cmd->_sceneClickX || g_fullpipe->_msgY != cmd->_sceneClickY) {
 					ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
-					if (!ani || ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100)) {
+					if (!ani || (ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100))) {
 						result = startWalkTo(g_fullpipe->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
 							ExCommand *ex = new ExCommand(g_fullpipe->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);

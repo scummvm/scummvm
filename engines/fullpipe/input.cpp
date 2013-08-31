@@ -152,7 +152,7 @@ void FullpipeEngine::updateCursorsCommon() {
 	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
 
 	GameObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
-	if (!ani || pic && pic->_priority < ani->_priority )
+	if (!ani || (pic && pic->_priority < ani->_priority))
 		ani = pic;
 
 	int selId = getGameLoaderInventory()->getSelectedItemId();
