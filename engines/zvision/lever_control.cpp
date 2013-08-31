@@ -153,7 +153,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 				_frameInfo[frameNumber].hotspot.bottom = y + _hotspotDelta.y;
 			}
 
-			Common::StringTokenizer tokenizer(line, " ^=");
+			Common::StringTokenizer tokenizer(line, " ^=()");
 			tokenizer.nextToken();
 			tokenizer.nextToken();
 
@@ -168,8 +168,11 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 
 					_frameInfo[frameNumber].directions.push_back(Direction(angle, toFrame));
 				} else if (token.hasPrefix("P")) {
-					uint to;
-					sscanf(token.c_str(), "P(%*u to %u)", &to);
+					// Format: P(<from> to <to>)
+					tokenizer.nextToken();
+					tokenizer.nextToken();
+					token = tokenizer.nextToken();
+					uint to = atoi(token.c_str());
 
 					_frameInfo[frameNumber].returnRoute.push_back(to);
 				}
