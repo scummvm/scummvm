@@ -47,7 +47,9 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		  _currentFrame(0),
 		  _lastRenderedFrame(0),
 		  _mouseIsCaptured(false),
-		  _isReturning(false) {
+		  _isReturning(false),
+		  _accumulatedTime(0),
+		  _returnRoutesCurrentFrame(0) {
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
@@ -204,11 +206,9 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 	_mouseIsCaptured = false;
 	_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 
-	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
-
-	}
-
-	// TODO: Animation reversal back to origin
+	_isReturning = true;
+	_returnRoutesCurrentProgress = _frameInfo[_currentFrame].returnRoute.begin();
+	_returnRoutesCurrentFrame = _currentFrame;
 }
 
 bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
@@ -247,8 +247,31 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 		return false;
 	}
 
-	// TODO: Implement reversal over time
+	if (_isReturning) {
+		_accumulatedTime += deltaTimeInMillis;
+		while (_accumulatedTime >= ANIMATION_FRAME_TIME) {
+			_accumulatedTime -= ANIMATION_FRAME_TIME;
+			if (_returnRoutesCurrentFrame == *_returnRoutesCurrentProgress) {
+				_returnRoutesCurrentProgress++;
+			}
+			if (_returnRoutesCurrentProgress == _frameInfo[_currentFrame].returnRoute.end()) {
+				_isReturning = false;
+				_currentFrame = _returnRoutesCurrentFrame;
+				_engine->getScriptManager()->setStateValue(_key, _currentFrame);
+				return false;
+			}
 
+			uint toFrame = *_returnRoutesCurrentProgress;
+			if (_returnRoutesCurrentFrame < toFrame) {
+				_returnRoutesCurrentFrame++;
+			} else if (_returnRoutesCurrentFrame > toFrame) {
+				_returnRoutesCurrentFrame--;
+			}
+
+			renderFrame(_returnRoutesCurrentFrame);
+		}
+	}
+	
 	return false;
 }
 

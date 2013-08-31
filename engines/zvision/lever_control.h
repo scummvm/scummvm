@@ -61,7 +61,8 @@ private:
 	};
 
 	enum {
-		ANGLE_DELTA = 30 // How far off a mouse angle can be and still be considered valid. This is in both directions, so the total buffer zone is (2 * ANGLE_DELTA)
+		ANGLE_DELTA = 30, // How far off a mouse angle can be and still be considered valid. This is in both directions, so the total buffer zone is (2 * ANGLE_DELTA)
+		ANIMATION_FRAME_TIME = 30 // In millis
 	};
 
 private:
@@ -85,6 +86,8 @@ private:
 	bool _isReturning;
 	Common::Point _lastMousePos;
 	Common::List<uint>::iterator _returnRoutesCurrentProgress;
+	uint _returnRoutesCurrentFrame;
+	uint32 _accumulatedTime;
 
 public:
 	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
