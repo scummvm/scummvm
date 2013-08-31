@@ -667,6 +667,8 @@ void global_messageHandler_KickMetal() {
 }
 
 int global_messageHandler1(ExCommand *cmd) {
+	debug(0, "global_messageHandler1: %d %d", cmd->_messageKind, cmd->_messageNum);
+
 	if (cmd->_excFlags & 0x10000) {
 		if (cmd->_messageNum == MV_MAN_TOLADDER)
 			cmd->_messageNum = MV_MAN_TOLADDER2;
@@ -837,8 +839,6 @@ void staticANIObjectCallback(int *arg) {
 }
 
 int global_messageHandler2(ExCommand *cmd) {
-	debug(0, "global_messageHandler2()");
-
 	if (cmd->_messageKind != 17)
 		return 0;
 
@@ -1082,7 +1082,6 @@ int global_messageHandler3(ExCommand *cmd) {
 int global_messageHandler4(ExCommand *cmd) {
 	StaticANIObject *ani = 0;
 
-	debug(0, "global_messageHandler4: %d %d", cmd->_messageKind, cmd->_messageNum);
 	switch (cmd->_messageKind) {
 	case 18: {
 		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(cmd->_messageNum), cmd->_parId, 0);

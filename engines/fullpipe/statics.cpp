@@ -467,7 +467,7 @@ void StaticANIObject::draw() {
 	Common::Point point;
 	Common::Rect rect;
 
-	debug(0, "StaticANIObject::draw() (%s) [%d]", transCyrillic((byte *)_objectName), _id);
+	debug(0, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_shadows
 		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
@@ -527,7 +527,7 @@ void StaticANIObject::draw() {
 }
 
 void StaticANIObject::draw2() {
-	debug(0, "StatciANIObject::draw2()");
+	debug(0, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if ((_flags & 4) && (_flags & 0x10)) {
 		if (_movement) {
@@ -602,7 +602,7 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 void StaticANIObject::update(int counterdiff) {
 	int mqid;
 
-	debug(0, "StaticANIObject::update() (%x)", _flags);
+	debug(0, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
 
 	if (_flags & 2) {
 		_messageNum--;
@@ -712,6 +712,8 @@ void StaticANIObject::update(int counterdiff) {
 			}
 		}
 	}
+
+	debug(0, "   StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
 }
 
 void StaticANIObject::stopAnim_maybe() {
@@ -915,7 +917,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	if (_flags & 0x80)
 		return false;
 
-	debug(0, "StaticANIObject::startAnim(%d, %d, %d)", movementId, messageQueueId, dynPhaseIdx);
+	debug(0, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if (_messageQueueId) {
 		updateGlobalMessageQueue(messageQueueId, _id);
@@ -948,16 +950,20 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	int newy = _oy;
 	Common::Point point;
 
+	debug(0, "0 %d %d", newx, newy);
 	if (_movement) {
 		_movement->getCurrDynamicPhaseXY(point);
 
 		newx -= point.x;
 		newy -= point.y;
+
+		debug(0, "1 %d %d", newx, newy);
 	} else if (_statics) {
 		_statics->getSomeXY(point);
 
 		newx -= point.x;
 		newy -= point.y;
+		debug(0, "2 %d %d", newx, newy);
 	}
 
 	_movement = mov;
@@ -975,6 +981,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 			newx += point.x + _movement->_mx;
 			newy += point.y + _movement->_my;
 
+			debug(0, "3 %d %d", newx, newy);
 			_stepArray.gotoNextPoint();
 
 			ExCommand *ex = _movement->_currDynamicPhase->getExCommand();
@@ -988,8 +995,11 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 		}
 	}
 
+	debug(0, "4 %d %d", newx, newy);
 	_movement->getCurrDynamicPhaseXY(point);
 	setOXY(point.x + newx, point.y + newy);
+
+	debug(0, "   StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if (_movement->_staticsObj2->_staticsId & 0x4000)
 		_flags |= 8;
@@ -1567,6 +1577,8 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 	_field_7E = 0;
 	_rect = new Common::Rect();
+
+	debug(0, "DynamicPhase::DynamicPhase(src, %d)", reverse);
 
 	if (reverse) {
 		if (!src->_bitmap)

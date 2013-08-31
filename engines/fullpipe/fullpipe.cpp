@@ -341,6 +341,8 @@ void FullpipeEngine::cleanup() {
 }
 
 void FullpipeEngine::updateScreen() {
+	debug(4, "FullpipeEngine::updateScreen()");
+
 	_mouseVirtX = _mouseScreenPos.x + _sceneRect.left;
 	_mouseVirtY = _mouseScreenPos.y + _sceneRect.top;
 
@@ -361,7 +363,6 @@ void FullpipeEngine::updateScreen() {
 			}
 		}
 	} else if (_currentScene) {
-		//_currentScene->update(42);  // HACK. FIXME
 		_currentScene->draw();
 
 		if (_inventoryScene)
