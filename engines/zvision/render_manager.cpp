@@ -324,15 +324,7 @@ void RenderManager::moveBackground(int offset) {
 	if (state == RenderTable::TILT) {
 		_backgroundOffset += Common::Point(0, offset);
 
-		if (_backgroundOffset.x <= -_backgroundWidth)
-			_backgroundOffset.x += _backgroundWidth;
-		else if (_backgroundOffset.x >= _backgroundWidth)
-			_backgroundOffset.x -= _backgroundWidth;
-
-		if (_backgroundOffset.y <= -_backgroundHeight)
-			_backgroundOffset.y += _backgroundHeight;
-		else if (_backgroundOffset.y >= _backgroundHeight)
-			_backgroundOffset.y -= _backgroundHeight;
+		_backgroundOffset.y = CLIP<int16>(_backgroundOffset.y, _screenCenterY, (int16)_backgroundHeight - _screenCenterY);
 
 		renderImageToScreen(_currentBackground, 0, _screenCenterY - _backgroundOffset.y, true);
 	} else if (state == RenderTable::PANORAMA) {
@@ -342,11 +334,6 @@ void RenderManager::moveBackground(int offset) {
 			_backgroundOffset.x += _backgroundWidth;
 		else if (_backgroundOffset.x >= _backgroundWidth)
 			_backgroundOffset.x -= _backgroundWidth;
-
-		if (_backgroundOffset.y <= -_backgroundHeight)
-			_backgroundOffset.y += _backgroundHeight;
-		else if (_backgroundOffset.y >= _backgroundHeight)
-			_backgroundOffset.y -= _backgroundHeight;
 
 		renderImageToScreen(_currentBackground, _screenCenterX - _backgroundOffset.x, 0, true);
 	} else {
