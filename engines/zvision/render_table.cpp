@@ -52,7 +52,9 @@ void RenderTable::setRenderState(RenderState newState) {
 		_panoramaOptions.reverse = false;
 		break;
 	case TILT:
-
+		_tiltOptions.fieldOfView = 27.0f;
+		_tiltOptions.linearScale = 0.55f;
+		_tiltOptions.reverse = false;
 		break;
 	case FLAT:
 		// Intentionally left empty
