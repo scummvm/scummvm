@@ -203,12 +203,14 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 		return;
 	}
 	
-	_mouseIsCaptured = false;
-	_engine->getScriptManager()->setStateValue(_key, _currentFrame);
+	if (_mouseIsCaptured) {
+		_mouseIsCaptured = false;
+		_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 
-	_isReturning = true;
-	_returnRoutesCurrentProgress = _frameInfo[_currentFrame].returnRoute.begin();
-	_returnRoutesCurrentFrame = _currentFrame;
+		_isReturning = true;
+		_returnRoutesCurrentProgress = _frameInfo[_currentFrame].returnRoute.begin();
+		_returnRoutesCurrentFrame = _currentFrame;
+	}
 }
 
 bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
