@@ -200,7 +200,7 @@ void RenderTable::generateTiltLookupTable() {
 	for (uint y = 0; y < _numRows; y++) {
 	
 		// Add an offset of 0.01 to overcome zero tan/atan issue (horizontal line on half of screen)
-		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and y
+		// Alpha represents the vertical angle between the viewer at the center of a cylinder and y
 		float alpha = atan(((float)y - halfHeight + 0.01f) / cylinderRadius);
 
 		// To get y in cylinder coordinates, we just need to calculate the arc length
