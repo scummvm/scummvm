@@ -38,6 +38,7 @@
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
+#include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 
 namespace Wintermute {
 
