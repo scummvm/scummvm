@@ -113,7 +113,7 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
 		case Common::EVENT_RBUTTONUP:
 		case Common::EVENT_MBUTTONUP:
 			evt.eventType = EVENT_BUTTON_UP;
-			evt.btnState = 0;
+			evt.btnState = BTNSHIFT_LEFT;
 			break;
 		case Common::EVENT_KEYDOWN:
 			evt.eventType = EVENT_KEYPRESS;
