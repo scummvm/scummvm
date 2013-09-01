@@ -222,7 +222,6 @@ void Avalot::run(Common::String arg) {
 
 		_vm->_lucerna->clock_lucerna();
 		_vm->_dropdown->menu_link();
-		_vm->_trip->readstick();
 		_vm->_gyro->force_numlock();
 		_vm->_trip->get_back_loretta();
 		_vm->_celer->pics_link();
@@ -233,13 +232,13 @@ void Avalot::run(Common::String arg) {
 
 
 		// ONLY FOR TESTING!!!
-		for (byte i = 0; i < _vm->_gyro->lineNum; i++) 
-			_vm->_graphics->_surface.drawLine(_vm->_gyro->lines[i].x1, _vm->_gyro->lines[i].y1, _vm->_gyro->lines[i].x2, _vm->_gyro->lines[i].y2, _vm->_gyro->lines[i].col);
+		/*for (byte i = 0; i < _vm->_gyro->lineNum; i++) 
+		_vm->_graphics->_surface.drawLine(_vm->_gyro->lines[i].x1, _vm->_gyro->lines[i].y1, _vm->_gyro->lines[i].x2, _vm->_gyro->lines[i].y2, _vm->_gyro->lines[i].col);
 
 		for (byte i = 0; i < _vm->_gyro->numfields; i++) {
-			if (_vm->_gyro->fields[i].x1 < 640)
-				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), lightmagenta);
-		}
+		if (_vm->_gyro->fields[i].x1 < 640)
+		_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), lightmagenta);
+		}*/
 		// ONYL FOR TESTING!!!
 
 

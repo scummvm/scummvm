@@ -946,8 +946,8 @@ void Lucerna::points(byte num) {     /* Add on no. of points */
 	showscore();
 }
 
-void Lucerna::topcheck() {
-	_vm->_dropdown->ddm_m.getmenu(_vm->_gyro->mpx);
+void Lucerna::topcheck(Common::Point cursorPos) {
+	_vm->_dropdown->ddm_m.getmenu(cursorPos.x);
 }
 
 void Lucerna::mouseway(const Common::Point &cursorPos) {
@@ -1084,8 +1084,6 @@ void Lucerna::verte(Common::Point cursorPos) {
 }
 
 void Lucerna::checkclick() {
-	bytefield b;
-
 	Common::Point cursorPos = _vm->getMousePos();
 	_vm->_gyro->ontoolbar = _vm->_gyro->slow_computer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
 	
@@ -1107,9 +1105,9 @@ void Lucerna::checkclick() {
 	}
 
 	if (holdLeftMouse)
-		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Clink on the dropdown menu.
+		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_vm->_gyro->dropsok)
-				topcheck();
+				topcheck(cursorPos);
 		} else if ((317 <= cursorPos.y) && (cursorPos.y <= 339)) { // Click on the command line.
 			_vm->_parser->_inputTextPos = (cursorPos.x - 23) / 8;
 			if (_vm->_parser->_inputTextPos > _vm->_parser->_inputText.size() + 1)

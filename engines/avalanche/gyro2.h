@@ -644,7 +644,7 @@ public:
 
 	Common::String getname(byte whose);
 
-	char getnamechar(byte whose);
+	byte getnamechar(byte whose);
 
 	Common::String get_thing(byte which);
 

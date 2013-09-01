@@ -76,6 +76,8 @@ public:
 
 	::Graphics::Surface _scrolls;
 
+	::Graphics::Surface _dropdown;
+
 
 
 	Graphics(AvalancheEngine *vm);

@@ -49,8 +49,8 @@ headtype *headtype::init(char trig, char alttrig, Common::String name, byte p, f
 	alttrigger = alttrig;
 	title = name;
 	position = p;
-	xpos = (position - 1) * _dr->spacing + _dr->indent;
-	xright = position * _dr->spacing + _dr->indent;
+	xpos = position * _dr->spacing + _dr->indent;
+	xright = (position + 1) * _dr->spacing + _dr->indent;
 	do_setup = dw;
 	do_choose = dc;
 
@@ -71,12 +71,12 @@ void headtype::highlight() {
 	warning("STUB: Dropdown::headytpe::highlight()");
 
 	_dr->hlchalk(xpos, 1, trigger, title, true);
-	{
-		_dr->ddm_o.left = xpos;
-		_dr->ddm_o.menunow = true;
-		_dr->_vm->_gyro->ddmnow = true;
-		_dr->ddm_o.menunum = position;
-	}
+	
+	_dr->ddm_o.left = xpos;
+	_dr->ddm_o.menunow = true;
+	_dr->_vm->_gyro->ddmnow = true;
+	_dr->ddm_o.menunum = position;
+	
 	_dr->_vm->_gyro->cmp = 177; /* Force redraw of cursor. */
 }
 
@@ -91,12 +91,11 @@ bool headtype::extdparse(char c) {
 
 
 
-onemenu *onemenu::init(Dropdown *dr) {
+void onemenu::init(Dropdown *dr) {
 	_dr = dr;
 	menunow = false;
 	_dr->_vm->_gyro->ddmnow = false;
 	menunum = 1;
-	return this;
 }
 
 void onemenu::start_afresh() {
@@ -108,55 +107,121 @@ void onemenu::start_afresh() {
 }
 
 void onemenu::opt(Common::String n, char tr, Common::String key, bool val) {
-	int16 l;
-	number += 1;
-	l = (n + key).size() + 3;
-	if (width < l)  width = l;
-	{
-		optiontype &with = oo[number];
-		with.title = n;
-		with.trigger = tr;
-		with.shortcut = key;
-		with.valid = val;
-	}
+	int16 l = (n + key).size() + 3;
+	if (width < l)
+		width = l;
+
+	oo[number].title = n;
+	oo[number].trigger = tr;
+	oo[number].shortcut = key;
+	oo[number].valid = val;
+	number++;
 }
 
 void onemenu::displayopt(byte y, bool highlit) {
-	warning("STUB: Dropdown::onemenu::displayopt()");
+	byte backgroundColor;
+	if (highlit)
+		backgroundColor = 0;
+	else
+		backgroundColor = 7;
+	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((flx1 + 1) * 8, 3 + (y + 1) * 10, (flx2 + 1) * 8, 13 + (y + 1) * 10), backgroundColor);
+	//bar((flx1 + 1) * 8, 3 + y * 10, (flx2 + 1) * 8, 12 + y * 10);
+
+	Common::String data = oo[y].title;
+	while ((data + oo[y].shortcut).size() < width)
+		data += ' '; /* Pad oo[y] spaces. */
+	data = data + oo[y].shortcut;
+
+	if (highlit)
+		_dr->hlchalk(left, 4 + (y + 1) * 10, oo[y].trigger, data, oo[y].valid);
+	else
+		_dr->chalk(left, 4 + (y + 1) * 10, oo[y].trigger, data, oo[y].valid);
 }
 
 void onemenu::display() {
-	warning("STUB: Dropdown::onemenu::display()");
+	CursorMan.showMouse(false);
+	/*setactivepage(cp);
+	setvisualpage(cp);
+	setfillstyle(1, menu_b);
+	setcolor(menu_border);*/
+	firstlix = true;
+	flx1 = left - 2;
+	flx2 = left + width;
+	fly = 15 + number * 10;
+	menunow = true;
+	_dr->_vm->_gyro->ddmnow = true;
+
+	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((flx1 + 1) * 8, 12, (flx2 + 1) * 8, fly), _dr->menu_b);
+	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((flx1 + 1) * 8 - 1, 11, (flx2 + 1) * 8 + 1, fly + 1), _dr->menu_border);
+	/*bar((flx1 + 1) * 8, 12, (flx2 + 1) * 8, fly);
+	rectangle((flx1 + 1) * 8 - 1, 11, (flx2 + 1) * 8 + 1, fly + 1);*/
+
+	displayopt(0, true);
+	for (byte y = 1; y < number; y++)
+		displayopt(y, false);
+	
+	_dr->_vm->_gyro->defaultled = 1;
+	_dr->_vm->_gyro->cmp = 177;
+	//mousepage(cp);
+	CursorMan.showMouse(true); // 4 = fletch
 }
 
 void onemenu::wipe() {
-	warning("STUB: Dropdown::onemenu::wipe()");
+	//setactivepage(cp);
+	CursorMan.showMouse(false); 
+	
+	_dr->chalk(_dr->ddm_m.ddms[_dr->ddm_o.menunum - 1].xpos, 1, _dr->ddm_m.ddms[_dr->ddm_o.menunum - 1].trigger, _dr->ddm_m.ddms[_dr->ddm_o.menunum - 1].title, true);
+
+	/*mblit(flx1, 11, flx2 + 1, fly + 1, 3, cp);
+	blitfix();*/
+
+	menunow = false;
+	_dr->_vm->_gyro->ddmnow = false;
+	firstlix = false;
+	_dr->_vm->_gyro->defaultled = 2;
+
+	CursorMan.showMouse(true); 
 }
 
 void onemenu::movehighlight(int8 add) {
-	warning("STUB: Dropdown::onemenu::movehighlight()");
+	int8 hn;
+	if (add != 0) {
+		hn = highlightnum + add;
+		if ((hn < 0) || (hn >= number))
+			return;
+		highlightnum = hn;
+	}
+	//setactivepage(cp);
+	CursorMan.showMouse(false); 
+	displayopt(oldy, false);
+	displayopt(highlightnum, true);
+	//setactivepage(1 - cp);
+	oldy = highlightnum;
+	CursorMan.showMouse(true); 
 }
 
-void onemenu::lightup() {  /* This makes the menu highlight follow the mouse.*/
-	warning("STUB: Dropdown::onemenu::lightup()");
-	/*if ((_dr->_vm->_gyro->mx < flx1 * 8) || (_dr->_vm->_gyro->mx > flx2 * 8) ||
-		(_dr->_vm->_gyro->my <= 12) || (_dr->_vm->_gyro->my > fly - 3))
-			return;
-	highlightnum = (_dr->_vm->_gyro->my - 13) / 10;
-	if (highlightnum == oldy)  return;
-	movehighlight(0);*/
-	
+void onemenu::lightup(Common::Point cursorPos) { 
+	if ((cursorPos.x < flx1 * 8) || (cursorPos.x > flx2 * 8) || (cursorPos.y <= 25) || (cursorPos.y > ((fly - 3) * 2 + 1)))
+		return;
+	highlightnum = (cursorPos.y - 26) / 20;
+	if (highlightnum == oldy)
+		return;
+	movehighlight(0);
 }
 
 void onemenu::select(byte n) {    /* Choose which one you want. */
-	if (! oo[n + 1].valid)  return;
+	if (!oo[n].valid)
+		return;
+
 	choicenum = n;
 	wipe();
 
-	if (choicenum == number)  choicenum -= 1; /* Off the bottom. */
-	if (choicenum > number)  choicenum = 0; /* Off the top, I suppose. */
+	if (choicenum == number)
+		choicenum--; /* Off the bottom. */
+	if (choicenum > number)
+		choicenum = 0; /* Off the top, I suppose. */
 
-	_dr->ddm_m.ddms[menunum].do_choose;
+	(_dr->*_dr->ddm_m.ddms[menunum].do_choose)();
 }
 
 void onemenu::keystroke(char c) {
@@ -164,13 +229,13 @@ void onemenu::keystroke(char c) {
 	bool found;
 	c = toupper(c);
 	found = false;
-	for (fv = 1; fv <= number; fv ++) {
+	for (fv = 0; fv < number; fv++) {
 		if ((toupper(oo[fv].trigger) == c) && oo[fv].valid) {
-			select(fv - 1);
+			select(fv);
 			found = true;
 		}
 	}
-	if (! found)
+	if (!found)
 		_dr->_vm->_gyro->blip();
 }
 
@@ -178,15 +243,14 @@ void onemenu::keystroke(char c) {
 
 
 
-menuset *menuset::init(Dropdown *dr) {
+void menuset::init(Dropdown *dr) {
 	_dr = dr;
 	howmany = 0;
-	return this;
 }
 
 void menuset::create(char t, Common::String n, char alttrig, func dw, func dc) {
-	howmany ++;
 	ddms[howmany].init(t, alttrig, n, howmany, dw, dc, _dr);
+	howmany++;
 }
 
 void menuset::update() {
@@ -201,10 +265,10 @@ void menuset::update() {
 	savecp = _dr->_vm->_gyro->cp;
 	_dr->_vm->_gyro->cp = 3;
 
-	for (fv = 1; fv <= howmany; fv ++)
+	for (fv = 0; fv < howmany; fv++)
 		ddms[fv].display();
 
-	for (page_ = 0; page_ <= 1; page_ ++)
+	for (page_ = 0; page_ <= 1; page_++)
 		_dr->_vm->_trip->getset[page_].remember(menuspace);
 
 	_dr->_vm->_gyro->cp = savecp;
@@ -212,33 +276,34 @@ void menuset::update() {
 
 void menuset::extd(char c) {
 	byte fv;
-	fv = 1;
-	while ((fv <= howmany) && (ddms[fv].extdparse(c)))  fv += 1;
-	if (fv > howmany)  return;
+	fv = 0;
+	while ((fv < howmany) && (ddms[fv].extdparse(c)))
+		fv ++;
+	if (fv == howmany)
+		return;
 	getcertain(fv);
 }
 
 void menuset::getcertain(byte fv) {
-	{
-		if (_dr->ddm_o.menunow) {
-			_dr->ddm_o.wipe(); /* get rid of menu */
-			if (_dr->ddm_o.menunum == ddms[fv].position)  return; /* clicked on own highlight */
-		}
-		ddms[fv].highlight();
-		ddms[fv].do_setup;
+	if (_dr->ddm_o.menunow) {
+		_dr->ddm_o.wipe(); // Get rid of menu.
+		if (_dr->ddm_o.menunum == ddms[fv].position)
+			return; // Clicked on own highlight.
 	}
+	ddms[fv].highlight();
+	(_dr->*ddms[fv].do_setup)();
 }
 
 void menuset::getmenu(int16 x) {
 	byte fv;
 	fv = 0;
 	do {
-		fv += 1;
 		if ((x > ddms[fv].xpos * 8) && (x < ddms[fv].xright * 8)) {
 			getcertain(fv);
 			return;
 		}
-	} while (!(fv > howmany));
+		fv++;
+	} while (fv < howmany);
 }
 
 
@@ -247,6 +312,8 @@ void menuset::getmenu(int16 x) {
 
 Dropdown::Dropdown(AvalancheEngine *vm) {
 	_vm = vm;
+	ddm_o.init(this);
+	ddm_m.init(this);
 }
 
 void Dropdown::find_what_you_can_do_with_it() {
@@ -305,15 +372,42 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = black;
 		}
 	}
+
+	_vm->_graphics->refreshScreen();
 }
 
 void Dropdown::hlchalk(int16 x, int16 y, char t, Common::String z, bool valid) {
-/* Highlighted. */
-	byte fv, ff, p;
-	uint16 pageseg;
 	byte ander;
+	if (valid)
+		ander = 255;
+	else
+		ander = 170;
 
-	warning("STUB: Dropdown::hlchalk()");
+	fontType font;
+	for (byte fv = 0; fv < z.size(); fv++)
+		for (byte ff = 0; ff < 8; ff++) {
+			font[z[fv]][ff] = _vm->_gyro->characters[z[fv]][ff] & ander; // Set the font.
+			// And set the background of the text to black.
+			for (byte i = 0; i < 8; i++)
+				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + fv * 8 + i, y + ff) = black;
+		}
+
+	_vm->_graphics->drawText(_vm->_graphics->_surface, z, font, 8, x * 8, y, white);
+
+	// Underline the selected character.
+	if (z.contains(t)) {
+		byte fv;
+		for (fv = 0; z[fv] != t; fv++); // Search for the character in the string.
+
+		byte pixel = ander;
+		for (byte bit = 0; bit < 8; bit++) {
+			byte pixelBit = (pixel >> bit) & 1;
+			if (pixelBit)
+				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = white;
+		}
+	}
+
+	_vm->_graphics->refreshScreen();
 }
 
 /*funcedure say(x,y:int16; t:char; z:Common::String; f,b:byte);
@@ -337,9 +431,9 @@ void Dropdown::parsekey(char r, char re) {
 				ddm_o.wipe();
 				ddm_m.getcertain(ddm_o.menunum - 1);
 			} else {
-				;     /* Get menu on the left-hand side */
+				// Get menu on the left-hand side.
 				ddm_o.wipe();
-				ddm_m.getmenu((ddm_m.howmany - 1)*spacing + indent);
+				ddm_m.getmenu((ddm_m.howmany - 1) * spacing + indent);
 			}
 			break;
 		case 'M':
@@ -347,7 +441,7 @@ void Dropdown::parsekey(char r, char re) {
 				ddm_o.wipe();
 				ddm_m.getcertain(ddm_o.menunum + 1);
 			} else {
-				;     /* Get menu on the far right-hand side */
+				// Get menu on the far right-hand side.
 				ddm_o.wipe();
 				ddm_m.getmenu(indent);
 			}
@@ -369,92 +463,83 @@ void Dropdown::parsekey(char r, char re) {
 	default: {
 		if (ddm_o.menunow)
 			ddm_o.keystroke(r);
-	}
+		}
 	}
 }
 
 /*$F+  *** Here follow all the ddm__ and do__ funcedures for the DDM system. */
 
 void Dropdown::ddm__game() {
-	{
-		ddm_o.start_afresh();
-		ddm_o.opt("Help...", 'H', "f1", true);
-		ddm_o.opt("Boss Key", 'B', "alt-B", true);
-		ddm_o.opt("Untrash screen", 'U', "ctrl-f7", true);
-		ddm_o.opt("Score and rank", 'S', "f9", true);
-		ddm_o.opt("About Avvy...", 'A', "shift-f10", true);
-		ddm_o.display();
-	}
+	ddm_o.start_afresh();
+	ddm_o.opt("Help...", 'H', "f1", true);
+	ddm_o.opt("Boss Key", 'B', "alt-B", true);
+	ddm_o.opt("Untrash screen", 'U', "ctrl-f7", true);
+	ddm_o.opt("Score and rank", 'S', "f9", true);
+	ddm_o.opt("About Avvy...", 'A', "shift-f10", true);
+	ddm_o.display();
 }
 
 void Dropdown::ddm__file() {
-	{
-		ddm_o.start_afresh();
-		ddm_o.opt("New game", 'N', "f4", true);
-		ddm_o.opt("Load...", 'L', "^f3", true);
-		ddm_o.opt("Save", 'S', "^f2", _vm->_gyro->alive);
-		ddm_o.opt("Save As...", 'v', "", _vm->_gyro->alive);
-		ddm_o.opt("DOS Shell", 'D', _vm->_gyro->atkey + '1', true);
-		ddm_o.opt("Quit", 'Q', "alt-X", true);
-		ddm_o.display();
-	}
+	ddm_o.start_afresh();
+	ddm_o.opt("New game", 'N', "f4", true);
+	ddm_o.opt("Load...", 'L', "^f3", true);
+	ddm_o.opt("Save", 'S', "^f2", _vm->_gyro->alive);
+	ddm_o.opt("Save As...", 'v', "", _vm->_gyro->alive);
+	ddm_o.opt("DOS Shell", 'D', _vm->_gyro->atkey + '1', true);
+	ddm_o.opt("Quit", 'Q', "alt-X", true);
+	ddm_o.display();
 }
 
 void Dropdown::ddm__action() {
-	Common::String n;
-	n = Common::String(_vm->_gyro->f5_does().c_str() + 2, 253);
+	ddm_o.start_afresh();
 
-	{
-		ddm_o.start_afresh();
-		if (n == "")
-			ddm_o.opt("Do something", 'D', "f5", false);
-		else
-			ddm_o.opt(Common::String(n.c_str() + 2, 253), n[1], "f5", true);
-		ddm_o.opt("Pause game", 'P', "f6", true);
-		if (_vm->_gyro->dna.room == 99)
-			ddm_o.opt("Journey thither", 'J', "f7", _vm->_trip->neardoor());
-		else
-			ddm_o.opt("Open the door", 'O', "f7", _vm->_trip->neardoor());
-		ddm_o.opt("Look around", 'L', "f8", true);
-		ddm_o.opt("Inventory", 'I', "Tab", true);
-		if (_vm->_trip->tr[1].xs == _vm->_gyro->walk)
-			ddm_o.opt("Run fast", 'R', "^R", true);
-		else
-			ddm_o.opt("Walk slowly", 'W', "^W", true);
-		ddm_o.display();
-	}
+	Common::String n = _vm->_gyro->f5_does();
+	for (byte i = 0; i < 2; i++)
+		n.deleteChar(0);
+	if (n.empty())
+		ddm_o.opt("Do something", 'D', "f5", false);
+	else
+		ddm_o.opt(n, n[0], "f5", true);
+	ddm_o.opt("Pause game", 'P', "f6", true);
+	if (_vm->_gyro->dna.room == 99)
+		ddm_o.opt("Journey thither", 'J', "f7", _vm->_trip->neardoor());
+	else
+		ddm_o.opt("Open the door", 'O', "f7", _vm->_trip->neardoor());
+	ddm_o.opt("Look around", 'L', "f8", true);
+	ddm_o.opt("Inventory", 'I', "Tab", true);
+	if (_vm->_trip->tr[0].xs == _vm->_gyro->walk)
+		ddm_o.opt("Run fast", 'R', "^R", true);
+	else
+		ddm_o.opt("Walk slowly", 'W', "^W", true);
+
+	ddm_o.display();
 }
 
 void Dropdown::ddm__people() {
-	byte here;
-	char fv;
+	if (!people.empty())
+		people.clear();
+	byte here = _vm->_gyro->dna.room;
 
-	people = "";
-	here = _vm->_gyro->dna.room;
+	ddm_o.start_afresh();
 
-	{
-		ddm_o.start_afresh();
-		for (fv = '\226'; fv <= '\262'; fv ++)
-			if (_vm->_gyro->whereis[fv] == here) {
-				ddm_o.opt(_vm->_gyro->getname(fv), _vm->_gyro->getnamechar(fv), "", true);
-				people = people + fv;
-			}
-		ddm_o.display();
-	}
+	for (byte fv = 150; fv <= 178; fv++)
+		if (_vm->_gyro->whereis[fv - 150] == here) {
+			ddm_o.opt(_vm->_gyro->getname(fv), _vm->_gyro->getnamechar(fv), "", true);
+			people = people + fv;
+		}
+
+	ddm_o.display();
 }
 
 void Dropdown::ddm__objects() {
-	char fv;
-	{
-		ddm_o.start_afresh();
-		for (fv = '\1'; fv <= numobjs; fv ++)
-			if (_vm->_gyro->dna.obj[fv])
-				ddm_o.opt(_vm->_gyro->get_thing(fv), _vm->_gyro->get_thingchar(fv), "", true);
-		ddm_o.display();
-	}
+	ddm_o.start_afresh();
+	for (byte fv = 0; fv < numobjs; fv++)
+		if (_vm->_gyro->dna.obj[fv])
+			ddm_o.opt(_vm->_gyro->get_thing(fv + 1), _vm->_gyro->get_thingchar(fv + 1), "", true);
+	ddm_o.display();
 }
 
-Common::String Dropdown::himher(char x) {         /* Returns "im" for boys, and "er" for girls.*/
+Common::String Dropdown::himher(byte x) {
 	if (x < 175)
 		return "im";
 	else
@@ -462,7 +547,63 @@ Common::String Dropdown::himher(char x) {         /* Returns "im" for boys, and 
 }
 
 void Dropdown::ddm__with() {
-	warning("STUB: Dropdown::ddm__with()");
+	byte fv;
+	Common::String verb;
+	char vbchar;
+	bool n;
+	
+	ddm_o.start_afresh();
+
+	if (_vm->_gyro->thinkthing) {
+		find_what_you_can_do_with_it();
+
+		for (fv = 0; fv < _vm->_gyro->verbstr.size(); fv++) {
+			_vm->_acci->verbopt(_vm->_gyro->verbstr[fv], verb, vbchar);
+			ddm_o.opt(verb, vbchar, "", true);
+		}
+
+		// We disable the "give" option if: (a), you haven't selected anybody, (b), the person you've selected isn't in the room, or (c), the person you've selected is YOU!
+		
+		if ((_vm->_gyro->last_person != _vm->_gyro->pavalot) || (_vm->_gyro->last_person != _vm->_acci->nowt) || (_vm->_gyro->whereis[_vm->_gyro->last_person - 1] != _vm->_gyro->dna.room))
+			ddm_o.opt("Give to...", 'G', "", false); /* Not here. */
+		else {
+			ddm_o.opt(Common::String("Give to ") + _vm->_gyro->getname(_vm->_gyro->last_person), 'G', "", true);
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->vb_give;
+		}
+	} else {
+		ddm_o.opt("Examine", 'x', "", true);
+		ddm_o.opt(Common::String("Talk to h") + himher(_vm->_gyro->thinks), 'T', "", true);
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_talk;
+		switch (_vm->_gyro->thinks) {
+		case _vm->_gyro->pgeida:
+		case _vm->_gyro->parkata: {
+			ddm_o.opt("Kiss her", 'K', "", true);
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->vb_kiss;
+		}
+		break;
+		case _vm->_gyro->pdogfood: {
+			ddm_o.opt("Play his game", 'P', "", !_vm->_gyro->dna.wonnim); /* True if you HAVEN'T won. */
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->vb_play;
+		}
+		break;
+		case _vm->_gyro->pmalagauche: {
+			n = !_vm->_gyro->dna.teetotal;
+			ddm_o.opt("Buy some wine", 'w', "", !_vm->_gyro->dna.obj[_vm->_gyro->wine - 1]);
+			ddm_o.opt("Buy some beer", 'b', "", n);
+			ddm_o.opt("Buy some whisky", 'h', "", n);
+			ddm_o.opt("Buy some cider", 'c', "", n);
+			ddm_o.opt("Buy some mead", 'm', "", n);
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + '\145' + '\144' + '\146' + '\147' + '\150';
+		}
+		break;
+		case _vm->_gyro->ptrader: {
+			ddm_o.opt("Buy an onion", 'o', "", !_vm->_gyro->dna.obj[_vm->_gyro->onion - 1]);
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + '\151';
+		}
+		break;
+		}
+	}
+	ddm_o.display();
 }
 
 /*funcedure ddm__map;
@@ -519,12 +660,14 @@ void Dropdown::do__file() {
 		_vm->_lucerna->callverb(_vm->_acci->vb_restart);
 		break;
 	case 1: {
-		_vm->_acci->realwords[2] = "";
+		if (!_vm->_acci->realwords[1].empty())
+			_vm->_acci->realwords[1].clear();
 		_vm->_lucerna->callverb(_vm->_acci->vb_load);
 	}
 	break;
 	case 2: {
-		_vm->_acci->realwords[2] = "";
+		if (!_vm->_acci->realwords[1].empty())
+			_vm->_acci->realwords[1].clear();
 		_vm->_lucerna->callverb(_vm->_acci->vb_save);
 	}
 	break;
@@ -548,7 +691,7 @@ void Dropdown::do__action() {
 		_vm->_acci->person = _vm->_acci->pardon;
 		_vm->_acci->thing = _vm->_acci->pardon;
 		n = _vm->_gyro->f5_does();
-		_vm->_lucerna->callverb(n[1]);
+		_vm->_lucerna->callverb(n[0]);
 	}
 	break;
 	case 1:
@@ -564,8 +707,10 @@ void Dropdown::do__action() {
 		_vm->_lucerna->callverb(_vm->_acci->vb_inv);
 		break;
 	case 5: {
-		if (_vm->_trip->tr[1].xs == _vm->_gyro->walk)  _vm->_trip->tr[1].xs = _vm->_gyro->run;
-		else _vm->_trip->tr[1].xs = _vm->_gyro->walk;
+		if (_vm->_trip->tr[0].xs == _vm->_gyro->walk)
+			_vm->_trip->tr[0].xs = _vm->_gyro->run;
+		else
+			_vm->_trip->tr[0].xs = _vm->_gyro->walk;
 		_vm->_trip->newspeed();
 	}
 	break;
@@ -577,8 +722,8 @@ void Dropdown::do__objects() {
 }
 
 void Dropdown::do__people() {
-	_vm->_lucerna->thinkabout(people[ddm_o.choicenum + 1], _vm->_gyro->a_person);
-	_vm->_gyro->last_person = people[ddm_o.choicenum + 1];
+	_vm->_lucerna->thinkabout(people[ddm_o.choicenum], _vm->_gyro->a_person);
+	_vm->_gyro->last_person = people[ddm_o.choicenum];
 }
 
 void Dropdown::do__with() {
@@ -588,72 +733,73 @@ void Dropdown::do__with() {
 
 		_vm->_acci->thing += 49;
 
-		if (_vm->_gyro->verbstr[ddm_o.choicenum + 1] == _vm->_acci->vb_give)
+		if (_vm->_gyro->verbstr[ddm_o.choicenum] == _vm->_acci->vb_give)
 			_vm->_acci->person = _vm->_gyro->last_person;
 		else
-			_vm->_acci->person = '\376';
+			_vm->_acci->person = 254;
 
 	} else {
-		switch (_vm->_gyro->verbstr[ddm_o.choicenum + 1]) {
-		case '\144': {
-			_vm->_acci->thing = '\144';
+		switch (_vm->_gyro->verbstr[ddm_o.choicenum]) {
+		case 100: { // Beer
+			_vm->_acci->thing = 100;
 			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
-		break; /* Beer */
-		case '\145': {
-			_vm->_acci->thing = '\62';
+		break;
+		case 101: { // Wine
+			_vm->_acci->thing = 50;
 			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
-		break; /* Wine */
-		case '\146': {
-			_vm->_acci->thing = '\146';
+		break;
+		case 102: { // Whisky
+			_vm->_acci->thing = 102;
 			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
-		break; /* Whisky */
-		case '\147': {
-			_vm->_acci->thing = '\147';
+		break; 
+		case 103: { // Cider
+			_vm->_acci->thing = 103;
 			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
-		break; /* Cider */
-		case '\150': {
-			_vm->_acci->thing = '\153';
+		break; 
+		case 104: { // Mead
+			_vm->_acci->thing = 107;
 			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
-		break; /* Mead */
-		case '\151': {
-			_vm->_acci->thing = '\103';
+		break; 
+		case 105: { // Onion (trader)
+			_vm->_acci->thing = 67;
 			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
 			return;
 		}
-		break; /* Onion (trader) */
+		break; 
 		default: {
 			_vm->_acci->person = _vm->_acci->thing;
-			_vm->_acci->thing = '\376';
+			_vm->_acci->thing = 254;
 		}
 		}
 	}
-	_vm->_lucerna->callverb(_vm->_gyro->verbstr[ddm_o.choicenum + 1]);
+	_vm->_lucerna->callverb(_vm->_gyro->verbstr[ddm_o.choicenum]);
 }
 
-/*$F- That's all. Now for the ...bar funcs. */
 
+
+// That's all. Now for the ...bar funcs.
 
 void Dropdown::standard_bar() {   /* Standard menu bar */
 	ddm_m.init(this);
 	ddm_o.init(this);
 	/* Set up menus */
 
-	ddm_m.create('F', "File", '!', &Avalanche::Dropdown::ddm__file, &Avalanche::Dropdown::do__file); /* same ones in map_bar, below, */
-	ddm_m.create('G', "Game", '\42', &Avalanche::Dropdown::ddm__game, &Avalanche::Dropdown::do__game); /* Don't forget to change the */
-	ddm_m.create('A', "Action", '\36', &Avalanche::Dropdown::ddm__action, &Avalanche::Dropdown::do__action); /* if you change them */
-	ddm_m.create('O', "Objects", '\30', &Avalanche::Dropdown::ddm__objects, &Avalanche::Dropdown::do__objects); /* here... */
-	ddm_m.create('P', "People", '\31', &Avalanche::Dropdown::ddm__people, &Avalanche::Dropdown::do__people);
-	ddm_m.create('W', "With", '\21', &Avalanche::Dropdown::ddm__with, &Avalanche::Dropdown::do__with);
+	ddm_m.create('F', "File", '!', &Avalanche::Dropdown::ddm__file, &Avalanche::Dropdown::do__file); // same ones in map_bar, below,
+	ddm_m.create('G', "Game", 34, &Avalanche::Dropdown::ddm__game, &Avalanche::Dropdown::do__game); // Don't forget to change the
+	ddm_m.create('A', "Action", 30, &Avalanche::Dropdown::ddm__action, &Avalanche::Dropdown::do__action); // if you change them
+	ddm_m.create('O', "Objects", 24, &Avalanche::Dropdown::ddm__objects, &Avalanche::Dropdown::do__objects); // here...
+	ddm_m.create('P', "People", 25, &Avalanche::Dropdown::ddm__people, &Avalanche::Dropdown::do__people);
+	ddm_m.create('W', "With", 17, &Avalanche::Dropdown::ddm__with, &Avalanche::Dropdown::do__with);
 
 	ddm_m.update();
 }
@@ -673,56 +819,32 @@ begin;
  end;
 end;*/
 
-void Dropdown::checkclick() {   /* only for when the menu's displayed */
-	if (_vm->_gyro->mpress > 0) {
-		if (_vm->_gyro->mpy > 10) {
-			if (!((ddm_o.firstlix) &&
-			   ((_vm->_gyro->mpx >= ddm_o.flx1 * 8) && (_vm->_gyro->mpx <= ddm_o.flx2 * 8) &&
-			   (_vm->_gyro->mpy >= 12) && (_vm->_gyro->mpy <= ddm_o.fly)))) {
-			     /* Clicked OUTSIDE the menu. */
-				if (ddm_o.menunow)
-					ddm_o.wipe();
-			}    /* No "else"- clicking on menu has no effect (only releasing) */
-		} else {
-			 /* Clicked on menu bar */
-			ddm_m.getmenu(_vm->_gyro->mpx);
-		}
-	} else {
-		;     /* NOT clicked button... */
-		if (_vm->_gyro->mrelease > 0) {
-			if ((ddm_o.firstlix) &&
-			   ((_vm->_gyro->mrx >= ddm_o.flx1 * 8) && (_vm->_gyro->mrx <= ddm_o.flx2 * 8) &&
-			   (_vm->_gyro->mry >= 12) && (_vm->_gyro->mry <= ddm_o.fly)))
-					ddm_o.select((_vm->_gyro->mry - 13) / 10);
-		}
-	}
+void Dropdown::checkclick(Common::Point cursorPos) {
+	warning("STUB: Lucerna::checkclick()");
 }
 
 void Dropdown::menu_link() {
-	if (! ddm_o.menunow)  return;
-
-	_vm->_gyro->check(); /* find mouse coords & click information */
-	checkclick(); /* work out click codes */
-
-	/* Change arrow... */
-
-		
-	if ((_vm->_gyro->my >= 0) && (_vm->_gyro->my <= 10))
-		_vm->_gyro->newpointer(1); /* up-arrow */
-	else if ((_vm->_gyro->my >= 11) && (_vm->_gyro->my <= 169)) {
-		if ((_vm->_gyro->mx >= ddm_o.flx1 * 8) && (_vm->_gyro->mx <= ddm_o.flx2 * 8)
-			&& (_vm->_gyro->my > 10) && (_vm->_gyro->my <= ddm_o.fly))
-			_vm->_gyro->newpointer(3); /* right-arrow */
-		else
-			_vm->_gyro->newpointer(4); /* fletch */
-	} else if ((_vm->_gyro->my >= 169) && (_vm->_gyro->my <= 200))
-		_vm->_gyro->newpointer(2); /* screwdriver */
-
-	if (! ddm_o.menunow)
+	if (!ddm_o.menunow)
 		return;
 
-	ddm_o.lightup();
-}
+	Common::Point cursorPos = _vm->getMousePos();
+	checkclick(cursorPos); // Work out click codes.
 
+	// Change arrow...
+	if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
+		_vm->_gyro->newpointer(1); // Up arrow
+	else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
+		if ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= ddm_o.fly * 2 + 1))
+			_vm->_gyro->newpointer(3); // Right-arrow
+		else
+			_vm->_gyro->newpointer(4); // Fletch
+	} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
+		_vm->_gyro->newpointer(2); // Screwdriver
+
+	if (!ddm_o.menunow)
+		return;
+
+	ddm_o.lightup(cursorPos);
+}
 
 } // End of namespace Avalanche.
