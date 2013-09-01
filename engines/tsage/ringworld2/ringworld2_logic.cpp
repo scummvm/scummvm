@@ -319,17 +319,23 @@ SceneExt::SceneExt(): Scene() {
 
 	for (int i = 0; i < 256; i++)
 		_field312[i] = 0;
-	_field372 = _field37A = 0;
+
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
-	_focusObject = NULL;
 
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,
 	// to make inter-scene debugging easier, I'm explicitly resetting the _animationCtr
 	// on scene start, since scene objects aren't drawn while it's non-zero
 	R2_GLOBALS._animationCtr = 0;
+}
+
+void SceneExt::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+
+	s.syncBytes(&_field312[0], 256);
+	_sceneAreas.synchronize(s);
 }
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
@@ -445,7 +451,6 @@ void SceneExt::fadeOut() {
 
 void SceneExt::startStrip() {
 	SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
-	scene->_field372 = 1;
 	scene->_savedPlayerEnabled = R2_GLOBALS._player._enabled;
 
 	if (scene->_savedPlayerEnabled) {
@@ -461,7 +466,6 @@ void SceneExt::startStrip() {
 
 void SceneExt::endStrip() {
 	SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
-	scene->_field372 = 0;
 
 	if (scene->_savedPlayerEnabled) {
 		R2_GLOBALS._player.enableControl();
@@ -1319,8 +1323,8 @@ void SceneArea::synchronize(Serializer &s) {
 	_bounds.synchronize(s);
 	s.syncAsSint16LE(_enabled);
 	s.syncAsSint16LE(_insideArea);
-	s.syncAsSint16LE(_cursorNum);
-	s.syncAsSint16LE(_savedCursorNum);
+	s.syncAsSint32LE(_cursorNum);
+	s.syncAsSint32LE(_savedCursorNum);
 	s.syncAsSint16LE(_cursorState);
 }
 

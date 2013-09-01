@@ -82,21 +82,17 @@ private:
 	static void endStrip();
 public:
 	byte _field312[256];
-	int _field372;
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;
-	int _field37A;
 
-	SceneObject *_focusObject;
 	Visage _cursorVisage;
 	SynchronizedList<EventHandler *> _sceneAreas;
-
-	Rect _v51C34;
 public:
 	SceneExt();
 
 	virtual Common::String getClassName() { return "SceneExt"; }
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void process(Event &event);
