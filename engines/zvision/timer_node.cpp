@@ -20,17 +20,27 @@
  *
  */
 
-#ifndef ZVISION_ACTION_NODE_H
-#define ZVISION_ACTION_NODE_H
+#include "common/scummsys.h"
 
-#include "common/types.h"
-
-#include "zvision/control.h"
+#include "zvision/timer_node.h"
+#include "zvision/zvision.h"
+#include "zvision/script_manager.h"
 
 namespace ZVision {
 
+TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds) 
+	: Control(engine, key), _timeLeft(timeInSeconds * 1000) {
+}
 
+bool TimerNode::process(uint32 deltaTimeInMillis) {
+	_timeLeft -= deltaTimeInMillis;
+
+	if (_timeLeft <= 0) {
+		_engine->getScriptManager()->setStateValue(_key, 0);
+		return true;
+	}
+
+	return false;
+}
 
 } // End of namespace ZVision
-
-#endif

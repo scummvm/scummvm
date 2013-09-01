@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	script_manager.o \
 	scripts.o \
 	single_value_container.o \
+	timer_node.o \
 	utility.o \
 	video.o \
 	zvision.o \
