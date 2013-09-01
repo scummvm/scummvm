@@ -2649,7 +2649,7 @@ void Scene160::Action2::signal() {
 }
 
 void Scene160::Action2::process(Event &event) {
-	if ((event.handled) || (event.eventType == 5))
+	if ((event.handled) || ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS)))
 		return;
 
 	if (_actionIndex == 25) {
