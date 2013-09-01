@@ -3267,6 +3267,7 @@ void Player::postInit(SceneObjectList *OwnerList) {
 		_moveDiff.y = 2;
 		_effect = 1;
 		_shade = 0;
+		_linkedActor = NULL;
 
 		setObjectWrapper(new SceneObjectWrapper());
 		setPosition(_characterPos[_characterIndex]);
