@@ -230,6 +230,7 @@ private:
 	int  _y;
 	int  _currentHourCount;
 	int  _currentTime;
+	int  _pauseStartTime;
 
 	Common::String _hintPctMessage;
 	byte  *_cfiecBuffer;
@@ -446,6 +447,7 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error run();
+	virtual void pauseEngineIntern(bool pause);
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
