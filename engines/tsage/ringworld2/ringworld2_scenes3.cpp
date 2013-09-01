@@ -5319,7 +5319,7 @@ void Scene3800::signal() {
 }
 
 void Scene3800::process(Event &event) {
-	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == 1) && (_rect1.contains(event.mousePos))) {
+	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN) && (_rect1.contains(event.mousePos))) {
 		event.handled = true;
 		switch (R2_GLOBALS._events.getCursor()) {
 		case R2_NEGATOR_GUN:
@@ -5582,7 +5582,7 @@ void Scene3900::signal() {
 }
 
 void Scene3900::process(Event &event) {
-	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == 1) && (_rect1.contains(event.mousePos))) {
+	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN) && (_rect1.contains(event.mousePos))) {
 		event.handled = true;
 		switch (R2_GLOBALS._events.getCursor()) {
 		case R2_NEGATOR_GUN:
