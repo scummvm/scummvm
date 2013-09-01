@@ -7384,43 +7384,43 @@ void Scene1550::ShipComponent::setupShipComponent(int componentId) {
 	postInit();
 	setup(1517, _componentId, 1);
 
-	switch (_componentId - 1) {
-	case 0:
+	switch (_componentId) {
+	case 1:
 		if (R2_INVENTORY.getObjectScene(R2_GUIDANCE_MODULE) == 0)
 			setFrame(5);
 		setPosition(Common::Point(287, 85));
 		break;
-	case 1:
+	case 2:
 		if (R2_INVENTORY.getObjectScene(R2_RADAR_MECHANISM) == 0)
 			setFrame(5);
 		setPosition(Common::Point(248, 100));
 		break;
-	case 2:
-		if (R2_INVENTORY.getObjectScene(R2_DIAGNOSTICS_DISPLAY) == 0)
+	case 3:
+		if (R2_INVENTORY.getObjectScene(R2_GYROSCOPE) == 0)
 			setFrame(5);
 		setPosition(Common::Point(217, 85));
 		break;
-	case 3:
-		if (R2_INVENTORY.getObjectScene(R2_THRUSTER_VALVE))
+	case 4:
+		if (R2_INVENTORY.getObjectScene(R2_THRUSTER_VALVE) == 0)
 			setFrame(5);
 		setPosition(Common::Point(161, 121));
 		break;
-	case 4:
-		if (R2_INVENTORY.getObjectScene(R2_IGNITOR))
+	case 5:
+		if (R2_INVENTORY.getObjectScene(R2_IGNITOR) == 0)
 			setFrame(5);
 		setPosition(Common::Point(117, 121));
 		break;
-	case 5:
-		if (R2_INVENTORY.getObjectScene(R2_FUEL_CELL))
+	case 6:
+		if (R2_INVENTORY.getObjectScene(R2_FUEL_CELL) == 0)
 			setFrame(5);
 		setPosition(Common::Point(111, 85));
 		break;
-	case 6:
-		if (R2_INVENTORY.getObjectScene(R2_BATTERY))
+	case 7:
+		if (R2_INVENTORY.getObjectScene(R2_BATTERY) == 0)
 			setFrame(5);
 		setPosition(Common::Point(95, 84));
 		break;
-	case 7: {
+	case 8: {
 		setup(1516, 1, 1);
 		setPosition(Common::Point(201, 45));
 		Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
@@ -7433,6 +7433,9 @@ void Scene1550::ShipComponent::setupShipComponent(int componentId) {
 	default:
 		break;
 	}
+
+	fixPriority(92);
+	setDetails(1550, 70, -1, -1, 2, (SceneItem *)NULL);
 }
 
 Scene1550::UnkObj15503::UnkObj15503() {
