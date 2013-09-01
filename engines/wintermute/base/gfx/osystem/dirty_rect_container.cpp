@@ -142,7 +142,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	}
 
 	Common::Array<Common::Rect *> ret;
-	ret.clear();
 	Common::Array<Common::Rect *> queue;
 
 	for (uint i = 0; i < _rectArray.size(); i++) {
