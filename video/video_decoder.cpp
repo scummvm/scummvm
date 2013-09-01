@@ -778,6 +778,31 @@ void VideoDecoder::setEndTime(const Audio::Timestamp &endTime) {
 	}
 }
 
+void VideoDecoder::setEndFrame(uint frame) {
+	VideoTrack *track = 0;
+
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo) {
+			// We only allow this when one video track is present
+			if (track)
+				return;
+
+			track = (VideoTrack *)*it;
+		}
+	}
+
+	// If we didn't find a video track, we can't set the final frame (of course)
+	if (!track)
+		return;
+
+	Audio::Timestamp time = track->getFrameTime(frame + 1);
+
+	if (time < 0)
+		return;
+
+	setEndTime(time);
+}
+
 VideoDecoder::Track *VideoDecoder::getTrack(uint track) {
 	if (track > _internalTracks.size())
 		return 0;
