@@ -755,7 +755,7 @@ public:
 	SceneActor _actor6;
 	SceneActor _actor7;
 	SceneActor _actor8;
-	SceneActor _actor9;
+	SceneActor _ledgeHopper;
 	SceneActor _actor10;
 	Actor11 _actor11;
 	Actor12 _actor12;
@@ -769,7 +769,7 @@ public:
 
 	Scene1700();
 	void synchronize(Serializer &s);
-	void subAF3F8();
+	void enterArea();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
