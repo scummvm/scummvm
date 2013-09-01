@@ -448,6 +448,7 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error run();
 	virtual void pauseEngineIntern(bool pause);
+	virtual GUI::Debugger *getDebugger() {return &_debugger;}
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
