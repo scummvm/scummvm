@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 
 #include "common/system.h"
+#include "video/video_decoder.h"
 
 #include "zvision/zvision.h"
 #include "zvision/rlf_animation.h"
@@ -82,6 +83,49 @@ void ZVision::playAnimation(RlfAnimation *animation, uint16 x, uint16 y, Dispose
 		delay = delay < 0 ? 0 : delay;
 		_system->delayMillis(delay);
 	}
+}
+
+void ZVision::playAnimation(Video::VideoDecoder *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse) {
+	_clock.stop();
+	animation->start();
+
+	// Only continue while the video is still playing
+	while (!shouldQuit() && !animation->endOfVideo() && animation->isPlaying()) {
+		// Check for engine quit and video stop key presses
+		while (!animation->endOfVideo() && animation->isPlaying() && _eventMan->pollEvent(_event)) {
+			switch (_event.type) {
+			case Common::EVENT_KEYDOWN:
+				switch (_event.kbd.keycode) {
+				case Common::KEYCODE_q:
+					if (_event.kbd.hasFlags(Common::KBD_CTRL))
+						quitGame();
+					break;
+				case Common::KEYCODE_SPACE:
+					animation->stop();
+					break;
+				default:
+					break;
+				}
+			default:
+				break;
+			}
+		}
+
+		if (animation->needsUpdate()) {
+			const Graphics::Surface *frame = animation->decodeNextFrame();
+
+			if (frame) {
+				_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+			}
+		}
+
+		// Always update the screen so the mouse continues to render
+		_system->updateScreen();
+
+		_system->delayMillis(animation->getTimeToNextFrame());
+	}
+
+	_clock.start();
 }
 
 } // End of namespace ZVision
