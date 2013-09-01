@@ -38,8 +38,8 @@ Scene1000::Scene1000(): SceneExt() {
 	R2_GLOBALS._sceneManager._hasPalette = false;
 	R2_GLOBALS._uiElements._active = false;
 	_gameTextSpeaker._displayMode = 9;
-	_fieldD2E = 0;
-	_field412 = 0;
+	_forceCheckAnimationFl = false;
+	_animCounter = 0;
 }
 
 void Scene1000::postInit(SceneObjectList *OwnerList) {
@@ -116,7 +116,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 
 		_animationPlayer.dispatch();
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, true, 0);
 		for (int percent = 0; percent < 100; percent += 5)
@@ -141,7 +141,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._player.setPosition(Common::Point(160, 100));
 		R2_GLOBALS._player.show();
 
-		_field412 = 0;
+		_animCounter = 0;
 		_stripManager.start(29, this);
 		break;
 
@@ -149,7 +149,7 @@ void Scene1000::signal() {
 		if (R2_GLOBALS._speechSubtitles & SPEECH_TEXT) {
 			setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
 		} else {
-			if (++_field412 < 3)
+			if (++_animCounter < 3)
 				_sceneMode = 2;
 
 			setAction(&_sequenceManager1, this, 2, &R2_GLOBALS._player, NULL);
@@ -174,7 +174,7 @@ void Scene1000::signal() {
 
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -204,7 +204,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -226,7 +226,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -246,7 +246,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -271,7 +271,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -297,7 +297,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -319,7 +319,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -346,7 +346,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -371,7 +371,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -394,7 +394,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -412,7 +412,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -439,7 +439,7 @@ void Scene1000::signal() {
 		R2_GLOBALS._sceneManager._hasPalette = false;
 		_animationPlayer.dispatch();
 
-		_fieldD2E = 1;
+		_forceCheckAnimationFl = true;
 		R2_GLOBALS._scenePalette.fade((const byte *)&black, 1, 0);
 		for (int percent = 0; percent < 100; percent += 5)
 			R2_GLOBALS._scenePalette.fade((const byte *)&black, true, percent);
@@ -455,9 +455,9 @@ void Scene1000::signal() {
 }
 
 void Scene1000::dispatch() {
-	if (_fieldD2E) {
+	if (_forceCheckAnimationFl) {
 		if (_animationPlayer.isCompleted()) {
-			_fieldD2E = 0;
+			_forceCheckAnimationFl = false;
 			_animationPlayer.close();
 			_animationPlayer.remove();
 

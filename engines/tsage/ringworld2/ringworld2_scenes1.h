@@ -46,8 +46,8 @@ public:
 	SpeakerGameText _gameTextSpeaker;
 	AnimationPlayer _animationPlayer;
 
-	int _field412;
-	int _fieldD2E;
+	int _animCounter;
+	bool _forceCheckAnimationFl;
 public:
 	Scene1000();
 
