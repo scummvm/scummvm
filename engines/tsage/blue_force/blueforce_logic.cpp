@@ -678,7 +678,7 @@ void FocusObject::process(Event &event) {
 			BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
 
 			if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-					(event.btnState == 3)) {
+					(event.btnState == BTNSHIFT_RIGHT)) {
 				BF_GLOBALS._events.setCursor(CURSOR_USE);
 				event.handled = true;
 			}
