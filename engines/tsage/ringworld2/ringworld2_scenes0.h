@@ -310,7 +310,7 @@ public:
 class Scene250: public SceneExt {
 	class Button: public SceneActor {
 	public:
-		int _floorNumber, _v2;
+		int _floorNumber;
 		Button();
 		void setFloor(int floorNumber);
 

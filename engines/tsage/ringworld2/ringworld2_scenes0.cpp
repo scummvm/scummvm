@@ -2489,14 +2489,13 @@ void Scene205::handleText() {
  *--------------------------------------------------------------------------*/
 
 Scene250::Button::Button(): SceneActor() {
-	_floorNumber = _v2 = 0;
+	_floorNumber = 0;
 }
 
 void Scene250::Button::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
 	s.syncAsSint16LE(_floorNumber);
-	s.syncAsSint16LE(_v2);
 }
 
 bool Scene250::Button::startAction(CursorType action, Event &event) {
@@ -2555,7 +2554,6 @@ bool Scene250::Button::startAction(CursorType action, Event &event) {
 void Scene250::Button::setFloor(int floorNumber) {
 	SceneActor::postInit();
 	_floorNumber = floorNumber;
-	_v2 = 0;
 
 	if (_floorNumber <= 9) {
 		SceneObject::setup(250, 1, 4);
