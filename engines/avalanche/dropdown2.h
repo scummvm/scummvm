@@ -63,7 +63,7 @@ private:
 
 struct optiontype {
 	Common::String title;
-	char trigger;
+	byte trigger;
 	Common::String shortcut;
 	bool valid;
 };
@@ -81,12 +81,12 @@ public:
 	byte choicenum; /* Your choice? */
 	byte highlightnum;
 
-	onemenu *init(Dropdown *dr);
+	void init(Dropdown *dr);
 	void start_afresh();
 	void opt(Common::String n, char tr, Common::String key, bool val);
 	void display();
 	void wipe();
-	void lightup();
+	void lightup(Common::Point cursorPos); // This makes the menu highlight follow the mouse.
 	void displayopt(byte y, bool highlit);
 	void movehighlight(int8 add);
 	void select(byte n);
@@ -103,7 +103,7 @@ public:
 	headtype ddms[8];
 	byte howmany;
 
-	menuset *menuset::init(Dropdown *dr);
+	void init(Dropdown *dr);
 	void create(char t, Common::String n, char alttrig, func dw, func dc);
 	void update();
 	void extd(char c);
@@ -140,30 +140,17 @@ public:
 	void standard_bar();
 
 private:
-	
-
-	
-
-
-
 	AvalancheEngine *_vm;
 
-	static const int16 indent = 5;
-	static const int16 spacing = 10;
+	static const byte indent = 5;
+	static const byte spacing = 10;
 
-	/* menu_b = blue; { Morpheus }
-	 menu_f = yellow;
-	 menu_border = black;
-	 highlight_b = lightblue;
-	 highlight_f = yellow;
-	 disabled = lightgray; */
-
-	static const int16 menu_b = lightgray; /* Windowsy */
-	static const int16 menu_f = black;
-	static const int16 menu_border = black;
-	static const int16 highlight_b = black;
-	static const int16 highlight_f = white;
-	static const int16 disabled = darkgray;
+	static const byte menu_b = lightgray; /* Windowsy */
+	static const byte menu_f = black;
+	static const byte menu_border = black;
+	static const byte highlight_b = black;
+	static const byte highlight_f = white;
+	static const byte disabled = darkgray;
 
 
 
@@ -174,13 +161,12 @@ private:
 
 	void chalk(int16 x, int16 y, char t, Common::String z, bool valid);
 
-	void hlchalk(int16 x, int16 y, char t, Common::String z, bool valid);
+	void hlchalk(int16 x, int16 y, char t, Common::String z, bool valid); // Highlighted. TODO: It's too similar to chalk! Unify these two!!!
 
 	void bleep();
 
 
 	
-
 	void ddm__game();
 	void ddm__file();
 	void ddm__action();
@@ -188,7 +174,7 @@ private:
 	void ddm__objects();
 	void ddm__with();
 
-	Common::String himher(char x);
+	Common::String himher(byte x); // Returns "im" for boys, and "er" for girls.
 
 	void do__game();
 	void do__file();
@@ -197,7 +183,7 @@ private:
 	void do__people();
 	void do__with();
 
-	void checkclick();
+	void checkclick(Common::Point cursorPos); // Only for when the menu's displayed!
 };
 
 } // End of namespace Avalanche.

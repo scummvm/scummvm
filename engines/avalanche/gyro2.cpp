@@ -413,13 +413,11 @@ Common::String Gyro::getname(byte whose) {
 }
 
 // Keep an eye open! ^
-char Gyro::getnamechar(byte whose) {
-	char getnamechar_result;
-	if (whose < 16) 
-		getnamechar_result = ladchar[whose];
+byte Gyro::getnamechar(byte whose) {
+	if (whose < 175) 
+		return ladchar[whose - 150];
 	else
-		getnamechar_result = lasschar[whose-16];
-	return getnamechar_result;
+		return lasschar[whose - 175];
 }
 
 // Keep an eye open! ^^
@@ -430,7 +428,7 @@ Common::String Gyro::get_thing(byte which) {
 		switch (dna.winestate) {
 		case 1:
 		case 4:
-			get_thing_result = things[which];
+			get_thing_result = things[which - 1];
 			break;
 		case 3:
 			get_thing_result = "Vinegar";
@@ -441,10 +439,10 @@ Common::String Gyro::get_thing(byte which) {
 		if (dna.rotten_onion)
 			get_thing_result = "rotten onion";
 		else
-			get_thing_result = things[which];
+			get_thing_result = things[which - 1];
 		break;
 	default:
-		get_thing_result = things[which];
+		get_thing_result = things[which - 1];
 	}
 	return get_thing_result;
 }

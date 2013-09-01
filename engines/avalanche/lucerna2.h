@@ -152,7 +152,7 @@ private:
 
 	void put_geida_at(byte whichped, byte &ped);
 
-	void topcheck();
+	void topcheck(Common::Point cursorPos);
 
 	void verte(Common::Point cursorPos);
 
