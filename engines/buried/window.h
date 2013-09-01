@@ -59,6 +59,7 @@ public:
 	virtual void onEnable(bool enable) {}
 
 	void invalidateRect(const Common::Rect &rect, bool erase = true);
+	void invalidateWindow(bool erase = true) { invalidateRect(_rect, erase); }
 	void createChild(const Common::Rect &rect, Window *parent);
 	Window *getParent() const { return _parent; }
 	const Common::Rect &getRect() const { return _rect; }
