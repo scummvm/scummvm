@@ -2772,7 +2772,6 @@ void Scene250::changeFloor(int floorNumber) {
 
 void Scene250::process(Event &event) {
 	if (!event.handled) {
-		warning("%d", event.btnState);
 		if (((event.eventType == EVENT_KEYPRESS) || (event.btnState == BTNSHIFT_RIGHT)) && _skippableFl) {
 			_skippingFl = true;
 			event.handled = true;
