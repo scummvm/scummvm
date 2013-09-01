@@ -873,25 +873,25 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._moveRate = 30;
 		R2_GLOBALS._player._moveDiff = Common::Point(16, 2);
 
-		_object1.setup2(1104, 2, 1, 175, 125, 102, 1);
+		_rightLandslide.setup2(1104, 2, 1, 175, 125, 102, 1);
 		_object2.setup2(1102, 5, 1, 216, 167, 1, 0);
 
-		_actor12.postInit();
-		_actor12.setup(1113, 2, 1);
-		_actor12.setPosition(Common::Point(67, 151));
-		_actor12.fixPriority(255);
+		_leftImpacts.postInit();
+		_leftImpacts.setup(1113, 2, 1);
+		_leftImpacts.setPosition(Common::Point(67, 151));
+		_leftImpacts.fixPriority(255);
 
-		_actor3.postInit();
-		_actor3.setup(1102, 6, 1);
-		_actor3._moveRate = 30;
-		_actor3._moveDiff.x = 2;
+		_shipFormation.postInit();
+		_shipFormation.setup(1102, 6, 1);
+		_shipFormation._moveRate = 30;
+		_shipFormation._moveDiff.x = 2;
 
-		_actor4.postInit();
-		_actor4.setup(1102, 6, 2);
-		_actor4._moveRate = 30;
-		_actor4._moveDiff.x = 2;
-		_actor4._effect = 5;
-		_actor4._field9C = _field312;
+		_shipFormationShadow.postInit();
+		_shipFormationShadow.setup(1102, 6, 2);
+		_shipFormationShadow._moveRate = 30;
+		_shipFormationShadow._moveDiff.x = 2;
+		_shipFormationShadow._effect = 5;
+		_shipFormationShadow._field9C = _field312;
 
 		R2_GLOBALS._sound1.play(86);
 
@@ -993,30 +993,30 @@ void Scene1100::remove() {
 void Scene1100::signal() {
 	switch (_sceneMode++) {
 	case 0:
-		_actor3.setPosition(Common::Point(350, 20));
+		_shipFormation.setPosition(Common::Point(350, 20));
 		setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
 		break;
 	case 1:{
 		Common::Point pt(-150, 20);
 		NpcMover *mover = new NpcMover();
-		_actor3.addMover(mover, &pt, this);
-		_actor4.setPosition(Common::Point(350, 55));
+		_shipFormation.addMover(mover, &pt, this);
+		_shipFormationShadow.setPosition(Common::Point(350, 55));
 
 		Common::Point pt2(-150, 55);
 		NpcMover *mover2 = new NpcMover();
-		_actor4.addMover(mover2, &pt2, NULL);
+		_shipFormationShadow.addMover(mover2, &pt2, NULL);
 		}
 		break;
 	case 2:
-		_actor3.remove();
-		_actor4.remove();
-		_actor5.postInit();
-		_actor6.postInit();
-		_actor7.postInit();
-		_actor8.postInit();
-		_actor9.postInit();
-		_actor10.postInit();
-		setAction(&_sequenceManager1, this, 1102, &_actor5, &_actor6, &_actor7, &_actor8, &_actor9, &_actor10, NULL);
+		_shipFormation.remove();
+		_shipFormationShadow.remove();
+		_shotImpact1.postInit();
+		_shotImpact2.postInit();
+		_shotImpact3.postInit();
+		_shotImpact4.postInit();
+		_shotImpact5.postInit();
+		_laserShot.postInit();
+		setAction(&_sequenceManager1, this, 1102, &_shotImpact1, &_shotImpact2, &_shotImpact3, &_shotImpact4, &_shotImpact5, &_laserShot, NULL);
 		break;
 	case 3: {
 		R2_GLOBALS._sound2.play(84);
@@ -1029,24 +1029,24 @@ void Scene1100::signal() {
 	case 4:
 		_chief.postInit();
 		_chief.show();
-		setAction(&_sequenceManager1, this, 1101, &_chief, &_actor10, NULL);
+		setAction(&_sequenceManager1, this, 1101, &_chief, &_laserShot, NULL);
 		break;
 	case 5:
-		_actor13.postInit();
-		_actor13._effect = 6;
-		_actor13.setup(1103, 3, 1);
-		_actor13._moveRate = 30;
+		_runningGuy1.postInit();
+		_runningGuy1._effect = 6;
+		_runningGuy1.setup(1103, 3, 1);
+		_runningGuy1._moveRate = 30;
 
-		_actor14.postInit();
-		_actor14._effect = 6;
-		_actor14.setup(1103, 4, 1);
-		_actor4._moveRate = 25;
+		_runningGuy2.postInit();
+		_runningGuy2._effect = 6;
+		_runningGuy2.setup(1103, 4, 1);
+		_runningGuy2._moveRate = 25;
 
-		_actor13.setAction(&_sequenceManager2, this, 1109, &_actor13, &_actor14, NULL);
+		_runningGuy1.setAction(&_sequenceManager2, this, 1109, &_runningGuy1, &_runningGuy2, NULL);
 		break;
 	case 6: {
-		_actor13.remove();
-		_actor14.remove();
+		_runningGuy1.remove();
+		_runningGuy2.remove();
 		R2_GLOBALS._player.setPosition(Common::Point(-50, 136));
 		R2_GLOBALS._sound2.play(84);
 		Common::Point pt(350, 236);
@@ -1055,29 +1055,30 @@ void Scene1100::signal() {
 		}
 		break;
 	case 7:
-		setAction(&_sequenceManager1, this, 1103, &_chief, &_actor10, NULL);
+		setAction(&_sequenceManager1, this, 1103, &_chief, &_laserShot, NULL);
 		break;
 	case 8:
 		R2_GLOBALS._player._effect = 0;
-		_actor11.postInit();
-		setAction(&_sequenceManager1, this, 1105, &R2_GLOBALS._player, &_actor10, &_actor11, &_chief, NULL);
+		_animation.postInit();
+		setAction(&_sequenceManager1, this, 1105, &R2_GLOBALS._player, &_laserShot, &_animation, &_chief, NULL);
 		break;
 	case 9:
-		_object1.copySceneToBackground();
+		_rightLandslide.copySceneToBackground();
 
-		_actor15.postInit();
-		_actor15.setup(1103, 2, 1);
-		_actor15._moveRate = 30;
-		_actor15.setAction(&_sequenceManager3, this, 1107, &_actor15, NULL);
+		_runningGuy3.postInit();
+		_runningGuy3.setup(1103, 2, 1);
+		_runningGuy3._moveRate = 30;
+		_runningGuy3.setAction(&_sequenceManager3, this, 1107, &_runningGuy3, NULL);
 		break;
 	case 10:
-		_actor13.postInit();
-		_actor13.setup(1103, 1, 1);
-		_actor13._moveRate = 15;
-		_actor13.setAction(&_sequenceManager2, this, 1108, &_actor13, NULL);
+		_runningGuy1.postInit();
+		_runningGuy1.setup(1103, 1, 1);
+		_runningGuy1._moveRate = 15;
+		_runningGuy1.setAction(&_sequenceManager2, this, 1108, &_runningGuy1, NULL);
 		break;
 	case 11: {
-		setAction(&_sequenceManager1, this, 1106, &_actor11, &_actor10, &_actor12, NULL);
+		setAction(&_sequenceManager1, this, 1106, &_animation, &_laserShot, &_leftImpacts, NULL);
+
 		R2_GLOBALS._player._effect = 5;
 		R2_GLOBALS._player.setup(1102, 3, 2);
 		R2_GLOBALS._player.setPosition(Common::Point(-50, 131));
@@ -1094,16 +1095,16 @@ void Scene1100::signal() {
 		_trooper.postInit();
 		R2_GLOBALS._scrollFollower = &_trooper;
 
-		_actor11.setup(1100, 2, 1);
-		_actor11.setPosition(Common::Point(408, 121));
+		_animation.setup(1100, 2, 1);
+		_animation.setPosition(Common::Point(408, 121));
 
-		_actor10.setup(1100, 3, 5);
-		_actor10.setPosition(Common::Point(409, 121));
+		_laserShot.setup(1100, 3, 5);
+		_laserShot.setPosition(Common::Point(409, 121));
 
 		setAction(&_sequenceManager1, this, 1104, &_trooper, NULL);
 		break;
 	case 14:
-		setAction(&_sequenceManager1, this, 1100, &_actor11, &_actor10, NULL);
+		setAction(&_sequenceManager1, this, 1100, &_animation, &_laserShot, NULL);
 		break;
 	case 15:
 		R2_GLOBALS._sceneManager.changeScene(1000);
@@ -1269,7 +1270,7 @@ void Scene1100::signal() {
 }
 
 void Scene1100::dispatch() {
-	if ((g_globals->_sceneObjects->contains(&_actor10)) && (_actor10._visage == 1102) && (_actor10._strip == 4) && (_actor10._frame == 1) && (_actor10._flags & OBJFLAG_HIDING)) {
+	if ((g_globals->_sceneObjects->contains(&_laserShot)) && (_laserShot._visage == 1102) && (_laserShot._strip == 4) && (_laserShot._frame == 1) && (_laserShot._flags & OBJFLAG_HIDING)) {
 		if (_paletteRefreshStatus == 1) {
 			_paletteRefreshStatus = 2;
 			R2_GLOBALS._scenePalette.refresh();
@@ -1282,20 +1283,20 @@ void Scene1100::dispatch() {
 
 	Scene::dispatch();
 
-	if (R2_GLOBALS._player._bounds.contains(_actor13._position))
-		_actor13._shade = 3;
+	if (R2_GLOBALS._player._bounds.contains(_runningGuy1._position))
+		_runningGuy1._shade = 3;
 	else
-		_actor13._shade = 0;
+		_runningGuy1._shade = 0;
 
-	if (R2_GLOBALS._player._bounds.contains(_actor14._position))
-		_actor14._shade = 3;
+	if (R2_GLOBALS._player._bounds.contains(_runningGuy2._position))
+		_runningGuy2._shade = 3;
 	else
-		_actor14._shade = 0;
+		_runningGuy2._shade = 0;
 
-	if (R2_GLOBALS._player._bounds.contains(_actor15._position))
-		_actor15._shade = 3;
+	if (R2_GLOBALS._player._bounds.contains(_runningGuy3._position))
+		_runningGuy3._shade = 3;
 	else
-		_actor15._shade = 0;
+		_runningGuy3._shade = 0;
 }
 
 void Scene1100::saveCharacter(int characterIndex) {
