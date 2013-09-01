@@ -662,15 +662,15 @@ void Scene1020::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 Scene1100::Scene1100() {
-	_field412 = 0;
-	_field414 = 0;
+	_nextStripNum = 0;
+	_paletteRefreshStatus = 0;
 }
 
 void Scene1100::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
+	s.syncAsSint16LE(_nextStripNum);
+	s.syncAsSint16LE(_paletteRefreshStatus);
 }
 
 bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
@@ -682,9 +682,9 @@ bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
 	if (R2_GLOBALS.getFlag(52)) {
 		R2_GLOBALS._player.disableControl();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-			scene->_field412 = 327;
+			scene->_nextStripNum = 327;
 		else
-			scene->_field412 = 328;
+			scene->_nextStripNum = 328;
 		scene->_sceneMode = 53;
 		scene->setAction(&scene->_sequenceManager1, scene, 1122, &R2_GLOBALS._player, NULL);
 	} else {
@@ -757,7 +757,7 @@ bool Scene1100::Chief::startAction(CursorType action, Event &event) {
 	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action == CURSOR_TALK) && (!R2_GLOBALS.getFlag(54)) && (R2_GLOBALS.getFlag(52))) {
-		scene->_field412 = 0;
+		scene->_nextStripNum = 0;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 53;
 		scene->setAction(&scene->_sequenceManager1, scene, 1122, &R2_GLOBALS._player, NULL);
@@ -860,7 +860,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
 	} else if (R2_GLOBALS._sceneManager._previousScene == 1000) {
 		_actor2.setPosition(Common::Point(50, 30));
-		_field414 = 0;
+		_paletteRefreshStatus = 0;
 		_palette1.loadPalette(1101);
 		R2_GLOBALS._player.postInit();
 		R2_GLOBALS._player.disableControl();
@@ -1055,7 +1055,7 @@ void Scene1100::signal() {
 		}
 		break;
 	case 7:
-		setAction(&_sequenceManager1, this, 1103, &_chief, &_actor10);
+		setAction(&_sequenceManager1, this, 1103, &_chief, &_actor10, NULL);
 		break;
 	case 8:
 		R2_GLOBALS._player._effect = 0;
@@ -1185,7 +1185,7 @@ void Scene1100::signal() {
 	case 53:
 		_sceneMode = 54;
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
-		if (_field412 == 0) {
+		if (_nextStripNum == 0) {
 			R2_GLOBALS.setFlag(55);
 			if (R2_GLOBALS.getFlag(55)) {
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
@@ -1200,7 +1200,7 @@ void Scene1100::signal() {
 					_stripManager.start(322, this);
 			}
 		} else {
-			_stripManager.start3(_field412, this, _stripManager._lookupList);
+			_stripManager.start3(_nextStripNum, this, _stripManager._lookupList);
 		}
 		break;
 	case 54:
@@ -1270,14 +1270,14 @@ void Scene1100::signal() {
 
 void Scene1100::dispatch() {
 	if ((g_globals->_sceneObjects->contains(&_actor10)) && (_actor10._visage == 1102) && (_actor10._strip == 4) && (_actor10._frame == 1) && (_actor10._flags & OBJFLAG_HIDING)) {
-		if (_field414 == 1) {
-			_field414 = 2;
+		if (_paletteRefreshStatus == 1) {
+			_paletteRefreshStatus = 2;
 			R2_GLOBALS._scenePalette.refresh();
 		}
 	} else {
-		if (_field414 == 2)
+		if (_paletteRefreshStatus == 2)
 			R2_GLOBALS._scenePalette.refresh();
-		_field414 = 1;
+		_paletteRefreshStatus = 1;
 	}
 
 	Scene::dispatch();

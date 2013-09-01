@@ -89,7 +89,7 @@ class Scene1100 : public SceneExt {
 	};
 
 public:
-	int _field412, _field414;
+	int _nextStripNum, _paletteRefreshStatus;
 	SpeakerSeeker1100 _seekerSpeaker;
 	SpeakerQuinn1100 _quinnSpeaker;
 	SpeakerChief1100 _chiefSpeaker;
