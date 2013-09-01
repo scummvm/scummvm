@@ -140,6 +140,8 @@ class Movement : public GameObject {
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
 
+	void setAlpha(int alpha);
+
 	void setDynamicPhaseIndex(int index);
 
 	void removeFirstPhase();
@@ -194,6 +196,7 @@ class StaticANIObject : public GameObject {
 	void clearFlags();
 	void setFlags40(bool state);
 	bool isIdle();
+	void setAlpha(int alpha);
 
 	void deleteFromGlobalMessageQueue();
 	void queueMessageQueue(MessageQueue *msg);

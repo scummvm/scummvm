@@ -572,6 +572,14 @@ void StaticANIObject::setSpeed(int speed) {
 	warning("STUB: StaticANIObject::setSpeed(%d)", speed);
 }
 
+void StaticANIObject::setAlpha(int alpha) {
+	for (uint i = 0; i < _movements.size(); i++)
+		((Movement *)_movements[i])->setAlpha(alpha);
+	
+	for (uint i = 0; i < _staticsList.size(); i++)
+		((Statics *)_staticsList[i])->setAlpha(alpha);
+}
+
 void StaticANIObject::initMovements() {
 	for (uint i = 0; i < _movements.size(); i++)
 		((Movement *)_movements[i])->removeFirstPhase();
@@ -684,6 +692,7 @@ void StaticANIObject::update(int counterdiff) {
 
 				_stepArray.getCurrPoint(&point);
 				setOXY(point.x + _ox, point.y + _oy);
+				warning("%d %d %d %d", _ox, point.x, _oy, point.y);
 				_stepArray.gotoNextPoint();
 				if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
 					adjustSomeXY();
@@ -963,7 +972,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 
 		newx -= point.x;
 		newy -= point.y;
-		debug(0, "2 %d %d", newx, newy);
+		debug(0, "2 %d %d - %d %d assa", newx, newy, point.x, point.y);
 	}
 
 	_movement = mov;
@@ -1160,6 +1169,7 @@ bool Movement::load(MfcArchive &file) {
 	warning("STUB: Movement::load");
 	return true;
 }
+
 bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 	GameObject::load(file);
 
@@ -1247,6 +1257,17 @@ Common::Point *Movement::getCurrDynamicPhaseXY(Common::Point &p) {
 	p.y = _currDynamicPhase->_y;
 
 	return &p;
+}
+
+void Movement::setAlpha(int alpha) {
+	if (_currMovement)
+		for (uint i = 0; i < _currMovement->_dynamicPhases.size(); i++) {
+			((DynamicPhase *)_currMovement->_dynamicPhases[i])->setAlpha(alpha);
+		}
+	else
+		for (uint i = 0; i < _dynamicPhases.size(); i++) {
+			((DynamicPhase *)_dynamicPhases[i])->setAlpha(alpha);
+		}
 }
 
 Common::Point *Movement::getDimensionsOfPhase(Common::Point *p, int phaseIndex) {
