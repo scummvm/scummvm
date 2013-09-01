@@ -381,6 +381,9 @@ void Ringworld2Globals::reset() {
 	if (!_scannerDialog)
 		_scannerDialog = new ScannerDialog();
 
+	// Default to Quinn as the active character
+	T2_GLOBALS._player._characterIndex = R2_QUINN;
+
 	// Reset the inventory
 	R2_INVENTORY.reset();
 	T2_GLOBALS._uiElements.updateInventory();
