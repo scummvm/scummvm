@@ -170,8 +170,7 @@ void onemenu::wipe() {
 	//setactivepage(cp);
 	CursorMan.showMouse(false); 
 	
-	_dr->chalk(_dr->ddm_m.ddms[_dr->ddm_o.menunum - 1].xpos, 1, _dr->ddm_m.ddms[_dr->ddm_o.menunum - 1].trigger, _dr->ddm_m.ddms[_dr->ddm_o.menunum - 1].title, true);
-
+	_dr->chalk(_dr->ddm_m.ddms[_dr->ddm_o.menunum].xpos, 1, _dr->ddm_m.ddms[_dr->ddm_o.menunum].trigger, _dr->ddm_m.ddms[_dr->ddm_o.menunum].title, true);
 	/*mblit(flx1, 11, flx2 + 1, fly + 1, 3, cp);
 	blitfix();*/
 
@@ -353,8 +352,11 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 
 	fontType font;
 	for (byte fv = 0; fv < z.size(); fv++)
-		for (byte ff = 0; ff < 8; ff++)
+		for (byte ff = 0; ff < 8; ff++) {
 			font[z[fv]][ff] = _vm->_gyro->characters[z[fv]][ff] & ander;
+			for (byte i = 0; i < 8; i++)
+				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + fv * 8 + i, y + ff) = lightgray;
+		}
 
 	_vm->_graphics->drawText(_vm->_graphics->_surface, z, font, 8, x * 8, y, black);
 	
@@ -495,7 +497,8 @@ void Dropdown::ddm__action() {
 
 	Common::String n = _vm->_gyro->f5_does();
 	for (byte i = 0; i < 2; i++)
-		n.deleteChar(0);
+		if (!n.empty())
+			n.deleteChar(0);
 	if (n.empty())
 		ddm_o.opt("Do something", 'D', "f5", false);
 	else
@@ -820,31 +823,79 @@ begin;
 end;*/
 
 void Dropdown::checkclick(Common::Point cursorPos) {
-	warning("STUB: Lucerna::checkclick()");
+	warning("STUB: Dropdown::checkclick()");
 }
 
-void Dropdown::menu_link() {
-	if (!ddm_o.menunow)
-		return;
-
+void Dropdown::menu_link() { // TODO: Optimize it ASAP!!! It really needs it...
 	Common::Point cursorPos = _vm->getMousePos();
-	checkclick(cursorPos); // Work out click codes.
+	::Graphics::Surface backup;
+	backup.copyFrom(_vm->_graphics->_surface);
 
-	// Change arrow...
-	if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
-		_vm->_gyro->newpointer(1); // Up arrow
-	else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
-		if ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= ddm_o.fly * 2 + 1))
-			_vm->_gyro->newpointer(3); // Right-arrow
-		else
-			_vm->_gyro->newpointer(4); // Fletch
-	} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
-		_vm->_gyro->newpointer(2); // Screwdriver
+	while (!ddm_o.menunow && (cursorPos.y <= 21) && _vm->_lucerna->holdLeftMouse) {
+		ddm_m.getmenu(cursorPos.x);
+		do 
+			_vm->updateEvents();
+		while (_vm->_lucerna->holdLeftMouse);
+	
 
-	if (!ddm_o.menunow)
-		return;
+		while (!_vm->shouldQuit()) {
+			do { 
+				_vm->updateEvents();
 
-	ddm_o.lightup(cursorPos);
+				cursorPos = _vm->getMousePos();
+				// Change arrow...
+				if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
+					_vm->_gyro->newpointer(1); // Up arrow
+				else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
+					if ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= ddm_o.fly * 2 + 1))
+						_vm->_gyro->newpointer(3); // Right-arrow
+					else
+						_vm->_gyro->newpointer(4); // Fletch
+				} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
+					_vm->_gyro->newpointer(2); // Screwdriver
+
+				ddm_o.lightup(cursorPos);
+
+				_vm->_graphics->refreshScreen();
+			} while (!_vm->_lucerna->holdLeftMouse);
+
+			if (_vm->_lucerna->holdLeftMouse) {
+				if (cursorPos.y > 21) {
+					if (!((ddm_o.firstlix) && ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8)
+						&& (cursorPos.y >= 24) && (cursorPos.y <= (ddm_o.fly * 2 + 1))))) {  // Clicked OUTSIDE the menu.
+							if (ddm_o.menunow) {
+								ddm_o.wipe();
+								_vm->_lucerna->holdLeftMouse = false;
+								return;
+							} // No "else"- clicking on menu has no effect (only releasing).
+						} 
+				} else {
+					// Clicked on menu bar.
+					if (ddm_o.menunow) {
+						ddm_o.wipe();
+						_vm->_lucerna->holdLeftMouse = true;
+						_vm->_graphics->_surface.copyFrom(backup);
+						_vm->_graphics->refreshScreen();
+						break;
+					}
+				}
+	
+				// NOT clicked button...
+				if ((ddm_o.firstlix) && ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8)
+					&& (cursorPos.y >= 12) && (cursorPos.y <= (ddm_o.fly * 2 + 1)))) {
+						do {
+							_vm->updateEvents();
+							_vm->_graphics->refreshScreen();
+						} while (_vm->_lucerna->holdLeftMouse);
+						uint16 which = (cursorPos.y - 26) / 20;
+						ddm_o.select(which);
+						if (ddm_o.oo[which].valid)
+							return;
+				}
+			}
+
+		}
+	}
 }
 
 } // End of namespace Avalanche.
