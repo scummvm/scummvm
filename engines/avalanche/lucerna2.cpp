@@ -1103,11 +1103,11 @@ void Lucerna::checkclick() {
 		} else
 			_vm->_gyro->newpointer(4); // fletch
 	}
-
+	
 	if (holdLeftMouse)
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_vm->_gyro->dropsok)
-				topcheck(cursorPos);
+				_vm->_dropdown->menu_link();
 		} else if ((317 <= cursorPos.y) && (cursorPos.y <= 339)) { // Click on the command line.
 			_vm->_parser->_inputTextPos = (cursorPos.x - 23) / 8;
 			if (_vm->_parser->_inputTextPos > _vm->_parser->_inputText.size() + 1)
