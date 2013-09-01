@@ -318,7 +318,7 @@ class Scene250: public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _currButtonY, _destButtonY, _field416;
+	int _currButtonY, _destButtonY, _elevatorSpeed;
 	bool _skippingFl, _skippableFl;
 	NamedHotspot _background, _item2, _item3, _item4;
 	Button _button1, _currentFloor;
