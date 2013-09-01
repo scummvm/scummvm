@@ -2580,7 +2580,8 @@ void Scene250::Button::setFloor(int floorNumber) {
 /*--------------------------------------------------------------------------*/
 
 Scene250::Scene250(): SceneExt() {
-	_currButtonY = _destButtonY = _field416 = _field418 = _field41A = 0;
+	_currButtonY = _destButtonY = _field416 = 0;
+	_skippingFl = _skippableFl = false;
 }
 
 void Scene250::synchronize(Serializer &s) {
@@ -2589,8 +2590,8 @@ void Scene250::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_currButtonY);
 	s.syncAsSint16LE(_destButtonY);
 	s.syncAsSint16LE(_field416);
-	s.syncAsSint16LE(_field418);
-	s.syncAsSint16LE(_field41A);
+	s.syncAsSint16LE(_skippableFl);
+	s.syncAsSint16LE(_skippingFl);
 }
 
 void Scene250::postInit(SceneObjectList *OwnerList) {
@@ -2653,7 +2654,7 @@ void Scene250::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene250::signal() {
-	if (_field41A)
+	if (_skippingFl)
 		_sceneMode = 20;
 
 	switch (_sceneMode) {
@@ -2668,7 +2669,11 @@ void Scene250::signal() {
 		_sceneMode = 2;
 		break;
 	case 2:
-		_sceneMode = ((_destButtonY - 12) == _currButtonY) ? 4 : 3;
+		if (_destButtonY - 12 == _currButtonY)
+			_sceneMode = 4;
+		else 
+			_sceneMode = 3;
+
 		signal();
 		break;
 	case 3:
@@ -2703,7 +2708,7 @@ void Scene250::signal() {
 		_sceneMode = 7;
 		break;
 	case 7:
-		_field418 = 1;
+		_skippableFl = true;
 		if ((_destButtonY + 12) == _currButtonY)
 			_sceneMode = 9;
 		else
@@ -2759,6 +2764,7 @@ void Scene250::changeFloor(int floorNumber) {
 	_button1.setPosition(Common::Point(111, _destButtonY));
 	_button1.show();
 
+	_skippableFl = true;
 	_sceneMode = (_currButtonY >= _destButtonY) ? 6 : 1;
 	if (_destButtonY == _currButtonY)
 		_sceneMode = 20;
@@ -2768,8 +2774,9 @@ void Scene250::changeFloor(int floorNumber) {
 
 void Scene250::process(Event &event) {
 	if (!event.handled) {
-		if (((event.eventType == EVENT_KEYPRESS) || (event.btnState != 0)) && _field418) {
-			_field41A = 1;
+		warning("%d", event.btnState);
+		if (((event.eventType == EVENT_KEYPRESS) || (event.btnState == BTNSHIFT_RIGHT)) && _skippableFl) {
+			_skippingFl = true;
 			event.handled = true;
 		}
 
@@ -2787,7 +2794,7 @@ void Scene250::dispatch() {
 
 	if (((_sceneMode == 5) || (_sceneMode == 10)) && (R2_GLOBALS._player._moveDiff.y > 4)) {
 		--_field416;
-		R2_GLOBALS._player._moveDiff.y = _field416 / 7 + 3;
+		R2_GLOBALS._player._moveDiff.y = (_field416 / 7) + 3;
 	}
 }
 
