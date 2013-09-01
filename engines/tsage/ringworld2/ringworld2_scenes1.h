@@ -730,15 +730,15 @@ class Scene1700 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -759,9 +759,9 @@ public:
 	SceneActor _actor10;
 	Actor11 _actor11;
 	Actor12 _actor12;
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
+	NorthExit _northExit;
+	SouthExit _southExit;
+	WestExit _westExit;
 	SequenceManager _sequenceManager;
 
 	int _field77A;

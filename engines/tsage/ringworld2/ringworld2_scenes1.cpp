@@ -10331,7 +10331,7 @@ bool Scene1700::Actor12::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene1700::Exit1::changeScene() {
+void Scene1700::NorthExit::changeScene() {
 	Scene1700 *scene = (Scene1700 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
@@ -10343,7 +10343,7 @@ void Scene1700::Exit1::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene1700::Exit2::changeScene() {
+void Scene1700::SouthExit::changeScene() {
 	Scene1700 *scene = (Scene1700 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
@@ -10355,7 +10355,7 @@ void Scene1700::Exit2::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene1700::Exit3::changeScene() {
+void Scene1700::WestExit::changeScene() {
 	Scene1700 *scene = (Scene1700 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
@@ -10396,7 +10396,7 @@ void Scene1700::enterArea() {
 
 	warning("set_pane_p(_paneNumber);");
 
-	if ((_sceneMode != 40) && (R2_GLOBALS._v565F6 != 0)){
+	if (_sceneMode != 40 && R2_GLOBALS._v565F6 == 0 && R2_GLOBALS._v565F8 == 0) {
 		_ledgeHopper.postInit();
 		_ledgeHopper.setup(1701, 1, 1);
 		_ledgeHopper.setPosition(Common::Point(220, 137));
@@ -10435,10 +10435,10 @@ void Scene1700::enterArea() {
 		_actor7.fixPriority(0);
 		_actor7.setDetails(100, -1, -1, -1, 2, (SceneItem *) NULL);
 
-		_exit3._enabled = true;
+		_westExit._enabled = true;
 	} else {
 		R2_GLOBALS._walkRegions.enableRegion(1);
-		_exit3._enabled = false;
+		_westExit._enabled = false;
 	}
 
 	if (  ((!R2_GLOBALS.getFlag(15)) && ((R2_GLOBALS._v565F6 == 25) || (R2_GLOBALS._v565F6 == -3)))
@@ -10471,9 +10471,9 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);
 
-	_exit1.setDetails(Rect(94, 0, 319, 12), EXITCURSOR_N, 1700);
-	_exit2.setDetails(Rect(0, 161, 319, 168), EXITCURSOR_S, 1700);
-	_exit3.setDetails(Rect(0, 0, 12, 138), EXITCURSOR_W, 1800);
+	_northExit.setDetails(Rect(94, 0, 319, 12), EXITCURSOR_N, 1700);
+	_southExit.setDetails(Rect(0, 161, 319, 168), EXITCURSOR_S, 1700);
+	_westExit.setDetails(Rect(0, 0, 12, 138), EXITCURSOR_W, 1800);
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setPosition(Common::Point(0, 0));
@@ -10545,7 +10545,7 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 
 		_actor1.hide();
 		_actor2.hide();
-		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		_stripManager.start(539, this);
 		_sceneMode = 40;
 		break;
@@ -10662,12 +10662,12 @@ void Scene1700::signal() {
 		break;
 	case 3:
 		if (_field77C == 0) {
-			R2_GLOBALS._player.enableControl(CURSOR_CROSSHAIRS);
+			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		} else {
 			R2_GLOBALS.setFlag(15);
 			_field77C = 0;
 			_sceneMode = 31;
-			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+			R2_GLOBALS._events.setCursor(CURSOR_WALK);
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				_stripManager.start(542, this);
 			else
@@ -10696,13 +10696,13 @@ void Scene1700::signal() {
 		R2_GLOBALS._player._strip = 1;
 		_actor12.setObjectWrapper(new SceneObjectWrapper());
 		_actor12._strip = 1;
-		R2_GLOBALS._player.enableControl(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		R2_GLOBALS._walkRegions.enableRegion(14);
 		break;
 	case 8:
 		R2_GLOBALS._player._strip = 2;
 		_actor12._strip = 1;
-		R2_GLOBALS._player.enableControl(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		R2_GLOBALS._walkRegions.enableRegion(12);
 		break;
 	case 30:
@@ -10737,7 +10737,7 @@ void Scene1700::signal() {
 		R2_GLOBALS._walkRegions.enableRegion(2);
 		R2_GLOBALS._walkRegions.enableRegion(12);
 		R2_GLOBALS._player.fixPriority(-1);
-		R2_GLOBALS._player.enableControl(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	default:
 		R2_GLOBALS._player.enableControl();
@@ -11018,8 +11018,6 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene1750::remove() {
-	_rotation->remove();
-
 	if (R2_GLOBALS._v565F6 == 2400)
 		R2_GLOBALS._v565F6 = 2399;
 
