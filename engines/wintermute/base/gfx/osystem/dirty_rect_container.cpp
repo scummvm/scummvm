@@ -71,12 +71,12 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 
 	if (target > kMaxInputRects) {
 		_disableDirtyRects = true;
-		// return;
+		return;
 	} else if (isHuge(&rect)) {
 		_disableDirtyRects = true;
-		// return;
+		return;
 	} else if (rect.width() == 0 || rect.height() == 0) {
-		// return;
+		return;
 	} else {
 		_disableDirtyRects = false;
 		_rectArray.insert_at(target, tmp);
