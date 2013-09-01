@@ -214,8 +214,8 @@ private:
 	int  _minute;
 	int  _curSearchObjId;
 	int  _controlMenu;
-	int  _startHour;
-	int  _endHour;
+	int  _startTime;
+	int  _endTime;
 	Common::Point _stdPal[91][17];
 
 	int  _x26KeyCount;
@@ -229,7 +229,7 @@ private:
 	int  _x;
 	int  _y;
 	int  _currentHourCount;
-	int  _currentDayHour;
+	int  _currentTime;
 
 	Common::String _hintPctMessage;
 	byte  *_cfiecBuffer;
