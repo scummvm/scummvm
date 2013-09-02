@@ -32,7 +32,9 @@
 #include "buried/buried.h"
 #include "buried/database.h"
 #include "buried/graphics.h"
+#include "buried/message.h"
 #include "buried/sound.h"
+#include "buried/window.h"
 
 namespace Buried {
 
@@ -41,6 +43,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 	_mainEXE = 0;
 	_library = 0;
 	_sound = 0;
+	_timerSeed = 0;
 }
 
 BuriedEngine::~BuriedEngine() {
@@ -163,6 +166,37 @@ Common::SeekableReadStream *BuriedEngine::getFileBCData(uint32 resourceID) {
 
 Common::SeekableReadStream *BuriedEngine::getINNData(uint32 resourceID) {
 	return _mainEXE->getResourceStream("INNDATA", resourceID);
+}
+
+uint BuriedEngine::createTimer(Window *window, uint period) {
+	uint timer = ++_timerSeed;
+
+	Timer timerInfo;
+	timerInfo.owner = window;
+	timerInfo.period = period;
+	timerInfo.nextTrigger = _system->getMillis() + period;
+
+	_timers[timer] = timerInfo;
+	return timer;
+}
+
+bool BuriedEngine::killTimer(uint timer) {
+	TimerMap::iterator it = _timers.find(timer);
+
+	if (it == _timers.end())
+		return false;
+
+	_timers.erase(it);
+	return true;
+}
+
+void BuriedEngine::updateTimers() {
+	for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++) {
+		if (g_system->getMillis() >= it->_value.nextTrigger) {
+			it->_value.nextTrigger += it->_value.period;
+			it->_value.owner->sendMessage(new TimerMessage(it->_key));
+		}
+	}
 }
 
 } // End of namespace Buried

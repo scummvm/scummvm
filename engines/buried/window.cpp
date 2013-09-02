@@ -121,4 +121,12 @@ bool Window::isWindowEnabled() const {
 	return _enabled;
 }
 
+uint Window::setTimer(uint elapse) {
+	return _vm->createTimer(this, elapse);
+}
+
+bool Window::killTimer(uint timer) {
+	return _vm->killTimer(timer);
+}
+
 } // End of namespace Buried
