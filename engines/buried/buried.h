@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/list.h"
 #include "common/hashmap.h"
 
 #include "engines/engine.h"
@@ -42,6 +43,7 @@ class Database;
 class GraphicsManager;
 class SoundManager;
 class Window;
+class VideoWindow;
 
 class BuriedEngine : public ::Engine {
 protected:
@@ -82,6 +84,10 @@ public:
 	bool killTimer(uint timer);
 	void updateTimers();
 
+	void addVideo(VideoWindow *window);
+	void removeVideo(VideoWindow *window);
+	void updateVideos();
+
 private:
 	Database *_library;
 
@@ -94,6 +100,9 @@ private:
 	typedef Common::HashMap<uint, Timer> TimerMap;
 	TimerMap _timers;
 	uint _timerSeed;
+
+	typedef Common::List<VideoWindow *> VideoList;
+	VideoList _videos;
 };
 
 } // End of namespace Buried
