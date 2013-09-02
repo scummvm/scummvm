@@ -31,8 +31,8 @@
 
 namespace Wintermute {
 
-const uint kMaxOutputRects = UINT_MAX; 
-// We have convened that we are not worried about lotsa rects 
+const uint kMaxOutputRects = UINT_MAX;
+// We have convened that we are not worried about lotsa rects
 // anymore thanks to wjp's patch... but overflow is still a remote risk.
 const uint kMaxInputRects = 512;
 const int kMaxAcceptableWaste = 10;
@@ -211,17 +211,17 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				        intersecting.bottom == candidate->bottom &&
 				        intersecting.right == candidate->right
 				   ) { // SE case
-					Common::Rect *neslice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), neslice);
+					Common::Rect *neSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), neSlice);
 
-					neslice->bottom = intersecting.top;
-					neslice->left = intersecting.left;
-					assert(neslice->isValidRect());
-					if (neslice->width() != 0 && neslice->height() != 0) {
-						queue.insert_at(queue.size(), neslice);
+					neSlice->bottom = intersecting.top;
+					neSlice->left = intersecting.left;
+					assert(neSlice->isValidRect());
+					if (neSlice->width() != 0 && neSlice->height() != 0) {
+						queue.insert_at(queue.size(), neSlice);
 					}
 					candidate->right = intersecting.left;
-					assert(neslice->isValidRect());
+					assert(neSlice->isValidRect());
 					if (candidate->width() == 0) {
 						discard = true;
 					}
@@ -232,14 +232,14 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           intersecting.bottom <= candidate->bottom &&
 				           intersecting.right == candidate->right
 				          ) { // NE
-					Common::Rect *seslice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), seslice);
-					seslice->top = intersecting.bottom;
-					seslice->left = intersecting.left;
-					assert(seslice->isValidRect());
-					assert(seslice->width() != 0 && seslice->height() != 0);
-					if (seslice->width() != 0 && seslice->height() != 0) {
-						queue.insert_at(queue.size(), seslice);
+					Common::Rect *seSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), seSlice);
+					seSlice->top = intersecting.bottom;
+					seSlice->left = intersecting.left;
+					assert(seSlice->isValidRect());
+					assert(seSlice->width() != 0 && seSlice->height() != 0);
+					if (seSlice->width() != 0 && seSlice->height() != 0) {
+						queue.insert_at(queue.size(), seSlice);
 					}
 					candidate->right = intersecting.left;
 					if (candidate->width() == 0) {
@@ -253,14 +253,14 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           intersecting.bottom <= candidate->bottom &&
 				           intersecting.right <= candidate->right
 				          ) {     // NW
-					Common::Rect *swslice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), swslice);
-					swslice->top = intersecting.bottom;
-					swslice->right = intersecting.right;
-					assert(swslice->isValidRect());
+					Common::Rect *swSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), swSlice);
+					swSlice->top = intersecting.bottom;
+					swSlice->right = intersecting.right;
+					assert(swSlice->isValidRect());
 					assert(candidate->isValidRect());
-					if (swslice->width() != 0 && swslice->height() != 0) {
-						queue.insert_at(queue.size(), swslice);
+					if (swSlice->width() != 0 && swSlice->height() != 0) {
+						queue.insert_at(queue.size(), swSlice);
 					}
 					candidate->left = intersecting.right;
 					if (candidate->width() == 0) {
@@ -273,14 +273,14 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           intersecting.bottom == candidate->bottom &&
 				           intersecting.right <= candidate->right
 				          ) { // SW
-					Common::Rect *nwslice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), nwslice);
-					nwslice->bottom = intersecting.top;
-					nwslice->right = intersecting.right;
-					assert(nwslice->isValidRect());
+					Common::Rect *nwSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), nwSlice);
+					nwSlice->bottom = intersecting.top;
+					nwSlice->right = intersecting.right;
+					assert(nwSlice->isValidRect());
 					assert(candidate->isValidRect());
-					if (nwslice->width() != 0 && nwslice->height() != 0) {
-						queue.insert_at(queue.size(), nwslice);
+					if (nwSlice->width() != 0 && nwSlice->height() != 0) {
+						queue.insert_at(queue.size(), nwSlice);
 					}
 					candidate->left = intersecting.right;
 					assert(candidate->isValidRect());
@@ -292,19 +292,19 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           existing->right >= candidate->right &&
 				           existing->top >= candidate->top &&
 				           existing->bottom <= candidate->bottom) { // Cross shaped intersections
-					Common::Rect *top_slice = new Common::Rect(*candidate);
-					Common::Rect *bottom_slice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), top_slice);
-					_cleanMe.insert_at(_cleanMe.size(), bottom_slice);
-					top_slice->bottom = existing->top;
-					bottom_slice->top = existing->bottom;
+					Common::Rect *topSlice = new Common::Rect(*candidate);
+					Common::Rect *bottomSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), topSlice);
+					_cleanMe.insert_at(_cleanMe.size(), bottomSlice);
+					topSlice->bottom = existing->top;
+					bottomSlice->top = existing->bottom;
 
-					if (top_slice->height() > 0 && top_slice->width() > 0) {
-						queue.insert_at(queue.size(), top_slice);
+					if (topSlice->height() > 0 && topSlice->width() > 0) {
+						queue.insert_at(queue.size(), topSlice);
 					}
 
-					if (bottom_slice->height() > 0 && bottom_slice->width() > 0) {
-						queue.insert_at(queue.size(), bottom_slice);
+					if (bottomSlice->height() > 0 && bottomSlice->width() > 0) {
+						queue.insert_at(queue.size(), bottomSlice);
 					}
 
 					discard = true;
@@ -315,18 +315,18 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           existing->right <= candidate->right &&
 				           existing->top <= candidate->top &&
 				           existing->bottom >= candidate->bottom) {
-					Common::Rect *left_slice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), left_slice);
-					left_slice->right = existing->left;
-					if (left_slice->height() > 0 && left_slice->width() > 0)
-						queue.insert_at(queue.size(), left_slice);
+					Common::Rect *leftSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), leftSlice);
+					leftSlice->right = existing->left;
+					if (leftSlice->height() > 0 && leftSlice->width() > 0)
+						queue.insert_at(queue.size(), leftSlice);
 
-					Common::Rect *right_slice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), right_slice);
+					Common::Rect *rightSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), rightSlice);
 
-					right_slice->right = existing->left;
-					if (right_slice->height() > 0 && right_slice->width() > 0)
-						queue.insert_at(queue.size(), right_slice);
+					rightSlice->right = existing->left;
+					if (rightSlice->height() > 0 && rightSlice->width() > 0)
+						queue.insert_at(queue.size(), rightSlice);
 
 					discard = true;
 					continue;
