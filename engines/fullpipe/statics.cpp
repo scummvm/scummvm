@@ -184,7 +184,6 @@ bool StaticANIObject::load(MfcArchive &file) {
 		pt.x = pt.y = 100;
 	}
 
-	warning("%s %d", __FILE__, __LINE__);
 	setOXY(pt.x, pt.y);
 
 	return true;
@@ -194,10 +193,8 @@ void StaticANIObject::setOXY(int x, int y) {
 	_ox = x;
 	_oy = y;
 	
-	if (_movement) {
-		warning("%s %d", __FILE__, __LINE__);
+	if (_movement)
 		_movement->setOXY(x, y);
-	}
 }
 
 void StaticANIObject::clearFlags() {
@@ -677,7 +674,6 @@ void StaticANIObject::update(int counterdiff) {
 			if (!_movement->gotoNextFrame(_callback1, _callback2)) {
 				stopAnim_maybe();
 			} else {
-				warning("%s %d", __FILE__, __LINE__);
 				setOXY(_movement->_ox, _movement->_oy);
 				_counter = _initialCounter;
 
@@ -695,7 +691,6 @@ void StaticANIObject::update(int counterdiff) {
 					return;
 
 				_stepArray.getCurrPoint(&point);
-				warning("%s %d", __FILE__, __LINE__);
 				setOXY(point.x + _ox, point.y + _oy);
 				_stepArray.gotoNextPoint();
 				if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
@@ -709,7 +704,6 @@ void StaticANIObject::update(int counterdiff) {
 
 			Common::Point pointS;
 			_statics->getSomeXY(pointS);
-			warning("%s %d", __FILE__, __LINE__);
 			_movement->setOXY(_ox + point.x + _movement->_mx - pointS.x,
 							  _oy + point.y + _movement->_my - pointS.y);
 		}
@@ -743,7 +737,6 @@ void StaticANIObject::stopAnim_maybe() {
 	Common::Point point;
 
 	if (_movement) {
-		warning("%s %d", __FILE__, __LINE__);
 		setOXY(_movement->_ox, _movement->_oy);
 
 		if (_flags & 0x40) {
@@ -812,7 +805,6 @@ bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	debug(0, "StaticANIObject::setPicAniInfo() (%s [%d]) type: %d, statid: %d, movid: %d", transCyrillic((byte *)_objectName), _id, picAniInfo->type, picAniInfo->staticsId, picAniInfo->movementId);
 
 	if (picAniInfo->type & 3) {
-		warning("%s %d", __FILE__, __LINE__);
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
 		_okeyCode = picAniInfo->field_8;
@@ -869,7 +861,6 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 	if (movId == -1) {
 		_flags |= 4u;
 		if (x != -1 && y != -1) {
-			warning("%s %d", __FILE__, __LINE__);
 			setOXY(x, y);
 		}
 
@@ -881,7 +872,6 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 		return;
 
 	if (x != -1 && y != -1) {
-		warning("%s %d", __FILE__, __LINE__);
 		setOXY(x, y);
 	}
 
@@ -1015,12 +1005,8 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 		}
 	}
 
-	debug(0, "4 %d %d", newx, newy);
 	_movement->getCurrDynamicPhaseXY(point);
-	warning("%s %d", __FILE__, __LINE__);
 	setOXY(point.x + newx, point.y + newy);
-
-	debug(0, "   StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if (_movement->_staticsObj2->_staticsId & 0x4000)
 		_flags |= 8;
@@ -1338,13 +1324,13 @@ void Movement::updateCurrDynamicPhase() {
 	debug(7, "Movement::updateCurrDynamicPhase()");
 
 	if (_currMovement) {
-		if (_currMovement->_dynamicPhases.size() == 0)
+		if (_currMovement->_dynamicPhases.size() == 0 || (uint)_currDynamicPhaseIndex >= _currMovement->_dynamicPhases.size())
 			return;
 
 		if (_currMovement->_dynamicPhases[_currDynamicPhaseIndex])
 			_currDynamicPhase = (DynamicPhase *)_currMovement->_dynamicPhases[_currDynamicPhaseIndex];
 	} else {
-		if (_dynamicPhases.size() == 0)
+		if (_dynamicPhases.size() == 0 || (uint)_currDynamicPhaseIndex >= _dynamicPhases.size())
 			return;
 
 		if (_dynamicPhases[_currDynamicPhaseIndex])

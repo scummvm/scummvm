@@ -203,9 +203,6 @@ Common::Error FullpipeEngine::run() {
 
 		_system->delayMillis(10);
 		_system->updateScreen();
-
-		_system->delayMillis(300); // HACK
-
 	}
 
 	freeGameLoader();

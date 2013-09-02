@@ -65,12 +65,7 @@ struct Bitmap {
 };
 
 class Picture : public MemoryObject {
-	friend class Movement;
-	friend class DynamicPhase;
-	friend class PictureObject;
-	friend class CInputController;
-	friend class StaticANIObject;
-
+ public:
 	Common::Rect _rect;
 	Bitmap *_convertedBitmap;
 	int _x;
