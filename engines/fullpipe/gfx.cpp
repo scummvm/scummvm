@@ -312,6 +312,8 @@ bool GameObject::load(MfcArchive &file) {
 }
 
 void GameObject::setOXY(int x, int y) {
+	warning("GameObject::setOXY(%d, %d)  %s", x, y, transCyrillic((byte *)_objectName));
+
 	_ox = x;
 	_oy = y;
 }
