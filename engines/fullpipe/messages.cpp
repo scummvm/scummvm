@@ -465,9 +465,16 @@ void GlobalMessageQueueList::disableQueueById(int id) {
 }
 
 int GlobalMessageQueueList::compact() {
-	warning("STUB: GlobalMessageQueueList::compact()");
+	for (uint i = 0; i < size();) {
+		if (((MessageQueue *)((*this).operator[](i)))->_isFinished) {
+			disableQueueById(((MessageQueue *)((*this).operator[](i)))->_id);
+			remove_at(i);
+		} else {
+			i++;
+		}
+	}
 
-	return 0;
+	return size() + 1;
 }
 
 void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
