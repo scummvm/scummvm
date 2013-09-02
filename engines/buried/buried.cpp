@@ -34,6 +34,7 @@
 #include "buried/graphics.h"
 #include "buried/message.h"
 #include "buried/sound.h"
+#include "buried/video_window.h"
 #include "buried/window.h"
 
 namespace Buried {
@@ -197,6 +198,19 @@ void BuriedEngine::updateTimers() {
 			it->_value.owner->sendMessage(new TimerMessage(it->_key));
 		}
 	}
+}
+
+void BuriedEngine::addVideo(VideoWindow *window) {
+	_videos.push_back(window);
+}
+
+void BuriedEngine::removeVideo(VideoWindow *window) {
+	_videos.remove(window);
+}
+
+void BuriedEngine::updateVideos() {
+	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
+		(*it)->updateVideo();
 }
 
 } // End of namespace Buried
