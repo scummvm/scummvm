@@ -69,9 +69,7 @@ public:
 	bool isWindowEnabled() const;
 
 	// TODO:
-	// SetTimer
 	// ShowWindow
-	// KillTimer
 	// BeginPaint (?)
 	// EndPaint (?)
 	// Create
@@ -85,6 +83,9 @@ protected:
 
 	Window *_parent;
 	Common::Rect _rect;
+
+	uint setTimer(uint elapse);
+	bool killTimer(uint timer);
 
 private:
 	Common::Queue<Message *> _queue;
