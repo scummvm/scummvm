@@ -2489,14 +2489,13 @@ void Scene205::handleText() {
  *--------------------------------------------------------------------------*/
 
 Scene250::Button::Button(): SceneActor() {
-	_floorNumber = _v2 = 0;
+	_floorNumber = 0;
 }
 
 void Scene250::Button::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
 	s.syncAsSint16LE(_floorNumber);
-	s.syncAsSint16LE(_v2);
 }
 
 bool Scene250::Button::startAction(CursorType action, Event &event) {
@@ -2504,7 +2503,7 @@ bool Scene250::Button::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_field414) {
+		if (scene->_destButtonY) {
 			SceneItem::display2(250, 15);
 		} else {
 			switch (_floorNumber) {
@@ -2555,7 +2554,6 @@ bool Scene250::Button::startAction(CursorType action, Event &event) {
 void Scene250::Button::setFloor(int floorNumber) {
 	SceneActor::postInit();
 	_floorNumber = floorNumber;
-	_v2 = 0;
 
 	if (_floorNumber <= 9) {
 		SceneObject::setup(250, 1, 4);
@@ -2580,17 +2578,18 @@ void Scene250::Button::setFloor(int floorNumber) {
 /*--------------------------------------------------------------------------*/
 
 Scene250::Scene250(): SceneExt() {
-	_field412 = _field414 = _field416 = _field418 = _field41A = 0;
+	_currButtonY = _destButtonY = _elevatorSpeed = 0;
+	_skippingFl = _skippableFl = false;
 }
 
 void Scene250::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
-	s.syncAsSint16LE(_field416);
-	s.syncAsSint16LE(_field418);
-	s.syncAsSint16LE(_field41A);
+	s.syncAsSint16LE(_currButtonY);
+	s.syncAsSint16LE(_destButtonY);
+	s.syncAsSint16LE(_elevatorSpeed);
+	s.syncAsSint16LE(_skippableFl);
+	s.syncAsSint16LE(_skippingFl);
 }
 
 void Scene250::postInit(SceneObjectList *OwnerList) {
@@ -2632,28 +2631,28 @@ void Scene250::postInit(SceneObjectList *OwnerList) {
 
 	switch (R2_GLOBALS._sceneManager._previousScene) {
 	case 200:
-		_field412 = 55;
+		_currButtonY = 55;
 		break;
 	case 300:
-		_field412 = 43;
+		_currButtonY = 43;
 		break;
 	case 700:
-		_field412 = 139;
+		_currButtonY = 139;
 		break;
 	case 850:
-		_field412 = 91;
+		_currButtonY = 91;
 		break;
 	default:
 		R2_GLOBALS._sceneManager._previousScene = 200;
-		_field412 = 55;
+		_currButtonY = 55;
 		break;
 	}
 
-	_currentFloor.setPosition(Common::Point(111, _field412));
+	_currentFloor.setPosition(Common::Point(111, _currButtonY));
 }
 
 void Scene250::signal() {
-	if (_field41A)
+	if (_skippingFl)
 		_sceneMode = 20;
 
 	switch (_sceneMode) {
@@ -2664,20 +2663,24 @@ void Scene250::signal() {
 		R2_GLOBALS._player.setPosition(Common::Point(261, 185));
 		ADD_MOVER(R2_GLOBALS._player, 261, 15);
 
-		_field416 = 0;
+		_elevatorSpeed = 0;
 		_sceneMode = 2;
 		break;
 	case 2:
-		_sceneMode = ((_field414 - 12) == _field412) ? 4 : 3;
+		if (_destButtonY - 12 == _currButtonY)
+			_sceneMode = 4;
+		else 
+			_sceneMode = 3;
+
 		signal();
 		break;
 	case 3:
 		_currentFloor.setPosition(Common::Point(111, _currentFloor._position.y + 12));
-		_field412 += 12;
+		_currButtonY += 12;
 		R2_GLOBALS._player.setPosition(Common::Point(261, 185));
 		ADD_MOVER(R2_GLOBALS._player, 261, 15);
 
-		if ((_field414 - 12) == _field412)
+		if ((_destButtonY - 12) == _currButtonY)
 			_sceneMode = 4;
 		break;
 	case 4:
@@ -2699,12 +2702,12 @@ void Scene250::signal() {
 		R2_GLOBALS._player.setup(250, 1, 2);
 		R2_GLOBALS._player.setPosition(Common::Point(261, 15));
 		ADD_MOVER(R2_GLOBALS._player, 261, 185);
-		_field416 = 0;
+		_elevatorSpeed = 0;
 		_sceneMode = 7;
 		break;
 	case 7:
-		_field418 = 1;
-		if ((_field414 + 12) == _field412)
+		_skippableFl = true;
+		if ((_destButtonY + 12) == _currButtonY)
 			_sceneMode = 9;
 		else
 			_sceneMode = 8;
@@ -2712,11 +2715,11 @@ void Scene250::signal() {
 		break;
 	case 8:
 		_currentFloor.setPosition(Common::Point(111, _currentFloor._position.y - 12));
-		_field412 -= 12;
+		_currButtonY -= 12;
 		R2_GLOBALS._player.setPosition(Common::Point(261, 15));
 		ADD_MOVER(R2_GLOBALS._player, 261, 185);
 
-		if ((_field414 + 12) == _field412)
+		if ((_destButtonY + 12) == _currButtonY)
 			_sceneMode = 9;
 		break;
 	case 9:
@@ -2732,7 +2735,7 @@ void Scene250::signal() {
 		break;
 	case 20:
 		// Handle changing scene
-		switch (_field414) {
+		switch (_destButtonY) {
 		case 55:
 			R2_GLOBALS._sceneManager.changeScene(200);
 			break;
@@ -2755,12 +2758,13 @@ void Scene250::signal() {
 }
 
 void Scene250::changeFloor(int floorNumber) {
-	_field414 = (floorNumber - 1) * 12 + 43;
-	_button1.setPosition(Common::Point(111, _field414));
+	_destButtonY = (floorNumber - 1) * 12 + 43;
+	_button1.setPosition(Common::Point(111, _destButtonY));
 	_button1.show();
 
-	_sceneMode = (_field412 >= _field414) ? 6 : 1;
-	if (_field414 == _field412)
+	_skippableFl = true;
+	_sceneMode = (_currButtonY >= _destButtonY) ? 6 : 1;
+	if (_destButtonY == _currButtonY)
 		_sceneMode = 20;
 
 	signal();
@@ -2768,8 +2772,8 @@ void Scene250::changeFloor(int floorNumber) {
 
 void Scene250::process(Event &event) {
 	if (!event.handled) {
-		if (((event.eventType == EVENT_KEYPRESS) || (event.btnState != 0)) && _field418) {
-			_field41A = 1;
+		if (((event.eventType == EVENT_KEYPRESS) || (event.btnState == BTNSHIFT_RIGHT)) && _skippableFl) {
+			_skippingFl = true;
 			event.handled = true;
 		}
 
@@ -2780,14 +2784,14 @@ void Scene250::process(Event &event) {
 void Scene250::dispatch() {
 	SceneExt::dispatch();
 
-	if (((_sceneMode == 2) || (_sceneMode == 7)) && (_field416 < 100)) {
-		++_field416;
-		R2_GLOBALS._player._moveDiff.y = _field416 / 5;
+	if (((_sceneMode == 2) || (_sceneMode == 7)) && (_elevatorSpeed < 100)) {
+		++_elevatorSpeed;
+		R2_GLOBALS._player._moveDiff.y = _elevatorSpeed / 5;
 	}
 
 	if (((_sceneMode == 5) || (_sceneMode == 10)) && (R2_GLOBALS._player._moveDiff.y > 4)) {
-		--_field416;
-		R2_GLOBALS._player._moveDiff.y = _field416 / 7 + 3;
+		--_elevatorSpeed;
+		R2_GLOBALS._player._moveDiff.y = (_elevatorSpeed / 7) + 3;
 	}
 }
 

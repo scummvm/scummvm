@@ -1984,7 +1984,7 @@ void Scene840::BoatKeysInset::process(Event &event) {
 			CursorType cursorId = BF_GLOBALS._events.getCursor();
 			BF_GLOBALS._events.setCursor(cursorId);
 
-			if ((event.eventType == EVENT_BUTTON_DOWN) && (cursorId == CURSOR_WALK) && (event.btnState == 3)) {
+			if ((event.eventType == EVENT_BUTTON_DOWN) && (cursorId == CURSOR_WALK) && (event.btnState == BTNSHIFT_RIGHT)) {
 				BF_GLOBALS._events.setCursor(CURSOR_USE);
 				event.handled = true;
 			}

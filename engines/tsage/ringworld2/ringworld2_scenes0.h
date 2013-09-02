@@ -310,7 +310,7 @@ public:
 class Scene250: public SceneExt {
 	class Button: public SceneActor {
 	public:
-		int _floorNumber, _v2;
+		int _floorNumber;
 		Button();
 		void setFloor(int floorNumber);
 
@@ -318,7 +318,8 @@ class Scene250: public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _field412, _field414, _field416, _field418, _field41A;
+	int _currButtonY, _destButtonY, _elevatorSpeed;
+	bool _skippingFl, _skippableFl;
 	NamedHotspot _background, _item2, _item3, _item4;
 	Button _button1, _currentFloor;
 	Button _floor1, _floor2, _floor3, _floor4, _floor5;

@@ -1220,7 +1220,7 @@ void Scene560::SafeInset::process(Event &event) {
 		}
 
 		if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-				(event.btnState == 3)) {
+				(event.btnState == BTNSHIFT_RIGHT)) {
 			BF_GLOBALS._events.setCursor(CURSOR_USE);
 			event.handled = true;
 		}

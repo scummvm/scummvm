@@ -46,8 +46,8 @@ public:
 	SpeakerGameText _gameTextSpeaker;
 	AnimationPlayer _animationPlayer;
 
-	int _field412;
-	int _fieldD2E;
+	int _animCounter;
+	bool _forceCheckAnimationFl;
 public:
 	Scene1000();
 
@@ -89,7 +89,7 @@ class Scene1100 : public SceneExt {
 	};
 
 public:
-	int _field412, _field414;
+	int _nextStripNum, _paletteRefreshStatus;
 	SpeakerSeeker1100 _seekerSpeaker;
 	SpeakerQuinn1100 _quinnSpeaker;
 	SpeakerChief1100 _chiefSpeaker;
@@ -103,20 +103,20 @@ public:
 	NamedHotspot _item7;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
-	SceneActor _actor10;
-	SceneActor _actor11;
-	SceneActor _actor12;
-	SceneActor _actor13;
-	SceneActor _actor14;
-	SceneActor _actor15;
-	BackgroundSceneObject _object1;
+	SceneActor _shipFormation;
+	SceneActor _shipFormationShadow;
+	SceneActor _shotImpact1;
+	SceneActor _shotImpact2;
+	SceneActor _shotImpact3;
+	SceneActor _shotImpact4;
+	SceneActor _shotImpact5;
+	SceneActor _laserShot;
+	SceneActor _animation;
+	SceneActor _leftImpacts;
+	SceneActor _runningGuy1;
+	SceneActor _runningGuy2;
+	SceneActor _runningGuy3;
+	BackgroundSceneObject _rightLandslide;
 	BackgroundSceneObject _object2;
 	Seeker _seeker;
 	Trooper _trooper;
@@ -730,15 +730,15 @@ class Scene1700 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -755,13 +755,13 @@ public:
 	SceneActor _actor6;
 	SceneActor _actor7;
 	SceneActor _actor8;
-	SceneActor _actor9;
+	SceneActor _ledgeHopper;
 	SceneActor _actor10;
 	Actor11 _actor11;
 	Actor12 _actor12;
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
+	NorthExit _northExit;
+	SouthExit _southExit;
+	WestExit _westExit;
 	SequenceManager _sequenceManager;
 
 	int _field77A;
@@ -769,7 +769,7 @@ public:
 
 	Scene1700();
 	void synchronize(Serializer &s);
-	void subAF3F8();
+	void enterArea();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
@@ -777,54 +777,54 @@ public:
 };
 
 class Scene1750 : public SceneExt {
-	class Actor4 : public SceneActor {
+	class SpeedSlider : public SceneActor {
 	public:
-		int _fieldA4;
-		int _fieldA6;
-		int _fieldA8;
-		int _fieldAA;
-		int _fieldAC;
-		int _fieldAE;
+		int _incrAmount;
+		int _xp;
+		int _ys;
+		int _height;
+		int _thumbHeight;
+		bool _mouseDown;
 
-		Actor4();
+		SpeedSlider();
 		virtual void synchronize(Serializer &s);
-		void subB1A76(int arg1, int arg2, int arg3, int arg4, int arg5);
-		void subB1B27();
+		void setupSlider(int incrAmount, int xp, int ys, int height, int thumbHeight);
+		void calculateSlider();
 
 		virtual void remove();
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor5 : public SceneActor {
+	class Button : public SceneActor {
 	public:
-		int _fieldA4;
+		int _buttonId;
 
-		Actor5();
+		Button();
 		virtual void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	NamedHotspot _item5;
+	NamedHotspot _background;
+	NamedHotspot _redLights;
+	NamedHotspot _greenLights;
+	NamedHotspot _frontView;
+	NamedHotspot _rearView;
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;
-	Actor4 _actor4;
-	Actor5 _actor5;
-	Actor5 _actor6;
-	Actor5 _actor7;
+	SpeedSlider _speedSlider;
+	Button _forwardButton;
+	Button _backwardButton;
+	Button _exitButton;
 	SequenceManager _sequenceManager;
 	PaletteRotation *_rotation;
 
-	int _field412;
+	int _direction;
 	int _field413;
-	int _field415;
+	int _speed;
 	int _field417;
 	int _field419;
 	int _field41B;

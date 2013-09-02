@@ -3057,7 +3057,7 @@ void Scene2700::Action4::signal() {
 
 void Scene2700::Area1::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
@@ -3107,7 +3107,7 @@ void Scene2700::Area1::process(Event &event) {
 
 void Scene2700::Area2::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;

@@ -413,8 +413,8 @@ void MortevielleEngine::prepareScreenType3() {
  * @remarks	Originally called 'calch'
  */
 void MortevielleEngine::updateHour(int &day, int &hour, int &minute) {
-	int newHour = readclock();
-	int th = _currentHourCount + ((newHour - _currentDayHour) / _inGameHourDuration);
+	int newTime = readclock();
+	int th = _currentHourCount + ((newTime - _currentTime) / _inGameHourDuration);
 	minute = ((th % 2) + _currHalfHour) * 30;
 	hour = ((uint)th >> 1) + _currHour;
 	if (minute == 60) {
@@ -1082,7 +1082,7 @@ void MortevielleEngine::initGame() {
 	if (!_coreVar._alreadyEnteredManor)
 		_blo = true;
 	_inGameHourDuration = kTime1;
-	_currentDayHour = readclock();
+	_currentTime = readclock();
 }
 
 /**
@@ -1465,8 +1465,8 @@ void MortevielleEngine::gameLoaded() {
 	_x = 0;
 	_y = 0;
 	_num = 0;
-	_startHour = 0;
-	_endHour = 0;
+	_startTime = 0;
+	_endTime = 0;
 	_searchCount = 0;
 	_roomDoorId = OWN_ROOM;
 	_syn = true;
@@ -2156,12 +2156,7 @@ void MortevielleEngine::drawRightFrame() {
  * Read the current system time
  */
 int MortevielleEngine::readclock() {
-	TimeDate dateTime;
-	g_system->getTimeAndDate(dateTime);
-
-	int m = dateTime.tm_min * 60;
-	int h = dateTime.tm_hour * 3600;
-	return h + m + dateTime.tm_sec;
+	return (int)(g_system->getMillis() / 1000);
 }
 
 /**
@@ -2224,12 +2219,12 @@ void MortevielleEngine::prepareRoom() {
 		if (_coreVar._faithScore > 65)
 			_inGameHourDuration -= ((_inGameHourDuration / 3) * 2);
 
-		int newHour = readclock();
-		if ((newHour - _currentDayHour) > _inGameHourDuration) {
+		int newTime = readclock();
+		if ((newTime - _currentTime) > _inGameHourDuration) {
 			bool activeMenu = _menu._menuActive;
 			_menu.eraseMenu();
-			_currentHourCount += ((newHour - _currentDayHour) / _inGameHourDuration);
-			_currentDayHour = newHour;
+			_currentHourCount += ((newTime - _currentTime) / _inGameHourDuration);
+			_currentTime = newTime;
 			switch (_place) {
 			case GREEN_ROOM:
 			case DARKBLUE_ROOM:
@@ -2279,7 +2274,7 @@ void MortevielleEngine::prepareRoom() {
 					_currBitIndex = 0;
 					if (!_uptodatePresence) {
 						_uptodatePresence = true;
-						_startHour = readclock();
+						_startTime = readclock();
 						if (getRandomNumber(1, 5) < 5) {
 							clearVerbBar();
 							prepareScreenType2();
@@ -2297,11 +2292,11 @@ void MortevielleEngine::prepareRoom() {
 				_menu.drawMenu();
 		}
 	}
-	_endHour = readclock();
-	if ((_uptodatePresence) && ((_endHour - _startHour) > 17)) {
+	_endTime = readclock();
+	if ((_uptodatePresence) && ((_endTime - _startTime) > 17)) {
 		getPresenceBitIndex(_place);
 		_uptodatePresence = false;
-		_startHour = 0;
+		_startTime = 0;
 		if ((_coreVar._currPlace > OWN_ROOM) && (_coreVar._currPlace < DINING_ROOM))
 			_anyone = true;
 	}
