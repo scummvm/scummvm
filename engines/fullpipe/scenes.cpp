@@ -1370,10 +1370,10 @@ void scene01_initScene(Scene *sc, int entrance) {
 			pic->_flags &= 0xFFFB;
 	}
 
-	if (entrance != TrubaLeft ) {
+	if (entrance != TrubaLeft) {
 		StaticANIObject *bootAnim = sc->getStaticANIObject1ById(ANI_BOOT_1, -1);
 		if (bootAnim)
-			bootAnim->_flags &= 0xFFFB;
+			bootAnim->_flags &= ~0x04;
 	}
 
 	setElevatorButton(sO_Level2, ST_LBN_2N);
