@@ -536,9 +536,10 @@ void Dropdown::ddm__people() {
 
 void Dropdown::ddm__objects() {
 	ddm_o.start_afresh();
-	for (byte fv = 0; fv < numobjs; fv++)
+	for (byte fv = 0; fv < numobjs; fv++) {
 		if (_vm->_gyro->dna.obj[fv])
 			ddm_o.opt(_vm->_gyro->get_thing(fv + 1), _vm->_gyro->get_thingchar(fv + 1), "", true);
+	}
 	ddm_o.display();
 }
 
@@ -567,7 +568,7 @@ void Dropdown::ddm__with() {
 
 		// We disable the "give" option if: (a), you haven't selected anybody, (b), the person you've selected isn't in the room, or (c), the person you've selected is YOU!
 		
-		if ((_vm->_gyro->last_person != _vm->_gyro->pavalot) || (_vm->_gyro->last_person != _vm->_acci->nowt) || (_vm->_gyro->whereis[_vm->_gyro->last_person - 1] != _vm->_gyro->dna.room))
+		if ((_vm->_gyro->last_person == _vm->_gyro->pavalot) || (_vm->_gyro->last_person == _vm->_acci->nowt) || (_vm->_gyro->whereis[_vm->_gyro->last_person - 150] != _vm->_gyro->dna.room))
 			ddm_o.opt("Give to...", 'G', "", false); /* Not here. */
 		else {
 			ddm_o.opt(Common::String("Give to ") + _vm->_gyro->getname(_vm->_gyro->last_person), 'G', "", true);
@@ -782,6 +783,7 @@ void Dropdown::do__with() {
 		default: {
 			_vm->_acci->person = _vm->_acci->thing;
 			_vm->_acci->thing = 254;
+			_vm->_gyro->subjnumber = 0;
 		}
 		}
 	}
@@ -877,15 +879,15 @@ void Dropdown::menu_link() { // TODO: Optimize it ASAP!!! It really needs it...
 						ddm_o.wipe();
 						_vm->_graphics->_surface.copyFrom(backup);
 						_vm->_graphics->refreshScreen();
-						_vm->_lucerna->holdLeftMouse = true;
 						
 						if (((ddm_o.left * 8) <= cursorPos.x) && (cursorPos.x <= (ddm_o.left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
-							// If we clicked on the same menu item on the bar...
+							// If we clicked on the same menu item (the one that is already active) on the bar...
 							_vm->_lucerna->holdLeftMouse = false;
 							return;
+						} else {
+							_vm->_lucerna->holdLeftMouse = true;
+							break;
 						}
-
-						break;
 					}
 				}
 	

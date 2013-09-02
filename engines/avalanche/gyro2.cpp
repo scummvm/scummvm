@@ -455,10 +455,10 @@ char Gyro::get_thingchar(byte which) {
 		if (dna.winestate == 3)
 			get_thingchar_result = 'V'; /* Vinegar */
 		else
-			get_thingchar_result = thingchar[which];
+			get_thingchar_result = thingchar[which - 1];
 		break;
 	default:
-		get_thingchar_result = thingchar[which];
+		get_thingchar_result = thingchar[which - 1];
 	}
 	return get_thingchar_result;
 }

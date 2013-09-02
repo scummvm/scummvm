@@ -580,7 +580,7 @@ public:
 	Common::File demofile; // of demo_type
 	Common::DumpFile demofile_save; // uruk added it - first use located in constructor of Basher
 
-	char last_person; /* Last person to have been selected using the People
+	byte last_person; /* Last person to have been selected using the People
 						menu. */
 
 	bool doing_sprite_run; /* Only set to True if we're doing a sprite_run
