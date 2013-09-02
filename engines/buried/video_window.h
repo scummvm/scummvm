@@ -37,7 +37,7 @@ namespace Buried {
 
 class VideoWindow : public Window {
 public:
-	VideoWindow(BuriedEngine *vm);
+	VideoWindow(BuriedEngine *vm, Window *parent = 0);
 	~VideoWindow();
 
 	// ScummVM-specific interface
