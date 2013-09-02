@@ -70,6 +70,7 @@ public:
 	Graphics::Font *createFont(int size) const;
 	Cursor setCursor(Cursor newCursor);
 	Graphics::Surface *getBitmap(uint32 bitmapID);
+	Graphics::Surface *getBitmap(const Common::String &fileName);
 	uint32 getColor(byte r, byte g, byte b);
 
 	void invalidateRect(const Common::Rect &rect, bool erase = true);
