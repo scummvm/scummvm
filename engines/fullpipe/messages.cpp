@@ -414,7 +414,25 @@ bool MessageQueue::checkGlobalExCommandList2() {
 }
 
 void MessageQueue::finish() {
-	warning("STUB: MessageQueue::finish()");
+	if (!_parId)
+		return;
+
+	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_parId);
+
+	_parId = 0;
+
+	if (!mq)
+		return;
+
+	if (!_flag1) {
+		mq->update();
+		return;
+	}
+
+	mq->_counter--;
+
+	if (!mq->_counter && !mq->_exCommands.size())
+		mq->update();
 }
 
 void MessageQueue::replaceKeyCode(int key1, int key2) {
