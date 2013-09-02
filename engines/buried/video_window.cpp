@@ -24,12 +24,16 @@
 #include "buried/graphics.h"
 #include "buried/video_window.h"
 
+#include "common/system.h"
+#include "graphics/surface.h"
 #include "video/avi_decoder.h"
 
 namespace Buried {
 
 VideoWindow::VideoWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent), _video(0), _mode(kModeClosed), _lastFrame(0) {
 	_vm->addVideo(this);
+	_needsPalConversion = false;
+	_ownedFrame = 0;
 }
 
 VideoWindow::~VideoWindow() {
@@ -101,6 +105,17 @@ bool VideoWindow::openVideo(const Common::String &fileName) {
 		return false;
 	}
 
+	if (!_vm->isTrueColor()) {
+		Graphics::PixelFormat videoFormat = _video->getPixelFormat();
+
+		if (videoFormat.bytesPerPixel == 1) {
+			_needsPalConversion = true;
+		} else {
+			_video->setDitheringPalette(_vm->_gfx->getDefaultPalette());
+			_needsPalConversion = false;
+		}
+	}
+
 	_mode = kModeOpen;
 	return true;
 }
@@ -111,6 +126,12 @@ void VideoWindow::closeVideo() {
 		_video = 0;
 		_mode = kModeClosed;
 		_lastFrame = 0;
+
+		if (_ownedFrame) {
+			_ownedFrame->free();
+			delete _ownedFrame;
+			_ownedFrame = 0;
+		}
 	}
 }
 
@@ -119,8 +140,32 @@ void VideoWindow::updateVideo() {
 		if (_video->needsUpdate()) {
 			// Store the frame for later
 			const Graphics::Surface *frame = _video->decodeNextFrame();
-			if (frame)
-				_lastFrame = frame;
+			if (frame) {
+				if (_ownedFrame) {
+					_ownedFrame->free();
+					delete _ownedFrame;
+					_ownedFrame = 0;
+				}
+
+				if (_vm->isTrueColor()) {
+					// Convert to the screen format if necessary
+					if (frame->format == g_system->getScreenFormat()) {
+						_lastFrame = frame;
+					} else {
+						_ownedFrame = frame->convertTo(g_system->getScreenFormat(), _video->getPalette());
+						_lastFrame = _ownedFrame;
+					}
+				} else {
+					if (_needsPalConversion) {
+						// If it's a palette video, ensure it's using the screen palette
+						_ownedFrame = remapPalettedFrame(frame, _video->getPalette());
+						_lastFrame = _ownedFrame;
+					} else {
+						// Assume it's in the right format from dithering
+						_lastFrame = frame;
+					}
+				}
+			}
 
 			// Invalidate the window so it gets updated
 			invalidateWindow();
@@ -136,6 +181,57 @@ void VideoWindow::updateVideo() {
 void VideoWindow::onPaint() {
 	if (_lastFrame)
 		_vm->_gfx->blit(_lastFrame, _rect.left, _rect.top);
+}
+
+Graphics::Surface *VideoWindow::remapPalettedFrame(const Graphics::Surface *frame, const byte *palette) {
+	// This is pretty much the same as the Cinepak one
+	// It seems to work for the one video I know that needs it (SWLOGO.BTV)
+
+	byte palMap[256];
+	const byte *screenPal = _vm->_gfx->getDefaultPalette();
+
+	for (int i = 0; i < 256; i++) {
+		int r = palette[i * 3];
+		int g = palette[i * 3 + 1];
+		int b = palette[i * 3 + 2];
+
+		int diff = 0x7FFFFFFF;
+		byte result = 0;
+
+		for (int j = 0; j < 256; j++) {
+			int bDiff = b - (int)screenPal[j * 3 + 2];
+			int curDiffB = diff - (bDiff * bDiff);
+
+			if (curDiffB > 0) {
+				int gDiff = g - (int)screenPal[j * 3 + 1];
+				int curDiffG = curDiffB - (gDiff * gDiff);
+
+				if (curDiffG > 0) {
+					int rDiff = r - (int)screenPal[j * 3];
+					int curDiffR = curDiffG - (rDiff * rDiff);
+
+					if (curDiffR > 0) {
+						diff -= curDiffR;
+						result = j;
+
+						if (diff == 0)
+							break;
+					}
+				}
+			}
+		}
+
+		palMap[i] = result;
+	}
+
+	Graphics::Surface *convertedSurface = new Graphics::Surface();
+	convertedSurface->create(frame->w, frame->h, frame->format);
+
+	for (int y = 0; y < frame->h; y++)
+		for (int x = 0; x < frame->w; x++)
+			*((byte *)convertedSurface->getBasePtr(x, y)) = palMap[*((byte *)frame->getBasePtr(x, y))];
+
+	return convertedSurface;
 }
 
 } // End of namespace Buried
