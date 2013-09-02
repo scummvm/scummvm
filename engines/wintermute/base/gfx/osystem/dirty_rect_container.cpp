@@ -91,6 +91,12 @@ void DirtyRectContainer::reset() {
 		delete _rectArray[i];
 		_rectArray.remove_at(i);
 	}
+
+	for (int i = _cleanMe.size() - 1; i >= 0; i--) {
+		delete _cleanMe[i];
+		_cleanMe.remove_at(i);
+	}
+
 	_disableDirtyRects = true;
 	delete _clipRect;
 	_clipRect = nullptr;
@@ -140,6 +146,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	if (_disableDirtyRects) {
 		return getFallback();
 	}
+
+	assert(_cleanMe.size() == 0);
 
 	Common::Array<Common::Rect *> ret;
 	Common::Array<Common::Rect *> queue;
@@ -204,6 +212,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				        intersecting.right == candidate->right
 				   ) { // SE case
 					Common::Rect *neslice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), neslice);
+
 					neslice->bottom = intersecting.top;
 					neslice->left = intersecting.left;
 					assert(neslice->isValidRect());
@@ -223,6 +233,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           intersecting.right == candidate->right
 				          ) { // NE
 					Common::Rect *seslice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), seslice);
 					seslice->top = intersecting.bottom;
 					seslice->left = intersecting.left;
 					assert(seslice->isValidRect());
@@ -243,6 +254,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           intersecting.right <= candidate->right
 				          ) {     // NW
 					Common::Rect *swslice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), swslice);
 					swslice->top = intersecting.bottom;
 					swslice->right = intersecting.right;
 					assert(swslice->isValidRect());
@@ -262,6 +274,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           intersecting.right <= candidate->right
 				          ) { // SW
 					Common::Rect *nwslice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), nwslice);
 					nwslice->bottom = intersecting.top;
 					nwslice->right = intersecting.right;
 					assert(nwslice->isValidRect());
@@ -281,6 +294,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           existing->bottom <= candidate->bottom) { // Cross shaped intersections
 					Common::Rect *top_slice = new Common::Rect(*candidate);
 					Common::Rect *bottom_slice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), top_slice);
+					_cleanMe.insert_at(_cleanMe.size(), bottom_slice);
 					top_slice->bottom = existing->top;
 					bottom_slice->top = existing->bottom;
 
@@ -301,11 +316,14 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           existing->top <= candidate->top &&
 				           existing->bottom >= candidate->bottom) {
 					Common::Rect *left_slice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), left_slice);
 					left_slice->right = existing->left;
 					if (left_slice->height() > 0 && left_slice->width() > 0)
 						queue.insert_at(queue.size(), left_slice);
 
 					Common::Rect *right_slice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), right_slice);
+
 					right_slice->right = existing->left;
 					if (right_slice->height() > 0 && right_slice->width() > 0)
 						queue.insert_at(queue.size(), right_slice);

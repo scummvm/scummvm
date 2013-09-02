@@ -46,6 +46,7 @@ public:
 	Common::Array<Common::Rect *> getFallback();
 private:
 	Common::Array<Common::Rect *> _rectArray;
+	Common::Array<Common::Rect *> _cleanMe;
 	Common::Rect *_clipRect;
 	bool isHuge(const Common::Rect *rect);
 };
