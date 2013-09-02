@@ -842,6 +842,7 @@ void Dropdown::menu_link() { // TODO: Optimize it ASAP!!! It really needs it...
 			do { 
 				_vm->updateEvents();
 
+				// We updadte the cursor's picture.
 				cursorPos = _vm->getMousePos();
 				// Change arrow...
 				if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
@@ -883,13 +884,22 @@ void Dropdown::menu_link() { // TODO: Optimize it ASAP!!! It really needs it...
 				// NOT clicked button...
 				if ((ddm_o.firstlix) && ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8)
 					&& (cursorPos.y >= 12) && (cursorPos.y <= (ddm_o.fly * 2 + 1)))) {
-						do {
-							_vm->updateEvents();
+
+						// We act only if the button is relased over a menu item.
+						Common::Event event;
+						while (!_vm->shouldQuit()) {
+							cursorPos = _vm->getMousePos();
+							ddm_o.lightup(cursorPos);
 							_vm->_graphics->refreshScreen();
-						} while (_vm->_lucerna->holdLeftMouse);
+
+							_vm->updateEvents();
+							if (!_vm->_lucerna->holdLeftMouse)
+								break;
+						}
+
 						uint16 which = (cursorPos.y - 26) / 20;
 						ddm_o.select(which);
-						if (ddm_o.oo[which].valid)
+						if (ddm_o.oo[which].valid) // If the menu item wasn't active, we do nothing.
 							return;
 				}
 			}
