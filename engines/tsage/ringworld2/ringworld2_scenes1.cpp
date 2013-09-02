@@ -10397,7 +10397,7 @@ void Scene1700::enterArea() {
 
 	warning("set_pane_p(_paneNumber);");
 
-	if (_sceneMode != 40 && R2_GLOBALS._v565F6 == 0 && R2_GLOBALS._v565F8 == 0) {
+	if (_sceneMode != 40 && R2_GLOBALS._v565F6 == 0) {
 		_ledgeHopper.postInit();
 		_ledgeHopper.setup(1701, 1, 1);
 		_ledgeHopper.setPosition(Common::Point(220, 137));
@@ -10747,43 +10747,154 @@ void Scene1700::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1750 -
+ * Scene 1750 - Rim Transport
  *
  *--------------------------------------------------------------------------*/
-Scene1750::Actor4::Actor4() {
-	_fieldA4 = 0;
-	_fieldA6 = 0;
-	_fieldA8 = 0;
-	_fieldAA = 0;
-	_fieldAC = 0;
-	_fieldAE = 0;
+
+Scene1750::Button::Button() {
+	_buttonId = 0;
 }
 
-void Scene1750::Actor4::synchronize(Serializer &s) {
+void Scene1750::Button::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
-	s.syncAsSint16LE(_fieldA4);
-	s.syncAsSint16LE(_fieldA6);
-	s.syncAsSint16LE(_fieldA8);
-	s.syncAsSint16LE(_fieldAA);
-	s.syncAsSint16LE(_fieldAC);
-	s.syncAsSint16LE(_fieldAE);
+	s.syncAsSint16LE(_buttonId);
 }
 
-Scene1750::Actor5::Actor5() {
-	_fieldA4 = 0;
+bool Scene1750::Button::startAction(CursorType action, Event &event) {
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+
+	Scene1750 *scene = (Scene1750 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_buttonId) {
+	case 1:
+		// Forward button
+		show();
+		scene->_backwardButton.hide();
+		if (scene->_speed < 0)
+			scene->_speed = -scene->_speed;
+		scene->_direction = 1;
+		break;
+	case 2:
+		// Backwards button
+		show();
+		scene->_forwardButton.hide();
+		if (scene->_speed > 0)
+			scene->_speed = -scene->_speed;
+		scene->_direction = -1;
+		break;
+	case 3:
+		// Exit button
+		if (scene->_rotation->_idxChange == 0) {
+			show();
+			R2_GLOBALS._sceneManager.changeScene(1700);
+		} else {
+			scene->_speed = 0;
+			scene->_speedSlider._moveRate = 20;
+			scene->_forwardButton._moveDiff.y = 1;
+			Common::Point pt(286, 143);
+			NpcMover *mover = new NpcMover();
+			scene->_speedSlider.addMover(mover, &pt, NULL);
+		}
+	default:
+		break;
+	}
+
+	return true;
 }
 
-void Scene1750::Actor5::synchronize(Serializer &s) {
+/*------------------------------------------------------------------------*/
+
+Scene1750::SpeedSlider::SpeedSlider() {
+	_incrAmount = 0;
+	_xp = 0;
+	_ys = 0;
+	_height = 0;
+	_thumbHeight = 0;
+	_mouseDown = false;
+}
+
+void Scene1750::SpeedSlider::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
-	s.syncAsSint16LE(_fieldA4);
+	s.syncAsSint16LE(_incrAmount);
+	s.syncAsSint16LE(_xp);
+	s.syncAsSint16LE(_ys);
+	s.syncAsSint16LE(_height);
+	s.syncAsSint16LE(_thumbHeight);
+	s.syncAsSint16LE(_mouseDown);
 }
+
+void Scene1750::SpeedSlider::setupSlider(int incrAmount, int xp, int ys, int height, int thumbHeight) {
+	_mouseDown = false;
+	_incrAmount = incrAmount;
+	_xp = xp;
+	_ys = ys;
+	_height = height;
+	_thumbHeight = thumbHeight;
+
+	postInit();
+	setup(1750, 1, 1);
+	fixPriority(255);
+	setPosition(Common::Point(_xp, _ys + ((_height * (incrAmount - 1)) / (_thumbHeight - 1))));
+}
+
+void Scene1750::SpeedSlider::calculateSlider() {
+	Scene1750 *scene = (Scene1750 *)R2_GLOBALS._sceneManager._scene;
+
+	int tmpVar = (_height / (_thumbHeight - 1)) / 2;
+	int tmpVar2 = ((_position.y - _ys + tmpVar) * _thumbHeight) / (_height + 2 * tmpVar);
+
+	setPosition(Common::Point(_xp, _ys + ((_height * tmpVar2) / (_thumbHeight - 1))));
+	scene->_speed = scene->_direction * tmpVar2;
+}
+
+void Scene1750::SpeedSlider::remove() {
+	// Function kept to match IDA. Could be removed.
+	SceneActor::remove();
+}
+
+void Scene1750::SpeedSlider::process(Event &event) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) && 
+			(_bounds.contains(event.mousePos))) {
+		_mouseDown = true;
+		event.eventType = EVENT_NONE;
+	}
+
+	if ((event.eventType == EVENT_BUTTON_UP) && _mouseDown) {
+		_mouseDown = false;
+		event.handled = true;
+		addMover(NULL);
+		calculateSlider();
+	}
+
+	if (_mouseDown) {
+		event.handled = true;
+		if (event.mousePos.y >= _ys) {
+			if (_ys + _height >= event.mousePos.y)
+				setPosition(Common::Point(_xp, event.mousePos.y));
+			else
+				setPosition(Common::Point(_xp, _ys + _height));
+		} else {
+			setPosition(Common::Point(_xp, _ys));
+		}
+	}
+}
+
+bool Scene1750::SpeedSlider::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return SceneActor::startAction(action, event);
+
+	return false;
+}
+
+/*------------------------------------------------------------------------*/
 
 Scene1750::Scene1750() {
-	_field412 = 0;
+	_direction = 0;
 	_field413 = 0;
-	_field415 = 0;
+	_speed = 0;
 	_field417 = 0;
 	_field419 = 0;
 	_field41B = 0;
@@ -10794,115 +10905,13 @@ void Scene1750::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 	SYNC_POINTER(_rotation);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_direction);
 	s.syncAsSint16LE(_field413);
-	s.syncAsSint16LE(_field415);
+	s.syncAsSint16LE(_speed);
 	s.syncAsSint16LE(_field417);
 	s.syncAsSint16LE(_field419);
 	s.syncAsSint16LE(_field41B);
 	s.syncAsSint16LE(_field41D);
-}
-
-void Scene1750::Actor4::subB1A76(int arg1, int arg2, int arg3, int arg4, int arg5) {
-	_fieldA4 = arg1;
-	_fieldAE = 0;
-	_fieldA6 = arg2;
-	_fieldA8 = arg3;
-	_fieldAA = arg4;
-	_fieldAC = arg5;
-
-	postInit();
-	setup(1750, 1, 1);
-	fixPriority(255);
-	setPosition(Common::Point(_fieldA6, _fieldA8 + ((_fieldAA * (arg1 - 1)) / (_fieldAC - 1))));
-}
-
-void Scene1750::Actor4::subB1B27() {
-	Scene1750 *scene = (Scene1750 *)R2_GLOBALS._sceneManager._scene;
-
-	int tmpVar = (_fieldAA / (_fieldAC - 1)) / 2;
-	int tmpVar2 = ((_position.y - _fieldA8 + tmpVar) * _fieldAC) / (_fieldAA + 2 * tmpVar);
-
-	setPosition(Common::Point(_fieldA6, _fieldA8 + ((_fieldAA * tmpVar2) / (_fieldAC - 1))));
-	scene->_field415 = scene->_field412 * tmpVar2;
-}
-
-void Scene1750::Actor4::remove() {
-	// Function kept to match IDA. Could be removed.
-	SceneActor::remove();
-}
-
-void Scene1750::Actor4::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) && (_bounds.contains(event.mousePos))) {
-		_fieldAE = 1;
-		event.eventType = EVENT_NONE;
-	}
-
-	if ((event.eventType == EVENT_BUTTON_UP) && (_fieldAE != 0)) {
-		_fieldAE = 0;
-		event.handled = true;
-		addMover(NULL);
-		subB1B27();
-	}
-
-	if (_fieldAE != 0) {
-		event.handled = true;
-		if (event.mousePos.y >= _fieldA8) {
-			if (_fieldA8 + _fieldAA >= event.mousePos.y)
-				setPosition(Common::Point(_fieldA6, event.mousePos.y));
-			else
-				setPosition(Common::Point(_fieldA6, _fieldA8 + _fieldAA));
-		} else {
-			setPosition(Common::Point(_fieldA6, _fieldA8));
-		}
-	}
-}
-
-bool Scene1750::Actor4::startAction(CursorType action, Event &event) {
-	if (action == CURSOR_USE)
-		return SceneActor::startAction(action, event);
-
-	return false;
-}
-
-bool Scene1750::Actor5::startAction(CursorType action, Event &event) {
-	if (action != CURSOR_USE)
-		return SceneActor::startAction(action, event);
-
-	Scene1750 *scene = (Scene1750 *)R2_GLOBALS._sceneManager._scene;
-
-	switch (_fieldA4) {
-	case 1:
-		show();
-		scene->_actor6.hide();
-		if (scene->_field415 < 0)
-			scene->_field415 ^= 0xFFFE;
-		scene->_field412 = 1;
-		break;
-	case 2:
-		show();
-		scene->_actor5.hide();
-		if (scene->_field415 > 0)
-			scene->_field415 ^= 0xFFFE;
-		scene->_field412 = -1;
-		break;
-	case 3:
-		if (scene->_rotation->_idxChange == 0) {
-			show();
-			R2_GLOBALS._sceneManager.changeScene(1700);
-		} else {
-			scene->_field415 = 0;
-			scene->_actor4._moveRate = 20;
-			scene->_actor5._moveDiff.y = 1;
-			Common::Point pt(286, 143);
-			NpcMover *mover = new NpcMover();
-			scene->_actor4.addMover(mover, &pt, NULL);
-		}
-	default:
-		break;
-	}
-
-	return true;
 }
 
 void Scene1750::postInit(SceneObjectList *OwnerList) {
@@ -10983,39 +10992,39 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	else
 		_actor2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
 
-	_actor4.subB1A76(1, 286, 143, 41, 15);
-	_actor4.setDetails(1750, 24, 1, -1, 1, (SceneItem *) NULL);
+	_speedSlider.setupSlider(1, 286, 143, 41, 15);
+	_speedSlider.setDetails(1750, 24, 1, -1, 1, (SceneItem *) NULL);
 
-	_actor5.postInit();
-	_actor5._fieldA4 = 1;
-	_actor5.setup(1750, 1, 2);
-	_actor5.setPosition(Common::Point(192, 140));
-	_actor5.setDetails(1750, 18, 1, -1, 1, (SceneItem *) NULL);
+	_forwardButton.postInit();
+	_forwardButton._buttonId = 1;
+	_forwardButton.setup(1750, 1, 2);
+	_forwardButton.setPosition(Common::Point(192, 140));
+	_forwardButton.setDetails(1750, 18, 1, -1, 1, (SceneItem *) NULL);
 
-	_actor6.postInit();
-	_actor6._fieldA4 = 2;
-	_actor6.setup(1750, 1, 3);
-	_actor6.setPosition(Common::Point(192, 163));
-	_actor6.setDetails(1750, 18, 1, -1, 1, (SceneItem *) NULL);
-	_actor6.hide();
+	_backwardButton.postInit();
+	_backwardButton._buttonId = 2;
+	_backwardButton.setup(1750, 1, 3);
+	_backwardButton.setPosition(Common::Point(192, 163));
+	_backwardButton.setDetails(1750, 18, 1, -1, 1, (SceneItem *) NULL);
+	_backwardButton.hide();
 
-	_actor7.postInit();
-	_actor7._fieldA4 = 3;
-	_actor7.setup(1750, 1, 5);
-	_actor7.setPosition(Common::Point(230, 183));
-	_actor7.setDetails(1750, 27, 1, -1, 1, (SceneItem *) NULL);
+	_exitButton.postInit();
+	_exitButton._buttonId = 3;
+	_exitButton.setup(1750, 1, 5);
+	_exitButton.setPosition(Common::Point(230, 183));
+	_exitButton.setDetails(1750, 27, 1, -1, 1, (SceneItem *) NULL);
 
-	_field412 = 1;
+	_direction = 1;		// Forward by default
 	_field417 = 0;
 	_field413 = 0;
-	_field415 = 0;
+	_speed = 0;
 	_field419 = ((_rotation->_currIndex - 218) / 4) % 4;
 
-	_item2.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
-	_item3.setDetails(Rect(93, 122, 126, 172), 1750, 15, -1, -1, 1, NULL);
-	_item4.setDetails(Rect(3, 3, 157, 99), 1750, 9, -1, -1, 1, NULL);
-	_item5.setDetails(Rect(162, 3, 316, 99), 1750, 12, -1, -1, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 1750, 6, 1, -1, 1, NULL);
+	_redLights.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
+	_greenLights.setDetails(Rect(93, 122, 126, 172), 1750, 15, -1, -1, 1, NULL);
+	_frontView.setDetails(Rect(3, 3, 157, 99), 1750, 9, -1, -1, 1, NULL);
+	_rearView.setDetails(Rect(162, 3, 316, 99), 1750, 12, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 1750, 6, 1, -1, 1, NULL);
 }
 
 void Scene1750::remove() {
@@ -11041,10 +11050,78 @@ void Scene1750::signal() {
 void Scene1750::process(Event &event) {
 	Scene::process(event);
 	if (!event.handled)
-		_actor4.process(event);
+		_speedSlider.process(event);
 }
 
-void Scene1750::dispatch() {}
+void Scene1750::dispatch() {
+	if (_rotation) {
+		if (!_field417 && (_speed != _field413)) {
+			if (_field413 >= _speed)
+				--_field413;
+			else
+				++_field413;
+
+			_field417 = 21 - ABS(_field413);
+		}
+
+		if (_field417 == 1) {
+			if (_field413 == 0) {
+				_actor3.show();
+				_rotation->_idxChange = 0;
+			} else {
+				if (_rotation->_idxChange == 0)
+					_actor3.hide();
+
+				if (_field413 < -12) {
+					_rotation->setDelay(15 - ABS(_field413));
+					_rotation->_idxChange = -2;
+				} else if (_field413 < 0) {
+					_rotation->setDelay(10 - ABS(_field413));
+					_rotation->_idxChange = -1;
+				} else if (_field413 < 11) {
+					_rotation->setDelay(10 - _field413);
+					_rotation->_idxChange = 1;
+				} else {
+					_rotation->setDelay(15 - _field413);
+					_rotation->_idxChange = 2;
+				}
+			} 
+		}
+
+		if (_field417)
+			--_field417;
+
+		_field41B = _field419;
+		_field419 = ((_rotation->_currIndex - 218) / 4) / 4;
+
+		if ((_field41B + 1) == _field419 || (_field41B - 3)  == _field419) {
+			if (R2_GLOBALS._v565F6 >= 2400) {
+				++R2_GLOBALS._v565F6;
+			}
+		}
+
+		if ((_field41B - 1) == _field419 || (_field41B + 3) == _field419) {
+			if (R2_GLOBALS._v565F6 > -2400) {
+				--R2_GLOBALS._v565F6;
+			}
+		}
+
+		if (_rotation->_currIndex != _field41D) {
+			_field41D = _rotation->_currIndex;
+			_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) / 4) +
+				((R2_GLOBALS._v565F6 % 800) * 4)));
+		}
+	}
+
+	int v = ABS(_actor1._position.y - 158) / 100;
+	if (v < 8) {
+		_actor2.show();
+		_actor2.setPosition(Common::Point((_actor1._position.y <= 158) ? 137 : 148,
+			v * 7 + 122));
+	} else {
+		_actor2.hide();
+	}
+}
 
 /*--------------------------------------------------------------------------
  * Scene 1800 -

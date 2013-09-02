@@ -266,7 +266,6 @@ public:
 	int _v565EB;
 	int _foodCount;
 	int _v565F6;
-	int _v565F8;
 	int _v565FA;
 	int _v5657C;
 	byte _v565AE;

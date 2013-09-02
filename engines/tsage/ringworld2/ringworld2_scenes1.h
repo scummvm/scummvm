@@ -777,54 +777,54 @@ public:
 };
 
 class Scene1750 : public SceneExt {
-	class Actor4 : public SceneActor {
+	class SpeedSlider : public SceneActor {
 	public:
-		int _fieldA4;
-		int _fieldA6;
-		int _fieldA8;
-		int _fieldAA;
-		int _fieldAC;
-		int _fieldAE;
+		int _incrAmount;
+		int _xp;
+		int _ys;
+		int _height;
+		int _thumbHeight;
+		bool _mouseDown;
 
-		Actor4();
+		SpeedSlider();
 		virtual void synchronize(Serializer &s);
-		void subB1A76(int arg1, int arg2, int arg3, int arg4, int arg5);
-		void subB1B27();
+		void setupSlider(int incrAmount, int xp, int ys, int height, int thumbHeight);
+		void calculateSlider();
 
 		virtual void remove();
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor5 : public SceneActor {
+	class Button : public SceneActor {
 	public:
-		int _fieldA4;
+		int _buttonId;
 
-		Actor5();
+		Button();
 		virtual void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	NamedHotspot _item5;
+	NamedHotspot _background;
+	NamedHotspot _redLights;
+	NamedHotspot _greenLights;
+	NamedHotspot _frontView;
+	NamedHotspot _rearView;
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;
-	Actor4 _actor4;
-	Actor5 _actor5;
-	Actor5 _actor6;
-	Actor5 _actor7;
+	SpeedSlider _speedSlider;
+	Button _forwardButton;
+	Button _backwardButton;
+	Button _exitButton;
 	SequenceManager _sequenceManager;
 	PaletteRotation *_rotation;
 
-	int _field412;
+	int _direction;
 	int _field413;
-	int _field415;
+	int _speed;
 	int _field417;
 	int _field419;
 	int _field41B;
