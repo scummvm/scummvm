@@ -251,6 +251,23 @@ Graphics::Surface *GraphicsManager::getBitmap(uint32 bitmapID) {
 	return surface;
 }
 
+Graphics::Surface *GraphicsManager::getBitmap(const Common::String &fileName) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
+
+	if (!stream)
+		error("Could not find bitmap '%s'", fileName.c_str());
+
+	Image::BitmapDecoder decoder;
+	if (!decoder.loadStream(*stream))
+		error("Failed to decode bitmap '%s'", fileName.c_str());
+
+	delete stream;
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->copyFrom(*decoder.getSurface());
+	return surface;
+}
+
 uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 	if (_vm->isTrueColor())
 		return g_system->getScreenFormat().RGBToColor(r, g, b);
