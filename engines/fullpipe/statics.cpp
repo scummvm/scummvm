@@ -1251,8 +1251,8 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 }
 
 Common::Point *Movement::getCurrDynamicPhaseXY(Common::Point &p) {
-	p.x = _currDynamicPhase->_x;
-	p.y = _currDynamicPhase->_y;
+	p.x = _currDynamicPhase->_someX;
+	p.y = _currDynamicPhase->_someY;
 
 	return &p;
 }
