@@ -37,7 +37,7 @@ struct Message;
 
 class Window {
 public:
-	Window(BuriedEngine *vm);
+	Window(BuriedEngine *vm, Window *parent = 0);
 	virtual ~Window();
 
 	// The message types used by Buried in Time's windows

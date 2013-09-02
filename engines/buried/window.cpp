@@ -29,8 +29,7 @@
 
 namespace Buried {
 
-Window::Window(BuriedEngine *vm) : _vm(vm) {
-	_parent = 0;
+Window::Window(BuriedEngine *vm, Window *parent) : _vm(vm), _parent(parent) {
 	_enabled = true;
 }
 
