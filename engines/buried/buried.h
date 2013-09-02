@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 
 #include "engines/engine.h"
 
@@ -40,6 +41,7 @@ struct BuriedGameDescription;
 class Database;
 class GraphicsManager;
 class SoundManager;
+class Window;
 
 class BuriedEngine : public ::Engine {
 protected:
@@ -76,8 +78,22 @@ public:
 	Database *_mainEXE;
 	SoundManager *_sound;
 
+	uint createTimer(Window *window, uint period);
+	bool killTimer(uint timer);
+	void updateTimers();
+
 private:
 	Database *_library;
+
+	struct Timer {
+		Window *owner;
+		uint32 period;
+		uint32 nextTrigger;
+	};
+
+	typedef Common::HashMap<uint, Timer> TimerMap;
+	TimerMap _timers;
+	uint _timerSeed;
 };
 
 } // End of namespace Buried
