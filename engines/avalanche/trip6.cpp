@@ -1573,7 +1573,7 @@ bool Trip::infield(byte which) {
 }
 
 bool Trip::neardoor() {
-	if (_vm->_gyro->numfields < 9) {
+	if (_vm->_gyro->numfields < 8) {
 		/* there ARE no doors here! */
 		return false;
 	}
@@ -1581,7 +1581,7 @@ bool Trip::neardoor() {
 	int16 ux = tr[0].x;
 	int16 uy = tr[0].y + tr[0]._info.yl;
 	bool nd = false;
-	for (byte fv = 9; fv <= _vm->_gyro->numfields; fv++)
+	for (byte fv = 8; fv < _vm->_gyro->numfields; fv++)
 		if ((ux >= _vm->_gyro->fields[fv].x1) && (ux <= _vm->_gyro->fields[fv].x2)
 			&& (uy >= _vm->_gyro->fields[fv].y1) && (uy <= _vm->_gyro->fields[fv].y2)) 
 			nd = true;

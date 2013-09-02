@@ -863,7 +863,8 @@ void Dropdown::menu_link() { // TODO: Optimize it ASAP!!! It really needs it...
 			if (_vm->_lucerna->holdLeftMouse) {
 				if (cursorPos.y > 21) {
 					if (!((ddm_o.firstlix) && ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8)
-						&& (cursorPos.y >= 24) && (cursorPos.y <= (ddm_o.fly * 2 + 1))))) {  // Clicked OUTSIDE the menu.
+						&& (cursorPos.y >= 24) && (cursorPos.y <= (ddm_o.fly * 2 + 1))))) {
+							// Clicked OUTSIDE the menu.
 							if (ddm_o.menunow) {
 								ddm_o.wipe();
 								_vm->_lucerna->holdLeftMouse = false;
@@ -874,9 +875,16 @@ void Dropdown::menu_link() { // TODO: Optimize it ASAP!!! It really needs it...
 					// Clicked on menu bar.
 					if (ddm_o.menunow) {
 						ddm_o.wipe();
-						_vm->_lucerna->holdLeftMouse = true;
 						_vm->_graphics->_surface.copyFrom(backup);
 						_vm->_graphics->refreshScreen();
+						_vm->_lucerna->holdLeftMouse = true;
+						
+						if (((ddm_o.left * 8) <= cursorPos.x) && (cursorPos.x <= (ddm_o.left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
+							// If we clicked on the same menu item on the bar...
+							_vm->_lucerna->holdLeftMouse = false;
+							return;
+						}
+
 						break;
 					}
 				}
@@ -885,8 +893,7 @@ void Dropdown::menu_link() { // TODO: Optimize it ASAP!!! It really needs it...
 				if ((ddm_o.firstlix) && ((cursorPos.x >= ddm_o.flx1 * 8) && (cursorPos.x <= ddm_o.flx2 * 8)
 					&& (cursorPos.y >= 12) && (cursorPos.y <= (ddm_o.fly * 2 + 1)))) {
 
-						// We act only if the button is relased over a menu item.
-						Common::Event event;
+						// We act only if the button is released over a menu item.
 						while (!_vm->shouldQuit()) {
 							cursorPos = _vm->getMousePos();
 							ddm_o.lightup(cursorPos);
