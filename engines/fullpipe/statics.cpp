@@ -217,7 +217,6 @@ void StaticANIObject::setFlags40(bool state) {
 		if (_flags & 0x40)
 			_flags ^= 0x40;
 	}
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
 }
 
 void StaticANIObject::deleteFromGlobalMessageQueue() {
@@ -238,10 +237,10 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 		deleteFromGlobalMessageQueue();
 		_messageQueueId = 0;
 		_messageNum = 0;
-		if (_flags & 2) {
+
+		if (_flags & 2)
 			_flags ^= 2;
-			if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
-		}
+
 		if (mq) {
 			_animExFlag = 0;
 			if (_movement)
@@ -268,7 +267,7 @@ bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
 	}
 
 	_flags |= 2;
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
+
 	_messageNum = msgNum;
 	_messageQueueId = qId;
 
@@ -613,8 +612,7 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 void StaticANIObject::update(int counterdiff) {
 	int mqid;
 
-	debug(0, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
-	if (_id == 322 && _oy != 100) warning("StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
+	debug(6, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
 
 	if (_flags & 2) {
 		_messageNum--;
@@ -624,7 +622,6 @@ void StaticANIObject::update(int counterdiff) {
 		mqid = _messageQueueId;
 		_messageQueueId = 0;
 		_flags ^= 2;
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
 
 		updateGlobalMessageQueue(mqid, _id);
 		return;
@@ -704,7 +701,7 @@ void StaticANIObject::update(int counterdiff) {
 		} else if (_flags & 0x20) {
 			_flags ^= 0x20;
 			_flags |= 1;
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
+
 			_movement->gotoFirstFrame();
 			_movement->getCurrDynamicPhaseXY(point);
 
@@ -726,20 +723,15 @@ void StaticANIObject::update(int counterdiff) {
 			}
 		}
 	}
-
-	debug(0, "   StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
-	if (_id == 322 && _oy != 100)
-	warning("   StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
 }
 
 void StaticANIObject::stopAnim_maybe() {
-	debug(0, "StaticANIObject::stopAnim_maybe()");
+	debug(6, "StaticANIObject::stopAnim_maybe()");
 
 	if (!(_flags & 1))
 		return;
 
 	_flags ^= 1;
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
 
 	int oid = 0;
 	int oldmqid = _messageQueueId;
@@ -906,7 +898,6 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 
 	if (_flags & 1)
 		_flags ^= 1;
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
 
 	_messageQueueId = mqId;
 }
@@ -961,7 +952,6 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 
 	if (mov == _movement) {
 		_flags |= 1;
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
 		_messageQueueId = messageQueueId;
 
 		return true;
@@ -1025,7 +1015,6 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 		_flags &= 0xFFF7;
 
 	_flags |= 1;
-	if (_id == 322) warning("%d [%d, %d] fl: %x", __LINE__, _ox, _oy, _flags);
 
 	_messageQueueId = messageQueueId;
 	_movement->_currDynamicPhase->_countdown = _movement->_currDynamicPhase->_initialCountdown;
