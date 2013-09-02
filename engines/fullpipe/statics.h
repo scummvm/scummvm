@@ -143,6 +143,7 @@ class Movement : public GameObject {
 	void setAlpha(int alpha);
 
 	void setDynamicPhaseIndex(int index);
+	DynamicPhase *getDynamicPhaseByIndex(int idx);
 
 	void removeFirstPhase();
 	bool gotoNextFrame(int callback1, void (*callback2)(int *));

@@ -1047,7 +1047,29 @@ void Shadows::init() {
 }
 
 void Shadows::initMovement(Movement *mov) {
-	warning("STUB: Shadows::initMovement()");
+	uint num;
+
+	if (mov->_currMovement)
+		num = mov->_currMovement->_dynamicPhases.size();
+	else
+		num = mov->_dynamicPhases.size();
+
+	_items.clear();
+	_items.resize(num);
+
+	Common::Point point;
+
+	_items[0].dynPhase = (DynamicPhase *)mov->_staticsObj1;
+	_items[0].dynPhase->getDimensions(&point);
+	_items[0].width = point.x;
+	_items[0].height = point.y;
+
+	for (uint i = 1; i < num; i++) {
+		_items[i].dynPhase = mov->getDynamicPhaseByIndex(i);
+		_items[i].dynPhase->getDimensions(&point);
+		_items[i].width = point.x;
+		_items[i].height = point.y;
+	}
 }
 
 DynamicPhase *Shadows::findSize(int width, int height) {

@@ -1348,6 +1348,22 @@ void Movement::setDynamicPhaseIndex(int index) {
 		gotoPrevFrame();
 }
 
+DynamicPhase *Movement::getDynamicPhaseByIndex(int idx) {
+	debug(7, "Movement::updateCurrDynamicPhase()");
+
+	if (_currMovement) {
+		if (_currMovement->_dynamicPhases.size() == 0 || (uint)idx >= _currMovement->_dynamicPhases.size())
+			return 0;
+
+		return (DynamicPhase *)_currMovement->_dynamicPhases[idx];
+	} else {
+		if (_dynamicPhases.size() == 0 || (uint)idx >= _dynamicPhases.size())
+			return 0;
+
+		return (DynamicPhase *)_dynamicPhases[idx];
+	}
+}
+
 void Movement::loadPixelData() {
 	Movement *mov = this;
 	for (Movement *i = _currMovement; i; i = i->_currMovement)
