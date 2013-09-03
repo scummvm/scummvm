@@ -47,7 +47,6 @@
 #include "avalanche/timeout2.h"
 #include "avalanche/trip6.h"
 #include "avalanche/acci2.h"
-#include "avalanche/basher2.h"
 #include "avalanche/dropdown2.h"
 #include "avalanche/closing2.h"
 
@@ -88,7 +87,6 @@ public:
 	Timeout *_timeout;
 	Trip *_trip;
 	Acci *_acci;
-	Basher *_basher;
 	Dropdown *_dropdown;
 	Closing *_closing;
 

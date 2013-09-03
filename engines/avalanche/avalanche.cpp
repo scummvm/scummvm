@@ -76,7 +76,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _timeout;
 	delete _trip;
 	delete _acci;
-	delete _basher;
 	delete _dropdown;
 	delete _closing;
 }
@@ -99,7 +98,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_timeout = new Timeout(this);
 	_trip = new Trip(this);
 	_acci = new Acci(this);
-	_basher = new Basher(this);
 	_dropdown = new Dropdown(this);
 	_closing = new Closing(this);
 
@@ -108,7 +106,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_scrolls->init();
 	_lucerna->init();
 	_acci->init();
-	_basher->init();
 	_parser->init();
 
 	return Common::kNoError;

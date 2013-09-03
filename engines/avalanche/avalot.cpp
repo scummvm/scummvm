@@ -36,7 +36,6 @@
 #include "avalanche/gyro2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/scrolls2.h"
-#include "avalanche/basher2.h"
 #include "avalanche/dropdown2.h"
 #include "avalanche/pingo2.h"
 #include "avalanche/logger2.h"
@@ -114,8 +113,6 @@ void Avalot::handleKeyDown(Common::Event &event) {
 		if (_vm->_gyro->alive && _vm->_gyro->dna.avvy_is_awake) {
 			_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
 			_vm->_lucerna->showrw();
-			if (_vm->_gyro->demo)
-				_vm->_basher->get_demorec();
 			return;
 		}
 	case Common::KEYCODE_BACKSPACE:
@@ -127,8 +124,6 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	}
 
 	_vm->_lucerna->showrw();
-	if (_vm->_gyro->demo)
-		_vm->_basher->get_demorec();
 }
 
 

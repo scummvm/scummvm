@@ -38,7 +38,6 @@
 #include "avalanche/acci2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/timeout2.h"
-#include "avalanche/basher2.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -152,9 +151,6 @@ void Scrolls::normscroll() {
 	CursorMan.showMouse(true);
 	_vm->_gyro->newpointer(4);
 	_vm->_lucerna->mousepage(1 - _vm->_gyro->cp);
-
-	if (_vm->_gyro->demo)
-		_vm->_basher->get_demorec();
 
 
 
