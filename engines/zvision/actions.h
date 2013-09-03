@@ -239,7 +239,7 @@ private:
 	uint32 _end;
 	uint _mask;
 	uint _framerate;
-	bool _loop;
+	uint _loopCount;
 };
 
 class ActionPreloadAnimation : public ResultAction {

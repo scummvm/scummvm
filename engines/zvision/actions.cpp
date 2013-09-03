@@ -224,15 +224,13 @@ bool ActionPreloadAnimation::execute(ZVision *engine) {
 
 ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
 	char fileName[25];
-	uint loop;
 
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
            "%*[^:]:%*[^:]:%u(%25s %u %u %u %u %u %u %u %*u %*u %u %u)",
-           &_key, fileName, &_x, &_y, &_width, &_height, &_start, &_end, &loop, &_mask, &_framerate);
+           &_key, fileName, &_x, &_y, &_width, &_height, &_start, &_end, &_loopCount, &_mask, &_framerate);
 
 	_fileName = Common::String(fileName);
-	_loop = loop == 1 ? true : false;
 }
 
 bool ActionPlayAnimation::execute(ZVision *engine) {
