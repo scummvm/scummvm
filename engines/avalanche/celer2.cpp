@@ -44,15 +44,17 @@ namespace Avalanche {
 const int16 Celer::kOnDisk = -1;
 
 
+
 Celer::Celer(AvalancheEngine *vm) {
 	_vm = vm;
-	_chunkNum = 0;
+	_spriteNum = 0;
 }
 
 Celer::~Celer() {
-	for (byte i = 0; i < 40; i++)
-		_memory[i].free();
+	forgetBackgroundSprites();
 }
+
+
 
 void Celer::refreshBackgroundSprites() {
 	if (_vm->_gyro->ddmnow)
@@ -272,11 +274,11 @@ void Celer::loadBackgroundSprites(byte number) {
 	}
 
 	f.seek(44);
-	_chunkNum = f.readByte();
-	for (byte i = 0; i < _chunkNum; i++)
+	_spriteNum = f.readByte();
+	for (byte i = 0; i < _spriteNum; i++)
 		_offsets[i] = f.readSint32LE();
 
-	for (byte i = 0; i < _chunkNum; i++) {
+	for (byte i = 0; i < _spriteNum; i++) {
 		f.seek(_offsets[i]);
 		
 		SpriteType sprite;
@@ -286,61 +288,38 @@ void Celer::loadBackgroundSprites(byte number) {
 		sprite._xl = f.readSint16LE();
 		sprite._yl = f.readSint16LE();
 		sprite._size = f.readSint32LE();
-		sprite._natural = f.readByte();
-		sprite._memorise = f.readByte();
+		bool natural = f.readByte();
+		bool memorise = f.readByte();
 				
-		if (sprite._memorise) {
-			_memos[i]._x = sprite._x;
-			_memos[i]._xl = sprite._xl;
-			_memos[i]._y = sprite._y;
-			_memos[i]._yl = sprite._yl;
-			_memos[i]._type = sprite._type;
+		if (memorise) {
+			_sprites[i]._x = sprite._x;
+			_sprites[i]._xl = sprite._xl;
+			_sprites[i]._y = sprite._y;
+			_sprites[i]._yl = sprite._yl;
+			_sprites[i]._type = sprite._type;
 
-			if (sprite._natural) {
-				_memos[i]._type = kNaturalImage; // We simply read from the screen and later, in display_it() we draw it right back.
-				_memos[i]._size = _memos[i]._xl * 8 * _memos[i]._yl + 1; 
-				_memory[i].create(_memos[i]._xl * 8, _memos[i]._yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
+			if (natural) {
+				_sprites[i]._type = kNaturalImage; // We simply read from the screen and later, in display_it() we draw it right back.
+				_sprites[i]._size = _sprites[i]._xl * 8 * _sprites[i]._yl + 1; 
+				_sprites[i]._picture.create(_sprites[i]._xl * 8, _sprites[i]._yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
 
-				for (uint16 y = 0; y < _memos[i]._yl + 1; y++)
-					for (uint16 x = 0; x < _memos[i]._xl * 8; x++)
-						*(byte *)_memory[i].getBasePtr(x, y) = *_vm->_graphics->getPixel(_memos[i]._x * 8 + x, _memos[i]._y + y);
+				for (uint16 y = 0; y < _sprites[i]._yl + 1; y++)
+					for (uint16 x = 0; x < _sprites[i]._xl * 8; x++)
+						*(byte *)_sprites[i]._picture.getBasePtr(x, y) = *_vm->_graphics->getPixel(_sprites[i]._x * 8 + x, _sprites[i]._y + y);
 			} else {
-				_memos[i]._size = sprite._size;
-				_memory[i] = _vm->_graphics->loadPictureRow(f, _memos[i]._xl * 8, _memos[i]._yl + 1); // Celer::forget_chunks() deallocates it.
+				_sprites[i]._size = sprite._size;
+				_sprites[i]._picture = _vm->_graphics->loadPictureRow(f, _sprites[i]._xl * 8, _sprites[i]._yl + 1); // Celer::forget_chunks() deallocates it.
 			}
 		} else
-			_memos[i]._x = kOnDisk;
+			_sprites[i]._x = kOnDisk;
 	}
 	f.close();
 }
 
 void Celer::forgetBackgroundSprites() {
-	for (byte i = 0; i < _chunkNum; i ++)
-		if (_memos[i]._x > kOnDisk)
-			_memory[i].free();
-
-	memset(_memos, 255, sizeof(_memos)); /* x=-1, => on disk. */
-}
-
-void Celer::drawSprite(int16 x, int16 y, int16 xl, int16 yl, PictureType type, const ::Graphics::Surface &picture) {
-	_r.x1 = x;
-	_r.y1 = y;
-	_r.y2 = y + yl;
-
-	switch (type) {
-	case kNaturalImage: // Allow fallthorugh on purpose.
-	case kBgi : {
-		_r.x2 = x + xl + 1;
-		}
-		break;
-	case kEga : {
-		_r.x2 = x + xl;
-		}
-		break;
-	}
-
-	// These pictures are practically parts of the background. -10 is for the drop-down menu.
-	_vm->_graphics->drawPicture(_vm->_graphics->_background, picture, x, y - 10);
+	for (byte i = 0; i < _spriteNum; i ++)
+		if (_sprites[i]._x > kOnDisk)
+			_sprites[i]._picture.free();
 }
 
 void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
@@ -348,12 +327,12 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 	//setactivepage(3);
 	warning("STUB: Celer::show_one()");
 
-	if (_memos[which]._x > kOnDisk) {
+	if (_sprites[which]._x > kOnDisk) {
 		if (destX < 0) {
-			destX = _memos[which]._x * 8;
-			destY = _memos[which]._y;
+			destX = _sprites[which]._x * 8;
+			destY = _sprites[which]._y;
 		}
-		drawSprite(destX, destY, _memos[which]._xl, _memos[which]._yl, _memos[which]._type, _memory[which]);
+		drawSprite(destX, destY, _sprites[which]);
 	} else {
 		Common::File f;
 		if (!f.open(_filename)) { // Filename was set in loadBackgroundSprites().
@@ -370,18 +349,15 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 		sprite._xl = f.readSint16LE();
 		sprite._yl = f.readSint16LE();
 		sprite._size = f.readSint32LE();
-		sprite._natural = f.readByte();
-		sprite._memorise = f.readByte();
-
-		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(f, sprite._xl * 8, sprite._yl + 1);
+		f.skip(2); // For the now not existing natural and memorise data members of the SpriteType (called chunkblocktype in the original).
+		sprite._picture = _vm->_graphics->loadPictureRow(f, sprite._xl * 8, sprite._yl + 1);
 
 		if (destX < 0) {
 			destX = sprite._x * 8;
 			destY = sprite._y;
 		}
-		drawSprite(destX, destY, sprite._xl, sprite._yl, sprite._type, picture);
+		drawSprite(destX, destY, sprite);
 
-		picture.free();
 		f.close();
 	}
 
@@ -393,5 +369,24 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 }
 
 
+
+void Celer::drawSprite(int16 x, int16 y, const SpriteType &sprite) {
+	_r.x1 = x;
+	_r.y1 = y;
+	_r.y2 = y + sprite._yl;
+
+	switch (sprite._type) {
+	case kNaturalImage: // Allow fallthorugh on purpose.
+	case kBgi:
+		_r.x2 = x + sprite._xl + 1;
+		break;
+	case kEga:
+		_r.x2 = x + sprite._xl;
+		break;
+	}
+
+	// These pictures are practically parts of the background. -10 is for the drop-down menu.
+	_vm->_graphics->drawPicture(_vm->_graphics->_background, sprite._picture, x, y - 10);
+}
 
 } // End of namespace Avalanche.
