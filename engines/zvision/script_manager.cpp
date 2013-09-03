@@ -48,6 +48,9 @@ ScriptManager::~ScriptManager() {
 	for (Common::List<Puzzle *>::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); iter++) {
 		delete (*iter);
 	}
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		delete (*iter);
+	}
 }
 
 void ScriptManager::initialize() {
