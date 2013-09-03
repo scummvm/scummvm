@@ -109,6 +109,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_lucerna->init();
 	_acci->init();
 	_basher->init();
+	_parser->init();
 
 	return Common::kNoError;
 }

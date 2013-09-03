@@ -46,6 +46,8 @@ public:
 
 	Parser(AvalancheEngine *vm);
 
+	void init();
+
 	void handleInputText(const Common::Event &event);
 
 	void handleBackspace();
