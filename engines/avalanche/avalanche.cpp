@@ -557,29 +557,29 @@ Common::Point AvalancheEngine::getMousePos() {
 
 // From Bootstrp:
 
-const char AvalancheEngine::runcodes[2][3] = {"et", "Go"};
+const char AvalancheEngine::kRuncodes[2][3] = {"et", "Go"};
 
 
 
 // The original ones were all commented out, so porbably there's no need
 // of these two cursor functions at all. TODO: Remove later.
-void AvalancheEngine::cursor_off() {
-	warning("STUB: cursor_off()");
+void AvalancheEngine::cursorOff() {
+	warning("STUB: cursorOff()");
 }
 
-void AvalancheEngine::cursor_on() {
-	warning("STUB: cursor_on()");
+void AvalancheEngine::cursorOn() {
+	warning("STUB: cursorOn()");
 }
 
 // Needed later.
 void AvalancheEngine::quit() {
-	cursor_on();
+	cursorOn();
 }
 
 // Needed in dos_shell(). TODO: Remove later.
-Common::String AvalancheEngine::command_com() {
-	warning("STUB: command_com()");
-	return ("STUB: command_com()");
+Common::String AvalancheEngine::commandCom() {
+	warning("STUB: commandCom()");
+	return ("STUB: commandCom()");
 }
 
 // Needed for run_avalot()'s errors. TODO: Remove later.
@@ -591,75 +591,70 @@ void AvalancheEngine::explain(byte error) {
 
 //TODO: Remove these (b_flight) functions later ( https://github.com/tthurman/avalot/wiki/B-Flight )
 
-void AvalancheEngine::b_flight() {   /*interrupt;*/
-	_storage.skellern++;
+void AvalancheEngine::bFlight() {   /*interrupt;*/
+	_storage._skellern++;
 }
 
-void AvalancheEngine::bflight_on() {
-	_storage.skellern = _reset_;
+void AvalancheEngine::bFlightOn() {
+	_storage._skellern = kReset;
 	// setintvec(0x1c, &b_flight);
 }
 
-void AvalancheEngine::bflight_off() {
+void AvalancheEngine::bFlightOff() {
 	// setintvec(0x1c, old_1c);
 }
 
 
 
-Common::String AvalancheEngine::elm2str(elm how) {
-	Common::String elm2str_result;
+Common::String AvalancheEngine::elm2Str(Elm how) {
 	switch (how) {
-	case Normal:
-	case Musical:
-		elm2str_result = "jsb";
-		break;
-	case Regi:
-		elm2str_result = "REGI";
-		break;
-	case Elmpoyten:
-		elm2str_result = "ELMPOYTEN";
-		break;
+	case kNormal:
+	case kMusical:
+		return "jsb";
+	case kRegi:
+		return "REGI";
+	case kElmpoyten:
+		return "ELMPOYTEN";
 	}
-	return elm2str_result;
 }
 
-void AvalancheEngine::run(Common::String what, bool with_jsb, bool with_bflight, elm how) {
+void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
 	warning("STUB: run(%s)", what.c_str()); 
 	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
 }
 
-void AvalancheEngine::get_arguments() {
+void AvalancheEngine::getArguments() {
 	// This function should mess around with command line arguments,
 	// but I am not sure if there'll be use of these arguments at all...
-	warning("STUB: get_arguments()"); 
+	warning("STUB: getArguments()"); 
 }
 
-void AvalancheEngine::get_slope() {
+void AvalancheEngine::getSlope() {
 	// Same as get_arguments()
-	warning("STUB: get_slope()");
+	warning("STUB: getSlope()");
 }
 
-void AvalancheEngine::call_menu() {
-	warning("STUB: call_menu()");
+void AvalancheEngine::callMenu() {
+	warning("STUB: callMenu()");
 }
 
-void AvalancheEngine::run_the_demo() {
-	warning("STUB: run_the_demo()");
+void AvalancheEngine::runDemo() {
+	warning("STUB: runDemo()");
 }
 
-void AvalancheEngine::dos_shell() {
-	warning("STUB: dos_shell()");
+void AvalancheEngine::dosShell() {
+	warning("STUB: dosShell()");
 }
 
 // Getting used only in demo() / call_menu(). Going to be implemented at the same time with these.
-bool AvalancheEngine::keypressed1() {	
-	warning("STUB: keypressed1()");
+bool AvalancheEngine::keyPressed() {	
+	warning("STUB: keyPressed()");
 	return false;
 }
 
 // Same as keypressed1().
-void AvalancheEngine::flush_buffer() {
-	warning("STUB: flush_buffer()");
+void AvalancheEngine::flushBuffer() {
+	warning("STUB: flushBuffer()");
 }
 
 // Same as keypressed1().
@@ -670,14 +665,14 @@ void AvalancheEngine::demo() {
 
 
 	
-void AvalancheEngine::run_avalot() {
-	bflight_on();
+void AvalancheEngine::runAvalot() {
+	bFlightOn();
 
-	_avalot->run(Common::String(runcodes[first_time]) + arguments);
+	_avalot->run(Common::String(kRuncodes[_firstTime]) + _arguments);
 	// TODO: Check if parameteres are ever used (probably not) and eventually remove them.
 	// If there's an error initalizing avalot, i'll handle it in there, not here
 
-	first_time = false;
+	_firstTime = false;
 }
 
 
@@ -691,36 +686,36 @@ Common::Error AvalancheEngine::run() {
 
 	// From bootstrp:
 
-	first_time = true;
+	_firstTime = true;
 
-	get_arguments();
-	get_slope();
+	getArguments();
+	getSlope();
 
-	zoomy = true; 
+	_zoomy = true; 
 	// Don't call the menu by default. Might be modified later, if get_slope() gets implemented,
 	// becouse zoomy's value is given there. Not sure yet what "zoomy" stands for.
-	if (!zoomy)
-		call_menu();    /* Not run when zoomy. */
+	if (!_zoomy)
+		callMenu();    /* Not run when zoomy. */
 
 
 
 	do {
-		run_avalot();
+		runAvalot();
 
 		//if (dosexitcode != 77)  quit(); /* Didn't stop for us. */
 
-		switch (_storage.operation) {
-		case _runShootemup:
-			run("seu.avx", _jsb, _bflight, Normal);
+		switch (_storage._operation) {
+		case kRunShootemup:
+			run("seu.avx", kJsb, kBflight, kNormal);
 			break;
-		case _runDosshell:
-			dos_shell();
+		case kRunDosshell:
+			dosShell();
 			break;
-		case _runGhostroom:
-			run("g-room.avx", _jsb, _no_bflight, Normal);
+		case kRunGhostroom:
+			run("g-room.avx", kJsb, kNoBflight, kNormal);
 			break;
-		case _runGolden:
-			run("golden.avx", _jsb, _bflight, Musical);
+		case kRunGolden:
+			run("golden.avx", kJsb, kBflight, kMusical);
 			break;
 		}
 
