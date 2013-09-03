@@ -478,7 +478,7 @@ bool PuzzleHiveControl::hitTest1(Control control, const Common::Point &point, co
 	if (!frame->getRect().contains(point1))
 		return false;
 	else
-		return *((byte *)frame->surface.pixels + point1.x + frame->surface.pitch * point1.y) != 0;
+		return *((byte *)frame->surface.getPixels() + point1.x + frame->surface.pitch * point1.y) != 0;
 }
 
 } // End of namespace Asylum

@@ -147,7 +147,7 @@ void GraphicResource::init(byte *data, int32 size) {
 
 		_frames[i].surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
-		memcpy(_frames[i].surface.pixels, dataPtr, (size_t)(width * height));
+		memcpy(_frames[i].surface.getPixels(), dataPtr, (size_t)(width * height));
 	}
 }
 

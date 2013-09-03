@@ -96,7 +96,7 @@ void Cursor::update() {
 	Common::Point hotspot = getHotspot(_currentFrame);
 
 	GraphicFrame *frame = _cursorRes->getFrame(_currentFrame);
-	CursorMan.replaceCursor((byte *)frame->surface.pixels,
+	CursorMan.replaceCursor((byte *)frame->surface.getPixels(),
 	                        frame->surface.w,
 	                        frame->surface.h,
 	                        hotspot.x,
