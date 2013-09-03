@@ -463,7 +463,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		_lucerna->dawn();
 	}
 
-	_celer->forget_chunks();
+	_celer->forgetBackgroundSprites();
 
 	_lucerna->minor_redraw();
 
@@ -482,7 +482,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_gyro->ontoolbar = false;
 	_trip->trippancy_link();
 
-	_celer->pics_link();
+	_celer->refreshBackgroundSprites();
 	
 	_scrolls->display(Common::String(_scrolls->kControlItalic) + "Loaded: " + _scrolls->kControlRoman + description + ".ASG"
 		+ _scrolls->kControlCenter + _scrolls->kControlNewLine + _scrolls->kControlNewLine

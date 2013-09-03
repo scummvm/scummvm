@@ -102,7 +102,7 @@ void Sequence::call_sequencer() {
 
 	if ((seq[0] >= 1) && (seq[0] <= 176)) {
 		/* Show a frame. */
-		_vm->_celer->show_one(-1, -1, seq[0]);
+		_vm->_celer->drawBackgroundSprite(-1, -1, seq[0]);
 		shove_left();
 	}
 	

@@ -37,224 +37,216 @@
 
 #include "common/textconsole.h"
 
+
+
 namespace Avalanche {
 
-const int16 Celer::on_disk = -1;
+const int16 Celer::kOnDisk = -1;
 
 
 Celer::Celer(AvalancheEngine *vm) {
 	_vm = vm;
-	num_chunks = 0;
+	_chunkNum = 0;
 }
 
 Celer::~Celer() {
 	for (byte i = 0; i < 40; i++)
-		memory[i].free();
+		_memory[i].free();
 }
 
-void Celer::pics_link() {
-	byte xx;
+void Celer::refreshBackgroundSprites() {
+	byte direction;
 
 	if (_vm->_gyro->ddmnow)
-		return; /* No animation when the menus are up. */
+		return; // No animation when the menus are up.
 
-	
 	switch (_vm->_gyro->dna.room) {
 	case r__outsideargentpub:
 		if ((_vm->_gyro->roomtime % 12) == 0)
-			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 4);
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 4);
 		break;
-
 	case r__brummieroad:
 		if ((_vm->_gyro->roomtime % 2) == 0)
-			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 2) % 4);
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 2) % 4);
 		break;
-
 	case r__bridge:
 		if ((_vm->_gyro->roomtime % 2) == 0)
-			show_one(-1, -1, 4 + (_vm->_gyro->roomtime / 2) % 4);
+			drawBackgroundSprite(-1, -1, 4 + (_vm->_gyro->roomtime / 2) % 4);
 		break;
-
 	case r__yours:
 		if ((!_vm->_gyro->dna.avvy_is_awake) && ((_vm->_gyro->roomtime % 4) == 0))
-			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 2);
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 2);
 		break;
+	case r__argentpub: {
+			if (((_vm->_gyro->roomtime % 7) == 1) && (_vm->_gyro->dna.malagauche != 177)) {
+				// Malagauche cycle.
+				_vm->_gyro->dna.malagauche += 1;
+				switch (_vm->_gyro->dna.malagauche) {
+				case 1:
+				case 11:
+				case 21:
+					drawBackgroundSprite(-1, -1, 12); // Looks forwards.
+					break; 
+				case 8:
+				case 18:
+				case 28:
+				case 32:
+					drawBackgroundSprite(-1, -1, 11); // Looks at you.
+					break; 
+				case 30:
+					drawBackgroundSprite(-1, -1, 13); // Winks.
+					break; 
+				case 33:
+					_vm->_gyro->dna.malagauche = 0;
+					break;
+				}
+			}
 
-	case r__argentpub:
-		if (((_vm->_gyro->roomtime % 7) == 1) && (_vm->_gyro->dna.malagauche != 177)) {
-			/* Malagauche cycle */
-			_vm->_gyro->dna.malagauche += 1;
-			switch (_vm->_gyro->dna.malagauche) {
-			case 1:
-			case 11:
-			case 21:
-				show_one(-1, -1, 12);
-				break; /* Looks forwards. */
-			case 8:
-			case 18:
-			case 28:
-			case 32:
-				show_one(-1, -1, 11);
-				break; /* Looks at you. */
-			case 30:
-				show_one(-1, -1, 13);
-				break; /* Winks. */
-			case 33:
-				_vm->_gyro->dna.malagauche = 0;
+			switch (_vm->_gyro->roomtime % 200) {
+			case 179:
+			case 197:
+				drawBackgroundSprite(-1, -1, 5); // Dogfood's drinking cycle.
+				break; 
+			case 182:
+			case 194:
+				drawBackgroundSprite(-1, -1, 6);
 				break;
+			case 185:
+				drawBackgroundSprite(-1, -1, 7);
+				break;
+			case 199:
+				_vm->_gyro->dna.dogfoodpos = 177; // Impossible value for this.
+				break; 
 			}
-		}
 
-		switch (_vm->_gyro->roomtime % 200) {
-		case 179:
-		case 197:
-			show_one(-1, -1, 5);
-			break; /* Dogfood's drinking cycle */
-		case 182:
-		case 194:
-			show_one(-1, -1, 6);
-			break;
-		case 185:
-			show_one(-1, -1, 7);
-			break;
-		case 199:
-			_vm->_gyro->dna.dogfoodpos = 177;
-			break; /* Impossible value for this. */
-		}
+			if ((_vm->_gyro->roomtime % 200 >= 0) && (_vm->_gyro->roomtime % 200 <= 178)) { // Normally.
+				if (((_vm->_lucerna->bearing(2) >= 1) && (_vm->_lucerna->bearing(2) <= 90)) || ((_vm->_lucerna->bearing(2) >= 358) && (_vm->_lucerna->bearing(2) <= 360)))
+					direction = 3;
+				else if ((_vm->_lucerna->bearing(2) >= 293) && (_vm->_lucerna->bearing(2) <= 357))
+					direction = 2;
+				else if ((_vm->_lucerna->bearing(2) >= 271) && (_vm->_lucerna->bearing(2) <= 292))
+					direction = 4;
 
-		if ((_vm->_gyro->roomtime % 200 >= 0) && (_vm->_gyro->roomtime % 200 <= 178)) { /* Normally. */
-			if (((_vm->_lucerna->bearing(2) >= 1) && (_vm->_lucerna->bearing(2) <= 90)) || ((_vm->_lucerna->bearing(2) >= 358) && (_vm->_lucerna->bearing(2) <= 360)))
-				xx = 3;
-			else if ((_vm->_lucerna->bearing(2) >= 293) && (_vm->_lucerna->bearing(2) <= 357))
-				xx = 2;
-			else if ((_vm->_lucerna->bearing(2) >= 271) && (_vm->_lucerna->bearing(2) <= 292))
-				xx = 4;
-
-			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-				show_one(-1, -1, xx);
-				_vm->_gyro->dna.dogfoodpos = xx;
+				if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+					drawBackgroundSprite(-1, -1, direction);
+					_vm->_gyro->dna.dogfoodpos = direction;
+				}
 			}
 		}
 		break;
-
 	case r__westhall:
 		if ((_vm->_gyro->roomtime % 3) == 0) {
 			switch ((_vm->_gyro->roomtime / int32(3)) % int32(6)) {
 			case 4:
-				show_one(-1, -1, 1);
+				drawBackgroundSprite(-1, -1, 1);
 				break;
 			case 1:
 			case 3:
 			case 5:
-				show_one(-1, -1, 2);
+				drawBackgroundSprite(-1, -1, 2);
 				break;
 			case 0:
 			case 2:
-				show_one(-1, -1, 3);
+				drawBackgroundSprite(-1, -1, 3);
 				break;
 			}
 		}
 		break;
-
 	case r__lustiesroom:
 		if (!(_vm->_gyro->dna.lustie_is_asleep)) {
 			if ((_vm->_gyro->roomtime % 45) > 42)
-				xx = 4; /* du Lustie blinks */
+				direction = 4; // du Lustie blinks.
 
-			/* Bearing of Avvy from du Lustie. */
+			// Bearing of Avvy from du Lustie.
 			else if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
-					xx = 1; /* Middle. */
+					direction = 1; // Middle.
 			else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
-					xx = 2; /* Left. */
+					direction = 2; // Left.
 			else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
-				xx = 3; /* Right. */
+				direction = 3; // Right.
 
-			if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-				show_one(-1, -1, xx);
-				_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
+			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+				drawBackgroundSprite(-1, -1, direction);
+				_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
 			}
 		}
 		break;
-
 	case r__aylesoffice:
 		if ((!_vm->_gyro->dna.ayles_is_awake) && (_vm->_gyro->roomtime % 14 == 0)) {
 			switch ((_vm->_gyro->roomtime / 14) % 2) {
 			case 0:
-				show_one(-1, -1, 1);
-				break; /* Frame 2: EGA. */
+				drawBackgroundSprite(-1, -1, 1);  // Frame 2: EGA.
+				break;
 			case 1:
-				show_one(-1, -1, 3);
-				break; /* Frame 1: Natural. */
+				drawBackgroundSprite(-1, -1, 3); // Frame 1: Natural.
+				break; 
 			}
 		}
 		break;
-
 	case r__robins:
 		if (_vm->_gyro->dna.tied_up) {
 			switch (_vm->_gyro->roomtime % 54) {
 			case 20:
-				show_one(-1, -1, 4);
-				break; /* Frame 4: Avalot blinks. */
+				drawBackgroundSprite(-1, -1, 4); // Frame 4: Avalot blinks.
+				break; 
 			case 23:
-				show_one(-1, -1, 2);
-				break; /* Frame 1: Back to normal. */
+				drawBackgroundSprite(-1, -1, 2); // Frame 1: Back to normal.
+				break; 
 			}
 		}
 		break;
+	case r__nottspub: {
+			// Bearing of Avvy from Port.
+			if (((_vm->_lucerna->bearing(5) >= 0) && (_vm->_lucerna->bearing(5) <= 45)) || ((_vm->_lucerna->bearing(5) >= 315) && (_vm->_lucerna->bearing(5) <= 360)))
+				direction = 2; // Middle.
+			else if ((_vm->_lucerna->bearing(5) >= 45) && (_vm->_lucerna->bearing(5) <= 180))
+				direction = 6; // Left.
+			else if ((_vm->_lucerna->bearing(5) >= 181) && (_vm->_lucerna->bearing(5) <= 314))
+				direction = 8; // Right.
 
-	case r__nottspub:
-		/* Bearing of Avvy from Port. */
-		if (((_vm->_lucerna->bearing(5) >= 0) && (_vm->_lucerna->bearing(5) <= 45)) || ((_vm->_lucerna->bearing(5) >= 315) && (_vm->_lucerna->bearing(5) <= 360)))
-			xx = 2; /* Middle. */
-		else if ((_vm->_lucerna->bearing(5) >= 45) && (_vm->_lucerna->bearing(5) <= 180))
-			xx = 6; /* Left. */
-		else if ((_vm->_lucerna->bearing(5) >= 181) && (_vm->_lucerna->bearing(5) <= 314))
-			xx = 8; /* Right. */
+			if ((_vm->_gyro->roomtime % 60) > 57)
+				direction--; // Blinks.
 
-		if ((_vm->_gyro->roomtime % int32(60)) > 57)
-			xx--; /* Blinks */
+			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+				drawBackgroundSprite(-1, -1, direction);
+				_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
+			}
 
-		if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-			show_one(-1, -1, xx);
-			_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
-		}
-
-		switch (_vm->_gyro->roomtime % 50) {
-		case 45 :
-			show_one(-1, -1, 9);
-			break; /* Spurge blinks */
-		case 49 :
-			show_one(-1, -1, 10);
-			break;
-		}
-		break;
-
-	case r__ducks:
-		if ((_vm->_gyro->roomtime % 3) == 0) /* The fire flickers */
-			show_one(-1, -1, 1 + (_vm->_gyro->roomtime / 3) % 3);
-
-		{/* _vm->_lucerna->bearing of Avvy from Duck. */
-		if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
-			xx = 4; /* Middle. */
-		else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
-			xx = 6; /* Left. */
-		else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
-			xx = 8; /* Right. */
-
-		if ((_vm->_gyro->roomtime % 45) > 42)
-			xx += 1; /* Duck blinks */
-
-		if (xx != _vm->_gyro->dna.dogfoodpos) { /* Only if it's changed.*/
-			show_one(-1, -1, xx);
-			_vm->_gyro->dna.dogfoodpos = xx; /* We use DogfoodPos here too- why not? */
+			switch (_vm->_gyro->roomtime % 50) {
+			case 45 :
+				drawBackgroundSprite(-1, -1, 9); // Spurge blinks.
+				break; 
+			case 49 :
+				drawBackgroundSprite(-1, -1, 10);
+				break;
+			}
 		}
 		break;
+	case r__ducks: {
+			if ((_vm->_gyro->roomtime % 3) == 0) // The fire flickers.
+				drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 3) % 3);
 
+			// Bearing of Avvy from Duck.
+			if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
+				direction = 4; // Middle.
+			else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
+				direction = 6; // Left.
+			else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
+				direction = 8; // Right.
+
+			if ((_vm->_gyro->roomtime % 45) > 42)
+				direction++; // Duck blinks.
+
+			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+				drawBackgroundSprite(-1, -1, direction);
+				_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
+			}
+		}
+		break;
 	}
-}
 
 	if ((_vm->_gyro->dna.ringing_bells) && (_vm->_gyro->flagset('B'))) {
-		/* They're ringing the bells. */
+		// They're ringing the bells.
 		switch (_vm->_gyro->roomtime % 4) {
 		case 1:
 			if (_vm->_gyro->dna.nextbell < 5)
@@ -263,86 +255,84 @@ void Celer::pics_link() {
 			_vm->_gyro->note(_vm->_gyro->notes[_vm->_gyro->dna.nextbell]);
 			break;
 		case 2:
-			//nosound;
+			//nosound();
 			warning("STUB: Celer::pics_link()");
 			break;
 		}
 	}
 }
 
-void Celer::load_chunks(Common::String xx) {
-	chunkblocktype ch;
-	byte fv;
-	
-	filename = filename.format("chunk%s.avd", xx.c_str());
-	if (!f.open(filename)) {
-		warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
+void Celer::loadBackgroundSprites(Common::String xx) {
+	_filename = _filename.format("chunk%s.avd", xx.c_str());
+	if (!_f.open(_filename)) {
+		warning("AVALANCHE: Celer: File not found: %s", _filename.c_str());
 		return;
 	}
 
-	f.seek(44);
-	num_chunks = f.readByte();
-	for (byte i = 0; i < num_chunks; i++)
-		offsets[i] = f.readSint32LE();
+	_f.seek(44);
+	_chunkNum = _f.readByte();
+	for (byte i = 0; i < _chunkNum; i++)
+		_offsets[i] = _f.readSint32LE();
 
-	for (fv = 0; fv < num_chunks; fv++) {
-		f.seek(offsets[fv]);
+	for (byte i = 0; i < _chunkNum; i++) {
+		_f.seek(_offsets[i]);
 		
-		ch.flavour = flavourtype(f.readByte());
-		ch.x = f.readSint16LE();
-		ch.y = f.readSint16LE();
-		ch.xl = f.readSint16LE();
-		ch.yl = f.readSint16LE();
-		ch.size = f.readSint32LE();
-		ch.natural = f.readByte();
-		ch.memorise = f.readByte();
+		SpriteType sprite;
+		sprite._type = PictureType(_f.readByte());
+		sprite._x = _f.readSint16LE();
+		sprite._y = _f.readSint16LE();
+		sprite._xl = _f.readSint16LE();
+		sprite._yl = _f.readSint16LE();
+		sprite._size = _f.readSint32LE();
+		sprite._natural = _f.readByte();
+		sprite._memorise = _f.readByte();
 				
-		if (ch.memorise) {
-			memos[fv].x = ch.x;
-			memos[fv].xl = ch.xl;
-			memos[fv].y = ch.y;
-			memos[fv].yl = ch.yl;
-			memos[fv].flavour = ch.flavour;
+		if (sprite._memorise) {
+			_memos[i]._x = sprite._x;
+			_memos[i]._xl = sprite._xl;
+			_memos[i]._y = sprite._y;
+			_memos[i]._yl = sprite._yl;
+			_memos[i]._type = sprite._type;
 
-			if (ch.natural) {
-				memos[fv].flavour = ch_natural_image; // We simply read from the screen and later, in display_it() we draw it right back.
-				memos[fv].size = memos[fv].xl * 8 * memos[fv].yl + 1; 
-				memory[fv].create(memos[fv].xl * 8, memos[fv].yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
+			if (sprite._natural) {
+				_memos[i]._type = kBaturalImage; // We simply read from the screen and later, in display_it() we draw it right back.
+				_memos[i]._size = _memos[i]._xl * 8 * _memos[i]._yl + 1; 
+				_memory[i].create(_memos[i]._xl * 8, _memos[i]._yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
 
-				for (uint16 j = 0; j < memos[fv].yl + 1; j++)
-					for (uint16 i = 0; i < memos[fv].xl * 8; i++)
-						*(byte *)memory[fv].getBasePtr(i, j) = *_vm->_graphics->getPixel(memos[fv].x * 8 + i, memos[fv].y + j);
+				for (uint16 y = 0; y < _memos[i]._yl + 1; y++)
+					for (uint16 x = 0; x < _memos[i]._xl * 8; x++)
+						*(byte *)_memory[i].getBasePtr(x, y) = *_vm->_graphics->getPixel(_memos[i]._x * 8 + x, _memos[i]._y + y);
 			} else {
-				memos[fv].size = ch.size;
-				memory[fv] = _vm->_graphics->loadPictureRow(f, memos[fv].xl * 8, memos[fv].yl + 1); // Celer::forget_chunks() deallocates it.
+				_memos[i]._size = sprite._size;
+				_memory[i] = _vm->_graphics->loadPictureRow(_f, _memos[i]._xl * 8, _memos[i]._yl + 1); // Celer::forget_chunks() deallocates it.
 			}
 		} else
-			memos[fv].x = on_disk;
+			_memos[i]._x = kOnDisk;
 	}
-	f.close();
+	_f.close();
 }
 
-void Celer::forget_chunks() {
-	for (byte fv = 0; fv < num_chunks; fv ++)
-		if (memos[fv].x > on_disk)
-			memory[fv].free();
+void Celer::forgetBackgroundSprites() {
+	for (byte i = 0; i < _chunkNum; i ++)
+		if (_memos[i]._x > kOnDisk)
+			_memory[i].free();
 
-	memset(memos, 255, sizeof(memos)); /* x=-1, => on disk. */
+	memset(_memos, 255, sizeof(_memos)); /* x=-1, => on disk. */
 }
 
-void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture) {
-	r.x1 = x;
-	r.y1 = y;
-	r.y2 = y + yl;
+void Celer::drawSprite(int16 x, int16 y, int16 xl, int16 yl, PictureType flavour, const ::Graphics::Surface &picture) {
+	_r.x1 = x;
+	_r.y1 = y;
+	_r.y2 = y + yl;
 
 	switch (flavour) {
-	case ch_natural_image: // Allow fallthorugh on purpose.
-	case ch_bgi : {
-		r.x2 = x + xl + 1;
+	case kBaturalImage: // Allow fallthorugh on purpose.
+	case kBgi : {
+		_r.x2 = x + xl + 1;
 		}
 		break;
-	case ch_ega : {
-		r.x2 = x + xl;
+	case kEga : {
+		_r.x2 = x + xl;
 		}
 		break;
 	}
@@ -351,52 +341,52 @@ void Celer::display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour
 	_vm->_graphics->drawPicture(_vm->_graphics->_background, picture, x, y - 10);
 }
 
-void Celer::show_one(int16 destX, int16 destY, byte which) {
-	chunkblocktype ch;
+void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 	which--; // For the difference between the Pascal and C array indexes.
 	//setactivepage(3);
 	warning("STUB: Celer::show_one()");
 
-	if (memos[which].x > on_disk) {
-		if (destX == -1) {
-			destX = memos[which].x * 8;
-			destY = memos[which].y;
+	if (_memos[which]._x > kOnDisk) {
+		if (destX < 0) {
+			destX = _memos[which]._x * 8;
+			destY = _memos[which]._y;
 		}
-		display_it(destX, destY, memos[which].xl, memos[which].yl, memos[which].flavour, memory[which]);
+		drawSprite(destX, destY, _memos[which]._xl, _memos[which]._yl, _memos[which]._type, _memory[which]);
 	} else {
-		if (!f.open(filename)) { /* Filename was set in load_chunks() */
-			warning("AVALANCHE: Celer: File not found: %s", filename.c_str());
+		if (!_f.open(_filename)) { /* Filename was set in load_chunks() */
+			warning("AVALANCHE: Celer: File not found: %s", _filename.c_str());
 			return;
 		}
 
-		f.seek(offsets[which]);
+		_f.seek(_offsets[which]);
 
-		ch.flavour = flavourtype(f.readByte());
-		ch.x = f.readSint16LE();
-		ch.y = f.readSint16LE();
-		ch.xl = f.readSint16LE();
-		ch.yl = f.readSint16LE();
-		ch.size = f.readSint32LE();
-		ch.natural = f.readByte();
-		ch.memorise = f.readByte();
+		SpriteType sprite;
+		sprite._type = PictureType(_f.readByte());
+		sprite._x = _f.readSint16LE();
+		sprite._y = _f.readSint16LE();
+		sprite._xl = _f.readSint16LE();
+		sprite._yl = _f.readSint16LE();
+		sprite._size = _f.readSint32LE();
+		sprite._natural = _f.readByte();
+		sprite._memorise = _f.readByte();
 
-		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(f, ch.xl * 8, ch.yl + 1);
+		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(_f, sprite._xl * 8, sprite._yl + 1);
 
-		if (destX == -1) {
-			destX = ch.x * 8;
-			destY = ch.y;
+		if (destX < 0) {
+			destX = sprite._x * 8;
+			destY = sprite._y;
 		}
-		display_it(destX, destY, ch.xl, ch.yl, ch.flavour, picture);
+		drawSprite(destX, destY, sprite._xl, sprite._yl, sprite._type, picture);
 
 		picture.free();
-		f.close();
+		_f.close();
 	}
 
 	//setactivepage(1 - cp);
 	warning("STUB: Celer::show_one()");
 
-	for (byte fv = 0; fv < 2; fv ++)
-		_vm->_trip->getset[fv].remember(r);
+	for (byte i = 0; i < 2; i ++)
+		_vm->_trip->getset[i].remember(_r);
 }
 
 
