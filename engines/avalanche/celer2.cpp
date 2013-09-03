@@ -264,29 +264,30 @@ void Celer::refreshBackgroundSprites() {
 }
 
 void Celer::loadBackgroundSprites(byte number) {
+	Common::File f;
 	_filename = _filename.format("chunk%d.avd", number);
-	if (!_f.open(_filename)) {
+	if (!f.open(_filename)) {
 		warning("AVALANCHE: Celer: File not found: %s", _filename.c_str());
 		return;
 	}
 
-	_f.seek(44);
-	_chunkNum = _f.readByte();
+	f.seek(44);
+	_chunkNum = f.readByte();
 	for (byte i = 0; i < _chunkNum; i++)
-		_offsets[i] = _f.readSint32LE();
+		_offsets[i] = f.readSint32LE();
 
 	for (byte i = 0; i < _chunkNum; i++) {
-		_f.seek(_offsets[i]);
+		f.seek(_offsets[i]);
 		
 		SpriteType sprite;
-		sprite._type = PictureType(_f.readByte());
-		sprite._x = _f.readSint16LE();
-		sprite._y = _f.readSint16LE();
-		sprite._xl = _f.readSint16LE();
-		sprite._yl = _f.readSint16LE();
-		sprite._size = _f.readSint32LE();
-		sprite._natural = _f.readByte();
-		sprite._memorise = _f.readByte();
+		sprite._type = PictureType(f.readByte());
+		sprite._x = f.readSint16LE();
+		sprite._y = f.readSint16LE();
+		sprite._xl = f.readSint16LE();
+		sprite._yl = f.readSint16LE();
+		sprite._size = f.readSint32LE();
+		sprite._natural = f.readByte();
+		sprite._memorise = f.readByte();
 				
 		if (sprite._memorise) {
 			_memos[i]._x = sprite._x;
@@ -305,12 +306,12 @@ void Celer::loadBackgroundSprites(byte number) {
 						*(byte *)_memory[i].getBasePtr(x, y) = *_vm->_graphics->getPixel(_memos[i]._x * 8 + x, _memos[i]._y + y);
 			} else {
 				_memos[i]._size = sprite._size;
-				_memory[i] = _vm->_graphics->loadPictureRow(_f, _memos[i]._xl * 8, _memos[i]._yl + 1); // Celer::forget_chunks() deallocates it.
+				_memory[i] = _vm->_graphics->loadPictureRow(f, _memos[i]._xl * 8, _memos[i]._yl + 1); // Celer::forget_chunks() deallocates it.
 			}
 		} else
 			_memos[i]._x = kOnDisk;
 	}
-	_f.close();
+	f.close();
 }
 
 void Celer::forgetBackgroundSprites() {
@@ -354,24 +355,25 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 		}
 		drawSprite(destX, destY, _memos[which]._xl, _memos[which]._yl, _memos[which]._type, _memory[which]);
 	} else {
-		if (!_f.open(_filename)) { /* Filename was set in load_chunks() */
+		Common::File f;
+		if (!f.open(_filename)) { // Filename was set in loadBackgroundSprites().
 			warning("AVALANCHE: Celer: File not found: %s", _filename.c_str());
 			return;
 		}
 
-		_f.seek(_offsets[which]);
+		f.seek(_offsets[which]);
 
 		SpriteType sprite;
-		sprite._type = PictureType(_f.readByte());
-		sprite._x = _f.readSint16LE();
-		sprite._y = _f.readSint16LE();
-		sprite._xl = _f.readSint16LE();
-		sprite._yl = _f.readSint16LE();
-		sprite._size = _f.readSint32LE();
-		sprite._natural = _f.readByte();
-		sprite._memorise = _f.readByte();
+		sprite._type = PictureType(f.readByte());
+		sprite._x = f.readSint16LE();
+		sprite._y = f.readSint16LE();
+		sprite._xl = f.readSint16LE();
+		sprite._yl = f.readSint16LE();
+		sprite._size = f.readSint32LE();
+		sprite._natural = f.readByte();
+		sprite._memorise = f.readByte();
 
-		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(_f, sprite._xl * 8, sprite._yl + 1);
+		::Graphics::Surface picture = _vm->_graphics->loadPictureRow(f, sprite._xl * 8, sprite._yl + 1);
 
 		if (destX < 0) {
 			destX = sprite._x * 8;
@@ -380,7 +382,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 		drawSprite(destX, destY, sprite._xl, sprite._yl, sprite._type, picture);
 
 		picture.free();
-		_f.close();
+		f.close();
 	}
 
 	//setactivepage(1 - cp);
