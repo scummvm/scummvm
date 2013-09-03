@@ -282,13 +282,6 @@ RenderTable *RenderManager::getRenderTable() {
 }
 
 void RenderManager::setBackgroundImage(const Common::String &fileName) {
-	Common::File *file = new Common::File;
-
-	if (!file->open(fileName)) {
-		warning("Could not open file %s", fileName.c_str());
-		return;
-	}
-
 	readImageToSurface(fileName, _currentBackground);
 
 	moveBackground(0);
