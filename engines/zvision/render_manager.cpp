@@ -54,6 +54,7 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, 
 
 RenderManager::~RenderManager() {
 	delete[] _workingWindowBuffer;
+	_currentBackground.free();
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
