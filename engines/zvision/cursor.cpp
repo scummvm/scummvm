@@ -81,9 +81,14 @@ ZorkCursor &ZorkCursor::operator=(const ZorkCursor &other) {
 	_hotspotX = other._hotspotX;
 	_hotspotY = other._hotspotY;
 
+	_surface.free();
 	_surface.copyFrom(other._surface);
 
 	return *this;
+}
+
+ZorkCursor::~ZorkCursor() {
+	_surface.free();
 }
 
 } // End of namespace ZVision

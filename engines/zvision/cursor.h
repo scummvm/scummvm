@@ -42,6 +42,7 @@ public:
 	ZorkCursor();
 	ZorkCursor(const Common::String &fileName);
 	ZorkCursor(const ZorkCursor &other);
+	~ZorkCursor();
 
 private:
 	uint16 _width;
