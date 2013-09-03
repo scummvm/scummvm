@@ -492,18 +492,18 @@ void StaticANIObject::draw() {
 			DynamicPhase *shd = g_fullpipe->_currentScene->_shadows->findSize(rect.width(), rect.height());
 			if (shd) {
 				shd->getDimensions(&point);
-				int midx = _ox - shd->_x / 2 - dyn->_someX;
-				int midy = _oy - shd->_y / 2 - dyn->_someY + rect.bottom - 3;
-				int shdy =  shd->_y;
+				int midx = _ox - point.x / 2 - dyn->_someX;
+				int midy = _oy - point.y / 2 - dyn->_someY + rect.bottom - 3;
+				int shdw =  point.y;
 
 				int px;
-				if (!_movement || _flags & 0x20 )
+				if (!_movement || (_flags & 0x20))
 					px = _statics->getCenter(&point)->x;
 				else
 					px = _movement->getCenter(&point)->x;
 
 				if (_shadowsOn != 1)
-					midy = _shadowsOn - shdy / 2;
+					midy = _shadowsOn - shdw / 2;
 
 				shd->draw(px + midx, midy, 0, 0);
 			}
@@ -1589,7 +1589,7 @@ Common::Point *Movement::getCenter(Common::Point *p) {
 	if (_currMovement) {
 		Common::Point point;
 
-		getDimensionsOfPhase(&point, _currDynamicPhaseIndex);
+		_currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex);
 
 		rect.moveTo(point.x - _currDynamicPhase->_rect->right, _currDynamicPhase->_rect->top);
 	}

@@ -1065,7 +1065,7 @@ void Shadows::initMovement(Movement *mov) {
 	_items[0].height = point.y;
 
 	for (uint i = 1; i < num; i++) {
-		_items[i].dynPhase = mov->getDynamicPhaseByIndex(i);
+		_items[i].dynPhase = mov->getDynamicPhaseByIndex(i - 1);
 		_items[i].dynPhase->getDimensions(&point);
 		_items[i].width = point.x;
 		_items[i].height = point.y;
