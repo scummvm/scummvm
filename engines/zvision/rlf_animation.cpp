@@ -72,7 +72,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 
 RlfAnimation::~RlfAnimation() {
 	delete[] _currentFrameBuffer;
-	for (int i = 0; i < _frameCount; i++) {
+	for (uint i = 0; i < _frameCount; i++) {
 		delete[] _frames[i].encodedData;
 	}
 	delete[] _frames;
