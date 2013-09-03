@@ -43,36 +43,11 @@ class AvalancheEngine;
 
 class Celer {
 public:
-	enum PictureType {kEga, kBgi, kNaturalImage};
-
-	struct SpriteType {
-		PictureType _type;
-		int16 _x, _y;
-		int16 _xl, _yl;
-		int32 _size;
-		bool _natural;
-
-		bool _memorise; /* Hold it in memory? */
-	};
-
-	struct MemoType {
-		int16 _x, _y;
-		int16 _xl, _yl;
-		PictureType _type;
-		uint16 _size;
-	};
-
-	int32 _offsets[40];
-	byte _chunkNum;
-	MemoType _memos[40];
-	::Graphics::Surface _memory[40]; // .free() is called in ~Celer()
-	bytefield _r;
-
-	
-
 	Celer(AvalancheEngine *vm);
 
 	~Celer();
+
+
 
 	void refreshBackgroundSprites();
 
@@ -86,13 +61,33 @@ public:
 	void drawBackgroundSprite(int16 destX, int16 destY, byte which);
 
 private:
+	enum PictureType {kEga, kBgi, kNaturalImage};
+
+	struct SpriteType {
+		PictureType _type;
+		int16 _x, _y;
+		int16 _xl, _yl;
+		int32 _size;
+		::Graphics::Surface _picture;
+	};
+
+
+
 	AvalancheEngine *_vm;
 
+	int32 _offsets[40];
+	byte _spriteNum;
+	SpriteType _sprites[40];
+	bytefield _r;
 	Common::String _filename;
+
+
 
 	static const int16 kOnDisk; /* Value of memos[fv].x when it's not in memory. */
 
-	void drawSprite(int16 x, int16 y, int16 xl, int16 yl, PictureType type, const ::Graphics::Surface &picture);
+
+
+	void drawSprite(int16 x, int16 y, const SpriteType &sprite);
 };
 
 } // End of namespace Avalanche.
