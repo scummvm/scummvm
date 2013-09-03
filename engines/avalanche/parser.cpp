@@ -34,6 +34,13 @@ Parser::Parser(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
+void Parser::init() {
+	_leftMargin = 0;
+	if (!_inputText.empty())
+		_inputText.clear();
+	_inputTextPos = 0;
+}
+
 void Parser::handleInputText(const Common::Event &event) {
 	byte inChar = event.kbd.ascii;
 	if (_vm->_dropdown->ddm_o.menunow) {
