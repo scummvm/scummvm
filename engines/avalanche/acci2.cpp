@@ -714,17 +714,17 @@ bool Acci::holding() {
 
 void Acci::openBox(bool isOpening) {
 	if ((_vm->_gyro->dna.room == r__yours) && (_thing == 54)) {
-		_vm->_celer->show_one(-1, -1, 5);
+		_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 
-		_vm->_celer->pics_link();
+		_vm->_celer->refreshBackgroundSprites();
 		_vm->_trip->trippancy_link();
 		_vm->_graphics->refreshScreen();
 
 		_vm->_system->delayMillis(55);
 
 		if (!isOpening) {
-			_vm->_celer->show_one(-1, -1, 6);
-			_vm->_celer->pics_link();
+			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
+			_vm->_celer->refreshBackgroundSprites();
 			_vm->_trip->trippancy_link();
 			_vm->_graphics->refreshScreen();
 		}
@@ -1145,7 +1145,7 @@ void Acci::standUp() {
 			_vm->_gyro->dna.user_moves_avvy = true;
 			_vm->_trip->apped(1, 2);
 			_vm->_gyro->dna.rw = _vm->_gyro->left;
-			_vm->_celer->show_one(-1, -1, 4); // Picture of empty pillow.
+			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->points(1);
 			_vm->_gyro->dna.avvy_in_bed = false;
 			_vm->_timeout->lose_timer(_vm->_timeout->reason_arkata_shouts);
@@ -1159,7 +1159,7 @@ void Acci::standUp() {
 
 	case r__nottspub:
 		if (_vm->_gyro->dna.sitting_in_pub)  {
-			_vm->_celer->show_one(-1, -1, 4); // Not sitting down.
+			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Not sitting down.
 			_vm->_trip->tr[0].visible = true; // But standing up.
 			_vm->_trip->apped(1, 4); // And walking away.
 			_vm->_gyro->dna.sitting_in_pub = false; // Really not sitting down.
@@ -1179,12 +1179,12 @@ void Acci::getProc(char thing) {
 	case r__yours:
 		if (_vm->_trip->infield(2)) {
 			if (_vm->_gyro->dna.box_contents == thing) {
-				_vm->_celer->show_one(-1, -1, 5);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_scrolls->display("OK, I've got it.");
 				_vm->_gyro->dna.obj[thing - 1] = true;
 				_vm->_lucerna->objectlist();
 				_vm->_gyro->dna.box_contents = kNothing;
-				_vm->_celer->show_one(-1, -1, 6);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			} else
 				_vm->_scrolls->display(Common::String("I can't see ") + _vm->_gyro->get_better(thing) + " in the box.");
 		} else
@@ -1198,7 +1198,7 @@ void Acci::getProc(char thing) {
 					_vm->_scrolls->display("It's not there, Avvy.");
 				else {
 					// OK: we're taking the pen, and it's there.
-					_vm->_celer->show_one(-1, -1, 4); // No pen there now.
+					_vm->_celer->drawBackgroundSprite(-1, -1, 4); // No pen there now.
 					_vm->_trip->call_special(3); // Zap!
 					_vm->_gyro->dna.taken_pen = true;
 					_vm->_gyro->dna.obj[_vm->_gyro->pen - 1] = true;
@@ -1219,7 +1219,7 @@ void Acci::getProc(char thing) {
 		break;
 	case r__robins:
 		if ((thing == _vm->_gyro->mushroom) & (_vm->_trip->infield(1)) & (_vm->_gyro->dna.mushroom_growing)) {
-			_vm->_celer->show_one(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_scrolls->display("Got it!");
 			_vm->_gyro->dna.mushroom_growing = false;
 			_vm->_gyro->dna.taken_mushroom = true;
@@ -1423,8 +1423,8 @@ void Acci::doThat() {
 							_vm->_gyro->dna.obj[_vm->_gyro->badge - 1] = false;
 							_vm->_gyro->dna.obj[_vm->_gyro->habit - 1] = true;
 							_vm->_gyro->dna.givenbadgetoiby = true;
-							_vm->_celer->show_one(-1, -1, 8);
-							_vm->_celer->show_one(-1, -1, 9);
+							_vm->_celer->drawBackgroundSprite(-1, -1, 8);
+							_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 						} else
 							heyThanks();
 						break;
@@ -1608,7 +1608,7 @@ void Acci::doThat() {
 					_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = true;
 					_vm->_lucerna->objectlist();
 					_vm->_gyro->dna.wonnim = true;
-					_vm->_celer->show_one(-1, -1, 1); // Show the settle with no lute on it.
+					_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Show the settle with no lute on it.
 					_vm->_lucerna->points(7); // 7 points for winning!
 
 					if (_vm->_gyro->dna.playednim == 1)
@@ -1761,11 +1761,11 @@ void Acci::doThat() {
 					if (_vm->_gyro->dna.alcohol == 0)
 						_vm->_lucerna->points(3);
 
-					_vm->_celer->show_one(-1, -1, 12);
+					_vm->_celer->drawBackgroundSprite(-1, -1, 12);
 					_vm->_scrolls->display(booze[_thing - 51] + ", please." + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
 					_vm->_gyro->dna.drinking = _thing;
 
-					_vm->_celer->show_one(-1, -1, 10);
+					_vm->_celer->drawBackgroundSprite(-1, -1, 10);
 					_vm->_gyro->dna.malagauche = 177;
 					_vm->_timeout->set_up_timer(27, _vm->_timeout->procbuydrinks, _vm->_timeout->reason_drinks);
 					break;
@@ -1786,11 +1786,11 @@ void Acci::doThat() {
 							return;
 						}
 
-						_vm->_celer->show_one(-1, -1, 12);
+						_vm->_celer->drawBackgroundSprite(-1, -1, 12);
 						_vm->_scrolls->display(Common::String("Wine, please.") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
 						if (_vm->_gyro->dna.alcohol == 0)
 							_vm->_lucerna->points(3);
-						_vm->_celer->show_one(-1, -1, 10);
+						_vm->_celer->drawBackgroundSprite(-1, -1, 10);
 						_vm->_gyro->dna.malagauche = 177;
 
 						_vm->_timeout->set_up_timer(27, _vm->_timeout->procbuywine, _vm->_timeout->reason_drinks);
@@ -1958,7 +1958,7 @@ void Acci::doThat() {
 					_vm->_gyro->dna.avvy_is_awake = true;
 					_vm->_lucerna->points(1);
 					_vm->_gyro->dna.avvy_in_bed = true;
-					_vm->_celer->show_one(-1, -1, 3); /* Picture of Avvy, awake in bed. */
+					_vm->_celer->drawBackgroundSprite(-1, -1, 3); /* Picture of Avvy, awake in bed. */
 					if (_vm->_gyro->dna.teetotal)
 						_vm->_visa->dixi('d', 13);
 				} else

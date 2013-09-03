@@ -262,7 +262,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	load_also(xx);
 
-	_vm->_celer->load_chunks(xx);
+	_vm->_celer->loadBackgroundSprites(xx);
 
 	bit = *_vm->_graphics->getPixel(0,0);
 
@@ -292,7 +292,7 @@ void Lucerna::find_people(byte room) {
 
 void Lucerna::exitroom(byte x) {
 	//nosound();
-	_vm->_celer->forget_chunks();
+	_vm->_celer->forgetBackgroundSprites();
 	_vm->_gyro->seescroll = true;  /* This stops the trippancy system working over the length of this procedure. */
 
 	switch (x) {
@@ -391,7 +391,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 	switch (x) {
 	case r__yours:
 		if (_vm->_gyro->dna.avvy_in_bed) {
-			_vm->_celer->show_one(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
 			_vm->_timeout->set_up_timer(100, _vm->_timeout->procarkata_shouts, _vm->_timeout->reason_arkata_shouts);
 		}
@@ -492,7 +492,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__bridge: {
 		if (_vm->_gyro->dna.drawbridge_open == 4) { /*open*/
-			_vm->_celer->show_one(-1, -1, 3); /* Position of drawbridge */
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3); /* Position of drawbridge */
 			_vm->_graphics->refreshBackground();
 			_vm->_gyro->magics[green - 1].op = _vm->_gyro->nix; /* You may enter the drawbridge. */
 		}
@@ -518,10 +518,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 
 		if (_vm->_gyro->dna.tied_up)
-			_vm->_celer->show_one(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 
 		if (!_vm->_gyro->dna.mushroom_growing) 
-			_vm->_celer->show_one(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_graphics->refreshBackground();
 	}
 	break;
@@ -603,11 +603,11 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__argentpub: {
 		if (_vm->_gyro->dna.wonnim)
-			_vm->_celer->show_one(-1, -1, 1);   /* No lute by the settle. */
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);   /* No lute by the settle. */
 		_vm->_gyro->dna.malagauche = 0; /* Ready to boot Malagauche */
 		if (_vm->_gyro->dna.givenbadgetoiby) {
-			_vm->_celer->show_one(-1, -1, 8);
-			_vm->_celer->show_one(-1, -1, 9);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 8);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 		}
 		_vm->_graphics->refreshBackground();
 	}
@@ -624,7 +624,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.geida_follows) {
 			put_geida_at(5, ped);
 			if (_vm->_gyro->dna.lustie_is_asleep) {
-				_vm->_celer->show_one(-1, -1, 5);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_graphics->refreshBackground();
 			}
 		}
@@ -634,14 +634,14 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__musicroom: {
 		if (_vm->_gyro->dna.jacques_awake > 0) {
 			_vm->_gyro->dna.jacques_awake = 5;
-			_vm->_celer->show_one(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
-			_vm->_celer->show_one(-1, -1, 4);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 4);
 			_vm->_gyro->magics[brown - 1].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0;
 		}
 		if (ped != 0) {
-			_vm->_celer->show_one(-1, -1, 6);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(6);
 			_vm->_sequence->then_show(5);
@@ -653,7 +653,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__outsidenottspub:
 		if (ped == 2) {
-			_vm->_celer->show_one(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(3);
 			_vm->_sequence->then_show(2);
@@ -665,7 +665,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__outsideargentpub:
 		if (ped == 2)  {
-			_vm->_celer->show_one(-1, -1, 6);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(6);
 			_vm->_sequence->then_show(5);
@@ -692,7 +692,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__insidecardiffcastle:
 		if (ped > 0) {
 			_vm->_trip->tr[1].init(10, false, _vm->_trip); /* Define the dart. */
-			_vm->_celer->show_one(-1, -1, 1);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(1);
 			if (_vm->_gyro->dna.arrow_in_the_door)
@@ -701,22 +701,22 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_sequence->then_show(2);
 
 			if (_vm->_gyro->dna.taken_pen)
-				_vm->_celer->show_one(-1, -1, 4);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 4);
 
 			_vm->_sequence->start_to_close();
 		} else {
-			_vm->_celer->show_one(-1, -1, 1);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			if (_vm->_gyro->dna.arrow_in_the_door)
-				_vm->_celer->show_one(-1, -1, 3);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			else
-				_vm->_celer->show_one(-1, -1, 2);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 		}
 		break;
 
 	case r__avvysgarden:
 		if (ped == 1)  {
-			_vm->_celer->show_one(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(2);
 			_vm->_sequence->then_show(1);
@@ -735,7 +735,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_sequence->then_show(3);
 			_vm->_sequence->start_to_close();*/
 
-			_vm->_celer->show_one(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(2);
 			_vm->_sequence->then_show(1);
@@ -746,7 +746,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__aylesoffice:
 		if (_vm->_gyro->dna.ayles_is_awake)
-			_vm->_celer->show_one(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 		_vm->_graphics->refreshBackground();
 		break; /* Ayles awake. */
 
@@ -766,7 +766,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		break;
 
 	case r__nottspub: {
-		if (_vm->_gyro->dna.sitting_in_pub)  _vm->_celer->show_one(-1, -1, 3);
+		if (_vm->_gyro->dna.sitting_in_pub)  _vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_gyro->dna.dogfoodpos = 1; /* Actually, du Lustie pos. */
 	}
 	break;
@@ -774,7 +774,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 	case r__outsideducks:
 		if (ped == 2) {
 			/* Shut the door */
-			_vm->_celer->show_one(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->first_show(3);
 			_vm->_sequence->first_show(2);

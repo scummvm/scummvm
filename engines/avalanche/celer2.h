@@ -36,35 +36,37 @@
 
 #include "graphics/surface.h"
 
+
+
 namespace Avalanche {
 class AvalancheEngine;
 
 class Celer {
 public:
-	enum flavourtype {ch_ega, ch_bgi, ch_natural_image};
+	enum PictureType {kEga, kBgi, kBaturalImage};
 
-	struct chunkblocktype {
-		flavourtype flavour;
-		int16 x, y;
-		int16 xl, yl;
-		int32 size;
-		bool natural;
+	struct SpriteType {
+		PictureType _type;
+		int16 _x, _y;
+		int16 _xl, _yl;
+		int32 _size;
+		bool _natural;
 
-		bool memorise; /* Hold it in memory? */
+		bool _memorise; /* Hold it in memory? */
 	};
 
-	struct memotype {
-		int16 x, y;
-		int16 xl, yl;
-		flavourtype flavour;
-		uint16 size;
+	struct MemoType {
+		int16 _x, _y;
+		int16 _xl, _yl;
+		PictureType _type;
+		uint16 _size;
 	};
 
-	int32 offsets[40];
-	byte num_chunks;
-	memotype memos[40];
-	::Graphics::Surface memory[40]; // .free() is called in ~Celer()
-	bytefield r;
+	int32 _offsets[40];
+	byte _chunkNum;
+	MemoType _memos[40];
+	::Graphics::Surface _memory[40]; // .free() is called in ~Celer()
+	bytefield _r;
 
 	
 
@@ -72,27 +74,27 @@ public:
 
 	~Celer();
 
-	void pics_link();
+	void refreshBackgroundSprites();
 
-	void load_chunks(Common::String xx);
+	void loadBackgroundSprites(Common::String xx);
 
-	void forget_chunks();
+	void forgetBackgroundSprites();
 
-	// Settint the destination to -1,-1 means the picture should be drawn to it's original position.
+	// Setting the destination to negative coordinates means the picture should be drawn to it's original position.
 	// If you give it positive values, the picture will be plotted to the desired coordinates on the screen.
 	// By that we get rid of show_one_at(), which would be almost identical and cause a lot of code duplication.
-	void show_one(int16 destX, int16 destY, byte which);
+	void drawBackgroundSprite(int16 destX, int16 destY, byte which);
 
 private:
 	AvalancheEngine *_vm;
 
-	Common::String filename;
+	Common::String _filename;
 
-	Common::File f;
+	Common::File _f;
 
-	static const int16 on_disk; /* Value of memos[fv].x when it's not in memory. */
+	static const int16 kOnDisk; /* Value of memos[fv].x when it's not in memory. */
 
-	void display_it(int16 x, int16 y, int16 xl, int16 yl, flavourtype flavour, const ::Graphics::Surface &picture);
+	void drawSprite(int16 x, int16 y, int16 xl, int16 yl, PictureType type, const ::Graphics::Surface &picture);
 };
 
 } // End of namespace Avalanche.
