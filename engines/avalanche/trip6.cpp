@@ -222,27 +222,27 @@ void triptype::walk() {
 
 		if ((tc != 255) & (!_tr->_vm->_gyro->doing_sprite_run)) {
 			switch (_tr->_vm->_gyro->magics[tc].op) {
-			case _tr->_vm->_gyro->exclaim: {
+			case Gyro::exclaim: {
 				bounce();
 				_tr->mustexclaim = true;
 				_tr->saywhat = _tr->_vm->_gyro->magics[tc].data;
 				}
 				break;
-			case _tr->_vm->_gyro->bounces:
+			case Gyro::bounces:
 				bounce();
 				break;
-			case _tr->_vm->_gyro->transport:
+			case Gyro::transport:
 				_tr->fliproom(_tr->_vm->_gyro->magics[tc].data >> 8, _tr->_vm->_gyro->magics[tc].data & 0xff);
 				break;
-			case _tr->_vm->_gyro->unfinished: {
+			case Gyro::unfinished: {
 				bounce();
 				_tr->_vm->_scrolls->display("\7Sorry.\3\rThis place is not available yet!");
 				}
 				break;
-			case _tr->_vm->_gyro->special:
+			case Gyro::special:
 				_tr->call_special(_tr->_vm->_gyro->magics[tc].data);
 				break;
-			case _tr->_vm->_gyro->mopendoor:
+			case Gyro::mopendoor:
 				_tr->open_the_door(_tr->_vm->_gyro->magics[tc].data >> 8, _tr->_vm->_gyro->magics[tc].data & 0xff, tc);
 				break;
 			}

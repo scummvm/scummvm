@@ -171,7 +171,7 @@ void Visa::talkto(byte whom) {
 
 	if (_vm->_gyro->subjnumber == 0)
 		switch (whom) {
-		case _vm->_gyro->pspludwick:
+		case Gyro::pspludwick:
 			if ((_vm->_gyro->dna.lustie_is_asleep) & (!_vm->_gyro->dna.obj[_vm->_gyro->potion - 1])) {
 				dixi('q', 68);
 				_vm->_gyro->dna.obj[_vm->_gyro->potion - 1] = true;
@@ -201,20 +201,20 @@ void Visa::talkto(byte whom) {
 				}
 			}
 			break;
-		case _vm->_gyro->pibythneth:
+		case Gyro::pibythneth:
 			if (_vm->_gyro->dna.givenbadgetoiby) {
 				dixi('q', 33); // Thanks a lot!
 				return; // And leave the proc.
 			}
 			break; // Or... just continue, 'cos he hasn't got it.
-		case _vm->_gyro->pdogfood:
+		case Gyro::pdogfood:
 			if (_vm->_gyro->dna.wonnim) { // We've won the game.
 				dixi('q', 6); // "I'm Not Playing!"
 				return; // Zap back.
 			} else
 				_vm->_gyro->dna.asked_dogfood_about_nim = true;
 			break;
-		case _vm->_gyro->payles:
+		case Gyro::payles:
 			if (!_vm->_gyro->dna.ayles_is_awake) {
 				dixi('q', 43); // He's fast asleep!
 				return;
@@ -224,11 +224,11 @@ void Visa::talkto(byte whom) {
 			}
 			break;
 
-		case _vm->_gyro->pjacques: {
+		case Gyro::pjacques: {
 			dixi('q', 43);
 			return;
 			}
-		case _vm->_gyro->pgeida:
+		case Gyro::pgeida:
 			if (_vm->_gyro->dna.geida_given_potion)
 				_vm->_gyro->dna.geida_follows = true;
 			else {
@@ -236,7 +236,7 @@ void Visa::talkto(byte whom) {
 				return;
 			}
 			break;
-		case _vm->_gyro->pspurge:
+		case Gyro::pspurge:
 			if (!_vm->_gyro->dna.sitting_in_pub) {
 				dixi('q', 71); // Try going over and sitting down.
 				return;

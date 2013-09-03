@@ -629,7 +629,7 @@ void Acci::examineObject() {
 	if (_thing != _vm->_gyro->thinks)
 		_vm->_lucerna->thinkabout(_thing, _vm->_gyro->a_thing);
 	switch (_thing) {
-	case _vm->_gyro->wine :
+	case Gyro::wine :
 		switch (_vm->_gyro->dna.winestate) {// 4 is perfect wine. 0 is not holding the wine.
 		case 1:
 			_vm->_visa->dixi('t', 1); // Normal examine wine scroll
@@ -642,7 +642,7 @@ void Acci::examineObject() {
 			break;
 		}
 		break;
-	case _vm->_gyro->onion:
+	case Gyro::onion:
 		if (_vm->_gyro->dna.rotten_onion)
 			_vm->_visa->dixi('q', 21); // Yucky onion.
 		else
@@ -775,7 +775,7 @@ void Acci::inventory() {
 
 void Acci::swallow() {   /* Eat something. */
 	switch (_thing) {
-	case _vm->_gyro->wine:
+	case Gyro::wine:
 		switch (_vm->_gyro->dna.winestate) { /* 4 is perfect */
 		case 1: {
 				if (_vm->_gyro->dna.teetotal)  {
@@ -796,25 +796,25 @@ void Acci::swallow() {   /* Eat something. */
 			break; /* You can't drink it! */
 		}
 		break;
-	case _vm->_gyro->potion: {
+	case Gyro::potion: {
 			_vm->_gyro->background(4);
 			_vm->_visa->dixi('U', 3);
 			_vm->_lucerna->gameover();
 			_vm->_gyro->background(0);
 		}
 		break;
-	case _vm->_gyro->ink:
+	case Gyro::ink:
 		_vm->_visa->dixi('U', 4);
 		break;
-	case _vm->_gyro->chastity:
+	case Gyro::chastity:
 		_vm->_visa->dixi('U', 5);
 		break;
-	case _vm->_gyro->mushroom: {
+	case Gyro::mushroom: {
 			_vm->_visa->dixi('U', 6);
 			_vm->_lucerna->gameover();
 		}
 		break;
-	case _vm->_gyro->onion:
+	case Gyro::onion:
 		if (_vm->_gyro->dna.rotten_onion)
 			_vm->_visa->dixi('U', 11);
 		else {
@@ -931,21 +931,21 @@ void Acci::openDoor() {
 			fv -= 8;
 
 			switch (_vm->_gyro->portals[fv].op) {
-			case _vm->_gyro->exclaim:
+			case Gyro::exclaim:
 				_vm->_trip->tr[0].bounce();
 				_vm->_visa->dixi('word', _vm->_gyro->portals[fv].data);
 				break;
-			case _vm->_gyro->transport:
+			case Gyro::transport:
 				_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8 /*High byte*/, (_vm->_gyro->portals[fv].data) & 0x0F /*Low byte*/);
 				break;
-			case _vm->_gyro->unfinished:
+			case Gyro::unfinished:
 				_vm->_trip->tr[0].bounce();
 				_vm->_scrolls->display("Sorry. This place is not available yet!");
 				break;
-			case _vm->_gyro->special:
+			case Gyro::special:
 				_vm->_trip->call_special(_vm->_gyro->portals[fv].data);
 				break;
-			case _vm->_gyro->mopendoor:
+			case Gyro::mopendoor:
 				_vm->_trip->open_the_door((_vm->_gyro->portals[fv].data) >> 8, (_vm->_gyro->portals[fv].data) & 0x0F, fv + 9);
 				break;
 			}
@@ -980,7 +980,7 @@ void Acci::putProc() {
 
 	// Thing is the _thing which you're putting in. _thing2 is where you're putting it.
 	switch (_thing2) {
-	case _vm->_gyro->wine:
+	case Gyro::wine:
 		if (_thing == _vm->_gyro->onion) {
 			if (_vm->_gyro->dna.rotten_onion)
 				_vm->_scrolls->display("That's a bit like shutting the stable door after the horse has bolted!");
@@ -1004,16 +1004,16 @@ void Acci::putProc() {
 				_vm->_scrolls->display("There's something in the box already, Avvy. Try taking that out first.");
 			else {
 				switch (_thing) {
-				case _vm->_gyro->money:
+				case Gyro::money:
 					_vm->_scrolls->display("You'd better keep some ready cash on you!");
 					break;
-				case _vm->_gyro->bell:
+				case Gyro::bell:
 					_vm->_scrolls->display("That's a silly place to keep a bell.");
 					break;
-				case _vm->_gyro->bodkin:
+				case Gyro::bodkin:
 					_vm->_scrolls->display("But you might need it!");
 					break;
-				case _vm->_gyro->onion:
+				case Gyro::onion:
 					_vm->_scrolls->display("Just give it to Spludwick, Avvy!");
 					break;
 				default: // Put the object into the box...
@@ -1061,7 +1061,7 @@ bool Acci::giveToSpludwick() {
 	}
 
 	switch (_thing) {
-	case _vm->_gyro->onion:
+	case Gyro::onion:
 		_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = false;
 		if (_vm->_gyro->dna.rotten_onion)
 			_vm->_visa->dixi('pos', 22);
@@ -1073,7 +1073,7 @@ bool Acci::giveToSpludwick() {
 		}
 		_vm->_lucerna->objectlist();
 		break;
-	case _vm->_gyro->ink:
+	case Gyro::ink:
 		_vm->_gyro->dna.obj[_vm->_gyro->ink - 1] = false;
 		_vm->_lucerna->objectlist();
 		_vm->_gyro->dna.given2spludwick++;
@@ -1081,7 +1081,7 @@ bool Acci::giveToSpludwick() {
 		goToCauldron();
 		_vm->_lucerna->points(3);
 		break;
-	case _vm->_gyro->mushroom:
+	case Gyro::mushroom:
 		_vm->_gyro->dna.obj[_vm->_gyro->mushroom - 1] = false;
 		_vm->_visa->dixi('pos', 25);
 		_vm->_lucerna->points(5);
@@ -1192,7 +1192,7 @@ void Acci::getProc(char thing) {
 		break;
 	case r__insidecardiffcastle:
 		switch (thing) {
-		case _vm->_gyro->pen:
+		case Gyro::pen:
 			if (_vm->_trip->infield(2)) { // Standing on the dais.
 				if (_vm->_gyro->dna.taken_pen)
 					_vm->_scrolls->display("It's not there, Avvy.");
@@ -1210,7 +1210,7 @@ void Acci::getProc(char thing) {
 			else
 				_vm->_visa->dixi('pos', 51);
 			break;
-		case _vm->_gyro->bolt:
+		case Gyro::bolt:
 			_vm->_visa->dixi('pos', 52);
 			break;
 		default:
@@ -1388,35 +1388,35 @@ void Acci::doThat() {
 				_vm->_scrolls->display("Give to whom?");
 			else if (isPersonHere()) {
 				switch (_thing) {
-				case _vm->_gyro->money :
+				case Gyro::money :
 					_vm->_scrolls->display("You can't bring yourself to give away your moneybag.");
 					break;
-				case _vm->_gyro->bodkin:
-				case _vm->_gyro->bell:
-				case _vm->_gyro->clothes:
-				case _vm->_gyro->habit :
+				case Gyro::bodkin:
+				case Gyro::bell:
+				case Gyro::clothes:
+				case Gyro::habit :
 					_vm->_scrolls->display("Don't give it away, it might be useful!");
 					break;
 				default:
 					switch (_person) {
-					case _vm->_gyro->pcrapulus:
+					case Gyro::pcrapulus:
 						if (_thing == _vm->_gyro->wine) {
 							_vm->_scrolls->display("Crapulus grabs the wine and gulps it down.");
 							_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
 						} else
 							heyThanks();
 						break;
-					case _vm->_gyro->pcwytalot:
+					case Gyro::pcwytalot:
 						if ((_thing == _vm->_gyro->crossbow) || (_thing == _vm->_gyro->bolt))
 							_vm->_scrolls->display(Common::String("You might be able to influence Cwytalot more if you used it!"));
 						else
 							heyThanks();
 						break;
-					case _vm->_gyro->pspludwick:
+					case Gyro::pspludwick:
 						if (giveToSpludwick())
 							heyThanks();
 						break;
-					case _vm->_gyro->pibythneth:
+					case Gyro::pibythneth:
 						if (_thing == _vm->_gyro->badge) {
 							_vm->_visa->dixi('pos', 32); // Thanks! Wow!
 							_vm->_lucerna->points(3);
@@ -1428,7 +1428,7 @@ void Acci::doThat() {
 						} else
 							heyThanks();
 						break;
-					case _vm->_gyro->payles:
+					case Gyro::payles:
 						if (_vm->_gyro->dna.ayles_is_awake) {
 							if (_thing == _vm->_gyro->pen) {
 								_vm->_gyro->dna.obj[_vm->_gyro->pen - 1] = false;
@@ -1442,25 +1442,25 @@ void Acci::doThat() {
 						} else
 							_vm->_scrolls->display("But he's asleep!");
 						break;
-					case _vm->_gyro->pgeida:
+					case Gyro::pgeida:
 						switch (_thing) {
-						case _vm->_gyro->potion:
+						case Gyro::potion:
 							_vm->_gyro->dna.obj[_vm->_gyro->potion - 1] = false;
 							_vm->_visa->dixi('u', 16); // She drinks it.
 							_vm->_lucerna->points(2);
 							_vm->_gyro->dna.geida_given_potion = true;
 							_vm->_lucerna->objectlist();
 							break;
-						case _vm->_gyro->lute:
+						case Gyro::lute:
 							giveGeidaTheLute();
 							break;
 						default:
 							heyThanks();
 						}
 						break;
-					case _vm->_gyro->parkata:
+					case Gyro::parkata:
 						switch (_thing) {
-						case _vm->_gyro->potion:
+						case Gyro::potion:
 							if (_vm->_gyro->dna.geida_given_potion)
 								winSequence();
 							else
@@ -1544,11 +1544,11 @@ void Acci::doThat() {
 	case kVerbCodeWear:
 		if (holding()) { // Wear something.
 			switch (_thing) {
-			case _vm->_gyro->chastity:
+			case Gyro::chastity:
 				_vm->_scrolls->display("Hey, kWhat kind of a weirdo are you??!");
 				break;
-			case _vm->_gyro->clothes:
-			case _vm->_gyro->habit: { /* Change this! */
+			case Gyro::clothes:
+			case Gyro::habit: { /* Change this! */
 					if (_vm->_gyro->dna.wearing != kNothing) {
 						if (_vm->_gyro->dna.wearing == _thing)
 							_vm->_scrolls->display("You're already wearing that.");
@@ -1625,7 +1625,7 @@ void Acci::doThat() {
 			}
 		} else if (holding()) {
 			switch (_thing) {
-			case _vm->_gyro->lute : {
+			case Gyro::lute : {
 					_vm->_visa->dixi('U', 7);
 
 					if (_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] == _vm->_gyro->dna.room)
@@ -1772,7 +1772,7 @@ void Acci::doThat() {
 				case 52:
 					examine();
 					break; // We have a right one here - buy Pepsi??!
-				case _vm->_gyro->wine:
+				case Gyro::wine:
 					if (_vm->_gyro->dna.obj[_vm->_gyro->wine - 1])  // We've already got the wine!
 						_vm->_visa->dixi('D', 2); // 1 bottle's shufishent!
 					else {
@@ -1918,13 +1918,13 @@ void Acci::doThat() {
 			_vm->_scrolls->display("Kiss whom?");
 		else if (isPersonHere()) {
 			switch (_person) {
-			case _vm->_gyro->parkata:
+			case Gyro::parkata:
 				_vm->_visa->dixi('U', 12);
 				break;
-			case _vm->_gyro->pgeida:
+			case Gyro::pgeida:
 				_vm->_visa->dixi('U', 13);
 				break;
-			case _vm->_gyro->pwisewoman:
+			case Gyro::pwisewoman:
 				_vm->_visa->dixi('U', 14);
 				break;
 			default:
@@ -1952,7 +1952,7 @@ void Acci::doThat() {
 		if (isPersonHere())
 			switch (_person) {
 			case kPardon:
-			case _vm->_gyro->pavalot:
+			case Gyro::pavalot:
 			case 0:
 				if (!_vm->_gyro->dna.avvy_is_awake) {
 					_vm->_gyro->dna.avvy_is_awake = true;
@@ -1964,11 +1964,11 @@ void Acci::doThat() {
 				} else
 					_vm->_scrolls->display("You're already awake, Avvy!");
 				break;
-			case _vm->_gyro->payles:
+			case Gyro::payles:
 				if (!_vm->_gyro->dna.ayles_is_awake)
 					_vm->_scrolls->display("You can't seem to wake him by yourself.");
 				break;
-			case _vm->_gyro->pjacques:
+			case Gyro::pjacques:
 				_vm->_scrolls->display(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + _vm->_scrolls->kControlRegister + '1' + 
 					_vm->_scrolls->kControlSpeechBubble + "Hmmm... that doesn't seem to do any good...");
 				break;

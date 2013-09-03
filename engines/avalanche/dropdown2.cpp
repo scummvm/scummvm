@@ -316,25 +316,25 @@ Dropdown::Dropdown(AvalancheEngine *vm) {
 
 void Dropdown::find_what_you_can_do_with_it() {
 	switch (_vm->_gyro->thinks) {
-	case _vm->_gyro->wine:
-	case _vm->_gyro->potion:
-	case _vm->_gyro->ink:
+	case Gyro::wine:
+	case Gyro::potion:
+	case Gyro::ink:
 		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeDrink;
 		break;
-	case _vm->_gyro->bell:
+	case Gyro::bell:
 		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeRing;
 		break;
-	case _vm->_gyro->chastity:
+	case Gyro::chastity:
 		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeWear;
 		break;
-	case _vm->_gyro->lute:
+	case Gyro::lute:
 		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodePlay;
 		break;
-	case _vm->_gyro->mushroom:
-	case _vm->_gyro->onion:
+	case Gyro::mushroom:
+	case Gyro::onion:
 		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeEat;
 		break;
-	case _vm->_gyro->clothes:
+	case Gyro::clothes:
 		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeWear;
 		break;
 	default:
@@ -578,18 +578,18 @@ void Dropdown::ddm__with() {
 		ddm_o.opt(Common::String("Talk to h") + himher(_vm->_gyro->thinks), 'T', "", true);
 		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeTalk;
 		switch (_vm->_gyro->thinks) {
-		case _vm->_gyro->pgeida:
-		case _vm->_gyro->parkata: {
+		case Gyro::pgeida:
+		case Gyro::parkata: {
 			ddm_o.opt("Kiss her", 'K', "", true);
 			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->kVerbCodeKiss;
 		}
 		break;
-		case _vm->_gyro->pdogfood: {
+		case Gyro::pdogfood: {
 			ddm_o.opt("Play his game", 'P', "", !_vm->_gyro->dna.wonnim); /* True if you HAVEN'T won. */
 			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->kVerbCodePlay;
 		}
 		break;
-		case _vm->_gyro->pmalagauche: {
+		case Gyro::pmalagauche: {
 			n = !_vm->_gyro->dna.teetotal;
 			ddm_o.opt("Buy some wine", 'w', "", !_vm->_gyro->dna.obj[_vm->_gyro->wine - 1]);
 			ddm_o.opt("Buy some beer", 'b', "", n);
@@ -599,7 +599,7 @@ void Dropdown::ddm__with() {
 			_vm->_gyro->verbstr = _vm->_gyro->verbstr + '\145' + '\144' + '\146' + '\147' + '\150';
 		}
 		break;
-		case _vm->_gyro->ptrader: {
+		case Gyro::ptrader: {
 			ddm_o.opt("Buy an onion", 'o', "", !_vm->_gyro->dna.obj[_vm->_gyro->onion - 1]);
 			_vm->_gyro->verbstr = _vm->_gyro->verbstr + '\151';
 		}
