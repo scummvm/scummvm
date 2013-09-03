@@ -400,11 +400,14 @@ void TrueMotion1Decoder::decode16() {
 const Graphics::Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	decodeHeader(stream);
 
-	if (compressionTypes[_header.compression].algorithm == ALGO_NOP)
+	if (compressionTypes[_header.compression].algorithm == ALGO_NOP) {
+		delete[] _buf;
 		return 0;
+	}
 
 	if (compressionTypes[_header.compression].algorithm == ALGO_RGB24H) {
 		warning("Unhandled TrueMotion1 24bpp frame");
+		delete[] _buf;
 		return 0;
 	} else
 		decode16();
