@@ -299,7 +299,7 @@ void Celer::loadBackgroundSprites(byte number) {
 			_sprites[i]._type = sprite._type;
 
 			if (natural) {
-				_sprites[i]._type = kNaturalImage; // We simply read from the screen and later, in display_it() we draw it right back.
+				_sprites[i]._type = kNaturalImage; // We simply read from the screen and later, in drawSprite() we draw it right back.
 				_sprites[i]._size = _sprites[i]._xl * 8 * _sprites[i]._yl + 1; 
 				_sprites[i]._picture.create(_sprites[i]._xl * 8, _sprites[i]._yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
 
@@ -308,7 +308,7 @@ void Celer::loadBackgroundSprites(byte number) {
 						*(byte *)_sprites[i]._picture.getBasePtr(x, y) = *_vm->_graphics->getPixel(_sprites[i]._x * 8 + x, _sprites[i]._y + y);
 			} else {
 				_sprites[i]._size = sprite._size;
-				_sprites[i]._picture = _vm->_graphics->loadPictureRow(f, _sprites[i]._xl * 8, _sprites[i]._yl + 1); // Celer::forget_chunks() deallocates it.
+				_sprites[i]._picture = _vm->_graphics->loadPictureRow(f, _sprites[i]._xl * 8, _sprites[i]._yl + 1);
 			}
 		} else
 			_sprites[i]._x = kOnDisk;
