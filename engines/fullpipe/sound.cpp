@@ -132,7 +132,7 @@ void FullpipeEngine::playSound(int id, int flag) {
 }
 
 void global_messageHandler_handleSound(ExCommand *cmd) {
-	warning("STUB: global_messageHandler_handleSound()");
+	debug(0, "STUB: global_messageHandler_handleSound()");
 }
 
 
