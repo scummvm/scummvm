@@ -150,70 +150,70 @@ private:
 
 	// From bootstrp:
 
-	enum elm {Normal, Musical, Elmpoyten, Regi};
+	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
 
-	static const int16 _runShootemup = 1, _runDosshell = 2, _runGhostroom = 3, _runGolden = 4;
+	static const int16 kRunShootemup = 1, kRunDosshell = 2, kRunGhostroom = 3, kRunGolden = 4;
 
-	static const char runcodes[2][3];
+	static const char kRuncodes[2][3];
 
-	static const int16 _reset_ = 0;
+	static const int16 kReset = 0;
 
-	static const bool _jsb = true, _no_jsb = false, _bflight = true, _no_bflight = false;
+	static const bool kJsb = true, kNoJsb = false, kBflight = true, kNoBflight = false;
 
 	struct {
-		byte operation;
-		uint16 skellern;
-		byte contents[1000];
+		byte _operation;
+		uint16 _skellern;
+		byte _contents[1000];
 	} _storage;
 
-	Common::String arguments, demo_args, args_with_no_filename;
+	Common::String _arguments, _demoArgs, _argsWithNoFilename;
 
-	bool first_time;
+	bool _firstTime;
 
-	byte original_mode;
-	void *old_1c;
+	byte _originalMode;
+	byte *_old1c;
 
-	Common::String segofs;
+	Common::String _segofs;
 
-	bool zoomy;
+	bool _zoomy;
 
-	int32 soundcard, speed, baseaddr, irq, dma;
+	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
 
-	void cursor_off();
+	void cursorOff();
 
-	void cursor_on();
+	void cursorOn();
 
 	void quit();
 
-	Common::String command_com();
+	Common::String commandCom();
 
 	void explain(byte error);
 
-	void b_flight();
+	void bFlight();
 
-	void bflight_on();
+	void bFlightOn();
 
-	void bflight_off();
+	void bFlightOff();
 
-	Common::String elm2str(elm how);
+	Common::String elm2Str(Elm how);
 
-	void run(Common::String what, bool with_jsb, bool with_bflight, elm how);
+	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
 
-	void get_arguments();
+	void getArguments();
 
-	void get_slope();
+	void getSlope();
 
-	void call_menu();
+	void callMenu();
 
-	void run_avalot();
+	void runAvalot();
 
-	void run_the_demo();
+	void runDemo();
 
-	void dos_shell();
+	void dosShell();
 
-	bool keypressed1();
+	bool keyPressed();
 
-	void flush_buffer();
+	void flushBuffer();
 
 	void demo();
 };
