@@ -783,7 +783,7 @@ void Scrolls::calldrivers() {
 						return;
 					}
 					break;
-					case _vm->_acci->kNothing:
+					case Acci::kNothing:
 						display("nothing at all. It's completely empty.");
 						break;
 					default:
