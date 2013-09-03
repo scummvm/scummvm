@@ -90,8 +90,6 @@ private:
 
 	Common::String _filename;
 
-	Common::File _f;
-
 	static const int16 kOnDisk; /* Value of memos[fv].x when it's not in memory. */
 
 	void drawSprite(int16 x, int16 y, int16 xl, int16 yl, PictureType type, const ::Graphics::Surface &picture);
