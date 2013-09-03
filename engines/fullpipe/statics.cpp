@@ -571,7 +571,24 @@ MovTable *StaticANIObject::countMovements() {
 }
 
 void StaticANIObject::setSpeed(int speed) {
-	warning("STUB: StaticANIObject::setSpeed(%d)", speed);
+	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
+
+	if (!var)
+		return;
+
+	for (var = var->_subVars; var; var = var->_nextVarObj) {
+		Movement *mov = getMovementById(var->_value.intValue);
+
+		if (mov) {
+			if (speed) {
+				if (mov->_counterMax == 83)
+					mov->_counterMax = 41;
+			} else if (mov->_counterMax == 41) {
+				mov->_counterMax = 83;
+			}
+		}
+	}
+
 }
 
 void StaticANIObject::setAlpha(int alpha) {
