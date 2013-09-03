@@ -67,16 +67,16 @@ void Lucerna::init() {
 }
 	
 void Lucerna::callverb(byte n) {
-	if (n == _vm->_acci->pardon) {
+	if (n == _vm->_acci->kPardon) {
 		_vm->_scrolls->display(Common::String("The f5 key lets you do a particular action in certain ") +
 			"situations. However, at the moment there is nothing " +
 			"assigned to it. You may press alt-A to see what the " +
 			"current setting of this key is.");
 	} else {
 		_vm->_gyro->weirdword = false;
-		_vm->_acci->polite = true;
-		_vm->_acci->verb = n;
-		_vm->_acci->do_that();
+		_vm->_acci->_polite = true;
+		_vm->_acci->_verb = n;
+		_vm->_acci->doThat();
 	}
 }
 
@@ -1120,26 +1120,26 @@ void Lucerna::checkclick() {
 			if ((137 <= cursorPos.x) && (cursorPos.x <= 207)) { // Control Avvy with the compass.
 				if (_vm->_gyro->alive && _vm->_gyro->dna.avvy_is_awake)
 					mouseway(cursorPos);
-			} else if ((208 <= cursorPos.x) && (cursorPos.x <= 260)) { // Examine the thing.
+			} else if ((208 <= cursorPos.x) && (cursorPos.x <= 260)) { // Examine the _thing.
 				do {
 					_vm->updateEvents();
 				} while (holdLeftMouse);
 
 				if (_vm->_gyro->thinkthing) {
-					_vm->_acci->thing = _vm->_gyro->thinks;
-					_vm->_acci->thing += 49;
-					_vm->_acci->person = _vm->_acci->pardon;
+					_vm->_acci->_thing = _vm->_gyro->thinks;
+					_vm->_acci->_thing += 49;
+					_vm->_acci->_person = _vm->_acci->kPardon;
 				} else {
-					_vm->_acci->person = _vm->_gyro->thinks;
-					_vm->_acci->thing = _vm->_acci->pardon;
+					_vm->_acci->_person = _vm->_gyro->thinks;
+					_vm->_acci->_thing = _vm->_acci->kPardon;
 				}
-				callverb(_vm->_acci->vb_exam);
+				callverb(_vm->_acci->kVerbCodeExam);
 			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
 				do {
 					_vm->updateEvents();
 				} while (holdLeftMouse);
 
-				callverb(_vm->_acci->vb_score);
+				callverb(_vm->_acci->kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
 				_vm->_trip->tr[0].xs = _vm->_gyro->walk;
 				_vm->_trip->newspeed();

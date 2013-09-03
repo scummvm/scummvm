@@ -78,7 +78,7 @@ void Parser::handleReturn() {
 		if (!_inputText.empty()) {
 			_inputTextBackup = _inputText;
 			_vm->_acci->parse();
-			_vm->_acci->do_that();
+			_vm->_acci->doThat();
 			_inputText.clear();
 			wipeText();
 		}
@@ -88,13 +88,13 @@ void Parser::handleReturn() {
 void Parser::handleFunctionKey(const Common::Event &event) {
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_F5: {
-		_vm->_acci->person = _vm->_acci->pardon;
-		_vm->_acci->thing = _vm->_acci->pardon;
+		_vm->_acci->_person = _vm->_acci->kPardon;
+		_vm->_acci->_thing = _vm->_acci->kPardon;
 		_vm->_lucerna->callverb(_vm->_gyro->f5_does()[0]);
 		}
 		break;
 	case Common::KEYCODE_F7:
-		_vm->_lucerna->callverb(_vm->_acci->vb_open);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeOpen);
 		break;
 	}
 }

@@ -164,8 +164,8 @@ void Visa::talkto(byte whom) {
 	byte fv;
 	bool no_matches;
 
-	if (_vm->_acci->person == _vm->_acci->pardon) {
-		_vm->_acci->person = _vm->_gyro->subjnumber;
+	if (_vm->_acci->_person == _vm->_acci->kPardon) {
+		_vm->_acci->_person = _vm->_gyro->subjnumber;
 		_vm->_gyro->subjnumber = 0;
 	}
 

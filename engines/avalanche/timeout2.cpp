@@ -499,7 +499,7 @@ void Timeout::buydrinks() {
 	_vm->_visa->dixi('D', 1); // That'll be thruppence.
 	if (_vm->_gyro->pennycheck(3)) // Pay 3d.
 		_vm->_visa->dixi('D', 3); // Tell 'em you paid up.
-	_vm->_acci->have_a_drink();
+	_vm->_acci->drink();
 }
 
 void Timeout::buywine() {
@@ -626,7 +626,7 @@ void Timeout::winning() {
 	} while (!(_vm->_gyro->mrelease == 0));*/
 	// To be implemented with Pingo::winning_pic().
 
-	_vm->_lucerna->callverb(_vm->_acci->vb_score);
+	_vm->_lucerna->callverb(_vm->_acci->kVerbCodeScore);
 	_vm->_scrolls->display(" T H E    E N D ");
 	_vm->_gyro->lmo = true;
 }

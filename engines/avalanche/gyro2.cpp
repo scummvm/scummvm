@@ -505,30 +505,30 @@ Common::String Gyro::f5_does() {
 	switch (dna.room) {
 	case r__yours: {
 			if (!dna.avvy_is_awake)
-				return Common::String(_vm->_acci->vb_wake) + "WWake up";
+				return Common::String(_vm->_acci->kVerbCodeWake) + "WWake up";
 			else if (dna.avvy_in_bed)
-				return Common::String(_vm->_acci->vb_stand) + "GGet up";
+				return Common::String(_vm->_acci->kVerbCodeStand) + "GGet up";
 		}
 		break;
 	case r__insidecardiffcastle: 
 		if (dna.standing_on_dais)
-			return Common::String(_vm->_acci->vb_climb) + "CClimb down";
+			return Common::String(_vm->_acci->kVerbCodeClimb) + "CClimb down";
 		else
-			return Common::String(_vm->_acci->vb_climb) + "CClimb up";
+			return Common::String(_vm->_acci->kVerbCodeClimb) + "CClimb up";
 		break;
 	case r__nottspub:
 		if (dna.sitting_in_pub)
-			return Common::String(_vm->_acci->vb_stand) + "SStand up";
+			return Common::String(_vm->_acci->kVerbCodeStand) + "SStand up";
 		else
-			return Common::String(_vm->_acci->vb_sit) + "SSit down";
+			return Common::String(_vm->_acci->kVerbCodeSit) + "SSit down";
 		break;
 	case r__musicroom:
 		if (_vm->_trip->infield(7))
-			return Common::String(_vm->_acci->vb_play) + "PPlay the harp";
+			return Common::String(_vm->_acci->kVerbCodePlay) + "PPlay the harp";
 		break;
 	}
 
-	return Common::String(_vm->_acci->pardon); /* If all else fails... */
+	return Common::String(_vm->_acci->kPardon); /* If all else fails... */
 }
 
 void Gyro::load_a_mouse(byte which) {

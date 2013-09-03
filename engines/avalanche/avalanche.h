@@ -195,7 +195,7 @@ private:
 
 	void bFlightOff();
 
-	Common::String elm2Str(Elm how);
+	Common::String elmToStr(Elm how);
 
 	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
 
