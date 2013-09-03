@@ -325,7 +325,6 @@ void Gyro::newgame() {
 	/*for gd:=0 to 5 do which[gd]:=1;*/
 	memset(&_vm->_gyro->dna, 0, sizeof(dnatype));
 	_vm->_scrolls->natural();
-	_vm->_basher->normal_edit();
 	_vm->_lucerna->mousepage(0);
 	dna.spare_evening = "answer a questionnaire";
 	dna.like2drink = "beer";

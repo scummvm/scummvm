@@ -20,7 +20,6 @@ MODULE_OBJS = \
 	timeout2.o \
 	trip6.o \
 	acci2.o \
-	basher2.o \
 	dropdown2.o \
 	closing2.o
 

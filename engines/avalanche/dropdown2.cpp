@@ -36,7 +36,6 @@
 #include "avalanche/acci2.h"
 #include "avalanche/trip6.h"
 #include "avalanche/enid2.h"
-#include "avalanche/basher2.h"
 
 #include "common/textconsole.h"
 
@@ -676,7 +675,7 @@ void Dropdown::do__file() {
 	}
 	break;
 	case 3:
-		_vm->_basher->filename_edit();
+		//_vm->_basher->filename_edit();
 		break;
 	case 4:
 		_vm->_enid->back_to_bootstrap(2);
