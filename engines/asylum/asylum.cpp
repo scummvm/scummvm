@@ -44,7 +44,6 @@
 #include "asylum/respack.h"
 
 #include "common/debug-channels.h"
-#include "common/EventRecorder.h"
 
 #include "engines/util.h"
 
