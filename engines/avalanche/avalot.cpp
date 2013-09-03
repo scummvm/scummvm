@@ -133,21 +133,12 @@ void Avalot::handleKeyDown(Common::Event &event) {
 
 
 
-
-
-
 void Avalot::setup() {
-	int16 gd, gm;
-
-	checkbreak = false;
 	_vm->_gyro->visible = _vm->_gyro->m_no;
 	_vm->_gyro->to_do = 0;
 	_vm->_gyro->lmo = false;
 	_vm->_scrolls->resetscroll();
 	CursorMan.showMouse(true);
-	gd = 3;
-	gm = 0;
-	//initgraph(gd: gm: "");
 	_vm->_gyro->holdthedawn = true;
 	_vm->_lucerna->dusk();
 	_vm->_gyro->cmp = 177;
@@ -157,7 +148,6 @@ void Avalot::setup() {
 	_vm->_gyro->oldjw = 177;
 	_vm->_gyro->mousetext = "";
 	_vm->_gyro->c = 999;
-	//settextjustify(0: 0);
 	_vm->_gyro->ddmnow = false;
 	_vm->_lucerna->load_digits();
 	_vm->_gyro->cheat = false;
@@ -168,22 +158,15 @@ void Avalot::setup() {
 	_vm->_gyro->defaultled = 2;
 	/* TSkellern:=0; { Replace with a more local variable sometime }*/
 	_vm->_gyro->dna.rw = _vm->_gyro->stopped;
-	_vm->_gyro->enid_filename = ""; /* undefined. */
+	_vm->_gyro->enid_filename = ""; // Undefined.
 	_vm->_lucerna->toolbar();
 	_vm->_scrolls->state(2);
 	for (byte i = 0; i < 3; i++)
-		_vm->_gyro->lastscore[i] = -1; /* impossible digits */
-
-	/* for gd:=0 to 1 do
-	 begin
-	  setactivepage(gd); outtextxy(7:177:chr(48+gd));
-	 end;*/
+		_vm->_gyro->lastscore[i] = -1; // Impossible digits.
 
 	_vm->_trip->loadtrip();
 
 	_vm->_trip->get_back_loretta();
-	//gm = getpixel(0: 0);
-	//setcolor(7);
 	_vm->_gyro->holdthedawn = false;
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
@@ -209,6 +192,8 @@ void Avalot::setup() {
 		_vm->_visa->dixi('q', 83); // Info on the game, etc. 
 	}	
 }
+
+
 
 void Avalot::run(Common::String arg) {
 	setup();
@@ -250,9 +235,9 @@ void Avalot::run(Common::String arg) {
 			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown(); 55 comes from 18.2 Hz (B Flight).
 	} while (! _vm->_gyro->lmo);
 
-	//restorecrtmode();
 	//if (logging)
 	//	close(logfile);
+	warning("STUB: Avalot::run()");
 
 	_vm->_closing->end_of_program();
 }

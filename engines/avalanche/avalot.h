@@ -42,21 +42,12 @@ public:
 
 	void setup();
 
-
-
 	void handleKeyDown(Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
-
-	
-
-
 
 	void run(Common::String arg);
 
 private:
 	AvalancheEngine *_vm;
-
-	bool checkbreak; // Originally located in avalot9.map
-
 };
 
 } // End of namespace Avalanche
