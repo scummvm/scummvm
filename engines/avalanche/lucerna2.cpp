@@ -262,7 +262,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	load_also(xx);
 
-	_vm->_celer->loadBackgroundSprites(xx);
+	_vm->_celer->loadBackgroundSprites(n);
 
 	bit = *_vm->_graphics->getPixel(0,0);
 

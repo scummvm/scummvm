@@ -43,7 +43,7 @@ class AvalancheEngine;
 
 class Celer {
 public:
-	enum PictureType {kEga, kBgi, kBaturalImage};
+	enum PictureType {kEga, kBgi, kNaturalImage};
 
 	struct SpriteType {
 		PictureType _type;
@@ -76,7 +76,7 @@ public:
 
 	void refreshBackgroundSprites();
 
-	void loadBackgroundSprites(Common::String xx);
+	void loadBackgroundSprites(byte number);
 
 	void forgetBackgroundSprites();
 

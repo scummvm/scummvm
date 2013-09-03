@@ -55,8 +55,6 @@ Celer::~Celer() {
 }
 
 void Celer::refreshBackgroundSprites() {
-	byte direction;
-
 	if (_vm->_gyro->ddmnow)
 		return; // No animation when the menus are up.
 
@@ -119,6 +117,7 @@ void Celer::refreshBackgroundSprites() {
 				break; 
 			}
 
+			byte direction;
 			if ((_vm->_gyro->roomtime % 200 >= 0) && (_vm->_gyro->roomtime % 200 <= 178)) { // Normally.
 				if (((_vm->_lucerna->bearing(2) >= 1) && (_vm->_lucerna->bearing(2) <= 90)) || ((_vm->_lucerna->bearing(2) >= 358) && (_vm->_lucerna->bearing(2) <= 360)))
 					direction = 3;
@@ -154,9 +153,9 @@ void Celer::refreshBackgroundSprites() {
 		break;
 	case r__lustiesroom:
 		if (!(_vm->_gyro->dna.lustie_is_asleep)) {
+			byte direction;
 			if ((_vm->_gyro->roomtime % 45) > 42)
 				direction = 4; // du Lustie blinks.
-
 			// Bearing of Avvy from du Lustie.
 			else if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
 					direction = 1; // Middle.
@@ -197,6 +196,7 @@ void Celer::refreshBackgroundSprites() {
 		break;
 	case r__nottspub: {
 			// Bearing of Avvy from Port.
+			byte direction;
 			if (((_vm->_lucerna->bearing(5) >= 0) && (_vm->_lucerna->bearing(5) <= 45)) || ((_vm->_lucerna->bearing(5) >= 315) && (_vm->_lucerna->bearing(5) <= 360)))
 				direction = 2; // Middle.
 			else if ((_vm->_lucerna->bearing(5) >= 45) && (_vm->_lucerna->bearing(5) <= 180))
@@ -227,6 +227,7 @@ void Celer::refreshBackgroundSprites() {
 				drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 3) % 3);
 
 			// Bearing of Avvy from Duck.
+			byte direction;
 			if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
 				direction = 4; // Middle.
 			else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
@@ -251,7 +252,7 @@ void Celer::refreshBackgroundSprites() {
 		case 1:
 			if (_vm->_gyro->dna.nextbell < 5)
 				_vm->_gyro->dna.nextbell = 12;
-			_vm->_gyro->dna.nextbell -= 1;
+			_vm->_gyro->dna.nextbell--;
 			_vm->_gyro->note(_vm->_gyro->notes[_vm->_gyro->dna.nextbell]);
 			break;
 		case 2:
@@ -262,8 +263,8 @@ void Celer::refreshBackgroundSprites() {
 	}
 }
 
-void Celer::loadBackgroundSprites(Common::String xx) {
-	_filename = _filename.format("chunk%s.avd", xx.c_str());
+void Celer::loadBackgroundSprites(byte number) {
+	_filename = _filename.format("chunk%d.avd", number);
 	if (!_f.open(_filename)) {
 		warning("AVALANCHE: Celer: File not found: %s", _filename.c_str());
 		return;
@@ -295,7 +296,7 @@ void Celer::loadBackgroundSprites(Common::String xx) {
 			_memos[i]._type = sprite._type;
 
 			if (sprite._natural) {
-				_memos[i]._type = kBaturalImage; // We simply read from the screen and later, in display_it() we draw it right back.
+				_memos[i]._type = kNaturalImage; // We simply read from the screen and later, in display_it() we draw it right back.
 				_memos[i]._size = _memos[i]._xl * 8 * _memos[i]._yl + 1; 
 				_memory[i].create(_memos[i]._xl * 8, _memos[i]._yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
 
@@ -320,13 +321,13 @@ void Celer::forgetBackgroundSprites() {
 	memset(_memos, 255, sizeof(_memos)); /* x=-1, => on disk. */
 }
 
-void Celer::drawSprite(int16 x, int16 y, int16 xl, int16 yl, PictureType flavour, const ::Graphics::Surface &picture) {
+void Celer::drawSprite(int16 x, int16 y, int16 xl, int16 yl, PictureType type, const ::Graphics::Surface &picture) {
 	_r.x1 = x;
 	_r.y1 = y;
 	_r.y2 = y + yl;
 
-	switch (flavour) {
-	case kBaturalImage: // Allow fallthorugh on purpose.
+	switch (type) {
+	case kNaturalImage: // Allow fallthorugh on purpose.
 	case kBgi : {
 		_r.x2 = x + xl + 1;
 		}
