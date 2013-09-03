@@ -38,93 +38,93 @@ class AvalancheEngine;
 
 class Acci {
 public:
-		/* verb codes */
-	static const byte vb_exam = 1;
-	static const byte vb_open = 2;
-	static const byte vb_pause = 3;
-	static const byte vb_get = 4;
-	static const byte vb_drop = 5;
-	static const byte vb_inv = 6;
-	static const byte vb_talk = 7;
-	static const byte vb_give = 8;
-	static const byte vb_drink = 9;
-	static const byte vb_load = 10;
-	static const byte vb_save = 11;
-	static const byte vb_pay = 12;
-	static const byte vb_look = 13;
-	static const byte vb_break = 14;
-	static const byte vb_quit = 15;
-	static const byte vb_sit = 16;
-	static const byte vb_stand = 17;
-	static const byte vb_go = 18;
-	static const byte vb_info = 19;
-	static const byte vb_undress = 20;
-	static const byte vb_wear = 21;
-	static const byte vb_play = 22;
-	static const byte vb_ring = 23;
-	static const byte vb_help = 24;
-	static const byte vb_larrypass = 25;
-	static const byte vb_phaon = 26;
-	static const byte vb_boss = 27;
-	static const byte vb_pee = 28;
-	static const byte vb_cheat = 29;
-	static const byte vb_magic = 30;
-	static const byte vb_restart = 31;
-	static const byte vb_eat = 32;
-	static const byte vb_listen = 33;
-	static const byte vb_buy = 34;
-	static const byte vb_attack = 35;
-	static const byte vb_password = 36;
-	static const byte vb_dir = 37;
-	static const byte vb_die = 38;
-	static const byte vb_score = 39;
-	static const byte vb_put = 40;
-	static const byte vb_kiss = 41;
-	static const byte vb_climb = 42;
-	static const byte vb_jump = 43;
-	static const byte vb_highscores = 44;
-	static const byte vb_wake = 45;
-	static const byte vb_hello = 46;
-	static const byte vb_thanks = 47;
-
-	static const byte vb_smartalec = 249;
-	static const byte vb_expletive = 253;
-
-	static const byte pardon = 254; // Didn't understand / wasn't given.
-
-	static const int16 nowords = 277; // How many words does the parser know?
-	static const byte nowt = 250;
-	static const byte moved = 0; // This word was moved. (Usually because it was the subject of conversation.)
-
-	static const int16 first_password = 89; // Words[first_password] should equal "TIROS".
-
-
-
-	struct vocab {
-		byte n;
-		Common::String w;
+	enum VerbCode {
+		kVerbCodeExam = 1,
+		kVerbCodeOpen = 2,
+		kVerbCodePause = 3,
+		kVerbCodeGet = 4,
+		kVerbCodeDrop = 5,
+		kVerbCodeInv = 6,
+		kVerbCodeTalk = 7,
+		kVerbCodeGive = 8,
+		kVerbCodeDrink = 9,
+		kVerbCodeLoad = 10,
+		kVerbCodeSave = 11,
+		kVerbCodePay = 12,
+		kVerbCodeLook = 13,
+		kVerbCodeBreak = 14,
+		kVerbCodeQuit = 15,
+		kVerbCodeSit = 16,
+		kVerbCodeStand = 17,
+		kVerbCodeGo = 18,
+		kVerbCodeInfo = 19,
+		kVerbCodeUndress = 20,
+		kVerbCodeWear = 21,
+		kVerbCodePlay = 22,
+		kVerbCodeRing = 23,
+		kVerbCodeHelp = 24,
+		kVerbCodeLarrypass = 25,
+		kVerbCodePhaon = 26,
+		kVerbCodeBoss = 27,
+		kVerbCodePee = 28,
+		kVerbCodeCheat = 29,
+		kVerbCodeMagic = 30,
+		kVerbCodeRestart = 31,
+		kVerbCodeEat = 32,
+		kVerbCodeListen = 33,
+		kVerbCodeBuy = 34,
+		kVerbCodeAttack = 35,
+		kVerbCodePassword = 36,
+		kVerbCodeDir = 37,
+		kVerbCodeDie = 38,
+		kVerbCodeScore = 39,
+		kVerbCodePut = 40,
+		kVerbCodeKiss = 41,
+		kVerbCodeClimb = 42,
+		kVerbCodeJump = 43,
+		kVerbCodeHighscores = 44,
+		kVerbCodeWake = 45,
+		kVerbCodeHello = 46,
+		kVerbCodeThanks = 47,
+		kVerbCodeSmartAlec = 249,
+		kVerbCodeExpletive = 253,
 	};
 
-	static const vocab words[nowords];
+	static const byte kPardon = 254; // Didn't understand / wasn't given.
 
-	static const char what[];
+	static const int16 kParserWordsNum = 277; // How many words does the parser know?
+	static const byte kNothing = 250;
+	static const byte kMoved = 0; // This word was moved. (Usually because it was the subject of conversation.)
+
+	static const int16 kFirstPassword = 88; // words[kFirstPassword] should equal "TIROS".
 
 
 
-	struct ranktype {
-		uint16 score;
-		Common::String title;
+	struct VocabEntry {
+		byte _number;
+		Common::String _word;
 	};
 
-	static const ranktype ranks[9];
+	static const VocabEntry kVocabulary[kParserWordsNum];
+
+	static const char kWhat[];
 
 
 
-	Common::String thats;
-	Common::String unknown;
-	Common::String realwords[11];
-	byte verb, person, thing, thing2;
-	bool polite;
+	struct RankType {
+		uint16 _score;
+		Common::String _title;
+	};
+
+	static const RankType kRanks[9];
+
+
+
+	Common::String _thats;
+	Common::String _unknown;
+	Common::String _realWords[11];
+	byte _verb, _person, _thing, _thing2;
+	bool _polite;
 
 
 
@@ -133,83 +133,77 @@ public:
 
 	void init();
 
-	void clearwords();
+	void clearWords();
 	void parse();
-	void lookaround();
-	void opendoor();
-	void do_that();
-	void verbopt(char n, Common::String &answer, char &anskey);
-	void have_a_drink();
+	void lookAround(); // This is called when you say "look".
+	void openDoor();
+	void doThat();
+	void verbOpt(byte verb, Common::String &answer, char &ansKey);
+	void drink();
 
 private:
 	AvalancheEngine *_vm;
 
 	byte fv;
 
-	byte wordnum(Common::String x);
-
-	void replace(Common::String old1, byte new1);
+	byte wordNum(Common::String word);
+	void replace(Common::String oldChars, byte newChar);
 
 	Common::String rank();
-
-	Common::String totaltime();
+	Common::String totalTime();
 
 	void number(Common::String &codes);
-	void cheatparse(Common::String codes);
+	void cheatParse(Common::String codes);
 
-	void punctustrip(Common::String &x);
+	void stripPunctuation(Common::String &word); // Strips punctuation from word.
 
-	void displaywhat(byte ch, bool animate, bool &ambigous);
-	bool do_pronouns();
+	void displayWhat(byte target, bool animate, bool &ambiguous); // << It's an adjective!
+	bool doPronouns();
 
-	void lowercase();
-	void propernouns();
-	void sayit();
-	void store_interrogation(byte interrogation);
+	void properNouns();
+	void sayIt();  // This makes Avalot say the response.
+	void storeInterrogation(byte interrogation);
 
-	void clearuint16s();
+	void examineObject(); // Examine a standard object-thing
 
-	void examobj(); // Examine a standard object-thing
-
-	bool personshere();
+	bool isPersonHere();
 
 	void exampers();
 
 	bool holding();
 
-	void openBox(bool before);
+	void openBox(bool isOpening);
 	void examine();
 
-	void inv();
+	void inventory();
 
 	void swallow();
 
-	void others();
+	void peopleInRoom(); // This lists the other people in the room.
 
 	void silly();
-	void putproc();
+	void putProc();  // Called when you call kVerbCodeput.
 
-	void not_in_order();
-	void go_to_cauldron();
-	bool give2spludwick();
+	void notInOrder();
+	void goToCauldron();
+	bool giveToSpludwick(); // The result of this fn is whether or not he says "Hey, thanks!".
 
-	void cardiff_climbing();
+	void cardiffClimbing();
 
 	void already();
-	void stand_up();
+	void standUp(); // Called when you ask Avvy to stand.
 
-	void getproc(char thing);
+	void getProc(char thing);
 
-	void give_geida_the_lute();
+	void giveGeidaTheLute();
 
-	void play_harp();
+	void playHarp();
 
-	void winsequence();
+	void winSequence();
 
-	void person_speaks();
+	void personSpeaks();
 
-	void heythanks();
-
+	void heyThanks();
 };
 
 } // End of namespace Avalanche.

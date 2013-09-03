@@ -760,7 +760,7 @@ void Scrolls::calldrivers() {
 					display(lsd() + kControlToBuffer); // Insert cash balance. (Recursion)
 					break; 
 				case 2:
-					display(_vm->_acci->words[_vm->_acci->first_password + _vm->_gyro->dna.pass_num].w + kControlToBuffer);
+					display(_vm->_acci->kVocabulary[_vm->_acci->kFirstPassword + _vm->_gyro->dna.pass_num]._word + kControlToBuffer);
 					break;
 				case 3:
 					display(_vm->_gyro->dna.like2drink + kControlToBuffer);
@@ -782,12 +782,12 @@ void Scrolls::calldrivers() {
 					case 0: { // Sixpence.
 						_vm->_visa->dixi('q', 37); // You find the sixpence.
 						_vm->_gyro->dna.pence += 6;
-						_vm->_gyro->dna.box_contents = _vm->_acci->nowt;
+						_vm->_gyro->dna.box_contents = _vm->_acci->kNothing;
 						_vm->_lucerna->points(2);
 						return;
 					}
 					break;
-					case _vm->_acci->nowt:
+					case _vm->_acci->kNothing:
 						display("nothing at all. It's completely empty.");
 						break;
 					default:

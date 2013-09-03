@@ -320,26 +320,26 @@ void Dropdown::find_what_you_can_do_with_it() {
 	case _vm->_gyro->wine:
 	case _vm->_gyro->potion:
 	case _vm->_gyro->ink:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_drink;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeDrink;
 		break;
 	case _vm->_gyro->bell:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_ring;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeRing;
 		break;
 	case _vm->_gyro->chastity:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_wear;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeWear;
 		break;
 	case _vm->_gyro->lute:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_play;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodePlay;
 		break;
 	case _vm->_gyro->mushroom:
 	case _vm->_gyro->onion:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_eat;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeEat;
 		break;
 	case _vm->_gyro->clothes:
-		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_wear;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeWear;
 		break;
 	default:
-		_vm->_gyro->verbstr = _vm->_acci->vb_exam; /* anything else */
+		_vm->_gyro->verbstr = _vm->_acci->kVerbCodeExam; /* anything else */
 	}
 }
 
@@ -562,32 +562,32 @@ void Dropdown::ddm__with() {
 		find_what_you_can_do_with_it();
 
 		for (fv = 0; fv < _vm->_gyro->verbstr.size(); fv++) {
-			_vm->_acci->verbopt(_vm->_gyro->verbstr[fv], verb, vbchar);
+			_vm->_acci->verbOpt(_vm->_gyro->verbstr[fv], verb, vbchar);
 			ddm_o.opt(verb, vbchar, "", true);
 		}
 
-		// We disable the "give" option if: (a), you haven't selected anybody, (b), the person you've selected isn't in the room, or (c), the person you've selected is YOU!
+		// We disable the "give" option if: (a), you haven't selected anybody, (b), the _person you've selected isn't in the room, or (c), the _person you've selected is YOU!
 		
-		if ((_vm->_gyro->last_person == _vm->_gyro->pavalot) || (_vm->_gyro->last_person == _vm->_acci->nowt) || (_vm->_gyro->whereis[_vm->_gyro->last_person - 150] != _vm->_gyro->dna.room))
+		if ((_vm->_gyro->last_person == _vm->_gyro->pavalot) || (_vm->_gyro->last_person == _vm->_acci->kNothing) || (_vm->_gyro->whereis[_vm->_gyro->last_person - 150] != _vm->_gyro->dna.room))
 			ddm_o.opt("Give to...", 'G', "", false); /* Not here. */
 		else {
 			ddm_o.opt(Common::String("Give to ") + _vm->_gyro->getname(_vm->_gyro->last_person), 'G', "", true);
-			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->vb_give;
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->kVerbCodeGive;
 		}
 	} else {
 		ddm_o.opt("Examine", 'x', "", true);
 		ddm_o.opt(Common::String("Talk to h") + himher(_vm->_gyro->thinks), 'T', "", true);
-		_vm->_gyro->verbstr = Common::String(_vm->_acci->vb_exam) + _vm->_acci->vb_talk;
+		_vm->_gyro->verbstr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeTalk;
 		switch (_vm->_gyro->thinks) {
 		case _vm->_gyro->pgeida:
 		case _vm->_gyro->parkata: {
 			ddm_o.opt("Kiss her", 'K', "", true);
-			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->vb_kiss;
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->kVerbCodeKiss;
 		}
 		break;
 		case _vm->_gyro->pdogfood: {
 			ddm_o.opt("Play his game", 'P', "", !_vm->_gyro->dna.wonnim); /* True if you HAVEN'T won. */
-			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->vb_play;
+			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->kVerbCodePlay;
 		}
 		break;
 		case _vm->_gyro->pmalagauche: {
@@ -640,19 +640,19 @@ void Dropdown::do__game() {
 	switch (ddm_o.choicenum) {
 		/* Help, boss, untrash screen. */
 	case 0:
-		_vm->_lucerna->callverb(_vm->_acci->vb_help);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeHelp);
 		break;
 	case 1:
-		_vm->_lucerna->callverb(_vm->_acci->vb_boss);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBoss);
 		break;
 	case 2:
 		_vm->_lucerna->major_redraw();
 		break;
 	case 3:
-		_vm->_lucerna->callverb(_vm->_acci->vb_score);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeScore);
 		break;
 	case 4:
-		_vm->_lucerna->callverb(_vm->_acci->vb_info);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeInfo);
 		break;
 	}
 }
@@ -661,18 +661,18 @@ void Dropdown::do__file() {
 	switch (ddm_o.choicenum) {
 		/* New game, load, save, save as, DOS shell, about, quit. */
 	case 0:
-		_vm->_lucerna->callverb(_vm->_acci->vb_restart);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeRestart);
 		break;
 	case 1: {
-		if (!_vm->_acci->realwords[1].empty())
-			_vm->_acci->realwords[1].clear();
-		_vm->_lucerna->callverb(_vm->_acci->vb_load);
+		if (!_vm->_acci->_realWords[1].empty())
+			_vm->_acci->_realWords[1].clear();
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeLoad);
 	}
 	break;
 	case 2: {
-		if (!_vm->_acci->realwords[1].empty())
-			_vm->_acci->realwords[1].clear();
-		_vm->_lucerna->callverb(_vm->_acci->vb_save);
+		if (!_vm->_acci->_realWords[1].empty())
+			_vm->_acci->_realWords[1].clear();
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeSave);
 	}
 	break;
 	case 3:
@@ -682,7 +682,7 @@ void Dropdown::do__file() {
 		_vm->_enid->back_to_bootstrap(2);
 		break;
 	case 5:
-		_vm->_lucerna->callverb(_vm->_acci->vb_quit);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeQuit);
 		break;
 	}
 }
@@ -692,23 +692,23 @@ void Dropdown::do__action() {
 	switch (ddm_o.choicenum) {
 		/* Get up/pause game/open door/look/inv/walk-run */
 	case 0: {
-		_vm->_acci->person = _vm->_acci->pardon;
-		_vm->_acci->thing = _vm->_acci->pardon;
+		_vm->_acci->_person = _vm->_acci->kPardon;
+		_vm->_acci->_thing = _vm->_acci->kPardon;
 		n = _vm->_gyro->f5_does();
 		_vm->_lucerna->callverb(n[0]);
 	}
 	break;
 	case 1:
-		_vm->_lucerna->callverb(_vm->_acci->vb_pause);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodePause);
 		break;
 	case 2:
-		_vm->_lucerna->callverb(_vm->_acci->vb_open);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeOpen);
 		break;
 	case 3:
-		_vm->_lucerna->callverb(_vm->_acci->vb_look);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeLook);
 		break;
 	case 4:
-		_vm->_lucerna->callverb(_vm->_acci->vb_inv);
+		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeInv);
 		break;
 	case 5: {
 		if (_vm->_trip->tr[0].xs == _vm->_gyro->walk)
@@ -731,58 +731,58 @@ void Dropdown::do__people() {
 }
 
 void Dropdown::do__with() {
-	_vm->_acci->thing = _vm->_gyro->thinks;
+	_vm->_acci->_thing = _vm->_gyro->thinks;
 
 	if (_vm->_gyro->thinkthing) {
 
-		_vm->_acci->thing += 49;
+		_vm->_acci->_thing += 49;
 
-		if (_vm->_gyro->verbstr[ddm_o.choicenum] == _vm->_acci->vb_give)
-			_vm->_acci->person = _vm->_gyro->last_person;
+		if (_vm->_gyro->verbstr[ddm_o.choicenum] == _vm->_acci->kVerbCodeGive)
+			_vm->_acci->_person = _vm->_gyro->last_person;
 		else
-			_vm->_acci->person = 254;
+			_vm->_acci->_person = 254;
 
 	} else {
 		switch (_vm->_gyro->verbstr[ddm_o.choicenum]) {
 		case 100: { // Beer
-			_vm->_acci->thing = 100;
-			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
+			_vm->_acci->_thing = 100;
+			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 101: { // Wine
-			_vm->_acci->thing = 50;
-			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
+			_vm->_acci->_thing = 50;
+			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 102: { // Whisky
-			_vm->_acci->thing = 102;
-			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
+			_vm->_acci->_thing = 102;
+			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
 		case 103: { // Cider
-			_vm->_acci->thing = 103;
-			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
+			_vm->_acci->_thing = 103;
+			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
 		case 104: { // Mead
-			_vm->_acci->thing = 107;
-			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
+			_vm->_acci->_thing = 107;
+			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
 		case 105: { // Onion (trader)
-			_vm->_acci->thing = 67;
-			_vm->_lucerna->callverb(_vm->_acci->vb_buy);
+			_vm->_acci->_thing = 67;
+			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
 		default: {
-			_vm->_acci->person = _vm->_acci->thing;
-			_vm->_acci->thing = 254;
+			_vm->_acci->_person = _vm->_acci->_thing;
+			_vm->_acci->_thing = 254;
 			_vm->_gyro->subjnumber = 0;
 		}
 		}

@@ -606,7 +606,7 @@ void AvalancheEngine::bFlightOff() {
 
 
 
-Common::String AvalancheEngine::elm2Str(Elm how) {
+Common::String AvalancheEngine::elmToStr(Elm how) {
 	switch (how) {
 	case kNormal:
 	case kMusical:
