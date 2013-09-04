@@ -43,6 +43,9 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis);
+	void serialize(Common::WriteStream *stream);
+	void deserialize(Common::SeekableReadStream *stream);
+	inline bool needsSerialization() { return true; }
 
 private:
 	uint32 _timeLeft;

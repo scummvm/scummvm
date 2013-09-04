@@ -22,6 +22,8 @@
 
 #include "common/scummsys.h"
 
+#include "common/stream.h"
+
 #include "zvision/timer_node.h"
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
@@ -41,6 +43,15 @@ bool TimerNode::process(uint32 deltaTimeInMillis) {
 	}
 
 	return false;
+}
+
+void TimerNode::serialize(Common::WriteStream *stream) {
+	stream->writeUint32LE(_key);
+	stream->writeUint32LE(_timeLeft);
+}
+
+void TimerNode::deserialize(Common::SeekableReadStream *stream) {
+	_timeLeft = stream->readUint32LE();
 }
 
 } // End of namespace ZVision
