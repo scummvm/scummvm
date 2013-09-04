@@ -162,20 +162,60 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	const int aIndex = 0;
+	const int bIndex = 1;
+	const int gIndex = 2;
+	const int rIndex = 3;
 #else
 	const int aIndex = 3;
+	const int bIndex = 2;
+	const int gIndex = 1;
+	const int rIndex = 0;
 #endif
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		memcpy(out, in, width * 4);
-		for (uint32 j = 0; j < width; j++) {
-			out[aIndex] = 0xFF;
-			out += 4;
+	if (blendMode == BLEND_ADDITIVE) {
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			memcpy(out, in, width * 4);
+			for (uint32 j = 0; j < width; j++) {
+				out[aIndex] = 0xFF;
+				out[rIndex] = MIN(out[rIndex] + in[rIndex], 255);
+				out[gIndex] = MIN(out[gIndex] + in[gIndex], 255);
+				out[bIndex] = MIN(out[bIndex] + in[bIndex], 255);
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
 		}
-		outo += pitch;
-		ino += inoStep;
+	} else if (blendMode == BLEND_SUBTRACTIVE) {
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			memcpy(out, in, width * 4);
+			for (uint32 j = 0; j < width; j++) {
+				out[aIndex] = 0xFF;
+				out[rIndex] = MAX(out[rIndex] - in[rIndex], 0);
+				out[gIndex] = MAX(out[gIndex] - in[gIndex], 0);
+				out[bIndex] = MAX(out[bIndex] - in[bIndex], 0);
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	} else {
+	
+		assert (blendMode == BLEND_NORMAL);
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			memcpy(out, in, width * 4);
+			for (uint32 j = 0; j < width; j++) {
+				out[aIndex] = 0xFF;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
 	}
 }
 
