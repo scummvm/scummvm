@@ -33,38 +33,37 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+
+
 namespace Avalanche {
 class AvalancheEngine;
 
 class Closing {
 public:
-	static const int16 scr_bugalert = 1;
-	static const int16 scr_ramcram = 2;
-	static const int16 scr_nagscreen = 3;
-	static const int16 scr_twocopies = 5;
-
 	Closing(AvalancheEngine *vm);
 
-	void quit_with(byte which, byte errorlev);
-
-	void end_of_program();
+	void exitGame();
 
 private:
+	enum ScreenType {
+		kScreenBugAlert = 1,
+		kScreenRamCram = 2,
+		kScreenNagScreen = 3,
+		kScreenTwoCopies = 5,
+	};
+
 	AvalancheEngine *_vm;
 
-	typedef Common::String scrtype;
+	Common::String q; //absolute $B8FA:0* ; Nobody's using the graphics memory now.
+	Common::File f;
 
-	scrtype q /*absolute $B8FA:0*/; /* Nobody's using the graphics memory now. */
-	//file<scrtype> f;
-	void *exitsave;
+	void getScreen(ScreenType which);
 
-	void get_screen(byte which);
+	void showScreen();
 
-	void show_screen();
+	void putIn(Common::String str, uint16 where);
 
-	void put_in(Common::String x, uint16 where);
-
-	void bug_handler();
+	void handleBug();
 };
 
 } // End of namespace Avalanche.

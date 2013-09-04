@@ -36,6 +36,8 @@
 #include "common/textconsole.h"
 #include "common/random.h"
 
+
+
 namespace Avalanche {
 
 Closing::Closing(AvalancheEngine *vm) {
@@ -43,23 +45,19 @@ Closing::Closing(AvalancheEngine *vm) {
 	warning("STUB: Closing::Closing()");
 }
 
-void Closing::get_screen(byte which) {
-	warning("STUB: Closing::get_screen()");
+void Closing::getScreen(ScreenType which) {
+	warning("STUB: Closing::getScreen()");
 }
 
-void Closing::show_screen() {
-	warning("STUB: Closing::show_screen()");
+void Closing::showScreen() {
+	warning("STUB: Closing::showScreen()");
 }
 
-void Closing::quit_with(byte which, byte errorlev) {
-	warning("STUB: Closing::quit_with()");
+void Closing::putIn(Common::String str, uint16 where) {
+	warning("STUB: Closing::putIn()");
 }
 
-void Closing::put_in(Common::String x, uint16 where) {
-	warning("STUB: Closing::put_in()");
-}
-
-void Closing::end_of_program() {
+void Closing::exitGame() {
 	const Common::String nouns[12] = {
 		"sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
 		"abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
@@ -72,17 +70,17 @@ void Closing::end_of_program() {
 
 	Common::String result;
 
-	//nosound;
-	warning("STUB: Closing::end_of_program()");
+	//nosound();
+	warning("STUB: Closing::exitGame()");
 
-	get_screen(scr_nagscreen);
+	getScreen(kScreenNagScreen);
 	result = nouns[_vm->_rnd->getRandomNumber(12)] + " will " + verbs[_vm->_rnd->getRandomNumber(12)] + " you";
-	put_in(result, 1628);
-	show_screen(); /* No halt- it's already set up. */
+	putIn(result, 1628);
+	showScreen(); // No halt- it's already set up.
 }
 
-void Closing::bug_handler() {
-	warning("STUB: Closing::bug_handler()");
+void Closing::handleBug() {
+	warning("STUB: Closing::handleBug()");
 }
 
 } // End of namespace Avalanche.

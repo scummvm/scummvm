@@ -42,6 +42,7 @@
 #include "graphics/thumbnail.h"
 
 
+
 namespace Avalanche {
 
 AvalancheEngine *AvalancheEngine::s_Engine = 0;
