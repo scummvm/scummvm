@@ -288,11 +288,10 @@ void Acci::number(Common::String &codes) {
 }
 
 void Acci::cheatParse(Common::String codes) {
-	uint16 num;
-	int16 e;
-
-	char cmd;
-	int16 se, sx, sy;
+//	uint16 num;
+//	int16 e;
+//	char cmd;
+//	int16 se, sx, sy;
 
 	warning("STUB: Acci::cheatParse()");
 }
@@ -522,39 +521,39 @@ void Acci::parse() {
 				inputText.deleteChar(0);
 	}
 
-	if (_vm->_parser->pos(Common::String(254), _thats) > -1) 
-		_unknown = _realWords[_vm->_parser->pos(Common::String(254), _thats)];
+	if (_vm->_parser->pos(Common::String('\xFE'), _thats) > -1) 
+		_unknown = _realWords[_vm->_parser->pos(Common::String('\xFE'), _thats)];
 	else
 		if (!_unknown.empty())
 			_unknown.clear();
 
 	// Replace words' codes that mean the same.
-	replace(Common::String(255), 0); /* zap noise words */
-	replace(Common::String(13) + 226, 1); // "look at" = "examine"
-	replace(Common::String(13) + 228, 1); // "look in" = "examine"
-	replace(Common::String(4) + 230, 17); // "get up" = "stand" 
-	replace(Common::String(4) + 231, 17); // "get down" = "stand"... well, why not?
-	replace(Common::String(18) + 228, 2); // "go in" = "open [door]"
-	replace(Common::String(28) + 229, 253); // "P' off" is a swear word
-	replace(Common::String(4) + 6, 6); // "Take inventory" (remember Colossal Adventure?)
-	replace(Common::String(40) + 232, 21); // "put on" = "don"
-	replace(Common::String(4) + 229, 20); // "take off" = "doff"
+	replace(Common::String('\xFF'), 0); /* zap noise words */
+	replace(Common::String('\xD')  + '\xE2', 1); // "look at" = "examine"
+	replace(Common::String('\xD')  + '\xE4', 1); // "look in" = "examine"
+	replace(Common::String('\x4')  + '\xE6', 17); // "get up" = "stand" 
+	replace(Common::String('\x4')  + '\xE7', 17); // "get down" = "stand"... well, why not?
+	replace(Common::String('\x12') + '\xE4', 2); // "go in" = "open [door]"
+	replace(Common::String('\x1C') + '\xE5', 253); // "P' off" is a swear word
+	replace(Common::String('\x4')  + '\x6' , 6); // "Take inventory" (remember Colossal Adventure?)
+	replace(Common::String('\x28') + '\xE8', 21); // "put on" = "don"
+	replace(Common::String('\x4')  + '\xE5', 20); // "take off" = "doff"
 
 	// Words that could mean more than one _person
 	if (_vm->_gyro->dna.room == r__nottspub)
-		replace(Common::String(204), 164); // Barman = Port
+		replace(Common::String('\xCC'), 164); // Barman = Port
 	else
-		replace(Common::String(204), 154); // Barman = Malagauche
+		replace(Common::String('\xCC'), 154); // Barman = Malagauche
 
 	switch (_vm->_gyro->dna.room) {
 	case r__aylesoffice:
-		replace(Common::String(203), 163); // Monk = Ayles
+		replace(Common::String('\xCB'), 163); // Monk = Ayles
 		break;       
 	case r__musicroom:
-		replace(Common::String(203), 166); // Monk = Jacques
+		replace(Common::String('\xCB'), 166); // Monk = Jacques
 		break;          
 	default:
-		replace(Common::String(203), 162); // Monk = Ibythneth
+		replace(Common::String('\xCB'), 162); // Monk = Ibythneth
 	}
 	
 	if (doPronouns()) {
