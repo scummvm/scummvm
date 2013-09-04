@@ -284,12 +284,6 @@ Common::String Acci::totalTime() {
 	return result + _vm->_gyro->strf(s) + " seconds.";
 }
 
-
-
-void Acci::number(Common::String &codes) {
-	warning("STUB: Acci::number()");
-}
-
 void Acci::cheatParse(Common::String codes) {
 //	uint16 num;
 //	int16 e;
@@ -1332,7 +1326,7 @@ void Acci::doThat() {
 
 	if ((_verb != kVerbCodeLoad) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeQuit) && (_verb != kVerbCodeInfo) && (_verb != kVerbCodeHelp)
 	&& (_verb != kVerbCodeLarrypass) && (_verb != kVerbCodePhaon) && (_verb != kVerbCodeBoss) && (_verb != kVerbCodeCheat) && (_verb != kVerbCodeRestart) && (_verb != kVerbCodeDir)
-	&& (_verb != kVerbCodeScore) && (_verb != kVerbCodeHighscores) && (_verb != kVerbCodeSmartAlec)) {
+	&& (_verb != kVerbCodeScore) && (_verb != kVerbCodeHiscores) && (_verb != kVerbCodeSmartAlec)) {
 		if (!_vm->_gyro->alive) {
 			_vm->_scrolls->display(Common::String("You're dead, so don't talk. What are you, a ghost or something? Try restarting, or restoring a saved game!"));
 			return;
@@ -1885,7 +1879,7 @@ void Acci::doThat() {
 		} else
 			_vm->_visa->dixi('Q', 10);
 		break;
-	case kVerbCodePassword:
+	case kVerbCodePasswd:
 		if (_vm->_gyro->dna.room != r__bridge)
 			_vm->_visa->dixi('Q', 12);
 		else {
@@ -1959,7 +1953,7 @@ void Acci::doThat() {
 		_vm->_timeout->set_up_timer(1, _vm->_timeout->procjump, _vm->_timeout->reason_jumping);
 		_vm->_gyro->dna.user_moves_avvy = false;
 		break;
-	case kVerbCodeHighscores:
+	case kVerbCodeHiscores:
 		//	show_highs();
 		warning("STUB: Acci::doThat() - case kVerbCodehighscores");
 		break;
