@@ -181,6 +181,9 @@ void ScriptManager::checkPuzzleCriteria() {
 			bool shouldContinue = true;
 			for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); resultIter++) {
 				shouldContinue = shouldContinue && (*resultIter)->execute(_engine);
+				if (!shouldContinue) {
+					break;
+				}
 			}
 
 			// Set the puzzle as completed
@@ -258,18 +261,11 @@ bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Commo
 }
 
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
-	_nextLocation.world = world;
-	_nextLocation.room = room;
-	_nextLocation.node = node;
-	_nextLocation.view = view;
-	_nextLocation.offset = offset;
+	assert(world != 0);
+	debug("Changing location to: %c %c %c %c %u", world, room, node, view, offset);
 
-	_changeLocation = true;
-}
-
-void ScriptManager::changeLocationIntern() {
-	assert(_nextLocation.world != 0);
-	debug("Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
+	// Auto save
+	_engine->getSaveManager()->autoSave();
 
 	// Clear all the containers
 	_referenceTable.clear();
@@ -290,11 +286,11 @@ void ScriptManager::changeLocationIntern() {
 	_engine->getRenderManager()->setBackgroundVelocity(0);
 
 	// Parse into puzzles and controls
-	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+	Common::String fileName = Common::String::format("%c%c%c%c.scr", world, room, node, view);
 	parseScrFile(fileName);
 
 	// Change the background position
-	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
+	_engine->getRenderManager()->setBackgroundPosition(offset);
 
 	// Enable all the controls
 	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {

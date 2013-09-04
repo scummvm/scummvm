@@ -70,8 +70,7 @@ private:
 	/** Holds the currently active controls */
 	Common::List<Control *> _activeControls;
 
-	Location _nextLocation;
-	bool _changeLocation;
+	Location _currentLocation;
 
 public:
 	void initialize();
@@ -113,7 +112,6 @@ public:
 
 private:
 	void createReferenceTable();
-	void changeLocationIntern();
 	void updateNodes(uint deltaTimeMillis);
 	void checkPuzzleCriteria();
 
