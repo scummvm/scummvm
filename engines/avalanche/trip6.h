@@ -44,7 +44,7 @@ struct adxtype { /* Second revision of ADX type */
 	Common::String comment/*[17]*/; /* comment */ // uruk: Same here, but 16.
 	byte num; /* number of pictures */
 	byte seq; /* how many in one stride */
-	byte fgc, bgc; /* foreground & background bubble colours */
+	byte fgc, bgc; /* foreground & background bubble colors */
 	byte accinum; /* the number according to Acci (1=Avvy, etc.) */
 };
 

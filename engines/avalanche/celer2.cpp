@@ -289,9 +289,9 @@ void Celer::loadBackgroundSprites(byte number) {
 		sprite._yl = f.readSint16LE();
 		sprite._size = f.readSint32LE();
 		bool natural = f.readByte();
-		bool memorise = f.readByte();
+		bool memorize = f.readByte();
 				
-		if (memorise) {
+		if (memorize) {
 			_sprites[i]._x = sprite._x;
 			_sprites[i]._xl = sprite._xl;
 			_sprites[i]._y = sprite._y;
@@ -349,7 +349,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 		sprite._xl = f.readSint16LE();
 		sprite._yl = f.readSint16LE();
 		sprite._size = f.readSint32LE();
-		f.skip(2); // For the now not existing natural and memorise data members of the SpriteType (called chunkblocktype in the original).
+		f.skip(2); // For the now not existing natural and memorize data members of the SpriteType (called chunkblocktype in the original).
 		sprite._picture = _vm->_graphics->loadPictureRow(f, sprite._xl * 8, sprite._yl + 1);
 
 		if (destX < 0) {

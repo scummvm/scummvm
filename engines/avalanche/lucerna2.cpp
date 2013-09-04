@@ -219,7 +219,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	
 	CursorMan.showMouse(false);
 	
-	_vm->_graphics->flesh_colours();
+	_vm->_graphics->flesh_colors();
 
 	xx = _vm->_gyro->strf(n);
 	Common::String filename;

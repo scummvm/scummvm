@@ -447,7 +447,7 @@ triptype *triptype::done() {
 
 
 getsettype *getsettype::init() {
-	numleft = 0; /* initialise array pointer */
+	numleft = 0; /* initialize array pointer */
 	return this;
 }
 

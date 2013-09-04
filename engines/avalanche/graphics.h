@@ -84,7 +84,7 @@ public:
 
 	~Graphics();
 
-	void flesh_colours();
+	void flesh_colors();
 
 	byte *getPixel(int16 x, int16 y);
 

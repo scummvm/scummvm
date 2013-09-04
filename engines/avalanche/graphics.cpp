@@ -77,7 +77,7 @@ Graphics::~Graphics() {
 }
 
 
-void Graphics::flesh_colours()
+void Graphics::flesh_colors()
 {
 	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
 	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);

@@ -736,7 +736,7 @@ void Scrolls::calldrivers() {
 					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].y; // Position.
 		
 					_vm->_gyro->talkf = _vm->_gyro->quasipeds[param - 10].fgc;
-					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param - 10].bgc; // Colours.
+					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param - 10].bgc; // Colors.
 				} else {
 					_vm->_lucerna->errorled(); // Not valid.
 					natural();
