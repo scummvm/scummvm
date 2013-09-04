@@ -55,8 +55,6 @@ void Scrolls::init() {
 }
 
 void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
-	byte page_;
-
 	if (_vm->_gyro->ledstatus == x)
 		return; /* Already like that! */
 
@@ -136,8 +134,6 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 void Scrolls::normscroll() {
 	Common::String egg = Common::String(kControlParagraph) + kControlLeftJustified + kControlNegative + kControlBell + kControlBackspace + "***";
 	Common::String e = "(c) 1994";
-	char r;
-	bool oktoexit;
 
 	state(3);
 	_vm->_gyro->seescroll = true;
@@ -165,6 +161,8 @@ void Scrolls::normscroll() {
 
 
 
+//	char r;
+//	bool oktoexit;
 //	do {
 //		do {
 //			_vm->_gyro->check(); /* was "checkclick;" */
@@ -308,8 +306,6 @@ void Scrolls::geticon(int16 x, int16 y, byte which) {
 
 void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File f;
-	byte bit;
-	int16 fv;
 	uint16 st;
 
 	st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
@@ -321,14 +317,15 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 		return;
 	}
 
-	/*for (fv = 1; fv <= yl; fv ++)
-	for (bit = 0; bit <= 3; bit ++) {
-	port[0x3c4] = 2;
-	port[0x3ce] = 4;
-	port[0x3c5] = 1 << bit;
-	port[0x3cf] = bit;
-	blockread(f, mem[0xa000 * st + (fv * 80)], xl);
-	}
+	/*byte bit;
+	for (uint16 fv = 1; fv <= yl; fv ++)
+		for (bit = 0; bit <= 3; bit ++) {
+			port[0x3c4] = 2;
+			port[0x3ce] = 4;
+			port[0x3c5] = 1 << bit;
+			port[0x3cf] = bit;
+			blockread(f, mem[0xa000 * st + (fv * 80)], xl);
+		}
 	bit = getpixel(0, 0);*/
 
 	warning("STUB: Scrolls::block_drop()");
@@ -484,7 +481,7 @@ void Scrolls::bubble(func2 gotoit) {
 	int16 xl, yl, my, xw, yw;
 	byte fv;
 	Common::Point p[3];
-	byte *rp1, *rp2; /* replace: 1=bubble, 2=pointer */
+//	byte *rp1, *rp2; /* replace: 1=bubble, 2=pointer */
 	int16 xc; /* x correction */
 
 	/*setvisualpage(cp);
@@ -638,7 +635,7 @@ void Scrolls::calldrivers() {
 	char nnn;
 	bool mouthnext;
 	bool call_spriterun; // Only call sprite_run the FIRST time.
-	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
+//	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
 
 
 	//nosound();
