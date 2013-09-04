@@ -102,7 +102,7 @@ public:
 
 	uint16 bearing(byte whichped); // Returns the bearing from ped Whichped to Avvy, in degrees.
 
-	void flesh_colours();
+	void flesh_colors();
 
 	void sprite_run();
 
