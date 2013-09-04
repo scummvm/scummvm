@@ -63,7 +63,6 @@ AvalancheEngine::~AvalancheEngine() {
 
 	delete _avalot;
 	delete _gyro;
-	delete _enhanced;
 	delete _pingo;
 	delete _scrolls;
 	delete _visa;
@@ -84,7 +83,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 
 	_avalot = new Avalot(this);
 	_gyro = new Gyro(this);
-	_enhanced = new Enhanced(this);
 	_pingo = new Pingo(this);
 	_scrolls = new Scrolls(this);
 	_visa = new Visa(this);

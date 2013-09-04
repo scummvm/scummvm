@@ -43,9 +43,10 @@ void Parser::init() {
 
 void Parser::handleInputText(const Common::Event &event) {
 	byte inChar = event.kbd.ascii;
-	if (_vm->_dropdown->_activeMenuItem._activeNow) {
+	warning("STUB: Parser::handleInputText()");
+	/*if (_vm->_dropdown->_activeMenuItem._activeNow) {
 		_vm->_dropdown->parseKey(inChar, _vm->_enhanced->extd);
-	} else {
+	} else {*/
 		if (_inputText.size() < 76) {
 			if ((inChar == '"') || (inChar == '`')) {
 				if (_quote)
@@ -60,7 +61,7 @@ void Parser::handleInputText(const Common::Event &event) {
 			plotText();
 		} else
 			_vm->_gyro->blip();
-	}
+	//}
 }
 
 void Parser::handleBackspace() {

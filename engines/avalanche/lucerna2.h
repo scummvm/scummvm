@@ -72,8 +72,6 @@ public:
 
 	void mouseway(const Common::Point &cursorPos);
 
-	void inkey();
-
 	void posxy();
 
 	void fxtoggle();

@@ -35,7 +35,6 @@
 
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
-#include "avalanche/enhanced2.h"
 #include "avalanche/pingo2.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/visa2.h"
@@ -73,7 +72,6 @@ public:
 
 	Avalot *_avalot;
 	Gyro *_gyro;
-	Enhanced *_enhanced;
 	Pingo *_pingo;
 	Scrolls *_scrolls;
 	Visa *_visa;
@@ -87,15 +85,12 @@ public:
 	Dropdown *_dropdown;
 	Closing *_closing;
 
-
 	OSystem *_system;
-
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
 
 	Common::ErrorCode initialize(); 
-
 	GUI::Debugger *getDebugger();
 
 	Common::RandomSource *_rnd;
@@ -103,28 +98,19 @@ public:
 	const AvalancheGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
-
 	Common::Platform getPlatform() const;
-
 	bool hasFeature(EngineFeature f) const;
 	const char *getCopyrightString() const;
 
-
-
 	void synchronize(Common::Serializer &sz);
-
 	virtual bool canSaveGameStateCurrently();
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool saveGame(const int16 slot, const Common::String &desc);
-
 	Common::String getSaveFileName(const int slot);
-
 	virtual bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	bool loadGame(const int16 slot);
 	Common::String expandDate(int d, int m, int y);
-
-
 
 	void updateEvents();
 	bool getEvent(Common::Event &event); // A wrapper around _eventMan->pollEvent(), so we can use it in Scrolls::normscroll() for example.
@@ -140,19 +126,13 @@ private:
 	AvalancheConsole *_console;
 	Common::Platform _platform;
 
-	
-
-
 	// From bootstrp:
 
 	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
 
 	static const int16 kRunShootemup = 1, kRunDosshell = 2, kRunGhostroom = 3, kRunGolden = 4;
-
 	static const char kRuncodes[2][3];
-
 	static const int16 kReset = 0;
-
 	static const bool kJsb = true, kNoJsb = false, kBflight = true, kNoBflight = false;
 
 	struct {
@@ -162,54 +142,31 @@ private:
 	} _storage;
 
 	Common::String _arguments, _demoArgs, _argsWithNoFilename;
-
 	bool _firstTime;
-
 	byte _originalMode;
 	byte *_old1c;
-
 	Common::String _segofs;
-
 	bool _zoomy;
-
 	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
 
 	void cursorOff();
-
 	void cursorOn();
-
 	void quit();
-
 	Common::String commandCom();
-
 	void explain(byte error);
-
 	void bFlight();
-
 	void bFlightOn();
-
 	void bFlightOff();
-
 	Common::String elmToStr(Elm how);
-
 	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
-
 	void getArguments();
-
 	void getSlope();
-
 	void callMenu();
-
 	void runAvalot();
-
 	void runDemo();
-
 	void dosShell();
-
 	bool keyPressed();
-
 	void flushBuffer();
-
 	void demo();
 };
 
