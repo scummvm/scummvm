@@ -53,8 +53,7 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	_tr = tr;
 
 	const int32 idshould = -1317732048;
-	int16 gd, gm;
-	byte fv/*,nds*/;
+	byte fv;
 	int32 id;
 	Common::File inf;
 
@@ -418,33 +417,23 @@ void triptype::load_data_from_mem(uint16 &where) {
 }
 
 triptype *triptype::done() {
-	int16 gd, gm;
 	Common::String xx;
-	byte fv/*,nds*/;
-	byte aa, bb;
-	int32 id;
-	uint16 soa;
 
 	/*  nds:=num div seq;*/
 	totalnum--;
 	_info.xw = _info.xl / 8;
 	if ((_info.xl % 8) > 0)
 		_info.xw++;
-	for (aa = 0; aa < /*nds*seq*/ a.num; aa++) {
+	for (byte aa = 0; aa < /*nds*seq*/ a.num; aa++) {
 		totalnum--;
-		delete _info.mani[totalnum];
-		delete _info.sil[totalnum];
+		delete[] _info.mani[totalnum];
+		delete[] _info.sil[totalnum];
 	}
 
 	quick = false;
 	whichsprite = 177;
 	return this;
 }
-
-
-
-
-
 
 getsettype *getsettype::init() {
 	numleft = 0; /* initialize array pointer */
@@ -528,6 +517,8 @@ byte Trip::geida_ped(byte which) {
 		return 9;
 	case 4:
 		return 10;	
+	default:
+		return 0;
 	}
 }
 
@@ -538,7 +529,7 @@ void Trip::catamove(byte ped) {
 
 	int32 here;
 	uint16 xy_uint16;
-	byte fv, ff;
+	byte fv;
 
 	/* XY_uint16 is cat_x+cat_y*256. Thus, every room in the
 		catacombs has a different number for it. */
@@ -1145,7 +1136,6 @@ bool Trip::overlaps_with_mouse() {
 }
 
 void Trip::getback() {
-	byte fv;
 	bool endangered;
 
 
@@ -1213,8 +1203,6 @@ void Trip::face_avvy(byte tripnum) {
 }
 
 void Trip::arrow_procs(byte tripnum) {
-	byte fv;
-			
 	if (tr[tripnum].homing) {
 		/* Arrow is still in flight. */
 		/* We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
@@ -1232,7 +1220,7 @@ void Trip::arrow_procs(byte tripnum) {
 			/*     tr[1].done; { Deallocate normal pic of Avvy. }
 
 					off;
-					for fv:=0 to 1 do
+					for byte fv:=0 to 1 do
 					begin
 					cp:=1-cp;
 					getback;
@@ -1267,11 +1255,8 @@ begin
 end;*/
 
 void Trip::grab_avvy(byte tripnum) {     /* For Friar Tuck, in Nottingham. */
-	byte fv;
-	int16 tox, toy;
-			
-	tox = tr[0].x + 17;
-	toy = tr[0].y - 1;
+	int16 tox = tr[0].x + 17;
+	int16 toy = tr[0].y - 1;
 	if ((tr[tripnum].x == tox) && (tr[tripnum].y == toy)) {
 		tr[tripnum].call_eachstep = false;
 		tr[tripnum].face = left;
@@ -1471,7 +1456,7 @@ void Trip::getsetclear() {
 }
 
 void Trip::hide_in_the_cupboard() {
-	const char nowt = 250; /* As in Acci. */
+	const char nowt = '\xFA'; /* As in Acci. */
 
 	if (_vm->_gyro->dna.avvys_in_the_cupboard) {
 		if (_vm->_gyro->dna.wearing == nowt)
