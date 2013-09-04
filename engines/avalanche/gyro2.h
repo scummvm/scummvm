@@ -559,7 +559,7 @@ public:
 	Common::String roomname; /* Name of this room */
 
 	//text logfile; // http://wiki.freepascal.org/Text
-	bool logging, log_epson;
+	bool log_epson;
 
 	bool cl_override;
 

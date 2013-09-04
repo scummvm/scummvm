@@ -80,8 +80,6 @@ void Parser::handleReturn() {
 	if (_vm->_dropdown->ddm_o.menunow)
 		_vm->_parser->tryDropdown();
 	else {
-		_vm->_logger->log_command(_inputText);
-		
 		if (!_inputText.empty()) {
 			_inputTextBackup = _inputText;
 			_vm->_acci->parse();

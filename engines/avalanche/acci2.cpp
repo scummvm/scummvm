@@ -1603,7 +1603,6 @@ void Acci::doThat() {
 					_vm->_gyro->dna.playednim++;
 
 					// You won - strange!
-					_vm->_logger->log_aside("You won.");
 					_vm->_visa->dixi('Q', 7); // You won! Give us a lute!
 					_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = true;
 					_vm->_lucerna->objectlist();
