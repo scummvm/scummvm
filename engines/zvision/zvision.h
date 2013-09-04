@@ -48,6 +48,7 @@ class Console;
 class ScriptManager;
 class RenderManager;
 class CursorManager;
+class SaveManager;
 class RlfAnimation;
  
 // our engine debug channels
@@ -95,6 +96,7 @@ private:
 	ScriptManager *_scriptManager;
 	RenderManager *_renderManager;
 	CursorManager *_cursorManager;
+	SaveManager *_saveManager;
 
 	// Clock
 	Clock _clock;
@@ -111,6 +113,7 @@ public:
 	ScriptManager *getScriptManager() const { return _scriptManager; }
 	RenderManager *getRenderManager() const { return _renderManager; }
 	CursorManager *getCursorManager() const { return _cursorManager; }
+	SaveManager *getSaveManager() const { return _saveManager; }
 	Common::RandomSource *getRandomSource() const { return _rnd; }
 	ZVisionGameId getGameId() const { return _gameDescription->gameId; }
 
