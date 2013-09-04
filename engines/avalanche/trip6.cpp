@@ -1646,6 +1646,8 @@ void Trip::handleMoveKey(const Common::Event &event) {
 		case Common::KEYCODE_KP5:
 			stopwalking();
 			break;
+		default:
+			break;
 		}
 }
 
