@@ -35,25 +35,31 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+
+
 namespace Avalanche {
 class AvalancheEngine;
 
 class Dropdown;
 
-typedef void (Dropdown::*func)();
 
-class headtype {
+
+typedef void (Dropdown::*DropdownFunc)();
+
+
+
+class HeadType {
 public:
-	Common::String title;
-	char trigger, alttrigger;
-	byte position;
-	int16 xpos, xright;
-	func do_setup, do_choose;
+	Common::String _title;
+	char _trigger, _altTrigger;
+	byte _position;
+	int16 _xpos, _xright;
+	DropdownFunc _setupFunc, _chooseFunc;
 
-	headtype *init(char trig, char alttrig, Common::String name, byte p, func dw, func dc, Dropdown *dr);
-	void display();
+	void init(char trig, char alTtrig, Common::String title, byte pos, DropdownFunc setupFunc, DropdownFunc chooseFunc, Dropdown *dr);
+	void draw();
 	void highlight();
-	bool extdparse(char c);
+	bool parseAltTrigger(char key);
 
 private:
 	Dropdown *_dr;
@@ -61,36 +67,38 @@ private:
 
 
 
-struct optiontype {
-	Common::String title;
-	byte trigger;
-	Common::String shortcut;
-	bool valid;
+struct OptionType {
+	Common::String _title;
+	byte _trigger;
+	Common::String _shortcut;
+	bool _valid;
 };
 
-class onemenu {
+
+
+class MenuItem {
 public:
-	optiontype oo[12];
-	byte number;
-	uint16 width, left;
-	bool firstlix;
-	int16 flx1, flx2, fly;
-	byte oldy; /* used by Lightup */
-	bool menunow; /* Is there a menu now? */
-	byte menunum; /* And if so, which is it? */
-	byte choicenum; /* Your choice? */
-	byte highlightnum;
+	OptionType _options[12];
+	byte _optionNum;
+	uint16 _width, _left;
+	bool _firstlix;
+	int16 _flx1, _flx2, fly;
+	byte _oldY; // used by lightUp */
+	bool _activeNow; // Is there an active option now?
+	byte _activeNum; // And if so, which is it?
+	byte _choiceNum; // Your choice?
+	byte _highlightNum;
 
 	void init(Dropdown *dr);
-	void start_afresh();
-	void opt(Common::String n, char tr, Common::String key, bool val);
+	void reset();
+	void setupOption(Common::String title, char trigger, Common::String shortcut, bool valid);
 	void display();
 	void wipe();
-	void lightup(Common::Point cursorPos); // This makes the menu highlight follow the mouse.
-	void displayopt(byte y, bool highlit);
-	void movehighlight(int8 add);
-	void select(byte n);
-	void keystroke(char c);
+	void lightUp(Common::Point cursorPos); // This makes the menu highlight follow the mouse.
+	void displayOption(byte y, bool highlit);
+	void moveHighlight(int8 inc);
+	void select(byte which); // Choose which one you want.
+	void parseKey(char c);
 
 private:
 	Dropdown *_dr;
@@ -98,17 +106,17 @@ private:
 
 
 
-class menuset {
+class MenuBar {
 public:
-	headtype ddms[8];
-	byte howmany;
+	HeadType _menuItems[8];
+	byte _menuNum;
 
 	void init(Dropdown *dr);
-	void create(char t, Common::String n, char alttrig, func dw, func dc);
-	void update();
-	void extd(char c);
-	void getcertain(byte fv);
-	void getmenu(int16 x);
+	void createMenuItem(char trig, Common::String title, char altTrig, DropdownFunc setupFunc, DropdownFunc chooseFunc);
+	void draw();
+	void parseAltTrigger(char c);
+	void setupMenuItem(byte which);
+	void chooseMenuItem(int16 x);
 
 private:
 	Dropdown *_dr;
@@ -118,12 +126,12 @@ private:
 
 class Dropdown {
 public:
-	friend headtype;
-	friend onemenu;
-	friend menuset;
+	friend HeadType;
+	friend MenuItem;
+	friend MenuBar;
 
-	onemenu ddm_o;
-	menuset ddm_m;
+	MenuItem _activeMenuItem;
+	MenuBar _menuBar;
 
 	Common::String people;
 
@@ -131,59 +139,52 @@ public:
 
 	Dropdown(AvalancheEngine *vm);
 
-	void find_what_you_can_do_with_it();
+	void parseKey(char r, char re);
 
-	void parsekey(char r, char re);
+	void updateMenu();
 
-	void menu_link(); /* DDM menu-bar funcs */
-
-	void standard_bar();
+	void setupMenu(); // Standard menu bar.
 
 private:
+	static const byte kIndent = 5;
+	static const byte kSpacing = 10;
+
+	static const byte kMenuBackgroundColor = lightgray;
+	static const byte kMenuFontColor = black;
+	static const byte kMenuBorderColor = black;
+	static const byte kHighlightBackgroundColor = black;
+	static const byte kHighlightFontColor = white;
+	static const byte kDisabledColor = darkgray;
+
+
+
 	AvalancheEngine *_vm;
 
-	static const byte indent = 5;
-	static const byte spacing = 10;
-
-	static const byte menu_b = lightgray; /* Windowsy */
-	static const byte menu_f = black;
-	static const byte menu_border = black;
-	static const byte highlight_b = black;
-	static const byte highlight_f = white;
-	static const byte disabled = darkgray;
 
 
+	Common::String selectGender(byte x); // Returns "im" for boys, and "er" for girls.
 
-	char r;
-	byte fv;
+	void findWhatYouCanDoWithIt();
 
+	void drawMenuItem(int16 x, int16 y, char t, Common::String z, bool valid);
 
-
-	void chalk(int16 x, int16 y, char t, Common::String z, bool valid);
-
-	void hlchalk(int16 x, int16 y, char t, Common::String z, bool valid); // Highlighted. TODO: It's too similar to chalk! Unify these two!!!
+	void drawHighlightedMenuItem(int16 x, int16 y, char t, Common::String z, bool valid); // Highlighted. TODO: It's too similar to chalk! Unify these two!!!
 
 	void bleep();
 
+	void setupMenuGame();
+	void setupMenuFile();
+	void setupMenuAction();
+	void setupMenuPeople();
+	void setupMenuObjects();
+	void setupMenuWith();
 
-	
-	void ddm__game();
-	void ddm__file();
-	void ddm__action();
-	void ddm__people();
-	void ddm__objects();
-	void ddm__with();
-
-	Common::String himher(byte x); // Returns "im" for boys, and "er" for girls.
-
-	void do__game();
-	void do__file();
-	void do__action();
-	void do__objects();
-	void do__people();
-	void do__with();
-
-	void checkclick(Common::Point cursorPos); // Only for when the menu's displayed!
+	void runMenuGame();
+	void runMenuFile();
+	void runMenuAction();
+	void runMenuObjects();
+	void runMenuPeople();
+	void runMenuWith();
 };
 
 } // End of namespace Avalanche.
