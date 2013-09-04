@@ -1095,6 +1095,8 @@ bool Acci::giveToSpludwick() {
 	default:
 		return true;
 	}
+
+	return false;
 }
 
 void Acci::drink() {
