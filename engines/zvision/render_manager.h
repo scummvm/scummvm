@@ -166,6 +166,7 @@ public:
 	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
 
 	RenderTable *getRenderTable();
+	uint32 getCurrentBackgroundOffset();
 
 private:
 	/**

@@ -335,4 +335,16 @@ void RenderManager::moveBackground(int offset) {
 	}
 }
 
+uint32 RenderManager::getCurrentBackgroundOffset() {
+	RenderTable::RenderState state = _renderTable.getRenderState();
+
+	if (state == RenderTable::PANORAMA) {
+		return _backgroundOffset.x;
+	} else if (state == RenderTable::TILT) {
+		return _backgroundOffset.y;
+	} else {
+		return 0;
+	}
+}
+
 } // End of namespace ZVision
