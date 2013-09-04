@@ -175,14 +175,14 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
-			memcpy(out, in, width * 4);
+			// memcpy(out, in, width * 4);
 			for (uint32 j = 0; j < width; j++) {
+				in += inStep;
 				out[aIndex] = 0xFF;
 				out[rIndex] = MIN(out[rIndex] + in[rIndex], 255);
 				out[gIndex] = MIN(out[gIndex] + in[gIndex], 255);
 				out[bIndex] = MIN(out[bIndex] + in[bIndex], 255);
 				out += 4;
-				in += 4;
 			}
 			outo += pitch;
 			ino += inoStep;
@@ -191,14 +191,14 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
-			memcpy(out, in, width * 4);
+			// memcpy(out, in, width * 4);
 			for (uint32 j = 0; j < width; j++) {
+				in += inStep;
 				out[aIndex] = 0xFF;
 				out[rIndex] = MAX(out[rIndex] - in[rIndex], 0);
 				out[gIndex] = MAX(out[gIndex] - in[gIndex], 0);
 				out[bIndex] = MAX(out[bIndex] - in[bIndex], 0);
 				out += 4;
-				in += 4;
 			}
 			outo += pitch;
 			ino += inoStep;
