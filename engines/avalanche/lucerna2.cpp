@@ -81,20 +81,19 @@ void Lucerna::callverb(byte n) {
 
 void Lucerna::draw_also_lines() {
 	byte ff;
-	byte squeaky_code;
-
 	
 	CursorMan.showMouse(false);
 
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
-	for (ff = 0; ff < _vm->_gyro->lineNum; ff++)
+	for (ff = 0; ff < _vm->_gyro->lineNum; ff++) {
 		// We had to check if the lines are within the borders of the screen.
 		if ((_vm->_gyro->lines[ff].x1 >= 0) && (_vm->_gyro->lines[ff].x1 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y1 >= 0) && (_vm->_gyro->lines[ff].y1 < _vm->_graphics->kScreenHeight)
-			&& (_vm->_gyro->lines[ff].x2 >= 0) && (_vm->_gyro->lines[ff].x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y2 >= 0) && (_vm->_gyro->lines[ff].y2 < _vm->_graphics->kScreenHeight))
-				_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
-		
+		 && (_vm->_gyro->lines[ff].x2 >= 0) && (_vm->_gyro->lines[ff].x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y2 >= 0) && (_vm->_gyro->lines[ff].y2 < _vm->_graphics->kScreenHeight))
+			_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
+	}
+
 	CursorMan.showMouse(true);
 }
 
@@ -111,13 +110,13 @@ Common::String Lucerna::nextstring() {
 }
 
 void Lucerna::scram1(Common::String &x) {
-	for (int fz = 0; fz < x.size(); fz ++)
+	for (uint fz = 0; fz < x.size(); fz++)
 		x.setChar(x[fz] ^ 177, fz);
 }
 
 void Lucerna::unscramble() {
 	for (byte fv = 0; fv < 31; fv ++)
-		for (byte ff = 0; ff < 2; ff ++)
+		for (byte ff = 0; ff < 2; ff++)
 			if (_vm->_gyro->also[fv][ff] != 0)
 				scram1(*_vm->_gyro->also[fv][ff]);
 	scram1(_vm->_gyro->listen);
@@ -149,7 +148,7 @@ void Lucerna::load_also(Common::String n) {
 			_vm->_gyro->also[fv][ff] = new Common::String;
 			*_vm->_gyro->also[fv][ff] = nextstring();
 		}
-		*_vm->_gyro->also[fv][0] = Common::String(157) + *_vm->_gyro->also[fv][0] + 157;
+		*_vm->_gyro->also[fv][0] = Common::String('\x9D') + *_vm->_gyro->also[fv][0] + Common::String('\x9D');
 	}
 	
 	memset(_vm->_gyro->lines, 0xFF, sizeof(_vm->_gyro->lines));
@@ -211,8 +210,6 @@ void Lucerna::load_also(Common::String n) {
 }
 
 void Lucerna::load(byte n) {     /* Load2, actually */
-	byte a0;  /*absolute $A000:800;*/
-	byte a1;  /*absolute $A000:17184;*/
 	byte bit;
 	Common::String xx;
 	
@@ -240,39 +237,22 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	f.seek(177);
 
-	/*for (bit = 0; bit <= 3; bit++) {
-	port[0x3c4] = 2;
-	port[0x3ce] = 4;
-	port[0x3c5] = 1 << bit;
-	port[0x3cf] = bit;
-	blockread(f, a0, 12080);
-	move(a0, a1, 12080);
-	}*/
-
-	
-	
 	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(f, _vm->_graphics->kBackgroundWidth, _vm->_graphics->kBackgroundHeight);
-
 	_vm->_graphics->refreshBackground();
 
 	f.close();
 
-
-
 	load_also(xx);
-
 	_vm->_celer->loadBackgroundSprites(n);
-
 	bit = *_vm->_graphics->getPixel(0,0);
-
 	CursorMan.showMouse(true);
 }
 
 
 
 void Lucerna::zoomout(int16 x, int16 y) {
-	int16 x1, y1, x2, y2;
-	byte fv;
+//	int16 x1, y1, x2, y2;
+//	byte fv;
 
 	warning("STUB: Lucerna::zoomout()");
 }
@@ -558,7 +538,6 @@ void Lucerna::enterroom(byte x, byte ped) {
 		//setactivepage(1 - cp);
 
 		{
-			dnatype &with = _vm->_gyro->dna;
 			if ((_vm->_gyro->dna.obj[_vm->_gyro->wine - 1]) && (_vm->_gyro->dna.winestate != 3)) {
 				_vm->_visa->dixi('q', 9); /* Don't want to waste the wine! */
 				_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
@@ -986,9 +965,6 @@ void Lucerna::mouseway(const Common::Point &cursorPos) {
 }
 
 void Lucerna::inkey() {
-	char r;
-
-
 	if (_vm->_gyro->demo)
 		return; /* Demo handles this itself. */
 
@@ -1298,25 +1274,20 @@ void Lucerna::clock_lucerna() {
 
 
 void Lucerna::delavvy() {
-	byte page_;
-
 	CursorMan.showMouse(false);
 	
-	triptype &with = _vm->_trip->tr[0];
-	/*for (page_ = 0; page_ <= 1; page_ ++)
-		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);*/
+//	triptype &with = _vm->_trip->tr[0];
+//	for (byte page_ = 0; page_ <= 1; page_ ++)
+//		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
 	
 	CursorMan.showMouse(true);
 }
 
 void Lucerna::gameover() {
-	byte fv;
-	int16 sx, sy;
-
 	_vm->_gyro->dna.user_moves_avvy = false;
 
-	sx = _vm->_trip->tr[0].x;
-	sy = _vm->_trip->tr[0].y;
+	int16 sx = _vm->_trip->tr[0].x;
+	int16 sy = _vm->_trip->tr[0].y;
 	
 	_vm->_trip->tr[0].done();
 	_vm->_trip->tr[0].init(12, true, _vm->_trip); // 12 = Avalot falls
@@ -1373,8 +1344,6 @@ void Lucerna::sprite_run() {
   sprites are still. It performs two fast cycles, only using a few of
   the links usually used, and without any extra animation. This should
   make the sprites the same on both pages. */
-	byte fv;
-
 	_vm->_gyro->doing_sprite_run = true;
 
 	_vm->_trip->get_back_loretta();
