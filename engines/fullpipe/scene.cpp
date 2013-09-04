@@ -483,7 +483,7 @@ StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
 		StaticANIObject *p = (StaticANIObject *)_staticANIObjectList1[i];
 		int pixel;
 
-		if ((p->_field_8 & 1) && (p->_flags & 4) &&
+		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->getPixelAtPos(x, y, &pixel) &&
 				(!res || res->_priority >= p->_priority))
 			res = p;
@@ -497,7 +497,7 @@ PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = (PictureObject *)_picObjList[i];
-		if ((p->_field_8 & 1) && (p->_flags & 4) &&
+		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
 				(!res || res->_priority >= p->_priority))
 			res = p;
@@ -512,7 +512,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = (PictureObject *)_picObjList[i];
-		if ((p->_field_8 & 1) && (p->_flags & 4) &&
+		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
 				(!res || resp->_priority >= p->_priority)) {
 			resp = p;
