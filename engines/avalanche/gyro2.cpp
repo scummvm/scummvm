@@ -267,12 +267,12 @@ Common::String Gyro::strf(int32 x) {
 	return q;
 }
 
-void Gyro::newpointer(byte m) {
-	if (m == cmp)
+void Gyro::newpointer(byte id) {
+	if (id == cmp)
 		return;
-	cmp = m;
+	cmp = id;
 
-	load_a_mouse(m);
+	load_a_mouse(id);
 }
 
 void Gyro::wait() {
@@ -388,8 +388,8 @@ bool Gyro::flagset(char x) {
 }
 
 void Gyro::force_numlock() {
-	if ((locks & num) > 0)
-		locks -= num;
+	if ((locks & numlockCode) > 0)
+		locks -= numlockCode;
 }
 
 bool Gyro::pennycheck(uint16 howmuchby) {

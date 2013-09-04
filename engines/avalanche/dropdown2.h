@@ -133,7 +133,7 @@ public:
 
 	void find_what_you_can_do_with_it();
 
-	void parsekey(char r, char re);
+	void parsekey(char key1, char key2);
 
 	void menu_link(); /* DDM menu-bar funcs */
 

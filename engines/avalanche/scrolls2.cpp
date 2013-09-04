@@ -464,7 +464,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 void Scrolls::bubble(func2 gotoit) {
 	int16 xl, yl, my, xw, yw;
-	byte fv;
 	Common::Point p[3];
 //	byte *rp1, *rp2; /* replace: 1=bubble, 2=pointer */
 	int16 xc; /* x correction */
@@ -478,7 +477,7 @@ void Scrolls::bubble(func2 gotoit) {
 
 	xl = 0;
 	yl = _vm->_gyro->scrolln * 5;
-	for (int8 fv = 0; fv < _vm->_gyro->scrolln; fv++) {
+	for (byte fv = 0; fv < _vm->_gyro->scrolln; fv++) {
 		uint16 textWidth = _vm->_gyro->scroll[fv].size() * 8;
 		if (textWidth > xl)
 			xl = textWidth;
@@ -527,7 +526,7 @@ void Scrolls::bubble(func2 gotoit) {
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
-	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) {
+	for (byte fv = 0; fv < _vm->_gyro->scrolln; fv++) {
 		int16 x = xc + _vm->_gyro->talkx - _vm->_gyro->scroll[fv].size() / 2 * 8;
 		bool offset = _vm->_gyro->scroll[fv].size() % 2;
 		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->scroll[fv], _vm->_gyro->characters, 8, x - offset * 4, (fv * 10) + 12, _vm->_gyro->talkf);

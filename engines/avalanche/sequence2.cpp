@@ -45,7 +45,7 @@ Sequence::Sequence(AvalancheEngine *vm) {
 
 void Sequence::first_show(byte what) {
 	/* First, we need to blank out the entire array. */
-	for (int i = 0; i < sizeof(seq); i++)
+	for (uint i = 0; i < sizeof(seq); i++)
 		seq[i] = 0;
 
 	/* Then it's just the same as then_show. */
@@ -54,7 +54,7 @@ void Sequence::first_show(byte what) {
 }
 
 void Sequence::then_show(byte what) {
-	for (byte fv = 0; fv < seq_length; fv++) {
+	for (int16 fv = 0; fv < seq_length; fv++) {
 		if (seq[fv] == 0) {
 			seq[fv] = what;
 			return;
