@@ -1190,7 +1190,7 @@ void Acci::getProc(char thing) {
 			} else
 				_vm->_scrolls->display(Common::String("I can't see ") + _vm->_gyro->get_better(thing) + " in the box.");
 		} else
-			_vm->_visa->dixi('pos', 57);
+			_vm->_visa->dixi('q', 57);
 		break;
 	case r__insidecardiffcastle:
 		switch (thing) {
@@ -1208,15 +1208,15 @@ void Acci::getProc(char thing) {
 					_vm->_scrolls->display("Taken.");
 				}
 			} else if (_vm->_gyro->dna.standing_on_dais)
-				_vm->_visa->dixi('pos', 53);
+				_vm->_visa->dixi('q', 53);
 			else
-				_vm->_visa->dixi('pos', 51);
+				_vm->_visa->dixi('q', 51);
 			break;
 		case Gyro::bolt:
-			_vm->_visa->dixi('pos', 52);
+			_vm->_visa->dixi('q', 52);
 			break;
 		default:
-			_vm->_visa->dixi('pos', 57);
+			_vm->_visa->dixi('q', 57);
 		}
 		break;
 	case r__robins:
@@ -1229,13 +1229,17 @@ void Acci::getProc(char thing) {
 			_vm->_lucerna->objectlist();
 			_vm->_lucerna->points(3);
 		} else
-			_vm->_visa->dixi('pos', 57);
+			_vm->_visa->dixi('q', 57);
 		break;
 	default:
-		_vm->_visa->dixi('pos', 57);
+		_vm->_visa->dixi('q', 57);
 	}
 }
 
+/**
+ * Give the lute to Geida
+ * @remarks	Originally called 'give_Geida_the_lute'
+ */
 void Acci::giveGeidaTheLute() {
 	if (_vm->_gyro->dna.room != r__lustiesroom) {
 		_vm->_scrolls->display(Common::String("Not yet. Try later!") + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
@@ -1243,7 +1247,7 @@ void Acci::giveGeidaTheLute() {
 	}
 	_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = false;
 	_vm->_lucerna->objectlist();
-	_vm->_visa->dixi('pos', 64); // She plays it.
+	_vm->_visa->dixi('q', 64); // She plays it.
 
 	_vm->_timeout->set_up_timer(1, _vm->_timeout->procgive_lute_to_geida, _vm->_timeout->reason_geida_sings);
 	_vm->_enid->back_to_bootstrap(4);
