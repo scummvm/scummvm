@@ -263,8 +263,8 @@ void Enid::from_sundry(sundry sund) {
 }
 
 void Enid::restore_dna() {
-	uint16 here, fv;
-	sundry sund;
+//	uint16 here, fv;
+//	sundry sund;
 
 	warning("STUB: Enid::restore_dna()");
 }
