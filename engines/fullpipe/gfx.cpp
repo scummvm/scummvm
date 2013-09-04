@@ -663,23 +663,23 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 				return false;
 			break;
 		case 'RB\0\0':
-			{
-				Bitmap bmp;
-
-				if (decompressRle2(&bmp))
-					return bmp._pixels[off] != bmp._flags;
-
-				return false;
-			}
+			return isPixelAtHitPosRB(x, y);
 		}
 	}
 	return true;
 }
 
-bool Bitmap::decompressRle2(Bitmap *res) {
-	warning("STUB: Bitmap::decompressRle2()");
+bool Bitmap::isPixelAtHitPosRB(int x, int y) {
+	int ox = _x;
+	int oy = _y;
 
-	return false;
+	_x = _y = 0;
+
+	bool res = putDibRB(0, x, y);
+	_x = ox;
+	_y = oy;
+
+	return res;
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {
@@ -694,7 +694,7 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 		putDibCB(palette);
 }
 
-void Bitmap::putDibRB(int32 *palette) {
+bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 	uint16 *curDestPtr;
 	int endy;
 	int x;
@@ -706,7 +706,7 @@ void Bitmap::putDibRB(int32 *palette) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
-	if (!palette)
+	if (!palette && pX == -1)
 		error("Bitmap::putDibRB(): Both global and local palettes are empty");
 
 	debug(8, "Bitmap::putDibRB()");
@@ -715,13 +715,15 @@ void Bitmap::putDibRB(int32 *palette) {
 	endy = _height + _y - 1;
 
 	if (_x > 799 || endx < 0 || _y > 599 || endy < 0)
-		return;
+		return false;
 
-	if (endy > 599)
-		endy = 599;
+	if (pX == -1) {
+		if (endy > 599)
+			endy = 599;
 
-	if (endx > 799)
-		endx = 799;
+		if (endx > 799)
+			endx = 799;
+	}
 
 	int startx = _x;
 	if (startx < 0)
@@ -773,10 +775,14 @@ void Bitmap::putDibRB(int32 *palette) {
 				if (fillLen > 0 || start1 >= 0) {
 					if (x <= 799 + 1 || (fillLen += 799 - x + 1, fillLen > 0)) {
 						if (y <= endy) {
-							curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, y);
-
-							int bgcolor = palette[(pixel >> 8) & 0xff];
-							colorFill(curDestPtr, fillLen, bgcolor);
+							if (pX == -1) {
+								int bgcolor = palette[(pixel >> 8) & 0xff];
+								curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, y);
+								colorFill(curDestPtr, fillLen, bgcolor);
+							} else {
+								if (y == pY && pX >= start1 && pX < start1 + fillLen)
+									return true;
+							}
 						}
 					}
 				}
@@ -801,14 +807,22 @@ void Bitmap::putDibRB(int32 *palette) {
 				}
 
 				if (y <= endy) {
-					curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, y);
-					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, (int32 *)palette);
+					if (pX == -1) {
+						curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, y);
+						paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, (int32 *)palette);
+					} else {
+						if (y == pY && pX >= start1 && pX < start1 + fillLen)
+							return true;
+					}
 				}
 			}
 		}
 	}
 
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
+	if (pX == -1)
+		g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
+
+	return false;
 }
 
 void Bitmap::putDibCB(int32 *palette) {

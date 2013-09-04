@@ -45,7 +45,7 @@ struct Bitmap {
 
 	void load(Common::ReadStream *s);
 	void putDib(int x, int y, int32 *palette);
-	void putDibRB(int32 *palette);
+	bool putDibRB(int32 *palette, int x = -1, int y = -1);
 	void putDibCB(int32 *palette);
 
 	void colorFill(uint16 *dest, int len, int color);
@@ -63,7 +63,7 @@ struct Bitmap {
 	void drawRotated(int x, int y, int angle, byte *palette);
 
 	bool isPixelHitAtPos(int x, int y);
-	bool decompressRle2(Bitmap *res);
+	bool isPixelAtHitPosRB(int x, int y);
 };
 
 class Picture : public MemoryObject {
