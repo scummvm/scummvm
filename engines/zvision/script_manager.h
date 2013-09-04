@@ -110,6 +110,8 @@ public:
 
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 
+	Location getCurrentLocation() const;
+
 private:
 	void createReferenceTable();
 	void updateNodes(uint deltaTimeMillis);

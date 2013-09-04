@@ -37,8 +37,7 @@
 namespace ZVision {
 
 ScriptManager::ScriptManager(ZVision *engine)
-	: _engine(engine),
-	  _changeLocation(false) {
+	: _engine(engine) {
 }
 
 ScriptManager::~ScriptManager() {
@@ -61,11 +60,6 @@ void ScriptManager::initialize() {
 void ScriptManager::update(uint deltaTimeMillis) {
 	updateNodes(deltaTimeMillis);
 	checkPuzzleCriteria();
-
-	if (_changeLocation) {
-		changeLocationIntern();
-		_changeLocation = false;
-	}
 }
 
 void ScriptManager::createReferenceTable() {
@@ -333,6 +327,20 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 
 	// Create the puzzle reference table
 	createReferenceTable();
+
+	// Update _currentLocation
+	_currentLocation.world = world;
+	_currentLocation.room = room;
+	_currentLocation.node = node;
+	_currentLocation.view = view;
+	_currentLocation.offset = offset;
+}
+
+Location ScriptManager::getCurrentLocation() const {
+	Location location = _currentLocation;
+	location.offset = _engine->getRenderManager()->getCurrentBackgroundOffset();
+
+	return location;
 }
 
 } // End of namespace ZVision
