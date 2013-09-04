@@ -58,7 +58,7 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 	if (_vm->_gyro->ledstatus == x)
 		return; /* Already like that! */
 
-	byte color;
+	byte color = black;
 	switch (x) {
 	case 0:
 		color = black;
@@ -69,21 +69,6 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 		color = green;
 		break; /* Hit a key */
 	}
-
-	//switch (x) {
-	//case 0:
-	//	setfillstyle(1, black);
-	//	break; /* Off */
-	//case 1:
-	//	setfillstyle(9, green);
-	//	break; /* Half-on (menus) */
-	//case 2:
-	//	setfillstyle(1, green);
-	//	break; /* On (kbd) */
-	//case 3:
-	//	setfillstyle(6, green);
-	//	break; /* Hit a key */
-	//}
 	warning("STUB: Scrolls::state()");
 
 	CursorMan.showMouse(false);
