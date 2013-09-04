@@ -53,6 +53,11 @@ Bitmap::Bitmap(Bitmap *src) {
 	_pixels = src->_pixels;
 }
 
+Bitmap::~Bitmap() {
+	if (_pixels)
+		free(_pixels);
+}
+
 void Bitmap::load(Common::ReadStream *s) {
 	debug(5, "Bitmap::load()");
 
@@ -635,7 +640,44 @@ int Picture::getPixelAtPosEx(int x, int y) {
 }
 
 bool Bitmap::isPixelHitAtPos(int x, int y) {
-	debug(0, "STUB: Bitmap::isPixelHitAtPos(%d, %d)", x, y);
+	if (x < _x || x >= _width + _x || y < _y || y >= _y + _height)
+		return false;
+
+	int off;
+
+	if (_type == 'CB\x05e')
+		off = 2 * ((_width + 1) / 2);
+	else
+		off = 4 * ((_width + 3) / 4);
+
+	off = x + off * (_y + _height - y - 1) - _x;
+
+	if (_flags & 0x1000000) {
+		switch (_type) {
+		case 'CB\0\0':
+			if (_pixels[off] == _flags & 0xff)
+				return false;
+			break;
+		case 'CB\x05e':
+			if (!*(int16 *)&_pixels[2 * off])
+				return false;
+			break;
+		case 'RB\0\0':
+			{
+				Bitmap bmp;
+
+				if (decompressRle2(&bmp))
+					return bmp._pixels[off] != bmp._flags;
+
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool Bitmap::decompressRle2(Bitmap *res) {
+	warning("STUB: Bitmap::decompressRle2()");
 
 	return false;
 }
