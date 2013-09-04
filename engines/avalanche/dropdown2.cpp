@@ -106,7 +106,7 @@ void onemenu::start_afresh() {
 }
 
 void onemenu::opt(Common::String n, char tr, Common::String key, bool val) {
-	int16 l = (n + key).size() + 3;
+	uint16 l = (n + key).size() + 3;
 	if (width < l)
 		width = l;
 
@@ -127,9 +127,9 @@ void onemenu::displayopt(byte y, bool highlit) {
 	//bar((flx1 + 1) * 8, 3 + y * 10, (flx2 + 1) * 8, 12 + y * 10);
 
 	Common::String data = oo[y].title;
-	while ((data + oo[y].shortcut).size() < width)
+	while (data.size() + oo[y].shortcut.size() < width)
 		data += ' '; /* Pad oo[y] spaces. */
-	data = data + oo[y].shortcut;
+	data += oo[y].shortcut;
 
 	if (highlit)
 		_dr->hlchalk(left, 4 + (y + 1) * 10, oo[y].trigger, data, oo[y].valid);
