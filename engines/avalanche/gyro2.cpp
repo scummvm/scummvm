@@ -267,12 +267,12 @@ Common::String Gyro::strf(int32 x) {
 	return q;
 }
 
-void Gyro::newpointer(byte m) {
-	if (m == cmp)
+void Gyro::newpointer(byte id) {
+	if (id == cmp)
 		return;
-	cmp = m;
+	cmp = id;
 
-	load_a_mouse(m);
+	load_a_mouse(id);
 }
 
 void Gyro::wait() {
@@ -312,7 +312,7 @@ void Gyro::shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
 }
 
 void Gyro::newgame() { 
-	for (byte gm = 0; gm < numtr; gm ++) {
+	for (byte gm = 0; gm < numtr; gm++) {
 		if (_vm->_trip->tr[gm].quick)
 			_vm->_trip->tr[gm].done();
 	}
@@ -343,7 +343,7 @@ void Gyro::newgame() {
 
 	ppos[0][1] = -177; 
 	_vm->_trip->tr[0].appear(300,117,right); // Needed to initialize Avalot.
-	//for (gd = 0; gd <= 30; gd ++) for (gm = 0; gm <= 1; gm ++) also[gd][gm] = nil;
+	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	/* fillchar(previous^,sizeof(previous^),#0); { blank out array } */
 	him = 254;
 	her = 254;
@@ -356,7 +356,7 @@ void Gyro::newgame() {
 	dna.avvy_in_bed = true;
 	enid_filename = "";
 
-	for (byte gd = 0; gd <= 1; gd ++) {
+	for (byte gd = 0; gd <= 1; gd++) {
 		cp = 1 - cp;
 		_vm->_trip->getback();
 	}
@@ -388,8 +388,8 @@ bool Gyro::flagset(char x) {
 }
 
 void Gyro::force_numlock() {
-	if ((locks & num) > 0)
-		locks -= num;
+	if ((locks & numlockCode) > 0)
+		locks -= numlockCode;
 }
 
 bool Gyro::pennycheck(uint16 howmuchby) {

@@ -36,7 +36,6 @@
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/enhanced2.h"
-#include "avalanche/logger2.h"
 #include "avalanche/pingo2.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/visa2.h"
@@ -77,7 +76,6 @@ public:
 	Avalot *_avalot;
 	Gyro *_gyro;
 	Enhanced *_enhanced;
-	Logger *_logger;
 	Pingo *_pingo;
 	Scrolls *_scrolls;
 	Visa *_visa;

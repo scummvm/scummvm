@@ -49,7 +49,7 @@ private:
 		kScreenBugAlert = 1,
 		kScreenRamCram = 2,
 		kScreenNagScreen = 3,
-		kScreenTwoCopies = 5,
+		kScreenTwoCopies = 5
 	};
 
 	AvalancheEngine *_vm;

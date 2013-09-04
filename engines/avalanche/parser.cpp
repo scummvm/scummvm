@@ -80,8 +80,6 @@ void Parser::handleReturn() {
 	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
 	else {
-		_vm->_logger->log_command(_inputText);
-		
 		if (!_inputText.empty()) {
 			_inputTextBackup = _inputText;
 			_vm->_acci->parse();
@@ -102,6 +100,8 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 		break;
 	case Common::KEYCODE_F7:
 		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeOpen);
+		break;
+	default:
 		break;
 	}
 }
@@ -155,7 +155,7 @@ void Parser::drawCursor() {
 	bf.x2 = _inputTextPos + 2;
 	bf.y1 = 168;
 	bf.y2 = 168;
-	for (byte fv = 0; fv <= 1; fv ++)
+	for (byte fv = 0; fv <= 1; fv++)
 		_vm->_trip->getset[fv].remember(bf);
 }
 

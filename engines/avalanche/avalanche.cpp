@@ -66,7 +66,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _avalot;
 	delete _gyro;
 	delete _enhanced;
-	delete _logger;
 	delete _pingo;
 	delete _scrolls;
 	delete _visa;
@@ -88,7 +87,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_avalot = new Avalot(this);
 	_gyro = new Gyro(this);
 	_enhanced = new Enhanced(this);
-	_logger = new Logger(this);
 	_pingo = new Pingo(this);
 	_scrolls = new Scrolls(this);
 	_visa = new Visa(this);
@@ -209,40 +207,37 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	} else {
 		if (!_gyro->dna.like2drink.empty())
 			_gyro->dna.like2drink.clear();
-		uint16 like2drinkSize;
+		uint16 like2drinkSize = 0;
+		char actChr = ' ';
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
-			char actChr;
 			sz.syncAsByte(actChr);
 			_gyro->dna.like2drink += actChr;
 		}
 
 		if (!_gyro->dna.favourite_song.empty())
 			_gyro->dna.favourite_song.clear();
-		uint16 favourite_songSize;
+		uint16 favourite_songSize = 0;
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
-			char actChr;
 			sz.syncAsByte(actChr);
 			_gyro->dna.favourite_song += actChr;
 		}
 
 		if (!_gyro->dna.worst_place_on_earth.empty())
 			_gyro->dna.worst_place_on_earth.clear();
-		uint16 worst_place_on_earthSize;
+		uint16 worst_place_on_earthSize = 0;
 		sz.syncAsUint16LE(worst_place_on_earthSize);
 		for (uint16 i = 0; i < worst_place_on_earthSize; i++) {
-			char actChr;
 			sz.syncAsByte(actChr);
 			_gyro->dna.worst_place_on_earth += actChr;
 		}
 
 		if (!_gyro->dna.spare_evening.empty())
 			_gyro->dna.spare_evening.clear();
-		uint16 spare_eveningSize;
+		uint16 spare_eveningSize = 0;
 		sz.syncAsUint16LE(spare_eveningSize);
 		for (uint16 i = 0; i < spare_eveningSize; i++) {
-			char actChr;
 			sz.syncAsByte(actChr);
 			_gyro->dna.spare_evening += actChr;
 		}
@@ -280,27 +275,28 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_gyro->dna.asked_dogfood_about_nim);
 
 
-	//for (byte groi = 0; groi < numtr; groi ++) {
+	//for (byte groi = 0; groi < numtr; groi++) {
 	//	if (tr[groi].quick) {
 	//		blockwrite(f, groi, 1);
 	//		tr[groi].savedata(f);
 	//	}
 	//}
 	
-	byte spriteNum;
+	byte spriteNum = 0;
 	if (sz.isSaving()) {
-		spriteNum = 0;
-		for (byte i = 0; i < _trip->numtr; i++)
+		for (byte i = 0; i < _trip->numtr; i++) {
 			if (_trip->tr[i].quick)
 				spriteNum++;
+		}
 	}
 	sz.syncAsByte(spriteNum);
 	
-	if (sz.isLoading())
+	if (sz.isLoading()) {
 		for (byte i = 0; i < _trip->numtr; i++) { // Deallocate sprites.
 			if (_trip->tr[i].quick)
 				_trip->tr[i].done();
 		}
+	}
 
 	for (byte i = 0; i < spriteNum; i++) {
 		sz.syncAsByte(_trip->tr[i].whichsprite);
@@ -366,7 +362,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 		return false;
 	}
 
-	char *signature = "AVAL";
+	const char *signature = "AVAL";
 	f->write(signature, 4);
 
 	// Write version. We can't restore from obsolete versions.
@@ -538,6 +534,9 @@ void AvalancheEngine::updateEvents() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			_avalot->handleKeyDown(event);
+			break;
+		default:
+			break;
 		}
 	}
 }

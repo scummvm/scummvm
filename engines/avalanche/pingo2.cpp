@@ -109,8 +109,6 @@ void Pingo::zonk() {
 
 void Pingo::winning_pic() {
 	Common::File f;
-	char r;
-
 	_vm->_lucerna->dusk();
 
 	if (!f.open("finale.avd")) {
@@ -118,7 +116,7 @@ void Pingo::winning_pic() {
 		return;
 	}
 
-	/*for (byte bit = 0; bit <= 3; bit ++) {
+	/*for (byte bit = 0; bit <= 3; bit++) {
 	port[0x3c4] = 2;
 	port[0x3ce] = 4;
 	port[0x3c5] = 1 << bit;
@@ -137,7 +135,8 @@ void Pingo::winning_pic() {
 	/*do {
 		_vm->_gyro->check();
 	} while (!(keypressed() || (mrelease > 0)));
-	while (keypressed())  r = readkey();
+	while (keypressed())
+		char r = readkey();
 	major_redraw();*/
 	warning("STUB: Pingo::winning_pic()");
 }

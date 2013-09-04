@@ -32,7 +32,6 @@
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/scrolls2.h"
-#include "avalanche/logger2.h"
 #include "avalanche/enhanced2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/timeout2.h"
@@ -62,8 +61,10 @@ Lucerna::Lucerna(AvalancheEngine *vm) : fxhidden(false) {
 void Lucerna::init() {
 	_vm->_gyro->oh = 17717;
 	_vm->_gyro->om = 17717;
-	if (_vm->_enhanced->atbios)  _vm->_gyro->atkey = "f1";
-	else _vm->_gyro->atkey = "alt-";
+	if (_vm->_enhanced->atbios)
+		_vm->_gyro->atkey = "f1";
+	else
+		_vm->_gyro->atkey = "alt-";
 }
 	
 void Lucerna::callverb(byte n) {
@@ -82,20 +83,19 @@ void Lucerna::callverb(byte n) {
 
 void Lucerna::draw_also_lines() {
 	byte ff;
-	byte squeaky_code;
-
 	
 	CursorMan.showMouse(false);
 
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
-	for (ff = 0; ff < _vm->_gyro->lineNum; ff++)
+	for (ff = 0; ff < _vm->_gyro->lineNum; ff++) {
 		// We had to check if the lines are within the borders of the screen.
 		if ((_vm->_gyro->lines[ff].x1 >= 0) && (_vm->_gyro->lines[ff].x1 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y1 >= 0) && (_vm->_gyro->lines[ff].y1 < _vm->_graphics->kScreenHeight)
-			&& (_vm->_gyro->lines[ff].x2 >= 0) && (_vm->_gyro->lines[ff].x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y2 >= 0) && (_vm->_gyro->lines[ff].y2 < _vm->_graphics->kScreenHeight))
-				_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
-		
+		 && (_vm->_gyro->lines[ff].x2 >= 0) && (_vm->_gyro->lines[ff].x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->lines[ff].y2 >= 0) && (_vm->_gyro->lines[ff].y2 < _vm->_graphics->kScreenHeight))
+			_vm->_graphics->_magics.drawLine(_vm->_gyro->lines[ff].x1, _vm->_gyro->lines[ff].y1, _vm->_gyro->lines[ff].x2, _vm->_gyro->lines[ff].y2, _vm->_gyro->lines[ff].col);
+	}
+
 	CursorMan.showMouse(true);
 }
 
@@ -112,13 +112,13 @@ Common::String Lucerna::nextstring() {
 }
 
 void Lucerna::scram1(Common::String &x) {
-	for (int fz = 0; fz < x.size(); fz ++)
+	for (uint fz = 0; fz < x.size(); fz++)
 		x.setChar(x[fz] ^ 177, fz);
 }
 
 void Lucerna::unscramble() {
-	for (byte fv = 0; fv < 31; fv ++)
-		for (byte ff = 0; ff < 2; ff ++)
+	for (byte fv = 0; fv < 31; fv++)
+		for (byte ff = 0; ff < 2; ff++)
 			if (_vm->_gyro->also[fv][ff] != 0)
 				scram1(*_vm->_gyro->also[fv][ff]);
 	scram1(_vm->_gyro->listen);
@@ -150,7 +150,7 @@ void Lucerna::load_also(Common::String n) {
 			_vm->_gyro->also[fv][ff] = new Common::String;
 			*_vm->_gyro->also[fv][ff] = nextstring();
 		}
-		*_vm->_gyro->also[fv][0] = Common::String(157) + *_vm->_gyro->also[fv][0] + 157;
+		*_vm->_gyro->also[fv][0] = Common::String('\x9D') + *_vm->_gyro->also[fv][0] + Common::String('\x9D');
 	}
 	
 	memset(_vm->_gyro->lines, 0xFF, sizeof(_vm->_gyro->lines));
@@ -212,14 +212,12 @@ void Lucerna::load_also(Common::String n) {
 }
 
 void Lucerna::load(byte n) {     /* Load2, actually */
-	byte a0;  /*absolute $A000:800;*/
-	byte a1;  /*absolute $A000:17184;*/
 	byte bit;
 	Common::String xx;
 	
 	CursorMan.showMouse(false);
 	
-	_vm->_graphics->flesh_colours();
+	_vm->_graphics->flesh_colors();
 
 	xx = _vm->_gyro->strf(n);
 	Common::String filename;
@@ -241,41 +239,22 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	f.seek(177);
 
-	/*for (bit = 0; bit <= 3; bit++) {
-	port[0x3c4] = 2;
-	port[0x3ce] = 4;
-	port[0x3c5] = 1 << bit;
-	port[0x3cf] = bit;
-	blockread(f, a0, 12080);
-	move(a0, a1, 12080);
-	}*/
-
-	
-	
 	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(f, _vm->_graphics->kBackgroundWidth, _vm->_graphics->kBackgroundHeight);
-
 	_vm->_graphics->refreshBackground();
 
 	f.close();
 
-
-
 	load_also(xx);
-
 	_vm->_celer->loadBackgroundSprites(n);
-
 	bit = *_vm->_graphics->getPixel(0,0);
-
-	_vm->_logger->log_newroom(_vm->_gyro->roomname);
-
 	CursorMan.showMouse(true);
 }
 
 
 
 void Lucerna::zoomout(int16 x, int16 y) {
-	int16 x1, y1, x2, y2;
-	byte fv;
+//	int16 x1, y1, x2, y2;
+//	byte fv;
 
 	warning("STUB: Lucerna::zoomout()");
 }
@@ -561,7 +540,6 @@ void Lucerna::enterroom(byte x, byte ped) {
 		//setactivepage(1 - cp);
 
 		{
-			dnatype &with = _vm->_gyro->dna;
 			if ((_vm->_gyro->dna.obj[_vm->_gyro->wine - 1]) && (_vm->_gyro->dna.winestate != 3)) {
 				_vm->_visa->dixi('q', 9); /* Don't want to waste the wine! */
 				_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
@@ -839,7 +817,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	putimage(x, y, p, 0);
 	setactivepage(1 - cp);*/
 
-	for (byte fv = 0; fv <= 1; fv ++)
+	for (byte fv = 0; fv <= 1; fv++)
 		_vm->_trip->getset[fv].remember(thinkspace);
 	
 	CursorMan.showMouse(true);
@@ -855,14 +833,14 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 		return;
 	}
 
-	for (byte fv = 0; fv < 10; fv ++) {
+	for (byte fv = 0; fv < 10; fv++) {
 		f.seek(fv * digitsize);
 		/*_vm->_gyro->digit[fv] = new byte[digitsize];
 		f.read(_vm->_gyro->digit[fv], digitsize);*/
 		_vm->_gyro->digit[fv] = _vm->_graphics->loadPictureGraphic(f);
 	}
 
-	for (byte ff = 0; ff < 9; ff ++) {
+	for (byte ff = 0; ff < 9; ff++) {
 		f.seek(10 * digitsize + ff * rwlitesize);
 		/*_vm->_gyro->rwlite[ff] = new byte[rwlitesize];
 		f.read(_vm->_gyro->rwlite[ff], rwlitesize);*/
@@ -918,11 +896,11 @@ void Lucerna::showscore() {
 
 	//setactivepage(3);
 
-	for (byte fv = 0; fv < 3; fv ++)
+	for (byte fv = 0; fv < 3; fv++)
 		if (_vm->_gyro->lastscore[fv] != numbers[fv]) 
 			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
-	for (byte fv = 0; fv < 2; fv ++)
+	for (byte fv = 0; fv < 2; fv++)
 		_vm->_trip->getset[fv].remember(scorespace);
 
 	//setactivepage(1 - cp);
@@ -933,16 +911,15 @@ void Lucerna::showscore() {
 }
 
 void Lucerna::points(byte num) {     /* Add on no. of points */
-	for (byte q = 1; q <= num; q ++) {
+	for (byte q = 1; q <= num; q++) {
 		_vm->_gyro->dna.score++;
 		/*if (soundfx)
-			for (byte fv = 1; fv <= 97; fv ++)
+			for (byte fv = 1; fv <= 97; fv++)
 				sound(177 + dna.score * 3);
 		nosound;*/
 	}
 	warning("STUB: Lucerna::points()");
 
-	_vm->_logger->log_score(num, _vm->_gyro->dna.score);
 	showscore();
 }
 
@@ -990,9 +967,6 @@ void Lucerna::mouseway(const Common::Point &cursorPos) {
 }
 
 void Lucerna::inkey() {
-	char r;
-
-
 	if (_vm->_gyro->demo)
 		return; /* Demo handles this itself. */
 
@@ -1171,9 +1145,13 @@ int8 Lucerna::fades(int8 x) {
 	x = x % 16;
 	byte g = x / 4;
 	byte b = x % 4;
-	if (r > 0)  r --;
-	if (g > 0)  g --;
-	if (b > 0)  b --;
+	if (r > 0)
+		r--;
+	if (g > 0)
+		g--;
+	if (b > 0)
+		b--;
+
 	return (16 * r + 4 * g + b);
 	/* fades:=x-1;*/
 }
@@ -1208,7 +1186,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	_vm->_gyro->oldrw = _vm->_gyro->dna.rw;
 	CursorMan.showMouse(false);
 	
-	/*	for (byte page_ = 0; page_ <= 1; page_ ++) {
+	/*	for (byte page_ = 0; page_ <= 1; page_++) {
 	setactivepage(page_);
 	putimage(0, 161, rwlite[with.rw], 0);
 	}*/
@@ -1258,7 +1236,7 @@ void Lucerna::plothands() {
 	hand(am, brown);
 
 	calchand(nh, 14, ah, brown);
-	calchand(_vm->_gyro->m * 6, 17, am, brown);
+	calchand(_vm->_gyro->minutes * 6, 17, am, brown);
 	hand(ah, yellow);
 	hand(am, yellow);
 
@@ -1277,50 +1255,45 @@ void Lucerna::clock_lucerna() {
 	/* ...Clock. */
 	TimeDate t;
 	_vm->_system->getTimeAndDate(t);
-	_vm->_gyro->h = t.tm_hour;
-	_vm->_gyro->m = t.tm_min;
-	_vm->_gyro->s = t.tm_sec;
+	_vm->_gyro->hour = t.tm_hour;
+	_vm->_gyro->minutes = t.tm_min;
+	_vm->_gyro->seconds = t.tm_sec;
 
-	nh = (_vm->_gyro->h % 12) * 30 + _vm->_gyro->m / 2;
+	nh = (_vm->_gyro->hour % 12) * 30 + _vm->_gyro->minutes / 2;
 
-	if (_vm->_gyro->oh != _vm->_gyro->h)  {
+	if (_vm->_gyro->oh != _vm->_gyro->hour)  {
 		plothands();
 		chime();
 	}
 
-	if (_vm->_gyro->om != _vm->_gyro->m)
+	if (_vm->_gyro->om != _vm->_gyro->minutes)
 		plothands();
 
-	if ((_vm->_gyro->h == 0) && (_vm->_gyro->oh != 0) && (_vm->_gyro->oh != 17717))
+	if ((_vm->_gyro->hour == 0) && (_vm->_gyro->oh != 0) && (_vm->_gyro->oh != 17717))
 		_vm->_scrolls->display(Common::String("Good morning!") + 13 + 13 + "Yes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!");
 	
-	_vm->_gyro->oh = _vm->_gyro->h;
+	_vm->_gyro->oh = _vm->_gyro->hour;
 	_vm->_gyro->onh = nh;
-	_vm->_gyro->om = _vm->_gyro->m;
+	_vm->_gyro->om = _vm->_gyro->minutes;
 }
 
 
 
 void Lucerna::delavvy() {
-	byte page_;
-
 	CursorMan.showMouse(false);
 	
-	triptype &with = _vm->_trip->tr[0];
-	/*for (page_ = 0; page_ <= 1; page_ ++)
-		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);*/
+//	triptype &with = _vm->_trip->tr[0];
+//	for (byte page_ = 0; page_ <= 1; page_++)
+//		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
 	
 	CursorMan.showMouse(true);
 }
 
 void Lucerna::gameover() {
-	byte fv;
-	int16 sx, sy;
-
 	_vm->_gyro->dna.user_moves_avvy = false;
 
-	sx = _vm->_trip->tr[0].x;
-	sy = _vm->_trip->tr[0].y;
+	int16 sx = _vm->_trip->tr[0].x;
+	int16 sy = _vm->_trip->tr[0].y;
 	
 	_vm->_trip->tr[0].done();
 	_vm->_trip->tr[0].init(12, true, _vm->_trip); // 12 = Avalot falls
@@ -1340,7 +1313,7 @@ void Lucerna::minor_redraw() {
 
 	enterroom(_vm->_gyro->dna.room, 0); /* Ped unknown or non-existant. */
 
-	for (byte fv = 0; fv <= 1; fv ++) {
+	for (byte fv = 0; fv <= 1; fv++) {
 		_vm->_gyro->cp = 1 - _vm->_gyro->cp;
 		_vm->_trip->getback();
 	}
@@ -1377,8 +1350,6 @@ void Lucerna::sprite_run() {
   sprites are still. It performs two fast cycles, only using a few of
   the links usually used, and without any extra animation. This should
   make the sprites the same on both pages. */
-	byte fv;
-
 	_vm->_gyro->doing_sprite_run = true;
 
 	_vm->_trip->get_back_loretta();

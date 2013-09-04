@@ -38,7 +38,6 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/dropdown2.h"
 #include "avalanche/pingo2.h"
-#include "avalanche/logger2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/enid2.h"
@@ -98,6 +97,8 @@ void Avalot::handleKeyDown(Common::Event &event) {
 		case Common::KEYCODE_KP1:
 			event.kbd.keycode = Common::KEYCODE_END;
 			break;
+		default:
+			break;
 	}
 
 	switch (event.kbd.keycode) {
@@ -120,6 +121,8 @@ void Avalot::handleKeyDown(Common::Event &event) {
 		break;
 	case Common::KEYCODE_RETURN:
 		_vm->_parser->handleReturn();
+		break;
+	default:
 		break;
 	}
 

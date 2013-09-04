@@ -9,7 +9,6 @@ MODULE_OBJS = \
 	detection.o \
 	gyro2.o \
 	enhanced2.o \
-	logger2.o \
 	pingo2.o \
 	scrolls2.o \
 	visa2.o \
