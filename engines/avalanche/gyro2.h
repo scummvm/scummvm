@@ -122,7 +122,7 @@ struct dnatype { /* here goes... */ /* Ux, uy, & ww now all belong to Trip5 */
 					worst_place_on_earth,
 					spare_evening;            /* Personalisation str's */
 
-	int32 total_time; /* Your total time playing this game, in ticks.*/
+	uint32 total_time; /* Your total time playing this game, in ticks.*/
 
 	byte jumpstatus; /* Fixes how high you're jumping. */
 

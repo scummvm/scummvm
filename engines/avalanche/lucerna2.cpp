@@ -1057,7 +1057,7 @@ void Lucerna::checkclick() {
 			_vm->_gyro->newpointer(4); // fletch
 	}
 	
-	if (holdLeftMouse)
+	if (holdLeftMouse) {
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_vm->_gyro->dropsok)
 				_vm->_dropdown->updateMenu();
@@ -1105,6 +1105,7 @@ void Lucerna::checkclick() {
 				_vm->_gyro->mousetext = Common::String(13) + _vm->_gyro->mousetext;
 		} else if (!_vm->_gyro->dropsok)
 			_vm->_gyro->mousetext = Common::String(13) + _vm->_gyro->mousetext;
+	}
 }
 
 void Lucerna::mouse_init() {
