@@ -291,9 +291,6 @@ void Scrolls::geticon(int16 x, int16 y, byte which) {
 
 void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File f;
-	uint16 st;
-
-	st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
 
 	Common::String filename;
 	filename = filename.format("%s.avd", fn.c_str());
@@ -302,7 +299,9 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 		return;
 	}
 
-	/*byte bit;
+#if 0
+	uint16 st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
+	byte bit;
 	for (uint16 fv = 1; fv <= yl; fv++)
 		for (bit = 0; bit <= 3; bit++) {
 			port[0x3c4] = 2;
@@ -311,7 +310,8 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 			port[0x3cf] = bit;
 			blockread(f, mem[0xa000 * st + (fv * 80)], xl);
 		}
-	bit = getpixel(0, 0);*/
+	bit = getpixel(0, 0);
+#endif
 
 	warning("STUB: Scrolls::block_drop()");
 
@@ -319,8 +319,8 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 }
 
 void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in the game.
-	byte b, groi;
-	int16 lx, ly, mx, my, ex, ey;
+	byte b;
+	int16 lx, ly, mx, my, ex;
 	bool centre;
 	byte icon_indent = 0;
 
@@ -373,7 +373,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), red);
 
 	ex = mx - lx;
-	ey = my - ly;
+//	int16 ey = my - ly;
 	mx -= lx;
 	my -= ly + 2;
 	
@@ -419,7 +419,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 				dix = mx + lx;
 				diy = my + ly;
 				_vm->_gyro->scroll[b].setChar(' ', 0);
-				groi = *_vm->_graphics->getPixel(0, 0);
+				// byte groi = *_vm->_graphics->getPixel(0, 0);
 				// inc(diy,14);
 				_vm->_gyro->shbox(dix - 65, diy - 24, dix - 5, diy - 10, "Yes.");
 				_vm->_gyro->shbox(dix + 5, diy - 24, dix + 65, diy - 10, "No.");

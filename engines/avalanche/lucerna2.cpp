@@ -211,7 +211,6 @@ void Lucerna::load_also(Common::String n) {
 }
 
 void Lucerna::load(byte n) {     /* Load2, actually */
-	byte bit;
 	Common::String xx;
 	
 	CursorMan.showMouse(false);
@@ -245,7 +244,7 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 
 	load_also(xx);
 	_vm->_celer->loadBackgroundSprites(n);
-	bit = *_vm->_graphics->getPixel(0,0);
+	// byte bit = *_vm->_graphics->getPixel(0,0);
 	CursorMan.showMouse(true);
 }
 
