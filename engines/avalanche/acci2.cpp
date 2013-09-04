@@ -865,34 +865,34 @@ void Acci::lookAround() {
 	switch (_vm->_gyro->dna.room) {
 	case r__spludwicks:
 		if (_vm->_gyro->dna.avaricius_talk > 0)
-			_vm->_visa->dixi('pos', 23);
+			_vm->_visa->dixi('q', 23);
 		else
 			peopleInRoom();
 		break;
 	case r__robins:
 		if (_vm->_gyro->dna.tied_up)
-			_vm->_visa->dixi('pos', 38);
+			_vm->_visa->dixi('q', 38);
 		if (_vm->_gyro->dna.mushroom_growing)
-			_vm->_visa->dixi('pos', 55);
+			_vm->_visa->dixi('q', 55);
 		break;
 	case r__insidecardiffcastle:
 		if (!_vm->_gyro->dna.taken_pen)
-			_vm->_visa->dixi('pos', 49);
+			_vm->_visa->dixi('q', 49);
 		break;
 	case r__lustiesroom:
 		if (_vm->_gyro->dna.lustie_is_asleep)
-			_vm->_visa->dixi('pos', 65);
+			_vm->_visa->dixi('q', 65);
 		break;
 	case r__catacombs:
 		switch (_vm->_gyro->dna.cat_y * 256 + _vm->_gyro->dna.cat_x) {
 		case 258 :
-			_vm->_visa->dixi('pos', 80); // Inside art gallery.
+			_vm->_visa->dixi('q', 80); // Inside art gallery.
 			break; 
 		case 514 :
-			_vm->_visa->dixi('pos', 81); // Outside ditto.
+			_vm->_visa->dixi('q', 81); // Outside ditto.
 			break;
 		case 260 :
-			_vm->_visa->dixi('pos', 82); // Outside Geida's room.
+			_vm->_visa->dixi('q', 82); // Outside Geida's room.
 			break; 
 		}
 		break;
