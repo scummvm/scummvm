@@ -2016,7 +2016,7 @@ void Acci::verbOpt(byte verb, Common::String &answer, char &ansKey) {
 	switch (verb) {
 	case kVerbCodeExam:
 		answer = "Examine";
-		ansKey = 'word';
+		ansKey = 'x';
 		break; // The ubiqutous one.
 	// kVerbCodegive isn't dealt with by this procedure, but by ddm__with.
 	case kVerbCodeDrink:
