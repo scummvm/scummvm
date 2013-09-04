@@ -135,14 +135,10 @@ public:
 
 	Common::String people;
 
-
-
 	Dropdown(AvalancheEngine *vm);
 
 	void parseKey(char r, char re);
-
 	void updateMenu();
-
 	void setupMenu(); // Standard menu bar.
 
 private:
@@ -156,20 +152,11 @@ private:
 	static const byte kHighlightFontColor = white;
 	static const byte kDisabledColor = darkgray;
 
-
-
 	AvalancheEngine *_vm;
 
-
-
 	Common::String selectGender(byte x); // Returns "im" for boys, and "er" for girls.
-
 	void findWhatYouCanDoWithIt();
-
-	void drawMenuItem(int16 x, int16 y, char t, Common::String z, bool valid);
-
-	void drawHighlightedMenuItem(int16 x, int16 y, char t, Common::String z, bool valid); // Highlighted. TODO: It's too similar to chalk! Unify these two!!!
-
+	void drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted);
 	void bleep();
 
 	void setupMenuGame();

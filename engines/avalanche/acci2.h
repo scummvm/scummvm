@@ -33,8 +33,6 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-
-
 namespace Avalanche {
 class AvalancheEngine;
 
