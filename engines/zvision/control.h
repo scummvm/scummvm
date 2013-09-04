@@ -29,6 +29,7 @@
 namespace Common {
 class SeekableReadStream;
 struct Point;
+class WriteStream;
 }
 
 namespace ZVision {
@@ -74,6 +75,36 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	virtual bool process(uint32 deltaTimeInMillis) { return false; }
+	/**
+	 * Serialize a Control for save game use. This should only be used if a Control needs
+	 * to save values that would be different from initialization. AKA a TimerNode needs to
+	 * store the amount of time left on the timer. Any Controls overriding this *MUST* write
+	 * their key as the first data outputted. The default implementation is NOP.
+	 *
+	 * NOTE: If this method is overridden, you MUST also override deserialize() 
+	 * and needsSerialization()
+	 *
+	 * @param stream    Stream to write any needed data to
+	 */
+	virtual void serialize(Common::WriteStream *stream) {}
+	/**
+	 * De-serialize data from a save game stream. This should only be implemented if the
+	 * Control also implements serialize(). The calling method assumes the size of the
+	 * data read from the stream exactly equals that written in serialize(). The default
+	 * implementation is NOP.
+	 *
+	 * NOTE: If this method is overridden, you MUST also override serialize()
+	 * and needsSerialization()
+	 *
+	 * @param stream    Save game file stream
+	 */
+	virtual void deserialize(Common::SeekableReadStream *stream) {}
+	/**
+	 * If a Control overrides serialize() and deserialize(), this should return true
+	 *
+	 * @return    Does the Control need save game serialization?
+	 */
+	virtual inline bool needsSerialization() { return false; }
 
 protected:
 	ZVision * _engine;
