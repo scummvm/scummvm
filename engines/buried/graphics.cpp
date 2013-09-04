@@ -36,11 +36,13 @@
 #include "buried/buried.h"
 #include "buried/database.h"
 #include "buried/graphics.h"
+#include "buried/window.h"
 
 namespace Buried {
 
 GraphicsManager::GraphicsManager(BuriedEngine *vm) : _vm(vm) {
 	_curCursor = kCursorNone;
+	_mouseMoved = false;
 
 	setCursor(kCursorArrow);
 	CursorMan.showMouse(true);
@@ -292,9 +294,30 @@ uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 	return best;
 }
 
-void GraphicsManager::invalidateRect(const Common::Rect &rect, bool erase) {
+void GraphicsManager::invalidateRect(const Common::Rect &rect) {
 	_dirtyRect.extend(rect);
-	// TODO: Erase?
+}
+
+void GraphicsManager::updateScreen() {
+	bool shouldUpdateScreen = _mouseMoved;
+	_mouseMoved = false;
+
+	if (!_dirtyRect.isEmpty()) {
+		// Draw the main window, which will draw its children
+		_vm->_mainWindow->updateWindow();
+
+		// Copy just that rect
+		g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
+
+		// Empty out the dirty rect
+		_dirtyRect = Common::Rect();
+
+		// Definitely update
+		shouldUpdateScreen = true;
+	}
+
+	if (shouldUpdateScreen)
+		g_system->updateScreen();
 }
 
 void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y) {

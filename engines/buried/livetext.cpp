@@ -34,7 +34,7 @@
 
 namespace Buried {
 
-LiveTextWindow::LiveTextWindow(BuriedEngine *vm, Window *parent) : Window(vm) {
+LiveTextWindow::LiveTextWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
 	// Initialize member variables to empty
 	_textTranslation = false;
 
@@ -42,7 +42,7 @@ LiveTextWindow::LiveTextWindow(BuriedEngine *vm, Window *parent) : Window(vm) {
 	_font = _vm->_gfx->createFont(14);
 
 	// Create window
-	createChild(Common::Rect(137, 21, 447, 87), parent);
+	_rect = Common::Rect(137, 21, 447, 87);
 
 	// Update the text in the window
 	updateLiveText(_vm->getString(IDS_SAVE_GAME_MESSAGE), false);

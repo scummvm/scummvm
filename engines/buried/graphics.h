@@ -73,8 +73,11 @@ public:
 	Graphics::Surface *getBitmap(const Common::String &fileName);
 	uint32 getColor(byte r, byte g, byte b);
 
-	void invalidateRect(const Common::Rect &rect, bool erase = true);
+	void invalidateRect(const Common::Rect &rect);
+	const Common::Rect &getDirtyRect() const { return _dirtyRect; }
 
+	void markMouseMoved() { _mouseMoved = true; }
+	void updateScreen();
 	Graphics::Surface *getScreen() const { return _screen; }
 
 	void blit(const Graphics::Surface *surface, int x, int y);
@@ -84,6 +87,7 @@ private:
 	Cursor _curCursor;
 
 	Common::Rect _dirtyRect;
+	bool _mouseMoved;
 	Graphics::Surface *_screen;
 	byte *_palette;
 	

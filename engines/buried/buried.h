@@ -79,6 +79,7 @@ public:
 	GraphicsManager *_gfx;
 	Database *_mainEXE;
 	SoundManager *_sound;
+	Window *_mainWindow; // Only one main window is supported.
 
 	uint createTimer(Window *window, uint period);
 	bool killTimer(uint timer);
