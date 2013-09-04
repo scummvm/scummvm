@@ -184,29 +184,82 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	const int aIndex = 0;
+	const int bIndex = 1;
+	const int gIndex = 2;
+	const int rIndex = 3;
 #else
 	const int aIndex = 3;
+	const int bIndex = 2;
+	const int gIndex = 1;
+	const int rIndex = 0;
 #endif
 	const int aShift = 0;//img->format.aShift;
+	if (blendMode == BLEND_ADDITIVE) {
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+				uint32 pix = *(uint32 *)in;
+				int a = (pix >> aShift) & 0xff;
+				in += inStep;
 
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
-			uint32 pix = *(uint32 *)in;
-			int a = (pix >> aShift) & 0xff;
-			in += inStep;
-
-			if (a == 0) { // Full transparency
-				out += 4;
-			} else { // Full opacity (Any value not exactly 0 is Opaque here)
-				*(uint32 *)out = pix;
-				out[aIndex] = 0xFF;
-				out += 4;
+				if (a == 0) { // Full transparency
+					out += 4;
+				} else { // Full opacity (Any value not exactly 0 is Opaque here)
+					out[rIndex] = MIN(out[rIndex] + in[rIndex], 255);
+					out[gIndex] = MIN(out[gIndex] + in[gIndex], 255);
+					out[bIndex] = MIN(out[bIndex] + in[bIndex], 255);
+					out[aIndex] = 0xFF;
+					out += 4;
+				}
 			}
+			outo += pitch;
+			ino += inoStep;
 		}
-		outo += pitch;
-		ino += inoStep;
+	} else if (blendMode == BLEND_SUBTRACTIVE) { 
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+				uint32 pix = *(uint32 *)in;
+				int a = (pix >> aShift) & 0xff;
+				in += inStep;
+
+				if (a == 0) { // Full transparency
+					out += 4;
+				} else { // Full opacity (Any value not exactly 0 is Opaque here)
+					out[rIndex] = MAX(out[rIndex] - in[rIndex], 0);
+					out[gIndex] = MAX(out[gIndex] - in[gIndex], 0);
+					out[bIndex] = MAX(out[bIndex] - in[bIndex], 0);
+					out[aIndex] = 0xFF;
+					out += 4;
+				}
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	} else {
+		assert (blendMode == BLEND_NORMAL);
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+				uint32 pix = *(uint32 *)in;
+				int a = (pix >> aShift) & 0xff;
+				in += inStep;
+
+				if (a == 0) { // Full transparency
+					out += 4;
+				} else { // Full opacity (Any value not exactly 0 is Opaque here)
+					*(uint32 *)out = pix;
+					out[aIndex] = 0xFF;
+					out += 4;
+				}
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
 	}
 }
 
