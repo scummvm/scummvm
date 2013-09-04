@@ -915,7 +915,7 @@ void Acci::openDoor() {
 		break;
 	case r__spludwicks:
 		if (_thing == 61) {
-			_vm->_visa->dixi('pos', 85);
+			_vm->_visa->dixi('q', 85);
 			return;
 		}
 		break;
@@ -932,7 +932,7 @@ void Acci::openDoor() {
 			switch (_vm->_gyro->portals[fv].op) {
 			case Gyro::exclaim:
 				_vm->_trip->tr[0].bounce();
-				_vm->_visa->dixi('word', _vm->_gyro->portals[fv].data);
+				_vm->_visa->dixi('x', _vm->_gyro->portals[fv].data);
 				break;
 			case Gyro::transport:
 				_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8 /*High byte*/, (_vm->_gyro->portals[fv].data) & 0x0F /*Low byte*/);
@@ -954,8 +954,7 @@ void Acci::openDoor() {
 
 	if (_vm->_gyro->dna.room == r__map)
 		_vm->_scrolls->display(Common::String("Avvy, you can complete the whole game without ever going "
-				"to anywhere other than Argent, Birmingham, Cardiff, "
-				"Nottingham and Norwich."));
+				"to anywhere other than Argent, Birmingham, Cardiff, Nottingham and Norwich."));
 	else
 		_vm->_scrolls->display("Door? What door?");
 }
