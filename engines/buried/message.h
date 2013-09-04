@@ -34,7 +34,6 @@ namespace Buried {
 class Window;
 
 enum MessageType {
-	kMessageTypeEraseBackground,
 	kMessageTypeKeyUp,
 	kMessageTypeKeyDown,
 	kMessageTypeTimer,
@@ -105,7 +104,6 @@ private:
 };
 
 // Types for everything that falls under one of the above categories
-typedef MessageTypeIntern<kMessageTypeEraseBackground> EraseBackgroundMessage;
 typedef KeyMessage<kMessageTypeKeyUp>                  KeyUpMessage;
 typedef KeyMessage<kMessageTypeKeyDown>                KeyDownMessage;
 typedef WindowMessage<kMessageTypeSetFocus>            SetFocusMessage;

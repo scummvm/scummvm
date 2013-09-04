@@ -37,7 +37,7 @@ struct Message;
 
 class Window {
 public:
-	Window(BuriedEngine *vm, Window *parent = 0);
+	Window(BuriedEngine *vm, Window *parent, bool visible = true);
 	virtual ~Window();
 
 	// The message types used by Buried in Time's windows
@@ -60,13 +60,36 @@ public:
 
 	void invalidateRect(const Common::Rect &rect, bool erase = true);
 	void invalidateWindow(bool erase = true) { invalidateRect(_rect, erase); }
-	void createChild(const Common::Rect &rect, Window *parent);
 	Window *getParent() const { return _parent; }
 	const Common::Rect &getRect() const { return _rect; }
 	Common::Rect getClientRect() const;
-	void updateWindow() { onPaint(); }
+	Common::Rect getAbsoluteRect() const;
+	void updateWindow();
 	void enableWindow(bool enable);
 	bool isWindowEnabled() const;
+	void setWindowPos(Window *insertAfter, int x, int y, int width, int height, uint flags);
+
+	// The subset of show modes we'll accept
+	enum WindowShowMode {
+		kWindowShow,
+		kWindowHide,
+		kWindowShowNormal
+	};
+
+	void showWindow(WindowShowMode showMode);
+	bool isWindowVisible() const { return _visible; }
+
+	// The subset of flags we'll accept
+	enum WindowPosFlags {
+		kWindowPosNoFlags = 0,
+
+		kWindowPosNoSize = (1 << 0),
+		kWindowPosNoZOrder = (1 << 1),
+		kWindowPosHideWindow = (1 << 2),
+		kWindowPosShowWindow = (1 << 3),
+		kWindowPosNoMove = (1 << 4),
+		kWindowPosNoActivate = (1 << 5)
+	};
 
 	// TODO:
 	// ShowWindow
@@ -87,10 +110,21 @@ protected:
 	uint setTimer(uint elapse);
 	bool killTimer(uint timer);
 
+	Common::Rect makeAbsoluteRect(const Common::Rect &rect) const;
+
 private:
 	Common::Queue<Message *> _queue;
-	bool _enabled;
+	bool _enabled, _visible;
+	bool _needsErase;
+
+	typedef Common::List<Window *> WindowList;
+	WindowList _children, _topMostChildren;
 };
+
+// A subset of the special insert after Window handles
+// (Values declared in window.cpp)
+extern const Window *kWindowPosTop;
+extern const Window *kWindowPosTopMost;
 
 } // End of namespace Buried
 
