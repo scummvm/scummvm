@@ -198,8 +198,8 @@ void Scrolls::dialogue() {
 
 
 void Scrolls::store_(byte what, tunetype &played) {
-	memcpy(played+1, played+2, sizeof(played) - 1);
-	played[31] = what;
+	memcpy(played + 1, played + 2, sizeof(played) - 1);
+	played[30] = what;
 }
 
 bool Scrolls::they_match(tunetype &played) {
@@ -207,10 +207,11 @@ bool Scrolls::they_match(tunetype &played) {
 
 	mistakes = 0;
 
-	for (fv = 1; fv <= sizeof(played); fv++)
+	for (fv = 1; fv <= sizeof(played); fv++) {
 		if (played[fv] != _vm->_gyro->tune[fv]) {
 			mistakes += 1;
 		}
+	}
 
 	return mistakes < 5;
 }
@@ -715,7 +716,7 @@ void Scrolls::calldrivers() {
 					return;
 			}
 			break;
-			case kControlNegative: {
+			case kControlNegative:
 				switch (param) {
 				case 1:
 					display(lsd() + kControlToBuffer); // Insert cash balance. (Recursion)
@@ -755,17 +756,15 @@ void Scrolls::calldrivers() {
 						display(_vm->_gyro->get_better(_vm->_gyro->dna.box_contents) + '.');
 					}
 					break;
-				case 11: {
+				case 11:
 					nn = 1;
-					for (nnn = 0; nnn < numobjs; nnn++)
+					for (nnn = 0; nnn < numobjs; nnn++) {
 						if (_vm->_gyro->dna.obj[nnn]) {
 							nn++;
 							display(_vm->_gyro->get_better(nnn) + ", " + kControlToBuffer);
 						}
 					}
 					break;
-				}
-				
 				}
 				break;
 			case kControlIcon:
