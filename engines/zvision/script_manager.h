@@ -114,6 +114,7 @@ private:
 	void createReferenceTable();
 	void updateNodes(uint deltaTimeMillis);
 	void checkPuzzleCriteria();
+	void cleanStateTable();
 
 // TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
 public:

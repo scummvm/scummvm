@@ -196,6 +196,17 @@ void ScriptManager::checkPuzzleCriteria() {
 	}
 }
 
+void ScriptManager::cleanStateTable() {
+	for (Common::HashMap<uint32, uint32>::iterator iter = _globalState.begin(); iter != _globalState.end(); iter++) {
+		// If the value is equal to zero, we can purge it since getStateValue()
+		// will return zero if _globalState doesn't contain a key
+		if ((*iter)._value == 0) {
+			// Remove the node
+			_globalState.erase(iter);
+		}
+	}
+}
+
 uint ScriptManager::getStateValue(uint32 key) {
 	if (_globalState.contains(key))
 		return _globalState[key];
@@ -284,6 +295,9 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 
 	// Reset the background velocity
 	_engine->getRenderManager()->setBackgroundVelocity(0);
+
+	// Clean the global state table
+	cleanStateTable();
 
 	// Parse into puzzles and controls
 	Common::String fileName = Common::String::format("%c%c%c%c.scr", world, room, node, view);
