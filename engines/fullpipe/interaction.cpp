@@ -37,8 +37,42 @@ bool CInteractionController::load(MfcArchive &file) {
 	return _interactions.load(file);
 }
 
+int static_compSceneId = 0;
+
+bool CInteractionController::compareInteractions(const void *p1, const void *p2) {
+	CInteraction *i1 = (CInteraction *)p1;
+	CInteraction *i2 = (CInteraction *)p2;
+
+	if ( i2->_sceneId < i1->_sceneId) {
+		if ( i1->_sceneId != static_compSceneId)
+			return false;
+	}
+	if (i2->_sceneId != i1->_sceneId) {
+		if (i1->_sceneId > 0 && i2->_sceneId == static_compSceneId)
+			return false;
+		if (i2->_sceneId != i1->_sceneId)
+			return true;
+	}
+	if (i2->_objectId3 == -1)
+		goto LABEL_17;
+	if (i2->_objectId3 == -2)
+		goto LABEL_18;
+	if (i1->_objectId3 != -1 && i1->_objectId3 != -2) {
+LABEL_17:
+		if (i2->_objectId3 != -2 )
+			return true;
+LABEL_18:
+		if (i1->_objectId3 != -1)
+			return true;
+	}
+
+	return false;
+}
+
 void CInteractionController::sortInteractions(int sceneId) {
-	warning("STUB: CInteractionController::sortInteractions(%d)", sceneId);
+	static_compSceneId = sceneId;
+
+	Common::sort(_interactions.begin(), _interactions.end(), CInteractionController::compareInteractions);
 }
 
 int CInteractionController::handleInteraction(GameObject *subject, GameObject *object, int invId) {
@@ -82,6 +116,11 @@ bool CInteraction::load(MfcArchive &file) {
 
 	_messageQueue = (MessageQueue *)file.readClass();
 
+	return true;
+}
+
+bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
+	warning("STUB: CInteraction::canInteract()");
 	return true;
 }
 

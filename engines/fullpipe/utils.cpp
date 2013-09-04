@@ -54,7 +54,7 @@ bool CObList::load(MfcArchive &file) {
 		debug(9, "CObList::[%d]", i);
 		CObject *t = file.readClass();
 
-		push_back(*t);
+		push_back(t);
 	}
 
 	return true;

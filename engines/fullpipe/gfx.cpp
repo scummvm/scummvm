@@ -26,6 +26,8 @@
 #include "fullpipe/gfx.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/scene.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/gameloader.h"
 
 #include "common/memstream.h"
 
@@ -147,6 +149,7 @@ PictureObject::PictureObject() {
 	_ox2 = 0;
 	_oy2 = 0;
 	_pictureObject2List = 0;
+	_objtype = kObjTypePictureObject;
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
@@ -154,6 +157,7 @@ PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 	_ox2 = _ox;
 	_oy2 = _oy;
 	_pictureObject2List = src->_pictureObject2List;
+	_objtype = kObjTypePictureObject;
 }
 
 bool PictureObject::load(MfcArchive &file, bool bigPicture) {
@@ -339,8 +343,25 @@ void GameObject::renumPictures(CPtrList *lst) {
 	free(buf);
 }
 
-bool GameObject::canInteractAny(GameObject *obj2, int a3) {
-	warning("STUB: GameObject::canInteractAny()");
+bool GameObject::canInteractAny(GameObject *obj2, int invId) {
+	int sceneId = 0;
+
+	if (g_fullpipe->_currentScene)
+		sceneId = g_fullpipe->_currentScene->_sceneId;
+
+	CInteractionController *intC = getGameLoaderInteractionController();
+	for (CObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
+		CInteraction *intr = (CInteraction *)*i;
+
+		if (intr->_sceneId > 0 && intr->_sceneId != sceneId)
+			break;
+
+		if (invId == -3) {
+			invId = getGameLoaderInventory()->getSelectedItemId();
+		}
+		if (intr->canInteract(this, obj2, invId))
+			return true;
+	}
 	return false;
 }
 

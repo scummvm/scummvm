@@ -142,7 +142,7 @@ class GameObject : public CObject {
 	void clearFlags() { _flags = 0; }
 	const char *getName() { return _objectName; }
 
-	bool canInteractAny(GameObject *obj2, int a3);
+	bool canInteractAny(GameObject *obj2, int invId);
 };
 
 class PictureObject : public GameObject {

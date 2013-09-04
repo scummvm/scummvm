@@ -102,6 +102,7 @@ StaticANIObject::StaticANIObject() {
 	_field_32 = 0;
 	_field_96 = 0;
 	_messageNum = 0;
+	_objtype = kObjTypeStaticANIObject;
 }
 
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
@@ -121,6 +122,7 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_sceneId = src->_sceneId;
 	_callback1 = src->_callback1;
 	_callback2 = src->_callback2;
+	_objtype = kObjTypeStaticANIObject;
 
 	for (uint i = 0; i < src->_staticsList.size(); i++)
 		_staticsList.push_back(new Statics((Statics *)src->_staticsList[i], 0));

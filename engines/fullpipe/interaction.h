@@ -34,6 +34,7 @@ class StaticANIObject;
 int handleObjectInteraction(GameObject *subject, GameObject *object, int invId);
 
 class CInteraction : public CObject {
+ public:
 	int16 _objectId1;
 	int16 _objectId2;
 	int16 _objectId3;
@@ -52,6 +53,7 @@ class CInteraction : public CObject {
  public:
 	CInteraction();
 	virtual bool load(MfcArchive &file);
+	bool canInteract(GameObject *obj1, GameObject *obj2, int invId);
 };
 
 class CInteractionController : public CObject {
@@ -59,6 +61,9 @@ class CInteractionController : public CObject {
 	CObList _interactions;
 	int16 _field_20;
 	bool _flag24;
+
+ private:
+	static bool compareInteractions(const void *p1, const void *p2);
 
  public:
 	CInteractionController() : _field_20(0), _flag24(true) {}

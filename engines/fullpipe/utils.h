@@ -66,7 +66,9 @@ class MfcArchive : public Common::SeekableReadStream {
 
 enum ObjType {
 	kObjTypeDefault,
-	kObjTypeObjstateCommand
+	kObjTypeObjstateCommand,
+	kObjTypeStaticANIObject,
+	kObjTypePictureObject
 };
 
 class CObject {
@@ -80,7 +82,7 @@ class CObject {
 	bool loadFile(const char *fname);
 };
 
-class CObList : public Common::List<CObject>, public CObject {
+class CObList : public Common::List<CObject *>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
