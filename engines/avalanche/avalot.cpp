@@ -234,7 +234,7 @@ void Avalot::run(Common::String arg) {
 	//	close(logfile);
 	warning("STUB: Avalot::run()");
 
-	_vm->_closing->end_of_program();
+	_vm->_closing->exitGame();
 }
 
 } // End of namespace Avalanche
