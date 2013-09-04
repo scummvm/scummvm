@@ -110,6 +110,8 @@ public:
 
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 
+	void serializeStateTable(Common::WriteStream *stream);
+	void deserializeStateTable(Common::SeekableReadStream *stream);
 	Location getCurrentLocation() const;
 
 private:

@@ -25,11 +25,13 @@
 #include "common/algorithm.h"
 #include "common/hashmap.h"
 #include "common/debug.h"
+#include "common/stream.h"
 
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/cursor_manager.h"
+#include "zvision/save_manager.h"
 #include "zvision/actions.h"
 #include "zvision/action_node.h"
 #include "zvision/utility.h"
@@ -334,6 +336,28 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	_currentLocation.node = node;
 	_currentLocation.view = view;
 	_currentLocation.offset = offset;
+}
+
+void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
+	// Write the number of state value entries
+	stream->writeUint32LE(_globalState.size());
+
+	for (Common::HashMap<uint32, uint32>::iterator iter = _globalState.begin(); iter != _globalState.end(); iter++) {
+		// Write out the key/value pair
+		stream->writeUint32LE((*iter)._key);
+		stream->writeUint32LE((*iter)._value);
+	}
+}
+
+void ScriptManager::deserializeStateTable(Common::SeekableReadStream *stream) {
+	// Read the number of key/value pairs
+	uint32 numberOfPairs = stream->readUint32LE();
+
+	for (uint32 i = 0; i < numberOfPairs; i++) {
+		uint32 key = stream->readUint32LE();
+		uint32 value = stream->readUint32LE();
+		setStateValue(key, value);
+	}
 }
 
 Location ScriptManager::getCurrentLocation() const {
