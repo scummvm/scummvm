@@ -716,7 +716,7 @@ void Acci::openBox(bool isOpening) {
 	if ((_vm->_gyro->dna.room == r__yours) && (_thing == 54)) {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 
-		_vm->_celer->refreshBackgroundSprites();
+		_vm->_celer->updateBackgroundSprites();
 		_vm->_trip->trippancy_link();
 		_vm->_graphics->refreshScreen();
 
@@ -724,7 +724,7 @@ void Acci::openBox(bool isOpening) {
 
 		if (!isOpening) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
-			_vm->_celer->refreshBackgroundSprites();
+			_vm->_celer->updateBackgroundSprites();
 			_vm->_trip->trippancy_link();
 			_vm->_graphics->refreshScreen();
 		}

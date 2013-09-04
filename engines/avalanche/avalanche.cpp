@@ -482,7 +482,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_gyro->ontoolbar = false;
 	_trip->trippancy_link();
 
-	_celer->refreshBackgroundSprites();
+	_celer->updateBackgroundSprites();
 	
 	_scrolls->display(Common::String(_scrolls->kControlItalic) + "Loaded: " + _scrolls->kControlRoman + description + ".ASG"
 		+ _scrolls->kControlCenter + _scrolls->kControlNewLine + _scrolls->kControlNewLine

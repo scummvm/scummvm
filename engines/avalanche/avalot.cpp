@@ -204,7 +204,7 @@ void Avalot::run(Common::String arg) {
 		_vm->_dropdown->menu_link();
 		_vm->_gyro->force_numlock();
 		_vm->_trip->get_back_loretta();
-		_vm->_celer->refreshBackgroundSprites();
+		_vm->_celer->updateBackgroundSprites();
 		_vm->_trip->trippancy_link();
 		_vm->_lucerna->checkclick();
 		_vm->_timeout->one_tick();

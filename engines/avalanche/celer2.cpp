@@ -56,7 +56,7 @@ Celer::~Celer() {
 
 
 
-void Celer::refreshBackgroundSprites() {
+void Celer::updateBackgroundSprites() {
 	if (_vm->_gyro->ddmnow)
 		return; // No animation when the menus are up.
 
