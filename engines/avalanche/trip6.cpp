@@ -1598,7 +1598,7 @@ void Trip::handleMoveKey(const Common::Event &event) {
 	if (!_vm->_gyro->dna.user_moves_avvy)
 		return;
 
-	if (_vm->_dropdown->ddm_o.menunow)
+	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
 	else
 		switch (event.kbd.keycode) {

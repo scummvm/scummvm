@@ -325,7 +325,7 @@ void Lucerna::exitroom(byte x) {
 }
 
 void Lucerna::new_town() {   /* You've just entered a town from the map. */
-	_vm->_dropdown->standard_bar();
+	_vm->_dropdown->setupMenu();
 
 	switch (_vm->_gyro->dna.room) {
 	case r__outsidenottspub: /* Entry into Nottingham. */
@@ -947,7 +947,7 @@ void Lucerna::points(byte num) {     /* Add on no. of points */
 }
 
 void Lucerna::topcheck(Common::Point cursorPos) {
-	_vm->_dropdown->ddm_m.getmenu(cursorPos.x);
+	_vm->_dropdown->_menuBar.chooseMenuItem(cursorPos.x);
 }
 
 void Lucerna::mouseway(const Common::Point &cursorPos) {
@@ -1107,7 +1107,7 @@ void Lucerna::checkclick() {
 	if (holdLeftMouse)
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_vm->_gyro->dropsok)
-				_vm->_dropdown->menu_link();
+				_vm->_dropdown->updateMenu();
 		} else if ((317 <= cursorPos.y) && (cursorPos.y <= 339)) { // Click on the command line.
 			_vm->_parser->_inputTextPos = (cursorPos.x - 23) / 8;
 			if (_vm->_parser->_inputTextPos > _vm->_parser->_inputText.size() + 1)

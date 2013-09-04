@@ -468,7 +468,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_lucerna->minor_redraw();
 
-	_dropdown->standard_bar();
+	_dropdown->setupMenu();
 
 	_gyro->whereis[0] = _gyro->dna.room;
 	

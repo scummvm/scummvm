@@ -43,8 +43,8 @@ void Parser::init() {
 
 void Parser::handleInputText(const Common::Event &event) {
 	byte inChar = event.kbd.ascii;
-	if (_vm->_dropdown->ddm_o.menunow) {
-		_vm->_dropdown->parsekey(inChar, _vm->_enhanced->extd);
+	if (_vm->_dropdown->_activeMenuItem._activeNow) {
+		_vm->_dropdown->parseKey(inChar, _vm->_enhanced->extd);
 	} else {
 		if (_inputText.size() < 76) {
 			if ((inChar == '"') || (inChar == '`')) {
@@ -64,7 +64,7 @@ void Parser::handleInputText(const Common::Event &event) {
 }
 
 void Parser::handleBackspace() {
-	if (!_vm->_dropdown->ddm_o.menunow) {
+	if (!_vm->_dropdown->_activeMenuItem._activeNow) {
 		if (_inputTextPos > _leftMargin) {
 			_inputTextPos--;
 			if ((_inputText[_inputTextPos] == '"') || (_inputText[_inputTextPos] == '`'))
@@ -77,7 +77,7 @@ void Parser::handleBackspace() {
 }
 
 void Parser::handleReturn() {
-	if (_vm->_dropdown->ddm_o.menunow)
+	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
 	else {
 		_vm->_logger->log_command(_inputText);
