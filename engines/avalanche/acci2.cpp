@@ -767,11 +767,12 @@ void Acci::inventory() {
 			if (itemNum < _vm->_gyro->dna.carrying)
 				_vm->_scrolls->display(Common::String(", ") + _vm->_scrolls->kControlToBuffer);
 		}
-		if (_vm->_gyro->dna.wearing == kNothing)
-			_vm->_scrolls->display(Common::String("...") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "...and you're stark naked!");
-		else
-			_vm->_scrolls->display(".");
 	}
+
+	if (_vm->_gyro->dna.wearing == kNothing)
+		_vm->_scrolls->display(Common::String("...") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "...and you're stark naked!");
+	else
+		_vm->_scrolls->display(".");
 }
 
 void Acci::swallow() {   /* Eat something. */
