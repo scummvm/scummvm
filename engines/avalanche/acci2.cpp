@@ -1383,9 +1383,7 @@ void Acci::doThat() {
 				else if (isPersonHere())
 					_vm->_visa->talkto(_person);
 			}
-		} else if (_person == kPardon)
-			_vm->_scrolls->display("Talk to whom?");
-		else if (isPersonHere())
+		} else if (isPersonHere())
 			_vm->_visa->talkto(_person);
 		break;
 	case kVerbCodeGive:
