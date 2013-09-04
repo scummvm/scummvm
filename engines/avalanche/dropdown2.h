@@ -72,7 +72,7 @@ class onemenu {
 public:
 	optiontype oo[12];
 	byte number;
-	int16 width, left;
+	uint16 width, left;
 	bool firstlix;
 	int16 flx1, flx2, fly;
 	byte oldy; /* used by Lightup */
