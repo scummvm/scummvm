@@ -1454,10 +1454,8 @@ void Trip::getsetclear() {
 }
 
 void Trip::hide_in_the_cupboard() {
-	const char nowt = '\xFA'; /* As in Acci. */
-
 	if (_vm->_gyro->dna.avvys_in_the_cupboard) {
-		if (_vm->_gyro->dna.wearing == nowt)
+		if (_vm->_gyro->dna.wearing == Acci::kNothing)
 			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "AVVY!" + _vm->_scrolls->kControlRoman + "Get dressed first!");
 		else {
 			tr[0].visible = true;

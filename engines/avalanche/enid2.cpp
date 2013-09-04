@@ -96,7 +96,8 @@ Common::String Enid::expanddate(byte d, byte m, uint16 y) {
 
 	day = _vm->_gyro->strf(d);
 
-	if (((d >= 0) && (d <= 9)) || ((d >= 21) && (d <= 31))) {
+	// d is always positive
+	if ((d <= 9) || ((d >= 21) && (d <= 31))) {
 		switch (d % 10) {
 		case 1:
 			day = day + "st";

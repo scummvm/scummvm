@@ -152,14 +152,15 @@ void Celer::updateBackgroundSprites() {
 	case r__lustiesroom:
 		if (!(_vm->_gyro->dna.lustie_is_asleep)) {
 			byte direction = 0;
+			uint16 angle = _vm->_lucerna->bearing(2);
 			if ((_vm->_gyro->roomtime % 45) > 42)
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
-			else if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
+			else if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 					direction = 1; // Middle.
-			else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
+			else if ((angle >= 45) && (angle <= 180))
 					direction = 2; // Left.
-			else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
+			else if ((angle >= 181) && (angle <= 314))
 				direction = 3; // Right.
 
 			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
@@ -195,11 +196,12 @@ void Celer::updateBackgroundSprites() {
 	case r__nottspub: {
 		// Bearing of Avvy from Port.
 		byte direction = 0;
-		if (((_vm->_lucerna->bearing(5) >= 0) && (_vm->_lucerna->bearing(5) <= 45)) || ((_vm->_lucerna->bearing(5) >= 315) && (_vm->_lucerna->bearing(5) <= 360)))
+		uint16 angle = _vm->_lucerna->bearing(5);
+		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 2; // Middle.
-		else if ((_vm->_lucerna->bearing(5) >= 45) && (_vm->_lucerna->bearing(5) <= 180))
+		else if ((angle >= 45) && (angle <= 180))
 			direction = 6; // Left.
-		else if ((_vm->_lucerna->bearing(5) >= 181) && (_vm->_lucerna->bearing(5) <= 314))
+		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
 		if ((_vm->_gyro->roomtime % 60) > 57)
@@ -226,11 +228,12 @@ void Celer::updateBackgroundSprites() {
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
-		if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
+		uint16 angle = _vm->_lucerna->bearing(2);
+		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 4; // Middle.
-		else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
+		else if ((angle >= 45) && (angle <= 180))
 			direction = 6; // Left.
-		else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
+		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
 		if ((_vm->_gyro->roomtime % 45) > 42)

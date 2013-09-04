@@ -1372,8 +1372,8 @@ void Acci::doThat() {
 	case kVerbCodeTalk:
 		if (_person == kPardon) {
 			if (_vm->_gyro->subjnumber == 99) // They typed "say password".
-				_vm->_scrolls->display(Common::String("Yes, but kWhat ") + _vm->_scrolls->kControlItalic + "is" + _vm->_scrolls->kControlRoman + " the password?");
-			else if (((1 <= _vm->_gyro->subjnumber) && (_vm->_gyro->subjnumber <= 49)) || (_vm->_gyro->subjnumber == 253) || (_vm->_gyro->subjnumber == 449)) {
+				_vm->_scrolls->display(Common::String("Yes, but what ") + _vm->_scrolls->kControlItalic + "is" + _vm->_scrolls->kControlRoman + " the password?");
+			else if (((1 <= _vm->_gyro->subjnumber) && (_vm->_gyro->subjnumber <= 49)) || (_vm->_gyro->subjnumber == 253) || (_vm->_gyro->subjnumber == 249)) {
 				_thats.deleteChar(0);
 
 				for (byte i = 0; i < 10; i++)
@@ -1890,9 +1890,10 @@ void Acci::doThat() {
 			for (byte i = 0; i < _thats.size(); i++) {
 				Common::String temp = _realWords[i];
 				temp.toUppercase();
-				for (byte i = 0; i < kVocabulary[_vm->_gyro->dna.pass_num + kFirstPassword]._word.size(); i++)
-					if (kVocabulary[_vm->_gyro->dna.pass_num + kFirstPassword]._word[i] != temp[i])
+				for (byte j = 0; j < kVocabulary[_vm->_gyro->dna.pass_num + kFirstPassword]._word.size(); j++) {
+					if (kVocabulary[_vm->_gyro->dna.pass_num + kFirstPassword]._word[j] != temp[j])
 						ok = false;
+				}
 			}
 
 			if (ok) {
