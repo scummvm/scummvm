@@ -112,6 +112,9 @@ public:
 
 	void serializeStateTable(Common::WriteStream *stream);
 	void deserializeStateTable(Common::SeekableReadStream *stream);
+	void serializeControls(Common::WriteStream *stream);
+	void deserializeControls(Common::SeekableReadStream *stream);
+	
 	Location getCurrentLocation() const;
 
 private:

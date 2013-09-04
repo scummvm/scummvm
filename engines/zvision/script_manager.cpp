@@ -360,6 +360,36 @@ void ScriptManager::deserializeStateTable(Common::SeekableReadStream *stream) {
 	}
 }
 
+void ScriptManager::serializeControls(Common::WriteStream *stream) {
+	// Count how many controls need to save their data
+	// Because WriteStream isn't seekable
+	uint32 numberOfControlsNeedingSerialization = 0;
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		if ((*iter)->needsSerialization()) {
+			numberOfControlsNeedingSerialization++;
+		}
+	}
+	stream->writeUint32LE(numberOfControlsNeedingSerialization);
+
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		(*iter)->serialize(stream);
+	}
+}
+
+void ScriptManager::deserializeControls(Common::SeekableReadStream *stream) {
+	uint32 numberOfControls = stream->readUint32LE();
+
+	for (uint32 i = 0; i < numberOfControls; i++) {
+		uint32 key = stream->readUint32LE();
+		for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+			if ((*iter)->getKey() == key) {
+				(*iter)->deserialize(stream);
+				break;
+			}
+		}
+	}
+}
+
 Location ScriptManager::getCurrentLocation() const {
 	Location location = _currentLocation;
 	location.offset = _engine->getRenderManager()->getCurrentBackgroundOffset();
