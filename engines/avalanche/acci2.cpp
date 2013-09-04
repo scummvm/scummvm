@@ -265,10 +265,7 @@ Common::String Acci::totalTime() {
 	uint16 h, m, s;
 
 	h = _vm->_gyro->dna.total_time / ticksInOneSec; // No. of seconds.
-	if (h < 0)
-		h = ceil((float)h);
-	else
-		h = floor((float)h);
+	h = floor((float)h);
 	m = h % 3600;
 	h = h / 3600;
 	s = m % 60;
@@ -564,18 +561,16 @@ void Acci::parse() {
 		_vm->_gyro->subject.clear();
 	_vm->_gyro->subjnumber = 0; // Find subject of conversation.
 	
-	byte i = 0;
-	while ((i < 11) && !_realWords[i].empty()) {
+	for (int i = 0; (i < 11) && !_realWords[i].empty(); i++) {
 		if ((_realWords[i][0] == '\'') || (_realWords[i][0] == '\"')) {
 			_vm->_gyro->subjnumber = (byte)_thats[i];
 			_thats.setChar(kMoved, i);
 			break;
 		}
-		i++;
 	}
 
 	if ((_vm->_gyro->subjnumber == 0) && !_thats.empty()) { // Still not found.
-		for (i = 0; i < _thats.size() - 1; i++) {
+		for (uint16 i = 0; i < _thats.size() - 1; i++) {
 			if ((byte)_thats[i] == 252) { // The word is "about", or something similar.
 				_vm->_gyro->subjnumber = (byte)_thats[i + 1];
 				_thats.setChar(0, i + 1);
@@ -585,7 +580,7 @@ void Acci::parse() {
 	}
 
 	if ((_vm->_gyro->subjnumber == 0) && !_thats.empty()) { // STILL not found! Must be the word after "say".
-		for (i = 0; i < _thats.size() - 1; i++) {
+		for (uint16 i = 0; i < _thats.size() - 1; i++) {
 			if (((byte)_thats[i] == 7) && ((byte)_thats[i + 1] != 0) && !((225 <= (byte)_thats[i + 1]) && ((byte)_thats[i + 1] <= 229))) {
 				// SAY not followed by a preposition
 				_vm->_gyro->subjnumber = (byte)_thats[i + 1];
@@ -595,7 +590,7 @@ void Acci::parse() {
 		}
 	}
 
-	for (int8 i = _thats.size() - 1; i >= 0; i--) { // Reverse order, so first will be used.
+	for (int16 i = _thats.size() - 1; i >= 0; i--) { // Reverse order, so first will be used.
 		if (((byte)_thats[i] == 253) || ((byte)_thats[i] == 249) || ((1 <= (byte)_thats[i]) && ((byte)_thats[i] <= 49)))
 			_verb = (byte)_thats[i];
 		else if ((50 <= (byte)_thats[i]) && ((byte)_thats[i] <= 149)) {

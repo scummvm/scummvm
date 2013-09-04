@@ -1134,23 +1134,20 @@ bool Trip::overlaps_with_mouse() {
 }
 
 void Trip::getback() {
-	bool endangered;
-
-
-	endangered = false;
 	/* Super_Off;*/
 
 	while (getset[1 - _vm->_gyro->cp].numleft > 0) {
 		getset[1 - _vm->_gyro->cp].recall(r);
 
-		/*
+#if 0
+		bool endangered = false;
 		if overlaps_with_mouse and not endangered then
 			begin
 				endangered:=true;
 				blitfix;
 				Super_Off;
 			end;
-		*/
+#endif
 
 		//_vm->_lucerna->mblit(r.x1, r.y1, r.x2, r.y2, 3, 1 - _vm->_gyro->cp);
 	}
