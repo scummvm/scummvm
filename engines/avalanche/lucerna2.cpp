@@ -32,7 +32,6 @@
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/scrolls2.h"
-#include "avalanche/logger2.h"
 #include "avalanche/enhanced2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/timeout2.h"
@@ -265,8 +264,6 @@ void Lucerna::load(byte n) {     /* Load2, actually */
 	_vm->_celer->loadBackgroundSprites(n);
 
 	bit = *_vm->_graphics->getPixel(0,0);
-
-	_vm->_logger->log_newroom(_vm->_gyro->roomname);
 
 	CursorMan.showMouse(true);
 }
@@ -942,7 +939,6 @@ void Lucerna::points(byte num) {     /* Add on no. of points */
 	}
 	warning("STUB: Lucerna::points()");
 
-	_vm->_logger->log_score(num, _vm->_gyro->dna.score);
 	showscore();
 }
 

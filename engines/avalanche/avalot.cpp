@@ -38,7 +38,6 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/dropdown2.h"
 #include "avalanche/pingo2.h"
-#include "avalanche/logger2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/enid2.h"

@@ -31,7 +31,6 @@
 
 #include "avalanche/scrolls2.h"
 #include "avalanche/gyro2.h"
-#include "avalanche/logger2.h"
 #include "avalanche/enhanced2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/trip6.h"
@@ -105,8 +104,6 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	fontType itw;
 	byte lz = z.size();
 	
-	_vm->_logger->log_scrollline();
-
 	bool offset = x % 8 == 4;
 	x = x / 8;
 	y++;
@@ -115,12 +112,10 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 		switch (z[xx]) {
 		case kControlRoman: {
 			cfont = roman;
-			_vm->_logger->log_roman();
 			}
 			break;
 		case kControlItalic: {
 			cfont = italic;
-			_vm->_logger->log_italic();
 			}
 			break;
 		default: {
@@ -131,8 +126,6 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			i++;
 			Common::String chr(z[xx]);
 			_vm->_graphics->drawText(_vm->_graphics->_scrolls, chr, itw, 12, (x - 1) * 8 + offset * 4 + i * 8, y, black);
-
-			_vm->_logger->log_scrollchar(Common::String(z[xx]));
 			}
 		}
 	}
@@ -269,7 +262,6 @@ void Scrolls::music_scroll() {
 void Scrolls::resetscrolldriver() {   /* phew */
 	_vm->_gyro->scrollbells = 0;
 	cfont = roman;
-	_vm->_logger->log_epsonroman();
 	use_icon = 0;
 	_vm->_gyro->interrogation = 0; /* always reset after a scroll comes up. */
 }
@@ -353,7 +345,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	//setvisualpage(cp);
 	//setactivepage(1 - cp);
 	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
-	_vm->_logger->log_epsonroman(); /* Scrolls always START with Roman. */
 
 	lx = 0;
 	ly = (_vm->_gyro->scrolln) * 6;
@@ -459,7 +450,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 		else
 			say(mx + icon_indent, my, _vm->_gyro->scroll[b]);
 
-		_vm->_logger->log_scrollendline(centre);
 		my += 12;
 	}
 
@@ -474,7 +464,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	undodgem();
 	_vm->_gyro->dropsok = true;
-	_vm->_logger->log_divider();
 	//setvisualpage(cp);
 	//mousepage(cp);
 	CursorMan.showMouse(false);
@@ -561,11 +550,6 @@ void Scrolls::bubble(func2 gotoit) {
 		bool offset = _vm->_gyro->scroll[fv].size() % 2;
 		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->scroll[fv], _vm->_gyro->characters, 8, x - offset * 4, (fv * 10) + 12, _vm->_gyro->talkf);
 	}
-
-	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) /* These should be separate loops. */
-		_vm->_logger->log_bubbleline(fv, param, _vm->_gyro->scroll[fv]);
-
-	_vm->_logger->log_divider();
 
 	//setvisualpage(1 - cp);
 	dingdongbell();
