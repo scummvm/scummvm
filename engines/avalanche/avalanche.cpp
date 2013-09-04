@@ -690,7 +690,7 @@ Common::Error AvalancheEngine::run() {
 
 	_zoomy = true; 
 	// Don't call the menu by default. Might be modified later, if get_slope() gets implemented,
-	// becouse zoomy's value is given there. Not sure yet what "zoomy" stands for.
+	// because zoomy's value is given there. Not sure yet what "zoomy" stands for.
 	if (!_zoomy)
 		callMenu();    /* Not run when zoomy. */
 
