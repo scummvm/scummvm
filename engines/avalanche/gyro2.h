@@ -43,7 +43,7 @@ namespace Avalanche {
 class AvalancheEngine;
 
 
-static const char numobjs = 18; /* always preface with a # */
+static const byte numobjs = 18; /* always preface with a # */
 static const int16 maxobjs = 12;  /* carry limit */
 
 static const int16 numlockCode = 32;  /* Code for Num Lock */
