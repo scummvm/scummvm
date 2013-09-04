@@ -23,6 +23,43 @@
 #ifndef ZVISION_SAVE_MANAGER_H
 #define ZVISION_SAVE_MANAGER_H
 
-// TODO: Implement SaveManager
+#include "common/types.h"
+
+#include "common/savefile.h"
+
+namespace Common {
+class String;
+}
+
+namespace ZVision {
+
+class ZVision;
+
+struct SaveGameHeader {
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+	int saveYear, saveMonth, saveDay;
+	int saveHour, saveMinutes;
+};
+
+class SaveManager {
+public:
+	SaveManager(ZVision *engine);
+
+private:
+	ZVision *_engine;
+	static const uint32 SAVEGAME_ID;
+
+public:
+	void autoSave();
+	void saveGame(uint slot, const Common::String &saveName);
+	Common::Error loadGame(uint slot);
+
+private:
+	void writeSaveGameData(Common::OutSaveFile *file);
+	bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
+};
+
+} // End of namespace ZVision
 
 #endif
