@@ -108,11 +108,11 @@ public:
 	Common::Error run();
 	void pauseEngineIntern(bool pause);
 
-	ScriptManager *getScriptManager() const;
-	RenderManager *getRenderManager() const;
-	CursorManager *getCursorManager() const;
-	Common::RandomSource *getRandomSource() const;
-	ZVisionGameId getGameId() const;
+	ScriptManager *getScriptManager() const { return _scriptManager; }
+	RenderManager *getRenderManager() const { return _renderManager; }
+	CursorManager *getCursorManager() const { return _cursorManager; }
+	Common::RandomSource *getRandomSource() const { return _rnd; }
+	ZVisionGameId getGameId() const { return _gameDescription->gameId; }
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call

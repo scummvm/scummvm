@@ -164,24 +164,8 @@ void ZVision::pauseEngineIntern(bool pause) {
 	}
 }
 
-ScriptManager *ZVision::getScriptManager() const {
-	return _scriptManager;
 }
 
-RenderManager *ZVision::getRenderManager() const {
-	return _renderManager;
-}
-
-CursorManager *ZVision::getCursorManager() const {
-	return _cursorManager;
-}
-
-Common::RandomSource *ZVision::getRandomSource() const {
-	return _rnd;
-}
-
-ZVisionGameId ZVision::getGameId() const {
-	return _gameDescription->gameId;
 }
 
 void ZVision::cycleThroughCursors() {
