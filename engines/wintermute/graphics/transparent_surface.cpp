@@ -182,6 +182,7 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 				out[gIndex] = MIN(out[gIndex] + in[gIndex], 255);
 				out[bIndex] = MIN(out[bIndex] + in[bIndex], 255);
 				out += 4;
+				in += 4;
 			}
 			outo += pitch;
 			ino += inoStep;
@@ -197,6 +198,7 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 				out[gIndex] = MAX(out[gIndex] - in[gIndex], 0);
 				out[bIndex] = MAX(out[bIndex] - in[bIndex], 0);
 				out += 4;
+				in += 4;
 			}
 			outo += pitch;
 			ino += inoStep;
