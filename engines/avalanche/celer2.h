@@ -49,7 +49,7 @@ public:
 
 
 
-	void refreshBackgroundSprites();
+	void updateBackgroundSprites();
 
 	void loadBackgroundSprites(byte number);
 
