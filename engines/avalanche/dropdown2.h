@@ -118,9 +118,9 @@ private:
 
 class Dropdown {
 public:
-	friend headtype;
-	friend onemenu;
-	friend menuset;
+	friend class headtype;
+	friend class onemenu;
+	friend class menuset;
 
 	onemenu ddm_o;
 	menuset ddm_m;

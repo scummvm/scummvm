@@ -145,8 +145,8 @@ public:
 
 class Trip {
 public:
-	friend triptype;
-	friend getsettype;
+	friend class triptype;
+	friend class getsettype;
 
 
 
