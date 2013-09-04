@@ -261,7 +261,7 @@ void Celer::updateBackgroundSprites() {
 			break;
 		case 2:
 			//nosound();
-			warning("STUB: Celer::pics_link()");
+			updateBackgroundSprites();
 			break;
 		}
 	}
