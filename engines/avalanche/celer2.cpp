@@ -55,7 +55,9 @@ Celer::~Celer() {
 }
 
 
-
+/**
+ * @remarks	Originally called 'pics_link'
+ */
 void Celer::updateBackgroundSprites() {
 	if (_vm->_gyro->ddmnow)
 		return; // No animation when the menus are up.
@@ -119,8 +121,8 @@ void Celer::updateBackgroundSprites() {
 				break; 
 			}
 
-			byte direction;
 			if ((_vm->_gyro->roomtime % 200 >= 0) && (_vm->_gyro->roomtime % 200 <= 178)) { // Normally.
+				byte direction = 0;
 				if (((_vm->_lucerna->bearing(2) >= 1) && (_vm->_lucerna->bearing(2) <= 90)) || ((_vm->_lucerna->bearing(2) >= 358) && (_vm->_lucerna->bearing(2) <= 360)))
 					direction = 3;
 				else if ((_vm->_lucerna->bearing(2) >= 293) && (_vm->_lucerna->bearing(2) <= 357))
@@ -155,7 +157,7 @@ void Celer::updateBackgroundSprites() {
 		break;
 	case r__lustiesroom:
 		if (!(_vm->_gyro->dna.lustie_is_asleep)) {
-			byte direction;
+			byte direction = 0;
 			if ((_vm->_gyro->roomtime % 45) > 42)
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
@@ -197,55 +199,55 @@ void Celer::updateBackgroundSprites() {
 		}
 		break;
 	case r__nottspub: {
-			// Bearing of Avvy from Port.
-			byte direction;
-			if (((_vm->_lucerna->bearing(5) >= 0) && (_vm->_lucerna->bearing(5) <= 45)) || ((_vm->_lucerna->bearing(5) >= 315) && (_vm->_lucerna->bearing(5) <= 360)))
-				direction = 2; // Middle.
-			else if ((_vm->_lucerna->bearing(5) >= 45) && (_vm->_lucerna->bearing(5) <= 180))
-				direction = 6; // Left.
-			else if ((_vm->_lucerna->bearing(5) >= 181) && (_vm->_lucerna->bearing(5) <= 314))
-				direction = 8; // Right.
+		// Bearing of Avvy from Port.
+		byte direction = 0;
+		if (((_vm->_lucerna->bearing(5) >= 0) && (_vm->_lucerna->bearing(5) <= 45)) || ((_vm->_lucerna->bearing(5) >= 315) && (_vm->_lucerna->bearing(5) <= 360)))
+			direction = 2; // Middle.
+		else if ((_vm->_lucerna->bearing(5) >= 45) && (_vm->_lucerna->bearing(5) <= 180))
+			direction = 6; // Left.
+		else if ((_vm->_lucerna->bearing(5) >= 181) && (_vm->_lucerna->bearing(5) <= 314))
+			direction = 8; // Right.
 
-			if ((_vm->_gyro->roomtime % 60) > 57)
-				direction--; // Blinks.
+		if ((_vm->_gyro->roomtime % 60) > 57)
+			direction--; // Blinks.
 
-			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
-				drawBackgroundSprite(-1, -1, direction);
-				_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
-			}
+		if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+			drawBackgroundSprite(-1, -1, direction);
+			_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
+		}
 
-			switch (_vm->_gyro->roomtime % 50) {
-			case 45 :
-				drawBackgroundSprite(-1, -1, 9); // Spurge blinks.
-				break; 
-			case 49 :
-				drawBackgroundSprite(-1, -1, 10);
-				break;
-			}
+		switch (_vm->_gyro->roomtime % 50) {
+		case 45 :
+			drawBackgroundSprite(-1, -1, 9); // Spurge blinks.
+			break; 
+		case 49 :
+			drawBackgroundSprite(-1, -1, 10);
+			break;
 		}
 		break;
+	  }
 	case r__ducks: {
-			if ((_vm->_gyro->roomtime % 3) == 0) // The fire flickers.
-				drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 3) % 3);
+		if ((_vm->_gyro->roomtime % 3) == 0) // The fire flickers.
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 3) % 3);
 
-			// Bearing of Avvy from Duck.
-			byte direction;
-			if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
-				direction = 4; // Middle.
-			else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
-				direction = 6; // Left.
-			else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
-				direction = 8; // Right.
+		// Bearing of Avvy from Duck.
+		byte direction = 0;
+		if (((_vm->_lucerna->bearing(2) >= 0) && (_vm->_lucerna->bearing(2) <= 45)) || ((_vm->_lucerna->bearing(2) >= 315) && (_vm->_lucerna->bearing(2) <= 360)))
+			direction = 4; // Middle.
+		else if ((_vm->_lucerna->bearing(2) >= 45) && (_vm->_lucerna->bearing(2) <= 180))
+			direction = 6; // Left.
+		else if ((_vm->_lucerna->bearing(2) >= 181) && (_vm->_lucerna->bearing(2) <= 314))
+			direction = 8; // Right.
 
-			if ((_vm->_gyro->roomtime % 45) > 42)
-				direction++; // Duck blinks.
+		if ((_vm->_gyro->roomtime % 45) > 42)
+			direction++; // Duck blinks.
 
-			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
-				drawBackgroundSprite(-1, -1, direction);
-				_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
-			}
+		if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+			drawBackgroundSprite(-1, -1, direction);
+			_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
 		}
 		break;
+	   }
 	}
 
 	if ((_vm->_gyro->dna.ringing_bells) && (_vm->_gyro->flagset('B'))) {
