@@ -45,6 +45,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 	_library = 0;
 	_sound = 0;
 	_timerSeed = 0;
+	_mainWindow = 0;
 }
 
 BuriedEngine::~BuriedEngine() {
@@ -52,6 +53,7 @@ BuriedEngine::~BuriedEngine() {
 	delete _mainEXE;
 	delete _library;
 	delete _sound;
+	delete _mainWindow;
 }
 
 Common::Error BuriedEngine::run() {

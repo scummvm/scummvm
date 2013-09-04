@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/textconsole.h"
 
 #include "buried/buried.h"
@@ -29,27 +30,41 @@
 
 namespace Buried {
 
-Window::Window(BuriedEngine *vm, Window *parent) : _vm(vm), _parent(parent) {
+const Window *kWindowPosTop = (const Window *)0;
+const Window *kWindowPosTopMost = (const Window *)-1;
+
+Window::Window(BuriedEngine *vm, Window *parent, bool visible) : _vm(vm), _parent(parent), _visible(visible) {
 	_enabled = true;
+	_needsErase = false;
+
+	// Add us to the top of the parent's window list
+	if (_parent)
+		_parent->_children.push_back(this);
 }
 
 Window::~Window() {
 	// Make sure the queue is cleaned out
 	while (!_queue.empty())
 		delete _queue.pop();
+
+	// Remove us from any of the parent's window lists
+	if (_parent) {
+		_parent->_children.remove(this);
+		_parent->_topMostChildren.remove(this);
+	}
 }
 
 void Window::invalidateRect(const Common::Rect &rect, bool erase) {
-	_vm->_gfx->invalidateRect(rect, erase);
-}
-
-void Window::createChild(const Common::Rect &rect, Window *parent) {
-	_rect = rect;
-	_parent = parent;
+	_vm->_gfx->invalidateRect(makeAbsoluteRect(rect));
+	_needsErase |= erase;
 }
 
 Common::Rect Window::getClientRect() const {
 	return Common::Rect(_rect.width(), _rect.height());
+}
+
+Common::Rect Window::getAbsoluteRect() const {
+	return makeAbsoluteRect(_rect);
 }
 
 void Window::dispatchAllMessages() {
@@ -57,9 +72,6 @@ void Window::dispatchAllMessages() {
 		Message *message = _queue.pop();
 
 		switch (message->getMessageType()) {
-		case kMessageTypeEraseBackground:
-			onEraseBackground();
-			break;
 		case kMessageTypeKeyUp:
 			onKeyUp(((KeyUpMessage *)message)->getKeyState(), ((KeyUpMessage *)message)->getFlags());
 			break;
@@ -107,6 +119,92 @@ void Window::dispatchAllMessages() {
 	}
 }
 
+void Window::updateWindow() {
+	// If we're not visible, ignore
+	if (!isWindowVisible())
+		return;
+
+	// If we're not in the dirty rect, ignore
+	if (!_vm->_gfx->getDirtyRect().intersects(getAbsoluteRect()))
+		return;
+
+	// If we need to erase, erase first
+	if (_needsErase) {
+		onEraseBackground();
+		_needsErase = false;
+	}
+
+	// Always draw this window first
+	onPaint();
+
+	// Draw children
+	for (WindowList::iterator it = _children.begin(); it != _children.end(); it++)
+		(*it)->updateWindow();
+
+	// Draw top-most children
+	for (WindowList::iterator it = _topMostChildren.begin(); it != _topMostChildren.end(); it++)
+		(*it)->updateWindow();
+}
+
+void Window::setWindowPos(Window *insertAfter, int x, int y, int width, int height, uint flags) {
+	if (!(flags & kWindowPosNoZOrder)) {
+		assert(insertAfter != this); // I don't even want to think about this case
+
+		_parent->_children.remove(this);
+		_parent->_topMostChildren.remove(this);
+
+		if (insertAfter == kWindowPosTop) {
+			// Reposition the window to the top
+			_parent->_children.push_back(this);
+		} else if (insertAfter == kWindowPosTopMost) {
+			// Reposition the window to the top of the top-most
+			_parent->_topMostChildren.push_back(this);
+		} else {
+			// Reposition the window to after insertAfter
+			WindowList::iterator it = Common::find(_parent->_children.begin(), _parent->_children.end(), insertAfter);
+
+			if (it == _parent->_children.end()) {
+				it = Common::find(_parent->_topMostChildren.begin(), _parent->_topMostChildren.end(), insertAfter);
+
+				// It has to be in one of the lists
+				assert(it != _parent->_topMostChildren.end());
+
+				_parent->_topMostChildren.insert(it, this);
+			} else {
+				_parent->_children.insert(it, this);
+			}
+		}
+	}
+
+	if (flags & kWindowPosShowWindow) {
+		assert(!(flags & kWindowPosHideWindow));
+		showWindow(kWindowShow);
+	} else if (flags & kWindowPosHideWindow) {
+		assert(!(flags & kWindowPosShowWindow));
+		showWindow(kWindowHide);
+	}
+
+	if (!(flags & kWindowPosNoActivate)) {
+		// TODO: Activate the window
+	}
+
+	if (!(flags & kWindowPosNoMove))
+		_rect.moveTo(x, y);
+
+	if (!(flags & kWindowPosNoSize)) {
+		_rect.right = _rect.left + width;
+		_rect.bottom = _rect.top + height;
+	}
+}
+
+void Window::showWindow(WindowShowMode showMode) {
+	_visible = (showMode != kWindowHide);
+
+	if (showMode == kWindowShowNormal) {
+		// TODO: Activate
+	}
+}
+
 void Window::enableWindow(bool enable) {
 	if (_enabled != enable) {
 		_enabled = enable;
@@ -127,6 +225,17 @@ uint Window::setTimer(uint elapse) {
 
 bool Window::killTimer(uint timer) {
 	return _vm->killTimer(timer);
+}
+
+Common::Rect Window::makeAbsoluteRect(const Common::Rect &rect) const {
+	// No parent; it's already absolute
+	if (!_parent)
+		return rect;
+
+	Common::Rect parentRect = _parent->getAbsoluteRect();
+	Common::Rect absoluteRect = rect;
+	absoluteRect.translate(parentRect.left, parentRect.top);
+	return absoluteRect;
 }
 
 } // End of namespace Buried
