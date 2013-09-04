@@ -1261,7 +1261,7 @@ void Acci::playHarp() {
 }
 
 void Acci::winSequence() {
-	_vm->_visa->dixi('pos', 78);
+	_vm->_visa->dixi('q', 78);
 	_vm->_sequence->first_show(7);
 	_vm->_sequence->then_show(8);
 	_vm->_sequence->then_show(9);
@@ -1302,6 +1302,9 @@ void Acci::heyThanks() {
 	_vm->_gyro->dna.obj[_thing - 1] = false;
 }
 
+/**
+ * @remarks	Originally called 'do_that'
+ */
 void Acci::doThat() {
 	const Common::String booze[] = {"Bitter", "GIED", "Whisky", "Cider", "", "", "", "Mead"};
 
@@ -1424,7 +1427,7 @@ void Acci::doThat() {
 						break;
 					case Gyro::pibythneth:
 						if (_thing == _vm->_gyro->badge) {
-							_vm->_visa->dixi('pos', 32); // Thanks! Wow!
+							_vm->_visa->dixi('q', 32); // Thanks! Wow!
 							_vm->_lucerna->points(3);
 							_vm->_gyro->dna.obj[_vm->_gyro->badge - 1] = false;
 							_vm->_gyro->dna.obj[_vm->_gyro->habit - 1] = true;
@@ -1438,7 +1441,7 @@ void Acci::doThat() {
 						if (_vm->_gyro->dna.ayles_is_awake) {
 							if (_thing == _vm->_gyro->pen) {
 								_vm->_gyro->dna.obj[_vm->_gyro->pen - 1] = false;
-								_vm->_visa->dixi('pos', 54);
+								_vm->_visa->dixi('q', 54);
 								_vm->_gyro->dna.obj[_vm->_gyro->ink - 1] = true;
 								_vm->_gyro->dna.given_pen_to_ayles = true;
 								_vm->_lucerna->objectlist();
@@ -1470,7 +1473,7 @@ void Acci::doThat() {
 							if (_vm->_gyro->dna.geida_given_potion)
 								winSequence();
 							else
-								_vm->_visa->dixi('pos', 77); // That Geida woman!
+								_vm->_visa->dixi('q', 77); // That Geida woman!
 							break;            
 						default:
 							heyThanks();
@@ -1601,7 +1604,7 @@ void Acci::doThat() {
 					}
 
 					if (!_vm->_gyro->dna.asked_dogfood_about_nim) {
-						_vm->_visa->dixi('pos', 84);
+						_vm->_visa->dixi('q', 84);
 						return;
 					}
 
@@ -1696,12 +1699,12 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeMagic:
 		if (_vm->_gyro->dna.avaricius_talk > 0)
-			_vm->_visa->dixi('pos', 19);
+			_vm->_visa->dixi('q', 19);
 		else {
 			if ((_vm->_gyro->dna.room == 12) & (_vm->_trip->infield(2))) { // Avaricius appears!
-				_vm->_visa->dixi('pos', 17);
+				_vm->_visa->dixi('q', 17);
 				if (_vm->_gyro->whereis[1] == 12)
-					_vm->_visa->dixi('pos', 18);
+					_vm->_visa->dixi('q', 18);
 				else {
 					_vm->_trip->tr[1].init(1, false, _vm->_trip); // Avaricius
 					_vm->_trip->apped(2, 4);
