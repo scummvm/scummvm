@@ -39,6 +39,8 @@ namespace ZVision {
 class ZVision;
 
 struct Location {
+	Location() : world('g'), room('a'), node('r'), view('y'), offset(0) {}
+
 	char world;
 	char room;
 	char node;
