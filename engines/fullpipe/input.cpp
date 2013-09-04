@@ -208,7 +208,7 @@ void FullpipeEngine::updateCursorsCommon() {
 		}
 	}
 
-	_cursorId = PIC_CSR_DEFAULT_INV;
+	_cursorId = PIC_CSR_DEFAULT;
 }
 
 } // End of namespace Fullpipe
