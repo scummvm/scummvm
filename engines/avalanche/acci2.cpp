@@ -1556,7 +1556,8 @@ void Acci::doThat() {
 		if (holding()) { // Wear something.
 			switch (_thing) {
 			case Gyro::chastity:
-				_vm->_scrolls->display("Hey, kWhat kind of a weirdo are you??!");
+				// \? are used to avoid that ??! is parsed as a trigraph
+				_vm->_scrolls->display("Hey, kWhat kind of a weirdo are you\?\?!");
 				break;
 			case Gyro::clothes:
 			case Gyro::habit: { /* Change this! */
@@ -1667,7 +1668,8 @@ void Acci::doThat() {
 			if (_thing == _vm->_gyro->bell) {
 				_vm->_scrolls->display("Ding, dong, ding, dong, ding, dong, ding, dong...");
 				if ((_vm->_gyro->dna.ringing_bells) & (_vm->_gyro->flagset('B')))
-					_vm->_scrolls->display("(Are you trying to join in, Avvy??!)");
+					// \? are used to avoid that ??! is parsed as a trigraph
+					_vm->_scrolls->display("(Are you trying to join in, Avvy\?\?!)");
 			} else
 				_vm->_scrolls->display(kWhat);
 		}
