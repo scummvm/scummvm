@@ -217,7 +217,7 @@ void triptype::walk() {
 		}
 
 		tc = _tr->checkfeet(x, x + _info.xl, oy[_tr->_vm->_gyro->cp], y, _info.yl) - 1;
-		// -1  is becouse the modified array indexes of magics[] compared to Pascal .
+		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
 		if ((tc != 255) & (!_tr->_vm->_gyro->doing_sprite_run)) {
 			switch (_tr->_vm->_gyro->magics[tc].op) {

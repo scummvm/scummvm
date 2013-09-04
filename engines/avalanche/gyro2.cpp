@@ -48,7 +48,6 @@
 namespace Avalanche {
 
 const char *Gyro::vernum = "1.30";
-
 const char *Gyro::copyright = "1995";
 
 
@@ -185,8 +184,7 @@ const quasiped_type Gyro::quasipeds[16] = {
 
 const char Gyro::keys[] = "QWERTYUIOP[]";
 
-const uint16 Gyro::notes[12] =
-{196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
+const uint16 Gyro::notes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
 
 const tunetype Gyro::tune = {
 	higher, higher, lower, same, higher, higher, lower, higher, higher, higher,
@@ -222,10 +220,6 @@ byte Gyro::whereis[29] = {
 	r__wisewomans  /* The Wise Woman. */
 };
 
-
-
-
-
 const Common::String Gyro::things[numobjs] = {
 	"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
 	"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
@@ -243,12 +237,10 @@ const Common::String Gyro::better[numobjs] = {
 
 const char Gyro::betterchar[] = "WMBParCLguKeSnIohn";
 
-
-
 Gyro::Gyro(AvalancheEngine *vm) : interrogation(0), oncandopageswap(true) {
 	_vm = vm;
 
-	/* Needed becouse of Lucerna::load_also() */
+	/* Needed because of Lucerna::load_also() */
 	for (int fv = 0; fv < 31; fv++) {
 		for (int ff = 0; ff < 2; ff++)
 			also[fv][ff] = 0;
@@ -404,7 +396,7 @@ bool Gyro::pennycheck(uint16 howmuchby) {
 		return true;
 }
 
-// There'll may be problems with calling these functions becouse of the conversion of the arrays!!!
+// There'll may be problems with calling these functions because of the conversion of the arrays!!!
 // Keep an eye open!
 Common::String Gyro::getname(byte whose) { 
 	if (whose < 175)
