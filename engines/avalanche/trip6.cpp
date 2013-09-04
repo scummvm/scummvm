@@ -271,10 +271,10 @@ void triptype::bounce() {
 	_tr->_vm->_gyro->oncandopageswap = true;
 }
 
-int8 triptype::sgn(int16 x) {
-	if (x > 0)
+int8 triptype::sgn(int16 val) {
+	if (val > 0)
 		return 1;
-	else if (x < 0)
+	else if (val < 0)
 		return -1;
 	else
 		return 0;
@@ -465,12 +465,10 @@ Trip::Trip(AvalancheEngine *vm) {
 }
 
 void Trip::loadtrip() {
-	byte gm;
-
-	for (gm = 0; gm < numtr; gm++)
+	for (int16 gm = 0; gm < numtr; gm++)
 		tr[gm].original();
 	
-	for (int i = 0; i < sizeof(aa); i++)
+	for (uint16 i = 0; i < sizeof(aa); i++)
 		aa[i] = 0;
 }
 
@@ -1084,8 +1082,8 @@ void Trip::newspeed() {
 	
 }
 
-void Trip::rwsp(byte t, byte r) {
-	switch (r) {
+void Trip::rwsp(byte t, byte dir) {
+	switch (dir) {
 	case up:
 		tr[t].speed(0, -tr[t].ys);
 		break;

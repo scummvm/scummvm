@@ -350,11 +350,11 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 		ander = 170;
 
 	fontType font;
-	for (byte fv = 0; fv < z.size(); fv++)
+	for (byte idx = 0; idx < z.size(); idx++)
 		for (byte ff = 0; ff < 8; ff++) {
-			font[z[fv]][ff] = _vm->_gyro->characters[z[fv]][ff] & ander;
+			font[z[idx]][ff] = _vm->_gyro->characters[z[idx]][ff] & ander;
 			for (byte i = 0; i < 8; i++)
-				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + fv * 8 + i, y + ff) = lightgray;
+				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + idx * 8 + i, y + ff) = lightgray;
 		}
 
 	_vm->_graphics->drawText(_vm->_graphics->_surface, z, font, 8, x * 8, y, black);
@@ -363,14 +363,15 @@ void Dropdown::chalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 	if (! z.contains(t))
 		return;
 	else {
-		byte fv;
-		for (fv = 0; z[fv] != t; fv++); // Search for the character in the string.
+		byte idx = 0;
+		for (; z[idx] != t; idx++)
+			; // Search for the character in the string.
 	
 		byte pixel = ander;
 		for (byte bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
 			if (pixelBit)
-				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = black;
+				*_vm->_graphics->getPixel(x * 8 + idx * 8 + 7 - bit, y + 8) = black;
 		}
 	}
 
@@ -385,26 +386,27 @@ void Dropdown::hlchalk(int16 x, int16 y, char t, Common::String z, bool valid) {
 		ander = 170;
 
 	fontType font;
-	for (byte fv = 0; fv < z.size(); fv++)
+	for (byte idx = 0; idx < z.size(); idx++) {
 		for (byte ff = 0; ff < 8; ff++) {
-			font[z[fv]][ff] = _vm->_gyro->characters[z[fv]][ff] & ander; // Set the font.
+			font[z[idx]][ff] = _vm->_gyro->characters[z[idx]][ff] & ander; // Set the font.
 			// And set the background of the text to black.
 			for (byte i = 0; i < 8; i++)
-				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + fv * 8 + i, y + ff) = black;
+				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + idx * 8 + i, y + ff) = black;
 		}
+	}
 
 	_vm->_graphics->drawText(_vm->_graphics->_surface, z, font, 8, x * 8, y, white);
 
 	// Underline the selected character.
 	if (z.contains(t)) {
-		byte fv;
-		for (fv = 0; z[fv] != t; fv++); // Search for the character in the string.
+		byte idx;
+		for (idx = 0; z[idx] != t; idx++); // Search for the character in the string.
 
 		byte pixel = ander;
 		for (byte bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
 			if (pixelBit)
-				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = white;
+				*_vm->_graphics->getPixel(x * 8 + idx * 8 + 7 - bit, y + 8) = white;
 		}
 	}
 
@@ -422,11 +424,11 @@ void Dropdown::bleep() {
 	warning("STUB: Dropdown::bleep()");
 }
 
-void Dropdown::parsekey(char r, char re) {
-	switch (r) {
+void Dropdown::parsekey(char key1, char key2) {
+	switch (key1) {
 	case 0:
 	case 224: {
-		switch (re) {
+		switch (key2) {
 		case 'K':
 			if (ddm_o.menunum > 1)  {
 				ddm_o.wipe();
@@ -454,7 +456,7 @@ void Dropdown::parsekey(char r, char re) {
 			ddm_o.movehighlight(1);
 			break;
 		default:
-			ddm_m.extd(re);
+			ddm_m.extd(key2);
 		}
 	}
 	break;
@@ -463,7 +465,7 @@ void Dropdown::parsekey(char r, char re) {
 		break;
 	default: {
 		if (ddm_o.menunow)
-			ddm_o.keystroke(r);
+			ddm_o.keystroke(key1);
 		}
 	}
 }

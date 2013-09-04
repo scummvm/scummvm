@@ -121,7 +121,7 @@ private:
 
 	bool collision_check();
 
-	int8 sgn(int16 x);
+	int8 sgn(int16 val);
 };
 
 
@@ -198,7 +198,7 @@ public:
 
 	void tripkey(char dir);
 
-	void rwsp(byte t, byte r);
+	void rwsp(byte t, byte dir);
 
 	void apped(byte trn, byte np);
 

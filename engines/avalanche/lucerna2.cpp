@@ -61,8 +61,10 @@ Lucerna::Lucerna(AvalancheEngine *vm) : fxhidden(false) {
 void Lucerna::init() {
 	_vm->_gyro->oh = 17717;
 	_vm->_gyro->om = 17717;
-	if (_vm->_enhanced->atbios)  _vm->_gyro->atkey = "f1";
-	else _vm->_gyro->atkey = "alt-";
+	if (_vm->_enhanced->atbios)
+		_vm->_gyro->atkey = "f1";
+	else
+		_vm->_gyro->atkey = "alt-";
 }
 	
 void Lucerna::callverb(byte n) {
@@ -1234,7 +1236,7 @@ void Lucerna::plothands() {
 	hand(am, brown);
 
 	calchand(nh, 14, ah, brown);
-	calchand(_vm->_gyro->m * 6, 17, am, brown);
+	calchand(_vm->_gyro->minutes * 6, 17, am, brown);
 	hand(ah, yellow);
 	hand(am, yellow);
 
@@ -1253,26 +1255,26 @@ void Lucerna::clock_lucerna() {
 	/* ...Clock. */
 	TimeDate t;
 	_vm->_system->getTimeAndDate(t);
-	_vm->_gyro->h = t.tm_hour;
-	_vm->_gyro->m = t.tm_min;
-	_vm->_gyro->s = t.tm_sec;
+	_vm->_gyro->hour = t.tm_hour;
+	_vm->_gyro->minutes = t.tm_min;
+	_vm->_gyro->seconds = t.tm_sec;
 
-	nh = (_vm->_gyro->h % 12) * 30 + _vm->_gyro->m / 2;
+	nh = (_vm->_gyro->hour % 12) * 30 + _vm->_gyro->minutes / 2;
 
-	if (_vm->_gyro->oh != _vm->_gyro->h)  {
+	if (_vm->_gyro->oh != _vm->_gyro->hour)  {
 		plothands();
 		chime();
 	}
 
-	if (_vm->_gyro->om != _vm->_gyro->m)
+	if (_vm->_gyro->om != _vm->_gyro->minutes)
 		plothands();
 
-	if ((_vm->_gyro->h == 0) && (_vm->_gyro->oh != 0) && (_vm->_gyro->oh != 17717))
+	if ((_vm->_gyro->hour == 0) && (_vm->_gyro->oh != 0) && (_vm->_gyro->oh != 17717))
 		_vm->_scrolls->display(Common::String("Good morning!") + 13 + 13 + "Yes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!");
 	
-	_vm->_gyro->oh = _vm->_gyro->h;
+	_vm->_gyro->oh = _vm->_gyro->hour;
 	_vm->_gyro->onh = nh;
-	_vm->_gyro->om = _vm->_gyro->m;
+	_vm->_gyro->om = _vm->_gyro->minutes;
 }
 
 
