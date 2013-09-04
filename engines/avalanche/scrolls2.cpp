@@ -207,7 +207,7 @@ bool Scrolls::they_match(tunetype &played) {
 
 	mistakes = 0;
 
-	for (fv = 1; fv <= sizeof(played); fv ++)
+	for (fv = 1; fv <= sizeof(played); fv++)
 		if (played[fv] != _vm->_gyro->tune[fv]) {
 			mistakes += 1;
 		}
@@ -303,8 +303,8 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	}
 
 	/*byte bit;
-	for (uint16 fv = 1; fv <= yl; fv ++)
-		for (bit = 0; bit <= 3; bit ++) {
+	for (uint16 fv = 1; fv <= yl; fv++)
+		for (bit = 0; bit <= 3; bit++) {
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -560,7 +560,7 @@ bool Scrolls::ask(Common::String question) {
 
 void Scrolls::resetscroll() {
 	_vm->_gyro->scrolln = 1;
-	for (int j = 0; j < 15; j ++)
+	for (int j = 0; j < 15; j++)
 		if (!_vm->_gyro->scroll[j].empty())
 			_vm->_gyro->scroll[j].clear();
 }
@@ -760,7 +760,7 @@ void Scrolls::calldrivers() {
 					nn = 1;
 					for (nnn = 0; nnn < numobjs; nnn++)
 						if (_vm->_gyro->dna.obj[nnn]) {
-							nn ++;
+							nn++;
 							display(_vm->_gyro->get_better(nnn) + ", " + kControlToBuffer);
 						}
 					}

@@ -276,7 +276,7 @@ void menuset::extd(char c) {
 	byte fv;
 	fv = 0;
 	while ((fv < howmany) && (ddms[fv].extdparse(c)))
-		fv ++;
+		fv++;
 	if (fv == howmany)
 		return;
 	getcertain(fv);

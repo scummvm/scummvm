@@ -126,9 +126,9 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
 
 	if (xRadius == 0)
-		xRadius ++;
+		xRadius++;
 	if (yRadius == 0)
-		yRadius ++;
+		yRadius++;
 
 	// Check for an ellipse with negligable x and y radius.
 	if ((xRadius <= 1) && (yRadius <= 1)) 

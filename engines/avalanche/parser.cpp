@@ -153,7 +153,7 @@ void Parser::drawCursor() {
 	bf.x2 = _inputTextPos + 2;
 	bf.y1 = 168;
 	bf.y2 = 168;
-	for (byte fv = 0; fv <= 1; fv ++)
+	for (byte fv = 0; fv <= 1; fv++)
 		_vm->_trip->getset[fv].remember(bf);
 }
 
