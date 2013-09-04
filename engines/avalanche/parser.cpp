@@ -101,6 +101,8 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 	case Common::KEYCODE_F7:
 		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeOpen);
 		break;
+	default:
+		break;
 	}
 }
 

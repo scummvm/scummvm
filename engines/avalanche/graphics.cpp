@@ -177,7 +177,7 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 		int16 xTemp = xNext;
 		int16 yTemp = yNext;
 		// This is used by both sin and cos.
-		double tempTerm = (j+delta)*convfac;
+		tempTerm = (j + delta) * convfac;
 		
 		xNext = floor(xRadius*cos(tempTerm) + 0.5);
 		yNext = floor(yRadius*sin(tempTerm + pi) + 0.5);

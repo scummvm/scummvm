@@ -97,6 +97,8 @@ void Avalot::handleKeyDown(Common::Event &event) {
 		case Common::KEYCODE_KP1:
 			event.kbd.keycode = Common::KEYCODE_END;
 			break;
+		default:
+			break;
 	}
 
 	switch (event.kbd.keycode) {
@@ -119,6 +121,8 @@ void Avalot::handleKeyDown(Common::Event &event) {
 		break;
 	case Common::KEYCODE_RETURN:
 		_vm->_parser->handleReturn();
+		break;
+	default:
 		break;
 	}
 
