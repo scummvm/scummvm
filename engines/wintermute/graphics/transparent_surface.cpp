@@ -607,11 +607,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
 			if (_alphaMode == ALPHA_FULL) {
-				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, blendMode);
 			} else if (_alphaMode == ALPHA_BINARY) {
-				doBlitBinary(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+				doBlitBinary(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, blendMode);
 			} else if (_alphaMode == ALPHA_OPAQUE) {
-				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, blendMode);
 			}
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
