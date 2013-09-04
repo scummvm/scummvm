@@ -126,9 +126,9 @@ private:
 
 class Dropdown {
 public:
-	friend HeadType;
-	friend MenuItem;
-	friend MenuBar;
+	friend class HeadType;
+	friend class MenuItem;
+	friend class MenuBar;
 
 	MenuItem _activeMenuItem;
 	MenuBar _menuBar;
