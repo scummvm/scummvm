@@ -249,9 +249,11 @@ Gyro::Gyro(AvalancheEngine *vm) : interrogation(0), oncandopageswap(true) {
 	_vm = vm;
 
 	/* Needed becouse of Lucerna::load_also() */
-	for (int fv = 0; fv < 31; fv++)
+	for (int fv = 0; fv < 31; fv++) {
 		for (int ff = 0; ff < 2; ff++)
 			also[fv][ff] = 0;
+	}
+	dna.total_time = 0;
 }
 
 Gyro::~Gyro() {
