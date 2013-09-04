@@ -1052,6 +1052,10 @@ void Acci::goToCauldron() {
 	_vm->_trip->tr[1].walkto(2);
 }
 
+/**
+ * Check is it's possible to give something to Spludwick
+ * @remarks	Originally called 'give2spludwick'
+ */
 bool Acci::giveToSpludwick() { 
 	if (_vm->_gyro->spludwick_order[_vm->_gyro->dna.given2spludwick] != _thing) {
 		notInOrder();
@@ -1062,10 +1066,10 @@ bool Acci::giveToSpludwick() {
 	case Gyro::onion:
 		_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = false;
 		if (_vm->_gyro->dna.rotten_onion)
-			_vm->_visa->dixi('pos', 22);
+			_vm->_visa->dixi('q', 22);
 		else {
 			_vm->_gyro->dna.given2spludwick++;
-			_vm->_visa->dixi('pos', 20);
+			_vm->_visa->dixi('q', 20);
 			goToCauldron();
 			_vm->_lucerna->points(3);
 		}
@@ -1075,13 +1079,13 @@ bool Acci::giveToSpludwick() {
 		_vm->_gyro->dna.obj[_vm->_gyro->ink - 1] = false;
 		_vm->_lucerna->objectlist();
 		_vm->_gyro->dna.given2spludwick++;
-		_vm->_visa->dixi('pos', 24);
+		_vm->_visa->dixi('q', 24);
 		goToCauldron();
 		_vm->_lucerna->points(3);
 		break;
 	case Gyro::mushroom:
 		_vm->_gyro->dna.obj[_vm->_gyro->mushroom - 1] = false;
-		_vm->_visa->dixi('pos', 25);
+		_vm->_visa->dixi('q', 25);
 		_vm->_lucerna->points(5);
 		_vm->_gyro->dna.given2spludwick++;
 		goToCauldron();
