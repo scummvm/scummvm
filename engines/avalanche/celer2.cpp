@@ -319,7 +319,7 @@ void Celer::loadBackgroundSprites(byte number) {
 }
 
 void Celer::forgetBackgroundSprites() {
-	for (byte i = 0; i < _spriteNum; i ++)
+	for (byte i = 0; i < _spriteNum; i++)
 		if (_sprites[i]._x > kOnDisk)
 			_sprites[i]._picture.free();
 }
@@ -366,7 +366,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 	//setactivepage(1 - cp);
 	warning("STUB: Celer::show_one()");
 
-	for (byte i = 0; i < 2; i ++)
+	for (byte i = 0; i < 2; i++)
 		_vm->_trip->getset[i].remember(_r);
 }
 

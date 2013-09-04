@@ -110,7 +110,7 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 		//getmem(sil[totalnum-1], 11 * (a.yl + 1));
 		_info.mani[totalnum] = new manitype[_info.size - 6];
 		//getmem(mani[totalnum-1], a.size - 6);
-		for (fv = 0; fv <= _info.yl; fv ++)
+		for (fv = 0; fv <= _info.yl; fv++)
 			inf.read((*_info.sil[totalnum])[fv], _info.xw);
 			//blockread(inf, (*sil[totalnum-1])[fv], xw);
 		inf.read(*_info.mani[totalnum], _info.size - 6);
@@ -945,7 +945,7 @@ void Trip::call_special(uint16 which) {
 			}
 		}
 		_vm->_lucerna->dusk();
-		_vm->_gyro->dna.cat_y --;
+		_vm->_gyro->dna.cat_y--;
 		catamove(4);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
@@ -1079,7 +1079,7 @@ void Trip::newspeed() {
 
 	//setactivepage(1 - cp);
 
-	for (page_ = 0; page_ <= 1; page_ ++)
+	for (page_ = 0; page_ <= 1; page_++)
 		getset[page_].remember(lightspace);
 	
 }
@@ -1304,7 +1304,7 @@ void Trip::spin(byte whichway, byte &tripnum) {
 
 void Trip::geida_procs(byte tripnum) {
 	if (_vm->_gyro->dna.geida_time > 0) {
-		_vm->_gyro->dna.geida_time --;
+		_vm->_gyro->dna.geida_time--;
 		if (_vm->_gyro->dna.geida_time == 0)
 			_vm->_gyro->dna.geida_spin = 0;
 	}

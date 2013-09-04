@@ -115,7 +115,7 @@ void Lucerna::scram1(Common::String &x) {
 }
 
 void Lucerna::unscramble() {
-	for (byte fv = 0; fv < 31; fv ++)
+	for (byte fv = 0; fv < 31; fv++)
 		for (byte ff = 0; ff < 2; ff++)
 			if (_vm->_gyro->also[fv][ff] != 0)
 				scram1(*_vm->_gyro->also[fv][ff]);
@@ -815,7 +815,7 @@ void Lucerna::thinkabout(byte z, bool th) {     /* Hey!!! Get it and put it!!! *
 	putimage(x, y, p, 0);
 	setactivepage(1 - cp);*/
 
-	for (byte fv = 0; fv <= 1; fv ++)
+	for (byte fv = 0; fv <= 1; fv++)
 		_vm->_trip->getset[fv].remember(thinkspace);
 	
 	CursorMan.showMouse(true);
@@ -831,14 +831,14 @@ void Lucerna::load_digits() {   /* Load the scoring digits & rwlites */
 		return;
 	}
 
-	for (byte fv = 0; fv < 10; fv ++) {
+	for (byte fv = 0; fv < 10; fv++) {
 		f.seek(fv * digitsize);
 		/*_vm->_gyro->digit[fv] = new byte[digitsize];
 		f.read(_vm->_gyro->digit[fv], digitsize);*/
 		_vm->_gyro->digit[fv] = _vm->_graphics->loadPictureGraphic(f);
 	}
 
-	for (byte ff = 0; ff < 9; ff ++) {
+	for (byte ff = 0; ff < 9; ff++) {
 		f.seek(10 * digitsize + ff * rwlitesize);
 		/*_vm->_gyro->rwlite[ff] = new byte[rwlitesize];
 		f.read(_vm->_gyro->rwlite[ff], rwlitesize);*/
@@ -894,11 +894,11 @@ void Lucerna::showscore() {
 
 	//setactivepage(3);
 
-	for (byte fv = 0; fv < 3; fv ++)
+	for (byte fv = 0; fv < 3; fv++)
 		if (_vm->_gyro->lastscore[fv] != numbers[fv]) 
 			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->digit[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
-	for (byte fv = 0; fv < 2; fv ++)
+	for (byte fv = 0; fv < 2; fv++)
 		_vm->_trip->getset[fv].remember(scorespace);
 
 	//setactivepage(1 - cp);
@@ -909,10 +909,10 @@ void Lucerna::showscore() {
 }
 
 void Lucerna::points(byte num) {     /* Add on no. of points */
-	for (byte q = 1; q <= num; q ++) {
+	for (byte q = 1; q <= num; q++) {
 		_vm->_gyro->dna.score++;
 		/*if (soundfx)
-			for (byte fv = 1; fv <= 97; fv ++)
+			for (byte fv = 1; fv <= 97; fv++)
 				sound(177 + dna.score * 3);
 		nosound;*/
 	}
@@ -1143,9 +1143,13 @@ int8 Lucerna::fades(int8 x) {
 	x = x % 16;
 	byte g = x / 4;
 	byte b = x % 4;
-	if (r > 0)  r --;
-	if (g > 0)  g --;
-	if (b > 0)  b --;
+	if (r > 0)
+		r--;
+	if (g > 0)
+		g--;
+	if (b > 0)
+		b--;
+
 	return (16 * r + 4 * g + b);
 	/* fades:=x-1;*/
 }
@@ -1180,7 +1184,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 	_vm->_gyro->oldrw = _vm->_gyro->dna.rw;
 	CursorMan.showMouse(false);
 	
-	/*	for (byte page_ = 0; page_ <= 1; page_ ++) {
+	/*	for (byte page_ = 0; page_ <= 1; page_++) {
 	setactivepage(page_);
 	putimage(0, 161, rwlite[with.rw], 0);
 	}*/
@@ -1277,7 +1281,7 @@ void Lucerna::delavvy() {
 	CursorMan.showMouse(false);
 	
 //	triptype &with = _vm->_trip->tr[0];
-//	for (byte page_ = 0; page_ <= 1; page_ ++)
+//	for (byte page_ = 0; page_ <= 1; page_++)
 //		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
 	
 	CursorMan.showMouse(true);
@@ -1307,7 +1311,7 @@ void Lucerna::minor_redraw() {
 
 	enterroom(_vm->_gyro->dna.room, 0); /* Ped unknown or non-existant. */
 
-	for (byte fv = 0; fv <= 1; fv ++) {
+	for (byte fv = 0; fv <= 1; fv++) {
 		_vm->_gyro->cp = 1 - _vm->_gyro->cp;
 		_vm->_trip->getback();
 	}

@@ -278,7 +278,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_gyro->dna.asked_dogfood_about_nim);
 
 
-	//for (byte groi = 0; groi < numtr; groi ++) {
+	//for (byte groi = 0; groi < numtr; groi++) {
 	//	if (tr[groi].quick) {
 	//		blockwrite(f, groi, 1);
 	//		tr[groi].savedata(f);
