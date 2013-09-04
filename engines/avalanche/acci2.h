@@ -89,7 +89,7 @@ public:
 		kVerbCodeHello = 46,
 		kVerbCodeThanks = 47,
 		kVerbCodeSmartAlec = 249,
-		kVerbCodeExpletive = 253,
+		kVerbCodeExpletive = 253
 	};
 
 	static const byte kPardon = 254; // Didn't understand / wasn't given.
