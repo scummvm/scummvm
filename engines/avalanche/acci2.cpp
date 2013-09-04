@@ -46,8 +46,6 @@
 #include <cstring>
 #include <cmath>
 
-
-
 namespace Avalanche {
 
 const Acci::VocabEntry Acci::kVocabulary[kParserWordsNum] = {

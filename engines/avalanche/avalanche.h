@@ -56,8 +56,6 @@
 
 #include "graphics/cursorman.h"
 
-
-
 namespace Common {
 class RandomSource;
 }

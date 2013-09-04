@@ -30,7 +30,6 @@
 #include "avalanche/avalanche.h"
 
 #include "avalanche/dropdown2.h"
-
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/acci2.h"
@@ -38,8 +37,6 @@
 #include "avalanche/enid2.h"
 
 #include "common/textconsole.h"
-
-
 
 namespace Avalanche {
 
@@ -58,7 +55,7 @@ void HeadType::init(char trig, char altTrig, Common::String title, byte pos, Dro
 
 void HeadType::draw() {
 	CursorMan.showMouse(false); 
-	_dr->drawMenuItem(_xpos, 1, _trigger, _title, true);
+	_dr->drawMenuText(_xpos, 1, _trigger, _title, true, false);
 	CursorMan.showMouse(true);
 }
 
@@ -69,7 +66,7 @@ void HeadType::highlight() {
 	//setactivepage(cp);
 	warning("STUB: Dropdown::headytpe::highlight()");
 
-	_dr->drawHighlightedMenuItem(_xpos, 1, _trigger, _title, true);
+	_dr->drawMenuText(_xpos, 1, _trigger, _title, true, true);
 	
 	_dr->_activeMenuItem._left = _xpos;
 	_dr->_activeMenuItem._activeNow = true;
@@ -122,15 +119,12 @@ void MenuItem::displayOption(byte y, bool highlit) {
 		backgroundColor = 7;
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10), backgroundColor);
 	
-	Common::String data = _options[y]._title;
-	while (data.size() + _options[y]._shortcut.size() < _width)
-		data += ' '; // Pad _options[y] with spaces.
-	data += _options[y]._shortcut;
+	Common::String text = _options[y]._title;
+	while (text.size() + _options[y]._shortcut.size() < _width)
+		text += ' '; // Pad _options[y] with spaces.
+	text += _options[y]._shortcut;
 
-	if (highlit)
-		_dr->drawHighlightedMenuItem(_left, 4 + (y + 1) * 10, _options[y]._trigger, data, _options[y]._valid);
-	else
-		_dr->drawMenuItem(_left, 4 + (y + 1) * 10, _options[y]._trigger, data, _options[y]._valid);
+	_dr->drawMenuText(_left, 4 + (y + 1) * 10, _options[y]._trigger, text, _options[y]._valid, highlit);
 }
 
 void MenuItem::display() {
@@ -163,7 +157,7 @@ void MenuItem::wipe() {
 	//setactivepage(cp);
 	CursorMan.showMouse(false); 
 	
-	_dr->drawMenuItem(_dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._xpos, 1, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._trigger, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._title, true);
+	_dr->drawMenuText(_dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._xpos, 1, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._trigger, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._title, true, false);
 
 	_activeNow = false;
 	_dr->_vm->_gyro->ddmnow = false;
@@ -324,42 +318,17 @@ void Dropdown::findWhatYouCanDoWithIt() {
 	}
 }
 
-void Dropdown::drawMenuItem(int16 x, int16 y, char t, Common::String z, bool valid) {
-	byte ander;
-	if (valid)
-		ander = 255;
-	else
-		ander = 170;
-
-	fontType font;
-	for (byte fv = 0; fv < z.size(); fv++)
-		for (byte ff = 0; ff < 8; ff++) {
-			font[z[fv]][ff] = _vm->_gyro->characters[z[fv]][ff] & ander;
-			for (byte i = 0; i < 8; i++)
-				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + fv * 8 + i, y + ff) = lightgray;
-		}
-
-	_vm->_graphics->drawText(_vm->_graphics->_surface, z, font, 8, x * 8, y, black);
-	
-	// Underline the selected character.
-	if (! z.contains(t))
-		return;
-	else {
-		byte fv;
-		for (fv = 0; z[fv] != t; fv++); // Search for the character in the string.
-	
-		byte pixel = ander;
-		for (byte bit = 0; bit < 8; bit++) {
-			byte pixelBit = (pixel >> bit) & 1;
-			if (pixelBit)
-				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = black;
-		}
+void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted) {
+	byte fontColor;
+	byte backgroundColor;
+	if (highlighted) {
+		fontColor = white;
+		backgroundColor = black;
+	} else {
+		fontColor = black;
+		backgroundColor = lightgray;
 	}
 
-	_vm->_graphics->refreshScreen();
-}
-
-void Dropdown::drawHighlightedMenuItem(int16 x, int16 y, char t, Common::String z, bool valid) {
 	byte ander;
 	if (valid)
 		ander = 255;
@@ -367,26 +336,28 @@ void Dropdown::drawHighlightedMenuItem(int16 x, int16 y, char t, Common::String 
 		ander = 170;
 
 	fontType font;
-	for (byte fv = 0; fv < z.size(); fv++)
-		for (byte ff = 0; ff < 8; ff++) {
-			font[z[fv]][ff] = _vm->_gyro->characters[z[fv]][ff] & ander; // Set the font.
-			// And set the background of the text to black.
-			for (byte i = 0; i < 8; i++)
-				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + fv * 8 + i, y + ff) = black;
+	for (byte i = 0; i < text.size(); i++)
+		for (byte j = 0; j < 8; j++) {
+			font[text[i]][j] = _vm->_gyro->characters[text[i]][j] & ander; // Set the font.
+			// And set the background of the text to the desired color.
+			for (byte k = 0; k < 8; k++)
+				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + k, y + j) = backgroundColor;
 		}
 
-	_vm->_graphics->drawText(_vm->_graphics->_surface, z, font, 8, x * 8, y, white);
-
+	_vm->_graphics->drawText(_vm->_graphics->_surface, text, font, 8, x * 8, y, fontColor);
+	
 	// Underline the selected character.
-	if (z.contains(t)) {
-		byte fv;
-		for (fv = 0; z[fv] != t; fv++); // Search for the character in the string.
-
+	if (!text.contains(trigger))
+		return;
+	else {
+		byte i;
+		for (i = 0; text[i] != trigger; i++); // Search for the character in the string.
+	
 		byte pixel = ander;
 		for (byte bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
 			if (pixelBit)
-				*_vm->_graphics->getPixel(x * 8 + fv * 8 + 7 - bit, y + 8) = white;
+				*_vm->_graphics->getPixel(x * 8 + i * 8 + 7 - bit, y + 8) = fontColor;
 		}
 	}
 
@@ -441,7 +412,7 @@ void Dropdown::parseKey(char r, char re) {
 	//		_activeMenuItem.parseKey(r);
 	//	}
 	//}
-	warning("STUB: Dropdown::parseKey()");
+	warning("STUB: Dropdown::parseKey()"); // To be implemented properly later! Don't remove the comment above!
 }
 
 Common::String Dropdown::selectGender(byte x) {
@@ -501,12 +472,11 @@ void Dropdown::setupMenuAction() {
 void Dropdown::setupMenuPeople() {
 	if (!people.empty())
 		people.clear();
-	byte here = _vm->_gyro->dna.room;
 
 	_activeMenuItem.reset();
 
 	for (byte i = 150; i <= 178; i++)
-		if (_vm->_gyro->whereis[i - 150] == here) {
+		if (_vm->_gyro->whereis[i - 150] == _vm->_gyro->dna.room) {
 			_activeMenuItem.setupOption(_vm->_gyro->getname(i), _vm->_gyro->getnamechar(i), "", true);
 			people = people + i;
 		}
