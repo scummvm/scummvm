@@ -164,8 +164,12 @@ void ZVision::pauseEngineIntern(bool pause) {
 	}
 }
 
+Common::String ZVision::generateSaveFileName(uint slot) {
+	return Common::String::format("%s.%02u", _targetName.c_str(), slot);
 }
 
+Common::String ZVision::generateAutoSaveFileName() {
+	return Common::String::format("%s.auto", _targetName.c_str());
 }
 
 void ZVision::cycleThroughCursors() {

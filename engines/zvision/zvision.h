@@ -135,6 +135,9 @@ public:
 	 */
 	void cycleThroughCursors();
 
+	Common::String generateSaveFileName(uint slot);
+	Common::String generateAutoSaveFileName();
+
 private:
 	void initialize();
 
