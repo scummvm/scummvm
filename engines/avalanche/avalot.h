@@ -40,10 +40,8 @@ class Avalot {
 public:
 	Avalot(AvalancheEngine *vm);
 
-	void setup();
-
 	void handleKeyDown(Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
-
+	void setup();
 	void run(Common::String arg);
 
 private:

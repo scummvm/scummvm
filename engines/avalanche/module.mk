@@ -8,7 +8,6 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	gyro2.o \
-	enhanced2.o \
 	pingo2.o \
 	scrolls2.o \
 	visa2.o \
