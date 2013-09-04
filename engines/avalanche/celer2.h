@@ -36,23 +36,16 @@
 
 #include "graphics/surface.h"
 
-
-
 namespace Avalanche {
 class AvalancheEngine;
 
 class Celer {
 public:
 	Celer(AvalancheEngine *vm);
-
 	~Celer();
 
-
-
 	void updateBackgroundSprites();
-
 	void loadBackgroundSprites(byte number);
-
 	void forgetBackgroundSprites();
 
 	// Setting the destination to negative coordinates means the picture should be drawn to it's original position.
@@ -71,8 +64,6 @@ private:
 		::Graphics::Surface _picture;
 	};
 
-
-
 	AvalancheEngine *_vm;
 
 	int32 _offsets[40];
@@ -80,12 +71,7 @@ private:
 	SpriteType _sprites[40];
 	bytefield _r;
 	Common::String _filename;
-
-
-
 	static const int16 kOnDisk; /* Value of memos[fv].x when it's not in memory. */
-
-
 
 	void drawSprite(int16 x, int16 y, const SpriteType &sprite);
 };
