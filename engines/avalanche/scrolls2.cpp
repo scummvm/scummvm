@@ -223,21 +223,25 @@ void Scrolls::music_scroll() {
 
 	// Since there are no sounds in the game yet, it's pretty pointless to implement this function further. 
 	// For now we act like the player just played the right tone.
-	//if (they_match(played)) {
+#if 0
+	if (they_match(played)) {
+#endif
 		_vm->_gyro->screturn = true;
 		_vm->_gyro->off();
 		state(0);
 		_vm->_gyro->seescroll = false;
 
 		_vm->_timeout->set_up_timer(8, _vm->_timeout->procjacques_wakes_up, _vm->_timeout->reason_jacques_waking_up);
+		warning("STUB: Scrolls::music_scroll()");
 		return;
-	//}
-	warning("STUB: Scrolls::music_scroll()");
-
+#if 0
+	}
+	
 	_vm->_gyro->screturn = false;
 	_vm->_gyro->off();
 	state(0);
 	_vm->_gyro->seescroll = false;
+#endif
 }
 
 /* ThatsAll, so put us back to */ /*$F-*/

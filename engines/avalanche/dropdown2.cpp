@@ -494,15 +494,15 @@ void Dropdown::setupMenuObjects() {
 }
 
 void Dropdown::setupMenuWith() {
-	Common::String verb;
-	char vbchar;
-	
 	_activeMenuItem.reset();
 
 	if (_vm->_gyro->thinkthing) {
 		findWhatYouCanDoWithIt();
 
 		for (byte i = 0; i < _vm->_gyro->verbstr.size(); i++) {
+			char vbchar;
+			Common::String verb;
+
 			_vm->_acci->verbOpt(_vm->_gyro->verbstr[i], verb, vbchar);
 			_activeMenuItem.setupOption(verb, vbchar, "", true);
 		}
