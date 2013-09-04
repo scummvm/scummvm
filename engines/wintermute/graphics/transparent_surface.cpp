@@ -433,7 +433,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 						int g = (pix >> gShift) & 0xff;
 						int r = (pix >> rShift) & 0xff;
 						int a = (pix >> aShift) & 0xff;
-						int outb, outg, outr, outa;
+						int outa = (o_pix >> aShift) & 0xff;
+						int outb = (o_pix  >> bShift) & 0xff;
+						int outg = (o_pix >> gShift) & 0xff;
+						int outr = (o_pix >> rShift) & 0xff;
 						in += inStep;
 
 						if (ca != 255) {
@@ -446,19 +449,19 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 							break;
 						default: // Full opacity
 							if (cb != 255)
-								outb = MIN(outb + ((b * cb * a) >> 16), 0);
+								outb = MAX(outb + ((b * cb * a) >> 16), 255);
 							else
-								outb = MIN(outb + (b * a >> 8), 0);
+								outb = MAX(outb + (b * a >> 8), 255);
 
 							if (cg != 255)
-								outg = MIN(outg + ((g * cg * a) >> 16), 0);
+								outg = MAX(outg + ((g * cg * a) >> 16), 255);
 							else
-								outg = MIN(outg + (g * a >> 8), 0);
+								outg = MAX(outg + (g * a >> 8), 255);
 
 							if (cr != 255)
-								outr = MIN(outr + ((r * cr * a) >> 16), 0);
+								outr = MAX(outr + ((r * cr * a) >> 16), 255);
 							else
-								outr = MIN(outr + (r * a >> 8), 0);
+								outr = MAX(outr + (r * a >> 8), 255);
 
 							outa = a;
 							out[aIndex] = outa;
@@ -489,7 +492,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 						int g = (pix >> gShift) & 0xff;
 						int r = (pix >> rShift) & 0xff;
 						int a = (pix >> aShift) & 0xff;
-						int outb, outg, outr, outa;
+						int outa = (o_pix >> aShift) & 0xff;
+						int outb = (o_pix  >> bShift) & 0xff;
+						int outg = (o_pix >> gShift) & 0xff;
+						int outr = (o_pix >> rShift) & 0xff;
 						in += inStep;
 
 						if (ca != 255) {
