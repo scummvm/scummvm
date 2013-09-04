@@ -608,11 +608,14 @@ Common::String AvalancheEngine::elmToStr(Elm how) {
 	switch (how) {
 	case kNormal:
 	case kMusical:
-		return "jsb";
+		return Common::String("jsb");
 	case kRegi:
-		return "REGI";
+		return Common::String("REGI");
 	case kElmpoyten:
-		return "ELMPOYTEN";
+		return Common::String("ELMPOYTEN");
+	// Useless, but silent a warning
+	default:
+		return Common::String("");
 	}
 }
 
