@@ -53,8 +53,7 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	_tr = tr;
 
 	const int32 idshould = -1317732048;
-	int16 gd, gm;
-	byte fv/*,nds*/;
+	byte fv;
 	int32 id;
 	Common::File inf;
 
@@ -111,7 +110,7 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 		//getmem(sil[totalnum-1], 11 * (a.yl + 1));
 		_info.mani[totalnum] = new manitype[_info.size - 6];
 		//getmem(mani[totalnum-1], a.size - 6);
-		for (fv = 0; fv <= _info.yl; fv ++)
+		for (fv = 0; fv <= _info.yl; fv++)
 			inf.read((*_info.sil[totalnum])[fv], _info.xw);
 			//blockread(inf, (*sil[totalnum-1])[fv], xw);
 		inf.read(*_info.mani[totalnum], _info.size - 6);
@@ -272,10 +271,10 @@ void triptype::bounce() {
 	_tr->_vm->_gyro->oncandopageswap = true;
 }
 
-int8 triptype::sgn(int16 x) {
-	if (x > 0)
+int8 triptype::sgn(int16 val) {
+	if (val > 0)
 		return 1;
-	else if (x < 0)
+	else if (val < 0)
 		return -1;
 	else
 		return 0;
@@ -418,22 +417,17 @@ void triptype::load_data_from_mem(uint16 &where) {
 }
 
 triptype *triptype::done() {
-	int16 gd, gm;
 	Common::String xx;
-	byte fv/*,nds*/;
-	byte aa, bb;
-	int32 id;
-	uint16 soa;
 
 	/*  nds:=num div seq;*/
 	totalnum--;
 	_info.xw = _info.xl / 8;
 	if ((_info.xl % 8) > 0)
 		_info.xw++;
-	for (aa = 0; aa < /*nds*seq*/ a.num; aa++) {
+	for (byte aa = 0; aa < /*nds*seq*/ a.num; aa++) {
 		totalnum--;
-		delete _info.mani[totalnum];
-		delete _info.sil[totalnum];
+		delete[] _info.mani[totalnum];
+		delete[] _info.sil[totalnum];
 	}
 
 	quick = false;
@@ -441,13 +435,8 @@ triptype *triptype::done() {
 	return this;
 }
 
-
-
-
-
-
 getsettype *getsettype::init() {
-	numleft = 0; /* initialise array pointer */
+	numleft = 0; /* initialize array pointer */
 	return this;
 }
 
@@ -476,12 +465,10 @@ Trip::Trip(AvalancheEngine *vm) {
 }
 
 void Trip::loadtrip() {
-	byte gm;
-
-	for (gm = 0; gm < numtr; gm++)
+	for (int16 gm = 0; gm < numtr; gm++)
 		tr[gm].original();
 	
-	for (int i = 0; i < sizeof(aa); i++)
+	for (uint16 i = 0; i < sizeof(aa); i++)
 		aa[i] = 0;
 }
 
@@ -528,6 +515,8 @@ byte Trip::geida_ped(byte which) {
 		return 9;
 	case 4:
 		return 10;	
+	default:
+		return 0;
 	}
 }
 
@@ -538,7 +527,7 @@ void Trip::catamove(byte ped) {
 
 	int32 here;
 	uint16 xy_uint16;
-	byte fv, ff;
+	byte fv;
 
 	/* XY_uint16 is cat_x+cat_y*256. Thus, every room in the
 		catacombs has a different number for it. */
@@ -954,7 +943,7 @@ void Trip::call_special(uint16 which) {
 			}
 		}
 		_vm->_lucerna->dusk();
-		_vm->_gyro->dna.cat_y --;
+		_vm->_gyro->dna.cat_y--;
 		catamove(4);
 		if (_vm->_gyro->dna.room != r__catacombs)
 			return;
@@ -1088,13 +1077,13 @@ void Trip::newspeed() {
 
 	//setactivepage(1 - cp);
 
-	for (page_ = 0; page_ <= 1; page_ ++)
+	for (page_ = 0; page_ <= 1; page_++)
 		getset[page_].remember(lightspace);
 	
 }
 
-void Trip::rwsp(byte t, byte r) {
-	switch (r) {
+void Trip::rwsp(byte t, byte dir) {
+	switch (dir) {
 	case up:
 		tr[t].speed(0, -tr[t].ys);
 		break;
@@ -1145,7 +1134,6 @@ bool Trip::overlaps_with_mouse() {
 }
 
 void Trip::getback() {
-	byte fv;
 	bool endangered;
 
 
@@ -1213,8 +1201,6 @@ void Trip::face_avvy(byte tripnum) {
 }
 
 void Trip::arrow_procs(byte tripnum) {
-	byte fv;
-			
 	if (tr[tripnum].homing) {
 		/* Arrow is still in flight. */
 		/* We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
@@ -1232,7 +1218,7 @@ void Trip::arrow_procs(byte tripnum) {
 			/*     tr[1].done; { Deallocate normal pic of Avvy. }
 
 					off;
-					for fv:=0 to 1 do
+					for byte fv:=0 to 1 do
 					begin
 					cp:=1-cp;
 					getback;
@@ -1267,11 +1253,8 @@ begin
 end;*/
 
 void Trip::grab_avvy(byte tripnum) {     /* For Friar Tuck, in Nottingham. */
-	byte fv;
-	int16 tox, toy;
-			
-	tox = tr[0].x + 17;
-	toy = tr[0].y - 1;
+	int16 tox = tr[0].x + 17;
+	int16 toy = tr[0].y - 1;
 	if ((tr[tripnum].x == tox) && (tr[tripnum].y == toy)) {
 		tr[tripnum].call_eachstep = false;
 		tr[tripnum].face = left;
@@ -1319,7 +1302,7 @@ void Trip::spin(byte whichway, byte &tripnum) {
 
 void Trip::geida_procs(byte tripnum) {
 	if (_vm->_gyro->dna.geida_time > 0) {
-		_vm->_gyro->dna.geida_time --;
+		_vm->_gyro->dna.geida_time--;
 		if (_vm->_gyro->dna.geida_time == 0)
 			_vm->_gyro->dna.geida_spin = 0;
 	}
@@ -1471,7 +1454,7 @@ void Trip::getsetclear() {
 }
 
 void Trip::hide_in_the_cupboard() {
-	const char nowt = 250; /* As in Acci. */
+	const char nowt = '\xFA'; /* As in Acci. */
 
 	if (_vm->_gyro->dna.avvys_in_the_cupboard) {
 		if (_vm->_gyro->dna.wearing == nowt)
@@ -1660,6 +1643,8 @@ void Trip::handleMoveKey(const Common::Event &event) {
 			break;
 		case Common::KEYCODE_KP5:
 			stopwalking();
+			break;
+		default:
 			break;
 		}
 }

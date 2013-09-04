@@ -31,7 +31,6 @@
 
 #include "avalanche/scrolls2.h"
 #include "avalanche/gyro2.h"
-#include "avalanche/logger2.h"
 #include "avalanche/enhanced2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/trip6.h"
@@ -56,12 +55,10 @@ void Scrolls::init() {
 }
 
 void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
-	byte page_;
-
 	if (_vm->_gyro->ledstatus == x)
 		return; /* Already like that! */
 
-	byte color;
+	byte color = black;
 	switch (x) {
 	case 0:
 		color = black;
@@ -72,21 +69,6 @@ void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
 		color = green;
 		break; /* Hit a key */
 	}
-
-	//switch (x) {
-	//case 0:
-	//	setfillstyle(1, black);
-	//	break; /* Off */
-	//case 1:
-	//	setfillstyle(9, green);
-	//	break; /* Half-on (menus) */
-	//case 2:
-	//	setfillstyle(1, green);
-	//	break; /* On (kbd) */
-	//case 3:
-	//	setfillstyle(6, green);
-	//	break; /* Hit a key */
-	//}
 	warning("STUB: Scrolls::state()");
 
 	CursorMan.showMouse(false);
@@ -105,8 +87,6 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	fontType itw;
 	byte lz = z.size();
 	
-	_vm->_logger->log_scrollline();
-
 	bool offset = x % 8 == 4;
 	x = x / 8;
 	y++;
@@ -115,12 +95,10 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 		switch (z[xx]) {
 		case kControlRoman: {
 			cfont = roman;
-			_vm->_logger->log_roman();
 			}
 			break;
 		case kControlItalic: {
 			cfont = italic;
-			_vm->_logger->log_italic();
 			}
 			break;
 		default: {
@@ -131,8 +109,6 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 			i++;
 			Common::String chr(z[xx]);
 			_vm->_graphics->drawText(_vm->_graphics->_scrolls, chr, itw, 12, (x - 1) * 8 + offset * 4 + i * 8, y, black);
-
-			_vm->_logger->log_scrollchar(Common::String(z[xx]));
 			}
 		}
 	}
@@ -143,8 +119,6 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 void Scrolls::normscroll() {
 	Common::String egg = Common::String(kControlParagraph) + kControlLeftJustified + kControlNegative + kControlBell + kControlBackspace + "***";
 	Common::String e = "(c) 1994";
-	char r;
-	bool oktoexit;
 
 	state(3);
 	_vm->_gyro->seescroll = true;
@@ -172,6 +146,8 @@ void Scrolls::normscroll() {
 
 
 
+//	char r;
+//	bool oktoexit;
 //	do {
 //		do {
 //			_vm->_gyro->check(); /* was "checkclick;" */
@@ -231,7 +207,7 @@ bool Scrolls::they_match(tunetype &played) {
 
 	mistakes = 0;
 
-	for (fv = 1; fv <= sizeof(played); fv ++)
+	for (fv = 1; fv <= sizeof(played); fv++)
 		if (played[fv] != _vm->_gyro->tune[fv]) {
 			mistakes += 1;
 		}
@@ -269,7 +245,6 @@ void Scrolls::music_scroll() {
 void Scrolls::resetscrolldriver() {   /* phew */
 	_vm->_gyro->scrollbells = 0;
 	cfont = roman;
-	_vm->_logger->log_epsonroman();
 	use_icon = 0;
 	_vm->_gyro->interrogation = 0; /* always reset after a scroll comes up. */
 }
@@ -316,8 +291,6 @@ void Scrolls::geticon(int16 x, int16 y, byte which) {
 
 void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File f;
-	byte bit;
-	int16 fv;
 	uint16 st;
 
 	st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
@@ -329,14 +302,15 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 		return;
 	}
 
-	/*for (fv = 1; fv <= yl; fv ++)
-	for (bit = 0; bit <= 3; bit ++) {
-	port[0x3c4] = 2;
-	port[0x3ce] = 4;
-	port[0x3c5] = 1 << bit;
-	port[0x3cf] = bit;
-	blockread(f, mem[0xa000 * st + (fv * 80)], xl);
-	}
+	/*byte bit;
+	for (uint16 fv = 1; fv <= yl; fv++)
+		for (bit = 0; bit <= 3; bit++) {
+			port[0x3c4] = 2;
+			port[0x3ce] = 4;
+			port[0x3c5] = 1 << bit;
+			port[0x3cf] = bit;
+			blockread(f, mem[0xa000 * st + (fv * 80)], xl);
+		}
 	bit = getpixel(0, 0);*/
 
 	warning("STUB: Scrolls::block_drop()");
@@ -353,7 +327,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	//setvisualpage(cp);
 	//setactivepage(1 - cp);
 	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
-	_vm->_logger->log_epsonroman(); /* Scrolls always START with Roman. */
 
 	lx = 0;
 	ly = (_vm->_gyro->scrolln) * 6;
@@ -459,7 +432,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 		else
 			say(mx + icon_indent, my, _vm->_gyro->scroll[b]);
 
-		_vm->_logger->log_scrollendline(centre);
 		my += 12;
 	}
 
@@ -474,7 +446,6 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	undodgem();
 	_vm->_gyro->dropsok = true;
-	_vm->_logger->log_divider();
 	//setvisualpage(cp);
 	//mousepage(cp);
 	CursorMan.showMouse(false);
@@ -493,9 +464,8 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 void Scrolls::bubble(func2 gotoit) {
 	int16 xl, yl, my, xw, yw;
-	byte fv;
 	Common::Point p[3];
-	byte *rp1, *rp2; /* replace: 1=bubble, 2=pointer */
+//	byte *rp1, *rp2; /* replace: 1=bubble, 2=pointer */
 	int16 xc; /* x correction */
 
 	/*setvisualpage(cp);
@@ -507,7 +477,7 @@ void Scrolls::bubble(func2 gotoit) {
 
 	xl = 0;
 	yl = _vm->_gyro->scrolln * 5;
-	for (int8 fv = 0; fv < _vm->_gyro->scrolln; fv++) {
+	for (byte fv = 0; fv < _vm->_gyro->scrolln; fv++) {
 		uint16 textWidth = _vm->_gyro->scroll[fv].size() * 8;
 		if (textWidth > xl)
 			xl = textWidth;
@@ -556,16 +526,11 @@ void Scrolls::bubble(func2 gotoit) {
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
-	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) {
+	for (byte fv = 0; fv < _vm->_gyro->scrolln; fv++) {
 		int16 x = xc + _vm->_gyro->talkx - _vm->_gyro->scroll[fv].size() / 2 * 8;
 		bool offset = _vm->_gyro->scroll[fv].size() % 2;
 		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->scroll[fv], _vm->_gyro->characters, 8, x - offset * 4, (fv * 10) + 12, _vm->_gyro->talkf);
 	}
-
-	for (fv = 0; fv < _vm->_gyro->scrolln; fv++) /* These should be separate loops. */
-		_vm->_logger->log_bubbleline(fv, param, _vm->_gyro->scroll[fv]);
-
-	_vm->_logger->log_divider();
 
 	//setvisualpage(1 - cp);
 	dingdongbell();
@@ -594,7 +559,7 @@ bool Scrolls::ask(Common::String question) {
 
 void Scrolls::resetscroll() {
 	_vm->_gyro->scrolln = 1;
-	for (int j = 0; j < 15; j ++)
+	for (int j = 0; j < 15; j++)
 		if (!_vm->_gyro->scroll[j].empty())
 			_vm->_gyro->scroll[j].clear();
 }
@@ -654,7 +619,7 @@ void Scrolls::calldrivers() {
 	char nnn;
 	bool mouthnext;
 	bool call_spriterun; // Only call sprite_run the FIRST time.
-	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
+//	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
 
 
 	//nosound();
@@ -736,7 +701,7 @@ void Scrolls::calldrivers() {
 					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].y; // Position.
 		
 					_vm->_gyro->talkf = _vm->_gyro->quasipeds[param - 10].fgc;
-					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param - 10].bgc; // Colours.
+					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param - 10].bgc; // Colors.
 				} else {
 					_vm->_lucerna->errorled(); // Not valid.
 					natural();
@@ -794,7 +759,7 @@ void Scrolls::calldrivers() {
 					nn = 1;
 					for (nnn = 0; nnn < numobjs; nnn++)
 						if (_vm->_gyro->dna.obj[nnn]) {
-							nn ++;
+							nn++;
 							display(_vm->_gyro->get_better(nnn) + ", " + kControlToBuffer);
 						}
 					}

@@ -45,15 +45,9 @@ class AvalancheEngine;
 
 static const char numobjs = 18; /* always preface with a # */
 static const int16 maxobjs = 12;  /* carry limit */
-static const byte howlong = 1/*8*/; /* 18 ticks. */
 
-static const int16 num = 32;  /* Code for Num Lock */
-
+static const int16 numlockCode = 32;  /* Code for Num Lock */
 static const int16 mouse_size = 134;
-
-
-
-typedef void (*proc)();
 
 struct postype {
 	uint16 x, y, datapos;
@@ -281,17 +275,6 @@ struct ednahead { /* Edna header */
 
 	/* DNA values follow, then footer (which is ignored) */
 };
-
-/* Possible values of edhead.os:
-	1 = DOS        4 = Mac
-	2 = Windows    5 = Amiga
-	3 = OS/2       6 = ST
-	7 = Archimedes */
-
-
-
-
-
 
 class Gyro {
 public:
@@ -535,7 +518,7 @@ public:
 	Common::String flags;
 	Common::String listen;
 
-	uint16 oh, onh, om, h, m, s, s1;
+	uint16 oh, onh, om, hour, minutes, seconds;
 
 	Common::String atkey; /* For XTs, set to "alt-". For ATs, set to "f1". */
 
@@ -559,7 +542,7 @@ public:
 	Common::String roomname; /* Name of this room */
 
 	//text logfile; // http://wiki.freepascal.org/Text
-	bool logging, log_epson;
+	bool log_epson;
 
 	bool cl_override;
 
@@ -612,7 +595,7 @@ public:
 
 	Common::String strf(int32 x);
 
-	void newpointer(byte m);
+	void newpointer(byte id);
 
 	void wait();    // Makes hourglass.
 

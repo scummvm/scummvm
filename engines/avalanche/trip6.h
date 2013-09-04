@@ -44,7 +44,7 @@ struct adxtype { /* Second revision of ADX type */
 	Common::String comment/*[17]*/; /* comment */ // uruk: Same here, but 16.
 	byte num; /* number of pictures */
 	byte seq; /* how many in one stride */
-	byte fgc, bgc; /* foreground & background bubble colours */
+	byte fgc, bgc; /* foreground & background bubble colors */
 	byte accinum; /* the number according to Acci (1=Avvy, etc.) */
 };
 
@@ -121,7 +121,7 @@ private:
 
 	bool collision_check();
 
-	int8 sgn(int16 x);
+	int8 sgn(int16 val);
 };
 
 
@@ -145,8 +145,8 @@ public:
 
 class Trip {
 public:
-	friend triptype;
-	friend getsettype;
+	friend class triptype;
+	friend class getsettype;
 
 
 
@@ -198,7 +198,7 @@ public:
 
 	void tripkey(char dir);
 
-	void rwsp(byte t, byte r);
+	void rwsp(byte t, byte dir);
 
 	void apped(byte trn, byte np);
 

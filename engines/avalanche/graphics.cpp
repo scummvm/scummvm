@@ -77,7 +77,7 @@ Graphics::~Graphics() {
 }
 
 
-void Graphics::flesh_colours()
+void Graphics::flesh_colors()
 {
 	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
 	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
@@ -126,9 +126,9 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
 
 	if (xRadius == 0)
-		xRadius ++;
+		xRadius++;
 	if (yRadius == 0)
-		yRadius ++;
+		yRadius++;
 
 	// Check for an ellipse with negligable x and y radius.
 	if ((xRadius <= 1) && (yRadius <= 1)) 
@@ -177,7 +177,7 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 		int16 xTemp = xNext;
 		int16 yTemp = yNext;
 		// This is used by both sin and cos.
-		double tempTerm = (j+delta)*convfac;
+		tempTerm = (j + delta) * convfac;
 		
 		xNext = floor(xRadius*cos(tempTerm) + 0.5);
 		yNext = floor(yRadius*sin(tempTerm + pi) + 0.5);
