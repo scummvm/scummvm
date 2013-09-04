@@ -117,6 +117,7 @@ bool VideoWindow::openVideo(const Common::String &fileName) {
 	}
 
 	_mode = kModeOpen;
+	_rect = Common::Rect(_video->getWidth(), _video->getHeight());
 	return true;
 }
 
@@ -126,6 +127,7 @@ void VideoWindow::closeVideo() {
 		_video = 0;
 		_mode = kModeClosed;
 		_lastFrame = 0;
+		_rect = Common::Rect();
 
 		if (_ownedFrame) {
 			_ownedFrame->free();
