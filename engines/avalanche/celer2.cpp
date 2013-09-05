@@ -304,7 +304,7 @@ void Celer::loadBackgroundSprites(byte number) {
 
 				for (uint16 y = 0; y < _sprites[i]._yl + 1; y++) {
 					for (uint16 x = 0; x < _sprites[i]._xl * 8; x++)
-						*(byte *)_sprites[i]._picture.getBasePtr(x, y) = *_vm->_graphics->getPixel(_sprites[i]._x * 8 + x, _sprites[i]._y + y);
+						*(byte *)_sprites[i]._picture.getBasePtr(x, y) = *(byte *)_vm->_graphics->_surface.getBasePtr(_sprites[i]._x * 8 + x, _sprites[i]._y + y);
 				}
 			} else {
 				_sprites[i]._size = sprite._size;

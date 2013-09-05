@@ -72,7 +72,7 @@ void Scrolls::state(byte x) {     // Sets "Ready" light to whatever
 
 	CursorMan.showMouse(false);
 
-	_vm->_graphics->drawBar(419, 195, 438, 197, color);
+	_vm->_graphics->_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
 
 	CursorMan.showMouse(true);
 	_vm->_gyro->ledstatus = x;
@@ -83,7 +83,7 @@ void Scrolls::easteregg() {
 }
 
 void Scrolls::say(int16 x, int16 y, Common::String z) { // Fancy FAST screenwriting
-	fontType itw;
+	FontType itw;
 	byte lz = z.size();
 	
 	bool offset = x % 8 == 4;

@@ -223,7 +223,7 @@ void Lucerna::load(byte n) {     // Load2, actually
 	
 	CursorMan.showMouse(false);
 	
-	_vm->_graphics->flesh_colors();
+	_vm->_graphics->fleshColors();
 
 	xx = _vm->_gyro->strf(n);
 	Common::String filename;
@@ -1017,14 +1017,14 @@ void Lucerna::verte(Common::Point cursorPos) {
 	// _vm->_trip->tr[0] : that's the only one we're interested in here. (It's Avalot.)
 	if (cursorPos.x < _vm->_trip->tr[0].x) 
 		what = 1;
-	else if (cursorPos.x > (_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info.xl)) 
+	else if (cursorPos.x > (_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info._xLength)) 
 		what = 2;
 	else
 		what = 0; // On top
 
 	if (cursorPos.y < _vm->_trip->tr[0].y)
 		what += 3;
-	else if (cursorPos.y > (_vm->_trip->tr[0].y + _vm->_trip->tr[0]._info.yl))
+	else if (cursorPos.y > (_vm->_trip->tr[0].y + _vm->_trip->tr[0]._info._yLength))
 		what += 6;
 
 	switch (what) {

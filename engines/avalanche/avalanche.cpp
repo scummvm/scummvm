@@ -313,7 +313,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(_trip->tr[i].visible);
 		sz.syncAsByte(_trip->tr[i].homing);
 		sz.syncAsByte(_trip->tr[i].count);
-		sz.syncAsByte(_trip->tr[i]._info.xw);
+		sz.syncAsByte(_trip->tr[i]._info._xWidth);
 		sz.syncAsByte(_trip->tr[i].xs);
 		sz.syncAsByte(_trip->tr[i].ys);
 		sz.syncAsByte(_trip->tr[i].totalnum);

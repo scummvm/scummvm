@@ -236,7 +236,7 @@ void MenuBar::draw() {
 
 	//setactivepage(3);
 	
-	_dr->_vm->_graphics->drawBar(0, 0, 640, 10, _dr->kMenuBackgroundColor);
+	_dr->_vm->_graphics->_surface.fillRect(Common::Rect(0, 0, 640, 10), _dr->kMenuBackgroundColor);
 
 	byte savecp = _dr->_vm->_gyro->cp;
 	_dr->_vm->_gyro->cp = 3;
@@ -331,7 +331,7 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 	else
 		ander = 170;
 
-	fontType font;
+	FontType font;
 	for (byte i = 0; i < text.size(); i++) {
 		for (byte j = 0; j < 8; j++) {
 			byte idx = text[i];
@@ -355,7 +355,7 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 		for (byte bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
 			if (pixelBit)
-				*_vm->_graphics->getPixel(x * 8 + i * 8 + 7 - bit, y + 8) = fontColor;
+				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + 7 - bit, y + 8) = fontColor;
 		}
 	}
 

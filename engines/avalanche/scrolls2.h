@@ -92,7 +92,7 @@ public:
 
 	void musical_scroll();
 
-	fontType ch[2];
+	FontType ch[2];
 
 private:
 	AvalancheEngine *_vm;

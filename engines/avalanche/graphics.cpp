@@ -41,10 +41,16 @@ namespace Avalanche {
 
 const byte Graphics::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 
-
-
 Graphics::Graphics(AvalancheEngine *vm) {
 	_vm = vm;
+}
+
+Graphics::~Graphics() {
+	_surface.free();
+	_magics.free();
+	_background.free();
+	_screen.free();
+	_scrolls.free();
 }
 
 void Graphics::init() {
@@ -60,61 +66,15 @@ void Graphics::init() {
 		g_system->getPaletteManager()->setPalette(_egaPalette[kEgaPaletteIndex[i]], i, 1);
 
 	_surface.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
-
 	_magics.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
-
 	_screen.create(kScreenWidth, kScreenHeight * 2, ::Graphics::PixelFormat::createFormatCLUT8());
-
 	_scrolls.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 }
 
-Graphics::~Graphics() {
-	_surface.free();
-	_magics.free();
-	_background.free();
-	_screen.free();
-	_scrolls.free();
-}
-
-
-void Graphics::flesh_colors()
+void Graphics::fleshColors()
 {
 	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
 	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
-}
-
-
-byte *Graphics::getPixel(int16 x, int16 y) {
-	return (byte *)_surface.getBasePtr(x, y);
-}
-
-void Graphics::drawFrame(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
-	_surface.frameRect(Common::Rect(x1, y1, x2, y2), color);
-}
-
-void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
-	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
-}
-
-void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
-	// First we make the pixels of the spirte blank.
-	for (byte j = 0; j < sprite.yl; j++)
-		for (byte i = 0; i < sprite.xl; i++)
-			if (((*sprite.sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
-				*getPixel(x + i, y + j) = 0;
-	
-	// Then we draw the picture to the blank places.
-	uint16 maniPos = 0; // Because the original manitype starts at 5!!! See Graphics.h for definition.
-
-	for (byte j = 0; j < sprite.yl; j++)
-		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
-			for (uint16 i = 0; i  < sprite.xl; i += 8) {
-				byte pixel = (*sprite.mani[picnum])[maniPos++];
-				for (byte bit = 0; bit < 8; bit++) {
-					byte pixelBit = (pixel >> bit) & 1;
-					*getPixel(x + i + 7 - bit, y + j) += (pixelBit << plane);
-				} 
-			}
 }
 
 Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color) {
@@ -247,9 +207,7 @@ void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte
 	_scrolls.drawLine(p[2].x, p[2].y, p[0].x, p[0].y, color);
 }
 
-
-
-void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text, fontType font, byte fontHeight, int16 x, int16 y, byte color) {
+void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, byte color) {
 	for (byte i = 0; i < text.size(); i++)
 		for (byte j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];	
@@ -260,8 +218,6 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 			}
 		}
 }
-
-
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
 	// This function mimics Pascal's getimage().
@@ -307,6 +263,27 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 			}
 
 	return picture;
+}
+
+void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
+	// First we make the pixels of the spirte blank.
+	for (byte j = 0; j < sprite._yLength; j++)
+		for (byte i = 0; i < sprite._xLength; i++)
+			if (((*sprite._sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
+				*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
+
+	// Then we draw the picture to the blank places.
+	uint16 maniPos = 0; // Because the original manitype starts at 5!!! See Graphics.h for definition.
+
+	for (byte j = 0; j < sprite._yLength; j++)
+		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
+			for (uint16 i = 0; i  < sprite._xLength; i += 8) {
+				byte pixel = (*sprite._mani[picnum])[maniPos++];
+				for (byte bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					*(byte *)_surface.getBasePtr(x + i + 7 - bit, y + j) += (pixelBit << plane);
+				} 
+			}
 }
 
 void Graphics::drawPicture(::Graphics::Surface &target, ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
