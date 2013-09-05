@@ -762,6 +762,7 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 							if (_activeMenuItem._activeNow) {
 								_activeMenuItem.wipe();
 								_vm->_lucerna->holdLeftMouse = false;
+								backup.free();
 								return;
 							} // No "else"- clicking on menu has no effect (only releasing).
 						} 
@@ -775,6 +776,7 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 						if (((_activeMenuItem._left * 8) <= cursorPos.x) && (cursorPos.x <= (_activeMenuItem._left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
 							// If we clicked on the same menu item (the one that is already active) on the bar...
 							_vm->_lucerna->holdLeftMouse = false;
+							backup.free();
 							return;
 						} else {
 							_vm->_lucerna->holdLeftMouse = true;
@@ -800,8 +802,10 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 
 						uint16 which = (cursorPos.y - 26) / 20;
 						_activeMenuItem.select(which);
-						if (_activeMenuItem._options[which]._valid) // If the menu item wasn't active, we do nothing.
+						if (_activeMenuItem._options[which]._valid) { // If the menu item wasn't active, we do nothing.
+							backup.free();
 							return;
+						}
 				}
 			}
 
