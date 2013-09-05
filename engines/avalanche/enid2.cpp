@@ -39,53 +39,49 @@
 
 #include "common/textconsole.h"
 
-//#include "fileunit.h"
-//#include "basher.h"
-
-
 namespace Avalanche {
 
 Enid::Enid(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-const Common::String Enid::crlf = Common::String(char(15)) + Common::String(char(12));
-const char Enid::tab = '\t';
-const char Enid::eof_ = '\n';
+const Common::String Enid::kCrlf = Common::String(char(15)) + Common::String(char(12));
+const char Enid::kTab = '\t';
+const char Enid::kEof = '\n';
 
-const Common::String Enid::ednafirst =
+const Common::String Enid::kEdnaFirst =
 	Common::String("This is an EDNA-based file, saved by a Thorsoft game. Good luck!") + // 64
-	crlf + eof_ + crlf + crlf + // 7
-	tab + "Glory to God in the highest," + crlf + // 31
-	tab + "and on earth peace, goodwill toward men." + // 42
-	crlf + tab + tab + tab + tab + // 6
+	kCrlf + kEof + kCrlf + kCrlf + // 7
+	kTab + "Glory to God in the highest," + kCrlf + // 31
+	kTab + "and on earth peace, goodwill toward men." + // 42
+	kCrlf + kTab + kTab + kTab + kTab + // 6
 	"Luke 2:14." + // 10
-	crlf + crlf + crlf + // 6
-	"1234567890" +crlf; // 11
+	kCrlf + kCrlf + kCrlf + // 6
+	"1234567890" +kCrlf; // 11
 
-const Common::String Enid::ednaid = Common::String("TT") + char(261) + char(60) + char(1) + char(165) + char(261) + char(231) + char(261);
+const Common::String Enid::kEdnaId = Common::String("TT") + char(261) + char(60) + char(1) + char(165) + char(261) + char(231) + char(261);
 
-const int16 Enid::ttage = 18;
-const Common::String Enid::ttwashere = "Thomas was here ";
+const int16 Enid::kAge = 18;
+const Common::String Enid::kWasHere = "Thomas was here ";
 
-const Enid::fourtype Enid::avaricius_file = "Avvy";
+const Enid::FourType Enid::kAvariciusFile = "Avvy";
 
 
 
 void Enid::addon(Common::String x) {
 	//month[0]--;
-	month = month + x;
+	_month = _month + x;
 }
 
-Common::String Enid::expanddate(byte d, byte m, uint16 y) {
+Common::String Enid::expandDate(byte d, byte m, uint16 y) {
 	const Common::String months[12] = {
 		"Jan#", "Febr#", "March", "April", "May", "June", "July", "August",
 		"Septem*", "Octo*", "Novem*", "Decem*"		
 	};
 
 	Common::String expanddate_result;
-	month = months[m];
-	switch (month[month.size()]) {
+	_month = months[m];
+	switch (_month[_month.size()]) {
 	case '#':
 		addon("uary");
 		break;
@@ -94,34 +90,34 @@ Common::String Enid::expanddate(byte d, byte m, uint16 y) {
 		break;
 	}
 
-	day = _vm->_gyro->strf(d);
+	_day = _vm->_gyro->strf(d);
 
 	// d is always positive
 	if ((d <= 9) || ((d >= 21) && (d <= 31))) {
 		switch (d % 10) {
 		case 1:
-			day = day + "st";
+			_day = _day + "st";
 			break;
 		case 2:
-			day = day + "nd";
+			_day = _day + "nd";
 			break;
 		case 3:
-			day = day + "rd";
+			_day = _day + "rd";
 			break;
 		default:
-			day = day + "th";
+			_day = _day + "th";
 		}
 	}
 
-	expanddate_result = day + ' ' + month + ' ' + _vm->_gyro->strf(y);
+	expanddate_result = _day + ' ' + _month + ' ' + _vm->_gyro->strf(y);
 	return expanddate_result;
 }
 
-void Enid::show_bug(char icon, Common::String strn) {
+void Enid::showBug(char icon, Common::String strn) {
 	_vm->_scrolls->display(Common::String("\7\6\23") + icon + "\26\r" + strn + '\15');
 }
 
-bool Enid::test_bug(byte what) {
+bool Enid::testBug(byte what) {
 	bool test_bug_result;
 	if (what == 0)  {
 		test_bug_result = false;
@@ -129,47 +125,47 @@ bool Enid::test_bug(byte what) {
 	}
 	switch (what) {
 	case 2:
-		show_bug('7', "Error in filename!");
+		showBug('7', "Error in filename!");
 		break;
 	case 101:
-		show_bug('6', "Disk full!");
+		showBug('6', "Disk full!");
 		break;
 	case 150:
-		show_bug('4', "Disk is write-protected!");
+		showBug('4', "Disk is write-protected!");
 		break;
 	default:
-		show_bug('B', "Saving error!");
+		showBug('B', "Saving error!");
 	}
 	test_bug_result = true;
 	return test_bug_result;
 }
 
-void Enid::edna_save(Common::String name) {
-	warning("STUB: Enid::edna_save()");
+void Enid::ednaSave(Common::String name) {
+	warning("STUB: Enid::ednaSave()");
 }
 
-void Enid::loaderror(Common::String x, char icon) {
+void Enid::loadError(Common::String x, char icon) {
 	if (_vm->_gyro->holdthedawn) {
 		_vm->_gyro->holdthedawn = false;
 		_vm->_lucerna->dawn();
 	}
 	_vm->_scrolls->display(Common::String('\7') + '\6' + '\23' + icon + '\26' + "Loading error:  " + "\r\r\22" + x);
-	bug = true;
+	_bug = true;
 }
 
-void Enid::edna_load(Common::String name) {
-	warning("STUB: Enid::edna_load()");
+void Enid::ednaLoad(Common::String name) {
+	warning("STUB: Enid::ednaLoad()");
 }
 
-void Enid::showheader() {
-	_vm->_scrolls->display(Common::String("Dir: ") + path + "\r\r\4");
+void Enid::showHeader() {
+	_vm->_scrolls->display(Common::String("Dir: ") + _path + "\r\r\4");
 }
 
 void Enid::dir(Common::String where) { // OK, it worked in Avaricius, let's do it in Avalot!
 	warning("STUB: Enid::dir()");
 }
 
-void Enid::avvy_background() {    
+void Enid::avvyBackground() {    
 	// Not really a filing procedure,
 	// but it's only called just before edna_load, so I thought I'd put it
 	// in Enid instead of, say, Lucerna.
@@ -251,30 +247,30 @@ void Enid::avvy_background() {
 #endif
 }
 
-void Enid::to_sundry(sundry &sund) {
+void Enid::toSundry(sundry &sund) {
 	sund.qenid_filename = _vm->_gyro->enid_filename;
 	sund.qsoundfx = _vm->_gyro->soundfx;
 	sund.qthinks = _vm->_gyro->thinks;
 	sund.qthinkthing = _vm->_gyro->thinkthing;
 }
 
-void Enid::from_sundry(sundry sund) {
+void Enid::fromSundry(sundry sund) {
 	_vm->_gyro->enid_filename = sund.qenid_filename;
 	_vm->_gyro->soundfx = sund.qsoundfx;
 	_vm->_gyro->thinks = sund.qthinks;
 	_vm->_gyro->thinkthing = sund.qthinkthing;
 }
 
-void Enid::restore_dna() {
+void Enid::restoreDna() {
 //	uint16 here, fv;
 //	sundry sund;
 
-	warning("STUB: Enid::restore_dna()");
+	warning("STUB: Enid::restoreDna()");
 }
 
-void Enid::edna_reload() {
+void Enid::ednaReload() {
 
-	restore_dna();
+	restoreDna();
 
 	_vm->_gyro->seescroll = true;  // This prevents display of the new sprites before the
 								   // new picture is loaded.
@@ -293,12 +289,12 @@ void Enid::edna_reload() {
 	}
 }
 
-void Enid::back_to_bootstrap(byte what) {
+void Enid::backToBootstrap(byte what) {
 	warning("STUB: Enid::back_to_bootstrap()");
 }
 
-bool Enid::there_was_a_problem() {
-	return bug;
+bool Enid::thereWasAProblem() {
+	return _bug;
 }
 
 

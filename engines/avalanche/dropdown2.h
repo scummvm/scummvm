@@ -42,11 +42,7 @@ class AvalancheEngine;
 
 class Dropdown;
 
-
-
 typedef void (Dropdown::*DropdownFunc)();
-
-
 
 class HeadType {
 public:
@@ -65,16 +61,12 @@ private:
 	Dropdown *_dr;
 };
 
-
-
 struct OptionType {
 	Common::String _title;
 	byte _trigger;
 	Common::String _shortcut;
 	bool _valid;
 };
-
-
 
 class MenuItem {
 public:
@@ -104,8 +96,6 @@ private:
 	Dropdown *_dr;
 };
 
-
-
 class MenuBar {
 public:
 	HeadType _menuItems[8];
@@ -121,8 +111,6 @@ public:
 private:
 	Dropdown *_dr;
 };
-
-
 
 class Dropdown {
 public:

@@ -32,72 +32,48 @@
 
 #include "common/scummsys.h"
 
-
 namespace Avalanche {
 class AvalancheEngine;
 
 class Enid {
 public:
 	Enid(AvalancheEngine *vm);
-
-	void edna_save(Common::String name);
-
-	void edna_load(Common::String name);
-
-	void edna_reload();    // From Bootstrap's storage.
-
+	void ednaSave(Common::String name);
+	void ednaLoad(Common::String name);
+	void ednaReload(); // From Bootstrap's storage.
 	void dir(Common::String where);
-
-	void avvy_background();
-
-	void back_to_bootstrap(byte what);
-
-	bool there_was_a_problem();
+	void avvyBackground();
+	void backToBootstrap(byte what);
+	bool thereWasAProblem();
 
 private:
 	AvalancheEngine *_vm;
 
-	static const Common::String crlf;
-	static const char tab;
-	static const char eof_;
+	static const Common::String kCrlf;
+	static const char kTab, kEof;
+	static const Common::String kEdnaFirst, kEdnaId, kWasHere;
+	static const int16 kAge;
 
-	static const Common::String ednafirst;
+	typedef char FourType[5];
+	static const FourType kAvariciusFile;
 
-	static const Common::String ednaid;
-
-	static const int16 ttage;
-	static const Common::String ttwashere;
-
-	typedef char fourtype[5];
-	static const fourtype avaricius_file;
-
-
-
-	bool bug;
-
-	Common::String path, groi;
-
-	Common::String month;
-	Common::String day;
-
-
+	bool _bug;
+	Common::String _path, _groi;
+	Common::String _month, _day;
 
 	void addon(Common::String x);
-	Common::String expanddate(byte d, byte m, uint16 y);
+	Common::String expandDate(byte d, byte m, uint16 y);
 
-	void show_bug(char icon, Common::String strn);
-	bool test_bug(byte what);
+	void showBug(char icon, Common::String strn);
+	bool testBug(byte what);
 
-	void loaderror(Common::String x, char icon);
+	void loadError(Common::String x, char icon);
+	void showHeader();
 
-	void showheader();
+	void toSundry(sundry &sund);
+	void fromSundry(sundry sund);
 
-	void to_sundry(sundry &sund);
-	void from_sundry(sundry sund);
-
-	void restore_dna();
-
-	
+	void restoreDna();
 };
 
 } // End of namespace Avalanche.

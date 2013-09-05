@@ -337,7 +337,7 @@ void Timeout::hang_around2() {
 
 	_vm->_gyro->dna.tied_up = false;
 
-	_vm->_enid->back_to_bootstrap(1); // Call the shoot-'em-up.
+	_vm->_enid->backToBootstrap(1); // Call the shoot-'em-up.
 }
 
 void Timeout::after_the_shootemup() {
