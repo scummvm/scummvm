@@ -129,10 +129,10 @@ void MenuItem::displayOption(byte y, bool highlit) {
 
 void MenuItem::display() {
 	CursorMan.showMouse(false);
-	/*setactivepage(cp);
-	setvisualpage(cp);
-	setfillstyle(1, menu_b);
-	setcolor(menu_border);*/
+	//setactivepage(cp);
+	//setvisualpage(cp);
+	//setfillstyle(1, menu_b);
+	//setcolor(menu_border);
 	_firstlix = true;
 	_flx1 = _left - 2;
 	_flx2 = _left + _width;
@@ -201,9 +201,9 @@ void MenuItem::select(byte which) {
 	wipe();
 
 	if (_choiceNum == _optionNum)
-		_choiceNum--; /* Off the bottom. */
+		_choiceNum--; // Off the bottom.
 	if (_choiceNum > _optionNum)
-		_choiceNum = 0; /* Off the top, I suppose. */
+		_choiceNum = 0; // Off the top, I suppose.
 
 	(_dr->*_dr->_menuBar._menuItems[_activeNum]._chooseFunc)();
 }
@@ -512,7 +512,7 @@ void Dropdown::setupMenuWith() {
 		
 		if ((_vm->_gyro->last_person == _vm->_gyro->pavalot) || (_vm->_gyro->last_person == _vm->_acci->kNothing)
 			|| (_vm->_gyro->whereis[_vm->_gyro->last_person - 150] != _vm->_gyro->dna.room))
-			_activeMenuItem.setupOption("Give to...", 'G', "", false); /* Not here. */
+			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_gyro->getname(_vm->_gyro->last_person), 'G', "", true);
 			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->kVerbCodeGive;
@@ -529,7 +529,7 @@ void Dropdown::setupMenuWith() {
 		}
 		break;
 		case Gyro::pdogfood: {
-			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_gyro->dna.wonnim); /* True if you HAVEN'T won. */
+			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_gyro->dna.wonnim); // True if you HAVEN'T won.
 			_vm->_gyro->verbstr = _vm->_gyro->verbstr + _vm->_acci->kVerbCodePlay;
 		}
 		break;

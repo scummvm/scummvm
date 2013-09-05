@@ -409,9 +409,9 @@ void Acci::storeInterrogation(byte interrogation) {
 		if (!_vm->_gyro->dna.spare_evening.empty())
 			_vm->_gyro->dna.spare_evening.clear();
 		_vm->_gyro->dna.spare_evening = _vm->_parser->_inputText;
-		_vm->_visa->dixi('z', 5); /* His closing statement... */
-		_vm->_trip->tr[1].walkto(4); /* The end of the drawbridge */
-		_vm->_trip->tr[1].vanishifstill = true; /* Then go away! */
+		_vm->_visa->dixi('z', 5); // His closing statement...
+		_vm->_trip->tr[1].walkto(4); // The end of the drawbridge
+		_vm->_trip->tr[1].vanishifstill = true; // Then go away!
 		_vm->_gyro->magics[1].op = _vm->_gyro->nix;
 		_vm->_gyro->dna.cardiff_things = 5;
 		break;
@@ -522,7 +522,7 @@ void Acci::parse() {
 			_unknown.clear();
 	}
 	// Replace words' codes that mean the same.
-	replace(Common::String('\xFF'), 0); /* zap noise words */
+	replace(Common::String('\xFF'), 0); // zap noise words
 	replace(Common::String('\xD')  + '\xE2', 1); // "look at" = "examine"
 	replace(Common::String('\xD')  + '\xE4', 1); // "look in" = "examine"
 	replace(Common::String('\x4')  + '\xE6', 17); // "get up" = "stand" 
@@ -668,7 +668,7 @@ void Acci::exampers() {
 		if (_thing != _vm->_gyro->thinks)
 			_vm->_lucerna->thinkabout(_person, _vm->_gyro->a_person);
 		_person -= 149;
-		switch (_person) { /* Special cases */
+		switch (_person) { // Special cases
 		case 11:
 			if (_vm->_gyro->dna.wonnim) {
 				_vm->_visa->dixi('Q', 8); // "I'm Not Playing!"
@@ -768,10 +768,10 @@ void Acci::inventory() {
 		_vm->_scrolls->display(".");
 }
 
-void Acci::swallow() {   /* Eat something. */
+void Acci::swallow() {   // Eat something.
 	switch (_thing) {
 	case Gyro::wine:
-		switch (_vm->_gyro->dna.winestate) { /* 4 is perfect */
+		switch (_vm->_gyro->dna.winestate) { // 4 is perfect
 		case 1:
 			if (_vm->_gyro->dna.teetotal)  {
 				_vm->_visa->dixi('D', 6);
@@ -787,7 +787,7 @@ void Acci::swallow() {   /* Eat something. */
 		case 2:
 		case 3:
 			_vm->_visa->dixi('d', 8);
-			break; /* You can't drink it! */
+			break; // You can't drink it!
 		}
 		break;
 	case Gyro::potion:
@@ -929,7 +929,9 @@ void Acci::openDoor() {
 				_vm->_visa->dixi('x', _vm->_gyro->portals[fv].data);
 				break;
 			case Gyro::transport:
-				_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8 /*High byte*/, (_vm->_gyro->portals[fv].data) & 0x0F /*Low byte*/);
+				_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8,  // High byte 
+					                 (_vm->_gyro->portals[fv].data) & 0x0F // Low byte
+									 );
 				break;
 			case Gyro::unfinished:
 				_vm->_trip->tr[0].bounce();
@@ -1504,12 +1506,12 @@ void Acci::doThat() {
 	case kVerbCodeBreak:
 		_vm->_scrolls->display("Vandalism is prohibited within this game!");
 		break;
-	case kVerbCodeQuit: /* quit */
+	case kVerbCodeQuit: // quit
 		if (_vm->_gyro->demo) {
 			warning("STUB: Acci::doThat() - case kVerbCodequit");
 		//	_vm->_visa->dixi('pos', 31);
 		//	close(demofile);
-		//	exit(0); /* Change this later!!! */
+		//	exit(0); // Change this later!!!
 		}
 		if (!_polite)
 			_vm->_scrolls->display("How about a `please\", Avvy?");
@@ -1552,7 +1554,7 @@ void Acci::doThat() {
 				_vm->_scrolls->display("Hey, kWhat kind of a weirdo are you\?\?!");
 				break;
 			case Gyro::clothes:
-			case Gyro::habit: { /* Change this! */
+			case Gyro::habit: { // Change this!
 					if (_vm->_gyro->dna.wearing != kNothing) {
 						if (_vm->_gyro->dna.wearing == _thing)
 							_vm->_scrolls->display("You're already wearing that.");
@@ -1868,7 +1870,7 @@ void Acci::doThat() {
 				_vm->_gyro->whereis[7] = 177;
 				break;
 			default:
-				_vm->_visa->dixi('Q', 10); /* Please try not to be so violent! */
+				_vm->_visa->dixi('Q', 10); // Please try not to be so violent!
 			}
 		} else
 			_vm->_visa->dixi('Q', 10);
@@ -1962,7 +1964,7 @@ void Acci::doThat() {
 					_vm->_gyro->dna.avvy_is_awake = true;
 					_vm->_lucerna->points(1);
 					_vm->_gyro->dna.avvy_in_bed = true;
-					_vm->_celer->drawBackgroundSprite(-1, -1, 3); /* Picture of Avvy, awake in bed. */
+					_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Picture of Avvy, awake in bed.
 					if (_vm->_gyro->dna.teetotal)
 						_vm->_visa->dixi('d', 13);
 				} else

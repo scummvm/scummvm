@@ -53,20 +53,20 @@ void Scrolls::init() {
 	resetscrolldriver();
 }
 
-void Scrolls::state(byte x) {     /* Sets "Ready" light to whatever */
+void Scrolls::state(byte x) {     // Sets "Ready" light to whatever
 	if (_vm->_gyro->ledstatus == x)
-		return; /* Already like that! */
+		return; // Already like that!
 
 	byte color = black;
 	switch (x) {
 	case 0:
 		color = black;
-		break; /* Off */
+		break; // Off
 	case 1:
 	case 2:
 	case 3:
 		color = green;
-		break; /* Hit a key */
+		break; // Hit a key
 	}
 	warning("STUB: Scrolls::state()");
 
@@ -82,7 +82,7 @@ void Scrolls::easteregg() {
 	warning("STUB: Scrolls::easteregg()");
 }
 
-void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwriting */
+void Scrolls::say(int16 x, int16 y, Common::String z) { // Fancy FAST screenwriting
 	fontType itw;
 	byte lz = z.size();
 	
@@ -113,7 +113,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { /* Fancy FAST screenwrit
 	}
 }
 
-/* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
+// Here are the procedures that Scroll calls. So they must be... $F+*/
 
 void Scrolls::normscroll() {
 	Common::String egg = Common::String(kControlParagraph) + kControlLeftJustified + kControlNegative + kControlBell + kControlBackspace + "***";
@@ -149,7 +149,7 @@ void Scrolls::normscroll() {
 //	bool oktoexit;
 //	do {
 //		do {
-//			_vm->_gyro->check(); /* was "checkclick;" */
+//			_vm->_gyro->check(); // was "checkclick;"
 //
 //#ifdef RECORD slowdown(); basher::count += 1; #endif
 //
@@ -178,7 +178,7 @@ void Scrolls::normscroll() {
 //
 //#ifdef RECORD record_one(); #endif
 //
-//	_vm->_gyro->screturn = r == '#'; /* "back door" */
+//	_vm->_gyro->screturn = r == '#'; // "back door"
 
 	state(0);
 	_vm->_gyro->seescroll = false;
@@ -244,20 +244,18 @@ void Scrolls::music_scroll() {
 #endif
 }
 
-/* ThatsAll, so put us back to */ /*$F-*/
+// ThatsAll, so put us back to $F-
 
-void Scrolls::resetscrolldriver() {   /* phew */
+void Scrolls::resetscrolldriver() {   // phew
 	_vm->_gyro->scrollbells = 0;
 	cfont = roman;
 	use_icon = 0;
-	_vm->_gyro->interrogation = 0; /* always reset after a scroll comes up. */
+	_vm->_gyro->interrogation = 0; // always reset after a scroll comes up.
 }
 
-void Scrolls::dingdongbell() {   /* Pussy's in the well. Who put her in? Little... */
-	byte fv;
-
-	for (fv = 0; fv < _vm->_gyro->scrollbells; fv++)
-		_vm->_lucerna->errorled(); /* ring the bell "x" times */
+void Scrolls::dingdongbell() {   // Pussy's in the well. Who put her in? Little...
+	for (byte fv = 0; fv < _vm->_gyro->scrollbells; fv++)
+		_vm->_lucerna->errorled(); // ring the bell "x" times
 }
 
 void Scrolls::dodgem() {     
@@ -330,7 +328,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	//setvisualpage(cp);
 	//setactivepage(1 - cp);
-	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
+	_vm->_gyro->oncandopageswap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
 
 	lx = 0;
 	ly = (_vm->_gyro->scrolln) * 6;
@@ -386,7 +384,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	switch (use_icon) {
 	case 0:
 		icon_indent = 0;
-		break; /* No icon. */
+		break; // No icon.
 	case 34: {
 		block_drop("about", 28, 76, 15);
 		icon_indent = 0;
@@ -453,12 +451,12 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	//setvisualpage(cp);
 	//mousepage(cp);
 	CursorMan.showMouse(false);
-	/* mblit(ex-46,ey-6,ex+lx*2+15,ey+ly*2+6,3,0);*/
+	// mblit(ex-46,ey-6,ex+lx*2+15,ey+ly*2+6,3,0);
 	//mblit((ex - 46) / 8, ey - 6, 1 + (ex + lx * 2 + 15) / 8, ey + ly * 2 + 6, cp, 1 - cp);
 	//blitfix();
 	_vm->_gyro->oncandopageswap = true; // Normality again.
 	CursorMan.showMouse(true);
-	//settextjustify(0, 0); /*sink*/
+	//settextjustify(0, 0); // sink
 	resetscrolldriver();
 	if (_vm->_gyro->mpress > 0)
 		_vm->_gyro->after_the_scroll = true;
@@ -469,13 +467,13 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 void Scrolls::bubble(func2 gotoit) {
 	int16 xl, yl, my, xw, yw;
 	Common::Point p[3];
-//	byte *rp1, *rp2; /* replace: 1=bubble, 2=pointer */
-	int16 xc; /* x correction */
+//	byte *rp1, *rp2; // replace: 1=bubble, 2=pointer
+	int16 xc; // x correction
 
-	/*setvisualpage(cp);
-	setactivepage(1 - cp);*/
-	_vm->_gyro->oncandopageswap = false;  /* On can now no longer swap pages. So we can do what we want without its interference! */
-	//mousepage(1 - cp); /* Mousepage */
+	//setvisualpage(cp);
+	//setactivepage(1 - cp);
+	_vm->_gyro->oncandopageswap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
+	//mousepage(1 - cp); // Mousepage
 
 	CursorMan.showMouse(false);
 
@@ -549,7 +547,7 @@ void Scrolls::bubble(func2 gotoit) {
 	_vm->_gyro->dropsok = true;
 
 	//setvisualpage(cp);
-	CursorMan.showMouse(true); /*sink;*/
+	CursorMan.showMouse(true); // sink;
 	_vm->_gyro->oncandopageswap = true;
 	resetscrolldriver();
 	if (_vm->_gyro->mpress > 0)
@@ -568,7 +566,7 @@ void Scrolls::resetscroll() {
 			_vm->_gyro->scroll[j].clear();
 }
 
-void Scrolls::natural() {   /* Natural state of bubbles */
+void Scrolls::natural() {   // Natural state of bubbles
 	_vm->_gyro->talkx = 320;
 	_vm->_gyro->talky = 200;
 	_vm->_gyro->talkb = 8;
@@ -698,9 +696,9 @@ void Scrolls::calldrivers() {
 					} else
 						_vm->_trip->tr[param - 1].chatter(); // Normal sprite talking routine.
 				else if ((10 <= param) && (param <= 36)) {
-					/* Quasi-peds. (This routine performs the same
-					thing with QPs as triptype.chatter does with the
-					sprites.) */
+					// Quasi-peds. (This routine performs the same
+					// thing with QPs as triptype.chatter does with the
+					// sprites.)
 					_vm->_gyro->talkx = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].x;
 					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].y; // Position.
 		

@@ -587,7 +587,7 @@ void AvalancheEngine::explain(byte error) {
 
 //TODO: Remove these (b_flight) functions later ( https://github.com/tthurman/avalot/wiki/B-Flight )
 
-void AvalancheEngine::bFlight() {   /*interrupt;*/
+void AvalancheEngine::bFlight() {   //interrupt;
 	_storage._skellern++;
 }
 
@@ -694,14 +694,14 @@ Common::Error AvalancheEngine::run() {
 	// Don't call the menu by default. Might be modified later, if get_slope() gets implemented,
 	// because zoomy's value is given there. Not sure yet what "zoomy" stands for.
 	if (!_zoomy)
-		callMenu();    /* Not run when zoomy. */
+		callMenu();    // Not run when zoomy.
 
 
 
 	do {
 		runAvalot();
 
-		//if (dosexitcode != 77)  quit(); /* Didn't stop for us. */
+		//if (dosexitcode != 77)  quit(); // Didn't stop for us.
 
 		switch (_storage._operation) {
 		case kRunShootemup:

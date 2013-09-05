@@ -43,10 +43,10 @@ namespace Avalanche {
 class AvalancheEngine;
 
 
-static const byte numobjs = 18; /* always preface with a # */
-static const int16 maxobjs = 12;  /* carry limit */
+static const byte numobjs = 18; // always preface with a #
+static const int16 maxobjs = 12;  // carry limit
 
-static const int16 numlockCode = 32;  /* Code for Num Lock */
+static const int16 numlockCode = 32;  // Code for Num Lock
 static const int16 mouse_size = 134;
 
 struct postype {
@@ -54,12 +54,12 @@ struct postype {
 	byte length;
 };
 
-struct mp { /* mouse-void **/
+struct mp { // mouse-void 
 	uint16 mask[2][16];
 	int16 horzhotspot, verthotspot;
 };
 
-struct dnatype { /* here goes... */ /* Ux, uy, & ww now all belong to Trip5 */
+struct dnatype { // here goes... Ux, uy, & ww now all belong to Trip5
 	byte rw; /* Realway- just for convenience! */
 	byte carrying; /* how many objects you're carrying... */
 	bool obj[numobjs]; /* ...and which ones they are. */
