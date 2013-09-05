@@ -164,22 +164,22 @@ const int32 Gyro::catamap[8][8] = {
 const char Gyro::spludwick_order[3] = {onion, ink, mushroom};
 
 const quasiped_type Gyro::quasipeds[16] = {
-	{2, lightgray, 19, brown, pdogfood},                       // A: Dogfood (screen 19). 
-	{3, green,     19, white, pibythneth},                     // B: Ibythneth (screen 19).
-	{3, white,     1, magenta, parkata},                       // C: Arkata (screen 1).
-	{3, black,     23, red, 177},							   // D: Hawk (screen 23).
-	{3, lightgreen, 50, brown, ptrader},                       // E: Trader (screen 50).
-	{6, yellow,    42, red, pavalot},                          // F: Avvy, tied up (scr.42)
-	{2, blue,      16, white, payles},                         // G: Ayles (screen 16).
-	{2, brown,     7, white, pjacques},                        // H: Jacques (screen 7).
-	{2, lightgreen, 47, green, pspurge},                       // I: Spurge (screen 47).
-	{3, yellow,    47, red, pavalot},                          // J: Avalot (screen 47).
-	{2, lightgray, 23, black, pdulustie},                      // K: du Lustie (screen 23).
-	{2, yellow,    27, red, pavalot},                          // L: Avalot (screen 27).
-	{3, white,     27, red, 177},                              // M: Avaroid (screen 27).
-	{4, lightgray, 19, darkgray, pmalagauche},                 // N: Malagauche (screen 19).
-	{5, lightmagenta, 47, red, pport},                         // O: Port (screen 47).
-	{2, lightgreen, 51, darkgray, pdrduck}                     // P: Duck (screen 51).
+	{2, kColorLightgray, 19, kColorBrown, pdogfood},                       // A: Dogfood (screen 19). 
+	{3, kColorGreen,     19, kColorWhite, pibythneth},                     // B: Ibythneth (screen 19).
+	{3, kColorWhite,     1, kColorMagenta, parkata},                       // C: Arkata (screen 1).
+	{3, kColorBlack,     23, kColorRed, 177},							   // D: Hawk (screen 23).
+	{3, kColorLightgreen, 50, kColorBrown, ptrader},                       // E: Trader (screen 50).
+	{6, kColorYellow,    42, kColorRed, pavalot},                          // F: Avvy, tied up (scr.42)
+	{2, kColorBlue,      16, kColorWhite, payles},                         // G: Ayles (screen 16).
+	{2, kColorBrown,     7, kColorWhite, pjacques},                        // H: Jacques (screen 7).
+	{2, kColorLightgreen, 47, kColorGreen, pspurge},                       // I: Spurge (screen 47).
+	{3, kColorYellow,    47, kColorRed, pavalot},                          // J: Avalot (screen 47).
+	{2, kColorLightgray, 23, kColorBlack, pdulustie},                      // K: du Lustie (screen 23).
+	{2, kColorYellow,    27, kColorRed, pavalot},                          // L: Avalot (screen 27).
+	{3, kColorWhite,     27, kColorRed, 177},                              // M: Avaroid (screen 27).
+	{4, kColorLightgray, 19, kColorDarkgray, pmalagauche},                 // N: Malagauche (screen 19).
+	{5, kColorLightmagenta, 47, kColorRed, pport},                         // O: Port (screen 47).
+	{2, kColorLightgreen, 51, kColorDarkgray, pdrduck}                     // P: Duck (screen 51).
 };
 
 const char Gyro::keys[] = "QWERTYUIOP[]";

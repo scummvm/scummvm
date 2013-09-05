@@ -446,7 +446,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(5, ped);
 		if (_vm->_gyro->dna.cwytalot_gone) {
-			_vm->_gyro->magics[lightred - 1].op = _vm->_gyro->nix;
+			_vm->_gyro->magics[kColorLightred - 1].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] = r__nowhere;
 		} else {
 			if (ped > 0) {
@@ -486,7 +486,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.drawbridge_open == 4) { // open
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Position of drawbridge
 			_vm->_graphics->refreshBackground();
-			_vm->_gyro->magics[green - 1].op = _vm->_gyro->nix; // You may enter the drawbridge.
+			_vm->_gyro->magics[kColorGreen - 1].op = _vm->_gyro->nix; // You may enter the drawbridge.
 		}
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(ped + 3, ped); // load Geida
@@ -628,7 +628,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4);
-			_vm->_gyro->magics[brown - 1].op = _vm->_gyro->nix;
+			_vm->_gyro->magics[kColorBrown - 1].op = _vm->_gyro->nix;
 			_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0;
 		}
 		if (ped != 0) {
@@ -960,34 +960,34 @@ void Lucerna::mouseway(const Common::Point &cursorPos) {
 	byte col = *(byte *)_vm->_graphics->_surface.getBasePtr(cursorPos.x, cursorPos.y / 2);
 
 	switch (col) {
-	case green: {
+	case kColorGreen: {
 			_vm->_gyro->dna.rw = _vm->_trip->up;
 			_vm->_trip->rwsp(0, _vm->_trip->up);
 			showrw();
 		}
 		break;
-	case brown: {
+	case kColorBrown: {
 			_vm->_gyro->dna.rw = _vm->_trip->down;
 			_vm->_trip->rwsp(0, _vm->_trip->down);
 			showrw();
 		}
 		break;
-	case cyan: {
+	case kColorCyan: {
 			_vm->_gyro->dna.rw = _vm->_trip->left;
 			_vm->_trip->rwsp(0, _vm->_trip->left);
 			showrw();
 		}
 		break;
-	case lightmagenta: {
+	case kColorLightmagenta: {
 			_vm->_gyro->dna.rw = _vm->_trip->right;
 			_vm->_trip->rwsp(0, _vm->_trip->right);
 			showrw();
 		}
 		break;
-	case red:
-	case white:
-	case lightcyan:
-	case yellow: { // Fall-throughs are intended.
+	case kColorRed:
+	case kColorWhite:
+	case kColorLightcyan:
+	case kColorYellow: { // Fall-throughs are intended.
 			_vm->_trip->stopwalking();
 			showrw();
 		}
@@ -1243,15 +1243,15 @@ void Lucerna::refresh_hands() {
 void Lucerna::plothands() {
 	//   off;
 	//setactivepage(3);
-	calchand(_vm->_gyro->onh, 14, ah, yellow);
-	calchand(_vm->_gyro->om * 6, 17, am, yellow);
-	hand(ah, brown);
-	hand(am, brown);
+	calchand(_vm->_gyro->onh, 14, ah, kColorYellow);
+	calchand(_vm->_gyro->om * 6, 17, am, kColorYellow);
+	hand(ah, kColorBrown);
+	hand(am, kColorBrown);
 
-	calchand(nh, 14, ah, brown);
-	calchand(_vm->_gyro->minutes * 6, 17, am, brown);
-	hand(ah, yellow);
-	hand(am, yellow);
+	calchand(nh, 14, ah, kColorBrown);
+	calchand(_vm->_gyro->minutes * 6, 17, am, kColorBrown);
+	hand(ah, kColorYellow);
+	hand(am, kColorYellow);
 
 	//setactivepage(1 - cp);
 

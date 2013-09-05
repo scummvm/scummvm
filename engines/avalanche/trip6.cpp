@@ -1074,14 +1074,14 @@ void Trip::newspeed() {
 	//setactivepage(3);
 
 	if (tr[0].xs == _vm->_gyro->run)
-		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, yellow);
+		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorYellow);
 	else
-		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, yellow);
+		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorYellow);
 
 	if (tr[0].xs == _vm->_gyro->run)
-		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, lightblue);
+		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorLightblue);
 	else
-		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, lightblue);
+		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorLightblue);
 
 	//setactivepage(1 - cp);
 

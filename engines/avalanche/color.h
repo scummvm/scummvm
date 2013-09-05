@@ -34,22 +34,24 @@
 
 namespace Avalanche {
 
-const byte black = 0;
-const byte blue = 1;
-const byte green = 2;
-const byte cyan = 3;
-const byte red = 4;
-const byte magenta = 5;
-const byte brown = 6;
-const byte lightgray = 7;
-const byte darkgray = 8;
-const byte lightblue = 9;
-const byte lightgreen = 10;
-const byte lightcyan = 11;
-const byte lightred = 12;
-const byte lightmagenta = 13;
-const byte yellow = 14;
-const byte white = 15;
+enum Color {
+	kColorBlack,
+	kColorBlue,
+	kColorGreen,
+	kColorCyan,
+	kColorRed,
+	kColorMagenta,
+	kColorBrown,
+	kColorLightgray,
+	kColorDarkgray,
+	kColorLightblue,
+	kColorLightgreen,
+	kColorLightcyan,
+	kColorLightred,
+	kColorLightmagenta,
+	kColorYellow,
+	kColorWhite
+};
 
 } // End of namespace Avalanche
 

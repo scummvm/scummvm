@@ -220,7 +220,7 @@ void Avalot::run(Common::String arg) {
 
 		for (byte i = 0; i < _vm->_gyro->numfields; i++) {
 			if (_vm->_gyro->fields[i].x1 < 640)
-				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), lightmagenta);
+				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), kColorLightmagenta);
 		}
 		// ONLY FOR TESTING!!!
 #endif
