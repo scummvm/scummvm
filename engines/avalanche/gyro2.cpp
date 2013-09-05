@@ -70,11 +70,11 @@ const Common::String Gyro::kLads[17] = {
 };
 
 const Common::String Gyro::kLasses[4] =
-{"Arkata", "Geida", "±", "the Wise Woman"};
+{"Arkata", "Geida", "\0xB1", "the Wise Woman"};
 
 const char Gyro::kLadChar[] = "ASCDMTRwLfgeIyPu";
 
-const char Gyro::kLassChar[] = "kG±o";
+const char Gyro::kLassChar[] = "kG\0xB1o";
 
 // Art gallery at 2,1; notice about this at 2,2.
 const int32 Gyro::kCatacombMap[8][8] = {
