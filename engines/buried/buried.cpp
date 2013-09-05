@@ -37,6 +37,9 @@
 #include "buried/video_window.h"
 #include "buried/window.h"
 
+#include "buried/title_sequence.h"
+#include "common/events.h"
+
 namespace Buried {
 
 BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -92,12 +95,38 @@ Common::Error BuriedEngine::run() {
 
 	_gfx = new GraphicsManager(this);
 	_sound = new SoundManager(this);
+	
+	// HACK: Show the intro for now in the full game
+	if (isDemo())
+		return Common::kNoError;
 
-	// TODO: Event loop
-	// - Dispatch window events
-	// - Poll events
-	// - Call UpdateWindow for the windows
-	// - Update timers
+	_mainWindow = new Window(this, 0);
+	_mainWindow->setWindowPos(0, 0, 0, 640, 480, Window::kWindowPosNoZOrder);
+	TitleSequenceWindow *titleSeq = new TitleSequenceWindow(this, _mainWindow);
+	titleSeq->playTitleSequence();
+
+	while (!shouldQuit()) {
+		updateTimers();
+		updateVideos();
+
+		Common::Event event;
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				_gfx->markMouseMoved();
+				break;
+			default:
+				break;
+			}
+		}
+
+		_mainWindow->dispatchAllMessages();
+
+		_gfx->updateScreen();
+		_system->delayMillis(10);
+	}
+
+	delete titleSeq;
 
 	return Common::kNoError;
 }
