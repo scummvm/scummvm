@@ -24,6 +24,7 @@
 
 #include "fullpipe/interaction.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -120,7 +121,58 @@ bool CInteraction::load(MfcArchive &file) {
 }
 
 bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
-	warning("STUB: CInteraction::canInteract()");
+	if (_sceneId > 0 && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_sceneId != _sceneId)
+		return false;
+
+	if (_flags & 0x20000)
+		return false;
+
+	if (!obj2)
+		return false;
+	if (obj2->_id != _objectId1)
+		return false;
+
+	if ((_flags & 8) && (_flags & 1)) {
+		if (!obj2->_objtype != kObjTypeStaticANIObject)
+			return false;
+
+		StaticANIObject *st = (StaticANIObject *)obj2;
+
+		if (!st->_statics)
+			return false;
+
+		if (st->_statics->_staticsId != _staticsId1) {
+			if (_staticsId1)
+				return false;
+		}
+	}
+
+	if ((_objectId3 != invId && _objectId3 != -1 && _objectId3 != -2) || (!invId && _objectId3 == -2))
+		return false;
+
+	if (_objectState1) {
+		if (_flags & 0x10) {
+			if ((g_fullpipe->getObjectState(obj1->getName()) & _objectState1) == 0)
+				return false;
+		} else {
+			if (g_fullpipe->getObjectState(obj1->getName()) != _objectState1)
+				return false;
+		}
+	}
+
+	if (_objectState2) {
+		if (_flags & 0x10) {
+			if ((g_fullpipe->getObjectState(obj2->getName()) & _objectState2) == 0)
+				return false;
+		} else {
+			if (g_fullpipe->getObjectState(obj2->getName()) != _objectState2)
+				return false;
+		}
+	}
+
+	if (_objectId2 && (!obj1 || _objectId2 != obj1->_id))
+		return false;
+
 	return true;
 }
 
