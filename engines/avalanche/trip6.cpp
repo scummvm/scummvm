@@ -480,20 +480,23 @@ byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 		x1 = 0;
 	if (x2 > 639)
 		x2 = 639;
-	if (oy < y)
-		for (fv = x1; fv <= x2; fv++)
+	if (oy < y) {
+		for (fv = x1; fv <= x2; fv++) {
 			for (ff = oy + yl; ff <= y + yl; ff++) {
 				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
 				if (c > a) 
 					a = c;
 			}
-	else
-		for (fv = x1; fv <= x2; fv++)
+		}
+	} else {
+		for (fv = x1; fv <= x2; fv++) {
 			for (ff = y + yl; ff <= oy + yl; ff++) {
 				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
 				if (c > a)
 					a = c;
 			}
+		}
+	}
 
 	//setactivepage(1 - cp);
 	return a;
@@ -1581,7 +1584,7 @@ void Trip::handleMoveKey(const Common::Event &event) {
 
 	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
-	else
+	else {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
 			if (_vm->_gyro->dna.rw != up) {
@@ -1645,6 +1648,7 @@ void Trip::handleMoveKey(const Common::Event &event) {
 		default:
 			break;
 		}
+	}
 }
 
 
