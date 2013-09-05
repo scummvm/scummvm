@@ -72,15 +72,16 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
  * Inner code for loading a saved game
  * @remarks	Originally called 'takesav'
  */
-void SavegameManager::loadSavegame(const Common::String &filename) {
+bool SavegameManager::loadSavegame(const Common::String &filename) {
 	// Try loading first from the save area
 	Common::SeekableReadStream *stream = g_system->getSavefileManager()->openForLoading(filename);
 
 	Common::File f;
 	if (stream == NULL) {
-		if (!f.open(filename))
-			error("Unable to open save file '%s'", filename.c_str());
-
+		if (!f.open(filename)) {
+			warning("Unable to open save file '%s'", filename.c_str());
+			return false;
+		}
 		stream = f.readStream(f.size());
 		f.close();
 	}
@@ -107,6 +108,8 @@ void SavegameManager::loadSavegame(const Common::String &filename) {
 
 	// Close the stream
 	delete stream;
+
+	return true;
 }
 
 /**
@@ -115,14 +118,15 @@ void SavegameManager::loadSavegame(const Common::String &filename) {
 Common::Error SavegameManager::loadGame(const Common::String &filename) {
 	g_vm->_mouse.hideMouse();
 	g_vm->displayEmptyHand();
-	loadSavegame(filename);
-
-	/* Initialization */
-	g_vm->charToHour();
-	g_vm->initGame();
-	g_vm->gameLoaded();
-	g_vm->_mouse.showMouse();
-	return Common::kNoError;
+	if (loadSavegame(filename)) {
+		/* Initialization */
+		g_vm->charToHour();
+		g_vm->initGame();
+		g_vm->gameLoaded();
+		g_vm->_mouse.showMouse();
+		return Common::kNoError;
+	} else 
+		return Common::kUnknownError;
 }
 
 /**

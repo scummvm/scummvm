@@ -1220,7 +1220,7 @@ void Scene560::SafeInset::process(Event &event) {
 		}
 
 		if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-				(event.btnState == 3)) {
+				(event.btnState == BTNSHIFT_RIGHT)) {
 			BF_GLOBALS._events.setCursor(CURSOR_USE);
 			event.handled = true;
 		}
@@ -1459,7 +1459,7 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 	_lamp.setDetails(Rect(197, 43, 214, 56), 560, 7, 19, 30, 1, NULL);
 	_item4.setDetails(Rect(121, 18, 156, 54), 560, 8, 20, 31, 1, NULL);
 	_trophy.setDetails(Rect(259, 52, 275, 63), 560, 10, 22, 33, 1, NULL);
-	_watercolours.setDetails(Rect(214, 48, 239, 64), 560, 12, 24, 35, 1, NULL);
+	_waterColors.setDetails(Rect(214, 48, 239, 64), 560, 12, 24, 35, 1, NULL);
 	_fileCabinets.setDetails(Rect(0, 47, 49, 100), 560, 14, 26, 37, 1, NULL);
 	_certificate.setDetails(Rect(280, 51, 292, 62), 560, 11, 23, 34, 1, NULL);
 	_bookcase.setDetails(Rect(176, 0, 319, 103), 560, 9, 21, 32, 1, NULL);

@@ -140,9 +140,9 @@ void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int 
 }
 #endif
 
-TransparentSurface::TransparentSurface() : Surface(), _enableAlphaBlit(true) {}
+TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
-TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _enableAlphaBlit(true) {
+TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _alphaMode(ALPHA_FULL) {
 	if (copyData) {
 		copyFrom(surf);
 	} else {
@@ -161,9 +161,9 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 	byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 3;
-#else
 	const int aIndex = 0;
+#else
+	const int aIndex = 3;
 #endif
 
 	for (uint32 i = 0; i < height; i++) {
@@ -179,29 +179,60 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+	byte *in, *out;
+	
+#ifdef SCUMM_LITTLE_ENDIAN
+	const int aIndex = 0;
+#else
+	const int aIndex = 3;
+#endif
+	const int aShift = 0;//img->format.aShift;
+
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (uint32 j = 0; j < width; j++) {
+			uint32 pix = *(uint32 *)in;
+			int a = (pix >> aShift) & 0xff;
+			in += inStep;
+
+			if (a == 0) { // Full transparency
+				out += 4;
+			} else { // Full opacity (Any value not exactly 0 is Opaque here)
+				*(uint32 *)out = pix;
+				out[aIndex] = 0xFF;
+				out += 4;
+			}
+		}
+		outo += pitch;
+		ino += inoStep;
+	}
+}
+
+void doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 3;
-	const int bIndex = 0;
-	const int gIndex = 1;
-	const int rIndex = 2;
-#else
 	const int aIndex = 0;
-	const int bIndex = 3;
+	const int bIndex = 1;
 	const int gIndex = 2;
-	const int rIndex = 1;
+	const int rIndex = 3;
+#else
+	const int aIndex = 3;
+	const int bIndex = 2;
+	const int gIndex = 1;
+	const int rIndex = 0;
 #endif
 
-	const int bShift = 0;//img->format.bShift;
-	const int gShift = 8;//img->format.gShift;
-	const int rShift = 16;//img->format.rShift;
-	const int aShift = 24;//img->format.aShift;
+	const int bShift = 8;//img->format.bShift;
+	const int gShift = 16;//img->format.gShift;
+	const int rShift = 24;//img->format.rShift;
+	const int aShift = 0;//img->format.aShift;
 
-	const int bShiftTarget = 0;//target.format.bShift;
-	const int gShiftTarget = 8;//target.format.gShift;
-	const int rShiftTarget = 16;//target.format.rShift;
+	const int bShiftTarget = 8;//target.format.bShift;
+	const int gShiftTarget = 16;//target.format.gShift;
+	const int rShiftTarget = 24;//target.format.rShift;
 
 	for (uint32 i = 0; i < height; i++) {
 		out = outo;
@@ -267,14 +298,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	int cr = (color >> 16) & 0xff;
 	int cg = (color >> 8) & 0xff;
 	int cb = (color >> 0) & 0xff;
-
-	// Compensate for transparency. Since we're coming
-	// down to 255 alpha, we just compensate for the colors here
-	if (ca != 255) {
-		cr = cr * ca >> 8;
-		cg = cg * ca >> 8;
-		cb = cb * ca >> 8;
-	}
 
 	// Create an encapsulating surface for the data
 	TransparentSurface srcImage(*this, false);
@@ -367,29 +390,32 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
-		const int aIndex = 3;
-		const int bIndex = 0;
-		const int gIndex = 1;
-		const int rIndex = 2;
-#else
 		const int aIndex = 0;
-		const int bIndex = 3;
+		const int bIndex = 1;
 		const int gIndex = 2;
-		const int rIndex = 1;
+		const int rIndex = 3;
+#else
+		const int aIndex = 3;
+		const int bIndex = 2;
+		const int gIndex = 1;
+		const int rIndex = 0;
 #endif
-		const int bShift = 0;//img->format.bShift;
-		const int gShift = 8;//img->format.gShift;
-		const int rShift = 16;//img->format.rShift;
-		const int aShift = 24;//img->format.aShift;
 
-		const int bShiftTarget = 0;//target.format.bShift;
-		const int gShiftTarget = 8;//target.format.gShift;
-		const int rShiftTarget = 16;//target.format.rShift;
+		const int bShift = 8;//img->format.bShift;
+		const int gShift = 16;//img->format.gShift;
+		const int rShift = 24;//img->format.rShift;
+		const int aShift = 0;//img->format.aShift;
+
+		const int bShiftTarget = 8;//target.format.bShift;
+		const int gShiftTarget = 16;//target.format.gShift;
+		const int rShiftTarget = 24;//target.format.rShift;
 
 		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
-			if (_enableAlphaBlit) {
+			if (_alphaMode == ALPHA_FULL) {
 				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
-			} else {
+			} else if (_alphaMode == ALPHA_BINARY) {
+				doBlitBinary(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			} else if (_alphaMode == ALPHA_OPAQUE) {
 				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 			}
 		} else {
@@ -409,7 +435,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 					if (ca != 255) {
 						a = a * ca >> 8;
 					}
-
 					switch (a) {
 					case 0: // Full transparency
 						out += 4;
@@ -439,27 +464,27 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 					default: // alpha blending
 						outa = 255;
-						outb = (o_pix >> bShiftTarget) & 0xff;
-						outg = (o_pix >> gShiftTarget) & 0xff;
-						outr = (o_pix >> rShiftTarget) & 0xff;
+						outb = ((o_pix >> bShiftTarget) & 0xff) * (255 - a);
+						outg = ((o_pix >> gShiftTarget) & 0xff) * (255 - a);
+						outr = ((o_pix >> rShiftTarget) & 0xff) * (255 - a);
 						if (cb == 0)
-							outb = 0;
+							outb = outb >> 8;
 						else if (cb != 255)
-							outb += ((b - outb) * a * cb) >> 16;
+							outb = ((outb<<8) + b * a * cb) >> 16;
 						else
-							outb += ((b - outb) * a) >> 8;
+							outb = (outb + b * a) >> 8;
 						if (cg == 0)
-							outg = 0;
+							outg = outg >> 8;
 						else if (cg != 255)
-							outg += ((g - outg) * a * cg) >> 16;
+							outg = ((outg<<8) + g * a * cg) >> 16;
 						else
-							outg += ((g - outg) * a) >> 8;
+							outg = (outg + g * a) >> 8;
 						if (cr == 0)
-							outr = 0;
+							outr = outr >> 8;
 						else if (cr != 255)
-							outr += ((r - outr) * a * cr) >> 16;
+							outr = ((outr<<8) + r * a * cr) >> 16;
 						else
-							outr += ((r - outr) * a) >> 8;
+							outr = (outr + r * a) >> 8;
 						out[aIndex] = outa;
 						out[bIndex] = outb;
 						out[gIndex] = outg;

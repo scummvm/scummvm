@@ -61,7 +61,7 @@ public:
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text,
 					const Common::Rect &area, Graphics::TextAlign alignH,
-					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis);
+					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0));
 
 	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = _format.RGBToColor(r, g, b); }
 	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = _format.RGBToColor(r, g, b); }
@@ -158,6 +158,12 @@ protected:
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);
 
+	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h,
+	    PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
+
+	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h,
+	    PixelType color, FillMode fill_m);
+
 	virtual void drawSquareAlg(int x, int y, int w, int h,
 	    PixelType color, FillMode fill_m);
 
@@ -174,6 +180,8 @@ protected:
 	    PixelType color, VectorRenderer::FillMode fill_m,
 	    int baseLeft = 0, int baseRight = 0);
 
+	virtual void drawTabShadow(int x, int y, int w, int h, int r);
+
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
 	    int bevel, PixelType topColor, PixelType bottomColor,
 	    int baseLeft = 0, int baseRight = 0);
@@ -186,10 +194,10 @@ protected:
 	 * There functions may be overloaded in inheriting classes to improve performance
 	 * in the slowest platforms where pixel alpha blending just doesn't cut it.
 	 *
-	 * @param blur Intensity/size of the shadow.
+	 * @param offset Intensity/size of the shadow.
 	 */
-	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
+	virtual void drawSquareShadow(int x, int y, int w, int h, int offset);
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset);
 
 	/**
 	 * Calculates the color gradient on a given point.
@@ -292,10 +300,12 @@ protected:
 	 */
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
 
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur) {
-		Base::drawRoundedSquareShadow(x, y, r, w, h, blur);
-//		VectorRenderer::applyConvolutionMatrix(VectorRenderer::kConvolutionHardBlur,
-//            Common::Rect(x, y, x + w + blur * 2, y + h + blur * 2));
+	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m, uint8 alpha_t, uint8 alpha_l, uint8 alpha_r, uint8 alpha_b);
+	
+	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
+
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset) {
+		Base::drawRoundedSquareShadow(x, y, r, w, h, offset);
 	}
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,

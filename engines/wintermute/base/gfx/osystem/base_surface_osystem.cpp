@@ -48,7 +48,7 @@ namespace Wintermute {
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
-	_alphaType = ALPHA_FULL;
+	_alphaType = TransparentSurface::ALPHA_FULL;
 	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
@@ -71,10 +71,10 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	renderer->invalidateTicketsFromSurface(this);
 }
 
-AlphaType hasTransparencyType(const Graphics::Surface *surf) {
+TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 	if (surf->format.bytesPerPixel != 4) {
 		warning("hasTransparencyType:: non 32 bpp surface passed as argument");
-		return ALPHA_OPAQUE;
+		return TransparentSurface::ALPHA_OPAQUE;
 	}
 	uint8 r, g, b, a;
 	bool seenAlpha = false;
@@ -84,7 +84,7 @@ AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 			break;
 		}
 		for (int j = 0; j < surf->w; j++) {
-			uint32 pix = *(uint32 *)surf->getBasePtr(j, i);
+			uint32 pix = *(const uint32 *)surf->getBasePtr(j, i);
 			surf->format.colorToARGB(pix, a, r, g, b);
 			if (a != 255) {
 				seenAlpha = true;
@@ -96,11 +96,11 @@ AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 		}
 	}
 	if (seenFullAlpha) {
-		return ALPHA_FULL;
+		return TransparentSurface::ALPHA_FULL;
 	} else if (seenAlpha) {
-		return ALPHA_BINARY;
+		return TransparentSurface::ALPHA_BINARY;
 	} else {
-		return ALPHA_OPAQUE;
+		return TransparentSurface::ALPHA_OPAQUE;
 	}
 }
 
@@ -143,39 +143,36 @@ bool BaseSurfaceOSystem::finishLoad() {
 	_width = image->getSurface()->w;
 	_height = image->getSurface()->h;
 
-	bool isSaveGameGrayscale = scumm_strnicmp(_filename.c_str(), "savegame:", 9) == 0 && (_filename.c_str()[_filename.size() - 1] == 'g' || _filename.c_str()[_filename.size() - 1] == 'G');
+	bool isSaveGameGrayscale = _filename.matchString("savegame:*g", true);
 	if (isSaveGameGrayscale) {
 		warning("grayscaleConversion not yet implemented");
 		// FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img); TODO
 	}
 
-	// no alpha, set color key
-	/*  if (surface->format.bytesPerPixel != 4)
-	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
-
-	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
-	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
 	_surface->free();
 	delete _surface;
 
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
-	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		needsColorKey = true;
-		replaceAlpha = false;
-	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		needsColorKey = true;
-	} else if (image->getSurface()->format.bytesPerPixel >= 3 && image->getSurface()->format != g_system->getScreenFormat()) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
-		if (image->getSurface()->format.bytesPerPixel == 3) {
-			needsColorKey = true;
+	if (image->getSurface()->format.bytesPerPixel == 1) {
+		if (!image->getPalette()) {
+			error("Missing palette while loading 8bit image %s", _filename.c_str());
 		}
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
+		needsColorKey = true;
 	} else {
-		_surface = new Graphics::Surface();
-		_surface->copyFrom(*image->getSurface());
-		if (_surface->format.aBits() == 0) {
+		if (image->getSurface()->format != g_system->getScreenFormat()) {
+			_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
+		} else {
+			_surface = new Graphics::Surface();
+			_surface->copyFrom(*image->getSurface());
+		}
+
+		if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
+			// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
+			needsColorKey = true;
+			replaceAlpha = false;
+		} else if (image->getSurface()->format.aBits() == 0) {
 			needsColorKey = true;
 		}
 	}
@@ -424,8 +421,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	if (newRect) {
 		position.top = y;
 		position.left = x;
-		position.right = x + newRect->width();
-		position.bottom = y + newRect->height();
 		position.setWidth(newRect->width());
 		position.setHeight(newRect->height());
 	} else {
@@ -438,7 +433,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// But no checking is in place for that yet.
 
 	// Optimize by not doing alpha-blits if we lack alpha
-	if (_alphaType == ALPHA_OPAQUE && !transform._alphaDisable) {
+	if (_alphaType == TransparentSurface::ALPHA_OPAQUE && !transform._alphaDisable) {
 		transform._alphaDisable = true;
 	}
 
@@ -457,9 +452,9 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	_surface->free();
 	_surface->copyFrom(surface);
 	if (hasAlpha) {
-		_alphaType = ALPHA_FULL;
+		_alphaType = TransparentSurface::ALPHA_FULL;
 	} else {
-		_alphaType = ALPHA_OPAQUE;
+		_alphaType = TransparentSurface::ALPHA_OPAQUE;
 	}
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);

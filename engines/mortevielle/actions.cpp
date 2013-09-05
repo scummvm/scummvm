@@ -91,31 +91,41 @@ void MortevielleEngine::fctMove() {
 		oldMenu = (_menu._moveMenu[menuChoice]._menuId << 8) | _menu._moveMenu[menuChoice]._actionId;
 	}
 
-	if (_coreVar._currPlace == MOUNTAIN) {
+	switch (_coreVar._currPlace) {
+	case MOUNTAIN:
 		if (menuChoice == 1)
 			gotoManorFront();
 		else if (menuChoice == 2)
 			checkManorDistance();
 		_menu.setDestinationText(_coreVar._currPlace);
 		return;
-	} else if (_coreVar._currPlace == INSIDE_WELL) {
+	case INSIDE_WELL:
 		if (menuChoice == 1)
 			floodedInWell();
 		else if (menuChoice == 2)
 			gotoManorBack();
 		_menu.setDestinationText(_coreVar._currPlace);
 		return;
-	} else if ((_coreVar._currPlace == BUREAU) && (menuChoice == 1))
-		menuChoice = 6;
-	else if (_coreVar._currPlace == KITCHEN) {
+	case BUREAU:
+		if (menuChoice == 1)
+			menuChoice = 6;
+		break;
+	case KITCHEN:
 		if (menuChoice == 2)
 			menuChoice = 6;
 		else if (menuChoice == 5)
 			menuChoice = 16;
-	} else if ((_coreVar._currPlace == CELLAR) && (menuChoice == 3))
-		menuChoice = 6;
-	else if (((_coreVar._currPlace == LANDING) || (_coreVar._currPlace == ROOM26)) && (menuChoice == 4))
-		menuChoice = 6;
+		break;
+	case CELLAR:
+		if (menuChoice == 3)
+			menuChoice = 6;
+		break;
+	case LANDING:
+	case ROOM26:
+		if (menuChoice == 4)
+			menuChoice = 6;
+		break;
+	}
 
 	if ((_coreVar._currPlace > MOUNTAIN) && (_coreVar._currPlace != ROOM26))
 		menuChoice += 10;
@@ -132,32 +142,40 @@ void MortevielleEngine::fctMove() {
 	else if ((_coreVar._currPlace == WELL) && (menuChoice > 13) && (menuChoice != 17))
 		menuChoice = 15;
 
-	if (menuChoice == 1)
+	switch (menuChoice) {
+	case 1:
 		_coreVar._currPlace = BUREAU;
-	else if (menuChoice == 2)
+		break;
+	case 2:
 		_coreVar._currPlace = KITCHEN;
-	else if (menuChoice == 3)
+		break;
+	case 3:
 		_coreVar._currPlace = CELLAR;
-	else if (menuChoice == 4)
+		break;
+	case 4:
 		_coreVar._currPlace = LANDING;
-	else if (menuChoice == 5)
-		menuChoice = 12;
-	else if (menuChoice == 6)
-		menuChoice = 11;
-
-	if (menuChoice == 11)
-		gotoDiningRoom();
-	else if (menuChoice == 12)
+		break;
+	case 5:
+	case 12:
 		gotoManorFront();
-	else if (menuChoice == 13)
+		break;
+	case 6:
+	case 11:
+		gotoDiningRoom();
+		break;
+	case 13:
 		_coreVar._currPlace = CHAPEL;
-	else if (menuChoice == 14)
+		break;
+	case 14:
 		_coreVar._currPlace = WELL;
-	else if (menuChoice == 15)
+		break;
+	case 15:
 		checkManorDistance();
-	else if (menuChoice == 16)
+		break;
+	case 16:
 		gotoManorBack();
-	else if (menuChoice == 17) {
+		break;
+	case 17:
 		if ((_coreVar._wellObjectId != 120) && (_coreVar._wellObjectId != 140))
 			_crep = 997;
 		else if (_coreVar._wellObjectId == 120)
@@ -169,7 +187,9 @@ void MortevielleEngine::fctMove() {
 			_coreVar._currPlace = INSIDE_WELL;
 			prepareDisplayText();
 		}
+		break;
 	}
+
 	if ((menuChoice < 5) || (menuChoice == 13) || (menuChoice == 14))
 		prepareDisplayText();
 	resetRoomVariables(_coreVar._currPlace);
@@ -503,9 +523,12 @@ void MortevielleEngine::fctSearch() {
 		setCoordinates(7);
 		if (_num != 0) {
 			int i;
-			for (i = 1; (i <= 6) && (_num != _openObjects[i]); i++)
-				;
-			if (_num == _openObjects[i]) {
+			for (i = 1; i <= 6; i++) {
+				if (_num == _openObjects[i])
+					break;
+			}
+
+			if (i <= 6) {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 
@@ -606,9 +629,20 @@ void MortevielleEngine::fctOpen() {
 			_coreVar._faithScore += 2;
 		++_openObjCount;
 		int i;
-		for (i = 1; (i <= 6) && (_openObjects[i] != 0) && (_openObjects[i] != _num); i++)
-			;
-		if (_openObjects[i] != _num) {
+		for (i = 1; (i <= 6); i++) {
+			if ((_openObjects[i] == 0) || (_openObjects[i] == _num))
+				break;
+		}
+
+		if (i > 6) {
+			warning("Unexpected action: Too many open objects");
+			return;
+		}
+
+		if (_openObjects[i] == _num)
+			// display "Already Opened"
+			_crep = 18;
+		else {
 			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
 				                 || (_coreVar._currPlace == JULIA_ROOM)
 								 || (_coreVar._currPlace == BLUE_ROOM)
@@ -641,9 +675,7 @@ void MortevielleEngine::fctOpen() {
 			_crep = _tabdon[kAouvr + (tmpPlace * 7) + _num - 1];
 			if (_crep == 254)
 				_crep = 999;
-		} else
-			// display "Already Opened"
-			_crep = 18;
+		}
 	}
 }
 
@@ -702,10 +734,10 @@ void MortevielleEngine::fctPlace() {
 					_soundManager.startSpeech(6, -9, 1);
 
 					// Do you want to enter the hidden passage?
-					int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+					int answer = _dialogManager.show(getEngineString(S_YES_NO));
 					if (answer == 1) {
 						Common::String alertTxt = getString(582);
-						_dialogManager.show(alertTxt, 1);
+						_dialogManager.show(alertTxt);
 
 						bool enterPassageFl = _dialogManager.showKnowledgeCheck();
 						_mouse.hideMouse();
@@ -732,7 +764,7 @@ void MortevielleEngine::fctPlace() {
 							displayAnimFrame(1, 2);
 							displayAnimFrame(1, 1);
 							alertTxt = getString(577);
-							_dialogManager.show(alertTxt, 1);
+							_dialogManager.show(alertTxt);
 							displayAnimFrame(2, 1);
 							_crep = 166;
 						}
@@ -801,7 +833,7 @@ void MortevielleEngine::fctTurn() {
 		if ((_coreVar._currPlace == ATTIC) && (_coreVar._atticRodHoleObjectId == 159) && (_coreVar._atticBallHoleObjectId == 141)) {
 			handleDescriptionText(2, 167);
 			_soundManager.startSpeech(7, 9, 1);
-			int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+			int answer = _dialogManager.show(getEngineString(S_YES_NO));
 			if (answer == 1)
 				_endGame = true;
 			else
@@ -811,7 +843,7 @@ void MortevielleEngine::fctTurn() {
 			handleDescriptionText(2, 175);
 			clearVerbBar();
 			_soundManager.startSpeech(6, -9, 1);
-			int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+			int answer = _dialogManager.show(getEngineString(S_YES_NO));
 			if (answer == 1) {
 				_coreVar._currPlace = CRYPT;
 				prepareDisplayText();
@@ -884,9 +916,12 @@ void MortevielleEngine::fctClose() {
 		setCoordinates(7);
 		if (_num != 0) {
 			int i;
-			for (i = 1; (i <= 6) && (_num != _openObjects[i]); ++i)
-				;
-			if (_num == _openObjects[i]) {
+			for (i = 1; i <= 6; ++i) {
+				if (_num == _openObjects[i])
+					break;
+			}
+
+			if (i <= 6) {
 				displayAnimFrame(2, _num);
 				_crep = 998;
 				_openObjects[i] = 0;
@@ -914,7 +949,7 @@ void MortevielleEngine::fctKnock() {
 		displayTextInVerbBar(getEngineString(S_HIT));
 
 	if (_coreVar._currPlace == LANDING) {
-		_dialogManager.show(getEngineString(S_BEFORE_USE_DEP_MENU), 1);
+		_dialogManager.show(getEngineString(S_BEFORE_USE_DEP_MENU));
 		return;
 	}
 
@@ -979,9 +1014,12 @@ void MortevielleEngine::fctSelfPut() {
 				_crep = 997;
 			else {
 				int i;
-				for (i = 1; (i <= 6) && (_num != _openObjects[i]); i++)
-					;
-				if (_num == _openObjects[i]) {
+				for (i = 1; i <= 6; i++) {
+					if (_num == _openObjects[i])
+						break;
+				}
+
+				if (i <= 6) {
 					_curSearchObjId = objId;
 					_crep = 999;
 				} else
@@ -1223,7 +1261,7 @@ void MortevielleEngine::fctSleep() {
 		if (hour > 23)
 			hour = 0;
 		prepareRoom();
-		answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+		answer = _dialogManager.show(getEngineString(S_YES_NO));
 		_anyone = false;
 	} while (answer != 1);
 	_crep = 998;
@@ -1313,7 +1351,7 @@ void MortevielleEngine::fctWait() {
 			return;
 		}
 		handleDescriptionText(2, 102);
-		answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+		answer = _dialogManager.show(getEngineString(S_YES_NO));
 	} while (answer != 2);
 	_crep = 998;
 	if (!_anyone)
@@ -1629,7 +1667,7 @@ void MortevielleEngine::askRestart() {
 	_day = 0;
 	handleDescriptionText(2, 180);
 
-	int answer = _dialogManager.show(getEngineString(S_YES_NO), 1);
+	int answer = _dialogManager.show(getEngineString(S_YES_NO));
 	_quitGame = (answer != 1);
 }
 

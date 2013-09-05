@@ -42,12 +42,6 @@ const int32 kDefaultOffsetX = 0;
 const int32 kDefaultOffsetY = 0;
 const int32 kDefaultAngle = 0;
 
-enum AlphaType {
-	ALPHA_OPAQUE = 0,
-	ALPHA_BINARY = 1,
-	ALPHA_FULL = 2
-};
-
 struct TransformStruct {
 private:
 	void init(Point32 zoom, uint32 angle, Point32 hotspot, bool alphaDisable, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX, bool mirrorY, Point32 offset);

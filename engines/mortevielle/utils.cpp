@@ -67,9 +67,10 @@ bool MortevielleEngine::keyPressed() {
  * @remarks	Originally called 'get_ch'
  */
 int MortevielleEngine::getChar() {
+	bool end = false;
 	// If there isn't any pending keypress, wait until there is
-	while (!shouldQuit() && _keypresses.empty()) {
-		keyPressed();
+	while (!shouldQuit() && !end) {
+		end = keyPressed();
 	}
 
 	// Return the top keypress
@@ -290,7 +291,7 @@ void MortevielleEngine::handleAction() {
 		if (_menu._menuSelected && (_currMenu == MENU_LOAD))
 			_savegameManager.loadGame((_currAction & 15) - 1);
 		if (inkey == '\103') {       /* F9 */
-			temps = _dialogManager.show(_hintPctMessage, 1);
+			temps = _dialogManager.show(_hintPctMessage);
 			return;
 		} else if (inkey == '\77') {
 			if ((_menuOpcode != OPCODE_NONE) && ((_currMenu == MENU_ACTION) || (_currMenu == MENU_SELF))) {
@@ -412,8 +413,8 @@ void MortevielleEngine::prepareScreenType3() {
  * @remarks	Originally called 'calch'
  */
 void MortevielleEngine::updateHour(int &day, int &hour, int &minute) {
-	int newHour = readclock();
-	int th = _currentHourCount + ((newHour - _currentDayHour) / _inGameHourDuration);
+	int newTime = readclock();
+	int th = _currentHourCount + ((newTime - _currentTime) / _inGameHourDuration);
 	minute = ((th % 2) + _currHalfHour) * 30;
 	hour = ((uint)th >> 1) + _currHour;
 	if (minute == 60) {
@@ -1081,7 +1082,7 @@ void MortevielleEngine::initGame() {
 	if (!_coreVar._alreadyEnteredManor)
 		_blo = true;
 	_inGameHourDuration = kTime1;
-	_currentDayHour = readclock();
+	_currentTime = readclock();
 }
 
 /**
@@ -1464,8 +1465,8 @@ void MortevielleEngine::gameLoaded() {
 	_x = 0;
 	_y = 0;
 	_num = 0;
-	_startHour = 0;
-	_endHour = 0;
+	_startTime = 0;
+	_endTime = 0;
 	_searchCount = 0;
 	_roomDoorId = OWN_ROOM;
 	_syn = true;
@@ -1712,7 +1713,7 @@ int MortevielleEngine::getRandomNumber(int minval, int maxval) {
  * @remarks	Originally called 'aldepl'
  */
 void MortevielleEngine::showMoveMenuAlert() {
-	_dialogManager.show(getEngineString(S_USE_DEP_MENU), 1);
+	_dialogManager.show(getEngineString(S_USE_DEP_MENU));
 }
 
 /**
@@ -1993,8 +1994,8 @@ void MortevielleEngine::loadTexts() {
 	Common::File ntpFile;
 
 	_txxFileFl = false;
-	if (getLanguage() == Common::EN_ANY) {
-		warning("English version expected - Switching to DAT file");
+	if (!useOriginalData()) {
+		warning("Using improved translation from DAT file");
 		return;
 	}
 
@@ -2155,12 +2156,7 @@ void MortevielleEngine::drawRightFrame() {
  * Read the current system time
  */
 int MortevielleEngine::readclock() {
-	TimeDate dateTime;
-	g_system->getTimeAndDate(dateTime);
-
-	int m = dateTime.tm_min * 60;
-	int h = dateTime.tm_hour * 3600;
-	return h + m + dateTime.tm_sec;
+	return (int)(g_system->getMillis() / 1000);
 }
 
 /**
@@ -2223,12 +2219,12 @@ void MortevielleEngine::prepareRoom() {
 		if (_coreVar._faithScore > 65)
 			_inGameHourDuration -= ((_inGameHourDuration / 3) * 2);
 
-		int newHour = readclock();
-		if ((newHour - _currentDayHour) > _inGameHourDuration) {
+		int newTime = readclock();
+		if ((newTime - _currentTime) > _inGameHourDuration) {
 			bool activeMenu = _menu._menuActive;
 			_menu.eraseMenu();
-			_currentHourCount += ((newHour - _currentDayHour) / _inGameHourDuration);
-			_currentDayHour = newHour;
+			_currentHourCount += ((newTime - _currentTime) / _inGameHourDuration);
+			_currentTime = newTime;
 			switch (_place) {
 			case GREEN_ROOM:
 			case DARKBLUE_ROOM:
@@ -2278,7 +2274,7 @@ void MortevielleEngine::prepareRoom() {
 					_currBitIndex = 0;
 					if (!_uptodatePresence) {
 						_uptodatePresence = true;
-						_startHour = readclock();
+						_startTime = readclock();
 						if (getRandomNumber(1, 5) < 5) {
 							clearVerbBar();
 							prepareScreenType2();
@@ -2296,11 +2292,11 @@ void MortevielleEngine::prepareRoom() {
 				_menu.drawMenu();
 		}
 	}
-	_endHour = readclock();
-	if ((_uptodatePresence) && ((_endHour - _startHour) > 17)) {
+	_endTime = readclock();
+	if ((_uptodatePresence) && ((_endTime - _startTime) > 17)) {
 		getPresenceBitIndex(_place);
 		_uptodatePresence = false;
-		_startHour = 0;
+		_startTime = 0;
 		if ((_coreVar._currPlace > OWN_ROOM) && (_coreVar._currPlace < DINING_ROOM))
 			_anyone = true;
 	}
@@ -2498,7 +2494,7 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 			displayTextInDescriptionBar(8, 182, 103, mesgId);
 			if ((mesgId == 68) || (mesgId == 69))
 				_coreVar._availableQuestion[40] = '*';
-			if ((mesgId == 104) && (_caff == CELLAR)) {
+			else if ((mesgId == 104) && (_caff == CELLAR)) {
 				_coreVar._availableQuestion[36] = '*';
 				if (_coreVar._availableQuestion[39] == '*') {
 					_coreVar._pctHintFound[3] = '*';
@@ -2775,34 +2771,54 @@ int MortevielleEngine::getPresence(int roomId) {
 			displayAloneText();
 		else {
 			int h = 0;
-			if (roomId == DINING_ROOM)
+			switch (roomId) {
+			case DINING_ROOM:
 				pres = getPresenceStatsDiningRoom(h);
-			else if (roomId == BUREAU)
+				break;
+			case BUREAU:
 				pres = getPresenceStatsBureau(h);
-			else if (roomId == KITCHEN)
+				break;
+			case KITCHEN:
 				pres = getPresenceStatsKitchen();
-			else if ((roomId == ATTIC) || (roomId == CELLAR))
+				break;
+			case ATTIC:
+			case CELLAR:
 				pres = getPresenceStatsAttic();
-			else if ((roomId == LANDING) || (roomId == ROOM26))
+				break;
+			case LANDING:
+			case ROOM26:
 				pres = getPresenceStatsLanding();
-			else if (roomId == CHAPEL)
+				break;
+			case CHAPEL:
 				pres = getPresenceStatsChapel(h);
+				break;
+			}
 			pres += _coreVar._faithScore;
 			rand = getRandomNumber(1, 100);
 			if (rand > pres) {
 				displayAloneText();
 				retVal = 0;
 			} else {
-				if (roomId == DINING_ROOM)
+				switch (roomId) {
+				case DINING_ROOM:
 					pres = setPresenceDiningRoom(h);
-				else if (roomId == BUREAU)
+					break;
+				case BUREAU:
 					pres = setPresenceBureau(h);
-				else if ((roomId == KITCHEN) || (roomId == ATTIC) || (roomId == CELLAR))
+					break;
+				case KITCHEN:
+				case ATTIC:
+				case CELLAR:
 					pres = setPresenceKitchen();
-				else if ((roomId == LANDING) || (roomId == ROOM26))
+					break;
+				case LANDING:
+				case ROOM26:
 					pres = setPresenceLanding();
-				else if (roomId == CHAPEL)
+					break;
+				case CHAPEL:
 					pres = setPresenceChapel(h);
+					break;
+				}
 				retVal = pres;
 			}
 		}
@@ -2866,18 +2882,27 @@ void MortevielleEngine::drawPicture() {
 					displayAnimFrame(1, _openObjects[i]);
 			}
 
-			if (_caff == ATTIC) {
+			switch (_caff) {
+			case ATTIC:
 				if (_coreVar._atticBallHoleObjectId == 141)
 					displayAnimFrame(1, 7);
 
 				if (_coreVar._atticRodHoleObjectId == 159)
 					displayAnimFrame(1, 6);
-			} else if ((_caff == CELLAR) && (_coreVar._cellarObjectId == 151))
-				displayAnimFrame(1, 2);
-			else if ((_caff == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143))
-				displayAnimFrame(1, 1);
-			else if ((_caff == WELL) && (_coreVar._wellObjectId != 0))
-				displayAnimFrame(1, 1);
+				break;
+			case CELLAR:
+				if (_coreVar._cellarObjectId == 151)
+					displayAnimFrame(1, 2);
+				break;
+			case SECRET_PASSAGE:
+				if (_coreVar._secretPassageObjectId == 143)
+					displayAnimFrame(1, 1);
+				break;
+			case WELL:
+				if (_coreVar._wellObjectId != 0)
+					displayAnimFrame(1, 1);
+				break;
+			}
 		}
 
 		if (_caff < ROOM26)
@@ -3190,7 +3215,7 @@ void MortevielleEngine::displayStatusArrow() {
 		} while (!(qust || inRect || _anyone));
 
 		if (qust && (touch == '\103'))
-			_dialogManager.show(_hintPctMessage, 1);
+			_dialogManager.show(_hintPctMessage);
 	} while (!((touch == '\73') || ((touch == '\104') && (_x != 0) && (_y != 0)) || (_anyone) || (inRect)));
 
 	if (touch == '\73')

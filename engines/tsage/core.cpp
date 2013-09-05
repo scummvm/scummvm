@@ -3267,6 +3267,7 @@ void Player::postInit(SceneObjectList *OwnerList) {
 		_moveDiff.y = 2;
 		_effect = 1;
 		_shade = 0;
+		_linkedActor = NULL;
 
 		setObjectWrapper(new SceneObjectWrapper());
 		setPosition(_characterPos[_characterIndex]);
@@ -3997,7 +3998,7 @@ int WalkRegions::indexOf(const Common::Point &pt, const Common::List<int> *index
 }
 
 void WalkRegions::synchronize(Serializer &s) {
-	// Synchronise the list of disabled regions as a list of values terminated with a '-1'
+	// Synchronize the list of disabled regions as a list of values terminated with a '-1'
 	int regionId = 0;
 	if (s.isLoading()) {
 		_disabledRegions.clear();

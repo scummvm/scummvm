@@ -181,7 +181,7 @@ void TVP::updatePitch() {
 	pitch = (Bit16u)newPitch;
 
 	// FIXME: We're doing this here because that's what the CM-32L does - we should probably move this somewhere more appropriate in future.
-	partial->tva->recalcSustain();
+	partial->getTVA()->recalcSustain();
 }
 
 void TVP::targetPitchOffsetReached() {

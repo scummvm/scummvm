@@ -242,11 +242,6 @@ namespace Ringworld2 {
 #define SPEECH_TEXT 1
 #define SPEECH_VOICE 2
 
-#define k5A78C 15
-#define k5A78D 16
-#define k5A790 18
-#define k5A791 17
-
 class ScannerDialog;
 
 class Ringworld2Globals: public TsAGE2Globals {
@@ -258,7 +253,7 @@ public:
 	byte _fadePaletteMap[10][256];
 	byte _paletteMap[4096];
 	int _insetUp;
-	int _frameEdgeColour;	// _v421e
+	int _frameEdgeColor;	// _v421e
 	Rect _v5589E;
 	Rect _v558B6;
 	int _v558C2;
@@ -271,7 +266,6 @@ public:
 	int _v565EB;
 	int _foodCount;
 	int _v565F6;
-	int _v565F8;
 	int _v565FA;
 	int _v5657C;
 	byte _v565AE;
@@ -304,9 +298,10 @@ public:
 	int _v57810;
 	int _v57C2C;
 	int _speechSubtitles;
-	byte _v565EC[5];
+	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker
 	byte _scannerFrequencies[4];
 	byte _stripManager_lookupList[12];
+	byte _scene1550JunkLocations[508];
 	ScannerDialog *_scannerDialog;
 
 	Ringworld2Globals();

@@ -274,12 +274,17 @@ class SpeakerQuinn : public VisualSpeaker {
 public:
 	SpeakerQuinn();
 	virtual Common::String getClassName() { return "SpeakerQuinn"; }
-	virtual void proc15();
 };
 
 class SpeakerQuinn300 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn300"; }
+	virtual void proc15();
+};
+
+class SpeakerQuinn500 : public SpeakerQuinn {
+public:
+	virtual Common::String getClassName() { return "SpeakerQuinn500"; }
 	virtual void proc15();
 };
 
@@ -413,12 +418,17 @@ class SpeakerSeeker : public VisualSpeaker {
 public:
 	SpeakerSeeker();
 	virtual Common::String getClassName() { return "SpeakerSeeker"; }
-	virtual void proc15();
 };
 
 class SpeakerSeeker300 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker300"; }
+	virtual void proc15();
+};
+
+class SpeakerSeeker500 : public SpeakerSeeker {
+public:
+	virtual Common::String getClassName() { return "SpeakerSeeker500"; }
 	virtual void proc15();
 };
 
@@ -506,7 +516,7 @@ public:
 
 class SpeakerSoldier : public VisualSpeaker {
 public:
-	SpeakerSoldier(int colour);
+	SpeakerSoldier(int color);
 	virtual Common::String getClassName() { return "SpeakerSoldier"; }
 };
 
@@ -581,7 +591,7 @@ public:
 
 class SpeakerWebbster : public VisualSpeaker {
 public:
-	SpeakerWebbster(int colour);
+	SpeakerWebbster(int color);
 	virtual Common::String getClassName() { return "SpeakerWebbster"; }
 };
 

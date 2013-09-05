@@ -769,6 +769,7 @@ Scene2000::Scene2000(): SceneExt() {
 	}
 
 	_exitingFlag = false;
+	_mazePlayerMode = 0;
 }
 
 void Scene2000::postInit(SceneObjectList *OwnerList) {
@@ -1116,7 +1117,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	_actor3.postInit();
 	_actor4.postInit();
 
-	if (R2_INVENTORY.getObjectScene(20) == 2350) {
+	if (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2350) {
 		_actor3.hide();
 		_actor4.hide();
 	} else {
@@ -1176,12 +1177,12 @@ void Scene2350::signal() {
 		break;
 	case 21:
 		R2_GLOBALS._player.disableControl();
-		R2_INVENTORY.setObjectScene(36, 1);
+		R2_INVENTORY.setObjectScene(R2_FLUTE, 1);
 		_sceneMode = 2354;
 		setAction(&_sequenceManager, this, 2354, &R2_GLOBALS._player, NULL);
 		break;
 	case 2354:
-		R2_INVENTORY.setObjectScene(20, 2350);
+		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 2350);
 		g_globals->_sceneManager.changeScene(2900);
 		break;
 	case 2355:
@@ -1534,7 +1535,7 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
 	_exit1.setDest(Common::Point(108, 160));
 
-	if (R2_INVENTORY.getObjectScene(37) == 2430) {
+	if (R2_INVENTORY.getObjectScene(R2_GUNPOWDER) == 2430) {
 		_actor2.postInit();
 		_actor2.setup(2435, 1, 5);
 		_actor2.setPosition(Common::Point(205, 119));
@@ -1542,7 +1543,7 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 		_actor2.setDetails(2430, 51, -1, 53, 1, (SceneItem *)NULL);
 	}
 
-	if (R2_INVENTORY.getObjectScene(50) == 2435) {
+	if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2435) {
 		_actor3.postInit();
 		_actor3.setup(2435, 1, 1);
 		_actor3.setPosition(Common::Point(31, 65));
@@ -1820,7 +1821,7 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 	// Fix exit cursor, the original was using NW
 	_exit1.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_SE, 2000);
 	_exit1.setDest(Common::Point(210, 160));
-	if (R2_INVENTORY.getObjectScene(49) == 2440) {
+	if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2440) {
 		_actor2.postInit();
 		_actor2.setup(2435, 1, 1);
 		_actor2.setPosition(Common::Point(94, 80));
@@ -1885,7 +1886,7 @@ void Scene2440::signal() {
 		break;
 	case 2440:
 		_actor2.remove();
-		R2_INVENTORY.setObjectScene(49, 2);
+		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_2, 2);
 	// No break on purpose
 	default:
 		R2_GLOBALS._player.enableControl();
@@ -2212,7 +2213,7 @@ bool Scene2455::Actor1::startAction(CursorType action, Event &event) {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == R2_GLASS_DOME) {
-		if ((R2_INVENTORY.getObjectScene(49) == 2455) || (R2_INVENTORY.getObjectScene(50) == 2455)) {
+		if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2455) || (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2455)) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2458;
 			scene->_actor2._lookLineNum = 9;
@@ -2232,7 +2233,7 @@ bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case R2_ALCOHOL_LAMP_2:
-		if (R2_INVENTORY.getObjectScene(50) != 2455) {
+		if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) != 2455) {
 			R2_GLOBALS._player.disableControl();
 			scene->_actor1.postInit();
 			scene->_actor1.setup(2456, 3, 3);
@@ -2244,7 +2245,7 @@ bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
 		}
 		break;
 	case R2_ALCOHOL_LAMP_3:
-		if (R2_INVENTORY.getObjectScene(49) != 2455) {
+		if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) != 2455) {
 			R2_GLOBALS._player.disableControl();
 			scene->_actor1.postInit();
 			scene->_actor1.setup(2456, 3, 3);
@@ -2290,15 +2291,15 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
-		R2_INVENTORY.setObjectScene(29, 2);
-		R2_INVENTORY.setObjectScene(50, 2);
+		R2_INVENTORY.setObjectScene(R2_GLASS_DOME, 2);
+		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_3, 2);
 	}
 
 	R2_GLOBALS._sound1.play(200);
 	_exit1.setDetails(Rect(0, 0, 320, 15), EXITCURSOR_N, 2425);
 
-	if (R2_INVENTORY.getObjectScene(29) == 2455) {
-		if ((R2_INVENTORY.getObjectScene(50) == 2455) || (R2_INVENTORY.getObjectScene(49) == 2455)) {
+	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2455) {
+		if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2455) || (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2455)) {
 			_actor1.postInit();
 			_actor1.setup(2456, 3, 3);
 			_actor1.setPosition(Common::Point(162, 165));
@@ -2312,11 +2313,11 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_actor2.postInit();
-	if (R2_INVENTORY.getObjectScene(29) == 2455) {
+	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2455) {
 		_actor2.setup(2456, 3, 2);
 		_actor2.setDetails(2455, 9, 1, -1, 1, (SceneItem *)NULL);
 	} else {
-		if ((R2_INVENTORY.getObjectScene(50) != 2455) && (R2_INVENTORY.getObjectScene(49) != 2455))
+		if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) != 2455) && (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) != 2455))
 			_actor2.setup(2455, 1, 1);
 		else
 			_actor2.setup(2456, 1, 1);
@@ -2324,7 +2325,7 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 	}
 	_actor2.setPosition(Common::Point(162, 165));
 	_actor2.fixPriority(20);
-	if (R2_INVENTORY.getObjectScene(29) != 2455)
+	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) != 2455)
 		_actor2.animate(ANIM_MODE_2, NULL);
 
 	R2_GLOBALS._player.postInit();
@@ -2356,23 +2357,23 @@ void Scene2455::signal() {
 		g_globals->_sceneManager.changeScene(2425);
 		break;
 	case 11:
-		R2_INVENTORY.setObjectScene(49, 2455);
+		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_2, 2455);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 12:
-		R2_INVENTORY.setObjectScene(50, 2455);
+		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_3, 2455);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 2458:
-		R2_INVENTORY.setObjectScene(29, 2455);
+		R2_INVENTORY.setObjectScene(R2_GLASS_DOME, 2455);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 2459:
 		_actor3.remove();
-		R2_INVENTORY.setObjectScene(31, 2);
+		R2_INVENTORY.setObjectScene(R2_SCRITH_KEY, 2);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		R2_GLOBALS._player._canWalk = false;
 		break;
@@ -2542,7 +2543,7 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 
 	_exit1.setDetails(Rect(86, 155, 228, 168), EXITCURSOR_S, 2000);
 
-	if (R2_INVENTORY.getObjectScene(29) == 2525) {
+	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2525) {
 		_actor3.postInit();
 		_actor3.setup(2435, 1, 2);
 		_actor3.setPosition(Common::Point(78, 155));
@@ -2615,7 +2616,7 @@ void Scene2525::signal() {
 		break;
 	case 2525:
 		_actor3.remove();
-		R2_INVENTORY.setObjectScene(29, 2);
+		R2_INVENTORY.setObjectScene(R2_GLASS_DOME, 2);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 2526:
@@ -2698,7 +2699,7 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
 	_exit1.setDest(Common::Point(108, 160));
 
-	if (R2_INVENTORY.getObjectScene(33) == 2530) {
+	if (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 2530) {
 		_actor2.postInit();
 		_actor2.setup(2435, 1, 3);
 		_actor2.setPosition(Common::Point(299, 80));
@@ -2766,7 +2767,7 @@ void Scene2530::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 2530:
-		R2_INVENTORY.setObjectScene(33, 2);
+		R2_INVENTORY.setObjectScene(R2_PURE_GRAIN_ALCOHOL, 2);
 		_actor2.remove();
 		break;
 	case 2531:
@@ -2798,7 +2799,7 @@ bool Scene2535::Actor3::startAction(CursorType action, Event &event) {
 
 	if (R2_GLOBALS._player._characterIndex == 1) {
 		R2_GLOBALS._player.disableControl();
-		if (R2_INVENTORY.getObjectScene(20) == 2535) {
+		if (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2535) {
 			scene->_sceneMode = 2536;
 			scene->setAction(&scene->_sequenceManager, scene, 2536, &R2_GLOBALS._player, &scene->_actor3, NULL);
 		} else {
@@ -2846,12 +2847,12 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
 		R2_GLOBALS.setFlag(73);
-		R2_INVENTORY.setObjectScene(20, 2535);
+		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 2535);
 	}
 	_exit1.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_S, 2000);
 	_exit1.setDest(Common::Point(210, 160));
 
-	if (R2_INVENTORY.getObjectScene(32) == 2535) {
+	if (R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 2535) {
 		_actor4.postInit();
 		_actor4.setup(2435, 1, 4);
 		_actor4.setPosition(Common::Point(47, 74));
@@ -2859,7 +2860,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		_actor4.setDetails(2535, 21, -1, -1, 1, (SceneItem *)NULL);
 	}
 
-	if (R2_INVENTORY.getObjectScene(20) == 2535) {
+	if (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2535) {
 		_actor3.postInit();
 		_actor3.setup(2535, 3, 1);
 		_actor3.setPosition(Common::Point(203, 131));
@@ -2867,7 +2868,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._walkRegions.enableRegion(6);
 	}
 
-	if ((R2_INVENTORY.getObjectScene(20) == 0) && (R2_GLOBALS.getFlag(73))) {
+	if ((R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 0) && (R2_GLOBALS.getFlag(73))) {
 		_actor3.postInit();
 		_actor3.setup(2536, 1, 2);
 		_actor3.setPosition(Common::Point(164, 133));
@@ -2933,12 +2934,12 @@ void Scene2535::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 2535:
-		R2_INVENTORY.setObjectScene(32, 2);
+		R2_INVENTORY.setObjectScene(R2_TANNER_MASK, 2);
 		_actor4.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 2536:
-		R2_INVENTORY.setObjectScene(20, 0);
+		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 0);
 		R2_GLOBALS._walkRegions.disableRegion(6);
 		if (!R2_GLOBALS.getFlag(73)) {
 			_actor3.remove();
@@ -2958,7 +2959,7 @@ void Scene2535::signal() {
 		break;
 	case 2537:
 		_actor3.remove();
-		R2_INVENTORY.setObjectScene(20, 1);
+		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 1);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 20:
@@ -3056,7 +3057,7 @@ void Scene2700::Action4::signal() {
 
 void Scene2700::Area1::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
@@ -3106,7 +3107,7 @@ void Scene2700::Area1::process(Event &event) {
 
 void Scene2700::Area2::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
@@ -3211,7 +3212,7 @@ void Scene2700::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._moveDiff = Common::Point(2, 2);
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_INVENTORY.getObjectScene(36) == 0)
+	if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0)
 		R2_GLOBALS._sound1.changeSound(234);
 
 	if (R2_GLOBALS._sceneManager._previousScene == 2750) {
@@ -3452,7 +3453,7 @@ void Scene2700::signal() {
 		}
 		break;
 	case 11:
-		R2_INVENTORY.setObjectScene(36, 0);
+		R2_INVENTORY.setObjectScene(R2_FLUTE, 0);
 		R2_GLOBALS._player.disableControl();
 		_field412 = 0;
 		_sceneMode = 2700;
@@ -3854,7 +3855,7 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 	_rect2.set(130, 142, 210, 167);
 	_rect3.set(-1, 137, 290, 147);
 
-	if (R2_INVENTORY.getObjectScene(36) == 0) {
+	if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0) {
 		R2_GLOBALS._sound1.changeSound(235);
 		_actor2.postInit();
 		_actor2.setup(2751, 1, 1);
@@ -3929,7 +3930,7 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_nejSpeaker);
 
-	if (R2_INVENTORY.getObjectScene(36) == 0) {
+	if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0) {
 		_actor1.postInit();
 		_actor1.setup(2752, 5, 1);
 		_actor1.animate(ANIM_MODE_NONE, NULL);
@@ -3943,7 +3944,7 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 2700) {
-		if (R2_INVENTORY.getObjectScene(36) == 0) {
+		if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0) {
 			R2_GLOBALS._player.setVisage(2752);
 			R2_GLOBALS._player.setStrip(6);
 			R2_GLOBALS._player.animate(ANIM_MODE_NONE, NULL);
@@ -4448,7 +4449,7 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_nejSpeaker);
 	_stripManager.addSpeaker(&_guardSpeaker);
 
-	if (R2_INVENTORY.getObjectScene(36) == 0) {
+	if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0) {
 		R2_GLOBALS._sound1.fadeSound(237);
 		if (R2_GLOBALS.getFlag(47)) {
 			_item2.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
@@ -4469,7 +4470,7 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._moveDiff = Common::Point(2, 2);
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_INVENTORY.getObjectScene(36) == 0) {
+	if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0) {
 		R2_GLOBALS._player.setAction(&_sequenceManager, this, 2800, &R2_GLOBALS._player, NULL);
 	} else if (R2_GLOBALS.getFlag(47)) {
 		R2_GLOBALS._player.setVisage(3110);

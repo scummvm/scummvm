@@ -454,7 +454,7 @@ void UIElements::add(UIElement *obj) {
 /**
  * Handles updating the visual inventory in the user interface
  */
-void UIElements::updateInventory() {
+void UIElements::updateInventory(int objectNumber) {
 	switch (g_vm->getGameID()) {
 	case GType_BlueForce:
 		// Update the score
@@ -482,6 +482,17 @@ void UIElements::updateInventory() {
 		_slotStart = lastPage - 1;
 	else if (_slotStart > (lastPage - 1))
 		_slotStart = 0;
+
+	// Handle changing the page, if necessary, to ensure an optionally supplied
+	// object number will be on-screen
+	if (objectNumber != 0) {
+		for (uint idx = 0; idx < _itemList.size(); ++idx) {
+			if (_itemList[idx] == objectNumber) {
+				_slotStart = idx / 4;
+				break;
+			}
+		}
+	}
 
 	// Handle refreshing slot graphics
 	UIInventorySlot *slotList[4] = { &_slot1, &_slot2, &_slot3, &_slot4 };

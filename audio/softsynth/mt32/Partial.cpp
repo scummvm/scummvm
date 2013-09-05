@@ -131,6 +131,7 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	}
 
 	// FIXME: Sample analysis suggests that the use of panVal is linear, but there are some some quirks that still need to be resolved.
+	// FIXME: I suppose this should be panVal / 8 and undoubtly integer, clarify ASAP
 	stereoVolume.leftVol = panVal / 7.0f;
 	stereoVolume.rightVol = 1.0f - stereoVolume.leftVol;
 
@@ -198,9 +199,6 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	if (!hasRingModulatingSlave()) {
 		la32Pair.deactivate(LA32PartialPair::SLAVE);
 	}
-	// Temporary integration hack
-	stereoVolume.leftVol /= 8192.0f;
-	stereoVolume.rightVol /= 8192.0f;
 }
 
 Bit32u Partial::getAmpValue() {
@@ -232,7 +230,7 @@ Bit32u Partial::getCutoffValue() {
 	return (tvf->getBaseCutoff() << 18) + cutoffModifierRampVal;
 }
 
-unsigned long Partial::generateSamples(Bit16s *partialBuf, unsigned long length) {
+unsigned long Partial::generateSamples(Sample *partialBuf, unsigned long length) {
 	if (!isActive() || alreadyOutputed) {
 		return 0;
 	}
@@ -258,7 +256,7 @@ unsigned long Partial::generateSamples(Bit16s *partialBuf, unsigned long length)
 				}
 			}
 		}
-		*partialBuf++ = la32Pair.nextOutSample();
+		*(partialBuf++) = la32Pair.nextOutSample();
 	}
 	unsigned long renderedSamples = sampleNum;
 	sampleNum = 0;
@@ -288,7 +286,18 @@ Synth *Partial::getSynth() const {
 	return synth;
 }
 
-bool Partial::produceOutput(float *leftBuf, float *rightBuf, unsigned long length) {
+TVA *Partial::getTVA() const {
+	return tva;
+}
+
+void Partial::backupCache(const PatchCache &cache) {
+	if (patchCache == &cache) {
+		cachebackup = cache;
+		patchCache = &cachebackup;
+	}
+}
+
+bool Partial::produceOutput(Sample *leftBuf, Sample *rightBuf, unsigned long length) {
 	if (!isActive() || alreadyOutputed || isRingModulatingSlave()) {
 		return false;
 	}
@@ -296,14 +305,18 @@ bool Partial::produceOutput(float *leftBuf, float *rightBuf, unsigned long lengt
 		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::produceOutput()!", debugPartialNum);
 		return false;
 	}
-	unsigned long numGenerated = generateSamples(myBuffer, length);
+	Sample buffer[MAX_SAMPLES_PER_RUN];
+	unsigned long numGenerated = generateSamples(buffer, length);
 	for (unsigned int i = 0; i < numGenerated; i++) {
-		*leftBuf++ = myBuffer[i] * stereoVolume.leftVol;
-		*rightBuf++ = myBuffer[i] * stereoVolume.rightVol;
-	}
-	for (; numGenerated < length; numGenerated++) {
-		*leftBuf++ = 0.0f;
-		*rightBuf++ = 0.0f;
+#if MT32EMU_USE_FLOAT_SAMPLES
+		*(leftBuf++) += buffer[i] * stereoVolume.leftVol;
+		*(rightBuf++) += buffer[i] * stereoVolume.rightVol;
+#else
+		*leftBuf = Synth::clipBit16s((Bit32s)*leftBuf + Bit32s(buffer[i] * stereoVolume.leftVol));
+		*rightBuf = Synth::clipBit16s((Bit32s)*rightBuf + Bit32s(buffer[i] * stereoVolume.rightVol));
+		leftBuf++;
+		rightBuf++;
+#endif
 	}
 	return true;
 }
