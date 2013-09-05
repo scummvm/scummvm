@@ -185,7 +185,7 @@ void Visa::talkto(byte whom) {
 					switch (_vm->_gyro->dna.given2spludwick) { 
 					case 1: // Falltrough is intended.
 					case 2:{
-						_vm->_scrolls->display(Common::String("Can you get me ") + _vm->_gyro->get_better(_vm->_gyro->spludwick_order[_vm->_gyro->dna.given2spludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
+						_vm->_scrolls->display(Common::String("Can you get me ") + _vm->_gyro->get_better(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->dna.given2spludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
 						return;
 						}
 						break;
@@ -281,7 +281,7 @@ void Visa::talkto(byte whom) {
 		dixi('q', 1); // Circular from Cardiff.
 		_vm->_gyro->dna.talked_to_crapulus = true;
 
-		_vm->_gyro->whereis[_vm->_gyro->pcrapulus - 150] = 177; // Crapulus walks off.
+		_vm->_gyro->_whereIs[_vm->_gyro->pcrapulus - 150] = 177; // Crapulus walks off.
 
 		_vm->_trip->tr[1].vanishifstill = true;
 		_vm->_trip->tr[1].walkto(3); // Walks away.

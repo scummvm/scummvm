@@ -277,7 +277,7 @@ void Enid::ednaReload() {
 
 	_vm->_lucerna->major_redraw();
 
-	_vm->_gyro->whereis[_vm->_gyro->pavalot - 150] = _vm->_gyro->dna.room;
+	_vm->_gyro->_whereIs[_vm->_gyro->pavalot - 150] = _vm->_gyro->dna.room;
 
 	_vm->_gyro->alive = true;
 

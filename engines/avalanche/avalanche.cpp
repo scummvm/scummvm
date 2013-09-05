@@ -464,7 +464,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_dropdown->setupMenu();
 
-	_gyro->whereis[0] = _gyro->dna.room;
+	_gyro->_whereIs[0] = _gyro->dna.room;
 	
 	_gyro->alive = true;
 

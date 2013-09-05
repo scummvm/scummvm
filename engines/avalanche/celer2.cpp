@@ -254,7 +254,7 @@ void Celer::updateBackgroundSprites() {
 			if (_vm->_gyro->dna.nextbell < 5)
 				_vm->_gyro->dna.nextbell = 12;
 			_vm->_gyro->dna.nextbell--;
-			_vm->_gyro->note(_vm->_gyro->notes[_vm->_gyro->dna.nextbell]);
+			_vm->_gyro->note(_vm->_gyro->kNotes[_vm->_gyro->dna.nextbell]);
 			break;
 		case 2:
 			//nosound();

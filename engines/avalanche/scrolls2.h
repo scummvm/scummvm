@@ -123,9 +123,9 @@ private:
 
 	void dialogue();
 
-	void store_(byte what, tunetype &played);
+	void store_(byte what, TuneType &played);
 
-	bool they_match(tunetype &played);
+	bool they_match(TuneType &played);
 
 	void music_scroll();
 
