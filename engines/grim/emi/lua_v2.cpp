@@ -25,6 +25,7 @@
 #include "common/savefile.h"
 
 #include "engines/grim/emi/lua_v2.h"
+#include "engines/grim/emi/emi_registry.h"
 #include "engines/grim/lua/lauxlib.h"
 
 #include "engines/grim/resource.h"
@@ -617,6 +618,34 @@ STUB_FUNC2(Lua_V2::SectEditInsert)
 STUB_FUNC2(Lua_V2::SectEditSortAdd)
 STUB_FUNC2(Lua_V2::SectEditForgetIt)
 
+// ResidualVM-hacks:
+void Lua_V2::GetResidualVMPreference() {
+	lua_Object keyObj = lua_getparam(1);
+
+	if (lua_isstring(keyObj)) {
+		const Common::String key = lua_getstring(keyObj);
+
+		float value;
+		if (g_emiregistry->Get(key, value))
+			lua_pushnumber(value);
+		else
+			lua_pushnil();
+	} else
+		lua_pushnil();
+}
+
+void Lua_V2::SetResidualVMPreference()  {
+	lua_Object keyObj = lua_getparam(1);
+	lua_Object valueObj = lua_getparam(2);
+
+	if (lua_isstring(keyObj) && lua_isnumber(valueObj)) {
+		const Common::String key = lua_getstring(keyObj);
+		float value = lua_getnumber(valueObj);
+
+		g_emiregistry->Set(key, value);
+	}
+}
+
 struct luaL_reg monkeyMainOpcodes[] = {
 	// Monkey specific LUA_OPCODEs:
 	{ "ScreenshotForSavegame", LUA_OPCODE(Lua_V2, ScreenshotForSavegame) },
@@ -719,7 +748,10 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "LocalizeString", LUA_OPCODE(Lua_V2, LocalizeString) },
 // PS2:
 	{ "GetMemoryCardId", LUA_OPCODE(Lua_V2, GetMemoryCardId) },
-	{ "OverWorldToScreen", LUA_OPCODE(Lua_V2, OverWorldToScreen) }
+	{ "OverWorldToScreen", LUA_OPCODE(Lua_V2, OverWorldToScreen) },
+// ResidualVM-hacks:
+	{ "GetResidualVMPreference", LUA_OPCODE(Lua_V2, GetResidualVMPreference) },
+	{ "SetResidualVMPreference", LUA_OPCODE(Lua_V2, SetResidualVMPreference) }
 };
 
 void Lua_V2::registerOpcodes() {
