@@ -68,6 +68,7 @@ Common::Rect Window::getAbsoluteRect() const {
 }
 
 void Window::dispatchAllMessages() {
+	// Dispatch all of our messages
 	while (!_queue.empty() && !_vm->shouldQuit()) {
 		Message *message = _queue.pop();
 
@@ -117,6 +118,13 @@ void Window::dispatchAllMessages() {
 
 		delete message;
 	}
+
+	// Also dispatch any children's messages
+	for (WindowList::iterator it = _children.begin(); it != _children.end() && !_vm->shouldQuit(); it++)
+		(*it)->dispatchAllMessages();
+
+	for (WindowList::iterator it = _topMostChildren.begin(); it != _topMostChildren.end() && !_vm->shouldQuit(); it++)
+		(*it)->dispatchAllMessages();
 }
 
 void Window::updateWindow() {
