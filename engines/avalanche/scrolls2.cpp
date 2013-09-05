@@ -199,18 +199,18 @@ void Scrolls::dialogue() {
 
 
 
-void Scrolls::store_(byte what, tunetype &played) {
+void Scrolls::store_(byte what, TuneType &played) {
 	memcpy(played + 1, played + 2, sizeof(played) - 1);
 	played[30] = what;
 }
 
-bool Scrolls::they_match(tunetype &played) {
+bool Scrolls::they_match(TuneType &played) {
 	byte fv, mistakes;
 
 	mistakes = 0;
 
 	for (fv = 1; fv <= sizeof(played); fv++) {
-		if (played[fv] != _vm->_gyro->tune[fv]) {
+		if (played[fv] != _vm->_gyro->kTune[fv]) {
 			mistakes += 1;
 		}
 	}
@@ -253,7 +253,7 @@ void Scrolls::resetscrolldriver() {   // phew
 	_vm->_gyro->scrollbells = 0;
 	cfont = roman;
 	use_icon = 0;
-	_vm->_gyro->interrogation = 0; // always reset after a scroll comes up.
+	_vm->_gyro->_interrogation = 0; // always reset after a scroll comes up.
 }
 
 void Scrolls::dingdongbell() {   // Pussy's in the well. Who put her in? Little...
@@ -331,7 +331,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	//setvisualpage(cp);
 	//setactivepage(1 - cp);
-	_vm->_gyro->oncandopageswap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
+	_vm->_gyro->_onCanDoPageSwap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
 
 	lx = 0;
 	ly = (_vm->_gyro->scrolln) * 6;
@@ -457,7 +457,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	// mblit(ex-46,ey-6,ex+lx*2+15,ey+ly*2+6,3,0);
 	//mblit((ex - 46) / 8, ey - 6, 1 + (ex + lx * 2 + 15) / 8, ey + ly * 2 + 6, cp, 1 - cp);
 	//blitfix();
-	_vm->_gyro->oncandopageswap = true; // Normality again.
+	_vm->_gyro->_onCanDoPageSwap = true; // Normality again.
 	CursorMan.showMouse(true);
 	//settextjustify(0, 0); // sink
 	resetscrolldriver();
@@ -475,7 +475,7 @@ void Scrolls::bubble(func2 gotoit) {
 
 	//setvisualpage(cp);
 	//setactivepage(1 - cp);
-	_vm->_gyro->oncandopageswap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
+	_vm->_gyro->_onCanDoPageSwap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
 	//mousepage(1 - cp); // Mousepage
 
 	CursorMan.showMouse(false);
@@ -539,7 +539,7 @@ void Scrolls::bubble(func2 gotoit) {
 
 	//setvisualpage(1 - cp);
 	dingdongbell();
-	_vm->_gyro->oncandopageswap = false;
+	_vm->_gyro->_onCanDoPageSwap = false;
 	CursorMan.showMouse(true);
 	_vm->_gyro->dropsok = false;
 
@@ -551,7 +551,7 @@ void Scrolls::bubble(func2 gotoit) {
 
 	//setvisualpage(cp);
 	CursorMan.showMouse(true); // sink;
-	_vm->_gyro->oncandopageswap = true;
+	_vm->_gyro->_onCanDoPageSwap = true;
 	resetscrolldriver();
 	if (_vm->_gyro->mpress > 0)
 		_vm->_gyro->after_the_scroll = true;
@@ -700,11 +700,11 @@ void Scrolls::calldrivers() {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
-					_vm->_gyro->talkx = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].x;
-					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->quasipeds[param - 10].whichped - 1].y; // Position.
+					_vm->_gyro->talkx = _vm->_gyro->peds[_vm->_gyro->kQuasipeds[param - 10].whichped - 1].x;
+					_vm->_gyro->talky = _vm->_gyro->peds[_vm->_gyro->kQuasipeds[param - 10].whichped - 1].y; // Position.
 		
-					_vm->_gyro->talkf = _vm->_gyro->quasipeds[param - 10].fgc;
-					_vm->_gyro->talkb = _vm->_gyro->quasipeds[param - 10].bgc; // Colors.
+					_vm->_gyro->talkf = _vm->_gyro->kQuasipeds[param - 10].fgc;
+					_vm->_gyro->talkb = _vm->_gyro->kQuasipeds[param - 10].bgc; // Colors.
 				} else {
 					_vm->_lucerna->errorled(); // Not valid.
 					natural();
