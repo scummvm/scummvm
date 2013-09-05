@@ -460,6 +460,13 @@ Trip::Trip(AvalancheEngine *vm) {
 	mustexclaim = false;
 }
 
+Trip::~Trip() {
+	for (byte i = 0; i < numtr; i++) {
+		if (tr[i].quick)
+			tr[i].done();
+	}
+}
+
 void Trip::loadtrip() {
 	for (int16 gm = 0; gm < numtr; gm++)
 		tr[gm].original();

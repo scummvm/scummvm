@@ -615,12 +615,14 @@ void Dropdown::runMenuAction() {
 	}
 	break;
 	case 1:
+		_vm->_acci->_thing = _vm->_acci->kPardon;
 		_vm->_lucerna->callverb(_vm->_acci->kVerbCodePause);
 		break;
 	case 2:
 		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeOpen);
 		break;
 	case 3:
+		_vm->_acci->_thing = _vm->_acci->kPardon;
 		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeLook);
 		break;
 	case 4:

@@ -1071,8 +1071,8 @@ void Lucerna::checkclick() {
 	Common::Point cursorPos = _vm->getMousePos();
 	_vm->_gyro->ontoolbar = _vm->_gyro->slow_computer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
 	
-	if (_vm->_gyro->mrelease > 0)
-		_vm->_gyro->after_the_scroll = false;
+	/*if (_vm->_gyro->mrelease > 0)
+	_vm->_gyro->after_the_scroll = false;*/
 
 	if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
 		_vm->_gyro->newpointer(1); // up arrow
