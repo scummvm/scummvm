@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	graphics.o \
 	livetext.o \
 	sound.o \
+	title_sequence.o \
 	video_window.o \
 	window.o
 
