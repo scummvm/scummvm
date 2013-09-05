@@ -318,11 +318,11 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 	byte fontColor;
 	byte backgroundColor;
 	if (highlighted) {
-		fontColor = white;
-		backgroundColor = black;
+		fontColor = kColorWhite;
+		backgroundColor = kColorBlack;
 	} else {
-		fontColor = black;
-		backgroundColor = lightgray;
+		fontColor = kColorBlack;
+		backgroundColor = kColorLightgray;
 	}
 
 	byte ander;

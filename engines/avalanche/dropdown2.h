@@ -133,12 +133,12 @@ private:
 	static const byte kIndent = 5;
 	static const byte kSpacing = 10;
 
-	static const byte kMenuBackgroundColor = lightgray;
-	static const byte kMenuFontColor = black;
-	static const byte kMenuBorderColor = black;
-	static const byte kHighlightBackgroundColor = black;
-	static const byte kHighlightFontColor = white;
-	static const byte kDisabledColor = darkgray;
+	static const byte kMenuBackgroundColor = kColorLightgray;
+	static const byte kMenuFontColor = kColorBlack;
+	static const byte kMenuBorderColor = kColorBlack;
+	static const byte kHighlightBackgroundColor = kColorBlack;
+	static const byte kHighlightFontColor = kColorWhite;
+	static const byte kDisabledColor = kColorDarkgray;
 
 	AvalancheEngine *_vm;
 

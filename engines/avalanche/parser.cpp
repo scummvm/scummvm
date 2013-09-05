@@ -113,9 +113,9 @@ void Parser::plotText() {
 
 	cursorOff();
 
-	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), black); // Black out the line of the text.
+	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
 
-	_vm->_graphics->drawText(_vm->_graphics->_surface, _vm->_parser->_inputText, _vm->_gyro->characters, 8, 24, 161, white);
+	_vm->_graphics->drawText(_vm->_graphics->_surface, _vm->_parser->_inputText, _vm->_gyro->characters, 8, 24, 161, kColorWhite);
 
 	cursorOn();
 	CursorMan.showMouse(true);
@@ -149,7 +149,7 @@ int16 Parser::pos(const Common::String &crit, const Common::String &src) {
 void Parser::drawCursor() {
 	// Draw the '_' character.
 	for (byte bit = 0; bit < 8; bit++)
-		*(byte *)_vm->_graphics->_surface.getBasePtr(24 + _inputTextPos * 8 + 7 - bit, 168) = white;
+		*(byte *)_vm->_graphics->_surface.getBasePtr(24 + _inputTextPos * 8 + 7 - bit, 168) = kColorWhite;
 
 	bytefield bf;
 	bf.x1 = _inputTextPos + 1;
@@ -166,7 +166,7 @@ void Parser::wipeText() {
 
 	cursorOff();
 	
-	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), black); // Black out the line of the text.
+	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
 
 	_quote = true;
 	_inputTextPos = 0;
