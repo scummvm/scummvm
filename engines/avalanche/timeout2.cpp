@@ -227,7 +227,7 @@ void Timeout::open_drawbridge() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, _vm->_gyro->dna.drawbridge_open - 1);
 
 	if (_vm->_gyro->dna.drawbridge_open == 4)
-		_vm->_gyro->magics[1].op = _vm->_gyro->nix; // You may enter the drawbridge.
+		_vm->_gyro->magics[1].op = _vm->_gyro->kMagicNothing; // You may enter the drawbridge.
 	else
 		set_up_timer(7, procopen_drawbridge, reason_drawbridgefalls);
 }
@@ -267,9 +267,9 @@ void Timeout::stairs() {
 	_vm->_trip->tr[0].walkto(4);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 	_vm->_gyro->dna.brummie_stairs = 2;
-	_vm->_gyro->magics[10].op = _vm->_gyro->special;
+	_vm->_gyro->magics[10].op = _vm->_gyro->kMagicSpecial;
 	_vm->_gyro->magics[10].data = 2; // Reached the bottom of the stairs.
-	_vm->_gyro->magics[3].op = _vm->_gyro->nix; // Stop them hitting the sides (or the game will hang.)
+	_vm->_gyro->magics[3].op = _vm->_gyro->kMagicNothing; // Stop them hitting the sides (or the game will hang.)
 }
 
 void Timeout::cardiff_survey() {
@@ -280,7 +280,7 @@ void Timeout::cardiff_survey() {
 
 	_vm->_visa->dixi('z', _vm->_gyro->dna.cardiff_things);
 
-	_vm->_gyro->interrogation = _vm->_gyro->dna.cardiff_things;
+	_vm->_gyro->_interrogation = _vm->_gyro->dna.cardiff_things;
 
 	set_up_timer(182, proccardiffsurvey, reason_cardiffsurvey);
 }
@@ -309,14 +309,14 @@ void Timeout::get_tied_up() {
 void Timeout::get_tied_up2() {
 	_vm->_trip->tr[0].walkto(4);
 	_vm->_trip->tr[1].walkto(5);
-	_vm->_gyro->magics[3].op = _vm->_gyro->nix; // No effect when you touch the boundaries.
+	_vm->_gyro->magics[3].op = _vm->_gyro->kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_gyro->dna.friar_will_tie_you_up = true;
 }
 
 void Timeout::hang_around() {
 	_vm->_trip->tr[1].check_me = false;
 	_vm->_trip->tr[0].init(7, true, _vm->_trip); // Robin Hood
-	_vm->_gyro->whereis[_vm->_gyro->probinhood - 150] = r__robins;
+	_vm->_gyro->_whereIs[_vm->_gyro->probinhood - 150] = r__robins;
 	_vm->_trip->apped(1, 2);
 	_vm->_visa->dixi('q', 39);
 	_vm->_trip->tr[0].walkto(7);
@@ -327,7 +327,7 @@ void Timeout::hang_around2() {
 	_vm->_visa->dixi('q', 40);
 	_vm->_trip->tr[1].vanishifstill = false;
 	_vm->_trip->tr[1].walkto(4);
-	_vm->_gyro->whereis[_vm->_gyro->pfriartuck - 150] = r__robins;
+	_vm->_gyro->_whereIs[_vm->_gyro->pfriartuck - 150] = r__robins;
 	_vm->_visa->dixi('q', 41);
 	_vm->_trip->tr[0].done();
 	_vm->_trip->tr[1].done(); // Get rid of Robin Hood and Friar Tuck.
@@ -387,12 +387,12 @@ void Timeout::jacques_wakes_up() {
 	case 2 : // Going through the door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // But going through the door.
-		_vm->_gyro->magics[5].op = _vm->_gyro->nix; // You can't wake him up now.
+		_vm->_gyro->magics[5].op = _vm->_gyro->kMagicNothing; // You can't wake him up now.
 		break;
 	case 3 :  // Gone through the door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor, either.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 4); // He's gone... so the door's open.
-		_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0; // Gone!
+		_vm->_gyro->_whereIs[_vm->_gyro->pjacques - 150] = 0; // Gone!
 		break;
 	}
 
@@ -529,7 +529,7 @@ void Timeout::greetsmonk() {
 }
 
 void Timeout::fall_down_oubliette() {
-	_vm->_gyro->magics[8].op = _vm->_gyro->nix;
+	_vm->_gyro->magics[8].op = _vm->_gyro->kMagicNothing;
 	_vm->_trip->tr[0].iy++; // Increments dx/dy!
 	_vm->_trip->tr[0].y += _vm->_trip->tr[0].iy;   // Dowwwn we go...
 	set_up_timer(3, procfall_down_oubliette, reason_falling_down_oubliette);

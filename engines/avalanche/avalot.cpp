@@ -153,7 +153,7 @@ void Avalot::setup() {
 	_vm->_gyro->ledstatus = 177;
 	_vm->_gyro->defaultled = 2;
 	// TSkellern = 0; Replace with a more local variable sometime
-	_vm->_gyro->dna.rw = _vm->_gyro->stopped;
+	_vm->_gyro->dna.rw = _vm->_gyro->kDirectionStopped;
 	_vm->_gyro->enid_filename = ""; // Undefined.
 	_vm->_lucerna->toolbar();
 	_vm->_scrolls->state(2);
@@ -167,7 +167,7 @@ void Avalot::setup() {
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
 	_vm->_parser->cursorOn();
-	_vm->_trip->tr[0].xs = _vm->_gyro->walk;
+	_vm->_trip->tr[0].xs = _vm->_gyro->kWalk;
 	_vm->_trip->newspeed();
 
 
@@ -175,7 +175,7 @@ void Avalot::setup() {
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {	
 		_vm->_gyro->thinks = 2; // You always have money.
-		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing);
+		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->kThing);
 
 		_vm->loadGame(loadSlot);
 	} else {
@@ -184,7 +184,7 @@ void Avalot::setup() {
 
 		_vm->_gyro->soundfx = ! _vm->_gyro->soundfx;
 		_vm->_lucerna->fxtoggle();
-		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing);
+		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->kThing);
 
 		_vm->_visa->dixi('q', 83); // Info on the game, etc. 
 	}	

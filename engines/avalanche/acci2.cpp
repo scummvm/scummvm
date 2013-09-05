@@ -412,7 +412,7 @@ void Acci::storeInterrogation(byte interrogation) {
 		_vm->_visa->dixi('z', 5); // His closing statement...
 		_vm->_trip->tr[1].walkto(4); // The end of the drawbridge
 		_vm->_trip->tr[1].vanishifstill = true; // Then go away!
-		_vm->_gyro->magics[1].op = _vm->_gyro->nix;
+		_vm->_gyro->magics[1].op = _vm->_gyro->kMagicNothing;
 		_vm->_gyro->dna.cardiff_things = 5;
 		break;
 	case 99:
@@ -449,8 +449,8 @@ void Acci::parse() {
 	}
 
 	// Are we being interrogated right now?
-	if (_vm->_gyro->interrogation > 0) {
-		storeInterrogation(_vm->_gyro->interrogation);
+	if (_vm->_gyro->_interrogation > 0) {
+		storeInterrogation(_vm->_gyro->_interrogation);
 		_vm->_gyro->weirdword = true;
 		return;
 	}
@@ -623,7 +623,7 @@ void Acci::parse() {
 
 void Acci::examineObject() {   
 	if (_thing != _vm->_gyro->thinks)
-		_vm->_lucerna->thinkabout(_thing, _vm->_gyro->a_thing);
+		_vm->_lucerna->thinkabout(_thing, _vm->_gyro->kThing);
 	switch (_thing) {
 	case Gyro::wine :
 		switch (_vm->_gyro->dna.winestate) {// 4 is perfect wine. 0 is not holding the wine.
@@ -650,7 +650,7 @@ void Acci::examineObject() {
 }
 
 bool Acci::isPersonHere() { // Person equivalent of "holding".
-	if ((_person == kPardon) || (_person == 0) || (_vm->_gyro->whereis[_person - 150] == _vm->_gyro->dna.room))
+	if ((_person == kPardon) || (_person == 0) || (_vm->_gyro->_whereIs[_person - 150] == _vm->_gyro->dna.room))
 		return true;
 	else {
 		if (_person < 175)
@@ -665,7 +665,7 @@ bool Acci::isPersonHere() { // Person equivalent of "holding".
 void Acci::exampers() {
 	if (isPersonHere()) {
 		if (_thing != _vm->_gyro->thinks)
-			_vm->_lucerna->thinkabout(_person, _vm->_gyro->a_person);
+			_vm->_lucerna->thinkabout(_person, _vm->_gyro->kPerson);
 		_person -= 149;
 		switch (_person) { // Special cases
 		case 11:
@@ -826,7 +826,7 @@ void Acci::peopleInRoom() {
 	byte numPeople = 0; // Number of people in the room.
 	
 	for (byte i = 1; i < 29; i++) { // Start at 1 so we don't list Avvy himself!
-		if (_vm->_gyro->whereis[i] == _vm->_gyro->dna.room)
+		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->dna.room)
 			numPeople++;
 	}
 
@@ -835,7 +835,7 @@ void Acci::peopleInRoom() {
 
 	byte actPerson = 0; // Actually listed people.
 	for (byte i = 1; i < 29; i++) {
-		if (_vm->_gyro->whereis[i] == _vm->_gyro->dna.room) {
+		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->dna.room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
 				_vm->_scrolls->display(_vm->_gyro->getname(i + 150) + _vm->_scrolls->kControlToBuffer);
@@ -923,23 +923,23 @@ void Acci::openDoor() {
 			fv -= 8;
 
 			switch (_vm->_gyro->portals[fv].op) {
-			case Gyro::exclaim:
+			case Gyro::kMagicExclaim:
 				_vm->_trip->tr[0].bounce();
 				_vm->_visa->dixi('x', _vm->_gyro->portals[fv].data);
 				break;
-			case Gyro::transport:
+			case Gyro::kMagicTransport:
 				_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8,  // High byte 
 					                 (_vm->_gyro->portals[fv].data) & 0x0F // Low byte
 									 );
 				break;
-			case Gyro::unfinished:
+			case Gyro::kMagicUnfinished:
 				_vm->_trip->tr[0].bounce();
 				_vm->_scrolls->display("Sorry. This place is not available yet!");
 				break;
-			case Gyro::special:
+			case Gyro::kMagicSpecial:
 				_vm->_trip->call_special(_vm->_gyro->portals[fv].data);
 				break;
-			case Gyro::mopendoor:
+			case Gyro::kMagicOpenDoor:
 				_vm->_trip->open_the_door((_vm->_gyro->portals[fv].data) >> 8, (_vm->_gyro->portals[fv].data) & 0x0F, fv + 9);
 				break;
 			}
@@ -1038,7 +1038,7 @@ void Acci::putProc() {
 
 void Acci::notInOrder() {
 	_vm->_scrolls->display(Common::String("Sorry, I need the ingredients in the right order for this potion. What I need next is ")
-			+ _vm->_gyro->get_better(_vm->_gyro->spludwick_order[_vm->_gyro->dna.given2spludwick])
+			+ _vm->_gyro->get_better(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->dna.given2spludwick])
 			+ _vm->_scrolls->kControlRegister + 2 + _vm->_scrolls->kControlSpeechBubble);
 }
 
@@ -1053,7 +1053,7 @@ void Acci::goToCauldron() {
  * @remarks	Originally called 'give2spludwick'
  */
 bool Acci::giveToSpludwick() { 
-	if (_vm->_gyro->spludwick_order[_vm->_gyro->dna.given2spludwick] != _thing) {
+	if (_vm->_gyro->kSpludwicksOrder[_vm->_gyro->dna.given2spludwick] != _thing) {
 		notInOrder();
 		return false;
 	}
@@ -1142,7 +1142,7 @@ void Acci::standUp() {
 			_vm->_trip->tr[0].visible = true;
 			_vm->_gyro->dna.user_moves_avvy = true;
 			_vm->_trip->apped(1, 2);
-			_vm->_gyro->dna.rw = _vm->_gyro->left;
+			_vm->_gyro->dna.rw = _vm->_gyro->kDirectionLeft;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->points(1);
 			_vm->_gyro->dna.avvy_in_bed = false;
@@ -1267,13 +1267,13 @@ void Acci::winSequence() {
 
 void Acci::personSpeaks() {
 	if ((_person == kPardon) || (_person == 0)) {
-		if ((_vm->_gyro->him == kPardon) || (_vm->_gyro->whereis[_vm->_gyro->him - 150] != _vm->_gyro->dna.room))
+		if ((_vm->_gyro->him == kPardon) || (_vm->_gyro->_whereIs[_vm->_gyro->him - 150] != _vm->_gyro->dna.room))
 			_person = _vm->_gyro->her;
 		else
 			_person = _vm->_gyro->him;
 	}
 
-	if (_vm->_gyro->whereis[_person - 150] != _vm->_gyro->dna.room) {
+	if (_vm->_gyro->_whereIs[_person - 150] != _vm->_gyro->dna.room) {
 		_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + '1' + _vm->_scrolls->kControlToBuffer); // Avvy himself!
 		return;
 	}
@@ -1289,7 +1289,7 @@ void Acci::personSpeaks() {
 
 	if (!found) {
 		for (byte i = 0; i < 16; i++) {
-			if ((_vm->_gyro->quasipeds[i].who == _person) && (_vm->_gyro->quasipeds[i].room == _vm->_gyro->dna.room))
+			if ((_vm->_gyro->kQuasipeds[i].who == _person) && (_vm->_gyro->kQuasipeds[i].room == _vm->_gyro->dna.room))
 				_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 65) + _vm->_scrolls->kControlToBuffer);
 		}
 	}
@@ -1506,7 +1506,7 @@ void Acci::doThat() {
 		_vm->_scrolls->display("Vandalism is prohibited within this game!");
 		break;
 	case kVerbCodeQuit: // quit
-		if (_vm->_gyro->demo) {
+		if (_vm->_gyro->kDemo) {
 			warning("STUB: Acci::doThat() - case kVerbCodequit");
 		//	_vm->_visa->dixi('pos', 31);
 		//	close(demofile);
@@ -1632,10 +1632,10 @@ void Acci::doThat() {
 			case Gyro::lute :
 					_vm->_visa->dixi('U', 7);
 
-					if (_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] == _vm->_gyro->dna.room)
+					if (_vm->_gyro->_whereIs[_vm->_gyro->pcwytalot - 150] == _vm->_gyro->dna.room)
 						_vm->_visa->dixi('U', 10);
 
-					if (_vm->_gyro->whereis[_vm->_gyro->pdulustie - 150] == _vm->_gyro->dna.room)
+					if (_vm->_gyro->_whereIs[_vm->_gyro->pdulustie - 150] == _vm->_gyro->dna.room)
 						_vm->_visa->dixi('U', 15);
 				break;
 			case 52:
@@ -1699,7 +1699,7 @@ void Acci::doThat() {
 		else {
 			if ((_vm->_gyro->dna.room == 12) & (_vm->_trip->infield(2))) { // Avaricius appears!
 				_vm->_visa->dixi('q', 17);
-				if (_vm->_gyro->whereis[1] == 12)
+				if (_vm->_gyro->_whereIs[1] == 12)
 					_vm->_visa->dixi('q', 18);
 				else {
 					_vm->_trip->tr[1].init(1, false, _vm->_trip); // Avaricius
@@ -1842,7 +1842,7 @@ void Acci::doThat() {
 	case kVerbCodeAttack:
 		if ((_vm->_gyro->dna.room == r__brummieroad) &&
 				((_person == 157) || (_thing == _vm->_gyro->crossbow) || (_thing == _vm->_gyro->bolt))
-				&& (_vm->_gyro->whereis[7] == _vm->_gyro->dna.room)) {
+				&& (_vm->_gyro->_whereIs[7] == _vm->_gyro->dna.room)) {
 			switch (_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] + _vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] * 2) {
 				// 0 = neither, 1 = only bolt, 2 = only crossbow, 3 = both.
 			case 0:
@@ -1861,12 +1861,12 @@ void Acci::doThat() {
 				_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] = false;
 				_vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] = false;
 				_vm->_lucerna->objectlist();
-				_vm->_gyro->magics[11].op = _vm->_gyro->nix;
+				_vm->_gyro->magics[11].op = _vm->_gyro->kMagicNothing;
 				_vm->_lucerna->points(7);
 				_vm->_trip->tr[1].walkto(2);
 				_vm->_trip->tr[1].vanishifstill = true;
 				_vm->_trip->tr[1].call_eachstep = false;
-				_vm->_gyro->whereis[7] = 177;
+				_vm->_gyro->_whereIs[7] = 177;
 				break;
 			default:
 				_vm->_visa->dixi('Q', 10); // Please try not to be so violent!

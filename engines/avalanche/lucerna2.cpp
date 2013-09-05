@@ -274,7 +274,7 @@ void Lucerna::zoomout(int16 x, int16 y) {
 
 void Lucerna::find_people(byte room) {
 	for (byte fv = 1; fv < 29; fv++)
-		if (_vm->_gyro->whereis[fv] == room) {
+		if (_vm->_gyro->_whereIs[fv] == room) {
 			if (fv < 25)
 				_vm->_gyro->him = fv + 150;
 			else
@@ -307,7 +307,7 @@ void Lucerna::exitroom(byte x) {
 		break;
 	}
 
-	_vm->_gyro->interrogation = 0; // Leaving the room cancels all the questions automatically.
+	_vm->_gyro->_interrogation = 0; // Leaving the room cancels all the questions automatically.
 
 	_vm->_gyro->seescroll = false; // Now it can work again!
 
@@ -368,10 +368,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 	if ((_vm->_gyro->dna.rooms[x] == 0) && (! _vm->_gyro->flagset('S')))
 		points(1);
 
-	_vm->_gyro->whereis[_vm->_gyro->pavalot - 150] = _vm->_gyro->dna.room;
+	_vm->_gyro->_whereIs[_vm->_gyro->pavalot - 150] = _vm->_gyro->dna.room;
 
 	if (_vm->_gyro->dna.geida_follows)
-		_vm->_gyro->whereis[_vm->_gyro->pgeida - 150] = x;
+		_vm->_gyro->_whereIs[_vm->_gyro->pgeida - 150] = x;
 
 	_vm->_gyro->roomtime = 0;
 
@@ -393,7 +393,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (ped > 0) {
 			if (! _vm->_gyro->dna.talked_to_crapulus) {
 
-				_vm->_gyro->whereis[_vm->_gyro->pcrapulus - 150] = r__outsideyours;
+				_vm->_gyro->_whereIs[_vm->_gyro->pcrapulus - 150] = r__outsideyours;
 				_vm->_trip->tr[1].init(8, false, _vm->_trip); // load Crapulus
 
 				if (_vm->_gyro->dna.rooms[r__outsideyours] == 1) {
@@ -407,7 +407,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_trip->tr[1].call_eachstep = true;
 				_vm->_trip->tr[1].eachstep = _vm->_trip->procface_avvy; // He always faces Avvy.
 
-			} else _vm->_gyro->whereis[_vm->_gyro->pcrapulus - 150] = r__nowhere;
+			} else _vm->_gyro->_whereIs[_vm->_gyro->pcrapulus - 150] = r__nowhere;
 
 			if (_vm->_gyro->dna.crapulus_will_tell) {
 				_vm->_trip->tr[1].init(8, false, _vm->_trip);
@@ -431,7 +431,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			if (ped > 0) {
 				_vm->_trip->tr[1].init(2, false, _vm->_trip); // load Spludwick
 				_vm->_trip->apped(2, 2);
-				_vm->_gyro->whereis[1] = r__spludwicks;
+				_vm->_gyro->_whereIs[1] = r__spludwicks;
 			}
 
 			_vm->_gyro->dna.dogfoodpos = 0;  // _vm->_gyro->also Spludwick pos.
@@ -439,21 +439,21 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_trip->tr[1].call_eachstep = true;
 			_vm->_trip->tr[1].eachstep = _vm->_trip->procgeida_procs;
 		} else
-			_vm->_gyro->whereis[1] = r__nowhere;
+			_vm->_gyro->_whereIs[1] = r__nowhere;
 		break;
 
 	case r__brummieroad: {
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(5, ped);
 		if (_vm->_gyro->dna.cwytalot_gone) {
-			_vm->_gyro->magics[kColorLightred - 1].op = _vm->_gyro->nix;
-			_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] = r__nowhere;
+			_vm->_gyro->magics[kColorLightred - 1].op = _vm->_gyro->kMagicNothing;
+			_vm->_gyro->_whereIs[_vm->_gyro->pcwytalot - 150] = r__nowhere;
 		} else {
 			if (ped > 0) {
 				_vm->_trip->tr[1].init(4, false, _vm->_trip); // 4 = Cwytalot
 				_vm->_trip->tr[1].call_eachstep = true;
 				_vm->_trip->tr[1].eachstep = _vm->_trip->procfollow_avvy_y;
-				_vm->_gyro->whereis[_vm->_gyro->pcwytalot - 150] = r__brummieroad;
+				_vm->_gyro->_whereIs[_vm->_gyro->pcwytalot - 150] = r__brummieroad;
 
 				if (_vm->_gyro->dna.rooms[r__brummieroad] == 1) { // First time here...
 					_vm->_trip->apped(2, 2); // He appears on the right of the screen...
@@ -486,7 +486,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.drawbridge_open == 4) { // open
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Position of drawbridge
 			_vm->_graphics->refreshBackground();
-			_vm->_gyro->magics[kColorGreen - 1].op = _vm->_gyro->nix; // You may enter the drawbridge.
+			_vm->_gyro->magics[kColorGreen - 1].op = _vm->_gyro->kMagicNothing; // You may enter the drawbridge.
 		}
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(ped + 3, ped); // load Geida
@@ -505,8 +505,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 
 		if (_vm->_gyro->dna.been_tied_up) {
-			_vm->_gyro->whereis[_vm->_gyro->probinhood - 150] = 0;
-			_vm->_gyro->whereis[_vm->_gyro->pfriartuck - 150] = 0;
+			_vm->_gyro->_whereIs[_vm->_gyro->probinhood - 150] = 0;
+			_vm->_gyro->_whereIs[_vm->_gyro->pfriartuck - 150] = 0;
 		}
 
 		if (_vm->_gyro->dna.tied_up)
@@ -529,7 +529,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			}
 			break;
 			case 5 :
-				_vm->_gyro->magics[1].op = _vm->_gyro->nix;
+				_vm->_gyro->magics[1].op = _vm->_gyro->kMagicNothing;
 				break; // You've answered ALL his questions. => nothing happens.
 			default: { // You've answered SOME of his questions.
 				_vm->_trip->tr[1].init(9, false, _vm->_trip);
@@ -539,8 +539,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 			}
 			}
 		if (_vm->_gyro->dna.cardiff_things < 5)
-			_vm->_gyro->interrogation = _vm->_gyro->dna.cardiff_things;
-		else _vm->_gyro->interrogation = 0;
+			_vm->_gyro->_interrogation = _vm->_gyro->dna.cardiff_things;
+		else _vm->_gyro->_interrogation = 0;
 	}
 	break;
 
@@ -628,8 +628,8 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4);
-			_vm->_gyro->magics[kColorBrown - 1].op = _vm->_gyro->nix;
-			_vm->_gyro->whereis[_vm->_gyro->pjacques - 150] = 0;
+			_vm->_gyro->magics[kColorBrown - 1].op = _vm->_gyro->kMagicNothing;
+			_vm->_gyro->_whereIs[_vm->_gyro->pjacques - 150] = 0;
 		}
 		if (ped != 0) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
@@ -903,7 +903,7 @@ void Lucerna::showscore() {
 
 	const bytefield scorespace = {33, 177, 39, 200};
 
-	if (_vm->_gyro->demo)
+	if (_vm->_gyro->kDemo)
 		return;
 
 	uint16 score = _vm->_gyro->dna.score;
@@ -1006,7 +1006,7 @@ void Lucerna::fxtoggle() {
 void Lucerna::objectlist() {
 	_vm->_gyro->dna.carrying = 0;
 	if (_vm->_gyro->thinkthing && !_vm->_gyro->dna.obj[_vm->_gyro->thinks - 1])
-		thinkabout(_vm->_gyro->money, _vm->_gyro->a_thing); // you always have money
+		thinkabout(_vm->_gyro->money, _vm->_gyro->kThing); // you always have money
 	for (byte fv = 0; fv < numobjs; fv++)
 		if (_vm->_gyro->dna.obj[fv]) {
 			_vm->_gyro->dna.carrying++;
@@ -1069,7 +1069,7 @@ void Lucerna::verte(Common::Point cursorPos) {
 
 void Lucerna::checkclick() {
 	Common::Point cursorPos = _vm->getMousePos();
-	_vm->_gyro->ontoolbar = _vm->_gyro->slow_computer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
+	_vm->_gyro->ontoolbar = _vm->_gyro->kSlowComputer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
 	
 	/*if (_vm->_gyro->mrelease > 0)
 	_vm->_gyro->after_the_scroll = false;*/
@@ -1125,10 +1125,10 @@ void Lucerna::checkclick() {
 
 				callverb(_vm->_acci->kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
-				_vm->_trip->tr[0].xs = _vm->_gyro->walk;
+				_vm->_trip->tr[0].xs = _vm->_gyro->kWalk;
 				_vm->_trip->newspeed();
 			} else if ((358 <= cursorPos.x) && (cursorPos.x <= 395)) { // Change speed.
-				_vm->_trip->tr[0].xs = _vm->_gyro->run;
+				_vm->_trip->tr[0].xs = _vm->_gyro->kRun;
 				_vm->_trip->newspeed();
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxtoggle();

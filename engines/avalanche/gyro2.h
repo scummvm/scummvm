@@ -49,14 +49,8 @@ static const int16 maxobjs = 12;  // carry limit
 static const int16 numlockCode = 32;  // Code for Num Lock
 static const int16 mouse_size = 134;
 
-struct postype {
-	uint16 x, y, datapos;
-	byte length;
-};
-
-struct mp { // mouse-void 
-	uint16 mask[2][16];
-	int16 horzhotspot, verthotspot;
+struct MouseHotspotType { // mouse-void 
+	int16 _horizontal, _vertical;
 };
 
 struct dnatype { // here goes... Ux, uy, & ww now all belong to Trip5
@@ -208,7 +202,7 @@ struct demo_type {
 	char key, extd;
 };
 
-struct quasiped_type {
+struct QuasipedType {
 	byte whichped, fgc, room, bgc;
 	uint16 who;
 };
@@ -216,7 +210,7 @@ struct quasiped_type {
 	quasiped "A" is Dogfood. The rooms aren't stored because I'm leaving
 	that to context. */
 
-typedef byte tunetype[31];
+typedef byte TuneType[31];
 
 
 struct PointType {
@@ -334,126 +328,80 @@ public:
 
 	static const int16 margin = 5;
 
-	static const mp mps[9];
+	static const MouseHotspotType kMouseHotSpots[9];
 
-	static const Common::String lads[17];
+	static const Common::String kLads[17];
 
-	static const Common::String lasses[4];
+	static const Common::String kLasses[4];
 
-	static const char ladchar[];
+	static const char kLadChar[];
 
-	static const char lasschar[];
+	static const char kLassChar[];
 
-	static const int16 numtr = 2; // current max no. of sprites
+	static const int16 kMaxSprites = 2; // Current max no. of sprites.
 
-	static const bool a_thing = true;
-	static const bool a_person = false; // for Thinkabout
+	// For Thinkabout:
+	static const bool kThing = true;
+	static const bool kPerson = false; 
 
-	// Magic/portal commands are
-
-	/*N*/ static const int16 nix = 0; // ignore it if this line is touched
-	/*B*/ static const int16 bounces = 1; // bounce off this line. Not valid for portals.
-	/*E*/ static const int16 exclaim = 2; // put up a chain of scrolls
-	/*T*/ static const int16 transport = 3; // enter new room
-	/*U*/ static const int16 unfinished = 4; // unfinished connection
-	/*S*/ static const int16 special = 5; // special function.
-	/*O*/ static const int16 mopendoor = 6; // opening door.
-
+	// Magic/portal constants:
+	enum Magics {
+		kMagicNothing, // Ignore it if this line is touched.
+		kMagicBounce, // Bounce off this line. Not valid for portals.
+		kMagicExclaim, // Put up a chain of scrolls.
+		kMagicTransport, // Enter new room.
+		kMagicUnfinished, // Unfinished connection.
+		kMagicSpecial, // Special function.
+		kMagicOpenDoor // Opening door.
+	};
+	
 	// These following static constants should be included in CFG when it's written.
 
-	static const bool slow_computer = false; // stops walking when mouse touches toolbar
+	static const bool kSlowComputer = false; // Stops walking when mouse touches toolbar.
 
-	/* --- */
+	static const int16 kBorder = 1; // size of border on shadowboxes
 
-	static const int16 border = 1; // size of border on shadowboxes
+	enum Direction {
+		kDirectionUp, kDirectionRight, kDirectionDown, kDirectionLeft,
+		kDirectionUpRight, kDirectionDownRight, kDirectionDownLeft, kDirectionUpLeft,
+		kDirectionStopped
+	};
 
-	static const int32 pagetop = 81920;
+	static const int16 kWalk = 3;
+	static const int16 kRun = 5;
 
-	static const int16 up = 0;
-	static const int16 right = 1;
-	static const int16 down = 2;
-	static const int16 left = 3;
-	static const int16 ur = 4;
-	static const int16 dr = 5;
-	static const int16 dl = 6;
-	static const int16 ul = 7;
-	static const int16 stopped = 8;
+	static const int32 kCatacombMap[8][8];
 
-	static const int16 walk = 3;
-	static const int16 run = 5;
+	static const bool kDemo = false; // If this is true, we're in a demo of the game.
 
-	// Art gallery at 2,1; notice about this at 2,2.
-
-	static const int32 catamap[8][8];
-
-	/* Explanation: $NSEW.
-		Nibble N: North.
-		0     = no connection,
-		2     = (left,) middle(, right) door with left-hand handle,
-		5     = (left,) middle(, right) door with right-hand handle,
-		7     = arch,
-		8     = arch and 1 north of it,
-		9     = arch and 2 north of it,
-		D     = no connection + WINDOW,
-		E     = no connection + TORCH,
-		F     = recessed door (to Geida's room.)
-
-		Nibble S: South.
-		0     = no connection,
-		1,2,3 = left, middle, right door.
-
-		Nibble E: East.
-		0     = no connection (wall),
-		1     = no connection (wall + window),
-		2     = wall with door,
-		3     = wall with door and window,
-		6     = wall with candles,
-		7     = wall with door and candles,
-		F     = straight-through corridor.
-
-		Nibble W: West.
-		0     = no connection (wall),
-		1     = no connection (wall + shield),
-		2     = wall with door,
-		3     = wall with door and shield,
-		4     = no connection (window),
-		5     = wall with door and window,
-		6     = wall with candles,
-		7     = wall with door and candles,
-		F     = straight-through corridor. */
-
-	static const bool demo = false; // If this is true, we're in a demo of the game.
-
-	static const char spludwick_order[3];
+	static const char kSpludwicksOrder[3];
 	 
-	static const quasiped_type quasipeds[16];
+	static const QuasipedType kQuasipeds[16];
 
-	static const int16 lower = 0;
-	static const int16 same = 1;
-	static const int16 higher = 2;
+	enum Pitch {
+		kPitchLower,
+		kPitchSame,
+		kPitchHigher
+	};
 
-	static const char keys[];
-	static const uint16 notes[12];
+	static const char kMusicKeys[];
+	static const uint16 kNotes[12];
 
-	static const tunetype tune;
-
-	// special run-time errors
-
-	static const int16 runerr_getset_overflow = 50;
+	static const TuneType kTune;
 
 
 
 
 
 
-	byte interrogation;
-	/* If this is greater than zero, the next line you type is stored in
-		the DNA in a position dictated by the value. If a scroll comes up,
-		or you leave the room, it's automatically set to zero. */
 
-	static byte whereis[29];
+	byte _interrogation;
+	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.
+	// If a scroll comes up, or you leave the room, it's automatically set to zero.
 
-	bool oncandopageswap; 
+	static byte _whereIs[29];
+
+	bool _onCanDoPageSwap; 
 	// Variable static constant for overriding the ability of On to switch pages.
 	// You may know better than On which page to switch to.
 

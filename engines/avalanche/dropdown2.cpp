@@ -459,7 +459,7 @@ void Dropdown::setupMenuAction() {
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_trip->neardoor());
 	_activeMenuItem.setupOption("Look around", 'L', "f8", true);
 	_activeMenuItem.setupOption("Inventory", 'I', "Tab", true);
-	if (_vm->_trip->tr[0].xs == _vm->_gyro->walk)
+	if (_vm->_trip->tr[0].xs == _vm->_gyro->kWalk)
 		_activeMenuItem.setupOption("Run fast", 'R', "^R", true);
 	else
 		_activeMenuItem.setupOption("Walk slowly", 'W', "^W", true);
@@ -474,7 +474,7 @@ void Dropdown::setupMenuPeople() {
 	_activeMenuItem.reset();
 
 	for (byte i = 150; i <= 178; i++)
-		if (_vm->_gyro->whereis[i - 150] == _vm->_gyro->dna.room) {
+		if (_vm->_gyro->_whereIs[i - 150] == _vm->_gyro->dna.room) {
 			_activeMenuItem.setupOption(_vm->_gyro->getname(i), _vm->_gyro->getnamechar(i), "", true);
 			people = people + i;
 		}
@@ -509,7 +509,7 @@ void Dropdown::setupMenuWith() {
 		// or (c), the _person you've selected is YOU!
 		
 		if ((_vm->_gyro->last_person == _vm->_gyro->pavalot) || (_vm->_gyro->last_person == _vm->_acci->kNothing)
-			|| (_vm->_gyro->whereis[_vm->_gyro->last_person - 150] != _vm->_gyro->dna.room))
+			|| (_vm->_gyro->_whereIs[_vm->_gyro->last_person - 150] != _vm->_gyro->dna.room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_gyro->getname(_vm->_gyro->last_person), 'G', "", true);
@@ -629,10 +629,10 @@ void Dropdown::runMenuAction() {
 		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeInv);
 		break;
 	case 5: {
-		if (_vm->_trip->tr[0].xs == _vm->_gyro->walk)
-			_vm->_trip->tr[0].xs = _vm->_gyro->run;
+		if (_vm->_trip->tr[0].xs == _vm->_gyro->kWalk)
+			_vm->_trip->tr[0].xs = _vm->_gyro->kRun;
 		else
-			_vm->_trip->tr[0].xs = _vm->_gyro->walk;
+			_vm->_trip->tr[0].xs = _vm->_gyro->kWalk;
 		_vm->_trip->newspeed();
 	}
 	break;
@@ -640,11 +640,11 @@ void Dropdown::runMenuAction() {
 }
 
 void Dropdown::runMenuObjects() {
-	_vm->_lucerna->thinkabout(_vm->_gyro->objlist[_activeMenuItem._choiceNum + 1], _vm->_gyro->a_thing);
+	_vm->_lucerna->thinkabout(_vm->_gyro->objlist[_activeMenuItem._choiceNum + 1], _vm->_gyro->kThing);
 }
 
 void Dropdown::runMenuPeople() {
-	_vm->_lucerna->thinkabout(people[_activeMenuItem._choiceNum], _vm->_gyro->a_person);
+	_vm->_lucerna->thinkabout(people[_activeMenuItem._choiceNum], _vm->_gyro->kPerson);
 	_vm->_gyro->last_person = people[_activeMenuItem._choiceNum];
 }
 
