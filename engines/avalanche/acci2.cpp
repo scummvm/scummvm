@@ -517,10 +517,9 @@ void Acci::parse() {
 
 	if (_vm->_parser->pos(Common::String('\xFE'), _thats) > -1) 
 		_unknown = _realWords[_vm->_parser->pos(Common::String('\xFE'), _thats)];
-	else {
-		if (!_unknown.empty())
-			_unknown.clear();
-	}
+	else if (!_unknown.empty())
+		_unknown.clear();
+
 	// Replace words' codes that mean the same.
 	replace(Common::String('\xFF'), 0); // zap noise words
 	replace(Common::String('\xD')  + '\xE2', 1); // "look at" = "examine"

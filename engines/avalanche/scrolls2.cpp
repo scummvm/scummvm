@@ -145,40 +145,42 @@ void Scrolls::normscroll() {
 
 
 
-//	char r;
-//	bool oktoexit;
-//	do {
-//		do {
-//			_vm->_gyro->check(); // was "checkclick;"
-//
+#if 0
+	char r;
+	bool oktoexit;
+	do {
+		do {
+			_vm->_gyro->check(); // was "checkclick;"
+
 //#ifdef RECORD slowdown(); basher::count += 1; #endif
-//
-//			if (_vm->_gyro->demo) {
-//				if (_vm->_basher->demo_ready())
-//					break;
-//				if (_vm->_enhanced->keypressede())
-//					return;
-//			} else if (_vm->_enhanced->keypressede())
-//				break;
-//		} while (!((mrelease > 0) || (buttona1()) || (buttonb1())));
-//
-//
-//		if (mrelease == 0) {
-//			inkey();
-//			if (aboutscroll) {
-//				move(e[2 - 1], e[1 - 1], 7);
-//				e[8 - 1] = inchar;
-//				if (egg == e)  easteregg();
-//			}
-//			oktoexit = set::of('\15', '\33', '+', '#', eos).has(inchar);
-//			if (! oktoexit)  errorled();
-//		}
-//
-//	} while (!((oktoexit) || (mrelease > 0)));
-//
+
+			if (_vm->_gyro->demo) {
+				if (_vm->_basher->demo_ready())
+					break;
+				if (_vm->_enhanced->keypressede())
+					return;
+			} else if (_vm->_enhanced->keypressede())
+				break;
+		} while (!((mrelease > 0) || (buttona1()) || (buttonb1())));
+
+
+		if (mrelease == 0) {
+			inkey();
+			if (aboutscroll) {
+				move(e[2 - 1], e[1 - 1], 7);
+				e[8 - 1] = inchar;
+				if (egg == e)  easteregg();
+			}
+			oktoexit = set::of('\15', '\33', '+', '#', eos).has(inchar);
+			if (! oktoexit)  errorled();
+		}
+
+	} while (!((oktoexit) || (mrelease > 0)));
+
 //#ifdef RECORD record_one(); #endif
-//
-//	_vm->_gyro->screturn = r == '#'; // "back door"
+
+	_vm->_gyro->screturn = r == '#'; // "back door"
+#endif
 
 	state(0);
 	_vm->_gyro->seescroll = false;
@@ -647,18 +649,17 @@ void Scrolls::calldrivers() {
 
 	uint16 size = _vm->_gyro->bufsize;
 
-	for (fv = 0; fv < size; fv++)
+	for (fv = 0; fv < size; fv++) {
 		if (mouthnext) {
 			if (_vm->_gyro->buffer[fv] == kControlRegister)
 				param = 0;
-			else
-				if (('0' <= _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] <= '9'))
-					param = _vm->_gyro->buffer[fv] - 48;
-				else if (('A' <= _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] <= 'Z'))
-					param = _vm->_gyro->buffer[fv] - 55;
+			else if (('0' <= _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] <= '9'))
+				param = _vm->_gyro->buffer[fv] - 48;
+			else if (('A' <= _vm->_gyro->buffer[fv]) && (_vm->_gyro->buffer[fv] <= 'Z'))
+				param = _vm->_gyro->buffer[fv] - 55;
 
 			mouthnext = false;
-		} else
+		} else {
 			switch (_vm->_gyro->buffer[fv]) {
 			case kControlParagraph: {
 				if ((_vm->_gyro->scrolln == 1) && (_vm->_gyro->scroll[0].empty()))
@@ -689,13 +690,13 @@ void Scrolls::calldrivers() {
 
 				if (param == 0)
 					natural();
-				else if ((1 <= param) && (param <= 9))
+				else if ((1 <= param) && (param <= 9)) {
 					if ((param > _vm->_trip->numtr) || (!_vm->_trip->tr[param - 1].quick)) { // Not valid.
 						_vm->_lucerna->errorled();
 						natural();
 					} else
 						_vm->_trip->tr[param - 1].chatter(); // Normal sprite talking routine.
-				else if ((10 <= param) && (param <= 36)) {
+				} else if ((10 <= param) && (param <= 36)) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
@@ -802,6 +803,8 @@ void Scrolls::calldrivers() {
 				_vm->_gyro->scroll[_vm->_gyro->scrolln - 1] += _vm->_gyro->buffer[fv];
 				}
 			}
+		}
+	}
 }
 
 void Scrolls::display(Common::String z) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
