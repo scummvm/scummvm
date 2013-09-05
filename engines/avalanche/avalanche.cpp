@@ -701,22 +701,24 @@ Common::Error AvalancheEngine::run() {
 	do {
 		runAvalot();
 
+		// Needed for later implementation!!! Don't remove these comments!!!
+		
 		//if (dosexitcode != 77)  quit(); // Didn't stop for us.
 
-		switch (_storage._operation) {
-		case kRunShootemup:
-			run("seu.avx", kJsb, kBflight, kNormal);
-			break;
-		case kRunDosshell:
-			dosShell();
-			break;
-		case kRunGhostroom:
-			run("g-room.avx", kJsb, kNoBflight, kNormal);
-			break;
-		case kRunGolden:
-			run("golden.avx", kJsb, kBflight, kMusical);
-			break;
-		}
+		//switch (_storage._operation) {
+		//case kRunShootemup:
+		//	run("seu.avx", kJsb, kBflight, kNormal);
+		//	break;
+		//case kRunDosshell:
+		//	dosShell();
+		//	break;
+		//case kRunGhostroom:
+		//	run("g-room.avx", kJsb, kNoBflight, kNormal);
+		//	break;
+		//case kRunGolden:
+		//	run("golden.avx", kJsb, kBflight, kMusical);
+		//	break;
+		//}
 
 	} while (false);
 

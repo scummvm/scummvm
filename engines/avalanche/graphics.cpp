@@ -222,24 +222,24 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
 	// This function mimics Pascal's getimage().
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
-	uint16 pictureWidth = file.readUint16LE() + 1;
-	uint16 pictureHeight = file.readUint16LE() + 1;
+	uint16 width = file.readUint16LE() + 1;
+	uint16 height = file.readUint16LE() + 1;
 
 	::Graphics::Surface picture; // We make a Surface object for the picture itself.
-
-	picture.create(pictureWidth, pictureHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
-	for (byte y = 0; y < pictureHeight; y++)
+	for (byte y = 0; y < height; y++) 
 		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
-			for (uint16 x = 0; x < pictureWidth; x += 8) {
+			for (uint16 x = 0; x < width; x += 8) {
 				byte pixel = file.readByte();
 				for (byte bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
+					if (pixelBit != 0)
+						*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
 				} 
 			}
-
+		
 	return picture;
 }
 
@@ -249,7 +249,6 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	// and we read the picture plane-by-plane.
 
 	::Graphics::Surface picture;
-
 	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	for (byte plane = 0; plane < 4; plane++)
