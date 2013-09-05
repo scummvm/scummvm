@@ -43,12 +43,12 @@ const byte r__argentroad = 10;
 const byte r__wisewomans = 11;
 const byte r__spludwicks = 12;
 const byte r__insideabbey = 13;
-const byte r__outsideabbey = 14; /*{ assumed }*/
+const byte r__outsideabbey = 14; // assumed
 const byte r__avvysgarden = 15;
 const byte r__aylesoffice = 16;
 const byte r__argentpub = 19;
 const byte r__brummieroad = 20;
-const byte r__bridge = 21; /*{ ? not sure }*/
+const byte r__bridge = 21; // ? not sure
 const byte r__lusties = 22;
 const byte r__lustiesroom = 23;
 const byte r__westhall = 25;
@@ -76,11 +76,11 @@ const byte r__insidecardiffcastle = 71;
 
 //{ -------------- }
 
-/*{ place80 appears to be bogus }*/
+// place80 appears to be bogus
 
 //{ -------------- }
 
-const byte r__bosskey = 98; /*{ assumed }*/
+const byte r__bosskey = 98; // assumed 
 const byte r__map = 99;
 
 } // End of namespace Avalanche

@@ -148,39 +148,39 @@ const char Gyro::ladchar[] = "ASCDMTRwLfgeIyPu";
 const char Gyro::lasschar[] = "kG±o";
 
 const int32 Gyro::catamap[8][8] = {
-	/* Geida's room */
-	/*  1     2			3   | 4     5		6		7     8*/
+	// Geida's room
+	// 1     2			3   | 4     5		6		7     8
 	{0x204, 0x200, 0xd0f0, 0xf0ff, 0xff, 0xd20f, 0xd200, 0x200},
 	{0x50f1, 0x20ff, 0x2ff, 0xff, 0xe0ff, 0x20ff, 0x200f, 0x7210},
 	{0xe3f0, 0xe10f, 0x72f0, 0xff, 0xe0ff, 0xff, 0xff, 0x800f},
-	{0x2201, 0x2030, 0x800f, 0x220, 0x20f, 0x30, 0xff, 0x23f}, /* >> Oubliette */
+	{0x2201, 0x2030, 0x800f, 0x220, 0x20f, 0x30, 0xff, 0x23f}, // >> Oubliette
 	{0x5024, 0xf3, 0xff, 0x200f, 0x22f0, 0x20f, 0x200, 0x7260},
 	{0xf0, 0x2ff, 0xe2ff, 0xff, 0x200f, 0x50f0, 0x72ff, 0x201f},
-	{0xf6, 0x220f, 0x22f0, 0x30f, 0xf0, 0x20f, 0x8200, 0x2f0}, /* <<< In here */
+	{0xf6, 0x220f, 0x22f0, 0x30f, 0xf0, 0x20f, 0x8200, 0x2f0}, // <<< In here
 	{0x34, 0x200f, 0x51f0, 0x201f, 0xf1, 0x50ff, 0x902f, 0x2062}
 };
-/* vv Stairs trap. */
+// vv Stairs trap.
 
 const char Gyro::spludwick_order[3] = {onion, ink, mushroom};
 
 const quasiped_type Gyro::quasipeds[16] = {
-	{2, lightgray, 19, brown, pdogfood},                       /* A: Dogfood (screen 19). */
-	{3, green,     19, white, pibythneth},                         /* B: Ibythneth (screen 19). */
-	{3, white,     1, magenta, parkata},                        /* C: Arkata (screen 1). */
-	{3, black,     23, red, 177},                         /* D: Hawk (screen 23). */
-	{3, lightgreen, 50, brown, ptrader},                        /* E: Trader (screen 50). */
-	{6, yellow,    42, red, pavalot},                           /* F: Avvy, tied up (scr.42) */
-	{2, blue,      16, white, payles},                         /* G: Ayles (screen 16). */
-	{2, brown,     7, white, pjacques},                          /* H: Jacques (screen 7). */
-	{2, lightgreen, 47, green, pspurge},                        /* I: Spurge (screen 47). */
-	{3, yellow,    47, red, pavalot},                           /* J: Avalot (screen 47). */
-	{2, lightgray, 23, black, pdulustie},                         /* K: du Lustie (screen 23). */
-	{2, yellow,    27, red, pavalot},                           /* L: Avalot (screen 27). */
-	{3, white,     27, red, 177},                         /* M: Avaroid (screen 27). */
-	{4, lightgray, 19, darkgray, pmalagauche},                        /*N: Malagauche (screen 19). */
-	{5, lightmagenta, 47, red, pport},                           /* O: Port (screen 47). */
-	{2, lightgreen, 51, darkgray, pdrduck}
-};                         /*P: Duck (screen 51). */
+	{2, lightgray, 19, brown, pdogfood},                       // A: Dogfood (screen 19). 
+	{3, green,     19, white, pibythneth},                     // B: Ibythneth (screen 19).
+	{3, white,     1, magenta, parkata},                       // C: Arkata (screen 1).
+	{3, black,     23, red, 177},							   // D: Hawk (screen 23).
+	{3, lightgreen, 50, brown, ptrader},                       // E: Trader (screen 50).
+	{6, yellow,    42, red, pavalot},                          // F: Avvy, tied up (scr.42)
+	{2, blue,      16, white, payles},                         // G: Ayles (screen 16).
+	{2, brown,     7, white, pjacques},                        // H: Jacques (screen 7).
+	{2, lightgreen, 47, green, pspurge},                       // I: Spurge (screen 47).
+	{3, yellow,    47, red, pavalot},                          // J: Avalot (screen 47).
+	{2, lightgray, 23, black, pdulustie},                      // K: du Lustie (screen 23).
+	{2, yellow,    27, red, pavalot},                          // L: Avalot (screen 27).
+	{3, white,     27, red, 177},                              // M: Avaroid (screen 27).
+	{4, lightgray, 19, darkgray, pmalagauche},                 // N: Malagauche (screen 19).
+	{5, lightmagenta, 47, red, pport},                         // O: Port (screen 47).
+	{2, lightgreen, 51, darkgray, pdrduck}                     // P: Duck (screen 51).
+};
 
 const char Gyro::keys[] = "QWERTYUIOP[]";
 
@@ -194,30 +194,30 @@ const tunetype Gyro::tune = {
 };
 
 byte Gyro::whereis[29] = {
-	/* The Lads */
-	r__yours, /* Avvy */
-	r__spludwicks, /* Spludwick */
-	r__outsideyours, /* Crapulus */
-	r__ducks, /* Duck - r__DucksRoom's not defined yet. */
-	r__argentpub, /* Malagauche */
-	r__robins, /* Friar Tuck. */
-	177, /* Robin Hood - can't meet him at the start. */
-	r__brummieroad, /* Cwytalot */
-	r__lustiesroom, /* Baron du Lustie. */
-	r__outsidecardiffcastle, /* The Duke of Cardiff. */
-	r__argentpub, /* Dogfood */
-	r__outsideducks, /* Trader */
-	r__argentpub, /* Ibythneth */
-	r__aylesoffice, /* Ayles */
-	r__nottspub, /* Port */
-	r__nottspub, /* Spurge */
-	r__musicroom, /* Jacques */
+	// The Lads
+	r__yours, // Avvy
+	r__spludwicks, // Spludwick
+	r__outsideyours, // Crapulus
+	r__ducks, // Duck - r__DucksRoom's not defined yet.
+	r__argentpub, // Malagauche
+	r__robins, // Friar Tuck.
+	177, // Robin Hood - can't meet him at the start.
+	r__brummieroad, // Cwytalot
+	r__lustiesroom, // Baron du Lustie.
+	r__outsidecardiffcastle, // The Duke of Cardiff.
+	r__argentpub, // Dogfood
+	r__outsideducks, // Trader
+	r__argentpub, // Ibythneth
+	r__aylesoffice, // Ayles
+	r__nottspub, // Port
+	r__nottspub, // Spurge
+	r__musicroom, // Jacques
 	0, 0, 0, 0, 0, 0, 0, 0,
-	/* The Lasses */
-	r__yours, /* Arkata */
-	r__geidas, /* Geida */
-	177, /* nobody allocated here! */
-	r__wisewomans  /* The Wise Woman. */
+	// The Lasses
+	r__yours, // Arkata
+	r__geidas, // Geida
+	177, // nobody allocated here!
+	r__wisewomans  // The Wise Woman.
 };
 
 const Common::String Gyro::things[numobjs] = {
@@ -226,7 +226,7 @@ const Common::String Gyro::things[numobjs] = {
 	"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
 };
 
-const char Gyro::thingchar[] = "WMBParCLguKeSnIohn"; /* V=Vinegar */
+const char Gyro::thingchar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
 
 const Common::String Gyro::better[numobjs] = {
 	"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
@@ -240,7 +240,7 @@ const char Gyro::betterchar[] = "WMBParCLguKeSnIohn";
 Gyro::Gyro(AvalancheEngine *vm) : interrogation(0), oncandopageswap(true) {
 	_vm = vm;
 
-	/* Needed because of Lucerna::load_also() */
+	// Needed because of Lucerna::load_also()
 	for (int fv = 0; fv < 31; fv++) {
 		for (int ff = 0; ff < 2; ff++)
 			also[fv][ff] = 0;
@@ -316,14 +316,15 @@ void Gyro::newgame() {
 	alive = true;
 
 	score = 0;
-	/*for gd:=0 to 5 do which[gd]:=1;*/
+	//for gd:=0 to 5 do which[gd]:=1;
 	memset(&_vm->_gyro->dna, 0, sizeof(dnatype));
 	_vm->_scrolls->natural();
 	_vm->_lucerna->mousepage(0);
 	dna.spare_evening = "answer a questionnaire";
 	dna.like2drink = "beer";
 
-	dna.pence = 30; /* 2/6 */ dna.rw = stopped;
+	dna.pence = 30; // 2/6
+	dna.rw = stopped;
 	dna.wearing = clothes;
 	dna.obj[money - 1] = true;
 	dna.obj[bodkin - 1] = true;
@@ -338,11 +339,11 @@ void Gyro::newgame() {
 	ppos[0][1] = -177; 
 	_vm->_trip->tr[0].appear(300,117,right); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
-	/* fillchar(previous^,sizeof(previous^),#0); { blank out array } */
+	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
 	him = 254;
 	her = 254;
 	it = 254;
-	last_person = 254; /* = Pardon? */
+	last_person = 254; // = Pardon?
 	dna.pass_num = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
 	after_the_scroll = false;
 	dna.user_moves_avvy = false;
@@ -446,7 +447,7 @@ char Gyro::get_thingchar(byte which) {
 	switch (which) {
 	case wine:
 		if (dna.winestate == 3)
-			get_thingchar_result = 'V'; /* Vinegar */
+			get_thingchar_result = 'V'; // Vinegar
 		else
 			get_thingchar_result = thingchar[which - 1];
 		break;
@@ -521,7 +522,7 @@ Common::String Gyro::f5_does() {
 		break;
 	}
 
-	return Common::String(_vm->_acci->kPardon); /* If all else fails... */
+	return Common::String(_vm->_acci->kPardon); // If all else fails...
 }
 
 void Gyro::load_a_mouse(byte which) {
