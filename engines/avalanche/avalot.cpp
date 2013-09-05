@@ -167,6 +167,7 @@ void Avalot::setup() {
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
 	_vm->_parser->cursorOn();
+	_vm->_trip->tr[0].xs = _vm->_gyro->walk;
 	_vm->_trip->newspeed();
 
 

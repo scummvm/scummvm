@@ -64,8 +64,8 @@ Lucerna::~Lucerna() {
 }
 
 void Lucerna::init() {
-	_vm->_gyro->oh = 17717;
-	_vm->_gyro->om = 17717;
+	_vm->_gyro->oh = _vm->_gyro->onh = _vm->_gyro->om = 17717;
+
 #if 0
 	if (_vm->_enhanced->atbios)
 		_vm->_gyro->atkey = "f1";
