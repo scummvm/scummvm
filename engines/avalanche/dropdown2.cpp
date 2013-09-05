@@ -813,6 +813,8 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 
 		}
 	}
+
+	backup.free();
 }
 
 } // End of namespace Avalanche.
