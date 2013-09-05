@@ -182,6 +182,8 @@ public:
 
 	Trip(AvalancheEngine *vm);
 
+	~Trip();
+
 	void trippancy_link();
 
 	void get_back_loretta();

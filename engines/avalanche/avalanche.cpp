@@ -62,7 +62,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _parser;
 
 	delete _avalot;
-	delete _gyro;
 	delete _pingo;
 	delete _scrolls;
 	delete _visa;
@@ -75,6 +74,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _acci;
 	delete _dropdown;
 	delete _closing;
+	delete _gyro;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {

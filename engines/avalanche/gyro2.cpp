@@ -331,6 +331,7 @@ void Gyro::newgame() {
 	dna.obj[bell - 1] = true;
 	dna.obj[clothes - 1] = true;
 	
+	thinkthing = true;
 	thinks = 2;
 	_vm->_lucerna->objectlist();
 	ontoolbar = false;
@@ -383,8 +384,7 @@ bool Gyro::flagset(char x) {
 }
 
 void Gyro::force_numlock() {
-	if ((locks & numlockCode) > 0)
-		locks -= numlockCode;
+	warning("STUB: Gyro::force_numlock()");
 }
 
 bool Gyro::pennycheck(uint16 howmuchby) {

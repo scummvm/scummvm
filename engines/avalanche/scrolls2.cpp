@@ -461,8 +461,8 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	CursorMan.showMouse(true);
 	//settextjustify(0, 0); // sink
 	resetscrolldriver();
-	if (_vm->_gyro->mpress > 0)
-		_vm->_gyro->after_the_scroll = true;
+	/*if (_vm->_gyro->mpress > 0)
+	_vm->_gyro->after_the_scroll = true;*/
 
 	warning("STUB: Scrolls::drawscroll()");
 }
