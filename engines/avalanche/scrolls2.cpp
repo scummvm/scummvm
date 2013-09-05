@@ -142,6 +142,7 @@ void Scrolls::normscroll() {
 	}
 
 	_vm->_graphics->_surface.copyFrom(temp);
+	temp.free();
 
 
 
