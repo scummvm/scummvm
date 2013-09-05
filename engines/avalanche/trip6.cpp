@@ -1119,11 +1119,9 @@ void Trip::apped(byte trn, byte np) {
 	rwsp(trn, _vm->_gyro->peds[np].dir);
 }
 
-
-
 #if 0
    function overlap(x1,y1,x2,y2,x3,y3,x4,y4:uint16):bool;
-	begin { By De Morgan's law: }
+	begin // By De Morgan's law:
 	overlap:=(x2>=x3) and (x4>=x1) and (y2>=y3) and (y4>=y1);
 	end;
 #endif

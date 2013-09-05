@@ -620,7 +620,6 @@ void Scrolls::solidify(byte n) {
 void Scrolls::calldrivers() {
 	uint16 fv;
 	byte nn;
-	char nnn;
 	bool mouthnext;
 	bool call_spriterun; // Only call sprite_run the FIRST time.
 //	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
@@ -760,7 +759,7 @@ void Scrolls::calldrivers() {
 					break;
 				case 11:
 					nn = 1;
-					for (nnn = 0; nnn < numobjs; nnn++) {
+					for (byte nnn = 0; nnn < numobjs; nnn++) {
 						if (_vm->_gyro->dna.obj[nnn]) {
 							nn++;
 							display(_vm->_gyro->get_better(nnn) + ", " + kControlToBuffer);
