@@ -359,6 +359,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 		}
 		drawSprite(destX, destY, sprite);
 
+		sprite._picture.free();
 		f.close();
 	}
 

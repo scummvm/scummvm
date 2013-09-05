@@ -44,6 +44,8 @@ public:
 
 	Lucerna(AvalancheEngine *vm);
 
+	~Lucerna();
+
 	void init();
 
 	void callverb(byte n);
