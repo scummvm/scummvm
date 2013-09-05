@@ -37,7 +37,7 @@ class AvalancheEngine;
 
 class Timeout {
 public:
-	/* reason_ now runs between 1 and 28. */
+	// reason_ now runs between 1 and 28.
 
 	static const int16 reason_drawbridgefalls = 2;
 	static const int16 reason_avariciustalks = 3;
@@ -47,7 +47,7 @@ public:
 	static const int16 reason_cardiffsurvey = 7;
 	static const int16 reason_cwytalot_in_herts = 8;
 	static const int16 reason_getting_tied_up = 9;
-	static const int16 reason_hanging_around = 10; /* Tied to the tree in Nottingham. */
+	static const int16 reason_hanging_around = 10; // Tied to the tree in Nottingham.
 	static const int16 reason_jacques_waking_up = 11;
 	static const int16 reason_naughty_duke = 12;
 	static const int16 reason_jumping = 13;
@@ -68,7 +68,7 @@ public:
 	static const int16 reason_spludwalk = 27;
 	static const int16 reason_geida_sings = 28;
 
-	/* procx now runs between 1 and 41. */
+	// procx now runs between 1 and 41.
 
 	static const int16 procopen_drawbridge = 3;
 	static const int16 procavaricius_talks = 4;
@@ -103,7 +103,7 @@ public:
 	static const int16 procrobin_hood_and_geida = 2;
 	static const int16 procrobin_hood_and_geida_talk = 30;
 	static const int16 procavalot_returns = 31;
-	static const int16 procavvy_sit_down = 33; /* In Nottingham. */
+	static const int16 procavvy_sit_down = 33; // In Nottingham.
 	static const int16 procghost_room_phew = 34;
 	static const int16 procarkata_shouts = 35;
 	static const int16 procwinning = 36;

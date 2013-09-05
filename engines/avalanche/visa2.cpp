@@ -112,7 +112,7 @@ void Visa::speech(byte who, byte subject) {
 	uint16 idx_offset, sez_offset, next_idx_offset;
 
 	if (subject == 0) {
-		/* No subject. */
+		// No subject.
 
 		bubbling = true;
 		report_dixi_errors = false;
@@ -120,9 +120,9 @@ void Visa::speech(byte who, byte subject) {
 		bubbling = false;
 		report_dixi_errors = true;
 	} else {
-		/* Subject given. */
+		// Subject given.
 
-		went_ok = false; /* Assume that until we know otherwise. */
+		went_ok = false; // Assume that until we know otherwise.
 
 		if (!indexfile.open("converse.avd")) {
 			warning("AVALANCHE: Visa: File not found: converse.avd");

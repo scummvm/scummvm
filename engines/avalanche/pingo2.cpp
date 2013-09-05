@@ -49,7 +49,8 @@ void Pingo::dplot(int16 x, int16 y, Common::String z) {
 }
 
 void Pingo::bosskey() {
-/*const
+#if 0
+const
 	months : array[0..11] of char = 'JFMAMJJASOND';
 	title = 'Net Profits';
 	fish = #224; { à }
@@ -78,20 +79,21 @@ begin;
 	dawn; on; setbkcolor(1); repeat check until (mpress>0) or keypressed;
 	while keypressed do r:=readkey; setbkcolor(0); settextjustify(0,0);
 	dusk; setvisualpage(0); setactivepage(0); mousepage(0); dawn;
-	copy02;*/
+	copy02;
+#endif
 
 	warning("STUB: Pingo::bosskey()");
 }
 
-void Pingo::copy02() {   /* taken from Wobble (below) */
+void Pingo::copy02() {   // taken from Wobble (below)
 	warning("STUB: Pingo::copy02()");
 }
 
-void Pingo::copy03() {   /* taken from Wobble (below) */
+void Pingo::copy03() {   // taken from Wobble (below)
 	warning("STUB: Pingo::copy03()");
 }
 
-void Pingo::copypage(byte frp, byte top) { /* taken from Copy02 (above) */
+void Pingo::copypage(byte frp, byte top) { // taken from Copy02 (above)
 	warning("STUB: Pingo::copypage()");
 }
 
@@ -116,13 +118,16 @@ void Pingo::winning_pic() {
 		return;
 	}
 
-	/*for (byte bit = 0; bit <= 3; bit++) {
+#if 0
+	for (byte bit = 0; bit <= 3; bit++) {
 	port[0x3c4] = 2;
 	port[0x3ce] = 4;
 	port[0x3c5] = 1 << bit;
 	port[0x3cf] = bit;
 	blockread(f, mem[0xa000 * 0], 16000);
-	}*/
+	}
+#endif
+
 	warning("STUB: Pingo::winning_pic()");
 
 	f.close();
@@ -132,12 +137,15 @@ void Pingo::winning_pic() {
 
 	_vm->_lucerna->dawn();
 
-	/*do {
+#if 0
+	do {
 		_vm->_gyro->check();
 	} while (!(keypressed() || (mrelease > 0)));
 	while (keypressed())
 		char r = readkey();
-	major_redraw();*/
+	major_redraw();
+#endif
+
 	warning("STUB: Pingo::winning_pic()");
 }
 

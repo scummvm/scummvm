@@ -60,108 +60,108 @@ struct mp { // mouse-void
 };
 
 struct dnatype { // here goes... Ux, uy, & ww now all belong to Trip5
-	byte rw; /* Realway- just for convenience! */
-	byte carrying; /* how many objects you're carrying... */
-	bool obj[numobjs]; /* ...and which ones they are. */
-	int16 score; /* your score, of course */
-	int32 pence; /* your current amount of dosh */
-	byte room; /* your current room */
-	byte wearing; /* what you're wearing */
-	byte swore; /* number of times you've sworn */
-	byte saves; /* number of times this game has been saved */
-	byte rooms[100]; /* Add one to each every time you enter a room */
-	byte alcohol; /* Your blood alcohol level. */
-	byte playednim; /* How many times you've played Nim. */
-	bool wonnim; /* Have you *won* Nim? (That's harder.) */
-	byte winestate; /* 0=good (Notts), 1=passable(Argent) ... 3=vinegar.*/
-	bool cwytalot_gone; /* Has Cwytalot rushed off to Jerusalem yet?*/
+	byte rw; // Realway- just for convenience!
+	byte carrying; // how many objects you're carrying...
+	bool obj[numobjs]; // ...and which ones they are.
+	int16 score; // your score, of course
+	int32 pence; // your current amount of dosh
+	byte room; // your current room
+	byte wearing; // what you're wearing
+	byte swore; // number of times you've sworn
+	byte saves; // number of times this game has been saved
+	byte rooms[100]; // Add one to each every time you enter a room
+	byte alcohol; // Your blood alcohol level.
+	byte playednim; // How many times you've played Nim.
+	bool wonnim; // Have you *won* Nim? (That's harder.)
+	byte winestate; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
+	bool cwytalot_gone; // Has Cwytalot rushed off to Jerusalem yet?
 
-	byte pass_num; /* Number of the passw for this game. */
-	bool ayles_is_awake; /* pretty obvious! */
-	byte drawbridge_open; /* Between 0 (shut) and 4 (open). */
-	byte avaricius_talk; /* How much Avaricius has said to you. */
-	bool bought_onion; /* Have you bought an onion yet? */
-	bool rotten_onion; /* And has it rotted? */
-	bool onion_in_vinegar; /* Is the onion in the vinegar? */
+	byte pass_num; // Number of the passw for this game.
+	bool ayles_is_awake; // pretty obvious!
+	byte drawbridge_open; // Between 0 (shut) and 4 (open).
+	byte avaricius_talk; // How much Avaricius has said to you.
+	bool bought_onion; // Have you bought an onion yet?
+	bool rotten_onion; // And has it rotted?
+	bool onion_in_vinegar; // Is the onion in the vinegar?
 
-	byte given2spludwick; /* 0 = nothing given, 1 = onion... */
-	byte brummie_stairs; /* Progression through the stairs trick. */
-	byte cardiff_things; /* Things you get asked in Cardiff. */
+	byte given2spludwick; // 0 = nothing given, 1 = onion...
+	byte brummie_stairs; // Progression through the stairs trick.
+	byte cardiff_things; // Things you get asked in Cardiff.
 
-	bool cwytalot_in_herts; /* Have you passed Cwytalot in Herts?*/
+	bool cwytalot_in_herts; // Have you passed Cwytalot in Herts?
 
-	bool avvy_is_awake; /* Well? Is Avvy awake? (Screen 1 only.) */
-	bool avvy_in_bed; /* True if Avvy's in bed, but awake. */
+	bool avvy_is_awake; // Well? Is Avvy awake? (Screen 1 only.)
+	bool avvy_in_bed; // True if Avvy's in bed, but awake.
 
-	bool user_moves_avvy; /* If this is false, the user has no
-										control over Avvy's movements. */
+	bool user_moves_avvy; // If this is false, the user has no
+						  // control over Avvy's movements.
 
-	byte dogfoodpos; /* Which way Dogfood's looking in the pub. */
+	byte dogfoodpos; // Which way Dogfood's looking in the pub.
 
-	bool givenbadgetoiby; /* Have you given the badge to Iby yet? */
+	bool givenbadgetoiby; // Have you given the badge to Iby yet?
 
-	bool friar_will_tie_you_up; /* If you're going to get tied up. */
-	bool tied_up; /* You ARE tied up! */
+	bool friar_will_tie_you_up; // If you're going to get tied up.
+	bool tied_up; // You ARE tied up!
 
-	byte box_contents; /* 0 = money (sixpence), 254 = empty, any
-				other number implies the contents of the box. */
+	byte box_contents; // 0 = money (sixpence), 254 = empty, any
+					   // other number implies the contents of the box.
 
-	bool talked_to_crapulus; /* Pretty self-explanatory. */
+	bool talked_to_crapulus; // Pretty self-explanatory.
 
-	byte jacques_awake; /* 0=asleep, 1=awake, 2=gets up, 3=gone. */
+	byte jacques_awake; // 0=asleep, 1=awake, 2=gets up, 3=gone.
 
-	bool ringing_bells; /* Is Jacques ringing the bells? */
+	bool ringing_bells; // Is Jacques ringing the bells?
 
-	bool standing_on_dais; /* In room 71, inside Cardiff Castle. */
-	bool taken_pen; /* Have you taken the pen (in Cardiff?) */
-	bool arrow_triggered; /* And has the arrow been triggered? */
-	bool arrow_in_the_door;  /* Did the arrow hit the wall? */
+	bool standing_on_dais; // In room 71, inside Cardiff Castle.
+	bool taken_pen; // Have you taken the pen (in Cardiff?)
+	bool arrow_triggered; // And has the arrow been triggered?
+	bool arrow_in_the_door;  // Did the arrow hit the wall?
 
 	Common::String like2drink,
 					favourite_song,
 					worst_place_on_earth,
-					spare_evening;            /* Personalisation str's */
+					spare_evening;            // Personalisation str's
 
-	uint32 total_time; /* Your total time playing this game, in ticks.*/
+	uint32 total_time; // Your total time playing this game, in ticks.
 
-	byte jumpstatus; /* Fixes how high you're jumping. */
+	byte jumpstatus; // Fixes how high you're jumping.
 
-	bool mushroom_growing; /* Is the mushroom growing in 42? */
+	bool mushroom_growing; // Is the mushroom growing in 42? 
 
-	bool spludwicks_here; /* Is Spludwick at home? */
+	bool spludwicks_here; // Is Spludwick at home?
 
 	byte last_room;
 	byte last_room_not_map;
 
-	bool crapulus_will_tell; /* Will Crapulus tell you about
-						Spludwick being away? */
+	bool crapulus_will_tell; // Will Crapulus tell you about
+							 // Spludwick being away?
 
 	bool enter_catacombs_from_lusties_room;
-	bool teetotal; /* Are we touching any more drinks? */
-	byte malagauche; /* Position of Malagauche. See Celer for more info. */
-	char drinking; /* What's he getting you? */
+	bool teetotal; // Are we touching any more drinks?
+	byte malagauche; // Position of Malagauche. See Celer for more info.
+	char drinking; // What's he getting you?
 
 	bool entered_lusties_room_as_monk;
 
-	byte cat_x, cat_y;   /* XY coords in the catacombs. */
+	byte cat_x, cat_y;   // XY coords in the catacombs.
 
-	bool avvys_in_the_cupboard; /* On screen 22. */
+	bool avvys_in_the_cupboard; // On screen 22.
 
-	bool geida_follows; /* Is Geida following you? */
+	bool geida_follows; // Is Geida following you?
 
-	byte geida_spin, geida_time; /* For the making "Geida dizzy" joke. */
+	byte geida_spin, geida_time; // For the making "Geida dizzy" joke.
 
-	byte nextbell; /* For the ringing. */
+	byte nextbell; // For the ringing.
 
-	bool geida_given_potion; /* Does Geida have the potion? */
-	bool lustie_is_asleep; /* Is BDL asleep? */
+	bool geida_given_potion; // Does Geida have the potion?
+	bool lustie_is_asleep; // Is BDL asleep?
 
-	byte flip_to_where, flip_to_ped; /* For the sequencer. */
+	byte flip_to_where, flip_to_ped; // For the sequencer.
 
-	bool been_tied_up; /* In r__Robins. */
+	bool been_tied_up; // In r__Robins.
 
-	bool sitting_in_pub; /* Are you sitting down in the pub? */
-	byte spurge_talk; /* Count for talking to Spurge. */
+	bool sitting_in_pub; // Are you sitting down in the pub?
+	byte spurge_talk; // Count for talking to Spurge.
 
 	bool met_avaroid;
 
@@ -176,8 +176,8 @@ struct pedtype {
 };
 
 struct magictype {
-	byte op; /* one of the operations */
-	uint16 data; /* data for them */
+	byte op; // one of the operations
+	uint16 data; // data for them
 };
 
 class fieldtype {
@@ -198,9 +198,9 @@ enum controllers {cjoy, ckey};
 
 typedef Common::String previoustype[20];
 
-struct corridor_type { /* Decarations for the corridors. */
-	uint16 doors; /* Door styles are calc'ed from this uint16.
-					Assign a different number to each one! */
+struct corridor_type { // Decarations for the corridors.
+	uint16 doors; // Door styles are calc'ed from this uint16.
+				  // Assign a different number to each one!
 };
 
 struct demo_type {
@@ -223,7 +223,7 @@ struct PointType {
 	int16 x, y;
 };
 
-struct vmctype { /* Virtual Mouse Cursor */
+struct vmctype { // Virtual Mouse Cursor
 	byte *andpic, *xorpic;
 	byte *backpic[2];
 	PointType wherewas[2];
@@ -232,8 +232,7 @@ struct vmctype { /* Virtual Mouse Cursor */
 };
 
 struct sundry {
-	/* Things which must be saved over a backtobootstrap,
-						outside DNA. */
+	// Things which must be saved over a backtobootstrap, outside DNA.
 	Common::String qenid_filename;
 	bool qsoundfx;
 	char qthinks;
@@ -242,38 +241,38 @@ struct sundry {
 
 struct joysetup {
 	uint16 xmid, ymid, xmin, ymin, xmax, ymax;
-	byte centre; /* Size of centre in tenths */
+	byte centre; // Size of centre in tenths
 };
 
-struct ednahead { /* Edna header */
-	/* This header starts at byte offset 177 in the .ASG file. */
-	char id[9];   /* signature */
-	uint16 revision; /* EDNA revision, here 2 (1=dna256) */
-	Common::String game; /* Long name, eg Lord Avalot D'Argent */
-	Common::String shortname; /* Short name, eg Avalot */
-	uint16 number; /* Game's code number, here 2 */
-	uint16 ver; /* Version number as int16 (eg 1.00 = 100) */
-	Common::String verstr; /* Vernum as Common::String (eg 1.00 = "1.00" */
-	Common::String filename; /* Filename, eg AVALOT.EXE */
-	byte osbyte; /* Saving OS (here 1=DOS. See below for others.*/
-	Common::String os; /* Saving OS in text format. */
+struct ednahead { // Edna header
+	// This header starts at byte offset 177 in the .ASG file.
+	char id[9];   // signature
+	uint16 revision; // EDNA revision, here 2 (1=dna256)
+	Common::String game; // Long name, eg Lord Avalot D'Argent
+	Common::String shortname; // Short name, eg Avalot
+	uint16 number; // Game's code number, here 2
+	uint16 ver; // Version number as int16 (eg 1.00 = 100)
+	Common::String verstr; // Vernum as Common::String (eg 1.00 = "1.00")
+	Common::String filename; // Filename, eg AVALOT.EXE
+	byte osbyte; // Saving OS (here 1=DOS. See below for others.
+	Common::String os; // Saving OS in text format.
 
-	/* Info on this particular game */
+	// Info on this particular game
 
-	Common::String fn; /* Filename (not extension ('cos that's .ASG)) */
-	byte d, m; /* D, M, Y are the Day, Month & Year this game was... */
-	uint16 y;  /* ...saved on. */
-	Common::String desc; /* Description of game (same as in Avaricius!) */
-	uint16 len; /* Length of DNA (it's not going to be above 65535!) */
+	Common::String fn; // Filename (not extension ('cos that's .ASG))
+	byte d, m; // D, M, Y are the Day, Month & Year this game was...
+	uint16 y;  // ...saved on.
+	Common::String desc; // Description of game (same as in Avaricius!)
+	uint16 len; // Length of DNA (it's not going to be above 65535!)
 
-	/* Quick reference & miscellaneous */
+	// Quick reference & miscellaneous
 
-	uint16 saves; /* no. of times this game has been saved */
-	int16 cash; /* contents of your wallet in numerical form */
-	Common::String money; /* ditto in Common::String form (eg 5/-, or 1 denarius)*/
-	uint16 points; /* your score */
+	uint16 saves; // no. of times this game has been saved
+	int16 cash; // contents of your wallet in numerical form
+	Common::String money; // ditto in Common::String form (eg 5/-, or 1 denarius)
+	uint16 points; // your score
 
-	/* DNA values follow, then footer (which is ignored) */
+	// DNA values follow, then footer (which is ignored)
 };
 
 class Gyro {
@@ -281,10 +280,10 @@ public:
 	static const char *vernum;
 	static const char *copyright;
 	static const int16 thisvercode = 130;
-	/* as "vernum", but numerically & without the ".". */
-	static const int16 thisgamecode = 2; /* Avalot's code number */
+	// as "vernum", but numerically & without the ".".
+	static const int16 thisgamecode = 2; // Avalot's code number
 
-	/* Objects you can hold: */
+	// Objects you can hold:
 	static const char wine = 1;
 	static const char money = 2;
 	static const char bodkin = 3;
@@ -304,9 +303,9 @@ public:
 	static const char habit = 17;
 	static const char onion = 18;
 
-	/* People who hang around this game. */
+	// People who hang around this game.
 
-	/* Boys: */
+	// Boys:
 	static const uint16 pavalot = 150;
 	static const uint16 pspludwick = 151;
 	static const uint16 pcrapulus = 152;
@@ -325,13 +324,13 @@ public:
 	static const uint16 pspurge = 165;
 	static const uint16 pjacques = 166;
 
-	/* Girls: */
+	// Girls:
 	static const uint16 parkata = 175;
 	static const uint16 pgeida = 176;
 	static const uint16 pwisewoman = 178;
 
 	static const int16 xw = 30;
-	static const int16 yw = 36; /* x width & y whatsit */
+	static const int16 yw = 36; // x width & y whatsit
 
 	static const int16 margin = 5;
 
@@ -345,28 +344,28 @@ public:
 
 	static const char lasschar[];
 
-	static const int16 numtr = 2; /* current max no. of sprites */
+	static const int16 numtr = 2; // current max no. of sprites
 
 	static const bool a_thing = true;
-	static const bool a_person = false; /* for Thinkabout */
+	static const bool a_person = false; // for Thinkabout
 
-	/* Magic/portal commands are */
+	// Magic/portal commands are
 
-	/*N*/ static const int16 nix = 0; /* ignore it if this line is touched */
-	/*B*/ static const int16 bounces = 1; /* bounce off this line. Not valid for portals. */
-	/*E*/ static const int16 exclaim = 2; /* put up a chain of scrolls */
-	/*T*/ static const int16 transport = 3; /* enter new room */
-	/*U*/ static const int16 unfinished = 4; /* unfinished connection */
-	/*S*/ static const int16 special = 5; /* special function. */
-	/*O*/ static const int16 mopendoor = 6; /* opening door. */
+	/*N*/ static const int16 nix = 0; // ignore it if this line is touched
+	/*B*/ static const int16 bounces = 1; // bounce off this line. Not valid for portals.
+	/*E*/ static const int16 exclaim = 2; // put up a chain of scrolls
+	/*T*/ static const int16 transport = 3; // enter new room
+	/*U*/ static const int16 unfinished = 4; // unfinished connection
+	/*S*/ static const int16 special = 5; // special function.
+	/*O*/ static const int16 mopendoor = 6; // opening door.
 
-	/* These following static constants should be included in CFG when it's written. */
+	// These following static constants should be included in CFG when it's written.
 
-	static const bool slow_computer = false; /* stops walking when mouse touches toolbar */
+	static const bool slow_computer = false; // stops walking when mouse touches toolbar
 
 	/* --- */
 
-	static const int16 border = 1; /* size of border on shadowboxes */
+	static const int16 border = 1; // size of border on shadowboxes
 
 	static const int32 pagetop = 81920;
 
@@ -383,7 +382,7 @@ public:
 	static const int16 walk = 3;
 	static const int16 run = 5;
 
-	/* Art gallery at 2,1; notice about this at 2,2. */
+	// Art gallery at 2,1; notice about this at 2,2.
 
 	static const int32 catamap[8][8];
 
@@ -423,7 +422,7 @@ public:
 		7     = wall with door and candles,
 		F     = straight-through corridor. */
 
-	static const bool demo = false; /* If this is true, we're in a demo of the game. */
+	static const bool demo = false; // If this is true, we're in a demo of the game.
 
 	static const char spludwick_order[3];
 	 
@@ -438,7 +437,7 @@ public:
 
 	static const tunetype tune;
 
-	/* special run-time errors */
+	// special run-time errors
 
 	static const int16 runerr_getset_overflow = 50;
 
@@ -455,28 +454,28 @@ public:
 	static byte whereis[29];
 
 	bool oncandopageswap; 
-	/* Variable static constant for overriding the ability of On to switch pages.
-		* You may know better than On which page to switch to. */
+	// Variable static constant for overriding the ability of On to switch pages.
+	// You may know better than On which page to switch to.
 
 
 
-	/* previous:^previoustype;*/
+	// previous:^previoustype;
 	dnatype dna;
 	byte lineNum; // Number of lines.
-	linetype lines[50]; /* For Also. */
+	linetype lines[50]; // For Also.
 	int16 c;
 	//registers r; // http://www.freepascal.org/docs-html/rtl/dos/registers.html
 	enum { m_no , m_yes , m_virtual } visible;
 	bool dropsok, screturn, soundfx, cheat;
-	uint16 mx, my; /* mouse x & y now */
-	uint16 mpx, mpy; /* mouse x & y when pressed */
-	uint16 mrx, mry; /* mouse x & y when released */
-	byte mpress, mrelease; /* times left mouse button has been pressed/released */
-	byte keystatus; /* Mouse key status */
+	uint16 mx, my; // mouse x & y now
+	uint16 mpx, mpy; // mouse x & y when pressed
+	uint16 mrx, mry; // mouse x & y when released
+	byte mpress, mrelease; // times left mouse button has been pressed/released
+	byte keystatus; // Mouse key status
 	Common::String un[10];
 	byte unn;
 	Common::String mousetext;
-	/* which:array[0..5] of byte;*/
+	// which:array[0..5] of byte;
 	void *p;
 	bool weirdword;
 	byte to_do;
@@ -486,8 +485,8 @@ public:
 	byte thinks;
 	bool thinkthing;
 
-	/* pp:array[1..1000] of postype;
-	bb:array[1..9000] of byte;*/
+	// pp:array[1..1000] of postype;
+	// bb:array[1..9000] of byte;
 	uint16 pptr, bptr;
 	int16 ppos[1][2];
 	uint16 pozzes[24];
@@ -495,7 +494,7 @@ public:
 	void *copier;
 	int16 talkx, talky;
 	byte talkb, talkf;
-	byte scrollbells; /* no. of times to ring the bell */
+	byte scrollbells; // no. of times to ring the bell
 	bool ontoolbar, seescroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 
 	char objlist[10];
@@ -506,8 +505,8 @@ public:
 
 	byte oldrw;
 	int8 lastscore[3];
-	byte cmp; /* current mouse-void **/
-	Common::String verbstr; /* what you can do with your object. :-) */
+	byte cmp; // current mouse-void
+	Common::String verbstr; // what you can do with your object. :-)
 
 	Common::String *also[31][2];
 	pedtype peds[15];
@@ -520,7 +519,7 @@ public:
 
 	uint16 oh, onh, om, hour, minutes, seconds;
 
-	Common::String atkey; /* For XTs, set to "alt-". For ATs, set to "f1". */
+	Common::String atkey; // For XTs, set to "alt-". For ATs, set to "f1".
 
 	byte cp, ledstatus, defaultled;
 	fontType characters;
@@ -528,59 +527,58 @@ public:
 	byte buffer[2000];
 	uint16 bufsize;
 
-	byte oldjw; /* Old joystick-way */
+	byte oldjw; // Old joystick-way
 	controllers ctrl;
 
-	int16 underscroll; /* Y-coord of just under the scroll text. */
+	int16 underscroll; // Y-coord of just under the scroll text.
 
-	/* TSkellern is only temporary, and I'll replace it
-	with a local version when it's all fixed up. */
+	// TSkellern is only temporary, and I'll replace it
+	// with a local version when it's all fixed up.
 
-	/* tskellern:int32 absolute $0:244; { Over int $61 }*/
+	// tskellern:int32 absolute $0:244; { Over int $61 }
 
-	bool ddmnow; /* Kludge so we don't have to keep referring to Dropdown */
-	Common::String roomname; /* Name of this room */
+	bool ddmnow; // Kludge so we don't have to keep referring to Dropdown
+	Common::String roomname; // Name of this room
 
 	//text logfile; // http://wiki.freepascal.org/Text
 	bool log_epson;
 
 	bool cl_override;
 
-	byte locks; /*ABSOLUTE $40:$17;*/
+	byte locks; // ABSOLUTE $40:$17;
 
-	Common::String subject; /* What you're talking to them about. */
-	byte subjnumber; /* The same thing. */
+	Common::String subject; // What you're talking to them about.
+	byte subjnumber; // The same thing.
 
-	bool keyboardclick; /* Is a keyboard click noise wanted? */
+	bool keyboardclick; // Is a keyboard click noise wanted?
 
 	byte him, her, it;
-	int32 roomtime; /* Set to 0 when you enter a room, added to in every loop.*/
+	int32 roomtime; // Set to 0 when you enter a room, added to in every loop.
 
 	bool after_the_scroll;
 
-	/* For the demo: */
+	// For the demo:
 	demo_type demo_rec;
 	Common::File demofile; // of demo_type
 	Common::DumpFile demofile_save; // uruk added it - first use located in constructor of Basher
 
-	byte last_person; /* Last person to have been selected using the People
-						menu. */
+	byte last_person; // Last person to have been selected using the People menu.
 
-	bool doing_sprite_run; /* Only set to True if we're doing a sprite_run
-	at this moment. This stops the trippancy system from moving any of the
-	sprites. */
+	bool doing_sprite_run; // Only set to True if we're doing a sprite_run
+						   // at this moment. This stops the trippancy system
+						   // from moving any of the sprites.
 
 	vmctype vmc;
 	Common::String filetoload;
 
-	bool holdthedawn; /* If this is true, calling Dawn will do nothing.
-	It's used, for example, at the start, to stop Load from dawning. */
+	bool holdthedawn; // If this is true, calling Dawn will do nothing.
+					  // It's used, for example, at the start, to stop Load from dawning.
 
-	uint16 storage_seg, storage_ofs; /* Seg and ofs of the Storage area. */
-	uint16 skellern; /* Offset of the timer variable - 1 more than storage_OFS */
+	uint16 storage_seg, storage_ofs; // Seg and ofs of the Storage area.
+	uint16 skellern; // Offset of the timer variable - 1 more than storage_OFS
 	bool isLoaded; // Is it a loaded gamestate?
 
-	bool super_was_virtual, super_was_off; /* Used by Super_Off and Super_On */
+	bool super_was_virtual, super_was_off; // Used by Super_Off and Super_On
 
 	Common::String enid_filename;
 

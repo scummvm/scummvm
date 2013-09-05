@@ -44,11 +44,11 @@ Sequence::Sequence(AvalancheEngine *vm) {
 }
 
 void Sequence::first_show(byte what) {
-	/* First, we need to blank out the entire array. */
+	// First, we need to blank out the entire array.
 	for (uint i = 0; i < sizeof(seq); i++)
 		seq[i] = 0;
 
-	/* Then it's just the same as then_show. */
+	// Then it's just the same as then_show.
 	then_show(what);
 
 }
@@ -75,16 +75,16 @@ void Sequence::start_to_close() {
 }
 
 void Sequence::start_to_open() {
-	_vm->_gyro->dna.user_moves_avvy = false; /* They can't move. */
-	_vm->_trip->stopwalking(); /* And they're not moving now. */
-	start_to_close(); /* Apart from that, it's the same thing. */
+	_vm->_gyro->dna.user_moves_avvy = false; // They can't move.
+	_vm->_trip->stopwalking(); // And they're not moving now.
+	start_to_close(); // Apart from that, it's the same thing.
 }
 
 
 
-/* This PROC is called by Timeout when it's time to do another frame. */
+// This PROC is called by Timeout when it's time to do another frame.
 void Sequence::shove_left() {
-	memcpy(seq, seq+1, seq_length - 1); /* Shift everything to the left. */
+	memcpy(seq, seq+1, seq_length - 1); // Shift everything to the left.
 }
 
 void Sequence::call_sequencer() {
@@ -101,12 +101,12 @@ void Sequence::call_sequencer() {
 	}
 
 	if ((seq[0] >= 1) && (seq[0] <= 176)) {
-		/* Show a frame. */
+		// Show a frame.
 		_vm->_celer->drawBackgroundSprite(-1, -1, seq[0]);
 		shove_left();
 	}
 	
-	start_to_close(); /* Make sure this PROC gets called again. */
+	start_to_close(); // Make sure this PROC gets called again.
 }
 
 } // End of namespace Avalanche.

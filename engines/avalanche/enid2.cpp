@@ -54,14 +54,14 @@ const char Enid::tab = '\t';
 const char Enid::eof_ = '\n';
 
 const Common::String Enid::ednafirst =
-	Common::String("This is an EDNA-based file, saved by a Thorsoft game. Good luck!") + /*64*/
-	crlf + eof_ + crlf + crlf + /*7*/
-	tab + "Glory to God in the highest," + crlf + /*31*/
-	tab + "and on earth peace, goodwill toward men." + /*42*/
-	crlf + tab + tab + tab + tab + /*6*/
-	"Luke 2:14." + /*10*/
-	crlf + crlf + crlf + /* 6 */
-	"1234567890" +crlf; /*11*/
+	Common::String("This is an EDNA-based file, saved by a Thorsoft game. Good luck!") + // 64
+	crlf + eof_ + crlf + crlf + // 7
+	tab + "Glory to God in the highest," + crlf + // 31
+	tab + "and on earth peace, goodwill toward men." + // 42
+	crlf + tab + tab + tab + tab + // 6
+	"Luke 2:14." + // 10
+	crlf + crlf + crlf + // 6
+	"1234567890" +crlf; // 11
 
 const Common::String Enid::ednaid = Common::String("TT") + char(261) + char(60) + char(1) + char(165) + char(261) + char(231) + char(261);
 
@@ -165,17 +165,19 @@ void Enid::showheader() {
 	_vm->_scrolls->display(Common::String("Dir: ") + path + "\r\r\4");
 }
 
-void Enid::dir(Common::String where) { /* OK, it worked in Avaricius, let's do it in Avalot! */
+void Enid::dir(Common::String where) { // OK, it worked in Avaricius, let's do it in Avalot!
 	warning("STUB: Enid::dir()");
 }
 
-void Enid::avvy_background() {    /* Not really a filing procedure,
-	but it's only called just before edna_load, so I thought I'd put it
-	in Enid instead of, say, Lucerna. */
+void Enid::avvy_background() {    
+	// Not really a filing procedure,
+	// but it's only called just before edna_load, so I thought I'd put it
+	// in Enid instead of, say, Lucerna.
 	
-	/* port[$3c4]:=2; port[$3ce]:=4; port[$3C5]:=1; port[$3CF]:=1; { Blue. }*/
-	/*
-		asm
+#if 0
+	port[$3c4]:=2; port[$3ce]:=4; port[$3C5]:=1; port[$3CF]:=1; { Blue. }
+
+	asm
 		mov dx,$3c4; mov al,2; out dx,al; { Set up the VGA to use the "blue" }
 		mov dx,$3ce; mov al,4; out dx,al; { register. }
 		mov dx,$3c5; mov al,1; out dx,al;
@@ -246,7 +248,7 @@ void Enid::avvy_background() {    /* Not really a filing procedure,
 
 		@the_end:
 		end;
-	*/
+#endif
 }
 
 void Enid::to_sundry(sundry &sund) {
@@ -274,8 +276,8 @@ void Enid::edna_reload() {
 
 	restore_dna();
 
-	_vm->_gyro->seescroll = true;  /* This prevents display of the new sprites before the
-	new picture is loaded. */
+	_vm->_gyro->seescroll = true;  // This prevents display of the new sprites before the
+								   // new picture is loaded.
 
 	_vm->_lucerna->major_redraw();
 

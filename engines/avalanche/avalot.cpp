@@ -44,8 +44,6 @@
 #include "avalanche/visa2.h"
 #include "avalanche/closing2.h"
 
-/*#include "Incline.h"*/
-
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/config-manager.h"
@@ -140,7 +138,7 @@ void Avalot::setup() {
 	_vm->_gyro->holdthedawn = true;
 	_vm->_lucerna->dusk();
 	_vm->_gyro->cmp = 177;
-	_vm->_lucerna->mouse_init();  /*on;*/
+	_vm->_lucerna->mouse_init();  // on;
 	_vm->_gyro->dropsok = true;
 	_vm->_gyro->ctrl = ckey;
 	_vm->_gyro->oldjw = 177;
@@ -154,7 +152,7 @@ void Avalot::setup() {
 	_vm->_parser->_quote = true;
 	_vm->_gyro->ledstatus = 177;
 	_vm->_gyro->defaultled = 2;
-	/* TSkellern:=0; { Replace with a more local variable sometime }*/
+	// TSkellern = 0; Replace with a more local variable sometime
 	_vm->_gyro->dna.rw = _vm->_gyro->stopped;
 	_vm->_gyro->enid_filename = ""; // Undefined.
 	_vm->_lucerna->toolbar();
@@ -214,16 +212,17 @@ void Avalot::run(Common::String arg) {
 
 
 
+#ifdef DEBUG
 		// ONLY FOR TESTING!!!
-		/*for (byte i = 0; i < _vm->_gyro->lineNum; i++) 
-		_vm->_graphics->_surface.drawLine(_vm->_gyro->lines[i].x1, _vm->_gyro->lines[i].y1, _vm->_gyro->lines[i].x2, _vm->_gyro->lines[i].y2, _vm->_gyro->lines[i].col);
+		for (byte i = 0; i < _vm->_gyro->lineNum; i++) 
+			_vm->_graphics->_surface.drawLine(_vm->_gyro->lines[i].x1, _vm->_gyro->lines[i].y1, _vm->_gyro->lines[i].x2, _vm->_gyro->lines[i].y2, _vm->_gyro->lines[i].col);
 
 		for (byte i = 0; i < _vm->_gyro->numfields; i++) {
-		if (_vm->_gyro->fields[i].x1 < 640)
-		_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), lightmagenta);
-		}*/
-		// ONYL FOR TESTING!!!
-
+			if (_vm->_gyro->fields[i].x1 < 640)
+				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), lightmagenta);
+		}
+		// ONLY FOR TESTING!!!
+#endif
 
 
 		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
