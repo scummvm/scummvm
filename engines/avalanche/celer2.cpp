@@ -371,7 +371,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 
 
 
-void Celer::drawSprite(int16 x, int16 y, const SpriteType &sprite) {
+void Celer::drawSprite(int16 x, int16 y, SpriteType &sprite) {
 	_r.x1 = x;
 	_r.y1 = y;
 	_r.y2 = y + sprite._yl;

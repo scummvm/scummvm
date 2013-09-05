@@ -39,7 +39,7 @@
 
 namespace Avalanche {
 
-const byte Graphics::_egaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
+const byte Graphics::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 
 
 
@@ -57,7 +57,7 @@ void Graphics::init() {
 	}
 
 	for (byte i = 0; i < 16; i++)
-		g_system->getPaletteManager()->setPalette(_egaPalette[_egaPaletteIndex[i]], i, 1);
+		g_system->getPaletteManager()->setPalette(_egaPalette[kEgaPaletteIndex[i]], i, 1);
 
 	_surface.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 
@@ -309,7 +309,7 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	return picture;
 }
 
-void Graphics::drawPicture(const ::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
+void Graphics::drawPicture(::Graphics::Surface &target, ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
 	for (uint16 y = 0; y < picture.h; y++)
 		for (uint16 x = 0; x < picture.w; x++)

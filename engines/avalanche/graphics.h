@@ -115,7 +115,7 @@ public:
 	::Graphics::Surface loadPictureRow(Common::File &file, uint16 width, uint16 height); // Reads Row-planar EGA data.
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 
-	void drawPicture(const ::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
+	void drawPicture(::Graphics::Surface &target, ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
 
 	void refreshScreen();
 
@@ -124,7 +124,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	static const byte _egaPaletteIndex[16];
+	static const byte kEgaPaletteIndex[16];
 
 	byte _egaPalette[64][3];
 };
