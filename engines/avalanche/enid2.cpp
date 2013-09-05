@@ -45,6 +45,8 @@ Enid::Enid(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
+//  CHECKME: useless?
+#if 0
 const Common::String Enid::kCrlf = Common::String(char(15)) + Common::String(char(12));
 const char Enid::kTab = '\t';
 const char Enid::kEof = '\n';
@@ -60,17 +62,16 @@ const Common::String Enid::kEdnaFirst =
 	"1234567890" +kCrlf; // 11
 
 const Common::String Enid::kEdnaId = Common::String("TT\xB1\x30\x01\x75\xB1\x99\xB1");
-
 const int16 Enid::kAge = 18;
 const Common::String Enid::kWasHere = "Thomas was here ";
-
 const Enid::FourType Enid::kAvariciusFile = "Avvy";
 
-
-
-void Enid::addon(Common::String x) {
-	//month[0]--;
-	_month = _month + x;
+/**
+ * Expand month name
+ * @remarks	Originally called 'addon'
+ */
+void Enid::expandMonthName(Common::String x) {
+	_month += x;
 }
 
 Common::String Enid::expandDate(byte d, byte m, uint16 y) {
@@ -83,10 +84,10 @@ Common::String Enid::expandDate(byte d, byte m, uint16 y) {
 	_month = months[m];
 	switch (_month[_month.size()]) {
 	case '#':
-		addon("uary");
+		expandMonthName("uary");
 		break;
 	case '*':
-		addon("ber");
+		expandMonthName("ber");
 		break;
 	}
 
@@ -159,10 +160,6 @@ void Enid::ednaLoad(Common::String name) {
 
 void Enid::showHeader() {
 	_vm->_scrolls->display(Common::String("Dir: ") + _path + "\r\r\4");
-}
-
-void Enid::dir(Common::String where) { // OK, it worked in Avaricius, let's do it in Avalot!
-	warning("STUB: Enid::dir()");
 }
 
 void Enid::avvyBackground() {    
@@ -289,13 +286,17 @@ void Enid::ednaReload() {
 	}
 }
 
-void Enid::backToBootstrap(byte what) {
-	warning("STUB: Enid::back_to_bootstrap()");
-}
-
 bool Enid::thereWasAProblem() {
 	return _bug;
 }
 
+#endif
+
+void Enid::dir(Common::String where) { // OK, it worked in Avaricius, let's do it in Avalot!
+	warning("STUB: Enid::dir()");
+}
+void Enid::backToBootstrap(byte what) {
+	warning("STUB: Enid::back_to_bootstrap()");
+}
 
 } // End of namespace Avalanche.
