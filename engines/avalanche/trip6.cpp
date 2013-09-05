@@ -88,28 +88,28 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	inf.skip(16 - commentSize);
 
 	a.num = inf.readByte();
-	_info.xl = inf.readByte();
-	_info.yl = inf.readByte();
+	_info._xLength = inf.readByte();
+	_info._yLength = inf.readByte();
 	a.seq = inf.readByte();
-	_info.size = inf.readUint16LE();
+	_info._size = inf.readUint16LE();
 	a.fgc = inf.readByte();
 	a.bgc = inf.readByte();
 	a.accinum = inf.readByte();
 
 	totalnum = 0; // = 1;
-	_info.xw = _info.xl / 8;
-	if ((_info.xl % 8) > 0)
-		_info.xw++;
+	_info._xWidth = _info._xLength / 8;
+	if ((_info._xLength % 8) > 0)
+		_info._xWidth++;
 	for (byte aa = 0; aa < /*nds*seq*/a.num; aa++) {
 
-		_info.sil[totalnum] = new siltype[11 * (_info.yl + 1)];
+		_info._sil[totalnum] = new SilType[11 * (_info._yLength + 1)];
 		//getmem(sil[totalnum-1], 11 * (a.yl + 1));
-		_info.mani[totalnum] = new manitype[_info.size - 6];
+		_info._mani[totalnum] = new ManiType[_info._size - 6];
 		//getmem(mani[totalnum-1], a.size - 6);
-		for (fv = 0; fv <= _info.yl; fv++)
-			inf.read((*_info.sil[totalnum])[fv], _info.xw);
+		for (fv = 0; fv <= _info._yLength; fv++)
+			inf.read((*_info._sil[totalnum])[fv], _info._xWidth);
 			//blockread(inf, (*sil[totalnum-1])[fv], xw);
-		inf.read(*_info.mani[totalnum], _info.size - 6);
+		inf.read(*_info._mani[totalnum], _info._size - 6);
 		//blockread(inf, *mani[totalnum-1], a.size - 6);
 
 		totalnum++;
@@ -173,8 +173,8 @@ void triptype::appear(int16 wx, int16 wy, byte wf) {
 bool triptype::collision_check() {
 	for (byte fv = 0; fv < _tr->numtr; fv++) 
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
-			((x + _info.xl) > _tr->tr[fv].x) &&
-			(x < (_tr->tr[fv].x + _tr->tr[fv]._info.xl)) &&
+			((x + _info._xLength) > _tr->tr[fv].x) &&
+			(x < (_tr->tr[fv].x + _tr->tr[fv]._info._xLength)) &&
 			(_tr->tr[fv].y == y)) 
 				return true;
 
@@ -191,8 +191,8 @@ void triptype::walk() {
 		if (r.x1 == 255)
 			r.x1 = 0;
 		r.y1 = y - 2;
-		r.x2 = ((x + _info.xl) / 8) + 1;
-		r.y2 = y + _info.yl + 2;
+		r.x2 = ((x + _info._xLength) / 8) + 1;
+		r.y2 = y + _info._yLength + 2;
 		
 		_tr->getset[1 - _tr->_vm->_gyro->cp].remember(r);
 	}
@@ -212,7 +212,7 @@ void triptype::walk() {
 			return;
 		}
 
-		tc = _tr->checkfeet(x, x + _info.xl, oy[_tr->_vm->_gyro->cp], y, _info.yl) - 1;
+		tc = _tr->checkfeet(x, x + _info._xLength, oy[_tr->_vm->_gyro->cp], y, _info._yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
 		if ((tc != 255) & (!_tr->_vm->_gyro->doing_sprite_run)) {
@@ -279,8 +279,8 @@ int8 triptype::sgn(int16 val) {
 void triptype::walkto(byte pednum) {
 	pednum--; // Pascal -> C conversion: different array indexes.
 	speed(sgn(_tr->_vm->_gyro->peds[pednum].x - x) * 4, sgn(_tr->_vm->_gyro->peds[pednum].y - y));
-	hx = _tr->_vm->_gyro->peds[pednum].x - _info.xl / 2;
-	hy = _tr->_vm->_gyro->peds[pednum].y - _info.yl;
+	hx = _tr->_vm->_gyro->peds[pednum].x - _info._xLength / 2;
+	hy = _tr->_vm->_gyro->peds[pednum].y - _info._yLength;
 	homing = true;
 }
 
@@ -344,7 +344,7 @@ void triptype::stopwalk() {
 }
 
 void triptype::chatter() {
-	_tr->_vm->_gyro->talkx = x + _info.xl / 2;
+	_tr->_vm->_gyro->talkx = x + _info._xLength / 2;
 	_tr->_vm->_gyro->talky = y;
 	_tr->_vm->_gyro->talkf = a.fgc;
 	_tr->_vm->_gyro->talkb = a.bgc;
@@ -362,7 +362,7 @@ void triptype::set_up_saver(trip_saver_type &v) {
 	v.homing = homing;
 	v.check_me = check_me;
 	v.count = count;
-	v.xw = _info.xw;
+	v.xw = _info._xWidth;
 	v.xs = xs;
 	v.ys = ys;
 	v.totalnum = totalnum;
@@ -385,7 +385,7 @@ void triptype::unload_saver(trip_saver_type v) {
 	homing = v.homing;
 	check_me = v.check_me;
 	count = v.count;
-	_info.xw = v.xw;
+	_info._xWidth = v.xw;
 	xs = v.xs;
 	ys = v.ys;
 	totalnum = v.totalnum;
@@ -417,13 +417,13 @@ triptype *triptype::done() {
 
 	//  nds:=num div seq;
 	totalnum--;
-	_info.xw = _info.xl / 8;
-	if ((_info.xl % 8) > 0)
-		_info.xw++;
+	_info._xWidth = _info._xLength / 8;
+	if ((_info._xLength % 8) > 0)
+		_info._xWidth++;
 	for (byte aa = 0; aa < /*nds*seq*/ a.num; aa++) {
 		totalnum--;
-		delete[] _info.mani[totalnum];
-		delete[] _info.sil[totalnum];
+		delete[] _info._mani[totalnum];
+		delete[] _info._sil[totalnum];
 	}
 
 	quick = false;
@@ -1115,7 +1115,7 @@ void Trip::rwsp(byte t, byte dir) {
 void Trip::apped(byte trn, byte np) {
 	trn--;
 	np--;
-	tr[trn].appear(_vm->_gyro->peds[np].x - tr[trn]._info.xl / 2, _vm->_gyro->peds[np].y - tr[trn]._info.yl, _vm->_gyro->peds[np].dir);
+	tr[trn].appear(_vm->_gyro->peds[np].x - tr[trn]._info._xLength / 2, _vm->_gyro->peds[np].y - tr[trn]._info._yLength, _vm->_gyro->peds[np].dir);
 	rwsp(trn, _vm->_gyro->peds[np].dir);
 }
 
@@ -1206,9 +1206,9 @@ void Trip::arrow_procs(byte tripnum) {
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if (((tr[tripnum].y + tr[tripnum]._info.yl) >= tr[0].y) // A
-				&& (tr[tripnum].x <= (tr[0].x + tr[0]._info.xl)) // B
-				&& ((tr[tripnum].x + tr[tripnum]._info.xl) >= tr[0].x)) { // C
+		if (((tr[tripnum].y + tr[tripnum]._info._yLength) >= tr[0].y) // A
+				&& (tr[tripnum].x <= (tr[0].x + tr[0]._info._xLength)) // B
+				&& ((tr[tripnum].x + tr[tripnum]._info._xLength) >= tr[0].x)) { // C
 			// OK, it's hit him... what now?
 
 			tr[1].call_eachstep = false; // prevent recursion.
@@ -1547,7 +1547,7 @@ void Trip::fliproom(byte room, byte ped) {
 bool Trip::infield(byte which) {
 	which--; // Pascal -> C: different array indexes.
 
-	int16 yy = tr[0].y + tr[0]._info.yl;
+	int16 yy = tr[0].y + tr[0]._info._yLength;
 
 	return (tr[0].x >= _vm->_gyro->fields[which].x1) && (tr[0].x <= _vm->_gyro->fields[which].x2)
 		&& (yy >= _vm->_gyro->fields[which].y1) && (yy <= _vm->_gyro->fields[which].y2);
@@ -1561,7 +1561,7 @@ bool Trip::neardoor() {
 	}
 		
 	int16 ux = tr[0].x;
-	int16 uy = tr[0].y + tr[0]._info.yl;
+	int16 uy = tr[0].y + tr[0]._info._yLength;
 	bool nd = false;
 	for (byte fv = 8; fv < _vm->_gyro->numfields; fv++)
 		if ((ux >= _vm->_gyro->fields[fv].x1) && (ux <= _vm->_gyro->fields[fv].x2)

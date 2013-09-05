@@ -522,7 +522,7 @@ public:
 	Common::String atkey; // For XTs, set to "alt-". For ATs, set to "f1".
 
 	byte cp, ledstatus, defaultled;
-	fontType characters;
+	FontType characters;
 	bool alive;
 	byte buffer[2000];
 	uint16 bufsize;
