@@ -97,13 +97,13 @@ void Graphics::drawBar(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 }
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
-	/* First we make the pixels of the spirte blank. */
+	// First we make the pixels of the spirte blank.
 	for (byte j = 0; j < sprite.yl; j++)
 		for (byte i = 0; i < sprite.xl; i++)
 			if (((*sprite.sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
 				*getPixel(x + i, y + j) = 0;
 	
-	/* Then we draw the picture to the blank places. */
+	// Then we draw the picture to the blank places.
 	uint16 maniPos = 0; // Because the original manitype starts at 5!!! See Graphics.h for definition.
 
 	for (byte j = 0; j < sprite.yl; j++)

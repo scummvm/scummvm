@@ -62,7 +62,7 @@ public:
 
 
 
-	bool aboutscroll; /* Is this the about box? */
+	bool aboutscroll; // Is this the about box?
 
 
 
@@ -70,9 +70,9 @@ public:
 	
 	void init();
 
-	void state(byte x);      /* Sets "Ready" light to whatever */
+	void state(byte x);      // Sets "Ready" light to whatever
 
-	void drawscroll(func2 gotoit);      /* This is one of the oldest funcs in the game. */
+	void drawscroll(func2 gotoit);      // This is one of the oldest funcs in the game.
 
 	void bubble(func2 gotoit);
 
@@ -88,7 +88,7 @@ public:
 
 	Common::String lsd();
 
-	void okay();    /* Says "Okay!" */
+	void okay();    // Says "Okay!"
 
 	void musical_scroll();
 

@@ -60,15 +60,15 @@ public:
 
 	void enterroom(byte x, byte ped);
 
-	void thinkabout(byte z, bool th);      /* Hey!!! Get it and put it!!! */
+	void thinkabout(byte z, bool th);      // Hey!!! Get it and put it!!!
 
-	void load_digits();    /* Load the scoring digits & rwlites */
+	void load_digits();    // Load the scoring digits & rwlites
 
 	void toolbar();
 
 	void showscore();
 
-	void points(byte num);      /* Add on no. of points */
+	void points(byte num);      // Add on no. of points
 
 	void mouseway(const Common::Point &cursorPos);
 

@@ -44,7 +44,7 @@ public:
 
 	void edna_load(Common::String name);
 
-	void edna_reload();    /* From Bootstrap's storage. */
+	void edna_reload();    // From Bootstrap's storage.
 
 	void dir(Common::String where);
 

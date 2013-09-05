@@ -345,7 +345,7 @@ void Timeout::after_the_shootemup() {
 	_vm->_trip->fliproom(_vm->_gyro->dna.room, 0);
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 
-	_vm->_trip->tr[0].init(0, true, _vm->_trip); /* Avalot. */
+	_vm->_trip->tr[0].init(0, true, _vm->_trip); // Avalot.
 	_vm->_trip->apped(1, 2);
 	_vm->_gyro->dna.user_moves_avvy = true;
 	_vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] = true;
@@ -355,19 +355,21 @@ void Timeout::after_the_shootemup() {
 	_vm->_scrolls->display(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
 		+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Peter (uruk)");
 
-	//byte shootscore, gain;
+#if 0
+	byte shootscore, gain;
 
-	//shootscore = mem[storage_seg * storage_ofs];
-	//gain = (shootscore + 5) / 10; /* Rounding up. */
+	shootscore = mem[storage_seg * storage_ofs];
+	gain = (shootscore + 5) / 10; // Rounding up.
 
-	//display(string("\6Your score was ") + strf(shootscore) + '.' + "\r\rYou gain (" +
-	//	strf(shootscore) + " ö 10) = " + strf(gain) + " points.");
+	display(string("\6Your score was ") + strf(shootscore) + '.' + "\r\rYou gain (" +
+		strf(shootscore) + " ö 10) = " + strf(gain) + " points.");
 
-	//if (gain > 20) {
-	//	display("But we won't let you have more than 20 points!");
-	//	points(20);
-	//} else
-	//	points(gain);
+	if (gain > 20) {
+		display("But we won't let you have more than 20 points!");
+		points(20);
+	} else
+		points(gain);
+#endif
 
 	warning("STUB: Timeout::after_the_shootemup()");
 
@@ -621,10 +623,12 @@ void Timeout::winning() {
 
 	_vm->_pingo->winning_pic();
 	warning("STUB: Timeout::winning()");
-	/*do {
-	_vm->_lucerna->checkclick();
-	} while (!(_vm->_gyro->mrelease == 0));*/
-	// To be implemented with Pingo::winning_pic().
+#if 0
+	do {
+		_vm->_lucerna->checkclick();
+	} while (!(_vm->_gyro->mrelease == 0));
+#endif	
+	// TODO: To be implemented with Pingo::winning_pic().
 
 	_vm->_lucerna->callverb(_vm->_acci->kVerbCodeScore);
 	_vm->_scrolls->display(" T H E    E N D ");
