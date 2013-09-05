@@ -221,8 +221,6 @@ void MenuItem::parseKey(char c) {
 		_dr->_vm->_gyro->blip();
 }
 
-
-
 void MenuBar::init(Dropdown *dr) {
 	_dr = dr;
 	_menuNum = 0;
@@ -281,8 +279,6 @@ void MenuBar::chooseMenuItem(int16 x) {
 		i++;
 	} while (i < _menuNum);
 }
-
-
 
 Dropdown::Dropdown(AvalancheEngine *vm) {
 	_vm = vm;
@@ -599,7 +595,7 @@ void Dropdown::runMenuFile() {
 		warning("STUB: Dropdown::runMenuFile()");
 		break;
 	case 4:
-		_vm->_enid->back_to_bootstrap(2);
+		_vm->_enid->backToBootstrap(2);
 		break;
 	case 5:
 		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeQuit);
@@ -709,8 +705,6 @@ void Dropdown::runMenuWith() {
 	}
 	_vm->_lucerna->callverb(_vm->_gyro->verbstr[_activeMenuItem._choiceNum]);
 }
-
-
 
 void Dropdown::setupMenu() {   
 	_menuBar.init(this);

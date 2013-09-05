@@ -1246,7 +1246,7 @@ void Acci::giveGeidaTheLute() {
 	_vm->_visa->dixi('q', 64); // She plays it.
 
 	_vm->_timeout->set_up_timer(1, _vm->_timeout->procgive_lute_to_geida, _vm->_timeout->reason_geida_sings);
-	_vm->_enid->back_to_bootstrap(4);
+	_vm->_enid->backToBootstrap(4);
 }
 
 void Acci::playHarp() {

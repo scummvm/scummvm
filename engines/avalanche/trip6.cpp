@@ -878,7 +878,7 @@ void Trip::call_special(uint16 which) {
 		_vm->_lucerna->dusk();
 		tr[0].turn(right); // you'll see this after we get back from bootstrap
 		_vm->_timeout->set_up_timer(1, _vm->_timeout->procghost_room_phew, _vm->_timeout->reason_ghost_room_phew);
-		_vm->_enid->back_to_bootstrap(3);
+		_vm->_enid->backToBootstrap(3);
 		break;
 	case 5:
 		if (_vm->_gyro->dna.friar_will_tie_you_up) {
