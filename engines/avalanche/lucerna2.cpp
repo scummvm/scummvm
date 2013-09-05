@@ -57,6 +57,12 @@ Lucerna::Lucerna(AvalancheEngine *vm) : fxhidden(false) {
 	_vm = vm;
 }
 
+Lucerna::~Lucerna() {
+	for (byte i = 0; i < 31; i++) 
+		for (byte j = 0; j < 2; j++)
+			delete _vm->_gyro->also[i][j];
+}
+
 void Lucerna::init() {
 	_vm->_gyro->oh = 17717;
 	_vm->_gyro->om = 17717;
