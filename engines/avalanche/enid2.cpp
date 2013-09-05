@@ -59,7 +59,7 @@ const Common::String Enid::kEdnaFirst =
 	kCrlf + kCrlf + kCrlf + // 6
 	"1234567890" +kCrlf; // 11
 
-const Common::String Enid::kEdnaId = Common::String("TT") + char(261) + char(60) + char(1) + char(165) + char(261) + char(231) + char(261);
+const Common::String Enid::kEdnaId = Common::String("TT\xB1\x30\x01\x75\xB1\x99\xB1");
 
 const int16 Enid::kAge = 18;
 const Common::String Enid::kWasHere = "Thomas was here ";
