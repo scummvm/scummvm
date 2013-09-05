@@ -81,6 +81,7 @@ public:
 	Graphics::Surface *getScreen() const { return _screen; }
 
 	void blit(const Graphics::Surface *surface, int x, int y);
+	void fillRect(const Common::Rect &rect, uint32 color);
 
 private:
 	BuriedEngine *_vm;

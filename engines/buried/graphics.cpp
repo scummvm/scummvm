@@ -327,6 +327,10 @@ void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y) {
 		memcpy(_screen->getBasePtr(x, y + i), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
 }
 
+void GraphicsManager::fillRect(const Common::Rect &rect, uint32 color) {
+	_screen->fillRect(rect, color);
+}
+
 byte *GraphicsManager::createDefaultPalette() const {
 	Common::SeekableReadStream *stream = _vm->getBitmapStream(700);
 
