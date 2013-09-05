@@ -58,13 +58,20 @@ Lucerna::Lucerna(AvalancheEngine *vm) : fxhidden(false) {
 }
 
 Lucerna::~Lucerna() {
-	for (int i = 0; i < 31; i++) 
-		for (int j = 0; j < 2; j++)
-			delete _vm->_gyro->also[i][j];
+	for (byte i = 0; i < 31; i++)
+		for (byte j = 0; j < 2; j++)
+			if (_vm->_gyro->also[i][j] != 0)  {
+				delete _vm->_gyro->also[i][j];
+				_vm->_gyro->also[i][j] = 0;
+			}
 }
 
 void Lucerna::init() {
 	_vm->_gyro->oh = _vm->_gyro->onh = _vm->_gyro->om = 17717;
+
+	for (byte i = 0; i < 31; i++)
+		for (byte j = 0; j < 2; j++)
+			_vm->_gyro->also[i][j] = 0;
 
 #if 0
 	if (_vm->_enhanced->atbios)
