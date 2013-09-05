@@ -336,13 +336,15 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 		ander = 170;
 
 	fontType font;
-	for (byte i = 0; i < text.size(); i++)
+	for (byte i = 0; i < text.size(); i++) {
 		for (byte j = 0; j < 8; j++) {
-			font[text[i]][j] = _vm->_gyro->characters[text[i]][j] & ander; // Set the font.
+			byte idx = text[i];
+			font[idx][j] = _vm->_gyro->characters[idx][j] & ander; // Set the font.
 			// And set the background of the text to the desired color.
 			for (byte k = 0; k < 8; k++)
 				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + k, y + j) = backgroundColor;
 		}
+	}
 
 	_vm->_graphics->drawText(_vm->_graphics->_surface, text, font, 8, x * 8, y, fontColor);
 	
