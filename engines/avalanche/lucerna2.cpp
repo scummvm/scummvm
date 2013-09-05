@@ -58,8 +58,8 @@ Lucerna::Lucerna(AvalancheEngine *vm) : fxhidden(false) {
 }
 
 Lucerna::~Lucerna() {
-	for (byte i = 0; i < 31; i++) 
-		for (byte j = 0; j < 2; j++)
+	for (int i = 0; i < 31; i++) 
+		for (int j = 0; j < 2; j++)
 			delete _vm->_gyro->also[i][j];
 }
 
