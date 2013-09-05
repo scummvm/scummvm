@@ -51,103 +51,33 @@ const char *Gyro::vernum = "1.30";
 const char *Gyro::copyright = "1995";
 
 
-const mp Gyro::mps[9] = {
-	{
-		// 1 - up-arrow
-		{	{65151, 64575, 64575, 63519, 63519, 61455, 61455, 57351, 57351, 49155, 49155, 64575, 64575, 64575, 64575, 64575},
-		{0, 384, 384, 960, 960, 2016, 2016, 4080, 4080, 8184, 384, 384, 384, 384, 384, 0}
-		},	
-			8,
-			0
-	},
-
-	{
-		// 2 - screwdriver
-		{	{8191, 4095, 2047, 34815, 50175, 61951, 63743, 64543, 65039, 65031, 65027, 65281, 65408, 65472, 65505, 65523},
-		{0, 24576, 28672, 12288, 2048, 1024, 512, 256, 224, 176, 216, 96, 38, 10, 12, 0}
-		},
-			0,
-			0
-	},
-
-	{
-		// 3 - right-arrow
-		{	{65535, 65535, 64639, 64543, 7, 1, 0, 1, 7, 64543, 64639, 65535, 65535, 65535, 65535, 65535},
-		{0, 0, 0, 384, 480, 32760, 32766, 32760, 480, 384, 0, 0, 0, 0, 0, 0}	
-		},
-			15,
-			6
-	},
-
-	{
-		// 4 - fletch
-		{	{255, 511, 1023, 2047, 1023, 4607, 14591, 31871, 65031, 65283, 65281, 65280, 65280, 65409, 65473, 65511},
-		{0, 10240, 20480, 24576, 26624, 17408, 512, 256, 128, 88, 32, 86, 72, 20, 16, 0}
-		},
-			0,
-			0
-	},
-
-	{
-		// 5 - hourglass
-		{	{0, 0, 0, 34785, 50115, 61455, 61455, 63519, 63519, 61839, 61455, 49155, 32769, 0, 0, 0},
-		{0, 32766, 16386, 12300, 2064, 1440, 1440, 576, 576, 1056, 1440, 3024, 14316, 16386, 32766, 0}
-		},
-			8,
-			7
-	},
-
-	{
-		// 6 - TTHand
-		{	{62463, 57855, 57855, 57855, 57471, 49167, 32769, 0, 0, 0, 0, 32768, 49152, 57344, 61441, 61443},
-		{3072, 4608, 4608, 4608, 4992, 12912, 21070, 36937, 36873, 36865, 32769, 16385, 8193, 4097, 2050, 4092}
-		},
-			4,
-			0
-	},
-
-	{
-		// 7- Mark's crosshairs
-		{	{65535, 65151, 65151, 65151, 65151, 0, 65151, 65151, 65151, 65151, 65535, 65535, 65535, 65535, 65535, 65535},
-		{0, 384, 384, 384, 384, 65535, 384, 384, 384, 384, 0, 0, 0, 0, 0, 0}
-		},
-			8,
-			5
-	},
-
-	{
-		// 8- I-beam
-		{	{65535, 65535, 63631, 63503, 63503, 65087, 65087, 65087, 65087, 65087, 63503, 63503, 63631, 65535, 65535, 65535},
-		{0, 0, 0, 864, 128, 128, 128, 128, 128, 128, 128, 864, 0, 0, 0, 0}
-		},
-			8,
-			7
-	},
-
-	{
-		// 9 - question mark
-		{	{511, 1023, 2047, 31, 15, 8199, 32647, 65415, 63503, 61471, 61503, 61695, 63999, 63999, 61695, 61695},
-		{65024, 33792, 34816, 34784, 40976, 57224, 32840, 72, 1936, 2080, 2496, 2304, 1536, 1536, 2304, 3840}
-		},
-			0,
-			0
-	}
+const MouseHotspotType Gyro::kMouseHotSpots[9] = {
+	{8,0}, // 1 - up-arrow
+	{0,0}, // 2 - screwdriver
+	{15,6}, // 3 - right-arrow
+	{0,0}, // 4 - fletch
+	{8,7}, // 5 - hourglass
+	{4,0}, // 6 - TTHand
+	{8,5}, // 7- Mark's crosshairs
+	{8,7}, // 8- I-beam
+	{0,0} // 9 - question mark
 };
 
-const Common::String Gyro::lads[17] = {
+const Common::String Gyro::kLads[17] = {
 	"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
 	"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
 	"A trader", "Ibythneth", "Ayles", "Port", "Spurge", "Jacques"
 };
 
-const Common::String Gyro::lasses[4] =
+const Common::String Gyro::kLasses[4] =
 {"Arkata", "Geida", "±", "the Wise Woman"};
 
-const char Gyro::ladchar[] = "ASCDMTRwLfgeIyPu";
+const char Gyro::kLadChar[] = "ASCDMTRwLfgeIyPu";
 
-const char Gyro::lasschar[] = "kG±o";
+const char Gyro::kLassChar[] = "kG±o";
 
-const int32 Gyro::catamap[8][8] = {
+// Art gallery at 2,1; notice about this at 2,2.
+const int32 Gyro::kCatacombMap[8][8] = {
 	// Geida's room
 	// 1     2			3   | 4     5		6		7     8
 	{0x204, 0x200, 0xd0f0, 0xf0ff, 0xff, 0xd20f, 0xd200, 0x200},
@@ -161,9 +91,45 @@ const int32 Gyro::catamap[8][8] = {
 };
 // vv Stairs trap.
 
-const char Gyro::spludwick_order[3] = {onion, ink, mushroom};
+/* Explanation: $NSEW.
+		Nibble N: North.
+		0     = no connection,
+		2     = (left,) middle(, right) door with left-hand handle,
+		5     = (left,) middle(, right) door with right-hand handle,
+		7     = arch,
+		8     = arch and 1 north of it,
+		9     = arch and 2 north of it,
+		D     = no connection + WINDOW,
+		E     = no connection + TORCH,
+		F     = recessed door (to Geida's room.)
 
-const quasiped_type Gyro::quasipeds[16] = {
+		Nibble S: South.
+		0     = no connection,
+		1,2,3 = left, middle, right door.
+
+		Nibble E: East.
+		0     = no connection (wall),
+		1     = no connection (wall + window),
+		2     = wall with door,
+		3     = wall with door and window,
+		6     = wall with candles,
+		7     = wall with door and candles,
+		F     = straight-through corridor.
+
+		Nibble W: West.
+		0     = no connection (wall),
+		1     = no connection (wall + shield),
+		2     = wall with door,
+		3     = wall with door and shield,
+		4     = no connection (window),
+		5     = wall with door and window,
+		6     = wall with candles,
+		7     = wall with door and candles,
+		F     = straight-through corridor. */
+
+const char Gyro::kSpludwicksOrder[3] = {onion, ink, mushroom};
+
+const QuasipedType Gyro::kQuasipeds[16] = {
 	{2, kColorLightgray, 19, kColorBrown, pdogfood},                       // A: Dogfood (screen 19). 
 	{3, kColorGreen,     19, kColorWhite, pibythneth},                     // B: Ibythneth (screen 19).
 	{3, kColorWhite,     1, kColorMagenta, parkata},                       // C: Arkata (screen 1).
@@ -182,18 +148,18 @@ const quasiped_type Gyro::quasipeds[16] = {
 	{2, kColorLightgreen, 51, kColorDarkgray, pdrduck}                     // P: Duck (screen 51).
 };
 
-const char Gyro::keys[] = "QWERTYUIOP[]";
+const char Gyro::kMusicKeys[] = "QWERTYUIOP[]";
 
-const uint16 Gyro::notes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
+const uint16 Gyro::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
 
-const tunetype Gyro::tune = {
-	higher, higher, lower, same, higher, higher, lower, higher, higher, higher,
-	lower, higher, higher,
-	same, higher, lower, lower, lower, lower, higher, higher, lower, lower, lower,
-	lower, same, lower, higher, same, lower, higher
+const TuneType Gyro::kTune = {
+	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
+	kPitchLower, kPitchHigher, kPitchHigher,
+	kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher, kPitchHigher, kPitchLower, kPitchLower, kPitchLower,
+	kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
 };
 
-byte Gyro::whereis[29] = {
+byte Gyro::_whereIs[29] = {
 	// The Lads
 	r__yours, // Avvy
 	r__spludwicks, // Spludwick
@@ -237,7 +203,7 @@ const Common::String Gyro::better[numobjs] = {
 
 const char Gyro::betterchar[] = "WMBParCLguKeSnIohn";
 
-Gyro::Gyro(AvalancheEngine *vm) : interrogation(0), oncandopageswap(true) {
+Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
 	_vm = vm;
 
 	// Needed because of Lucerna::load_also()
@@ -306,7 +272,7 @@ void Gyro::shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
 }
 
 void Gyro::newgame() { 
-	for (byte gm = 0; gm < numtr; gm++) {
+	for (byte gm = 0; gm < kMaxSprites; gm++) {
 		if (_vm->_trip->tr[gm].quick)
 			_vm->_trip->tr[gm].done();
 	}
@@ -324,7 +290,7 @@ void Gyro::newgame() {
 	dna.like2drink = "beer";
 
 	dna.pence = 30; // 2/6
-	dna.rw = stopped;
+	dna.rw = kDirectionStopped;
 	dna.wearing = clothes;
 	dna.obj[money - 1] = true;
 	dna.obj[bodkin - 1] = true;
@@ -338,7 +304,7 @@ void Gyro::newgame() {
 	seescroll = false;
 
 	ppos[0][1] = -177; 
-	_vm->_trip->tr[0].appear(300,117,right); // Needed to initialize Avalot.
+	_vm->_trip->tr[0].appear(300,117,kDirectionRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
 	him = 254;
@@ -401,17 +367,17 @@ bool Gyro::pennycheck(uint16 howmuchby) {
 // Keep an eye open!
 Common::String Gyro::getname(byte whose) { 
 	if (whose < 175)
-		return lads[whose - 150];
+		return kLads[whose - 150];
 	else
-		return lasses[whose - 175];
+		return kLasses[whose - 175];
 }
 
 // Keep an eye open! ^
 byte Gyro::getnamechar(byte whose) {
 	if (whose < 175) 
-		return ladchar[whose - 150];
+		return kLadChar[whose - 150];
 	else
-		return lasschar[whose - 175];
+		return kLassChar[whose - 175];
 }
 
 // Keep an eye open! ^^
@@ -570,7 +536,7 @@ void Gyro::load_a_mouse(byte which) {
 
 
 
-	CursorMan.replaceCursor(cursor.pixels, 16, 32, mps[which - 1].horzhotspot, mps[which - 1].verthotspot * 2, 255, false);
+	CursorMan.replaceCursor(cursor.pixels, 16, 32, kMouseHotSpots[which - 1]._horizontal, kMouseHotSpots[which - 1]._vertical * 2, 255, false);
 
 	cursor.free();
 }
