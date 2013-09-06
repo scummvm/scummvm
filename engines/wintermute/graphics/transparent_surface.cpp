@@ -272,12 +272,6 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 					out += 4;
 				} else { // Full opacity (Any value not exactly 0 is Opaque here)
 					BlittingTools::blendPixelAdditive(in, out);
-					/*
-					out[rIndex] = MIN(out[rIndex] + in[rIndex], 255);
-					out[gIndex] = MIN(out[gIndex] + in[gIndex], 255);
-					out[bIndex] = MIN(out[bIndex] + in[bIndex], 255);
-					out[aIndex] = 0xFF;
-					*/
 					out += 4;
 				}
 			}
@@ -297,12 +291,6 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 					out += 4;
 				} else { // Full opacity (Any value not exactly 0 is Opaque here)
 					BlittingTools::blendPixelSubtractive(in, out);
-					/*
-					out[rIndex] = MAX(out[rIndex] - in[rIndex], 0);
-					out[gIndex] = MAX(out[gIndex] - in[gIndex], 0);
-					out[bIndex] = MAX(out[bIndex] - in[bIndex], 0);
-					out[aIndex] = 0xFF;
-					*/
 					out += 4;
 				}
 			}
