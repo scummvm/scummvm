@@ -446,9 +446,9 @@ void MessageQueue::replaceKeyCode(int key1, int key2) {
 }
 
 MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
-	for (CPtrList::iterator s = begin(); s != end(); ++s) {
-		if (((MessageQueue *)*s)->_id == id)
-			return (MessageQueue *)*s;
+	for (Common::Array<MessageQueue *>::iterator s = begin(); s != end(); ++s) {
+		if ((*s)->_id == id)
+			return *s;
 	}
 
 	return 0;
@@ -456,7 +456,7 @@ MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 
 void GlobalMessageQueueList::deleteQueueById(int id) {
 	for (uint i = 0; i < size(); i++)
-		if (((MessageQueue *)((*this).operator[](i)))->_id == id) {
+		if (_storage[i]->_id == id) {
 			remove_at(i);
 
 			disableQueueById(id);
@@ -466,8 +466,8 @@ void GlobalMessageQueueList::deleteQueueById(int id) {
 
 void GlobalMessageQueueList::removeQueueById(int id) {
 	for (uint i = 0; i < size(); i++)
-		if (((MessageQueue *)((*this).operator[](i)))->_id == id) {
-			((MessageQueue *)((*this).operator[](i)))->_flags &= 0xFD; // It is quite pointless
+		if (_storage[i]->_id == id) {
+			_storage[i]->_flags &= 0xFD; // It is quite pointless
 			remove_at(i);
 
 			disableQueueById(id);
@@ -476,16 +476,16 @@ void GlobalMessageQueueList::removeQueueById(int id) {
 }
 
 void GlobalMessageQueueList::disableQueueById(int id) {
-	for (CPtrList::iterator s = begin(); s != end(); ++s) {
-		if (((MessageQueue *)*s)->_parId == id)
-			((MessageQueue *)*s)->_parId = 0;
+	for (Common::Array<MessageQueue *>::iterator s = begin(); s != end(); ++s) {
+		if ((*s)->_parId == id)
+			(*s)->_parId = 0;
 	}
 }
 
 int GlobalMessageQueueList::compact() {
 	for (uint i = 0; i < size();) {
-		if (((MessageQueue *)((*this).operator[](i)))->_isFinished) {
-			disableQueueById(((MessageQueue *)((*this).operator[](i)))->_id);
+		if (((MessageQueue *)_storage[i])->_isFinished) {
+			disableQueueById(_storage[i]->_id);
 			remove_at(i);
 		} else {
 			i++;

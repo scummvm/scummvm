@@ -135,7 +135,7 @@ class MessageQueue : public CObject {
 	bool checkGlobalExCommandList2();
 };
 
-class GlobalMessageQueueList : public CPtrList {
+class GlobalMessageQueueList : public Common::Array<MessageQueue *> {
   public:
 	MessageQueue *getMessageQueueById(int id);
 	void deleteQueueById(int id);
