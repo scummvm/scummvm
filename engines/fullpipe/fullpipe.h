@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_H
-#define FULLPIPE_H
+#ifndef FULLPIPE_FULLPIPE_H
+#define FULLPIPE_FULLPIPE_H
 
 #include "common/scummsys.h"
 #include "common/events.h"
@@ -238,4 +238,4 @@ extern Vars *g_vars;
 
 } // End of namespace Fullpipe
 
-#endif /* FULLPIPE_H */
+#endif /* FULLPIPE_FULLPIPE_H */
