@@ -75,7 +75,7 @@ bool CModalIntro::handleMessage(ExCommand *message) {
 	if (message->_messageNum != 36)
 		return false;
 
-	if (message->_keyCode != 13 && message->_keyCode != 27 && message->_keyCode != 32 )
+	if (message->_keyCode != 13 && message->_keyCode != 27 && message->_keyCode != 32)
 		return false;
 
 	if (_needRedraw) {

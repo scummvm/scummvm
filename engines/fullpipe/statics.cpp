@@ -256,7 +256,7 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 }
 
 MessageQueue *StaticANIObject::getMessageQueue() {
-	if (this->_messageQueueId <= 0 )
+	if (this->_messageQueueId <= 0)
 		return 0;
 
 	return g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
@@ -1389,7 +1389,7 @@ void Movement::loadPixelData() {
 		mov = i;
 
 	for (uint i = 0; i < _dynamicPhases.size(); i++) {
-		if ((Statics *)_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000) )
+		if ((Statics *)_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
 			((Statics *)_dynamicPhases[i])->getPixelData();
 	}
 

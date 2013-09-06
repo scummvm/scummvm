@@ -170,7 +170,7 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 		return true;
 	}
 
-	if (_sc2array[sc2idx]._entranceDataCount <= 0 )
+	if (_sc2array[sc2idx]._entranceDataCount <= 0)
 		return false;
 
 	int entranceIdx;

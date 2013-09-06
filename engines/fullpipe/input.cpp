@@ -202,7 +202,7 @@ void FullpipeEngine::updateCursorsCommon() {
 			_cursorId = PIC_CSR_GOFAR_R;
 			return;
 		}
-		if (_mouseVirtX - _sceneRect.left < 47 && _sceneRect.left > 0 ) {
+		if (_mouseVirtX - _sceneRect.left < 47 && _sceneRect.left > 0) {
 			_cursorId = PIC_CSR_GOFAR_L;
 			return;
 		}

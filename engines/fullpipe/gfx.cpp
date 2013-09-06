@@ -633,7 +633,7 @@ bool Picture::isPixelHitAtPos(int x, int y) {
 	if (x < _x || y < _y || x >= _x + _width || y >= _y + _height)
 		return false;
 
-	if (!_bitmap )
+	if (!_bitmap)
 		init();
 
 	_bitmap->_x = _x;

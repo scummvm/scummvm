@@ -386,7 +386,7 @@ bool CInventory2::unselectItem(bool flag) {
 int CInventory2::getHoveredItem(Common::Point *point) {
 	int selId = getSelectedItemId();
 
-	if (point->y <= 20 && !_isInventoryOut && !_isLocked )
+	if (point->y <= 20 && !_isInventoryOut && !_isLocked)
 		slideOut();
 
 	if (!selId && point->y >= 55) {

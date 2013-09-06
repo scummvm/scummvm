@@ -44,8 +44,8 @@ bool CInteractionController::compareInteractions(const void *p1, const void *p2)
 	const CInteraction *i1 = (const CInteraction *)p1;
 	const CInteraction *i2 = (const CInteraction *)p2;
 
-	if ( i2->_sceneId < i1->_sceneId) {
-		if ( i1->_sceneId != static_compSceneId)
+	if (i2->_sceneId < i1->_sceneId) {
+		if (i1->_sceneId != static_compSceneId)
 			return false;
 	}
 	if (i2->_sceneId != i1->_sceneId) {
@@ -60,7 +60,7 @@ bool CInteractionController::compareInteractions(const void *p1, const void *p2)
 		goto LABEL_18;
 	if (i1->_objectId3 != -1 && i1->_objectId3 != -2) {
 LABEL_17:
-		if (i2->_objectId3 != -2 )
+		if (i2->_objectId3 != -2)
 			return true;
 LABEL_18:
 		if (i1->_objectId3 != -1)
