@@ -676,7 +676,7 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	if (_flags & 0x1000000) {
 		switch (_type) {
 		case 'CB\0\0':
-			if (_pixels[off] == _flags & 0xff)
+			if (_pixels[off] == (_flags & 0xff))
 				return false;
 			break;
 		case 'CB\x05e':
