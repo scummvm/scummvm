@@ -279,7 +279,7 @@ void FullpipeEngine::updateEvents() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			if (_recordEvents) {
-				ex = new ExCommand(0, 17, 31, event.mouse.x, event.mouse.x, 0, 1, 0, 0, 0);
+				ex = new ExCommand(0, 17, 31, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
 				ex->handle();
 			}
@@ -291,7 +291,7 @@ void FullpipeEngine::updateEvents() {
 			break;
 			case Common::EVENT_RBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
-				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.x, 0, 1, 0, 0, 0);
+				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
 				_lastInputTicks = _updateTicks;
 				ex->handle();
@@ -299,7 +299,7 @@ void FullpipeEngine::updateEvents() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
-				ex = new ExCommand(0, 17, 29, event.mouse.x, event.mouse.x, 0, 1, 0, 0, 0);
+				ex = new ExCommand(0, 17, 29, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 
 				ex->_sceneClickX = _sceneRect.left + ex->_x;
 				ex->_sceneClickY = _sceneRect.top + ex->_y;
