@@ -435,7 +435,7 @@ void Scene::initObjectCursors(const char *varname) {
 }
 
 bool Scene::compareObjPriority(const void *p1, const void *p2) {
-	if (((StaticANIObject *)p1)->_priority > ((StaticANIObject *)p2)->_priority)
+	if (((const StaticANIObject *)p1)->_priority > ((const StaticANIObject *)p2)->_priority)
 		return true;
 
 	return false;
