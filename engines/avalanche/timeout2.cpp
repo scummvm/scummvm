@@ -630,7 +630,7 @@ void Timeout::winning() {
 #endif	
 	// TODO: To be implemented with Pingo::winning_pic().
 
-	_vm->_lucerna->callverb(_vm->_acci->kVerbCodeScore);
+	_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);
 	_vm->_scrolls->display(" T H E    E N D ");
 	_vm->_gyro->lmo = true;
 }

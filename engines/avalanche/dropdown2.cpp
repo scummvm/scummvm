@@ -555,19 +555,19 @@ void Dropdown::runMenuGame() {
 	// Help, boss, untrash screen.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeHelp);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeHelp);
 		break;
 	case 1:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBoss);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBoss);
 		break;
 	case 2:
 		_vm->_lucerna->major_redraw();
 		break;
 	case 3:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeScore);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);
 		break;
 	case 4:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeInfo);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeInfo);
 		break;
 	}
 }
@@ -576,18 +576,18 @@ void Dropdown::runMenuFile() {
 	// New game, load, save, save as, DOS shell, about, quit.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeRestart);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeRestart);
 		break;
 	case 1: {
 		if (!_vm->_acci->_realWords[1].empty())
 			_vm->_acci->_realWords[1].clear();
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeLoad);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeLoad);
 	}
 	break;
 	case 2: {
 		if (!_vm->_acci->_realWords[1].empty())
 			_vm->_acci->_realWords[1].clear();
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeSave);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeSave);
 	}
 	break;
 	case 3:
@@ -598,7 +598,7 @@ void Dropdown::runMenuFile() {
 		_vm->_enid->backToBootstrap(2);
 		break;
 	case 5:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeQuit);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeQuit);
 		break;
 	}
 }
@@ -611,22 +611,22 @@ void Dropdown::runMenuAction() {
 		_vm->_acci->_person = _vm->_acci->kPardon;
 		_vm->_acci->_thing = _vm->_acci->kPardon;
 		f5Does = _vm->_gyro->f5_does();
-		_vm->_lucerna->callverb(f5Does[0]);
+		_vm->_lucerna->callVerb(f5Does[0]);
 	}
 	break;
 	case 1:
 		_vm->_acci->_thing = _vm->_acci->kPardon;
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodePause);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodePause);
 		break;
 	case 2:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeOpen);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeOpen);
 		break;
 	case 3:
 		_vm->_acci->_thing = _vm->_acci->kPardon;
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeLook);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeLook);
 		break;
 	case 4:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeInv);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeInv);
 		break;
 	case 5: {
 		if (_vm->_trip->tr[0].xs == _vm->_gyro->kWalk)
@@ -664,37 +664,37 @@ void Dropdown::runMenuWith() {
 		switch (_vm->_gyro->verbstr[_activeMenuItem._choiceNum]) {
 		case 100: { // Beer
 			_vm->_acci->_thing = 100;
-			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 101: { // Wine
 			_vm->_acci->_thing = 50;
-			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 102: { // Whisky
 			_vm->_acci->_thing = 102;
-			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
 		case 103: { // Cider
 			_vm->_acci->_thing = 103;
-			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
 		case 104: { // Mead
 			_vm->_acci->_thing = 107;
-			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
 		case 105: { // Onion (trader)
 			_vm->_acci->_thing = 67;
-			_vm->_lucerna->callverb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
 		break; 
@@ -705,7 +705,7 @@ void Dropdown::runMenuWith() {
 		}
 		}
 	}
-	_vm->_lucerna->callverb(_vm->_gyro->verbstr[_activeMenuItem._choiceNum]);
+	_vm->_lucerna->callVerb(_vm->_gyro->verbstr[_activeMenuItem._choiceNum]);
 }
 
 void Dropdown::setupMenu() {   

@@ -40,74 +40,40 @@ class Lucerna {
 public:
 	bool holdLeftMouse;
 
-
-
 	Lucerna(AvalancheEngine *vm);
-
 	~Lucerna();
 
 	void init();
-
-	void callverb(byte n);
-
+	void callVerb(byte id);
 	void draw_also_lines();
-
 	void mouse_init();
-
 	void mousepage(uint16 page_);
-
 	void load(byte n);
-
 	void exitroom(byte x);
-
 	void enterroom(byte x, byte ped);
-
 	void thinkabout(byte z, bool th);      // Hey!!! Get it and put it!!!
-
 	void load_digits();    // Load the scoring digits & rwlites
-
 	void toolbar();
-
 	void showscore();
-
 	void points(byte num);      // Add on no. of points
-
 	void mouseway(const Common::Point &cursorPos);
-
 	void posxy();
-
 	void fxtoggle();
-
 	void objectlist();
-
 	void checkclick();
-
 	void errorled();
-
 	void dusk();
-
 	void dawn();
-
 	void showrw();
-
 	void clock_lucerna();
-
 	void delavvy();
-
 	void gameover();
-
 	void minor_redraw();
-
 	void major_redraw();
-
 	uint16 bearing(byte whichped); // Returns the bearing from ped Whichped to Avvy, in degrees.
-
 	void flesh_colors();
-
 	void sprite_run();
-
 	void fix_flashers();
-
 	void load_also(Common::String n);
 
 private:
@@ -125,8 +91,8 @@ private:
 	};
 
 	//Clock
-	static const int16 xm = 510;
-	static const int16 ym = 183;
+	static const int16 _clockCenterX = 510;
+	static const int16 _clockCenterY = 183;
 	Common::Point ah, am;
 	uint16 nh;
 

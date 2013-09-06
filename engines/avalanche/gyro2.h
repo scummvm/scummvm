@@ -543,7 +543,7 @@ public:
 
 	void newpointer(byte id);
 
-	void wait();    // Makes hourglass.
+	void setMousePointerWait();    // Makes hourglass.
 
 	void on();
 
