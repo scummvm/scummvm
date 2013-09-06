@@ -235,7 +235,11 @@ void Gyro::newpointer(byte id) {
 	load_a_mouse(id);
 }
 
-void Gyro::wait() {
+/**
+ * Set the mouse pointer to 'HourGlass"
+ * @remarks	Originally called 'wait'
+ */
+void Gyro::setMousePointerWait() {
 	newpointer(5);
 }
 

@@ -96,11 +96,11 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 	case Common::KEYCODE_F5: {
 		_vm->_acci->_person = _vm->_acci->kPardon;
 		_vm->_acci->_thing = _vm->_acci->kPardon;
-		_vm->_lucerna->callverb(_vm->_gyro->f5_does()[0]);
+		_vm->_lucerna->callVerb(_vm->_gyro->f5_does()[0]);
 		}
 		break;
 	case Common::KEYCODE_F7:
-		_vm->_lucerna->callverb(_vm->_acci->kVerbCodeOpen);
+		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeOpen);
 		break;
 	default:
 		break;

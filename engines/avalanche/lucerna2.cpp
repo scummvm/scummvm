@@ -81,8 +81,12 @@ void Lucerna::init() {
 #endif
 }
 	
-void Lucerna::callverb(byte n) {
-	if (n == _vm->_acci->kPardon) {
+/**
+ * Call a given Verb
+ * @remarks	Originally called 'callverb'
+ */
+void Lucerna::callVerb(byte id) {
+	if (id == _vm->_acci->kPardon) {
 		_vm->_scrolls->display(Common::String("The f5 key lets you do a particular action in certain ") +
 			"situations. However, at the moment there is nothing " +
 			"assigned to it. You may press alt-A to see what the " +
@@ -90,7 +94,7 @@ void Lucerna::callverb(byte n) {
 	} else {
 		_vm->_gyro->weirdword = false;
 		_vm->_acci->_polite = true;
-		_vm->_acci->_verb = n;
+		_vm->_acci->_verb = id;
 		_vm->_acci->doThat();
 	}
 }
@@ -273,13 +277,14 @@ void Lucerna::zoomout(int16 x, int16 y) {
 }
 
 void Lucerna::find_people(byte room) {
-	for (byte fv = 1; fv < 29; fv++)
+	for (byte fv = 1; fv < 29; fv++) {
 		if (_vm->_gyro->_whereIs[fv] == room) {
 			if (fv < 25)
 				_vm->_gyro->him = fv + 150;
 			else
 				_vm->_gyro->her = fv + 150;
 		}
+	}
 }
 
 void Lucerna::exitroom(byte x) {
@@ -442,7 +447,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_gyro->_whereIs[1] = r__nowhere;
 		break;
 
-	case r__brummieroad: {
+	case r__brummieroad:
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(5, ped);
 		if (_vm->_gyro->dna.cwytalot_gone) {
@@ -465,10 +470,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 				}
 			}
 		}
-	}
-	break;
+		break;
 
-	case r__argentroad: {
+	case r__argentroad:
 		if ((_vm->_gyro->dna.cwytalot_gone) && (! _vm->_gyro->dna.cwytalot_in_herts) && (ped == 2) &&
 		        (_vm->_gyro->dna.rooms[r__argentroad] > 3)) {
 			_vm->_trip->tr[1].init(4, false, _vm->_trip); // 4 = Cwytalot again
@@ -479,10 +483,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 			// _vm->_gyro->whereis[#157] = r__Nowhere; // can we fit this in?
 			_vm->_timeout->set_up_timer(20, _vm->_timeout->proc_cwytalot_in_herts, _vm->_timeout->reason_cwytalot_in_herts);
 		}
-	}
-	break;
+		break;
 
-	case r__bridge: {
+	case r__bridge:
 		if (_vm->_gyro->dna.drawbridge_open == 4) { // open
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Position of drawbridge
 			_vm->_graphics->refreshBackground();
@@ -490,10 +493,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 		if (_vm->_gyro->dna.geida_follows)
 			put_geida_at(ped + 3, ped); // load Geida
-	}
-	break;
+		break;
 
-	case r__robins: {
+	case r__robins:
 		if (ped > 0) {
 			if (! _vm->_gyro->dna.been_tied_up) {
 				// A welcome party... or maybe not...
@@ -515,10 +517,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (!_vm->_gyro->dna.mushroom_growing) 
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_graphics->refreshBackground();
-	}
-	break;
+		break;
 
-	case r__outsidecardiffcastle: {
+	case r__outsidecardiffcastle:
 		if (ped > 0)
 			switch (_vm->_gyro->dna.cardiff_things) {
 			case 0 : { // You've answered NONE of his questions.
@@ -541,10 +542,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->dna.cardiff_things < 5)
 			_vm->_gyro->_interrogation = _vm->_gyro->dna.cardiff_things;
 		else _vm->_gyro->_interrogation = 0;
-	}
-	break;
+		break;
 
-	case r__map: {
+	case r__map:
 		// You're entering the map.
 		dawn();
 		//setactivepage(cp);
@@ -561,10 +561,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 
 		_vm->_visa->dixi('q', 69);
-	}
-	break;
+		break;
 
-	case r__catacombs: {
+	case r__catacombs:
 		if ((ped == 0) || (ped == 3) || (ped == 5) || (ped == 6)) {
 
 			switch (ped) {
@@ -589,10 +588,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_trip->catamove(ped);
 			_vm->_gyro->dna.enter_catacombs_from_lusties_room = false;
 		}
-	}
-	break;
+		break;
 
-	case r__argentpub: {
+	case r__argentpub:
 		if (_vm->_gyro->dna.wonnim)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 1);   // No lute by the settle.
 		_vm->_gyro->dna.malagauche = 0; // Ready to boot Malagauche
@@ -601,10 +599,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 		}
 		_vm->_graphics->refreshBackground();
-	}
-	break;
+		break;
 
-	case r__lustiesroom: {
+	case r__lustiesroom:
 		_vm->_gyro->dna.dogfoodpos = 1; // Actually, du Lustie pos.
 		if (_vm->_trip->tr[0].whichsprite == 0) // Avvy in his normal clothes
 			_vm->_timeout->set_up_timer(3, _vm->_timeout->proccallsguards, _vm->_timeout->reason_du_lustie_talks);
@@ -619,10 +616,9 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_graphics->refreshBackground();
 			}
 		}
-	}
-	break;
+		break;
 
-	case r__musicroom: {
+	case r__musicroom:
 		if (_vm->_gyro->dna.jacques_awake > 0) {
 			_vm->_gyro->dna.jacques_awake = 5;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
@@ -639,8 +635,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_sequence->then_show(7);
 			_vm->_sequence->start_to_close();
 		}
-	}
-	break;
+		break;
 
 	case r__outsidenottspub:
 		if (ped == 2) {
@@ -665,7 +660,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		}
 		break;
 
-	case r__wisewomans: {
+	case r__wisewomans:
 		_vm->_trip->tr[1].init(11, false, _vm->_trip);
 		if ((_vm->_gyro->dna.rooms[r__wisewomans] == 1) && (ped > 0)) {
 			_vm->_trip->apped(2, 2); // Start on the right-hand side of the screen.
@@ -677,8 +672,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 		_vm->_trip->tr[1].call_eachstep = true;
 		_vm->_trip->tr[1].eachstep = _vm->_trip->procface_avvy; // She always faces Avvy.
-	}
-	break;
+		break;
 
 	case r__insidecardiffcastle:
 		if (ped > 0) {
@@ -758,11 +752,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 			put_geida_at(ped + 6, ped);
 		break;
 
-	case r__nottspub: {
+	case r__nottspub:
 		if (_vm->_gyro->dna.sitting_in_pub)  _vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_gyro->dna.dogfoodpos = 1; // Actually, du Lustie pos.
-	}
-	break;
+		break;
 
 	case r__outsideducks:
 		if (ped == 2) {
@@ -795,7 +788,7 @@ void Lucerna::thinkabout(byte z, bool th) {     // Hey!!! Get it and put it!!!
 	_vm->_gyro->thinks = z;
 	z--;
 
-	_vm->_gyro->wait();
+	_vm->_gyro->setMousePointerWait();
 
 	if (th) {
 		if (!f.open("thinks.avd")) {
@@ -1117,13 +1110,13 @@ void Lucerna::checkclick() {
 					_vm->_acci->_person = _vm->_gyro->thinks;
 					_vm->_acci->_thing = _vm->_acci->kPardon;
 				}
-				callverb(_vm->_acci->kVerbCodeExam);
+				callVerb(_vm->_acci->kVerbCodeExam);
 			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
 				do {
 					_vm->updateEvents();
 				} while (holdLeftMouse);
 
-				callverb(_vm->_acci->kVerbCodeScore);
+				callVerb(_vm->_acci->kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
 				_vm->_trip->tr[0].xs = _vm->_gyro->kWalk;
 				_vm->_trip->newspeed();
@@ -1140,7 +1133,7 @@ void Lucerna::checkclick() {
 }
 
 void Lucerna::mouse_init() {
-	_vm->_gyro->wait();
+	_vm->_gyro->setMousePointerWait();
 }
 
 void Lucerna::mousepage(uint16 page_) {
@@ -1223,14 +1216,14 @@ void Lucerna::calchand(uint16 ang, uint16 length, Common::Point &a, byte c) {
 		return;
 	}
 
-	a = _vm->_graphics->drawArc(_vm->_graphics->_surface, xm, ym, 449 - ang, 450 - ang, length, c);
+	a = _vm->_graphics->drawArc(_vm->_graphics->_surface, _clockCenterX, _clockCenterY, 449 - ang, 450 - ang, length, c);
 }
 
 void Lucerna::hand(const Common::Point &a, byte c) {
 	if (a.x == 177)
 		return;
 
-	_vm->_graphics->_surface.drawLine(xm, ym, a.x, a.y, c);
+	_vm->_graphics->_surface.drawLine(_clockCenterX, _clockCenterY, a.x, a.y, c);
 }
 
 void Lucerna::refresh_hands() {
@@ -1283,7 +1276,7 @@ void Lucerna::clock_lucerna() {
 		plothands();
 
 	if ((_vm->_gyro->hour == 0) && (_vm->_gyro->oh != 0) && (_vm->_gyro->oh != 17717))
-		_vm->_scrolls->display(Common::String("Good morning!") + 13 + 13 + "Yes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!");
+		_vm->_scrolls->display(Common::String("Good morning!\n\nYes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!"));
 	
 	_vm->_gyro->oh = _vm->_gyro->hour;
 	_vm->_gyro->onh = nh;
