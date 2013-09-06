@@ -37,8 +37,6 @@ enum MessageType {
 	kMessageTypeKeyUp,
 	kMessageTypeKeyDown,
 	kMessageTypeTimer,
-	kMessageTypeSetFocus,
-	kMessageTypeKillFocus,
 	kMessageTypeMouseMove,
 	kMessageTypeLButtonUp,
 	kMessageTypeLButtonDown,
@@ -106,8 +104,6 @@ private:
 // Types for everything that falls under one of the above categories
 typedef KeyMessage<kMessageTypeKeyUp>                  KeyUpMessage;
 typedef KeyMessage<kMessageTypeKeyDown>                KeyDownMessage;
-typedef WindowMessage<kMessageTypeSetFocus>            SetFocusMessage;
-typedef WindowMessage<kMessageTypeKillFocus>           KillFocusMessage;
 typedef MouseMessage<kMessageTypeMouseMove>            MouseMoveMessage;
 typedef MouseMessage<kMessageTypeLButtonUp>            LButtonUpMessage;
 typedef MouseMessage<kMessageTypeLButtonDown>          LButtonDownMessage;
