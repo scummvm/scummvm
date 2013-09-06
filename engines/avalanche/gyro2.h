@@ -490,7 +490,8 @@ public:
 private:
 	AvalancheEngine *_vm;
 	
-	static const char kItemsChar[]; // Similar as above.
+	// CHECKME: Useless?
+	// static const char kItemsChar[];
 	void drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
 };
 
