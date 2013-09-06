@@ -86,8 +86,7 @@ class Sc2 : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class Sc2Array : public Common::Array<Sc2> {
-};
+typedef Common::Array<Sc2> Sc2Array;
 
 union VarValue {
 	float floatValue;
