@@ -294,14 +294,6 @@ public:
 
 	static const MouseHotspotType kMouseHotSpots[9];
 
-	static const Common::String kLads[17];
-
-	static const Common::String kLasses[4];
-
-	static const char kLadChar[];
-
-	static const char kLassChar[];
-
 	static const int16 kMaxSprites = 2; // Current max no. of sprites.
 
 	// For Thinkabout:
@@ -498,14 +490,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 	
-	static const Common::String kThings[kObjectNum];
-
-	static const char kThingsChar[];
-
-	static const Common::String kItems[kObjectNum]; // 'better' in the original.
-
 	static const char kItemsChar[]; // Similar as above.
-
 	void drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
 };
 

@@ -63,19 +63,6 @@ const MouseHotspotType Gyro::kMouseHotSpots[9] = {
 	{0,0} // 9 - question mark
 };
 
-const Common::String Gyro::kLads[17] = {
-	"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
-	"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
-	"A trader", "Ibythneth", "Ayles", "Port", "Spurge", "Jacques"
-};
-
-const Common::String Gyro::kLasses[4] =
-{"Arkata", "Geida", "\0xB1", "the Wise Woman"};
-
-const char Gyro::kLadChar[] = "ASCDMTRwLfgeIyPu";
-
-const char Gyro::kLassChar[] = "kG\0xB1o";
-
 // Art gallery at 2,1; notice about this at 2,2.
 const int32 Gyro::kCatacombMap[8][8] = {
 	// Geida's room
@@ -186,21 +173,6 @@ byte Gyro::_whereIs[29] = {
 	r__geidas, // Geida
 	177, // nobody allocated here!
 	r__wisewomans  // The Wise Woman.
-};
-
-const Common::String Gyro::kThings[kObjectNum] = {
-	"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
-	"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
-	"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
-};
-
-const char Gyro::kThingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
-
-const Common::String Gyro::kItems[kObjectNum] = {
-	"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
-	"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
-	"a key", "a bell", "a scroll", "a pen", "some ink", "your clothes", "a habit",
-	"an onion"
 };
 
 const char Gyro::kItemsChar[] = "WMBParCLguKeSnIohn";
@@ -354,6 +326,16 @@ bool Gyro::updateMoney(uint16 howmuchby) {
 // There'll may be problems with calling these functions because of the conversion of the arrays!!!
 // Keep an eye open!
 Common::String Gyro::getName(byte whose) { 
+	static const Common::String kLads[17] = {
+		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
+		"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
+		"A trader", "Ibythneth", "Ayles", "Port", "Spurge", "Jacques"
+	};
+
+	static const Common::String kLasses[4] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
+
+	assert((whose > 150) && (whose < 179));
+
 	if (whose < 175)
 		return kLads[whose - 150];
 	else
@@ -362,6 +344,11 @@ Common::String Gyro::getName(byte whose) {
 
 // Keep an eye open! ^
 byte Gyro::getNameChar(byte whose) {
+	static const char kLadChar[] = "ASCDMTRwLfgeIyPu";
+	static const char kLassChar[] = "kG\0xB1o";
+
+	assert((whose > 150) && (whose < 179));
+
 	if (whose < 175) 
 		return kLadChar[whose - 150];
 	else
@@ -370,6 +357,12 @@ byte Gyro::getNameChar(byte whose) {
 
 // Keep an eye open! ^^
 Common::String Gyro::getThing(byte which) {
+	static const Common::String kThings[kObjectNum] = {
+		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
+		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
+		"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
+	};
+
 	Common::String get_thing_result;
 	switch (which) {
 	case kObjectWine:
@@ -397,6 +390,8 @@ Common::String Gyro::getThing(byte which) {
 
 // Keep an eye open! ^^^
 char Gyro::getThingChar(byte which) {
+	static const char kThingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
+
 	char get_thingchar_result;
 	switch (which) {
 	case kObjectWine:
@@ -413,6 +408,13 @@ char Gyro::getThingChar(byte which) {
 
 // Keep an eye open! ^^^^
 Common::String Gyro::getItem(byte which) {
+	static const Common::String kItems[kObjectNum] = {
+		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
+		"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
+		"a key", "a bell", "a scroll", "a pen", "some ink", "your clothes", "a habit",
+		"an onion"
+	};
+
 	Common::String get_better_result;
 	if (which > 150)
 		which -= 149;

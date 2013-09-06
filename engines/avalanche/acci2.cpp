@@ -1529,7 +1529,7 @@ void Acci::doThat() {
 		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + _vm->_scrolls->kControlCenter + _vm->_scrolls->kControlNewLine
 			+ "The medi\x91val descendant of" + _vm->_scrolls->kControlNewLine
 			+ "Denarius Avaricius Sextus" + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
-			+ "version " + _vm->_gyro->kVersionNum + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Copyright \XEF "
+			+ "version " + _vm->_gyro->kVersionNum + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Copyright \xEF "
 			+ _vm->_gyro->kCopyright + ", Mark, Mike and Thomas Thurman." + _vm->_scrolls->kControlRegister + 'Y' + _vm->_scrolls->kControlIcon;
 		_vm->_scrolls->display(toDisplay);
 		_vm->_scrolls->aboutscroll = false;
