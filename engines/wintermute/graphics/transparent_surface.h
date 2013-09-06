@@ -150,6 +150,7 @@ public:
 
 	static void blendPixelSubtractive(byte *in, byte *out);
 	static void blendPixelAdditive(byte *in, byte *out);
+	static void blendBinaryFast(byte *in, byte *out);
 	static void blendPixelSubtractive(byte *in, byte *out, int colorMod);
 	static void blendPixelAdditive(byte *in, byte *out, int colorMod);
 	static void blendPixelNormal(byte *in, byte *out, int colorMod);

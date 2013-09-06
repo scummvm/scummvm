@@ -289,6 +289,16 @@ void BlittingTools::blendPixelSubtractive (byte *in, byte *out)  {
 				blendPixelSubtractive(ina, inr, ing, inb, outa, outr, outg, outb); 
 };
 
+void BlittingTools::blendBinaryFast (byte *in, byte *out) {
+	uint32 pix = *(uint32 *)in;
+	int a = (pix >> aShift) & 0xff;
+
+	if (a == 0) { // Full transparency
+	} else { // Full opacity (Any value not exactly 0 is Opaque here)
+		*(uint32 *)out = pix;
+		out[aIndex] = 0xFF;
+	}
+}
 #if ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 	int srcW = srcRect.width();
@@ -556,17 +566,9 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
-				uint32 pix = *(uint32 *)in;
-				int a = (pix >> aShift) & 0xff;
 				in += inStep;
-
-				if (a == 0) { // Full transparency
-					out += 4;
-				} else { // Full opacity (Any value not exactly 0 is Opaque here)
-					*(uint32 *)out = pix;
-					out[aIndex] = 0xFF;
-					out += 4;
-				}
+				BlittingTools::blendBinaryFast(in, out);
+				out += 4;
 			}
 			outo += pitch;
 			ino += inoStep;
