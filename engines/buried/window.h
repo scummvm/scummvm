@@ -103,6 +103,8 @@ public:
 	void sendMessage(Message *message) { _queue.push(message); }
 	void dispatchAllMessages();
 
+	Window *findWindowAtPoint(const Common::Point &point);
+
 protected:
 	BuriedEngine *_vm;
 
