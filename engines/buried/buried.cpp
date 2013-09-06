@@ -111,21 +111,39 @@ Common::Error BuriedEngine::run() {
 		updateTimers();
 		updateVideos();
 
+		// TODO: Key flags
+		// TODO: Mouse flags
+
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
 				_gfx->markMouseMoved();
+				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new MouseMoveMessage(event.mouse, 0));
 				break;
 			case Common::EVENT_KEYUP:
-				// TODO: Key flags
 				if (_focusedWindow)
 					_focusedWindow->sendMessage(new KeyUpMessage(event.kbd, 0));
 				break;
 			case Common::EVENT_KEYDOWN:
-				// TODO: Key flags
 				if (_focusedWindow)
 					_focusedWindow->sendMessage(new KeyDownMessage(event.kbd, 0));
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new LButtonDownMessage(event.mouse, 0));
+				break;
+			case Common::EVENT_LBUTTONUP:
+				// TODO: Double-click
+				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new LButtonUpMessage(event.mouse, 0));
+				break;
+			case Common::EVENT_MBUTTONUP:
+				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new MButtonUpMessage(event.mouse, 0));
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new RButtonDownMessage(event.mouse, 0));
+				break;
+			case Common::EVENT_RBUTTONUP:
+				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new RButtonUpMessage(event.mouse, 0));
 				break;
 			default:
 				break;

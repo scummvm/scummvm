@@ -82,6 +82,9 @@ void Window::dispatchAllMessages() {
 		case kMessageTypeTimer:
 			onTimer(((TimerMessage *)message)->getTimer());
 			break;
+		case kMessageTypeMouseMove:
+			onMouseMove(((MouseMoveMessage *)message)->getPoint(), ((MouseMoveMessage *)message)->getFlags());
+			break;
 		case kMessageTypeLButtonUp:
 			onLButtonUp(((LButtonUpMessage *)message)->getPoint(), ((LButtonUpMessage *)message)->getFlags());
 			break;
@@ -256,6 +259,18 @@ Window *Window::setFocus() {
 	_vm->_focusedWindow = this;
 	onSetFocus(oldWindow);
 	return oldWindow;
+}
+
+Window *Window::findWindowAtPoint(const Common::Point &point) {
+	for (WindowList::iterator it = _topMostChildren.reverse_begin(); it != _topMostChildren.end(); it--)
+		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
+			return (*it)->findWindowAtPoint(point);
+
+	for (WindowList::iterator it = _children.reverse_begin(); it != _children.end(); it--)
+		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
+			return (*it)->findWindowAtPoint(point);
+
+	return this;
 }
 
 } // End of namespace Buried
