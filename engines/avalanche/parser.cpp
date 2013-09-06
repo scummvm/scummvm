@@ -96,7 +96,7 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 	case Common::KEYCODE_F5: {
 		_vm->_acci->_person = _vm->_acci->kPardon;
 		_vm->_acci->_thing = _vm->_acci->kPardon;
-		_vm->_lucerna->callVerb(_vm->_gyro->f5_does()[0]);
+		_vm->_lucerna->callVerb(_vm->_gyro->f5Does()[0]);
 		}
 		break;
 	case Common::KEYCODE_F7:
@@ -108,14 +108,13 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 }
 
 void Parser::plotText() {
-	if (_vm->_gyro->mouse_near_text())
-		CursorMan.showMouse(false);
+	CursorMan.showMouse(false);
 
 	cursorOff();
 
 	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
 
-	_vm->_graphics->drawText(_vm->_graphics->_surface, _vm->_parser->_inputText, _vm->_gyro->characters, 8, 24, 161, kColorWhite);
+	_vm->_graphics->drawText(_vm->_graphics->_surface, _vm->_parser->_inputText, _vm->_gyro->_font, 8, 24, 161, kColorWhite);
 
 	cursorOn();
 	CursorMan.showMouse(true);
@@ -151,25 +150,24 @@ void Parser::drawCursor() {
 	for (byte bit = 0; bit < 8; bit++)
 		*(byte *)_vm->_graphics->_surface.getBasePtr(24 + _inputTextPos * 8 + 7 - bit, 168) = kColorWhite;
 
-	bytefield bf;
-	bf.x1 = _inputTextPos + 1;
-	bf.x2 = _inputTextPos + 2;
-	bf.y1 = 168;
-	bf.y2 = 168;
+	ByteField bf;
+	bf._x1 = _inputTextPos + 1;
+	bf._x2 = _inputTextPos + 2;
+	bf._y1 = 168;
+	bf._y2 = 168;
 	for (byte fv = 0; fv <= 1; fv++)
 		_vm->_trip->getset[fv].remember(bf);
 }
 
 void Parser::wipeText() {
-	if (_vm->_gyro->mouse_near_text())
-		CursorMan.showMouse(false);
-
+	CursorMan.showMouse(false);
 	cursorOff();
 	
 	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
 
 	_quote = true;
 	_inputTextPos = 0;
+
 	cursorOn();
 	CursorMan.showMouse(true);
 }

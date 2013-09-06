@@ -109,7 +109,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP5:
-		if (_vm->_gyro->alive && _vm->_gyro->dna.avvy_is_awake) {
+		if (_vm->_gyro->_alive && _vm->_gyro->_dna._avvyIsAwake) {
 			_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
 			_vm->_lucerna->showrw();
 			return;
@@ -130,40 +130,36 @@ void Avalot::handleKeyDown(Common::Event &event) {
 
 
 void Avalot::setup() {
-	_vm->_gyro->visible = _vm->_gyro->m_no;
-	_vm->_gyro->to_do = 0;
-	_vm->_gyro->lmo = false;
+	_vm->_gyro->_mouse = _vm->_gyro->kMouseStateNo;
+	_vm->_gyro->_letMeOut = false;
 	_vm->_scrolls->resetscroll();
 	CursorMan.showMouse(true);
-	_vm->_gyro->holdthedawn = true;
+	_vm->_gyro->_holdTheDawn = true;
 	_vm->_lucerna->dusk();
-	_vm->_gyro->cmp = 177;
+	_vm->_gyro->_currentMouse = 177;
 	_vm->_lucerna->mouse_init();  // on;
-	_vm->_gyro->dropsok = true;
-	_vm->_gyro->ctrl = ckey;
-	_vm->_gyro->oldjw = 177;
-	_vm->_gyro->mousetext = "";
-	_vm->_gyro->c = 999;
-	_vm->_gyro->ddmnow = false;
+	_vm->_gyro->_dropsOk = true;
+	_vm->_gyro->_mouseText = "";
+	_vm->_gyro->_dropdownActive = false;
 	_vm->_lucerna->load_digits();
-	_vm->_gyro->cheat = false;
-	_vm->_gyro->cp = 0;
+	_vm->_gyro->_cheat = false;
+	_vm->_gyro->_cp = 0;
 	_vm->_parser->_inputTextPos = 0;
 	_vm->_parser->_quote = true;
-	_vm->_gyro->ledstatus = 177;
-	_vm->_gyro->defaultled = 2;
+	_vm->_gyro->_ledStatus = 177;
+	_vm->_gyro->_defaultLed = 2;
 	// TSkellern = 0; Replace with a more local variable sometime
-	_vm->_gyro->dna.rw = _vm->_gyro->kDirectionStopped;
-	_vm->_gyro->enid_filename = ""; // Undefined.
+	_vm->_gyro->_dna._direction = _vm->_gyro->kDirectionStopped;
+	_vm->_gyro->_enidFilename = ""; // Undefined.
 	_vm->_lucerna->toolbar();
 	_vm->_scrolls->state(2);
 	for (byte i = 0; i < 3; i++)
-		_vm->_gyro->lastscore[i] = -1; // Impossible digits.
+		_vm->_gyro->_scoreToDisplay[i] = -1; // Impossible digits.
 
 	_vm->_trip->loadtrip();
 
 	_vm->_trip->get_back_loretta();
-	_vm->_gyro->holdthedawn = false;
+	_vm->_gyro->_holdTheDawn = false;
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
 	_vm->_parser->cursorOn();
@@ -174,17 +170,17 @@ void Avalot::setup() {
 
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {	
-		_vm->_gyro->thinks = 2; // You always have money.
-		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->kThing);
+		_vm->_gyro->_thinks = 2; // You always have money.
+		_vm->_lucerna->thinkabout(_vm->_gyro->kObjectMoney, _vm->_gyro->kThing);
 
 		_vm->loadGame(loadSlot);
 	} else {
 		_vm->_gyro->isLoaded = false; // Set to true in _vm->loadGame().
-		_vm->_gyro->newgame(); // No game was requested- load the default.
+		_vm->_gyro->newGame(); // No game was requested- load the default.
 
-		_vm->_gyro->soundfx = ! _vm->_gyro->soundfx;
+		_vm->_gyro->_soundFx = ! _vm->_gyro->_soundFx;
 		_vm->_lucerna->fxtoggle();
-		_vm->_lucerna->thinkabout(_vm->_gyro->money, _vm->_gyro->kThing);
+		_vm->_lucerna->thinkabout(_vm->_gyro->kObjectMoney, _vm->_gyro->kThing);
 
 		_vm->_visa->dixi('q', 83); // Info on the game, etc. 
 	}	
@@ -204,7 +200,7 @@ void Avalot::run(Common::String arg) {
 
 		_vm->_lucerna->clock_lucerna();
 		_vm->_dropdown->updateMenu();
-		_vm->_gyro->force_numlock();
+		_vm->_gyro->forceNumlock();
 		_vm->_trip->get_back_loretta();
 		_vm->_celer->updateBackgroundSprites();
 		_vm->_trip->trippancy_link();
@@ -215,12 +211,12 @@ void Avalot::run(Common::String arg) {
 
 #ifdef DEBUG
 		// ONLY FOR TESTING!!!
-		for (byte i = 0; i < _vm->_gyro->lineNum; i++) 
-			_vm->_graphics->_surface.drawLine(_vm->_gyro->lines[i].x1, _vm->_gyro->lines[i].y1, _vm->_gyro->lines[i].x2, _vm->_gyro->lines[i].y2, _vm->_gyro->lines[i].col);
+		for (byte i = 0; i < _vm->_gyro->_lineNum; i++) 
+			_vm->_graphics->_surface.drawLine(_vm->_gyro->_lines[i]._x1, _vm->_gyro->_lines[i]._y1, _vm->_gyro->_lines[i]._x2, _vm->_gyro->_lines[i]._y2, _vm->_gyro->_lines[i].col);
 
-		for (byte i = 0; i < _vm->_gyro->numfields; i++) {
-			if (_vm->_gyro->fields[i].x1 < 640)
-				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->fields[i].x1, _vm->_gyro->fields[i].y1, _vm->_gyro->fields[i].x2, _vm->_gyro->fields[i].y2), kColorLightmagenta);
+		for (byte i = 0; i < _vm->_gyro->_fieldNum; i++) {
+			if (_vm->_gyro->_fields[i]._x1 < 640)
+				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->_fields[i]._x1, _vm->_gyro->_fields[i]._y1, _vm->_gyro->_fields[i]._x2, _vm->_gyro->_fields[i]._y2), kColorLightmagenta);
 		}
 		// ONLY FOR TESTING!!!
 #endif
@@ -231,7 +227,7 @@ void Avalot::run(Common::String arg) {
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
 		if (delay <= 55)
 			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown(); 55 comes from 18.2 Hz (B Flight).
-	} while (! _vm->_gyro->lmo);
+	} while (! _vm->_gyro->_letMeOut);
 
 	//if (logging)
 	//	close(logfile);
