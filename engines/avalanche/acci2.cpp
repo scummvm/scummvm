@@ -192,17 +192,6 @@ const Acci::VocabEntry Acci::kVocabulary[kParserWordsNum] = {
 	{255, "THIS"},      {255, "SENTINEL"} // for "Ken SENT Me"
 };        
 
-const char Acci::kWhat[] = "That's not possible!";
-
-const Acci::RankType Acci::kRanks[9] = {
-	{0, "Beginner"},     {10, "Novice"},
-	{20, "Improving"},   {35, "Not bad"},
-	{50, "Passable"},    {65, "Good"},
-	{80, "Experienced"}, {108, "The BEST!"},
-	{32767, "copyright'93"}
-};
-
-
 Acci::Acci(AvalancheEngine *vm) {
 	_vm = vm;
 }
@@ -251,6 +240,14 @@ void Acci::replace(Common::String oldChars, byte newChar) {
 }
 
 Common::String Acci::rank() {
+	static const RankType kRanks[9] = {
+		{0, "Beginner"},     {10, "Novice"},
+		{20, "Improving"},   {35, "Not bad"},
+		{50, "Passable"},    {65, "Good"},
+		{80, "Experienced"}, {108, "The BEST!"},
+		{32767, "copyright'93"}
+	};
+
 	for (byte i = 0; i < 8; i++) {
 		if ((_vm->_gyro->_dna._score >= kRanks[i]._score) && (_vm->_gyro->_dna._score < kRanks[i + 1]._score)) {
 			return kRanks[i]._title;
@@ -1304,7 +1301,8 @@ void Acci::heyThanks() {
  * @remarks	Originally called 'do_that'
  */
 void Acci::doThat() {
-	const Common::String booze[] = {"Bitter", "GIED", "Whisky", "Cider", "", "", "", "Mead"};
+	static const Common::String booze[] = {"Bitter", "GIED", "Whisky", "Cider", "", "", "", "Mead"};
+	static const char kWhat[] = "That's not possible!";
 
 	if (_thats == Common::String(kNothing))  {
 		if (!_thats.empty())
