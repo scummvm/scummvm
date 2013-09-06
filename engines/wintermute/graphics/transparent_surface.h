@@ -144,8 +144,10 @@ class BlittingTools {
 public:
 	static void blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
 	static void blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
 	static void blendPixelSubtractive(byte *in, byte *out);
 	static void blendPixelAdditive(byte *in, byte *out);
+	static void blendPixelNormal(byte *in, byte *out, int colorMod);
 };
 
 

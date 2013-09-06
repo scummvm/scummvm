@@ -66,6 +66,86 @@ void BlittingTools::blendPixelAdditive(byte *in, byte *out) {
 		blendPixelAdditive(ina, inr, ing, inb, outa, outr, outg, outb); 
 }
 
+void BlittingTools::blendPixelNormal(byte *in, byte *out, int colorMod) {
+		byte *outa = &out[aIndex];
+		byte *outr = &out[rIndex];
+		byte *outg = &out[gIndex];
+		byte *outb = &out[bIndex];
+
+		byte *ina = &in[aIndex];
+		byte *inr = &in[rIndex];
+		byte *ing = &in[gIndex];
+		byte *inb = &in[bIndex];
+
+		byte ca = (colorMod >> aIndex) & 0xFF;
+		byte cr = (colorMod >> rIndex) & 0xFF;
+		byte cg = (colorMod >> gIndex) & 0xFF;
+		byte cb = (colorMod >> bIndex) & 0xFF;
+
+		blendPixelNormal(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
+}
+
+
+void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+
+	if (*ca != 255) {
+		*ina = *ina * *ca >> 8;
+	}
+
+	if (*ina == 0) {
+		return;
+	} else if (*ina == 255) {
+		if (*cb != 255)
+			*outb = (*inb * *cb) >> 8;
+		else
+			*outb = *inb;
+
+		if (*cr != 255)
+			*outr = (*inr * *cr) >> 8;
+		else
+			*outr = *inr;
+
+		if (*cg != 255)
+			*outg = (*ing * *cg) >> 8;
+		else
+			*outg = *ing;
+
+		*outa = *ina;
+			
+		return;
+
+	} else {
+
+		*outa = 255;
+		*outb = *outb * (255 - *ina);
+		*outr = *outr * (255 - *ina);
+		*outg = *outg * (255 - *ina);
+
+		if (*cb == 0)
+			*outb = *outb >> 8;
+		else if (*cb != 255)
+			*outb = ((*outb << 8) + *inb * *ina * *cb) >> 16;
+		else
+			*outb = (*outb + *inb * *ina) >> 8;
+
+		if (*cr == 0)
+			*outr = *outr >> 8;
+		else if (*cr != 255)
+			*outr = ((*outr << 8) + *inr * *ina * *cr) >> 16;
+		else
+			*outr = (*outr + *inr * *inr) >> 8;
+
+		if (*cg == 0)
+			*outg = *outg >> 8;
+		else if (*cg != 255)
+			*outg = ((*outg << 8) + *ing * *ina * *cg) >> 16;
+		else
+			*outg = (*outg + *ing * *ing) >> 8;
+
+		return;
+	}
+}
+
 void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 		if (*ina == 0) {
 			return;
@@ -377,74 +457,9 @@ void TransparentSurface::doBlitColormod(byte *ino, byte *outo, uint32 width, uin
 			out = outo;
 			in = ino;
 			for (int j = 0; j < width; j++) {
-				uint32 pix = *(uint32 *)in;
-				uint32 o_pix = *(uint32 *) out;
-				int b = (pix >> bShift) & 0xff;
-				int g = (pix >> gShift) & 0xff;
-				int r = (pix >> rShift) & 0xff;
-				int a = (pix >> aShift) & 0xff;
-				int outb, outg, outr, outa;
 				in += inStep;
-
-				if (ca != 255) {
-					a = a * ca >> 8;
-				}
-				switch (a) {
-				case 0: // Full transparency
-					out += 4;
-					break;
-				case 255: // Full opacity
-					if (cb != 255)
-						outb = (b * cb) >> 8;
-					else
-						outb = b;
-
-					if (cg != 255)
-						outg = (g * cg) >> 8;
-					else
-						outg = g;
-
-					if (cr != 255)
-						outr = (r * cr) >> 8;
-					else
-						outr = r;
-					outa = a;
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
-					out += 4;
-					break;
-
-				default: // alpha blending
-					outa = 255;
-					outb = ((o_pix >> bShiftTarget) & 0xff) * (255 - a);
-					outg = ((o_pix >> gShiftTarget) & 0xff) * (255 - a);
-					outr = ((o_pix >> rShiftTarget) & 0xff) * (255 - a);
-					if (cb == 0)
-						outb = outb >> 8;
-					else if (cb != 255)
-						outb = ((outb << 8) + b * a * cb) >> 16;
-					else
-						outb = (outb + b * a) >> 8;
-					if (cg == 0)
-						outg = outg >> 8;
-					else if (cg != 255)
-						outg = ((outg << 8) + g * a * cg) >> 16;
-					else
-						outg = (outg + g * a) >> 8;
-					if (cr == 0)
-						outr = outr >> 8;
-					else if (cr != 255)
-						outr = ((outr << 8) + r * a * cr) >> 16;
-					else
-						outr = (outr + r * a) >> 8;
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
-					out += 4;
-				}
+				BlittingTools::blendPixelNormal(in, out, color);
+				out += 4;
 			}
 			outo += pitch;
 			ino += inoStep;
