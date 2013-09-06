@@ -22,6 +22,11 @@
 
 // This file is used in order to avoid usage of constants in Russian accross the code
 
+#ifndef FULLPIPE_OBJECTNAMES_H
+#define FULLPIPE_OBJECTNAMES_H
+
+namespace Fullpipe {
+
 #define sO_Grandma "\xc1\xe0\xe1\xf3\xeb\xff"	// "Бабуля"
 #define sO_Jar_4 "\xc1\xe0\xed\xea\xe0_4"	// "Банка_4"
 #define sO_Pool "\xc1\xe0\xf1\xf1\xe5\xe9\xed"	// "Бассейн"
@@ -239,3 +244,7 @@
 #define sO_Egg1 "\xdf\xe9\xf6\xee\x31"	// "Яйцо1"
 #define sO_Egg2 "\xdf\xe9\xf6\xee\x32"	// "Яйцо2"
 #define sO_Egg3 "\xdf\xe9\xf6\xee\x33"	// "Яйцо3"
+
+} // End of namespace Fullpipe
+
+#endif /* FULLPIPE_OBJECTNAMES_H */
