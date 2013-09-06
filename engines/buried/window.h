@@ -91,6 +91,8 @@ public:
 		kWindowPosNoActivate = (1 << 5)
 	};
 
+	Window *setFocus();
+
 	// TODO:
 	// ShowWindow
 	// BeginPaint (?)

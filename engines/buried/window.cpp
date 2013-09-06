@@ -82,12 +82,6 @@ void Window::dispatchAllMessages() {
 		case kMessageTypeTimer:
 			onTimer(((TimerMessage *)message)->getTimer());
 			break;
-		case kMessageTypeSetFocus:
-			onSetFocus(((SetFocusMessage *)message)->getWindow());
-			break;
-		case kMessageTypeKillFocus:
-			onKillFocus(((KillFocusMessage *)message)->getWindow());
-			break;
 		case kMessageTypeLButtonUp:
 			onLButtonUp(((LButtonUpMessage *)message)->getPoint(), ((LButtonUpMessage *)message)->getFlags());
 			break;
@@ -244,6 +238,24 @@ Common::Rect Window::makeAbsoluteRect(const Common::Rect &rect) const {
 	Common::Rect absoluteRect = rect;
 	absoluteRect.translate(parentRect.left, parentRect.top);
 	return absoluteRect;
+}
+
+Window *Window::setFocus() {
+	// Don't allow focus to be acquired if the window is disabled
+	if (!isWindowEnabled())
+		return 0;
+
+	Window *oldWindow = 0;
+
+	// Notify the old window we just took its focus
+	if (_vm->_focusedWindow) {
+		_vm->_focusedWindow->onKillFocus(this);
+		oldWindow = _vm->_focusedWindow;
+	}
+
+	_vm->_focusedWindow = this;
+	onSetFocus(oldWindow);
+	return oldWindow;
 }
 
 } // End of namespace Buried
