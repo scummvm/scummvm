@@ -30,7 +30,60 @@
 #include "engines/wintermute/graphics/transform_tools.h"
 
 namespace Wintermute {
+#ifdef SCUMM_LITTLE_ENDIAN
+const int aIndex = 0;
+const int bIndex = 1;
+const int gIndex = 2;
+const int rIndex = 3;
+#else
+const int aIndex = 3;
+const int bIndex = 2;
+const int gIndex = 1;
+const int rIndex = 0;
+#endif
 
+
+void BlittingTools::blendPixelAdditive(byte *in, byte *out) {
+				byte *outa = &out[aIndex];
+				byte *outr = &out[rIndex];
+				byte *outg = &out[gIndex];
+				byte *outb = &out[bIndex];
+
+				byte *ina = &in[aIndex];
+				byte *inr = &in[rIndex];
+				byte *ing = &in[gIndex];
+				byte *inb = &in[bIndex];
+
+				blendPixelAdditive(ina, inr, ing, inb, outa, outr, outg, outb); 
+}
+
+void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+				*outa = *outa;
+				*outr = MAX(*outr - *inr, 0);
+				*outg = MAX(*outg - *ing, 0);
+				*outb = MAX(*outb - *inb, 0);
+}
+
+void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+				*outa = *outa;
+				*outr = MIN(*outr + *inr, 255);
+				*outg = MIN(*outg + *ing, 255);
+				*outb = MIN(*outb + *inb, 255);
+};
+
+void BlittingTools::blendPixelSubtractive (byte *in, byte *out)  {
+				byte *outa = &out[aIndex];
+				byte *outr = &out[rIndex];
+				byte *outg = &out[gIndex];
+				byte *outb = &out[bIndex];
+
+				byte *ina = &in[aIndex];
+				byte *inr = &in[rIndex];
+				byte *ing = &in[gIndex];
+				byte *inb = &in[bIndex];
+
+				blendPixelSubtractive(ina, inr, ing, inb, outa, outr, outg, outb); 
+};
 
 #if ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
@@ -160,28 +213,13 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
-#ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 0;
-	const int bIndex = 1;
-	const int gIndex = 2;
-	const int rIndex = 3;
-#else
-	const int aIndex = 3;
-	const int bIndex = 2;
-	const int gIndex = 1;
-	const int rIndex = 0;
-#endif
 	if (blendMode == BLEND_ADDITIVE) {
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
-			// memcpy(out, in, width * 4);
 			for (uint32 j = 0; j < width; j++) {
 				in += inStep;
-				out[aIndex] = 0xFF;
-				out[rIndex] = MIN(out[rIndex] + in[rIndex], 255);
-				out[gIndex] = MIN(out[gIndex] + in[gIndex], 255);
-				out[bIndex] = MIN(out[bIndex] + in[bIndex], 255);
+				BlittingTools::blendPixelAdditive(in, out);
 				out += 4;
 			}
 			outo += pitch;
@@ -191,13 +229,9 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
-			// memcpy(out, in, width * 4);
 			for (uint32 j = 0; j < width; j++) {
 				in += inStep;
-				out[aIndex] = 0xFF;
-				out[rIndex] = MAX(out[rIndex] - in[rIndex], 0);
-				out[gIndex] = MAX(out[gIndex] - in[gIndex], 0);
-				out[bIndex] = MAX(out[bIndex] - in[bIndex], 0);
+				BlittingTools::blendPixelSubtractive(in, out);
 				out += 4;
 			}
 			outo += pitch;
@@ -224,17 +258,6 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
-#ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 0;
-	const int bIndex = 1;
-	const int gIndex = 2;
-	const int rIndex = 3;
-#else
-	const int aIndex = 3;
-	const int bIndex = 2;
-	const int gIndex = 1;
-	const int rIndex = 0;
-#endif
 	const int aShift = 0;//img->format.aShift;
 	if (blendMode == BLEND_ADDITIVE) {
 		for (uint32 i = 0; i < height; i++) {
@@ -248,10 +271,13 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 				if (a == 0) { // Full transparency
 					out += 4;
 				} else { // Full opacity (Any value not exactly 0 is Opaque here)
+					BlittingTools::blendPixelAdditive(in, out);
+					/*
 					out[rIndex] = MIN(out[rIndex] + in[rIndex], 255);
 					out[gIndex] = MIN(out[gIndex] + in[gIndex], 255);
 					out[bIndex] = MIN(out[bIndex] + in[bIndex], 255);
 					out[aIndex] = 0xFF;
+					*/
 					out += 4;
 				}
 			}
@@ -270,10 +296,13 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 				if (a == 0) { // Full transparency
 					out += 4;
 				} else { // Full opacity (Any value not exactly 0 is Opaque here)
+					BlittingTools::blendPixelSubtractive(in, out);
+					/*
 					out[rIndex] = MAX(out[rIndex] - in[rIndex], 0);
 					out[gIndex] = MAX(out[gIndex] - in[gIndex], 0);
 					out[bIndex] = MAX(out[bIndex] - in[bIndex], 0);
 					out[aIndex] = 0xFF;
+					*/
 					out += 4;
 				}
 			}
@@ -308,18 +337,6 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
-#ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 0;
-	const int bIndex = 1;
-	const int gIndex = 2;
-	const int rIndex = 3;
-#else
-	const int aIndex = 3;
-	const int bIndex = 2;
-	const int gIndex = 1;
-	const int rIndex = 0;
-#endif
-
 	const int bShift = 8;//img->format.bShift;
 	const int gShift = 16;//img->format.gShift;
 	const int rShift = 24;//img->format.rShift;
@@ -350,15 +367,7 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 					out += 4;
 					break;
 				case 255: // Full opacity
-					outb = MIN(b + outb, 255);
-					outg = MIN(g + outg, 255);
-					outr = MIN(r + outr, 255);
-					outa = outa;
-
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
+					BlittingTools::blendPixelAdditive(in, out);
 					out += 4;
 					break;
 
@@ -400,19 +409,12 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 					out += 4;
 					break;
 				case 255: // Full opacity
-					outb = MAX(outb - b, 0);
-					outg = MAX(outg - g, 0);
-					outr = MAX(outr - r, 0);
-					outa = outa;
-
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
+					BlittingTools::blendPixelSubtractive(in, out);
 					out += 4;
 					break;
 
 				default: // alpha blending
+					// subBlend
 					outa = outa;
 					outb = MAX(outb - (b * a >> 8), 0);
 					outg = MAX(outg - (g * a >> 8), 0);
@@ -448,6 +450,7 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 					out += 4;
 					break;
 				case 255: // Full opacity
+					// opaqueBlit
 					outb = b;
 					outg = g;
 					outr = r;
@@ -460,7 +463,8 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 					out += 4;
 					break;
 
-				default: // alpha blending
+				default: 
+					// alphaBlend
 					outa = 255;
 					outb = ((b * a) + ((oPix >> bShiftTarget) & 0xff) * (255 - a)) >> 8;
 					outg = ((g * a) + ((oPix >> gShiftTarget) & 0xff) * (255 - a)) >> 8;
@@ -586,17 +590,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 		byte *in, *out;
 
-#ifdef SCUMM_LITTLE_ENDIAN
-		const int aIndex = 0;
-		const int bIndex = 1;
-		const int gIndex = 2;
-		const int rIndex = 3;
-#else
-		const int aIndex = 3;
-		const int bIndex = 2;
-		const int gIndex = 1;
-		const int rIndex = 0;
-#endif
 
 		const int bShift = 8;//img->format.bShift;
 		const int gShift = 16;//img->format.gShift;

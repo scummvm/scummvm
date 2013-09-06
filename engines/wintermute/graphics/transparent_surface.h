@@ -139,6 +139,14 @@ private:
     }
 };*/
 
+class BlittingTools {
+public:
+	static void blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixelSubtractive(byte *in, byte *out);
+	static void blendPixelAdditive(byte *in, byte *out);
+};
+
 
 } // End of namespace Wintermute
 
