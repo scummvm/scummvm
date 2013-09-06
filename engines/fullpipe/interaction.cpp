@@ -41,8 +41,8 @@ bool CInteractionController::load(MfcArchive &file) {
 int static_compSceneId = 0;
 
 bool CInteractionController::compareInteractions(const void *p1, const void *p2) {
-	CInteraction *i1 = (CInteraction *)p1;
-	CInteraction *i2 = (CInteraction *)p2;
+	const CInteraction *i1 = (const CInteraction *)p1;
+	const CInteraction *i2 = (const CInteraction *)p2;
 
 	if ( i2->_sceneId < i1->_sceneId) {
 		if ( i1->_sceneId != static_compSceneId)
