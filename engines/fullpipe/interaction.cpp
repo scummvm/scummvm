@@ -55,19 +55,15 @@ bool CInteractionController::compareInteractions(const void *p1, const void *p2)
 			return true;
 	}
 	if (i2->_objectId3 == -1)
-		goto LABEL_17;
-	if (i2->_objectId3 == -2)
-		goto LABEL_18;
-	if (i1->_objectId3 != -1 && i1->_objectId3 != -2) {
-LABEL_17:
-		if (i2->_objectId3 != -2)
-			return true;
-LABEL_18:
-		if (i1->_objectId3 != -1)
-			return true;
-	}
+		return true;
 
-	return false;
+	if (i1->_objectId3 == i2->_objectId3)
+		return true;
+
+	if (i1->_objectId3 == -1 || i1->_objectId3 == -2)
+		return false;
+
+	return true;
 }
 
 void CInteractionController::sortInteractions(int sceneId) {
