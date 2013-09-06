@@ -144,12 +144,6 @@ class CDWordArray : public Common::Array<int32>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-struct CNode {
-	CNode *pNext;
-	CNode *pPrev;
-	void *data;
-};
-
 typedef Common::Array<void *> CPtrList;
 
 char *genFileName(int superId, int sceneId, const char *ext);
