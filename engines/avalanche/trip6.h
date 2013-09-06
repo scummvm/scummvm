@@ -235,9 +235,9 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	ByteField r;
-
-	int16 beforex, beforey;
+	// CHECKME: Useless?
+	// ByteField r;
+	// int16 beforex, beforey;
 
 	byte checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
 
