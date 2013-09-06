@@ -130,12 +130,12 @@ const int16 maxgetset = 35;
 
 class getsettype {
 public:
-	bytefield gs[maxgetset];
+	ByteField gs[maxgetset];
 	byte numleft;
 
 	getsettype *init();
-	void remember(bytefield r);
-	void recall(bytefield &r);
+	void remember(ByteField r);
+	void recall(ByteField &r);
 };
 
 
@@ -235,7 +235,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	bytefield r;
+	ByteField r;
 
 	int16 beforex, beforey;
 
@@ -246,8 +246,6 @@ private:
 	void dawndelay();
 
 	void hide_in_the_cupboard();
-
-	bool overlaps_with_mouse();
 
 	void follow_avvy_y(byte tripnum);
 
@@ -266,10 +264,6 @@ private:
 	void call_andexors();
 
 	void getsetclear();
-
-	void tidy_up(int16 a, int16 b, int16 c, int16 d);
-
-	void tidy_after_mouse();
 };
 
 } // End of namespace Avalanche.

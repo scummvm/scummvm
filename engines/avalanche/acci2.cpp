@@ -208,7 +208,7 @@ Acci::Acci(AvalancheEngine *vm) {
 }
 
 void Acci::init() {
-	_vm->_gyro->weirdword = false;
+	_vm->_gyro->_weirdWord = false;
 }
 
 void Acci::clearWords() {
@@ -252,7 +252,7 @@ void Acci::replace(Common::String oldChars, byte newChar) {
 
 Common::String Acci::rank() {
 	for (byte i = 0; i < 8; i++) {
-		if ((_vm->_gyro->dna.score >= kRanks[i]._score) && (_vm->_gyro->dna.score < kRanks[i + 1]._score)) {
+		if ((_vm->_gyro->_dna._score >= kRanks[i]._score) && (_vm->_gyro->_dna._score < kRanks[i + 1]._score)) {
 			return kRanks[i]._title;
 		}
 	}
@@ -264,7 +264,7 @@ Common::String Acci::totalTime() {
 	const double ticksInOneSec = (double)(65535) / 3600; 
 	uint16 h, m, s;
 
-	h = _vm->_gyro->dna.total_time / ticksInOneSec; // No. of seconds.
+	h = _vm->_gyro->_dna._totalTime / ticksInOneSec; // No. of seconds.
 	h = floor((float)h);
 	m = h % 3600;
 	h = h / 3600;
@@ -273,10 +273,10 @@ Common::String Acci::totalTime() {
 
 	Common::String result = "You've been playing for ";
 	if (h > 0)
-		result = result + _vm->_gyro->strf(h) + " hours, ";
+		result = result + _vm->_gyro->intToStr(h) + " hours, ";
 	if ((m > 0) || (h != 0))
-		result = result + _vm->_gyro->strf(m) + " minutes and ";
-	return result + _vm->_gyro->strf(s) + " seconds.";
+		result = result + _vm->_gyro->intToStr(m) + " minutes and ";
+	return result + _vm->_gyro->intToStr(s) + " seconds.";
 }
 
 void Acci::cheatParse(Common::String codes) {
@@ -314,9 +314,9 @@ void Acci::displayWhat(byte target, bool animate, bool &ambiguous) {
 			_vm->_scrolls->display("What?");
 	} else {
 		if (animate)
-			_vm->_scrolls->display(Common::String("{ ") + _vm->_gyro->getname(target) + " }");
+			_vm->_scrolls->display(Common::String("{ ") + _vm->_gyro->getName(target) + " }");
 		else {
-			Common::String z = _vm->_gyro->get_better(target);
+			Common::String z = _vm->_gyro->getItem(target);
 			if (z != "") 
 				_vm->_scrolls->display(Common::String("{ ") + z + " }");
 		}
@@ -330,18 +330,18 @@ bool Acci::doPronouns() {
 		byte wordCode = _thats[i];
 		switch (wordCode) {
 		case 200: {
-			displayWhat(_vm->_gyro->him, true, ambiguous);
-			_thats.setChar(_vm->_gyro->him, i);
+			displayWhat(_vm->_gyro->_him, true, ambiguous);
+			_thats.setChar(_vm->_gyro->_him, i);
 			}
 			break;
 		case 201: {
-			displayWhat(_vm->_gyro->her, true, ambiguous);
-			_thats.setChar(_vm->_gyro->her, i);
+			displayWhat(_vm->_gyro->_her, true, ambiguous);
+			_thats.setChar(_vm->_gyro->_her, i);
 			}
 			break;
 		case 202: {
-			displayWhat(_vm->_gyro->it, false, ambiguous);
-			_thats.setChar(_vm->_gyro->it, i);
+			displayWhat(_vm->_gyro->_it, false, ambiguous);
+			_thats.setChar(_vm->_gyro->_it, i);
 			}
 			break;
 		}
@@ -388,32 +388,32 @@ void Acci::storeInterrogation(byte interrogation) {
 	case 1:
 		_vm->_parser->_inputText.toLowercase();
 		sayIt();
-		_vm->_gyro->dna.like2drink = _vm->_parser->_inputText;
-		_vm->_gyro->dna.cardiff_things = 2;
+		_vm->_gyro->_dna._favouriteDrink = _vm->_parser->_inputText;
+		_vm->_gyro->_dna._cardiffQuestionNum = 2;
 		break;
 	case 2:
 		properNouns();
 		sayIt();
-		_vm->_gyro->dna.favourite_song = _vm->_parser->_inputText;
-		_vm->_gyro->dna.cardiff_things = 3;
+		_vm->_gyro->_dna._favouriteSong = _vm->_parser->_inputText;
+		_vm->_gyro->_dna._cardiffQuestionNum = 3;
 		break;
 	case 3:
 		properNouns();
 		sayIt();
-		_vm->_gyro->dna.worst_place_on_earth = _vm->_parser->_inputText;
-		_vm->_gyro->dna.cardiff_things = 4;
+		_vm->_gyro->_dna._worstPlaceOnEarth = _vm->_parser->_inputText;
+		_vm->_gyro->_dna._cardiffQuestionNum = 4;
 		break;
 	case 4:
 		_vm->_parser->_inputText.toLowercase();
 		sayIt();
-		if (!_vm->_gyro->dna.spare_evening.empty())
-			_vm->_gyro->dna.spare_evening.clear();
-		_vm->_gyro->dna.spare_evening = _vm->_parser->_inputText;
+		if (!_vm->_gyro->_dna._spareEvening.empty())
+			_vm->_gyro->_dna._spareEvening.clear();
+		_vm->_gyro->_dna._spareEvening = _vm->_parser->_inputText;
 		_vm->_visa->dixi('z', 5); // His closing statement...
 		_vm->_trip->tr[1].walkto(4); // The end of the drawbridge
 		_vm->_trip->tr[1].vanishifstill = true; // Then go away!
-		_vm->_gyro->magics[1].op = _vm->_gyro->kMagicNothing;
-		_vm->_gyro->dna.cardiff_things = 5;
+		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing;
+		_vm->_gyro->_dna._cardiffQuestionNum = 5;
 		break;
 	case 99:
 		//store_high(_vm->_parser->_inputText);
@@ -451,7 +451,7 @@ void Acci::parse() {
 	// Are we being interrogated right now?
 	if (_vm->_gyro->_interrogation > 0) {
 		storeInterrogation(_vm->_gyro->_interrogation);
-		_vm->_gyro->weirdword = true;
+		_vm->_gyro->_weirdWord = true;
 		return;
 	}
 
@@ -483,7 +483,7 @@ void Acci::parse() {
 		// Check also[] first, which conatins words about the actual room.
 		if (!thisword.empty()) {
 			for (byte i = 0; i < 31; i++) {
-				if ((_vm->_gyro->also[i][0] != 0) && (_vm->_parser->pos(',' + thisword, *_vm->_gyro->also[i][0]) > -1)) {
+				if ((_vm->_gyro->_also[i][0] != 0) && (_vm->_parser->pos(',' + thisword, *_vm->_gyro->_also[i][0]) > -1)) {
 					_thats = _thats + Common::String(99 + i);
 					notfound = false;
 				}
@@ -533,12 +533,12 @@ void Acci::parse() {
 	replace(Common::String('\x4')  + '\xE5', 20); // "take off" = "doff"
 
 	// Words that could mean more than one _person
-	if (_vm->_gyro->dna.room == r__nottspub)
+	if (_vm->_gyro->_dna._room == r__nottspub)
 		replace(Common::String('\xCC'), 164); // Barman = Port
 	else
 		replace(Common::String('\xCC'), 154); // Barman = Malagauche
 
-	switch (_vm->_gyro->dna.room) {
+	switch (_vm->_gyro->_dna._room) {
 	case r__aylesoffice:
 		replace(Common::String('\xCB'), 163); // Monk = Ayles
 		break;       
@@ -550,39 +550,39 @@ void Acci::parse() {
 	}
 	
 	if (doPronouns()) {
-		_vm->_gyro->weirdword = true;
+		_vm->_gyro->_weirdWord = true;
 		_thats = kNothing;
 		return;
 	}
 
 	// Second parsing.
-	if (!_vm->_gyro->subject.empty())
-		_vm->_gyro->subject.clear();
-	_vm->_gyro->subjnumber = 0; // Find subject of conversation.
+	if (!_vm->_gyro->_subject.empty())
+		_vm->_gyro->_subject.clear();
+	_vm->_gyro->_subjectNum = 0; // Find subject of conversation.
 	
 	for (int i = 0; (i < 11) && !_realWords[i].empty(); i++) {
 		if ((_realWords[i][0] == '\'') || (_realWords[i][0] == '\"')) {
-			_vm->_gyro->subjnumber = (byte)_thats[i];
+			_vm->_gyro->_subjectNum = (byte)_thats[i];
 			_thats.setChar(kMoved, i);
 			break;
 		}
 	}
 
-	if ((_vm->_gyro->subjnumber == 0) && !_thats.empty()) { // Still not found.
+	if ((_vm->_gyro->_subjectNum == 0) && !_thats.empty()) { // Still not found.
 		for (uint16 i = 0; i < _thats.size() - 1; i++) {
 			if ((byte)_thats[i] == 252) { // The word is "about", or something similar.
-				_vm->_gyro->subjnumber = (byte)_thats[i + 1];
+				_vm->_gyro->_subjectNum = (byte)_thats[i + 1];
 				_thats.setChar(0, i + 1);
 				break;
 			}
 		}
 	}
 
-	if ((_vm->_gyro->subjnumber == 0) && !_thats.empty()) { // STILL not found! Must be the word after "say".
+	if ((_vm->_gyro->_subjectNum == 0) && !_thats.empty()) { // STILL not found! Must be the word after "say".
 		for (uint16 i = 0; i < _thats.size() - 1; i++) {
 			if (((byte)_thats[i] == 7) && ((byte)_thats[i + 1] != 0) && !((225 <= (byte)_thats[i + 1]) && ((byte)_thats[i + 1] <= 229))) {
 				// SAY not followed by a preposition
-				_vm->_gyro->subjnumber = (byte)_thats[i + 1];
+				_vm->_gyro->_subjectNum = (byte)_thats[i + 1];
 				_thats.setChar(0, i + 1);
 				break;
 			}
@@ -603,30 +603,30 @@ void Acci::parse() {
 
 	if ((!_unknown.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
 			_vm->_scrolls->display(Common::String("Sorry, but I have no idea kWhat \"") + _unknown + "\" means. Can you rephrase it?");
-			_vm->_gyro->weirdword = true;
+			_vm->_gyro->_weirdWord = true;
 	} else
-		_vm->_gyro->weirdword = false;
+		_vm->_gyro->_weirdWord = false;
 
 	if (_thats.empty())
 		_thats = kNothing;
 
 	if (_thing != kPardon)
-		_vm->_gyro->it = _thing;
+		_vm->_gyro->_it = _thing;
 
 	if (_person != kPardon) {
 		if (_person < 175)
-			_vm->_gyro->him = _person;
+			_vm->_gyro->_him = _person;
 		else
-			_vm->_gyro->her = _person;
+			_vm->_gyro->_her = _person;
 	}
 }
 
 void Acci::examineObject() {   
-	if (_thing != _vm->_gyro->thinks)
+	if (_thing != _vm->_gyro->_thinks)
 		_vm->_lucerna->thinkabout(_thing, _vm->_gyro->kThing);
 	switch (_thing) {
-	case Gyro::wine :
-		switch (_vm->_gyro->dna.winestate) {// 4 is perfect wine. 0 is not holding the wine.
+	case Gyro::kObjectWine :
+		switch (_vm->_gyro->_dna._wineState) {// 4 is perfect wine. 0 is not holding the wine.
 		case 1:
 			_vm->_visa->dixi('t', 1); // Normal examine wine scroll
 			break; 
@@ -638,8 +638,8 @@ void Acci::examineObject() {
 			break;
 		}
 		break;
-	case Gyro::onion:
-		if (_vm->_gyro->dna.rotten_onion)
+	case Gyro::kObjectOnion:
+		if (_vm->_gyro->_dna._rottenOnion)
 			_vm->_visa->dixi('q', 21); // Yucky onion.
 		else
 			_vm->_visa->dixi('t', 18);  // Normal onion scroll
@@ -650,7 +650,7 @@ void Acci::examineObject() {
 }
 
 bool Acci::isPersonHere() { // Person equivalent of "holding".
-	if ((_person == kPardon) || (_person == 0) || (_vm->_gyro->_whereIs[_person - 150] == _vm->_gyro->dna.room))
+	if ((_person == kPardon) || (_person == 0) || (_vm->_gyro->_whereIs[_person - 150] == _vm->_gyro->_dna._room))
 		return true;
 	else {
 		if (_person < 175)
@@ -664,18 +664,18 @@ bool Acci::isPersonHere() { // Person equivalent of "holding".
 
 void Acci::exampers() {
 	if (isPersonHere()) {
-		if (_thing != _vm->_gyro->thinks)
+		if (_thing != _vm->_gyro->_thinks)
 			_vm->_lucerna->thinkabout(_person, _vm->_gyro->kPerson);
 		_person -= 149;
 		switch (_person) { // Special cases
 		case 11:
-			if (_vm->_gyro->dna.wonnim) {
+			if (_vm->_gyro->_dna._wonNim) {
 				_vm->_visa->dixi('Q', 8); // "I'm Not Playing!"
 				return;
 			}
 			break;
 		case 99:
-			if (_vm->_gyro->dna.lustie_is_asleep) {
+			if (_vm->_gyro->_dna._lustieIsAsleep) {
 				_vm->_visa->dixi('Q', 65); // He's asleep. (65! Wow!)
 				return;
 			}
@@ -686,7 +686,7 @@ void Acci::exampers() {
 	} 
 	
 	// And afterwards...
-	if ((_person == 14) && (!_vm->_gyro->dna.ayles_is_awake))
+	if ((_person == 14) && (!_vm->_gyro->_dna._aylesIsAwake))
 		_vm->_visa->dixi('Q', 13);
 }
 
@@ -698,7 +698,7 @@ bool Acci::holding() {
 
 	if (_thing > 100)
 		_vm->_scrolls->display("Be reasonable!");
-	else if (!_vm->_gyro->dna.obj[_thing - 1])  // Verbs that need "_thing" to be in the inventory.
+	else if (!_vm->_gyro->_dna._objects[_thing - 1])  // Verbs that need "_thing" to be in the inventory.
 		_vm->_scrolls->display("You're not holding it, Avvy.");
 	else 
 		holdingResult = true;
@@ -707,7 +707,7 @@ bool Acci::holding() {
 }
 
 void Acci::openBox(bool isOpening) {
-	if ((_vm->_gyro->dna.room == r__yours) && (_thing == 54)) {
+	if ((_vm->_gyro->_dna._room == r__yours) && (_thing == 54)) {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 
 		_vm->_celer->updateBackgroundSprites();
@@ -734,7 +734,7 @@ void Acci::examine() {
 				examineObject();
 			else if ((50 <= _thing) && (_thing <= 100)) { // Also _thing
 				openBox(true);
-				_vm->_scrolls->display(*_vm->_gyro->also[_thing - 50][1]);
+				_vm->_scrolls->display(*_vm->_gyro->_also[_thing - 50][1]);
 				openBox(false);
 			}
 		}
@@ -748,20 +748,20 @@ void Acci::inventory() {
 	byte itemNum = 0;
 	_vm->_scrolls->display(Common::String("You're carrying ") + _vm->_scrolls->kControlToBuffer);
 
-	for (byte i = 0; i < numobjs; i++) {
-		if (_vm->_gyro->dna.obj[i]) {
+	for (byte i = 0; i < kObjectNum; i++) {
+		if (_vm->_gyro->_dna._objects[i]) {
 			itemNum++;
-			if (itemNum == _vm->_gyro->dna.carrying)
+			if (itemNum == _vm->_gyro->_dna._carryNum)
 				_vm->_scrolls->display(Common::String("and ") + _vm->_scrolls->kControlToBuffer);
-			_vm->_scrolls->display(_vm->_gyro->get_better(i + 1) + _vm->_scrolls->kControlToBuffer);
-			if ((i + 1) == _vm->_gyro->dna.wearing)
+			_vm->_scrolls->display(_vm->_gyro->getItem(i + 1) + _vm->_scrolls->kControlToBuffer);
+			if ((i + 1) == _vm->_gyro->_dna._wearing)
 				_vm->_scrolls->display(Common::String(", which you're wearing") + _vm->_scrolls->kControlToBuffer);
-			if (itemNum < _vm->_gyro->dna.carrying)
+			if (itemNum < _vm->_gyro->_dna._carryNum)
 				_vm->_scrolls->display(Common::String(", ") + _vm->_scrolls->kControlToBuffer);
 		}
 	}
 
-	if (_vm->_gyro->dna.wearing == kNothing)
+	if (_vm->_gyro->_dna._wearing == kNothing)
 		_vm->_scrolls->display(Common::String("...") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "...and you're stark naked!");
 	else
 		_vm->_scrolls->display(".");
@@ -769,17 +769,17 @@ void Acci::inventory() {
 
 void Acci::swallow() {   // Eat something.
 	switch (_thing) {
-	case Gyro::wine:
-		switch (_vm->_gyro->dna.winestate) { // 4 is perfect
+	case Gyro::kObjectWine:
+		switch (_vm->_gyro->_dna._wineState) { // 4 is perfect
 		case 1:
-			if (_vm->_gyro->dna.teetotal)  {
+			if (_vm->_gyro->_dna._teetotal)  {
 				_vm->_visa->dixi('D', 6);
 				return;
 			}
 			_vm->_visa->dixi('U', 1);
 			_vm->_pingo->wobble();
 			_vm->_visa->dixi('U', 2);
-			_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
+			_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = false;
 			_vm->_lucerna->objectlist();
 			drink();
 			break;
@@ -789,33 +789,33 @@ void Acci::swallow() {   // Eat something.
 			break; // You can't drink it!
 		}
 		break;
-	case Gyro::potion:
-		_vm->_gyro->background(4);
+	case Gyro::kObjectPotion:
+		_vm->_gyro->setBackgroundColor(4);
 		_vm->_visa->dixi('U', 3);
 		_vm->_lucerna->gameover();
-		_vm->_gyro->background(0);
+		_vm->_gyro->setBackgroundColor(0);
 		break;
-	case Gyro::ink:
+	case Gyro::kObjectInk:
 		_vm->_visa->dixi('U', 4);
 		break;
-	case Gyro::chastity:
+	case Gyro::kObjectChastity:
 		_vm->_visa->dixi('U', 5);
 		break;
-	case Gyro::mushroom:
+	case Gyro::kObjectMushroom:
 		_vm->_visa->dixi('U', 6);
 		_vm->_lucerna->gameover();
 		break;
-	case Gyro::onion:
-		if (_vm->_gyro->dna.rotten_onion)
+	case Gyro::kObjectOnion:
+		if (_vm->_gyro->_dna._rottenOnion)
 			_vm->_visa->dixi('U', 11);
 		else {
 			_vm->_visa->dixi('U', 8);
-			_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = false;
+			_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1] = false;
 			_vm->_lucerna->objectlist();
 		}
 		break;
 	default:
-		if ((_vm->_gyro->dna.room == r__argentpub) || (_vm->_gyro->dna.room == r__nottspub))
+		if ((_vm->_gyro->_dna._room == r__argentpub) || (_vm->_gyro->_dna._room == r__nottspub))
 			_vm->_scrolls->display("Try BUYing things before you drink them!");
 		else
 			_vm->_scrolls->display("The taste of it makes you retch!");
@@ -826,7 +826,7 @@ void Acci::peopleInRoom() {
 	byte numPeople = 0; // Number of people in the room.
 	
 	for (byte i = 1; i < 29; i++) { // Start at 1 so we don't list Avvy himself!
-		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->dna.room)
+		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_dna._room)
 			numPeople++;
 	}
 
@@ -835,14 +835,14 @@ void Acci::peopleInRoom() {
 
 	byte actPerson = 0; // Actually listed people.
 	for (byte i = 1; i < 29; i++) {
-		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->dna.room) {
+		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_dna._room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
-				_vm->_scrolls->display(_vm->_gyro->getname(i + 150) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->display(_vm->_gyro->getName(i + 150) + _vm->_scrolls->kControlToBuffer);
 			else if (actPerson < numPeople) // The middle...
-				_vm->_scrolls->display(Common::String(", ") + _vm->_gyro->getname(i + 150) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->display(Common::String(", ") + _vm->_gyro->getName(i + 150) + _vm->_scrolls->kControlToBuffer);
 			else // The end.
-				_vm->_scrolls->display(Common::String(" and ") + _vm->_gyro->getname(i + 150) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->display(Common::String(" and ") + _vm->_gyro->getName(i + 150) + _vm->_scrolls->kControlToBuffer);
 		}
 	}
 
@@ -855,30 +855,30 @@ void Acci::peopleInRoom() {
 }
 
 void Acci::lookAround() {
-	_vm->_scrolls->display(*_vm->_gyro->also[0][1]);
-	switch (_vm->_gyro->dna.room) {
+	_vm->_scrolls->display(*_vm->_gyro->_also[0][1]);
+	switch (_vm->_gyro->_dna._room) {
 	case r__spludwicks:
-		if (_vm->_gyro->dna.avaricius_talk > 0)
+		if (_vm->_gyro->_dna._avariciusTalk > 0)
 			_vm->_visa->dixi('q', 23);
 		else
 			peopleInRoom();
 		break;
 	case r__robins:
-		if (_vm->_gyro->dna.tied_up)
+		if (_vm->_gyro->_dna._tiedUp)
 			_vm->_visa->dixi('q', 38);
-		if (_vm->_gyro->dna.mushroom_growing)
+		if (_vm->_gyro->_dna._mushroomGrowing)
 			_vm->_visa->dixi('q', 55);
 		break;
 	case r__insidecardiffcastle:
-		if (!_vm->_gyro->dna.taken_pen)
+		if (!_vm->_gyro->_dna._takenPen)
 			_vm->_visa->dixi('q', 49);
 		break;
 	case r__lustiesroom:
-		if (_vm->_gyro->dna.lustie_is_asleep)
+		if (_vm->_gyro->_dna._lustieIsAsleep)
 			_vm->_visa->dixi('q', 65);
 		break;
 	case r__catacombs:
-		switch (_vm->_gyro->dna.cat_y * 256 + _vm->_gyro->dna.cat_x) {
+		switch (_vm->_gyro->_dna._catacombY * 256 + _vm->_gyro->_dna._catacombX) {
 		case 258 :
 			_vm->_visa->dixi('q', 80); // Inside art gallery.
 			break; 
@@ -897,7 +897,7 @@ void Acci::lookAround() {
 
 void Acci::openDoor() { 
 	// Special cases.
-	switch (_vm->_gyro->dna.room) {   
+	switch (_vm->_gyro->_dna._room) {   
 	case r__yours:
 		if (_vm->_trip->infield(2)) {
 			// Opening the box.
@@ -915,21 +915,21 @@ void Acci::openDoor() {
 		break;
 	}
 
-	if ((!_vm->_gyro->dna.user_moves_avvy) && (_vm->_gyro->dna.room != r__lusties))
+	if ((!_vm->_gyro->_dna._userMovesAvvy) && (_vm->_gyro->_dna._room != r__lusties))
 		return; // No doors can open if you can't move Avvy.
 
 	for (byte fv = 8; fv < 15; fv++) {
 		if (_vm->_trip->infield(fv + 1)) {
 			fv -= 8;
 
-			switch (_vm->_gyro->portals[fv].op) {
+			switch (_vm->_gyro->_portals[fv]._operation) {
 			case Gyro::kMagicExclaim:
 				_vm->_trip->tr[0].bounce();
-				_vm->_visa->dixi('x', _vm->_gyro->portals[fv].data);
+				_vm->_visa->dixi('x', _vm->_gyro->_portals[fv]._data);
 				break;
 			case Gyro::kMagicTransport:
-				_vm->_trip->fliproom((_vm->_gyro->portals[fv].data) >> 8,  // High byte 
-					                 (_vm->_gyro->portals[fv].data) & 0x0F // Low byte
+				_vm->_trip->fliproom((_vm->_gyro->_portals[fv]._data) >> 8,  // High byte 
+					                 (_vm->_gyro->_portals[fv]._data) & 0x0F // Low byte
 									 );
 				break;
 			case Gyro::kMagicUnfinished:
@@ -937,10 +937,10 @@ void Acci::openDoor() {
 				_vm->_scrolls->display("Sorry. This place is not available yet!");
 				break;
 			case Gyro::kMagicSpecial:
-				_vm->_trip->call_special(_vm->_gyro->portals[fv].data);
+				_vm->_trip->call_special(_vm->_gyro->_portals[fv]._data);
 				break;
 			case Gyro::kMagicOpenDoor:
-				_vm->_trip->open_the_door((_vm->_gyro->portals[fv].data) >> 8, (_vm->_gyro->portals[fv].data) & 0x0F, fv + 9);
+				_vm->_trip->open_the_door((_vm->_gyro->_portals[fv]._data) >> 8, (_vm->_gyro->_portals[fv]._data) & 0x0F, fv + 9);
 				break;
 			}
 			
@@ -948,7 +948,7 @@ void Acci::openDoor() {
 		}
 	}
 
-	if (_vm->_gyro->dna.room == r__map)
+	if (_vm->_gyro->_dna._room == r__map)
 		_vm->_scrolls->display(Common::String("Avvy, you can complete the whole game without ever going "
 				"to anywhere other than Argent, Birmingham, Cardiff, Nottingham and Norwich."));
 	else
@@ -974,16 +974,16 @@ void Acci::putProc() {
 
 	// Thing is the _thing which you're putting in. _thing2 is where you're putting it.
 	switch (_thing2) {
-	case Gyro::wine:
-		if (_thing == _vm->_gyro->onion) {
-			if (_vm->_gyro->dna.rotten_onion)
+	case Gyro::kObjectWine:
+		if (_thing == _vm->_gyro->kObjectOnion) {
+			if (_vm->_gyro->_dna._rottenOnion)
 				_vm->_scrolls->display("That's a bit like shutting the stable door after the horse has bolted!");
 			else { // Put onion into wine?
-				if (_vm->_gyro->dna.winestate != 3)
+				if (_vm->_gyro->_dna._wineState != 3)
 					_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "Oignon au vin"
 					+ _vm->_scrolls->kControlRoman + " is a bit too strong for your tastes!");
 				else { // Put onion into vinegar! Yes!
-					_vm->_gyro->dna.onion_in_vinegar = true;
+					_vm->_gyro->_dna._onionInVinegar = true;
 					_vm->_lucerna->points(7);
 					_vm->_visa->dixi('u', 9);
 				}
@@ -993,31 +993,31 @@ void Acci::putProc() {
 		break;
 
 	case 54:
-		if (_vm->_gyro->dna.room == r__yours) { // Put something into the box.
-			if (_vm->_gyro->dna.box_contents != kNothing)
+		if (_vm->_gyro->_dna._room == r__yours) { // Put something into the box.
+			if (_vm->_gyro->_dna._boxContent != kNothing)
 				_vm->_scrolls->display("There's something in the box already, Avvy. Try taking that out first.");
 			else {
 				switch (_thing) {
-				case Gyro::money:
+				case Gyro::kObjectMoney:
 					_vm->_scrolls->display("You'd better keep some ready cash on you!");
 					break;
-				case Gyro::bell:
+				case Gyro::kObjectBell:
 					_vm->_scrolls->display("That's a silly place to keep a bell.");
 					break;
-				case Gyro::bodkin:
+				case Gyro::kObjectBodkin:
 					_vm->_scrolls->display("But you might need it!");
 					break;
-				case Gyro::onion:
+				case Gyro::kObjectOnion:
 					_vm->_scrolls->display("Just give it to Spludwick, Avvy!");
 					break;
 				default: // Put the object into the box...
-					if (_vm->_gyro->dna.wearing == _thing)
-						_vm->_scrolls->display(Common::String("You'd better take ") + _vm->_gyro->get_better(_thing) + " off first!");
+					if (_vm->_gyro->_dna._wearing == _thing)
+						_vm->_scrolls->display(Common::String("You'd better take ") + _vm->_gyro->getItem(_thing) + " off first!");
 					else {
 						openBox(true); // Open box.
 
-						_vm->_gyro->dna.box_contents = _thing;
-						_vm->_gyro->dna.obj[_thing - 1] = false;
+						_vm->_gyro->_dna._boxContent = _thing;
+						_vm->_gyro->_dna._objects[_thing - 1] = false;
 						_vm->_lucerna->objectlist();
 						_vm->_scrolls->display("OK, it's in the box.");
 
@@ -1038,7 +1038,7 @@ void Acci::putProc() {
 
 void Acci::notInOrder() {
 	_vm->_scrolls->display(Common::String("Sorry, I need the ingredients in the right order for this potion. What I need next is ")
-			+ _vm->_gyro->get_better(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->dna.given2spludwick])
+			+ _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick])
 			+ _vm->_scrolls->kControlRegister + 2 + _vm->_scrolls->kControlSpeechBubble);
 }
 
@@ -1053,39 +1053,39 @@ void Acci::goToCauldron() {
  * @remarks	Originally called 'give2spludwick'
  */
 bool Acci::giveToSpludwick() { 
-	if (_vm->_gyro->kSpludwicksOrder[_vm->_gyro->dna.given2spludwick] != _thing) {
+	if (_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick] != _thing) {
 		notInOrder();
 		return false;
 	}
 
 	switch (_thing) {
-	case Gyro::onion:
-		_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = false;
-		if (_vm->_gyro->dna.rotten_onion)
+	case Gyro::kObjectOnion:
+		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1] = false;
+		if (_vm->_gyro->_dna._rottenOnion)
 			_vm->_visa->dixi('q', 22);
 		else {
-			_vm->_gyro->dna.given2spludwick++;
+			_vm->_gyro->_dna._givenToSpludwick++;
 			_vm->_visa->dixi('q', 20);
 			goToCauldron();
 			_vm->_lucerna->points(3);
 		}
 		_vm->_lucerna->objectlist();
 		break;
-	case Gyro::ink:
-		_vm->_gyro->dna.obj[_vm->_gyro->ink - 1] = false;
+	case Gyro::kObjectInk:
+		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectInk - 1] = false;
 		_vm->_lucerna->objectlist();
-		_vm->_gyro->dna.given2spludwick++;
+		_vm->_gyro->_dna._givenToSpludwick++;
 		_vm->_visa->dixi('q', 24);
 		goToCauldron();
 		_vm->_lucerna->points(3);
 		break;
-	case Gyro::mushroom:
-		_vm->_gyro->dna.obj[_vm->_gyro->mushroom - 1] = false;
+	case Gyro::kObjectMushroom:
+		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectMushroom - 1] = false;
 		_vm->_visa->dixi('q', 25);
 		_vm->_lucerna->points(5);
-		_vm->_gyro->dna.given2spludwick++;
+		_vm->_gyro->_dna._givenToSpludwick++;
 		goToCauldron();
-		_vm->_gyro->dna.obj[_vm->_gyro->potion - 1] = true;
+		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1] = true;
 		_vm->_lucerna->objectlist();
 		break;
 	default:
@@ -1096,30 +1096,30 @@ bool Acci::giveToSpludwick() {
 }
 
 void Acci::drink() {
-	_vm->_gyro->dna.alcohol += 1;
-	if (_vm->_gyro->dna.alcohol == 5) {
-		_vm->_gyro->dna.obj[_vm->_gyro->key - 1] = true; // Get the key.
-		_vm->_gyro->dna.teetotal = true;
-		_vm->_gyro->dna.avvy_is_awake = false;
-		_vm->_gyro->dna.avvy_in_bed = true;
+	_vm->_gyro->_dna._alcoholLevel += 1;
+	if (_vm->_gyro->_dna._alcoholLevel == 5) {
+		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectKey - 1] = true; // Get the key.
+		_vm->_gyro->_dna._teetotal = true;
+		_vm->_gyro->_dna._avvyIsAwake = false;
+		_vm->_gyro->_dna._avvyInBed = true;
 		_vm->_lucerna->objectlist();
 		_vm->_lucerna->dusk();
-		_vm->_gyro->hang_around_for_a_while();
+		_vm->_gyro->hangAroundForAWhile();
 		_vm->_trip->fliproom(1, 1);
-		_vm->_gyro->background(14);
+		_vm->_gyro->setBackgroundColor(14);
 		_vm->_trip->new_game_for_trippancy(); // Not really.
 	}
 }
 
 void Acci::cardiffClimbing() {
-	if (_vm->_gyro->dna.standing_on_dais) { // Clamber up.
+	if (_vm->_gyro->_dna._standingOnDais) { // Clamber up.
 		_vm->_scrolls->display("You climb down, back onto the floor.");
-		_vm->_gyro->dna.standing_on_dais = false;
+		_vm->_gyro->_dna._standingOnDais = false;
 		_vm->_trip->apped(1, 3);
 	} else { // Clamber down.
 		if (_vm->_trip->infield(1)) {
 			_vm->_scrolls->display("You clamber up onto the dais.");
-			_vm->_gyro->dna.standing_on_dais = true;
+			_vm->_gyro->_dna._standingOnDais = true;
 			_vm->_trip->apped(1, 2);
 		} else
 			_vm->_scrolls->display("Get a bit closer, Avvy.");
@@ -1131,21 +1131,21 @@ void Acci::already() {
 }
 
 void Acci::standUp() {
-	switch (_vm->_gyro->dna.room) {
+	switch (_vm->_gyro->_dna._room) {
 	case r__yours: // Avvy isn't asleep.
-		if (_vm->_gyro->dna.avvy_is_awake && _vm->_gyro->dna.avvy_in_bed) {  // But he's in bed.
-			if (_vm->_gyro->dna.teetotal) {
+		if (_vm->_gyro->_dna._avvyIsAwake && _vm->_gyro->_dna._avvyInBed) {  // But he's in bed.
+			if (_vm->_gyro->_dna._teetotal) {
 				_vm->_visa->dixi('d', 12);
-				_vm->_gyro->background(0);
+				_vm->_gyro->setBackgroundColor(0);
 				_vm->_visa->dixi('d', 14);
 			}
 			_vm->_trip->tr[0].visible = true;
-			_vm->_gyro->dna.user_moves_avvy = true;
+			_vm->_gyro->_dna._userMovesAvvy = true;
 			_vm->_trip->apped(1, 2);
-			_vm->_gyro->dna.rw = _vm->_gyro->kDirectionLeft;
+			_vm->_gyro->_dna._direction = _vm->_gyro->kDirectionLeft;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->points(1);
-			_vm->_gyro->dna.avvy_in_bed = false;
+			_vm->_gyro->_dna._avvyInBed = false;
 			_vm->_timeout->lose_timer(_vm->_timeout->reason_arkata_shouts);
 		} else
 			already();
@@ -1156,12 +1156,12 @@ void Acci::standUp() {
 		break;
 
 	case r__nottspub:
-		if (_vm->_gyro->dna.sitting_in_pub)  {
+		if (_vm->_gyro->_dna._sittingInPub)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Not sitting down.
 			_vm->_trip->tr[0].visible = true; // But standing up.
 			_vm->_trip->apped(1, 4); // And walking away.
-			_vm->_gyro->dna.sitting_in_pub = false; // Really not sitting down.
-			_vm->_gyro->dna.user_moves_avvy = true; // And ambulant.
+			_vm->_gyro->_dna._sittingInPub = false; // Really not sitting down.
+			_vm->_gyro->_dna._userMovesAvvy = true; // And ambulant.
 		} else
 			already();
 		break;
@@ -1173,42 +1173,42 @@ void Acci::standUp() {
 
 
 void Acci::getProc(char thing) {
-	switch (_vm->_gyro->dna.room) {
+	switch (_vm->_gyro->_dna._room) {
 	case r__yours:
 		if (_vm->_trip->infield(2)) {
-			if (_vm->_gyro->dna.box_contents == thing) {
+			if (_vm->_gyro->_dna._boxContent == thing) {
 				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_scrolls->display("OK, I've got it.");
-				_vm->_gyro->dna.obj[thing - 1] = true;
+				_vm->_gyro->_dna._objects[thing - 1] = true;
 				_vm->_lucerna->objectlist();
-				_vm->_gyro->dna.box_contents = kNothing;
+				_vm->_gyro->_dna._boxContent = kNothing;
 				_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			} else
-				_vm->_scrolls->display(Common::String("I can't see ") + _vm->_gyro->get_better(thing) + " in the box.");
+				_vm->_scrolls->display(Common::String("I can't see ") + _vm->_gyro->getItem(thing) + " in the box.");
 		} else
 			_vm->_visa->dixi('q', 57);
 		break;
 	case r__insidecardiffcastle:
 		switch (thing) {
-		case Gyro::pen:
+		case Gyro::kObjectPen:
 			if (_vm->_trip->infield(2)) { // Standing on the dais.
-				if (_vm->_gyro->dna.taken_pen)
+				if (_vm->_gyro->_dna._takenPen)
 					_vm->_scrolls->display("It's not there, Avvy.");
 				else {
 					// OK: we're taking the pen, and it's there.
 					_vm->_celer->drawBackgroundSprite(-1, -1, 4); // No pen there now.
 					_vm->_trip->call_special(3); // Zap!
-					_vm->_gyro->dna.taken_pen = true;
-					_vm->_gyro->dna.obj[_vm->_gyro->pen - 1] = true;
+					_vm->_gyro->_dna._takenPen = true;
+					_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPen - 1] = true;
 					_vm->_lucerna->objectlist();
 					_vm->_scrolls->display("Taken.");
 				}
-			} else if (_vm->_gyro->dna.standing_on_dais)
+			} else if (_vm->_gyro->_dna._standingOnDais)
 				_vm->_visa->dixi('q', 53);
 			else
 				_vm->_visa->dixi('q', 51);
 			break;
-		case Gyro::bolt:
+		case Gyro::kObjectBolt:
 			_vm->_visa->dixi('q', 52);
 			break;
 		default:
@@ -1216,12 +1216,12 @@ void Acci::getProc(char thing) {
 		}
 		break;
 	case r__robins:
-		if ((thing == _vm->_gyro->mushroom) & (_vm->_trip->infield(1)) & (_vm->_gyro->dna.mushroom_growing)) {
+		if ((thing == _vm->_gyro->kObjectMushroom) & (_vm->_trip->infield(1)) & (_vm->_gyro->_dna._mushroomGrowing)) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_scrolls->display("Got it!");
-			_vm->_gyro->dna.mushroom_growing = false;
-			_vm->_gyro->dna.taken_mushroom = true;
-			_vm->_gyro->dna.obj[_vm->_gyro->mushroom - 1] = true;
+			_vm->_gyro->_dna._mushroomGrowing = false;
+			_vm->_gyro->_dna._takenMushroom = true;
+			_vm->_gyro->_dna._objects[_vm->_gyro->kObjectMushroom - 1] = true;
 			_vm->_lucerna->objectlist();
 			_vm->_lucerna->points(3);
 		} else
@@ -1237,11 +1237,11 @@ void Acci::getProc(char thing) {
  * @remarks	Originally called 'give_Geida_the_lute'
  */
 void Acci::giveGeidaTheLute() {
-	if (_vm->_gyro->dna.room != r__lustiesroom) {
+	if (_vm->_gyro->_dna._room != r__lustiesroom) {
 		_vm->_scrolls->display(Common::String("Not yet. Try later!") + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
 		return;
 	}
-	_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = false;
+	_vm->_gyro->_dna._objects[_vm->_gyro->kObjectLute - 1] = false;
 	_vm->_lucerna->objectlist();
 	_vm->_visa->dixi('q', 64); // She plays it.
 
@@ -1267,13 +1267,13 @@ void Acci::winSequence() {
 
 void Acci::personSpeaks() {
 	if ((_person == kPardon) || (_person == 0)) {
-		if ((_vm->_gyro->him == kPardon) || (_vm->_gyro->_whereIs[_vm->_gyro->him - 150] != _vm->_gyro->dna.room))
-			_person = _vm->_gyro->her;
+		if ((_vm->_gyro->_him == kPardon) || (_vm->_gyro->_whereIs[_vm->_gyro->_him - 150] != _vm->_gyro->_dna._room))
+			_person = _vm->_gyro->_her;
 		else
-			_person = _vm->_gyro->him;
+			_person = _vm->_gyro->_him;
 	}
 
-	if (_vm->_gyro->_whereIs[_person - 150] != _vm->_gyro->dna.room) {
+	if (_vm->_gyro->_whereIs[_person - 150] != _vm->_gyro->_dna._room) {
 		_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + '1' + _vm->_scrolls->kControlToBuffer); // Avvy himself!
 		return;
 	}
@@ -1289,7 +1289,7 @@ void Acci::personSpeaks() {
 
 	if (!found) {
 		for (byte i = 0; i < 16; i++) {
-			if ((_vm->_gyro->kQuasipeds[i].who == _person) && (_vm->_gyro->kQuasipeds[i].room == _vm->_gyro->dna.room))
+			if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_dna._room))
 				_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 65) + _vm->_scrolls->kControlToBuffer);
 		}
 	}
@@ -1297,7 +1297,7 @@ void Acci::personSpeaks() {
 void Acci::heyThanks() {
 	personSpeaks();
 	_vm->_scrolls->display(Common::String("Hey, thanks!") + _vm->_scrolls->kControlSpeechBubble + "(But now, you've lost it!)");
-	_vm->_gyro->dna.obj[_thing - 1] = false;
+	_vm->_gyro->_dna._objects[_thing - 1] = false;
 }
 
 /**
@@ -1312,7 +1312,7 @@ void Acci::doThat() {
 		return;
 	}
 
-	if (_vm->_gyro->weirdword)
+	if (_vm->_gyro->_weirdWord)
 		return;
 
 	if (_thing < 200)
@@ -1322,11 +1322,11 @@ void Acci::doThat() {
 	if ((_verb != kVerbCodeLoad) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeQuit) && (_verb != kVerbCodeInfo) && (_verb != kVerbCodeHelp)
 	&& (_verb != kVerbCodeLarrypass) && (_verb != kVerbCodePhaon) && (_verb != kVerbCodeBoss) && (_verb != kVerbCodeCheat) && (_verb != kVerbCodeRestart)
 	&& (_verb != kVerbCodeDir) && (_verb != kVerbCodeScore) && (_verb != kVerbCodeHiscores) && (_verb != kVerbCodeSmartAlec)) {
-		if (!_vm->_gyro->alive) {
+		if (!_vm->_gyro->_alive) {
 			_vm->_scrolls->display(Common::String("You're dead, so don't talk. What are you, a ghost or something? Try restarting, or restoring a saved game!"));
 			return;
 		}
-		if (!_vm->_gyro->dna.avvy_is_awake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
+		if (!_vm->_gyro->_dna._avvyIsAwake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
 			_vm->_scrolls->display("Talking in your sleep? Try waking up!");
 			return;
 		}
@@ -1345,7 +1345,7 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeGet:
 		if (_thing != kPardon) { // Legitimate try to pick something up.
-			if (_vm->_gyro->dna.carrying >= maxobjs)
+			if (_vm->_gyro->_dna._carryNum >= kCarryLimit)
 				_vm->_scrolls->display("You can't carry any more!");
 			else
 				getProc(_thing);
@@ -1365,20 +1365,20 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeTalk:
 		if (_person == kPardon) {
-			if (_vm->_gyro->subjnumber == 99) // They typed "say password".
+			if (_vm->_gyro->_subjectNum == 99) // They typed "say password".
 				_vm->_scrolls->display(Common::String("Yes, but what ") + _vm->_scrolls->kControlItalic + "is" + _vm->_scrolls->kControlRoman + " the password?");
-			else if (((1 <= _vm->_gyro->subjnumber) && (_vm->_gyro->subjnumber <= 49)) || (_vm->_gyro->subjnumber == 253) || (_vm->_gyro->subjnumber == 249)) {
+			else if (((1 <= _vm->_gyro->_subjectNum) && (_vm->_gyro->_subjectNum <= 49)) || (_vm->_gyro->_subjectNum == 253) || (_vm->_gyro->_subjectNum == 249)) {
 				_thats.deleteChar(0);
 
 				for (byte i = 0; i < 10; i++)
 					_realWords[i] = _realWords[i + 1];
 
-				_verb = _vm->_gyro->subjnumber;
+				_verb = _vm->_gyro->_subjectNum;
 				doThat();
 				return;
 			} else {
-				_person = _vm->_gyro->subjnumber;
-				_vm->_gyro->subjnumber = 0;
+				_person = _vm->_gyro->_subjectNum;
+				_vm->_gyro->_subjectNum = 0;
 				if ((_person == 0) || (_person == kPardon))
 					_vm->_scrolls->display("Talk to whom?");
 				else if (isPersonHere())
@@ -1393,53 +1393,53 @@ void Acci::doThat() {
 				_vm->_scrolls->display("Give to whom?");
 			else if (isPersonHere()) {
 				switch (_thing) {
-				case Gyro::money :
+				case Gyro::kObjectMoney :
 					_vm->_scrolls->display("You can't bring yourself to give away your moneybag.");
 					break;
-				case Gyro::bodkin:
-				case Gyro::bell:
-				case Gyro::clothes:
-				case Gyro::habit :
+				case Gyro::kObjectBodkin:
+				case Gyro::kObjectBell:
+				case Gyro::kObjectClothes:
+				case Gyro::kObjectHabit :
 					_vm->_scrolls->display("Don't give it away, it might be useful!");
 					break;
 				default:
 					switch (_person) {
-					case Gyro::pcrapulus:
-						if (_thing == _vm->_gyro->wine) {
+					case Gyro::kPeopleCrapulus:
+						if (_thing == _vm->_gyro->kObjectWine) {
 							_vm->_scrolls->display("Crapulus grabs the wine and gulps it down.");
-							_vm->_gyro->dna.obj[_vm->_gyro->wine - 1] = false;
+							_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = false;
 						} else
 							heyThanks();
 						break;
-					case Gyro::pcwytalot:
-						if ((_thing == _vm->_gyro->crossbow) || (_thing == _vm->_gyro->bolt))
+					case Gyro::kPeopleCwytalot:
+						if ((_thing == _vm->_gyro->kObjectCrossbow) || (_thing == _vm->_gyro->kObjectBolt))
 							_vm->_scrolls->display(Common::String("You might be able to influence Cwytalot more if you used it!"));
 						else
 							heyThanks();
 						break;
-					case Gyro::pspludwick:
+					case Gyro::kPeopleSpludwick:
 						if (giveToSpludwick())
 							heyThanks();
 						break;
-					case Gyro::pibythneth:
-						if (_thing == _vm->_gyro->badge) {
+					case Gyro::kPeopleIbythneth:
+						if (_thing == _vm->_gyro->kObjectBadge) {
 							_vm->_visa->dixi('q', 32); // Thanks! Wow!
 							_vm->_lucerna->points(3);
-							_vm->_gyro->dna.obj[_vm->_gyro->badge - 1] = false;
-							_vm->_gyro->dna.obj[_vm->_gyro->habit - 1] = true;
-							_vm->_gyro->dna.givenbadgetoiby = true;
+							_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBadge - 1] = false;
+							_vm->_gyro->_dna._objects[_vm->_gyro->kObjectHabit - 1] = true;
+							_vm->_gyro->_dna._givenBadgeToIby = true;
 							_vm->_celer->drawBackgroundSprite(-1, -1, 8);
 							_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 						} else
 							heyThanks();
 						break;
-					case Gyro::payles:
-						if (_vm->_gyro->dna.ayles_is_awake) {
-							if (_thing == _vm->_gyro->pen) {
-								_vm->_gyro->dna.obj[_vm->_gyro->pen - 1] = false;
+					case Gyro::kPeopleAyles:
+						if (_vm->_gyro->_dna._aylesIsAwake) {
+							if (_thing == _vm->_gyro->kObjectPen) {
+								_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPen - 1] = false;
 								_vm->_visa->dixi('q', 54);
-								_vm->_gyro->dna.obj[_vm->_gyro->ink - 1] = true;
-								_vm->_gyro->dna.given_pen_to_ayles = true;
+								_vm->_gyro->_dna._objects[_vm->_gyro->kObjectInk - 1] = true;
+								_vm->_gyro->_dna._givenPenToAyles = true;
 								_vm->_lucerna->objectlist();
 								_vm->_lucerna->points(2);
 							} else
@@ -1447,26 +1447,26 @@ void Acci::doThat() {
 						} else
 							_vm->_scrolls->display("But he's asleep!");
 						break;
-					case Gyro::pgeida:
+					case Gyro::kPeopleGeida:
 						switch (_thing) {
-						case Gyro::potion:
-							_vm->_gyro->dna.obj[_vm->_gyro->potion - 1] = false;
+						case Gyro::kObjectPotion:
+							_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1] = false;
 							_vm->_visa->dixi('u', 16); // She drinks it.
 							_vm->_lucerna->points(2);
-							_vm->_gyro->dna.geida_given_potion = true;
+							_vm->_gyro->_dna._givenPotionToGeida = true;
 							_vm->_lucerna->objectlist();
 							break;
-						case Gyro::lute:
+						case Gyro::kObjectLute:
 							giveGeidaTheLute();
 							break;
 						default:
 							heyThanks();
 						}
 						break;
-					case Gyro::parkata:
+					case Gyro::kPeopleArkata:
 						switch (_thing) {
-						case Gyro::potion:
-							if (_vm->_gyro->dna.geida_given_potion)
+						case Gyro::kObjectPotion:
+							if (_vm->_gyro->_dna._givenPotionToGeida)
 								winSequence();
 							else
 								_vm->_visa->dixi('q', 77); // That Geida woman!
@@ -1515,7 +1515,7 @@ void Acci::doThat() {
 		if (!_polite)
 			_vm->_scrolls->display("How about a `please\", Avvy?");
 		else if (_vm->_scrolls->ask(Common::String(_vm->_scrolls->kControlRegister) + 'C' + _vm->_scrolls->kControlIcon + "Do you really want to quit?"))
-			_vm->_gyro->lmo = true;
+			_vm->_gyro->_letMeOut = true;
 		break;
 	case kVerbCodeGo:
 		_vm->_scrolls->display("Just use the arrow keys to walk there.");
@@ -1529,18 +1529,18 @@ void Acci::doThat() {
 		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + _vm->_scrolls->kControlCenter + _vm->_scrolls->kControlNewLine
 			+ "The medi‘val descendant of" + _vm->_scrolls->kControlNewLine
 			+ "Denarius Avaricius Sextus" + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
-			+ "version " + _vm->_gyro->vernum + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Copyright ï "
-			+ _vm->_gyro->copyright + ", Mark, Mike and Thomas Thurman." + _vm->_scrolls->kControlRegister + 'Y' + _vm->_scrolls->kControlIcon;
+			+ "version " + _vm->_gyro->kVersionNum + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Copyright ï "
+			+ _vm->_gyro->kCopyright + ", Mark, Mike and Thomas Thurman." + _vm->_scrolls->kControlRegister + 'Y' + _vm->_scrolls->kControlIcon;
 		_vm->_scrolls->display(toDisplay);
 		_vm->_scrolls->aboutscroll = false;
 		}
 		break;
 	case kVerbCodeUndress:
-		if (_vm->_gyro->dna.wearing == kNothing)
+		if (_vm->_gyro->_dna._wearing == kNothing)
 			_vm->_scrolls->display("You're already stark naked!");
-		else if (_vm->_gyro->dna.avvys_in_the_cupboard) {
-			_vm->_scrolls->display(Common::String("You take off ") + _vm->_gyro->get_better(_vm->_gyro->dna.wearing) + '.');
-			_vm->_gyro->dna.wearing = kNothing;
+		else if (_vm->_gyro->_dna._avvysInTheCupboard) {
+			_vm->_scrolls->display(Common::String("You take off ") + _vm->_gyro->getItem(_vm->_gyro->_dna._wearing) + '.');
+			_vm->_gyro->_dna._wearing = kNothing;
 			_vm->_lucerna->objectlist();
 		} else
 			_vm->_scrolls->display("Hadn't you better find somewhere more private, Avvy?");
@@ -1548,25 +1548,25 @@ void Acci::doThat() {
 	case kVerbCodeWear:
 		if (holding()) { // Wear something.
 			switch (_thing) {
-			case Gyro::chastity:
+			case Gyro::kObjectChastity:
 				// \? are used to avoid that ??! is parsed as a trigraph
 				_vm->_scrolls->display("Hey, kWhat kind of a weirdo are you\?\?!");
 				break;
-			case Gyro::clothes:
-			case Gyro::habit: { // Change this!
-					if (_vm->_gyro->dna.wearing != kNothing) {
-						if (_vm->_gyro->dna.wearing == _thing)
+			case Gyro::kObjectClothes:
+			case Gyro::kObjectHabit: { // Change this!
+					if (_vm->_gyro->_dna._wearing != kNothing) {
+						if (_vm->_gyro->_dna._wearing == _thing)
 							_vm->_scrolls->display("You're already wearing that.");
 						else
 							_vm->_scrolls->display("You'll be rather warm wearing two sets of clothes!");
 						return;
 					} else
-						_vm->_gyro->dna.wearing = _thing;
+						_vm->_gyro->_dna._wearing = _thing;
 
 					_vm->_lucerna->objectlist();
 
 					byte i;
-					if (_thing == _vm->_gyro->habit)
+					if (_thing == _vm->_gyro->kObjectHabit)
 						i = 3;
 					else
 						i = 0;
@@ -1587,35 +1587,35 @@ void Acci::doThat() {
 		break;
 	case kVerbCodePlay:
 		if (_thing == kPardon) {
-			switch (_vm->_gyro->dna.room) { // They just typed "play"...
+			switch (_vm->_gyro->_dna._room) { // They just typed "play"...
 			case r__argentpub: { // ...in the pub, => play Nim.
 					warning("STUB: Acci::doThat() - case kVerbCodeplay");
 					// play_nim();
 					// The following parts are copied from play_nim().
 					// The player automatically wins the game everytime he wins, until I implement the mini-game.
 
-					if (_vm->_gyro->dna.wonnim) { // Already won the game.
+					if (_vm->_gyro->_dna._wonNim) { // Already won the game.
 						_vm->_visa->dixi('Q', 6);
 						return;
 					}
 
-					if (!_vm->_gyro->dna.asked_dogfood_about_nim) {
+					if (!_vm->_gyro->_dna._askedDogfoodAboutNim) {
 						_vm->_visa->dixi('q', 84);
 						return;
 					}
 
 					_vm->_visa->dixi('Q', 3);
-					_vm->_gyro->dna.playednim++;
+					_vm->_gyro->_dna._playedNim++;
 
 					// You won - strange!
 					_vm->_visa->dixi('Q', 7); // You won! Give us a lute!
-					_vm->_gyro->dna.obj[_vm->_gyro->lute - 1] = true;
+					_vm->_gyro->_dna._objects[_vm->_gyro->kObjectLute - 1] = true;
 					_vm->_lucerna->objectlist();
-					_vm->_gyro->dna.wonnim = true;
+					_vm->_gyro->_dna._wonNim = true;
 					_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Show the settle with no lute on it.
 					_vm->_lucerna->points(7); // 7 points for winning!
 
-					if (_vm->_gyro->dna.playednim == 1)
+					if (_vm->_gyro->_dna._playedNim == 1)
 						_vm->_lucerna->points(3); // 3 points for playing your 1st game.
 
 					// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
@@ -1629,23 +1629,23 @@ void Acci::doThat() {
 			}
 		} else if (holding()) {
 			switch (_thing) {
-			case Gyro::lute :
+			case Gyro::kObjectLute :
 					_vm->_visa->dixi('U', 7);
 
-					if (_vm->_gyro->_whereIs[_vm->_gyro->pcwytalot - 150] == _vm->_gyro->dna.room)
+					if (_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] == _vm->_gyro->_dna._room)
 						_vm->_visa->dixi('U', 10);
 
-					if (_vm->_gyro->_whereIs[_vm->_gyro->pdulustie - 150] == _vm->_gyro->dna.room)
+					if (_vm->_gyro->_whereIs[_vm->_gyro->kPeopleDuLustie - 150] == _vm->_gyro->_dna._room)
 						_vm->_visa->dixi('U', 15);
 				break;
 			case 52:
-				if (_vm->_gyro->dna.room == r__musicroom)
+				if (_vm->_gyro->_dna._room == r__musicroom)
 					playHarp();
 				else
 					_vm->_scrolls->display(kWhat);
 				break;
 			case 55:
-				if (_vm->_gyro->dna.room == r__argentpub)
+				if (_vm->_gyro->_dna._room == r__argentpub)
 					// play_nim();
 					warning("STUB: Acci::doThat() - case kVerbCodeplay");
 				else
@@ -1658,9 +1658,9 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeRing:
 		if (holding()) {
-			if (_thing == _vm->_gyro->bell) {
+			if (_thing == _vm->_gyro->kObjectBell) {
 				_vm->_scrolls->display("Ding, dong, ding, dong, ding, dong, ding, dong...");
-				if ((_vm->_gyro->dna.ringing_bells) & (_vm->_gyro->flagset('B')))
+				if ((_vm->_gyro->_dna._bellsAreRinging) & (_vm->_gyro->setFlag('B')))
 					// \? are used to avoid that ??! is parsed as a trigraph
 					_vm->_scrolls->display("(Are you trying to join in, Avvy\?\?!)");
 			} else
@@ -1682,7 +1682,7 @@ void Acci::doThat() {
 		warning("STUB: Acci::doThat() - case kVerbCodeboss");
 		break;
 	case kVerbCodePee:
-		if (_vm->_gyro->flagset('P')) {
+		if (_vm->_gyro->setFlag('P')) {
 			_vm->_scrolls->display("Hmm, I don't think anyone will notice...");
 			_vm->_timeout->set_up_timer(4, _vm->_timeout->procurinate, _vm->_timeout->reason_gototoilet);
 		} else
@@ -1691,13 +1691,13 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeCheat:
 		_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "Cheat mode now enabled.");
-		_vm->_gyro->cheat = true;
+		_vm->_gyro->_cheat = true;
 		break;
 	case kVerbCodeMagic:
-		if (_vm->_gyro->dna.avaricius_talk > 0)
+		if (_vm->_gyro->_dna._avariciusTalk > 0)
 			_vm->_visa->dixi('q', 19);
 		else {
-			if ((_vm->_gyro->dna.room == 12) & (_vm->_trip->infield(2))) { // Avaricius appears!
+			if ((_vm->_gyro->_dna._room == 12) & (_vm->_trip->infield(2))) { // Avaricius appears!
 				_vm->_visa->dixi('q', 17);
 				if (_vm->_gyro->_whereIs[1] == 12)
 					_vm->_visa->dixi('q', 18);
@@ -1707,7 +1707,7 @@ void Acci::doThat() {
 					_vm->_trip->tr[1].walkto(5);
 					_vm->_trip->tr[1].call_eachstep = true;
 					_vm->_trip->tr[1].eachstep = _vm->_trip->procback_and_forth;
-					_vm->_gyro->dna.avaricius_talk = 14;
+					_vm->_gyro->_dna._avariciusTalk = 14;
 					_vm->_timeout->set_up_timer(177, _vm->_timeout->procavaricius_talks, _vm->_timeout->reason_avariciustalks);
 				}
 			} else
@@ -1718,7 +1718,7 @@ void Acci::doThat() {
 		_vm->_scrolls->display("Listen, smart alec, that was just rhetoric.");
 		break;
 	case kVerbCodeExpletive:
-		switch (_vm->_gyro->dna.swore) {
+		switch (_vm->_gyro->_dna._sworeNum) {
 		case 0:
 			_vm->_scrolls->display(Common::String("Avvy! Do you mind? There might be kids playing!")
 				+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "(I shouldn't say it again, if I were you!)");
@@ -1733,18 +1733,18 @@ void Acci::doThat() {
 				+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "(`Such is the anger of the gods, Avvy!\")");
 			_vm->_lucerna->gameover();
 		}
-		_vm->_gyro->dna.swore++;
+		_vm->_gyro->_dna._sworeNum++;
 		break;
 	case kVerbCodeListen:
-		if ((_vm->_gyro->dna.ringing_bells) & (_vm->_gyro->flagset('B')))
+		if ((_vm->_gyro->_dna._bellsAreRinging) & (_vm->_gyro->setFlag('B')))
 			_vm->_scrolls->display("All other noise is drowned out by the ringing of the bells.");
-		else if (_vm->_gyro->listen.empty())
+		else if (_vm->_gyro->_listen.empty())
 			_vm->_scrolls->display("You can't hear anything much at the moment, Avvy.");
 		else
-			_vm->_scrolls->display(_vm->_gyro->listen);
+			_vm->_scrolls->display(_vm->_gyro->_listen);
 		break;
 	case kVerbCodeBuy: // What are they trying to buy?
-		switch (_vm->_gyro->dna.room) {
+		switch (_vm->_gyro->_dna._room) {
 		case r__argentpub:
 			if (_vm->_trip->infield(6)) { // We're in a pub, and near the bar.
 				switch (_thing) {
@@ -1752,50 +1752,50 @@ void Acci::doThat() {
 				case 53:
 				case 54:
 				case 58: // Beer, whisky, cider or mead.
-					if (_vm->_gyro->dna.malagauche == 177) { // Already getting us one.
+					if (_vm->_gyro->_dna._malagauche == 177) { // Already getting us one.
 						_vm->_visa->dixi('D', 15);
 						return;
 					}
 
-					if (_vm->_gyro->dna.teetotal)  {
+					if (_vm->_gyro->_dna._teetotal)  {
 						_vm->_visa->dixi('D', 6);
 						return;
 					}
 
-					if (_vm->_gyro->dna.alcohol == 0)
+					if (_vm->_gyro->_dna._alcoholLevel == 0)
 						_vm->_lucerna->points(3);
 
 					_vm->_celer->drawBackgroundSprite(-1, -1, 12);
 					_vm->_scrolls->display(booze[_thing - 51] + ", please." + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
-					_vm->_gyro->dna.drinking = _thing;
+					_vm->_gyro->_dna._drinking = _thing;
 
 					_vm->_celer->drawBackgroundSprite(-1, -1, 10);
-					_vm->_gyro->dna.malagauche = 177;
+					_vm->_gyro->_dna._malagauche = 177;
 					_vm->_timeout->set_up_timer(27, _vm->_timeout->procbuydrinks, _vm->_timeout->reason_drinks);
 					break;
 				case 52:
 					examine();
 					break; // We have a right one here - buy Pepsi??!
-				case Gyro::wine:
-					if (_vm->_gyro->dna.obj[_vm->_gyro->wine - 1])  // We've already got the wine!
+				case Gyro::kObjectWine:
+					if (_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1])  // We've already got the wine!
 						_vm->_visa->dixi('D', 2); // 1 bottle's shufishent!
 					else {
-						if (_vm->_gyro->dna.malagauche == 177) { // Already getting us one.
+						if (_vm->_gyro->_dna._malagauche == 177) { // Already getting us one.
 							_vm->_visa->dixi('D', 15);
 							return;
 						}
 
-						if (_vm->_gyro->dna.carrying >= maxobjs) {
+						if (_vm->_gyro->_dna._carryNum >= kCarryLimit) {
 							_vm->_scrolls->display("Your hands are full.");
 							return;
 						}
 
 						_vm->_celer->drawBackgroundSprite(-1, -1, 12);
 						_vm->_scrolls->display(Common::String("Wine, please.") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
-						if (_vm->_gyro->dna.alcohol == 0)
+						if (_vm->_gyro->_dna._alcoholLevel == 0)
 							_vm->_lucerna->points(3);
 						_vm->_celer->drawBackgroundSprite(-1, -1, 10);
-						_vm->_gyro->dna.malagauche = 177;
+						_vm->_gyro->_dna._malagauche = 177;
 
 						_vm->_timeout->set_up_timer(27, _vm->_timeout->procbuywine, _vm->_timeout->reason_drinks);
 					}
@@ -1807,24 +1807,24 @@ void Acci::doThat() {
 
 		case r__outsideducks:
 			if (_vm->_trip->infield(6)) {
-				if (_thing == _vm->_gyro->onion) {
-					if (_vm->_gyro->dna.obj[_vm->_gyro->onion - 1])
+				if (_thing == _vm->_gyro->kObjectOnion) {
+					if (_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1])
 						_vm->_visa->dixi('D', 10); // Not planning to juggle with the things!
-					else if (_vm->_gyro->dna.carrying >= maxobjs)
+					else if (_vm->_gyro->_dna._carryNum >= kCarryLimit)
 						_vm->_scrolls->display("Before you ask, you remember that your hands are full.");
 					else {
-						if (_vm->_gyro->dna.bought_onion)
+						if (_vm->_gyro->_dna._boughtOnion)
 							_vm->_visa->dixi('D', 11);
 						else {
 							_vm->_visa->dixi('D', 9);
 							_vm->_lucerna->points(3);
 						}
-						_vm->_gyro->pennycheck(3); // It costs thruppence.
-						_vm->_gyro->dna.obj[_vm->_gyro->onion - 1] = true;
+						_vm->_gyro->updateMoney(3); // It costs thruppence.
+						_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1] = true;
 						_vm->_lucerna->objectlist();
-						_vm->_gyro->dna.bought_onion = true;
-						_vm->_gyro->dna.rotten_onion = false; // It's OK when it leaves the stall!
-						_vm->_gyro->dna.onion_in_vinegar = false;
+						_vm->_gyro->_dna._boughtOnion = true;
+						_vm->_gyro->_dna._rottenOnion = false; // It's OK when it leaves the stall!
+						_vm->_gyro->_dna._onionInVinegar = false;
 					}
 				} else
 					_vm->_visa->dixi('D', 0);
@@ -1840,10 +1840,10 @@ void Acci::doThat() {
 		}
 		break;
 	case kVerbCodeAttack:
-		if ((_vm->_gyro->dna.room == r__brummieroad) &&
-				((_person == 157) || (_thing == _vm->_gyro->crossbow) || (_thing == _vm->_gyro->bolt))
-				&& (_vm->_gyro->_whereIs[7] == _vm->_gyro->dna.room)) {
-			switch (_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] + _vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] * 2) {
+		if ((_vm->_gyro->_dna._room == r__brummieroad) &&
+				((_person == 157) || (_thing == _vm->_gyro->kObjectCrossbow) || (_thing == _vm->_gyro->kObjectBolt))
+				&& (_vm->_gyro->_whereIs[7] == _vm->_gyro->_dna._room)) {
+			switch (_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBolt - 1] + _vm->_gyro->_dna._objects[_vm->_gyro->kObjectCrossbow - 1] * 2) {
 				// 0 = neither, 1 = only bolt, 2 = only crossbow, 3 = both.
 			case 0:
 				_vm->_visa->dixi('Q', 10);
@@ -1857,11 +1857,11 @@ void Acci::doThat() {
 				break;
 			case 3:
 				_vm->_visa->dixi('Q', 11);
-				_vm->_gyro->dna.cwytalot_gone = true;
-				_vm->_gyro->dna.obj[_vm->_gyro->bolt - 1] = false;
-				_vm->_gyro->dna.obj[_vm->_gyro->crossbow - 1] = false;
+				_vm->_gyro->_dna._cwytalotGone = true;
+				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBolt - 1] = false;
+				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectCrossbow - 1] = false;
 				_vm->_lucerna->objectlist();
-				_vm->_gyro->magics[11].op = _vm->_gyro->kMagicNothing;
+				_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicNothing;
 				_vm->_lucerna->points(7);
 				_vm->_trip->tr[1].walkto(2);
 				_vm->_trip->tr[1].vanishifstill = true;
@@ -1875,27 +1875,27 @@ void Acci::doThat() {
 			_vm->_visa->dixi('Q', 10);
 		break;
 	case kVerbCodePasswd:
-		if (_vm->_gyro->dna.room != r__bridge)
+		if (_vm->_gyro->_dna._room != r__bridge)
 			_vm->_visa->dixi('Q', 12);
 		else {
 			bool ok = true;
 			for (byte i = 0; i < _thats.size(); i++) {
 				Common::String temp = _realWords[i];
 				temp.toUppercase();
-				for (byte j = 0; j < kVocabulary[_vm->_gyro->dna.pass_num + kFirstPassword]._word.size(); j++) {
-					if (kVocabulary[_vm->_gyro->dna.pass_num + kFirstPassword]._word[j] != temp[j])
+				for (byte j = 0; j < kVocabulary[_vm->_gyro->_dna._passwordNum + kFirstPassword]._word.size(); j++) {
+					if (kVocabulary[_vm->_gyro->_dna._passwordNum + kFirstPassword]._word[j] != temp[j])
 						ok = false;
 				}
 			}
 
 			if (ok) {
-				if (_vm->_gyro->dna.drawbridge_open != 0)
+				if (_vm->_gyro->_dna._drawbridgeOpen != 0)
 					_vm->_scrolls->display("Contrary to your expectations, the drawbridge fails to close again.");
 				else {
 					_vm->_lucerna->points(4);
 					_vm->_scrolls->display("The drawbridge opens!");
 					_vm->_timeout->set_up_timer(7, _vm->_timeout->procopen_drawbridge, _vm->_timeout->reason_drawbridgefalls);
-					_vm->_gyro->dna.drawbridge_open = 1;
+					_vm->_gyro->_dna._drawbridgeOpen = 1;
 				}
 			} else
 				_vm->_visa->dixi('Q', 12);
@@ -1908,7 +1908,7 @@ void Acci::doThat() {
 		_vm->_lucerna->gameover();
 		break;
 	case kVerbCodeScore:
-		_vm->_scrolls->display(Common::String("Your score is ") + _vm->_gyro->strf(_vm->_gyro->dna.score) + ',' + _vm->_scrolls->kControlCenter
+		_vm->_scrolls->display(Common::String("Your score is ") + _vm->_gyro->intToStr(_vm->_gyro->_dna._score) + ',' + _vm->_scrolls->kControlCenter
 			+ _vm->_scrolls->kControlNewLine + "out of a possible 128." + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
 			+ "This gives you a rank of " + rank() + '.' + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + totalTime());
 		break;
@@ -1923,13 +1923,13 @@ void Acci::doThat() {
 			_vm->_scrolls->display("Kiss whom?");
 		else if (isPersonHere()) {
 			switch (_person) {
-			case Gyro::parkata:
+			case Gyro::kPeopleArkata:
 				_vm->_visa->dixi('U', 12);
 				break;
-			case Gyro::pgeida:
+			case Gyro::kPeopleGeida:
 				_vm->_visa->dixi('U', 13);
 				break;
-			case Gyro::pwisewoman:
+			case Gyro::kPeopleWisewoman:
 				_vm->_visa->dixi('U', 14);
 				break;
 			default:
@@ -1940,14 +1940,14 @@ void Acci::doThat() {
 
 		break;
 	case kVerbCodeClimb:
-		if (_vm->_gyro->dna.room == r__insidecardiffcastle)
+		if (_vm->_gyro->_dna._room == r__insidecardiffcastle)
 			cardiffClimbing();
 		else // In the wrong room!
 			_vm->_scrolls->display("Not with your head for heights, Avvy!");
 		break;
 	case kVerbCodeJump:
 		_vm->_timeout->set_up_timer(1, _vm->_timeout->procjump, _vm->_timeout->reason_jumping);
-		_vm->_gyro->dna.user_moves_avvy = false;
+		_vm->_gyro->_dna._userMovesAvvy = false;
 		break;
 	case kVerbCodeHiscores:
 		//	show_highs();
@@ -1957,23 +1957,23 @@ void Acci::doThat() {
 		if (isPersonHere())
 			switch (_person) {
 			case kPardon:
-			case Gyro::pavalot:
+			case Gyro::kPeopleAvalot:
 			case 0:
-				if (!_vm->_gyro->dna.avvy_is_awake) {
-					_vm->_gyro->dna.avvy_is_awake = true;
+				if (!_vm->_gyro->_dna._avvyIsAwake) {
+					_vm->_gyro->_dna._avvyIsAwake = true;
 					_vm->_lucerna->points(1);
-					_vm->_gyro->dna.avvy_in_bed = true;
+					_vm->_gyro->_dna._avvyInBed = true;
 					_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Picture of Avvy, awake in bed.
-					if (_vm->_gyro->dna.teetotal)
+					if (_vm->_gyro->_dna._teetotal)
 						_vm->_visa->dixi('d', 13);
 				} else
 					_vm->_scrolls->display("You're already awake, Avvy!");
 				break;
-			case Gyro::payles:
-				if (!_vm->_gyro->dna.ayles_is_awake)
+			case Gyro::kPeopleAyles:
+				if (!_vm->_gyro->_dna._aylesIsAwake)
 					_vm->_scrolls->display("You can't seem to wake him by yourself.");
 				break;
-			case Gyro::pjacques:
+			case Gyro::kPeopleJacques:
 				_vm->_scrolls->display(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + _vm->_scrolls->kControlRegister + '1' + 
 					_vm->_scrolls->kControlSpeechBubble + "Hmmm... that doesn't seem to do any good...");
 				break;
@@ -1982,8 +1982,8 @@ void Acci::doThat() {
 		}
 		break;
 	case kVerbCodeSit:
-		if (_vm->_gyro->dna.room == r__nottspub) {
-			if (_vm->_gyro->dna.sitting_in_pub)
+		if (_vm->_gyro->_dna._room == r__nottspub) {
+			if (_vm->_gyro->_dna._sittingInPub)
 				_vm->_scrolls->display("You're already sitting!");
 			else {
 				_vm->_trip->tr[0].walkto(4); // Move Avvy to the place, and sit him down.
@@ -1991,7 +1991,7 @@ void Acci::doThat() {
 			}
 		} else { // Default doodah.
 			_vm->_lucerna->dusk();
-			_vm->_gyro->hang_around_for_a_while();
+			_vm->_gyro->hangAroundForAWhile();
 			_vm->_lucerna->dawn();
 			_vm->_scrolls->display(Common::String("A few hours later...") + _vm->_scrolls->kControlParagraph + "nothing much has happened...");
 		}
@@ -1999,7 +1999,7 @@ void Acci::doThat() {
 	case kVerbCodeRestart:
 		if (_vm->_scrolls->ask("Restart game and lose changes?"))  {
 			_vm->_lucerna->dusk();
-			_vm->_gyro->newgame();
+			_vm->_gyro->newGame();
 			_vm->_lucerna->dawn();
 		}
 		break;

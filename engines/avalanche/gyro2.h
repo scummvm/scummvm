@@ -43,201 +43,163 @@ namespace Avalanche {
 class AvalancheEngine;
 
 
-static const byte numobjs = 18; // always preface with a #
-static const int16 maxobjs = 12;  // carry limit
+static const byte kObjectNum = 18; // always preface with a #
+static const int16 kCarryLimit = 12;  // carry limit
 
-static const int16 numlockCode = 32;  // Code for Num Lock
-static const int16 mouse_size = 134;
+static const int16 kNumlockCode = 32;  // Code for Num Lock
+static const int16 kMouseSize = 134;
 
 struct MouseHotspotType { // mouse-void 
 	int16 _horizontal, _vertical;
 };
 
-struct dnatype { // here goes... Ux, uy, & ww now all belong to Trip5
-	byte rw; // Realway- just for convenience!
-	byte carrying; // how many objects you're carrying...
-	bool obj[numobjs]; // ...and which ones they are.
-	int16 score; // your score, of course
-	int32 pence; // your current amount of dosh
-	byte room; // your current room
-	byte wearing; // what you're wearing
-	byte swore; // number of times you've sworn
-	byte saves; // number of times this game has been saved
-	byte rooms[100]; // Add one to each every time you enter a room
-	byte alcohol; // Your blood alcohol level.
-	byte playednim; // How many times you've played Nim.
-	bool wonnim; // Have you *won* Nim? (That's harder.)
-	byte winestate; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
-	bool cwytalot_gone; // Has Cwytalot rushed off to Jerusalem yet?
+struct DnaType { // Ux, uy, & ww now all belong to Trip5
+	byte _direction; // The direction Avvy is currently facing.
+	byte _carryNum; // How many objects you're carrying...
+	bool _objects[kObjectNum]; // ...and which ones they are.
+	int16 _score; // your score, of course
+	int32 _money; // your current amount of dosh
+	byte _room; // your current room
+	byte _wearing; // what you're wearing
+	byte _sworeNum; // number of times you've sworn
+	byte _saveNum; // number of times this game has been saved
+	byte _roomCount[100]; // Add one to each every time you enter a room
+	byte _alcoholLevel; // Your blood alcohol level.
+	byte _playedNim; // How many times you've played Nim.
+	bool _wonNim; // Have you *won* Nim? (That's harder.)
+	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
+	bool _cwytalotGone; // Has Cwytalot rushed off to Jerusalem yet?
 
-	byte pass_num; // Number of the passw for this game.
-	bool ayles_is_awake; // pretty obvious!
-	byte drawbridge_open; // Between 0 (shut) and 4 (open).
-	byte avaricius_talk; // How much Avaricius has said to you.
-	bool bought_onion; // Have you bought an onion yet?
-	bool rotten_onion; // And has it rotted?
-	bool onion_in_vinegar; // Is the onion in the vinegar?
+	byte _passwordNum; // Number of the passw for this game.
+	bool _aylesIsAwake; // pretty obvious!
+	byte _drawbridgeOpen; // Between 0 (shut) and 4 (open).
+	byte _avariciusTalk; // How much Avaricius has said to you.
+	bool _boughtOnion; // Have you bought an onion yet?
+	bool _rottenOnion; // And has it rotted?
+	bool _onionInVinegar; // Is the onion in the vinegar?
 
-	byte given2spludwick; // 0 = nothing given, 1 = onion...
-	byte brummie_stairs; // Progression through the stairs trick.
-	byte cardiff_things; // Things you get asked in Cardiff.
+	byte _givenToSpludwick; // 0 = nothing given, 1 = onion...
+	byte _brummieStairs; // Progression through the stairs trick.
+	byte _cardiffQuestionNum; // Things you get asked in Cardiff.
 
-	bool cwytalot_in_herts; // Have you passed Cwytalot in Herts?
+	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
 
-	bool avvy_is_awake; // Well? Is Avvy awake? (Screen 1 only.)
-	bool avvy_in_bed; // True if Avvy's in bed, but awake.
+	bool _avvyIsAwake; // Well? Is Avvy awake? (Screen 1 only.)
+	bool _avvyInBed; // True if Avvy's in bed, but awake.
 
-	bool user_moves_avvy; // If this is false, the user has no
-						  // control over Avvy's movements.
+	bool _userMovesAvvy; // If this is false, the user has no control over Avvy's movements.
 
-	byte dogfoodpos; // Which way Dogfood's looking in the pub.
+	byte _dogFoodPos; // Which way Dogfood's looking in the pub.
 
-	bool givenbadgetoiby; // Have you given the badge to Iby yet?
+	bool _givenBadgeToIby; // Have you given the badge to Iby yet?
 
-	bool friar_will_tie_you_up; // If you're going to get tied up.
-	bool tied_up; // You ARE tied up!
+	bool _friarWillTieYouUp; // If you're going to get tied up.
+	bool _tiedUp; // You ARE tied up!
 
-	byte box_contents; // 0 = money (sixpence), 254 = empty, any
-					   // other number implies the contents of the box.
+	byte _boxContent; // 0 = money (sixpence), 254 = empty, any other number implies the contents of the box.
 
-	bool talked_to_crapulus; // Pretty self-explanatory.
+	bool _talkedToCrapulus; // Pretty self-explanatory.
 
-	byte jacques_awake; // 0=asleep, 1=awake, 2=gets up, 3=gone.
+	byte _jacquesState; // 0=asleep, 1=awake, 2=gets up, 3=gone.
 
-	bool ringing_bells; // Is Jacques ringing the bells?
+	bool _bellsAreRinging; // Is Jacques ringing the bells?
 
-	bool standing_on_dais; // In room 71, inside Cardiff Castle.
-	bool taken_pen; // Have you taken the pen (in Cardiff?)
-	bool arrow_triggered; // And has the arrow been triggered?
-	bool arrow_in_the_door;  // Did the arrow hit the wall?
+	bool _standingOnDais; // In room 71, inside Cardiff Castle.
+	bool _takenPen; // Have you taken the pen (in Cardiff?)
+	bool _arrowTriggered; // And has the arrow been triggered?
+	bool _arrowInTheDoor;  // Did the arrow hit the wall?
 
-	Common::String like2drink,
-					favourite_song,
-					worst_place_on_earth,
-					spare_evening;            // Personalisation str's
+	Common::String _favouriteDrink, _favouriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
 
-	uint32 total_time; // Your total time playing this game, in ticks.
+	uint32 _totalTime; // Your total time playing this game, in ticks.
 
-	byte jumpstatus; // Fixes how high you're jumping.
+	byte _jumpStatus; // Fixes how high you're jumping.
 
-	bool mushroom_growing; // Is the mushroom growing in 42? 
+	bool _mushroomGrowing; // Is the mushroom growing in 42? 
 
-	bool spludwicks_here; // Is Spludwick at home?
+	bool _spludwickAtHome; // Is Spludwick at home?
 
-	byte last_room;
-	byte last_room_not_map;
+	byte _lastRoom;
+	byte _lastRoomNotMap;
 
-	bool crapulus_will_tell; // Will Crapulus tell you about
-							 // Spludwick being away?
+	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
 
-	bool enter_catacombs_from_lusties_room;
-	bool teetotal; // Are we touching any more drinks?
-	byte malagauche; // Position of Malagauche. See Celer for more info.
-	char drinking; // What's he getting you?
+	bool _enterCatacombsFromLustiesRoom;
+	bool _teetotal; // Are we touching any more drinks?
+	byte _malagauche; // Position of Malagauche. See Celer for more info.
+	char _drinking; // What's he getting you?
 
-	bool entered_lusties_room_as_monk;
+	bool _enteredLustiesRoomAsMonk;
 
-	byte cat_x, cat_y;   // XY coords in the catacombs.
+	byte _catacombX, _catacombY;   // XY coords in the catacombs.
 
-	bool avvys_in_the_cupboard; // On screen 22.
+	bool _avvysInTheCupboard; // On screen 22.
 
-	bool geida_follows; // Is Geida following you?
+	bool _geidaFollows; // Is Geida following you?
 
-	byte geida_spin, geida_time; // For the making "Geida dizzy" joke.
+	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
 
-	byte nextbell; // For the ringing.
+	byte _nextBell; // For the ringing.
 
-	bool geida_given_potion; // Does Geida have the potion?
-	bool lustie_is_asleep; // Is BDL asleep?
+	bool _givenPotionToGeida; // Does Geida have the potion?
+	bool _lustieIsAsleep; // Is BDL asleep?
 
-	byte flip_to_where, flip_to_ped; // For the sequencer.
+	byte _flipToWhere, _flipToPed; // For the sequencer.
 
-	bool been_tied_up; // In r__Robins.
+	bool _beenTiedUp; // In r__Robins.
 
-	bool sitting_in_pub; // Are you sitting down in the pub?
-	byte spurge_talk; // Count for talking to Spurge.
+	bool _sittingInPub; // Are you sitting down in the pub?
+	byte _spurgeTalkCount; // Count for talking to Spurge.
 
-	bool met_avaroid;
+	bool _metAvaroid;
 
-	bool taken_mushroom,
-			given_pen_to_ayles,
-			asked_dogfood_about_nim;
+	bool _takenMushroom, _givenPenToAyles, _askedDogfoodAboutNim;
 };
 
-struct pedtype {
-	int16 x, y;
-	byte dir;
+struct PedType {
+	int16 _x, _y;
+	byte _direction;
 };
 
-struct magictype {
-	byte op; // one of the operations
-	uint16 data; // data for them
+struct MagicType {
+	byte _operation; // one of the operations
+	uint16 _data; // data for them
 };
 
-class fieldtype {
+class FieldType {
 public:
-	int16 x1, y1, x2, y2;
+	int16 _x1, _y1, _x2, _y2;
 };
 
-struct bytefield {
-	byte x1, y1, x2, y2;
+struct ByteField {
+	byte _x1, _y1, _x2, _y2;
 };
 
-class linetype : public fieldtype {
+class LineType : public FieldType {
 public:
-	byte col;
+	byte _color;
 };
 
-enum controllers {cjoy, ckey};
-
-typedef Common::String previoustype[20];
-
-struct corridor_type { // Decarations for the corridors.
-	uint16 doors; // Door styles are calc'ed from this uint16.
-				  // Assign a different number to each one!
-};
-
-struct demo_type {
-	uint16 delay;
-	char key, extd;
+struct DemoType {
+	uint16 _delay;
+	char _key, _extd;
 };
 
 struct QuasipedType {
-	byte whichped, fgc, room, bgc;
-	uint16 who;
+	byte _whichPed, _foregroundColor, _room, _backgroundColor;
+	uint16 _who;
 };
-/* A quasiped defines how people who aren't sprites talk. For example,
-	quasiped "A" is Dogfood. The rooms aren't stored because I'm leaving
-	that to context. */
 
 typedef byte TuneType[31];
 
-
-struct PointType {
-	int16 x, y;
+struct Sundry { // Things which must be saved over a backtobootstrap, outside DNA.
+	Common::String _qEnidFilename;
+	bool _qSoundFx;
+	byte _qThinks;
+	bool _qThinkThing;
 };
 
-struct vmctype { // Virtual Mouse Cursor
-	byte *andpic, *xorpic;
-	byte *backpic[2];
-	PointType wherewas[2];
-	byte picnumber;
-	int8 ofsx, ofsy;
-};
-
-struct sundry {
-	// Things which must be saved over a backtobootstrap, outside DNA.
-	Common::String qenid_filename;
-	bool qsoundfx;
-	char qthinks;
-	bool qthinkthing;
-};
-
-struct joysetup {
-	uint16 xmid, ymid, xmin, ymin, xmax, ymax;
-	byte centre; // Size of centre in tenths
-};
-
+#if 0
 struct ednahead { // Edna header
 	// This header starts at byte offset 177 in the .ASG file.
 	char id[9];   // signature
@@ -268,65 +230,67 @@ struct ednahead { // Edna header
 
 	// DNA values follow, then footer (which is ignored)
 };
+#endif
 
 class Gyro {
 public:
-	static const char *vernum;
-	static const char *copyright;
-	static const int16 thisvercode = 130;
-	// as "vernum", but numerically & without the ".".
-	static const int16 thisgamecode = 2; // Avalot's code number
+	static const char *kVersionNum;
+	static const char *kCopyright;
+	static const int16 kVersionCode = 130; // Same as kVersionCode, but numerically & without the ".".
+	static const int16 kGameCode = 2; // Avalot's code number
 
 	// Objects you can hold:
-	static const char wine = 1;
-	static const char money = 2;
-	static const char bodkin = 3;
-	static const char potion = 4;
-	static const char chastity = 5;
-	static const char bolt = 6;
-	static const char crossbow = 7;
-	static const char lute = 8;
-	static const char badge = 9;
-	static const char mushroom = 10;
-	static const char key = 11;
-	static const char bell = 12;
-	static const char prescription = 13;
-	static const char pen = 14;
-	static const char ink = 15;
-	static const char clothes = 16;
-	static const char habit = 17;
-	static const char onion = 18;
+	enum Object {
+		kObjectWine = 1,
+		kObjectMoney,
+		kObjectBodkin,
+		kObjectPotion,
+		kObjectChastity,
+		kObjectBolt,
+		kObjectCrossbow,
+		kObjectLute,
+		kObjectBadge,
+		kObjectMushroom,
+		kObjectKey,
+		kObjectBell,
+		kObjectPrescription,
+		kObjectPen,
+		kObjectInk,
+		kObjectClothes,
+		kObjectHabit,
+		kObjectOnion
+	};
 
 	// People who hang around this game.
+	enum People {
+		// Boys:
+		kPeopleAvalot = 150,
+		kPeopleSpludwick = 151,
+		kPeopleCrapulus = 152,
+		kPeopleDrDuck = 153,
+		kPeopleMalagauche = 154,
+		kPeopleFriarTuck = 155,
+		kPeopleRobinHood = 156,
+		kPeopleCwytalot = 157,
+		kPeopleDuLustie = 158,
+		kPeopleDuke = 159,
+		kPeopleDogfood = 160,
+		kPeopleTrader = 161,
+		kPeopleIbythneth = 162,
+		kPeopleAyles = 163,
+		kPeoplePort = 164,
+		kPeopleSpurge = 165,
+		kPeopleJacques = 166,
+		// Girls:
+		kPeopleArkata = 175,
+		kPeopleGeida = 176,
+		kPeopleWisewoman = 178
+	};
 
-	// Boys:
-	static const uint16 pavalot = 150;
-	static const uint16 pspludwick = 151;
-	static const uint16 pcrapulus = 152;
-	static const uint16 pdrduck = 153;
-	static const uint16 pmalagauche = 154;
-	static const uint16 pfriartuck = 155;
-	static const uint16 probinhood = 156;
-	static const uint16 pcwytalot = 157;
-	static const uint16 pdulustie = 158;
-	static const uint16 pduke = 159;
-	static const uint16 pdogfood = 160;
-	static const uint16 ptrader = 161;
-	static const uint16 pibythneth = 162;
-	static const uint16 payles = 163;
-	static const uint16 pport = 164;
-	static const uint16 pspurge = 165;
-	static const uint16 pjacques = 166;
+	static const int16 kXW = 30;
+	static const int16 kYW = 36; // x width & y whatsit
 
-	// Girls:
-	static const uint16 parkata = 175;
-	static const uint16 pgeida = 176;
-	static const uint16 pwisewoman = 178;
-
-	static const int16 xw = 30;
-	static const int16 yw = 36; // x width & y whatsit
-
-	static const int16 margin = 5;
+	static const int16 kMargin = 5;
 
 	static const MouseHotspotType kMouseHotSpots[9];
 
@@ -394,215 +358,155 @@ public:
 
 
 
-
-	byte _interrogation;
 	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.
 	// If a scroll comes up, or you leave the room, it's automatically set to zero.
-
+	byte _interrogation;
+	
 	static byte _whereIs[29];
 
-	bool _onCanDoPageSwap; 
 	// Variable static constant for overriding the ability of On to switch pages.
 	// You may know better than On which page to switch to.
+	bool _onCanDoPageSwap; 
+	
 
 
 
-	// previous:^previoustype;
-	dnatype dna;
-	byte lineNum; // Number of lines.
-	linetype lines[50]; // For Also.
-	int16 c;
-	//registers r; // http://www.freepascal.org/docs-html/rtl/dos/registers.html
-	enum { m_no , m_yes , m_virtual } visible;
-	bool dropsok, screturn, soundfx, cheat;
-	uint16 mx, my; // mouse x & y now
-	uint16 mpx, mpy; // mouse x & y when pressed
-	uint16 mrx, mry; // mouse x & y when released
-	byte mpress, mrelease; // times left mouse button has been pressed/released
-	byte keystatus; // Mouse key status
-	Common::String un[10];
-	byte unn;
-	Common::String mousetext;
-	// which:array[0..5] of byte;
-	void *p;
-	bool weirdword;
-	byte to_do;
-	bool lmo, mousemade;
-	Common::String scroll[15];
-	byte scrolln, score, whichwas;
-	byte thinks;
-	bool thinkthing;
+	DnaType _dna;
+	byte _lineNum; // Number of lines.
+	LineType _lines[50]; // For Also.
+	enum MouseState { kMouseStateNo, kMouseStateYes, kMouseStateVirtual } _mouse;
+	bool _dropsOk, _scReturn, _soundFx, _cheat;
+	Common::String _mouseText;
+	bool _weirdWord;
+	bool _letMeOut;
+	Common::String _scroll[15];
+	byte _scrollNum, _score, _whichwas;
+	byte _thinks;
+	bool _thinkThing;
 
-	// pp:array[1..1000] of postype;
-	// bb:array[1..9000] of byte;
-	uint16 pptr, bptr;
-	int16 ppos[1][2];
-	uint16 pozzes[24];
-	byte anim;
-	void *copier;
-	int16 talkx, talky;
-	byte talkb, talkf;
-	byte scrollbells; // no. of times to ring the bell
-	bool ontoolbar, seescroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
+	int16 _talkX, _talkY;
+	byte _talkBackgroundColor, _talkFontColor;
+	byte _scrollBells; // no. of times to ring the bell
+	bool _onToolbar, _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 
-	char objlist[10];
+	char _objectList[10];
 
-	::Graphics::Surface digit[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
-	::Graphics::Surface rwlite[9]; // Maybe it will be needed to move them to the class itself instead.
+	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
+	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	// Called .free() for them in ~Gyro().
 
-	byte oldrw;
-	int8 lastscore[3];
-	byte cmp; // current mouse-void
-	Common::String verbstr; // what you can do with your object. :-)
+	byte _oldDirection;
+	int8 _scoreToDisplay[3];
+	byte _currentMouse; // current mouse-void
+	Common::String _verbStr; // what you can do with your object. :-)
 
-	Common::String *also[31][2];
-	pedtype peds[15];
-	magictype magics[15];
-	magictype portals[7];
-	fieldtype fields[30];
-	byte numfields;
-	Common::String flags;
-	Common::String listen;
+	Common::String *_also[31][2];
+	PedType _peds[15];
+	MagicType _magics[15];
+	MagicType _portals[7];
+	FieldType _fields[30];
+	byte _fieldNum;
+	Common::String _flags;
+	Common::String _listen;
 
-	uint16 oh, onh, om, hour, minutes, seconds;
+	uint16 _oh, _onh, _om, _hours, _minutes, _seconds;
 
-	Common::String atkey; // For XTs, set to "alt-". For ATs, set to "f1".
+	Common::String _atKey; // For XTs, set to "alt-". For ATs, set to "f1".
 
-	byte cp, ledstatus, defaultled;
-	FontType characters;
-	bool alive;
-	byte buffer[2000];
-	uint16 bufsize;
+	byte _cp, _ledStatus, _defaultLed;
+	FontType _font;
+	bool _alive;
+	byte _buffer[2000];
+	uint16 _bufSize;
 
-	byte oldjw; // Old joystick-way
-	controllers ctrl;
+	int16 _underScroll; // Y-coord of just under the scroll text.
 
-	int16 underscroll; // Y-coord of just under the scroll text.
+	bool _dropdownActive; // Kludge so we don't have to keep referring to Dropdown
+	Common::String _roomnName; // Name of actual room
 
-	// TSkellern is only temporary, and I'll replace it
-	// with a local version when it's all fixed up.
+	Common::String _subject; // What you're talking to them about.
+	byte _subjectNum; // The same thing.
 
-	// tskellern:int32 absolute $0:244; { Over int $61 }
+	bool _keyboardClick; // Is a keyboard click noise wanted?
 
-	bool ddmnow; // Kludge so we don't have to keep referring to Dropdown
-	Common::String roomname; // Name of this room
-
-	//text logfile; // http://wiki.freepascal.org/Text
-	bool log_epson;
-
-	bool cl_override;
-
-	byte locks; // ABSOLUTE $40:$17;
-
-	Common::String subject; // What you're talking to them about.
-	byte subjnumber; // The same thing.
-
-	bool keyboardclick; // Is a keyboard click noise wanted?
-
-	byte him, her, it;
-	int32 roomtime; // Set to 0 when you enter a room, added to in every loop.
-
-	bool after_the_scroll;
+	byte _him, _her, _it;
+	int32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
 
 	// For the demo:
-	demo_type demo_rec;
-	Common::File demofile; // of demo_type
-	Common::DumpFile demofile_save; // uruk added it - first use located in constructor of Basher
+	DemoType _demoRec;
+	Common::File _demoFile; // of demo_type
+	Common::DumpFile _demoFileSave; // uruk added it - first use located in constructor of Basher
 
-	byte last_person; // Last person to have been selected using the People menu.
+	byte _lastPerson; // Last person to have been selected using the People menu.
 
-	bool doing_sprite_run; // Only set to True if we're doing a sprite_run
-						   // at this moment. This stops the trippancy system
-						   // from moving any of the sprites.
+	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
 
-	vmctype vmc;
-	Common::String filetoload;
+	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
 
-	bool holdthedawn; // If this is true, calling Dawn will do nothing.
-					  // It's used, for example, at the start, to stop Load from dawning.
-
-	uint16 storage_seg, storage_ofs; // Seg and ofs of the Storage area.
-	uint16 skellern; // Offset of the timer variable - 1 more than storage_OFS
 	bool isLoaded; // Is it a loaded gamestate?
 
-	bool super_was_virtual, super_was_off; // Used by Super_Off and Super_On
+	Common::String _enidFilename;
 
-	Common::String enid_filename;
-
-	joysetup js;
-	uint16 cxmin, cxmax, cymin, cymax;
-	bool use_joy_a;
 
 
 	Gyro(AvalancheEngine *vm);
 
 	~Gyro();
 
-	Common::String strf(int32 x);
+	Common::String intToStr(int32 x);
 
-	void newpointer(byte id);
+	void newMouse(byte id);
 
 	void setMousePointerWait();    // Makes hourglass.
-
-	void on();
-
-	void off();
-
-	void xycheck(); // Only updates mx & my, not all other mouse vars.
-
-	void check();
 
 	void note(uint16 hertz);
 
 	void blip();
 
-	void shbox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
+	void shadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
 
-	void newgame(); // This sets up the DNA for a completely new game.
+	void newGame(); // This sets up the DNA for a completely new game.
 
 	void click(); // "Audio keyboard feedback"
 
-	void slowdown();
+	void slowDown();
 
-	bool flagset(char x);
+	bool setFlag(char x);
 
-	void force_numlock();
+	void forceNumlock();
 
-	bool pennycheck(uint16 howmuchby);
+	bool updateMoney(uint16 howmuchby); // Called pennycheck in the original.
 
-	Common::String getname(byte whose);
+	Common::String getName(byte whose);
 
-	byte getnamechar(byte whose);
+	byte getNameChar(byte whose);
 
-	Common::String get_thing(byte which);
+	Common::String getThing(byte which);
 
-	char get_thingchar(byte which);
+	char getThingChar(byte which);
 
-	Common::String get_better(byte which);
+	Common::String getItem(byte which); // Called get_better in the original.
 
-	Common::String f5_does(); // This procedure determines what f5 does.
+	Common::String f5Does(); // This procedure determines what f5 does.
 
-	void load_a_mouse(byte which);
+	void loadMouse(byte which);
 
-	void background(byte x);
+	void setBackgroundColor(byte x);
 
-	void hang_around_for_a_while();
-
-	bool mouse_near_text();
+	void hangAroundForAWhile();
 
 private:
 	AvalancheEngine *_vm;
 	
-	static const Common::String things[numobjs];
+	static const Common::String kThings[kObjectNum];
 
-	static const char thingchar[];
+	static const char kThingsChar[];
 
-	static const Common::String better[numobjs];
+	static const Common::String kItems[kObjectNum]; // 'better' in the original.
 
-	static const char betterchar[];
+	static const char kItemsChar[]; // Similar as above.
 
-	void shadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
+	void drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
 };
 
 } // End of namespace Avalanche

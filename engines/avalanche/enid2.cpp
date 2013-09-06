@@ -244,18 +244,18 @@ void Enid::avvyBackground() {
 #endif
 }
 
-void Enid::toSundry(sundry &sund) {
-	sund.qenid_filename = _vm->_gyro->enid_filename;
-	sund.qsoundfx = _vm->_gyro->soundfx;
-	sund.qthinks = _vm->_gyro->thinks;
-	sund.qthinkthing = _vm->_gyro->thinkthing;
+void Enid::toSundry(Sundry &sund) {
+	sund._qEnidFilename = _vm->_gyro->_enidFilename;
+	sund._qSoundFx = _vm->_gyro->_soundFx;
+	sund._qThinks = _vm->_gyro->_thinks;
+	sund._qThinkThing = _vm->_gyro->_thinkThing;
 }
 
-void Enid::fromSundry(sundry sund) {
-	_vm->_gyro->enid_filename = sund.qenid_filename;
-	_vm->_gyro->soundfx = sund.qsoundfx;
-	_vm->_gyro->thinks = sund.qthinks;
-	_vm->_gyro->thinkthing = sund.qthinkthing;
+void Enid::fromSundry(Sundry sund) {
+	_vm->_gyro->_enidFilename = sund._qEnidFilename;
+	_vm->_gyro->_soundFx = sund._qSoundFx;
+	_vm->_gyro->_thinks = sund._qThinks;
+	_vm->_gyro->_thinkThing = sund._qThinkThing;
 }
 
 void Enid::restoreDna() {
@@ -269,19 +269,19 @@ void Enid::ednaReload() {
 
 	restoreDna();
 
-	_vm->_gyro->seescroll = true;  // This prevents display of the new sprites before the
+	_vm->_gyro->_seeScroll = true;  // This prevents display of the new sprites before the
 								   // new picture is loaded.
 
 	_vm->_lucerna->major_redraw();
 
-	_vm->_gyro->_whereIs[_vm->_gyro->pavalot - 150] = _vm->_gyro->dna.room;
+	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleAvalot - 150] = _vm->_gyro->_dna._room;
 
-	_vm->_gyro->alive = true;
+	_vm->_gyro->_alive = true;
 
 	_vm->_lucerna->objectlist();
 
-	if (_vm->_gyro->holdthedawn) {
-		_vm->_gyro->holdthedawn = false;
+	if (_vm->_gyro->_holdTheDawn) {
+		_vm->_gyro->_holdTheDawn = false;
 		_vm->_lucerna->dawn();
 	}
 }

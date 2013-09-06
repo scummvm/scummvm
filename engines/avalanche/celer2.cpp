@@ -54,31 +54,31 @@ Celer::~Celer() {
  * @remarks	Originally called 'pics_link'
  */
 void Celer::updateBackgroundSprites() {
-	if (_vm->_gyro->ddmnow)
+	if (_vm->_gyro->_dropdownActive)
 		return; // No animation when the menus are up.
 
-	switch (_vm->_gyro->dna.room) {
+	switch (_vm->_gyro->_dna._room) {
 	case r__outsideargentpub:
-		if ((_vm->_gyro->roomtime % 12) == 0)
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 4);
+		if ((_vm->_gyro->_roomTime % 12) == 0)
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 12) % 4);
 		break;
 	case r__brummieroad:
-		if ((_vm->_gyro->roomtime % 2) == 0)
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 2) % 4);
+		if ((_vm->_gyro->_roomTime % 2) == 0)
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 2) % 4);
 		break;
 	case r__bridge:
-		if ((_vm->_gyro->roomtime % 2) == 0)
-			drawBackgroundSprite(-1, -1, 4 + (_vm->_gyro->roomtime / 2) % 4);
+		if ((_vm->_gyro->_roomTime % 2) == 0)
+			drawBackgroundSprite(-1, -1, 4 + (_vm->_gyro->_roomTime / 2) % 4);
 		break;
 	case r__yours:
-		if ((!_vm->_gyro->dna.avvy_is_awake) && ((_vm->_gyro->roomtime % 4) == 0))
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 12) % 2);
+		if ((!_vm->_gyro->_dna._avvyIsAwake) && ((_vm->_gyro->_roomTime % 4) == 0))
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 12) % 2);
 		break;
 	case r__argentpub:
-		if (((_vm->_gyro->roomtime % 7) == 1) && (_vm->_gyro->dna.malagauche != 177)) {
+		if (((_vm->_gyro->_roomTime % 7) == 1) && (_vm->_gyro->_dna._malagauche != 177)) {
 			// Malagauche cycle.
-			_vm->_gyro->dna.malagauche += 1;
-			switch (_vm->_gyro->dna.malagauche) {
+			_vm->_gyro->_dna._malagauche += 1;
+			switch (_vm->_gyro->_dna._malagauche) {
 			case 1:
 			case 11:
 			case 21:
@@ -94,12 +94,12 @@ void Celer::updateBackgroundSprites() {
 				drawBackgroundSprite(-1, -1, 13); // Winks.
 				break; 
 			case 33:
-				_vm->_gyro->dna.malagauche = 0;
+				_vm->_gyro->_dna._malagauche = 0;
 				break;
 			}
 		}
 
-		switch (_vm->_gyro->roomtime % 200) {
+		switch (_vm->_gyro->_roomTime % 200) {
 		case 179:
 		case 197:
 			drawBackgroundSprite(-1, -1, 5); // Dogfood's drinking cycle.
@@ -112,11 +112,11 @@ void Celer::updateBackgroundSprites() {
 			drawBackgroundSprite(-1, -1, 7);
 			break;
 		case 199:
-			_vm->_gyro->dna.dogfoodpos = 177; // Impossible value for this.
+			_vm->_gyro->_dna._dogFoodPos = 177; // Impossible value for this.
 			break; 
 		}
 
-		if ((_vm->_gyro->roomtime % 200 >= 0) && (_vm->_gyro->roomtime % 200 <= 178)) { // Normally.
+		if ((_vm->_gyro->_roomTime % 200 >= 0) && (_vm->_gyro->_roomTime % 200 <= 178)) { // Normally.
 			byte direction = 0;
 			if (((_vm->_lucerna->bearing(2) >= 1) && (_vm->_lucerna->bearing(2) <= 90)) || ((_vm->_lucerna->bearing(2) >= 358) && (_vm->_lucerna->bearing(2) <= 360)))
 				direction = 3;
@@ -125,15 +125,15 @@ void Celer::updateBackgroundSprites() {
 			else if ((_vm->_lucerna->bearing(2) >= 271) && (_vm->_lucerna->bearing(2) <= 292))
 				direction = 4;
 
-			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+			if (direction != _vm->_gyro->_dna._dogFoodPos) { // Only if it's changed.
 				drawBackgroundSprite(-1, -1, direction);
-				_vm->_gyro->dna.dogfoodpos = direction;
+				_vm->_gyro->_dna._dogFoodPos = direction;
 			}
 		}
 		break;
 	case r__westhall:
-		if ((_vm->_gyro->roomtime % 3) == 0) {
-			switch ((_vm->_gyro->roomtime / int32(3)) % int32(6)) {
+		if ((_vm->_gyro->_roomTime % 3) == 0) {
+			switch ((_vm->_gyro->_roomTime / int32(3)) % int32(6)) {
 			case 4:
 				drawBackgroundSprite(-1, -1, 1);
 				break;
@@ -150,10 +150,10 @@ void Celer::updateBackgroundSprites() {
 		}
 		break;
 	case r__lustiesroom:
-		if (!(_vm->_gyro->dna.lustie_is_asleep)) {
+		if (!(_vm->_gyro->_dna._lustieIsAsleep)) {
 			byte direction = 0;
 			uint16 angle = _vm->_lucerna->bearing(2);
-			if ((_vm->_gyro->roomtime % 45) > 42)
+			if ((_vm->_gyro->_roomTime % 45) > 42)
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
 			else if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
@@ -163,15 +163,15 @@ void Celer::updateBackgroundSprites() {
 			else if ((angle >= 181) && (angle <= 314))
 				direction = 3; // Right.
 
-			if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+			if (direction != _vm->_gyro->_dna._dogFoodPos) { // Only if it's changed.
 				drawBackgroundSprite(-1, -1, direction);
-				_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
+				_vm->_gyro->_dna._dogFoodPos = direction; // We use DogfoodPos here too - why not?
 			}
 		}
 		break;
 	case r__aylesoffice:
-		if ((!_vm->_gyro->dna.ayles_is_awake) && (_vm->_gyro->roomtime % 14 == 0)) {
-			switch ((_vm->_gyro->roomtime / 14) % 2) {
+		if ((!_vm->_gyro->_dna._aylesIsAwake) && (_vm->_gyro->_roomTime % 14 == 0)) {
+			switch ((_vm->_gyro->_roomTime / 14) % 2) {
 			case 0:
 				drawBackgroundSprite(-1, -1, 1);  // Frame 2: EGA.
 				break;
@@ -182,8 +182,8 @@ void Celer::updateBackgroundSprites() {
 		}
 		break;
 	case r__robins:
-		if (_vm->_gyro->dna.tied_up) {
-			switch (_vm->_gyro->roomtime % 54) {
+		if (_vm->_gyro->_dna._tiedUp) {
+			switch (_vm->_gyro->_roomTime % 54) {
 			case 20:
 				drawBackgroundSprite(-1, -1, 4); // Frame 4: Avalot blinks.
 				break; 
@@ -204,15 +204,15 @@ void Celer::updateBackgroundSprites() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_gyro->roomtime % 60) > 57)
+		if ((_vm->_gyro->_roomTime % 60) > 57)
 			direction--; // Blinks.
 
-		if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+		if (direction != _vm->_gyro->_dna._dogFoodPos) { // Only if it's changed.
 			drawBackgroundSprite(-1, -1, direction);
-			_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
+			_vm->_gyro->_dna._dogFoodPos = direction; // We use DogfoodPos here too - why not?
 		}
 
-		switch (_vm->_gyro->roomtime % 50) {
+		switch (_vm->_gyro->_roomTime % 50) {
 		case 45 :
 			drawBackgroundSprite(-1, -1, 9); // Spurge blinks.
 			break; 
@@ -223,8 +223,8 @@ void Celer::updateBackgroundSprites() {
 		break;
 	  }
 	case r__ducks: {
-		if ((_vm->_gyro->roomtime % 3) == 0) // The fire flickers.
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->roomtime / 3) % 3);
+		if ((_vm->_gyro->_roomTime % 3) == 0) // The fire flickers.
+			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 3) % 3);
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
@@ -236,25 +236,25 @@ void Celer::updateBackgroundSprites() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_gyro->roomtime % 45) > 42)
+		if ((_vm->_gyro->_roomTime % 45) > 42)
 			direction++; // Duck blinks.
 
-		if (direction != _vm->_gyro->dna.dogfoodpos) { // Only if it's changed.
+		if (direction != _vm->_gyro->_dna._dogFoodPos) { // Only if it's changed.
 			drawBackgroundSprite(-1, -1, direction);
-			_vm->_gyro->dna.dogfoodpos = direction; // We use DogfoodPos here too - why not?
+			_vm->_gyro->_dna._dogFoodPos = direction; // We use DogfoodPos here too - why not?
 		}
 		break;
 	   }
 	}
 
-	if ((_vm->_gyro->dna.ringing_bells) && (_vm->_gyro->flagset('B'))) {
+	if ((_vm->_gyro->_dna._bellsAreRinging) && (_vm->_gyro->setFlag('B'))) {
 		// They're ringing the bells.
-		switch (_vm->_gyro->roomtime % 4) {
+		switch (_vm->_gyro->_roomTime % 4) {
 		case 1:
-			if (_vm->_gyro->dna.nextbell < 5)
-				_vm->_gyro->dna.nextbell = 12;
-			_vm->_gyro->dna.nextbell--;
-			_vm->_gyro->note(_vm->_gyro->kNotes[_vm->_gyro->dna.nextbell]);
+			if (_vm->_gyro->_dna._nextBell < 5)
+				_vm->_gyro->_dna._nextBell = 12;
+			_vm->_gyro->_dna._nextBell--;
+			_vm->_gyro->note(_vm->_gyro->kNotes[_vm->_gyro->_dna._nextBell]);
 			break;
 		case 2:
 			//nosound();
@@ -373,17 +373,17 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 
 
 void Celer::drawSprite(int16 x, int16 y, SpriteType &sprite) {
-	_r.x1 = x;
-	_r.y1 = y;
-	_r.y2 = y + sprite._yl;
+	_r._x1 = x;
+	_r._y1 = y;
+	_r._y2 = y + sprite._yl;
 
 	switch (sprite._type) {
 	case kNaturalImage: // Allow fallthrough on purpose.
 	case kBgi:
-		_r.x2 = x + sprite._xl + 1;
+		_r._x2 = x + sprite._xl + 1;
 		break;
 	case kEga:
-		_r.x2 = x + sprite._xl;
+		_r._x2 = x + sprite._xl;
 		break;
 	}
 
