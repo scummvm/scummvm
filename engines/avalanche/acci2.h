@@ -82,9 +82,6 @@ private:
 		Common::String _title;
 	};
 
-	static const RankType kRanks[9];
-	static const char kWhat[];
-
 	Common::String _thats;
 	Common::String _unknown;
 
