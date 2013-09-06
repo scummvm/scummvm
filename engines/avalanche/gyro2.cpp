@@ -175,7 +175,8 @@ byte Gyro::_whereIs[29] = {
 	r__wisewomans  // The Wise Woman.
 };
 
-const char Gyro::kItemsChar[] = "WMBParCLguKeSnIohn";
+// CHECKME: Useless?
+// const char Gyro::kItemsChar[] = "WMBParCLguKeSnIohn";
 
 Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
 	_vm = vm;
