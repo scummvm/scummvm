@@ -533,51 +533,33 @@ void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint3
 
 void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
-
+	void (*fp)(byte *in, byte *out);      // Function pointer
 	const int aShift = 0;//img->format.aShift;
-	if (blendMode == BLEND_ADDITIVE) {
-		for (uint32 i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (uint32 j = 0; j < width; j++) {
-				in += inStep;
-				BlittingTools::blendPixelAdditive(in, out);
-				out += 4;
-			}
-			outo += pitch;
-			ino += inoStep;
-		}
-	} else if (blendMode == BLEND_SUBTRACTIVE) { 
-		for (uint32 i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (uint32 j = 0; j < width; j++) {
-				in += inStep;
-				BlittingTools::blendPixelSubtractive(in, out);
-				out += 4;
-			}
-			outo += pitch;
-			ino += inoStep;
-		}
-	} else {
-		assert (blendMode == BLEND_NORMAL);
 
-		for (uint32 i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (uint32 j = 0; j < width; j++) {
-				in += inStep;
-				BlittingTools::blendBinaryFast(in, out);
-				out += 4;
-			}
-			outo += pitch;
-			ino += inoStep;
+	if (blendMode == BLEND_ADDITIVE) {
+		fp = BlittingTools::blendPixelAdditive;
+	} else if (blendMode == BLEND_SUBTRACTIVE) {
+		fp = BlittingTools::blendPixelSubtractive;
+	} else {
+		fp = fp = BlittingTools::blendBinaryFast;
+	}
+
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (uint32 j = 0; j < width; j++) {
+			fp(in, out);
+			in += inStep;
+			out += 4;
 		}
+		outo += pitch;
+		ino += inoStep;
 	}
 }
 
 void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
+
 	if (blendMode == BLEND_ADDITIVE) {
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
