@@ -1336,20 +1336,18 @@ void Lucerna::major_redraw() {
 }
 
 uint16 Lucerna::bearing(byte whichped) {
-	whichped--; // Different array indexes in Pascal and C.
+	byte pedId = whichped - 1; // Different array indexes in Pascal and C.
 
 	const double rad2deg = 180 / 3.14; // Pi
 		
-	if (_vm->_trip->tr[0].x == _vm->_gyro->_peds[whichped]._x)
+	if (_vm->_trip->tr[0].x == _vm->_gyro->_peds[pedId]._x)
 		return 0;
-	else {
-		if (_vm->_trip->tr[0].x < _vm->_gyro->_peds[whichped]._x) {
-			return (atan(double((_vm->_trip->tr[0].y - _vm->_gyro->_peds[whichped]._y))
-					/ (_vm->_trip->tr[0].x - _vm->_gyro->_peds[whichped]._x)) * rad2deg) + 90;
-		} else {
-			return (atan(double((_vm->_trip->tr[0].y - _vm->_gyro->_peds[whichped]._y))
-					/ (_vm->_trip->tr[0].x - _vm->_gyro->_peds[whichped]._x)) * rad2deg) + 270;
-		}
+	else if (_vm->_trip->tr[0].x < _vm->_gyro->_peds[pedId]._x) {
+		return (uint16)((atan(double((_vm->_trip->tr[0].y - _vm->_gyro->_peds[pedId]._y))
+			/ (_vm->_trip->tr[0].x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 90);
+	} else {
+		return (uint16)((atan(double((_vm->_trip->tr[0].y - _vm->_gyro->_peds[pedId]._y))
+			/ (_vm->_trip->tr[0].x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 270);
 	}
 }
 

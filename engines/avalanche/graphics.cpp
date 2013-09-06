@@ -91,8 +91,7 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 		yRadius++;
 
 	// Check for an ellipse with negligable x and y radius.
-	if ((xRadius <= 1) && (yRadius <= 1)) 
-	{
+	if ((xRadius <= 1) && (yRadius <= 1)) {
 		*(byte *)_scrolls.getBasePtr(x, y) = color;
 		endPoint.x = x;
 		endPoint.y = y;
@@ -104,15 +103,14 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 	endAngle = endAngle % 361;
 
 	// If impossible angles, then swap them! 
-	if (endAngle < stAngle) 
-	{
+	if (endAngle < stAngle) {
 		uint16 tmpAngle=endAngle;
 		endAngle=stAngle;
 		stAngle=tmpAngle;
 	}
 
 	// Approximate the number of pixels required by using the circumference equation of an ellipse.                                              
-	uint16 numOfPixels=floor(sqrt(3.0)*sqrt(pow(double(xRadius), 2)+pow(double(yRadius), 2)) + 0.5);
+	uint16 numOfPixels = (uint16)floor(sqrt(3.0) * sqrt(pow(double(xRadius), 2) + pow(double(yRadius), 2)) + 0.5);
 
 	// Calculate the angle precision required.
 	double delta = 90.0 / numOfPixels;
@@ -127,8 +125,8 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 
 	// Set the end point.
 	double tempTerm = endAngle * convfac;
-	endPoint.x = floor(xRadius * cos(tempTerm) + 0.5) + x;
-	endPoint.y = floor(yRadius * sin(tempTerm + pi) + 0.5) + y;
+	endPoint.x = (int16)floor(xRadius * cos(tempTerm) + 0.5) + x;
+	endPoint.y = (int16)floor(yRadius * sin(tempTerm + pi) + 0.5) + y;
 
 	// Calculate points. 
 	int16 xNext = xRadius;
@@ -139,8 +137,8 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 		// This is used by both sin and cos.
 		tempTerm = (j + delta) * convfac;
 		
-		xNext = floor(xRadius*cos(tempTerm) + 0.5);
-		yNext = floor(yRadius*sin(tempTerm + pi) + 0.5);
+		xNext = (int16)floor(xRadius * cos(tempTerm) + 0.5);
+		yNext = (int16)floor(yRadius * sin(tempTerm + pi) + 0.5);
 
 		int16 xp = x + xTemp;
 		int16 xm = x - xTemp;
@@ -208,7 +206,7 @@ void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte
 }
 
 void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, byte color) {
-	for (byte i = 0; i < text.size(); i++)
+	for (byte i = 0; i < text.size(); i++) {
 		for (byte j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];	
 			for (byte bit = 0; bit < 8; bit++) {
@@ -217,6 +215,7 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 					*(byte *)surface.getBasePtr(x + i * 8 + 7 - bit, y + j) = color;
 			}
 		}
+	}
 }
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
@@ -229,8 +228,8 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
-	for (byte y = 0; y < height; y++) 
-		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
+	for (byte y = 0; y < height; y++) {
+		for (int8 plane = 3; plane >= 0; plane--) { // The planes are in the opposite way.
 			for (uint16 x = 0; x < width; x += 8) {
 				byte pixel = file.readByte();
 				for (byte bit = 0; bit < 8; bit++) {
@@ -239,7 +238,8 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 						*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
 				} 
 			}
-		
+		}
+	}
 	return picture;
 }
 
@@ -251,8 +251,8 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	::Graphics::Surface picture;
 	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
 
-	for (byte plane = 0; plane < 4; plane++)
-		for (uint16 y = 0; y < height; y++)
+	for (byte plane = 0; plane < 4; plane++) {
+		for (uint16 y = 0; y < height; y++) {
 			for (uint16 x = 0; x < width; x += 8) {
 				byte pixel = file.readByte();
 				for (byte i = 0; i < 8; i++) {
@@ -260,22 +260,26 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 					*(byte *)picture.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
 				}	
 			}
+		}
+	}
 
 	return picture;
 }
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 	// First we make the pixels of the spirte blank.
-	for (byte j = 0; j < sprite._yLength; j++)
-		for (byte i = 0; i < sprite._xLength; i++)
+	for (byte j = 0; j < sprite._yLength; j++) {
+		for (byte i = 0; i < sprite._xLength; i++) {
 			if (((*sprite._sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
 				*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
+		}
+	}
 
 	// Then we draw the picture to the blank places.
 	uint16 maniPos = 0; // Because the original manitype starts at 5!!! See Graphics.h for definition.
 
-	for (byte j = 0; j < sprite._yLength; j++)
-		for (int8 plane = 3; plane >= 0; plane--) // The planes are in the opposite way.
+	for (byte j = 0; j < sprite._yLength; j++) {
+		for (int8 plane = 3; plane >= 0; plane--) { // The planes are in the opposite way.
 			for (uint16 i = 0; i  < sprite._xLength; i += 8) {
 				byte pixel = (*sprite._mani[picnum])[maniPos++];
 				for (byte bit = 0; bit < 8; bit++) {
@@ -283,22 +287,27 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 					*(byte *)_surface.getBasePtr(x + i + 7 - bit, y + j) += (pixelBit << plane);
 				} 
 			}
+		}
+	}
 }
 
 void Graphics::drawPicture(::Graphics::Surface &target, ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
-	for (uint16 y = 0; y < picture.h; y++)
-		for (uint16 x = 0; x < picture.w; x++)
-			*(byte *)target.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);		
+	for (uint16 y = 0; y < picture.h; y++) {
+		for (uint16 x = 0; x < picture.w; x++) {
+			*(byte *)target.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);
+		}
+	}
 }
 
 void Graphics::refreshScreen() {
 	// These cycles are for doubling the screen height.
-	for (uint16 y = 0; y < _screen.h / 2; y++)
-		for (uint16 x = 0; x < _screen.w; x++)
+	for (uint16 y = 0; y < _screen.h / 2; y++) {
+		for (uint16 x = 0; x < _screen.w; x++) {
 			for (byte j = 0; j < 2; j++) 
 				*(byte *)_screen.getBasePtr(x, y * 2 + j) = *(byte *)_surface.getBasePtr(x, y);	
-
+		}
+	}
 	// Now we copy the stretched picture to the screen.
 	g_system->copyRectToScreen(_screen.pixels, _screen.pitch, 0, 0, kScreenWidth, kScreenHeight * 2);
 	g_system->updateScreen();

@@ -349,7 +349,8 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 		return;
 	else {
 		byte i;
-		for (i = 0; text[i] != trigger; i++); // Search for the character in the string.
+		for (i = 0; text[i] != trigger; i++)
+			; // Search for the character in the string.
 	
 		byte pixel = ander;
 		for (byte bit = 0; bit < 8; bit++) {

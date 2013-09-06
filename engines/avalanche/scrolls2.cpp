@@ -588,7 +588,7 @@ Common::String Scrolls::lsd() {
 		else
 			x = x + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
 	} else // L, s & d
-		x = Common::String('œ') + _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 240) + '.' + _vm->_gyro->intToStr((_vm->_gyro->_dna._money / 12) % 20)
+		x = Common::String('\x9C') + _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 240) + '.' + _vm->_gyro->intToStr((_vm->_gyro->_dna._money / 12) % 20)
 			+ '.' + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
 	if (_vm->_gyro->_dna._money > 12)
 		x = x + " (that's " + _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + "d)";
