@@ -42,6 +42,15 @@ const int gIndex = 1;
 const int rIndex = 0;
 #endif
 
+const int bShift = 8;//img->format.bShift;
+const int gShift = 16;//img->format.gShift;
+const int rShift = 24;//img->format.rShift;
+const int aShift = 0;//img->format.aShift;
+
+const int bShiftTarget = 8;//target.format.bShift;
+const int gShiftTarget = 16;//target.format.gShift;
+const int rShiftTarget = 24;//target.format.rShift;
+
 
 void BlittingTools::blendPixelAdditive(byte *in, byte *out) {
 				byte *outa = &out[aIndex];
@@ -210,6 +219,217 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
+void TransparentSurface::doBlitColormod(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint color, TSpriteBlendMode blendMode) {
+
+	byte *in;
+	byte *out;
+
+	int ca = (color >> 24) & 0xff;
+	int cr = (color >> 16) & 0xff;
+	int cg = (color >> 8) & 0xff;
+	int cb = (color >> 0) & 0xff;
+
+
+	if (blendMode == BLEND_ADDITIVE) {
+
+		// Additive blending.
+		for (int i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (int j = 0; j < width; j++) {
+				uint32 pix = *(uint32 *)in;
+				uint32 o_pix = *(uint32 *) out;
+				int b = (pix >> bShift) & 0xff;
+				int g = (pix >> gShift) & 0xff;
+				int r = (pix >> rShift) & 0xff;
+				int a = (pix >> aShift) & 0xff;
+				int outa = out[aIndex];
+				int outb = out[bIndex];
+				int outg = out[gIndex];
+				int outr = out[rIndex];
+				in += inStep;
+
+				if (ca != 255) {
+					a = a * ca >> 8;
+				}
+
+				switch (a) {
+				case 0: // Full transparency
+					out += 4;
+					break;
+				default: // Full opacity
+					if (cb != 255)
+						outb = MIN(outb + ((b * cb * a) >> 16), 255);
+					else
+						outb = MIN(outb + (b * a >> 8), 255);
+
+					if (cg != 255)
+						outg = MIN(outg + ((g * cg * a) >> 16), 255);
+					else
+						outg = MIN(outg + (g * a >> 8), 255);
+
+					if (cr != 255)
+						outr = MIN(outr + ((r * cr * a) >> 16), 255);
+					else
+						outr = MIN(outr + (r * a >> 8), 255);
+
+					// outa = a;
+					out[aIndex] = outa;
+					out[bIndex] = outb;
+					out[gIndex] = outg;
+					out[rIndex] = outr;
+					out += 4;
+					break;
+				}
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+
+
+
+	} else if (blendMode == BLEND_SUBTRACTIVE) {
+
+		// Subtractive blending.
+
+		for (int i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (int j = 0; j < width; j++) {
+				uint32 pix = *(uint32 *)in;
+				uint32 o_pix = *(uint32 *) out;
+				int b = (pix >> bShift) & 0xff;
+				int g = (pix >> gShift) & 0xff;
+				int r = (pix >> rShift) & 0xff;
+				int a = (pix >> aShift) & 0xff;
+				int outa = out[aIndex];
+				int outb = out[bIndex];
+				int outg = out[gIndex];
+				int outr = out[rIndex];
+				in += inStep;
+
+				if (ca != 255) {
+					a = a * ca >> 8;
+				}
+				switch (a) {
+				case 0: // Full transparency
+					out += 4;
+					break;
+				default: // Full opacity
+					if (cb != 255)
+						outb = MAX(outb - ((b * cb * a) >> 16), 0);
+					else
+						outb = MAX(outb - (b *  a >> 8), 0);
+
+					if (cg != 255)
+						outg = MAX(outg - ((g * cg * a) >> 16), 0);
+					else
+						outg = MAX(outg - (g *  a >> 8), 0);
+
+					if (cr != 255)
+						outr = MAX(outr - ((r * cr * a) >> 16), 0);
+					else
+						outr = MAX(outr - (r *  a >> 8), 0);
+
+					// outa = a;
+					out[aIndex] = outa;
+					out[bIndex] = outb;
+					out[gIndex] = outg;
+					out[rIndex] = outr;
+					out += 4;
+					break;
+
+				}
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+
+	} else {
+
+		assert(blendMode == BLEND_NORMAL);
+
+		for (int i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (int j = 0; j < width; j++) {
+				uint32 pix = *(uint32 *)in;
+				uint32 o_pix = *(uint32 *) out;
+				int b = (pix >> bShift) & 0xff;
+				int g = (pix >> gShift) & 0xff;
+				int r = (pix >> rShift) & 0xff;
+				int a = (pix >> aShift) & 0xff;
+				int outb, outg, outr, outa;
+				in += inStep;
+
+				if (ca != 255) {
+					a = a * ca >> 8;
+				}
+				switch (a) {
+				case 0: // Full transparency
+					out += 4;
+					break;
+				case 255: // Full opacity
+					if (cb != 255)
+						outb = (b * cb) >> 8;
+					else
+						outb = b;
+
+					if (cg != 255)
+						outg = (g * cg) >> 8;
+					else
+						outg = g;
+
+					if (cr != 255)
+						outr = (r * cr) >> 8;
+					else
+						outr = r;
+					outa = a;
+					out[aIndex] = outa;
+					out[bIndex] = outb;
+					out[gIndex] = outg;
+					out[rIndex] = outr;
+					out += 4;
+					break;
+
+				default: // alpha blending
+					outa = 255;
+					outb = ((o_pix >> bShiftTarget) & 0xff) * (255 - a);
+					outg = ((o_pix >> gShiftTarget) & 0xff) * (255 - a);
+					outr = ((o_pix >> rShiftTarget) & 0xff) * (255 - a);
+					if (cb == 0)
+						outb = outb >> 8;
+					else if (cb != 255)
+						outb = ((outb << 8) + b * a * cb) >> 16;
+					else
+						outb = (outb + b * a) >> 8;
+					if (cg == 0)
+						outg = outg >> 8;
+					else if (cg != 255)
+						outg = ((outg << 8) + g * a * cg) >> 16;
+					else
+						outg = (outg + g * a) >> 8;
+					if (cr == 0)
+						outr = outr >> 8;
+					else if (cr != 255)
+						outr = ((outr << 8) + r * a * cr) >> 16;
+					else
+						outr = (outr + r * a) >> 8;
+					out[aIndex] = outa;
+					out[bIndex] = outb;
+					out[gIndex] = outg;
+					out[rIndex] = outr;
+					out += 4;
+				}
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+
+		// End normal blending
+	}
+}
+
 void TransparentSurface::doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
@@ -325,14 +545,6 @@ void TransparentSurface::doBlitBinary(byte *ino, byte *outo, uint32 width, uint3
 void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, TSpriteBlendMode blendMode) {
 	byte *in, *out;
 
-	const int bShift = 8;//img->format.bShift;
-	const int gShift = 16;//img->format.gShift;
-	const int rShift = 24;//img->format.rShift;
-	const int aShift = 0;//img->format.aShift;
-
-	const int bShiftTarget = 8;//target.format.bShift;
-	const int gShiftTarget = 16;//target.format.gShift;
-	const int rShiftTarget = 24;//target.format.rShift;
 	if (blendMode == BLEND_ADDITIVE) {
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
@@ -473,7 +685,6 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 
 
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
-	int ca = (color >> 24) & 0xff;
 
 	Common::Rect retSize;
 	retSize.top = 0;
@@ -481,6 +692,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	retSize.setWidth(0);
 	retSize.setHeight(0);
 	// Check if we need to draw anything at all
+	int ca = (color >> 24) & 0xff;
+
 	if (ca == 0)
 		return retSize;
 
@@ -578,16 +791,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 		byte *in, *out;
 
-
-		const int bShift = 8;//img->format.bShift;
-		const int gShift = 16;//img->format.gShift;
-		const int rShift = 24;//img->format.rShift;
-		const int aShift = 0;//img->format.aShift;
-
-		const int bShiftTarget = 8;//target.format.bShift;
-		const int gShiftTarget = 16;//target.format.gShift;
-		const int rShiftTarget = 24;//target.format.rShift;
-
 		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
 			if (_alphaMode == ALPHA_FULL) {
 				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, blendMode);
@@ -597,205 +800,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, blendMode);
 			}
 		} else {
-			if (blendMode == BLEND_ADDITIVE) {
-
-				// Additive blending.
-
-				for (int i = 0; i < img->h; i++) {
-					out = outo;
-					in = ino;
-					for (int j = 0; j < img->w; j++) {
-						uint32 pix = *(uint32 *)in;
-						uint32 o_pix = *(uint32 *) out;
-						int b = (pix >> bShift) & 0xff;
-						int g = (pix >> gShift) & 0xff;
-						int r = (pix >> rShift) & 0xff;
-						int a = (pix >> aShift) & 0xff;
-						int outa = out[aIndex];
-						int outb = out[bIndex];
-						int outg = out[gIndex];
-						int outr = out[rIndex];
-						in += inStep;
-
-						if (ca != 255) {
-							a = a * ca >> 8;
-						}
-
-						switch (a) {
-						case 0: // Full transparency
-							out += 4;
-							break;
-						default: // Full opacity
-							if (cb != 255)
-								outb = MIN(outb + ((b * cb * a) >> 16), 255);
-							else
-								outb = MIN(outb + (b * a >> 8), 255);
-
-							if (cg != 255)
-								outg = MIN(outg + ((g * cg * a) >> 16), 255);
-							else
-								outg = MIN(outg + (g * a >> 8), 255);
-
-							if (cr != 255)
-								outr = MIN(outr + ((r * cr * a) >> 16), 255);
-							else
-								outr = MIN(outr + (r * a >> 8), 255);
-
-							// outa = a;
-							out[aIndex] = outa;
-							out[bIndex] = outb;
-							out[gIndex] = outg;
-							out[rIndex] = outr;
-							out += 4;
-							break;
-						}
-					}
-					outo += target.pitch;
-					ino += inoStep;
-				}
-
-
-
-			} else if (blendMode == BLEND_SUBTRACTIVE) {
-
-				// Subtractive blending.
-
-				for (int i = 0; i < img->h; i++) {
-					out = outo;
-					in = ino;
-					for (int j = 0; j < img->w; j++) {
-						uint32 pix = *(uint32 *)in;
-						uint32 o_pix = *(uint32 *) out;
-						int b = (pix >> bShift) & 0xff;
-						int g = (pix >> gShift) & 0xff;
-						int r = (pix >> rShift) & 0xff;
-						int a = (pix >> aShift) & 0xff;
-						int outa = out[aIndex];
-						int outb = out[bIndex];
-						int outg = out[gIndex];
-						int outr = out[rIndex];
-						in += inStep;
-
-						if (ca != 255) {
-							a = a * ca >> 8;
-						}
-						switch (a) {
-						case 0: // Full transparency
-							out += 4;
-							break;
-						default: // Full opacity
-							if (cb != 255)
-								outb = MAX(outb - ((b * cb * a) >> 16), 0);
-							else
-								outb = MAX(outb - (b *  a >> 8), 0);
-
-							if (cg != 255)
-								outg = MAX(outg - ((g * cg * a) >> 16), 0);
-							else
-								outg = MAX(outg - (g *  a >> 8), 0);
-
-							if (cr != 255)
-								outr = MAX(outr - ((r * cr * a) >> 16), 0);
-							else
-								outr = MAX(outr - (r *  a >> 8), 0);
-
-							// outa = a;
-							out[aIndex] = outa;
-							out[bIndex] = outb;
-							out[gIndex] = outg;
-							out[rIndex] = outr;
-							out += 4;
-							break;
-
-						}
-					}
-					outo += target.pitch;
-					ino += inoStep;
-				}
-
-			} else {
-
-				assert(blendMode == BLEND_NORMAL);
-
-				for (int i = 0; i < img->h; i++) {
-					out = outo;
-					in = ino;
-					for (int j = 0; j < img->w; j++) {
-						uint32 pix = *(uint32 *)in;
-						uint32 o_pix = *(uint32 *) out;
-						int b = (pix >> bShift) & 0xff;
-						int g = (pix >> gShift) & 0xff;
-						int r = (pix >> rShift) & 0xff;
-						int a = (pix >> aShift) & 0xff;
-						int outb, outg, outr, outa;
-						in += inStep;
-
-						if (ca != 255) {
-							a = a * ca >> 8;
-						}
-						switch (a) {
-						case 0: // Full transparency
-							out += 4;
-							break;
-						case 255: // Full opacity
-							if (cb != 255)
-								outb = (b * cb) >> 8;
-							else
-								outb = b;
-
-							if (cg != 255)
-								outg = (g * cg) >> 8;
-							else
-								outg = g;
-
-							if (cr != 255)
-								outr = (r * cr) >> 8;
-							else
-								outr = r;
-							outa = a;
-							out[aIndex] = outa;
-							out[bIndex] = outb;
-							out[gIndex] = outg;
-							out[rIndex] = outr;
-							out += 4;
-							break;
-
-						default: // alpha blending
-							outa = 255;
-							outb = ((o_pix >> bShiftTarget) & 0xff) * (255 - a);
-							outg = ((o_pix >> gShiftTarget) & 0xff) * (255 - a);
-							outr = ((o_pix >> rShiftTarget) & 0xff) * (255 - a);
-							if (cb == 0)
-								outb = outb >> 8;
-							else if (cb != 255)
-								outb = ((outb << 8) + b * a * cb) >> 16;
-							else
-								outb = (outb + b * a) >> 8;
-							if (cg == 0)
-								outg = outg >> 8;
-							else if (cg != 255)
-								outg = ((outg << 8) + g * a * cg) >> 16;
-							else
-								outg = (outg + g * a) >> 8;
-							if (cr == 0)
-								outr = outr >> 8;
-							else if (cr != 255)
-								outr = ((outr << 8) + r * a * cr) >> 16;
-							else
-								outr = (outr + r * a) >> 8;
-							out[aIndex] = outa;
-							out[bIndex] = outb;
-							out[gIndex] = outg;
-							out[rIndex] = outr;
-							out += 4;
-						}
-					}
-					outo += target.pitch;
-					ino += inoStep;
-				}
-
-				// End normal blending
-			}
+			doBlitColormod(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color, blendMode);
 		}
 	}
 
