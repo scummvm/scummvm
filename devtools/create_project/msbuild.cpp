@@ -117,13 +117,14 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
 	std::string version = "v" + std::to_string(_version) + "0";
+	std::string llvm = "LLVM-vs" + std::to_string(getVisualStudioVersion());
 
 	outputConfigurationType(setup, project, name, "Release|Win32", version);
 	outputConfigurationType(setup, project, name, "Analysis|Win32", version);
-	outputConfigurationType(setup, project, name, "LLVM|Win32", "llvm");
+	outputConfigurationType(setup, project, name, "LLVM|Win32", llvm);
 	outputConfigurationType(setup, project, name, "Debug|Win32", version);
 	outputConfigurationType(setup, project, name, "Release|x64", version);
-	outputConfigurationType(setup, project, name, "LLVM|x64", "llvm");
+	outputConfigurationType(setup, project, name, "LLVM|x64", llvm);
 	outputConfigurationType(setup, project, name, "Analysis|x64", version);
 	outputConfigurationType(setup, project, name, "Debug|x64", version);
 

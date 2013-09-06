@@ -121,7 +121,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		// Win32
 		outputConfiguration(setup, project, toolConfig, "Debug", "Win32", "");
 		outputConfiguration(setup, project, toolConfig, "Analysis", "Win32", "");
-		 outputConfiguration(setup, project, toolConfig, "LLVM", "Win32", "");
+		outputConfiguration(setup, project, toolConfig, "LLVM", "Win32", "");
 		outputConfiguration(setup, project, toolConfig, "Release", "Win32", "");
 		outputConfiguration(setup, project, toolConfig, "Debug", "x64", "64");
 		outputConfiguration(setup, project, toolConfig, "Analysis", "x64", "64");
