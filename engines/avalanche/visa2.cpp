@@ -49,7 +49,7 @@ bool Visa::bubbling = false;
 bool Visa::report_dixi_errors = true;
 
 void Visa::unskrimble() {
-	for (uint16  fv = 0; fv < _vm->_gyro->_bufSize; fv++) 
+	for (uint16  fv = 0; fv < _vm->_gyro->_bufSize; fv++)
 		_vm->_gyro->_buffer[fv] = (~(_vm->_gyro->_buffer[fv] - (fv + 1))) % 256;
 }
 
@@ -182,7 +182,7 @@ void Visa::talkto(byte whom) {
 				if (_vm->_gyro->_dna._talkedToCrapulus)
 					// Spludwick - what does he need?
 					// 0 - let it through to use normal routine.
-					switch (_vm->_gyro->_dna._givenToSpludwick) { 
+					switch (_vm->_gyro->_dna._givenToSpludwick) {
 					case 1: // Falltrough is intended.
 					case 2:{
 						_vm->_scrolls->display(Common::String("Can you get me ") + _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
@@ -251,7 +251,7 @@ void Visa::talkto(byte whom) {
 			break;
 	}
 	// On a subject. Is there any reason to block it?
-	else if ((whom == _vm->_gyro->kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) { 
+	else if ((whom == _vm->_gyro->kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) {
 			dixi('q', 43); // He's fast asleep!
 			return;
 		}

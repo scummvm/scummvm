@@ -77,7 +77,7 @@ void Enid::expandMonthName(Common::String x) {
 Common::String Enid::expandDate(byte d, byte m, uint16 y) {
 	const Common::String months[12] = {
 		"Jan#", "Febr#", "March", "April", "May", "June", "July", "August",
-		"Septem*", "Octo*", "Novem*", "Decem*"		
+		"Septem*", "Octo*", "Novem*", "Decem*"
 	};
 
 	Common::String expanddate_result;
@@ -162,11 +162,11 @@ void Enid::showHeader() {
 	_vm->_scrolls->display(Common::String("Dir: ") + _path + "\r\r\4");
 }
 
-void Enid::avvyBackground() {    
+void Enid::avvyBackground() {
 	// Not really a filing procedure,
 	// but it's only called just before edna_load, so I thought I'd put it
 	// in Enid instead of, say, Lucerna.
-	
+
 #if 0
 	port[$3c4]:=2; port[$3ce]:=4; port[$3C5]:=1; port[$3CF]:=1; { Blue. }
 

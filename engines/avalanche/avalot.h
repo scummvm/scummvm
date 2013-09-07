@@ -27,8 +27,8 @@
 
 /* AVALOT		The kernel of the program. */
 
-#ifndef AVALOT_H
-#define AVALOT_H
+#ifndef AVALANCHE_AVALOT_H
+#define AVALANCHE_AVALOT_H
 
 #include "common/events.h"
 #include "common/system.h"
@@ -50,4 +50,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // AVALOT_H
+#endif // AVALANCHE_AVALOT_H

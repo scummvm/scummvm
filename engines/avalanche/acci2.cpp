@@ -190,7 +190,7 @@ const Acci::VocabEntry Acci::kVocabulary[kParserWordsNum] = {
 	{255, "SOME"},      {255, "AND"},       {255, "THAT"},
 	{255, "POCUS"},     {255, "HIS"},
 	{255, "THIS"},      {255, "SENTINEL"} // for "Ken SENT Me"
-};        
+};
 
 Acci::Acci(AvalancheEngine *vm) {
 	_vm = vm;
@@ -210,7 +210,7 @@ void Acci::clearWords() {
 byte Acci::wordNum(Common::String word) {
 	if (word.empty())
 		return 0;
-	
+
 	for (int32 i = kParserWordsNum - 1; i >= 0; i--) {
 		if (kVocabulary[i]._word == word)
 			return kVocabulary[i]._number;
@@ -258,7 +258,7 @@ Common::String Acci::rank() {
 
 Common::String Acci::totalTime() {
 	// There are 65535 clock ticks in a second, 1092.25 in a minute, and 65535 in an hour.
-	const double ticksInOneSec = (double)(65535) / 3600; 
+	const double ticksInOneSec = (double)(65535) / 3600;
 	uint16 h, m, s;
 
 	h = _vm->_gyro->_dna._totalTime / ticksInOneSec; // No. of seconds.
@@ -302,7 +302,7 @@ void Acci::stripPunctuation(Common::String &word) {
 
 
 
-void Acci::displayWhat(byte target, bool animate, bool &ambiguous) { 
+void Acci::displayWhat(byte target, bool animate, bool &ambiguous) {
 	if (target == kPardon) {
 		ambiguous = true;
 		if (animate)
@@ -314,7 +314,7 @@ void Acci::displayWhat(byte target, bool animate, bool &ambiguous) {
 			_vm->_scrolls->display(Common::String("{ ") + _vm->_gyro->getName(target) + " }");
 		else {
 			Common::String z = _vm->_gyro->getItem(target);
-			if (z != "") 
+			if (z != "")
 				_vm->_scrolls->display(Common::String("{ ") + z + " }");
 		}
 	}
@@ -357,7 +357,7 @@ void Acci::properNouns() {
 		if (_vm->_parser->_inputText[i] == ' ')
 			_vm->_parser->_inputText.setChar(toupper(_vm->_parser->_inputText[i + 1]), i + 1);
 	}
-	
+
 	// And the first character as well.
 	_vm->_parser->_inputText.setChar(toupper(_vm->_parser->_inputText[0]), 0);
 }
@@ -365,7 +365,7 @@ void Acci::properNouns() {
 void Acci::sayIt() {
 	Common::String x = _vm->_parser->_inputText;
 	x.setChar(toupper(x[0]), 0);
-	_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + '1' + x 
+	_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + '1' + x
 		+ '.' + _vm->_scrolls->kControlSpeechBubble + _vm->_scrolls->kControlRegister + '2');
 }
 
@@ -378,7 +378,7 @@ void Acci::storeInterrogation(byte interrogation) {
 		_vm->_parser->_inputText.deleteChar(0);
 	while ((_vm->_parser->_inputText.lastChar() == ' ') && (!_vm->_parser->_inputText.empty()))
 		_vm->_parser->_inputText.deleteLastChar();
-	
+
 	_vm->_timeout->lose_timer(_vm->_timeout->reason_cardiffsurvey); // If you want to use any other timer, put this into the case statement.
 
 	switch (interrogation) {
@@ -428,7 +428,7 @@ void Acci::parse() {
 	// First parsing - word identification
 	if (!_thats.empty())
 		_thats.clear();
-	
+
 	byte n = 0;
 	_polite = false;
 	_verb = kPardon;
@@ -512,7 +512,7 @@ void Acci::parse() {
 		}
 	}
 
-	if (_vm->_parser->pos(Common::String('\xFE'), _thats) > -1) 
+	if (_vm->_parser->pos(Common::String('\xFE'), _thats) > -1)
 		_unknown = _realWords[_vm->_parser->pos(Common::String('\xFE'), _thats)];
 	else if (!_unknown.empty())
 		_unknown.clear();
@@ -521,7 +521,7 @@ void Acci::parse() {
 	replace(Common::String('\xFF'), 0); // zap noise words
 	replace(Common::String('\xD')  + '\xE2', 1); // "look at" = "examine"
 	replace(Common::String('\xD')  + '\xE4', 1); // "look in" = "examine"
-	replace(Common::String('\x4')  + '\xE6', 17); // "get up" = "stand" 
+	replace(Common::String('\x4')  + '\xE6', 17); // "get up" = "stand"
 	replace(Common::String('\x4')  + '\xE7', 17); // "get down" = "stand"... well, why not?
 	replace(Common::String('\x12') + '\xE4', 2); // "go in" = "open [door]"
 	replace(Common::String('\x1C') + '\xE5', 253); // "P' off" is a swear word
@@ -538,14 +538,14 @@ void Acci::parse() {
 	switch (_vm->_gyro->_dna._room) {
 	case r__aylesoffice:
 		replace(Common::String('\xCB'), 163); // Monk = Ayles
-		break;       
+		break;
 	case r__musicroom:
 		replace(Common::String('\xCB'), 166); // Monk = Jacques
-		break;          
+		break;
 	default:
 		replace(Common::String('\xCB'), 162); // Monk = Ibythneth
 	}
-	
+
 	if (doPronouns()) {
 		_vm->_gyro->_weirdWord = true;
 		_thats = kNothing;
@@ -556,7 +556,7 @@ void Acci::parse() {
 	if (!_vm->_gyro->_subject.empty())
 		_vm->_gyro->_subject.clear();
 	_vm->_gyro->_subjectNum = 0; // Find subject of conversation.
-	
+
 	for (int i = 0; (i < 11) && !_realWords[i].empty(); i++) {
 		if ((_realWords[i][0] == '\'') || (_realWords[i][0] == '\"')) {
 			_vm->_gyro->_subjectNum = (byte)_thats[i];
@@ -618,7 +618,7 @@ void Acci::parse() {
 	}
 }
 
-void Acci::examineObject() {   
+void Acci::examineObject() {
 	if (_thing != _vm->_gyro->_thinks)
 		_vm->_lucerna->thinkabout(_thing, _vm->_gyro->kThing);
 	switch (_thing) {
@@ -626,7 +626,7 @@ void Acci::examineObject() {
 		switch (_vm->_gyro->_dna._wineState) {// 4 is perfect wine. 0 is not holding the wine.
 		case 1:
 			_vm->_visa->dixi('t', 1); // Normal examine wine scroll
-			break; 
+			break;
 		case 2:
 			_vm->_visa->dixi('d', 6); // Bad wine
 			break;
@@ -640,7 +640,7 @@ void Acci::examineObject() {
 			_vm->_visa->dixi('q', 21); // Yucky onion.
 		else
 			_vm->_visa->dixi('t', 18);  // Normal onion scroll
-		break;       
+		break;
 	default:
 		_vm->_visa->dixi('t', _thing); // <<< Ordinarily
 	}
@@ -680,8 +680,8 @@ void Acci::exampers() {
 		}
 		// Otherwise...
 		_vm->_visa->dixi('p', _person);
-	} 
-	
+	}
+
 	// And afterwards...
 	if ((_person == 14) && (!_vm->_gyro->_dna._aylesIsAwake))
 		_vm->_visa->dixi('Q', 13);
@@ -697,7 +697,7 @@ bool Acci::holding() {
 		_vm->_scrolls->display("Be reasonable!");
 	else if (!_vm->_gyro->_dna._objects[_thing - 1])  // Verbs that need "_thing" to be in the inventory.
 		_vm->_scrolls->display("You're not holding it, Avvy.");
-	else 
+	else
 		holdingResult = true;
 
 	return holdingResult;
@@ -821,7 +821,7 @@ void Acci::swallow() {   // Eat something.
 
 void Acci::peopleInRoom() {
 	byte numPeople = 0; // Number of people in the room.
-	
+
 	for (byte i = 1; i < 29; i++) { // Start at 1 so we don't list Avvy himself!
 		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_dna._room)
 			numPeople++;
@@ -878,13 +878,13 @@ void Acci::lookAround() {
 		switch (_vm->_gyro->_dna._catacombY * 256 + _vm->_gyro->_dna._catacombX) {
 		case 258 :
 			_vm->_visa->dixi('q', 80); // Inside art gallery.
-			break; 
+			break;
 		case 514 :
 			_vm->_visa->dixi('q', 81); // Outside ditto.
 			break;
 		case 260 :
 			_vm->_visa->dixi('q', 82); // Outside Geida's room.
-			break; 
+			break;
 		}
 		break;
 	default:
@@ -892,9 +892,9 @@ void Acci::lookAround() {
 	}
 }
 
-void Acci::openDoor() { 
+void Acci::openDoor() {
 	// Special cases.
-	switch (_vm->_gyro->_dna._room) {   
+	switch (_vm->_gyro->_dna._room) {
 	case r__yours:
 		if (_vm->_trip->infield(2)) {
 			// Opening the box.
@@ -925,7 +925,7 @@ void Acci::openDoor() {
 				_vm->_visa->dixi('x', _vm->_gyro->_portals[fv]._data);
 				break;
 			case Gyro::kMagicTransport:
-				_vm->_trip->fliproom((_vm->_gyro->_portals[fv]._data) >> 8,  // High byte 
+				_vm->_trip->fliproom((_vm->_gyro->_portals[fv]._data) >> 8,  // High byte
 					                 (_vm->_gyro->_portals[fv]._data) & 0x0F // Low byte
 									 );
 				break;
@@ -940,7 +940,7 @@ void Acci::openDoor() {
 				_vm->_trip->open_the_door((_vm->_gyro->_portals[fv]._data) >> 8, (_vm->_gyro->_portals[fv]._data) & 0x0F, fv + 9);
 				break;
 			}
-			
+
 			return;
 		}
 	}
@@ -1049,7 +1049,7 @@ void Acci::goToCauldron() {
  * Check is it's possible to give something to Spludwick
  * @remarks	Originally called 'give2spludwick'
  */
-bool Acci::giveToSpludwick() { 
+bool Acci::giveToSpludwick() {
 	if (_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick] != _thing) {
 		notInOrder();
 		return false;
@@ -1468,7 +1468,7 @@ void Acci::doThat() {
 								winSequence();
 							else
 								_vm->_visa->dixi('q', 77); // That Geida woman!
-							break;            
+							break;
 						default:
 							heyThanks();
 						}
@@ -1620,7 +1620,7 @@ void Acci::doThat() {
 					_vm->_scrolls->display(Common::String("P.S.: There should have been the mini-game called \"Nim\", but I haven't implemented it yet: you win and get the lute automatically.")
 						+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Peter (uruk)");
 				}
-				break; 
+				break;
 			case r__musicroom:
 				playHarp();
 				break;
@@ -1801,7 +1801,7 @@ void Acci::doThat() {
 				}
 			} else
 				_vm->_visa->dixi('D', 5); // Go to the bar!
-			break;                
+			break;
 
 		case r__outsideducks:
 			if (_vm->_trip->infield(6)) {
@@ -1832,7 +1832,7 @@ void Acci::doThat() {
 
 		case r__nottspub:
 			_vm->_visa->dixi('n', 15); // Can't sell to southerners.
-			break; 
+			break;
 		default:
 			_vm->_visa->dixi('D', 0); // Can't buy that.
 		}
@@ -1972,7 +1972,7 @@ void Acci::doThat() {
 					_vm->_scrolls->display("You can't seem to wake him by yourself.");
 				break;
 			case Gyro::kPeopleJacques:
-				_vm->_scrolls->display(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + _vm->_scrolls->kControlRegister + '1' + 
+				_vm->_scrolls->display(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + _vm->_scrolls->kControlRegister + '1' +
 					_vm->_scrolls->kControlSpeechBubble + "Hmmm... that doesn't seem to do any good...");
 				break;
 			default:

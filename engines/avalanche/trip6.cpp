@@ -44,7 +44,7 @@
 #include "common/file.h"
 
 namespace Avalanche {
-	
+
 void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	_tr = tr;
 
@@ -73,14 +73,14 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	}
 
 	inf.skip(2); // Replace variable named 'soa' in the original code.
-	
+
 	if (!a.name.empty())
 		a.name.clear();
 	byte nameSize = inf.readByte();
-	for (byte i = 0; i < nameSize; i++) 
+	for (byte i = 0; i < nameSize; i++)
 		a.name += inf.readByte();
 	inf.skip(12 - nameSize);
-	
+
 	//inf.skip(1); // Same as above.
 	byte commentSize = inf.readByte();
 	for (byte i = 0; i < commentSize; i++)
@@ -147,9 +147,9 @@ void triptype::original() {
 void triptype::andexor() {
 	if ((vanishifstill) && (ix == 0) && (iy == 0))
 		return;
-	byte picnum = face * a.seq + step; // There'll maybe problem because of the different array indexes in Pascal (starting from 1). 
+	byte picnum = face * a.seq + step; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
 
-	_tr->_vm->_graphics->drawSprite(_info, picnum, x, y);	
+	_tr->_vm->_graphics->drawSprite(_info, picnum, x, y);
 }
 
 void triptype::turn(byte whichway) {
@@ -171,11 +171,11 @@ void triptype::appear(int16 wx, int16 wy, byte wf) {
 }
 
 bool triptype::collision_check() {
-	for (byte fv = 0; fv < _tr->numtr; fv++) 
+	for (byte fv = 0; fv < _tr->numtr; fv++)
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
 			((x + _info._xLength) > _tr->tr[fv].x) &&
 			(x < (_tr->tr[fv].x + _tr->tr[fv]._info._xLength)) &&
-			(_tr->tr[fv].y == y)) 
+			(_tr->tr[fv].y == y))
 				return true;
 
 	return false;
@@ -193,7 +193,7 @@ void triptype::walk() {
 		r._y1 = y - 2;
 		r._x2 = ((x + _info._xLength) / 8) + 1;
 		r._y2 = y + _info._yLength + 2;
-		
+
 		_tr->getset[1 - _tr->_vm->_gyro->_cp].remember(r);
 	}
 
@@ -470,7 +470,7 @@ Trip::~Trip() {
 void Trip::loadtrip() {
 	for (int16 gm = 0; gm < numtr; gm++)
 		tr[gm].original();
-	
+
 	for (uint16 i = 0; i < sizeof(aa); i++)
 		aa[i] = 0;
 }
@@ -491,7 +491,7 @@ byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 		for (fv = x1; fv <= x2; fv++) {
 			for (ff = oy + yl; ff <= y + yl; ff++) {
 				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
-				if (c > a) 
+				if (c > a)
 					a = c;
 			}
 		}
@@ -520,7 +520,7 @@ byte Trip::geida_ped(byte which) {
 	case 5:
 		return 9;
 	case 4:
-		return 10;	
+		return 10;
 	default:
 		return 0;
 	}
@@ -539,10 +539,10 @@ void Trip::catamove(byte ped) {
 	// catacombs has a different number for it.
 
 
-		
+
 	xy_uint16 = _vm->_gyro->_dna._catacombX + _vm->_gyro->_dna._catacombY * 256;
 	_vm->_gyro->_dna._geidaSpin = 0;
-		
+
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
 		fliproom(r__lustiesroom, 4);
@@ -696,7 +696,7 @@ void Trip::catamove(byte ped) {
 		break;
 	case 0x1:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 22);
-			
+
 		if ((xy_uint16 == 2051) && (_vm->_gyro->_dna._geidaFollows))
 			_vm->_gyro->_magics[12]._operation = _vm->_gyro->kMagicExclaim;
 		else
@@ -724,7 +724,7 @@ void Trip::catamove(byte ped) {
 		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicBounce;
 		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicNothing; // Door.
 		break;
-	// LEFT handles: 
+	// LEFT handles:
 #if 0
 	case 0x1:
 		_vm->_celer->show_one(-1, -1, 4);
@@ -837,7 +837,7 @@ void Trip::catamove(byte ped) {
 	}
 }
 
-	
+
 
 // This proc gets called whenever you touch a line defined as _vm->_gyro->special.
 void Trip::dawndelay() {
@@ -875,7 +875,7 @@ void Trip::call_special(uint16 which) {
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
 			// graphic of the arrow buried in the plaster. */
-			
+
 			// OK!
 			tr[1].call_eachstep = true;
 			tr[1].eachstep = procarrow_procs;
@@ -1005,7 +1005,7 @@ void Trip::call_special(uint16 which) {
 	}
 }
 
-	
+
 
 void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
 // This slides the door open. (The data really ought to be saved in
@@ -1087,7 +1087,7 @@ void Trip::newspeed() {
 
 	for (page_ = 0; page_ <= 1; page_++)
 		getset[page_].remember(lightspace);
-	
+
 }
 
 void Trip::rwsp(byte t, byte dir) {
@@ -1234,7 +1234,7 @@ void Trip::arrow_procs(byte tripnum) {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Show pic of arrow stuck into the door.
 		_vm->_gyro->_dna._arrowInTheDoor = true; // So that we can pick it up.
 	}
-		
+
 }
 
 #if 0
@@ -1368,7 +1368,7 @@ void Trip::call_andexors() {
 		}
 	} while (!ok);
 
-	
+
 	_vm->_graphics->refreshBackground();
 
 	for (fv = 0; fv < 5; fv++) {
@@ -1544,13 +1544,13 @@ bool Trip::neardoor() {
 		// there ARE no doors here!
 		return false;
 	}
-		
+
 	int16 ux = tr[0].x;
 	int16 uy = tr[0].y + tr[0]._info._yLength;
 	bool nd = false;
 	for (byte fv = 8; fv < _vm->_gyro->_fieldNum; fv++)
 		if ((ux >= _vm->_gyro->_fields[fv]._x1) && (ux <= _vm->_gyro->_fields[fv]._x2)
-			&& (uy >= _vm->_gyro->_fields[fv]._y1) && (uy <= _vm->_gyro->_fields[fv]._y2)) 
+			&& (uy >= _vm->_gyro->_fields[fv]._y1) && (uy <= _vm->_gyro->_fields[fv]._y2))
 			nd = true;
 	return nd;
 }
@@ -1561,7 +1561,7 @@ void Trip::new_game_for_trippancy() {   // Called by gyro.newgame
 
 
 
-void Trip::handleMoveKey(const Common::Event &event) { 
+void Trip::handleMoveKey(const Common::Event &event) {
 	if (!_vm->_gyro->_dna._userMovesAvvy)
 		return;
 

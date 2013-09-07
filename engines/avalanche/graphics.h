@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef AVALANCHE_GRAPHICS_H
+#define AVALANCHE_GRAPHICS_H
 
 #include "common/file.h"
 
@@ -38,7 +38,7 @@ class AvalancheEngine;
 
 typedef byte FontType[256][16]; // raw font type
 
-typedef byte ManiType[2049]; // manitype = array[5..2053] of byte; 
+typedef byte ManiType[2049]; // manitype = array[5..2053] of byte;
 // Be aware!!!
 
 typedef byte SilType[51][11]; // 35, 4
@@ -69,12 +69,12 @@ public:
 	~Graphics();
 	void init();
 	void fleshColors();
-	
+
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 	// Returns the end point of the arc. (Needed in Lucerna::lucerna_clock().)
 	// TODO: Make it more accurate later.
 	Common::Point drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
-	
+
 	void drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
 	void drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte color);
 	void drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, byte color);
@@ -100,4 +100,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // GRAPHICS_H
+#endif // AVALANCHE_GRAPHICS_H

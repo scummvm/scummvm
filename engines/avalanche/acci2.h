@@ -27,8 +27,8 @@
 
 /* ACCIDENCE II		The parser. */
 
-#ifndef ACCI2_H
-#define ACCI2_H
+#ifndef AVALANCHE_ACCI2_H
+#define AVALANCHE_ACCI2_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -132,4 +132,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // ACCI2_H
+#endif // AVALANCHE_ACCI2_H

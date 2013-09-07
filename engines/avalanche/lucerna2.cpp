@@ -80,7 +80,7 @@ void Lucerna::init() {
 		_vm->_gyro->atkey = "alt-";
 #endif
 }
-	
+
 /**
  * Call a given Verb
  * @remarks	Originally called 'callverb'
@@ -101,7 +101,7 @@ void Lucerna::callVerb(byte id) {
 
 void Lucerna::draw_also_lines() {
 	byte ff;
-	
+
 	CursorMan.showMouse(false);
 
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
@@ -119,7 +119,7 @@ void Lucerna::draw_also_lines() {
 
 
 
-// nextstring, scram1 and unscrable are only used in load_also 
+// nextstring, scram1 and unscrable are only used in load_also
 
 Common::String Lucerna::nextstring() {
 	Common::String str;
@@ -145,7 +145,7 @@ void Lucerna::unscramble() {
 
 void Lucerna::load_also(Common::String n) {
 	byte ff, fv;
-	
+
 	for (fv = 0; fv < 31; fv++)
 		for (ff = 0; ff < 2; ff++)
 			if (_vm->_gyro->_also[fv][ff] != 0)  {
@@ -170,9 +170,9 @@ void Lucerna::load_also(Common::String n) {
 		}
 		*_vm->_gyro->_also[fv][0] = Common::String('\x9D') + *_vm->_gyro->_also[fv][0] + Common::String('\x9D');
 	}
-	
+
 	memset(_vm->_gyro->_lines, 0xFF, sizeof(_vm->_gyro->_lines));
-	
+
 	//fv = getpixel(0, 0);
 	_vm->_gyro->_lineNum = f.readByte();
 	for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
@@ -217,7 +217,7 @@ void Lucerna::load_also(Common::String n) {
 	_vm->_gyro->_listen.clear();
 	for (byte i = 0; i < listen_length; i++)
 		_vm->_gyro->_listen += f.readByte();
-	
+
 	draw_also_lines();
 
 	//setactivepage(1);
@@ -231,9 +231,9 @@ void Lucerna::load_also(Common::String n) {
 
 void Lucerna::load(byte n) {     // Load2, actually
 	Common::String xx;
-	
+
 	CursorMan.showMouse(false);
-	
+
 	_vm->_graphics->fleshColors();
 
 	xx = _vm->_gyro->intToStr(n);
@@ -380,10 +380,10 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	_vm->_gyro->_roomTime = 0;
 
-	
+
 	if ((_vm->_gyro->_dna._lastRoom == r__map) && (_vm->_gyro->_dna._lastRoomNotMap != _vm->_gyro->_dna._room))
 		new_town();
-	
+
 
 	switch (x) {
 	case r__yours:
@@ -514,7 +514,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 		if (_vm->_gyro->_dna._tiedUp)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 
-		if (!_vm->_gyro->_dna._mushroomGrowing) 
+		if (!_vm->_gyro->_dna._mushroomGrowing)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_graphics->refreshBackground();
 		break;
@@ -571,17 +571,17 @@ void Lucerna::enterroom(byte x, byte ped) {
 				_vm->_gyro->_dna._catacombX = 8;
 				_vm->_gyro->_dna._catacombY = 4;
 			}
-			break; 
+			break;
 			case 5: { // Enter from du Lustie's
 				_vm->_gyro->_dna._catacombX = 8;
 				_vm->_gyro->_dna._catacombY = 7;
 			}
-			break; 
+			break;
 			case 6: { // Enter from Geida's
 				_vm->_gyro->_dna._catacombX = 4;
 				_vm->_gyro->_dna._catacombY = 1;
 			}
-			break; 
+			break;
 			}
 
 			_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = true;
@@ -709,7 +709,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_sequence->start_to_close();
 		}
 		break;
-	
+
 	case r__entrancehall:
 	case r__insideabbey:
 	case r__yourhall:
@@ -804,19 +804,19 @@ void Lucerna::thinkabout(byte z, bool th) {     // Hey!!! Get it and put it!!!
 		z = z - 149;
 		if (z >= 25)
 			z -= 8;
-		if (z == 20) 
+		if (z == 20)
 			z--; // Last time...
 
 	}
 
 	f.seek(z * picsize + 65);
-	
+
 	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
 
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 205, 170);
 
 	picture.free();
-	
+
 	f.close();
 
 	CursorMan.showMouse(false);
@@ -829,7 +829,7 @@ void Lucerna::thinkabout(byte z, bool th) {     // Hey!!! Get it and put it!!!
 
 	for (byte fv = 0; fv <= 1; fv++)
 		_vm->_trip->getset[fv].remember(thinkspace);
-	
+
 	CursorMan.showMouse(true);
 	_vm->_gyro->_thinkThing = th;
 }
@@ -845,7 +845,7 @@ void Lucerna::load_digits() {   // Load the scoring digits & rwlites
 
 	for (byte fv = 0; fv < 10; fv++) {
 		f.seek(fv * digitsize);
-		
+
 #if 0
 		_vm->_gyro->digit[fv] = new byte[digitsize];
 		f.read(_vm->_gyro->digit[fv], digitsize);
@@ -856,7 +856,7 @@ void Lucerna::load_digits() {   // Load the scoring digits & rwlites
 
 	for (byte ff = 0; ff < 9; ff++) {
 		f.seek(10 * digitsize + ff * rwlitesize);
-		
+
 #if 0
 		_vm->_gyro->rwlite[ff] = new byte[rwlitesize];
 		f.read(_vm->_gyro->rwlite[ff], rwlitesize);
@@ -875,7 +875,7 @@ void Lucerna::toolbar() {
 	}
 
 	f.seek(40);
-	
+
 	// off;
 
 	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
@@ -915,7 +915,7 @@ void Lucerna::showscore() {
 	//setactivepage(3);
 
 	for (byte fv = 0; fv < 3; fv++)
-		if (_vm->_gyro->_scoreToDisplay[fv] != numbers[fv]) 
+		if (_vm->_gyro->_scoreToDisplay[fv] != numbers[fv])
 			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_digits[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
 	for (byte fv = 0; fv < 2; fv++)
@@ -1008,16 +1008,16 @@ void Lucerna::objectlist() {
 }
 
 void Lucerna::verte(Common::Point cursorPos) {
-	if (! _vm->_gyro->_dna._userMovesAvvy) 
+	if (! _vm->_gyro->_dna._userMovesAvvy)
 		return;
 
 	cursorPos.y /= 2;
 	byte what;
 
 	// _vm->_trip->tr[0] : that's the only one we're interested in here. (It's Avalot.)
-	if (cursorPos.x < _vm->_trip->tr[0].x) 
+	if (cursorPos.x < _vm->_trip->tr[0].x)
 		what = 1;
-	else if (cursorPos.x > (_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info._xLength)) 
+	else if (cursorPos.x > (_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info._xLength))
 		what = 2;
 	else
 		what = 0; // On top
@@ -1063,7 +1063,7 @@ void Lucerna::verte(Common::Point cursorPos) {
 void Lucerna::checkclick() {
 	Common::Point cursorPos = _vm->getMousePos();
 	_vm->_gyro->_onToolbar = _vm->_gyro->kSlowComputer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
-	
+
 	/*if (_vm->_gyro->mrelease > 0)
 	_vm->_gyro->after_the_scroll = false;*/
 
@@ -1080,7 +1080,7 @@ void Lucerna::checkclick() {
 		} else
 			_vm->_gyro->newMouse(4); // fletch
 	}
-	
+
 	if (holdLeftMouse) {
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_vm->_gyro->_dropsOk)
@@ -1185,11 +1185,11 @@ void Lucerna::dawn() {
 
 
 void Lucerna::showrw() { // It's data is loaded in load_digits().
-	if (_vm->_gyro->_oldDirection == _vm->_gyro->_dna._direction) 
+	if (_vm->_gyro->_oldDirection == _vm->_gyro->_dna._direction)
 		return;
 	_vm->_gyro->_oldDirection = _vm->_gyro->_dna._direction;
 	CursorMan.showMouse(false);
-	
+
 #if 0
 	for (byte page_ = 0; page_ <= 1; page_++) {
 		setactivepage(page_);
@@ -1201,7 +1201,7 @@ void Lucerna::showrw() { // It's data is loaded in load_digits().
 
 	CursorMan.showMouse(true);
 	//setactivepage(1 - cp);
-	
+
 	warning("STUB: Lucerna::showrw()");
 }
 
@@ -1277,7 +1277,7 @@ void Lucerna::clock_lucerna() {
 
 	if ((_vm->_gyro->_hours == 0) && (_vm->_gyro->_oh != 0) && (_vm->_gyro->_oh != 17717))
 		_vm->_scrolls->display(Common::String("Good morning!\n\nYes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!"));
-	
+
 	_vm->_gyro->_oh = _vm->_gyro->_hours;
 	_vm->_gyro->_onh = nh;
 	_vm->_gyro->_om = _vm->_gyro->_minutes;
@@ -1287,11 +1287,11 @@ void Lucerna::clock_lucerna() {
 
 void Lucerna::delavvy() {
 	CursorMan.showMouse(false);
-	
+
 //	triptype &with = _vm->_trip->tr[0];
 //	for (byte page_ = 0; page_ <= 1; page_++)
 //		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
-	
+
 	CursorMan.showMouse(true);
 }
 
@@ -1300,12 +1300,12 @@ void Lucerna::gameover() {
 
 	int16 sx = _vm->_trip->tr[0].x;
 	int16 sy = _vm->_trip->tr[0].y;
-	
+
 	_vm->_trip->tr[0].done();
 	_vm->_trip->tr[0].init(12, true, _vm->_trip); // 12 = Avalot falls
 	_vm->_trip->tr[0].step = 0;
 	_vm->_trip->tr[0].appear(sx, sy, 0);
-	
+
 	_vm->_timeout->set_up_timer(3, _vm->_timeout->procavalot_falls, _vm->_timeout->reason_falling_over);
 
 	_vm->_gyro->_alive = false;
@@ -1323,11 +1323,11 @@ void Lucerna::minor_redraw() {
 		_vm->_gyro->_cp = 1 - _vm->_gyro->_cp;
 		_vm->_trip->getback();
 	}
-	
+
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // impossible digits
 	showscore();
-	
+
 	dawn();
 }
 
@@ -1339,7 +1339,7 @@ uint16 Lucerna::bearing(byte whichped) {
 	byte pedId = whichped - 1; // Different array indexes in Pascal and C.
 
 	const double rad2deg = 180 / 3.14; // Pi
-		
+
 	if (_vm->_trip->tr[0].x == _vm->_gyro->_peds[pedId]._x)
 		return 0;
 	else if (_vm->_trip->tr[0].x < _vm->_gyro->_peds[pedId]._x) {

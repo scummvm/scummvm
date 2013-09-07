@@ -27,8 +27,8 @@
 
 /* TIMEOUT	The scheduling unit. */
 
-#ifndef TIMEOUT2_H
-#define TIMEOUT2_H
+#ifndef AVALANCHE_TIMEOUT2_H
+#define AVALANCHE_TIMEOUT2_H
 
 #include "common/scummsys.h"
 
@@ -121,11 +121,11 @@ public:
 
 
 	timetype times[7];
-	
+
 	bool timerLost; // Is the timer "lost"? (Because of using lose_timer())
 
 
-	
+
 	Timeout(AvalancheEngine *vm);
 
 	void setParent(AvalancheEngine *vm);
@@ -222,4 +222,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // TIMEOUT2_H
+#endif // AVALANCHE_TIMEOUT2_H

@@ -27,8 +27,8 @@
 
 /* ENID		Edna's manager. Loads/saves files. */
 
-#ifndef ENID2_H
-#define ENID2_H
+#ifndef AVALANCHE_ENID2_H
+#define AVALANCHE_ENID2_H
 
 #include "common/scummsys.h"
 
@@ -75,4 +75,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // ENID2_H
+#endif // AVALANCHE_ENID2_H

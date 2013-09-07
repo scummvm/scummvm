@@ -83,16 +83,16 @@ void Celer::updateBackgroundSprites() {
 			case 11:
 			case 21:
 				drawBackgroundSprite(-1, -1, 12); // Looks forwards.
-				break; 
+				break;
 			case 8:
 			case 18:
 			case 28:
 			case 32:
 				drawBackgroundSprite(-1, -1, 11); // Looks at you.
-				break; 
+				break;
 			case 30:
 				drawBackgroundSprite(-1, -1, 13); // Winks.
-				break; 
+				break;
 			case 33:
 				_vm->_gyro->_dna._malagauche = 0;
 				break;
@@ -103,7 +103,7 @@ void Celer::updateBackgroundSprites() {
 		case 179:
 		case 197:
 			drawBackgroundSprite(-1, -1, 5); // Dogfood's drinking cycle.
-			break; 
+			break;
 		case 182:
 		case 194:
 			drawBackgroundSprite(-1, -1, 6);
@@ -113,7 +113,7 @@ void Celer::updateBackgroundSprites() {
 			break;
 		case 199:
 			_vm->_gyro->_dna._dogFoodPos = 177; // Impossible value for this.
-			break; 
+			break;
 		}
 
 		if ((_vm->_gyro->_roomTime % 200 >= 0) && (_vm->_gyro->_roomTime % 200 <= 178)) { // Normally.
@@ -177,7 +177,7 @@ void Celer::updateBackgroundSprites() {
 				break;
 			case 1:
 				drawBackgroundSprite(-1, -1, 3); // Frame 1: Natural.
-				break; 
+				break;
 			}
 		}
 		break;
@@ -186,10 +186,10 @@ void Celer::updateBackgroundSprites() {
 			switch (_vm->_gyro->_roomTime % 54) {
 			case 20:
 				drawBackgroundSprite(-1, -1, 4); // Frame 4: Avalot blinks.
-				break; 
+				break;
 			case 23:
 				drawBackgroundSprite(-1, -1, 2); // Frame 1: Back to normal.
-				break; 
+				break;
 			}
 		}
 		break;
@@ -215,7 +215,7 @@ void Celer::updateBackgroundSprites() {
 		switch (_vm->_gyro->_roomTime % 50) {
 		case 45 :
 			drawBackgroundSprite(-1, -1, 9); // Spurge blinks.
-			break; 
+			break;
 		case 49 :
 			drawBackgroundSprite(-1, -1, 10);
 			break;
@@ -279,7 +279,7 @@ void Celer::loadBackgroundSprites(byte number) {
 
 	for (byte i = 0; i < _spriteNum; i++) {
 		f.seek(_offsets[i]);
-		
+
 		SpriteType sprite;
 		sprite._type = PictureType(f.readByte());
 		sprite._x = f.readSint16LE();
@@ -289,7 +289,7 @@ void Celer::loadBackgroundSprites(byte number) {
 		sprite._size = f.readSint32LE();
 		bool natural = f.readByte();
 		bool memorize = f.readByte();
-				
+
 		if (memorize) {
 			_sprites[i]._x = sprite._x;
 			_sprites[i]._xl = sprite._xl;
@@ -299,7 +299,7 @@ void Celer::loadBackgroundSprites(byte number) {
 
 			if (natural) {
 				_sprites[i]._type = kNaturalImage; // We simply read from the screen and later, in drawSprite() we draw it right back.
-				_sprites[i]._size = _sprites[i]._xl * 8 * _sprites[i]._yl + 1; 
+				_sprites[i]._size = _sprites[i]._xl * 8 * _sprites[i]._yl + 1;
 				_sprites[i]._picture.create(_sprites[i]._xl * 8, _sprites[i]._yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
 
 				for (uint16 y = 0; y < _sprites[i]._yl + 1; y++) {

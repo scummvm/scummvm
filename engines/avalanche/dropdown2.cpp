@@ -54,7 +54,7 @@ void HeadType::init(char trig, char altTrig, Common::String title, byte pos, Dro
 }
 
 void HeadType::draw() {
-	CursorMan.showMouse(false); 
+	CursorMan.showMouse(false);
 	_dr->drawMenuText(_xpos, 1, _trigger, _title, true, false);
 	CursorMan.showMouse(true);
 }
@@ -67,17 +67,17 @@ void HeadType::highlight() {
 	warning("STUB: Dropdown::headytpe::highlight()");
 
 	_dr->drawMenuText(_xpos, 1, _trigger, _title, true, true);
-	
+
 	_dr->_activeMenuItem._left = _xpos;
 	_dr->_activeMenuItem._activeNow = true;
 	_dr->_vm->_gyro->_dropdownActive = true;
 	_dr->_activeMenuItem._activeNum = _position;
-	
+
 	_dr->_vm->_gyro->_currentMouse = 177; // Force redraw of cursor.
 }
 
 bool HeadType::parseAltTrigger(char key) {
-	if (key != _altTrigger)  
+	if (key != _altTrigger)
 		return true;
 	return false;
 }
@@ -118,7 +118,7 @@ void MenuItem::displayOption(byte y, bool highlit) {
 	else
 		backgroundColor = 7;
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10), backgroundColor);
-	
+
 	Common::String text = _options[y]._title;
 	while (text.size() + _options[y]._shortcut.size() < _width)
 		text += ' '; // Pad _options[y] with spaces.
@@ -146,7 +146,7 @@ void MenuItem::display() {
 	displayOption(0, true);
 	for (byte y = 1; y < _optionNum; y++)
 		displayOption(y, false);
-	
+
 	_dr->_vm->_gyro->_defaultLed = 1;
 	_dr->_vm->_gyro->_currentMouse = 177;
 	//mousepage(cp);
@@ -155,8 +155,8 @@ void MenuItem::display() {
 
 void MenuItem::wipe() {
 	//setactivepage(cp);
-	CursorMan.showMouse(false); 
-	
+	CursorMan.showMouse(false);
+
 	_dr->drawMenuText(_dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._xpos, 1, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._trigger, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._title, true, false);
 
 	_activeNow = false;
@@ -164,7 +164,7 @@ void MenuItem::wipe() {
 	_firstlix = false;
 	_dr->_vm->_gyro->_defaultLed = 2;
 
-	CursorMan.showMouse(true); 
+	CursorMan.showMouse(true);
 }
 
 void MenuItem::moveHighlight(int8 inc) {
@@ -176,15 +176,15 @@ void MenuItem::moveHighlight(int8 inc) {
 		_highlightNum = highlightNum;
 	}
 	//setactivepage(cp);
-	CursorMan.showMouse(false); 
+	CursorMan.showMouse(false);
 	displayOption(_oldY, false);
 	displayOption(_highlightNum, true);
 	//setactivepage(1 - cp);
 	_oldY = _highlightNum;
-	CursorMan.showMouse(true); 
+	CursorMan.showMouse(true);
 }
 
-void MenuItem::lightUp(Common::Point cursorPos) { 
+void MenuItem::lightUp(Common::Point cursorPos) {
 	if ((cursorPos.x < _flx1 * 8) || (cursorPos.x > _flx2 * 8) || (cursorPos.y <= 25) || (cursorPos.y > ((fly - 3) * 2 + 1)))
 		return;
 	_highlightNum = (cursorPos.y - 26) / 20;
@@ -193,7 +193,7 @@ void MenuItem::lightUp(Common::Point cursorPos) {
 	moveHighlight(0);
 }
 
-void MenuItem::select(byte which) {    
+void MenuItem::select(byte which) {
 	if (!_options[which]._valid)
 		return;
 
@@ -235,7 +235,7 @@ void MenuBar::draw() {
 	const ByteField menuspace = {0, 0, 80, 9};
 
 	//setactivepage(3);
-	
+
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect(0, 0, 640, 10), _dr->kMenuBackgroundColor);
 
 	byte savecp = _dr->_vm->_gyro->_cp;
@@ -343,7 +343,7 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 	}
 
 	_vm->_graphics->drawText(_vm->_graphics->_surface, text, font, 8, x * 8, y, fontColor);
-	
+
 	// Underline the selected character.
 	if (!text.contains(trigger))
 		return;
@@ -351,7 +351,7 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 		byte i;
 		for (i = 0; text[i] != trigger; i++)
 			; // Search for the character in the string.
-	
+
 		byte pixel = ander;
 		for (byte bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
@@ -508,7 +508,7 @@ void Dropdown::setupMenuWith() {
 
 		// We disable the "give" option if: (a), you haven't selected anybody, (b), the _person you've selected isn't in the room,
 		// or (c), the _person you've selected is YOU!
-		
+
 		if ((_vm->_gyro->_lastPerson == _vm->_gyro->kPeopleAvalot) || (_vm->_gyro->_lastPerson == _vm->_acci->kNothing)
 			|| (_vm->_gyro->_whereIs[_vm->_gyro->_lastPerson - 150] != _vm->_gyro->_dna._room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
@@ -680,25 +680,25 @@ void Dropdown::runMenuWith() {
 			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
-		break; 
+		break;
 		case 103: { // Cider
 			_vm->_acci->_thing = 103;
 			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
-		break; 
+		break;
 		case 104: { // Mead
 			_vm->_acci->_thing = 107;
 			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
-		break; 
+		break;
 		case 105: { // Onion (trader)
 			_vm->_acci->_thing = 67;
 			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
 			return;
 		}
-		break; 
+		break;
 		default: {
 			_vm->_acci->_person = _vm->_acci->_thing;
 			_vm->_acci->_thing = 254;
@@ -709,7 +709,7 @@ void Dropdown::runMenuWith() {
 	_vm->_lucerna->callVerb(_vm->_gyro->_verbStr[_activeMenuItem._choiceNum]);
 }
 
-void Dropdown::setupMenu() {   
+void Dropdown::setupMenu() {
 	_menuBar.init(this);
 	_activeMenuItem.init(this);
 
@@ -730,13 +730,13 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 
 	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_lucerna->holdLeftMouse) {
 		_menuBar.chooseMenuItem(cursorPos.x);
-		do 
+		do
 			_vm->updateEvents();
 		while (_vm->_lucerna->holdLeftMouse);
-	
+
 
 		while (!_vm->shouldQuit()) {
-			do { 
+			do {
 				_vm->updateEvents();
 
 				// We updadte the cursor's picture.
@@ -768,14 +768,14 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 								backup.free();
 								return;
 							} // No "else"- clicking on menu has no effect (only releasing).
-						} 
+						}
 				} else {
 					// Clicked on menu bar.
 					if (_activeMenuItem._activeNow) {
 						_activeMenuItem.wipe();
 						_vm->_graphics->_surface.copyFrom(backup);
 						_vm->_graphics->refreshScreen();
-						
+
 						if (((_activeMenuItem._left * 8) <= cursorPos.x) && (cursorPos.x <= (_activeMenuItem._left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
 							// If we clicked on the same menu item (the one that is already active) on the bar...
 							_vm->_lucerna->holdLeftMouse = false;
@@ -787,7 +787,7 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 						}
 					}
 				}
-	
+
 				// NOT clicked button...
 				if ((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
 					&& (cursorPos.y >= 12) && (cursorPos.y <= (_activeMenuItem.fly * 2 + 1)))) {

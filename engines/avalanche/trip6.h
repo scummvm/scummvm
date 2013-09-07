@@ -28,8 +28,8 @@
 /* TRIP5	Trippancy V - the sprite animation subsystem */
 
 
-#ifndef TRIP6_H
-#define TRIP6_H
+#ifndef AVALANCHE_TRIP6_H
+#define AVALANCHE_TRIP6_H
 
 #include "avalanche/graphics.h"
 
@@ -120,11 +120,8 @@ private:
 	Trip *_tr;
 
 	bool collision_check();
-
 	int8 sgn(int16 val);
 };
-
-
 
 const int16 maxgetset = 35;
 
@@ -138,17 +135,10 @@ public:
 	void recall(ByteField &r);
 };
 
-
-
-
-
-
 class Trip {
 public:
 	friend class triptype;
 	friend class getsettype;
-
-
 
 	static const int16 up = 0;
 	static const int16 right = 1;
@@ -162,68 +152,36 @@ public:
 
 	static const int16 numtr = 5; // current max no. of sprites
 
-
-
 	static const int16 procfollow_avvy_y = 1;
-
 	static const int16 procback_and_forth = 2;
-
 	static const int16 procface_avvy = 3;
-
 	static const int16 procarrow_procs = 4;
-
 	static const int16 procspludwick_procs = 5;
-
 	static const int16 procgrab_avvy = 6;
-
 	static const int16 procgeida_procs = 7;
 
-
-
 	Trip(AvalancheEngine *vm);
-
 	~Trip();
 
 	void trippancy_link();
-
 	void get_back_loretta();
-
 	void loadtrip();
-
 	void call_special(uint16 which);
-
 	void open_the_door(byte whither, byte ped, byte magicnum); // Handles slidey-open doors.
-
 	void catamove(byte ped);
-
 	void stopwalking();
-
 	void tripkey(char dir);
-
 	void rwsp(byte t, byte dir);
-
 	void apped(byte trn, byte np);
-
 	void getback();
-
 	void fliproom(byte room, byte ped);
-
 	bool infield(byte which); // Returns true if you're within field "which".
-
 	bool neardoor(); // Returns True if you're near a door.
-
 	void readstick();
-
 	void newspeed();
-
 	void new_game_for_trippancy();
-
 	void take_a_step(byte &tripnum);
-
-
-
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
-
 
 	triptype tr[numtr];
 	getsettype getset[2];
@@ -240,32 +198,20 @@ private:
 	// int16 beforex, beforey;
 
 	byte checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
-
 	byte geida_ped(byte which);
-
 	void dawndelay();
-
 	void hide_in_the_cupboard();
-
 	void follow_avvy_y(byte tripnum);
-
 	void back_and_forth(byte tripnum);
-
 	void face_avvy(byte tripnum);
-
 	void arrow_procs(byte tripnum);
-
 	void grab_avvy(byte tripnum);
-
 	void spin(byte whichway, byte &tripnum);
-
 	void geida_procs(byte tripnum);
-
 	void call_andexors();
-
 	void getsetclear();
 };
 
 } // End of namespace Avalanche.
 
-#endif // TRIP6_H
+#endif // AVALANCHE_TRIP6_H
