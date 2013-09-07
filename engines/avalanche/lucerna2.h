@@ -43,7 +43,8 @@ public:
 	void update();
 	
 private:
-	static const Common::Point kCenter;
+	static const int kCenterX = 510;
+	static const int kCenterY = 183;
 
 	AvalancheEngine *_vm;
 
