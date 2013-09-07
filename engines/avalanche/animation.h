@@ -49,25 +49,25 @@ struct adxtype { // Second revision of ADX type
 	byte accinum; // the number according to Acci (1=Avvy, etc.)
 };
 
-struct trip_saver_type {
-	byte whichsprite;
-	byte face;
-	byte step;
-	int16 x;
-	int16 y;
-	int8 ix;
-	int8 iy;
-	bool visible;
-	bool homing;
-	bool check_me;
-	byte count;
-	byte xw, xs, ys;
-	byte totalnum;
-	int16 hx;
-	int16 hy;
-	bool call_eachstep;
-	byte eachstep;
-	bool vanishifstill;
+struct AnimationSaver {
+	byte _id;
+	byte _facingDir;
+	byte _stepNum;
+	int16 _x;
+	int16 _y;
+	int8 _moveX;
+	int8 _moveY;
+	bool _visible;
+	bool _homing;
+	bool _doCheck;
+	byte _count;
+	byte _xWidth, _speedX, _speedY;
+	byte _animCount;
+	int16 _homingX;
+	int16 _homingY;
+	bool _callEachStepFl;
+	byte _eachStepProc;
+	bool _vanishIfStill;
 };
 
 class Animation;
@@ -77,22 +77,22 @@ public:
 	SpriteInfo _info;
 
 	adxtype _stat; // vital statistics
-	byte _facingDir, step;
+	byte _facingDir, _stepNum;
 	int16 _x, _y; // current xy coords
 	int16 _oldX[2], _oldY[2];  // last xy coords
 	int8 _moveX, _moveY; // amount to move sprite by, each step
 	byte _id;
-	bool quick, _visible, _homing, check_me;
+	bool _quick, _visible, _homing, _doCheck;
 	int16 _homingX, _homingY; // homing x & y coords
-	byte count; // counts before changing step
+	byte _count; // counts before changing step
 	byte _speedX, _speedY; // x & y speed
 	byte _animCount; // total number of sprites
-	bool vanishifstill; // Do we show this sprite if it's still?
+	bool _vanishIfStill; // Do we show this sprite if it's still?
 
-	bool call_eachstep; // Do we call the eachstep procedure?
-	byte eachstep;
+	bool _callEachStepFl; // Do we call the eachstep procedure?
+	byte _eachStepProc;
 
-	void init(byte spritenum, bool do_check, Animation *tr);
+	void init(byte spritenum, bool doCheck, Animation *tr);
 	// loads & sets up the sprite
 	void original();    // just sets Quick to false
 	void andexor();    // drops sprite onto screen
@@ -106,8 +106,8 @@ public:
 	void speed(int8 xx, int8 yy); // sets ix & iy, non-homing, etc
 	void stopWalk();    // Stops the sprite from moving
 	void chatter();    // Sets up talk vars
-	void set_up_saver(trip_saver_type &v);
-	void unload_saver(trip_saver_type v);
+	void setupSaver(AnimationSaver &sav);
+	void unload_saver(AnimationSaver sav);
 
 	void savedata(Common::File &f); // Self-explanatory,
 	void loaddata(Common::File &f);  // really.
@@ -140,25 +140,25 @@ public:
 	friend class AnimationType;
 	friend class getsettype;
 
-	static const int16 kDirUp = 0;
-	static const int16 kDirRight = 1;
-	static const int16 kDirDown = 2;
-	static const int16 kDirLeft = 3;
-	static const int16 kDirUpRight = 4;
-	static const int16 kDirDownRight = 5;
-	static const int16 kDirDownLeft = 6;
-	static const int16 kDirUpLeft = 7;
-	static const int16 kDirStopped = 8;
+	static const byte kDirUp = 0;
+	static const byte kDirRight = 1;
+	static const byte kDirDown = 2;
+	static const byte kDirLeft = 3;
+	static const byte kDirUpRight = 4;
+	static const byte kDirDownRight = 5;
+	static const byte kDirDownLeft = 6;
+	static const byte kDirUpLeft = 7;
+	static const byte kDirStopped = 8;
 
 	static const int16 kSpriteNumbMax = 5; // current max no. of sprites
 
-	static const int16 kProcFollowAvvyY = 1;
-	static const int16 kProcBackAndForth = 2;
-	static const int16 kProcFaceAvvy = 3;
-	static const int16 kProcArrow = 4;
-	static const int16 kProcsPludwick = 5; // Unused
-	static const int16 kProcGrabAvvy = 6;
-	static const int16 kProcGeida = 7;
+	static const byte kProcFollowAvvyY = 1;
+	static const byte kProcBackAndForth = 2;
+	static const byte kProcFaceAvvy = 3;
+	static const byte kProcArrow = 4;
+	static const byte kProcsPludwick = 5; // Unused
+	static const byte kProcGrabAvvy = 6;
+	static const byte kProcGeida = 7;
 
 	Animation(AvalancheEngine *vm);
 	~Animation();
@@ -167,7 +167,7 @@ public:
 	void get_back_loretta();
 	void loadtrip();
 	void call_special(uint16 which);
-	void open_the_door(byte whither, byte ped, byte magicnum); // Handles slidey-open doors.
+	void openDoor(byte whither, byte ped, byte magicnum); // Handles slidey-open doors.
 	void catamove(byte ped);
 	void stopWalking();
 	void tripkey(char dir);

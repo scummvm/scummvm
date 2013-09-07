@@ -283,7 +283,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	byte spriteNum = 0;
 	if (sz.isSaving()) {
 		for (int16 i = 0; i < _animation->kSpriteNumbMax; i++) {
-			if (_animation->tr[i].quick)
+			if (_animation->tr[i]._quick)
 				spriteNum++;
 		}
 	}
@@ -291,37 +291,37 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	if (sz.isLoading()) {
 		for (int16 i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
-			if (_animation->tr[i].quick)
+			if (_animation->tr[i]._quick)
 				_animation->tr[i].done();
 		}
 	}
 
 	for (byte i = 0; i < spriteNum; i++) {
 		sz.syncAsByte(_animation->tr[i]._id);
-		sz.syncAsByte(_animation->tr[i].check_me);
+		sz.syncAsByte(_animation->tr[i]._doCheck);
 
 
 		if (sz.isLoading()) {
-			_animation->tr[i].quick = true;
-			_animation->tr[i].init(_animation->tr[i]._id, _animation->tr[i].check_me, _animation);
+			_animation->tr[i]._quick = true;
+			_animation->tr[i].init(_animation->tr[i]._id, _animation->tr[i]._doCheck, _animation);
 		}
 
 		sz.syncAsByte(_animation->tr[i]._moveX);
 		sz.syncAsByte(_animation->tr[i]._moveY);
 		sz.syncAsByte(_animation->tr[i]._facingDir);
-		sz.syncAsByte(_animation->tr[i].step);
+		sz.syncAsByte(_animation->tr[i]._stepNum);
 		sz.syncAsByte(_animation->tr[i]._visible);
 		sz.syncAsByte(_animation->tr[i]._homing);
-		sz.syncAsByte(_animation->tr[i].count);
+		sz.syncAsByte(_animation->tr[i]._count);
 		sz.syncAsByte(_animation->tr[i]._info._xWidth);
 		sz.syncAsByte(_animation->tr[i]._speedX);
 		sz.syncAsByte(_animation->tr[i]._speedY);
 		sz.syncAsByte(_animation->tr[i]._animCount);
 		sz.syncAsSint16LE(_animation->tr[i]._homingX);
 		sz.syncAsSint16LE(_animation->tr[i]._homingY);
-		sz.syncAsByte(_animation->tr[i].call_eachstep);
-		sz.syncAsByte(_animation->tr[i].eachstep);
-		sz.syncAsByte(_animation->tr[i].vanishifstill);
+		sz.syncAsByte(_animation->tr[i]._callEachStepFl);
+		sz.syncAsByte(_animation->tr[i]._eachStepProc);
+		sz.syncAsByte(_animation->tr[i]._vanishIfStill);
 
 		sz.syncAsSint16LE(_animation->tr[i]._x);
 		sz.syncAsSint16LE(_animation->tr[i]._y);
@@ -484,14 +484,14 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		+ _gyro->_roomnName + _scrolls->kControlNewLine + _scrolls->kControlNewLine
 		+ "saved on " + expandDate(t.tm_mday, t.tm_mon, t.tm_year) + '.');
 
-	if (_animation->tr[0].quick && _animation->tr[0]._visible)
+	if (_animation->tr[0]._quick && _animation->tr[0]._visible)
 		_animation->rwsp(0, _gyro->_dna._direction); // We push Avvy in the right direction is he was moving.
 
 	return true;
 }
 
 Common::String AvalancheEngine::expandDate(int d, int m, int y) {
-	const Common::String months[12] = {
+	static const Common::String months[12] = {
 		"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 	};
 
