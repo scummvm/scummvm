@@ -77,6 +77,8 @@ public:
 	uint height() { return _height; }
 	uint32 frameTime() { return _frameTime; }
 
+	void seekToFrame(int frameNumber);
+
 	const uint16 *getFrameData(uint frameNumber);
 	const uint16 *getNextFrame();
 

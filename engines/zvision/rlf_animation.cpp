@@ -155,16 +155,13 @@ RlfAnimation::Frame RlfAnimation::readNextFrame() {
 	return frame;
 }
 
-const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
+void RlfAnimation::seekToFrame(int frameNumber) {
 	assert(!_stream);
-	assert(frameNumber < _frameCount);
+	assert(frameNumber < _frameCount || frameNumber >= -1);
 
-	// Since this method is so expensive, first check to see if we can use
-	// getNextFrame() it's cheap.
-	if ((int)frameNumber == _currentFrame) {
-		return _currentFrameBuffer;
-	} else if (_currentFrame + 1 == (int)frameNumber) {
-		return getNextFrame();
+	if (frameNumber == -1) {
+		_currentFrame = -1;
+		return;
 	}
 
 	int closestFrame = _currentFrame;
@@ -182,6 +179,21 @@ const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
 	}
 
 	_currentFrame = frameNumber;
+}
+
+const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
+	assert(!_stream);
+	assert(frameNumber < _frameCount);
+
+	// Since this method is so expensive, first check to see if we can use
+	// getNextFrame() it's cheap.
+	if ((int)frameNumber == _currentFrame) {
+		return _currentFrameBuffer;
+	} else if (_currentFrame + 1 == (int)frameNumber) {
+		return getNextFrame();
+	}
+
+	seekToFrame(frameNumber);
 	return _currentFrameBuffer;
 }
 
