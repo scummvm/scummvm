@@ -58,6 +58,8 @@ BuriedEngine::~BuriedEngine() {
 	delete _library;
 	delete _sound;
 	delete _mainWindow;
+
+	// The queue should be empty since all windows destroy their messages
 }
 
 Common::Error BuriedEngine::run() {
@@ -119,38 +121,38 @@ Common::Error BuriedEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
 				_gfx->markMouseMoved();
-				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new MouseMoveMessage(event.mouse, 0));
+				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MouseMoveMessage(event.mouse, 0));
 				break;
 			case Common::EVENT_KEYUP:
 				if (_focusedWindow)
-					_focusedWindow->sendMessage(new KeyUpMessage(event.kbd, 0));
+					_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (_focusedWindow)
-					_focusedWindow->sendMessage(new KeyDownMessage(event.kbd, 0));
+					_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new LButtonDownMessage(event.mouse, 0));
+				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonDownMessage(event.mouse, 0));
 				break;
 			case Common::EVENT_LBUTTONUP:
 				// TODO: Double-click
-				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new LButtonUpMessage(event.mouse, 0));
+				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonUpMessage(event.mouse, 0));
 				break;
 			case Common::EVENT_MBUTTONUP:
-				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new MButtonUpMessage(event.mouse, 0));
+				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MButtonUpMessage(event.mouse, 0));
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new RButtonDownMessage(event.mouse, 0));
+				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonDownMessage(event.mouse, 0));
 				break;
 			case Common::EVENT_RBUTTONUP:
-				_mainWindow->findWindowAtPoint(event.mouse)->sendMessage(new RButtonUpMessage(event.mouse, 0));
+				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonUpMessage(event.mouse, 0));
 				break;
 			default:
 				break;
 			}
 		}
 
-		_mainWindow->dispatchAllMessages();
+		sendAllMessages();
 
 		_gfx->updateScreen();
 		_system->delayMillis(10);
@@ -256,7 +258,7 @@ void BuriedEngine::updateTimers() {
 	for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++) {
 		if (g_system->getMillis() >= it->_value.nextTrigger) {
 			it->_value.nextTrigger += it->_value.period;
-			it->_value.owner->sendMessage(new TimerMessage(it->_key));
+			it->_value.owner->postMessage(new TimerMessage(it->_key));
 		}
 	}
 }
@@ -272,6 +274,56 @@ void BuriedEngine::removeVideo(VideoWindow *window) {
 void BuriedEngine::updateVideos() {
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 		(*it)->updateVideo();
+}
+
+void BuriedEngine::postMessageToWindow(Window *dest, Message *message) {
+	MessageInfo msg;
+	msg.dest = dest;
+	msg.message = message;
+	_messageQueue.push_back(msg);
+}
+
+void BuriedEngine::sendAllMessages() {
+	while (!_messageQueue.empty()) {
+		MessageInfo msg = _messageQueue.front();
+		_messageQueue.pop_front();
+
+		msg.dest->sendMessage(msg.message);
+		// Control of the pointer is passed to the destination
+	}
+}
+
+void BuriedEngine::removeKeyboardMessages(Window *window) {
+	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
+		if (it->dest == window && it->message->getMessageType() >= kMessageTypeKeyUp && it->message->getMessageType() <= kMessageTypeKeyDown) {
+			delete it->message;
+			it = _messageQueue.erase(it);
+		} else {
+			it++;
+		}
+	}
+}
+
+void BuriedEngine::removeMouseMessages(Window *window) {
+	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
+		if (it->dest == window && it->message->getMessageType() >= kMessageTypeMouseMove && it->message->getMessageType() <= kMessageTypeSetCursor) {
+			delete it->message;
+			it = _messageQueue.erase(it);
+		} else {
+			it++;
+		}
+	}
+}
+
+void BuriedEngine::removeAllMessages(Window *window) {
+	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
+		if (it->dest == window) {
+			delete it->message;
+			it = _messageQueue.erase(it);
+		} else {
+			it++;
+		}
+	}
 }
 
 } // End of namespace Buried

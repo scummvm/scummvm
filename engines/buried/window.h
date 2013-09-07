@@ -100,8 +100,8 @@ public:
 	// Create
 	// ...
 
-	void sendMessage(Message *message) { _queue.push(message); }
-	void dispatchAllMessages();
+	void sendMessage(Message *message);
+	void postMessage(Message *message);
 
 	Window *findWindowAtPoint(const Common::Point &point);
 
@@ -117,7 +117,6 @@ protected:
 	Common::Rect makeAbsoluteRect(const Common::Rect &rect) const;
 
 private:
-	Common::Queue<Message *> _queue;
 	bool _enabled, _visible;
 	bool _needsErase;
 
