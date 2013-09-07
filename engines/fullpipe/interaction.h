@@ -54,6 +54,7 @@ class CInteraction : public CObject {
 	CInteraction();
 	virtual bool load(MfcArchive &file);
 	bool canInteract(GameObject *obj1, GameObject *obj2, int invId);
+	bool isOverlapping(StaticANIObject *subj, StaticANIObject *obj);
 };
 
 class CInteractionController : public CObject {
@@ -75,7 +76,7 @@ class CInteractionController : public CObject {
 
 	void sortInteractions(int sceneId);
 
-	int handleInteraction(GameObject *subject, GameObject *object, int invId);
+	bool handleInteraction(GameObject *subj, GameObject *obj, int invId);
 };
 
 struct EntranceInfo {

@@ -72,10 +72,8 @@ void CInteractionController::sortInteractions(int sceneId) {
 	Common::sort(_interactions.begin(), _interactions.end(), CInteractionController::compareInteractions);
 }
 
-int CInteractionController::handleInteraction(GameObject *subject, GameObject *object, int invId) {
-	warning("STUB: CInteractionController::handleInteraction()");
-
-	return 0;
+bool CInteractionController::handleInteraction(GameObject *subj, GameObject *obj, int invId) {
+	return true;
 }
 
 CInteraction::CInteraction() {
@@ -170,6 +168,17 @@ bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 		return false;
 
 	return true;
+}
+
+bool CInteraction::isOverlapping(StaticANIObject *subj, StaticANIObject *obj) {
+	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1
+		&& abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
+		if (!this->_staticsId2 || subj->_statics != 0 && subj->_statics->_staticsId == _staticsId2) {
+			if (!_staticsId1 || !(_flags & 1) || obj->_statics != 0 && obj->_statics->_staticsId == _staticsId1)
+				return true;
+		}
+	}
+	return false;
 }
 
 bool EntranceInfo::load(MfcArchive &file) {
