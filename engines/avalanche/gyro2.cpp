@@ -240,7 +240,6 @@ void Gyro::newGame() {
 	memset(&_vm->_gyro->_dna, 0, sizeof(DnaType));
 
 	_vm->_scrolls->natural();
-	_vm->_lucerna->mousepage(0);
 
 	_dna._spareEvening = "answer a questionnaire";
 	_dna._favouriteDrink = "beer";
@@ -254,7 +253,7 @@ void Gyro::newGame() {
 
 	_thinkThing = true;
 	_thinks = 2;
-	_vm->_lucerna->objectlist();
+	_vm->_lucerna->refreshObjectList();
 	_onToolbar = false;
 	_seeScroll = false;
 
@@ -276,12 +275,12 @@ void Gyro::newGame() {
 		_vm->_trip->getback();
 	}
 
-	_vm->_lucerna->enterroom(1, 1);
+	_vm->_lucerna->enterRoom(1, 1);
 	_vm->_trip->new_game_for_trippancy();
-	_vm->_lucerna->showscore();
+	_vm->_lucerna->drawScore();
 	_vm->_dropdown->setupMenu();
-	_vm->_lucerna->clock_lucerna();
-	_vm->_lucerna->sprite_run();
+	_vm->_lucerna->updateClock();
+	_vm->_lucerna->spriteRun();
 }
 
 void Gyro::click() {
@@ -309,7 +308,7 @@ bool Gyro::decreaseMoney(uint16 howmuchby) {
 	_dna._money -= howmuchby;
 	if (_dna._money < 0) {
 		_vm->_visa->dixi('Q', 2); // "You are now denariusless!"
-		_vm->_lucerna->gameover();
+		_vm->_lucerna->gameOver();
 		return false;
 	} else
 		return true;

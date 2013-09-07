@@ -562,7 +562,7 @@ void Dropdown::runMenuGame() {
 		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBoss);
 		break;
 	case 2:
-		_vm->_lucerna->major_redraw();
+		_vm->_lucerna->majorRedraw();
 		break;
 	case 3:
 		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);
@@ -641,11 +641,11 @@ void Dropdown::runMenuAction() {
 }
 
 void Dropdown::runMenuObjects() {
-	_vm->_lucerna->thinkabout(_vm->_gyro->_objectList[_activeMenuItem._choiceNum + 1], _vm->_gyro->kThing);
+	_vm->_lucerna->thinkAbout(_vm->_gyro->_objectList[_activeMenuItem._choiceNum + 1], Gyro::kThing);
 }
 
 void Dropdown::runMenuPeople() {
-	_vm->_lucerna->thinkabout(people[_activeMenuItem._choiceNum], _vm->_gyro->kPerson);
+	_vm->_lucerna->thinkAbout(people[_activeMenuItem._choiceNum], Gyro::kPerson);
 	_vm->_gyro->_lastPerson = people[_activeMenuItem._choiceNum];
 }
 

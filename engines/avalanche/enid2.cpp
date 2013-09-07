@@ -272,13 +272,13 @@ void Enid::ednaReload() {
 	_vm->_gyro->_seeScroll = true;  // This prevents display of the new sprites before the
 								   // new picture is loaded.
 
-	_vm->_lucerna->major_redraw();
+	_vm->_lucerna->majorRedraw();
 
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleAvalot - 150] = _vm->_gyro->_dna._room;
 
 	_vm->_gyro->_alive = true;
 
-	_vm->_lucerna->objectlist();
+	_vm->_lucerna->refreshObjectList();
 
 	if (_vm->_gyro->_holdTheDawn) {
 		_vm->_gyro->_holdTheDawn = false;

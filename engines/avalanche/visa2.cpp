@@ -175,8 +175,8 @@ void Visa::talkto(byte whom) {
 			if ((_vm->_gyro->_dna._lustieIsAsleep) & (!_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1])) {
 				dixi('q', 68);
 				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1] = true;
-				_vm->_lucerna->objectlist();
-				_vm->_lucerna->points(3);
+				_vm->_lucerna->refreshObjectList();
+				_vm->_lucerna->incScore(3);
 				return;
 			} else {
 				if (_vm->_gyro->_dna._talkedToCrapulus)
@@ -277,7 +277,7 @@ void Visa::talkto(byte whom) {
 
 	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == _vm->_gyro->kPeopleCrapulus)) { // Crapulus: get the badge - first time only
 		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBadge - 1] = true;
-		_vm->_lucerna->objectlist();
+		_vm->_lucerna->refreshObjectList();
 		dixi('q', 1); // Circular from Cardiff.
 		_vm->_gyro->_dna._talkedToCrapulus = true;
 
@@ -286,7 +286,7 @@ void Visa::talkto(byte whom) {
 		_vm->_trip->tr[1].vanishifstill = true;
 		_vm->_trip->tr[1].walkto(3); // Walks away.
 
-		_vm->_lucerna->points(2);
+		_vm->_lucerna->incScore(2);
 	}
 }
 

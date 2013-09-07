@@ -460,7 +460,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_celer->forgetBackgroundSprites();
 
-	_lucerna->minor_redraw();
+	_lucerna->minorRedraw();
 
 	_dropdown->setupMenu();
 
@@ -468,11 +468,11 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_gyro->_alive = true;
 
-	_lucerna->objectlist();
+	_lucerna->refreshObjectList();
 
 	_trip->newspeed();
 
-	_lucerna->showrw();
+	_lucerna->drawDirection();
 
 	_gyro->_onToolbar = false;
 	_trip->trippancy_link();
@@ -720,7 +720,7 @@ Common::Error AvalancheEngine::run() {
 		//	break;
 		//}
 
-	} while (false);
+	} while (!shouldQuit());
 
 
 
