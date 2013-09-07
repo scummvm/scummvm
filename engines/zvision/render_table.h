@@ -66,7 +66,7 @@ public:
 
 	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);
 
-	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth);
+	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth, const Common::Rect &subRect);
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov);

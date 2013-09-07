@@ -60,6 +60,10 @@ RenderManager::~RenderManager() {
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
+	// Clear the dirty rects from last frame
+	_workingWindowDirtyRect = Common::Rect();
+	_backBufferDirtyRect = Common::Rect();
+
 	// An inverse velocity of 0 would be infinitely fast, so we'll let 0 mean no velocity.
 	if (_backgroundInverseVelocity != 0) {
 		_accumulatedVelocityMilliseconds += deltaTimeInMillis;
@@ -78,16 +82,25 @@ void RenderManager::update(uint deltaTimeInMillis) {
 }
 
 void RenderManager::renderBackbufferToScreen() {
-	RenderTable::RenderState state = _renderTable.getRenderState();
-	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-		_renderTable.mutateImage((uint16 *)_workingWindowBuffer.getPixels(), (uint16 *)_backBuffer.getBasePtr(_workingWindow.left, _workingWindow.top), _backBuffer.w);
-	} else {
-		_backBuffer.copyRectToSurface(_workingWindowBuffer.getPixels(), _workingWindowBuffer.pitch, _workingWindow.left, _workingWindow.top, _workingWindowBuffer.w, _workingWindowBuffer.h);
+	if (!_workingWindowDirtyRect.isEmpty()) {
+		RenderTable::RenderState state = _renderTable.getRenderState();
+		if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+			_renderTable.mutateImage((uint16 *)_workingWindowBuffer.getPixels(), (uint16 *)_backBuffer.getBasePtr(_workingWindow.left + _workingWindowDirtyRect.left, _workingWindow.top + _workingWindowDirtyRect.top), _backBuffer.w, _workingWindowDirtyRect);
+		} else {
+			_backBuffer.copyRectToSurface(_workingWindowBuffer.getBasePtr(_workingWindowDirtyRect.left, _workingWindowDirtyRect.top), _workingWindowBuffer.pitch, _workingWindow.left + _workingWindowDirtyRect.left, _workingWindow.top + _workingWindowDirtyRect.top, _workingWindowDirtyRect.width(), _workingWindowDirtyRect.height());
+		}
+
+		// Translate the working window dirty rect to screen coords
+		_workingWindowDirtyRect.translate(_workingWindow.left, _workingWindow.top);
+		// Then extend the backbuffer dirty rect to contain it
+		_backBufferDirtyRect.extend(_workingWindowDirtyRect);
 	}
 
 	// TODO: Add menu rendering
 
-	_system->copyRectToScreen(_backBuffer.getPixels(), _backBuffer.pitch, 0, 0, _backBuffer.w, _backBuffer.h);
+	if (!_backBufferDirtyRect.isEmpty()) {
+		_system->copyRectToScreen(_backBuffer.getBasePtr(_backBufferDirtyRect.left, _backBufferDirtyRect.top), _backBuffer.pitch, _backBufferDirtyRect.left, _backBufferDirtyRect.top, _backBufferDirtyRect.width(), _backBufferDirtyRect.height());
+	}
 }
 
 void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
@@ -274,6 +287,8 @@ void RenderManager::renderRectToWorkingWindow(uint16 *buffer, int32 imageWidth, 
 		destOffset += _workingWidth;
 		sourceOffset += imageWidth;
 	}
+
+	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
 }
 
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {

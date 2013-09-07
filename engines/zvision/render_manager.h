@@ -57,6 +57,9 @@ private:
 	Graphics::Surface _workingWindowBuffer;
 	Graphics::Surface _backBuffer;
 
+	Common::Rect _workingWindowDirtyRect;
+	Common::Rect _backBufferDirtyRect;
+
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _workingWidth;
 	/** Height of the working window. Saved to prevent extraneous calls to _workingWindow.height() */

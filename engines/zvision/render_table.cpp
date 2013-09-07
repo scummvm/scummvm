@@ -100,14 +100,15 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 	return returnColor;
 }
 
-void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth) {
-	uint32 destColumnOffset = 0;
+void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth, const Common::Rect &subRect) {
+	uint32 destOffset = 0;
 
-	for (uint32 y = 0; y < _numRows; y++) {
-		uint32 sourceColumnOffset = y * _numColumns;
+	for (uint32 y = subRect.top; y < subRect.bottom; y++) {
+		uint32 sourceOffset = y * _numColumns;
 
-		for (uint32 x = 0; x < _numColumns; x++) {
-			uint32 index = sourceColumnOffset + x;
+		for (uint32 x = subRect.left; x < subRect.right; x++) {
+			uint32 normalizedX = x - subRect.left;
+			uint32 index = sourceOffset + x;
 
 			// RenderTable only stores offsets from the original coordinates
 			uint32 sourceYIndex = y + _internalBuffer[index].y;
@@ -119,10 +120,10 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 d
 			// Clamp the xIndex to the size of the image
 			sourceXIndex = CLIP<uint32>(sourceXIndex, 0, _numColumns - 1);
 			
-			destBuffer[destColumnOffset + x] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+			destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
 		}
 
-		destColumnOffset += destWidth;
+		destOffset += destWidth;
 	}
 }
 
