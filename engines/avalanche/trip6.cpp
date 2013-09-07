@@ -171,7 +171,7 @@ void triptype::appear(int16 wx, int16 wy, byte wf) {
 }
 
 bool triptype::collision_check() {
-	for (byte fv = 0; fv < _tr->numtr; fv++)
+	for (byte fv = 0; fv < _tr->kSpriteNumbMax; fv++)
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
 			((x + _info._xLength) > _tr->tr[fv].x) &&
 			(x < (_tr->tr[fv].x + _tr->tr[fv]._info._xLength)) &&
@@ -326,14 +326,14 @@ void triptype::speed(int8 xx, int8 yy) {
 	if (ix == 0) {
 		// No horz movement
 		if (iy < 0)
-			turn(_tr->up);
+			turn(_tr->kDirUp);
 		else
-			turn(_tr->down);
+			turn(_tr->kDirDown);
 	} else {
 		if (ix < 0)
-			turn(_tr->left);
+			turn(_tr->kDirLeft);
 		else
-			turn(_tr->right);
+			turn(_tr->kDirRight);
 	}
 }
 
@@ -461,14 +461,14 @@ Trip::Trip(AvalancheEngine *vm) {
 }
 
 Trip::~Trip() {
-	for (byte i = 0; i < numtr; i++) {
+	for (byte i = 0; i < kSpriteNumbMax; i++) {
 		if (tr[i].quick)
 			tr[i].done();
 	}
 }
 
 void Trip::loadtrip() {
-	for (int16 gm = 0; gm < numtr; gm++)
+	for (int16 gm = 0; gm < kSpriteNumbMax; gm++)
 		tr[gm].original();
 
 	for (uint16 i = 0; i < sizeof(aa); i++)
@@ -883,7 +883,7 @@ void Trip::call_special(uint16 which) {
 		break;
 	case 4: // This is the ghost room link.
 		_vm->_lucerna->dusk();
-		tr[0].turn(right); // you'll see this after we get back from bootstrap
+		tr[0].turn(kDirRight); // you'll see this after we get back from bootstrap
 		_vm->_timeout->set_up_timer(1, _vm->_timeout->procghost_room_phew, _vm->_timeout->reason_ghost_room_phew);
 		_vm->_enid->backToBootstrap(3);
 		break;
@@ -909,7 +909,7 @@ void Trip::call_special(uint16 which) {
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		tr[0].ix = 3;
 		tr[0].iy = 0;
-		tr[0].face = right;
+		tr[0].face = kDirRight;
 		_vm->_timeout->set_up_timer(1, _vm->_timeout->procfall_down_oubliette, _vm->_timeout->reason_falling_down_oubliette);
 		break;
 	case 7: // _vm->_gyro->special 7: stop falling down oubliette.
@@ -925,7 +925,7 @@ void Trip::call_special(uint16 which) {
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
 		if ((_vm->_gyro->_dna._geidaFollows) && (!_vm->_gyro->_dna._lustieIsAsleep)) {
 			_vm->_visa->dixi('q', 63);
-			tr[1].turn(down);
+			tr[1].turn(kDirDown);
 			tr[1].stopwalk();
 			tr[1].call_eachstep = false; // Geida
 			_vm->_lucerna->gameover();
@@ -1046,7 +1046,7 @@ void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
 				return;
 			} else {
 				apped(1, 6);
-				tr[0].face = right; // added by TT 12/3/1995
+				tr[0].face = kDirRight; // added by TT 12/3/1995
 				_vm->_sequence->first_show(8);
 				_vm->_sequence->then_show(9);
 			}
@@ -1092,28 +1092,28 @@ void Trip::newspeed() {
 
 void Trip::rwsp(byte t, byte dir) {
 	switch (dir) {
-	case up:
+	case kDirUp:
 		tr[t].speed(0, -tr[t].ys);
 		break;
-	case down:
+	case kDirDown:
 		tr[t].speed(0, tr[t].ys);
 		break;
-	case left:
+	case kDirLeft:
 		tr[t].speed(-tr[t].xs,  0);
 		break;
-	case right:
+	case kDirRight:
 		tr[t].speed(tr[t].xs,  0);
 		break;
-	case ul:
+	case kDirUpLeft:
 		tr[t].speed(-tr[t].xs, -tr[t].ys);
 		break;
-	case ur:
+	case kDirUpRight:
 		tr[t].speed(tr[t].xs, -tr[t].ys);
 		break;
-	case dl:
+	case kDirDownLeft:
 		tr[t].speed(-tr[t].xs, tr[t].ys);
 		break;
-	case dr:
+	case kDirDownRight:
 		tr[t].speed(tr[t].xs, tr[t].ys);
 		break;
 	}
@@ -1160,7 +1160,7 @@ void Trip::getback() {
 
 // Eachstep procedures:
 void Trip::follow_avvy_y(byte tripnum) {
-	if (tr[0].face == left)
+	if (tr[0].face == kDirLeft)
 		return;
 	if (tr[tripnum].homing)
 		tr[tripnum].hy = tr[1].y;
@@ -1182,7 +1182,7 @@ void Trip::follow_avvy_y(byte tripnum) {
 
 void Trip::back_and_forth(byte tripnum) {
 	if (!tr[tripnum].homing) {
-		if (tr[tripnum].face == right)
+		if (tr[tripnum].face == kDirRight)
 			tr[tripnum].walkto(4);
 		else
 			tr[tripnum].walkto(5);
@@ -1192,9 +1192,9 @@ void Trip::back_and_forth(byte tripnum) {
 void Trip::face_avvy(byte tripnum) {
 	if (!tr[tripnum].homing) {
 		if (tr[0].x >= tr[tripnum].x)
-			tr[tripnum].face = right;
+			tr[tripnum].face = kDirRight;
 		else
-			tr[tripnum].face = left;
+			tr[tripnum].face = kDirLeft;
 	}
 }
 
@@ -1258,7 +1258,7 @@ void Trip::grab_avvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
 	int16 toy = tr[0].y - 1;
 	if ((tr[tripnum].x == tox) && (tr[tripnum].y == toy)) {
 		tr[tripnum].call_eachstep = false;
-		tr[tripnum].face = left;
+		tr[tripnum].face = kDirLeft;
 		tr[tripnum].stopwalk();
 		// ... whatever ...
 	} else {
@@ -1310,14 +1310,14 @@ void Trip::geida_procs(byte tripnum) {
 
 	if (tr[tripnum].y < (tr[0].y - 2)) {
 		// Geida is further from the screen than Avvy.
-		spin(down, tripnum);
+		spin(kDirDown, tripnum);
 		tr[tripnum].iy = 1;
 		tr[tripnum].ix = 0;
 		take_a_step(tripnum);
 		return;
 	} else if (tr[tripnum].y > (tr[0].y + 2)) {
 		// Avvy is further from the screen than Geida.
-		spin(up, tripnum);
+		spin(kDirUp, tripnum);
 		tr[tripnum].iy = -1;
 		tr[tripnum].ix = 0;
 		take_a_step(tripnum);
@@ -1329,11 +1329,11 @@ void Trip::geida_procs(byte tripnum) {
 	// Now the NPC which is following Avvy won't block his way and will walk next to him properly.
 	if (tr[tripnum].x < tr[0].x - tr[0].xs * 8 - 12) {
 		tr[tripnum].ix = tr[0].xs;
-		spin(right, tripnum);
+		spin(kDirRight, tripnum);
 		take_a_step(tripnum);
 	} else if (tr[tripnum].x > tr[0].x + tr[0].xs * 8 + 12) {
 		tr[tripnum].ix = -tr[0].xs;
-		spin(left, tripnum);
+		spin(kDirLeft, tripnum);
 		take_a_step(tripnum);
 	} else
 		tr[tripnum].ix = 0;
@@ -1349,7 +1349,7 @@ void Trip::call_andexors() {
 	for (int i = 0; i < 5; i++)
 		order[i] = -1;
 
-	for (fv = 0; fv < numtr; fv++) {
+	for (fv = 0; fv < kSpriteNumbMax; fv++) {
 		if (tr[fv].quick && tr[fv].visible)
 			order[fv] = fv;
 	}
@@ -1382,14 +1382,14 @@ void Trip::trippancy_link() {
 
 	if (_vm->_gyro->_dropdownActive | _vm->_gyro->_onToolbar | _vm->_gyro->_seeScroll)
 		return;
-	for (fv = 0; fv < numtr; fv++) {
+	for (fv = 0; fv < kSpriteNumbMax; fv++) {
 		if (tr[fv].quick && tr[fv].visible)
 			tr[fv].walk();
 	}
 
 	call_andexors();
 
-	for (fv = 0; fv < numtr; fv++) {
+	for (fv = 0; fv < kSpriteNumbMax; fv++) {
 		if (tr[fv].quick && tr[fv].call_eachstep) {
 			switch (tr[fv].eachstep) {
 			case procfollow_avvy_y :
@@ -1424,7 +1424,7 @@ void Trip::trippancy_link() {
 void Trip::get_back_loretta() {
 	byte fv;
 
-	for (fv = 0; fv < numtr; fv++) {
+	for (fv = 0; fv < kSpriteNumbMax; fv++) {
 		if (tr[fv].quick) {
 			getback();
 			return;
@@ -1435,7 +1435,7 @@ void Trip::get_back_loretta() {
 
 void Trip::stopwalking() {
 	tr[0].stopwalk();
-	_vm->_gyro->_dna._direction = stopped;
+	_vm->_gyro->_dna._direction = kDirStopped;
 	if (_vm->_gyro->_alive)
 		tr[0].step = 1;
 }
@@ -1504,7 +1504,7 @@ void Trip::fliproom(byte room, byte ped) {
 	getsetclear();
 
 
-	for (fv = 1; fv < numtr; fv++) {
+	for (fv = 1; fv < kSpriteNumbMax; fv++) {
 		if (tr[fv].quick)
 			tr[fv].done();
 	} // Deallocate sprite
@@ -1570,57 +1570,57 @@ void Trip::handleMoveKey(const Common::Event &event) {
 	else {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
-			if (_vm->_gyro->_dna._direction != up) {
-				_vm->_gyro->_dna._direction = up;
+			if (_vm->_gyro->_dna._direction != kDirUp) {
+				_vm->_gyro->_dna._direction = kDirUp;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();
 			break;
 		case Common::KEYCODE_DOWN:
-			if (_vm->_gyro->_dna._direction != down) {
-				_vm->_gyro->_dna._direction = down;
+			if (_vm->_gyro->_dna._direction != kDirDown) {
+				_vm->_gyro->_dna._direction = kDirDown;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();
 			break;
 		case Common::KEYCODE_LEFT:
-			if (_vm->_gyro->_dna._direction != left) {
-				_vm->_gyro->_dna._direction = left;
+			if (_vm->_gyro->_dna._direction != kDirLeft) {
+				_vm->_gyro->_dna._direction = kDirLeft;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();
 			break;
 		case Common::KEYCODE_RIGHT:
-			if (_vm->_gyro->_dna._direction != right) {
-				_vm->_gyro->_dna._direction = right;
+			if (_vm->_gyro->_dna._direction != kDirRight) {
+				_vm->_gyro->_dna._direction = kDirRight;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();
 			break;
 		case Common::KEYCODE_PAGEUP:
-			if (_vm->_gyro->_dna._direction != ur) {
-				_vm->_gyro->_dna._direction = ur;
+			if (_vm->_gyro->_dna._direction != kDirUpRight) {
+				_vm->_gyro->_dna._direction = kDirUpRight;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();
 			break;
 		case Common::KEYCODE_PAGEDOWN:
-			if (_vm->_gyro->_dna._direction != dr) {
-				_vm->_gyro->_dna._direction = dr;
+			if (_vm->_gyro->_dna._direction != kDirDownRight) {
+				_vm->_gyro->_dna._direction = kDirDownRight;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();
 			break;
 		case Common::KEYCODE_END:
-			if (_vm->_gyro->_dna._direction != dl) {
-				_vm->_gyro->_dna._direction = dl;
+			if (_vm->_gyro->_dna._direction != kDirDownLeft) {
+				_vm->_gyro->_dna._direction = kDirDownLeft;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();
 			break;
 		case Common::KEYCODE_HOME:
-			if (_vm->_gyro->_dna._direction != ul) {
-				_vm->_gyro->_dna._direction = ul;
+			if (_vm->_gyro->_dna._direction != kDirUpLeft) {
+				_vm->_gyro->_dna._direction = kDirUpLeft;
 				rwsp(0, _vm->_gyro->_dna._direction);
 			} else
 				stopwalking();

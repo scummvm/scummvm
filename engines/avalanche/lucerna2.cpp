@@ -466,7 +466,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 				} else {
 					// You've been here before.
 					_vm->_trip->apped(2, 4); // He's standing in your way straight away...
-					_vm->_trip->tr[1].face = _vm->_trip->left;
+					_vm->_trip->tr[1].face = _vm->_trip->kDirLeft;
 				}
 			}
 		}
@@ -535,7 +535,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			default: { // You've answered SOME of his questions.
 				_vm->_trip->tr[1].init(9, false, _vm->_trip);
 				_vm->_trip->apped(2, 3);
-				_vm->_trip->tr[1].face = _vm->_trip->right;
+				_vm->_trip->tr[1].face = _vm->_trip->kDirRight;
 				_vm->_timeout->set_up_timer(3, _vm->_timeout->proccardiff_return, _vm->_timeout->reason_cardiffsurvey);
 			}
 			}
@@ -954,26 +954,26 @@ void Lucerna::mouseway(const Common::Point &cursorPos) {
 
 	switch (col) {
 	case kColorGreen: {
-			_vm->_gyro->_dna._direction = _vm->_trip->up;
-			_vm->_trip->rwsp(0, _vm->_trip->up);
+			_vm->_gyro->_dna._direction = _vm->_trip->kDirUp;
+			_vm->_trip->rwsp(0, _vm->_trip->kDirUp);
 			showrw();
 		}
 		break;
 	case kColorBrown: {
-			_vm->_gyro->_dna._direction = _vm->_trip->down;
-			_vm->_trip->rwsp(0, _vm->_trip->down);
+			_vm->_gyro->_dna._direction = _vm->_trip->kDirDown;
+			_vm->_trip->rwsp(0, _vm->_trip->kDirDown);
 			showrw();
 		}
 		break;
 	case kColorCyan: {
-			_vm->_gyro->_dna._direction = _vm->_trip->left;
-			_vm->_trip->rwsp(0, _vm->_trip->left);
+			_vm->_gyro->_dna._direction = _vm->_trip->kDirLeft;
+			_vm->_trip->rwsp(0, _vm->_trip->kDirLeft);
 			showrw();
 		}
 		break;
 	case kColorLightmagenta: {
-			_vm->_gyro->_dna._direction = _vm->_trip->right;
-			_vm->_trip->rwsp(0, _vm->_trip->right);
+			_vm->_gyro->_dna._direction = _vm->_trip->kDirRight;
+			_vm->_trip->rwsp(0, _vm->_trip->kDirRight);
 			showrw();
 		}
 		break;
@@ -1032,28 +1032,28 @@ void Lucerna::verte(Common::Point cursorPos) {
 		_vm->_trip->stopwalking();
 		break; // Clicked on Avvy: no movement.
 	case 1:
-		_vm->_trip->rwsp(0, _vm->_trip->left);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirLeft);
 		break;
 	case 2:
-		_vm->_trip->rwsp(0, _vm->_trip->right);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirRight);
 		break;
 	case 3:
-		_vm->_trip->rwsp(0, _vm->_trip->up);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirUp);
 		break;
 	case 4:
-		_vm->_trip->rwsp(0, _vm->_trip->ul);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirUpLeft);
 		break;
 	case 5:
-		_vm->_trip->rwsp(0, _vm->_trip->ur);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirUpRight);
 		break;
 	case 6:
-		_vm->_trip->rwsp(0, _vm->_trip->down);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirDown);
 		break;
 	case 7:
-		_vm->_trip->rwsp(0, _vm->_trip->dl);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirDownLeft);
 		break;
 	case 8:
-		_vm->_trip->rwsp(0, _vm->_trip->dr);
+		_vm->_trip->rwsp(0, _vm->_trip->kDirDownRight);
 		break;
 	}    // No other values are possible.
 

@@ -140,17 +140,17 @@ public:
 	friend class triptype;
 	friend class getsettype;
 
-	static const int16 up = 0;
-	static const int16 right = 1;
-	static const int16 down = 2;
-	static const int16 left = 3;
-	static const int16 ur = 4;
-	static const int16 dr = 5;
-	static const int16 dl = 6;
-	static const int16 ul = 7;
-	static const int16 stopped = 8;
+	static const int16 kDirUp = 0;
+	static const int16 kDirRight = 1;
+	static const int16 kDirDown = 2;
+	static const int16 kDirLeft = 3;
+	static const int16 kDirUpRight = 4;
+	static const int16 kDirDownRight = 5;
+	static const int16 kDirDownLeft = 6;
+	static const int16 kDirUpLeft = 7;
+	static const int16 kDirStopped = 8;
 
-	static const int16 numtr = 5; // current max no. of sprites
+	static const int16 kSpriteNumbMax = 5; // current max no. of sprites
 
 	static const int16 procfollow_avvy_y = 1;
 	static const int16 procback_and_forth = 2;
@@ -183,7 +183,7 @@ public:
 	void take_a_step(byte &tripnum);
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
 
-	triptype tr[numtr];
+	triptype tr[kSpriteNumbMax];
 	getsettype getset[2];
 	byte aa[1600];
 

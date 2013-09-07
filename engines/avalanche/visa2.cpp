@@ -260,7 +260,7 @@ void Visa::talkto(byte whom) {
 		whom -= 149;
 
 	no_matches = true;
-	for (fv = 0; fv <= _vm->_trip->numtr; fv++)
+	for (fv = 0; fv <= _vm->_trip->kSpriteNumbMax; fv++)
 		if (_vm->_trip->tr[fv].a.accinum == whom) {
 			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + (fv + 49) + _vm->_scrolls->kControlToBuffer);
 			no_matches = false;
