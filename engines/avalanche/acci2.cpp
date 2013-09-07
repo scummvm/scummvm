@@ -1255,10 +1255,10 @@ void Acci::playHarp() {
 
 void Acci::winSequence() {
 	_vm->_visa->dixi('q', 78);
-	_vm->_sequence->first_show(7);
-	_vm->_sequence->then_show(8);
-	_vm->_sequence->then_show(9);
-	_vm->_sequence->start_to_close();
+	_vm->_sequence->firstShow(7);
+	_vm->_sequence->thenShow(8);
+	_vm->_sequence->thenShow(9);
+	_vm->_sequence->startToClose();
 	_vm->_timeout->set_up_timer(30, _vm->_timeout->procwinning, _vm->_timeout->reason_winning);
 }
 

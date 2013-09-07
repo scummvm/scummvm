@@ -37,33 +37,24 @@ class AvalancheEngine;
 
 class Sequence {
 public:
-	static const int16 now_flip = 177;
+	static const int16 kNowFlip = 177;
+	static const int16 kSeqLength = 10;
 
-	static const int16 seq_length = 10;
-
-
-
-	byte seq[seq_length];
-
+	byte _seq[kSeqLength];
 
 	Sequence(AvalancheEngine *vm);
 
-	void first_show(byte what);
-
-	void then_show(byte what);
-
-	void then_flip(byte where, byte ped);
-
-	void start_to_close();
-
-	void start_to_open();
-
-	void call_sequencer();
+	void firstShow(byte what);
+	void thenShow(byte what);
+	void thenFlip(byte where, byte ped);
+	void startToClose();
+	void startToOpen();
+	void callSequencer();
 
 private:
 	AvalancheEngine *_vm;
 
-	void shove_left();
+	void shoveLeft(); // This PROC is called by Timeout when it's time to do another frame.
 };
 
 } // End of namespace Avalanche.

@@ -143,7 +143,7 @@ void Timeout::one_tick() {
 					jump();
 					break;
 				case procsequence:
-					_vm->_sequence->call_sequencer();
+					_vm->_sequence->callSequencer();
 					break;
 				case proccrapulus_splud_out:
 					crapulus_says_splud_out();
@@ -421,8 +421,8 @@ void Timeout::naughty_duke() { // This is when the Duke comes in and takes your 
 
 	// Let's get the door opening.
 	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
-	_vm->_sequence->first_show(2);
-	_vm->_sequence->start_to_close();
+	_vm->_sequence->firstShow(2);
+	_vm->_sequence->startToClose();
 
 	set_up_timer(50, procnaughty_duke2, reason_naughty_duke);
 }
@@ -436,8 +436,8 @@ void Timeout::naughty_duke2() {
 
 void Timeout::naughty_duke3() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
-	_vm->_sequence->first_show(2);
-	_vm->_sequence->start_to_close();
+	_vm->_sequence->firstShow(2);
+	_vm->_sequence->startToClose();
 }
 
 void Timeout::jump() {
@@ -665,9 +665,9 @@ void Timeout::give_lute_to_geida() { // Moved here from Acci.
 	_vm->_visa->dixi('Q', 86);
 	_vm->_lucerna->incScore(4);
 	_vm->_gyro->_dna._lustieIsAsleep = true;
-	_vm->_sequence->first_show(5);
-	_vm->_sequence->then_show(6); // He falls asleep...
-	_vm->_sequence->start_to_close(); // Not really closing, but we're using the same procedure.
+	_vm->_sequence->firstShow(5);
+	_vm->_sequence->thenShow(6); // He falls asleep...
+	_vm->_sequence->startToClose(); // Not really closing, but we're using the same procedure.
 }
 
 } // End of namespace Avalanche.

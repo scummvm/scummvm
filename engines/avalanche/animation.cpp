@@ -1012,53 +1012,53 @@ void Animation::openDoor(byte whither, byte ped, byte magicnum) {
 	case r__outsideyours:
 	case r__outsidenottspub:
 	case r__outsideducks:
-		_vm->_sequence->first_show(1);
-		_vm->_sequence->then_show(2);
-		_vm->_sequence->then_show(3);
+		_vm->_sequence->firstShow(1);
+		_vm->_sequence->thenShow(2);
+		_vm->_sequence->thenShow(3);
 		break;
 	case r__insidecardiffcastle:
-		_vm->_sequence->first_show(1);
-		_vm->_sequence->then_show(5);
+		_vm->_sequence->firstShow(1);
+		_vm->_sequence->thenShow(5);
 		break;
 	case r__avvysgarden:
 	case r__entrancehall:
 	case r__insideabbey:
 	case r__yourhall:
-		_vm->_sequence->first_show(1);
-		_vm->_sequence->then_show(2);
+		_vm->_sequence->firstShow(1);
+		_vm->_sequence->thenShow(2);
 		break;
 	case r__musicroom:
 	case r__outsideargentpub:
-		_vm->_sequence->first_show(5);
-		_vm->_sequence->then_show(6);
+		_vm->_sequence->firstShow(5);
+		_vm->_sequence->thenShow(6);
 		break;
 	case r__lusties:
 		switch (magicnum) {
 		case 14:
 			if (_vm->_gyro->_dna._avvysInTheCupboard) {
 				hideInCupboard();
-				_vm->_sequence->first_show(8);
-				_vm->_sequence->then_show(7);
-				_vm->_sequence->start_to_close();
+				_vm->_sequence->firstShow(8);
+				_vm->_sequence->thenShow(7);
+				_vm->_sequence->startToClose();
 				return;
 			} else {
 				apped(1, 6);
 				tr[0]._facingDir = kDirRight; // added by TT 12/3/1995
-				_vm->_sequence->first_show(8);
-				_vm->_sequence->then_show(9);
+				_vm->_sequence->firstShow(8);
+				_vm->_sequence->thenShow(9);
 			}
 			break;
 		case 12:
-			_vm->_sequence->first_show(4);
-			_vm->_sequence->then_show(5);
-			_vm->_sequence->then_show(6);
+			_vm->_sequence->firstShow(4);
+			_vm->_sequence->thenShow(5);
+			_vm->_sequence->thenShow(6);
 			break;
 		}
 		break;
 	}
 
-	_vm->_sequence->then_flip(whither, ped);
-	_vm->_sequence->start_to_open();
+	_vm->_sequence->thenFlip(whither, ped);
+	_vm->_sequence->startToOpen();
 }
 
 void Animation::newspeed() {
@@ -1463,9 +1463,9 @@ void Animation::hideInCupboard() {
 			apped(1, 3); // Walk out of the cupboard.
 			_vm->_scrolls->displayText("You leave the cupboard. Nice to be out of there!");
 			_vm->_gyro->_dna._avvysInTheCupboard = false;
-			_vm->_sequence->first_show(8);
-			_vm->_sequence->then_show(7);
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->firstShow(8);
+			_vm->_sequence->thenShow(7);
+			_vm->_sequence->startToClose();
 		}
 	} else {
 		// Not hiding in the cupboard

@@ -341,7 +341,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	}
 
 	//blockwrite(f, seq, sizeof(seq)); // Sequencer information.
-	sz.syncBytes(_sequence->seq, _sequence->seq_length);
+	sz.syncBytes(_sequence->_seq, _sequence->kSeqLength);
 }
 
 bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!

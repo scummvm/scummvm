@@ -43,70 +43,66 @@ Sequence::Sequence(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-void Sequence::first_show(byte what) {
+void Sequence::firstShow(byte what) {
 	// First, we need to blank out the entire array.
-	for (uint i = 0; i < sizeof(seq); i++)
-		seq[i] = 0;
+	for (uint i = 0; i < sizeof(_seq); i++)
+		_seq[i] = 0;
 
-	// Then it's just the same as then_show.
-	then_show(what);
-
+	// Then it's just the same as thenShow.
+	thenShow(what);
 }
 
-void Sequence::then_show(byte what) {
-	for (int16 fv = 0; fv < seq_length; fv++) {
-		if (seq[fv] == 0) {
-			seq[fv] = what;
+void Sequence::thenShow(byte what) {
+	for (int16 i = 0; i < kSeqLength; i++) {
+		if (_seq[i] == 0) {
+			_seq[i] = what;
 			return;
 		}
 	}
 }
 
-void Sequence::then_flip(byte where, byte ped) {
-	then_show(now_flip);
+void Sequence::thenFlip(byte where, byte ped) {
+	thenShow(kNowFlip);
 
 	_vm->_gyro->_dna._flipToWhere = where;
 	_vm->_gyro->_dna._flipToPed = ped;
 }
 
-void Sequence::start_to_close() {
+void Sequence::startToClose() {
 	_vm->_timeout->lose_timer(_vm->_timeout->reason_sequencer);
 	_vm->_timeout->set_up_timer(7, _vm->_timeout->procsequence, _vm->_timeout->reason_sequencer);
 }
 
-void Sequence::start_to_open() {
+void Sequence::startToOpen() {
 	_vm->_gyro->_dna._userMovesAvvy = false; // They can't move.
 	_vm->_animation->stopWalking(); // And they're not moving now.
-	start_to_close(); // Apart from that, it's the same thing.
+	startToClose(); // Apart from that, it's the same thing.
 }
 
-
-
-// This PROC is called by Timeout when it's time to do another frame.
-void Sequence::shove_left() {
-	memcpy(seq, seq+1, seq_length - 1); // Shift everything to the left.
+void Sequence::shoveLeft() {
+	memcpy(_seq, _seq+1, kSeqLength - 1); // Shift everything to the left.
 }
 
-void Sequence::call_sequencer() {
-	switch (seq[0]) {
+void Sequence::callSequencer() {
+	switch (_seq[0]) {
 	case 0:
 		return; // No more routines.
 		break;
 	case 177: // Flip room.
 		_vm->_gyro->_dna._userMovesAvvy = true;
 		_vm->_animation->fliproom(_vm->_gyro->_dna._flipToWhere, _vm->_gyro->_dna._flipToPed);
-		if (seq[0] == 177)
-			shove_left();
+		if (_seq[0] == 177)
+			shoveLeft();
 		break;
 	}
 
-	if ((seq[0] >= 1) && (seq[0] <= 176)) {
+	if ((_seq[0] >= 1) && (_seq[0] <= 176)) {
 		// Show a frame.
-		_vm->_celer->drawBackgroundSprite(-1, -1, seq[0]);
-		shove_left();
+		_vm->_celer->drawBackgroundSprite(-1, -1, _seq[0]);
+		shoveLeft();
 	}
 
-	start_to_close(); // Make sure this PROC gets called again.
+	startToClose(); // Make sure this PROC gets called again.
 }
 
 } // End of namespace Avalanche.
