@@ -229,7 +229,7 @@ void Timeout::open_drawbridge() {
 	if (_vm->_gyro->_dna._drawbridgeOpen == 4)
 		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing; // You may enter the drawbridge.
 	else
-		set_up_timer(7, procopen_drawbridge, reason_drawbridgefalls);
+		set_up_timer(7, procopen_drawbridge, kReasonDrawbridgeFalls);
 }
 
 void Timeout::avaricius_talks() {
@@ -237,7 +237,7 @@ void Timeout::avaricius_talks() {
 	_vm->_gyro->_dna._avariciusTalk++;
 
 	if (_vm->_gyro->_dna._avariciusTalk < 17)
-		set_up_timer(177, procavaricius_talks, reason_avariciustalks);
+		set_up_timer(177, procavaricius_talks, kReasonAvariciusTalks);
 	else
 		_vm->_lucerna->incScore(3);
 }
@@ -246,7 +246,7 @@ void Timeout::urinate() {
 	_vm->_animation->tr[0].turn(Animation::kDirUp);
 	_vm->_animation->stopWalking();
 	_vm->_lucerna->drawDirection();
-	set_up_timer(14, proctoilet2, reason_gototoilet);
+	set_up_timer(14, proctoilet2, kReasonGoToToilet);
 }
 
 void Timeout::toilet2() {
@@ -255,7 +255,7 @@ void Timeout::toilet2() {
 
 void Timeout::bang() {
 	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "< BANG! >");
-	set_up_timer(30, procbang2, reason_explosion);
+	set_up_timer(30, procbang2, kReasonExplosion);
 }
 
 void Timeout::bang2() {
@@ -282,7 +282,7 @@ void Timeout::cardiff_survey() {
 
 	_vm->_gyro->_interrogation = _vm->_gyro->_dna._cardiffQuestionNum;
 
-	set_up_timer(182, proccardiffsurvey, reason_cardiffsurvey);
+	set_up_timer(182, proccardiffsurvey, kReasonCardiffsurvey);
 }
 
 void Timeout::cardiff_return() {
@@ -303,7 +303,7 @@ void Timeout::get_tied_up() {
 	_vm->_animation->tr[1].stophoming();
 	_vm->_animation->tr[1]._callEachStepFl = true;
 	_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcGrabAvvy;
-	set_up_timer(70, procget_tied_up2, reason_getting_tied_up);
+	set_up_timer(70, procget_tied_up2, kReasonGettingTiedUp);
 }
 
 void Timeout::get_tied_up2() {
@@ -320,7 +320,7 @@ void Timeout::hang_around() {
 	_vm->_animation->apped(1, 2);
 	_vm->_visa->dixi('q', 39);
 	_vm->_animation->tr[0].walkto(7);
-	set_up_timer(55, prochang_around2, reason_hanging_around);
+	set_up_timer(55, prochang_around2, kReasonHangingAround);
 }
 
 void Timeout::hang_around2() {
@@ -332,7 +332,7 @@ void Timeout::hang_around2() {
 	_vm->_animation->tr[0].done();
 	_vm->_animation->tr[1].done(); // Get rid of Robin Hood and Friar Tuck.
 
-	set_up_timer(1, procafter_the_shootemup, reason_hanging_around);
+	set_up_timer(1, procafter_the_shootemup, kReasonHangingAround);
 	// Immediately call the following proc (when you have a chance).
 
 	_vm->_gyro->_dna._tiedUp = false;
@@ -406,10 +406,10 @@ void Timeout::jacques_wakes_up() {
 	case 1:
 	case 2:
 	case 3:
-		set_up_timer(12, procjacques_wakes_up, reason_jacques_waking_up);
+		set_up_timer(12, procjacques_wakes_up, kReasonJacquesWakingUp);
 		break;
 	case 4:
-		set_up_timer(24, procjacques_wakes_up, reason_jacques_waking_up);
+		set_up_timer(24, procjacques_wakes_up, kReasonJacquesWakingUp);
 		break;
 	}
 }
@@ -424,14 +424,14 @@ void Timeout::naughty_duke() { // This is when the Duke comes in and takes your 
 	_vm->_sequence->firstShow(2);
 	_vm->_sequence->startToClose();
 
-	set_up_timer(50, procnaughty_duke2, reason_naughty_duke);
+	set_up_timer(50, procnaughty_duke2, kReasonNaughtyDuke);
 }
 
 void Timeout::naughty_duke2() {
 	_vm->_visa->dixi('q', 48); // "Ha ha, it worked again!"
 	_vm->_animation->tr[1].walkto(1); // Walk to the door.
 	_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
-	set_up_timer(32, procnaughty_duke3, reason_naughty_duke);
+	set_up_timer(32, procnaughty_duke3, kReasonNaughtyDuke);
 }
 
 void Timeout::naughty_duke3() {
@@ -466,7 +466,7 @@ void Timeout::jump() {
 		_vm->_gyro->_dna._userMovesAvvy = true;
 		_vm->_gyro->_dna._jumpStatus = 0;
 	} else { // Still jumping.
-		set_up_timer(1, procjump, reason_jumping);
+		set_up_timer(1, procjump, kReasonJumping);
 	}
 
 	if ((_vm->_gyro->_dna._jumpStatus == 10) // You're at the highest point of your jump.
@@ -532,7 +532,7 @@ void Timeout::fall_down_oubliette() {
 	_vm->_gyro->_magics[8]._operation = _vm->_gyro->kMagicNothing;
 	_vm->_animation->tr[0]._moveY++; // Increments dx/dy!
 	_vm->_animation->tr[0]._y += _vm->_animation->tr[0]._moveY;   // Dowwwn we go...
-	set_up_timer(3, procfall_down_oubliette, reason_falling_down_oubliette);
+	set_up_timer(3, procfall_down_oubliette, kReasonFallingDownOubliette);
 }
 
 void Timeout::meet_avaroid() {
@@ -543,7 +543,7 @@ void Timeout::meet_avaroid() {
 	} else {
 		_vm->_visa->dixi('Q', 60);
 		_vm->_gyro->_dna._metAvaroid = true;
-		set_up_timer(1, procrise_up_oubliette, reason_rising_up_oubliette);
+		set_up_timer(1, procrise_up_oubliette, kReasonRisingUpOubliette);
 
 		_vm->_animation->tr[0]._facingDir = Animation::kDirLeft;
 		_vm->_animation->tr[0]._x = 151;
@@ -559,7 +559,7 @@ void Timeout::rise_up_oubliette() {
 	_vm->_animation->tr[0]._moveY++; // Decrements dx/dy!
 	_vm->_animation->tr[0]._y -= _vm->_animation->tr[0]._moveY; // Uuuupppp we go...
 	if (_vm->_animation->tr[0]._moveY > 0)
-		set_up_timer(3, procrise_up_oubliette, reason_rising_up_oubliette);
+		set_up_timer(3, procrise_up_oubliette, kReasonRisingUpOubliette);
 	else
 		_vm->_gyro->_dna._userMovesAvvy = true;
 }
@@ -570,7 +570,7 @@ void Timeout::robin_hood_and_geida() {
 	_vm->_animation->tr[0].walkto(6);
 	_vm->_animation->tr[1].stopWalk();
 	_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
-	set_up_timer(20, procrobin_hood_and_geida_talk, reason_robin_hood_and_geida);
+	set_up_timer(20, procrobin_hood_and_geida_talk, kReasonRobinHoodAndGeida);
 	_vm->_gyro->_dna._geidaFollows = false;
 }
 
@@ -580,7 +580,7 @@ void Timeout::robin_hood_and_geida_talk() {
 	_vm->_animation->tr[1].walkto(2);
 	_vm->_animation->tr[0]._vanishIfStill = true;
 	_vm->_animation->tr[1]._vanishIfStill = true;
-	set_up_timer(162, procavalot_returns, reason_robin_hood_and_geida);
+	set_up_timer(162, procavalot_returns, kReasonRobinHoodAndGeida);
 }
 
 void Timeout::avalot_returns() {
@@ -595,7 +595,7 @@ void Timeout::avalot_returns() {
 void Timeout::avvy_sit_down() {
 // This is used when you sit down in the pub in Notts. It loops around so that it will happen when Avvy stops walking.
 	if (_vm->_animation->tr[0]._homing)    // Still walking.
-		set_up_timer(1, procavvy_sit_down, reason_sitting_down);
+		set_up_timer(1, procavvy_sit_down, kReasonSittingDown);
 	else {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_gyro->_dna._sittingInPub = true;
@@ -615,7 +615,7 @@ void Timeout::arkata_shouts() {
 
 	_vm->_visa->dixi('q', 76);
 
-	set_up_timer(160, procarkata_shouts, reason_arkata_shouts);
+	set_up_timer(160, procarkata_shouts, kReasonArkataShouts);
 }
 
 void Timeout::winning() {
@@ -638,7 +638,7 @@ void Timeout::winning() {
 void Timeout::avalot_falls() {
 	if (_vm->_animation->tr[0]._stepNum < 5) {
 		_vm->_animation->tr[0]._stepNum++;
-		set_up_timer(3, procavalot_falls, reason_falling_over);
+		set_up_timer(3, procavalot_falls, kReasonFallingOver);
 	} else {
 		Common::String toDisplay;
 		for (byte i = 0; i < 6; i++)
@@ -652,9 +652,9 @@ void Timeout::avalot_falls() {
 
 void Timeout::spludwick_goes_to_cauldron() {
 	if (_vm->_animation->tr[1]._homing)
-		set_up_timer(1, procspludwick_goes_to_cauldron, reason_spludwalk);
+		set_up_timer(1, procspludwick_goes_to_cauldron, kReasonSpludWalk);
 	else
-		set_up_timer(17, procspludwick_leaves_cauldron, reason_spludwalk);
+		set_up_timer(17, procspludwick_leaves_cauldron, kReasonSpludWalk);
 }
 
 void Timeout::spludwick_leaves_cauldron() {
