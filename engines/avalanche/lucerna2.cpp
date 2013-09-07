@@ -835,26 +835,22 @@ void Lucerna::thinkAbout(byte object, bool type) {
 
 	_vm->_gyro->setMousePointerWait();
 
-	switch (type) {
-	case Gyro::kThing:
+	if (type == Gyro::kThing) {
 		if (!file.open("thinks.avd")) {
 			warning("AVALANCHE: Lucerna: File not found: thinks.avd");
 			return;
 		}
-		break;
-	case Gyro::kPerson:
+	} else { // Gyro::kPerson
 		if (!file.open("folk.avd")) {
 			warning("AVALANCHE: Lucerna: File not found: folk.avd");
 			return;
 		}
 
-		object = object - 149;
+		object -= 149;
 		if (object >= 25)
 			object -= 8;
 		if (object == 20)
 			object--; // Last time...
-
-		break;
 	}
 
 	file.seek(object * picSize + 65);
