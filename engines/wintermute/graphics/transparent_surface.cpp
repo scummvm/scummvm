@@ -51,102 +51,6 @@ const int bShiftTarget = 8;//target.format.bShift;
 const int gShiftTarget = 16;//target.format.gShift;
 const int rShiftTarget = 24;//target.format.rShift;
 
-
-void  BlenderAdditive::blendPixel(byte *in, byte *out) {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
-}
-
-void  BlenderNormal::blendPixel(byte *in, byte *out, int colorMod) {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	byte ca = (colorMod >> aShift) & 0xFF;
-	byte cr = (colorMod >> rShift) & 0xFF;
-	byte cg = (colorMod >> gShift) & 0xFF;
-	byte cb = (colorMod >> bShift) & 0xFF;
-
-	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
-}
-
-void  BlenderNormal::blendPixel(byte *in, byte *out) {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
-}
-
-
-void  BlenderAdditive::blendPixel(byte *in, byte *out, int colorMod) {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	byte ca = (colorMod >> aShift) & 0xFF;
-	byte cr = (colorMod >> rShift) & 0xFF;
-	byte cg = (colorMod >> gShift) & 0xFF;
-	byte cb = (colorMod >> bShift) & 0xFF;
-
-	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
-}
-
-void BlenderSubtractive::blendPixel(byte *in, byte *out, int colorMod) {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	byte ca = (colorMod >> aShift) & 0xFF;
-	byte cr = (colorMod >> rShift) & 0xFF;
-	byte cg = (colorMod >> gShift) & 0xFF;
-	byte cb = (colorMod >> bShift) & 0xFF;
-
-	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
-}
-
-
-
-
-
-
-
-
-
-
 void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	byte tempa = *ina;
@@ -330,30 +234,6 @@ void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, by
 	}
 };
 
-void BlenderSubtractive::blendPixel(byte *in, byte *out)  {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
-};
-
-void BlittingTools::blendBinaryFast(byte *in, byte *out) {
-	uint32 pix = *(uint32 *)in;
-	int a = (pix >> aShift) & 0xff;
-
-	if (a == 0) { // Full transparency
-	} else { // Full opacity (Any value not exactly 0 is Opaque here)
-		*(uint32 *)out = pix;
-		out[aIndex] = 0xFF;
-	}
-}
 #if ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
 	int srcW = srcRect.width();
@@ -479,7 +359,6 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-
 void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 
 	byte *in;
@@ -498,6 +377,30 @@ void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, u
 	}
 }
 
+void TransparentSurface::doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+	byte *in;
+	byte *out;
+
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (uint32 j = 0; j < width; j++) {
+			uint32 pix = *(uint32 *)in;
+			int a = (pix >> aShift) & 0xff;
+
+			if (a == 0) { // Full transparency
+			} else { // Full opacity (Any value not exactly 0 is Opaque here)
+				*(uint32 *)out = pix;
+				out[aIndex] = 0xFF;
+			}
+			out += 4;
+			in += inStep;
+		}
+		outo += pitch;
+		ino += inoStep;
+	}
+}
+
 template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint color) {
 
 	byte *in;
@@ -509,7 +412,18 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
-				Blender::blendPixel(in, out);
+
+				byte *outa = &out[aIndex];
+				byte *outr = &out[rIndex];
+				byte *outg = &out[gIndex];
+				byte *outb = &out[bIndex];
+
+				byte *ina = &in[aIndex];
+				byte *inr = &in[rIndex];
+				byte *ing = &in[gIndex];
+				byte *inb = &in[bIndex];
+
+				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
 				in += inStep;
 				out += 4;
 			}
@@ -522,7 +436,23 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
-				Blender::blendPixel(in, out, color);
+
+				byte *outa = &out[aIndex];
+				byte *outr = &out[rIndex];
+				byte *outg = &out[gIndex];
+				byte *outb = &out[bIndex];
+
+				byte *ina = &in[aIndex];
+				byte *inr = &in[rIndex];
+				byte *ing = &in[gIndex];
+				byte *inb = &in[bIndex];
+
+				byte ca = (color >> aShift) & 0xFF;
+				byte cr = (color >> rShift) & 0xFF;
+				byte cg = (color >> gShift) & 0xFF;
+				byte cb = (color >> bShift) & 0xFF;
+
+				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 				in += inStep;
 				out += 4;
 			}
@@ -640,6 +570,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *in, *out;
 
 		if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
+			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+		} else if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
 			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {

@@ -123,7 +123,7 @@ struct TransparentSurface : public Graphics::Surface {
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 private:
 	static void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
-
+	static void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 };
 
 /**
@@ -161,13 +161,6 @@ public:
 	static void blendPixel(byte *in, byte *out);
 	static void blendPixel(byte *in, byte *out, int colorMod);
 };
-
-
-
-class BlittingTools {
-	static void blendBinaryFast(byte *in, byte *out);
-};
-
 
 } // End of namespace Wintermute
 
