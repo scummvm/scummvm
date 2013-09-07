@@ -166,7 +166,7 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (!subRect.isValidRect() || subRect.isEmpty())
 		return;
 
-	renderRectToWorkingWindow((uint16 *)surface.getBasePtr(subRect.left, subRect.top), surface.w, destinationX, destinationY, subRect.width(), subRect.height());
+	copyRectToWorkingWindow((const uint16 *)surface.getBasePtr(subRect.left, subRect.top), destinationX, destinationY, surface.w, subRect.width(), subRect.height());
 }
 
 void RenderManager::renderImageToScreen(const Common::String &fileName, int16 destinationX, int16 destinationY, bool wrap) {
@@ -274,7 +274,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	destination.convertToInPlace(_pixelFormat);
 }
 
-void RenderManager::renderRectToWorkingWindow(uint16 *buffer, int32 imageWidth, int32 destX, int32 destY, int32 width, int32 height) {
+void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height) {
 	uint32 destOffset = 0;
 	uint32 sourceOffset = 0;
 	uint16 *workingWindowBufferPtr = (uint16 *)_workingWindowBuffer.getBasePtr(destX, destY);
