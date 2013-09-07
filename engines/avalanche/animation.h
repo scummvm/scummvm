@@ -119,7 +119,7 @@ public:
 private:
 	Animation *_tr;
 
-	bool collision_check();
+	bool checkCollision();
 	int8 sgn(int16 val);
 };
 
@@ -152,18 +152,18 @@ public:
 
 	static const int16 kSpriteNumbMax = 5; // current max no. of sprites
 
-	static const int16 procfollow_avvy_y = 1;
-	static const int16 procback_and_forth = 2;
-	static const int16 procface_avvy = 3;
-	static const int16 procarrow_procs = 4;
-	static const int16 procspludwick_procs = 5;
-	static const int16 procgrab_avvy = 6;
-	static const int16 procgeida_procs = 7;
+	static const int16 kProcFollowAvvyY = 1;
+	static const int16 kProcBackAndForth = 2;
+	static const int16 kProcFaceAvvy = 3;
+	static const int16 kProcArrow = 4;
+	static const int16 kProcsPludwick = 5; // Unused
+	static const int16 kProcGrabAvvy = 6;
+	static const int16 kProcGeida = 7;
 
 	Animation(AvalancheEngine *vm);
 	~Animation();
 
-	void trippancy_link();
+	void animLink();
 	void get_back_loretta();
 	void loadtrip();
 	void call_special(uint16 which);

@@ -170,13 +170,18 @@ void AnimationType::appear(int16 wx, int16 wy, byte wf) {
 	iy = 0;
 }
 
-bool AnimationType::collision_check() {
-	for (byte fv = 0; fv < _tr->kSpriteNumbMax; fv++)
-		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
-			((_x + _info._xLength) > _tr->tr[fv]._x) &&
-			(_x < (_tr->tr[fv]._x + _tr->tr[fv]._info._xLength)) &&
-			(_tr->tr[fv]._y == _y))
+/**
+ * Check collision
+ * @remarks	Originally called 'collision_check'
+ */
+bool AnimationType::checkCollision() {
+	for (byte i = 0; i < _tr->kSpriteNumbMax; i++) {
+		if (_tr->tr[i].quick && (_tr->tr[i].whichsprite != whichsprite) &&
+			((_x + _info._xLength) > _tr->tr[i]._x) &&
+			(_x < (_tr->tr[i]._x + _tr->tr[i]._info._xLength)) &&
+			(_tr->tr[i]._y == _y))
 				return true;
+	}
 
 	return false;
 }
@@ -207,7 +212,7 @@ void AnimationType::walk() {
 	}
 
 	if (check_me) {
-		if (collision_check()) {
+		if (checkCollision()) {
 			bounce();
 			return;
 		}
@@ -833,7 +838,7 @@ void Animation::catamove(byte ped) {
 			tr[1].init(5, true, this); // ...Load Geida.
 		apped(2, geida_ped(ped));
 		tr[1].call_eachstep = true;
-		tr[1].eachstep = procgeida_procs;
+		tr[1].eachstep = kProcGeida;
 	}
 }
 
@@ -878,7 +883,7 @@ void Animation::call_special(uint16 which) {
 
 			// OK!
 			tr[1].call_eachstep = true;
-			tr[1].eachstep = procarrow_procs;
+			tr[1].eachstep = kProcArrow;
 		}
 		break;
 	case 4: // This is the ghost room link.
@@ -1373,7 +1378,11 @@ void Animation::call_andexors() {
 	}
 }
 
-void Animation::trippancy_link() {
+/**
+ * Animation links
+ * @remarks	Originally called 'trippancy_link'
+ */
+void Animation::animLink() {
 	byte fv;
 
 	if (_vm->_gyro->_dropdownActive | _vm->_gyro->_onToolbar | _vm->_gyro->_seeScroll)
@@ -1388,23 +1397,23 @@ void Animation::trippancy_link() {
 	for (fv = 0; fv < kSpriteNumbMax; fv++) {
 		if (tr[fv].quick && tr[fv].call_eachstep) {
 			switch (tr[fv].eachstep) {
-			case procfollow_avvy_y :
+			case kProcFollowAvvyY :
 				follow_avvy_y(fv);
 				break;
-			case procback_and_forth :
+			case kProcBackAndForth :
 				back_and_forth(fv);
 				break;
-			case procface_avvy :
+			case kProcFaceAvvy :
 				face_avvy(fv);
 				break;
-			case procarrow_procs :
+			case kProcArrow :
 				arrow_procs(fv);
 				break;
 				//    PROCSpludwick_procs : spludwick_procs(fv);
-			case procgrab_avvy :
+			case kProcGrabAvvy :
 				grab_avvy(fv);
 				break;
-			case procgeida_procs :
+			case kProcGeida :
 				geida_procs(fv);
 				break;
 			}

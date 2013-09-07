@@ -475,7 +475,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_lucerna->drawDirection();
 
 	_gyro->_onToolbar = false;
-	_animation->trippancy_link();
+	_animation->animLink();
 
 	_celer->updateBackgroundSprites();
 
