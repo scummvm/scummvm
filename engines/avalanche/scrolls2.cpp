@@ -40,8 +40,6 @@
 #include "common/textconsole.h"
 #include "common/file.h"
 
-//#include "avalanche/joystick2.h" - Will be implemented later, if it will be implemented at all...
-
 namespace Avalanche {
 
 Scrolls::Scrolls(AvalancheEngine *vm) {
@@ -53,12 +51,12 @@ void Scrolls::init() {
 	resetScrollDriver();
 }
 
-void Scrolls::setReadyLight(byte x) {     // Sets "Ready" light to whatever
-	if (_vm->_gyro->_ledStatus == x)
+void Scrolls::setReadyLight(byte state) {     // Sets "Ready" light to whatever
+	if (_vm->_gyro->_ledStatus == state)
 		return; // Already like that!
 
 	byte color = kColorBlack;
-	switch (x) {
+	switch (state) {
 	case 0:
 		color = kColorBlack;
 		break; // Off
@@ -75,14 +73,14 @@ void Scrolls::setReadyLight(byte x) {     // Sets "Ready" light to whatever
 	_vm->_graphics->_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
 
 	CursorMan.showMouse(true);
-	_vm->_gyro->_ledStatus = x;
+	_vm->_gyro->_ledStatus = state;
 }
 
 void Scrolls::easterEgg() {
-	warning("STUB: Scrolls::easteregg()");
+	warning("STUB: Scrolls::easterEgg()");
 }
 
-void Scrolls::say(int16 x, int16 y, Common::String z) { // Fancy FAST screenwriting
+void Scrolls::say(int16 x, int16 y, Common::String z) {
 	FontType itw;
 	byte lz = z.size();
 
@@ -113,8 +111,6 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { // Fancy FAST screenwrit
 	}
 }
 
-// Here are the procedures that Scroll calls. So they must be... $F+*/
-
 void Scrolls::scrollModeNormal() {
 	Common::String egg = Common::String(kControlParagraph) + kControlLeftJustified + kControlNegative + kControlBell + kControlBackspace + "***";
 	Common::String e = "(c) 1994";
@@ -123,8 +119,6 @@ void Scrolls::scrollModeNormal() {
 	_vm->_gyro->_seeScroll = true;
 	CursorMan.showMouse(true);
 	_vm->_gyro->newMouse(4);
-
-
 
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
@@ -142,8 +136,6 @@ void Scrolls::scrollModeNormal() {
 
 	_vm->_graphics->_surface.copyFrom(temp);
 	temp.free();
-
-
 
 #if 0
 	char r;
@@ -187,15 +179,12 @@ void Scrolls::scrollModeNormal() {
 	CursorMan.showMouse(false);
 	_vm->_lucerna->_holdLeftMouse = false; // Used in Lucerna::checkclick().
 
-	warning("STUB: Scrolls::normscroll()");
+	warning("STUB: Scrolls::scrollModeNormal()");
 }
 
 void Scrolls::scrollModeDialogue() {
-	warning("STUB: Scrolls::dialogue()");
+	warning("STUB: Scrolls::scrollModeDialogue()");
 }
-
-
-
 
 void Scrolls::store(byte what, TuneType &played) {
 	memcpy(played + 1, played + 2, sizeof(played) - 1);
@@ -203,12 +192,10 @@ void Scrolls::store(byte what, TuneType &played) {
 }
 
 bool Scrolls::theyMatch(TuneType &played) {
-	byte fv, mistakes;
+	byte mistakes = 0;
 
-	mistakes = 0;
-
-	for (fv = 1; fv <= sizeof(played); fv++) {
-		if (played[fv] != _vm->_gyro->kTune[fv]) {
+	for (byte i = 0; i < sizeof(played); i++) {
+		if (played[i] != _vm->_gyro->kTune[i]) {
 			mistakes += 1;
 		}
 	}
@@ -245,18 +232,16 @@ void Scrolls::scrollModeMusic() {
 #endif
 }
 
-// ThatsAll, so put us back to $F-
-
-void Scrolls::resetScrollDriver() {   // phew
+void Scrolls::resetScrollDriver() {
 	_vm->_gyro->_scrollBells = 0;
 	_currentFont = kFontStyleRoman;
 	_useIcon = 0;
-	_vm->_gyro->_interrogation = 0; // always reset after a scroll comes up.
+	_vm->_gyro->_interrogation = 0; // Always reset after a scroll comes up.
 }
 
 void Scrolls::ringBell() {   // Pussy's in the well. Who put her in? Little...
-	for (byte fv = 0; fv < _vm->_gyro->_scrollBells; fv++)
-		_vm->_lucerna->errorLed(); // ring the bell "x" times
+	for (byte i = 0; i < _vm->_gyro->_scrollBells; i++)
+		_vm->_lucerna->errorLed(); // Ring the bell "x" times.
 }
 
 void Scrolls::dodgem() {
@@ -271,33 +256,32 @@ void Scrolls::unDodgem() {
 }
 
 void Scrolls::getIcon(int16 x, int16 y, byte which) {
-	Common::File f;
-	byte *p;
+	Common::File file;
 
-	if (!f.open("icons.avd")) {
+	if (!file.open("icons.avd")) {
 		warning("AVALANCHE: Scrolls: File not found: icons.avd");
 		return;
 	}
 
 	which--;
-	f.seek(which * 426);
+	file.seek(which * 426);
 
-	p = new byte[426];
-	f.read(p, 426);
+	byte *p = new byte[426];
+	file.read(p, 426);
 
 	//putimage(x, y, p, 0);
-	warning("STUB: Scrolls::geticon()");
+	warning("STUB: Scrolls::getIcon()");
 
 	delete[] p;
-	f.close();
+	file.close();
 }
 
 void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
-	Common::File f;
+	Common::File file;
 
 	Common::String filename;
 	filename = filename.format("%s.avd", fn.c_str());
-	if (!f.open(filename)) {
+	if (!file.open(filename)) {
 		warning("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
 		return;
 	}
@@ -316,30 +300,27 @@ void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	bit = getpixel(0, 0);
 #endif
 
-	warning("STUB: Scrolls::block_drop()");
+	warning("STUB: Scrolls::drawSign()");
 
-	f.close();
+	file.close();
 }
 
-void Scrolls::drawScroll(ScrollsFunctionType gotoit) { // This is one of the oldest procs in the game.
-	byte b;
-	int16 lx, ly, mx, my, ex;
-	bool centre;
-	byte icon_indent = 0;
+void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
+	int16 ex;
 
 	//setvisualpage(cp);
 	//setactivepage(1 - cp);
 	_vm->_gyro->_onCanDoPageSwap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
 
-	lx = 0;
-	ly = (_vm->_gyro->_scrollNum) * 6;
-	for (b = 0; b < _vm->_gyro->_scrollNum; b++) {
-		ex = _vm->_gyro->_scroll[b].size() * 8;
+	int16 lx = 0;
+	int16 ly = (_vm->_gyro->_scrollNum) * 6;
+	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+		ex = _vm->_gyro->_scroll[i].size() * 8;
 		if (lx < ex)
 			lx = ex;
 	}
-	mx = 320;
-	my = 100; // Getmaxx & getmaxy div 2, both.
+	int16 mx = 320;
+	int16 my = 100; // Getmaxx & getmaxy div 2, both.
 	lx = lx / 2;
 	ly -= 2;
 
@@ -380,48 +361,49 @@ void Scrolls::drawScroll(ScrollsFunctionType gotoit) { // This is one of the old
 	mx -= lx;
 	my -= ly + 2;
 
-	centre = false;
+	bool centre = false;
 
+	byte iconIndent = 0;
 	switch (_useIcon) {
 	case 0:
-		icon_indent = 0;
+		iconIndent = 0;
 		break; // No icon.
 	case 34: {
 		drawSign("about", 28, 76, 15);
-		icon_indent = 0;
+		iconIndent = 0;
 		}
 		break;
 	case 35: {
 		drawSign("gameover", 52, 59, 71);
-		icon_indent = 0;
+		iconIndent = 0;
 		}
 		break;
 	}
 
 	if ((1 <= _useIcon) && (_useIcon <= 33)) { // Standard icon.
 		getIcon(mx, my + ly / 2, _useIcon);
-		icon_indent = 53;
+		iconIndent = 53;
 	}
 
 
-	for (b = 0; b < _vm->_gyro->_scrollNum; b++) {
-		if (!_vm->_gyro->_scroll[b].empty())
-			switch (_vm->_gyro->_scroll[b][_vm->_gyro->_scroll[b].size() - 1]) {
+	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+		if (!_vm->_gyro->_scroll[i].empty())
+			switch (_vm->_gyro->_scroll[i][_vm->_gyro->_scroll[i].size() - 1]) {
 			case kControlCenter: {
 				centre = true;
-				_vm->_gyro->_scroll[b].deleteLastChar();
+				_vm->_gyro->_scroll[i].deleteLastChar();
 				}
 				break;
 			case kControlLeftJustified: {
 				centre = false;
-				_vm->_gyro->_scroll[b].deleteLastChar();
+				_vm->_gyro->_scroll[i].deleteLastChar();
 				}
 				break;
 			case kControlQuestion: {
 				//settextjustify(1, 1);
 				_shadowBoxX = mx + lx;
 				_shadowBoxY = my + ly;
-				_vm->_gyro->_scroll[b].setChar(' ', 0);
+				_vm->_gyro->_scroll[i].setChar(' ', 0);
 				// byte groi = *_vm->_graphics->getPixel(0, 0);
 				// inc(diy,14);
 				_vm->_gyro->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
@@ -431,9 +413,9 @@ void Scrolls::drawScroll(ScrollsFunctionType gotoit) { // This is one of the old
 			}
 
 		if (centre)
-			say(320 - _vm->_gyro->_scroll[b].size() * 4 + icon_indent, my, _vm->_gyro->_scroll[b]);
+			say(320 - _vm->_gyro->_scroll[i].size() * 4 + iconIndent, my, _vm->_gyro->_scroll[i]);
 		else
-			say(mx + icon_indent, my, _vm->_gyro->_scroll[b]);
+			say(mx + iconIndent, my, _vm->_gyro->_scroll[i]);
 
 		my += 12;
 	}
@@ -445,7 +427,7 @@ void Scrolls::drawScroll(ScrollsFunctionType gotoit) { // This is one of the old
 	_vm->_gyro->_dropsOk = false;
 	dodgem();
 
-	(this->*gotoit)();
+	(this->*modeFunc)();
 
 	unDodgem();
 	_vm->_gyro->_dropsOk = true;
@@ -462,12 +444,11 @@ void Scrolls::drawScroll(ScrollsFunctionType gotoit) { // This is one of the old
 	/*if (_vm->_gyro->mpress > 0)
 	_vm->_gyro->after_the_scroll = true;*/
 
-	warning("STUB: Scrolls::drawscroll()");
+	warning("STUB: Scrolls::drawScroll()");
 }
 
-void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
-	int16 xl, yl, my, xw, yw;
-	Common::Point p[3];
+void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
+	Common::Point points[3];
 //	byte *rp1, *rp2; // replace: 1=bubble, 2=pointer
 	int16 xc; // x correction
 
@@ -478,18 +459,18 @@ void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
 
 	CursorMan.showMouse(false);
 
-	xl = 0;
-	yl = _vm->_gyro->_scrollNum * 5;
-	for (byte fv = 0; fv < _vm->_gyro->_scrollNum; fv++) {
-		uint16 textWidth = _vm->_gyro->_scroll[fv].size() * 8;
+	int16 xl = 0;
+	int16 yl = _vm->_gyro->_scrollNum * 5;
+	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+		uint16 textWidth = _vm->_gyro->_scroll[i].size() * 8;
 		if (textWidth > xl)
 			xl = textWidth;
 	}
 	xl = xl / 2;
 
-	xw = xl + 18;
-	yw = yl + 7;
-	my = yw * 2 - 2;
+	int16 xw = xl + 18;
+	int16 yw = yl + 7;
+	int16 my = yw * 2 - 2;
 	xc = 0;
 
 	if ((_vm->_gyro->_talkX - xw) < 0)
@@ -497,12 +478,12 @@ void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
 	if ((_vm->_gyro->_talkX + xw) > 639)
 		xc = 639 - (_vm->_gyro->_talkX + xw);
 
-	p[0].x = _vm->_gyro->_talkX - 10;
-	p[0].y = yw;
-	p[1].x = _vm->_gyro->_talkX + 10;
-	p[1].y = yw;
-	p[2].x = _vm->_gyro->_talkX;
-	p[2].y = _vm->_gyro->_talkY;
+	points[0].x = _vm->_gyro->_talkX - 10;
+	points[0].y = yw;
+	points[1].x = _vm->_gyro->_talkX + 10;
+	points[1].y = yw;
+	points[2].x = _vm->_gyro->_talkX;
+	points[2].y = _vm->_gyro->_talkY;
 
 	// Backup the screen before drawing the bubble.
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
@@ -521,7 +502,7 @@ void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
 	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->_talkX - xw + 10, my - 4, 180, 270, 9, _vm->_gyro->_talkBackgroundColor);
 
 	// "Tail" of the speech bubble.
-	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, p, _vm->_gyro->_talkBackgroundColor);
+	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, points, _vm->_gyro->_talkBackgroundColor);
 
 
 	yl -= 3;
@@ -529,10 +510,10 @@ void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
-	for (byte fv = 0; fv < _vm->_gyro->_scrollNum; fv++) {
-		int16 x = xc + _vm->_gyro->_talkX - _vm->_gyro->_scroll[fv].size() / 2 * 8;
-		bool offset = _vm->_gyro->_scroll[fv].size() % 2;
-		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->_scroll[fv], _vm->_gyro->_font, 8, x - offset * 4, (fv * 10) + 12, _vm->_gyro->_talkFontColor);
+	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+		int16 x = xc + _vm->_gyro->_talkX - _vm->_gyro->_scroll[i].size() / 2 * 8;
+		bool offset = _vm->_gyro->_scroll[i].size() % 2;
+		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->_scroll[i], _vm->_gyro->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_gyro->_talkFontColor);
 	}
 
 	//setvisualpage(1 - cp);
@@ -542,7 +523,7 @@ void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
 	_vm->_gyro->_dropsOk = false;
 
 	// This does the actual drawing to the screen.
-	(this->*gotoit)();
+	(this->*modeFunc)();
 
 	CursorMan.showMouse(false);
 	_vm->_gyro->_dropsOk = true;
@@ -556,15 +537,15 @@ void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
 }
 
 bool Scrolls::displayQuestion(Common::String question) {
-	warning("STUB: Scrolls::ask()");
+	warning("STUB: Scrolls::displayQuestion()");
 	return true;
 }
 
 void Scrolls::resetScroll() {
 	_vm->_gyro->_scrollNum = 1;
-	for (int j = 0; j < 15; j++)
-		if (!_vm->_gyro->_scroll[j].empty())
-			_vm->_gyro->_scroll[j].clear();
+	for (int i = 0; i < 15; i++)
+		if (!_vm->_gyro->_scroll[i].empty())
+			_vm->_gyro->_scroll[i].clear();
 }
 
 void Scrolls::setBubbleStateNatural() {
@@ -575,31 +556,28 @@ void Scrolls::setBubbleStateNatural() {
 }
 
 Common::String Scrolls::displayMoney() {
-	Common::String x;
+	Common::String result;
 
 	if (_vm->_gyro->_dna._money < 12) { // just pence
-		x = _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + 'd';
+		result = _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + 'd';
 	} else if (_vm->_gyro->_dna._money < 240) { // shillings & pence
-		x = _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 12) + '/';
+		result = _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 12) + '/';
 		if ((_vm->_gyro->_dna._money % 12) == 0)
-			x = x + '-';
+			result = result + '-';
 		else
-			x = x + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
+			result = result + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
 	} else // L, s & d
-		x = Common::String('\x9C') + _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 240) + '.' + _vm->_gyro->intToStr((_vm->_gyro->_dna._money / 12) % 20)
+		result = Common::String('\x9C') + _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 240) + '.' + _vm->_gyro->intToStr((_vm->_gyro->_dna._money / 12) % 20)
 			+ '.' + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
 	if (_vm->_gyro->_dna._money > 12)
-		x = x + " (that's " + _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + "d)";
+		result = result + " (that's " + _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + "d)";
 
-	return x;
+	return result;
 }
 
-
-
-
-void Scrolls::stripTrailingSpaces(Common::String &q) {
-	while (q[q.size() - 1] == ' ') {
-		q.deleteLastChar();
+void Scrolls::stripTrailingSpaces(Common::String &str) {
+	while (str[str.size() - 1] == ' ') {
+		str.deleteLastChar();
 	}
 }
 
@@ -617,10 +595,6 @@ void Scrolls::solidify(byte n) {
 }
 
 void Scrolls::callScrollDriver() {
-	uint16 fv;
-	byte nn;
-	bool mouthnext;
-	bool call_spriterun; // Only call sprite_run the FIRST time.
 //	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
 
 
@@ -629,8 +603,8 @@ void Scrolls::callScrollDriver() {
 
 	setReadyLight(0);
 	_vm->_gyro->_scReturn = false;
-	mouthnext = false;
-	call_spriterun = true;
+	bool mouthnext = false;
+	bool call_spriterun = true; // Only call sprite_run the FIRST time.
 
 	switch (_vm->_gyro->_buffer[_vm->_gyro->_bufSize - 1]) {
 	case kControlToBuffer:
@@ -647,18 +621,18 @@ void Scrolls::callScrollDriver() {
 
 	uint16 size = _vm->_gyro->_bufSize;
 
-	for (fv = 0; fv < size; fv++) {
+	for (uint16 i = 0; i < size; i++) {
 		if (mouthnext) {
-			if (_vm->_gyro->_buffer[fv] == kControlRegister)
+			if (_vm->_gyro->_buffer[i] == kControlRegister)
 				_param = 0;
-			else if (('0' <= _vm->_gyro->_buffer[fv]) && (_vm->_gyro->_buffer[fv] <= '9'))
-				_param = _vm->_gyro->_buffer[fv] - 48;
-			else if (('A' <= _vm->_gyro->_buffer[fv]) && (_vm->_gyro->_buffer[fv] <= 'Z'))
-				_param = _vm->_gyro->_buffer[fv] - 55;
+			else if (('0' <= _vm->_gyro->_buffer[i]) && (_vm->_gyro->_buffer[i] <= '9'))
+				_param = _vm->_gyro->_buffer[i] - 48;
+			else if (('A' <= _vm->_gyro->_buffer[i]) && (_vm->_gyro->_buffer[i] <= 'Z'))
+				_param = _vm->_gyro->_buffer[i] - 55;
 
 			mouthnext = false;
 		} else {
-			switch (_vm->_gyro->_buffer[fv]) {
+			switch (_vm->_gyro->_buffer[i]) {
 			case kControlParagraph: {
 				if ((_vm->_gyro->_scrollNum == 1) && (_vm->_gyro->_scroll[0].empty()))
 					break;
@@ -757,12 +731,9 @@ void Scrolls::callScrollDriver() {
 					}
 					break;
 				case 11:
-					nn = 1;
-					for (byte nnn = 0; nnn < kObjectNum; nnn++) {
-						if (_vm->_gyro->_dna._objects[nnn]) {
-							nn++;
-							displayText(_vm->_gyro->getItem(nnn) + ", " + kControlToBuffer);
-						}
+					for (byte j = 0; j < kObjectNum; j++) {
+						if (_vm->_gyro->_dna._objects[j]) 
+							displayText(_vm->_gyro->getItem(j) + ", " + kControlToBuffer);
 					}
 					break;
 				}
@@ -790,7 +761,7 @@ void Scrolls::callScrollDriver() {
 				mouthnext = true;
 				break;
 			case kControlInsertSpaces:
-				for (nn = 0; nn < 9; nn++)
+				for (byte j = 0; j < 9; j++)
 					_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += ' ';
 				break;
 			default: { // Add new char.
@@ -798,45 +769,45 @@ void Scrolls::callScrollDriver() {
 					solidify(_vm->_gyro->_scrollNum - 1);
 					_vm->_gyro->_scrollNum++;
 				}
-				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += _vm->_gyro->_buffer[fv];
+				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += _vm->_gyro->_buffer[i];
 				}
 			}
 		}
 	}
 }
 
-void Scrolls::displayText(Common::String z) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
-	_vm->_gyro->_bufSize = z.size();
-	memcpy(_vm->_gyro->_buffer, z.c_str(), _vm->_gyro->_bufSize);
+void Scrolls::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
+	_vm->_gyro->_bufSize = text.size();
+	memcpy(_vm->_gyro->_buffer, text.c_str(), _vm->_gyro->_bufSize);
 	callScrollDriver();
 }
 
 void Scrolls::loadFont() {
-	Common::File f;
+	Common::File file;
 
-	if (!f.open("avalot.fnt")) {
+	if (!file.open("avalot.fnt")) {
 		warning("AVALANCHE: Scrolls: File not found: avalot.fnt");
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(_scrollFonts[0][i], 16);
-	f.close();
+		file.read(_scrollFonts[0][i], 16);
+	file.close();
 
-	if (!f.open("avitalic.fnt")) {
+	if (!file.open("avitalic.fnt")) {
 		warning("AVALANCHE: Scrolls: File not found: avitalic.fnt");
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(_scrollFonts[1][i], 16);
-	f.close();
+		file.read(_scrollFonts[1][i], 16);
+	file.close();
 
-	if (!f.open("ttsmall.fnt")) {
+	if (!file.open("ttsmall.fnt")) {
 		warning("AVALANCHE: Scrolls: File not found: ttsmall.fnt");
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(_vm->_gyro->_font[i],16);
-	f.close();
+		file.read(_vm->_gyro->_font[i],16);
+	file.close();
 }
 
 void Scrolls::musicalScroll() {

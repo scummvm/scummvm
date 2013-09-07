@@ -599,7 +599,7 @@ void Acci::parse() {
 	}
 
 	if ((!_unknown.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
-			_vm->_scrolls->displayText(Common::String("Sorry, but I have no idea kWhat \"") + _unknown + "\" means. Can you rephrase it?");
+			_vm->_scrolls->displayText(Common::String("Sorry, but I have no idea what \"") + _unknown + "\" means. Can you rephrase it?");
 			_vm->_gyro->_weirdWord = true;
 	} else
 		_vm->_gyro->_weirdWord = false;
@@ -1548,7 +1548,7 @@ void Acci::doThat() {
 			switch (_thing) {
 			case Gyro::kObjectChastity:
 				// \? are used to avoid that ??! is parsed as a trigraph
-				_vm->_scrolls->displayText("Hey, kWhat kind of a weirdo are you\?\?!");
+				_vm->_scrolls->displayText("Hey, what kind of a weirdo are you\?\?!");
 				break;
 			case Gyro::kObjectClothes:
 			case Gyro::kObjectHabit: { // Change this!
@@ -1934,7 +1934,7 @@ void Acci::doThat() {
 				_vm->_visa->dixi('U', 5); // You WHAT?
 			}
 		} else if ((150 <= _person) && (_person <= 174))
-			_vm->_scrolls->displayText("Hey, kWhat kind of a weirdo are you??");
+			_vm->_scrolls->displayText("Hey, what kind of a weirdo are you??");
 
 		break;
 	case kVerbCodeClimb:
@@ -2002,7 +2002,7 @@ void Acci::doThat() {
 		}
 		break;
 	case kPardon:
-		_vm->_scrolls->displayText("Hey, a _verb would be helpful!");
+		_vm->_scrolls->displayText("Hey, a verb would be helpful!");
 		break;
 	case kVerbCodeHello:
 		personSpeaks();
