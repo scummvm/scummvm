@@ -120,7 +120,7 @@ void BlittingTools::blendPixelSubtractive(byte *in, byte *out, int colorMod) {
 		byte cg = (colorMod >> gIndex) & 0xFF;
 		byte cb = (colorMod >> bIndex) & 0xFF;
 
-		blendPixelAdditive(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
+		blendPixelSubtractive(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
 }
 
 void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
@@ -429,60 +429,26 @@ void TransparentSurface::doBlitColormod(byte *ino, byte *outo, uint32 width, uin
 	byte *in;
 	byte *out;
 
-	int ca = (color >> 24) & 0xff;
-	int cr = (color >> 16) & 0xff;
-	int cg = (color >> 8) & 0xff;
-	int cb = (color >> 0) & 0xff;
-
+	void (*fp)(byte *in, byte *out, int color);      // Function pointer
 
 	if (blendMode == BLEND_ADDITIVE) {
-
-		// Additive blending.
-		for (int i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (int j = 0; j < width; j++) {
-				in += inStep;
-				BlittingTools::blendPixelAdditive(in, out, color);
-				out += 4;
-			}
-			outo += pitch;
-			ino += inoStep;
-		}
-
-
-
+		fp = BlittingTools::blendPixelAdditive;
 	} else if (blendMode == BLEND_SUBTRACTIVE) {
-
-		// Subtractive blending.
-
-		for (int i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (int j = 0; j < width; j++) {
-				// here
-			}
-			outo += pitch;
-			ino += inoStep;
-		}
-
+		fp = BlittingTools::blendPixelSubtractive;
 	} else {
+		fp = fp = BlittingTools::blendPixelNormal;
+	}
 
-		assert(blendMode == BLEND_NORMAL);
-
-		for (int i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (int j = 0; j < width; j++) {
-				in += inStep;
-				BlittingTools::blendPixelNormal(in, out, color);
-				out += 4;
-			}
-			outo += pitch;
-			ino += inoStep;
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (uint32 j = 0; j < width; j++) {
+			fp(in, out, color);
+			in += inStep;
+			out += 4;
 		}
-
-		// End normal blending
+		outo += pitch;
+		ino += inoStep;
 	}
 }
 
