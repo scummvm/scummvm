@@ -168,7 +168,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:attenuate*", true)) {
 			// TODO: Implement ActionAttenuate
 		} else if (line.matchString("*:assign*", true)) {
-			// TODO: Implement ActionAssign
+			actionList.push_back(new ActionAssign(line));
 		} else if (line.matchString("*:change_location*", true)) {
 			actionList.push_back(new ActionChangeLocation(line));
 		} else if (line.matchString("*:crossfade*", true)) {
