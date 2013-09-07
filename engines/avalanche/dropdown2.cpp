@@ -33,7 +33,7 @@
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/acci2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 #include "avalanche/enid2.h"
 
 #include "common/textconsole.h"
@@ -245,7 +245,7 @@ void MenuBar::draw() {
 		_menuItems[i].draw();
 
 	for (byte page = 0; page <= 1; page++)
-		_dr->_vm->_trip->getset[page].remember(menuspace);
+		_dr->_vm->_animation->getset[page].remember(menuspace);
 
 	_dr->_vm->_gyro->_cp = savecp;
 }
@@ -455,12 +455,12 @@ void Dropdown::setupMenuAction() {
 		_activeMenuItem.setupOption(f5Does, f5Does[0], "f5", true);
 	_activeMenuItem.setupOption("Pause game", 'P', "f6", true);
 	if (_vm->_gyro->_dna._room == 99)
-		_activeMenuItem.setupOption("Journey thither", 'J', "f7", _vm->_trip->neardoor());
+		_activeMenuItem.setupOption("Journey thither", 'J', "f7", _vm->_animation->neardoor());
 	else
-		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_trip->neardoor());
+		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->neardoor());
 	_activeMenuItem.setupOption("Look around", 'L', "f8", true);
 	_activeMenuItem.setupOption("Inventory", 'I', "Tab", true);
-	if (_vm->_trip->tr[0].xs == _vm->_gyro->kWalk)
+	if (_vm->_animation->tr[0].xs == _vm->_gyro->kWalk)
 		_activeMenuItem.setupOption("Run fast", 'R', "^R", true);
 	else
 		_activeMenuItem.setupOption("Walk slowly", 'W', "^W", true);
@@ -630,11 +630,11 @@ void Dropdown::runMenuAction() {
 		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeInv);
 		break;
 	case 5: {
-		if (_vm->_trip->tr[0].xs == _vm->_gyro->kWalk)
-			_vm->_trip->tr[0].xs = _vm->_gyro->kRun;
+		if (_vm->_animation->tr[0].xs == _vm->_gyro->kWalk)
+			_vm->_animation->tr[0].xs = _vm->_gyro->kRun;
 		else
-			_vm->_trip->tr[0].xs = _vm->_gyro->kWalk;
-		_vm->_trip->newspeed();
+			_vm->_animation->tr[0].xs = _vm->_gyro->kWalk;
+		_vm->_animation->newspeed();
 	}
 	break;
 	}

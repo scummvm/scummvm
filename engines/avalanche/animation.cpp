@@ -29,7 +29,7 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/visa2.h"
@@ -45,7 +45,7 @@
 
 namespace Avalanche {
 
-void triptype::init(byte spritenum, bool do_check, Trip *tr) {
+void AnimationType::init(byte spritenum, bool do_check, Animation *tr) {
 	_tr = tr;
 
 	const int32 idshould = -1317732048;
@@ -74,33 +74,33 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 
 	inf.skip(2); // Replace variable named 'soa' in the original code.
 
-	if (!a.name.empty())
-		a.name.clear();
+	if (!_stat._name.empty())
+		_stat._name.clear();
 	byte nameSize = inf.readByte();
 	for (byte i = 0; i < nameSize; i++)
-		a.name += inf.readByte();
+		_stat._name += inf.readByte();
 	inf.skip(12 - nameSize);
 
 	//inf.skip(1); // Same as above.
 	byte commentSize = inf.readByte();
 	for (byte i = 0; i < commentSize; i++)
-		a.comment += inf.readByte();
+		_stat._comment += inf.readByte();
 	inf.skip(16 - commentSize);
 
-	a.num = inf.readByte();
+	_stat._frameNum = inf.readByte();
 	_info._xLength = inf.readByte();
 	_info._yLength = inf.readByte();
-	a.seq = inf.readByte();
+	_stat.seq = inf.readByte();
 	_info._size = inf.readUint16LE();
-	a.fgc = inf.readByte();
-	a.bgc = inf.readByte();
-	a.accinum = inf.readByte();
+	_stat._fgBubbleCol = inf.readByte();
+	_stat._bgBubbleCol = inf.readByte();
+	_stat.accinum = inf.readByte();
 
 	totalnum = 0; // = 1;
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
 		_info._xWidth++;
-	for (byte aa = 0; aa < /*nds*seq*/a.num; aa++) {
+	for (byte aa = 0; aa < _stat._frameNum; aa++) {
 
 		_info._sil[totalnum] = new SilType[11 * (_info._yLength + 1)];
 		//getmem(sil[totalnum-1], 11 * (a.yl + 1));
@@ -117,10 +117,10 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	totalnum++;
 
 	// on;
-	x = 0;
-	y = 0;
+	_x = 0;
+	_y = 0;
 	quick = true;
-	visible = false;
+	_visible = false;
 	xs = 3;
 	ys = 1;
 	if (spritenum == 1)
@@ -139,71 +139,71 @@ void triptype::init(byte spritenum, bool do_check, Trip *tr) {
 	inf.close();
 }
 
-void triptype::original() {
+void AnimationType::original() {
 	quick = false;
 	whichsprite = 177;
 }
 
-void triptype::andexor() {
+void AnimationType::andexor() {
 	if ((vanishifstill) && (ix == 0) && (iy == 0))
 		return;
-	byte picnum = face * a.seq + step; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
+	byte picnum = face * _stat.seq + step; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
 
-	_tr->_vm->_graphics->drawSprite(_info, picnum, x, y);
+	_tr->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
 }
 
-void triptype::turn(byte whichway) {
+void AnimationType::turn(byte whichway) {
 	if (whichway == 8)
-		face = 0;
+		face = Animation::kDirUp;
 	else
 		face = whichway;
 }
 
-void triptype::appear(int16 wx, int16 wy, byte wf) {
-	x = (wx / 8) * 8;
-	y = wy;
-	ox[_tr->_vm->_gyro->_cp] = wx;
-	oy[_tr->_vm->_gyro->_cp] = wy;
+void AnimationType::appear(int16 wx, int16 wy, byte wf) {
+	_x = (wx / 8) * 8;
+	_y = wy;
+	_oldX[_tr->_vm->_gyro->_cp] = wx;
+	_oldY[_tr->_vm->_gyro->_cp] = wy;
 	turn(wf);
-	visible = true;
+	_visible = true;
 	ix = 0;
 	iy = 0;
 }
 
-bool triptype::collision_check() {
+bool AnimationType::collision_check() {
 	for (byte fv = 0; fv < _tr->kSpriteNumbMax; fv++)
 		if (_tr->tr[fv].quick && (_tr->tr[fv].whichsprite != whichsprite) &&
-			((x + _info._xLength) > _tr->tr[fv].x) &&
-			(x < (_tr->tr[fv].x + _tr->tr[fv]._info._xLength)) &&
-			(_tr->tr[fv].y == y))
+			((_x + _info._xLength) > _tr->tr[fv]._x) &&
+			(_x < (_tr->tr[fv]._x + _tr->tr[fv]._info._xLength)) &&
+			(_tr->tr[fv]._y == _y))
 				return true;
 
 	return false;
 }
 
-void triptype::walk() {
+void AnimationType::walk() {
 	byte tc;
 	ByteField r;
 
 
-	if (visible) {
-		r._x1 = (x / 8) - 1;
+	if (_visible) {
+		r._x1 = (_x / 8) - 1;
 		if (r._x1 == 255)
 			r._x1 = 0;
-		r._y1 = y - 2;
-		r._x2 = ((x + _info._xLength) / 8) + 1;
-		r._y2 = y + _info._yLength + 2;
+		r._y1 = _y - 2;
+		r._x2 = ((_x + _info._xLength) / 8) + 1;
+		r._y2 = _y + _info._yLength + 2;
 
 		_tr->getset[1 - _tr->_vm->_gyro->_cp].remember(r);
 	}
 
 	if (!_tr->_vm->_gyro->_doingSpriteRun) {
-		ox[_tr->_vm->_gyro->_cp] = x;
-		oy[_tr->_vm->_gyro->_cp] = y;
+		_oldX[_tr->_vm->_gyro->_cp] = _x;
+		_oldY[_tr->_vm->_gyro->_cp] = _y;
 		if (homing)
 			homestep();
-		x = x + ix;
-		y = y + iy;
+		_x = _x + ix;
+		_y = _y + iy;
 	}
 
 	if (check_me) {
@@ -212,7 +212,7 @@ void triptype::walk() {
 			return;
 		}
 
-		tc = _tr->checkfeet(x, x + _info._xLength, oy[_tr->_vm->_gyro->_cp], y, _info._yLength) - 1;
+		tc = _tr->checkfeet(_x, _x + _info._xLength, _oldY[_tr->_vm->_gyro->_cp], _y, _info._yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
 		if ((tc != 255) & (!_tr->_vm->_gyro->_doingSpriteRun)) {
@@ -248,16 +248,16 @@ void triptype::walk() {
 		count++;
 		if (((ix != 0) || (iy != 0)) && (count > 1)) {
 			step++;
-			if (step == a.seq)
+			if (step == _stat.seq)
 				step = 0;
 			count = 0;
 		}
 	}
 }
 
-void triptype::bounce() {
-	x = ox[_tr->_vm->_gyro->_cp];
-	y = oy[_tr->_vm->_gyro->_cp];
+void AnimationType::bounce() {
+	_x = _oldX[_tr->_vm->_gyro->_cp];
+	_y = _oldY[_tr->_vm->_gyro->_cp];
 	if (check_me)
 		_tr->stopwalking();
 	else
@@ -267,7 +267,7 @@ void triptype::bounce() {
 	_tr->_vm->_gyro->_onCanDoPageSwap = true;
 }
 
-int8 triptype::sgn(int16 val) {
+int8 AnimationType::sgn(int16 val) {
 	if (val > 0)
 		return 1;
 	else if (val < 0)
@@ -276,30 +276,30 @@ int8 triptype::sgn(int16 val) {
 		return 0;
 }
 
-void triptype::walkto(byte pednum) {
+void AnimationType::walkto(byte pednum) {
 	pednum--; // Pascal -> C conversion: different array indexes.
-	speed(sgn(_tr->_vm->_gyro->_peds[pednum]._x - x) * 4, sgn(_tr->_vm->_gyro->_peds[pednum]._y - y));
+	speed(sgn(_tr->_vm->_gyro->_peds[pednum]._x - _x) * 4, sgn(_tr->_vm->_gyro->_peds[pednum]._y - _y));
 	hx = _tr->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
 	hy = _tr->_vm->_gyro->_peds[pednum]._y - _info._yLength;
 	homing = true;
 }
 
-void triptype::stophoming() {
+void AnimationType::stophoming() {
 	homing = false;
 }
 
-void triptype::homestep() {
+void AnimationType::homestep() {
 	int16 temp;
 
-	if ((hx == x) && (hy == y)) {
+	if ((hx == _x) && (hy == _y)) {
 		// touching the target
 		stopwalk();
 		return;
 	}
 	ix = 0;
 	iy = 0;
-	if (hy != y) {
-		temp = hy - y;
+	if (hy != _y) {
+		temp = hy - _y;
 		if (temp > 4)
 			iy = 4;
 		else if (temp < -4)
@@ -307,8 +307,8 @@ void triptype::homestep() {
 		else
 			iy = temp;
 	}
-	if (hx != x) {
-		temp = hx - x;
+	if (hx != _x) {
+		temp = hx - _x;
 		if (temp > 4)
 			ix = 4;
 		else if (temp < -4)
@@ -318,7 +318,7 @@ void triptype::homestep() {
 	}
 }
 
-void triptype::speed(int8 xx, int8 yy) {
+void AnimationType::speed(int8 xx, int8 yy) {
 	ix = xx;
 	iy = yy;
 	if ((ix == 0) && (iy == 0))
@@ -337,28 +337,28 @@ void triptype::speed(int8 xx, int8 yy) {
 	}
 }
 
-void triptype::stopwalk() {
+void AnimationType::stopwalk() {
 	ix = 0;
 	iy = 0;
 	homing = false;
 }
 
-void triptype::chatter() {
-	_tr->_vm->_gyro->_talkX = x + _info._xLength / 2;
-	_tr->_vm->_gyro->_talkY = y;
-	_tr->_vm->_gyro->_talkFontColor = a.fgc;
-	_tr->_vm->_gyro->_talkBackgroundColor = a.bgc;
+void AnimationType::chatter() {
+	_tr->_vm->_gyro->_talkX = _x + _info._xLength / 2;
+	_tr->_vm->_gyro->_talkY = _y;
+	_tr->_vm->_gyro->_talkFontColor = _stat._fgBubbleCol;
+	_tr->_vm->_gyro->_talkBackgroundColor = _stat._bgBubbleCol;
 }
 
-void triptype::set_up_saver(trip_saver_type &v) {
+void AnimationType::set_up_saver(trip_saver_type &v) {
 	v.whichsprite = whichsprite;
 	v.face = face;
 	v.step = step;
-	v.x = x;
-	v.y = y;
+	v.x = _x;
+	v.y = _y;
 	v.ix = ix;
 	v.iy = iy;
-	v.visible = visible;
+	v.visible = _visible;
 	v.homing = homing;
 	v.check_me = check_me;
 	v.count = count;
@@ -373,15 +373,15 @@ void triptype::set_up_saver(trip_saver_type &v) {
 	v.vanishifstill = vanishifstill;
 }
 
-void triptype::unload_saver(trip_saver_type v) {
+void AnimationType::unload_saver(trip_saver_type v) {
 	whichsprite = v.whichsprite;
 	face = v.face;
 	step = v.step;
-	x = v.x;
-	y = v.y;
+	_x = v.x;
+	_y = v.y;
 	ix = v.ix;
 	iy = v.iy;
-	visible = v.visible;
+	_visible = v.visible;
 	homing = v.homing;
 	check_me = v.check_me;
 	count = v.count;
@@ -396,23 +396,23 @@ void triptype::unload_saver(trip_saver_type v) {
 	vanishifstill = v.vanishifstill;
 }
 
-void triptype::savedata(Common::File &f) {
+void AnimationType::savedata(Common::File &f) {
 	warning("STUB: triptype::savedata()");
 }
 
-void triptype::loaddata(Common::File &f) {
+void AnimationType::loaddata(Common::File &f) {
 	warning("STUB: triptype::loaddata()");
 }
 
-void triptype::save_data_to_mem(uint16 &where) {
+void AnimationType::save_data_to_mem(uint16 &where) {
 	warning("STUB: triptype::save_data_to_mem()");
 }
 
-void triptype::load_data_from_mem(uint16 &where) {
+void AnimationType::load_data_from_mem(uint16 &where) {
 	warning("STUB: triptype::load_data_from_mem()");
 }
 
-triptype *triptype::done() {
+AnimationType *AnimationType::done() {
 	Common::String xx;
 
 	//  nds:=num div seq;
@@ -420,7 +420,7 @@ triptype *triptype::done() {
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
 		_info._xWidth++;
-	for (byte aa = 0; aa < /*nds*seq*/ a.num; aa++) {
+	for (byte aa = 0; aa < _stat._frameNum; aa++) {
 		totalnum--;
 		delete[] _info._mani[totalnum];
 		delete[] _info._sil[totalnum];
@@ -453,21 +453,21 @@ void getsettype::recall(ByteField &r) {
 
 
 
-Trip::Trip(AvalancheEngine *vm) {
+Animation::Animation(AvalancheEngine *vm) {
 	_vm = vm;
 
 	getsetclear();
 	mustexclaim = false;
 }
 
-Trip::~Trip() {
+Animation::~Animation() {
 	for (byte i = 0; i < kSpriteNumbMax; i++) {
 		if (tr[i].quick)
 			tr[i].done();
 	}
 }
 
-void Trip::loadtrip() {
+void Animation::loadtrip() {
 	for (int16 gm = 0; gm < kSpriteNumbMax; gm++)
 		tr[gm].original();
 
@@ -475,7 +475,7 @@ void Trip::loadtrip() {
 		aa[i] = 0;
 }
 
-byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
+byte Animation::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	byte a, c;
 	int16 fv, ff;
 
@@ -509,7 +509,7 @@ byte Trip::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	return a;
 }
 
-byte Trip::geida_ped(byte which) {
+byte Animation::geida_ped(byte which) {
 	switch (which) {
 	case 1:
 		return 7;
@@ -526,7 +526,7 @@ byte Trip::geida_ped(byte which) {
 	}
 }
 
-void Trip::catamove(byte ped) {
+void Animation::catamove(byte ped) {
 /* When you enter a new position in the catacombs, this procedure should
 	be called. It changes the Also codes so that they may match the picture
 	on the screen. (Coming soon: It draws up the screen, too.) */
@@ -840,11 +840,11 @@ void Trip::catamove(byte ped) {
 
 
 // This proc gets called whenever you touch a line defined as _vm->_gyro->special.
-void Trip::dawndelay() {
+void Animation::dawndelay() {
 	_vm->_timeout->set_up_timer(2, _vm->_timeout->procdawn_delay, _vm->_timeout->reason_dawndelay);
 }
 
-void Trip::call_special(uint16 which) {
+void Animation::call_special(uint16 which) {
 	switch (which) {
 	case 1: // _vm->_gyro->special 1: Room 22: top of stairs.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1);
@@ -871,7 +871,7 @@ void Trip::call_special(uint16 which) {
 			_vm->_gyro->_dna._arrowTriggered = true;
 			apped(2, 4); // The dart starts at ped 4, and...
 			tr[1].walkto(5); // flies to ped 5.
-			tr[1].face = 0; // Only face.
+			tr[1].face = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
 			// graphic of the arrow buried in the plaster. */
@@ -913,7 +913,7 @@ void Trip::call_special(uint16 which) {
 		_vm->_timeout->set_up_timer(1, _vm->_timeout->procfall_down_oubliette, _vm->_timeout->reason_falling_down_oubliette);
 		break;
 	case 7: // _vm->_gyro->special 7: stop falling down oubliette.
-		tr[0].visible = false;
+		tr[0]._visible = false;
 		_vm->_gyro->_magics[9]._operation = _vm->_gyro->kMagicNothing;
 		stopwalking();
 		_vm->_timeout->lose_timer(_vm->_timeout->reason_falling_down_oubliette);
@@ -1003,7 +1003,7 @@ void Trip::call_special(uint16 which) {
 
 
 
-void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
+void Animation::open_the_door(byte whither, byte ped, byte magicnum) {
 // This slides the door open. (The data really ought to be saved in
 // the Also file, and will be next time. However, for now, they're
 // here.)
@@ -1060,7 +1060,7 @@ void Trip::open_the_door(byte whither, byte ped, byte magicnum) {
 	_vm->_sequence->start_to_open();
 }
 
-void Trip::newspeed() {
+void Animation::newspeed() {
 	// Given that you've just changed the speed in triptype.xs, this adjusts ix.
 	const ByteField lightspace = {40, 199, 47, 199};
 	byte page_;
@@ -1086,7 +1086,7 @@ void Trip::newspeed() {
 
 }
 
-void Trip::rwsp(byte t, byte dir) {
+void Animation::rwsp(byte t, byte dir) {
 	switch (dir) {
 	case kDirUp:
 		tr[t].speed(0, -tr[t].ys);
@@ -1115,7 +1115,7 @@ void Trip::rwsp(byte t, byte dir) {
 	}
 }
 
-void Trip::apped(byte trn, byte np) {
+void Animation::apped(byte trn, byte np) {
 	trn--;
 	np--;
 	tr[trn].appear(_vm->_gyro->_peds[np]._x - tr[trn]._info._xLength / 2, _vm->_gyro->_peds[np]._y - tr[trn]._info._yLength, _vm->_gyro->_peds[np]._direction);
@@ -1131,7 +1131,7 @@ void Trip::apped(byte trn, byte np) {
 	//x1,x2 - as _vm->_gyro->bytefield, but *8. y1,y2 - as _vm->_gyro->bytefield.
 	//x3,y3 = mx,my. x4,y4 = mx+16,my+16.
 
-void Trip::getback() {
+void Animation::getback() {
 	// Super_Off;
 #if 0
 	while (getset[1 - _vm->_gyro->cp].numleft > 0) {
@@ -1155,28 +1155,28 @@ void Trip::getback() {
 }
 
 // Eachstep procedures:
-void Trip::follow_avvy_y(byte tripnum) {
+void Animation::follow_avvy_y(byte tripnum) {
 	if (tr[0].face == kDirLeft)
 		return;
 	if (tr[tripnum].homing)
-		tr[tripnum].hy = tr[1].y;
+		tr[tripnum].hy = tr[1]._y;
 	else {
-		if (tr[tripnum].y < tr[1].y)
-			tr[tripnum].y += 1;
-		else if (tr[tripnum].y > tr[1].y)
-			tr[tripnum].y -= 1;
+		if (tr[tripnum]._y < tr[1]._y)
+			tr[tripnum]._y += 1;
+		else if (tr[tripnum]._y > tr[1]._y)
+			tr[tripnum]._y -= 1;
 		else
 			return;
 		if (tr[tripnum].ix == 0)  {
 			tr[tripnum].step += 1;
-			if (tr[tripnum].step == tr[tripnum].a.seq)
+			if (tr[tripnum].step == tr[tripnum]._stat.seq)
 				tr[tripnum].step = 0;
 			tr[tripnum].count = 0;
 		}
 	}
 }
 
-void Trip::back_and_forth(byte tripnum) {
+void Animation::back_and_forth(byte tripnum) {
 	if (!tr[tripnum].homing) {
 		if (tr[tripnum].face == kDirRight)
 			tr[tripnum].walkto(4);
@@ -1185,25 +1185,25 @@ void Trip::back_and_forth(byte tripnum) {
 	}
 }
 
-void Trip::face_avvy(byte tripnum) {
+void Animation::face_avvy(byte tripnum) {
 	if (!tr[tripnum].homing) {
-		if (tr[0].x >= tr[tripnum].x)
+		if (tr[0]._x >= tr[tripnum]._x)
 			tr[tripnum].face = kDirRight;
 		else
 			tr[tripnum].face = kDirLeft;
 	}
 }
 
-void Trip::arrow_procs(byte tripnum) {
+void Animation::arrow_procs(byte tripnum) {
 	if (tr[tripnum].homing) {
 		// Arrow is still in flight.
 		// We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if (((tr[tripnum].y + tr[tripnum]._info._yLength) >= tr[0].y) // A
-				&& (tr[tripnum].x <= (tr[0].x + tr[0]._info._xLength)) // B
-				&& ((tr[tripnum].x + tr[tripnum]._info._xLength) >= tr[0].x)) { // C
+		if (((tr[tripnum]._y + tr[tripnum]._info._yLength) >= tr[0]._y) // A
+				&& (tr[tripnum]._x <= (tr[0]._x + tr[0]._info._xLength)) // B
+				&& ((tr[tripnum]._x + tr[tripnum]._info._xLength) >= tr[0]._x)) { // C
 			// OK, it's hit him... what now?
 
 			tr[1].call_eachstep = false; // prevent recursion.
@@ -1249,39 +1249,39 @@ begin
 end;
 #endif
 
-void Trip::grab_avvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
-	int16 tox = tr[0].x + 17;
-	int16 toy = tr[0].y - 1;
-	if ((tr[tripnum].x == tox) && (tr[tripnum].y == toy)) {
+void Animation::grab_avvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
+	int16 tox = tr[0]._x + 17;
+	int16 toy = tr[0]._y - 1;
+	if ((tr[tripnum]._x == tox) && (tr[tripnum]._y == toy)) {
 		tr[tripnum].call_eachstep = false;
 		tr[tripnum].face = kDirLeft;
 		tr[tripnum].stopwalk();
 		// ... whatever ...
 	} else {
 		// Still some way to go.
-		if (tr[tripnum].x < tox) {
-			tr[tripnum].x += 5;
-			if (tr[tripnum].x > tox)
-				tr[tripnum].x = tox;
+		if (tr[tripnum]._x < tox) {
+			tr[tripnum]._x += 5;
+			if (tr[tripnum]._x > tox)
+				tr[tripnum]._x = tox;
 		}
-		if (tr[tripnum].y < toy)
-			tr[tripnum].y++;
+		if (tr[tripnum]._y < toy)
+			tr[tripnum]._y++;
 		tr[tripnum].step++;
-		if (tr[tripnum].step == tr[tripnum].a.seq)
+		if (tr[tripnum].step == tr[tripnum]._stat.seq)
 			tr[tripnum].step = 0;
 	}
 }
 
-void Trip::take_a_step(byte &tripnum) {
+void Animation::take_a_step(byte &tripnum) {
 	if (tr[tripnum].ix == 0) {
 		tr[tripnum].step++;
-		if (tr[tripnum].step == tr[tripnum].a.seq)
+		if (tr[tripnum].step == tr[tripnum]._stat.seq)
 			tr[tripnum].step = 0;
 		tr[tripnum].count = 0;
 	}
 }
 
-void Trip::spin(byte whichway, byte &tripnum) {
+void Animation::spin(byte whichway, byte &tripnum) {
 	if (tr[tripnum].face != whichway) {
 		tr[tripnum].face = whichway;
 		if (tr[tripnum].whichsprite == 2)
@@ -1297,21 +1297,21 @@ void Trip::spin(byte whichway, byte &tripnum) {
 	}
 }
 
-void Trip::geida_procs(byte tripnum) {
+void Animation::geida_procs(byte tripnum) {
 	if (_vm->_gyro->_dna._geidaTime > 0) {
 		_vm->_gyro->_dna._geidaTime--;
 		if (_vm->_gyro->_dna._geidaTime == 0)
 			_vm->_gyro->_dna._geidaSpin = 0;
 	}
 
-	if (tr[tripnum].y < (tr[0].y - 2)) {
+	if (tr[tripnum]._y < (tr[0]._y - 2)) {
 		// Geida is further from the screen than Avvy.
 		spin(kDirDown, tripnum);
 		tr[tripnum].iy = 1;
 		tr[tripnum].ix = 0;
 		take_a_step(tripnum);
 		return;
-	} else if (tr[tripnum].y > (tr[0].y + 2)) {
+	} else if (tr[tripnum]._y > (tr[0]._y + 2)) {
 		// Avvy is further from the screen than Geida.
 		spin(kDirUp, tripnum);
 		tr[tripnum].iy = -1;
@@ -1323,11 +1323,11 @@ void Trip::geida_procs(byte tripnum) {
 	tr[tripnum].iy = 0;
 	// These 12-s are not in the original, I added them to make the following method more "smooth".
 	// Now the NPC which is following Avvy won't block his way and will walk next to him properly.
-	if (tr[tripnum].x < tr[0].x - tr[0].xs * 8 - 12) {
+	if (tr[tripnum]._x < tr[0]._x - tr[0].xs * 8 - 12) {
 		tr[tripnum].ix = tr[0].xs;
 		spin(kDirRight, tripnum);
 		take_a_step(tripnum);
-	} else if (tr[tripnum].x > tr[0].x + tr[0].xs * 8 + 12) {
+	} else if (tr[tripnum]._x > tr[0]._x + tr[0].xs * 8 + 12) {
 		tr[tripnum].ix = -tr[0].xs;
 		spin(kDirLeft, tripnum);
 		take_a_step(tripnum);
@@ -1337,7 +1337,7 @@ void Trip::geida_procs(byte tripnum) {
 
 // That's all...
 
-void Trip::call_andexors() {
+void Animation::call_andexors() {
 	int8 order[5];
 	byte fv, temp;
 	bool ok;
@@ -1346,7 +1346,7 @@ void Trip::call_andexors() {
 		order[i] = -1;
 
 	for (fv = 0; fv < kSpriteNumbMax; fv++) {
-		if (tr[fv].quick && tr[fv].visible)
+		if (tr[fv].quick && tr[fv]._visible)
 			order[fv] = fv;
 	}
 
@@ -1354,7 +1354,7 @@ void Trip::call_andexors() {
 		ok = true;
 		for (fv = 0; fv < 4; fv++) {
 			if (((order[fv] != -1) && (order[fv + 1] != -1))
-					&& (tr[order[fv]].y > tr[order[fv + 1]].y)) {
+					&& (tr[order[fv]]._y > tr[order[fv + 1]]._y)) {
 				// Swap them!
 				temp = order[fv];
 				order[fv] = order[fv + 1];
@@ -1373,13 +1373,13 @@ void Trip::call_andexors() {
 	}
 }
 
-void Trip::trippancy_link() {
+void Animation::trippancy_link() {
 	byte fv;
 
 	if (_vm->_gyro->_dropdownActive | _vm->_gyro->_onToolbar | _vm->_gyro->_seeScroll)
 		return;
 	for (fv = 0; fv < kSpriteNumbMax; fv++) {
-		if (tr[fv].quick && tr[fv].visible)
+		if (tr[fv].quick && tr[fv]._visible)
 			tr[fv].walk();
 	}
 
@@ -1417,7 +1417,7 @@ void Trip::trippancy_link() {
 	}
 }
 
-void Trip::get_back_loretta() {
+void Animation::get_back_loretta() {
 	byte fv;
 
 	for (fv = 0; fv < kSpriteNumbMax; fv++) {
@@ -1429,32 +1429,32 @@ void Trip::get_back_loretta() {
 	// for fv:=0 to 1 do begin cp:=1-cp; getback; end;
 }
 
-void Trip::stopwalking() {
+void Animation::stopwalking() {
 	tr[0].stopwalk();
 	_vm->_gyro->_dna._direction = kDirStopped;
 	if (_vm->_gyro->_alive)
 		tr[0].step = 1;
 }
 
-void Trip::tripkey(char dir) {
+void Animation::tripkey(char dir) {
 	warning("Replaced by Trip::handleMoveKey!");
 }
 
-void Trip::readstick() {
+void Animation::readstick() {
 	warning("STUB: Trip::readstick()");
 }
 
-void Trip::getsetclear() {
+void Animation::getsetclear() {
 	for (byte fv = 0; fv <= 1; fv++)
 		getset[fv].init();
 }
 
-void Trip::hide_in_the_cupboard() {
+void Animation::hide_in_the_cupboard() {
 	if (_vm->_gyro->_dna._avvysInTheCupboard) {
 		if (_vm->_gyro->_dna._wearing == Acci::kNothing)
 			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "AVVY!" + _vm->_scrolls->kControlRoman + "Get dressed first!");
 		else {
-			tr[0].visible = true;
+			tr[0]._visible = true;
 			_vm->_gyro->_dna._userMovesAvvy = true;
 			apped(1, 3); // Walk out of the cupboard.
 			_vm->_scrolls->display("You leave the cupboard. Nice to be out of there!");
@@ -1465,7 +1465,7 @@ void Trip::hide_in_the_cupboard() {
 		}
 	} else {
 		// Not hiding in the cupboard
-		tr[0].visible = false;
+		tr[0]._visible = false;
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		_vm->_scrolls->display(Common::String("You walk into the room...") + _vm->_scrolls->kControlParagraph
 			+ "It seems to be an empty, but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.");
@@ -1474,7 +1474,7 @@ void Trip::hide_in_the_cupboard() {
 	}
 }
 
-void Trip::fliproom(byte room, byte ped) {
+void Animation::fliproom(byte room, byte ped) {
 	byte fv;
 
 	if (!_vm->_gyro->_alive) {
@@ -1525,24 +1525,24 @@ void Trip::fliproom(byte room, byte ped) {
 	//  tidy_after_mouse;
 }
 
-bool Trip::infield(byte which) {
+bool Animation::infield(byte which) {
 	which--; // Pascal -> C: different array indexes.
 
-	int16 yy = tr[0].y + tr[0]._info._yLength;
+	int16 yy = tr[0]._y + tr[0]._info._yLength;
 
-	return (tr[0].x >= _vm->_gyro->_fields[which]._x1) && (tr[0].x <= _vm->_gyro->_fields[which]._x2)
+	return (tr[0]._x >= _vm->_gyro->_fields[which]._x1) && (tr[0]._x <= _vm->_gyro->_fields[which]._x2)
 		&& (yy >= _vm->_gyro->_fields[which]._y1) && (yy <= _vm->_gyro->_fields[which]._y2);
 
 }
 
-bool Trip::neardoor() {
+bool Animation::neardoor() {
 	if (_vm->_gyro->_fieldNum < 8) {
 		// there ARE no doors here!
 		return false;
 	}
 
-	int16 ux = tr[0].x;
-	int16 uy = tr[0].y + tr[0]._info._yLength;
+	int16 ux = tr[0]._x;
+	int16 uy = tr[0]._y + tr[0]._info._yLength;
 	bool nd = false;
 	for (byte fv = 8; fv < _vm->_gyro->_fieldNum; fv++)
 		if ((ux >= _vm->_gyro->_fields[fv]._x1) && (ux <= _vm->_gyro->_fields[fv]._x2)
@@ -1551,13 +1551,11 @@ bool Trip::neardoor() {
 	return nd;
 }
 
-void Trip::new_game_for_trippancy() {   // Called by gyro.newgame
-	tr[0].visible = false;
+void Animation::new_game_for_trippancy() {   // Called by gyro.newgame
+	tr[0]._visible = false;
 }
 
-
-
-void Trip::handleMoveKey(const Common::Event &event) {
+void Animation::handleMoveKey(const Common::Event &event) {
 	if (!_vm->_gyro->_dna._userMovesAvvy)
 		return;
 

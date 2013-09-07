@@ -156,7 +156,7 @@ void Parser::drawCursor() {
 	bf._y1 = 168;
 	bf._y2 = 168;
 	for (byte fv = 0; fv <= 1; fv++)
-		_vm->_trip->getset[fv].remember(bf);
+		_vm->_animation->getset[fv].remember(bf);
 }
 
 void Parser::wipeText() {

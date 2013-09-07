@@ -32,7 +32,7 @@
 #include "avalanche/graphics.h"
 #include "avalanche/avalot.h"
 #include "avalanche/gyro2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/scrolls2.h"
@@ -110,7 +110,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP5:
 		if (_vm->_gyro->_alive && _vm->_gyro->_dna._avvyIsAwake) {
-			_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
+			_vm->_animation->handleMoveKey(event); // Fallthroughs are intended.
 			_vm->_lucerna->drawDirection();
 			return;
 		}
@@ -156,15 +156,15 @@ void Avalot::setup() {
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // Impossible digits.
 
-	_vm->_trip->loadtrip();
+	_vm->_animation->loadtrip();
 
-	_vm->_trip->get_back_loretta();
+	_vm->_animation->get_back_loretta();
 	_vm->_gyro->_holdTheDawn = false;
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
 	_vm->_parser->cursorOn();
-	_vm->_trip->tr[0].xs = _vm->_gyro->kWalk;
-	_vm->_trip->newspeed();
+	_vm->_animation->tr[0].xs = _vm->_gyro->kWalk;
+	_vm->_animation->newspeed();
 
 
 
@@ -201,9 +201,9 @@ void Avalot::run(Common::String arg) {
 		_vm->_lucerna->_clock.update();
 		_vm->_dropdown->updateMenu();
 		_vm->_gyro->forceNumlock();
-		_vm->_trip->get_back_loretta();
+		_vm->_animation->get_back_loretta();
 		_vm->_celer->updateBackgroundSprites();
-		_vm->_trip->trippancy_link();
+		_vm->_animation->trippancy_link();
 		_vm->_lucerna->checkClick();
 		_vm->_timeout->one_tick();
 

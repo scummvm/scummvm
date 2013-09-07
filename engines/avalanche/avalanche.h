@@ -43,7 +43,7 @@
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
 #include "avalanche/timeout2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 #include "avalanche/acci2.h"
 #include "avalanche/dropdown2.h"
 #include "avalanche/closing2.h"
@@ -80,7 +80,7 @@ public:
 	Celer *_celer;
 	Sequence *_sequence;
 	Timeout *_timeout;
-	Trip *_trip;
+	Animation *_animation;
 	Acci *_acci;
 	Dropdown *_dropdown;
 	Closing *_closing;

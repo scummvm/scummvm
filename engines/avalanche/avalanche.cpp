@@ -70,7 +70,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _celer;
 	delete _sequence;
 	delete _timeout;
-	delete _trip;
+	delete _animation;
 	delete _acci;
 	delete _dropdown;
 	delete _closing;
@@ -91,7 +91,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_celer = new Celer(this);
 	_sequence = new Sequence(this);
 	_timeout = new Timeout(this);
-	_trip = new Trip(this);
+	_animation = new Animation(this);
 	_acci = new Acci(this);
 	_dropdown = new Dropdown(this);
 	_closing = new Closing(this);
@@ -282,52 +282,52 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	byte spriteNum = 0;
 	if (sz.isSaving()) {
-		for (byte i = 0; i < _trip->kSpriteNumbMax; i++) {
-			if (_trip->tr[i].quick)
+		for (byte i = 0; i < _animation->kSpriteNumbMax; i++) {
+			if (_animation->tr[i].quick)
 				spriteNum++;
 		}
 	}
 	sz.syncAsByte(spriteNum);
 
 	if (sz.isLoading()) {
-		for (byte i = 0; i < _trip->kSpriteNumbMax; i++) { // Deallocate sprites.
-			if (_trip->tr[i].quick)
-				_trip->tr[i].done();
+		for (byte i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
+			if (_animation->tr[i].quick)
+				_animation->tr[i].done();
 		}
 	}
 
 	for (byte i = 0; i < spriteNum; i++) {
-		sz.syncAsByte(_trip->tr[i].whichsprite);
-		sz.syncAsByte(_trip->tr[i].check_me);
+		sz.syncAsByte(_animation->tr[i].whichsprite);
+		sz.syncAsByte(_animation->tr[i].check_me);
 
 
 		if (sz.isLoading()) {
-			_trip->tr[i].quick = true;
-			_trip->tr[i].init(_trip->tr[i].whichsprite, _trip->tr[i].check_me, _trip);
+			_animation->tr[i].quick = true;
+			_animation->tr[i].init(_animation->tr[i].whichsprite, _animation->tr[i].check_me, _animation);
 		}
 
-		sz.syncAsByte(_trip->tr[i].ix);
-		sz.syncAsByte(_trip->tr[i].iy);
-		sz.syncAsByte(_trip->tr[i].face);
-		sz.syncAsByte(_trip->tr[i].step);
-		sz.syncAsByte(_trip->tr[i].visible);
-		sz.syncAsByte(_trip->tr[i].homing);
-		sz.syncAsByte(_trip->tr[i].count);
-		sz.syncAsByte(_trip->tr[i]._info._xWidth);
-		sz.syncAsByte(_trip->tr[i].xs);
-		sz.syncAsByte(_trip->tr[i].ys);
-		sz.syncAsByte(_trip->tr[i].totalnum);
-		sz.syncAsSint16LE(_trip->tr[i].hx);
-		sz.syncAsSint16LE(_trip->tr[i].hy);
-		sz.syncAsByte(_trip->tr[i].call_eachstep);
-		sz.syncAsByte(_trip->tr[i].eachstep);
-		sz.syncAsByte(_trip->tr[i].vanishifstill);
+		sz.syncAsByte(_animation->tr[i].ix);
+		sz.syncAsByte(_animation->tr[i].iy);
+		sz.syncAsByte(_animation->tr[i].face);
+		sz.syncAsByte(_animation->tr[i].step);
+		sz.syncAsByte(_animation->tr[i]._visible);
+		sz.syncAsByte(_animation->tr[i].homing);
+		sz.syncAsByte(_animation->tr[i].count);
+		sz.syncAsByte(_animation->tr[i]._info._xWidth);
+		sz.syncAsByte(_animation->tr[i].xs);
+		sz.syncAsByte(_animation->tr[i].ys);
+		sz.syncAsByte(_animation->tr[i].totalnum);
+		sz.syncAsSint16LE(_animation->tr[i].hx);
+		sz.syncAsSint16LE(_animation->tr[i].hy);
+		sz.syncAsByte(_animation->tr[i].call_eachstep);
+		sz.syncAsByte(_animation->tr[i].eachstep);
+		sz.syncAsByte(_animation->tr[i].vanishifstill);
 
-		sz.syncAsSint16LE(_trip->tr[i].x);
-		sz.syncAsSint16LE(_trip->tr[i].y);
+		sz.syncAsSint16LE(_animation->tr[i]._x);
+		sz.syncAsSint16LE(_animation->tr[i]._y);
 
-		if (sz.isLoading() && _trip->tr[i].visible)
-			_trip->tr[i].appear(_trip->tr[i].x, _trip->tr[i].y, _trip->tr[i].face);
+		if (sz.isLoading() && _animation->tr[i]._visible)
+			_animation->tr[i].appear(_animation->tr[i]._x, _animation->tr[i]._y, _animation->tr[i].face);
 	}
 
 	//groi = 177;
@@ -470,12 +470,12 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_lucerna->refreshObjectList();
 
-	_trip->newspeed();
+	_animation->newspeed();
 
 	_lucerna->drawDirection();
 
 	_gyro->_onToolbar = false;
-	_trip->trippancy_link();
+	_animation->trippancy_link();
 
 	_celer->updateBackgroundSprites();
 
@@ -484,8 +484,8 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		+ _gyro->_roomnName + _scrolls->kControlNewLine + _scrolls->kControlNewLine
 		+ "saved on " + expandDate(t.tm_mday, t.tm_mon, t.tm_year) + '.');
 
-	if (_trip->tr[0].quick && _trip->tr[0].visible)
-		_trip->rwsp(0, _gyro->_dna._direction); // We push Avvy in the right direction is he was moving.
+	if (_animation->tr[0].quick && _animation->tr[0]._visible)
+		_animation->rwsp(0, _gyro->_dna._direction); // We push Avvy in the right direction is he was moving.
 
 	return true;
 }
