@@ -37,36 +37,37 @@ class AvalancheEngine;
 
 class Timeout {
 public:
-	// reason_ now runs between 1 and 28.
-
-	static const int16 reason_drawbridgefalls = 2;
-	static const int16 reason_avariciustalks = 3;
-	static const int16 reason_gototoilet = 4;
-	static const int16 reason_explosion = 5;
-	static const int16 reason_brummiestairs = 6;
-	static const int16 reason_cardiffsurvey = 7;
-	static const int16 reason_cwytalot_in_herts = 8;
-	static const int16 reason_getting_tied_up = 9;
-	static const int16 reason_hanging_around = 10; // Tied to the tree in Nottingham.
-	static const int16 reason_jacques_waking_up = 11;
-	static const int16 reason_naughty_duke = 12;
-	static const int16 reason_jumping = 13;
-	static const int16 reason_sequencer = 14;
-	static const int16 reason_crapulus_says_spludwick_out = 15;
-	static const int16 reason_dawndelay = 16;
-	static const int16 reason_drinks = 17;
-	static const int16 reason_du_lustie_talks = 18;
-	static const int16 reason_falling_down_oubliette = 19;
-	static const int16 reason_meeting_avaroid = 20;
-	static const int16 reason_rising_up_oubliette = 21;
-	static const int16 reason_robin_hood_and_geida = 22;
-	static const int16 reason_sitting_down = 23;
-	static const int16 reason_ghost_room_phew = 1;
-	static const int16 reason_arkata_shouts = 24;
-	static const int16 reason_winning = 25;
-	static const int16 reason_falling_over = 26;
-	static const int16 reason_spludwalk = 27;
-	static const int16 reason_geida_sings = 28;
+	// Reason runs between 1 and 28.
+	enum Reason {
+		kReasonDrawbridgeFalls = 2,
+		kReasonAvariciusTalks = 3,
+		kReasonGoToToilet = 4,
+		kReasonExplosion = 5,
+		kReasonBrummieStairs = 6,
+		kReasonCardiffsurvey = 7,
+		kReasonCwytalotInHerts = 8,
+		kReasonGettingTiedUp = 9,
+		kReasonHangingAround = 10, // Tied to the tree in Nottingham.
+		kReasonJacquesWakingUp = 11,
+		kReasonNaughtyDuke = 12,
+		kReasonJumping = 13,
+		kReasonSequencer = 14,
+		kReasonCrapulusSaysSpludwickOut = 15,
+		kReasonDawndelay = 16,
+		kReasonDrinks = 17,
+		kReasonDuLustieTalks = 18,
+		kReasonFallingDownOubliette = 19,
+		kReasonMeetingAvaroid = 20,
+		kReasonRisingUpOubliette = 21,
+		kReasonRobinHoodAndGeida = 22,
+		kReasonSittingDown = 23,
+		kReasonGhostRoomPhew = 1,
+		kReasonArkataShouts = 24,
+		kReasonWinning = 25,
+		kReasonFallingOver = 26,
+		kReasonSpludWalk = 27,
+		kReasonGeidaSings = 28
+	};
 
 	// procx now runs between 1 and 41.
 
