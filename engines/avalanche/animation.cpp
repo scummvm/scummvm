@@ -126,7 +126,7 @@ void AnimationType::init(byte spritenum, bool do_check, Animation *tr) {
 	if (spritenum == 1)
 		_tr->newspeed(); // Just for the lights.
 
-	homing = false;
+	_homing = false;
 	ix = 0;
 	iy = 0;
 	step = 0;
@@ -205,7 +205,7 @@ void AnimationType::walk() {
 	if (!_tr->_vm->_gyro->_doingSpriteRun) {
 		_oldX[_tr->_vm->_gyro->_cp] = _x;
 		_oldY[_tr->_vm->_gyro->_cp] = _y;
-		if (homing)
+		if (_homing)
 			homestep();
 		_x = _x + ix;
 		_y = _y + iy;
@@ -284,27 +284,27 @@ int8 AnimationType::sgn(int16 val) {
 void AnimationType::walkto(byte pednum) {
 	pednum--; // Pascal -> C conversion: different array indexes.
 	speed(sgn(_tr->_vm->_gyro->_peds[pednum]._x - _x) * 4, sgn(_tr->_vm->_gyro->_peds[pednum]._y - _y));
-	hx = _tr->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
-	hy = _tr->_vm->_gyro->_peds[pednum]._y - _info._yLength;
-	homing = true;
+	_homingX = _tr->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
+	_homingY = _tr->_vm->_gyro->_peds[pednum]._y - _info._yLength;
+	_homing = true;
 }
 
 void AnimationType::stophoming() {
-	homing = false;
+	_homing = false;
 }
 
 void AnimationType::homestep() {
 	int16 temp;
 
-	if ((hx == _x) && (hy == _y)) {
+	if ((_homingX == _x) && (_homingY == _y)) {
 		// touching the target
 		stopwalk();
 		return;
 	}
 	ix = 0;
 	iy = 0;
-	if (hy != _y) {
-		temp = hy - _y;
+	if (_homingY != _y) {
+		temp = _homingY - _y;
 		if (temp > 4)
 			iy = 4;
 		else if (temp < -4)
@@ -312,8 +312,8 @@ void AnimationType::homestep() {
 		else
 			iy = temp;
 	}
-	if (hx != _x) {
-		temp = hx - _x;
+	if (_homingX != _x) {
+		temp = _homingX - _x;
 		if (temp > 4)
 			ix = 4;
 		else if (temp < -4)
@@ -345,7 +345,7 @@ void AnimationType::speed(int8 xx, int8 yy) {
 void AnimationType::stopwalk() {
 	ix = 0;
 	iy = 0;
-	homing = false;
+	_homing = false;
 }
 
 void AnimationType::chatter() {
@@ -364,15 +364,15 @@ void AnimationType::set_up_saver(trip_saver_type &v) {
 	v.ix = ix;
 	v.iy = iy;
 	v.visible = _visible;
-	v.homing = homing;
+	v.homing = _homing;
 	v.check_me = check_me;
 	v.count = count;
 	v.xw = _info._xWidth;
 	v.xs = xs;
 	v.ys = ys;
 	v.totalnum = totalnum;
-	v.hx = hx;
-	v.hy = hy;
+	v.hx = _homingX;
+	v.hy = _homingY;
 	v.call_eachstep = call_eachstep;
 	v.eachstep = eachstep;
 	v.vanishifstill = vanishifstill;
@@ -387,15 +387,15 @@ void AnimationType::unload_saver(trip_saver_type v) {
 	ix = v.ix;
 	iy = v.iy;
 	_visible = v.visible;
-	homing = v.homing;
+	_homing = v.homing;
 	check_me = v.check_me;
 	count = v.count;
 	_info._xWidth = v.xw;
 	xs = v.xs;
 	ys = v.ys;
 	totalnum = v.totalnum;
-	hx = v.hx;
-	hy = v.hy;
+	_homingX = v.hx;
+	_homingY = v.hy;
 	call_eachstep = v.call_eachstep;
 	eachstep = v.eachstep;
 	vanishifstill = v.vanishifstill;
@@ -1163,8 +1163,8 @@ void Animation::getback() {
 void Animation::follow_avvy_y(byte tripnum) {
 	if (tr[0].face == kDirLeft)
 		return;
-	if (tr[tripnum].homing)
-		tr[tripnum].hy = tr[1]._y;
+	if (tr[tripnum]._homing)
+		tr[tripnum]._homingY = tr[1]._y;
 	else {
 		if (tr[tripnum]._y < tr[1]._y)
 			tr[tripnum]._y += 1;
@@ -1182,7 +1182,7 @@ void Animation::follow_avvy_y(byte tripnum) {
 }
 
 void Animation::back_and_forth(byte tripnum) {
-	if (!tr[tripnum].homing) {
+	if (!tr[tripnum]._homing) {
 		if (tr[tripnum].face == kDirRight)
 			tr[tripnum].walkto(4);
 		else
@@ -1191,7 +1191,7 @@ void Animation::back_and_forth(byte tripnum) {
 }
 
 void Animation::face_avvy(byte tripnum) {
-	if (!tr[tripnum].homing) {
+	if (!tr[tripnum]._homing) {
 		if (tr[0]._x >= tr[tripnum]._x)
 			tr[tripnum].face = kDirRight;
 		else
@@ -1200,7 +1200,7 @@ void Animation::face_avvy(byte tripnum) {
 }
 
 void Animation::arrow_procs(byte tripnum) {
-	if (tr[tripnum].homing) {
+	if (tr[tripnum]._homing) {
 		// Arrow is still in flight.
 		// We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
