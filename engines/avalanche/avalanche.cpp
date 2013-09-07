@@ -525,10 +525,10 @@ void AvalancheEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			_lucerna->holdLeftMouse = true; // Used in Lucerna::checkclick() and Dropdown::menu_link().
+			_lucerna->_holdLeftMouse = true; // Used in Lucerna::checkclick() and Dropdown::menu_link().
 			break;
 		case Common::EVENT_LBUTTONUP:
-			_lucerna->holdLeftMouse = false; // Same as above.
+			_lucerna->_holdLeftMouse = false; // Same as above.
 			break;
 		case Common::EVENT_KEYDOWN:
 			_avalot->handleKeyDown(event);

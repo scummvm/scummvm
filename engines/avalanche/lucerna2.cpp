@@ -49,7 +49,71 @@
 
 namespace Avalanche {
 
-Lucerna::Lucerna(AvalancheEngine *vm) : _fxHidden(false) {
+const Common::Point Clock::kCenter(510,183);
+
+Clock::Clock(AvalancheEngine *vm) {
+	_vm = vm;
+	_oldHour = _oldHourAngle = _oldMinute = 17717;
+}
+
+void Clock::update() { // TODO: Move variables from Gyro to here (or at least somewhere nearby), rename them.
+	TimeDate t;
+	_vm->_system->getTimeAndDate(t);
+	_hour = t.tm_hour;
+	_minute = t.tm_min;
+	_second = t.tm_sec;
+
+	_hourAngle = (_hour % 12) * 30 + _minute / 2;
+
+	if (_oldHour != _hour)  {
+		plotHands();
+		chime();
+	}
+
+	if (_oldMinute != _minute)
+		plotHands();
+
+	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717))
+		_vm->_scrolls->display(Common::String("Good morning!\n\nYes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!"));
+
+	_oldHour = _hour;
+	_oldHourAngle = _hourAngle;
+	_oldMinute = _minute;
+}
+
+void Clock::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color) {
+	if (angle > 900) {
+		endPoint.x = 177;
+		return;
+	}
+
+	endPoint = _vm->_graphics->drawArc(_vm->_graphics->_surface, kCenter.x, kCenter.y, 449 - angle, 450 - angle, length, color);
+}
+
+void Clock::drawHand(const Common::Point &endPoint, byte color) {
+	if (endPoint.x == 177)
+		return;
+
+	_vm->_graphics->_surface.drawLine(kCenter.x, kCenter.y, endPoint.x, endPoint.y, color);
+}
+
+void Clock::plotHands() {
+	calcHand(_oldHourAngle, 14, _clockHandHour, kColorYellow);
+	calcHand(_oldMinute * 6, 17, _clockHandMinute, kColorYellow);
+	drawHand(_clockHandHour, kColorBrown);
+	drawHand(_clockHandMinute, kColorBrown);
+
+	calcHand(_hourAngle, 14, _clockHandHour, kColorBrown);
+	calcHand(_minute * 6, 17, _clockHandMinute, kColorBrown);
+	drawHand(_clockHandHour, kColorYellow);
+	drawHand(_clockHandMinute, kColorYellow);
+}
+
+void Clock::chime() {
+	warning("STUB: Lucerna::chime()");
+}
+
+Lucerna::Lucerna(AvalancheEngine *vm) : _fxHidden(false), _clock(vm) {
 	_vm = vm;
 }
 
@@ -63,8 +127,6 @@ Lucerna::~Lucerna() {
 }
 
 void Lucerna::init() {
-	_vm->_gyro->_oh = _vm->_gyro->_onh = _vm->_gyro->_om = 17717;
-
 	for (byte i = 0; i < 31; i++)
 		for (byte j = 0; j < 2; j++)
 			_vm->_gyro->_also[i][j] = 0;
@@ -111,9 +173,7 @@ void Lucerna::drawAlsoLines() {
 	CursorMan.showMouse(true);
 }
 
-
-
-// nextstring, scram1 and unscrable are only used in load_also
+// readAlsoStringFromFile, scram and unScramble are only used in loadAlso
 
 Common::String Lucerna::readAlsoStringFromFile() {
 	Common::String str;
@@ -1025,14 +1085,14 @@ void Lucerna::checkClick() {
 	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
 		_vm->_gyro->newMouse(2); // screwdriver
 	else if (!_vm->_gyro->_dropdownActive) { // Dropdown can handle its own pointers.
-		if (holdLeftMouse) {
+		if (_holdLeftMouse) {
 			_vm->_gyro->newMouse(7); // Mark's crosshairs
 			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
 		} else
 			_vm->_gyro->newMouse(4); // fletch
 	}
 
-	if (holdLeftMouse) {
+	if (_holdLeftMouse) {
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_vm->_gyro->_dropsOk)
 				_vm->_dropdown->updateMenu();
@@ -1051,7 +1111,7 @@ void Lucerna::checkClick() {
 			} else if ((208 <= cursorPos.x) && (cursorPos.x <= 260)) { // Examine the _thing.
 				do {
 					_vm->updateEvents();
-				} while (holdLeftMouse);
+				} while (_holdLeftMouse);
 
 				if (_vm->_gyro->_thinkThing) {
 					_vm->_acci->_thing = _vm->_gyro->_thinks;
@@ -1065,7 +1125,7 @@ void Lucerna::checkClick() {
 			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
 				do {
 					_vm->updateEvents();
-				} while (holdLeftMouse);
+				} while (_holdLeftMouse);
 
 				callVerb(_vm->_acci->kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
@@ -1121,62 +1181,6 @@ void Lucerna::drawDirection() { // It's data is loaded in load_digits().
 	CursorMan.showMouse(true);
 }
 
-void Lucerna::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color) {
-	if (angle > 900) {
-		endPoint.x = 177;
-		return;
-	}
-
-	endPoint = _vm->_graphics->drawArc(_vm->_graphics->_surface, _clockCenterX, _clockCenterY, 449 - angle, 450 - angle, length, color);
-}
-
-void Lucerna::drawHand(const Common::Point &endPoint, byte color) {
-	if (endPoint.x == 177)
-		return;
-
-	_vm->_graphics->_surface.drawLine(_clockCenterX, _clockCenterY, endPoint.x, endPoint.y, color);
-}
-
-void Lucerna::plotHands() {
-	calcHand(_vm->_gyro->_onh, 14, _clockHandHour, kColorYellow);
-	calcHand(_vm->_gyro->_om * 6, 17, _clockHandMinute, kColorYellow);
-	drawHand(_clockHandHour, kColorBrown);
-	drawHand(_clockHandMinute, kColorBrown);
-
-	calcHand(_hourAngle, 14, _clockHandHour, kColorBrown);
-	calcHand(_vm->_gyro->_minutes * 6, 17, _clockHandMinute, kColorBrown);
-	drawHand(_clockHandHour, kColorYellow);
-	drawHand(_clockHandMinute, kColorYellow);
-}
-
-void Lucerna::chime() {
-	warning("STUB: Lucerna::chime()");
-}
-
-void Lucerna::updateClock() { // TODO: Move variables from Gyro to here (or at least somewhere nearby), rename them.
-	TimeDate t;
-	_vm->_system->getTimeAndDate(t);
-	_vm->_gyro->_hours = t.tm_hour;
-	_vm->_gyro->_minutes = t.tm_min;
-	_vm->_gyro->_seconds = t.tm_sec;
-
-	_hourAngle = (_vm->_gyro->_hours % 12) * 30 + _vm->_gyro->_minutes / 2;
-
-	if (_vm->_gyro->_oh != _vm->_gyro->_hours)  {
-		plotHands();
-		chime();
-	}
-
-	if (_vm->_gyro->_om != _vm->_gyro->_minutes)
-		plotHands();
-
-	if ((_vm->_gyro->_hours == 0) && (_vm->_gyro->_oh != 0) && (_vm->_gyro->_oh != 17717))
-		_vm->_scrolls->display(Common::String("Good morning!\n\nYes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!"));
-
-	_vm->_gyro->_oh = _vm->_gyro->_hours;
-	_vm->_gyro->_onh = _hourAngle;
-	_vm->_gyro->_om = _vm->_gyro->_minutes;
-}
 
 void Lucerna::gameOver() {
 	_vm->_gyro->_dna._userMovesAvvy = false;
