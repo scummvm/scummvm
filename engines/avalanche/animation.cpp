@@ -236,7 +236,7 @@ void AnimationType::walk() {
 				break;
 			case Gyro::kMagicUnfinished: {
 				bounce();
-				_tr->_vm->_scrolls->display("\7Sorry.\3\rThis place is not available yet!");
+				_tr->_vm->_scrolls->displayText("\7Sorry.\3\rThis place is not available yet!");
 				}
 				break;
 			case Gyro::kMagicSpecial:
@@ -551,18 +551,18 @@ void Animation::catamove(byte ped) {
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
 		fliproom(r__lustiesroom, 4);
-		_vm->_scrolls->display("Phew! Nice to be out of there!");
+		_vm->_scrolls->displayText("Phew! Nice to be out of there!");
 		return;
 	case 1033: // Oubliette
 		fliproom(r__oubliette, 1);
-		_vm->_scrolls->display(Common::String("Oh, NO!") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
+		_vm->_scrolls->displayText(Common::String("Oh, NO!") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
 		return;
 	case 4:
 		fliproom(r__geidas, 1);
 		return;
 	case 2307:
 		fliproom(r__lusties, 5);
-		_vm->_scrolls->display("Oh no... here we go again...");
+		_vm->_scrolls->displayText("Oh no... here we go again...");
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		tr[0].iy = 1;
 		tr[0].ix = 0;
@@ -924,7 +924,7 @@ void Animation::call_special(uint16 which) {
 		_vm->_timeout->lose_timer(_vm->_timeout->reason_falling_down_oubliette);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 1);
-		_vm->_scrolls->display("Oh dear, you seem to be down the bottom of an oubliette.");
+		_vm->_scrolls->displayText("Oh dear, you seem to be down the bottom of an oubliette.");
 		_vm->_timeout->set_up_timer(200, _vm->_timeout->procmeet_avaroid, _vm->_timeout->reason_meeting_avaroid);
 		break;
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
@@ -1295,7 +1295,7 @@ void Animation::spin(byte whichway, byte &tripnum) {
 		_vm->_gyro->_dna._geidaSpin += 1;
 		_vm->_gyro->_dna._geidaTime = 20;
 		if (_vm->_gyro->_dna._geidaSpin == 5) {
-			_vm->_scrolls->display("Steady on, Avvy, you'll make the poor girl dizzy!");
+			_vm->_scrolls->displayText("Steady on, Avvy, you'll make the poor girl dizzy!");
 			_vm->_gyro->_dna._geidaSpin = 0;
 			_vm->_gyro->_dna._geidaTime = 0; // knock out records
 		}
@@ -1461,12 +1461,12 @@ void Animation::getsetclear() {
 void Animation::hide_in_the_cupboard() {
 	if (_vm->_gyro->_dna._avvysInTheCupboard) {
 		if (_vm->_gyro->_dna._wearing == Acci::kNothing)
-			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "AVVY!" + _vm->_scrolls->kControlRoman + "Get dressed first!");
+			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "AVVY!" + _vm->_scrolls->kControlRoman + "Get dressed first!");
 		else {
 			tr[0]._visible = true;
 			_vm->_gyro->_dna._userMovesAvvy = true;
 			apped(1, 3); // Walk out of the cupboard.
-			_vm->_scrolls->display("You leave the cupboard. Nice to be out of there!");
+			_vm->_scrolls->displayText("You leave the cupboard. Nice to be out of there!");
 			_vm->_gyro->_dna._avvysInTheCupboard = false;
 			_vm->_sequence->first_show(8);
 			_vm->_sequence->then_show(7);
@@ -1476,7 +1476,7 @@ void Animation::hide_in_the_cupboard() {
 		// Not hiding in the cupboard
 		tr[0]._visible = false;
 		_vm->_gyro->_dna._userMovesAvvy = false;
-		_vm->_scrolls->display(Common::String("You walk into the room...") + _vm->_scrolls->kControlParagraph
+		_vm->_scrolls->displayText(Common::String("You walk into the room...") + _vm->_scrolls->kControlParagraph
 			+ "It seems to be an empty, but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.");
 		_vm->_gyro->_dna._avvysInTheCupboard = true;
 		_vm->_celer->drawBackgroundSprite(-1, -1, 8);

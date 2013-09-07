@@ -49,11 +49,11 @@ Scrolls::Scrolls(AvalancheEngine *vm) {
 }
 
 void Scrolls::init() {
-	loadfont();
-	resetscrolldriver();
+	loadFont();
+	resetScrollDriver();
 }
 
-void Scrolls::state(byte x) {     // Sets "Ready" light to whatever
+void Scrolls::setReadyLight(byte x) {     // Sets "Ready" light to whatever
 	if (_vm->_gyro->_ledStatus == x)
 		return; // Already like that!
 
@@ -78,7 +78,7 @@ void Scrolls::state(byte x) {     // Sets "Ready" light to whatever
 	_vm->_gyro->_ledStatus = x;
 }
 
-void Scrolls::easteregg() {
+void Scrolls::easterEgg() {
 	warning("STUB: Scrolls::easteregg()");
 }
 
@@ -93,16 +93,16 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { // Fancy FAST screenwrit
 	for (byte xx = 0; xx < lz; xx++) {
 		switch (z[xx]) {
 		case kControlRoman: {
-			cfont = roman;
+			_currentFont = kFontStyleRoman;
 			}
 			break;
 		case kControlItalic: {
-			cfont = italic;
+			_currentFont = kFontStyleItalic;
 			}
 			break;
 		default: {
 			for (byte yy = 0; yy < 12; yy++)
-				itw[(byte)z[xx]][yy] = ch[cfont][(byte)z[xx]][yy + 2];
+				itw[(byte)z[xx]][yy] = _scrollFonts[_currentFont][(byte)z[xx]][yy + 2];
 
 			// We have to draw the characters one-by-one because of the accidental font changes.
 			i++;
@@ -115,11 +115,11 @@ void Scrolls::say(int16 x, int16 y, Common::String z) { // Fancy FAST screenwrit
 
 // Here are the procedures that Scroll calls. So they must be... $F+*/
 
-void Scrolls::normscroll() {
+void Scrolls::scrollModeNormal() {
 	Common::String egg = Common::String(kControlParagraph) + kControlLeftJustified + kControlNegative + kControlBell + kControlBackspace + "***";
 	Common::String e = "(c) 1994";
 
-	state(3);
+	setReadyLight(3);
 	_vm->_gyro->_seeScroll = true;
 	CursorMan.showMouse(true);
 	_vm->_gyro->newMouse(4);
@@ -182,7 +182,7 @@ void Scrolls::normscroll() {
 	_vm->_gyro->screturn = r == '#'; // "back door"
 #endif
 
-	state(0);
+	setReadyLight(0);
 	_vm->_gyro->_seeScroll = false;
 	CursorMan.showMouse(false);
 	_vm->_lucerna->_holdLeftMouse = false; // Used in Lucerna::checkclick().
@@ -190,19 +190,19 @@ void Scrolls::normscroll() {
 	warning("STUB: Scrolls::normscroll()");
 }
 
-void Scrolls::dialogue() {
+void Scrolls::scrollModeDialogue() {
 	warning("STUB: Scrolls::dialogue()");
 }
 
 
 
 
-void Scrolls::store_(byte what, TuneType &played) {
+void Scrolls::store(byte what, TuneType &played) {
 	memcpy(played + 1, played + 2, sizeof(played) - 1);
 	played[30] = what;
 }
 
-bool Scrolls::they_match(TuneType &played) {
+bool Scrolls::theyMatch(TuneType &played) {
 	byte fv, mistakes;
 
 	mistakes = 0;
@@ -216,8 +216,8 @@ bool Scrolls::they_match(TuneType &played) {
 	return mistakes < 5;
 }
 
-void Scrolls::music_scroll() {
-	state(3);
+void Scrolls::scrollModeMusic() {
+	setReadyLight(3);
 	_vm->_gyro->_seeScroll = true;
 	CursorMan.showMouse(true);
 	_vm->_gyro->newMouse(4);
@@ -229,7 +229,7 @@ void Scrolls::music_scroll() {
 #endif
 		_vm->_gyro->_scReturn = true;
 		CursorMan.showMouse(false);
-		state(0);
+		setReadyLight(0);
 		_vm->_gyro->_seeScroll = false;
 
 		_vm->_timeout->set_up_timer(8, _vm->_timeout->procjacques_wakes_up, _vm->_timeout->reason_jacques_waking_up);
@@ -247,30 +247,30 @@ void Scrolls::music_scroll() {
 
 // ThatsAll, so put us back to $F-
 
-void Scrolls::resetscrolldriver() {   // phew
+void Scrolls::resetScrollDriver() {   // phew
 	_vm->_gyro->_scrollBells = 0;
-	cfont = roman;
-	use_icon = 0;
+	_currentFont = kFontStyleRoman;
+	_useIcon = 0;
 	_vm->_gyro->_interrogation = 0; // always reset after a scroll comes up.
 }
 
-void Scrolls::dingdongbell() {   // Pussy's in the well. Who put her in? Little...
+void Scrolls::ringBell() {   // Pussy's in the well. Who put her in? Little...
 	for (byte fv = 0; fv < _vm->_gyro->_scrollBells; fv++)
 		_vm->_lucerna->errorLed(); // ring the bell "x" times
 }
 
 void Scrolls::dodgem() {
-	dodgeCoord = _vm->getMousePos();
-	g_system->warpMouse(dodgeCoord.x, _vm->_gyro->_underScroll); // Move the pointer off the scroll.
+	_dodgeCoord = _vm->getMousePos();
+	g_system->warpMouse(_dodgeCoord.x, _vm->_gyro->_underScroll); // Move the pointer off the scroll.
 }
 
-void Scrolls::undodgem() {
+void Scrolls::unDodgem() {
 	Common::Point actCoord = _vm->getMousePos();
-	if ((actCoord.x == dodgeCoord.x) && (actCoord.y == _vm->_gyro->_underScroll))
-		g_system->warpMouse(dodgeCoord.x, dodgeCoord.y); // No change, so restore the pointer's original position.
+	if ((actCoord.x == _dodgeCoord.x) && (actCoord.y == _vm->_gyro->_underScroll))
+		g_system->warpMouse(_dodgeCoord.x, _dodgeCoord.y); // No change, so restore the pointer's original position.
 }
 
-void Scrolls::geticon(int16 x, int16 y, byte which) {
+void Scrolls::getIcon(int16 x, int16 y, byte which) {
 	Common::File f;
 	byte *p;
 
@@ -292,7 +292,7 @@ void Scrolls::geticon(int16 x, int16 y, byte which) {
 	f.close();
 }
 
-void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
+void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File f;
 
 	Common::String filename;
@@ -321,7 +321,7 @@ void Scrolls::block_drop(Common::String fn, int16 xl, int16 yl, int16 y) {
 	f.close();
 }
 
-void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in the game.
+void Scrolls::drawScroll(ScrollsFunctionType gotoit) { // This is one of the oldest procs in the game.
 	byte b;
 	int16 lx, ly, mx, my, ex;
 	bool centre;
@@ -343,8 +343,8 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	lx = lx / 2;
 	ly -= 2;
 
-	if ((1 <= use_icon) && (use_icon <= 34))
-		lx += halficonwidth;
+	if ((1 <= _useIcon) && (_useIcon <= 34))
+		lx += kHalfIconWidth;
 
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
 
@@ -382,24 +382,24 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	centre = false;
 
-	switch (use_icon) {
+	switch (_useIcon) {
 	case 0:
 		icon_indent = 0;
 		break; // No icon.
 	case 34: {
-		block_drop("about", 28, 76, 15);
+		drawSign("about", 28, 76, 15);
 		icon_indent = 0;
 		}
 		break;
 	case 35: {
-		block_drop("gameover", 52, 59, 71);
+		drawSign("gameover", 52, 59, 71);
 		icon_indent = 0;
 		}
 		break;
 	}
 
-	if ((1 <= use_icon) && (use_icon <= 33)) { // Standard icon.
-		geticon(mx, my + ly / 2, use_icon);
+	if ((1 <= _useIcon) && (_useIcon <= 33)) { // Standard icon.
+		getIcon(mx, my + ly / 2, _useIcon);
 		icon_indent = 53;
 	}
 
@@ -419,13 +419,13 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 				break;
 			case kControlQuestion: {
 				//settextjustify(1, 1);
-				dix = mx + lx;
-				diy = my + ly;
+				_shadowBoxX = mx + lx;
+				_shadowBoxY = my + ly;
 				_vm->_gyro->_scroll[b].setChar(' ', 0);
 				// byte groi = *_vm->_graphics->getPixel(0, 0);
 				// inc(diy,14);
-				_vm->_gyro->drawShadowBox(dix - 65, diy - 24, dix - 5, diy - 10, "Yes.");
-				_vm->_gyro->drawShadowBox(dix + 5, diy - 24, dix + 65, diy - 10, "No.");
+				_vm->_gyro->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
+				_vm->_gyro->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
 				}
 				break;
 			}
@@ -440,14 +440,14 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 
 	_vm->_gyro->_underScroll = my * 2 + 6; // Multiplying because of the doubled screen height.
 	//setvisualpage(1 - cp);
-	dingdongbell();
+	ringBell();
 	//my = getpixel(0, 0);
 	_vm->_gyro->_dropsOk = false;
 	dodgem();
 
 	(this->*gotoit)();
 
-	undodgem();
+	unDodgem();
 	_vm->_gyro->_dropsOk = true;
 	//setvisualpage(cp);
 	//mousepage(cp);
@@ -458,14 +458,14 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_gyro->_onCanDoPageSwap = true; // Normality again.
 	CursorMan.showMouse(true);
 	//settextjustify(0, 0); // sink
-	resetscrolldriver();
+	resetScrollDriver();
 	/*if (_vm->_gyro->mpress > 0)
 	_vm->_gyro->after_the_scroll = true;*/
 
 	warning("STUB: Scrolls::drawscroll()");
 }
 
-void Scrolls::bubble(func2 gotoit) {
+void Scrolls::drawBubble(ScrollsFunctionType gotoit) {
 	int16 xl, yl, my, xw, yw;
 	Common::Point p[3];
 //	byte *rp1, *rp2; // replace: 1=bubble, 2=pointer
@@ -536,7 +536,7 @@ void Scrolls::bubble(func2 gotoit) {
 	}
 
 	//setvisualpage(1 - cp);
-	dingdongbell();
+	ringBell();
 	_vm->_gyro->_onCanDoPageSwap = false;
 	CursorMan.showMouse(true);
 	_vm->_gyro->_dropsOk = false;
@@ -550,31 +550,31 @@ void Scrolls::bubble(func2 gotoit) {
 	//setvisualpage(cp);
 	CursorMan.showMouse(true); // sink;
 	_vm->_gyro->_onCanDoPageSwap = true;
-	resetscrolldriver();
+	resetScrollDriver();
 	/*if (_vm->_gyro->mpress > 0)
 	_vm->_gyro->after_the_scroll = true;*/
 }
 
-bool Scrolls::ask(Common::String question) {
+bool Scrolls::displayQuestion(Common::String question) {
 	warning("STUB: Scrolls::ask()");
 	return true;
 }
 
-void Scrolls::resetscroll() {
+void Scrolls::resetScroll() {
 	_vm->_gyro->_scrollNum = 1;
 	for (int j = 0; j < 15; j++)
 		if (!_vm->_gyro->_scroll[j].empty())
 			_vm->_gyro->_scroll[j].clear();
 }
 
-void Scrolls::natural() {   // Natural state of bubbles
+void Scrolls::setBubbleStateNatural() {
 	_vm->_gyro->_talkX = 320;
 	_vm->_gyro->_talkY = 200;
 	_vm->_gyro->_talkBackgroundColor = 8;
 	_vm->_gyro->_talkFontColor = 15;
 }
 
-Common::String Scrolls::lsd() {
+Common::String Scrolls::displayMoney() {
 	Common::String x;
 
 	if (_vm->_gyro->_dna._money < 12) { // just pence
@@ -597,7 +597,7 @@ Common::String Scrolls::lsd() {
 
 
 
-void Scrolls::strip(Common::String &q) {
+void Scrolls::stripTrailingSpaces(Common::String &q) {
 	while (q[q.size() - 1] == ' ') {
 		q.deleteLastChar();
 	}
@@ -613,10 +613,10 @@ void Scrolls::solidify(byte n) {
 		_vm->_gyro->_scroll[n].deleteLastChar();
 	} while (_vm->_gyro->_scroll[n][_vm->_gyro->_scroll[n].size() - 1] != ' ');
 
-	strip(_vm->_gyro->_scroll[n]);
+	stripTrailingSpaces(_vm->_gyro->_scroll[n]);
 }
 
-void Scrolls::calldrivers() {
+void Scrolls::callScrollDriver() {
 	uint16 fv;
 	byte nn;
 	bool mouthnext;
@@ -627,7 +627,7 @@ void Scrolls::calldrivers() {
 	//nosound();
 	warning("STUB: Scrolls::calldrivers()");
 
-	state(0);
+	setReadyLight(0);
 	_vm->_gyro->_scReturn = false;
 	mouthnext = false;
 	call_spriterun = true;
@@ -650,11 +650,11 @@ void Scrolls::calldrivers() {
 	for (fv = 0; fv < size; fv++) {
 		if (mouthnext) {
 			if (_vm->_gyro->_buffer[fv] == kControlRegister)
-				param = 0;
+				_param = 0;
 			else if (('0' <= _vm->_gyro->_buffer[fv]) && (_vm->_gyro->_buffer[fv] <= '9'))
-				param = _vm->_gyro->_buffer[fv] - 48;
+				_param = _vm->_gyro->_buffer[fv] - 48;
 			else if (('A' <= _vm->_gyro->_buffer[fv]) && (_vm->_gyro->_buffer[fv] <= 'Z'))
-				param = _vm->_gyro->_buffer[fv] - 55;
+				_param = _vm->_gyro->_buffer[fv] - 55;
 
 			mouthnext = false;
 		} else {
@@ -667,9 +667,9 @@ void Scrolls::calldrivers() {
 					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
 
-				drawscroll(&Avalanche::Scrolls::normscroll);
+				drawScroll(&Avalanche::Scrolls::scrollModeNormal);
 
-				resetscroll();
+				resetScroll();
 
 				if (_vm->_gyro->_scReturn)
 					return;
@@ -686,58 +686,58 @@ void Scrolls::calldrivers() {
 					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
 
-				if (param == 0)
-					natural();
-				else if ((1 <= param) && (param <= 9)) {
-					if ((param > _vm->_animation->kSpriteNumbMax) || (!_vm->_animation->tr[param - 1].quick)) { // Not valid.
+				if (_param == 0)
+					setBubbleStateNatural();
+				else if ((1 <= _param) && (_param <= 9)) {
+					if ((_param > _vm->_animation->kSpriteNumbMax) || (!_vm->_animation->tr[_param - 1].quick)) { // Not valid.
 						_vm->_lucerna->errorLed();
-						natural();
+						setBubbleStateNatural();
 					} else
-						_vm->_animation->tr[param - 1].chatter(); // Normal sprite talking routine.
-				} else if ((10 <= param) && (param <= 36)) {
+						_vm->_animation->tr[_param - 1].chatter(); // Normal sprite talking routine.
+				} else if ((10 <= _param) && (_param <= 36)) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
-					_vm->_gyro->_talkX = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[param - 10]._whichPed - 1]._x;
-					_vm->_gyro->_talkY = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[param - 10]._whichPed - 1]._y; // Position.
+					_vm->_gyro->_talkX = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed - 1]._x;
+					_vm->_gyro->_talkY = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed - 1]._y; // Position.
 
-					_vm->_gyro->_talkFontColor = _vm->_gyro->kQuasipeds[param - 10]._foregroundColor;
-					_vm->_gyro->_talkBackgroundColor = _vm->_gyro->kQuasipeds[param - 10]._backgroundColor; // Colors.
+					_vm->_gyro->_talkFontColor = _vm->_gyro->kQuasipeds[_param - 10]._foregroundColor;
+					_vm->_gyro->_talkBackgroundColor = _vm->_gyro->kQuasipeds[_param - 10]._backgroundColor; // Colors.
 				} else {
 					_vm->_lucerna->errorLed(); // Not valid.
-					natural();
+					setBubbleStateNatural();
 				}
 
-				bubble(&Avalanche::Scrolls::normscroll);
+				drawBubble(&Avalanche::Scrolls::scrollModeNormal);
 
-				resetscroll();
+				resetScroll();
 
 				if (_vm->_gyro->_scReturn)
 					return;
 			}
 			break;
 			case kControlNegative:
-				switch (param) {
+				switch (_param) {
 				case 1:
-					display(lsd() + kControlToBuffer); // Insert cash balance. (Recursion)
+					displayText(displayMoney() + kControlToBuffer); // Insert cash balance. (Recursion)
 					break;
 				case 2:
-					display(_vm->_acci->kVocabulary[_vm->_acci->kFirstPassword + _vm->_gyro->_dna._passwordNum]._word + kControlToBuffer);
+					displayText(_vm->_acci->kVocabulary[_vm->_acci->kFirstPassword + _vm->_gyro->_dna._passwordNum]._word + kControlToBuffer);
 					break;
 				case 3:
-					display(_vm->_gyro->_dna._favouriteDrink + kControlToBuffer);
+					displayText(_vm->_gyro->_dna._favouriteDrink + kControlToBuffer);
 					break;
 				case 4:
-					display(_vm->_gyro->_dna._favouriteSong + kControlToBuffer);
+					displayText(_vm->_gyro->_dna._favouriteSong + kControlToBuffer);
 					break;
 				case 5:
-					display(_vm->_gyro->_dna._worstPlaceOnEarth + kControlToBuffer);
+					displayText(_vm->_gyro->_dna._worstPlaceOnEarth + kControlToBuffer);
 					break;
 				case 6:
-					display(_vm->_gyro->_dna._spareEvening + kControlToBuffer);
+					displayText(_vm->_gyro->_dna._spareEvening + kControlToBuffer);
 					break;
 				case 9:
-					display(_vm->_gyro->intToStr(_vm->_gyro->_dna._catacombX) + ',' + _vm->_gyro->intToStr(_vm->_gyro->_dna._catacombY) + kControlToBuffer);
+					displayText(_vm->_gyro->intToStr(_vm->_gyro->_dna._catacombX) + ',' + _vm->_gyro->intToStr(_vm->_gyro->_dna._catacombY) + kControlToBuffer);
 					break;
 				case 10:
 					switch (_vm->_gyro->_dna._boxContent) {
@@ -750,10 +750,10 @@ void Scrolls::calldrivers() {
 					}
 					break;
 					case Acci::kNothing:
-						display("nothing at all. It's completely empty.");
+						displayText("nothing at all. It's completely empty.");
 						break;
 					default:
-						display(_vm->_gyro->getItem(_vm->_gyro->_dna._boxContent) + '.');
+						displayText(_vm->_gyro->getItem(_vm->_gyro->_dna._boxContent) + '.');
 					}
 					break;
 				case 11:
@@ -761,14 +761,14 @@ void Scrolls::calldrivers() {
 					for (byte nnn = 0; nnn < kObjectNum; nnn++) {
 						if (_vm->_gyro->_dna._objects[nnn]) {
 							nn++;
-							display(_vm->_gyro->getItem(nnn) + ", " + kControlToBuffer);
+							displayText(_vm->_gyro->getItem(nnn) + ", " + kControlToBuffer);
 						}
 					}
 					break;
 				}
 				break;
 			case kControlIcon:
-				use_icon = param;
+				_useIcon = _param;
 				break;
 			case kControlNewLine:
 				_vm->_gyro->_scrollNum++;
@@ -781,9 +781,9 @@ void Scrolls::calldrivers() {
 				_vm->_gyro->_scrollNum++;
 				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] = kControlQuestion;
 
-				drawscroll(&Avalanche::Scrolls::dialogue);
+				drawScroll(&Avalanche::Scrolls::scrollModeDialogue);
 
-				resetscroll();
+				resetScroll();
 				}
 				break;
 			case kControlRegister:
@@ -805,13 +805,13 @@ void Scrolls::calldrivers() {
 	}
 }
 
-void Scrolls::display(Common::String z) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
+void Scrolls::displayText(Common::String z) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
 	_vm->_gyro->_bufSize = z.size();
 	memcpy(_vm->_gyro->_buffer, z.c_str(), _vm->_gyro->_bufSize);
-	calldrivers();
+	callScrollDriver();
 }
 
-void Scrolls::loadfont() {
+void Scrolls::loadFont() {
 	Common::File f;
 
 	if (!f.open("avalot.fnt")) {
@@ -819,7 +819,7 @@ void Scrolls::loadfont() {
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(ch[0][i], 16);
+		f.read(_scrollFonts[0][i], 16);
 	f.close();
 
 	if (!f.open("avitalic.fnt")) {
@@ -827,7 +827,7 @@ void Scrolls::loadfont() {
 		return;
 	}
 	for (int16 i = 0; i < 256; i++)
-		f.read(ch[1][i], 16);
+		f.read(_scrollFonts[1][i], 16);
 	f.close();
 
 	if (!f.open("ttsmall.fnt")) {
@@ -839,20 +839,16 @@ void Scrolls::loadfont() {
 	f.close();
 }
 
-void Scrolls::okay() {
-	display("Okay!");
-}
-
-void Scrolls::musical_scroll() {
-	display(Common::String("To play the harp...") + kControlNewLine + kControlNewLine + "Use these keys:" + + kControlNewLine
+void Scrolls::musicalScroll() {
+	displayText(Common::String("To play the harp...") + kControlNewLine + kControlNewLine + "Use these keys:" + + kControlNewLine
 		+ kControlInsertSpaces + "Q W E R T Y U I O P [ ]" + kControlNewLine + kControlNewLine + "Or press Enter to stop playing."
 		+ kControlToBuffer);
 
 	_vm->_lucerna->spriteRun();
 
-	drawscroll(&Avalanche::Scrolls::music_scroll);
+	drawScroll(&Avalanche::Scrolls::scrollModeMusic);
 
-	resetscroll();
+	resetScroll();
 }
 
 } // End of namespace Avalanche

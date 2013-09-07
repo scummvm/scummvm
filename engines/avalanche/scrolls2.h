@@ -37,115 +37,85 @@ class AvalancheEngine;
 
 class Scrolls;
 
-typedef void (Scrolls::*func2)();
+typedef void (Scrolls::*ScrollsFunctionType)();
 
 class Scrolls {
 public:
 	// Constants to replace the command characters from Pascal.
 	// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
+	enum ControlCharacter {
+		kControlSpeechBubble = 2, // ^B
+		kControlCenter = 3, // ^C
+		kControlToBuffer = 4, // ^D
+		kControlItalic = 6, // ^F
+		kControlBell = 7, // ^G
+		kControlBackspace = 8, // ^H
+		kControlInsertSpaces = 9, // ^I
+		kControlLeftJustified = 12, // ^L
+		kControlNewLine = 13, // ^M
+		kControlParagraph = 16, // ^P
+		kControlQuestion = 17, // ^Q
+		kControlRoman = 18, // ^R
+		kControlRegister = 19, // ^S
+		kControlNegative = 21, // ^U
+		kControlIcon = 22 // ^V
+	};
 
-	static const char kControlSpeechBubble = 2; // ^B
-	static const char kControlCenter = 3; // ^C
-	static const char kControlToBuffer = 4; // ^D
-	static const char kControlItalic = 6; // ^F
-	static const char kControlBell = 7; // ^G
-	static const char kControlBackspace = 8; // ^H
-	static const char kControlInsertSpaces = 9; // ^I
-	static const char kControlLeftJustified = 12; // ^L
-	static const char kControlNewLine = 13; // ^M
-	static const char kControlParagraph = 16; // ^P
-	static const char kControlQuestion = 17; // ^Q
-	static const char kControlRoman = 18; // ^R
-	static const char kControlRegister = 19; // ^S
-	static const char kControlNegative = 21; // ^U
-	static const char kControlIcon = 22; // ^V
-
-
-
-	bool aboutscroll; // Is this the about box?
-
-
+	bool _aboutScroll; // Is this the about box?
+	FontType _scrollFonts[2];
 
 	Scrolls(AvalancheEngine *vm);
 
 	void init();
-
-	void state(byte x);      // Sets "Ready" light to whatever
-
-	void drawscroll(func2 gotoit);      // This is one of the oldest funcs in the game.
-
-	void bubble(func2 gotoit);
-
-	void resetscroll();
-
-	void calldrivers();
-
-	void display(Common::String z);
-
-	bool ask(Common::String question);
-
-	void natural();
-
-	Common::String lsd();
-
-	void okay();    // Says "Okay!"
-
-	void musical_scroll();
-
-	FontType ch[2];
+	void setReadyLight(byte x); // Sets "Ready" light to whatever.
+	void drawScroll(ScrollsFunctionType modeFunc);
+	void drawBubble(ScrollsFunctionType modeFunc);
+	void resetScroll();
+	void callScrollDriver();
+	void displayText(Common::String text);
+	bool displayQuestion(Common::String question);
+	void setBubbleStateNatural(); // Natural state of bubbles
+	Common::String displayMoney();
+	void musicalScroll(); // Practically this one is a mini-game which called when you play the harp in the monastery.
 
 private:
 	AvalancheEngine *_vm;
 
-	static const int16 roman = 0;
-	static const int16 italic = 1;
+	enum FontStyle {
+		kFontStyleRoman,
+		kFontStyleItalic
+	};
 
-	static const int16 halficonwidth = 19; // Half the width of an icon.
+	static const int16 kHalfIconWidth = 19; // Half the width of an icon.
 
+	int16 _shadowBoxX, _shadowBoxY;
+	byte _currentFont; // Current font
+	Common::Point _dodgeCoord;
+	byte _param; // For using arguments code
+	byte _useIcon;
 
+	// These 3 functions are always passed as ScrollsFunctionType parameters.
+	void scrollModeNormal();
+	void scrollModeDialogue();
+	void scrollModeMusic();
 
-	int16 dix, diy;
+	// These 2 are used only in musicalScroll().
+	void store(byte what, TuneType &played);
+	bool theyMatch(TuneType &played);
 
-	byte cfont; // Current font
-
-	Common::Point dodgeCoord;
-	byte param; // For using arguments code
-
-	byte use_icon;
-
-
-
-	void easteregg();
-
-	void say(int16 x, int16 y, Common::String z);
-
-	void normscroll();
-
-	void dialogue();
-
-	void store_(byte what, TuneType &played);
-
-	bool they_match(TuneType &played);
-
-	void music_scroll();
-
-	void resetscrolldriver();
-
-	void dingdongbell();
-
-	void dodgem(); // This moves the mouse pointer off the scroll so that you can read it.
-
-	void undodgem(); // This is the opposite of Dodgem. It moves the mouse pointer back, IF you haven't moved it in the meantime.
-
-	void geticon(int16 x, int16 y, byte which);
-
-	void block_drop(Common::String fn, int16 xl, int16 yl, int16 y);
-
-	void strip(Common::String &q); // Strip trailing spaces.
-
+	void stripTrailingSpaces(Common::String &str); // Original: strip.
 	void solidify(byte n); // Does the word wrapping.
 
-	void loadfont();
+	void dodgem(); // This moves the mouse pointer off the scroll so that you can read it.
+	void unDodgem(); // This is the opposite of Dodgem. It moves the mouse pointer back, IF you haven't moved it in the meantime.
+
+	void easterEgg();
+	void say(int16 x, int16 y, Common::String text);
+	void resetScrollDriver();
+	void ringBell(); // Original: dingdongbell
+	void getIcon(int16 x, int16 y, byte which);
+	void drawSign(Common::String name, int16 xl, int16 yl, int16 y); // This is for drawing a big "about" or "gameover" picture loaded from a file into an empty scroll.
+	void loadFont();
 };
 
 } // End of namespace Avalanche

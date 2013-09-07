@@ -239,7 +239,7 @@ void Gyro::newGame() {
 	_score = 0;
 	memset(&_vm->_gyro->_dna, 0, sizeof(DnaType));
 
-	_vm->_scrolls->natural();
+	_vm->_scrolls->setBubbleStateNatural();
 
 	_dna._spareEvening = "answer a questionnaire";
 	_dna._favouriteDrink = "beer";

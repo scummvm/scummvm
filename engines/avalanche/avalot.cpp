@@ -132,7 +132,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 void Avalot::setup() {
 	_vm->_gyro->_mouse = _vm->_gyro->kMouseStateNo;
 	_vm->_gyro->_letMeOut = false;
-	_vm->_scrolls->resetscroll();
+	_vm->_scrolls->resetScroll();
 	CursorMan.showMouse(true);
 	_vm->_gyro->_holdTheDawn = true;
 	_vm->_lucerna->dusk();
@@ -152,7 +152,7 @@ void Avalot::setup() {
 	_vm->_gyro->_dna._direction = _vm->_gyro->kDirectionStopped;
 	_vm->_gyro->_enidFilename = ""; // Undefined.
 	_vm->_lucerna->drawToolbar();
-	_vm->_scrolls->state(2);
+	_vm->_scrolls->setReadyLight(2);
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // Impossible digits.
 

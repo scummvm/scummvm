@@ -479,7 +479,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_celer->updateBackgroundSprites();
 
-	_scrolls->display(Common::String(_scrolls->kControlItalic) + "Loaded: " + _scrolls->kControlRoman + description + ".ASG"
+	_scrolls->displayText(Common::String(_scrolls->kControlItalic) + "Loaded: " + _scrolls->kControlRoman + description + ".ASG"
 		+ _scrolls->kControlCenter + _scrolls->kControlNewLine + _scrolls->kControlNewLine
 		+ _gyro->_roomnName + _scrolls->kControlNewLine + _scrolls->kControlNewLine
 		+ "saved on " + expandDate(t.tm_mday, t.tm_mon, t.tm_year) + '.');

@@ -250,16 +250,16 @@ void Timeout::urinate() {
 }
 
 void Timeout::toilet2() {
-	_vm->_scrolls->display("That's better!");
+	_vm->_scrolls->displayText("That's better!");
 }
 
 void Timeout::bang() {
-	_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "< BANG! >");
+	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "< BANG! >");
 	set_up_timer(30, procbang2, reason_explosion);
 }
 
 void Timeout::bang2() {
-	_vm->_scrolls->display("Hmm... sounds like Spludwick's up to something...");
+	_vm->_scrolls->displayText("Hmm... sounds like Spludwick's up to something...");
 }
 
 void Timeout::stairs() {
@@ -352,7 +352,7 @@ void Timeout::after_the_shootemup() {
 	_vm->_lucerna->refreshObjectList();
 
 	// Same as the added line above: TODO: Remove it later!!!
-	_vm->_scrolls->display(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
+	_vm->_scrolls->displayText(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
 		+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Peter (uruk)");
 
 #if 0
@@ -475,7 +475,7 @@ void Timeout::jump() {
 			&& (_vm->_animation->infield(3))) { // Beside the wall
 		// Grab the arrow!
 		if (_vm->_gyro->_dna._carryNum >= kCarryLimit)
-			_vm->_scrolls->display("You fail to grab it, because your hands are full.");
+			_vm->_scrolls->displayText("You fail to grab it, because your hands are full.");
 		else {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_gyro->_dna._arrowInTheDoor = false; // You've got it.
@@ -537,7 +537,7 @@ void Timeout::fall_down_oubliette() {
 
 void Timeout::meet_avaroid() {
 	if (_vm->_gyro->_dna._metAvaroid) {
-		_vm->_scrolls->display(Common::String("You can't expect to be ") + _vm->_scrolls->kControlItalic + "that"
+		_vm->_scrolls->displayText(Common::String("You can't expect to be ") + _vm->_scrolls->kControlItalic + "that"
 			+ _vm->_scrolls->kControlRoman + " lucky twice in a row!");
 		_vm->_lucerna->gameOver();
 	} else {
@@ -605,7 +605,7 @@ void Timeout::avvy_sit_down() {
 }
 
 void Timeout::ghost_room_phew() {
-	_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlItalic) + "PHEW!" + _vm->_scrolls->kControlRoman
+	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "PHEW!" + _vm->_scrolls->kControlRoman
 		+ " You're glad to get out of " + _vm->_scrolls->kControlItalic + "there!");
 }
 
@@ -631,7 +631,7 @@ void Timeout::winning() {
 	// TODO: To be implemented with Pingo::winningPic().
 
 	_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);
-	_vm->_scrolls->display(" T H E    E N D ");
+	_vm->_scrolls->displayText(" T H E    E N D ");
 	_vm->_gyro->_letMeOut = true;
 }
 
@@ -646,7 +646,7 @@ void Timeout::avalot_falls() {
 		for (byte i = 0; i < 6; i++)
 			toDisplay += _vm->_scrolls->kControlInsertSpaces;
 		toDisplay = toDisplay + _vm->_scrolls->kControlRegister + 'Z' + _vm->_scrolls->kControlIcon;
-		_vm->_scrolls->display(toDisplay);
+		_vm->_scrolls->displayText(toDisplay);
 	}
 }
 
