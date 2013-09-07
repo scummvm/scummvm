@@ -728,11 +728,11 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 	::Graphics::Surface backup;
 	backup.copyFrom(_vm->_graphics->_surface);
 
-	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_lucerna->holdLeftMouse) {
+	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_lucerna->_holdLeftMouse) {
 		_menuBar.chooseMenuItem(cursorPos.x);
 		do
 			_vm->updateEvents();
-		while (_vm->_lucerna->holdLeftMouse);
+		while (_vm->_lucerna->_holdLeftMouse);
 
 
 		while (!_vm->shouldQuit()) {
@@ -755,16 +755,16 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 				_activeMenuItem.lightUp(cursorPos);
 
 				_vm->_graphics->refreshScreen();
-			} while (!_vm->_lucerna->holdLeftMouse);
+			} while (!_vm->_lucerna->_holdLeftMouse);
 
-			if (_vm->_lucerna->holdLeftMouse) {
+			if (_vm->_lucerna->_holdLeftMouse) {
 				if (cursorPos.y > 21) {
 					if (!((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
 						&& (cursorPos.y >= 24) && (cursorPos.y <= (_activeMenuItem.fly * 2 + 1))))) {
 							// Clicked OUTSIDE the menu.
 							if (_activeMenuItem._activeNow) {
 								_activeMenuItem.wipe();
-								_vm->_lucerna->holdLeftMouse = false;
+								_vm->_lucerna->_holdLeftMouse = false;
 								backup.free();
 								return;
 							} // No "else"- clicking on menu has no effect (only releasing).
@@ -778,11 +778,11 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 
 						if (((_activeMenuItem._left * 8) <= cursorPos.x) && (cursorPos.x <= (_activeMenuItem._left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
 							// If we clicked on the same menu item (the one that is already active) on the bar...
-							_vm->_lucerna->holdLeftMouse = false;
+							_vm->_lucerna->_holdLeftMouse = false;
 							backup.free();
 							return;
 						} else {
-							_vm->_lucerna->holdLeftMouse = true;
+							_vm->_lucerna->_holdLeftMouse = true;
 							break;
 						}
 					}
@@ -799,7 +799,7 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 							_vm->_graphics->refreshScreen();
 
 							_vm->updateEvents();
-							if (!_vm->_lucerna->holdLeftMouse)
+							if (!_vm->_lucerna->_holdLeftMouse)
 								break;
 						}
 

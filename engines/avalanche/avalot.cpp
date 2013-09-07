@@ -198,7 +198,7 @@ void Avalot::run(Common::String arg) {
 
 
 
-		_vm->_lucerna->updateClock();
+		_vm->_lucerna->_clock.update();
 		_vm->_dropdown->updateMenu();
 		_vm->_gyro->forceNumlock();
 		_vm->_trip->get_back_loretta();

@@ -279,7 +279,7 @@ void Gyro::newGame() {
 	_vm->_trip->new_game_for_trippancy();
 	_vm->_lucerna->drawScore();
 	_vm->_dropdown->setupMenu();
-	_vm->_lucerna->updateClock();
+	_vm->_lucerna->_clock.update();
 	_vm->_lucerna->spriteRun();
 }
 

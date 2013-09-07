@@ -36,10 +36,32 @@
 namespace Avalanche {
 class AvalancheEngine;
 
+class Clock {
+public:
+	Clock(AvalancheEngine *vm);
+
+	void update();
+	
+private:
+	static const Common::Point kCenter;
+
+	AvalancheEngine *_vm;
+
+	uint16 _hour, _minute, _second, _hourAngle, _oldHour, _oldMinute, _oldHourAngle; // hourAngle = nh in the original.
+	Common::Point _clockHandHour, _clockHandMinute; // ah and am in the original.
+
+	void calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color);
+	void drawHand(const Common::Point &endPoint, byte color);
+	void plotHands();
+	void chime();
+
+};
+
 class Lucerna {
 public:
-	bool holdLeftMouse;
-
+	bool _holdLeftMouse;
+	Clock _clock;
+	
 	Lucerna(AvalancheEngine *vm);
 	~Lucerna();
 
@@ -62,7 +84,6 @@ public:
 	void dusk();
 	void dawn();
 	void drawDirection(); // Draws the little icon at the left end of the text input field.
-	void updateClock();
 	void gameOver();
 	uint16 bearing(byte whichPed); // Returns the bearing from ped 'whichped' to Avvy, in degrees.
 	void fixFlashers();
@@ -78,12 +99,6 @@ public:
 
 private:
 	AvalancheEngine *_vm;
-
-	//Clock
-	static const int16 _clockCenterX = 510;
-	static const int16 _clockCenterY = 183;
-	Common::Point _clockHandHour, _clockHandMinute; // ah and am in the original.
-	uint16 _hourAngle; // nh in the original.
 
 	bool _fxHidden; // Will de used in dust() and dawn().
 
@@ -103,12 +118,6 @@ private:
 	int8 fades(int8 x);
 	void fadeOut(byte n);
 	void fadeIn(byte n);
-
-	// Clock
-	void calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color);
-	void drawHand(const Common::Point &endPoint, byte color);
-	void plotHands();
-	void chime();
 
 };
 

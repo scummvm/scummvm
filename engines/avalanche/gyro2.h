@@ -356,7 +356,6 @@ public:
 	byte _fieldNum;
 	Common::String _flags;
 	Common::String _listen;
-	uint16 _oh, _onh, _om, _hours, _minutes, _seconds; // For Timeout. TODO: Move them into it.
 	Common::String _atKey; // For XTs, set to "alt-". For ATs, set to "f1".
 	byte _cp, _ledStatus, _defaultLed;
 	FontType _font;
