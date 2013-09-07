@@ -42,35 +42,23 @@ public:
 	byte _leftMargin;
 	bool _cursorState;
 
-
-
 	Parser(AvalancheEngine *vm);
 
 	void init();
-
 	void handleInputText(const Common::Event &event);
-
 	void handleBackspace();
-
 	void handleReturn();
-
 	void handleFunctionKey(const Common::Event &event);
-
 	void plotText();
-
 	void cursorOn();
-
 	void cursorOff();
-
 	void tryDropdown(); // This asks the parsekey proc in Dropdown if it knows it.
-
 	int16 pos(const Common::String &crit, const Common::String &src); // Returns the index of the first appearance of crit in src.
 
 private:
 	AvalancheEngine *_vm;
 
 	void drawCursor();
-
 	void wipeText();
 
 };
