@@ -499,7 +499,7 @@ void Timeout::buydrinks() {
 	_vm->_visa->dixi('D', _vm->_gyro->_dna._drinking); // Display message about it.
 	_vm->_pingo->wobble(); // Do the special effects.
 	_vm->_visa->dixi('D', 1); // That'll be thruppence.
-	if (_vm->_gyro->updateMoney(3)) // Pay 3d.
+	if (_vm->_gyro->decreaseMoney(3)) // Pay 3d.
 		_vm->_visa->dixi('D', 3); // Tell 'em you paid up.
 	_vm->_acci->drink();
 }
@@ -510,7 +510,7 @@ void Timeout::buywine() {
 
 	_vm->_visa->dixi('D', 50); // You buy the wine.
 	_vm->_visa->dixi('D', 1); // It'll be thruppence.
-	if (_vm->_gyro->updateMoney(3)) {
+	if (_vm->_gyro->decreaseMoney(3)) {
 		_vm->_visa->dixi('D', 4); // You paid up.
 		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = true;
 		_vm->_lucerna->objectlist();

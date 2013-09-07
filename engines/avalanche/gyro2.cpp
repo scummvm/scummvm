@@ -37,19 +37,14 @@
 #include "avalanche/acci2.h"
 #include "avalanche/trip6.h"
 
-#include "common/textconsole.h"
 #include "common/file.h"
-
 #include "common/random.h"
-
-//#include "dropdown.h"
-//#include "basher.h"
+#include "common/textconsole.h"
 
 namespace Avalanche {
 
 const char *Gyro::kVersionNum = "1.30";
 const char *Gyro::kCopyright = "1995";
-
 
 const MouseHotspotType Gyro::kMouseHotSpots[9] = {
 	{8,0}, // 1 - up-arrow
@@ -66,15 +61,15 @@ const MouseHotspotType Gyro::kMouseHotSpots[9] = {
 // Art gallery at 2,1; notice about this at 2,2.
 const int32 Gyro::kCatacombMap[8][8] = {
 	// Geida's room
-	// 1     2			3   | 4     5		6		7     8
-	{0x204, 0x200, 0xd0f0, 0xf0ff, 0xff, 0xd20f, 0xd200, 0x200},
-	{0x50f1, 0x20ff, 0x2ff, 0xff, 0xe0ff, 0x20ff, 0x200f, 0x7210},
-	{0xe3f0, 0xe10f, 0x72f0, 0xff, 0xe0ff, 0xff, 0xff, 0x800f},
-	{0x2201, 0x2030, 0x800f, 0x220, 0x20f, 0x30, 0xff, 0x23f}, // >> Oubliette
-	{0x5024, 0xf3, 0xff, 0x200f, 0x22f0, 0x20f, 0x200, 0x7260},
-	{0xf0, 0x2ff, 0xe2ff, 0xff, 0x200f, 0x50f0, 0x72ff, 0x201f},
-	{0xf6, 0x220f, 0x22f0, 0x30f, 0xf0, 0x20f, 0x8200, 0x2f0}, // <<< In here
-	{0x34, 0x200f, 0x51f0, 0x201f, 0xf1, 0x50ff, 0x902f, 0x2062}
+	// 1       2	   3     | 4	   5	   6	   7       8
+	{0x204,	 0x200,  0xd0f0, 0xf0ff, 0xff,   0xd20f, 0xd200, 0x200},
+	{0x50f1, 0x20ff, 0x2ff,  0xff,   0xe0ff, 0x20ff, 0x200f, 0x7210},
+	{0xe3f0, 0xe10f, 0x72f0, 0xff,   0xe0ff, 0xff,   0xff,   0x800f},
+	{0x2201, 0x2030, 0x800f, 0x220,  0x20f,  0x30,   0xff,   0x23f}, // >> Oubliette
+	{0x5024, 0xf3,   0xff,   0x200f, 0x22f0, 0x20f,  0x200,  0x7260},
+	{0xf0,   0x2ff,  0xe2ff, 0xff,   0x200f, 0x50f0, 0x72ff, 0x201f},
+	{0xf6,   0x220f, 0x22f0, 0x30f,  0xf0,   0x20f,  0x8200, 0x2f0}, // <<< In here
+	{0x34,   0x200f, 0x51f0, 0x201f, 0xf1,   0x50ff, 0x902f, 0x2062}
 };
 // vv Stairs trap.
 
@@ -119,22 +114,22 @@ const char Gyro::kSpludwicksOrder[3] = {kObjectOnion, kObjectInk, kObjectMushroo
 // A quasiped defines how people who aren't sprites talk. For example, quasiped
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
 const QuasipedType Gyro::kQuasipeds[16] = {
-	{2, kColorLightgray, 19, kColorBrown, kPeopleDogfood},                       // A: Dogfood (screen 19).
-	{3, kColorGreen,     19, kColorWhite, kPeopleIbythneth},                     // B: Ibythneth (screen 19).
-	{3, kColorWhite,     1, kColorMagenta, kPeopleArkata},                       // C: Arkata (screen 1).
-	{3, kColorBlack,     23, kColorRed, 177},							   // D: Hawk (screen 23).
-	{3, kColorLightgreen, 50, kColorBrown, kPeopleTrader},                       // E: Trader (screen 50).
-	{6, kColorYellow,    42, kColorRed, kPeopleAvalot},                          // F: Avvy, tied up (scr.42)
-	{2, kColorBlue,      16, kColorWhite, kPeopleAyles},                         // G: Ayles (screen 16).
-	{2, kColorBrown,     7, kColorWhite, kPeopleJacques},                        // H: Jacques (screen 7).
-	{2, kColorLightgreen, 47, kColorGreen, kPeopleSpurge},                       // I: Spurge (screen 47).
-	{3, kColorYellow,    47, kColorRed, kPeopleAvalot},                          // J: Avalot (screen 47).
-	{2, kColorLightgray, 23, kColorBlack, kPeopleDuLustie},                      // K: du Lustie (screen 23).
-	{2, kColorYellow,    27, kColorRed, kPeopleAvalot},                          // L: Avalot (screen 27).
-	{3, kColorWhite,     27, kColorRed, 177},                              // M: Avaroid (screen 27).
-	{4, kColorLightgray, 19, kColorDarkgray, kPeopleMalagauche},                 // N: Malagauche (screen 19).
-	{5, kColorLightmagenta, 47, kColorRed, kPeoplePort},                         // O: Port (screen 47).
-	{2, kColorLightgreen, 51, kColorDarkgray, kPeopleDrDuck}                     // P: Duck (screen 51).
+	{2, kColorLightgray, 19, kColorBrown, kPeopleDogfood}, // A: Dogfood (screen 19).
+	{3, kColorGreen, 19, kColorWhite, kPeopleIbythneth}, // B: Ibythneth (screen 19).
+	{3, kColorWhite, 1, kColorMagenta, kPeopleArkata}, // C: Arkata (screen 1).
+	{3, kColorBlack, 23, kColorRed, 177}, // D: Hawk (screen 23).
+	{3, kColorLightgreen, 50, kColorBrown, kPeopleTrader}, // E: Trader (screen 50).
+	{6, kColorYellow, 42, kColorRed, kPeopleAvalot}, // F: Avvy, tied up (scr.42)
+	{2, kColorBlue, 16, kColorWhite, kPeopleAyles}, // G: Ayles (screen 16).
+	{2, kColorBrown, 7, kColorWhite, kPeopleJacques}, // H: Jacques (screen 7).
+	{2, kColorLightgreen, 47, kColorGreen, kPeopleSpurge}, // I: Spurge (screen 47).
+	{3, kColorYellow, 47, kColorRed, kPeopleAvalot}, // J: Avalot (screen 47).
+	{2, kColorLightgray, 23, kColorBlack, kPeopleDuLustie}, // K: du Lustie (screen 23).
+	{2, kColorYellow, 27, kColorRed, kPeopleAvalot}, // L: Avalot (screen 27).
+	{3, kColorWhite, 27, kColorRed, 177}, // M: Avaroid (screen 27).
+	{4, kColorLightgray, 19, kColorDarkgray, kPeopleMalagauche}, // N: Malagauche (screen 19).
+	{5, kColorLightmagenta, 47, kColorRed, kPeoplePort}, // O: Port (screen 47).
+	{2, kColorLightgreen, 51, kColorDarkgray, kPeopleDrDuck} // P: Duck (screen 51).
 };
 
 const char Gyro::kMusicKeys[] = "QWERTYUIOP[]";
@@ -143,9 +138,8 @@ const uint16 Gyro::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 49
 
 const TuneType Gyro::kTune = {
 	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
-	kPitchLower, kPitchHigher, kPitchHigher,
-	kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher, kPitchHigher, kPitchLower, kPitchLower, kPitchLower,
-	kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
+	kPitchLower, kPitchHigher, kPitchHigher, kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher,
+	kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
 };
 
 byte Gyro::_whereIs[29] = {
@@ -175,9 +169,6 @@ byte Gyro::_whereIs[29] = {
 	r__wisewomans  // The Wise Woman.
 };
 
-// CHECKME: Useless?
-// const char Gyro::kItemsChar[] = "WMBParCLguKeSnIohn";
-
 Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
 	_vm = vm;
 
@@ -186,6 +177,7 @@ Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
 		for (int ff = 0; ff < 2; ff++)
 			_also[fv][ff] = 0;
 	}
+
 	_dna._totalTime = 0;
 }
 
@@ -197,9 +189,9 @@ Gyro::~Gyro() {
 	_digits[9].free();
 }
 
-Common::String Gyro::intToStr(int32 x) {
-	Common::String q = Common::String::format("%d", x);
-	return q;
+Common::String Gyro::intToStr(int32 num) {
+	Common::String result = Common::String::format("%d", num);
+	return result;
 }
 
 void Gyro::newMouse(byte id) {
@@ -230,28 +222,28 @@ void Gyro::drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc) 
 	warning("STUB: Gyro::shadow()");
 }
 
-void Gyro::shadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
+void Gyro::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
 	warning("STUB: Gyro::shbox()");
 }
 
 void Gyro::newGame() {
-	for (byte gm = 0; gm < kMaxSprites; gm++) {
-		if (_vm->_trip->tr[gm].quick)
-			_vm->_trip->tr[gm].done();
+	for (byte i = 0; i < kMaxSprites; i++) {
+		if (_vm->_trip->tr[i].quick)
+			_vm->_trip->tr[i].done();
 	}
 	// Deallocate sprite. Sorry, beta testers!
 
 	_vm->_trip->tr[0].init(0, true, _vm->_trip);
-	_alive = true;
 
+	_alive = true;
 	_score = 0;
-	//for gd:=0 to 5 do which[gd]:=1;
 	memset(&_vm->_gyro->_dna, 0, sizeof(DnaType));
+
 	_vm->_scrolls->natural();
 	_vm->_lucerna->mousepage(0);
+
 	_dna._spareEvening = "answer a questionnaire";
 	_dna._favouriteDrink = "beer";
-
 	_dna._money = 30; // 2/6
 	_dna._direction = kDirectionStopped;
 	_dna._wearing = kObjectClothes;
@@ -279,7 +271,7 @@ void Gyro::newGame() {
 	_dna._avvyInBed = true;
 	_enidFilename = "";
 
-	for (byte gd = 0; gd <= 1; gd++) {
+	for (byte i = 0; i <= 1; i++) {
 		_cp = 1 - _cp;
 		_vm->_trip->getback();
 	}
@@ -287,7 +279,6 @@ void Gyro::newGame() {
 	_vm->_lucerna->enterroom(1, 1);
 	_vm->_trip->new_game_for_trippancy();
 	_vm->_lucerna->showscore();
-
 	_vm->_dropdown->setupMenu();
 	_vm->_lucerna->clock_lucerna();
 	_vm->_lucerna->sprite_run();
@@ -314,7 +305,7 @@ void Gyro::forceNumlock() {
 	warning("STUB: Gyro::force_numlock()");
 }
 
-bool Gyro::updateMoney(uint16 howmuchby) {
+bool Gyro::decreaseMoney(uint16 howmuchby) {
 	_dna._money -= howmuchby;
 	if (_dna._money < 0) {
 		_vm->_visa->dixi('Q', 2); // "You are now denariusless!"
@@ -324,8 +315,6 @@ bool Gyro::updateMoney(uint16 howmuchby) {
 		return true;
 }
 
-// There'll may be problems with calling these functions because of the conversion of the arrays!!!
-// Keep an eye open!
 Common::String Gyro::getName(byte whose) {
 	static const Common::String kLads[17] = {
 		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
@@ -335,20 +324,15 @@ Common::String Gyro::getName(byte whose) {
 
 	static const Common::String kLasses[4] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
 
-	assert((whose > 150) && (whose < 179));
-
 	if (whose < 175)
 		return kLads[whose - 150];
 	else
 		return kLasses[whose - 175];
 }
 
-// Keep an eye open! ^
 byte Gyro::getNameChar(byte whose) {
 	static const char kLadChar[] = "ASCDMTRwLfgeIyPu";
 	static const char kLassChar[] = "kG\0xB1o";
-
-	assert((whose > 150) && (whose < 179));
 
 	if (whose < 175)
 		return kLadChar[whose - 150];
@@ -356,7 +340,6 @@ byte Gyro::getNameChar(byte whose) {
 		return kLassChar[whose - 175];
 }
 
-// Keep an eye open! ^^
 Common::String Gyro::getThing(byte which) {
 	static const Common::String kThings[kObjectNum] = {
 		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
@@ -389,7 +372,6 @@ Common::String Gyro::getThing(byte which) {
 	return get_thing_result;
 }
 
-// Keep an eye open! ^^^
 char Gyro::getThingChar(byte which) {
 	static const char kThingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
 
@@ -407,7 +389,6 @@ char Gyro::getThingChar(byte which) {
 	return get_thingchar_result;
 }
 
-// Keep an eye open! ^^^^
 Common::String Gyro::getItem(byte which) {
 	static const Common::String kItems[kObjectNum] = {
 		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
@@ -522,13 +503,9 @@ void Gyro::loadMouse(byte which) {
 			}
 
 	mask.free();
-
 	f.close();
 
-
-
 	CursorMan.replaceCursor(cursor.pixels, 16, 32, kMouseHotSpots[which - 1]._horizontal, kMouseHotSpots[which - 1]._vertical * 2, 255, false);
-
 	cursor.free();
 }
 

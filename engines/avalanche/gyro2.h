@@ -69,7 +69,6 @@ struct DnaType { // Ux, uy, & ww now all belong to Trip5
 	bool _wonNim; // Have you *won* Nim? (That's harder.)
 	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
 	bool _cwytalotGone; // Has Cwytalot rushed off to Jerusalem yet?
-
 	byte _passwordNum; // Number of the passw for this game.
 	bool _aylesIsAwake; // pretty obvious!
 	byte _drawbridgeOpen; // Between 0 (shut) and 4 (open).
@@ -77,82 +76,50 @@ struct DnaType { // Ux, uy, & ww now all belong to Trip5
 	bool _boughtOnion; // Have you bought an onion yet?
 	bool _rottenOnion; // And has it rotted?
 	bool _onionInVinegar; // Is the onion in the vinegar?
-
 	byte _givenToSpludwick; // 0 = nothing given, 1 = onion...
 	byte _brummieStairs; // Progression through the stairs trick.
 	byte _cardiffQuestionNum; // Things you get asked in Cardiff.
-
 	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
-
 	bool _avvyIsAwake; // Well? Is Avvy awake? (Screen 1 only.)
 	bool _avvyInBed; // True if Avvy's in bed, but awake.
-
 	bool _userMovesAvvy; // If this is false, the user has no control over Avvy's movements.
-
 	byte _dogFoodPos; // Which way Dogfood's looking in the pub.
-
 	bool _givenBadgeToIby; // Have you given the badge to Iby yet?
-
 	bool _friarWillTieYouUp; // If you're going to get tied up.
 	bool _tiedUp; // You ARE tied up!
-
 	byte _boxContent; // 0 = money (sixpence), 254 = empty, any other number implies the contents of the box.
-
 	bool _talkedToCrapulus; // Pretty self-explanatory.
-
 	byte _jacquesState; // 0=asleep, 1=awake, 2=gets up, 3=gone.
-
 	bool _bellsAreRinging; // Is Jacques ringing the bells?
-
 	bool _standingOnDais; // In room 71, inside Cardiff Castle.
 	bool _takenPen; // Have you taken the pen (in Cardiff?)
 	bool _arrowTriggered; // And has the arrow been triggered?
 	bool _arrowInTheDoor;  // Did the arrow hit the wall?
-
 	Common::String _favouriteDrink, _favouriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
-
 	uint32 _totalTime; // Your total time playing this game, in ticks.
-
 	byte _jumpStatus; // Fixes how high you're jumping.
-
 	bool _mushroomGrowing; // Is the mushroom growing in 42?
-
 	bool _spludwickAtHome; // Is Spludwick at home?
-
 	byte _lastRoom;
 	byte _lastRoomNotMap;
-
 	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
-
 	bool _enterCatacombsFromLustiesRoom;
 	bool _teetotal; // Are we touching any more drinks?
 	byte _malagauche; // Position of Malagauche. See Celer for more info.
 	char _drinking; // What's he getting you?
-
 	bool _enteredLustiesRoomAsMonk;
-
 	byte _catacombX, _catacombY;   // XY coords in the catacombs.
-
 	bool _avvysInTheCupboard; // On screen 22.
-
 	bool _geidaFollows; // Is Geida following you?
-
 	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
-
 	byte _nextBell; // For the ringing.
-
 	bool _givenPotionToGeida; // Does Geida have the potion?
 	bool _lustieIsAsleep; // Is BDL asleep?
-
 	byte _flipToWhere, _flipToPed; // For the sequencer.
-
 	bool _beenTiedUp; // In r__Robins.
-
 	bool _sittingInPub; // Are you sitting down in the pub?
 	byte _spurgeTalkCount; // Count for talking to Spurge.
-
 	bool _metAvaroid;
-
 	bool _takenMushroom, _givenPenToAyles, _askedDogfoodAboutNim;
 };
 
@@ -347,9 +314,6 @@ public:
 
 
 
-
-
-
 	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.
 	// If a scroll comes up, or you leave the room, it's automatically set to zero.
 	byte _interrogation;
@@ -359,9 +323,6 @@ public:
 	// Variable static constant for overriding the ability of On to switch pages.
 	// You may know better than On which page to switch to.
 	bool _onCanDoPageSwap;
-
-
-
 
 	DnaType _dna;
 	byte _lineNum; // Number of lines.
@@ -375,23 +336,18 @@ public:
 	byte _scrollNum, _score, _whichwas;
 	byte _thinks;
 	bool _thinkThing;
-
 	int16 _talkX, _talkY;
 	byte _talkBackgroundColor, _talkFontColor;
 	byte _scrollBells; // no. of times to ring the bell
 	bool _onToolbar, _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
-
 	char _objectList[10];
-
 	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
 	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	// Called .free() for them in ~Gyro().
-
 	byte _oldDirection;
 	int8 _scoreToDisplay[3];
 	byte _currentMouse; // current mouse-void
 	Common::String _verbStr; // what you can do with your object. :-)
-
 	Common::String *_also[31][2];
 	PedType _peds[15];
 	MagicType _magics[15];
@@ -400,27 +356,19 @@ public:
 	byte _fieldNum;
 	Common::String _flags;
 	Common::String _listen;
-
-	uint16 _oh, _onh, _om, _hours, _minutes, _seconds;
-
+	uint16 _oh, _onh, _om, _hours, _minutes, _seconds; // For Timeout. TODO: Move them into it.
 	Common::String _atKey; // For XTs, set to "alt-". For ATs, set to "f1".
-
 	byte _cp, _ledStatus, _defaultLed;
 	FontType _font;
 	bool _alive;
 	byte _buffer[2000];
 	uint16 _bufSize;
-
 	int16 _underScroll; // Y-coord of just under the scroll text.
-
 	bool _dropdownActive; // Kludge so we don't have to keep referring to Dropdown
 	Common::String _roomnName; // Name of actual room
-
 	Common::String _subject; // What you're talking to them about.
 	byte _subjectNum; // The same thing.
-
 	bool _keyboardClick; // Is a keyboard click noise wanted?
-
 	byte _him, _her, _it;
 	int32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
 
@@ -430,68 +378,45 @@ public:
 	Common::DumpFile _demoFileSave; // uruk added it - first use located in constructor of Basher
 
 	byte _lastPerson; // Last person to have been selected using the People menu.
-
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
-
 	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
-
 	bool isLoaded; // Is it a loaded gamestate?
-
 	Common::String _enidFilename;
 
 
 
 	Gyro(AvalancheEngine *vm);
-
 	~Gyro();
 
-	Common::String intToStr(int32 x);
-
+	Common::String intToStr(int32 num);
 	void newMouse(byte id);
-
 	void setMousePointerWait();    // Makes hourglass.
-
-	void note(uint16 hertz);
-
-	void blip();
-
-	void shadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
-
-	void newGame(); // This sets up the DNA for a completely new game.
-
-	void click(); // "Audio keyboard feedback"
-
-	void slowDown();
-
-	bool setFlag(char x);
-
-	void forceNumlock();
-
-	bool updateMoney(uint16 howmuchby); // Called pennycheck in the original.
-
-	Common::String getName(byte whose);
-
-	byte getNameChar(byte whose);
-
-	Common::String getThing(byte which);
-
-	char getThingChar(byte which);
-
-	Common::String getItem(byte which); // Called get_better in the original.
-
-	Common::String f5Does(); // This procedure determines what f5 does.
-
 	void loadMouse(byte which);
 
-	void setBackgroundColor(byte x);
+	void note(uint16 hertz);
+	void blip();
+	void click(); // "Audio keyboard feedback"
 
+	void setBackgroundColor(byte x);
+	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
+
+	void newGame(); // This sets up the DNA for a completely new game.
+	void slowDown();
+	bool setFlag(char x);
+	void forceNumlock();
+	bool decreaseMoney(uint16 howmuchby); // Called pennycheck in the original.
 	void hangAroundForAWhile();
+	
+	Common::String getName(byte whose);
+	byte getNameChar(byte whose);
+	Common::String getThing(byte which);
+	char getThingChar(byte which);
+	Common::String getItem(byte which); // Called get_better in the original.
+	Common::String f5Does(); // This procedure determines what f5 does.
 
 private:
 	AvalancheEngine *_vm;
 
-	// CHECKME: Useless?
-	// static const char kItemsChar[];
 	void drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
 };
 
