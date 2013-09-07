@@ -1020,13 +1020,13 @@ void Lucerna::refreshObjectList() {
 }
 
 void Lucerna::guideAvvy(Common::Point cursorPos) {
-	if (! _vm->_gyro->_dna._userMovesAvvy)
+	if (!_vm->_gyro->_dna._userMovesAvvy)
 		return;
 
 	cursorPos.y /= 2;
 	byte what;
 
-	// _vm->_trip->tr[0] : that's the only one we're interested in here. (It's Avalot.)
+	// _vm->_trip->tr[0] is Avalot.)
 	if (cursorPos.x < _vm->_trip->tr[0].x)
 		what = 1;
 	else if (cursorPos.x > (_vm->_trip->tr[0].x + _vm->_trip->tr[0]._info._xLength))
