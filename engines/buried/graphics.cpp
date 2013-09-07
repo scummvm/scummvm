@@ -337,6 +337,16 @@ void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y) {
 		memcpy(_screen->getBasePtr(x, y + i), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
 }
 
+void GraphicsManager::blit(const Graphics::Surface *surface, const Common::Rect &srcRect, const Common::Rect &dstRect) {
+	assert(surface->format.bytesPerPixel == _screen->format.bytesPerPixel);
+
+	int width = MIN(srcRect.width(), dstRect.width());
+	int height = MIN(srcRect.height(), dstRect.height());
+
+	for (int i = 0; i < height; i++)
+		memcpy(_screen->getBasePtr(dstRect.left, dstRect.top + i), surface->getBasePtr(srcRect.left, srcRect.top + i), width * surface->format.bytesPerPixel);
+}
+
 void GraphicsManager::fillRect(const Common::Rect &rect, uint32 color) {
 	_screen->fillRect(rect, color);
 }
