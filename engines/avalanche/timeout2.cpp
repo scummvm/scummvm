@@ -239,13 +239,13 @@ void Timeout::avaricius_talks() {
 	if (_vm->_gyro->_dna._avariciusTalk < 17)
 		set_up_timer(177, procavaricius_talks, reason_avariciustalks);
 	else
-		_vm->_lucerna->points(3);
+		_vm->_lucerna->incScore(3);
 }
 
 void Timeout::urinate() {
 	_vm->_trip->tr[0].turn(_vm->_trip->kDirUp);
 	_vm->_trip->stopwalking();
-	_vm->_lucerna->showrw();
+	_vm->_lucerna->drawDirection();
 	set_up_timer(14, proctoilet2, reason_gototoilet);
 }
 
@@ -349,7 +349,7 @@ void Timeout::after_the_shootemup() {
 	_vm->_trip->apped(1, 2);
 	_vm->_gyro->_dna._userMovesAvvy = true;
 	_vm->_gyro->_dna._objects[_vm->_gyro->kObjectCrossbow - 1] = true;
-	_vm->_lucerna->objectlist();
+	_vm->_lucerna->refreshObjectList();
 
 	// Same as the added line above: TODO: Remove it later!!!
 	_vm->_scrolls->display(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
@@ -399,7 +399,7 @@ void Timeout::jacques_wakes_up() {
 	if (_vm->_gyro->_dna._jacquesState == 5) {
 		_vm->_gyro->_dna._bellsAreRinging = true;
 		_vm->_gyro->_dna._aylesIsAwake = true;
-		_vm->_lucerna->points(2);
+		_vm->_lucerna->incScore(2);
 	}
 
 	switch (_vm->_gyro->_dna._jacquesState) {
@@ -480,9 +480,9 @@ void Timeout::jump() {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_gyro->_dna._arrowInTheDoor = false; // You've got it.
 			_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBolt - 1] = true;
-			_vm->_lucerna->objectlist();
+			_vm->_lucerna->refreshObjectList();
 			_vm->_visa->dixi('q', 50);
-			_vm->_lucerna->points(3);
+			_vm->_lucerna->incScore(3);
 		}
 	}
 }
@@ -513,14 +513,14 @@ void Timeout::buywine() {
 	if (_vm->_gyro->decreaseMoney(3)) {
 		_vm->_visa->dixi('D', 4); // You paid up.
 		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = true;
-		_vm->_lucerna->objectlist();
+		_vm->_lucerna->refreshObjectList();
 		_vm->_gyro->_dna._wineState = 1; // OK Wine.
 	}
 }
 
 void Timeout::callsguards() {
 	_vm->_visa->dixi('Q', 58); // "GUARDS!!!"
-	_vm->_lucerna->gameover();
+	_vm->_lucerna->gameOver();
 }
 
 void Timeout::greetsmonk() {
@@ -539,7 +539,7 @@ void Timeout::meet_avaroid() {
 	if (_vm->_gyro->_dna._metAvaroid) {
 		_vm->_scrolls->display(Common::String("You can't expect to be ") + _vm->_scrolls->kControlItalic + "that"
 			+ _vm->_scrolls->kControlRoman + " lucky twice in a row!");
-		_vm->_lucerna->gameover();
+		_vm->_lucerna->gameOver();
 	} else {
 		_vm->_visa->dixi('Q', 60);
 		_vm->_gyro->_dna._metAvaroid = true;
@@ -663,7 +663,7 @@ void Timeout::spludwick_leaves_cauldron() {
 
 void Timeout::give_lute_to_geida() { // Moved here from Acci.
 	_vm->_visa->dixi('Q', 86);
-	_vm->_lucerna->points(4);
+	_vm->_lucerna->incScore(4);
 	_vm->_gyro->_dna._lustieIsAsleep = true;
 	_vm->_sequence->first_show(5);
 	_vm->_sequence->then_show(6); // He falls asleep...

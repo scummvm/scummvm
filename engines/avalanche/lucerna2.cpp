@@ -47,13 +47,9 @@
 
 #include "graphics/palette.h"
 
-//#include "dropdown.h"
-//#include "basher.h"
-
-
 namespace Avalanche {
 
-Lucerna::Lucerna(AvalancheEngine *vm) : fxhidden(false) {
+Lucerna::Lucerna(AvalancheEngine *vm) : _fxHidden(false) {
 	_vm = vm;
 }
 
@@ -99,19 +95,17 @@ void Lucerna::callVerb(byte id) {
 	}
 }
 
-void Lucerna::draw_also_lines() {
-	byte ff;
-
+void Lucerna::drawAlsoLines() {
 	CursorMan.showMouse(false);
 
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
-	for (ff = 0; ff < _vm->_gyro->_lineNum; ff++) {
+	for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
 		// We had to check if the lines are within the borders of the screen.
-		if ((_vm->_gyro->_lines[ff]._x1 >= 0) && (_vm->_gyro->_lines[ff]._x1 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->_lines[ff]._y1 >= 0) && (_vm->_gyro->_lines[ff]._y1 < _vm->_graphics->kScreenHeight)
-		 && (_vm->_gyro->_lines[ff]._x2 >= 0) && (_vm->_gyro->_lines[ff]._x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->_lines[ff]._y2 >= 0) && (_vm->_gyro->_lines[ff]._y2 < _vm->_graphics->kScreenHeight))
-			_vm->_graphics->_magics.drawLine(_vm->_gyro->_lines[ff]._x1, _vm->_gyro->_lines[ff]._y1, _vm->_gyro->_lines[ff]._x2, _vm->_gyro->_lines[ff]._y2, _vm->_gyro->_lines[ff]._color);
+		if ((_vm->_gyro->_lines[i]._x1 >= 0) && (_vm->_gyro->_lines[i]._x1 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->_lines[i]._y1 >= 0) && (_vm->_gyro->_lines[i]._y1 < _vm->_graphics->kScreenHeight)
+		 && (_vm->_gyro->_lines[i]._x2 >= 0) && (_vm->_gyro->_lines[i]._x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->_lines[i]._y2 >= 0) && (_vm->_gyro->_lines[i]._y2 < _vm->_graphics->kScreenHeight))
+			_vm->_graphics->_magics.drawLine(_vm->_gyro->_lines[i]._x1, _vm->_gyro->_lines[i]._y1, _vm->_gyro->_lines[i]._x2, _vm->_gyro->_lines[i]._y2, _vm->_gyro->_lines[i]._color);
 	}
 
 	CursorMan.showMouse(true);
@@ -121,173 +115,160 @@ void Lucerna::draw_also_lines() {
 
 // nextstring, scram1 and unscrable are only used in load_also
 
-Common::String Lucerna::nextstring() {
+Common::String Lucerna::readAlsoStringFromFile() {
 	Common::String str;
-	byte length = f.readByte();
+	byte length = file.readByte();
 	for (int i = 0; i < length; i++)
-		str += f.readByte();
+		str += file.readByte();
 	return str;
 }
 
-void Lucerna::scram1(Common::String &x) {
-	for (uint fz = 0; fz < x.size(); fz++)
-		x.setChar(x[fz] ^ 177, fz);
+void Lucerna::scram(Common::String &str) {
+	for (uint i = 0; i < str.size(); i++)
+		str.setChar(str[i] ^ 177, i);
 }
 
-void Lucerna::unscramble() {
-	for (byte fv = 0; fv < 31; fv++)
-		for (byte ff = 0; ff < 2; ff++)
-			if (_vm->_gyro->_also[fv][ff] != 0)
-				scram1(*_vm->_gyro->_also[fv][ff]);
-	scram1(_vm->_gyro->_listen);
-	scram1(_vm->_gyro->_flags);
+void Lucerna::unScramble() {
+	for (byte i = 0; i < 31; i++)
+		for (byte j = 0; j < 2; j++)
+			if (_vm->_gyro->_also[i][j] != 0)
+				scram(*_vm->_gyro->_also[i][j]);
+	scram(_vm->_gyro->_listen);
+	scram(_vm->_gyro->_flags);
 }
 
-void Lucerna::load_also(Common::String n) {
-	byte ff, fv;
-
-	for (fv = 0; fv < 31; fv++)
-		for (ff = 0; ff < 2; ff++)
-			if (_vm->_gyro->_also[fv][ff] != 0)  {
-				delete _vm->_gyro->_also[fv][ff];
-				_vm->_gyro->_also[fv][ff] = 0;
+void Lucerna::loadAlso(byte num) {
+	for (byte i = 0; i < 31; i++)
+		for (byte j = 0; j < 2; j++)
+			if (_vm->_gyro->_also[i][j] != 0)  {
+				delete _vm->_gyro->_also[i][j];
+				_vm->_gyro->_also[i][j] = 0;
 			}
 
 	Common::String filename;
-	filename = filename.format("also%s.avd", n.c_str());
-	if (!f.open(filename)) {
+	filename = filename.format("also%d.avd", num);
+	if (!file.open(filename)) {
 		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
 		return;
 	}
 
-	f.seek(128);
+	file.seek(128);
 
-	byte minnames = f.readByte();
-	for (fv = 0; fv <= minnames; fv++) {
-		for (ff = 0; ff < 2; ff++) {
-			_vm->_gyro->_also[fv][ff] = new Common::String;
-			*_vm->_gyro->_also[fv][ff] = nextstring();
+	byte alsoNum = file.readByte();
+	for (byte i = 0; i <= alsoNum; i++) {
+		for (byte j = 0; j < 2; j++) {
+			_vm->_gyro->_also[i][j] = new Common::String;
+			*_vm->_gyro->_also[i][j] = readAlsoStringFromFile();
 		}
-		*_vm->_gyro->_also[fv][0] = Common::String('\x9D') + *_vm->_gyro->_also[fv][0] + Common::String('\x9D');
+		*_vm->_gyro->_also[i][0] = Common::String('\x9D') + *_vm->_gyro->_also[i][0] + Common::String('\x9D');
 	}
 
 	memset(_vm->_gyro->_lines, 0xFF, sizeof(_vm->_gyro->_lines));
 
-	//fv = getpixel(0, 0);
-	_vm->_gyro->_lineNum = f.readByte();
+	_vm->_gyro->_lineNum = file.readByte();
 	for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
-		_vm->_gyro->_lines[i]._x1 = f.readSint16LE();
-		_vm->_gyro->_lines[i]._y1 = f.readSint16LE();
-		_vm->_gyro->_lines[i]._x2 = f.readSint16LE();
-		_vm->_gyro->_lines[i]._y2 = f.readSint16LE();
-		_vm->_gyro->_lines[i]._color = f.readByte();
+		_vm->_gyro->_lines[i]._x1 = file.readSint16LE();
+		_vm->_gyro->_lines[i]._y1 = file.readSint16LE();
+		_vm->_gyro->_lines[i]._x2 = file.readSint16LE();
+		_vm->_gyro->_lines[i]._y2 = file.readSint16LE();
+		_vm->_gyro->_lines[i]._color = file.readByte();
 	}
 
 	memset(_vm->_gyro->_peds, 177, sizeof(_vm->_gyro->_peds));
-	fv = f.readByte();
-	for (byte i = 0; i < fv; i++) {
-		_vm->_gyro->_peds[i]._x = f.readSint16LE();
-		_vm->_gyro->_peds[i]._y = f.readSint16LE();
-		_vm->_gyro->_peds[i]._direction = f.readByte();
+	byte pedNum = file.readByte();
+	for (byte i = 0; i < pedNum; i++) {
+		_vm->_gyro->_peds[i]._x = file.readSint16LE();
+		_vm->_gyro->_peds[i]._y = file.readSint16LE();
+		_vm->_gyro->_peds[i]._direction = file.readByte();
 	}
 
-	_vm->_gyro->_fieldNum = f.readByte();
+	_vm->_gyro->_fieldNum = file.readByte();
 	for (byte i = 0; i < _vm->_gyro->_fieldNum; i++) {
-		_vm->_gyro->_fields[i]._x1 = f.readSint16LE();
-		_vm->_gyro->_fields[i]._y1 = f.readSint16LE();
-		_vm->_gyro->_fields[i]._x2 = f.readSint16LE();
-		_vm->_gyro->_fields[i]._y2 = f.readSint16LE();
+		_vm->_gyro->_fields[i]._x1 = file.readSint16LE();
+		_vm->_gyro->_fields[i]._y1 = file.readSint16LE();
+		_vm->_gyro->_fields[i]._x2 = file.readSint16LE();
+		_vm->_gyro->_fields[i]._y2 = file.readSint16LE();
 	}
 
 	for (byte i = 0; i < 15; i++) {
-		_vm->_gyro->_magics[i]._operation = f.readByte();
-		_vm->_gyro->_magics[i]._data = f.readUint16LE();
+		_vm->_gyro->_magics[i]._operation = file.readByte();
+		_vm->_gyro->_magics[i]._data = file.readUint16LE();
 	}
 
 	for (byte i = 0; i < 7; i++) {
-		_vm->_gyro->_portals[i]._operation = f.readByte();
-		_vm->_gyro->_portals[i]._data = f.readUint16LE();
+		_vm->_gyro->_portals[i]._operation = file.readByte();
+		_vm->_gyro->_portals[i]._data = file.readUint16LE();
 	}
 
 	_vm->_gyro->_flags.clear();
 	for (byte i = 0;  i < 26; i++)
-		_vm->_gyro->_flags += f.readByte();
+		_vm->_gyro->_flags += file.readByte();
 
-	int16 listen_length = f.readByte();
+	int16 listen_length = file.readByte();
 	_vm->_gyro->_listen.clear();
 	for (byte i = 0; i < listen_length; i++)
-		_vm->_gyro->_listen += f.readByte();
+		_vm->_gyro->_listen += file.readByte();
 
-	draw_also_lines();
+	drawAlsoLines();
 
-	//setactivepage(1);
-	warning("STUB: Lucerna::load_also()");
-
-	f.close();
-	unscramble();
-	for (fv = 0; fv <= minnames; fv++)
-		*_vm->_gyro->_also[fv][0] = Common::String(',') + *_vm->_gyro->_also[fv][0] + ',';
+	file.close();
+	unScramble();
+	for (byte i = 0; i <= alsoNum; i++)
+		*_vm->_gyro->_also[i][0] = Common::String(',') + *_vm->_gyro->_also[i][0] + ',';
 }
 
-void Lucerna::load(byte n) {     // Load2, actually
-	Common::String xx;
-
+void Lucerna::loadRoom(byte num) {
 	CursorMan.showMouse(false);
 
 	_vm->_graphics->fleshColors();
 
-	xx = _vm->_gyro->intToStr(n);
 	Common::String filename;
-	filename = filename.format("place%s.avd", xx.c_str());
-	if (!f.open(filename)) {
+	filename = filename.format("place%d.avd", num);
+	if (!file.open(filename)) {
 		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
 		return;
 	}
 
-	f.seek(146);
+	file.seek(146);
 	if (!_vm->_gyro->_roomnName.empty())
 		_vm->_gyro->_roomnName.clear();
 	for (byte i = 0; i < 30; i++) {
-		char actChar = f.readByte();
+		char actChar = file.readByte();
 		if ((32 <= actChar) && (actChar <= 126))
 			_vm->_gyro->_roomnName += actChar;
 	}
 	// Compression method byte follows this...
 
-	f.seek(177);
+	file.seek(177);
 
-	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(f, _vm->_graphics->kBackgroundWidth, _vm->_graphics->kBackgroundHeight);
+	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(file, _vm->_graphics->kBackgroundWidth, _vm->_graphics->kBackgroundHeight);
 	_vm->_graphics->refreshBackground();
 
-	f.close();
+	file.close();
 
-	load_also(xx);
-	_vm->_celer->loadBackgroundSprites(n);
-	// byte bit = *_vm->_graphics->getPixel(0,0);
+	loadAlso(num);
+	_vm->_celer->loadBackgroundSprites(num);
 	CursorMan.showMouse(true);
 }
 
 
 
-void Lucerna::zoomout(int16 x, int16 y) {
-//	int16 x1, y1, x2, y2;
-//	byte fv;
-
+void Lucerna::zoomOut(int16 x, int16 y) {
 	warning("STUB: Lucerna::zoomout()");
 }
 
-void Lucerna::find_people(byte room) {
-	for (byte fv = 1; fv < 29; fv++) {
-		if (_vm->_gyro->_whereIs[fv] == room) {
-			if (fv < 25)
-				_vm->_gyro->_him = fv + 150;
+void Lucerna::findPeople(byte room) {
+	for (byte i = 1; i < 29; i++) {
+		if (_vm->_gyro->_whereIs[i] == room) {
+			if (i < 25)
+				_vm->_gyro->_him = i + 150;
 			else
-				_vm->_gyro->_her = fv + 150;
+				_vm->_gyro->_her = i + 150;
 		}
 	}
 }
 
-void Lucerna::exitroom(byte x) {
+void Lucerna::exitRoom(byte x) {
 	//nosound();
 	_vm->_celer->forgetBackgroundSprites();
 	_vm->_gyro->_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
@@ -321,7 +302,7 @@ void Lucerna::exitroom(byte x) {
 		_vm->_gyro->_dna._lastRoomNotMap = _vm->_gyro->_dna._room;
 }
 
-void Lucerna::new_town() {   // You've just entered a town from the map.
+void Lucerna::enterNewTown() {
 	_vm->_dropdown->setupMenu();
 
 	switch (_vm->_gyro->_dna._room) {
@@ -351,41 +332,41 @@ void Lucerna::new_town() {   // You've just entered a town from the map.
 
 
 
-void Lucerna::put_geida_at(byte whichped, byte &ped) {
+void Lucerna::putGeidaAt(byte whichPed, byte &ped) {
 	if (ped == 0)
 		return;
 	_vm->_trip->tr[1].init(5, false, _vm->_trip); // load Geida
-	_vm->_trip->apped(2, whichped);
+	_vm->_trip->apped(2, whichPed);
 	_vm->_trip->tr[1].call_eachstep = true;
 	_vm->_trip->tr[1].eachstep = _vm->_trip->procgeida_procs;
 }
 
-void Lucerna::enterroom(byte x, byte ped) {
+void Lucerna::enterRoom(byte room, byte ped) {
 	_vm->_gyro->_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
 
-	find_people(x);
-	_vm->_gyro->_dna._room = x;
+	findPeople(room);
+	_vm->_gyro->_dna._room = room;
 	if (ped != 0)
-		_vm->_gyro->_dna._roomCount[x]++;
+		_vm->_gyro->_dna._roomCount[room]++;
 
-	load(x);
+	loadRoom(room);
 
-	if ((_vm->_gyro->_dna._roomCount[x] == 0) && (! _vm->_gyro->setFlag('S')))
-		points(1);
+	if ((_vm->_gyro->_dna._roomCount[room] == 0) && (! _vm->_gyro->setFlag('S')))
+		incScore(1);
 
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleAvalot - 150] = _vm->_gyro->_dna._room;
 
 	if (_vm->_gyro->_dna._geidaFollows)
-		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleGeida - 150] = x;
+		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleGeida - 150] = room;
 
 	_vm->_gyro->_roomTime = 0;
 
 
 	if ((_vm->_gyro->_dna._lastRoom == r__map) && (_vm->_gyro->_dna._lastRoomNotMap != _vm->_gyro->_dna._room))
-		new_town();
+		enterNewTown();
 
 
-	switch (x) {
+	switch (room) {
 	case r__yours:
 		if (_vm->_gyro->_dna._avvyInBed) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
@@ -449,7 +430,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 
 	case r__brummieroad:
 		if (_vm->_gyro->_dna._geidaFollows)
-			put_geida_at(5, ped);
+			putGeidaAt(5, ped);
 		if (_vm->_gyro->_dna._cwytalotGone) {
 			_vm->_gyro->_magics[kColorLightred - 1]._operation = _vm->_gyro->kMagicNothing;
 			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] = r__nowhere;
@@ -492,7 +473,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_gyro->_magics[kColorGreen - 1]._operation = _vm->_gyro->kMagicNothing; // You may enter the drawbridge.
 		}
 		if (_vm->_gyro->_dna._geidaFollows)
-			put_geida_at(ped + 3, ped); // load Geida
+			putGeidaAt(ped + 3, ped); // load Geida
 		break;
 
 	case r__robins:
@@ -549,14 +530,14 @@ void Lucerna::enterroom(byte x, byte ped) {
 		dawn();
 		//setactivepage(cp);
 		if (ped > 0)
-			zoomout(_vm->_gyro->_peds[ped - 1]._x, _vm->_gyro->_peds[ped - 1]._y);
+			zoomOut(_vm->_gyro->_peds[ped - 1]._x, _vm->_gyro->_peds[ped - 1]._y);
 		//setactivepage(1 - cp);
 
 		{
 			if ((_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1]) && (_vm->_gyro->_dna._wineState != 3)) {
 				_vm->_visa->dixi('q', 9); // Don't want to waste the wine!
 				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = false;
-				objectlist();
+				refreshObjectList();
 			}
 		}
 
@@ -610,7 +591,7 @@ void Lucerna::enterroom(byte x, byte ped) {
 			_vm->_timeout->set_up_timer(3, _vm->_timeout->procgreetsmonk, _vm->_timeout->reason_du_lustie_talks);
 
 		if (_vm->_gyro->_dna._geidaFollows) {
-			put_geida_at(5, ped);
+			putGeidaAt(5, ped);
 			if (_vm->_gyro->_dna._lustieIsAsleep) {
 				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_graphics->refreshBackground();
@@ -738,18 +719,18 @@ void Lucerna::enterroom(byte x, byte ped) {
 		break; // Ayles awake.
 
 	case r__geidas:
-		put_geida_at(2, ped);
+		putGeidaAt(2, ped);
 		break; // load Geida
 
 	case r__easthall:
 	case r__westhall:
 		if (_vm->_gyro->_dna._geidaFollows)
-			put_geida_at(ped + 2, ped);
+			putGeidaAt(ped + 2, ped);
 		break;
 
 	case r__lusties:
 		if (_vm->_gyro->_dna._geidaFollows)
-			put_geida_at(ped + 6, ped);
+			putGeidaAt(ped + 6, ped);
 		break;
 
 	case r__nottspub:
@@ -781,43 +762,45 @@ void Lucerna::enterroom(byte x, byte ped) {
 		_vm->_gyro->isLoaded = false;
 }
 
-void Lucerna::thinkabout(byte z, bool th) {     // Hey!!! Get it and put it!!!
-	const int16 picsize = 966;
-	const ByteField thinkspace = {25, 170, 32, 200};
+void Lucerna::thinkAbout(byte object, bool type) {
+	const int16 picSize = 966;
 
-	_vm->_gyro->_thinks = z;
-	z--;
+	_vm->_gyro->_thinks = object;
+	object--;
 
 	_vm->_gyro->setMousePointerWait();
 
-	if (th) {
-		if (!f.open("thinks.avd")) {
+	switch (type) {
+	case Gyro::kThing:
+		if (!file.open("thinks.avd")) {
 			warning("AVALANCHE: Lucerna: File not found: thinks.avd");
 			return;
 		}
-	} else {
-		if (!f.open("folk.avd")) {
+		break;
+	case Gyro::kPerson:
+		if (!file.open("folk.avd")) {
 			warning("AVALANCHE: Lucerna: File not found: folk.avd");
 			return;
 		}
 
-		z = z - 149;
-		if (z >= 25)
-			z -= 8;
-		if (z == 20)
-			z--; // Last time...
+		object = object - 149;
+		if (object >= 25)
+			object -= 8;
+		if (object == 20)
+			object--; // Last time...
 
+		break;
 	}
 
-	f.seek(z * picsize + 65);
+	file.seek(object * picSize + 65);
 
-	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
+	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(file);
 
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 205, 170);
 
 	picture.free();
 
-	f.close();
+	file.close();
 
 	CursorMan.showMouse(false);
 
@@ -827,75 +810,57 @@ void Lucerna::thinkabout(byte z, bool th) {     // Hey!!! Get it and put it!!!
 	setactivepage(1 - cp);
 #endif
 
-	for (byte fv = 0; fv <= 1; fv++)
-		_vm->_trip->getset[fv].remember(thinkspace);
-
 	CursorMan.showMouse(true);
-	_vm->_gyro->_thinkThing = th;
+	_vm->_gyro->_thinkThing = type;
 }
 
-void Lucerna::load_digits() {   // Load the scoring digits & rwlites
+void Lucerna::loadDigits() {   // Load the scoring digits & rwlites
 	const byte digitsize = 134;
 	const byte rwlitesize = 126;
 
-	if (!f.open("digit.avd")) {
+	if (!file.open("digit.avd")) {
 		warning("AVALANCHE: Lucerna: File not found: digit.avd");
 		return;
 	}
 
-	for (byte fv = 0; fv < 10; fv++) {
-		f.seek(fv * digitsize);
-
-#if 0
-		_vm->_gyro->digit[fv] = new byte[digitsize];
-		f.read(_vm->_gyro->digit[fv], digitsize);
-#endif
-
-		_vm->_gyro->_digits[fv] = _vm->_graphics->loadPictureGraphic(f);
+	for (byte i = 0; i < 10; i++) {
+		file.seek(i * digitsize);
+		_vm->_gyro->_digits[i] = _vm->_graphics->loadPictureGraphic(file);
 	}
 
-	for (byte ff = 0; ff < 9; ff++) {
-		f.seek(10 * digitsize + ff * rwlitesize);
-
-#if 0
-		_vm->_gyro->rwlite[ff] = new byte[rwlitesize];
-		f.read(_vm->_gyro->rwlite[ff], rwlitesize);
-#endif
-
-		_vm->_gyro->_directions[ff] = _vm->_graphics->loadPictureGraphic(f);
+	for (byte i = 0; i < 9; i++) {
+		file.seek(10 * digitsize + i * rwlitesize);
+		_vm->_gyro->_directions[i] = _vm->_graphics->loadPictureGraphic(file);
 	}
 
-	f.close();
+	file.close();
 }
 
-void Lucerna::toolbar() {
-	if (!f.open("useful.avd")) {
+void Lucerna::drawToolbar() {
+	if (!file.open("useful.avd")) {
 		warning("AVALANCHE: Lucerna: File not found: useful.avd");
 		return;
 	}
 
-	f.seek(40);
+	file.seek(40);
 
-	// off;
+	CursorMan.showMouse(false);
 
-	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(f);
+	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(file);
 
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 5, 169);
 
 	picture.free();
 
-	f.close();
+	file.close();
 
-	// on;
+	CursorMan.showMouse(true);
 
 	_vm->_gyro->_oldDirection = 177;
-	showrw();
+	drawDirection();
 }
 
-void Lucerna::showscore() {
-
-	const ByteField scorespace = {33, 177, 39, 200};
-
+void Lucerna::drawScore() {
 	if (_vm->_gyro->kDemo)
 		return;
 
@@ -912,23 +877,17 @@ void Lucerna::showscore() {
 
 	CursorMan.showMouse(false);
 
-	//setactivepage(3);
-
 	for (byte fv = 0; fv < 3; fv++)
 		if (_vm->_gyro->_scoreToDisplay[fv] != numbers[fv])
 			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_digits[numbers[fv]], 250 + (fv + 1) * 15, 177);
 
-	for (byte fv = 0; fv < 2; fv++)
-		_vm->_trip->getset[fv].remember(scorespace);
-
-	//setactivepage(1 - cp);
-
 	CursorMan.showMouse(true);
+
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = numbers[i];
 }
 
-void Lucerna::points(byte num) {     // Add on no. of points
+void Lucerna::incScore(byte num) {     // Add on no. of points
 	for (byte q = 1; q <= num; q++) {
 		_vm->_gyro->_dna._score++;
 
@@ -942,39 +901,35 @@ void Lucerna::points(byte num) {     // Add on no. of points
 	}
 	warning("STUB: Lucerna::points()");
 
-	showscore();
+	drawScore();
 }
 
-void Lucerna::topcheck(Common::Point cursorPos) {
-	_vm->_dropdown->_menuBar.chooseMenuItem(cursorPos.x);
-}
+void Lucerna::useCompass(const Common::Point &cursorPos) {
+	byte color = *(byte *)_vm->_graphics->_surface.getBasePtr(cursorPos.x, cursorPos.y / 2);
 
-void Lucerna::mouseway(const Common::Point &cursorPos) {
-	byte col = *(byte *)_vm->_graphics->_surface.getBasePtr(cursorPos.x, cursorPos.y / 2);
-
-	switch (col) {
+	switch (color) {
 	case kColorGreen: {
 			_vm->_gyro->_dna._direction = _vm->_trip->kDirUp;
 			_vm->_trip->rwsp(0, _vm->_trip->kDirUp);
-			showrw();
+			drawDirection();
 		}
 		break;
 	case kColorBrown: {
 			_vm->_gyro->_dna._direction = _vm->_trip->kDirDown;
 			_vm->_trip->rwsp(0, _vm->_trip->kDirDown);
-			showrw();
+			drawDirection();
 		}
 		break;
 	case kColorCyan: {
 			_vm->_gyro->_dna._direction = _vm->_trip->kDirLeft;
 			_vm->_trip->rwsp(0, _vm->_trip->kDirLeft);
-			showrw();
+			drawDirection();
 		}
 		break;
 	case kColorLightmagenta: {
 			_vm->_gyro->_dna._direction = _vm->_trip->kDirRight;
 			_vm->_trip->rwsp(0, _vm->_trip->kDirRight);
-			showrw();
+			drawDirection();
 		}
 		break;
 	case kColorRed:
@@ -982,32 +937,28 @@ void Lucerna::mouseway(const Common::Point &cursorPos) {
 	case kColorLightcyan:
 	case kColorYellow: { // Fall-throughs are intended.
 			_vm->_trip->stopwalking();
-			showrw();
+			drawDirection();
 		}
 		break;
 	}
 }
 
-void Lucerna::posxy() {
-	warning("STUB: Lucerna::posxy()");
-}
-
-void Lucerna::fxtoggle() {
+void Lucerna::fxToggle() {
 	warning("STUB: Lucerna::fxtoggle()");
 }
 
-void Lucerna::objectlist() {
+void Lucerna::refreshObjectList() {
 	_vm->_gyro->_dna._carryNum = 0;
 	if (_vm->_gyro->_thinkThing && !_vm->_gyro->_dna._objects[_vm->_gyro->_thinks - 1])
-		thinkabout(_vm->_gyro->kObjectMoney, _vm->_gyro->kThing); // you always have money
-	for (byte fv = 0; fv < kObjectNum; fv++)
-		if (_vm->_gyro->_dna._objects[fv]) {
+		thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing); // you always have money
+	for (byte i = 0; i < kObjectNum; i++)
+		if (_vm->_gyro->_dna._objects[i]) {
 			_vm->_gyro->_dna._carryNum++;
-			_vm->_gyro->_objectList[_vm->_gyro->_dna._carryNum] = fv + 1;
+			_vm->_gyro->_objectList[_vm->_gyro->_dna._carryNum] = i + 1;
 		}
 }
 
-void Lucerna::verte(Common::Point cursorPos) {
+void Lucerna::guideAvvy(Common::Point cursorPos) {
 	if (! _vm->_gyro->_dna._userMovesAvvy)
 		return;
 
@@ -1057,10 +1008,10 @@ void Lucerna::verte(Common::Point cursorPos) {
 		break;
 	}    // No other values are possible.
 
-	showrw();
+	drawDirection();
 }
 
-void Lucerna::checkclick() {
+void Lucerna::checkClick() {
 	Common::Point cursorPos = _vm->getMousePos();
 	_vm->_gyro->_onToolbar = _vm->_gyro->kSlowComputer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
 
@@ -1076,7 +1027,7 @@ void Lucerna::checkclick() {
 	else if (!_vm->_gyro->_dropdownActive) { // Dropdown can handle its own pointers.
 		if (holdLeftMouse) {
 			_vm->_gyro->newMouse(7); // Mark's crosshairs
-			verte(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
+			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
 		} else
 			_vm->_gyro->newMouse(4); // fletch
 	}
@@ -1096,7 +1047,7 @@ void Lucerna::checkclick() {
 		} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399)) { // Check the toolbar.
 			if ((137 <= cursorPos.x) && (cursorPos.x <= 207)) { // Control Avvy with the compass.
 				if (_vm->_gyro->_alive && _vm->_gyro->_dna._avvyIsAwake)
-					mouseway(cursorPos);
+					useCompass(cursorPos);
 			} else if ((208 <= cursorPos.x) && (cursorPos.x <= 260)) { // Examine the _thing.
 				do {
 					_vm->updateEvents();
@@ -1124,7 +1075,7 @@ void Lucerna::checkclick() {
 				_vm->_trip->tr[0].xs = _vm->_gyro->kRun;
 				_vm->_trip->newspeed();
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
-				fxtoggle();
+				fxToggle();
 			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
 				_vm->_gyro->_mouseText = Common::String(13) + _vm->_gyro->_mouseText;
 		} else if (!_vm->_gyro->_dropsOk)
@@ -1132,170 +1083,102 @@ void Lucerna::checkclick() {
 	}
 }
 
-void Lucerna::mouse_init() {
-	_vm->_gyro->setMousePointerWait();
-}
-
-void Lucerna::mousepage(uint16 page_) {
-	warning("STUB: Lucerna::mousepage()");
-}
-
-void Lucerna::errorled() {
+void Lucerna::errorLed() {
 	warning("STUB: Lucerna::errorled()");
 }
 
 int8 Lucerna::fades(int8 x) {
-	byte r = x / 16;
-	x = x % 16;
-	byte g = x / 4;
-	byte b = x % 4;
-	if (r > 0)
-		r--;
-	if (g > 0)
-		g--;
-	if (b > 0)
-		b--;
-
-	return (16 * r + 4 * g + b);
-	// fades = x - 1;
+	warning("STUB: Lucerna::fades()");
+	return 0;
 }
 
-
-
-
-void Lucerna::fadeout(byte n) {
-	warning("STUB: Lucerna::fadeout()"); // I'll bother with colors later.
+void Lucerna::fadeOut(byte n) {
+	warning("STUB: Lucerna::fadeOut()");
 }
 
 void Lucerna::dusk() {
-	warning("STUB: Lucerna::dusk()"); // I'll bother with colors later.
+	warning("STUB: Lucerna::dusk()");
 }
 
-
-
-
-void Lucerna::fadein(byte n) {
-	warning("STUB: Lucerna::fadein()");
+void Lucerna::fadeIn(byte n) {
+	warning("STUB: Lucerna::fadeIn()");
 }
 
 void Lucerna::dawn() {
 	warning("STUB: Lucerna::dawn()");
 }
 
-
-
-void Lucerna::showrw() { // It's data is loaded in load_digits().
+void Lucerna::drawDirection() { // It's data is loaded in load_digits().
 	if (_vm->_gyro->_oldDirection == _vm->_gyro->_dna._direction)
 		return;
-	_vm->_gyro->_oldDirection = _vm->_gyro->_dna._direction;
-	CursorMan.showMouse(false);
 
-#if 0
-	for (byte page_ = 0; page_ <= 1; page_++) {
-		setactivepage(page_);
-		putimage(0, 161, rwlite[with.rw], 0);
-	}
-#endif
+	_vm->_gyro->_oldDirection = _vm->_gyro->_dna._direction;
+
+	CursorMan.showMouse(false);
 
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_directions[_vm->_gyro->_dna._direction], 0, 161);
 
 	CursorMan.showMouse(true);
-	//setactivepage(1 - cp);
-
-	warning("STUB: Lucerna::showrw()");
 }
 
-
-
-
-
-
-void Lucerna::calchand(uint16 ang, uint16 length, Common::Point &a, byte c) {
-	if (ang > 900) {
-		a.x = 177;
+void Lucerna::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color) {
+	if (angle > 900) {
+		endPoint.x = 177;
 		return;
 	}
 
-	a = _vm->_graphics->drawArc(_vm->_graphics->_surface, _clockCenterX, _clockCenterY, 449 - ang, 450 - ang, length, c);
+	endPoint = _vm->_graphics->drawArc(_vm->_graphics->_surface, _clockCenterX, _clockCenterY, 449 - angle, 450 - angle, length, color);
 }
 
-void Lucerna::hand(const Common::Point &a, byte c) {
-	if (a.x == 177)
+void Lucerna::drawHand(const Common::Point &endPoint, byte color) {
+	if (endPoint.x == 177)
 		return;
 
-	_vm->_graphics->_surface.drawLine(_clockCenterX, _clockCenterY, a.x, a.y, c);
+	_vm->_graphics->_surface.drawLine(_clockCenterX, _clockCenterY, endPoint.x, endPoint.y, color);
 }
 
-void Lucerna::refresh_hands() {
-	const ByteField clockspace = {61, 166, 66, 200};
+void Lucerna::plotHands() {
+	calcHand(_vm->_gyro->_onh, 14, _clockHandHour, kColorYellow);
+	calcHand(_vm->_gyro->_om * 6, 17, _clockHandMinute, kColorYellow);
+	drawHand(_clockHandHour, kColorBrown);
+	drawHand(_clockHandMinute, kColorBrown);
 
-	for (byte page_ = 0; page_ < 2; page_++)
-		_vm->_trip->getset[page_].remember(clockspace);
-}
-
-void Lucerna::plothands() {
-	//   off;
-	//setactivepage(3);
-	calchand(_vm->_gyro->_onh, 14, ah, kColorYellow);
-	calchand(_vm->_gyro->_om * 6, 17, am, kColorYellow);
-	hand(ah, kColorBrown);
-	hand(am, kColorBrown);
-
-	calchand(nh, 14, ah, kColorBrown);
-	calchand(_vm->_gyro->_minutes * 6, 17, am, kColorBrown);
-	hand(ah, kColorYellow);
-	hand(am, kColorYellow);
-
-	//setactivepage(1 - cp);
-
-	refresh_hands();
-
-	//   on;
+	calcHand(_hourAngle, 14, _clockHandHour, kColorBrown);
+	calcHand(_vm->_gyro->_minutes * 6, 17, _clockHandMinute, kColorBrown);
+	drawHand(_clockHandHour, kColorYellow);
+	drawHand(_clockHandMinute, kColorYellow);
 }
 
 void Lucerna::chime() {
 	warning("STUB: Lucerna::chime()");
 }
 
-void Lucerna::clock_lucerna() {
-	// ...Clock.
+void Lucerna::updateClock() { // TODO: Move variables from Gyro to here (or at least somewhere nearby), rename them.
 	TimeDate t;
 	_vm->_system->getTimeAndDate(t);
 	_vm->_gyro->_hours = t.tm_hour;
 	_vm->_gyro->_minutes = t.tm_min;
 	_vm->_gyro->_seconds = t.tm_sec;
 
-	nh = (_vm->_gyro->_hours % 12) * 30 + _vm->_gyro->_minutes / 2;
+	_hourAngle = (_vm->_gyro->_hours % 12) * 30 + _vm->_gyro->_minutes / 2;
 
 	if (_vm->_gyro->_oh != _vm->_gyro->_hours)  {
-		plothands();
+		plotHands();
 		chime();
 	}
 
 	if (_vm->_gyro->_om != _vm->_gyro->_minutes)
-		plothands();
+		plotHands();
 
 	if ((_vm->_gyro->_hours == 0) && (_vm->_gyro->_oh != 0) && (_vm->_gyro->_oh != 17717))
 		_vm->_scrolls->display(Common::String("Good morning!\n\nYes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!"));
 
 	_vm->_gyro->_oh = _vm->_gyro->_hours;
-	_vm->_gyro->_onh = nh;
+	_vm->_gyro->_onh = _hourAngle;
 	_vm->_gyro->_om = _vm->_gyro->_minutes;
 }
 
-
-
-void Lucerna::delavvy() {
-	CursorMan.showMouse(false);
-
-//	triptype &with = _vm->_trip->tr[0];
-//	for (byte page_ = 0; page_ <= 1; page_++)
-//		mblit(with.x / 8, with.y, (with.x + with._info.xl) / 8 + 1, with.y + with._info.yl, 3, page_);
-
-	CursorMan.showMouse(true);
-}
-
-void Lucerna::gameover() {
+void Lucerna::gameOver() {
 	_vm->_gyro->_dna._userMovesAvvy = false;
 
 	int16 sx = _vm->_trip->tr[0].x;
@@ -1307,36 +1190,32 @@ void Lucerna::gameover() {
 	_vm->_trip->tr[0].appear(sx, sy, 0);
 
 	_vm->_timeout->set_up_timer(3, _vm->_timeout->procavalot_falls, _vm->_timeout->reason_falling_over);
-
 	_vm->_gyro->_alive = false;
 }
 
-/* OK. There are two kinds of redraw: Major and Minor. Minor is what happens
-  when you load a game, etc. Major redraws EVERYTHING. */
-
-void Lucerna::minor_redraw() {
+void Lucerna::minorRedraw() {
 	dusk();
 
-	enterroom(_vm->_gyro->_dna._room, 0); // Ped unknown or non-existant.
+	enterRoom(_vm->_gyro->_dna._room, 0); // Ped unknown or non-existant.
 
-	for (byte fv = 0; fv <= 1; fv++) {
+	for (byte i = 0; i <= 1; i++) {
 		_vm->_gyro->_cp = 1 - _vm->_gyro->_cp;
 		_vm->_trip->getback();
 	}
 
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // impossible digits
-	showscore();
+	drawScore();
 
 	dawn();
 }
 
-void Lucerna::major_redraw() {
+void Lucerna::majorRedraw() {
 	warning("STUB: Lucerna::major_redraw()");
 }
 
-uint16 Lucerna::bearing(byte whichped) {
-	byte pedId = whichped - 1; // Different array indexes in Pascal and C.
+uint16 Lucerna::bearing(byte whichPed) {
+	byte pedId = whichPed - 1; // Different array indexes in Pascal and C.
 
 	const double rad2deg = 180 / 3.14; // Pi
 
@@ -1351,25 +1230,20 @@ uint16 Lucerna::bearing(byte whichped) {
 	}
 }
 
-void Lucerna::sprite_run() {
-/* A sprite run is performed before displaying a scroll, if not all the
-  sprites are still. It performs two fast cycles, only using a few of
-  the links usually used, and without any extra animation. This should
-  make the sprites the same on both pages. */
+void Lucerna::spriteRun() {
 	_vm->_gyro->_doingSpriteRun = true;
 
 	_vm->_trip->get_back_loretta();
 	_vm->_trip->trippancy_link();
 
 	_vm->_gyro->_doingSpriteRun = false;
-
 }
 
-void Lucerna::fix_flashers() {
+void Lucerna::fixFlashers() {
 	_vm->_gyro->_ledStatus = 177;
 	_vm->_gyro->_oldDirection = 177;
 	_vm->_scrolls->state(2);
-	showrw();
+	drawDirection();
 }
 
 } // End of namespace Avalanche

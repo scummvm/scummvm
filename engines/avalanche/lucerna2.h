@@ -45,94 +45,69 @@ public:
 
 	void init();
 	void callVerb(byte id);
-	void draw_also_lines();
-	void mouse_init();
-	void mousepage(uint16 page_);
-	void load(byte n);
-	void exitroom(byte x);
-	void enterroom(byte x, byte ped);
-	void thinkabout(byte z, bool th);      // Hey!!! Get it and put it!!!
-	void load_digits();    // Load the scoring digits & rwlites
-	void toolbar();
-	void showscore();
-	void points(byte num);      // Add on no. of points
-	void mouseway(const Common::Point &cursorPos);
-	void posxy();
-	void fxtoggle();
-	void objectlist();
-	void checkclick();
-	void errorled();
+	void drawAlsoLines();
+	void loadRoom(byte num);
+	void exitRoom(byte x);
+	void enterRoom(byte room, byte ped);
+	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
+	void loadDigits(); // Load the scoring digits & rwlites
+	void drawToolbar();
+	void drawScore();
+	void incScore(byte num); // Add on no. of points
+	void useCompass(const Common::Point &cursorPos); // Click on the compass on the toolbar to control Avvy's movement.
+	void fxToggle();
+	void refreshObjectList();
+	void checkClick();
+	void errorLed();
 	void dusk();
 	void dawn();
-	void showrw();
-	void clock_lucerna();
-	void delavvy();
-	void gameover();
-	void minor_redraw();
-	void major_redraw();
-	uint16 bearing(byte whichped); // Returns the bearing from ped Whichped to Avvy, in degrees.
-	void flesh_colors();
-	void sprite_run();
-	void fix_flashers();
-	void load_also(Common::String n);
+	void drawDirection(); // Draws the little icon at the left end of the text input field.
+	void updateClock();
+	void gameOver();
+	uint16 bearing(byte whichPed); // Returns the bearing from ped 'whichped' to Avvy, in degrees.
+	void fixFlashers();
+	void loadAlso(byte num);
+
+	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc. Major redraws EVERYTHING.
+	void minorRedraw();
+	void majorRedraw();
+
+	// A sprite run is performed before displaying a scroll, if not all the sprites are still. It performs two fast cycles, only using a few of
+	// the links usually used, and without any extra animation. This should make the sprites the same on both pages.
+	void spriteRun();
 
 private:
 	AvalancheEngine *_vm;
 
-	struct rgbrec {
-		int16 red;
-		int16 green;
-		int16 blue;
-	};
-
-	struct palettetype {
-		int32 size;
-		rgbrec colors[256];
-	};
-
 	//Clock
 	static const int16 _clockCenterX = 510;
 	static const int16 _clockCenterY = 183;
-	Common::Point ah, am;
-	uint16 nh;
+	Common::Point _clockHandHour, _clockHandMinute; // ah and am in the original.
+	uint16 _hourAngle; // nh in the original.
 
+	bool _fxHidden; // Will de used in dust() and dawn().
 
-	palettetype fxpal[4];
+	Common::File file;
 
-	bool fxhidden;
+	Common::String readAlsoStringFromFile(); // 'nexstring' in the original.
+	void scram(Common::String &str);
+	void unScramble();
 
-	Common::File f;
+	void zoomOut(int16 x, int16 y); // Only used when entering the map.
+	void enterNewTown(); // Onyl when entering a NEW town! Not returning to the last one, but choosing another from the map.
+	void findPeople(byte room);
+	void putGeidaAt(byte whichPed, byte &ped);
+	void guideAvvy(Common::Point cursorPos); // 'verte' in the original.
 
-
-
-
-	Common::String nextstring();
-	void scram1(Common::String &x);
-	void unscramble();
-
-	void zoomout(int16 x, int16 y);
-
-	void find_people(byte room);
-
-	void new_town();
-
-	void put_geida_at(byte whichped, byte &ped);
-
-	void topcheck(Common::Point cursorPos);
-
-	void verte(Common::Point cursorPos);
-
+	// Used in dusk() and dawn().
 	int8 fades(int8 x);
+	void fadeOut(byte n);
+	void fadeIn(byte n);
 
-	void fadeout(byte n);
-
-	void fadein(byte n);
-
-	// clock_lucerna
-	void calchand(uint16 ang, uint16 length, Common::Point &a, byte c);
-	void hand(const Common::Point &a, byte c);
-	void refresh_hands();
-	void plothands();
+	// Clock
+	void calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color);
+	void drawHand(const Common::Point &endPoint, byte color);
+	void plotHands();
 	void chime();
 
 };

@@ -263,7 +263,7 @@ void triptype::bounce() {
 	else
 		stopwalk();
 	_tr->_vm->_gyro->_onCanDoPageSwap = false;
-	_tr->_vm->_lucerna->showrw();
+	_tr->_vm->_lucerna->drawDirection();
 	_tr->_vm->_gyro->_onCanDoPageSwap = true;
 }
 
@@ -565,7 +565,7 @@ void Trip::catamove(byte ped) {
 	}
 
 	if (!_vm->_gyro->_dna._enterCatacombsFromLustiesRoom)
-		_vm->_lucerna->load(29);
+		_vm->_lucerna->loadRoom(29);
 	here = _vm->_gyro->kCatacombMap[_vm->_gyro->_dna._catacombY - 1][_vm->_gyro->_dna._catacombX - 1];
 
 	switch (here & 0xf) { // West.
@@ -928,7 +928,7 @@ void Trip::call_special(uint16 which) {
 			tr[1].turn(kDirDown);
 			tr[1].stopwalk();
 			tr[1].call_eachstep = false; // Geida
-			_vm->_lucerna->gameover();
+			_vm->_lucerna->gameOver();
 		}
 		break;
 	case 9: // _vm->_gyro->special 9: lose Geida to Robin Hood...
@@ -955,7 +955,6 @@ void Trip::call_special(uint16 which) {
 		catamove(4);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
-		_vm->_lucerna->delavvy();
 		switch ((_vm->_gyro->kCatacombMap[_vm->_gyro->_dna._catacombY - 1][_vm->_gyro->_dna._catacombX - 1] & 0xf00) >> 8) {
 		case 0x1:
 			apped(1, 12);
@@ -975,7 +974,6 @@ void Trip::call_special(uint16 which) {
 		catamove(1);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
-		_vm->_lucerna->delavvy();
 		apped(1, 1);
 		getback();
 		dawndelay();
@@ -986,7 +984,6 @@ void Trip::call_special(uint16 which) {
 		catamove(2);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
-		_vm->_lucerna->delavvy();
 		apped(1, 2);
 		getback();
 		dawndelay();
@@ -997,7 +994,6 @@ void Trip::call_special(uint16 which) {
 		catamove(3);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
-		_vm->_lucerna->delavvy();
 		apped(1, 3);
 		getback();
 		dawndelay();
@@ -1224,7 +1220,7 @@ void Trip::arrow_procs(byte tripnum) {
 			end;
 			on;
 #endif
-			_vm->_lucerna->gameover();
+			_vm->_lucerna->gameOver();
 
 			_vm->_gyro->_dna._userMovesAvvy = false; // Stop the user from moving him.
 			_vm->_timeout->set_up_timer(55, _vm->_timeout->procnaughty_duke, _vm->_timeout->reason_naughty_duke);
@@ -1499,7 +1495,7 @@ void Trip::fliproom(byte room, byte ped) {
 		return;
 	}
 
-	_vm->_lucerna->exitroom(_vm->_gyro->_dna._room);
+	_vm->_lucerna->exitRoom(_vm->_gyro->_dna._room);
 	_vm->_lucerna->dusk();
 	getsetclear();
 
@@ -1512,12 +1508,12 @@ void Trip::fliproom(byte room, byte ped) {
 	if (_vm->_gyro->_dna._room == r__lustiesroom)
 		_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = true;
 
-	_vm->_lucerna->enterroom(room, ped);
+	_vm->_lucerna->enterRoom(room, ped);
 	apped(1, ped);
 	_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = false;
 	_vm->_gyro->_oldDirection = _vm->_gyro->_dna._direction;
 	_vm->_gyro->_dna._direction = tr[0].face;
-	_vm->_lucerna->showrw();
+	_vm->_lucerna->drawDirection();
 
 	for (fv = 0; fv <= 1; fv++) {
 		_vm->_gyro->_cp = 1 - _vm->_gyro->_cp;

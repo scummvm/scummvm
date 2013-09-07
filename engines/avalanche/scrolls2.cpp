@@ -123,7 +123,6 @@ void Scrolls::normscroll() {
 	_vm->_gyro->_seeScroll = true;
 	CursorMan.showMouse(true);
 	_vm->_gyro->newMouse(4);
-	_vm->_lucerna->mousepage(1 - _vm->_gyro->_cp);
 
 
 
@@ -185,7 +184,6 @@ void Scrolls::normscroll() {
 
 	state(0);
 	_vm->_gyro->_seeScroll = false;
-	_vm->_lucerna->mousepage(_vm->_gyro->_cp);
 	CursorMan.showMouse(false);
 	_vm->_lucerna->holdLeftMouse = false; // Used in Lucerna::checkclick().
 
@@ -258,7 +256,7 @@ void Scrolls::resetscrolldriver() {   // phew
 
 void Scrolls::dingdongbell() {   // Pussy's in the well. Who put her in? Little...
 	for (byte fv = 0; fv < _vm->_gyro->_scrollBells; fv++)
-		_vm->_lucerna->errorled(); // ring the bell "x" times
+		_vm->_lucerna->errorLed(); // ring the bell "x" times
 }
 
 void Scrolls::dodgem() {
@@ -666,7 +664,7 @@ void Scrolls::calldrivers() {
 					break;
 
 				if (call_spriterun)
-					_vm->_lucerna->sprite_run();
+					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
 
 				drawscroll(&Avalanche::Scrolls::normscroll);
@@ -685,14 +683,14 @@ void Scrolls::calldrivers() {
 					break;
 
 				if (call_spriterun)
-					_vm->_lucerna->sprite_run();
+					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
 
 				if (param == 0)
 					natural();
 				else if ((1 <= param) && (param <= 9)) {
 					if ((param > _vm->_trip->kSpriteNumbMax) || (!_vm->_trip->tr[param - 1].quick)) { // Not valid.
-						_vm->_lucerna->errorled();
+						_vm->_lucerna->errorLed();
 						natural();
 					} else
 						_vm->_trip->tr[param - 1].chatter(); // Normal sprite talking routine.
@@ -706,7 +704,7 @@ void Scrolls::calldrivers() {
 					_vm->_gyro->_talkFontColor = _vm->_gyro->kQuasipeds[param - 10]._foregroundColor;
 					_vm->_gyro->_talkBackgroundColor = _vm->_gyro->kQuasipeds[param - 10]._backgroundColor; // Colors.
 				} else {
-					_vm->_lucerna->errorled(); // Not valid.
+					_vm->_lucerna->errorLed(); // Not valid.
 					natural();
 				}
 
@@ -747,7 +745,7 @@ void Scrolls::calldrivers() {
 						_vm->_visa->dixi('q', 37); // You find the sixpence.
 						_vm->_gyro->_dna._money += 6;
 						_vm->_gyro->_dna._boxContent = _vm->_acci->kNothing;
-						_vm->_lucerna->points(2);
+						_vm->_lucerna->incScore(2);
 						return;
 					}
 					break;
@@ -777,7 +775,7 @@ void Scrolls::calldrivers() {
 				break;
 			case kControlQuestion: {
 				if (call_spriterun)
-					_vm->_lucerna->sprite_run();
+					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
 
 				_vm->_gyro->_scrollNum++;
@@ -850,7 +848,7 @@ void Scrolls::musical_scroll() {
 		+ kControlInsertSpaces + "Q W E R T Y U I O P [ ]" + kControlNewLine + kControlNewLine + "Or press Enter to stop playing."
 		+ kControlToBuffer);
 
-	_vm->_lucerna->sprite_run();
+	_vm->_lucerna->spriteRun();
 
 	drawscroll(&Avalanche::Scrolls::music_scroll);
 

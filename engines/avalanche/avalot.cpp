@@ -111,7 +111,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	case Common::KEYCODE_KP5:
 		if (_vm->_gyro->_alive && _vm->_gyro->_dna._avvyIsAwake) {
 			_vm->_trip->handleMoveKey(event); // Fallthroughs are intended.
-			_vm->_lucerna->showrw();
+			_vm->_lucerna->drawDirection();
 			return;
 		}
 	case Common::KEYCODE_BACKSPACE:
@@ -124,7 +124,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 		break;
 	}
 
-	_vm->_lucerna->showrw();
+	_vm->_lucerna->drawDirection();
 }
 
 
@@ -137,11 +137,11 @@ void Avalot::setup() {
 	_vm->_gyro->_holdTheDawn = true;
 	_vm->_lucerna->dusk();
 	_vm->_gyro->_currentMouse = 177;
-	_vm->_lucerna->mouse_init();  // on;
+	_vm->_gyro->setMousePointerWait();
 	_vm->_gyro->_dropsOk = true;
 	_vm->_gyro->_mouseText = "";
 	_vm->_gyro->_dropdownActive = false;
-	_vm->_lucerna->load_digits();
+	_vm->_lucerna->loadDigits();
 	_vm->_gyro->_cheat = false;
 	_vm->_gyro->_cp = 0;
 	_vm->_parser->_inputTextPos = 0;
@@ -151,7 +151,7 @@ void Avalot::setup() {
 	// TSkellern = 0; Replace with a more local variable sometime
 	_vm->_gyro->_dna._direction = _vm->_gyro->kDirectionStopped;
 	_vm->_gyro->_enidFilename = ""; // Undefined.
-	_vm->_lucerna->toolbar();
+	_vm->_lucerna->drawToolbar();
 	_vm->_scrolls->state(2);
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // Impossible digits.
@@ -171,7 +171,7 @@ void Avalot::setup() {
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_vm->_gyro->_thinks = 2; // You always have money.
-		_vm->_lucerna->thinkabout(_vm->_gyro->kObjectMoney, _vm->_gyro->kThing);
+		_vm->_lucerna->thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing);
 
 		_vm->loadGame(loadSlot);
 	} else {
@@ -179,8 +179,8 @@ void Avalot::setup() {
 		_vm->_gyro->newGame(); // No game was requested- load the default.
 
 		_vm->_gyro->_soundFx = ! _vm->_gyro->_soundFx;
-		_vm->_lucerna->fxtoggle();
-		_vm->_lucerna->thinkabout(_vm->_gyro->kObjectMoney, _vm->_gyro->kThing);
+		_vm->_lucerna->fxToggle();
+		_vm->_lucerna->thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing);
 
 		_vm->_visa->dixi('q', 83); // Info on the game, etc.
 	}
@@ -198,13 +198,13 @@ void Avalot::run(Common::String arg) {
 
 
 
-		_vm->_lucerna->clock_lucerna();
+		_vm->_lucerna->updateClock();
 		_vm->_dropdown->updateMenu();
 		_vm->_gyro->forceNumlock();
 		_vm->_trip->get_back_loretta();
 		_vm->_celer->updateBackgroundSprites();
 		_vm->_trip->trippancy_link();
-		_vm->_lucerna->checkclick();
+		_vm->_lucerna->checkClick();
 		_vm->_timeout->one_tick();
 
 
@@ -227,7 +227,7 @@ void Avalot::run(Common::String arg) {
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
 		if (delay <= 55)
 			_vm->_system->delayMillis(55 - delay); // Replaces _vm->_gyro->slowdown(); 55 comes from 18.2 Hz (B Flight).
-	} while (! _vm->_gyro->_letMeOut);
+	} while (!_vm->_gyro->_letMeOut && !_vm->shouldQuit());
 
 	//if (logging)
 	//	close(logfile);
