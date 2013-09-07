@@ -621,14 +621,14 @@ void Timeout::arkata_shouts() {
 void Timeout::winning() {
 	_vm->_visa->dixi('q', 79);
 
-	_vm->_pingo->winning_pic();
+	_vm->_pingo->winningPic();
 	warning("STUB: Timeout::winning()");
 #if 0
 	do {
 		_vm->_lucerna->checkclick();
 	} while (!(_vm->_gyro->mrelease == 0));
 #endif
-	// TODO: To be implemented with Pingo::winning_pic().
+	// TODO: To be implemented with Pingo::winningPic().
 
 	_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);
 	_vm->_scrolls->display(" T H E    E N D ");
