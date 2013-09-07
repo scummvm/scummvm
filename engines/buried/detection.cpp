@@ -189,6 +189,7 @@ class BuriedMetaEngine : public AdvancedMetaEngine {
 public:
 	BuriedMetaEngine() : AdvancedMetaEngine(Buried::gameDescriptions, sizeof(Buried::BuriedGameDescription), buriedGames) {
 		_singleid = "buried";
+		_flags = kADFlagUseExtraAsHint;
 	}
 
 	virtual const char *getName() const {
