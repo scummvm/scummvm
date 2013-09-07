@@ -147,7 +147,7 @@ Common::Error SaveManager::loadGame(uint slot) {
 }
 
 bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
-	if (in->readSint32BE() != SAVEGAME_ID) {
+	if (in->readUint32BE() != SAVEGAME_ID) {
 		warning("File is not a ZVision save file. Aborting load");
 		return false;
 	}
