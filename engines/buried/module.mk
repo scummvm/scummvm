@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	detection.o \
 	graphics.o \
 	livetext.o \
+	main_menu.o \
 	sound.o \
 	title_sequence.o \
 	video_window.o \
