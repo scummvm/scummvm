@@ -728,7 +728,7 @@ bool SoundManager::Sound::start() {
 	_soundData->rewind();
 
 	if (_loop) {
-		audioStream = Audio::makeLoopingAudioStream(_soundData, 0);
+		audioStream = new Audio::LoopingAudioStream(_soundData, 0, DisposeAfterUse::NO);
 		disposeAfterUse = DisposeAfterUse::YES;
 	}
 
