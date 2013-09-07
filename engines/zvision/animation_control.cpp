@@ -104,6 +104,7 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 			if (_loopCount > 0) {
 				_currentLoop++;
 				if (_currentLoop >= _loopCount) {
+					_animation.avi->stop();
 					finished = true;
 				}
 			}
