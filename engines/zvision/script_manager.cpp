@@ -174,6 +174,8 @@ void ScriptManager::checkPuzzleCriteria() {
 		if (puzzle->criteriaList.empty() || criteriaMet) {
 			debug("Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
+			uint32 key = puzzle->key;
+
 			bool shouldContinue = true;
 			for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); resultIter++) {
 				shouldContinue = shouldContinue && (*resultIter)->execute(_engine);
@@ -183,7 +185,7 @@ void ScriptManager::checkPuzzleCriteria() {
 			}
 
 			// Set the puzzle as completed
-			setStateValue(puzzle->key, 1);
+			setStateValue(key, 1);
 
 			if (!shouldContinue) {
 				break;
