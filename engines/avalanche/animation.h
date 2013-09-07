@@ -25,11 +25,10 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* TRIP5	Trippancy V - the sprite animation subsystem */
+/* Original name TRIP5 / Trippancy V - the sprite animation subsystem */
 
-
-#ifndef AVALANCHE_TRIP6_H
-#define AVALANCHE_TRIP6_H
+#ifndef AVALANCHE_ANIMATION_H
+#define AVALANCHE_ANIMATION_H
 
 #include "avalanche/graphics.h"
 
@@ -40,11 +39,13 @@ namespace Avalanche {
 class AvalancheEngine;
 
 struct adxtype { // Second revision of ADX type
-	Common::String name; // [13] name of character // uruk: Note to self: TRAILING /0 !!! Real size: 12
-	Common::String comment; // [17] comment // uruk: Same here, but 16.
-	byte num; // number of pictures
+	// CHECKME: Useless?
+	Common::String _name; // name of character
+	Common::String _comment; // comment
+	//
+	byte _frameNum; // number of pictures
 	byte seq; // how many in one stride
-	byte fgc, bgc; // foreground & background bubble colors
+	byte _fgBubbleCol, _bgBubbleCol; // foreground & background bubble colors
 	byte accinum; // the number according to Acci (1=Avvy, etc.)
 };
 
@@ -69,20 +70,19 @@ struct trip_saver_type {
 	bool vanishifstill;
 };
 
+class Animation;
 
-class Trip;
-
-class triptype {
+class AnimationType {
 public:
 	SpriteInfo _info;
 
-	adxtype a; // vital statistics
+	adxtype _stat; // vital statistics
 	byte face, step;
-	int16 x, y; // current xy coords
-	int16 ox[2], oy[2];  // last xy coords
+	int16 _x, _y; // current xy coords
+	int16 _oldX[2], _oldY[2];  // last xy coords
 	int8 ix, iy; // amount to move sprite by, each step
 	byte whichsprite;
-	bool quick, visible, homing, check_me;
+	bool quick, _visible, homing, check_me;
 	int16 hx, hy; // homing x & y coords
 	byte count; // counts before changing step
 	byte xs, ys; // x & y speed
@@ -92,7 +92,7 @@ public:
 	bool call_eachstep; // Do we call the eachstep procedure?
 	byte eachstep;
 
-	void init(byte spritenum, bool do_check, Trip *tr);
+	void init(byte spritenum, bool do_check, Animation *tr);
 	// loads & sets up the sprite
 	void original();    // just sets Quick to false
 	void andexor();    // drops sprite onto screen
@@ -114,10 +114,10 @@ public:
 
 	void save_data_to_mem(uint16 &where);
 	void load_data_from_mem(uint16 &where);
-	triptype *done();
+	AnimationType *done();
 
 private:
-	Trip *_tr;
+	Animation *_tr;
 
 	bool collision_check();
 	int8 sgn(int16 val);
@@ -135,9 +135,9 @@ public:
 	void recall(ByteField &r);
 };
 
-class Trip {
+class Animation {
 public:
-	friend class triptype;
+	friend class AnimationType;
 	friend class getsettype;
 
 	static const int16 kDirUp = 0;
@@ -160,8 +160,8 @@ public:
 	static const int16 procgrab_avvy = 6;
 	static const int16 procgeida_procs = 7;
 
-	Trip(AvalancheEngine *vm);
-	~Trip();
+	Animation(AvalancheEngine *vm);
+	~Animation();
 
 	void trippancy_link();
 	void get_back_loretta();
@@ -183,7 +183,7 @@ public:
 	void take_a_step(byte &tripnum);
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
 
-	triptype tr[kSpriteNumbMax];
+	AnimationType tr[kSpriteNumbMax];
 	getsettype getset[2];
 	byte aa[1600];
 
@@ -214,4 +214,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // AVALANCHE_TRIP6_H
+#endif // AVALANCHE_ANIMATION_H

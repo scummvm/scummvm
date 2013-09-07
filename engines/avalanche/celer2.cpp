@@ -30,7 +30,7 @@
 #include "avalanche/avalanche.h"
 
 #include "avalanche/celer2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/roomnums.h"
@@ -367,7 +367,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 	warning("STUB: Celer::show_one()");
 
 	for (byte i = 0; i < 2; i++)
-		_vm->_trip->getset[i].remember(_r);
+		_vm->_animation->getset[i].remember(_r);
 }
 
 

@@ -33,7 +33,7 @@
 #include "avalanche/gyro2.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/celer2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 
 #include "common/scummsys.h"
 
@@ -76,7 +76,7 @@ void Sequence::start_to_close() {
 
 void Sequence::start_to_open() {
 	_vm->_gyro->_dna._userMovesAvvy = false; // They can't move.
-	_vm->_trip->stopwalking(); // And they're not moving now.
+	_vm->_animation->stopwalking(); // And they're not moving now.
 	start_to_close(); // Apart from that, it's the same thing.
 }
 
@@ -94,7 +94,7 @@ void Sequence::call_sequencer() {
 		break;
 	case 177: // Flip room.
 		_vm->_gyro->_dna._userMovesAvvy = true;
-		_vm->_trip->fliproom(_vm->_gyro->_dna._flipToWhere, _vm->_gyro->_dna._flipToPed);
+		_vm->_animation->fliproom(_vm->_gyro->_dna._flipToWhere, _vm->_gyro->_dna._flipToPed);
 		if (seq[0] == 177)
 			shove_left();
 		break;

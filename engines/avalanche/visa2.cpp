@@ -34,7 +34,7 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/acci2.h"
 #include "avalanche/lucerna2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 
 #include "common/textconsole.h"
 
@@ -252,8 +252,8 @@ void Visa::talkto(byte whom) {
 		whom -= 149;
 
 	no_matches = true;
-	for (fv = 0; fv <= _vm->_trip->kSpriteNumbMax; fv++)
-		if (_vm->_trip->tr[fv].a.accinum == whom) {
+	for (fv = 0; fv <= _vm->_animation->kSpriteNumbMax; fv++)
+		if (_vm->_animation->tr[fv]._stat.accinum == whom) {
 			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + (fv + 49) + _vm->_scrolls->kControlToBuffer);
 			no_matches = false;
 			break;
@@ -275,8 +275,8 @@ void Visa::talkto(byte whom) {
 
 		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = 177; // Crapulus walks off.
 
-		_vm->_trip->tr[1].vanishifstill = true;
-		_vm->_trip->tr[1].walkto(3); // Walks away.
+		_vm->_animation->tr[1].vanishifstill = true;
+		_vm->_animation->tr[1].walkto(3); // Walks away.
 
 		_vm->_lucerna->incScore(2);
 	}

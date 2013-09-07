@@ -32,7 +32,7 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/lucerna2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 #include "avalanche/acci2.h"
 #include "avalanche/visa2.h"
 #include "avalanche/timeout2.h"
@@ -689,11 +689,11 @@ void Scrolls::calldrivers() {
 				if (param == 0)
 					natural();
 				else if ((1 <= param) && (param <= 9)) {
-					if ((param > _vm->_trip->kSpriteNumbMax) || (!_vm->_trip->tr[param - 1].quick)) { // Not valid.
+					if ((param > _vm->_animation->kSpriteNumbMax) || (!_vm->_animation->tr[param - 1].quick)) { // Not valid.
 						_vm->_lucerna->errorLed();
 						natural();
 					} else
-						_vm->_trip->tr[param - 1].chatter(); // Normal sprite talking routine.
+						_vm->_animation->tr[param - 1].chatter(); // Normal sprite talking routine.
 				} else if ((10 <= param) && (param <= 36)) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the

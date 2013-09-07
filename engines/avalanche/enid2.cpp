@@ -32,7 +32,7 @@
 #include "avalanche/enid2.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/lucerna2.h"
-#include "avalanche/trip6.h"
+#include "avalanche/animation.h"
 #include "avalanche/timeout2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
