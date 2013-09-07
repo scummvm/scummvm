@@ -45,9 +45,6 @@ Visa::Visa(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-bool Visa::bubbling = false;
-bool Visa::report_dixi_errors = true;
-
 void Visa::unskrimble() {
 	for (uint16  fv = 0; fv < _vm->_gyro->_bufSize; fv++)
 		_vm->_gyro->_buffer[fv] = (~(_vm->_gyro->_buffer[fv] - (fv + 1))) % 256;
@@ -58,7 +55,7 @@ void Visa::do_the_bubble() {
 	_vm->_gyro->_buffer[_vm->_gyro->_bufSize - 1] = 2;
 }
 
-void Visa::dixi(char block, byte point) {
+void Visa::dixi(char block, byte point, bool report, bool bubbling) {
 	Common::File indexfile, sezfile;
 	uint16 idx_offset, sez_offset;
 	bool error = false;
@@ -83,7 +80,7 @@ void Visa::dixi(char block, byte point) {
 	went_ok = !error;
 
 	if (error) {
-		if (report_dixi_errors) {
+		if (report) {
 			Common::String todisplay;
 			todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro->intToStr(point).c_str());
 			_vm->_scrolls->display(todisplay);
@@ -113,12 +110,7 @@ void Visa::speech(byte who, byte subject) {
 
 	if (subject == 0) {
 		// No subject.
-
-		bubbling = true;
-		report_dixi_errors = false;
-		dixi('s', who);
-		bubbling = false;
-		report_dixi_errors = true;
+		dixi('s', who, false, true);
 	} else {
 		// Subject given.
 

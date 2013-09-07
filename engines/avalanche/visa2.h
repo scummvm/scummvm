@@ -38,23 +38,15 @@ class AvalancheEngine;
 class Visa {
 public:
 	Visa(AvalancheEngine *vm);
-
-	void dixi(char block, byte point);
-
+	void dixi(char block, byte point, bool report = true, bool bubbling = false);
 	void talkto(byte whom);
 
 private:
 	AvalancheEngine *_vm;
 
-	static bool bubbling;
-	static bool report_dixi_errors;
-
 	bool went_ok;
-
 	void unskrimble();
-
 	void do_the_bubble();
-
 	void speech(byte who, byte subject);
 };
 
