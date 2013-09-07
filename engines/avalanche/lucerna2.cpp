@@ -676,10 +676,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (ped != 0) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->first_show(6);
-			_vm->_sequence->then_show(5);
-			_vm->_sequence->then_show(7);
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->firstShow(6);
+			_vm->_sequence->thenShow(5);
+			_vm->_sequence->thenShow(7);
+			_vm->_sequence->startToClose();
 		}
 		break;
 
@@ -687,11 +687,11 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (ped == 2) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->first_show(3);
-			_vm->_sequence->then_show(2);
-			_vm->_sequence->then_show(1);
-			_vm->_sequence->then_show(4);
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->firstShow(3);
+			_vm->_sequence->thenShow(2);
+			_vm->_sequence->thenShow(1);
+			_vm->_sequence->thenShow(4);
+			_vm->_sequence->startToClose();
 		}
 		break;
 
@@ -699,10 +699,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (ped == 2)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->first_show(6);
-			_vm->_sequence->then_show(5);
-			_vm->_sequence->then_show(7);
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->firstShow(6);
+			_vm->_sequence->thenShow(5);
+			_vm->_sequence->thenShow(7);
+			_vm->_sequence->startToClose();
 		}
 		break;
 
@@ -725,16 +725,16 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_animation->tr[1].init(10, false, _vm->_animation); // Define the dart.
 			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->first_show(1);
+			_vm->_sequence->firstShow(1);
 			if (_vm->_gyro->_dna._arrowInTheDoor)
-				_vm->_sequence->then_show(3);
+				_vm->_sequence->thenShow(3);
 			else
-				_vm->_sequence->then_show(2);
+				_vm->_sequence->thenShow(2);
 
 			if (_vm->_gyro->_dna._takenPen)
 				_vm->_celer->drawBackgroundSprite(-1, -1, 4);
 
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->startToClose();
 		} else {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			if (_vm->_gyro->_dna._arrowInTheDoor)
@@ -749,10 +749,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (ped == 1)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->first_show(2);
-			_vm->_sequence->then_show(1);
-			_vm->_sequence->then_show(3);
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->firstShow(2);
+			_vm->_sequence->thenShow(1);
+			_vm->_sequence->thenShow(3);
+			_vm->_sequence->startToClose();
 		}
 		break;
 
@@ -770,10 +770,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->first_show(2);
-			_vm->_sequence->then_show(1);
-			_vm->_sequence->then_show(3);
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->firstShow(2);
+			_vm->_sequence->thenShow(1);
+			_vm->_sequence->thenShow(3);
+			_vm->_sequence->startToClose();
 		}
 		break;
 
@@ -808,11 +808,11 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			// Shut the door
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->first_show(3);
-			_vm->_sequence->first_show(2);
-			_vm->_sequence->then_show(1);
-			_vm->_sequence->then_show(4);
-			_vm->_sequence->start_to_close();
+			_vm->_sequence->firstShow(3);
+			_vm->_sequence->firstShow(2);
+			_vm->_sequence->thenShow(1);
+			_vm->_sequence->thenShow(4);
+			_vm->_sequence->startToClose();
 		}
 		break;
 
