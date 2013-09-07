@@ -108,6 +108,7 @@ void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
 	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end();) {
 		if ((*iter)->process(deltaTimeMillis)) {
+			delete (*iter);
 			// Remove the node
 			iter = _activeControls.erase(iter);
 		} else {
