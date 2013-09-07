@@ -52,7 +52,7 @@ const int gShiftTarget = 16;//target.format.gShift;
 const int rShiftTarget = 24;//target.format.rShift;
 
 
-void BlittingTools::blendPixelAdditive(byte *in, byte *out) {
+void  BlenderAdditive::blendPixel(byte *in, byte *out) {
 	byte *outa = &out[aIndex];
 	byte *outr = &out[rIndex];
 	byte *outg = &out[gIndex];
@@ -63,44 +63,10 @@ void BlittingTools::blendPixelAdditive(byte *in, byte *out) {
 	byte *ing = &in[gIndex];
 	byte *inb = &in[bIndex];
 
-	blendPixelAdditive(ina, inr, ing, inb, outa, outr, outg, outb);
+	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
 }
 
-void BlittingTools::blendPixelNormal(byte *in, byte *out, int colorMod) {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	byte ca = (colorMod >> aShift) & 0xFF;
-	byte cr = (colorMod >> rShift) & 0xFF;
-	byte cg = (colorMod >> gShift) & 0xFF;
-	byte cb = (colorMod >> bShift) & 0xFF;
-
-	blendPixelNormal(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
-}
-
-void BlittingTools::blendPixelNormal(byte *in, byte *out) {
-	byte *outa = &out[aIndex];
-	byte *outr = &out[rIndex];
-	byte *outg = &out[gIndex];
-	byte *outb = &out[bIndex];
-
-	byte *ina = &in[aIndex];
-	byte *inr = &in[rIndex];
-	byte *ing = &in[gIndex];
-	byte *inb = &in[bIndex];
-
-	blendPixelNormal(ina, inr, ing, inb, outa, outr, outg, outb);
-}
-
-
-void BlittingTools::blendPixelAdditive(byte *in, byte *out, int colorMod) {
+void  BlenderNormal::blendPixel(byte *in, byte *out, int colorMod) {
 	byte *outa = &out[aIndex];
 	byte *outr = &out[rIndex];
 	byte *outg = &out[gIndex];
@@ -116,10 +82,25 @@ void BlittingTools::blendPixelAdditive(byte *in, byte *out, int colorMod) {
 	byte cg = (colorMod >> gShift) & 0xFF;
 	byte cb = (colorMod >> bShift) & 0xFF;
 
-	blendPixelAdditive(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
+	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 }
 
-void BlittingTools::blendPixelSubtractive(byte *in, byte *out, int colorMod) {
+void  BlenderNormal::blendPixel(byte *in, byte *out) {
+	byte *outa = &out[aIndex];
+	byte *outr = &out[rIndex];
+	byte *outg = &out[gIndex];
+	byte *outb = &out[bIndex];
+
+	byte *ina = &in[aIndex];
+	byte *inr = &in[rIndex];
+	byte *ing = &in[gIndex];
+	byte *inb = &in[bIndex];
+
+	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
+}
+
+
+void  BlenderAdditive::blendPixel(byte *in, byte *out, int colorMod) {
 	byte *outa = &out[aIndex];
 	byte *outr = &out[rIndex];
 	byte *outg = &out[gIndex];
@@ -135,7 +116,26 @@ void BlittingTools::blendPixelSubtractive(byte *in, byte *out, int colorMod) {
 	byte cg = (colorMod >> gShift) & 0xFF;
 	byte cb = (colorMod >> bShift) & 0xFF;
 
-	blendPixelSubtractive(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
+	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
+}
+
+void BlenderSubtractive::blendPixel(byte *in, byte *out, int colorMod) {
+	byte *outa = &out[aIndex];
+	byte *outr = &out[rIndex];
+	byte *outg = &out[gIndex];
+	byte *outb = &out[bIndex];
+
+	byte *ina = &in[aIndex];
+	byte *inr = &in[rIndex];
+	byte *ing = &in[gIndex];
+	byte *inb = &in[bIndex];
+
+	byte ca = (colorMod >> aShift) & 0xFF;
+	byte cr = (colorMod >> rShift) & 0xFF;
+	byte cg = (colorMod >> gShift) & 0xFF;
+	byte cb = (colorMod >> bShift) & 0xFF;
+
+	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 }
 
 
@@ -147,7 +147,7 @@ void BlittingTools::blendPixelSubtractive(byte *in, byte *out, int colorMod) {
 
 
 
-void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	byte tempa = *ina;
 
@@ -178,7 +178,7 @@ void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *in
 }
 
 
-void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+void  BlenderSubtractive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	byte tempa = *ina;
 
@@ -209,7 +209,7 @@ void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte 
 }
 
 
-void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+void  BlenderNormal::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	byte tempa = *ina;
 
@@ -275,7 +275,7 @@ void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb,
 	}
 }
 
-void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+void BlenderNormal::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 	if (*ina == 0) {
 		return;
 	} else if (*ina == 255) {
@@ -293,7 +293,7 @@ void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb,
 }
 
 
-void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+void  BlenderSubtractive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 	if (*ina == 0) {
 		return;
 	} else if (*ina == 255) {
@@ -311,7 +311,7 @@ void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte 
 	}
 }
 
-void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
 	if (*ina == 0) {
 		return;
@@ -330,8 +330,7 @@ void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *in
 	}
 };
 
-
-void BlittingTools::blendPixelSubtractive(byte *in, byte *out)  {
+void BlenderSubtractive::blendPixel(byte *in, byte *out)  {
 	byte *outa = &out[aIndex];
 	byte *outr = &out[rIndex];
 	byte *outg = &out[gIndex];
@@ -342,7 +341,7 @@ void BlittingTools::blendPixelSubtractive(byte *in, byte *out)  {
 	byte *ing = &in[gIndex];
 	byte *inb = &in[bIndex];
 
-	blendPixelSubtractive(ina, inr, ing, inb, outa, outr, outg, outb);
+	blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
 };
 
 void BlittingTools::blendBinaryFast(byte *in, byte *out) {
@@ -480,40 +479,37 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-void TransparentSurface::doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint color, TSpriteBlendMode blendMode, AlphaType alphaMode) {
+
+void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 
 	byte *in;
 	byte *out;
 
-	if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && alphaMode == ALPHA_OPAQUE) {
-		for (uint32 i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			memcpy(out, in, width * 4);
-			for (uint32 j = 0; j < width; j++) {
-				out[aIndex] = 0xFF;
-				out += 4;
-			}
-			outo += pitch;
-			ino += inoStep;
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		memcpy(out, in, width * 4);
+		for (uint32 j = 0; j < width; j++) {
+			out[aIndex] = 0xFF;
+			out += 4;
 		}
+		outo += pitch;
+		ino += inoStep;
+	}
+}
 
-	} else if (color == 0xFFFFFF) {
+template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint color) {
 
-		void (*fp)(byte * in, byte * out);
+	byte *in;
+	byte *out;
 
-		if (blendMode == BLEND_ADDITIVE) {
-			fp = BlittingTools::blendPixelAdditive;
-		} else if (blendMode == BLEND_SUBTRACTIVE) {
-			fp = BlittingTools::blendPixelSubtractive;
-		} else {
-			fp = fp = BlittingTools::blendPixelNormal;
-		}
+	if (color == 0xFFFFFF) {
+
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
-				fp(in, out);
+				Blender::blendPixel(in, out);
 				in += inStep;
 				out += 4;
 			}
@@ -521,20 +517,12 @@ void TransparentSurface::doBlit(byte *ino, byte *outo, uint32 width, uint32 heig
 			ino += inoStep;
 		}
 	} else {
-		void (*fp)(byte * in, byte * out, int color);
 
-		if (blendMode == BLEND_ADDITIVE) {
-			fp = BlittingTools::blendPixelAdditive;
-		} else if (blendMode == BLEND_SUBTRACTIVE) {
-			fp = BlittingTools::blendPixelSubtractive;
-		} else {
-			fp = fp = BlittingTools::blendPixelNormal;
-		}
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
-				fp(in, out, color);
+				Blender::blendPixel(in, out, color);
 				in += inStep;
 				out += 4;
 			}
@@ -651,7 +639,18 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 		byte *in, *out;
 
-		doBlit(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color, blendMode, _alphaMode);
+		if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
+			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+		} else {
+			if (blendMode == BLEND_ADDITIVE) {
+				doBlit<BlenderAdditive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_SUBTRACTIVE) {
+				doBlit<BlenderSubtractive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else {
+				assert(blendMode == BLEND_NORMAL);
+				doBlit<BlenderNormal>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			}
+		}
 
 	}
 

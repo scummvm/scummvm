@@ -63,22 +63,22 @@ struct TransparentSurface : public Graphics::Surface {
 	 @brief The possible flipping parameters for the blit methode.
 	 */
 	enum FLIP_FLAGS {
-		/// The image will not be flipped.
-		FLIP_NONE = 0,
-		/// The image will be flipped at the horizontal axis.
-		FLIP_H = 1,
-		/// The image will be flipped at the vertical axis.
-		FLIP_V = 2,
-		/// The image will be flipped at the horizontal and vertical axis.
-		FLIP_HV = FLIP_H | FLIP_V,
-		/// The image will be flipped at the horizontal and vertical axis.
-		FLIP_VH = FLIP_H | FLIP_V
+	    /// The image will not be flipped.
+	    FLIP_NONE = 0,
+	    /// The image will be flipped at the horizontal axis.
+	    FLIP_H = 1,
+	    /// The image will be flipped at the vertical axis.
+	    FLIP_V = 2,
+	    /// The image will be flipped at the horizontal and vertical axis.
+	    FLIP_HV = FLIP_H | FLIP_V,
+	    /// The image will be flipped at the horizontal and vertical axis.
+	    FLIP_VH = FLIP_H | FLIP_V
 	};
 
 	enum AlphaType {
-		ALPHA_OPAQUE = 0,
-		ALPHA_BINARY = 1,
-		ALPHA_FULL = 2
+	    ALPHA_OPAQUE = 0,
+	    ALPHA_BINARY = 1,
+	    ALPHA_FULL = 2
 	};
 
 	AlphaType _alphaMode;
@@ -116,13 +116,14 @@ struct TransparentSurface : public Graphics::Surface {
 	                  Common::Rect *pPartRect = nullptr,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  TSpriteBlendMode blend = BLEND_NORMAL);
+	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 private:
-	static void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep,  uint color, TSpriteBlendMode blendMode, AlphaType alphaMode);
+	static void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
+
 };
 
 /**
@@ -137,22 +138,34 @@ private:
     }
 };*/
 
-class BlittingTools {
+class BlenderAdditive {
 public:
-	static void blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	static void blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	static void blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	static void blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	static void blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	static void blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	
-	static void blendPixelSubtractive(byte *in, byte *out);
-	static void blendPixelAdditive(byte *in, byte *out);
+	static void blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	static void blendPixel(byte *in, byte *out);
+	static void blendPixel(byte *in, byte *out, int colorMod);
+};
+
+class BlenderSubtractive {
+public:
+	static void blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	static void blendPixel(byte *in, byte *out);
+	static void blendPixel(byte *in, byte *out, int colorMod);
+};
+
+class BlenderNormal {
+public:
+	static void blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	static void blendPixel(byte *in, byte *out);
+	static void blendPixel(byte *in, byte *out, int colorMod);
+};
+
+
+
+class BlittingTools {
 	static void blendBinaryFast(byte *in, byte *out);
-	static void blendPixelSubtractive(byte *in, byte *out, int colorMod);
-	static void blendPixelAdditive(byte *in, byte *out, int colorMod);
-	static void blendPixelNormal(byte *in, byte *out, int colorMod);
-	static void blendPixelNormal(byte *in, byte *out);
 };
 
 
