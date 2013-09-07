@@ -117,18 +117,21 @@ Lucerna::Lucerna(AvalancheEngine *vm) : _fxHidden(false), _clock(vm) {
 }
 
 Lucerna::~Lucerna() {
-	for (byte i = 0; i < 31; i++)
-		for (byte j = 0; j < 2; j++)
+	for (byte i = 0; i < 31; i++) {
+		for (byte j = 0; j < 2; j++) {
 			if (_vm->_gyro->_also[i][j] != 0)  {
 				delete _vm->_gyro->_also[i][j];
 				_vm->_gyro->_also[i][j] = 0;
 			}
+		}
+	}
 }
 
 void Lucerna::init() {
-	for (byte i = 0; i < 31; i++)
+	for (byte i = 0; i < 31; i++) {
 		for (byte j = 0; j < 2; j++)
 			_vm->_gyro->_also[i][j] = 0;
+	}
 
 #if 0
 	if (_vm->_enhanced->atbios)
@@ -188,22 +191,25 @@ void Lucerna::scram(Common::String &str) {
 }
 
 void Lucerna::unScramble() {
-	for (byte i = 0; i < 31; i++)
-		for (byte j = 0; j < 2; j++)
+	for (byte i = 0; i < 31; i++) {
+		for (byte j = 0; j < 2; j++) {
 			if (_vm->_gyro->_also[i][j] != 0)
 				scram(*_vm->_gyro->_also[i][j]);
+		}
+	}
 	scram(_vm->_gyro->_listen);
 	scram(_vm->_gyro->_flags);
 }
 
 void Lucerna::loadAlso(byte num) {
-	for (byte i = 0; i < 31; i++)
-		for (byte j = 0; j < 2; j++)
+	for (byte i = 0; i < 31; i++) {
+		for (byte j = 0; j < 2; j++) {
 			if (_vm->_gyro->_also[i][j] != 0)  {
 				delete _vm->_gyro->_also[i][j];
 				_vm->_gyro->_also[i][j] = 0;
 			}
-
+		}
+	}
 	Common::String filename;
 	filename = filename.format("also%d.avd", num);
 	if (!file.open(filename)) {
@@ -936,9 +942,10 @@ void Lucerna::drawScore() {
 
 	CursorMan.showMouse(false);
 
-	for (byte fv = 0; fv < 3; fv++)
+	for (byte fv = 0; fv < 3; fv++) {
 		if (_vm->_gyro->_scoreToDisplay[fv] != numbers[fv])
 			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_digits[numbers[fv]], 250 + (fv + 1) * 15, 177);
+	}
 
 	CursorMan.showMouse(true);
 
@@ -1005,11 +1012,13 @@ void Lucerna::refreshObjectList() {
 	_vm->_gyro->_dna._carryNum = 0;
 	if (_vm->_gyro->_thinkThing && !_vm->_gyro->_dna._objects[_vm->_gyro->_thinks - 1])
 		thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing); // you always have money
-	for (byte i = 0; i < kObjectNum; i++)
+
+	for (byte i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_dna._objects[i]) {
 			_vm->_gyro->_dna._carryNum++;
 			_vm->_gyro->_objectList[_vm->_gyro->_dna._carryNum] = i + 1;
 		}
+	}
 }
 
 void Lucerna::guideAvvy(Common::Point cursorPos) {
