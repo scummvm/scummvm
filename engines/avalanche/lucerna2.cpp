@@ -49,8 +49,6 @@
 
 namespace Avalanche {
 
-const Common::Point Clock::kCenter(510,183);
-
 Clock::Clock(AvalancheEngine *vm) {
 	_vm = vm;
 	_oldHour = _oldHourAngle = _oldMinute = 17717;
@@ -88,14 +86,14 @@ void Clock::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte 
 		return;
 	}
 
-	endPoint = _vm->_graphics->drawArc(_vm->_graphics->_surface, kCenter.x, kCenter.y, 449 - angle, 450 - angle, length, color);
+	endPoint = _vm->_graphics->drawArc(_vm->_graphics->_surface, kCenterX, kCenterY, 449 - angle, 450 - angle, length, color);
 }
 
 void Clock::drawHand(const Common::Point &endPoint, byte color) {
 	if (endPoint.x == 177)
 		return;
 
-	_vm->_graphics->_surface.drawLine(kCenter.x, kCenter.y, endPoint.x, endPoint.y, color);
+	_vm->_graphics->_surface.drawLine(kCenterX, kCenterY, endPoint.x, endPoint.y, color);
 }
 
 void Clock::plotHands() {
