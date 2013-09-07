@@ -67,7 +67,7 @@ public:
 	Scrolls(AvalancheEngine *vm);
 
 	void init();
-	void setReadyLight(byte x); // Sets "Ready" light to whatever.
+	void setReadyLight(byte state); // Sets "Ready" light to whatever.
 	void drawScroll(ScrollsFunctionType modeFunc);
 	void drawBubble(ScrollsFunctionType modeFunc);
 	void resetScroll();
