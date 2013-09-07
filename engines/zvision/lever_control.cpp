@@ -32,6 +32,7 @@
 #include "zvision/lever_control.h"
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
 #include "zvision/cursor_manager.h"
 #include "zvision/rlf_animation.h"
 #include "zvision/zork_avi_decoder.h"
@@ -375,7 +376,6 @@ void LeverControl::renderFrame(uint frameNumber) {
 	}
 
 	const uint16 *frameData;
-	int pitch;
 	int x = _animationCoords.left;
 	int y = _animationCoords.top;
 	int width;
@@ -384,19 +384,17 @@ void LeverControl::renderFrame(uint frameNumber) {
 	if (_fileType == RLF) {
 		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
 		frameData = _animation.rlf->getFrameData(frameNumber);
-		pitch = _animation.rlf->width() * sizeof(uint16);
 		width = _animation.rlf->width(); // Use the animation width instead of _animationCoords.width()
 		height = _animation.rlf->height(); // Use the animation height instead of _animationCoords.height()			
 	} else if (_fileType == AVI) {
 		_animation.avi->seekToFrame(frameNumber);
 		const Graphics::Surface *surface = _animation.avi->decodeNextFrame();
 		frameData = (const uint16 *)surface->getPixels();
-		pitch = surface->pitch;
 		width = surface->w;
 		height = surface->h;
 	}
 
-	_engine->_system->copyRectToScreen(frameData, pitch, x + _engine->_workingWindow.left, y + _engine->_workingWindow.top, width, height);
+	_engine->getRenderManager()->copyRectToWorkingWindow(frameData, x, y, width, width, height);
 }
 
 } // End of namespace ZVision
