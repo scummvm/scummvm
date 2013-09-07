@@ -83,6 +83,7 @@ public:
 	void addToStateValue(uint32 key, uint valueToAdd);
 
 	void addControl(Control *control);
+	Control *getControl(uint32 key);
 
 	void enableControl(uint32 key);
 	void disableControl(uint32 key);

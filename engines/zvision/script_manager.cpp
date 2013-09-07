@@ -228,6 +228,14 @@ void ScriptManager::addControl(Control *control) {
 	_activeControls.push_back(control);
 }
 
+Control *ScriptManager::getControl(uint32 key) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		if ((*iter)->getKey() == key) {
+			return (*iter);
+		}
+	}
+}
+
 void ScriptManager::enableControl(uint32 key) {
 	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
 		if ((*iter)->getKey() == key) {
