@@ -44,11 +44,11 @@ Pingo::Pingo(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-void Pingo::dplot(int16 x, int16 y, Common::String z) {
-	warning("STUB: Pingo::dplot()");
+void Pingo::dPlot(int16 x, int16 y, Common::String z) {
+	warning("STUB: Pingo::dPlot()");
 }
 
-void Pingo::bosskey() {
+void Pingo::bossKey() {
 #if 0
 const
 	months : array[0..11] of char = 'JFMAMJJASOND';
@@ -82,7 +82,7 @@ begin;
 	copy02;
 #endif
 
-	warning("STUB: Pingo::bosskey()");
+	warning("STUB: Pingo::bossKey()");
 }
 
 void Pingo::copy02() {   // taken from Wobble (below)
@@ -93,8 +93,8 @@ void Pingo::copy03() {   // taken from Wobble (below)
 	warning("STUB: Pingo::copy03()");
 }
 
-void Pingo::copypage(byte frp, byte top) { // taken from Copy02 (above)
-	warning("STUB: Pingo::copypage()");
+void Pingo::copyPage(byte frp, byte top) { // taken from Copy02 (above)
+	warning("STUB: Pingo::copyPage()");
 }
 
 void Pingo::wobble() {
@@ -109,7 +109,7 @@ void Pingo::zonk() {
 	warning("STUB: Pingo::zonk()");
 }
 
-void Pingo::winning_pic() {
+void Pingo::winningPic() {
 	Common::File f;
 	_vm->_lucerna->dusk();
 
@@ -128,12 +128,12 @@ void Pingo::winning_pic() {
 	}
 #endif
 
-	warning("STUB: Pingo::winning_pic()");
+	warning("STUB: Pingo::winningPic()");
 
 	f.close();
 
 	//setvisualpage(0);
-	warning("STUB: Pingo::winning_pic()");
+	warning("STUB: Pingo::winningPic()");
 
 	_vm->_lucerna->dawn();
 
@@ -146,7 +146,7 @@ void Pingo::winning_pic() {
 	major_redraw();
 #endif
 
-	warning("STUB: Pingo::winning_pic()");
+	warning("STUB: Pingo::winningPic()");
 }
 
 } // End of namespace Avalanche.

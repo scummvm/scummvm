@@ -74,7 +74,8 @@ void Clock::update() { // TODO: Move variables from Gyro to here (or at least so
 		plotHands();
 
 	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717))
-		_vm->_scrolls->display(Common::String("Good morning!\n\nYes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!"));
+		_vm->_scrolls->display(Common::String("Good morning!") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
+		+ "Yes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!");
 
 	_oldHour = _hour;
 	_oldHourAngle = _hourAngle;
@@ -110,7 +111,7 @@ void Clock::plotHands() {
 }
 
 void Clock::chime() {
-	warning("STUB: Lucerna::chime()");
+	warning("STUB: Clock::chime()");
 }
 
 Lucerna::Lucerna(AvalancheEngine *vm) : _fxHidden(false), _clock(vm) {
