@@ -98,7 +98,7 @@ void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
 	uint16 *bufferPtr = (uint16 *)_workingWindowBuffer.getPixels();
 
 	for (uint32 i = 0; i < workingWindowSize; i++) {
-		bufferPtr[i] = color;
+		bufferPtr[i] = colorIn565;
 	}
 }
 
