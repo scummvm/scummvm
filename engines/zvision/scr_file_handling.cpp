@@ -202,7 +202,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:pan_track*", true)) {
 			// TODO: Implement ActionPanTrack
 		} else if (line.matchString("*:playpreload*", true)) {
-			// TODO: Implement ActionPlayPreload
+			actionList.push_back(new ActionPlayPreloadAnimation(line));
 		} else if (line.matchString("*:preferences*", true)) {
 			// TODO: Implement ActionPreferences
 		} else if (line.matchString("*:quit*", true)) {

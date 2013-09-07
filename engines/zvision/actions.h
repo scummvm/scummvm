@@ -242,6 +242,23 @@ private:
 	uint _loopCount;
 };
 
+class ActionPlayPreloadAnimation : public ResultAction {
+public:
+	ActionPlayPreloadAnimation(const Common::String &line);
+	bool execute(ZVision *engine);
+
+private:
+	uint32 _animationKey;
+	uint32 _controlKey;
+	uint32 _x1;
+	uint32 _y1;
+	uint32 _x2;
+	uint32 _y2;
+	uint _startFrame;
+	uint _endFrame;
+	uint _loopCount;
+};
+
 class ActionPreloadAnimation : public ResultAction {
 public:
 	ActionPreloadAnimation(const Common::String &line);

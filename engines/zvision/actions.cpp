@@ -246,6 +246,33 @@ bool ActionPlayAnimation::execute(ZVision *engine) {
 
 
 //////////////////////////////////////////////////////////////////////////////
+// ActionPlayPreloadAnimation
+//////////////////////////////////////////////////////////////////////////////
+
+ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(const Common::String &line) {
+	sscanf(line.c_str(),
+		   "%*[^:]:%*[^:]:%u(%u %u %u %u %u %u %u %u)",
+		   &_animationKey, &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
+}
+
+bool ActionPlayPreloadAnimation::execute(ZVision *engine) {
+	// Find the control
+	AnimationControl *control = (AnimationControl *)engine->getScriptManager()->getControl(_controlKey);
+
+	// Set the needed values within the control
+	control->setAnimationKey(_animationKey);
+	control->setLoopCount(_loopCount);
+	control->setXPos(_x1);
+	control->setYPost(_y1);
+
+	// Enable the control. ScriptManager will take care of the rest
+	control->enable();
+
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionQuit
 //////////////////////////////////////////////////////////////////////////////
 
