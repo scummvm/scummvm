@@ -135,7 +135,7 @@ void Parser::cursorOff() {
 }
 
 void Parser::tryDropdown() {
-	warning("STUB: Parser::tryDropdown()"); // TODO: Implement at the same time with Dropdown.
+	warning("STUB: Parser::tryDropdown()"); // TODO: Implement at the same time with Dropdown's keyboard handling.
 }
 
 int16 Parser::pos(const Common::String &crit, const Common::String &src) {
