@@ -691,7 +691,7 @@ void Scrolls::calldrivers() {
 				if (param == 0)
 					natural();
 				else if ((1 <= param) && (param <= 9)) {
-					if ((param > _vm->_trip->numtr) || (!_vm->_trip->tr[param - 1].quick)) { // Not valid.
+					if ((param > _vm->_trip->kSpriteNumbMax) || (!_vm->_trip->tr[param - 1].quick)) { // Not valid.
 						_vm->_lucerna->errorled();
 						natural();
 					} else

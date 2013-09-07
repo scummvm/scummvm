@@ -1277,7 +1277,7 @@ void Acci::personSpeaks() {
 
 	bool found = false; // The _person we're looking for's code is in _person.
 
-	for (byte i = 0; i < _vm->_trip->numtr; i++) {
+	for (byte i = 0; i < _vm->_trip->kSpriteNumbMax; i++) {
 		if (_vm->_trip->tr[i].quick && ((_vm->_trip->tr[i].a.accinum + 149) == _person)) {
 			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 49) + _vm->_scrolls->kControlToBuffer);
 			found = true;
@@ -1573,7 +1573,7 @@ void Acci::doThat() {
 						int16 y = _vm->_trip->tr[0].y;
 						_vm->_trip->tr[0].done();
 						_vm->_trip->tr[0].init(i, true, _vm->_trip);
-						_vm->_trip->tr[0].appear(x, y, _vm->_trip->left);
+						_vm->_trip->tr[0].appear(x, y, _vm->_trip->kDirLeft);
 						_vm->_trip->tr[0].visible = false;
 					}
 				}

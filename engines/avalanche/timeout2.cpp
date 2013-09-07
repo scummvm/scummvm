@@ -243,7 +243,7 @@ void Timeout::avaricius_talks() {
 }
 
 void Timeout::urinate() {
-	_vm->_trip->tr[0].turn(_vm->_trip->up);
+	_vm->_trip->tr[0].turn(_vm->_trip->kDirUp);
 	_vm->_trip->stopwalking();
 	_vm->_lucerna->showrw();
 	set_up_timer(14, proctoilet2, reason_gototoilet);
@@ -545,7 +545,7 @@ void Timeout::meet_avaroid() {
 		_vm->_gyro->_dna._metAvaroid = true;
 		set_up_timer(1, procrise_up_oubliette, reason_rising_up_oubliette);
 
-		_vm->_trip->tr[0].face = _vm->_trip->left;
+		_vm->_trip->tr[0].face = _vm->_trip->kDirLeft;
 		_vm->_trip->tr[0].x = 151;
 		_vm->_trip->tr[0].ix = -3;
 		_vm->_trip->tr[0].iy = -5;
@@ -569,7 +569,7 @@ void Timeout::robin_hood_and_geida() {
 	_vm->_trip->apped(1, 7);
 	_vm->_trip->tr[0].walkto(6);
 	_vm->_trip->tr[1].stopwalk();
-	_vm->_trip->tr[1].face = _vm->_trip->left;
+	_vm->_trip->tr[1].face = _vm->_trip->kDirLeft;
 	set_up_timer(20, procrobin_hood_and_geida_talk, reason_robin_hood_and_geida);
 	_vm->_gyro->_dna._geidaFollows = false;
 }
