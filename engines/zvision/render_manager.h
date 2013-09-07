@@ -189,7 +189,7 @@ private:
 
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
 
-	void renderRectToWorkingWindow(uint16 *buffer, int32 x, int32 y, int32 width, int32 height, bool wrap);
+	void renderRectToWorkingWindow(uint16 *buffer, int32 x, int32 y, int32 imageWidth, int32 width, int32 height);
 
 	void moveBackground(int offset);
 };

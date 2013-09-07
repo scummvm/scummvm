@@ -82,7 +82,7 @@ void RenderManager::renderBackbufferToScreen() {
 	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
 		_renderTable.mutateImage((uint16 *)_workingWindowBuffer.getPixels(), (uint16 *)_backBuffer.getBasePtr(_workingWindow.left, _workingWindow.top), _backBuffer.w);
 	} else {
-		renderRectToWorkingWindow((uint16 *)_workingWindowBuffer.getPixels(), _workingWindow.left, _workingWindow.top, _workingWindowBuffer.w, _workingWindowBuffer.h, false);
+		_backBuffer.copyRectToSurface(_workingWindowBuffer.getPixels(), _workingWindowBuffer.pitch, _workingWindow.left, _workingWindow.top, _workingWindowBuffer.w, _workingWindowBuffer.h);
 	}
 
 	// TODO: Add menu rendering
@@ -153,7 +153,7 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (!subRect.isValidRect() || subRect.isEmpty())
 		return;
 
-	renderRectToWorkingWindow((uint16 *)surface.getBasePtr(subRect.left, subRect.top), destinationX, destinationY, subRect.width(), subRect.height(), wrap);
+	renderRectToWorkingWindow((uint16 *)surface.getBasePtr(subRect.left, subRect.top), surface.w, destinationX, destinationY, subRect.width(), subRect.height());
 }
 
 void RenderManager::renderImageToScreen(const Common::String &fileName, int16 destinationX, int16 destinationY, bool wrap) {
@@ -261,41 +261,18 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	destination.convertToInPlace(_pixelFormat);
 }
 
-void RenderManager::renderRectToWorkingWindow(uint16 *buffer, int32 destX, int32 destY, int32 width, int32 height, bool wrap) {
+void RenderManager::renderRectToWorkingWindow(uint16 *buffer, int32 imageWidth, int32 destX, int32 destY, int32 width, int32 height) {
 	uint32 destOffset = 0;
+	uint32 sourceOffset = 0;
 	uint16 *workingWindowBufferPtr = (uint16 *)_workingWindowBuffer.getBasePtr(destX, destY);
 
 	for (int32 y = 0; y < height; y++) {
 		for (int32 x = 0; x < width; x++) {
-			int32 sourceYIndex = y;
-			int32 sourceXIndex = x;
-
-			if (wrap) {
-				while (sourceXIndex >= width) {
-					sourceXIndex -= width;
-				}
-				while (sourceXIndex < 0) {
-					sourceXIndex += width;
-				}
-
-				while (sourceYIndex >= height) {
-					sourceYIndex -= height;
-				}
-				while (sourceYIndex < 0) {
-					sourceYIndex += height;
-				}
-			} else {
-				// Clamp the yIndex to the size of the image
-				sourceYIndex = CLIP<int16>(sourceYIndex, 0, height - 1);
-
-				// Clamp the xIndex to the size of the image
-				sourceXIndex = CLIP<int16>(sourceXIndex, 0, width - 1);
-			}
-
-			workingWindowBufferPtr[destOffset + x] = buffer[sourceYIndex * width + sourceXIndex];
+			workingWindowBufferPtr[destOffset + x] = buffer[sourceOffset + x];
 		}
 
 		destOffset += _workingWidth;
+		sourceOffset += imageWidth;
 	}
 }
 
