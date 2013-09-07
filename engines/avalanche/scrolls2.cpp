@@ -426,8 +426,8 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 				_vm->_gyro->_scroll[b].setChar(' ', 0);
 				// byte groi = *_vm->_graphics->getPixel(0, 0);
 				// inc(diy,14);
-				_vm->_gyro->shadowBox(dix - 65, diy - 24, dix - 5, diy - 10, "Yes.");
-				_vm->_gyro->shadowBox(dix + 5, diy - 24, dix + 65, diy - 10, "No.");
+				_vm->_gyro->drawShadowBox(dix - 65, diy - 24, dix - 5, diy - 10, "Yes.");
+				_vm->_gyro->drawShadowBox(dix + 5, diy - 24, dix + 65, diy - 10, "No.");
 				}
 				break;
 			}
