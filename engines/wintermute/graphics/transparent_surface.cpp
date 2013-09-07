@@ -244,30 +244,30 @@ void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb,
 	} else {
 
 		*outa = 255;
-		*outb = *outb * (255 - *ina);
-		*outr = *outr * (255 - *ina);
-		*outg = *outg * (255 - *ina);
+		*outb = (*outb * (255 - *ina) >> 8);
+		*outr = (*outr * (255 - *ina) >> 8);
+		*outg = (*outg * (255 - *ina) >> 8);
 
 		if (*cb == 0)
-			*outb = *outb >> 8;
+			*outb = *outb;
 		else if (*cb != 255)
-			*outb = ((*outb << 8) + *inb * *ina * *cb) >> 16;
+			*outb = *outb + (*inb * *ina * *cb >> 16);
 		else
-			*outb = (*outb + *inb * *ina) >> 8;
+			*outb = *outb + (*inb * *ina >> 8);
 
 		if (*cr == 0)
-			*outr = *outr >> 8;
+			*outr = *outr;
 		else if (*cr != 255)
-			*outr = ((*outr << 8) + *inr * *ina * *cr) >> 16;
+			*outr = *outr + (*inr * *ina * *cr >> 16);
 		else
-			*outr = (*outr + *inr * *inr) >> 8;
+			*outr = *outr + (*inr * *ina >> 8);
 
 		if (*cg == 0)
-			*outg = *outg >> 8;
+			*outg = *outg;
 		else if (*cg != 255)
-			*outg = ((*outg << 8) + *ing * *ina * *cg) >> 16;
+			*outg = *outg + (*ing * *ina * *cg >> 16);
 		else
-			*outg = (*outg + *ing * *ing) >> 8;
+			*outg = *outg + (*ing * *ina >> 8);
 
 		*ina = tempa;
 
