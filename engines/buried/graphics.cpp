@@ -248,6 +248,11 @@ Graphics::Surface *GraphicsManager::getBitmap(uint32 bitmapID) {
 
 	delete stream;
 
+	if (decoder.getSurface()->format != g_system->getScreenFormat()) {
+		assert(_vm->isTrueColor());
+		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+	}
+
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*decoder.getSurface());
 	return surface;
@@ -264,6 +269,11 @@ Graphics::Surface *GraphicsManager::getBitmap(const Common::String &fileName) {
 		error("Failed to decode bitmap '%s'", fileName.c_str());
 
 	delete stream;
+
+	if (decoder.getSurface()->format != g_system->getScreenFormat()) {
+		assert(_vm->isTrueColor());
+		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+	}
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*decoder.getSurface());
