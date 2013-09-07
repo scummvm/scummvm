@@ -399,7 +399,7 @@ void Lucerna::putGeidaAt(byte whichPed, byte &ped) {
 	_vm->_animation->tr[1].init(5, false, _vm->_animation); // load Geida
 	_vm->_animation->apped(2, whichPed);
 	_vm->_animation->tr[1].call_eachstep = true;
-	_vm->_animation->tr[1].eachstep = _vm->_animation->procgeida_procs;
+	_vm->_animation->tr[1].eachstep = _vm->_animation->kProcGeida;
 }
 
 void Lucerna::enterRoom(byte room, byte ped) {
@@ -452,7 +452,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				}
 
 				_vm->_animation->tr[1].call_eachstep = true;
-				_vm->_animation->tr[1].eachstep = _vm->_animation->procface_avvy; // He always faces Avvy.
+				_vm->_animation->tr[1].eachstep = _vm->_animation->kProcFaceAvvy; // He always faces Avvy.
 
 			} else _vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = r__nowhere;
 
@@ -484,7 +484,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_gyro->_dna._dogFoodPos = 0;  // _vm->_gyro->also Spludwick pos.
 
 			_vm->_animation->tr[1].call_eachstep = true;
-			_vm->_animation->tr[1].eachstep = _vm->_animation->procgeida_procs;
+			_vm->_animation->tr[1].eachstep = _vm->_animation->kProcGeida;
 		} else
 			_vm->_gyro->_whereIs[1] = r__nowhere;
 		break;
@@ -499,7 +499,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			if (ped > 0) {
 				_vm->_animation->tr[1].init(4, false, _vm->_animation); // 4 = Cwytalot
 				_vm->_animation->tr[1].call_eachstep = true;
-				_vm->_animation->tr[1].eachstep = _vm->_animation->procfollow_avvy_y;
+				_vm->_animation->tr[1].eachstep = _vm->_animation->kProcFollowAvvyY;
 				_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] = r__brummieroad;
 
 				if (_vm->_gyro->_dna._roomCount[r__brummieroad] == 1) { // First time here...
@@ -713,7 +713,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 
 		_vm->_animation->tr[1].call_eachstep = true;
-		_vm->_animation->tr[1].eachstep = _vm->_animation->procface_avvy; // She always faces Avvy.
+		_vm->_animation->tr[1].eachstep = _vm->_animation->kProcFaceAvvy; // She always faces Avvy.
 		break;
 
 	case r__insidecardiffcastle:
@@ -1234,7 +1234,7 @@ void Lucerna::spriteRun() {
 	_vm->_gyro->_doingSpriteRun = true;
 
 	_vm->_animation->get_back_loretta();
-	_vm->_animation->trippancy_link();
+	_vm->_animation->animLink();
 
 	_vm->_gyro->_doingSpriteRun = false;
 }

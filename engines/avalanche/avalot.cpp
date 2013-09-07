@@ -203,7 +203,7 @@ void Avalot::run(Common::String arg) {
 		_vm->_gyro->forceNumlock();
 		_vm->_animation->get_back_loretta();
 		_vm->_celer->updateBackgroundSprites();
-		_vm->_animation->trippancy_link();
+		_vm->_animation->animLink();
 		_vm->_lucerna->checkClick();
 		_vm->_timeout->one_tick();
 

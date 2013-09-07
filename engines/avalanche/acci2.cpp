@@ -708,7 +708,7 @@ void Acci::openBox(bool isOpening) {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 
 		_vm->_celer->updateBackgroundSprites();
-		_vm->_animation->trippancy_link();
+		_vm->_animation->animLink();
 		_vm->_graphics->refreshScreen();
 
 		_vm->_system->delayMillis(55);
@@ -716,7 +716,7 @@ void Acci::openBox(bool isOpening) {
 		if (!isOpening) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			_vm->_celer->updateBackgroundSprites();
-			_vm->_animation->trippancy_link();
+			_vm->_animation->animLink();
 			_vm->_graphics->refreshScreen();
 		}
 	}
@@ -1704,7 +1704,7 @@ void Acci::doThat() {
 					_vm->_animation->apped(2, 4);
 					_vm->_animation->tr[1].walkto(5);
 					_vm->_animation->tr[1].call_eachstep = true;
-					_vm->_animation->tr[1].eachstep = _vm->_animation->procback_and_forth;
+					_vm->_animation->tr[1].eachstep = _vm->_animation->kProcBackAndForth;
 					_vm->_gyro->_dna._avariciusTalk = 14;
 					_vm->_timeout->set_up_timer(177, _vm->_timeout->procavaricius_talks, _vm->_timeout->reason_avariciustalks);
 				}

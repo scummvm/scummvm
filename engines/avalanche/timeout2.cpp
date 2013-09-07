@@ -302,7 +302,7 @@ void Timeout::get_tied_up() {
 	_vm->_animation->tr[1].stopwalk();
 	_vm->_animation->tr[1].stophoming();
 	_vm->_animation->tr[1].call_eachstep = true;
-	_vm->_animation->tr[1].eachstep = _vm->_animation->procgrab_avvy;
+	_vm->_animation->tr[1].eachstep = _vm->_animation->kProcGrabAvvy;
 	set_up_timer(70, procget_tied_up2, reason_getting_tied_up);
 }
 
