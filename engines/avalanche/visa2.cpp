@@ -274,7 +274,7 @@ void Visa::talkto(byte whom) {
 
 		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = 177; // Crapulus walks off.
 
-		_vm->_animation->tr[1].vanishifstill = true;
+		_vm->_animation->tr[1]._vanishIfStill = true;
 		_vm->_animation->tr[1].walkto(3); // Walks away.
 
 		_vm->_lucerna->incScore(2);

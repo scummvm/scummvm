@@ -408,7 +408,7 @@ void Acci::storeInterrogation(byte interrogation) {
 		_vm->_gyro->_dna._spareEvening = _vm->_parser->_inputText;
 		_vm->_visa->dixi('z', 5); // His closing statement...
 		_vm->_animation->tr[1].walkto(4); // The end of the drawbridge
-		_vm->_animation->tr[1].vanishifstill = true; // Then go away!
+		_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
 		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing;
 		_vm->_gyro->_dna._cardiffQuestionNum = 5;
 		break;
@@ -937,7 +937,7 @@ void Acci::openDoor() {
 				_vm->_animation->call_special(_vm->_gyro->_portals[fv]._data);
 				break;
 			case Gyro::kMagicOpenDoor:
-				_vm->_animation->open_the_door((_vm->_gyro->_portals[fv]._data) >> 8, (_vm->_gyro->_portals[fv]._data) & 0x0F, fv + 9);
+				_vm->_animation->openDoor((_vm->_gyro->_portals[fv]._data) >> 8, (_vm->_gyro->_portals[fv]._data) & 0x0F, fv + 9);
 				break;
 			}
 
@@ -1040,7 +1040,7 @@ void Acci::notInOrder() {
 }
 
 void Acci::goToCauldron() {
-	_vm->_animation->tr[1].call_eachstep = false; // Stops Geida_Procs.
+	_vm->_animation->tr[1]._callEachStepFl = false; // Stops Geida_Procs.
 	_vm->_timeout->set_up_timer(1, _vm->_timeout->procspludwick_goes_to_cauldron, _vm->_timeout->reason_spludwalk);
 	_vm->_animation->tr[1].walkto(2);
 }
@@ -1278,7 +1278,7 @@ void Acci::personSpeaks() {
 	bool found = false; // The _person we're looking for's code is in _person.
 
 	for (int16 i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->tr[i].quick && ((_vm->_animation->tr[i]._stat.accinum + 149) == _person)) {
+		if (_vm->_animation->tr[i]._quick && ((_vm->_animation->tr[i]._stat.accinum + 149) == _person)) {
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 49) + _vm->_scrolls->kControlToBuffer);
 			found = true;
 		}
@@ -1703,8 +1703,8 @@ void Acci::doThat() {
 					_vm->_animation->tr[1].init(1, false, _vm->_animation); // Avaricius
 					_vm->_animation->apped(2, 4);
 					_vm->_animation->tr[1].walkto(5);
-					_vm->_animation->tr[1].call_eachstep = true;
-					_vm->_animation->tr[1].eachstep = _vm->_animation->kProcBackAndForth;
+					_vm->_animation->tr[1]._callEachStepFl = true;
+					_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcBackAndForth;
 					_vm->_gyro->_dna._avariciusTalk = 14;
 					_vm->_timeout->set_up_timer(177, _vm->_timeout->procavaricius_talks, _vm->_timeout->reason_avariciustalks);
 				}
@@ -1862,8 +1862,8 @@ void Acci::doThat() {
 				_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicNothing;
 				_vm->_lucerna->incScore(7);
 				_vm->_animation->tr[1].walkto(2);
-				_vm->_animation->tr[1].vanishifstill = true;
-				_vm->_animation->tr[1].call_eachstep = false;
+				_vm->_animation->tr[1]._vanishIfStill = true;
+				_vm->_animation->tr[1]._callEachStepFl = false;
 				_vm->_gyro->_whereIs[7] = 177;
 				break;
 			default:
