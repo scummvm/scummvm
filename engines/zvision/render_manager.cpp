@@ -78,16 +78,16 @@ void RenderManager::update(uint deltaTimeInMillis) {
 }
 
 void RenderManager::renderBackbufferToScreen() {
-	//RenderTable::RenderState state = _renderTable.getRenderState();
-	//if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-	//	_renderTable.mutateImage((uint16 *)_workingWindowBuffer.getPixels(), (uint16 *)_backBuffer.getBasePtr(_workingWindow.left, _workingWindow.top), _backBuffer.w);
-	//} else {
-		//_system->copyRectToScreen(_workingWindowBuffer.getPixels(), _workingWindowBuffer.pitch, _workingWindow.left, _workingWindow.top, _workingWindowBuffer.w, _workingWindowBuffer.h);
-	//}
+	RenderTable::RenderState state = _renderTable.getRenderState();
+	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+		_renderTable.mutateImage((uint16 *)_workingWindowBuffer.getPixels(), (uint16 *)_backBuffer.getBasePtr(_workingWindow.left, _workingWindow.top), _backBuffer.w);
+	} else {
+		renderRectToWorkingWindow((uint16 *)_workingWindowBuffer.getPixels(), _workingWindow.left, _workingWindow.top, _workingWindowBuffer.w, _workingWindowBuffer.h, false);
+	}
 
 	// TODO: Add menu rendering
 
-	//_system->copyRectToScreen(_backBuffer.getPixels(), _backBuffer.pitch, 0, 0, _backBuffer.w, _backBuffer.h);
+	_system->copyRectToScreen(_backBuffer.getPixels(), _backBuffer.pitch, 0, 0, _backBuffer.w, _backBuffer.h);
 }
 
 void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
@@ -153,7 +153,7 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (!subRect.isValidRect() || subRect.isEmpty())
 		return;
 
-	_system->copyRectToScreen(surface.getBasePtr(subRect.left, subRect.top), surface.pitch, destinationX, destinationY, subRect.width(), subRect.height()/*, wrap*/);
+	renderRectToWorkingWindow((uint16 *)surface.getBasePtr(subRect.left, subRect.top), destinationX, destinationY, subRect.width(), subRect.height(), wrap);
 }
 
 void RenderManager::renderImageToScreen(const Common::String &fileName, int16 destinationX, int16 destinationY, bool wrap) {
