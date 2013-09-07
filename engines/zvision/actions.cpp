@@ -286,7 +286,7 @@ bool ActionSetPartialScreen::execute(ZVision *engine) {
 	RenderManager *renderManager = engine->getRenderManager();
 	
 	if (_backgroundColor > 0) {
-		renderManager->clearWorkingWindowToColor(_backgroundColor);
+		renderManager->clearWorkingWindowTo555Color(_backgroundColor);
 	}
 	renderManager->renderImageToScreen(_fileName, _x, _y);
 
