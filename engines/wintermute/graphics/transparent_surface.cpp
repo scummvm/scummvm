@@ -85,6 +85,21 @@ void BlittingTools::blendPixelNormal(byte *in, byte *out, int colorMod) {
 		blendPixelNormal(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
 }
 
+void BlittingTools::blendPixelNormal(byte *in, byte *out) {
+		byte *outa = &out[aIndex];
+		byte *outr = &out[rIndex];
+		byte *outg = &out[gIndex];
+		byte *outb = &out[bIndex];
+
+		byte *ina = &in[aIndex];
+		byte *inr = &in[rIndex];
+		byte *ing = &in[gIndex];
+		byte *inb = &in[bIndex];
+
+		blendPixelNormal(ina, inr, ing, inb, outa, outr, outg, outb); 
+}
+
+
 void BlittingTools::blendPixelAdditive(byte *in, byte *out, int colorMod) {
 		byte *outa = &out[aIndex];
 		byte *outr = &out[rIndex];
@@ -122,6 +137,15 @@ void BlittingTools::blendPixelSubtractive(byte *in, byte *out, int colorMod) {
 
 		blendPixelSubtractive(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
 }
+
+
+
+
+
+
+
+
+
 
 void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
@@ -250,6 +274,24 @@ void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb,
 		return;
 	}
 }
+
+void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+	if (*ina == 0) {
+		return;
+	} else if (*ina == 255) {
+		*outb = *inb;
+		*outg = *ing;
+		*outr = *inr;
+		*outa = *ina;
+		return;
+	} else {
+		*outa = 255;
+		*outb = ((*inb * *ina) + *outb * (255 - *ina)) >> 8;
+		*outg = ((*ing * *ina) + *outg * (255 - *ina)) >> 8;
+		*outr = ((*inr * *ina) + *outr * (255 - *ina)) >> 8;
+	}
+}
+
 
 void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 		if (*ina == 0) {
@@ -535,76 +577,24 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 	byte *in, *out;
 	void (*fp)(byte *in, byte *out);      // Function pointer
 
-	if (blendMode == BLEND_NORMAL) {
-
-		for (uint32 i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (uint32 j = 0; j < width; j++) {
-				uint32 pix = *(uint32 *)in;
-				uint32 oPix = *(uint32 *) out;
-				int b = (pix >> bShift) & 0xff;
-				int g = (pix >> gShift) & 0xff;
-				int r = (pix >> rShift) & 0xff;
-				int a = (pix >> aShift) & 0xff;
-				int outb, outg, outr, outa;
-				in += inStep;
-
-				switch (a) {
-				case 0: // Full transparency
-					out += 4;
-					break;
-				case 255: // Full opacity
-					// opaqueBlit
-					outb = b;
-					outg = g;
-					outr = r;
-					outa = a;
-
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
-					out += 4;
-					break;
-
-				default: 
-					// alphaBlend
-					outa = 255;
-					outb = ((b * a) + ((oPix >> bShiftTarget) & 0xff) * (255 - a)) >> 8;
-					outg = ((g * a) + ((oPix >> gShiftTarget) & 0xff) * (255 - a)) >> 8;
-					outr = ((r * a) + ((oPix >> rShiftTarget) & 0xff) * (255 - a)) >> 8;
-
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
-					out += 4;
-				}
-			}
-			outo += pitch;
-			ino += inoStep;
-		}	
-		
+	if (blendMode == BLEND_ADDITIVE) {
+		fp = BlittingTools::blendPixelAdditive;
+	} else if (blendMode == BLEND_SUBTRACTIVE) {
+		fp = BlittingTools::blendPixelSubtractive;
 	} else {
+		fp = BlittingTools::blendPixelNormal;
+	}
 
-		if (blendMode == BLEND_ADDITIVE) {
-			fp = BlittingTools::blendPixelAdditive;
-		} else if (blendMode == BLEND_SUBTRACTIVE) {
-			fp = BlittingTools::blendPixelSubtractive;
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (uint32 j = 0; j < width; j++) {
+			fp(in, out);
+			in += inStep;
+			out += 4;
 		}
-
-		for (uint32 i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (uint32 j = 0; j < width; j++) {
-				fp(in, out);
-				in += inStep;
-				out += 4;
-			}
-			outo += pitch;
-			ino += inoStep;
-		}
+		outo += pitch;
+		ino += inoStep;
 	}
 }
 

@@ -147,13 +147,15 @@ public:
 	static void blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
 	static void blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
 	static void blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-
+	static void blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	
 	static void blendPixelSubtractive(byte *in, byte *out);
 	static void blendPixelAdditive(byte *in, byte *out);
 	static void blendBinaryFast(byte *in, byte *out);
 	static void blendPixelSubtractive(byte *in, byte *out, int colorMod);
 	static void blendPixelAdditive(byte *in, byte *out, int colorMod);
 	static void blendPixelNormal(byte *in, byte *out, int colorMod);
+	static void blendPixelNormal(byte *in, byte *out);
 };
 
 
