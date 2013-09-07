@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	graphics.o \
 	livetext.o \
 	main_menu.o \
+	overview.o \
 	sound.o \
 	title_sequence.o \
 	video_window.o \
