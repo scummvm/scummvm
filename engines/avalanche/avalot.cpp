@@ -163,7 +163,7 @@ void Avalot::setup() {
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
 	_vm->_parser->cursorOn();
-	_vm->_animation->tr[0].xs = _vm->_gyro->kWalk;
+	_vm->_animation->tr[0]._speedX = _vm->_gyro->kWalk;
 	_vm->_animation->newspeed();
 
 

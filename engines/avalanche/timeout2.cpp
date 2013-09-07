@@ -244,7 +244,7 @@ void Timeout::avaricius_talks() {
 
 void Timeout::urinate() {
 	_vm->_animation->tr[0].turn(Animation::kDirUp);
-	_vm->_animation->stopwalking();
+	_vm->_animation->stopWalking();
 	_vm->_lucerna->drawDirection();
 	set_up_timer(14, proctoilet2, reason_gototoilet);
 }
@@ -298,8 +298,8 @@ void Timeout::get_tied_up() {
 	_vm->_visa->dixi('q', 34); // ...Trouble!
 	_vm->_gyro->_dna._userMovesAvvy = false;
 	_vm->_gyro->_dna._beenTiedUp = true;
-	_vm->_animation->stopwalking();
-	_vm->_animation->tr[1].stopwalk();
+	_vm->_animation->stopWalking();
+	_vm->_animation->tr[1].stopWalk();
 	_vm->_animation->tr[1].stophoming();
 	_vm->_animation->tr[1].call_eachstep = true;
 	_vm->_animation->tr[1].eachstep = _vm->_animation->kProcGrabAvvy;
@@ -530,8 +530,8 @@ void Timeout::greetsmonk() {
 
 void Timeout::fall_down_oubliette() {
 	_vm->_gyro->_magics[8]._operation = _vm->_gyro->kMagicNothing;
-	_vm->_animation->tr[0].iy++; // Increments dx/dy!
-	_vm->_animation->tr[0]._y += _vm->_animation->tr[0].iy;   // Dowwwn we go...
+	_vm->_animation->tr[0]._moveY++; // Increments dx/dy!
+	_vm->_animation->tr[0]._y += _vm->_animation->tr[0]._moveY;   // Dowwwn we go...
 	set_up_timer(3, procfall_down_oubliette, reason_falling_down_oubliette);
 }
 
@@ -545,10 +545,10 @@ void Timeout::meet_avaroid() {
 		_vm->_gyro->_dna._metAvaroid = true;
 		set_up_timer(1, procrise_up_oubliette, reason_rising_up_oubliette);
 
-		_vm->_animation->tr[0].face = Animation::kDirLeft;
+		_vm->_animation->tr[0]._facingDir = Animation::kDirLeft;
 		_vm->_animation->tr[0]._x = 151;
-		_vm->_animation->tr[0].ix = -3;
-		_vm->_animation->tr[0].iy = -5;
+		_vm->_animation->tr[0]._moveX = -3;
+		_vm->_animation->tr[0]._moveY = -5;
 
 		_vm->_gyro->setBackgroundColor(2);
 	}
@@ -556,9 +556,9 @@ void Timeout::meet_avaroid() {
 
 void Timeout::rise_up_oubliette() {
 	_vm->_animation->tr[0]._visible = true;
-	_vm->_animation->tr[0].iy++; // Decrements dx/dy!
-	_vm->_animation->tr[0]._y -= _vm->_animation->tr[0].iy; // Uuuupppp we go...
-	if (_vm->_animation->tr[0].iy > 0)
+	_vm->_animation->tr[0]._moveY++; // Decrements dx/dy!
+	_vm->_animation->tr[0]._y -= _vm->_animation->tr[0]._moveY; // Uuuupppp we go...
+	if (_vm->_animation->tr[0]._moveY > 0)
 		set_up_timer(3, procrise_up_oubliette, reason_rising_up_oubliette);
 	else
 		_vm->_gyro->_dna._userMovesAvvy = true;
@@ -568,8 +568,8 @@ void Timeout::robin_hood_and_geida() {
 	_vm->_animation->tr[0].init(7, true, _vm->_animation);
 	_vm->_animation->apped(1, 7);
 	_vm->_animation->tr[0].walkto(6);
-	_vm->_animation->tr[1].stopwalk();
-	_vm->_animation->tr[1].face = Animation::kDirLeft;
+	_vm->_animation->tr[1].stopWalk();
+	_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
 	set_up_timer(20, procrobin_hood_and_geida_talk, reason_robin_hood_and_geida);
 	_vm->_gyro->_dna._geidaFollows = false;
 }

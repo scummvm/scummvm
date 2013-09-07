@@ -101,7 +101,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	bool _fxHidden; // Will de used in dust() and dawn().
+	bool _fxHidden; // Will de used in dusk() and dawn().
 
 	Common::File file;
 

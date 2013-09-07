@@ -452,7 +452,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 					_vm->_animation->tr[1].walkto(5); // Walks up to greet you.
 				} else {
 					_vm->_animation->apped(2, 5); // Starts where he was before.
-					_vm->_animation->tr[1].face = Animation::kDirLeft;
+					_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
 				}
 
 				_vm->_animation->tr[1].call_eachstep = true;
@@ -512,7 +512,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				} else {
 					// You've been here before.
 					_vm->_animation->apped(2, 4); // He's standing in your way straight away...
-					_vm->_animation->tr[1].face = Animation::kDirLeft;
+					_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
 				}
 			}
 		}
@@ -581,7 +581,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			default: { // You've answered SOME of his questions.
 				_vm->_animation->tr[1].init(9, false, _vm->_animation);
 				_vm->_animation->apped(2, 3);
-				_vm->_animation->tr[1].face = Animation::kDirRight;
+				_vm->_animation->tr[1]._facingDir = Animation::kDirRight;
 				_vm->_timeout->set_up_timer(3, _vm->_timeout->proccardiff_return, _vm->_timeout->reason_cardiffsurvey);
 			}
 			}
@@ -649,7 +649,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case r__lustiesroom:
 		_vm->_gyro->_dna._dogFoodPos = 1; // Actually, du Lustie pos.
-		if (_vm->_animation->tr[0].whichsprite == 0) // Avvy in his normal clothes
+		if (_vm->_animation->tr[0]._id == 0) // Avvy in his normal clothes
 			_vm->_timeout->set_up_timer(3, _vm->_timeout->proccallsguards, _vm->_timeout->reason_du_lustie_talks);
 		else if (! _vm->_gyro->_dna._enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
@@ -713,7 +713,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_animation->tr[1].walkto(4); // Walks up to greet you.
 		} else {
 			_vm->_animation->apped(2, 4); // Starts where she was before.
-			_vm->_animation->tr[1].face = Animation::kDirLeft;
+			_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
 		}
 
 		_vm->_animation->tr[1].call_eachstep = true;
@@ -994,7 +994,7 @@ void Lucerna::useCompass(const Common::Point &cursorPos) {
 	case kColorWhite:
 	case kColorLightcyan:
 	case kColorYellow: // Fall-throughs are intended.
-		_vm->_animation->stopwalking();
+		_vm->_animation->stopWalking();
 		drawDirection();
 		break;
 	}
@@ -1039,7 +1039,7 @@ void Lucerna::guideAvvy(Common::Point cursorPos) {
 
 	switch (what) {
 	case 0:
-		_vm->_animation->stopwalking();
+		_vm->_animation->stopWalking();
 		break; // Clicked on Avvy: no movement.
 	case 1:
 		_vm->_animation->rwsp(0, Animation::kDirLeft);
@@ -1128,10 +1128,10 @@ void Lucerna::checkClick() {
 
 				callVerb(_vm->_acci->kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
-				_vm->_animation->tr[0].xs = _vm->_gyro->kWalk;
+				_vm->_animation->tr[0]._speedX = _vm->_gyro->kWalk;
 				_vm->_animation->newspeed();
 			} else if ((358 <= cursorPos.x) && (cursorPos.x <= 395)) { // Change speed.
-				_vm->_animation->tr[0].xs = _vm->_gyro->kRun;
+				_vm->_animation->tr[0]._speedX = _vm->_gyro->kRun;
 				_vm->_animation->newspeed();
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxToggle();
@@ -1174,9 +1174,7 @@ void Lucerna::drawDirection() { // It's data is loaded in load_digits().
 	_vm->_gyro->_oldDirection = _vm->_gyro->_dna._direction;
 
 	CursorMan.showMouse(false);
-
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_directions[_vm->_gyro->_dna._direction], 0, 161);
-
 	CursorMan.showMouse(true);
 }
 

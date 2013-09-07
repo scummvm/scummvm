@@ -77,16 +77,16 @@ public:
 	SpriteInfo _info;
 
 	adxtype _stat; // vital statistics
-	byte face, step;
+	byte _facingDir, step;
 	int16 _x, _y; // current xy coords
 	int16 _oldX[2], _oldY[2];  // last xy coords
-	int8 ix, iy; // amount to move sprite by, each step
-	byte whichsprite;
+	int8 _moveX, _moveY; // amount to move sprite by, each step
+	byte _id;
 	bool quick, _visible, _homing, check_me;
 	int16 _homingX, _homingY; // homing x & y coords
 	byte count; // counts before changing step
-	byte xs, ys; // x & y speed
-	byte totalnum; // total number of sprites
+	byte _speedX, _speedY; // x & y speed
+	byte _animCount; // total number of sprites
 	bool vanishifstill; // Do we show this sprite if it's still?
 
 	bool call_eachstep; // Do we call the eachstep procedure?
@@ -104,7 +104,7 @@ public:
 	void stophoming();    // self-explanatory
 	void homestep();    // calculates ix & iy for one homing step
 	void speed(int8 xx, int8 yy); // sets ix & iy, non-homing, etc
-	void stopwalk();    // Stops the sprite from moving
+	void stopWalk();    // Stops the sprite from moving
 	void chatter();    // Sets up talk vars
 	void set_up_saver(trip_saver_type &v);
 	void unload_saver(trip_saver_type v);
@@ -169,7 +169,7 @@ public:
 	void call_special(uint16 which);
 	void open_the_door(byte whither, byte ped, byte magicnum); // Handles slidey-open doors.
 	void catamove(byte ped);
-	void stopwalking();
+	void stopWalking();
 	void tripkey(char dir);
 	void rwsp(byte t, byte dir);
 	void apped(byte trn, byte np);
@@ -200,7 +200,7 @@ private:
 	byte checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
 	byte geida_ped(byte which);
 	void dawndelay();
-	void hide_in_the_cupboard();
+	void hideInCupboard();
 	void follow_avvy_y(byte tripnum);
 	void back_and_forth(byte tripnum);
 	void face_avvy(byte tripnum);

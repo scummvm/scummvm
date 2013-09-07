@@ -460,7 +460,7 @@ void Dropdown::setupMenuAction() {
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->neardoor());
 	_activeMenuItem.setupOption("Look around", 'L', "f8", true);
 	_activeMenuItem.setupOption("Inventory", 'I', "Tab", true);
-	if (_vm->_animation->tr[0].xs == _vm->_gyro->kWalk)
+	if (_vm->_animation->tr[0]._speedX == _vm->_gyro->kWalk)
 		_activeMenuItem.setupOption("Run fast", 'R', "^R", true);
 	else
 		_activeMenuItem.setupOption("Walk slowly", 'W', "^W", true);
@@ -630,10 +630,10 @@ void Dropdown::runMenuAction() {
 		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeInv);
 		break;
 	case 5: {
-		if (_vm->_animation->tr[0].xs == _vm->_gyro->kWalk)
-			_vm->_animation->tr[0].xs = _vm->_gyro->kRun;
+		if (_vm->_animation->tr[0]._speedX == _vm->_gyro->kWalk)
+			_vm->_animation->tr[0]._speedX = _vm->_gyro->kRun;
 		else
-			_vm->_animation->tr[0].xs = _vm->_gyro->kWalk;
+			_vm->_animation->tr[0]._speedX = _vm->_gyro->kWalk;
 		_vm->_animation->newspeed();
 	}
 	break;

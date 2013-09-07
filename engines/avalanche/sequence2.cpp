@@ -76,7 +76,7 @@ void Sequence::start_to_close() {
 
 void Sequence::start_to_open() {
 	_vm->_gyro->_dna._userMovesAvvy = false; // They can't move.
-	_vm->_animation->stopwalking(); // And they're not moving now.
+	_vm->_animation->stopWalking(); // And they're not moving now.
 	start_to_close(); // Apart from that, it's the same thing.
 }
 
