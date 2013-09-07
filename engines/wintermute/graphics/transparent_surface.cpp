@@ -77,10 +77,10 @@ void BlittingTools::blendPixelNormal(byte *in, byte *out, int colorMod) {
 		byte *ing = &in[gIndex];
 		byte *inb = &in[bIndex];
 
-		byte ca = (colorMod >> aIndex) & 0xFF;
-		byte cr = (colorMod >> rIndex) & 0xFF;
-		byte cg = (colorMod >> gIndex) & 0xFF;
-		byte cb = (colorMod >> bIndex) & 0xFF;
+		byte ca = (colorMod >> aShift) & 0xFF;
+		byte cr = (colorMod >> rShift) & 0xFF;
+		byte cg = (colorMod >> gShift) & 0xFF;
+		byte cb = (colorMod >> bShift) & 0xFF;
 
 		blendPixelNormal(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
 }
@@ -96,10 +96,10 @@ void BlittingTools::blendPixelAdditive(byte *in, byte *out, int colorMod) {
 		byte *ing = &in[gIndex];
 		byte *inb = &in[bIndex];
 
-		byte ca = (colorMod >> aIndex) & 0xFF;
-		byte cr = (colorMod >> rIndex) & 0xFF;
-		byte cg = (colorMod >> gIndex) & 0xFF;
-		byte cb = (colorMod >> bIndex) & 0xFF;
+		byte ca = (colorMod >> aShift) & 0xFF;
+		byte cr = (colorMod >> rShift) & 0xFF;
+		byte cg = (colorMod >> gShift) & 0xFF;
+		byte cb = (colorMod >> bShift) & 0xFF;
 
 		blendPixelAdditive(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
 }
@@ -115,15 +115,17 @@ void BlittingTools::blendPixelSubtractive(byte *in, byte *out, int colorMod) {
 		byte *ing = &in[gIndex];
 		byte *inb = &in[bIndex];
 
-		byte ca = (colorMod >> aIndex) & 0xFF;
-		byte cr = (colorMod >> rIndex) & 0xFF;
-		byte cg = (colorMod >> gIndex) & 0xFF;
-		byte cb = (colorMod >> bIndex) & 0xFF;
+		byte ca = (colorMod >> aShift) & 0xFF;
+		byte cr = (colorMod >> rShift) & 0xFF;
+		byte cg = (colorMod >> gShift) & 0xFF;
+		byte cb = (colorMod >> bShift) & 0xFF;
 
 		blendPixelSubtractive(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb); 
 }
 
 void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+
+		byte tempa = *ina;
 
 		if (*ca != 255) {
 			*ina = *ina * *ca >> 8;
@@ -131,7 +133,7 @@ void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *in
 
 		if (*ina == 0) {
 			return; 
-		} else if (*ina == 255) {
+		} else {
 			if (*cb != 255)
 				*outb = MIN(*outb + ((*inb * *cb * *ina) >> 16), 255);
 			else
@@ -147,11 +149,15 @@ void BlittingTools::blendPixelAdditive(byte *ina, byte *inr, byte *ing, byte *in
 			else
 				*outr = MIN(*outr + (*inr * *ina >> 8), 255);
 		}
+
+		*ina = tempa;
 }
 
 
 void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
+	
+		byte tempa = *ina;
+		
 		if (*ca != 255) {
 			*ina = *ina * *ca >> 8;
 		}
@@ -174,11 +180,15 @@ void BlittingTools::blendPixelSubtractive(byte *ina, byte *inr, byte *ing, byte 
 			else
 				*outr = MAX(*outr - (*inr *  *ina >> 8), 0);
 		}
+
+		*ina = tempa;
 }
 
 
 void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
+	
+	byte tempa = *ina;
+	
 	if (*ca != 255) {
 		*ina = *ina * *ca >> 8;
 	}
@@ -202,7 +212,9 @@ void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb,
 			*outg = *ing;
 
 		*outa = *ina;
-			
+
+		*ina = tempa;
+
 		return;
 
 	} else {
@@ -232,6 +244,8 @@ void BlittingTools::blendPixelNormal(byte *ina, byte *inr, byte *ing, byte *inb,
 			*outg = ((*outg << 8) + *ing * *ina * *cg) >> 16;
 		else
 			*outg = (*outg + *ing * *ing) >> 8;
+
+		*ina = tempa;
 
 		return;
 	}
