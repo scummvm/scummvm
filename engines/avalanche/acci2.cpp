@@ -1817,7 +1817,7 @@ void Acci::doThat() {
 							_vm->_visa->dixi('D', 9);
 							_vm->_lucerna->points(3);
 						}
-						_vm->_gyro->updateMoney(3); // It costs thruppence.
+						_vm->_gyro->decreaseMoney(3); // It costs thruppence.
 						_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1] = true;
 						_vm->_lucerna->objectlist();
 						_vm->_gyro->_dna._boughtOnion = true;
