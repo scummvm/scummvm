@@ -74,7 +74,7 @@ void Clock::update() { // TODO: Move variables from Gyro to here (or at least so
 		plotHands();
 
 	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717))
-		_vm->_scrolls->display(Common::String("Good morning!") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
+		_vm->_scrolls->displayText(Common::String("Good morning!") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
 		+ "Yes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!");
 
 	_oldHour = _hour;
@@ -146,7 +146,7 @@ void Lucerna::init() {
  */
 void Lucerna::callVerb(byte id) {
 	if (id == _vm->_acci->kPardon) {
-		_vm->_scrolls->display(Common::String("The f5 key lets you do a particular action in certain ") +
+		_vm->_scrolls->displayText(Common::String("The f5 key lets you do a particular action in certain ") +
 			"situations. However, at the moment there is nothing " +
 			"assigned to it. You may press alt-A to see what the " +
 			"current setting of this key is.");
@@ -1242,7 +1242,7 @@ void Lucerna::spriteRun() {
 void Lucerna::fixFlashers() {
 	_vm->_gyro->_ledStatus = 177;
 	_vm->_gyro->_oldDirection = 177;
-	_vm->_scrolls->state(2);
+	_vm->_scrolls->setReadyLight(2);
 	drawDirection();
 }
 

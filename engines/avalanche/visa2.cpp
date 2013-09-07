@@ -83,7 +83,7 @@ void Visa::dixi(char block, byte point, bool report, bool bubbling) {
 		if (report) {
 			Common::String todisplay;
 			todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro->intToStr(point).c_str());
-			_vm->_scrolls->display(todisplay);
+			_vm->_scrolls->displayText(todisplay);
 		}
 		return;
 	}
@@ -101,7 +101,7 @@ void Visa::dixi(char block, byte point, bool report, bool bubbling) {
 	if (bubbling)
 		do_the_bubble();
 
-	_vm->_scrolls->calldrivers();
+	_vm->_scrolls->callScrollDriver();
 }
 
 void Visa::speech(byte who, byte subject) {
@@ -145,7 +145,7 @@ void Visa::speech(byte who, byte subject) {
 		unskrimble();
 		do_the_bubble();
 
-		_vm->_scrolls->calldrivers();
+		_vm->_scrolls->callScrollDriver();
 		went_ok = true;
 	}
 
@@ -177,7 +177,7 @@ void Visa::talkto(byte whom) {
 					switch (_vm->_gyro->_dna._givenToSpludwick) {
 					case 1: // Falltrough is intended.
 					case 2:{
-						_vm->_scrolls->display(Common::String("Can you get me ") + _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
+						_vm->_scrolls->displayText(Common::String("Can you get me ") + _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
 						return;
 						}
 						break;
@@ -254,13 +254,13 @@ void Visa::talkto(byte whom) {
 	no_matches = true;
 	for (fv = 0; fv <= _vm->_animation->kSpriteNumbMax; fv++)
 		if (_vm->_animation->tr[fv]._stat.accinum == whom) {
-			_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + (fv + 49) + _vm->_scrolls->kControlToBuffer);
+			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (fv + 49) + _vm->_scrolls->kControlToBuffer);
 			no_matches = false;
 			break;
 		}
 
 	if (no_matches)
-		_vm->_scrolls->display(Common::String(_vm->_scrolls->kControlRegister) + _vm->_scrolls->kControlRegister + _vm->_scrolls->kControlToBuffer);
+		_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + _vm->_scrolls->kControlRegister + _vm->_scrolls->kControlToBuffer);
 
 	speech(whom, _vm->_gyro->_subjectNum);
 
