@@ -311,14 +311,14 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(_animation->tr[i].face);
 		sz.syncAsByte(_animation->tr[i].step);
 		sz.syncAsByte(_animation->tr[i]._visible);
-		sz.syncAsByte(_animation->tr[i].homing);
+		sz.syncAsByte(_animation->tr[i]._homing);
 		sz.syncAsByte(_animation->tr[i].count);
 		sz.syncAsByte(_animation->tr[i]._info._xWidth);
 		sz.syncAsByte(_animation->tr[i].xs);
 		sz.syncAsByte(_animation->tr[i].ys);
 		sz.syncAsByte(_animation->tr[i].totalnum);
-		sz.syncAsSint16LE(_animation->tr[i].hx);
-		sz.syncAsSint16LE(_animation->tr[i].hy);
+		sz.syncAsSint16LE(_animation->tr[i]._homingX);
+		sz.syncAsSint16LE(_animation->tr[i]._homingY);
 		sz.syncAsByte(_animation->tr[i].call_eachstep);
 		sz.syncAsByte(_animation->tr[i].eachstep);
 		sz.syncAsByte(_animation->tr[i].vanishifstill);

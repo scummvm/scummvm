@@ -82,8 +82,8 @@ public:
 	int16 _oldX[2], _oldY[2];  // last xy coords
 	int8 ix, iy; // amount to move sprite by, each step
 	byte whichsprite;
-	bool quick, _visible, homing, check_me;
-	int16 hx, hy; // homing x & y coords
+	bool quick, _visible, _homing, check_me;
+	int16 _homingX, _homingY; // homing x & y coords
 	byte count; // counts before changing step
 	byte xs, ys; // x & y speed
 	byte totalnum; // total number of sprites
