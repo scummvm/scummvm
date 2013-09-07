@@ -34,7 +34,7 @@
 
 namespace ZVision {
 
-RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat)
+RenderManager::RenderManager(OSystem *system, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat)
 		: _system(system),
 		  _workingWidth(workingWindow.width()),
 		  _workingHeight(workingWindow.height()),
@@ -49,12 +49,14 @@ RenderManager::RenderManager(OSystem *system, const Common::Rect workingWindow, 
 		  _accumulatedVelocityMilliseconds(0),
 		  _renderTable(_workingWidth, _workingHeight) {
 
-	_workingWindowBuffer = new uint16[_workingWidth *_workingHeight];
+	_workingWindowBuffer.create(_workingWidth, _workingHeight, _pixelFormat);
+	_backBuffer.create(windowWidth, windowHeight, pixelFormat);
 }
 
 RenderManager::~RenderManager() {
-	delete[] _workingWindowBuffer;
+	_workingWindowBuffer.free();
 	_currentBackground.free();
+	_backBuffer.free();
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
@@ -75,14 +77,29 @@ void RenderManager::update(uint deltaTimeInMillis) {
 	}
 }
 
-void RenderManager::clearWorkingWindowToColor(uint16 color) {
+void RenderManager::renderBackbufferToScreen() {
+	//RenderTable::RenderState state = _renderTable.getRenderState();
+	//if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+	//	_renderTable.mutateImage((uint16 *)_workingWindowBuffer.getPixels(), (uint16 *)_backBuffer.getBasePtr(_workingWindow.left, _workingWindow.top), _backBuffer.w);
+	//} else {
+		//_system->copyRectToScreen(_workingWindowBuffer.getPixels(), _workingWindowBuffer.pitch, _workingWindow.left, _workingWindow.top, _workingWindowBuffer.w, _workingWindowBuffer.h);
+	//}
+
+	// TODO: Add menu rendering
+
+	//_system->copyRectToScreen(_backBuffer.getPixels(), _backBuffer.pitch, 0, 0, _backBuffer.w, _backBuffer.h);
+}
+
+void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
 	uint32 workingWindowSize = _workingWidth * _workingHeight;
+	byte r, g, b;
+	Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(color, r, g, b);
+	uint16 colorIn565 = _pixelFormat.RGBToColor(r, g, b);
+	uint16 *bufferPtr = (uint16 *)_workingWindowBuffer.getPixels();
 
 	for (uint32 i = 0; i < workingWindowSize; i++) {
-		_workingWindowBuffer[i] = color;
+		bufferPtr[i] = color;
 	}
-
-	_system->copyRectToScreen(_workingWindowBuffer, _workingWidth * sizeof(uint16), _workingWindow.left, _workingWindow.top, _workingWidth, _workingHeight);
 }
 
 void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {	
@@ -136,13 +153,7 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (!subRect.isValidRect() || subRect.isEmpty())
 		return;
 
-	if (_renderTable.getRenderState() == RenderTable::FLAT) {
-		_system->copyRectToScreen(surface.getBasePtr(subRect.left, subRect.top), surface.pitch, destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
-	} else {
-		_renderTable.mutateImage((uint16 *)surface.getPixels(), _workingWindowBuffer, surface.w, surface.h, destinationX, destinationY, subRect, wrap);
-
-		_system->copyRectToScreen(_workingWindowBuffer, _workingWidth * sizeof(uint16), destinationX + _workingWindow.left, destinationY + _workingWindow.top, subRect.width(), subRect.height());
-	}
+	_system->copyRectToScreen(surface.getBasePtr(subRect.left, subRect.top), surface.pitch, destinationX, destinationY, subRect.width(), subRect.height()/*, wrap*/);
 }
 
 void RenderManager::renderImageToScreen(const Common::String &fileName, int16 destinationX, int16 destinationY, bool wrap) {
@@ -248,6 +259,44 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 
 	// Convert in place to RGB 565 from RGB 555
 	destination.convertToInPlace(_pixelFormat);
+}
+
+void RenderManager::renderRectToWorkingWindow(uint16 *buffer, int32 destX, int32 destY, int32 width, int32 height, bool wrap) {
+	uint32 destOffset = 0;
+	uint16 *workingWindowBufferPtr = (uint16 *)_workingWindowBuffer.getBasePtr(destX, destY);
+
+	for (int32 y = 0; y < height; y++) {
+		for (int32 x = 0; x < width; x++) {
+			int32 sourceYIndex = y;
+			int32 sourceXIndex = x;
+
+			if (wrap) {
+				while (sourceXIndex >= width) {
+					sourceXIndex -= width;
+				}
+				while (sourceXIndex < 0) {
+					sourceXIndex += width;
+				}
+
+				while (sourceYIndex >= height) {
+					sourceYIndex -= height;
+				}
+				while (sourceYIndex < 0) {
+					sourceYIndex += height;
+				}
+			} else {
+				// Clamp the yIndex to the size of the image
+				sourceYIndex = CLIP<int16>(sourceYIndex, 0, height - 1);
+
+				// Clamp the xIndex to the size of the image
+				sourceXIndex = CLIP<int16>(sourceXIndex, 0, width - 1);
+			}
+
+			workingWindowBufferPtr[destOffset + x] = buffer[sourceYIndex * width + sourceXIndex];
+		}
+
+		destOffset += _workingWidth;
+	}
 }
 
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {

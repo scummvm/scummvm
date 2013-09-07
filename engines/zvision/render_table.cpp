@@ -100,45 +100,29 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 	return returnColor;
 }
 
-void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, int16 imageWidth, int16 imageHeight, int16 destinationX, int16 destinationY, const Common::Rect &subRect, bool wrap) {
-	for (int16 y = subRect.top; y < subRect.bottom; y++) {
-		int16 normalizedY = y - subRect.top;
-		int32 internalColumnIndex = (normalizedY + destinationY) * _numColumns;
-		int32 destColumnIndex = normalizedY * _numColumns;
+void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint16 destWidth) {
+	uint32 destColumnOffset = 0;
 
-		for (int16 x = subRect.left; x < subRect.right; x++) {
-			int16 normalizedX = x - subRect.left;
+	for (int16 y = 0; y < _numRows; y++) {
+		int32 sourceColumnOffset = y * _numColumns;
 
-			int32 index = internalColumnIndex + normalizedX + destinationX;
+		for (int16 x = 0; x < _numColumns; x++) {
+			int32 index = sourceColumnOffset + x;
 
 			// RenderTable only stores offsets from the original coordinates
-			int16 sourceYIndex = y + _internalBuffer[index].y;
-			int16 sourceXIndex = x + _internalBuffer[index].x;
+			int32 sourceYIndex = y + _internalBuffer[index].y;
+			int32 sourceXIndex = x + _internalBuffer[index].x;
 
-			if (wrap) {
-				while (sourceXIndex >= imageWidth) {
-					sourceXIndex -= imageWidth;
-				}
-				while (sourceXIndex < 0) {
-					sourceXIndex += imageWidth;
-				}
+			// Clamp the yIndex to the size of the image
+			sourceYIndex = CLIP<int32>(sourceYIndex, 0, _numRows - 1);
 
-				while (sourceYIndex >= imageHeight) {
-					sourceYIndex -= imageHeight;
-				}
-				while (sourceYIndex < 0) {
-					sourceYIndex += imageHeight;
-				}
-			} else {
-				// Clamp the yIndex to the size of the image
-				sourceYIndex = CLIP<int16>(sourceYIndex, 0, imageHeight - 1);
-
-				// Clamp the xIndex to the size of the image
-				sourceXIndex = CLIP<int16>(sourceXIndex, 0, imageWidth - 1);
-			}
+			// Clamp the xIndex to the size of the image
+			sourceXIndex = CLIP<int32>(sourceXIndex, 0, _numColumns - 1);
 			
-			destBuffer[destColumnIndex + normalizedX] = sourceBuffer[sourceYIndex * imageWidth + sourceXIndex];
+			destBuffer[destColumnOffset + x] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
 		}
+
+		destColumnOffset += destWidth;
 	}
 }
 

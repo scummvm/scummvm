@@ -45,7 +45,7 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(OSystem *system, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat);
+	RenderManager(OSystem *system, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat);
 	~RenderManager();
 
 private:
@@ -54,7 +54,8 @@ private:
 
 	// A buffer the exact same size as the workingWindow
 	// It's used for panorama/tilt warping and for clearing the workingWindow to a single color
-	uint16 *_workingWindowBuffer;
+	Graphics::Surface _workingWindowBuffer;
+	Graphics::Surface _backBuffer;
 
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _workingWidth;
@@ -90,9 +91,6 @@ private:
 	/** Holds any 'leftover' milliseconds between frames */
 	uint _accumulatedVelocityMilliseconds;
 
-	// TODO: Potentially merge this buffer and _workingWindowBuffer
-	byte *_scaledVideoFrameBuffer;
-
 public:
 	void initialize();
 	/**
@@ -103,11 +101,16 @@ public:
 	void update(uint deltaTimeInMillis);
 
 	/**
+	 * Renders the current state of the backbuffer to the screen
+	 */
+	void renderBackbufferToScreen();
+
+	/**
 	 * Fills the entire workingWindow with the specified color
 	 *
 	 * @param color    The color to fill the working window with. (In RGB 555)
 	 */
-	void clearWorkingWindowToColor(uint16 color);
+	void clearWorkingWindowTo555Color(uint16 color);
 
 	/**
 	 * Blits the image or a portion of the image to the backbuffer. Actual screen updates won't happen until the end of the frame.
@@ -185,6 +188,8 @@ private:
 	void renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap);
 
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
+
+	void renderRectToWorkingWindow(uint16 *buffer, int32 x, int32 y, int32 width, int32 height, bool wrap);
 
 	void moveBackground(int offset);
 };

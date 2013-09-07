@@ -69,7 +69,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(_system, _workingWindow, _pixelFormat);
+	_renderManager = new RenderManager(_system, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
 
 	debug("ZVision::ZVision");
 }
@@ -140,6 +140,9 @@ Common::Error ZVision::run() {
 		// before anything that puzzles/controls will render
 		_renderManager->update(deltaTime);
 		_scriptManager->update(deltaTime);
+
+		// Render the backBuffer to the screen
+		_renderManager->renderBackbufferToScreen();
 
 		// Update the screen
 		_system->updateScreen();
