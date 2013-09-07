@@ -134,7 +134,7 @@ void Parser::cursorOff() {
 	_cursorState = false;
 }
 
-void Parser::tryDropdown() { 
+void Parser::tryDropdown() {
 	warning("STUB: Parser::tryDropdown()"); // TODO: Implement at the same time with Dropdown.
 }
 
@@ -162,7 +162,7 @@ void Parser::drawCursor() {
 void Parser::wipeText() {
 	CursorMan.showMouse(false);
 	cursorOff();
-	
+
 	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
 
 	_quote = true;

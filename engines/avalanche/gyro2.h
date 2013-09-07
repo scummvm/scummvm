@@ -27,8 +27,8 @@
 
 /* GYRO		It all revolves around this bit! */
 
-#ifndef GYRO2_H
-#define GYRO2_H
+#ifndef AVALANCHE_GYRO2_H
+#define AVALANCHE_GYRO2_H
 
 #include "common/str.h"
 #include "common/scummsys.h"
@@ -49,7 +49,7 @@ static const int16 kCarryLimit = 12;  // carry limit
 static const int16 kNumlockCode = 32;  // Code for Num Lock
 static const int16 kMouseSize = 134;
 
-struct MouseHotspotType { // mouse-void 
+struct MouseHotspotType { // mouse-void
 	int16 _horizontal, _vertical;
 };
 
@@ -115,7 +115,7 @@ struct DnaType { // Ux, uy, & ww now all belong to Trip5
 
 	byte _jumpStatus; // Fixes how high you're jumping.
 
-	bool _mushroomGrowing; // Is the mushroom growing in 42? 
+	bool _mushroomGrowing; // Is the mushroom growing in 42?
 
 	bool _spludwickAtHome; // Is Spludwick at home?
 
@@ -298,7 +298,7 @@ public:
 
 	// For Thinkabout:
 	static const bool kThing = true;
-	static const bool kPerson = false; 
+	static const bool kPerson = false;
 
 	// Magic/portal constants:
 	enum Magics {
@@ -310,7 +310,7 @@ public:
 		kMagicSpecial, // Special function.
 		kMagicOpenDoor // Opening door.
 	};
-	
+
 	// These following static constants should be included in CFG when it's written.
 
 	static const bool kSlowComputer = false; // Stops walking when mouse touches toolbar.
@@ -331,7 +331,7 @@ public:
 	static const bool kDemo = false; // If this is true, we're in a demo of the game.
 
 	static const char kSpludwicksOrder[3];
-	 
+
 	static const QuasipedType kQuasipeds[16];
 
 	enum Pitch {
@@ -353,13 +353,13 @@ public:
 	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.
 	// If a scroll comes up, or you leave the room, it's automatically set to zero.
 	byte _interrogation;
-	
+
 	static byte _whereIs[29];
 
 	// Variable static constant for overriding the ability of On to switch pages.
 	// You may know better than On which page to switch to.
-	bool _onCanDoPageSwap; 
-	
+	bool _onCanDoPageSwap;
+
 
 
 
@@ -489,7 +489,7 @@ public:
 
 private:
 	AvalancheEngine *_vm;
-	
+
 	// CHECKME: Useless?
 	// static const char kItemsChar[];
 	void drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
@@ -497,4 +497,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // GYRO2_H
+#endif // AVALANCHE_GYRO2_H

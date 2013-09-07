@@ -27,8 +27,8 @@
 
 /* VISA		The new Sez handler. (Replaces Access.) */
 
-#ifndef VISA2_H
-#define VISA2_H
+#ifndef AVALANCHE_VISA2_H
+#define AVALANCHE_VISA2_H
 
 #include "common/scummsys.h"
 
@@ -60,4 +60,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // VISA2_H
+#endif // AVALANCHE_VISA2_H

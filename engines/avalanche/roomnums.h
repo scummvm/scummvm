@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#ifndef ROOMNUMS_H
-#define ROOMNUMS_H
+#ifndef AVALANCHE_ROOMNUMS_H
+#define AVALANCHE_ROOMNUMS_H
 
 #include "common/system.h"
 
@@ -80,9 +80,9 @@ const byte r__insidecardiffcastle = 71;
 
 //{ -------------- }
 
-const byte r__bosskey = 98; // assumed 
+const byte r__bosskey = 98; // assumed
 const byte r__map = 99;
 
 } // End of namespace Avalanche
 
-#endif // ROOMNUMS_H
+#endif // AVALANCHE_ROOMNUMS_H

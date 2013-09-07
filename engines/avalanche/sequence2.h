@@ -27,8 +27,8 @@
 
 /* SEQUENCE		The sequencer. */
 
-#ifndef SEQUENCE2_H
-#define SEQUENCE2_H
+#ifndef AVALANCHE_SEQUENCE2_H
+#define AVALANCHE_SEQUENCE2_H
 
 #include "common/scummsys.h"
 
@@ -68,4 +68,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // SEQUENCE2_H
+#endif // AVALANCHE_SEQUENCE2_H

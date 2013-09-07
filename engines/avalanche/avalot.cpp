@@ -61,9 +61,9 @@ Avalot::Avalot(AvalancheEngine *vm) {
 void Avalot::handleKeyDown(Common::Event &event) {
 	//if (keyboardclick)
 	//	click();
-	//	
+	//
 	// To be implemented later with the sounds, I assume.
-	
+
 
 	if ((Common::KEYCODE_F1 <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_F15))
 		_vm->_parser->handleFunctionKey(event);
@@ -169,7 +169,7 @@ void Avalot::setup() {
 
 
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
-	if (loadSlot >= 0) {	
+	if (loadSlot >= 0) {
 		_vm->_gyro->_thinks = 2; // You always have money.
 		_vm->_lucerna->thinkabout(_vm->_gyro->kObjectMoney, _vm->_gyro->kThing);
 
@@ -182,8 +182,8 @@ void Avalot::setup() {
 		_vm->_lucerna->fxtoggle();
 		_vm->_lucerna->thinkabout(_vm->_gyro->kObjectMoney, _vm->_gyro->kThing);
 
-		_vm->_visa->dixi('q', 83); // Info on the game, etc. 
-	}	
+		_vm->_visa->dixi('q', 83); // Info on the game, etc.
+	}
 }
 
 
@@ -211,7 +211,7 @@ void Avalot::run(Common::String arg) {
 
 #ifdef DEBUG
 		// ONLY FOR TESTING!!!
-		for (byte i = 0; i < _vm->_gyro->_lineNum; i++) 
+		for (byte i = 0; i < _vm->_gyro->_lineNum; i++)
 			_vm->_graphics->_surface.drawLine(_vm->_gyro->_lines[i]._x1, _vm->_gyro->_lines[i]._y1, _vm->_gyro->_lines[i]._x2, _vm->_gyro->_lines[i]._y2, _vm->_gyro->_lines[i].col);
 
 		for (byte i = 0; i < _vm->_gyro->_fieldNum; i++) {

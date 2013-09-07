@@ -27,8 +27,8 @@
 
 /* LUCERNA		The screen, [keyboard] and mouse handler.*/
 
-#ifndef LUCERNA2_H
-#define LUCERNA2_H
+#ifndef AVALANCHE_LUCERNA2_H
+#define AVALANCHE_LUCERNA2_H
 
 #include "common/scummsys.h"
 #include "common/file.h"
@@ -139,4 +139,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // LUCERNA2_H
+#endif // AVALANCHE_LUCERNA2_H

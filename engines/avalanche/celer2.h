@@ -27,8 +27,8 @@
 
 /* CELER	The unit for updating the screen pics. */
 
-#ifndef CELER2_H
-#define CELER2_H
+#ifndef AVALANCHE_CELER2_H
+#define AVALANCHE_CELER2_H
 
 #include "common/scummsys.h"
 #include "common/file.h"
@@ -78,4 +78,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // CELER2_H
+#endif // AVALANCHE_CELER2_H

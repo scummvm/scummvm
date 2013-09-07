@@ -91,10 +91,10 @@ void Sequence::call_sequencer() {
 	switch (seq[0]) {
 	case 0:
 		return; // No more routines.
-		break; 
+		break;
 	case 177: // Flip room.
 		_vm->_gyro->_dna._userMovesAvvy = true;
-		_vm->_trip->fliproom(_vm->_gyro->_dna._flipToWhere, _vm->_gyro->_dna._flipToPed); 
+		_vm->_trip->fliproom(_vm->_gyro->_dna._flipToWhere, _vm->_gyro->_dna._flipToPed);
 		if (seq[0] == 177)
 			shove_left();
 		break;
@@ -105,7 +105,7 @@ void Sequence::call_sequencer() {
 		_vm->_celer->drawBackgroundSprite(-1, -1, seq[0]);
 		shove_left();
 	}
-	
+
 	start_to_close(); // Make sure this PROC gets called again.
 }
 

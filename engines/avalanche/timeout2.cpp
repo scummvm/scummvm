@@ -332,7 +332,7 @@ void Timeout::hang_around2() {
 	_vm->_trip->tr[0].done();
 	_vm->_trip->tr[1].done(); // Get rid of Robin Hood and Friar Tuck.
 
-	set_up_timer(1, procafter_the_shootemup, reason_hanging_around); 
+	set_up_timer(1, procafter_the_shootemup, reason_hanging_around);
 	// Immediately call the following proc (when you have a chance).
 
 	_vm->_gyro->_dna._tiedUp = false;
@@ -341,7 +341,7 @@ void Timeout::hang_around2() {
 }
 
 void Timeout::after_the_shootemup() {
-	
+
 	_vm->_trip->fliproom(_vm->_gyro->_dna._room, 0);
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 
@@ -614,7 +614,7 @@ void Timeout::arkata_shouts() {
 		return;
 
 	_vm->_visa->dixi('q', 76);
-	
+
 	set_up_timer(160, procarkata_shouts, reason_arkata_shouts);
 }
 
@@ -627,7 +627,7 @@ void Timeout::winning() {
 	do {
 		_vm->_lucerna->checkclick();
 	} while (!(_vm->_gyro->mrelease == 0));
-#endif	
+#endif
 	// TODO: To be implemented with Pingo::winning_pic().
 
 	_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);

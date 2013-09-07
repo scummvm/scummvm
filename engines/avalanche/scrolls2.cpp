@@ -85,7 +85,7 @@ void Scrolls::easteregg() {
 void Scrolls::say(int16 x, int16 y, Common::String z) { // Fancy FAST screenwriting
 	FontType itw;
 	byte lz = z.size();
-	
+
 	bool offset = x % 8 == 4;
 	x = x / 8;
 	y++;
@@ -130,7 +130,7 @@ void Scrolls::normscroll() {
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
 	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
-	
+
 	Common::Event event;
 	while (!_vm->shouldQuit()) {
 		_vm->_graphics->refreshScreen();
@@ -224,7 +224,7 @@ void Scrolls::music_scroll() {
 	CursorMan.showMouse(true);
 	_vm->_gyro->newMouse(4);
 
-	// Since there are no sounds in the game yet, it's pretty pointless to implement this function further. 
+	// Since there are no sounds in the game yet, it's pretty pointless to implement this function further.
 	// For now we act like the player just played the right tone.
 #if 0
 	if (they_match(played)) {
@@ -239,7 +239,7 @@ void Scrolls::music_scroll() {
 		return;
 #if 0
 	}
-	
+
 	_vm->_gyro->screturn = false;
 	CursorMan.showMouse(false);
 	state(0);
@@ -261,12 +261,12 @@ void Scrolls::dingdongbell() {   // Pussy's in the well. Who put her in? Little.
 		_vm->_lucerna->errorled(); // ring the bell "x" times
 }
 
-void Scrolls::dodgem() {     
+void Scrolls::dodgem() {
 	dodgeCoord = _vm->getMousePos();
 	g_system->warpMouse(dodgeCoord.x, _vm->_gyro->_underScroll); // Move the pointer off the scroll.
 }
 
-void Scrolls::undodgem() {   
+void Scrolls::undodgem() {
 	Common::Point actCoord = _vm->getMousePos();
 	if ((actCoord.x == dodgeCoord.x) && (actCoord.y == _vm->_gyro->_underScroll))
 		g_system->warpMouse(dodgeCoord.x, dodgeCoord.y); // No change, so restore the pointer's original position.
@@ -357,7 +357,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, kColorLightgray);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, kColorRed);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, kColorRed);
-	
+
 	// The body of the scroll.
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), kColorLightgray);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly + 1), kColorLightgray);
@@ -381,7 +381,7 @@ void Scrolls::drawscroll(func2 gotoit) { // This is one of the oldest procs in t
 //	int16 ey = my - ly;
 	mx -= lx;
 	my -= ly + 2;
-	
+
 	centre = false;
 
 	switch (use_icon) {
@@ -525,7 +525,7 @@ void Scrolls::bubble(func2 gotoit) {
 	// "Tail" of the speech bubble.
 	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, p, _vm->_gyro->_talkBackgroundColor);
 
-	
+
 	yl -= 3;
 
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
@@ -592,7 +592,7 @@ Common::String Scrolls::lsd() {
 			+ '.' + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
 	if (_vm->_gyro->_dna._money > 12)
 		x = x + " (that's " + _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + "d)";
-	
+
 	return x;
 }
 
@@ -702,7 +702,7 @@ void Scrolls::calldrivers() {
 					// sprites.)
 					_vm->_gyro->_talkX = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[param - 10]._whichPed - 1]._x;
 					_vm->_gyro->_talkY = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[param - 10]._whichPed - 1]._y; // Position.
-		
+
 					_vm->_gyro->_talkFontColor = _vm->_gyro->kQuasipeds[param - 10]._foregroundColor;
 					_vm->_gyro->_talkBackgroundColor = _vm->_gyro->kQuasipeds[param - 10]._backgroundColor; // Colors.
 				} else {
@@ -722,7 +722,7 @@ void Scrolls::calldrivers() {
 				switch (param) {
 				case 1:
 					display(lsd() + kControlToBuffer); // Insert cash balance. (Recursion)
-					break; 
+					break;
 				case 2:
 					display(_vm->_acci->kVocabulary[_vm->_acci->kFirstPassword + _vm->_gyro->_dna._passwordNum]._word + kControlToBuffer);
 					break;
@@ -831,7 +831,7 @@ void Scrolls::loadfont() {
 	for (int16 i = 0; i < 256; i++)
 		f.read(ch[1][i], 16);
 	f.close();
-	
+
 	if (!f.open("ttsmall.fnt")) {
 		warning("AVALANCHE: Scrolls: File not found: ttsmall.fnt");
 		return;

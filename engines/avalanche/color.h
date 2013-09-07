@@ -27,8 +27,8 @@
 
 // Color constants replacing the colors from the CRT unit of Pascal
 
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef AVALANCHE_COLOR_H
+#define AVALANCHE_COLOR_H
 
 #include "common/system.h"
 
@@ -55,4 +55,4 @@ enum Color {
 
 } // End of namespace Avalanche
 
-#endif // COLOR_H
+#endif // AVALANCHE_COLOR_H

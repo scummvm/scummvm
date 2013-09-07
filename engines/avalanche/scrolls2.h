@@ -27,8 +27,8 @@
 
  /* SCROLLS		The scroll driver. */
 
-#ifndef SCROLLS2_H
-#define SCROLLS2_H
+#ifndef AVALANCHE_SCROLLS2_H
+#define AVALANCHE_SCROLLS2_H
 
 #include "common/system.h"
 
@@ -67,7 +67,7 @@ public:
 
 
 	Scrolls(AvalancheEngine *vm);
-	
+
 	void init();
 
 	void state(byte x);      // Sets "Ready" light to whatever
@@ -105,7 +105,7 @@ private:
 
 
 	int16 dix, diy;
-	
+
 	byte cfont; // Current font
 
 	Common::Point dodgeCoord;
@@ -150,4 +150,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // SCROLLS2_H
+#endif // AVALANCHE_SCROLLS2_H

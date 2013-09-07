@@ -27,8 +27,8 @@
 
 /* DROPDOWN	A customised version of Oopmenu (qv). */
 
-#ifndef DROPDOWN2_H
-#define DROPDOWN2_H
+#ifndef AVALANCHE_DROPDOWN2_H
+#define AVALANCHE_DROPDOWN2_H
 
 #include "avalanche/color.h"
 
@@ -164,4 +164,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // DROPDOWN2_H
+#endif // AVALANCHE_DROPDOWN2_H

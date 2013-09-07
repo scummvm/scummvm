@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#ifndef AVALANCHE_H
-#define AVALANCHE_H
+#ifndef AVALANCHE_AVALANCHE_H
+#define AVALANCHE_AVALANCHE_H
 
 #include "avalanche/console.h"
 
@@ -90,11 +90,11 @@ public:
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
 
-	Common::ErrorCode initialize(); 
+	Common::ErrorCode initialize();
 	GUI::Debugger *getDebugger();
 
 	Common::RandomSource *_rnd;
-	
+
 	const AvalancheGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
@@ -172,4 +172,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // AVALANCHE_H
+#endif // AVALANCHE_AVALANCHE_H

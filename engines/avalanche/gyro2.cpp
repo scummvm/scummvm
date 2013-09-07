@@ -119,7 +119,7 @@ const char Gyro::kSpludwicksOrder[3] = {kObjectOnion, kObjectInk, kObjectMushroo
 // A quasiped defines how people who aren't sprites talk. For example, quasiped
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
 const QuasipedType Gyro::kQuasipeds[16] = {
-	{2, kColorLightgray, 19, kColorBrown, kPeopleDogfood},                       // A: Dogfood (screen 19). 
+	{2, kColorLightgray, 19, kColorBrown, kPeopleDogfood},                       // A: Dogfood (screen 19).
 	{3, kColorGreen,     19, kColorWhite, kPeopleIbythneth},                     // B: Ibythneth (screen 19).
 	{3, kColorWhite,     1, kColorMagenta, kPeopleArkata},                       // C: Arkata (screen 1).
 	{3, kColorBlack,     23, kColorRed, 177},							   // D: Hawk (screen 23).
@@ -234,7 +234,7 @@ void Gyro::shadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
 	warning("STUB: Gyro::shbox()");
 }
 
-void Gyro::newGame() { 
+void Gyro::newGame() {
 	for (byte gm = 0; gm < kMaxSprites; gm++) {
 		if (_vm->_trip->tr[gm].quick)
 			_vm->_trip->tr[gm].done();
@@ -259,7 +259,7 @@ void Gyro::newGame() {
 	_dna._objects[kObjectBodkin - 1] = true;
 	_dna._objects[kObjectBell - 1] = true;
 	_dna._objects[kObjectClothes - 1] = true;
-	
+
 	_thinkThing = true;
 	_thinks = 2;
 	_vm->_lucerna->objectlist();
@@ -293,7 +293,7 @@ void Gyro::newGame() {
 	_vm->_lucerna->sprite_run();
 }
 
-void Gyro::click() { 
+void Gyro::click() {
 	warning("STUB: Gyro::click()");
 }
 
@@ -326,7 +326,7 @@ bool Gyro::updateMoney(uint16 howmuchby) {
 
 // There'll may be problems with calling these functions because of the conversion of the arrays!!!
 // Keep an eye open!
-Common::String Gyro::getName(byte whose) { 
+Common::String Gyro::getName(byte whose) {
 	static const Common::String kLads[17] = {
 		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
 		"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
@@ -350,7 +350,7 @@ byte Gyro::getNameChar(byte whose) {
 
 	assert((whose > 150) && (whose < 179));
 
-	if (whose < 175) 
+	if (whose < 175)
 		return kLadChar[whose - 150];
 	else
 		return kLassChar[whose - 175];
@@ -461,7 +461,7 @@ Common::String Gyro::f5Does() {
 				return Common::String(_vm->_acci->kVerbCodeStand) + "GGet up";
 		}
 		break;
-	case r__insidecardiffcastle: 
+	case r__insidecardiffcastle:
 		if (_dna._standingOnDais)
 			return Common::String(_vm->_acci->kVerbCodeClimb) + "CClimb down";
 		else
@@ -505,7 +505,7 @@ void Gyro::loadMouse(byte which) {
 			for (byte k = 0; k < 2; k++)
 				if (*(byte *)mask.getBasePtr(i, j) == 0)
 					*(byte *)cursor.getBasePtr(i, j * 2 + k) = 0;
-	
+
 	mask.free();
 
 	// The OR mask.

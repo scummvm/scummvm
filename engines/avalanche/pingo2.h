@@ -27,8 +27,8 @@
 
 /* PINGO	Full-screen sub-parts of the game. */
 
-#ifndef PINGO2_H
-#define PINGO2_H
+#ifndef AVALANCHE_PINGO2_H
+#define AVALANCHE_PINGO2_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -64,4 +64,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // PINGO2_H
+#endif // AVALANCHE_PINGO2_H

@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef AVALANCHE_PARSER_H
+#define AVALANCHE_PARSER_H
 
 #include "common/events.h"
 
@@ -41,7 +41,7 @@ public:
 	bool _quote; // 66 or 99 next?
 	byte _leftMargin;
 	bool _cursorState;
-	
+
 
 
 	Parser(AvalancheEngine *vm);
@@ -77,4 +77,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // PARSER_H
+#endif // AVALANCHE_PARSER_H

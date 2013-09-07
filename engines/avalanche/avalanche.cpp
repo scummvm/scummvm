@@ -51,7 +51,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_console = new AvalancheConsole(this);
 
 	_rnd = new Common::RandomSource("avalanche");
-	_rnd->setSeed(42);     
+	_rnd->setSeed(42);
 }
 
 AvalancheEngine::~AvalancheEngine() {
@@ -238,7 +238,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 			_gyro->_dna._spareEvening += actChr;
 		}
 	}
-	
+
 	sz.syncAsSint32LE(_gyro->_dna._totalTime);
 	sz.syncAsByte(_gyro->_dna._jumpStatus);
 	sz.syncAsByte(_gyro->_dna._mushroomGrowing);
@@ -288,7 +288,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		}
 	}
 	sz.syncAsByte(spriteNum);
-	
+
 	if (sz.isLoading()) {
 		for (byte i = 0; i < _trip->numtr; i++) { // Deallocate sprites.
 			if (_trip->tr[i].quick)
@@ -299,8 +299,8 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	for (byte i = 0; i < spriteNum; i++) {
 		sz.syncAsByte(_trip->tr[i].whichsprite);
 		sz.syncAsByte(_trip->tr[i].check_me);
-		
-	
+
+
 		if (sz.isLoading()) {
 			_trip->tr[i].quick = true;
 			_trip->tr[i].init(_trip->tr[i].whichsprite, _trip->tr[i].check_me, _trip);
@@ -379,7 +379,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	Common::Serializer sz(NULL, f);
 
 	synchronize(sz);
-	
+
 	f->finalize();
 
 	delete f;
@@ -465,7 +465,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_dropdown->setupMenu();
 
 	_gyro->_whereIs[0] = _gyro->_dna._room;
-	
+
 	_gyro->_alive = true;
 
 	_lucerna->objectlist();
@@ -478,7 +478,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_trip->trippancy_link();
 
 	_celer->updateBackgroundSprites();
-	
+
 	_scrolls->display(Common::String(_scrolls->kControlItalic) + "Loaded: " + _scrolls->kControlRoman + description + ".ASG"
 		+ _scrolls->kControlCenter + _scrolls->kControlNewLine + _scrolls->kControlNewLine
 		+ _gyro->_roomnName + _scrolls->kControlNewLine + _scrolls->kControlNewLine
@@ -618,14 +618,14 @@ Common::String AvalancheEngine::elmToStr(Elm how) {
 }
 
 void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
-	warning("STUB: run(%s)", what.c_str()); 
+	warning("STUB: run(%s)", what.c_str());
 	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
 }
 
 void AvalancheEngine::getArguments() {
 	// This function should mess around with command line arguments,
 	// but I am not sure if there'll be use of these arguments at all...
-	warning("STUB: getArguments()"); 
+	warning("STUB: getArguments()");
 }
 
 void AvalancheEngine::getSlope() {
@@ -646,7 +646,7 @@ void AvalancheEngine::dosShell() {
 }
 
 // Getting used only in demo() / call_menu(). Going to be implemented at the same time with these.
-bool AvalancheEngine::keyPressed() {	
+bool AvalancheEngine::keyPressed() {
 	warning("STUB: keyPressed()");
 	return false;
 }
@@ -663,7 +663,7 @@ void AvalancheEngine::demo() {
 
 
 
-	
+
 void AvalancheEngine::runAvalot() {
 	bFlightOn();
 
@@ -681,7 +681,7 @@ Common::Error AvalancheEngine::run() {
 	if (err != Common::kNoError)
 		return err;
 
-	
+
 
 	// From bootstrp:
 
@@ -690,7 +690,7 @@ Common::Error AvalancheEngine::run() {
 	getArguments();
 	getSlope();
 
-	_zoomy = true; 
+	_zoomy = true;
 	// Don't call the menu by default. Might be modified later, if get_slope() gets implemented,
 	// because zoomy's value is given there. Not sure yet what "zoomy" stands for.
 	if (!_zoomy)
@@ -702,7 +702,7 @@ Common::Error AvalancheEngine::run() {
 		runAvalot();
 
 		// Needed for later implementation!!! Don't remove these comments!!!
-		
+
 		//if (dosexitcode != 77)  quit(); // Didn't stop for us.
 
 		//switch (_storage._operation) {
@@ -727,6 +727,6 @@ Common::Error AvalancheEngine::run() {
 	return Common::kNoError;
 }
 
-	
+
 
 } // End of namespace Avalanche
