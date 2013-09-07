@@ -33,6 +33,7 @@
 #include "zvision/zork_raw.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/timer_node.h"
+#include "zvision/animation_control.h"
 
 namespace ZVision {
 
@@ -212,7 +213,13 @@ ActionPreloadAnimation::ActionPreloadAnimation(const Common::String &line) {
 }
 
 bool ActionPreloadAnimation::execute(ZVision *engine) {
-	// TODO: Implement
+	// TODO: We ignore the mask and framerate atm. Mask refers to a key color used for binary alpha. We assume the framerate is the default framerate embedded in the videos
+
+	// TODO: Check if the Control already exists
+
+	// Create the control, but disable it until PlayPreload is called
+	engine->getScriptManager()->addControl(new AnimationControl(engine, _key, _fileName));
+	engine->getScriptManager()->disableControl(_key);
 	return true;
 }
 
