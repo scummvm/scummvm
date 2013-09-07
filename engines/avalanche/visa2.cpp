@@ -153,7 +153,6 @@ void Visa::speech(byte who, byte subject) {
 }
 
 void Visa::talkto(byte whom) {
-	byte fv;
 	bool no_matches;
 
 	if (_vm->_acci->_person == _vm->_acci->kPardon) {
@@ -252,9 +251,9 @@ void Visa::talkto(byte whom) {
 		whom -= 149;
 
 	no_matches = true;
-	for (fv = 0; fv <= _vm->_animation->kSpriteNumbMax; fv++)
-		if (_vm->_animation->tr[fv]._stat.accinum == whom) {
-			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (fv + 49) + _vm->_scrolls->kControlToBuffer);
+	for (int16 i = 0; i <= _vm->_animation->kSpriteNumbMax; i++)
+		if (_vm->_animation->tr[i]._stat.accinum == whom) {
+			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (i + 49) + _vm->_scrolls->kControlToBuffer);
 			no_matches = false;
 			break;
 		}

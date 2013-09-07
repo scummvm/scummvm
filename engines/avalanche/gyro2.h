@@ -152,13 +152,14 @@ struct DemoType {
 	char _key, _extd;
 };
 
+typedef byte TuneType[31];
+
 struct QuasipedType {
 	byte _whichPed, _foregroundColor, _room, _backgroundColor;
 	uint16 _who;
 };
 
-typedef byte TuneType[31];
-
+#if 0
 struct Sundry { // Things which must be saved over a backtobootstrap, outside DNA.
 	Common::String _qEnidFilename;
 	bool _qSoundFx;
@@ -166,7 +167,6 @@ struct Sundry { // Things which must be saved over a backtobootstrap, outside DN
 	bool _qThinkThing;
 };
 
-#if 0
 struct ednahead { // Edna header
 	// This header starts at byte offset 177 in the .ASG file.
 	char id[9];   // signature
