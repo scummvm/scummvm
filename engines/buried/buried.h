@@ -41,6 +41,7 @@ namespace Buried {
 struct BuriedGameDescription;
 class Database;
 class GraphicsManager;
+class Message;
 class SoundManager;
 class Window;
 class VideoWindow;
@@ -64,6 +65,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const;
 
+	// Resources
 	Common::String getString(uint32 stringID);
 	Common::String getFilePath(uint32 stringID);
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
@@ -82,13 +84,22 @@ public:
 	Window *_mainWindow; // Only one main window is supported.
 	Window *_focusedWindow;
 
+	// Timers
 	uint createTimer(Window *window, uint period);
 	bool killTimer(uint timer);
 	void updateTimers();
 
+	// Video
 	void addVideo(VideoWindow *window);
 	void removeVideo(VideoWindow *window);
 	void updateVideos();
+
+	// Messaging
+	void postMessageToWindow(Window *dest, Message *message);
+	void sendAllMessages();
+	void removeKeyboardMessages(Window *window);
+	void removeMouseMessages(Window *window);
+	void removeAllMessages(Window *window);
 
 private:
 	Database *_library;
@@ -105,6 +116,15 @@ private:
 
 	typedef Common::List<VideoWindow *> VideoList;
 	VideoList _videos;
+
+	struct MessageInfo { // I did think about calling this "Envelope"
+		Window *dest;
+		Message *message;
+	};
+
+	// LordHoto didn't want me to add an iterator to Common::Queue.
+	typedef Common::List<MessageInfo> MessageQueue;
+	MessageQueue _messageQueue;
 };
 
 } // End of namespace Buried

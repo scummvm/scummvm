@@ -43,15 +43,14 @@ Window::Window(BuriedEngine *vm, Window *parent, bool visible) : _vm(vm), _paren
 }
 
 Window::~Window() {
-	// Make sure the queue is cleaned out
-	while (!_queue.empty())
-		delete _queue.pop();
-
 	// Remove us from any of the parent's window lists
 	if (_parent) {
 		_parent->_children.remove(this);
 		_parent->_topMostChildren.remove(this);
 	}
+
+	// Remove any of our messages from the queue
+	_vm->removeAllMessages(this);
 }
 
 void Window::invalidateRect(const Common::Rect &rect, bool erase) {
@@ -67,61 +66,54 @@ Common::Rect Window::getAbsoluteRect() const {
 	return makeAbsoluteRect(_rect);
 }
 
-void Window::dispatchAllMessages() {
-	// Dispatch all of our messages
-	while (!_queue.empty() && !_vm->shouldQuit()) {
-		Message *message = _queue.pop();
-
-		switch (message->getMessageType()) {
-		case kMessageTypeKeyUp:
-			onKeyUp(((KeyUpMessage *)message)->getKeyState(), ((KeyUpMessage *)message)->getFlags());
-			break;
-		case kMessageTypeKeyDown:
-			onKeyDown(((KeyDownMessage *)message)->getKeyState(), ((KeyDownMessage *)message)->getFlags());
-			break;
-		case kMessageTypeTimer:
-			onTimer(((TimerMessage *)message)->getTimer());
-			break;
-		case kMessageTypeMouseMove:
-			onMouseMove(((MouseMoveMessage *)message)->getPoint(), ((MouseMoveMessage *)message)->getFlags());
-			break;
-		case kMessageTypeLButtonUp:
-			onLButtonUp(((LButtonUpMessage *)message)->getPoint(), ((LButtonUpMessage *)message)->getFlags());
-			break;
-		case kMessageTypeLButtonDown:
-			onLButtonDown(((LButtonDownMessage *)message)->getPoint(), ((LButtonDownMessage *)message)->getFlags());
-			break;
-		case kMessageTypeLButtonDoubleClick:
-			onLButtonDoubleClick(((LButtonDoubleClickMessage *)message)->getPoint(), ((LButtonDoubleClickMessage *)message)->getFlags());
-			break;
-		case kMessageTypeMButtonUp:
-			onMButtonUp(((MButtonUpMessage *)message)->getPoint(), ((MButtonUpMessage *)message)->getFlags());
-			break;
-		case kMessageTypeRButtonUp:
-			onRButtonUp(((RButtonUpMessage *)message)->getPoint(), ((RButtonUpMessage *)message)->getFlags());
-			break;
-		case kMessageTypeRButtonDown:
-			onRButtonDown(((RButtonDownMessage *)message)->getPoint(), ((RButtonDownMessage *)message)->getFlags());
-			break;
-		case kMessageTypeSetCursor:
-			onSetCursor(((SetCursorMessage *)message)->getWindow(), ((SetCursorMessage *)message)->getCursor());
-			break;
-		case kMessageTypeEnable:
-			onEnable(((EnableMessage *)message)->getEnable());
-			break;
-		default:
-			error("Unknown message type %d", message->getMessageType());
-		}
-
-		delete message;
+void Window::sendMessage(Message *message) {
+	switch (message->getMessageType()) {
+	case kMessageTypeKeyUp:
+		onKeyUp(((KeyUpMessage *)message)->getKeyState(), ((KeyUpMessage *)message)->getFlags());
+		break;
+	case kMessageTypeKeyDown:
+		onKeyDown(((KeyDownMessage *)message)->getKeyState(), ((KeyDownMessage *)message)->getFlags());
+		break;
+	case kMessageTypeTimer:
+		onTimer(((TimerMessage *)message)->getTimer());
+		break;
+	case kMessageTypeMouseMove:
+		onMouseMove(((MouseMoveMessage *)message)->getPoint(), ((MouseMoveMessage *)message)->getFlags());
+		break;
+	case kMessageTypeLButtonUp:
+		onLButtonUp(((LButtonUpMessage *)message)->getPoint(), ((LButtonUpMessage *)message)->getFlags());
+		break;
+	case kMessageTypeLButtonDown:
+		onLButtonDown(((LButtonDownMessage *)message)->getPoint(), ((LButtonDownMessage *)message)->getFlags());
+		break;
+	case kMessageTypeLButtonDoubleClick:
+		onLButtonDoubleClick(((LButtonDoubleClickMessage *)message)->getPoint(), ((LButtonDoubleClickMessage *)message)->getFlags());
+		break;
+	case kMessageTypeMButtonUp:
+		onMButtonUp(((MButtonUpMessage *)message)->getPoint(), ((MButtonUpMessage *)message)->getFlags());
+		break;
+	case kMessageTypeRButtonUp:
+		onRButtonUp(((RButtonUpMessage *)message)->getPoint(), ((RButtonUpMessage *)message)->getFlags());
+		break;
+	case kMessageTypeRButtonDown:
+		onRButtonDown(((RButtonDownMessage *)message)->getPoint(), ((RButtonDownMessage *)message)->getFlags());
+		break;
+	case kMessageTypeSetCursor:
+		onSetCursor(((SetCursorMessage *)message)->getWindow(), ((SetCursorMessage *)message)->getCursor());
+		break;
+	case kMessageTypeEnable:
+		onEnable(((EnableMessage *)message)->getEnable());
+		break;
+	default:
+		error("Unknown message type %d", message->getMessageType());
 	}
 
-	// Also dispatch any children's messages
-	for (WindowList::iterator it = _children.begin(); it != _children.end() && !_vm->shouldQuit(); it++)
-		(*it)->dispatchAllMessages();
+	delete message;
+}
 
-	for (WindowList::iterator it = _topMostChildren.begin(); it != _topMostChildren.end() && !_vm->shouldQuit(); it++)
-		(*it)->dispatchAllMessages();
+void Window::postMessage(Message *message) {
+	// Simple wrapper
+	_vm->postMessageToWindow(this, message);
 }
 
 void Window::updateWindow() {
@@ -213,7 +205,7 @@ void Window::showWindow(WindowShowMode showMode) {
 void Window::enableWindow(bool enable) {
 	if (_enabled != enable) {
 		_enabled = enable;
-		sendMessage(new EnableMessage(enable));
+		postMessage(new EnableMessage(enable));
 	}
 }
 
