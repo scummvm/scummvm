@@ -74,8 +74,6 @@ private:
 	Mode _mode;
 	Graphics::Surface *_ownedFrame;
 	bool _needsPalConversion;
-
-	Graphics::Surface *remapPalettedFrame(const Graphics::Surface *frame, const byte *palette);
 };
 
 } // End of namespace Buried

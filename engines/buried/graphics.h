@@ -26,6 +26,10 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Graphics {
 class Font;
 struct Surface;
@@ -84,6 +88,8 @@ public:
 	void blit(const Graphics::Surface *surface, const Common::Rect &srcRect, const Common::Rect &dstRect);
 	void fillRect(const Common::Rect &rect, uint32 color);
 
+	Graphics::Surface *remapPalettedFrame(const Graphics::Surface *frame, const byte *palette);
+
 private:
 	BuriedEngine *_vm;
 	Cursor _curCursor;
@@ -94,6 +100,7 @@ private:
 	byte *_palette;
 	
 	byte *createDefaultPalette() const;
+	Graphics::Surface *getBitmap(Common::SeekableReadStream *stream);
 };
 
 } // End of namespace Buried
