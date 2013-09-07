@@ -594,7 +594,7 @@ void Timeout::avalot_returns() {
 
 void Timeout::avvy_sit_down() {
 // This is used when you sit down in the pub in Notts. It loops around so that it will happen when Avvy stops walking.
-	if (_vm->_animation->tr[0].homing)    // Still walking.
+	if (_vm->_animation->tr[0]._homing)    // Still walking.
 		set_up_timer(1, procavvy_sit_down, reason_sitting_down);
 	else {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3);
@@ -651,7 +651,7 @@ void Timeout::avalot_falls() {
 }
 
 void Timeout::spludwick_goes_to_cauldron() {
-	if (_vm->_animation->tr[1].homing)
+	if (_vm->_animation->tr[1]._homing)
 		set_up_timer(1, procspludwick_goes_to_cauldron, reason_spludwalk);
 	else
 		set_up_timer(17, procspludwick_leaves_cauldron, reason_spludwalk);
