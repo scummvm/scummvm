@@ -69,8 +69,8 @@ void Sequence::thenFlip(byte where, byte ped) {
 }
 
 void Sequence::startToClose() {
-	_vm->_timeout->lose_timer(_vm->_timeout->reason_sequencer);
-	_vm->_timeout->set_up_timer(7, _vm->_timeout->procsequence, _vm->_timeout->reason_sequencer);
+	_vm->_timeout->lose_timer(_vm->_timeout->kReasonSequencer);
+	_vm->_timeout->set_up_timer(7, _vm->_timeout->procsequence, _vm->_timeout->kReasonSequencer);
 }
 
 void Sequence::startToOpen() {
