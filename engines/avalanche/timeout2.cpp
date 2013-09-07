@@ -301,8 +301,8 @@ void Timeout::get_tied_up() {
 	_vm->_animation->stopWalking();
 	_vm->_animation->tr[1].stopWalk();
 	_vm->_animation->tr[1].stophoming();
-	_vm->_animation->tr[1].call_eachstep = true;
-	_vm->_animation->tr[1].eachstep = _vm->_animation->kProcGrabAvvy;
+	_vm->_animation->tr[1]._callEachStepFl = true;
+	_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcGrabAvvy;
 	set_up_timer(70, procget_tied_up2, reason_getting_tied_up);
 }
 
@@ -314,7 +314,7 @@ void Timeout::get_tied_up2() {
 }
 
 void Timeout::hang_around() {
-	_vm->_animation->tr[1].check_me = false;
+	_vm->_animation->tr[1]._doCheck = false;
 	_vm->_animation->tr[0].init(7, true, _vm->_animation); // Robin Hood
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleRobinHood - 150] = r__robins;
 	_vm->_animation->apped(1, 2);
@@ -325,7 +325,7 @@ void Timeout::hang_around() {
 
 void Timeout::hang_around2() {
 	_vm->_visa->dixi('q', 40);
-	_vm->_animation->tr[1].vanishifstill = false;
+	_vm->_animation->tr[1]._vanishIfStill = false;
 	_vm->_animation->tr[1].walkto(4);
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = r__robins;
 	_vm->_visa->dixi('q', 41);
@@ -430,7 +430,7 @@ void Timeout::naughty_duke() { // This is when the Duke comes in and takes your 
 void Timeout::naughty_duke2() {
 	_vm->_visa->dixi('q', 48); // "Ha ha, it worked again!"
 	_vm->_animation->tr[1].walkto(1); // Walk to the door.
-	_vm->_animation->tr[1].vanishifstill = true; // Then go away!
+	_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
 	set_up_timer(32, procnaughty_duke3, reason_naughty_duke);
 }
 
@@ -578,8 +578,8 @@ void Timeout::robin_hood_and_geida_talk() {
 	_vm->_visa->dixi('q', 66);
 	_vm->_animation->tr[0].walkto(2);
 	_vm->_animation->tr[1].walkto(2);
-	_vm->_animation->tr[0].vanishifstill = true;
-	_vm->_animation->tr[1].vanishifstill = true;
+	_vm->_animation->tr[0]._vanishIfStill = true;
+	_vm->_animation->tr[1]._vanishIfStill = true;
 	set_up_timer(162, procavalot_returns, reason_robin_hood_and_geida);
 }
 
@@ -636,8 +636,8 @@ void Timeout::winning() {
 }
 
 void Timeout::avalot_falls() {
-	if (_vm->_animation->tr[0].step < 5) {
-		_vm->_animation->tr[0].step++;
+	if (_vm->_animation->tr[0]._stepNum < 5) {
+		_vm->_animation->tr[0]._stepNum++;
 		set_up_timer(3, procavalot_falls, reason_falling_over);
 	} else {
 		Common::String toDisplay;
@@ -658,7 +658,7 @@ void Timeout::spludwick_goes_to_cauldron() {
 }
 
 void Timeout::spludwick_leaves_cauldron() {
-	_vm->_animation->tr[1].call_eachstep = true; // So that normal procs will continue.
+	_vm->_animation->tr[1]._callEachStepFl = true; // So that normal procs will continue.
 }
 
 void Timeout::give_lute_to_geida() { // Moved here from Acci.

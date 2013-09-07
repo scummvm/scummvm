@@ -402,8 +402,8 @@ void Lucerna::putGeidaAt(byte whichPed, byte &ped) {
 		return;
 	_vm->_animation->tr[1].init(5, false, _vm->_animation); // load Geida
 	_vm->_animation->apped(2, whichPed);
-	_vm->_animation->tr[1].call_eachstep = true;
-	_vm->_animation->tr[1].eachstep = _vm->_animation->kProcGeida;
+	_vm->_animation->tr[1]._callEachStepFl = true;
+	_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcGeida;
 }
 
 void Lucerna::enterRoom(byte room, byte ped) {
@@ -455,8 +455,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 					_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
 				}
 
-				_vm->_animation->tr[1].call_eachstep = true;
-				_vm->_animation->tr[1].eachstep = _vm->_animation->kProcFaceAvvy; // He always faces Avvy.
+				_vm->_animation->tr[1]._callEachStepFl = true;
+				_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // He always faces Avvy.
 
 			} else _vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = r__nowhere;
 
@@ -487,8 +487,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 			_vm->_gyro->_dna._dogFoodPos = 0;  // _vm->_gyro->also Spludwick pos.
 
-			_vm->_animation->tr[1].call_eachstep = true;
-			_vm->_animation->tr[1].eachstep = _vm->_animation->kProcGeida;
+			_vm->_animation->tr[1]._callEachStepFl = true;
+			_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcGeida;
 		} else
 			_vm->_gyro->_whereIs[1] = r__nowhere;
 		break;
@@ -502,8 +502,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		} else {
 			if (ped > 0) {
 				_vm->_animation->tr[1].init(4, false, _vm->_animation); // 4 = Cwytalot
-				_vm->_animation->tr[1].call_eachstep = true;
-				_vm->_animation->tr[1].eachstep = _vm->_animation->kProcFollowAvvyY;
+				_vm->_animation->tr[1]._callEachStepFl = true;
+				_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcFollowAvvyY;
 				_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] = r__brummieroad;
 
 				if (_vm->_gyro->_dna._roomCount[r__brummieroad] == 1) { // First time here...
@@ -524,7 +524,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_animation->tr[1].init(4, false, _vm->_animation); // 4 = Cwytalot again
 			_vm->_animation->apped(2, 1);
 			_vm->_animation->tr[1].walkto(2);
-			_vm->_animation->tr[1].vanishifstill = true;
+			_vm->_animation->tr[1]._vanishIfStill = true;
 			_vm->_gyro->_dna._passedCwytalotInHerts = true;
 			// _vm->_gyro->whereis[#157] = r__Nowhere; // can we fit this in?
 			_vm->_timeout->set_up_timer(20, _vm->_timeout->proc_cwytalot_in_herts, _vm->_timeout->reason_cwytalot_in_herts);
@@ -716,8 +716,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
 		}
 
-		_vm->_animation->tr[1].call_eachstep = true;
-		_vm->_animation->tr[1].eachstep = _vm->_animation->kProcFaceAvvy; // She always faces Avvy.
+		_vm->_animation->tr[1]._callEachStepFl = true;
+		_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // She always faces Avvy.
 		break;
 
 	case r__insidecardiffcastle:
@@ -1187,7 +1187,7 @@ void Lucerna::gameOver() {
 
 	_vm->_animation->tr[0].done();
 	_vm->_animation->tr[0].init(12, true, _vm->_animation); // 12 = Avalot falls
-	_vm->_animation->tr[0].step = 0;
+	_vm->_animation->tr[0]._stepNum = 0;
 	_vm->_animation->tr[0].appear(sx, sy, 0);
 
 	_vm->_timeout->set_up_timer(3, _vm->_timeout->procavalot_falls, _vm->_timeout->reason_falling_over);

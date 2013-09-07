@@ -689,7 +689,7 @@ void Scrolls::callScrollDriver() {
 				if (_param == 0)
 					setBubbleStateNatural();
 				else if ((1 <= _param) && (_param <= 9)) {
-					if ((_param > _vm->_animation->kSpriteNumbMax) || (!_vm->_animation->tr[_param - 1].quick)) { // Not valid.
+					if ((_param > _vm->_animation->kSpriteNumbMax) || (!_vm->_animation->tr[_param - 1]._quick)) { // Not valid.
 						_vm->_lucerna->errorLed();
 						setBubbleStateNatural();
 					} else
