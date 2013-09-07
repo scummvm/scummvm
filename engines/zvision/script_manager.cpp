@@ -33,7 +33,6 @@
 #include "zvision/cursor_manager.h"
 #include "zvision/save_manager.h"
 #include "zvision/actions.h"
-#include "zvision/action_node.h"
 #include "zvision/utility.h"
 
 namespace ZVision {

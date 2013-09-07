@@ -30,7 +30,6 @@
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
-#include "zvision/action_node.h"
 #include "zvision/zork_raw.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/timer_node.h"

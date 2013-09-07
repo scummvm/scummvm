@@ -1,7 +1,6 @@
 MODULE := engines/zvision
  
 MODULE_OBJS := \
-	action_node.o \
 	actions.o \
 	animation.o \
 	clock.o \
