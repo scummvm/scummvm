@@ -274,7 +274,7 @@ void Timeout::bang2() {
 
 void Timeout::stairs() {
 	_vm->_gyro->blip();
-	_vm->_animation->tr[0].walkto(4);
+	_vm->_animation->tr[0].walkTo(4);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 	_vm->_gyro->_dna._brummieStairs = 2;
 	_vm->_gyro->_magics[10]._operation = _vm->_gyro->kMagicSpecial;
@@ -315,8 +315,8 @@ void Timeout::getTiedUp() {
 }
 
 void Timeout::getTiedUp2() {
-	_vm->_animation->tr[0].walkto(4);
-	_vm->_animation->tr[1].walkto(5);
+	_vm->_animation->tr[0].walkTo(4);
+	_vm->_animation->tr[1].walkTo(5);
 	_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_gyro->_dna._friarWillTieYouUp = true;
 }
@@ -327,14 +327,14 @@ void Timeout::hangAround() {
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleRobinHood - 150] = r__robins;
 	_vm->_animation->apped(1, 2);
 	_vm->_visa->displayScrollChain('q', 39);
-	_vm->_animation->tr[0].walkto(7);
+	_vm->_animation->tr[0].walkTo(7);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
 void Timeout::hangAround2() {
 	_vm->_visa->displayScrollChain('q', 40);
 	_vm->_animation->tr[1]._vanishIfStill = false;
-	_vm->_animation->tr[1].walkto(4);
+	_vm->_animation->tr[1].walkTo(4);
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = r__robins;
 	_vm->_visa->displayScrollChain('q', 41);
 	_vm->_animation->tr[0].done();
@@ -425,7 +425,7 @@ void Timeout::jacquesWakesUp() {
 void Timeout::naughtyDuke() { // This is when the Duke comes in and takes your money.
 	_vm->_animation->tr[1].init(9, false, _vm->_animation); // Here comes the Duke.
 	_vm->_animation->apped(2, 1); // He starts at the door...
-	_vm->_animation->tr[1].walkto(3); // He walks over to you.
+	_vm->_animation->tr[1].walkTo(3); // He walks over to you.
 
 	// Let's get the door opening.
 	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
@@ -437,7 +437,7 @@ void Timeout::naughtyDuke() { // This is when the Duke comes in and takes your m
 
 void Timeout::naughtyDuke2() {
 	_vm->_visa->displayScrollChain('q', 48); // "Ha ha, it worked again!"
-	_vm->_animation->tr[1].walkto(1); // Walk to the door.
+	_vm->_animation->tr[1].walkTo(1); // Walk to the door.
 	_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
 }
@@ -575,7 +575,7 @@ void Timeout::riseUpOubliette() {
 void Timeout::robinHoodAndGeida() {
 	_vm->_animation->tr[0].init(7, true, _vm->_animation);
 	_vm->_animation->apped(1, 7);
-	_vm->_animation->tr[0].walkto(6);
+	_vm->_animation->tr[0].walkTo(6);
 	_vm->_animation->tr[1].stopWalk();
 	_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
 	addTimer(20, kProcRobinHoodAndGeidaTalk, kReasonRobinHoodAndGeida);
@@ -584,8 +584,8 @@ void Timeout::robinHoodAndGeida() {
 
 void Timeout::robinHoodAndGeidaTalk() {
 	_vm->_visa->displayScrollChain('q', 66);
-	_vm->_animation->tr[0].walkto(2);
-	_vm->_animation->tr[1].walkto(2);
+	_vm->_animation->tr[0].walkTo(2);
+	_vm->_animation->tr[1].walkTo(2);
 	_vm->_animation->tr[0]._vanishIfStill = true;
 	_vm->_animation->tr[1]._vanishIfStill = true;
 	addTimer(162, kProcAvalotReturns, kReasonRobinHoodAndGeida);

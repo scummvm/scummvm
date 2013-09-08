@@ -76,63 +76,41 @@ class AnimationType {
 public:
 	SpriteInfo _info;
 
-	adxtype _stat; // vital statistics
+	adxtype _stat; // Vital statistics.
 	byte _facingDir, _stepNum;
-	int16 _x, _y; // current xy coords
-	int16 _oldX[2], _oldY[2];  // last xy coords
-	int8 _moveX, _moveY; // amount to move sprite by, each step
+	int16 _x, _y; // Current xy coords.
+	int16 _oldX[2], _oldY[2];  // Last xy coords.
+	int8 _moveX, _moveY; // Amount to move sprite by, each step.
 	byte _id;
 	bool _quick, _visible, _homing, _doCheck;
-	int16 _homingX, _homingY; // homing x & y coords
-	byte _count; // counts before changing step
-	byte _speedX, _speedY; // x & y speed
-	byte _animCount; // total number of sprites
+	int16 _homingX, _homingY; // Homing x & y coords.
+	byte _count; // Counts before changing step.
+	byte _speedX, _speedY; // x & y speed.
+	byte _animCount; // Total number of sprites.
 	bool _vanishIfStill; // Do we show this sprite if it's still?
-
 	bool _callEachStepFl; // Do we call the eachstep procedure?
 	byte _eachStepProc;
 
-	void init(byte spritenum, bool doCheck, Animation *tr);
-	// loads & sets up the sprite
-	void original();    // just sets Quick to false
-	void andexor();    // drops sprite onto screen
-	void turn(byte whichway);      // turns him round
-	void appear(int16 wx, int16 wy, byte wf); // switches him on
-	void bounce();    // bounces off walls.
-	void walk();    // prepares for andexor, etc.
-	void walkto(byte pednum);      // home in on a point
-	void stophoming();    // self-explanatory
-	void homestep();    // calculates ix & iy for one homing step
-	void speed(int8 xx, int8 yy); // sets ix & iy, non-homing, etc
-	void stopWalk();    // Stops the sprite from moving
-	void chatter();    // Sets up talk vars
-	void setupSaver(AnimationSaver &sav);
-	void unload_saver(AnimationSaver sav);
-
-	void savedata(Common::File &f); // Self-explanatory,
-	void loaddata(Common::File &f);  // really.
-
-	void save_data_to_mem(uint16 &where);
-	void load_data_from_mem(uint16 &where);
-	AnimationType *done();
+	void init(byte spritenum, bool doCheck, Animation *tr); // Loads & sets up the sprite.
+	void original(); // Just sets 'quick' to false.
+	void andexor(); // Drops sprite onto screen.
+	void turn(byte whichway); // Turns character round.
+	void appear(int16 wx, int16 wy, byte wf); // Switches it on.
+	void bounce(); // Bounces off walls.
+	void walk(); // Prepares for andexor, etc.
+	void walkTo(byte pednum); // Home in on a point.
+	void stophoming(); // Self-explanatory.
+	void homeStep(); // Calculates ix & iy for one homing step.
+	void speed(int8 xx, int8 yy); // Sets ix & iy, non-homing, etc.
+	void stopWalk(); // Stops the sprite from moving.
+	void chatter();  // Sets up talk vars.
+	void done();
 
 private:
 	Animation *_tr;
 
 	bool checkCollision();
 	int8 sgn(int16 val);
-};
-
-const int16 maxgetset = 35;
-
-class getsettype {
-public:
-	ByteField gs[maxgetset];
-	byte numleft;
-
-	getsettype *init();
-	void remember(ByteField r);
-	void recall(ByteField &r);
 };
 
 class Animation {
@@ -184,7 +162,6 @@ public:
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
 
 	AnimationType tr[kSpriteNumbMax];
-	getsettype getset[2];
 	byte aa[1600];
 
 	bool mustexclaim;
@@ -209,7 +186,6 @@ private:
 	void spin(byte whichway, byte &tripnum);
 	void geida_procs(byte tripnum);
 	void call_andexors();
-	void getsetclear();
 };
 
 } // End of namespace Avalanche.

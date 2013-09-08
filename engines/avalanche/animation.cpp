@@ -192,15 +192,13 @@ void AnimationType::walk() {
 		r._y1 = _y - 2;
 		r._x2 = ((_x + _info._xLength) / 8) + 1;
 		r._y2 = _y + _info._yLength + 2;
-
-		_tr->getset[1 - _tr->_vm->_gyro->_cp].remember(r);
 	}
 
 	if (!_tr->_vm->_gyro->_doingSpriteRun) {
 		_oldX[_tr->_vm->_gyro->_cp] = _x;
 		_oldY[_tr->_vm->_gyro->_cp] = _y;
 		if (_homing)
-			homestep();
+			homeStep();
 		_x += _moveX;
 		_y += _moveY;
 	}
@@ -275,7 +273,7 @@ int8 AnimationType::sgn(int16 val) {
 		return 0;
 }
 
-void AnimationType::walkto(byte pednum) {
+void AnimationType::walkTo(byte pednum) {
 	pednum--; // Pascal -> C conversion: different array indexes.
 	speed(sgn(_tr->_vm->_gyro->_peds[pednum]._x - _x) * 4, sgn(_tr->_vm->_gyro->_peds[pednum]._y - _y));
 	_homingX = _tr->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
@@ -287,7 +285,7 @@ void AnimationType::stophoming() {
 	_homing = false;
 }
 
-void AnimationType::homestep() {
+void AnimationType::homeStep() {
 	int16 temp;
 
 	if ((_homingX == _x) && (_homingY == _y)) {
@@ -349,73 +347,7 @@ void AnimationType::chatter() {
 	_tr->_vm->_gyro->_talkBackgroundColor = _stat._bgBubbleCol;
 }
 
-/**
- * Init Saver structure
- * @remarks	Originally called 'set_up_saver'
- */
-void AnimationType::setupSaver(AnimationSaver &sav) {
-	sav._id = _id;
-	sav._facingDir = _facingDir;
-	sav._stepNum = _stepNum;
-	sav._x = _x;
-	sav._y = _y;
-	sav._moveX = _moveX;
-	sav._moveY = _moveY;
-	sav._visible = _visible;
-	sav._homing = _homing;
-	sav._doCheck = _doCheck;
-	sav._count = _count;
-	sav._xWidth = _info._xWidth;
-	sav._speedX = _speedX;
-	sav._speedY = _speedY;
-	sav._animCount = _animCount;
-	sav._homingX = _homingX;
-	sav._homingY = _homingY;
-	sav._callEachStepFl = _callEachStepFl;
-	sav._eachStepProc = _eachStepProc;
-	sav._vanishIfStill = _vanishIfStill;
-}
-
-void AnimationType::unload_saver(AnimationSaver sav) {
-	_id = sav._id;
-	_facingDir = sav._facingDir;
-	_stepNum = sav._stepNum;
-	_x = sav._x;
-	_y = sav._y;
-	_moveX = sav._moveX;
-	_moveY = sav._moveY;
-	_visible = sav._visible;
-	_homing = sav._homing;
-	_doCheck = sav._doCheck;
-	_count = sav._count;
-	_info._xWidth = sav._xWidth;
-	_speedX = sav._speedX;
-	_speedY = sav._speedY;
-	_animCount = sav._animCount;
-	_homingX = sav._homingX;
-	_homingY = sav._homingY;
-	_callEachStepFl = sav._callEachStepFl;
-	_eachStepProc = sav._eachStepProc;
-	_vanishIfStill = sav._vanishIfStill;
-}
-
-void AnimationType::savedata(Common::File &f) {
-	warning("STUB: triptype::savedata()");
-}
-
-void AnimationType::loaddata(Common::File &f) {
-	warning("STUB: triptype::loaddata()");
-}
-
-void AnimationType::save_data_to_mem(uint16 &where) {
-	warning("STUB: triptype::save_data_to_mem()");
-}
-
-void AnimationType::load_data_from_mem(uint16 &where) {
-	warning("STUB: triptype::load_data_from_mem()");
-}
-
-AnimationType *AnimationType::done() {
+void AnimationType::done() {
 	_animCount--;
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
@@ -429,30 +361,11 @@ AnimationType *AnimationType::done() {
 
 	_quick = false;
 	_id = 177;
-	return this;
-}
-
-getsettype *getsettype::init() {
-	numleft = 0; // initialize array pointer
-	return this;
-}
-
-void getsettype::remember(ByteField r) {
-	numleft++;
-	//if (numleft > maxgetset)
-	//	error("Trip::remember() : runerr_Getset_Overflow");
-	gs[numleft] = r;
-}
-
-void getsettype::recall(ByteField &r) {
-	r = gs[numleft];
-	numleft--;
 }
 
 Animation::Animation(AvalancheEngine *vm) {
 	_vm = vm;
 
-	getsetclear();
 	mustexclaim = false;
 }
 
@@ -863,7 +776,7 @@ void Animation::call_special(uint16 which) {
 		if (!_vm->_gyro->_dna._arrowTriggered) {
 			_vm->_gyro->_dna._arrowTriggered = true;
 			apped(2, 4); // The dart starts at ped 4, and...
-			tr[1].walkto(5); // flies to ped 5.
+			tr[1].walkTo(5); // flies to ped 5.
 			tr[1]._facingDir = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
@@ -891,7 +804,7 @@ void Animation::call_special(uint16 which) {
 			_vm->_visa->displayScrollChain('q', 36);
 			_vm->_gyro->_dna._tiedUp = true;
 			_vm->_gyro->_dna._friarWillTieYouUp = false;
-			tr[1].walkto(3);
+			tr[1].walkTo(3);
 			tr[1]._vanishIfStill = true;
 			tr[1]._doCheck = true; // One of them must have Check_Me switched on.
 			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = 177; // Not here, then.
@@ -928,7 +841,7 @@ void Animation::call_special(uint16 which) {
 		if (!_vm->_gyro->_dna._geidaFollows)
 			return;   // DOESN'T COUNT: no Geida.
 		tr[1]._callEachStepFl = false; // She no longer follows Avvy around.
-		tr[1].walkto(4); // She walks to somewhere...
+		tr[1].walkTo(4); // She walks to somewhere...
 		tr[0].done();     // Lose Avvy.
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		_vm->_timeout->addTimer(40, _vm->_timeout->kProcRobinHoodAndGeida, _vm->_timeout->kReasonRobinHoodAndGeida);
@@ -1074,10 +987,6 @@ void Animation::newspeed() {
 		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorLightblue);
 
 	//setactivepage(1 - cp);
-
-	for (byte i = 0; i <= 1; i++)
-		getset[i].remember(lightspace);
-
 }
 
 void Animation::rwsp(byte t, byte dir) {
@@ -1173,9 +1082,9 @@ void Animation::follow_avvy_y(byte tripnum) {
 void Animation::back_and_forth(byte tripnum) {
 	if (!tr[tripnum]._homing) {
 		if (tr[tripnum]._facingDir == kDirRight)
-			tr[tripnum].walkto(4);
+			tr[tripnum].walkTo(4);
 		else
-			tr[tripnum].walkto(5);
+			tr[tripnum].walkTo(5);
 	}
 }
 
@@ -1438,11 +1347,6 @@ void Animation::readstick() {
 	warning("STUB: Trip::readstick()");
 }
 
-void Animation::getsetclear() {
-	for (byte fv = 0; fv <= 1; fv++)
-		getset[fv].init();
-}
-
 /**
  * Hide in the cupboard
  * @remarks	Originally called 'hide_in_the_cupboard'
@@ -1493,7 +1397,6 @@ void Animation::fliproom(byte room, byte ped) {
 
 	_vm->_lucerna->exitRoom(_vm->_gyro->_dna._room);
 	_vm->_lucerna->dusk();
-	getsetclear();
 
 	for (int16 i = 1; i < kSpriteNumbMax; i++) {
 		if (tr[i]._quick)

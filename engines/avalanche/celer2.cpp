@@ -365,9 +365,6 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 
 	//setactivepage(1 - cp);
 	warning("STUB: Celer::show_one()");
-
-	for (byte i = 0; i < 2; i++)
-		_vm->_animation->getset[i].remember(_r);
 }
 
 
