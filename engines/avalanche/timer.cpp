@@ -264,7 +264,8 @@ void Timer::toilet() {
 }
 
 void Timer::bang() {
-	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "< BANG! >");
+	Common::String tmpStr = Common::String::format("%c< BANG! >", Scrolls::kControlItalic);
+	_vm->_scrolls->displayText(tmpStr);
 	addTimer(30, kProcBang2, kReasonExplosion);
 }
 
@@ -545,8 +546,8 @@ void Timer::fallDownOubliette() {
 
 void Timer::meetAvaroid() {
 	if (_vm->_gyro->_dna._metAvaroid) {
-		_vm->_scrolls->displayText(Common::String("You can't expect to be ") + _vm->_scrolls->kControlItalic + "that"
-			+ _vm->_scrolls->kControlRoman + " lucky twice in a row!");
+		Common::String tmpStr = Common::String::format("You can't expect to be %cthat%c lucky twice in a row!", Scrolls::kControlItalic, Scrolls::kControlRoman);
+		_vm->_scrolls->displayText(tmpStr);
 		_vm->_lucerna->gameOver();
 	} else {
 		_vm->_visa->displayScrollChain('Q', 60);
@@ -617,8 +618,8 @@ void Timer::avvySitDown() {
 }
 
 void Timer::ghostRoomPhew() {
-	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "PHEW!" + _vm->_scrolls->kControlRoman
-		+ " You're glad to get out of " + _vm->_scrolls->kControlItalic + "there!");
+	Common::String tmpStr = Common::String::format("%cPHEW!%c You're glad to get out of %cthere!", Scrolls::kControlItalic, Scrolls::kControlRoman, Scrolls::kControlItalic);
+	_vm->_scrolls->displayText(tmpStr);
 }
 
 void Timer::arkataShouts() {
@@ -656,7 +657,7 @@ void Timer::avalotFalls() {
 			toDisplay += _vm->_scrolls->kControlNewLine;
 		for (byte i = 0; i < 6; i++)
 			toDisplay += _vm->_scrolls->kControlInsertSpaces;
-		toDisplay = toDisplay + _vm->_scrolls->kControlRegister + 'Z' + _vm->_scrolls->kControlIcon;
+		toDisplay += _vm->_scrolls->kControlRegister + 'Z' + _vm->_scrolls->kControlIcon;
 		_vm->_scrolls->displayText(toDisplay);
 	}
 }

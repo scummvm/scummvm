@@ -446,9 +446,11 @@ void Animation::catacombMove(byte ped) {
 		flipRoom(r__lustiesroom, 4);
 		_vm->_scrolls->displayText("Phew! Nice to be out of there!");
 		return;
-	case 1033: // Oubliette
+	case 1033:{ // Oubliette
 		flipRoom(r__oubliette, 1);
-		_vm->_scrolls->displayText(Common::String("Oh, NO!") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
+		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
+		_vm->_scrolls->displayText(tmpStr);
+		}
 		return;
 	case 4:
 		flipRoom(r__geidas, 1);
@@ -1290,9 +1292,10 @@ void Animation::stopWalking() {
  */
 void Animation::hideInCupboard() {
 	if (_vm->_gyro->_dna._avvysInTheCupboard) {
-		if (_vm->_gyro->_dna._wearing == Acci::kNothing)
-			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "AVVY!" + _vm->_scrolls->kControlRoman + "Get dressed first!");
-		else {
+		if (_vm->_gyro->_dna._wearing == Acci::kNothing) {
+			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", Scrolls::kControlItalic, Scrolls::kControlRoman);
+			_vm->_scrolls->displayText(tmpStr);
+		} else {
 			_sprites[0]._visible = true;
 			_vm->_gyro->_dna._userMovesAvvy = true;
 			appearPed(1, 3); // Walk out of the cupboard.
@@ -1306,8 +1309,9 @@ void Animation::hideInCupboard() {
 		// Not hiding in the cupboard
 		_sprites[0]._visible = false;
 		_vm->_gyro->_dna._userMovesAvvy = false;
-		_vm->_scrolls->displayText(Common::String("You walk into the room...") + _vm->_scrolls->kControlParagraph
-			+ "It seems to be an empty, but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.");
+		Common::String tmpStr = Common::String::format("You walk into the room...%cIt seems to be an empty, " \
+			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", Scrolls::kControlParagraph);
+		_vm->_scrolls->displayText(tmpStr);
 		_vm->_gyro->_dna._avvysInTheCupboard = true;
 		_vm->_celer->drawBackgroundSprite(-1, -1, 8);
 	}

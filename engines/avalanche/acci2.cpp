@@ -270,9 +270,9 @@ Common::String Acci::totalTime() {
 
 	Common::String result = "You've been playing for ";
 	if (h > 0)
-		result = result + _vm->_gyro->intToStr(h) + " hours, ";
+		result += _vm->_gyro->intToStr(h) + " hours, ";
 	if ((m > 0) || (h != 0))
-		result = result + _vm->_gyro->intToStr(m) + " minutes and ";
+		result += _vm->_gyro->intToStr(m) + " minutes and ";
 	return result + _vm->_gyro->intToStr(s) + " seconds.";
 }
 
@@ -308,12 +308,15 @@ void Acci::displayWhat(byte target, bool animate, bool &ambiguous) {
 		else
 			_vm->_scrolls->displayText("What?");
 	} else {
-		if (animate)
-			_vm->_scrolls->displayText(Common::String("{ ") + _vm->_gyro->getName(target) + " }");
-		else {
+		if (animate) {
+			Common::String tmpStr = Common::String::format("{ %s }", _vm->_gyro->getName(target).c_str());
+			_vm->_scrolls->displayText(tmpStr);
+		} else {
 			Common::String z = _vm->_gyro->getItem(target);
-			if (z != "")
-				_vm->_scrolls->displayText(Common::String("{ ") + z + " }");
+			if (z != "") {
+				Common::String tmpStr = Common::String::format("{ %s }", z.c_str());
+				_vm->_scrolls->displayText(tmpStr);
+			}
 		}
 	}
 }
