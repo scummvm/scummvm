@@ -28,6 +28,9 @@
 
 namespace Buried {
 
+#define IDS_INI_KEY_TRANS_SPEED         868
+#define IDS_INI_KEY_CYCLE_CACHING		870
+
 #define IDS_MOVEMENT_DATA_BASE_ID		800
 
 #define IDBD_DIARY1						900
