@@ -47,9 +47,11 @@ const int gShift = 16;//img->format.gShift;
 const int rShift = 24;//img->format.rShift;
 const int aShift = 0;//img->format.aShift;
 
-const int bShiftTarget = 8;//target.format.bShift;
-const int gShiftTarget = 16;//target.format.gShift;
-const int rShiftTarget = 24;//target.format.rShift;
+
+const int bModShift = 0;//img->format.bShift;
+const int gModShift = 8;//img->format.gShift;
+const int rModShift = 16;//img->format.rShift;
+const int aModShift = 24;//img->format.aShift;
 
 void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
@@ -432,10 +434,10 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 		}
 	} else {
 
-		byte ca = (color >> aShift) & 0xFF;
-		byte cr = (color >> rShift) & 0xFF;
-		byte cg = (color >> gShift) & 0xFF;
-		byte cb = (color >> bShift) & 0xFF;
+		byte ca = (color >> aModShift) & 0xFF;
+		byte cr = (color >> rModShift) & 0xFF;
+		byte cg = (color >> gModShift) & 0xFF;
+		byte cb = (color >> bModShift) & 0xFF;
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
