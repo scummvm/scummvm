@@ -30,6 +30,7 @@
 #include "zvision/save_manager.h"
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
 
 
 namespace ZVision {
@@ -88,7 +89,7 @@ void SaveManager::autoSave() {
 
 void SaveManager::writeSaveGameData(Common::OutSaveFile *file) {
 	// Create a thumbnail and save it
-	Graphics::saveThumbnail(*file);
+	Graphics::saveThumbnail(*file, *_engine->getRenderManager()->getBackBuffer());
 
 	// Write out the save date/time
 	TimeDate td;
