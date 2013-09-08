@@ -39,16 +39,16 @@ class Visa {
 public:
 	Visa(AvalancheEngine *vm);
 
-	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false); // Original: dixi().
+	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false);
 	void talkTo(byte whom);
 
 private:
 	AvalancheEngine *_vm;
 
-	bool noError;
+	bool _noError;
 	void unSkrimble();
 	void doTheBubble();
-	void speak(byte who, byte subject); // Original: speech().
+	void speak(byte who, byte subject);
 };
 
 } // End of namespace Avalanche.
