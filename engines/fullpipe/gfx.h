@@ -143,6 +143,8 @@ class GameObject : public CObject {
 	const char *getName() { return _objectName; }
 
 	bool canInteractAny(GameObject *obj2, int invId);
+	bool getPicAniInfo(PicAniInfo *info);
+	bool setPicAniInfo(PicAniInfo *info);
 };
 
 class PictureObject : public GameObject {

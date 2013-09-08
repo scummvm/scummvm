@@ -76,8 +76,20 @@ void CMctlCompound::addObject(StaticANIObject *obj) {
 	warning("STUB: CMctlCompound::addObject()");
 }
 
-	void CMctlCompound::initMovGraph2() {
+void CMctlCompound::initMovGraph2() {
 	warning("STUB: CMctlCompound::initMovGraph2()");
+}
+
+MessageQueue *CMctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: CMctlCompound::method34()");
+
+	return 0;
+}
+
+MessageQueue *CMctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: CMctlCompound::method4C()");
+
+	return 0;
 }
 
 bool CMctlCompoundArray::load(MfcArchive &file) {

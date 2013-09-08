@@ -815,46 +815,6 @@ void StaticANIObject::adjustSomeXY() {
 	warning("STUB: StaticANIObject::adjustSomeXY()");
 }
 
-bool StaticANIObject::setPicAniInfo(PicAniInfo *picAniInfo) {
-	if (!(picAniInfo->type & 3)) {
-		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
-
-		return false;
-	}
-
-	debug(0, "StaticANIObject::setPicAniInfo() (%s [%d]) type: %d, statid: %d, movid: %d", transCyrillic((byte *)_objectName), _id, picAniInfo->type, picAniInfo->staticsId, picAniInfo->movementId);
-
-	if (picAniInfo->type & 3) {
-		setOXY(picAniInfo->ox, picAniInfo->oy);
-		_priority = picAniInfo->priority;
-		_okeyCode = picAniInfo->field_8;
-		setFlags(picAniInfo->flags);
-		_field_8 = picAniInfo->field_24;
-	}
-
-	if (picAniInfo->type & 1) {
-		_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
-
-		if (picAniInfo->staticsId) {
-			_statics = getStaticsById(picAniInfo->staticsId);
-		} else {
-			_statics = 0;
-		}
-
-		if (picAniInfo->movementId) {
-			_movement = getMovementById(picAniInfo->movementId);
-			if (_movement)
-				_movement->setDynamicPhaseIndex(picAniInfo->dynamicPhaseIndex);
-		} else {
-			_movement = 0;
-		}
-
-		setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
-	}
-
-	return true;
-}
-
 MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
 	warning("STUB: StaticANIObject::changeStatics1(%d)", msgNum);
 
@@ -1356,6 +1316,21 @@ void Movement::updateCurrDynamicPhase() {
 		if (_dynamicPhases[_currDynamicPhaseIndex])
 			_currDynamicPhase = (DynamicPhase *)_dynamicPhases[_currDynamicPhaseIndex];
 	}
+}
+
+int Movement::calcDuration() {
+	int res = 0;
+
+	if (_currMovement)
+		for (uint i = 0; i < _currMovement->_dynamicPhases.size(); i++) {
+			res += ((DynamicPhase *)_currMovement->_dynamicPhases[i])->_initialCountdown;
+		}
+	else
+		for (uint i = 0; i < _dynamicPhases.size(); i++) {
+			res += ((DynamicPhase *)_dynamicPhases[i])->_initialCountdown;
+		}
+
+	return res;
 }
 
 void Movement::setDynamicPhaseIndex(int index) {

@@ -62,6 +62,9 @@ class CMctlCompound : public CMotionController {
 
 	virtual void addObject(StaticANIObject *obj);
 	void initMovGraph2();
+
+	MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+	MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
 };
 
 class Unk2 : public CObject {

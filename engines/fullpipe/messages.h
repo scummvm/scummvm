@@ -133,6 +133,9 @@ class MessageQueue : public CObject {
 
 	bool checkGlobalExCommandList1();
 	bool checkGlobalExCommandList2();
+
+	int calcDuration(StaticANIObject *obj);
+	void changeParam28ForObjectId(int objId, int oldParam28, int newParam28);
 };
 
 class GlobalMessageQueueList : public Common::Array<MessageQueue *> {

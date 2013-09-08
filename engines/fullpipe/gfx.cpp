@@ -365,6 +365,95 @@ bool GameObject::canInteractAny(GameObject *obj2, int invId) {
 	return false;
 }
 
+bool GameObject::getPicAniInfo(PicAniInfo *info) {
+	if (_objtype == kObjTypePictureObject) {
+		info->type = 2;
+		info->objectId = _id;
+		info->sceneId = 0;
+		info->field_8 = _okeyCode;
+		info->flags = _flags;
+		info->field_24 = _field_8;
+		info->ox = _ox;
+		info->oy = _oy;
+		info->priority = _priority;
+
+		return true;
+	}
+
+	if (_objtype == kObjTypeStaticANIObject) {
+		StaticANIObject *ani = (StaticANIObject *)this;
+
+		info->type = (ani->_messageQueueId << 16) | 1;
+		info->objectId = ani->_id;
+		info->field_8 = ani->_okeyCode;
+		info->sceneId = ani->_sceneId;
+		info->flags = ani->_flags;
+		info->field_24 = ani->_field_8;
+		if (ani->_movement) {
+			info->ox = ani->_movement->_ox;
+			info->oy = ani->_movement->_oy;
+		} else {
+			info->ox = ani->_ox;
+			info->oy = ani->_oy;
+		}
+		info->priority = ani->_priority;
+
+		if (ani->_statics)
+			info->staticsId = ani->_statics->_staticsId;
+
+		if (ani->_movement) {
+			info->movementId = ani->_movement->_id;
+			info->dynamicPhaseIndex = ani->_movement->_currDynamicPhaseIndex;
+		}
+
+		info->someDynamicPhaseIndex = ani->_someDynamicPhaseIndex;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
+	if (!(picAniInfo->type & 3)) {
+		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+
+		return false;
+	}
+
+	if (picAniInfo->type & 3) {
+		setOXY(picAniInfo->ox, picAniInfo->oy);
+		_priority = picAniInfo->priority;
+		_okeyCode = picAniInfo->field_8;
+		setFlags(picAniInfo->flags);
+		_field_8 = picAniInfo->field_24;
+	}
+
+	if (picAniInfo->type & 1) {
+		StaticANIObject *ani = (StaticANIObject *)this;
+
+		ani->_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
+
+		if (picAniInfo->staticsId) {
+			ani->_statics = ani->getStaticsById(picAniInfo->staticsId);
+		} else {
+			ani->_statics = 0;
+		}
+
+		if (picAniInfo->movementId) {
+			ani->_movement = ani->getMovementById(picAniInfo->movementId);
+			if (ani->_movement)
+				ani->_movement->setDynamicPhaseIndex(picAniInfo->dynamicPhaseIndex);
+		} else {
+			ani->_movement = 0;
+		}
+
+		ani->setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
+	}
+
+	return true;
+}
+
 Picture::Picture() {
 	_x = 0;
 	_y = 0;

@@ -145,6 +145,8 @@ class Movement : public GameObject {
 	void setDynamicPhaseIndex(int index);
 	DynamicPhase *getDynamicPhaseByIndex(int idx);
 
+	int calcDuration();
+
 	void removeFirstPhase();
 	bool gotoNextFrame(int callback1, void (*callback2)(int *));
 	bool gotoPrevFrame();
@@ -206,8 +208,6 @@ class StaticANIObject : public GameObject {
 
 	void initMovements();
 	void loadMovementsPixelData();
-
-	bool setPicAniInfo(PicAniInfo *picAniInfo);
 
 	void setSomeDynamicPhaseIndex(int val) { _someDynamicPhaseIndex = val; }
 	void adjustSomeXY();

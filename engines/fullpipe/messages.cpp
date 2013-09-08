@@ -445,6 +445,38 @@ void MessageQueue::replaceKeyCode(int key1, int key2) {
     }
 }
 
+int MessageQueue::calcDuration(StaticANIObject *obj) {
+	int res;
+	ExCommand *ex;
+	Movement *mov;
+
+	for (uint i = 0; (ex = getExCommandByIndex(i)); i++)
+		if (ex->_parentId == obj->_id) {
+			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
+				if ((mov = obj->getMovementById(ex->_messageNum)) != 0) {
+					if (ex->_field_14 >= 1)
+						res += ex->_field_14;
+					else
+						res += mov->calcDuration();
+				}
+			}
+		}
+
+	return res;
+}
+
+void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newParam28) {
+	for (uint i = 0; i < _exCommands.size(); i++) {
+		ExCommand *ex = getExCommandByIndex(i);
+		int k = ex->_messageKind;
+
+		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
+			 && ex->_keyCode == oldParam28
+			 && ex->_parentId == objId)
+			ex->_keyCode = newParam28;
+    }
+}
+
 MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 	for (Common::Array<MessageQueue *>::iterator s = begin(); s != end(); ++s) {
 		if ((*s)->_id == id)

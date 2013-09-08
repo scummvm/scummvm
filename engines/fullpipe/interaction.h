@@ -31,7 +31,7 @@ class GameObject;
 class MessageQueue;
 class StaticANIObject;
 
-int handleObjectInteraction(GameObject *subject, GameObject *object, int invId);
+int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int invId);
 
 class CInteraction : public CObject {
  public:
@@ -54,7 +54,7 @@ class CInteraction : public CObject {
 	CInteraction();
 	virtual bool load(MfcArchive &file);
 	bool canInteract(GameObject *obj1, GameObject *obj2, int invId);
-	bool isOverlapping(StaticANIObject *subj, StaticANIObject *obj);
+	bool isOverlapping(StaticANIObject *subj, GameObject *obj);
 };
 
 class CInteractionController : public CObject {
@@ -76,7 +76,7 @@ class CInteractionController : public CObject {
 
 	void sortInteractions(int sceneId);
 
-	bool handleInteraction(GameObject *subj, GameObject *obj, int invId);
+	bool handleInteraction(StaticANIObject *subj, GameObject *obj, int invId);
 };
 
 struct EntranceInfo {
