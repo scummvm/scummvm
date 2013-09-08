@@ -109,6 +109,7 @@ public:
 	void renderBackbufferToScreen();
 
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height);
+	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor);
 
 	/**
 	 * Fills the entire workingWindow with the specified color

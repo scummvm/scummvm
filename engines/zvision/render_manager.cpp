@@ -291,6 +291,26 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
 }
 
+void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor) {
+	uint32 destOffset = 0;
+	uint32 sourceOffset = 0;
+	uint16 *workingWindowBufferPtr = (uint16 *)_workingWindowBuffer.getBasePtr(destX, destY);
+
+	for (int32 y = 0; y < height; y++) {
+		for (int32 x = 0; x < width; x++) {
+			uint16 color = buffer[sourceOffset + x];
+			if (color != alphaColor) {
+				workingWindowBufferPtr[destOffset + x] = color;
+			}
+		}
+
+		destOffset += _workingWidth;
+		sourceOffset += imageWidth;
+	}
+
+	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
+}
+
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
 	// Convert from screen space to working window space
 	Common::Point newPoint(point - Common::Point(_workingWindow.left, _workingWindow.top));
