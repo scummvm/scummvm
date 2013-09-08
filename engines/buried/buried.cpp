@@ -113,44 +113,7 @@ Common::Error BuriedEngine::run() {
 		updateTimers();
 		updateVideos();
 
-		// TODO: Key flags
-		// TODO: Mouse flags
-
-		Common::Event event;
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				_gfx->markMouseMoved();
-				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MouseMoveMessage(event.mouse, 0));
-				break;
-			case Common::EVENT_KEYUP:
-				if (_focusedWindow)
-					_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (_focusedWindow)
-					_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonDownMessage(event.mouse, 0));
-				break;
-			case Common::EVENT_LBUTTONUP:
-				// TODO: Double-click
-				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonUpMessage(event.mouse, 0));
-				break;
-			case Common::EVENT_MBUTTONUP:
-				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MButtonUpMessage(event.mouse, 0));
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonDownMessage(event.mouse, 0));
-				break;
-			case Common::EVENT_RBUTTONUP:
-				_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonUpMessage(event.mouse, 0));
-				break;
-			default:
-				break;
-			}
-		}
+		pollForEvents();
 
 		sendAllMessages();
 
@@ -293,9 +256,9 @@ void BuriedEngine::sendAllMessages() {
 	}
 }
 
-void BuriedEngine::removeKeyboardMessages(Window *window) {
+void BuriedEngine::removeMessages(Window *window, int messageBegin, int messageEnd) {
 	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
-		if (it->dest == window && it->message->getMessageType() >= kMessageTypeKeyUp && it->message->getMessageType() <= kMessageTypeKeyDown) {
+		if (it->dest == window && it->message->getMessageType() >= messageBegin && it->message->getMessageType() <= messageEnd) {
 			delete it->message;
 			it = _messageQueue.erase(it);
 		} else {
@@ -304,15 +267,12 @@ void BuriedEngine::removeKeyboardMessages(Window *window) {
 	}
 }
 
+void BuriedEngine::removeKeyboardMessages(Window *window) {
+	removeMessages(window, kMessageTypeKeyBegin, kMessageTypeKeyEnd);
+}
+
 void BuriedEngine::removeMouseMessages(Window *window) {
-	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
-		if (it->dest == window && it->message->getMessageType() >= kMessageTypeMouseMove && it->message->getMessageType() <= kMessageTypeSetCursor) {
-			delete it->message;
-			it = _messageQueue.erase(it);
-		} else {
-			it++;
-		}
-	}
+	removeMessages(window, kMessageTypeMouseBegin, kMessageTypeMouseEnd);
 }
 
 void BuriedEngine::removeAllMessages(Window *window) {
@@ -322,6 +282,70 @@ void BuriedEngine::removeAllMessages(Window *window) {
 			it = _messageQueue.erase(it);
 		} else {
 			it++;
+		}
+	}
+}
+
+bool BuriedEngine::hasMessage(Window *window, int messageBegin, int messageEnd) const {
+	for (MessageQueue::const_iterator it = _messageQueue.begin(); it != _messageQueue.end(); it++)
+		if ((!window || it->dest == window) && it->message->getMessageType() >= messageBegin && it->message->getMessageType() <= messageEnd)
+			return true;
+
+	return false;
+}
+
+void BuriedEngine::yield() {
+	// A cut down version of the Win16 yield function. Win32 handles this
+	// asynchronously, which we don't want. Only needed for internal event loops.
+	updateTimers();
+	updateVideos();
+
+	pollForEvents();
+
+	// We don't send messages any messages from here. Otherwise, this is the same
+	// as our main loop.
+
+	_gfx->updateScreen();
+	_system->delayMillis(10);
+}
+
+void BuriedEngine::pollForEvents() {
+	// TODO: Key flags
+	// TODO: Mouse flags
+
+	Common::Event event;
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			_gfx->markMouseMoved();
+			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MouseMoveMessage(event.mouse, 0));
+			break;
+		case Common::EVENT_KEYUP:
+			if (_focusedWindow)
+				_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (_focusedWindow)
+				_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonDownMessage(event.mouse, 0));
+			break;
+		case Common::EVENT_LBUTTONUP:
+			// TODO: Double-click
+			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonUpMessage(event.mouse, 0));
+			break;
+		case Common::EVENT_MBUTTONUP:
+			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MButtonUpMessage(event.mouse, 0));
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonDownMessage(event.mouse, 0));
+			break;
+		case Common::EVENT_RBUTTONUP:
+			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonUpMessage(event.mouse, 0));
+			break;
+		default:
+			break;
 		}
 	}
 }
