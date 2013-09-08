@@ -51,6 +51,10 @@ Window::~Window() {
 
 	// Remove any of our messages from the queue
 	_vm->removeAllMessages(this);
+
+	// Make sure we're not the focused window
+	if (_vm->_focusedWindow == this)
+		_vm->_focusedWindow = 0;
 }
 
 void Window::invalidateRect(const Common::Rect &rect, bool erase) {
