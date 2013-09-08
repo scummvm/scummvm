@@ -192,6 +192,7 @@ bool FrameWindow::showCredits() {
 
 	_mainChildWindow = new CreditsWindow(_vm, this);
 	_mainChildWindow->showWindow(kWindowShow);
+	_mainChildWindow->invalidateWindow(false);
 
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
