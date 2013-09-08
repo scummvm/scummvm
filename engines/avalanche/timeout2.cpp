@@ -51,6 +51,7 @@ Timeout::Timeout(AvalancheEngine *vm) {
 		_times[i]._thenWhere = 0;
 		_times[i]._whatFor = 0;
 	}
+	_timerLost = false;
 }
 
 void Timeout::addTimer(int32 howlong, byte whither, byte why) {
