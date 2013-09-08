@@ -406,7 +406,7 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 	byte *in;
 	byte *out;
 
-	if (color == 0xFFFFFF) {
+	if (color == 0xffffffff) {
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
