@@ -351,6 +351,17 @@ const Common::Point RenderManager::imageSpaceToWorkingWindowSpace(const Common::
 	return newPoint;
 }
 
+bool RenderManager::clipRectToWorkingWindow(Common::Rect &rect) {
+	if (!_workingWindow.contains(rect)) {
+		return false;
+	}
+
+	// We can't clip against the actual working window rect because it's in screen space
+	// But rect is in working window space
+	rect.clip(_workingWidth, _workingHeight);
+	return true;
+}
+
 RenderTable *RenderManager::getRenderTable() {
 	return &_renderTable;
 }

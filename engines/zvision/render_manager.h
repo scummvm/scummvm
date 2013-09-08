@@ -182,6 +182,14 @@ public:
 	 */
 	const Common::Point imageSpaceToWorkingWindowSpace(const Common::Point &point);
 
+	/**
+	 * Clip a rectangle to the working window. If it returns false, the original rect
+	 * is not inside the working window.
+	 *
+	 * @param rect    The rectangle to clip against the working window
+	 * @return        Is rect at least partially inside the working window (true) or completely outside (false)
+	 */
+	bool clipRectToWorkingWindow(Common::Rect &rect);
 
 	RenderTable *getRenderTable();
 	uint32 getCurrentBackgroundOffset();
