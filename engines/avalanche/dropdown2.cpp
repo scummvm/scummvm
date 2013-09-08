@@ -231,8 +231,6 @@ void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, Drop
 }
 
 void MenuBar::draw() {
-	const ByteField menuspace = {0, 0, 80, 9};
-
 	//setactivepage(3);
 
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect(0, 0, 640, 10), _dr->kMenuBackgroundColor);
