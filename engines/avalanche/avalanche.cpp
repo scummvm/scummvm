@@ -69,7 +69,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _enid;
 	delete _celer;
 	delete _sequence;
-	delete _timeout;
+	delete _timer;
 	delete _animation;
 	delete _acci;
 	delete _dropdown;
@@ -90,7 +90,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_enid = new Enid(this);
 	_celer = new Celer(this);
 	_sequence = new Sequence(this);
-	_timeout = new Timeout(this);
+	_timer = new Timer(this);
 	_animation = new Animation(this);
 	_acci = new Acci(this);
 	_dropdown = new Dropdown(this);
@@ -335,9 +335,9 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	//blockwrite(f, times, sizeof(times)); // Timeout.times: Timers.
 	for (byte i = 0; i < 7; i++) {
-		sz.syncAsSint32LE(_timeout->_times[i]._timeLeft);
-		sz.syncAsByte(_timeout->_times[i]._action);
-		sz.syncAsByte(_timeout->_times[i]._reason);
+		sz.syncAsSint32LE(_timer->_times[i]._timeLeft);
+		sz.syncAsByte(_timer->_times[i]._action);
+		sz.syncAsByte(_timer->_times[i]._reason);
 	}
 
 	//blockwrite(f, seq, sizeof(seq)); // Sequencer information.

@@ -25,17 +25,17 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* TIMEOUT	The scheduling unit. */
+/* Original name: TIMEOUT	The scheduling unit. */
 
-#ifndef AVALANCHE_TIMEOUT2_H
-#define AVALANCHE_TIMEOUT2_H
+#ifndef AVALANCHE_TIMER_H
+#define AVALANCHE_TIMER_H
 
 #include "common/scummsys.h"
 
 namespace Avalanche {
 class AvalancheEngine;
 
-class Timeout {
+class Timer {
 public:
 	// Reason runs between 1 and 28.
 	enum Reason {
@@ -114,16 +114,16 @@ public:
 		kProcGiveLuteToGeida = 41
 	};
 
-	struct TimeType {
+	struct TimerType {
 		int32 _timeLeft;
 		byte _action;
 		byte _reason;
 	};
 
-	TimeType _times[7];
+	TimerType _times[7];
 	bool _timerLost; // Is the timer "lost"? (Because of using loseTimer())
 
-	Timeout(AvalancheEngine *vm);
+	Timer(AvalancheEngine *vm);
 
 	void addTimer(int32 duration, byte action, byte reason);
 	void updateTimer();
@@ -177,4 +177,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // AVALANCHE_TIMEOUT2_H
+#endif // AVALANCHE_TIMER_H
