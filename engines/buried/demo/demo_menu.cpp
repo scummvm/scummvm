@@ -24,6 +24,7 @@
  */
 
 #include "buried/buried.h"
+#include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/message.h"
 #include "buried/resources.h"
@@ -70,6 +71,8 @@ DemoMainMenuWindow::DemoMainMenuWindow(BuriedEngine *vm, Window *parent) : Windo
 DemoMainMenuWindow::~DemoMainMenuWindow() {
 	_background->free();
 	delete _background;
+
+	_vm->_sound->setAmbientSound();
 }
 
 void DemoMainMenuWindow::showWithSplash() {
@@ -139,17 +142,20 @@ void DemoMainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 	switch (_curButton) {
 	case BUTTON_OVERVIEW:
-		// TODO
-		break;
+		if (_overview.contains(point))
+			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/OVERVIEW.BMP" : "MISC/8BPP/OVERVIEW.BMP", "MISC/OVERVIEW.AVI", 160, 112);
+		return;
 	case BUTTON_TRAILER:
-		// TODO
-		break;
+		if (_trailer.contains(point))
+			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/TRAILER.BMP" : "MISC/8BPP/TRAILER.BMP", "MISC/TRAILER.AVI", 104, 136);
+		return;
 	case BUTTON_INTERACTIVE:
 		// TODO
 		break;
 	case BUTTON_GALLERY:
-		// TODO
-		break;
+		if (_gallery.contains(point))
+			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/GALLERY.BMP" : "MISC/8BPP/GALLERY.BMP", "MISC/GALLERY.AVI", 104, 136);
+		return;
 	case BUTTON_QUIT:
 		// TODO
 		return;
