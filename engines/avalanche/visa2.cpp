@@ -177,8 +177,11 @@ void Visa::talkTo(byte whom) {
 				// 0 - let it through to use normal routine.
 				switch (_vm->_gyro->_dna._givenToSpludwick) {
 				case 1: // Fallthrough is intended.
-				case 2:
-					_vm->_scrolls->displayText(Common::String("Can you get me ") + _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
+				case 2: {
+					Common::String objStr = _vm->_gyro->getItem(Gyro::kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]);
+					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", objStr.c_str(), Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
+					_vm->_scrolls->displayText(tmpStr);
+					}
 					return;
 				case 3:
 					displayScrollChain('q', 30); // Need any help with the game?
@@ -250,14 +253,17 @@ void Visa::talkTo(byte whom) {
 	bool noMatches = true;
 	for (byte i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
-			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (i + 49) + _vm->_scrolls->kControlToBuffer);
+			Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, i + 49, Scrolls::kControlToBuffer);
+			_vm->_scrolls->displayText(tmpStr);
 			noMatches = false;
 			break;
 		}
 	}
 
-	if (noMatches)
-		_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + _vm->_scrolls->kControlRegister + _vm->_scrolls->kControlToBuffer);
+	if (noMatches) {
+		Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, Scrolls::kControlRegister, Scrolls::kControlToBuffer);
+		_vm->_scrolls->displayText(tmpStr);
+	}
 
 	speak(whom, _vm->_gyro->_subjectNum);
 
