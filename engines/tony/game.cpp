@@ -508,7 +508,8 @@ void RMOptionScreen::refreshThumbnails() {
 			_curThumb[i] = NULL;
 			_curThumbName[i].clear();
 			_curThumbDiff[i] = 11;
-		}
+		} else
+			_curThumb[i]->prepareImage();
 	}
 }
 

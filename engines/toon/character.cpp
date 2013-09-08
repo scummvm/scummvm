@@ -58,6 +58,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_animSpecialDefaultId = 0;
 	_currentPathNode = 0;
 	_currentWalkStamp = 0;
+	_currentFacingStamp = 0;
 	_visible = true;
 	_speed = 150;   // 150 = nominal drew speed
 	_lastWalkTime = 0;
@@ -99,6 +100,9 @@ void Character::setFacing(int32 facing) {
 	if (_blockingWalk) {
 		_flags |= 2;
 
+		_currentFacingStamp++;
+		int32 localFacingStamp = _currentFacingStamp;
+
 		int32 dir = 0;
 
 		_lastWalkTime = _vm->_system->getMillis();
@@ -127,6 +131,11 @@ void Character::setFacing(int32 facing) {
 			else
 				playWalkAnim(0, 0);
 			_vm->doFrame();
+
+			if (_currentFacingStamp != localFacingStamp) {
+				// another setFacing was started in doFrame, we need to cancel this one.
+				return;
+			}
 		};
 
 		_flags &= ~2;

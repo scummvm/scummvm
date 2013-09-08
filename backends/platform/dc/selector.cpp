@@ -219,7 +219,7 @@ static int findGames(Game *games, int max, bool use_ini)
 
   if (use_ini) {
     ConfMan.loadDefaultConfigFile();
-    Common::ConfigManager::DomainMap &game_domains = ConfMan.getGameDomains();
+    const Common::ConfigManager::DomainMap &game_domains = ConfMan.getGameDomains();
     for(Common::ConfigManager::DomainMap::const_iterator i =
 	  game_domains.begin(); curr_game < max && i != game_domains.end(); i++) {
       Common::String path = (*i)._value["path"];

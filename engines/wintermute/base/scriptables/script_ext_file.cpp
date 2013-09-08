@@ -825,4 +825,4 @@ Common::WriteStream *SXFile::openForAppend(const Common::String &filename, bool 
 	error("SXFile::openForAppend - WriteFiles not supported");
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

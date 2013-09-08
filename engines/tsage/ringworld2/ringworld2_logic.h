@@ -88,7 +88,7 @@ public:
 
 	SceneObject *_focusObject;
 	Visage _cursorVisage;
-	SynchronizedList<SceneArea *> _sceneAreas;
+	SynchronizedList<EventHandler *> _sceneAreas;
 
 	Rect _v51C34;
 public:
@@ -108,12 +108,14 @@ public:
 	void fadeOut();
 	void clearScreen();
 	void scalePalette(int RFactor, int GFactor, int BFactor);
+	void loadBlankScene();
 };
 
 class SceneHandlerExt: public SceneHandler {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
+	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad);
 
 	void setupPaletteMaps();
 };
@@ -159,6 +161,9 @@ public:
 /*--------------------------------------------------------------------------*/
 
 class Ringworld2InvObjectList : public InvObjectList {
+private:
+	static bool SelectItem(int objectNumber);
+	static void selectDefault(int obectNumber);
 public:
 	InvObject _none;
 	InvObject _inv1;
@@ -260,7 +265,9 @@ class SceneActor: public SceneObject {
 public:
 	virtual Common::String getClassName() { return "SceneActor"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
 	virtual bool startAction(CursorType action, Event &event);
+	virtual GfxSurface getFrame();
 };
 
 class SceneActorExt: public SceneActor {
@@ -276,6 +283,49 @@ public:
 	}
 };
 
+enum MazeDirection { MAZEDIR_NONE = 0, MAZEDIR_NORTH = 1, MAZEDIR_NORTHEAST = 2, MAZEDIR_EAST = 3,
+	MAZEDIR_SOUTHEAST = 4, MAZEDIR_SOUTH = 5, MAZEDIR_SOUTHWEST = 6, MAZEDIR_WEST = 7,
+	MAZEDIR_NORTHWEST = 8 };
+
+class MazeUI: public SceneObject {
+private:
+	void clear();
+public:
+	// The dimensions (in cells) of the entire maze map
+	Rect _mapBounds;
+
+	// Encoded cell map specifying the features of the maze
+	byte *_mapData;
+	// Image surface used to store a line of the map for rendering
+	GfxSurface _mapImage;
+
+	Common::Point _cellsVisible;
+	Common::Point _mapCells;
+	Common::Point _cellSize;
+	Common::Point _mapOffset;
+	int _resNum;
+	int _cellsResNum;
+	int _frameCount;
+	int _resCount;
+	int _mapImagePitch;
+	int _unused;
+public:
+	MazeUI();
+	virtual ~MazeUI();
+
+	void setDisplayBounds(const Rect &r);
+	bool setMazePosition(const Common::Point &pt);
+	void load(int resNum);
+	int getCellFromPixelXY(const Common::Point &pt);
+	int getCellFromCellXY(const Common::Point &p);
+	int pixelToCellXY(Common::Point &pt);
+
+	virtual Common::String getClassName() { return "MazeUI"; }
+	void synchronize(Serializer &s);
+	virtual void reposition();
+	virtual void draw();
+};
+
 class SceneAreaObject: public SceneArea {
 	class Object1: public SceneActor {
 	public:
@@ -288,41 +338,6 @@ public:
 	virtual void process(Event &event);
 	void setDetails(int visage, int strip, int frameNumber, const Common::Point &pt);
 	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
-};
-
-class UnkObject1200 : public SavedObject {
-public:
-	Rect _rect1;
-	Rect _rect2;
-
-	int *_field16;
-	int *_field3A;
-
-	int _field12;
-	int _field14;
-	int _field26;
-	int _field28;
-	int _field2A;
-	int _field2C;
-	int _field2E;
-	int _field30;
-	int _field32;
-	int _field34;
-	int _field36;
-	int _field38;
-	int _field3E;
-	int _field40;
-
-	UnkObject1200();
-	void synchronize(Serializer &s);
-
-	void sub51AE9(int arg1);
-	int sub51AF8(Common::Point pt);
-	bool sub51AFD(Common::Point pt);
-	void sub51B02();
-	void sub9EDE8(Rect rect);
-	int sub9EE22(int &arg1, int &arg2);
-	virtual Common::String getClassName() { return "UnkObject1200"; }
 };
 
 /*--------------------------------------------------------------------------*/
@@ -378,6 +393,8 @@ public:
 enum AnimationPaletteMode { ANIMPALMODE_REPLACE_PALETTE = 0, ANIMPALMODE_CURR_PALETTE = 1,
 		ANIMPALMODE_NONE = 2 };
 
+enum AnimationObjectMode { ANIMOBJMODE_1 = 1, ANIMOBJMODE_2 = 2, ANIMOBJMODE_42 = 42 };
+
 class AnimationPlayer: public EventHandler {
 private:
 	void rleDecode(const byte *pSrc, byte *pDest, int size);
@@ -392,8 +409,9 @@ public:
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
 	int _field38;
-	int _field3A, _paletteMode;
-	int _objectMode;
+	int _field3A;
+	AnimationPaletteMode _paletteMode;
+	AnimationObjectMode _objectMode;
 	int _field58, _sliceHeight;
 	byte _palIndexes[256];
 	ScenePalette _palette;
@@ -418,6 +436,7 @@ public:
 	virtual void changePane() {}
 	virtual void closing() {}
 
+
 	bool load(int animId, Action *endAction = NULL);
 	bool isCompleted();
 	void close();
@@ -430,6 +449,74 @@ public:
 	AnimationPlayerExt();
 
 	virtual void synchronize(Serializer &s);
+};
+
+class ModalWindow: public SceneArea {
+public:
+	SceneActor _object1;
+	byte _field20;
+public:
+	ModalWindow();
+
+	virtual void remove();
+	virtual void synchronize(Serializer &s);
+	virtual Common::String getClassName() { return "ModalWindow"; }
+	virtual void process(Event &event);
+	virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+};
+
+class ScannerDialog: public ModalWindow {
+
+	class Button: public SceneActor {
+	private:
+		void reset();
+	public:
+		int _buttonId;
+		bool _buttonDown;
+	public:
+		Button();
+		void setup(int buttonId);
+
+		virtual void synchronize(Serializer &s);
+		virtual Common::String getClassName() { return "ScannerButton"; }
+		virtual void process(Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Slider: public SceneActor {
+	private:
+		void update();
+	public:
+		int _initial;
+		int _xStart;
+		int _yp;
+		int _width;
+		int _xInc;
+		bool _sliderDown;
+	public:
+		Slider();
+		void setup(int initial, int xStart, int yp, int width, int xInc);
+
+		virtual void synchronize(Serializer &s);
+		virtual Common::String getClassName() { return "ScannerSlider"; }
+		virtual void remove();
+		virtual void process(Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	Button _talkButton;
+	Button _scanButton;
+	Slider _slider;
+	SceneActor _obj4;
+	SceneActor _obj5;
+	SceneActor _obj6;
+	SceneActor _obj7;
+public:
+	ScannerDialog();
+
+	virtual Common::String getClassName() { return "ScannerDialog"; }
+	virtual void remove();
+	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 };
 
 } // End of namespace Ringworld2

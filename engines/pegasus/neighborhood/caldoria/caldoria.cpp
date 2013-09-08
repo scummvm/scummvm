@@ -200,7 +200,7 @@ void Caldoria::start() {
 		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
 		assert(frame);
 		assert(frame->format == g_system->getScreenFormat());
-		g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 64, 112, frame->w, frame->h);
+		g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, 64, 112, frame->w, frame->h);
 		_vm->_gfx->doFadeInSync(kTwoSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond);
 
 		bool saveAllowed = _vm->swapSaveAllowed(false);
@@ -216,7 +216,7 @@ void Caldoria::start() {
 				frame = pullbackMovie->decodeNextFrame();
 
 				if (frame) {
-					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 64, 112, frame->w, frame->h);
+					g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, 64, 112, frame->w, frame->h);
 					g_system->updateScreen();
 				}
 			}

@@ -48,6 +48,6 @@ public:
 	BaseSprite *_sprites[NUM_DIRECTIONS];
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

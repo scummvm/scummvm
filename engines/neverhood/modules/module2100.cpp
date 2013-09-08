@@ -30,7 +30,7 @@ Module2100::Module2100(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 
 	_vm->_soundMan->addMusic(0x10A10C14, 0x11482B95);
-	
+
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
 	else if (which == 1)
@@ -47,7 +47,7 @@ Module2100::~Module2100() {
 }
 
 void Module2100::createScene(int sceneNum, int which) {
-	debug("Module2100::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module2100::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
@@ -129,7 +129,7 @@ void AsScene2101Door::stCloseDoorDone() {
 
 AsScene2101HitByDoorEffect::AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klaymen)
 	: AnimatedSprite(vm, 1400), _klaymen(klaymen) {
-	
+
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2101HitByDoorEffect::handleMessage);
 	createSurface(1200, 88, 165);
@@ -176,8 +176,8 @@ void SsCommonFloorButton::update() {
 		else
 			setVisible(false);
 	}
-}	
-	
+}
+
 uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -195,12 +195,12 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 
 Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	Sprite *tempSprite;
-	
+
 	SetMessageHandler(&Scene2101::handleMessage);
 	SetUpdateHandler(&Scene2101::update);
-	
+
 	setBackground(0x44242305);
 	setPalette(0x44242305);
 	insertScreenMouse(0x4230144A);
@@ -210,9 +210,9 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x72427010, 0x32423010, 200, 0);
 	_asTape1 = insertSprite<AsScene1201Tape>(this, 18, 1100, 412, 443, 0x9148A011);
 	addCollisionSprite(_asTape1);
-	_asTape2 = insertSprite<AsScene1201Tape>(this, 11, 1100, 441, 443, 0x9148A011);
+	_asTape2 = insertSprite<AsScene1201Tape>(this, 11, 1100, 441, 443, 0x9048A093);
 	addCollisionSprite(_asTape2);
-	
+
 	if (which < 0) {
 		insertKlaymen<KmScene2101>(380, 438);
 		setMessageList(0x004B8E48);
@@ -256,10 +256,10 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_doorStatus = 1;
 		_countdown1 = 0;
 	}
-	
+
 	_asHitByDoorEffect = insertSprite<AsScene2101HitByDoorEffect>(_klaymen);
 	_klaymen->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
-	
+
 }
 
 void Scene2101::update() {

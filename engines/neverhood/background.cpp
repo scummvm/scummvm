@@ -33,11 +33,11 @@ Background::Background(NeverhoodEngine *vm, int objectPriority)
 
 Background::Background(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority)
 	: Entity(vm, objectPriority), _surface(NULL), _spriteResource(vm) {
-	
+
 	_spriteResource.load(fileHash);
 	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_surface->drawSpriteResource(_spriteResource);
-	
+
 }
 
 Background::~Background() {
@@ -45,7 +45,7 @@ Background::~Background() {
 }
 
 void Background::createSurface(int surfacePriority, int16 width, int16 height) {
-	_surface = new BaseSurface(_vm, surfacePriority, width, height);
+	_surface = new BaseSurface(_vm, surfacePriority, width, height, "background");
 	_surface->setTransparent(false);
 	_spriteResource.getPosition().x = width;
 	_spriteResource.getPosition().y = height;

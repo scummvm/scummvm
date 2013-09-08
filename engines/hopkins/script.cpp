@@ -536,6 +536,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 12:
+			// Bank - negotiations between Hopkins and one of the killers
 			_vm->_fontMan->hideText(9);
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
@@ -543,6 +544,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 13:
+			// Bank - after negotiations, Hopkins enters the bank
 			_vm->_events->_mouseButton = _vm->_events->_curMouseButton;
 			_vm->_globals->_disableInventFl = true;
 			_vm->_graphicsMan->fadeOutLong();
@@ -553,9 +555,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->endDisplayBob();
 			_vm->_objectsMan->clearScreen();
 
-			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) {
-				_vm->_graphicsMan->fadeOutLong();
-			} else {
+			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
 				_vm->_soundMan->playSoundFile("SOUND17.WAV");
 				_vm->_graphicsMan->_fadingFl = true;
 				_vm->_animMan->playSequence2("HELICO.SEQ", 10, 4, 10);
@@ -615,10 +615,6 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->_fadingFl = true;
 			_vm->_animMan->playSequence2("ASSOM.SEQ", 10, 4, 500);
 			_vm->_soundMan->_specialSoundNum = 0;
-
-			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
-				_vm->_graphicsMan->fadeOutLong();
-
 			_vm->_globals->_disableInventFl = false;
 			_vm->_objectsMan->_helicopterFl = true;
 			break;
@@ -1221,6 +1217,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 88:
+			// Shooting target - Shooting at target
 			if (_vm->_globals->_saveData->_data[svField183] == 1) {
 				_vm->_objectsMan->setBobAnimDataIdx(1, 0);
 				_vm->_objectsMan->setBobAnimDataIdx(2, 0);
@@ -1298,6 +1295,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 90:
+			// Shooting target - Using the level
 			_vm->_soundMan->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animMan->playSequence("CIB5A.SEQ", 1, 12, 1, false, false);
@@ -1984,6 +1982,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 216:
+			// Discuss with pilot just before Flight cutscene
 			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkMan->startAnimatedCharacterDialogue("aviat1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;

@@ -50,7 +50,7 @@ public:
 class SsScene1705Tape : public StaticSprite {
 public:
 	SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash);
-protected:	
+protected:
 	Scene *_parentScene;
 	uint32 _tapeIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

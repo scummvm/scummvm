@@ -500,7 +500,13 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 codec, int bufSiz
 		break;
 
 	case FPCODEC_ADPCM:
+#ifdef __amigaos4__
+		// HACK: AmigaOS 4 has weird performance problems with reading in the audio thread,
+		// so we read the whole stream into memory.
+		_rewindableStream = Audio::makeADPCMStream(_file.readStream(_size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, 44100, 2);
+#else
 		_rewindableStream = Audio::makeADPCMStream(&_file, DisposeAfterUse::NO, 0, Audio::kADPCMDVI, 44100, 2);
+#endif
 		break;
 
 	default:

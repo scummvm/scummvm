@@ -24,12 +24,38 @@
 #define WINTERMUTE_RECT32_H
 
 #include "common/system.h"
+#include "engines/wintermute/math/floatpoint.h"
+#include "common/rect.h"
 
 namespace Wintermute {
 
 struct Point32 {
 	int32 x;
 	int32 y;
+	Point32() : x(0), y(0) {}
+	Point32(int32 x1, int32 y1) : x(x1), y(y1) {}
+	bool operator==(const Point32 &p) const { return x == p.x && y == p.y; }
+	bool operator!=(const Point32 &p) const { return x != p.x || y != p.y; }
+	Point32 operator+(const Point32 &delta) const {	return Point32(x + delta.x, y + delta.y);	}
+	Point32 operator-(const Point32 &delta) const {	return Point32(x - delta.x, y - delta.y);	}
+
+	Point32 &operator+=(const Point32 &delta) {
+		x += delta.x;
+		y += delta.y;
+		return *this;
+	}
+
+	Point32 &operator-=(const Point32 &delta) {
+		x -= delta.x;
+		y -= delta.y;
+		return *this;
+	}
+	
+	operator FloatPoint() {
+		return FloatPoint(x,y);
+	}
+
+
 };
 
 struct Rect32 {
@@ -38,6 +64,7 @@ struct Rect32 {
 
 	Rect32() : top(0), left(0), bottom(0), right(0) {}
 	Rect32(int32 w, int32 h) : top(0), left(0), bottom(h), right(w) {}
+	Rect32(const Common::Rect &rect) : top(rect.top), left(rect.left), bottom(rect.bottom), right(rect.right) {}
 	Rect32(int32 x1, int32 y1, int32 x2, int32 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
@@ -89,6 +116,6 @@ struct Rect32 {
 	}
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

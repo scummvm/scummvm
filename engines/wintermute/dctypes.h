@@ -220,6 +220,6 @@ enum TShadowType {
 	SHADOW_STENCIL  = 3
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -136,6 +136,6 @@ typedef enum {
 	ELEMENT_STRING = 0
 } TElementType;
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

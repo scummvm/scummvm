@@ -289,4 +289,4 @@ bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3,
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

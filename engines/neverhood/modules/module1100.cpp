@@ -40,7 +40,7 @@ static const uint32 kModule1100SoundList[] = {
 
 Module1100::Module1100(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
 	} else if (which == 1) {
@@ -64,7 +64,8 @@ Module1100::~Module1100() {
 void Module1100::createScene(int sceneNum, int which) {
 	static const uint32 kSmackerFileHashList06[] = {0x10880805, 0x1088081D, 0};
 	static const uint32 kSmackerFileHashList07[] = {0x00290321, 0x01881000, 0};
-	debug("Module1100::createScene(%d, %d)", sceneNum, which);
+	static const byte kNavigationTypes02[] = {1, 0, 4, 1};
+	debug(1, "Module1100::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
@@ -80,9 +81,9 @@ void Module1100::createScene(int sceneNum, int which) {
 	case 2:
 		_vm->gameState().sceneNum = 2;
 		if (getGlobalVar(V_ROBOT_TARGET)) {
-			createNavigationScene(0x004B84F0, which);
+			createNavigationScene(0x004B84F0, which, kNavigationTypes02);
 		} else {
-			createNavigationScene(0x004B8490, which);
+			createNavigationScene(0x004B8490, which, kNavigationTypes02);
 		}
 		break;
 	case 3:
@@ -270,7 +271,7 @@ static const uint32 kSsScene1105SymbolDieFileHashes[] = {
 
 SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds)
 	: StaticSprite(vm, fileHash, 200), _parentScene(parentScene), _countdown(0) {
-	
+
 	_collisionBounds = collisionBounds;
 	SetMessageHandler(&SsScene1105Button::handleMessage);
 	SetUpdateHandler(&SsScene1105Button::update);
@@ -346,7 +347,7 @@ void SsScene1105SymbolDie::hide() {
 
 AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
+
 	createSurface(100, 556, 328);
 	_x = 320;
 	_y = 240;
@@ -395,7 +396,7 @@ void AsScene1105TeddyBear::hide() {
 
 SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _isClicked(false) {
-	
+
 	loadSprite(0x8228A46C, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44045140);
@@ -431,26 +432,26 @@ uint32 SsScene1105OpenButton::handleMessage(int messageNum, const MessageParam &
 Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule), _countdown(0), _isPanelOpen(false), _isActionButtonClicked(false), _doMoveTeddy(false),
 	_isClosePanelDone(false), _leaveResult(0), _backgroundIndex(0) {
-	
+
 	Sprite *ssOpenButton;
-	
+
 	_vm->gameModule()->initMemoryPuzzle();
-	
+
 	SetUpdateHandler(&Scene1105::update);
 	SetMessageHandler(&Scene1105::handleMessage);
-	
+
 	setBackground(0x20010002);
 	setPalette(0x20010002);
-	
+
 	_asTeddyBear = insertSprite<AsScene1105TeddyBear>(this);
 	ssOpenButton = insertSprite<SsScene1105OpenButton>(this);
 	addCollisionSprite(ssOpenButton);
 	insertPuzzleMouse(0x10006208, 20, 620);
-	
+
 	loadSound(0, 0x48442057);
 	loadSound(1, 0xC025014F);
 	loadSound(2, 0x68E25540);
-	
+
 }
 
 uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -554,27 +555,27 @@ void Scene1105::createObjects() {
 	_ssSymbolDice[1] = insertSprite<SsScene1105SymbolDie>(1, 339, 304);
 	_ssSymbolDice[2] = insertSprite<SsScene1105SymbolDie>(2, 485, 304);
 
-	_ssSymbol1UpButton = insertSprite<SsScene1105Button>(this, 0x08002860, NRect(146, 362, 192, 403));
+	_ssSymbol1UpButton = insertSprite<SsScene1105Button>(this, 0x08002860, NRect::make(146, 362, 192, 403));
 	addCollisionSprite(_ssSymbol1UpButton);
-	_ssSymbol1DownButton = insertSprite<SsScene1105Button>(this, 0x42012460, NRect(147, 404, 191, 442));
+	_ssSymbol1DownButton = insertSprite<SsScene1105Button>(this, 0x42012460, NRect::make(147, 404, 191, 442));
 	addCollisionSprite(_ssSymbol1DownButton);
-	_ssSymbol2UpButton = insertSprite<SsScene1105Button>(this, 0x100030A0, NRect(308, 361, 355, 402));
+	_ssSymbol2UpButton = insertSprite<SsScene1105Button>(this, 0x100030A0, NRect::make(308, 361, 355, 402));
 	addCollisionSprite(_ssSymbol2UpButton);
-	_ssSymbol2DownButton = insertSprite<SsScene1105Button>(this, 0x840228A0, NRect(306, 406, 352, 445));
+	_ssSymbol2DownButton = insertSprite<SsScene1105Button>(this, 0x840228A0, NRect::make(306, 406, 352, 445));
 	addCollisionSprite(_ssSymbol2DownButton);
-	_ssSymbol3UpButton = insertSprite<SsScene1105Button>(this, 0x20000120, NRect(476, 358, 509, 394));
+	_ssSymbol3UpButton = insertSprite<SsScene1105Button>(this, 0x20000120, NRect::make(476, 358, 509, 394));
 	addCollisionSprite(_ssSymbol3UpButton);
-	_ssSymbol3DownButton = insertSprite<SsScene1105Button>(this, 0x08043121, NRect(463, 401, 508, 438));
+	_ssSymbol3DownButton = insertSprite<SsScene1105Button>(this, 0x08043121, NRect::make(463, 401, 508, 438));
 	addCollisionSprite(_ssSymbol3DownButton);
-	_ssActionButton = insertSprite<SsScene1105Button>(this, 0x8248AD35, NRect(280, 170, 354, 245));
+	_ssActionButton = insertSprite<SsScene1105Button>(this, 0x8248AD35, NRect::make(280, 170, 354, 245));
 	addCollisionSprite(_ssActionButton);
-	
+
 	_isPanelOpen = true;
-	
+
 	_asTeddyBear->show();
 
 	insertPuzzleMouse(0x18666208, 20, 620);
-	
+
 }
 
 void Scene1105::upOpenPanel() {
@@ -625,13 +626,6 @@ void Scene1105::upClosePanel() {
 }
 
 void Scene1105::update() {
-
-	// DEBUG: Show the correct code
-	debug("(%d, %d) (%d, %d) (%d, %d)", 
-		getSubVar(VA_GOOD_DICE_NUMBERS, 0), getSubVar(VA_CURR_DICE_NUMBERS, 0),
-		getSubVar(VA_GOOD_DICE_NUMBERS, 1), getSubVar(VA_CURR_DICE_NUMBERS, 1),
-		getSubVar(VA_GOOD_DICE_NUMBERS, 2), getSubVar(VA_CURR_DICE_NUMBERS, 2));
-
 	Scene::update();
 	if (_countdown != 0 && (--_countdown == 0))
 		createObjects();
@@ -645,13 +639,13 @@ void Scene1105::update() {
 
 Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	SetMessageHandler(&Scene1109::handleMessage);
-	
+
 	setBackground(0x8449E02F);
 	setPalette(0x8449E02F);
 	insertScreenMouse(0x9E02B84C);
-	
+
 	_sprite1 = insertStaticSprite(0x600CEF01, 1100);
 
 	if (which < 0) {

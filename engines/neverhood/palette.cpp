@@ -81,7 +81,7 @@ void Palette::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex)
 	if (toIndex + count > 256)
 		count = 256 - toIndex;
 	paletteResource.load(fileHash);
-	memcpy(_palette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);		
+	memcpy(_palette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);
 	_vm->_screen->testPalette(_palette);
 }
 
@@ -90,20 +90,20 @@ void Palette::addBasePalette(uint32 fileHash, int toIndex, int count, int fromIn
 	if (toIndex + count > 256)
 		count = 256 - toIndex;
 	paletteResource.load(fileHash);
-	memcpy(_basePalette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);		
+	memcpy(_basePalette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);
 }
 
 void Palette::copyPalette(const byte *palette, int toIndex, int count, int fromIndex) {
 	if (toIndex + count > 256)
 		count = 256 - toIndex;
-	memcpy(_palette + toIndex * 4, palette + fromIndex * 4, count * 4);		
+	memcpy(_palette + toIndex * 4, palette + fromIndex * 4, count * 4);
 	_vm->_screen->testPalette(_palette);
 }
 
 void Palette::copyBasePalette(int toIndex, int count, int fromIndex) {
 	if (toIndex + count > 256)
 		count = 256 - toIndex;
-	memcpy(_basePalette + toIndex * 4, _palette + fromIndex * 4, count * 4);		
+	memcpy(_basePalette + toIndex * 4, _palette + fromIndex * 4, count * 4);
 }
 
 void Palette::startFadeToBlack(int counter) {
@@ -115,7 +115,7 @@ void Palette::startFadeToBlack(int counter) {
 	_fadeToB = 0;
 	_palCounter = counter;
 	_fadeStep = 255 / counter;
-	_status = 1;			
+	_status = 1;
 }
 
 void Palette::startFadeToWhite(int counter) {
@@ -127,7 +127,7 @@ void Palette::startFadeToWhite(int counter) {
 	_fadeToB = 255;
 	_palCounter = counter;
 	_fadeStep = 255 / counter;
-	_status = 1;			
+	_status = 1;
 }
 
 void Palette::startFadeToPalette(int counter) {
@@ -136,7 +136,7 @@ void Palette::startFadeToPalette(int counter) {
 		counter = 1;
 	_palCounter = counter;
 	_fadeStep = 255 / counter;
-	_status = 2;			
+	_status = 2;
 }
 
 void Palette::fillBaseWhite(int index, int count) {

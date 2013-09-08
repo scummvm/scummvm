@@ -1163,12 +1163,12 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_angle1));
 	persistMgr->transfer(TMEMBER(_angle2));
 
-	persistMgr->transfer(TMEMBER(_velocity1));
-	persistMgr->transfer(TMEMBER(_velocity2));
+	persistMgr->transferFloat(TMEMBER(_velocity1));
+	persistMgr->transferFloat(TMEMBER(_velocity2));
 	persistMgr->transfer(TMEMBER(_velocityZBased));
 
-	persistMgr->transfer(TMEMBER(_scale1));
-	persistMgr->transfer(TMEMBER(_scale2));
+	persistMgr->transferFloat(TMEMBER(_scale1));
+	persistMgr->transferFloat(TMEMBER(_scale2));
 	persistMgr->transfer(TMEMBER(_scaleZBased));
 
 	persistMgr->transfer(TMEMBER(_maxParticles));
@@ -1196,14 +1196,14 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha2));
 	persistMgr->transfer(TMEMBER(_alphaTimeBased));
 
-	persistMgr->transfer(TMEMBER(_angVelocity1));
-	persistMgr->transfer(TMEMBER(_angVelocity2));
+	persistMgr->transferFloat(TMEMBER(_angVelocity1));
+	persistMgr->transferFloat(TMEMBER(_angVelocity2));
 
-	persistMgr->transfer(TMEMBER(_rotation1));
-	persistMgr->transfer(TMEMBER(_rotation2));
+	persistMgr->transferFloat(TMEMBER(_rotation1));
+	persistMgr->transferFloat(TMEMBER(_rotation2));
 
-	persistMgr->transfer(TMEMBER(_growthRate1));
-	persistMgr->transfer(TMEMBER(_growthRate2));
+	persistMgr->transferFloat(TMEMBER(_growthRate1));
+	persistMgr->transferFloat(TMEMBER(_growthRate2));
 	persistMgr->transfer(TMEMBER(_exponentialGrowth));
 
 	persistMgr->transfer(TMEMBER(_useRegion));
@@ -1252,4 +1252,4 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

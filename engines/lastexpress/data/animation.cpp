@@ -270,7 +270,7 @@ void Animation::play() {
 			draw(s);
 
 			// XXX: Update the screen
-			g_system->copyRectToScreen(s->pixels, s->pitch, 0, 0, s->w, s->h);
+			g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
 
 			// Free the temporary surface
 			s->free();

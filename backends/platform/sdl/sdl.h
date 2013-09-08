@@ -68,10 +68,11 @@ public:
 
 	virtual void setWindowCaption(const char *caption);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	virtual uint32 getMillis();
+	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td) const;
 	virtual Audio::Mixer *getMixer();
+	virtual Common::TimerManager *getTimerManager();
 
 protected:
 	bool _inited;

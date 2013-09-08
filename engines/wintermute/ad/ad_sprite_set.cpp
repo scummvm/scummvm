@@ -353,4 +353,4 @@ bool AdSpriteSet::containsSprite(BaseSprite *sprite) {
 	return false;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

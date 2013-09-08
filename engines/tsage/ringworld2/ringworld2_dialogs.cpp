@@ -236,7 +236,7 @@ void CharacterDialog::show() {
 
 		// Play a transition sound as the character is changed
 		if (R2_GLOBALS._player._characterScene[0] != 300) {
-			switch (R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex]) {
+			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex]) {
 			case 0:
 				R2_GLOBALS._sound4.stop();
 				break;
@@ -255,8 +255,8 @@ void CharacterDialog::show() {
 			default:
 				break;
 			}
-		} else if (R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex] > 1) {
-			switch (R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex]) {
+		} else if (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] > 1) {
+			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex]) {
 			case 2:
 				R2_GLOBALS._sound4.play(45);
 				break;
@@ -272,8 +272,8 @@ void CharacterDialog::show() {
 			default:
 				break;
 			}
-		} else if ((R2_GLOBALS._player._characterScene[1] == 300) && (R2_GLOBALS._v565F1[1] != 1)) {
-			switch (R2_GLOBALS._v565F1[1]) {
+		} else if ((R2_GLOBALS._player._characterScene[1] == 300) && (R2_GLOBALS._scannerFrequencies[1] != 1)) {
+			switch (R2_GLOBALS._scannerFrequencies[1]) {
 			case 2:
 				R2_GLOBALS._sound4.play(45);
 				break;
@@ -291,10 +291,10 @@ void CharacterDialog::show() {
 			}
 		} else if (R2_GLOBALS._player._characterScene[2] != 300) {
 			R2_GLOBALS._sound4.stop();
-		} else if (R2_GLOBALS._v565F1[2] == 1) {
+		} else if (R2_GLOBALS._scannerFrequencies[2] == 1) {
 			R2_GLOBALS._sound4.stop();
 		} else {
-			switch (R2_GLOBALS._v565F1[1]) {
+			switch (R2_GLOBALS._scannerFrequencies[1]) {
 			case 2:
 				R2_GLOBALS._sound4.play(45);
 				break;

@@ -31,16 +31,16 @@ SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubl
 	debug(0, "SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, canSkip, canAbort);
 
 	// NOTE: Merged from SmackerScene::init, maybe split again if needed (incl. parameter flags)
-	
+
 	if (getGlobalVar(V_SMACKER_CAN_ABORT)) {
 		_canSkip = true;
 		_canAbort = true;
 	}
-	
+
 	if (!_doubleSurface)
 		_vm->_screen->clear();
 
-	_fileHash[0] = 0; 
+	_fileHash[0] = 0;
 	_fileHash[1] = 0;
 
 	SetUpdateHandler(&SmackerScene::update);
@@ -67,7 +67,7 @@ void SmackerScene::nextVideo() {
 	debug(0, "SmackerScene::nextVideo()");
 
 	_fileHashListIndex++;
-	
+
 	if (_fileHashList && _fileHashList[_fileHashListIndex] != 0) {
 		uint32 smackerFileHash = _fileHashList[_fileHashListIndex];
 		ResourceHandle resourceHandle;

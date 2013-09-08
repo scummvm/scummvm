@@ -70,7 +70,7 @@ void ScreenFader::setFaderValue(const int32 value) {
 	if (value != getFaderValue()) {
 		Fader::setFaderValue(value);
 
-		if (_screen->pixels) {
+		if (_screen->getPixels()) {
 			// The original game does a gamma fade here using the Mac API. In order to do
 			// that, it would require an immense amount of CPU processing. This does a
 			// linear fade instead, which looks fairly well, IMO.

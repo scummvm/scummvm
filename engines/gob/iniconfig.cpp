@@ -73,7 +73,7 @@ bool INIConfig::getConfig(const Common::String &file, Config &config) {
 }
 
 bool INIConfig::openConfig(const Common::String &file, Config &config) {
-	config.config  = new Common::ConfigFile();
+	config.config  = new Common::INIFile();
 	config.created = false;
 
 	if (!config.config->loadFromFile(file)) {
@@ -89,7 +89,7 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 }
 
 bool INIConfig::createConfig(const Common::String &file, Config &config) {
-	config.config  = new Common::ConfigFile();
+	config.config  = new Common::INIFile();
 	config.created = true;
 
 	_configs.setVal(file, config);

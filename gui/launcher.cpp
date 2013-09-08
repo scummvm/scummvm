@@ -37,6 +37,11 @@
 #include "gui/message.h"
 #include "gui/gui-manager.h"
 #include "gui/options.h"
+#ifdef ENABLE_EVENTRECORDER
+#include "gui/onscreendialog.h"
+#include "gui/recorderdialog.h"
+#include "gui/EventRecorder.h"
+#endif
 #include "gui/saveload.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
@@ -596,7 +601,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 LauncherDialog::LauncherDialog()
 	: Dialog(0, 0, 320, 200) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
-
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
@@ -779,10 +783,9 @@ void LauncherDialog::updateListing() {
 }
 
 void LauncherDialog::addGame() {
-	int modifiers = g_system->getEventManager()->getModifierState();
 
 #ifndef DISABLE_MASS_ADD
-	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+	const bool massAdd = checkModifier(Common::KBD_SHIFT);
 
 	if (massAdd) {
 		MessageDialog alert(_("Do you really want to run the mass game detector? "
@@ -975,6 +978,49 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
+void LauncherDialog::loadGameButtonPressed(int item) {
+#ifdef ENABLE_EVENTRECORDER
+	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
+	if (shiftPressed) {
+		recordGame(item);
+	} else {
+		loadGame(item);
+	}
+	updateButtons();
+#else
+	loadGame(item);
+#endif
+}
+
+#ifdef ENABLE_EVENTRECORDER
+void LauncherDialog::recordGame(int item) {
+	RecorderDialog recorderDialog;
+	MessageDialog alert(_("Do you want to load savegame?"),
+		_("Yes"), _("No"));
+	switch(recorderDialog.runModal(_domains[item])) {
+	case RecorderDialog::kRecordDialogClose:
+		break;
+	case RecorderDialog::kRecordDialogPlayback:
+		ConfMan.setActiveDomain(_domains[item]);
+		close();
+		ConfMan.set("record_mode", "playback", ConfigManager::kTransientDomain);
+		ConfMan.set("record_file_name", recorderDialog.getFileName(), ConfigManager::kTransientDomain);
+		break;
+	case RecorderDialog::kRecordDialogRecord:
+		ConfMan.setActiveDomain(_domains[item]);
+		if (alert.runModal() == GUI::kMessageOK) {
+			loadGame(item);
+		}
+		close();
+		g_eventRec.setAuthor(recorderDialog._author);
+		g_eventRec.setName(recorderDialog._name);
+		g_eventRec.setNotes(recorderDialog._notes);
+		ConfMan.set("record_mode", "record", ConfigManager::kTransientDomain);
+		break;
+	}
+}
+#endif
+
 void LauncherDialog::loadGame(int item) {
 	String gameId = ConfMan.get("gameid", _domains[item]);
 	if (gameId.empty())
@@ -1039,7 +1085,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		editGame(item);
 		break;
 	case kLoadGameCmd:
-		loadGame(item);
+		loadGameButtonPressed(item);
 		break;
 	case kOptionsCmd: {
 		GlobalOptionsDialog options;
@@ -1109,19 +1155,27 @@ void LauncherDialog::updateButtons() {
 		_loadButton->setEnabled(en);
 		_loadButton->draw();
 	}
+	switchButtonsText(_addButton, "~A~dd Game...", "Mass Add...");
+#ifdef ENABLE_EVENTRECORDER
+	switchButtonsText(_loadButton, "~L~oad...", "Record...");
+#endif
+}
 
-	// Update the label of the "Add" button depending on whether shift is pressed or not
-	int modifiers = g_system->getEventManager()->getModifierState();
-	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+// Update the label of the button depending on whether shift is pressed or not
+void LauncherDialog::switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText) {
+	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
 	const bool lowRes = g_system->getOverlayWidth() <= 320;
 
-	const char *newAddButtonLabel = massAdd
-		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
-		: (lowRes ? _c("~A~dd Game...", "lowres") : _("~A~dd Game..."));
+	const char *newAddButtonLabel = shiftPressed
+		? (lowRes ? _c(shiftedText, "lowres") : _(shiftedText))
+		: (lowRes ? _c(normalText, "lowres") : _(normalText));
 
-	if (_addButton->getLabel() != newAddButtonLabel)
-		_addButton->setLabel(newAddButtonLabel);
+	if (button->getLabel() != newAddButtonLabel)
+		button->setLabel(newAddButtonLabel);
 }
+
+
+
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
@@ -1184,6 +1238,11 @@ void LauncherDialog::reflowLayout() {
 	_h = g_system->getOverlayHeight();
 
 	Dialog::reflowLayout();
+}
+
+bool LauncherDialog::checkModifier(int checkedModifier) {
+	int modifiers = g_system->getEventManager()->getModifierState();
+	return (modifiers & checkedModifier) != 0;
 }
 
 } // End of namespace GUI

@@ -166,7 +166,7 @@ BaseFont *AdResponse::getFont() const {
 int32 AdResponse::getID() const {
 	return _iD;
 }
-		
+
 const char *AdResponse::getText() const {
 	return _text;
 }
@@ -175,4 +175,4 @@ const char *AdResponse::getTextOrig() const {
 	return _textOrig;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

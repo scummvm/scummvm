@@ -234,9 +234,9 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha2));
 	persistMgr->transfer(TMEMBER(_border));
 	persistMgr->transfer(TMEMBER(_pos));
-	persistMgr->transfer(TMEMBER(_posZ));
+	persistMgr->transferFloat(TMEMBER(_posZ));
 	persistMgr->transfer(TMEMBER(_velocity));
-	persistMgr->transfer(TMEMBER(_scale));
+	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transfer(TMEMBER(_creationTime));
 	persistMgr->transfer(TMEMBER(_lifeTime));
 	persistMgr->transfer(TMEMBER(_isDead));
@@ -244,9 +244,9 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_fadeStart));
 	persistMgr->transfer(TMEMBER(_fadeTime));
 	persistMgr->transfer(TMEMBER(_currentAlpha));
-	persistMgr->transfer(TMEMBER(_angVelocity));
-	persistMgr->transfer(TMEMBER(_rotation));
-	persistMgr->transfer(TMEMBER(_growthRate));
+	persistMgr->transferFloat(TMEMBER(_angVelocity));
+	persistMgr->transferFloat(TMEMBER(_rotation));
+	persistMgr->transferFloat(TMEMBER(_growthRate));
 	persistMgr->transfer(TMEMBER(_exponentialGrowth));
 	persistMgr->transfer(TMEMBER(_fadeStartAlpha));
 
@@ -266,4 +266,4 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

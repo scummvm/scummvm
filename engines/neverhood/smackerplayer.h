@@ -37,6 +37,7 @@ public:
 	SmackerSurface(NeverhoodEngine *vm);
 	virtual void draw();
 	void setSmackerFrame(const Graphics::Surface *smackerFrame);
+	void unsetSmackerFrame();
 protected:
 	const Graphics::Surface *_smackerFrame;
 };
@@ -61,7 +62,7 @@ public:
 	void close();
 	void gotoFrame(int frameNumber);
 	uint32 getFrameCount();
-	uint32 getFrameNumber(); 
+	uint32 getFrameNumber();
 	uint getStatus();
 	void setDrawPos(int16 x, int16 y);
 	void rewind();

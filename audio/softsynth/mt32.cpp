@@ -62,7 +62,8 @@ protected:
 
 	// Callback for debug messages, in vprintf() format
 	void printDebug(const char *fmt, va_list list) {
-		debug(4, fmt, list);
+		Common::String out = Common::String::vformat(fmt, list);
+		debug(4, "%s", out.c_str());
 	}
 
 	// Callbacks for reporting various errors and information

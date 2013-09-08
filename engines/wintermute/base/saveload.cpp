@@ -201,4 +201,4 @@ bool SaveLoad::emptySaveSlot(int slot) {
 }
 
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

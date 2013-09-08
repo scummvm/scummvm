@@ -630,6 +630,7 @@ void Scene2000::Exit3::changeScene() {
 		break;
 	}
 }
+
 void Scene2000::Exit4::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
 
@@ -756,19 +757,21 @@ void Scene2000::Exit5::changeScene() {
 	}
 }
 
-void Scene2000::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(2000);
-
+Scene2000::Scene2000(): SceneExt() {
 	if (R2_GLOBALS._sceneManager._previousScene != -1) {
 		R2_GLOBALS._v56605[1] = 21;
 		R2_GLOBALS._v56605[2] = 21;
 	}
-	if ((R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex] != R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) && (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] != 2350)) {
+	if ((R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]
+			!= R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex])
+			&& (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] != 2350)) {
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 0;
 	}
-	_exitingFlag = false;
 
+	_exitingFlag = false;
+}
+
+void Scene2000::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDetails(Rect(0, 100, 14, 140), EXITCURSOR_W, 2000);
 	_exit1.setDest(Common::Point(14, 129));
 	_exit2.setDetails(Rect(305, 100, 320, 140), EXITCURSOR_E, 2000);
@@ -917,6 +920,8 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	initPlayer();
 
 	_item1.setDetails(Rect(0, 0, 320, 200), 2000, 0, -1, 23, 1, NULL);
+
+	SceneExt::postInit();
 }
 
 void Scene2000::remove() {
@@ -998,6 +1003,8 @@ void Scene2000::signal() {
 		g_globals->_sceneManager.changeScene(2350);
 		break;
 	default:
+		R2_GLOBALS._v56AAB = 0;
+		R2_GLOBALS._player.enableControl();
 		break;
 	}
 }

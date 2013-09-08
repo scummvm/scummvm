@@ -289,12 +289,16 @@ uint32 Player_Mac::durationToSamples(uint16 duration) {
 	// (duration * 473 * _sampleRate) / (4 * 480 * 480)
 	//
 	// But that's likely to cause integer overflow, so we do it in two
-	// steps and hope that the rounding error won't be noticeable.
+	// steps using bitwise operations to perform
+	// ((duration * 473 * _sampleRate) / 4096) without overflowing,
+	// then divide this by 225
+	// (note that 4 * 480 * 480 == 225 * 4096 == 225 << 12)
 	//
 	// The original code is a bit unclear on if it should be 473 or 437,
 	// but since the comments indicated 473 I'm assuming 437 was a typo.
-	uint32 samples = (duration * _sampleRate) / (4 * 480);
-	samples = (samples * 473) / 480;
+	uint32 samples = (duration * _sampleRate);
+	samples = (samples >> 12) * 473 + (((samples & 4095) * 473) >> 12);
+	samples = samples / 225;
 	return samples;
 }
 

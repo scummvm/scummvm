@@ -67,7 +67,7 @@ void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y,
 	// characters (0 - 31).
 	if (c < 32 || c == 255)
 		return;
-	
+
 	uint8 dummyWidth, dummyHeight;
 	if (width == NULL)
 		width = &dummyWidth;

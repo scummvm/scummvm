@@ -31,7 +31,6 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/persistent.h"
 #include "common/math.h"
-#include <math.h>
 
 namespace Wintermute {
 
@@ -292,4 +291,4 @@ bool SXMath::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

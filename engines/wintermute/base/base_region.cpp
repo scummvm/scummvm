@@ -432,7 +432,7 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
-	persistMgr->transfer(TMEMBER(_lastMimicScale));
+	persistMgr->transferFloat(TMEMBER(_lastMimicScale));
 	persistMgr->transfer(TMEMBER(_lastMimicX));
 	persistMgr->transfer(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
@@ -532,4 +532,4 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 	return createRegion() ? STATUS_OK : STATUS_FAILED;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

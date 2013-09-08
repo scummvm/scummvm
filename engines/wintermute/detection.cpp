@@ -181,7 +181,7 @@ public:
 	}
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #if PLUGIN_ENABLED_DYNAMIC(WINTERMUTE)
 REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);

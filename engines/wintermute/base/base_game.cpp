@@ -81,7 +81,7 @@ IMPLEMENT_PERSISTENT(BaseGame, true)
 
 
 //////////////////////////////////////////////////////////////////////
-BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gameId), _timerNormal(), _timerLive() {
+BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _targetName(targetName), _timerNormal(), _timerLive() {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
@@ -212,7 +212,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	#else*/
 	_touchInterface = false;
 	_constrainedMemory = false;
-	
+
 	_settings = new BaseGameSettings(this);
 //#endif
 
@@ -1276,11 +1276,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
-		Common::String result = initVal;
-		if (ConfMan.hasKey(privKey)) {
-			result = StringUtil::decodeSetting(ConfMan.get(key));
-		}
+		Common::String result = readRegistryString(key, initVal);
 		stack->pushString(result.c_str());
 		return STATUS_OK;
 	}
@@ -3072,8 +3068,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_offsetX));
 	persistMgr->transfer(TMEMBER(_offsetY));
-	persistMgr->transfer(TMEMBER(_offsetPercentX));
-	persistMgr->transfer(TMEMBER(_offsetPercentY));
+	persistMgr->transferFloat(TMEMBER(_offsetPercentX));
+	persistMgr->transferFloat(TMEMBER(_offsetPercentY));
 
 	persistMgr->transfer(TMEMBER(_origInteractive));
 	persistMgr->transfer(TMEMBER_INT(_origState));
@@ -3734,7 +3730,7 @@ bool BaseGame::onWindowClose() {
 bool BaseGame::displayDebugInfo() {
 	const uint32 strLength = 100;
 	char str[strLength];
-	
+
 	if (_debugShowFPS) {
 		sprintf(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
@@ -3902,4 +3898,26 @@ char *BaseGame::getKeyFromStringTable(const char *str) const {
 	return _settings->getKeyFromStringTable(str);
 }
 
-} // end of namespace Wintermute
+Common::String BaseGame::readRegistryString(const Common::String &key, const Common::String &initValue) const {
+	// Game specific hacks:
+	Common::String result = initValue;
+	// James Peris:
+	if (BaseEngine::instance().getGameId() == "jamesperis" && key == "Language") {
+		Common::Language language = BaseEngine::instance().getLanguage();
+		if (language == Common::EN_ANY) {
+			result = "english";
+		} else if (language == Common::ES_ESP) {
+			result = "spanish";
+		} else {
+			error("Invalid language set for James Peris");
+		}
+	} else { // Just fallback to using ConfMan for now
+		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
+		if (ConfMan.hasKey(privKey)) {
+			result = StringUtil::decodeSetting(ConfMan.get(key));
+		}
+	}
+	return result;
+}
+
+} // End of namespace Wintermute

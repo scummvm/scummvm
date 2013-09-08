@@ -868,9 +868,6 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 }
 
 TinselEngine::~TinselEngine() {
-	if (_bmv->MoviePlaying())
-		_bmv->FinishBMV();
-
 	_system->getAudioCDManager()->stop();
 	delete _bmv;
 	delete _sound;
@@ -1006,6 +1003,9 @@ Common::Error TinselEngine::run() {
 		else
 			g_system->delayMillis(10);
 	}
+
+	if (_bmv->MoviePlaying())
+		_bmv->FinishBMV();
 
 	// Write configuration
 	_vm->_config->writeToDisk();

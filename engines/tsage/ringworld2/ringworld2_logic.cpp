@@ -21,6 +21,8 @@
  */
 
 #include "common/config-manager.h"
+#include "common/rect.h"
+#include "tsage/graphics.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -86,8 +88,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Walking in hall
 		return new Scene525();
 	case 600:
+		// Drive Room
 		return new Scene600();
 	case 700:
+		// Lander Bay 2
 		return new Scene700();
 	case 800:
 		// Sick bay
@@ -99,11 +103,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Deck #5 - By Lift
 		return new Scene850();
 	case 900:
+		// Lander Bay 2 - Crane Controls
 		return new Scene900();
 	/* Scene group #1 */
 	//
 	case 1000:
-		error("Missing scene %d from group 1", sceneNumber);
+		// Cutscene scene
+		return new Scene1000();
 	case 1010:
 		// Cutscene - trip in space
 		return new Scene1010();
@@ -166,7 +172,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Ice Maze: Large empty room
 		return new Scene2400();
 	case 2425:
-		// Ice Maze:
+		// Ice Maze: The Hall of Records
 		return new Scene2425();
 	case 2430:
 		// Ice Maze: Bedroom
@@ -213,7 +219,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 2900:
 		error("Missing scene %d from group 2", sceneNumber);
 	/* Scene group #3 */
-	//
+	// ARM Base Hanager
 	case 3100:
 		return new Scene3100();
 	case 3125:
@@ -258,16 +264,22 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship landing
 		return new Scene3350();
 	case 3375:
+		// Outer walkway
 		return new Scene3375();
 	case 3385:
+		// Corridor
 		return new Scene3385();
 	case 3395:
+		// Walkway
 		return new Scene3395();
 	case 3400:
+		// Confrontation
 		return new Scene3400();
 	case 3500:
+		// Maze action sequencec
 		return new Scene3500();
 	case 3600:
+		// Cutscene - walking at gunpoint
 		return new Scene3600();
 	case 3700:
 		// Cutscene - Teleport outside
@@ -311,6 +323,12 @@ SceneExt::SceneExt(): Scene() {
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
 	_focusObject = NULL;
+
+	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
+	// counter as scene changes unless the playing animation explicitly finishes. For now,
+	// to make inter-scene debugging easier, I'm explicitly resetting the _animationCtr
+	// on scene start, since scene objects aren't drawn while it's non-zero
+	R2_GLOBALS._animationCtr = 0;
 }
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
@@ -328,8 +346,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
 	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
 			|| (sceneNumber == 50)
-			|| ((prevScene == 205) && (sceneNumber == 100))
-			|| ((prevScene == 180) && (sceneNumber == 100))) {
+			|| ((sceneNumber == 100) && (prevScene == 0 || prevScene == 180 || prevScene == 205))) {
 		static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
 		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._uiElements.show();
@@ -341,6 +358,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 void SceneExt::remove() {
 	_sceneAreas.clear();
 	Scene::remove();
+	R2_GLOBALS._uiElements._active = true;
 }
 
 void SceneExt::process(Event &event) {
@@ -407,17 +425,19 @@ bool SceneExt::display(CursorType action, Event &event) {
 			SceneItem::display2(5, 0);
 		break;
 	case R2_SONIC_STUNNER:
-		if ((R2_GLOBALS._v565F1[1] == 2) || ((R2_GLOBALS._v565F1[1] == 1) &&
-				(R2_GLOBALS._v565F1[2] == 2) && (R2_GLOBALS._sceneManager._previousScene == 300))) {
+		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2) 
+			|| ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 1) &&
+				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) && 
+				(R2_GLOBALS._sceneManager._previousScene == 300))) {
 			R2_GLOBALS._sound4.stop();
 			R2_GLOBALS._sound3.play(46);
 			SceneItem::display2(5, 15);
+
+			R2_GLOBALS._sound4.play(45);
 		} else {
 			R2_GLOBALS._sound3.play(43, 0);
-			SceneItem::display2(2, 0);
+			SceneItem::display2(2, R2_SONIC_STUNNER);
 		}
-
-		R2_GLOBALS._sound4.play(45);
 		break;
 	case R2_COM_SCANNER:
 	case R2_COM_SCANNER_2:
@@ -509,7 +529,7 @@ void SceneExt::refreshBackground(int xAmount, int yAmount) {
 	assert(screenSize == (s.w * s.h));
 
 	// Copy the data
-	byte *destP = (byte *)s.getBasePtr(0, 0);
+	byte *destP = (byte *)s.getPixels();
 	Common::copy(dataP, dataP + (s.w * s.h), destP);
 	_backSurface.unlockSurface();
 
@@ -557,6 +577,13 @@ void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 	}
 }
 
+void SceneExt::loadBlankScene() {
+	_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT * 3 / 2);
+	_backSurface.fillRect(_backSurface.getBounds(), 0);
+
+	R2_GLOBALS._screenSurface.fillRect(R2_GLOBALS._screenSurface.getBounds(), 0);
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
@@ -573,7 +600,7 @@ void SceneHandlerExt::process(Event &event) {
 	SceneExt *scene = static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene);
 	if (scene && R2_GLOBALS._player._uiEnabled) {
 		// Handle any scene areas that have been registered
-		SynchronizedList<SceneArea *>::iterator saIter;
+		SynchronizedList<EventHandler *>::iterator saIter;
 		for (saIter = scene->_sceneAreas.begin(); saIter != scene->_sceneAreas.end() && !event.handled; ++saIter) {
 			(*saIter)->process(event);
 		}
@@ -583,11 +610,32 @@ void SceneHandlerExt::process(Event &event) {
 		SceneHandler::process(event);
 }
 
+void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {
+	if (priorSceneBeforeLoad == -1 || priorSceneBeforeLoad == 50
+			|| priorSceneBeforeLoad == 180 || priorSceneBeforeLoad == 205)
+		setupPaletteMaps();
+
+	if (currentSceneBeforeLoad == 2900) {
+		R2_GLOBALS._gfxFontNumber = 50;
+		R2_GLOBALS._gfxColors.background = 0;
+		R2_GLOBALS._gfxColors.foreground = 59;
+		R2_GLOBALS._fontColors.background = 4;
+		R2_GLOBALS._fontColors.foreground = 15;
+		R2_GLOBALS._frameEdgeColour = 2;
+
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._scenePalette.setEntry(255, 0xff, 0xff, 0xff);
+		R2_GLOBALS._fadePaletteFlag = false;
+		setupPaletteMaps();
+	}
+}
+
 void SceneHandlerExt::setupPaletteMaps() {
 	byte *palP = &R2_GLOBALS._scenePalette._palette[0];
 
-	if (!R2_GLOBALS._v1000Flag) {
-		R2_GLOBALS._v1000Flag = true;
+	// Set up the mapping table for giving faded versions of pixels at different fade percentages
+	if (!R2_GLOBALS._fadePaletteFlag) {
+		R2_GLOBALS._fadePaletteFlag = true;
 
 		for (int idx = 0; idx < 10; ++idx) {
 			for (int palIndex = 0; palIndex < 224; ++palIndex) {
@@ -637,18 +685,19 @@ void SceneHandlerExt::setupPaletteMaps() {
 					foundIndex = pIndex2;
 				}
 
-				R2_GLOBALS._palIndexList[idx][palIndex] = foundIndex;
+				R2_GLOBALS._fadePaletteMap[idx][palIndex] = foundIndex;
 			}
 		}
 	}
 
 	for (int palIndex = 0; palIndex < 224; ++palIndex) {
-		int r = palP[palIndex * 3] >> 2;
-		int g = palP[palIndex * 3 + 1] >> 2;
-		int b = palP[palIndex * 3 + 2] >> 2;
+		int r = palP[palIndex * 3] >> 4;
+		int g = palP[palIndex * 3 + 1] >> 4;
+		int b = palP[palIndex * 3 + 2] >> 4;
 
-		int idx = (((r << 4) | g) << 4) | b;
-		R2_GLOBALS._v1000[idx] = palIndex;
+		int v = (r << 8) | (g << 4) | b;
+		assert(v < 0x1000);
+		R2_GLOBALS._paletteMap[v] = palIndex;
 	}
 
 	int vdx = 0;
@@ -656,9 +705,9 @@ void SceneHandlerExt::setupPaletteMaps() {
 	int palIndex = 224;
 
 	for (int vIndex = 0; vIndex < 4096; ++vIndex) {
-		int v = R2_GLOBALS._v1000[vIndex];
+		int v = R2_GLOBALS._paletteMap[vIndex];
 		if (!v) {
-			R2_GLOBALS._v1000[vIndex] = idx;
+			R2_GLOBALS._paletteMap[vIndex] = idx;
 		} else {
 			idx = v;
 		}
@@ -842,6 +891,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 	_itemList.push_back(&_inv52);
 
 	_selectedItem = NULL;
+
 }
 
 void Ringworld2InvObjectList::reset() {
@@ -904,6 +954,9 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_ALCOHOL_LAMP_3, 2435);
 	setObjectScene(R2_BROKEN_DISPLAY, 1580);
 	setObjectScene(R2_TOOLBOX, 3260);
+
+	// Set up the select item handler method
+	T2_GLOBALS._onSelectItem = SelectItem;
 }
 
 void Ringworld2InvObjectList::setObjectScene(int objectNum, int sceneNumber) {
@@ -919,6 +972,127 @@ void Ringworld2InvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 
 	// Update the user interface if necessary
 	T2_GLOBALS._uiElements.updateInventory();
+}
+
+/**
+ * When an inventory item is selected, in Return to Ringworld two objects can be combined
+ */
+bool Ringworld2InvObjectList::SelectItem(int objectNumber) {
+	// If no existing item selected, don't go any further
+	int currentItem = R2_GLOBALS._events.getCursor();
+	if (currentItem >= 256)
+		return false;
+
+	switch (objectNumber) {
+	case R2_NEGATOR_GUN:
+		switch (currentItem) {
+		case R2_SENSOR_PROBE:
+			if (R2_GLOBALS.getFlag(1))
+				SceneItem::display2(5, 1);
+			else if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) != 100)
+				SceneItem::display2(5, 3);
+			else {
+				R2_GLOBALS._sound3.play(48);
+				SceneItem::display2(5, 2);
+				R2_INVENTORY.setObjectScene(R2_SPENT_POWER_CAPSULE, 1);
+			}
+			break;
+		case R2_COM_SCANNER:
+			R2_GLOBALS._sound3.play(44);
+			if (R2_GLOBALS.getFlag(1))
+				SceneItem::display2(5, 9);
+			else if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) == 100)
+				SceneItem::display2(5, 8);
+			else
+				SceneItem::display2(5, 10);
+
+			R2_GLOBALS._sound3.stop();
+			break;
+		case R2_CHARGED_POWER_CAPSULE:
+			if (R2_INVENTORY.getObjectScene(R2_SPENT_POWER_CAPSULE) == 1) {
+				R2_GLOBALS._sound3.play(49);
+				R2_INVENTORY.setObjectScene(R2_CHARGED_POWER_CAPSULE, 100);
+				R2_GLOBALS.setFlag(1);
+				SceneItem::display2(5, 4);
+			} else {
+				SceneItem::display2(5, 5);
+			}
+			break;
+		default:
+			selectDefault(objectNumber);
+			break;
+		}
+		break;
+	case R2_STEPPING_DISKS:
+		switch (currentItem) {
+		case R2_SENSOR_PROBE:
+			if (R2_INVENTORY.getObjectScene(R2_CHARGED_POWER_CAPSULE) == 400) {
+				R2_GLOBALS._sound3.play(48);
+				SceneItem::display2(5, 6);
+				R2_INVENTORY.setObjectScene(R2_CHARGED_POWER_CAPSULE, 1);
+			} else {
+				SceneItem::display2(5, 7);
+			}
+			break;
+		case R2_COM_SCANNER:
+			R2_GLOBALS._sound3.play(44);
+			if (R2_INVENTORY.getObjectScene(R2_CHARGED_POWER_CAPSULE) == 400)
+				SceneItem::display2(5, 16);
+			else
+				SceneItem::display2(5, 17);
+			R2_GLOBALS._sound3.stop();
+			break;
+		default:
+			selectDefault(objectNumber);
+			break;
+		}
+		break;
+	case R2_ATTRACTOR_UNIT:
+	case R2_CABLE_HARNESS:
+		if (currentItem == R2_CABLE_HARNESS ||
+				currentItem == R2_ATTRACTOR_UNIT) {
+			R2_INVENTORY.setObjectScene(R2_CABLE_HARNESS, 0);
+			R2_INVENTORY.setObjectScene(R2_ATTRACTOR_UNIT, 0);
+			R2_INVENTORY.setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 1);
+		} else {
+			selectDefault(objectNumber);
+		}
+		break;
+	case R2_TANNER_MASK:
+	case R2_PURE_GRAIN_ALCOHOL:
+		if (currentItem == R2_TANNER_MASK ||
+				currentItem == R2_PURE_GRAIN_ALCOHOL) {
+			R2_INVENTORY.setObjectScene(R2_TANNER_MASK, 0);
+			R2_INVENTORY.setObjectScene(R2_PURE_GRAIN_ALCOHOL, 0);
+			R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, 1);
+		} else {
+			selectDefault(objectNumber);
+		}
+		break;
+	default:
+		// Standard item selection
+		return false;
+	}
+
+	return true;
+}
+
+void Ringworld2InvObjectList::selectDefault(int objectNumber) {
+	Common::String msg1 = g_resourceManager->getMessage(4, 53);
+	Common::String msg2 = g_resourceManager->getMessage(4, R2_GLOBALS._events.getCursor());
+	Common::String msg3 = g_resourceManager->getMessage(4, 54);
+	Common::String msg4 = g_resourceManager->getMessage(4, objectNumber);
+	Common::String line = Common::String::format("%.5s%.5s%.5s%.5s%s %s %s %s.",
+		msg1.c_str(), msg2.c_str(), msg3.c_str(), msg4.c_str(),
+		msg1.c_str() + 5, msg2.c_str() + 5, msg3.c_str() + 5, msg4.c_str() + 5);
+		
+	SceneItem::display(-1, -1, line.c_str(),
+		SET_WIDTH, 280,
+		SET_X, 160,
+		SET_Y, 20,
+		SET_POS_MODE, 1,
+		SET_EXT_BGCOLOR, 7,
+		LIST_END);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1083,6 +1257,14 @@ void SceneActor::postInit(SceneObjectList *OwnerList) {
 	SceneObject::postInit();
 }
 
+void SceneActor::remove() {
+	R2_GLOBALS._sceneItems.remove(this);
+	_field9C = NULL;
+	_linkedActor = NULL;
+
+	SceneObject::remove();
+}
+
 bool SceneActor::startAction(CursorType action, Event &event) {
 	bool handled = true;
 
@@ -1113,6 +1295,32 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 	if (!handled)
 		handled = ((SceneExt *)R2_GLOBALS._sceneManager._scene)->display(action, event);
 	return handled;
+}
+
+GfxSurface SceneActor::getFrame() {
+	GfxSurface frame = SceneObject::getFrame();
+
+	// TODO: Proper effects handling
+	switch (_effect) {
+	case 0:
+	case 5:
+		// TODO: Figure out purpose of setting image flags to 64, and getting
+		// scene priorities -1 or _shade
+		break;
+	case 1:
+		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
+		break;
+	case 2:
+		// No effect
+		break;
+	case 4:
+		break;
+	default:
+		// TODO: Default effect
+		break;
+	}
+
+	return frame;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1268,285 +1476,204 @@ void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, i
 
 /*****************************************************************************/
 
-UnkObject1200::UnkObject1200() {
-	_field16 = _field3A = NULL;
-	_field12 = _field14 = 0;
-	_field26 = _field28 = _field2A = _field2C = _field2E = _field30 = 0;
-	_field32 = _field34 = _field36 = _field38 = _field3E = _field40 = 0;
+MazeUI::MazeUI() {
+	_mapData = NULL;
+	_cellsVisible.x = _cellsVisible.y = 0;
+	_mapCells.x = _mapCells.y = 0;
+	_cellSize.x = _cellSize.y = 0;
+	_mapOffset.x = _mapOffset.y = 0;
+	_resNum = _cellsResNum = 0;
+	_frameCount = _resCount = _mapImagePitch = _unused = 0;
 }
 
-void UnkObject1200::synchronize(Serializer &s) {
+MazeUI::~MazeUI() {
+	DEALLOCATE(_mapData);
+}
+
+void MazeUI::synchronize(Serializer &s) {
 	SavedObject::synchronize(s);
 
-	_rect1.synchronize(s);
-	_rect2.synchronize(s);
+	s.syncAsSint16LE(_resNum);
+	if (s.isLoading())
+		load(_resNum);
 
-	// FIXME: syncrhonize _field16 and _field3A
-
-	s.syncAsSint16LE(_field12);
-	s.syncAsSint16LE(_field14);
-	s.syncAsSint16LE(_field26);
-	s.syncAsSint16LE(_field28);
-	s.syncAsSint16LE(_field2A);
-	s.syncAsSint16LE(_field2C);
-	s.syncAsSint16LE(_field2E);
-	s.syncAsSint16LE(_field30);
-	s.syncAsSint16LE(_field32);
-	s.syncAsSint16LE(_field34);
-	s.syncAsSint16LE(_field36);
-	s.syncAsSint16LE(_field38);
-	s.syncAsSint16LE(_field3E);
-	s.syncAsSint16LE(_field40);
+	s.syncAsSint16LE(_mapOffset.x);
+	s.syncAsSint16LE(_mapOffset.y);
+	s.syncAsSint16LE(_unused);
 }
 
-void UnkObject1200::sub51AE9(int arg1) {
-	warning("STUB: UnkObject1200::sub51AE9()");
+void MazeUI::load(int resNum) {
+	postInit();
+	clear();
+	_resNum = resNum;
+
+	const byte *header = g_resourceManager->getResource(RT17, resNum, 0);
+
+	_cellsResNum = resNum + 1000;
+	_mapCells.x = READ_LE_UINT16(header + 2);
+	_mapCells.y = READ_LE_UINT16(header + 4);
+	_frameCount = 10;
+	_resCount = _frameCount << 3;
+
+	Visage visage;
+	visage.setVisage(_cellsResNum, 1);
+
+	GfxSurface frame = visage.getFrame(2);
+	_cellSize.x = frame.getBounds().width();
+	_cellSize.y = frame.getBounds().height();
+
+	_mapData = g_resourceManager->getResource(RT17, resNum, 1);
+
+	_mapOffset.y = _mapOffset.x = 0;
+	_cellsVisible.x = (_bounds.width() + _cellSize.x - 1) / _cellSize.x;
+	_cellsVisible.y = (_bounds.height() + _cellSize.y - 1) / _cellSize.y;
+
+	_mapImagePitch = (_cellsVisible.x + 1) * _cellSize.x;
+	_mapImage.create(_mapImagePitch, _cellSize.y);
+
+	_mapBounds = Rect(0, 0, _cellSize.x * _mapCells.x, _cellSize.y * _mapCells.y);
 }
 
-int UnkObject1200::sub51AF8(Common::Point pt) {
-	if (!_rect1.contains(pt))
-		return -1;
+void MazeUI::clear() {
+	if (!_resNum)
+		_resNum = 1;
 
-	int tmp1 = (pt.x - _rect1.left + _field2E) / _field2A;
-	int tmp2 = (pt.y - _rect1.top + _field30) / _field2C;
+	if (_mapData)
+		DEALLOCATE(_mapData);
+	_mapData = NULL;
 
-	if ((tmp1 >= 0) && (tmp2 >= 0) && (_field26 > tmp1) && (_field28 > tmp2))
-		return _field16[(((_field26 * tmp2) + tmp1)* 2)];
-
-	return -1;
+	_mapImage.clear();
 }
 
-bool UnkObject1200::sub51AFD(Common::Point pt) {
-	int retval = false;
+bool MazeUI::setMazePosition(const Common::Point &pt) {
+	bool retval = false;
 
-	_field2E = pt.x;
-	_field30 = pt.y;
+	_mapOffset = pt;
 
-	if (_field2E < _rect2.top) {
-		_field2E = _rect2.top;
+	if (_mapOffset.x < _mapBounds.top) {
+		_mapOffset.x = _mapBounds.top;
 		retval = true;
 	}
 
-	if (_field30 < _rect2.left) {
-		_field30 = _rect2.left;
+	if (_mapOffset.y < _mapBounds.left) {
+		_mapOffset.y = _mapBounds.left;
 		retval = true;
 	}
 
-	if (_field2E + _rect1.width() > _rect2.right) {
-		_field2E = _rect2.right - _rect1.width();
+	if (_mapOffset.x + _bounds.width() > _mapBounds.right) {
+		_mapOffset.x = _mapBounds.right - _bounds.width();
 		retval = true;
 	}
 
-	if (_field30 + _rect1.height() > _rect2.bottom) {
-		_field30 = _rect2.bottom - _rect1.height();
+	if (_mapOffset.y + _bounds.height() > _mapBounds.bottom) {
+		_mapOffset.y = _mapBounds.bottom - _bounds.height();
 		retval = true;
 	}
 
 	return retval;
 }
 
-void UnkObject1200::sub51B02() {
-	warning("STUB: UnkObject1200::sub51B02()");
+void MazeUI::reposition() {
 }
 
-void UnkObject1200::sub9EDE8(Rect rect) {
-	_rect1 = rect;
-	warning("FIXME: UnkObject1200::sub9EDE8()");
-//	_rect1.clip(g_globals->gfxManager()._bounds);
+void MazeUI::draw() {
+	int yPos = 0;
+	int ySize;
+	Visage visage;
+
+	_cellsVisible.y = ((_mapOffset.y % _cellSize.y) + _bounds.height() +
+		(_cellSize.y - 1)) / _cellSize.y;
+
+	// Loop to handle the cell rows of the visible display area one at a time
+	for (int yCtr = 0; yCtr < _cellsVisible.y; ++yCtr, yPos += ySize) {
+		int cellY = _mapOffset.y / _cellSize.y + yCtr;
+
+		// Loop to iterate through the horizontal visible cells to build up
+		// an entire cell high horizontal slice of the map
+		for (int xCtr = 0; xCtr < _cellsVisible.x; ++xCtr) {
+			int cellX = _mapOffset.x / _cellSize.x + xCtr;
+
+			// Get the type of content to display in the cell
+			int cell = getCellFromCellXY(Common::Point(cellX, cellY)) - 1;
+			if (cell >= 0) {
+				int frameNum = (cell % _frameCount) + 1;
+				int rlbNum = (cell % _resCount) / _frameCount + 1;
+				int resNum = _cellsResNum + (cell / _resCount);
+
+				visage.setVisage(resNum, rlbNum);
+				GfxSurface frame = visage.getFrame(frameNum);
+
+				_mapImage.copyFrom(frame, xCtr * _cellSize.x, 0);
+			} else {
+				GfxSurface emptyRect;
+				emptyRect.create(_cellSize.x, _cellSize.y);
+
+				_mapImage.copyFrom(emptyRect, xCtr * _cellSize.x, 0);
+			}
+		}
+
+		if (yPos == 0) {
+			// First line of the map to be displayed - only the bottom portion of that
+			// first cell row may be visible
+			yPos = _bounds.top;
+			ySize = _cellSize.y - (_mapOffset.y % _cellSize.y);
+
+			Rect srcBounds(_mapOffset.x % _cellSize.x, _mapOffset.y % _cellSize.y,
+				(_mapOffset.x % _cellSize.x) + _bounds.width(), _cellSize.y);
+			Rect destBounds(_bounds.left, yPos, _bounds.right, yPos + ySize);
+
+			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
+		} else {
+			if ((yPos + _cellSize.y) < _bounds.bottom) {
+				ySize = _cellSize.y;
+			} else {
+				ySize = _bounds.bottom - yPos;
+			}
+
+			Rect srcBounds(_mapOffset.x % _cellSize.x, 0,
+				(_mapOffset.x % _cellSize.x) + _bounds.width(), ySize);
+			Rect destBounds(_bounds.left, yPos, _bounds.right, yPos + ySize);
+
+			R2_GLOBALS.gfxManager().copyFrom(_mapImage, srcBounds, destBounds);
+		}
+	}
 }
 
-int UnkObject1200::sub9EE22(int &arg1, int &arg2) {
-	arg1 /= _field2A;
-	arg2 /= _field2C;
+int MazeUI::getCellFromPixelXY(const Common::Point &pt) {
+	if (!_bounds.contains(pt))
+		return -1;
 
-	if ((arg1 >= 0) && (arg2 >= 0) && (_field26 > arg1) && (_field28 > arg2)) {
-		return _field16[(((_field26 * arg2) + arg1) * 2)];
+	int cellX = (pt.x - _bounds.left + _mapOffset.x) / _cellSize.x;
+	int cellY = (pt.y - _bounds.top + _mapOffset.y) / _cellSize.y;
+
+	if ((cellX >= 0) && (cellY >= 0) && (cellX < _mapCells.x) && (cellY < _mapCells.y))
+		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * cellY + cellX) * 2);
+
+	return -1;
+}
+
+int MazeUI::getCellFromCellXY(const Common::Point &p) {
+	if (p.x < 0 || p.y < 0 || p.x >= _mapCells.x || p.y >= _mapCells.y) {
+		return -1;
+	} else {
+		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * p.y + p.x) * 2);
+	}
+}
+
+int MazeUI::pixelToCellXY(Common::Point &pt) {
+	pt.x /= _cellSize.x;
+	pt.y /= _cellSize.y;
+
+	if ((pt.x >= 0) && (pt.y >= 0) && (pt.x < _mapCells.x) && (pt.y < _mapCells.y)) {
+		return (int16)READ_LE_UINT16(_mapData + (_mapCells.x * pt.y + pt.x) * 2);
 	}
 
 	return -1;
 }
 
-void Scene1200::sub9DAD6(int indx) {
-	_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
-
-	switch (indx) {
-	case 0:
-		if ( ((_object1.sub51AF8(Common::Point(200, 50)) > 36) || (_object1.sub51AF8(Common::Point(200, 88)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
-				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
-				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
-				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 41)) )
-				)	{
-			R2_GLOBALS._player.disableControl();
-			_sceneMode = 1200;
-			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(200, 69)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
-				if (R2_GLOBALS._player._visage == 3155)
-					_sceneMode = 15;
-				else
-					_sceneMode = 10;
-				break;
-			case 1:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 76;
-				else
-					_sceneMode = 75;
-				break;
-			case 2:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 101;
-				else
-					_sceneMode = 100;
-				break;
-			case 3:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 111;
-				else
-					_sceneMode = 110;
-				break;
-			default:
-				break;
-			}
-			R2_GLOBALS._player.disableControl();
-			_field412 = 1;
-			signal();
-		}
-		break;
-	case 1:
-		if ( ((_object1.sub51AF8(Common::Point(120, 50)) > 36) || (_object1.sub51AF8(Common::Point(120, 88)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
-				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
-				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
-				|| ((R2_GLOBALS._v56AA2 == 5) && (R2_GLOBALS._v56AA4 == 5)) )
-				)	{
-			R2_GLOBALS._player.disableControl();
-			_sceneMode = 1201;
-			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(120, 69)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 56;
-				else
-					_sceneMode = 55;
-				break;
-			case 1:
-				if (R2_GLOBALS._player._visage == 3155)
-					_sceneMode = 25;
-				else
-					_sceneMode = 20;
-				break;
-			case 2:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 91;
-				else
-					_sceneMode = 90;
-				break;
-			case 3:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 121;
-				else
-					_sceneMode = 120;
-				break;
-			default:
-				break;
-			}
-			R2_GLOBALS._player.disableControl();
-			_field412 = 2;
-			signal();
-		}
-		break;
-	case 2:
-		if ( ((_object1.sub51AF8(Common::Point(140, 110)) > 36) || (_object1.sub51AF8(Common::Point(178, 110)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3))
-				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
-				)	{
-			R2_GLOBALS._player.disableControl();
-			_sceneMode = 1203;
-			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(160, 110)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 51;
-				else
-					_sceneMode = 50;
-				break;
-			case 1:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 81;
-				else
-					_sceneMode = 80;
-				break;
-			case 2:
-				if (R2_GLOBALS._player._visage == 3155)
-					_sceneMode = 35;
-				else
-					_sceneMode = 30;
-				break;
-			case 3:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 116;
-				else
-					_sceneMode = 115;
-				break;
-			default:
-				break;
-			}
-			R2_GLOBALS._player.disableControl();
-			_field412 = 3;
-			signal();
-		}
-		break;
-	case 3:
-		if ( ((_object1.sub51AF8(Common::Point(140, 30)) > 36) || (_object1.sub51AF8(Common::Point(178, 30)) > 36))
-			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3))
-				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
-				)	{
-			R2_GLOBALS._player.disableControl();
-			_sceneMode = 1202;
-			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);
-		} else if (_object1.sub51AF8(Common::Point(160, 30)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 61;
-				else
-					_sceneMode = 60;
-				break;
-			case 1:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 71;
-				else
-					_sceneMode = 70;
-				break;
-			case 2:
-				if (R2_GLOBALS._player._visage == 3156)
-					_sceneMode = 96;
-				else
-					_sceneMode = 95;
-				break;
-			case 3:
-				if (R2_GLOBALS._player._visage == 3155)
-					_sceneMode = 45;
-				else
-					_sceneMode = 40;
-				break;
-			default:
-				_sceneMode = 1;
-				R2_GLOBALS._player.setup(3156, 4, 6);
-				break;
-			}
-			R2_GLOBALS._player.disableControl();
-			_field412 = 4;
-			signal();
-		}
-		break;
-	default:
-		break;
-	}
+void MazeUI::setDisplayBounds(const Rect &r) {
+	_bounds = r;
+	_bounds.clip(g_globals->gfxManager()._bounds);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1637,7 +1764,7 @@ AnimationPlayer::~AnimationPlayer() {
 
 void AnimationPlayer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
-	warning("TODO AnimationPlayer::load");
+	warning("TODO AnimationPlayer::synchronize");
 }
 
 void AnimationPlayer::remove() {
@@ -2000,6 +2127,349 @@ void AnimationPlayerExt::synchronize(Serializer &s) {
 	AnimationPlayer::synchronize(s);
 	s.syncAsSint16LE(_v);
 }
+
+/*--------------------------------------------------------------------------*/
+
+ModalWindow::ModalWindow() {
+	_field20 = 0;
+}
+
+void ModalWindow::remove() {
+	R2_GLOBALS._sceneItems.remove(&_object1);
+	_object1.remove();
+
+	SceneArea::remove();
+
+	--R2_GLOBALS._insetUp;
+}
+
+void ModalWindow::synchronize(Serializer &s) {
+	SceneArea::synchronize(s);
+
+	s.syncAsByte(_field20);
+}
+
+void ModalWindow::process(Event &event) {
+	if (_field20 != R2_GLOBALS._insetUp)
+		return;
+
+	CursorType cursor = R2_GLOBALS._events.getCursor();
+
+	if (_object1._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
+		if (cursor == _cursorNum) {
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
+		}
+	} else if (event.mousePos.y < 168) {
+		if (cursor != _cursorNum) {
+			_savedCursorNum = cursor;
+			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
+		}
+		if (event.eventType == EVENT_BUTTON_DOWN) {
+			event.handled = true;
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
+			remove();
+		}
+	}
+}
+
+void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
+
+	_object1.postInit();
+	_object1.setup(visage, stripFrameNum, frameNum);
+	_object1.setPosition(Common::Point(posX, posY));
+	_object1.fixPriority(250);
+	_cursorNum = CURSOR_INVALID;
+	scene->_sceneAreas.push_front(this);
+	++R2_GLOBALS._insetUp;
+	_field20 = R2_GLOBALS._insetUp;
+}
+
+void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
+ScannerDialog::Button::Button() {
+	_buttonId = 0;
+	_buttonDown = false;
+}
+
+void ScannerDialog::Button::setup(int buttonId) {
+	_buttonId = buttonId;
+	_buttonDown = false;
+	SceneActor::postInit();
+
+	SceneObject::setup(4, 2, 2);
+	fixPriority(255);
+
+	if (_buttonId == 1)
+		setPosition(Common::Point(141, 99));
+	else if (_buttonId == 2)
+		setPosition(Common::Point(141, 108));
+
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.push_front(this);
+}
+
+void ScannerDialog::Button::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+	s.syncAsSint16LE(_buttonId);
+}
+
+void ScannerDialog::Button::process(Event &event) {
+	if (event.eventType == EVENT_BUTTON_DOWN && R2_GLOBALS._events.getCursor() == CURSOR_USE
+			&& _bounds.contains(event.mousePos) && !_buttonDown) {
+		setFrame(3);
+		_buttonDown = true;
+		event.handled = true;
+	}
+
+	if (event.eventType == EVENT_BUTTON_UP && _buttonDown) {
+		setFrame(2);
+		_buttonDown = false;
+		event.handled = true;
+		
+		reset();
+	}
+}
+
+bool ScannerDialog::Button::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return false;
+
+	return startAction(action, event);
+}
+
+void ScannerDialog::Button::reset() {
+	Scene *scene = R2_GLOBALS._sceneManager._scene;
+	ScannerDialog &scanner = *R2_GLOBALS._scannerDialog;
+
+	switch (_buttonId) {
+	case 1:
+		// Talk button
+		switch (R2_GLOBALS._sceneManager._sceneNumber) {
+		case 1550:
+			scene->_sceneMode = 80;
+			scene->signal();
+			break;
+		case 1700:
+			scene->_sceneMode = 30;
+			scene->signal();
+			remove();
+			break;
+		default:
+			break;
+		}
+		break;
+	case 2:
+		// Scan button
+		switch (R2_GLOBALS._sceneManager._sceneNumber) {
+		case 1550:
+			scanner._obj4.setup(4, 3, 1);
+
+			scanner._obj5.postInit();
+			scanner._obj5.setup(4, 4, 1);
+			scanner._obj5.setPosition(Common::Point(R2_GLOBALS._v565EC[1] + 145,
+				R2_GLOBALS._v565EC[3] + 59));
+			scanner._obj5.fixPriority(257);
+
+			scanner._obj6.postInit();
+			scanner._obj6.setup(4, 4, 2);
+			scanner._obj6.setPosition(Common::Point(R2_GLOBALS._v565EC[2] + 145,
+				R2_GLOBALS._v565EC[4] + 59));
+			scanner._obj6.fixPriority(257);
+			break;
+		case 1700:
+		case 1800:
+			if (R2_GLOBALS._v565F8 < 0 || (R2_GLOBALS._v565F8 == 0 && R2_GLOBALS._v565F6 < 1201))
+				scanner._obj4.setup(4, 3, 3);
+			else if (R2_GLOBALS._v565F8 > 0 || (R2_GLOBALS._v565F8 == 0 && R2_GLOBALS._v565F6 < 1201))
+				scanner._obj4.setup(4, 3, 4);
+			else
+				scanner._obj4.setup(4, 3, 5);
+			break;
+		case 3800:
+		case 3900:
+			if ((R2_GLOBALS._v56A93 + 1) == 0 && R2_GLOBALS._v566A9 == 0) {
+				do {
+					R2_GLOBALS._v566A9 = R2_GLOBALS._randomSource.getRandomNumber(3);
+				} while (R2_GLOBALS._v566A9 == R2_GLOBALS._v566AA);
+			}
+
+			scanner._obj4.setup(4, 7, R2_GLOBALS._v566A9);
+			if (!R2_GLOBALS.getFlag(46))
+				R2_GLOBALS.setFlag(46);
+			break;
+		default:
+			scanner._obj4.setup(4, 3, 2);
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+ScannerDialog::Slider::Slider() {
+	_initial = _xStart = _yp = 0;
+	_width = _xInc = 0;
+	_sliderDown = false;
+}
+
+void ScannerDialog::Slider::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+
+	s.syncAsSint16LE(_initial);
+	s.syncAsSint16LE(_xStart);
+	s.syncAsSint16LE(_yp);
+	s.syncAsSint16LE(_width);
+	s.syncAsSint16LE(_xInc);
+}
+
+void ScannerDialog::Slider::remove() {
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.remove(this);
+	SceneActor::remove();
+}
+
+void ScannerDialog::Slider::process(Event &event) {
+	if (event.eventType == EVENT_BUTTON_DOWN && R2_GLOBALS._events.getCursor() == CURSOR_USE
+			&& _bounds.contains(event.mousePos)) {
+		_sliderDown = true;
+	}
+
+	if (event.eventType == EVENT_BUTTON_UP && _sliderDown) {
+		_sliderDown = false;
+		event.handled = true;
+		update();
+	}
+
+	if (_sliderDown) {
+		event.handled = true;
+		if (event.mousePos.x < _xStart) {
+			setPosition(Common::Point(_xStart, _yp));
+		} else if (event.mousePos.x >= (_xStart + _width)) {
+			setPosition(Common::Point(_xStart + _width, _yp));
+		} else {
+			setPosition(Common::Point(event.mousePos.x, _yp));
+		}
+	}
+}
+
+bool ScannerDialog::Slider::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return false;
+
+	return startAction(action, event);
+}
+
+void ScannerDialog::Slider::update() {
+	int incHalf = (_width / (_xInc - 1)) / 2;
+	int newFrequency = ((_position.x - _xStart + incHalf) * _xInc) / (_width + incHalf * 2);
+	setPosition(Common::Point(_xStart + ((_width * newFrequency) / (_xInc - 1)), _yp));
+
+	R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] = newFrequency + 1;
+
+	switch (newFrequency) {
+	case 0:
+		R2_GLOBALS._sound4.stop();
+		break;
+	case 1:
+		R2_GLOBALS._sound4.play(45);
+		break;
+	case 2:
+		R2_GLOBALS._sound4.play(4);
+		break;
+	case 3:
+		R2_GLOBALS._sound4.play(5);
+		break;
+	case 4:
+		R2_GLOBALS._sound4.play(6);
+		break;
+	default:
+		break;
+	}
+}
+
+void ScannerDialog::Slider::setup(int initial, int xStart, int yp, int width, int xInc) {
+	_initial = initial;
+	_xStart = xStart;
+	_yp = yp;
+	_width = width;
+	_xInc = xInc;
+	_sliderDown = false;
+	SceneActor::postInit();
+	SceneObject::setup(4, 2, 1);
+	fixPriority(255);
+	setPosition(Common::Point(_width * (_initial - 1) / (_xInc - 1) + _xStart, yp));
+
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.push_front(this);
+}
+
+/*--------------------------------------------------------------------------*/
+
+ScannerDialog::ScannerDialog() {
+}
+
+void ScannerDialog::remove() {
+	switch (R2_GLOBALS._sceneManager._sceneNumber) {
+	case 1550:
+	case 1700:
+		R2_GLOBALS._events.setCursor(R2_GLOBALS._player._canWalk ? CURSOR_ARROW : CURSOR_USE);
+		break;
+	case 3800:
+	case 3900: {
+		Scene *scene = R2_GLOBALS._sceneManager._scene;
+		scene->_sceneMode = 3806;
+		scene->signal();
+		break;
+		}
+	default:
+		break;
+	}
+
+	SceneExt *scene = static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene);
+	scene->_sceneAreas.remove(&_talkButton);
+	scene->_sceneAreas.remove(&_scanButton);
+	_talkButton.remove();
+	_scanButton.remove();
+	_slider.remove();
+	_obj4.remove();
+	_obj5.remove();
+	_obj6.remove();
+	_obj7.remove();
+
+	ModalWindow::remove();
+}
+
+void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+	// Stop player moving if currently doing so
+	if (R2_GLOBALS._player._mover)
+		R2_GLOBALS._player.addMover(NULL);
+
+	R2_GLOBALS._events.setCursor(CURSOR_USE);
+	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
+
+	proc13(100, -1, -1, -1);
+	_talkButton.setup(1);
+	_scanButton.setup(2);
+	_slider.setup(R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);
+
+	_obj4.postInit();
+	_obj4.setup(4, 3, 2);
+	_obj4.setPosition(Common::Point(160, 83));
+	_obj4.fixPriority(256);
+
+	if (R2_GLOBALS._sceneManager._sceneNumber == 3800 || R2_GLOBALS._sceneManager._sceneNumber == 3900) {
+		Scene *scene = R2_GLOBALS._sceneManager._scene;
+		scene->_sceneMode = 3805;
+		scene->signal();
+	}
+}
+
+/*--------------------------------------------------------------------------*/
 
 } // End of namespace Ringworld2
 

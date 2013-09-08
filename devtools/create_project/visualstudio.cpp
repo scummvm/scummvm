@@ -83,7 +83,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	// Check for project-specific warnings:
 	std::map< std::string, std::list<std::string> >::iterator warningsIterator = _projectWarnings.find(name);
 
-	if (setup.devTools || name == setup.projectName) {
+	if (setup.devTools || setup.tests || name == setup.projectName) {
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
@@ -140,6 +140,11 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
+	// Output auto-generated test runner
+	if (setup.tests) {
+		project << "\t\t<File RelativePath=\"test_runner.cpp\" />\n";
+	}
+
 	project << "\t</Files>\n"
 	           "</VisualStudioProject>\n";
 }
@@ -161,13 +166,24 @@ void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ost
 }
 
 void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32) {
-	if (!setup.devTools && setup.runBuildEvents) {
+	if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
 		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
 		           "\t\t\t/>\n"
 		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
 		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup.createInstaller) << "\"\n"
 		           "\t\t\t/>\n";
+	}
+
+	// Generate runner file before build for tests
+	if (setup.tests) {
+		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
+			"\t\t\t\tCommandLine=\"" << getTestPreBuildEvent(setup) << "\"\n"
+			"\t\t\t/>\n";
+
+		project << "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
+			"\t\t\t\tCommandLine=\"$(TargetPath)\" IgnoreExitCode=\"true\"\n"
+			"\t\t\t/>\n";
 	}
 }
 
@@ -212,9 +228,9 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(TargetDir)\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
-	              "\t\tExceptionHandling=\"" << (setup.devTools ? "1" : "0") << "\"\n";
+	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests) ? "1" : "0") << "\"\n";
 
 #if NEEDS_RTTI
 	properties << "\t\tRuntimeTypeInfo=\"true\"\n";
@@ -235,7 +251,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
 	              "\t\tSubSystem=\"1\"\n";
 
-	if (!setup.devTools)
+	if (!setup.devTools && !setup.tests)
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";
 
 	properties << "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << ((bits == 32) ? "x86" : "x64") << "\"\n"

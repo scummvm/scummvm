@@ -110,7 +110,7 @@ void Screen::copyToScreen() {
 
 	// If a full update is needed, update the whole screen
 	if (_surface->needsFullUpdate()) {
-		byte *ptr = (byte *)_surface->getBasePtr(0, 0);
+		byte *ptr = (byte *)_surface->getPixels();
 
 		_vm->_system->copyRectToScreen(ptr, kScreenWidth,
 			0, 0, kScreenWidth, kScreenHeight);
@@ -138,7 +138,7 @@ void Screen::copyToScreen() {
  * Clears the screen and marks the whole screen dirty.
  */
 void Screen::clearScreen() {
-	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
+	byte *ptr = (byte *)_surface->getPixels();
 
 	_surface->markDirty();
 

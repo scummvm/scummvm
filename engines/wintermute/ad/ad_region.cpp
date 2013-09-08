@@ -404,9 +404,9 @@ bool AdRegion::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha));
 	persistMgr->transfer(TMEMBER(_blocked));
 	persistMgr->transfer(TMEMBER(_decoration));
-	persistMgr->transfer(TMEMBER(_zoom));
+	persistMgr->transferFloat(TMEMBER(_zoom));
 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

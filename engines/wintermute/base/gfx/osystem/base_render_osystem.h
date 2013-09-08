@@ -33,10 +33,30 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 #include "common/list.h"
+#include "engines/wintermute/graphics/transform_struct.h"
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
 class RenderTicket;
+/**
+ * A 2D-renderer implementation for WME.
+ * This renderer makes use of a "ticket"-system, where all draw-calls
+ * are stored as tickets until flip() is called, and compared against the tickets
+ * from last frame, to determine which calls were the same as last round
+ * (i.e. in the exact same order, with the exact same arguments), and thus
+ * figure out which parts of the screen need to be redrawn.
+ *
+ * Important concepts to handle here, is the ordered number of any ticket
+ * which is called the "drawNum", every frame this starts from scratch, and
+ * then the incoming tickets created from the draw-calls are checked to see whether
+ * they came before, on, or after the drawNum they had last frame. Everything else
+ * being equal, this information is then used to check whether the draw order changed,
+ * which will then create a need for redrawing, as we draw with an alpha-channel here.
+ *
+ * There is also a draw path that draws without tickets, for debugging purposes,
+ * as well as to accomodate situations with large enough amounts of draw calls,
+ * that there will be too much overhead involved with comparing the generated tickets.
+ */
 class BaseRenderOSystem : public BaseRenderer {
 public:
 	BaseRenderOSystem(BaseGame *inGame);
@@ -56,10 +76,13 @@ public:
 
 	BaseImage *takeScreenshot() override;
 
-	void setAlphaMod(byte alpha);
-	void setColorMod(byte r, byte g, byte b);
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
+	/**
+	 * Insert a ticket into the queue, adding a dirty rect if it's
+	 * new, or out-of-order from last draw from the ticket.
+	 * param renderTicket the ticket to be added.
+	 */
 	void drawFromTicket(RenderTicket *renderTicket);
 
 	bool setViewport(int left, int top, int right, int bottom) override;
@@ -80,11 +103,18 @@ public:
 	virtual bool startSpriteBatch() override;
 	virtual bool endSpriteBatch() override;
 	void endSaveLoad();
-	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false) ;
+	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
 	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
 	BaseSurface *createSurface() override;
 private:
-	void addDirtyRect(const Common::Rect &rect) ;
+	/**
+	 * Mark a specified rect of the screen as dirty.
+	 * @param rect the region to be marked as dirty
+	 */
+	void addDirtyRect(const Common::Rect &rect);
+	/**
+	 * Traverse the tickets that are dirty, and draw them
+	 */
 	void drawTickets();
 	// Non-dirty-rects:
 	void drawFromSurface(RenderTicket *ticket);
@@ -97,7 +127,7 @@ private:
 	RenderTicket *_previousTicket;
 
 	bool _needsFlip;
-	uint32 _drawNum;
+	uint32 _drawNum; ///< The global number of the current draw-operation.
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
 	Graphics::Surface *_blankSurface;
@@ -119,6 +149,6 @@ private:
 	bool _skipThisFrame;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

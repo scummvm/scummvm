@@ -95,4 +95,4 @@ AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

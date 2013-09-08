@@ -48,9 +48,10 @@ public:
 	Module(NeverhoodEngine *vm, Module *parentModule);
 	virtual ~Module();
 	virtual void draw();
+
+	Entity *_childObject;
 protected:
 	Module *_parentModule;
-	Entity *_childObject;
 	bool _done;
 	uint32 _moduleResult;
 	SceneType _sceneType;

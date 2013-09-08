@@ -126,9 +126,7 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 	inst->_a->getFrameRect(r);
 
 	Graphics::Surface v18;
-	v18.w = r.width();
-	v18.h = r.height();
-	v18.pixels = inst->_a->getFrameData();
+	v18.init(r.width(), r.height(), r.width(), inst->_a->getFrameData(), Graphics::PixelFormat::createFormatCLUT8());
 
 	int16 x = inst->_opA.getValue();
 	int16 y = inst->_opB.getValue();

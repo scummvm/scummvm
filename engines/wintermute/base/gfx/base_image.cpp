@@ -228,4 +228,4 @@ bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 	return true;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -51,6 +51,6 @@ public:
 	bool _ready;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

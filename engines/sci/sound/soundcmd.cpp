@@ -530,17 +530,21 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 }
 
 reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
+	// The 4 parameter variant of this call is used in at least LSL1VGA, room
+	// 110 (Lefty's bar), to distort the music when Larry is drunk and stands
+	// up - bug #3614447.
 	reg_t obj = argv[0];
 	byte channel = argv[1].toUint16() & 0xf;
-	byte midiCmd = argv[2].toUint16() & 0xff;
+	byte midiCmd = (argc == 5) ? argv[2].toUint16() & 0xff : 0xB0;	// 0xB0: controller
+	uint16 controller = (argc == 5) ? argv[3].toUint16() : argv[2].toUint16();
+	uint16 param = (argc == 5) ? argv[4].toUint16() : argv[3].toUint16();
 
-	// TODO: first there is a 4-parameter variant of this call which needs to get reversed
-	//        second the current code isn't 100% accurate, sierra sci does checks on the 4th parameter
-	if (argc == 4)
-		return acc;
-
-	uint16 controller = argv[3].toUint16();
-	uint16 param = argv[4].toUint16();
+	if (argc == 4 && controller == 0xFF) {
+		midiCmd = 0xE0;	// 0xE0: pitch wheel
+		uint16 pitch = CLIP<uint16>(argv[3].toSint16() + 0x2000, 0x0000, 0x3FFF);
+		controller = pitch & 0x7F;
+		param = pitch >> 7;
+	}
 
 	debugC(kDebugLevelSound, "kDoSound(sendMidi): %04x:%04x, %d, %d, %d, %d", PRINT_REG(obj), channel, midiCmd, controller, param);
 	if (channel)

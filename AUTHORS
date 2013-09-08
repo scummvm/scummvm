@@ -238,9 +238,6 @@ ScummVM Team
        Andre Heider
        Angus Lees
 
-    BADA:
-       Chris Warren-Smith
-
     Dreamcast:
        Marcus Comstedt
 
@@ -287,6 +284,9 @@ ScummVM Team
     SymbianOS:
        Jurgen Braam
        Lars Persson
+
+    Tizen / BADA:
+       Chris Warren-Smith
 
     WebOS:
        Klaus Reimer

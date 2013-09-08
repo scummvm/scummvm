@@ -98,4 +98,4 @@ AnsiString PathUtil::getExtension(const AnsiString &path) {
 	return Common::lastPathComponent(path, '.');
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

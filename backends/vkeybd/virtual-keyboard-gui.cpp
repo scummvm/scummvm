@@ -32,11 +32,9 @@
 
 namespace Common {
 
-static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16 x, int16 y, OverlayColor transparent) {
-	if (surf_dst->format.bytesPerPixel != sizeof(OverlayColor) || surf_src->format.bytesPerPixel != sizeof(OverlayColor))
-		return;
-
-	const OverlayColor *src = (const OverlayColor *)surf_src->pixels;
+template<typename ColorType>
+static void blitImplementation(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16 x, int16 y, ColorType transparent) {
+	const ColorType *src = (const ColorType *)surf_src->getPixels();
 	int blitW = surf_src->w;
 	int blitH = surf_src->h;
 
@@ -58,19 +56,29 @@ static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16
 	if (blitW <= 0 || blitH <= 0)
 		return;
 
-	OverlayColor *dst = (OverlayColor *)surf_dst->getBasePtr(x, y);
+	ColorType *dst = (ColorType *)surf_dst->getBasePtr(x, y);
 	int dstAdd = surf_dst->w - blitW;
 	int srcAdd = surf_src->w - blitW;
 
 	for (int i = 0; i < blitH; ++i) {
 		for (int j = 0; j < blitW; ++j, ++dst, ++src) {
-			OverlayColor col = *src;
+			ColorType col = *src;
 			if (col != transparent)
 				*dst = col;
 		}
 		dst += dstAdd;
 		src += srcAdd;
 	}
+}
+
+static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16 x, int16 y, uint32 transparent) {
+	if (surf_dst->format.bytesPerPixel != surf_src->format.bytesPerPixel)
+		return;
+
+	if (surf_dst->format.bytesPerPixel == 2)
+		blitImplementation<uint16>(surf_dst, surf_src, x, y, transparent);
+	else if (surf_dst->format.bytesPerPixel == 4)
+		blitImplementation<uint32>(surf_dst, surf_src, x, y, transparent);
 }
 
 VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd)
@@ -111,7 +119,7 @@ void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
 	}
 }
 
-void VirtualKeyboardGUI::setupDisplayArea(Rect &r, OverlayColor forecolor) {
+void VirtualKeyboardGUI::setupDisplayArea(Rect &r, uint32 forecolor) {
 
 	_dispFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	if (!fontIsSuitable(_dispFont, r)) {
@@ -161,7 +169,7 @@ void VirtualKeyboardGUI::run() {
 		_system->clearOverlay();
 	}
 	_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-	_system->grabOverlay(_overlayBackup.pixels, _overlayBackup.pitch);
+	_system->grabOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch);
 
 	setupCursor();
 
@@ -171,7 +179,7 @@ void VirtualKeyboardGUI::run() {
 
 	removeCursor();
 
-	_system->copyRectToOverlay(_overlayBackup.pixels, _overlayBackup.pitch, 0, 0, _overlayBackup.w, _overlayBackup.h);
+	_system->copyRectToOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch, 0, 0, _overlayBackup.w, _overlayBackup.h);
 	if (!g_gui.isActive()) _system->hideOverlay();
 
 	_overlayBackup.free();
@@ -262,7 +270,7 @@ void VirtualKeyboardGUI::screenChanged() {
 		_screenH = newScreenH;
 
 		_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-		_system->grabOverlay(_overlayBackup.pixels, _overlayBackup.pitch);
+		_system->grabOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch);
 
 		if (!_kbd->checkModeResolutions()) {
 			_displaying = false;
@@ -356,13 +364,13 @@ void VirtualKeyboardGUI::redraw() {
 	Graphics::Surface surf;
 	surf.create(w, h, _system->getOverlayFormat());
 
-	OverlayColor *dst = (OverlayColor *)surf.pixels;
-	const OverlayColor *src = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
+	byte *dst = (byte *)surf.getPixels();
+	const byte *src = (const byte *)_overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
 
 	while (h--) {
-		memcpy(dst, src, surf.w * sizeof(OverlayColor));
-		dst += surf.w;
-		src += _overlayBackup.w;
+		memcpy(dst, src, surf.pitch);
+		dst += surf.pitch;
+		src += _overlayBackup.pitch;
 	}
 
 	blit(&surf, _kbdSurface, _kbdBound.left - _dirtyRect.left,
@@ -371,7 +379,7 @@ void VirtualKeyboardGUI::redraw() {
 		blit(&surf, &_dispSurface, _dispX - _dirtyRect.left,
 		     _dispY - _dirtyRect.top, _dispBackColor);
 	}
-	_system->copyRectToOverlay(surf.pixels, surf.pitch,
+	_system->copyRectToOverlay(surf.getPixels(), surf.pitch,
 	                           _dirtyRect.left, _dirtyRect.top, surf.w, surf.h);
 
 	surf.free();

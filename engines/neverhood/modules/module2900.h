@@ -49,7 +49,7 @@ protected:
 	Scene *_parentScene;
 	uint _index;
 	int _countdown1;
-	void update();	
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -74,7 +74,7 @@ protected:
 	Scene *_parentScene;
 	int _which;
 	int _countdown1;
-	void update();	
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

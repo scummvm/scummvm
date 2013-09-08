@@ -85,6 +85,6 @@ private:
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::iterator _filesIter;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -41,11 +41,11 @@ namespace Video {
 		byte b = _clipTable[lum + (u << 1)]; \
 		\
 		if (_pixelFormat.bytesPerPixel == 2) \
-			*((uint16 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
+			*((uint16 *)_curFrame.surface->getPixels() + offset) = _pixelFormat.RGBToColor(r, g, b); \
 		else \
-			*((uint32 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
+			*((uint32 *)_curFrame.surface->getPixels() + offset) = _pixelFormat.RGBToColor(r, g, b); \
 	} else \
-		*((byte *)_curFrame.surface->pixels + offset) = lum
+		*((byte *)_curFrame.surface->getPixels() + offset) = lum
 
 CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec() {
 	_curFrame.surface = NULL;

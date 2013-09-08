@@ -196,7 +196,7 @@ bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
-	persistMgr->transfer(TMEMBER(_lastMimicScale));
+	persistMgr->transferFloat(TMEMBER(_lastMimicScale));
 	persistMgr->transfer(TMEMBER(_lastMimicX));
 	persistMgr->transfer(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
@@ -267,4 +267,4 @@ bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int arg
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

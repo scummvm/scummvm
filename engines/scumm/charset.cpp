@@ -799,7 +799,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
-			dstPtr = (byte *)_vm->_textSurface.pixels;
+			dstPtr = (byte *)_vm->_textSurface.getPixels();
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -829,7 +829,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
 			dstSurface = _vm->_textSurface;
-			dstPtr = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch * _vm->_textSurfaceMultiplier + _left * _vm->_textSurfaceMultiplier;
+			dstPtr = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier);
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -907,7 +907,7 @@ bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	if (!prepareDraw(chr))
 		return;
-	byte *dst = (byte *)s.pixels + y * s.pitch + x;
+	byte *dst = (byte *)s.getBasePtr(x, y);
 	drawBitsN(s, dst, _charPtr, *_fontPtr, y, _width, _height);
 }
 
@@ -1242,7 +1242,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	if (ignoreCharsetMask) {
 		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 		s = *vs;
-		s.pixels = vs->getPixels(0, 0);
+		s.setPixels(vs->getPixels(0, 0));
 	} else {
 		s = _vm->_textSurface;
 		drawTop -= _vm->_screenTop;
@@ -1401,7 +1401,7 @@ void CharsetRendererTownsClassic::drawBitsN(const Graphics::Surface&, byte *dst,
 	}
 
 	bool scale2x = (_vm->_textSurfaceMultiplier == 2);
-	dst = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch * _vm->_textSurfaceMultiplier + _left * _vm->_textSurfaceMultiplier;
+	dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier);
 
 	int y, x;
 	int color;

@@ -52,7 +52,7 @@ void PspRtc::init() {						// init our starting ticks
 
 // Note that after we fill up 32 bits ie 50 days we'll loop back to 0, which may cause
 // unpredictable results
-uint32 PspRtc::getMillis() {
+uint32 PspRtc::getMillis(bool skipRecord) {
 	uint32 ticks[2];
 
 	sceRtcGetCurrentTick((u64 *)ticks);		// can introduce weird thread delays

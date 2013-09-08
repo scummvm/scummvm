@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef VIDEO_AVI_PLAYER_H
-#define VIDEO_AVI_PLAYER_H
+#ifndef VIDEO_AVI_DECODER_H
+#define VIDEO_AVI_DECODER_H
 
-#include "common/endian.h"
+#include "common/array.h"
 #include "common/rational.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -52,10 +52,13 @@ class Codec;
  *
  * Video decoder used in engines:
  *  - sci
+ *  - sword1
+ *  - sword2
  */
 class AVIDecoder : public VideoDecoder {
 public:
 	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -99,13 +102,10 @@ private:
 	};
 
 	struct OldIndex {
+		uint32 id;
+		uint32 flags;
+		uint32 offset;
 		uint32 size;
-		struct Index {
-			uint32 id;
-			uint32 flags;
-			uint32 offset;
-			uint32 size;
-		} *indices;
 	};
 
 	// Index Flags
@@ -215,17 +215,24 @@ private:
 		Audio::QueuingAudioStream *createAudioStream();
 	};
 
-	OldIndex _ixInfo;
+	Common::Array<OldIndex> _indexEntries;
 	AVIHeader _header;
 
 	Common::SeekableReadStream *_fileStream;
 	bool _decodedHeader;
+	bool _foundMovieList;
+	uint32 _movieListStart;
 
 	Audio::Mixer::SoundType _soundType;
+	Common::Rational _frameRateOverride;
+	void initCommon();
 
-	void runHandle(uint32 tag);
-	void handleList();
-	void handleStreamHeader();
+	bool parseNextChunk();
+	void skipChunk(uint32 size);
+	void handleList(uint32 listSize);
+	void handleStreamHeader(uint32 size);
+	uint16 getStreamType(uint32 tag) const { return tag & 0xFFFF; }
+	byte getStreamIndex(uint32 tag) const;
 };
 
 } // End of namespace Video

@@ -519,4 +519,4 @@ bool UIText::sizeToFit() {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

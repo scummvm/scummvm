@@ -160,7 +160,7 @@ enum {
 	VA_HAS_KEY					= 0x0090EA95,
 	VA_IS_KEY_INSERTED			= 0x08D0AB11,
 	VA_LOCKS_DISABLED			= 0x14800353,
-	V_END_	
+	V_END_
 };
 
 struct GameVar {
@@ -168,6 +168,8 @@ struct GameVar {
 	uint32 value;
 	int16 firstIndex, nextIndex;
 };
+
+class Console;
 
 class GameVars {
 public:
@@ -179,7 +181,7 @@ public:
 	void setGlobalVar(uint32 nameHash, uint32 value);
 	uint32 getSubVar(uint32 nameHash, uint32 subNameHash);
 	void setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value);
-	void dumpVars();
+	void dumpVars(Console *con);
 protected:
 	Common::Array<GameVar> _vars;
 	int16 addVar(uint32 nameHash, uint32 value);

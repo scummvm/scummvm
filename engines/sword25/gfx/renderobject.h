@@ -236,7 +236,7 @@ public:
 	    @brief Löscht alle Kinderobjekte.
 	*/
 	void deleteAllChildren();
-	
+
 	// Accessor-Methoden
 	// -----------------
 	/**
@@ -305,11 +305,11 @@ public:
 	int         getZ() const {
 		return _z;
 	}
-	
+
 	int getAbsoluteZ() const {
 		return _absoluteZ;
 	}
-	
+
 	/**
 	    @brief Gibt die Breite des Objektes zurück.
 	 */
@@ -363,11 +363,11 @@ public:
 		return _handle;
 	}
 
-	// Get the RenderObjects current version	
+	// Get the RenderObjects current version
 	int getVersion() const {
 		return _version;
 	}
-	
+
 	bool isSolid() const {
 		return _isSolid;
 	}
@@ -410,7 +410,7 @@ protected:
 	bool        _oldVisible;
 
 	static int _nextGlobalVersion;
-	
+
 	int _version;
 
 	// This should be set to true if the RenderObject is NOT alpha-blended to optimize drawing
@@ -509,9 +509,9 @@ private:
 	    @brief Berechnet die absolute Position des Objektes.
 	*/
 	int calcAbsoluteY() const;
-	
+
 	int calcAbsoluteZ() const;
-	
+
 	/**
 	    @brief Sortiert alle Kinderobjekte nach ihrem Renderang.
 	 */

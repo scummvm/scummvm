@@ -249,11 +249,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 		if (!memcmp(header, "Creative", 8)) {
 			resourceType = kSoundVOC;
-		} else if (!memcmp(header, "RIFF", 4) != 0) {
+		} else if (!memcmp(header, "RIFF", 4)) {
 			resourceType = kSoundWAV;
-		} else if (!memcmp(header, "FORM", 4) != 0) {
+		} else if (!memcmp(header, "FORM", 4)) {
 			resourceType = kSoundAIFF;
-		} else if (!memcmp(header, "ajkg", 4) != 0) {
+		} else if (!memcmp(header, "ajkg", 4)) {
 			resourceType = kSoundShorten;
 		}
 

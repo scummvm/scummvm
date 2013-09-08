@@ -587,4 +587,4 @@ int BaseFontBitmap::getLetterHeight() {
 	return _tileHeight;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -311,8 +311,8 @@ void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 	//     - fDebugWindow                (always 0?)
 
 	if (_bookInfoFile.hasSection("Globals")) {
-		const Common::ConfigFile::SectionKeyList globals = _bookInfoFile.getKeys("Globals");
-		for (Common::ConfigFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
+		const Common::INIFile::SectionKeyList globals = _bookInfoFile.getKeys("Globals");
+		for (Common::INIFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
 			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
 			LBCode tempCode(this, 0);
 			uint offset = tempCode.parseCode(command);

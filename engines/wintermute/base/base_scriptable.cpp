@@ -188,4 +188,4 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return nullptr;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

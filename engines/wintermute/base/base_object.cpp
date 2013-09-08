@@ -968,9 +968,9 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_movable));
 	persistMgr->transfer(TMEMBER(_posX));
 	persistMgr->transfer(TMEMBER(_posY));
-	persistMgr->transfer(TMEMBER(_relativeScale));
+	persistMgr->transferFloat(TMEMBER(_relativeScale));
 	persistMgr->transfer(TMEMBER(_rotatable));
-	persistMgr->transfer(TMEMBER(_scale));
+	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transferPtr(TMEMBER_PTR(_sFX));
 	persistMgr->transfer(TMEMBER(_sFXStart));
 	persistMgr->transfer(TMEMBER(_sFXVolume));
@@ -982,21 +982,21 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_soundEvent));
 	persistMgr->transfer(TMEMBER(_zoomable));
 
-	persistMgr->transfer(TMEMBER(_scaleX));
-	persistMgr->transfer(TMEMBER(_scaleY));
+	persistMgr->transferFloat(TMEMBER(_scaleX));
+	persistMgr->transferFloat(TMEMBER(_scaleY));
 
-	persistMgr->transfer(TMEMBER(_rotate));
+	persistMgr->transferFloat(TMEMBER(_rotate));
 	persistMgr->transfer(TMEMBER(_rotateValid));
-	persistMgr->transfer(TMEMBER(_relativeRotate));
+	persistMgr->transferFloat(TMEMBER(_relativeRotate));
 
 	persistMgr->transfer(TMEMBER(_saveState));
 	persistMgr->transfer(TMEMBER(_nonIntMouseEvents));
 
 	persistMgr->transfer(TMEMBER_INT(_sFXType));
-	persistMgr->transfer(TMEMBER(_sFXParam1));
-	persistMgr->transfer(TMEMBER(_sFXParam2));
-	persistMgr->transfer(TMEMBER(_sFXParam3));
-	persistMgr->transfer(TMEMBER(_sFXParam4));
+	persistMgr->transferFloat(TMEMBER(_sFXParam1));
+	persistMgr->transferFloat(TMEMBER(_sFXParam2));
+	persistMgr->transferFloat(TMEMBER(_sFXParam3));
+	persistMgr->transferFloat(TMEMBER(_sFXParam4));
 
 
 	persistMgr->transfer(TMEMBER_INT(_blendMode));
@@ -1242,4 +1242,4 @@ bool BaseObject::afterMove() {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

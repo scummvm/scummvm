@@ -299,7 +299,11 @@ static const GameSettings gameVariantsTable[] = {
 
 	// Changed o_getResourceSize to cover all resource types
 	{"farm", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
-	{"puttzoo", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"puttzoo", "", 0, GID_PUTTZOO, 6, 73, MDT_NONE, GF_USE_KEY, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"puttzoo", "HE 72", 0, GID_PUTTZOO, 6, 72, MDT_NONE, GF_USE_KEY | GF_HE_985, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"puttzoo", "HE 98.5", 0, GID_PUTTZOO, 6, 98, MDT_NONE, GF_USE_KEY | GF_HE_985, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"puttzoo", "HE 99", 0, GID_PUTTZOO, 6, 99, MDT_NONE, GF_USE_KEY, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"puttzoo", "HE 100", 0, GID_PUTTZOO, 6, 100, MDT_NONE, GF_USE_KEY, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
 
 	// Added VAR_PLATFORM variable
 	{"jungle", "", 0, GID_HEGAME, 6, 74, MDT_NONE, GF_USE_KEY, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
@@ -385,7 +389,8 @@ static const GameSettings gameVariantsTable[] = {
 	{"Soccer2004", 0, 0, GID_SOCCER2004, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
 
 	// U32 code required, for testing only
-	{"moonbase", 0, 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"moonbase", "1.0", 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"moonbase", "1.1", 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
 	{"moonbase", "Demo", 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR | GF_DEMO, UNK, GUIO3(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT)},
 
 	// HE100 games, which use older o72_debugInput code
@@ -758,6 +763,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "PYJAMADB", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "PyjamaHM", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "pajama2", "PyjamaHM", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "PYJAMA2", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama2", "Pyjama Pit 2", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
@@ -858,6 +864,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttzoo", "Putt-Putt Saves the Zoo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttzoo", "game", kGenHEPC, Common::EN_ANY, Common::kPlatformIOS, 0 },
+	{ "puttzoo", "pp3_unlocked", kGenHEPC, Common::EN_ANY, Common::kPlatformWindows, 0 },
 
 	{ "SamsFunShop", "SamsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "SamsFunShop", "Sam's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },

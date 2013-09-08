@@ -54,27 +54,32 @@ public:
 
 	/**
 	 * Open a Mac data/resource fork pair.
+	 *
+	 * This uses SearchMan to find the data/resource forks. This should only be used
+	 * from inside an engine.
+	 *
 	 * @param filename The base file name of the file
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
-	bool open(String filename);
+	bool open(const String &fileName);
 
 	/**
 	 * Open a Mac data/resource fork pair.
+	 *
 	 * @param path The path that holds the forks
 	 * @param filename The base file name of the file
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
-	bool open(FSNode path, String filename);
+	bool open(const FSNode &path, const String &fileName);
 
 	/**
 	 * See if a Mac data/resource fork pair exists.
 	 * @param filename The base file name of the file
 	 * @return True if either a data fork or resource fork with this name exists
 	 */
-	static bool exists(const String &filename);
+	static bool exists(const String &fileName);
 
 	/**
 	 * Close the Mac data/resource fork pair.
@@ -92,12 +97,6 @@ public:
 	 * @return True if the resource fork is present
 	 */
 	bool hasResFork() const;
-
-	/**
-	 * Check if the given stream is in the MacBinary format.
-	 * @param stream The stream we're checking
-	 */
-	static bool isMacBinary(SeekableReadStream &stream);
 
 	/**
 	 * Read resource from the MacBinary file
@@ -176,7 +175,13 @@ private:
 	bool loadFromMacBinary(SeekableReadStream &stream);
 	bool loadFromAppleDouble(SeekableReadStream &stream);
 
-	static Common::String constructAppleDoubleName(Common::String name);
+	static String constructAppleDoubleName(String name);
+
+	/**
+	 * Check if the given stream is in the MacBinary format.
+	 * @param stream The stream we're checking
+	 */
+	static bool isMacBinary(SeekableReadStream &stream);
 
 	enum {
 		kResForkNone = 0,

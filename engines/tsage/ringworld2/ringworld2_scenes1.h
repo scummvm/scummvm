@@ -39,6 +39,24 @@ namespace Ringworld2 {
 
 using namespace TsAGE;
 
+class Scene1000 : public SceneExt {
+public:
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	SpeakerGameText _gameTextSpeaker;
+	AnimationPlayer _animationPlayer;
+
+	int _field412;
+	int _fieldD2E;
+public:
+	Scene1000();
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene1010 : public SceneExt {
 public:
 	SequenceManager _sequenceManager;
@@ -57,15 +75,15 @@ public:
 };
 
 class Scene1100 : public SceneExt {
-	class Actor16 : public SceneActor {
+	class Seeker : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor17 : public SceneActor {
+	class Trooper : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor18 : public SceneActor {
+	class Chief : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -100,9 +118,9 @@ public:
 	SceneActor _actor15;
 	BackgroundSceneObject _object1;
 	BackgroundSceneObject _object2;
-	Actor16 _actor16;
-	Actor17 _actor17;
-	Actor18 _actor18;
+	Seeker _seeker;
+	Trooper _trooper;
+	Chief _chief;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	SequenceManager _sequenceManager3;
@@ -118,36 +136,31 @@ public:
 };
 
 class Scene1200 : public SceneExt {
-	class Area1: public SceneArea {
+	enum CrawlDirection { CRAWL_EAST = 1, CRAWL_WEST = 2, CRAWL_SOUTH = 3, CRAWL_NORTH = 4 };
+
+	class LaserPanel: public ModalWindow {
 	public:
-		class Actor3 : public SceneActorExt {
+		class Jumper : public SceneActorExt {
 		public:
 			void init(int state);
 			virtual bool startAction(CursorType action, Event &event);
 		};
 
-		SceneActor _actor2;
-		Actor3 _actor3;
-		Actor3 _actor4;
-		Actor3 _actor5;
+		Jumper _jumper1;
+		Jumper _jumper2;
+		Jumper _jumper3;
 
-		byte _field20;
-
-		Area1();
-		void synchronize(Serializer &s);
+		LaserPanel();
 
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void remove();
-		virtual void process(Event &event);
-		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
 public:
 	NamedHotspot _item1;
 	SceneActor _actor1;
-	Area1 _area1;
-	UnkObject1200 _object1;
+	LaserPanel _laserPanel;
+	MazeUI _mazeUI;
 	SequenceManager _sequenceManager;
 
 	int _field412;
@@ -155,12 +168,12 @@ public:
 	int _field416;
 	int _field418;
 	int _field41A;
-	int _field41C;
+	bool _fixupMaze;
 
 	Scene1200();
 	void synchronize(Serializer &s);
 
-	void sub9DAD6(int indx);
+	void startCrawling(CrawlDirection dir);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

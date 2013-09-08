@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Pluto - Heavy-duty persistence for Lua
+/* Tamed Pluto - Heavy-duty persistence for Lua
  * Copyright (C) 2004 by Ben Sunshine-Hill, and released into the public
  * domain. People making use of this software as part of an application
  * are politely requested to email the author at sneftel@gmail.com
@@ -14,10 +14,16 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Instrumented by Stefan Reich (info@luaos.net)
+ * for Mobile Lua (http://luaos.net/pages/mobile-lua.php)
  */
 
+#include "config.h"
 #include "sword25/util/lua/lua.h"
 #include "pluto.h"
+
+#undef TOTEXT
 
 #define USE_PDEP
 
@@ -42,10 +48,20 @@
 #include <string.h>
 
 
+/* Define this if you want size_t values to be written in 64-bit
+   (even on 32-bit systems). Should eliminate at least one source of
+   32/64 bit incompatibility. */
+#define SIZES64
+
 
 /* #define PLUTO_DEBUG */
 
 
+#ifdef SIZES64
+#define VERSION "Tamed Pluto 1.0 with SIZES64 flag"
+#else
+#define VERSION "Tamed Pluto 1.0"
+#endif
 
 
 #ifdef PLUTO_DEBUG
@@ -55,6 +71,23 @@
 #define PLUTO_TPERMANENT 101
 
 #define verify(x) { int v = (int)((x)); v=v; lua_assert(v); }
+
+#define NUMTYPES 9
+static const char* typenames[] = {
+	"nil",
+	"boolean",
+	"lightuserdata",
+	"number",
+	"string",
+	"table",
+	"function",
+	"userdata",
+	"thread"
+};
+
+static int humanReadable = 0;
+#define hrBufSize 200
+static char hrBuf[hrBufSize];
 
 typedef struct PersistInfo_t {
 	lua_State *L;
@@ -75,6 +108,77 @@ void printindent(int indent)
 	}
 }
 #endif
+
+/* lua_Chunkwriter signature: (lua_State *L, const void *p, size_t sz, void *ud).
+   ud is a pointer to the WriterInfo struct (holds the buffer pointer)
+*/
+
+static void pi_write(PersistInfo *pi, const void *p, size_t size, void *ud) {
+	if (humanReadable) {
+		uint i;
+		snprintf(hrBuf, hrBufSize, "  pi_write %d ", (int) size);
+		pi->writer(pi->L, hrBuf, strlen(hrBuf), ud);
+		for (i = 0; i < size; i++) {
+			char b = ((char *)p)[i];
+			snprintf(hrBuf, hrBufSize, "%X%X", (b >> 4) & 0xF, b & 0xF);
+			pi->writer(pi->L, hrBuf, strlen(hrBuf), ud);
+		}
+		snprintf(hrBuf, hrBufSize, "\n");
+		pi->writer(pi->L, hrBuf, strlen(hrBuf), ud);
+	} else {
+		pi->writer(pi->L, p, size, ud);
+	}
+#ifdef TOTEXT
+	int i;
+	printf("  pi_write %d ", (int) size);
+	for (i = 0; i < size; i++) {
+		char b = ((char *)p)[i];
+		printf("%X%X", (b >> 4) & 0xF, b & 0xF);
+	}
+	printf("\n");
+#endif
+}
+
+static void hrOut(PersistInfo *pi) {
+	pi->writer(pi->L, hrBuf, strlen(hrBuf), pi->ud);
+}
+
+static void write_size(PersistInfo *pi, size_t *val)
+{
+#ifdef SIZES64
+	int64 longval; /* yeah, you really need long long to get 8 bytes on win32... duh. */
+	longval = *val;
+	pi_write(pi, &longval, 8, pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "write_size64 %ld\n", longval);
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("write_size64 %ld\n", longval);
+#endif
+#else
+	pi_write(pi, val, sizeof(size_t), pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "write_size %ld\n", *((size_t *)val));
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("write_size %ld\n", *val);
+#endif
+#endif
+}
+
+static void read_size(ZIO *zio, size_t *val)
+{
+#ifdef SIZES64
+	int64 longval;
+	verify(LIF(Z,read)(zio, &longval, 8) == 0);
+	*val = longval;
+#else
+	verify(LIF(Z,read)(zio, val, sizeof(size_t)) == 0);
+#endif
+}
+
 
 /* Mutual recursion requires prototype */
 static void persist(PersistInfo *pi);
@@ -107,7 +211,14 @@ static int persistspecialobject(PersistInfo *pi, int defaction)
 		if(defaction) {
 			{
 				int zero = 0;
-				pi->writer(pi->L, &zero, sizeof(int), pi->ud);
+				pi_write(pi, &zero, sizeof(int), pi->ud);
+				if (humanReadable) {
+					snprintf(hrBuf, hrBufSize, "persistspecialobject_write_zero\n");
+					hrOut(pi);
+				}
+#ifdef TOTEXT
+				printf("persistspecialobject_write_zero\n");
+#endif
 			}
 			return 0;
 		} else {
@@ -127,7 +238,14 @@ static int persistspecialobject(PersistInfo *pi, int defaction)
 		if(defaction) {
 			{
 				int zero = 0;
-				pi->writer(pi->L, &zero, sizeof(int), pi->ud);
+				pi_write(pi, &zero, sizeof(int), pi->ud);
+				if (humanReadable) {
+					snprintf(hrBuf, hrBufSize, "persistspecialobject_write_zero2\n");
+					hrOut(pi);
+				}
+#ifdef TOTEXT
+				printf("persistspecialobject_write_zero2\n");
+#endif
 			}
 			return 0;
 		} else {
@@ -143,7 +261,14 @@ static int persistspecialobject(PersistInfo *pi, int defaction)
 					/* perms reftbl sptbl ... obj */
 			{
 				int zero = 0;
-				pi->writer(pi->L, &zero, sizeof(int), pi->ud);
+				pi_write(pi, &zero, sizeof(int), pi->ud);
+				if (humanReadable) {
+					snprintf(hrBuf, hrBufSize, "persistspecialobject_write_zero3\n");
+					hrOut(pi);
+				}
+#ifdef TOTEXT
+				printf("persistspecialobject_write_zero3\n");
+#endif
 			}
 			return 0;
 		} else {
@@ -176,7 +301,14 @@ static int persistspecialobject(PersistInfo *pi, int defaction)
 					/* perms reftbl ... obj mt func */
 	{
 		int one = 1;
-		pi->writer(pi->L, &one, sizeof(int), pi->ud);
+		pi_write(pi, &one, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistspecialobject_write_one\n");
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistspecialobject_write_one\n");
+#endif
 	}
 	persist(pi);
 					/* perms reftbl ... obj mt func */
@@ -187,6 +319,14 @@ static int persistspecialobject(PersistInfo *pi, int defaction)
 
 static void persisttable(PersistInfo *pi)
 {
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persisttable\n");
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persisttable\n");
+#endif
+  
 					/* perms reftbl ... tbl */
 	lua_checkstack(pi->L, 3);
 	if(persistspecialobject(pi, 1)) {
@@ -235,8 +375,15 @@ static void persistuserdata(PersistInfo *pi) {
 	} else {
 	/* Use literal persistence */
 		size_t length = uvalue(getobject(pi->L, -1))->len;
-		pi->writer(pi->L, &length, sizeof(size_t), pi->ud);
-		pi->writer(pi->L, lua_touserdata(pi->L, -1), length, pi->ud);
+		write_size(pi, &length);
+		pi_write(pi, lua_touserdata(pi->L, -1), length, pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistuserdata %ld\n", (long) length);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistuserdata %ld\n", (long) length);
+#endif
 		if(!lua_getmetatable(pi->L, -1)) {
 					/* perms reftbl ... udata */
 			lua_pushnil(pi->L);
@@ -269,8 +416,8 @@ static void pushproto(lua_State *L, Proto *proto)
 
 #define setuvvalue(L,obj,x) \
   { TValue *i_o=(obj); \
-    i_o->value.gc=cast(GCObject *, (x)); i_o->tt=LUA_TUPVAL; \
-    checkliveness(G(L),i_o); }
+	i_o->value.gc=cast(GCObject *, (x)); i_o->tt=LUA_TUPVAL; \
+	checkliveness(G(L),i_o); }
 
 static void pushupval(lua_State *L, UpVal *upval)
 {
@@ -309,7 +456,14 @@ static void persistfunction(PersistInfo *pi)
 		{
 			/* We don't really _NEED_ the number of upvals,
 			 * but it'll simplify things a bit */
-			pi->writer(pi->L, &cl->l.p->nups, sizeof(lu_byte), pi->ud);
+			pi_write(pi, &cl->l.p->nups, sizeof(lu_byte), pi->ud);
+			if (humanReadable) {
+				snprintf(hrBuf, hrBufSize, "persistfunction_number_upvalues %d\n", (int) cl->l.p->nups);
+				hrOut(pi);
+			}
+#ifdef TOTEXT
+			printf("persistfunction_number_upvalues %d\n", (int) cl->l.p->nups);
+#endif
 		}
 		/* Persist prototype */
 		{
@@ -401,7 +555,14 @@ static void persistproto(PersistInfo *pi)
 	/* Persist constant refs */
 	{
 		int i;
-		pi->writer(pi->L, &p->sizek, sizeof(int), pi->ud);
+		pi_write(pi, &p->sizek, sizeof(int), pi->ud);
+	if (humanReadable) {
+	  snprintf(hrBuf, hrBufSize, "persistproto_sizek %d\n", p->sizek);
+	  hrOut(pi);
+	}
+	#ifdef TOTEXT
+	  printf("persistproto_sizek %d\n", p->sizek);
+	#endif
 		for(i=0; i<p->sizek; i++) {
 			LIF(A,pushobject)(pi->L, &p->k[i]);
 					/* perms reftbl ... proto const */
@@ -415,7 +576,14 @@ static void persistproto(PersistInfo *pi)
 	/* serialize inner Proto refs */
 	{
 		int i;
-		pi->writer(pi->L, &p->sizep, sizeof(int), pi->ud);
+		pi_write(pi, &p->sizep, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_sizep %d\n", p->sizep);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_sizep %d\n", p->sizep);
+#endif
 		for(i=0; i<p->sizep; i++)
 		{
 			pushproto(pi->L, p->p[i]);
@@ -429,14 +597,37 @@ static void persistproto(PersistInfo *pi)
 
 	/* Serialize code */
 	{
-		pi->writer(pi->L, &p->sizecode, sizeof(int), pi->ud);
-		pi->writer(pi->L, p->code, sizeof(Instruction) * p->sizecode, pi->ud);
+		int len;
+		pi_write(pi, &p->sizecode, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_sizecode %d\n", p->sizecode);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_sizecode %d\n", p->sizecode);
+#endif
+		len = sizeof(Instruction) * p->sizecode;
+		pi_write(pi, p->code, len, pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_code %d\n", len);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_code %d\n", len);
+#endif
 	}
 
 	/* Serialize upvalue names */
 	{
 		int i;
-		pi->writer(pi->L, &p->sizeupvalues, sizeof(int), pi->ud);
+		pi_write(pi, &p->sizeupvalues, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_upvalues %d\n", p->sizeupvalues);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_upvalues %d\n", p->sizeupvalues);
+#endif
 		for(i=0; i<p->sizeupvalues; i++)
 		{
 			pushstring(pi->L, p->upvalues[i]);
@@ -447,15 +638,36 @@ static void persistproto(PersistInfo *pi)
 	/* Serialize local variable infos */
 	{
 		int i;
-		pi->writer(pi->L, &p->sizelocvars, sizeof(int), pi->ud);
+		pi_write(pi, &p->sizelocvars, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_sizelocvars %d\n", p->sizelocvars);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_sizelocvars %d\n", p->sizelocvars);
+#endif
 		for(i=0; i<p->sizelocvars; i++)
 		{
 			pushstring(pi->L, p->locvars[i].varname);
 			persist(pi);
 			lua_pop(pi->L, 1);
 
-			pi->writer(pi->L, &p->locvars[i].startpc, sizeof(int), pi->ud);
-			pi->writer(pi->L, &p->locvars[i].endpc, sizeof(int), pi->ud);
+			pi_write(pi, &p->locvars[i].startpc, sizeof(int), pi->ud);
+			if (humanReadable) {
+				snprintf(hrBuf, hrBufSize, "persistproto_startpc %d\n", p->locvars[i].startpc);
+				hrOut(pi);
+			}
+#ifdef TOTEXT
+			printf("persistproto_startpc %d\n", p->locvars[i].startpc);
+#endif
+			pi_write(pi, &p->locvars[i].endpc, sizeof(int), pi->ud);
+			if (humanReadable) {
+				snprintf(hrBuf, hrBufSize, "persistproto_endpc %d\n", p->locvars[i].endpc);
+				hrOut(pi);
+			}
+#ifdef TOTEXT
+			printf("persistproto_endpc %d\n", p->locvars[i].endpc);
+#endif
 		}
 	}
 
@@ -466,23 +678,81 @@ static void persistproto(PersistInfo *pi)
 
 	/* Serialize line numbers */
 	{
-		pi->writer(pi->L, &p->sizelineinfo, sizeof(int), pi->ud);
+		pi_write(pi, &p->sizelineinfo, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_sizelineinfo %d\n", p->sizelineinfo);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_sizelineinfo %d\n", p->sizelineinfo);
+#endif
 		if (p->sizelineinfo)
 		{
-			pi->writer(pi->L, p->lineinfo, sizeof(int) * p->sizelineinfo, pi->ud);
+			int len;
+			len = sizeof(int) * p->sizelineinfo;
+			pi_write(pi, p->lineinfo, len, pi->ud);
+			if (humanReadable) {
+				snprintf(hrBuf, hrBufSize, "persistproto_lineinfo %d\n", len);
+				hrOut(pi);
+			}
+#ifdef TOTEXT
+			printf("persistproto_lineinfo %d\n", len);
+#endif
 		}
 	}
 
 	/* Serialize linedefined and lastlinedefined */
-	pi->writer(pi->L, &p->linedefined, sizeof(int), pi->ud);
-	pi->writer(pi->L, &p->lastlinedefined, sizeof(int), pi->ud);
+	pi_write(pi, &p->linedefined, sizeof(int), pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persistproto_linedefined %d\n", p->linedefined);
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persistproto_linedefined %d\n", p->linedefined);
+#endif
+	pi_write(pi, &p->lastlinedefined, sizeof(int), pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persistproto_lastlinedefined %d\n", p->lastlinedefined);
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persistproto_lastlinedefined %d\n", p->lastlinedefined);
+#endif
 
 	/* Serialize misc values */
 	{
-		pi->writer(pi->L, &p->nups, sizeof(lu_byte), pi->ud);
-		pi->writer(pi->L, &p->numparams, sizeof(lu_byte), pi->ud);
-		pi->writer(pi->L, &p->is_vararg, sizeof(lu_byte), pi->ud);
-		pi->writer(pi->L, &p->maxstacksize, sizeof(lu_byte), pi->ud);
+		pi_write(pi, &p->nups, sizeof(lu_byte), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_nups %d\n", (int) p->nups);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_nups %d\n", (int) p->nups);
+#endif
+		pi_write(pi, &p->numparams, sizeof(lu_byte), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_numparams %d\n", (int) p->numparams);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_numparams %d\n", (int) p->numparams);
+#endif
+		pi_write(pi, &p->is_vararg, sizeof(lu_byte), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_is_vararg %d\n", (int) p->is_vararg);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_is_vararg %d\n", (int) p->is_vararg);
+#endif
+		pi_write(pi, &p->maxstacksize, sizeof(lu_byte), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistproto_maxstacksize %d\n", (int) p->maxstacksize);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistproto_maxstacksize %d\n", (int) p->maxstacksize);
+#endif
 	}
 	/* We do not currently persist upvalue names, local variable names,
 	 * variable lifetimes, line info, or source code. */
@@ -518,7 +788,7 @@ static void persistthread(PersistInfo *pi)
 	/* Persist the stack */
 	posremaining = revappendstack(L2, pi->L);
 					/* perms reftbl ... thr (rev'ed contents of L2) */
-	pi->writer(pi->L, &posremaining, sizeof(size_t), pi->ud);
+	write_size(pi, &posremaining);
 	for(; posremaining > 0; posremaining--) {
 		persist(pi);
 		lua_pop(pi->L, 1);
@@ -527,7 +797,7 @@ static void persistthread(PersistInfo *pi)
 	/* Now, persist the CallInfo stack. */
 	{
 		size_t i, numframes = (L2->ci - L2->base_ci) + 1;
-		pi->writer(pi->L, &numframes, sizeof(size_t), pi->ud);
+		write_size(pi, &numframes);
 		for(i=0; i<numframes; i++) {
 			CallInfo *ci = L2->base_ci + i;
 			size_t stackbase = ci->base - L2->stack;
@@ -536,11 +806,18 @@ static void persistthread(PersistInfo *pi)
 			size_t savedpc = (ci != L2->base_ci) ?
 				ci->savedpc - ci_func(ci)->l.p->code :
 				0;
-			pi->writer(pi->L, &stackbase, sizeof(size_t), pi->ud);
-			pi->writer(pi->L, &stackfunc, sizeof(size_t), pi->ud);
-			pi->writer(pi->L, &stacktop, sizeof(size_t), pi->ud);
-			pi->writer(pi->L, &ci->nresults, sizeof(int), pi->ud);
-			pi->writer(pi->L, &savedpc, sizeof(size_t), pi->ud);
+			write_size(pi, &stackbase);
+			write_size(pi, &stackfunc);
+			write_size(pi, &stacktop);
+			pi_write(pi, &ci->nresults, sizeof(int), pi->ud);
+			if (humanReadable) {
+				snprintf(hrBuf, hrBufSize, "persistthread %d\n", ci->nresults);
+				hrOut(pi);
+			}
+#ifdef TOTEXT
+			printf("persistthread %d\n", ci->nresults);
+#endif
+			write_size(pi, &savedpc);
 		}
 	}
 
@@ -549,10 +826,18 @@ static void persistthread(PersistInfo *pi)
 		size_t stackbase = L2->base - L2->stack;
 		size_t stacktop = L2->top - L2->stack;
 		lua_assert(L2->nCcalls <= 1);
-		pi->writer(pi->L, &L2->status, sizeof(lu_byte), pi->ud);
-		pi->writer(pi->L, &stackbase, sizeof(size_t), pi->ud);
-		pi->writer(pi->L, &stacktop, sizeof(size_t), pi->ud);
-		pi->writer(pi->L, &L2->errfunc, sizeof(ptrdiff_t), pi->ud);
+		pi_write(pi, &L2->status, sizeof(lu_byte), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persistthread_status %d\n", (int) L2->status);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persistthread_status %d\n", (int) L2->status);
+#endif
+		write_size(pi, &stackbase);
+		write_size(pi, &stacktop);
+		pi_write(pi, &L2->errfunc, sizeof(ptrdiff_t), pi->ud);
+		//write_size(pi, (size_t *)&L2->errfunc);
 	}
 
 	/* Finally, record upvalues which need to be reopened */
@@ -573,7 +858,7 @@ static void persistthread(PersistInfo *pi)
 			lua_pop(pi->L, 1);
 					/* perms reftbl ... thr */
 			stackpos = uv->v - L2->stack;
-			pi->writer(pi->L, &stackpos, sizeof(size_t), pi->ud);
+			write_size(pi, &stackpos);
 		}
 					/* perms reftbl ... thr */
 		lua_pushnil(pi->L);
@@ -588,26 +873,62 @@ static void persistthread(PersistInfo *pi)
 static void persistboolean(PersistInfo *pi)
 {
 	int b = lua_toboolean(pi->L, -1);
-	pi->writer(pi->L, &b, sizeof(int), pi->ud);
+	pi_write(pi, &b, sizeof(int), pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persistboolean %d\n", b);
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persistboolean %d\n", b);
+#endif
 }
 
 static void persistlightuserdata(PersistInfo *pi)
 {
 	void *p = lua_touserdata(pi->L, -1);
-	pi->writer(pi->L, &p, sizeof(void *), pi->ud);
+	pi_write(pi, &p, sizeof(void *), pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persistlightuserdata %p\n", p);
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persistlightuserdata %d\n", (int) p);
+#endif
 }
 
 static void persistnumber(PersistInfo *pi)
 {
 	lua_Number n = lua_tonumber(pi->L, -1);
-	pi->writer(pi->L, &n, sizeof(lua_Number), pi->ud);
+	pi_write(pi, &n, sizeof(lua_Number), pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persistnumber %d (%d)\n", (int) n, (int) sizeof(lua_Number));
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persistnumber %d (%d)\n", (int) n, (int) sizeof(lua_Number));
+#endif
 }
 
 static void persiststring(PersistInfo *pi)
 {
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persiststring\n");
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persiststring\n");
+#endif
 	size_t length = lua_strlen(pi->L, -1);
-	pi->writer(pi->L, &length, sizeof(size_t), pi->ud);
-	pi->writer(pi->L, lua_tostring(pi->L, -1), length, pi->ud);
+	write_size(pi, &length);
+	const char* s = lua_tostring(pi->L, -1);
+	pi_write(pi, s, length, pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persiststring %d \"%s\"\n", (int)length, s);
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persiststring %d \"%s\"\n", length, s);
+#endif
 }
 
 /* Top-level delegating persist function
@@ -630,8 +951,22 @@ static void persist(PersistInfo *pi)
 		// since size_t is supposedly the same size as a pointer on most
 		// (modern) architectures.
 		int ref = (int)(size_t)lua_touserdata(pi->L, -1);
-		pi->writer(pi->L, &zero, sizeof(int), pi->ud);
-		pi->writer(pi->L, &ref, sizeof(int), pi->ud);
+		pi_write(pi, &zero, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persist_seenobject\n");
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persist_seenobject\n");
+#endif
+		pi_write(pi, &ref, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persist_touserdata_ref %d\n", ref);
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persist_touserdata_ref %d\n", ref);
+#endif
 		lua_pop(pi->L, 1);
 					/* perms reftbl ... obj ref */
 #ifdef PLUTO_DEBUG
@@ -647,9 +982,16 @@ static void persist(PersistInfo *pi)
 	if(lua_isnil(pi->L, -1)) {
 		int zero = 0;
 		/* firsttime */
-		pi->writer(pi->L, &zero, sizeof(int), pi->ud);
+		pi_write(pi, &zero, sizeof(int), pi->ud);
 		/* ref */
-		pi->writer(pi->L, &zero, sizeof(int), pi->ud);
+		pi_write(pi, &zero, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persist_nil (last 2 lines)\n");
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persist_nil (last 2 lines)\n");
+#endif
 #ifdef PLUTO_DEBUG
 		printindent(pi->level);
 		printf("0 0\n");
@@ -659,7 +1001,14 @@ static void persist(PersistInfo *pi)
 	{
 		/* indicate that it's the first time */
 		int one = 1;
-		pi->writer(pi->L, &one, sizeof(int), pi->ud);
+		pi_write(pi, &one, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persist_newobject\n");
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persist_newobject\n");
+#endif
 	}
 	lua_pushvalue(pi->L, -1);
 					/* perms reftbl ... obj obj */
@@ -668,7 +1017,14 @@ static void persist(PersistInfo *pi)
 	lua_rawset(pi->L, 2);
 					/* perms reftbl ... obj */
 
-	pi->writer(pi->L, &pi->counter, sizeof(int), pi->ud);
+	pi_write(pi, &pi->counter, sizeof(int), pi->ud);
+	if (humanReadable) {
+		snprintf(hrBuf, hrBufSize, "persist_counter %d\n", pi->counter);
+		hrOut(pi);
+	}
+#ifdef TOTEXT
+	printf("persist_counter %d\n", pi->counter);
+#endif
 
 
 	/* At this point, we'll give the permanents table a chance to play. */
@@ -685,7 +1041,14 @@ static void persist(PersistInfo *pi)
 			printf("1 %d PERM\n", pi->counter);
 			pi->level++;
 #endif
-			pi->writer(pi->L, &type, sizeof(int), pi->ud);
+			pi_write(pi, &type, sizeof(int), pi->ud);
+			if (humanReadable) {
+				snprintf(hrBuf, hrBufSize, "persist_permtype %d\n", type);
+				hrOut(pi);
+			}
+#ifdef TOTEXT
+			printf("persist_permtype %d\n", type);
+#endif
 			persist(pi);
 			lua_pop(pi->L, 1);
 					/* perms reftbl ... obj */
@@ -702,7 +1065,14 @@ static void persist(PersistInfo *pi)
 	}
 	{
 		int type = lua_type(pi->L, -1);
-		pi->writer(pi->L, &type, sizeof(int), pi->ud);
+		pi_write(pi, &type, sizeof(int), pi->ud);
+		if (humanReadable) {
+			snprintf(hrBuf, hrBufSize, "persist %s\n", type >= 0 && type < NUMTYPES ? typenames[type] : "?");
+			hrOut(pi);
+		}
+#ifdef TOTEXT
+		printf("persist %s\n", type >= 0 && type < NUMTYPES ? typenames[type] : "?");
+#endif
 
 #ifdef PLUTO_DEBUG
 		printindent(pi->level);
@@ -798,8 +1168,8 @@ typedef struct WriterInfo_t {
 	size_t buflen;
 } WriterInfo;
 
-static int bufwriter (lua_State *L, const void* p, size_t sz, void* ud) {
-	const char* cp = (const char*)p;
+static int bufwriter (lua_State *L, const void *p, size_t sz, void *ud) {
+	const char *cp = (const char *)p;
 	WriterInfo *wi = (WriterInfo *)ud;
 
 	LIF(M,reallocvector)(L, wi->buf, wi->buflen, wi->buflen+sz, char);
@@ -819,7 +1189,7 @@ int persist_l(lua_State *L)
 
 	wi.buf = NULL;
 	wi.buflen = 0;
-
+	
 	lua_settop(L, 2);
 					/* perms? rootobj? */
 	luaL_checktype(L, 1, LUA_TTABLE);
@@ -895,10 +1265,13 @@ static void unpersistnumber(UnpersistInfo *upi)
 static void unpersiststring(UnpersistInfo *upi)
 {
 					/* perms reftbl sptbl ref */
+	/*int length;*/
 	size_t length;
 	char* string;
 	lua_checkstack(upi->L, 1);
-	verify(LIF(Z,read)(&upi->zio, &length, sizeof(size_t)) == 0);
+	/*verify(LIF(Z,read)(&upi->zio, &length, sizeof(int)) == 0);*/
+	/*verify(LIF(Z,read)(&upi->zio, &length, sizeof(size_t)) == 0);*/
+	read_size(&upi->zio, &length);
 	string = pdep_newvector(upi->L, length, char);
 	verify(LIF(Z,read)(&upi->zio, string, length) == 0);
 	lua_pushlstring(upi->L, string, length);
@@ -1312,7 +1685,7 @@ static void unpersistthread(int ref, UnpersistInfo *upi)
 	/* First, deserialize the object stack. */
 	{
 		size_t i, stacksize;
-		verify(LIF(Z,read)(&upi->zio, &stacksize, sizeof(size_t)) == 0);
+		read_size(&upi->zio, &stacksize);
 		LIF(D,growstack)(L2, (int)stacksize);
 		/* Make sure that the first stack element (a nil, representing
 		 * the imaginary top-level C function) is written to the very,
@@ -1331,16 +1704,16 @@ static void unpersistthread(int ref, UnpersistInfo *upi)
 	/* Now, deserialize the CallInfo stack. */
 	{
 		size_t i, numframes;
-		verify(LIF(Z,read)(&upi->zio, &numframes, sizeof(size_t)) == 0);
+		read_size(&upi->zio, &numframes);
 		LIF(D,reallocCI)(L2,numframes*2);
 		for(i=0; i<numframes; i++) {
 			CallInfo *ci = L2->base_ci + i;
 			size_t stackbase, stackfunc, stacktop, savedpc;
-			verify(LIF(Z,read)(&upi->zio, &stackbase, sizeof(size_t)) == 0);
-			verify(LIF(Z,read)(&upi->zio, &stackfunc, sizeof(size_t)) == 0);
-			verify(LIF(Z,read)(&upi->zio, &stacktop, sizeof(size_t)) == 0);
+			read_size(&upi->zio, &stackbase);
+			read_size(&upi->zio, &stackfunc);
+			read_size(&upi->zio, &stacktop);
 			verify(LIF(Z,read)(&upi->zio, &ci->nresults, sizeof(int)) == 0);
-			verify(LIF(Z,read)(&upi->zio, &savedpc, sizeof(size_t)) == 0);
+			read_size(&upi->zio, &savedpc);
 
 			if(stacklimit < stacktop)
 				stacklimit = stacktop;
@@ -1363,9 +1736,10 @@ static void unpersistthread(int ref, UnpersistInfo *upi)
 		size_t stackbase, stacktop;
 		L2->savedpc = L2->ci->savedpc;
 		verify(LIF(Z,read)(&upi->zio, &L2->status, sizeof(lu_byte)) == 0);
-		verify(LIF(Z,read)(&upi->zio, &stackbase, sizeof(size_t)) == 0);
-		verify(LIF(Z,read)(&upi->zio, &stacktop, sizeof(size_t)) == 0);
+		read_size(&upi->zio, &stackbase);
+		read_size(&upi->zio, &stacktop);
 		verify(LIF(Z,read)(&upi->zio, &L2->errfunc, sizeof(ptrdiff_t)) == 0);
+		//read_size(&upi->zio, (size_t *)&L2->errfunc);
 		L2->base = L2->stack + stackbase;
 		L2->top = L2->stack + stacktop;
 	}
@@ -1391,7 +1765,7 @@ static void unpersistthread(int ref, UnpersistInfo *upi)
 			lua_pop(upi->L, 1);
 					/* perms reftbl ... thr */
 
-			verify(LIF(Z,read)(&upi->zio, &stackpos, sizeof(size_t)) == 0);
+			read_size(&upi->zio, &stackpos);
 			uv->v = L2->stack + stackpos;
 			gcunlink(upi->L, (GCObject *)uv);
 			uv->marked = luaC_white(g);
@@ -1443,7 +1817,7 @@ static void unpersistuserdata(int ref, UnpersistInfo *upi)
 					/* perms reftbl ... udata */
 	} else {
 		size_t length;
-		verify(LIF(Z,read)(&upi->zio, &length, sizeof(size_t)) == 0);
+		read_size(&upi->zio, &length);
 
 		lua_newuserdata(upi->L, length);
 					/* perms reftbl ... udata */
@@ -1611,8 +1985,8 @@ void pluto_unpersist(lua_State *L, lua_Chunkreader reader, void *ud)
 }
 
 typedef struct LoadInfo_t {
-  char *buf;
-  size_t size;
+	char *buf;
+	size_t size;
 } LoadInfo;
 
 
@@ -1653,9 +2027,41 @@ int unpersist_l(lua_State *L)
 	return 1;
 }
 
+/* Stefan's first C function for Lua! :)
+   Returns a string describing the Pluto version you're using. */
+
+int version_l(lua_State *L)
+{
+	const char *version = VERSION;
+  
+	lua_settop(L, 0);
+					/* (empty) */
+	lua_pushlstring(L, version, strlen(version));
+					/* str */
+	return 1;
+}
+
+/* Set human-readable output on or off. */
+int human_l(lua_State *L)
+{
+					/* flag? ...? */
+	lua_settop(L, 1);
+					/* flag? */
+	/*luaL_checktype(L, 1, LUA_TBOOLEAN);*/
+					/* flag */
+
+	humanReadable = lua_toboolean(L, 1);
+
+	lua_settop(L, 0);
+					/* (empty) */
+	return 0;
+}
+
 static luaL_reg pluto_reg[] = {
 	{ "persist", persist_l },
 	{ "unpersist", unpersist_l },
+	{ "version", version_l },
+	{ "human", human_l },
 	{ NULL, NULL }
 };
 

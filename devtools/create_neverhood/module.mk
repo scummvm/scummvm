@@ -3,6 +3,7 @@ MODULE := devtools/create_neverhood
 
 MODULE_OBJS := \
 	create_neverhood.o \
+	md5.o \
 	util.o
 
 # Set the name of the executable

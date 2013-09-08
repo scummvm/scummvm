@@ -94,7 +94,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 	if (savePrefix) {
 		_savePrefix = savePrefix;
 	} else if (_gameRef) {
-		_savePrefix = _gameRef->getGameId();
+		_savePrefix = _gameRef->getGameTargetName();
 	} else {
 		_savePrefix = "wmesav";
 	}
@@ -282,7 +282,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 				} else {
 					_saveStream->writeUint32LE(0);
 				}
-				
+
 				thumbnailOK = true;
 			}
 		}
@@ -637,7 +637,7 @@ bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // float
-bool BasePersistenceManager::transfer(const char *name, float *val) {
+bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 	if (_saving) {
 		putFloat(*val);
 		if (_saveStream->err()) {
@@ -887,4 +887,4 @@ bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte ver
 	return true;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

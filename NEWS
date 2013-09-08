@@ -2,7 +2,14 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.7.0 (????-??-??)
+ Gob:
+   - Improved video quality in Urban Runner
 
+ Broken Sword 1:
+   - Added back support for MPEG-2 videos
+
+ Broken Sword 2:
+   - Added back support for MPEG-2 videos
 
 1.6.0 (2013-05-31)
  New Games:

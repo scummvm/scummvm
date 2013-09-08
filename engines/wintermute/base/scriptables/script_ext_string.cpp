@@ -430,4 +430,4 @@ int SXString::scCompare(BaseScriptable *val) {
 	return strcmp(_string, ((SXString *)val)->_string);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

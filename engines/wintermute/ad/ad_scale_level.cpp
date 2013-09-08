@@ -154,9 +154,9 @@ bool AdScaleLevel::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_scale));
+	persistMgr->transferFloat(TMEMBER(_scale));
 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

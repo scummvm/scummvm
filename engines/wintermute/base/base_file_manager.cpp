@@ -269,7 +269,7 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 
 bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
-		BasePersistenceManager pm(BaseEngine::instance().getGameId());
+		BasePersistenceManager pm(BaseEngine::instance().getGameTargetName());
 		if (filename.size() <= 9) {
 			return false;
 		}
@@ -360,4 +360,4 @@ BaseFileManager *BaseFileManager::getEngineInstance() {
 	return nullptr;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

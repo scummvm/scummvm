@@ -46,7 +46,7 @@ enum {
 //   0 - 2       -- set a custom color:
 //                  0 normal text
 //                  1 highlighted text
-//                  2 disabled text	
+//                  2 disabled text
 // TODO: Maybe add a tab/indent feature; that is, make it possible to specify
 // an amount by which that line shall be indented (the indent of course would have
 // to be considered while performing any word wrapping, too).
@@ -139,7 +139,7 @@ void AboutDialog::addLine(const char *str) {
 	} else {
 		Common::String format(str, 2);
 		str += 2;
-		
+
 		static Common::String asciiStr;
 		if (format[0] == 'A') {
 			bool useAscii = false;

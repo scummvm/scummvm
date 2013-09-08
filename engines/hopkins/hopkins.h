@@ -164,6 +164,7 @@ public:
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
 	bool getIsDemo() const;
+	const Common::String &getTargetName() const;
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);
@@ -182,9 +183,6 @@ public:
 	 */
 	virtual void syncSoundSettings();
 };
-
-// Global reference to the HopkinsEngine object
-extern HopkinsEngine *g_vm;
 
 } // End of namespace Hopkins
 

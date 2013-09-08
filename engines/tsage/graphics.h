@@ -100,6 +100,7 @@ public:
 	void unlockSurface();
 	void synchronize(Serializer &s);
 	void create(int width, int height);
+	void clear();
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 	const Rect &getBounds() const { return _bounds; }
 
@@ -302,6 +303,7 @@ public:
 	}
 	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL);
 	void copyFrom(GfxSurface &src, int destX, int destY);
+	void copyFrom(GfxSurface &src, const Rect &srcBounds, const Rect &destBounds);
 
 	GfxSurface &getSurface() {
 		_surface.setBounds(_bounds);

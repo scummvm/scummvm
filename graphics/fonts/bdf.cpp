@@ -102,7 +102,7 @@ void BdfFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const
 	// equal to 50 and the decision of the theme designer?
 	// asserting _data.maxAdvance <= 50: let the theme designer decide what looks best
 	assert(_data.maxAdvance <= 50);
-	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2);
+	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 
 	const int idx = mapToIndex(chr);
 	if (idx < 0)
@@ -165,6 +165,8 @@ void BdfFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const
 		drawCharIntern<byte>(ptr, dst->pitch, src, height, originalWidth, xStart, xEnd, color);
 	else if (dst->format.bytesPerPixel == 2)
 		drawCharIntern<uint16>(ptr, dst->pitch, src, height, originalWidth, xStart, xEnd, color);
+	else if (dst->format.bytesPerPixel == 4)
+		drawCharIntern<uint32>(ptr, dst->pitch, src, height, originalWidth, xStart, xEnd, color);
 }
 
 namespace {

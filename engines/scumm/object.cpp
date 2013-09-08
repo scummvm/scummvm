@@ -1715,7 +1715,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 		error("object %d is not a blast object", eo->number);
 
 	bdd.dst = *vs;
-	bdd.dst.pixels = vs->getPixels(0, 0);
+	bdd.dst.setPixels(vs->getPixels(0, 0));
 	bdd.x = eo->rect.left;
 	bdd.y = eo->rect.top;
 
