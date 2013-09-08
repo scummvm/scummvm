@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	video_window.o \
 	window.o \
 	demo/demo_menu.o \
+	demo/features.o \
 	demo/movie_scene.o
 
 
