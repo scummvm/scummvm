@@ -1571,7 +1571,7 @@ void Acci::doThat() {
 					if (_vm->_animation->_sprites[0]._id != i) {
 						int16 x = _vm->_animation->_sprites[0]._x;
 						int16 y = _vm->_animation->_sprites[0]._y;
-						_vm->_animation->_sprites[0].done();
+						_vm->_animation->_sprites[0].remove();
 						_vm->_animation->_sprites[0].init(i, true, _vm->_animation);
 						_vm->_animation->_sprites[0].appear(x, y, Animation::kDirLeft);
 						_vm->_animation->_sprites[0]._visible = false;

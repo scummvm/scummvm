@@ -1198,7 +1198,7 @@ void Lucerna::gameOver() {
 	int16 sx = _vm->_animation->_sprites[0]._x;
 	int16 sy = _vm->_animation->_sprites[0]._y;
 
-	_vm->_animation->_sprites[0].done();
+	_vm->_animation->_sprites[0].remove();
 	_vm->_animation->_sprites[0].init(12, true, _vm->_animation); // 12 = Avalot falls
 	_vm->_animation->_sprites[0]._stepNum = 0;
 	_vm->_animation->_sprites[0].appear(sx, sy, 0);

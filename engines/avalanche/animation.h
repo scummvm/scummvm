@@ -74,18 +74,18 @@ public:
 	void bounce(); // Bounces off walls.
 	void walk(); // Prepares for andexor, etc.
 	void walkTo(byte pednum); // Home in on a point.
-	void stophoming(); // Self-explanatory.
+	void stopHoming(); // Self-explanatory.
 	void homeStep(); // Calculates ix & iy for one homing step.
-	void speed(int8 xx, int8 yy); // Sets ix & iy, non-homing, etc.
+	void setSpeed(int8 xx, int8 yy); // Sets ix & iy, non-homing, etc.
 	void stopWalk(); // Stops the sprite from moving.
 	void chatter();  // Sets up talk vars.
-	void done();
+	void remove();
 
 private:
 	Animation *_tr;
 
 	bool checkCollision();
-	int8 sgn(int16 val);
+	int8 getSign(int16 val);
 };
 
 class Animation {

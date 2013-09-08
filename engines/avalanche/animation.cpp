@@ -264,7 +264,7 @@ void AnimationType::bounce() {
 	_tr->_vm->_gyro->_onCanDoPageSwap = true;
 }
 
-int8 AnimationType::sgn(int16 val) {
+int8 AnimationType::getSign(int16 val) {
 	if (val > 0)
 		return 1;
 	else if (val < 0)
@@ -275,13 +275,13 @@ int8 AnimationType::sgn(int16 val) {
 
 void AnimationType::walkTo(byte pednum) {
 	pednum--; // Pascal -> C conversion: different array indexes.
-	speed(sgn(_tr->_vm->_gyro->_peds[pednum]._x - _x) * 4, sgn(_tr->_vm->_gyro->_peds[pednum]._y - _y));
+	setSpeed(getSign(_tr->_vm->_gyro->_peds[pednum]._x - _x) * 4, getSign(_tr->_vm->_gyro->_peds[pednum]._y - _y));
 	_homingX = _tr->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
 	_homingY = _tr->_vm->_gyro->_peds[pednum]._y - _info._yLength;
 	_homing = true;
 }
 
-void AnimationType::stophoming() {
+void AnimationType::stopHoming() {
 	_homing = false;
 }
 
@@ -315,7 +315,7 @@ void AnimationType::homeStep() {
 	}
 }
 
-void AnimationType::speed(int8 xx, int8 yy) {
+void AnimationType::setSpeed(int8 xx, int8 yy) {
 	_moveX = xx;
 	_moveY = yy;
 	if ((_moveX == 0) && (_moveY == 0))
@@ -347,7 +347,7 @@ void AnimationType::chatter() {
 	_tr->_vm->_gyro->_talkBackgroundColor = _stat._bgBubbleCol;
 }
 
-void AnimationType::done() {
+void AnimationType::remove() {
 	_animCount--;
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
@@ -372,7 +372,7 @@ Animation::Animation(AvalancheEngine *vm) {
 Animation::~Animation() {
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick)
-			_sprites[i].done();
+			_sprites[i].remove();
 	}
 }
 
@@ -791,7 +791,7 @@ void Animation::callSpecial(uint16 which) {
 			// _vm->_gyro->special 5: Room 42: touched tree, and get tied up.
 			_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Boundary effect is now working again.
 			_vm->_visa->displayScrollChain('q', 35);
-			_sprites[0].done();
+			_sprites[0].remove();
 			//tr[1].vanishifstill:=true;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_visa->displayScrollChain('q', 36);
@@ -835,7 +835,7 @@ void Animation::callSpecial(uint16 which) {
 			return;   // DOESN'T COUNT: no Geida.
 		_sprites[1]._callEachStepFl = false; // She no longer follows Avvy around.
 		_sprites[1].walkTo(4); // She walks to somewhere...
-		_sprites[0].done();     // Lose Avvy.
+		_sprites[0].remove();     // Lose Avvy.
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		_vm->_timer->addTimer(40, _vm->_timer->kProcRobinHoodAndGeida, _vm->_timer->kReasonRobinHoodAndGeida);
 		break;
@@ -980,28 +980,28 @@ void Animation::updateSpeed() {
 void Animation::changeDirection(byte t, byte dir) {
 	switch (dir) {
 	case kDirUp:
-		_sprites[t].speed(0, -_sprites[t]._speedY);
+		_sprites[t].setSpeed(0, -_sprites[t]._speedY);
 		break;
 	case kDirDown:
-		_sprites[t].speed(0, _sprites[t]._speedY);
+		_sprites[t].setSpeed(0, _sprites[t]._speedY);
 		break;
 	case kDirLeft:
-		_sprites[t].speed(-_sprites[t]._speedX,  0);
+		_sprites[t].setSpeed(-_sprites[t]._speedX,  0);
 		break;
 	case kDirRight:
-		_sprites[t].speed(_sprites[t]._speedX,  0);
+		_sprites[t].setSpeed(_sprites[t]._speedX,  0);
 		break;
 	case kDirUpLeft:
-		_sprites[t].speed(-_sprites[t]._speedX, -_sprites[t]._speedY);
+		_sprites[t].setSpeed(-_sprites[t]._speedX, -_sprites[t]._speedY);
 		break;
 	case kDirUpRight:
-		_sprites[t].speed(_sprites[t]._speedX, -_sprites[t]._speedY);
+		_sprites[t].setSpeed(_sprites[t]._speedX, -_sprites[t]._speedY);
 		break;
 	case kDirDownLeft:
-		_sprites[t].speed(-_sprites[t]._speedX, _sprites[t]._speedY);
+		_sprites[t].setSpeed(-_sprites[t]._speedX, _sprites[t]._speedY);
 		break;
 	case kDirDownRight:
-		_sprites[t].speed(_sprites[t]._speedX, _sprites[t]._speedY);
+		_sprites[t].setSpeed(_sprites[t]._speedX, _sprites[t]._speedY);
 		break;
 	}
 }
@@ -1067,7 +1067,7 @@ void Animation::arrowProcs(byte tripnum) {
 
 			_sprites[1]._callEachStepFl = false; // prevent recursion.
 			_vm->_visa->displayScrollChain('Q', 47); // Complaint!
-			_sprites[tripnum].done(); // Deallocate the arrow.
+			_sprites[tripnum].remove(); // Deallocate the arrow.
 #if 0
 			tr[1].done; { Deallocate normal pic of Avvy. }
 
@@ -1085,7 +1085,7 @@ void Animation::arrowProcs(byte tripnum) {
 			_vm->_timer->addTimer(55, _vm->_timer->kProcNaughtyDuke, _vm->_timer->kReasonNaughtyDuke);
 		}
 	} else { // Arrow has hit the wall!
-		_sprites[tripnum].done(); // Deallocate the arrow.
+		_sprites[tripnum].remove(); // Deallocate the arrow.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Show pic of arrow stuck into the door.
 		_vm->_gyro->_dna._arrowInTheDoor = true; // So that we can pick it up.
 	}
@@ -1338,7 +1338,7 @@ void Animation::flipRoom(byte room, byte ped) {
 
 	for (int16 i = 1; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick)
-			_sprites[i].done();
+			_sprites[i].remove();
 	} // Deallocate sprite
 
 	if (_vm->_gyro->_dna._room == r__lustiesroom)
