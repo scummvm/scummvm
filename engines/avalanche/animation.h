@@ -98,7 +98,7 @@ public:
 		kDirStopped
 	};
 
-	static const int16 kSpriteNumbMax = 5; // current max no. of sprites
+	static const byte kSpriteNumbMax = 5; // current max no. of sprites
 
 	enum Proc {
 		kProcFollowAvvyY = 1,

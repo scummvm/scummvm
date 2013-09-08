@@ -1277,7 +1277,7 @@ void Acci::personSpeaks() {
 
 	bool found = false; // The _person we're looking for's code is in _person.
 
-	for (int16 i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
+	for (byte i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 49) + _vm->_scrolls->kControlToBuffer);
 			found = true;

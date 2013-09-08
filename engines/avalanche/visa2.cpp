@@ -248,7 +248,7 @@ void Visa::talkTo(byte whom) {
 		whom -= 149;
 
 	bool noMatches = true;
-	for (int16 i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
+	for (byte i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (i + 49) + _vm->_scrolls->kControlToBuffer);
 			noMatches = false;

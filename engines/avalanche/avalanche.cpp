@@ -282,7 +282,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	byte spriteNum = 0;
 	if (sz.isSaving()) {
-		for (int16 i = 0; i < _animation->kSpriteNumbMax; i++) {
+		for (byte i = 0; i < _animation->kSpriteNumbMax; i++) {
 			if (_animation->_sprites[i]._quick)
 				spriteNum++;
 		}
@@ -290,7 +290,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(spriteNum);
 
 	if (sz.isLoading()) {
-		for (int16 i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
+		for (byte i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
 			if (_animation->_sprites[i]._quick)
 				_animation->_sprites[i].remove();
 		}
