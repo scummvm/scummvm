@@ -33,7 +33,7 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/animation.h"
-#include "avalanche/timeout2.h"
+#include "avalanche/timer.h"
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
 

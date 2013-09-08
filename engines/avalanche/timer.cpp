@@ -25,11 +25,11 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* TIMEOUT	The scheduling unit. */
+/* Original name: TIMEOUT	The scheduling unit. */
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/timeout2.h"
+#include "avalanche/timer.h"
 #include "avalanche/visa2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/animation.h"
@@ -43,7 +43,7 @@
 
 namespace Avalanche {
 
-Timeout::Timeout(AvalancheEngine *vm) {
+Timer::Timer(AvalancheEngine *vm) {
 	_vm = vm;
 
 	for (byte i = 0; i < 7; i++) {
@@ -58,7 +58,7 @@ Timeout::Timeout(AvalancheEngine *vm) {
  * Add a nex timer
  * @remarks	Originally called 'set_up_timer'
  */
-void Timeout::addTimer(int32 duration, byte action, byte reason) {
+void Timer::addTimer(int32 duration, byte action, byte reason) {
 	if ((_vm->_gyro->isLoaded == false) || (_timerLost == true)) {
 		byte i = 0;
 		while ((i < 7) && (_times[i]._timeLeft != 0))
@@ -81,7 +81,7 @@ void Timeout::addTimer(int32 duration, byte action, byte reason) {
  * Update the timers
  * @remarks	Originally called 'one_tick'
  */
-void Timeout::updateTimer() {
+void Timer::updateTimer() {
 	if (_vm->_gyro->_dropdownActive)
 		return;
 
@@ -223,7 +223,7 @@ void Timeout::updateTimer() {
 	_vm->_gyro->_dna._totalTime++; // Total amount of time for this game.
 }
 
-void Timeout::loseTimer(byte which) {
+void Timer::loseTimer(byte which) {
 	for (byte i = 0; i < 7; i++) {
 		if (_times[i]._reason == which)
 			_times[i]._timeLeft = 0; // Cancel this one!
@@ -232,7 +232,7 @@ void Timeout::loseTimer(byte which) {
 	_timerLost = true;
 }
 
-void Timeout::openDrawbridge() {
+void Timer::openDrawbridge() {
 	_vm->_gyro->_dna._drawbridgeOpen++;
 	_vm->_celer->drawBackgroundSprite(-1, -1, _vm->_gyro->_dna._drawbridgeOpen - 1);
 
@@ -242,7 +242,7 @@ void Timeout::openDrawbridge() {
 		addTimer(7, kProcOpenDrawbridge, kReasonDrawbridgeFalls);
 }
 
-void Timeout::avariciusTalks() {
+void Timer::avariciusTalks() {
 	_vm->_visa->displayScrollChain('q', _vm->_gyro->_dna._avariciusTalk);
 	_vm->_gyro->_dna._avariciusTalk++;
 
@@ -252,27 +252,27 @@ void Timeout::avariciusTalks() {
 		_vm->_lucerna->incScore(3);
 }
 
-void Timeout::urinate() {
+void Timer::urinate() {
 	_vm->_animation->tr[0].turn(Animation::kDirUp);
 	_vm->_animation->stopWalking();
 	_vm->_lucerna->drawDirection();
 	addTimer(14, kProcToilet, kReasonGoToToilet);
 }
 
-void Timeout::toilet() {
+void Timer::toilet() {
 	_vm->_scrolls->displayText("That's better!");
 }
 
-void Timeout::bang() {
+void Timer::bang() {
 	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "< BANG! >");
 	addTimer(30, kProcBang2, kReasonExplosion);
 }
 
-void Timeout::bang2() {
+void Timer::bang2() {
 	_vm->_scrolls->displayText("Hmm... sounds like Spludwick's up to something...");
 }
 
-void Timeout::stairs() {
+void Timer::stairs() {
 	_vm->_gyro->blip();
 	_vm->_animation->tr[0].walkTo(4);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
@@ -282,7 +282,7 @@ void Timeout::stairs() {
 	_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicNothing; // Stop them hitting the sides (or the game will hang.)
 }
 
-void Timeout::cardiffSurvey() {
+void Timer::cardiffSurvey() {
 	if (_vm->_gyro->_dna._cardiffQuestionNum == 0) {
 		_vm->_gyro->_dna._cardiffQuestionNum++;
 		_vm->_visa->displayScrollChain('q', 27);
@@ -293,16 +293,16 @@ void Timeout::cardiffSurvey() {
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
-void Timeout::cardiffReturn() {
+void Timer::cardiffReturn() {
 	_vm->_visa->displayScrollChain('q', 28);
 	cardiffSurvey(); // Add end of question.
 }
 
-void Timeout::cwytalotInHerts() {
+void Timer::cwytalotInHerts() {
 	_vm->_visa->displayScrollChain('q', 29);
 }
 
-void Timeout::getTiedUp() {
+void Timer::getTiedUp() {
 	_vm->_visa->displayScrollChain('q', 34); // ...Trouble!
 	_vm->_gyro->_dna._userMovesAvvy = false;
 	_vm->_gyro->_dna._beenTiedUp = true;
@@ -314,14 +314,14 @@ void Timeout::getTiedUp() {
 	addTimer(70, kProcGetTiedUp2, kReasonGettingTiedUp);
 }
 
-void Timeout::getTiedUp2() {
+void Timer::getTiedUp2() {
 	_vm->_animation->tr[0].walkTo(4);
 	_vm->_animation->tr[1].walkTo(5);
 	_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_gyro->_dna._friarWillTieYouUp = true;
 }
 
-void Timeout::hangAround() {
+void Timer::hangAround() {
 	_vm->_animation->tr[1]._doCheck = false;
 	_vm->_animation->tr[0].init(7, true, _vm->_animation); // Robin Hood
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleRobinHood - 150] = r__robins;
@@ -331,7 +331,7 @@ void Timeout::hangAround() {
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
-void Timeout::hangAround2() {
+void Timer::hangAround2() {
 	_vm->_visa->displayScrollChain('q', 40);
 	_vm->_animation->tr[1]._vanishIfStill = false;
 	_vm->_animation->tr[1].walkTo(4);
@@ -348,7 +348,7 @@ void Timeout::hangAround2() {
 	_vm->_enid->backToBootstrap(1); // Call the shoot-'em-up.
 }
 
-void Timeout::afterTheShootemup() {
+void Timer::afterTheShootemup() {
 
 	_vm->_animation->fliproom(_vm->_gyro->_dna._room, 0);
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
@@ -379,12 +379,12 @@ void Timeout::afterTheShootemup() {
 		points(gain);
 #endif
 
-	warning("STUB: Timeout::after_the_shootemup()");
+	warning("STUB: Timer::after_the_shootemup()");
 
 	_vm->_visa->displayScrollChain('q', 70);
 }
 
-void Timeout::jacquesWakesUp() {
+void Timer::jacquesWakesUp() {
 	_vm->_gyro->_dna._jacquesState++;
 
 	switch (_vm->_gyro->_dna._jacquesState) { // Additional pictures.
@@ -422,7 +422,7 @@ void Timeout::jacquesWakesUp() {
 	}
 }
 
-void Timeout::naughtyDuke() { // This is when the Duke comes in and takes your money.
+void Timer::naughtyDuke() { // This is when the Duke comes in and takes your money.
 	_vm->_animation->tr[1].init(9, false, _vm->_animation); // Here comes the Duke.
 	_vm->_animation->apped(2, 1); // He starts at the door...
 	_vm->_animation->tr[1].walkTo(3); // He walks over to you.
@@ -435,20 +435,20 @@ void Timeout::naughtyDuke() { // This is when the Duke comes in and takes your m
 	addTimer(50, kProcNaughtyDuke2, kReasonNaughtyDuke);
 }
 
-void Timeout::naughtyDuke2() {
+void Timer::naughtyDuke2() {
 	_vm->_visa->displayScrollChain('q', 48); // "Ha ha, it worked again!"
 	_vm->_animation->tr[1].walkTo(1); // Walk to the door.
 	_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
 }
 
-void Timeout::naughtyDuke3() {
+void Timer::naughtyDuke3() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 	_vm->_sequence->firstShow(2);
 	_vm->_sequence->startToClose();
 }
 
-void Timeout::jump() {
+void Timer::jump() {
 	_vm->_gyro->_dna._jumpStatus++;
 
 	switch (_vm->_gyro->_dna._jumpStatus) {
@@ -495,12 +495,12 @@ void Timeout::jump() {
 	}
 }
 
-void Timeout::crapulusSaysSpludOut() {
+void Timer::crapulusSaysSpludOut() {
 	_vm->_visa->displayScrollChain('q', 56);
 	_vm->_gyro->_dna._crapulusWillTell = false;
 }
 
-void Timeout::buyDrinks() {
+void Timer::buyDrinks() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
 	_vm->_gyro->_dna._malagauche = 0;
 
@@ -512,7 +512,7 @@ void Timeout::buyDrinks() {
 	_vm->_acci->drink();
 }
 
-void Timeout::buyWine() {
+void Timer::buyWine() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
 	_vm->_gyro->_dna._malagauche = 0;
 
@@ -526,24 +526,24 @@ void Timeout::buyWine() {
 	}
 }
 
-void Timeout::callsGuards() {
+void Timer::callsGuards() {
 	_vm->_visa->displayScrollChain('Q', 58); // "GUARDS!!!"
 	_vm->_lucerna->gameOver();
 }
 
-void Timeout::greetsMonk() {
+void Timer::greetsMonk() {
 	_vm->_visa->displayScrollChain('Q', 59);
 	_vm->_gyro->_dna._enteredLustiesRoomAsMonk = true;
 }
 
-void Timeout::fallDownOubliette() {
+void Timer::fallDownOubliette() {
 	_vm->_gyro->_magics[8]._operation = _vm->_gyro->kMagicNothing;
 	_vm->_animation->tr[0]._moveY++; // Increments dx/dy!
 	_vm->_animation->tr[0]._y += _vm->_animation->tr[0]._moveY;   // Dowwwn we go...
 	addTimer(3, kProcFallDownOubliette, kReasonFallingDownOubliette);
 }
 
-void Timeout::meetAvaroid() {
+void Timer::meetAvaroid() {
 	if (_vm->_gyro->_dna._metAvaroid) {
 		_vm->_scrolls->displayText(Common::String("You can't expect to be ") + _vm->_scrolls->kControlItalic + "that"
 			+ _vm->_scrolls->kControlRoman + " lucky twice in a row!");
@@ -562,7 +562,7 @@ void Timeout::meetAvaroid() {
 	}
 }
 
-void Timeout::riseUpOubliette() {
+void Timer::riseUpOubliette() {
 	_vm->_animation->tr[0]._visible = true;
 	_vm->_animation->tr[0]._moveY++; // Decrements dx/dy!
 	_vm->_animation->tr[0]._y -= _vm->_animation->tr[0]._moveY; // Uuuupppp we go...
@@ -572,7 +572,7 @@ void Timeout::riseUpOubliette() {
 		_vm->_gyro->_dna._userMovesAvvy = true;
 }
 
-void Timeout::robinHoodAndGeida() {
+void Timer::robinHoodAndGeida() {
 	_vm->_animation->tr[0].init(7, true, _vm->_animation);
 	_vm->_animation->apped(1, 7);
 	_vm->_animation->tr[0].walkTo(6);
@@ -582,7 +582,7 @@ void Timeout::robinHoodAndGeida() {
 	_vm->_gyro->_dna._geidaFollows = false;
 }
 
-void Timeout::robinHoodAndGeidaTalk() {
+void Timer::robinHoodAndGeidaTalk() {
 	_vm->_visa->displayScrollChain('q', 66);
 	_vm->_animation->tr[0].walkTo(2);
 	_vm->_animation->tr[1].walkTo(2);
@@ -591,7 +591,7 @@ void Timeout::robinHoodAndGeidaTalk() {
 	addTimer(162, kProcAvalotReturns, kReasonRobinHoodAndGeida);
 }
 
-void Timeout::avalotReturns() {
+void Timer::avalotReturns() {
 	_vm->_animation->tr[0].done();
 	_vm->_animation->tr[1].done();
 	_vm->_animation->tr[0].init(0, true, _vm->_animation);
@@ -605,7 +605,7 @@ void Timeout::avalotReturns() {
  * so that it will happen when Avvy stops walking.
  * @remarks	Originally called 'avvy_sit_down'
  */
-void Timeout::avvySitDown() {
+void Timer::avvySitDown() {
 	if (_vm->_animation->tr[0]._homing)    // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
@@ -616,12 +616,12 @@ void Timeout::avvySitDown() {
 	}
 }
 
-void Timeout::ghostRoomPhew() {
+void Timer::ghostRoomPhew() {
 	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "PHEW!" + _vm->_scrolls->kControlRoman
 		+ " You're glad to get out of " + _vm->_scrolls->kControlItalic + "there!");
 }
 
-void Timeout::arkataShouts() {
+void Timer::arkataShouts() {
 	if (_vm->_gyro->_dna._teetotal)
 		return;
 
@@ -629,11 +629,11 @@ void Timeout::arkataShouts() {
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
-void Timeout::winning() {
+void Timer::winning() {
 	_vm->_visa->displayScrollChain('q', 79);
 	_vm->_pingo->winningPic();
 
-	warning("STUB: Timeout::winning()");
+	warning("STUB: Timer::winning()");
 #if 0
 	do {
 		_vm->_lucerna->checkclick();
@@ -646,7 +646,7 @@ void Timeout::winning() {
 	_vm->_gyro->_letMeOut = true;
 }
 
-void Timeout::avalotFalls() {
+void Timer::avalotFalls() {
 	if (_vm->_animation->tr[0]._stepNum < 5) {
 		_vm->_animation->tr[0]._stepNum++;
 		addTimer(3, kProcAvalotFalls, kReasonFallingOver);
@@ -661,18 +661,18 @@ void Timeout::avalotFalls() {
 	}
 }
 
-void Timeout::spludwickGoesToCauldron() {
+void Timer::spludwickGoesToCauldron() {
 	if (_vm->_animation->tr[1]._homing)
 		addTimer(1, kProcSpludwickGoesToCauldron, kReasonSpludWalk);
 	else
 		addTimer(17, kProcSpludwickLeavesCauldron, kReasonSpludWalk);
 }
 
-void Timeout::spludwickLeavesCauldron() {
+void Timer::spludwickLeavesCauldron() {
 	_vm->_animation->tr[1]._callEachStepFl = true; // So that normal procs will continue.
 }
 
-void Timeout::giveLuteToGeida() { // Moved here from Acci.
+void Timer::giveLuteToGeida() { // Moved here from Acci.
 	_vm->_visa->displayScrollChain('Q', 86);
 	_vm->_lucerna->incScore(4);
 	_vm->_gyro->_dna._lustieIsAsleep = true;

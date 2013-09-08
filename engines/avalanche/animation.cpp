@@ -36,7 +36,7 @@
 #include "avalanche/gyro2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
-#include "avalanche/timeout2.h"
+#include "avalanche/timer.h"
 #include "avalanche/enid2.h"
 
 #include "common/scummsys.h"
@@ -747,7 +747,7 @@ void Animation::catamove(byte ped) {
 
 // This proc gets called whenever you touch a line defined as _vm->_gyro->special.
 void Animation::dawndelay() {
-	_vm->_timeout->addTimer(2, _vm->_timeout->kProcDawnDelay, _vm->_timeout->kReasonDawndelay);
+	_vm->_timer->addTimer(2, _vm->_timer->kProcDawnDelay, _vm->_timer->kReasonDawndelay);
 }
 
 void Animation::call_special(uint16 which) {
@@ -756,7 +756,7 @@ void Animation::call_special(uint16 which) {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 		_vm->_gyro->_dna._brummieStairs = 1;
 		_vm->_gyro->_magics[9]._operation = _vm->_gyro->kMagicNothing;
-		_vm->_timeout->addTimer(10, _vm->_timeout->kProcStairs, _vm->_timeout->kReasonBrummieStairs);
+		_vm->_timer->addTimer(10, _vm->_timer->kProcStairs, _vm->_timer->kReasonBrummieStairs);
 		stopWalking();
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		break;
@@ -790,7 +790,7 @@ void Animation::call_special(uint16 which) {
 	case 4: // This is the ghost room link.
 		_vm->_lucerna->dusk();
 		tr[0].turn(kDirRight); // you'll see this after we get back from bootstrap
-		_vm->_timeout->addTimer(1, _vm->_timeout->kProcGhostRoomPhew, _vm->_timeout->kReasonGhostRoomPhew);
+		_vm->_timer->addTimer(1, _vm->_timer->kProcGhostRoomPhew, _vm->_timer->kReasonGhostRoomPhew);
 		_vm->_enid->backToBootstrap(3);
 		break;
 	case 5:
@@ -808,7 +808,7 @@ void Animation::call_special(uint16 which) {
 			tr[1]._vanishIfStill = true;
 			tr[1]._doCheck = true; // One of them must have Check_Me switched on.
 			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = 177; // Not here, then.
-			_vm->_timeout->addTimer(364, _vm->_timeout->kProcHangAround, _vm->_timeout->kReasonHangingAround);
+			_vm->_timer->addTimer(364, _vm->_timer->kProcHangAround, _vm->_timer->kReasonHangingAround);
 		}
 		break;
 	case 6: // _vm->_gyro->special 6: fall down oubliette.
@@ -816,17 +816,17 @@ void Animation::call_special(uint16 which) {
 		tr[0]._moveX = 3;
 		tr[0]._moveY = 0;
 		tr[0]._facingDir = kDirRight;
-		_vm->_timeout->addTimer(1, _vm->_timeout->kProcFallDownOubliette, _vm->_timeout->kReasonFallingDownOubliette);
+		_vm->_timer->addTimer(1, _vm->_timer->kProcFallDownOubliette, _vm->_timer->kReasonFallingDownOubliette);
 		break;
 	case 7: // _vm->_gyro->special 7: stop falling down oubliette.
 		tr[0]._visible = false;
 		_vm->_gyro->_magics[9]._operation = _vm->_gyro->kMagicNothing;
 		stopWalking();
-		_vm->_timeout->loseTimer(_vm->_timeout->kReasonFallingDownOubliette);
+		_vm->_timer->loseTimer(_vm->_timer->kReasonFallingDownOubliette);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 1);
 		_vm->_scrolls->displayText("Oh dear, you seem to be down the bottom of an oubliette.");
-		_vm->_timeout->addTimer(200, _vm->_timeout->kProcMeetAvaroid, _vm->_timeout->kReasonMeetingAvaroid);
+		_vm->_timer->addTimer(200, _vm->_timer->kProcMeetAvaroid, _vm->_timer->kReasonMeetingAvaroid);
 		break;
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
 		if ((_vm->_gyro->_dna._geidaFollows) && (!_vm->_gyro->_dna._lustieIsAsleep)) {
@@ -844,7 +844,7 @@ void Animation::call_special(uint16 which) {
 		tr[1].walkTo(4); // She walks to somewhere...
 		tr[0].done();     // Lose Avvy.
 		_vm->_gyro->_dna._userMovesAvvy = false;
-		_vm->_timeout->addTimer(40, _vm->_timeout->kProcRobinHoodAndGeida, _vm->_timeout->kReasonRobinHoodAndGeida);
+		_vm->_timer->addTimer(40, _vm->_timer->kProcRobinHoodAndGeida, _vm->_timer->kReasonRobinHoodAndGeida);
 		break;
 	case 10: // _vm->_gyro->special 10: transfer north in catacombs.
 		if ((_vm->_gyro->_dna._catacombX == 4) && (_vm->_gyro->_dna._catacombY == 1)) {
@@ -1126,7 +1126,7 @@ void Animation::arrow_procs(byte tripnum) {
 			_vm->_lucerna->gameOver();
 
 			_vm->_gyro->_dna._userMovesAvvy = false; // Stop the user from moving him.
-			_vm->_timeout->addTimer(55, _vm->_timeout->kProcNaughtyDuke, _vm->_timeout->kReasonNaughtyDuke);
+			_vm->_timer->addTimer(55, _vm->_timer->kProcNaughtyDuke, _vm->_timer->kReasonNaughtyDuke);
 		}
 	} else { // Arrow has hit the wall!
 		tr[tripnum].done(); // Deallocate the arrow.

@@ -38,7 +38,7 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/dropdown2.h"
 #include "avalanche/pingo2.h"
-#include "avalanche/timeout2.h"
+#include "avalanche/timer.h"
 #include "avalanche/celer2.h"
 #include "avalanche/enid2.h"
 #include "avalanche/visa2.h"
@@ -205,7 +205,7 @@ void Avalot::run(Common::String arg) {
 		_vm->_celer->updateBackgroundSprites();
 		_vm->_animation->animLink();
 		_vm->_lucerna->checkClick();
-		_vm->_timeout->updateTimer();
+		_vm->_timer->updateTimer();
 
 
 

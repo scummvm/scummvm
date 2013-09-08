@@ -31,7 +31,7 @@
 
 #include "avalanche/sequence2.h"
 #include "avalanche/gyro2.h"
-#include "avalanche/timeout2.h"
+#include "avalanche/timer.h"
 #include "avalanche/celer2.h"
 #include "avalanche/animation.h"
 
@@ -69,8 +69,8 @@ void Sequence::thenFlip(byte where, byte ped) {
 }
 
 void Sequence::startToClose() {
-	_vm->_timeout->loseTimer(_vm->_timeout->kReasonSequencer);
-	_vm->_timeout->addTimer(7, _vm->_timeout->kProcSequence, _vm->_timeout->kReasonSequencer);
+	_vm->_timer->loseTimer(_vm->_timer->kReasonSequencer);
+	_vm->_timer->addTimer(7, _vm->_timer->kProcSequence, _vm->_timer->kReasonSequencer);
 }
 
 void Sequence::startToOpen() {
