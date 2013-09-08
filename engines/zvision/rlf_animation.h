@@ -68,7 +68,7 @@ private:
 	Common::List<uint> _completeFrames;
 
 	int _currentFrame;
-	uint16 *_currentFrameBuffer;
+	Graphics::Surface _currentFrameBuffer;
 	uint32 _frameBufferByteSize;
 
 public:
@@ -79,8 +79,8 @@ public:
 
 	void seekToFrame(int frameNumber);
 
-	const uint16 *getFrameData(uint frameNumber);
-	const uint16 *getNextFrame();
+	const Graphics::Surface *getFrameData(uint frameNumber);
+	const Graphics::Surface *getNextFrame();
 
 	bool endOfAnimation() { return _currentFrame == (int)_frameCount - 1; }
 

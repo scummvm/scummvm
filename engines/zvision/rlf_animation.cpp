@@ -45,7 +45,6 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 		  _frameTime(0),
 		  _frames(0),
 		  _currentFrame(-1),
-		  _currentFrameBuffer(0),
 		  _frameBufferByteSize(0) {
 	if (!_file.open(fileName)) {
 		warning("RLF animation file %s could not be opened", fileName.c_str());
@@ -57,7 +56,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 		return;
 	}
 
-	_currentFrameBuffer = new uint16[_width * _height];
+	_currentFrameBuffer.create(_width, _height, _pixelFormat565);
 	_frameBufferByteSize = _width * _height * sizeof(uint16);
 
 	if (!stream) {
@@ -71,7 +70,6 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 }
 
 RlfAnimation::~RlfAnimation() {
-	delete[] _currentFrameBuffer;
 	for (uint i = 0; i < _frameCount; i++) {
 		delete[] _frames[i].encodedData;
 	}
@@ -181,23 +179,23 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 	_currentFrame = frameNumber;
 }
 
-const uint16 *RlfAnimation::getFrameData(uint frameNumber) {
+const Graphics::Surface *RlfAnimation::getFrameData(uint frameNumber) {
 	assert(!_stream);
 	assert(frameNumber < _frameCount);
 
 	// Since this method is so expensive, first check to see if we can use
 	// getNextFrame() it's cheap.
 	if ((int)frameNumber == _currentFrame) {
-		return _currentFrameBuffer;
+		return &_currentFrameBuffer;
 	} else if (_currentFrame + 1 == (int)frameNumber) {
 		return getNextFrame();
 	}
 
 	seekToFrame(frameNumber);
-	return _currentFrameBuffer;
+	return &_currentFrameBuffer;
 }
 
-const uint16 *RlfAnimation::getNextFrame() {
+const Graphics::Surface *RlfAnimation::getNextFrame() {
 	assert(_currentFrame + 1 < (int)_frameCount);
 
 	if (_stream) {
@@ -207,22 +205,22 @@ const uint16 *RlfAnimation::getNextFrame() {
 	}
 
 	_currentFrame++;
-	return _currentFrameBuffer;
+	return &_currentFrameBuffer;
 }
 
 void RlfAnimation::applyFrameToCurrent(uint frameNumber) {
 	if (_frames[frameNumber].type == Masked) {
-		decodeMaskedRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer, _frames[frameNumber].encodedSize, _frameBufferByteSize);
+		decodeMaskedRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer.getPixels(), _frames[frameNumber].encodedSize, _frameBufferByteSize);
 	} else if (_frames[frameNumber].type == Simple) {
-		decodeSimpleRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer, _frames[frameNumber].encodedSize, _frameBufferByteSize);
+		decodeSimpleRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer.getPixels(), _frames[frameNumber].encodedSize, _frameBufferByteSize);
 	}
 }
 
 void RlfAnimation::applyFrameToCurrent(const RlfAnimation::Frame &frame) {
 	if (frame.type == Masked) {
-		decodeMaskedRunLengthEncoding(frame.encodedData, (int8 *)_currentFrameBuffer, frame.encodedSize, _frameBufferByteSize);
+		decodeMaskedRunLengthEncoding(frame.encodedData, (int8 *)_currentFrameBuffer.getPixels(), frame.encodedSize, _frameBufferByteSize);
 	} else if (frame.type == Simple) {
-		decodeSimpleRunLengthEncoding(frame.encodedData, (int8 *)_currentFrameBuffer, frame.encodedSize, _frameBufferByteSize);
+		decodeSimpleRunLengthEncoding(frame.encodedData, (int8 *)_currentFrameBuffer.getPixels(), frame.encodedSize, _frameBufferByteSize);
 	}
 }
 
