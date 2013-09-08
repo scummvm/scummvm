@@ -213,11 +213,10 @@ void AnimationType::walk() {
 
 		if ((tc != 255) & (!_anim->_vm->_gyro->_doingSpriteRun)) {
 			switch (_anim->_vm->_gyro->_magics[tc]._operation) {
-			case Gyro::kMagicExclaim: {
+			case Gyro::kMagicExclaim:
 				bounce();
 				_anim->_mustExclaim = true;
 				_anim->_sayWhat = _anim->_vm->_gyro->_magics[tc]._data;
-				}
 				break;
 			case Gyro::kMagicBounce:
 				bounce();
@@ -227,7 +226,8 @@ void AnimationType::walk() {
 				break;
 			case Gyro::kMagicUnfinished: {
 				bounce();
-				_anim->_vm->_scrolls->displayText("\7Sorry.\3\rThis place is not available yet!");
+				Common::String tmpStr = Common::String::format("%cSorry.%cThis place is not available yet!", Scrolls::kControlBell, Scrolls::kControlCenter, Scrolls::kControlRoman);
+				_anim->_vm->_scrolls->displayText(tmpStr);
 				}
 				break;
 			case Gyro::kMagicSpecial:
