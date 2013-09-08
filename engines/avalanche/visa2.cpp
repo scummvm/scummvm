@@ -42,7 +42,7 @@ namespace Avalanche {
 
 Visa::Visa(AvalancheEngine *vm) {
 	_vm = vm;
-	noError = true;
+	_noError = true;
 }
 
 void Visa::unSkrimble() {
@@ -55,29 +55,32 @@ void Visa::doTheBubble() {
 	_vm->_gyro->_buffer[_vm->_gyro->_bufSize - 1] = 2;
 }
 
+/**
+ * Display a string in a scroll
+ * @remarks	Originally called 'dixi'
+ */
 void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling) {
-	Common::File indexfile, sezfile;
-	uint16 idx_offset, sez_offset;
-	bool error = false;
-
+	Common::File indexfile;
 	if (!indexfile.open("avalot.idx")) {
 		warning("AVALANCHE: Visa: File not found: avalot.idx");
 		return;
 	}
 
+	bool error = false;
+
 	indexfile.seek((toupper(block) - 65) * 2);
-	idx_offset = indexfile.readUint16LE();
+	uint16 idx_offset = indexfile.readUint16LE();
 	if (idx_offset == 0)
 		error = true;
 
 	indexfile.seek(idx_offset + point * 2);
-	sez_offset = indexfile.readUint16LE();
+	uint16 sez_offset = indexfile.readUint16LE();
 	if (sez_offset == 0)
 		error = true;
 
 	indexfile.close();
 
-	noError = !error;
+	_noError = !error;
 
 	if (error) {
 		if (report) {
@@ -88,6 +91,7 @@ void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling
 		return;
 	}
 
+	Common::File sezfile;
 	if (!sezfile.open("avalot.sez")) {
 		warning("AVALANCHE: Visa: File not found: avalot.sez");
 		return;
@@ -104,47 +108,53 @@ void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling
 	_vm->_scrolls->callScrollDriver();
 }
 
+/**
+ * Start speech
+ * @remarks	Originally called 'speech'
+ */
 void Visa::speak(byte who, byte subject) {
-	Common::File indexfile, sezfile;
-
 	if (subject == 0) { // No subject.
 		displayScrollChain('s', who, false, true);
-	} else { // Subject given.
-		noError = false; // Assume that until we know otherwise.
-
-		if (!indexfile.open("converse.avd")) {
-			warning("AVALANCHE: Visa: File not found: converse.avd");
-			return;
-		}
-
-		indexfile.seek(who * 2 - 2);
-		uint16 idx_offset = indexfile.readUint16LE();
-		uint16 next_idx_offset = indexfile.readUint16LE();
-
-		if ((idx_offset == 0) || ((((next_idx_offset - idx_offset) / 2) - 1) < subject))
-			return;
-
-		indexfile.seek(idx_offset + subject * 2);
-		uint16 sez_offset = indexfile.readUint16LE();
-		if ((sez_offset == 0) || (indexfile.err()))
-			return;
-		indexfile.close();
-
-		if (!sezfile.open("avalot.sez")) {
-			warning("AVALANCHE: Visa: File not found: avalot.sez");
-			return;
-		}
-		sezfile.seek(sez_offset);
-		_vm->_gyro->_bufSize = sezfile.readUint16LE();
-		sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
-		sezfile.close();
-
-		unSkrimble();
-		doTheBubble();
-
-		_vm->_scrolls->callScrollDriver();
-		noError = true;
+		return;
 	}
+
+	// Subject given.
+	_noError = false; // Assume that until we know otherwise.
+
+	Common::File indexfile;
+	if (!indexfile.open("converse.avd")) {
+		warning("AVALANCHE: Visa: File not found: converse.avd");
+		return;
+	}
+
+	indexfile.seek(who * 2 - 2);
+	uint16 idx_offset = indexfile.readUint16LE();
+	uint16 next_idx_offset = indexfile.readUint16LE();
+
+	if ((idx_offset == 0) || ((((next_idx_offset - idx_offset) / 2) - 1) < subject))
+		return;
+
+	indexfile.seek(idx_offset + subject * 2);
+	uint16 sez_offset = indexfile.readUint16LE();
+	if ((sez_offset == 0) || (indexfile.err()))
+		return;
+	indexfile.close();
+
+	Common::File sezfile;
+	if (!sezfile.open("avalot.sez")) {
+		warning("AVALANCHE: Visa: File not found: avalot.sez");
+		return;
+	}
+	sezfile.seek(sez_offset);
+	_vm->_gyro->_bufSize = sezfile.readUint16LE();
+	sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
+	sezfile.close();
+
+	unSkrimble();
+	doTheBubble();
+
+	_vm->_scrolls->callScrollDriver();
+	_noError = true;
 }
 
 void Visa::talkTo(byte whom) {
@@ -153,7 +163,7 @@ void Visa::talkTo(byte whom) {
 		_vm->_gyro->_subjectNum = 0;
 	}
 
-	if (_vm->_gyro->_subjectNum == 0)
+	if (_vm->_gyro->_subjectNum == 0) {
 		switch (whom) {
 		case Gyro::kPeopleSpludwick:
 			if ((_vm->_gyro->_dna._lustieIsAsleep) & (!_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1])) {
@@ -162,27 +172,21 @@ void Visa::talkTo(byte whom) {
 				_vm->_lucerna->refreshObjectList();
 				_vm->_lucerna->incScore(3);
 				return;
-			} else {
-				if (_vm->_gyro->_dna._talkedToCrapulus)
-					// Spludwick - what does he need?
-					// 0 - let it through to use normal routine.
-					switch (_vm->_gyro->_dna._givenToSpludwick) {
-					case 1: // Falltrough is intended.
-					case 2:{
-						_vm->_scrolls->displayText(Common::String("Can you get me ") + _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
-						return;
-						}
-						break;
-					case 3: {
-						displayScrollChain('q', 30); // Need any help with the game?
-						return;
-						}
-						break;
-				}
-				else {
-					displayScrollChain('q', 42); // Haven't talked to Crapulus. Go and talk to him.
+			} else if (_vm->_gyro->_dna._talkedToCrapulus) {
+				// Spludwick - what does he need?
+				// 0 - let it through to use normal routine.
+				switch (_vm->_gyro->_dna._givenToSpludwick) {
+				case 1: // Fallthrough is intended.
+				case 2:
+					_vm->_scrolls->displayText(Common::String("Can you get me ") + _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]) + ", please?" + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
+					return;
+				case 3:
+					displayScrollChain('q', 30); // Need any help with the game?
 					return;
 				}
+			} else {
+				displayScrollChain('q', 42); // Haven't talked to Crapulus. Go and talk to him.
+				return;
 			}
 			break;
 		case Gyro::kPeopleIbythneth:
@@ -208,10 +212,10 @@ void Visa::talkTo(byte whom) {
 			}
 			break;
 
-		case Gyro::kPeopleJacques: {
+		case Gyro::kPeopleJacques:
 			displayScrollChain('q', 43);
 			return;
-			}
+
 		case Gyro::kPeopleGeida:
 			if (_vm->_gyro->_dna._givenPotionToGeida)
 				_vm->_gyro->_dna._geidaFollows = true;
@@ -233,30 +237,31 @@ void Visa::talkTo(byte whom) {
 				}
 			}
 			break;
-	}
-	// On a subject. Is there any reason to block it?
-	else if ((whom == _vm->_gyro->kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) {
-			displayScrollChain('q', 43); // He's fast asleep!
-			return;
 		}
+	// On a subject. Is there any reason to block it?
+	} else if ((whom == _vm->_gyro->kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) {
+		displayScrollChain('q', 43); // He's fast asleep!
+		return;
+	}
 
 	if (whom > 149)
 		whom -= 149;
 
 	bool noMatches = true;
-	for (int16 i = 0; i <= _vm->_animation->kSpriteNumbMax; i++)
+	for (int16 i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (i + 49) + _vm->_scrolls->kControlToBuffer);
 			noMatches = false;
 			break;
 		}
+	}
 
 	if (noMatches)
 		_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + _vm->_scrolls->kControlRegister + _vm->_scrolls->kControlToBuffer);
 
 	speak(whom, _vm->_gyro->_subjectNum);
 
-	if (!noError)
+	if (!_noError)
 		displayScrollChain('n', whom); // File not found!
 
 	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == _vm->_gyro->kPeopleCrapulus)) { // Crapulus: get the badge - first time only
@@ -264,7 +269,6 @@ void Visa::talkTo(byte whom) {
 		_vm->_lucerna->refreshObjectList();
 		displayScrollChain('q', 1); // Circular from Cardiff.
 		_vm->_gyro->_dna._talkedToCrapulus = true;
-
 		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = 177; // Crapulus walks off.
 
 		_vm->_animation->_sprites[1]._vanishIfStill = true;
