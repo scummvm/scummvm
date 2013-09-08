@@ -139,9 +139,13 @@ Common::String BuriedEngine::getFilePath(uint32 stringID) {
 
 	uint i = 0;
 
-	// The non-demo paths have CD info followed by a backspace
-	// We ignore this
-	if (!isDemo())
+	// The non-demo paths have CD info followed by a backslash.
+	// We ignore this.
+	// In the demo, we remove the "BITDATA" prefix because the
+	// binaries are in the same directory.
+	if (isDemo())
+		i += 8;
+	else
 		i += 2;
 
 	for (; i < path.size(); i++) {
