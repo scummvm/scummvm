@@ -243,7 +243,7 @@ void Timeout::openDrawbridge() {
 }
 
 void Timeout::avariciusTalks() {
-	_vm->_visa->dixi('q', _vm->_gyro->_dna._avariciusTalk);
+	_vm->_visa->displayScrollChain('q', _vm->_gyro->_dna._avariciusTalk);
 	_vm->_gyro->_dna._avariciusTalk++;
 
 	if (_vm->_gyro->_dna._avariciusTalk < 17)
@@ -285,25 +285,25 @@ void Timeout::stairs() {
 void Timeout::cardiffSurvey() {
 	if (_vm->_gyro->_dna._cardiffQuestionNum == 0) {
 		_vm->_gyro->_dna._cardiffQuestionNum++;
-		_vm->_visa->dixi('q', 27);
+		_vm->_visa->displayScrollChain('q', 27);
 	}
 
-	_vm->_visa->dixi('z', _vm->_gyro->_dna._cardiffQuestionNum);
+	_vm->_visa->displayScrollChain('z', _vm->_gyro->_dna._cardiffQuestionNum);
 	_vm->_gyro->_interrogation = _vm->_gyro->_dna._cardiffQuestionNum;
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
 void Timeout::cardiffReturn() {
-	_vm->_visa->dixi('q', 28);
+	_vm->_visa->displayScrollChain('q', 28);
 	cardiffSurvey(); // Add end of question.
 }
 
 void Timeout::cwytalotInHerts() {
-	_vm->_visa->dixi('q', 29);
+	_vm->_visa->displayScrollChain('q', 29);
 }
 
 void Timeout::getTiedUp() {
-	_vm->_visa->dixi('q', 34); // ...Trouble!
+	_vm->_visa->displayScrollChain('q', 34); // ...Trouble!
 	_vm->_gyro->_dna._userMovesAvvy = false;
 	_vm->_gyro->_dna._beenTiedUp = true;
 	_vm->_animation->stopWalking();
@@ -326,17 +326,17 @@ void Timeout::hangAround() {
 	_vm->_animation->tr[0].init(7, true, _vm->_animation); // Robin Hood
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleRobinHood - 150] = r__robins;
 	_vm->_animation->apped(1, 2);
-	_vm->_visa->dixi('q', 39);
+	_vm->_visa->displayScrollChain('q', 39);
 	_vm->_animation->tr[0].walkto(7);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
 void Timeout::hangAround2() {
-	_vm->_visa->dixi('q', 40);
+	_vm->_visa->displayScrollChain('q', 40);
 	_vm->_animation->tr[1]._vanishIfStill = false;
 	_vm->_animation->tr[1].walkto(4);
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = r__robins;
-	_vm->_visa->dixi('q', 41);
+	_vm->_visa->displayScrollChain('q', 41);
 	_vm->_animation->tr[0].done();
 	_vm->_animation->tr[1].done(); // Get rid of Robin Hood and Friar Tuck.
 
@@ -381,7 +381,7 @@ void Timeout::afterTheShootemup() {
 
 	warning("STUB: Timeout::after_the_shootemup()");
 
-	_vm->_visa->dixi('q', 70);
+	_vm->_visa->displayScrollChain('q', 70);
 }
 
 void Timeout::jacquesWakesUp() {
@@ -390,7 +390,7 @@ void Timeout::jacquesWakesUp() {
 	switch (_vm->_gyro->_dna._jacquesState) { // Additional pictures.
 	case 1 :
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Eyes open.
-		_vm->_visa->dixi('Q', 45);
+		_vm->_visa->displayScrollChain('Q', 45);
 		break;
 	case 2 : // Going through the door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor.
@@ -436,7 +436,7 @@ void Timeout::naughtyDuke() { // This is when the Duke comes in and takes your m
 }
 
 void Timeout::naughtyDuke2() {
-	_vm->_visa->dixi('q', 48); // "Ha ha, it worked again!"
+	_vm->_visa->displayScrollChain('q', 48); // "Ha ha, it worked again!"
 	_vm->_animation->tr[1].walkto(1); // Walk to the door.
 	_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
@@ -489,14 +489,14 @@ void Timeout::jump() {
 			_vm->_gyro->_dna._arrowInTheDoor = false; // You've got it.
 			_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBolt - 1] = true;
 			_vm->_lucerna->refreshObjectList();
-			_vm->_visa->dixi('q', 50);
+			_vm->_visa->displayScrollChain('q', 50);
 			_vm->_lucerna->incScore(3);
 		}
 	}
 }
 
 void Timeout::crapulusSaysSpludOut() {
-	_vm->_visa->dixi('q', 56);
+	_vm->_visa->displayScrollChain('q', 56);
 	_vm->_gyro->_dna._crapulusWillTell = false;
 }
 
@@ -504,11 +504,11 @@ void Timeout::buyDrinks() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
 	_vm->_gyro->_dna._malagauche = 0;
 
-	_vm->_visa->dixi('D', _vm->_gyro->_dna._drinking); // Display message about it.
+	_vm->_visa->displayScrollChain('D', _vm->_gyro->_dna._drinking); // Display message about it.
 	_vm->_pingo->wobble(); // Do the special effects.
-	_vm->_visa->dixi('D', 1); // That'll be thruppence.
+	_vm->_visa->displayScrollChain('D', 1); // That'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) // Pay 3d.
-		_vm->_visa->dixi('D', 3); // Tell 'em you paid up.
+		_vm->_visa->displayScrollChain('D', 3); // Tell 'em you paid up.
 	_vm->_acci->drink();
 }
 
@@ -516,10 +516,10 @@ void Timeout::buyWine() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
 	_vm->_gyro->_dna._malagauche = 0;
 
-	_vm->_visa->dixi('D', 50); // You buy the wine.
-	_vm->_visa->dixi('D', 1); // It'll be thruppence.
+	_vm->_visa->displayScrollChain('D', 50); // You buy the wine.
+	_vm->_visa->displayScrollChain('D', 1); // It'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) {
-		_vm->_visa->dixi('D', 4); // You paid up.
+		_vm->_visa->displayScrollChain('D', 4); // You paid up.
 		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = true;
 		_vm->_lucerna->refreshObjectList();
 		_vm->_gyro->_dna._wineState = 1; // OK Wine.
@@ -527,12 +527,12 @@ void Timeout::buyWine() {
 }
 
 void Timeout::callsGuards() {
-	_vm->_visa->dixi('Q', 58); // "GUARDS!!!"
+	_vm->_visa->displayScrollChain('Q', 58); // "GUARDS!!!"
 	_vm->_lucerna->gameOver();
 }
 
 void Timeout::greetsMonk() {
-	_vm->_visa->dixi('Q', 59);
+	_vm->_visa->displayScrollChain('Q', 59);
 	_vm->_gyro->_dna._enteredLustiesRoomAsMonk = true;
 }
 
@@ -549,7 +549,7 @@ void Timeout::meetAvaroid() {
 			+ _vm->_scrolls->kControlRoman + " lucky twice in a row!");
 		_vm->_lucerna->gameOver();
 	} else {
-		_vm->_visa->dixi('Q', 60);
+		_vm->_visa->displayScrollChain('Q', 60);
 		_vm->_gyro->_dna._metAvaroid = true;
 		addTimer(1, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 
@@ -583,7 +583,7 @@ void Timeout::robinHoodAndGeida() {
 }
 
 void Timeout::robinHoodAndGeidaTalk() {
-	_vm->_visa->dixi('q', 66);
+	_vm->_visa->displayScrollChain('q', 66);
 	_vm->_animation->tr[0].walkto(2);
 	_vm->_animation->tr[1].walkto(2);
 	_vm->_animation->tr[0]._vanishIfStill = true;
@@ -596,7 +596,7 @@ void Timeout::avalotReturns() {
 	_vm->_animation->tr[1].done();
 	_vm->_animation->tr[0].init(0, true, _vm->_animation);
 	_vm->_animation->apped(1, 1);
-	_vm->_visa->dixi('q', 67);
+	_vm->_visa->displayScrollChain('q', 67);
 	_vm->_gyro->_dna._userMovesAvvy = true;
 }
 
@@ -625,12 +625,12 @@ void Timeout::arkataShouts() {
 	if (_vm->_gyro->_dna._teetotal)
 		return;
 
-	_vm->_visa->dixi('q', 76);
+	_vm->_visa->displayScrollChain('q', 76);
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
 void Timeout::winning() {
-	_vm->_visa->dixi('q', 79);
+	_vm->_visa->displayScrollChain('q', 79);
 	_vm->_pingo->winningPic();
 
 	warning("STUB: Timeout::winning()");
@@ -673,7 +673,7 @@ void Timeout::spludwickLeavesCauldron() {
 }
 
 void Timeout::giveLuteToGeida() { // Moved here from Acci.
-	_vm->_visa->dixi('Q', 86);
+	_vm->_visa->displayScrollChain('Q', 86);
 	_vm->_lucerna->incScore(4);
 	_vm->_gyro->_dna._lustieIsAsleep = true;
 	_vm->_sequence->firstShow(5);

@@ -718,7 +718,7 @@ void Scrolls::callScrollDriver() {
 				case 10:
 					switch (_vm->_gyro->_dna._boxContent) {
 					case 0: { // Sixpence.
-						_vm->_visa->dixi('q', 37); // You find the sixpence.
+						_vm->_visa->displayScrollChain('q', 37); // You find the sixpence.
 						_vm->_gyro->_dna._money += 6;
 						_vm->_gyro->_dna._boxContent = _vm->_acci->kNothing;
 						_vm->_lucerna->incScore(2);

@@ -307,7 +307,7 @@ void Gyro::forceNumlock() {
 bool Gyro::decreaseMoney(uint16 howmuchby) {
 	_dna._money -= howmuchby;
 	if (_dna._money < 0) {
-		_vm->_visa->dixi('Q', 2); // "You are now denariusless!"
+		_vm->_visa->displayScrollChain('Q', 2); // "You are now denariusless!"
 		_vm->_lucerna->gameOver();
 		return false;
 	} else
