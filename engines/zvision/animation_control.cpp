@@ -71,10 +71,31 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 		_accumulatedTime += deltaTimeInMillis;
 
 		uint32 frameTime = _animation.rlf->frameTime();
-		if (_accumulatedTime >= frameTime) {
+		while (_accumulatedTime >= frameTime) {
 			_accumulatedTime -= frameTime;
 
-			_engine->getRenderManager()->copyRectToWorkingWindow(_animation.rlf->getNextFrame(), _x, _y, _animation.rlf->width(), _animation.rlf->width(), _animation.rlf->height());
+			RenderManager *renderManager = _engine->getRenderManager();
+			Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
+			Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _animation.rlf->width(), workingWindowPoint.y + _animation.rlf->height());
+
+			// If the clip returns false, it means the animation is outside the working window
+			if (!renderManager->clipRectToWorkingWindow(subRect)) {
+				return false;
+			}
+
+			const Graphics::Surface *frame = _animation.rlf->getNextFrame();
+
+			RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
+			if (state == RenderTable::PANORAMA) {
+				Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
+
+				renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
+
+				tranposedFrame->free();
+				delete tranposedFrame;
+			} else {
+				renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
+			}
 
 			if (_animation.rlf->endOfAnimation()) {
 				_animation.rlf->seekToFrame(-1);
@@ -95,7 +116,28 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 			const Graphics::Surface *frame = _animation.avi->decodeNextFrame();
 
 			if (frame) {
-				_engine->getRenderManager()->copyRectToWorkingWindow((const uint16 *)frame->getPixels(), _x, _y, frame->w, frame->w, frame->h);
+				RenderManager *renderManager = _engine->getRenderManager();
+				Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
+				Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + frame->w, workingWindowPoint.y + frame->h);
+
+				// If the clip returns false, it means the animation is outside the working window
+				if (!renderManager->clipRectToWorkingWindow(subRect)) {
+					return false;
+				}
+
+				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
+				if (state == RenderTable::PANORAMA) {
+					Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
+
+					renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
+
+					tranposedFrame->free();
+					delete tranposedFrame;
+				} else {
+					renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
+				}
+
+				
 			}
 		}
 
