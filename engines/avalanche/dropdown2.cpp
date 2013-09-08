@@ -243,9 +243,6 @@ void MenuBar::draw() {
 	for (byte i = 0; i < _menuNum; i++)
 		_menuItems[i].draw();
 
-	for (byte page = 0; page <= 1; page++)
-		_dr->_vm->_animation->getset[page].remember(menuspace);
-
 	_dr->_vm->_gyro->_cp = savecp;
 }
 
