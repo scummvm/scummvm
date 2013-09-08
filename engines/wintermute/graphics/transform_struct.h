@@ -54,7 +54,7 @@ public:
 
 	Point32 _zoom;   ///< Zoom; 100 = no zoom
 	Point32 _hotspot; ///< Position of the hotspot
-	uint32 _angle;   ///< Rotation angle, in degrees
+	int32 _angle;   ///< Rotation angle, in degrees
 	byte _flip;      ///< Bitflag: see TransparentSurface::FLIP_XXX
 	bool _alphaDisable;
 	TSpriteBlendMode _blendMode;
