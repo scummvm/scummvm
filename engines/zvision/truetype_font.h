@@ -106,10 +106,6 @@ public:
 	void drawText(const Common::String &text, int x, int y, int width, TextAlign align = ALIGN_LEFT, int max_height = -1);
 	int getLetterHeight();
 
-	void initLoop() {}
-	void afterLoad() {}
-
-	bool loadBuffer(byte *buffer);
 	bool loadFile(const Common::String &filename);
 
 	float getLineHeight() const { return _lineHeight; }
@@ -121,7 +117,6 @@ public:
 private:
 	void measureText(const Common::String &text, int maxWidth, int maxHeight, int &textWidthOut, int &textHeightOut);
 	Graphics::Surface *renderTextToTexture(const Common::String &text, int width, TextAlign align, int maxHeight);
-	bool initFont();
 };
 
 } // End of namespace ZVision
