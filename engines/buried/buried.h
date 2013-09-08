@@ -100,6 +100,11 @@ public:
 	void removeKeyboardMessages(Window *window);
 	void removeMouseMessages(Window *window);
 	void removeAllMessages(Window *window);
+	void removeMessages(Window *window, int messageBegin, int messageEnd);
+	bool hasMessage(Window *window, int messageBegin, int messageEnd) const;
+
+	// Miscellaneous
+	void yield();
 
 private:
 	Database *_library;
@@ -125,6 +130,7 @@ private:
 	// LordHoto didn't want me to add an iterator to Common::Queue.
 	typedef Common::List<MessageInfo> MessageQueue;
 	MessageQueue _messageQueue;
+	void pollForEvents();
 };
 
 } // End of namespace Buried
