@@ -38,6 +38,7 @@
 #include "buried/window.h"
 
 #include "buried/title_sequence.h"
+#include "buried/demo/demo_menu.h"
 #include "common/events.h"
 
 namespace Buried {
@@ -98,16 +99,23 @@ Common::Error BuriedEngine::run() {
 
 	_gfx = new GraphicsManager(this);
 	_sound = new SoundManager(this);
-	
-	// HACK: Show the intro for now in the full game
-	if (isDemo())
-		return Common::kNoError;
 
+	// HACK: Create a dummy main window
 	_mainWindow = new Window(this, 0);
 	_mainWindow->setWindowPos(0, 0, 0, 640, 480, Window::kWindowPosNoZOrder);
-	TitleSequenceWindow *titleSeq = new TitleSequenceWindow(this, _mainWindow);
-	titleSeq->setFocus();
-	titleSeq->playTitleSequence();
+
+	// HACK: Show a window
+	Window *tempWindow = 0;
+	if (isDemo()) {
+		DemoMainMenuWindow *demoMenu = new DemoMainMenuWindow(this, _mainWindow);
+		demoMenu->showWithSplash();
+		tempWindow = demoMenu;
+	} else {
+		TitleSequenceWindow *titleSeq = new TitleSequenceWindow(this, _mainWindow);
+		titleSeq->setFocus();
+		titleSeq->playTitleSequence();
+		tempWindow = titleSeq;
+	}
 
 	while (!shouldQuit()) {
 		updateTimers();
@@ -121,7 +129,7 @@ Common::Error BuriedEngine::run() {
 		_system->delayMillis(10);
 	}
 
-	delete titleSeq;
+	delete tempWindow;
 
 	return Common::kNoError;
 }
