@@ -15,7 +15,8 @@ MODULE_OBJS = \
 	title_sequence.o \
 	video_window.o \
 	window.o \
-	demo/demo_menu.o
+	demo/demo_menu.o \
+	demo/movie_scene.o
 
 
 # This module can be built as a plugin

@@ -23,51 +23,33 @@
  *
  */
 
-#ifndef BURIED_FRAME_WINDOW_H
-#define BURIED_FRAME_WINDOW_H
+#ifndef BURIED_DEMO_MOVIE_SCENE_H
+#define BURIED_DEMO_MOVIE_SCENE_H
 
 #include "buried/window.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Buried {
 
-class BuriedEngine;
-
-class FrameWindow : public Window {
+class MovieDisplayWindow : public Window {
 public:
-	FrameWindow(BuriedEngine *vm);
-	~FrameWindow();
+	MovieDisplayWindow(BuriedEngine *vm, Window *parent, const Common::String &background, const Common::String &movie, int movieLeft, int movieTop);
+	~MovieDisplayWindow();
 
-	bool showMainMenu();
-	bool returnToMainMenu();
-	bool playMovie(const Common::String &background, const Common::String &movie, int movieLeft, int movieTop);
-	bool showClosingScreen();
-	bool showFeaturesScreen();
-	bool startNewGame(bool walkthrough = false, bool introMovie = false);
-	bool startNewGame(const Common::String &fileName);
-	// TODO: startNewGame with continue data
-	// TODO: showDeathScene
-	// TODO: showCompletionScene
-	bool showCredits();
-	bool showOverview();
-	bool notifyUserOfFrameCycling();
-	bool setTimerPause(bool pause);
+	bool showMovieInWindow();
 
+	void onPaint();
 	bool onEraseBackground();
-	void onKeyDown(const Common::KeyState &key, uint flags);
-	void onKeyUp(const Common::KeyState &key, uint flags);
+	void onLButtonUp(const Common::Point &point, uint flags);
 	void onTimer(uint timer);
-	void onKillFocus(Window *newWindow);
-	void onSetFocus(Window *oldWindow);
 
 private:
-	Window *_mainChildWindow;
-	bool _controlDown;
-
-	bool _cacheFrames;
-	bool _cycleDefault;
-	int _transitionSpeed;
-	bool _gameInProgress;
-	bool _atMainMenu;
+	Graphics::Surface *_background;
+	VideoWindow *_movie;
+	uint _timer;
 };
 
 } // End of namespace Buried
