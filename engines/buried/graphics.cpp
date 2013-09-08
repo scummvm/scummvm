@@ -312,7 +312,10 @@ uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 }
 
 void GraphicsManager::invalidateRect(const Common::Rect &rect) {
-	_dirtyRect.extend(rect);
+	if (_dirtyRect.isEmpty())
+		_dirtyRect = rect;
+	else
+		_dirtyRect.extend(rect);
 }
 
 void GraphicsManager::updateScreen() {
@@ -324,7 +327,7 @@ void GraphicsManager::updateScreen() {
 		_vm->_mainWindow->updateWindow();
 
 		// Copy just that rect
-		g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
+		g_system->copyRectToScreen(_screen->getBasePtr(_dirtyRect.left, _dirtyRect.top), _screen->pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
 
 		// Empty out the dirty rect
 		_dirtyRect = Common::Rect();
