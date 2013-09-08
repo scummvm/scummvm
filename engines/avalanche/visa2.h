@@ -44,7 +44,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	bool went_ok;
+	bool noError;
 	void unskrimble();
 	void do_the_bubble();
 	void speech(byte who, byte subject);

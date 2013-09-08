@@ -184,11 +184,8 @@ bool AnimationType::checkCollision() {
 }
 
 void AnimationType::walk() {
-	byte tc;
-	ByteField r;
-
-
 	if (_visible) {
+		ByteField r;
 		r._x1 = (_x / 8) - 1;
 		if (r._x1 == 255)
 			r._x1 = 0;
@@ -204,8 +201,8 @@ void AnimationType::walk() {
 		_oldY[_tr->_vm->_gyro->_cp] = _y;
 		if (_homing)
 			homestep();
-		_x = _x + _moveX;
-		_y = _y + _moveY;
+		_x += _moveX;
+		_y += _moveY;
 	}
 
 	if (_doCheck) {
@@ -214,7 +211,7 @@ void AnimationType::walk() {
 			return;
 		}
 
-		tc = _tr->checkfeet(_x, _x + _info._xLength, _oldY[_tr->_vm->_gyro->_cp], _y, _info._yLength) - 1;
+		byte tc = _tr->checkfeet(_x, _x + _info._xLength, _oldY[_tr->_vm->_gyro->_cp], _y, _info._yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
 		if ((tc != 255) & (!_tr->_vm->_gyro->_doingSpriteRun)) {
@@ -475,11 +472,8 @@ void Animation::loadtrip() {
 }
 
 byte Animation::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
-	byte a, c;
-	int16 fv, ff;
-
 	// if not alive then begin checkfeet:=0; exit; end;
-	a = 0;
+	byte a = 0;
 
 	//setactivepage(2);
 	if (x1 < 0)
@@ -487,17 +481,17 @@ byte Animation::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	if (x2 > 639)
 		x2 = 639;
 	if (oy < y) {
-		for (fv = x1; fv <= x2; fv++) {
-			for (ff = oy + yl; ff <= y + yl; ff++) {
-				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
+		for (int16 i = x1; i <= x2; i++) {
+			for (int16 j = oy + yl; j <= y + yl; j++) {
+				byte c = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
 				if (c > a)
 					a = c;
 			}
 		}
 	} else {
-		for (fv = x1; fv <= x2; fv++) {
-			for (ff = y + yl; ff <= oy + yl; ff++) {
-				c = *(byte *)_vm->_graphics->_magics.getBasePtr(fv, ff);
+		for (int16 i = x1; i <= x2; i++) {
+			for (int16 j = y + yl; j <= oy + yl; j++) {
+				byte c = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
 				if (c > a)
 					a = c;
 			}

@@ -356,7 +356,8 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), kColorRed);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), kColorRed);
 
-	ex = mx - lx;
+//	CHECKME: unused?
+//	ex = mx - lx;
 //	int16 ey = my - ly;
 	mx -= lx;
 	my -= ly + 2;
@@ -466,7 +467,7 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 		if (textWidth > xl)
 			xl = textWidth;
 	}
-	xl = xl / 2;
+	xl /= 2;
 
 	int16 xw = xl + 18;
 	int16 yw = yl + 7;
@@ -505,7 +506,8 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, points, _vm->_gyro->_talkBackgroundColor);
 
 
-	yl -= 3;
+	// CHECKME: Unused?
+	// yl -= 3;
 
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.

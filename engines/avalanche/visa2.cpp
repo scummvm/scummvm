@@ -43,6 +43,7 @@ namespace Avalanche {
 
 Visa::Visa(AvalancheEngine *vm) {
 	_vm = vm;
+	noError = true;
 }
 
 void Visa::unskrimble() {
@@ -77,7 +78,7 @@ void Visa::dixi(char block, byte point, bool report, bool bubbling) {
 
 	indexfile.close();
 
-	went_ok = !error;
+	noError = !error;
 
 	if (error) {
 		if (report) {
@@ -106,7 +107,6 @@ void Visa::dixi(char block, byte point, bool report, bool bubbling) {
 
 void Visa::speech(byte who, byte subject) {
 	Common::File indexfile, sezfile;
-	uint16 idx_offset, sez_offset, next_idx_offset;
 
 	if (subject == 0) {
 		// No subject.
@@ -114,7 +114,7 @@ void Visa::speech(byte who, byte subject) {
 	} else {
 		// Subject given.
 
-		went_ok = false; // Assume that until we know otherwise.
+		noError = false; // Assume that until we know otherwise.
 
 		if (!indexfile.open("converse.avd")) {
 			warning("AVALANCHE: Visa: File not found: converse.avd");
@@ -122,13 +122,14 @@ void Visa::speech(byte who, byte subject) {
 		}
 
 		indexfile.seek(who * 2 - 2);
-		idx_offset = indexfile.readUint16LE();
-		next_idx_offset = indexfile.readUint16LE();
+		uint16 idx_offset = indexfile.readUint16LE();
+		uint16 next_idx_offset = indexfile.readUint16LE();
 
-		if ((idx_offset == 0) || ((((next_idx_offset - idx_offset) / 2) - 1) < subject))  return;
+		if ((idx_offset == 0) || ((((next_idx_offset - idx_offset) / 2) - 1) < subject))
+			return;
 
 		indexfile.seek(idx_offset + subject * 2);
-		sez_offset = indexfile.readUint16LE();
+		uint16 sez_offset = indexfile.readUint16LE();
 		if ((sez_offset == 0) || (indexfile.err()))
 			return;
 		indexfile.close();
@@ -146,7 +147,7 @@ void Visa::speech(byte who, byte subject) {
 		do_the_bubble();
 
 		_vm->_scrolls->callScrollDriver();
-		went_ok = true;
+		noError = true;
 	}
 
 	warning("STUB: Visa::speech()");
@@ -263,7 +264,7 @@ void Visa::talkto(byte whom) {
 
 	speech(whom, _vm->_gyro->_subjectNum);
 
-	if (!went_ok)
+	if (!noError)
 		dixi('n', whom); // File not found!
 
 	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == _vm->_gyro->kPeopleCrapulus)) { // Crapulus: get the badge - first time only

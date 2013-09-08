@@ -53,7 +53,7 @@ void Pingo::bossKey() {
 const
 	months : array[0..11] of char = 'JFMAMJJASOND';
 	title = 'Net Profits';
-	fish = #224; { à }
+	fish = 224; // 'à'
 var fv:byte; gd,gm:int16; r:char;
 begin;
 	dusk; delavvy;
