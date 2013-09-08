@@ -37,46 +37,23 @@
 
 namespace Avalanche {
 class AvalancheEngine;
-
-struct adxtype { // Second revision of ADX type
-	// CHECKME: Useless?
-	Common::String _name; // name of character
-	Common::String _comment; // comment
-	//
-	byte _frameNum; // number of pictures
-	byte seq; // how many in one stride
-	byte _fgBubbleCol, _bgBubbleCol; // foreground & background bubble colors
-	byte accinum; // the number according to Acci (1=Avvy, etc.)
-};
-
-struct AnimationSaver {
-	byte _id;
-	byte _facingDir;
-	byte _stepNum;
-	int16 _x;
-	int16 _y;
-	int8 _moveX;
-	int8 _moveY;
-	bool _visible;
-	bool _homing;
-	bool _doCheck;
-	byte _count;
-	byte _xWidth, _speedX, _speedY;
-	byte _animCount;
-	int16 _homingX;
-	int16 _homingY;
-	bool _callEachStepFl;
-	byte _eachStepProc;
-	bool _vanishIfStill;
-};
-
 class Animation;
+
+struct StatType {
+	Common::String _name; // Name of character.
+	Common::String _comment; // Comment.
+	//
+	byte _frameNum; // Number of pictures.
+	byte _seq; // How many in one stride.
+	byte _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
+	byte _acciNum; // The number according to Acci. (1=Avvy, etc.)
+};
 
 class AnimationType {
 public:
 	SpriteInfo _info;
 
-	adxtype _stat; // Vital statistics.
+	StatType _stat; // Vital statistics.
 	byte _facingDir, _stepNum;
 	int16 _x, _y; // Current xy coords.
 	int16 _oldX[2], _oldY[2];  // Last xy coords.
@@ -116,7 +93,6 @@ private:
 class Animation {
 public:
 	friend class AnimationType;
-	friend class getsettype;
 
 	static const byte kDirUp = 0;
 	static const byte kDirRight = 1;

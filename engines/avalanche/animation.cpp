@@ -88,11 +88,11 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *tr) {
 	_stat._frameNum = inf.readByte();
 	_info._xLength = inf.readByte();
 	_info._yLength = inf.readByte();
-	_stat.seq = inf.readByte();
+	_stat._seq = inf.readByte();
 	_info._size = inf.readUint16LE();
 	_stat._fgBubbleCol = inf.readByte();
 	_stat._bgBubbleCol = inf.readByte();
-	_stat.accinum = inf.readByte();
+	_stat._acciNum = inf.readByte();
 
 	_animCount = 0; // = 1;
 	_info._xWidth = _info._xLength / 8;
@@ -144,7 +144,7 @@ void AnimationType::original() {
 void AnimationType::andexor() {
 	if ((_vanishIfStill) && (_moveX == 0) && (_moveY == 0))
 		return;
-	byte picnum = _facingDir * _stat.seq + _stepNum; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
+	byte picnum = _facingDir * _stat._seq + _stepNum; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
 
 	_tr->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
 }
@@ -245,7 +245,7 @@ void AnimationType::walk() {
 		_count++;
 		if (((_moveX != 0) || (_moveY != 0)) && (_count > 1)) {
 			_stepNum++;
-			if (_stepNum == _stat.seq)
+			if (_stepNum == _stat._seq)
 				_stepNum = 0;
 			_count = 0;
 		}
@@ -970,7 +970,6 @@ void Animation::openDoor(byte whither, byte ped, byte magicnum) {
 
 void Animation::newspeed() {
 	// Given that you've just changed the speed in triptype._speedX, this adjusts _moveX.
-	const ByteField lightspace = {40, 199, 47, 199};
 
 	tr[0]._moveX = (tr[0]._moveX / 3) * tr[0]._speedX;
 
@@ -1072,7 +1071,7 @@ void Animation::follow_avvy_y(byte tripnum) {
 			return;
 		if (tr[tripnum]._moveX == 0)  {
 			tr[tripnum]._stepNum += 1;
-			if (tr[tripnum]._stepNum == tr[tripnum]._stat.seq)
+			if (tr[tripnum]._stepNum == tr[tripnum]._stat._seq)
 				tr[tripnum]._stepNum = 0;
 			tr[tripnum]._count = 0;
 		}
@@ -1170,7 +1169,7 @@ void Animation::grab_avvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
 		if (tr[tripnum]._y < toy)
 			tr[tripnum]._y++;
 		tr[tripnum]._stepNum++;
-		if (tr[tripnum]._stepNum == tr[tripnum]._stat.seq)
+		if (tr[tripnum]._stepNum == tr[tripnum]._stat._seq)
 			tr[tripnum]._stepNum = 0;
 	}
 }
@@ -1178,7 +1177,7 @@ void Animation::grab_avvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
 void Animation::take_a_step(byte &tripnum) {
 	if (tr[tripnum]._moveX == 0) {
 		tr[tripnum]._stepNum++;
-		if (tr[tripnum]._stepNum == tr[tripnum]._stat.seq)
+		if (tr[tripnum]._stepNum == tr[tripnum]._stat._seq)
 			tr[tripnum]._stepNum = 0;
 		tr[tripnum]._count = 0;
 	}
