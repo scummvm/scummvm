@@ -52,11 +52,11 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 }
 
 BuriedEngine::~BuriedEngine() {
+	delete _mainWindow;
 	delete _gfx;
 	delete _mainEXE;
 	delete _library;
 	delete _sound;
-	delete _mainWindow;
 
 	// The queue should be empty since all windows destroy their messages
 }
