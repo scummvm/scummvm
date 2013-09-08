@@ -446,7 +446,7 @@ void MessageQueue::replaceKeyCode(int key1, int key2) {
 }
 
 int MessageQueue::calcDuration(StaticANIObject *obj) {
-	int res;
+	int res = 0;
 	ExCommand *ex;
 	Movement *mov;
 
