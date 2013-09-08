@@ -893,12 +893,12 @@ public:
 };
 
 class Scene1850 : public SceneExt {
-	class Hotspot2 : public NamedHotspot {
+	class Button : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor5 : public SceneActor {
+	class Robot : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -906,7 +906,7 @@ class Scene1850 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor8 : public SceneActor {
+	class DisplayScreen : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -921,16 +921,16 @@ public:
 	ScenePalette _palette1;
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	NamedHotspot _item1;
-	Hotspot2 _item2;
-	SceneActor _actor1;
+	NamedHotspot _background;
+	Button _button;
+	SceneActor _companion;
 	SceneActor _actor2;
 	SceneActor _actor3;
 	SceneActor _actor4;
-	Actor5 _actor5;
-	Actor6 _actor6;
-	Actor6 _actor7;
-	Actor8 _actor8;
+	Robot _robot;
+	Actor6 _leftDoor;
+	Actor6 _rightDoor;
+	DisplayScreen _displayScreen;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 
