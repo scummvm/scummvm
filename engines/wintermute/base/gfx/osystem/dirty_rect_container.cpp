@@ -118,6 +118,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	}
 	Common::Rect *temp = new Common::Rect(*_clipRect);
 	singleret.insert_at(0, temp);
+	_cleanMe.insert_at(_cleanMe.size(), temp);
 	return singleret;
 }
 
