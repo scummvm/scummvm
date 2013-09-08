@@ -85,7 +85,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 	byte lz = z.size();
 
 	bool offset = x % 8 == 4;
-	x = x / 8;
+	x /= 8;
 	y++;
 	int16 i = 0;
 	for (byte xx = 0; xx < lz; xx++) {
@@ -112,7 +112,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 }
 
 void Scrolls::scrollModeNormal() {
-	Common::String egg = Common::String(kControlParagraph) + kControlLeftJustified + kControlNegative + kControlBell + kControlBackspace + "***";
+	Common::String egg = Common::String::format("%c%c%c%c%c***", kControlParagraph, kControlLeftJustified, kControlNegative, kControlBell, kControlBackspace);
 	Common::String e = "(c) 1994";
 
 	setReadyLight(3);
@@ -161,7 +161,8 @@ void Scrolls::scrollModeNormal() {
 			if (aboutscroll) {
 				move(e[2 - 1], e[1 - 1], 7);
 				e[8 - 1] = inchar;
-				if (egg == e)  easteregg();
+				if (egg == e)
+					easteregg();
 			}
 			oktoexit = set::of('\15', '\33', '+', '#', eos).has(inchar);
 			if (! oktoexit)  errorled();
@@ -278,9 +279,8 @@ void Scrolls::getIcon(int16 x, int16 y, byte which) {
 
 void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File file;
+	Common::String filename = Common::String::format("%s.avd", fn.c_str());
 
-	Common::String filename;
-	filename = filename.format("%s.avd", fn.c_str());
 	if (!file.open(filename)) {
 		warning("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
 		return;

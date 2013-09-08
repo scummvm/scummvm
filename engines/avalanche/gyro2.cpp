@@ -190,8 +190,7 @@ Gyro::~Gyro() {
 }
 
 Common::String Gyro::intToStr(int32 num) {
-	Common::String result = Common::String::format("%d", num);
-	return result;
+	return Common::String::format("%d", num);
 }
 
 void Gyro::newMouse(byte id) {
@@ -427,34 +426,32 @@ Common::String Gyro::getItem(byte which) {
 
 
 Common::String Gyro::f5Does() {
-	Common::String f5_does_result;
 	switch (_dna._room) {
-	case r__yours: {
-			if (!_dna._avvyIsAwake)
-				return Common::String(_vm->_acci->kVerbCodeWake) + "WWake up";
-			else if (_dna._avvyInBed)
-				return Common::String(_vm->_acci->kVerbCodeStand) + "GGet up";
-		}
+	case r__yours:
+		if (!_dna._avvyIsAwake)
+			return Common::String::format("%cWWake up", Acci::kVerbCodeWake);
+		else if (_dna._avvyInBed)
+			return Common::String::format("%cGGet up", Acci::kVerbCodeStand);
 		break;
 	case r__insidecardiffcastle:
 		if (_dna._standingOnDais)
-			return Common::String(_vm->_acci->kVerbCodeClimb) + "CClimb down";
+			return Common::String::format("%cCClimb down", Acci::kVerbCodeClimb);
 		else
-			return Common::String(_vm->_acci->kVerbCodeClimb) + "CClimb up";
+			return Common::String::format("%cCClimb up", Acci::kVerbCodeClimb);
 		break;
 	case r__nottspub:
 		if (_dna._sittingInPub)
-			return Common::String(_vm->_acci->kVerbCodeStand) + "SStand up";
+			return Common::String::format("%cSStand up", Acci::kVerbCodeStand);
 		else
-			return Common::String(_vm->_acci->kVerbCodeSit) + "SSit down";
+			return Common::String::format("%cSSit down", Acci::kVerbCodeSit);
 		break;
 	case r__musicroom:
 		if (_vm->_animation->inField(7))
-			return Common::String(_vm->_acci->kVerbCodePlay) + "PPlay the harp";
+			return Common::String::format("%cPPlay the harp", Acci::kVerbCodePlay);
 		break;
 	}
 
-	return Common::String(_vm->_acci->kPardon); // If all else fails...
+	return Common::String::format("%c", _vm->_acci->kPardon); // If all else fails...
 }
 
 void Gyro::loadMouse(byte which) {
