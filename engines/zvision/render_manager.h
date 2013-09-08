@@ -173,6 +173,15 @@ public:
 	 * @return         Point in image coordinate space
 	 */
 	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
+	/**
+	 * Converts a point in image coordinate space to ***PRE-WARP*** 
+	 * working window coordinate space
+	 *
+	 * @param point    Point in image coordinate space
+	 * @return         Point in PRE-WARP working window coordinate space
+	 */
+	const Common::Point imageSpaceToWorkingWindowSpace(const Common::Point &point);
+
 
 	RenderTable *getRenderTable();
 	uint32 getCurrentBackgroundOffset();

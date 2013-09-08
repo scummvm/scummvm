@@ -338,6 +338,19 @@ const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &
 	return newPoint;
 }
 
+const Common::Point RenderManager::imageSpaceToWorkingWindowSpace(const Common::Point &point) {
+	Common::Point newPoint(point);
+
+	RenderTable::RenderState state = _renderTable.getRenderState();
+	if (state == RenderTable::PANORAMA) {
+		newPoint += (Common::Point(_screenCenterX, 0) - _backgroundOffset);
+	} else if (state == RenderTable::TILT) {
+		newPoint += (Common::Point(0, _screenCenterY) - _backgroundOffset);
+	}
+
+	return newPoint;
+}
+
 RenderTable *RenderManager::getRenderTable() {
 	return &_renderTable;
 }
