@@ -499,7 +499,7 @@ void Gyro::loadMouse(byte which) {
 	mask.free();
 	f.close();
 
-	CursorMan.replaceCursor(cursor.pixels, 16, 32, kMouseHotSpots[which - 1]._horizontal, kMouseHotSpots[which - 1]._vertical * 2, 255, false);
+	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, kMouseHotSpots[which - 1]._horizontal, kMouseHotSpots[which - 1]._vertical * 2, 255, false);
 	cursor.free();
 }
 

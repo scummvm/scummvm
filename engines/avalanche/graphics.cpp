@@ -309,7 +309,7 @@ void Graphics::refreshScreen() {
 		}
 	}
 	// Now we copy the stretched picture to the screen.
-	g_system->copyRectToScreen(_screen.pixels, _screen.pitch, 0, 0, kScreenWidth, kScreenHeight * 2);
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, kScreenWidth, kScreenHeight * 2);
 	g_system->updateScreen();
 }
 
