@@ -147,10 +147,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Rim
 		return new Scene1700();
 	case 1750:
-		// Maintaiance Vechile
+		// Rim Transport Vechile
 		return new Scene1750();
 	case 1800:
-		// Rim lift
+		// Rim Lift Exterior
 		return new Scene1800();
 	case 1850:
 		return new Scene1850();

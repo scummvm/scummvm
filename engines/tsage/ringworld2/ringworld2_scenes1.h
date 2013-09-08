@@ -841,20 +841,20 @@ public:
 };
 
 class Scene1800 : public SceneExt {
-	class Hotspot5 : public NamedHotspot {
+	class Background : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor6 : public SceneActor {
+	class Lever : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor7 : public SceneActor {
+	class Doors : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor8 : public SceneActor {
+	class PassengerDoor : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -864,23 +864,23 @@ class Scene1800 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	int _field412;
+	int _locationMode;
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
 	NamedHotspot _item1;
 	NamedHotspot _item2;
 	NamedHotspot _item3;
 	NamedHotspot _item4;
-	Hotspot5 _item5;
+	Background _background;
 	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _companion;
 	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	Actor6 _actor6;
-	Actor7 _actor7;
-	Actor8 _actor8;
-	Actor8 _actor9;
+	SceneActor _leftStaircase;
+	SceneActor _rightStaircase;
+	Lever _lever;
+	Doors _doors;
+	PassengerDoor _leftDoor;
+	PassengerDoor _rightDoor;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
