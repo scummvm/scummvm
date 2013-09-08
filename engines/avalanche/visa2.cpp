@@ -84,8 +84,7 @@ void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling
 
 	if (error) {
 		if (report) {
-			Common::String todisplay;
-			todisplay.format("%cError accessing scroll %c%s", 7, block, _vm->_gyro->intToStr(point).c_str());
+			Common::String todisplay = Common::String::format("%cError accessing scroll %c%d", Scrolls::kControlBell, block, point);
 			_vm->_scrolls->displayText(todisplay);
 		}
 		return;
