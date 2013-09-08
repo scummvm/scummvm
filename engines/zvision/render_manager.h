@@ -195,6 +195,17 @@ public:
 	uint32 getCurrentBackgroundOffset();
 	const Graphics::Surface *getBackBuffer() { return &_backBuffer; }
 
+	/**
+	 * Creates a copy of surface and transposes the data.
+	 *
+	 * Note: The user is responsible for calling free() on the returned surface
+	 * and then deleting it
+	 *
+	 * @param surface    The data to be transposed
+	 * @return           A copy of the surface with the data transposed
+	 */
+	static Graphics::Surface *tranposeSurface(const Graphics::Surface *surface);
+
 private:
 	/**
 	 * Renders a subRectangle of an image to the backbuffer. The destinationRect and SubRect

@@ -432,4 +432,22 @@ uint32 RenderManager::getCurrentBackgroundOffset() {
 	}
 }
 
+Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surface) {
+	Graphics::Surface *tranposedSurface = new Graphics::Surface();
+	tranposedSurface->create(surface->h, surface->w, surface->format);
+
+	uint16 *source = (uint16 *)surface->getPixels();
+	uint16 *dest = (uint16 *)tranposedSurface->getPixels();
+
+	for (uint32 y = 0; y < tranposedSurface->h; y++) {
+		uint32 columnIndex = y * tranposedSurface->w;
+
+		for (uint32 x = 0; x < tranposedSurface->w; x++) {
+			dest[columnIndex + x] = source[x * surface->w + y];
+		}
+	}
+
+	return tranposedSurface;
+}
+
 } // End of namespace ZVision
