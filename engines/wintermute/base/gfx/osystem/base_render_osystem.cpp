@@ -60,7 +60,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
 	_colorMod = kDefaultRgbaMod;
-	_dirtyRects = new DirtyRectContainer;
+	_dirtyRects = new DirtyRectContainer();
 	_disableDirtyRects = false;
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
@@ -77,7 +77,7 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	}
 
 	_dirtyRects->reset();
-
+	delete _dirtyRects;
 	_renderSurface->free();
 	delete _renderSurface;
 	_blankSurface->free();

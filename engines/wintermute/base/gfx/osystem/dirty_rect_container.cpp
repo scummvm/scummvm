@@ -50,6 +50,7 @@ DirtyRectContainer::DirtyRectContainer() {
 }
 
 DirtyRectContainer::~DirtyRectContainer() {
+	reset();
 	delete _clipRect;
 }
 
