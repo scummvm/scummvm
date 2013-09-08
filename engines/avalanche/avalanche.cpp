@@ -335,9 +335,9 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	//blockwrite(f, times, sizeof(times)); // Timeout.times: Timers.
 	for (byte i = 0; i < 7; i++) {
-		sz.syncAsSint32LE(_timeout->times[i].time_left);
-		sz.syncAsByte(_timeout->times[i].then_where);
-		sz.syncAsByte(_timeout->times[i].what_for);
+		sz.syncAsSint32LE(_timeout->_times[i]._timeLeft);
+		sz.syncAsByte(_timeout->_times[i]._thenWhere);
+		sz.syncAsByte(_timeout->_times[i]._whatFor);
 	}
 
 	//blockwrite(f, seq, sizeof(seq)); // Sequencer information.

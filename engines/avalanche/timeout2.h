@@ -69,156 +69,110 @@ public:
 		kReasonGeidaSings = 28
 	};
 
-	// procx now runs between 1 and 41.
-
-	static const int16 procopen_drawbridge = 3;
-	static const int16 procavaricius_talks = 4;
-	static const int16 procurinate = 5;
-	static const int16 proctoilet2 = 6;
-	static const int16 procbang = 7;
-	static const int16 procbang2 = 8;
-	static const int16 procstairs = 9;
-	static const int16 proccardiffsurvey = 10;
-	static const int16 proccardiff_return = 11;
-	static const int16 proc_cwytalot_in_herts = 12;
-	static const int16 procget_tied_up = 13;
-	static const int16 procget_tied_up2 = 1;
-	static const int16 prochang_around = 14;
-	static const int16 prochang_around2 = 15;
-	static const int16 procafter_the_shootemup = 32;
-	static const int16 procjacques_wakes_up = 16;
-	static const int16 procnaughty_duke = 17;
-	static const int16 procnaughty_duke2 = 18;
-	static const int16 procnaughty_duke3 = 38;
-	static const int16 procjump = 19;
-	static const int16 procsequence = 20;
-	static const int16 proccrapulus_splud_out = 21;
-	static const int16 procdawn_delay = 22;
-	static const int16 procbuydrinks = 23;
-	static const int16 procbuywine = 24;
-	static const int16 proccallsguards = 25;
-	static const int16 procgreetsmonk = 26;
-	static const int16 procfall_down_oubliette = 27;
-	static const int16 procmeet_avaroid = 28;
-	static const int16 procrise_up_oubliette = 29;
-	static const int16 procrobin_hood_and_geida = 2;
-	static const int16 procrobin_hood_and_geida_talk = 30;
-	static const int16 procavalot_returns = 31;
-	static const int16 procavvy_sit_down = 33; // In Nottingham.
-	static const int16 procghost_room_phew = 34;
-	static const int16 procarkata_shouts = 35;
-	static const int16 procwinning = 36;
-	static const int16 procavalot_falls = 37;
-	static const int16 procspludwick_goes_to_cauldron = 39;
-	static const int16 procspludwick_leaves_cauldron = 40;
-	static const int16 procgive_lute_to_geida = 41;
-
-	struct timetype {
-		int32 time_left;
-		byte then_where;
-		byte what_for;
+	// Proc runs between 1 and 41.
+	enum Proc {
+		kProcOpenDrawbridge = 3,
+		kProcAvariciusTalks = 4,
+		kProcUrinate = 5,
+		kProcToilet = 6,
+		kProcBang = 7,
+		kProcBang2 = 8,
+		kProcStairs = 9,
+		kProcCardiffSurvey = 10,
+		kProcCardiffReturn = 11,
+		kProcCwytalotInHerts = 12,
+		kProcGetTiedUp = 13,
+		kProcGetTiedUp2 = 1,
+		kProcHangAround = 14,
+		kProcHangAround2 = 15,
+		kProcAfterTheShootemup = 32,
+		kProcJacquesWakesUp = 16,
+		kProcNaughtyDuke = 17,
+		kProcNaughtyDuke2 = 18,
+		kProcNaughtyDuke3 = 38,
+		kProcJump = 19,
+		kProcSequence = 20,
+		kProcCrapulusSpludOut = 21,
+		kProcDawnDelay = 22,
+		kProcBuyDrinks = 23,
+		kProcBuyWine = 24,
+		kProcCallsGuards = 25,
+		kProcGreetsMonk = 26,
+		kProcFallDownOubliette = 27,
+		kProcMeetAvaroid = 28,
+		kProcRiseUpOubliette = 29,
+		kProcRobinHoodAndGeida = 2,
+		kProcRobinHoodAndGeidaTalk = 30,
+		kProcAvalotReturns = 31,
+		kProcAvvySitDown = 33, // In Nottingham.
+		kProcGhostRoomPhew = 34,
+		kProcArkataShouts = 35,
+		kProcWinning = 36,
+		kProcAvalotFalls = 37,
+		kProcSpludwickGoesToCauldron = 39,
+		kProcSpludwickLeavesCauldron = 40,
+		kProcGiveLuteToGeida = 41
 	};
 
+	struct TimeType {
+		int32 _timeLeft;
+		byte _thenWhere;
+		byte _whatFor;
+	};
 
-
-	timetype times[7];
-
-	bool timerLost; // Is the timer "lost"? (Because of using lose_timer())
-
-
+	TimeType _times[7];
+	bool _timerLost; // Is the timer "lost"? (Because of using loseTimer())
 
 	Timeout(AvalancheEngine *vm);
 
-	void setParent(AvalancheEngine *vm);
-
-	void set_up_timer(int32 howlong, byte whither, byte why);
-
-	void one_tick();
-
-	void lose_timer(byte which);
+	void addTimer(int32 howlong, byte whither, byte why); // Original: set_up_timer()
+	void updateTimer(); // Original: one_tick()
+	void loseTimer(byte which);
 
 	// Procedures to do things at the end of amounts of time:
-
-	void open_drawbridge();
-
-	void avaricius_talks();
-
+	void openDrawbridge();
+	void avariciusTalks();
 	void urinate();
-
-	void toilet2();
-
+	void toilet();
 	void bang();
-
 	void bang2();
-
 	void stairs();
-
-	void cardiff_survey();
-
-	void cardiff_return();
-
-	void cwytalot_in_herts();
-
-	void get_tied_up();
-
-	void get_tied_up2();
-
-	void hang_around();
-
-	void hang_around2();
-
-	void after_the_shootemup();
-
-	void jacques_wakes_up();
-
-	void naughty_duke();
-
-	void naughty_duke2();
-
-	void naughty_duke3();
-
+	void cardiffSurvey();
+	void cardiffReturn();
+	void cwytalotInHerts();
+	void getTiedUp();
+	void getTiedUp2();
+	void hangAround();
+	void hangAround2();
+	void afterTheShootemup();
+	void jacquesWakesUp();
+	void naughtyDuke();
+	void naughtyDuke2();
+	void naughtyDuke3();
 	void jump();
-
-	void crapulus_says_splud_out();
-
-	void buydrinks();
-
-	void buywine();
-
-	void callsguards();
-
-	void greetsmonk();
-
-	void fall_down_oubliette();
-
-	void meet_avaroid();
-
-	void rise_up_oubliette();
-
-	void robin_hood_and_geida();
-
-	void robin_hood_and_geida_talk();
-
-	void avalot_returns();
-
-	void avvy_sit_down();
-
-	void ghost_room_phew();
-
-	void arkata_shouts();
-
+	void crapulusSaysSpludOut();
+	void buyDrinks();
+	void buyWine();
+	void callsGuards();
+	void greetsMonk();
+	void fallDownOubliette();
+	void meetAvaroid();
+	void riseUpOubliette();
+	void robinHoodAndGeida();
+	void robinHoodAndGeidaTalk();
+	void avalotReturns();
+	void avvySitDown();
+	void ghostRoomPhew();
+	void arkataShouts();
 	void winning();
-
-	void avalot_falls();
-
-	void spludwick_goes_to_cauldron();
-
-	void spludwick_leaves_cauldron();
-
-	void give_lute_to_geida();
+	void avalotFalls();
+	void spludwickGoesToCauldron();
+	void spludwickLeavesCauldron();
+	void giveLuteToGeida();
 
 private:
 	AvalancheEngine *_vm;
+
 };
 
 } // End of namespace Avalanche.

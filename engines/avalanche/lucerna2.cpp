@@ -340,21 +340,21 @@ void Lucerna::exitRoom(byte x) {
 
 	switch (x) {
 	case r__spludwicks:
-		_vm->_timeout->lose_timer(_vm->_timeout->kReasonAvariciusTalks);
+		_vm->_timeout->loseTimer(_vm->_timeout->kReasonAvariciusTalks);
 		 _vm->_gyro->_dna._avariciusTalk = 0;
 		// He doesn't HAVE to be talking for this to work. It just deletes it IF it exists.
 		break;
 	case r__bridge:
 		if (_vm->_gyro->_dna._drawbridgeOpen > 0) {
 			_vm->_gyro->_dna._drawbridgeOpen = 4; // Fully open.
-			_vm->_timeout->lose_timer(_vm->_timeout->kReasonDrawbridgeFalls);
+			_vm->_timeout->loseTimer(_vm->_timeout->kReasonDrawbridgeFalls);
 		}
 		break;
 	case r__outsidecardiffcastle:
-		_vm->_timeout->lose_timer(_vm->_timeout->kReasonCardiffsurvey);
+		_vm->_timeout->loseTimer(_vm->_timeout->kReasonCardiffsurvey);
 		break;
 	case r__robins:
-		_vm->_timeout->lose_timer(_vm->_timeout->kReasonGettingTiedUp);
+		_vm->_timeout->loseTimer(_vm->_timeout->kReasonGettingTiedUp);
 		break;
 	}
 
@@ -436,7 +436,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (_vm->_gyro->_dna._avvyInBed) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
-			_vm->_timeout->set_up_timer(100, _vm->_timeout->procarkata_shouts, _vm->_timeout->kReasonArkataShouts);
+			_vm->_timeout->addTimer(100, _vm->_timeout->kProcArkataShouts, _vm->_timeout->kReasonArkataShouts);
 		}
 		break;
 
@@ -464,7 +464,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_animation->tr[1].init(8, false, _vm->_animation);
 				_vm->_animation->apped(2, 2);
 				_vm->_animation->tr[1].walkto(4);
-				_vm->_timeout->set_up_timer(20, _vm->_timeout->proccrapulus_splud_out, _vm->_timeout->kReasonCrapulusSaysSpludwickOut);
+				_vm->_timeout->addTimer(20, _vm->_timeout->kProcCrapulusSpludOut, _vm->_timeout->kReasonCrapulusSaysSpludwickOut);
 				_vm->_gyro->_dna._crapulusWillTell = false;
 			}
 		}
@@ -472,7 +472,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case r__outsidespludwicks:
 		if ((_vm->_gyro->_dna._roomCount[r__outsidespludwicks] == 1) && (ped == 1)) {
-			_vm->_timeout->set_up_timer(20, _vm->_timeout->procbang, _vm->_timeout->kReasonExplosion);
+			_vm->_timeout->addTimer(20, _vm->_timeout->kProcBang, _vm->_timeout->kReasonExplosion);
 			_vm->_gyro->_dna._spludwickAtHome = true;
 		}
 		break;
@@ -527,7 +527,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_animation->tr[1]._vanishIfStill = true;
 			_vm->_gyro->_dna._passedCwytalotInHerts = true;
 			// _vm->_gyro->whereis[#157] = r__Nowhere; // can we fit this in?
-			_vm->_timeout->set_up_timer(20, _vm->_timeout->proc_cwytalot_in_herts, _vm->_timeout->kReasonCwytalotInHerts);
+			_vm->_timeout->addTimer(20, _vm->_timeout->kProcCwytalotInHerts, _vm->_timeout->kReasonCwytalotInHerts);
 		}
 		break;
 
@@ -548,7 +548,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_animation->tr[1].init(6, false, _vm->_animation);
 				_vm->_animation->apped(2, 2);
 				_vm->_animation->tr[1].walkto(3);
-				_vm->_timeout->set_up_timer(36, _vm->_timeout->procget_tied_up, _vm->_timeout->kReasonGettingTiedUp);
+				_vm->_timeout->addTimer(36, _vm->_timeout->kProcGetTiedUp, _vm->_timeout->kReasonGettingTiedUp);
 			}
 		}
 
@@ -572,7 +572,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_animation->tr[1].init(9, false, _vm->_animation);
 				_vm->_animation->apped(2, 2);
 				_vm->_animation->tr[1].walkto(3);
-				_vm->_timeout->set_up_timer(47, _vm->_timeout->proccardiffsurvey, _vm->_timeout->kReasonCardiffsurvey);
+				_vm->_timeout->addTimer(47, _vm->_timeout->kProcCardiffSurvey, _vm->_timeout->kReasonCardiffsurvey);
 			}
 			break;
 			case 5 :
@@ -582,7 +582,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_animation->tr[1].init(9, false, _vm->_animation);
 				_vm->_animation->apped(2, 3);
 				_vm->_animation->tr[1]._facingDir = Animation::kDirRight;
-				_vm->_timeout->set_up_timer(3, _vm->_timeout->proccardiff_return, _vm->_timeout->kReasonCardiffsurvey);
+				_vm->_timeout->addTimer(3, _vm->_timeout->kProcCardiffReturn, _vm->_timeout->kReasonCardiffsurvey);
 			}
 			}
 		if (_vm->_gyro->_dna._cardiffQuestionNum < 5)
@@ -650,10 +650,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case r__lustiesroom:
 		_vm->_gyro->_dna._dogFoodPos = 1; // Actually, du Lustie pos.
 		if (_vm->_animation->tr[0]._id == 0) // Avvy in his normal clothes
-			_vm->_timeout->set_up_timer(3, _vm->_timeout->proccallsguards, _vm->_timeout->kReasonDuLustieTalks);
+			_vm->_timeout->addTimer(3, _vm->_timeout->kProcCallsGuards, _vm->_timeout->kReasonDuLustieTalks);
 		else if (! _vm->_gyro->_dna._enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
-			_vm->_timeout->set_up_timer(3, _vm->_timeout->procgreetsmonk, _vm->_timeout->kReasonDuLustieTalks);
+			_vm->_timeout->addTimer(3, _vm->_timeout->kProcGreetsMonk, _vm->_timeout->kReasonDuLustieTalks);
 
 		if (_vm->_gyro->_dna._geidaFollows) {
 			putGeidaAt(5, ped);
@@ -1190,7 +1190,7 @@ void Lucerna::gameOver() {
 	_vm->_animation->tr[0]._stepNum = 0;
 	_vm->_animation->tr[0].appear(sx, sy, 0);
 
-	_vm->_timeout->set_up_timer(3, _vm->_timeout->procavalot_falls, _vm->_timeout->kReasonFallingOver);
+	_vm->_timeout->addTimer(3, _vm->_timeout->kProcAvalotFalls, _vm->_timeout->kReasonFallingOver);
 	_vm->_gyro->_alive = false;
 }
 
