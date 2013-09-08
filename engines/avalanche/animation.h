@@ -42,7 +42,7 @@ class Animation;
 struct StatType {
 	Common::String _name; // Name of character.
 	Common::String _comment; // Comment.
-	//
+
 	byte _frameNum; // Number of pictures.
 	byte _seq; // How many in one stride.
 	byte _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
@@ -68,26 +68,26 @@ public:
 	bool _callEachStepFl; // Do we call the eachstep procedure?
 	byte _eachStepProc;
 
-	void init(byte spritenum, bool doCheck, Animation *tr); // Loads & sets up the sprite.
-	void original(); // Just sets 'quick' to false.
 	void andexor(); // Drops sprite onto screen.
-	void turn(byte whichway); // Turns character round.
 	void appear(int16 wx, int16 wy, byte wf); // Switches it on.
 	void bounce(); // Bounces off walls.
+	void chatter();  // Sets up talk vars.
+	void init(byte spritenum, bool doCheck, Animation *tr); // Loads & sets up the sprite.
+	void original(); // Just sets 'quick' to false.
+	void remove();
+	void setSpeed(int8 xx, int8 yy); // Sets ix & iy, non-homing, etc.
+	void stopHoming(); // Self-explanatory.
+	void stopWalk(); // Stops the sprite from moving.
+	void turn(byte whichway); // Turns character round.
 	void walk(); // Prepares for andexor, etc.
 	void walkTo(byte pednum); // Home in on a point.
-	void stophoming(); // Self-explanatory.
-	void homeStep(); // Calculates ix & iy for one homing step.
-	void speed(int8 xx, int8 yy); // Sets ix & iy, non-homing, etc.
-	void stopWalk(); // Stops the sprite from moving.
-	void chatter();  // Sets up talk vars.
-	void done();
 
 private:
 	Animation *_tr;
 
 	bool checkCollision();
-	int8 sgn(int16 val);
+	int8 getSign(int16 val);
+	void homeStep(); // Calculates ix & iy for one homing step.
 };
 
 class Animation {

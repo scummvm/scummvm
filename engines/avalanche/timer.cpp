@@ -308,7 +308,7 @@ void Timer::getTiedUp() {
 	_vm->_gyro->_dna._beenTiedUp = true;
 	_vm->_animation->stopWalking();
 	_vm->_animation->_sprites[1].stopWalk();
-	_vm->_animation->_sprites[1].stophoming();
+	_vm->_animation->_sprites[1].stopHoming();
 	_vm->_animation->_sprites[1]._callEachStepFl = true;
 	_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcGrabAvvy;
 	addTimer(70, kProcGetTiedUp2, kReasonGettingTiedUp);
@@ -337,8 +337,8 @@ void Timer::hangAround2() {
 	_vm->_animation->_sprites[1].walkTo(4);
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = r__robins;
 	_vm->_visa->displayScrollChain('q', 41);
-	_vm->_animation->_sprites[0].done();
-	_vm->_animation->_sprites[1].done(); // Get rid of Robin Hood and Friar Tuck.
+	_vm->_animation->_sprites[0].remove();
+	_vm->_animation->_sprites[1].remove(); // Get rid of Robin Hood and Friar Tuck.
 
 	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
 	// Immediately call the following proc (when you have a chance).
@@ -592,8 +592,8 @@ void Timer::robinHoodAndGeidaTalk() {
 }
 
 void Timer::avalotReturns() {
-	_vm->_animation->_sprites[0].done();
-	_vm->_animation->_sprites[1].done();
+	_vm->_animation->_sprites[0].remove();
+	_vm->_animation->_sprites[1].remove();
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation);
 	_vm->_animation->appearPed(1, 1);
 	_vm->_visa->displayScrollChain('q', 67);
