@@ -48,14 +48,13 @@ private:
 
 	AvalancheEngine *_vm;
 
-	uint16 _hour, _minute, _second, _hourAngle, _oldHour, _oldMinute, _oldHourAngle; // hourAngle = nh in the original.
-	Common::Point _clockHandHour, _clockHandMinute; // ah and am in the original.
+	uint16 _hour, _minute, _second, _hourAngle, _oldHour, _oldMinute, _oldHourAngle;
+	Common::Point _clockHandHour, _clockHandMinute;
 
 	void calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color);
 	void drawHand(const Common::Point &endPoint, byte color);
 	void plotHands();
 	void chime();
-
 };
 
 class Lucerna {
@@ -94,28 +93,26 @@ public:
 	void minorRedraw();
 	void majorRedraw();
 
-	// A sprite run is performed before displaying a scroll, if not all the sprites are still. It performs two fast cycles, only using a few of
-	// the links usually used, and without any extra animation. This should make the sprites the same on both pages.
 	void spriteRun();
 
 private:
 	AvalancheEngine *_vm;
 
-	bool _fxHidden; // Will de used in dusk() and dawn().
-
 	Common::File file;
 
-	Common::String readAlsoStringFromFile(); // 'nexstring' in the original.
+	Common::String readAlsoStringFromFile();
 	void scram(Common::String &str);
 	void unScramble();
 
 	void zoomOut(int16 x, int16 y); // Only used when entering the map.
-	void enterNewTown(); // Onyl when entering a NEW town! Not returning to the last one, but choosing another from the map.
+	void enterNewTown();
 	void findPeople(byte room);
 	void putGeidaAt(byte whichPed, byte &ped);
-	void guideAvvy(Common::Point cursorPos); // 'verte' in the original.
+	void guideAvvy(Common::Point cursorPos);
 
-	// Used in dusk() and dawn().
+	// Will be used in dusk() and dawn().
+	bool _fxHidden;
+
 	int8 fades(int8 x);
 	void fadeOut(byte n);
 	void fadeIn(byte n);
