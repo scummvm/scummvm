@@ -39,7 +39,8 @@ AnimationControl::AnimationControl(ZVision *engine, uint32 controlKey, const Com
 		  _fileType(RLF),
 		  _loopCount(1),
 		  _currentLoop(0),
-		  _accumulatedTime(0) {
+		  _accumulatedTime(0),
+		  _cachedFrame(0) {
 	if (fileName.hasSuffix(".rlf")) {
 		_fileType = RLF;
 		_animation.rlf = new RlfAnimation(fileName, false);
@@ -50,6 +51,8 @@ AnimationControl::AnimationControl(ZVision *engine, uint32 controlKey, const Com
 	} else {
 		warning("Unrecognized animation file type: %s", fileName.c_str());
 	}
+
+	_cachedFrame = new Graphics::Surface();
 }
 
 AnimationControl::~AnimationControl() {
@@ -58,6 +61,9 @@ AnimationControl::~AnimationControl() {
 	} else if (_fileType == AVI) {
 		delete _animation.avi;
 	}
+
+	_cachedFrame->free();
+	delete _cachedFrame;
 }
 
 bool AnimationControl::process(uint32 deltaTimeInMillis) {
@@ -71,46 +77,74 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 		_accumulatedTime += deltaTimeInMillis;
 
 		uint32 frameTime = _animation.rlf->frameTime();
-		while (_accumulatedTime >= frameTime) {
-			_accumulatedTime -= frameTime;
+		if (_accumulatedTime >= frameTime) {
+			while (_accumulatedTime >= frameTime) {
+				_accumulatedTime -= frameTime;
 
-			// Make sure the frame is inside the working window
-			// If it's not, then just return
+				// Make sure the frame is inside the working window
+				// If it's not, then just return
 
-			RenderManager *renderManager = _engine->getRenderManager();
-			Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
-			Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _animation.rlf->width(), workingWindowPoint.y + _animation.rlf->height());
+				RenderManager *renderManager = _engine->getRenderManager();
+				Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
+				Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _animation.rlf->width(), workingWindowPoint.y + _animation.rlf->height());
 
-			// If the clip returns false, it means the animation is outside the working window
-			if (!renderManager->clipRectToWorkingWindow(subRect)) {
-				return false;
-			}
+				// If the clip returns false, it means the animation is outside the working window
+				if (!renderManager->clipRectToWorkingWindow(subRect)) {
+					return false;
+				}
 
-			const Graphics::Surface *frame = _animation.rlf->getNextFrame();
+				const Graphics::Surface *frame = _animation.rlf->getNextFrame();
 
-			// Animation frames for PANORAMAs are transposed, so un-transpose them
-			RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
-			if (state == RenderTable::PANORAMA) {
-				Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
+				// Animation frames for PANORAMAs are transposed, so un-transpose them
+				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
+				if (state == RenderTable::PANORAMA) {
+					Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
 
-				renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
+					renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
 
-				// Cleanup
-				tranposedFrame->free();
-				delete tranposedFrame;
-			} else {
-				renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
-			}
+					// If the background can move, we need to cache the last frame so it can be rendered during background movement
+					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						_cachedFrame = tranposedFrame;
+					} else {
+						// Cleanup
+						tranposedFrame->free();
+						delete tranposedFrame;
+					}
+				} else {
+					renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
 
-			// Check if we should continue looping
-			if (_animation.rlf->endOfAnimation()) {
-				_animation.rlf->seekToFrame(-1);
-				if (_loopCount > 0) {
-					_currentLoop++;
-					if (_currentLoop >= _loopCount) {
-						finished = true;
+					// If the background can move, we need to cache the last frame so it can be rendered during background movement
+					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						_cachedFrame->copyFrom(*frame);
 					}
 				}
+
+				// Check if we should continue looping
+				if (_animation.rlf->endOfAnimation()) {
+					_animation.rlf->seekToFrame(-1);
+					if (_loopCount > 0) {
+						_currentLoop++;
+						if (_currentLoop >= _loopCount) {
+							finished = true;
+						}
+					}
+				}
+			}
+		} else {
+			// If the background can move, we have to keep rendering animation frames, otherwise the animation flickers during background movement
+			RenderManager *renderManager = _engine->getRenderManager();
+			RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
+
+			if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+				Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
+				Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _cachedFrame->w, workingWindowPoint.y + _cachedFrame->h);
+
+				// If the clip returns false, it means the animation is outside the working window
+				if (!renderManager->clipRectToWorkingWindow(subRect)) {
+					return false;
+				}
+
+				renderManager->copyRectToWorkingWindow((uint16 *)_cachedFrame->getBasePtr(_cachedFrame->w - subRect.width(), _cachedFrame->h - subRect.height()), subRect.left, subRect.top, _cachedFrame->w, subRect.width(), subRect.height());
 			}
 		}
 	} else if (_fileType == AVI) {
@@ -141,11 +175,37 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 
 					renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
 
-					// Cleanup
-					tranposedFrame->free();
-					delete tranposedFrame;
+					// If the background can move, we need to cache the last frame so it can be rendered during background movement
+					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						_cachedFrame = tranposedFrame;
+					} else {
+						// Cleanup
+						tranposedFrame->free();
+						delete tranposedFrame;
+					}
 				} else {
 					renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
+
+					// If the background can move, we need to cache the last frame so it can be rendered during background movement
+					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						_cachedFrame->copyFrom(*frame);
+					}
+				}
+			} else {
+				// If the background can move, we have to keep rendering animation frames, otherwise the animation flickers during background movement
+				RenderManager *renderManager = _engine->getRenderManager();
+				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
+
+				if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+					Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
+					Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _cachedFrame->w, workingWindowPoint.y + _cachedFrame->h);
+
+					// If the clip returns false, it means the animation is outside the working window
+					if (!renderManager->clipRectToWorkingWindow(subRect)) {
+						return false;
+					}
+
+					renderManager->copyRectToWorkingWindow((uint16 *)_cachedFrame->getBasePtr(_cachedFrame->w - subRect.width(), _cachedFrame->h - subRect.height()), subRect.left, subRect.top, _cachedFrame->w, subRect.width(), subRect.height());
 				}
 			}
 		}

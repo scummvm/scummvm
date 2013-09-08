@@ -64,6 +64,8 @@ private:
 	uint _accumulatedTime;
 	uint _currentLoop;
 
+	Graphics::Surface *_cachedFrame;
+
 public:
 	bool process(uint32 deltaTimeInMillis);
 
