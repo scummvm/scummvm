@@ -721,7 +721,7 @@ class Scene1700 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor11 : public SceneActor {
+	class RimTransport : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -749,15 +749,15 @@ public:
 	Item2 _item2;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
-	SceneActor _actor8;
+	SceneActor _slabWest;
+	SceneActor _slabEast;
+	SceneActor _slabShadowWest;
+	SceneActor _slabShadowEast;
+	SceneActor _westPlatform;
+	SceneActor _rimTransportDoor;
 	SceneActor _ledgeHopper;
 	SceneActor _actor10;
-	Actor11 _actor11;
+	RimTransport _rimTransport;
 	Actor12 _actor12;
 	NorthExit _northExit;
 	SouthExit _southExit;

@@ -265,8 +265,8 @@ public:
 	int _v565E9;
 	int _v565EB;
 	int _foodCount;
-	int _v565F6;
-	int _v565FA;
+	int _rimLocation;
+	int _rimTransportLocation;
 	int _v5657C;
 	byte _v565AE;
 	byte _v56605[14];

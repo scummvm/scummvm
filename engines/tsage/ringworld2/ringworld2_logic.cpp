@@ -144,10 +144,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Miranda being questioned
 		return new Scene1625();
 	case 1700:
+		// Rim
 		return new Scene1700();
 	case 1750:
+		// Maintaiance Vechile
 		return new Scene1750();
 	case 1800:
+		// Rim lift
 		return new Scene1800();
 	case 1850:
 		return new Scene1850();
@@ -2271,9 +2274,9 @@ void ScannerDialog::Button::reset() {
 			break;
 		case 1700:
 		case 1800:
-			if (R2_GLOBALS._v565F6 < 1201)
+			if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 3);
-			else if (R2_GLOBALS._v565F6 < 1201)
+			else if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 4);
 			else
 				scanner._obj4.setup(4, 3, 5);

@@ -5,7 +5,7 @@
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
+ * modify it under the terms of the GNU GenWeral Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
 
@@ -10282,7 +10282,7 @@ void Scene1625::process(Event &event) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1700 -
+ * Scene 1700 - Rim
  *
  *--------------------------------------------------------------------------*/
 
@@ -10304,7 +10304,7 @@ bool Scene1700::Item2::startAction(CursorType action, Event &event) {
 	return SceneHotspot::startAction(action, event);
 }
 
-bool Scene1700::Actor11::startAction(CursorType action, Event &event) {
+bool Scene1700::RimTransport::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
@@ -10372,13 +10372,13 @@ void Scene1700::enterArea() {
 	Rect tmpRect;
 	R2_GLOBALS._walkRegions.load(1700);
 
-	_actor3.remove();
-	_actor4.remove();
-	_actor5.remove();
-	_actor6.remove();
-	_actor7.remove();
-	_actor8.remove();
-	_actor11.remove();
+	_slabWest.remove();
+	_slabEast.remove();
+	_slabShadowWest.remove();
+	_slabShadowEast.remove();
+	_westPlatform.remove();
+	_rimTransportDoor.remove();
+	_rimTransport.remove();
 	
 	if (_sceneMode != 40) {
 		_ledgeHopper.remove();
@@ -10397,7 +10397,8 @@ void Scene1700::enterArea() {
 
 	warning("set_pane_p(_paneNumber);");
 
-	if (_sceneMode != 40 && R2_GLOBALS._v565F6 == 0) {
+	if (_sceneMode != 40 && R2_GLOBALS._rimLocation == 0) {
+		// Crashed ledge hopper
 		_ledgeHopper.postInit();
 		_ledgeHopper.setup(1701, 1, 1);
 		_ledgeHopper.setPosition(Common::Point(220, 137));
@@ -10406,35 +10407,37 @@ void Scene1700::enterArea() {
 		R2_GLOBALS._walkRegions.enableRegion(12);
 	}
 
-	if ((R2_GLOBALS._v565F6 + 2) % 4 == 0) {
-		_actor3.postInit();
-		_actor3.setup(1700, 1, 1);
-		_actor3.setPosition(Common::Point(222, 82));
-		_actor3.setDetails(100, -1, -1, -1, 2, (SceneItem *) NULL);
+	if ((R2_GLOBALS._rimLocation + 2) % 4 == 0) {
+		// The slabs forming the bottom of the regular rings the rim transport travels through
+		_slabWest.postInit();
+		_slabWest.setup(1700, 1, 1);
+		_slabWest.setPosition(Common::Point(222, 82));
+		_slabWest.setDetails(100, -1, -1, -1, 2, (SceneItem *) NULL);
 
-		_actor5.postInit();
-		_actor5.setup(1700, 2, 1);
-		_actor5.setPosition(Common::Point(177, 82));
-		_actor5.fixPriority(0);
+		_slabShadowWest.postInit();
+		_slabShadowWest.setup(1700, 2, 1);
+		_slabShadowWest.setPosition(Common::Point(177, 82));
+		_slabShadowWest.fixPriority(0);
 
-		_actor6.postInit();
-		_actor6.setup(1700, 2, 2);
-		_actor6.setPosition(Common::Point(332, 96));
-		_actor6.fixPriority(0);
+		_slabShadowEast.postInit();
+		_slabShadowEast.setup(1700, 2, 2);
+		_slabShadowEast.setPosition(Common::Point(332, 96));
+		_slabShadowEast.fixPriority(0);
 
-		_actor4.postInit();
-		_actor4.setup(1700, 1, 2);
-		_actor4.setPosition(Common::Point(424, 84));
+		_slabEast.postInit();
+		_slabEast.setup(1700, 1, 2);
+		_slabEast.setPosition(Common::Point(424, 84));
 
 		R2_GLOBALS._walkRegions.enableRegion(11);
 	}
 
-	if ((R2_GLOBALS._v565F6 + 399) % 800 == 0) {
-		_actor7.postInit();
-		_actor7.setup(1700, 3, 2);
-		_actor7.setPosition(Common::Point(51, 141));
-		_actor7.fixPriority(0);
-		_actor7.setDetails(100, -1, -1, -1, 2, (SceneItem *) NULL);
+	if ((R2_GLOBALS._rimLocation + 399) % 800 == 0) {
+		// Enable west exit to lift
+		_westPlatform.postInit();
+		_westPlatform.setup(1700, 3, 2);
+		_westPlatform.setPosition(Common::Point(51, 141));
+		_westPlatform.fixPriority(0);
+		_westPlatform.setDetails(100, -1, -1, -1, 2, (SceneItem *) NULL);
 
 		_westExit._enabled = true;
 	} else {
@@ -10442,23 +10445,24 @@ void Scene1700::enterArea() {
 		_westExit._enabled = false;
 	}
 
-	if (  ((!R2_GLOBALS.getFlag(15)) && ((R2_GLOBALS._v565F6 == 25) || (R2_GLOBALS._v565F6 == -3)))
-		 || ((R2_GLOBALS.getFlag(15)) && (R2_GLOBALS._v565F6 == R2_GLOBALS._v565FA))
+	if (  ((!R2_GLOBALS.getFlag(15)) && ((R2_GLOBALS._rimLocation == 25) || (R2_GLOBALS._rimLocation == -3)))
+		 || ((R2_GLOBALS.getFlag(15)) && (R2_GLOBALS._rimLocation == R2_GLOBALS._rimTransportLocation))
 		 ) {
-		R2_GLOBALS._v565FA = R2_GLOBALS._v565F6;
+		// Rim transport vechile located
+		R2_GLOBALS._rimTransportLocation = R2_GLOBALS._rimLocation;
 		if (!R2_GLOBALS.getFlag(15))
 			_field77C = 1;
 
-		_actor11.postInit();
-		_actor11.setup(1700, 3, 1);
-		_actor11.setPosition(Common::Point(338, 150));
-		_actor11.setDetails(1700, 9, -1, -1, 2, (SceneItem *) NULL);
-		_actor11.fixPriority(15);
+		_rimTransport.postInit();
+		_rimTransport.setup(1700, 3, 1);
+		_rimTransport.setPosition(Common::Point(338, 150));
+		_rimTransport.setDetails(1700, 9, -1, -1, 2, (SceneItem *) NULL);
+		_rimTransport.fixPriority(15);
 
-		_actor8.postInit();
-		_actor8.setup(1700, 4, 1);
-		_actor8.setPosition(Common::Point(312, 106));
-		_actor8.fixPriority(130);
+		_rimTransportDoor.postInit();
+		_rimTransportDoor.setup(1700, 4, 1);
+		_rimTransportDoor.setPosition(Common::Point(312, 106));
+		_rimTransportDoor.fixPriority(130);
 	}
 }
 
@@ -10613,8 +10617,8 @@ void Scene1700::signal() {
 	switch (_sceneMode) {
 	case 1: {
 		_sceneMode = 3;
-		if ((R2_GLOBALS._v565F6 < 2400) && (R2_GLOBALS._v565F6 >= 0))
-			++R2_GLOBALS._v565F6;
+		if (R2_GLOBALS._rimLocation < 2400)
+			++R2_GLOBALS._rimLocation;
 		enterArea();
 		R2_GLOBALS._player.setPosition(Common::Point(235 - (((((235 - R2_GLOBALS._player._position.x) * 100) / 103) * 167) / 100), 170));
 		Common::Point pt(R2_GLOBALS._player._position.x, 160);
@@ -10638,8 +10642,8 @@ void Scene1700::signal() {
 		break;
 	case 2: {
 		_sceneMode = 3;
-		if ((R2_GLOBALS._v565F6 > -2400) && (R2_GLOBALS._v565F6 < 0))
-			R2_GLOBALS._v565F6--;
+		if (R2_GLOBALS._rimLocation > -2400)
+			--R2_GLOBALS._rimLocation;
 		enterArea();
 		R2_GLOBALS._player.setPosition(Common::Point(235 - (((((235 - R2_GLOBALS._player._position.x) * 100) / 167) * 103) / 100), 0));
 		Common::Point pt(R2_GLOBALS._player._position.x, 10);
@@ -10681,9 +10685,9 @@ void Scene1700::signal() {
 		PlayerMover *mover = new PlayerMover();
 		_actor12.addMover(mover, &pt, NULL);
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-			setAction(&_sequenceManager, this, 1700, &R2_GLOBALS._player, &_actor8, NULL);
+			setAction(&_sequenceManager, this, 1700, &R2_GLOBALS._player, &_rimTransportDoor, NULL);
 		else
-			setAction(&_sequenceManager, this, 1701, &R2_GLOBALS._player, &_actor8, NULL);
+			setAction(&_sequenceManager, this, 1701, &R2_GLOBALS._player, &_rimTransportDoor, NULL);
 		}
 		break;
 	case 5:
@@ -10747,7 +10751,7 @@ void Scene1700::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1750 - Rim Transport
+ * Scene 1750 - Maintaiance Vechile
  *
  *--------------------------------------------------------------------------*/
 
@@ -10931,7 +10935,7 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	_rotation->_idxChange = 0;
 	_rotation->_countdown = 2;
 
-	switch ((R2_GLOBALS._v565F6 + 2) % 4) {
+	switch ((R2_GLOBALS._rimLocation + 2) % 4) {
 	case 0:
 		_rotation->_currIndex = 247;
 		break;
@@ -10977,7 +10981,7 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 
 	_actor1.postInit();
 	_actor1.setup(1750, 2, 1);
-	_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._v565F6 % 800) * 4) - 1440));
+	_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
 	_actor1.fixPriority(8);
 
 	_actor2.postInit();
@@ -11028,13 +11032,13 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene1750::remove() {
-	if (R2_GLOBALS._v565F6 == 2400)
-		R2_GLOBALS._v565F6 = 2399;
+	if (R2_GLOBALS._rimLocation == 2400)
+		R2_GLOBALS._rimLocation = 2399;
 
-	if (R2_GLOBALS._v565F6 == -2400)
-		R2_GLOBALS._v565F6 = -2399;
+	if (R2_GLOBALS._rimLocation == -2400)
+		R2_GLOBALS._rimLocation = -2399;
 
-	R2_GLOBALS._v565FA = R2_GLOBALS._v565F6;
+	R2_GLOBALS._rimTransportLocation = R2_GLOBALS._rimLocation;
 
 	SceneExt::remove();
 	R2_GLOBALS._sound1.fadeOut2(NULL);
@@ -11095,21 +11099,21 @@ void Scene1750::dispatch() {
 		_field419 = ((_rotation->_currIndex - 218) / 4) / 4;
 
 		if ((_field41B + 1) == _field419 || (_field41B - 3)  == _field419) {
-			if (R2_GLOBALS._v565F6 >= 2400) {
-				++R2_GLOBALS._v565F6;
+			if (R2_GLOBALS._rimLocation < 2400) {
+				++R2_GLOBALS._rimLocation;
 			}
 		}
 
 		if ((_field41B - 1) == _field419 || (_field41B + 3) == _field419) {
-			if (R2_GLOBALS._v565F6 > -2400) {
-				--R2_GLOBALS._v565F6;
+			if (R2_GLOBALS._rimLocation > -2400) {
+				--R2_GLOBALS._rimLocation;
 			}
 		}
 
 		if (_rotation->_currIndex != _field41D) {
 			_field41D = _rotation->_currIndex;
-			_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) / 4) +
-				((R2_GLOBALS._v565F6 % 800) * 4)));
+			_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
+				((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
 		}
 	}
 
@@ -11124,9 +11128,10 @@ void Scene1750::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1800 -
+ * Scene 1800 - Rim Lift
  *
  *--------------------------------------------------------------------------*/
+
 Scene1800::Scene1800() {
 	_field412 = 0;
 }
@@ -11146,7 +11151,7 @@ bool Scene1800::Hotspot5::startAction(CursorType action, Event &event) {
 	R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-		if (R2_GLOBALS._v565F6 == 1201) {
+		if (R2_GLOBALS._rimLocation == 1201) {
 			scene->_stripManager.start(548, this);
 		} else if (R2_GLOBALS.getFlag(66)) {
 			return false;
@@ -11154,7 +11159,7 @@ bool Scene1800::Hotspot5::startAction(CursorType action, Event &event) {
 			scene->_stripManager.start(546, this);
 		}
 	} else {
-		if (R2_GLOBALS._v565F6 == 1201) {
+		if (R2_GLOBALS._rimLocation == 1201) {
 			scene->_stripManager.start(549, this);
 		} else if (R2_GLOBALS.getFlag(66)) {
 			return false;
@@ -11318,9 +11323,9 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_seekerSpeaker);
 
 	if (R2_GLOBALS._sceneManager._previousScene == -1)
-		R2_GLOBALS._v565F6 = 1201;
+		R2_GLOBALS._rimLocation = 1201;
 
-	if (R2_GLOBALS._v565F6 == 1201)
+	if (R2_GLOBALS._rimLocation == 1201)
 		_field412 = 2;
 	else
 		_field412 = 0;

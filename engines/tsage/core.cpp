@@ -1179,7 +1179,7 @@ void PaletteRotation::signal() {
 		int count = _end - _currIndex;
 		g_system->getPaletteManager()->setPalette((const byte *)&_palette[_currIndex * 3], _start, count);
 
-		if (count2) {
+		if (count2 > 0) {
 			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start * 3], _start + count, count2);
 		}
 	}
