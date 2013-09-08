@@ -42,7 +42,7 @@
 #include "avalanche/enid2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
-#include "avalanche/timeout2.h"
+#include "avalanche/timer.h"
 #include "avalanche/animation.h"
 #include "avalanche/acci2.h"
 #include "avalanche/dropdown2.h"
@@ -79,7 +79,7 @@ public:
 	Enid *_enid;
 	Celer *_celer;
 	Sequence *_sequence;
-	Timeout *_timeout;
+	Timer *_timer;
 	Animation *_animation;
 	Acci *_acci;
 	Dropdown *_dropdown;

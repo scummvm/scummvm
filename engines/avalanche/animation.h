@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* Original name TRIP5 / Trippancy V - the sprite animation subsystem */
+/* Original name: TRIP5 / Trippancy V - the sprite animation subsystem */
 
 #ifndef AVALANCHE_ANIMATION_H
 #define AVALANCHE_ANIMATION_H

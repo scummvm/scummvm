@@ -15,7 +15,7 @@ MODULE_OBJS = \
 	enid2.o \
 	celer2.o \
 	sequence2.o \
-	timeout2.o \
+	timer.o \
 	animation.o \
 	acci2.o \
 	dropdown2.o \
