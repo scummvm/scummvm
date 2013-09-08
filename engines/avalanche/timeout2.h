@@ -116,8 +116,8 @@ public:
 
 	struct TimeType {
 		int32 _timeLeft;
-		byte _thenWhere;
-		byte _whatFor;
+		byte _action;
+		byte _reason;
 	};
 
 	TimeType _times[7];
@@ -125,8 +125,8 @@ public:
 
 	Timeout(AvalancheEngine *vm);
 
-	void addTimer(int32 howlong, byte whither, byte why); // Original: set_up_timer()
-	void updateTimer(); // Original: one_tick()
+	void addTimer(int32 duration, byte action, byte reason);
+	void updateTimer();
 	void loseTimer(byte which);
 
 	// Procedures to do things at the end of amounts of time:

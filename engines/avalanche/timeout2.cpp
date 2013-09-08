@@ -48,165 +48,174 @@ Timeout::Timeout(AvalancheEngine *vm) {
 
 	for (byte i = 0; i < 7; i++) {
 		_times[i]._timeLeft = 0;
-		_times[i]._thenWhere = 0;
-		_times[i]._whatFor = 0;
+		_times[i]._action = 0;
+		_times[i]._reason = 0;
 	}
 	_timerLost = false;
 }
 
-void Timeout::addTimer(int32 howlong, byte whither, byte why) {
+/**
+ * Add a nex timer
+ * @remarks	Originally called 'set_up_timer'
+ */
+void Timeout::addTimer(int32 duration, byte action, byte reason) {
 	if ((_vm->_gyro->isLoaded == false) || (_timerLost == true)) {
 		byte i = 0;
 		while ((i < 7) && (_times[i]._timeLeft != 0))
 			i++;
 
 		if (i == 7)
-			return; // Oh dear...
+			return; // Oh dear... No timer left
 
 		// Everything's OK here!
-		_times[i]._timeLeft = howlong;
-		_times[i]._thenWhere = whither;
-		_times[i]._whatFor = why;
+		_times[i]._timeLeft = duration;
+		_times[i]._action = action;
+		_times[i]._reason = reason;
 	} else {
 		_vm->_gyro->isLoaded = false;
 		return;
 	}
 }
 
+/**
+ * Update the timers
+ * @remarks	Originally called 'one_tick'
+ */
 void Timeout::updateTimer() {
 	if (_vm->_gyro->_dropdownActive)
 		return;
 
-	for (byte fv = 0; fv < 7; fv++) {
-		if (_times[fv]._timeLeft > 0) {
-			_times[fv]._timeLeft--;
+	for (byte i = 0; i < 7; i++) {
+		if (_times[i]._timeLeft <= 0)
+			continue;
 
-			if (_times[fv]._timeLeft == 0) {
-				switch (_times[fv]._thenWhere) {
-				case kProcOpenDrawbridge :
-					openDrawbridge();
-					break;
-				case kProcAvariciusTalks :
-					avariciusTalks();
-					break;
-				case kProcUrinate :
-					urinate();
-					break;
-				case kProcToilet :
-					toilet();
-					break;
-				case kProcBang:
-					bang();
-					break;
-				case kProcBang2:
-					bang2();
-					break;
-				case kProcStairs:
-					stairs();
-					break;
-				case kProcCardiffSurvey:
-					cardiffSurvey();
-					break;
-				case kProcCardiffReturn:
-					cardiffReturn();
-					break;
-				case kProcCwytalotInHerts:
-					cwytalotInHerts();
-					break;
-				case kProcGetTiedUp:
-					getTiedUp();
-					break;
-				case kProcGetTiedUp2:
-					getTiedUp2();
-					break;
-				case kProcHangAround:
-					hangAround();
-					break;
-				case kProcHangAround2:
-					hangAround2();
-					break;
-				case kProcAfterTheShootemup:
-					afterTheShootemup();
-					break;
-				case kProcJacquesWakesUp:
-					jacquesWakesUp();
-					break;
-				case kProcNaughtyDuke:
-					naughtyDuke();
-					break;
-				case kProcNaughtyDuke2:
-					naughtyDuke2();
-					break;
-				case kProcNaughtyDuke3:
-					naughtyDuke3();
-					break;
-				case kProcJump:
-					jump();
-					break;
-				case kProcSequence:
-					_vm->_sequence->callSequencer();
-					break;
-				case kProcCrapulusSpludOut:
-					crapulusSaysSpludOut();
-					break;
-				case kProcDawnDelay:
-					_vm->_lucerna->dawn();
-					break;
-				case kProcBuyDrinks:
-					buyDrinks();
-					break;
-				case kProcBuyWine:
-					buyWine();
-					break;
-				case kProcCallsGuards:
-					callsGuards();
-					break;
-				case kProcGreetsMonk:
-					greetsMonk();
-					break;
-				case kProcFallDownOubliette:
-					fallDownOubliette();
-					break;
-				case kProcMeetAvaroid:
-					meetAvaroid();
-					break;
-				case kProcRiseUpOubliette:
-					riseUpOubliette();
-					break;
-				case kProcRobinHoodAndGeida:
-					robinHoodAndGeida();
-					break;
-				case kProcRobinHoodAndGeidaTalk:
-					robinHoodAndGeidaTalk();
-					break;
-				case kProcAvalotReturns:
-					avalotReturns();
-					break;
-				case kProcAvvySitDown:
-					avvySitDown();
-					break;
-				case kProcGhostRoomPhew:
-					ghostRoomPhew();
-					break;
-				case kProcArkataShouts:
-					arkataShouts();
-					break;
-				case kProcWinning:
-					winning();
-					break;
-				case kProcAvalotFalls:
-					avalotFalls();
-					break;
-				case kProcSpludwickGoesToCauldron:
-					spludwickGoesToCauldron();
-					break;
-				case kProcSpludwickLeavesCauldron:
-					spludwickLeavesCauldron();
-					break;
-				case kProcGiveLuteToGeida:
-					giveLuteToGeida();
-					break;
-				}
+		_times[i]._timeLeft--;
+
+		if (_times[i]._timeLeft == 0) {
+			switch (_times[i]._action) {
+			case kProcOpenDrawbridge :
+				openDrawbridge();
+				break;
+			case kProcAvariciusTalks :
+				avariciusTalks();
+				break;
+			case kProcUrinate :
+				urinate();
+				break;
+			case kProcToilet :
+				toilet();
+				break;
+			case kProcBang:
+				bang();
+				break;
+			case kProcBang2:
+				bang2();
+				break;
+			case kProcStairs:
+				stairs();
+				break;
+			case kProcCardiffSurvey:
+				cardiffSurvey();
+				break;
+			case kProcCardiffReturn:
+				cardiffReturn();
+				break;
+			case kProcCwytalotInHerts:
+				cwytalotInHerts();
+				break;
+			case kProcGetTiedUp:
+				getTiedUp();
+				break;
+			case kProcGetTiedUp2:
+				getTiedUp2();
+				break;
+			case kProcHangAround:
+				hangAround();
+				break;
+			case kProcHangAround2:
+				hangAround2();
+				break;
+			case kProcAfterTheShootemup:
+				afterTheShootemup();
+				break;
+			case kProcJacquesWakesUp:
+				jacquesWakesUp();
+				break;
+			case kProcNaughtyDuke:
+				naughtyDuke();
+				break;
+			case kProcNaughtyDuke2:
+				naughtyDuke2();
+				break;
+			case kProcNaughtyDuke3:
+				naughtyDuke3();
+				break;
+			case kProcJump:
+				jump();
+				break;
+			case kProcSequence:
+				_vm->_sequence->callSequencer();
+				break;
+			case kProcCrapulusSpludOut:
+				crapulusSaysSpludOut();
+				break;
+			case kProcDawnDelay:
+				_vm->_lucerna->dawn();
+				break;
+			case kProcBuyDrinks:
+				buyDrinks();
+				break;
+			case kProcBuyWine:
+				buyWine();
+				break;
+			case kProcCallsGuards:
+				callsGuards();
+				break;
+			case kProcGreetsMonk:
+				greetsMonk();
+				break;
+			case kProcFallDownOubliette:
+				fallDownOubliette();
+				break;
+			case kProcMeetAvaroid:
+				meetAvaroid();
+				break;
+			case kProcRiseUpOubliette:
+				riseUpOubliette();
+				break;
+			case kProcRobinHoodAndGeida:
+				robinHoodAndGeida();
+				break;
+			case kProcRobinHoodAndGeidaTalk:
+				robinHoodAndGeidaTalk();
+				break;
+			case kProcAvalotReturns:
+				avalotReturns();
+				break;
+			case kProcAvvySitDown:
+				avvySitDown();
+				break;
+			case kProcGhostRoomPhew:
+				ghostRoomPhew();
+				break;
+			case kProcArkataShouts:
+				arkataShouts();
+				break;
+			case kProcWinning:
+				winning();
+				break;
+			case kProcAvalotFalls:
+				avalotFalls();
+				break;
+			case kProcSpludwickGoesToCauldron:
+				spludwickGoesToCauldron();
+				break;
+			case kProcSpludwickLeavesCauldron:
+				spludwickLeavesCauldron();
+				break;
+			case kProcGiveLuteToGeida:
+				giveLuteToGeida();
+				break;
 			}
 		}
 	}
@@ -215,9 +224,9 @@ void Timeout::updateTimer() {
 }
 
 void Timeout::loseTimer(byte which) {
-	for (byte fv = 0; fv < 7; fv++) {
-		if (_times[fv]._whatFor == which)
-			_times[fv]._timeLeft = 0; // Cancel this one!
+	for (byte i = 0; i < 7; i++) {
+		if (_times[i]._reason == which)
+			_times[i]._timeLeft = 0; // Cancel this one!
 	}
 
 	_timerLost = true;
@@ -280,9 +289,7 @@ void Timeout::cardiffSurvey() {
 	}
 
 	_vm->_visa->dixi('z', _vm->_gyro->_dna._cardiffQuestionNum);
-
 	_vm->_gyro->_interrogation = _vm->_gyro->_dna._cardiffQuestionNum;
-
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
@@ -363,7 +370,7 @@ void Timeout::afterTheShootemup() {
 	gain = (shootscore + 5) / 10; // Rounding up.
 
 	display(string("\6Your score was ") + strf(shootscore) + '.' + "\r\rYou gain (" +
-		strf(shootscore) + " ö 10) = " + strf(gain) + " points.");
+		strf(shootscore) + " 0xF6 10) = " + strf(gain) + " points.");
 
 	if (gain > 20) {
 		display("But we won't let you have more than 20 points!");
@@ -593,8 +600,12 @@ void Timeout::avalotReturns() {
 	_vm->_gyro->_dna._userMovesAvvy = true;
 }
 
+/**
+ * This is used when you sit down in the pub in Notts. It loops around
+ * so that it will happen when Avvy stops walking.
+ * @remarks	Originally called 'avvy_sit_down'
+ */
 void Timeout::avvySitDown() {
-// This is used when you sit down in the pub in Notts. It loops around so that it will happen when Avvy stops walking.
 	if (_vm->_animation->tr[0]._homing)    // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
@@ -615,14 +626,13 @@ void Timeout::arkataShouts() {
 		return;
 
 	_vm->_visa->dixi('q', 76);
-
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
 void Timeout::winning() {
 	_vm->_visa->dixi('q', 79);
-
 	_vm->_pingo->winningPic();
+
 	warning("STUB: Timeout::winning()");
 #if 0
 	do {
