@@ -71,8 +71,6 @@ DemoMainMenuWindow::DemoMainMenuWindow(BuriedEngine *vm, Window *parent) : Windo
 DemoMainMenuWindow::~DemoMainMenuWindow() {
 	_background->free();
 	delete _background;
-
-	_vm->_sound->setAmbientSound();
 }
 
 void DemoMainMenuWindow::showWithSplash() {
@@ -142,22 +140,29 @@ void DemoMainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 	switch (_curButton) {
 	case BUTTON_OVERVIEW:
-		if (_overview.contains(point))
+		if (_overview.contains(point)) {
+			_vm->_sound->setAmbientSound();
 			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/OVERVIEW.BMP" : "MISC/8BPP/OVERVIEW.BMP", "MISC/OVERVIEW.AVI", 160, 112);
+		}
 		return;
 	case BUTTON_TRAILER:
-		if (_trailer.contains(point))
+		if (_trailer.contains(point)) {
+			_vm->_sound->setAmbientSound();
 			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/TRAILER.BMP" : "MISC/8BPP/TRAILER.BMP", "MISC/TRAILER.AVI", 104, 136);
+		}
 		return;
 	case BUTTON_INTERACTIVE:
 		// TODO
 		break;
 	case BUTTON_GALLERY:
-		if (_gallery.contains(point))
+		if (_gallery.contains(point)) {
+			_vm->_sound->setAmbientSound();
 			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/GALLERY.BMP" : "MISC/8BPP/GALLERY.BMP", "MISC/GALLERY.AVI", 104, 136);
+		}
 		return;
 	case BUTTON_QUIT:
-		// TODO
+		if (_quit.contains(point))
+			((FrameWindow *)_parent)->showFeaturesScreen();
 		return;
 	}
 
