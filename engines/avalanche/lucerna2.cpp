@@ -600,13 +600,13 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 		{
 			if ((_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1]) && (_vm->_gyro->_dna._wineState != 3)) {
-				_vm->_visa->dixi('q', 9); // Don't want to waste the wine!
+				_vm->_visa->displayScrollChain('q', 9); // Don't want to waste the wine!
 				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = false;
 				refreshObjectList();
 			}
 		}
 
-		_vm->_visa->dixi('q', 69);
+		_vm->_visa->displayScrollChain('q', 69);
 		break;
 
 	case r__catacombs:

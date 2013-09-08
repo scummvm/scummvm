@@ -182,7 +182,7 @@ void Avalot::setup() {
 		_vm->_lucerna->fxToggle();
 		_vm->_lucerna->thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing);
 
-		_vm->_visa->dixi('q', 83); // Info on the game, etc.
+		_vm->_visa->displayScrollChain('q', 83); // Info on the game, etc.
 	}
 }
 

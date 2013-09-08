@@ -854,7 +854,7 @@ void Animation::call_special(uint16 which) {
 		_vm->_gyro->_magics[11]._data = 5;
 		_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicBounce; // Now works as planned!
 		stopWalking();
-		_vm->_visa->dixi('q', 26);
+		_vm->_visa->displayScrollChain('q', 26);
 		_vm->_gyro->_dna._userMovesAvvy = true;
 		break;
 	case 3: // _vm->_gyro->special 3: Room 71: triggers dart.
@@ -884,11 +884,11 @@ void Animation::call_special(uint16 which) {
 		if (_vm->_gyro->_dna._friarWillTieYouUp) {
 			// _vm->_gyro->special 5: Room 42: touched tree, and get tied up.
 			_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Boundary effect is now working again.
-			_vm->_visa->dixi('q', 35);
+			_vm->_visa->displayScrollChain('q', 35);
 			tr[0].done();
 			//tr[1].vanishifstill:=true;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
-			_vm->_visa->dixi('q', 36);
+			_vm->_visa->displayScrollChain('q', 36);
 			_vm->_gyro->_dna._tiedUp = true;
 			_vm->_gyro->_dna._friarWillTieYouUp = false;
 			tr[1].walkto(3);
@@ -917,7 +917,7 @@ void Animation::call_special(uint16 which) {
 		break;
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
 		if ((_vm->_gyro->_dna._geidaFollows) && (!_vm->_gyro->_dna._lustieIsAsleep)) {
-			_vm->_visa->dixi('q', 63);
+			_vm->_visa->displayScrollChain('q', 63);
 			tr[1].turn(kDirDown);
 			tr[1].stopWalk();
 			tr[1]._callEachStepFl = false; // Geida
@@ -937,9 +937,9 @@ void Animation::call_special(uint16 which) {
 		if ((_vm->_gyro->_dna._catacombX == 4) && (_vm->_gyro->_dna._catacombY == 1)) {
 			// Into Geida's room.
 			if (_vm->_gyro->_dna._objects[_vm->_gyro->kObjectKey - 1])
-				_vm->_visa->dixi('q', 62);
+				_vm->_visa->displayScrollChain('q', 62);
 			else {
-				_vm->_visa->dixi('q', 61);
+				_vm->_visa->displayScrollChain('q', 61);
 				return;
 			}
 		}
@@ -1201,7 +1201,7 @@ void Animation::arrow_procs(byte tripnum) {
 			// OK, it's hit him... what now?
 
 			tr[1]._callEachStepFl = false; // prevent recursion.
-			_vm->_visa->dixi('Q', 47); // Complaint!
+			_vm->_visa->displayScrollChain('Q', 47); // Complaint!
 			tr[tripnum].done(); // Deallocate the arrow.
 #if 0
 			tr[1].done; { Deallocate normal pic of Avvy. }
@@ -1409,7 +1409,7 @@ void Animation::animLink() {
 
 	if (mustexclaim) {
 		mustexclaim = false;
-		_vm->_visa->dixi('x', saywhat);
+		_vm->_visa->displayScrollChain('x', saywhat);
 	}
 }
 
