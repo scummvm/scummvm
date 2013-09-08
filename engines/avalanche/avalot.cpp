@@ -156,15 +156,14 @@ void Avalot::setup() {
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // Impossible digits.
 
-	_vm->_animation->loadtrip();
+	_vm->_animation->loadAnims();
 
-	_vm->_animation->get_back_loretta();
 	_vm->_gyro->_holdTheDawn = false;
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
 	_vm->_parser->cursorOn();
-	_vm->_animation->tr[0]._speedX = _vm->_gyro->kWalk;
-	_vm->_animation->newspeed();
+	_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kWalk;
+	_vm->_animation->updateSpeed();
 
 
 
@@ -201,7 +200,6 @@ void Avalot::run(Common::String arg) {
 		_vm->_lucerna->_clock.update();
 		_vm->_dropdown->updateMenu();
 		_vm->_gyro->forceNumlock();
-		_vm->_animation->get_back_loretta();
 		_vm->_celer->updateBackgroundSprites();
 		_vm->_animation->animLink();
 		_vm->_lucerna->checkClick();

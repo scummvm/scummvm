@@ -283,7 +283,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	byte spriteNum = 0;
 	if (sz.isSaving()) {
 		for (int16 i = 0; i < _animation->kSpriteNumbMax; i++) {
-			if (_animation->tr[i]._quick)
+			if (_animation->_sprites[i]._quick)
 				spriteNum++;
 		}
 	}
@@ -291,43 +291,43 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	if (sz.isLoading()) {
 		for (int16 i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
-			if (_animation->tr[i]._quick)
-				_animation->tr[i].done();
+			if (_animation->_sprites[i]._quick)
+				_animation->_sprites[i].done();
 		}
 	}
 
 	for (byte i = 0; i < spriteNum; i++) {
-		sz.syncAsByte(_animation->tr[i]._id);
-		sz.syncAsByte(_animation->tr[i]._doCheck);
+		sz.syncAsByte(_animation->_sprites[i]._id);
+		sz.syncAsByte(_animation->_sprites[i]._doCheck);
 
 
 		if (sz.isLoading()) {
-			_animation->tr[i]._quick = true;
-			_animation->tr[i].init(_animation->tr[i]._id, _animation->tr[i]._doCheck, _animation);
+			_animation->_sprites[i]._quick = true;
+			_animation->_sprites[i].init(_animation->_sprites[i]._id, _animation->_sprites[i]._doCheck, _animation);
 		}
 
-		sz.syncAsByte(_animation->tr[i]._moveX);
-		sz.syncAsByte(_animation->tr[i]._moveY);
-		sz.syncAsByte(_animation->tr[i]._facingDir);
-		sz.syncAsByte(_animation->tr[i]._stepNum);
-		sz.syncAsByte(_animation->tr[i]._visible);
-		sz.syncAsByte(_animation->tr[i]._homing);
-		sz.syncAsByte(_animation->tr[i]._count);
-		sz.syncAsByte(_animation->tr[i]._info._xWidth);
-		sz.syncAsByte(_animation->tr[i]._speedX);
-		sz.syncAsByte(_animation->tr[i]._speedY);
-		sz.syncAsByte(_animation->tr[i]._animCount);
-		sz.syncAsSint16LE(_animation->tr[i]._homingX);
-		sz.syncAsSint16LE(_animation->tr[i]._homingY);
-		sz.syncAsByte(_animation->tr[i]._callEachStepFl);
-		sz.syncAsByte(_animation->tr[i]._eachStepProc);
-		sz.syncAsByte(_animation->tr[i]._vanishIfStill);
+		sz.syncAsByte(_animation->_sprites[i]._moveX);
+		sz.syncAsByte(_animation->_sprites[i]._moveY);
+		sz.syncAsByte(_animation->_sprites[i]._facingDir);
+		sz.syncAsByte(_animation->_sprites[i]._stepNum);
+		sz.syncAsByte(_animation->_sprites[i]._visible);
+		sz.syncAsByte(_animation->_sprites[i]._homing);
+		sz.syncAsByte(_animation->_sprites[i]._count);
+		sz.syncAsByte(_animation->_sprites[i]._info._xWidth);
+		sz.syncAsByte(_animation->_sprites[i]._speedX);
+		sz.syncAsByte(_animation->_sprites[i]._speedY);
+		sz.syncAsByte(_animation->_sprites[i]._animCount);
+		sz.syncAsSint16LE(_animation->_sprites[i]._homingX);
+		sz.syncAsSint16LE(_animation->_sprites[i]._homingY);
+		sz.syncAsByte(_animation->_sprites[i]._callEachStepFl);
+		sz.syncAsByte(_animation->_sprites[i]._eachStepProc);
+		sz.syncAsByte(_animation->_sprites[i]._vanishIfStill);
 
-		sz.syncAsSint16LE(_animation->tr[i]._x);
-		sz.syncAsSint16LE(_animation->tr[i]._y);
+		sz.syncAsSint16LE(_animation->_sprites[i]._x);
+		sz.syncAsSint16LE(_animation->_sprites[i]._y);
 
-		if (sz.isLoading() && _animation->tr[i]._visible)
-			_animation->tr[i].appear(_animation->tr[i]._x, _animation->tr[i]._y, _animation->tr[i]._facingDir);
+		if (sz.isLoading() && _animation->_sprites[i]._visible)
+			_animation->_sprites[i].appear(_animation->_sprites[i]._x, _animation->_sprites[i]._y, _animation->_sprites[i]._facingDir);
 	}
 
 	//groi = 177;
@@ -470,7 +470,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_lucerna->refreshObjectList();
 
-	_animation->newspeed();
+	_animation->updateSpeed();
 
 	_lucerna->drawDirection();
 
@@ -484,8 +484,8 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		+ _gyro->_roomnName + _scrolls->kControlNewLine + _scrolls->kControlNewLine
 		+ "saved on " + expandDate(t.tm_mday, t.tm_mon, t.tm_year) + '.');
 
-	if (_animation->tr[0]._quick && _animation->tr[0]._visible)
-		_animation->rwsp(0, _gyro->_dna._direction); // We push Avvy in the right direction is he was moving.
+	if (_animation->_sprites[0]._quick && _animation->_sprites[0]._visible)
+		_animation->changeDirection(0, _gyro->_dna._direction); // We push Avvy in the right direction is he was moving.
 
 	return true;
 }

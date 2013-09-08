@@ -245,7 +245,7 @@ void Visa::talkTo(byte whom) {
 
 	bool noMatches = true;
 	for (int16 i = 0; i <= _vm->_animation->kSpriteNumbMax; i++)
-		if (_vm->_animation->tr[i]._stat._acciNum == whom) {
+		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (i + 49) + _vm->_scrolls->kControlToBuffer);
 			noMatches = false;
 			break;
@@ -267,8 +267,8 @@ void Visa::talkTo(byte whom) {
 
 		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = 177; // Crapulus walks off.
 
-		_vm->_animation->tr[1]._vanishIfStill = true;
-		_vm->_animation->tr[1].walkTo(3); // Walks away.
+		_vm->_animation->_sprites[1]._vanishIfStill = true;
+		_vm->_animation->_sprites[1].walkTo(3); // Walks away.
 
 		_vm->_lucerna->incScore(2);
 	}

@@ -228,12 +228,12 @@ void Gyro::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String 
 
 void Gyro::newGame() {
 	for (byte i = 0; i < kMaxSprites; i++) {
-		if (_vm->_animation->tr[i]._quick)
-			_vm->_animation->tr[i].done();
+		if (_vm->_animation->_sprites[i]._quick)
+			_vm->_animation->_sprites[i].done();
 	}
 	// Deallocate sprite. Sorry, beta testers!
 
-	_vm->_animation->tr[0].init(0, true, _vm->_animation);
+	_vm->_animation->_sprites[0].init(0, true, _vm->_animation);
 
 	_alive = true;
 	_score = 0;
@@ -257,7 +257,7 @@ void Gyro::newGame() {
 	_onToolbar = false;
 	_seeScroll = false;
 
-	_vm->_animation->tr[0].appear(300,117,kDirectionRight); // Needed to initialize Avalot.
+	_vm->_animation->_sprites[0].appear(300,117,kDirectionRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
 	_him = 254;
@@ -270,13 +270,8 @@ void Gyro::newGame() {
 	_dna._avvyInBed = true;
 	_enidFilename = "";
 
-	for (byte i = 0; i <= 1; i++) {
-		_cp = 1 - _cp;
-		_vm->_animation->getback();
-	}
-
 	_vm->_lucerna->enterRoom(1, 1);
-	_vm->_animation->new_game_for_trippancy();
+	_vm->_animation->_sprites[0]._visible = false;
 	_vm->_lucerna->drawScore();
 	_vm->_dropdown->setupMenu();
 	_vm->_lucerna->_clock.update();
@@ -454,7 +449,7 @@ Common::String Gyro::f5Does() {
 			return Common::String(_vm->_acci->kVerbCodeSit) + "SSit down";
 		break;
 	case r__musicroom:
-		if (_vm->_animation->infield(7))
+		if (_vm->_animation->inField(7))
 			return Common::String(_vm->_acci->kVerbCodePlay) + "PPlay the harp";
 		break;
 	}
