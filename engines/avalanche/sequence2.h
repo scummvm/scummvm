@@ -54,7 +54,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	void shoveLeft(); // This PROC is called by Timeout when it's time to do another frame.
+	void shoveLeft(); // This PROC is called by Timer when it's time to do another frame.
 };
 
 } // End of namespace Avalanche.

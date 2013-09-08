@@ -34,7 +34,7 @@
 #include "avalanche/lucerna2.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/visa2.h"
-#include "avalanche/timeout2.h"
+#include "avalanche/timer.h"
 #include "avalanche/animation.h"
 #include "avalanche/enid2.h"
 #include "avalanche/celer2.h"
@@ -379,7 +379,7 @@ void Acci::storeInterrogation(byte interrogation) {
 	while ((_vm->_parser->_inputText.lastChar() == ' ') && (!_vm->_parser->_inputText.empty()))
 		_vm->_parser->_inputText.deleteLastChar();
 
-	_vm->_timeout->loseTimer(_vm->_timeout->kReasonCardiffsurvey); // If you want to use any other timer, put this into the case statement.
+	_vm->_timer->loseTimer(_vm->_timer->kReasonCardiffsurvey); // If you want to use any other timer, put this into the case statement.
 
 	switch (interrogation) {
 	case 1:
@@ -419,7 +419,7 @@ void Acci::storeInterrogation(byte interrogation) {
 	}
 
 	if (interrogation < 4)
-		_vm->_timeout->cardiffSurvey();
+		_vm->_timer->cardiffSurvey();
 }
 
 
@@ -1041,7 +1041,7 @@ void Acci::notInOrder() {
 
 void Acci::goToCauldron() {
 	_vm->_animation->tr[1]._callEachStepFl = false; // Stops Geida_Procs.
-	_vm->_timeout->addTimer(1, _vm->_timeout->kProcSpludwickGoesToCauldron, _vm->_timeout->kReasonSpludWalk);
+	_vm->_timer->addTimer(1, _vm->_timer->kProcSpludwickGoesToCauldron, _vm->_timer->kReasonSpludWalk);
 	_vm->_animation->tr[1].walkto(2);
 }
 
@@ -1143,7 +1143,7 @@ void Acci::standUp() {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->incScore(1);
 			_vm->_gyro->_dna._avvyInBed = false;
-			_vm->_timeout->loseTimer(_vm->_timeout->kReasonArkataShouts);
+			_vm->_timer->loseTimer(_vm->_timer->kReasonArkataShouts);
 		} else
 			already();
 		break;
@@ -1242,7 +1242,7 @@ void Acci::giveGeidaTheLute() {
 	_vm->_lucerna->refreshObjectList();
 	_vm->_visa->displayScrollChain('q', 64); // She plays it.
 
-	_vm->_timeout->addTimer(1, _vm->_timeout->kProcGiveLuteToGeida, _vm->_timeout->kReasonGeidaSings);
+	_vm->_timer->addTimer(1, _vm->_timer->kProcGiveLuteToGeida, _vm->_timer->kReasonGeidaSings);
 	_vm->_enid->backToBootstrap(4);
 }
 
@@ -1259,7 +1259,7 @@ void Acci::winSequence() {
 	_vm->_sequence->thenShow(8);
 	_vm->_sequence->thenShow(9);
 	_vm->_sequence->startToClose();
-	_vm->_timeout->addTimer(30, _vm->_timeout->kProcWinning, _vm->_timeout->kReasonWinning);
+	_vm->_timer->addTimer(30, _vm->_timer->kProcWinning, _vm->_timer->kReasonWinning);
 }
 
 void Acci::personSpeaks() {
@@ -1506,7 +1506,7 @@ void Acci::doThat() {
 	case kVerbCodeQuit: // quit
 		if (_vm->_gyro->kDemo) {
 			warning("STUB: Acci::doThat() - case kVerbCodequit");
-		//	_vm->_visa->dixi('pos', 31);
+		//	_vm->_visa->displayScrollChain('pos', 31);
 		//	close(demofile);
 		//	exit(0); // Change this later!!!
 		}
@@ -1682,7 +1682,7 @@ void Acci::doThat() {
 	case kVerbCodePee:
 		if (_vm->_gyro->setFlag('P')) {
 			_vm->_scrolls->displayText("Hmm, I don't think anyone will notice...");
-			_vm->_timeout->addTimer(4, _vm->_timeout->kProcUrinate, _vm->_timeout->kReasonGoToToilet);
+			_vm->_timer->addTimer(4, _vm->_timer->kProcUrinate, _vm->_timer->kReasonGoToToilet);
 		} else
 			_vm->_scrolls->displayText(Common::String("It would be ") + _vm->_scrolls->kControlItalic + "VERY"
 			+ _vm->_scrolls->kControlRoman + " unwise to do that here, Avvy!");
@@ -1706,7 +1706,7 @@ void Acci::doThat() {
 					_vm->_animation->tr[1]._callEachStepFl = true;
 					_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcBackAndForth;
 					_vm->_gyro->_dna._avariciusTalk = 14;
-					_vm->_timeout->addTimer(177, _vm->_timeout->kProcAvariciusTalks, _vm->_timeout->kReasonAvariciusTalks);
+					_vm->_timer->addTimer(177, _vm->_timer->kProcAvariciusTalks, _vm->_timer->kReasonAvariciusTalks);
 				}
 			} else
 				_vm->_scrolls->displayText("Nothing appears to happen...");
@@ -1769,7 +1769,7 @@ void Acci::doThat() {
 
 					_vm->_celer->drawBackgroundSprite(-1, -1, 10);
 					_vm->_gyro->_dna._malagauche = 177;
-					_vm->_timeout->addTimer(27, _vm->_timeout->kProcBuyDrinks, _vm->_timeout->kReasonDrinks);
+					_vm->_timer->addTimer(27, _vm->_timer->kProcBuyDrinks, _vm->_timer->kReasonDrinks);
 					break;
 				case 52:
 					examine();
@@ -1795,7 +1795,7 @@ void Acci::doThat() {
 						_vm->_celer->drawBackgroundSprite(-1, -1, 10);
 						_vm->_gyro->_dna._malagauche = 177;
 
-						_vm->_timeout->addTimer(27, _vm->_timeout->kProcBuyWine, _vm->_timeout->kReasonDrinks);
+						_vm->_timer->addTimer(27, _vm->_timer->kProcBuyWine, _vm->_timer->kReasonDrinks);
 					}
 					break;
 				}
@@ -1892,7 +1892,7 @@ void Acci::doThat() {
 				else {
 					_vm->_lucerna->incScore(4);
 					_vm->_scrolls->displayText("The drawbridge opens!");
-					_vm->_timeout->addTimer(7, _vm->_timeout->kProcOpenDrawbridge, _vm->_timeout->kReasonDrawbridgeFalls);
+					_vm->_timer->addTimer(7, _vm->_timer->kProcOpenDrawbridge, _vm->_timer->kReasonDrawbridgeFalls);
 					_vm->_gyro->_dna._drawbridgeOpen = 1;
 				}
 			} else
@@ -1944,7 +1944,7 @@ void Acci::doThat() {
 			_vm->_scrolls->displayText("Not with your head for heights, Avvy!");
 		break;
 	case kVerbCodeJump:
-		_vm->_timeout->addTimer(1, _vm->_timeout->kProcJump, _vm->_timeout->kReasonJumping);
+		_vm->_timer->addTimer(1, _vm->_timer->kProcJump, _vm->_timer->kReasonJumping);
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		break;
 	case kVerbCodeHiscores:
@@ -1985,7 +1985,7 @@ void Acci::doThat() {
 				_vm->_scrolls->displayText("You're already sitting!");
 			else {
 				_vm->_animation->tr[0].walkto(4); // Move Avvy to the place, and sit him down.
-				_vm->_timeout->addTimer(1, _vm->_timeout->kProcAvvySitDown, _vm->_timeout->kReasonSittingDown);
+				_vm->_timer->addTimer(1, _vm->_timer->kProcAvvySitDown, _vm->_timer->kReasonSittingDown);
 			}
 		} else { // Default doodah.
 			_vm->_lucerna->dusk();
