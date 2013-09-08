@@ -705,6 +705,10 @@ void Scene900::process(Event &event) {
 void Scene900::dispatch() {
 	SceneExt::dispatch();
 
+	// WORKAROUND:: Fix for invalid data in the Blue Force floppy version when opening gate
+	if (_sceneMode == 9006 && (g_vm->getFeatures() & GF_FLOPPY) && BF_GLOBALS._player._endFrame == 8)
+		BF_GLOBALS._player._endFrame = 6;
+
 	if (BF_GLOBALS.getFlag(fWithLyle) && _lyle.isNoMover()) {
 		_lyle.updateAngle(BF_GLOBALS._player._position);
 	}

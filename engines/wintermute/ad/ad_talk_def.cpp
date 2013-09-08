@@ -282,4 +282,4 @@ BaseSprite *AdTalkDef::getDefaultSprite(TDirection dir) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

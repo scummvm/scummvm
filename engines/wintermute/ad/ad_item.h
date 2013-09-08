@@ -64,6 +64,6 @@ private:
 	char *_amountString;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

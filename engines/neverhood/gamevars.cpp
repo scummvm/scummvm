@@ -20,6 +20,7 @@
  *
  */
 
+#include "neverhood/console.h"
 #include "neverhood/gamevars.h"
 
 namespace Neverhood {
@@ -74,7 +75,7 @@ uint32 GameVars::getSubVar(uint32 nameHash, uint32 subNameHash) {
 		int16 subVarIndex = findSubVarIndex(varIndex, subNameHash);
 		if (subVarIndex != -1)
 			value = _vars[subVarIndex].value;
-	} 
+	}
 	return value;
 }
 
@@ -123,10 +124,10 @@ int16 GameVars::getSubVarIndex(int16 varIndex, uint32 subNameHash) {
 	return subVarIndex;
 }
 
-void GameVars::dumpVars() {
+void GameVars::dumpVars(Console *con) {
 	for (Common::Array<GameVar>::iterator it = _vars.begin(); it != _vars.end(); ++it) {
 		GameVar gameVar = *it;
-		debug("%08X %08X %3d %3d", gameVar.nameHash, gameVar.value, gameVar.firstIndex, gameVar.nextIndex);
+		con->DebugPrintf("hash: %08X, var: %08X, first index: %3d, next index: %3d\n", gameVar.nameHash, gameVar.value, gameVar.firstIndex, gameVar.nextIndex);
 	}
 }
 

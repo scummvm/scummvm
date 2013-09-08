@@ -24,7 +24,7 @@
 #define GOB_INICONFIG_H
 
 #include "common/str.h"
-#include "common/config-file.h"
+#include "common/ini-file.h"
 #include "common/hashmap.h"
 
 namespace Gob {
@@ -43,7 +43,7 @@ public:
 
 private:
 	struct Config {
-		Common::ConfigFile *config;
+		Common::INIFile *config;
 		bool created;
 	};
 

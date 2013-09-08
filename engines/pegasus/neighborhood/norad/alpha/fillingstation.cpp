@@ -201,7 +201,7 @@ void NoradAlphaFillingStation::showIntakeInProgress(uint16 numSeconds) {
 
 		if (item->getObjectID() == kGasCanister) {
 			GameState.setNoradGassed(true);
-			((NoradAlpha *)getOwner())->loadAmbientLoops();
+			((NoradAlpha *)getOwner())->checkAirMask();
 			getOwner()->restoreStriding(kNorad03, kEast, kAltNoradAlphaNormal);
 		}
 	} else {

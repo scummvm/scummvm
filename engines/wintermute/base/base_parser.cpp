@@ -464,4 +464,4 @@ int32 BaseParser::scanStr(const char *in, const char *format, ...) {
 	return num;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

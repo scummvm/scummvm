@@ -75,8 +75,8 @@ bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurface::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return displayTransZoom(x, y, rect, zoomX, zoomY, alpha, blendMode, mirrorX, mirrorY);
+bool BaseSurface::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) {
+	return displayTransform(x, y, rect, newRect, transform);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,4 +146,4 @@ void BaseSurface::setSize(int width, int height) {
 	_height = height;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

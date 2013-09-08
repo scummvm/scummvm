@@ -32,6 +32,9 @@ kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #if ENABLE_LURE       == STATIC_PLUGIN
 lure.dat               FILE    "dists/engine-data/lure.dat"
 #endif
+#if ENABLE_MORTEVIELLE == STATIC_PLUGIN
+mort.dat               FILE    "dists/engine-data/mort.dat"
+#endif
 #if ENABLE_NEVERHOOD  == STATIC_PLUGIN
 neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
 #endif

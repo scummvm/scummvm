@@ -113,15 +113,21 @@ void BaseRenderer::setIndicatorVal(int value) {
 }
 
 void BaseRenderer::setLoadingScreen(const char *filename, int x, int y) {
-	// TODO: Handle NULL
-	_loadImageName = filename;
+	if (filename == nullptr) {
+		_saveImageName = "";
+	} else {
+		_loadImageName = filename;
+	}
 	_loadImageX = x;
 	_loadImageY = y;
 }
 
 void BaseRenderer::setSaveImage(const char *filename, int x, int y) {
-	// TODO: Handle NULL
-	_saveImageName = filename;
+	if (filename == nullptr) {
+		_saveImageName = "";
+	} else {
+		_saveImageName = filename;
+	}
 	_saveImageX = x;
 	_saveImageY = y;
 }
@@ -395,4 +401,4 @@ bool BaseRenderer::displayIndicator() {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

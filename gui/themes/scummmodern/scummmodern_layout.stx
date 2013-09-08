@@ -43,6 +43,9 @@
 		<def var = 'ShowChooserPageDisplay' value = '1'/>
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '1'/>
+		<def var = 'RecorderDialog.ExtInfo.Visible' value = '1'/>
+
+		<def var = 'OnScreenDialog.ShowPics' value = '1'/>
 
 		<def var = 'KeyMapper.Spacing' value = '10'/>
 		<def var = 'KeyMapper.LabelWidth' value = '100'/>
@@ -105,6 +108,13 @@
 		<widget name = 'TabWidget.NavButton'
 				size = '15, 18'
 				padding = '0, 3, 4, 0'
+		/>
+
+		<widget name = 'EditRecordLabel'
+				size = '60, 25'
+		/>
+		<widget name = 'EditRecord'
+				size = '220, 25'
 		/>
 	</globals>
 
@@ -1032,6 +1042,126 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'RecorderDialog' overlays = 'screen' inset = '8' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 32' center = 'true'>
+			<widget name = 'Title'
+					height = 'Globals.Line.Height'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 16' spacing = '16'>
+				<widget name = 'List' />
+				<layout type = 'vertical' padding = '0, 0, 0, 0'>
+					<widget name = 'Thumbnail'
+							width = '180'
+							height = '170'
+					/>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0'>	
+						<widget name = 'NextScreenShotButton'
+								width = '25'
+								height = '25'
+						/>
+						<widget name = 'currentScreenshot'
+								width = '125'
+								height = '25'
+								textalign = 'center'
+						/>
+						<widget name = 'PreviousScreenShotButton'
+								width = '25'
+								height = '25'
+						/>
+					</layout>
+					<widget name = 'Author' height = 'Globals.Line.Height' />
+					<widget name = 'Notes' height = 'Globals.Line.Height' />
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<space/>
+				<widget name = 'Delete'
+						type = 'Button'
+				/>
+				<space size = '16'/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<space size = '16'/>
+				<widget name = 'Edit'
+						type = 'Button'
+				/>
+				<widget name = 'Record'
+						type = 'Button'
+				/>
+				<widget name = 'Playback'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'OnScreenDialog' overlays = 'screen_center'>
+		<layout type = 'horizontal'  spacing = '5' padding = '5, 3, 5, 3' center = 'true'>
+			<widget name = 'StopButton'
+				width = '32'
+				height = '32'
+			/>
+			<widget name = 'EditButton'
+				width = '32'
+				height = '32'
+			/>
+			<widget name = 'SwitchModeButton'
+				width = '32'
+				height = '32'
+			/>
+			<widget name = 'FastReplayButton'
+				width = '32'
+				height = '32'
+			/>
+			<widget name = 'TimeLabel'
+				width = '50'
+				height = '30'
+			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'EditRecordDialog' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
+			<widget name = 'Title'
+					width = '320'
+					height = 'Globals.Line.Height'
+			/>
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
+				<widget name = 'AuthorLabel'
+						type = 'EditRecordLabel'
+				/>		
+				<widget name = 'AuthorEdit'
+						type = 'EditRecord'
+				/>		
+			</layout>
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
+				<widget name = 'NameLabel'
+						type = 'EditRecordLabel'
+				/>		
+				<widget name = 'NameEdit'
+						type = 'EditRecord'
+				/>
+			</layout>
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
+				<widget name = 'NotesLabel'
+						type = 'EditRecordLabel'
+				/>
+				<widget name = 'NotesEdit'
+						type = 'EditRecord'
+				/>
+			</layout>
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'OK'
+						type = 'Button'
+				/>			
+			</layout>
+		</layout>
+	</dialog>
+	
 	<dialog name = 'ScummHelp' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
 			<widget name = 'Title'

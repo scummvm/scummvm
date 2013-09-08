@@ -51,6 +51,6 @@ public:
 	static AnsiString toString(int val);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

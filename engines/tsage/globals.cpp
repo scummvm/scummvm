@@ -3,7 +3,7 @@
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -366,30 +366,47 @@ bool BlueForceGlobals::removeFlag(int flagNum) {
 
 namespace Ringworld2 {
 
+Ringworld2Globals::Ringworld2Globals() {
+	_scannerDialog = new ScannerDialog();
+}
+
+Ringworld2Globals::~Ringworld2Globals() {
+	delete _scannerDialog;
+}
+
 void Ringworld2Globals::reset() {
 	Globals::reset();
+
+	if (!_scannerDialog)
+		_scannerDialog = new ScannerDialog();
 
 	// Reset the inventory
 	R2_INVENTORY.reset();
 	T2_GLOBALS._uiElements.updateInventory();
 	T2_GLOBALS._uiElements._active = false;
 
+	// Set the screen to track the player
+	_scrollFollower = &_player;
+
 	// Reset fields
-	Common::fill(&_v1000[0], &_v1000[0x1000], 0);
-	_v1000Flag = false;
+	Common::fill(&_fadePaletteMap[0][0], &_fadePaletteMap[10][256], 0);
+	Common::fill(&_paletteMap[0], &_paletteMap[4096], 0);
+
+	_fadePaletteFlag = false;
 	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
 	_v558C2 = 0;
 	_animationCtr = 0;
 	_v5657C = 0;
-	_v565E1 = 0;
-	_v565E3 = 0;
+	_electromagnetChangeAmount = 0;
+	_electromagnetZoom = 0;
 	_v565E5 = 0;
 	_v565E7 = 0;
 	_v565E9 = -5;
 	_v565EB = 26;
 	_v565F5 = 0;
 	_v565F6 = 0;
+	_v565F8 = 0;
 	_v565FA = 0;
 	_v565AE = 0;
 	_v56605[0] = 0;
@@ -463,7 +480,7 @@ void Ringworld2Globals::reset() {
 	_v565EC[2] = 27;
 	_v565EC[3] = 4;
 	_v565EC[4] = 4;
-	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 1);
+	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
 	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
 	_frameEdgeColour = 2;
@@ -496,14 +513,15 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v558C2);
 	s.syncAsSint16LE(_animationCtr);
 	s.syncAsSint16LE(_v5657C);
-	s.syncAsSint16LE(_v565E1);
-	s.syncAsSint16LE(_v565E3);
+	s.syncAsSint16LE(_electromagnetChangeAmount);
+	s.syncAsSint16LE(_electromagnetZoom);
 	s.syncAsSint16LE(_v565E5);
 	s.syncAsSint16LE(_v565E7);
 	s.syncAsSint16LE(_v565E9);
 	s.syncAsSint16LE(_v565EB);
 	s.syncAsSint16LE(_v565F5);
 	s.syncAsSint16LE(_v565F6);
+	s.syncAsSint16LE(_v565F8);
 	s.syncAsSint16LE(_v565FA);
 	s.syncAsSint16LE(_v566A3);
 	s.syncAsSint16LE(_v566A6);
@@ -525,7 +543,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 		s.syncAsByte(_v565EC[i]);
 
 	for (i = 0; i < MAX_CHARACTERS; ++i)
-		s.syncAsByte(_v565F1[i]);
+		s.syncAsByte(_scannerFrequencies[i]);
 
 	s.syncAsByte(_v565AE);
 	s.syncAsByte(_v566A4);

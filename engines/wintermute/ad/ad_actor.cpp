@@ -1457,4 +1457,4 @@ bool AdActor::playAnim(const char *filename) {
 	return AdTalkHolder::playAnim(filename);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

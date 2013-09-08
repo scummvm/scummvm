@@ -192,4 +192,4 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

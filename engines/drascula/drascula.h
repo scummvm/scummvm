@@ -661,7 +661,7 @@ public:
 	void animation_3_1();		// John talks with the bartender to book a room
 	void animation_4_1();		// John talks with the pianist
 	//
-	void animation_2_2();		// John enters the chapel via the window 
+	void animation_2_2();		// John enters the chapel via the window
 	void animation_4_2();		// John talks with the blind man (closeup)
 	void animation_5_2();		// John breaks the chapel window with the pike
 	void animation_6_2();		// The blind man (closeup) thanks John for giving him money and hands him the sickle

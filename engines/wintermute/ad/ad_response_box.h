@@ -94,6 +94,6 @@ private:
 	UIWindow *_window;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

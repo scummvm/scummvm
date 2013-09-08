@@ -532,7 +532,7 @@ void GfxFrameout::showVideo() {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
-				g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 
 				if (videoDecoder->hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
@@ -745,7 +745,7 @@ void GfxFrameout::kernelFrameout() {
 					// Process global scaling, if needed.
 					// TODO: Seems like SCI32 always processes global scaling for scaled objects
 					// TODO: We can only process symmetrical scaling for now (i.e. same value for scaleX/scaleY)
-					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) && 
+					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) &&
 					   !(itemEntry->scaleSignal & kScaleSignalDisableGlobalScaling32) &&
 					    (itemEntry->scaleX == itemEntry->scaleY) &&
 						itemEntry->scaleX != 128)
@@ -777,6 +777,14 @@ void GfxFrameout::kernelFrameout() {
 					} else if (getSciVersion() >= SCI_VERSION_2_1 && _resMan->detectHires()) {
 						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
 						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
+						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					}
+
+					// TODO: For some reason, the top left nsRect coordinates get
+					// swapped in the GK1 inventory screen, investigate why.
+					// HACK: Fix the coordinates by explicitly setting them here.
+					Common::Rect objNSRect = g_sci->_gfxCompare->getNSRect(itemEntry->object);
+					if (objNSRect.top == nsRect.left && objNSRect.left == nsRect.top && nsRect.top != 0 && nsRect.left != 0) {
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 					}
 				}

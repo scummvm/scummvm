@@ -77,7 +77,7 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
 	_restoreGameRequested(false), _restartGameRequested(false), _canRequestMainMenu(true),
 	_mainMenuRequested(false) {
-	
+
 	// Other initializations moved to actual engine class
 	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
 	SetMessageHandler(&GameModule::handleMessage);
@@ -96,7 +96,7 @@ void GameModule::handleMouseMove(int16 x, int16 y) {
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseMove(%d, %d)", x, y);
 		sendPointMessage(_childObject, 0, mousePos);
-	}				
+	}
 }
 
 void GameModule::handleMouseDown(int16 x, int16 y) {
@@ -106,7 +106,7 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseDown(%d, %d)", x, y);
 		sendPointMessage(_childObject, 0x0001, mousePos);
-	}				
+	}
 }
 
 void GameModule::handleMouseUp(int16 x, int16 y) {
@@ -116,21 +116,21 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseUp(%d, %d)", x, y);
 		sendPointMessage(_childObject, 0x0002, mousePos);
-	}				
+	}
 }
 
 void GameModule::handleSpaceKey() {
 	if (_childObject) {
 		debug(2, "GameModule::handleSpaceKey()");
 		sendMessage(_childObject, 0x0009, 0);
-	}				
+	}
 }
 
 void GameModule::handleAsciiKey(char key) {
 	if (_childObject) {
 		debug(2, "GameModule::handleAsciiKey()");
 		sendMessage(_childObject, 0x000A, (uint32)key);
-	}				
+	}
 }
 
 void GameModule::handleKeyDown(Common::KeyCode keyCode) {
@@ -141,7 +141,7 @@ void GameModule::handleKeyDown(Common::KeyCode keyCode) {
 			handleSpaceKey();
 		debug(2, "GameModule::handleKeyDown()");
 		sendMessage(_childObject, 0x000B, keyCode);
-	}				
+	}
 }
 
 void GameModule::handleEscapeKey() {
@@ -166,7 +166,7 @@ void GameModule::initKeySlotsPuzzle() {
 
 void GameModule::initMemoryPuzzle() {
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0xC8606803)) {
-		NonRepeatingRandomNumbers diceIndices(_vm->_rnd, 3);	
+		NonRepeatingRandomNumbers diceIndices(_vm->_rnd, 3);
 		NonRepeatingRandomNumbers availableTiles(_vm->_rnd, 48);
 		NonRepeatingRandomNumbers tileSymbols(_vm->_rnd, 10);
 		for (uint32 i = 0; i < 3; i++)
@@ -194,21 +194,6 @@ void GameModule::initMemoryPuzzle() {
 				tileSymbolIndex = 0;
 		}
 		setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
-
-		// DEBUG Enable to autosolve all tiles and leave only two matching tiles open
-#if 0		
-		for (int i = 0; i < 48; i++)
-			setSubVar(VA_IS_TILE_MATCH, i, 1);
-		int debugIndex = 0;
-		setSubVar(VA_IS_TILE_MATCH, debugIndex, 0);
-		for (int i = 0; i < 48; i++) {
-			if (i != debugIndex && getSubVar(VA_TILE_SYMBOLS, i) == getSubVar(VA_TILE_SYMBOLS, debugIndex)) {
-				setSubVar(VA_IS_TILE_MATCH, i, 0);
-				break;
-			}
-		}
-#endif		
-
 	}
 }
 
@@ -335,11 +320,11 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 	switch (messageNum) {
 	case 0x0800:
 		_canRequestMainMenu = true;
-		break;		
+		break;
 	case 0x1009:
 		_moduleResult = param.asInteger();
 		_done = true;
-		break;		
+		break;
 	}
 	return messageResult;
 }
@@ -426,6 +411,8 @@ void GameModule::checkRequests() {
 	}
 	if (_restoreGameRequested) {
 		_restoreGameRequested = false;
+		_vm->_audioResourceMan->stopAllSounds();
+		_vm->_soundMan->stopAllSounds();
 		delete _childObject;
 		delete _prevChildObject;
 		_childObject = NULL;
@@ -438,8 +425,11 @@ void GameModule::checkRequests() {
 }
 
 void GameModule::createModule(int moduleNum, int which) {
-	debug("GameModule::createModule(%d, %d)", moduleNum, which);
+	debug(1, "GameModule::createModule(%d, %d)", moduleNum, which);
 	_moduleNum = moduleNum;
+
+	delete _childObject;
+
 	switch (_moduleNum) {
 	case 1000:
 		setGlobalVar(V_MODULE_NAME, 0x03294419);
@@ -539,7 +529,7 @@ void GameModule::createModule(int moduleNum, int which) {
 }
 
 void GameModule::createModuleByHash(uint32 nameHash) {
-	debug("GameModule::createModuleByHash(%08X)", nameHash);
+	debug(1, "GameModule::createModuleByHash(%08X)", nameHash);
 	switch (nameHash) {
 	case 0x03294419:
 		createModule(1000, -1);
@@ -684,7 +674,7 @@ void GameModule::updateModule() {
 			createModule(2300, 1);
 			break;
 		case 2300:
-		debug("module 23000 _moduleResult : %d", _moduleResult);
+		debug(1, "module 23000 _moduleResult : %d", _moduleResult);
 			if (_moduleResult == 2)
 				createModule(1200, 0);
 			else if (_moduleResult == 0)
@@ -796,6 +786,7 @@ void GameModule::openMainMenu() {
 		createModule(1000, 0);
 	}
 	_vm->_screen->saveParams();
+	_vm->_screen->update();
 	_mainMenuRequested = false;
 	createMenuModule();
 }

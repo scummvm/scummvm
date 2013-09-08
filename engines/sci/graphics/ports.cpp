@@ -116,7 +116,7 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	setPort(_wmgrPort);
 	// SCI0 games till kq4 (.502 - not including) did not adjust against _wmgrPort in kNewWindow
 	//  We leave _wmgrPort top at 0, so the adjustment wont get done
-	if (!g_sci->_features->usesOldGfxFunctions()) {
+	if (!_usesOldGfxFunctions) {
 		setOrigin(0, offTop);
 		_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
 	} else {
@@ -131,7 +131,7 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	_picWind = addWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 	// For SCI0 games till kq4 (.502 - not including) we set _picWind top to offTop instead
 	//  Because of the menu/status bar
-	if (g_sci->_features->usesOldGfxFunctions())
+	if (_usesOldGfxFunctions)
 		_picWind->top = offTop;
 
 	kernelInitPriorityBands();

@@ -364,7 +364,7 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 	case 1:
 		// Just copy to the image
 		_outputSurface->create(width, height, PixelFormat::createFormatCLUT8());
-		memcpy(_outputSurface->pixels, buffer, _outputSurface->w * _outputSurface->h);
+		memcpy(_outputSurface->getPixels(), buffer, _outputSurface->w * _outputSurface->h);
 		break;
 	case 2:
 		// We have a 16-bit surface

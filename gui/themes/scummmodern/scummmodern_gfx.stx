@@ -103,6 +103,14 @@
 		<bitmap filename = 'delbtn.bmp'/>
 		<bitmap filename = 'list.bmp'/>
 		<bitmap filename = 'grid.bmp'/>
+		<bitmap filename = 'stopbtn.bmp'/>
+		<bitmap filename = 'editbtn.bmp'/>
+		<bitmap filename = 'switchbtn.bmp'/>
+		<bitmap filename = 'fastreplay.bmp'/>
+		<bitmap filename = 'stopbtn_small.bmp'/>
+		<bitmap filename = 'editbtn_small.bmp'/>
+		<bitmap filename = 'switchbtn_small.bmp'/>
+		<bitmap filename = 'fastreplay_small.bmp'/>
 	</bitmaps>
 
 	<fonts>

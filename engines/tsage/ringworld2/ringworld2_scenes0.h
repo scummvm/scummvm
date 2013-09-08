@@ -126,7 +126,7 @@ class Scene125: public SceneExt {
 	};
 
 	/* Items */
-	class Item4: public NamedHotspot {
+	class DiskSlot: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -135,8 +135,8 @@ public:
 	ScenePalette _palette;
 	ASoundExt _sound1;
 	NamedHotspot _background, _item2, _item3;
-	Item4 _item4;
-	SceneActor _object1, _object2, _object3, _object4, _object5, _object6, _object7;
+	DiskSlot _diskSlot;
+	SceneActor _object1, _object2, _object3, _object4, _object5, _object6, _infoDisk;
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;
@@ -277,9 +277,7 @@ class Scene205: public SceneExt {
 	public:
 		int _x100, _y100;
 	public:
-		Object();
-
-		virtual void synchronize(Serializer &s);
+		// TODO: Check if this derives from DataManager? and flesh out
 	};
 private:
 	void setup();
@@ -453,7 +451,7 @@ private:
 	Common::String parseMessage(const Common::String &msg);
 public:
 	int _field412, _iconFontNumber, _field416, _field418;
-	int _field41A, _field41C, _field41E, _field420;
+	int _field41A, _field41C, _field41E, _scannerLocation;
 	int _soundCount, _soundIndex;
 	int _soundQueue[10];
 	SpeakerQuinn _quinnSpeaker;
@@ -461,7 +459,7 @@ public:
 	SceneHotspot _background, _item2;
 	SceneObject _object1, _object2, _object3, _object4, _object5;
 	SceneObject _object6, _object7, _object8, _object9, _object10;
-	SceneObject _object11, _object12, _object13;
+	SceneObject _object11, _object12, _scannerTab;
 	SceneObject _objList[4];
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5, _icon6;
 	ASoundExt _sound1;
@@ -615,7 +613,7 @@ public:
 };
 
 class Scene600 : public SceneExt {
-	class Item1 : public NamedHotspot {
+	class CompartmentHotspot : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -628,17 +626,17 @@ class Scene600 : public SceneExt {
 	public:
 		virtual void signal();
 		virtual bool startAction(CursorType action, Event &event);
-		virtual void draw();
+		virtual GfxSurface getFrame();
 	};
-	class Actor5 : public SceneActor {
+	class Doorway : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor6 : public SceneActor {
+	class Laser : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor7 : public SceneActor {
+	class Aerosol : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -648,24 +646,24 @@ class Scene600 : public SceneExt {
 	};
 public:
 	int _field412;
-	Item1 _item1;
-	Item1 _item2;
-	Item1 _item3;
+	CompartmentHotspot _background;
+	CompartmentHotspot _item2;
+	CompartmentHotspot _item3;
 	Item4 _item4;
-	Item1 _item5;
+	CompartmentHotspot _item5;
 	BackgroundSceneObject _object1;
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;
 	Actor4 _actor4;
-	Actor5 _actor5;
-	Actor6 _actor6;
-	Actor7 _actor7;
+	Doorway _doorway;
+	Laser _laser;
+	Aerosol _aerosol;
 	Actor8 _actor8;
 	ASoundExt _aSound1;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
-	byte _fieldAD2[256];
+	byte _pixelMap[256];
 
 	Scene600();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -865,30 +863,29 @@ public:
 };
 
 class Scene900 : public SceneExt {
-	class Actor4 : public SceneActor {
+	class Button : public SceneActor {
 	public:
-    int _fieldA4;
+		int _buttonId;
 
-		Actor4();
-		void sub96135(int arg1);
+		Button();
+		void initButton(int buttonId);
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
 	int _field412;
-	int _field414;
-	int _field416;
+	Common::Point _magnetChangeAmount;
 	NamedHotspot _item1;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	SceneActor _actor3;
-	Actor4 _actor4;
-	Actor4 _actor5;
-	Actor4 _actor6;
-	Actor4 _actor7;
-	Actor4 _actor8;
-	Actor4 _actor9;
-	Actor4 _actor10;
+	SceneActor _electromagnet;
+	Button _button1;
+	Button _button2;
+	Button _button3;
+	Button _button4;
+	Button _button5;
+	Button _button6;
+	Button _button7;
 	ASoundExt _aSound1;
 	SequenceManager _sequenceManager1;
 

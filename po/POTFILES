@@ -48,6 +48,8 @@ engines/groovie/script.cpp
 engines/kyra/detection.cpp
 engines/kyra/lol.cpp
 engines/kyra/sound_midi.cpp
+engines/neverhood/detection.cpp
+engines/neverhood/menumodule.cpp
 engines/queen/queen.cpp
 engines/sky/compact.cpp
 engines/sky/detection.cpp
@@ -97,5 +99,5 @@ backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/openpandora/op-events.cpp
 backends/updates/macosx/macosx-updates.mm
-backends/platform/bada/form.cpp
+backends/platform/tizen/form.cpp
 backends/events/maemosdl/maemosdl-events.cpp

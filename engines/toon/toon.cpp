@@ -466,8 +466,7 @@ void ToonEngine::doMagnifierEffect() {
 		int32 cy = CLIP<int32>(posY + y, 0, TOON_BACKBUFFER_HEIGHT-1);
 		for (int32 x = -12; x <= 12; x++) {
 			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH-1);
-			int32 destPitch = surface.pitch;
-			uint8 *curRow = (uint8 *)surface.pixels + cy * destPitch + cx;
+			uint8 *curRow = (uint8 *)surface.getBasePtr(cx, cy);
 			tempBuffer[(y + 12) * 25 + x + 12] = *curRow;
 		}
 	}
@@ -479,8 +478,7 @@ void ToonEngine::doMagnifierEffect() {
 			if (dist > 144)
 				continue;
 			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH-1);
-			int32 destPitch = surface.pitch;
-			uint8 *curRow = (uint8 *)surface.pixels + cy * destPitch + cx;
+			uint8 *curRow = (uint8 *)surface.getBasePtr(cx, cy);
 			int32 lerp = (512 + intSqrt[dist] * 256 / 12);
 			*curRow = tempBuffer[(y * lerp / 1024 + 12) * 25 + x * lerp / 1024 + 12];
 		}
@@ -501,7 +499,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 
 	if (_dirtyAll || _gameState->_currentScrollValue != lastScroll) {
 		// we have to refresh everything in case of scrolling.
-		_system->copyRectToScreen((byte *)_mainSurface->pixels + state()->_currentScrollValue, TOON_BACKBUFFER_WIDTH, 0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
+		_system->copyRectToScreen((byte *)_mainSurface->getPixels() + state()->_currentScrollValue, TOON_BACKBUFFER_WIDTH, 0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 	} else {
 
 		int32 offX = 0;
@@ -517,7 +515,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			}
 			rect.clip(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
-				_system->copyRectToScreen((byte *)_mainSurface->pixels + _oldDirtyRects[i].left + offX + _oldDirtyRects[i].top * TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				_system->copyRectToScreen((byte *)_mainSurface->getBasePtr(_oldDirtyRects[i].left + offX, _oldDirtyRects[i].top), TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
 			}
 		}
 
@@ -533,7 +531,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			}
 			rect.clip(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
-				_system->copyRectToScreen((byte *)_mainSurface->pixels + _dirtyRects[i].left + offX + _dirtyRects[i].top * TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				_system->copyRectToScreen((byte *)_mainSurface->getBasePtr(_dirtyRects[i].left + offX, _dirtyRects[i].top), TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
 			}
 		}
 	}

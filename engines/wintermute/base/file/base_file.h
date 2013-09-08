@@ -62,6 +62,6 @@ public:
 	virtual Common::SeekableReadStream *getMemStream();
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

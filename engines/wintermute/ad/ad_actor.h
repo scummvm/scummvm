@@ -103,6 +103,6 @@ private:
 	int32 _pFCount;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

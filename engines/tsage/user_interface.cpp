@@ -84,7 +84,10 @@ void UIQuestion::showDescription(CursorType cursor) {
 	case GType_Ringworld2:
 		if ((cursor == R2_COM_SCANNER) || (cursor == R2_COM_SCANNER_2)) {
 			// Show communicator
-			warning("TODO: Communicator");
+			Ringworld2::SceneExt *scene = static_cast<Ringworld2::SceneExt *>
+				(R2_GLOBALS._sceneManager._scene);
+			if (!scene->_sceneAreas.contains(R2_GLOBALS._scannerDialog))
+				R2_GLOBALS._scannerDialog->proc12(4, 1, 1, 160, 125);
 		} else {
 			// Show object description
 			SceneItem::display2(3, (int)cursor);
@@ -399,7 +402,7 @@ void UIElements::setup(const Common::Point &pt) {
 	}
 
 	// Setup bottom-right hand buttons
-	xp += 62;
+	xp = (g_vm->getGameID() == GType_Ringworld2) ? 255 : 253;
 	int yp = (g_vm->getGameID() == GType_BlueForce) ? 16 : 17;
 	_question.setup(1, 4, 7, xp, yp, 255);
 	_question.setEnabled(false);
@@ -410,7 +413,7 @@ void UIElements::setup(const Common::Point &pt) {
 	add(&_scrollLeft);
 	_scrollLeft._isLeft = true;
 
-	xp += 22;
+	xp += (g_vm->getGameID() == GType_Ringworld2) ? 21 : 22;
 	_scrollRight.setup(1, 4, 4, xp, yp, 255);
 	add(&_scrollRight);
 	_scrollRight._isLeft = false;

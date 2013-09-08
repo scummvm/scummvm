@@ -644,4 +644,4 @@ void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight
 	    }*/
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

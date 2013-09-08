@@ -102,18 +102,18 @@ String MacResManager::computeResForkMD5AsString(uint32 length) const {
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
-bool MacResManager::open(String filename) {
+bool MacResManager::open(const String &fileName) {
 	close();
 
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
-	String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
+	String fullPath = ConfMan.get("path") + "/" + fileName + "/..namedfork/rsrc";
 	FSNode resFsNode = FSNode(fullPath);
 	if (resFsNode.exists()) {
 		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 
 		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
-			_baseFileName = filename;
+			_baseFileName = fileName;
 			return true;
 		}
 
@@ -123,38 +123,39 @@ bool MacResManager::open(String filename) {
 
 	File *file = new File();
 
-	// First, let's try to see if the Mac converted name exists
-	if (file->open(constructAppleDoubleName(filename)) && loadFromAppleDouble(*file)) {
-		_baseFileName = filename;
+	// Prefer standalone files first, starting with raw forks
+	if (file->open(fileName + ".rsrc") && loadFromRawFork(*file)) {
+		_baseFileName = fileName;
 		return true;
 	}
 	file->close();
 
-	// Check .bin too
-	if (file->open(filename + ".bin") && loadFromMacBinary(*file)) {
-		_baseFileName = filename;
+	// Then try for AppleDouble using Apple's naming
+	if (file->open(constructAppleDoubleName(fileName)) && loadFromAppleDouble(*file)) {
+		_baseFileName = fileName;
 		return true;
 	}
 	file->close();
 
-	// Maybe we have a dumped fork?
-	if (file->open(filename + ".rsrc") && loadFromRawFork(*file)) {
-		_baseFileName = filename;
+	// Check .bin for MacBinary next
+	if (file->open(fileName + ".bin") && loadFromMacBinary(*file)) {
+		_baseFileName = fileName;
 		return true;
 	}
 	file->close();
 
-	// Fine, what about just the data fork?
-	if (file->open(filename)) {
-		_baseFileName = filename;
+	// As a last resort, see if just the data fork exists
+	if (file->open(fileName)) {
+		_baseFileName = fileName;
 
+		// FIXME: Is this really needed?
 		if (isMacBinary(*file)) {
-			file->seek(0, SEEK_SET);
+			file->seek(0);
 			if (loadFromMacBinary(*file))
 				return true;
 		}
 
-		file->seek(0, SEEK_SET);
+		file->seek(0);
 		_stream = file;
 		return true;
 	}
@@ -165,18 +166,18 @@ bool MacResManager::open(String filename) {
 	return false;
 }
 
-bool MacResManager::open(FSNode path, String filename) {
+bool MacResManager::open(const FSNode &path, const String &fileName) {
 	close();
 
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
-	String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
+	String fullPath = path.getPath() + "/" + fileName + "/..namedfork/rsrc";
 	FSNode resFsNode = FSNode(fullPath);
 	if (resFsNode.exists()) {
 		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 
 		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
-			_baseFileName = filename;
+			_baseFileName = fileName;
 			return true;
 		}
 
@@ -184,52 +185,53 @@ bool MacResManager::open(FSNode path, String filename) {
 	}
 #endif
 
-	// First, let's try to see if the Mac converted name exists
-	FSNode fsNode = path.getChild(constructAppleDoubleName(filename));
-	if (fsNode.exists() && !fsNode.isDirectory()) {
-		SeekableReadStream *stream = fsNode.createReadStream();
-		if (loadFromAppleDouble(*stream)) {
-			_baseFileName = filename;
-			return true;
-		}
-		delete stream;
-	}
-
-	// Check .bin too
-	fsNode = path.getChild(filename + ".bin");
-	if (fsNode.exists() && !fsNode.isDirectory()) {
-		SeekableReadStream *stream = fsNode.createReadStream();
-		if (loadFromMacBinary(*stream)) {
-			_baseFileName = filename;
-			return true;
-		}
-		delete stream;
-	}
-
-	// Maybe we have a dumped fork?
-	fsNode = path.getChild(filename + ".rsrc");
+	// Prefer standalone files first, starting with raw forks
+	FSNode fsNode = path.getChild(fileName + ".rsrc");
 	if (fsNode.exists() && !fsNode.isDirectory()) {
 		SeekableReadStream *stream = fsNode.createReadStream();
 		if (loadFromRawFork(*stream)) {
-			_baseFileName = filename;
+			_baseFileName = fileName;
 			return true;
 		}
 		delete stream;
 	}
 
-	// Fine, what about just the data fork?
-	fsNode = path.getChild(filename);
+	// Then try for AppleDouble using Apple's naming
+	fsNode = path.getChild(constructAppleDoubleName(fileName));
 	if (fsNode.exists() && !fsNode.isDirectory()) {
 		SeekableReadStream *stream = fsNode.createReadStream();
-		_baseFileName = filename;
+		if (loadFromAppleDouble(*stream)) {
+			_baseFileName = fileName;
+			return true;
+		}
+		delete stream;
+	}
 
+	// Check .bin for MacBinary next
+	fsNode = path.getChild(fileName + ".bin");
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		if (loadFromMacBinary(*stream)) {
+			_baseFileName = fileName;
+			return true;
+		}
+		delete stream;
+	}
+
+	// As a last resort, see if just the data fork exists
+	fsNode = path.getChild(fileName);
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		_baseFileName = fileName;
+
+		// FIXME: Is this really needed?
 		if (isMacBinary(*stream)) {
-			stream->seek(0, SEEK_SET);
+			stream->seek(0);
 			if (loadFromMacBinary(*stream))
 				return true;
 		}
 
-		stream->seek(0, SEEK_SET);
+		stream->seek(0);
 		_stream = stream;
 		return true;
 	}
@@ -238,22 +240,22 @@ bool MacResManager::open(FSNode path, String filename) {
 	return false;
 }
 
-bool MacResManager::exists(const String &filename) {
+bool MacResManager::exists(const String &fileName) {
 	// Try the file name by itself
-	if (Common::File::exists(filename))
+	if (File::exists(fileName))
 		return true;
 
 	// Try the .rsrc extension
-	if (Common::File::exists(filename + ".rsrc"))
+	if (File::exists(fileName + ".rsrc"))
 		return true;
 
 	// Check if we have a MacBinary file
-	Common::File tempFile;
-	if (tempFile.open(filename + ".bin") && isMacBinary(tempFile))
+	File tempFile;
+	if (tempFile.open(fileName + ".bin") && isMacBinary(tempFile))
 		return true;
 
 	// Check if we have an AppleDouble file
-	if (tempFile.open(constructAppleDoubleName(filename)) && tempFile.readUint32BE() == 0x00051607)
+	if (tempFile.open(constructAppleDoubleName(fileName)) && tempFile.readUint32BE() == 0x00051607)
 		return true;
 
 	return false;
@@ -480,10 +482,10 @@ SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 resID) {
 	return _stream->readStream(len);
 }
 
-SeekableReadStream *MacResManager::getResource(const String &filename) {
+SeekableReadStream *MacResManager::getResource(const String &fileName) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
 		for (uint32 j = 0; j < _resTypes[i].items; j++) {
-			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
+			if (_resLists[i][j].nameOffset != -1 && fileName.equalsIgnoreCase(_resLists[i][j].name)) {
 				_stream->seek(_dataOffset + _resLists[i][j].dataOffset);
 				uint32 len = _stream->readUint32BE();
 
@@ -499,13 +501,13 @@ SeekableReadStream *MacResManager::getResource(const String &filename) {
 	return 0;
 }
 
-SeekableReadStream *MacResManager::getResource(uint32 typeID, const String &filename) {
+SeekableReadStream *MacResManager::getResource(uint32 typeID, const String &fileName) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
 		if (_resTypes[i].id != typeID)
 			continue;
 
 		for (uint32 j = 0; j < _resTypes[i].items; j++) {
-			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
+			if (_resLists[i][j].nameOffset != -1 && fileName.equalsIgnoreCase(_resLists[i][j].name)) {
 				_stream->seek(_dataOffset + _resLists[i][j].dataOffset);
 				uint32 len = _stream->readUint32BE();
 
@@ -574,7 +576,7 @@ void MacResManager::readMap() {
 	}
 }
 
-Common::String MacResManager::constructAppleDoubleName(Common::String name) {
+String MacResManager::constructAppleDoubleName(String name) {
 	// Insert "._" before the last portion of a path name
 	for (int i = name.size() - 1; i >= 0; i--) {
 		if (i == 0) {

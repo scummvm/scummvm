@@ -26,10 +26,10 @@
 
 namespace Neverhood {
 
-BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height)
+BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, Common::String name)
 	: _vm(vm), _priority(priority), _visible(true), _transparent(true),
-	_clipRects(NULL), _clipRectsCount(0), _version(0) {
-	
+	_clipRects(NULL), _clipRectsCount(0), _version(0), _name(name) {
+
 	_drawRect.x = 0;
 	_drawRect.y = 0;
 	_drawRect.width = width;
@@ -68,7 +68,7 @@ void BaseSurface::clear() {
 }
 
 void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
-	if (spriteResource.getDimensions().width <= _drawRect.width && 
+	if (spriteResource.getDimensions().width <= _drawRect.width &&
 		spriteResource.getDimensions().height <= _drawRect.height) {
 		clear();
 		spriteResource.draw(_surface, false, false);
@@ -77,7 +77,7 @@ void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
 }
 
 void BaseSurface::drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height) {
-	if (spriteResource.getDimensions().width <= _sysRect.width && 
+	if (spriteResource.getDimensions().width <= _sysRect.width &&
 		spriteResource.getDimensions().height <= _sysRect.height) {
 		if (width > 0 && width <= _sysRect.width)
 			_drawRect.width = width;
@@ -130,7 +130,7 @@ void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, N
 // ShadowSurface
 
 ShadowSurface::ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface)
-	: BaseSurface(vm, priority, width, height), _shadowSurface(shadowSurface) {
+	: BaseSurface(vm, priority, width, height, "shadow"), _shadowSurface(shadowSurface) {
 	// Empty
 }
 
@@ -143,18 +143,18 @@ void ShadowSurface::draw() {
 // FontSurface
 
 FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
-	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows), _charsPerRow(charsPerRow), _numRows(numRows),
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
 	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
-	
+
 	_tracking = new NPointArray();
 	*_tracking = *tracking;
 
 }
 
 FontSurface::FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
-	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows), _charsPerRow(charsPerRow), _numRows(numRows),
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
 	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
-	
+
 	SpriteResource fontSpriteResource(_vm);
 	fontSpriteResource.load(fileHash, true);
 	drawSpriteResourceEx(fontSpriteResource, false, false, 0, 0);
@@ -182,7 +182,7 @@ void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const b
 	for (; stringLen > 0; --stringLen, ++string) {
 		drawChar(destSurface, x, y, *string);
 		x += _tracking ? (*_tracking)[*string - _firstChar].x : _charWidth;
-	}	
+	}
 
 }
 
@@ -201,7 +201,7 @@ FontSurface *FontSurface::createFontSurface(NeverhoodEngine *vm, uint32 fileHash
 	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
 	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
 	fontSprite.load(fileHash, true);
-	fontSurface = new FontSurface(vm, tracking, 16, numRows, firstChar, charWidth, charHeight);	
+	fontSurface = new FontSurface(vm, tracking, 16, numRows, firstChar, charWidth, charHeight);
 	fontSurface->drawSpriteResourceEx(fontSprite, false, false, 0, 0);
 	return fontSurface;
 }
@@ -219,7 +219,7 @@ enum BitmapFlags {
 void parseBitmapResource(const byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, const byte **palette, const byte **pixels) {
 
 	uint16 flags;
-	
+
 	flags = READ_LE_UINT16(sprite);
 	sprite += 2;
 
@@ -278,7 +278,7 @@ void unpackSpriteRle(const byte *source, int width, int height, byte *dest, int 
 	rows = READ_LE_UINT16(source);
 	chunks = READ_LE_UINT16(source + 2);
 	source += 4;
-	
+
 	do {
 		if (chunks == 0) {
 			dest += rows * destPitch;
@@ -316,7 +316,7 @@ void unpackSpriteRle(const byte *source, int width, int height, byte *dest, int 
 void unpackSpriteNormal(const byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
 
 	const int sourcePitch = (width + 3) & 0xFFFC;
-	
+
 	if (flipY) {
 		dest += destPitch * (height - 1);
 		destPitch = -destPitch;
@@ -343,7 +343,7 @@ void unpackSpriteNormal(const byte *source, int width, int height, byte *dest, i
 int calcDistance(int16 x1, int16 y1, int16 x2, int16 y2) {
 	const int16 deltaX = ABS(x1 - x2);
 	const int16 deltaY = ABS(y1 - y2);
-	return sqrt((double)(deltaX * deltaX + deltaY * deltaY));
+	return (int)sqrt((double)(deltaX * deltaX + deltaY * deltaY));
 }
 
 } // End of namespace Neverhood

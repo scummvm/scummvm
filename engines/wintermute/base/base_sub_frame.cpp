@@ -38,6 +38,8 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/graphics/transform_tools.h"
+#include "engines/wintermute/graphics/transform_struct.h"
 
 namespace Wintermute {
 
@@ -46,8 +48,9 @@ IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 //////////////////////////////////////////////////////////////////////////
 BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_surface = nullptr;
-	_hotspotX = _hotspotY = 0;
-	_alpha = 0xFFFFFFFF;
+	_hotspotX = kDefaultHotspotX;
+	_hotspotY = kDefaultHotspotY;
+	_alpha = kDefaultRgbaMod;
 	_transparent = 0xFFFF00FF;
 
 	_wantsDefaultRect = false;
@@ -233,12 +236,18 @@ const char* BaseSubFrame::getSurfaceFilename() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
+	
+	rotate = fmod(rotate, 360.0f);
+	if (rotate < 0) {
+		rotate += 360.0f;
+	}
+
 	if (!_surface) {
 		return STATUS_OK;
 	}
 
 	if (registerOwner != nullptr && !_decoration) {
-		if (zoomX == 100 && zoomY == 100) {
+		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
 			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
 			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
@@ -251,17 +260,24 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	bool res;
 
 	//if (Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
-	if (_alpha != 0xFFFFFFFF) {
+	if (_alpha != kDefaultRgbaMod) {
 		alpha = _alpha;
 	}
 
-	if (rotate != 0.0f) {
-		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
+	if (rotate != kDefaultAngle) {
+		Point32 boxOffset, rotatedHotspot, hotspotOffset, newOrigin;
+		Point32 origin(x, y);
+		Rect32 oldRect = getRect();
+		Point32 newHotspot;
+		TransformStruct transform = TransformStruct(zoomX, zoomY, rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
+		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
+		newOrigin = origin - newHotspot;
+		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
 	} else {
-		if (zoomX == 100 && zoomY == 100) {
+		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
 		} else {
-			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / kDefaultZoomX)), (int)(y - _hotspotY * (zoomY / kDefaultZoomY)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 		}
 	}
 
@@ -657,4 +673,4 @@ bool BaseSubFrame::setSurfaceSimple() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

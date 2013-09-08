@@ -2924,7 +2924,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	Graphics::Surface *screen = _system->lockScreen();
 
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		dst = (byte *)screen->pixels;
+		dst = (byte *)screen->getPixels();
 		dstPitch = screen->pitch;
 		h = 8;
 		w = 6;
@@ -2961,7 +2961,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 			error("windowDrawChar: Unknown language %d", _language);
 		}
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-		dst = (byte *)screen->pixels;
+		dst = (byte *)screen->getPixels();
 		dstPitch = screen->pitch;
 		h = 8;
 		w = 6;
@@ -2986,14 +2986,14 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 			error("windowDrawChar: Unknown language %d", _language);
 		}
 	} else if (getGameType() == GType_ELVIRA1) {
-		dst = (byte *)screen->pixels;
+		dst = (byte *)screen->getPixels();
 		dstPitch = screen->pitch;
 		h = 8;
 		w = 6;
 
 		src = english_elvira1Font + (chr - 32) * 8;
 	} else {
-		dst = (byte *)screen->pixels;
+		dst = (byte *)screen->getPixels();
 		dstPitch = screen->pitch;
 		h = 8;
 		w = 8;

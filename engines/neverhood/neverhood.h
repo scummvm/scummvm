@@ -48,6 +48,7 @@ class Screen;
 class SoundMan;
 class AudioResourceMan;
 class StaticData;
+class Console;
 struct NPoint;
 
 struct GameState {
@@ -86,12 +87,13 @@ public:
 	ResourceMan *_res;
 	GameModule *_gameModule;
 	StaticData *_staticData;
-	
+	Console *_console;
+
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;
 
 public:
-	
+
 	/* Save/load */
 
 	enum kReadSaveHeaderError {
@@ -116,12 +118,12 @@ public:
 
 	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
-	
+
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
 	Common::Error removeGameState(int slot);
-	void savegame(const char *filename, const char *description);
-	void loadgame(const char *filename);
+	bool savegame(const char *filename, const char *description);
+	bool loadgame(const char *filename);
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
@@ -132,7 +134,10 @@ public:
 	int16 getMouseY() const { return _mouseY; }
 	NPoint getMousePos();
 
-public:
+	void toggleSoundUpdate(bool state) { _updateSound = state; }
+
+private:
+	bool _updateSound;
 
 };
 

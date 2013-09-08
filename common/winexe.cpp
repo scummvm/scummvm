@@ -73,7 +73,7 @@ String WinResourceID::toString() const {
 	if (_idType == kIDTypeString)
 		return _name;
 	else if (_idType == kIDTypeNumerical)
-		return String::format("%08x", _id);
+		return String::format("0x%08x", _id);
 
 	return "";
 }

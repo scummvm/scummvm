@@ -810,4 +810,4 @@ bool AdItem::getExtendedFlag(const char *flagName) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

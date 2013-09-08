@@ -101,7 +101,7 @@ public:
 	// video properties
 	int32 _posX;
 	int32 _posY;
-	
+
 	bool _dontDropFrames;
 private:
 	int32 _state;
@@ -142,6 +142,6 @@ private:
 
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

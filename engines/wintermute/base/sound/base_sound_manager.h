@@ -64,6 +64,6 @@ private:
 	bool setMasterVolume(byte percent);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

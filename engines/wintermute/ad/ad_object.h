@@ -123,6 +123,6 @@ private:
 	AdInventory *_inventory;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

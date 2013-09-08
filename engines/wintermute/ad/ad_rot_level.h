@@ -45,6 +45,6 @@ public:
 	bool loadBuffer(byte *buffer, bool complete = true);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

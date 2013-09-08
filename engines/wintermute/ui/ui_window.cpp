@@ -1442,4 +1442,4 @@ bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactive
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

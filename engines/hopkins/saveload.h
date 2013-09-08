@@ -35,7 +35,7 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-#define HOPKINS_SAVEGAME_VERSION 2
+#define HOPKINS_SAVEGAME_VERSION 4
 
 struct hopkinsSavegameHeader {
 	uint8 _version;
@@ -56,14 +56,14 @@ private:
 public:
 	SaveLoadManager(HopkinsEngine *vm);
 
-	void initSaves();
+	bool saveExists(const Common::String &file);
 	bool save(const Common::String &file, const void *buf, size_t n);
 	bool saveFile(const Common::String &file, const void *buf, size_t n);
 	void load(const Common::String &file, byte *buf);
 
 	static bool readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header);
 	void writeSavegameHeader(Common::OutSaveFile *out, hopkinsSavegameHeader &header);
-	static bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
+	bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
 	Common::Error saveGame(int slot, const Common::String &saveName);
 	Common::Error loadGame(int slot);
 

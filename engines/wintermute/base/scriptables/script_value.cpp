@@ -992,4 +992,4 @@ bool ScValue::setProperty(const char *propName) {
 	return ret;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

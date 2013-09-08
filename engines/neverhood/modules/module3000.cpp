@@ -39,7 +39,7 @@ static const uint32 kModule3000SoundList[] = {
 
 Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundVolume(0) {
-	
+
 	_vm->_soundMan->addSoundList(0x81293110, kModule3000SoundList);
 	_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->setSoundParams(0x90F0D1C3, false, 20000, 30000, 20000, 30000);
@@ -49,7 +49,7 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 
-	if (_isWallBroken) {
+	if (!_isWallBroken) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
 	}
@@ -73,15 +73,16 @@ Module3000::~Module3000() {
 }
 
 void Module3000::createScene(int sceneNum, int which) {
-	static const byte kNavigationTypes05[] = {3, 0};
+	static const byte kNavigationTypes05[] = {2, 0};
 	static const byte kNavigationTypes06[] = {5};
-	debug("Module3000::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module3000::createScene(%d, %d)", sceneNum, which);
 	_vm->gameState().sceneNum = sceneNum;
+	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 	switch (_vm->gameState().sceneNum) {
 	case 1:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN)) {
 			createNavigationScene(0x004B7C80, which);
-		} else if (getGlobalVar(V_WALL_BROKEN)) {
+		} else if (_isWallBroken) {
 			createNavigationScene(0x004B7CE0, which);
 		} else {
 			createNavigationScene(0x004B7CB0, which);
@@ -89,11 +90,11 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
-		if (_isWallBroken) {
+		if (!_isWallBroken) {
 			_soundVolume = 90;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 90);
 		}
-		if (getGlobalVar(V_WALL_BROKEN)) {
+		if (_isWallBroken) {
 			createNavigationScene(0x004B7D58, which);
 		} else {
 			createNavigationScene(0x004B7D10, which);
@@ -102,7 +103,7 @@ void Module3000::createScene(int sceneNum, int which) {
 	case 3:
 		if (getGlobalVar(V_STAIRS_DOWN))
 			createNavigationScene(0x004B7E60, which);
-		else if (getGlobalVar(V_WALL_BROKEN))
+		else if (_isWallBroken)
 			createNavigationScene(0x004B7DA0, which);
 		else
 			createNavigationScene(0x004B7E00, which);
@@ -150,12 +151,12 @@ void Module3000::createScene(int sceneNum, int which) {
 	// NOTE: Newly introduced sceneNums
 	case 1001:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN))
-			if (getGlobalVar(V_WALL_BROKEN))
+			if (_isWallBroken)
 				createSmackerScene(0x00940021, true, true, false);
 			else
 				createSmackerScene(0x01140021, true, true, false);
 		else
-			if (getGlobalVar(V_WALL_BROKEN))
+			if (_isWallBroken)
 				createSmackerScene(0x001011B1, true, true, false);
 			else
 				createSmackerScene(0x001021B1, true, true, false);
@@ -299,7 +300,7 @@ void Module3000::updateScene() {
 					} else if (frameNumber == 10) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
@@ -313,7 +314,7 @@ void Module3000::updateScene() {
 			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
 				int navigationIndex = navigationScene()->getNavigationIndex();
-				if (_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
+				if (!_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
 					_soundVolume--;
 					_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 				}
@@ -338,7 +339,7 @@ void Module3000::updateScene() {
 					if (frameNumber == 40) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
@@ -439,7 +440,7 @@ static const uint32 kAsScene3009SymbolFileHashes[] = {
 };
 
 static const uint32 kSsScene3009SymbolArrowFileHashes1[] = {
-	0x24016060,  
+	0x24016060,
 	0x21216221,
 	0x486160A0,
 	0x42216422,
@@ -454,7 +455,7 @@ static const uint32 kSsScene3009SymbolArrowFileHashes1[] = {
 };
 
 static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
-	0x40092024, 
+	0x40092024,
 	0x01636002,
 	0x8071E028,
 	0x02A56064,
@@ -470,7 +471,7 @@ static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
 
 SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _isClicked(false) {
-	
+
 	loadSprite(0x120B24B0, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	SetUpdateHandler(&SsScene3009FireCannonButton::update);
@@ -636,7 +637,7 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 
 AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 cannonTargetStatus)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
-	
+
 	_x = getGlobalVar(V_CANNON_TURNED) ? 533 : 92;
 	_y = 150;
 	createSurface1(0xC0C12954, 1200);
@@ -701,7 +702,7 @@ AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _symbolPosition(symbolPosition) {
 
 	_symbolIndex = getSubVar(VA_CURR_CANNON_SYMBOLS, _symbolPosition);
-	
+
 	_x = kAsScene3009SymbolPoints[_symbolPosition].x;
 	_y = kAsScene3009SymbolPoints[_symbolPosition].y;
 	createSurface1(kAsScene3009SymbolFileHashes[_symbolPosition / 3], 1200);
@@ -752,17 +753,17 @@ void AsScene3009Symbol::hide() {
 }
 
 Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _keepVideo(false), _moveCannonLeftFirst(false), 
+	: Scene(vm, parentModule), _keepVideo(false), _moveCannonLeftFirst(false),
 	_isTurning(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
 
 	_cannonTargetStatus = getGlobalVar(V_CANNON_TARGET_STATUS);
-	
+
 	_vm->gameModule()->initCannonSymbolsPuzzle();
-	
+
 	setGlobalVar(V_CANNON_SMACKER_NAME, 0);
-	
+
 	_vm->_screen->clear();
-	
+
 	setBackground(0xD000420C);
 	setPalette(0xD000420C);
 	insertPuzzleMouse(0x04208D08, 20, 620);
@@ -786,8 +787,8 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 	}
 
-	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009CannonScopeVideos[_cannonTargetStatus], false, _keepVideo));
-	_smackerPlayer->setDrawPos(89, 37);
+	_cannonSmackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009CannonScopeVideos[_cannonTargetStatus], false, _keepVideo));
+	_cannonSmackerPlayer->setDrawPos(89, 37);
 	_palette->usePalette(); // Use it again since the SmackerPlayer overrides the usage
 
 	insertStaticSprite(0x8540252C, 400);
@@ -807,42 +808,39 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene3009::handleMessage);
 	SetUpdateHandler(&Scene3009::update);
+}
 
-	// DEBUG Enable to set the correct code
-#if 0	
-	for (int i = 0; i < 6; i++)
-		setSubVar(VA_CURR_CANNON_SYMBOLS, i, _correctSymbols[i]);
-	sendMessage(this, 0x2003, 0);
-#endif   
+Scene3009::~Scene3009() {
+}
 
+void Scene3009::openSmacker(uint32 fileHash, bool keepLastFrame) {
+	_cannonSmackerPlayer->open(fileHash, keepLastFrame);
+	//_vm->_screen->setSmackerDecoder(_cannonSmackerPlayer->getSmackerDecoder());
+	_palette->usePalette();
 }
 
 void Scene3009::update() {
 	Scene::update();
-	
-	if (!_keepVideo && _smackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
+
+	if (!_keepVideo && _cannonSmackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
 		switch (_cannonTargetStatus) {
 		case kCTSNull:
 		case kCTSLowerCannon:
-			_smackerPlayer->open(0x340A0049, true);
-			_palette->usePalette();
+			openSmacker(0x340A0049, true);
 			_keepVideo = true;
 			break;
 		case kCTSRightRobotNoTarget:
-			_smackerPlayer->open(0x0082080D, true);
-			_palette->usePalette();
+			openSmacker(0x0082080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
 		case kCTSRightRobotIsTarget:
-			_smackerPlayer->open(0x0282080D, true);
-			_palette->usePalette();
+			openSmacker(0x0282080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
 		case kCTSRightNoRobot:
-			_smackerPlayer->open(0x0882080D, true);
-			_palette->usePalette();
+			openSmacker(0x0882080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
@@ -851,12 +849,11 @@ void Scene3009::update() {
 		case kCTSLeftNoRobot:
 			if (_moveCannonLeftFirst) {
 				if (_cannonTargetStatus == kCTSLeftRobotNoTarget)
-					_smackerPlayer->open(0x110A000F, false);
-				else if (_cannonTargetStatus == kCTSLeftRobotIsTarget)				
-					_smackerPlayer->open(0x500B004F, false);
-				else if (_cannonTargetStatus == kCTSLeftNoRobot)				
-					_smackerPlayer->open(0x100B010E, false);
-				_palette->usePalette();
+					openSmacker(0x110A000F, false);
+				else if (_cannonTargetStatus == kCTSLeftRobotIsTarget)
+					openSmacker(0x500B004F, false);
+				else if (_cannonTargetStatus == kCTSLeftNoRobot)
+					openSmacker(0x100B010E, false);
 				_moveCannonLeftFirst = false;
 				_asHorizontalIndicator->stMoveLeft();
 			} else {
@@ -955,15 +952,14 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 				// Cannon is at the right position
 				if (!getGlobalVar(V_ROBOT_TARGET)) {
 					_cannonTargetStatus = kCTSLeftRobotNoTarget;
-					_smackerPlayer->open(0x108A000F, false);
+					openSmacker(0x108A000F, false);
 				} else if (!getGlobalVar(V_ROBOT_HIT)) {
 					_cannonTargetStatus = kCTSLeftRobotIsTarget;
-					_smackerPlayer->open(0x500B002F, false);
+					openSmacker(0x500B002F, false);
 				} else {
 					_cannonTargetStatus = kCTSLeftNoRobot;
-					_smackerPlayer->open(0x100B008E, false);
+					openSmacker(0x100B008E, false);
 				}
-				_palette->usePalette();
 				_moveCannonLeftFirst = true;
 				_isTurning = true;
 				_keepVideo = false;
@@ -1123,7 +1119,7 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 		loadSound(0, 0x420073DC);
 		loadSound(1, 0x420073DC);
 	}
-	
+
 	setVisible(false);
 	stIdle();
 	if (initUnlocked)
@@ -1131,7 +1127,7 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 
 	_needRefresh = true;
 	AnimatedSprite::updatePosition();
-	
+
 }
 
 void AsScene3010DeadBolt::update() {
@@ -1221,15 +1217,8 @@ void AsScene3010DeadBolt::stDisabledMessage() {
 
 Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
-	
-	int initCountdown = 0;
 
-	// DEBUG Enable to activate all buttons
-#if 0	
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[0], 1);
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[1], 1);
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[2], 1);
-#endif	
+	int initCountdown = 0;
 
 	setBackground(0x80802626);
 	setPalette(0x80802626);
@@ -1359,7 +1348,7 @@ static const uint32 kAsScene3011SymbolFileHashes[] = {
 
 SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
-	
+
 	loadSprite(flag ? 0x11282020 : 0x994D0433, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44061000);
@@ -1457,7 +1446,7 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene3011::handleMessage);
 	SetUpdateHandler(&Scene3011::update);
-	
+
 	setBackground(0x92124A04);
 	setPalette(0xA4070114);
 	addEntity(_palette);
@@ -1469,12 +1458,12 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	addCollisionSprite(_ssButton);
-	
+
 }
 
 void Scene3011::update() {
 	Scene::update();
-	
+
 	if (_countdown != 0 && (--_countdown == 0)) {
 		switch (_updateStatus) {
 		case 0:

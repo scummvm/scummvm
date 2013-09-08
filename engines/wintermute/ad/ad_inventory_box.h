@@ -60,6 +60,6 @@ private:
 	int32 _itemWidth;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

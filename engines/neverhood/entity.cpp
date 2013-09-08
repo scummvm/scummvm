@@ -25,29 +25,29 @@
 
 namespace Neverhood {
 
-uint32 MessageParam::asInteger() const { 
-	assert(_type == mptInteger); 
-	return _integer; 
+uint32 MessageParam::asInteger() const {
+	assert(_type == mptInteger);
+	return _integer;
 }
 
-NPoint MessageParam::asPoint() const { 
+NPoint MessageParam::asPoint() const {
 	assert(_type == mptInteger || _type == mptPoint);
 	if (_type == mptInteger) {
 		NPoint pt;
 		pt.x = _integer & 0xFFFF;
-		pt.y = (_integer >> 16) & 0xFFFF; 
+		pt.y = (_integer >> 16) & 0xFFFF;
 		return pt;
-	} 
-	return _point; 
+	}
+	return _point;
 }
 
 Entity *MessageParam::asEntity() const {
-	assert(_type == mptEntity); 
-	return _entity; 
+	assert(_type == mptEntity);
+	return _entity;
 }
 
 Entity::Entity(NeverhoodEngine *vm, int priority)
-	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _soundResources(NULL) {
+	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(nullptr), _priority(priority), _soundResources(NULL) {
 }
 
 Entity::~Entity() {

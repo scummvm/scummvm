@@ -90,7 +90,7 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 	if (!surface)
 		return;
 
-	byte *src = (byte *)surface->pixels;
+	const byte *src = (const byte *)surface->getPixels();
 
 	if (_video->hasDirtyPalette())
 		_vm->setPaletteFromPtr(_video->getPalette(), 256);
@@ -119,7 +119,7 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 			dst += y * pitch + x * 2;
 			do {
 				for (uint i = 0; i < w; i++) {
-					uint16 color = *((uint16 *)src + i);
+					uint16 color = *((const uint16 *)src + i);
 					switch (dstType) {
 					case kDstScreen:
 						WRITE_UINT16(dst + i * 2, color);

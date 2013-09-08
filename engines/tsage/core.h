@@ -472,11 +472,13 @@ class Visage {
 private:
 	byte *_data;
 
-	void flip(GfxSurface &s);
+	void flipHorizontal(GfxSurface &s);
+	void flipVertical(GfxSurface &s);
 public:
 	int _resNum;
 	int _rlbNum;
 	bool _flipHoriz;
+	bool _flipVert;
 public:
 	Visage();
 	Visage(const Visage &v);
@@ -611,7 +613,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
 	void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10);
-	void proc27();
+	static void copySceneToBackground();
 };
 
 class SceneText : public SceneObject {
@@ -898,6 +900,7 @@ public:
 protected:
 	virtual void playerAction(Event &event) {}
 	virtual void processEnd(Event &event) {}
+	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {}
 public:
 	SceneHandler();
 	void registerHandler();

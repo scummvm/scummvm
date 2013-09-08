@@ -77,24 +77,24 @@ public:
 	void stIdleArms();
 	void evIdleArmsDone();
 	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
-	
+
 	void stIdleChest();
 	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
-	
+
 	void stIdleHeadOff();
 	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stIdleWonderAbout();
 
 	void stIdleTeleporterHands();
-	
+
 	void stIdleTeleporterHands2();
 
 	void stTryStandIdle();
 	void stStandAround();
 	void upStandIdle();
 	void stIdleBlink();
-	
+
 	bool stStartAction(AnimationCb callback3);
 	bool stStartActionFromIdle(AnimationCb callback);
 	uint32 hmStartAction(int messageNum, const MessageParam &param, Entity *sender);
@@ -134,7 +134,7 @@ public:
 
 	void stPickUpTube();
 	uint32 hmPickUpTube(int messageNum, const MessageParam &param, Entity *sender);
-	
+
 	void stTurnToUse();
 	void stTurnToUseHalf();
 	void stTurnAwayFromUse();
@@ -263,10 +263,10 @@ public:
 	void stJumpToGrabFall();
 	uint32 hmJumpToGrab(int messageNum, const MessageParam &param, Entity *sender);
 	void suJumpToGrab();
-	
+
 	void stJumpToGrabRelease();
 	uint32 hmJumpToGrabRelease(int messageNum, const MessageParam &param, Entity *sender);
-	
+
 	void stSitInTeleporter();
 	uint32 hmSitInTeleporter(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -326,7 +326,7 @@ public:
 
 	void stFinishGrow();
 	uint32 hmFinishGrow(int messageNum, const MessageParam &param, Entity *sender);
-	
+
 	void stJumpToRingVenusFlyTrap();
 	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -363,7 +363,7 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 
 	void stopWalking();
-	
+
 	void suAction();
 	void suUpdateDestX();
 	void suWalkingTestExit();
@@ -375,7 +375,7 @@ public:
 	void setKlaymenIdleTable1();
 	void setKlaymenIdleTable2();
 	void setKlaymenIdleTable3();
-	
+
 	void setSoundFlag(bool value) { _soundFlag = value; }
 
 	void spitIntoPipe();
@@ -416,7 +416,7 @@ protected:
 
 	NPointArray *_pathPoints;
 	bool _soundFlag;
-	
+
 	int16 _spitOutCountdown;
 
 	bool _isSittingInTeleporter;
@@ -456,16 +456,16 @@ protected:
 
 	void stStartWalkingSmall();
 	uint32 hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender);
-	
+
 	void enterIdleAnimation(uint idleAnimation);
 	void walkAlongPathPoints();
-	
+
 };
 
 class KmScene1001 : public Klaymen {
 public:
 	KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:	
+protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
@@ -473,7 +473,7 @@ class KmScene1002 : public Klaymen {
 public:
 	KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	void xUpdate();	
+	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

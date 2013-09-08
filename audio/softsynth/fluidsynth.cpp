@@ -163,7 +163,7 @@ int MidiDriver_FluidSynth::open() {
 
 	Common::String interpolation = ConfMan.get("fluidsynth_misc_interpolation");
 	int interpMethod = FLUID_INTERP_4THORDER;
-	
+
 	if (interpolation == "none") {
 		interpMethod = FLUID_INTERP_NONE;
 	} else if (interpolation == "linear") {

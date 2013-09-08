@@ -244,7 +244,7 @@ void FlicDecoder::FlicVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch)
 	for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 		for (int y = (*it).top; y < (*it).bottom; ++y) {
 			const int x = (*it).left;
-			memcpy(dst + y * pitch + x, (byte *)_surface->pixels + y * getWidth() + x, (*it).right - x);
+			memcpy(dst + y * pitch + x, (byte *)_surface->getBasePtr(x, y), (*it).right - x);
 		}
 	}
 
@@ -252,7 +252,7 @@ void FlicDecoder::FlicVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch)
 }
 
 void FlicDecoder::FlicVideoTrack::copyFrame(uint8 *data) {
-	memcpy((byte *)_surface->pixels, data, getWidth() * getHeight());
+	memcpy((byte *)_surface->getPixels(), data, getWidth() * getHeight());
 
 	// Redraw
 	_dirtyRects.clear();
@@ -260,8 +260,8 @@ void FlicDecoder::FlicVideoTrack::copyFrame(uint8 *data) {
 }
 
 void FlicDecoder::FlicVideoTrack::decodeByteRun(uint8 *data) {
-	byte *ptr = (byte *)_surface->pixels;
-	while ((int32)(ptr - (byte *)_surface->pixels) < (getWidth() * getHeight())) {
+	byte *ptr = (byte *)_surface->getPixels();
+	while ((int32)(ptr - (byte *)_surface->getPixels()) < (getWidth() * getHeight())) {
 		int chunks = *data++;
 		while (chunks--) {
 			int count = (int8)*data++;
@@ -305,7 +305,7 @@ void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
 			case OP_UNDEFINED:
 				break;
 			case OP_LASTPIXEL:
-				*((byte *)_surface->pixels + currentLine * getWidth() + getWidth() - 1) = (opcode & 0xFF);
+				*((byte *)_surface->getBasePtr(getWidth() - 1, currentLine)) = (opcode & 0xFF);
 				_dirtyRects.push_back(Common::Rect(getWidth() - 1, currentLine, getWidth(), currentLine + 1));
 				break;
 			case OP_LINESKIPCOUNT:
@@ -321,14 +321,14 @@ void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
 			column += *data++;
 			int rleCount = (int8)*data++;
 			if (rleCount > 0) {
-				memcpy((byte *)_surface->pixels + (currentLine * getWidth()) + column, data, rleCount * 2);
+				memcpy((byte *)_surface->getBasePtr(column, currentLine), data, rleCount * 2);
 				data += rleCount * 2;
 				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
 			} else if (rleCount < 0) {
 				rleCount = -rleCount;
 				uint16 dataWord = READ_UINT16(data); data += 2;
 				for (int i = 0; i < rleCount; ++i) {
-					WRITE_UINT16((byte *)_surface->pixels + currentLine * getWidth() + column + i * 2, dataWord);
+					WRITE_UINT16((byte *)_surface->getBasePtr(column + i * 2, currentLine), dataWord);
 				}
 				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
 			} else { // End of cutscene ?

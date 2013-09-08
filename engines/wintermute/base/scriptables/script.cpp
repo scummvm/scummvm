@@ -461,6 +461,7 @@ void ScScript::cleanup() {
 	_parentScript = nullptr; // ref only
 
 	delete _scriptStream;
+	_scriptStream = nullptr;
 }
 
 
@@ -1464,4 +1465,4 @@ void ScScript::afterLoad() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -47,6 +47,6 @@ private:
 	char *_context;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

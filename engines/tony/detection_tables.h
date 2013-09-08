@@ -196,6 +196,40 @@ static const TonyGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Tony Tough English Unpacked
+		{
+			"tony",
+			0,
+			{
+				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
+				{"roasted.mpc", 0, "57c4a3860cf899443c357e0078ea6f49", 366773},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
+	{
+		// Tony Tough German "Shoe Box", reported in bug #3582420
+		{
+			"tony",
+				0,
+			{
+				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
+				{"roasted.mpc", 0, "bc3471f098e591dc509dcad401a8d8a5", 389554},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 

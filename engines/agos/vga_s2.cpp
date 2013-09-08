@@ -213,7 +213,10 @@ void AGOSEngine_Simon2::clearVideoWindow(uint16 num, uint16 color) {
 	uint16 xoffs = vlut[0] * 16;
 	uint16 yoffs = vlut[1];
 	uint16 dstWidth = _videoWindows[18] * 16;
-	byte *dst = (byte *)_window4BackScn->pixels + xoffs + yoffs * dstWidth;
+	// TODO: Is there any known connection between dstWidth and the pitch
+	// of the _window4BackScn Surface? If so, we might be able to pass
+	// yoffs as proper y parameter to getBasePtr.
+	byte *dst = (byte *)_window4BackScn->getBasePtr(xoffs, 0) + yoffs * dstWidth;
 
 	setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
 

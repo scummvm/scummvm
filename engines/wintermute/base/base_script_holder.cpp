@@ -500,4 +500,4 @@ bool BaseScriptHolder::sendEvent(const char *eventName) {
 	return DID_SUCCEED(applyEvent(eventName));
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

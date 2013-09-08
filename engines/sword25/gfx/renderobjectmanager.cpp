@@ -113,7 +113,7 @@ bool RenderObjectManager::render() {
 
 	RectangleList *updateRects = _uta->getRectangles();
 	Common::Array<int> updateRectsMinZ;
-	
+
 	updateRectsMinZ.reserve(updateRects->size());
 
 	// Calculate the minimum drawing Z value of each update rectangle
@@ -144,9 +144,9 @@ bool RenderObjectManager::render() {
 	}
 
 	delete updateRects;
-	
+
 	SWAP(_currQueue, _prevQueue);
-	
+
 	return true;
 }
 

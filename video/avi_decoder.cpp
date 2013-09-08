@@ -36,6 +36,7 @@
 // Video Codecs
 #include "video/codecs/cinepak.h"
 #include "video/codecs/indeo3.h"
+#include "video/codecs/mpeg.h"
 #include "video/codecs/msvideo1.h"
 #include "video/codecs/msrle.h"
 #include "video/codecs/truemotion1.h"
@@ -64,8 +65,10 @@ namespace Video {
 #define ID_VEDT MKTAG('v','e','d','t')
 #define ID_IDX1 MKTAG('i','d','x','1')
 #define ID_STRD MKTAG('s','t','r','d')
-#define ID_00AM MKTAG('0','0','A','M')
-//#define ID_INFO MKTAG('I','N','F','O')
+#define ID_INFO MKTAG('I','N','F','O')
+#define ID_ISFT MKTAG('I','S','F','T')
+#define ID_DISP MKTAG('D','I','S','P')
+#define ID_PRMI MKTAG('P','R','M','I')
 
 // Codec tags
 #define ID_RLE  MKTAG('R','L','E',' ')
@@ -75,49 +78,45 @@ namespace Video {
 #define ID_CVID MKTAG('c','v','i','d')
 #define ID_IV32 MKTAG('i','v','3','2')
 #define ID_DUCK MKTAG('D','U','C','K')
+#define ID_MPG2 MKTAG('m','p','g','2')
 
-static byte char2num(char c) {
-	c = tolower((byte)c);
-	return (c >= 'a' && c <= 'f') ? c - 'a' + 10 : c - '0';
+
+AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) : _frameRateOverride(0), _soundType(soundType) {
+	initCommon();
 }
 
-static byte getStreamIndex(uint32 tag) {
-	return char2num((tag >> 24) & 0xFF) << 4 | char2num((tag >> 16) & 0xFF);
-}
-
-static uint16 getStreamType(uint32 tag) {
-	return tag & 0xffff;
-}
-
-AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
-	_decodedHeader = false;
-	_fileStream = 0;
-	memset(&_ixInfo, 0, sizeof(_ixInfo));
-	memset(&_header, 0, sizeof(_header));
+AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType)
+		: _frameRateOverride(frameRateOverride), _soundType(soundType) {
+	initCommon();
 }
 
 AVIDecoder::~AVIDecoder() {
 	close();
 }
 
-void AVIDecoder::runHandle(uint32 tag) {
-	assert(_fileStream);
+void AVIDecoder::initCommon() {
+	_decodedHeader = false;
+	_foundMovieList = false;
+	_movieListStart = 0;
+	_fileStream = 0;
+	memset(&_header, 0, sizeof(_header));
+}
+
+bool AVIDecoder::parseNextChunk() {
+	uint32 tag = _fileStream->readUint32BE();
+	uint32 size = _fileStream->readUint32LE();
+
 	if (_fileStream->eos())
-		return;
+		return false;
 
 	debug(3, "Decoding tag %s", tag2str(tag));
 
 	switch (tag) {
-	case ID_RIFF:
-		/*_filesize = */_fileStream->readUint32LE();
-		if (_fileStream->readUint32BE() != ID_AVI)
-			error("RIFF file is not an AVI video");
-		break;
 	case ID_LIST:
-		handleList();
+		handleList(size);
 		break;
 	case ID_AVIH:
-		_header.size = _fileStream->readUint32LE();
+		_header.size = size;
 		_header.microSecondsPerFrame = _fileStream->readUint32LE();
 		_header.maxBytesPerSecond = _fileStream->readUint32LE();
 		_header.padding = _fileStream->readUint32LE();
@@ -132,50 +131,74 @@ void AVIDecoder::runHandle(uint32 tag) {
 		_fileStream->skip(16);
 		break;
 	case ID_STRH:
-		handleStreamHeader();
+		handleStreamHeader(size);
 		break;
 	case ID_STRD: // Extra stream info, safe to ignore
 	case ID_VEDT: // Unknown, safe to ignore
 	case ID_JUNK: // Alignment bytes, should be ignored
-		{
-		uint32 junkSize = _fileStream->readUint32LE();
-		_fileStream->skip(junkSize + (junkSize & 1)); // Alignment
-		} break;
+	case ID_ISFT: // Metadata, safe to ignore
+	case ID_DISP: // Metadata, should be safe to ignore
+		skipChunk(size);
+		break;
 	case ID_IDX1:
-		_ixInfo.size = _fileStream->readUint32LE();
-		_ixInfo.indices = new OldIndex::Index[_ixInfo.size / 16];
-		debug(0, "%d Indices", (_ixInfo.size / 16));
-		for (uint32 i = 0; i < (_ixInfo.size / 16); i++) {
-			_ixInfo.indices[i].id = _fileStream->readUint32BE();
-			_ixInfo.indices[i].flags = _fileStream->readUint32LE();
-			_ixInfo.indices[i].offset = _fileStream->readUint32LE();
-			_ixInfo.indices[i].size = _fileStream->readUint32LE();
-			debug(0, "Index %d == Tag \'%s\', Offset = %d, Size = %d", i, tag2str(_ixInfo.indices[i].id), _ixInfo.indices[i].offset, _ixInfo.indices[i].size);
+		debug(0, "%d Indices", size / 16);
+		for (uint32 i = 0; i < size / 16; i++) {
+			OldIndex indexEntry;
+			indexEntry.id = _fileStream->readUint32BE();
+			indexEntry.flags = _fileStream->readUint32LE();
+			indexEntry.offset = _fileStream->readUint32LE();
+			indexEntry.size = _fileStream->readUint32LE();
+			_indexEntries.push_back(indexEntry);
+			debug(0, "Index %d == Tag \'%s\', Offset = %d, Size = %d", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size);
 		}
 		break;
 	default:
 		error("Unknown tag \'%s\' found", tag2str(tag));
 	}
+
+	return true;
 }
 
-void AVIDecoder::handleList() {
-	uint32 listSize = _fileStream->readUint32LE() - 4; // Subtract away listType's 4 bytes
+void AVIDecoder::skipChunk(uint32 size) {
+	// Make sure we're aligned on a word boundary
+	_fileStream->skip(size + (size & 1));
+}
+
+void AVIDecoder::handleList(uint32 listSize) {
 	uint32 listType = _fileStream->readUint32BE();
+	listSize -= 4; // Subtract away listType's 4 bytes
 	uint32 curPos = _fileStream->pos();
 
 	debug(0, "Found LIST of type %s", tag2str(listType));
 
-	while ((_fileStream->pos() - curPos) < listSize)
-		runHandle(_fileStream->readUint32BE());
-
-	// We now have all the header data
-	if (listType == ID_HDRL)
+	switch (listType) {
+	case ID_MOVI: // Movie List
+		// We found the movie block
+		_foundMovieList = true;
+		_movieListStart = curPos;
+		_fileStream->skip(listSize);
+		return;
+	case ID_HDRL: // Header List
+		// Mark the header as decoded
 		_decodedHeader = true;
+		break;
+	case ID_INFO: // Metadata
+	case ID_PRMI: // Unknown metadata, should be safe to ignore
+		// Ignore metadata
+		_fileStream->skip(listSize);
+		return;
+	case ID_STRL: // Stream list
+	default:      // (Just hope we can parse it!)
+		break;
+	}
+
+	while ((_fileStream->pos() - curPos) < listSize)
+		parseNextChunk();
 }
 
-void AVIDecoder::handleStreamHeader() {
+void AVIDecoder::handleStreamHeader(uint32 size) {
 	AVIStreamHeader sHeader;
-	sHeader.size = _fileStream->readUint32LE();
+	sHeader.size = size;
 	sHeader.streamType = _fileStream->readUint32BE();
 
 	if (sHeader.streamType == ID_MIDS || sHeader.streamType == ID_TXTS)
@@ -203,6 +226,11 @@ void AVIDecoder::handleStreamHeader() {
 	uint32 startPos = _fileStream->pos();
 
 	if (sHeader.streamType == ID_VIDS) {
+		if (_frameRateOverride != 0) {
+			sHeader.rate = _frameRateOverride.getNumerator();
+			sHeader.scale = _frameRateOverride.getDenominator();
+		}
+
 		BitmapInfoHeader bmInfo;
 		bmInfo.size = _fileStream->readUint32LE();
 		bmInfo.width = _fileStream->readUint32LE();
@@ -261,29 +289,40 @@ void AVIDecoder::handleStreamHeader() {
 bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	uint32 riffTag = stream->readUint32BE();
+	if (riffTag != ID_RIFF) {
+		warning("Failed to find RIFF header");
+		return false;
+	}
+
+	/* uint32 fileSize = */ stream->readUint32LE();
+	uint32 riffType = stream->readUint32BE();
+
+	if (riffType != ID_AVI) {
+		warning("RIFF not an AVI file");
+		return false;
+	}
+
 	_fileStream = stream;
-	_decodedHeader = false;
 
-	// Read chunks until we have decoded the header
-	while (!_decodedHeader)
-		runHandle(_fileStream->readUint32BE());
+	// Go through all chunks in the file
+	while (parseNextChunk())
+		;
 
-	uint32 nextTag = _fileStream->readUint32BE();
-
-	// Throw out any JUNK section
-	if (nextTag == ID_JUNK) {
-		runHandle(ID_JUNK);
-		nextTag = _fileStream->readUint32BE();
+	if (!_decodedHeader) {
+		warning("Failed to parse AVI header");
+		close();
+		return false;
 	}
 
-	// Ignore the 'movi' LIST
-	if (nextTag == ID_LIST) {
-		_fileStream->readUint32BE(); // Skip size
-		if (_fileStream->readUint32BE() != ID_MOVI)
-			error("Expected 'movi' LIST");
-	} else {
-		error("Expected 'movi' LIST");
+	if (!_foundMovieList) {
+		warning("Failed to find 'MOVI' list");
+		close();
+		return false;
 	}
+
+	// Seek back to the start of the MOVI list
+	_fileStream->seek(_movieListStart);
 
 	return true;
 }
@@ -294,33 +333,36 @@ void AVIDecoder::close() {
 	delete _fileStream;
 	_fileStream = 0;
 	_decodedHeader = false;
+	_foundMovieList = false;
+	_movieListStart = 0;
 
-	delete[] _ixInfo.indices;
-	memset(&_ixInfo, 0, sizeof(_ixInfo));
+	_indexEntries.clear();
 	memset(&_header, 0, sizeof(_header));
 }
 
 void AVIDecoder::readNextPacket() {
 	uint32 nextTag = _fileStream->readUint32BE();
+	uint32 size = _fileStream->readUint32LE();
 
 	if (_fileStream->eos())
 		return;
 
 	if (nextTag == ID_LIST) {
 		// A list of audio/video chunks
-		uint32 listSize = _fileStream->readUint32LE() - 4;
 		int32 startPos = _fileStream->pos();
 
 		if (_fileStream->readUint32BE() != ID_REC)
 			error("Expected 'rec ' LIST");
 
+		size -= 4; // subtract list type
+
 		// Decode chunks in the list
-		while (_fileStream->pos() < startPos + (int32)listSize)
+		while (_fileStream->pos() < startPos + (int32)size)
 			readNextPacket();
 
 		return;
 	} else if (nextTag == ID_JUNK || nextTag == ID_IDX1) {
-		runHandle(nextTag);
+		skipChunk(size);
 		return;
 	}
 
@@ -329,12 +371,11 @@ void AVIDecoder::readNextPacket() {
 	if (!track)
 		error("Cannot get track from tag '%s'", tag2str(nextTag));
 
-	uint32 chunkSize = _fileStream->readUint32LE();
 	Common::SeekableReadStream *chunk = 0;
 
-	if (chunkSize != 0) {
-		chunk = _fileStream->readStream(chunkSize);
-		_fileStream->skip(chunkSize & 1);
+	if (size != 0) {
+		chunk = _fileStream->readStream(size);
+		_fileStream->skip(size & 1);
 	}
 
 	if (track->getTrackType() == Track::kTrackTypeAudio) {
@@ -377,6 +418,13 @@ void AVIDecoder::readNextPacket() {
 			videoTrack->decodeFrame(chunk);
 		}
 	}
+}
+
+byte AVIDecoder::getStreamIndex(uint32 tag) const {
+	char string[3];
+	WRITE_BE_UINT16(string, tag >> 16);
+	string[2] = 0;
+	return strtol(string, 0, 16);
 }
 
 AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader)
@@ -427,6 +475,10 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 #ifdef VIDEO_CODECS_TRUEMOTION1_H
 	case ID_DUCK:
 		return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
+#endif
+#ifdef USE_MPEG2
+	case ID_MPG2:
+		return new MPEGDecoder();
 #endif
 	default:
 		warning("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));

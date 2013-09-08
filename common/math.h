@@ -52,14 +52,6 @@
 #endif
 #endif
 
-#ifndef M_SQRT1_2
-	#define M_SQRT1_2 0.70710678118654752440 /* 1/sqrt(2) */
-#endif
-
-#ifndef M_PI
-	#define M_PI 3.14159265358979323846
-#endif
-
 #ifndef FLT_MIN
 	#define FLT_MIN 1E-37
 #endif

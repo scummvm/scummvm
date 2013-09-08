@@ -36,7 +36,7 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 	_currentMusicFileHash = 0;
 	_vm->_soundMan->addMusic(0x64210814, 0xD2FA4D14);
 	setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 1);
-	
+
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, which);
 	} else if (which == 2) {
@@ -58,7 +58,7 @@ Module2800::~Module2800() {
 }
 
 void Module2800::createScene(int sceneNum, int which) {
-	debug("Module2800::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module2800::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
@@ -224,7 +224,7 @@ void Module2800::updateScene() {
 					_musicResource = NULL;
 				}
 				_currentMusicFileHash = 0;
-			}			
+			}
 			if (_moduleResult == 1) {
 				createScene(2, 0);
 			} else if (_moduleResult == 2) {
@@ -251,7 +251,7 @@ void Module2800::updateScene() {
 				createScene(9, 0);
 			else if (_moduleResult == 5)
 				createScene(25, 0);
-			else 
+			else
 				createScene(0, 1);
 			break;
 		case 3:
@@ -318,7 +318,7 @@ void Module2800::updateScene() {
 				createScene(22, 0);
 			else if (_moduleResult == 22)
 				createScene(23, 0);
-			else 
+			else
 				createScene(2, 4);
 			break;
 		case 10:
@@ -331,7 +331,7 @@ void Module2800::updateScene() {
 				createScene(26, 0);
 			else if (_moduleResult == 3)
 				createScene(9, 5);
-			else 
+			else
 				createScene(9, 1);
 			break;
 		case 12:
@@ -401,7 +401,7 @@ void Module2800::updateMusic(bool halfVolume) {
 
 	if (!_musicResource)
 		_musicResource = new MusicResource(_vm);
-		
+
 	if (newMusicFileHash != _currentMusicFileHash) {
 		_currentMusicFileHash = newMusicFileHash;
 		if (_currentMusicFileHash != 0) {
@@ -469,7 +469,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x0066201C);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
-		addCollisionSprite(_asTape); 
+		addCollisionSprite(_asTape);
 	} else if (getGlobalVar(V_RADIO_ROOM_RIGHT_DOOR)) {
 		setRectList(0x004B6CD0);
 		setBackground(0x11E00684);
@@ -480,7 +480,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klaymen->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x00680116);
 		_asTape = insertSprite<SsScene1705Tape>(this, 8, 1100, 302, 437, 0x01142428);
-		addCollisionSprite(_asTape); 
+		addCollisionSprite(_asTape);
 	} else {
 		setRectList(0x004B6CF0);
 		setBackground(0x030006E6);
@@ -491,9 +491,9 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klaymen->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x006E2038);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
-		addCollisionSprite(_asTape); 
+		addCollisionSprite(_asTape);
 	}
-	
+
 	addEntity(_palette);
 
 	if (which == 1) {
@@ -503,7 +503,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addPalette(_paletteHash, 0, 65, 0);
 		_palette->addBasePalette(_paletteHash, 0, 65, 0);
 	}
-	
+
 }
 
 Scene2801::~Scene2801() {
@@ -565,7 +565,7 @@ Scene2802::~Scene2802() {
 	}
 	setGlobalVar(V_CURR_RADIO_MUSIC_INDEX, _currRadioMusicIndex);
 }
-	
+
 void Scene2802::update() {
 	int prevTuneStatus = _currTuneStatus;
 	uint prevRadioMusicIndex = _currRadioMusicIndex;
@@ -577,7 +577,7 @@ void Scene2802::update() {
 		_currTuneStatus = 3;
 	else if (_currTuneStatus == 4)
 		_currTuneStatus = 6;
-	
+
 	switch (_currTuneStatus) {
 	case 2:
 		if (_currRadioMusicIndex < 90)
@@ -607,24 +607,20 @@ void Scene2802::update() {
 		} else
 			_currTuneStatus = 0;
 		break;
-	
+
 	}
 
 	if (prevRadioMusicIndex != _currRadioMusicIndex)
 		_smackerPlayer->gotoFrame(_currRadioMusicIndex);
-		
+
 	if (prevTuneStatus != _currTuneStatus)
 		changeTuneStatus(prevTuneStatus, _currTuneStatus);
-		
-	//DEBUG>>>
-	//debug("_currRadioMusicIndex = %d; V_GOOD_RADIO_MUSIC_INDEX = %d", _currRadioMusicIndex, getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
-	//DEBUG<<<
 
 	if (getGlobalVar(V_RADIO_MOVE_DISH_VIDEO) && prevTuneStatus != _currTuneStatus && _currRadioMusicIndex != 0) {
 		setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
 		leaveScene(1);
 	}
-	
+
 }
 
 uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -762,7 +758,7 @@ void AsScene2803LightCord::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 
 AsScene2803TestTubeOne::AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileHash1, uint32 fileHash2)
 	: AnimatedSprite(vm, 1200), _fileHash1(fileHash1), _fileHash2(fileHash2) {
-	
+
 	createSurface1(fileHash1, 100);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2803TestTubeOne::handleMessage);
@@ -785,7 +781,7 @@ uint32 AsScene2803TestTubeOne::handleMessage(int messageNum, const MessageParam 
 
 AsScene2803Rope::AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
+
 	createSurface(990, 68, 476);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
@@ -841,7 +837,7 @@ void AsScene2803Rope::stHide() {
 
 Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _paletteArea(0) {
-	
+
 	static const uint32 kScene2803FileHashes1[] = {
 		0,
 		0x081000F1,
@@ -858,20 +854,20 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setGlobalVar(V_BEEN_SHRINKING_ROOM, 1);
 	_vm->gameModule()->initTestTubes1Puzzle();
-	
+
 	SetMessageHandler(&Scene2803::handleMessage);
-	
+
 	loadDataResource(0x00900849);
-	
+
 	_background = new Background(_vm, 0);
 	_background->createSurface(0, 640, 480);
 	addBackground(_background);
-	
+
 	setPalette(0x412A423E);
 	addEntity(_palette);
-	
+
 	insertScreenMouse(0xA423A41A);
-	
+
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
 		_asTestTubeOne = (StaticSprite*)insertStaticSprite(0x66121222, 100);
 	} else {
@@ -879,13 +875,13 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 			kScene2803FileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)],
 			kScene2803FileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)]);
 	}
-	
+
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 		_asTestTubeTwo = (StaticSprite*)insertStaticSprite(0x64330236, 100);
 
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 		_asTestTubeThree = (StaticSprite*)insertStaticSprite(0x2E4A22A2, 100);
-	
+
 	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0x8FAD5932, 0x276E1A3D, 578, 200);
 	_sprite3 = (StaticSprite*)insertStaticSprite(0xA40EF2FB, 1100);
 	_sprite4 = (StaticSprite*)insertStaticSprite(0x0C03AA23, 1100);
@@ -900,7 +896,7 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRectsFloor[0].y1 = 0;
 	_clipRectsFloor[0].x2 = 640;
 	_clipRectsFloor[0].y2 = _sprite8->getDrawRect().y2();
-	
+
 	_clipRectsFloor[1].x1 = _sprite8->getDrawRect().x2();
 	_clipRectsFloor[1].y1 = _sprite8->getDrawRect().y2();
 	_clipRectsFloor[1].x2 = 640;
@@ -910,12 +906,12 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRectsStairs[0].y1 = 0;
 	_clipRectsStairs[0].x2 = _sprite5->getDrawRect().x2();
 	_clipRectsStairs[0].y2 = _sprite5->getDrawRect().y2();
-	
+
 	_clipRectsStairs[1].x1 = _sprite6->getDrawRect().x;
 	_clipRectsStairs[1].y1 = 0;
 	_clipRectsStairs[1].x2 = _sprite3->getDrawRect().x;
 	_clipRectsStairs[1].y2 = _sprite6->getDrawRect().y2();
-	
+
 	_clipRectsStairs[2].x1 = _sprite3->getDrawRect().x;
 	_clipRectsStairs[2].y1 = 0;
 	_clipRectsStairs[2].x2 = _sprite4->getDrawRect().x2();
@@ -1116,7 +1112,7 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 	static const uint32 kScene2803SmallFileHashes2[] = {
 		0, 0x286800D4, 0x286806D4, 0x28680AD4
 	};
-	
+
 	SetMessageHandler(&Scene2803Small::handleMessage);
 
 	loadDataResource(0x81120132);
@@ -1164,7 +1160,7 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 			insertStaticSprite(0x30022689, 100);
 	}
-	
+
 	_sprite6->setVisible(false);
 	_sprite7->setVisible(false);
 
@@ -1356,7 +1352,7 @@ void Scene2803Small::updatePaletteArea(bool instantly) {
 
 SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene)
 	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene) {
-	
+
 	loadSprite(getGlobalVar(V_SHRINK_LIGHTS_ON) ? 0x51A10202 : 0x11814A21, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	SetUpdateHandler(&SsScene2804RedButton::update);
@@ -1389,7 +1385,7 @@ uint32 SsScene2804RedButton::handleMessage(int messageNum, const MessageParam &p
 
 SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
-	
+
 	loadSprite(0x8889B008, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
 	SetMessageHandler(&SsScene2804LightCoil::handleMessage);
@@ -1414,7 +1410,7 @@ uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &p
 
 SsScene2804LightTarget::SsScene2804LightTarget(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
-	
+
 	loadSprite(0x06092132, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
 	SetMessageHandler(&SsScene2804LightTarget::handleMessage);
@@ -1439,7 +1435,7 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 
 SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
-	
+
 	loadSprite(0x211003A0, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
 	loadSound(0, 0xCB36BA54);
@@ -1453,7 +1449,7 @@ void SsScene2804Flash::show() {
 
 SsScene2804BeamCoilBody::SsScene2804BeamCoilBody(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
-	
+
 	loadSprite(0x9A816000, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
 }
@@ -1589,7 +1585,7 @@ SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene280
 		0xA8042525,
 		0x5008292B
 	};
-	
+
 	loadSprite(getGlobalVar(V_SHRINK_LIGHTS_ON) ? kSsScene2804CrystalButtonFileHashes1[crystalIndex] : kSsScene2804CrystalButtonFileHashes2[crystalIndex],
 		kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
@@ -1623,7 +1619,7 @@ uint32 SsScene2804CrystalButton::handleMessage(int messageNum, const MessagePara
 
 AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody)
 	: AnimatedSprite(vm, 1400), _parentScene(parentScene), _ssBeamCoilBody(ssBeamCoilBody), _countdown(0) {
-	
+
 	createSurface1(0x00494891, 1000);
 	_x = 125;
 	_y = 184;
@@ -1663,7 +1659,7 @@ uint32 AsScene2804BeamCoil::handleMessage(int messageNum, const MessageParam &pa
 	}
 	return messageResult;
 }
-	
+
 void AsScene2804BeamCoil::show() {
 	_ssBeamCoilBody->setVisible(true);
 	setVisible(true);
@@ -1699,7 +1695,7 @@ uint32 AsScene2804BeamCoil::hmBeaming(int messageNum, const MessageParam &param,
 
 AsScene2804BeamTarget::AsScene2804BeamTarget(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1400) {
-	
+
 	createSurface1(0x03842000, 1000);
 	_x = 475;
 	_y = 278;
@@ -1754,7 +1750,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asTarget = insertSprite<AsScene2804BeamTarget>();
 		_ssFlash = insertSprite<SsScene2804Flash>();
 	}
-	
+
 	_ssRedButton = insertSprite<SsScene2804RedButton>(this);
 	addCollisionSprite(_ssRedButton);
 
@@ -1801,7 +1797,7 @@ uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entit
 void Scene2804::update() {
 
 	Scene::update();
-	
+
 	if (_countdown1 != 0 && (--_countdown1) == 0) {
 		leaveScene(0);
 	}
@@ -1840,7 +1836,7 @@ void Scene2804::update() {
 
 Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	SetMessageHandler(&Scene2805::handleMessage);
 
 	setBackground(0x08021E04);
@@ -1898,7 +1894,7 @@ uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entit
 
 AsScene2806Spew::AsScene2806Spew(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1200) {
-	
+
 	createSurface1(0x04211490, 1200);
 	_x = 378;
 	_y = 423;
@@ -1923,7 +1919,7 @@ uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param,
 	}
 	return messageResult;
 }
-	
+
 Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
 
@@ -1931,16 +1927,16 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene2806::handleMessage);
 	SetUpdateHandler(&Scene2806::update);
-	
+
 	loadDataResource(0x98182003);
 	loadHitRectList();
-	
+
 	_pointList = _dataResource.getPointArray(0x3606A422);
 
-	insertScreenMouse(0x22114C13);	
+	insertScreenMouse(0x22114C13);
 	setBackground(0xC1B22110);
 	setPalette(0xC1B22110);
-	
+
 	_sprite1 = insertStaticSprite(0xA21F82CB, 1100);
 	_clipRects[0].x1 = _sprite1->getDrawRect().x;
 	_clipRects[0].y1 = _sprite1->getDrawRect().y;
@@ -1955,7 +1951,7 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite4 = insertStaticSprite(0x72090342, 1100);
 	_clipRects[1].x1 = _sprite4->getDrawRect().x;
 	_clipRects[1].y1 = _sprite4->getDrawRect().y;
-	
+
 	tempSprite = insertStaticSprite(0xD2012C02, 1100);
 	_clipRects[2].x1 = tempSprite->getDrawRect().x;
 	_clipRects[2].y2 = tempSprite->getDrawRect().y2();
@@ -2031,7 +2027,7 @@ void Scene2806::findClosestPoint() {
 
 	int16 x = MIN<int16>(_klaymen->getX(), 639);
 	int index = 1;
-	
+
 	while (index < (int)_pointList->size() && (*_pointList)[index].x < x)
 		++index;
 	--index;
@@ -2040,12 +2036,12 @@ void Scene2806::findClosestPoint() {
 		_pointIndex = index;
 		_palette->addPalette(kScene2806PaletteFileHashes[index], 0, 64, 0);
 	}
-	
+
 }
 
 Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	SetMessageHandler(&Scene2807::handleMessage);
 
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 1) {
@@ -2140,7 +2136,7 @@ static const int16 kClass490FrameIndices2[] = {
 SsScene2808Dispenser::SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _testTubeSetNum(testTubeSetNum),
 	_testTubeIndex(testTubeIndex) {
-	
+
 	loadSprite(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex], kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 1500);
 	setVisible(false);
 	SetUpdateHandler(&SsScene2808Dispenser::update);
@@ -2153,7 +2149,7 @@ void SsScene2808Dispenser::update() {
 		setVisible(false);
 	}
 }
-	
+
 uint32 SsScene2808Dispenser::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -2201,16 +2197,16 @@ AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum
 		loadSound(7, 0x70A43D2D);
 		loadSound(8, 0xF0601E2D);
 	}
-	
+
 	startAnimation(kClass490FileHashes[testTubeIndex], 0, -1);
 	_newStickFrameIndex = 0;
-	
+
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2808TestTube::handleMessage);
-	
+
 	if (_fillLevel == 0)
 		setVisible(false);
-	
+
 }
 
 uint32 AsScene2808TestTube::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2257,7 +2253,7 @@ void AsScene2808TestTube::flush() {
 
 AsScene2808Handle::AsScene2808Handle(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
 	: AnimatedSprite(vm, 1300), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum), _isActivated(false) {
-	
+
 	loadSound(0, 0xE18D1F30);
 	_x = 320;
 	_y = 240;
@@ -2329,7 +2325,7 @@ AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int te
 	SetUpdateHandler(&AnimatedSprite::update);
 	AnimatedSprite::updatePosition();
 }
-	
+
 uint32 AsScene2808Flow::hmFlowing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -2355,7 +2351,7 @@ void AsScene2808Flow::stKeepFlowing() {
 
 AsScene2808LightEffect::AsScene2808LightEffect(NeverhoodEngine *vm, int testTubeSetNum)
 	: AnimatedSprite(vm, 800), _countdown(1) {
-	
+
 	_x = 320;
 	_y = 240;
 	if (testTubeSetNum == 1)
@@ -2385,7 +2381,7 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->gameModule()->initTestTubes1Puzzle();
 	else
 		_vm->gameModule()->initTestTubes2Puzzle();
-	
+
 	SetMessageHandler(&Scene2808::handleMessage);
 	SetUpdateHandler(&Scene2808::update);
 
@@ -2404,7 +2400,7 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asTestTubes[testTubeIndex] = insertSprite<AsScene2808TestTube>(which, testTubeIndex, ssDispenser);
 		addCollisionSprite(_asTestTubes[testTubeIndex]);
 	}
-	
+
 	insertScreenMouse(kScene2808FileHashes2[which]);
 
 }
@@ -2443,18 +2439,6 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 void Scene2808::update() {
-
-	// DEBUG>>> Show correct values
-	#if 1
-	debug("---------------");
-	if (_testTubeSetNum == 0)
-		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
-	else
-		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2));
-	debug("%03d %03d %03d", _asTestTubes[0]->getFillLevel(), _asTestTubes[1]->getFillLevel(), _asTestTubes[2]->getFillLevel());
-	#endif
-	// DEBUG<<<
-	
 	Scene::update();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		leaveScene(_leaveResult);
@@ -2514,13 +2498,13 @@ Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
-		
+
 	SetMessageHandler(&Scene2809::handleMessage);
 	SetUpdateHandler(&Scene2809::update);
-	
+
 	loadDataResource(0x1830009A);
 	loadHitRectList();
-	
+
 	_pointList = _dataResource.getPointArray(0x064A310E);
 
 	setBackground(0xB22116C5);
@@ -2551,7 +2535,7 @@ Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	tempSprite = insertStaticSprite(0x877F6252, 1100);
 	_clipRects[3].x2 = tempSprite->getDrawRect().x2();
-	
+
 	insertStaticSprite(0x01612A22, 1100);
 	insertStaticSprite(0x877F6252, 1100);
 
@@ -2626,7 +2610,7 @@ void Scene2809::findClosestPoint() {
 		_pointIndex = index;
 		_palette->addPalette(kScene2809PaletteFileHashes[index], 0, 64, 0);
 	}
-	
+
 }
 
 AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
@@ -2663,7 +2647,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 	Sprite *tempSprite;
 
 	SetMessageHandler(&Scene2810::handleMessage);
-	
+
 	setBackground(0x26508804);
 	setPalette(0x26508804);
 	insertScreenMouse(0x0880026D);
@@ -2699,7 +2683,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 		_sprite4->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
 	}
-	
+
 	if (which < 0) {
 		if (getGlobalVar(V_KLAYMEN_SMALL)) {
 			insertKlaymen<KmScene2810Small>(240, 448);
@@ -2880,7 +2864,7 @@ uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entit
 
 AsScene2812Winch::AsScene2812Winch(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100) {
-	
+
 	createSurface1(0x20DA08A0, 1200);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2812Winch::handleMessage);
@@ -2911,7 +2895,7 @@ uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param
 
 AsScene2812Rope::AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
+
 	createSurface(990, 68, 476);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2812Rope::handleMessage);
@@ -2956,7 +2940,7 @@ void AsScene2812Rope::stRopingDown() {
 
 AsScene2812TrapDoor::AsScene2812TrapDoor(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 0x805D0029, 100, 320, 240) {
-	
+
 	SetMessageHandler(&AsScene2812TrapDoor::handleMessage);
 	_newStickFrameIndex = 0;
 }
@@ -2975,15 +2959,15 @@ uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &pa
 
 Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _paletteArea(0) {
-	
+
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 3);
 
 	SetMessageHandler(&Scene2812::handleMessage);
 	SetUpdateHandler(&Scene2812::update);
-	
+
 	setRectList(0x004AF700);
-	
+
 	setBackground(0x03600606);
 	setPalette(0x03600606);
 	addEntity(_palette);
@@ -2999,7 +2983,7 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssTape = insertSprite<SsScene1705Tape>(this, 6, 1100, 513, 437, 0xA1361863);
 	addCollisionSprite(_ssTape);
-	
+
 	_asWinch = insertSprite<AsScene2812Winch>();
 	_asTrapDoor = insertSprite<AsScene2812TrapDoor>();
 	_asRope = insertSprite<AsScene2812Rope>(this);
@@ -3039,9 +3023,9 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite1->setVisible(false);
 		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 	}
-	
+
 	_asRope->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
-	
+
 }
 
 void Scene2812::update() {
@@ -3136,7 +3120,7 @@ Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
 	addBackground(_background);
 	_background->getSurface()->getDrawRect().y = -10;
 	setPalette(0xD542022E);
-	insertPuzzleMouse(0x0028D089, 20, 620);
+	insertPuzzleMouse(0x2022AD5C, 20, 620);
 	_ssButton = insertStaticSprite(0x1A4D4120, 1100);
 	_ssButton->setVisible(false);
 	loadSound(2, 0x19044E72);
@@ -3156,7 +3140,7 @@ void Scene2822::update() {
 				_ssButton->setVisible(false);
 				_countdownStatus = 1;
 				_countdown = 48;
-			} else if (_countdownStatus == 1) {
+			} else if (_countdownStatus == 1 && getGlobalVar(V_LADDER_DOWN_ACTION)) {
 				playSound(0, 0x1384CB60);
 				_countdownStatus = 2;
 				_countdown = 12;

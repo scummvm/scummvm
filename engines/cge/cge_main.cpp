@@ -358,7 +358,7 @@ void CGEEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &he
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
 	Graphics::Surface *s = _vga->_page[0];
-	::createThumbnail(thumb, (const byte *)s->pixels, kScrWidth, kScrHeight, thumbPalette);
+	::createThumbnail(thumb, (const byte *)s->getPixels(), kScrWidth, kScrHeight, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
 	thumb->free();
 	delete thumb;

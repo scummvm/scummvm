@@ -163,14 +163,14 @@ bool VideoTheoraPlayer::resetStream() {
 	if (!_file) {
 		return STATUS_FAILED;
 	}
-	
+
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
 #else
 	return STATUS_FAILED;
 #endif
 	_theoraDecoder->loadStream(_file);
-	
+
 	if (!_theoraDecoder->isVideoLoaded()) {
 		return STATUS_FAILED;
 	}
@@ -369,14 +369,14 @@ void VideoTheoraPlayer::writeAlpha() {
 	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);
-		const byte *alphaData = (const byte *)_alphaImage->getSurface()->getBasePtr(0, 0);
+		const byte *alphaData = (const byte *)_alphaImage->getSurface()->getPixels();
 #ifdef SCUMM_LITTLE_ENDIAN
 		int alphaPlace = (_alphaImage->getSurface()->format.aShift / 8);
 #else
 		int alphaPlace = 3 - (_alphaImage->getSurface()->format.aShift / 8);
 #endif
 		alphaData += alphaPlace;
-		byte *imgData = (byte *)_surface.getBasePtr(0, 0);
+		byte *imgData = (byte *)_surface.getPixels();
 #ifdef SCUMM_LITTLE_ENDIAN
 		imgData += (_surface.format.aShift / 8);
 #else
@@ -417,7 +417,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	delete _alphaImage;
 	_alphaImage = new BaseImage();
-	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
+	if (filename == "" || !_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
 		_alphaImage = nullptr;
 		_alphaFilename = "";
@@ -498,7 +498,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alphaFilename));
 	persistMgr->transfer(TMEMBER(_posX));
 	persistMgr->transfer(TMEMBER(_posY));
-	persistMgr->transfer(TMEMBER(_playZoom));
+	persistMgr->transferFloat(TMEMBER(_playZoom));
 	persistMgr->transfer(TMEMBER_INT(_playbackType));
 	persistMgr->transfer(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_volume));
@@ -529,4 +529,4 @@ BaseSurface *VideoTheoraPlayer::getTexture() const {
 	return _texture;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

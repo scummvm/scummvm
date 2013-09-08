@@ -1364,7 +1364,7 @@ void Neighborhood::setUpAIRules() {
 	if (g_AIArea) {
 		g_AIArea->forceAIUnlocked();
 
-		if (!_vm->isDemo() && (getObjectID() == kPrehistoricID || getObjectID() == kNoradAlphaID ||
+		if (!_vm->isOldDemo() && (getObjectID() == kPrehistoricID || getObjectID() == kNoradAlphaID ||
 				getObjectID() == kNoradDeltaID || getObjectID() == kMarsID || getObjectID() == kWSCID)) {
 
 			AIEnergyMonitorCondition *condition50 = new AIEnergyMonitorCondition(kWorriedEnergy);

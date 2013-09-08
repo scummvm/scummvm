@@ -27,6 +27,7 @@ namespace Wintermute {
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
+	{"bthreshold",      "Beyond the Threshold"},
 	{"actualdest",      "Actual Destination"},
 	{"carolreed4",      "Carol Reed 4 - East Side Story"},
 	{"carolreed5",      "Carol Reed 5 - The Colour of Murder"},
@@ -36,17 +37,22 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed9",      "Carol Reed 9 - Cold Case Summer"},
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"deadcity",        "Dead City"},
+	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
+	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"julia",           "J.U.L.I.A."},
 	{"mirage",          "Mirage"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"reversion1",      "Reversion: The Escape"},
-	{"reversion2",	    "Reversion: The Meeting"},
+	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
+	{"shinestar",       "The Shine of a Star"},
 	{"thebox",          "The Box"},
+	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
+	{"tradestory",      "The Trader of Stories"},
 	{"twc",             "the white chamber"},
 	{"wintermute",      "Wintermute engine game"},
 	{0, 0}
@@ -78,6 +84,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"actualdest",
 		"",
 		AD_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Beyond the Threshold
+	{
+		"bthreshold",
+		"",
+		AD_ENTRY1s("data.dcp", "d49bf9ccb2e74507447c82d6ad3e2bc4", 12773712),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -123,6 +139,17 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Carol Reed 7 - Blue Madonna (Demo)
+	{
+		"carolreed7",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "0372ad0c775266f6355e9e8ae397a2f1", 103719442),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// Carol Reed 7 - Blue Madonna
@@ -237,6 +264,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Des Reves Elastiques Avec Mille Insectes Nommes Georges
+	{
+		"dreaming",
+		"",
+		AD_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Dreamscape
 	{
 		"dreamscape",
@@ -268,6 +305,48 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// James Peris: No License Nor Control (English)
+	{
+		"jamesperis",
+		"",
+		AD_ENTRY1s("data.dcp", "a420961e170cb7d168a0d2bae2fe5218", 225294032),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// James Peris: No License Nor Control (Spanish)
+	{
+		"jamesperis",
+		"",
+		AD_ENTRY1s("data.dcp", "a420961e170cb7d168a0d2bae2fe5218", 225294032),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// James Peris: No License Nor Control (Demo) (English)
+	{
+		"jamesperis",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
+	// James Peris: No License Nor Control (Demo) (Spanish)
+	{
+		"jamesperis",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// J.U.L.I.A. (English)
 	{
 		"julia",
@@ -283,6 +362,17 @@ static const ADGameDescription gameDescriptions[] = {
 		"julia",
 		"Demo",
 		AD_ENTRY1s("data.dcp", "f0bbc3394555a9811f6050dae428cab6", 7655237),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
+	// J.U.L.I.A. (English) (Greenlight Demo)
+	{
+		"julia",
+		"Greenlight Demo",
+		AD_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
@@ -535,6 +625,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// The Shine of a Star
+	{
+		"shinestar",
+		"",
+		AD_ENTRY1s("data.dcp", "f05abe9e2427a5e4f73648fa09c4ba8e", 94113060),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// The Box
 	{
 		"thebox",
@@ -543,6 +643,27 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Fairy Tales About Toshechka and Boshechka
+	{
+		"tib",
+		"",
+		AD_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// The Trader of Stories
+	{
+		"tradestory",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "0a0b51191636cc8ead89b905281c3218", 40401902),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// the white chamber (multi-language)

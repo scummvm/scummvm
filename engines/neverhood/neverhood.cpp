@@ -22,12 +22,18 @@
 
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
+
 #include "base/plugins.h"
 #include "base/version.h"
+
 #include "graphics/cursorman.h"
+
 #include "engines/util.h"
+
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
+#include "neverhood/console.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
@@ -71,12 +77,16 @@ Common::Error NeverhoodEngine::run() {
 	_gameState.sceneNum = 0;
 	_gameState.which = 0;
 
+	// Assign default values to the config manager, in case settings are missing
+	ConfMan.registerDefault("originalsaveload", "false");
+
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");
 	_gameVars = new GameVars();
 	_screen = new Screen(this);
 	_res = new ResourceMan();
-	
+	_console = new Console(this);
+
 	if (isDemo()) {
 		_res->addArchive("a.blb");
 		_res->addArchive("nevdemo.blb");
@@ -94,11 +104,12 @@ Common::Error NeverhoodEngine::run() {
 
 	_soundMan = new SoundMan(this);
 	_audioResourceMan = new AudioResourceMan(this);
-	
+
 	_gameModule = new GameModule(this);
-	
+
 	_isSaveAllowed = true;
-	
+	_updateSound = true;
+
 	if (isDemo()) {
 		// Adjust this navigation list for the demo version
 		NavigationList *navigationList = _staticData->getNavigationList(0x004B67E8);
@@ -111,24 +122,26 @@ Common::Error NeverhoodEngine::run() {
 		(*navigationList)[5].middleSmackerFileHash = 0;
 		(*navigationList)[5].middleFlag = 1;
 	}
-	
-	if (ConfMan.hasKey("save_slot"))
-		loadGameState(ConfMan.getInt("save_slot"));
-	else
+
+	if (ConfMan.hasKey("save_slot")) {
+		if (loadGameState(ConfMan.getInt("save_slot")).getCode() != Common::kNoError)
+			_gameModule->startup();
+	} else
 		_gameModule->startup();
-	
+
 	mainLoop();
-	
+
 	delete _gameModule;
 	delete _soundMan;
 	delete _audioResourceMan;
 
+	delete _console;
 	delete _res;
 	delete _screen;
 
 	delete _gameVars;
 	delete _staticData;
-	
+
 	return Common::kNoError;
 }
 
@@ -140,6 +153,11 @@ void NeverhoodEngine::mainLoop() {
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
+				if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
+					// Open debugger console
+					_console->attach();
+					continue;
+				}
 				_gameModule->handleKeyDown(event.kbd.keycode);
 				_gameModule->handleAsciiKey(event.kbd.ascii);
 				break;
@@ -169,11 +187,16 @@ void NeverhoodEngine::mainLoop() {
 			_gameModule->checkRequests();
 			_gameModule->handleUpdate();
 			_gameModule->draw();
+			_console->onFrame();
 			_screen->update();
 			nextFrameTime = _screen->getNextFrameTime();
 		};
-		_soundMan->update();
-		_audioResourceMan->updateMusic();
+
+		if (_updateSound) {
+			_soundMan->update();
+			_audioResourceMan->updateMusic();
+		}
+
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}

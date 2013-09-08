@@ -318,7 +318,7 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 	}
 
 	if (lastOffset.x != 0 || lastOffset.y != 0) {
-		g_system->copyRectToScreen((byte *)oldScreen.pixels, oldScreen.pitch, 0, 0, 640, 480);
+		g_system->copyRectToScreen((byte *)oldScreen.getPixels(), oldScreen.pitch, 0, 0, 640, 480);
 		g_system->updateScreen();
 	}
 

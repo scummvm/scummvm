@@ -26,7 +26,7 @@
 #include "dc.h"
 
 
-uint32 OSystem_Dreamcast::getMillis()
+uint32 OSystem_Dreamcast::getMillis(bool skipRecord)
 {
   static uint32 msecs=0;
   static unsigned int t0=0;

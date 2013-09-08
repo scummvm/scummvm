@@ -203,4 +203,4 @@ bool BaseSurfaceStorage::surfaceSortCB(const BaseSurface *s1, const BaseSurface 
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
