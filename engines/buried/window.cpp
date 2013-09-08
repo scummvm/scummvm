@@ -55,6 +55,9 @@ Window::~Window() {
 	// Make sure we're not the focused window
 	if (_vm->_focusedWindow == this)
 		_vm->_focusedWindow = 0;
+
+	// Invalidate this window's rect as well
+	_vm->_gfx->invalidateRect(getAbsoluteRect());
 }
 
 void Window::invalidateRect(const Common::Rect &rect, bool erase) {
