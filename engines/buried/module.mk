@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	credits.o \
 	database.o \
 	detection.o \
+	frame_window.o \
 	graphics.o \
 	livetext.o \
 	main_menu.o \

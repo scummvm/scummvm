@@ -1,0 +1,75 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Additional copyright for this file:
+ * Copyright (C) 1995 Presto Studios, Inc.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef BURIED_FRAME_WINDOW_H
+#define BURIED_FRAME_WINDOW_H
+
+#include "buried/window.h"
+
+namespace Buried {
+
+class BuriedEngine;
+
+class FrameWindow : public Window {
+public:
+	FrameWindow(BuriedEngine *vm);
+	~FrameWindow();
+
+	bool showMainMenu();
+	bool returnToMainMenu();
+	// TODO: playMovie
+	bool showClosingScreen();
+	bool showFeaturesScreen();
+	bool startNewGame(bool walkthrough = false, bool introMovie = false);
+	bool startNewGame(const Common::String &fileName);
+	// TODO: startNewGame with continue data
+	// TODO: showDeathScene
+	// TODO: showCompletionScene
+	bool showCredits();
+	bool showOverview();
+	bool notifyUserOfFrameCycling();
+	bool setTimerPause(bool pause);
+
+	bool onEraseBackground();
+	void onKeyDown(const Common::KeyState &key, uint flags);
+	void onKeyUp(const Common::KeyState &key, uint flags);
+	void onTimer(uint timer);
+	void onKillFocus(Window *newWindow);
+	void onSetFocus(Window *oldWindow);
+
+private:
+	Window *_mainChildWindow;
+	bool _controlDown;
+
+	bool _cacheFrames;
+	bool _cycleDefault;
+	int _transitionSpeed;
+	bool _gameInProgress;
+	bool _atMainMenu;
+};
+
+} // End of namespace Buried
+
+#endif
