@@ -278,7 +278,7 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 	}
 
 	byte *Q11s = (byte *)&Q11;
-	byte *Q12s = (byte *)&Qswitch12;
+	byte *Q12s = (byte *)&Q12;
 	byte *Q21s = (byte *)&Q21;
 	byte *Q22s = (byte *)&Q22;
 
