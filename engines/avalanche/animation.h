@@ -42,7 +42,6 @@ class Animation;
 struct StatType {
 	Common::String _name; // Name of character.
 	Common::String _comment; // Comment.
-	//
 	byte _frameNum; // Number of pictures.
 	byte _seq; // How many in one stride.
 	byte _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
@@ -52,7 +51,6 @@ struct StatType {
 class AnimationType {
 public:
 	SpriteInfo _info;
-
 	StatType _stat; // Vital statistics.
 	byte _facingDir, _stepNum;
 	int16 _x, _y; // Current xy coords.
@@ -70,7 +68,7 @@ public:
 
 	void init(byte spritenum, bool doCheck, Animation *tr); // Loads & sets up the sprite.
 	void original(); // Just sets 'quick' to false.
-	void andexor(); // Drops sprite onto screen.
+	void draw(); // Drops sprite onto screen. Original: andexor().
 	void turn(byte whichway); // Turns character round.
 	void appear(int16 wx, int16 wy, byte wf); // Switches it on.
 	void bounce(); // Bounces off walls.
@@ -94,25 +92,27 @@ class Animation {
 public:
 	friend class AnimationType;
 
-	static const byte kDirUp = 0;
-	static const byte kDirRight = 1;
-	static const byte kDirDown = 2;
-	static const byte kDirLeft = 3;
-	static const byte kDirUpRight = 4;
-	static const byte kDirDownRight = 5;
-	static const byte kDirDownLeft = 6;
-	static const byte kDirUpLeft = 7;
-	static const byte kDirStopped = 8;
+	enum Direction {
+		kDirUp, kDirRight, kDirDown, kDirLeft,
+		kDirUpRight, kDirDownRight, kDirDownLeft, kDirUpLeft,
+		kDirStopped
+	};
 
 	static const int16 kSpriteNumbMax = 5; // current max no. of sprites
 
-	static const byte kProcFollowAvvyY = 1;
-	static const byte kProcBackAndForth = 2;
-	static const byte kProcFaceAvvy = 3;
-	static const byte kProcArrow = 4;
-	static const byte kProcsPludwick = 5; // Unused
-	static const byte kProcGrabAvvy = 6;
-	static const byte kProcGeida = 7;
+	enum Proc {
+		kProcFollowAvvyY = 1,
+		kProcBackAndForth,
+		kProcFaceAvvy,
+		kProcArrow,
+		kProcSpludwick, // Unused
+		kProcGrabAvvy,
+		kProcGeida // Spludwick uses it as well for homing! TODO: Unify it with kProcSpludwick.
+	};
+
+	AnimationType _sprites[kSpriteNumbMax];
+	bool _mustExclaim;
+	uint16 _sayWhat;
 
 	Animation(AvalancheEngine *vm);
 	~Animation();
@@ -131,29 +131,28 @@ public:
 	void updateSpeed();
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
 
-	AnimationType _sprites[kSpriteNumbMax];
-
-	bool _mustExclaim;
-	uint16 _sayWhat;
-
 private:
 	AvalancheEngine *_vm;
 
 	byte checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
-	byte geida_ped(byte which);
-	void dawndelay();
+	byte geidaPed(byte which);
+	void dawnDelay();
+
+	void grabAvvy(byte tripnum);
+	void arrowProcs(byte tripnum);
 	void hideInCupboard();
-	void follow_avvy_y(byte tripnum);
-	void back_and_forth(byte tripnum);
-	void face_avvy(byte tripnum);
-	void arrow_procs(byte tripnum);
-	void grab_avvy(byte tripnum);
+
+	// Different movements for NPCs:
+	void followAvalotY(byte tripnum); // Original: follow_avvy_y().
+	void backAndForth(byte tripnum);
+	void faceAvvy(byte tripnum);
+	
+	// Movements for Homing NPCs: Spludwick and Geida.
 	void spin(byte whichway, byte &tripnum);
-
 	void takeAStep(byte &tripnum);
-	void geida_procs(byte tripnum);
+	void geidaProcs(byte tripnum);
 
-	void call_andexors();
+	void drawSprites(); // Original: call_andexors().
 };
 
 } // End of namespace Avalanche.

@@ -141,7 +141,7 @@ void AnimationType::original() {
 	_id = 177;
 }
 
-void AnimationType::andexor() {
+void AnimationType::draw() {
 	if ((_vanishIfStill) && (_moveX == 0) && (_moveY == 0))
 		return;
 	byte picnum = _facingDir * _stat._seq + _stepNum; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
@@ -412,7 +412,7 @@ byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	return a;
 }
 
-byte Animation::geida_ped(byte which) {
+byte Animation::geidaPed(byte which) {
 	switch (which) {
 	case 1:
 		return 7;
@@ -730,7 +730,7 @@ void Animation::catacombMove(byte ped) {
 	if ((_vm->_gyro->_dna._geidaFollows) && (ped > 0)) {
 		if (!_sprites[1]._quick)  // If we don't already have her...
 			_sprites[1].init(5, true, this); // ...Load Geida.
-		appearPed(2, geida_ped(ped));
+		appearPed(2, geidaPed(ped));
 		_sprites[1]._callEachStepFl = true;
 		_sprites[1]._eachStepProc = kProcGeida;
 	}
@@ -739,7 +739,7 @@ void Animation::catacombMove(byte ped) {
 
 
 // This proc gets called whenever you touch a line defined as _vm->_gyro->special.
-void Animation::dawndelay() {
+void Animation::dawnDelay() {
 	_vm->_timer->addTimer(2, _vm->_timer->kProcDawnDelay, _vm->_timer->kReasonDawndelay);
 }
 
@@ -864,7 +864,7 @@ void Animation::callSpecial(uint16 which) {
 		default:
 			appearPed(1, 4);
 		}
-		dawndelay();
+		dawnDelay();
 		break;
 	case 11: // _vm->_gyro->special 11: transfer east in catacombs.
 		_vm->_lucerna->dusk();
@@ -873,7 +873,7 @@ void Animation::callSpecial(uint16 which) {
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
 		appearPed(1, 1);
-		dawndelay();
+		dawnDelay();
 		break;
 	case 12: // _vm->_gyro->special 12: transfer south in catacombs.
 		_vm->_lucerna->dusk();
@@ -882,7 +882,7 @@ void Animation::callSpecial(uint16 which) {
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
 		appearPed(1, 2);
-		dawndelay();
+		dawnDelay();
 		break;
 	case 13: // _vm->_gyro->special 13: transfer west in catacombs.
 		_vm->_lucerna->dusk();
@@ -891,7 +891,7 @@ void Animation::callSpecial(uint16 which) {
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
 		appearPed(1, 3);
-		dawndelay();
+		dawnDelay();
 		break;
 	}
 }
@@ -1014,7 +1014,7 @@ void Animation::appearPed(byte trn, byte np) {
 }
 
 // Eachstep procedures:
-void Animation::follow_avvy_y(byte tripnum) {
+void Animation::followAvalotY(byte tripnum) {
 	if (_sprites[0]._facingDir == kDirLeft)
 		return;
 	if (_sprites[tripnum]._homing)
@@ -1035,7 +1035,7 @@ void Animation::follow_avvy_y(byte tripnum) {
 	}
 }
 
-void Animation::back_and_forth(byte tripnum) {
+void Animation::backAndForth(byte tripnum) {
 	if (!_sprites[tripnum]._homing) {
 		if (_sprites[tripnum]._facingDir == kDirRight)
 			_sprites[tripnum].walkTo(4);
@@ -1044,7 +1044,7 @@ void Animation::back_and_forth(byte tripnum) {
 	}
 }
 
-void Animation::face_avvy(byte tripnum) {
+void Animation::faceAvvy(byte tripnum) {
 	if (!_sprites[tripnum]._homing) {
 		if (_sprites[0]._x >= _sprites[tripnum]._x)
 			_sprites[tripnum]._facingDir = kDirRight;
@@ -1053,7 +1053,7 @@ void Animation::face_avvy(byte tripnum) {
 	}
 }
 
-void Animation::arrow_procs(byte tripnum) {
+void Animation::arrowProcs(byte tripnum) {
 	if (_sprites[tripnum]._homing) {
 		// Arrow is still in flight.
 		// We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
@@ -1108,7 +1108,7 @@ begin
 end;
 #endif
 
-void Animation::grab_avvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
+void Animation::grabAvvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
 	int16 tox = _sprites[0]._x + 17;
 	int16 toy = _sprites[0]._y - 1;
 	if ((_sprites[tripnum]._x == tox) && (_sprites[tripnum]._y == toy)) {
@@ -1156,7 +1156,7 @@ void Animation::spin(byte whichway, byte &tripnum) {
 	}
 }
 
-void Animation::geida_procs(byte tripnum) {
+void Animation::geidaProcs(byte tripnum) {
 	if (_vm->_gyro->_dna._geidaTime > 0) {
 		_vm->_gyro->_dna._geidaTime--;
 		if (_vm->_gyro->_dna._geidaTime == 0)
@@ -1196,7 +1196,7 @@ void Animation::geida_procs(byte tripnum) {
 
 // That's all...
 
-void Animation::call_andexors() {
+void Animation::drawSprites() {
 	int8 order[5];
 	byte temp;
 	bool ok;
@@ -1228,7 +1228,7 @@ void Animation::call_andexors() {
 
 	for (byte i = 0; i < 5; i++) {
 		if (order[i] > -1)
-			_sprites[order[i]].andexor();
+			_sprites[order[i]].draw();
 	}
 }
 
@@ -1244,29 +1244,29 @@ void Animation::animLink() {
 			_sprites[i].walk();
 	}
 
-	call_andexors();
+	drawSprites();
 
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick && _sprites[i]._callEachStepFl) {
 			switch (_sprites[i]._eachStepProc) {
 			case kProcFollowAvvyY :
-				follow_avvy_y(i);
+				followAvalotY(i);
 				break;
 			case kProcBackAndForth :
-				back_and_forth(i);
+				backAndForth(i);
 				break;
 			case kProcFaceAvvy :
-				face_avvy(i);
+				faceAvvy(i);
 				break;
 			case kProcArrow :
-				arrow_procs(i);
+				arrowProcs(i);
 				break;
 				//    PROCSpludwick_procs : spludwick_procs(fv);
 			case kProcGrabAvvy :
-				grab_avvy(i);
+				grabAvvy(i);
 				break;
 			case kProcGeida :
-				geida_procs(i);
+				geidaProcs(i);
 				break;
 			}
 		}
