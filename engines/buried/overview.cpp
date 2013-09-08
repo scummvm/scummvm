@@ -24,6 +24,7 @@
  */
 
 #include "buried/buried.h"
+#include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/overview.h"
 #include "buried/resources.h"
@@ -171,7 +172,7 @@ void OverviewWindow::onTimer(uint timer) {
 		break;
 	case 4:
 		_currentStatus = 5;
-		// TODO: Return to the main menu
+		((FrameWindow *)_parent)->returnToMainMenu();
 		break;
 	}
 }

@@ -39,9 +39,6 @@
 #include "buried/video_window.h"
 #include "buried/window.h"
 
-#include "buried/title_sequence.h"
-#include "buried/demo/demo_menu.h"
-
 namespace Buried {
 
 BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -102,17 +99,11 @@ Common::Error BuriedEngine::run() {
 	_sound = new SoundManager(this);
 	_mainWindow = new FrameWindow(this);
 
-	// HACK: Show a window
-	Window *tempWindow = 0;
 	if (isDemo()) {
-		DemoMainMenuWindow *demoMenu = new DemoMainMenuWindow(this, _mainWindow);
-		demoMenu->showWithSplash();
-		tempWindow = demoMenu;
+		// TODO: Title sequence
+		((FrameWindow *)_mainWindow)->showMainMenu();
 	} else {
-		TitleSequenceWindow *titleSeq = new TitleSequenceWindow(this, _mainWindow);
-		titleSeq->setFocus();
-		titleSeq->playTitleSequence();
-		tempWindow = titleSeq;
+		((FrameWindow *)_mainWindow)->showClosingScreen();
 	}
 
 	while (!shouldQuit()) {
@@ -126,8 +117,6 @@ Common::Error BuriedEngine::run() {
 		_gfx->updateScreen();
 		_system->delayMillis(10);
 	}
-
-	delete tempWindow;
 
 	return Common::kNoError;
 }

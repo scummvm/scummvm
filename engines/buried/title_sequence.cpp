@@ -24,6 +24,7 @@
  */
 
 #include "buried/buried.h"
+#include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/title_sequence.h"
 #include "buried/resources.h"
@@ -72,7 +73,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 		if (!_currentMovie->openVideo(_vm->getFilePath(IDS_TITLE_SW_LOGO_FILENAME))) {
 			delete _currentMovie;
 			_currentMovie = 0;
-			// TODO: Return to main menu
+			((FrameWindow *)_parent)->returnToMainMenu();
 			return false;
 		}
 
@@ -90,7 +91,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 		if (!_currentMovie->openVideo(_vm->getFilePath(IDS_TITLE_PRESTO_LOGO_FILENAME))) {
 			delete _currentMovie;
 			_currentMovie = 0;
-			// TODO: Return to main menu
+			((FrameWindow *)_parent)->returnToMainMenu();
 			return false;
 		}
 
@@ -107,7 +108,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 		if (!_currentMovie->openVideo(_vm->getFilePath(IDS_TITLE_MOVIE_FILENAME))) {
 			delete _currentMovie;
 			_currentMovie = 0;
-			// TODO: Return to main menu
+			((FrameWindow *)_parent)->returnToMainMenu();
 			return false;
 		}
 
@@ -118,7 +119,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 		_currentAnimation = 3;
 		return true;
 	case 3: // Exit the title sequence
-		// TODO: Return to main menu
+		((FrameWindow *)_parent)->showMainMenu();
 		return true;
 	}
 
