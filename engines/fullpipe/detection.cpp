@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("0654.sc2", "099f54f86d33ad2395f3b854b7e05058", 2272),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("0654.sc2", "d8743351fc53d205f42d91f6d791e51b", 2272),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
