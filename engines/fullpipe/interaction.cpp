@@ -472,8 +472,8 @@ bool CInteraction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 
 	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1
 		&& abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
-		if (!_staticsId2 || subj->_statics != 0 && subj->_statics->_staticsId == _staticsId2) {
-			if (!_staticsId1 || !(_flags & 1) || ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1)
+		if (!_staticsId2 || (subj->_statics != 0 && subj->_statics->_staticsId == _staticsId2)) {
+			if (!_staticsId1 || !(_flags & 1) || (ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1))
 				return true;
 		}
 	}
