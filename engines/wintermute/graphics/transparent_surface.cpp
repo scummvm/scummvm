@@ -232,7 +232,7 @@ void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, by
 		*outb = MIN((*inr **inr >> 8) + *outb, 255);
 		return;
 	}
-};
+}
 
 #if ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
@@ -475,10 +475,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	if (ca == 0)
 		return retSize;
 
-	int cr = (color >> 16) & 0xff;
-	int cg = (color >> 8) & 0xff;
-	int cb = (color >> 0) & 0xff;
-
 	// Create an encapsulating surface for the data
 	TransparentSurface srcImage(*this, false);
 	// TODO: Is the data really in the screen format?
@@ -567,7 +563,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 		byte *ino = (byte *)img->getBasePtr(xp, yp);
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
-		byte *in, *out;
 
 		if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
 			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
