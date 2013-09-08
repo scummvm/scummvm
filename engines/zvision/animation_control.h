@@ -65,6 +65,7 @@ private:
 	uint _currentLoop;
 
 	Graphics::Surface *_cachedFrame;
+	bool _cachedFrameNeedsDeletion;
 
 public:
 	bool process(uint32 deltaTimeInMillis);

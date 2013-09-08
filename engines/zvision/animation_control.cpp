@@ -40,7 +40,8 @@ AnimationControl::AnimationControl(ZVision *engine, uint32 controlKey, const Com
 		  _loopCount(1),
 		  _currentLoop(0),
 		  _accumulatedTime(0),
-		  _cachedFrame(0) {
+		  _cachedFrame(0),
+		  _cachedFrameNeedsDeletion(false) {
 	if (fileName.hasSuffix(".rlf")) {
 		_fileType = RLF;
 		_animation.rlf = new RlfAnimation(fileName, false);
@@ -104,7 +105,13 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 
 					// If the background can move, we need to cache the last frame so it can be rendered during background movement
 					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						if (_cachedFrameNeedsDeletion) {
+							_cachedFrame->free();
+							delete _cachedFrame;
+							_cachedFrameNeedsDeletion = false;
+						}
 						_cachedFrame = tranposedFrame;
+						_cachedFrameNeedsDeletion = true;
 					} else {
 						// Cleanup
 						tranposedFrame->free();
@@ -115,6 +122,11 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 
 					// If the background can move, we need to cache the last frame so it can be rendered during background movement
 					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						if (_cachedFrameNeedsDeletion) {
+							_cachedFrame->free();
+							delete _cachedFrame;
+							_cachedFrameNeedsDeletion = false;
+						}
 						_cachedFrame->copyFrom(*frame);
 					}
 				}
@@ -177,7 +189,13 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 
 					// If the background can move, we need to cache the last frame so it can be rendered during background movement
 					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						if (_cachedFrameNeedsDeletion) {
+							_cachedFrame->free();
+							delete _cachedFrame;
+							_cachedFrameNeedsDeletion = false;
+						}
 						_cachedFrame = tranposedFrame;
+						_cachedFrameNeedsDeletion = true;
 					} else {
 						// Cleanup
 						tranposedFrame->free();
@@ -188,6 +206,11 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 
 					// If the background can move, we need to cache the last frame so it can be rendered during background movement
 					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+						if (_cachedFrameNeedsDeletion) {
+							_cachedFrame->free();
+							delete _cachedFrame;
+							_cachedFrameNeedsDeletion = false;
+						}
 						_cachedFrame->copyFrom(*frame);
 					}
 				}
