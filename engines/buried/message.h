@@ -34,6 +34,7 @@ namespace Buried {
 class Window;
 
 enum MessageType {
+	// Actual message types
 	kMessageTypeKeyUp,
 	kMessageTypeKeyDown,
 	kMessageTypeTimer,
@@ -45,7 +46,13 @@ enum MessageType {
 	kMessageTypeRButtonUp,
 	kMessageTypeRButtonDown,
 	kMessageTypeSetCursor,
-	kMessageTypeEnable
+	kMessageTypeEnable,
+
+	// Ranges of messages
+	kMessageTypeMouseBegin = kMessageTypeMouseMove,
+	kMessageTypeMouseEnd = kMessageTypeRButtonDown,
+	kMessageTypeKeyBegin = kMessageTypeKeyUp,
+	kMessageTypeKeyEnd = kMessageTypeKeyDown
 };
 
 
