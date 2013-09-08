@@ -45,8 +45,8 @@
 
 namespace Avalanche {
 
-void AnimationType::init(byte spritenum, bool doCheck, Animation *tr) {
-	_tr = tr;
+void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
+	_anim = anim;
 
 	const int32 idshould = -1317732048;
 
@@ -121,7 +121,7 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *tr) {
 	_speedX = 3;
 	_speedY = 1;
 	if (spritenum == 1)
-		_tr->updateSpeed(); // Just for the lights.
+		_anim->updateSpeed(); // Just for the lights.
 
 	_homing = false;
 	_moveX = 0;
@@ -146,7 +146,7 @@ void AnimationType::draw() {
 		return;
 	byte picnum = _facingDir * _stat._seq + _stepNum; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
 
-	_tr->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
+	_anim->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
 }
 
 void AnimationType::turn(byte whichway) {
@@ -159,8 +159,8 @@ void AnimationType::turn(byte whichway) {
 void AnimationType::appear(int16 wx, int16 wy, byte wf) {
 	_x = (wx / 8) * 8;
 	_y = wy;
-	_oldX[_tr->_vm->_gyro->_cp] = wx;
-	_oldY[_tr->_vm->_gyro->_cp] = wy;
+	_oldX[_anim->_vm->_gyro->_cp] = wx;
+	_oldY[_anim->_vm->_gyro->_cp] = wy;
 	turn(wf);
 	_visible = true;
 	_moveX = 0;
@@ -172,11 +172,11 @@ void AnimationType::appear(int16 wx, int16 wy, byte wf) {
  * @remarks	Originally called 'collision_check'
  */
 bool AnimationType::checkCollision() {
-	for (int16 i = 0; i < _tr->kSpriteNumbMax; i++) {
-		if (_tr->_sprites[i]._quick && (_tr->_sprites[i]._id != _id) &&
-			((_x + _info._xLength) > _tr->_sprites[i]._x) &&
-			(_x < (_tr->_sprites[i]._x + _tr->_sprites[i]._info._xLength)) &&
-			(_tr->_sprites[i]._y == _y))
+	for (int16 i = 0; i < _anim->kSpriteNumbMax; i++) {
+		if (_anim->_sprites[i]._quick && (_anim->_sprites[i]._id != _id) &&
+			((_x + _info._xLength) > _anim->_sprites[i]._x) &&
+			(_x < (_anim->_sprites[i]._x + _anim->_sprites[i]._info._xLength)) &&
+			(_anim->_sprites[i]._y == _y))
 				return true;
 	}
 
@@ -194,9 +194,9 @@ void AnimationType::walk() {
 		r._y2 = _y + _info._yLength + 2;
 	}
 
-	if (!_tr->_vm->_gyro->_doingSpriteRun) {
-		_oldX[_tr->_vm->_gyro->_cp] = _x;
-		_oldY[_tr->_vm->_gyro->_cp] = _y;
+	if (!_anim->_vm->_gyro->_doingSpriteRun) {
+		_oldX[_anim->_vm->_gyro->_cp] = _x;
+		_oldY[_anim->_vm->_gyro->_cp] = _y;
 		if (_homing)
 			homeStep();
 		_x += _moveX;
@@ -209,39 +209,39 @@ void AnimationType::walk() {
 			return;
 		}
 
-		byte tc = _tr->checkFeet(_x, _x + _info._xLength, _oldY[_tr->_vm->_gyro->_cp], _y, _info._yLength) - 1;
+		byte tc = _anim->checkFeet(_x, _x + _info._xLength, _oldY[_anim->_vm->_gyro->_cp], _y, _info._yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
-		if ((tc != 255) & (!_tr->_vm->_gyro->_doingSpriteRun)) {
-			switch (_tr->_vm->_gyro->_magics[tc]._operation) {
+		if ((tc != 255) & (!_anim->_vm->_gyro->_doingSpriteRun)) {
+			switch (_anim->_vm->_gyro->_magics[tc]._operation) {
 			case Gyro::kMagicExclaim: {
 				bounce();
-				_tr->_mustExclaim = true;
-				_tr->_sayWhat = _tr->_vm->_gyro->_magics[tc]._data;
+				_anim->_mustExclaim = true;
+				_anim->_sayWhat = _anim->_vm->_gyro->_magics[tc]._data;
 				}
 				break;
 			case Gyro::kMagicBounce:
 				bounce();
 				break;
 			case Gyro::kMagicTransport:
-				_tr->flipRoom(_tr->_vm->_gyro->_magics[tc]._data >> 8, _tr->_vm->_gyro->_magics[tc]._data & 0xff);
+				_anim->flipRoom(_anim->_vm->_gyro->_magics[tc]._data >> 8, _anim->_vm->_gyro->_magics[tc]._data & 0xff);
 				break;
 			case Gyro::kMagicUnfinished: {
 				bounce();
-				_tr->_vm->_scrolls->displayText("\7Sorry.\3\rThis place is not available yet!");
+				_anim->_vm->_scrolls->displayText("\7Sorry.\3\rThis place is not available yet!");
 				}
 				break;
 			case Gyro::kMagicSpecial:
-				_tr->callSpecial(_tr->_vm->_gyro->_magics[tc]._data);
+				_anim->callSpecial(_anim->_vm->_gyro->_magics[tc]._data);
 				break;
 			case Gyro::kMagicOpenDoor:
-				_tr->openDoor(_tr->_vm->_gyro->_magics[tc]._data >> 8, _tr->_vm->_gyro->_magics[tc]._data & 0xff, tc);
+				_anim->openDoor(_anim->_vm->_gyro->_magics[tc]._data >> 8, _anim->_vm->_gyro->_magics[tc]._data & 0xff, tc);
 				break;
 			}
 		}
 	}
 
-	if (!_tr->_vm->_gyro->_doingSpriteRun) {
+	if (!_anim->_vm->_gyro->_doingSpriteRun) {
 		_count++;
 		if (((_moveX != 0) || (_moveY != 0)) && (_count > 1)) {
 			_stepNum++;
@@ -253,15 +253,15 @@ void AnimationType::walk() {
 }
 
 void AnimationType::bounce() {
-	_x = _oldX[_tr->_vm->_gyro->_cp];
-	_y = _oldY[_tr->_vm->_gyro->_cp];
+	_x = _oldX[_anim->_vm->_gyro->_cp];
+	_y = _oldY[_anim->_vm->_gyro->_cp];
 	if (_doCheck)
-		_tr->stopWalking();
+		_anim->stopWalking();
 	else
 		stopWalk();
-	_tr->_vm->_gyro->_onCanDoPageSwap = false;
-	_tr->_vm->_lucerna->drawDirection();
-	_tr->_vm->_gyro->_onCanDoPageSwap = true;
+	_anim->_vm->_gyro->_onCanDoPageSwap = false;
+	_anim->_vm->_lucerna->drawDirection();
+	_anim->_vm->_gyro->_onCanDoPageSwap = true;
 }
 
 int8 AnimationType::getSign(int16 val) {
@@ -275,9 +275,9 @@ int8 AnimationType::getSign(int16 val) {
 
 void AnimationType::walkTo(byte pednum) {
 	pednum--; // Pascal -> C conversion: different array indexes.
-	setSpeed(getSign(_tr->_vm->_gyro->_peds[pednum]._x - _x) * 4, getSign(_tr->_vm->_gyro->_peds[pednum]._y - _y));
-	_homingX = _tr->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
-	_homingY = _tr->_vm->_gyro->_peds[pednum]._y - _info._yLength;
+	setSpeed(getSign(_anim->_vm->_gyro->_peds[pednum]._x - _x) * 4, getSign(_anim->_vm->_gyro->_peds[pednum]._y - _y));
+	_homingX = _anim->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
+	_homingY = _anim->_vm->_gyro->_peds[pednum]._y - _info._yLength;
 	_homing = true;
 }
 
@@ -323,14 +323,14 @@ void AnimationType::setSpeed(int8 xx, int8 yy) {
 	if (_moveX == 0) {
 		// No horz movement
 		if (_moveY < 0)
-			turn(_tr->kDirUp);
+			turn(_anim->kDirUp);
 		else
-			turn(_tr->kDirDown);
+			turn(_anim->kDirDown);
 	} else {
 		if (_moveX < 0)
-			turn(_tr->kDirLeft);
+			turn(_anim->kDirLeft);
 		else
-			turn(_tr->kDirRight);
+			turn(_anim->kDirRight);
 	}
 }
 
@@ -341,10 +341,10 @@ void AnimationType::stopWalk() {
 }
 
 void AnimationType::chatter() {
-	_tr->_vm->_gyro->_talkX = _x + _info._xLength / 2;
-	_tr->_vm->_gyro->_talkY = _y;
-	_tr->_vm->_gyro->_talkFontColor = _stat._fgBubbleCol;
-	_tr->_vm->_gyro->_talkBackgroundColor = _stat._bgBubbleCol;
+	_anim->_vm->_gyro->_talkX = _x + _info._xLength / 2;
+	_anim->_vm->_gyro->_talkY = _y;
+	_anim->_vm->_gyro->_talkFontColor = _stat._fgBubbleCol;
+	_anim->_vm->_gyro->_talkBackgroundColor = _stat._bgBubbleCol;
 }
 
 void AnimationType::remove() {

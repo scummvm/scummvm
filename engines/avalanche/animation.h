@@ -66,7 +66,7 @@ public:
 	bool _callEachStepFl; // Do we call the eachstep procedure?
 	byte _eachStepProc;
 
-	void init(byte spritenum, bool doCheck, Animation *tr); // Loads & sets up the sprite.
+	void init(byte spritenum, bool doCheck, Animation *anim); // Loads & sets up the sprite.
 	void original(); // Just sets 'quick' to false.
 	void draw(); // Drops sprite onto screen. Original: andexor().
 	void turn(byte whichway); // Turns character round.
@@ -82,7 +82,7 @@ public:
 	void remove();
 
 private:
-	Animation *_tr;
+	Animation *_anim;
 
 	bool checkCollision();
 	int8 getSign(int16 val);
