@@ -364,8 +364,8 @@ void Acci::properNouns() {
 void Acci::sayIt() {
 	Common::String x = _vm->_parser->_inputText;
 	x.setChar(toupper(x[0]), 0);
-	_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + '1' + x
-		+ '.' + _vm->_scrolls->kControlSpeechBubble + _vm->_scrolls->kControlRegister + '2');
+	Common::String tmpStr = Common::String::format("%c1%s.%c%c2", Scrolls::kControlRegister, x.c_str(), Scrolls::kControlSpeechBubble, Scrolls::kControlRegister);
+	_vm->_scrolls->displayText(tmpStr);
 }
 
 void Acci::storeInterrogation(byte interrogation) {
@@ -480,7 +480,7 @@ void Acci::parse() {
 		if (!thisword.empty()) {
 			for (byte i = 0; i < 31; i++) {
 				if ((_vm->_gyro->_also[i][0] != 0) && (_vm->_parser->pos(',' + thisword, *_vm->_gyro->_also[i][0]) > -1)) {
-					_thats = _thats + Common::String(99 + i);
+					_thats += Common::String(99 + i);
 					notfound = false;
 				}
 			}
@@ -599,7 +599,8 @@ void Acci::parse() {
 	}
 
 	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
-		_vm->_scrolls->displayText(Common::String("Sorry, but I have no idea what \"") + unkString + "\" means. Can you rephrase it?");
+		Common::String tmpStr = Common::String::format("Sorry, but I have no idea what \"%s\" means. Can you rephrase it?", unkString.c_str());
+		_vm->_scrolls->displayText(tmpStr);
 		_vm->_gyro->_weirdWord = true;
 	} else
 		_vm->_gyro->_weirdWord = false;
@@ -650,11 +651,12 @@ bool Acci::isPersonHere() { // Person equivalent of "holding".
 	if ((_person == kPardon) || (_person == 0) || (_vm->_gyro->_whereIs[_person - 150] == _vm->_gyro->_dna._room))
 		return true;
 	else {
+		Common::String tmpStr;
 		if (_person < 175)
-			_vm->_scrolls->displayText(Common::String('H') + _vm->_scrolls->kControlToBuffer);
+			tmpStr = Common::String::format("H%ce isn't around at the moment.", Scrolls::kControlToBuffer);
 		else
-			_vm->_scrolls->displayText(Common::String("Sh") + _vm->_scrolls->kControlToBuffer);
-		_vm->_scrolls->displayText("e isn't around at the moment.");
+			tmpStr = Common::String::format("Sh%ce isn't around at the moment.", Scrolls::kControlToBuffer);
+		_vm->_scrolls->displayText(tmpStr);
 		return false;
 	}
 }

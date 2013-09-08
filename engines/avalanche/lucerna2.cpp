@@ -71,10 +71,12 @@ void Clock::update() { // TODO: Move variables from Gyro to here (or at least so
 	if (_oldMinute != _minute)
 		plotHands();
 
-	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717))
-		_vm->_scrolls->displayText(Common::String("Good morning!") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
-		+ "Yes, it's just past midnight. Are you having an all-night Avvy session? Glad you like the game that much!");
-
+	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717)) {
+		Common::String tmpStr = Common::String::format("Good morning!%c%cYes, it's just past " \
+			"midnight. Are you having an all-night Avvy session? Glad you like the game that much!", 
+			Scrolls::kControlNewLine, Scrolls::kControlNewLine);
+		_vm->_scrolls->displayText(tmpStr);
+	}
 	_oldHour = _hour;
 	_oldHourAngle = _hourAngle;
 	_oldMinute = _minute;
@@ -147,10 +149,10 @@ void Lucerna::init() {
  */
 void Lucerna::callVerb(byte id) {
 	if (id == _vm->_acci->kPardon) {
-		_vm->_scrolls->displayText(Common::String("The f5 key lets you do a particular action in certain ") +
-			"situations. However, at the moment there is nothing " +
-			"assigned to it. You may press alt-A to see what the " +
-			"current setting of this key is.");
+		Common::String tmpStr = Common::String::format("The f5 key lets you do a particular action in certain " \
+			"situations. However, at the moment there is nothing assigned to it. You may press alt-A to see " \
+			"what the current setting of this key is.");
+		_vm->_scrolls->displayText(tmpStr);
 	} else {
 		_vm->_gyro->_weirdWord = false;
 		_vm->_acci->_polite = true;
