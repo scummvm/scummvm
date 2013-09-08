@@ -185,7 +185,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			assert(existing->width() != 0 && existing->height() != 0);
 			// We don't want to put useless garbage in here.
 
-			if (existing->contains(*candidate) || existing->equals(*candidate)) {
+			if (existing->contains(*candidate)) {
 				discard = true;
 				continue;
 			}
