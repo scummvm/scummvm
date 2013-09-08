@@ -172,7 +172,7 @@ void AnimationType::appear(int16 wx, int16 wy, byte wf) {
  * @remarks	Originally called 'collision_check'
  */
 bool AnimationType::checkCollision() {
-	for (int16 i = 0; i < _anim->kSpriteNumbMax; i++) {
+	for (byte i = 0; i < _anim->kSpriteNumbMax; i++) {
 		if (_anim->_sprites[i]._quick && (_anim->_sprites[i]._id != _id) &&
 			((_x + _info._xLength) > _anim->_sprites[i]._x) &&
 			(_x < (_anim->_sprites[i]._x + _anim->_sprites[i]._info._xLength)) &&
