@@ -168,9 +168,8 @@ void MenuItem::wipe() {
 }
 
 void MenuItem::moveHighlight(int8 inc) {
-	int8 highlightNum;
 	if (inc != 0) {
-		highlightNum = _highlightNum + inc;
+		int8 highlightNum = _highlightNum + inc;
 		if ((highlightNum < 0) || (highlightNum >= _optionNum))
 			return;
 		_highlightNum = highlightNum;
