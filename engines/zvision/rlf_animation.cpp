@@ -74,6 +74,7 @@ RlfAnimation::~RlfAnimation() {
 		delete[] _frames[i].encodedData;
 	}
 	delete[] _frames;
+	_currentFrameBuffer.free();
 }
 
 bool RlfAnimation::readHeader() {
