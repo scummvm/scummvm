@@ -26,6 +26,7 @@
 #include "buried/avi_frames.h"
 #include "buried/buried.h"
 #include "buried/credits.h"
+#include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
@@ -93,7 +94,7 @@ bool CreditsWindow::onEraseBackground() {
 
 void CreditsWindow::onLButtonDown(const Common::Point &point, uint flags) {
 	if (_returnButton.contains(point)) {
-		// TODO: Show main menu
+		((FrameWindow *)_parent)->showMainMenu();
 		return;
 	}
 

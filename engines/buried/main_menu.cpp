@@ -24,6 +24,7 @@
  */
 
 #include "buried/buried.h"
+#include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/main_menu.h"
 #include "buried/resources.h"
@@ -191,8 +192,9 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	if (_curButton > 0 && _buttons[_curButton - 1].contains(point)) {
 		switch (_curButton) {
 		case BUTTON_INTERFACE_OVERVIEW:
-			// TODO
-			break;
+			_vm->_sound->setAmbientSound();
+			((FrameWindow *)_parent)->showOverview();
+			return;
 		case BUTTON_NEW_GAME:
 			// TODO
 			break;
@@ -200,8 +202,8 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 			// TODO
 			break;
 		case BUTTON_CREDITS:
-			// TODO
-			break;
+			((FrameWindow *)_parent)->showCredits();
+			return;
 		case BUTTON_QUIT:
 			_vm->quitGame();
 			return;
