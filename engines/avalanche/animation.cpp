@@ -172,7 +172,7 @@ void AnimationType::appear(int16 wx, int16 wy, byte wf) {
  * @remarks	Originally called 'collision_check'
  */
 bool AnimationType::checkCollision() {
-	for (int16 i = 0; i < _tr->kSpriteNumbMax; i++) {
+	for (byte i = 0; i < _tr->kSpriteNumbMax; i++) {
 		if (_tr->_sprites[i]._quick && (_tr->_sprites[i]._id != _id) &&
 			((_x + _info._xLength) > _tr->_sprites[i]._x) &&
 			(_x < (_tr->_sprites[i]._x + _tr->_sprites[i]._info._xLength)) &&
@@ -370,14 +370,14 @@ Animation::Animation(AvalancheEngine *vm) {
 }
 
 Animation::~Animation() {
-	for (int16 i = 0; i < kSpriteNumbMax; i++) {
+	for (byte i = 0; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick)
 			_sprites[i].remove();
 	}
 }
 
 void Animation::loadAnims() {
-	for (int16 i = 0; i < kSpriteNumbMax; i++)
+	for (byte i = 0; i < kSpriteNumbMax; i++)
 		_sprites[i].original();
 }
 
@@ -1204,7 +1204,7 @@ void Animation::drawSprites() {
 	for (int i = 0; i < 5; i++)
 		order[i] = -1;
 
-	for (int16 i = 0; i < kSpriteNumbMax; i++) {
+	for (byte i = 0; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick && _sprites[i]._visible)
 			order[i] = i;
 	}
@@ -1239,14 +1239,14 @@ void Animation::drawSprites() {
 void Animation::animLink() {
 	if (_vm->_gyro->_dropdownActive | _vm->_gyro->_onToolbar | _vm->_gyro->_seeScroll)
 		return;
-	for (int16 i = 0; i < kSpriteNumbMax; i++) {
+	for (byte i = 0; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick && _sprites[i]._visible)
 			_sprites[i].walk();
 	}
 
 	drawSprites();
 
-	for (int16 i = 0; i < kSpriteNumbMax; i++) {
+	for (byte i = 0; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick && _sprites[i]._callEachStepFl) {
 			switch (_sprites[i]._eachStepProc) {
 			case kProcFollowAvvyY :
@@ -1336,7 +1336,7 @@ void Animation::flipRoom(byte room, byte ped) {
 	_vm->_lucerna->exitRoom(_vm->_gyro->_dna._room);
 	_vm->_lucerna->dusk();
 
-	for (int16 i = 1; i < kSpriteNumbMax; i++) {
+	for (byte i = 1; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick)
 			_sprites[i].remove();
 	} // Deallocate sprite
