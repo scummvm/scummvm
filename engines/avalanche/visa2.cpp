@@ -38,7 +38,6 @@
 
 #include "common/textconsole.h"
 
-
 namespace Avalanche {
 
 Visa::Visa(AvalancheEngine *vm) {
@@ -46,17 +45,17 @@ Visa::Visa(AvalancheEngine *vm) {
 	noError = true;
 }
 
-void Visa::unskrimble() {
-	for (uint16  fv = 0; fv < _vm->_gyro->_bufSize; fv++)
-		_vm->_gyro->_buffer[fv] = (~(_vm->_gyro->_buffer[fv] - (fv + 1))) % 256;
+void Visa::unSkrimble() {
+	for (uint16  i = 0; i < _vm->_gyro->_bufSize; i++)
+		_vm->_gyro->_buffer[i] = (~(_vm->_gyro->_buffer[i] - (i + 1))) % 256;
 }
 
-void Visa::do_the_bubble() {
+void Visa::doTheBubble() {
 	_vm->_gyro->_bufSize++;
 	_vm->_gyro->_buffer[_vm->_gyro->_bufSize - 1] = 2;
 }
 
-void Visa::dixi(char block, byte point, bool report, bool bubbling) {
+void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling) {
 	Common::File indexfile, sezfile;
 	uint16 idx_offset, sez_offset;
 	bool error = false;
@@ -97,23 +96,20 @@ void Visa::dixi(char block, byte point, bool report, bool bubbling) {
 	_vm->_gyro->_bufSize = sezfile.readUint16LE();
 	sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
 	sezfile.close();
-	unskrimble();
+	unSkrimble();
 
 	if (bubbling)
-		do_the_bubble();
+		doTheBubble();
 
 	_vm->_scrolls->callScrollDriver();
 }
 
-void Visa::speech(byte who, byte subject) {
+void Visa::speak(byte who, byte subject) {
 	Common::File indexfile, sezfile;
 
-	if (subject == 0) {
-		// No subject.
-		dixi('s', who, false, true);
-	} else {
-		// Subject given.
-
+	if (subject == 0) { // No subject.
+		displayScrollChain('s', who, false, true);
+	} else { // Subject given.
 		noError = false; // Assume that until we know otherwise.
 
 		if (!indexfile.open("converse.avd")) {
@@ -143,19 +139,15 @@ void Visa::speech(byte who, byte subject) {
 		sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
 		sezfile.close();
 
-		unskrimble();
-		do_the_bubble();
+		unSkrimble();
+		doTheBubble();
 
 		_vm->_scrolls->callScrollDriver();
 		noError = true;
 	}
-
-	warning("STUB: Visa::speech()");
 }
 
-void Visa::talkto(byte whom) {
-	bool no_matches;
-
+void Visa::talkTo(byte whom) {
 	if (_vm->_acci->_person == _vm->_acci->kPardon) {
 		_vm->_acci->_person = _vm->_gyro->_subjectNum;
 		_vm->_gyro->_subjectNum = 0;
@@ -165,7 +157,7 @@ void Visa::talkto(byte whom) {
 		switch (whom) {
 		case Gyro::kPeopleSpludwick:
 			if ((_vm->_gyro->_dna._lustieIsAsleep) & (!_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1])) {
-				dixi('q', 68);
+				displayScrollChain('q', 68);
 				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1] = true;
 				_vm->_lucerna->refreshObjectList();
 				_vm->_lucerna->incScore(3);
@@ -182,61 +174,61 @@ void Visa::talkto(byte whom) {
 						}
 						break;
 					case 3: {
-						dixi('q', 30); // Need any help with the game?
+						displayScrollChain('q', 30); // Need any help with the game?
 						return;
 						}
 						break;
 				}
 				else {
-					dixi('q', 42); // Haven't talked to Crapulus. Go and talk to him.
+					displayScrollChain('q', 42); // Haven't talked to Crapulus. Go and talk to him.
 					return;
 				}
 			}
 			break;
 		case Gyro::kPeopleIbythneth:
 			if (_vm->_gyro->_dna._givenBadgeToIby) {
-				dixi('q', 33); // Thanks a lot!
+				displayScrollChain('q', 33); // Thanks a lot!
 				return; // And leave the proc.
 			}
 			break; // Or... just continue, 'cos he hasn't got it.
 		case Gyro::kPeopleDogfood:
 			if (_vm->_gyro->_dna._wonNim) { // We've won the game.
-				dixi('q', 6); // "I'm Not Playing!"
+				displayScrollChain('q', 6); // "I'm Not Playing!"
 				return; // Zap back.
 			} else
 				_vm->_gyro->_dna._askedDogfoodAboutNim = true;
 			break;
 		case Gyro::kPeopleAyles:
 			if (!_vm->_gyro->_dna._aylesIsAwake) {
-				dixi('q', 43); // He's fast asleep!
+				displayScrollChain('q', 43); // He's fast asleep!
 				return;
 			} else if (!_vm->_gyro->_dna._givenPenToAyles) {
-				dixi('q', 44); // Can you get me a pen, Avvy?
+				displayScrollChain('q', 44); // Can you get me a pen, Avvy?
 				return;
 			}
 			break;
 
 		case Gyro::kPeopleJacques: {
-			dixi('q', 43);
+			displayScrollChain('q', 43);
 			return;
 			}
 		case Gyro::kPeopleGeida:
 			if (_vm->_gyro->_dna._givenPotionToGeida)
 				_vm->_gyro->_dna._geidaFollows = true;
 			else {
-				dixi('u', 17);
+				displayScrollChain('u', 17);
 				return;
 			}
 			break;
 		case Gyro::kPeopleSpurge:
 			if (!_vm->_gyro->_dna._sittingInPub) {
-				dixi('q', 71); // Try going over and sitting down.
+				displayScrollChain('q', 71); // Try going over and sitting down.
 				return;
 			} else {
 				if (_vm->_gyro->_dna._spurgeTalkCount < 5)
 					_vm->_gyro->_dna._spurgeTalkCount++;
 				if (_vm->_gyro->_dna._spurgeTalkCount > 1) { // no. 1 falls through
-					dixi('q', 70 + _vm->_gyro->_dna._spurgeTalkCount);
+					displayScrollChain('q', 70 + _vm->_gyro->_dna._spurgeTalkCount);
 					return;
 				}
 			}
@@ -244,33 +236,33 @@ void Visa::talkto(byte whom) {
 	}
 	// On a subject. Is there any reason to block it?
 	else if ((whom == _vm->_gyro->kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) {
-			dixi('q', 43); // He's fast asleep!
+			displayScrollChain('q', 43); // He's fast asleep!
 			return;
 		}
 
 	if (whom > 149)
 		whom -= 149;
 
-	no_matches = true;
+	bool noMatches = true;
 	for (int16 i = 0; i <= _vm->_animation->kSpriteNumbMax; i++)
 		if (_vm->_animation->tr[i]._stat.accinum == whom) {
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + (i + 49) + _vm->_scrolls->kControlToBuffer);
-			no_matches = false;
+			noMatches = false;
 			break;
 		}
 
-	if (no_matches)
+	if (noMatches)
 		_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + _vm->_scrolls->kControlRegister + _vm->_scrolls->kControlToBuffer);
 
-	speech(whom, _vm->_gyro->_subjectNum);
+	speak(whom, _vm->_gyro->_subjectNum);
 
 	if (!noError)
-		dixi('n', whom); // File not found!
+		displayScrollChain('n', whom); // File not found!
 
 	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == _vm->_gyro->kPeopleCrapulus)) { // Crapulus: get the badge - first time only
 		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBadge - 1] = true;
 		_vm->_lucerna->refreshObjectList();
-		dixi('q', 1); // Circular from Cardiff.
+		displayScrollChain('q', 1); // Circular from Cardiff.
 		_vm->_gyro->_dna._talkedToCrapulus = true;
 
 		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = 177; // Crapulus walks off.
