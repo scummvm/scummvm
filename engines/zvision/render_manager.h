@@ -176,6 +176,7 @@ public:
 
 	RenderTable *getRenderTable();
 	uint32 getCurrentBackgroundOffset();
+	const Graphics::Surface *getBackBuffer() { return &_backBuffer; }
 
 private:
 	/**
