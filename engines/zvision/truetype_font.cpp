@@ -75,7 +75,7 @@ bool TruetypeFont::loadFile(const Common::String &filename) {
 		return false;
 	}
 
-	_font = Graphics::loadTTFFont(file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
+	_font = Graphics::loadTTFFont(file, _fontHeight);
 	_lineHeight = _font->getFontHeight();
 
 	return true;
