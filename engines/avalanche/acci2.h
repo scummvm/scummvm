@@ -83,8 +83,6 @@ private:
 	};
 
 	Common::String _thats;
-	Common::String _unknown;
-
 	byte _thing2;
 
 	AvalancheEngine *_vm;
@@ -108,7 +106,7 @@ private:
 	void examineObject(); // Examine a standard object-thing
 	bool isPersonHere();
 	void exampers();
-	bool holding();
+	bool isHolding();
 	void openBox(bool isOpening);
 	void examine();
 	void inventory();

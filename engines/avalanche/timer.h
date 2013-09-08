@@ -65,7 +65,7 @@ public:
 		kReasonArkataShouts = 24,
 		kReasonWinning = 25,
 		kReasonFallingOver = 26,
-		kReasonSpludWalk = 27,
+		kReasonSpludwickWalk = 27,
 		kReasonGeidaSings = 28
 	};
 

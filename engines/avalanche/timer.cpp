@@ -663,9 +663,9 @@ void Timer::avalotFalls() {
 
 void Timer::spludwickGoesToCauldron() {
 	if (_vm->_animation->_sprites[1]._homing)
-		addTimer(1, kProcSpludwickGoesToCauldron, kReasonSpludWalk);
+		addTimer(1, kProcSpludwickGoesToCauldron, kReasonSpludwickWalk);
 	else
-		addTimer(17, kProcSpludwickLeavesCauldron, kReasonSpludWalk);
+		addTimer(17, kProcSpludwickLeavesCauldron, kReasonSpludwickWalk);
 }
 
 void Timer::spludwickLeavesCauldron() {
