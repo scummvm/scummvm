@@ -561,18 +561,20 @@ Common::String Scrolls::displayMoney() {
 	Common::String result;
 
 	if (_vm->_gyro->_dna._money < 12) { // just pence
-		result = _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + 'd';
+		result = Common::String::format("%dd", _vm->_gyro->_dna._money);
 	} else if (_vm->_gyro->_dna._money < 240) { // shillings & pence
-		result = _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 12) + '/';
 		if ((_vm->_gyro->_dna._money % 12) == 0)
-			result = result + '-';
+			result = Common::String::format("%d/-", _vm->_gyro->_dna._money / 12);
 		else
-			result = result + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
-	} else // L, s & d
-		result = Common::String('\x9C') + _vm->_gyro->intToStr(_vm->_gyro->_dna._money / 240) + '.' + _vm->_gyro->intToStr((_vm->_gyro->_dna._money / 12) % 20)
-			+ '.' + _vm->_gyro->intToStr(_vm->_gyro->_dna._money % 12);
-	if (_vm->_gyro->_dna._money > 12)
-		result = result + " (that's " + _vm->_gyro->intToStr(_vm->_gyro->_dna._money) + "d)";
+			result = Common::String::format("%d/%d", _vm->_gyro->_dna._money / 12, _vm->_gyro->_dna._money % 12);
+	} else { // L, s & d
+		result = Common::String::format("\x9C%d.%d.%d", _vm->_gyro->_dna._money / 240, (_vm->_gyro->_dna._money / 12) % 20, 
+		                _vm->_gyro->_dna._money % 12);
+	}
+	if (_vm->_gyro->_dna._money > 12) {
+		Common::String extraStr = Common::String::format(" (that's %dd)", _vm->_gyro->_dna._money);
+		result += extraStr;
+	}
 
 	return result;
 }
@@ -813,14 +815,12 @@ void Scrolls::loadFont() {
 }
 
 void Scrolls::musicalScroll() {
-	displayText(Common::String("To play the harp...") + kControlNewLine + kControlNewLine + "Use these keys:" + + kControlNewLine
-		+ kControlInsertSpaces + "Q W E R T Y U I O P [ ]" + kControlNewLine + kControlNewLine + "Or press Enter to stop playing."
-		+ kControlToBuffer);
+	Common::String tmpStr = Common::String::format("To play the harp...%c%cUse these keys:%c%cQ W E R T Y U I O P [ ]%c%cOr press Enter to stop playing.%c", 
+		        kControlNewLine, kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlNewLine, kControlNewLine, kControlToBuffer);
+	displayText(tmpStr);
 
 	_vm->_lucerna->spriteRun();
-
 	drawScroll(&Avalanche::Scrolls::scrollModeMusic);
-
 	resetScroll();
 }
 
