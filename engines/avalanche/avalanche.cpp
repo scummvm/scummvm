@@ -292,7 +292,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	if (sz.isLoading()) {
 		for (int16 i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
 			if (_animation->_sprites[i]._quick)
-				_animation->_sprites[i].done();
+				_animation->_sprites[i].remove();
 		}
 	}
 

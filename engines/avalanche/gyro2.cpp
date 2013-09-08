@@ -229,7 +229,7 @@ void Gyro::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String 
 void Gyro::newGame() {
 	for (byte i = 0; i < kMaxSprites; i++) {
 		if (_vm->_animation->_sprites[i]._quick)
-			_vm->_animation->_sprites[i].done();
+			_vm->_animation->_sprites[i].remove();
 	}
 	// Deallocate sprite. Sorry, beta testers!
 
