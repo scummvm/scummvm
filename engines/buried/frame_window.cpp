@@ -37,6 +37,7 @@
 #include "buried/sound.h"
 #include "buried/title_sequence.h"
 #include "buried/demo/demo_menu.h"
+#include "buried/demo/movie_scene.h"
 
 namespace Buried {
 
@@ -113,6 +114,21 @@ bool FrameWindow::returnToMainMenu() {
 	}
 
 	// Empty input queue
+	_vm->removeMouseMessages(this);
+	_vm->removeMouseMessages(_mainChildWindow);
+
+	return true;
+}
+
+bool FrameWindow::playMovie(const Common::String &background, const Common::String &movie, int movieLeft, int movieTop) {
+	_vm->removeMouseMessages(this);
+	_vm->removeMouseMessages(_mainChildWindow);
+
+	delete _mainChildWindow;
+	_mainChildWindow = new MovieDisplayWindow(_vm, this, background, movie, movieLeft, movieTop);
+
+	((MovieDisplayWindow *)_mainChildWindow)->showMovieInWindow();
+
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
 
