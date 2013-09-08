@@ -90,7 +90,7 @@ void Sequence::callSequencer() {
 		break;
 	case 177: // Flip room.
 		_vm->_gyro->_dna._userMovesAvvy = true;
-		_vm->_animation->fliproom(_vm->_gyro->_dna._flipToWhere, _vm->_gyro->_dna._flipToPed);
+		_vm->_animation->flipRoom(_vm->_gyro->_dna._flipToWhere, _vm->_gyro->_dna._flipToPed);
 		if (_seq[0] == 177)
 			shoveLeft();
 		break;

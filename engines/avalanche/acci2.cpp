@@ -407,8 +407,8 @@ void Acci::storeInterrogation(byte interrogation) {
 			_vm->_gyro->_dna._spareEvening.clear();
 		_vm->_gyro->_dna._spareEvening = _vm->_parser->_inputText;
 		_vm->_visa->displayScrollChain('z', 5); // His closing statement...
-		_vm->_animation->tr[1].walkTo(4); // The end of the drawbridge
-		_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
+		_vm->_animation->_sprites[1].walkTo(4); // The end of the drawbridge
+		_vm->_animation->_sprites[1]._vanishIfStill = true; // Then go away!
 		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing;
 		_vm->_gyro->_dna._cardiffQuestionNum = 5;
 		break;
@@ -896,7 +896,7 @@ void Acci::openDoor() {
 	// Special cases.
 	switch (_vm->_gyro->_dna._room) {
 	case r__yours:
-		if (_vm->_animation->infield(2)) {
+		if (_vm->_animation->inField(2)) {
 			// Opening the box.
 			_thing = 54; // The box.
 			_person = kPardon;
@@ -916,25 +916,25 @@ void Acci::openDoor() {
 		return; // No doors can open if you can't move Avvy.
 
 	for (byte fv = 8; fv < 15; fv++) {
-		if (_vm->_animation->infield(fv + 1)) {
+		if (_vm->_animation->inField(fv + 1)) {
 			fv -= 8;
 
 			switch (_vm->_gyro->_portals[fv]._operation) {
 			case Gyro::kMagicExclaim:
-				_vm->_animation->tr[0].bounce();
+				_vm->_animation->_sprites[0].bounce();
 				_vm->_visa->displayScrollChain('x', _vm->_gyro->_portals[fv]._data);
 				break;
 			case Gyro::kMagicTransport:
-				_vm->_animation->fliproom((_vm->_gyro->_portals[fv]._data) >> 8,  // High byte
+				_vm->_animation->flipRoom((_vm->_gyro->_portals[fv]._data) >> 8,  // High byte
 					                 (_vm->_gyro->_portals[fv]._data) & 0x0F // Low byte
 									 );
 				break;
 			case Gyro::kMagicUnfinished:
-				_vm->_animation->tr[0].bounce();
+				_vm->_animation->_sprites[0].bounce();
 				_vm->_scrolls->displayText("Sorry. This place is not available yet!");
 				break;
 			case Gyro::kMagicSpecial:
-				_vm->_animation->call_special(_vm->_gyro->_portals[fv]._data);
+				_vm->_animation->callSpecial(_vm->_gyro->_portals[fv]._data);
 				break;
 			case Gyro::kMagicOpenDoor:
 				_vm->_animation->openDoor((_vm->_gyro->_portals[fv]._data) >> 8, (_vm->_gyro->_portals[fv]._data) & 0x0F, fv + 9);
@@ -1040,9 +1040,9 @@ void Acci::notInOrder() {
 }
 
 void Acci::goToCauldron() {
-	_vm->_animation->tr[1]._callEachStepFl = false; // Stops Geida_Procs.
+	_vm->_animation->_sprites[1]._callEachStepFl = false; // Stops Geida_Procs.
 	_vm->_timer->addTimer(1, _vm->_timer->kProcSpludwickGoesToCauldron, _vm->_timer->kReasonSpludWalk);
-	_vm->_animation->tr[1].walkTo(2);
+	_vm->_animation->_sprites[1].walkTo(2);
 }
 
 /**
@@ -1102,9 +1102,9 @@ void Acci::drink() {
 		_vm->_lucerna->refreshObjectList();
 		_vm->_lucerna->dusk();
 		_vm->_gyro->hangAroundForAWhile();
-		_vm->_animation->fliproom(1, 1);
+		_vm->_animation->flipRoom(1, 1);
 		_vm->_gyro->setBackgroundColor(14);
-		_vm->_animation->new_game_for_trippancy(); // Not really.
+		_vm->_animation->_sprites[0]._visible = false;
 	}
 }
 
@@ -1112,12 +1112,12 @@ void Acci::cardiffClimbing() {
 	if (_vm->_gyro->_dna._standingOnDais) { // Clamber up.
 		_vm->_scrolls->displayText("You climb down, back onto the floor.");
 		_vm->_gyro->_dna._standingOnDais = false;
-		_vm->_animation->apped(1, 3);
+		_vm->_animation->appearPed(1, 3);
 	} else { // Clamber down.
-		if (_vm->_animation->infield(1)) {
+		if (_vm->_animation->inField(1)) {
 			_vm->_scrolls->displayText("You clamber up onto the dais.");
 			_vm->_gyro->_dna._standingOnDais = true;
-			_vm->_animation->apped(1, 2);
+			_vm->_animation->appearPed(1, 2);
 		} else
 			_vm->_scrolls->displayText("Get a bit closer, Avvy.");
 	}
@@ -1136,9 +1136,9 @@ void Acci::standUp() {
 				_vm->_gyro->setBackgroundColor(0);
 				_vm->_visa->displayScrollChain('d', 14);
 			}
-			_vm->_animation->tr[0]._visible = true;
+			_vm->_animation->_sprites[0]._visible = true;
 			_vm->_gyro->_dna._userMovesAvvy = true;
-			_vm->_animation->apped(1, 2);
+			_vm->_animation->appearPed(1, 2);
 			_vm->_gyro->_dna._direction = _vm->_gyro->kDirectionLeft;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->incScore(1);
@@ -1155,8 +1155,8 @@ void Acci::standUp() {
 	case r__nottspub:
 		if (_vm->_gyro->_dna._sittingInPub)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Not sitting down.
-			_vm->_animation->tr[0]._visible = true; // But standing up.
-			_vm->_animation->apped(1, 4); // And walking away.
+			_vm->_animation->_sprites[0]._visible = true; // But standing up.
+			_vm->_animation->appearPed(1, 4); // And walking away.
 			_vm->_gyro->_dna._sittingInPub = false; // Really not sitting down.
 			_vm->_gyro->_dna._userMovesAvvy = true; // And ambulant.
 		} else
@@ -1172,7 +1172,7 @@ void Acci::standUp() {
 void Acci::getProc(char thing) {
 	switch (_vm->_gyro->_dna._room) {
 	case r__yours:
-		if (_vm->_animation->infield(2)) {
+		if (_vm->_animation->inField(2)) {
 			if (_vm->_gyro->_dna._boxContent == thing) {
 				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_scrolls->displayText("OK, I've got it.");
@@ -1188,13 +1188,13 @@ void Acci::getProc(char thing) {
 	case r__insidecardiffcastle:
 		switch (thing) {
 		case Gyro::kObjectPen:
-			if (_vm->_animation->infield(2)) { // Standing on the dais.
+			if (_vm->_animation->inField(2)) { // Standing on the dais.
 				if (_vm->_gyro->_dna._takenPen)
 					_vm->_scrolls->displayText("It's not there, Avvy.");
 				else {
 					// OK: we're taking the pen, and it's there.
 					_vm->_celer->drawBackgroundSprite(-1, -1, 4); // No pen there now.
-					_vm->_animation->call_special(3); // Zap!
+					_vm->_animation->callSpecial(3); // Zap!
 					_vm->_gyro->_dna._takenPen = true;
 					_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPen - 1] = true;
 					_vm->_lucerna->refreshObjectList();
@@ -1213,7 +1213,7 @@ void Acci::getProc(char thing) {
 		}
 		break;
 	case r__robins:
-		if ((thing == _vm->_gyro->kObjectMushroom) & (_vm->_animation->infield(1)) & (_vm->_gyro->_dna._mushroomGrowing)) {
+		if ((thing == _vm->_gyro->kObjectMushroom) & (_vm->_animation->inField(1)) & (_vm->_gyro->_dna._mushroomGrowing)) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_scrolls->displayText("Got it!");
 			_vm->_gyro->_dna._mushroomGrowing = false;
@@ -1247,7 +1247,7 @@ void Acci::giveGeidaTheLute() {
 }
 
 void Acci::playHarp() {
-	if (_vm->_animation->infield(7))
+	if (_vm->_animation->inField(7))
 		_vm->_scrolls->musicalScroll();
 	else
 		_vm->_scrolls->displayText("Get a bit closer to it, Avvy!");
@@ -1278,7 +1278,7 @@ void Acci::personSpeaks() {
 	bool found = false; // The _person we're looking for's code is in _person.
 
 	for (int16 i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->tr[i]._quick && ((_vm->_animation->tr[i]._stat._acciNum + 149) == _person)) {
+		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 49) + _vm->_scrolls->kControlToBuffer);
 			found = true;
 		}
@@ -1568,13 +1568,13 @@ void Acci::doThat() {
 						i = 3;
 					else
 						i = 0;
-					if (_vm->_animation->tr[0]._id != i) {
-						int16 x = _vm->_animation->tr[0]._x;
-						int16 y = _vm->_animation->tr[0]._y;
-						_vm->_animation->tr[0].done();
-						_vm->_animation->tr[0].init(i, true, _vm->_animation);
-						_vm->_animation->tr[0].appear(x, y, Animation::kDirLeft);
-						_vm->_animation->tr[0]._visible = false;
+					if (_vm->_animation->_sprites[0]._id != i) {
+						int16 x = _vm->_animation->_sprites[0]._x;
+						int16 y = _vm->_animation->_sprites[0]._y;
+						_vm->_animation->_sprites[0].done();
+						_vm->_animation->_sprites[0].init(i, true, _vm->_animation);
+						_vm->_animation->_sprites[0].appear(x, y, Animation::kDirLeft);
+						_vm->_animation->_sprites[0]._visible = false;
 					}
 				}
 				break;
@@ -1695,16 +1695,16 @@ void Acci::doThat() {
 		if (_vm->_gyro->_dna._avariciusTalk > 0)
 			_vm->_visa->displayScrollChain('q', 19);
 		else {
-			if ((_vm->_gyro->_dna._room == 12) & (_vm->_animation->infield(2))) { // Avaricius appears!
+			if ((_vm->_gyro->_dna._room == 12) & (_vm->_animation->inField(2))) { // Avaricius appears!
 				_vm->_visa->displayScrollChain('q', 17);
 				if (_vm->_gyro->_whereIs[1] == 12)
 					_vm->_visa->displayScrollChain('q', 18);
 				else {
-					_vm->_animation->tr[1].init(1, false, _vm->_animation); // Avaricius
-					_vm->_animation->apped(2, 4);
-					_vm->_animation->tr[1].walkTo(5);
-					_vm->_animation->tr[1]._callEachStepFl = true;
-					_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcBackAndForth;
+					_vm->_animation->_sprites[1].init(1, false, _vm->_animation); // Avaricius
+					_vm->_animation->appearPed(2, 4);
+					_vm->_animation->_sprites[1].walkTo(5);
+					_vm->_animation->_sprites[1]._callEachStepFl = true;
+					_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcBackAndForth;
 					_vm->_gyro->_dna._avariciusTalk = 14;
 					_vm->_timer->addTimer(177, _vm->_timer->kProcAvariciusTalks, _vm->_timer->kReasonAvariciusTalks);
 				}
@@ -1744,7 +1744,7 @@ void Acci::doThat() {
 	case kVerbCodeBuy: // What are they trying to buy?
 		switch (_vm->_gyro->_dna._room) {
 		case r__argentpub:
-			if (_vm->_animation->infield(6)) { // We're in a pub, and near the bar.
+			if (_vm->_animation->inField(6)) { // We're in a pub, and near the bar.
 				switch (_thing) {
 				case 51:
 				case 53:
@@ -1804,7 +1804,7 @@ void Acci::doThat() {
 			break;
 
 		case r__outsideducks:
-			if (_vm->_animation->infield(6)) {
+			if (_vm->_animation->inField(6)) {
 				if (_thing == _vm->_gyro->kObjectOnion) {
 					if (_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1])
 						_vm->_visa->displayScrollChain('D', 10); // Not planning to juggle with the things!
@@ -1861,9 +1861,9 @@ void Acci::doThat() {
 				_vm->_lucerna->refreshObjectList();
 				_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicNothing;
 				_vm->_lucerna->incScore(7);
-				_vm->_animation->tr[1].walkTo(2);
-				_vm->_animation->tr[1]._vanishIfStill = true;
-				_vm->_animation->tr[1]._callEachStepFl = false;
+				_vm->_animation->_sprites[1].walkTo(2);
+				_vm->_animation->_sprites[1]._vanishIfStill = true;
+				_vm->_animation->_sprites[1]._callEachStepFl = false;
 				_vm->_gyro->_whereIs[7] = 177;
 				break;
 			default:
@@ -1984,7 +1984,7 @@ void Acci::doThat() {
 			if (_vm->_gyro->_dna._sittingInPub)
 				_vm->_scrolls->displayText("You're already sitting!");
 			else {
-				_vm->_animation->tr[0].walkTo(4); // Move Avvy to the place, and sit him down.
+				_vm->_animation->_sprites[0].walkTo(4); // Move Avvy to the place, and sit him down.
 				_vm->_timer->addTimer(1, _vm->_timer->kProcAvvySitDown, _vm->_timer->kReasonSittingDown);
 			}
 		} else { // Default doodah.

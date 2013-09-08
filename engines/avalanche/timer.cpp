@@ -253,7 +253,7 @@ void Timer::avariciusTalks() {
 }
 
 void Timer::urinate() {
-	_vm->_animation->tr[0].turn(Animation::kDirUp);
+	_vm->_animation->_sprites[0].turn(Animation::kDirUp);
 	_vm->_animation->stopWalking();
 	_vm->_lucerna->drawDirection();
 	addTimer(14, kProcToilet, kReasonGoToToilet);
@@ -274,7 +274,7 @@ void Timer::bang2() {
 
 void Timer::stairs() {
 	_vm->_gyro->blip();
-	_vm->_animation->tr[0].walkTo(4);
+	_vm->_animation->_sprites[0].walkTo(4);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 	_vm->_gyro->_dna._brummieStairs = 2;
 	_vm->_gyro->_magics[10]._operation = _vm->_gyro->kMagicSpecial;
@@ -307,38 +307,38 @@ void Timer::getTiedUp() {
 	_vm->_gyro->_dna._userMovesAvvy = false;
 	_vm->_gyro->_dna._beenTiedUp = true;
 	_vm->_animation->stopWalking();
-	_vm->_animation->tr[1].stopWalk();
-	_vm->_animation->tr[1].stophoming();
-	_vm->_animation->tr[1]._callEachStepFl = true;
-	_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcGrabAvvy;
+	_vm->_animation->_sprites[1].stopWalk();
+	_vm->_animation->_sprites[1].stophoming();
+	_vm->_animation->_sprites[1]._callEachStepFl = true;
+	_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcGrabAvvy;
 	addTimer(70, kProcGetTiedUp2, kReasonGettingTiedUp);
 }
 
 void Timer::getTiedUp2() {
-	_vm->_animation->tr[0].walkTo(4);
-	_vm->_animation->tr[1].walkTo(5);
+	_vm->_animation->_sprites[0].walkTo(4);
+	_vm->_animation->_sprites[1].walkTo(5);
 	_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_gyro->_dna._friarWillTieYouUp = true;
 }
 
 void Timer::hangAround() {
-	_vm->_animation->tr[1]._doCheck = false;
-	_vm->_animation->tr[0].init(7, true, _vm->_animation); // Robin Hood
+	_vm->_animation->_sprites[1]._doCheck = false;
+	_vm->_animation->_sprites[0].init(7, true, _vm->_animation); // Robin Hood
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleRobinHood - 150] = r__robins;
-	_vm->_animation->apped(1, 2);
+	_vm->_animation->appearPed(1, 2);
 	_vm->_visa->displayScrollChain('q', 39);
-	_vm->_animation->tr[0].walkTo(7);
+	_vm->_animation->_sprites[0].walkTo(7);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
 void Timer::hangAround2() {
 	_vm->_visa->displayScrollChain('q', 40);
-	_vm->_animation->tr[1]._vanishIfStill = false;
-	_vm->_animation->tr[1].walkTo(4);
+	_vm->_animation->_sprites[1]._vanishIfStill = false;
+	_vm->_animation->_sprites[1].walkTo(4);
 	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = r__robins;
 	_vm->_visa->displayScrollChain('q', 41);
-	_vm->_animation->tr[0].done();
-	_vm->_animation->tr[1].done(); // Get rid of Robin Hood and Friar Tuck.
+	_vm->_animation->_sprites[0].done();
+	_vm->_animation->_sprites[1].done(); // Get rid of Robin Hood and Friar Tuck.
 
 	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
 	// Immediately call the following proc (when you have a chance).
@@ -350,11 +350,11 @@ void Timer::hangAround2() {
 
 void Timer::afterTheShootemup() {
 
-	_vm->_animation->fliproom(_vm->_gyro->_dna._room, 0);
+	_vm->_animation->flipRoom(_vm->_gyro->_dna._room, 0);
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 
-	_vm->_animation->tr[0].init(0, true, _vm->_animation); // Avalot.
-	_vm->_animation->apped(1, 2);
+	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
+	_vm->_animation->appearPed(1, 2);
 	_vm->_gyro->_dna._userMovesAvvy = true;
 	_vm->_gyro->_dna._objects[_vm->_gyro->kObjectCrossbow - 1] = true;
 	_vm->_lucerna->refreshObjectList();
@@ -423,9 +423,9 @@ void Timer::jacquesWakesUp() {
 }
 
 void Timer::naughtyDuke() { // This is when the Duke comes in and takes your money.
-	_vm->_animation->tr[1].init(9, false, _vm->_animation); // Here comes the Duke.
-	_vm->_animation->apped(2, 1); // He starts at the door...
-	_vm->_animation->tr[1].walkTo(3); // He walks over to you.
+	_vm->_animation->_sprites[1].init(9, false, _vm->_animation); // Here comes the Duke.
+	_vm->_animation->appearPed(2, 1); // He starts at the door...
+	_vm->_animation->_sprites[1].walkTo(3); // He walks over to you.
 
 	// Let's get the door opening.
 	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
@@ -437,8 +437,8 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 
 void Timer::naughtyDuke2() {
 	_vm->_visa->displayScrollChain('q', 48); // "Ha ha, it worked again!"
-	_vm->_animation->tr[1].walkTo(1); // Walk to the door.
-	_vm->_animation->tr[1]._vanishIfStill = true; // Then go away!
+	_vm->_animation->_sprites[1].walkTo(1); // Walk to the door.
+	_vm->_animation->_sprites[1]._vanishIfStill = true; // Then go away!
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
 }
 
@@ -458,7 +458,7 @@ void Timer::jump() {
 	case 5:
 	case 7:
 	case 9:
-		_vm->_animation->tr[0]._y--;
+		_vm->_animation->_sprites[0]._y--;
 		break;
 	case 12:
 	case 13:
@@ -466,7 +466,7 @@ void Timer::jump() {
 	case 16:
 	case 18:
 	case 19:
-		_vm->_animation->tr[0]._y++;
+		_vm->_animation->_sprites[0]._y++;
 		break;
 	}
 
@@ -480,7 +480,7 @@ void Timer::jump() {
 	if ((_vm->_gyro->_dna._jumpStatus == 10) // You're at the highest point of your jump.
 			&& (_vm->_gyro->_dna._room == r__insidecardiffcastle)
 			&& (_vm->_gyro->_dna._arrowInTheDoor == true)
-			&& (_vm->_animation->infield(3))) { // Beside the wall
+			&& (_vm->_animation->inField(3))) { // Beside the wall
 		// Grab the arrow!
 		if (_vm->_gyro->_dna._carryNum >= kCarryLimit)
 			_vm->_scrolls->displayText("You fail to grab it, because your hands are full.");
@@ -538,8 +538,8 @@ void Timer::greetsMonk() {
 
 void Timer::fallDownOubliette() {
 	_vm->_gyro->_magics[8]._operation = _vm->_gyro->kMagicNothing;
-	_vm->_animation->tr[0]._moveY++; // Increments dx/dy!
-	_vm->_animation->tr[0]._y += _vm->_animation->tr[0]._moveY;   // Dowwwn we go...
+	_vm->_animation->_sprites[0]._moveY++; // Increments dx/dy!
+	_vm->_animation->_sprites[0]._y += _vm->_animation->_sprites[0]._moveY;   // Dowwwn we go...
 	addTimer(3, kProcFallDownOubliette, kReasonFallingDownOubliette);
 }
 
@@ -553,49 +553,49 @@ void Timer::meetAvaroid() {
 		_vm->_gyro->_dna._metAvaroid = true;
 		addTimer(1, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 
-		_vm->_animation->tr[0]._facingDir = Animation::kDirLeft;
-		_vm->_animation->tr[0]._x = 151;
-		_vm->_animation->tr[0]._moveX = -3;
-		_vm->_animation->tr[0]._moveY = -5;
+		_vm->_animation->_sprites[0]._facingDir = Animation::kDirLeft;
+		_vm->_animation->_sprites[0]._x = 151;
+		_vm->_animation->_sprites[0]._moveX = -3;
+		_vm->_animation->_sprites[0]._moveY = -5;
 
 		_vm->_gyro->setBackgroundColor(2);
 	}
 }
 
 void Timer::riseUpOubliette() {
-	_vm->_animation->tr[0]._visible = true;
-	_vm->_animation->tr[0]._moveY++; // Decrements dx/dy!
-	_vm->_animation->tr[0]._y -= _vm->_animation->tr[0]._moveY; // Uuuupppp we go...
-	if (_vm->_animation->tr[0]._moveY > 0)
+	_vm->_animation->_sprites[0]._visible = true;
+	_vm->_animation->_sprites[0]._moveY++; // Decrements dx/dy!
+	_vm->_animation->_sprites[0]._y -= _vm->_animation->_sprites[0]._moveY; // Uuuupppp we go...
+	if (_vm->_animation->_sprites[0]._moveY > 0)
 		addTimer(3, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 	else
 		_vm->_gyro->_dna._userMovesAvvy = true;
 }
 
 void Timer::robinHoodAndGeida() {
-	_vm->_animation->tr[0].init(7, true, _vm->_animation);
-	_vm->_animation->apped(1, 7);
-	_vm->_animation->tr[0].walkTo(6);
-	_vm->_animation->tr[1].stopWalk();
-	_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
+	_vm->_animation->_sprites[0].init(7, true, _vm->_animation);
+	_vm->_animation->appearPed(1, 7);
+	_vm->_animation->_sprites[0].walkTo(6);
+	_vm->_animation->_sprites[1].stopWalk();
+	_vm->_animation->_sprites[1]._facingDir = Animation::kDirLeft;
 	addTimer(20, kProcRobinHoodAndGeidaTalk, kReasonRobinHoodAndGeida);
 	_vm->_gyro->_dna._geidaFollows = false;
 }
 
 void Timer::robinHoodAndGeidaTalk() {
 	_vm->_visa->displayScrollChain('q', 66);
-	_vm->_animation->tr[0].walkTo(2);
-	_vm->_animation->tr[1].walkTo(2);
-	_vm->_animation->tr[0]._vanishIfStill = true;
-	_vm->_animation->tr[1]._vanishIfStill = true;
+	_vm->_animation->_sprites[0].walkTo(2);
+	_vm->_animation->_sprites[1].walkTo(2);
+	_vm->_animation->_sprites[0]._vanishIfStill = true;
+	_vm->_animation->_sprites[1]._vanishIfStill = true;
 	addTimer(162, kProcAvalotReturns, kReasonRobinHoodAndGeida);
 }
 
 void Timer::avalotReturns() {
-	_vm->_animation->tr[0].done();
-	_vm->_animation->tr[1].done();
-	_vm->_animation->tr[0].init(0, true, _vm->_animation);
-	_vm->_animation->apped(1, 1);
+	_vm->_animation->_sprites[0].done();
+	_vm->_animation->_sprites[1].done();
+	_vm->_animation->_sprites[0].init(0, true, _vm->_animation);
+	_vm->_animation->appearPed(1, 1);
 	_vm->_visa->displayScrollChain('q', 67);
 	_vm->_gyro->_dna._userMovesAvvy = true;
 }
@@ -606,13 +606,13 @@ void Timer::avalotReturns() {
  * @remarks	Originally called 'avvy_sit_down'
  */
 void Timer::avvySitDown() {
-	if (_vm->_animation->tr[0]._homing)    // Still walking.
+	if (_vm->_animation->_sprites[0]._homing)    // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_gyro->_dna._sittingInPub = true;
 		_vm->_gyro->_dna._userMovesAvvy = false;
-		_vm->_animation->tr[0]._visible = false;
+		_vm->_animation->_sprites[0]._visible = false;
 	}
 }
 
@@ -647,8 +647,8 @@ void Timer::winning() {
 }
 
 void Timer::avalotFalls() {
-	if (_vm->_animation->tr[0]._stepNum < 5) {
-		_vm->_animation->tr[0]._stepNum++;
+	if (_vm->_animation->_sprites[0]._stepNum < 5) {
+		_vm->_animation->_sprites[0]._stepNum++;
 		addTimer(3, kProcAvalotFalls, kReasonFallingOver);
 	} else {
 		Common::String toDisplay;
@@ -662,14 +662,14 @@ void Timer::avalotFalls() {
 }
 
 void Timer::spludwickGoesToCauldron() {
-	if (_vm->_animation->tr[1]._homing)
+	if (_vm->_animation->_sprites[1]._homing)
 		addTimer(1, kProcSpludwickGoesToCauldron, kReasonSpludWalk);
 	else
 		addTimer(17, kProcSpludwickLeavesCauldron, kReasonSpludWalk);
 }
 
 void Timer::spludwickLeavesCauldron() {
-	_vm->_animation->tr[1]._callEachStepFl = true; // So that normal procs will continue.
+	_vm->_animation->_sprites[1]._callEachStepFl = true; // So that normal procs will continue.
 }
 
 void Timer::giveLuteToGeida() { // Moved here from Acci.

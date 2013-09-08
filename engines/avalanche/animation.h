@@ -118,39 +118,28 @@ public:
 	~Animation();
 
 	void animLink();
-	void get_back_loretta();
-	void loadtrip();
-	void call_special(uint16 which);
+	void loadAnims(); // Original: loadtrip().
+	void callSpecial(uint16 which);
 	void openDoor(byte whither, byte ped, byte magicnum); // Handles slidey-open doors.
-	void catamove(byte ped);
+	void catacombMove(byte ped); // When you enter a new position in the catacombs, this procedure should be called. It changes the 'also' codes so that they may match the picture on the screen.
 	void stopWalking();
-	void tripkey(char dir);
-	void rwsp(byte t, byte dir);
-	void apped(byte trn, byte np);
-	void getback();
-	void fliproom(byte room, byte ped);
-	bool infield(byte which); // Returns true if you're within field "which".
-	bool neardoor(); // Returns True if you're near a door.
-	void readstick();
-	void newspeed();
-	void new_game_for_trippancy();
-	void take_a_step(byte &tripnum);
+	void changeDirection(byte t, byte dir);
+	void appearPed(byte trn, byte np);
+	void flipRoom(byte room, byte ped);
+	bool inField(byte which); // Returns true if you're within field "which".
+	bool nearDoor(); // Returns True if you're near a door.
+	void updateSpeed();
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
 
-	AnimationType tr[kSpriteNumbMax];
-	byte aa[1600];
+	AnimationType _sprites[kSpriteNumbMax];
 
-	bool mustexclaim;
-	uint16 saywhat;
+	bool _mustExclaim;
+	uint16 _sayWhat;
 
 private:
 	AvalancheEngine *_vm;
 
-	// CHECKME: Useless?
-	// ByteField r;
-	// int16 beforex, beforey;
-
-	byte checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
+	byte checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
 	byte geida_ped(byte which);
 	void dawndelay();
 	void hideInCupboard();
@@ -160,7 +149,10 @@ private:
 	void arrow_procs(byte tripnum);
 	void grab_avvy(byte tripnum);
 	void spin(byte whichway, byte &tripnum);
+
+	void takeAStep(byte &tripnum);
 	void geida_procs(byte tripnum);
+
 	void call_andexors();
 };
 

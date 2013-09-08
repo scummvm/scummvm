@@ -121,7 +121,7 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *tr) {
 	_speedX = 3;
 	_speedY = 1;
 	if (spritenum == 1)
-		_tr->newspeed(); // Just for the lights.
+		_tr->updateSpeed(); // Just for the lights.
 
 	_homing = false;
 	_moveX = 0;
@@ -173,10 +173,10 @@ void AnimationType::appear(int16 wx, int16 wy, byte wf) {
  */
 bool AnimationType::checkCollision() {
 	for (int16 i = 0; i < _tr->kSpriteNumbMax; i++) {
-		if (_tr->tr[i]._quick && (_tr->tr[i]._id != _id) &&
-			((_x + _info._xLength) > _tr->tr[i]._x) &&
-			(_x < (_tr->tr[i]._x + _tr->tr[i]._info._xLength)) &&
-			(_tr->tr[i]._y == _y))
+		if (_tr->_sprites[i]._quick && (_tr->_sprites[i]._id != _id) &&
+			((_x + _info._xLength) > _tr->_sprites[i]._x) &&
+			(_x < (_tr->_sprites[i]._x + _tr->_sprites[i]._info._xLength)) &&
+			(_tr->_sprites[i]._y == _y))
 				return true;
 	}
 
@@ -209,22 +209,22 @@ void AnimationType::walk() {
 			return;
 		}
 
-		byte tc = _tr->checkfeet(_x, _x + _info._xLength, _oldY[_tr->_vm->_gyro->_cp], _y, _info._yLength) - 1;
+		byte tc = _tr->checkFeet(_x, _x + _info._xLength, _oldY[_tr->_vm->_gyro->_cp], _y, _info._yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
 		if ((tc != 255) & (!_tr->_vm->_gyro->_doingSpriteRun)) {
 			switch (_tr->_vm->_gyro->_magics[tc]._operation) {
 			case Gyro::kMagicExclaim: {
 				bounce();
-				_tr->mustexclaim = true;
-				_tr->saywhat = _tr->_vm->_gyro->_magics[tc]._data;
+				_tr->_mustExclaim = true;
+				_tr->_sayWhat = _tr->_vm->_gyro->_magics[tc]._data;
 				}
 				break;
 			case Gyro::kMagicBounce:
 				bounce();
 				break;
 			case Gyro::kMagicTransport:
-				_tr->fliproom(_tr->_vm->_gyro->_magics[tc]._data >> 8, _tr->_vm->_gyro->_magics[tc]._data & 0xff);
+				_tr->flipRoom(_tr->_vm->_gyro->_magics[tc]._data >> 8, _tr->_vm->_gyro->_magics[tc]._data & 0xff);
 				break;
 			case Gyro::kMagicUnfinished: {
 				bounce();
@@ -232,7 +232,7 @@ void AnimationType::walk() {
 				}
 				break;
 			case Gyro::kMagicSpecial:
-				_tr->call_special(_tr->_vm->_gyro->_magics[tc]._data);
+				_tr->callSpecial(_tr->_vm->_gyro->_magics[tc]._data);
 				break;
 			case Gyro::kMagicOpenDoor:
 				_tr->openDoor(_tr->_vm->_gyro->_magics[tc]._data >> 8, _tr->_vm->_gyro->_magics[tc]._data & 0xff, tc);
@@ -366,25 +366,22 @@ void AnimationType::done() {
 Animation::Animation(AvalancheEngine *vm) {
 	_vm = vm;
 
-	mustexclaim = false;
+	_mustExclaim = false;
 }
 
 Animation::~Animation() {
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (tr[i]._quick)
-			tr[i].done();
+		if (_sprites[i]._quick)
+			_sprites[i].done();
 	}
 }
 
-void Animation::loadtrip() {
+void Animation::loadAnims() {
 	for (int16 i = 0; i < kSpriteNumbMax; i++)
-		tr[i].original();
-
-	for (uint16 i = 0; i < sizeof(aa); i++)
-		aa[i] = 0;
+		_sprites[i].original();
 }
 
-byte Animation::checkfeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
+byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	// if not alive then begin checkfeet:=0; exit; end;
 	byte a = 0;
 
@@ -432,11 +429,7 @@ byte Animation::geida_ped(byte which) {
 	}
 }
 
-void Animation::catamove(byte ped) {
-/* When you enter a new position in the catacombs, this procedure should
-	be called. It changes the Also codes so that they may match the picture
-	on the screen. (Coming soon: It draws up the screen, too.) */
-
+void Animation::catacombMove(byte ped) {
 	int32 here;
 	uint16 xy_uint16;
 	byte fv;
@@ -451,22 +444,22 @@ void Animation::catamove(byte ped) {
 
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
-		fliproom(r__lustiesroom, 4);
+		flipRoom(r__lustiesroom, 4);
 		_vm->_scrolls->displayText("Phew! Nice to be out of there!");
 		return;
 	case 1033: // Oubliette
-		fliproom(r__oubliette, 1);
+		flipRoom(r__oubliette, 1);
 		_vm->_scrolls->displayText(Common::String("Oh, NO!") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
 		return;
 	case 4:
-		fliproom(r__geidas, 1);
+		flipRoom(r__geidas, 1);
 		return;
 	case 2307:
-		fliproom(r__lusties, 5);
+		flipRoom(r__lusties, 5);
 		_vm->_scrolls->displayText("Oh no... here we go again...");
 		_vm->_gyro->_dna._userMovesAvvy = false;
-		tr[0]._moveY = 1;
-		tr[0]._moveX = 0;
+		_sprites[0]._moveY = 1;
+		_sprites[0]._moveX = 0;
 		return;
 	}
 
@@ -735,11 +728,11 @@ void Animation::catamove(byte ped) {
 	}
 
 	if ((_vm->_gyro->_dna._geidaFollows) && (ped > 0)) {
-		if (!tr[1]._quick)  // If we don't already have her...
-			tr[1].init(5, true, this); // ...Load Geida.
-		apped(2, geida_ped(ped));
-		tr[1]._callEachStepFl = true;
-		tr[1]._eachStepProc = kProcGeida;
+		if (!_sprites[1]._quick)  // If we don't already have her...
+			_sprites[1].init(5, true, this); // ...Load Geida.
+		appearPed(2, geida_ped(ped));
+		_sprites[1]._callEachStepFl = true;
+		_sprites[1]._eachStepProc = kProcGeida;
 	}
 }
 
@@ -750,7 +743,7 @@ void Animation::dawndelay() {
 	_vm->_timer->addTimer(2, _vm->_timer->kProcDawnDelay, _vm->_timer->kReasonDawndelay);
 }
 
-void Animation::call_special(uint16 which) {
+void Animation::callSpecial(uint16 which) {
 	switch (which) {
 	case 1: // _vm->_gyro->special 1: Room 22: top of stairs.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1);
@@ -771,25 +764,25 @@ void Animation::call_special(uint16 which) {
 		_vm->_gyro->_dna._userMovesAvvy = true;
 		break;
 	case 3: // _vm->_gyro->special 3: Room 71: triggers dart.
-		tr[0].bounce(); // Must include that.
+		_sprites[0].bounce(); // Must include that.
 
 		if (!_vm->_gyro->_dna._arrowTriggered) {
 			_vm->_gyro->_dna._arrowTriggered = true;
-			apped(2, 4); // The dart starts at ped 4, and...
-			tr[1].walkTo(5); // flies to ped 5.
-			tr[1]._facingDir = kDirUp; // Only face.
+			appearPed(2, 4); // The dart starts at ped 4, and...
+			_sprites[1].walkTo(5); // flies to ped 5.
+			_sprites[1]._facingDir = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
 			// graphic of the arrow buried in the plaster. */
 
 			// OK!
-			tr[1]._callEachStepFl = true;
-			tr[1]._eachStepProc = kProcArrow;
+			_sprites[1]._callEachStepFl = true;
+			_sprites[1]._eachStepProc = kProcArrow;
 		}
 		break;
 	case 4: // This is the ghost room link.
 		_vm->_lucerna->dusk();
-		tr[0].turn(kDirRight); // you'll see this after we get back from bootstrap
+		_sprites[0].turn(kDirRight); // you'll see this after we get back from bootstrap
 		_vm->_timer->addTimer(1, _vm->_timer->kProcGhostRoomPhew, _vm->_timer->kReasonGhostRoomPhew);
 		_vm->_enid->backToBootstrap(3);
 		break;
@@ -798,28 +791,28 @@ void Animation::call_special(uint16 which) {
 			// _vm->_gyro->special 5: Room 42: touched tree, and get tied up.
 			_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Boundary effect is now working again.
 			_vm->_visa->displayScrollChain('q', 35);
-			tr[0].done();
+			_sprites[0].done();
 			//tr[1].vanishifstill:=true;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_visa->displayScrollChain('q', 36);
 			_vm->_gyro->_dna._tiedUp = true;
 			_vm->_gyro->_dna._friarWillTieYouUp = false;
-			tr[1].walkTo(3);
-			tr[1]._vanishIfStill = true;
-			tr[1]._doCheck = true; // One of them must have Check_Me switched on.
+			_sprites[1].walkTo(3);
+			_sprites[1]._vanishIfStill = true;
+			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
 			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = 177; // Not here, then.
 			_vm->_timer->addTimer(364, _vm->_timer->kProcHangAround, _vm->_timer->kReasonHangingAround);
 		}
 		break;
 	case 6: // _vm->_gyro->special 6: fall down oubliette.
 		_vm->_gyro->_dna._userMovesAvvy = false;
-		tr[0]._moveX = 3;
-		tr[0]._moveY = 0;
-		tr[0]._facingDir = kDirRight;
+		_sprites[0]._moveX = 3;
+		_sprites[0]._moveY = 0;
+		_sprites[0]._facingDir = kDirRight;
 		_vm->_timer->addTimer(1, _vm->_timer->kProcFallDownOubliette, _vm->_timer->kReasonFallingDownOubliette);
 		break;
 	case 7: // _vm->_gyro->special 7: stop falling down oubliette.
-		tr[0]._visible = false;
+		_sprites[0]._visible = false;
 		_vm->_gyro->_magics[9]._operation = _vm->_gyro->kMagicNothing;
 		stopWalking();
 		_vm->_timer->loseTimer(_vm->_timer->kReasonFallingDownOubliette);
@@ -831,18 +824,18 @@ void Animation::call_special(uint16 which) {
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
 		if ((_vm->_gyro->_dna._geidaFollows) && (!_vm->_gyro->_dna._lustieIsAsleep)) {
 			_vm->_visa->displayScrollChain('q', 63);
-			tr[1].turn(kDirDown);
-			tr[1].stopWalk();
-			tr[1]._callEachStepFl = false; // Geida
+			_sprites[1].turn(kDirDown);
+			_sprites[1].stopWalk();
+			_sprites[1]._callEachStepFl = false; // Geida
 			_vm->_lucerna->gameOver();
 		}
 		break;
 	case 9: // _vm->_gyro->special 9: lose Geida to Robin Hood...
 		if (!_vm->_gyro->_dna._geidaFollows)
 			return;   // DOESN'T COUNT: no Geida.
-		tr[1]._callEachStepFl = false; // She no longer follows Avvy around.
-		tr[1].walkTo(4); // She walks to somewhere...
-		tr[0].done();     // Lose Avvy.
+		_sprites[1]._callEachStepFl = false; // She no longer follows Avvy around.
+		_sprites[1].walkTo(4); // She walks to somewhere...
+		_sprites[0].done();     // Lose Avvy.
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		_vm->_timer->addTimer(40, _vm->_timer->kProcRobinHoodAndGeida, _vm->_timer->kReasonRobinHoodAndGeida);
 		break;
@@ -858,50 +851,46 @@ void Animation::call_special(uint16 which) {
 		}
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_dna._catacombY--;
-		catamove(4);
+		catacombMove(4);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
 		switch ((_vm->_gyro->kCatacombMap[_vm->_gyro->_dna._catacombY - 1][_vm->_gyro->_dna._catacombX - 1] & 0xf00) >> 8) {
 		case 0x1:
-			apped(1, 12);
+			appearPed(1, 12);
 			break;
 		case 0x3:
-			apped(1, 11);
+			appearPed(1, 11);
 			break;
 		default:
-			apped(1, 4);
+			appearPed(1, 4);
 		}
-		getback();
 		dawndelay();
 		break;
 	case 11: // _vm->_gyro->special 11: transfer east in catacombs.
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_dna._catacombX++;
-		catamove(1);
+		catacombMove(1);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
-		apped(1, 1);
-		getback();
+		appearPed(1, 1);
 		dawndelay();
 		break;
 	case 12: // _vm->_gyro->special 12: transfer south in catacombs.
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_dna._catacombY += 1;
-		catamove(2);
+		catacombMove(2);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
-		apped(1, 2);
-		getback();
+		appearPed(1, 2);
 		dawndelay();
 		break;
 	case 13: // _vm->_gyro->special 13: transfer west in catacombs.
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_dna._catacombX--;
-		catamove(3);
+		catacombMove(3);
 		if (_vm->_gyro->_dna._room != r__catacombs)
 			return;
-		apped(1, 3);
-		getback();
+		appearPed(1, 3);
 		dawndelay();
 		break;
 	}
@@ -949,8 +938,8 @@ void Animation::openDoor(byte whither, byte ped, byte magicnum) {
 				_vm->_sequence->startToClose();
 				return;
 			} else {
-				apped(1, 6);
-				tr[0]._facingDir = kDirRight; // added by TT 12/3/1995
+				appearPed(1, 6);
+				_sprites[0]._facingDir = kDirRight; // added by TT 12/3/1995
 				_vm->_sequence->firstShow(8);
 				_vm->_sequence->thenShow(9);
 			}
@@ -968,19 +957,19 @@ void Animation::openDoor(byte whither, byte ped, byte magicnum) {
 	_vm->_sequence->startToOpen();
 }
 
-void Animation::newspeed() {
+void Animation::updateSpeed() {
 	// Given that you've just changed the speed in triptype._speedX, this adjusts _moveX.
 
-	tr[0]._moveX = (tr[0]._moveX / 3) * tr[0]._speedX;
+	_sprites[0]._moveX = (_sprites[0]._moveX / 3) * _sprites[0]._speedX;
 
 	//setactivepage(3);
 
-	if (tr[0]._speedX == _vm->_gyro->kRun)
+	if (_sprites[0]._speedX == _vm->_gyro->kRun)
 		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorYellow);
 	else
 		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorYellow);
 
-	if (tr[0]._speedX == _vm->_gyro->kRun)
+	if (_sprites[0]._speedX == _vm->_gyro->kRun)
 		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorLightblue);
 	else
 		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorLightblue);
@@ -988,129 +977,97 @@ void Animation::newspeed() {
 	//setactivepage(1 - cp);
 }
 
-void Animation::rwsp(byte t, byte dir) {
+void Animation::changeDirection(byte t, byte dir) {
 	switch (dir) {
 	case kDirUp:
-		tr[t].speed(0, -tr[t]._speedY);
+		_sprites[t].speed(0, -_sprites[t]._speedY);
 		break;
 	case kDirDown:
-		tr[t].speed(0, tr[t]._speedY);
+		_sprites[t].speed(0, _sprites[t]._speedY);
 		break;
 	case kDirLeft:
-		tr[t].speed(-tr[t]._speedX,  0);
+		_sprites[t].speed(-_sprites[t]._speedX,  0);
 		break;
 	case kDirRight:
-		tr[t].speed(tr[t]._speedX,  0);
+		_sprites[t].speed(_sprites[t]._speedX,  0);
 		break;
 	case kDirUpLeft:
-		tr[t].speed(-tr[t]._speedX, -tr[t]._speedY);
+		_sprites[t].speed(-_sprites[t]._speedX, -_sprites[t]._speedY);
 		break;
 	case kDirUpRight:
-		tr[t].speed(tr[t]._speedX, -tr[t]._speedY);
+		_sprites[t].speed(_sprites[t]._speedX, -_sprites[t]._speedY);
 		break;
 	case kDirDownLeft:
-		tr[t].speed(-tr[t]._speedX, tr[t]._speedY);
+		_sprites[t].speed(-_sprites[t]._speedX, _sprites[t]._speedY);
 		break;
 	case kDirDownRight:
-		tr[t].speed(tr[t]._speedX, tr[t]._speedY);
+		_sprites[t].speed(_sprites[t]._speedX, _sprites[t]._speedY);
 		break;
 	}
 }
 
-void Animation::apped(byte trn, byte np) {
+void Animation::appearPed(byte trn, byte np) {
 	trn--;
 	np--;
-	tr[trn].appear(_vm->_gyro->_peds[np]._x - tr[trn]._info._xLength / 2, _vm->_gyro->_peds[np]._y - tr[trn]._info._yLength, _vm->_gyro->_peds[np]._direction);
-	rwsp(trn, _vm->_gyro->_peds[np]._direction);
-}
-
-#if 0
-   function overlap(x1,y1,x2,y2,x3,y3,x4,y4:uint16):bool;
-	begin // By De Morgan's law:
-	overlap:=(x2>=x3) and (x4>=x1) and (y2>=y3) and (y4>=y1);
-	end;
-#endif
-	//x1,x2 - as _vm->_gyro->bytefield, but *8. y1,y2 - as _vm->_gyro->bytefield.
-	//x3,y3 = mx,my. x4,y4 = mx+16,my+16.
-
-void Animation::getback() {
-	// Super_Off;
-#if 0
-	while (getset[1 - _vm->_gyro->cp].numleft > 0) {
-		getset[1 - _vm->_gyro->cp].recall(r);
-
-
-		bool endangered = false;
-		if overlaps_with_mouse and not endangered then
-			begin
-				endangered:=true;
-				blitfix;
-				Super_Off;
-			end;
-
-		//_vm->_lucerna->mblit(r.x1, r.y1, r.x2, r.y2, 3, 1 - _vm->_gyro->cp);
-	}
-
-	if endangered then
-		Super_On;
-#endif
+	_sprites[trn].appear(_vm->_gyro->_peds[np]._x - _sprites[trn]._info._xLength / 2, _vm->_gyro->_peds[np]._y - _sprites[trn]._info._yLength, _vm->_gyro->_peds[np]._direction);
+	changeDirection(trn, _vm->_gyro->_peds[np]._direction);
 }
 
 // Eachstep procedures:
 void Animation::follow_avvy_y(byte tripnum) {
-	if (tr[0]._facingDir == kDirLeft)
+	if (_sprites[0]._facingDir == kDirLeft)
 		return;
-	if (tr[tripnum]._homing)
-		tr[tripnum]._homingY = tr[1]._y;
+	if (_sprites[tripnum]._homing)
+		_sprites[tripnum]._homingY = _sprites[1]._y;
 	else {
-		if (tr[tripnum]._y < tr[1]._y)
-			tr[tripnum]._y += 1;
-		else if (tr[tripnum]._y > tr[1]._y)
-			tr[tripnum]._y -= 1;
+		if (_sprites[tripnum]._y < _sprites[1]._y)
+			_sprites[tripnum]._y += 1;
+		else if (_sprites[tripnum]._y > _sprites[1]._y)
+			_sprites[tripnum]._y -= 1;
 		else
 			return;
-		if (tr[tripnum]._moveX == 0)  {
-			tr[tripnum]._stepNum += 1;
-			if (tr[tripnum]._stepNum == tr[tripnum]._stat._seq)
-				tr[tripnum]._stepNum = 0;
-			tr[tripnum]._count = 0;
+		if (_sprites[tripnum]._moveX == 0)  {
+			_sprites[tripnum]._stepNum += 1;
+			if (_sprites[tripnum]._stepNum == _sprites[tripnum]._stat._seq)
+				_sprites[tripnum]._stepNum = 0;
+			_sprites[tripnum]._count = 0;
 		}
 	}
 }
 
 void Animation::back_and_forth(byte tripnum) {
-	if (!tr[tripnum]._homing) {
-		if (tr[tripnum]._facingDir == kDirRight)
-			tr[tripnum].walkTo(4);
+	if (!_sprites[tripnum]._homing) {
+		if (_sprites[tripnum]._facingDir == kDirRight)
+			_sprites[tripnum].walkTo(4);
 		else
-			tr[tripnum].walkTo(5);
+			_sprites[tripnum].walkTo(5);
 	}
 }
 
 void Animation::face_avvy(byte tripnum) {
-	if (!tr[tripnum]._homing) {
-		if (tr[0]._x >= tr[tripnum]._x)
-			tr[tripnum]._facingDir = kDirRight;
+	if (!_sprites[tripnum]._homing) {
+		if (_sprites[0]._x >= _sprites[tripnum]._x)
+			_sprites[tripnum]._facingDir = kDirRight;
 		else
-			tr[tripnum]._facingDir = kDirLeft;
+			_sprites[tripnum]._facingDir = kDirLeft;
 	}
 }
 
 void Animation::arrow_procs(byte tripnum) {
-	if (tr[tripnum]._homing) {
+	if (_sprites[tripnum]._homing) {
 		// Arrow is still in flight.
 		// We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if (((tr[tripnum]._y + tr[tripnum]._info._yLength) >= tr[0]._y) // A
-				&& (tr[tripnum]._x <= (tr[0]._x + tr[0]._info._xLength)) // B
-				&& ((tr[tripnum]._x + tr[tripnum]._info._xLength) >= tr[0]._x)) { // C
+		if (((_sprites[tripnum]._y + _sprites[tripnum]._info._yLength) >= _sprites[0]._y) // A
+				&& (_sprites[tripnum]._x <= (_sprites[0]._x + _sprites[0]._info._xLength)) // B
+				&& ((_sprites[tripnum]._x + _sprites[tripnum]._info._xLength) >= _sprites[0]._x)) { // C
 			// OK, it's hit him... what now?
 
-			tr[1]._callEachStepFl = false; // prevent recursion.
+			_sprites[1]._callEachStepFl = false; // prevent recursion.
 			_vm->_visa->displayScrollChain('Q', 47); // Complaint!
-			tr[tripnum].done(); // Deallocate the arrow.
+			_sprites[tripnum].done(); // Deallocate the arrow.
 #if 0
 			tr[1].done; { Deallocate normal pic of Avvy. }
 
@@ -1128,7 +1085,7 @@ void Animation::arrow_procs(byte tripnum) {
 			_vm->_timer->addTimer(55, _vm->_timer->kProcNaughtyDuke, _vm->_timer->kReasonNaughtyDuke);
 		}
 	} else { // Arrow has hit the wall!
-		tr[tripnum].done(); // Deallocate the arrow.
+		_sprites[tripnum].done(); // Deallocate the arrow.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Show pic of arrow stuck into the door.
 		_vm->_gyro->_dna._arrowInTheDoor = true; // So that we can pick it up.
 	}
@@ -1152,41 +1109,41 @@ end;
 #endif
 
 void Animation::grab_avvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
-	int16 tox = tr[0]._x + 17;
-	int16 toy = tr[0]._y - 1;
-	if ((tr[tripnum]._x == tox) && (tr[tripnum]._y == toy)) {
-		tr[tripnum]._callEachStepFl = false;
-		tr[tripnum]._facingDir = kDirLeft;
-		tr[tripnum].stopWalk();
+	int16 tox = _sprites[0]._x + 17;
+	int16 toy = _sprites[0]._y - 1;
+	if ((_sprites[tripnum]._x == tox) && (_sprites[tripnum]._y == toy)) {
+		_sprites[tripnum]._callEachStepFl = false;
+		_sprites[tripnum]._facingDir = kDirLeft;
+		_sprites[tripnum].stopWalk();
 		// ... whatever ...
 	} else {
 		// Still some way to go.
-		if (tr[tripnum]._x < tox) {
-			tr[tripnum]._x += 5;
-			if (tr[tripnum]._x > tox)
-				tr[tripnum]._x = tox;
+		if (_sprites[tripnum]._x < tox) {
+			_sprites[tripnum]._x += 5;
+			if (_sprites[tripnum]._x > tox)
+				_sprites[tripnum]._x = tox;
 		}
-		if (tr[tripnum]._y < toy)
-			tr[tripnum]._y++;
-		tr[tripnum]._stepNum++;
-		if (tr[tripnum]._stepNum == tr[tripnum]._stat._seq)
-			tr[tripnum]._stepNum = 0;
+		if (_sprites[tripnum]._y < toy)
+			_sprites[tripnum]._y++;
+		_sprites[tripnum]._stepNum++;
+		if (_sprites[tripnum]._stepNum == _sprites[tripnum]._stat._seq)
+			_sprites[tripnum]._stepNum = 0;
 	}
 }
 
-void Animation::take_a_step(byte &tripnum) {
-	if (tr[tripnum]._moveX == 0) {
-		tr[tripnum]._stepNum++;
-		if (tr[tripnum]._stepNum == tr[tripnum]._stat._seq)
-			tr[tripnum]._stepNum = 0;
-		tr[tripnum]._count = 0;
+void Animation::takeAStep(byte &tripnum) {
+	if (_sprites[tripnum]._moveX == 0) {
+		_sprites[tripnum]._stepNum++;
+		if (_sprites[tripnum]._stepNum == _sprites[tripnum]._stat._seq)
+			_sprites[tripnum]._stepNum = 0;
+		_sprites[tripnum]._count = 0;
 	}
 }
 
 void Animation::spin(byte whichway, byte &tripnum) {
-	if (tr[tripnum]._facingDir != whichway) {
-		tr[tripnum]._facingDir = whichway;
-		if (tr[tripnum]._id == 2)
+	if (_sprites[tripnum]._facingDir != whichway) {
+		_sprites[tripnum]._facingDir = whichway;
+		if (_sprites[tripnum]._id == 2)
 			return; // Not for Spludwick
 
 		_vm->_gyro->_dna._geidaSpin += 1;
@@ -1206,35 +1163,35 @@ void Animation::geida_procs(byte tripnum) {
 			_vm->_gyro->_dna._geidaSpin = 0;
 	}
 
-	if (tr[tripnum]._y < (tr[0]._y - 2)) {
+	if (_sprites[tripnum]._y < (_sprites[0]._y - 2)) {
 		// Geida is further from the screen than Avvy.
 		spin(kDirDown, tripnum);
-		tr[tripnum]._moveY = 1;
-		tr[tripnum]._moveX = 0;
-		take_a_step(tripnum);
+		_sprites[tripnum]._moveY = 1;
+		_sprites[tripnum]._moveX = 0;
+		takeAStep(tripnum);
 		return;
-	} else if (tr[tripnum]._y > (tr[0]._y + 2)) {
+	} else if (_sprites[tripnum]._y > (_sprites[0]._y + 2)) {
 		// Avvy is further from the screen than Geida.
 		spin(kDirUp, tripnum);
-		tr[tripnum]._moveY = -1;
-		tr[tripnum]._moveX = 0;
-		take_a_step(tripnum);
+		_sprites[tripnum]._moveY = -1;
+		_sprites[tripnum]._moveX = 0;
+		takeAStep(tripnum);
 		return;
 	}
 
-	tr[tripnum]._moveY = 0;
+	_sprites[tripnum]._moveY = 0;
 	// These 12-s are not in the original, I added them to make the following method more "smooth".
 	// Now the NPC which is following Avvy won't block his way and will walk next to him properly.
-	if (tr[tripnum]._x < tr[0]._x - tr[0]._speedX * 8 - 12) {
-		tr[tripnum]._moveX = tr[0]._speedX;
+	if (_sprites[tripnum]._x < _sprites[0]._x - _sprites[0]._speedX * 8 - 12) {
+		_sprites[tripnum]._moveX = _sprites[0]._speedX;
 		spin(kDirRight, tripnum);
-		take_a_step(tripnum);
-	} else if (tr[tripnum]._x > tr[0]._x + tr[0]._speedX * 8 + 12) {
-		tr[tripnum]._moveX = -tr[0]._speedX;
+		takeAStep(tripnum);
+	} else if (_sprites[tripnum]._x > _sprites[0]._x + _sprites[0]._speedX * 8 + 12) {
+		_sprites[tripnum]._moveX = -_sprites[0]._speedX;
 		spin(kDirLeft, tripnum);
-		take_a_step(tripnum);
+		takeAStep(tripnum);
 	} else
-		tr[tripnum]._moveX = 0;
+		_sprites[tripnum]._moveX = 0;
 }
 
 // That's all...
@@ -1248,7 +1205,7 @@ void Animation::call_andexors() {
 		order[i] = -1;
 
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (tr[i]._quick && tr[i]._visible)
+		if (_sprites[i]._quick && _sprites[i]._visible)
 			order[i] = i;
 	}
 
@@ -1256,7 +1213,7 @@ void Animation::call_andexors() {
 		ok = true;
 		for (byte i = 0; i < 4; i++) {
 			if (((order[i] != -1) && (order[i + 1] != -1))
-					&& (tr[order[i]]._y > tr[order[i + 1]]._y)) {
+					&& (_sprites[order[i]]._y > _sprites[order[i + 1]]._y)) {
 				// Swap them!
 				temp = order[i];
 				order[i] = order[i + 1];
@@ -1271,7 +1228,7 @@ void Animation::call_andexors() {
 
 	for (byte i = 0; i < 5; i++) {
 		if (order[i] > -1)
-			tr[order[i]].andexor();
+			_sprites[order[i]].andexor();
 	}
 }
 
@@ -1283,15 +1240,15 @@ void Animation::animLink() {
 	if (_vm->_gyro->_dropdownActive | _vm->_gyro->_onToolbar | _vm->_gyro->_seeScroll)
 		return;
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (tr[i]._quick && tr[i]._visible)
-			tr[i].walk();
+		if (_sprites[i]._quick && _sprites[i]._visible)
+			_sprites[i].walk();
 	}
 
 	call_andexors();
 
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (tr[i]._quick && tr[i]._callEachStepFl) {
-			switch (tr[i]._eachStepProc) {
+		if (_sprites[i]._quick && _sprites[i]._callEachStepFl) {
+			switch (_sprites[i]._eachStepProc) {
 			case kProcFollowAvvyY :
 				follow_avvy_y(i);
 				break;
@@ -1315,35 +1272,17 @@ void Animation::animLink() {
 		}
 	}
 
-	if (mustexclaim) {
-		mustexclaim = false;
-		_vm->_visa->displayScrollChain('x', saywhat);
+	if (_mustExclaim) {
+		_mustExclaim = false;
+		_vm->_visa->displayScrollChain('x', _sayWhat);
 	}
-}
-
-void Animation::get_back_loretta() {
-	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (tr[i]._quick) {
-			getback();
-			return;
-		}
-	}
-	// for fv:=0 to 1 do begin cp:=1-cp; getback; end;
 }
 
 void Animation::stopWalking() {
-	tr[0].stopWalk();
+	_sprites[0].stopWalk();
 	_vm->_gyro->_dna._direction = kDirStopped;
 	if (_vm->_gyro->_alive)
-		tr[0]._stepNum = 1;
-}
-
-void Animation::tripkey(char dir) {
-	warning("Replaced by Trip::handleMoveKey!");
-}
-
-void Animation::readstick() {
-	warning("STUB: Trip::readstick()");
+		_sprites[0]._stepNum = 1;
 }
 
 /**
@@ -1355,9 +1294,9 @@ void Animation::hideInCupboard() {
 		if (_vm->_gyro->_dna._wearing == Acci::kNothing)
 			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "AVVY!" + _vm->_scrolls->kControlRoman + "Get dressed first!");
 		else {
-			tr[0]._visible = true;
+			_sprites[0]._visible = true;
 			_vm->_gyro->_dna._userMovesAvvy = true;
-			apped(1, 3); // Walk out of the cupboard.
+			appearPed(1, 3); // Walk out of the cupboard.
 			_vm->_scrolls->displayText("You leave the cupboard. Nice to be out of there!");
 			_vm->_gyro->_dna._avvysInTheCupboard = false;
 			_vm->_sequence->firstShow(8);
@@ -1366,7 +1305,7 @@ void Animation::hideInCupboard() {
 		}
 	} else {
 		// Not hiding in the cupboard
-		tr[0]._visible = false;
+		_sprites[0]._visible = false;
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		_vm->_scrolls->displayText(Common::String("You walk into the room...") + _vm->_scrolls->kControlParagraph
 			+ "It seems to be an empty, but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.");
@@ -1375,11 +1314,11 @@ void Animation::hideInCupboard() {
 	}
 }
 
-void Animation::fliproom(byte room, byte ped) {
+void Animation::flipRoom(byte room, byte ped) {
 	if (!_vm->_gyro->_alive) {
 		// You can't leave the room if you're dead.
-		tr[0]._moveX = 0;
-		tr[0]._moveY = 0; // Stop him from moving.
+		_sprites[0]._moveX = 0;
+		_sprites[0]._moveY = 0; // Stop him from moving.
 		return;
 	}
 
@@ -1390,7 +1329,7 @@ void Animation::fliproom(byte room, byte ped) {
 
 	if ((_vm->_gyro->_dna._jumpStatus > 0) && (_vm->_gyro->_dna._room == r__insidecardiffcastle)) {
 		// You can't *jump* out of Cardiff Castle!
-		tr[0]._moveX = 0;
+		_sprites[0]._moveX = 0;
 		return;
 	}
 
@@ -1398,58 +1337,50 @@ void Animation::fliproom(byte room, byte ped) {
 	_vm->_lucerna->dusk();
 
 	for (int16 i = 1; i < kSpriteNumbMax; i++) {
-		if (tr[i]._quick)
-			tr[i].done();
+		if (_sprites[i]._quick)
+			_sprites[i].done();
 	} // Deallocate sprite
 
 	if (_vm->_gyro->_dna._room == r__lustiesroom)
 		_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = true;
 
 	_vm->_lucerna->enterRoom(room, ped);
-	apped(1, ped);
+	appearPed(1, ped);
 	_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = false;
 	_vm->_gyro->_oldDirection = _vm->_gyro->_dna._direction;
-	_vm->_gyro->_dna._direction = tr[0]._facingDir;
+	_vm->_gyro->_dna._direction = _sprites[0]._facingDir;
 	_vm->_lucerna->drawDirection();
 
-	for (byte i = 0; i <= 1; i++) {
-		_vm->_gyro->_cp = 1 - _vm->_gyro->_cp;
-		getback();
-	}
 	_vm->_lucerna->dawn();
 
 	// Tidy up after mouse. I know it's a kludge...
 	//  tidy_after_mouse;
 }
 
-bool Animation::infield(byte which) {
+bool Animation::inField(byte which) {
 	which--; // Pascal -> C: different array indexes.
 
-	int16 yy = tr[0]._y + tr[0]._info._yLength;
+	int16 yy = _sprites[0]._y + _sprites[0]._info._yLength;
 
-	return (tr[0]._x >= _vm->_gyro->_fields[which]._x1) && (tr[0]._x <= _vm->_gyro->_fields[which]._x2)
+	return (_sprites[0]._x >= _vm->_gyro->_fields[which]._x1) && (_sprites[0]._x <= _vm->_gyro->_fields[which]._x2)
 		&& (yy >= _vm->_gyro->_fields[which]._y1) && (yy <= _vm->_gyro->_fields[which]._y2);
 
 }
 
-bool Animation::neardoor() {
+bool Animation::nearDoor() {
 	if (_vm->_gyro->_fieldNum < 8) {
 		// there ARE no doors here!
 		return false;
 	}
 
-	int16 ux = tr[0]._x;
-	int16 uy = tr[0]._y + tr[0]._info._yLength;
+	int16 ux = _sprites[0]._x;
+	int16 uy = _sprites[0]._y + _sprites[0]._info._yLength;
 	bool nd = false;
 	for (byte fv = 8; fv < _vm->_gyro->_fieldNum; fv++)
 		if ((ux >= _vm->_gyro->_fields[fv]._x1) && (ux <= _vm->_gyro->_fields[fv]._x2)
 			&& (uy >= _vm->_gyro->_fields[fv]._y1) && (uy <= _vm->_gyro->_fields[fv]._y2))
 			nd = true;
 	return nd;
-}
-
-void Animation::new_game_for_trippancy() {   // Called by gyro.newgame
-	tr[0]._visible = false;
 }
 
 void Animation::handleMoveKey(const Common::Event &event) {
@@ -1463,56 +1394,56 @@ void Animation::handleMoveKey(const Common::Event &event) {
 		case Common::KEYCODE_UP:
 			if (_vm->_gyro->_dna._direction != kDirUp) {
 				_vm->_gyro->_dna._direction = kDirUp;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_DOWN:
 			if (_vm->_gyro->_dna._direction != kDirDown) {
 				_vm->_gyro->_dna._direction = kDirDown;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_LEFT:
 			if (_vm->_gyro->_dna._direction != kDirLeft) {
 				_vm->_gyro->_dna._direction = kDirLeft;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_RIGHT:
 			if (_vm->_gyro->_dna._direction != kDirRight) {
 				_vm->_gyro->_dna._direction = kDirRight;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEUP:
 			if (_vm->_gyro->_dna._direction != kDirUpRight) {
 				_vm->_gyro->_dna._direction = kDirUpRight;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEDOWN:
 			if (_vm->_gyro->_dna._direction != kDirDownRight) {
 				_vm->_gyro->_dna._direction = kDirDownRight;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_END:
 			if (_vm->_gyro->_dna._direction != kDirDownLeft) {
 				_vm->_gyro->_dna._direction = kDirDownLeft;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_HOME:
 			if (_vm->_gyro->_dna._direction != kDirUpLeft) {
 				_vm->_gyro->_dna._direction = kDirUpLeft;
-				rwsp(0, _vm->_gyro->_dna._direction);
+				changeDirection(0, _vm->_gyro->_dna._direction);
 			} else
 				stopWalking();
 			break;

@@ -400,10 +400,10 @@ void Lucerna::enterNewTown() {
 void Lucerna::putGeidaAt(byte whichPed, byte &ped) {
 	if (ped == 0)
 		return;
-	_vm->_animation->tr[1].init(5, false, _vm->_animation); // load Geida
-	_vm->_animation->apped(2, whichPed);
-	_vm->_animation->tr[1]._callEachStepFl = true;
-	_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcGeida;
+	_vm->_animation->_sprites[1].init(5, false, _vm->_animation); // load Geida
+	_vm->_animation->appearPed(2, whichPed);
+	_vm->_animation->_sprites[1]._callEachStepFl = true;
+	_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcGeida;
 }
 
 void Lucerna::enterRoom(byte room, byte ped) {
@@ -445,25 +445,25 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			if (! _vm->_gyro->_dna._talkedToCrapulus) {
 
 				_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = r__outsideyours;
-				_vm->_animation->tr[1].init(8, false, _vm->_animation); // load Crapulus
+				_vm->_animation->_sprites[1].init(8, false, _vm->_animation); // load Crapulus
 
 				if (_vm->_gyro->_dna._roomCount[r__outsideyours] == 1) {
-					_vm->_animation->apped(2, 4); // Start on the right-hand side of the screen.
-					_vm->_animation->tr[1].walkTo(5); // Walks up to greet you.
+					_vm->_animation->appearPed(2, 4); // Start on the right-hand side of the screen.
+					_vm->_animation->_sprites[1].walkTo(5); // Walks up to greet you.
 				} else {
-					_vm->_animation->apped(2, 5); // Starts where he was before.
-					_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
+					_vm->_animation->appearPed(2, 5); // Starts where he was before.
+					_vm->_animation->_sprites[1]._facingDir = Animation::kDirLeft;
 				}
 
-				_vm->_animation->tr[1]._callEachStepFl = true;
-				_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // He always faces Avvy.
+				_vm->_animation->_sprites[1]._callEachStepFl = true;
+				_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // He always faces Avvy.
 
 			} else _vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = r__nowhere;
 
 			if (_vm->_gyro->_dna._crapulusWillTell) {
-				_vm->_animation->tr[1].init(8, false, _vm->_animation);
-				_vm->_animation->apped(2, 2);
-				_vm->_animation->tr[1].walkTo(4);
+				_vm->_animation->_sprites[1].init(8, false, _vm->_animation);
+				_vm->_animation->appearPed(2, 2);
+				_vm->_animation->_sprites[1].walkTo(4);
 				_vm->_timer->addTimer(20, _vm->_timer->kProcCrapulusSpludOut, _vm->_timer->kReasonCrapulusSaysSpludwickOut);
 				_vm->_gyro->_dna._crapulusWillTell = false;
 			}
@@ -480,15 +480,15 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case r__spludwicks:
 		if (_vm->_gyro->_dna._spludwickAtHome) {
 			if (ped > 0) {
-				_vm->_animation->tr[1].init(2, false, _vm->_animation); // load Spludwick
-				_vm->_animation->apped(2, 2);
+				_vm->_animation->_sprites[1].init(2, false, _vm->_animation); // load Spludwick
+				_vm->_animation->appearPed(2, 2);
 				_vm->_gyro->_whereIs[1] = r__spludwicks;
 			}
 
 			_vm->_gyro->_dna._dogFoodPos = 0;  // _vm->_gyro->also Spludwick pos.
 
-			_vm->_animation->tr[1]._callEachStepFl = true;
-			_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcGeida;
+			_vm->_animation->_sprites[1]._callEachStepFl = true;
+			_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcGeida;
 		} else
 			_vm->_gyro->_whereIs[1] = r__nowhere;
 		break;
@@ -501,18 +501,18 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] = r__nowhere;
 		} else {
 			if (ped > 0) {
-				_vm->_animation->tr[1].init(4, false, _vm->_animation); // 4 = Cwytalot
-				_vm->_animation->tr[1]._callEachStepFl = true;
-				_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcFollowAvvyY;
+				_vm->_animation->_sprites[1].init(4, false, _vm->_animation); // 4 = Cwytalot
+				_vm->_animation->_sprites[1]._callEachStepFl = true;
+				_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFollowAvvyY;
 				_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] = r__brummieroad;
 
 				if (_vm->_gyro->_dna._roomCount[r__brummieroad] == 1) { // First time here...
-					_vm->_animation->apped(2, 2); // He appears on the right of the screen...
-					_vm->_animation->tr[1].walkTo(4); // ...and he walks up...
+					_vm->_animation->appearPed(2, 2); // He appears on the right of the screen...
+					_vm->_animation->_sprites[1].walkTo(4); // ...and he walks up...
 				} else {
 					// You've been here before.
-					_vm->_animation->apped(2, 4); // He's standing in your way straight away...
-					_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
+					_vm->_animation->appearPed(2, 4); // He's standing in your way straight away...
+					_vm->_animation->_sprites[1]._facingDir = Animation::kDirLeft;
 				}
 			}
 		}
@@ -521,10 +521,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case r__argentroad:
 		if ((_vm->_gyro->_dna._cwytalotGone) && (! _vm->_gyro->_dna._passedCwytalotInHerts) && (ped == 2) &&
 		        (_vm->_gyro->_dna._roomCount[r__argentroad] > 3)) {
-			_vm->_animation->tr[1].init(4, false, _vm->_animation); // 4 = Cwytalot again
-			_vm->_animation->apped(2, 1);
-			_vm->_animation->tr[1].walkTo(2);
-			_vm->_animation->tr[1]._vanishIfStill = true;
+			_vm->_animation->_sprites[1].init(4, false, _vm->_animation); // 4 = Cwytalot again
+			_vm->_animation->appearPed(2, 1);
+			_vm->_animation->_sprites[1].walkTo(2);
+			_vm->_animation->_sprites[1]._vanishIfStill = true;
 			_vm->_gyro->_dna._passedCwytalotInHerts = true;
 			// _vm->_gyro->whereis[#157] = r__Nowhere; // can we fit this in?
 			_vm->_timer->addTimer(20, _vm->_timer->kProcCwytalotInHerts, _vm->_timer->kReasonCwytalotInHerts);
@@ -545,9 +545,9 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (ped > 0) {
 			if (! _vm->_gyro->_dna._beenTiedUp) {
 				// A welcome party... or maybe not...
-				_vm->_animation->tr[1].init(6, false, _vm->_animation);
-				_vm->_animation->apped(2, 2);
-				_vm->_animation->tr[1].walkTo(3);
+				_vm->_animation->_sprites[1].init(6, false, _vm->_animation);
+				_vm->_animation->appearPed(2, 2);
+				_vm->_animation->_sprites[1].walkTo(3);
 				_vm->_timer->addTimer(36, _vm->_timer->kProcGetTiedUp, _vm->_timer->kReasonGettingTiedUp);
 			}
 		}
@@ -569,9 +569,9 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (ped > 0)
 			switch (_vm->_gyro->_dna._cardiffQuestionNum) {
 			case 0 : { // You've answered NONE of his questions.
-				_vm->_animation->tr[1].init(9, false, _vm->_animation);
-				_vm->_animation->apped(2, 2);
-				_vm->_animation->tr[1].walkTo(3);
+				_vm->_animation->_sprites[1].init(9, false, _vm->_animation);
+				_vm->_animation->appearPed(2, 2);
+				_vm->_animation->_sprites[1].walkTo(3);
 				_vm->_timer->addTimer(47, _vm->_timer->kProcCardiffSurvey, _vm->_timer->kReasonCardiffsurvey);
 			}
 			break;
@@ -579,9 +579,9 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing;
 				break; // You've answered ALL his questions. => nothing happens.
 			default: { // You've answered SOME of his questions.
-				_vm->_animation->tr[1].init(9, false, _vm->_animation);
-				_vm->_animation->apped(2, 3);
-				_vm->_animation->tr[1]._facingDir = Animation::kDirRight;
+				_vm->_animation->_sprites[1].init(9, false, _vm->_animation);
+				_vm->_animation->appearPed(2, 3);
+				_vm->_animation->_sprites[1]._facingDir = Animation::kDirRight;
 				_vm->_timer->addTimer(3, _vm->_timer->kProcCardiffReturn, _vm->_timer->kReasonCardiffsurvey);
 			}
 			}
@@ -631,7 +631,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			}
 
 			_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = true;
-			_vm->_animation->catamove(ped);
+			_vm->_animation->catacombMove(ped);
 			_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = false;
 		}
 		break;
@@ -649,7 +649,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case r__lustiesroom:
 		_vm->_gyro->_dna._dogFoodPos = 1; // Actually, du Lustie pos.
-		if (_vm->_animation->tr[0]._id == 0) // Avvy in his normal clothes
+		if (_vm->_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
 			_vm->_timer->addTimer(3, _vm->_timer->kProcCallsGuards, _vm->_timer->kReasonDuLustieTalks);
 		else if (! _vm->_gyro->_dna._enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
@@ -707,22 +707,22 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		break;
 
 	case r__wisewomans:
-		_vm->_animation->tr[1].init(11, false, _vm->_animation);
+		_vm->_animation->_sprites[1].init(11, false, _vm->_animation);
 		if ((_vm->_gyro->_dna._roomCount[r__wisewomans] == 1) && (ped > 0)) {
-			_vm->_animation->apped(2, 2); // Start on the right-hand side of the screen.
-			_vm->_animation->tr[1].walkTo(4); // Walks up to greet you.
+			_vm->_animation->appearPed(2, 2); // Start on the right-hand side of the screen.
+			_vm->_animation->_sprites[1].walkTo(4); // Walks up to greet you.
 		} else {
-			_vm->_animation->apped(2, 4); // Starts where she was before.
-			_vm->_animation->tr[1]._facingDir = Animation::kDirLeft;
+			_vm->_animation->appearPed(2, 4); // Starts where she was before.
+			_vm->_animation->_sprites[1]._facingDir = Animation::kDirLeft;
 		}
 
-		_vm->_animation->tr[1]._callEachStepFl = true;
-		_vm->_animation->tr[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // She always faces Avvy.
+		_vm->_animation->_sprites[1]._callEachStepFl = true;
+		_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // She always faces Avvy.
 		break;
 
 	case r__insidecardiffcastle:
 		if (ped > 0) {
-			_vm->_animation->tr[1].init(10, false, _vm->_animation); // Define the dart.
+			_vm->_animation->_sprites[1].init(10, false, _vm->_animation); // Define the dart.
 			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(1);
@@ -972,22 +972,22 @@ void Lucerna::useCompass(const Common::Point &cursorPos) {
 	switch (color) {
 	case kColorGreen:
 		_vm->_gyro->_dna._direction = Animation::kDirUp;
-		_vm->_animation->rwsp(0, Animation::kDirUp);
+		_vm->_animation->changeDirection(0, Animation::kDirUp);
 		drawDirection();
 		break;
 	case kColorBrown:
 		_vm->_gyro->_dna._direction = Animation::kDirDown;
-		_vm->_animation->rwsp(0, Animation::kDirDown);
+		_vm->_animation->changeDirection(0, Animation::kDirDown);
 		drawDirection();
 		break;
 	case kColorCyan:
 		_vm->_gyro->_dna._direction = Animation::kDirLeft;
-		_vm->_animation->rwsp(0, Animation::kDirLeft);
+		_vm->_animation->changeDirection(0, Animation::kDirLeft);
 		drawDirection();
 		break;
 	case kColorLightmagenta:
 		_vm->_gyro->_dna._direction = Animation::kDirRight;
-		_vm->_animation->rwsp(0, Animation::kDirRight);
+		_vm->_animation->changeDirection(0, Animation::kDirRight);
 		drawDirection();
 		break;
 	case kColorRed:
@@ -1025,16 +1025,16 @@ void Lucerna::guideAvvy(Common::Point cursorPos) {
 	byte what;
 
 	// _vm->_animation->tr[0] is Avalot.)
-	if (cursorPos.x < _vm->_animation->tr[0]._x)
+	if (cursorPos.x < _vm->_animation->_sprites[0]._x)
 		what = 1;
-	else if (cursorPos.x > (_vm->_animation->tr[0]._x + _vm->_animation->tr[0]._info._xLength))
+	else if (cursorPos.x > (_vm->_animation->_sprites[0]._x + _vm->_animation->_sprites[0]._info._xLength))
 		what = 2;
 	else
 		what = 0; // On top
 
-	if (cursorPos.y < _vm->_animation->tr[0]._y)
+	if (cursorPos.y < _vm->_animation->_sprites[0]._y)
 		what += 3;
-	else if (cursorPos.y > (_vm->_animation->tr[0]._y + _vm->_animation->tr[0]._info._yLength))
+	else if (cursorPos.y > (_vm->_animation->_sprites[0]._y + _vm->_animation->_sprites[0]._info._yLength))
 		what += 6;
 
 	switch (what) {
@@ -1042,28 +1042,28 @@ void Lucerna::guideAvvy(Common::Point cursorPos) {
 		_vm->_animation->stopWalking();
 		break; // Clicked on Avvy: no movement.
 	case 1:
-		_vm->_animation->rwsp(0, Animation::kDirLeft);
+		_vm->_animation->changeDirection(0, Animation::kDirLeft);
 		break;
 	case 2:
-		_vm->_animation->rwsp(0, Animation::kDirRight);
+		_vm->_animation->changeDirection(0, Animation::kDirRight);
 		break;
 	case 3:
-		_vm->_animation->rwsp(0, Animation::kDirUp);
+		_vm->_animation->changeDirection(0, Animation::kDirUp);
 		break;
 	case 4:
-		_vm->_animation->rwsp(0, Animation::kDirUpLeft);
+		_vm->_animation->changeDirection(0, Animation::kDirUpLeft);
 		break;
 	case 5:
-		_vm->_animation->rwsp(0, Animation::kDirUpRight);
+		_vm->_animation->changeDirection(0, Animation::kDirUpRight);
 		break;
 	case 6:
-		_vm->_animation->rwsp(0, Animation::kDirDown);
+		_vm->_animation->changeDirection(0, Animation::kDirDown);
 		break;
 	case 7:
-		_vm->_animation->rwsp(0, Animation::kDirDownLeft);
+		_vm->_animation->changeDirection(0, Animation::kDirDownLeft);
 		break;
 	case 8:
-		_vm->_animation->rwsp(0, Animation::kDirDownRight);
+		_vm->_animation->changeDirection(0, Animation::kDirDownRight);
 		break;
 	}    // No other values are possible.
 
@@ -1128,11 +1128,11 @@ void Lucerna::checkClick() {
 
 				callVerb(_vm->_acci->kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
-				_vm->_animation->tr[0]._speedX = _vm->_gyro->kWalk;
-				_vm->_animation->newspeed();
+				_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kWalk;
+				_vm->_animation->updateSpeed();
 			} else if ((358 <= cursorPos.x) && (cursorPos.x <= 395)) { // Change speed.
-				_vm->_animation->tr[0]._speedX = _vm->_gyro->kRun;
-				_vm->_animation->newspeed();
+				_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kRun;
+				_vm->_animation->updateSpeed();
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxToggle();
 			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
@@ -1182,13 +1182,13 @@ void Lucerna::drawDirection() { // It's data is loaded in load_digits().
 void Lucerna::gameOver() {
 	_vm->_gyro->_dna._userMovesAvvy = false;
 
-	int16 sx = _vm->_animation->tr[0]._x;
-	int16 sy = _vm->_animation->tr[0]._y;
+	int16 sx = _vm->_animation->_sprites[0]._x;
+	int16 sy = _vm->_animation->_sprites[0]._y;
 
-	_vm->_animation->tr[0].done();
-	_vm->_animation->tr[0].init(12, true, _vm->_animation); // 12 = Avalot falls
-	_vm->_animation->tr[0]._stepNum = 0;
-	_vm->_animation->tr[0].appear(sx, sy, 0);
+	_vm->_animation->_sprites[0].done();
+	_vm->_animation->_sprites[0].init(12, true, _vm->_animation); // 12 = Avalot falls
+	_vm->_animation->_sprites[0]._stepNum = 0;
+	_vm->_animation->_sprites[0].appear(sx, sy, 0);
 
 	_vm->_timer->addTimer(3, _vm->_timer->kProcAvalotFalls, _vm->_timer->kReasonFallingOver);
 	_vm->_gyro->_alive = false;
@@ -1198,11 +1198,6 @@ void Lucerna::minorRedraw() {
 	dusk();
 
 	enterRoom(_vm->_gyro->_dna._room, 0); // Ped unknown or non-existant.
-
-	for (byte i = 0; i <= 1; i++) {
-		_vm->_gyro->_cp = 1 - _vm->_gyro->_cp;
-		_vm->_animation->getback();
-	}
 
 	for (byte i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // impossible digits
@@ -1220,23 +1215,20 @@ uint16 Lucerna::bearing(byte whichPed) {
 
 	const double rad2deg = 180 / 3.14; // Pi
 
-	if (_vm->_animation->tr[0]._x == _vm->_gyro->_peds[pedId]._x)
+	if (_vm->_animation->_sprites[0]._x == _vm->_gyro->_peds[pedId]._x)
 		return 0;
-	else if (_vm->_animation->tr[0]._x < _vm->_gyro->_peds[pedId]._x) {
-		return (uint16)((atan(double((_vm->_animation->tr[0]._y - _vm->_gyro->_peds[pedId]._y))
-			/ (_vm->_animation->tr[0]._x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 90);
+	else if (_vm->_animation->_sprites[0]._x < _vm->_gyro->_peds[pedId]._x) {
+		return (uint16)((atan(double((_vm->_animation->_sprites[0]._y - _vm->_gyro->_peds[pedId]._y))
+			/ (_vm->_animation->_sprites[0]._x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 90);
 	} else {
-		return (uint16)((atan(double((_vm->_animation->tr[0]._y - _vm->_gyro->_peds[pedId]._y))
-			/ (_vm->_animation->tr[0]._x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 270);
+		return (uint16)((atan(double((_vm->_animation->_sprites[0]._y - _vm->_gyro->_peds[pedId]._y))
+			/ (_vm->_animation->_sprites[0]._x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 270);
 	}
 }
 
 void Lucerna::spriteRun() {
 	_vm->_gyro->_doingSpriteRun = true;
-
-	_vm->_animation->get_back_loretta();
 	_vm->_animation->animLink();
-
 	_vm->_gyro->_doingSpriteRun = false;
 }
 
