@@ -37,6 +37,7 @@
 #include "buried/sound.h"
 #include "buried/title_sequence.h"
 #include "buried/demo/demo_menu.h"
+#include "buried/demo/features.h"
 #include "buried/demo/movie_scene.h"
 
 namespace Buried {
@@ -162,6 +163,20 @@ bool FrameWindow::showClosingScreen() {
 	_vm->removeMouseMessages(_mainChildWindow);
 	_vm->removeKeyboardMessages(_mainChildWindow);
 
+	return true;
+}
+
+bool FrameWindow::showFeaturesScreen() {
+	_vm->removeMouseMessages(this);
+	_vm->removeMouseMessages(_mainChildWindow);
+
+	delete _mainChildWindow;
+	_mainChildWindow = new FeaturesDisplayWindow(_vm, this);
+
+	_mainChildWindow->showWindow(kWindowShow);
+
+	_vm->removeMouseMessages(this);
+	_vm->removeMouseMessages(_mainChildWindow);
 	return true;
 }
 
