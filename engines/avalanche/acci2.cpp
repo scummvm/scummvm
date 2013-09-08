@@ -300,8 +300,6 @@ void Acci::stripPunctuation(Common::String &word) {
 	}
 }
 
-
-
 void Acci::displayWhat(byte target, bool animate, bool &ambiguous) {
 	if (target == kPardon) {
 		ambiguous = true;
@@ -346,8 +344,6 @@ bool Acci::doPronouns() {
 
 	return ambiguous;
 }
-
-
 
 void Acci::properNouns() {
 	_vm->_parser->_inputText.toLowercase();
@@ -512,10 +508,11 @@ void Acci::parse() {
 		}
 	}
 
+	Common::String unkString;
 	if (_vm->_parser->pos(Common::String('\xFE'), _thats) > -1)
-		_unknown = _realWords[_vm->_parser->pos(Common::String('\xFE'), _thats)];
-	else if (!_unknown.empty())
-		_unknown.clear();
+		unkString = _realWords[_vm->_parser->pos(Common::String('\xFE'), _thats)];
+	else
+		unkString.clear();
 
 	// Replace words' codes that mean the same.
 	replace(Common::String('\xFF'), 0); // zap noise words
@@ -598,9 +595,9 @@ void Acci::parse() {
 			_polite = true;
 	}
 
-	if ((!_unknown.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
-			_vm->_scrolls->displayText(Common::String("Sorry, but I have no idea what \"") + _unknown + "\" means. Can you rephrase it?");
-			_vm->_gyro->_weirdWord = true;
+	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
+		_vm->_scrolls->displayText(Common::String("Sorry, but I have no idea what \"") + unkString + "\" means. Can you rephrase it?");
+		_vm->_gyro->_weirdWord = true;
 	} else
 		_vm->_gyro->_weirdWord = false;
 
@@ -687,7 +684,11 @@ void Acci::exampers() {
 		_vm->_visa->displayScrollChain('Q', 13);
 }
 
-bool Acci::holding() {
+/**
+ * Return whether Avvy is holding an object or not
+ * @remarks	Originally called 'holding'
+ */
+bool Acci::isHolding() {
 	if ((51 <= _thing) && (_thing <= 99)) // Also.
 		return true;
 
@@ -725,7 +726,7 @@ void Acci::openBox(bool isOpening) {
 void Acci::examine() {
 	// EITHER it's an object OR it's an Also OR it's a _person OR it's something else.
 	if ((_person == kPardon) && (_thing != kPardon)) {
-		if (holding()) {
+		if (isHolding()) {
 			// Remember: it's been Slipped! Ie subtract 49.
 			if ((1 <= _thing) && (_thing <= 49)) // Standard object
 				examineObject();
@@ -959,13 +960,13 @@ void Acci::silly() {
 }
 
 void Acci::putProc() {
-	if (!holding())
+	if (!isHolding())
 		return;
 
 	_thing2 -= 49; // Slip the second object.
 	char temp = _thing;
 	_thing = _thing2;
-	if (!holding())
+	if (!isHolding())
 		return;
 	_thing = temp;
 
@@ -1031,17 +1032,23 @@ void Acci::putProc() {
 	}
 }
 
-
-
+/**
+ * Display text when ingredients are not in the right order
+ * @remarks	Originally called 'not_in_order'
+ */
 void Acci::notInOrder() {
 	_vm->_scrolls->displayText(Common::String("Sorry, I need the ingredients in the right order for this potion. What I need next is ")
 			+ _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick])
 			+ _vm->_scrolls->kControlRegister + 2 + _vm->_scrolls->kControlSpeechBubble);
 }
 
+/**
+ * Move Spludwick to cauldron
+ * @remarks	Originally called 'go_to_cauldron'
+ */
 void Acci::goToCauldron() {
 	_vm->_animation->_sprites[1]._callEachStepFl = false; // Stops Geida_Procs.
-	_vm->_timer->addTimer(1, _vm->_timer->kProcSpludwickGoesToCauldron, _vm->_timer->kReasonSpludWalk);
+	_vm->_timer->addTimer(1, _vm->_timer->kProcSpludwickGoesToCauldron, _vm->_timer->kReasonSpludwickWalk);
 	_vm->_animation->_sprites[1].walkTo(2);
 }
 
@@ -1386,7 +1393,7 @@ void Acci::doThat() {
 			_vm->_visa->talkTo(_person);
 		break;
 	case kVerbCodeGive:
-		if (holding()) {
+		if (isHolding()) {
 			if (_person == kPardon)
 				_vm->_scrolls->displayText("Give to whom?");
 			else if (isPersonHere()) {
@@ -1484,7 +1491,7 @@ void Acci::doThat() {
 
 	case kVerbCodeEat:
 	case kVerbCodeDrink:
-		if (holding())
+		if (isHolding())
 			swallow();
 		break;
 
@@ -1544,7 +1551,7 @@ void Acci::doThat() {
 			_vm->_scrolls->displayText("Hadn't you better find somewhere more private, Avvy?");
 		break;
 	case kVerbCodeWear:
-		if (holding()) { // Wear something.
+		if (isHolding()) { // Wear something.
 			switch (_thing) {
 			case Gyro::kObjectChastity:
 				// \? are used to avoid that ??! is parsed as a trigraph
@@ -1625,7 +1632,7 @@ void Acci::doThat() {
 				playHarp();
 				break;
 			}
-		} else if (holding()) {
+		} else if (isHolding()) {
 			switch (_thing) {
 			case Gyro::kObjectLute :
 					_vm->_visa->displayScrollChain('U', 7);
@@ -1655,7 +1662,7 @@ void Acci::doThat() {
 		}
 		break;
 	case kVerbCodeRing:
-		if (holding()) {
+		if (isHolding()) {
 			if (_thing == _vm->_gyro->kObjectBell) {
 				_vm->_scrolls->displayText("Ding, dong, ding, dong, ding, dong, ding, dong...");
 				if ((_vm->_gyro->_dna._bellsAreRinging) & (_vm->_gyro->setFlag('B')))
@@ -2022,7 +2029,7 @@ void Acci::verbOpt(byte verb, Common::String &answer, char &ansKey) {
 	case kVerbCodeExam:
 		answer = "Examine";
 		ansKey = 'x';
-		break; // The ubiqutous one.
+		break; // The ubiquitous one.
 	// kVerbCodegive isn't dealt with by this procedure, but by ddm__with.
 	case kVerbCodeDrink:
 		answer = "Drink";
