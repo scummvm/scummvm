@@ -74,6 +74,9 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 		while (_accumulatedTime >= frameTime) {
 			_accumulatedTime -= frameTime;
 
+			// Make sure the frame is inside the working window
+			// If it's not, then just return
+
 			RenderManager *renderManager = _engine->getRenderManager();
 			Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
 			Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _animation.rlf->width(), workingWindowPoint.y + _animation.rlf->height());
@@ -85,18 +88,21 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 
 			const Graphics::Surface *frame = _animation.rlf->getNextFrame();
 
+			// Animation frames for PANORAMAs are transposed, so un-transpose them
 			RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
 			if (state == RenderTable::PANORAMA) {
 				Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
 
 				renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
 
+				// Cleanup
 				tranposedFrame->free();
 				delete tranposedFrame;
 			} else {
 				renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
 			}
 
+			// Check if we should continue looping
 			if (_animation.rlf->endOfAnimation()) {
 				_animation.rlf->seekToFrame(-1);
 				if (_loopCount > 0) {
@@ -116,6 +122,9 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 			const Graphics::Surface *frame = _animation.avi->decodeNextFrame();
 
 			if (frame) {
+				// Make sure the frame is inside the working window
+				// If it's not, then just return
+
 				RenderManager *renderManager = _engine->getRenderManager();
 				Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
 				Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + frame->w, workingWindowPoint.y + frame->h);
@@ -125,22 +134,23 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 					return false;
 				}
 
+				// Animation frames for PANORAMAs are transposed, so un-transpose them
 				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
 				if (state == RenderTable::PANORAMA) {
 					Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
 
 					renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
 
+					// Cleanup
 					tranposedFrame->free();
 					delete tranposedFrame;
 				} else {
 					renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
 				}
-
-				
 			}
 		}
 
+		// Check if we should continue looping
 		if (_animation.avi->endOfVideo()) {
 			_animation.avi->rewind();
 			if (_loopCount > 0) {
@@ -153,6 +163,8 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 		}
 	}
 
+	// If we're done, set _animation key = 2 (Why 2? I don't know. It's just the value that they used)
+	// Then disable the control. DON'T delete it. It can be re-used
 	if (finished) {
 		_engine->getScriptManager()->setStateValue(_animationKey, 2);
 		disable();
