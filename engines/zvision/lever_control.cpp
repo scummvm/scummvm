@@ -383,7 +383,7 @@ void LeverControl::renderFrame(uint frameNumber) {
 
 	if (_fileType == RLF) {
 		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
-		frameData = _animation.rlf->getFrameData(frameNumber);
+		frameData = (const uint16 *)_animation.rlf->getFrameData(frameNumber)->getPixels();
 		width = _animation.rlf->width(); // Use the animation width instead of _animationCoords.width()
 		height = _animation.rlf->height(); // Use the animation height instead of _animationCoords.height()			
 	} else if (_fileType == AVI) {
