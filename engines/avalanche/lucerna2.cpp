@@ -177,6 +177,10 @@ void Lucerna::drawAlsoLines() {
 
 // readAlsoStringFromFile, scram and unScramble are only used in loadAlso
 
+/**
+ * Check is it's possible to give something to Spludwick
+ * @remarks	Originally called 'nextstring'
+ */
 Common::String Lucerna::readAlsoStringFromFile() {
 	Common::String str;
 	byte length = file.readByte();
@@ -367,6 +371,12 @@ void Lucerna::exitRoom(byte x) {
 		_vm->_gyro->_dna._lastRoomNotMap = _vm->_gyro->_dna._room;
 }
 
+
+/**
+ * Only when entering a NEW town! Not returning to the last one,
+ * but choosing another from the map.
+ * @remarks	Originally called 'new_town'
+ */
 void Lucerna::enterNewTown() {
 	_vm->_dropdown->setupMenu();
 
@@ -1017,6 +1027,9 @@ void Lucerna::refreshObjectList() {
 	}
 }
 
+/**
+ * @remarks	Originally called 'verte'
+ */
 void Lucerna::guideAvvy(Common::Point cursorPos) {
 	if (!_vm->_gyro->_dna._userMovesAvvy)
 		return;
@@ -1226,6 +1239,13 @@ uint16 Lucerna::bearing(byte whichPed) {
 	}
 }
 
+/** 
+ * A sprite run is performed before displaying a scroll, if not all the
+ * sprites are still. It performs two fast cycles, only using a few of
+ * the links usually used, and without any extra animation. This should
+ * make the sprites the same on both pages.
+ * @remarks	Originally called 'sprite_run'
+ */
 void Lucerna::spriteRun() {
 	_vm->_gyro->_doingSpriteRun = true;
 	_vm->_animation->animLink();
