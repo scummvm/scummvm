@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	scripts.o \
 	single_value_container.o \
 	timer_node.o \
+	truetype_font.o \
 	utility.o \
 	video.o \
 	zvision.o \
