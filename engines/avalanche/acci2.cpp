@@ -750,23 +750,23 @@ void Acci::examine() {
 
 void Acci::inventory() {
 	byte itemNum = 0;
-	_vm->_scrolls->displayText(Common::String("You're carrying ") + _vm->_scrolls->kControlToBuffer);
+	_vm->_scrolls->displayText(Common::String("You're carrying ") + Scrolls::kControlToBuffer);
 
 	for (byte i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_dna._objects[i]) {
 			itemNum++;
 			if (itemNum == _vm->_gyro->_dna._carryNum)
-				_vm->_scrolls->displayText(Common::String("and ") + _vm->_scrolls->kControlToBuffer);
-			_vm->_scrolls->displayText(_vm->_gyro->getItem(i + 1) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->displayText(Common::String("and ") + Scrolls::kControlToBuffer);
+			_vm->_scrolls->displayText(_vm->_gyro->getItem(i + 1) + Scrolls::kControlToBuffer);
 			if ((i + 1) == _vm->_gyro->_dna._wearing)
-				_vm->_scrolls->displayText(Common::String(", which you're wearing") + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->displayText(Common::String(", which you're wearing") + Scrolls::kControlToBuffer);
 			if (itemNum < _vm->_gyro->_dna._carryNum)
-				_vm->_scrolls->displayText(Common::String(", ") + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->displayText(Common::String(", ") + Scrolls::kControlToBuffer);
 		}
 	}
 
 	if (_vm->_gyro->_dna._wearing == kNothing)
-		_vm->_scrolls->displayText(Common::String("...") + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "...and you're stark naked!");
+		_vm->_scrolls->displayText(Common::String("...") + Scrolls::kControlNewLine + Scrolls::kControlNewLine + "...and you're stark naked!");
 	else
 		_vm->_scrolls->displayText(".");
 }
@@ -842,18 +842,18 @@ void Acci::peopleInRoom() {
 		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_dna._room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
-				_vm->_scrolls->displayText(_vm->_gyro->getName(i + 150) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->displayText(_vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
 			else if (actPerson < numPeople) // The middle...
-				_vm->_scrolls->displayText(Common::String(", ") + _vm->_gyro->getName(i + 150) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->displayText(Common::String(", ") + _vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
 			else // The end.
-				_vm->_scrolls->displayText(Common::String(" and ") + _vm->_gyro->getName(i + 150) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->displayText(Common::String(" and ") + _vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
 		}
 	}
 
 	if (numPeople == 1)
-		_vm->_scrolls->displayText(Common::String(" is") + _vm->_scrolls->kControlToBuffer);
+		_vm->_scrolls->displayText(Common::String(" is") + Scrolls::kControlToBuffer);
 	else
-		_vm->_scrolls->displayText(Common::String(" are") + _vm->_scrolls->kControlToBuffer);
+		_vm->_scrolls->displayText(Common::String(" are") + Scrolls::kControlToBuffer);
 
 	_vm->_scrolls->displayText(" here."); // End and display it.
 }
@@ -1015,9 +1015,10 @@ void Acci::putProc() {
 					_vm->_scrolls->displayText("Just give it to Spludwick, Avvy!");
 					break;
 				default: // Put the object into the box...
-					if (_vm->_gyro->_dna._wearing == _thing)
-						_vm->_scrolls->displayText(Common::String("You'd better take ") + _vm->_gyro->getItem(_thing) + " off first!");
-					else {
+					if (_vm->_gyro->_dna._wearing == _thing) {
+						Common::String tmpStr = Common::String::format("You'd better take %s off first!", _vm->_gyro->getItem(_thing).c_str());
+						_vm->_scrolls->displayText(tmpStr);
+					} else {
 						openBox(true); // Open box.
 
 						_vm->_gyro->_dna._boxContent = _thing;
@@ -1043,9 +1044,10 @@ void Acci::putProc() {
  * @remarks	Originally called 'not_in_order'
  */
 void Acci::notInOrder() {
-	_vm->_scrolls->displayText(Common::String("Sorry, I need the ingredients in the right order for this potion. What I need next is ")
-			+ _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick])
-			+ _vm->_scrolls->kControlRegister + 2 + _vm->_scrolls->kControlSpeechBubble);
+	Common::String tmpStr = Common::String::format("Sorry, I need the ingredients in the right order for this potion. " \
+		"What I need next is %s%c2%c", _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]),
+		Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
+	_vm->_scrolls->displayText(tmpStr);
 }
 
 /**
@@ -1180,8 +1182,6 @@ void Acci::standUp() {
 	}
 }
 
-
-
 void Acci::getProc(char thing) {
 	switch (_vm->_gyro->_dna._room) {
 	case r__yours:
@@ -1193,8 +1193,10 @@ void Acci::getProc(char thing) {
 				_vm->_lucerna->refreshObjectList();
 				_vm->_gyro->_dna._boxContent = kNothing;
 				_vm->_celer->drawBackgroundSprite(-1, -1, 6);
-			} else
-				_vm->_scrolls->displayText(Common::String("I can't see ") + _vm->_gyro->getItem(thing) + " in the box.");
+			} else {
+				Common::String tmpStr = Common::String::format("I can't see %s in the box.", _vm->_gyro->getItem(thing));
+				_vm->_scrolls->displayText(tmpStr);
+			}
 		} else
 			_vm->_visa->displayScrollChain('q', 57);
 		break;
@@ -1248,7 +1250,7 @@ void Acci::getProc(char thing) {
  */
 void Acci::giveGeidaTheLute() {
 	if (_vm->_gyro->_dna._room != r__lustiesroom) {
-		_vm->_scrolls->displayText(Common::String("Not yet. Try later!") + _vm->_scrolls->kControlRegister + '2' + _vm->_scrolls->kControlSpeechBubble);
+		_vm->_scrolls->displayText(Common::String("Not yet. Try later!") + Scrolls::kControlRegister + '2' + Scrolls::kControlSpeechBubble);
 		return;
 	}
 	_vm->_gyro->_dna._objects[_vm->_gyro->kObjectLute - 1] = false;
@@ -1284,7 +1286,7 @@ void Acci::personSpeaks() {
 	}
 
 	if (_vm->_gyro->_whereIs[_person - 150] != _vm->_gyro->_dna._room) {
-		_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + '1' + _vm->_scrolls->kControlToBuffer); // Avvy himself!
+		_vm->_scrolls->displayText(Common::String(Scrolls::kControlRegister) + '1' + Scrolls::kControlToBuffer); // Avvy himself!
 		return;
 	}
 
@@ -1292,7 +1294,7 @@ void Acci::personSpeaks() {
 
 	for (byte i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
-			_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 49) + _vm->_scrolls->kControlToBuffer);
+			_vm->_scrolls->displayText(Common::String(Scrolls::kControlRegister) + byte(i + 49) + Scrolls::kControlToBuffer);
 			found = true;
 		}
 	}
@@ -1300,13 +1302,13 @@ void Acci::personSpeaks() {
 	if (!found) {
 		for (byte i = 0; i < 16; i++) {
 			if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_dna._room))
-				_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlRegister) + byte(i + 65) + _vm->_scrolls->kControlToBuffer);
+				_vm->_scrolls->displayText(Common::String(Scrolls::kControlRegister) + byte(i + 65) + Scrolls::kControlToBuffer);
 		}
 	}
 }
 void Acci::heyThanks() {
 	personSpeaks();
-	_vm->_scrolls->displayText(Common::String("Hey, thanks!") + _vm->_scrolls->kControlSpeechBubble + "(But now, you've lost it!)");
+	_vm->_scrolls->displayText(Common::String("Hey, thanks!") + Scrolls::kControlSpeechBubble + "(But now, you've lost it!)");
 	_vm->_gyro->_dna._objects[_thing - 1] = false;
 }
 
@@ -1351,7 +1353,7 @@ void Acci::doThat() {
 		openDoor();
 		break;
 	case kVerbCodePause: // Note that the original game doesn't care about the "O.K." box neither, it accepts clicks from everywhere on the screen to continue. Just like my code.
-		_vm->_scrolls->displayText(Common::String("Game paused.") + _vm->_scrolls->kControlCenter + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
+		_vm->_scrolls->displayText(Common::String("Game paused.") + Scrolls::kControlCenter + Scrolls::kControlNewLine + Scrolls::kControlNewLine
 			+ "Press Enter, Esc, or click the mouse on the \"O.K.\" box to continue.");
 		break;
 	case kVerbCodeGet:
@@ -1377,7 +1379,7 @@ void Acci::doThat() {
 	case kVerbCodeTalk:
 		if (_person == kPardon) {
 			if (_vm->_gyro->_subjectNum == 99) // They typed "say password".
-				_vm->_scrolls->displayText(Common::String("Yes, but what ") + _vm->_scrolls->kControlItalic + "is" + _vm->_scrolls->kControlRoman + " the password?");
+				_vm->_scrolls->displayText(Common::String("Yes, but what ") + Scrolls::kControlItalic + "is" + Scrolls::kControlRoman + " the password?");
 			else if (((1 <= _vm->_gyro->_subjectNum) && (_vm->_gyro->_subjectNum <= 49)) || (_vm->_gyro->_subjectNum == 253) || (_vm->_gyro->_subjectNum == 249)) {
 				_thats.deleteChar(0);
 
@@ -1525,7 +1527,7 @@ void Acci::doThat() {
 		}
 		if (!_polite)
 			_vm->_scrolls->displayText("How about a `please\", Avvy?");
-		else if (_vm->_scrolls->displayQuestion(Common::String(_vm->_scrolls->kControlRegister) + 'C' + _vm->_scrolls->kControlIcon + "Do you really want to quit?"))
+		else if (_vm->_scrolls->displayQuestion(Common::String(Scrolls::kControlRegister) + 'C' + Scrolls::kControlIcon + "Do you really want to quit?"))
 			_vm->_gyro->_letMeOut = true;
 		break;
 	case kVerbCodeGo:
@@ -1536,12 +1538,12 @@ void Acci::doThat() {
 
 		Common::String toDisplay;
 		for (byte i = 0; i < 7; i++)
-			toDisplay += _vm->_scrolls->kControlNewLine;
-		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + _vm->_scrolls->kControlCenter + _vm->_scrolls->kControlNewLine
-			+ "The medi\x91val descendant of" + _vm->_scrolls->kControlNewLine
-			+ "Denarius Avaricius Sextus" + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
-			+ "version " + _vm->_gyro->kVersionNum + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Copyright \xEF "
-			+ _vm->_gyro->kCopyright + ", Mark, Mike and Thomas Thurman." + _vm->_scrolls->kControlRegister + 'Y' + _vm->_scrolls->kControlIcon;
+			toDisplay += Scrolls::kControlNewLine;
+		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + Scrolls::kControlCenter + Scrolls::kControlNewLine
+			+ "The medi\x91val descendant of" + Scrolls::kControlNewLine
+			+ "Denarius Avaricius Sextus" + Scrolls::kControlNewLine + Scrolls::kControlNewLine
+			+ "version " + _vm->_gyro->kVersionNum + Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Copyright \xEF "
+			+ _vm->_gyro->kCopyright + ", Mark, Mike and Thomas Thurman." + Scrolls::kControlRegister + 'Y' + Scrolls::kControlIcon;
 		_vm->_scrolls->displayText(toDisplay);
 		_vm->_scrolls->_aboutScroll = false;
 		}
@@ -1631,7 +1633,7 @@ void Acci::doThat() {
 
 					// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
 					_vm->_scrolls->displayText(Common::String("P.S.: There should have been the mini-game called \"Nim\", but I haven't implemented it yet: you win and get the lute automatically.")
-						+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Peter (uruk)");
+						+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Peter (uruk)");
 				}
 				break;
 			case r__musicroom:
@@ -1697,11 +1699,11 @@ void Acci::doThat() {
 			_vm->_scrolls->displayText("Hmm, I don't think anyone will notice...");
 			_vm->_timer->addTimer(4, _vm->_timer->kProcUrinate, _vm->_timer->kReasonGoToToilet);
 		} else
-			_vm->_scrolls->displayText(Common::String("It would be ") + _vm->_scrolls->kControlItalic + "VERY"
-			+ _vm->_scrolls->kControlRoman + " unwise to do that here, Avvy!");
+			_vm->_scrolls->displayText(Common::String("It would be ") + Scrolls::kControlItalic + "VERY"
+			+ Scrolls::kControlRoman + " unwise to do that here, Avvy!");
 		break;
 	case kVerbCodeCheat:
-		_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "Cheat mode now enabled.");
+		_vm->_scrolls->displayText(Common::String(Scrolls::kControlItalic) + "Cheat mode now enabled.");
 		_vm->_gyro->_cheat = true;
 		break;
 	case kVerbCodeMagic:
@@ -1732,16 +1734,16 @@ void Acci::doThat() {
 		switch (_vm->_gyro->_dna._sworeNum) {
 		case 0:
 			_vm->_scrolls->displayText(Common::String("Avvy! Do you mind? There might be kids playing!")
-				+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "(I shouldn't say it again, if I were you!)");
+				+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "(I shouldn't say it again, if I were you!)");
 			break;
 		case 1:
 			_vm->_scrolls->displayText(Common::String("You hear a distant rumble of thunder. Must you always do things I tell you not to?")
-				+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Don't do it again!");
+				+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Don't do it again!");
 			break;
 		default:
 			_vm->_pingo->zonk();
 			_vm->_scrolls->displayText(Common::String("A crack of lightning shoots from the sky, and fries you.")
-				+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "(`Such is the anger of the gods, Avvy!\")");
+				+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "(`Such is the anger of the gods, Avvy!\")");
 			_vm->_lucerna->gameOver();
 		}
 		_vm->_gyro->_dna._sworeNum++;
@@ -1777,7 +1779,7 @@ void Acci::doThat() {
 						_vm->_lucerna->incScore(3);
 
 					_vm->_celer->drawBackgroundSprite(-1, -1, 12);
-					_vm->_scrolls->displayText(booze[_thing - 51] + ", please." + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
+					_vm->_scrolls->displayText(booze[_thing - 51] + ", please." + Scrolls::kControlRegister + '1' + Scrolls::kControlSpeechBubble);
 					_vm->_gyro->_dna._drinking = _thing;
 
 					_vm->_celer->drawBackgroundSprite(-1, -1, 10);
@@ -1802,7 +1804,7 @@ void Acci::doThat() {
 						}
 
 						_vm->_celer->drawBackgroundSprite(-1, -1, 12);
-						_vm->_scrolls->displayText(Common::String("Wine, please.") + _vm->_scrolls->kControlRegister + '1' + _vm->_scrolls->kControlSpeechBubble);
+						_vm->_scrolls->displayText(Common::String("Wine, please.") + Scrolls::kControlRegister + '1' + Scrolls::kControlSpeechBubble);
 						if (_vm->_gyro->_dna._alcoholLevel == 0)
 							_vm->_lucerna->incScore(3);
 						_vm->_celer->drawBackgroundSprite(-1, -1, 10);
@@ -1985,8 +1987,8 @@ void Acci::doThat() {
 					_vm->_scrolls->displayText("You can't seem to wake him by yourself.");
 				break;
 			case Gyro::kPeopleJacques:
-				_vm->_scrolls->displayText(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + _vm->_scrolls->kControlRegister + '1' +
-					_vm->_scrolls->kControlSpeechBubble + "Hmmm... that doesn't seem to do any good...");
+				_vm->_scrolls->displayText(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + Scrolls::kControlRegister + '1' +
+					Scrolls::kControlSpeechBubble + "Hmmm... that doesn't seem to do any good...");
 				break;
 			default:
 				_vm->_scrolls->displayText("It's difficult to awaken people who aren't asleep...!");
@@ -2004,7 +2006,7 @@ void Acci::doThat() {
 			_vm->_lucerna->dusk();
 			_vm->_gyro->hangAroundForAWhile();
 			_vm->_lucerna->dawn();
-			_vm->_scrolls->displayText(Common::String("A few hours later...") + _vm->_scrolls->kControlParagraph + "nothing much has happened...");
+			_vm->_scrolls->displayText(Common::String("A few hours later...") + Scrolls::kControlParagraph + "nothing much has happened...");
 		}
 		break;
 	case kVerbCodeRestart:
@@ -2019,14 +2021,14 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeHello:
 		personSpeaks();
-		_vm->_scrolls->displayText(Common::String("Hello.") + _vm->_scrolls->kControlSpeechBubble);
+		_vm->_scrolls->displayText(Common::String("Hello.") + Scrolls::kControlSpeechBubble);
 		break;
 	case kVerbCodeThanks:
 		personSpeaks();
-		_vm->_scrolls->displayText(Common::String("That's OK.") + _vm->_scrolls->kControlSpeechBubble);
+		_vm->_scrolls->displayText(Common::String("That's OK.") + Scrolls::kControlSpeechBubble);
 		break;
 	default:
-		_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlBell) + "Parser bug!");
+		_vm->_scrolls->displayText(Common::String(Scrolls::kControlBell) + "Parser bug!");
 	}
 }
 

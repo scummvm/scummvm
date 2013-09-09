@@ -362,7 +362,7 @@ void Timer::afterTheShootemup() {
 
 	// Same as the added line above: TODO: Remove it later!!!
 	_vm->_scrolls->displayText(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
-		+ _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + "Peter (uruk)");
+		+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Peter (uruk)");
 
 #if 0
 	byte shootscore, gain;
