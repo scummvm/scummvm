@@ -156,6 +156,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Rim Lift Interior
 		return new Scene1850();
 	case 1875:
+		// Rim Lift Computer
 		return new Scene1875();
 	case 1900:
 		return new Scene1900();

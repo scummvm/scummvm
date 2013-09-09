@@ -945,15 +945,16 @@ public:
 };
 
 class Scene1875 : public SceneExt {
-	class Actor1875 : public SceneActor {
+	class Button : public SceneActor {
 	public:
-		int _fieldA4;
-		int _fieldA6;
+		int _buttonId;
+		bool _buttonDown;
 
-		Actor1875();
-		void subB84AB();
-		void subB8271(int indx);
+		Button();
+		void doButtonPress();
+		void initButton(int buttonId);
 
+		virtual Common::String getClassName() { return "Scene1875_Button"; }
 		void synchronize(Serializer &s);
 		virtual void process(Event &event);
 	};
@@ -965,11 +966,11 @@ public:
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;
-	Actor1875 _actor4;
-	Actor1875 _actor5;
-	Actor1875 _actor6;
-	Actor1875 _actor7;
-	Actor1875 _actor8;
+	Button _button1;
+	Button _button2;
+	Button _button3;
+	Button _button4;
+	Button _button5;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

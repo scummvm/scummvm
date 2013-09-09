@@ -12449,34 +12449,35 @@ void Scene1850::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1875 -
+ * Scene 1875 - Rim Lift Computer
  *
  *--------------------------------------------------------------------------*/
-Scene1875::Actor1875::Actor1875() {
-	_fieldA4 = 0;
-	_fieldA6 = 0;
+
+Scene1875::Button::Button() {
+	_buttonId = 0;
+	_buttonDown = false;
 }
 
-void Scene1875::Actor1875::synchronize(Serializer &s) {
+void Scene1875::Button::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
-	s.syncAsSint16LE(_fieldA4);
-	s.syncAsSint16LE(_fieldA6);
+	s.syncAsSint16LE(_buttonId);
+	s.syncAsSint16LE(_buttonDown);
 }
 
-void Scene1875::Actor1875::subB84AB() {
+void Scene1875::Button::doButtonPress() {
 	Scene1875 *scene = (Scene1875 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._sound1.play(227);
 
 	int newFrameNumber;
-	switch (_fieldA4) {
+	switch (_buttonId) {
 	case 3:
-		if ((scene->_actor1._frame == 1) && (scene->_actor4._strip == 2)) {
+		if ((scene->_actor1._frame == 1) && (scene->_button1._strip == 2)) {
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 			scene->_sceneMode = 10;
-			scene->_stripManager.start(576, this);
+			scene->_stripManager.start(576, scene);
 		} else {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1890;
@@ -12501,32 +12502,32 @@ void Scene1875::Actor1875::subB84AB() {
 	}
 }
 
-void Scene1875::Actor1875::subB8271(int indx) {
+void Scene1875::Button::initButton(int buttonId) {
 	postInit();
-	_fieldA4 = indx;
-	_fieldA6 = 0;
+	_buttonId = buttonId;
+	_buttonDown = false;
 	setVisage(1855);
 
-	if (_fieldA4 == 1)
+	if (_buttonId == 1)
 		setStrip(2);
 	else
 		setStrip(1);
 
-	setFrame(_fieldA4);
-	switch (_fieldA4 - 1) {
-	case 0:
+	setFrame(_buttonId);
+	switch (_buttonId) {
+	case 1:
 		setPosition(Common::Point(20, 144));
 		break;
-	case 1:
+	case 2:
 		setPosition(Common::Point(82, 144));
 		break;
-	case 2:
+	case 3:
 		setPosition(Common::Point(136, 144));
 		break;
-	case 3:
+	case 4:
 		setPosition(Common::Point(237, 144));
 		break;
-	case 4:
+	case 5:
 		setPosition(Common::Point(299, 144));
 		break;
 	default:
@@ -12536,36 +12537,37 @@ void Scene1875::Actor1875::subB8271(int indx) {
 	setDetails(1875, 6, 1, -1, 2, (SceneItem *) NULL);
 }
 
-void Scene1875::Actor1875::process(Event &event) {
-	if ((R2_GLOBALS._player._uiEnabled) || (event.handled))
+void Scene1875::Button::process(Event &event) {
+	if (!R2_GLOBALS._player._uiEnabled || event.handled)
 		return;
 
 	Scene1875 *scene = (Scene1875 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == R2_STEPPING_DISKS) && (_bounds.contains(event.mousePos)) && (_fieldA6 == 0)) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) 
+			&& (_bounds.contains(event.mousePos)) && !_buttonDown) {
 		setStrip(2);
-		switch (_fieldA4) {
+		switch (_buttonId) {
 		case 1:
 			R2_GLOBALS._sound2.play(227);
-			scene->_actor5.setStrip(1);
+			scene->_button2.setStrip(1);
 			break;
 		case 2:
 			R2_GLOBALS._sound2.play(227);
-			scene->_actor4.setStrip(1);
+			scene->_button1.setStrip(1);
 			break;
 		default:
 			break;
 		}
-		_fieldA6 = 1;
+		_buttonDown = true;
 		event.handled = true;
 	}
 
-	if ((event.eventType == EVENT_BUTTON_UP) && (_fieldA6 != 0)) {
-		if ((_fieldA4 == 3) || (_fieldA4 == 4) || (_fieldA4 == 5)) {
+	if ((event.eventType == EVENT_BUTTON_UP) && _buttonDown) {
+		if ((_buttonId == 3) || (_buttonId == 4) || (_buttonId == 5)) {
 			setStrip(1);
-			subB84AB();
+			doButtonPress();
 		}
-		_fieldA6 = 0;
+		_buttonDown = false;
 		event.handled = true;
 	}
 }
@@ -12574,32 +12576,36 @@ void Scene1875::postInit(SceneObjectList *OwnerList) {
 	loadScene(1875);
 	SceneExt::postInit();
 
-	R2_GLOBALS._player._characterScene[1] = 1875;
-	R2_GLOBALS._player._characterScene[2] = 1875;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 1875;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 1875;
 
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);
 
-	_actor4.subB8271(1);
-	_actor5.subB8271(2);
-	_actor6.subB8271(3);
-	_actor7.subB8271(4);
-	_actor8.subB8271(5);
+	_button1.initButton(1);
+	_button2.initButton(2);
+	_button3.initButton(3);
+	_button4.initButton(4);
+	_button5.initButton(5);
 
 	_actor1.postInit();
 	_actor1.setup(1855, 4, 1);
 	_actor1.setPosition(Common::Point(160, 116));
 
 	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+
 	if (R2_GLOBALS._sceneManager._previousScene == 1625) {
 		R2_GLOBALS._sound1.play(122);
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 11;
 		_actor2.postInit();
 		setAction(&_sequenceManager, this, 1892, &_actor2, NULL);
-	} else if (R2_GLOBALS._sceneManager._previousScene == 3150) {
-		R2_GLOBALS._sound1.play(116);
 	} else {
+		if (R2_GLOBALS._sceneManager._previousScene == 3150) {
+			R2_GLOBALS._sound1.play(116);
+		} 
+
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 	}
@@ -12607,10 +12613,10 @@ void Scene1875::postInit(SceneObjectList *OwnerList) {
 	_item2.setDetails(Rect(43, 14, 275, 122), 1875, 9, 1, -1, 1, NULL);
 	_item1.setDetails(Rect(0, 0, 320, 200), 1875, 3, -1, -1, 1, NULL);
 
-	R2_GLOBALS._player._characterScene[1] = 1875;
-	R2_GLOBALS._player._characterScene[2] = 1875;
-	R2_GLOBALS._player._oldCharacterScene[1] = 1875;
-	R2_GLOBALS._player._oldCharacterScene[2] = 1875;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 1875;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 1875;
+	R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = 1875;
+	R2_GLOBALS._player._oldCharacterScene[R2_SEEKER] = 1875;
 }
 
 void Scene1875::signal() {
@@ -12649,11 +12655,11 @@ void Scene1875::signal() {
 void Scene1875::process(Event &event) {
 	Scene::process(event);
 
-	_actor4.process(event);
-	_actor5.process(event);
-	_actor6.process(event);
-	_actor7.process(event);
-	_actor8.process(event);
+	_button1.process(event);
+	_button2.process(event);
+	_button3.process(event);
+	_button4.process(event);
+	_button5.process(event);
 }
 
 /*--------------------------------------------------------------------------
