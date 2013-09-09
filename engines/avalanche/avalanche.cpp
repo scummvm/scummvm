@@ -525,10 +525,6 @@ void AvalancheEngine::bFlightOn() {
 	_storage._skellern = kReset;
 	// setintvec(0x1c, &b_flight);
 }
-void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
-	warning("STUB: run(%s)", what.c_str());
-	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
-}
 
 void AvalancheEngine::getArguments() {
 	// This function should mess around with command line arguments,
@@ -600,6 +596,11 @@ Common::Error AvalancheEngine::run() {
 }
 
 #if 0
+void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
+	warning("STUB: run(%s)", what.c_str());
+	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
+}
+
 void AvalancheEngine::bFlightOff() {
 	// setintvec(0x1c, old_1c);
 }

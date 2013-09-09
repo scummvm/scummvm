@@ -170,7 +170,7 @@ void Avalot::setup() {
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_vm->_gyro->_thinks = 2; // You always have money.
-		_vm->_lucerna->thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing);
+		_vm->_lucerna->thinkAbout(Gyro::kObjectMoney, Gyro::kThing);
 
 		_vm->loadGame(loadSlot);
 	} else {
@@ -179,7 +179,7 @@ void Avalot::setup() {
 
 		_vm->_gyro->_soundFx = ! _vm->_gyro->_soundFx;
 		_vm->_lucerna->fxToggle();
-		_vm->_lucerna->thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing);
+		_vm->_lucerna->thinkAbout(Gyro::kObjectMoney, Gyro::kThing);
 
 		_vm->_visa->displayScrollChain('q', 83); // Info on the game, etc.
 	}

@@ -470,66 +470,66 @@ void Animation::catacombMove(byte ped) {
 
 	switch (here & 0xf) { // West.
 	case 0: // no connection (wall)
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicNothing; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28);
 		break;
 	case 0x1: // no connection (wall + shield),
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicNothing; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 29); // ...shield.
 		break;
 	case 0x2: // wall with door
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicSpecial; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 30); // ...door.
 		break;
 	case 0x3: // wall with door and shield
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicSpecial; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 30); // ...door, and...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 29); // ...shield.
 		break;
 	case 0x4: // no connection (wall + window),
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicNothing; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 5);  // ...window.
 		break;
 	case 0x5: // wall with door and window
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicSpecial; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 30); // ...door, and...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 5); // ...window.
 		break;
 	case 0x6: // no connection (wall + torches),
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicNothing; // No door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicNothing; // No door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 7); // ...torches.
 		break;
 	case 0x7: // wall with door and torches
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[4]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[4]._operation = Gyro::kMagicSpecial; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 28); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 30); // ...door, and...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 7); // ...torches.
 		break;
 	case 0xf: // straight-through corridor.
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing; // Sloping wall.
-		_vm->_gyro->_magics[2]._operation = _vm->_gyro->kMagicSpecial; // Straight wall.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicNothing; // Sloping wall.
+		_vm->_gyro->_magics[2]._operation = Gyro::kMagicSpecial; // Straight wall.
 		break;
 	}
 
@@ -537,52 +537,52 @@ void Animation::catacombMove(byte ped) {
 
 	switch ((here & 0xf0) >> 4) { // East
 	case 0: // no connection (wall)
-		_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[6]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[6]._operation = Gyro::kMagicNothing; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 19);
 		break;
 	case 0x1: // no connection (wall + window),
-		_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[6]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[6]._operation = Gyro::kMagicNothing; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 19); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 20); // ...window.
 		break;
 	case 0x2: // wall with door
-		_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[6]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[6]._operation = Gyro::kMagicSpecial; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 19); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 21); // ...door.
 		break;
 	case 0x3: // wall with door and window
-		_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[6]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[6]._operation = Gyro::kMagicSpecial; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 19); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 20); // ...door, and...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 21); // ...window.
 		break;
 	case 0x6: // no connection (wall + torches),
-		_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[6]._operation = _vm->_gyro->kMagicNothing; // No door.
+		_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[6]._operation = Gyro::kMagicNothing; // No door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 19); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 18); // ...torches.
 		break;
 	case 0x7: // wall with door and torches
-		_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Sloping wall.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicNothing; // Straight wall.
-		_vm->_gyro->_portals[6]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Sloping wall.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // Straight wall.
+		_vm->_gyro->_portals[6]._operation = Gyro::kMagicSpecial; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 19); // Wall, plus...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 21); // ...door, and...
 		_vm->_celer->drawBackgroundSprite(-1, -1, 18); // ...torches.
 		break;
 	case 0xf: // straight-through corridor.
-		_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicNothing; // Sloping wall.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicSpecial; // Straight wall.
-		_vm->_gyro->_portals[6]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[4]._operation = Gyro::kMagicNothing; // Sloping wall.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicSpecial; // Straight wall.
+		_vm->_gyro->_portals[6]._operation = Gyro::kMagicNothing; // Door.
 		break;
 	}
 
@@ -590,39 +590,39 @@ void Animation::catacombMove(byte ped) {
 
 	switch ((here & 0xf00) >> 8) { // South
 	case 0: // No connection.
-		_vm->_gyro->_magics[6]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_magics[12]._operation = _vm->_gyro->kMagicBounce;
+		_vm->_gyro->_magics[6]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_magics[11]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_magics[12]._operation = Gyro::kMagicBounce;
 		break;
 	case 0x1:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 22);
 
 		if ((xy_uint16 == 2051) && (_vm->_gyro->_dna._geidaFollows))
-			_vm->_gyro->_magics[12]._operation = _vm->_gyro->kMagicExclaim;
+			_vm->_gyro->_magics[12]._operation = Gyro::kMagicExclaim;
 		else
-			_vm->_gyro->_magics[12]._operation = _vm->_gyro->kMagicSpecial; // Right exit south.
+			_vm->_gyro->_magics[12]._operation = Gyro::kMagicSpecial; // Right exit south.
 
-		_vm->_gyro->_magics[6]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicBounce;
+		_vm->_gyro->_magics[6]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_magics[11]._operation = Gyro::kMagicBounce;
 		break;
 	case 0x2:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 23);
-		_vm->_gyro->_magics[6]._operation = _vm->_gyro->kMagicSpecial; // Middle exit south.
-		_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_magics[12]._operation = _vm->_gyro->kMagicBounce;
+		_vm->_gyro->_magics[6]._operation = Gyro::kMagicSpecial; // Middle exit south.
+		_vm->_gyro->_magics[11]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_magics[12]._operation = Gyro::kMagicBounce;
 		break;
 	case 0x3:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 24);
-		_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicSpecial; // Left exit south.
-		_vm->_gyro->_magics[6]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_magics[12]._operation = _vm->_gyro->kMagicBounce;
+		_vm->_gyro->_magics[11]._operation = Gyro::kMagicSpecial; // Left exit south.
+		_vm->_gyro->_magics[6]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_magics[12]._operation = Gyro::kMagicBounce;
 		break;
 	}
 
 	switch ((here & 0xf000) >> 12) { // North
 	case 0: // No connection
-		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[0]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_portals[3]._operation = Gyro::kMagicNothing; // Door.
 		break;
 	// LEFT handles:
 #if 0
@@ -634,8 +634,8 @@ void Animation::catacombMove(byte ped) {
 #endif
 	case 0x2:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 4);
-		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicBounce; // Middle exit north.
-		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[0]._operation = Gyro::kMagicBounce; // Middle exit north.
+		_vm->_gyro->_portals[3]._operation = Gyro::kMagicSpecial; // Door.
 		break;
 #if 0
 	case 0x3:
@@ -652,8 +652,8 @@ void Animation::catacombMove(byte ped) {
 #endif
 	case 0x5:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3);
-		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicBounce; // Middle exit north.
-		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_magics[0]._operation = Gyro::kMagicBounce; // Middle exit north.
+		_vm->_gyro->_portals[3]._operation = Gyro::kMagicSpecial; // Door.
 		break;
 #if 0
 	case 0x6:
@@ -673,26 +673,26 @@ void Animation::catacombMove(byte ped) {
 		if (((here & 0xf000) >> 12) == 0x9)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 32);
 
-		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicSpecial; // Middle arch north.
-		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[0]._operation = Gyro::kMagicSpecial; // Middle arch north.
+		_vm->_gyro->_portals[3]._operation = Gyro::kMagicNothing; // Door.
 	}
 	break;
 	// DECORATIONS:
 	case 0xd: // No connection + WINDOW
-		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[0]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_portals[3]._operation = Gyro::kMagicNothing; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 14);
 		break;
 	case 0xe: // No connection + TORCH
-		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicBounce;
-		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicNothing; // Door.
+		_vm->_gyro->_magics[0]._operation = Gyro::kMagicBounce;
+		_vm->_gyro->_portals[3]._operation = Gyro::kMagicNothing; // Door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 8);
 		break;
 	// Recessed door:
 	case 0xf:
-		_vm->_gyro->_magics[0]._operation = _vm->_gyro->kMagicNothing; // Door to Geida's room.
+		_vm->_gyro->_magics[0]._operation = Gyro::kMagicNothing; // Door to Geida's room.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1);
-		_vm->_gyro->_portals[3]._operation = _vm->_gyro->kMagicSpecial; // Door.
+		_vm->_gyro->_portals[3]._operation = Gyro::kMagicSpecial; // Door.
 		break;
 	}
 
@@ -741,7 +741,7 @@ void Animation::catacombMove(byte ped) {
 
 // This proc gets called whenever you touch a line defined as _vm->_gyro->special.
 void Animation::dawnDelay() {
-	_vm->_timer->addTimer(2, _vm->_timer->kProcDawnDelay, _vm->_timer->kReasonDawndelay);
+	_vm->_timer->addTimer(2, Timer::kProcDawnDelay, Timer::kReasonDawndelay);
 }
 
 void Animation::callSpecial(uint16 which) {
@@ -749,17 +749,17 @@ void Animation::callSpecial(uint16 which) {
 	case 1: // _vm->_gyro->special 1: Room 22: top of stairs.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 		_vm->_gyro->_dna._brummieStairs = 1;
-		_vm->_gyro->_magics[9]._operation = _vm->_gyro->kMagicNothing;
-		_vm->_timer->addTimer(10, _vm->_timer->kProcStairs, _vm->_timer->kReasonBrummieStairs);
+		_vm->_gyro->_magics[9]._operation = Gyro::kMagicNothing;
+		_vm->_timer->addTimer(10, Timer::kProcStairs, Timer::kReasonBrummieStairs);
 		stopWalking();
 		_vm->_gyro->_dna._userMovesAvvy = false;
 		break;
 	case 2: // _vm->_gyro->special 2: Room 22: bottom of stairs.
 		_vm->_gyro->_dna._brummieStairs = 3;
-		_vm->_gyro->_magics[10]._operation = _vm->_gyro->kMagicNothing;
-		_vm->_gyro->_magics[11]._operation = _vm->_gyro->kMagicExclaim;
+		_vm->_gyro->_magics[10]._operation = Gyro::kMagicNothing;
+		_vm->_gyro->_magics[11]._operation = Gyro::kMagicExclaim;
 		_vm->_gyro->_magics[11]._data = 5;
-		_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicBounce; // Now works as planned!
+		_vm->_gyro->_magics[3]._operation = Gyro::kMagicBounce; // Now works as planned!
 		stopWalking();
 		_vm->_visa->displayScrollChain('q', 26);
 		_vm->_gyro->_dna._userMovesAvvy = true;
@@ -784,13 +784,13 @@ void Animation::callSpecial(uint16 which) {
 	case 4: // This is the ghost room link.
 		_vm->_lucerna->dusk();
 		_sprites[0].turn(kDirRight); // you'll see this after we get back from bootstrap
-		_vm->_timer->addTimer(1, _vm->_timer->kProcGhostRoomPhew, _vm->_timer->kReasonGhostRoomPhew);
+		_vm->_timer->addTimer(1, Timer::kProcGhostRoomPhew, Timer::kReasonGhostRoomPhew);
 		_vm->_enid->backToBootstrap(3);
 		break;
 	case 5:
 		if (_vm->_gyro->_dna._friarWillTieYouUp) {
 			// _vm->_gyro->special 5: Room 42: touched tree, and get tied up.
-			_vm->_gyro->_magics[4]._operation = _vm->_gyro->kMagicBounce; // Boundary effect is now working again.
+			_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Boundary effect is now working again.
 			_vm->_visa->displayScrollChain('q', 35);
 			_sprites[0].remove();
 			//tr[1].vanishifstill:=true;
@@ -801,8 +801,8 @@ void Animation::callSpecial(uint16 which) {
 			_sprites[1].walkTo(3);
 			_sprites[1]._vanishIfStill = true;
 			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
-			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = 177; // Not here, then.
-			_vm->_timer->addTimer(364, _vm->_timer->kProcHangAround, _vm->_timer->kReasonHangingAround);
+			_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = 177; // Not here, then.
+			_vm->_timer->addTimer(364, Timer::kProcHangAround, Timer::kReasonHangingAround);
 		}
 		break;
 	case 6: // _vm->_gyro->special 6: fall down oubliette.
@@ -810,17 +810,17 @@ void Animation::callSpecial(uint16 which) {
 		_sprites[0]._moveX = 3;
 		_sprites[0]._moveY = 0;
 		_sprites[0]._facingDir = kDirRight;
-		_vm->_timer->addTimer(1, _vm->_timer->kProcFallDownOubliette, _vm->_timer->kReasonFallingDownOubliette);
+		_vm->_timer->addTimer(1, Timer::kProcFallDownOubliette, Timer::kReasonFallingDownOubliette);
 		break;
 	case 7: // _vm->_gyro->special 7: stop falling down oubliette.
 		_sprites[0]._visible = false;
-		_vm->_gyro->_magics[9]._operation = _vm->_gyro->kMagicNothing;
+		_vm->_gyro->_magics[9]._operation = Gyro::kMagicNothing;
 		stopWalking();
-		_vm->_timer->loseTimer(_vm->_timer->kReasonFallingDownOubliette);
+		_vm->_timer->loseTimer(Timer::kReasonFallingDownOubliette);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 1);
 		_vm->_scrolls->displayText("Oh dear, you seem to be down the bottom of an oubliette.");
-		_vm->_timer->addTimer(200, _vm->_timer->kProcMeetAvaroid, _vm->_timer->kReasonMeetingAvaroid);
+		_vm->_timer->addTimer(200, Timer::kProcMeetAvaroid, Timer::kReasonMeetingAvaroid);
 		break;
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
 		if ((_vm->_gyro->_dna._geidaFollows) && (!_vm->_gyro->_dna._lustieIsAsleep)) {
@@ -838,12 +838,12 @@ void Animation::callSpecial(uint16 which) {
 		_sprites[1].walkTo(4); // She walks to somewhere...
 		_sprites[0].remove();     // Lose Avvy.
 		_vm->_gyro->_dna._userMovesAvvy = false;
-		_vm->_timer->addTimer(40, _vm->_timer->kProcRobinHoodAndGeida, _vm->_timer->kReasonRobinHoodAndGeida);
+		_vm->_timer->addTimer(40, Timer::kProcRobinHoodAndGeida, Timer::kReasonRobinHoodAndGeida);
 		break;
 	case 10: // _vm->_gyro->special 10: transfer north in catacombs.
 		if ((_vm->_gyro->_dna._catacombX == 4) && (_vm->_gyro->_dna._catacombY == 1)) {
 			// Into Geida's room.
-			if (_vm->_gyro->_dna._objects[_vm->_gyro->kObjectKey - 1])
+			if (_vm->_gyro->_dna._objects[Gyro::kObjectKey - 1])
 				_vm->_visa->displayScrollChain('q', 62);
 			else {
 				_vm->_visa->displayScrollChain('q', 61);
@@ -1083,7 +1083,7 @@ void Animation::arrowProcs(byte tripnum) {
 			_vm->_lucerna->gameOver();
 
 			_vm->_gyro->_dna._userMovesAvvy = false; // Stop the user from moving him.
-			_vm->_timer->addTimer(55, _vm->_timer->kProcNaughtyDuke, _vm->_timer->kReasonNaughtyDuke);
+			_vm->_timer->addTimer(55, Timer::kProcNaughtyDuke, Timer::kReasonNaughtyDuke);
 		}
 	} else { // Arrow has hit the wall!
 		_sprites[tripnum].remove(); // Deallocate the arrow.

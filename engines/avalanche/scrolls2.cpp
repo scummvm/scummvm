@@ -220,7 +220,7 @@ void Scrolls::scrollModeMusic() {
 		setReadyLight(0);
 		_vm->_gyro->_seeScroll = false;
 
-		_vm->_timer->addTimer(8, _vm->_timer->kProcJacquesWakesUp, _vm->_timer->kReasonJacquesWakingUp);
+		_vm->_timer->addTimer(8, Timer::kProcJacquesWakesUp, Timer::kReasonJacquesWakingUp);
 		warning("STUB: Scrolls::music_scroll()");
 		return;
 #if 0
