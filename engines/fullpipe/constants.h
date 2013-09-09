@@ -90,6 +90,7 @@ namespace Fullpipe {
 #define PIC_SC1_LADDER 1091
 #define PIC_SC1_OSK 1018
 #define PIC_SC1_OSK2 2932
+#define PIC_SCD_SEL 734
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654

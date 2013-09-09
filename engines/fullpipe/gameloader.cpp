@@ -173,6 +173,9 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 	if (_sc2array[sc2idx]._entranceDataCount <= 0)
 		return false;
 
+	if (sceneId == 726)
+		return true;
+
 	int entranceIdx;
 	for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]->_field_4 != entranceId; entranceIdx++) {
 		if (entranceIdx >= _sc2array[sc2idx]._entranceDataCount)

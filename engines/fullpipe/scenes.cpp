@@ -53,6 +53,9 @@ void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
 int sceneHandler01(ExCommand *cmd);
 
+void sceneDbgMenu_initScene(Scene *sc);
+int sceneHandlerDbgMenu(ExCommand *cmd);
+
 Vars::Vars() {
 	sceneIntro_aniin1man = 0;
 	sceneIntro_needSleep = true;
@@ -632,6 +635,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		addMessageHandler(sceneHandlerFinal1, 2);
 		_updateCursorCallback = sceneFinal1_updateCursor;
 		break;
+#endif
 
 	case SC_DBGMENU:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_DBGMENU");
@@ -641,7 +645,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_DBGMENU");
 		addMessageHandler(sceneHandlerDbgMenu, 2);
 		break;
-#endif
 
 	default:
 		_behaviorManager->initBehavior(0, 0);
@@ -847,6 +850,7 @@ int global_messageHandler2(ExCommand *cmd) {
 
 	switch (cmd->_messageNum) {
 	case 0x44c8:
+		error("0x44c8");
 		// Unk3_sub_4477A0(&unk3, _parentId, _field_14 != 0);
 		break;
 
@@ -1428,6 +1432,59 @@ int sceneHandler01(ExCommand *cmd) {
 	g_fullpipe->startSceneTrack();
 
 	return res;
+}
+
+void sceneDbgMenu_initScene(Scene *sc) {
+	g_vars->selector = sc->getPictureObjectById(PIC_SCD_SEL, 0);
+	getGameLoaderInteractionController()->disableFlag24();
+	setInputDisabled(0);
+}
+
+int sceneHandlerDbgMenu(ExCommand *ex) {
+	if (ex->_messageKind != 17)
+		return 0;
+#if 0
+	int mx = g_fullpipe->_mouseScreenPos.x + g_sceneRect.left;
+	int my = g_fullpipe->_mouseScreenPos.y + g_sceneRect.top;
+
+	if (ex->_messageNum == 29) {
+		GameObject *obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
+		if (obj && GameObject_canInteractAny(0, obj, -3) ) {
+			getGameLoaderInteractionController()->enableFlag24();
+			handleObjectInteraction(0, obj, 0);
+		}
+		return 0;
+	}
+	if (ex->_messageNum != 33) {
+		if (ex->_messageNum == MSG_RESTARTGAME) {
+			g_fullpipe->_needRestart = true;
+			return 0;
+		}
+		return 0;
+	}
+
+	g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
+	GameObject *obj = g_fullpipe->_currentScene->getStaticANIObjectAtPos(mx, my);
+	if (obj) {
+		if (GameObject_canInteractAny(0, obj, -3)) {
+			g_cursorId = PIC_CSR_DEFAULT;
+			input_setCursor(PIC_CSR_DEFAULT);
+			return 0;
+		}
+	} else {
+		obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
+		if (obj && GameObject_canInteractAny(0, obj, -3) ) {
+			g_vars->selector->_flags |= 4;
+			g_vars->selector->setOXY(obj->_ox, obj->_oy);
+			g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
+			input_setCursor(PIC_CSR_DEFAULT);
+			return 0;
+		}
+		g_vars->selector->_flags &= 0xFFFB;
+	}
+	input_setCursor(g_cursorId);
+#endif
+	return 0;
 }
 
 } // End of namespace Fullpipe

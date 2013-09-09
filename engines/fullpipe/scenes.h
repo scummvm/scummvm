@@ -44,6 +44,8 @@ class Vars {
 
 	PictureObject *scene01_picSc01Osk;
 	PictureObject *scene01_picSc01Osk2;
+
+	GameObject *selector;
 };
 
 } // End of namespace Fullpipe
