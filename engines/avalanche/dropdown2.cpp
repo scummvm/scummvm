@@ -285,26 +285,26 @@ void Dropdown::findWhatYouCanDoWithIt() {
 	case Gyro::kObjectWine:
 	case Gyro::kObjectPotion:
 	case Gyro::kObjectInk:
-		_vm->_gyro->_verbStr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeDrink;
+		_vm->_gyro->_verbStr = Common::String(Acci::kVerbCodeExam) + Acci::kVerbCodeDrink;
 		break;
 	case Gyro::kObjectBell:
-		_vm->_gyro->_verbStr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeRing;
+		_vm->_gyro->_verbStr = Common::String(Acci::kVerbCodeExam) + Acci::kVerbCodeRing;
 		break;
 	case Gyro::kObjectChastity:
-		_vm->_gyro->_verbStr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeWear;
+		_vm->_gyro->_verbStr = Common::String(Acci::kVerbCodeExam) + Acci::kVerbCodeWear;
 		break;
 	case Gyro::kObjectLute:
-		_vm->_gyro->_verbStr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodePlay;
+		_vm->_gyro->_verbStr = Common::String(Acci::kVerbCodeExam) + Acci::kVerbCodePlay;
 		break;
 	case Gyro::kObjectMushroom:
 	case Gyro::kObjectOnion:
-		_vm->_gyro->_verbStr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeEat;
+		_vm->_gyro->_verbStr = Common::String(Acci::kVerbCodeExam) + Acci::kVerbCodeEat;
 		break;
 	case Gyro::kObjectClothes:
-		_vm->_gyro->_verbStr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeWear;
+		_vm->_gyro->_verbStr = Common::String(Acci::kVerbCodeExam) + Acci::kVerbCodeWear;
 		break;
 	default:
-		_vm->_gyro->_verbStr = _vm->_acci->kVerbCodeExam; // Anything else.
+		_vm->_gyro->_verbStr = Acci::kVerbCodeExam; // Anything else.
 	}
 }
 
@@ -508,22 +508,22 @@ void Dropdown::setupMenuWith() {
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_gyro->getName(_vm->_gyro->_lastPerson), 'G', "", true);
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + _vm->_acci->kVerbCodeGive;
+			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + Acci::kVerbCodeGive;
 		}
 	} else {
 		_activeMenuItem.setupOption("Examine", 'x', "", true);
 		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_gyro->_thinks), 'T', "", true);
-		_vm->_gyro->_verbStr = Common::String(_vm->_acci->kVerbCodeExam) + _vm->_acci->kVerbCodeTalk;
+		_vm->_gyro->_verbStr = Common::String(Acci::kVerbCodeExam) + Acci::kVerbCodeTalk;
 		switch (_vm->_gyro->_thinks) {
 		case Gyro::kPeopleGeida:
 		case Gyro::kPeopleArkata: {
 			_activeMenuItem.setupOption("Kiss her", 'K', "", true);
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + _vm->_acci->kVerbCodeKiss;
+			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + Acci::kVerbCodeKiss;
 		}
 		break;
 		case Gyro::kPeopleDogfood: {
 			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_gyro->_dna._wonNim); // True if you HAVEN'T won.
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + _vm->_acci->kVerbCodePlay;
+			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + Acci::kVerbCodePlay;
 		}
 		break;
 		case Gyro::kPeopleMalagauche: {
@@ -550,19 +550,19 @@ void Dropdown::runMenuGame() {
 	// Help, boss, untrash screen.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeHelp);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeHelp);
 		break;
 	case 1:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBoss);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeBoss);
 		break;
 	case 2:
 		_vm->_lucerna->majorRedraw();
 		break;
 	case 3:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeScore);
 		break;
 	case 4:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeInfo);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeInfo);
 		break;
 	}
 }
@@ -571,18 +571,18 @@ void Dropdown::runMenuFile() {
 	// New game, load, save, save as, DOS shell, about, quit.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeRestart);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeRestart);
 		break;
 	case 1: {
 		if (!_vm->_acci->_realWords[1].empty())
 			_vm->_acci->_realWords[1].clear();
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeLoad);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeLoad);
 	}
 	break;
 	case 2: {
 		if (!_vm->_acci->_realWords[1].empty())
 			_vm->_acci->_realWords[1].clear();
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeSave);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeSave);
 	}
 	break;
 	case 3:
@@ -593,7 +593,7 @@ void Dropdown::runMenuFile() {
 		_vm->_enid->backToBootstrap(2);
 		break;
 	case 5:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeQuit);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeQuit);
 		break;
 	}
 }
@@ -611,17 +611,17 @@ void Dropdown::runMenuAction() {
 	break;
 	case 1:
 		_vm->_acci->_thing = _vm->_acci->kPardon;
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodePause);
+		_vm->_lucerna->callVerb(Acci::kVerbCodePause);
 		break;
 	case 2:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeOpen);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeOpen);
 		break;
 	case 3:
 		_vm->_acci->_thing = _vm->_acci->kPardon;
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeLook);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeLook);
 		break;
 	case 4:
-		_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeInv);
+		_vm->_lucerna->callVerb(Acci::kVerbCodeInv);
 		break;
 	case 5: {
 		if (_vm->_animation->_sprites[0]._speedX == _vm->_gyro->kWalk)
@@ -650,7 +650,7 @@ void Dropdown::runMenuWith() {
 
 		_vm->_acci->_thing += 49;
 
-		if (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum] == _vm->_acci->kVerbCodeGive)
+		if (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum] == Acci::kVerbCodeGive)
 			_vm->_acci->_person = _vm->_gyro->_lastPerson;
 		else
 			_vm->_acci->_person = 254;
@@ -659,37 +659,37 @@ void Dropdown::runMenuWith() {
 		switch (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: { // Beer
 			_vm->_acci->_thing = 100;
-			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(Acci::kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 101: { // Wine
 			_vm->_acci->_thing = 50;
-			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(Acci::kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 102: { // Whisky
 			_vm->_acci->_thing = 102;
-			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(Acci::kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 103: { // Cider
 			_vm->_acci->_thing = 103;
-			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(Acci::kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 104: { // Mead
 			_vm->_acci->_thing = 107;
-			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(Acci::kVerbCodeBuy);
 			return;
 		}
 		break;
 		case 105: { // Onion (trader)
 			_vm->_acci->_thing = 67;
-			_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeBuy);
+			_vm->_lucerna->callVerb(Acci::kVerbCodeBuy);
 			return;
 		}
 		break;

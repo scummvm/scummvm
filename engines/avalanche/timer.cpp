@@ -311,7 +311,7 @@ void Timer::getTiedUp() {
 	_vm->_animation->_sprites[1].stopWalk();
 	_vm->_animation->_sprites[1].stopHoming();
 	_vm->_animation->_sprites[1]._callEachStepFl = true;
-	_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcGrabAvvy;
+	_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcGrabAvvy;
 	addTimer(70, kProcGetTiedUp2, kReasonGettingTiedUp);
 }
 
@@ -642,7 +642,7 @@ void Timer::winning() {
 #endif
 	// TODO: To be implemented with Pingo::winningPic().
 
-	_vm->_lucerna->callVerb(_vm->_acci->kVerbCodeScore);
+	_vm->_lucerna->callVerb(Acci::kVerbCodeScore);
 	_vm->_scrolls->displayText(" T H E    E N D ");
 	_vm->_gyro->_letMeOut = true;
 }
