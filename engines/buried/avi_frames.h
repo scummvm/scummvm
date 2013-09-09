@@ -76,6 +76,7 @@ private:
 	bool _cacheEnabled;
 
 	Graphics::Surface *_lastFrame;
+	Graphics::Surface *_tempFrame;
 	int _lastFrameIndex;
 };
 
