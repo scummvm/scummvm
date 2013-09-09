@@ -424,7 +424,7 @@ bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 		return false;
 
 	if ((_flags & 8) && (_flags & 1)) {
-		if (!obj2->_objtype != kObjTypeStaticANIObject)
+		if (obj2->_objtype != kObjTypeStaticANIObject)
 			return false;
 
 		StaticANIObject *st = (StaticANIObject *)obj2;
