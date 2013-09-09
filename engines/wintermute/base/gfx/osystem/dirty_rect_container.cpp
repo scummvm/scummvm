@@ -170,6 +170,17 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 			assert(existing->width() != 0 && existing->height() != 0);
 			// We don't want to put useless garbage in here.
+			/* These are the 'simple' contains/contained cases, like:
+			*     A A A A 
+			 *    A A A A 
+			 *    A A B B 
+			 *    A A B B 
+			 *     
+			 *    B B B B 
+			 *    B A A B
+			 *    B B B B 
+			 * In these cases we simply discard the "contained".
+			 */
 
 			if (existing->contains(*candidate)) {
 				discard = true;
@@ -184,7 +195,50 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				continue;
 			}
 
-			// Okay, we now see if we have an overlapping corner and slice accordingly.
+			/* 
+			 * Okay, now we work on intersections.
+			 * We want to minimize the number of pixels shared by more than one rect.
+			 * We are interested in the following cases:
+			 * a. SE
+			 *    A A A A 
+			 *    A A A A 
+			 *    A A B B B
+			 *    A A B B B
+			 *        B B B 
+			 * In this case we keep B as it is and split A:
+			 *
+			 *
+			 *    A1 A1 A1 A1
+			 *    A1 A1 A1 A1
+			 *    A2 A2  B  B  B
+			 *    A2 A2  B  B  B
+			 *           B  B  B
+			 *
+			 * A is then deleted and 
+			 * A1, A2 are enqueued for processing as new rects.
+			 *
+			 * b, c, d: SW, NW, NE, same but with different corners.
+			 *
+			 * e, f: cross-shaped intersections like:
+			 *
+			 *    AA 
+			 *    AA
+			 * BB BA BB
+			 *    AA
+			 *    AA
+			 * 
+			 * and the other way around.
+			 * We split like:
+			 *
+			 *    A1
+			 *    A1
+			 * BB BB BB 
+			 *    A2
+			 *    A2
+			 *
+			 * We keep B and enqueue A1, A2
+			 *
+			 */
 			Common::Rect intersecting = existing->findIntersectingRect(*candidate);
 			// We have to remove intersecting and enqueue the rest
 			// We know that it's not a simple contained rect, we know that
