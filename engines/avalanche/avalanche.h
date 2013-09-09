@@ -141,33 +141,38 @@ private:
 		byte _contents[1000];
 	} _storage;
 
-	Common::String _arguments, _demoArgs, _argsWithNoFilename;
+	Common::String _arguments;
 	bool _firstTime;
-	byte _originalMode;
-	byte *_old1c;
-	Common::String _segofs;
 	bool _zoomy;
-	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
 
-	void cursorOff();
-	void cursorOn();
-	void quit();
-	Common::String commandCom();
-	void explain(byte error);
-	void bFlight();
 	void bFlightOn();
-	void bFlightOff();
-	Common::String elmToStr(Elm how);
 	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
 	void getArguments();
 	void getSlope();
 	void callMenu();
 	void runAvalot();
-	void runDemo();
-	void dosShell();
+
+#if 0
+	Common::String _demoArgs, _argsWithNoFilename;
+	byte _originalMode;
+	byte *_old1c;
+	Common::String _segofs;
+	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
+
+	void bFlightOff();
+	Common::String elmToStr(Elm how);
 	bool keyPressed();
 	void flushBuffer();
 	void demo();
+	void runDemo();
+	void dosShell();
+	void bFlight();
+	Common::String commandCom();
+	void explain(byte error);
+	void cursorOff();
+	void cursorOn();
+	void quit();
+#endif
 };
 
 } // End of namespace Avalanche

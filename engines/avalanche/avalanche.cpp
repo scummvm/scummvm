@@ -97,7 +97,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_closing = new Closing(this);
 
 	_graphics->init();
-
 	_scrolls->init();
 	_lucerna->init();
 	_acci->init();
@@ -105,7 +104,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 
 	return Common::kNoError;
 }
-
 
 GUI::Debugger *AvalancheEngine::getDebugger() {
 	return _console;
@@ -115,8 +113,6 @@ Common::Platform AvalancheEngine::getPlatform() const {
 	return _platform;
 }
 
-
-
 bool AvalancheEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsSavingDuringRuntime) || (f == kSupportsLoadingDuringRuntime);
 }
@@ -124,8 +120,6 @@ bool AvalancheEngine::hasFeature(EngineFeature f) const {
 const char *AvalancheEngine::getCopyrightString() const {
 	return "Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.";
 }
-
-
 
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	//blockwrite(f, dna, sizeof(dna));
@@ -300,7 +294,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(_animation->_sprites[i]._id);
 		sz.syncAsByte(_animation->_sprites[i]._doCheck);
 
-
 		if (sz.isLoading()) {
 			_animation->_sprites[i]._quick = true;
 			_animation->_sprites[i].init(_animation->_sprites[i]._id, _animation->_sprites[i]._doCheck, _animation);
@@ -322,7 +315,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(_animation->_sprites[i]._callEachStepFl);
 		sz.syncAsByte(_animation->_sprites[i]._eachStepProc);
 		sz.syncAsByte(_animation->_sprites[i]._vanishIfStill);
-
 		sz.syncAsSint16LE(_animation->_sprites[i]._x);
 		sz.syncAsSint16LE(_animation->_sprites[i]._y);
 
@@ -377,25 +369,18 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	f->writeSint16LE(t.tm_year);
 
 	Common::Serializer sz(NULL, f);
-
 	synchronize(sz);
-
 	f->finalize();
-
 	delete f;
 
 	return true;
 }
-
-
 
 Common::String AvalancheEngine::getSaveFileName(const int slot) {
 	Common::String upperName = _targetName;
 	upperName.toUppercase();
 	return upperName+ Common::String::format("-%02d.SAV", slot);
 }
-
-
 
 bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
 	return (!_gyro->_seeScroll);
@@ -433,8 +418,8 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		char actChar = f->readByte();
 		description += actChar;
 	}
-	description.toUppercase();
 
+	description.toUppercase();
 	::Graphics::skipThumbnail(*f);
 
 	// Read the time the game was saved.
@@ -444,13 +429,10 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	t.tm_year = f->readSint16LE();
 
 	Common::Serializer sz(f, NULL);
-
 	synchronize(sz);
-
 	delete f;
 
 	_gyro->isLoaded = true;
-
 	_gyro->_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
 
 	if (_gyro->_holdTheDawn) {
@@ -459,30 +441,22 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	}
 
 	_celer->forgetBackgroundSprites();
-
 	_lucerna->minorRedraw();
-
 	_dropdown->setupMenu();
-
 	_gyro->_whereIs[0] = _gyro->_dna._room;
-
 	_gyro->_alive = true;
-
 	_lucerna->refreshObjectList();
-
 	_animation->updateSpeed();
-
 	_lucerna->drawDirection();
-
 	_gyro->_onToolbar = false;
 	_animation->animLink();
-
 	_celer->updateBackgroundSprites();
 
-	_scrolls->displayText(Common::String(_scrolls->kControlItalic) + "Loaded: " + _scrolls->kControlRoman + description + ".ASG"
-		+ _scrolls->kControlCenter + _scrolls->kControlNewLine + _scrolls->kControlNewLine
-		+ _gyro->_roomnName + _scrolls->kControlNewLine + _scrolls->kControlNewLine
-		+ "saved on " + expandDate(t.tm_mday, t.tm_mon, t.tm_year) + '.');
+	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
+		Scrolls::kControlItalic, Scrolls::kControlRoman, description.c_str(), Scrolls::kControlCenter, 
+		Scrolls::kControlNewLine, Scrolls::kControlNewLine, _gyro->_roomnName, Scrolls::kControlNewLine, 
+		Scrolls::kControlNewLine, expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
+	_scrolls->displayText(tmpStr);
 
 	if (_animation->_sprites[0]._quick && _animation->_sprites[0]._visible)
 		_animation->changeDirection(0, _gyro->_dna._direction); // We push Avvy in the right direction is he was moving.
@@ -496,28 +470,25 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 	};
 
 	Common::String month = months[m];
-
 	Common::String day = _gyro->intToStr(d);
 
 	if (((1 <= d) && (d <= 9)) || ((21 <= d) && (d <= 31)))
 		switch (d % 10) {
 		case 1:
-			day = day + "st";
+			day += "st";
 			break;
 		case 2:
-			day = day + "nd";
+			day += "nd";
 			break;
 		case 3:
-			day = day + "rd";
+			day += "rd";
 			break;
 		default:
-			day = day + "th";
+			day += "th";
 		}
 
 	return day + ' ' + month + ' ' + _gyro->intToStr(y + 1900);
 }
-
-
 
 void AvalancheEngine::updateEvents() {
 	Common::Event event;
@@ -547,76 +518,13 @@ Common::Point AvalancheEngine::getMousePos() {
 	return _eventMan->getMousePos();
 }
 
-
-
-
-
 // From Bootstrp:
-
 const char AvalancheEngine::kRuncodes[2][3] = {"et", "Go"};
-
-
-
-// The original ones were all commented out, so porbably there's no need
-// of these two cursor functions at all. TODO: Remove later.
-void AvalancheEngine::cursorOff() {
-	warning("STUB: cursorOff()");
-}
-
-void AvalancheEngine::cursorOn() {
-	warning("STUB: cursorOn()");
-}
-
-// Needed later.
-void AvalancheEngine::quit() {
-	cursorOn();
-}
-
-// Needed in dos_shell(). TODO: Remove later.
-Common::String AvalancheEngine::commandCom() {
-	warning("STUB: commandCom()");
-	return ("STUB: commandCom()");
-}
-
-// Needed for run_avalot()'s errors. TODO: Remove later.
-void AvalancheEngine::explain(byte error) {
-	warning("STUB: explain()");
-}
-
-
-
-//TODO: Remove these (b_flight) functions later ( https://github.com/tthurman/avalot/wiki/B-Flight )
-
-void AvalancheEngine::bFlight() {   //interrupt;
-	_storage._skellern++;
-}
 
 void AvalancheEngine::bFlightOn() {
 	_storage._skellern = kReset;
 	// setintvec(0x1c, &b_flight);
 }
-
-void AvalancheEngine::bFlightOff() {
-	// setintvec(0x1c, old_1c);
-}
-
-
-
-Common::String AvalancheEngine::elmToStr(Elm how) {
-	switch (how) {
-	case kNormal:
-	case kMusical:
-		return Common::String("jsb");
-	case kRegi:
-		return Common::String("REGI");
-	case kElmpoyten:
-		return Common::String("ELMPOYTEN");
-	// Useless, but silent a warning
-	default:
-		return Common::String("");
-	}
-}
-
 void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
 	warning("STUB: run(%s)", what.c_str());
 	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
@@ -637,54 +545,22 @@ void AvalancheEngine::callMenu() {
 	warning("STUB: callMenu()");
 }
 
-void AvalancheEngine::runDemo() {
-	warning("STUB: runDemo()");
-}
-
-void AvalancheEngine::dosShell() {
-	warning("STUB: dosShell()");
-}
-
-// Getting used only in demo() / call_menu(). Going to be implemented at the same time with these.
-bool AvalancheEngine::keyPressed() {
-	warning("STUB: keyPressed()");
-	return false;
-}
-
-// Same as keypressed1().
-void AvalancheEngine::flushBuffer() {
-	warning("STUB: flushBuffer()");
-}
-
-// Same as keypressed1().
-void AvalancheEngine::demo() {
-	warning("STUB: demo()");
-}
-
-
-
-
 void AvalancheEngine::runAvalot() {
 	bFlightOn();
 
 	_avalot->run(Common::String(kRuncodes[_firstTime]) + _arguments);
-	// TODO: Check if parameteres are ever used (probably not) and eventually remove them.
-	// If there's an error initalizing avalot, i'll handle it in there, not here
+	// TODO: Check if parameters are ever used (probably not) and eventually remove them.
+	// If there's an error initializing avalot, i'll handle it in there, not here
 
 	_firstTime = false;
 }
-
-
 
 Common::Error AvalancheEngine::run() {
 	Common::ErrorCode err = initialize();
 	if (err != Common::kNoError)
 		return err;
 
-
-
 	// From bootstrp:
-
 	_firstTime = true;
 
 	getArguments();
@@ -695,8 +571,6 @@ Common::Error AvalancheEngine::run() {
 	// because zoomy's value is given there. Not sure yet what "zoomy" stands for.
 	if (!_zoomy)
 		callMenu();    // Not run when zoomy.
-
-
 
 	do {
 		runAvalot();
@@ -722,11 +596,84 @@ Common::Error AvalancheEngine::run() {
 
 	} while (!shouldQuit());
 
-
-
 	return Common::kNoError;
 }
 
+#if 0
+void AvalancheEngine::bFlightOff() {
+	// setintvec(0x1c, old_1c);
+}
 
+Common::String AvalancheEngine::elmToStr(Elm how) {
+	switch (how) {
+	case kNormal:
+	case kMusical:
+		return Common::String("jsb");
+	case kRegi:
+		return Common::String("REGI");
+	case kElmpoyten:
+		return Common::String("ELMPOYTEN");
+		// Useless, but silent a warning
+	default:
+		return Common::String("");
+	}
+}
+
+// Getting used only in demo() / call_menu(). Going to be implemented at the same time with these.
+bool AvalancheEngine::keyPressed() {
+	warning("STUB: keyPressed()");
+	return false;
+}
+
+// Same as keypressed1().
+void AvalancheEngine::flushBuffer() {
+	warning("STUB: flushBuffer()");
+}
+
+// Same as keypressed1().
+void AvalancheEngine::demo() {
+	warning("STUB: demo()");
+}
+
+void AvalancheEngine::runDemo() {
+	warning("STUB: runDemo()");
+}
+
+void AvalancheEngine::dosShell() {
+	warning("STUB: dosShell()");
+}
+
+//TODO: Remove these (b_flight) functions later ( https://github.com/tthurman/avalot/wiki/B-Flight )
+void AvalancheEngine::bFlight() {   //interrupt;
+	_storage._skellern++;
+}
+
+// Needed in dos_shell(). TODO: Remove later.
+Common::String AvalancheEngine::commandCom() {
+	warning("STUB: commandCom()");
+	return ("STUB: commandCom()");
+}
+
+// Needed for run_avalot()'s errors. TODO: Remove later.
+void AvalancheEngine::explain(byte error) {
+	warning("STUB: explain()");
+}
+
+// The original ones were all commented out, so probably there's no need
+// of these two cursor functions at all. TODO: Remove later.
+void AvalancheEngine::cursorOff() {
+	warning("STUB: cursorOff()");
+}
+
+void AvalancheEngine::cursorOn() {
+	warning("STUB: cursorOn()");
+}
+
+// Needed later.
+void AvalancheEngine::quit() {
+	cursorOn();
+}
+
+#endif
 
 } // End of namespace Avalanche

@@ -512,8 +512,9 @@ void Acci::parse() {
 	}
 
 	Common::String unkString;
-	if (_vm->_parser->pos(Common::String('\xFE'), _thats) > -1)
-		unkString = _realWords[_vm->_parser->pos(Common::String('\xFE'), _thats)];
+	int16 pos = _vm->_parser->pos(Common::String('\xFE'), _thats);
+	if (pos > -1)
+		unkString = _realWords[pos];
 	else
 		unkString.clear();
 
@@ -982,10 +983,10 @@ void Acci::putProc() {
 			if (_vm->_gyro->_dna._rottenOnion)
 				_vm->_scrolls->displayText("That's a bit like shutting the stable door after the horse has bolted!");
 			else { // Put onion into wine?
-				if (_vm->_gyro->_dna._wineState != 3)
-					_vm->_scrolls->displayText(Common::String(_vm->_scrolls->kControlItalic) + "Oignon au vin"
-					+ _vm->_scrolls->kControlRoman + " is a bit too strong for your tastes!");
-				else { // Put onion into vinegar! Yes!
+				if (_vm->_gyro->_dna._wineState != 3) {
+					Common::String tmpStr = Common::String::format("%cOignon au vin%c is a bit too strong for your tastes!", Scrolls::kControlItalic, Scrolls::kControlRoman);
+					_vm->_scrolls->displayText(tmpStr);
+				} else { // Put onion into vinegar! Yes!
 					_vm->_gyro->_dna._onionInVinegar = true;
 					_vm->_lucerna->incScore(7);
 					_vm->_visa->displayScrollChain('u', 9);

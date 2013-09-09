@@ -217,7 +217,7 @@ void Lucerna::loadAlso(byte num) {
 		}
 	}
 	Common::String filename;
-	filename = filename.format("also%d.avd", num);
+	filename = Common::String::format("also%d.avd", num);
 	if (!file.open(filename)) {
 		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
 		return;
@@ -226,12 +226,14 @@ void Lucerna::loadAlso(byte num) {
 	file.seek(128);
 
 	byte alsoNum = file.readByte();
+	Common::String tmpStr;
 	for (byte i = 0; i <= alsoNum; i++) {
 		for (byte j = 0; j < 2; j++) {
 			_vm->_gyro->_also[i][j] = new Common::String;
 			*_vm->_gyro->_also[i][j] = readAlsoStringFromFile();
 		}
-		*_vm->_gyro->_also[i][0] = Common::String('\x9D') + *_vm->_gyro->_also[i][0] + Common::String('\x9D');
+		tmpStr = Common::String::format("\x9D%s\x9D", *_vm->_gyro->_also[i][0]);
+		*_vm->_gyro->_also[i][0] = tmpStr;
 	}
 
 	memset(_vm->_gyro->_lines, 0xFF, sizeof(_vm->_gyro->_lines));
@@ -284,8 +286,10 @@ void Lucerna::loadAlso(byte num) {
 
 	file.close();
 	unScramble();
-	for (byte i = 0; i <= alsoNum; i++)
-		*_vm->_gyro->_also[i][0] = Common::String(',') + *_vm->_gyro->_also[i][0] + ',';
+	for (byte i = 0; i <= alsoNum; i++) {
+		tmpStr = Common::String::format(",%s,", *_vm->_gyro->_also[i][0]);
+		*_vm->_gyro->_also[i][0] = tmpStr;
+	}
 }
 
 void Lucerna::loadRoom(byte num) {
@@ -1150,7 +1154,7 @@ void Lucerna::checkClick() {
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxToggle();
 			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
-				_vm->_gyro->_mouseText = Common::String(13) + _vm->_gyro->_mouseText;
+				_vm->_gyro->_mouseText.insertChar(Scrolls::kControlNewLine, 0);
 		} else if (!_vm->_gyro->_dropsOk)
 			_vm->_gyro->_mouseText = Common::String(13) + _vm->_gyro->_mouseText;
 	}

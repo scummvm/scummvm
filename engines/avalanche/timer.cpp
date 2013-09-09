@@ -652,12 +652,12 @@ void Timer::avalotFalls() {
 		_vm->_animation->_sprites[0]._stepNum++;
 		addTimer(3, kProcAvalotFalls, kReasonFallingOver);
 	} else {
-		Common::String toDisplay;
-		for (byte i = 0; i < 6; i++)
-			toDisplay += _vm->_scrolls->kControlNewLine;
-		for (byte i = 0; i < 6; i++)
-			toDisplay += _vm->_scrolls->kControlInsertSpaces;
-		toDisplay += _vm->_scrolls->kControlRegister + 'Z' + _vm->_scrolls->kControlIcon;
+		Common::String toDisplay = Common::String::format("%c%c%c%c%c%c%c%c%c%c%c%c%cZ%c",
+			Scrolls::kControlNewLine, Scrolls::kControlNewLine, Scrolls::kControlNewLine,
+			Scrolls::kControlNewLine, Scrolls::kControlNewLine, Scrolls::kControlNewLine,
+			Scrolls::kControlInsertSpaces, Scrolls::kControlInsertSpaces, Scrolls::kControlInsertSpaces,
+			Scrolls::kControlInsertSpaces, Scrolls::kControlInsertSpaces, Scrolls::kControlInsertSpaces,
+			Scrolls::kControlRegister, Scrolls::kControlIcon);
 		_vm->_scrolls->displayText(toDisplay);
 	}
 }
