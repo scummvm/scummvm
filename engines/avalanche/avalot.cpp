@@ -185,8 +185,6 @@ void Avalot::setup() {
 	}
 }
 
-
-
 void Avalot::run(Common::String arg) {
 	setup();
 
@@ -195,8 +193,6 @@ void Avalot::run(Common::String arg) {
 
 		_vm->updateEvents(); // The event handler.
 
-
-
 		_vm->_lucerna->_clock.update();
 		_vm->_dropdown->updateMenu();
 		_vm->_gyro->forceNumlock();
@@ -204,8 +200,6 @@ void Avalot::run(Common::String arg) {
 		_vm->_animation->animLink();
 		_vm->_lucerna->checkClick();
 		_vm->_timer->updateTimer();
-
-
 
 #ifdef DEBUG
 		// ONLY FOR TESTING!!!
@@ -218,7 +212,6 @@ void Avalot::run(Common::String arg) {
 		}
 		// ONLY FOR TESTING!!!
 #endif
-
 
 		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
 
