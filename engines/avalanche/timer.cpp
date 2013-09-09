@@ -237,7 +237,7 @@ void Timer::openDrawbridge() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, _vm->_gyro->_dna._drawbridgeOpen - 1);
 
 	if (_vm->_gyro->_dna._drawbridgeOpen == 4)
-		_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing; // You may enter the drawbridge.
+		_vm->_gyro->_magics[1]._operation = Gyro::kMagicNothing; // You may enter the drawbridge.
 	else
 		addTimer(7, kProcOpenDrawbridge, kReasonDrawbridgeFalls);
 }
@@ -278,9 +278,9 @@ void Timer::stairs() {
 	_vm->_animation->_sprites[0].walkTo(4);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 	_vm->_gyro->_dna._brummieStairs = 2;
-	_vm->_gyro->_magics[10]._operation = _vm->_gyro->kMagicSpecial;
+	_vm->_gyro->_magics[10]._operation = Gyro::kMagicSpecial;
 	_vm->_gyro->_magics[10]._data = 2; // Reached the bottom of the stairs.
-	_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicNothing; // Stop them hitting the sides (or the game will hang.)
+	_vm->_gyro->_magics[3]._operation = Gyro::kMagicNothing; // Stop them hitting the sides (or the game will hang.)
 }
 
 void Timer::cardiffSurvey() {
@@ -318,14 +318,14 @@ void Timer::getTiedUp() {
 void Timer::getTiedUp2() {
 	_vm->_animation->_sprites[0].walkTo(4);
 	_vm->_animation->_sprites[1].walkTo(5);
-	_vm->_gyro->_magics[3]._operation = _vm->_gyro->kMagicNothing; // No effect when you touch the boundaries.
+	_vm->_gyro->_magics[3]._operation = Gyro::kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_gyro->_dna._friarWillTieYouUp = true;
 }
 
 void Timer::hangAround() {
 	_vm->_animation->_sprites[1]._doCheck = false;
 	_vm->_animation->_sprites[0].init(7, true, _vm->_animation); // Robin Hood
-	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleRobinHood - 150] = r__robins;
+	_vm->_gyro->_whereIs[Gyro::kPeopleRobinHood - 150] = r__robins;
 	_vm->_animation->appearPed(1, 2);
 	_vm->_visa->displayScrollChain('q', 39);
 	_vm->_animation->_sprites[0].walkTo(7);
@@ -336,7 +336,7 @@ void Timer::hangAround2() {
 	_vm->_visa->displayScrollChain('q', 40);
 	_vm->_animation->_sprites[1]._vanishIfStill = false;
 	_vm->_animation->_sprites[1].walkTo(4);
-	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = r__robins;
+	_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = r__robins;
 	_vm->_visa->displayScrollChain('q', 41);
 	_vm->_animation->_sprites[0].remove();
 	_vm->_animation->_sprites[1].remove(); // Get rid of Robin Hood and Friar Tuck.
@@ -357,7 +357,7 @@ void Timer::afterTheShootemup() {
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
 	_vm->_animation->appearPed(1, 2);
 	_vm->_gyro->_dna._userMovesAvvy = true;
-	_vm->_gyro->_dna._objects[_vm->_gyro->kObjectCrossbow - 1] = true;
+	_vm->_gyro->_dna._objects[Gyro::kObjectCrossbow - 1] = true;
 	_vm->_lucerna->refreshObjectList();
 
 	// Same as the added line above: TODO: Remove it later!!!
@@ -396,12 +396,12 @@ void Timer::jacquesWakesUp() {
 	case 2 : // Going through the door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // But going through the door.
-		_vm->_gyro->_magics[5]._operation = _vm->_gyro->kMagicNothing; // You can't wake him up now.
+		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // You can't wake him up now.
 		break;
 	case 3 :  // Gone through the door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor, either.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 4); // He's gone... so the door's open.
-		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleJacques - 150] = 0; // Gone!
+		_vm->_gyro->_whereIs[Gyro::kPeopleJacques - 150] = 0; // Gone!
 		break;
 	}
 
@@ -488,7 +488,7 @@ void Timer::jump() {
 		else {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_gyro->_dna._arrowInTheDoor = false; // You've got it.
-			_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBolt - 1] = true;
+			_vm->_gyro->_dna._objects[Gyro::kObjectBolt - 1] = true;
 			_vm->_lucerna->refreshObjectList();
 			_vm->_visa->displayScrollChain('q', 50);
 			_vm->_lucerna->incScore(3);
@@ -521,7 +521,7 @@ void Timer::buyWine() {
 	_vm->_visa->displayScrollChain('D', 1); // It'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) {
 		_vm->_visa->displayScrollChain('D', 4); // You paid up.
-		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = true;
+		_vm->_gyro->_dna._objects[Gyro::kObjectWine - 1] = true;
 		_vm->_lucerna->refreshObjectList();
 		_vm->_gyro->_dna._wineState = 1; // OK Wine.
 	}
@@ -538,7 +538,7 @@ void Timer::greetsMonk() {
 }
 
 void Timer::fallDownOubliette() {
-	_vm->_gyro->_magics[8]._operation = _vm->_gyro->kMagicNothing;
+	_vm->_gyro->_magics[8]._operation = Gyro::kMagicNothing;
 	_vm->_animation->_sprites[0]._moveY++; // Increments dx/dy!
 	_vm->_animation->_sprites[0]._y += _vm->_animation->_sprites[0]._moveY;   // Dowwwn we go...
 	addTimer(3, kProcFallDownOubliette, kReasonFallingDownOubliette);

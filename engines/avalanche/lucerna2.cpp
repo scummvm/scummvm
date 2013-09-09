@@ -349,21 +349,21 @@ void Lucerna::exitRoom(byte x) {
 
 	switch (x) {
 	case r__spludwicks:
-		_vm->_timer->loseTimer(_vm->_timer->kReasonAvariciusTalks);
+		_vm->_timer->loseTimer(Timer::kReasonAvariciusTalks);
 		 _vm->_gyro->_dna._avariciusTalk = 0;
 		// He doesn't HAVE to be talking for this to work. It just deletes it IF it exists.
 		break;
 	case r__bridge:
 		if (_vm->_gyro->_dna._drawbridgeOpen > 0) {
 			_vm->_gyro->_dna._drawbridgeOpen = 4; // Fully open.
-			_vm->_timer->loseTimer(_vm->_timer->kReasonDrawbridgeFalls);
+			_vm->_timer->loseTimer(Timer::kReasonDrawbridgeFalls);
 		}
 		break;
 	case r__outsidecardiffcastle:
-		_vm->_timer->loseTimer(_vm->_timer->kReasonCardiffsurvey);
+		_vm->_timer->loseTimer(Timer::kReasonCardiffsurvey);
 		break;
 	case r__robins:
-		_vm->_timer->loseTimer(_vm->_timer->kReasonGettingTiedUp);
+		_vm->_timer->loseTimer(Timer::kReasonGettingTiedUp);
 		break;
 	}
 
@@ -398,14 +398,14 @@ void Lucerna::enterNewTown() {
 			_vm->_gyro->_dna._spludwickAtHome = true;
 			_vm->_gyro->_dna._crapulusWillTell = false;
 		}
-		if (_vm->_gyro->_dna._boxContent == _vm->_gyro->kObjectWine)
+		if (_vm->_gyro->_dna._boxContent == Gyro::kObjectWine)
 			_vm->_gyro->_dna._wineState = 3; // Vinegar
 	}
 	break;
 	}
 
 	if (_vm->_gyro->_dna._room != r__outsideducks) {
-		if ((_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1]) && !(_vm->_gyro->_dna._onionInVinegar))
+		if ((_vm->_gyro->_dna._objects[Gyro::kObjectOnion - 1]) && !(_vm->_gyro->_dna._onionInVinegar))
 			_vm->_gyro->_dna._rottenOnion = true; // You're holding the onion
 	}
 }
@@ -434,10 +434,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	if ((_vm->_gyro->_dna._roomCount[room] == 0) && (! _vm->_gyro->setFlag('S')))
 		incScore(1);
 
-	_vm->_gyro->_whereIs[_vm->_gyro->kPeopleAvalot - 150] = _vm->_gyro->_dna._room;
+	_vm->_gyro->_whereIs[Gyro::kPeopleAvalot - 150] = _vm->_gyro->_dna._room;
 
 	if (_vm->_gyro->_dna._geidaFollows)
-		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleGeida - 150] = room;
+		_vm->_gyro->_whereIs[Gyro::kPeopleGeida - 150] = room;
 
 	_vm->_gyro->_roomTime = 0;
 
@@ -451,7 +451,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (_vm->_gyro->_dna._avvyInBed) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
-			_vm->_timer->addTimer(100, _vm->_timer->kProcArkataShouts, _vm->_timer->kReasonArkataShouts);
+			_vm->_timer->addTimer(100, Timer::kProcArkataShouts, Timer::kReasonArkataShouts);
 		}
 		break;
 
@@ -459,7 +459,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (ped > 0) {
 			if (! _vm->_gyro->_dna._talkedToCrapulus) {
 
-				_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = r__outsideyours;
+				_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = r__outsideyours;
 				_vm->_animation->_sprites[1].init(8, false, _vm->_animation); // load Crapulus
 
 				if (_vm->_gyro->_dna._roomCount[r__outsideyours] == 1) {
@@ -473,13 +473,13 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_animation->_sprites[1]._callEachStepFl = true;
 				_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // He always faces Avvy.
 
-			} else _vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = r__nowhere;
+			} else _vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = r__nowhere;
 
 			if (_vm->_gyro->_dna._crapulusWillTell) {
 				_vm->_animation->_sprites[1].init(8, false, _vm->_animation);
 				_vm->_animation->appearPed(2, 2);
 				_vm->_animation->_sprites[1].walkTo(4);
-				_vm->_timer->addTimer(20, _vm->_timer->kProcCrapulusSpludOut, _vm->_timer->kReasonCrapulusSaysSpludwickOut);
+				_vm->_timer->addTimer(20, Timer::kProcCrapulusSpludOut, Timer::kReasonCrapulusSaysSpludwickOut);
 				_vm->_gyro->_dna._crapulusWillTell = false;
 			}
 		}
@@ -487,7 +487,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case r__outsidespludwicks:
 		if ((_vm->_gyro->_dna._roomCount[r__outsidespludwicks] == 1) && (ped == 1)) {
-			_vm->_timer->addTimer(20, _vm->_timer->kProcBang, _vm->_timer->kReasonExplosion);
+			_vm->_timer->addTimer(20, Timer::kProcBang, Timer::kReasonExplosion);
 			_vm->_gyro->_dna._spludwickAtHome = true;
 		}
 		break;
@@ -512,14 +512,14 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (_vm->_gyro->_dna._geidaFollows)
 			putGeidaAt(5, ped);
 		if (_vm->_gyro->_dna._cwytalotGone) {
-			_vm->_gyro->_magics[kColorLightred - 1]._operation = _vm->_gyro->kMagicNothing;
-			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] = r__nowhere;
+			_vm->_gyro->_magics[kColorLightred - 1]._operation = Gyro::kMagicNothing;
+			_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = r__nowhere;
 		} else {
 			if (ped > 0) {
 				_vm->_animation->_sprites[1].init(4, false, _vm->_animation); // 4 = Cwytalot
 				_vm->_animation->_sprites[1]._callEachStepFl = true;
 				_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFollowAvvyY;
-				_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCwytalot - 150] = r__brummieroad;
+				_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = r__brummieroad;
 
 				if (_vm->_gyro->_dna._roomCount[r__brummieroad] == 1) { // First time here...
 					_vm->_animation->appearPed(2, 2); // He appears on the right of the screen...
@@ -542,7 +542,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_animation->_sprites[1]._vanishIfStill = true;
 			_vm->_gyro->_dna._passedCwytalotInHerts = true;
 			// _vm->_gyro->whereis[#157] = r__Nowhere; // can we fit this in?
-			_vm->_timer->addTimer(20, _vm->_timer->kProcCwytalotInHerts, _vm->_timer->kReasonCwytalotInHerts);
+			_vm->_timer->addTimer(20, Timer::kProcCwytalotInHerts, Timer::kReasonCwytalotInHerts);
 		}
 		break;
 
@@ -550,7 +550,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (_vm->_gyro->_dna._drawbridgeOpen == 4) { // open
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Position of drawbridge
 			_vm->_graphics->refreshBackground();
-			_vm->_gyro->_magics[kColorGreen - 1]._operation = _vm->_gyro->kMagicNothing; // You may enter the drawbridge.
+			_vm->_gyro->_magics[kColorGreen - 1]._operation = Gyro::kMagicNothing; // You may enter the drawbridge.
 		}
 		if (_vm->_gyro->_dna._geidaFollows)
 			putGeidaAt(ped + 3, ped); // load Geida
@@ -563,13 +563,13 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_animation->_sprites[1].init(6, false, _vm->_animation);
 				_vm->_animation->appearPed(2, 2);
 				_vm->_animation->_sprites[1].walkTo(3);
-				_vm->_timer->addTimer(36, _vm->_timer->kProcGetTiedUp, _vm->_timer->kReasonGettingTiedUp);
+				_vm->_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
 			}
 		}
 
 		if (_vm->_gyro->_dna._beenTiedUp) {
-			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleRobinHood - 150] = 0;
-			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleFriarTuck - 150] = 0;
+			_vm->_gyro->_whereIs[Gyro::kPeopleRobinHood - 150] = 0;
+			_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = 0;
 		}
 
 		if (_vm->_gyro->_dna._tiedUp)
@@ -587,17 +587,17 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_animation->_sprites[1].init(9, false, _vm->_animation);
 				_vm->_animation->appearPed(2, 2);
 				_vm->_animation->_sprites[1].walkTo(3);
-				_vm->_timer->addTimer(47, _vm->_timer->kProcCardiffSurvey, _vm->_timer->kReasonCardiffsurvey);
+				_vm->_timer->addTimer(47, Timer::kProcCardiffSurvey, Timer::kReasonCardiffsurvey);
 			}
 			break;
 			case 5 :
-				_vm->_gyro->_magics[1]._operation = _vm->_gyro->kMagicNothing;
+				_vm->_gyro->_magics[1]._operation = Gyro::kMagicNothing;
 				break; // You've answered ALL his questions. => nothing happens.
 			default: { // You've answered SOME of his questions.
 				_vm->_animation->_sprites[1].init(9, false, _vm->_animation);
 				_vm->_animation->appearPed(2, 3);
 				_vm->_animation->_sprites[1]._facingDir = Animation::kDirRight;
-				_vm->_timer->addTimer(3, _vm->_timer->kProcCardiffReturn, _vm->_timer->kReasonCardiffsurvey);
+				_vm->_timer->addTimer(3, Timer::kProcCardiffReturn, Timer::kReasonCardiffsurvey);
 			}
 			}
 		if (_vm->_gyro->_dna._cardiffQuestionNum < 5)
@@ -614,9 +614,9 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		//setactivepage(1 - cp);
 
 		{
-			if ((_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1]) && (_vm->_gyro->_dna._wineState != 3)) {
+			if ((_vm->_gyro->_dna._objects[Gyro::kObjectWine - 1]) && (_vm->_gyro->_dna._wineState != 3)) {
 				_vm->_visa->displayScrollChain('q', 9); // Don't want to waste the wine!
-				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1] = false;
+				_vm->_gyro->_dna._objects[Gyro::kObjectWine - 1] = false;
 				refreshObjectList();
 			}
 		}
@@ -665,10 +665,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case r__lustiesroom:
 		_vm->_gyro->_dna._dogFoodPos = 1; // Actually, du Lustie pos.
 		if (_vm->_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
-			_vm->_timer->addTimer(3, _vm->_timer->kProcCallsGuards, _vm->_timer->kReasonDuLustieTalks);
+			_vm->_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
 		else if (! _vm->_gyro->_dna._enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
-			_vm->_timer->addTimer(3, _vm->_timer->kProcGreetsMonk, _vm->_timer->kReasonDuLustieTalks);
+			_vm->_timer->addTimer(3, Timer::kProcGreetsMonk, Timer::kReasonDuLustieTalks);
 
 		if (_vm->_gyro->_dna._geidaFollows) {
 			putGeidaAt(5, ped);
@@ -685,8 +685,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4);
-			_vm->_gyro->_magics[kColorBrown - 1]._operation = _vm->_gyro->kMagicNothing;
-			_vm->_gyro->_whereIs[_vm->_gyro->kPeopleJacques - 150] = 0;
+			_vm->_gyro->_magics[kColorBrown - 1]._operation = Gyro::kMagicNothing;
+			_vm->_gyro->_whereIs[Gyro::kPeopleJacques - 150] = 0;
 		}
 		if (ped != 0) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
@@ -1022,7 +1022,7 @@ void Lucerna::fxToggle() {
 void Lucerna::refreshObjectList() {
 	_vm->_gyro->_dna._carryNum = 0;
 	if (_vm->_gyro->_thinkThing && !_vm->_gyro->_dna._objects[_vm->_gyro->_thinks - 1])
-		thinkAbout(_vm->_gyro->kObjectMoney, Gyro::kThing); // you always have money
+		thinkAbout(Gyro::kObjectMoney, Gyro::kThing); // you always have money
 
 	for (byte i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_dna._objects[i]) {
@@ -1208,7 +1208,7 @@ void Lucerna::gameOver() {
 	_vm->_animation->_sprites[0]._stepNum = 0;
 	_vm->_animation->_sprites[0].appear(sx, sy, 0);
 
-	_vm->_timer->addTimer(3, _vm->_timer->kProcAvalotFalls, _vm->_timer->kReasonFallingOver);
+	_vm->_timer->addTimer(3, Timer::kProcAvalotFalls, Timer::kReasonFallingOver);
 	_vm->_gyro->_alive = false;
 }
 

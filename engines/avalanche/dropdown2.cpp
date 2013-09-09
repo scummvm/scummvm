@@ -503,7 +503,7 @@ void Dropdown::setupMenuWith() {
 		// We disable the "give" option if: (a), you haven't selected anybody, (b), the _person you've selected isn't in the room,
 		// or (c), the _person you've selected is YOU!
 
-		if ((_vm->_gyro->_lastPerson == _vm->_gyro->kPeopleAvalot) || (_vm->_gyro->_lastPerson == _vm->_acci->kNothing)
+		if ((_vm->_gyro->_lastPerson == Gyro::kPeopleAvalot) || (_vm->_gyro->_lastPerson == _vm->_acci->kNothing)
 			|| (_vm->_gyro->_whereIs[_vm->_gyro->_lastPerson - 150] != _vm->_gyro->_dna._room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
@@ -528,7 +528,7 @@ void Dropdown::setupMenuWith() {
 		break;
 		case Gyro::kPeopleMalagauche: {
 			bool isSober = !_vm->_gyro->_dna._teetotal;
-			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_gyro->_dna._objects[_vm->_gyro->kObjectWine - 1]);
+			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_gyro->_dna._objects[Gyro::kObjectWine - 1]);
 			_activeMenuItem.setupOption("Buy some beer", 'b', "", isSober);
 			_activeMenuItem.setupOption("Buy some whisky", 'h', "", isSober);
 			_activeMenuItem.setupOption("Buy some cider", 'c', "", isSober);
@@ -537,7 +537,7 @@ void Dropdown::setupMenuWith() {
 		}
 		break;
 		case Gyro::kPeopleTrader: {
-			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_gyro->_dna._objects[_vm->_gyro->kObjectOnion - 1]);
+			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_gyro->_dna._objects[Gyro::kObjectOnion - 1]);
 			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + 105;
 		}
 		break;

@@ -126,10 +126,6 @@ private:
 	AvalancheConsole *_console;
 	Common::Platform _platform;
 
-	// From bootstrp:
-
-	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
-
 	static const int16 kRunShootemup = 1, kRunDosshell = 2, kRunGhostroom = 3, kRunGolden = 4;
 	static const char kRuncodes[2][3];
 	static const int16 kReset = 0;
@@ -146,19 +142,22 @@ private:
 	bool _zoomy;
 
 	void bFlightOn();
-	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
 	void getArguments();
 	void getSlope();
 	void callMenu();
 	void runAvalot();
 
 #if 0
+	// From bootstrp:
+	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
+
 	Common::String _demoArgs, _argsWithNoFilename;
 	byte _originalMode;
 	byte *_old1c;
 	Common::String _segofs;
 	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
 
+	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
 	void bFlightOff();
 	Common::String elmToStr(Elm how);
 	bool keyPressed();

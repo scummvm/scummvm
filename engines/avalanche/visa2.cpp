@@ -165,9 +165,9 @@ void Visa::talkTo(byte whom) {
 	if (_vm->_gyro->_subjectNum == 0) {
 		switch (whom) {
 		case Gyro::kPeopleSpludwick:
-			if ((_vm->_gyro->_dna._lustieIsAsleep) & (!_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1])) {
+			if ((_vm->_gyro->_dna._lustieIsAsleep) & (!_vm->_gyro->_dna._objects[Gyro::kObjectPotion - 1])) {
 				displayScrollChain('q', 68);
-				_vm->_gyro->_dna._objects[_vm->_gyro->kObjectPotion - 1] = true;
+				_vm->_gyro->_dna._objects[Gyro::kObjectPotion - 1] = true;
 				_vm->_lucerna->refreshObjectList();
 				_vm->_lucerna->incScore(3);
 				return;
@@ -241,7 +241,7 @@ void Visa::talkTo(byte whom) {
 			break;
 		}
 	// On a subject. Is there any reason to block it?
-	} else if ((whom == _vm->_gyro->kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) {
+	} else if ((whom == Gyro::kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) {
 		displayScrollChain('q', 43); // He's fast asleep!
 		return;
 	}
@@ -269,12 +269,12 @@ void Visa::talkTo(byte whom) {
 	if (!_noError)
 		displayScrollChain('n', whom); // File not found!
 
-	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == _vm->_gyro->kPeopleCrapulus)) { // Crapulus: get the badge - first time only
-		_vm->_gyro->_dna._objects[_vm->_gyro->kObjectBadge - 1] = true;
+	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == Gyro::kPeopleCrapulus)) { // Crapulus: get the badge - first time only
+		_vm->_gyro->_dna._objects[Gyro::kObjectBadge - 1] = true;
 		_vm->_lucerna->refreshObjectList();
 		displayScrollChain('q', 1); // Circular from Cardiff.
 		_vm->_gyro->_dna._talkedToCrapulus = true;
-		_vm->_gyro->_whereIs[_vm->_gyro->kPeopleCrapulus - 150] = 177; // Crapulus walks off.
+		_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = 177; // Crapulus walks off.
 
 		_vm->_animation->_sprites[1]._vanishIfStill = true;
 		_vm->_animation->_sprites[1].walkTo(3); // Walks away.
