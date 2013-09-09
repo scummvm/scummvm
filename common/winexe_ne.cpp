@@ -148,7 +148,7 @@ bool NEResources::loadFromCompressedEXE(const String &fileName) {
 	}
 
 	delete[] window;
-	SeekableReadStream *stream = new MemoryReadStream(unpackedData, unpackedLength);
+	SeekableReadStream *stream = new MemoryReadStream(unpackedData, unpackedLength, DisposeAfterUse::YES);
 
 	return loadFromEXE(stream);
 }
@@ -366,6 +366,7 @@ String NEResources::loadString(uint32 stringID) {
 	while (size--)
 		string += (char)stream->readByte();
 
+	delete stream;
 	return string;
 }
 
