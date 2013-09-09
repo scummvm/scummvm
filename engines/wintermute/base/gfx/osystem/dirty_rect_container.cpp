@@ -239,11 +239,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			 *
 			 */
 			Common::Rect intersecting = existing->findIntersectingRect(*candidate);
-			// We have to remove intersecting and enqueue the rest
-			// We know that it's not a simple contained rect, we know that
-			// it's not a cross-shaped thing like above, we know that it's not
-			// a Commodore-logo type of deal (where the C is the bigger rect)
-			// So intersecting is either the NE, SE, SW or NW corner of candidate
+
 			if (intersecting.width() >= kMaxSplicingX &&
 			        intersecting.height() >= kMaxSplicingY
 			   ) {
