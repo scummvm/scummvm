@@ -85,7 +85,6 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 		_rectArray[target]->clip(*clipRect);
 	}
 
-	// TODO: Upper limit?
 }
 
 void DirtyRectContainer::reset() {
