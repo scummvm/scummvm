@@ -27,23 +27,9 @@
  */
 
 
-#include <limits.h>
 #include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 
 namespace Wintermute {
-
-const uint kMaxOutputRects = UINT_MAX;
-// We have convened that we are not worried about lotsa rects
-// anymore thanks to wjp's patch... but overflow is still a remote risk.
-const uint kMaxInputRects = 512;
-const int kMaxAcceptableWaste = 10;
-const int kMinAcceptableWaste = 3;
-const int kMaxSplicingX = 5;
-const int kMaxSplicingY = 5;
-const int kHugeWidthPercent = 90;
-const int kHugeHeigthPercent = 90;
-const int kHugeWidthFixed = 1024;
-const int kHugeHeightFixed = 768;
 
 DirtyRectContainer::DirtyRectContainer() {
 	_disableDirtyRects = true;
