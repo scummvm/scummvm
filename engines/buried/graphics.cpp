@@ -318,13 +318,14 @@ void GraphicsManager::invalidateRect(const Common::Rect &rect) {
 		_dirtyRect.extend(rect);
 }
 
-void GraphicsManager::updateScreen() {
+void GraphicsManager::updateScreen(bool drawWindows) {
 	bool shouldUpdateScreen = _mouseMoved;
 	_mouseMoved = false;
 
 	if (!_dirtyRect.isEmpty()) {
 		// Draw the main window, which will draw its children
-		_vm->_mainWindow->updateWindow();
+		if (drawWindows)
+			_vm->_mainWindow->updateWindow();
 
 		// Copy just that rect
 		g_system->copyRectToScreen(_screen->getBasePtr(_dirtyRect.left, _dirtyRect.top), _screen->pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());

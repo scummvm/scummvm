@@ -81,7 +81,7 @@ public:
 	const Common::Rect &getDirtyRect() const { return _dirtyRect; }
 
 	void markMouseMoved() { _mouseMoved = true; }
-	void updateScreen();
+	void updateScreen(bool drawWindows = true);
 	Graphics::Surface *getScreen() const { return _screen; }
 
 	void blit(const Graphics::Surface *surface, int x, int y);
