@@ -77,6 +77,9 @@ bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject
 	if (subj) {
 		if (!subj->isIdle() || (subj->_flags & 0x100))
 			return false;
+	} else {
+		error("CInteractionController::handleInteraction(): subj is null");
+		return false;
 	}
 
 	if (!_interactions.size())
