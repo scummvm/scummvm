@@ -37,6 +37,7 @@ public:
 	FrameWindow(BuriedEngine *vm);
 	~FrameWindow();
 
+	bool showTitleSequence();
 	bool showMainMenu();
 	bool returnToMainMenu();
 	bool playMovie(const Common::String &background, const Common::String &movie, int movieLeft, int movieTop);
