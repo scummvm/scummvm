@@ -77,6 +77,37 @@ ResourceLoader::ResourceLoader() {
 	Lab *l;
 	Common::ArchiveMemberList files, updFiles;
 
+	//Load the update from the executable, if needed
+	const char *updateFilename = g_grim->getUpdateFilename();
+	if (updateFilename) {
+		Common::File *updStream = new Common::File();
+		if (updStream && updStream->open(updateFilename)) {
+			Common::Archive *update = loadUpdateArchive(updStream);
+			if (update)
+				SearchMan.add("update", update, 1);
+		} else
+			delete updStream;
+
+		// Check if the update has been correctly loaded
+		if (!SearchMan.hasArchive("update")) {
+			const char *errorMessage = 0;
+			if (g_grim->getGameType() == GType_GRIM) {
+				errorMessage =  "The original patch of Grim Fandango\n"
+								"is missing. Please download it from\n"
+								"http://www.residualvm.org/downloads/\n"
+								"and put it in the game data files directory";
+			} else if (g_grim->getGameType() == GType_MONKEY4) {
+				errorMessage =  "The original patch of Escape from Monkey Island is missing. \n"
+								"Please download it from http://www.residualvm.org/downloads/\n"
+								"and put it in the game data files directory.\n"
+								"Pay attention to download the correct version according to the game's language";
+			}
+
+			GUI::displayErrorDialog(errorMessage);
+			error("%s not found", updateFilename);
+		}
+	}
+
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
 			SearchMan.listMatchingMembers(files, "gfdemo01.lab");
@@ -84,15 +115,6 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "sound001.lab");
 			SearchMan.listMatchingMembers(files, "voice001.lab");
 		} else {
-			//Load the update from the executable
-			Common::File *updStream = new Common::File();
-			if (updStream && updStream->open("gfupd101.exe")) {
-				Common::Archive *update = loadUpdateArchive(updStream);
-				if (update)
-					SearchMan.add("update", update, 1);
-			} else
-				delete updStream;
-
 			if (!SearchMan.hasFile("residualvm-grim-patch.lab"))
 				error("residualvm-grim-patch.lab not found");
 
@@ -128,22 +150,10 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "tile.lab");
 			SearchMan.listMatchingMembers(files, "voice.lab");
 		} else {
-			if (g_grim->getGamePlatform() == Common::kPlatformWindows) {
-				//Load the update from the executable
-				SearchMan.listMatchingMembers(updFiles, "MonkeyUpdate.exe");
-				SearchMan.listMatchingMembers(updFiles, "MonkeyUpdate_???.exe");
-				for (Common::ArchiveMemberList::const_iterator x = updFiles.begin(); x != updFiles.end(); ++x) {
-					Common::SeekableReadStream *updStream;
-					updStream = (*x)->createReadStream();
-
-					Common::Archive *update = loadUpdateArchive(updStream);
-					if (update)
-						SearchMan.add("update", update, 1);
-				}
-			}
-
-			SearchMan.listMatchingMembers(files, "patch.m4b");
+			//Keep i9n.m4b before patch.m4b for a better efficiency
+			//in decompressing from Monkey Update.exe
 			SearchMan.listMatchingMembers(files, "i9n.m4b");
+			SearchMan.listMatchingMembers(files, "patch.m4b");
 			SearchMan.listMatchingMembers(files, "art???.m4b");
 			SearchMan.listMatchingMembers(files, "lip.m4b");
 			SearchMan.listMatchingMembers(files, "local.m4b");
@@ -163,28 +173,6 @@ ResourceLoader::ResourceLoader() {
 				files.push_front(SearchMan.getMember(datausr_name));
 			}
 		}
-	}
-
-	// Check if the update has correctly loaded
-	if (!(g_grim->getGameFlags() & ADGF_DEMO || SearchMan.hasArchive("update"))) {
-		const char *errorMessage = 0;
-		if (g_grim->getGameType() == GType_GRIM) {
-			errorMessage =  "Unsupported version of Grim Fandango.\n"
-							"Please download the original patch from\n"
-							"http://www.residualvm.org/downloads/\n"
-							"and put it in the game data files directory";
-			GUI::displayErrorDialog(errorMessage);
-			error("gfupd101.exe not found");
-		}
-
-		//Don't force the update for MI4 for now
-		/*else if (g_grim->getGameType() == GType_MONKEY4)
-		    errorMessage =  "Unsupported version of Escape from Monkey Island.\n"
-		                    "Please download the original patch from\n"
-		                    "http://www.residualvm.org/downloads/\n"
-		                    "and put it in the game data files directory.\n"
-		                    "Pay attention to download the correct version according to the game's language";
-		*/
 	}
 
 	if (files.empty())

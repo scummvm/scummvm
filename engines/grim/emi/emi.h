@@ -35,6 +35,8 @@ public:
 	EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language);
 	virtual ~EMIEngine();
 
+	virtual const char *getUpdateFilename();
+
 	void pushText(Common::List<TextObject *> *objects);
 	Common::List<TextObject *> *popText();
 

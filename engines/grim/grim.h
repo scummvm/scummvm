@@ -91,6 +91,7 @@ public:
 	GrimGameType getGameType() { return _gameType; }
 	Common::Language getGameLanguage() { return _gameLanguage; }
 	Common::Platform getGamePlatform() { return _gamePlatform; }
+	virtual const char *getUpdateFilename();
 	bool canLoadGameStateCurrently() { return true; }
 	Common::Error loadGameState(int slot);
 

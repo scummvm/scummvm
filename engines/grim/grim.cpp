@@ -222,6 +222,13 @@ void GrimEngine::createRenderer() {
 	}
 }
 
+const char *GrimEngine::getUpdateFilename() {
+	if (!(getGameFlags() & ADGF_DEMO))
+		return "gfupd101.exe";
+	else
+		return 0;
+}
+
 Common::Error GrimEngine::run() {
 	// Try to see if we have the EMI Mac installer present
 	// Currently, this requires the data fork to be standalone
