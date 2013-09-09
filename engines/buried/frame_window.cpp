@@ -25,6 +25,8 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/system.h"
+#include "graphics/surface.h"
 
 #include "buried/buried.h"
 #include "buried/credits.h"
@@ -36,6 +38,7 @@
 #include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/title_sequence.h"
+#include "buried/video_window.h"
 #include "buried/demo/demo_menu.h"
 #include "buried/demo/features.h"
 #include "buried/demo/movie_scene.h"
@@ -67,6 +70,54 @@ FrameWindow::FrameWindow(BuriedEngine *vm) : Window(vm, 0) {
 
 FrameWindow::~FrameWindow() {
 	delete _mainChildWindow;
+}
+
+bool FrameWindow::showTitleSequence() {
+	invalidateWindow();
+	updateWindow();
+
+	Graphics::Surface *swLogo = _vm->_gfx->getBitmap(_vm->isTrueColor() ? "MISC/24BPP/SWLOGO.BMP" : "MISC/8BPP/SWLOGO.BMP");
+	uint32 x = (640 - swLogo->w) / 2;
+	uint32 y = (480 - swLogo->h) / 2;
+	_vm->_gfx->blit(swLogo, x, y);
+	_vm->_gfx->updateScreen(false);
+	swLogo->free();
+	delete swLogo;
+
+	_vm->_sound->playInterfaceSound("MISC/SWSTING.WAV");
+
+	_vm->removeMouseMessages(this);
+
+	uint32 startTime = g_system->getMillis();
+	while (g_system->getMillis() < (startTime + 7000) && !_vm->hasMessage(this, kMessageTypeLButtonDown, kMessageTypeLButtonDown) && !_vm->shouldQuit())
+		_vm->yield();
+
+	_vm->_sound->stopInterfaceSound();
+	invalidateWindow();
+
+	VideoWindow *video = new VideoWindow(_vm, this);
+
+	if (!video->openVideo("MISC/PRESTO.AVI"))
+		error("Failed to open MISC/PRESTO.AVI");
+
+	video->enableWindow(false);
+	x = (_rect.right - video->getRect().right) / 2;
+	y = (_rect.bottom - video->getRect().bottom) / 2;
+
+	video->setWindowPos(0, x, y, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosShowWindow);
+	video->playVideo();
+	enableWindow(true);
+
+	_vm->removeMouseMessages(this);
+	_vm->removeMouseMessages(video);
+
+	while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped && !_vm->hasMessage(this, kMessageTypeLButtonDown, kMessageTypeLButtonDown))
+		_vm->yield();
+
+	delete video;
+
+	invalidateWindow();
+	return true;
 }
 
 bool FrameWindow::showMainMenu() {

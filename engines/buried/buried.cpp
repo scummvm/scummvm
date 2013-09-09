@@ -100,7 +100,7 @@ Common::Error BuriedEngine::run() {
 	_mainWindow = new FrameWindow(this);
 
 	if (isDemo()) {
-		// TODO: Title sequence
+		((FrameWindow *)_mainWindow)->showTitleSequence();
 		((FrameWindow *)_mainWindow)->showMainMenu();
 	} else {
 		((FrameWindow *)_mainWindow)->showClosingScreen();
