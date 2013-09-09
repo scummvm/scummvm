@@ -293,8 +293,7 @@ void Lucerna::loadRoom(byte num) {
 
 	_vm->_graphics->fleshColors();
 
-	Common::String filename;
-	filename = filename.format("place%d.avd", num);
+	Common::String filename = Common::String::format("place%d.avd", num);
 	if (!file.open(filename)) {
 		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
 		return;

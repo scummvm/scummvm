@@ -1917,10 +1917,10 @@ void Acci::doThat() {
 	case kVerbCodeDie:
 		_vm->_lucerna->gameOver();
 		break;
-	case kVerbCodeScore:
-		_vm->_scrolls->displayText(Common::String("Your score is ") + _vm->_gyro->intToStr(_vm->_gyro->_dna._score) + ',' + _vm->_scrolls->kControlCenter
-			+ _vm->_scrolls->kControlNewLine + "out of a possible 128." + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine
-			+ "This gives you a rank of " + rank() + '.' + _vm->_scrolls->kControlNewLine + _vm->_scrolls->kControlNewLine + totalTime());
+	case kVerbCodeScore: {
+		Common::String tmpStr = Common::String::format("Your score is %d,%c%cout of a possible 128.%c%cThis gives you a rank of %s.%c%c%s", _vm->_gyro->_dna._score, Scrolls::kControlCenter, Scrolls::kControlNewLine, Scrolls::kControlNewLine, Scrolls::kControlNewLine, rank().c_str(), Scrolls::kControlNewLine, Scrolls::kControlNewLine, totalTime().c_str());
+		_vm->_scrolls->displayText(tmpStr);
+		}
 		break;
 	case kVerbCodePut:
 		putProc();
