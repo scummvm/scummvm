@@ -195,8 +195,7 @@ LABEL_38:
 					mq = new MessageQueue(inter->_messageQueue, 0, 1);
 
 					if (!mq->chain(subj)) {
-						if (mq)
-							delete mq;
+						delete mq;
 
 						return false;
 					}
