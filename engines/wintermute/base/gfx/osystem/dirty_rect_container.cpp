@@ -130,7 +130,6 @@ bool DirtyRectContainer::isHuge(const Common::Rect *rect) {
 }
 
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
-
 	if (_disableDirtyRects) {
 		return getFallback();
 	}
