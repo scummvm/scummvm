@@ -48,7 +48,7 @@ struct Bitmap {
 	bool putDibRB(int32 *palette, int x = -1, int y = -1);
 	void putDibCB(int32 *palette);
 
-	void colorFill(uint16 *dest, int len, int color);
+	void colorFill(uint16 *dest, int len, int32 color);
 	void paletteFill(uint16 *dest, byte *src, int len, int32 *palette);
 	void copierKeyColor(uint16 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format);
 	void copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_format);
