@@ -714,8 +714,10 @@ void Scrolls::callScrollDriver() {
 				case 6:
 					displayText(_vm->_gyro->_dna._spareEvening + kControlToBuffer);
 					break;
-				case 9:
-					displayText(_vm->_gyro->intToStr(_vm->_gyro->_dna._catacombX) + ',' + _vm->_gyro->intToStr(_vm->_gyro->_dna._catacombY) + kControlToBuffer);
+				case 9: {
+					Common::String tmpStr = Common::String::format("%d,%d%c",_vm->_gyro->_dna._catacombX, _vm->_gyro->_dna._catacombY, kControlToBuffer);
+					displayText(tmpStr);
+					}
 					break;
 				case 10:
 					switch (_vm->_gyro->_dna._boxContent) {
