@@ -979,7 +979,7 @@ int global_messageHandler3(ExCommand *cmd) {
 							cmd->_messageKind = 0;
 							return result;
 						}
-						if (ani2->canInteractAny(pic, cmd->_keyCode)) {
+						if (!ani2 || ani2->canInteractAny(pic, cmd->_keyCode)) {
 							if (!ani2 || (ani2->isIdle() && !(ani2->_flags & 0x80) && !(ani2->_flags & 0x100)))
 								handleObjectInteraction(ani2, pic, cmd->_keyCode);
 							return 1;
