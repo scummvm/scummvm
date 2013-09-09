@@ -26,8 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
+
 #include <limits.h>
+#include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 
 namespace Wintermute {
 
