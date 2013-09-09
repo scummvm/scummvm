@@ -418,7 +418,7 @@ void Lucerna::putGeidaAt(byte whichPed, byte &ped) {
 	_vm->_animation->_sprites[1].init(5, false, _vm->_animation); // load Geida
 	_vm->_animation->appearPed(2, whichPed);
 	_vm->_animation->_sprites[1]._callEachStepFl = true;
-	_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcGeida;
+	_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcGeida;
 }
 
 void Lucerna::enterRoom(byte room, byte ped) {
@@ -471,7 +471,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				}
 
 				_vm->_animation->_sprites[1]._callEachStepFl = true;
-				_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // He always faces Avvy.
+				_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcFaceAvvy; // He always faces Avvy.
 
 			} else _vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = r__nowhere;
 
@@ -503,7 +503,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_gyro->_dna._dogFoodPos = 0;  // _vm->_gyro->also Spludwick pos.
 
 			_vm->_animation->_sprites[1]._callEachStepFl = true;
-			_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcGeida;
+			_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcGeida;
 		} else
 			_vm->_gyro->_whereIs[1] = r__nowhere;
 		break;
@@ -518,7 +518,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			if (ped > 0) {
 				_vm->_animation->_sprites[1].init(4, false, _vm->_animation); // 4 = Cwytalot
 				_vm->_animation->_sprites[1]._callEachStepFl = true;
-				_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFollowAvvyY;
+				_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcFollowAvvyY;
 				_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = r__brummieroad;
 
 				if (_vm->_gyro->_dna._roomCount[r__brummieroad] == 1) { // First time here...
@@ -732,7 +732,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 
 		_vm->_animation->_sprites[1]._callEachStepFl = true;
-		_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcFaceAvvy; // She always faces Avvy.
+		_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcFaceAvvy; // She always faces Avvy.
 		break;
 
 	case r__insidecardiffcastle:
@@ -1138,13 +1138,13 @@ void Lucerna::checkClick() {
 					_vm->_acci->_person = _vm->_gyro->_thinks;
 					_vm->_acci->_thing = _vm->_acci->kPardon;
 				}
-				callVerb(_vm->_acci->kVerbCodeExam);
+				callVerb(Acci::kVerbCodeExam);
 			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
 				do {
 					_vm->updateEvents();
 				} while (_holdLeftMouse);
 
-				callVerb(_vm->_acci->kVerbCodeScore);
+				callVerb(Acci::kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
 				_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kWalk;
 				_vm->_animation->updateSpeed();

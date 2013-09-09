@@ -322,14 +322,14 @@ void AnimationType::setSpeed(int8 xx, int8 yy) {
 	if (_moveX == 0) {
 		// No horz movement
 		if (_moveY < 0)
-			turn(_anim->kDirUp);
+			turn(Animation::kDirUp);
 		else
-			turn(_anim->kDirDown);
+			turn(Animation::kDirDown);
 	} else {
 		if (_moveX < 0)
-			turn(_anim->kDirLeft);
+			turn(Animation::kDirLeft);
 		else
-			turn(_anim->kDirRight);
+			turn(Animation::kDirRight);
 	}
 }
 

@@ -1154,7 +1154,7 @@ void Acci::standUp() {
 			_vm->_animation->_sprites[0]._visible = true;
 			_vm->_gyro->_dna._userMovesAvvy = true;
 			_vm->_animation->appearPed(1, 2);
-			_vm->_gyro->_dna._direction = _vm->_gyro->kDirectionLeft;
+			_vm->_gyro->_dna._direction = Gyro::kDirectionLeft;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->incScore(1);
 			_vm->_gyro->_dna._avvyInBed = false;
@@ -1719,7 +1719,7 @@ void Acci::doThat() {
 					_vm->_animation->appearPed(2, 4);
 					_vm->_animation->_sprites[1].walkTo(5);
 					_vm->_animation->_sprites[1]._callEachStepFl = true;
-					_vm->_animation->_sprites[1]._eachStepProc = _vm->_animation->kProcBackAndForth;
+					_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcBackAndForth;
 					_vm->_gyro->_dna._avariciusTalk = 14;
 					_vm->_timer->addTimer(177, Timer::kProcAvariciusTalks, Timer::kReasonAvariciusTalks);
 				}
