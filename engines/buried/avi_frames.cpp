@@ -39,6 +39,7 @@ AVIFrames::AVIFrames(const Common::String &fileName, uint cachedFrames) {
 	_cacheEnabled = false;
 	_lastFrame = 0;
 	_lastFrameIndex = -1;
+	_tempFrame = 0;
 
 	if (!fileName.empty())
 		open(fileName, cachedFrames);
@@ -92,6 +93,11 @@ void AVIFrames::close() {
 
 	_lastFrameIndex = -1;
 	_lastFrame = 0;
+
+	if (_tempFrame) {
+		_tempFrame->free();
+		delete _tempFrame;
+	}
 }
 
 const Graphics::Surface *AVIFrames::getFrame(int frameIndex) {
@@ -122,8 +128,16 @@ const Graphics::Surface *AVIFrames::getFrame(int frameIndex) {
 		copy = frame->convertTo(g_system->getScreenFormat());
 	}
 
-	if (_cacheEnabled)
+	if (_cacheEnabled) {
 		addFrameToCache(frameIndex, copy);
+	} else {
+		if (_tempFrame) {
+			_tempFrame->free();
+			delete _tempFrame;
+		}
+
+		_tempFrame = copy;
+	}
 
 	return copy;
 }
