@@ -42,7 +42,7 @@ namespace Wintermute {
 
 class BaseFontTT : public BaseFont {
 private:
-	//////////////////////////////////////////////////////////////////////////
+	
 	class BaseCachedTTFontText {
 	public:
 		WideString _text;
@@ -75,7 +75,7 @@ private:
 	};
 
 public:
-	//////////////////////////////////////////////////////////////////////////
+	
 	class BaseTTFontLayer {
 	public:
 		BaseTTFontLayer() {

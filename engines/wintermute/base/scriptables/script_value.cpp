@@ -36,13 +36,13 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 
 IMPLEMENT_PERSISTENT(ScValue, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue::ScValue(BaseGame *inGame) : BaseClass(inGame) {
 	_type = VAL_NULL;
 
@@ -57,7 +57,7 @@ ScValue::ScValue(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue::ScValue(BaseGame *inGame, bool val) : BaseClass(inGame) {
 	_type = VAL_BOOL;
 	_valBool = val;
@@ -72,7 +72,7 @@ ScValue::ScValue(BaseGame *inGame, bool val) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue::ScValue(BaseGame *inGame, int32 val) : BaseClass(inGame) {
 	_type = VAL_INT;
 	_valInt = val;
@@ -87,7 +87,7 @@ ScValue::ScValue(BaseGame *inGame, int32 val) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue::ScValue(BaseGame *inGame, double val) : BaseClass(inGame) {
 	_type = VAL_FLOAT;
 	_valFloat = val;
@@ -102,7 +102,7 @@ ScValue::ScValue(BaseGame *inGame, double val) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue::ScValue(BaseGame *inGame, const char *val) : BaseClass(inGame) {
 	_type = VAL_STRING;
 	_valString = nullptr;
@@ -118,7 +118,7 @@ ScValue::ScValue(BaseGame *inGame, const char *val) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::cleanup(bool ignoreNatives) {
 	deleteProps();
 
@@ -151,13 +151,13 @@ void ScValue::cleanup(bool ignoreNatives) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue::~ScValue() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *ScValue::getProp(const char *name) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getProp(name);
@@ -191,7 +191,7 @@ ScValue *ScValue::getProp(const char *name) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::deleteProp(const char *name) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->deleteProp(name);
@@ -208,7 +208,7 @@ bool ScValue::deleteProp(const char *name) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAsConst) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->setProp(name, val);
@@ -259,7 +259,7 @@ bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAs
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::propExists(const char *name) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->propExists(name);
@@ -270,7 +270,7 @@ bool ScValue::propExists(const char *name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::deleteProps() {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
@@ -281,7 +281,7 @@ void ScValue::deleteProps() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::CleanProps(bool includingNatives) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
@@ -292,7 +292,7 @@ void ScValue::CleanProps(bool includingNatives) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::isNULL() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->isNULL();
@@ -302,7 +302,7 @@ bool ScValue::isNULL() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::isNative() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->isNative();
@@ -312,7 +312,7 @@ bool ScValue::isNative() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::isString() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->isString();
@@ -322,7 +322,7 @@ bool ScValue::isString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::isFloat() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->isFloat();
@@ -332,7 +332,7 @@ bool ScValue::isFloat() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::isInt() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->isInt();
@@ -342,7 +342,7 @@ bool ScValue::isInt() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::isBool() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->isBool();
@@ -352,7 +352,7 @@ bool ScValue::isBool() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::isObject() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->isObject();
@@ -362,7 +362,7 @@ bool ScValue::isObject() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 TValType ScValue::getTypeTolerant() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getType();
@@ -372,7 +372,7 @@ TValType ScValue::getTypeTolerant() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setBool(bool val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setBool(val);
@@ -389,7 +389,7 @@ void ScValue::setBool(bool val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setInt(int val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setInt(val);
@@ -406,7 +406,7 @@ void ScValue::setInt(int val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setFloat(double val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setFloat(val);
@@ -423,7 +423,7 @@ void ScValue::setFloat(double val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setString(const char *val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setString(val);
@@ -447,7 +447,7 @@ void ScValue::setString(const Common::String &val) {
 	setString(val.c_str());
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setStringVal(const char *val) {
 	if (_valString) {
 		delete[] _valString;
@@ -466,7 +466,7 @@ void ScValue::setStringVal(const char *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setNULL() {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setNULL();
@@ -486,7 +486,7 @@ void ScValue::setNULL() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setNative(BaseScriptable *val, bool persistent) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setNative(val, persistent);
@@ -517,7 +517,7 @@ void ScValue::setNative(BaseScriptable *val, bool persistent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setObject() {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setObject();
@@ -529,14 +529,14 @@ void ScValue::setObject() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setReference(ScValue *val) {
 	_valRef = val;
 	_type = VAL_VARIABLE_REF;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::getBool(bool defaultVal) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getBool();
@@ -564,7 +564,7 @@ bool ScValue::getBool(bool defaultVal) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int ScValue::getInt(int defaultVal) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getInt();
@@ -592,7 +592,7 @@ int ScValue::getInt(int defaultVal) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 double ScValue::getFloat(double defaultVal) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getFloat();
@@ -619,7 +619,7 @@ double ScValue::getFloat(double defaultVal) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void *ScValue::getMemBuffer() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getMemBuffer();
@@ -633,7 +633,7 @@ void *ScValue::getMemBuffer() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *ScValue::getString() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getString();
@@ -684,7 +684,7 @@ const char *ScValue::getString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseScriptable *ScValue::getNative() {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getNative();
@@ -698,13 +698,13 @@ BaseScriptable *ScValue::getNative() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 TValType ScValue::getType() {
 	return _type;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::copy(ScValue *orig, bool copyWhole) {
 	_gameRef = orig->_gameRef;
 
@@ -753,7 +753,7 @@ void ScValue::copy(ScValue *orig, bool copyWhole) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScValue::setValue(ScValue *val) {
 	if (val->_type == VAL_VARIABLE_REF) {
 		setValue(val->_valRef);
@@ -787,7 +787,7 @@ void ScValue::setValue(ScValue *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
@@ -882,7 +882,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
@@ -897,7 +897,7 @@ bool ScValue::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // -1 ... left is less, 0 ... equals, 1 ... left is greater
 int ScValue::compare(ScValue *val1, ScValue *val2) {
 	// both natives?
@@ -952,7 +952,7 @@ int ScValue::compare(ScValue *val1, ScValue *val2) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int ScValue::compareStrict(ScValue *val1, ScValue *val2) {
 	if (val1->getTypeTolerant() != val2->getTypeTolerant()) {
 		return -1;
@@ -961,7 +961,7 @@ int ScValue::compareStrict(ScValue *val1, ScValue *val2) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::setProperty(const char *propName, int32 value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
@@ -969,7 +969,7 @@ bool ScValue::setProperty(const char *propName, int32 value) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::setProperty(const char *propName, const char *value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
@@ -977,7 +977,7 @@ bool ScValue::setProperty(const char *propName, const char *value) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::setProperty(const char *propName, double value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
@@ -986,7 +986,7 @@ bool ScValue::setProperty(const char *propName, double value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::setProperty(const char *propName, bool value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
@@ -995,7 +995,7 @@ bool ScValue::setProperty(const char *propName, bool value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScValue::setProperty(const char *propName) {
 	ScValue *val = new ScValue(_gameRef);
 	bool ret =  DID_SUCCEED(setProp(propName, val));

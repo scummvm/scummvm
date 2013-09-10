@@ -37,19 +37,19 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////
+
+
 BaseParser::BaseParser() {
 	_whiteSpace = new char [strlen(WHITESPACE) + 1];
 	strcpy(_whiteSpace, WHITESPACE);
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseParser::~BaseParser() {
 	if (_whiteSpace != nullptr) {
 		delete[] _whiteSpace;
@@ -57,13 +57,13 @@ BaseParser::~BaseParser() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 char *BaseParser::getLastOffender() {
 	return _lastOffender;
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, char **data) {
 	skipCharacters(buf, _whiteSpace);
 
@@ -118,7 +118,7 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 int32 BaseParser::getCommand(char **buf, const TokenDesc *tokens, char **params) {
 	if (!*buf) {
 		return PARSERR_TOKENNOTFOUND;
@@ -129,7 +129,7 @@ int32 BaseParser::getCommand(char **buf, const TokenDesc *tokens, char **params)
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 	char ch;
 	while ((ch = **buf) != 0) {
@@ -145,7 +145,7 @@ void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 char *BaseParser::getSubText(char **buf, char open, char close) {
 	if (**buf == 0 || **buf != open) {
 		return 0;
@@ -177,7 +177,7 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 char *BaseParser::getAssignmentText(char **buf) {
 	++*buf;                       // skip the '='
 	skipCharacters(buf, _whiteSpace);
@@ -205,7 +205,7 @@ char *BaseParser::getAssignmentText(char **buf) {
 	return result;
 }
 
-//////////////////////////////////////////////////////////////////////
+
 Common::String BaseParser::getToken(char **buf) {
 	char token[100]; // TODO: Remove static
 	char *b = *buf, *t = token;
@@ -261,7 +261,7 @@ Common::String BaseParser::getToken(char **buf) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 float BaseParser::getTokenFloat(char **buf) {
 	Common::String token = getToken(buf);
 	const char *t = token.c_str();
@@ -274,7 +274,7 @@ float BaseParser::getTokenFloat(char **buf) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 int32 BaseParser::getTokenInt(char **buf) {
 	Common::String token = getToken(buf);
 	const char *t = token.c_str();
@@ -287,7 +287,7 @@ int32 BaseParser::getTokenInt(char **buf) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
 	Common::String token = getToken(buf);
 	const char *t = token.c_str();
@@ -297,7 +297,7 @@ void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 int32 BaseParser::scanStr(const char *in, const char *format, ...) {
 	va_list arg;
 	va_start(arg, format);

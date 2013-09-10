@@ -44,7 +44,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseFrame, false)
 
-//////////////////////////////////////////////////////////////////////
+
 BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_delay = 0;
 	_moveX = _moveY = 0;
@@ -57,7 +57,7 @@ BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseFrame::~BaseFrame() {
 	delete _sound;
 	_sound = nullptr;
@@ -75,7 +75,7 @@ BaseFrame::~BaseFrame() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
 	bool res;
 
@@ -95,7 +95,7 @@ void BaseFrame::stopSound() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 	if (_sound && !muted) {
 		if (owner) {
@@ -141,7 +141,7 @@ TOKEN_DEF(EDITOR_EXPANDED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
@@ -347,7 +347,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
@@ -365,7 +365,7 @@ bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float 
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "FRAME {\n");
 	buffer->putTextIndent(indent + 2, "DELAY = %d\n", _delay);
@@ -409,7 +409,7 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
@@ -427,14 +427,14 @@ bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetSound
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "GetSound") == 0) {
 		stack->correctParams(0);
 
@@ -446,9 +446,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetSound
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "SetSound") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -470,9 +470,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetSubframe
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
@@ -486,9 +486,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DeleteSubframe
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DeleteSubframe") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -511,9 +511,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddSubframe
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "AddSubframe") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -533,9 +533,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InsertSubframe
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "InsertSubframe") == 0) {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
@@ -564,9 +564,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetEvent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
@@ -579,9 +579,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddEvent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "AddEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
@@ -596,9 +596,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DeleteEvent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DeleteEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
@@ -613,7 +613,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	else {
 		if (_subframes.size() == 1) {
 			return _subframes[0]->scCallMethod(script, stack, thisStack, name);
@@ -624,78 +624,78 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
 		_scValue = new ScValue(_gameRef);
 	}
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("frame");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Delay
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Delay") {
 		_scValue->setInt(_delay);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Keyframe
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Keyframe") {
 		_scValue->setBool(_keyframe);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// KillSounds
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "KillSounds") {
 		_scValue->setBool(_killSound);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// MoveX
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "MoveX") {
 		_scValue->setInt(_moveX);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// MoveY
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "MoveY") {
 		_scValue->setInt(_moveY);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// NumSubframes (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "NumSubframes") {
 		_scValue->setInt(_subframes.size());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// NumEvents (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "NumEvents") {
 		_scValue->setInt(_applyEvent.size());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	else {
 		if (_subframes.size() == 1) {
 			return _subframes[0]->scGetProperty(name);
@@ -706,49 +706,49 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Delay
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Delay") == 0) {
 		_delay = MAX(0, value->getInt());
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Keyframe
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Keyframe") == 0) {
 		_keyframe = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// KillSounds
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "KillSounds") == 0) {
 		_killSound = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// MoveX
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "MoveX") == 0) {
 		_moveX = value->getInt();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// MoveY
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "MoveY") == 0) {
 		_moveY = value->getInt();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	else {
 		if (_subframes.size() == 1) {
 			return _subframes[0]->scSetProperty(name, value);
@@ -759,7 +759,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *BaseFrame::scToString() {
 	return "[frame]";
 }

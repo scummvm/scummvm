@@ -44,7 +44,7 @@ BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack) {
 	return new SXString(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_string = nullptr;
 	_capacity = 0;
@@ -68,7 +68,7 @@ SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 SXString::~SXString() {
 	if (_string) {
 		delete[] _string;
@@ -76,7 +76,7 @@ SXString::~SXString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void SXString::setStringVal(const char *val) {
 	int len = strlen(val);
 	if (len >= _capacity) {
@@ -90,7 +90,7 @@ void SXString::setStringVal(const char *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *SXString::scToString() {
 	if (_string) {
 		return _string;
@@ -100,17 +100,17 @@ const char *SXString::scToString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void SXString::scSetString(const char *val) {
 	setStringVal(val);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Substring
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Substring") == 0) {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
@@ -143,9 +143,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Substr
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Substr") == 0) {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
@@ -185,9 +185,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ToUpperCase
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ToUpperCase") == 0) {
 		stack->correctParams(0);
 
@@ -209,9 +209,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ToLowerCase
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ToLowerCase") == 0) {
 		stack->correctParams(0);
 
@@ -233,9 +233,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IndexOf
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IndexOf") == 0) {
 		stack->correctParams(2);
 
@@ -262,9 +262,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Split
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Split") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -339,20 +339,20 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *SXString::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("string");
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Length (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Length") {
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(_string);
@@ -363,9 +363,9 @@ ScValue *SXString::scGetProperty(const Common::String &name) {
 
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Capacity
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Capacity") {
 		_scValue->setInt(_capacity);
 		return _scValue;
@@ -375,11 +375,11 @@ ScValue *SXString::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXString::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Capacity
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Capacity") == 0) {
 		int32 newCap = (uint32)value->getInt();
 		if (newCap < (int32)(strlen(_string) + 1)) {
@@ -401,7 +401,7 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXString::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
@@ -425,7 +425,7 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int SXString::scCompare(BaseScriptable *val) {
 	return strcmp(_string, ((SXString *)val)->_string);
 }

@@ -59,7 +59,7 @@ void BaseGameMusic::cleanup() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseGameMusic::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -87,7 +87,7 @@ bool BaseGameMusic::playMusic(int channel, const char *filename, bool looping, u
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseGameMusic::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -105,7 +105,7 @@ bool BaseGameMusic::stopMusic(int channel) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseGameMusic::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -120,7 +120,7 @@ bool BaseGameMusic::pauseMusic(int channel) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseGameMusic::resumeMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -135,7 +135,7 @@ bool BaseGameMusic::resumeMusic(int channel) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseGameMusic::setMusicStartTime(int channel, uint32 time) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -150,7 +150,7 @@ bool BaseGameMusic::setMusicStartTime(int channel, uint32 time) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseGameMusic::updateMusicCrossfade() {
 	/* byte globMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
 
@@ -231,9 +231,9 @@ bool BaseGameMusic::persistCrossfadeSettings(BasePersistenceManager *persistMgr)
 }
 
 bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PlayMusic / PlayMusicChannel
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "PlayMusic") == 0 || strcmp(name, "PlayMusicChannel") == 0) {
 		int channel = 0;
 		if (strcmp(name, "PlayMusic") == 0) {
@@ -259,9 +259,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StopMusic / StopMusicChannel
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "StopMusic") == 0 || strcmp(name, "StopMusicChannel") == 0) {
 		int channel = 0;
 
@@ -280,9 +280,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PauseMusic / PauseMusicChannel
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "PauseMusic") == 0 || strcmp(name, "PauseMusicChannel") == 0) {
 		int channel = 0;
 
@@ -301,9 +301,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ResumeMusic / ResumeMusicChannel
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ResumeMusic") == 0 || strcmp(name, "ResumeMusicChannel") == 0) {
 		int channel = 0;
 		if (strcmp(name, "ResumeMusic") == 0) {
@@ -321,9 +321,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetMusic / GetMusicChannel
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetMusic") == 0 || strcmp(name, "GetMusicChannel") == 0) {
 		int channel = 0;
 		if (strcmp(name, "GetMusic") == 0) {
@@ -344,9 +344,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetMusicPosition / SetMusicChannelPosition
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetMusicPosition") == 0 || strcmp(name, "SetMusicChannelPosition") == 0 || strcmp(name, "SetMusicPositionChannel") == 0) {
 		int channel = 0;
 		if (strcmp(name, "SetMusicPosition") == 0) {
@@ -367,9 +367,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetMusicPosition / GetMusicChannelPosition
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetMusicPosition") == 0 || strcmp(name, "GetMusicChannelPosition") == 0) {
 		int channel = 0;
 		if (strcmp(name, "GetMusicPosition") == 0) {
@@ -387,9 +387,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IsMusicPlaying / IsMusicChannelPlaying
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IsMusicPlaying") == 0 || strcmp(name, "IsMusicChannelPlaying") == 0) {
 		int channel = 0;
 		if (strcmp(name, "IsMusicPlaying") == 0) {
@@ -407,9 +407,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetMusicVolume / SetMusicChannelVolume
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetMusicVolume") == 0 || strcmp(name, "SetMusicChannelVolume") == 0) {
 		int channel = 0;
 		if (strcmp(name, "SetMusicVolume") == 0) {
@@ -432,9 +432,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetMusicVolume / GetMusicChannelVolume
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetMusicVolume") == 0 || strcmp(name, "GetMusicChannelVolume") == 0) {
 		int channel = 0;
 		if (strcmp(name, "GetMusicVolume") == 0) {
@@ -453,9 +453,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// MusicCrossfade
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "MusicCrossfade") == 0) {
 		stack->correctParams(4);
 		int channel1 = stack->pop()->getInt(0);
@@ -481,9 +481,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetSoundLength
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetSoundLength") == 0) {
 		stack->correctParams(1);
 

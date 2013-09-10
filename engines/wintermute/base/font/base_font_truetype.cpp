@@ -46,7 +46,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseFontTT, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 	_fontHeight = 12;
 	_isBold = _isItalic = _isUnderline = _isStriked = false;
@@ -64,7 +64,7 @@ BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 	_maxCharWidth = _maxCharHeight = 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseFontTT::~BaseFontTT(void) {
 	clearCache();
 
@@ -81,7 +81,7 @@ BaseFontTT::~BaseFontTT(void) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseFontTT::clearCache() {
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
 		if (_cachedTexts[i]) {
@@ -91,7 +91,7 @@ void BaseFontTT::clearCache() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseFontTT::initLoop() {
 	// we need more aggressive cache management on iOS not to waste too much memory on fonts
 	if (_gameRef->_constrainedMemory) {
@@ -111,7 +111,7 @@ void BaseFontTT::initLoop() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	WideString textStr;
 
@@ -132,7 +132,7 @@ int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	return textWidth;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseFontTT::getTextHeight(const byte *text, int width) {
 	WideString textStr;
 
@@ -150,7 +150,7 @@ int BaseFontTT::getTextHeight(const byte *text, int width) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 	if (text == nullptr || strcmp((const char *)text, "") == 0) {
 		return;
@@ -244,7 +244,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
 	//TextLineList lines;
 	// TODO: Use WideString-conversion here.
@@ -296,13 +296,13 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseFontTT::getLetterHeight() {
 	return (int)getLineHeight();
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 bool BaseFontTT::loadFile(const Common::String &filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -340,7 +340,7 @@ TOKEN_DEF(LAYER)
 TOKEN_DEF(OFFSET_X)
 TOKEN_DEF(OFFSET_Y)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////
+
 bool BaseFontTT::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TTFONT)
@@ -451,7 +451,7 @@ bool BaseFontTT::loadBuffer(byte *buffer) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
@@ -497,7 +497,7 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, byte *buffer) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	BaseFont::persist(persistMgr);
 
@@ -538,12 +538,12 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseFontTT::afterLoad() {
 	initFont();
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFontTT::initFont() {
 	if (!_fontFile) {
 		return STATUS_FAILED;
@@ -614,7 +614,7 @@ bool BaseFontTT::initFont() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
 	//TextLineList lines;
 

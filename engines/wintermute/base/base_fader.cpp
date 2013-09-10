@@ -34,13 +34,13 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 
 IMPLEMENT_PERSISTENT(BaseFader, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseFader::BaseFader(BaseGame *inGame) : BaseObject(inGame) {
 	_active = false;
 	_red = _green = _blue = 0;
@@ -53,13 +53,13 @@ BaseFader::BaseFader(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseFader::~BaseFader() {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFader::update() {
 	if (!_active) {
 		return STATUS_OK;
@@ -91,7 +91,7 @@ bool BaseFader::update() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFader::display() {
 	if (!_active) {
 		return STATUS_OK;
@@ -104,7 +104,7 @@ bool BaseFader::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFader::deactivate() {
 	_active = false;
 	_ready = true;
@@ -112,7 +112,7 @@ bool BaseFader::deactivate() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
@@ -137,7 +137,7 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
@@ -164,14 +164,14 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 BaseFader::getCurrentColor() const {
 	return BYTETORGBA(_red, _green, _blue, _currentAlpha);
 }
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFader::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 

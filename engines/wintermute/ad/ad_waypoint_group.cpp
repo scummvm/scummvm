@@ -39,7 +39,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdWaypointGroup, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdWaypointGroup::AdWaypointGroup(BaseGame *inGame) : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
@@ -48,13 +48,13 @@ AdWaypointGroup::AdWaypointGroup(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdWaypointGroup::~AdWaypointGroup() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdWaypointGroup::cleanup() {
 	for (uint32 i = 0; i < _points.size(); i++) {
 		delete _points[i];
@@ -64,7 +64,7 @@ void AdWaypointGroup::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdWaypointGroup::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -97,7 +97,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool AdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WAYPOINTS)
@@ -167,7 +167,7 @@ bool AdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WAYPOINTS {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
@@ -189,7 +189,7 @@ bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
@@ -205,21 +205,21 @@ bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("waypoint-group");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Active
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Active") {
 		_scValue->setBool(_active);
 		return _scValue;
@@ -229,11 +229,11 @@ ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdWaypointGroup::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Active
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Active") == 0) {
 		_active = value->getBool();
 		return STATUS_OK;
@@ -245,7 +245,7 @@ bool AdWaypointGroup::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int argY) {
 	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) {
 		return STATUS_OK;

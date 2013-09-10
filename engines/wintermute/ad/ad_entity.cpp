@@ -57,7 +57,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdEntity, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_type = OBJECT_ENTITY;
 	_subtype = ENTITY_NORMAL;
@@ -71,7 +71,7 @@ AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdEntity::~AdEntity() {
 	_gameRef->unregisterObject(_region);
 
@@ -98,7 +98,7 @@ const char *AdEntity::getItemName() const {
 	return _item;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -165,7 +165,7 @@ TOKEN_DEF(WALK_TO_Y)
 TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
@@ -523,7 +523,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::display() {
 	if (_active) {
 		updateSounds();
@@ -583,7 +583,7 @@ bool AdEntity::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::update() {
 	_currentSprite = nullptr;
 
@@ -608,19 +608,19 @@ bool AdEntity::update() {
 	}
 
 	switch (_state) {
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_PLAYING_ANIM:
 		_currentSprite = _animSprite;
 		break;
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_READY:
 		if (!_animSprite) {
 			_currentSprite = _sprite;
 		}
 		break;
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_TALKING: {
 		_sentence->update();
 		if (_sentence->_currentSprite) {
@@ -684,13 +684,13 @@ bool AdEntity::update() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StopSound
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
 		stack->correctParams(0);
 
@@ -702,9 +702,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PlayTheora
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "PlayTheora") == 0) {
 		stack->correctParams(4);
 		const char *filename = stack->pop()->getString();
@@ -729,9 +729,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StopTheora
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "StopTheora") == 0) {
 		stack->correctParams(0);
 		if (_theora) {
@@ -746,9 +746,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IsTheoraPlaying
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IsTheoraPlaying") == 0) {
 		stack->correctParams(0);
 		if (_theora && _theora->isPlaying()) {
@@ -760,9 +760,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PauseTheora
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "PauseTheora") == 0) {
 		stack->correctParams(0);
 		if (_theora && _theora->isPlaying()) {
@@ -775,9 +775,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ResumeTheora
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ResumeTheora") == 0) {
 		stack->correctParams(0);
 		if (_theora && _theora->isPaused()) {
@@ -790,9 +790,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IsTheoraPaused
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IsTheoraPaused") == 0) {
 		stack->correctParams(0);
 		if (_theora && _theora->isPaused()) {
@@ -805,9 +805,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateRegion
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateRegion") == 0) {
 		stack->correctParams(0);
 		if (!_region) {
@@ -823,9 +823,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DeleteRegion
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DeleteRegion") == 0) {
 		stack->correctParams(0);
 		if (_region) {
@@ -843,21 +843,21 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("entity");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Item
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Item") {
 		if (_item) {
 			_scValue->setString(_item);
@@ -868,9 +868,9 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Subtype (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Subtype") {
 		if (_subtype == ENTITY_SOUND) {
 			_scValue->setString("sound");
@@ -881,33 +881,33 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkToX
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "WalkToX") {
 		_scValue->setInt(_walkToX);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkToY
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "WalkToY") {
 		_scValue->setInt(_walkToY);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkToDirection
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "WalkToDirection") {
 		_scValue->setInt((int)_walkToDir);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Region (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Region") {
 		if (_region) {
 			_scValue->setNative(_region, true);
@@ -921,36 +921,36 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Item
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Item") == 0) {
 		setItem(value->getString());
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkToX
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WalkToX") == 0) {
 		_walkToX = value->getInt();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkToY
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WalkToY") == 0) {
 		_walkToY = value->getInt();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkToDirection
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WalkToDirection") == 0) {
 		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
@@ -963,13 +963,13 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *AdEntity::scToString() {
 	return "[entity object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
@@ -1066,7 +1066,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int AdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
@@ -1079,7 +1079,7 @@ int AdEntity::getHeight() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdEntity::updatePosition() {
 	if (_region && !_sprite) {
 		_posX = _region->_rect.left + (_region->_rect.right - _region->_rect.left) / 2;
@@ -1088,7 +1088,7 @@ void AdEntity::updatePosition() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
@@ -1109,12 +1109,12 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdEntity::setItem(const char *itemName) {
 	BaseUtils::setString(&_item, itemName);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdEntity::setSprite(const char *filename) {
 	if (_currentSprite == _sprite) {
 		_currentSprite = nullptr;

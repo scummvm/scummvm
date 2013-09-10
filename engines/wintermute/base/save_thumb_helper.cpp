@@ -34,13 +34,13 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
+
 SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) : _gameRef(inGame) {
 	_thumbnail = nullptr;
 	_scummVMThumb = nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 SaveThumbHelper::~SaveThumbHelper(void) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
@@ -79,7 +79,7 @@ BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 	return thumbnail;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
@@ -95,7 +95,7 @@ bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
 	delete _scummVMThumb;
 	_scummVMThumb = nullptr;

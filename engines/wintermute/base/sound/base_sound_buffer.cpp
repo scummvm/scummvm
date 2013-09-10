@@ -41,13 +41,13 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 
 #define MAX_NONSTREAMED_FILE_SIZE 1024*1024
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 	_stream = nullptr;
 	_handle = nullptr;
@@ -69,7 +69,7 @@ BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSoundBuffer::~BaseSoundBuffer() {
 	stop();
 
@@ -83,13 +83,13 @@ BaseSoundBuffer::~BaseSoundBuffer() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseSoundBuffer::setStreaming(bool streamed, uint32 numBlocks, uint32 blockSize) {
 	_streamed = streamed;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceReload) {
 	debugC(kWintermuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename.c_str(), forceReload);
 
@@ -129,7 +129,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 	if (_handle) {
 		g_system->getMixer()->stopHandle(*_handle);
@@ -152,7 +152,7 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseSoundBuffer::setLooping(bool looping) {
 	if (isPlaying()) {
 		// This warning is here, to see if this is ever the case.
@@ -161,7 +161,7 @@ void BaseSoundBuffer::setLooping(bool looping) {
 	_looping = looping;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::resume() {
 	// If the sound was paused while active:
 	if (_stream && _handle) {
@@ -175,7 +175,7 @@ bool BaseSoundBuffer::resume() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::stop() {
 	if (_stream && _handle) {
 		g_system->getMixer()->stopHandle(*_handle);
@@ -184,7 +184,7 @@ bool BaseSoundBuffer::stop() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::pause() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, true);
@@ -193,7 +193,7 @@ bool BaseSoundBuffer::pause() {
 
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 BaseSoundBuffer::getLength() {
 	if (_stream) {
 		uint32 len = _stream->getLength().msecs();
@@ -203,17 +203,17 @@ uint32 BaseSoundBuffer::getLength() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseSoundBuffer::setType(Audio::Mixer::SoundType type) {
 	_type = type;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseSoundBuffer::updateVolume() {
 	setVolume(_privateVolume);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::setVolume(int volume) {
 	_volume = volume * _gameRef->_soundMgr->getMasterVolume() / 255;
 	if (_stream && _handle) {
@@ -224,14 +224,14 @@ bool BaseSoundBuffer::setVolume(int volume) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::setPrivateVolume(int volume) {
 	_privateVolume = volume;
 	return setVolume(_privateVolume);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::isPlaying() {
 	if (_stream && _handle) {
 		return _freezePaused || g_system->getMixer()->isSoundHandleActive(*_handle);
@@ -241,7 +241,7 @@ bool BaseSoundBuffer::isPlaying() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 BaseSoundBuffer::getPosition() {
 	if (_stream && _handle) {
 		uint32 pos = g_system->getMixer()->getSoundElapsedTime(*_handle);
@@ -251,7 +251,7 @@ uint32 BaseSoundBuffer::getPosition() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::setPosition(uint32 pos) {
 	if (isPlaying()) {
 		warning("BaseSoundBuffer::SetPosition - not implemented for playing sounds yet.");
@@ -260,13 +260,13 @@ bool BaseSoundBuffer::setPosition(uint32 pos) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::setLoopStart(uint32 pos) {
 	_loopStart = pos;
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::setPan(float pan) {
 	if (_handle) {
 		g_system->getMixer()->setChannelBalance(*_handle, (int8)(pan * 127));
@@ -274,7 +274,7 @@ bool BaseSoundBuffer::setPan(float pan) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	// This function was already stubbed out in WME Lite, and thus isn't reimplemented here either.
 	switch (type) {

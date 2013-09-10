@@ -52,7 +52,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIWindow, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 	BasePlatform::setRectEmpty(&_titleRect);
 	BasePlatform::setRectEmpty(&_dragRect);
@@ -87,14 +87,14 @@ UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 UIWindow::~UIWindow() {
 	close();
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void UIWindow::cleanup() {
 	delete _shieldWindow;
 	delete _shieldButton;
@@ -118,7 +118,7 @@ void UIWindow::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
@@ -237,7 +237,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -297,7 +297,7 @@ TOKEN_DEF(PAUSE_MUSIC)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WINDOW)
@@ -621,7 +621,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WINDOW\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -733,7 +733,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::enableWidget(const char *name, bool enable) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
@@ -744,7 +744,7 @@ bool UIWindow::enableWidget(const char *name, bool enable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::showWidget(const char *name, bool visible) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
@@ -755,13 +755,13 @@ bool UIWindow::showWidget(const char *name, bool visible) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetWidget / GetControl
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "GetWidget") == 0 || strcmp(name, "GetControl") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -785,9 +785,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetInactiveFont
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetInactiveFont") == 0) {
 		stack->correctParams(1);
 
@@ -800,9 +800,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetInactiveImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetInactiveImage") == 0) {
 		stack->correctParams(1);
 
@@ -820,9 +820,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetInactiveImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetInactiveImage") == 0) {
 		stack->correctParams(0);
 		if (!_imageInactive || !_imageInactive->getFilename()) {
@@ -834,9 +834,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetInactiveImageObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetInactiveImageObject") == 0) {
 		stack->correctParams(0);
 		if (!_imageInactive) {
@@ -849,18 +849,18 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Close
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Close") == 0) {
 		stack->correctParams(0);
 		stack->pushBool(DID_SUCCEED(close()));
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GoExclusive
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GoExclusive") == 0) {
 		stack->correctParams(0);
 		goExclusive();
@@ -869,9 +869,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GoSystemExclusive
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GoSystemExclusive") == 0) {
 		stack->correctParams(0);
 		goSystemExclusive();
@@ -880,9 +880,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Center
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Center") == 0) {
 		stack->correctParams(0);
 		_posX = (_gameRef->_renderer->getWidth() - _width) / 2;
@@ -891,9 +891,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LoadFromFile
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "LoadFromFile") == 0) {
 		stack->correctParams(1);
 
@@ -908,9 +908,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateButton
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateButton") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -927,9 +927,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateStatic
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateStatic") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -946,9 +946,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateEditor
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateEditor") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -965,9 +965,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateWindow
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateWindow") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -984,9 +984,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DeleteControl / DeleteButton / DeleteStatic / DeleteEditor / DeleteWindow
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DeleteControl") == 0 || strcmp(name, "DeleteButton") == 0 || strcmp(name, "DeleteStatic") == 0 || strcmp(name, "DeleteEditor") == 0 || strcmp(name, "DeleteWindow") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -1013,85 +1013,85 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("window");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// NumWidgets / NumControls (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "NumWidgets" || name == "NumControls") {
 		_scValue->setInt(_widgets.size());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Exclusive
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Exclusive") {
 		_scValue->setBool(_mode == WINDOW_EXCLUSIVE);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SystemExclusive
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SystemExclusive") {
 		_scValue->setBool(_mode == WINDOW_SYSTEM_EXCLUSIVE);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Menu
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Menu") {
 		_scValue->setBool(_isMenu);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InGame
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "InGame") {
 		_scValue->setBool(_inGame);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PauseMusic
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "PauseMusic") {
 		_scValue->setBool(_pauseMusic);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ClipContents
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "ClipContents") {
 		_scValue->setBool(_clipContents);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Transparent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Transparent") {
 		_scValue->setBool(_transparent);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// FadeColor
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "FadeColor") {
 		_scValue->setInt((int)_fadeColor);
 		return _scValue;
@@ -1101,68 +1101,68 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Name
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Menu
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Menu") == 0) {
 		_isMenu = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InGame
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "InGame") == 0) {
 		_inGame = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PauseMusic
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "PauseMusic") == 0) {
 		_pauseMusic = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ClipContents
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ClipContents") == 0) {
 		_clipContents = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Transparent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Transparent") == 0) {
 		_transparent = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// FadeColor
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "FadeColor") == 0) {
 		_fadeColor = (uint32)value->getInt();
 		_fadeBackground = (_fadeColor != 0);
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Exclusive
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Exclusive") == 0) {
 		if (value->getBool()) {
 			goExclusive();
@@ -1173,9 +1173,9 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SystemExclusive
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SystemExclusive") == 0) {
 		if (value->getBool()) {
 			goSystemExclusive();
@@ -1190,13 +1190,13 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *UIWindow::scToString() {
 	return "[window]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 //TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
@@ -1212,7 +1212,7 @@ bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::handleMouseWheel(int Delta) {
 	if (_focusedWidget) {
 		return _focusedWidget->handleMouseWheel(Delta);
@@ -1222,7 +1222,7 @@ bool UIWindow::handleMouseWheel(int Delta) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	bool res = UIObject::handleMouse(event, button);
 
@@ -1252,7 +1252,7 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
@@ -1283,7 +1283,7 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::moveFocus(bool forward) {
 	int i;
 	bool found = false;
@@ -1333,7 +1333,7 @@ bool UIWindow::moveFocus(bool forward) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::goExclusive() {
 	if (_mode == WINDOW_EXCLUSIVE) {
 		return STATUS_OK;
@@ -1352,7 +1352,7 @@ bool UIWindow::goExclusive() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::goSystemExclusive() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		return STATUS_OK;
@@ -1371,7 +1371,7 @@ bool UIWindow::goSystemExclusive() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		_gameRef->unfreeze();
@@ -1385,7 +1385,7 @@ bool UIWindow::close() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 	UIObject *obj = (UIObject *)param1;
 
@@ -1405,7 +1405,7 @@ bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void UIWindow::makeFreezable(bool freezable) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		_widgets[i]->makeFreezable(freezable);
@@ -1415,7 +1415,7 @@ void UIWindow::makeFreezable(bool freezable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		UIObject *control = _widgets[i];

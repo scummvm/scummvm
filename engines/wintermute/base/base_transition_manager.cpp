@@ -33,7 +33,7 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_state = TRANS_MGR_READY;
 	_type = TRANSITION_NONE;
@@ -45,19 +45,19 @@ BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame) : BaseClass(inGame) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseTransitionMgr::~BaseTransitionMgr() {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseTransitionMgr::isReady() const {
 	return (_state == TRANS_MGR_READY);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 	if (_state != TRANS_MGR_READY) {
 		return STATUS_OK;
@@ -84,7 +84,7 @@ bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 
 #define FADE_DURATION 200
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseTransitionMgr::update() {
 	if (isReady()) {
 		return STATUS_OK;

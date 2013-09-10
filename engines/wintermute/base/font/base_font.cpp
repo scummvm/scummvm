@@ -34,47 +34,47 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 
 IMPLEMENT_PERSISTENT(BaseFont, false)
 
-//////////////////////////////////////////////////////////////////////
+
 BaseFont::BaseFont(BaseGame *inGame) : BaseObject(inGame) {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseFont::~BaseFont() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 void BaseFont::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 int BaseFont::getTextHeight(const byte *text, int width) {
 	return 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 int BaseFont::getTextWidth(const byte *text, int maxLength) {
 	return 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseFont::getLetterHeight() {
 	return 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFont::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
@@ -82,7 +82,7 @@ bool BaseFont::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &filename) {
 	if (isTrueType(gameRef,  filename)) {
 		BaseFontTT *font = new BaseFontTT(gameRef);
@@ -110,7 +110,7 @@ TOKEN_DEF_START
 TOKEN_DEF(FONT)
 TOKEN_DEF(TTFONT)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONT)

@@ -39,7 +39,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseScriptHolder, false)
 
-//////////////////////////////////////////////////////////////////////
+
 BaseScriptHolder::BaseScriptHolder(BaseGame *inGame) : BaseScriptable(inGame) {
 	setName("<unnamed>");
 
@@ -48,13 +48,13 @@ BaseScriptHolder::BaseScriptHolder(BaseGame *inGame) : BaseScriptable(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseScriptHolder::~BaseScriptHolder() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::cleanup() {
 	delete[] _filename;
 	_filename = nullptr;
@@ -68,7 +68,7 @@ bool BaseScriptHolder::cleanup() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////
+
 void BaseScriptHolder::setFilename(const char *filename) {
 	if (_filename != nullptr) {
 		delete[] _filename;
@@ -84,7 +84,7 @@ void BaseScriptHolder::setFilename(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 	int numHandlers = 0;
 
@@ -107,19 +107,19 @@ bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DEBUG_CrashMe
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "DEBUG_CrashMe") == 0) {
 		stack->correctParams(0);
 		byte *p = 0;
@@ -129,9 +129,9 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ApplyEvent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ApplyEvent") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -147,9 +147,9 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CanHandleEvent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CanHandleEvent") == 0) {
 		stack->correctParams(1);
 		stack->pushBool(canHandleEvent(stack->pop()->getString()));
@@ -157,9 +157,9 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CanHandleMethod
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CanHandleMethod") == 0) {
 		stack->correctParams(1);
 		stack->pushBool(canHandleMethod(stack->pop()->getString()));
@@ -167,9 +167,9 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AttachScript
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "AttachScript") == 0) {
 		stack->correctParams(1);
 		stack->pushBool(DID_SUCCEED(addScript(stack->pop()->getString())));
@@ -177,9 +177,9 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DetachScript
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DetachScript") == 0) {
 		stack->correctParams(2);
 		const char *filename = stack->pop()->getString();
@@ -197,9 +197,9 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IsScriptRunning
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IsScriptRunning") == 0) {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
@@ -219,29 +219,29 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *BaseScriptHolder::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("script_holder");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Name
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Name") {
 		_scValue->setString(getName());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Filename (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Filename") {
 		_scValue->setString(_filename);
 		return _scValue;
@@ -251,11 +251,11 @@ ScValue *BaseScriptHolder::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Name
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
 		return STATUS_OK;
@@ -265,18 +265,18 @@ bool BaseScriptHolder::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *BaseScriptHolder::scToString() {
 	return "[script_holder]";
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return BaseClass::saveAsText(buffer, indent);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
@@ -297,7 +297,7 @@ bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::addScript(const char *filename) {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
@@ -331,7 +331,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::removeScript(ScScript *script) {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (_scripts[i] == script) {
@@ -342,7 +342,7 @@ bool BaseScriptHolder::removeScript(ScScript *script) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::canHandleEvent(const char *EventName) const {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) {
@@ -353,7 +353,7 @@ bool BaseScriptHolder::canHandleEvent(const char *EventName) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::canHandleMethod(const char *MethodName) const {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) {
@@ -369,7 +369,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(PROPERTY)
@@ -448,7 +448,7 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseScriptHolder::makeFreezable(bool freezable) {
 	_freezable = freezable;
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -458,7 +458,7 @@ void BaseScriptHolder::makeFreezable(bool freezable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 	for (int i = _scripts.size() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
@@ -479,7 +479,7 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 	strcpy(buf, scToString());
 	if (getName() && strcmp(getName(), "<unnamed>") != 0) {
@@ -493,9 +493,9 @@ void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // IWmeObject
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptHolder::sendEvent(const char *eventName) {
 	return DID_SUCCEED(applyEvent(eventName));
 }

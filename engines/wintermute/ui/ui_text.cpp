@@ -45,7 +45,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIText, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 UIText::UIText(BaseGame *inGame) : UIObject(inGame) {
 	_textAlign = TAL_LEFT;
 	_verticalAlign = VAL_CENTER;
@@ -54,13 +54,13 @@ UIText::UIText(BaseGame *inGame) : UIObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 UIText::~UIText() {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::display(int offsetX, int offsetY) {
 	if (!_visible) {
 		return STATUS_OK;
@@ -101,7 +101,7 @@ bool UIText::display(int offsetX, int offsetY) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -145,7 +145,7 @@ TOKEN_DEF(CAPTION)
 TOKEN_DEF(PARENT_NOTIFY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(STATIC)
@@ -314,7 +314,7 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "STATIC\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -400,13 +400,13 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SizeToFit
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "SizeToFit") == 0) {
 		stack->correctParams(0);
 		sizeToFit();
@@ -414,9 +414,9 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// HeightToFit
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "HeightToFit") == 0) {
 		stack->correctParams(0);
 		if (_font && _text) {
@@ -430,29 +430,29 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *UIText::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("static");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TextAlign
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TextAlign") {
 		_scValue->setInt(_textAlign);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// VerticalAlign
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "VerticalAlign") {
 		_scValue->setInt(_verticalAlign);
 		return _scValue;
@@ -462,11 +462,11 @@ ScValue *UIText::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TextAlign
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "TextAlign") == 0) {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) {
@@ -476,9 +476,9 @@ bool UIText::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// VerticalAlign
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "VerticalAlign") == 0) {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_VERTICAL_ALIGN) {
@@ -492,14 +492,14 @@ bool UIText::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *UIText::scToString() {
 	return "[static]";
 }
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
@@ -510,7 +510,7 @@ bool UIText::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIText::sizeToFit() {
 	if (_font && _text) {
 		_width = _font->getTextWidth((byte *)_text);

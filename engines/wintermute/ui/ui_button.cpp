@@ -46,7 +46,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIButton, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 UIButton::UIButton(BaseGame *inGame) : UIObject(inGame) {
 	_backPress = _backHover = _backDisable = _backFocus = nullptr;
 
@@ -70,7 +70,7 @@ UIButton::UIButton(BaseGame *inGame) : UIObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 UIButton::~UIButton() {
 	delete _backPress;
 	delete _backHover;
@@ -101,7 +101,7 @@ UIButton::~UIButton() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIButton::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -161,7 +161,7 @@ TOKEN_DEF(PRESSED)
 TOKEN_DEF(PIXEL_PERFECT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool UIButton::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(BUTTON)
@@ -472,7 +472,7 @@ bool UIButton::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "BUTTON\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -588,7 +588,7 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void UIButton::correctSize() {
 	Rect32 rect;
 
@@ -644,7 +644,7 @@ void UIButton::correctSize() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIButton::display(int offsetX, int offsetY) {
 	if (!_visible) {
 		return STATUS_OK;
@@ -771,7 +771,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void UIButton::press() {
 	applyEvent("Press");
 	if (_listenerObject) {
@@ -785,13 +785,13 @@ void UIButton::press() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetDisabledFont
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "SetDisabledFont") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -809,9 +809,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetHoverFont
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetHoverFont") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -829,9 +829,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetPressedFont
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetPressedFont") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -849,9 +849,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetFocusedFont
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetFocusedFont") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -869,9 +869,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetDisabledImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetDisabledImage") == 0) {
 		stack->correctParams(1);
 
@@ -889,9 +889,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetDisabledImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetDisabledImage") == 0) {
 		stack->correctParams(0);
 		if (!_imageDisable || !_imageDisable->getFilename()) {
@@ -903,9 +903,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetDisabledImageObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetDisabledImageObject") == 0) {
 		stack->correctParams(0);
 		if (!_imageDisable) {
@@ -918,9 +918,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetHoverImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetHoverImage") == 0) {
 		stack->correctParams(1);
 
@@ -938,9 +938,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetHoverImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetHoverImage") == 0) {
 		stack->correctParams(0);
 		if (!_imageHover || !_imageHover->getFilename()) {
@@ -952,9 +952,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetHoverImageObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetHoverImageObject") == 0) {
 		stack->correctParams(0);
 		if (!_imageHover) {
@@ -966,9 +966,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetPressedImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetPressedImage") == 0) {
 		stack->correctParams(1);
 
@@ -986,9 +986,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetPressedImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetPressedImage") == 0) {
 		stack->correctParams(0);
 		if (!_imagePress || !_imagePress->getFilename()) {
@@ -1000,9 +1000,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetPressedImageObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetPressedImageObject") == 0) {
 		stack->correctParams(0);
 		if (!_imagePress) {
@@ -1014,9 +1014,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetFocusedImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetFocusedImage") == 0) {
 		stack->correctParams(1);
 
@@ -1034,9 +1034,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetFocusedImage
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetFocusedImage") == 0) {
 		stack->correctParams(0);
 		if (!_imageFocus || !_imageFocus->getFilename()) {
@@ -1048,9 +1048,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetFocusedImageObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetFocusedImageObject") == 0) {
 		stack->correctParams(0);
 		if (!_imageFocus) {
@@ -1062,9 +1062,9 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Press
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Press") == 0) {
 		stack->correctParams(0);
 
@@ -1081,43 +1081,43 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *UIButton::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("button");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TextAlign
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TextAlign") {
 		_scValue->setInt(_align);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Focusable
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Focusable") {
 		_scValue->setBool(_canFocus);
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Pressed
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Pressed") {
 		_scValue->setBool(_stayPressed);
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PixelPerfect
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "PixelPerfect") {
 		_scValue->setBool(_pixelPerfect);
 		return _scValue;
@@ -1127,11 +1127,11 @@ ScValue *UIButton::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIButton::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TextAlign
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "TextAlign") == 0) {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) {
@@ -1141,23 +1141,23 @@ bool UIButton::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Focusable
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Focusable") == 0) {
 		_canFocus = value->getBool();
 		return STATUS_OK;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Pressed
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Pressed") == 0) {
 		_stayPressed = value->getBool();
 		return STATUS_OK;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PixelPerfect
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "PixelPerfect") == 0) {
 		_pixelPerfect = value->getBool();
 		return STATUS_OK;
@@ -1167,13 +1167,13 @@ bool UIButton::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *UIButton::scToString() {
 	return "[button]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool UIButton::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);

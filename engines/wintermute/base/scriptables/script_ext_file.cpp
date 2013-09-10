@@ -47,7 +47,7 @@ BaseScriptable *makeSXFile(BaseGame *inGame, ScStack *stack) {
 	return new SXFile(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	ScValue *val = stack->pop();
@@ -65,12 +65,12 @@ SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 SXFile::~SXFile() {
 	cleanup();
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void SXFile::cleanup() {
 	delete[] _filename;
 	_filename = nullptr;
@@ -78,7 +78,7 @@ void SXFile::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void SXFile::close() {
 	if (_readFile) {
 		BaseFileManager::getEngineInstance()->closeFile(_readFile);
@@ -93,7 +93,7 @@ void SXFile::close() {
 	_textMode = false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *SXFile::scToString() {
 	if (_filename) {
 		return _filename;
@@ -103,11 +103,11 @@ const char *SXFile::scToString() {
 }
 
 #define FILE_BUFFER_SIZE 32768
-//////////////////////////////////////////////////////////////////////////
+
 bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetFilename
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "SetFilename") == 0) {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
@@ -117,9 +117,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// OpenAsText / OpenAsBinary
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "OpenAsText") == 0 || strcmp(name, "OpenAsBinary") == 0) {
 		stack->correctParams(1);
 		close();
@@ -168,9 +168,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Close
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Close") == 0) {
 		stack->correctParams(0);
 		close();
@@ -178,9 +178,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetPosition
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetPosition") == 0) {
 		stack->correctParams(1);
 		if (_mode == 0) {
@@ -193,9 +193,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Delete
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Delete") == 0) {
 		stack->correctParams(0);
 		close();
@@ -205,9 +205,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Copy
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Copy") == 0) {
 		stack->correctParams(2);
 		/* const char *dest = */ stack->pop()->getString();
@@ -220,9 +220,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadLine
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadLine") == 0) {
 		stack->correctParams(0);
 		if (!_textMode || !_readFile) {
@@ -275,9 +275,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadText
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadText") == 0) {
 		stack->correctParams(1);
 		int textLen = stack->pop()->getInt();
@@ -328,9 +328,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteLine / WriteText
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteLine") == 0 || strcmp(name, "WriteText") == 0) {
 		stack->correctParams(1);
 		const char *line = stack->pop()->getString();
@@ -352,10 +352,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
+	
+	
 	// ReadBool
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadBool") == 0) {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
@@ -373,9 +373,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadByte
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadByte") == 0) {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
@@ -393,9 +393,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadShort
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadShort") == 0) {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
@@ -412,9 +412,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadInt / ReadLong
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadInt") == 0 || strcmp(name, "ReadLong") == 0) {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
@@ -432,9 +432,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadFloat
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadFloat") == 0) {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
@@ -453,9 +453,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadDouble
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadDouble") == 0) { // TODO: Solve reading a 8 byte double.
 		error("SXFile::ReadDouble - Not endian safe yet");
 		stack->correctParams(0);
@@ -474,9 +474,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ReadString
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ReadString") == 0) {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
@@ -503,9 +503,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteBool
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteBool") == 0) {
 		stack->correctParams(1);
 		bool val = stack->pop()->getBool();
@@ -521,9 +521,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteByte
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteByte") == 0) {
 		stack->correctParams(1);
 		byte val = stack->pop()->getInt();
@@ -539,9 +539,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteShort
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteShort") == 0) {
 		stack->correctParams(1);
 		int16 val = stack->pop()->getInt();
@@ -557,9 +557,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteInt / WriteLong
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteInt") == 0 || strcmp(name, "WriteLong") == 0) {
 		stack->correctParams(1);
 		int32 val = stack->pop()->getInt();
@@ -575,9 +575,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteFloat
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteFloat") == 0) {
 		stack->correctParams(1);
 		float val = stack->pop()->getFloat();
@@ -594,9 +594,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteDouble
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteDouble") == 0) {
 		error("SXFile::WriteDouble - Not endian safe yet");
 		stack->correctParams(1);
@@ -613,9 +613,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WriteString
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WriteString") == 0) {
 		stack->correctParams(1);
 		const char *val = stack->pop()->getString();
@@ -639,53 +639,53 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *SXFile::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("file");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Filename (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Filename") {
 		_scValue->setString(_filename);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Position (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Position") {
 		_scValue->setInt(getPos());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Length (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Length") {
 		_scValue->setInt(getLength());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TextMode (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TextMode") {
 		_scValue->setBool(_textMode);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AccessMode (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "AccessMode") {
 		_scValue->setInt(_mode);
 		return _scValue;
@@ -695,12 +695,12 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	/*
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Length
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Length")==0) {
 	    int origLength = _length;
 	    _length = max(value->getInt(0), 0);
@@ -717,7 +717,7 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	else*/ return BaseScriptable::scSetProperty(name, value);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 SXFile::getPos() {
 	if (_mode == 1 && _readFile) {
 		return _readFile->pos();
@@ -730,7 +730,7 @@ uint32 SXFile::getPos() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXFile::setPos(uint32 pos, int whence) {
 	if (_mode == 1 && _readFile) {
 		return _readFile->seek(pos, whence);
@@ -743,7 +743,7 @@ bool SXFile::setPos(uint32 pos, int whence) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 SXFile::getLength() {
 	if (_mode == 1 && _readFile) {
 		return _readFile->size();
@@ -761,7 +761,7 @@ uint32 SXFile::getLength() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXFile::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);

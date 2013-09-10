@@ -47,7 +47,7 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 	return new BaseRenderOSystem(inGame);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
 	_blankSurface = new Graphics::Surface();
@@ -69,7 +69,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseRenderOSystem::~BaseRenderOSystem() {
 	RenderQueueIterator it = _renderQueue.begin();
 	while (it != _renderQueue.end()) {
@@ -86,7 +86,7 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	delete _blankSurface;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_width = width;
 	_height = height;
@@ -215,7 +215,7 @@ bool BaseRenderOSystem::flip() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
 	if (!_disableDirtyRects && !_tempDisableDirtyRects) {
@@ -236,13 +236,13 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRenderOSystem::fade(uint16 alpha) {
 	byte dwAlpha = (byte)(255 - alpha);
 	return fadeToColor(0, 0, 0, dwAlpha);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect) {
 	Common::Rect fillRect;
 
@@ -561,7 +561,7 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 	ticket->drawToSurface(_renderSurface, dstRect, clipRect);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	// This function isn't used outside of indicator-displaying, and thus quite unused in
 	// BaseRenderOSystem when dirty-rects are enabled.
@@ -593,7 +593,7 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseImage *BaseRenderOSystem::takeScreenshot() {
 // TODO: Clip by viewport.
 	BaseImage *screenshot = new BaseImage();
@@ -601,12 +601,12 @@ BaseImage *BaseRenderOSystem::takeScreenshot() {
 	return screenshot;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 Common::String BaseRenderOSystem::getName() const {
 	return "ScummVM-OSystem-renderer";
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 	Common::Rect rect;
 	// TODO: Hopefully this is the same logic that ScummVM uses.
@@ -628,7 +628,7 @@ Rect32 BaseRenderOSystem::getViewPort() {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 	return;
 	int newWidth = (int16)MathUtil::roundUp(rect->width() * _ratioX);
@@ -639,20 +639,20 @@ void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 	rect->setHeight(newHeight);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRenderOSystem::pointFromScreen(Point32 *point) {
 	point->x = (int16)(point->x / _ratioX - _borderLeft / _ratioX + _renderRect.left);
 	point->y = (int16)(point->y / _ratioY - _borderTop / _ratioY + _renderRect.top);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRenderOSystem::pointToScreen(Point32 *point) {
 	point->x = (int16)MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
 	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRenderOSystem::dumpData(const char *filename) {
 	warning("BaseRenderOSystem::DumpData(%s) - stubbed", filename); // TODO
 }

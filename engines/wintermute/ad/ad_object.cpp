@@ -56,7 +56,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdObject, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdObject::AdObject(BaseGame *inGame) : BaseObject(inGame) {
 	_type = OBJECT_NONE;
 	_state = _nextState = STATE_NONE;
@@ -106,7 +106,7 @@ AdObject::AdObject(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdObject::~AdObject() {
 	_currentSprite = nullptr; // reference only, don't delete
 	delete _animSprite;
@@ -155,7 +155,7 @@ AdObject::~AdObject() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::playAnim(const char *filename) {
 	delete _animSprite;
 	_animSprite = nullptr;
@@ -177,26 +177,26 @@ bool AdObject::playAnim(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::display() {
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::update() {
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PlayAnim / PlayAnimAsync
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "PlayAnim") == 0 || strcmp(name, "PlayAnimAsync") == 0) {
 		stack->correctParams(1);
 		if (DID_FAIL(playAnim(stack->pop()->getString()))) {
@@ -210,9 +210,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Reset
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Reset") == 0) {
 		stack->correctParams(0);
 		reset();
@@ -220,18 +220,18 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IsTalking
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IsTalking") == 0) {
 		stack->correctParams(0);
 		stack->pushBool(_state == STATE_TALKING);
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StopTalk / StopTalking
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "StopTalk") == 0 || strcmp(name, "StopTalking") == 0) {
 		stack->correctParams(0);
 		if (_sentence) {
@@ -247,9 +247,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ForceTalkAnim
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ForceTalkAnim") == 0) {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
@@ -262,9 +262,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Talk / TalkAsync
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Talk") == 0 || strcmp(name, "TalkAsync") == 0) {
 		stack->correctParams(5);
 
@@ -296,9 +296,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StickToRegion
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "StickToRegion") == 0) {
 		stack->correctParams(1);
 
@@ -339,9 +339,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetFont
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetFont") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -356,9 +356,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetFont
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetFont") == 0) {
 		stack->correctParams(0);
 		if (_font && _font->getFilename()) {
@@ -369,9 +369,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TakeItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "TakeItem") == 0) {
 		stack->correctParams(2);
 
@@ -400,9 +400,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DropItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DropItem") == 0) {
 		stack->correctParams(1);
 
@@ -427,9 +427,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetItem") == 0) {
 		stack->correctParams(1);
 
@@ -455,9 +455,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// HasItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "HasItem") == 0) {
 		stack->correctParams(1);
 
@@ -485,9 +485,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateParticleEmitter
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateParticleEmitter") == 0) {
 		stack->correctParams(3);
 		bool followParent = stack->pop()->getBool();
@@ -504,9 +504,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DeleteParticleEmitter
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DeleteParticleEmitter") == 0) {
 		stack->correctParams(0);
 		if (_partEmitter) {
@@ -518,9 +518,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddAttachment
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "AddAttachment") == 0) {
 		stack->correctParams(4);
 		const char *filename = stack->pop()->getString();
@@ -554,9 +554,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// RemoveAttachment
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "RemoveAttachment") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -603,9 +603,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetAttachment
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetAttachment") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -657,93 +657,93 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *AdObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("object");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Active
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Active") {
 		_scValue->setBool(_active);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IgnoreItems
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "IgnoreItems") {
 		_scValue->setBool(_ignoreItems);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SceneIndependent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SceneIndependent") {
 		_scValue->setBool(_sceneIndependent);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesWidth
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SubtitlesWidth") {
 		_scValue->setInt(_subtitlesWidth);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosRelative
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SubtitlesPosRelative") {
 		_scValue->setBool(_subtitlesModRelative);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosX
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SubtitlesPosX") {
 		_scValue->setInt(_subtitlesModX);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosY
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SubtitlesPosY") {
 		_scValue->setInt(_subtitlesModY);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosXCenter
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SubtitlesPosXCenter") {
 		_scValue->setBool(_subtitlesModXCenter);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// NumItems (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "NumItems") {
 		_scValue->setInt(getInventory()->_takenItems.size());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ParticleEmitter (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "ParticleEmitter") {
 		if (_partEmitter) {
 			_scValue->setNative(_partEmitter, true);
@@ -754,9 +754,9 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// NumAttachments (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "NumAttachments") {
 		_scValue->setInt(_attachmentsPre.size() + _attachmentsPost.size());
 		return _scValue;
@@ -766,68 +766,68 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::scSetProperty(const char *name, ScValue *value) {
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Active
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Active") == 0) {
 		_active = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IgnoreItems
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IgnoreItems") == 0) {
 		_ignoreItems = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SceneIndependent
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SceneIndependent") == 0) {
 		_sceneIndependent = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesWidth
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SubtitlesWidth") == 0) {
 		_subtitlesWidth = value->getInt();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosRelative
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SubtitlesPosRelative") == 0) {
 		_subtitlesModRelative = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosX
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SubtitlesPosX") == 0) {
 		_subtitlesModX = value->getInt();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosY
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SubtitlesPosY") == 0) {
 		_subtitlesModY = value->getInt();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SubtitlesPosXCenter
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
 		_subtitlesModXCenter = value->getBool();
 		return STATUS_OK;
@@ -837,13 +837,13 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *AdObject::scToString() {
 	return "[ad object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::setFont(const char *filename) {
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
@@ -858,7 +858,7 @@ bool AdObject::setFont(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int AdObject::getHeight() {
 	if (!_currentSprite) {
 		return 0;
@@ -881,7 +881,7 @@ TObjectType AdObject::getType() const {
 	return _type;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign Align) {
 	if (!_sentence) {
 		_sentence = new AdSentence(_gameRef);
@@ -1009,7 +1009,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::reset() {
 	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr) {
 		delete _animSprite;
@@ -1026,7 +1026,7 @@ bool AdObject::reset() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
@@ -1073,7 +1073,7 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::updateSounds() {
 	if (_sentence && _sentence->_sound) {
 		updateOneSound(_sentence->_sound);
@@ -1083,7 +1083,7 @@ bool AdObject::updateSounds() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::resetSoundPan() {
 	if (_sentence && _sentence->_sound) {
 		_sentence->_sound->setPan(0.0f);
@@ -1092,7 +1092,7 @@ bool AdObject::resetSoundPan() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::getExtendedFlag(const char *flagName) {
 	if (!flagName) {
 		return false;
@@ -1104,7 +1104,7 @@ bool AdObject::getExtendedFlag(const char *flagName) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	if (_blockRegion) {
 		_blockRegion->saveAsText(buffer, indent + 2, "BLOCKED_REGION");
@@ -1119,7 +1119,7 @@ bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::updateBlockRegion() {
 	AdGame *adGame = (AdGame *)_gameRef;
 	if (adGame->_scene) {
@@ -1134,7 +1134,7 @@ bool AdObject::updateBlockRegion() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 AdInventory *AdObject::getInventory() {
 	if (!_inventory) {
 		_inventory = new AdInventory(_gameRef);
@@ -1144,7 +1144,7 @@ AdInventory *AdObject::getInventory() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::afterMove() {
 	AdRegion *newRegions[MAX_NUM_REGIONS];
 
@@ -1176,7 +1176,7 @@ bool AdObject::afterMove() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::invalidateCurrRegions() {
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
 		_currentRegions[i] = nullptr;
@@ -1185,7 +1185,7 @@ bool AdObject::invalidateCurrRegions() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::getScale(float *scaleX, float *scaleY) {
 	if (_zoomable) {
 		if (_scaleX >= 0 || _scaleY >= 0) {
@@ -1202,7 +1202,7 @@ bool AdObject::getScale(float *scaleX, float *scaleY) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::updateSpriteAttachments() {
 	for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
 		_attachmentsPre[i]->update();
@@ -1213,7 +1213,7 @@ bool AdObject::updateSpriteAttachments() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::displaySpriteAttachments(bool preDisplay) {
 	if (preDisplay) {
 		for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
@@ -1227,7 +1227,7 @@ bool AdObject::displaySpriteAttachments(bool preDisplay) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::displaySpriteAttachment(AdObject *attachment) {
 	if (!attachment->_active) {
 		return STATUS_OK;
@@ -1267,7 +1267,7 @@ bool AdObject::displaySpriteAttachment(AdObject *attachment) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 PartEmitter *AdObject::createParticleEmitter(bool followParent, int offsetX, int offsetY) {
 	_partFollowParent = followParent;
 	_partOffsetX = offsetX;
@@ -1283,7 +1283,7 @@ PartEmitter *AdObject::createParticleEmitter(bool followParent, int offsetX, int
 	return _partEmitter;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdObject::updatePartEmitter() {
 	if (!_partEmitter) {
 		return STATUS_FAILED;

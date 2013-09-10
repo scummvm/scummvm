@@ -40,7 +40,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkDef, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdTalkDef::AdTalkDef(BaseGame *inGame) : BaseObject(inGame) {
 	_defaultSpriteFilename = nullptr;
 	_defaultSprite = nullptr;
@@ -50,7 +50,7 @@ AdTalkDef::AdTalkDef(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdTalkDef::~AdTalkDef() {
 	for (uint32 i = 0; i < _nodes.size(); i++) {
 		delete _nodes[i];
@@ -69,7 +69,7 @@ AdTalkDef::~AdTalkDef() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkDef::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -100,7 +100,7 @@ TOKEN_DEF(DEFAULT_SPRITESET)
 TOKEN_DEF(DEFAULT_SPRITE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TALK)
@@ -203,7 +203,7 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
@@ -219,7 +219,7 @@ bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TALK {\n");
 	if (_defaultSpriteFilename) {
@@ -244,7 +244,7 @@ bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkDef::loadDefaultSprite() {
 	if (_defaultSpriteFilename && !_defaultSprite) {
 		_defaultSprite = new BaseSprite(_gameRef);
@@ -270,7 +270,7 @@ bool AdTalkDef::loadDefaultSprite() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSprite *AdTalkDef::getDefaultSprite(TDirection dir) {
 	loadDefaultSprite();
 	if (_defaultSprite) {

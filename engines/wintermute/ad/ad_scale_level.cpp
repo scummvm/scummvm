@@ -36,14 +36,14 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdScaleLevel, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdScaleLevel::AdScaleLevel(BaseGame *inGame) : BaseObject(inGame) {
 	_posY = 0;
 	_scale = 100;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdScaleLevel::~AdScaleLevel() {
 
 }
@@ -52,7 +52,7 @@ float AdScaleLevel::getScale() const {
 	return _scale;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdScaleLevel::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -82,7 +82,7 @@ TOKEN_DEF(Y)
 TOKEN_DEF(SCALE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool AdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCALE_LEVEL)
@@ -137,7 +137,7 @@ bool AdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdScaleLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SCALE_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
@@ -149,7 +149,7 @@ bool AdScaleLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdScaleLevel::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);

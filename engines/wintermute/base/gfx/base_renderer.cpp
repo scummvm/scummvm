@@ -37,7 +37,7 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_window = 0;
 	_clipperWindow = 0;
@@ -72,7 +72,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseRenderer::~BaseRenderer() {
 	deleteRectList();
 	unclipCursor();
@@ -80,7 +80,7 @@ BaseRenderer::~BaseRenderer() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 void BaseRenderer::initLoop() {
 	deleteRectList();
 }
@@ -181,7 +181,7 @@ void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_loadImageY));
 }
 
-//////////////////////////////////////////////////////////////////////
+
 BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	Point32 point;
 	point.x = x;
@@ -225,7 +225,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRenderer::deleteRectList() {
 	for (uint32 i = 0; i < _rectList.size(); i++) {
 		delete _rectList[i];
@@ -233,41 +233,41 @@ void BaseRenderer::deleteRectList() {
 	_rectList.clear();
 }
 
-//////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
 	return STATUS_FAILED;
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 void BaseRenderer::onWindowChange() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::windowedBlt() {
 	return STATUS_FAILED;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::setup2D(bool Force) {
 	return STATUS_FAILED;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::setupLines() {
 	return STATUS_FAILED;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return STATUS_FAILED;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
 	for (int i = 0; i < width; i++) {
 		drawLine(x1 + i, y1 + i, x2 - i,   y1 + i,   color); // up
@@ -280,19 +280,19 @@ bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int wi
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_FAILED;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::setScreenViewport() {
 	return setViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::setViewport(Rect32 *rect) {
 	return setViewport(rect->left + _drawOffsetX,
 	                   rect->top + _drawOffsetY,
@@ -301,7 +301,7 @@ bool BaseRenderer::setViewport(Rect32 *rect) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::clipCursor() {
 	// TODO: Reimplement this. (Currently aspect-indpendence isn't quite finished)
 	/*
@@ -321,7 +321,7 @@ bool BaseRenderer::clipCursor() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::unclipCursor() {
 	/*
 	if (!_windowed) ::ClipCursor(nullptr);
@@ -329,7 +329,7 @@ bool BaseRenderer::unclipCursor() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::pointInViewport(Point32 *p) {
 	if (p->x < _drawOffsetX) {
 		return false;
@@ -367,7 +367,7 @@ bool BaseRenderer::saveScreenShot(const Common::String &filename, int sizeX, int
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRenderer::displayIndicator() {
 	if (!_indicatorDisplay || !_indicatorProgress) {
 		return STATUS_OK;

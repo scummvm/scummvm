@@ -43,7 +43,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSentence, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 	_text = nullptr;
 	_stances = nullptr;
@@ -71,7 +71,7 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdSentence::~AdSentence() {
 	delete _sound;
 	delete[] _text;
@@ -90,7 +90,7 @@ AdSentence::~AdSentence() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdSentence::setText(const char *text) {
 	if (_text) {
 		delete[] _text;
@@ -102,7 +102,7 @@ void AdSentence::setText(const char *text) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdSentence::setStances(const char *stances) {
 	if (_stances) {
 		delete[] _stances;
@@ -118,20 +118,20 @@ void AdSentence::setStances(const char *stances) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 char *AdSentence::getCurrentStance() {
 	return getStance(_currentStance);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 char *AdSentence::getNextStance() {
 	_currentStance++;
 	return getStance(_currentStance);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 char *AdSentence::getStance(int stance) {
 	if (_stances == nullptr) {
 		return nullptr;
@@ -192,7 +192,7 @@ char *AdSentence::getStance(int stance) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSentence::display() {
 	if (!_font || !_text) {
 		return STATUS_FAILED;
@@ -224,7 +224,7 @@ bool AdSentence::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdSentence::setSound(BaseSound *sound) {
 	if (!sound) {
 		return;
@@ -235,7 +235,7 @@ void AdSentence::setSound(BaseSound *sound) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSentence::finish() {
 	if (_sound) {
 		_sound->stop();
@@ -244,7 +244,7 @@ bool AdSentence::finish() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
@@ -271,7 +271,7 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSentence::setupTalkFile(const char *soundFilename) {
 	delete _talkDef;
 	_talkDef = nullptr;
@@ -303,7 +303,7 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSentence::update(TDirection dir) {
 	if (!_talkDef) {
 		return STATUS_OK;
@@ -352,7 +352,7 @@ bool AdSentence::update(TDirection dir) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSentence::canSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
 	return (_gameRef->getTimer()->getTime() - _startTime) > 300;
