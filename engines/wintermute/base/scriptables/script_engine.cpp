@@ -206,7 +206,7 @@ bool ScEngine::refreshWatchlist() {
 bool ScEngine::addBreakpoint(const char *filename, int line) {
 	// Add a <filename, line> pair to the per-Engine list of breakpoints.
 	CScBreakpoint breakpoint = CScBreakpoint(filename);
-	breakpoint._line = (line);
+	breakpoint._line = line;
 	breakpoint._hits = 0;
 	_breakpoints.add(breakpoint);
 	return true;
