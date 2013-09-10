@@ -230,11 +230,11 @@ public:
 };
 
 class Scene2435 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Companion : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Astor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -247,11 +247,11 @@ public:
 	SpeakerQuinn2435 _quinnSpeaker;
 	SpeakerSeeker2435 _seekerSpeaker;
 	SpeakerPharisha2435 _pharishaSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	Actor1 _actor1;
-	Actor2 _actor2;
+	NamedHotspot _background;
+	NamedHotspot _leftWindow;
+	NamedHotspot _rightWindow;
+	Companion _companion;
+	Astor _astor;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 

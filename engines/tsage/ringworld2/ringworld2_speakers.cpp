@@ -1041,7 +1041,7 @@ void SpeakerPharisha2435::proc15() {
 	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_astor;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1323,7 +1323,7 @@ void SpeakerQuinn2435::proc15() {
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
 			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();
@@ -1350,7 +1350,7 @@ void SpeakerQuinn2450::proc15() {
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
 			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();
@@ -2165,7 +2165,7 @@ void SpeakerSeeker2435::proc15() {
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
 			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();

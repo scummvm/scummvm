@@ -1627,11 +1627,12 @@ void Scene2430::signal() {
  * Scene 2435 - Spill Mountains: Throne room
  *
  *--------------------------------------------------------------------------*/
-bool Scene2435::Actor1::startAction(CursorType action, Event &event) {
+
+bool Scene2435::Companion::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene2435::Actor2::startAction(CursorType action, Event &event) {
+bool Scene2435::Astor::startAction(CursorType action, Event &event) {
 	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -1690,13 +1691,14 @@ void Scene2435::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_pharishaSpeaker);
 	_exit1.setDetails(Rect(142, 155, 207, 167), EXITCURSOR_S, 2000);
 	_exit1.setDest(Common::Point(175, 160));
-	_actor2.postInit();
-	_actor2.setup(2005, 3, 1);
-	_actor2.setPosition(Common::Point(219, 106));
-	_actor2.setDetails(2001, 25, 26, -1, 1, (SceneItem *)NULL);
+	_astor.postInit();
+	_astor.setup(2005, 3, 1);
+	_astor.setPosition(Common::Point(219, 106));
+	_astor.setDetails(2001, 25, 26, -1, 1, (SceneItem *)NULL);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-	if (R2_GLOBALS._player._characterIndex == 1) {
+
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setVisage(2008);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -1704,22 +1706,23 @@ void Scene2435::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
 	}
 	R2_GLOBALS._player.setPosition(Common::Point(715, 200));
-	if (R2_GLOBALS._player._characterScene[1] == R2_GLOBALS._player._characterScene[2]) {
-		_actor1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
-			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
+		_companion.postInit();
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
-		_actor1.setPosition(Common::Point(107, 145));
+		_companion.setPosition(Common::Point(107, 145));
 		R2_GLOBALS._walkRegions.enableRegion(2);
 	}
 
-	_item2.setDetails(Rect(52, 44, 96, 82), 2430, 3, -1, 5, 1, NULL);
-	_item3.setDetails(Rect(117, 36, 161, 74), 2430, 3, -1, 5, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
+	_leftWindow.setDetails(Rect(52, 44, 96, 82), 2430, 3, -1, 5, 1, NULL);
+	_rightWindow.setDetails(Rect(117, 36, 161, 74), 2430, 3, -1, 5, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
+
 	R2_GLOBALS._player.disableControl();
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
 		_sceneMode = 10;
@@ -1763,12 +1766,12 @@ void Scene2435::signal() {
 		R2_GLOBALS.setFlag(81);
 		_sceneMode = 2436;
 		R2_GLOBALS._player.setStrip(7);
-		_actor1.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1)
-			_actor1.setVisage(20);
+			_companion.setVisage(20);
 		else
-			_actor1.setVisage(2008);
-		setAction(&_sequenceManager, this, 2436, &_actor1, NULL);
+			_companion.setVisage(2008);
+		setAction(&_sequenceManager, this, 2436, &_companion, NULL);
 		break;
 	case 2436:
 		R2_GLOBALS._walkRegions.enableRegion(2);
