@@ -167,7 +167,6 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 }
 
 int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
-	// TODO: Check if file exists, check if line exists
 	assert(SCENGINE);
 	if (!compiledExists(filename)) {
 		return NO_SUCH_SCRIPT;
@@ -195,7 +194,6 @@ int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
 }
 
 int DebuggerAdapter::removeBreakpoint(int id) {
-	// TODO: Check blah.
 	assert(SCENGINE);
 
 	if (SCENGINE->removeBreakpoint(id)) {
@@ -206,7 +204,6 @@ int DebuggerAdapter::removeBreakpoint(int id) {
 }
 
 int DebuggerAdapter::disableBreakpoint(int id) {
-	// TODO: Check blah.
 	assert(SCENGINE);
 
 	if (SCENGINE->disableBreakpoint(id)) {
