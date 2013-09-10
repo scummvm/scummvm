@@ -2192,7 +2192,7 @@ void SpeakerSeeker2450::proc15() {
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2450);
 			Scene2450 *scene = (Scene2450 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();

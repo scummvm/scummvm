@@ -169,49 +169,49 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #2 */
 	//
 	case 2000:
-		// Ice Maze
+		// Spill Mountains
 		return new Scene2000();
 	case 2350:
-		// Ice Maze: Balloon Launch Platform
+		// Spill Mountains: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
-		// Ice Maze: Large empty room
+		// Spill Mountains: Large empty room
 		return new Scene2400();
 	case 2425:
-		// Ice Maze: The Hall of Records
+		// Spill Mountains: The Hall of Records
 		return new Scene2425();
 	case 2430:
-		// Ice Maze: Bedroom
+		// Spill Mountains: Bedroom
 		return new Scene2430();
 	case 2435:
-		// Ice Maze: Throne room
+		// Spill Mountains: Throne room
 		return new Scene2435();
 	case 2440:
-		// Ice Maze: Another bedroom
+		// Spill Mountains: Another bedroom
 		return new Scene2440();
 	case 2445:
-		// Ice Maze:
+		// Spill Mountains:
 		return new Scene2445();
 	case 2450:
-		// Ice Maze: Another bedroom
+		// Spill Mountains: Another bedroom
 		return new Scene2450();
 	case 2455:
-		// Ice Maze: Inside crevasse
+		// Spill Mountains: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Ice Maze: Large Cave
+		// Spill Mountains: Large Cave
 		return new Scene2500();
 	case 2525:
-		// Ice Maze: Furnace room
+		// Spill Mountains: Furnace room
 		return new Scene2525();
 	case 2530:
-		// Ice Maze: Well
+		// Spill Mountains: Well
 		return new Scene2530();
 	case 2535:
-		// Ice Maze: Tannery
+		// Spill Mountains: Tannery
 		return new Scene2535();
 	case 2600:
-		// Ice Maze: Exit
+		// Spill Mountains: Exit
 		return new Scene2600();
 	case 2700:
 		// Forest Maze
