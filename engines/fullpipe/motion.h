@@ -80,7 +80,6 @@ class CMovGraphNode : public CObject {
 	int _y;
 	int _distance;
 	int16 _field_10;
-	int16 _field_12;
 	int _field_14;
 
   public:
