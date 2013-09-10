@@ -153,7 +153,6 @@ int WintermuteEngine::init() {
 	// set gameId, for savegame-naming:
 	_game->setGameId(_targetName);
 	_game->_adapter = _adapter;
-	// _game->attachDebugger(_debugger);
 
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
