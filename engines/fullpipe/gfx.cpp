@@ -343,28 +343,6 @@ void GameObject::renumPictures(CPtrList *lst) {
 	free(buf);
 }
 
-bool GameObject::canInteractAny(GameObject *obj2, int invId) {
-	int sceneId = 0;
-
-	if (g_fullpipe->_currentScene)
-		sceneId = g_fullpipe->_currentScene->_sceneId;
-
-	CInteractionController *intC = getGameLoaderInteractionController();
-	for (CObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
-		CInteraction *intr = (CInteraction *)*i;
-
-		if (intr->_sceneId > 0 && intr->_sceneId != sceneId)
-			break;
-
-		if (invId == -3) {
-			invId = getGameLoaderInventory()->getSelectedItemId();
-		}
-		if (intr->canInteract(this, obj2, invId))
-			return true;
-	}
-	return false;
-}
-
 bool GameObject::getPicAniInfo(PicAniInfo *info) {
 	if (_objtype == kObjTypePictureObject) {
 		info->type = 2;

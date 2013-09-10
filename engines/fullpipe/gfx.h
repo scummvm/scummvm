@@ -142,7 +142,6 @@ class GameObject : public CObject {
 	void clearFlags() { _flags = 0; }
 	const char *getName() { return _objectName; }
 
-	bool canInteractAny(GameObject *obj2, int invId);
 	bool getPicAniInfo(PicAniInfo *info);
 	bool setPicAniInfo(PicAniInfo *info);
 };

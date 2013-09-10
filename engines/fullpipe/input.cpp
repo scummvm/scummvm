@@ -28,6 +28,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/interaction.h"
 #include "fullpipe/constants.h"
 
 namespace Fullpipe {
@@ -169,7 +170,7 @@ void FullpipeEngine::updateCursorsCommon() {
 				return;
 			}
 		}
-		if (_aniMan->canInteractAny(ani, selId)) {
+		if (canInteractAny(_aniMan, ani, selId)) {
 			_cursorId = selId > 0 ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
 			return;
 		}

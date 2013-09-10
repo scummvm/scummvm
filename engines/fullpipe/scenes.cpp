@@ -971,7 +971,7 @@ int global_messageHandler3(ExCommand *cmd) {
 						cmd->_messageKind = 0;
 						return result;
 					}
-					if (ani2->canInteractAny(ani, cmd->_keyCode)) {
+					if (canInteractAny(ani2, ani, cmd->_keyCode)) {
 						handleObjectInteraction(ani2, ani, cmd->_keyCode);
 						return 1;
 					}
@@ -983,7 +983,7 @@ int global_messageHandler3(ExCommand *cmd) {
 							cmd->_messageKind = 0;
 							return result;
 						}
-						if (!ani2 || ani2->canInteractAny(pic, cmd->_keyCode)) {
+						if (!ani2 || canInteractAny(ani2, pic, cmd->_keyCode)) {
 							if (!ani2 || (ani2->isIdle() && !(ani2->_flags & 0x80) && !(ani2->_flags & 0x100)))
 								handleObjectInteraction(ani2, pic, cmd->_keyCode);
 							return 1;
@@ -1449,7 +1449,7 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 
 	if (ex->_messageNum == 29) {
 		GameObject *obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
-		if (obj && GameObject_canInteractAny(0, obj, -3) ) {
+		if (obj && canInteractAny(0, obj, -3) ) {
 			getGameLoaderInteractionController()->enableFlag24();
 			handleObjectInteraction(0, obj, 0);
 		}
@@ -1466,14 +1466,14 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 	g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
 	GameObject *obj = g_fullpipe->_currentScene->getStaticANIObjectAtPos(mx, my);
 	if (obj) {
-		if (GameObject_canInteractAny(0, obj, -3)) {
+		if (canInteractAny(0, obj, -3)) {
 			g_cursorId = PIC_CSR_DEFAULT;
 			input_setCursor(PIC_CSR_DEFAULT);
 			return 0;
 		}
 	} else {
 		obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
-		if (obj && GameObject_canInteractAny(0, obj, -3) ) {
+		if (obj && canInteractAny(0, obj, -3) ) {
 			g_vars->selector->_flags |= 4;
 			g_vars->selector->setOXY(obj->_ox, obj->_oy);
 			g_fullpipe->_cursorId = PIC_CSR_DEFAULT;

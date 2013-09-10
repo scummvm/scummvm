@@ -32,6 +32,8 @@ class MessageQueue;
 class StaticANIObject;
 
 int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int invId);
+bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId);
+
 
 class CInteraction : public CObject {
  public:

@@ -33,6 +33,28 @@ int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int in
 	return getGameLoaderInteractionController()->handleInteraction(subject, object, invId);
 }
 
+bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
+	int sceneId = 0;
+
+	if (g_fullpipe->_currentScene)
+		sceneId = g_fullpipe->_currentScene->_sceneId;
+
+	CInteractionController *intC = getGameLoaderInteractionController();
+	for (CObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
+		CInteraction *intr = (CInteraction *)*i;
+
+		if (intr->_sceneId > 0 && intr->_sceneId != sceneId)
+			break;
+
+		if (invId == -3) {
+			invId = getGameLoaderInventory()->getSelectedItemId();
+		}
+		if (intr->canInteract(obj1, obj2, invId))
+			return true;
+	}
+	return false;
+}
+
 bool CInteractionController::load(MfcArchive &file) {
 	debug(5, "CInteractionController::load()");
 
@@ -422,6 +444,7 @@ bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 
 	if (!obj2)
 		return false;
+
 	if (obj2->_id != _objectId1)
 		return false;
 
