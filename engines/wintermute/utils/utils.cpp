@@ -32,14 +32,14 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 static inline unsigned Sqr(int x) {
 	return (x * x);
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+
 // Swap - swaps two integers
-//////////////////////////////////////////////////////////////////////////////////
+
 void BaseUtils::swap(int *a, int *b) {
 	int temp = *a;
 	*a = *b;
@@ -47,7 +47,7 @@ void BaseUtils::swap(int *a, int *b) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 float BaseUtils::normalizeAngle(float angle) {
 	while (angle > 360) {
 		angle -= 360;
@@ -60,7 +60,7 @@ float BaseUtils::normalizeAngle(float angle) {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//
 void BaseUtils::createPath(const char *path, bool pathOnly) {
 	/*  AnsiString pathStr;
 
@@ -76,13 +76,13 @@ void BaseUtils::createPath(const char *path, bool pathOnly) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseUtils::debugMessage(const char *text) {
 	//MessageBox(hWnd, Text, "WME", MB_OK|MB_ICONINFORMATION);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 char *BaseUtils::setString(char **string, const char *value) {
 	delete[] *string;
 	*string = new char[strlen(value) + 1];
@@ -92,7 +92,7 @@ char *BaseUtils::setString(char **string, const char *value) {
 	return *string;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 	int numEntries = 0;
 
@@ -120,7 +120,7 @@ char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseUtils::randomInt(int from, int to) {
 	if (to < from) {
 		int i = to;
@@ -131,14 +131,14 @@ int BaseUtils::randomInt(int from, int to) {
 //	return (rand() % (to - from + 1)) + from;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 float BaseUtils::randomFloat(float from, float to) {
 	const uint32 randMax = RAND_MAX;
 	float randNum = (float)BaseEngine::instance().randInt(0, randMax) / (float)randMax;
 	return from + (to - from) * randNum;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 float BaseUtils::randomAngle(float from, float to) {
 	while (to < from) {
 		to += 360;
@@ -146,7 +146,7 @@ float BaseUtils::randomAngle(float from, float to) {
 	return normalizeAngle(randomFloat(from, to));
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseUtils::RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL) {
 	float varR = (RGBCOLGetR(rgbColor) / 255.0f);
 	float varG = (RGBCOLGetG(rgbColor) / 255.0f);
@@ -206,7 +206,7 @@ void BaseUtils::RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 	float H = InH / 255.0f;
 	float S = InS / 255.0f;
@@ -238,7 +238,7 @@ uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
 	if (vH < 0.0f) {
 		vH += 1.0f;

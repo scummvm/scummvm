@@ -51,7 +51,7 @@ void BasePlatform::deinit() {
 	_engineRef = nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BasePlatform::handleEvent(Common::Event *event) {
 	switch (event->type) {
 
@@ -140,9 +140,9 @@ void BasePlatform::handleEvent(Common::Event *event) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // Win32 API bindings
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::getCursorPos(Point32 *lpPoint) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
@@ -155,7 +155,7 @@ bool BasePlatform::getCursorPos(Point32 *lpPoint) {
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::setCursorPos(int x, int y) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
@@ -168,38 +168,38 @@ bool BasePlatform::setCursorPos(int x, int y) {
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::showWindow(int nCmdShow) {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BasePlatform::setCapture() {
 	return;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::releaseCapture() {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::setRectEmpty(Rect32 *lprc) {
 	lprc->left = lprc->right = lprc->top = lprc->bottom = 0;
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::isRectEmpty(const Rect32 *lprc) {
 	return (lprc->left >= lprc->right) || (lprc->top >= lprc->bottom);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::ptInRect(Rect32 *lprc, Point32 p) {
 	return (p.x >= lprc->left) && (p.x < lprc->right) && (p.y >= lprc->top) && (p.y < lprc->bottom);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::setRect(Rect32 *lprc, int left, int top, int right, int bottom) {
 	lprc->left   = left;
 	lprc->top    = top;
@@ -209,7 +209,7 @@ bool BasePlatform::setRect(Rect32 *lprc, int left, int top, int right, int botto
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
 	if (isRectEmpty(lprcSrc1) || isRectEmpty(lprcSrc2) ||
 	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
@@ -225,7 +225,7 @@ bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const 
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2) {
 	if (isRectEmpty(lprcSrc1)) {
 		if (isRectEmpty(lprcSrc2)) {
@@ -248,7 +248,7 @@ bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
 	if (lprcDst == nullptr || lprcSrc == nullptr) {
 		return false;
@@ -258,14 +258,14 @@ bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 AnsiString BasePlatform::getPlatformName() {
 	// TODO: Should conform to the WME-spec.
 	//return AnsiString(SDL_GetPlatform());
 	return AnsiString("ScummVM");
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 char *BasePlatform::strlwr(char *string) {
 	if (string) {
 		for (size_t i = 0; i < strlen(string); ++i) {

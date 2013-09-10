@@ -39,13 +39,13 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 
 //IMPLEMENT_PERSISTENT(BaseSoundMgr, true);
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_soundAvailable = false;
 	_volumeMaster = 255;
@@ -53,14 +53,14 @@ BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSoundMgr::~BaseSoundMgr() {
 	saveSettings();
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::cleanup() {
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		delete _sounds[i];
@@ -69,14 +69,14 @@ bool BaseSoundMgr::cleanup() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
 		ConfMan.setInt("master_volume_percent", _volumeMasterPercent);
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::initialize() {
 	_soundAvailable = false;
 
@@ -90,7 +90,7 @@ bool BaseSoundMgr::initialize() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (!_soundAvailable) {
 		return nullptr;
@@ -138,7 +138,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type) {
 	if (!sound) {
 		return STATUS_FAILED;
@@ -153,7 +153,7 @@ bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		if (_sounds[i] == sound) {
@@ -167,7 +167,7 @@ bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	if (!_soundAvailable) {
 		return STATUS_OK;
@@ -191,13 +191,13 @@ bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
 	return setVolume(type, percent * 255 / 100);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 	int volume = 0;
 
@@ -216,7 +216,7 @@ byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::setMasterVolume(byte value) {
 	// This function intentionally doesn't touch _volumeMasterPercent,
 	// as that variable keeps track of what the game actually wanted,
@@ -230,7 +230,7 @@ bool BaseSoundMgr::setMasterVolume(byte value) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
 	_volumeMasterPercent = percent;
 	setMasterVolume((int)ceil(percent * 255.0 / 100.0));
@@ -238,18 +238,18 @@ bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 byte BaseSoundMgr::getMasterVolumePercent() {
 	return _volumeMasterPercent;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 byte BaseSoundMgr::getMasterVolume() {
 	return (byte)_volumeMaster;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
 
 	for (uint32 i = 0; i < _sounds.size(); i++) {
@@ -263,7 +263,7 @@ bool BaseSoundMgr::pauseAll(bool includingMusic) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSoundMgr::resumeAll() {
 
 	for (uint32 i = 0; i < _sounds.size(); i++) {
@@ -277,7 +277,7 @@ bool BaseSoundMgr::resumeAll() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 float BaseSoundMgr::posToPan(int x, int y) {
 	float relPos = (float)x / ((float)BaseEngine::getRenderer()->getWidth());
 

@@ -41,13 +41,13 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkHolder, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdTalkHolder::AdTalkHolder(BaseGame *inGame) : AdObject(inGame) {
 	_sprite = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdTalkHolder::~AdTalkHolder() {
 	delete _sprite;
 	_sprite = nullptr;
@@ -63,7 +63,7 @@ AdTalkHolder::~AdTalkHolder() {
 	_talkSpritesEx.clear();
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	BaseSprite *ret = nullptr;
 
@@ -120,13 +120,13 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetSprite
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "SetSprite") == 0) {
 		stack->correctParams(1);
 
@@ -163,9 +163,9 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetSprite
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetSprite") == 0) {
 		stack->correctParams(0);
 
@@ -177,9 +177,9 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetSpriteObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetSpriteObject") == 0) {
 		stack->correctParams(0);
 
@@ -191,9 +191,9 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddTalkSprite
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "AddTalkSprite") == 0) {
 		stack->correctParams(2);
 
@@ -215,9 +215,9 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// RemoveTalkSprite
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "RemoveTalkSprite") == 0) {
 		stack->correctParams(2);
 
@@ -269,9 +269,9 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetTalkSprite
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetTalkSprite") == 0) {
 		stack->correctParams(2);
 
@@ -333,13 +333,13 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("talk-holder");
 		return _scValue;
@@ -349,12 +349,12 @@ ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	/*
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Item
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Item")==0) {
 	    SetItem(value->getString());
 	    return STATUS_OK;
@@ -364,13 +364,13 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *AdTalkHolder::scToString() {
 	return "[talk-holder object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	for (uint32 i = 0; i < _talkSprites.size(); i++) {
 		if (_talkSprites[i]->getFilename()) {
@@ -388,7 +388,7 @@ bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdTalkHolder::persist(BasePersistenceManager *persistMgr) {
 	AdObject::persist(persistMgr);
 

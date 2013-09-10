@@ -34,13 +34,13 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScStack, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 ScStack::ScStack(BaseGame *inGame) : BaseClass(inGame) {
 	_sP = -1;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScStack::~ScStack() {
 
 #if _DEBUG
@@ -54,7 +54,7 @@ ScStack::~ScStack() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *ScStack::pop() {
 	if (_sP < 0) {
 		_gameRef->LOG(0, "Fatal: Stack underflow");
@@ -65,7 +65,7 @@ ScValue *ScStack::pop() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::push(ScValue *val) {
 	_sP++;
 
@@ -80,7 +80,7 @@ void ScStack::push(ScValue *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *ScStack::getPushValue() {
 	_sP++;
 
@@ -94,7 +94,7 @@ ScValue *ScStack::getPushValue() {
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *ScStack::getTop() {
 	if (_sP < 0 || _sP >= (int32)_values.size()) {
 		return nullptr;
@@ -104,7 +104,7 @@ ScValue *ScStack::getTop() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *ScStack::getAt(int index) {
 	index = _sP - index;
 	if (index < 0 || index >= (int32)_values.size()) {
@@ -115,7 +115,7 @@ ScValue *ScStack::getAt(int index) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::correctParams(uint32 expectedParams) {
 	uint32 nuParams = (uint32)pop()->getInt();
 
@@ -145,43 +145,43 @@ void ScStack::correctParams(uint32 expectedParams) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::pushNULL() {
 	getPushValue()->setNULL();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::pushInt(int val) {
 	getPushValue()->setInt(val);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::pushFloat(double val) {
 	getPushValue()->setFloat(val);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::pushBool(bool val) {
 	getPushValue()->setBool(val);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::pushString(const char *val) {
 	getPushValue()->setString(val);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScStack::pushNative(BaseScriptable *val, bool persistent) {
 	getPushValue()->setNative(val, persistent);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScStack::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));

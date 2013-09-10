@@ -36,7 +36,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseViewport, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
 	BasePlatform::setRectEmpty(&_rect);
 	_mainObject = nullptr;
@@ -44,13 +44,13 @@ BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseViewport::~BaseViewport() {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
@@ -64,7 +64,7 @@ bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck) {
 	if (!noCheck) {
 		left = MAX<int32>(left, 0);
@@ -80,19 +80,19 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 Rect32 *BaseViewport::getRect() {
 	return &_rect;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseViewport::getWidth() const {
 	return _rect.right - _rect.left;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseViewport::getHeight() const {
 	return _rect.bottom - _rect.top;
 }

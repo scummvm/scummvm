@@ -50,7 +50,7 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdActor, false)
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_path = new AdPath(_gameRef);
 
@@ -70,7 +70,7 @@ AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 	setDefaultAnimNames();
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::setDefaultAnimNames() {
 	_talkAnimName = "talk";
 	_idleAnimName = "idle";
@@ -80,7 +80,7 @@ bool AdActor::setDefaultAnimNames() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 AdActor::~AdActor() {
 	delete _path;
 	delete _targetPoint;
@@ -117,7 +117,7 @@ AdActor::~AdActor() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -178,7 +178,7 @@ TOKEN_DEF(ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(ANIMATION)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTOR)
@@ -480,7 +480,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdActor::turnTo(TDirection dir) {
 	int delta1, delta2, delta3, delta;
 
@@ -506,7 +506,7 @@ void AdActor::turnTo(TDirection dir) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	_afterWalkDir = afterWalkDir;
 	if (x == _targetPoint->x && y == _targetPoint->y && _state == STATE_FOLLOWING_PATH) {
@@ -526,7 +526,7 @@ void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::display() {
 	if (_active) {
 		updateSounds();
@@ -587,7 +587,7 @@ bool AdActor::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::update() {
 	_currentSprite = nullptr;
 
@@ -637,17 +637,17 @@ bool AdActor::update() {
 	bool already_moved = false;
 
 	switch (_state) {
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_PLAYING_ANIM:
 		_currentSprite = _animSprite;
 		break;
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_PLAYING_ANIM_SET:
 		_currentSprite = _animSprite2;
 		break;
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_TURNING_LEFT:
 		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
 			if (_dir > 0) {
@@ -684,7 +684,7 @@ bool AdActor::update() {
 		break;
 
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_TURNING_RIGHT:
 		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
 			_dir = (TDirection)(_dir + 1);
@@ -721,7 +721,7 @@ bool AdActor::update() {
 		break;
 
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_SEARCHING_PATH:
 		// keep asking scene for the path
 		if (((AdGame *)_gameRef)->_scene->getPath(BasePoint(_posX, _posY), *_targetPoint, _path, this)) {
@@ -730,7 +730,7 @@ bool AdActor::update() {
 		break;
 
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_WAITING_PATH:
 		// wait until the scene finished the path
 		if (_path->_ready) {
@@ -739,13 +739,13 @@ bool AdActor::update() {
 		break;
 
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_FOLLOWING_PATH:
 		getNextStep();
 		already_moved = true;
 		break;
 
-		//////////////////////////////////////////////////////////////////////////
+		
 	case STATE_TALKING: {
 		_sentence->update(_dir);
 		if (_sentence->_currentSprite) {
@@ -774,7 +774,7 @@ bool AdActor::update() {
 	}
 	break;
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	case STATE_READY:
 		if (!_animSprite && !_animSprite2) {
 			if (_sprite) {
@@ -817,7 +817,7 @@ bool AdActor::update() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdActor::followPath() {
 	// skip current position
 	_path->getFirst();
@@ -842,7 +842,7 @@ void AdActor::followPath() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdActor::getNextStep() {
 	if (_walkSprite) {
 		_currentSprite = _walkSprite->getSprite(_dir);
@@ -914,7 +914,7 @@ void AdActor::getNextStep() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
 	_pFCount = MAX((abs(endPt.x - startPt.x)) , (abs(endPt.y - startPt.y)));
 
@@ -932,13 +932,13 @@ void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GoTo / GoToAsync
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "GoTo") == 0 || strcmp(name, "GoToAsync") == 0) {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
@@ -951,9 +951,9 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GoToObject / GoToObjectAsync
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GoToObject") == 0 || strcmp(name, "GoToObjectAsync") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -981,9 +981,9 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TurnTo / TurnToAsync
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "TurnTo") == 0 || strcmp(name, "TurnToAsync") == 0) {
 		stack->correctParams(1);
 		int dir;
@@ -1010,27 +1010,27 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IsWalking
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IsWalking") == 0) {
 		stack->correctParams(0);
 		stack->pushBool(_state == STATE_FOLLOWING_PATH);
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// MergeAnims
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "MergeAnims") == 0) {
 		stack->correctParams(1);
 		stack->pushBool(DID_SUCCEED(mergeAnims(stack->pop()->getString())));
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// UnloadAnim
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "UnloadAnim") == 0) {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
@@ -1060,9 +1060,9 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// HasAnim
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "HasAnim") == 0) {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
@@ -1074,59 +1074,59 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *AdActor::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Direction
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Direction") {
 		_scValue->setInt(_dir);
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Type") {
 		_scValue->setString("actor");
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TalkAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TalkAnimName") {
 		_scValue->setString(_talkAnimName);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "WalkAnimName") {
 		_scValue->setString(_walkAnimName);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IdleAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "IdleAnimName") {
 		_scValue->setString(_idleAnimName);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TurnLeftAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TurnLeftAnimName") {
 		_scValue->setString(_turnLeftAnimName);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TurnRightAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TurnRightAnimName") {
 		_scValue->setString(_turnRightAnimName);
 		return _scValue;
@@ -1136,11 +1136,11 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Direction
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Direction") == 0) {
 		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
@@ -1149,9 +1149,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TalkAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "TalkAnimName") == 0) {
 		if (value->isNULL()) {
 			_talkAnimName = "talk";
@@ -1161,9 +1161,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// WalkAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "WalkAnimName") == 0) {
 		if (value->isNULL()) {
 			_walkAnimName = "walk";
@@ -1173,9 +1173,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IdleAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IdleAnimName") == 0) {
 		if (value->isNULL()) {
 			_idleAnimName = "idle";
@@ -1185,9 +1185,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TurnLeftAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "TurnLeftAnimName") == 0) {
 		if (value->isNULL()) {
 			_turnLeftAnimName = "turnleft";
@@ -1197,9 +1197,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TurnRightAnimName
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
 		if (value->isNULL()) {
 			_turnRightAnimName = "turnright";
@@ -1213,13 +1213,13 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *AdActor::scToString() {
 	return "[actor object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSprite *AdActor::getTalkStance(const char *stance) {
 	// forced stance?
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
@@ -1278,7 +1278,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 	BaseSprite *ret = nullptr;
 
@@ -1315,7 +1315,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
@@ -1349,7 +1349,7 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 TDirection AdActor::angleToDirection(int angle) {
 	TDirection ret = DI_DOWN;
 
@@ -1375,7 +1375,7 @@ TDirection AdActor::angleToDirection(int angle) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int AdActor::getHeight() {
 	// if no current sprite is set, set some
 	if (_currentSprite == nullptr) {
@@ -1393,7 +1393,7 @@ int AdActor::getHeight() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
 	for (uint32 i = 0; i < _anims.size(); i++) {
 		if (animName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
@@ -1403,7 +1403,7 @@ AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ANIMATION)
@@ -1441,7 +1441,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdActor::playAnim(const char *filename) {
 	// if we have an anim with this name, use it
 	AdSpriteSet *anim = getAnimByName(filename);

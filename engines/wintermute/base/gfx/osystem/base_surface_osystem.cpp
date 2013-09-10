@@ -44,7 +44,7 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
@@ -55,7 +55,7 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_rotation = 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	if (_surface) {
 		_surface->free();
@@ -104,7 +104,7 @@ TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	/*  BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer); */
 	_filename = filename;
@@ -194,7 +194,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	warning("BaseSurfaceOSystem::GenAlphaMask - Not ported yet");
 	return;
@@ -241,7 +241,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) {
 	warning("BaseSurfaceOSystem::GetPixel - Not ported yet");
 	int bpp = surface->format.bytesPerPixel;
@@ -277,7 +277,7 @@ uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) 
 	return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::create(int width, int height) {
 	_width = width;
 	_height = height;
@@ -289,12 +289,12 @@ bool BaseSurfaceOSystem::create(int width, int height) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::isTransparentAt(int x, int y) {
 	return isTransparentAtLite(x, y);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 	if (x < 0 || x >= _surface->w || y < 0 || y >= _surface->h) {
 		return true;
@@ -314,7 +314,7 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::startPixelOp() {
 	//SDL_LockTexture(_texture, nullptr, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
@@ -323,40 +323,40 @@ bool BaseSurfaceOSystem::startPixelOp() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::endPixelOp() {
 	//SDL_UnlockTexture(_texture);
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY,  mirrorX, mirrorY));
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY)); 
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr,  TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, int32 zoomX, int32 zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, TransformStruct(zoomX, zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, int32 zoomX, int32 zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	TransformStruct transform;
@@ -369,7 +369,7 @@ bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, int32 zoomX, int
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) {
 	_rotation = (uint32)transform._angle;
 	if (transform._angle < 0.0f) {
@@ -380,7 +380,7 @@ bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newR
 	return drawSprite(x, y, &rect, &newRect, transform);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transform) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 

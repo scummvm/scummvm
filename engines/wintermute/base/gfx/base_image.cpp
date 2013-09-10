@@ -40,7 +40,7 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 BaseImage::BaseImage() {
 	_fileManager = BaseFileManager::getEngineInstance();
 	_palette = nullptr;
@@ -50,7 +50,7 @@ BaseImage::BaseImage() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseImage::~BaseImage() {
 	delete _decoder;
 	if (_deletableSurface) {
@@ -104,14 +104,14 @@ void BaseImage::copyFrom(const Graphics::Surface *surface) {
 	_deletableSurface->copyFrom(*surface);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseImage::saveBMPFile(const Common::String &filename) const {
 	warning("BaseImage::saveBMPFile - stubbed"); // TODO
 	return false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseImage::resize(int newWidth, int newHeight) {
 	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
 	TransparentSurface temp(*_surface, true);
@@ -126,7 +126,7 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 	if (!_surface) {
 		return false;
@@ -214,7 +214,7 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
 

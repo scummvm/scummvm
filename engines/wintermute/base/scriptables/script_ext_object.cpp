@@ -32,9 +32,9 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
+
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 
 IMPLEMENT_PERSISTENT(SXObject, false)
 
@@ -42,7 +42,7 @@ BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack) {
 	return new SXObject(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 SXObject::SXObject(BaseGame *inGame, ScStack *stack) : BaseObject(inGame) {
 	int numParams = stack->pop()->getInt(0);
 	for (int i = 0; i < numParams; i++) {
@@ -51,13 +51,13 @@ SXObject::SXObject(BaseGame *inGame, ScStack *stack) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 SXObject::~SXObject() {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXObject::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 

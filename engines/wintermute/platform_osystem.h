@@ -37,7 +37,7 @@ namespace Wintermute {
 
 class BaseGame;
 class WintermuteEngine;
-//////////////////////////////////////////////////////////////////////////
+
 class BasePlatform {
 public:
 	static int initialize(WintermuteEngine *engineRef, BaseGame *inGame, int argc, char *argv[]);

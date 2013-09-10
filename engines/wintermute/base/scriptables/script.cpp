@@ -37,7 +37,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScScript, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_buffer = nullptr;
 	_bufferSize = _iP = 0;
@@ -96,7 +96,7 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScScript::~ScScript() {
 	cleanup();
 }
@@ -116,7 +116,7 @@ void ScScript::readHeader() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::initScript() {
 	if (!_scriptStream) {
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
@@ -159,7 +159,7 @@ bool ScScript::initScript() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::initTables() {
 	uint32 origIP = _iP;
 
@@ -234,7 +234,7 @@ bool ScScript::initTables() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner) {
 	cleanup();
 
@@ -272,7 +272,7 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::String &eventName) {
 	cleanup();
 
@@ -324,7 +324,7 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::createMethodThread(ScScript *original, const Common::String &methodName) {
 	uint32 ip = original->getMethodPos(methodName);
 	if (ip == 0) {
@@ -378,7 +378,7 @@ bool ScScript::createMethodThread(ScScript *original, const Common::String &meth
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScScript::cleanup() {
 	if (_buffer) {
 		delete[] _buffer;
@@ -465,7 +465,7 @@ void ScScript::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 ScScript::getDWORD() {
 	_scriptStream->seek((int32)_iP);
 	uint32 ret = _scriptStream->readUint32LE();
@@ -474,7 +474,7 @@ uint32 ScScript::getDWORD() {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 double ScScript::getFloat() {
 	_scriptStream->seek((int32)_iP);
 	byte buffer[8];
@@ -494,7 +494,7 @@ double ScScript::getFloat() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 char *ScScript::getString() {
 	char *ret = (char *)(_buffer + _iP);
 	while (*(char *)(_buffer + _iP) != '\0') {
@@ -507,7 +507,7 @@ char *ScScript::getString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::executeInstruction() {
 	bool ret = STATUS_OK;
 
@@ -1097,7 +1097,7 @@ bool ScScript::executeInstruction() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 ScScript::getFuncPos(const Common::String &name) {
 	for (uint32 i = 0; i < _numFunctions; i++) {
 		if (name == _functions[i].name) {
@@ -1108,7 +1108,7 @@ uint32 ScScript::getFuncPos(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 ScScript::getMethodPos(const Common::String &name) const {
 	for (uint32 i = 0; i < _numMethods; i++) {
 		if (name == _methods[i].name) {
@@ -1119,7 +1119,7 @@ uint32 ScScript::getMethodPos(const Common::String &name) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *ScScript::getVar(char *name) {
 	ScValue *ret = nullptr;
 
@@ -1163,7 +1163,7 @@ ScValue *ScScript::getVar(char *name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::waitFor(BaseObject *object) {
 	if (_unbreakable) {
 		runtimeError("Script cannot be interrupted.");
@@ -1176,14 +1176,14 @@ bool ScScript::waitFor(BaseObject *object) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::waitForExclusive(BaseObject *object) {
 	_engine->resetObject(object);
 	return waitFor(object);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::sleep(uint32 duration) {
 	if (_unbreakable) {
 		runtimeError("Script cannot be interrupted.");
@@ -1202,7 +1202,7 @@ bool ScScript::sleep(uint32 duration) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::finish(bool includingThreads) {
 	if (_state != SCRIPT_FINISHED && includingThreads) {
 		_state = SCRIPT_FINISHED;
@@ -1216,14 +1216,14 @@ bool ScScript::finish(bool includingThreads) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::run() {
 	_state = SCRIPT_RUNNING;
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 void ScScript::runtimeError(const char *fmt, ...) {
 	char buff[256];
 	va_list va;
@@ -1241,7 +1241,7 @@ void ScScript::runtimeError(const char *fmt, ...) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
@@ -1305,7 +1305,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unbreakable) {
 	//if (_state!=SCRIPT_PERSISTENT) return nullptr;
 
@@ -1332,7 +1332,7 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 ScScript::getEventPos(const Common::String &name) const {
 	for (int i = _numEvents - 1; i >= 0; i--) {
 		if (scumm_stricmp(name.c_str(), _events[i].name) == 0) {
@@ -1343,19 +1343,19 @@ uint32 ScScript::getEventPos(const Common::String &name) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::canHandleEvent(const Common::String &eventName) const {
 	return getEventPos(eventName) != 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::canHandleMethod(const Common::String &methodName) const {
 	return getMethodPos(methodName) != 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::pause() {
 	if (_state == SCRIPT_PAUSED) {
 		_gameRef->LOG(0, "Attempting to pause a paused script ('%s', line %d)", _filename, _currentLine);
@@ -1373,7 +1373,7 @@ bool ScScript::pause() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::resume() {
 	if (_state != SCRIPT_PAUSED) {
 		return STATUS_OK;
@@ -1384,7 +1384,7 @@ bool ScScript::resume() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 	for (uint32 i = 0; i < _numExternals; i++) {
 		if (strcmp(name, _externals[i].name) == 0) {
@@ -1395,7 +1395,7 @@ ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
 
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
@@ -1405,7 +1405,7 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::copyParameters(ScStack *stack) {
 	int i;
 	int numParams = stack->pop()->getInt();
@@ -1422,7 +1422,7 @@ bool ScScript::copyParameters(ScStack *stack) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool ScScript::finishThreads() {
 	for (uint32 i = 0; i < _engine->_scripts.size(); i++) {
 		ScScript *scr = _engine->_scripts[i];
@@ -1434,18 +1434,18 @@ bool ScScript::finishThreads() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // IWmeDebugScript interface implementation
 int ScScript::dbgGetLine() {
 	return _currentLine;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *ScScript::dbgGetFilename() {
 	return _filename;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void ScScript::afterLoad() {
 	if (_buffer == nullptr) {
 		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);

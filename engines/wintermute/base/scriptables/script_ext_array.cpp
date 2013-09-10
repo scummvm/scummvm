@@ -40,7 +40,7 @@ BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack) {
 	return new SXArray(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
@@ -59,21 +59,21 @@ SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 SXArray::~SXArray() {
 	delete _values;
 	_values = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *SXArray::scToString() {
 	char dummy[32768];
 	strcpy(dummy, "");
@@ -96,11 +96,11 @@ const char *SXArray::scToString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Push
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Push") == 0) {
 		int numParams = stack->pop()->getInt(0);
 		char paramName[20];
@@ -115,9 +115,9 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Pop
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Pop") == 0) {
 
 		stack->correctParams(0);
@@ -139,29 +139,29 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *SXArray::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("array");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Length
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Length") {
 		_scValue->setInt(_length);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// [number]
-	//////////////////////////////////////////////////////////////////////////
+	
 	else {
 		char paramName[20];
 		if (validNumber(name.c_str(), paramName)) { // TODO: Change to Common::String
@@ -173,11 +173,11 @@ ScValue *SXArray::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXArray::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Length
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Length") == 0) {
 		int origLength = _length;
 		_length = MAX(value->getInt(0), 0);
@@ -192,9 +192,9 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// [number]
-	//////////////////////////////////////////////////////////////////////////
+	
 	else {
 		char paramName[20];
 		if (validNumber(name, paramName)) {
@@ -210,7 +210,7 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
@@ -221,7 +221,7 @@ bool SXArray::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXArray::validNumber(const char *origStr, char *outStr) {
 	bool isNumber = true;
 	for (uint32 i = 0; i < strlen(origStr); i++) {
@@ -240,7 +240,7 @@ bool SXArray::validNumber(const char *origStr, char *outStr) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool SXArray::push(ScValue *val) {
 	char paramName[20];
 	_length++;

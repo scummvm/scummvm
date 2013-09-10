@@ -34,7 +34,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseScriptable, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable) : BaseNamedObject(inGame) {
 	_refCount = 0;
 
@@ -50,7 +50,7 @@ BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseScriptable::~BaseScriptable() {
 	//if (_refCount>0) BaseEngine::LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
 	delete _scValue;
@@ -60,9 +60,9 @@ BaseScriptable::~BaseScriptable() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	/*
 	stack->correctParams(0);
@@ -75,7 +75,7 @@ bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 	if (!_scProp) {
 		_scProp = new ScValue(_gameRef);
@@ -88,7 +88,7 @@ ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
 	if (!_scProp) {
 		_scProp = new ScValue(_gameRef);
@@ -101,56 +101,56 @@ bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *BaseScriptable::scToString() {
 	return "[native object]";
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void *BaseScriptable::scToMemBuffer() {
 	return (void *)NULL;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseScriptable::scToInt() {
 	return 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 double BaseScriptable::scToFloat() {
 	return 0.0f;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptable::scToBool() {
 	return false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseScriptable::scSetString(const char *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseScriptable::scSetInt(int val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseScriptable::scSetFloat(double val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseScriptable::scSetBool(bool val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 	persistMgr->transfer(TMEMBER(_refCount));
@@ -161,7 +161,7 @@ bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 int BaseScriptable::scCompare(BaseScriptable *val) {
 	if (this < val) {
 		return -1;
@@ -172,18 +172,18 @@ int BaseScriptable::scCompare(BaseScriptable *val) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseScriptable::scDebuggerDesc(char *buf, int bufSize) {
 	strcpy(buf, scToString());
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseScriptable::canHandleMethod(const char *eventMethod) const {
 	return false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return nullptr;
 }

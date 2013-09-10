@@ -55,7 +55,7 @@ namespace Wintermute {
 // avoid those numbers, and use this instead:
 #define SAVE_MAGIC_3    0x12564154
 
-//////////////////////////////////////////////////////////////////////////
+
 BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool deleteSingleton) {
 	_saving = false;
 	_offset = 0;
@@ -101,7 +101,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BasePersistenceManager::~BasePersistenceManager() {
 	cleanup();
 	if (_deleteSingleton && BaseEngine::instance().getGameRef() == nullptr)
@@ -109,7 +109,7 @@ BasePersistenceManager::~BasePersistenceManager() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BasePersistenceManager::cleanup() {
 	_offset = 0;
 
@@ -214,7 +214,7 @@ bool BasePersistenceManager::getSaveExists(int slot) {
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePersistenceManager::initSave(const char *desc) {
 	if (!desc) {
 		return STATUS_FAILED;
@@ -373,7 +373,7 @@ bool BasePersistenceManager::readHeader(const Common::String &filename) {
 	return STATUS_FAILED;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	if (DID_FAIL(readHeader(filename))) {
 		cleanup();
@@ -415,7 +415,7 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePersistenceManager::saveFile(const Common::String &filename) {
 	byte *prefixBuffer = _richBuffer;
 	uint32 prefixSize = _richBufferSize;
@@ -433,7 +433,7 @@ bool BasePersistenceManager::saveFile(const Common::String &filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePersistenceManager::putBytes(byte *buffer, uint32 size) {
 	_saveStream->write(buffer, size);
 	if (_saveStream->err()) {
@@ -442,7 +442,7 @@ bool BasePersistenceManager::putBytes(byte *buffer, uint32 size) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePersistenceManager::getBytes(byte *buffer, uint32 size) {
 	_loadStream->read(buffer, size);
 	if (_loadStream->err()) {
@@ -451,20 +451,20 @@ bool BasePersistenceManager::getBytes(byte *buffer, uint32 size) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void BasePersistenceManager::putDWORD(uint32 val) {
 	_saveStream->writeUint32LE(val);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 uint32 BasePersistenceManager::getDWORD() {
 	uint32 ret = _loadStream->readUint32LE();
 	return ret;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BasePersistenceManager::putString(const char *val) {
 	if (!val) {
 		_saveStream->writeUint32LE(0);
@@ -481,7 +481,7 @@ Common::String BasePersistenceManager::getStringObj() {
 	return getString();
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 char *BasePersistenceManager::getString() {
 	uint32 len = _loadStream->readUint32LE();
 
@@ -585,7 +585,7 @@ double BasePersistenceManager::getDouble() {
 	return value;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 // bool
 bool BasePersistenceManager::transfer(const char *name, bool *val) {
 	if (_saving) {
@@ -604,7 +604,7 @@ bool BasePersistenceManager::transfer(const char *name, bool *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // int
 bool BasePersistenceManager::transfer(const char *name, int32 *val) {
 	if (_saving) {
@@ -623,7 +623,7 @@ bool BasePersistenceManager::transfer(const char *name, int32 *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // DWORD
 bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 	if (_saving) {
@@ -642,7 +642,7 @@ bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // float
 bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 	if (_saving) {
@@ -661,7 +661,7 @@ bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // double
 bool BasePersistenceManager::transfer(const char *name, double *val) {
 	if (_saving) {
@@ -680,7 +680,7 @@ bool BasePersistenceManager::transfer(const char *name, double *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // char*
 bool BasePersistenceManager::transfer(const char *name, char **val) {
 	if (_saving) {
@@ -697,7 +697,7 @@ bool BasePersistenceManager::transfer(const char *name, char **val) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 // const char*
 bool BasePersistenceManager::transfer(const char *name, const char **val) {
 	if (_saving) {
@@ -714,7 +714,7 @@ bool BasePersistenceManager::transfer(const char *name, const char **val) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 // Common::String
 bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
 	if (_saving) {
@@ -736,7 +736,7 @@ bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
 	size_t size;
 
@@ -767,7 +767,7 @@ bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 // BYTE
 bool BasePersistenceManager::transfer(const char *name, byte *val) {
 	if (_saving) {
@@ -786,7 +786,7 @@ bool BasePersistenceManager::transfer(const char *name, byte *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // RECT
 bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
 	if (_saving) {
@@ -811,7 +811,7 @@ bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // POINT
 bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 	if (_saving) {
@@ -832,7 +832,7 @@ bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // Vector2
 bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
 	if (_saving) {
@@ -853,7 +853,7 @@ bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // generic pointer
 
 bool BasePersistenceManager::transferPtr(const char *name, void *val) {
@@ -877,7 +877,7 @@ bool BasePersistenceManager::transferPtr(const char *name, void *val) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte verBuild) {
 	if (_saving) {
 		return true;

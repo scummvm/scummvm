@@ -66,7 +66,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdGame, true)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdGame::AdGame(const Common::String &gameId) : BaseGame(gameId) {
 	_responseBox = nullptr;
 	_inventoryBox = nullptr;
@@ -111,13 +111,13 @@ AdGame::AdGame(const Common::String &gameId) : BaseGame(gameId) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdGame::~AdGame() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::cleanup() {
 	for (uint32 i = 0; i < _objects.size(); i++) {
 		unregisterObject(_objects[i]);
@@ -201,7 +201,7 @@ bool AdGame::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::initLoop() {
 	if (_scheduledScene && _transMgr->isReady()) {
 		changeScene(_scheduledScene, _scheduledFadeIn);
@@ -228,14 +228,14 @@ bool AdGame::initLoop() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::addObject(AdObject *object) {
 	_objects.add(object);
 	return registerObject(object);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::removeObject(AdObject *object) {
 	// in case the user called Scene.CreateXXX() and Game.DeleteXXX()
 	if (_scene) {
@@ -255,7 +255,7 @@ bool AdGame::removeObject(AdObject *object) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::changeScene(const char *filename, bool fadeIn) {
 	if (_scene == nullptr) {
 		_scene = new AdScene(_gameRef);
@@ -311,13 +311,13 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdGame::addSentence(AdSentence *sentence) {
 	_sentences.add(sentence);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::displaySentences(bool frozen) {
 	for (uint32 i = 0; i < _sentences.size(); i++) {
 		if (frozen && _sentences[i]->_freezable) {
@@ -330,7 +330,7 @@ bool AdGame::displaySentences(bool frozen) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdGame::finishSentences() {
 	for (uint32 i = 0; i < _sentences.size(); i++) {
 		if (_sentences[i]->canSkip()) {
@@ -343,13 +343,13 @@ void AdGame::finishSentences() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ChangeScene
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "ChangeScene") == 0) {
 		stack->correctParams(3);
 		const char *filename = stack->pop()->getString();
@@ -373,9 +373,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LoadActor
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "LoadActor") == 0) {
 		stack->correctParams(1);
 		AdActor *act = new AdActor(_gameRef);
@@ -390,9 +390,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LoadEntity
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "LoadEntity") == 0) {
 		stack->correctParams(1);
 		AdEntity *ent = new AdEntity(_gameRef);
@@ -407,9 +407,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// UnloadObject / UnloadActor / UnloadEntity / DeleteEntity
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "DeleteEntity") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -423,9 +423,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateEntity
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateEntity") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -439,9 +439,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// CreateItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "CreateItem") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -455,9 +455,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DeleteItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DeleteItem") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -477,9 +477,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// QueryItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "QueryItem") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -504,9 +504,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddResponse/AddResponseOnce/AddResponseOnceGame
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "AddResponse") == 0 || strcmp(name, "AddResponseOnce") == 0 || strcmp(name, "AddResponseOnceGame") == 0) {
 		stack->correctParams(6);
 		int id = stack->pop()->getInt();
@@ -556,9 +556,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ResetResponse
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ResetResponse") == 0) {
 		stack->correctParams(1);
 		int id = stack->pop()->getInt(-1);
@@ -567,9 +567,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ClearResponses
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "ClearResponses") == 0) {
 		stack->correctParams(0);
 		_responseBox->clearResponses();
@@ -578,9 +578,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetResponse
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetResponse") == 0) {
 		stack->correctParams(1);
 		bool autoSelectLast = stack->pop()->getBool();
@@ -614,9 +614,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetNumResponses
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetNumResponses") == 0) {
 		stack->correctParams(0);
 		if (_responseBox) {
@@ -630,9 +630,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StartDlgBranch
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "StartDlgBranch") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
@@ -649,9 +649,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// EndDlgBranch
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "EndDlgBranch") == 0) {
 		stack->correctParams(1);
 
@@ -667,9 +667,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetCurrentDlgBranch
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetCurrentDlgBranch") == 0) {
 		stack->correctParams(0);
 
@@ -682,37 +682,37 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TakeItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "TakeItem") == 0) {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// DropItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "DropItem") == 0) {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetItem") == 0) {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// HasItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "HasItem") == 0) {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// IsItemTaken
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "IsItemTaken") == 0) {
 		stack->correctParams(1);
 
@@ -739,9 +739,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetInventoryWindow
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetInventoryWindow") == 0) {
 		stack->correctParams(0);
 		if (_inventoryBox && _inventoryBox->_window) {
@@ -753,9 +753,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetResponsesWindow
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetResponsesWindow") == 0 || strcmp(name, "GetResponseWindow") == 0) {
 		stack->correctParams(0);
 		if (_responseBox && _responseBox->getResponseWindow()) {
@@ -767,9 +767,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LoadResponseBox
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "LoadResponseBox") == 0) {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
@@ -787,9 +787,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LoadInventoryBox
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "LoadInventoryBox") == 0) {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
@@ -807,9 +807,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LoadItems
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "LoadItems") == 0) {
 		stack->correctParams(2);
 		const char *filename = stack->pop()->getString();
@@ -821,9 +821,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddSpeechDir
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "AddSpeechDir") == 0) {
 		stack->correctParams(1);
 		const char *dir = stack->pop()->getString();
@@ -832,9 +832,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// RemoveSpeechDir
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "RemoveSpeechDir") == 0) {
 		stack->correctParams(1);
 		const char *dir = stack->pop()->getString();
@@ -843,9 +843,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetSceneViewport
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetSceneViewport") == 0) {
 		stack->correctParams(4);
 		int x = stack->pop()->getInt();
@@ -879,20 +879,20 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *AdGame::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("game");
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Scene
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Scene") {
 		if (_scene) {
 			_scValue->setNative(_scene, true);
@@ -902,9 +902,9 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SelectedItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SelectedItem") {
 		//if (_selectedItem) _scValue->setString(_selectedItem->_name);
 		if (_selectedItem) {
@@ -915,32 +915,32 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 
 		return _scValue;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	
 	// NumItems
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "NumItems") {
 		return _invObject->scGetProperty(name);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SmartItemCursor
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "SmartItemCursor") {
 		_scValue->setBool(_smartItemCursor);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InventoryVisible
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "InventoryVisible") {
 		_scValue->setBool(_inventoryBox && _inventoryBox->_visible);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InventoryScrollOffset
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "InventoryScrollOffset") {
 		if (_inventoryBox) {
 			_scValue->setInt(_inventoryBox->_scrollOffset);
@@ -951,17 +951,17 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ResponsesVisible (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "ResponsesVisible") {
 		_scValue->setBool(_stateEx == GAME_WAITING_RESPONSE);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PrevScene / PreviousScene (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "PrevScene" || name == "PreviousScene") {
 		if (!_prevSceneName) {
 			_scValue->setString("");
@@ -971,9 +971,9 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// PrevSceneFilename / PreviousSceneFilename (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "PrevSceneFilename" || name == "PreviousSceneFilename") {
 		if (!_prevSceneFilename) {
 			_scValue->setString("");
@@ -983,9 +983,9 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LastResponse (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "LastResponse") {
 		if (!_responseBox || !_responseBox->getLastResponseText()) {
 			_scValue->setString("");
@@ -995,9 +995,9 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// LastResponseOrig (RO)
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "LastResponseOrig") {
 		if (!_responseBox || !_responseBox->getLastResponseTextOrig()) {
 			_scValue->setString("");
@@ -1007,9 +1007,9 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InventoryObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "InventoryObject") {
 		if (_inventoryOwner == _invObject) {
 			_scValue->setNative(this, true);
@@ -1020,33 +1020,33 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TotalNumItems
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TotalNumItems") {
 		_scValue->setInt(_items.size());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TalkSkipButton
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "TalkSkipButton") {
 		_scValue->setInt(_talkSkipButton);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// ChangingScene
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "ChangingScene") {
 		_scValue->setBool(_scheduledScene != nullptr);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StartupScene
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "StartupScene") {
 		if (!_startupScene) {
 			_scValue->setNULL();
@@ -1062,12 +1062,12 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::scSetProperty(const char *name, ScValue *value) {
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SelectedItem
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "SelectedItem") == 0) {
 		if (value->isNULL()) {
 			_selectedItem = nullptr;
@@ -1089,17 +1089,17 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SmartItemCursor
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SmartItemCursor") == 0) {
 		_smartItemCursor = value->getBool();
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InventoryVisible
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "InventoryVisible") == 0) {
 		if (_inventoryBox) {
 			_inventoryBox->_visible = value->getBool();
@@ -1107,9 +1107,9 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InventoryObject
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "InventoryObject") == 0) {
 		if (_inventoryOwner && _inventoryBox) {
 			_inventoryOwner->getInventory()->_scrollOffset = _inventoryBox->_scrollOffset;
@@ -1133,9 +1133,9 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InventoryScrollOffset
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "InventoryScrollOffset") == 0) {
 		if (_inventoryBox) {
 			_inventoryBox->_scrollOffset = value->getInt();
@@ -1143,9 +1143,9 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// TalkSkipButton
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "TalkSkipButton") == 0) {
 		int val = value->getInt();
 		if (val < 0) {
@@ -1158,9 +1158,9 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// StartupScene
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "StartupScene") == 0) {
 		if (value == nullptr) {
 			delete[] _startupScene;
@@ -1178,13 +1178,13 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Actor
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Actor") == 0) {
 		stack->correctParams(0);
 		thisObj = thisStack->getTop();
@@ -1193,9 +1193,9 @@ bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->pushNULL();
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Entity
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Entity") == 0) {
 		stack->correctParams(0);
 		thisObj = thisStack->getTop();
@@ -1205,7 +1205,7 @@ bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// call parent
 	else {
 		return BaseGame::externalCall(script, stack, thisStack, name);
@@ -1216,7 +1216,7 @@ bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::showCursor() {
 	if (_cursorHidden) {
 		return STATUS_OK;
@@ -1243,7 +1243,7 @@ bool AdGame::showCursor() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -1280,7 +1280,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(STARTUP_SCENE)
 TOKEN_DEF(DEBUG_STARTUP_SCENE)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(GAME)
@@ -1403,7 +1403,7 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		cleanup();
@@ -1457,7 +1457,7 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdGame::setPrevSceneName(const char *name) {
 	delete[] _prevSceneName;
 	_prevSceneName = nullptr;
@@ -1470,7 +1470,7 @@ void AdGame::setPrevSceneName(const char *name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdGame::setPrevSceneFilename(const char *name) {
 	delete[] _prevSceneFilename;
 	_prevSceneFilename = nullptr;
@@ -1483,7 +1483,7 @@ void AdGame::setPrevSceneFilename(const char *name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 	delete[] _scheduledScene;
 	_scheduledScene = nullptr;
@@ -1501,7 +1501,7 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
 	BaseGame::getVersion(verMajor, verMinor, nullptr, nullptr);
 
@@ -1516,7 +1516,7 @@ bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *ex
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::loadItemsFile(const char *filename, bool merge) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -1540,7 +1540,7 @@ bool AdGame::loadItemsFile(const char *filename, bool merge) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::loadItemsBuffer(byte *buffer, bool merge) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
@@ -1592,7 +1592,7 @@ bool AdGame::loadItemsBuffer(byte *buffer, bool merge) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 	char *filenameCor = new char[strlen(filename) + 1];
 	strcpy(filenameCor, filename);
@@ -1624,7 +1624,7 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
@@ -1658,7 +1658,7 @@ bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name) {
 	if (strcmp(name, "CreateEntityContainer") == 0) {
 		stack->correctParams(1);
@@ -1680,7 +1680,7 @@ bool AdGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *st
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::startDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
 	char *name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
 	if (name) {
@@ -1691,7 +1691,7 @@ bool AdGame::startDlgBranch(const char *branchName, const char *scriptName, cons
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
 	char *name = nullptr;
 	bool deleteName = false;
@@ -1744,7 +1744,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::clearBranchResponses(char *name) {
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (scumm_stricmp(name, _responsesBranch[i]->getContext()) == 0) {
@@ -1757,7 +1757,7 @@ bool AdGame::clearBranchResponses(char *name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::addBranchResponse(int id) {
 	if (branchResponseUsed(id)) {
 		return STATUS_OK;
@@ -1770,7 +1770,7 @@ bool AdGame::addBranchResponse(int id) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::branchResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
@@ -1784,7 +1784,7 @@ bool AdGame::branchResponseUsed(int id) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::addGameResponse(int id) {
 	if (gameResponseUsed(id)) {
 		return STATUS_OK;
@@ -1797,7 +1797,7 @@ bool AdGame::addGameResponse(int id) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::gameResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
@@ -1812,7 +1812,7 @@ bool AdGame::gameResponseUsed(int id) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::resetResponse(int id) {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 
@@ -1839,7 +1839,7 @@ bool AdGame::resetResponse(int id) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 	// init
 	if (doUpdate) {
@@ -1923,7 +1923,7 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::registerInventory(AdInventory *inv) {
 	for (uint32 i = 0; i < _inventories.size(); i++) {
 		if (_inventories[i] == inv) {
@@ -1936,7 +1936,7 @@ bool AdGame::registerInventory(AdInventory *inv) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::unregisterInventory(AdInventory *inv) {
 	for (uint32 i = 0; i < _inventories.size(); i++) {
 		if (_inventories[i] == inv) {
@@ -1948,7 +1948,7 @@ bool AdGame::unregisterInventory(AdInventory *inv) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::isItemTaken(char *itemName) {
 	for (uint32 i = 0; i < _inventories.size(); i++) {
 		AdInventory *inv = _inventories[i];
@@ -1962,7 +1962,7 @@ bool AdGame::isItemTaken(char *itemName) {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 AdItem *AdGame::getItemByName(const char *name) const {
 	for (uint32 i = 0; i < _items.size(); i++) {
 		if (scumm_stricmp(_items[i]->getName(), name) == 0) {
@@ -1973,14 +1973,14 @@ AdItem *AdGame::getItemByName(const char *name) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::addItem(AdItem *item) {
 	_items.add(item);
 	return _gameRef->registerObject(item);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::resetContent() {
 	// clear pending dialogs
 	for (uint32 i = 0; i < _dlgPendingBranches.size(); i++) {
@@ -2023,7 +2023,7 @@ bool AdGame::resetContent() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::deleteItem(AdItem *item) {
 	if (!item) {
 		return STATUS_FAILED;
@@ -2052,7 +2052,7 @@ bool AdGame::deleteItem(AdItem *item) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::addSpeechDir(const char *dir) {
 	if (!dir || dir[0] == '\0') {
 		return STATUS_FAILED;
@@ -2076,7 +2076,7 @@ bool AdGame::addSpeechDir(const char *dir) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::removeSpeechDir(const char *dir) {
 	if (!dir || dir[0] == '\0') {
 		return STATUS_FAILED;
@@ -2103,7 +2103,7 @@ bool AdGame::removeSpeechDir(const char *dir) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 char *AdGame::findSpeechFile(char *stringID) {
 	char *ret = new char[MAX_PATH_LENGTH];
 
@@ -2123,7 +2123,7 @@ char *AdGame::findSpeechFile(char *stringID) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::validMouse() {
 	Point32 pos;
 	BasePlatform::getCursorPos(&pos);
@@ -2131,7 +2131,7 @@ bool AdGame::validMouse() {
 	return _renderer->pointInViewport(&pos);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::onMouseLeftDown() {
 	if (!validMouse()) {
 		return STATUS_OK;
@@ -2165,7 +2165,7 @@ bool AdGame::onMouseLeftDown() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::onMouseLeftUp() {
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
@@ -2186,7 +2186,7 @@ bool AdGame::onMouseLeftUp() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::onMouseLeftDblClick() {
 	if (!validMouse()) {
 		return STATUS_OK;
@@ -2211,7 +2211,7 @@ bool AdGame::onMouseLeftDblClick() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::onMouseRightDown() {
 	if (!validMouse()) {
 		return STATUS_OK;
@@ -2242,7 +2242,7 @@ bool AdGame::onMouseRightDown() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::onMouseRightUp() {
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
@@ -2259,7 +2259,7 @@ bool AdGame::onMouseRightUp() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::displayDebugInfo() {
 	char str[100];
 	if (_gameRef->_debugDebugMode) {
@@ -2273,7 +2273,7 @@ bool AdGame::displayDebugInfo() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdGame::onScriptShutdown(ScScript *script) {
 	if (_responseBox && _responseBox->_waitingScript == script) {
 		_responseBox->_waitingScript = nullptr;

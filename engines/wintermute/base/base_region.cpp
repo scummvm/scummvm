@@ -41,7 +41,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseRegion, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
@@ -52,13 +52,13 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BaseRegion::~BaseRegion() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void BaseRegion::cleanup() {
 	for (uint32 i = 0; i < _points.size(); i++) {
 		delete _points[i];
@@ -70,13 +70,13 @@ void BaseRegion::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::createRegion() {
 	return DID_SUCCEED(getBoundingRect(&_rect));
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::pointInRegion(int x, int y) {
 	if (_points.size() < 3) {
 		return false;
@@ -100,7 +100,7 @@ bool BaseRegion::pointInRegion(int x, int y) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -134,7 +134,7 @@ TOKEN_DEF(SCRIPT)
 TOKEN_DEF(EDITOR_SELECTED_POINT)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
@@ -216,14 +216,14 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddPoint
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "AddPoint") == 0) {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
@@ -237,9 +237,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// InsertPoint
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "InsertPoint") == 0) {
 		stack->correctParams(3);
 		int index = stack->pop()->getInt();
@@ -258,9 +258,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// SetPoint
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "SetPoint") == 0) {
 		stack->correctParams(3);
 		int index = stack->pop()->getInt();
@@ -280,9 +280,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// RemovePoint
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "RemovePoint") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
@@ -302,9 +302,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// GetPoint
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "GetPoint") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
@@ -326,37 +326,37 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Type
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (name == "Type") {
 		_scValue->setString("region");
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Name
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Name") {
 		_scValue->setString(getName());
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Active
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "Active") {
 		_scValue->setBool(_active);
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// NumPoints
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (name == "NumPoints") {
 		_scValue->setInt(_points.size());
 		return _scValue;
@@ -366,19 +366,19 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Name
-	//////////////////////////////////////////////////////////////////////////
+	
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+	
 	// Active
-	//////////////////////////////////////////////////////////////////////////
+	
 	else if (strcmp(name, "Active") == 0) {
 		_active = value->getBool();
 		return STATUS_OK;
@@ -388,13 +388,13 @@ bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 const char *BaseRegion::scToString() {
 	return "[region]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride) {
 	if (!nameOverride) {
 		buffer->putTextIndent(indent, "REGION {\n");
@@ -425,7 +425,7 @@ bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *n
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
@@ -445,7 +445,7 @@ typedef struct {
 	double x, y;
 } dPoint;
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 	if (_points.size() < 3) {
 		return false;
@@ -488,7 +488,7 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
 		BasePlatform::setRectEmpty(rect);
@@ -508,7 +508,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 	if (scale == _lastMimicScale && x == _lastMimicX && y == _lastMimicY) {
 		return STATUS_OK;

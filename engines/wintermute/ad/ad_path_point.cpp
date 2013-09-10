@@ -33,7 +33,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdPathPoint, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdPathPoint::AdPathPoint() {
 	x = y = 0;
 	_distance = 0;
@@ -43,7 +43,7 @@ AdPathPoint::AdPathPoint() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdPathPoint::AdPathPoint(int initX, int initY, int initDistance) {
 	x = initX;
 	y = initY;
@@ -54,13 +54,13 @@ AdPathPoint::AdPathPoint(int initX, int initY, int initDistance) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdPathPoint::~AdPathPoint() {
 	_origin = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdPathPoint::persist(BasePersistenceManager *persistMgr) {
 
 	BasePoint::persist(persistMgr);

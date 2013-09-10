@@ -39,19 +39,19 @@ namespace Wintermute {
 
 //IMPLEMENT_PERSISTENT(BaseSurfaceStorage, true);
 
-//////////////////////////////////////////////////////////////////////
+
 BaseSurfaceStorage::BaseSurfaceStorage(BaseGame *inGame) : BaseClass(inGame) {
 	_lastCleanupTime = 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseSurfaceStorage::~BaseSurfaceStorage() {
 	cleanup(true);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceStorage::cleanup(bool warn) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (warn) {
@@ -65,7 +65,7 @@ bool BaseSurfaceStorage::cleanup(bool warn) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceStorage::initLoop() {
 	if (_gameRef->_smartCache && _gameRef->getLiveTimer()->getTime() - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
 		_lastCleanupTime = _gameRef->getLiveTimer()->getTime();
@@ -85,7 +85,7 @@ bool BaseSurfaceStorage::initLoop() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (_surfaces[i] == surface) {
@@ -101,7 +101,7 @@ bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (scumm_stricmp(_surfaces[i]->getFileName(), filename.c_str()) == 0) {
@@ -139,7 +139,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 }
 
 
-//////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceStorage::restoreAll() {
 	bool ret;
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
@@ -154,7 +154,7 @@ bool BaseSurfaceStorage::restoreAll() {
 
 
 /*
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 {
 
@@ -169,14 +169,14 @@ bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 */
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceStorage::sortSurfaces() {
 	Common::sort(_surfaces.begin(), _surfaces.end(), surfaceSortCB);
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseSurfaceStorage::surfaceSortCB(const BaseSurface *s1, const BaseSurface *s2) {
 	// sort by life time
 	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) {

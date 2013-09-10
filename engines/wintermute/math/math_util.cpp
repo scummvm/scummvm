@@ -31,7 +31,7 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
+
 float MathUtil::round(float val) {
 	float result = floor(val);
 	if (val - result >= 0.5f) {
@@ -40,7 +40,7 @@ float MathUtil::round(float val) {
 	return result;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 float MathUtil::roundUp(float val) {
 	float result = floor(val);
 	if (val - result > 0) {

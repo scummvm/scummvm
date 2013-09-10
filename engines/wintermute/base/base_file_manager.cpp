@@ -48,11 +48,11 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+
+
+
 BaseFileManager::BaseFileManager(Common::Language lang, bool detectionMode) {
 	_detectionMode = detectionMode;
 	_language = lang;
@@ -62,13 +62,13 @@ BaseFileManager::BaseFileManager(Common::Language lang, bool detectionMode) {
 	registerPackages();
 }
 
-//////////////////////////////////////////////////////////////////////
+
 BaseFileManager::~BaseFileManager() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFileManager::cleanup() {
 	// delete registered paths
 	_packagePaths.clear();
@@ -89,7 +89,7 @@ bool BaseFileManager::cleanup() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////
+
 byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *size, bool mustExist) {
 	byte *buffer = nullptr;
 
@@ -124,7 +124,7 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 	return buffer;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
 	if (!path.exists()) {
 		return STATUS_FAILED;
@@ -143,7 +143,7 @@ bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFileManager::reloadPaths() {
 	// delete registered paths
 	//_singlePaths.clear();
@@ -152,7 +152,7 @@ bool BaseFileManager::reloadPaths() {
 	return initPaths();
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFileManager::initPaths() {
 	// Removed: Config-based file-path choice.
 
@@ -183,7 +183,7 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFileManager::registerPackages() {
 	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Scanning packages");
 
@@ -245,7 +245,7 @@ void BaseFileManager::initResources() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &filename) {
 	Common::String upcName = filename;
 	upcName.toUppercase();
@@ -288,7 +288,7 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &filename, bool absPathWarning, bool keepTrackOf) {
 	if (strcmp(filename.c_str(), "") == 0) {
 		return nullptr;
@@ -303,7 +303,7 @@ Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &file
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool BaseFileManager::closeFile(Common::SeekableReadStream *File) {
 	for (uint32 i = 0; i < _openFiles.size(); i++) {
 		if (_openFiles[i] == File) {
@@ -316,7 +316,7 @@ bool BaseFileManager::closeFile(Common::SeekableReadStream *File) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &filename) {
 	Common::SeekableReadStream *ret = nullptr;
 

@@ -32,12 +32,12 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
+
 bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
 	return (str1.compareToIgnoreCase(str2) == 0);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 /*bool StringUtil::CompareNoCase(const WideString &str1, const WideString &str2) {
     WideString str1lc = str1;
     WideString str2lc = str2;
@@ -48,7 +48,7 @@ bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
     return (str1lc == str2lc);
 }*/
 
-//////////////////////////////////////////////////////////////////////////
+
 WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
 	error("StringUtil::Utf8ToWide - WideString not supported yet");
 	/*  size_t WideSize = Utf8Str.size();
@@ -97,7 +97,7 @@ WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
 	return "";
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 	error("StringUtil::wideToUtf8 - Widestring not supported yet");
 	/*  size_t WideSize = WideStr.length();
@@ -146,7 +146,7 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 	return "";
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 WideString StringUtil::ansiToWide(const AnsiString &str) {
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
 	Common::String converted = "";
@@ -174,7 +174,7 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 	return WideString(converted);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
 	// using default os locale!
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
@@ -188,7 +188,7 @@ AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
 	return AnsiString(wstr);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
 	if (bufferSize > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
 		return true;
@@ -197,7 +197,7 @@ bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
 	const char *index = strstr(str.c_str(), toFind.c_str());
 	if (index == nullptr) {
@@ -220,7 +220,7 @@ Common::String StringUtil::decodeSetting(const Common::String &str) {
 	return str;
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 AnsiString StringUtil::toString(int val) {
 	return Common::String::format("%d", val);
 }

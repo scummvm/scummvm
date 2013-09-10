@@ -33,20 +33,20 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdPath, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdPath::AdPath(BaseGame *inGame) : BaseClass(inGame) {
 	_currIndex = -1;
 	_ready = false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdPath::~AdPath() {
 	reset();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdPath::reset() {
 	for (uint32 i = 0; i < _points.size(); i++) {
 		delete _points[i];
@@ -58,7 +58,7 @@ void AdPath::reset() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BasePoint *AdPath::getFirst() {
 	if (_points.size() > 0) {
 		_currIndex = 0;
@@ -69,7 +69,7 @@ BasePoint *AdPath::getFirst() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BasePoint *AdPath::getNext() {
 	_currIndex++;
 	if (_currIndex < (int32)_points.size()) {
@@ -80,7 +80,7 @@ BasePoint *AdPath::getNext() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 BasePoint *AdPath::getCurrent() {
 	if (_currIndex >= 0 && _currIndex < (int32)_points.size()) {
 		return _points[_currIndex];
@@ -90,13 +90,13 @@ BasePoint *AdPath::getCurrent() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 void AdPath::addPoint(BasePoint *point) {
 	_points.add(point);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdPath::setReady(bool ready) {
 	bool orig = _ready;
 	_ready = ready;
@@ -105,7 +105,7 @@ bool AdPath::setReady(bool ready) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdPath::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));

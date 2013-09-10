@@ -33,7 +33,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSceneNode, false)
 
-//////////////////////////////////////////////////////////////////////////
+
 AdSceneNode::AdSceneNode(BaseGame *inGame) : BaseObject(inGame) {
 	_type = OBJECT_NONE;
 	_region = nullptr;
@@ -41,7 +41,7 @@ AdSceneNode::AdSceneNode(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 AdSceneNode::~AdSceneNode() {
 	_gameRef->unregisterObject(_region);
 	_region = nullptr;
@@ -51,7 +51,7 @@ AdSceneNode::~AdSceneNode() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSceneNode::setEntity(AdEntity *entity) {
 	_type = OBJECT_ENTITY;
 	_entity = entity;
@@ -59,7 +59,7 @@ bool AdSceneNode::setEntity(AdEntity *entity) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSceneNode::setRegion(AdRegion *region) {
 	_type = OBJECT_REGION;
 	_region = region;
@@ -67,7 +67,7 @@ bool AdSceneNode::setRegion(AdRegion *region) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+
 bool AdSceneNode::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
