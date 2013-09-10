@@ -69,6 +69,7 @@ public:
 	void notifyWatch(const char *filename, const char *symbol, const char *newValue);
 
 private:
+	bool printError(int error, Common::String command);
 	WintermuteEngine *_engineRef;
 };
 

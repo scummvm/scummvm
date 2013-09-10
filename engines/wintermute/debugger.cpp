@@ -178,66 +178,41 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 bool Console::Cmd_StepOver(int argc, const char **argv) {
 	if (argc == 1) {
 		int error = ADAPTER->stepOver();
-		if (error == OK) {
-			return false;
-		} else if (error == NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
-		}
+		return printError(error, Common::String(argv[0]));
 	} else {
-		DebugPrintf("Usage: %s to step over/single step\n", argv[0]);
+		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		return true;
 	}
-	return true;
 }
 
 bool Console::Cmd_StepInto(int argc, const char **argv) {
 	if (argc == 1) {
 		int error = ADAPTER->stepInto();
-		if (error == OK) {
-			return false;
-		} else if (error == NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
-		}
+		return printError(error, Common::String(argv[0]));
 	} else {
-		DebugPrintf("Usage: %s to step into\n", argv[0]);
+		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		return true;
 	}
-	return true;
 }
 
 bool Console::Cmd_Continue(int argc, const char **argv) {
 	if (argc == 1) {
 		int error = ADAPTER->stepContinue();
-		if (error == OK) {
-			return false;
-		} else if (error == NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
-		}
+		return printError(error, Common::String(argv[0]));
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		return true;
 	}
-	return true;
 }
 
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
-
 		int error = ADAPTER->stepFinish();
-		if (error == OK) {
-			return false;
-		} else if (error == NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
-		}
+		return printError(error, Common::String(argv[0]));
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		return true;
 	}
-	return true;
 }
 
 bool Console::Cmd_List(int argc, const char **argv) {
@@ -251,15 +226,14 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 		Common::String temp = ADAPTER->readValue(argv[1], &error);
 		if (!error) {
 			DebugPrintf("%s = %s \n", argv[1], temp.c_str());
-		} else if (error == NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
+			return true;
 		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
+			return printError(error, Common::String(argv[0]));
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> to print value of <name>\n", argv[0]);
+		return true;
 	}
-	return true;
 }
 
 
@@ -414,5 +388,17 @@ void Console::debugWarning(const Common::String &command, int warning_level, con
 		level = Common::String("ERROR");
 	}
 	DebugPrintf("%s %s: %s", level.c_str(), command.c_str(), message.c_str());
+}
+
+bool Console::printError(int error, Common::String command) {
+		if (error == OK) {
+			return false;
+		} else if (error == NOT_ALLOWED) {
+			debugWarning(command.c_str(), ERROR, "Not allowed here. Perhaps did not break?\n");
+			return true;
+		} else {
+			debugWarning(command.c_str(), ERROR, "Unrecognized error\n");
+			return true;
+		}
 }
 } // end of namespace Wintermute

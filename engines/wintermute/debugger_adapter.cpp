@@ -531,6 +531,7 @@ Common::Array<WatchInfo> DebuggerAdapter::getWatchlist() {
 	return watchlist;
 }
 
+
 int32 DebuggerAdapter::getLastLine() {
 	return _lastLine;
 }
