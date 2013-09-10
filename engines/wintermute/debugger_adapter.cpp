@@ -135,6 +135,7 @@ bool DebuggerAdapter::compiledExists(Common::String filename) {
 		return true;
 	}
 }
+
 int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 
 	// First of all: does the compiled even exist?
@@ -221,6 +222,7 @@ int DebuggerAdapter::enableBreakpoint(int id) {
 		return NO_SUCH_BREAKPOINT;
 	}
 }
+
 int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	assert(SCENGINE);
 	if (!compiledExists(filename)) {
