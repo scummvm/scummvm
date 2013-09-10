@@ -80,9 +80,9 @@ enum {
 };
 
 struct InventoryElement {
-	uint16 itemID;
-	uint32 firstDragID;
-	uint32 dragIDCount;
+	int16 itemID;
+	int32 firstDragID;
+	int32 dragIDCount;
 };
 
 } // End of namespace Buried

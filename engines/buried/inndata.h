@@ -31,17 +31,17 @@
 namespace Buried {
 
 struct INNHotspotData {
-	uint32 left;
-	uint32 top;
-	uint32 right;
-	uint32 bottom;
-	uint32 stillFrameOffset;
+	int16 left;
+	int16 top;
+	int16 right;
+	int16 bottom;
+	int32 stillFrameOffset;
 };
 
 struct INNFrame {
-	uint16 topicID;
-	uint16 pageType;
-	uint32 stillFrameOffset;
+	int16 topicID;
+	int16 pageType;
+	int32 stillFrameOffset;
 	INNHotspotData hotspots[8];
 };
 
@@ -53,9 +53,9 @@ enum {
 };
 
 struct INNMediaElement {
-	uint32 frameIndex;
-	uint16 mediaType;
-	uint16 fileIDOffset;
+	int32 frameIndex;
+	int16 mediaType;
+	int16 fileIDOffset;
 };
 
 } // End of namespace Buried

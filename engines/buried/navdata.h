@@ -31,12 +31,12 @@
 namespace Buried {
 
 struct Location {
-	uint16 timeZone;
-	uint16 environment;
-	uint16 node;
-	uint16 facing;
-	uint16 orientaton;
-	uint16 depth;
+	int16 timeZone;
+	int16 environment;
+	int16 node;
+	int16 facing;
+	int16 orientaton;
+	int16 depth;
 };
 
 enum {
@@ -56,15 +56,15 @@ enum {
 
 struct DestinationScene {
 	Location destinationScene;
-	uint16 transitionType;
+	int16 transitionType;
 
 	// Data specific to each type of transition:
 	// TRANSITION_VIDEO: video clip ID
 	// TRANSITION_PUSH: identifies direction
-	uint16 transitionData;
+	int16 transitionData;
 
-	uint32 transitionStartFrame; // Unused for video
-	uint32 transitionLength;     // Unused for video
+	int32 transitionStartFrame; // Unused for video
+	int32 transitionLength;     // Unused for video
 };
 
 struct LocationStaticData {
@@ -74,12 +74,12 @@ struct LocationStaticData {
 	DestinationScene destRight;
 	DestinationScene destDown;
 	DestinationScene destForward;
-	uint16 classID;
-	uint32 navFrameIndex;
-	uint32 miscFrameIndex;
-	uint32 miscFrameCount;
-	uint32 cycleStartFrame;
-	uint32 cycleFrameCount;
+	int16 classID;
+	int32 navFrameIndex;
+	int32 miscFrameIndex;
+	int32 miscFrameCount;
+	int32 cycleStartFrame;
+	int32 cycleFrameCount;
 };
 
 } // End of namespace Buried

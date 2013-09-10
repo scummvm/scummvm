@@ -31,18 +31,18 @@
 namespace Buried {
 
 struct FilesPageHotspot {
-	uint32 left;
-	uint32 top;
-	uint32 right;
-	uint32 bottom;
-	uint32 pageIndex;
+	int16 left;
+	int16 top;
+	int16 right;
+	int16 bottom;
+	int16 pageIndex;
 };
 
 struct FilesPage {
-	uint16 pageID;
-	uint16 returnPageIndex;
-	uint16 nextButtonPageIndex;
-	uint16 prevButtonPageIndex;
+	int16 pageID;
+	int16 returnPageIndex;
+	int16 nextButtonPageIndex;
+	int16 prevButtonPageIndex;
 	FilesPageHotspot hotspots[6];
 };
 

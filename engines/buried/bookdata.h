@@ -31,14 +31,14 @@
 namespace Buried {
 
 struct PageTurn {
-	uint32 typeOfTrans;
-	uint32 destPage;
+	int16 typeOfTrans;
+	int16 destPage;
 };
 
 struct BookPage {
-	uint16 pageID;
-	uint32 pageFrameIndex;
-	uint16 numLines;
+	int16 pageID;
+	int32 pageFrameIndex;
+	int16 numLines;
 	PageTurn up;
 	PageTurn left;
 	PageTurn right;
