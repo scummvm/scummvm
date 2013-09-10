@@ -377,8 +377,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 			}
 
 			Common::StringTokenizer st3 = Common::StringTokenizer(arg, "\"");
-			Common::String dest;
-			dest = "";
+			Common::String dest = Common::String("");
 			while (!st3.empty()) {
 				dest += st3.nextToken();
 			}
