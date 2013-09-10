@@ -105,6 +105,7 @@ bool CMctlCompoundArray::load(MfcArchive &file) {
 }
 
 CMovGraph::CMovGraph() {
+	warning("STUB: CMovGraph::CMovGraph()");
 	_itemsCount = 0;
 	_items = 0;
 	//_callback1 = CMovGraphCallback1;  // TODO
