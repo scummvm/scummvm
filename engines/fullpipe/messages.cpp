@@ -644,6 +644,9 @@ bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id)
 			if (curItem)
 				curItem = curItem->nextItem;
 
+		if (!curItem)
+			return false;
+
 		bool res = allocMessageHandler(curItem, id, callback, index);
 
 		if (res)
