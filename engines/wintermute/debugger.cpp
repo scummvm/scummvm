@@ -68,16 +68,16 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->addBreakpoint(argv[1], atoi(argv[2]));
 		if (!error) {
 			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == NO_SUCH_SCRIPT) {
+		} else if (error == DebuggerAdapter::NO_SUCH_SCRIPT) {
 			Common::String msg = Common::String::format("no such script: %s, breakpoint NOT created\n", argv[1]);
 			debugWarning(argv[0], ERROR, msg);
-		} else if (error == NO_SUCH_SOURCE) {
+		} else if (error == DebuggerAdapter::NO_SUCH_SOURCE) {
 			Common::String msg = Common::String::format("no such source file: %s\n", argv[1]);
 			debugWarning(argv[0], WARNING, msg);
-		} else if (error == NO_SUCH_LINE) {
+		} else if (error == DebuggerAdapter::NO_SUCH_LINE) {
 			Common::String msg = Common::String::format("source %s has no line %d\n", argv[1], atoi(argv[2]));
 			debugWarning(argv[0], WARNING, msg);
-		} else if (error == IS_BLANK) {
+		} else if (error == DebuggerAdapter::IS_BLANK) {
 			Common::String msg = Common::String::format("%s:%d looks like a comment/blank line.\n", argv[1], atoi(argv[2]));
 			debugWarning(argv[0], WARNING, msg);
 		} else {
@@ -95,7 +95,7 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->removeBreakpoint(atoi(argv[1]));
 		if (!error) {
 			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == NO_SUCH_BREAKPOINT) {
+		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
 			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
 			debugWarning(argv[0], ERROR, msg);
 		}
@@ -111,7 +111,7 @@ bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->enableBreakpoint(atoi(argv[1]));
 		if (!error) {
 			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == NO_SUCH_BREAKPOINT) {
+		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
 			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
 			debugWarning(argv[0], ERROR, msg);
 		}
@@ -126,7 +126,7 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 		int error = ADAPTER->disableBreakpoint(atoi(argv[1]));
 		if (!error) {
 			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == NO_SUCH_BREAKPOINT) {
+		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
 			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
 			debugWarning(argv[0], ERROR, msg);
 		}
@@ -144,7 +144,7 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 		int error = ADAPTER->addWatch(argv[1], argv[2]);
 		if (!error) {
 			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == NO_SUCH_SCRIPT) {
+		} else if (error == DebuggerAdapter::NO_SUCH_SCRIPT) {
 			Common::String msg = Common::String::format("no such file %s\n", argv[1]);
 			debugWarning(argv[0], ERROR, msg);
 		}
@@ -244,7 +244,7 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 		if (!error) {
 			assert(val);
 			DebugPrintf("%s = %s\n", argv[1], val->getString());
-		} else if (error == NOT_ALLOWED) {
+		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
 			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
 			debugWarning(argv[0], ERROR, "Unrecognized error\n");
@@ -259,11 +259,11 @@ bool Console::Cmd_SetType(int argc, const char **argv) {
 	if (argc == 3) {
 		Common::String type = Common::String(argv[2]);
 		int error = ADAPTER->setType(Common::String(argv[1]), type);
-		if (error == OK) {
+		if (error == DebuggerAdapter::OK) {
 			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == NOT_ALLOWED) {
+		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
 			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else if (error == PARSE_ERROR) {
+		} else if (error == DebuggerAdapter::PARSE_ERROR) {
 			debugWarning(argv[0], ERROR, "Couldn't parse type\n");
 		} else {
 			debugWarning(argv[0], ERROR, "Unrecognized error\n");
@@ -293,13 +293,13 @@ bool Console::Cmd_DumpRes(int argc, const char **argv) {
 	if (argc == 2) {
 		int error = 0;
 		Common::String res = ADAPTER->readRes(Common::String(argv[1]), &error);
-		if (error == OK) {
+		if (error == DebuggerAdapter::OK) {
 			DebugPrintf("%s = %s \n", argv[1], res.c_str());
-		} else if (error == NOT_ALLOWED) {
+		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
 			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else if (error == WRONG_TYPE) {
+		} else if (error == DebuggerAdapter::WRONG_TYPE) {
 			debugWarning(argv[0], ERROR, "Wrong type. Perhaps not a native?\n");
-		} else if (error == PARSE_ERROR) {
+		} else if (error == DebuggerAdapter::PARSE_ERROR) {
 			debugWarning(argv[0], ERROR, "Could not parse input\n");
 		} else {
 			debugWarning(argv[0], ERROR, "Unrecognized error\n");
@@ -391,9 +391,9 @@ void Console::debugWarning(const Common::String &command, int warning_level, con
 }
 
 bool Console::printError(int error, Common::String command) {
-		if (error == OK) {
+		if (error == DebuggerAdapter::OK) {
 			return false;
-		} else if (error == NOT_ALLOWED) {
+		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
 			debugWarning(command.c_str(), ERROR, "Not allowed here. Perhaps did not break?\n");
 			return true;
 		} else {

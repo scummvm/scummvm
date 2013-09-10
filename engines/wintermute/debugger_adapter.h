@@ -32,26 +32,20 @@ namespace Wintermute {
 class ScScript;
 class ScValue;
 
-enum ErrorCode {
-	OK,
-	NO_SUCH_SOURCE,
-	COULD_NOT_OPEN,
-	NO_SUCH_LINE,
-	DUPLICATE_BREAKPOINT,
-	NO_SUCH_BREAKPOINT,
-	NOT_ALLOWED,
-	IS_BLANK, // Is blank or comment-only, actually
-	NO_SUCH_SCRIPT,
-	WRONG_TYPE,
-	PARSE_ERROR,
-	NOT_YET_IMPLEMENTED
-};
-
 class SourceFile {
 private:
 	Common::Array<Common::String> _strings;
 	bool _err;
 public:
+	enum ErrorCode {
+		OK,
+		NO_SUCH_SOURCE,
+		COULD_NOT_OPEN,
+		NO_SUCH_LINE,
+		NOT_ALLOWED,
+		IS_BLANK, // Is blank or comment-only, actually
+		NO_SUCH_SCRIPT
+	};
 	SourceFile(const Common::String &filename);
 	bool loadFile(Common::String filename, int *error = nullptr);
 	int getLength();
@@ -76,8 +70,24 @@ struct WatchInfo {
 };
 
 class DebuggerAdapter {
-	/* Faux MVA Adapter */
+
+/* Faux MVA Adapter */
 public:
+	enum ErrorCode {
+		OK,
+		NO_SUCH_SOURCE,
+		COULD_NOT_OPEN,
+		NO_SUCH_LINE,
+		NOT_ALLOWED,
+		IS_BLANK, // Is blank or comment-only, actually
+		NO_SUCH_SCRIPT,
+		DUPLICATE_BREAKPOINT,
+		NO_SUCH_BREAKPOINT,
+		WRONG_TYPE,
+		PARSE_ERROR,
+		NOT_YET_IMPLEMENTED
+	};
+
 	DebuggerAdapter(WintermuteEngine *vm);
 	// Called by Script (=~Model)
 	bool triggerBreakpoint(ScScript *script);

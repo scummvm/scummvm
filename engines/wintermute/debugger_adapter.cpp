@@ -155,7 +155,7 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 		} else {
 			return OK;
 		}
-	} else if (error == NO_SUCH_SOURCE || error == COULD_NOT_OPEN) {
+	} else if (error == SourceFile::NO_SUCH_SOURCE || error == SourceFile::COULD_NOT_OPEN) {
 		// Okay, this does not tell us much, except that we don't have the SOURCE file.
 		// TODO: Check if the bytecode is there, at least
 		return NO_SUCH_SOURCE;
@@ -176,15 +176,15 @@ int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
 	if (isLegal == OK) {
 		SCENGINE->addBreakpoint(filename, line);
 		return OK;
-	} else if (isLegal == IS_BLANK) {
+	} else if (isLegal == SourceFile::IS_BLANK) {
 		// We don't have the SOURCE. A warning will do.
 		SCENGINE->addBreakpoint(filename, line);
 		return IS_BLANK;
-	} else if (isLegal == NO_SUCH_SOURCE) {
+	} else if (isLegal == SourceFile::NO_SUCH_SOURCE) {
 		// We don't have the SOURCE. A warning will do.
 		SCENGINE->addBreakpoint(filename, line);
 		return NO_SUCH_SOURCE;
-	} else if (isLegal == NO_SUCH_LINE) {
+	} else if (isLegal == SourceFile::NO_SUCH_LINE) {
 		// No line in the source A warning will do.
 		SCENGINE->addBreakpoint(filename, line);
 		return NO_SUCH_LINE;
