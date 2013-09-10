@@ -319,7 +319,7 @@ bool CInventory2::handleLeftClick(ExCommand *cmd) {
 	if (!_isInventoryOut)
 		return false;
 
-    bool res = false;
+	bool res = false;
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
 		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 && 
@@ -343,8 +343,8 @@ bool CInventory2::handleLeftClick(ExCommand *cmd) {
 		}
 	}
 
-    if (!res)
-		unselectItem(this);
+	if (!res)
+		unselectItem(0);
 
 	return res;
 }
