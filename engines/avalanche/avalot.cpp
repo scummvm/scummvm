@@ -127,8 +127,6 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	_vm->_lucerna->drawDirection();
 }
 
-
-
 void Avalot::setup() {
 	_vm->_gyro->_mouse = _vm->_gyro->kMouseStateNo;
 	_vm->_gyro->_letMeOut = false;
