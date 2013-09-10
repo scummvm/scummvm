@@ -103,7 +103,7 @@ public:
 	void sendMessage(Message *message);
 	void postMessage(Message *message);
 
-	Window *findWindowAtPoint(const Common::Point &point);
+	Window *findWindowAtPoint(const Common::Point &point, Common::Point &relativePoint);
 
 protected:
 	BuriedEngine *_vm;

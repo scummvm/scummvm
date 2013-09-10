@@ -315,10 +315,13 @@ void BuriedEngine::pollForEvents() {
 	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE: {
 			_gfx->markMouseMoved();
-			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MouseMoveMessage(event.mouse, 0));
+			Common::Point relativePos;
+			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
+			window->postMessage(new MouseMoveMessage(relativePos, 0));
 			break;
+		}
 		case Common::EVENT_KEYUP:
 			if (_focusedWindow)
 				_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
@@ -327,22 +330,37 @@ void BuriedEngine::pollForEvents() {
 			if (_focusedWindow)
 				_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
 			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonDownMessage(event.mouse, 0));
+		case Common::EVENT_LBUTTONDOWN: {
+			Common::Point relativePos;
+			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
+			window->postMessage(new LButtonDownMessage(relativePos, 0));
 			break;
-		case Common::EVENT_LBUTTONUP:
+		}
+		case Common::EVENT_LBUTTONUP: {
 			// TODO: Double-click
-			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new LButtonUpMessage(event.mouse, 0));
+			Common::Point relativePos;
+			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
+			window->postMessage(new LButtonUpMessage(relativePos, 0));
 			break;
-		case Common::EVENT_MBUTTONUP:
-			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new MButtonUpMessage(event.mouse, 0));
+		}
+		case Common::EVENT_MBUTTONUP: {
+			Common::Point relativePos;
+			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
+			window->postMessage(new MButtonUpMessage(relativePos, 0));
 			break;
-		case Common::EVENT_RBUTTONDOWN:
-			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonDownMessage(event.mouse, 0));
+		}
+		case Common::EVENT_RBUTTONDOWN: {
+			Common::Point relativePos;
+			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
+			window->postMessage(new RButtonDownMessage(relativePos, 0));
 			break;
-		case Common::EVENT_RBUTTONUP:
-			_mainWindow->findWindowAtPoint(event.mouse)->postMessage(new RButtonUpMessage(event.mouse, 0));
+		}
+		case Common::EVENT_RBUTTONUP: {
+			Common::Point relativePos;
+			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
+			window->postMessage(new RButtonUpMessage(relativePos, 0));
 			break;
+		}
 		default:
 			break;
 		}
