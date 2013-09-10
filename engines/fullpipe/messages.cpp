@@ -272,9 +272,6 @@ bool MessageQueue::load(MfcArchive &file) {
 }
 
 bool MessageQueue::chain(StaticANIObject *ani) {
-	if (ani)
-		ani->isIdle();
-
 	if (checkGlobalExCommandList1() && checkGlobalExCommandList2()) {
 		if (!(getFlags() & 2)) {
 			g_fullpipe->_globalMessageQueueList->addMessageQueue(this);
