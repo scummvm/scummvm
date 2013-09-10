@@ -60,11 +60,6 @@ SourceFile::SourceFile(const Common::String &filename) {
 	}
 }
 
-DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
-	_engine = vm;
-	_lastScript = nullptr;
-}
-
 bool SourceFile::isBlank(int line) {
 	Common::String theLine = getLine(line);
 	Common::StringTokenizer st(theLine, "//");
@@ -124,6 +119,12 @@ Common::Array<Common::String> SourceFile::getSurroundingLines(int center, int be
 	}
 	return ret;
 }
+
+DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
+	_engine = vm;
+	_lastScript = nullptr;
+}
+
 bool DebuggerAdapter::compiledExists(Common::String filename) {
 	uint32 compSize;
 	byte *compBuffer = SCENGINE->getCompiledScript(filename.c_str(), &compSize);
