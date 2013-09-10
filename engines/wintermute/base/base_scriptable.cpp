@@ -188,7 +188,6 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
 Common::String BaseScriptable::debuggerToString() const {
 	return Common::String::format("%p: BaseScriptable %s", (void *)this, getName());
 }

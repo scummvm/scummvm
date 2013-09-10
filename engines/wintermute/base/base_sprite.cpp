@@ -46,7 +46,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSprite, false)
 
-//////////////////////////////////////////////////////////////////////
 BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(inGame) {
 	_editorAllFrames = false;
 	_owner = Owner;
@@ -54,13 +53,11 @@ BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(i
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseSprite::~BaseSprite() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseSprite::setDefaults() {
 	_currentFrame = -1;
 	_looping = false;
@@ -85,7 +82,6 @@ void BaseSprite::setDefaults() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseSprite::cleanup() {
 	BaseScriptHolder::cleanup();
 
@@ -101,7 +97,6 @@ void BaseSprite::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
 	getCurrentFrame(zoomX, zoomY);
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
@@ -130,7 +125,6 @@ bool BaseSprite::isFinished() {
 	return _finished;
 }
 
-//////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename);
 	if (!file) {
@@ -203,7 +197,7 @@ TOKEN_DEF(EDITOR_BG_OFFSET_Y)
 TOKEN_DEF(EDITOR_BG_ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////
+
 bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(CONTINUOUS)
@@ -340,7 +334,6 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 }
 
 
-//////////////////////////////////////////////////////////////////////
 void BaseSprite::reset() {
 	if (_frames.size() > 0) {
 		_currentFrame = 0;
@@ -356,7 +349,6 @@ void BaseSprite::reset() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 	//if (_owner && _owner->_freezable && _gameRef->_state == GAME_FROZEN) return true;
 
@@ -417,7 +409,6 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
 		return STATUS_OK;
@@ -437,7 +428,6 @@ bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, flo
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseSurface *BaseSprite::getSurface() {
 	// only used for animated textures for 3D models
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
@@ -456,7 +446,6 @@ BaseSurface *BaseSprite::getSurface() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
@@ -473,7 +462,6 @@ bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITE {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
@@ -516,7 +504,6 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
 
@@ -693,7 +680,6 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -769,7 +755,6 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
@@ -803,13 +788,11 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *BaseSprite::scToString() {
 	return "[sprite]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		_frames[i]->stopSound();
@@ -818,7 +801,6 @@ bool BaseSprite::killAllSounds() {
 }
 
 
-////////////////////////
 Common::String BaseSprite::debuggerToString() const {
 	return Common::String::format("%p: Sprite \"%s\"", (void *)this, getName());
 }
