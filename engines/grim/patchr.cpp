@@ -113,7 +113,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, const Common::String &p
 
 	// Check for appropriate signature
 	if (patch.readUint32BE() != MKTAG('P','A','T','R')) {
-		error("%s patchfile is corrupted", _patchName.c_str());
+		error("%s patchfile is corrupted, wrong siganture", _patchName.c_str());
 		return false;
 	}
 
@@ -129,8 +129,18 @@ bool PatchedFile::load(Common::SeekableReadStream *file, const Common::String &p
 	Common::computeStreamMD5(*file, md5_f, _kMd5size);
 	file->seek(0, SEEK_SET);
 	patch.read(md5_p, 16);
-	if (memcmp(md5_p, md5_f, 16) != 0 || (uint32)file->size() != patch.readUint32LE()) {
+	uint32 fileSize = patch.readUint32LE();
+	if (memcmp(md5_p, md5_f, 16) != 0 || (uint32)file->size() != fileSize) {
 		Debug::debug(Debug::Patchr, "%s targets a different file", _patchName.c_str());
+		if (Debug::isChannelEnabled(Debug::Patchr)) {
+			Common::String md5_ps, md5_fs;
+			for (int i = 0; i < 16; i++) {
+				md5_ps += Common::String::format("%02x", (int)md5_p[i]);
+				md5_fs += Common::String::format("%02x", (int)md5_f[i]);
+			}
+			Debug::debug(Debug::Patchr, "Patch target: size = %d, md5 = %s", fileSize, md5_ps.c_str());
+			Debug::debug(Debug::Patchr, "Actual file : size = %d, md5 = %s", (uint32)file->size(), md5_fs.c_str());
+		}
 		return false;
 	}
 
@@ -364,7 +374,7 @@ Common::SeekableReadStream *wrapPatchedFile(Common::SeekableReadStream *rs, cons
 	Common::String patchfile = filename + ".patchr";
 	int i = 1;
 	while (SearchMan.hasFile(patchfile)) {
-		Debug::debug(Debug::Patchr, "Patch requested for %s", filename.c_str());
+		Debug::debug(Debug::Patchr, "Patch requested for %s (patch filename %s)", filename.c_str(), patchfile.c_str());
 
 		PatchedFile *pf = new PatchedFile;
 		if (pf->load(rs, patchfile)) {
