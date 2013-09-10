@@ -36,10 +36,10 @@ namespace Buried {
 
 struct Sprite {
 	Graphics::Surface *image;
-	int32 xPos;
-	int32 yPos;
-	int32 width;
-	int32 height;
+	int16 xPos;
+	int16 yPos;
+	int16 width;
+	int16 height;
 	byte redTrans;
 	byte greenTrans;
 	byte blueTrans;

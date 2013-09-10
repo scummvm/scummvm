@@ -31,10 +31,10 @@
 namespace Buried {
 
 struct SoundEvent {
-	uint16 eventID;
-	uint16 fileNameID;
-	uint16 flags;
-	uint16 volumeLevel;
+	int16 eventID;
+	int16 fileNameID;
+	int16 flags;
+	int16 volumeLevel;
 };
 
 } // End of namespace Buried

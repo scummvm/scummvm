@@ -31,11 +31,11 @@
 namespace Buried {
 
 struct AnimEvent {
-	uint16 animationID;
-	uint16 fileNameID;
-	uint16 audioStreamCount;
-	uint32 startFrame;
-	uint32 frameCount;
+	int16 animationID;
+	int16 fileNameID;
+	int16 audioStreamCount;
+	int32 startFrame;
+	int32 frameCount;
 };
 
 } // End of namespace Buried
