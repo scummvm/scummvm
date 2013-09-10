@@ -122,7 +122,8 @@ Common::Array<Common::String> SourceFile::getSurroundingLines(int center, int be
 
 DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
 	_engine = vm;
-	_lastScript = nullptr;
+	_lastSource = nullptr;
+	reset();
 }
 
 bool DebuggerAdapter::compiledExists(Common::String filename) {
