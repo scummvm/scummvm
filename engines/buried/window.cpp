@@ -37,9 +37,9 @@ Window::Window(BuriedEngine *vm, Window *parent, bool visible) : _vm(vm), _paren
 	_enabled = true;
 	_needsErase = false;
 
-	// Add us to the top of the parent's window list
+	// Add us to the bottom of the parent's window list
 	if (_parent)
-		_parent->_children.push_back(this);
+		_parent->_children.push_front(this);
 }
 
 Window::~Window() {
