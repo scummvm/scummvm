@@ -41,7 +41,6 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
 	DCmd_Register("del", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
-	DCmd_Register("top", WRAP_METHOD(Console, Cmd_Top));
 	DCmd_Register("next", WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
@@ -173,12 +172,6 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 		DebugPrintf("Usage: %s [watch|breakpoints]\n", argv[0]);
 	}
 	return 0;
-}
-
-
-bool Console::Cmd_Top(int argc, const char **argv) {
-	// ADAPTER->getTop();
-	return true;
 }
 
 

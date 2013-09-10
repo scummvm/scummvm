@@ -58,11 +58,6 @@ public:
 	bool Cmd_RemoveBreakpoint(int argc, const char **argv);
 	bool Cmd_EnableBreakpoint(int argc, const char **argv);
 	bool Cmd_DisableBreakpoint(int argc, const char **argv);
-	/**
-	 * List all scripts running ATM.
-	 * Also, which line are they on and if they have any breakpoints.
-	 */
-	bool Cmd_Top(int argc, const char **argv);
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_List(int argc, const char **argv);
 	bool Cmd_DumpRes(int argc, const char **argv);
