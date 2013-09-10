@@ -699,8 +699,10 @@ void Scrolls::callScrollDriver() {
 				case 1:
 					displayText(displayMoney() + kControlToBuffer); // Insert cash balance. (Recursion)
 					break;
-				case 2:
-					displayText(_vm->_acci->kVocabulary[_vm->_acci->kFirstPassword + _vm->_gyro->_dna._passwordNum]._word + kControlToBuffer);
+				case 2: {
+					int pwdId = _vm->_acci->kFirstPassword + _vm->_gyro->_dna._passwordNum;
+					displayText(_vm->_acci->kVocabulary[pwdId]._word + kControlToBuffer);
+					}
 					break;
 				case 3:
 					displayText(_vm->_gyro->_dna._favouriteDrink + kControlToBuffer);

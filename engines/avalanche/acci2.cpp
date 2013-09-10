@@ -364,7 +364,8 @@ void Acci::properNouns() {
 void Acci::sayIt() {
 	Common::String x = _vm->_parser->_inputText;
 	x.setChar(toupper(x[0]), 0);
-	Common::String tmpStr = Common::String::format("%c1%s.%c%c2", Scrolls::kControlRegister, x.c_str(), Scrolls::kControlSpeechBubble, Scrolls::kControlRegister);
+	Common::String tmpStr = Common::String::format("%c1%s.%c%c2", Scrolls::kControlRegister, x.c_str(), 
+		                                           Scrolls::kControlSpeechBubble, Scrolls::kControlRegister);
 	_vm->_scrolls->displayText(tmpStr);
 }
 
@@ -476,7 +477,7 @@ void Acci::parse() {
 
 		bool notfound = true;
 
-		// Check also[] first, which conatins words about the actual room.
+		// Check also[] first, which contains words about the actual room.
 		if (!thisword.empty()) {
 			for (byte i = 0; i < 31; i++) {
 				if ((_vm->_gyro->_also[i][0] != 0) && (_vm->_parser->pos(',' + thisword, *_vm->_gyro->_also[i][0]) > -1)) {
@@ -519,16 +520,16 @@ void Acci::parse() {
 		unkString.clear();
 
 	// Replace words' codes that mean the same.
-	replace(Common::String('\xFF'), 0); // zap noise words
-	replace(Common::String('\xD')  + '\xE2', 1); // "look at" = "examine"
-	replace(Common::String('\xD')  + '\xE4', 1); // "look in" = "examine"
-	replace(Common::String('\x4')  + '\xE6', 17); // "get up" = "stand"
-	replace(Common::String('\x4')  + '\xE7', 17); // "get down" = "stand"... well, why not?
-	replace(Common::String('\x12') + '\xE4', 2); // "go in" = "open [door]"
-	replace(Common::String('\x1C') + '\xE5', 253); // "P' off" is a swear word
-	replace(Common::String('\x4')  + '\x6' , 6); // "Take inventory" (remember Colossal Adventure?)
-	replace(Common::String('\x28') + '\xE8', 21); // "put on" = "don"
-	replace(Common::String('\x4')  + '\xE5', 20); // "take off" = "doff"
+	replace(Common::String("\xFF"),     0); // zap noise words
+	replace(Common::String("\xD\xE2"),  1); // "look at" = "examine"
+	replace(Common::String("\xD\xE4"),  1); // "look in" = "examine"
+	replace(Common::String("\x4\xE6"),  17); // "get up" = "stand"
+	replace(Common::String("\x4\xE7"),  17); // "get down" = "stand"... well, why not?
+	replace(Common::String("\x12\xE4"), 2); // "go in" = "open [door]"
+	replace(Common::String("\x1C\xE5"), 253); // "P' off" is a swear word
+	replace(Common::String("\x4\x6"),   6); // "Take inventory" (remember Colossal Adventure?)
+	replace(Common::String("\x28\xE8"), 21); // "put on" = "don"
+	replace(Common::String("\x4\xE5"),  20); // "take off" = "doff"
 
 	// Words that could mean more than one _person
 	if (_vm->_gyro->_dna._room == r__nottspub)
@@ -654,9 +655,9 @@ bool Acci::isPersonHere() { // Person equivalent of "holding".
 	else {
 		Common::String tmpStr;
 		if (_person < 175)
-			tmpStr = Common::String::format("H%ce isn't around at the moment.", Scrolls::kControlToBuffer);
+			tmpStr = Common::String::format("He isn't around at the moment.");
 		else
-			tmpStr = Common::String::format("Sh%ce isn't around at the moment.", Scrolls::kControlToBuffer);
+			tmpStr = Common::String::format("She isn't around at the moment.");
 		_vm->_scrolls->displayText(tmpStr);
 		return false;
 	}
@@ -1250,7 +1251,8 @@ void Acci::getProc(char thing) {
  */
 void Acci::giveGeidaTheLute() {
 	if (_vm->_gyro->_dna._room != r__lustiesroom) {
-		_vm->_scrolls->displayText(Common::String("Not yet. Try later!") + Scrolls::kControlRegister + '2' + Scrolls::kControlSpeechBubble);
+		Common::String tmpStr = Common::String::format("Not yet. Try later!%c2%c", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
+		_vm->_scrolls->displayText(tmpStr);
 		return;
 	}
 	_vm->_gyro->_dna._objects[Gyro::kObjectLute - 1] = false;
@@ -1286,7 +1288,8 @@ void Acci::personSpeaks() {
 	}
 
 	if (_vm->_gyro->_whereIs[_person - 150] != _vm->_gyro->_dna._room) {
-		_vm->_scrolls->displayText(Common::String(Scrolls::kControlRegister) + '1' + Scrolls::kControlToBuffer); // Avvy himself!
+		Common::String tmpStr = Common::String::format("%c1%c", Scrolls::kControlRegister, Scrolls::kControlToBuffer);
+		_vm->_scrolls->displayText(tmpStr); // Avvy himself!
 		return;
 	}
 
@@ -1294,21 +1297,26 @@ void Acci::personSpeaks() {
 
 	for (byte i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
-			_vm->_scrolls->displayText(Common::String(Scrolls::kControlRegister) + byte(i + 49) + Scrolls::kControlToBuffer);
+			Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, '1' + i, Scrolls::kControlToBuffer);
+			_vm->_scrolls->displayText(tmpStr);
 			found = true;
 		}
 	}
 
-	if (!found) {
-		for (byte i = 0; i < 16; i++) {
-			if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_dna._room))
-				_vm->_scrolls->displayText(Common::String(Scrolls::kControlRegister) + byte(i + 65) + Scrolls::kControlToBuffer);
+	if (found)
+		return;
+
+	for (byte i = 0; i < 16; i++) {
+		if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_dna._room)) {
+			Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, 'A' + i, Scrolls::kControlToBuffer);
+			_vm->_scrolls->displayText(tmpStr);
 		}
 	}
 }
 void Acci::heyThanks() {
 	personSpeaks();
-	_vm->_scrolls->displayText(Common::String("Hey, thanks!") + Scrolls::kControlSpeechBubble + "(But now, you've lost it!)");
+	Common::String tmpStr = Common::String::format("Hey, thanks!%c(But now, you've lost it!)", Scrolls::kControlSpeechBubble);
+	_vm->_scrolls->displayText(tmpStr);
 	_vm->_gyro->_dna._objects[_thing - 1] = false;
 }
 
@@ -1895,8 +1903,9 @@ void Acci::doThat() {
 			for (byte i = 0; i < _thats.size(); i++) {
 				Common::String temp = _realWords[i];
 				temp.toUppercase();
-				for (byte j = 0; j < kVocabulary[_vm->_gyro->_dna._passwordNum + kFirstPassword]._word.size(); j++) {
-					if (kVocabulary[_vm->_gyro->_dna._passwordNum + kFirstPassword]._word[j] != temp[j])
+				int pwdId = _vm->_gyro->_dna._passwordNum + kFirstPassword;
+				for (byte j = 0; j < kVocabulary[pwdId]._word.size(); j++) {
+					if (kVocabulary[pwdId]._word[j] != temp[j])
 						ok = false;
 				}
 			}
@@ -1986,9 +1995,11 @@ void Acci::doThat() {
 				if (!_vm->_gyro->_dna._aylesIsAwake)
 					_vm->_scrolls->displayText("You can't seem to wake him by yourself.");
 				break;
-			case Gyro::kPeopleJacques:
-				_vm->_scrolls->displayText(Common::String("Brother Jacques, Brother Jacques, are you asleep?") + Scrolls::kControlRegister + '1' +
-					Scrolls::kControlSpeechBubble + "Hmmm... that doesn't seem to do any good...");
+			case Gyro::kPeopleJacques: {
+				Common::String tmpStr = Common::String::format("Brother Jacques, Brother Jacques, are you asleep?%c1%c" \
+					"Hmmm... that doesn't seem to do any good...", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
+				_vm->_scrolls->displayText(tmpStr);
+				}
 				break;
 			default:
 				_vm->_scrolls->displayText("It's difficult to awaken people who aren't asleep...!");
@@ -2006,7 +2017,8 @@ void Acci::doThat() {
 			_vm->_lucerna->dusk();
 			_vm->_gyro->hangAroundForAWhile();
 			_vm->_lucerna->dawn();
-			_vm->_scrolls->displayText(Common::String("A few hours later...") + Scrolls::kControlParagraph + "nothing much has happened...");
+			Common::String tmpStr = Common::String::format("A few hours later...%cnothing much has happened...", Scrolls::kControlParagraph);
+			_vm->_scrolls->displayText(tmpStr);
 		}
 		break;
 	case kVerbCodeRestart:
