@@ -260,14 +260,19 @@ Window *Window::setFocus() {
 	return oldWindow;
 }
 
-Window *Window::findWindowAtPoint(const Common::Point &point) {
+Window *Window::findWindowAtPoint(const Common::Point &point, Common::Point &relativePos) {
 	for (WindowList::iterator it = _topMostChildren.reverse_begin(); it != _topMostChildren.end(); it--)
 		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
-			return (*it)->findWindowAtPoint(point);
+			return (*it)->findWindowAtPoint(point, relativePos);
 
 	for (WindowList::iterator it = _children.reverse_begin(); it != _children.end(); it--)
 		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
-			return (*it)->findWindowAtPoint(point);
+			return (*it)->findWindowAtPoint(point, relativePos);
+
+	// Also calculate the relative position of the point within the window
+	Common::Rect absoluteRect = getAbsoluteRect();
+	relativePos.x = point.x - absoluteRect.left;
+	relativePos.y = point.y - absoluteRect.top;
 
 	return this;
 }
