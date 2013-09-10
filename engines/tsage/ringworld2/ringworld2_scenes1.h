@@ -687,7 +687,7 @@ public:
 };
 
 class Scene1625 : public SceneExt {
-	class Actor7 : public SceneActor {
+	class Wire : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -698,12 +698,12 @@ public:
 	SpeakerSoldier1625 _soldierSpeaker;
 	NamedHotspot _item1;
 	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _tealHead;
 	SceneActor _actor3;
-	SceneActor _actor4;
+	SceneActor _glass;
 	SceneActor _actor5;
 	SceneActor _actor6;
-	Actor7 _actor7;
+	Wire _wire;
 	SequenceManager _sequenceManager;
 
 	Scene1625();

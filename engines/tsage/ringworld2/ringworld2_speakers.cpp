@@ -2666,7 +2666,7 @@ void SpeakerTeal1625::proc15() {
 
 	if (!_object2) {
 		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_tealHead;
 		_object2->hide();
 
 		_object1.postInit();
