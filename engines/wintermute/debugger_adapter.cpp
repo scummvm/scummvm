@@ -222,8 +222,21 @@ int DebuggerAdapter::enableBreakpoint(int id) {
 	}
 }
 int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
-	// TODO: Check if file exists, check if symbol exists
 	assert(SCENGINE);
+	if (!compiledExists(filename)) {
+		return NO_SUCH_SCRIPT;
+	}	
+	
+	/* In this case there's not a lot we can check for.
+	 * We don't have a symbol table, we can only either hit it
+	 * at runtime or... not.
+	 *
+	 * Basically, because of the way the script engine works,
+	 * (no symbol table, only II_DBG_LINE to tell us that where 
+	 * we are corresponds to some line in the source)
+	 * watching is awkward, unless we parse the whole source.
+	 */
+
 	SCENGINE->addWatch(filename, symbol);
 	return OK;
 }
