@@ -83,6 +83,30 @@ struct TransparentSurface : public Graphics::Surface {
 
 	AlphaType _alphaMode;
 
+	#ifdef SCUMM_LITTLE_ENDIAN
+	static const int aIndex = 0;
+	static const int bIndex = 1;
+	static const int gIndex = 2;
+	static const int rIndex = 3;
+	#else
+	static const int aIndex = 3;
+	static const int bIndex = 2;
+	static const int gIndex = 1;
+	static const int rIndex = 0;
+	#endif
+
+	static const int bShift = 8;//img->format.bShift;
+	static const int gShift = 16;//img->format.gShift;
+	static const int rShift = 24;//img->format.rShift;
+	static const int aShift = 0;//img->format.aShift;
+
+
+	static const int bModShift = 0;//img->format.bShift;
+	static const int gModShift = 8;//img->format.gShift;
+	static const int rModShift = 16;//img->format.rShift;
+	static const int aModShift = 24;//img->format.aShift;
+
+
 	/**
 	 @brief renders the surface to another surface
 	 @param pDest a pointer to the target image. In most cases this is the framebuffer.
