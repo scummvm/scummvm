@@ -207,9 +207,9 @@ void BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byt
 		return;
 	} else {
 		*outa = *outa;
-		*outb = MIN((*inb **ina >> 8) + *outb, 255);
-		*outb = MIN((*ing **ing >> 8) + *outb, 255);
-		*outb = MIN((*inr **inr >> 8) + *outb, 255);
+		*outb = MIN(((*inb) * (*ina) >> 8) + *outb, 255);
+		*outg = MIN(((*ing) * (*ina) >> 8) + *outg, 255);
+		*outr = MIN(((*inr) * (*ina) >> 8) + *outr, 255);
 		return;
 	}
 }
