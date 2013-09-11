@@ -269,7 +269,7 @@ public:
 	int _rimTransportLocation;
 	int _v5657C;
 	byte _v565AE;
-	byte _v56605[14];
+	byte _spillLocation[14];
 	int _v56613[76];
 	byte _v566A4;
 	byte _v566A5;

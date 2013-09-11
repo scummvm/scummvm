@@ -45,23 +45,23 @@ class Scene2000 : public SceneExt {
 		virtual void signal();
 	};
 
-	class Exit1 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit4 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit5 : public SceneExit {
+	class DoorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -72,11 +72,11 @@ public:
 	NamedHotspot _item1;
 	SceneActor _object1;
 	SceneActor _objList1[11];
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
-	Exit5 _exit5;
+	WestExit _westExit;
+	EastExit _eastExit;
+	SouthExit _southExit;
+	NorthExit _northExit;
+	DoorExit _doorExit;
 	Action1 _action1, _action2, _action3, _action4, _action5;
 	SequenceManager _sequenceManager;
 

@@ -412,20 +412,20 @@ void Ringworld2Globals::reset() {
 	_rimLocation = 0;
 	_rimTransportLocation = 0;
 	_v565AE = 0;
-	_v56605[0] = 0;
-	_v56605[1] = 3;
-	_v56605[2] = 5;
-	_v56605[3] = 1;
-	_v56605[4] = 2;
-	_v56605[5] = 5;
-	_v56605[6] = 9;
-	_v56605[7] = 14;
-	_v56605[8] = 15;
-	_v56605[9] = 18;
-	_v56605[10] = 20;
-	_v56605[11] = 25;
-	_v56605[12] = 27;
-	_v56605[13] = 31;
+	_spillLocation[0] = 0;
+	_spillLocation[1] = 3;
+	_spillLocation[R2_SEEKER] = 5;
+	_spillLocation[3] = 1;
+	_spillLocation[4] = 2;
+	_spillLocation[5] = 5;
+	_spillLocation[6] = 9;
+	_spillLocation[7] = 14;
+	_spillLocation[8] = 15;
+	_spillLocation[9] = 18;
+	_spillLocation[10] = 20;
+	_spillLocation[11] = 25;
+	_spillLocation[12] = 27;
+	_spillLocation[13] = 31;
 
 	for (int i = 0; i < 18; i++) {
 		_v56613[(i * 4)    ] = 1;
@@ -502,8 +502,8 @@ void Ringworld2Globals::reset() {
 
 	// Reset fields stored in the player class
 	_player._characterIndex = R2_QUINN;
-	_player._characterScene[1] = 100;
-	_player._characterScene[2] = 300;
+	_player._characterScene[R2_QUINN] = 100;
+	_player._characterScene[R2_SEEKER] = 300;
 	_player._characterScene[3] = 300;
 }
 
@@ -565,7 +565,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsByte(_v56AA8);
 
 	for (i = 0; i < 14; ++i)
-		s.syncAsByte(_v56605[i]);
+		s.syncAsByte(_spillLocation[i]);
 	for (i = 0; i < 1000; ++i)
 		s.syncAsByte(_v566AB[i]);
 	s.syncAsByte(_v56A99);

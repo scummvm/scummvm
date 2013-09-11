@@ -58,7 +58,7 @@ bool Scene3100::Guard::startAction(CursorType action, Event &event) {
 
 void Scene3100::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == 1000) {
-		if (R2_GLOBALS._player._oldCharacterScene[1] == 3100) {
+		if (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 3100) {
 			loadScene(3101);
 			R2_GLOBALS._uiElements._active = false;
 		} else {
@@ -89,7 +89,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 	_field412 = 0;
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1000) {
-		if (R2_GLOBALS._player._oldCharacterScene[1] == 3100) {
+		if (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 3100) {
 			_sceneMode = 3102;
 			_actor3.postInit();
 			_actor4.postInit();
@@ -153,7 +153,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._sound1.play(243);
 	}
 
-	R2_GLOBALS._player._oldCharacterScene[1] = 3100;
+	R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = 3100;
 }
 
 void Scene3100::remove() {
@@ -178,7 +178,7 @@ void Scene3100::signal() {
 		R2_GLOBALS._sceneManager.changeScene(1000);
 		break;
 	case 3102:
-		R2_GLOBALS._player._oldCharacterScene[1] = 1000;
+		R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = 1000;
 		R2_GLOBALS._sceneManager.changeScene(1000);
 		break;
 	default:
@@ -536,7 +536,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 	loadScene(3150);
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
 		R2_INVENTORY.setObjectScene(R2_ANCIENT_SCROLLS, 2000);
-		R2_GLOBALS._player._oldCharacterScene[1] = 3100;
+		R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = 3100;
 		R2_GLOBALS._player._oldCharacterScene[3] = 0;
 		R2_GLOBALS._player._characterIndex = R2_MIRANDA;
 	}
@@ -675,7 +675,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		break;
 		}
 	default:
-		if ((R2_GLOBALS._v56AA0 == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000) && (R2_GLOBALS._player._oldCharacterScene[1] == 3100)) {
+		if ((R2_GLOBALS._v56AA0 == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000) && (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 3100)) {
 			++R2_GLOBALS._v56AA0;
 			_sceneMode = 3156;
 			_actor1.postInit();
@@ -1957,8 +1957,8 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_mirandaSpeaker);
 	_stripManager.addSpeaker(&_webbsterSpeaker);
 
-	R2_GLOBALS._player._characterScene[1] = 3375;
-	R2_GLOBALS._player._characterScene[2] = 3375;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 3375;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3375;
 	R2_GLOBALS._player._characterScene[3] = 3375;
 
 	setZoomPercents(126, 55, 200, 167);
@@ -2292,8 +2292,8 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_mirandaSpeaker);
 	_stripManager.addSpeaker(&_webbsterSpeaker);
 
-	R2_GLOBALS._player._characterScene[1] = 3385;
-	R2_GLOBALS._player._characterScene[2] = 3385;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 3385;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3385;
 	R2_GLOBALS._player._characterScene[3] = 3385;
 
 	if (R2_GLOBALS._sceneManager._previousScene == 3375)
@@ -2512,8 +2512,8 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_mirandaSpeaker);
 	_stripManager.addSpeaker(&_webbsterSpeaker);
 
-	R2_GLOBALS._player._characterScene[1] = 3395;
-	R2_GLOBALS._player._characterScene[2] = 3395;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 3395;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3395;
 	R2_GLOBALS._player._characterScene[3] = 3395;
 
 	if (R2_GLOBALS._sceneManager._previousScene == 3385)
@@ -2669,8 +2669,8 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_tealSpeaker);
 
 	setZoomPercents(51, 46, 180, 200);
-	R2_GLOBALS._player._characterScene[1] = 3400;
-	R2_GLOBALS._player._characterScene[2] = 3400;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 3400;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3400;
 	R2_GLOBALS._player._characterScene[3] = 3400;
 
 	_actor7.postInit();
@@ -3577,8 +3577,8 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
 	R2_GLOBALS._sound1.play(305);
 	R2_GLOBALS._player._characterIndex = R2_QUINN;
-	R2_GLOBALS._player._characterScene[1] = 3500;
-	R2_GLOBALS._player._characterScene[2] = 3500;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 3500;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3500;
 	R2_GLOBALS._player._characterScene[3] = 3500;
 	_field1284 = 0;
 	_field1282 = 0;
@@ -4377,8 +4377,8 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_protectorSpeaker);
 
 	setZoomPercents(142, 80, 167, 105);
-	R2_GLOBALS._player._characterScene[1] = 3600;
-	R2_GLOBALS._player._characterScene[2] = 3600;
+	R2_GLOBALS._player._characterScene[R2_QUINN] = 3600;
+	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3600;
 	R2_GLOBALS._player._characterScene[3] = 3600;
 
 	_item2.setDetails(33, 3600, 6, -1, -1);
