@@ -596,7 +596,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 					v25++;
 
 					if (v25 >= _bigPictureArray2Count) {
-						if (!((PictureObject *)_picObjList[0])->_flags & 0x20)
+						if (!((PictureObject *)_picObjList[0])->_flags & 0x20)	// FIXME: looks like a typo
 							break;
 						v25 = 0;
 					}
