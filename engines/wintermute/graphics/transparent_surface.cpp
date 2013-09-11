@@ -326,7 +326,7 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 
 	byte *in;
 	byte *out;
@@ -336,7 +336,7 @@ void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, u
 		in = ino;
 		memcpy(out, in, width * 4);
 		for (uint32 j = 0; j < width; j++) {
-			out[kAIndex] = 0xFF;
+			out[TransparentSurface::kAIndex] = 0xFF;
 			out += 4;
 		}
 		outo += pitch;
@@ -344,7 +344,7 @@ void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, u
 	}
 }
 
-void TransparentSurface::doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in;
 	byte *out;
 
@@ -353,12 +353,12 @@ void TransparentSurface::doBlitBinaryFast(byte *ino, byte *outo, uint32 width, u
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
-			int a = (pix >> kAShift) & 0xff;
+			int a = (pix >> TransparentSurface::kAShift) & 0xff;
 
 			if (a == 0) { // Full transparency
 			} else { // Full opacity (Any value not exactly 0 is Opaque here)
 				*(uint32 *)out = pix;
-				out[kAIndex] = 0xFF;
+				out[TransparentSurface::kAIndex] = 0xFF;
 			}
 			out += 4;
 			in += inStep;
