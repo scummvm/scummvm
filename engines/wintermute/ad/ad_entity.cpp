@@ -57,7 +57,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdEntity, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_type = OBJECT_ENTITY;
 	_subtype = ENTITY_NORMAL;
@@ -71,7 +70,6 @@ AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdEntity::~AdEntity() {
 	_gameRef->unregisterObject(_region);
 
@@ -98,7 +96,6 @@ const char *AdEntity::getItemName() const {
 	return _item;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -165,7 +162,6 @@ TOKEN_DEF(WALK_TO_Y)
 TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
@@ -523,7 +519,6 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::display() {
 	if (_active) {
 		updateSounds();
@@ -583,7 +578,6 @@ bool AdEntity::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::update() {
 	_currentSprite = nullptr;
 
@@ -684,9 +678,7 @@ bool AdEntity::update() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
@@ -843,7 +835,6 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -921,7 +912,6 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
@@ -963,13 +953,11 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdEntity::scToString() {
 	return "[entity object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
@@ -1066,7 +1054,6 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int AdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
@@ -1079,7 +1066,6 @@ int AdEntity::getHeight() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdEntity::updatePosition() {
 	if (_region && !_sprite) {
 		_posX = _region->_rect.left + (_region->_rect.right - _region->_rect.left) / 2;
@@ -1088,7 +1074,6 @@ void AdEntity::updatePosition() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
@@ -1109,12 +1094,10 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdEntity::setItem(const char *itemName) {
 	BaseUtils::setString(&_item, itemName);
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdEntity::setSprite(const char *filename) {
 	if (_currentSprite == _sprite) {
 		_currentSprite = nullptr;

@@ -35,7 +35,6 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 	_pos = Vector2(0.0f, 0.0f);
 	_posZ = 0.0f;
@@ -62,13 +61,11 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 PartParticle::~PartParticle(void) {
 	delete _sprite;
 	_sprite = nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartParticle::setSprite(const Common::String &filename) {
 	if (_sprite && _sprite->getFilename() && scumm_stricmp(filename.c_str(), _sprite->getFilename()) == 0) {
 		_sprite->reset();
@@ -92,7 +89,6 @@ bool PartParticle::setSprite(const Common::String &filename) {
 
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
 	if (_state == PARTICLE_FADEIN) {
 		if (currentTime - _fadeStart >= (uint32)_fadeTime) {
@@ -188,7 +184,6 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartParticle::display(PartEmitter *emitter) {
 	if (!_sprite) {
 		return STATUS_FAILED;
@@ -207,7 +202,6 @@ bool PartParticle::display(PartEmitter *emitter) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool PartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 	_currentAlpha = 0;
 	_fadeStart = currentTime;
@@ -217,7 +211,6 @@ bool PartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 	//_currentAlpha = 255;
 	_fadeStartAlpha = _currentAlpha;
@@ -228,7 +221,6 @@ bool PartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));

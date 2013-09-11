@@ -35,7 +35,6 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 	BasePlatform::setRectEmpty(&_rect);
 	_owner = nullptr;
@@ -48,7 +47,6 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX, float zoomY, bool precise) : BaseClass(inGame) {
 	_owner = owner;
 	_frame = frame;
@@ -61,7 +59,6 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame
 	clipRect();
 }
 
-//////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY) : BaseClass(inGame) {
 	_owner = owner;
 	_region = region;
@@ -77,7 +74,6 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseActiveRect::~BaseActiveRect() {
 	_owner = nullptr;
 	_frame = nullptr;
@@ -85,7 +81,6 @@ BaseActiveRect::~BaseActiveRect() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseActiveRect::clipRect() {
 	Rect32 rc;
 	bool customViewport;

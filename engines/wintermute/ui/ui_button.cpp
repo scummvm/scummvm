@@ -46,7 +46,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIButton, false)
 
-//////////////////////////////////////////////////////////////////////////
 UIButton::UIButton(BaseGame *inGame) : UIObject(inGame) {
 	_backPress = _backHover = _backDisable = _backFocus = nullptr;
 
@@ -70,7 +69,6 @@ UIButton::UIButton(BaseGame *inGame) : UIObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 UIButton::~UIButton() {
 	delete _backPress;
 	delete _backHover;
@@ -101,7 +99,6 @@ UIButton::~UIButton() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIButton::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -161,7 +158,6 @@ TOKEN_DEF(PRESSED)
 TOKEN_DEF(PIXEL_PERFECT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool UIButton::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(BUTTON)
@@ -472,7 +468,6 @@ bool UIButton::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "BUTTON\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -588,7 +583,6 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void UIButton::correctSize() {
 	Rect32 rect;
 
@@ -644,7 +638,6 @@ void UIButton::correctSize() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIButton::display(int offsetX, int offsetY) {
 	if (!_visible) {
 		return STATUS_OK;
@@ -771,7 +764,6 @@ bool UIButton::display(int offsetX, int offsetY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void UIButton::press() {
 	applyEvent("Press");
 	if (_listenerObject) {
@@ -785,9 +777,7 @@ void UIButton::press() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledFont
@@ -1081,7 +1071,6 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *UIButton::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -1127,7 +1116,6 @@ ScValue *UIButton::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIButton::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
@@ -1167,13 +1155,11 @@ bool UIButton::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *UIButton::scToString() {
 	return "[button]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIButton::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);

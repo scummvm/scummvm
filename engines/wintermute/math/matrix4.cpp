@@ -32,7 +32,6 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 Matrix4::Matrix4() {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -41,12 +40,10 @@ Matrix4::Matrix4() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 Matrix4::~Matrix4() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void Matrix4::identity() {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -60,7 +57,6 @@ void Matrix4::identity() {
 
 }
 
-//////////////////////////////////////////////////////////////////////////
 void Matrix4::rotationZ(float angle) {
 	identity();
 
@@ -70,7 +66,6 @@ void Matrix4::rotationZ(float angle) {
 	m[1][0] = -sin(angle);
 }
 
-//////////////////////////////////////////////////////////////////////////
 void Matrix4::transformVector2(Vector2 &vec) {
 	float norm;
 

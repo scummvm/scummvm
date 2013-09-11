@@ -31,7 +31,6 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy) {
 	_buffer = nullptr;
 	_size = 0;
@@ -45,13 +44,11 @@ BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 g
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseDynamicBuffer::~BaseDynamicBuffer() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::cleanup() {
 	if (_buffer) {
 		free(_buffer);
@@ -64,13 +61,11 @@ void BaseDynamicBuffer::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 uint32 BaseDynamicBuffer::getSize() const {
 	return _size;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::init(uint32 initSize) {
 	cleanup();
 
@@ -91,7 +86,6 @@ bool BaseDynamicBuffer::init(uint32 initSize) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::putBytes(const byte *buffer, uint32 size) {
 	if (!_initialized) {
 		init();
@@ -114,7 +108,6 @@ bool BaseDynamicBuffer::putBytes(const byte *buffer, uint32 size) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::getBytes(byte *buffer, uint32 size) {
 	if (!_initialized) {
 		init();
@@ -132,13 +125,11 @@ bool BaseDynamicBuffer::getBytes(byte *buffer, uint32 size) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putDWORD(uint32 val) {
 	putBytes((byte *)&val, sizeof(uint32));
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 uint32 BaseDynamicBuffer::getDWORD() {
 	uint32 ret;
 	getBytes((byte *)&ret, sizeof(uint32));
@@ -146,7 +137,6 @@ uint32 BaseDynamicBuffer::getDWORD() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putString(const char *val) {
 	if (!val) {
 		putString("(null)");
@@ -157,7 +147,6 @@ void BaseDynamicBuffer::putString(const char *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 char *BaseDynamicBuffer::getString() {
 	uint32 len = getDWORD();
 	char *ret = (char *)(_buffer + _offset);
@@ -171,7 +160,6 @@ char *BaseDynamicBuffer::getString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putText(const char *fmt, ...) {
 	va_list va;
 
@@ -182,7 +170,6 @@ void BaseDynamicBuffer::putText(const char *fmt, ...) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putTextIndent(int indent, const char *fmt, ...) {
 	va_list va;
 
@@ -194,7 +181,6 @@ void BaseDynamicBuffer::putTextIndent(int indent, const char *fmt, ...) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putTextForm(const char *format, va_list argptr) {
 	char buff[32768];
 	vsprintf(buff, format, argptr);

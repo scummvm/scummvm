@@ -50,7 +50,6 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdActor, false)
 
 
-//////////////////////////////////////////////////////////////////////////
 AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_path = new AdPath(_gameRef);
 
@@ -70,7 +69,6 @@ AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 	setDefaultAnimNames();
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::setDefaultAnimNames() {
 	_talkAnimName = "talk";
 	_idleAnimName = "idle";
@@ -80,7 +78,6 @@ bool AdActor::setDefaultAnimNames() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 AdActor::~AdActor() {
 	delete _path;
 	delete _targetPoint;
@@ -117,7 +114,6 @@ AdActor::~AdActor() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -178,7 +174,6 @@ TOKEN_DEF(ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(ANIMATION)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTOR)
@@ -480,7 +475,6 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdActor::turnTo(TDirection dir) {
 	int delta1, delta2, delta3, delta;
 
@@ -506,7 +500,6 @@ void AdActor::turnTo(TDirection dir) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	_afterWalkDir = afterWalkDir;
 	if (x == _targetPoint->x && y == _targetPoint->y && _state == STATE_FOLLOWING_PATH) {
@@ -526,7 +519,6 @@ void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::display() {
 	if (_active) {
 		updateSounds();
@@ -587,7 +579,6 @@ bool AdActor::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::update() {
 	_currentSprite = nullptr;
 
@@ -817,7 +808,6 @@ bool AdActor::update() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdActor::followPath() {
 	// skip current position
 	_path->getFirst();
@@ -842,7 +832,6 @@ void AdActor::followPath() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdActor::getNextStep() {
 	if (_walkSprite) {
 		_currentSprite = _walkSprite->getSprite(_dir);
@@ -914,7 +903,6 @@ void AdActor::getNextStep() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
 	_pFCount = MAX((abs(endPt.x - startPt.x)) , (abs(endPt.y - startPt.y)));
 
@@ -1074,7 +1062,6 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *AdActor::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -1136,7 +1123,6 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
@@ -1213,13 +1199,11 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdActor::scToString() {
 	return "[actor object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseSprite *AdActor::getTalkStance(const char *stance) {
 	// forced stance?
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
@@ -1278,7 +1262,6 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
 BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 	BaseSprite *ret = nullptr;
 
@@ -1315,7 +1298,6 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
@@ -1349,7 +1331,6 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 TDirection AdActor::angleToDirection(int angle) {
 	TDirection ret = DI_DOWN;
 
@@ -1375,7 +1356,6 @@ TDirection AdActor::angleToDirection(int angle) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int AdActor::getHeight() {
 	// if no current sprite is set, set some
 	if (_currentSprite == nullptr) {
@@ -1393,7 +1373,6 @@ int AdActor::getHeight() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
 	for (uint32 i = 0; i < _anims.size(); i++) {
 		if (animName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
@@ -1403,7 +1382,6 @@ AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ANIMATION)
@@ -1441,7 +1419,6 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdActor::playAnim(const char *filename) {
 	// if we have an anim with this name, use it
 	AdSpriteSet *anim = getAnimByName(filename);

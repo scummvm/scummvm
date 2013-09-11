@@ -34,27 +34,23 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass(BaseGame *gameOwner) {
 	_gameRef = gameOwner;
 	_persistable = true;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass() {
 	_gameRef = nullptr;
 	_persistable = true;
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseClass::~BaseClass() {
 	_editorProps.clear();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 Common::String BaseClass::getEditorProp(const Common::String &propName, const Common::String &initVal) {
 	_editorPropsIter = _editorProps.find(propName);
 	if (_editorPropsIter != _editorProps.end()) {
@@ -65,7 +61,6 @@ Common::String BaseClass::getEditorProp(const Common::String &propName, const Co
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseClass::setEditorProp(const Common::String &propName, const Common::String &propValue) {
 	if (propName.size() == 0) {
 		return STATUS_FAILED;
@@ -86,7 +81,6 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(EDITOR_PROPERTY)
@@ -168,7 +162,6 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseClass::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	_editorPropsIter = _editorProps.begin();
 	while (_editorPropsIter != _editorProps.end()) {

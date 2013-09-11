@@ -38,20 +38,17 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdRotLevel, false)
 
 
-//////////////////////////////////////////////////////////////////////////
 AdRotLevel::AdRotLevel(BaseGame *inGame) : BaseObject(inGame) {
 	_posX = 0;
 	_rotation = 0.0f;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdRotLevel::~AdRotLevel() {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdRotLevel::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -81,7 +78,6 @@ TOKEN_DEF(X)
 TOKEN_DEF(ROTATION)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ROTATION_LEVEL)
@@ -136,7 +132,6 @@ bool AdRotLevel::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdRotLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ROTATION_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
@@ -148,7 +143,6 @@ bool AdRotLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdRotLevel::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);

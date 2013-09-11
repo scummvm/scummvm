@@ -36,19 +36,16 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdInventory, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdInventory::AdInventory(BaseGame *inGame) : BaseObject(inGame) {
 	_scrollOffset = 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdInventory::~AdInventory() {
 	_takenItems.clear(); // ref only
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (name == nullptr) {
 		return STATUS_FAILED;
@@ -82,7 +79,6 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventory::removeItem(const char *name) {
 	if (name == nullptr) {
 		return STATUS_FAILED;
@@ -103,7 +99,6 @@ bool AdInventory::removeItem(const char *name) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventory::removeItem(AdItem *item) {
 	if (item == nullptr) {
 		return STATUS_FAILED;
@@ -122,7 +117,6 @@ bool AdInventory::removeItem(AdItem *item) {
 	return STATUS_FAILED;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventory::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);

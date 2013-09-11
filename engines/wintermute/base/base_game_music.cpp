@@ -59,7 +59,6 @@ void BaseGameMusic::cleanup() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -87,7 +86,6 @@ bool BaseGameMusic::playMusic(int channel, const char *filename, bool looping, u
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -105,7 +103,6 @@ bool BaseGameMusic::stopMusic(int channel) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -120,7 +117,6 @@ bool BaseGameMusic::pauseMusic(int channel) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::resumeMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -135,7 +131,6 @@ bool BaseGameMusic::resumeMusic(int channel) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::setMusicStartTime(int channel, uint32 time) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
@@ -150,7 +145,6 @@ bool BaseGameMusic::setMusicStartTime(int channel, uint32 time) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::updateMusicCrossfade() {
 	/* byte globMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
 

@@ -40,7 +40,6 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(ScEngine, true)
 
 #define COMPILER_DLL "dcscomp.dll"
-//////////////////////////////////////////////////////////////////////////
 ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 	_gameRef->LOG(0, "Initializing scripting engine...");
 
@@ -81,7 +80,6 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScEngine::~ScEngine() {
 	_gameRef->LOG(0, "Shutting down scripting engine");
 
@@ -91,7 +89,6 @@ ScEngine::~ScEngine() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::cleanup() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->_owner) {
@@ -115,24 +112,20 @@ bool ScEngine::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 byte *ScEngine::loadFile(void *data, char *filename, uint32 *size) {
 	return BaseFileManager::getEngineInstance()->readWholeFile(filename, size);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void ScEngine::closeFile(void *data, byte *buffer) {
 	delete[] buffer;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void ScEngine::parseElement(void *data, int line, int type, void *elementData) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 	byte *compBuffer;
 	uint32 compSize;
@@ -169,7 +162,6 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache) {
 	// is script in cache?
 	if (!ignoreCache) {
@@ -244,7 +236,6 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::tick() {
 	if (_scripts.size() == 0) {
 		return STATUS_OK;
@@ -360,7 +351,6 @@ bool ScEngine::tick() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::tickUnbreakable() {
 	ScScript *oldScript = _currentScript;
 
@@ -386,7 +376,6 @@ bool ScEngine::tickUnbreakable() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::removeFinishedScripts() {
 	// remove finished scripts
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -404,7 +393,6 @@ bool ScEngine::removeFinishedScripts() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 	int numRunning = 0, numWaiting = 0, numPersistent = 0, numTotal = 0;
 
@@ -444,7 +432,6 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::emptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 		if (_cachedScripts[i]) {
@@ -456,7 +443,6 @@ bool ScEngine::emptyScriptCache() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::resetObject(BaseObject *Object) {
 	// terminate all scripts waiting for this object
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -472,7 +458,6 @@ bool ScEngine::resetObject(BaseObject *Object) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::resetScript(ScScript *script) {
 	// terminate all scripts waiting for this script
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -483,7 +468,6 @@ bool ScEngine::resetScript(ScScript *script) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		cleanup();
@@ -498,7 +482,6 @@ bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void ScEngine::editorCleanup() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (_scripts[i]->_owner == nullptr && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
@@ -510,7 +493,6 @@ void ScEngine::editorCleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::pauseAll() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (_scripts[i] != _currentScript) {
@@ -522,7 +504,6 @@ bool ScEngine::pauseAll() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::resumeAll() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		_scripts[i]->resume();
@@ -532,7 +513,6 @@ bool ScEngine::resumeAll() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::isValidScript(ScScript *script) {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (_scripts[i] == script) {
@@ -542,13 +522,11 @@ bool ScEngine::isValidScript(ScScript *script) {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool ScEngine::clearGlobals(bool includingNatives) {
 	_globals->CleanProps(includingNatives);
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void ScEngine::addScriptTime(const char *filename, uint32 time) {
 	if (!_isProfiling) {
 		return;
@@ -560,7 +538,6 @@ void ScEngine::addScriptTime(const char *filename, uint32 time) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void ScEngine::enableProfiling() {
 	if (_isProfiling) {
 		return;
@@ -574,7 +551,6 @@ void ScEngine::enableProfiling() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void ScEngine::disableProfiling() {
 	if (!_isProfiling) {
 		return;
@@ -585,7 +561,6 @@ void ScEngine::disableProfiling() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void ScEngine::dumpStats() {
 	error("DumpStats not ported to ScummVM yet");
 	/*  uint32 totalTime = g_system->getMillis() - _profilingStartTime;

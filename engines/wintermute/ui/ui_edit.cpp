@@ -52,7 +52,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIEdit, false)
 
-//////////////////////////////////////////////////////////////////////////
 UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_EDIT;
 
@@ -79,7 +78,6 @@ UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 UIEdit::~UIEdit() {
 	if (!_sharedFonts) {
 		if (_fontSelected) {
@@ -92,7 +90,6 @@ UIEdit::~UIEdit() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -138,7 +135,6 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF(CAPTION)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TEMPLATE)
@@ -311,7 +307,6 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "EDIT\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -374,9 +369,7 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSelectedFont
@@ -397,7 +390,6 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -474,7 +466,6 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
@@ -545,13 +536,11 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *UIEdit::scToString() {
 	return "[edit]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void UIEdit::setCursorChar(const char *character) {
 	if (!character) {
 		return;
@@ -564,7 +553,6 @@ void UIEdit::setCursorChar(const char *character) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::display(int offsetX, int offsetY) {
 	if (!_visible) {
 		return STATUS_OK;
@@ -735,7 +723,6 @@ bool UIEdit::display(int offsetX, int offsetY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	bool handled = false;
 
@@ -870,7 +857,6 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 int UIEdit::deleteChars(int start, int end) {
 	if (start > end) {
 		BaseUtils::swap(&start, &end);
@@ -897,7 +883,6 @@ int UIEdit::deleteChars(int start, int end) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int UIEdit::insertChars(int pos, const byte *chars, int num) {
 	if ((int)strlen(_text) + num > _maxLength) {
 		num -= (strlen(_text) + num - _maxLength);
@@ -927,7 +912,6 @@ int UIEdit::insertChars(int pos, const byte *chars, int num) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEdit::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);

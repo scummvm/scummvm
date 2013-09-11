@@ -35,13 +35,11 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 BaseStringTable::BaseStringTable(BaseGame *inGame) : BaseClass(inGame) {
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseStringTable::~BaseStringTable() {
 	// delete strings
 	_strings.clear();
@@ -49,7 +47,6 @@ BaseStringTable::~BaseStringTable() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
 	if (key == nullptr || val == nullptr) {
 		return STATUS_FAILED;
@@ -73,7 +70,6 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 char *BaseStringTable::getKey(const char *str) const {
 	if (str == nullptr || str[0] != '/') {
 		return nullptr;
@@ -109,7 +105,6 @@ char *BaseStringTable::getKey(const char *str) const {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 void BaseStringTable::expand(char **str) const {
 	if (str == nullptr || *str == nullptr || *str[0] != '/') {
 		return;
@@ -148,7 +143,6 @@ void BaseStringTable::expand(char **str) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *BaseStringTable::expandStatic(const char *string) const {
 	if (string == nullptr || string[0] == '\0' || string[0] != '/') {
 		return string;
@@ -184,7 +178,6 @@ const char *BaseStringTable::expandStatic(const char *string) const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	BaseEngine::LOG(0, "Loading string table...");
 

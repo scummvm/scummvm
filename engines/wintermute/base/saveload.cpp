@@ -112,7 +112,6 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SaveLoad::initAfterLoad() {
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "BaseRegion",   nullptr);
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "BaseSubFrame", nullptr);
@@ -124,34 +123,28 @@ bool SaveLoad::initAfterLoad() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadScene(void *scene, void *data) {
 	((AdScene *)scene)->afterLoad();
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadRegion(void *region, void *data) {
 	((BaseRegion *)region)->createRegion();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadSubFrame(void *subframe, void *data) {
 	((BaseSubFrame *)subframe)->setSurfaceSimple();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadSound(void *sound, void *data) {
 	((BaseSound *)sound)->setSoundSimple();
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadFont(void *font, void *data) {
 	((BaseFont *)font)->afterLoad();
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadScript(void *script, void *data) {
 	((ScScript *)script)->afterLoad();
 }

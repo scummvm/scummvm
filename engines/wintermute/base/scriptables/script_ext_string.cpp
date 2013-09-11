@@ -44,7 +44,6 @@ BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack) {
 	return new SXString(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
 SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_string = nullptr;
 	_capacity = 0;
@@ -68,7 +67,6 @@ SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 SXString::~SXString() {
 	if (_string) {
 		delete[] _string;
@@ -76,7 +74,6 @@ SXString::~SXString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void SXString::setStringVal(const char *val) {
 	int len = strlen(val);
 	if (len >= _capacity) {
@@ -90,7 +87,6 @@ void SXString::setStringVal(const char *val) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *SXString::scToString() {
 	if (_string) {
 		return _string;
@@ -100,13 +96,11 @@ const char *SXString::scToString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void SXString::scSetString(const char *val) {
 	setStringVal(val);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
@@ -339,7 +333,6 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *SXString::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -375,7 +368,6 @@ ScValue *SXString::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXString::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
@@ -401,7 +393,6 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXString::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
@@ -425,7 +416,6 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int SXString::scCompare(BaseScriptable *val) {
 	return strcmp(_string, ((SXString *)val)->_string);
 }

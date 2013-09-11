@@ -40,7 +40,6 @@ BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack) {
 	return new SXArray(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
 SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
@@ -59,21 +58,18 @@ SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
 	delete _values;
 	_values = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *SXArray::scToString() {
 	char dummy[32768];
 	strcpy(dummy, "");
@@ -96,7 +92,6 @@ const char *SXArray::scToString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Push
@@ -139,7 +134,6 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *SXArray::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -173,7 +167,6 @@ ScValue *SXArray::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXArray::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -210,7 +203,6 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
@@ -221,7 +213,6 @@ bool SXArray::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXArray::validNumber(const char *origStr, char *outStr) {
 	bool isNumber = true;
 	for (uint32 i = 0; i < strlen(origStr); i++) {
@@ -240,7 +231,6 @@ bool SXArray::validNumber(const char *origStr, char *outStr) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SXArray::push(ScValue *val) {
 	char paramName[20];
 	_length++;

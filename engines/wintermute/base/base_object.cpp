@@ -40,7 +40,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseObject, false)
 
-//////////////////////////////////////////////////////////////////////
 BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_posX = _posY = 0;
 	_movable = true;
@@ -99,13 +98,11 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseObject::~BaseObject() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::cleanup() {
 	if (_gameRef && _gameRef->_activeObject == this) {
 		_gameRef->_activeObject = nullptr;
@@ -136,7 +133,6 @@ bool BaseObject::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseObject::setCaption(const char *caption, int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
@@ -154,7 +150,6 @@ void BaseObject::setCaption(const char *caption, int caseVal) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *BaseObject::getCaption(int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
@@ -167,15 +162,12 @@ const char *BaseObject::getCaption(int caseVal) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
@@ -529,7 +521,6 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -734,7 +725,6 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
@@ -926,13 +916,11 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *BaseObject::scToString() {
 	return "[object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::showCursor() {
 	if (_cursor) {
 		return _gameRef->drawCursor(_cursor);
@@ -942,13 +930,11 @@ bool BaseObject::showCursor() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
 
@@ -1005,7 +991,6 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::setCursor(const char *filename) {
 	if (!_sharedCursors) {
 		delete _cursor;
@@ -1024,7 +1009,6 @@ bool BaseObject::setCursor(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::setActiveCursor(const char *filename) {
 	delete _activeCursor;
 	_activeCursor = new BaseSprite(_gameRef);
@@ -1038,31 +1022,26 @@ bool BaseObject::setActiveCursor(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int BaseObject::getHeight() {
 	return 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::handleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::handleMouseWheel(int delta) {
 	return false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
 	// just play loaded sound
 	if (filename == nullptr && _sFX) {
@@ -1116,7 +1095,6 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::stopSFX(bool deleteSound) {
 	if (_sFX) {
 		_sFX->stop();
@@ -1131,7 +1109,6 @@ bool BaseObject::stopSFX(bool deleteSound) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::pauseSFX() {
 	if (_sFX) {
 		return _sFX->pause();
@@ -1141,7 +1118,6 @@ bool BaseObject::pauseSFX() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::resumeSFX() {
 	if (_sFX) {
 		return _sFX->resume();
@@ -1151,7 +1127,6 @@ bool BaseObject::resumeSFX() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::setSFXTime(uint32 time) {
 	_sFXStart = time;
 	if (_sFX && _sFX->isPlaying()) {
@@ -1162,7 +1137,6 @@ bool BaseObject::setSFXTime(uint32 time) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::setSFXVolume(int volume) {
 	_sFXVolume = volume;
 	if (_sFX) {
@@ -1173,7 +1147,6 @@ bool BaseObject::setSFXVolume(int volume) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::updateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->isPlaying()) {
@@ -1189,7 +1162,6 @@ bool BaseObject::updateSounds() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::updateOneSound(BaseSound *sound) {
 	bool ret = STATUS_OK;
 
@@ -1203,7 +1175,6 @@ bool BaseObject::updateOneSound(BaseSound *sound) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::resetSoundPan() {
 	if (!_sFX) {
 		return STATUS_OK;
@@ -1213,19 +1184,16 @@ bool BaseObject::resetSoundPan() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::getExtendedFlag(const char *flagName) {
 	return false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::isReady() {
 	return _ready;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseObject::setSoundEvent(const char *eventName) {
 	delete[] _soundEvent;
 	_soundEvent = nullptr;
@@ -1237,7 +1205,6 @@ void BaseObject::setSoundEvent(const char *eventName) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseObject::afterMove() {
 	return STATUS_OK;
 }

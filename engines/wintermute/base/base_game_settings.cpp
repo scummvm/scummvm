@@ -81,7 +81,6 @@ TOKEN_DEF(SAVED_GAME_EXT)
 TOKEN_DEF(GUID)
 TOKEN_DEF_END
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseGameSettings::loadSettings(const char *filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SETTINGS)
@@ -210,7 +209,6 @@ bool BaseGameSettings::loadStringTable(const char *filename, bool clearOld) {
 	return _stringTable->loadFile(filename, clearOld);
 }
 
-//////////////////////////////////////////////////////////////////////////
 void BaseGameSettings::expandStringByStringTable(char **str) const {
 	_stringTable->expand(str);
 }

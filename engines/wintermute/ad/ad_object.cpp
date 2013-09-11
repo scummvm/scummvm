@@ -56,7 +56,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdObject, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdObject::AdObject(BaseGame *inGame) : BaseObject(inGame) {
 	_type = OBJECT_NONE;
 	_state = _nextState = STATE_NONE;
@@ -106,7 +105,6 @@ AdObject::AdObject(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdObject::~AdObject() {
 	_currentSprite = nullptr; // reference only, don't delete
 	delete _animSprite;
@@ -155,7 +153,6 @@ AdObject::~AdObject() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::playAnim(const char *filename) {
 	delete _animSprite;
 	_animSprite = nullptr;
@@ -177,21 +174,17 @@ bool AdObject::playAnim(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::display() {
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::update() {
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
@@ -657,7 +650,6 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *AdObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -766,7 +758,6 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::scSetProperty(const char *name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
@@ -837,13 +828,11 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdObject::scToString() {
 	return "[ad object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::setFont(const char *filename) {
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
@@ -858,7 +847,6 @@ bool AdObject::setFont(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int AdObject::getHeight() {
 	if (!_currentSprite) {
 		return 0;
@@ -881,7 +869,6 @@ TObjectType AdObject::getType() const {
 	return _type;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void AdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign Align) {
 	if (!_sentence) {
 		_sentence = new AdSentence(_gameRef);
@@ -1009,7 +996,6 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::reset() {
 	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr) {
 		delete _animSprite;
@@ -1026,7 +1012,6 @@ bool AdObject::reset() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
@@ -1073,7 +1058,6 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::updateSounds() {
 	if (_sentence && _sentence->_sound) {
 		updateOneSound(_sentence->_sound);
@@ -1083,7 +1067,6 @@ bool AdObject::updateSounds() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::resetSoundPan() {
 	if (_sentence && _sentence->_sound) {
 		_sentence->_sound->setPan(0.0f);
@@ -1092,7 +1075,6 @@ bool AdObject::resetSoundPan() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::getExtendedFlag(const char *flagName) {
 	if (!flagName) {
 		return false;
@@ -1104,7 +1086,6 @@ bool AdObject::getExtendedFlag(const char *flagName) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	if (_blockRegion) {
 		_blockRegion->saveAsText(buffer, indent + 2, "BLOCKED_REGION");
@@ -1119,7 +1100,6 @@ bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::updateBlockRegion() {
 	AdGame *adGame = (AdGame *)_gameRef;
 	if (adGame->_scene) {
@@ -1134,7 +1114,6 @@ bool AdObject::updateBlockRegion() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 AdInventory *AdObject::getInventory() {
 	if (!_inventory) {
 		_inventory = new AdInventory(_gameRef);
@@ -1144,7 +1123,6 @@ AdInventory *AdObject::getInventory() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::afterMove() {
 	AdRegion *newRegions[MAX_NUM_REGIONS];
 
@@ -1176,7 +1154,6 @@ bool AdObject::afterMove() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::invalidateCurrRegions() {
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
 		_currentRegions[i] = nullptr;
@@ -1185,7 +1162,6 @@ bool AdObject::invalidateCurrRegions() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::getScale(float *scaleX, float *scaleY) {
 	if (_zoomable) {
 		if (_scaleX >= 0 || _scaleY >= 0) {
@@ -1202,7 +1178,6 @@ bool AdObject::getScale(float *scaleX, float *scaleY) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::updateSpriteAttachments() {
 	for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
 		_attachmentsPre[i]->update();
@@ -1213,7 +1188,6 @@ bool AdObject::updateSpriteAttachments() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::displaySpriteAttachments(bool preDisplay) {
 	if (preDisplay) {
 		for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
@@ -1227,7 +1201,6 @@ bool AdObject::displaySpriteAttachments(bool preDisplay) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::displaySpriteAttachment(AdObject *attachment) {
 	if (!attachment->_active) {
 		return STATUS_OK;
@@ -1267,7 +1240,6 @@ bool AdObject::displaySpriteAttachment(AdObject *attachment) {
 	return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
 PartEmitter *AdObject::createParticleEmitter(bool followParent, int offsetX, int offsetY) {
 	_partFollowParent = followParent;
 	_partOffsetX = offsetX;
@@ -1283,7 +1255,6 @@ PartEmitter *AdObject::createParticleEmitter(bool followParent, int offsetX, int
 	return _partEmitter;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdObject::updatePartEmitter() {
 	if (!_partEmitter) {
 		return STATUS_FAILED;

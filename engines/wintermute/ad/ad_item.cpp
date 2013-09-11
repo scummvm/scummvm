@@ -47,7 +47,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdItem, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_spriteHover = nullptr;
 	_cursorNormal = _cursorHover = nullptr;
@@ -68,7 +67,6 @@ AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdItem::~AdItem() {
 	delete _spriteHover;
 	delete _cursorNormal;
@@ -82,7 +80,6 @@ AdItem::~AdItem() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -133,7 +130,6 @@ TOKEN_DEF(AMOUNT_ALIGN)
 TOKEN_DEF(AMOUNT_STRING)
 TOKEN_DEF(AMOUNT)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
@@ -330,7 +326,6 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::update() {
 	_currentSprite = nullptr;
 
@@ -406,7 +401,6 @@ bool AdItem::update() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::display(int x, int y) {
 	int width = 0;
 	if (_currentSprite) {
@@ -451,9 +445,7 @@ bool AdItem::display(int x, int y) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverSprite
@@ -613,7 +605,6 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *AdItem::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -697,7 +688,6 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -772,13 +762,11 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdItem::scToString() {
 	return "[item]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::persist(BasePersistenceManager *persistMgr) {
 
 	AdTalkHolder::persist(persistMgr);
@@ -799,7 +787,6 @@ bool AdItem::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdItem::getExtendedFlag(const char *flagName) {
 	if (!flagName) {
 		return false;

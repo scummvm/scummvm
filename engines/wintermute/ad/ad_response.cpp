@@ -36,7 +36,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdResponse, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 	_text = nullptr;
 	_textOrig = nullptr;
@@ -47,7 +46,6 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdResponse::~AdResponse() {
 	delete[] _text;
 	delete[] _textOrig;
@@ -65,14 +63,12 @@ AdResponse::~AdResponse() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdResponse::setText(const char *text) {
 	BaseUtils::setString(&_text, text);
 	BaseUtils::setString(&_textOrig, text);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIcon(const char *filename) {
 	delete _icon;
 	_icon = new BaseSprite(_gameRef);
@@ -85,7 +81,6 @@ bool AdResponse::setIcon(const char *filename) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponse::setFont(const char *filename) {
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
@@ -98,7 +93,6 @@ bool AdResponse::setFont(const char *filename) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconHover(const char *filename) {
 	delete _iconHover;
 	_iconHover = new BaseSprite(_gameRef);
@@ -112,7 +106,6 @@ bool AdResponse::setIconHover(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconPressed(const char *filename) {
 	delete _iconPressed;
 	_iconPressed = new BaseSprite(_gameRef);
@@ -126,7 +119,6 @@ bool AdResponse::setIconPressed(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);

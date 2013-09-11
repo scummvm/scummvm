@@ -40,14 +40,12 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIEntity, false)
 
-//////////////////////////////////////////////////////////////////////////
 UIEntity::UIEntity(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_CUSTOM;
 	_entity = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 UIEntity::~UIEntity() {
 	if (_entity) {
 		_gameRef->unregisterObject(_entity);
@@ -56,7 +54,6 @@ UIEntity::~UIEntity() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -91,7 +88,6 @@ TOKEN_DEF(ENTITY)
 TOKEN_DEF(SCRIPT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
@@ -180,7 +176,6 @@ bool UIEntity::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY_CONTAINER\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -215,7 +210,6 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::setEntity(const char *filename) {
 	if (_entity) {
 		_gameRef->unregisterObject(_entity);
@@ -234,7 +228,6 @@ bool UIEntity::setEntity(const char *filename) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::display(int offsetX, int offsetY) {
 	if (!_visible) {
 		return STATUS_OK;
@@ -264,9 +257,7 @@ bool UIEntity::display(int offsetX, int offsetY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetEntity
@@ -304,7 +295,6 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *UIEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -332,7 +322,6 @@ ScValue *UIEntity::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
@@ -348,13 +337,11 @@ bool UIEntity::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *UIEntity::scToString() {
 	return "[entity container]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIEntity::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);

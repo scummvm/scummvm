@@ -33,22 +33,16 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
 IMPLEMENT_PERSISTENT(BaseFontStorage, true)
 
-//////////////////////////////////////////////////////////////////////////
 BaseFontStorage::BaseFontStorage(BaseGame *inGame) : BaseClass(inGame) {
 }
 
-//////////////////////////////////////////////////////////////////////////
 BaseFontStorage::~BaseFontStorage() {
 	cleanup(true);
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::cleanup(bool warn) {
 	for (uint32 i = 0; i < _fonts.size(); i++) {
 		if (warn) {
@@ -61,7 +55,6 @@ bool BaseFontStorage::cleanup(bool warn) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::initLoop() {
 	for (uint32 i = 0; i < _fonts.size(); i++) {
 		_fonts[i]->initLoop();
@@ -69,7 +62,6 @@ bool BaseFontStorage::initLoop() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 	if (!filename.size()) {
 		return nullptr;
@@ -105,7 +97,6 @@ BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::removeFont(BaseFont *font) {
 	if (!font) {
 		return STATUS_FAILED;
@@ -125,7 +116,6 @@ bool BaseFontStorage::removeFont(BaseFont *font) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::persist(BasePersistenceManager *persistMgr) {
 
 	if (!persistMgr->getIsSaving()) {

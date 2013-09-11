@@ -41,13 +41,9 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////
 // Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
 IMPLEMENT_PERSISTENT(BaseFontBitmap, false)
 
-//////////////////////////////////////////////////////////////////////
 BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
 	_subframe = nullptr;
 	_sprite = nullptr;
@@ -60,7 +56,6 @@ BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseFontBitmap::~BaseFontBitmap() {
 	delete _subframe;
 	delete _sprite;
@@ -69,19 +64,16 @@ BaseFontBitmap::~BaseFontBitmap() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 void BaseFontBitmap::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 	textHeightDraw(text, x, y, width, align, true, maxHeight, maxLength);
 }
 
 
-//////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getTextHeight(const byte *text, int width) {
 	return textHeightDraw(text, 0, 0, width, TAL_LEFT, false);
 }
 
 
-//////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getTextWidth(const byte *text, int maxLength) {
 	AnsiString str;
 
@@ -106,7 +98,6 @@ int BaseFontBitmap::getTextWidth(const byte *text, int maxLength) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
 	if (maxLength == 0) {
 		return 0;
@@ -233,7 +224,6 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 }
 
 
-//////////////////////////////////////////////////////////////////////
 void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	if (_fontextFix) {
 		c--;
@@ -270,7 +260,6 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::loadFile(const Common::String &filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -310,7 +299,6 @@ TOKEN_DEF(SPRITE)
 TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONTEXT_FIX)
@@ -492,7 +480,6 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 
 	BaseFont::persist(persistMgr);
@@ -519,7 +506,6 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getCharWidth(byte index) {
 	if (_fontextFix) {
 		index--;
@@ -528,7 +514,6 @@ int BaseFontBitmap::getCharWidth(byte index) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::getWidths() {
 	BaseSurface *surf = nullptr;
 
@@ -582,7 +567,6 @@ bool BaseFontBitmap::getWidths() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getLetterHeight() {
 	return _tileHeight;
 }
