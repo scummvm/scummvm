@@ -794,8 +794,10 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
-	if (!palette && pX == -1)
-		error("Bitmap::putDibRB(): Both global and local palettes are empty");
+	if (!palette && pX == -1) {
+		warning("Bitmap::putDibRB(): Both global and local palettes are empty");
+		return false;
+	}
 
 	debug(8, "Bitmap::putDibRB()");
 

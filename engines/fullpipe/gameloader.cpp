@@ -163,7 +163,7 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 		return false;
 
 	if (!_sc2array[sc2idx]._isLoaded)
-		return 0;
+		return false;
 
 	if (_sc2array[sc2idx]._entranceDataCount < 1) {
 		g_fullpipe->_currentScene = st->_scene;
@@ -173,14 +173,12 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 	if (_sc2array[sc2idx]._entranceDataCount <= 0)
 		return false;
 
-	if (sceneId == 726)
-		return true;
-
-	int entranceIdx;
-	for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]->_field_4 != entranceId; entranceIdx++) {
-		if (entranceIdx >= _sc2array[sc2idx]._entranceDataCount)
-			return false;
-	}
+	int entranceIdx = 0;
+	if (sceneId != 726) // WORKAROUND
+		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]->_field_4 != entranceId; entranceIdx++) {
+			if (entranceIdx >= _sc2array[sc2idx]._entranceDataCount)
+				return false;
+		}
 
 	CGameVar *sg = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 
