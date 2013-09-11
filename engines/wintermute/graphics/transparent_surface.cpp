@@ -340,7 +340,7 @@ void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 			out += 4;
 		}
 		outo += pitch;
-		*ino+= inoStep;
+		ino += inoStep;
 	}
 }
 
@@ -364,7 +364,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 			in += inStep;
 		}
 		outo += pitch;
-		*ino+= inoStep;
+		ino += inoStep;
 	}
 }
 
@@ -396,7 +396,7 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 				out += 4;
 			}
 			outo += pitch;
-			*ino+= inoStep;
+			ino += inoStep;
 		}
 	} else {
 
@@ -424,7 +424,7 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 				out += 4;
 			}
 			outo += pitch;
-			*ino+= inoStep;
+			ino += inoStep;
 		}
 	}
 }
