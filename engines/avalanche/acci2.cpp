@@ -261,19 +261,18 @@ Common::String Acci::totalTime() {
 	const double ticksInOneSec = (double)(65535) / 3600;
 	uint16 h, m, s;
 
-	h = _vm->_gyro->_dna._totalTime / ticksInOneSec; // No. of seconds.
-	h = floor((float)h);
+	h = floor(_vm->_gyro->_dna._totalTime / ticksInOneSec); // No. of seconds.
 	m = h % 3600;
-	h = h / 3600;
+	h /= 3600;
 	s = m % 60;
-	m = m / 60;
+	m /= 60;
 
 	Common::String result = "You've been playing for ";
 	if (h > 0)
-		result += _vm->_gyro->intToStr(h) + " hours, ";
+		result += Common::String::format("%d hours, ", h);
 	if ((m > 0) || (h != 0))
-		result += _vm->_gyro->intToStr(m) + " minutes and ";
-	return result + _vm->_gyro->intToStr(s) + " seconds.";
+		result = Common::String::format("%d minutes and ", m);
+	return result + Common::String::format("%d seconds", s);
 }
 
 void Acci::cheatParse(Common::String codes) {
@@ -751,24 +750,35 @@ void Acci::examine() {
 
 void Acci::inventory() {
 	byte itemNum = 0;
-	_vm->_scrolls->displayText(Common::String("You're carrying ") + Scrolls::kControlToBuffer);
+	Common::String tmpStr = Common::String::format("You're carrying %c", Scrolls::kControlToBuffer);
+	_vm->_scrolls->displayText(tmpStr);
 
 	for (byte i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_dna._objects[i]) {
 			itemNum++;
-			if (itemNum == _vm->_gyro->_dna._carryNum)
-				_vm->_scrolls->displayText(Common::String("and ") + Scrolls::kControlToBuffer);
+			if (itemNum == _vm->_gyro->_dna._carryNum) {
+				tmpStr = Common::String::format("and %c", Scrolls::kControlToBuffer);
+				_vm->_scrolls->displayText(tmpStr);
+			}
+
 			_vm->_scrolls->displayText(_vm->_gyro->getItem(i + 1) + Scrolls::kControlToBuffer);
-			if ((i + 1) == _vm->_gyro->_dna._wearing)
-				_vm->_scrolls->displayText(Common::String(", which you're wearing") + Scrolls::kControlToBuffer);
-			if (itemNum < _vm->_gyro->_dna._carryNum)
-				_vm->_scrolls->displayText(Common::String(", ") + Scrolls::kControlToBuffer);
+
+			if ((i + 1) == _vm->_gyro->_dna._wearing) {
+				tmpStr = Common::String::format(", which you're wearing%c", Scrolls::kControlToBuffer);
+				_vm->_scrolls->displayText(tmpStr);
+			}
+
+			if (itemNum < _vm->_gyro->_dna._carryNum) {
+				tmpStr = Common::String::format(", %c", Scrolls::kControlToBuffer);
+				_vm->_scrolls->displayText(tmpStr);
+			}
 		}
 	}
 
-	if (_vm->_gyro->_dna._wearing == kNothing)
-		_vm->_scrolls->displayText(Common::String("...") + Scrolls::kControlNewLine + Scrolls::kControlNewLine + "...and you're stark naked!");
-	else
+	if (_vm->_gyro->_dna._wearing == kNothing) {
+		tmpStr = Common::String::format("...%c%c...and you're stark naked!", Scrolls::kControlNewLine, Scrolls::kControlNewLine);
+		_vm->_scrolls->displayText(tmpStr);
+	} else
 		_vm->_scrolls->displayText(".");
 }
 
@@ -838,23 +848,30 @@ void Acci::peopleInRoom() {
 	if (numPeople == 0) // If nobody's here, we can cut out straight away.
 		return;
 
+	Common::String tmpStr;
 	byte actPerson = 0; // Actually listed people.
 	for (byte i = 1; i < 29; i++) {
 		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_dna._room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
 				_vm->_scrolls->displayText(_vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
-			else if (actPerson < numPeople) // The middle...
-				_vm->_scrolls->displayText(Common::String(", ") + _vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
-			else // The end.
-				_vm->_scrolls->displayText(Common::String(" and ") + _vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
+			else if (actPerson < numPeople) { // The middle...
+				tmpStr = Common::String::format(", %s%c", _vm->_gyro->getName(i + 150), Scrolls::kControlToBuffer);
+				_vm->_scrolls->displayText(tmpStr);
+			} else { // The end.
+				tmpStr = Common::String::format(" and %s%c", _vm->_gyro->getName(i + 150), Scrolls::kControlToBuffer);
+				_vm->_scrolls->displayText(tmpStr);
+			}
 		}
 	}
 
-	if (numPeople == 1)
-		_vm->_scrolls->displayText(Common::String(" is") + Scrolls::kControlToBuffer);
-	else
-		_vm->_scrolls->displayText(Common::String(" are") + Scrolls::kControlToBuffer);
+	if (numPeople == 1) {
+		tmpStr = Common::String::format(" is%c", Scrolls::kControlToBuffer);
+		_vm->_scrolls->displayText(tmpStr);
+	} else {
+		tmpStr = Common::String::format(" are%c", Scrolls::kControlToBuffer);
+		_vm->_scrolls->displayText(tmpStr);
+	}
 
 	_vm->_scrolls->displayText(" here."); // End and display it.
 }
@@ -1360,9 +1377,10 @@ void Acci::doThat() {
 	case kVerbCodeOpen:
 		openDoor();
 		break;
-	case kVerbCodePause: // Note that the original game doesn't care about the "O.K." box neither, it accepts clicks from everywhere on the screen to continue. Just like my code.
-		_vm->_scrolls->displayText(Common::String("Game paused.") + Scrolls::kControlCenter + Scrolls::kControlNewLine + Scrolls::kControlNewLine
-			+ "Press Enter, Esc, or click the mouse on the \"O.K.\" box to continue.");
+	case kVerbCodePause: { // Note that the original game doesn't care about the "O.K." box neither, it accepts clicks from everywhere on the screen to continue. Just like my code.
+		Common::String tmpStr = Common::String::format("Game paused.%c%c%cPress Enter, Esc, or click the mouse on the \"O.K.\" box to continue.", Scrolls::kControlCenter, Scrolls::kControlNewLine, Scrolls::kControlNewLine);
+		_vm->_scrolls->displayText(tmpStr);
+		}
 		break;
 	case kVerbCodeGet:
 		if (_thing != kPardon) { // Legitimate try to pick something up.
