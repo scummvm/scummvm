@@ -368,7 +368,8 @@ void TransparentSurface::doBlitBinaryFast(byte *ino, byte *outo, uint32 width, u
 	}
 }
 
-template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint color) {
+template<class Blender> 
+void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint color) {
 
 	byte *in;
 	byte *out;
