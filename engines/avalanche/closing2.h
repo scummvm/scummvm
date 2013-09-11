@@ -33,37 +33,33 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-
-
 namespace Avalanche {
 class AvalancheEngine;
 
 class Closing {
 public:
 	Closing(AvalancheEngine *vm);
-
 	void exitGame();
 
 private:
+// CHECKME: Useless values?
 	enum ScreenType {
-		kScreenBugAlert = 1,
-		kScreenRamCram = 2,
-		kScreenNagScreen = 3,
-		kScreenTwoCopies = 5
+//		kScreenBugAlert = 1,
+//		kScreenRamCram = 2,
+//		kScreenTwoCopies = 5,
+		kScreenNagScreen = 3
 	};
 
 	AvalancheEngine *_vm;
 
-	Common::String q; //absolute $B8FA:0* ; Nobody's using the graphics memory now.
-	Common::File f;
-
 	void getScreen(ScreenType which);
-
 	void showScreen();
-
 	void putIn(Common::String str, uint16 where);
 
-	void handleBug();
+	// CHECKME: Unused?
+	// Common::String q; //absolute $B8FA:0* ; Nobody's using the graphics memory now.
+	// Common::File f;
+	// void handleBug();
 };
 
 } // End of namespace Avalanche.

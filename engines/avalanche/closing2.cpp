@@ -79,8 +79,9 @@ void Closing::exitGame() {
 	showScreen(); // No halt- it's already set up.
 }
 
-void Closing::handleBug() {
-	warning("STUB: Closing::handleBug()");
-}
+// CHECKME: Useless?
+// void Closing::handleBug() {
+//	warning("STUB: Closing::handleBug()");
+//}
 
 } // End of namespace Avalanche.
