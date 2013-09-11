@@ -168,6 +168,8 @@ ipch/
 [Rr]elease32/
 [Dd]ebug64/
 [Rr]elease64/
+LLVM32/
+LLVM64/
 
 #Ignore Qt Creator project files
 ScummVM.config

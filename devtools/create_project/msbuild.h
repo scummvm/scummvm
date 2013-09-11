@@ -35,7 +35,7 @@ protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 	                       const StringList &includeList, const StringList &excludeList);
 
-	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis);
+	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration);
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
@@ -44,7 +44,7 @@ protected:
 
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
-	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis);
+	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration);
 
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();

@@ -133,6 +133,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Elevator
 		return new Scene1530();
 	case 1550:
+		// Spaceport
 		return new Scene1550();
 	case 1575:
 		return new Scene1575();
@@ -143,16 +144,22 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Miranda being questioned
 		return new Scene1625();
 	case 1700:
+		// Rim
 		return new Scene1700();
 	case 1750:
+		// Rim Transport Vechile
 		return new Scene1750();
 	case 1800:
+		// Rim Lift Exterior
 		return new Scene1800();
 	case 1850:
+		// Rim Lift Interior
 		return new Scene1850();
 	case 1875:
+		// Rim Lift Computer
 		return new Scene1875();
 	case 1900:
+		// Spill Mountains Elevator Exit
 		return new Scene1900();
 	case 1925:
 		return new Scene1925();
@@ -163,49 +170,49 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #2 */
 	//
 	case 2000:
-		// Ice Maze
+		// Spill Mountains
 		return new Scene2000();
 	case 2350:
-		// Ice Maze: Balloon Launch Platform
+		// Spill Mountains: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
-		// Ice Maze: Large empty room
+		// Spill Mountains: Large empty room
 		return new Scene2400();
 	case 2425:
-		// Ice Maze: The Hall of Records
+		// Spill Mountains: The Hall of Records
 		return new Scene2425();
 	case 2430:
-		// Ice Maze: Bedroom
+		// Spill Mountains: Bedroom
 		return new Scene2430();
 	case 2435:
-		// Ice Maze: Throne room
+		// Spill Mountains: Throne room
 		return new Scene2435();
 	case 2440:
-		// Ice Maze: Another bedroom
+		// Spill Mountains: Another bedroom
 		return new Scene2440();
 	case 2445:
-		// Ice Maze:
+		// Spill Mountains:
 		return new Scene2445();
 	case 2450:
-		// Ice Maze: Another bedroom
+		// Spill Mountains: Another bedroom
 		return new Scene2450();
 	case 2455:
-		// Ice Maze: Inside crevasse
+		// Spill Mountains: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Ice Maze: Large Cave
+		// Spill Mountains: Large Cave
 		return new Scene2500();
 	case 2525:
-		// Ice Maze: Furnace room
+		// Spill Mountains: Furnace room
 		return new Scene2525();
 	case 2530:
-		// Ice Maze: Well
+		// Spill Mountains: Well
 		return new Scene2530();
 	case 2535:
-		// Ice Maze: Tannery
+		// Spill Mountains: Tannery
 		return new Scene2535();
 	case 2600:
-		// Ice Maze: Exit
+		// Spill Mountains: Exit
 		return new Scene2600();
 	case 2700:
 		// Forest Maze
@@ -318,11 +325,10 @@ SceneExt::SceneExt(): Scene() {
 
 	for (int i = 0; i < 256; i++)
 		_field312[i] = 0;
-	_field372 = _field37A = 0;
+
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
-	_focusObject = NULL;
 
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,
@@ -331,13 +337,20 @@ SceneExt::SceneExt(): Scene() {
 	R2_GLOBALS._animationCtr = 0;
 }
 
+void SceneExt::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+
+	s.syncBytes(&_field312[0], 256);
+	_sceneAreas.synchronize(s);
+}
+
 void SceneExt::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit(OwnerList);
 
 	// Exclude the bottom area of the screen to allow room for the UI
 	T2_GLOBALS._interfaceY = UI_INTERFACE_Y;
 
-	// Initialise fields
+	// Initialize fields
 	_action = NULL;
 	_field12 = 0;
 	_sceneMode = 0;
@@ -381,27 +394,6 @@ void SceneExt::dispatch() {
 	}
 */
 	Scene::dispatch();
-}
-
-void SceneExt::loadScene(int sceneNum) {
-	Scene::loadScene(sceneNum);
-
-	_v51C34.top = 0;
-	_v51C34.bottom = 300;
-
-	int prevScene = R2_GLOBALS._sceneManager._previousScene;
-	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
-
-	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50)) ||
-			(sceneNumber == 50) || ((prevScene == 205) && (sceneNumber == 100)) ||
-			((prevScene == 180) && (sceneNumber == 100))) {
-		// TODO: sub_17875
-		R2_GLOBALS._uiElements._active = true;
-		R2_GLOBALS._uiElements.show();
-	} else {
-		// Update the user interface
-		R2_GLOBALS._uiElements.updateInventory();
-	}
 }
 
 bool SceneExt::display(CursorType action, Event &event) {
@@ -465,7 +457,6 @@ void SceneExt::fadeOut() {
 
 void SceneExt::startStrip() {
 	SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
-	scene->_field372 = 1;
 	scene->_savedPlayerEnabled = R2_GLOBALS._player._enabled;
 
 	if (scene->_savedPlayerEnabled) {
@@ -481,7 +472,6 @@ void SceneExt::startStrip() {
 
 void SceneExt::endStrip() {
 	SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
-	scene->_field372 = 0;
 
 	if (scene->_savedPlayerEnabled) {
 		R2_GLOBALS._player.enableControl();
@@ -621,7 +611,7 @@ void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeL
 		R2_GLOBALS._gfxColors.foreground = 59;
 		R2_GLOBALS._fontColors.background = 4;
 		R2_GLOBALS._fontColors.foreground = 15;
-		R2_GLOBALS._frameEdgeColour = 2;
+		R2_GLOBALS._frameEdgeColor = 2;
 
 		R2_GLOBALS._scenePalette.loadPalette(0);
 		R2_GLOBALS._scenePalette.setEntry(255, 0xff, 0xff, 0xff);
@@ -665,7 +655,7 @@ void SceneHandlerExt::setupPaletteMaps() {
 					break;
 				}
 
-				// Scan for the palette index with the closest matching colour
+				// Scan for the palette index with the closest matching color
 				int threshold = 769;
 				int foundIndex = -1;
 				for (int pIndex2 = 223; pIndex2 >= 0; --pIndex2) {
@@ -971,7 +961,8 @@ void Ringworld2InvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
 
 	// Update the user interface if necessary
-	T2_GLOBALS._uiElements.updateInventory();
+	T2_GLOBALS._uiElements.updateInventory(
+		(sceneNumber == R2_GLOBALS._player._characterIndex) ? objectNum : 0);
 }
 
 /**
@@ -1325,7 +1316,7 @@ GfxSurface SceneActor::getFrame() {
 
 /*--------------------------------------------------------------------------*/
 
-SceneArea::SceneArea(): EventHandler() {
+SceneArea::SceneArea(): SceneItem() {
 	_enabled = true;
 	_insideArea = false;
 	_savedCursorNum = CURSOR_NONE;
@@ -1338,8 +1329,8 @@ void SceneArea::synchronize(Serializer &s) {
 	_bounds.synchronize(s);
 	s.syncAsSint16LE(_enabled);
 	s.syncAsSint16LE(_insideArea);
-	s.syncAsSint16LE(_cursorNum);
-	s.syncAsSint16LE(_savedCursorNum);
+	s.syncAsSint32LE(_cursorNum);
+	s.syncAsSint32LE(_savedCursorNum);
 	s.syncAsSint16LE(_cursorState);
 }
 
@@ -1429,6 +1420,7 @@ void SceneExit::process(Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void SceneAreaObject::remove() {
+	R2_GLOBALS._sceneItems.remove(this);
 	_object1.remove();
 	SceneArea::remove();
 	--R2_GLOBALS._insetUp;
@@ -1438,19 +1430,22 @@ void SceneAreaObject::process(Event &event) {
 	if (_insetCount == R2_GLOBALS._insetUp) {
 		CursorType cursor = R2_GLOBALS._events.getCursor();
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_object1._bounds.contains(event.mousePos)) {
 			// Cursor moving in bounded area
 			if (cursor == _cursorNum) {
 				R2_GLOBALS._events.setCursor(_savedCursorNum);
 			}
 		} else if (event.mousePos.y < 168) {
-			if (_cursorNum != cursor)
+			if (_cursorNum != cursor) {
 				// Cursor moved outside bounded area
-				R2_GLOBALS._events.setCursor(_savedCursorNum);
-
+				_savedCursorNum = R2_GLOBALS._events.getCursor();
+				R2_GLOBALS._events.setCursor(CURSOR_INVALID);
+			}
+				
 			if (event.eventType == EVENT_BUTTON_DOWN) {
-				R2_GLOBALS._events.setCursor(_savedCursorNum);
 				event.handled = true;
+				R2_GLOBALS._events.setCursor(_savedCursorNum);
+				remove();
 			}
 		}
 	}
@@ -1470,7 +1465,7 @@ void SceneAreaObject::setDetails(int visage, int strip, int frameNumber, const C
 }
 
 void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	((SceneHotspot *)(this))->setDetails(resNum, lookLineNum, talkLineNum, useLineNum,
+	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum,
 		2, (SceneItem *)NULL);
 }
 
@@ -1882,7 +1877,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 
 	default:
 		// ANIMPALMODE_CURR_PALETTE
-		// Use the closest matching colours in the currently active palette to those specified in the animation
+		// Use the closest matching colors in the currently active palette to those specified in the animation
 		for (int idx = _subData._palStart; idx < (_subData._palStart + _subData._palSize); ++idx) {
 			byte r = _subData._palData[idx * 3];
 			byte g = _subData._palData[idx * 3 + 1];
@@ -2270,21 +2265,21 @@ void ScannerDialog::Button::reset() {
 
 			scanner._obj5.postInit();
 			scanner._obj5.setup(4, 4, 1);
-			scanner._obj5.setPosition(Common::Point(R2_GLOBALS._v565EC[1] + 145,
-				R2_GLOBALS._v565EC[3] + 59));
+			scanner._obj5.setPosition(Common::Point(R2_GLOBALS._s1550PlayerArea[R2_QUINN].x + 145,
+				R2_GLOBALS._s1550PlayerArea[R2_QUINN].y + 59));
 			scanner._obj5.fixPriority(257);
 
 			scanner._obj6.postInit();
 			scanner._obj6.setup(4, 4, 2);
-			scanner._obj6.setPosition(Common::Point(R2_GLOBALS._v565EC[2] + 145,
-				R2_GLOBALS._v565EC[4] + 59));
+			scanner._obj6.setPosition(Common::Point(R2_GLOBALS._s1550PlayerArea[R2_SEEKER].x + 145,
+				R2_GLOBALS._s1550PlayerArea[R2_SEEKER].y + 59));
 			scanner._obj6.fixPriority(257);
 			break;
 		case 1700:
 		case 1800:
-			if (R2_GLOBALS._v565F8 < 0 || (R2_GLOBALS._v565F8 == 0 && R2_GLOBALS._v565F6 < 1201))
+			if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 3);
-			else if (R2_GLOBALS._v565F8 > 0 || (R2_GLOBALS._v565F8 == 0 && R2_GLOBALS._v565F6 < 1201))
+			else if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 4);
 			else
 				scanner._obj4.setup(4, 3, 5);
@@ -2417,7 +2412,7 @@ void ScannerDialog::remove() {
 	switch (R2_GLOBALS._sceneManager._sceneNumber) {
 	case 1550:
 	case 1700:
-		R2_GLOBALS._events.setCursor(R2_GLOBALS._player._canWalk ? CURSOR_ARROW : CURSOR_USE);
+		R2_GLOBALS._events.setCursor(R2_GLOBALS._player._canWalk ? CURSOR_WALK : CURSOR_USE);
 		break;
 	case 3800:
 	case 3900: {

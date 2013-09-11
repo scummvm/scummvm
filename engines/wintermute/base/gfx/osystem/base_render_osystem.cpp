@@ -84,7 +84,6 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	delete _renderSurface;
 	_blankSurface->free();
 	delete _blankSurface;
-	TransparentSurface::destroyLookup();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,7 +126,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	_windowed = !ConfMan.getBool("fullscreen");
 
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
 	g_system->initSize(_width, _height, &format);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();

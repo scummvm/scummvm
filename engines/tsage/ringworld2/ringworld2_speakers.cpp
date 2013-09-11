@@ -204,13 +204,12 @@ void VisualSpeaker::setText(const Common::String &msg) {
 	_sceneText._textMode = _textMode;
 	_sceneText.setup(s);
 
-	//_sceneText.clone();
-
 	_sceneText.setPosition(_textPos);
 	_sceneText.fixPriority(256);
 
 	// If subtitles are turned off, don't show the text
-	if (!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
+	if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) &&  
+			!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
 		_sceneText.hide();
 	}
 
@@ -1042,7 +1041,7 @@ void SpeakerPharisha2435::proc15() {
 	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_astor;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1180,6 +1179,7 @@ void SpeakerQuinn300::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 3) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 300);
 			Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
 			_object2 = &scene->_quinn;
 		}
@@ -1220,6 +1220,51 @@ void SpeakerQuinn300::proc15() {
 	}
 }
 
+void SpeakerQuinn500::proc15() {
+	int v = _speakerMode;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 500);
+			Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_seeker;
+		}
+
+		_object2->hide();
+
+		_object1.postInit();
+		_object1._effect = _object2->_effect;
+		_object1._shade = _object2->_shade;
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+
+		switch (_object2->_visage) {
+		case 10:
+			_object1.setup(4021, (v == 1) ? 5 : 7, 1);
+			break;
+
+		case 1500:
+			_object1.setup(4021, (v == 1) ? 1 : 3, 1);
+			break;
+
+		default:
+			break;
+		}
+
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 void SpeakerQuinn1100::proc15() {
 	int v = _speakerMode;
 
@@ -1230,6 +1275,7 @@ void SpeakerQuinn1100::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 1100);
 			Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 			_object2 = &scene->_seeker;
 		}
@@ -1275,8 +1321,9 @@ void SpeakerQuinn2435::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
 			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();
@@ -1301,8 +1348,9 @@ void SpeakerQuinn2450::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
 			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();
@@ -1948,9 +1996,9 @@ void SpeakerSeeker300::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_object2 = &R2_GLOBALS._player;
-		} else {
+		} else {assert(R2_GLOBALS._sceneManager._sceneNumber == 300);
 			Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
 			_object2 = &scene->_seeker;
 		}
@@ -1980,6 +2028,43 @@ void SpeakerSeeker300::proc15() {
 	}
 }
 
+void SpeakerSeeker500::proc15() {
+	int v = _speakerMode;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 500);
+			Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_seeker;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+
+		_object1._effect = _object2->_effect;
+		_object1._shade = _object2->_shade;
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+
+		if (v == 1)
+			_object1.setup(4041, 3, 1);
+		else
+			_object1.setup(4041, 1, 1);
+
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 void SpeakerSeeker1100::proc15() {
 	int v = _speakerMode;
 
@@ -1990,6 +2075,7 @@ void SpeakerSeeker1100::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 2) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 1100);
 			Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 			_object2 = &scene->_seeker;
 		}
@@ -2046,6 +2132,7 @@ void SpeakerSeeker1900::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 2) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 1900);
 			Scene1900 *scene = (Scene1900 *)R2_GLOBALS._sceneManager._scene;
 			_object2 = &scene->_actor1;
 		}
@@ -2076,8 +2163,9 @@ void SpeakerSeeker2435::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 2) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
 			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();
@@ -2102,8 +2190,9 @@ void SpeakerSeeker2450::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 2) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 2450);
 			Scene2450 *scene = (Scene2450 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();
@@ -2492,9 +2581,9 @@ void SpeakerSocko3200::proc15() {
 // Classes related to SOLDIER
 //----------------------------------------------------------------------------
 
-SpeakerSoldier::SpeakerSoldier(int colour) {
+SpeakerSoldier::SpeakerSoldier(int color) {
 	_speakerName = "SOLDIER";
-	_color1 = colour;
+	_color1 = color;
 	_color2 = 0;
 	_speakerMode = 0;
 	_textWidth = 300;
@@ -2577,7 +2666,7 @@ void SpeakerTeal1625::proc15() {
 
 	if (!_object2) {
 		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_tealHead;
 		_object2->hide();
 
 		_object1.postInit();
@@ -2788,9 +2877,9 @@ void SpeakerTomko3245::proc15() {
 // Classes related to WEBBSTER
 //----------------------------------------------------------------------------
 
-SpeakerWebbster::SpeakerWebbster(int colour) {
+SpeakerWebbster::SpeakerWebbster(int color) {
 	_speakerName = "WEBBSTER";
-	_color1 = colour;
+	_color1 = color;
 	_color2 = 0;
 	_speakerMode = 0;
 	_textWidth = 300;

@@ -277,7 +277,7 @@ void EditableWidget::drawCaret(bool erase) {
 			int chrWidth = g_gui.getCharWidth(_editString[_caretPos], _font);
 			const uint last = (_caretPos > 0) ? _editString[_caretPos - 1] : 0;
 			x += g_gui.getKerningOffset(last, _editString[_caretPos], _font);
-			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height() - 2), chr, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font);
+			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height() - 2), chr, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		}
 	}
 

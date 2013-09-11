@@ -66,8 +66,13 @@ public:
 	uint16 getWidth() const { return _header.width; }
 	uint16 getHeight() const { return _header.height; }
 
+	bool rewind();
+	bool isRewindable() const { return true; }
+	bool isSeekable() const;
+
 protected:
 	 void readNextPacket();
+	 bool seekIntern(const Audio::Timestamp &time);
 
 private:
 	struct BitmapInfoHeader {
@@ -157,7 +162,7 @@ private:
 
 	class AVIVideoTrack : public FixedRateVideoTrack {
 	public:
-		AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader);
+		AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette = 0);
 		~AVIVideoTrack();
 
 		void decodeFrame(Common::SeekableReadStream *stream);
@@ -170,7 +175,12 @@ private:
 		const Graphics::Surface *decodeNextFrame() { return _lastFrame; }
 		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
-		void markPaletteDirty() { _dirtyPalette = true; }
+		void setCurFrame(int frame) { _curFrame = frame; }
+		void loadPaletteFromChunk(Common::SeekableReadStream *chunk);
+		void useInitialPalette();
+
+		bool isRewindable() const { return true; }
+		bool rewind();
 
 	protected:
 		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
@@ -179,6 +189,7 @@ private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;
 		byte _palette[3 * 256];
+		byte *_initialPalette;
 		mutable bool _dirtyPalette;
 		int _frameCount, _curFrame;
 
@@ -194,6 +205,11 @@ private:
 
 		void queueSound(Common::SeekableReadStream *stream);
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
+		void resetStream();
+
+		bool isRewindable() const { return true; }
+		bool rewind();
 
 	protected:
 		Audio::AudioStream *getAudioStream() const;

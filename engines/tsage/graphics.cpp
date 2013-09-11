@@ -806,20 +806,20 @@ void GfxElement::drawFrame() {
 		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.bottom - 1)) = 0;
 
 		// Inner frame border
-		surface.hLine(tempRect.left + 2, tempRect.top + 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColour); 
-		surface.hLine(tempRect.left + 2, tempRect.bottom - 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColour); 
-		surface.vLine(tempRect.left + 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColour);
-		surface.vLine(tempRect.right - 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColour);
-		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColour;
-		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColour;
-		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColour;
-		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColour;
+		surface.hLine(tempRect.left + 2, tempRect.top + 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor); 
+		surface.hLine(tempRect.left + 2, tempRect.bottom - 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor); 
+		surface.vLine(tempRect.left + 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
+		surface.vLine(tempRect.right - 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
+		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColor;
 
 		gfxManager.unlockSurface();
 		gfxManager.getSurface().addDirtyRect(tempRect);
 
 	} else {
-		// Fill dialog content with specified background colour
+		// Fill dialog content with specified background color
 		gfxManager.fillRect(tempRect, _colors.background);
 
 		--tempRect.bottom; --tempRect.right;

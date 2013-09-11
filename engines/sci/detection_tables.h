@@ -1656,6 +1656,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Questions mini-game from the King's Quest Collection
+	// SCI interpreter version 2.000.000
+	{"kquestions", "", {
+		{"resource.000", 0, "9b1cddecd4f0720d83661ba7aed28891", 162697},
+		{"resource.map", 0, "93a2251fa64e729d7a7d2fe56b217c8e", 502},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO3(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_FB01_MIDI)	},
+
 #endif // ENABLE_SCI32
 
 	// Laura Bow - English Amiga

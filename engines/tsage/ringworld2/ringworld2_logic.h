@@ -42,9 +42,8 @@ public:
 	static Scene *createScene(int sceneNumber);
 };
 
-class SceneArea: public EventHandler {
+class SceneArea: public SceneItem {
 public:
-	Rect _bounds;
 	bool _enabled;
 	bool _insideArea;
 	CursorType _cursorNum;
@@ -54,9 +53,12 @@ public:
 	SceneArea();
 	void setDetails(const Rect &bounds, CursorType cursor);
 
+	virtual Common::String getClassName() { return "SceneArea"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void process(Event &event);
+	virtual bool startAction(CursorType action, Event &event) { return false; }
+	virtual void doAction(int action) {}
 };
 
 class SceneExit: public SceneArea {
@@ -80,26 +82,21 @@ private:
 	static void endStrip();
 public:
 	byte _field312[256];
-	int _field372;
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;
-	int _field37A;
 
-	SceneObject *_focusObject;
 	Visage _cursorVisage;
 	SynchronizedList<EventHandler *> _sceneAreas;
-
-	Rect _v51C34;
 public:
 	SceneExt();
 
 	virtual Common::String getClassName() { return "SceneExt"; }
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
 	virtual void saveCharacter(int characterIndex);
 	virtual void restore() {}

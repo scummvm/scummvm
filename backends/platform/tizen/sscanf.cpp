@@ -93,7 +93,7 @@ bool scanStringUntil(const char **in, va_list *ap, char c_end) {
 	char *arg = va_arg(*ap, char*);
 	while (**in && **in != c_end) {
 		*arg = **in;
-		*arg++;
+		arg++;
 		(*in)++;
 	}
 	*arg = 0;

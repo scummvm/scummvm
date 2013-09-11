@@ -168,17 +168,23 @@ void Menu::setText(MenuItem item, Common::String name) {
 			_inventoryStringArray[item._actionId].insertChar(' ', 0);
 		}
 		break;
-	case MENU_MOVE:
+	case MENU_MOVE: {
+		// If the first character isn't '*' or ' ' then it's missing a heading space
+		char c = s[0];
+		if (c != '*' && c != ' ')
+			s.insertChar(' ', 0);
+
 		while (s.size() < 22)
 			s += ' ';
 
 		_moveStringArray[item._actionId] = s;
+		}
 		break;
 	case MENU_ACTION: {
 		// If the first character isn't '*' or ' ' then it's missing a heading space
 		char c = s[0];
 		if (c != '*' && c != ' ')
-			s = ' ' + s;
+			s.insertChar(' ', 0);
 
 		while (s.size() < 10)
 			s += ' ';
@@ -190,7 +196,7 @@ void Menu::setText(MenuItem item, Common::String name) {
 		// If the first character isn't '*' or ' ' then it's missing a heading space
 		char c = s[0];
 		if (c != '*' && c != ' ')
-			s = ' ' + s;
+			s.insertChar(' ', 0);
 
 		while (s.size() < 10)
 			s += ' ';
@@ -591,12 +597,30 @@ void Menu::setParent(MortevielleEngine *vm) {
 void Menu::initMenu() {
 	Common::File f;
 	
-	bool enMenuLoaded = false;
-	if (_vm->getLanguage() == Common::EN_ANY) {
-		// Open the mort.dat file
+	bool menuLoaded = false;
+	// First try to read it from mort.dat if useOriginalData() is false
+	if (!_vm->useOriginalData()) {
 		if (!f.open(MORT_DAT))
 			warning("File %s not found. Using default menu from game data", MORT_DAT);
 		else {
+			// Figure out what language Id is needed
+			byte desiredLanguageId;
+			switch(_vm->getLanguage()) {
+			case Common::EN_ANY:
+				desiredLanguageId = MORTDAT_LANG_ENGLISH;
+				break;
+			case Common::FR_FRA:
+				desiredLanguageId = MORTDAT_LANG_FRENCH;
+				break;
+			case Common::DE_DEU:
+				desiredLanguageId = MORTDAT_LANG_GERMAN;
+				break;
+			default:
+				warning("Language not supported, switching to English");
+				desiredLanguageId = MORTDAT_LANG_ENGLISH;
+				break;
+			}
+		
 			// Validate the data file header
 			char fileId[4];
 			f.read(fileId, 4);
@@ -611,12 +635,20 @@ void Menu::initMenu() {
 					f.read(dataType, 4);
 					dataSize = f.readUint16LE();
 					if (!strncmp(dataType, "MENU", 4)) {
-						// MENU section
-						if (dataSize <= 7 * 24) {
+						// Read in the language
+						byte languageId = f.readByte();
+						--dataSize;
+					
+						// If the language isn't correct, then skip the entire block
+						if (languageId != desiredLanguageId) {
+							f.skip(dataSize);
+							continue;
+						}
+						if (dataSize == 6 * 24) {
 							f.read(_charArr, dataSize);
-							enMenuLoaded = true;
+							menuLoaded = true;
 						} else
-							warning("Wrong size %d for menu data. Expected %d or less", dataSize, 7*24);
+							warning("Wrong size %d for menu data. Expected %d or less", dataSize, 6 * 24);
 						break;
 					} else {
 						// Other sections
@@ -626,12 +658,13 @@ void Menu::initMenu() {
 			}
 			// Close the file
 			f.close();
-			if (!enMenuLoaded)
-				warning("Failed to load English menu. Will use default menu from game data instead");
+			if (!menuLoaded)
+				warning("Failed to load menu from mort.dat. Will use default menu from game data instead.");
 		}
 	}
 
-	if (!enMenuLoaded) {
+	if (!menuLoaded) {
+		// Load menu from game data using the original language
 		if (_vm->getOriginalLanguage() == Common::FR_FRA) {
 			if (!f.open("menufr.mor"))
 				error("Missing file - menufr.mor");
@@ -639,7 +672,7 @@ void Menu::initMenu() {
 			if (!f.open("menual.mor"))
 				error("Missing file - menual.mor");
 		}
-		f.read(_charArr, 7 * 24);
+		f.read(_charArr, 6 * 24);
 		f.close();
 	}
 
@@ -652,13 +685,16 @@ void Menu::initMenu() {
 		_moveStringArray[i] = "*                       ";
 	for (int i = 1; i < 22; i++) {
 		_actionStringArray[i] = _vm->getString(i + kMenuActionStringIndex);
-
+		if ((_actionStringArray[i][0] != '*') && (_actionStringArray[i][0] != ' '))
+			_actionStringArray[i].insertChar(' ', 0);
 		while (_actionStringArray[i].size() < 10)
 			_actionStringArray[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
 				_selfStringArray[i] = _vm->getString(i + kMenuSelfStringIndex);
+				if ((_selfStringArray[i][0] != '*') && (_selfStringArray[i][0] != ' '))
+					_selfStringArray[i].insertChar(' ', 0);
 				while (_selfStringArray[i].size() < 10)
 					_selfStringArray[i] += ' ';
 			}
