@@ -202,7 +202,12 @@ void Window::setWindowPos(Window *insertAfter, int x, int y, int width, int heig
 }
 
 void Window::showWindow(WindowShowMode showMode) {
-	_visible = (showMode != kWindowHide);
+	bool newVisibility = (showMode != kWindowHide);
+
+	if (_visible != newVisibility) {
+		invalidateWindow();
+		_visible = newVisibility;
+	}
 
 	if (showMode == kWindowShowNormal) {
 		// TODO: Activate
