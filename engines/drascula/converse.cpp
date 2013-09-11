@@ -216,7 +216,7 @@ void DrasculaEngine::converse(int index) {
 		phrase3_bottom = phrase2_bottom + 8 * print_abc_opc(phrase3, phrase2_bottom + 2, game3);
 		phrase4_bottom = phrase3_bottom + 8 * print_abc_opc(phrase4, phrase3_bottom + 2, kDialogOptionUnselected);
 
-		if (mouseY > 0 && mouseY < phrase1_bottom) {
+		if (_mouseY > 0 && _mouseY < phrase1_bottom) {
 			if (game1 == kDialogOptionClicked && _color != kColorWhite)
 				color_abc(kColorWhite);
 			else if (game1 != kDialogOptionClicked && _color != kColorLightGreen)
@@ -224,13 +224,13 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase1, 2, kDialogOptionSelected);
 
-			if (leftMouseButton == 1) {
+			if (_leftMouseButton == 1) {
 				delay(100);
 				game1 = kDialogOptionClicked;
 				talk(phrase1, sound1);
 				response(answer1);
 			}
-		} else if (mouseY > phrase1_bottom && mouseY < phrase2_bottom) {
+		} else if (_mouseY > phrase1_bottom && _mouseY < phrase2_bottom) {
 			if (game2 == kDialogOptionClicked && _color != kColorWhite)
 				color_abc(kColorWhite);
 			else if (game2 != kDialogOptionClicked && _color != kColorLightGreen)
@@ -238,13 +238,13 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase2, phrase1_bottom + 2, kDialogOptionSelected);
 
-			if (leftMouseButton == 1) {
+			if (_leftMouseButton == 1) {
 				delay(100);
 				game2 = kDialogOptionClicked;
 				talk(phrase2, sound2);
 				response(answer2);
 			}
-		} else if (mouseY > phrase2_bottom && mouseY < phrase3_bottom) {
+		} else if (_mouseY > phrase2_bottom && _mouseY < phrase3_bottom) {
 			if (game3 == kDialogOptionClicked && _color != kColorWhite)
 				color_abc(kColorWhite);
 			else if (game3 != kDialogOptionClicked && _color != kColorLightGreen)
@@ -252,16 +252,16 @@ void DrasculaEngine::converse(int index) {
 
 			print_abc_opc(phrase3, phrase2_bottom + 2, kDialogOptionSelected);
 
-			if (leftMouseButton == 1) {
+			if (_leftMouseButton == 1) {
 				delay(100);
 				game3 = kDialogOptionClicked;
 				talk(phrase3, sound3);
 				response(answer3);
 			}
-		} else if (mouseY > phrase3_bottom && mouseY < phrase4_bottom) {
+		} else if (_mouseY > phrase3_bottom && _mouseY < phrase4_bottom) {
 			print_abc_opc(phrase4, phrase3_bottom + 2, kDialogOptionSelected);
 
-			if (leftMouseButton == 1) {
+			if (_leftMouseButton == 1) {
 				delay(100);
 				talk(phrase4, sound4);
 				breakOut = 1;

@@ -52,7 +52,7 @@ public:
 	void putDWORD(uint32 val);
 	char *getString();
 	Common::String getStringObj();
-	void putString(const Common::String &val);
+	void putString(const char *val);
 	float getFloat();
 	void putFloat(float val);
 	double getDouble();

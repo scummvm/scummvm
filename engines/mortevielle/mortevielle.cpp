@@ -63,6 +63,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_mouseClick = false;
 	_inMainGameLoop = false;
 	_quitGame = false;
+	_pauseStartTime = -1;
 
 	_roomPresenceLuc = false;
 	_roomPresenceIda = false;
@@ -162,6 +163,25 @@ Common::String MortevielleEngine::generateSaveFilename(const Common::String &tar
 		return "sav0.mor";
 
 	return Common::String::format("%s.%03d", target.c_str(), slot);
+}
+
+/**
+ * Pause the game.
+ */
+void MortevielleEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		if (_pauseStartTime == -1)
+			_pauseStartTime = readclock();
+	} else {
+		if (_pauseStartTime != -1) {
+			int pauseEndTime = readclock();
+			_currentTime += (pauseEndTime - _pauseStartTime);
+			if (_uptodatePresence)
+				_startTime += (pauseEndTime - _pauseStartTime);
+		}
+		_pauseStartTime = -1;
+	}
 }
 
 /**
@@ -347,13 +367,16 @@ Common::Error MortevielleEngine::run() {
 	if (loadSlot == 0)
 		// Show the game introduction
 		showIntroduction();
+	else {
+		_caff = 51;
+		_text.taffich();
+	}
 
 	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
+	resetVariables();
 	if (loadSlot != 0)
 		_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
-	else
-		resetVariables();
 
 	// Run the main game loop
 	mainGame();

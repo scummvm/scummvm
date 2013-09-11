@@ -129,7 +129,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
 
 	while (c) {
-		char a = tolower(_ctrl[1]);
+		char a = tolower((unsigned char)_ctrl[1]);
 
 		if (!_tempString2 && c == '%') {
 			if (a == 'd') {

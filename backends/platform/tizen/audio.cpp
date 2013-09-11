@@ -26,8 +26,9 @@
 #include "backends/platform/tizen/audio.h"
 #include "backends/platform/tizen/system.h"
 
-#define TIMER_INTERVAL 10
-#define VOLUME 99
+#define TIMER_INTERVAL		10
+#define VOLUME				96
+#define MIN_TIMER_INTERVAL	5
 
 AudioThread::AudioThread() :
 	_mixer(0),
@@ -38,6 +39,7 @@ AudioThread::AudioThread() :
 	_ready(0),
 	_interval(TIMER_INTERVAL),
 	_playing(-1),
+	_size(0),
 	_muted(true) {
 }
 
@@ -70,7 +72,7 @@ void AudioThread::setMute(bool on) {
 		if (on) {
 			_timer->Cancel();
 		} else {
-			_timer->StartAsRepeatable(_interval);
+			_timer->Start(_interval);
 		}
 	}
 }
@@ -105,13 +107,14 @@ bool AudioThread::OnStart(void) {
 		}
 	}
 
+	_size = _audioBuffer[0].GetCapacity();
 	_timer = new Timer();
 	if (!_timer || IsFailed(_timer->Construct(*this))) {
 		AppLog("Failed to create audio timer");
 		return false;
 	}
 
-	if (IsFailed(_timer->StartAsRepeatable(_interval))) {
+	if (IsFailed(_timer->Start(_interval))) {
 		AppLog("failed to start audio timer");
 		return false;
 	}
@@ -137,6 +140,7 @@ void AudioThread::OnStop(void) {
 
 	if (_audioOut) {
 		_audioOut->Reset();
+		_audioOut->Unprepare();
 		delete _audioOut;
 	}
 }
@@ -161,21 +165,33 @@ void AudioThread::OnAudioOutBufferEndReached(Tizen::Media::AudioOut &src) {
 		_tail = (_tail + 1) % NUM_AUDIO_BUFFERS;
 		_ready--;
 	} else {
-		// audio buffer empty: decrease timer inverval
+		// audio buffer empty: decrease timer interval
 		_playing = -1;
+		_interval -= 1;
+		if (_interval < MIN_TIMER_INTERVAL) {
+			_interval = MIN_TIMER_INTERVAL;
+		}
 	}
+
 }
 
 void AudioThread::OnTimerExpired(Timer &timer) {
 	if (_ready < NUM_AUDIO_BUFFERS) {
-		uint len = _audioBuffer[_head].GetCapacity();
-		int samples = _mixer->mixCallback((byte *)_audioBuffer[_head].GetPointer(), len);
-		if (samples) {
-			_head = (_head + 1) % NUM_AUDIO_BUFFERS;
-			_ready++;
+		if (_playing != _head) {
+			if (_mixer->mixCallback((byte *)_audioBuffer[_head].GetPointer(), _size)) {
+				_head = (_head + 1) % NUM_AUDIO_BUFFERS;
+				_ready++;
+			}
 		}
+	} else {
+		// audio buffer full: restore timer interval
+		_interval = TIMER_INTERVAL;
 	}
+
 	if (_ready && _playing == -1) {
 		OnAudioOutBufferEndReached(*_audioOut);
 	}
+
+	_timer->Start(_interval);
 }
+

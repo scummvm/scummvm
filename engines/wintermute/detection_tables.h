@@ -40,16 +40,20 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
+	{"escapemansion",   "Escape from the Mansion"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
+	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
 	{"mirage",          "Mirage"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
+	{"shaban",          "Shaban"},
 	{"shinestar",       "The Shine of a Star"},
+	{"spacemadness",    "Space Madness"},
 	{"thebox",          "The Box"},
 	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
 	{"tradestory",      "The Trader of Stories"},
@@ -284,6 +288,26 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Escape from the Mansion
+	{
+		"escapemansion",
+		"Beta 1",
+		AD_ENTRY1s("data.dcp",  "d8e348b2312cc36a929cad75f12e0b3a", 21452380),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Escape from the Mansion
+	{
+		"escapemansion",
+		"Beta 2",
+		AD_ENTRY1s("data.dcp",  "ded5fa6c5f2afdaf2cafb53e52cd3dd8", 21455763),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Ghosts in the Sheet
 	{
 		"ghostsheet",
@@ -377,6 +401,48 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
 		ADGF_DEMO,
+		GUIO0()
+	},
+	// Looky Demo (English)
+	{
+		"looky",
+		"Demo",
+		{
+			{"english.dcp", 0, "1388e1dd320f4d553dea3b0316812f9d", 1358442},
+			{"data.dcp", 0, "7074bcd7bc7ad7eb04c271aafb964c32", 13815660},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Looky Demo (German)
+	{
+		"looky",
+		"Demo",
+		{
+			{"german.dcp", 0, "606c048426dfbe94442b59fd34a5c76e", 14339496},
+			{"data.dcp", 0, "7074bcd7bc7ad7eb04c271aafb964c32", 13815660},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Looky (German)
+	{
+		"looky",
+		"",
+		{
+			{"german.dcp", 0, "bf4c2b8c26342342441a6d64934ab832", 107027865},
+			{"data.dcp", 0, "50de0beaa5ad621aa9f020df901d1e74", 1342214},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	// Mirage
@@ -625,11 +691,31 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Shaban
+	{
+		"shaban",
+		"",
+		AD_ENTRY1s("data.dcp",  "35f702ca9baabc5c620e0be230195c8a", 755388466),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// The Shine of a Star
 	{
 		"shinestar",
 		"",
 		AD_ENTRY1s("data.dcp", "f05abe9e2427a5e4f73648fa09c4ba8e", 94113060),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Space Madness
+	{
+		"spacemadness",
+		"1.0.2",
+		AD_ENTRY1s("data.dcp",  "b9b83135dc7a9e1b4b5f50195dbeb630", 39546622),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,

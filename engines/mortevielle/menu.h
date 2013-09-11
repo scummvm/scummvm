@@ -51,7 +51,7 @@ class Menu {
 private:
 	MortevielleEngine *_vm;
 
-	byte _charArr[7][24];
+	byte _charArr[6][24];
 	int _msg3;
 	int _msg4;
 

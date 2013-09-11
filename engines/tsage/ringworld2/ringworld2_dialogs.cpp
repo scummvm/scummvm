@@ -234,9 +234,9 @@ void CharacterDialog::show() {
 		SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
 		scene->saveCharacter(oldCharacter);
 
-		// Play a transition sound as the character is changed
+		// Play the correctfrequency, if any, of the character being switched to's scanner device 
 		if (R2_GLOBALS._player._characterScene[0] != 300) {
-			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex]) {
+			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] - 1) {
 			case 0:
 				R2_GLOBALS._sound4.stop();
 				break;
@@ -256,7 +256,7 @@ void CharacterDialog::show() {
 				break;
 			}
 		} else if (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] > 1) {
-			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex]) {
+			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] - 1) {
 			case 2:
 				R2_GLOBALS._sound4.play(45);
 				break;
@@ -272,8 +272,8 @@ void CharacterDialog::show() {
 			default:
 				break;
 			}
-		} else if ((R2_GLOBALS._player._characterScene[1] == 300) && (R2_GLOBALS._scannerFrequencies[1] != 1)) {
-			switch (R2_GLOBALS._scannerFrequencies[1]) {
+		} else if ((R2_GLOBALS._player._characterScene[R2_QUINN] == 300) && (R2_GLOBALS._scannerFrequencies[1] != 1)) {
+			switch (R2_GLOBALS._scannerFrequencies[1] - 1) {
 			case 2:
 				R2_GLOBALS._sound4.play(45);
 				break;
@@ -289,12 +289,12 @@ void CharacterDialog::show() {
 			default:
 				break;
 			}
-		} else if (R2_GLOBALS._player._characterScene[2] != 300) {
+		} else if (R2_GLOBALS._player._characterScene[R2_SEEKER] != 300) {
 			R2_GLOBALS._sound4.stop();
 		} else if (R2_GLOBALS._scannerFrequencies[2] == 1) {
 			R2_GLOBALS._sound4.stop();
 		} else {
-			switch (R2_GLOBALS._scannerFrequencies[1]) {
+			switch (R2_GLOBALS._scannerFrequencies[1] - 1) {
 			case 2:
 				R2_GLOBALS._sound4.play(45);
 				break;

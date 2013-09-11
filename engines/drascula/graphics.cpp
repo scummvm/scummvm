@@ -82,7 +82,7 @@ void DrasculaEngine::moveCursor() {
 	} else if (!_menuScreen && _color != kColorLightGreen)
 		color_abc(kColorLightGreen);
 	if (_hasName && !_menuScreen)
-		centerText(textName, mouseX, mouseY);
+		centerText(textName, _mouseX, _mouseY);
 	if (_menuScreen)
 		showMenu();
 	else if (_menuBar)
@@ -417,8 +417,8 @@ void DrasculaEngine::screenSaver() {
 	delete stream;
 
 	updateEvents();
-	xr = mouseX;
-	yr = mouseY;
+	xr = _mouseX;
+	yr = _mouseY;
 
 	while (!shouldQuit()) {
 		// efecto(bgSurface);
@@ -480,18 +480,18 @@ void DrasculaEngine::screenSaver() {
 		// end of efecto()
 
 		updateEvents();
-		if (rightMouseButton == 1 || leftMouseButton == 1)
+		if (_rightMouseButton == 1 || _leftMouseButton == 1)
 			break;
-		if (mouseX != xr)
+		if (_mouseX != xr)
 			break;
-		if (mouseY != yr)
+		if (_mouseY != yr)
 			break;
 	}
 	// fin_ghost();
 	free(copia);
 	free(ghost);
 
-	loadPic(roomNumber, bgSurface, HALF_PAL);
+	loadPic(_roomNumber, bgSurface, HALF_PAL);
 	showCursor();
 }
 

@@ -263,7 +263,7 @@ bool DrasculaEngine::loadGame(int slot) {
 	if (savedChapter != currentChapter) {
 		_currentSaveSlot = slot;
 		currentChapter = savedChapter - 1;
-		loadedDifferentChapter = 1;
+		_loadedDifferentChapter = true;
 		delete in;
 		return false;
 	}
@@ -283,7 +283,7 @@ bool DrasculaEngine::loadGame(int slot) {
 
 	takeObject = in->readSint32LE();
 	pickedObject = in->readSint32LE();
-	loadedDifferentChapter = 0;
+	_loadedDifferentChapter = false;
 	if (!sscanf(currentData, "%d.ald", &roomNum)) {
 		error("Bad save format");
 	}
@@ -383,10 +383,10 @@ bool DrasculaEngine::saveLoadScreen() {
 		updateScreen();
 		updateEvents();
 
-		if (leftMouseButton == 1) {
+		if (_leftMouseButton == 1) {
 			// Check if the user has clicked on a save slot
 			for (n = 0; n < NUM_SAVES; n++) {
-				if (mouseX > 115 && mouseY > 27 + (9 * n) && mouseX < 115 + 175 && mouseY < 27 + 10 + (9 * n)) {
+				if (_mouseX > 115 && _mouseY > 27 + (9 * n) && _mouseX < 115 + 175 && _mouseY < 27 + 10 + (9 * n)) {
 					selectedSlot = n;
 					selectedName = _saveNames[selectedSlot];
 					if (selectedName.empty()) {
@@ -399,14 +399,14 @@ bool DrasculaEngine::saveLoadScreen() {
 			}
 
 			// Check if the user has clicked in the text area above the save slots
-			if (mouseX > 117 && mouseY > 15 && mouseX < 295 && mouseY < 24 && !selectedName.empty()) {
+			if (_mouseX > 117 && _mouseY > 15 && _mouseX < 295 && _mouseY < 24 && !selectedName.empty()) {
 				selectedName = enterName(selectedName);
 				if (!selectedName.empty())
 					_saveNames[selectedSlot] = selectedName;	// update save name
 			}
 
 			// Check if the user has clicked a button
-			if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149) {
+			if (_mouseX > 208 && _mouseY > 123 && _mouseX < 282 && _mouseY < 149) {
 				// "Save" button
 				if (selectedName.empty()) {
 					print_abc("Please select a slot", 117, 15);
@@ -415,14 +415,14 @@ bool DrasculaEngine::saveLoadScreen() {
 				} else {
 					selectVerb(kVerbNone);
 					clearRoom();
-					loadPic(roomNumber, bgSurface, HALF_PAL);
+					loadPic(_roomNumber, bgSurface, HALF_PAL);
 					updateRoom();
 					updateScreen();
 
 					saveGame(selectedSlot + 1, _saveNames[selectedSlot]);
 					return true;
 				}
-			} else if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149) {
+			} else if (_mouseX > 125 && _mouseY > 123 && _mouseX < 199 && _mouseY < 149) {
 				// "Load" button
 				if (selectedName.empty()) {
 					print_abc("Please select a slot", 117, 15);
@@ -431,19 +431,19 @@ bool DrasculaEngine::saveLoadScreen() {
 				} else {
 					return loadGame(selectedSlot + 1);
 				}
-			} else if (mouseX > 168 && mouseY > 154 && mouseX < 242 && mouseY < 180) {
+			} else if (_mouseX > 168 && _mouseY > 154 && _mouseX < 242 && _mouseY < 180) {
 				// "Play" button
 				break;
 			}
-		}	// if (leftMouseButton == 1)
+		}	// if (_leftMouseButton == 1)
 
-		leftMouseButton = 0;
+		_leftMouseButton = 0;
 		delay(10);
 	}
 
 	selectVerb(kVerbNone);
 	clearRoom();
-	loadPic(roomNumber, bgSurface, HALF_PAL);
+	loadPic(_roomNumber, bgSurface, HALF_PAL);
 	return true;
 }
 

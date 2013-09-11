@@ -707,7 +707,7 @@ void StripManager::synchronize(Serializer &s) {
 	for (int i = 0; i < arrSize; ++i)
 		_obj44List[i].synchronize(s);
 
-	// Synhcronise script data
+	// Synchronize script data
 	int scriptSize = _script.size();
 	s.syncAsUint16LE(scriptSize);
 	if (s.isLoading())
@@ -858,7 +858,7 @@ void StripManager::signal() {
 						++obj44Idx;
 
 					if (_obj44List[obj44Idx]._field16[0]) {
-						// WORKAROUND: The _lookupList isn't always correctly initialised. But it always
+						// WORKAROUND: The _lookupList isn't always correctly initialized. But it always
 						// seems to be set to the R2_GLOBALS._stripManager_lookupList, so manually set it
 						if (!_lookupList)
 							_lookupList = R2_GLOBALS._stripManager_lookupList;

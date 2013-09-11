@@ -62,6 +62,11 @@ enum {
 	MORTDAT_LANG_GERMAN = 2
 };
 
+enum {
+	kUseOriginalData = 0,
+	kUseEngineDataFile = 1
+};
+
 // Static string list
 enum {
 	S_YES_NO = 0, S_GO_TO = 1, S_SOMEONE_ENTERS = 2, S_COOL = 3, S_LOURDE = 4,
@@ -209,8 +214,8 @@ private:
 	int  _minute;
 	int  _curSearchObjId;
 	int  _controlMenu;
-	int  _startHour;
-	int  _endHour;
+	int  _startTime;
+	int  _endTime;
 	Common::Point _stdPal[91][17];
 
 	int  _x26KeyCount;
@@ -224,7 +229,8 @@ private:
 	int  _x;
 	int  _y;
 	int  _currentHourCount;
-	int  _currentDayHour;
+	int  _currentTime;
+	int  _pauseStartTime;
 
 	Common::String _hintPctMessage;
 	byte  *_cfiecBuffer;
@@ -441,9 +447,12 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error run();
+	virtual void pauseEngineIntern(bool pause);
+	virtual GUI::Debugger *getDebugger() {return &_debugger;}
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
+	bool useOriginalData() const;
 	static Common::String generateSaveFilename(const Common::String &target, int slot);
 	Common::String generateSaveFilename(int slot) { return generateSaveFilename(_targetName, slot); }
 

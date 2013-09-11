@@ -70,7 +70,7 @@ protected:
 	 * @param isWin32         Bitness of property file
 	 * @param enableAnalysis  PREfast support
 	 */
-	virtual void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis) = 0;
+	virtual void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) = 0;
 
 	/**
 	 * Get the file extension for property files

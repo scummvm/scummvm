@@ -638,6 +638,16 @@ begin_credits("Credits");
 				add_person("David Turner", "digitall", "");
 			end_section();
 
+			begin_section("Mortevielle");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
+			begin_section("Neverhood");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
 			begin_section("Parallaction");
 				add_person("", "peres", "");
 			end_section();

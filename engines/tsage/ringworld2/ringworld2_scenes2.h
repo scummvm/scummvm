@@ -45,23 +45,23 @@ class Scene2000 : public SceneExt {
 		virtual void signal();
 	};
 
-	class Exit1 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit4 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit5 : public SceneExit {
+	class DoorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -72,11 +72,11 @@ public:
 	NamedHotspot _item1;
 	SceneActor _object1;
 	SceneActor _objList1[11];
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
-	Exit5 _exit5;
+	WestExit _westExit;
+	EastExit _eastExit;
+	SouthExit _southExit;
+	NorthExit _northExit;
+	DoorExit _doorExit;
 	Action1 _action1, _action2, _action3, _action4, _action5;
 	SequenceManager _sequenceManager;
 
@@ -230,11 +230,11 @@ public:
 };
 
 class Scene2435 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Companion : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Astor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -247,11 +247,11 @@ public:
 	SpeakerQuinn2435 _quinnSpeaker;
 	SpeakerSeeker2435 _seekerSpeaker;
 	SpeakerPharisha2435 _pharishaSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	Actor1 _actor1;
-	Actor2 _actor2;
+	NamedHotspot _background;
+	NamedHotspot _leftWindow;
+	NamedHotspot _rightWindow;
+	Companion _companion;
+	Astor _astor;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -301,11 +301,11 @@ public:
 };
 
 class Scene2450 : public SceneExt {
-	class Actor2 : public SceneActor {
+	class Parker : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class CareTaker : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -318,12 +318,12 @@ public:
 	SpeakerQuinn2450 _quinnSpeaker;
 	SpeakerSeeker2450 _seekerSpeaker;
 	SpeakerCaretaker2450 _caretakerSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	SceneActor _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
+	NamedHotspot _background;
+	NamedHotspot _post;
+	NamedHotspot _bedspread;
+	SceneActor _companion;
+	Parker _parker;
+	CareTaker _careTaker;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
