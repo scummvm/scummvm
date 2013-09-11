@@ -31,185 +31,172 @@
 
 namespace Wintermute {
 
-	void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
-	byte tempa = *ina;
+	void  BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	if (*ca != 255) {
-		*ina = (*ina) * (*ca) >> 8;
+		ina = (ina) * (*ca) >> 8;
 	}
 
-	if (*ina == 0) {
+	if (ina == 0) {
 		return;
 	} else {
 		if (*cb != 255)
-			*outb = MIN(*outb + (((*inb) * (*cb) * (*ina)) >> 16), 255);
+			*outb = MIN(*outb + ((inb * (*cb) * ina) >> 16), 255);
 		else
-			*outb = MIN(*outb + ((*inb) * (*ina) >> 8), 255);
+			*outb = MIN(*outb + (inb * ina >> 8), 255);
 
 		if (*cg != 255)
-			*outg = MIN(*outg + (((*ing) * (*cg) * (*ina)) >> 16), 255);
+			*outg = MIN(*outg + ((ing * (*cg) * ina) >> 16), 255);
 		else
-			*outg = MIN(*outg + ((*ing) * (*ina) >> 8), 255);
+			*outg = MIN(*outg + (ing * ina >> 8), 255);
 
 		if (*cr != 255)
-			*outr = MIN(*outr + (((*inr) * (*cr) * (*ina)) >> 16), 255);
+			*outr = MIN(*outr + ((inr * (*cr) * ina) >> 16), 255);
 		else
-			*outr = MIN(*outr + ((*inr) * (*ina) >> 8), 255);
+			*outr = MIN(*outr + (inr * ina >> 8), 255);
 	}
-
-	*ina = tempa;
 }
 
 
-void  BlenderSubtractive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+void  BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
-	byte tempa = *ina;
 
 	if (*ca != 255) {
-		*ina = *ina * (*ca) >> 8;
+		ina = ina * (*ca) >> 8;
 	}
 
-	if (*ina == 0) {
+	if (ina == 0) {
 		return;
 	} else {
 		if (*cb != 255)
-			*outb = MAX(*outb - (((*inb) * (*cb) * (*ina)) >> 16), 0);
+			*outb = MAX(*outb - ((inb * (*cb) * ina) >> 16), 0);
 		else
-			*outb = MAX(*outb - ((*inb) * (*ina) >> 8), 0);
+			*outb = MAX(*outb - (inb * ina >> 8), 0);
 
 		if (*cg != 255)
-			*outg = MAX(*outg - (((*ing) * (*cg) * (*ina)) >> 16), 0);
+			*outg = MAX(*outg - ((ing * (*cg) * ina) >> 16), 0);
 		else
-			*outg = MAX(*outg - ((*ing) * (*ina) >> 8), 0);
+			*outg = MAX(*outg - (ing * ina >> 8), 0);
 
 		if (*cr != 255)
-			*outr = MAX(*outr - (((*inr) * (*cr) * (*ina)) >> 16), 0);
+			*outr = MAX(*outr - ((inr * (*cr) * ina) >> 16), 0);
 		else
-			*outr = MAX(*outr - ((*inr) * (*ina) >> 8), 0);
+			*outr = MAX(*outr - (inr * ina >> 8), 0);
 	}
-
-	*ina = tempa;
 }
 
 
-void  BlenderNormal::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
-	byte tempa = *ina;
+void  BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	if (*ca != 255) {
-		*ina = *ina * (*ca) >> 8;
+		ina = ina * (*ca) >> 8;
 	}
 
-	if (*ina == 0) {
+	if (ina == 0) {
 		return;
-	} else if (*ina == 255) {
+	} else if (ina == 255) {
 		if (*cb != 255)
-			*outb = (*inb * (*cb)) >> 8;
+			*outb = (inb * (*cb)) >> 8;
 		else
-			*outb = *inb;
+			*outb = inb;
 
 		if (*cr != 255)
-			*outr = (*inr * (*cr)) >> 8;
+			*outr = (inr * (*cr)) >> 8;
 		else
-			*outr = *inr;
+			*outr = inr;
 
 		if (*cg != 255)
-			*outg = (*ing * (*cg)) >> 8;
+			*outg = (ing * (*cg)) >> 8;
 		else
-			*outg = *ing;
+			*outg = ing;
 
-		*outa = *ina;
-
-		*ina = tempa;
+		*outa = ina;
 
 		return;
 
 	} else {
 
 		*outa = 255;
-		*outb = (*outb * (255 - *ina) >> 8);
-		*outr = (*outr * (255 - *ina) >> 8);
-		*outg = (*outg * (255 - *ina) >> 8);
+		*outb = (*outb * (255 - ina) >> 8);
+		*outr = (*outr * (255 - ina) >> 8);
+		*outg = (*outg * (255 - ina) >> 8);
 
 		if (*cb == 0)
 			*outb = *outb;
 		else if (*cb != 255)
-			*outb = *outb + ((*inb) * (*ina) * (*cb) >> 16);
+			*outb = *outb + (inb * ina * (*cb) >> 16);
 		else
-			*outb = *outb + (*inb * (*ina) >> 8);
+			*outb = *outb + (inb * ina >> 8);
 
 		if (*cr == 0)
 			*outr = *outr;
 		else if (*cr != 255)
-			*outr = *outr + (*inr * (*ina) * (*cr) >> 16);
+			*outr = *outr + (inr * ina * (*cr) >> 16);
 		else
-			*outr = *outr + (*inr * (*ina) >> 8);
+			*outr = *outr + (inr * ina >> 8);
 
 		if (*cg == 0)
 			*outg = *outg;
 		else if (*cg != 255)
-			*outg = *outg + ((*ing) * (*ina) * (*cg) >> 16);
+			*outg = *outg + (ing * ina * (*cg) >> 16);
 		else
-			*outg = *outg + ((*ing) * (*ina) >> 8);
-
-		*ina = tempa;
+			*outg = *outg + (ing * ina >> 8);
 
 		return;
 	}
 }
 
-void BlenderNormal::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
-	if (*ina == 0) {
+void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+	if (ina == 0) {
 		return;
-	} else if (*ina == 255) {
-		*outb = *inb;
-		*outg = *ing;
-		*outr = *inr;
-		*outa = *ina;
+	} else if (ina == 255) {
+		*outb = inb;
+		*outg = ing;
+		*outr = inr;
+		*outa = ina;
 		return;
 	} else {
 		*outa = 255;
-		*outb = (((*inb) *(*ina)) + *outb * (255 - *ina)) >> 8;
-		*outg = (((*ing) *(*ina)) + *outg * (255 - *ina)) >> 8;
-		*outr = (((*inr) *(*ina)) + *outr * (255 - *ina)) >> 8;
+		*outb = ((inb * ina) + *outb * (255 - ina)) >> 8;
+		*outg = ((ing * ina) + *outg * (255 - ina)) >> 8;
+		*outr = ((inr * ina) + *outr * (255 - ina)) >> 8;
 	}
 }
 
 
-void  BlenderSubtractive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
-	if (*ina == 0) {
+void  BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+	if (ina == 0) {
 		return;
-	} else if (*ina == 255) {
+	} else if (ina == 255) {
 		*outa = *outa;
-		*outr = MAX(*outr - *inr, 0);
-		*outg = MAX(*outg - *ing, 0);
-		*outb = MAX(*outb - *inb, 0);
+		*outr = MAX(*outr - inr, 0);
+		*outg = MAX(*outg - ing, 0);
+		*outb = MAX(*outb - inb, 0);
 		return;
 	} else {
 		*outa = *outa;
-		*outb = MAX(*outb - ((*inb) *(*ina) >> 8), 0);
-		*outg = MAX(*outg - ((*ing) *(*ina) >> 8), 0);
-		*outr = MAX(*outr - ((*inr) *(*ina) >> 8), 0);
+		*outb = MAX(*outb - (inb * ina >> 8), 0);
+		*outg = MAX(*outg - (ing * ina >> 8), 0);
+		*outr = MAX(*outr - (inr * ina >> 8), 0);
 		return;
 	}
 }
 
-void BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
-	if (*ina == 0) {
+	if (ina == 0) {
 		return;
-	} else if (*ina == 255) {
+	} else if (ina == 255) {
 		*outa = *outa;
-		*outr = MIN(*outr + *inr, 255);
-		*outg = MIN(*outg + *ing, 255);
-		*outb = MIN(*outb + *inb, 255);
+		*outr = MIN(*outr + inr, 255);
+		*outg = MIN(*outg + ing, 255);
+		*outb = MIN(*outb + inb, 255);
 		return;
 	} else {
 		*outa = *outa;
-		*outb = MIN(((*inb) * (*ina) >> 8) + *outb, 255);
-		*outg = MIN(((*ing) * (*ina) >> 8) + *outg, 255);
-		*outr = MIN(((*inr) * (*ina) >> 8) + *outr, 255);
+		*outb = MIN((inb * ina >> 8) + *outb, 255);
+		*outg = MIN((ing * ina >> 8) + *outg, 255);
+		*outr = MIN((inr * ina >> 8) + *outr, 255);
 		return;
 	}
 }
@@ -353,7 +340,7 @@ void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, u
 			out += 4;
 		}
 		outo += pitch;
-		ino += inoStep;
+		*ino+= inoStep;
 	}
 }
 
@@ -377,7 +364,7 @@ void TransparentSurface::doBlitBinaryFast(byte *ino, byte *outo, uint32 width, u
 			in += inStep;
 		}
 		outo += pitch;
-		ino += inoStep;
+		*ino+= inoStep;
 	}
 }
 
@@ -398,17 +385,17 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 				byte *outg = &out[TransparentSurface::kGIndex];
 				byte *outb = &out[TransparentSurface::kBIndex];
 
-				byte *ina = &in[TransparentSurface::kAIndex];
-				byte *inr = &in[TransparentSurface::kRIndex];
-				byte *ing = &in[TransparentSurface::kGIndex];
-				byte *inb = &in[TransparentSurface::kBIndex];
+				Blender::blendPixel(in[TransparentSurface::kAIndex],
+					in[TransparentSurface::kRIndex],
+					in[TransparentSurface::kGIndex],
+					in[TransparentSurface::kBIndex],
+					outa, outr, outg, outb);
 
-				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
 				in += inStep;
 				out += 4;
 			}
 			outo += pitch;
-			ino += inoStep;
+			*ino+= inoStep;
 		}
 	} else {
 
@@ -427,17 +414,16 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 				byte *outg = &out[TransparentSurface::kGIndex];
 				byte *outb = &out[TransparentSurface::kBIndex];
 
-				byte *ina = &in[TransparentSurface::kAIndex];
-				byte *inr = &in[TransparentSurface::kRIndex];
-				byte *ing = &in[TransparentSurface::kGIndex];
-				byte *inb = &in[TransparentSurface::kBIndex];
-
-				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
+				Blender::blendPixel(in[TransparentSurface::kAIndex],
+					in[TransparentSurface::kRIndex],
+					in[TransparentSurface::kGIndex],
+					in[TransparentSurface::kBIndex],
+					outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 				in += inStep;
 				out += 4;
 			}
 			outo += pitch;
-			ino += inoStep;
+			*ino+= inoStep;
 		}
 	}
 }
@@ -541,7 +527,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 			yp = img->h - 1;
 		}
 
-		byte *ino = (byte *)img->getBasePtr(xp, yp);
+		byte *ino= (byte *)img->getBasePtr(xp, yp);
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 
 		if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
