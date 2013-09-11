@@ -971,8 +971,8 @@ void Acci::openDoor() {
 	}
 
 	if (_vm->_gyro->_dna._room == r__map)
-		_vm->_scrolls->displayText(Common::String("Avvy, you can complete the whole game without ever going "
-				"to anywhere other than Argent, Birmingham, Cardiff, Nottingham and Norwich."));
+		_vm->_scrolls->displayText("Avvy, you can complete the whole game without ever going " \
+				"to anywhere other than Argent, Birmingham, Cardiff, Nottingham and Norwich.");
 	else
 		_vm->_scrolls->displayText("Door? What door?");
 }
@@ -1361,7 +1361,7 @@ void Acci::doThat() {
 	&& (_verb != kVerbCodeLarrypass) && (_verb != kVerbCodePhaon) && (_verb != kVerbCodeBoss) && (_verb != kVerbCodeCheat) && (_verb != kVerbCodeRestart)
 	&& (_verb != kVerbCodeDir) && (_verb != kVerbCodeScore) && (_verb != kVerbCodeHiscores) && (_verb != kVerbCodeSmartAlec)) {
 		if (!_vm->_gyro->_alive) {
-			_vm->_scrolls->displayText(Common::String("You're dead, so don't talk. What are you, a ghost or something? Try restarting, or restoring a saved game!"));
+			_vm->_scrolls->displayText("You're dead, so don't talk. What are you, a ghost or something? Try restarting, or restoring a saved game!");
 			return;
 		}
 		if (!_vm->_gyro->_dna._avvyIsAwake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
@@ -1396,7 +1396,7 @@ void Acci::doThat() {
 		}
 		break;
 	case kVerbCodeDrop:
-		_vm->_scrolls->displayText(Common::String("Two years ago you dropped a florin in the street. Three days ") +
+		_vm->_scrolls->displayText("Two years ago you dropped a florin in the street. Three days " \
 				"later it was gone! So now you never leave ANYTHING lying around. OK?");
 		break;
 	case kVerbCodeInv:
@@ -1404,9 +1404,10 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeTalk:
 		if (_person == kPardon) {
-			if (_vm->_gyro->_subjectNum == 99) // They typed "say password".
-				_vm->_scrolls->displayText(Common::String("Yes, but what ") + Scrolls::kControlItalic + "is" + Scrolls::kControlRoman + " the password?");
-			else if (((1 <= _vm->_gyro->_subjectNum) && (_vm->_gyro->_subjectNum <= 49)) || (_vm->_gyro->_subjectNum == 253) || (_vm->_gyro->_subjectNum == 249)) {
+			if (_vm->_gyro->_subjectNum == 99) { // They typed "say password".
+				Common::String tmpStr = Common::String::format("Yes, but what %cis%c the password?", Scrolls::kControlItalic, Scrolls::kControlRoman);
+				_vm->_scrolls->displayText(tmpStr);
+			} else if (((1 <= _vm->_gyro->_subjectNum) && (_vm->_gyro->_subjectNum <= 49)) || (_vm->_gyro->_subjectNum == 253) || (_vm->_gyro->_subjectNum == 249)) {
 				_thats.deleteChar(0);
 
 				for (byte i = 0; i < 10; i++)
@@ -1452,7 +1453,7 @@ void Acci::doThat() {
 						break;
 					case Gyro::kPeopleCwytalot:
 						if ((_thing == Gyro::kObjectCrossbow) || (_thing == Gyro::kObjectBolt))
-							_vm->_scrolls->displayText(Common::String("You might be able to influence Cwytalot more if you used it!"));
+							_vm->_scrolls->displayText("You might be able to influence Cwytalot more if you used it!");
 						else
 							heyThanks();
 						break;
@@ -1578,7 +1579,8 @@ void Acci::doThat() {
 		if (_vm->_gyro->_dna._wearing == kNothing)
 			_vm->_scrolls->displayText("You're already stark naked!");
 		else if (_vm->_gyro->_dna._avvysInTheCupboard) {
-			_vm->_scrolls->displayText(Common::String("You take off ") + _vm->_gyro->getItem(_vm->_gyro->_dna._wearing) + '.');
+			Common::String tmpStr = Common::String::format("You take off %s.", _vm->_gyro->getItem(_vm->_gyro->_dna._wearing).c_str());
+			_vm->_scrolls->displayText(tmpStr);
 			_vm->_gyro->_dna._wearing = kNothing;
 			_vm->_lucerna->refreshObjectList();
 		} else
@@ -1724,13 +1726,16 @@ void Acci::doThat() {
 		if (_vm->_gyro->setFlag('P')) {
 			_vm->_scrolls->displayText("Hmm, I don't think anyone will notice...");
 			_vm->_timer->addTimer(4, Timer::kProcUrinate, Timer::kReasonGoToToilet);
-		} else
-			_vm->_scrolls->displayText(Common::String("It would be ") + Scrolls::kControlItalic + "VERY"
-			+ Scrolls::kControlRoman + " unwise to do that here, Avvy!");
+		} else {
+			Common::String tmpStr = Common::String::format("It would be %cVERY%c unwise to do that here, Avvy!", Scrolls::kControlItalic, Scrolls::kControlRoman);
+			_vm->_scrolls->displayText(tmpStr);
+		}
 		break;
-	case kVerbCodeCheat:
-		_vm->_scrolls->displayText(Common::String(Scrolls::kControlItalic) + "Cheat mode now enabled.");
+	case kVerbCodeCheat: {
+		Common::String tmpStr = Common::String::format("%cCheat mode now enabled.", Scrolls::kControlItalic);
+		_vm->_scrolls->displayText(tmpStr);
 		_vm->_gyro->_cheat = true;
+		}
 		break;
 	case kVerbCodeMagic:
 		if (_vm->_gyro->_dna._avariciusTalk > 0)
@@ -1758,19 +1763,25 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeExpletive:
 		switch (_vm->_gyro->_dna._sworeNum) {
-		case 0:
-			_vm->_scrolls->displayText(Common::String("Avvy! Do you mind? There might be kids playing!")
-				+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "(I shouldn't say it again, if I were you!)");
+		case 0: {
+			Common::String tmpStr = Common::String::format("Avvy! Do you mind? There might be kids playing!%c%c" \
+				"(I shouldn't say it again, if I were you!)", Scrolls::kControlNewLine, Scrolls::kControlNewLine);
+			_vm->_scrolls->displayText(tmpStr);
+			}
 			break;
-		case 1:
-			_vm->_scrolls->displayText(Common::String("You hear a distant rumble of thunder. Must you always do things I tell you not to?")
-				+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Don't do it again!");
+		case 1: {
+			Common::String tmpStr = Common::String::format("You hear a distant rumble of thunder. Must you always" \
+				"do things I tell you not to?%c%cDon't do it again!", Scrolls::kControlNewLine, Scrolls::kControlNewLine);
+			_vm->_scrolls->displayText(tmpStr);
+			}
 			break;
-		default:
+		default: {
 			_vm->_pingo->zonk();
-			_vm->_scrolls->displayText(Common::String("A crack of lightning shoots from the sky, and fries you.")
-				+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "(`Such is the anger of the gods, Avvy!\")");
+			// CHECKME: Weird character in string
+			Common::String tmpStr = Common::String::format("A crack of lightning shoots from the sky, and fries you.%c%c(`Such is the anger of the gods, Avvy!\")", Scrolls::kControlNewLine, Scrolls::kControlNewLine);
+			_vm->_scrolls->displayText(tmpStr);
 			_vm->_lucerna->gameOver();
+			}
 		}
 		_vm->_gyro->_dna._sworeNum++;
 		break;
@@ -1830,7 +1841,8 @@ void Acci::doThat() {
 						}
 
 						_vm->_celer->drawBackgroundSprite(-1, -1, 12);
-						_vm->_scrolls->displayText(Common::String("Wine, please.") + Scrolls::kControlRegister + '1' + Scrolls::kControlSpeechBubble);
+						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Scrolls::kControlRegister, '1', Scrolls::kControlSpeechBubble);
+						_vm->_scrolls->displayText(tmpStr);
 						if (_vm->_gyro->_dna._alcoholLevel == 0)
 							_vm->_lucerna->incScore(3);
 						_vm->_celer->drawBackgroundSprite(-1, -1, 10);
@@ -2049,16 +2061,21 @@ void Acci::doThat() {
 	case kPardon:
 		_vm->_scrolls->displayText("Hey, a verb would be helpful!");
 		break;
-	case kVerbCodeHello:
+	case kVerbCodeHello: {
 		personSpeaks();
-		_vm->_scrolls->displayText(Common::String("Hello.") + Scrolls::kControlSpeechBubble);
+		Common::String tmpStr = Common::String::format("Hello.%c", Scrolls::kControlSpeechBubble);
+		_vm->_scrolls->displayText(tmpStr);
+		}
 		break;
-	case kVerbCodeThanks:
+	case kVerbCodeThanks: {
 		personSpeaks();
-		_vm->_scrolls->displayText(Common::String("That's OK.") + Scrolls::kControlSpeechBubble);
+		Common::String tmpStr = Common::String::format("That's OK.%c", Scrolls::kControlSpeechBubble);
+		_vm->_scrolls->displayText(tmpStr);
+		}
 		break;
 	default:
-		_vm->_scrolls->displayText(Common::String(Scrolls::kControlBell) + "Parser bug!");
+		Common::String tmpStr = Common::String::format("%cParser bug!", Scrolls::kControlBell);
+		_vm->_scrolls->displayText(tmpStr);
 	}
 }
 
