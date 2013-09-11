@@ -349,7 +349,7 @@ void TransparentSurface::doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, u
 		in = ino;
 		memcpy(out, in, width * 4);
 		for (uint32 j = 0; j < width; j++) {
-			out[aIndex] = 0xFF;
+			out[kAIndex] = 0xFF;
 			out += 4;
 		}
 		outo += pitch;
@@ -366,12 +366,12 @@ void TransparentSurface::doBlitBinaryFast(byte *ino, byte *outo, uint32 width, u
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
-			int a = (pix >> aShift) & 0xff;
+			int a = (pix >> kAShift) & 0xff;
 
 			if (a == 0) { // Full transparency
 			} else { // Full opacity (Any value not exactly 0 is Opaque here)
 				*(uint32 *)out = pix;
-				out[aIndex] = 0xFF;
+				out[kAIndex] = 0xFF;
 			}
 			out += 4;
 			in += inStep;
@@ -393,15 +393,15 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
 
-				byte *outa = &out[TransparentSurface::aIndex];
-				byte *outr = &out[TransparentSurface::rIndex];
-				byte *outg = &out[TransparentSurface::gIndex];
-				byte *outb = &out[TransparentSurface::bIndex];
+				byte *outa = &out[TransparentSurface::kAIndex];
+				byte *outr = &out[TransparentSurface::kRIndex];
+				byte *outg = &out[TransparentSurface::kGIndex];
+				byte *outb = &out[TransparentSurface::kBIndex];
 
-				byte *ina = &in[TransparentSurface::aIndex];
-				byte *inr = &in[TransparentSurface::rIndex];
-				byte *ing = &in[TransparentSurface::gIndex];
-				byte *inb = &in[TransparentSurface::bIndex];
+				byte *ina = &in[TransparentSurface::kAIndex];
+				byte *inr = &in[TransparentSurface::kRIndex];
+				byte *ing = &in[TransparentSurface::kGIndex];
+				byte *inb = &in[TransparentSurface::kBIndex];
 
 				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
 				in += inStep;
@@ -412,25 +412,25 @@ template<class Blender> void doBlit(byte *ino, byte *outo, uint32 width, uint32 
 		}
 	} else {
 
-		byte ca = (color >> TransparentSurface::aModShift) & 0xFF;
-		byte cr = (color >> TransparentSurface::rModShift) & 0xFF;
-		byte cg = (color >> TransparentSurface::gModShift) & 0xFF;
-		byte cb = (color >> TransparentSurface::bModShift) & 0xFF;
+		byte ca = (color >> TransparentSurface::kAModShift) & 0xFF;
+		byte cr = (color >> TransparentSurface::kRModShift) & 0xFF;
+		byte cg = (color >> TransparentSurface::kGModShift) & 0xFF;
+		byte cb = (color >> TransparentSurface::kBModShift) & 0xFF;
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
 
-				byte *outa = &out[TransparentSurface::aIndex];
-				byte *outr = &out[TransparentSurface::rIndex];
-				byte *outg = &out[TransparentSurface::gIndex];
-				byte *outb = &out[TransparentSurface::bIndex];
+				byte *outa = &out[TransparentSurface::kAIndex];
+				byte *outr = &out[TransparentSurface::kRIndex];
+				byte *outg = &out[TransparentSurface::kGIndex];
+				byte *outb = &out[TransparentSurface::kBIndex];
 
-				byte *ina = &in[TransparentSurface::aIndex];
-				byte *inr = &in[TransparentSurface::rIndex];
-				byte *ing = &in[TransparentSurface::gIndex];
-				byte *inb = &in[TransparentSurface::bIndex];
+				byte *ina = &in[TransparentSurface::kAIndex];
+				byte *inr = &in[TransparentSurface::kRIndex];
+				byte *ing = &in[TransparentSurface::kGIndex];
+				byte *inb = &in[TransparentSurface::kBIndex];
 
 				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 				in += inStep;
