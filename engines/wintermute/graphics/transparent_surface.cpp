@@ -36,26 +36,26 @@ namespace Wintermute {
 	byte tempa = *ina;
 
 	if (*ca != 255) {
-		*ina = *ina **ca >> 8;
+		*ina = (*ina) * (*ca) >> 8;
 	}
 
 	if (*ina == 0) {
 		return;
 	} else {
 		if (*cb != 255)
-			*outb = MIN(*outb + ((*inb **cb **ina) >> 16), 255);
+			*outb = MIN(*outb + (((*inb) * (*cb) * (*ina)) >> 16), 255);
 		else
-			*outb = MIN(*outb + (*inb **ina >> 8), 255);
+			*outb = MIN(*outb + ((*inb) * (*ina) >> 8), 255);
 
 		if (*cg != 255)
-			*outg = MIN(*outg + ((*ing **cg **ina) >> 16), 255);
+			*outg = MIN(*outg + (((*ing) * (*cg) * (*ina)) >> 16), 255);
 		else
-			*outg = MIN(*outg + (*ing **ina >> 8), 255);
+			*outg = MIN(*outg + ((*ing) * (*ina) >> 8), 255);
 
 		if (*cr != 255)
-			*outr = MIN(*outr + ((*inr **cr **ina) >> 16), 255);
+			*outr = MIN(*outr + (((*inr) * (*cr) * (*ina)) >> 16), 255);
 		else
-			*outr = MIN(*outr + (*inr **ina >> 8), 255);
+			*outr = MIN(*outr + ((*inr) * (*ina) >> 8), 255);
 	}
 
 	*ina = tempa;
@@ -67,26 +67,26 @@ void  BlenderSubtractive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb,
 	byte tempa = *ina;
 
 	if (*ca != 255) {
-		*ina = *ina **ca >> 8;
+		*ina = *ina * (*ca) >> 8;
 	}
 
 	if (*ina == 0) {
 		return;
 	} else {
 		if (*cb != 255)
-			*outb = MAX(*outb - ((*inb **cb **ina) >> 16), 0);
+			*outb = MAX(*outb - (((*inb) * (*cb) * (*ina)) >> 16), 0);
 		else
-			*outb = MAX(*outb - (*inb **ina >> 8), 0);
+			*outb = MAX(*outb - ((*inb) * (*ina) >> 8), 0);
 
 		if (*cg != 255)
-			*outg = MAX(*outg - ((*ing **cg **ina) >> 16), 0);
+			*outg = MAX(*outg - (((*ing) * (*cg) * (*ina)) >> 16), 0);
 		else
-			*outg = MAX(*outg - (*ing **ina >> 8), 0);
+			*outg = MAX(*outg - ((*ing) * (*ina) >> 8), 0);
 
 		if (*cr != 255)
-			*outr = MAX(*outr - ((*inr **cr **ina) >> 16), 0);
+			*outr = MAX(*outr - (((*inr) * (*cr) * (*ina)) >> 16), 0);
 		else
-			*outr = MAX(*outr - (*inr **ina >> 8), 0);
+			*outr = MAX(*outr - ((*inr) * (*ina) >> 8), 0);
 	}
 
 	*ina = tempa;
@@ -98,24 +98,24 @@ void  BlenderNormal::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte
 	byte tempa = *ina;
 
 	if (*ca != 255) {
-		*ina = *ina **ca >> 8;
+		*ina = *ina * (*ca) >> 8;
 	}
 
 	if (*ina == 0) {
 		return;
 	} else if (*ina == 255) {
 		if (*cb != 255)
-			*outb = (*inb **cb) >> 8;
+			*outb = (*inb * (*cb)) >> 8;
 		else
 			*outb = *inb;
 
 		if (*cr != 255)
-			*outr = (*inr **cr) >> 8;
+			*outr = (*inr * (*cr)) >> 8;
 		else
 			*outr = *inr;
 
 		if (*cg != 255)
-			*outg = (*ing **cg) >> 8;
+			*outg = (*ing * (*cg)) >> 8;
 		else
 			*outg = *ing;
 
@@ -135,23 +135,23 @@ void  BlenderNormal::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte
 		if (*cb == 0)
 			*outb = *outb;
 		else if (*cb != 255)
-			*outb = *outb + (*inb **ina **cb >> 16);
+			*outb = *outb + ((*inb) * (*ina) * (*cb) >> 16);
 		else
-			*outb = *outb + (*inb **ina >> 8);
+			*outb = *outb + (*inb * (*ina) >> 8);
 
 		if (*cr == 0)
 			*outr = *outr;
 		else if (*cr != 255)
-			*outr = *outr + (*inr **ina **cr >> 16);
+			*outr = *outr + (*inr * (*ina) * (*cr) >> 16);
 		else
-			*outr = *outr + (*inr **ina >> 8);
+			*outr = *outr + (*inr * (*ina) >> 8);
 
 		if (*cg == 0)
 			*outg = *outg;
 		else if (*cg != 255)
-			*outg = *outg + (*ing **ina **cg >> 16);
+			*outg = *outg + ((*ing) * (*ina) * (*cg) >> 16);
 		else
-			*outg = *outg + (*ing **ina >> 8);
+			*outg = *outg + ((*ing) * (*ina) >> 8);
 
 		*ina = tempa;
 
@@ -170,9 +170,9 @@ void BlenderNormal::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte 
 		return;
 	} else {
 		*outa = 255;
-		*outb = ((*inb **ina) + *outb * (255 - *ina)) >> 8;
-		*outg = ((*ing **ina) + *outg * (255 - *ina)) >> 8;
-		*outr = ((*inr **ina) + *outr * (255 - *ina)) >> 8;
+		*outb = (((*inb) *(*ina)) + *outb * (255 - *ina)) >> 8;
+		*outg = (((*ing) *(*ina)) + *outg * (255 - *ina)) >> 8;
+		*outr = (((*inr) *(*ina)) + *outr * (255 - *ina)) >> 8;
 	}
 }
 
@@ -188,9 +188,9 @@ void  BlenderSubtractive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb,
 		return;
 	} else {
 		*outa = *outa;
-		*outb = MAX(*outb - (*inb **ina >> 8), 0);
-		*outg = MAX(*outg - (*ing **ina >> 8), 0);
-		*outr = MAX(*outr - (*inr **ina >> 8), 0);
+		*outb = MAX(*outb - ((*inb) *(*ina) >> 8), 0);
+		*outg = MAX(*outg - ((*ing) *(*ina) >> 8), 0);
+		*outr = MAX(*outr - ((*inr) *(*ina) >> 8), 0);
 		return;
 	}
 }
