@@ -195,7 +195,7 @@ void  BlenderSubtractive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb,
 	}
 }
 
-void  BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+void BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
 	if (*ina == 0) {
 		return;
