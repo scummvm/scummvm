@@ -142,59 +142,21 @@ static const uint32 s_codePage1252[256] = {
 #undef REQUIRED
 #undef NOT_REQUIRED
 
-Graphics::Font *GraphicsManager::createFont(int size) const {
-	Common::SeekableReadStream *stream = 0;
-
-	// HACK: Try to load the system font
+Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
 	// TODO: MS Gothic for the Japanese version (please buy for clone2727)
-	// Arial for everything else (???)
-#if defined(WIN32)
-	Common::FSNode fontPath("C:/WINDOWS/Fonts/arial.ttf");
+	// Arial or Arial Bold for everything else (???)
 
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
+	Common::SeekableReadStream *stream = findArialStream(bold);
 
-	if (!stream) {
-		Common::FSNode win2kFontPath("C:/WINNT/Fonts/arial.ttf");
-
-		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
-			stream = win2kFontPath.createReadStream();
-	}
-#elif defined(MACOSX)
-	// Attempt to load the font from the Arial.ttf font first
-	Common::FSNode fontPath("/Library/Fonts/Arial.ttf");
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
-
-	if (!stream) {
-		// Try the suitcase on the system
-		Common::FSNode fontDirectory("/Library/Fonts");
-		Common::MacResManager resFork;
-
-		// DOUBLE HACK WARNING: Just assume it's 0x1000
-		// (it should always be this, the first font, but parsing the FOND would be better)
-		if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
-			stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), 0x1000);
-
-		// ...and one last try
-		if (!stream) {
-			Common::FSNode msFontDirectory("/Library/Fonts/Microsoft");
-			if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
-				stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), 0x1000);
-		}
-	}
-#endif
-
-	if (!stream) {
-		// TODO: Try to load an equivalent font from the theme
+	if (!stream)
 		return 0;
-	}
 
 	// TODO: Make the monochrome mode optional
 	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
 	// with the TrueType font on Win7/Win8 (at least)
 	// TODO: shift-jis (code page 932) for the Japanese version (again, buy for clone2727)
+	// FIXME: 'size' is really 'height', not point size.
+	// FIXME: DPI should be 96, not 0 (72)
 	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 0, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
 	delete stream;
 	return font;
@@ -451,6 +413,57 @@ Graphics::Surface *GraphicsManager::remapPalettedFrame(const Graphics::Surface *
 			*((byte *)convertedSurface->getBasePtr(x, y)) = palMap[*((byte *)frame->getBasePtr(x, y))];
 
 	return convertedSurface;
+}
+
+Common::SeekableReadStream *GraphicsManager::findArialStream(bool bold) const {
+	Common::SeekableReadStream *stream = 0;
+
+	// HACK: Try to load the system font
+#if defined(WIN32)
+	Common::String baseName = bold ? "arialbd.ttf" : "arial.ttf";
+	Common::FSNode fontPath("C:/WINDOWS/Fonts/" + baseName);
+
+	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
+		stream = fontPath.createReadStream();
+
+	if (!stream) {
+		Common::FSNode win2kFontPath("C:/WINNT/Fonts/" + baseName);
+
+		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
+			stream = win2kFontPath.createReadStream();
+	}
+#elif defined(MACOSX)
+	// Attempt to load the font from the Arial.ttf font first
+	Common::String baseName = bold ? "Arial Bold" : "Arial";
+	Common::FSNode fontPath(Common::String::format("/Library/Fonts/%s.ttf", baseName.c_str()));
+
+	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
+		stream = fontPath.createReadStream();
+
+	if (!stream) {
+		// Try the suitcase on the system
+		Common::FSNode fontDirectory("/Library/Fonts");
+		Common::MacResManager resFork;
+
+		// DOUBLE HACK WARNING: Just assume it's 0x1000
+		// (it should always be this, the first font, but parsing the FOND would be better)
+		if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
+			stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), baseName);
+
+		// ...and one last try
+		if (!stream) {
+			Common::FSNode msFontDirectory("/Library/Fonts/Microsoft");
+			if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
+				stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), baseName);
+		}
+	}
+#endif
+
+	if (!stream) {
+		// TODO: Find the equivalent free font
+	}
+
+	return stream;
 }
 
 } // End of namespace Buried
