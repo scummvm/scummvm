@@ -159,6 +159,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Rim Lift Computer
 		return new Scene1875();
 	case 1900:
+		// Spill Mountains Elevator Exit
 		return new Scene1900();
 	case 1925:
 		return new Scene1925();
