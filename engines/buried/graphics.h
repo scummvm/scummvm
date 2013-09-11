@@ -71,7 +71,7 @@ public:
 	~GraphicsManager();
 
 	byte *getDefaultPalette() const { return _palette; }
-	Graphics::Font *createFont(int size) const;
+	Graphics::Font *createFont(int size, bool bold = false) const;
 	Cursor setCursor(Cursor newCursor);
 	Graphics::Surface *getBitmap(uint32 bitmapID);
 	Graphics::Surface *getBitmap(const Common::String &fileName);
@@ -101,6 +101,8 @@ private:
 	
 	byte *createDefaultPalette() const;
 	Graphics::Surface *getBitmap(Common::SeekableReadStream *stream);
+
+	Common::SeekableReadStream *findArialStream(bool bold) const;
 };
 
 } // End of namespace Buried
