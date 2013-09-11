@@ -285,7 +285,7 @@ void Scene2000::initExits() {
 	case 21:
 	case 26:
 		loadScene(2200);
-		R2_GLOBALS._walkRegions.load(2000);
+		R2_GLOBALS._walkRegions.load(2200);
 		_eastExit._enabled = false;
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1900)
 			_mazePlayerMode = 2;
@@ -1029,6 +1029,12 @@ void Scene2000::process(Event &event) {
 
 void Scene2000::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
+
+	// Synchronise active walk regions
+	int regionsId = R2_GLOBALS._walkRegions._resNum;
+	s.syncAsUint16LE(regionsId);
+	if (s.isLoading())
+		R2_GLOBALS._walkRegions.load(regionsId);
 
 	s.syncAsByte(_exitingFlag);
 	s.syncAsSint16LE(_mazePlayerMode);
