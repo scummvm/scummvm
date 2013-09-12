@@ -530,6 +530,10 @@ void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
 	push_back(msg);
 }
 
+void clearGlobalMessageQueueList1() {
+	warning("STUB: clearGlobalMessageQueueList1()");
+}
+
 bool removeMessageHandler(int16 id, int pos) {
 	if (g_fullpipe->_messageHandlers) {
 		MessageHandler *curItem = g_fullpipe->_messageHandlers;

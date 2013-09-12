@@ -27,6 +27,7 @@
 #include "fullpipe/input.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/motion.h"
 
 namespace Fullpipe {
 
@@ -227,10 +228,86 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 	return true;
 }
 
-bool CGameLoader::preloadScene(int sceneId, int entranceId) {
-	warning("STUB: preloadScene(%d, %d), ", sceneId, entranceId);
+bool preloadCallback(const PreloadItem &pre, int flag) {
+	warning("STUB: preloadCallback");
 
 	return true;
+}
+
+bool CGameLoader::preloadScene(int sceneId, int entranceId) {
+	debug(0, "preloadScene(%d, %d), ", sceneId, entranceId);
+
+	if (_preloadSceneId != sceneId || _preloadEntranceId != entranceId) {
+		_preloadSceneId = sceneId;
+		_preloadEntranceId = entranceId;
+		return true;
+	}
+
+	int idx = -1;
+
+	for (uint i = 0; i < _preloadItems.size(); i++)
+		if (_preloadItems[i].preloadId1 == sceneId && _preloadItems[i].preloadId2 == entranceId) {
+			idx = i;
+			break;
+		}
+
+	if (idx == -1) {
+		_preloadSceneId = 0;
+		_preloadEntranceId = 0;
+		return false;
+	}
+
+	if (_preloadCallback) {
+		if (!_preloadCallback(_preloadItems[idx], 0))
+			return false;
+	}
+
+	if (g_fullpipe->_currentScene && g_fullpipe->_currentScene->_sceneId == sceneId)
+		g_fullpipe->_currentScene = 0;
+
+	saveScenePicAniInfos(sceneId);
+	clearGlobalMessageQueueList1();
+	unloadScene(sceneId);
+
+	if (_preloadCallback)
+		_preloadCallback(_preloadItems[idx], 50);
+
+	loadScene(_preloadItems[idx].sceneId);
+
+	ExCommand *ex = new ExCommand(_preloadItems[idx].sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags = 2;
+	ex->_keyCode = _preloadItems[idx].keyCode;
+
+	_preloadSceneId = 0;
+	_preloadEntranceId = 0;
+
+	if (_preloadCallback)
+		_preloadCallback(_preloadItems[idx], 100);
+
+	ex->postMessage();
+
+	return true;
+}
+
+bool CGameLoader::unloadScene(int sceneId) {
+	SceneTag *tag;
+	int sceneTag = getSceneTagBySceneId(sceneId, &tag);
+
+	if (sceneTag < 0)
+		return false;
+
+	if (_sc2array[sceneTag]._isLoaded)
+		saveScenePicAniInfos(sceneId);
+
+	_sc2array[sceneTag]._motionController->freeItems();
+
+	delete tag->_scene;
+	tag->_scene = 0;
+
+	_sc2array[sceneTag]._isLoaded = 0;
+	_sc2array[sceneTag]._scene = 0;
+
+   return true;
 }
 
 int CGameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
@@ -302,6 +379,10 @@ void CGameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAn
 			}
 		}
 	}
+}
+
+void CGameLoader::saveScenePicAniInfos(int sceneId) {
+	warning("STUB: CGameLoader::saveScenePicAniInfos(%d)", sceneId);
 }
 
 void CGameLoader::updateSystems(int counterdiff) {

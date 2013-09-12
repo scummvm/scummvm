@@ -42,6 +42,7 @@ class CMotionController : public CObject {
 	void clearEnabled() { _isEnabled = false; }
 
 	virtual void addObject(StaticANIObject *obj) {}
+	virtual void freeItems() {}
 };
 
 class CMctlCompoundArray : public Common::Array<CObject>, public CObject {

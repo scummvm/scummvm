@@ -59,8 +59,8 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	}
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
-	// _preloadCallback = gameLoaderPreloadCallback
-	// _readSavegameCallback = gameLoaderReadSavegameCallback;
+	_gameLoader->_preloadCallback = preloadCallback;
+	// _readSavegameCallback = gameLoaderReadSavegameCallback; // TODO
 
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
 	_scene2 = 0;
@@ -155,7 +155,7 @@ bool PreloadItems::load(MfcArchive &file) {
 		t->preloadId1 = file.readUint32LE();
 		t->preloadId2 = file.readUint32LE();
 		t->sceneId = file.readUint32LE();
-		t->field_C = file.readUint32LE();
+		t->keyCode = file.readUint32LE();
 
 		push_back(*t);
 	}

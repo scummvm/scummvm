@@ -38,8 +38,10 @@ struct PreloadItem {
 	int preloadId1;
 	int preloadId2;
 	int sceneId;
-	int field_C;
+	int keyCode;
 };
+
+bool preloadCallback(const PreloadItem &pre, int flag);
 
 class PreloadItems : public Common::Array<PreloadItem>, public CObject {
  public:
@@ -55,11 +57,13 @@ class CGameLoader : public CObject {
 	bool loadScene(int sceneId);
 	bool gotoScene(int sceneId, int entranceId);
 	bool preloadScene(int sceneId, int entranceId);
+	bool unloadScene(int sceneId);
 
 	void updateSystems(int counterdiff);
 
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
 	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
+	void saveScenePicAniInfos(int sceneId);
 
 	GameProject *_gameProject;
 	CInteractionController *_interactionController;
@@ -67,7 +71,7 @@ class CGameLoader : public CObject {
 	CInventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
-	void *_preloadCallback;
+	bool (*_preloadCallback)(const PreloadItem &pre, int flag);
 	void *_readSavegameCallback;
 	int16 _field_F8;
 	int16 _field_FA;
