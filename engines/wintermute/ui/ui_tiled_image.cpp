@@ -36,9 +36,6 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
 
-#include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
-#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
-
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UITiledImage, false)
