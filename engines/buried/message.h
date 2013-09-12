@@ -97,17 +97,6 @@ private:
 	uint _flags;
 };
 
-template <MessageType type>
-class WindowMessage : public MessageTypeIntern<type> {
-public:
-	WindowMessage(Window *window) : _window(window) {}
-
-	Window *getWindow() const { return _window; }
-
-private:
-	Window *_window;
-};
-
 // Types for everything that falls under one of the above categories
 typedef KeyMessage<kMessageTypeKeyUp>                  KeyUpMessage;
 typedef KeyMessage<kMessageTypeKeyDown>                KeyDownMessage;
@@ -120,15 +109,15 @@ typedef MouseMessage<kMessageTypeRButtonUp>            RButtonUpMessage;
 typedef MouseMessage<kMessageTypeRButtonDown>          RButtonDownMessage;
 
 // ...and the rest
-class SetCursorMessage : public WindowMessage<kMessageTypeSetCursor> {
+class SetCursorMessage : public MessageTypeIntern<kMessageTypeSetCursor> {
 public:
-	SetCursorMessage(Window *window, uint cursor)
-			: WindowMessage<kMessageTypeSetCursor>(window), _cursor(cursor) {}
+	// Hit-test is purposely skipped
+	SetCursorMessage(uint message) : _message(message) {}
 
-	uint getCursor() const { return _cursor; }
+	uint getMessage() const { return _message; }
 
 private:
-	uint _cursor;
+	uint _message;
 };
 
 class TimerMessage : public MessageTypeIntern<kMessageTypeTimer> {

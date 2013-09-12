@@ -321,6 +321,7 @@ void BuriedEngine::pollForEvents() {
 			Common::Point relativePos;
 			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
 			window->postMessage(new MouseMoveMessage(relativePos, 0));
+			window->postMessage(new SetCursorMessage(kMessageTypeMouseMove));
 			break;
 		}
 		case Common::EVENT_KEYUP:

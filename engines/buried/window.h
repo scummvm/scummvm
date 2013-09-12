@@ -55,7 +55,7 @@ public:
 	virtual void onMButtonUp(const Common::Point &point, uint flags) {}
 	virtual void onRButtonUp(const Common::Point &point, uint flags) {}
 	virtual void onRButtonDown(const Common::Point &point, uint flags) {}
-	virtual bool onSetCursor(Window *window, uint cursor) { return false; }
+	virtual bool onSetCursor(uint message) { return false; }
 	virtual void onEnable(bool enable) {}
 
 	void invalidateRect(const Common::Rect &rect, bool erase = true);
@@ -121,6 +121,8 @@ private:
 
 	typedef Common::List<Window *> WindowList;
 	WindowList _children, _topMostChildren;
+
+	bool handleSetCursorMessage(uint message);
 };
 
 // A subset of the special insert after Window handles
