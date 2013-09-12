@@ -124,7 +124,7 @@ private:
 	void giveGeidaTheLute();
 	void playHarp();
 	void winSequence();
-	void personSpeaks();
+	Common::String personSpeaks();
 	void heyThanks();
 };
 

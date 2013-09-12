@@ -848,26 +848,20 @@ void Acci::peopleInRoom() {
 		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_dna._room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
-				_vm->_scrolls->displayText(_vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
-			else if (actPerson < numPeople) { // The middle...
-				tmpStr = Common::String::format(", %s%c", _vm->_gyro->getName(i + 150).c_str(), Scrolls::kControlToBuffer);
-				_vm->_scrolls->displayText(tmpStr);
-			} else { // The end.
-				tmpStr = Common::String::format(" and %s%c", _vm->_gyro->getName(i + 150).c_str(), Scrolls::kControlToBuffer);
-				_vm->_scrolls->displayText(tmpStr);
-			}
+				tmpStr = _vm->_gyro->getName(i + 150);
+			else if (actPerson < numPeople) // The middle...
+				tmpStr += ", " + _vm->_gyro->getName(i + 150);
+			else // The end.
+				tmpStr += " and " + _vm->_gyro->getName(i + 150);
 		}
 	}
 
-	if (numPeople == 1) {
-		tmpStr = Common::String::format(" is%c", Scrolls::kControlToBuffer);
-		_vm->_scrolls->displayText(tmpStr);
-	} else {
-		tmpStr = Common::String::format(" are%c", Scrolls::kControlToBuffer);
-		_vm->_scrolls->displayText(tmpStr);
-	}
+	if (numPeople == 1)
+		tmpStr += " is";
+	else
+		tmpStr += " are";
 
-	_vm->_scrolls->displayText(" here."); // End and display it.
+	_vm->_scrolls->displayText(tmpStr + " here."); // End and display it.
 }
 
 void Acci::lookAround() {
@@ -1290,7 +1284,7 @@ void Acci::winSequence() {
 	_vm->_timer->addTimer(30, Timer::kProcWinning, Timer::kReasonWinning);
 }
 
-void Acci::personSpeaks() {
+Common::String Acci::personSpeaks() {
 	if ((_person == kPardon) || (_person == 0)) {
 		if ((_vm->_gyro->_him == kPardon) || (_vm->_gyro->_whereIs[_vm->_gyro->_him - 150] != _vm->_gyro->_dna._room))
 			_person = _vm->_gyro->_her;
@@ -1299,34 +1293,32 @@ void Acci::personSpeaks() {
 	}
 
 	if (_vm->_gyro->_whereIs[_person - 150] != _vm->_gyro->_dna._room) {
-		Common::String tmpStr = Common::String::format("%c1%c", Scrolls::kControlRegister, Scrolls::kControlToBuffer);
-		_vm->_scrolls->displayText(tmpStr); // Avvy himself!
-		return;
+		return Common::String::format("%c1", Scrolls::kControlRegister); // Avvy himself!
 	}
 
 	bool found = false; // The _person we're looking for's code is in _person.
+	Common::String tmpStr;
 
 	for (byte i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
-			Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, '1' + i, Scrolls::kControlToBuffer);
-			_vm->_scrolls->displayText(tmpStr);
+			tmpStr += Common::String::format("%c%c", Scrolls::kControlRegister, '1' + i);
 			found = true;
 		}
 	}
 
 	if (found)
-		return;
+		return tmpStr;
 
 	for (byte i = 0; i < 16; i++) {
-		if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_dna._room)) {
-			Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, 'A' + i, Scrolls::kControlToBuffer);
-			_vm->_scrolls->displayText(tmpStr);
-		}
+		if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_dna._room))
+			tmpStr += Common::String::format("%c%c", Scrolls::kControlRegister, 'A' + i);
 	}
+
+	return tmpStr;
 }
 void Acci::heyThanks() {
-	personSpeaks();
-	Common::String tmpStr = Common::String::format("Hey, thanks!%c(But now, you've lost it!)", Scrolls::kControlSpeechBubble);
+	Common::String tmpStr = personSpeaks();
+	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", Scrolls::kControlSpeechBubble);
 	_vm->_scrolls->displayText(tmpStr);
 	_vm->_gyro->_dna._objects[_thing - 1] = false;
 }
@@ -2056,14 +2048,14 @@ void Acci::doThat() {
 		_vm->_scrolls->displayText("Hey, a verb would be helpful!");
 		break;
 	case kVerbCodeHello: {
-		personSpeaks();
-		Common::String tmpStr = Common::String::format("Hello.%c", Scrolls::kControlSpeechBubble);
+		Common::String tmpStr = personSpeaks();
+		tmpStr += Common::String::format("Hello.%c", Scrolls::kControlSpeechBubble);
 		_vm->_scrolls->displayText(tmpStr);
 		}
 		break;
 	case kVerbCodeThanks: {
-		personSpeaks();
-		Common::String tmpStr = Common::String::format("That's OK.%c", Scrolls::kControlSpeechBubble);
+		Common::String tmpStr = personSpeaks();
+		tmpStr += Common::String::format("That's OK.%c", Scrolls::kControlSpeechBubble);
 		_vm->_scrolls->displayText(tmpStr);
 		}
 		break;
