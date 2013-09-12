@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	database.o \
 	detection.o \
 	frame_window.o \
+	gameui.o \
 	graphics.o \
 	livetext.o \
 	main_menu.o \

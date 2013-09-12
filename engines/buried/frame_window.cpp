@@ -31,6 +31,7 @@
 #include "buried/buried.h"
 #include "buried/credits.h"
 #include "buried/frame_window.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/main_menu.h"
 #include "buried/message.h"
@@ -238,9 +239,15 @@ bool FrameWindow::startNewGame(bool walkthrough, bool introMovie) {
 	_vm->removeMouseMessages(this);
 
 	delete _mainChildWindow;
-	_mainChildWindow = 0;
 
-	// TODO: Create and show UI, then begin the game
+	// Create Game UI window to kick things off
+	_mainChildWindow = new GameUIWindow(_vm, this);
+	_mainChildWindow->showWindow(kWindowShow);
+
+	if (introMovie)
+		((GameUIWindow *)_mainChildWindow)->startNewGameIntro(walkthrough);
+	else
+		((GameUIWindow *)_mainChildWindow)->startNewGame(walkthrough);
 
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
@@ -254,9 +261,11 @@ bool FrameWindow::startNewGame(const Common::String &fileName) {
 	_vm->removeMouseMessages(this);
 
 	delete _mainChildWindow;
-	_mainChildWindow = 0;
 
-	// TODO: Create and show UI, then begin the game
+	// Create Game UI window to kick things off
+	_mainChildWindow = new GameUIWindow(_vm, this);
+	_mainChildWindow->showWindow(kWindowShow);
+	((GameUIWindow *)_mainChildWindow)->startNewGame(fileName);
 
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
