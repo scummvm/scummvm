@@ -2805,21 +2805,18 @@ void Scene2530::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2535::Actor3::startAction(CursorType action, Event &event) {
+bool Scene2535::RebreatherTank::startAction(CursorType action, Event &event) {
 	Scene2535 *scene = (Scene2535 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.disableControl();
-		if (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2535) {
-			scene->_sceneMode = 2536;
-			scene->setAction(&scene->_sequenceManager, scene, 2536, &R2_GLOBALS._player, &scene->_actor3, NULL);
-		} else {
-			scene->_sceneMode = 2537;
-			scene->setAction(&scene->_sequenceManager, scene, 2537, &R2_GLOBALS._player, &scene->_actor3, NULL);
-		}
+		
+		scene->_sceneMode = (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2535) ? 2536 : 2537;
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, 
+			&R2_GLOBALS._player, &scene->_rebreatherTank, NULL);
 	} else {
 		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 	}
@@ -2827,7 +2824,7 @@ bool Scene2535::Actor3::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene2535::Actor4::startAction(CursorType action, Event &event) {
+bool Scene2535::TannerMask::startAction(CursorType action, Event &event) {
 	Scene2535 *scene = (Scene2535 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -2836,7 +2833,7 @@ bool Scene2535::Actor4::startAction(CursorType action, Event &event) {
 	if (R2_GLOBALS._player._characterIndex == 2) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2535;
-		scene->setAction(&scene->_sequenceManager, scene, 2535, &R2_GLOBALS._player, &scene->_actor4, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2535, &R2_GLOBALS._player, &scene->_tannerMask, NULL);
 	} else {
 		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 	}
@@ -2867,34 +2864,34 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDest(Common::Point(210, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 2535) {
-		_actor4.postInit();
-		_actor4.setup(2435, 1, 4);
-		_actor4.setPosition(Common::Point(47, 74));
-		_actor4.fixPriority(74);
-		_actor4.setDetails(2535, 21, -1, -1, 1, (SceneItem *)NULL);
+		_tannerMask.postInit();
+		_tannerMask.setup(2435, 1, 4);
+		_tannerMask.setPosition(Common::Point(47, 74));
+		_tannerMask.fixPriority(74);
+		_tannerMask.setDetails(2535, 21, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2535) {
-		_actor3.postInit();
-		_actor3.setup(2535, 3, 1);
-		_actor3.setPosition(Common::Point(203, 131));
-		_actor3.setDetails(3, 20, -1, -1, 1, (SceneItem *)NULL);
+		_rebreatherTank.postInit();
+		_rebreatherTank.setup(2535, 3, 1);
+		_rebreatherTank.setPosition(Common::Point(203, 131));
+		_rebreatherTank.setDetails(3, 20, -1, -1, 1, (SceneItem *)NULL);
 		R2_GLOBALS._walkRegions.enableRegion(6);
 	}
 
 	if ((R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 0) && (R2_GLOBALS.getFlag(73))) {
-		_actor3.postInit();
-		_actor3.setup(2536, 1, 2);
-		_actor3.setPosition(Common::Point(164, 133));
-		_actor3.setDetails(3, 20, -1, -1, 1, (SceneItem *)NULL);
+		_rebreatherTank.postInit();
+		_rebreatherTank.setup(2536, 1, 2);
+		_rebreatherTank.setPosition(Common::Point(164, 133));
+		_rebreatherTank.setDetails(3, 20, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_GLOBALS.getFlag(73)) {
-		_actor2.postInit();
-		_actor2.setup(2536, 1, 1);
-		_actor2.setPosition(Common::Point(160, 130));
-		_actor2.fixPriority(122);
-		_actor2.setDetails(2535, 37, -1, -1, 1, (SceneItem *)NULL);
+		_rope.postInit();
+		_rope.setup(2536, 1, 1);
+		_rope.setPosition(Common::Point(160, 130));
+		_rope.fixPriority(122);
+		_rope.setDetails(2535, 37, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	R2_GLOBALS._player.postInit();
@@ -2909,25 +2906,25 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.setPosition(Common::Point(210, 200));
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor1.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
-			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
-		_actor1.setPosition(Common::Point(245, 115));
+		_companion.setPosition(Common::Point(245, 115));
 		R2_GLOBALS._walkRegions.enableRegion(2);
 	}
 
-	_item2.setDetails(Rect(96, 3, 215, 33), 2535, 3, 6, 5, 1, NULL);
-	_item3.setDetails(Rect(4, 43, 40, 101), 2535, 6, 7, 8, 1, NULL);
-	_item4.setDetails(Rect(55, 13, 140, 89), 2535, 6, 7, 8, 1, NULL);
-	_item5.setDetails(Rect(144, 23, 216, 76), 2535, 6, 7, 8, 1, NULL);
-	_item6.setDetails(Rect(227, 8, 307, 99), 2535, 6, 7, 8, 1, NULL);
-	_item7.setDetails(Rect(116, 111, 201, 132), 2535, 18, 19, 20, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 2535, 0, 1, -1, 1, NULL);
+	_roof.setDetails(Rect(96, 3, 215, 33), 2535, 3, 6, 5, 1, NULL);
+	_skin1.setDetails(Rect(4, 43, 40, 101), 2535, 6, 7, 8, 1, NULL);
+	_skin2.setDetails(Rect(55, 13, 140, 89), 2535, 6, 7, 8, 1, NULL);
+	_skin3.setDetails(Rect(144, 23, 216, 76), 2535, 6, 7, 8, 1, NULL);
+	_skin4.setDetails(Rect(227, 8, 307, 99), 2535, 6, 7, 8, 1, NULL);
+	_depression.setDetails(Rect(116, 111, 201, 132), 2535, 18, 19, 20, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2535, 0, 1, -1, 1, NULL);
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
@@ -2949,30 +2946,29 @@ void Scene2535::signal() {
 		break;
 	case 2535:
 		R2_INVENTORY.setObjectScene(R2_TANNER_MASK, 2);
-		_actor4.remove();
+		_tannerMask.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 2536:
 		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 0);
 		R2_GLOBALS._walkRegions.disableRegion(6);
 		if (!R2_GLOBALS.getFlag(73)) {
-			_actor3.remove();
+			_rebreatherTank.remove();
 			R2_GLOBALS._player.enableControl();
 		} else {
 			_sceneMode = 20;
-			_actor3.show();
-			_actor3.setup(2536, 1, 2);
-			_actor3.setDetails(3, 20, -1, -1, 3, (SceneItem *)NULL);
-			_actor3.setPosition(Common::Point(164, 150));
-			_actor3.fixPriority(130);
-			_actor3._moveDiff.y = 1;
-			Common::Point pt(164, 133);
-			PlayerMover *mover = new PlayerMover();
-			_actor3.addMover(mover, &pt, this);
+			_rebreatherTank.show();
+			_rebreatherTank.setup(2536, 1, 2);
+			_rebreatherTank.setDetails(3, 20, -1, -1, 3, (SceneItem *)NULL);
+			_rebreatherTank.setPosition(Common::Point(164, 150));
+			_rebreatherTank.fixPriority(130);
+
+			_rebreatherTank._moveDiff.y = 1;
+			ADD_MOVER(_rebreatherTank, 164, 133);
 		}
 		break;
 	case 2537:
-		_actor3.remove();
+		_rebreatherTank.remove();
 		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 1);
 		R2_GLOBALS._player.enableControl();
 		break;

@@ -12878,7 +12878,7 @@ void Scene1900::signal() {
 		break;
 	case 20:
 		++_sceneMode;
-		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		_stripManager.start(1300, this);
 		break;
 	case 21:
@@ -12901,7 +12901,7 @@ void Scene1900::signal() {
 		R2_GLOBALS._sceneManager.changeScene(1925);
 		break;
 	case 1910:
-		R2_INVENTORY.setObjectScene(R2_GUIDANCE_MODULE, 2535);
+		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 2535);
 		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 		R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = 1900;
 		R2_GLOBALS._player._oldCharacterScene[R2_SEEKER] = 1900;

@@ -447,11 +447,11 @@ public:
 };
 
 class Scene2535 : public SceneExt {
-	class Actor3 : public SceneActor {
+	class RebreatherTank : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class TannerMask : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -461,17 +461,17 @@ class Scene2535 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	NamedHotspot _item5;
-	NamedHotspot _item6;
-	NamedHotspot _item7;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	Actor3 _actor3;
-	Actor4 _actor4;
+	NamedHotspot _background;
+	NamedHotspot _roof;
+	NamedHotspot _skin1;
+	NamedHotspot _skin2;
+	NamedHotspot _skin3;
+	NamedHotspot _skin4;
+	NamedHotspot _depression;
+	SceneActor _companion;
+	SceneActor _rope;
+	RebreatherTank _rebreatherTank;
+	TannerMask _tannerMask;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
