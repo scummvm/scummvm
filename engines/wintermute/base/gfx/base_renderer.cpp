@@ -404,10 +404,4 @@ bool BaseRenderer::displayIndicator() {
 	return STATUS_OK;
 }
 
-/*void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){
-	_auxSurface = auxSurface;
-}
-*/
-
-
 } // End of namespace Wintermute
