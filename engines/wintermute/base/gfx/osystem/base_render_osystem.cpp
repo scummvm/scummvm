@@ -732,10 +732,7 @@ BaseSurface *BaseRenderOSystem::getAuxSurface() {
 	surface->setAlphaType(ALPHA_FULL);
 	return surface;
 }
-/*void BaseRenderOSystem::putAuxSurface(Graphics::Surface *auxSurface){
-	_auxSurface = auxSurface;
-}
-*/
+
 // TODO: Ugly hack is ugly 
 void BaseRenderOSystem::disableDirtyRects (bool disable) {
 	_disableDirtyRects = disable;

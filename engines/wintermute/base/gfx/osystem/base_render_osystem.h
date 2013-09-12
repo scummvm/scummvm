@@ -103,7 +103,6 @@ public:
 	virtual bool startSpriteBatch(bool swap = false, int width = 0, int height = 0) override;
 	virtual bool endSpriteBatch(bool swap = false) override;
 	virtual BaseSurface *getAuxSurface() override;
-	void putAuxSurface(Graphics::Surface *auxSurface);
 	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
 	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
