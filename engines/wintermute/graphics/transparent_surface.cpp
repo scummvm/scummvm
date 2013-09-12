@@ -34,6 +34,31 @@ namespace Wintermute {
 void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 
+class BlenderAdditive {
+public:
+	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	static void blendPixel(byte *in, byte *out);
+	static void blendPixel(byte *in, byte *out, int colorMod);
+};
+
+class BlenderSubtractive {
+public:
+	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	static void blendPixel(byte *in, byte *out);
+	static void blendPixel(byte *in, byte *out, int colorMod);
+};
+
+class BlenderNormal {
+public:
+	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	static void blendPixel(byte *in, byte *out);
+	static void blendPixel(byte *in, byte *out, int colorMod);
+};
+
+
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	/**
