@@ -36,6 +36,16 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
+	/**
+	 * Perform additive blending of a pixel, applying beforehand a given colormod.
+	 * @param ina, inr, ing, inb: the input pixel, split into its components.
+	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+	 */
+
+	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
+	// Just use the faster, sans-colormod version
+
 	if (*ca != 255) {
 		ina = (ina) * (*ca) >> 8;
 	}
@@ -62,6 +72,16 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
 
 void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
+	/**
+	 * Perform subtractive blending of a pixel, applying beforehand a given colormod.
+	 * @param ina, inr, ing, inb: the input pixel, split into its components.
+	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+	 */
+
+	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
+	// Just use the faster, sans-colormod version
+
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
 	}
@@ -87,6 +107,16 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 }
 
 void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+
+	/**
+	 * Perform "regular" alphablending of a pixel, applying beforehand a given colormod.
+	 * @param ina, inr, ing, inb: the input pixel, split into its components.
+	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+	 */
+
+	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
+	// Just use the faster, sans-colormod version
 
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
@@ -148,6 +178,12 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 
 void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
+	/**
+	 * Perform "regular" alphablending of a pixel.
+	 * @param ina, inr, ing, inb: the input pixel, split into its components.
+	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+	 */
+
 	if (ina == 0) {
 		return;
 	} else if (ina == 255) {
@@ -165,6 +201,12 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 }
 
 void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+
+	/**
+	 * Perform subtractive blending of a pixel.
+	 * @param ina, inr, ing, inb: the input pixel, split into its components.
+	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+	 */
 
 	if (ina == 0) {
 		return;
@@ -184,6 +226,12 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 }
 
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+	
+	/**
+	 * Perform additive blending of a pixel.
+	 * @param ina, inr, ing, inb: the input pixel, split into its components.
+	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+	 */
 
 	if (ina == 0) {
 		return;
