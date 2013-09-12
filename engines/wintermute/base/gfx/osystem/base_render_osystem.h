@@ -70,7 +70,7 @@ public:
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 	Graphics::PixelFormat getPixelFormat() const override;
 	void fade(uint16 alpha) override;
-	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = nullptr) override;
+	void fadeToColor(byte r, byte g, byte b, byte a) override;
 
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 

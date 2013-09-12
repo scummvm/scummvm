@@ -243,22 +243,16 @@ void BaseRenderOSystem::fade(uint16 alpha) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect) {
+void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 	Common::Rect fillRect;
 
-	if (rect) {
-		fillRect.left = rect->left;
-		fillRect.top = rect->top;
-		fillRect.setWidth(rect->width());
-		fillRect.setHeight(rect->height());
-	} else {
-		Rect32 rc;
-		_gameRef->getCurrentViewportRect(&rc);
-		fillRect.left = (int16)rc.left;
-		fillRect.top = (int16)rc.top;
-		fillRect.setWidth((int16)(rc.right - rc.left));
-		fillRect.setHeight((int16)(rc.bottom - rc.top));
-	}
+	Rect32 rc;
+	_gameRef->getCurrentViewportRect(&rc);
+	fillRect.left = (int16)rc.left;
+	fillRect.top = (int16)rc.top;
+	fillRect.setWidth((int16)(rc.right - rc.left));
+	fillRect.setHeight((int16)(rc.bottom - rc.top));
+
 	modTargetRect(&fillRect);
 
 	//TODO: This is only here until I'm sure about the final pixelformat
