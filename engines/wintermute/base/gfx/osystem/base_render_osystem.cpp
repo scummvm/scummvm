@@ -734,7 +734,7 @@ BaseSurface *BaseRenderOSystem::getAuxSurface() {
 }
 
 // TODO: Ugly hack is ugly 
-void BaseRenderOSystem::disableDirtyRects (bool disable) {
+void BaseRenderOSystem::disableDirtyRects(bool disable) {
 	_disableDirtyRects = disable;
 }
 
