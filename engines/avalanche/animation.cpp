@@ -226,7 +226,7 @@ void AnimationType::walk() {
 				break;
 			case Gyro::kMagicUnfinished: {
 				bounce();
-				Common::String tmpStr = Common::String::format("%cSorry.%cThis place is not available yet!", Scrolls::kControlBell, Scrolls::kControlCenter, Scrolls::kControlRoman);
+				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", Scrolls::kControlBell, Scrolls::kControlCenter, Scrolls::kControlRoman);
 				_anim->_vm->_scrolls->displayText(tmpStr);
 				}
 				break;
@@ -352,8 +352,8 @@ void AnimationType::remove() {
 	if ((_info._xLength % 8) > 0)
 		_info._xWidth++;
 	for (byte i = 0; i < _stat._frameNum; i++) {
+		assert(_animCount > 0);
 		_animCount--;
-		assert(_animCount >= 0);
 		delete[] _info._mani[_animCount];
 		delete[] _info._sil[_animCount];
 	}

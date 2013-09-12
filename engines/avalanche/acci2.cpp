@@ -654,9 +654,9 @@ bool Acci::isPersonHere() { // Person equivalent of "holding".
 	else {
 		Common::String tmpStr;
 		if (_person < 175)
-			tmpStr = Common::String::format("He isn't around at the moment.");
+			tmpStr = "He isn't around at the moment.";
 		else
-			tmpStr = Common::String::format("She isn't around at the moment.");
+			tmpStr = "She isn't around at the moment.";
 		_vm->_scrolls->displayText(tmpStr);
 		return false;
 	}
@@ -750,13 +750,13 @@ void Acci::examine() {
 
 void Acci::inventory() {
 	byte itemNum = 0;
-	Common::String tmpStr = Common::String::format("You're carrying ");
+	Common::String tmpStr = Common::String("You're carrying ");
 
 	for (byte i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_dna._objects[i]) {
 			itemNum++;
 			if (itemNum == _vm->_gyro->_dna._carryNum)
-				tmpStr += "and %c";
+				tmpStr += "and ";
 
 			tmpStr += _vm->_gyro->getItem(i + 1);
 
@@ -768,9 +768,9 @@ void Acci::inventory() {
 		}
 	}
 
-	if (_vm->_gyro->_dna._wearing == kNothing) {
+	if (_vm->_gyro->_dna._wearing == kNothing)
 		tmpStr += Common::String::format("...%c%c...and you're stark naked!", Scrolls::kControlNewLine, Scrolls::kControlNewLine);
-	} else
+	else
 		tmpStr += '.';
 
 	_vm->_scrolls->displayText(tmpStr);
@@ -850,10 +850,10 @@ void Acci::peopleInRoom() {
 			if (actPerson == 1) // First on the list.
 				_vm->_scrolls->displayText(_vm->_gyro->getName(i + 150) + Scrolls::kControlToBuffer);
 			else if (actPerson < numPeople) { // The middle...
-				tmpStr = Common::String::format(", %s%c", _vm->_gyro->getName(i + 150), Scrolls::kControlToBuffer);
+				tmpStr = Common::String::format(", %s%c", _vm->_gyro->getName(i + 150).c_str(), Scrolls::kControlToBuffer);
 				_vm->_scrolls->displayText(tmpStr);
 			} else { // The end.
-				tmpStr = Common::String::format(" and %s%c", _vm->_gyro->getName(i + 150), Scrolls::kControlToBuffer);
+				tmpStr = Common::String::format(" and %s%c", _vm->_gyro->getName(i + 150).c_str(), Scrolls::kControlToBuffer);
 				_vm->_scrolls->displayText(tmpStr);
 			}
 		}
@@ -1056,9 +1056,9 @@ void Acci::putProc() {
  * @remarks	Originally called 'not_in_order'
  */
 void Acci::notInOrder() {
+	Common::String itemStr = _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]);
 	Common::String tmpStr = Common::String::format("Sorry, I need the ingredients in the right order for this potion. " \
-		"What I need next is %s%c2%c", _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]),
-		Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
+		"What I need next is %s%c2%c", itemStr.c_str(), Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
 	_vm->_scrolls->displayText(tmpStr);
 }
 
@@ -1206,7 +1206,7 @@ void Acci::getProc(char thing) {
 				_vm->_gyro->_dna._boxContent = kNothing;
 				_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			} else {
-				Common::String tmpStr = Common::String::format("I can't see %s in the box.", _vm->_gyro->getItem(thing));
+				Common::String tmpStr = Common::String::format("I can't see %s in the box.", _vm->_gyro->getItem(thing).c_str());
 				_vm->_scrolls->displayText(tmpStr);
 			}
 		} else
@@ -1835,7 +1835,7 @@ void Acci::doThat() {
 						}
 
 						_vm->_celer->drawBackgroundSprite(-1, -1, 12);
-						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Scrolls::kControlRegister, '1', Scrolls::kControlSpeechBubble);
+						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
 						_vm->_scrolls->displayText(tmpStr);
 						if (_vm->_gyro->_dna._alcoholLevel == 0)
 							_vm->_lucerna->incScore(3);

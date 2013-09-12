@@ -454,7 +454,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
 		Scrolls::kControlItalic, Scrolls::kControlRoman, description.c_str(), Scrolls::kControlCenter, 
-		Scrolls::kControlNewLine, Scrolls::kControlNewLine, _gyro->_roomnName, Scrolls::kControlNewLine, 
+		Scrolls::kControlNewLine, Scrolls::kControlNewLine, _gyro->_roomnName.c_str(), Scrolls::kControlNewLine, 
 		Scrolls::kControlNewLine, expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
 	_scrolls->displayText(tmpStr);
 
