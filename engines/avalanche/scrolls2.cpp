@@ -112,7 +112,11 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 }
 
 void Scrolls::scrollModeNormal() {
-	Common::String egg = Common::String::format("%c%c%c%c%c+***", kControlParagraph, kControlLeftJustified, kControlNegative, kControlBell, kControlBackspace);
+	// Original code is:
+	// egg : array[1..8] of char = ^P^L^U^G^H+'***';
+	// this is not using kControl characters: it's the secret code to be entered to trigger the easter egg
+	// TODO: To be fixed when the Easter egg code is implemented
+	Common::String egg = Common::String::format("%c%c%c%c%c***", kControlParagraph, kControlLeftJustified, kControlNegative, kControlBell, kControlBackspace);
 	Common::String e = "(c) 1994";
 
 	setReadyLight(3);
@@ -137,6 +141,7 @@ void Scrolls::scrollModeNormal() {
 	_vm->_graphics->_surface.copyFrom(temp);
 	temp.free();
 
+	warning("STUB: scrollModeNormal() - Check Easter Egg trigger");
 #if 0
 	char r;
 	bool oktoexit;
@@ -694,6 +699,8 @@ void Scrolls::callScrollDriver() {
 					return;
 			}
 			break;
+
+			// CHECME: The whole kControlNegative block seems completely unused, as the only use (the easter egg check) is a false positive 
 			case kControlNegative:
 				switch (_param) {
 				case 1:
