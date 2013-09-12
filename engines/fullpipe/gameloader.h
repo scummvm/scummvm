@@ -33,6 +33,30 @@ class SceneTag;
 class CMctlCompound;
 class CInputController;
 class CInteractionController;
+class CMotionController;
+
+class Sc2 : public CObject {
+ public:
+	int16 _sceneId;
+	int16 _field_2;
+	Scene *_scene;
+	CMotionController *_motionController;
+	int32 *_data1; // FIXME, could be a struct
+	int _count1;
+	PicAniInfo **_defPicAniInfos;
+	int _defPicAniInfosCount;
+	PicAniInfo **_picAniInfos;
+	int _picAniInfosCount;
+	int _isLoaded;
+	EntranceInfo **_entranceData;
+	int _entranceDataCount;
+
+ public:
+	Sc2();
+	virtual bool load(MfcArchive &file);
+};
+
+typedef Common::Array<Sc2> Sc2Array;
 
 struct PreloadItem {
 	int preloadId1;

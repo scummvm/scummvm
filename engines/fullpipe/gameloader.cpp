@@ -404,6 +404,78 @@ void CGameLoader::updateSystems(int counterdiff) {
 	}
 }
 
+Sc2::Sc2() {
+	_sceneId = 0;
+	_field_2 = 0;
+	_scene = 0;
+	_motionController = 0;
+	_data1 = 0;
+	_count1 = 0;
+	_defPicAniInfos = 0;
+	_defPicAniInfosCount = 0;
+	_picAniInfos = 0;
+	_picAniInfosCount = 0;
+	_isLoaded = 0;
+	_entranceData = 0;
+	_entranceDataCount = 0;
+}
+
+bool Sc2::load(MfcArchive &file) {
+	debug(5, "Sc2::load()");
+
+	_sceneId = file.readUint16LE();
+
+	_motionController = (CMotionController *)file.readClass();
+
+	_count1 = file.readUint32LE();
+	debug(4, "count1: %d", _count1);
+	if (_count1 > 0) {
+		_data1 = (int32 *)malloc(_count1 * sizeof(int32));
+
+		for (int i = 0; i < _count1; i++) {
+			_data1[i] = file.readUint32LE();
+		}
+	} else {
+		_data1 = 0;
+	}
+
+	_defPicAniInfosCount = file.readUint32LE();
+	debug(4, "defPicAniInfos: %d", _defPicAniInfosCount);
+	if (_defPicAniInfosCount > 0) {
+		_defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
+
+		for (int i = 0; i < _defPicAniInfosCount; i++) {
+			_defPicAniInfos[i] = new PicAniInfo();
+
+			_defPicAniInfos[i]->load(file);
+		}
+	} else {
+		_defPicAniInfos = 0;
+	}
+
+	_picAniInfos = 0;
+	_picAniInfosCount = 0;
+
+	_entranceDataCount = file.readUint32LE();
+	debug(4, "_entranceData: %d", _entranceDataCount);
+
+	if (_entranceDataCount > 0) {
+		_entranceData = (EntranceInfo **)malloc(_entranceDataCount * sizeof(EntranceInfo *));
+
+		for (int i = 0; i < _entranceDataCount; i++) {
+			_entranceData[i] = new EntranceInfo();
+			_entranceData[i]->load(file);
+		}
+	} else {
+		_entranceData = 0;
+	}
+
+	if (file.size() - file.pos() > 0)
+		error("Sc2::load(): (%d bytes left)", file.size() - file.pos());
+
+	return true;
+}
+
 CGameVar *FullpipeEngine::getGameLoaderGameVar() {
 	if (_gameLoader)
 		return _gameLoader->_gameVar;
