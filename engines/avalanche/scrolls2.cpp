@@ -112,7 +112,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 }
 
 void Scrolls::scrollModeNormal() {
-	Common::String egg = Common::String::format("%c%c%c%c%c***", kControlParagraph, kControlLeftJustified, kControlNegative, kControlBell, kControlBackspace);
+	Common::String egg = Common::String::format("%c%c%c%c%c+***", kControlParagraph, kControlLeftJustified, kControlNegative, kControlBell, kControlBackspace);
 	Common::String e = "(c) 1994";
 
 	setReadyLight(3);
