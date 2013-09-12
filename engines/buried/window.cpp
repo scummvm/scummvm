@@ -104,7 +104,7 @@ void Window::sendMessage(Message *message) {
 		onRButtonDown(((RButtonDownMessage *)message)->getPoint(), ((RButtonDownMessage *)message)->getFlags());
 		break;
 	case kMessageTypeSetCursor:
-		onSetCursor(((SetCursorMessage *)message)->getWindow(), ((SetCursorMessage *)message)->getCursor());
+		handleSetCursorMessage(((SetCursorMessage *)message)->getMessage());
 		break;
 	case kMessageTypeEnable:
 		onEnable(((EnableMessage *)message)->getEnable());
@@ -276,6 +276,15 @@ Window *Window::findWindowAtPoint(const Common::Point &point, Common::Point &rel
 	relativePos.y = point.y - absoluteRect.top;
 
 	return this;
+}
+
+bool Window::handleSetCursorMessage(uint message) {
+	// SetCursor messages need special handling
+	// The parent has a chance to set a cursor first
+	if (_parent && _parent->handleSetCursorMessage(message))
+		return true;
+
+	return onSetCursor(message);
 }
 
 } // End of namespace Buried
