@@ -482,10 +482,10 @@ void BaseRenderOSystem::drawTickets() {
 				_colorMod = ticket->_transform._rgbaMod; 
 				drawFromSurface(ticket, &pos, &dstClip);
 				_needsFlip = true;
-			}
+			} // endif
 			// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
 			ticket->_wantsDraw = false;
-		}
+		} // end inner for
 		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		
 
@@ -503,8 +503,8 @@ void BaseRenderOSystem::drawTickets() {
 				(*it)->_drawNum -= decrement;
 				++it;
 			}
-		}
-	}
+		} // endwhile
+	} // endfor
 
 }
 
