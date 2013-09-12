@@ -487,24 +487,24 @@ void BaseRenderOSystem::drawTickets() {
 			ticket->_wantsDraw = false;
 		} // end inner for
 		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
-		
-
-		it = _renderQueue.begin();
-		// Clean out the old tickets
-		decrement = 0;
-		while (it != _renderQueue.end()) {
-			if ((*it)->_isValid == false) {
-				RenderTicket *ticket = *it;
-				addDirtyRect((*it)->_dstRect);
-				it = _renderQueue.erase(it);
-				delete ticket;
-				decrement++;
-			} else {
-				(*it)->_drawNum -= decrement;
-				++it;
-			}
-		} // endwhile
 	} // endfor
+
+	
+	it = _renderQueue.begin();
+	// Clean out the old tickets
+	decrement = 0;
+	while (it != _renderQueue.end()) {
+		if ((*it)->_isValid == false) {
+			RenderTicket *ticket = *it;
+			addDirtyRect((*it)->_dstRect);
+			it = _renderQueue.erase(it);
+			delete ticket;
+			decrement++;
+		} else {
+			(*it)->_drawNum -= decrement;
+			++it;
+		}
+	} // endwhile
 
 }
 
