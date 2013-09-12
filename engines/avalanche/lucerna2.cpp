@@ -232,7 +232,7 @@ void Lucerna::loadAlso(byte num) {
 			_vm->_gyro->_also[i][j] = new Common::String;
 			*_vm->_gyro->_also[i][j] = readAlsoStringFromFile();
 		}
-		tmpStr = Common::String::format("\x9D%s\x9D", *_vm->_gyro->_also[i][0]);
+		tmpStr = Common::String::format("\x9D%s\x9D", *_vm->_gyro->_also[i][0]->c_str());
 		*_vm->_gyro->_also[i][0] = tmpStr;
 	}
 
@@ -287,7 +287,7 @@ void Lucerna::loadAlso(byte num) {
 	file.close();
 	unScramble();
 	for (byte i = 0; i <= alsoNum; i++) {
-		tmpStr = Common::String::format(",%s,", *_vm->_gyro->_also[i][0]);
+		tmpStr = Common::String::format(",%s,", *_vm->_gyro->_also[i][0]->c_str());
 		*_vm->_gyro->_also[i][0] = tmpStr;
 	}
 }
