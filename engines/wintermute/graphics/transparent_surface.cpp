@@ -31,10 +31,10 @@
 
 namespace Wintermute {
 
-	void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
-	void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
+void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
+void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 
-	void  BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	if (*ca != 255) {
 		ina = (ina) * (*ca) >> 8;
@@ -60,9 +60,7 @@ namespace Wintermute {
 	}
 }
 
-
-void  BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
+void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
@@ -88,8 +86,7 @@ void  BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byt
 	}
 }
 
-
-void  BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
@@ -150,6 +147,7 @@ void  BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *ou
 }
 
 void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+
 	if (ina == 0) {
 		return;
 	} else if (ina == 255) {
@@ -166,8 +164,8 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 	}
 }
 
+void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
-void  BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 	if (ina == 0) {
 		return;
 	} else if (ina == 255) {
