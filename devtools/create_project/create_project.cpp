@@ -39,7 +39,7 @@
 
 #include <fstream>
 #include <iostream>
-
+#include <sstream>
 #include <stack>
 #include <algorithm>
 #include <iomanip>
@@ -964,6 +964,10 @@ bool producesObjectFile(const std::string &fileName) {
 		return true;
 	else
 		return false;
+}
+
+std::string toString(int num) {
+    return static_cast<std::ostringstream*>(&(std::ostringstream() << num))->str();
 }
 
 /**

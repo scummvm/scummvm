@@ -116,8 +116,8 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	std::string version = "v" + std::to_string(_version) + "0";
-	std::string llvm = "LLVM-vs" + std::to_string(getVisualStudioVersion());
+    std::string version = "v" + toString(_version) + "0";
+	std::string llvm = "LLVM-vs" + toString(getVisualStudioVersion());
 
 	outputConfigurationType(setup, project, name, "Release|Win32", version);
 	outputConfigurationType(setup, project, name, "Analysis|Win32", version);
