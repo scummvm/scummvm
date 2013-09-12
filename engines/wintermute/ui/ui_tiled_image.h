@@ -33,7 +33,7 @@
 #include "engines/wintermute/ui/ui_object.h"
 #include "common/rect.h"
 
-#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 
 namespace Wintermute {
 class BaseSubFrame;
