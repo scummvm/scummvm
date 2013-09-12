@@ -196,8 +196,9 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 			((FrameWindow *)_parent)->showOverview();
 			return;
 		case BUTTON_NEW_GAME:
-			// TODO
-			break;
+			// TODO: Easter egg with control down
+			((FrameWindow *)_parent)->startNewGame(_walkthrough, _showIntro);
+			return;
 		case BUTTON_RESTORE_GAME:
 			// TODO
 			break;
