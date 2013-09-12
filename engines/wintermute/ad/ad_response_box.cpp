@@ -50,7 +50,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdResponseBox, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_font = _fontHover = nullptr;
 
@@ -71,7 +70,6 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdResponseBox::~AdResponseBox() {
 
 	delete _window;
@@ -100,7 +98,6 @@ uint32 AdResponseBox::getNumResponses() const {
 	return _responses.size();
 }
 
-//////////////////////////////////////////////////////////////////////////
 void AdResponseBox::clearResponses() {
 	for (uint32 i = 0; i < _responses.size(); i++) {
 		delete _responses[i];
@@ -109,7 +106,6 @@ void AdResponseBox::clearResponses() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdResponseBox::clearButtons() {
 	for (uint32 i = 0; i < _respButtons.size(); i++) {
 		delete _respButtons[i];
@@ -118,7 +114,6 @@ void AdResponseBox::clearButtons() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::invalidateButtons() {
 	for (uint32 i = 0; i < _respButtons.size(); i++) {
 		_respButtons[i]->_image = nullptr;
@@ -132,7 +127,6 @@ bool AdResponseBox::invalidateButtons() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::createButtons() {
 	clearButtons();
 
@@ -207,7 +201,6 @@ bool AdResponseBox::createButtons() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -244,7 +237,6 @@ TOKEN_DEF(TEXT_ALIGN)
 TOKEN_DEF(VERTICAL_ALIGN)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(RESPONSE_BOX)
@@ -377,7 +369,6 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "RESPONSE_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -443,7 +434,6 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::display() {
 	Rect32 rect = _responseArea;
 	if (_window) {
@@ -536,7 +526,6 @@ bool AdResponseBox::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 	UIObject *obj = (UIObject *)param1;
 
@@ -569,7 +558,6 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
@@ -594,7 +582,6 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::weedResponses() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
@@ -624,7 +611,6 @@ bool AdResponseBox::weedResponses() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdResponseBox::setLastResponseText(const char *text, const char *textOrig) {
 	BaseUtils::setString(&_lastResponseText, text);
 	BaseUtils::setString(&_lastResponseTextOrig, textOrig);
@@ -655,7 +641,6 @@ bool AdResponseBox::handleResponseNum(uint32 num) {
 	return handleResponse(_responses[num]);
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::handleResponse(const AdResponse *response) {
 	setLastResponseText(response->getText(), response->getTextOrig());
 
@@ -677,7 +662,6 @@ bool AdResponseBox::handleResponse(const AdResponse *response) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
 	BaseArray<UIObject *> objects;
 	getObjects(objects, true);
@@ -701,7 +685,6 @@ BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
 BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 	BaseArray<UIObject *> objects;
 	getObjects(objects, true);
@@ -725,7 +708,6 @@ BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
 	for (uint32 i = 0; i < _respButtons.size(); i++) {
 		objects.add(_respButtons[i]);

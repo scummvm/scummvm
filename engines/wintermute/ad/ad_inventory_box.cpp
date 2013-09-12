@@ -46,7 +46,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdInventoryBox, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 	_itemsArea.setEmpty();
 	_scrollOffset = 0;
@@ -64,7 +63,6 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdInventoryBox::~AdInventoryBox() {
 	_gameRef->unregisterObject(_window);
 	_window = nullptr;
@@ -74,7 +72,6 @@ AdInventoryBox::~AdInventoryBox() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 	UIObject *obj = (UIObject *)param1;
 
@@ -100,7 +97,6 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::display() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
@@ -163,7 +159,6 @@ bool AdInventoryBox::display() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -202,7 +197,6 @@ TOKEN_DEF(CAPTION)
 TOKEN_DEF(HIDE_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(INVENTORY_BOX)
@@ -332,7 +326,6 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -367,7 +360,6 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 

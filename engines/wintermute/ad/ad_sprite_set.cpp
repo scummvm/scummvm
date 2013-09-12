@@ -37,7 +37,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSpriteSet, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 	_owner = owner;
 
@@ -47,7 +46,6 @@ AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner) : BaseObject(inGam
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdSpriteSet::~AdSpriteSet() {
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
 		delete _sprites[i];
@@ -58,7 +56,6 @@ AdSpriteSet::~AdSpriteSet() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -92,7 +89,6 @@ TOKEN_DEF(DOWN)
 TOKEN_DEF(TEMPLATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SPRITESET)
@@ -244,7 +240,6 @@ bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
@@ -258,7 +253,6 @@ bool AdSpriteSet::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 	int dir = (int)direction;
 	if (dir < 0) {
@@ -295,7 +289,6 @@ BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITESET {\n");
 	if (getName()) {
@@ -339,7 +332,6 @@ bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::containsSprite(BaseSprite *sprite) {
 	if (!sprite) {
 		return false;

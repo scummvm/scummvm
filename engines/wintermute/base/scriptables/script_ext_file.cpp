@@ -47,7 +47,6 @@ BaseScriptable *makeSXFile(BaseGame *inGame, ScStack *stack) {
 	return new SXFile(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
 SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	ScValue *val = stack->pop();
@@ -65,12 +64,10 @@ SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 SXFile::~SXFile() {
 	cleanup();
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SXFile::cleanup() {
 	delete[] _filename;
 	_filename = nullptr;
@@ -78,7 +75,6 @@ void SXFile::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void SXFile::close() {
 	if (_readFile) {
 		BaseFileManager::getEngineInstance()->closeFile(_readFile);
@@ -93,7 +89,6 @@ void SXFile::close() {
 	_textMode = false;
 }
 
-//////////////////////////////////////////////////////////////////////////
 const char *SXFile::scToString() {
 	if (_filename) {
 		return _filename;
@@ -103,7 +98,6 @@ const char *SXFile::scToString() {
 }
 
 #define FILE_BUFFER_SIZE 32768
-//////////////////////////////////////////////////////////////////////////
 bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFilename
@@ -639,7 +633,6 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *SXFile::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -695,7 +688,6 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
@@ -717,7 +709,6 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	else*/ return BaseScriptable::scSetProperty(name, value);
 }
 
-//////////////////////////////////////////////////////////////////////////
 uint32 SXFile::getPos() {
 	if (_mode == 1 && _readFile) {
 		return _readFile->pos();
@@ -730,7 +721,6 @@ uint32 SXFile::getPos() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SXFile::setPos(uint32 pos, int whence) {
 	if (_mode == 1 && _readFile) {
 		return _readFile->seek(pos, whence);
@@ -743,7 +733,6 @@ bool SXFile::setPos(uint32 pos, int whence) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 uint32 SXFile::getLength() {
 	if (_mode == 1 && _readFile) {
 		return _readFile->size();
@@ -761,7 +750,6 @@ uint32 SXFile::getLength() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SXFile::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);

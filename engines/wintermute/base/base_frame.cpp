@@ -44,7 +44,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseFrame, false)
 
-//////////////////////////////////////////////////////////////////////
 BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_delay = 0;
 	_moveX = _moveY = 0;
@@ -57,7 +56,6 @@ BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseFrame::~BaseFrame() {
 	delete _sound;
 	_sound = nullptr;
@@ -75,7 +73,6 @@ BaseFrame::~BaseFrame() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
 	bool res;
 
@@ -95,7 +92,6 @@ void BaseFrame::stopSound() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 	if (_sound && !muted) {
 		if (owner) {
@@ -141,7 +137,6 @@ TOKEN_DEF(EDITOR_EXPANDED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////
 bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
@@ -347,7 +342,6 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
@@ -365,7 +359,6 @@ bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float 
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "FRAME {\n");
 	buffer->putTextIndent(indent + 2, "DELAY = %d\n", _delay);
@@ -409,7 +402,6 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
@@ -427,9 +419,7 @@ bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
@@ -624,7 +614,6 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
 		_scValue = new ScValue(_gameRef);
@@ -706,7 +695,6 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
@@ -759,7 +747,6 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *BaseFrame::scToString() {
 	return "[frame]";
 }

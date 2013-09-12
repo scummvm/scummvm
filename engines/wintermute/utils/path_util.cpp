@@ -31,7 +31,6 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::unifySeparators(const AnsiString &path) {
 	AnsiString newPath = path;
 
@@ -44,14 +43,12 @@ AnsiString PathUtil::unifySeparators(const AnsiString &path) {
 	return newPath;
 }
 
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::normalizeFileName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
 	newPath.toLowercase();
 	return newPath;
 }
 
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
 	AnsiString newPath1 = unifySeparators(path1);
 	AnsiString newPath2 = unifySeparators(path2);
@@ -63,14 +60,12 @@ AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
 	return newPath1 + newPath2;
 }
 
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getDirectoryName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
 	Common::String filename = getFileName(path);
 	return Common::String(path.c_str(), path.size() - filename.size());
 }
 
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getFileName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
 	Common::String lastPart = Common::lastPathComponent(newPath, '/');
@@ -81,7 +76,6 @@ AnsiString PathUtil::getFileName(const AnsiString &path) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
 	AnsiString fileName = getFileName(path);
 	// TODO: Prettify this.
@@ -92,7 +86,6 @@ AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
 	return fileName;
 }
 
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getExtension(const AnsiString &path) {
 	AnsiString fileName = getFileName(path);
 	return Common::lastPathComponent(path, '.');

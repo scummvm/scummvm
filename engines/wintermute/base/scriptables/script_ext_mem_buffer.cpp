@@ -41,7 +41,6 @@ BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack) {
 	return new SXMemBuffer(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
 SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	_buffer = nullptr;
@@ -51,24 +50,20 @@ SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGa
 	resize(MAX(0, newSize));
 }
 
-//////////////////////////////////////////////////////////////////////////
 SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *buffer) : BaseScriptable(inGame) {
 	_size = 0;
 	_buffer = buffer;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 SXMemBuffer::~SXMemBuffer() {
 	cleanup();
 }
 
-//////////////////////////////////////////////////////////////////////////
 void *SXMemBuffer::scToMemBuffer() {
 	return _buffer;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SXMemBuffer::cleanup() {
 	if (_size) {
 		free(_buffer);
@@ -77,7 +72,6 @@ void SXMemBuffer::cleanup() {
 	_size = 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::resize(int newSize) {
 	int oldSize = _size;
 
@@ -107,7 +101,6 @@ bool SXMemBuffer::resize(int newSize) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::checkBounds(ScScript *script, int start, int length) {
 	if (_buffer == nullptr) {
 		script->runtimeError("Cannot use Set/Get methods on an uninitialized memory buffer");
@@ -125,13 +118,11 @@ bool SXMemBuffer::checkBounds(ScScript *script, int start, int length) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 const char *SXMemBuffer::scToString() {
 	return "[membuffer object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSize
@@ -446,7 +437,6 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -470,7 +460,6 @@ ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
@@ -493,7 +482,6 @@ bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
@@ -517,7 +505,6 @@ bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 int SXMemBuffer::scCompare(BaseScriptable *val) {
 	if (_buffer == val->scToMemBuffer()) {
 		return 0;

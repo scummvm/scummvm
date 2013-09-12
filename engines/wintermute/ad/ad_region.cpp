@@ -38,7 +38,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdRegion, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdRegion::AdRegion(BaseGame *inGame) : BaseRegion(inGame) {
 	_blocked = false;
 	_decoration = false;
@@ -47,7 +46,6 @@ AdRegion::AdRegion(BaseGame *inGame) : BaseRegion(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdRegion::~AdRegion() {
 }
 
@@ -67,7 +65,6 @@ bool AdRegion::hasDecoration() const {
 	return _decoration;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool AdRegion::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -109,7 +106,6 @@ TOKEN_DEF(CAPTION)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
@@ -235,9 +231,7 @@ bool AdRegion::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool AdRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	/*
 	    //////////////////////////////////////////////////////////////////////////
@@ -256,7 +250,6 @@ bool AdRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *AdRegion::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -312,7 +305,6 @@ ScValue *AdRegion::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -358,13 +350,11 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdRegion::scToString() {
 	return "[ad region]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "REGION {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
@@ -397,7 +387,6 @@ bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdRegion::persist(BasePersistenceManager *persistMgr) {
 	BaseRegion::persist(persistMgr);
 

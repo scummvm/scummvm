@@ -41,13 +41,11 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkHolder, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdTalkHolder::AdTalkHolder(BaseGame *inGame) : AdObject(inGame) {
 	_sprite = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdTalkHolder::~AdTalkHolder() {
 	delete _sprite;
 	_sprite = nullptr;
@@ -63,7 +61,6 @@ AdTalkHolder::~AdTalkHolder() {
 	_talkSpritesEx.clear();
 }
 
-//////////////////////////////////////////////////////////////////////////
 BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	BaseSprite *ret = nullptr;
 
@@ -120,9 +117,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSprite
@@ -333,7 +328,6 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -349,7 +343,6 @@ ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
@@ -364,13 +357,11 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdTalkHolder::scToString() {
 	return "[talk-holder object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	for (uint32 i = 0; i < _talkSprites.size(); i++) {
 		if (_talkSprites[i]->getFilename()) {
@@ -388,7 +379,6 @@ bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::persist(BasePersistenceManager *persistMgr) {
 	AdObject::persist(persistMgr);
 

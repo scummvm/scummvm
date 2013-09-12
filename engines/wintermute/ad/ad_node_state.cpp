@@ -39,7 +39,6 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdNodeState, false)
 
 
-//////////////////////////////////////////////////////////////////////////
 AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
 	_name = nullptr;
 	_active = false;
@@ -52,7 +51,6 @@ AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdNodeState::~AdNodeState() {
 	delete[] _name;
 	delete[] _filename;
@@ -67,7 +65,6 @@ AdNodeState::~AdNodeState() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdNodeState::setName(const char *name) {
 	delete[] _name;
 	_name = nullptr;
@@ -75,7 +72,6 @@ void AdNodeState::setName(const char *name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdNodeState::setFilename(const char *filename) {
 	delete[] _filename;
 	_filename = nullptr;
@@ -83,7 +79,6 @@ void AdNodeState::setFilename(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCursor(const char *filename) {
 	delete[] _cursor;
 	_cursor = nullptr;
@@ -91,7 +86,6 @@ void AdNodeState::setCursor(const char *filename) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
@@ -108,7 +102,6 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCaption(const char *caption, int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
@@ -126,7 +119,6 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdNodeState::getCaption(int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
@@ -139,7 +131,6 @@ const char *AdNodeState::getCaption(int caseVal) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool saving) {
 	if (!entity) {
 		return STATUS_FAILED;

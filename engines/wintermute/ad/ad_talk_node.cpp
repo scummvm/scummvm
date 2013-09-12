@@ -37,7 +37,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkNode, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
 	_sprite = nullptr;
 	_spriteFilename = nullptr;
@@ -51,7 +50,6 @@ AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdTalkNode::~AdTalkNode() {
 	delete[] _spriteFilename;
 	delete _sprite;
@@ -78,7 +76,6 @@ TOKEN_DEF(COMMENT)
 TOKEN_DEF(PRECACHE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTION)
@@ -189,7 +186,6 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_comment));
 	persistMgr->transfer(TMEMBER(_startTime));
@@ -204,7 +200,6 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ACTION {\n");
 	if (_comment) {
@@ -234,7 +229,6 @@ bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
 		_sprite = new BaseSprite(_gameRef);
@@ -260,7 +254,6 @@ bool AdTalkNode::loadSprite() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
 		if (_playToEnd) {
@@ -280,7 +273,6 @@ bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseSprite *AdTalkNode::getSprite(TDirection dir) {
 	loadSprite();
 	if (_sprite) {

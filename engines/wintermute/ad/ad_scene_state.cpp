@@ -36,13 +36,11 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSceneState, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdSceneState::AdSceneState(BaseGame *inGame) : BaseClass(inGame) {
 	_filename = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdSceneState::~AdSceneState() {
 	delete[] _filename;
 	_filename = nullptr;
@@ -54,7 +52,6 @@ AdSceneState::~AdSceneState() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_filename));
 	_nodeStates.persist(persistMgr);
@@ -63,7 +60,6 @@ bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void AdSceneState::setFilename(const char *filename) {
 	delete[] _filename;
 	_filename = new char [strlen(filename) + 1];
@@ -76,7 +72,6 @@ const char *AdSceneState::getFilename() const {
 	return _filename;
 }
 
-//////////////////////////////////////////////////////////////////////////
 AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 	for (uint32 i = 0; i < _nodeStates.size(); i++) {
 		if (scumm_stricmp(_nodeStates[i]->getName(), name) == 0) {

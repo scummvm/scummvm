@@ -30,7 +30,6 @@
 #define WINTERMUTE_DCGF_H
 
 
-//////////////////////////////////////////////////////////////////////////
 #define DCGF_VER_MAJOR 1
 #define DCGF_VER_MINOR 2
 #define DCGF_VER_BUILD 2
@@ -44,8 +43,6 @@
 #define SAVEGAME_VER_MAJOR 1
 #define SAVEGAME_VER_MINOR 1
 #define SAVEGAME_VER_BUILD 1
-//////////////////////////////////////////////////////////////////////////
-
 #define COMPRESSED_FILE_MAGIC 0x504D435A // ZCMP
 
 #endif

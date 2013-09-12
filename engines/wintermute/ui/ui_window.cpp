@@ -52,7 +52,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIWindow, false)
 
-//////////////////////////////////////////////////////////////////////////
 UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 	BasePlatform::setRectEmpty(&_titleRect);
 	BasePlatform::setRectEmpty(&_dragRect);
@@ -87,14 +86,12 @@ UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 UIWindow::~UIWindow() {
 	close();
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void UIWindow::cleanup() {
 	delete _shieldWindow;
 	delete _shieldButton;
@@ -118,7 +115,6 @@ void UIWindow::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
@@ -237,7 +233,6 @@ bool UIWindow::display(int offsetX, int offsetY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -297,7 +292,6 @@ TOKEN_DEF(PAUSE_MUSIC)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WINDOW)
@@ -621,7 +615,6 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WINDOW\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -733,7 +726,6 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::enableWidget(const char *name, bool enable) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
@@ -744,7 +736,6 @@ bool UIWindow::enableWidget(const char *name, bool enable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::showWidget(const char *name, bool visible) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
@@ -755,9 +746,7 @@ bool UIWindow::showWidget(const char *name, bool visible) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetWidget / GetControl
@@ -1013,7 +1002,6 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -1101,7 +1089,6 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -1190,13 +1177,11 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *UIWindow::scToString() {
 	return "[window]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 //TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
@@ -1212,7 +1197,6 @@ bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::handleMouseWheel(int Delta) {
 	if (_focusedWidget) {
 		return _focusedWidget->handleMouseWheel(Delta);
@@ -1222,7 +1206,6 @@ bool UIWindow::handleMouseWheel(int Delta) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	bool res = UIObject::handleMouse(event, button);
 
@@ -1252,7 +1235,6 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
@@ -1283,7 +1265,6 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::moveFocus(bool forward) {
 	int i;
 	bool found = false;
@@ -1333,7 +1314,6 @@ bool UIWindow::moveFocus(bool forward) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::goExclusive() {
 	if (_mode == WINDOW_EXCLUSIVE) {
 		return STATUS_OK;
@@ -1352,7 +1332,6 @@ bool UIWindow::goExclusive() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::goSystemExclusive() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		return STATUS_OK;
@@ -1371,7 +1350,6 @@ bool UIWindow::goSystemExclusive() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		_gameRef->unfreeze();
@@ -1385,7 +1363,6 @@ bool UIWindow::close() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 	UIObject *obj = (UIObject *)param1;
 
@@ -1405,7 +1382,6 @@ bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void UIWindow::makeFreezable(bool freezable) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		_widgets[i]->makeFreezable(freezable);
@@ -1415,7 +1391,6 @@ void UIWindow::makeFreezable(bool freezable) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		UIObject *control = _widgets[i];

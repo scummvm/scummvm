@@ -41,7 +41,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIObject, false)
 
-//////////////////////////////////////////////////////////////////////////
 UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
 	_back = nullptr;
 	_image = nullptr;
@@ -70,7 +69,6 @@ UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 UIObject::~UIObject() {
 	if (!_gameRef->_loadInProgress) {
 		SystemClassRegistry::getInstance()->enumInstances(BaseGame::invalidateValues, "ScValue", (void *)this);
@@ -95,7 +93,6 @@ UIObject::~UIObject() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void UIObject::setText(const char *text) {
 	if (_text) {
 		delete[] _text;
@@ -112,13 +109,11 @@ void UIObject::setText(const char *text) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::display(int offsetX, int offsetY) {
 	return STATUS_OK;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void UIObject::setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam) {
 	_listenerObject = object;
 	_listenerParamObject = listenerObject;
@@ -126,7 +121,6 @@ void UIObject::setListener(BaseScriptHolder *object, BaseScriptHolder *listenerO
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void UIObject::correctSize() {
 	Rect32 rect;
 
@@ -153,9 +147,7 @@ void UIObject::correctSize() {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFont
@@ -359,7 +351,6 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *UIObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -464,7 +455,6 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -526,13 +516,11 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *UIObject::scToString() {
 	return "[ui_object]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::isFocused() {
 	if (!_gameRef->_focusedWindow) {
 		return false;
@@ -553,7 +541,6 @@ bool UIObject::isFocused() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	// handle focus change
 	if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
@@ -563,7 +550,6 @@ bool UIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::focus() {
 	UIObject *obj = this;
 	bool disabled = false;
@@ -594,7 +580,6 @@ bool UIObject::focus() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::getTotalOffset(int *offsetX, int *offsetY) {
 	int offX = 0, offY = 0;
 
@@ -616,7 +601,6 @@ bool UIObject::getTotalOffset(int *offsetX, int *offsetY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
@@ -643,7 +627,6 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }

@@ -46,7 +46,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(PartEmitter, false)
 
-//////////////////////////////////////////////////////////////////////////
 PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject(inGame) {
 	_width = _height = 0;
 
@@ -94,7 +93,6 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 PartEmitter::~PartEmitter(void) {
 	for (uint32 i = 0; i < _particles.size(); i++) {
 		delete _particles[i];
@@ -116,7 +114,6 @@ PartEmitter::~PartEmitter(void) {
 	_emitEvent = nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::addSprite(const char *filename) {
 	if (!filename) {
 		return STATUS_FAILED;
@@ -145,7 +142,6 @@ bool PartEmitter::addSprite(const char *filename) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::removeSprite(const char *filename) {
 	for (uint32 i = 0; i < _sprites.size(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
@@ -157,7 +153,6 @@ bool PartEmitter::removeSprite(const char *filename) {
 	return STATUS_FAILED;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta) {
 	if (!particle) {
 		return STATUS_FAILED;
@@ -248,7 +243,6 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::update() {
 	if (!_running) {
 		return STATUS_OK;
@@ -257,7 +251,6 @@ bool PartEmitter::update() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	int numLive = 0;
 
@@ -319,7 +312,6 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::display(BaseRegion *region) {
 	if (_sprites.size() <= 1) {
 		BaseEngine::getRenderer()->startSpriteBatch();
@@ -342,7 +334,6 @@ bool PartEmitter::display(BaseRegion *region) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::start() {
 	for (uint32 i = 0; i < _particles.size(); i++) {
 		_particles[i]->_isDead = true;
@@ -366,14 +357,12 @@ bool PartEmitter::start() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::sortParticlesByZ() {
 	// sort particles by _posY
 	Common::sort(_particles.begin(), _particles.end(), PartEmitter::compareZ);
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::compareZ(const PartParticle *p1, const PartParticle *p2) {
 	if (p1->_posZ < p2->_posZ) {
 		return true;
@@ -384,14 +373,12 @@ bool PartEmitter::compareZ(const PartParticle *p1, const PartParticle *p2) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::setBorder(int x, int y, int width, int height) {
 	BasePlatform::setRect(&_border, x, y, x + width, y + height);
 
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
 	_borderThicknessLeft = thicknessLeft;
 	_borderThicknessRight = thicknessRight;
@@ -401,7 +388,6 @@ bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int 
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 PartForce *PartEmitter::addForceByName(const Common::String &name) {
 	PartForce *force = nullptr;
 
@@ -422,7 +408,6 @@ PartForce *PartEmitter::addForceByName(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
 	PartForce *force = addForceByName(name);
 	if (!force) {
@@ -440,7 +425,6 @@ bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType typ
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::removeForce(const Common::String &name) {
 	for (uint32 i = 0; i < _forces.size(); i++) {
 		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
@@ -453,9 +437,7 @@ bool PartEmitter::removeForce(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorder
@@ -601,7 +583,6 @@ bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *PartEmitter::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -878,7 +859,6 @@ ScValue *PartEmitter::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
@@ -1145,7 +1125,6 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *PartEmitter::scToString() {
 	return "[particle emitter]";
 }
@@ -1153,7 +1132,6 @@ const char *PartEmitter::scToString() {
 
 
 
-//////////////////////////////////////////////////////////////////////////
 bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 

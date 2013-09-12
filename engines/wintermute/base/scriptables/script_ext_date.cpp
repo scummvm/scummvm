@@ -38,7 +38,6 @@ BaseScriptable *makeSXDate(BaseGame *inGame, ScStack *stack) {
 	return new SXDate(inGame, stack);
 }
 
-//////////////////////////////////////////////////////////////////////////
 SXDate::SXDate(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(6);
 
@@ -58,12 +57,10 @@ SXDate::SXDate(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 SXDate::~SXDate() {
 
 }
 
-//////////////////////////////////////////////////////////////////////////
 const char *SXDate::scToString() {
 	// TODO: Make this more stringy, and less ISO 8601-like
 	_strRep.format("%04d-%02d-%02d - %02d:%02d:%02d", _tm.tm_year, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec);
@@ -72,7 +69,6 @@ const char *SXDate::scToString() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
@@ -202,7 +198,6 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *SXDate::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -218,7 +213,6 @@ ScValue *SXDate::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXDate::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
@@ -233,7 +227,6 @@ bool SXDate::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SXDate::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
@@ -263,7 +256,6 @@ bool SXDate::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 int SXDate::scCompare(BaseScriptable *Value) {
 	TimeDate time1 = _tm;
 	TimeDate time2 = ((SXDate *)Value)->_tm;

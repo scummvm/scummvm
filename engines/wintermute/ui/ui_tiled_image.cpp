@@ -40,7 +40,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UITiledImage, false)
 
-//////////////////////////////////////////////////////////////////////////
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = nullptr;
 
@@ -56,14 +55,12 @@ UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 UITiledImage::~UITiledImage() {
 	delete _image;
 	_image = nullptr;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UITiledImage::display(int x, int y, int width, int height) {
 	if (!_image) {
 		return STATUS_FAILED;
@@ -117,7 +114,6 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -157,7 +153,6 @@ TOKEN_DEF(VERTICAL_TILES)
 TOKEN_DEF(HORIZONTAL_TILES)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TILED_IMAGE)
@@ -326,7 +321,6 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
@@ -357,7 +351,6 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void UITiledImage::correctSize(int32 *width, int32 *height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
@@ -370,7 +363,6 @@ void UITiledImage::correctSize(int32 *width, int32 *height) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool UITiledImage::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 

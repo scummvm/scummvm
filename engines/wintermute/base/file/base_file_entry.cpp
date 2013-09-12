@@ -53,7 +53,6 @@ Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	return file;
 }
 
-//////////////////////////////////////////////////////////////////////////
 BaseFileEntry::BaseFileEntry() {
 	_package = nullptr;
 	_length = _compressedLength = _offset = _flags = 0;
@@ -65,7 +64,6 @@ BaseFileEntry::BaseFileEntry() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseFileEntry::~BaseFileEntry() {
 	_package = nullptr; // ref only
 }

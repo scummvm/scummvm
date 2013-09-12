@@ -42,7 +42,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdLayer, false)
 
-//////////////////////////////////////////////////////////////////////////
 AdLayer::AdLayer(BaseGame *inGame) : BaseObject(inGame) {
 	_main = false;
 	_width = _height = 0;
@@ -51,7 +50,6 @@ AdLayer::AdLayer(BaseGame *inGame) : BaseObject(inGame) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 AdLayer::~AdLayer() {
 	for (uint32 i = 0; i < _nodes.size(); i++) {
 		delete _nodes[i];
@@ -60,7 +58,6 @@ AdLayer::~AdLayer() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdLayer::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
@@ -99,7 +96,6 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(CLOSE_UP)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////////
 bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(LAYER)
@@ -228,9 +224,7 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
@@ -375,7 +369,6 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -439,7 +432,6 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -496,13 +488,11 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *AdLayer::scToString() {
 	return "[layer]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "LAYER {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
@@ -546,7 +536,6 @@ bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool AdLayer::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);

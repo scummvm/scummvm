@@ -45,7 +45,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 
-//////////////////////////////////////////////////////////////////////////
 BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_surface = nullptr;
 	_hotspotX = kDefaultHotspotX;
@@ -71,7 +70,6 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseSubFrame::~BaseSubFrame() {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
@@ -96,7 +94,6 @@ TOKEN_DEF(MIRROR_Y)
 TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
@@ -234,7 +231,6 @@ const char* BaseSubFrame::getSurfaceFilename() {
 	return _surfaceFilename;
 }
 
-//////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	
 	rotate = fmod(rotate, 360.0f);
@@ -285,7 +281,6 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
@@ -303,7 +298,6 @@ bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, flo
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool complete) {
 	if (complete) {
 		buffer->putTextIndent(indent, "SUBFRAME {\n");
@@ -370,7 +364,6 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseSubFrame::setDefaultRect() {
 	if (_surface) {
 		_wantsDefaultRect = true;
@@ -381,7 +374,6 @@ void BaseSubFrame::setDefaultRect() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
@@ -412,9 +404,7 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 // high level scripting interface
-//////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
@@ -462,7 +452,6 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
 		_scValue = new ScValue(_gameRef);
@@ -554,7 +543,6 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
@@ -624,13 +612,11 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *BaseSubFrame::scToString() {
 	return "[subframe]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
@@ -659,7 +645,6 @@ bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, by
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurfaceSimple() {
 	if (!_surfaceFilename) {
 		_surface = nullptr;

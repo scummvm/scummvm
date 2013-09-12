@@ -35,7 +35,6 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistentClass) {
 	_name = name;
 
@@ -50,13 +49,11 @@ SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 SystemClass::~SystemClass() {
 	SystemClassRegistry::getInstance()->unregisterClass(this);
 	removeAllInstances();
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClass::removeAllInstances() {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
@@ -68,7 +65,6 @@ bool SystemClass::removeAllInstances() {
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
 SystemInstance *SystemClass::addInstance(void *instance, int id, int savedId) {
 	SystemInstance *inst = new SystemInstance(instance, id, this);
 	inst->setSavedID(savedId);
@@ -82,7 +78,6 @@ SystemInstance *SystemClass::addInstance(void *instance, int id, int savedId) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClass::removeInstance(void *instance) {
 	InstanceMap::iterator mapIt = _instanceMap.find(instance);
 	if (mapIt == _instanceMap.end()) {
@@ -100,7 +95,6 @@ bool SystemClass::removeInstance(void *instance) {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
 int SystemClass::getInstanceID(void *pointer) {
 	InstanceMap::iterator mapIt = _instanceMap.find(pointer);
 	if (mapIt == _instanceMap.end()) {
@@ -110,7 +104,6 @@ int SystemClass::getInstanceID(void *pointer) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 void *SystemClass::idToPointer(int savedID) {
 	//slow
 	Instances::iterator it;
@@ -122,19 +115,16 @@ void *SystemClass::idToPointer(int savedID) {
 	return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////
 int SystemClass::getNumInstances() {
 	return _instances.size();
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClass::dump(Common::WriteStream *stream) {
 	Common::String str;
 	str = Common::String::format("%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), getNumInstances());
 	stream->write(str.c_str(), str.size());
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClass::saveTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	persistMgr->putString(_name.c_str());
 	persistMgr->putDWORD(_iD);
@@ -146,7 +136,6 @@ void SystemClass::saveTable(BaseGame *gameRef, BasePersistenceManager *persistMg
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClass::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	_savedID = persistMgr->getDWORD();
 	int numInstances = persistMgr->getDWORD();
@@ -181,7 +170,6 @@ void SystemClass::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMg
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClass::saveInstances(BaseGame *Game, BasePersistenceManager *persistMgr) {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
@@ -195,13 +183,11 @@ void SystemClass::saveInstances(BaseGame *Game, BasePersistenceManager *persistM
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClass::loadInstance(void *instance, BasePersistenceManager *persistMgr) {
 	_load(instance, persistMgr);
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClass::resetSavedIDs() {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
@@ -209,7 +195,6 @@ void SystemClass::resetSavedIDs() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClass::instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData) {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {

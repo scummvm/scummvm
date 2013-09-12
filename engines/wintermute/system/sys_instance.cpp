@@ -32,7 +32,6 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 SystemInstance::SystemInstance(void *instance, int id, SystemClass *sysClass) {
 	_instance = instance;
 	_id = id;
@@ -42,7 +41,6 @@ SystemInstance::SystemInstance(void *instance, int id, SystemClass *sysClass) {
 	_used = false;
 }
 
-//////////////////////////////////////////////////////////////////////////
 SystemInstance::~SystemInstance() {
 }
 

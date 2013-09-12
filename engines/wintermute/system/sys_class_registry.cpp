@@ -38,19 +38,16 @@
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 SystemClassRegistry::SystemClassRegistry() {
 	_count = 0;
 	_disabled = false;
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 SystemClassRegistry::~SystemClassRegistry() {
 	unregisterClasses();
 }
 
-//////////////////////////////////////////////////////////////////////////
 SystemClassRegistry *SystemClassRegistry::getInstance() {
 	return BaseEngine::instance().getClassRegistry();
 }
@@ -62,7 +59,6 @@ void SystemClassRegistry::unregisterClasses() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::registerClass(SystemClass *classObj) {
 	classObj->setID(_count++);
 	//_classes.insert(classObj);
@@ -75,7 +71,6 @@ bool SystemClassRegistry::registerClass(SystemClass *classObj) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 
 	Classes::iterator it = _classes.find(classObj);
@@ -103,7 +98,6 @@ bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::registerInstance(const char *className, void *instance) {
 	if (_disabled) {
 		return true;
@@ -118,7 +112,6 @@ bool SystemClassRegistry::registerInstance(const char *className, void *instance
 	return (inst != nullptr);
 }
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClassRegistry::addInstanceToTable(SystemInstance *instance, void *pointer) {
 	_instanceMap[pointer] = instance;
 
@@ -127,12 +120,10 @@ void SystemClassRegistry::addInstanceToTable(SystemInstance *instance, void *poi
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 int SystemClassRegistry::getNextID() {
 	return _count++;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::unregisterInstance(const char *className, void *instance) {
 	NameMap::iterator mapIt = _nameMap.find(className);
 	if (mapIt == _nameMap.end()) {
@@ -150,7 +141,6 @@ bool SystemClassRegistry::unregisterInstance(const char *className, void *instan
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanceID) {
 	if (pointer == nullptr) {
 		return true;
@@ -169,7 +159,6 @@ bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanc
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void *SystemClassRegistry::idToPointer(int classID, int instanceID) {
 	SavedInstanceMap::iterator it = _savedInstanceMap.find(instanceID);
 	if (it == _savedInstanceMap.end()) {
@@ -190,7 +179,6 @@ bool checkHeader(const char *tag, BasePersistenceManager *pm) {
 	return retVal;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *persistMgr, bool quickSave) {
 	persistMgr->putString("<CLASS_REGISTRY_TABLE>");
 	persistMgr->putDWORD(_classes.size());
@@ -212,7 +200,6 @@ bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *p
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	checkHeader("<CLASS_REGISTRY_TABLE>", persistMgr);
 
@@ -249,7 +236,6 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManager *persistMgr, bool quickSave) {
 
 	Classes::iterator it;
@@ -279,7 +265,6 @@ bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManage
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	// get total instances
 	int numInstances = persistMgr->getDWORD();
@@ -313,7 +298,6 @@ bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManage
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
 	NameMap::iterator mapIt = _nameMap.find(className);
 	if (mapIt == _nameMap.end()) {
@@ -325,7 +309,6 @@ bool SystemClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void SystemClassRegistry::dumpClasses(Common::WriteStream *stream) {
 	Classes::iterator it;
 	for (it = _classes.begin(); it != _classes.end(); ++it) {
