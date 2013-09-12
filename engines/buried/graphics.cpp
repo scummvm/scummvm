@@ -43,6 +43,7 @@ namespace Buried {
 GraphicsManager::GraphicsManager(BuriedEngine *vm) : _vm(vm) {
 	_curCursor = kCursorNone;
 	_mouseMoved = false;
+	_needsErase = false;
 
 	setCursor(kCursorArrow);
 	CursorMan.showMouse(true);
@@ -273,11 +274,13 @@ uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 	return best;
 }
 
-void GraphicsManager::invalidateRect(const Common::Rect &rect) {
+void GraphicsManager::invalidateRect(const Common::Rect &rect, bool erase) {
 	if (_dirtyRect.isEmpty())
 		_dirtyRect = rect;
 	else
 		_dirtyRect.extend(rect);
+
+	_needsErase |= erase;
 }
 
 void GraphicsManager::updateScreen(bool drawWindows) {
@@ -301,6 +304,8 @@ void GraphicsManager::updateScreen(bool drawWindows) {
 
 	if (shouldUpdateScreen)
 		g_system->updateScreen();
+
+	_needsErase = false;
 }
 
 void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y) {

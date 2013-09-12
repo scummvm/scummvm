@@ -118,7 +118,6 @@ protected:
 
 private:
 	bool _enabled, _visible;
-	bool _needsErase;
 
 	typedef Common::List<Window *> WindowList;
 	WindowList _children, _topMostChildren;

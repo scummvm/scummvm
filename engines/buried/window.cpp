@@ -35,7 +35,6 @@ const Window *kWindowPosTopMost = (const Window *)-1;
 
 Window::Window(BuriedEngine *vm, Window *parent, bool visible) : _vm(vm), _parent(parent), _visible(visible) {
 	_enabled = true;
-	_needsErase = false;
 
 	// Add us to the bottom of the parent's window list
 	if (_parent)
@@ -61,8 +60,7 @@ Window::~Window() {
 }
 
 void Window::invalidateRect(const Common::Rect &rect, bool erase) {
-	_vm->_gfx->invalidateRect(makeAbsoluteRect(rect));
-	_needsErase |= erase;
+	_vm->_gfx->invalidateRect(makeAbsoluteRect(rect), erase);
 }
 
 Common::Rect Window::getClientRect() const {
@@ -133,10 +131,8 @@ void Window::updateWindow() {
 		return;
 
 	// If we need to erase, erase first
-	if (_needsErase) {
+	if (_vm->_gfx->needsErase())
 		onEraseBackground();
-		_needsErase = false;
-	}
 
 	// Always draw this window first
 	onPaint();
