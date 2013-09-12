@@ -34,6 +34,18 @@ class CMctlCompound;
 class CInputController;
 class CInteractionController;
 
+struct PreloadItem {
+	int preloadId1;
+	int preloadId2;
+	int sceneId;
+	int field_C;
+};
+
+class PreloadItems : public Common::Array<PreloadItem>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
 class CGameLoader : public CObject {
  public:
 	CGameLoader();

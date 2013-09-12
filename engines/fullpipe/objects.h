@@ -117,18 +117,6 @@ class CGameVar : public CObject {
 	CGameVar *getSubVarByIndex(int idx);
 };
 
-struct PreloadItem {
-	int preloadId1;
-	int preloadId2;
-	int sceneId;
-	int field_C;
-};
-
-class PreloadItems : public Common::Array<PreloadItem>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_OBJECTS_H */
