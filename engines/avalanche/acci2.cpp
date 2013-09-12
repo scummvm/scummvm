@@ -750,36 +750,30 @@ void Acci::examine() {
 
 void Acci::inventory() {
 	byte itemNum = 0;
-	Common::String tmpStr = Common::String::format("You're carrying %c", Scrolls::kControlToBuffer);
-	_vm->_scrolls->displayText(tmpStr);
+	Common::String tmpStr = Common::String::format("You're carrying ");
 
 	for (byte i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_dna._objects[i]) {
 			itemNum++;
-			if (itemNum == _vm->_gyro->_dna._carryNum) {
-				tmpStr = Common::String::format("and %c", Scrolls::kControlToBuffer);
-				_vm->_scrolls->displayText(tmpStr);
-			}
+			if (itemNum == _vm->_gyro->_dna._carryNum)
+				tmpStr += "and %c";
 
-			_vm->_scrolls->displayText(_vm->_gyro->getItem(i + 1) + Scrolls::kControlToBuffer);
+			tmpStr += _vm->_gyro->getItem(i + 1);
 
-			if ((i + 1) == _vm->_gyro->_dna._wearing) {
-				tmpStr = Common::String::format(", which you're wearing%c", Scrolls::kControlToBuffer);
-				_vm->_scrolls->displayText(tmpStr);
-			}
+			if ((i + 1) == _vm->_gyro->_dna._wearing)
+				tmpStr += ", which you're wearing";
 
-			if (itemNum < _vm->_gyro->_dna._carryNum) {
-				tmpStr = Common::String::format(", %c", Scrolls::kControlToBuffer);
-				_vm->_scrolls->displayText(tmpStr);
-			}
+			if (itemNum < _vm->_gyro->_dna._carryNum)
+				tmpStr += ", ";
 		}
 	}
 
 	if (_vm->_gyro->_dna._wearing == kNothing) {
-		tmpStr = Common::String::format("...%c%c...and you're stark naked!", Scrolls::kControlNewLine, Scrolls::kControlNewLine);
-		_vm->_scrolls->displayText(tmpStr);
+		tmpStr += Common::String::format("...%c%c...and you're stark naked!", Scrolls::kControlNewLine, Scrolls::kControlNewLine);
 	} else
-		_vm->_scrolls->displayText(".");
+		tmpStr += '.';
+
+	_vm->_scrolls->displayText(tmpStr);
 }
 
 void Acci::swallow() {   // Eat something.
@@ -1630,7 +1624,7 @@ void Acci::doThat() {
 		if (_thing == kPardon) {
 			switch (_vm->_gyro->_dna._room) { // They just typed "play"...
 			case r__argentpub: { // ...in the pub, => play Nim.
-					warning("STUB: Acci::doThat() - case kVerbCodeplay");
+					warning("STUB: Acci::doThat() - case kVerbCodeplay - play_nim()");
 					// play_nim();
 					// The following parts are copied from play_nim().
 					// The player automatically wins the game everytime he wins, until I implement the mini-game.
@@ -1688,7 +1682,7 @@ void Acci::doThat() {
 			case 55:
 				if (_vm->_gyro->_dna._room == r__argentpub)
 					// play_nim();
-					warning("STUB: Acci::doThat() - case kVerbCodeplay");
+					warning("STUB: Acci::doThat() - case kVerbCodeplay - play_nim()");
 				else
 					_vm->_scrolls->displayText(kWhat);
 				break;
