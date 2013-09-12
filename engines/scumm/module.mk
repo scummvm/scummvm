@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	midiparser_ro.o \
 	object.o \
 	palette.o \
+	player_ad.o \
 	player_apple2.o \
 	player_mac.o \
 	player_mod.o \
