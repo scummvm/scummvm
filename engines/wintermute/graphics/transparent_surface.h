@@ -147,9 +147,6 @@ struct TransparentSurface : public Graphics::Surface {
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 };
 
-void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
-void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
-
 /**
  * A deleter for Surface objects which can be used with SharedPtr.
  *
