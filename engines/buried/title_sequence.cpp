@@ -79,6 +79,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 
 		_currentMovie->setWindowPos(0, 195, 115, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 		_currentMovie->enableWindow(false);
+		_currentMovie->showWindow(kWindowShow);
 		_currentMovie->playVideo();
 		_currentAnimation = 1;
 		return true;
@@ -97,6 +98,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 
 		_currentMovie->setWindowPos(0, 200, 60, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 		_currentMovie->enableWindow(false);
+		_currentMovie->showWindow(kWindowShow);
 		_currentMovie->playVideo();
 		_currentAnimation = 2;
 		return true;
@@ -114,6 +116,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 
 		_currentMovie->setWindowPos(0, 60, 138, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 		_currentMovie->enableWindow(false);
+		_currentMovie->showWindow(kWindowShow);
 		invalidateWindow();
 		_currentMovie->playVideo();
 		_currentAnimation = 3;

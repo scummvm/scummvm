@@ -98,6 +98,7 @@ Common::Error BuriedEngine::run() {
 	_gfx = new GraphicsManager(this);
 	_sound = new SoundManager(this);
 	_mainWindow = new FrameWindow(this);
+	_mainWindow->showWindow(Window::kWindowShow);
 
 	if (isDemo()) {
 		((FrameWindow *)_mainWindow)->showTitleSequence();
