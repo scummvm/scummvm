@@ -4,6 +4,9 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
+ * Additional copyright for this file:
+ * Copyright (C) 1995 Presto Studios, Inc.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -88,6 +91,8 @@ public:
 	void blit(const Graphics::Surface *surface, int x, int y);
 	void blit(const Graphics::Surface *surface, const Common::Rect &srcRect, const Common::Rect &dstRect);
 	void fillRect(const Common::Rect &rect, uint32 color);
+	void opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc, int opacityValue, byte r, byte g, byte b);
+	bool checkPointAgainstMaskedBitmap(const Graphics::Surface *bitmap, int x, int y, const Common::Point &point, byte rTrans, byte gTrans, byte bTrans);
 
 	Graphics::Surface *remapPalettedFrame(const Graphics::Surface *frame, const byte *palette);
 
