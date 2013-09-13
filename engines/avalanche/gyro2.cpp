@@ -318,7 +318,6 @@ void Gyro::newGame() {
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation);
 
 	_alive = true;
-	_score = 0;
 	resetVariables();
 
 	_vm->_scrolls->setBubbleStateNatural();
