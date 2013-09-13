@@ -48,123 +48,287 @@
 
 namespace Avalanche {
 
-const Acci::VocabEntry Acci::kVocabulary[kParserWordsNum] = {
+Acci::Acci(AvalancheEngine *vm) {
+	_vm = vm;
+}
+
+void Acci::init() {
+	_vm->_gyro->_weirdWord = false;
+
+	// Initailaze the vocabulary.
 	// Verbs: 1-49
-	{1, "EXAMINE"},      {1, "READ"},      {1, "XAM"}, // short
-	{2, "OPEN"},         {2, "LEAVE"},     {2, "UNLOCK"},
-	{3, "PAUSE"},        {47, "TA"}, // Early to avoid Take and Talk.
-	{4, "TAKE"},         {4, "GET"},       {4, "PICK"},
-	{5, "DROP"},         {6, "INVENTORY"}, {7, "TALK"},
-	{7, "SAY"},          {7, "ASK"},
-	{8, "GIVE"},         {9, "DRINK"},     {9, "IMBIBE"},
-	{9, "DRAIN"},        {10, "LOAD"},     {10, "RESTORE"},
-	{11, "SAVE"},        {12, "BRIBE"},    {12, "PAY"},
-	{13, "LOOK"},        {14, "BREAK"},    {15, "QUIT"},
-	{15, "EXIT"},        {16, "SIT"},      {16, "SLEEP"},
-	{17, "STAND"},
-	{18, "GO"},          {19, "INFO"},      {20, "UNDRESS"},
-	{20, "DOFF"},
-	{21, "DRESS"},       {21, "WEAR"},      {21, "DON"},
-	{22, "PLAY"},
-	{22, "STRUM"},       {23, "RING"},      {24, "HELP"},
-	{25, "KENDAL"},      {26, "CAPYBARA"},  {27, "BOSS"},
-	{255, "NINET"}, // block for NINETY
-	{28, "URINATE"},     {28, "MINGITE"},   {29, "NINETY"},
-	{30, "ABRACADABRA"}, {30, "PLUGH"},     {30, "XYZZY"},
-	{30, "HOCUS"},       {30, "POCUS"},     {30, "IZZY"},
-	{30, "WIZZY"},       {30, "PLOVER"},
-	{30, "MELENKURION"}, {30, "ZORTON"},    {30, "BLERBI"},
-	{30, "THURB"},       {30, "SNOEZE"},    {30, "SAMOHT"},
-	{30, "NOSIDE"},      {30, "PHUGGG"},    {30, "KNERL"},
-	{30, "MAGIC"},       {30, "KLAETU"},    {30, "VODEL"},
-	{30, "BONESCROLLS"}, {30, "RADOF"},
-	{31, "RESTART"},
-	{32, "SWALLOW"},     {32, "EAT"},       {33, "LISTEN"},
-	{33, "HEAR"},        {34, "BUY"},       {34, "PURCHASE"},
-	{34, "ORDER"},       {34, "DEMAND"},
-	{35, "ATTACK"},      {35, "HIT"},       {35, "KILL"},
-	{35, "PUNCH"},       {35, "KICK"},      {35, "SHOOT"},
-	{35, "FIRE"},
+	_vocabulary[0].init(1, "EXAMINE");
+	_vocabulary[1].init(1, "READ");
+	_vocabulary[2].init(1, "XAM");
+	_vocabulary[3].init(2, "OPEN");
+	_vocabulary[4].init(2, "LEAVE");
+	_vocabulary[5].init(2, "UNLOCK");
+	_vocabulary[6].init(3, "PAUSE");
+	_vocabulary[7].init(47, "TA"); // Early to avoid Take and Talk.
+	_vocabulary[8].init(4, "TAKE");
+	_vocabulary[9].init(4, "GET");
+	_vocabulary[10].init(4, "PICK");
+	_vocabulary[11].init(5, "DROP");
+	_vocabulary[12].init(6, "INVENTORY");
+	_vocabulary[13].init(7, "TALK");
+	_vocabulary[14].init(7, "SAY");
+	_vocabulary[15].init(7, "ASK");
+	_vocabulary[16].init(8, "GIVE");
+	_vocabulary[17].init(9, "DRINK");
+	_vocabulary[18].init(9, "IMBIBE");
+	_vocabulary[19].init(9, "DRAIN");
+	_vocabulary[20].init(10, "LOAD");
+	_vocabulary[21].init(10, "RESTORE");
+	_vocabulary[22].init(11, "SAVE");
+	_vocabulary[23].init(12, "BRIBE");
+	_vocabulary[24].init(12, "PAY");
+	_vocabulary[25].init(13, "LOOK");
+	_vocabulary[26].init(14, "BREAK");
+	_vocabulary[27].init(15, "QUIT");
+	_vocabulary[28].init(15, "EXIT");
+	_vocabulary[29].init(16, "SIT");
+	_vocabulary[30].init(16, "SLEEP");
+	_vocabulary[31].init(17, "STAND");
+
+	_vocabulary[32].init(18, "GO");
+	_vocabulary[33].init(19, "INFO");
+	_vocabulary[34].init(20, "UNDRESS");
+	_vocabulary[35].init(20, "DOFF");
+	_vocabulary[36].init(21, "DRESS");
+	_vocabulary[37].init(21, "WEAR");
+	_vocabulary[38].init(21, "DON");
+	_vocabulary[39].init(22, "PLAY");
+	_vocabulary[40].init(22, "STRUM");
+	_vocabulary[41].init(23, "RING");
+	_vocabulary[42].init(24, "HELP");
+	_vocabulary[43].init(25, "KENDAL");
+	_vocabulary[44].init(26, "CAPYBARA");
+	_vocabulary[45].init(27, "BOSS");
+	_vocabulary[46].init(255, "NINET"); // block for NINETY
+	_vocabulary[47].init(28, "URINATE");
+	_vocabulary[48].init(28, "MINGITE");
+	_vocabulary[49].init(29, "NINETY");
+	_vocabulary[50].init(30, "ABRACADABRA");
+	_vocabulary[51].init(30, "PLUGH");
+	_vocabulary[52].init(30, "XYZZY");
+	_vocabulary[53].init(30, "HOCUS");
+	_vocabulary[54].init(30, "POCUS");
+	_vocabulary[55].init(30, "IZZY");
+	_vocabulary[56].init(30, "WIZZY");
+	_vocabulary[57].init(30, "PLOVER");
+	_vocabulary[58].init(30, "MELENKURION");
+	_vocabulary[59].init(30, "ZORTON");
+	_vocabulary[60].init(30, "BLERBI");
+	_vocabulary[61].init(30, "THURB");
+	_vocabulary[62].init(30, "SNOEZE");
+	_vocabulary[63].init(30, "SAMOHT");
+	_vocabulary[64].init(30, "NOSIDE");
+	_vocabulary[65].init(30, "PHUGGG");
+	_vocabulary[66].init(30, "KNERL");
+	_vocabulary[67].init(30, "MAGIC");
+	_vocabulary[68].init(30, "KLAETU");
+	_vocabulary[69].init(30, "VODEL");
+	_vocabulary[70].init(30, "BONESCROLLS");
+	_vocabulary[71].init(30, "RADOF");
+
+	_vocabulary[72].init(31, "RESTART");
+	_vocabulary[73].init(32, "SWALLOW");
+	_vocabulary[74].init(32, "EAT");
+	_vocabulary[75].init(33, "LISTEN");
+	_vocabulary[76].init(33, "HEAR");
+	_vocabulary[77].init(34, "BUY");
+	_vocabulary[78].init(34, "PURCHASE");
+	_vocabulary[79].init(34, "ORDER");
+	_vocabulary[80].init(34, "DEMAND");
+	_vocabulary[81].init(35, "ATTACK");
+	_vocabulary[82].init(35, "HIT");
+	_vocabulary[83].init(35, "KILL");
+	_vocabulary[84].init(35, "PUNCH");
+	_vocabulary[85].init(35, "KICK");
+	_vocabulary[86].init(35, "SHOOT");
+	_vocabulary[87].init(35, "FIRE");
 
 	// Passwords: 36
-	{36, "TIROS"},     {36, "WORDY"},     {36, "STACK"},
-	{36, "SHADOW"},    {36, "OWL"},       {36, "ACORN"},
-	{36, "DOMESDAY"},  {36, "FLOPPY"},    {36, "DIODE"},
-	{36, "FIELD"},     {36, "COWSLIP"},   {36, "OSBYTE"},
-	{36, "OSCLI"},     {36, "TIMBER"},    {36, "ADVAL"},
-	{36, "NEUTRON"},   {36, "POSITRON"},  {36, "ELECTRON"},
-	{36, "CIRCUIT"},   {36, "AURUM"},     {36, "PETRIFY"},
-	{36, "EBBY"},      {36, "CATAPULT"},  {36, "GAMERS"},
-	{36, "FUDGE"},     {36, "CANDLE"},    {36, "BEEB"},
-	{36, "MICRO"},     {36, "SESAME"},    {36, "LORDSHIP"},
-	{37, "DIR"},       {37, "LS"},        {38, "DIE"},
-	{39, "SCORE"},
-	{40, "PUT"},       {40, "INSERT"},    {41, "KISS"},
-	{41, "SNOG"},      {41, "CUDDLE"},    {42, "CLIMB"},
-	{42, "CLAMBER"},   {43, "JUMP"},      {44, "HIGHSCORES"},
-	{44, "HISCORES"},  {45, "WAKEN"},     {45, "AWAKEN"},
-	{46, "HELLO"},     {46, "HI"},        {46, "YO"},
-	{47, "THANKS"}, // = 47, "ta", which was defined earlier.
+	_vocabulary[88].init(36, "TIROS");
+	_vocabulary[89].init(36, "WORDY");
+	_vocabulary[90].init(36, "STACK");
+	_vocabulary[91].init(36, "SHADOW");
+	_vocabulary[92].init(36, "OWL");
+	_vocabulary[93].init(36, "ACORN");
+	_vocabulary[94].init(36, "DOMESDAY");
+	_vocabulary[95].init(36, "FLOPPY");
+	_vocabulary[96].init(36, "DIODE");
+	_vocabulary[97].init(36, "FIELD");
+	_vocabulary[98].init(36, "COWSLIP");
+	_vocabulary[99].init(36, "OSBYTE");
+	_vocabulary[100].init(36, "OSCLI");
+	_vocabulary[101].init(36, "TIMBER");
+	_vocabulary[102].init(36, "ADVAL");
+	_vocabulary[103].init(36, "NEUTRON");
+	_vocabulary[104].init(36, "POSITRON");
+	_vocabulary[105].init(36, "ELECTRON");
+	_vocabulary[106].init(36, "CIRCUIT");
+	_vocabulary[107].init(36, "AURUM");
+	_vocabulary[108].init(36, "PETRIFY");
+	_vocabulary[109].init(36, "EBBY");
+	_vocabulary[110].init(36, "CATAPULT");
+	_vocabulary[111].init(36, "GAMERS");
+	_vocabulary[112].init(36, "FUDGE");
+	_vocabulary[113].init(36, "CANDLE");
+	_vocabulary[114].init(36, "BEEB");
+	_vocabulary[115].init(36, "MICRO");
+	_vocabulary[116].init(36, "SESAME");
+	_vocabulary[117].init(36, "LORDSHIP");
+
+	_vocabulary[118].init(37, "DIR");
+	_vocabulary[119].init(37, "LS");
+	_vocabulary[120].init(38, "DIE");
+	_vocabulary[121].init(39, "SCORE");
+	_vocabulary[122].init(40, "PUT");
+	_vocabulary[123].init(40, "INSERT");
+	_vocabulary[124].init(41, "KISS");
+	_vocabulary[125].init(41, "SNOG");
+	_vocabulary[126].init(41, "CUDDLE");
+	_vocabulary[127].init(42, "CLIMB");
+	_vocabulary[128].init(42, "CLAMBER");
+	_vocabulary[129].init(43, "JUMP");
+	_vocabulary[130].init(44, "HIGHSCORES");
+	_vocabulary[131].init(44, "HISCORES");
+	_vocabulary[132].init(45, "WAKEN");
+	_vocabulary[133].init(45, "AWAKEN");
+	_vocabulary[134].init(46, "HELLO");
+	_vocabulary[135].init(46, "HI");
+	_vocabulary[136].init(46, "YO");
+	_vocabulary[137].init(47, "THANKS"); // = 47, "ta", which was defined earlier.
 
 	// Nouns - Objects: 50-100
-	{50, "WINE"},       {50, "BOOZE"},    {50, "NASTY"},
-	{50, "VINEGAR"},    {51, "MONEYBAG"},
-	{51, "BAG"},        {51, "CASH"},     {51, "DOSH"},
-	{51, "WALLET"},
-	{52, "BODKIN"},     {52, "DAGGER"},   {53, "POTION"},
-	{54, "CHASTITY"},   {54, "BELT"},     {55, "BOLT"},
-	{55, "ARROW"},      {55, "DART"},
-	{56, "CROSSBOW"},   {56, "BOW"},      {57, "LUTE"},
-	{58, "PILGRIM"},    {58, "BADGE"},    {59, "MUSHROOMS"},
-	{59, "TOADSTOOLS"}, {60, "KEY"},      {61, "BELL"},
-	{62, "PRESCRIPT"},  {62, "SCROLL"},   {62, "MESSAGE"},
-	{63, "PEN"},        {63, "QUILL"},    {64, "INK"},
-	{64, "INKPOT"},     {65, "CLOTHES"},  {66, "HABIT"},
-	{66, "DISGUISE"},   {67, "ONION"},
-	{99, "PASSWORD"},
+	_vocabulary[138].init(50, "WINE");
+	_vocabulary[139].init(50, "BOOZE");
+	_vocabulary[140].init(50, "NASTY");
+	_vocabulary[141].init(50, "VINEGAR");
+	_vocabulary[142].init(51, "MONEYBAG");
+	_vocabulary[143].init(51, "BAG");
+	_vocabulary[144].init(51, "CASH");
+	_vocabulary[145].init(51, "DOSH");
+	_vocabulary[146].init(51, "WALLET");
+	_vocabulary[147].init(52, "BODKIN");
+	_vocabulary[148].init(52, "DAGGER");
+	_vocabulary[149].init(53, "POTION");
+	_vocabulary[150].init(54, "CHASTITY");
+	_vocabulary[151].init(54, "BELT");
+	_vocabulary[152].init(55, "BOLT");
+	_vocabulary[153].init(55, "ARROW");
+	_vocabulary[154].init(55, "DART");
+	_vocabulary[155].init(56, "CROSSBOW");
+	_vocabulary[156].init(56, "BOW");
+	_vocabulary[157].init(57, "LUTE");
+	_vocabulary[158].init(58, "PILGRIM");
+	_vocabulary[159].init(58, "BADGE");
+	_vocabulary[160].init(59, "MUSHROOMS");
+	_vocabulary[161].init(59, "TOADSTOOLS");
+	_vocabulary[162].init(60, "KEY");
+	_vocabulary[163].init(61, "BELL");
+	_vocabulary[164].init(62, "PRESCRIPT");
+	_vocabulary[165].init(62, "SCROLL");
+	_vocabulary[166].init(62, "MESSAGE");
+	_vocabulary[167].init(63, "PEN");
+	_vocabulary[168].init(63, "QUILL");
+	_vocabulary[169].init(64, "INK");
+	_vocabulary[170].init(64, "INKPOT");
+	_vocabulary[171].init(65, "CLOTHES");
+	_vocabulary[172].init(66, "HABIT");
+	_vocabulary[173].init(66, "DISGUISE");
+	_vocabulary[174].init(67, "ONION");
+
+	_vocabulary[175].init(99, "PASSWORD");
 
 	// Objects from Also are placed between 101 and 131.
-
 	// Nouns - People - Male: 150-174
-	{150, "AVVY"},       {150, "AVALOT"},    {150, "YOURSELF"},
-	{150, "ME"},         {150, "MYSELF"},    {151, "SPLUDWICK"},
-	{151, "THOMAS"},     {151, "ALCHEMIST"}, {151, "CHEMIST"},
-	{152, "CRAPULUS"},   {152, "SERF"},      {152, "SLAVE"},
-	{158, "DU"}, // <<< Put in early for Baron DU Lustie to save confusion with Duck & Duke.
-	{152, "CRAPPY"},     {153, "DUCK"},      {153, "DOCTOR"},
-	{154, "MALAGAUCHE"},
-	{155, "FRIAR"},      {155, "TUCK"},      {156, "ROBIN"},
-	{156, "HOOD"},       {157, "CWYTALOT"},  {157, "GUARD"},
-	{157, "BRIDGEKEEP"}, {158, "BARON"},     {158, "LUSTIE"},
-	{159, "DUKE"},       {159, "GRACE"},     {160, "DOGFOOD"},
-	{160, "MINSTREL"},   {161, "TRADER"},    {161, "SHOPKEEPER"},
-	{161, "STALLHOLDER"},
-	{162, "PILGRIM"},    {162, "IBYTHNETH"}, {163, "ABBOT"},
-	{163, "AYLES"},      {164, "PORT"},      {165, "SPURGE"},
-	{166, "JACQUES"},    {166, "SLEEPER"},   {166, "RINGER"},
+	_vocabulary[176].init(150, "AVVY");
+	_vocabulary[177].init(150, "AVALOT");
+	_vocabulary[178].init(150, "YOURSELF");
+	_vocabulary[179].init(150, "ME");
+	_vocabulary[180].init(150, "MYSELF");
+	_vocabulary[181].init(151, "SPLUDWICK");
+	_vocabulary[182].init(151, "THOMAS");
+	_vocabulary[183].init(151, "ALCHEMIST");
+	_vocabulary[184].init(151, "CHEMIST");
+	_vocabulary[185].init(152, "CRAPULUS");
+	_vocabulary[186].init(152, "SERF");
+	_vocabulary[187].init(152, "SLAVE");
+	_vocabulary[188].init(158, "DU"); // Put in early for Baron DU Lustie to save confusion with Duck & Duke.
+	_vocabulary[189].init(152, "CRAPPY");
+	_vocabulary[190].init(153, "DUCK");
+	_vocabulary[191].init(153, "DOCTOR");
+	_vocabulary[192].init(154, "MALAGAUCHE");
+	_vocabulary[193].init(155, "FRIAR");
+	_vocabulary[194].init(155, "TUCK");
+	_vocabulary[195].init(156, "ROBIN");
+	_vocabulary[196].init(156, "HOOD");
+	_vocabulary[197].init(157, "CWYTALOT");
+	_vocabulary[198].init(157, "GUARD");
+	_vocabulary[199].init(157, "BRIDGEKEEP");
+	_vocabulary[200].init(158, "BARON");
+	_vocabulary[201].init(158, "LUSTIE");
+	_vocabulary[202].init(159, "DUKE");
+	_vocabulary[203].init(159, "GRACE");
+	_vocabulary[204].init(160, "DOGFOOD");
+	_vocabulary[205].init(160, "MINSTREL");
+	_vocabulary[206].init(161, "TRADER");
+	_vocabulary[207].init(161, "SHOPKEEPER");
+	_vocabulary[208].init(161, "STALLHOLDER");
+	_vocabulary[209].init(162, "PILGRIM");
+	_vocabulary[210].init(162, "IBYTHNETH");
+	_vocabulary[211].init(163, "ABBOT");
+	_vocabulary[212].init(163, "AYLES");
+	_vocabulary[213].init(164, "PORT");
+	_vocabulary[214].init(165, "SPURGE");
+	_vocabulary[215].init(166, "JACQUES");
+	_vocabulary[216].init(166, "SLEEPER");
+	_vocabulary[217].init(166, "RINGER");
 
 	// Nouns - People - Female: 175-199
-	{175, "WIFE"},      {175, "ARKATA"},    {176, "GEDALODAVA"},
-	{176, "GEIDA"},     {176, "PRINCESS"},  {178, "WISE"},
-	{178, "WITCH"},
+	_vocabulary[218].init(175, "WIFE");
+	_vocabulary[219].init(175, "ARKATA");
+	_vocabulary[220].init(176, "GEDALODAVA");
+	_vocabulary[221].init(176, "GEIDA");
+	_vocabulary[222].init(176, "PRINCESS");
+	_vocabulary[223].init(178, "WISE");
+	_vocabulary[224].init(178, "WITCH");
 
 	// Pronouns: 200-224
-	{200, "HIM"},       {200, "MAN"},       {200, "GUY"},
-	{200, "DUDE"},      {200, "CHAP"},      {200, "FELLOW"},
-	{201, "HER"},       {201, "GIRL"},      {201, "WOMAN"},
-	{202, "IT"},        {202, "THING"},
-	{203, "MONK"},      {204, "BARMAN"},    {204, "BARTENDER"},
+	_vocabulary[225].init(200, "HIM");
+	_vocabulary[226].init(200, "MAN");
+	_vocabulary[227].init(200, "GUY");
+	_vocabulary[228].init(200, "DUDE");
+	_vocabulary[229].init(200, "CHAP");
+	_vocabulary[230].init(200, "FELLOW");
+	_vocabulary[231].init(201, "HER");
+	_vocabulary[232].init(201, "GIRL");
+	_vocabulary[233].init(201, "WOMAN");
+	_vocabulary[234].init(202, "IT");
+	_vocabulary[235].init(202, "THING");
+	_vocabulary[236].init(203, "MONK");
+	_vocabulary[237].init(204, "BARMAN");
+	_vocabulary[238].init(204, "BARTENDER");
 
 	// Prepositions: 225-249
-	{225, "TO"},        {226, "AT"},        {227, "UP"},
-	{228, "INTO"},      {228, "INSIDE"},    {229, "OFF"},
-	{230, "UP"},        {231, "DOWN"},      {232, "ON"},
+	_vocabulary[239].init(225, "TO");
+	_vocabulary[240].init(226, "AT");
+	_vocabulary[241].init(227, "UP");
+	_vocabulary[242].init(228, "INTO");
+	_vocabulary[243].init(228, "INSIDE");
+	_vocabulary[244].init(229, "OFF");
+	_vocabulary[245].init(230, "UP");
+	_vocabulary[246].init(231, "DOWN");
+	_vocabulary[247].init(232, "ON");
 
 	// Please: 251
-	{251, "PLEASE"},
+	_vocabulary[248].init(251, "PLEASE");
 
 	// About: 252
-	{252, "ABOUT"}, {252, "CONCERNING"},
+	_vocabulary[249].init(252, "ABOUT");
+	_vocabulary[250].init(252, "CONCERNING");
 
 	// Swear words: 253
 	/*		  I M P O R T A N T    M E S S A G E
@@ -174,30 +338,37 @@ const Acci::VocabEntry Acci::kVocabulary[kParserWordsNum] = {
 	GOODNESS KNOWS WHO WROTE THEM.
 	READ THEM AT YOUR OWN RISK. BETTER STILL, DON'T READ THEM.
 	WHY ARE YOU SNOOPING AROUND IN MY PROGRAM, ANYWAY? */
-
-	{253, "SHIT"},      {28 , "PISS"},    {28 , "PEE"},
-	{253, "FART"},      {253, "FUCK"},    {253, "BALLS"},
-	{253, "BLAST"},     {253, "BUGGER"},  {253, "KNICKERS"},
-	{253, "BLOODY"},    {253, "HELL"},    {253, "DAMN"},
-	{253, "SMEG"},
-	// ...and other even ruder words. You didn't read them, did you? Good. */
+	_vocabulary[251].init(253, "SHIT");
+	_vocabulary[252].init(28 , "PISS");
+	_vocabulary[253].init(28 , "PEE");
+	_vocabulary[254].init(253, "FART");
+	_vocabulary[255].init(253, "FUCK");
+	_vocabulary[256].init(253, "BALLS");
+	_vocabulary[257].init(253, "BLAST");
+	_vocabulary[258].init(253, "BUGGER");
+	_vocabulary[259].init(253, "KNICKERS");
+	_vocabulary[260].init(253, "BLOODY");
+	_vocabulary[261].init(253, "HELL");
+	_vocabulary[262].init(253, "DAMN");
+	_vocabulary[263].init(253, "SMEG");
+	// ...and other even ruder words. You didn't read them, did you? Good.
 
 	// Answer-back smart-alec words: 249
-	{249, "YES"},       {249, "NO"},        {249, "BECAUSE"},
+	_vocabulary[264].init(249, "YES");
+	_vocabulary[265].init(249, "NO");
+	_vocabulary[266].init(249, "BECAUSE");
 
 	// Noise words: 255
-	{255, "THE"},       {255, "A"},         {255, "NOW"},
-	{255, "SOME"},      {255, "AND"},       {255, "THAT"},
-	{255, "POCUS"},     {255, "HIS"},
-	{255, "THIS"},      {255, "SENTINEL"} // for "Ken SENT Me"
-};
-
-Acci::Acci(AvalancheEngine *vm) {
-	_vm = vm;
-}
-
-void Acci::init() {
-	_vm->_gyro->_weirdWord = false;
+	_vocabulary[267].init(255, "THE");
+	_vocabulary[268].init(255, "A");
+	_vocabulary[269].init(255, "NOW");
+	_vocabulary[270].init(255, "SOME");
+	_vocabulary[271].init(255, "AND");
+	_vocabulary[272].init(255, "THAT");
+	_vocabulary[273].init(255, "POCUS");
+	_vocabulary[274].init(255, "HIS");
+	_vocabulary[275].init(255, "THIS");
+	_vocabulary[276].init(255, "SENTINEL"); // for "Ken SENT Me"
 }
 
 void Acci::clearWords() {
@@ -212,14 +383,14 @@ byte Acci::wordNum(Common::String word) {
 		return 0;
 
 	for (int32 i = kParserWordsNum - 1; i >= 0; i--) {
-		if (kVocabulary[i]._word == word)
-			return kVocabulary[i]._number;
+		if (_vocabulary[i]._word == word)
+			return _vocabulary[i]._number;
 	}
 
 	// If not found as a whole, we look for it as a substring.
 	for (int32 i = kParserWordsNum - 1; i >= 0; i--) {
-		if (Common::String(kVocabulary[i]._word.c_str(), word.size()) == word)
-			return kVocabulary[i]._number;
+		if (Common::String(_vocabulary[i]._word.c_str(), word.size()) == word)
+			return _vocabulary[i]._number;
 	}
 
 	return kPardon;
@@ -1920,8 +2091,8 @@ void Acci::doThat() {
 				Common::String temp = _realWords[i];
 				temp.toUppercase();
 				int pwdId = _vm->_gyro->_passwordNum + kFirstPassword;
-				for (byte j = 0; j < kVocabulary[pwdId]._word.size(); j++) {
-					if (kVocabulary[pwdId]._word[j] != temp[j])
+				for (byte j = 0; j < _vocabulary[pwdId]._word.size(); j++) {
+					if (_vocabulary[pwdId]._word[j] != temp[j])
 						ok = false;
 				}
 			}
