@@ -918,9 +918,6 @@ void Lucerna::drawToolbar() {
 }
 
 void Lucerna::drawScore() {
-	if (_vm->_gyro->kDemo)
-		return;
-
 	uint16 score = _vm->_gyro->_dnascore;
 	int8 numbers[3] = {0, 0, 0};
 	for (byte i = 0; i < 2; i++) {
