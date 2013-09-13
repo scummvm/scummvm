@@ -2,6 +2,7 @@ MODULE := engines/buried
 
 MODULE_OBJS = \
 	avi_frames.o \
+	biochip_right.o \
 	buried.o \
 	credits.o \
 	database.o \
