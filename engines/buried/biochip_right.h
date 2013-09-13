@@ -23,51 +23,39 @@
  *
  */
 
-#ifndef BURIED_GAMEUI_H
-#define BURIED_GAMEUI_H
+#ifndef BURIED_BIOCHIP_RIGHT_H
+#define BURIED_BIOCHIP_RIGHT_H
 
 #include "buried/window.h"
 
-namespace Graphics {
-struct Surface;
-}
-
 namespace Buried {
 
-class BioChipRightWindow;
-class LiveTextWindow;
-
-class GameUIWindow : public Window {
+class BioChipRightWindow : public Window {
 public:
-	GameUIWindow(BuriedEngine *vm, Window *parent);
-	~GameUIWindow();
+	BioChipRightWindow(BuriedEngine *vm, Window *parent);
+	~BioChipRightWindow();
 
-	bool startNewGame(bool walkthrough = false);
-	bool startNewGameIntro(bool walkthrough = false);
-	// startNewGame(location struct)
-	bool startNewGame(const Common::String &fileName);
-	// startNewGame(continue data, location struct);
-	bool loadGame();
-	bool loadGame(const Common::String &fileName);
-	bool saveGame();
-	bool changeCurrentDate(int timeZoneID);
-	bool flashWarningLight();
-	bool setWarningState(bool newState);
+	bool changeCurrentBioChip(int bioChipID);
+	bool showBioChipMainView();
+	bool destroyBioChipViewWindow();
+	void sceneChanged();
+	void disableEvidenceCapture();
+	void jumpInitiated(bool redraw);
+	void jumpEnded(bool redraw);
 
 	void onPaint();
 	void onEnable(bool enable);
-	void onKeyUp(const Common::KeyState &key, uint flags);
+	void onLButtonUp(const Common::Point &point, uint flags);
 
-	// TODO: NavArrowWindow
-	LiveTextWindow *_liveTextWindow;
-	// TODO: SceneViewWindow
-	// TODO: InventoryWindow
-	BioChipRightWindow *_bioChipRightWindow;
+	// clone2727 says: These are labeled as HACKS, so I assume they are.
+	bool _forceHelp;
+	bool _forceComment;
 
 private:
-	int _currentDateDisplay;
-	bool _warningLightDisplayed;
-	bool _doNotDraw;
+	int _curBioChip;
+	int _status;
+	Window *_bioChipViewWindow;
+	bool _jumpInProgress;
 };
 
 } // End of namespace Buried

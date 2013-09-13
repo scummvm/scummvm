@@ -23,10 +23,13 @@
  *
  */
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
+#include "buried/invdata.h"
 #include "buried/livetext.h"
+#include "buried/message.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
@@ -44,12 +47,14 @@ GameUIWindow::GameUIWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent
 	_doNotDraw = true;
 
 	_liveTextWindow = new LiveTextWindow(_vm, this);
+	_bioChipRightWindow = new BioChipRightWindow(_vm, this);
 
 	// TODO: Other windows
 }
 
 GameUIWindow::~GameUIWindow() {
 	delete _liveTextWindow;
+	delete _bioChipRightWindow;
 
 	// TODO: Other windows
 }
@@ -59,6 +64,7 @@ bool GameUIWindow::startNewGame(bool walkthrough) {
 	invalidateWindow(false);
 
 	_liveTextWindow->showWindow(kWindowShow);
+	_bioChipRightWindow->showWindow(kWindowShow);
 
 	// TODO: Other windows
 
@@ -93,6 +99,7 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 	invalidateWindow(false);
 
 	_liveTextWindow->showWindow(kWindowShow);
+	_bioChipRightWindow->showWindow(kWindowShow);
 
 	// TODO: Other windows
 	return true;
@@ -103,6 +110,7 @@ bool GameUIWindow::startNewGame(const Common::String &fileName) {
 	invalidateWindow(false);
 
 	_liveTextWindow->showWindow(kWindowShow);
+	_bioChipRightWindow->showWindow(kWindowShow);
 
 	// TODO: Other windows
 
@@ -274,6 +282,7 @@ void GameUIWindow::onPaint() {
 void GameUIWindow::onEnable(bool enable) {
 	// Pass the enable message to all child windows
 	_liveTextWindow->enableWindow(enable);
+	_bioChipRightWindow->showWindow(kWindowShow);
 	// TODO: Other windows
 
 	// If we're re-enabling, clear out the message queue of any mouse messages
@@ -296,14 +305,22 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 		break;
 	case Common::KEYCODE_s:
 		if (key.flags & Common::KBD_CTRL) {
-			// TODO: Save
+			// TODO: Check for cloaking enabled
+			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
+			_bioChipRightWindow->invalidateWindow(false);
+			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
+			saveGame();
 			return;
 		}
 		// Fall through
 	case Common::KEYCODE_o:
 	case Common::KEYCODE_l:
 		if (key.flags & Common::KBD_CTRL) {
-			// TODO: Save
+			// TODO: Check for cloaking enabled
+			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
+			_bioChipRightWindow->invalidateWindow(false);
+			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
+			loadGame();
 			return;
 		}
 		// Fall through
