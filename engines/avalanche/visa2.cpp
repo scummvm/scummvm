@@ -90,7 +90,7 @@ void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling
 
 	Common::File sezfile;
 	if (!sezfile.open("avalot.sez"))
-		error("AVALANCHE: Visa: File not found: avalot.sez");
+		::error("AVALANCHE: Visa: File not found: avalot.sez");
 
 	sezfile.seek(sez_offset);
 	_vm->_gyro->_bufSize = sezfile.readUint16LE();
