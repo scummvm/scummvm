@@ -218,10 +218,8 @@ void Lucerna::loadAlso(byte num) {
 	}
 	Common::String filename;
 	filename = Common::String::format("also%d.avd", num);
-	if (!file.open(filename)) {
-		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
-		return;
-	}
+	if (!file.open(filename))
+		error("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
 
 	file.seek(128);
 
@@ -298,10 +296,8 @@ void Lucerna::loadRoom(byte num) {
 	_vm->_graphics->fleshColors();
 
 	Common::String filename = Common::String::format("place%d.avd", num);
-	if (!file.open(filename)) {
-		warning("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
-		return;
-	}
+	if (!file.open(filename))
+		error("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
 
 	file.seek(146);
 	if (!_vm->_gyro->_roomnName.empty())
@@ -851,15 +847,11 @@ void Lucerna::thinkAbout(byte object, bool type) {
 	_vm->_gyro->setMousePointerWait();
 
 	if (type == Gyro::kThing) {
-		if (!file.open("thinks.avd")) {
-			warning("AVALANCHE: Lucerna: File not found: thinks.avd");
-			return;
-		}
+		if (!file.open("thinks.avd"))
+			error("AVALANCHE: Lucerna: File not found: thinks.avd");
 	} else { // Gyro::kPerson
-		if (!file.open("folk.avd")) {
-			warning("AVALANCHE: Lucerna: File not found: folk.avd");
-			return;
-		}
+		if (!file.open("folk.avd"))
+			error("AVALANCHE: Lucerna: File not found: folk.avd");
 
 		object -= 149;
 		if (object >= 25)
@@ -869,13 +861,10 @@ void Lucerna::thinkAbout(byte object, bool type) {
 	}
 
 	file.seek(object * picSize + 65);
-
 	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(file);
-
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 205, 170);
 
 	picture.free();
-
 	file.close();
 
 	CursorMan.showMouse(false);
@@ -894,10 +883,8 @@ void Lucerna::loadDigits() {   // Load the scoring digits & rwlites
 	const byte digitsize = 134;
 	const byte rwlitesize = 126;
 
-	if (!file.open("digit.avd")) {
-		warning("AVALANCHE: Lucerna: File not found: digit.avd");
-		return;
-	}
+	if (!file.open("digit.avd"))
+		error("AVALANCHE: Lucerna: File not found: digit.avd");
 
 	for (byte i = 0; i < 10; i++) {
 		file.seek(i * digitsize);
@@ -913,25 +900,19 @@ void Lucerna::loadDigits() {   // Load the scoring digits & rwlites
 }
 
 void Lucerna::drawToolbar() {
-	if (!file.open("useful.avd")) {
-		warning("AVALANCHE: Lucerna: File not found: useful.avd");
-		return;
-	}
+	if (!file.open("useful.avd"))
+		error("AVALANCHE: Lucerna: File not found: useful.avd");
 
 	file.seek(40);
 
 	CursorMan.showMouse(false);
-
 	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(file);
-
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 5, 169);
 
 	picture.free();
-
 	file.close();
 
 	CursorMan.showMouse(true);
-
 	_vm->_gyro->_oldDirection = 177;
 	drawDirection();
 }

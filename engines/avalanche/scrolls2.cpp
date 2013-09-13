@@ -264,10 +264,8 @@ void Scrolls::unDodgem() {
 void Scrolls::getIcon(int16 x, int16 y, byte which) {
 	Common::File file;
 
-	if (!file.open("icons.avd")) {
-		warning("AVALANCHE: Scrolls: File not found: icons.avd");
-		return;
-	}
+	if (!file.open("icons.avd"))
+		error("AVALANCHE: Scrolls: File not found: icons.avd");
 
 	which--;
 	file.seek(which * 426);
@@ -286,10 +284,8 @@ void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File file;
 	Common::String filename = Common::String::format("%s.avd", fn.c_str());
 
-	if (!file.open(filename)) {
-		warning("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
-		return;
-	}
+	if (!file.open(filename))
+		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
 
 #if 0
 	uint16 st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
@@ -730,14 +726,12 @@ void Scrolls::callScrollDriver() {
 					break;
 				case 10:
 					switch (_vm->_gyro->_dna._boxContent) {
-					case 0: { // Sixpence.
+					case 0: // Sixpence.
 						_vm->_visa->displayScrollChain('q', 37); // You find the sixpence.
 						_vm->_gyro->_dna._money += 6;
 						_vm->_gyro->_dna._boxContent = _vm->_acci->kNothing;
 						_vm->_lucerna->incScore(2);
 						return;
-					}
-					break;
 					case Acci::kNothing:
 						displayText("nothing at all. It's completely empty.");
 						break;
@@ -759,7 +753,7 @@ void Scrolls::callScrollDriver() {
 			case kControlNewLine:
 				_vm->_gyro->_scrollNum++;
 				break;
-			case kControlQuestion: {
+			case kControlQuestion:
 				if (call_spriterun)
 					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
@@ -768,9 +762,7 @@ void Scrolls::callScrollDriver() {
 				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] = kControlQuestion;
 
 				drawScroll(&Avalanche::Scrolls::scrollModeDialogue);
-
 				resetScroll();
-				}
 				break;
 			case kControlRegister:
 				mouthnext = true;
@@ -779,13 +771,13 @@ void Scrolls::callScrollDriver() {
 				for (byte j = 0; j < 9; j++)
 					_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += ' ';
 				break;
-			default: { // Add new char.
+			default: // Add new char.
 				if (_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1].size() == 50) {
 					solidify(_vm->_gyro->_scrollNum - 1);
 					_vm->_gyro->_scrollNum++;
 				}
 				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += _vm->_gyro->_buffer[i];
-				}
+				break;
 			}
 		}
 	}
@@ -800,26 +792,23 @@ void Scrolls::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A 
 void Scrolls::loadFont() {
 	Common::File file;
 
-	if (!file.open("avalot.fnt")) {
-		warning("AVALANCHE: Scrolls: File not found: avalot.fnt");
-		return;
-	}
+	if (!file.open("avalot.fnt"))
+		error("AVALANCHE: Scrolls: File not found: avalot.fnt");
+
 	for (int16 i = 0; i < 256; i++)
 		file.read(_scrollFonts[0][i], 16);
 	file.close();
 
-	if (!file.open("avitalic.fnt")) {
-		warning("AVALANCHE: Scrolls: File not found: avitalic.fnt");
-		return;
-	}
+	if (!file.open("avitalic.fnt"))
+		error("AVALANCHE: Scrolls: File not found: avitalic.fnt");
+
 	for (int16 i = 0; i < 256; i++)
 		file.read(_scrollFonts[1][i], 16);
 	file.close();
 
-	if (!file.open("ttsmall.fnt")) {
-		warning("AVALANCHE: Scrolls: File not found: ttsmall.fnt");
-		return;
-	}
+	if (!file.open("ttsmall.fnt"))
+		error("AVALANCHE: Scrolls: File not found: ttsmall.fnt");
+
 	for (int16 i = 0; i < 256; i++)
 		file.read(_vm->_gyro->_font[i],16);
 	file.close();
