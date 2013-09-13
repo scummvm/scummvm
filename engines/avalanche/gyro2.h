@@ -211,24 +211,12 @@ public:
 	// These following static constants should be included in CFG when it's written.
 
 	static const bool kSlowComputer = false; // Stops walking when mouse touches toolbar.
-
 	static const int16 kBorder = 1; // size of border on shadowboxes
-
-	enum Direction {
-		kDirectionUp, kDirectionRight, kDirectionDown, kDirectionLeft,
-		kDirectionUpRight, kDirectionDownRight, kDirectionDownLeft, kDirectionUpLeft,
-		kDirectionStopped
-	};
-
 	static const int16 kWalk = 3;
 	static const int16 kRun = 5;
-
 	static const int32 kCatacombMap[8][8];
-
 	static const bool kDemo = false; // If this is true, we're in a demo of the game.
-
 	static const char kSpludwicksOrder[3];
-
 	static const QuasipedType kQuasipeds[16];
 
 	enum Pitch {
@@ -255,7 +243,6 @@ public:
 	bool _onCanDoPageSwap;
 
 	// Former DNA structure
-	byte _direction; // The direction Avvy is currently facing.
 	byte _carryNum; // How many objects you're carrying...
 	bool _objects[kObjectNum]; // ...and which ones they are.
 	int16 _dnascore; // your score, of course
@@ -343,7 +330,6 @@ public:
 	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
 	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	// Called .free() for them in ~Gyro().
-	byte _oldDirection;
 	int8 _scoreToDisplay[3];
 	byte _currentMouse; // current mouse-void
 	Common::String _verbStr; // what you can do with your object. :-)

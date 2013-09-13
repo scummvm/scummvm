@@ -1160,7 +1160,7 @@ void Acci::standUp() {
 			_vm->_animation->_sprites[0]._visible = true;
 			_vm->_gyro->_userMovesAvvy = true;
 			_vm->_animation->appearPed(1, 2);
-			_vm->_gyro->_direction = Gyro::kDirectionLeft;
+			_vm->_animation->_direction = Animation::kDirLeft;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->incScore(1);
 			_vm->_gyro->_avvyInBed = false;
