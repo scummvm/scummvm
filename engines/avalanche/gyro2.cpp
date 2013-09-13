@@ -239,7 +239,7 @@ void Gyro::resetVariables() {
 	_sworeNum = 0;
 	_saveNum = 0;
 	for (int i = 0; i < 100; i++)
-		_roomCount[100] = 0;
+		_roomCount[i] = 0;
 
 	_alcoholLevel = 0;
 	_playedNim = 0;
