@@ -457,10 +457,8 @@ Common::String Gyro::f5Does() {
 void Gyro::loadMouse(byte which) {
 	Common::File f;
 
-	if (!f.open("mice.avd")) {
-		warning("AVALANCHE: Gyro: File not found: mice.avd");
-		return;
-	}
+	if (!f.open("mice.avd"))
+		error("AVALANCHE: Gyro: File not found: mice.avd");
 
 	::Graphics::Surface cursor;
 	cursor.create(16, 32, ::Graphics::PixelFormat::createFormatCLUT8());

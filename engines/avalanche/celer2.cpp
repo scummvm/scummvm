@@ -267,10 +267,8 @@ void Celer::updateBackgroundSprites() {
 void Celer::loadBackgroundSprites(byte number) {
 	Common::File f;
 	_filename = _filename.format("chunk%d.avd", number);
-	if (!f.open(_filename)) {
-		warning("AVALANCHE: Celer: File not found: %s", _filename.c_str());
-		return;
-	}
+	if (!f.open(_filename))
+		error("AVALANCHE: Celer: File not found: %s", _filename.c_str());
 
 	f.seek(44);
 	_spriteNum = f.readByte();
@@ -336,10 +334,8 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 		drawSprite(destX, destY, _sprites[which]);
 	} else {
 		Common::File f;
-		if (!f.open(_filename)) { // Filename was set in loadBackgroundSprites().
-			warning("AVALANCHE: Celer: File not found: %s", _filename.c_str());
-			return;
-		}
+		if (!f.open(_filename)) // Filename was set in loadBackgroundSprites().
+			error("AVALANCHE: Celer: File not found: %s", _filename.c_str());
 
 		f.seek(_offsets[which]);
 

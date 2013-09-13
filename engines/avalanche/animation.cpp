@@ -55,10 +55,8 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 
 	Common::File inf;
 	Common::String filename = Common::String::format("sprite%d.avd", spritenum);
-	if (!inf.open(filename)) {
-		warning("AVALANCHE: Trip: File not found: %s", filename.c_str());
-		return;
-	}
+	if (!inf.open(filename))
+		error("AVALANCHE: Trip: File not found: %s", filename.c_str());
 
 	inf.seek(177);
 

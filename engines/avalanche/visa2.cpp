@@ -61,10 +61,8 @@ void Visa::doTheBubble() {
  */
 void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling) {
 	Common::File indexfile;
-	if (!indexfile.open("avalot.idx")) {
-		warning("AVALANCHE: Visa: File not found: avalot.idx");
-		return;
-	}
+	if (!indexfile.open("avalot.idx"))
+		error("AVALANCHE: Visa: File not found: avalot.idx");
 
 	bool error = false;
 
@@ -91,10 +89,9 @@ void Visa::displayScrollChain(char block, byte point, bool report, bool bubbling
 	}
 
 	Common::File sezfile;
-	if (!sezfile.open("avalot.sez")) {
-		warning("AVALANCHE: Visa: File not found: avalot.sez");
-		return;
-	}
+	if (!sezfile.open("avalot.sez"))
+		error("AVALANCHE: Visa: File not found: avalot.sez");
+
 	sezfile.seek(sez_offset);
 	_vm->_gyro->_bufSize = sezfile.readUint16LE();
 	sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
@@ -121,10 +118,8 @@ void Visa::speak(byte who, byte subject) {
 	_noError = false; // Assume that until we know otherwise.
 
 	Common::File indexfile;
-	if (!indexfile.open("converse.avd")) {
-		warning("AVALANCHE: Visa: File not found: converse.avd");
-		return;
-	}
+	if (!indexfile.open("converse.avd"))
+		error("AVALANCHE: Visa: File not found: converse.avd");
 
 	indexfile.seek(who * 2 - 2);
 	uint16 idx_offset = indexfile.readUint16LE();
@@ -140,10 +135,9 @@ void Visa::speak(byte who, byte subject) {
 	indexfile.close();
 
 	Common::File sezfile;
-	if (!sezfile.open("avalot.sez")) {
-		warning("AVALANCHE: Visa: File not found: avalot.sez");
-		return;
-	}
+	if (!sezfile.open("avalot.sez"))
+		error("AVALANCHE: Visa: File not found: avalot.sez");
+
 	sezfile.seek(sez_offset);
 	_vm->_gyro->_bufSize = sezfile.readUint16LE();
 	sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
