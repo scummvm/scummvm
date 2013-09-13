@@ -1532,12 +1532,6 @@ void Acci::doThat() {
 		_vm->_scrolls->displayText("Vandalism is prohibited within this game!");
 		break;
 	case kVerbCodeQuit: // quit
-		if (_vm->_gyro->kDemo) {
-			warning("STUB: Acci::doThat() - case kVerbCodequit");
-		//	_vm->_visa->displayScrollChain('pos', 31);
-		//	close(demofile);
-		//	exit(0); // Change this later!!!
-		}
 		if (!_polite)
 			_vm->_scrolls->displayText("How about a `please\", Avvy?");
 		else if (_vm->_scrolls->displayQuestion(Common::String(Scrolls::kControlRegister) + 'C' + Scrolls::kControlIcon + "Do you really want to quit?"))

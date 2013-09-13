@@ -215,7 +215,6 @@ public:
 	static const int16 kWalk = 3;
 	static const int16 kRun = 5;
 	static const int32 kCatacombMap[8][8];
-	static const bool kDemo = false; // If this is true, we're in a demo of the game.
 	static const char kSpludwicksOrder[3];
 	static const QuasipedType kQuasipeds[16];
 
@@ -319,7 +318,7 @@ public:
 	bool _weirdWord;
 	bool _letMeOut;
 	Common::String _scroll[15];
-	byte _scrollNum, _score, _whichwas;
+	byte _scrollNum, _whichwas;
 	byte _thinks;
 	bool _thinkThing;
 	int16 _talkX, _talkY;
