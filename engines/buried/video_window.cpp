@@ -117,7 +117,8 @@ bool VideoWindow::openVideo(const Common::String &fileName) {
 	}
 
 	_mode = kModeOpen;
-	_rect = Common::Rect(_video->getWidth(), _video->getHeight());
+	_rect.right = _rect.left + _video->getWidth();
+	_rect.bottom = _rect.top + _video->getHeight();
 	return true;
 }
 
@@ -170,7 +171,7 @@ void VideoWindow::updateVideo() {
 			}
 
 			// Invalidate the window so it gets updated
-			invalidateWindow();
+			invalidateWindow(false);
 		}
 
 		if (_video->isPlaying() && _video->endOfVideo()) {
@@ -181,8 +182,10 @@ void VideoWindow::updateVideo() {
 }
 
 void VideoWindow::onPaint() {
-	if (_lastFrame)
-		_vm->_gfx->blit(_lastFrame, _rect.left, _rect.top);
+	if (_lastFrame) {
+		Common::Rect absoluteRect = getAbsoluteRect();
+		_vm->_gfx->blit(_lastFrame, absoluteRect.left, absoluteRect.top);
+	}
 }
 
 } // End of namespace Buried
