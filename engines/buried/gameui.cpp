@@ -30,6 +30,7 @@
 #include "buried/invdata.h"
 #include "buried/livetext.h"
 #include "buried/message.h"
+#include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
@@ -46,6 +47,7 @@ GameUIWindow::GameUIWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent
 	_rect = Common::Rect(0, 0, 640, 480);
 	_doNotDraw = true;
 
+	_navArrowWindow = new NavArrowWindow(_vm, this);
 	_liveTextWindow = new LiveTextWindow(_vm, this);
 	_bioChipRightWindow = new BioChipRightWindow(_vm, this);
 
@@ -53,6 +55,7 @@ GameUIWindow::GameUIWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent
 }
 
 GameUIWindow::~GameUIWindow() {
+	delete _navArrowWindow;
 	delete _liveTextWindow;
 	delete _bioChipRightWindow;
 
@@ -63,6 +66,7 @@ bool GameUIWindow::startNewGame(bool walkthrough) {
 	_doNotDraw = false;
 	invalidateWindow(false);
 
+	_navArrowWindow->showWindow(kWindowShow);
 	_liveTextWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
 
@@ -98,6 +102,7 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 	_doNotDraw = false;
 	invalidateWindow(false);
 
+	_navArrowWindow->showWindow(kWindowShow);
 	_liveTextWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
 
@@ -109,6 +114,7 @@ bool GameUIWindow::startNewGame(const Common::String &fileName) {
 	_doNotDraw = false;
 	invalidateWindow(false);
 
+	_navArrowWindow->showWindow(kWindowShow);
 	_liveTextWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
 
@@ -281,8 +287,9 @@ void GameUIWindow::onPaint() {
 
 void GameUIWindow::onEnable(bool enable) {
 	// Pass the enable message to all child windows
+	_navArrowWindow->enableWindow(enable);
 	_liveTextWindow->enableWindow(enable);
-	_bioChipRightWindow->showWindow(kWindowShow);
+	_bioChipRightWindow->enableWindow(enable);
 	// TODO: Other windows
 
 	// If we're re-enabling, clear out the message queue of any mouse messages
@@ -301,7 +308,8 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	case Common::KEYCODE_KP8:
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP5:
-		// TODO: Send to the nav arrow window
+		if (_navArrowWindow->isWindowEnabled())
+			_navArrowWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	case Common::KEYCODE_s:
 		if (key.flags & Common::KBD_CTRL) {
