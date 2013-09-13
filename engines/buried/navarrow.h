@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef BURIED_GAMEUI_H
-#define BURIED_GAMEUI_H
+#ifndef BURIED_NAVARROW_H
+#define BURIED_NAVARROW_H
 
 #include "buried/window.h"
 
@@ -34,41 +34,47 @@ struct Surface;
 
 namespace Buried {
 
-class BioChipRightWindow;
-class LiveTextWindow;
-class NavArrowWindow;
+struct LocationStaticData;
 
-class GameUIWindow : public Window {
+class NavArrowWindow : public Window {
 public:
-	GameUIWindow(BuriedEngine *vm, Window *parent);
-	~GameUIWindow();
+	NavArrowWindow(BuriedEngine *vm, Window *parent);
+	~NavArrowWindow();
 
-	bool startNewGame(bool walkthrough = false);
-	bool startNewGameIntro(bool walkthrough = false);
-	// startNewGame(location struct)
-	bool startNewGame(const Common::String &fileName);
-	// startNewGame(continue data, location struct);
-	bool loadGame();
-	bool loadGame(const Common::String &fileName);
-	bool saveGame();
-	bool changeCurrentDate(int timeZoneID);
-	bool flashWarningLight();
-	bool setWarningState(bool newState);
+	bool updateArrow(int button, int newStatus);
+	bool updateAllArrows(int up, int left, int right, int down, int forward);
+	bool updateAllArrows(const LocationStaticData &locationStaticData);
 
 	void onPaint();
 	void onEnable(bool enable);
+	void onLButtonDown(const Common::Point &point, uint flags);
 	void onKeyUp(const Common::KeyState &key, uint flags);
 
-	NavArrowWindow *_navArrowWindow;
-	LiveTextWindow *_liveTextWindow;
-	// TODO: SceneViewWindow
-	// TODO: InventoryWindow
-	BioChipRightWindow *_bioChipRightWindow;
-
 private:
-	int _currentDateDisplay;
-	bool _warningLightDisplayed;
-	bool _doNotDraw;
+	enum {
+		BUTTON_DISABLED = 0,
+		BUTTON_ENABLED = 1,
+		BUTTON_SELECTED = 2
+	};
+
+	enum {
+		NAV_BUTTON_UP = 0,
+		NAV_BUTTON_LEFT = 1,
+		NAV_BUTTON_RIGHT = 2,
+		NAV_BUTTON_DOWN = 3,
+		NAV_BUTTON_FORWARD = 4
+	};
+
+	static const int NUM_ARROWS = 5;
+	static const int NUM_ARROW_BITMAPS = 3;
+
+	Graphics::Surface *_background;
+	int _arrowBitmaps[NUM_ARROWS][NUM_ARROW_BITMAPS];
+	byte _arrowStatus[NUM_ARROWS];
+
+	bool drawArrow(int xDst, int yDst, int arrow);
+	bool rebuildArrows();
+
 };
 
 } // End of namespace Buried

@@ -29,6 +29,7 @@
 #include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/livetext.h"
+#include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
@@ -219,7 +220,8 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 			if (_status == 0) {
 				_status = 1;
 
-				// TODO: Disable navigation
+				// Disable navigation
+				((GameUIWindow *)_parent)->_navArrowWindow->updateAllArrows(0, 0, 0, 0, 0);
 
 				VideoWindow *video = new VideoWindow(_vm, this);
 				video->setWindowPos(0, 2, 22, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
@@ -242,6 +244,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				// TODO: Set cloaking flag
 				// TODO: Disable some controls
+				((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(false);
 				// TODO: Change live text
 			} else {
 				_status = 0;
@@ -269,6 +272,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				// TODO: Set cloaking flag
 				// TODO: Enable navigation
 				// TODO: Enable inventory controls
+				((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(true);
 				// TODO: Change live text
 			}
 		}
