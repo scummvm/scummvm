@@ -143,26 +143,6 @@ GameProject::~GameProject() {
 	free(_headerFilename);
 }
 
-bool PreloadItems::load(MfcArchive &file) {
-	debug(5, "PreloadItems::load()");
-
-	int count = file.readCount();
-
-	resize(count);
-
-	for (int i = 0; i < count; i++) {
-		PreloadItem *t = new PreloadItem();
-		t->preloadId1 = file.readUint32LE();
-		t->preloadId2 = file.readUint32LE();
-		t->sceneId = file.readUint32LE();
-		t->keyCode = file.readUint32LE();
-
-		push_back(*t);
-	}
-
-	return true;
-}
-
 CGameVar::CGameVar() {
 	_subVars = 0;
 	_parentVarObj = 0;

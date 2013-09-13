@@ -67,7 +67,7 @@ struct PreloadItem {
 
 bool preloadCallback(const PreloadItem &pre, int flag);
 
-class PreloadItems : public Common::Array<PreloadItem>, public CObject {
+class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };

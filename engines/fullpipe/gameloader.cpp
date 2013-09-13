@@ -246,7 +246,7 @@ bool CGameLoader::preloadScene(int sceneId, int entranceId) {
 	int idx = -1;
 
 	for (uint i = 0; i < _preloadItems.size(); i++)
-		if (_preloadItems[i].preloadId1 == sceneId && _preloadItems[i].preloadId2 == entranceId) {
+		if (_preloadItems[i]->preloadId1 == sceneId && _preloadItems[i]->preloadId2 == entranceId) {
 			idx = i;
 			break;
 		}
@@ -258,7 +258,7 @@ bool CGameLoader::preloadScene(int sceneId, int entranceId) {
 	}
 
 	if (_preloadCallback) {
-		if (!_preloadCallback(_preloadItems[idx], 0))
+		if (!_preloadCallback(*_preloadItems[idx], 0))
 			return false;
 	}
 
@@ -270,19 +270,19 @@ bool CGameLoader::preloadScene(int sceneId, int entranceId) {
 	unloadScene(sceneId);
 
 	if (_preloadCallback)
-		_preloadCallback(_preloadItems[idx], 50);
+		_preloadCallback(*_preloadItems[idx], 50);
 
-	loadScene(_preloadItems[idx].sceneId);
+	loadScene(_preloadItems[idx]->sceneId);
 
-	ExCommand *ex = new ExCommand(_preloadItems[idx].sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+	ExCommand *ex = new ExCommand(_preloadItems[idx]->sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags = 2;
-	ex->_keyCode = _preloadItems[idx].keyCode;
+	ex->_keyCode = _preloadItems[idx]->keyCode;
 
 	_preloadSceneId = 0;
 	_preloadEntranceId = 0;
 
 	if (_preloadCallback)
-		_preloadCallback(_preloadItems[idx], 100);
+		_preloadCallback(*_preloadItems[idx], 100);
 
 	ex->postMessage();
 
@@ -472,6 +472,26 @@ bool Sc2::load(MfcArchive &file) {
 
 	if (file.size() - file.pos() > 0)
 		error("Sc2::load(): (%d bytes left)", file.size() - file.pos());
+
+	return true;
+}
+
+bool PreloadItems::load(MfcArchive &file) {
+	debug(5, "PreloadItems::load()");
+
+	int count = file.readCount();
+
+	resize(count);
+
+	for (int i = 0; i < count; i++) {
+		PreloadItem *t = new PreloadItem();
+		t->preloadId1 = file.readUint32LE();
+		t->preloadId2 = file.readUint32LE();
+		t->sceneId = file.readUint32LE();
+		t->keyCode = file.readUint32LE();
+
+		push_back(t);
+	}
 
 	return true;
 }
