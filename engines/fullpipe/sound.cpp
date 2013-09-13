@@ -49,7 +49,7 @@ bool SoundList::load(MfcArchive &file, char *fname) {
 	for (int i = 0; i < _soundItemsCount; i++) {
 		Sound *snd = new Sound();
 
-		_soundItems[i] = 0;
+		_soundItems[i] = snd;
 		snd->load(file, _libHandle);
 	}
 
