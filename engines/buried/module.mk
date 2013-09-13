@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	graphics.o \
 	livetext.o \
 	main_menu.o \
+	navarrow.o \
 	overview.o \
 	sound.o \
 	title_sequence.o \
