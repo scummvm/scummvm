@@ -4,6 +4,9 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
+ * Additional copyright for this file:
+ * Copyright (C) 1995 Presto Studios, Inc.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -327,6 +330,121 @@ void GraphicsManager::blit(const Graphics::Surface *surface, const Common::Rect 
 
 void GraphicsManager::fillRect(const Common::Rect &rect, uint32 color) {
 	_screen->fillRect(rect, color);
+}
+
+void GraphicsManager::opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc, int opacityValue, byte rTrans, byte gTrans, byte bTrans) {
+	if (_vm->isTrueColor()) {
+		uint32 transColor = getColor(rTrans, gTrans, bTrans);
+
+		for (int y = 0; y < h; y++) {
+			if (y + yDst < dst->h && y + yDst >= 0) {
+				for (int x = 0; x < w; x++) {
+					if (x + xDst < dst->w && x + xDst >= 0) {
+						uint32 srcColor;
+
+						if (src->format.bytesPerPixel == 2)
+							srcColor = *((const uint16 *)src->getBasePtr(x + xSrc, y + ySrc));
+						else
+							srcColor = *((const uint32 *)src->getBasePtr(x + xSrc, y + ySrc));
+
+						if (srcColor == transColor)
+							continue;
+
+						int srcCycles, dstCycles;
+						switch (opacityValue) {
+						case 50:
+							srcCycles = 1;
+							dstCycles = 3;
+							break;
+						case 85:
+							srcCycles = 17;
+							dstCycles = 3;
+							break;
+						default:
+							srcCycles = 1;
+							dstCycles = 0;
+							break;
+						}
+
+						byte rSrc, gSrc, bSrc;
+						g_system->getScreenFormat().colorToRGB(srcColor, rSrc, gSrc, bSrc);
+
+						uint32 dstColor;
+						if (dst->format.bytesPerPixel == 2)
+							dstColor = *((uint16 *)dst->getBasePtr(x + xDst, y + yDst));
+						else
+							dstColor = *((uint32 *)dst->getBasePtr(x + xDst, y + yDst));
+
+						byte rDst, gDst, bDst;
+						g_system->getScreenFormat().colorToRGB(dstColor, rDst, gDst, bDst);
+
+						byte r = (((int)rSrc * srcCycles) + ((int)rDst * dstCycles)) / (srcCycles + dstCycles);
+						byte g = (((int)gSrc * srcCycles) + ((int)gDst * dstCycles)) / (srcCycles + dstCycles);
+						byte b = (((int)bSrc * srcCycles) + ((int)bDst * dstCycles)) / (srcCycles + dstCycles);
+						uint32 color = g_system->getScreenFormat().RGBToColor(r, g, b);
+
+						if (dst->format.bytesPerPixel == 2)
+							*((uint16 *)dst->getBasePtr(x + xDst, y + yDst)) = color;
+						else
+							*((uint32 *)dst->getBasePtr(x + xDst, y + yDst)) = color;
+					}
+				}
+			}
+		}
+	} else {
+		// Find the palette index of the color
+		int paletteIndex = -1;
+		for (int i = 0; i < 256; i++) {
+			if (_palette[i * 3] == rTrans && _palette[i * 3 + 1] == gTrans && _palette[i * 3 + 2] == bTrans) {
+				paletteIndex = i;
+				break;
+			}
+		}
+
+		assert(paletteIndex >= 0);
+
+		for (int y = 0; y < h; y++) {
+			if (y + yDst < dst->h && y + yDst >= 0) {
+				for (int x = 0; x < w; x++) {
+					if (x + xDst < dst->w && x + xDst >= 0) {
+						byte color = *((const byte *)src->getBasePtr(x + xSrc, y + ySrc));
+
+						if (color == paletteIndex)
+							continue;
+
+						*((byte *)dst->getBasePtr(x + xDst, y + yDst)) = color;
+					}
+				}
+			}
+		}
+	}
+}
+
+bool GraphicsManager::checkPointAgainstMaskedBitmap(const Graphics::Surface *bitmap, int x, int y, const Common::Point &point, byte rTrans, byte gTrans, byte bTrans) {
+	if (_vm->isTrueColor()) {
+		uint32 transColor = getColor(rTrans, gTrans, bTrans);
+		uint32 color;
+
+		if (bitmap->format.bytesPerPixel == 2)
+			color = *((uint16 *)bitmap->getBasePtr(point.x + x, point.y + y));
+		else
+			color = *((uint32 *)bitmap->getBasePtr(point.x + x, point.y + y));
+
+		return transColor != color;
+	} else {
+		// Find the palette index of the color
+		int paletteIndex = -1;
+		for (int i = 0; i < 256; i++) {
+			if (_palette[i * 3] == rTrans && _palette[i * 3 + 1] == gTrans && _palette[i * 3 + 2] == bTrans) {
+				paletteIndex = i;
+				break;
+			}
+		}
+
+		assert(paletteIndex >= 0);
+
+		return *((const byte *)bitmap->getBasePtr(point.x + x, point.y + y)) != paletteIndex;
+	}
 }
 
 byte *GraphicsManager::createDefaultPalette() const {
