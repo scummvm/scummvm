@@ -549,7 +549,7 @@ void StaticANIObject::draw2() {
 MovTable *StaticANIObject::countMovements() {
 	CGameVar *preloadSubVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
-	if (preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
+	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
 		return 0;
 
 	MovTable *movTable = new MovTable;
