@@ -178,7 +178,7 @@ Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
 			_also[fv][ff] = 0;
 	}
 
-	_dna._totalTime = 0;
+	_totalTime = 0;
 }
 
 Gyro::~Gyro() {
@@ -225,6 +225,89 @@ void Gyro::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String 
 	warning("STUB: Gyro::shbox()");
 }
 
+void Gyro::resetVariables() {
+// Replaces memset(&_vm->_gyro->_dna, 0, sizeof(DnaType));
+	_direction = 0;
+	_carryNum = 0;
+	for (int i = 0; i < kObjectNum; i++)
+		_objects[i] = false;
+
+	_dnascore = 0;
+	_money = 0;
+	_room = 0;
+	_wearing = 0;
+	_sworeNum = 0;
+	_saveNum = 0;
+	for (int i = 0; i < 100; i++)
+		_roomCount[100] = 0;
+
+	_alcoholLevel = 0;
+	_playedNim = 0;
+	_wonNim = false;
+	_wineState = 0;
+	_cwytalotGone = false;
+	_passwordNum = 0;
+	_aylesIsAwake = false;
+	_drawbridgeOpen = 0;
+	_avariciusTalk = 0;
+	_boughtOnion = false;
+	_rottenOnion = false;
+	_onionInVinegar = false;
+	_givenToSpludwick = 0;
+	_brummieStairs = 0;
+	_cardiffQuestionNum = 0;
+	_passedCwytalotInHerts = false;
+	_avvyIsAwake = false;
+	_avvyInBed = false;
+	_userMovesAvvy = false;
+	_dogFoodPos = 0;
+	_givenBadgeToIby = false;
+	_friarWillTieYouUp = false;
+	_tiedUp = false;
+	_boxContent = 0;
+	_talkedToCrapulus = false;
+	_jacquesState = 0;
+	_bellsAreRinging = false;
+	_standingOnDais = false;
+	_takenPen = false;
+	_arrowTriggered = false;
+	_arrowInTheDoor = false;
+	_favouriteDrink = "";
+	_favouriteSong = "";
+	_worstPlaceOnEarth = "";
+	_spareEvening = "";
+	_totalTime = 0;
+	_jumpStatus = 0;
+	_mushroomGrowing = false;
+	_spludwickAtHome = false;
+	_lastRoom = 0;
+	_lastRoomNotMap = 0;
+	_crapulusWillTell = false;
+	_enterCatacombsFromLustiesRoom = false;
+	_teetotal = false;
+	_malagauche = 0;
+	_drinking = 0;
+	_enteredLustiesRoomAsMonk = false;
+	_catacombX = 0;
+	_catacombY = 0;
+	_avvysInTheCupboard = false;
+	_geidaFollows = false;
+	_geidaSpin = 0;
+	_geidaTime = 0;
+	_nextBell = 0;
+	_givenPotionToGeida = false;
+	_lustieIsAsleep = false;
+	_flipToWhere = 0;
+	_flipToPed = 0;
+	_beenTiedUp = false;
+	_sittingInPub = false;
+	_spurgeTalkCount = 0;
+	_metAvaroid = false;
+	_takenMushroom = false;
+	_givenPenToAyles = false;
+	_askedDogfoodAboutNim = false;
+}
+
 void Gyro::newGame() {
 	for (byte i = 0; i < kMaxSprites; i++) {
 		if (_vm->_animation->_sprites[i]._quick)
@@ -236,19 +319,19 @@ void Gyro::newGame() {
 
 	_alive = true;
 	_score = 0;
-	memset(&_vm->_gyro->_dna, 0, sizeof(DnaType));
+	resetVariables();
 
 	_vm->_scrolls->setBubbleStateNatural();
 
-	_dna._spareEvening = "answer a questionnaire";
-	_dna._favouriteDrink = "beer";
-	_dna._money = 30; // 2/6
-	_dna._direction = kDirectionStopped;
-	_dna._wearing = kObjectClothes;
-	_dna._objects[kObjectMoney - 1] = true;
-	_dna._objects[kObjectBodkin - 1] = true;
-	_dna._objects[kObjectBell - 1] = true;
-	_dna._objects[kObjectClothes - 1] = true;
+	_spareEvening = "answer a questionnaire";
+	_favouriteDrink = "beer";
+	_money = 30; // 2/6
+	_direction = kDirectionStopped;
+	_wearing = kObjectClothes;
+	_objects[kObjectMoney - 1] = true;
+	_objects[kObjectBodkin - 1] = true;
+	_objects[kObjectBell - 1] = true;
+	_objects[kObjectClothes - 1] = true;
 
 	_thinkThing = true;
 	_thinks = 2;
@@ -263,10 +346,10 @@ void Gyro::newGame() {
 	_her = 254;
 	_it = 254;
 	_lastPerson = 254; // = Pardon?
-	_dna._passwordNum = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
-	_dna._userMovesAvvy = false;
+	_passwordNum = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
+	_userMovesAvvy = false;
 	_doingSpriteRun = false;
-	_dna._avvyInBed = true;
+	_avvyInBed = true;
 	_enidFilename = "";
 
 	_vm->_lucerna->enterRoom(1, 1);
@@ -299,8 +382,8 @@ void Gyro::forceNumlock() {
 }
 
 bool Gyro::decreaseMoney(uint16 howmuchby) {
-	_dna._money -= howmuchby;
-	if (_dna._money < 0) {
+	_money -= howmuchby;
+	if (_money < 0) {
 		_vm->_visa->displayScrollChain('Q', 2); // "You are now denariusless!"
 		_vm->_lucerna->gameOver();
 		return false;
@@ -343,7 +426,7 @@ Common::String Gyro::getThing(byte which) {
 	Common::String get_thing_result;
 	switch (which) {
 	case kObjectWine:
-		switch (_dna._wineState) {
+		switch (_wineState) {
 		case 1:
 		case 4:
 			get_thing_result = kThings[which - 1];
@@ -354,7 +437,7 @@ Common::String Gyro::getThing(byte which) {
 		}
 		break;
 	case kObjectOnion:
-		if (_dna._rottenOnion)
+		if (_rottenOnion)
 			get_thing_result = "rotten onion";
 		else
 			get_thing_result = kThings[which - 1];
@@ -371,7 +454,7 @@ char Gyro::getThingChar(byte which) {
 	char get_thingchar_result;
 	switch (which) {
 	case kObjectWine:
-		if (_dna._wineState == 3)
+		if (_wineState == 3)
 			get_thingchar_result = 'V'; // Vinegar
 		else
 			get_thingchar_result = kThingsChar[which - 1];
@@ -396,7 +479,7 @@ Common::String Gyro::getItem(byte which) {
 
 	switch (which) {
 	case kObjectWine:
-		switch (_dna._wineState) {
+		switch (_wineState) {
 		case 0:
 		case 1:
 		case 4:
@@ -408,9 +491,9 @@ Common::String Gyro::getItem(byte which) {
 		}
 		break;
 	case kObjectOnion:
-		if (_dna._rottenOnion)
+		if (_rottenOnion)
 			get_better_result = "a rotten onion";
-		else if (_dna._onionInVinegar)
+		else if (_onionInVinegar)
 			get_better_result = "a pickled onion (in the vinegar)";
 		else
 			get_better_result = kItems[which - 1];
@@ -426,21 +509,21 @@ Common::String Gyro::getItem(byte which) {
 
 
 Common::String Gyro::f5Does() {
-	switch (_dna._room) {
+	switch (_room) {
 	case r__yours:
-		if (!_dna._avvyIsAwake)
+		if (!_avvyIsAwake)
 			return Common::String::format("%cWWake up", Acci::kVerbCodeWake);
-		else if (_dna._avvyInBed)
+		else if (_avvyInBed)
 			return Common::String::format("%cGGet up", Acci::kVerbCodeStand);
 		break;
 	case r__insidecardiffcastle:
-		if (_dna._standingOnDais)
+		if (_standingOnDais)
 			return Common::String::format("%cCClimb down", Acci::kVerbCodeClimb);
 		else
 			return Common::String::format("%cCClimb up", Acci::kVerbCodeClimb);
 		break;
 	case r__nottspub:
-		if (_dna._sittingInPub)
+		if (_sittingInPub)
 			return Common::String::format("%cSStand up", Acci::kVerbCodeStand);
 		else
 			return Common::String::format("%cSSit down", Acci::kVerbCodeSit);

@@ -123,146 +123,146 @@ const char *AvalancheEngine::getCopyrightString() const {
 
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	//blockwrite(f, dna, sizeof(dna));
-	sz.syncAsByte(_gyro->_dna._direction);
-	sz.syncAsByte(_gyro->_dna._carryNum);
+	sz.syncAsByte(_gyro->_direction);
+	sz.syncAsByte(_gyro->_carryNum);
 	for (byte i = 0; i < kObjectNum; i++)
-		sz.syncAsByte(_gyro->_dna._objects[i]);
-	sz.syncAsSint16LE(_gyro->_dna._score);
-	sz.syncAsSint32LE(_gyro->_dna._money);
-	sz.syncAsByte(_gyro->_dna._room);
-	sz.syncAsByte(_gyro->_dna._wearing);
-	sz.syncAsByte(_gyro->_dna._sworeNum);
-	sz.syncAsByte(_gyro->_dna._saveNum);
-	sz.syncBytes(_gyro->_dna._roomCount, 100);
-	sz.syncAsByte(_gyro->_dna._alcoholLevel);
-	sz.syncAsByte(_gyro->_dna._playedNim);
-	sz.syncAsByte(_gyro->_dna._wonNim);
-	sz.syncAsByte(_gyro->_dna._wineState);
-	sz.syncAsByte(_gyro->_dna._cwytalotGone);
-	sz.syncAsByte(_gyro->_dna._passwordNum);
-	sz.syncAsByte(_gyro->_dna._aylesIsAwake);
-	sz.syncAsByte(_gyro->_dna._drawbridgeOpen);
-	sz.syncAsByte(_gyro->_dna._avariciusTalk);
-	sz.syncAsByte(_gyro->_dna._boughtOnion);
-	sz.syncAsByte(_gyro->_dna._rottenOnion);
-	sz.syncAsByte(_gyro->_dna._onionInVinegar);
-	sz.syncAsByte(_gyro->_dna._givenToSpludwick);
-	sz.syncAsByte(_gyro->_dna._brummieStairs);
-	sz.syncAsByte(_gyro->_dna._cardiffQuestionNum);
-	sz.syncAsByte(_gyro->_dna._passedCwytalotInHerts);
-	sz.syncAsByte(_gyro->_dna._avvyIsAwake);
-	sz.syncAsByte(_gyro->_dna._avvyInBed);
-	sz.syncAsByte(_gyro->_dna._userMovesAvvy);
-	sz.syncAsByte(_gyro->_dna._dogFoodPos);
-	sz.syncAsByte(_gyro->_dna._givenBadgeToIby);
-	sz.syncAsByte(_gyro->_dna._friarWillTieYouUp);
-	sz.syncAsByte(_gyro->_dna._tiedUp);
-	sz.syncAsByte(_gyro->_dna._boxContent);
-	sz.syncAsByte(_gyro->_dna._talkedToCrapulus);
-	sz.syncAsByte(_gyro->_dna._jacquesState);
-	sz.syncAsByte(_gyro->_dna._bellsAreRinging);
-	sz.syncAsByte(_gyro->_dna._standingOnDais);
-	sz.syncAsByte(_gyro->_dna._takenPen);
-	sz.syncAsByte(_gyro->_dna._arrowTriggered);
-	sz.syncAsByte(_gyro->_dna._arrowInTheDoor);
+		sz.syncAsByte(_gyro->_objects[i]);
+	sz.syncAsSint16LE(_gyro->_dnascore);
+	sz.syncAsSint32LE(_gyro->_money);
+	sz.syncAsByte(_gyro->_room);
+	sz.syncAsByte(_gyro->_wearing);
+	sz.syncAsByte(_gyro->_sworeNum);
+	sz.syncAsByte(_gyro->_saveNum);
+	sz.syncBytes(_gyro->_roomCount, 100);
+	sz.syncAsByte(_gyro->_alcoholLevel);
+	sz.syncAsByte(_gyro->_playedNim);
+	sz.syncAsByte(_gyro->_wonNim);
+	sz.syncAsByte(_gyro->_wineState);
+	sz.syncAsByte(_gyro->_cwytalotGone);
+	sz.syncAsByte(_gyro->_passwordNum);
+	sz.syncAsByte(_gyro->_aylesIsAwake);
+	sz.syncAsByte(_gyro->_drawbridgeOpen);
+	sz.syncAsByte(_gyro->_avariciusTalk);
+	sz.syncAsByte(_gyro->_boughtOnion);
+	sz.syncAsByte(_gyro->_rottenOnion);
+	sz.syncAsByte(_gyro->_onionInVinegar);
+	sz.syncAsByte(_gyro->_givenToSpludwick);
+	sz.syncAsByte(_gyro->_brummieStairs);
+	sz.syncAsByte(_gyro->_cardiffQuestionNum);
+	sz.syncAsByte(_gyro->_passedCwytalotInHerts);
+	sz.syncAsByte(_gyro->_avvyIsAwake);
+	sz.syncAsByte(_gyro->_avvyInBed);
+	sz.syncAsByte(_gyro->_userMovesAvvy);
+	sz.syncAsByte(_gyro->_dogFoodPos);
+	sz.syncAsByte(_gyro->_givenBadgeToIby);
+	sz.syncAsByte(_gyro->_friarWillTieYouUp);
+	sz.syncAsByte(_gyro->_tiedUp);
+	sz.syncAsByte(_gyro->_boxContent);
+	sz.syncAsByte(_gyro->_talkedToCrapulus);
+	sz.syncAsByte(_gyro->_jacquesState);
+	sz.syncAsByte(_gyro->_bellsAreRinging);
+	sz.syncAsByte(_gyro->_standingOnDais);
+	sz.syncAsByte(_gyro->_takenPen);
+	sz.syncAsByte(_gyro->_arrowTriggered);
+	sz.syncAsByte(_gyro->_arrowInTheDoor);
 
 	if (sz.isSaving()) {
-		uint16 like2drinkSize = _gyro->_dna._favouriteDrink.size();
+		uint16 like2drinkSize = _gyro->_favouriteDrink.size();
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
-			char actChr = _gyro->_dna._favouriteDrink[i];
+			char actChr = _gyro->_favouriteDrink[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 favourite_songSize = _gyro->_dna._favouriteSong.size();
+		uint16 favourite_songSize = _gyro->_favouriteSong.size();
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
-			char actChr = _gyro->_dna._favouriteSong[i];
+			char actChr = _gyro->_favouriteSong[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 worst_place_on_earthSize = _gyro->_dna._worstPlaceOnEarth.size();
+		uint16 worst_place_on_earthSize = _gyro->_worstPlaceOnEarth.size();
 		sz.syncAsUint16LE(worst_place_on_earthSize);
 		for (uint16 i = 0; i < worst_place_on_earthSize; i++) {
-			char actChr = _gyro->_dna._worstPlaceOnEarth[i];
+			char actChr = _gyro->_worstPlaceOnEarth[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 spare_eveningSize = _gyro->_dna._spareEvening.size();
+		uint16 spare_eveningSize = _gyro->_spareEvening.size();
 		sz.syncAsUint16LE(spare_eveningSize);
 		for (uint16 i = 0; i < spare_eveningSize; i++) {
-			char actChr = _gyro->_dna._spareEvening[i];
+			char actChr = _gyro->_spareEvening[i];
 			sz.syncAsByte(actChr);
 		}
 	} else {
-		if (!_gyro->_dna._favouriteDrink.empty())
-			_gyro->_dna._favouriteDrink.clear();
+		if (!_gyro->_favouriteDrink.empty())
+			_gyro->_favouriteDrink.clear();
 		uint16 like2drinkSize = 0;
 		char actChr = ' ';
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_dna._favouriteDrink += actChr;
+			_gyro->_favouriteDrink += actChr;
 		}
 
-		if (!_gyro->_dna._favouriteSong.empty())
-			_gyro->_dna._favouriteSong.clear();
+		if (!_gyro->_favouriteSong.empty())
+			_gyro->_favouriteSong.clear();
 		uint16 favourite_songSize = 0;
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_dna._favouriteSong += actChr;
+			_gyro->_favouriteSong += actChr;
 		}
 
-		if (!_gyro->_dna._worstPlaceOnEarth.empty())
-			_gyro->_dna._worstPlaceOnEarth.clear();
+		if (!_gyro->_worstPlaceOnEarth.empty())
+			_gyro->_worstPlaceOnEarth.clear();
 		uint16 worst_place_on_earthSize = 0;
 		sz.syncAsUint16LE(worst_place_on_earthSize);
 		for (uint16 i = 0; i < worst_place_on_earthSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_dna._worstPlaceOnEarth += actChr;
+			_gyro->_worstPlaceOnEarth += actChr;
 		}
 
-		if (!_gyro->_dna._spareEvening.empty())
-			_gyro->_dna._spareEvening.clear();
+		if (!_gyro->_spareEvening.empty())
+			_gyro->_spareEvening.clear();
 		uint16 spare_eveningSize = 0;
 		sz.syncAsUint16LE(spare_eveningSize);
 		for (uint16 i = 0; i < spare_eveningSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_dna._spareEvening += actChr;
+			_gyro->_spareEvening += actChr;
 		}
 	}
 
-	sz.syncAsSint32LE(_gyro->_dna._totalTime);
-	sz.syncAsByte(_gyro->_dna._jumpStatus);
-	sz.syncAsByte(_gyro->_dna._mushroomGrowing);
-	sz.syncAsByte(_gyro->_dna._spludwickAtHome);
-	sz.syncAsByte(_gyro->_dna._lastRoom);
-	sz.syncAsByte(_gyro->_dna._lastRoomNotMap);
-	sz.syncAsByte(_gyro->_dna._crapulusWillTell);
-	sz.syncAsByte(_gyro->_dna._enterCatacombsFromLustiesRoom);
-	sz.syncAsByte(_gyro->_dna._teetotal);
-	sz.syncAsByte(_gyro->_dna._malagauche);
-	sz.syncAsByte(_gyro->_dna._drinking);
-	sz.syncAsByte(_gyro->_dna._enteredLustiesRoomAsMonk);
-	sz.syncAsByte(_gyro->_dna._catacombX);
-	sz.syncAsByte(_gyro->_dna._catacombY);
-	sz.syncAsByte(_gyro->_dna._avvysInTheCupboard);
-	sz.syncAsByte(_gyro->_dna._geidaFollows);
-	sz.syncAsByte(_gyro->_dna._geidaSpin);
-	sz.syncAsByte(_gyro->_dna._geidaTime);
-	sz.syncAsByte(_gyro->_dna._nextBell);
-	sz.syncAsByte(_gyro->_dna._givenPotionToGeida);
-	sz.syncAsByte(_gyro->_dna._lustieIsAsleep);
-	sz.syncAsByte(_gyro->_dna._flipToWhere);
-	sz.syncAsByte(_gyro->_dna._flipToPed);
-	sz.syncAsByte(_gyro->_dna._beenTiedUp);
-	sz.syncAsByte(_gyro->_dna._sittingInPub);
-	sz.syncAsByte(_gyro->_dna._spurgeTalkCount);
-	sz.syncAsByte(_gyro->_dna._metAvaroid);
-	sz.syncAsByte(_gyro->_dna._takenMushroom);
-	sz.syncAsByte(_gyro->_dna._givenPenToAyles);
-	sz.syncAsByte(_gyro->_dna._askedDogfoodAboutNim);
+	sz.syncAsSint32LE(_gyro->_totalTime);
+	sz.syncAsByte(_gyro->_jumpStatus);
+	sz.syncAsByte(_gyro->_mushroomGrowing);
+	sz.syncAsByte(_gyro->_spludwickAtHome);
+	sz.syncAsByte(_gyro->_lastRoom);
+	sz.syncAsByte(_gyro->_lastRoomNotMap);
+	sz.syncAsByte(_gyro->_crapulusWillTell);
+	sz.syncAsByte(_gyro->_enterCatacombsFromLustiesRoom);
+	sz.syncAsByte(_gyro->_teetotal);
+	sz.syncAsByte(_gyro->_malagauche);
+	sz.syncAsByte(_gyro->_drinking);
+	sz.syncAsByte(_gyro->_enteredLustiesRoomAsMonk);
+	sz.syncAsByte(_gyro->_catacombX);
+	sz.syncAsByte(_gyro->_catacombY);
+	sz.syncAsByte(_gyro->_avvysInTheCupboard);
+	sz.syncAsByte(_gyro->_geidaFollows);
+	sz.syncAsByte(_gyro->_geidaSpin);
+	sz.syncAsByte(_gyro->_geidaTime);
+	sz.syncAsByte(_gyro->_nextBell);
+	sz.syncAsByte(_gyro->_givenPotionToGeida);
+	sz.syncAsByte(_gyro->_lustieIsAsleep);
+	sz.syncAsByte(_gyro->_flipToWhere);
+	sz.syncAsByte(_gyro->_flipToPed);
+	sz.syncAsByte(_gyro->_beenTiedUp);
+	sz.syncAsByte(_gyro->_sittingInPub);
+	sz.syncAsByte(_gyro->_spurgeTalkCount);
+	sz.syncAsByte(_gyro->_metAvaroid);
+	sz.syncAsByte(_gyro->_takenMushroom);
+	sz.syncAsByte(_gyro->_givenPenToAyles);
+	sz.syncAsByte(_gyro->_askedDogfoodAboutNim);
 
 
 #if 0
@@ -443,7 +443,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_celer->forgetBackgroundSprites();
 	_lucerna->minorRedraw();
 	_dropdown->setupMenu();
-	_gyro->_whereIs[0] = _gyro->_dna._room;
+	_gyro->_whereIs[0] = _gyro->_room;
 	_gyro->_alive = true;
 	_lucerna->refreshObjectList();
 	_animation->updateSpeed();
@@ -459,7 +459,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_scrolls->displayText(tmpStr);
 
 	if (_animation->_sprites[0]._quick && _animation->_sprites[0]._visible)
-		_animation->changeDirection(0, _gyro->_dna._direction); // We push Avvy in the right direction is he was moving.
+		_animation->changeDirection(0, _gyro->_direction); // We push Avvy in the right direction is he was moving.
 
 	return true;
 }

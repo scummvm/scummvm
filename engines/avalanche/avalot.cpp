@@ -109,7 +109,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP5:
-		if (_vm->_gyro->_alive && _vm->_gyro->_dna._avvyIsAwake) {
+		if (_vm->_gyro->_alive && _vm->_gyro->_avvyIsAwake) {
 			_vm->_animation->handleMoveKey(event); // Fallthroughs are intended.
 			_vm->_lucerna->drawDirection();
 			return;
@@ -147,7 +147,7 @@ void Avalot::setup() {
 	_vm->_gyro->_ledStatus = 177;
 	_vm->_gyro->_defaultLed = 2;
 	// TSkellern = 0; Replace with a more local variable sometime
-	_vm->_gyro->_dna._direction = Gyro::kDirectionStopped;
+	_vm->_gyro->_direction = Gyro::kDirectionStopped;
 	_vm->_gyro->_enidFilename = ""; // Undefined.
 	_vm->_lucerna->drawToolbar();
 	_vm->_scrolls->setReadyLight(2);

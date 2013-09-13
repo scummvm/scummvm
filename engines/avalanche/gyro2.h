@@ -53,76 +53,6 @@ struct MouseHotspotType { // mouse-void
 	int16 _horizontal, _vertical;
 };
 
-struct DnaType { // Ux, uy, & ww now all belong to Trip5
-	byte _direction; // The direction Avvy is currently facing.
-	byte _carryNum; // How many objects you're carrying...
-	bool _objects[kObjectNum]; // ...and which ones they are.
-	int16 _score; // your score, of course
-	int32 _money; // your current amount of dosh
-	byte _room; // your current room
-	byte _wearing; // what you're wearing
-	byte _sworeNum; // number of times you've sworn
-	byte _saveNum; // number of times this game has been saved
-	byte _roomCount[100]; // Add one to each every time you enter a room
-	byte _alcoholLevel; // Your blood alcohol level.
-	byte _playedNim; // How many times you've played Nim.
-	bool _wonNim; // Have you *won* Nim? (That's harder.)
-	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
-	bool _cwytalotGone; // Has Cwytalot rushed off to Jerusalem yet?
-	byte _passwordNum; // Number of the passw for this game.
-	bool _aylesIsAwake; // pretty obvious!
-	byte _drawbridgeOpen; // Between 0 (shut) and 4 (open).
-	byte _avariciusTalk; // How much Avaricius has said to you.
-	bool _boughtOnion; // Have you bought an onion yet?
-	bool _rottenOnion; // And has it rotted?
-	bool _onionInVinegar; // Is the onion in the vinegar?
-	byte _givenToSpludwick; // 0 = nothing given, 1 = onion...
-	byte _brummieStairs; // Progression through the stairs trick.
-	byte _cardiffQuestionNum; // Things you get asked in Cardiff.
-	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
-	bool _avvyIsAwake; // Well? Is Avvy awake? (Screen 1 only.)
-	bool _avvyInBed; // True if Avvy's in bed, but awake.
-	bool _userMovesAvvy; // If this is false, the user has no control over Avvy's movements.
-	byte _dogFoodPos; // Which way Dogfood's looking in the pub.
-	bool _givenBadgeToIby; // Have you given the badge to Iby yet?
-	bool _friarWillTieYouUp; // If you're going to get tied up.
-	bool _tiedUp; // You ARE tied up!
-	byte _boxContent; // 0 = money (sixpence), 254 = empty, any other number implies the contents of the box.
-	bool _talkedToCrapulus; // Pretty self-explanatory.
-	byte _jacquesState; // 0=asleep, 1=awake, 2=gets up, 3=gone.
-	bool _bellsAreRinging; // Is Jacques ringing the bells?
-	bool _standingOnDais; // In room 71, inside Cardiff Castle.
-	bool _takenPen; // Have you taken the pen (in Cardiff?)
-	bool _arrowTriggered; // And has the arrow been triggered?
-	bool _arrowInTheDoor;  // Did the arrow hit the wall?
-	Common::String _favouriteDrink, _favouriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
-	uint32 _totalTime; // Your total time playing this game, in ticks.
-	byte _jumpStatus; // Fixes how high you're jumping.
-	bool _mushroomGrowing; // Is the mushroom growing in 42?
-	bool _spludwickAtHome; // Is Spludwick at home?
-	byte _lastRoom;
-	byte _lastRoomNotMap;
-	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
-	bool _enterCatacombsFromLustiesRoom;
-	bool _teetotal; // Are we touching any more drinks?
-	byte _malagauche; // Position of Malagauche. See Celer for more info.
-	char _drinking; // What's he getting you?
-	bool _enteredLustiesRoomAsMonk;
-	byte _catacombX, _catacombY;   // XY coords in the catacombs.
-	bool _avvysInTheCupboard; // On screen 22.
-	bool _geidaFollows; // Is Geida following you?
-	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
-	byte _nextBell; // For the ringing.
-	bool _givenPotionToGeida; // Does Geida have the potion?
-	bool _lustieIsAsleep; // Is BDL asleep?
-	byte _flipToWhere, _flipToPed; // For the sequencer.
-	bool _beenTiedUp; // In r__Robins.
-	bool _sittingInPub; // Are you sitting down in the pub?
-	byte _spurgeTalkCount; // Count for talking to Spurge.
-	bool _metAvaroid;
-	bool _takenMushroom, _givenPenToAyles, _askedDogfoodAboutNim;
-};
-
 struct PedType {
 	int16 _x, _y;
 	byte _direction;
@@ -324,7 +254,76 @@ public:
 	// You may know better than On which page to switch to.
 	bool _onCanDoPageSwap;
 
-	DnaType _dna;
+	// Former DNA structure
+	byte _direction; // The direction Avvy is currently facing.
+	byte _carryNum; // How many objects you're carrying...
+	bool _objects[kObjectNum]; // ...and which ones they are.
+	int16 _dnascore; // your score, of course
+	int32 _money; // your current amount of dosh
+	byte _room; // your current room
+	byte _wearing; // what you're wearing
+	byte _sworeNum; // number of times you've sworn
+	byte _saveNum; // number of times this game has been saved
+	byte _roomCount[100]; // Add one to each every time you enter a room
+	byte _alcoholLevel; // Your blood alcohol level.
+	byte _playedNim; // How many times you've played Nim.
+	bool _wonNim; // Have you *won* Nim? (That's harder.)
+	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
+	bool _cwytalotGone; // Has Cwytalot rushed off to Jerusalem yet?
+	byte _passwordNum; // Number of the passw for this game.
+	bool _aylesIsAwake; // pretty obvious!
+	byte _drawbridgeOpen; // Between 0 (shut) and 4 (open).
+	byte _avariciusTalk; // How much Avaricius has said to you.
+	bool _boughtOnion; // Have you bought an onion yet?
+	bool _rottenOnion; // And has it rotted?
+	bool _onionInVinegar; // Is the onion in the vinegar?
+	byte _givenToSpludwick; // 0 = nothing given, 1 = onion...
+	byte _brummieStairs; // Progression through the stairs trick.
+	byte _cardiffQuestionNum; // Things you get asked in Cardiff.
+	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
+	bool _avvyIsAwake; // Well? Is Avvy awake? (Screen 1 only.)
+	bool _avvyInBed; // True if Avvy's in bed, but awake.
+	bool _userMovesAvvy; // If this is false, the user has no control over Avvy's movements.
+	byte _dogFoodPos; // Which way Dogfood's looking in the pub.
+	bool _givenBadgeToIby; // Have you given the badge to Iby yet?
+	bool _friarWillTieYouUp; // If you're going to get tied up.
+	bool _tiedUp; // You ARE tied up!
+	byte _boxContent; // 0 = money (sixpence), 254 = empty, any other number implies the contents of the box.
+	bool _talkedToCrapulus; // Pretty self-explanatory.
+	byte _jacquesState; // 0=asleep, 1=awake, 2=gets up, 3=gone.
+	bool _bellsAreRinging; // Is Jacques ringing the bells?
+	bool _standingOnDais; // In room 71, inside Cardiff Castle.
+	bool _takenPen; // Have you taken the pen (in Cardiff?)
+	bool _arrowTriggered; // And has the arrow been triggered?
+	bool _arrowInTheDoor;  // Did the arrow hit the wall?
+	Common::String _favouriteDrink, _favouriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
+	uint32 _totalTime; // Your total time playing this game, in ticks.
+	byte _jumpStatus; // Fixes how high you're jumping.
+	bool _mushroomGrowing; // Is the mushroom growing in 42?
+	bool _spludwickAtHome; // Is Spludwick at home?
+	byte _lastRoom;
+	byte _lastRoomNotMap;
+	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
+	bool _enterCatacombsFromLustiesRoom;
+	bool _teetotal; // Are we touching any more drinks?
+	byte _malagauche; // Position of Malagauche. See Celer for more info.
+	char _drinking; // What's he getting you?
+	bool _enteredLustiesRoomAsMonk;
+	byte _catacombX, _catacombY;   // XY coords in the catacombs.
+	bool _avvysInTheCupboard; // On screen 22.
+	bool _geidaFollows; // Is Geida following you?
+	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
+	byte _nextBell; // For the ringing.
+	bool _givenPotionToGeida; // Does Geida have the potion?
+	bool _lustieIsAsleep; // Is BDL asleep?
+	byte _flipToWhere, _flipToPed; // For the sequencer.
+	bool _beenTiedUp; // In r__Robins.
+	bool _sittingInPub; // Are you sitting down in the pub?
+	byte _spurgeTalkCount; // Count for talking to Spurge.
+	bool _metAvaroid;
+	bool _takenMushroom, _givenPenToAyles, _askedDogfoodAboutNim;
+	// End of former DNA Structure
+
 	byte _lineNum; // Number of lines.
 	LineType _lines[50]; // For Also.
 	enum MouseState { kMouseStateNo, kMouseStateYes, kMouseStateVirtual } _mouse;
@@ -399,6 +398,7 @@ public:
 	void setBackgroundColor(byte x);
 	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
 
+	void resetVariables();
 	void newGame(); // This sets up the DNA for a completely new game.
 	void slowDown();
 	bool setFlag(char x);

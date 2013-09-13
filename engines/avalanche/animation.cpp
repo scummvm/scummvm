@@ -436,8 +436,8 @@ void Animation::catacombMove(byte ped) {
 
 
 
-	xy_uint16 = _vm->_gyro->_dna._catacombX + _vm->_gyro->_dna._catacombY * 256;
-	_vm->_gyro->_dna._geidaSpin = 0;
+	xy_uint16 = _vm->_gyro->_catacombX + _vm->_gyro->_catacombY * 256;
+	_vm->_gyro->_geidaSpin = 0;
 
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
@@ -456,15 +456,15 @@ void Animation::catacombMove(byte ped) {
 	case 2307:
 		flipRoom(r__lusties, 5);
 		_vm->_scrolls->displayText("Oh no... here we go again...");
-		_vm->_gyro->_dna._userMovesAvvy = false;
+		_vm->_gyro->_userMovesAvvy = false;
 		_sprites[0]._moveY = 1;
 		_sprites[0]._moveX = 0;
 		return;
 	}
 
-	if (!_vm->_gyro->_dna._enterCatacombsFromLustiesRoom)
+	if (!_vm->_gyro->_enterCatacombsFromLustiesRoom)
 		_vm->_lucerna->loadRoom(29);
-	here = _vm->_gyro->kCatacombMap[_vm->_gyro->_dna._catacombY - 1][_vm->_gyro->_dna._catacombX - 1];
+	here = _vm->_gyro->kCatacombMap[_vm->_gyro->_catacombY - 1][_vm->_gyro->_catacombX - 1];
 
 	switch (here & 0xf) { // West.
 	case 0: // no connection (wall)
@@ -595,7 +595,7 @@ void Animation::catacombMove(byte ped) {
 	case 0x1:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 22);
 
-		if ((xy_uint16 == 2051) && (_vm->_gyro->_dna._geidaFollows))
+		if ((xy_uint16 == 2051) && (_vm->_gyro->_geidaFollows))
 			_vm->_gyro->_magics[12]._operation = Gyro::kMagicExclaim;
 		else
 			_vm->_gyro->_magics[12]._operation = Gyro::kMagicSpecial; // Right exit south.
@@ -726,7 +726,7 @@ void Animation::catacombMove(byte ped) {
 		break; // [1,1] : the other two.
 	}
 
-	if ((_vm->_gyro->_dna._geidaFollows) && (ped > 0)) {
+	if ((_vm->_gyro->_geidaFollows) && (ped > 0)) {
 		if (!_sprites[1]._quick)  // If we don't already have her...
 			_sprites[1].init(5, true, this); // ...Load Geida.
 		appearPed(2, geidaPed(ped));
@@ -746,27 +746,27 @@ void Animation::callSpecial(uint16 which) {
 	switch (which) {
 	case 1: // _vm->_gyro->special 1: Room 22: top of stairs.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1);
-		_vm->_gyro->_dna._brummieStairs = 1;
+		_vm->_gyro->_brummieStairs = 1;
 		_vm->_gyro->_magics[9]._operation = Gyro::kMagicNothing;
 		_vm->_timer->addTimer(10, Timer::kProcStairs, Timer::kReasonBrummieStairs);
 		stopWalking();
-		_vm->_gyro->_dna._userMovesAvvy = false;
+		_vm->_gyro->_userMovesAvvy = false;
 		break;
 	case 2: // _vm->_gyro->special 2: Room 22: bottom of stairs.
-		_vm->_gyro->_dna._brummieStairs = 3;
+		_vm->_gyro->_brummieStairs = 3;
 		_vm->_gyro->_magics[10]._operation = Gyro::kMagicNothing;
 		_vm->_gyro->_magics[11]._operation = Gyro::kMagicExclaim;
 		_vm->_gyro->_magics[11]._data = 5;
 		_vm->_gyro->_magics[3]._operation = Gyro::kMagicBounce; // Now works as planned!
 		stopWalking();
 		_vm->_visa->displayScrollChain('q', 26);
-		_vm->_gyro->_dna._userMovesAvvy = true;
+		_vm->_gyro->_userMovesAvvy = true;
 		break;
 	case 3: // _vm->_gyro->special 3: Room 71: triggers dart.
 		_sprites[0].bounce(); // Must include that.
 
-		if (!_vm->_gyro->_dna._arrowTriggered) {
-			_vm->_gyro->_dna._arrowTriggered = true;
+		if (!_vm->_gyro->_arrowTriggered) {
+			_vm->_gyro->_arrowTriggered = true;
 			appearPed(2, 4); // The dart starts at ped 4, and...
 			_sprites[1].walkTo(5); // flies to ped 5.
 			_sprites[1]._facingDir = kDirUp; // Only face.
@@ -786,7 +786,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_enid->backToBootstrap(3);
 		break;
 	case 5:
-		if (_vm->_gyro->_dna._friarWillTieYouUp) {
+		if (_vm->_gyro->_friarWillTieYouUp) {
 			// _vm->_gyro->special 5: Room 42: touched tree, and get tied up.
 			_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Boundary effect is now working again.
 			_vm->_visa->displayScrollChain('q', 35);
@@ -794,8 +794,8 @@ void Animation::callSpecial(uint16 which) {
 			//tr[1].vanishifstill:=true;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_visa->displayScrollChain('q', 36);
-			_vm->_gyro->_dna._tiedUp = true;
-			_vm->_gyro->_dna._friarWillTieYouUp = false;
+			_vm->_gyro->_tiedUp = true;
+			_vm->_gyro->_friarWillTieYouUp = false;
 			_sprites[1].walkTo(3);
 			_sprites[1]._vanishIfStill = true;
 			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
@@ -804,7 +804,7 @@ void Animation::callSpecial(uint16 which) {
 		}
 		break;
 	case 6: // _vm->_gyro->special 6: fall down oubliette.
-		_vm->_gyro->_dna._userMovesAvvy = false;
+		_vm->_gyro->_userMovesAvvy = false;
 		_sprites[0]._moveX = 3;
 		_sprites[0]._moveY = 0;
 		_sprites[0]._facingDir = kDirRight;
@@ -821,7 +821,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_timer->addTimer(200, Timer::kProcMeetAvaroid, Timer::kReasonMeetingAvaroid);
 		break;
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
-		if ((_vm->_gyro->_dna._geidaFollows) && (!_vm->_gyro->_dna._lustieIsAsleep)) {
+		if ((_vm->_gyro->_geidaFollows) && (!_vm->_gyro->_lustieIsAsleep)) {
 			_vm->_visa->displayScrollChain('q', 63);
 			_sprites[1].turn(kDirDown);
 			_sprites[1].stopWalk();
@@ -830,18 +830,18 @@ void Animation::callSpecial(uint16 which) {
 		}
 		break;
 	case 9: // _vm->_gyro->special 9: lose Geida to Robin Hood...
-		if (!_vm->_gyro->_dna._geidaFollows)
+		if (!_vm->_gyro->_geidaFollows)
 			return;   // DOESN'T COUNT: no Geida.
 		_sprites[1]._callEachStepFl = false; // She no longer follows Avvy around.
 		_sprites[1].walkTo(4); // She walks to somewhere...
 		_sprites[0].remove();     // Lose Avvy.
-		_vm->_gyro->_dna._userMovesAvvy = false;
+		_vm->_gyro->_userMovesAvvy = false;
 		_vm->_timer->addTimer(40, Timer::kProcRobinHoodAndGeida, Timer::kReasonRobinHoodAndGeida);
 		break;
 	case 10: // _vm->_gyro->special 10: transfer north in catacombs.
-		if ((_vm->_gyro->_dna._catacombX == 4) && (_vm->_gyro->_dna._catacombY == 1)) {
+		if ((_vm->_gyro->_catacombX == 4) && (_vm->_gyro->_catacombY == 1)) {
 			// Into Geida's room.
-			if (_vm->_gyro->_dna._objects[Gyro::kObjectKey - 1])
+			if (_vm->_gyro->_objects[Gyro::kObjectKey - 1])
 				_vm->_visa->displayScrollChain('q', 62);
 			else {
 				_vm->_visa->displayScrollChain('q', 61);
@@ -849,11 +849,11 @@ void Animation::callSpecial(uint16 which) {
 			}
 		}
 		_vm->_lucerna->dusk();
-		_vm->_gyro->_dna._catacombY--;
+		_vm->_gyro->_catacombY--;
 		catacombMove(4);
-		if (_vm->_gyro->_dna._room != r__catacombs)
+		if (_vm->_gyro->_room != r__catacombs)
 			return;
-		switch ((_vm->_gyro->kCatacombMap[_vm->_gyro->_dna._catacombY - 1][_vm->_gyro->_dna._catacombX - 1] & 0xf00) >> 8) {
+		switch ((_vm->_gyro->kCatacombMap[_vm->_gyro->_catacombY - 1][_vm->_gyro->_catacombX - 1] & 0xf00) >> 8) {
 		case 0x1:
 			appearPed(1, 12);
 			break;
@@ -867,27 +867,27 @@ void Animation::callSpecial(uint16 which) {
 		break;
 	case 11: // _vm->_gyro->special 11: transfer east in catacombs.
 		_vm->_lucerna->dusk();
-		_vm->_gyro->_dna._catacombX++;
+		_vm->_gyro->_catacombX++;
 		catacombMove(1);
-		if (_vm->_gyro->_dna._room != r__catacombs)
+		if (_vm->_gyro->_room != r__catacombs)
 			return;
 		appearPed(1, 1);
 		dawnDelay();
 		break;
 	case 12: // _vm->_gyro->special 12: transfer south in catacombs.
 		_vm->_lucerna->dusk();
-		_vm->_gyro->_dna._catacombY += 1;
+		_vm->_gyro->_catacombY += 1;
 		catacombMove(2);
-		if (_vm->_gyro->_dna._room != r__catacombs)
+		if (_vm->_gyro->_room != r__catacombs)
 			return;
 		appearPed(1, 2);
 		dawnDelay();
 		break;
 	case 13: // _vm->_gyro->special 13: transfer west in catacombs.
 		_vm->_lucerna->dusk();
-		_vm->_gyro->_dna._catacombX--;
+		_vm->_gyro->_catacombX--;
 		catacombMove(3);
-		if (_vm->_gyro->_dna._room != r__catacombs)
+		if (_vm->_gyro->_room != r__catacombs)
 			return;
 		appearPed(1, 3);
 		dawnDelay();
@@ -903,7 +903,7 @@ void Animation::callSpecial(uint16 which) {
  * @remarks	Originally called 'open_the_door'
  */
 void Animation::openDoor(byte whither, byte ped, byte magicnum) {
-	switch (_vm->_gyro->_dna._room) {
+	switch (_vm->_gyro->_room) {
 	case r__outsideyours:
 	case r__outsidenottspub:
 	case r__outsideducks:
@@ -930,7 +930,7 @@ void Animation::openDoor(byte whither, byte ped, byte magicnum) {
 	case r__lusties:
 		switch (magicnum) {
 		case 14:
-			if (_vm->_gyro->_dna._avvysInTheCupboard) {
+			if (_vm->_gyro->_avvysInTheCupboard) {
 				hideInCupboard();
 				_vm->_sequence->firstShow(8);
 				_vm->_sequence->thenShow(7);
@@ -1080,13 +1080,13 @@ void Animation::arrowProcs(byte tripnum) {
 #endif
 			_vm->_lucerna->gameOver();
 
-			_vm->_gyro->_dna._userMovesAvvy = false; // Stop the user from moving him.
+			_vm->_gyro->_userMovesAvvy = false; // Stop the user from moving him.
 			_vm->_timer->addTimer(55, Timer::kProcNaughtyDuke, Timer::kReasonNaughtyDuke);
 		}
 	} else { // Arrow has hit the wall!
 		_sprites[tripnum].remove(); // Deallocate the arrow.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Show pic of arrow stuck into the door.
-		_vm->_gyro->_dna._arrowInTheDoor = true; // So that we can pick it up.
+		_vm->_gyro->_arrowInTheDoor = true; // So that we can pick it up.
 	}
 
 }
@@ -1145,21 +1145,21 @@ void Animation::spin(byte whichway, byte &tripnum) {
 		if (_sprites[tripnum]._id == 2)
 			return; // Not for Spludwick
 
-		_vm->_gyro->_dna._geidaSpin += 1;
-		_vm->_gyro->_dna._geidaTime = 20;
-		if (_vm->_gyro->_dna._geidaSpin == 5) {
+		_vm->_gyro->_geidaSpin += 1;
+		_vm->_gyro->_geidaTime = 20;
+		if (_vm->_gyro->_geidaSpin == 5) {
 			_vm->_scrolls->displayText("Steady on, Avvy, you'll make the poor girl dizzy!");
-			_vm->_gyro->_dna._geidaSpin = 0;
-			_vm->_gyro->_dna._geidaTime = 0; // knock out records
+			_vm->_gyro->_geidaSpin = 0;
+			_vm->_gyro->_geidaTime = 0; // knock out records
 		}
 	}
 }
 
 void Animation::geidaProcs(byte tripnum) {
-	if (_vm->_gyro->_dna._geidaTime > 0) {
-		_vm->_gyro->_dna._geidaTime--;
-		if (_vm->_gyro->_dna._geidaTime == 0)
-			_vm->_gyro->_dna._geidaSpin = 0;
+	if (_vm->_gyro->_geidaTime > 0) {
+		_vm->_gyro->_geidaTime--;
+		if (_vm->_gyro->_geidaTime == 0)
+			_vm->_gyro->_geidaSpin = 0;
 	}
 
 	if (_sprites[tripnum]._y < (_sprites[0]._y - 2)) {
@@ -1279,7 +1279,7 @@ void Animation::animLink() {
 
 void Animation::stopWalking() {
 	_sprites[0].stopWalk();
-	_vm->_gyro->_dna._direction = kDirStopped;
+	_vm->_gyro->_direction = kDirStopped;
 	if (_vm->_gyro->_alive)
 		_sprites[0]._stepNum = 1;
 }
@@ -1289,16 +1289,16 @@ void Animation::stopWalking() {
  * @remarks	Originally called 'hide_in_the_cupboard'
  */
 void Animation::hideInCupboard() {
-	if (_vm->_gyro->_dna._avvysInTheCupboard) {
-		if (_vm->_gyro->_dna._wearing == Acci::kNothing) {
+	if (_vm->_gyro->_avvysInTheCupboard) {
+		if (_vm->_gyro->_wearing == Acci::kNothing) {
 			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", Scrolls::kControlItalic, Scrolls::kControlRoman);
 			_vm->_scrolls->displayText(tmpStr);
 		} else {
 			_sprites[0]._visible = true;
-			_vm->_gyro->_dna._userMovesAvvy = true;
+			_vm->_gyro->_userMovesAvvy = true;
 			appearPed(1, 3); // Walk out of the cupboard.
 			_vm->_scrolls->displayText("You leave the cupboard. Nice to be out of there!");
-			_vm->_gyro->_dna._avvysInTheCupboard = false;
+			_vm->_gyro->_avvysInTheCupboard = false;
 			_vm->_sequence->firstShow(8);
 			_vm->_sequence->thenShow(7);
 			_vm->_sequence->startToClose();
@@ -1306,11 +1306,11 @@ void Animation::hideInCupboard() {
 	} else {
 		// Not hiding in the cupboard
 		_sprites[0]._visible = false;
-		_vm->_gyro->_dna._userMovesAvvy = false;
+		_vm->_gyro->_userMovesAvvy = false;
 		Common::String tmpStr = Common::String::format("You walk into the room...%cIt seems to be an empty, " \
 			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", Scrolls::kControlParagraph);
 		_vm->_scrolls->displayText(tmpStr);
-		_vm->_gyro->_dna._avvysInTheCupboard = true;
+		_vm->_gyro->_avvysInTheCupboard = true;
 		_vm->_celer->drawBackgroundSprite(-1, -1, 8);
 	}
 }
@@ -1323,18 +1323,18 @@ void Animation::flipRoom(byte room, byte ped) {
 		return;
 	}
 
-	if ((room == 177) && (_vm->_gyro->_dna._room == r__lusties)) {
+	if ((room == 177) && (_vm->_gyro->_room == r__lusties)) {
 		hideInCupboard();
 		return;
 	}
 
-	if ((_vm->_gyro->_dna._jumpStatus > 0) && (_vm->_gyro->_dna._room == r__insidecardiffcastle)) {
+	if ((_vm->_gyro->_jumpStatus > 0) && (_vm->_gyro->_room == r__insidecardiffcastle)) {
 		// You can't *jump* out of Cardiff Castle!
 		_sprites[0]._moveX = 0;
 		return;
 	}
 
-	_vm->_lucerna->exitRoom(_vm->_gyro->_dna._room);
+	_vm->_lucerna->exitRoom(_vm->_gyro->_room);
 	_vm->_lucerna->dusk();
 
 	for (int16 i = 1; i < kSpriteNumbMax; i++) {
@@ -1342,14 +1342,14 @@ void Animation::flipRoom(byte room, byte ped) {
 			_sprites[i].remove();
 	} // Deallocate sprite
 
-	if (_vm->_gyro->_dna._room == r__lustiesroom)
-		_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = true;
+	if (_vm->_gyro->_room == r__lustiesroom)
+		_vm->_gyro->_enterCatacombsFromLustiesRoom = true;
 
 	_vm->_lucerna->enterRoom(room, ped);
 	appearPed(1, ped);
-	_vm->_gyro->_dna._enterCatacombsFromLustiesRoom = false;
-	_vm->_gyro->_oldDirection = _vm->_gyro->_dna._direction;
-	_vm->_gyro->_dna._direction = _sprites[0]._facingDir;
+	_vm->_gyro->_enterCatacombsFromLustiesRoom = false;
+	_vm->_gyro->_oldDirection = _vm->_gyro->_direction;
+	_vm->_gyro->_direction = _sprites[0]._facingDir;
 	_vm->_lucerna->drawDirection();
 
 	_vm->_lucerna->dawn();
@@ -1385,7 +1385,7 @@ bool Animation::nearDoor() {
 }
 
 void Animation::handleMoveKey(const Common::Event &event) {
-	if (!_vm->_gyro->_dna._userMovesAvvy)
+	if (!_vm->_gyro->_userMovesAvvy)
 		return;
 
 	if (_vm->_dropdown->_activeMenuItem._activeNow)
@@ -1393,58 +1393,58 @@ void Animation::handleMoveKey(const Common::Event &event) {
 	else {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
-			if (_vm->_gyro->_dna._direction != kDirUp) {
-				_vm->_gyro->_dna._direction = kDirUp;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirUp) {
+				_vm->_gyro->_direction = kDirUp;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_DOWN:
-			if (_vm->_gyro->_dna._direction != kDirDown) {
-				_vm->_gyro->_dna._direction = kDirDown;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirDown) {
+				_vm->_gyro->_direction = kDirDown;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_LEFT:
-			if (_vm->_gyro->_dna._direction != kDirLeft) {
-				_vm->_gyro->_dna._direction = kDirLeft;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirLeft) {
+				_vm->_gyro->_direction = kDirLeft;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_RIGHT:
-			if (_vm->_gyro->_dna._direction != kDirRight) {
-				_vm->_gyro->_dna._direction = kDirRight;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirRight) {
+				_vm->_gyro->_direction = kDirRight;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEUP:
-			if (_vm->_gyro->_dna._direction != kDirUpRight) {
-				_vm->_gyro->_dna._direction = kDirUpRight;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirUpRight) {
+				_vm->_gyro->_direction = kDirUpRight;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEDOWN:
-			if (_vm->_gyro->_dna._direction != kDirDownRight) {
-				_vm->_gyro->_dna._direction = kDirDownRight;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirDownRight) {
+				_vm->_gyro->_direction = kDirDownRight;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_END:
-			if (_vm->_gyro->_dna._direction != kDirDownLeft) {
-				_vm->_gyro->_dna._direction = kDirDownLeft;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirDownLeft) {
+				_vm->_gyro->_direction = kDirDownLeft;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_HOME:
-			if (_vm->_gyro->_dna._direction != kDirUpLeft) {
-				_vm->_gyro->_dna._direction = kDirUpLeft;
-				changeDirection(0, _vm->_gyro->_dna._direction);
+			if (_vm->_gyro->_direction != kDirUpLeft) {
+				_vm->_gyro->_direction = kDirUpLeft;
+				changeDirection(0, _vm->_gyro->_direction);
 			} else
 				stopWalking();
 			break;
