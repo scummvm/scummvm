@@ -448,7 +448,7 @@ void Dropdown::setupMenuAction() {
 	else
 		_activeMenuItem.setupOption(f5Does, f5Does[0], "f5", true);
 	_activeMenuItem.setupOption("Pause game", 'P', "f6", true);
-	if (_vm->_gyro->_dna._room == 99)
+	if (_vm->_gyro->_room == 99)
 		_activeMenuItem.setupOption("Journey thither", 'J', "f7", _vm->_animation->nearDoor());
 	else
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->nearDoor());
@@ -469,7 +469,7 @@ void Dropdown::setupMenuPeople() {
 	_activeMenuItem.reset();
 
 	for (byte i = 150; i <= 178; i++)
-		if (_vm->_gyro->_whereIs[i - 150] == _vm->_gyro->_dna._room) {
+		if (_vm->_gyro->_whereIs[i - 150] == _vm->_gyro->_room) {
 			_activeMenuItem.setupOption(_vm->_gyro->getName(i), _vm->_gyro->getNameChar(i), "", true);
 			people = people + i;
 		}
@@ -480,7 +480,7 @@ void Dropdown::setupMenuPeople() {
 void Dropdown::setupMenuObjects() {
 	_activeMenuItem.reset();
 	for (byte i = 0; i < kObjectNum; i++) {
-		if (_vm->_gyro->_dna._objects[i])
+		if (_vm->_gyro->_objects[i])
 			_activeMenuItem.setupOption(_vm->_gyro->getThing(i + 1), _vm->_gyro->getThingChar(i + 1), "", true);
 	}
 	_activeMenuItem.display();
@@ -504,7 +504,7 @@ void Dropdown::setupMenuWith() {
 		// or (c), the _person you've selected is YOU!
 
 		if ((_vm->_gyro->_lastPerson == Gyro::kPeopleAvalot) || (_vm->_gyro->_lastPerson == _vm->_acci->kNothing)
-			|| (_vm->_gyro->_whereIs[_vm->_gyro->_lastPerson - 150] != _vm->_gyro->_dna._room))
+			|| (_vm->_gyro->_whereIs[_vm->_gyro->_lastPerson - 150] != _vm->_gyro->_room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_gyro->getName(_vm->_gyro->_lastPerson), 'G', "", true);
@@ -522,13 +522,13 @@ void Dropdown::setupMenuWith() {
 		}
 		break;
 		case Gyro::kPeopleDogfood: {
-			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_gyro->_dna._wonNim); // True if you HAVEN'T won.
+			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_gyro->_wonNim); // True if you HAVEN'T won.
 			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + Acci::kVerbCodePlay;
 		}
 		break;
 		case Gyro::kPeopleMalagauche: {
-			bool isSober = !_vm->_gyro->_dna._teetotal;
-			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_gyro->_dna._objects[Gyro::kObjectWine - 1]);
+			bool isSober = !_vm->_gyro->_teetotal;
+			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_gyro->_objects[Gyro::kObjectWine - 1]);
 			_activeMenuItem.setupOption("Buy some beer", 'b', "", isSober);
 			_activeMenuItem.setupOption("Buy some whisky", 'h', "", isSober);
 			_activeMenuItem.setupOption("Buy some cider", 'c', "", isSober);
@@ -537,7 +537,7 @@ void Dropdown::setupMenuWith() {
 		}
 		break;
 		case Gyro::kPeopleTrader: {
-			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_gyro->_dna._objects[Gyro::kObjectOnion - 1]);
+			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_gyro->_objects[Gyro::kObjectOnion - 1]);
 			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + 105;
 		}
 		break;

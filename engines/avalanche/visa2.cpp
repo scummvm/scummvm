@@ -159,19 +159,19 @@ void Visa::talkTo(byte whom) {
 	if (_vm->_gyro->_subjectNum == 0) {
 		switch (whom) {
 		case Gyro::kPeopleSpludwick:
-			if ((_vm->_gyro->_dna._lustieIsAsleep) & (!_vm->_gyro->_dna._objects[Gyro::kObjectPotion - 1])) {
+			if ((_vm->_gyro->_lustieIsAsleep) & (!_vm->_gyro->_objects[Gyro::kObjectPotion - 1])) {
 				displayScrollChain('q', 68);
-				_vm->_gyro->_dna._objects[Gyro::kObjectPotion - 1] = true;
+				_vm->_gyro->_objects[Gyro::kObjectPotion - 1] = true;
 				_vm->_lucerna->refreshObjectList();
 				_vm->_lucerna->incScore(3);
 				return;
-			} else if (_vm->_gyro->_dna._talkedToCrapulus) {
+			} else if (_vm->_gyro->_talkedToCrapulus) {
 				// Spludwick - what does he need?
 				// 0 - let it through to use normal routine.
-				switch (_vm->_gyro->_dna._givenToSpludwick) {
+				switch (_vm->_gyro->_givenToSpludwick) {
 				case 1: // Fallthrough is intended.
 				case 2: {
-					Common::String objStr = _vm->_gyro->getItem(Gyro::kSpludwicksOrder[_vm->_gyro->_dna._givenToSpludwick]);
+					Common::String objStr = _vm->_gyro->getItem(Gyro::kSpludwicksOrder[_vm->_gyro->_givenToSpludwick]);
 					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", objStr.c_str(), Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
 					_vm->_scrolls->displayText(tmpStr);
 					}
@@ -186,23 +186,23 @@ void Visa::talkTo(byte whom) {
 			}
 			break;
 		case Gyro::kPeopleIbythneth:
-			if (_vm->_gyro->_dna._givenBadgeToIby) {
+			if (_vm->_gyro->_givenBadgeToIby) {
 				displayScrollChain('q', 33); // Thanks a lot!
 				return; // And leave the proc.
 			}
 			break; // Or... just continue, 'cos he hasn't got it.
 		case Gyro::kPeopleDogfood:
-			if (_vm->_gyro->_dna._wonNim) { // We've won the game.
+			if (_vm->_gyro->_wonNim) { // We've won the game.
 				displayScrollChain('q', 6); // "I'm Not Playing!"
 				return; // Zap back.
 			} else
-				_vm->_gyro->_dna._askedDogfoodAboutNim = true;
+				_vm->_gyro->_askedDogfoodAboutNim = true;
 			break;
 		case Gyro::kPeopleAyles:
-			if (!_vm->_gyro->_dna._aylesIsAwake) {
+			if (!_vm->_gyro->_aylesIsAwake) {
 				displayScrollChain('q', 43); // He's fast asleep!
 				return;
-			} else if (!_vm->_gyro->_dna._givenPenToAyles) {
+			} else if (!_vm->_gyro->_givenPenToAyles) {
 				displayScrollChain('q', 44); // Can you get me a pen, Avvy?
 				return;
 			}
@@ -213,29 +213,29 @@ void Visa::talkTo(byte whom) {
 			return;
 
 		case Gyro::kPeopleGeida:
-			if (_vm->_gyro->_dna._givenPotionToGeida)
-				_vm->_gyro->_dna._geidaFollows = true;
+			if (_vm->_gyro->_givenPotionToGeida)
+				_vm->_gyro->_geidaFollows = true;
 			else {
 				displayScrollChain('u', 17);
 				return;
 			}
 			break;
 		case Gyro::kPeopleSpurge:
-			if (!_vm->_gyro->_dna._sittingInPub) {
+			if (!_vm->_gyro->_sittingInPub) {
 				displayScrollChain('q', 71); // Try going over and sitting down.
 				return;
 			} else {
-				if (_vm->_gyro->_dna._spurgeTalkCount < 5)
-					_vm->_gyro->_dna._spurgeTalkCount++;
-				if (_vm->_gyro->_dna._spurgeTalkCount > 1) { // no. 1 falls through
-					displayScrollChain('q', 70 + _vm->_gyro->_dna._spurgeTalkCount);
+				if (_vm->_gyro->_spurgeTalkCount < 5)
+					_vm->_gyro->_spurgeTalkCount++;
+				if (_vm->_gyro->_spurgeTalkCount > 1) { // no. 1 falls through
+					displayScrollChain('q', 70 + _vm->_gyro->_spurgeTalkCount);
 					return;
 				}
 			}
 			break;
 		}
 	// On a subject. Is there any reason to block it?
-	} else if ((whom == Gyro::kPeopleAyles) && (!_vm->_gyro->_dna._aylesIsAwake)) {
+	} else if ((whom == Gyro::kPeopleAyles) && (!_vm->_gyro->_aylesIsAwake)) {
 		displayScrollChain('q', 43); // He's fast asleep!
 		return;
 	}
@@ -264,10 +264,10 @@ void Visa::talkTo(byte whom) {
 		displayScrollChain('n', whom); // File not found!
 
 	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == Gyro::kPeopleCrapulus)) { // Crapulus: get the badge - first time only
-		_vm->_gyro->_dna._objects[Gyro::kObjectBadge - 1] = true;
+		_vm->_gyro->_objects[Gyro::kObjectBadge - 1] = true;
 		_vm->_lucerna->refreshObjectList();
 		displayScrollChain('q', 1); // Circular from Cardiff.
-		_vm->_gyro->_dna._talkedToCrapulus = true;
+		_vm->_gyro->_talkedToCrapulus = true;
 		_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = 177; // Crapulus walks off.
 
 		_vm->_animation->_sprites[1]._vanishIfStill = true;

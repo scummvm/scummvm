@@ -220,7 +220,7 @@ void Timer::updateTimer() {
 		}
 	}
 	_vm->_gyro->_roomTime++; // Cycles since you've been in this room.
-	_vm->_gyro->_dna._totalTime++; // Total amount of time for this game.
+	_vm->_gyro->_totalTime++; // Total amount of time for this game.
 }
 
 void Timer::loseTimer(byte which) {
@@ -233,20 +233,20 @@ void Timer::loseTimer(byte which) {
 }
 
 void Timer::openDrawbridge() {
-	_vm->_gyro->_dna._drawbridgeOpen++;
-	_vm->_celer->drawBackgroundSprite(-1, -1, _vm->_gyro->_dna._drawbridgeOpen - 1);
+	_vm->_gyro->_drawbridgeOpen++;
+	_vm->_celer->drawBackgroundSprite(-1, -1, _vm->_gyro->_drawbridgeOpen - 1);
 
-	if (_vm->_gyro->_dna._drawbridgeOpen == 4)
+	if (_vm->_gyro->_drawbridgeOpen == 4)
 		_vm->_gyro->_magics[1]._operation = Gyro::kMagicNothing; // You may enter the drawbridge.
 	else
 		addTimer(7, kProcOpenDrawbridge, kReasonDrawbridgeFalls);
 }
 
 void Timer::avariciusTalks() {
-	_vm->_visa->displayScrollChain('q', _vm->_gyro->_dna._avariciusTalk);
-	_vm->_gyro->_dna._avariciusTalk++;
+	_vm->_visa->displayScrollChain('q', _vm->_gyro->_avariciusTalk);
+	_vm->_gyro->_avariciusTalk++;
 
-	if (_vm->_gyro->_dna._avariciusTalk < 17)
+	if (_vm->_gyro->_avariciusTalk < 17)
 		addTimer(177, kProcAvariciusTalks, kReasonAvariciusTalks);
 	else
 		_vm->_lucerna->incScore(3);
@@ -277,20 +277,20 @@ void Timer::stairs() {
 	_vm->_gyro->blip();
 	_vm->_animation->_sprites[0].walkTo(4);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
-	_vm->_gyro->_dna._brummieStairs = 2;
+	_vm->_gyro->_brummieStairs = 2;
 	_vm->_gyro->_magics[10]._operation = Gyro::kMagicSpecial;
 	_vm->_gyro->_magics[10]._data = 2; // Reached the bottom of the stairs.
 	_vm->_gyro->_magics[3]._operation = Gyro::kMagicNothing; // Stop them hitting the sides (or the game will hang.)
 }
 
 void Timer::cardiffSurvey() {
-	if (_vm->_gyro->_dna._cardiffQuestionNum == 0) {
-		_vm->_gyro->_dna._cardiffQuestionNum++;
+	if (_vm->_gyro->_cardiffQuestionNum == 0) {
+		_vm->_gyro->_cardiffQuestionNum++;
 		_vm->_visa->displayScrollChain('q', 27);
 	}
 
-	_vm->_visa->displayScrollChain('z', _vm->_gyro->_dna._cardiffQuestionNum);
-	_vm->_gyro->_interrogation = _vm->_gyro->_dna._cardiffQuestionNum;
+	_vm->_visa->displayScrollChain('z', _vm->_gyro->_cardiffQuestionNum);
+	_vm->_gyro->_interrogation = _vm->_gyro->_cardiffQuestionNum;
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
@@ -305,8 +305,8 @@ void Timer::cwytalotInHerts() {
 
 void Timer::getTiedUp() {
 	_vm->_visa->displayScrollChain('q', 34); // ...Trouble!
-	_vm->_gyro->_dna._userMovesAvvy = false;
-	_vm->_gyro->_dna._beenTiedUp = true;
+	_vm->_gyro->_userMovesAvvy = false;
+	_vm->_gyro->_beenTiedUp = true;
 	_vm->_animation->stopWalking();
 	_vm->_animation->_sprites[1].stopWalk();
 	_vm->_animation->_sprites[1].stopHoming();
@@ -319,7 +319,7 @@ void Timer::getTiedUp2() {
 	_vm->_animation->_sprites[0].walkTo(4);
 	_vm->_animation->_sprites[1].walkTo(5);
 	_vm->_gyro->_magics[3]._operation = Gyro::kMagicNothing; // No effect when you touch the boundaries.
-	_vm->_gyro->_dna._friarWillTieYouUp = true;
+	_vm->_gyro->_friarWillTieYouUp = true;
 }
 
 void Timer::hangAround() {
@@ -344,20 +344,20 @@ void Timer::hangAround2() {
 	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
 	// Immediately call the following proc (when you have a chance).
 
-	_vm->_gyro->_dna._tiedUp = false;
+	_vm->_gyro->_tiedUp = false;
 
 	_vm->_enid->backToBootstrap(1); // Call the shoot-'em-up.
 }
 
 void Timer::afterTheShootemup() {
 
-	_vm->_animation->flipRoom(_vm->_gyro->_dna._room, 0);
+	_vm->_animation->flipRoom(_vm->_gyro->_room, 0);
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
 	_vm->_animation->appearPed(1, 2);
-	_vm->_gyro->_dna._userMovesAvvy = true;
-	_vm->_gyro->_dna._objects[Gyro::kObjectCrossbow - 1] = true;
+	_vm->_gyro->_userMovesAvvy = true;
+	_vm->_gyro->_objects[Gyro::kObjectCrossbow - 1] = true;
 	_vm->_lucerna->refreshObjectList();
 
 	// Same as the added line above: TODO: Remove it later!!!
@@ -386,9 +386,9 @@ void Timer::afterTheShootemup() {
 }
 
 void Timer::jacquesWakesUp() {
-	_vm->_gyro->_dna._jacquesState++;
+	_vm->_gyro->_jacquesState++;
 
-	switch (_vm->_gyro->_dna._jacquesState) { // Additional pictures.
+	switch (_vm->_gyro->_jacquesState) { // Additional pictures.
 	case 1 :
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Eyes open.
 		_vm->_visa->displayScrollChain('Q', 45);
@@ -405,13 +405,13 @@ void Timer::jacquesWakesUp() {
 		break;
 	}
 
-	if (_vm->_gyro->_dna._jacquesState == 5) {
-		_vm->_gyro->_dna._bellsAreRinging = true;
-		_vm->_gyro->_dna._aylesIsAwake = true;
+	if (_vm->_gyro->_jacquesState == 5) {
+		_vm->_gyro->_bellsAreRinging = true;
+		_vm->_gyro->_aylesIsAwake = true;
 		_vm->_lucerna->incScore(2);
 	}
 
-	switch (_vm->_gyro->_dna._jacquesState) {
+	switch (_vm->_gyro->_jacquesState) {
 	case 1:
 	case 2:
 	case 3:
@@ -450,9 +450,9 @@ void Timer::naughtyDuke3() {
 }
 
 void Timer::jump() {
-	_vm->_gyro->_dna._jumpStatus++;
+	_vm->_gyro->_jumpStatus++;
 
-	switch (_vm->_gyro->_dna._jumpStatus) {
+	switch (_vm->_gyro->_jumpStatus) {
 	case 1:
 	case 2:
 	case 3:
@@ -471,24 +471,24 @@ void Timer::jump() {
 		break;
 	}
 
-	if (_vm->_gyro->_dna._jumpStatus == 20) { // End of jump.
-		_vm->_gyro->_dna._userMovesAvvy = true;
-		_vm->_gyro->_dna._jumpStatus = 0;
+	if (_vm->_gyro->_jumpStatus == 20) { // End of jump.
+		_vm->_gyro->_userMovesAvvy = true;
+		_vm->_gyro->_jumpStatus = 0;
 	} else { // Still jumping.
 		addTimer(1, kProcJump, kReasonJumping);
 	}
 
-	if ((_vm->_gyro->_dna._jumpStatus == 10) // You're at the highest point of your jump.
-			&& (_vm->_gyro->_dna._room == r__insidecardiffcastle)
-			&& (_vm->_gyro->_dna._arrowInTheDoor == true)
+	if ((_vm->_gyro->_jumpStatus == 10) // You're at the highest point of your jump.
+			&& (_vm->_gyro->_room == r__insidecardiffcastle)
+			&& (_vm->_gyro->_arrowInTheDoor == true)
 			&& (_vm->_animation->inField(3))) { // Beside the wall
 		// Grab the arrow!
-		if (_vm->_gyro->_dna._carryNum >= kCarryLimit)
+		if (_vm->_gyro->_carryNum >= kCarryLimit)
 			_vm->_scrolls->displayText("You fail to grab it, because your hands are full.");
 		else {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
-			_vm->_gyro->_dna._arrowInTheDoor = false; // You've got it.
-			_vm->_gyro->_dna._objects[Gyro::kObjectBolt - 1] = true;
+			_vm->_gyro->_arrowInTheDoor = false; // You've got it.
+			_vm->_gyro->_objects[Gyro::kObjectBolt - 1] = true;
 			_vm->_lucerna->refreshObjectList();
 			_vm->_visa->displayScrollChain('q', 50);
 			_vm->_lucerna->incScore(3);
@@ -498,14 +498,14 @@ void Timer::jump() {
 
 void Timer::crapulusSaysSpludOut() {
 	_vm->_visa->displayScrollChain('q', 56);
-	_vm->_gyro->_dna._crapulusWillTell = false;
+	_vm->_gyro->_crapulusWillTell = false;
 }
 
 void Timer::buyDrinks() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
-	_vm->_gyro->_dna._malagauche = 0;
+	_vm->_gyro->_malagauche = 0;
 
-	_vm->_visa->displayScrollChain('D', _vm->_gyro->_dna._drinking); // Display message about it.
+	_vm->_visa->displayScrollChain('D', _vm->_gyro->_drinking); // Display message about it.
 	_vm->_pingo->wobble(); // Do the special effects.
 	_vm->_visa->displayScrollChain('D', 1); // That'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) // Pay 3d.
@@ -515,15 +515,15 @@ void Timer::buyDrinks() {
 
 void Timer::buyWine() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
-	_vm->_gyro->_dna._malagauche = 0;
+	_vm->_gyro->_malagauche = 0;
 
 	_vm->_visa->displayScrollChain('D', 50); // You buy the wine.
 	_vm->_visa->displayScrollChain('D', 1); // It'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) {
 		_vm->_visa->displayScrollChain('D', 4); // You paid up.
-		_vm->_gyro->_dna._objects[Gyro::kObjectWine - 1] = true;
+		_vm->_gyro->_objects[Gyro::kObjectWine - 1] = true;
 		_vm->_lucerna->refreshObjectList();
-		_vm->_gyro->_dna._wineState = 1; // OK Wine.
+		_vm->_gyro->_wineState = 1; // OK Wine.
 	}
 }
 
@@ -534,7 +534,7 @@ void Timer::callsGuards() {
 
 void Timer::greetsMonk() {
 	_vm->_visa->displayScrollChain('Q', 59);
-	_vm->_gyro->_dna._enteredLustiesRoomAsMonk = true;
+	_vm->_gyro->_enteredLustiesRoomAsMonk = true;
 }
 
 void Timer::fallDownOubliette() {
@@ -545,13 +545,13 @@ void Timer::fallDownOubliette() {
 }
 
 void Timer::meetAvaroid() {
-	if (_vm->_gyro->_dna._metAvaroid) {
+	if (_vm->_gyro->_metAvaroid) {
 		Common::String tmpStr = Common::String::format("You can't expect to be %cthat%c lucky twice in a row!", Scrolls::kControlItalic, Scrolls::kControlRoman);
 		_vm->_scrolls->displayText(tmpStr);
 		_vm->_lucerna->gameOver();
 	} else {
 		_vm->_visa->displayScrollChain('Q', 60);
-		_vm->_gyro->_dna._metAvaroid = true;
+		_vm->_gyro->_metAvaroid = true;
 		addTimer(1, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 
 		_vm->_animation->_sprites[0]._facingDir = Animation::kDirLeft;
@@ -570,7 +570,7 @@ void Timer::riseUpOubliette() {
 	if (_vm->_animation->_sprites[0]._moveY > 0)
 		addTimer(3, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 	else
-		_vm->_gyro->_dna._userMovesAvvy = true;
+		_vm->_gyro->_userMovesAvvy = true;
 }
 
 void Timer::robinHoodAndGeida() {
@@ -580,7 +580,7 @@ void Timer::robinHoodAndGeida() {
 	_vm->_animation->_sprites[1].stopWalk();
 	_vm->_animation->_sprites[1]._facingDir = Animation::kDirLeft;
 	addTimer(20, kProcRobinHoodAndGeidaTalk, kReasonRobinHoodAndGeida);
-	_vm->_gyro->_dna._geidaFollows = false;
+	_vm->_gyro->_geidaFollows = false;
 }
 
 void Timer::robinHoodAndGeidaTalk() {
@@ -598,7 +598,7 @@ void Timer::avalotReturns() {
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation);
 	_vm->_animation->appearPed(1, 1);
 	_vm->_visa->displayScrollChain('q', 67);
-	_vm->_gyro->_dna._userMovesAvvy = true;
+	_vm->_gyro->_userMovesAvvy = true;
 }
 
 /**
@@ -611,8 +611,8 @@ void Timer::avvySitDown() {
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 3);
-		_vm->_gyro->_dna._sittingInPub = true;
-		_vm->_gyro->_dna._userMovesAvvy = false;
+		_vm->_gyro->_sittingInPub = true;
+		_vm->_gyro->_userMovesAvvy = false;
 		_vm->_animation->_sprites[0]._visible = false;
 	}
 }
@@ -623,7 +623,7 @@ void Timer::ghostRoomPhew() {
 }
 
 void Timer::arkataShouts() {
-	if (_vm->_gyro->_dna._teetotal)
+	if (_vm->_gyro->_teetotal)
 		return;
 
 	_vm->_visa->displayScrollChain('q', 76);
@@ -676,7 +676,7 @@ void Timer::spludwickLeavesCauldron() {
 void Timer::giveLuteToGeida() { // Moved here from Acci.
 	_vm->_visa->displayScrollChain('Q', 86);
 	_vm->_lucerna->incScore(4);
-	_vm->_gyro->_dna._lustieIsAsleep = true;
+	_vm->_gyro->_lustieIsAsleep = true;
 	_vm->_sequence->firstShow(5);
 	_vm->_sequence->thenShow(6); // He falls asleep...
 	_vm->_sequence->startToClose(); // Not really closing, but we're using the same procedure.

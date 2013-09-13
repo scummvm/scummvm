@@ -561,19 +561,19 @@ void Scrolls::setBubbleStateNatural() {
 Common::String Scrolls::displayMoney() {
 	Common::String result;
 
-	if (_vm->_gyro->_dna._money < 12) { // just pence
-		result = Common::String::format("%dd", _vm->_gyro->_dna._money);
-	} else if (_vm->_gyro->_dna._money < 240) { // shillings & pence
-		if ((_vm->_gyro->_dna._money % 12) == 0)
-			result = Common::String::format("%d/-", _vm->_gyro->_dna._money / 12);
+	if (_vm->_gyro->_money < 12) { // just pence
+		result = Common::String::format("%dd", _vm->_gyro->_money);
+	} else if (_vm->_gyro->_money < 240) { // shillings & pence
+		if ((_vm->_gyro->_money % 12) == 0)
+			result = Common::String::format("%d/-", _vm->_gyro->_money / 12);
 		else
-			result = Common::String::format("%d/%d", _vm->_gyro->_dna._money / 12, _vm->_gyro->_dna._money % 12);
+			result = Common::String::format("%d/%d", _vm->_gyro->_money / 12, _vm->_gyro->_money % 12);
 	} else { // L, s & d
-		result = Common::String::format("\x9C%d.%d.%d", _vm->_gyro->_dna._money / 240, (_vm->_gyro->_dna._money / 12) % 20, 
-		                _vm->_gyro->_dna._money % 12);
+		result = Common::String::format("\x9C%d.%d.%d", _vm->_gyro->_money / 240, (_vm->_gyro->_money / 12) % 20, 
+		                _vm->_gyro->_money % 12);
 	}
-	if (_vm->_gyro->_dna._money > 12) {
-		Common::String extraStr = Common::String::format(" (that's %dd)", _vm->_gyro->_dna._money);
+	if (_vm->_gyro->_money > 12) {
+		Common::String extraStr = Common::String::format(" (that's %dd)", _vm->_gyro->_money);
 		result += extraStr;
 	}
 
@@ -703,45 +703,45 @@ void Scrolls::callScrollDriver() {
 					displayText(displayMoney() + kControlToBuffer); // Insert cash balance. (Recursion)
 					break;
 				case 2: {
-					int pwdId = _vm->_acci->kFirstPassword + _vm->_gyro->_dna._passwordNum;
+					int pwdId = _vm->_acci->kFirstPassword + _vm->_gyro->_passwordNum;
 					displayText(_vm->_acci->kVocabulary[pwdId]._word + kControlToBuffer);
 					}
 					break;
 				case 3:
-					displayText(_vm->_gyro->_dna._favouriteDrink + kControlToBuffer);
+					displayText(_vm->_gyro->_favouriteDrink + kControlToBuffer);
 					break;
 				case 4:
-					displayText(_vm->_gyro->_dna._favouriteSong + kControlToBuffer);
+					displayText(_vm->_gyro->_favouriteSong + kControlToBuffer);
 					break;
 				case 5:
-					displayText(_vm->_gyro->_dna._worstPlaceOnEarth + kControlToBuffer);
+					displayText(_vm->_gyro->_worstPlaceOnEarth + kControlToBuffer);
 					break;
 				case 6:
-					displayText(_vm->_gyro->_dna._spareEvening + kControlToBuffer);
+					displayText(_vm->_gyro->_spareEvening + kControlToBuffer);
 					break;
 				case 9: {
-					Common::String tmpStr = Common::String::format("%d,%d%c",_vm->_gyro->_dna._catacombX, _vm->_gyro->_dna._catacombY, kControlToBuffer);
+					Common::String tmpStr = Common::String::format("%d,%d%c",_vm->_gyro->_catacombX, _vm->_gyro->_catacombY, kControlToBuffer);
 					displayText(tmpStr);
 					}
 					break;
 				case 10:
-					switch (_vm->_gyro->_dna._boxContent) {
+					switch (_vm->_gyro->_boxContent) {
 					case 0: // Sixpence.
 						_vm->_visa->displayScrollChain('q', 37); // You find the sixpence.
-						_vm->_gyro->_dna._money += 6;
-						_vm->_gyro->_dna._boxContent = _vm->_acci->kNothing;
+						_vm->_gyro->_money += 6;
+						_vm->_gyro->_boxContent = _vm->_acci->kNothing;
 						_vm->_lucerna->incScore(2);
 						return;
 					case Acci::kNothing:
 						displayText("nothing at all. It's completely empty.");
 						break;
 					default:
-						displayText(_vm->_gyro->getItem(_vm->_gyro->_dna._boxContent) + '.');
+						displayText(_vm->_gyro->getItem(_vm->_gyro->_boxContent) + '.');
 					}
 					break;
 				case 11:
 					for (byte j = 0; j < kObjectNum; j++) {
-						if (_vm->_gyro->_dna._objects[j]) 
+						if (_vm->_gyro->_objects[j]) 
 							displayText(_vm->_gyro->getItem(j) + ", " + kControlToBuffer);
 					}
 					break;
