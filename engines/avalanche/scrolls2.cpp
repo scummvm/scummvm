@@ -704,7 +704,7 @@ void Scrolls::callScrollDriver() {
 					break;
 				case 2: {
 					int pwdId = _vm->_acci->kFirstPassword + _vm->_gyro->_passwordNum;
-					displayText(_vm->_acci->kVocabulary[pwdId]._word + kControlToBuffer);
+					displayText(_vm->_acci->_vocabulary[pwdId]._word + kControlToBuffer);
 					}
 					break;
 				case 3:

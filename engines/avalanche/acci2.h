@@ -60,9 +60,14 @@ public:
 	struct VocabEntry {
 		byte _number;
 		Common::String _word;
+
+		void init(byte number, Common::String word) {
+			_number = number;
+			_word = word;
+		}
 	};
 
-	static const VocabEntry kVocabulary[kParserWordsNum];
+	VocabEntry _vocabulary[kParserWordsNum];
 
 	Common::String _realWords[11];
 	byte _verb, _person, _thing;
