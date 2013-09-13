@@ -268,7 +268,7 @@ void Celer::loadBackgroundSprites(byte number) {
 	Common::File f;
 	_filename = _filename.format("chunk%d.avd", number);
 	if (!f.open(_filename))
-		error("AVALANCHE: Celer: File not found: %s", _filename.c_str());
+		return; // We skip because some rooms don't have sprites in the background.
 
 	f.seek(44);
 	_spriteNum = f.readByte();
