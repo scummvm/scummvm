@@ -1279,7 +1279,7 @@ void Animation::animLink() {
 
 void Animation::stopWalking() {
 	_sprites[0].stopWalk();
-	_vm->_gyro->_direction = kDirStopped;
+	_direction = kDirStopped;
 	if (_vm->_gyro->_alive)
 		_sprites[0]._stepNum = 1;
 }
@@ -1348,8 +1348,8 @@ void Animation::flipRoom(byte room, byte ped) {
 	_vm->_lucerna->enterRoom(room, ped);
 	appearPed(1, ped);
 	_vm->_gyro->_enterCatacombsFromLustiesRoom = false;
-	_vm->_gyro->_oldDirection = _vm->_gyro->_direction;
-	_vm->_gyro->_direction = _sprites[0]._facingDir;
+	_oldDirection = _direction;
+	_direction = _sprites[0]._facingDir;
 	_vm->_lucerna->drawDirection();
 
 	_vm->_lucerna->dawn();
@@ -1393,58 +1393,58 @@ void Animation::handleMoveKey(const Common::Event &event) {
 	else {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
-			if (_vm->_gyro->_direction != kDirUp) {
-				_vm->_gyro->_direction = kDirUp;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirUp) {
+				_direction = kDirUp;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_DOWN:
-			if (_vm->_gyro->_direction != kDirDown) {
-				_vm->_gyro->_direction = kDirDown;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirDown) {
+				_direction = kDirDown;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_LEFT:
-			if (_vm->_gyro->_direction != kDirLeft) {
-				_vm->_gyro->_direction = kDirLeft;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirLeft) {
+				_direction = kDirLeft;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_RIGHT:
-			if (_vm->_gyro->_direction != kDirRight) {
-				_vm->_gyro->_direction = kDirRight;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirRight) {
+				_direction = kDirRight;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEUP:
-			if (_vm->_gyro->_direction != kDirUpRight) {
-				_vm->_gyro->_direction = kDirUpRight;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirUpRight) {
+				_direction = kDirUpRight;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEDOWN:
-			if (_vm->_gyro->_direction != kDirDownRight) {
-				_vm->_gyro->_direction = kDirDownRight;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirDownRight) {
+				_direction = kDirDownRight;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_END:
-			if (_vm->_gyro->_direction != kDirDownLeft) {
-				_vm->_gyro->_direction = kDirDownLeft;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirDownLeft) {
+				_direction = kDirDownLeft;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_HOME:
-			if (_vm->_gyro->_direction != kDirUpLeft) {
-				_vm->_gyro->_direction = kDirUpLeft;
-				changeDirection(0, _vm->_gyro->_direction);
+			if (_direction != kDirUpLeft) {
+				_direction = kDirUpLeft;
+				changeDirection(0, _direction);
 			} else
 				stopWalking();
 			break;

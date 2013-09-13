@@ -913,7 +913,7 @@ void Lucerna::drawToolbar() {
 	file.close();
 
 	CursorMan.showMouse(true);
-	_vm->_gyro->_oldDirection = 177;
+	_vm->_animation->_oldDirection = 177;
 	drawDirection();
 }
 
@@ -967,22 +967,22 @@ void Lucerna::useCompass(const Common::Point &cursorPos) {
 
 	switch (color) {
 	case kColorGreen:
-		_vm->_gyro->_direction = Animation::kDirUp;
+		_vm->_animation->_direction = Animation::kDirUp;
 		_vm->_animation->changeDirection(0, Animation::kDirUp);
 		drawDirection();
 		break;
 	case kColorBrown:
-		_vm->_gyro->_direction = Animation::kDirDown;
+		_vm->_animation->_direction = Animation::kDirDown;
 		_vm->_animation->changeDirection(0, Animation::kDirDown);
 		drawDirection();
 		break;
 	case kColorCyan:
-		_vm->_gyro->_direction = Animation::kDirLeft;
+		_vm->_animation->_direction = Animation::kDirLeft;
 		_vm->_animation->changeDirection(0, Animation::kDirLeft);
 		drawDirection();
 		break;
 	case kColorLightmagenta:
-		_vm->_gyro->_direction = Animation::kDirRight;
+		_vm->_animation->_direction = Animation::kDirRight;
 		_vm->_animation->changeDirection(0, Animation::kDirRight);
 		drawDirection();
 		break;
@@ -1167,13 +1167,13 @@ void Lucerna::dawn() {
 }
 
 void Lucerna::drawDirection() { // It's data is loaded in load_digits().
-	if (_vm->_gyro->_oldDirection == _vm->_gyro->_direction)
+	if (_vm->_animation->_oldDirection == _vm->_animation->_direction)
 		return;
 
-	_vm->_gyro->_oldDirection = _vm->_gyro->_direction;
+	_vm->_animation->_oldDirection = _vm->_animation->_direction;
 
 	CursorMan.showMouse(false);
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_directions[_vm->_gyro->_direction], 0, 161);
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_directions[_vm->_animation->_direction], 0, 161);
 	CursorMan.showMouse(true);
 }
 
@@ -1240,7 +1240,7 @@ void Lucerna::spriteRun() {
 
 void Lucerna::fixFlashers() {
 	_vm->_gyro->_ledStatus = 177;
-	_vm->_gyro->_oldDirection = 177;
+	_vm->_animation->_oldDirection = 177;
 	_vm->_scrolls->setReadyLight(2);
 	drawDirection();
 }

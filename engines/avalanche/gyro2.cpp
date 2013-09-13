@@ -227,7 +227,7 @@ void Gyro::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String 
 
 void Gyro::resetVariables() {
 // Replaces memset(&_vm->_gyro->_dna, 0, sizeof(DnaType));
-	_direction = 0;
+	_vm->_animation->_direction = 0;
 	_carryNum = 0;
 	for (int i = 0; i < kObjectNum; i++)
 		_objects[i] = false;
@@ -326,7 +326,7 @@ void Gyro::newGame() {
 	_spareEvening = "answer a questionnaire";
 	_favouriteDrink = "beer";
 	_money = 30; // 2/6
-	_direction = kDirectionStopped;
+	_vm->_animation->_direction = Animation::kDirStopped;
 	_wearing = kObjectClothes;
 	_objects[kObjectMoney - 1] = true;
 	_objects[kObjectBodkin - 1] = true;
@@ -339,7 +339,7 @@ void Gyro::newGame() {
 	_onToolbar = false;
 	_seeScroll = false;
 
-	_vm->_animation->_sprites[0].appear(300,117,kDirectionRight); // Needed to initialize Avalot.
+	_vm->_animation->_sprites[0].appear(300, 117, Animation::kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
 	_him = 254;

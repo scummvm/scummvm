@@ -123,7 +123,7 @@ const char *AvalancheEngine::getCopyrightString() const {
 
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	//blockwrite(f, dna, sizeof(dna));
-	sz.syncAsByte(_gyro->_direction);
+	sz.syncAsByte(_animation->_direction);
 	sz.syncAsByte(_gyro->_carryNum);
 	for (byte i = 0; i < kObjectNum; i++)
 		sz.syncAsByte(_gyro->_objects[i]);
@@ -459,7 +459,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_scrolls->displayText(tmpStr);
 
 	if (_animation->_sprites[0]._quick && _animation->_sprites[0]._visible)
-		_animation->changeDirection(0, _gyro->_direction); // We push Avvy in the right direction is he was moving.
+		_animation->changeDirection(0, _animation->_direction); // We push Avvy in the right direction is he was moving.
 
 	return true;
 }
@@ -487,6 +487,7 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 			day += "th";
 		}
 
+	// Y2K compliant ;)
 	return day + ' ' + month + ' ' + _gyro->intToStr(y + 1900);
 }
 

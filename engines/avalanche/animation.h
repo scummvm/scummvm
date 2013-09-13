@@ -113,6 +113,8 @@ public:
 	AnimationType _sprites[kSpriteNumbMax];
 	bool _mustExclaim;
 	uint16 _sayWhat;
+	byte _direction; // The direction Avvy is currently facing.
+	byte _oldDirection;
 
 	Animation(AvalancheEngine *vm);
 	~Animation();

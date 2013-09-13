@@ -147,7 +147,7 @@ void Avalot::setup() {
 	_vm->_gyro->_ledStatus = 177;
 	_vm->_gyro->_defaultLed = 2;
 	// TSkellern = 0; Replace with a more local variable sometime
-	_vm->_gyro->_direction = Gyro::kDirectionStopped;
+	_vm->_animation->_direction = Animation::kDirStopped;
 	_vm->_gyro->_enidFilename = ""; // Undefined.
 	_vm->_lucerna->drawToolbar();
 	_vm->_scrolls->setReadyLight(2);
