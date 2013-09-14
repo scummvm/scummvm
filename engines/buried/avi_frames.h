@@ -42,7 +42,7 @@ namespace Buried {
 
 class AVIFrames {
 public:
-	AVIFrames(const Common::String &fileName, uint cachedFrames = 0);
+	AVIFrames(const Common::String &fileName = "", uint cachedFrames = 0);
 	~AVIFrames();
 
 	bool open(const Common::String &fileName, uint cachedFrames = 0);
