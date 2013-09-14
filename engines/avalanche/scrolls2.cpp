@@ -668,11 +668,12 @@ void Scrolls::callScrollDriver() {
 				if (_param == 0)
 					setBubbleStateNatural();
 				else if ((1 <= _param) && (_param <= 9)) {
-					if ((_param > _vm->_animation->kSpriteNumbMax) || (!_vm->_animation->_sprites[_param - 1]._quick)) { // Not valid.
+					AnimationType *spr = &_vm->_animation->_sprites[_param - 1];
+					if ((_param > _vm->_animation->kSpriteNumbMax) || (!spr->_quick)) { // Not valid.
 						_vm->_lucerna->errorLed();
 						setBubbleStateNatural();
 					} else
-						_vm->_animation->_sprites[_param - 1].chatter(); // Normal sprite talking routine.
+						spr->chatter(); // Normal sprite talking routine.
 				} else if ((10 <= _param) && (_param <= 36)) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the

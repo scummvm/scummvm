@@ -624,10 +624,11 @@ void Dropdown::runMenuAction() {
 		_vm->_lucerna->callVerb(Acci::kVerbCodeInv);
 		break;
 	case 5: {
-		if (_vm->_animation->_sprites[0]._speedX == _vm->_gyro->kWalk)
-			_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kRun;
+		AnimationType *avvy = &_vm->_animation->_sprites[0];
+		if (avvy->_speedX == _vm->_gyro->kWalk)
+			avvy->_speedX = _vm->_gyro->kRun;
 		else
-			_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kWalk;
+			avvy->_speedX = _vm->_gyro->kWalk;
 		_vm->_animation->updateSpeed();
 	}
 	break;
