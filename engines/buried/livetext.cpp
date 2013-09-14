@@ -124,20 +124,20 @@ void LiveTextWindow::onPaint() {
 		uint32 y = 4;
 		for (uint32 i = 0; i < lines.size(); i++) {
 			_font->drawString(surface, lines[i], 30, y, 270, textColor);
-			y += _font->getFontHeight() + 1;
+			y += 14;
 		}
 	}
 
-	_vm->_gfx->blit(surface, _rect.left, _rect.top);
+	Common::Rect absoluteRect = getAbsoluteRect();
+	_vm->_gfx->blit(surface, absoluteRect.left, absoluteRect.top);
 
 	surface->free();
 	delete surface;
 }
 
 void LiveTextWindow::onEnable(bool enable) {
-	if (enable) {
-		// TODO: Clear out mouse messages (why???)
-	}
+	if (enable)
+		_vm->removeMouseMessages(this);
 }
 
 } // End of namespace Buried
