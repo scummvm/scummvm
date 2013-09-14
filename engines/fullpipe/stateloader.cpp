@@ -104,6 +104,8 @@ GameProject::GameProject() {
 	_field_4 = 0;
 	_headerFilename = 0;
 	_field_10 = 12;
+
+	_sceneTagList = 0;
 }
 
 bool GameProject::load(MfcArchive &file) {
