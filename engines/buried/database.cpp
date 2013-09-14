@@ -24,6 +24,7 @@
  */
 
 #include "common/winexe_ne.h"
+#include "common/winexe_pe.h"
 #include "graphics/wincursor.h"
 
 #include "buried/database.h"
@@ -88,6 +89,62 @@ Common::SeekableReadStream *DatabaseNE::getResourceStream(const Common::String &
 
 bool DatabaseNECompressed::load(const Common::String &fileName) {
 	return _exe->loadFromCompressedEXE(fileName);
+}
+
+DatabasePE::DatabasePE() {
+	_exe = new Common::PEResources();
+}
+
+DatabasePE::~DatabasePE() {
+	delete _exe;
+}
+
+bool DatabasePE::load(const Common::String &fileName) {
+	return _exe->loadFromEXE(fileName);
+}
+
+void DatabasePE::close() {
+	_exe->clear();
+}
+
+Common::String DatabasePE::loadString(uint32 stringID) {
+	bool continueReading = true;
+	Common::String result;
+
+	while (continueReading) {
+		Common::String string = _exe->loadString(stringID);
+
+		if (string.empty())
+			return "";
+
+		if (string[0] == '!') {
+			string.deleteChar(0);
+			stringID++;
+		} else {
+			continueReading = false;
+		}
+
+		result += string;
+	}
+
+	// Change any \r to \n
+	for (uint32 i = 0; i < result.size(); i++)
+		if (result[i] == '\r')
+			result.setChar('\n', i);
+
+	return result;
+}
+
+Common::SeekableReadStream *DatabasePE::getBitmapStream(uint32 bitmapID) {
+	return _exe->getResource(Common::kPEBitmap, bitmapID);
+}
+
+Graphics::WinCursorGroup *DatabasePE::getCursorGroup(uint32 cursorGroupID) {
+	return Graphics::WinCursorGroup::createCursorGroup(*_exe, cursorGroupID);
+}
+
+Common::SeekableReadStream *DatabasePE::getResourceStream(const Common::String &resourceType, uint32 resourceID) {
+	return _exe->getResource(resourceType, resourceID);
 }
 
 } // End of namespace Buried

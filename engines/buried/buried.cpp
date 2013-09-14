@@ -77,7 +77,8 @@ Common::Error BuriedEngine::run() {
 	}
 
 	if (isWin95()) {
-		error("TODO: Win95 version");
+		_mainEXE = new DatabasePE();
+		_library = new DatabasePE();
 	} else if (isCompressed()) {
 		_mainEXE = new DatabaseNECompressed();
 		_library = new DatabaseNECompressed();
