@@ -41,7 +41,6 @@ enum MessageType {
 	kMessageTypeMouseMove,
 	kMessageTypeLButtonUp,
 	kMessageTypeLButtonDown,
-	kMessageTypeLButtonDoubleClick,
 	kMessageTypeMButtonUp,
 	kMessageTypeRButtonUp,
 	kMessageTypeRButtonDown,
@@ -103,7 +102,6 @@ typedef KeyMessage<kMessageTypeKeyDown>                KeyDownMessage;
 typedef MouseMessage<kMessageTypeMouseMove>            MouseMoveMessage;
 typedef MouseMessage<kMessageTypeLButtonUp>            LButtonUpMessage;
 typedef MouseMessage<kMessageTypeLButtonDown>          LButtonDownMessage;
-typedef MouseMessage<kMessageTypeLButtonDoubleClick>   LButtonDoubleClickMessage;
 typedef MouseMessage<kMessageTypeMButtonUp>            MButtonUpMessage;
 typedef MouseMessage<kMessageTypeRButtonUp>            RButtonUpMessage;
 typedef MouseMessage<kMessageTypeRButtonDown>          RButtonDownMessage;
