@@ -577,6 +577,9 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	for (i = 0; i < 508; i += 4)
 		s.syncAsByte(_scene1550JunkLocations[i + 2]);
+
+	s.syncAsSint16LE(_balloonPosition.x);
+	s.syncAsSint16LE(_balloonPosition.y);
 }
 
 } // end of namespace Ringworld2

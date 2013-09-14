@@ -4541,5 +4541,616 @@ void Scene2800::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2900 - Balloon Cutscene
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene2900::Item1::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_USE:
+		SceneItem::display2(1, 5 + R2_GLOBALS._randomSource.getRandomNumber(5));
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display2(2900, 0);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display2(1, 10 + R2_GLOBALS._randomSource.getRandomNumber(5));
+		break;
+	default:
+		break;
+	}
+
+	event.handled = true;
+	return true;
+}
+
+bool Scene2900::Item2::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_USE:
+		SceneItem::display2(2900, 5);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display2(2900, 3);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display2(2900, 4);
+		break;
+	default:
+		break;
+	}
+
+	event.handled = true;
+	return true;
+}
+
+bool Scene2900::Item3::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_USE:
+		SceneItem::display2(2900, 8);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display2(2900, 6);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display2(2900, 4);
+		break;
+	default:
+		break;
+	}
+
+	event.handled = true;
+	return true;
+}
+
+bool Scene2900::Item4::startAction(CursorType action, Event &event) {
+	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (scene->_field416 != 0 || scene->_field414 != 0 || scene->_field425 != scene->_field426) {
+			SceneItem::display2(2900, 17);
+		} else if (R2_GLOBALS._v56A99 / 48 == 0) {
+			SceneItem::display2(2900, 15);
+		} else {
+			R2_GLOBALS._sound2.fadeSound(282);
+			scene->_field414 = 1;
+			scene->_field41E = -1;
+			scene->_field426 = 100 - ((R2_GLOBALS._v56A99 / 48) - 1) * 25;
+		}
+		break;
+
+	case CURSOR_LOOK:
+		SceneItem::display2(2900, 9);
+		break;
+
+	case CURSOR_TALK:
+		SceneItem::display2(2900, 4);
+		break;
+
+	default:
+		break;
+	}
+
+	event.handled = true;
+	return true;
+}
+
+bool Scene2900::Item5::startAction(CursorType action, Event &event) {
+	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (scene->_field416 != 0 || scene->_field414 != 0 || scene->_field425 != scene->_field426) {
+			SceneItem::display2(2900, 17);
+		} else if (R2_GLOBALS._v56A99 / 48 == 0) {
+			SceneItem::display2(2900, 16);
+		} else {
+			R2_GLOBALS._sound2.fadeSound(212);
+			scene->_field414 = 1;
+			scene->_field41E = 1;
+			scene->_field426 = 100 - ((R2_GLOBALS._v56A99 / 48) + 1) * 25;
+		}
+		break;
+
+	case CURSOR_LOOK:
+		SceneItem::display2(2900, 12);
+		break;
+
+	case CURSOR_TALK:
+		SceneItem::display2(2900, 4);
+		break;
+
+	default:
+		break;
+	}
+
+	event.handled = true;
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene2900::Action1::signal() {
+	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
+	setDelay(3);
+
+	if (scene->_field416 == 0 && scene->_field414 == 0) {
+		scene->_field427 = 2;
+		scene->_field412 = 0;
+	} else if (scene->_field416 != 0) {
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+	} else if (scene->_field427 == 0) {
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+	} else if (scene->_field412 == 0) {
+		scene->_object6.hide();
+		scene->_object5.hide();
+		scene->_field412 = 1;
+	} else {
+		--scene->_field427;
+		scene->_object6.show();
+		scene->_object5.show();
+		scene->_field412 = 0;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene2900::Obj1::Obj1() {
+	_width = _height = 0;
+	_field4 = 0;
+	_field6 = 0;
+	_field8 = 0;
+	_fieldA = 0;
+	_resNum = 0;
+	_xV = _yV = 0;
+	_rect = Rect(40, 0, 280, 150);
+}
+
+void Scene2900::Obj1::load(int resNum) {
+	byte *data = g_resourceManager->getResource(RES_BITMAP, resNum, 9999);
+
+	_resNum = resNum;
+	_xV = _yV = 0;
+	_width = READ_LE_UINT16(data);
+	_height = READ_LE_UINT16(data + 2);
+
+	DEALLOCATE(data);
+}
+
+Common::Point Scene2900::Obj1::setPosition(const Common::Point &pos, int v3) {
+	Rect rect2;
+	Rect blockRect(0, 0, 160, 100);
+	int xHalfCount = _width / 160;
+	int yHalfCount = _height / 100;
+	Common::Point p = pos;
+
+	if (p.x >= 0) {
+		int xRight = p.x + _rect.width();
+		if (xRight > _width) {
+			p.x = _width - _rect.width();
+		}
+	} else {
+		p.x = 0;
+	}
+
+	if (p.y >= 0) {
+		int yBottom = p.y + _rect.height();
+		if (yBottom > _height) {
+			p.y = _height - _rect.height();
+		}
+	} else {
+		p.y = 0;
+	}
+
+	if ((p.x != 0 || p.y != 0) && !v3) {
+		rect2 = _rect;
+		moveArea(rect2, _xV - p.x, _yV - p.y);
+	}
+
+	_xV = p.x;
+	_yV = p.y;
+	Rect rect3 = _rect;
+	rect3.translate(_xV - _rect.left, _yV - _rect.top);
+	int rlbNum = 0;
+
+	for (int xCtr = 0; xCtr < xHalfCount; ++xCtr) {
+		for (int yCtr = 0; yCtr < yHalfCount; ++yCtr) {
+			blockRect.moveTo(160 * xCtr, 100 * yCtr);
+			if (blockRect.intersects(rect3)) {
+				blockRect.translate(_rect.left - _xV, _rect.top - _yV);
+				byte *data = g_resourceManager->getResource(RES_BITMAP, _resNum, rlbNum);
+
+				draw(data, blockRect.left, blockRect.top, _rect, rect2);
+
+				DEALLOCATE(data);
+			}
+		}
+	}
+
+	return Common::Point(_xV, _yV);
+}
+
+void Scene2900::Obj1::synchronize(Serializer &s) {
+	s.syncAsUint16LE(_width);
+	s.syncAsUint16LE(_height);
+	s.syncAsSint16LE(_xV);
+	s.syncAsSint16LE(_yV);
+	_rect.synchronize(s);
+}
+
+int Scene2900::Obj1::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
+	if (r2.contains(r1))
+		return 0;
+	if (!r2.intersects(r1))
+		return 1;
+
+	if (r1.top >= r2.top && r1.bottom <= r2.bottom) {
+		if (r1.left >= r2.left && r1.left < r2.right) {
+			r1.left = r2.right - 1;
+			return 1;
+		}
+		if (r1.right > r2.left && r1.right <= r2.right) {
+			r1.right = r2.left + 1;
+			return 1;
+		}
+	}
+
+	if (r1.left < r2.left || r1.right > r2.right)
+		return -1;
+
+	if (r1.top >= r2.top && r1.top < r2.bottom) {
+		r1.top = r2.bottom - 1;
+		return 1;
+	}
+	if (r1.bottom > r2.top && r1.bottom <= r2.bottom) {
+		r1.bottom = r2.top + 1;
+		return 1;
+	}
+
+	return -1;
+}
+
+void Scene2900::Obj1::draw(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2) {
+	Rect blockRect(xp, yp, xp + 160, yp + 100);
+	const byte *src = data;
+
+	if (blockRect.intersects(r1)) {
+		blockRect.clip(r1);
+
+		if (adjustRect(blockRect, r2) != 0) {
+			int width = blockRect.width();
+			int height = blockRect.height();
+
+			GfxSurface &surface = R2_GLOBALS.gfxManager().getSurface();
+			Graphics::Surface s = surface.lockSurface();
+
+			for (int yCtr = 0; yCtr < height; ++yCtr, src += 160) {
+				byte *destP = (byte *)s.getBasePtr(blockRect.left, blockRect.top + yCtr);
+				Common::copy(src, src + width, destP);
+			}
+
+			surface.unlockSurface();
+			surface.addDirtyRect(blockRect);
+		}
+	}
+}
+
+void Scene2900::Obj1::moveArea(Rect &r, int xAmt, int yAmt) {
+	Rect tempRect = r;
+	tempRect.translate(xAmt, yAmt);
+	int xpSrc, xpDest, width;
+	int ypSrc, ypDest, height;
+
+	if (tempRect.intersects(r)) {
+		if (xAmt >= 0) {
+			xpSrc = tempRect.left;
+			width = tempRect.width() - xAmt;
+			xpDest = tempRect.left + xAmt;
+		} else {
+			xpSrc = tempRect.left - xAmt;
+			width = tempRect.width() + xAmt;
+			xpDest = tempRect.left;
+		}
+
+		if (yAmt > 0) {
+			height = tempRect.height() - yAmt;
+			ypDest = tempRect.top + yAmt + (height - 1);
+			ypSrc = tempRect.top + (height - 1);
+
+			for (int yCtr = 0; yCtr < height; ++yCtr, --ypSrc, --ypDest) {
+				moveLine(xpSrc, ypSrc, xpDest, ypDest, width);
+			}
+		} else {
+			ypSrc = tempRect.top - yAmt;
+			height = tempRect.height() + yAmt;
+			ypDest = tempRect.top;
+
+			for (int yCtr = 0; yCtr < height; ++yCtr, ++ypSrc, ++ypDest) {
+				moveLine(xpSrc, ypSrc, xpDest, ypDest, width);
+			}
+		}
+	} else {
+		r = Rect(0, 0, 0, 0);
+	}
+}
+
+void Scene2900::Obj1::moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width) {
+	byte buffer[SCREEN_WIDTH];
+	assert(width <= SCREEN_WIDTH);
+
+	GfxSurface &surface = R2_GLOBALS.gfxManager().getSurface();
+	Graphics::Surface s = surface.lockSurface();
+
+	byte *srcP = (byte *)s.getBasePtr(xpSrc, ypSrc);
+	byte *destP = (byte *)s.getBasePtr(xpDest, ypDest);
+	Common::copy(srcP, srcP + width, &buffer[0]);
+	Common::copy(&buffer[0], &buffer[width], destP);
+
+	surface.unlockSurface();
+}
+
+
+/*------------------------------------------------------------------------*/
+
+Scene2900::Scene2900(): SceneExt() {
+	_field412 = 0;
+	_field414 = 0;
+	_field416 = 0;
+	_offsetPos = Common::Point(550, 550);
+	_field41C = 0;
+	_field41E = 0;
+	_pos = Common::Point(160, 100);
+	_field424 = 0;
+	_field425 = 100;
+	_field426 = 100;
+	_field427 = 0;
+	_field8F8 = 0;
+}
+
+void Scene2900::synchronize(Serializer &s) {
+	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_field414);
+	s.syncAsSint16LE(_field416);
+	s.syncAsSint16LE(_field41C);
+	s.syncAsSint16LE(_field41E);
+	s.syncAsSint16LE(_offsetPos.x);
+	s.syncAsSint16LE(_offsetPos.y);
+	s.syncAsSint16LE(_pos.x);
+	s.syncAsSint16LE(_pos.y);
+	s.syncAsSint16LE(_field424);
+	s.syncAsSint16LE(_field425);
+	s.syncAsSint16LE(_field426);
+	s.syncAsSint16LE(_field427);
+	s.syncAsSint16LE(_field8F8);
+
+	_obj1.synchronize(s);
+}
+
+void Scene2900::postInit(SceneObjectList *OwnerList) {
+	R2_GLOBALS._uiElements._active = false;
+	// TODO: Determine correct colours
+	R2_GLOBALS._gfxColors.foreground = 220;
+	R2_GLOBALS._fontColors.background = 12;
+	R2_GLOBALS._fontColors.foreground = 22;
+	_obj1.load(2950);
+
+	loadScene(2900);
+	SceneExt::postInit();
+
+	_object1.setup2(2900, 6, 1, 22, 0, 25, 0);
+	_object2.setup2(2900, 6, 1, 280, 0, 25, 0);
+	_object3.setup2(2900, 1, 3, 228, 199, 25, 0);
+	
+	_object4.postInit();
+	_object4.setVisage(2900);
+	_object4.setStrip(2);
+	_object4.setFrame(1);
+	_object4.fixPriority(10);
+
+	_object6.postInit();
+	_object6.setVisage(2900);
+	_object6.setStrip(1);
+	_object6.setFrame(1);
+	_object6.setPosition(Common::Point(209, 199));
+	_object6.fixPriority(200);
+	
+	_object5.postInit();
+	_object5.setVisage(2900);
+	_object5.setStrip(1);
+	_object5.setFrame(2);
+	_object5.setPosition(Common::Point(247, 199));
+	_object5.fixPriority(200);
+
+	_item1.setDetails(Rect(0, 0, 320, 150), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
+	_item2.setDetails(Rect(0, 150, 320, 200), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
+	_item3.setDetails(Rect(42, 164, 129, 190), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
+	_item4.setDetails(Rect(165, 160, 228, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
+	_item5.setDetails(Rect(228, 160, 285, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
+
+	setAction(&_action1);
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.setVisage(2900);
+	R2_GLOBALS._player.setStrip2(3);
+	R2_GLOBALS._player.setFrame2(1);
+	R2_GLOBALS._player.fixPriority(15);
+	R2_GLOBALS._player._moveDiff = Common::Point(2, 2);
+	R2_GLOBALS._player.disableControl();
+
+	if (R2_GLOBALS._sceneManager._previousScene == 2350 && 
+			R2_GLOBALS._balloonPosition.x == 0 && R2_GLOBALS._balloonPosition.y == 0) {
+		R2_GLOBALS._v56A99 = 5;
+		_obj1.setPosition(Common::Point(R2_GLOBALS._balloonPosition.x - 120,
+			R2_GLOBALS._balloonPosition.y - 100));
+		_sceneMode = 10;
+
+		R2_GLOBALS._player.changeZoom(100);
+		R2_GLOBALS._player.setPosition(Common::Point(160, 180));
+		ADD_PLAYER_MOVER(160, 100);
+
+		_object4.setPosition(Common::Point(9, 189));
+	} else {
+		_offsetPos.x = R2_GLOBALS._balloonPosition.x + 120;
+		_offsetPos.y = R2_GLOBALS._balloonPosition.y + 100;
+
+		if ((R2_GLOBALS._v56A99 % 8) == 0)
+			_offsetPos.x -= 70;
+		else if ((R2_GLOBALS._v56A99 % 8) == 7)
+			_offsetPos.x += 70;
+		
+		if (_offsetPos.x <= 120)
+			_pos.x = _offsetPos.x + 40;
+		else if (_offsetPos.x >= 680)
+			_pos.x = _offsetPos.x - 520;
+
+		if ((R2_GLOBALS._v56A99 / 6) == 5)
+			_offsetPos.y -= 50;
+		if (_offsetPos.y <= 100)
+			_pos.y = _offsetPos.y;
+
+		_field425 = _field426 = 100 - (R2_GLOBALS._v56A99 / 48) * 25;
+		_obj1.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
+		_sceneMode = 11;
+
+		R2_GLOBALS._player.changeZoom(_field425);
+		R2_GLOBALS._player.setPosition(_pos);
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player._canWalk = false;
+
+		_object4.setPosition(Common::Point(109 - _field425, 189));
+	}
+
+	R2_GLOBALS._sound1.play(211);
+}
+
+void Scene2900::remove() {
+	// TODO: Figure out correct colours
+	R2_GLOBALS._gfxColors.foreground = 59;
+	R2_GLOBALS._fontColors.background = 4;
+	R2_GLOBALS._fontColors.foreground = 15;
+
+	R2_GLOBALS._scenePalette.loadPalette(0);
+	R2_GLOBALS._scenePalette.setEntry(255, 255, 255, 255);
+
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	R2_GLOBALS._sound2.stop();
+
+	SceneExt::remove();
+}
+
+void Scene2900::signal() {
+	switch (_sceneMode) {
+	case 10:
+		_sceneMode = 11;
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	case 12:
+		R2_GLOBALS._sceneManager.changeScene(2600);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene2900::dispatch() {
+	if (_sceneMode == 11) {
+		_offsetPos.x += balloonData[R2_GLOBALS._v56A99].x;
+		_offsetPos.y += balloonData[R2_GLOBALS._v56A99].y;
+		_field41C = balloonData[R2_GLOBALS._v56A99].v3;
+
+		if (_field41C == 0) {
+			_field416 = 0;
+		} else {
+			_field416 = 1;
+			_field414 = 0;
+			_field41C += R2_GLOBALS._v56A99 / 48;
+			_field426 = 100 - (_field41C * 25);
+		}
+
+		if (_field425 == _field426) {
+			_field416 = 0;
+		} else {
+			if (_field416 == 0) {
+				_field425 = _field425 - _field41E;
+			} else {
+				_field425 = _field425 - _field41C;
+			}
+
+			if (_field41C == -1 || _field41E == -1) {
+				if (_object4._frame == 1) {
+					_object4.setFrame2(10);
+				} else {
+					_object4.setFrame2(_object4._frame - 1);
+				}
+			} else if (_field41C == -1 || _field41E == 1) {
+				if (_object4._frame == 10)
+					_object4.setFrame2(1);
+				else
+					_object4.setFrame2(_object4._frame + 1);
+			}
+
+			_object4.setPosition(Common::Point(109 - _field425, 189));
+			R2_GLOBALS._player.changeZoom(_field425);
+		}
+
+		if (_field8F8 == 0) {
+			R2_GLOBALS._scenePalette.loadPalette(2950);
+			R2_GLOBALS._scenePalette.refresh();
+		}
+
+		// TODO: Verify param 3
+		R2_GLOBALS._balloonPosition = _obj1.setPosition(Common::Point(_offsetPos.x - 120, 
+			_offsetPos.y - 100), _field8F8 + (_field8F8 ? 1 : 0));
+		_field8F8 = 1;
+
+		if (_offsetPos.x <= 120)
+			_pos.x = _offsetPos.x + 40;
+		else if (_offsetPos.x >= 680)
+			_pos.x = _offsetPos.x - 520;
+
+		if (_offsetPos.y <= 100)
+			_pos.y = _offsetPos.y;
+
+		R2_GLOBALS._player.setPosition(_pos);
+
+		if ((_offsetPos.y % 100) == 50 && _field416 == 0) {
+			_field424 = R2_GLOBALS._v56A99;
+			if (_field414 != 0) {
+				_field424 += _field41E * 48;
+				_field414 = 0;
+			}
+
+			if (balloonData[R2_GLOBALS._v56A99].x > 0) {
+				++_field424;
+			} else if (balloonData[R2_GLOBALS._v56A99].x < 0) {
+				--_field424;
+			}
+
+			if (balloonData[R2_GLOBALS._v56A99].y > 0) {
+				_field424 += 240;
+			} else if (balloonData[R2_GLOBALS._v56A99].x < 0) {
+				_field424 += 8;
+			}
+
+			if (balloonData[R2_GLOBALS._v56A99].v3 > 0) {
+				_field424 += 48;
+			} else if (balloonData[R2_GLOBALS._v56A99].v3 < 0) {
+				_field424 += 208;
+			}
+
+			R2_GLOBALS._v56A99 = _field424;
+			if (R2_GLOBALS._v56A99 == 189) {
+				_sceneMode = 12;
+				R2_GLOBALS._player.disableControl();
+
+				ADD_MOVER(R2_GLOBALS._player, 160, -10);
+			}
+		}
+	}
+
+	Scene::dispatch();
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

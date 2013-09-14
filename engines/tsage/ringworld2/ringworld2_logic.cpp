@@ -224,7 +224,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Exiting Forest
 		return new Scene2800();
 	case 2900:
-		error("Missing scene %d from group 2", sceneNumber);
+		// Balloon Cutscene
 	/* Scene group #3 */
 	// ARM Base Hanager
 	case 3100:

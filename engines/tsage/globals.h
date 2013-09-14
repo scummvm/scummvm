@@ -302,6 +302,8 @@ public:
 	byte _scannerFrequencies[4];
 	byte _stripManager_lookupList[12];
 	byte _scene1550JunkLocations[508];
+	Common::Point _balloonPosition;
+
 	ScannerDialog *_scannerDialog;
 
 	Ringworld2Globals();

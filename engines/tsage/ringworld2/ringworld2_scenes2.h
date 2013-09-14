@@ -667,6 +667,93 @@ public:
 	virtual void signal();
 };
 
+class Scene2900 : public SceneExt {
+	/* Items */
+	class Item1 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item2 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item3 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item4 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item5 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+
+	/* Custom classes */
+	class Obj1 {
+	private:
+		void moveArea(Rect &r, int xAmt, int yAmt);
+		void moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width);
+	public:
+		int _width, _height;
+		int _field4;
+		int _field6;
+		int _field8;
+		int _fieldA;
+		int _resNum;
+		int _xV, _yV;
+		Rect _rect;
+
+		Obj1();
+		void load(int resNum);
+		Common::Point setPosition(const Common::Point &pos, int v3 = 0);
+		void synchronize(Serializer &s);
+		int adjustRect(Common::Rect &r1, const Common::Rect &r2);
+		void draw(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
+	};
+public:
+	BackgroundSceneObject _object1;
+	BackgroundSceneObject _object2;
+	BackgroundSceneObject _object3;
+	SceneObject _object4;
+	SceneObject _object5;
+	SceneObject _object6;
+	Item1 _item1;
+	Item2 _item2;
+	Item3 _item3;
+	Item4 _item4;
+	Item5 _item5;
+	Action1 _action1;
+	Obj1 _obj1;
+
+	int _field412;
+	int _field414;
+	int _field416;
+	int _field41C;
+	int _field41E;
+	Common::Point _offsetPos;
+	Common::Point _pos;
+	int _field424;
+	int _field425;
+	int _field426;
+	int _field427;
+	int _field8F8;
+
+	Scene2900();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
