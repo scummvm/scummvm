@@ -270,8 +270,9 @@ void Visa::talkTo(byte whom) {
 		_vm->_gyro->_talkedToCrapulus = true;
 		_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = 177; // Crapulus walks off.
 
-		_vm->_animation->_sprites[1]._vanishIfStill = true;
-		_vm->_animation->_sprites[1].walkTo(3); // Walks away.
+		AnimationType *spr = &_vm->_animation->_sprites[1];
+		spr->_vanishIfStill = true;
+		spr->walkTo(3); // Walks away.
 
 		_vm->_lucerna->incScore(2);
 	}
