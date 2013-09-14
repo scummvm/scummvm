@@ -170,7 +170,7 @@ void Scrolls::scrollModeNormal() {
 					easteregg();
 			}
 			oktoexit = set::of('\15', '\33', '+', '#', eos).has(inchar);
-			if (! oktoexit)  errorled();
+			if (!oktoexit)  errorled();
 		}
 
 	} while (!((oktoexit) || (mrelease > 0)));
