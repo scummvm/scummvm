@@ -697,12 +697,12 @@ class Scene2900 : public SceneExt {
 	};
 
 	/* Custom classes */
-	class Obj1 {
+	class Map {
 	private:
 		void moveArea(Rect &r, int xAmt, int yAmt);
 		void moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width);
 	public:
-		int _width, _height;
+		int _mapWidth, _mapHeight;
 		int _field4;
 		int _field6;
 		int _field8;
@@ -711,16 +711,16 @@ class Scene2900 : public SceneExt {
 		int _xV, _yV;
 		Rect _rect;
 
-		Obj1();
+		Map();
 		void load(int resNum);
 		Common::Point setPosition(const Common::Point &pos, int v3 = 0);
 		void synchronize(Serializer &s);
 		int adjustRect(Common::Rect &r1, const Common::Rect &r2);
-		void draw(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
+		void drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
 	};
 public:
-	BackgroundSceneObject _object1;
-	BackgroundSceneObject _object2;
+	BackgroundSceneObject _leftEdge;
+	BackgroundSceneObject _rightEdge;
 	BackgroundSceneObject _object3;
 	SceneObject _object4;
 	SceneObject _object5;
@@ -731,7 +731,7 @@ public:
 	Item4 _item4;
 	Item5 _item5;
 	Action1 _action1;
-	Obj1 _obj1;
+	Map _map;
 
 	int _field412;
 	int _field414;

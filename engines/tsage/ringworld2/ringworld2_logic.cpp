@@ -225,6 +225,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		return new Scene2800();
 	case 2900:
 		// Balloon Cutscene
+		return new Scene2900();
+
 	/* Scene group #3 */
 	// ARM Base Hanager
 	case 3100:

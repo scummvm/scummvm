@@ -575,7 +575,6 @@ public:
 	int getRegionIndex();
 	int checkRegion(const Common::Point &pt);
 	void animate(AnimateMode animMode, ...);
-	SceneObject *clone() const;
 	void checkAngle(const SceneObject *obj);
 	void checkAngle(const Common::Point &pt);
 	void hide();
@@ -602,6 +601,7 @@ public:
 	virtual void changeAngle(int angle);
 	// New methods introduced by Ringworld 2
 	virtual void copy(SceneObject *src);
+	virtual SceneObject *clone() const;
 
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 	void setup(int visage, int stripFrameNum, int frameNum);
@@ -612,6 +612,8 @@ public:
 	virtual Common::String getClassName() { return "BackgroundSceneObject"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
+	virtual SceneObject *clone() const;
+
 	void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10);
 	static void copySceneToBackground();
 };

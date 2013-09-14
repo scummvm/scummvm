@@ -4696,8 +4696,8 @@ void Scene2900::Action1::signal() {
 
 /*------------------------------------------------------------------------*/
 
-Scene2900::Obj1::Obj1() {
-	_width = _height = 0;
+Scene2900::Map::Map() {
+	_mapWidth = _mapHeight = 0;
 	_field4 = 0;
 	_field6 = 0;
 	_field8 = 0;
@@ -4707,28 +4707,28 @@ Scene2900::Obj1::Obj1() {
 	_rect = Rect(40, 0, 280, 150);
 }
 
-void Scene2900::Obj1::load(int resNum) {
+void Scene2900::Map::load(int resNum) {
 	byte *data = g_resourceManager->getResource(RES_BITMAP, resNum, 9999);
 
 	_resNum = resNum;
 	_xV = _yV = 0;
-	_width = READ_LE_UINT16(data);
-	_height = READ_LE_UINT16(data + 2);
+	_mapWidth = READ_LE_UINT16(data);
+	_mapHeight = READ_LE_UINT16(data + 2);
 
 	DEALLOCATE(data);
 }
 
-Common::Point Scene2900::Obj1::setPosition(const Common::Point &pos, int v3) {
+Common::Point Scene2900::Map::setPosition(const Common::Point &pos, int v3) {
 	Rect rect2;
 	Rect blockRect(0, 0, 160, 100);
-	int xHalfCount = _width / 160;
-	int yHalfCount = _height / 100;
+	int xHalfCount = _mapWidth / 160;
+	int yHalfCount = _mapHeight / 100;
 	Common::Point p = pos;
 
 	if (p.x >= 0) {
 		int xRight = p.x + _rect.width();
-		if (xRight > _width) {
-			p.x = _width - _rect.width();
+		if (xRight > _mapWidth) {
+			p.x = _mapWidth - _rect.width();
 		}
 	} else {
 		p.x = 0;
@@ -4736,8 +4736,8 @@ Common::Point Scene2900::Obj1::setPosition(const Common::Point &pos, int v3) {
 
 	if (p.y >= 0) {
 		int yBottom = p.y + _rect.height();
-		if (yBottom > _height) {
-			p.y = _height - _rect.height();
+		if (yBottom > _mapHeight) {
+			p.y = _mapHeight - _rect.height();
 		}
 	} else {
 		p.y = 0;
@@ -4750,18 +4750,19 @@ Common::Point Scene2900::Obj1::setPosition(const Common::Point &pos, int v3) {
 
 	_xV = p.x;
 	_yV = p.y;
-	Rect rect3 = _rect;
-	rect3.translate(_xV - _rect.left, _yV - _rect.top);
+	Rect screenRect = _rect;
+	screenRect.translate(_xV - _rect.left, _yV - _rect.top);
 	int rlbNum = 0;
 
 	for (int xCtr = 0; xCtr < xHalfCount; ++xCtr) {
-		for (int yCtr = 0; yCtr < yHalfCount; ++yCtr) {
+		for (int yCtr = 0; yCtr < yHalfCount; ++yCtr, ++rlbNum) {
 			blockRect.moveTo(160 * xCtr, 100 * yCtr);
-			if (blockRect.intersects(rect3)) {
+			if (blockRect.intersects(screenRect)) {
+				// The block of the map is at least partially on-screen, so needs drawing
 				blockRect.translate(_rect.left - _xV, _rect.top - _yV);
 				byte *data = g_resourceManager->getResource(RES_BITMAP, _resNum, rlbNum);
 
-				draw(data, blockRect.left, blockRect.top, _rect, rect2);
+				drawBlock(data, blockRect.left, blockRect.top, _rect, rect2);
 
 				DEALLOCATE(data);
 			}
@@ -4771,15 +4772,15 @@ Common::Point Scene2900::Obj1::setPosition(const Common::Point &pos, int v3) {
 	return Common::Point(_xV, _yV);
 }
 
-void Scene2900::Obj1::synchronize(Serializer &s) {
-	s.syncAsUint16LE(_width);
-	s.syncAsUint16LE(_height);
+void Scene2900::Map::synchronize(Serializer &s) {
+	s.syncAsUint16LE(_mapWidth);
+	s.syncAsUint16LE(_mapHeight);
 	s.syncAsSint16LE(_xV);
 	s.syncAsSint16LE(_yV);
 	_rect.synchronize(s);
 }
 
-int Scene2900::Obj1::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
+int Scene2900::Map::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
 	if (r2.contains(r1))
 		return 0;
 	if (!r2.intersects(r1))
@@ -4811,7 +4812,7 @@ int Scene2900::Obj1::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
 	return -1;
 }
 
-void Scene2900::Obj1::draw(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2) {
+void Scene2900::Map::drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2) {
 	Rect blockRect(xp, yp, xp + 160, yp + 100);
 	const byte *src = data;
 
@@ -4821,6 +4822,7 @@ void Scene2900::Obj1::draw(const byte *data, int xp, int yp, const Rect &r1, con
 		if (adjustRect(blockRect, r2) != 0) {
 			int width = blockRect.width();
 			int height = blockRect.height();
+			src += (blockRect.top - yp) * 160 + blockRect.left - xp;
 
 			GfxSurface &surface = R2_GLOBALS.gfxManager().getSurface();
 			Graphics::Surface s = surface.lockSurface();
@@ -4836,7 +4838,7 @@ void Scene2900::Obj1::draw(const byte *data, int xp, int yp, const Rect &r1, con
 	}
 }
 
-void Scene2900::Obj1::moveArea(Rect &r, int xAmt, int yAmt) {
+void Scene2900::Map::moveArea(Rect &r, int xAmt, int yAmt) {
 	Rect tempRect = r;
 	tempRect.translate(xAmt, yAmt);
 	int xpSrc, xpDest, width;
@@ -4875,7 +4877,7 @@ void Scene2900::Obj1::moveArea(Rect &r, int xAmt, int yAmt) {
 	}
 }
 
-void Scene2900::Obj1::moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width) {
+void Scene2900::Map::moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width) {
 	byte buffer[SCREEN_WIDTH];
 	assert(width <= SCREEN_WIDTH);
 
@@ -4924,22 +4926,23 @@ void Scene2900::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field427);
 	s.syncAsSint16LE(_field8F8);
 
-	_obj1.synchronize(s);
+	_map.synchronize(s);
 }
 
 void Scene2900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._uiElements._active = false;
 	// TODO: Determine correct colours
-	R2_GLOBALS._gfxColors.foreground = 220;
+	R2_GLOBALS._gfxColors.foreground = 228;
 	R2_GLOBALS._fontColors.background = 12;
 	R2_GLOBALS._fontColors.foreground = 22;
-	_obj1.load(2950);
+	
+	_map.load(2950);
 
 	loadScene(2900);
 	SceneExt::postInit();
 
-	_object1.setup2(2900, 6, 1, 22, 0, 25, 0);
-	_object2.setup2(2900, 6, 1, 280, 0, 25, 0);
+	_leftEdge.setup2(2900, 6, 1, 22, 0, 25, 0);
+	_rightEdge.setup2(2900, 6, 1, 280, 0, 25, 0);
 	_object3.setup2(2900, 1, 3, 228, 199, 25, 0);
 	
 	_object4.postInit();
@@ -4980,8 +4983,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == 2350 && 
 			R2_GLOBALS._balloonPosition.x == 0 && R2_GLOBALS._balloonPosition.y == 0) {
 		R2_GLOBALS._v56A99 = 5;
-		_obj1.setPosition(Common::Point(R2_GLOBALS._balloonPosition.x - 120,
-			R2_GLOBALS._balloonPosition.y - 100));
+		_map.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
 		_sceneMode = 10;
 
 		R2_GLOBALS._player.changeZoom(100);
@@ -5009,7 +5011,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 			_pos.y = _offsetPos.y;
 
 		_field425 = _field426 = 100 - (R2_GLOBALS._v56A99 / 48) * 25;
-		_obj1.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
+		_map.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
 		_sceneMode = 11;
 
 		R2_GLOBALS._player.changeZoom(_field425);
@@ -5100,8 +5102,9 @@ void Scene2900::dispatch() {
 		}
 
 		// TODO: Verify param 3
-		R2_GLOBALS._balloonPosition = _obj1.setPosition(Common::Point(_offsetPos.x - 120, 
-			_offsetPos.y - 100), _field8F8 + (_field8F8 ? 1 : 0));
+		R2_GLOBALS._balloonPosition = _map.setPosition(
+			Common::Point(_offsetPos.x - 120, _offsetPos.y - 100), 
+			_field8F8 + (_field8F8 ? 1 : 0));
 		_field8F8 = 1;
 
 		if (_offsetPos.x <= 120)

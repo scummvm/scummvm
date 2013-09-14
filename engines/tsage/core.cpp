@@ -2757,13 +2757,29 @@ void BackgroundSceneObject::draw() {
 	g_globals->_sceneManager._scene->_backSurface.copyFrom(frame, destRect, priorityRegion);
 }
 
-void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10) {
-	warning("TODO: Implement properly BackgroundSceneObject::setup2()");
+SceneObject *BackgroundSceneObject::clone() const {
+	BackgroundSceneObject *obj = new BackgroundSceneObject(*this);
+	return obj;
+}
+
+void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int effect) {
+	// Check if the given object is already in the background object list
+	if (R2_GLOBALS._sceneManager._scene->_bgSceneObjects.contains(this)) {
+		_flags |= OBJFLAG_REMOVE;
+
+		// Clone the item
+		SceneObject *obj = clone();
+		obj->_flags |= OBJFLAG_CLONED;
+		R2_GLOBALS._sceneManager._scene->_bgSceneObjects.push_back(obj);
+
+		_flags |= ~OBJFLAG_REMOVE;
+	}
+
 	postInit();
 	setVisage(visage);
 	setStrip(stripFrameNum);
 	setFrame(frameNum);
-	setPosition(Common::Point(posX, posY), 0);
+	setPosition(Common::Point(posX, posY));
 	fixPriority(priority);
 }
 
