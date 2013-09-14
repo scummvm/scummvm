@@ -182,7 +182,10 @@ void BioChipRightWindow::onPaint() {
 		bitmapResID = (_status == 0) ? 10 : 11;
 		break;
 	case kItemBioChipInterface:
-		bitmapResID = (_status == 0) ? 12 : 13;
+		if (_vm->isDemo())
+			bitmapResID = (_status == 0) ? IDB_BCR_INTERFACE_MENU : IDB_BCR_INTERFACE_EXIT;
+		else
+			bitmapResID = (_status == 0) ? 12 : 13;
 		break;
 	case kItemBioChipJump:
 		// TODO
@@ -194,7 +197,10 @@ void BioChipRightWindow::onPaint() {
 	}
 
 	if (bitmapResID >= 0) {
-		Graphics::Surface *bitmap = _vm->_gfx->getBitmap(IDB_BCR_BITMAP_BASE + bitmapResID);
+		if (!_vm->isDemo())
+			bitmapResID += IDB_BCR_BITMAP_BASE;
+
+		Graphics::Surface *bitmap = _vm->_gfx->getBitmap(bitmapResID);
 		Common::Rect absoluteRect = getAbsoluteRect();
 		_vm->_gfx->blit(bitmap, absoluteRect.left, absoluteRect.top);
 		bitmap->free();

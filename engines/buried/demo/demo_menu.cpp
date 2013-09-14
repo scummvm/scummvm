@@ -153,8 +153,12 @@ void DemoMainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		}
 		return;
 	case BUTTON_INTERACTIVE:
-		// TODO
-		break;
+		if (_interactive.contains(point)) {
+			_vm->_sound->setAmbientSound();
+			// TODO: Reviewer mode check (control)
+			((FrameWindow *)_parent)->startNewGame();
+		}
+		return;
 	case BUTTON_GALLERY:
 		if (_gallery.contains(point)) {
 			_vm->_sound->setAmbientSound();
