@@ -83,10 +83,11 @@ namespace Buried {
 static const BuriedGameDescription gameDescriptions[] = {
 	// Windows 3.11 8BPP
 	// Installed
+	// v1.01
 	{
 		{
 			"buried",
-			"8BPP",
+			"v1.01 8BPP",
 			{
 				{ "BIT816.EXE",  0, "57a14461c77d9c77534bd418043db1ec", 1163776 },
 				{ "BIT8LIB.DLL", 0, "31bcd9e5cc32df00b09ce626e6d9106e", 2420480 },
@@ -101,10 +102,11 @@ static const BuriedGameDescription gameDescriptions[] = {
 
 	// Windows 3.11 24BPP
 	// Installed
+	// v1.01
 	{
 		{
 			"buried",
-			"24BPP",
+			"v1.01 24BPP",
 			{
 				{ "BIT2416.EXE",  0, "dcbfb3f2916ad902043942fc00d2017f", 1159680 },
 				{ "BIT24LIB.DLL", 0, "74ac9dae92f415fea8cdbd220ba8795c", 5211648 },
@@ -119,10 +121,11 @@ static const BuriedGameDescription gameDescriptions[] = {
 
 	// Windows 3.11 8BPP
 	// Not Installed
+	// v1.01
 	{
 		{
 			"buried",
-			"8BPP",
+			"v1.01 8BPP",
 			{
 				{ "BIT816.EX_",  0, "166b44e53350c19bb25ef93d2c2b8f79", 364490 },
 				{ "BIT8LIB.DL_", 0, "8a345993f60f6bed7c17fa9e7f2bc37d", 908854 },
@@ -137,10 +140,11 @@ static const BuriedGameDescription gameDescriptions[] = {
 
 	// Windows 3.11 24BPP
 	// Not Installed
+	// v1.01
 	{
 		{
 			"buried",
-			"24BPP",
+			"v1.01 24BPP",
 			{
 				{ "BIT2416.EX_",  0, "a9ac76610ba614b59235a7d5e00e4a62", 361816 },
 				{ "BIT24LIB.DL_", 0, "00e6eedbcef824988fbb01a87ca8f7fd", 2269314 },
@@ -149,6 +153,42 @@ static const BuriedGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			GF_COMPRESSED | GF_TRUECOLOR,
+			GUIO0()
+		},
+	},
+
+	// Windows 95 8BPP
+	// v1.1
+	{
+		{
+			"buried",
+			"v1.1 8BPP",
+			{
+				{ "BIT832.EXE",  0, "f4f8007f49197ba40ea633eb113c0b6d", 1262592 },
+				{ "BIT8L32.DLL", 0, "addfef0420e1f41a7766ecc6baa58553", 2424832 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			GF_WIN95,
+			GUIO0()
+		},
+	},
+
+	// Windows 95 24BPP
+	// v1.1
+	{
+		{
+			"buried",
+			"v1.1 24BPP",
+			{
+				{ "BIT2432.EXE",  0, "4086a8200938eac3e72d238a84f65618", 1257472 },
+				{ "BIT24L32.DLL", 0, "198bfd476d5228c4a7a63c029cffadfc", 5216256 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			GF_TRUECOLOR | GF_WIN95,
 			GUIO0()
 		},
 	},

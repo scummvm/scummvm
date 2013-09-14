@@ -25,6 +25,7 @@
 
 namespace Common {
 class NEResources;
+class PEResources;
 class String;
 }
 
@@ -80,7 +81,22 @@ public:
 	bool load(const Common::String &fileName);
 };
 
-// TODO: PE stuff
+class DatabasePE : public Database {
+public:
+	DatabasePE();
+	~DatabasePE();
+
+	bool load(const Common::String &fileName);
+	void close();
+
+	Common::String loadString(uint32 stringID);
+	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
+	Graphics::WinCursorGroup *getCursorGroup(uint32 cursorGroupID);
+	Common::SeekableReadStream *getResourceStream(const Common::String &resourceType, uint32 resourceID);
+
+private:
+	Common::PEResources *_exe;
+};
 
 } // End of namespace Buried
 
