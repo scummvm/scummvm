@@ -32,6 +32,8 @@ namespace Neverhood {
 
 Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
+	DCmd_Register("checkresource",	WRAP_METHOD(Console, Cmd_CheckResource));
+	DCmd_Register("dumpresource",	WRAP_METHOD(Console, Cmd_DumpResource));
 	DCmd_Register("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
 	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
 	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
@@ -183,6 +185,53 @@ bool Console::Cmd_PlaySound(int argc, const char **argv) {
 			_vm->_system->delayMillis(10);
 		}
 		delete soundItem;
+	}
+
+	return true;
+}
+
+bool Console::Cmd_CheckResource(int argc, const char **argv) {
+	const char *resourceNames[] = { "unknown", "unknown", "bitmap", "palette", "animation", "data", "text", "sound", "music", "unknown", "video" };
+
+	if (argc < 2) {
+		DebugPrintf("Gets information about a resource\n");
+		DebugPrintf("Usage: %s <resource hash>\n", argv[0]);
+	} else {
+		uint32 resourceHash = strtol(argv[1], NULL, 0);
+		ResourceHandle handle;
+
+		_vm->_res->queryResource(resourceHash, handle);
+		if (!handle.isValid()) {
+			DebugPrintf("Invalid resource hash\n");
+		} else {
+			DebugPrintf("Resource type: %d (%s). Size: %d bytes\n", handle.type(), resourceNames[handle.type()], handle.size());
+		}
+	}
+
+	return true;
+}
+
+bool Console::Cmd_DumpResource(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("Dumps a resource to disk\n");
+		DebugPrintf("Usage: %s <resource hash> <output file>\n", argv[0]);
+	} else {
+		uint32 resourceHash = strtol(argv[1], NULL, 0);
+		const char *outFileName = argv[2];
+		ResourceHandle handle;
+
+		_vm->_res->queryResource(resourceHash, handle);
+		if (!handle.isValid()) {
+			DebugPrintf("Invalid resource hash\n");
+		} else {
+			_vm->_res->loadResource(handle);
+			Common::DumpFile outFile;
+			outFile.open(outFileName);
+			outFile.write(handle.data(), handle.size());
+			outFile.finalize();
+			outFile.close();
+			_vm->_res->unloadResource(handle);
+		}
 	}
 
 	return true;
