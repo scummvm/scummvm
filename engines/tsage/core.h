@@ -614,7 +614,7 @@ public:
 	virtual void draw();
 	virtual SceneObject *clone() const;
 
-	void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10);
+	void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int effect);
 	static void copySceneToBackground();
 };
 
