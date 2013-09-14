@@ -85,7 +85,7 @@ bool BioChipRightWindow::showBioChipMainView() {
 	// TODO: Destroy burned letter window
 	_vm->_sound->timerCallback();
 
-	// TODO: BioChip main view window
+	// TODO: BioChip main view window (child to scene view)
 	_vm->_sound->timerCallback();
 
 	return true;
