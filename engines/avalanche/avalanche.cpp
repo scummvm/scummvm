@@ -285,41 +285,43 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	if (sz.isLoading()) {
 		for (byte i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
-			if (_animation->_sprites[i]._quick)
-				_animation->_sprites[i].remove();
+			AnimationType *spr = &_animation->_sprites[i];
+			if (spr->_quick)
+				spr->remove();
 		}
 	}
 
 	for (byte i = 0; i < spriteNum; i++) {
-		sz.syncAsByte(_animation->_sprites[i]._id);
-		sz.syncAsByte(_animation->_sprites[i]._doCheck);
+		AnimationType *spr = &_animation->_sprites[i];
+		sz.syncAsByte(spr->_id);
+		sz.syncAsByte(spr->_doCheck);
 
 		if (sz.isLoading()) {
-			_animation->_sprites[i]._quick = true;
-			_animation->_sprites[i].init(_animation->_sprites[i]._id, _animation->_sprites[i]._doCheck, _animation);
+			spr->_quick = true;
+			spr->init(spr->_id, spr->_doCheck, _animation);
 		}
 
-		sz.syncAsByte(_animation->_sprites[i]._moveX);
-		sz.syncAsByte(_animation->_sprites[i]._moveY);
-		sz.syncAsByte(_animation->_sprites[i]._facingDir);
-		sz.syncAsByte(_animation->_sprites[i]._stepNum);
-		sz.syncAsByte(_animation->_sprites[i]._visible);
-		sz.syncAsByte(_animation->_sprites[i]._homing);
-		sz.syncAsByte(_animation->_sprites[i]._count);
-		sz.syncAsByte(_animation->_sprites[i]._info._xWidth);
-		sz.syncAsByte(_animation->_sprites[i]._speedX);
-		sz.syncAsByte(_animation->_sprites[i]._speedY);
-		sz.syncAsByte(_animation->_sprites[i]._animCount);
-		sz.syncAsSint16LE(_animation->_sprites[i]._homingX);
-		sz.syncAsSint16LE(_animation->_sprites[i]._homingY);
-		sz.syncAsByte(_animation->_sprites[i]._callEachStepFl);
-		sz.syncAsByte(_animation->_sprites[i]._eachStepProc);
-		sz.syncAsByte(_animation->_sprites[i]._vanishIfStill);
-		sz.syncAsSint16LE(_animation->_sprites[i]._x);
-		sz.syncAsSint16LE(_animation->_sprites[i]._y);
+		sz.syncAsByte(spr->_moveX);
+		sz.syncAsByte(spr->_moveY);
+		sz.syncAsByte(spr->_facingDir);
+		sz.syncAsByte(spr->_stepNum);
+		sz.syncAsByte(spr->_visible);
+		sz.syncAsByte(spr->_homing);
+		sz.syncAsByte(spr->_count);
+		sz.syncAsByte(spr->_info._xWidth);
+		sz.syncAsByte(spr->_speedX);
+		sz.syncAsByte(spr->_speedY);
+		sz.syncAsByte(spr->_animCount);
+		sz.syncAsSint16LE(spr->_homingX);
+		sz.syncAsSint16LE(spr->_homingY);
+		sz.syncAsByte(spr->_callEachStepFl);
+		sz.syncAsByte(spr->_eachStepProc);
+		sz.syncAsByte(spr->_vanishIfStill);
+		sz.syncAsSint16LE(spr->_x);
+		sz.syncAsSint16LE(spr->_y);
 
-		if (sz.isLoading() && _animation->_sprites[i]._visible)
-			_animation->_sprites[i].appear(_animation->_sprites[i]._x, _animation->_sprites[i]._y, _animation->_sprites[i]._facingDir);
+		if (sz.isLoading() && spr->_visible)
+			spr->appear(spr->_x, spr->_y, spr->_facingDir);
 	}
 
 	//groi = 177;
@@ -458,7 +460,8 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		Scrolls::kControlNewLine, expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
 	_scrolls->displayText(tmpStr);
 
-	if (_animation->_sprites[0]._quick && _animation->_sprites[0]._visible)
+	AnimationType *avvy = &_animation->_sprites[0];
+	if (avvy->_quick && avvy->_visible)
 		_animation->changeDirection(0, _animation->_direction); // We push Avvy in the right direction is he was moving.
 
 	return true;

@@ -1765,13 +1765,14 @@ void Acci::doThat() {
 						i = 3;
 					else
 						i = 0;
-					if (_vm->_animation->_sprites[0]._id != i) {
-						int16 x = _vm->_animation->_sprites[0]._x;
-						int16 y = _vm->_animation->_sprites[0]._y;
-						_vm->_animation->_sprites[0].remove();
-						_vm->_animation->_sprites[0].init(i, true, _vm->_animation);
-						_vm->_animation->_sprites[0].appear(x, y, Animation::kDirLeft);
-						_vm->_animation->_sprites[0]._visible = false;
+					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[0];
+					if (spr->_id != i) {
+						int16 x = spr->_x;
+						int16 y = spr->_y;
+						spr->remove();
+						spr->init(i, true, _vm->_animation);
+						spr->appear(x, y, Animation::kDirLeft);
+						spr->_visible = false;
 					}
 				}
 				break;
@@ -1900,11 +1901,12 @@ void Acci::doThat() {
 				if (_vm->_gyro->_whereIs[1] == 12)
 					_vm->_visa->displayScrollChain('q', 18);
 				else {
-					_vm->_animation->_sprites[1].init(1, false, _vm->_animation); // Avaricius
+					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[1];
+					spr->init(1, false, _vm->_animation); // Avaricius
 					_vm->_animation->appearPed(2, 4);
-					_vm->_animation->_sprites[1].walkTo(5);
-					_vm->_animation->_sprites[1]._callEachStepFl = true;
-					_vm->_animation->_sprites[1]._eachStepProc = Animation::kProcBackAndForth;
+					spr->walkTo(5);
+					spr->_callEachStepFl = true;
+					spr->_eachStepProc = Animation::kProcBackAndForth;
 					_vm->_gyro->_avariciusTalk = 14;
 					_vm->_timer->addTimer(177, Timer::kProcAvariciusTalks, Timer::kReasonAvariciusTalks);
 				}

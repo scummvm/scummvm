@@ -310,12 +310,14 @@ void Gyro::resetVariables() {
 
 void Gyro::newGame() {
 	for (byte i = 0; i < kMaxSprites; i++) {
-		if (_vm->_animation->_sprites[i]._quick)
-			_vm->_animation->_sprites[i].remove();
+		AnimationType *spr = &_vm->_animation->_sprites[i];
+		if (spr->_quick)
+			spr->remove();
 	}
 	// Deallocate sprite. Sorry, beta testers!
 
-	_vm->_animation->_sprites[0].init(0, true, _vm->_animation);
+	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	avvy->init(0, true, _vm->_animation);
 
 	_alive = true;
 	resetVariables();
@@ -338,7 +340,7 @@ void Gyro::newGame() {
 	_onToolbar = false;
 	_seeScroll = false;
 
-	_vm->_animation->_sprites[0].appear(300, 117, Animation::kDirRight); // Needed to initialize Avalot.
+	avvy->appear(300, 117, Animation::kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
 	_him = 254;
@@ -352,7 +354,7 @@ void Gyro::newGame() {
 	_enidFilename = "";
 
 	_vm->_lucerna->enterRoom(1, 1);
-	_vm->_animation->_sprites[0]._visible = false;
+	avvy->_visible = false;
 	_vm->_lucerna->drawScore();
 	_vm->_dropdown->setupMenu();
 	_vm->_lucerna->_clock.update();
