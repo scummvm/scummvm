@@ -56,6 +56,7 @@ class StaticPhase : public Picture {
 
   public:
 	StaticPhase();
+	virtual ~StaticPhase();
 
 	virtual bool load(MfcArchive &file);
 
@@ -74,6 +75,7 @@ class DynamicPhase : public StaticPhase {
   public:
 	DynamicPhase();
 	DynamicPhase(DynamicPhase *src, bool reverse);
+	virtual ~DynamicPhase();
 
 	virtual bool load(MfcArchive &file);
 
@@ -89,6 +91,7 @@ class Statics : public DynamicPhase {
   public:
 	Statics();
 	Statics(Statics *src, bool reverse);
+	virtual ~Statics();
 
 	virtual bool load(MfcArchive &file);
 	Statics *getStaticsById(int itemId);

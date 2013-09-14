@@ -1020,6 +1020,11 @@ Statics::Statics() {
 	_staticsName = 0;
 }
 
+Statics::~Statics() {
+	delete _picture;
+	free(_staticsName);
+}
+
 Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
 	_staticsId = src->_staticsId;
 
@@ -1603,6 +1608,10 @@ DynamicPhase::DynamicPhase() {
 	_someY = 0;
 }
 
+DynamicPhase::~DynamicPhase() {
+	delete _rect;
+}
+
 DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 	_field_7E = 0;
@@ -1696,6 +1705,10 @@ StaticPhase::StaticPhase() {
 	_countdown = 0;
 	_field_68 = 0;
 	_exCommand = 0;
+}
+
+StaticPhase::~StaticPhase() {
+	delete _exCommand;
 }
 
 bool StaticPhase::load(MfcArchive &file) {
