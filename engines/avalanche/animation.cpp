@@ -210,17 +210,18 @@ void AnimationType::walk() {
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
 		if ((tc != 255) & (!_anim->_vm->_gyro->_doingSpriteRun)) {
-			switch (_anim->_vm->_gyro->_magics[tc]._operation) {
+			MagicType *magic = &_anim->_vm->_gyro->_magics[tc];
+			switch (magic->_operation) {
 			case Gyro::kMagicExclaim:
 				bounce();
 				_anim->_mustExclaim = true;
-				_anim->_sayWhat = _anim->_vm->_gyro->_magics[tc]._data;
+				_anim->_sayWhat = magic->_data;
 				break;
 			case Gyro::kMagicBounce:
 				bounce();
 				break;
 			case Gyro::kMagicTransport:
-				_anim->flipRoom(_anim->_vm->_gyro->_magics[tc]._data >> 8, _anim->_vm->_gyro->_magics[tc]._data & 0xff);
+				_anim->flipRoom(magic->_data >> 8, magic->_data & 0xff);
 				break;
 			case Gyro::kMagicUnfinished: {
 				bounce();
@@ -229,10 +230,10 @@ void AnimationType::walk() {
 				}
 				break;
 			case Gyro::kMagicSpecial:
-				_anim->callSpecial(_anim->_vm->_gyro->_magics[tc]._data);
+				_anim->callSpecial(magic->_data);
 				break;
 			case Gyro::kMagicOpenDoor:
-				_anim->openDoor(_anim->_vm->_gyro->_magics[tc]._data >> 8, _anim->_vm->_gyro->_magics[tc]._data & 0xff, tc);
+				_anim->openDoor(magic->_data >> 8, magic->_data & 0xff, tc);
 				break;
 			}
 		}
