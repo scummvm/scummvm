@@ -105,6 +105,8 @@ public:
 
 	// Miscellaneous
 	void yield();
+	int getTransitionSpeed();
+	void setTransitionSpeed(int newSpeed);
 
 private:
 	Database *_library;

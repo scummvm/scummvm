@@ -352,4 +352,9 @@ void FrameWindow::onKillFocus(Window *newWindow) {
 	_controlDown = false;
 }
 
+void FrameWindow::setTransitionSpeed(int newSpeed) {
+	_transitionSpeed = newSpeed;
+	ConfMan.setInt(_vm->isDemo() ? "TransitionSpeed" : _vm->getString(IDS_INI_KEY_TRANS_SPEED), newSpeed);
+}
+
 } // End of namespace Buried
