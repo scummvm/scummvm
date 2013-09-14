@@ -60,6 +60,9 @@ public:
 	void onKillFocus(Window *newWindow);
 	void onSetFocus(Window *oldWindow);
 
+	int getTransitionSpeed() const { return _transitionSpeed; }
+	void setTransitionSpeed(int newSpeed);
+
 private:
 	Window *_mainChildWindow;
 	bool _controlDown;
