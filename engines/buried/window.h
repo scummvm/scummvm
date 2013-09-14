@@ -50,7 +50,6 @@ public:
 	virtual void onPaint() {}
 	virtual void onLButtonUp(const Common::Point &point, uint flags) {}
 	virtual void onLButtonDown(const Common::Point &point, uint flags) {}
-	virtual void onLButtonDoubleClick(const Common::Point &point, uint flags) {}
 	virtual void onMouseMove(const Common::Point &point, uint flags) {}
 	virtual void onMButtonUp(const Common::Point &point, uint flags) {}
 	virtual void onRButtonUp(const Common::Point &point, uint flags) {}

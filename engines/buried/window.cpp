@@ -91,9 +91,6 @@ void Window::sendMessage(Message *message) {
 	case kMessageTypeLButtonDown:
 		onLButtonDown(((LButtonDownMessage *)message)->getPoint(), ((LButtonDownMessage *)message)->getFlags());
 		break;
-	case kMessageTypeLButtonDoubleClick:
-		onLButtonDoubleClick(((LButtonDoubleClickMessage *)message)->getPoint(), ((LButtonDoubleClickMessage *)message)->getFlags());
-		break;
 	case kMessageTypeMButtonUp:
 		onMButtonUp(((MButtonUpMessage *)message)->getPoint(), ((MButtonUpMessage *)message)->getFlags());
 		break;
