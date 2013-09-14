@@ -262,13 +262,15 @@ void Lucerna::loadAlso(byte num) {
 	}
 
 	for (byte i = 0; i < 15; i++) {
-		_vm->_gyro->_magics[i]._operation = file.readByte();
-		_vm->_gyro->_magics[i]._data = file.readUint16LE();
+		MagicType *magic = &_vm->_gyro->_magics[i];
+		magic->_operation = file.readByte();
+		magic->_data = file.readUint16LE();
 	}
 
 	for (byte i = 0; i < 7; i++) {
-		_vm->_gyro->_portals[i]._operation = file.readByte();
-		_vm->_gyro->_portals[i]._data = file.readUint16LE();
+		MagicType *portal = &_vm->_gyro->_portals[i];
+		portal->_operation = file.readByte();
+		portal->_data = file.readUint16LE();
 	}
 
 	_vm->_gyro->_flags.clear();

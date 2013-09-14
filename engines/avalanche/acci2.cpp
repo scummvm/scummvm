@@ -1099,29 +1099,26 @@ void Acci::openDoor() {
 	if ((!_vm->_gyro->_userMovesAvvy) && (_vm->_gyro->_room != r__lusties))
 		return; // No doors can open if you can't move Avvy.
 
-	for (byte fv = 8; fv < 15; fv++) {
-		if (_vm->_animation->inField(fv + 1)) {
-			fv -= 8;
-
-			switch (_vm->_gyro->_portals[fv]._operation) {
+	for (byte i = 0; i < 7; i++) {
+		if (_vm->_animation->inField(i + 9)) {
+			MagicType *portal = &_vm->_gyro->_portals[i];
+			switch (portal->_operation) {
 			case Gyro::kMagicExclaim:
 				_vm->_animation->_sprites[0].bounce();
-				_vm->_visa->displayScrollChain('x', _vm->_gyro->_portals[fv]._data);
+				_vm->_visa->displayScrollChain('x', portal->_data);
 				break;
 			case Gyro::kMagicTransport:
-				_vm->_animation->flipRoom((_vm->_gyro->_portals[fv]._data) >> 8,  // High byte
-					                 (_vm->_gyro->_portals[fv]._data) & 0x0F // Low byte
-									 );
+				_vm->_animation->flipRoom((portal->_data) >> 8, portal->_data & 0x0F);
 				break;
 			case Gyro::kMagicUnfinished:
 				_vm->_animation->_sprites[0].bounce();
 				_vm->_scrolls->displayText("Sorry. This place is not available yet!");
 				break;
 			case Gyro::kMagicSpecial:
-				_vm->_animation->callSpecial(_vm->_gyro->_portals[fv]._data);
+				_vm->_animation->callSpecial(portal->_data);
 				break;
 			case Gyro::kMagicOpenDoor:
-				_vm->_animation->openDoor((_vm->_gyro->_portals[fv]._data) >> 8, (_vm->_gyro->_portals[fv]._data) & 0x0F, fv + 9);
+				_vm->_animation->openDoor(portal->_data >> 8, portal->_data & 0x0F, i + 9);
 				break;
 			}
 
