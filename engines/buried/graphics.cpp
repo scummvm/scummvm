@@ -148,20 +148,43 @@ static const uint32 s_codePage1252[256] = {
 
 Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
 	// TODO: MS Gothic for the Japanese version (please buy for clone2727)
-	// Arial or Arial Bold for everything else (???)
+	// Arial or Arial Bold for everything else
 
 	Common::SeekableReadStream *stream = findArialStream(bold);
 
 	if (!stream)
-		return 0;
+		error("Failed to find Arial%s font", bold ? " Bold" : "");
+
+	// Map the heights needed to point sizes
+	if (bold) {
+		if (size != 20)
+			error("Unhandled Arial Bold height %d", size);
+
+		size = 12;
+	} else {
+		switch (size) {
+		case 12:
+		case 13:
+			size = 7;
+			break;
+		case 14:
+			size = 8;
+			break;
+		default:
+			error("Unhandled Arial height %d", size);
+		}
+	}
 
 	// TODO: Make the monochrome mode optional
 	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
 	// with the TrueType font on Win7/Win8 (at least)
 	// TODO: shift-jis (code page 932) for the Japanese version (again, buy for clone2727)
-	// FIXME: 'size' is really 'height', not point size.
-	// FIXME: DPI should be 96, not 0 (72)
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 0, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
+	// FIXME: The font is slightly off from the original... need to check. Sizes are right though!
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
+
+	if (!font)
+		error("Failed to load Arial%s font", bold ? " Bold" : "");
+
 	delete stream;
 	return font;
 }
