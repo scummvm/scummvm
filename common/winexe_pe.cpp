@@ -250,4 +250,26 @@ SeekableReadStream *PEResources::getResource(const WinResourceID &type, const Wi
 	return _exe->readStream(resource.size);
 }
 
+String PEResources::loadString(uint32 stringID) {
+	String string;
+	SeekableReadStream *stream = getResource(kPEString, (stringID >> 4) + 1);
+
+	if (!stream)
+		return string;
+
+	// Skip over strings we don't care about
+	uint32 startString = stringID & ~0xF;
+
+	for (uint32 i = startString; i < stringID; i++)
+		stream->skip(stream->readUint16LE() * 2);
+
+	// HACK: Truncate UTF-16 down to ASCII
+	byte size = stream->readUint16LE();
+	while (size--)
+		string += (char)(stream->readUint16LE() & 0xFF);
+
+	delete stream;
+	return string;
+}
+
 } // End of namespace Common
