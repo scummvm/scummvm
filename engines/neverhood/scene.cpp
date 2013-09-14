@@ -51,6 +51,8 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
 	_isMessageListBusy = false;
 	_messageValue = -1;
 
+	_backgroundFileHash = _cursorFileHash = 0;
+
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene::handleMessage);
 
@@ -188,6 +190,7 @@ Background *Scene::addBackground(Background *background) {
 
 void Scene::setBackground(uint32 fileHash) {
 	_background = addBackground(new Background(_vm, fileHash, 0, 0));
+	_backgroundFileHash = fileHash;
 }
 
 void Scene::changeBackground(uint32 fileHash) {
@@ -216,14 +219,17 @@ void Scene::insertScreenMouse(uint32 fileHash, const NRect *mouseRect) {
 	if (mouseRect)
 		rect = *mouseRect;
 	insertMouse(new Mouse(_vm, fileHash, rect));
+	_cursorFileHash = fileHash;
 }
 
 void Scene::insertPuzzleMouse(uint32 fileHash, int16 x1, int16 x2) {
 	insertMouse(new Mouse(_vm, fileHash, x1, x2));
+	_cursorFileHash = fileHash;
 }
 
 void Scene::insertNavigationMouse(uint32 fileHash, int type) {
 	insertMouse(new Mouse(_vm, fileHash, type));
+	_cursorFileHash = fileHash;
 }
 
 void Scene::showMouse(bool visible) {

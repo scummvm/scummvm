@@ -162,6 +162,10 @@ public:
 	T* createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
 		return new T(_vm, arg1, arg2, arg3, arg4, arg5, arg6);
 	}
+
+	uint32 getBackgroundFileHash() const { return _backgroundFileHash; }
+	uint32 getCursorFileHash() const { return _cursorFileHash; }
+
 protected:
 	Module *_parentModule;
 	Common::Array<Entity*> _entities;
@@ -196,6 +200,9 @@ protected:
 
 	HitRectList *_hitRects;
 	Common::Array<Sprite*> _collisionSprites;
+
+	// Used for debugging
+	uint32 _backgroundFileHash, _cursorFileHash;    // for StaticScene and all Scene* classes
 
 	void (Entity::*_savedUpdateHandlerCb)();
 	uint32 (Entity::*_savedMessageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);

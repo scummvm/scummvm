@@ -24,7 +24,9 @@
 #include "gui/debugger.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/gamemodule.h"
+#include "neverhood/navigationscene.h"
 #include "neverhood/scene.h"
+#include "neverhood/smackerscene.h"
 #include "neverhood/sound.h"
 #include "neverhood/modules/module1600.h"
 
@@ -35,23 +37,49 @@ Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("checkresource",	WRAP_METHOD(Console, Cmd_CheckResource));
 	DCmd_Register("dumpresource",	WRAP_METHOD(Console, Cmd_DumpResource));
 	DCmd_Register("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
-	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
-	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
 	DCmd_Register("playsound",		WRAP_METHOD(Console, Cmd_PlaySound));
+	DCmd_Register("scene",			WRAP_METHOD(Console, Cmd_Scene));
+	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_Room(int argc, const char **argv) {
-	int currentModule = _vm->_gameModule->getCurrentModuleNum();
-	int previousModule = _vm->_gameModule->getPreviousModuleNum();
-	int scene = _vm->gameState().sceneNum;
-
-	DebugPrintf("Current module: %d, previous module: %d, scene %d\n", currentModule, previousModule, scene);
-
+bool Console::Cmd_Scene(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Use room <module> <scene> to change rooms\n");
+		int currentModule = _vm->_gameModule->getCurrentModuleNum();
+		int previousModule = _vm->_gameModule->getPreviousModuleNum();
+		int scenenNum = _vm->gameState().sceneNum;
+		SceneType sceneType = ((GameModule *)_vm->_gameModule->_childObject)->getSceneType();
+
+		const char *sceneTypes[] = { "normal", "smacker", "navigation" };
+
+		DebugPrintf("Current module: %d, previous module: %d, scene %d (%s scene)\n", currentModule, previousModule, scenenNum, sceneTypes[sceneType]);	
+
+		if (sceneType == kSceneTypeNormal) {
+			Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
+			// Normal scenes have a background and a cursor file hash
+			DebugPrintf("Background hash: 0x%x, cursor hash: 0x%x\n", scene->getBackgroundFileHash(), scene->getCursorFileHash());
+		} else if (sceneType == kSceneTypeSmacker) {
+			SmackerScene *scene = (SmackerScene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
+			// Smacker scenes have a file hash, or a list of hashes
+			// TODO: Only the first file hash is shown - any additional hashes, found in
+			// scenes with a list of hashes (two scenes in module 1100 and the making of
+			// video) aren't shown yet
+			DebugPrintf("File hash: 0x%x\n", scene->getSmackerFileHash());
+		} else if (sceneType == kSceneTypeNavigation) {
+			NavigationScene *scene = (NavigationScene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
+			// Navigation scenes have a navigation list and its index
+			NavigationList *navigationList = _vm->_staticData->getNavigationList(scene->getNavigationListId());
+			int navigationIndex = scene->getGlobalVar(V_NAVIGATION_INDEX);
+			NavigationItem curNavigation = (*navigationList)[navigationIndex];
+			DebugPrintf("Navigation list ID: 0x%x, index: %d\n", scene->getNavigationListId(), navigationIndex);
+			DebugPrintf("File hash: 0x%x, cursor hash: 0x%x, Smacker hashes: [left: 0x%x, middle: 0x%x, right: 0x%x\n",
+				curNavigation.fileHash, curNavigation.mouseCursorFileHash,
+				curNavigation.leftSmackerFileHash, curNavigation.middleSmackerFileHash, curNavigation.rightSmackerFileHash);
+		}
+
+		DebugPrintf("Use %s <module> <scene> to change scenes\n", argv[0]);
 		DebugPrintf("Modules are incremental by 100, from 1000 to 3000\n");
 	} else {
 		int newModule = atoi(argv[1]);

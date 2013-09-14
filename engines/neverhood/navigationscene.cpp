@@ -35,6 +35,7 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 	_isWalkingForward(false), _isTurning(false), _smackerFileHash(0), _interactive(true), _leaveSceneAfter(false) {
 
 	_navigationList = _vm->_staticData->getNavigationList(navigationListId);
+	_navigationListId = navigationListId;
 
 	if (_navigationIndex < 0) {
 		_navigationIndex = (int)getGlobalVar(V_NAVIGATION_INDEX);
