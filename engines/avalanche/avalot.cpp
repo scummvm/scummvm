@@ -175,7 +175,7 @@ void Avalot::setup() {
 		_vm->_gyro->isLoaded = false; // Set to true in _vm->loadGame().
 		_vm->_gyro->newGame(); // No game was requested- load the default.
 
-		_vm->_gyro->_soundFx = ! _vm->_gyro->_soundFx;
+		_vm->_gyro->_soundFx = !_vm->_gyro->_soundFx;
 		_vm->_lucerna->fxToggle();
 		_vm->_lucerna->thinkAbout(Gyro::kObjectMoney, Gyro::kThing);
 

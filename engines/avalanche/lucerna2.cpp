@@ -387,9 +387,9 @@ void Lucerna::enterNewTown() {
 			_vm->_gyro->_mushroomGrowing = true;
 		break;
 	case r__wisewomans: { // Entry into Argent.
-		if (_vm->_gyro->_talkedToCrapulus && (! _vm->_gyro->_lustieIsAsleep)) {
+		if (_vm->_gyro->_talkedToCrapulus && (!_vm->_gyro->_lustieIsAsleep)) {
 			_vm->_gyro->_spludwickAtHome = !((_vm->_gyro->_roomCount[r__wisewomans] % 3) == 1);
-			_vm->_gyro->_crapulusWillTell = ! _vm->_gyro->_spludwickAtHome;
+			_vm->_gyro->_crapulusWillTell = !_vm->_gyro->_spludwickAtHome;
 		} else {
 			_vm->_gyro->_spludwickAtHome = true;
 			_vm->_gyro->_crapulusWillTell = false;
@@ -429,7 +429,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	loadRoom(room);
 
-	if ((_vm->_gyro->_roomCount[room] == 0) && (! _vm->_gyro->setFlag('S')))
+	if ((_vm->_gyro->_roomCount[room] == 0) && (!_vm->_gyro->setFlag('S')))
 		incScore(1);
 
 	_vm->_gyro->_whereIs[Gyro::kPeopleAvalot - 150] = _vm->_gyro->_room;
@@ -456,7 +456,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case r__outsideyours:
 		if (ped > 0) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
-			if (! _vm->_gyro->_talkedToCrapulus) {
+			if (!_vm->_gyro->_talkedToCrapulus) {
 				_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = r__outsideyours;
 				spr1->init(8, false, _vm->_animation); // load Crapulus
 
@@ -559,7 +559,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case r__robins:
 		if (ped > 0) {
-			if (! _vm->_gyro->_beenTiedUp) {
+			if (!_vm->_gyro->_beenTiedUp) {
 				// A welcome party... or maybe not...
 				AnimationType *spr1 = &_vm->_animation->_sprites[1];
 				spr1->init(6, false, _vm->_animation);
@@ -670,7 +670,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		_vm->_gyro->_dogFoodPos = 1; // Actually, du Lustie pos.
 		if (_vm->_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
 			_vm->_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
-		else if (! _vm->_gyro->_enteredLustiesRoomAsMonk) // already
+		else if (!_vm->_gyro->_enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
 			_vm->_timer->addTimer(3, Timer::kProcGreetsMonk, Timer::kReasonDuLustieTalks);
 
