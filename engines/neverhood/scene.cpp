@@ -593,4 +593,27 @@ void Scene::insertMouse(Mouse *mouseCursor) {
 	addEntity(_mouseCursor);
 }
 
+// StaticScene
+
+StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
+	: Scene(vm, parentModule) {
+
+	SetMessageHandler(&StaticScene::handleMessage);
+
+	setBackground(backgroundFileHash);
+	setPalette(backgroundFileHash);
+	insertPuzzleMouse(cursorFileHash, 20, 620);
+}
+
+uint32 StaticScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
+			leaveScene(0);
+		break;
+	}
+	return 0;
+}
+
 } // End of namespace Neverhood

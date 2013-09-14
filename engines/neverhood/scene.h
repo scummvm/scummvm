@@ -224,6 +224,14 @@ protected:
 	void insertMouse(Mouse *mouseCursor);
 };
 
+
+class StaticScene : public Scene {
+public:
+	StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_SCENE_H */
