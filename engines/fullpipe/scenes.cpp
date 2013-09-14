@@ -70,6 +70,8 @@ Vars::Vars() {
 
 	scene01_picSc01Osk = 0;
 	scene01_picSc01Osk2 = 0;
+
+	selector = 0;
 }
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
