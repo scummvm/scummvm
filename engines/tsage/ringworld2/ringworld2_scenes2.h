@@ -669,23 +669,23 @@ public:
 
 class Scene2900 : public SceneExt {
 	/* Items */
-	class Item1 : public NamedHotspot {
+	class Scenery : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item2 : public NamedHotspot {
+	class ControlPanel : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item3 : public NamedHotspot {
+	class Altimeter : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item4 : public NamedHotspot {
+	class KnobLeft : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item5 : public NamedHotspot {
+	class KnobRight : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -719,17 +719,17 @@ class Scene2900 : public SceneExt {
 		void drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
 	};
 public:
-	BackgroundSceneObject _leftEdge;
-	BackgroundSceneObject _rightEdge;
-	BackgroundSceneObject _object3;
-	SceneObject _object4;
-	SceneObject _object5;
-	SceneObject _object6;
-	Item1 _item1;
-	Item2 _item2;
-	Item3 _item3;
-	Item4 _item4;
-	Item5 _item5;
+	SceneObject _leftEdge;
+	SceneObject _rightEdge;
+	SceneObject _knob;
+	SceneObject _altimeterContent;
+	SceneObject _knobRightContent;
+	SceneObject _knobLeftContent;
+	Scenery _scenery;
+	ControlPanel _controlPanel;
+	Altimeter _altimeter;
+	KnobLeft _knobLeft;
+	KnobRight _knobRight;
 	Action1 _action1;
 	Map _map;
 

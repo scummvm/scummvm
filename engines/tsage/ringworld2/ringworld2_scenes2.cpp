@@ -4546,7 +4546,7 @@ void Scene2800::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2900::Item1::startAction(CursorType action, Event &event) {
+bool Scene2900::Scenery::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		SceneItem::display2(1, 5 + R2_GLOBALS._randomSource.getRandomNumber(5));
@@ -4565,7 +4565,7 @@ bool Scene2900::Item1::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene2900::Item2::startAction(CursorType action, Event &event) {
+bool Scene2900::ControlPanel::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		SceneItem::display2(2900, 5);
@@ -4584,7 +4584,7 @@ bool Scene2900::Item2::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene2900::Item3::startAction(CursorType action, Event &event) {
+bool Scene2900::Altimeter::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		SceneItem::display2(2900, 8);
@@ -4603,7 +4603,7 @@ bool Scene2900::Item3::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene2900::Item4::startAction(CursorType action, Event &event) {
+bool Scene2900::KnobLeft::startAction(CursorType action, Event &event) {
 	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -4636,7 +4636,7 @@ bool Scene2900::Item4::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene2900::Item5::startAction(CursorType action, Event &event) {
+bool Scene2900::KnobRight::startAction(CursorType action, Event &event) {
 	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -4683,13 +4683,13 @@ void Scene2900::Action1::signal() {
 	} else if (scene->_field427 == 0) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 	} else if (scene->_field412 == 0) {
-		scene->_object6.hide();
-		scene->_object5.hide();
+		scene->_knobLeftContent.hide();
+		scene->_knobRightContent.hide();
 		scene->_field412 = 1;
 	} else {
 		--scene->_field427;
-		scene->_object6.show();
-		scene->_object5.show();
+		scene->_knobLeftContent.show();
+		scene->_knobRightContent.show();
 		scene->_field412 = 0;
 	}
 }
@@ -4941,37 +4941,37 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	loadScene(2900);
 	SceneExt::postInit();
 
-	_leftEdge.setup2(2900, 6, 1, 22, 0, 25, 0);
-	_rightEdge.setup2(2900, 6, 1, 280, 0, 25, 0);
-	_object3.setup2(2900, 1, 3, 228, 199, 25, 0);
+	_leftEdge.setup(2900, 6, 1, 22, 0, 25);
+	_rightEdge.setup(2900, 6, 1, 280, 0, 25);
+	_knob.setup(2900, 1, 3, 228, 199, 25);
 	
-	_object4.postInit();
-	_object4.setVisage(2900);
-	_object4.setStrip(2);
-	_object4.setFrame(1);
-	_object4.fixPriority(10);
+	_altimeterContent.postInit();
+	_altimeterContent.setVisage(2900);
+	_altimeterContent.setStrip(2);
+	_altimeterContent.setFrame(1);
+	_altimeterContent.fixPriority(10);
 
-	_object6.postInit();
-	_object6.setVisage(2900);
-	_object6.setStrip(1);
-	_object6.setFrame(1);
-	_object6.setPosition(Common::Point(209, 199));
-	_object6.fixPriority(200);
+	_knobLeftContent.postInit();
+	_knobLeftContent.setVisage(2900);
+	_knobLeftContent.setStrip(1);
+	_knobLeftContent.setFrame(1);
+	_knobLeftContent.setPosition(Common::Point(209, 199));
+	_knobLeftContent.fixPriority(200);
 	
-	_object5.postInit();
-	_object5.setVisage(2900);
-	_object5.setStrip(1);
-	_object5.setFrame(2);
-	_object5.setPosition(Common::Point(247, 199));
-	_object5.fixPriority(200);
+	_knobRightContent.postInit();
+	_knobRightContent.setVisage(2900);
+	_knobRightContent.setStrip(1);
+	_knobRightContent.setFrame(2);
+	_knobRightContent.setPosition(Common::Point(247, 199));
+	_knobRightContent.fixPriority(200);
 
-	_item1.setDetails(Rect(0, 0, 320, 150), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
-	_item2.setDetails(Rect(0, 150, 320, 200), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
-	_item3.setDetails(Rect(42, 164, 129, 190), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
-	_item4.setDetails(Rect(165, 160, 228, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
-	_item5.setDetails(Rect(228, 160, 285, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
+	_scenery.setDetails(Rect(0, 0, 320, 150), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
+	_controlPanel.setDetails(Rect(0, 150, 320, 200), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
+	_altimeter.setDetails(Rect(42, 164, 129, 190), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
+	_knobLeft.setDetails(Rect(165, 160, 228, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
+	_knobRight.setDetails(Rect(228, 160, 285, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
 
-	setAction(&_action1);
+//**DEBUG**	setAction(&_action1);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(2900);
 	R2_GLOBALS._player.setStrip2(3);
@@ -4990,7 +4990,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.setPosition(Common::Point(160, 180));
 		ADD_PLAYER_MOVER(160, 100);
 
-		_object4.setPosition(Common::Point(9, 189));
+		_altimeterContent.setPosition(Common::Point(9, 189));
 	} else {
 		_offsetPos.x = R2_GLOBALS._balloonPosition.x + 120;
 		_offsetPos.y = R2_GLOBALS._balloonPosition.y + 100;
@@ -5019,7 +5019,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 
-		_object4.setPosition(Common::Point(109 - _field425, 189));
+		_altimeterContent.setPosition(Common::Point(109 - _field425, 189));
 	}
 
 	R2_GLOBALS._sound1.play(211);
@@ -5080,19 +5080,19 @@ void Scene2900::dispatch() {
 			}
 
 			if (_field41C == -1 || _field41E == -1) {
-				if (_object4._frame == 1) {
-					_object4.setFrame2(10);
+				if (_altimeterContent._frame == 1) {
+					_altimeterContent.setFrame2(10);
 				} else {
-					_object4.setFrame2(_object4._frame - 1);
+					_altimeterContent.setFrame2(_altimeterContent._frame - 1);
 				}
 			} else if (_field41C == -1 || _field41E == 1) {
-				if (_object4._frame == 10)
-					_object4.setFrame2(1);
+				if (_altimeterContent._frame == 10)
+					_altimeterContent.setFrame2(1);
 				else
-					_object4.setFrame2(_object4._frame + 1);
+					_altimeterContent.setFrame2(_altimeterContent._frame + 1);
 			}
 
-			_object4.setPosition(Common::Point(109 - _field425, 189));
+			_altimeterContent.setPosition(Common::Point(109 - _field425, 189));
 			R2_GLOBALS._player.changeZoom(_field425);
 		}
 
