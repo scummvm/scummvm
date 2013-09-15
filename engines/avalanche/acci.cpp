@@ -575,7 +575,7 @@ void Acci::storeInterrogation(byte interrogation) {
 			_vm->_gyro->_spareEvening.clear();
 		_vm->_gyro->_spareEvening = _vm->_parser->_inputText;
 		_vm->_scrolls->displayScrollChain('z', 5); // His closing statement...
-		_vm->_animation->_sprites[1].walkTo(4); // The end of the drawbridge
+		_vm->_animation->_sprites[1].walkTo(3); // The end of the drawbridge
 		_vm->_animation->_sprites[1]._vanishIfStill = true; // Then go away!
 		_vm->_gyro->_magics[1]._operation = Gyro::kMagicNothing;
 		_vm->_gyro->_cardiffQuestionNum = 5;
@@ -1229,7 +1229,7 @@ void Acci::notInOrder() {
 void Acci::goToCauldron() {
 	_vm->_animation->_sprites[1]._callEachStepFl = false; // Stops Geida_Procs.
 	_vm->_timer->addTimer(1, Timer::kProcSpludwickGoesToCauldron, Timer::kReasonSpludwickWalk);
-	_vm->_animation->_sprites[1].walkTo(2);
+	_vm->_animation->_sprites[1].walkTo(1);
 }
 
 /**
@@ -1899,7 +1899,7 @@ void Acci::doThat() {
 					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[1];
 					spr->init(1, false, _vm->_animation); // Avaricius
 					_vm->_animation->appearPed(2, 4);
-					spr->walkTo(5);
+					spr->walkTo(4);
 					spr->_callEachStepFl = true;
 					spr->_eachStepProc = Animation::kProcBackAndForth;
 					_vm->_gyro->_avariciusTalk = 14;
@@ -2065,7 +2065,7 @@ void Acci::doThat() {
 				_vm->_lucerna->refreshObjectList();
 				_vm->_gyro->_magics[11]._operation = Gyro::kMagicNothing;
 				_vm->_lucerna->incScore(7);
-				_vm->_animation->_sprites[1].walkTo(2);
+				_vm->_animation->_sprites[1].walkTo(1);
 				_vm->_animation->_sprites[1]._vanishIfStill = true;
 				_vm->_animation->_sprites[1]._callEachStepFl = false;
 				_vm->_gyro->_whereIs[7] = 177;
@@ -2191,7 +2191,7 @@ void Acci::doThat() {
 			if (_vm->_gyro->_sittingInPub)
 				_vm->_scrolls->displayText("You're already sitting!");
 			else {
-				_vm->_animation->_sprites[0].walkTo(4); // Move Avvy to the place, and sit him down.
+				_vm->_animation->_sprites[0].walkTo(3); // Move Avvy to the place, and sit him down.
 				_vm->_timer->addTimer(1, Timer::kProcAvvySitDown, Timer::kReasonSittingDown);
 			}
 		} else { // Default doodah.

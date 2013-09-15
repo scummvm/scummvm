@@ -273,7 +273,7 @@ void Timer::bang2() {
 
 void Timer::stairs() {
 	_vm->_gyro->blip();
-	_vm->_animation->_sprites[0].walkTo(4);
+	_vm->_animation->_sprites[0].walkTo(3);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 	_vm->_gyro->_brummieStairs = 2;
 	_vm->_gyro->_magics[10]._operation = Gyro::kMagicSpecial;
@@ -316,8 +316,8 @@ void Timer::getTiedUp() {
 }
 
 void Timer::getTiedUp2() {
-	_vm->_animation->_sprites[0].walkTo(4);
-	_vm->_animation->_sprites[1].walkTo(5);
+	_vm->_animation->_sprites[0].walkTo(3);
+	_vm->_animation->_sprites[1].walkTo(4);
 	_vm->_gyro->_magics[3]._operation = Gyro::kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_gyro->_friarWillTieYouUp = true;
 }
@@ -330,7 +330,7 @@ void Timer::hangAround() {
 	_vm->_gyro->_whereIs[Gyro::kPeopleRobinHood - 150] = r__robins;
 	_vm->_animation->appearPed(1, 2);
 	_vm->_scrolls->displayScrollChain('q', 39);
-	avvy->walkTo(7);
+	avvy->walkTo(6);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
@@ -338,7 +338,7 @@ void Timer::hangAround2() {
 	_vm->_scrolls->displayScrollChain('q', 40);
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
-	spr->walkTo(4);
+	spr->walkTo(3);
 	_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = r__robins;
 	_vm->_scrolls->displayScrollChain('q', 41);
 	_vm->_animation->_sprites[0].remove();
@@ -430,7 +430,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->init(9, false, _vm->_animation); // Here comes the Duke.
 	_vm->_animation->appearPed(2, 1); // He starts at the door...
-	spr->walkTo(3); // He walks over to you.
+	spr->walkTo(2); // He walks over to you.
 
 	// Let's get the door opening.
 	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
@@ -443,7 +443,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 void Timer::naughtyDuke2() {
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	_vm->_scrolls->displayScrollChain('q', 48); // "Ha ha, it worked again!"
-	spr->walkTo(1); // Walk to the door.
+	spr->walkTo(0); // Walk to the door.
 	spr->_vanishIfStill = true; // Then go away!
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
 }
@@ -587,7 +587,7 @@ void Timer::robinHoodAndGeida() {
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->init(7, true, _vm->_animation);
 	_vm->_animation->appearPed(1, 7);
-	avvy->walkTo(6);
+	avvy->walkTo(5);
 
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->stopWalk();
@@ -601,8 +601,8 @@ void Timer::robinHoodAndGeidaTalk() {
 
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	AnimationType *spr = &_vm->_animation->_sprites[1];
-	avvy->walkTo(2);
-	spr->walkTo(2);
+	avvy->walkTo(1);
+	spr->walkTo(1);
 	avvy->_vanishIfStill = true;
 	spr->_vanishIfStill = true;
 
