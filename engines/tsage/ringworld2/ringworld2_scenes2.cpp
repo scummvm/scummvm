@@ -4917,10 +4917,10 @@ Scene2900::Scene2900(): SceneExt() {
 	_field412 = 0;
 	_altitudeChanging = false;
 	_field416 = false;
-	_offsetPos = Common::Point(550, 550);
+	_balloonLocation = Common::Point(550, 550);
 	_field41C = 0;
 	_altitudeMajorChange = 0;
-	_pos = Common::Point(160, 100);
+	_balloonScreenPos = Common::Point(160, 100);
 	_newAltitude = 0;
 	_field425 = 100;
 	_field426 = 100;
@@ -4929,15 +4929,17 @@ Scene2900::Scene2900(): SceneExt() {
 }
 
 void Scene2900::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
 	s.syncAsSint16LE(_field412);
 	s.syncAsSint16LE(_altitudeChanging);
 	s.syncAsSint16LE(_field416);
 	s.syncAsSint16LE(_field41C);
 	s.syncAsSint16LE(_altitudeMajorChange);
-	s.syncAsSint16LE(_offsetPos.x);
-	s.syncAsSint16LE(_offsetPos.y);
-	s.syncAsSint16LE(_pos.x);
-	s.syncAsSint16LE(_pos.y);
+	s.syncAsSint16LE(_balloonLocation.x);
+	s.syncAsSint16LE(_balloonLocation.y);
+	s.syncAsSint16LE(_balloonScreenPos.x);
+	s.syncAsSint16LE(_balloonScreenPos.y);
 	s.syncAsSint16LE(_newAltitude);
 	s.syncAsSint16LE(_field425);
 	s.syncAsSint16LE(_field426);
@@ -5002,7 +5004,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == 2350 && 
 			R2_GLOBALS._balloonPosition.x == 0 && R2_GLOBALS._balloonPosition.y == 0) {
 		R2_GLOBALS._balloonAltitude = 5;
-		_map.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
+		_map.setPosition(Common::Point(_balloonLocation.x - 120, _balloonLocation.y - 100));
 		_sceneMode = 10;
 
 		R2_GLOBALS._player.changeZoom(100);
@@ -5011,30 +5013,30 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 
 		_altimeterContent.setPosition(Common::Point(9, 189));
 	} else {
-		_offsetPos.x = R2_GLOBALS._balloonPosition.x + 120;
-		_offsetPos.y = R2_GLOBALS._balloonPosition.y + 100;
+		_balloonLocation.x = R2_GLOBALS._balloonPosition.x + 120;
+		_balloonLocation.y = R2_GLOBALS._balloonPosition.y + 100;
 
 		if ((R2_GLOBALS._balloonAltitude % 8) == 0)
-			_offsetPos.x -= 70;
+			_balloonLocation.x -= 70;
 		else if ((R2_GLOBALS._balloonAltitude % 8) == 7)
-			_offsetPos.x += 70;
+			_balloonLocation.x += 70;
 		
-		if (_offsetPos.x <= 120)
-			_pos.x = _offsetPos.x + 40;
-		else if (_offsetPos.x >= 680)
-			_pos.x = _offsetPos.x - 520;
+		if (_balloonLocation.x <= 120)
+			_balloonScreenPos.x = _balloonLocation.x + 40;
+		else if (_balloonLocation.x >= 680)
+			_balloonScreenPos.x = _balloonLocation.x - 520;
 
 		if ((R2_GLOBALS._balloonAltitude / 6) == 5)
-			_offsetPos.y -= 50;
-		if (_offsetPos.y <= 100)
-			_pos.y = _offsetPos.y;
+			_balloonLocation.y -= 50;
+		if (_balloonLocation.y <= 100)
+			_balloonScreenPos.y = _balloonLocation.y;
 
 		_field425 = _field426 = 100 - (R2_GLOBALS._balloonAltitude / 48) * 25;
-		_map.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
+		_map.setPosition(Common::Point(_balloonLocation.x - 120, _balloonLocation.y - 100));
 		_sceneMode = 11;
 
 		R2_GLOBALS._player.changeZoom(_field425);
-		R2_GLOBALS._player.setPosition(_pos);
+		R2_GLOBALS._player.setPosition(_balloonScreenPos);
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 
@@ -5077,8 +5079,8 @@ void Scene2900::signal() {
 
 void Scene2900::dispatch() {
 	if (_sceneMode == 11) {
-		_offsetPos.x += balloonData[R2_GLOBALS._balloonAltitude].x;
-		_offsetPos.y += balloonData[R2_GLOBALS._balloonAltitude].y;
+		_balloonLocation.x += balloonData[R2_GLOBALS._balloonAltitude].x;
+		_balloonLocation.y += balloonData[R2_GLOBALS._balloonAltitude].y;
 		_field41C = balloonData[R2_GLOBALS._balloonAltitude].v3;
 
 		if (_field41C == 0) {
@@ -5122,20 +5124,20 @@ void Scene2900::dispatch() {
 		}
 
 		R2_GLOBALS._balloonPosition = _map.setPosition(
-			Common::Point(_offsetPos.x - 120, _offsetPos.y - 100), !_field8F8);
+			Common::Point(_balloonLocation.x - 120, _balloonLocation.y - 100), !_field8F8);
 		_field8F8 = true;
 
-		if (_offsetPos.x <= 120)
-			_pos.x = _offsetPos.x + 40;
-		else if (_offsetPos.x >= 680)
-			_pos.x = _offsetPos.x - 520;
+		if (_balloonLocation.x <= 120)
+			_balloonScreenPos.x = _balloonLocation.x + 40;
+		else if (_balloonLocation.x >= 680)
+			_balloonScreenPos.x = _balloonLocation.x - 520;
 
-		if (_offsetPos.y <= 100)
-			_pos.y = _offsetPos.y;
+		if (_balloonLocation.y <= 100)
+			_balloonScreenPos.y = _balloonLocation.y;
 
-		R2_GLOBALS._player.setPosition(_pos);
+		R2_GLOBALS._player.setPosition(_balloonScreenPos);
 
-		if ((_offsetPos.x % 100) == 50 && (_offsetPos.y % 100) == 50 && !_field416) {
+		if ((_balloonLocation.x % 100) == 50 && (_balloonLocation.y % 100) == 50 && !_field416) {
 			_newAltitude = R2_GLOBALS._balloonAltitude;
 			if (_altitudeChanging) {
 				_newAltitude += _altitudeMajorChange * 48;
@@ -5149,8 +5151,8 @@ void Scene2900::dispatch() {
 			}
 
 			if (balloonData[R2_GLOBALS._balloonAltitude].y > 0) {
-				_newAltitude += 240;
-			} else if (balloonData[R2_GLOBALS._balloonAltitude].x < 0) {
+				_newAltitude -= 8;
+			} else if (balloonData[R2_GLOBALS._balloonAltitude].y < 0) {
 				_newAltitude += 8;
 			}
 
