@@ -259,7 +259,6 @@ void Celer::updateBackgroundSprites() {
 			break;
 		case 2:
 			//nosound();
-			updateBackgroundSprites();
 			break;
 		}
 	}

@@ -338,7 +338,7 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 	_vm->_graphics->drawText(_vm->_graphics->_surface, text, font, 8, x * 8, y, fontColor);
 
 	// Underline the selected character.
-	if (!text.contains(trigger))
+	if ((trigger == 0) || !text.contains(trigger) )
 		return;
 	else {
 		byte i;
