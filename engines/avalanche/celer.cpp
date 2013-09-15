@@ -118,11 +118,12 @@ void Celer::updateBackgroundSprites() {
 
 		if ((_vm->_gyro->_roomTime % 200 >= 0) && (_vm->_gyro->_roomTime % 200 <= 178)) { // Normally.
 			byte direction = 0;
-			if (((_vm->_lucerna->bearing(2) >= 1) && (_vm->_lucerna->bearing(2) <= 90)) || ((_vm->_lucerna->bearing(2) >= 358) && (_vm->_lucerna->bearing(2) <= 360)))
+			uint16 angle = _vm->_lucerna->bearing(1);
+			if (((angle >= 1) && (angle <= 90)) || ((angle >= 358) && (angle <= 360)))
 				direction = 3;
-			else if ((_vm->_lucerna->bearing(2) >= 293) && (_vm->_lucerna->bearing(2) <= 357))
+			else if ((angle >= 293) && (angle <= 357))
 				direction = 2;
-			else if ((_vm->_lucerna->bearing(2) >= 271) && (_vm->_lucerna->bearing(2) <= 292))
+			else if ((angle >= 271) && (angle <= 292))
 				direction = 4;
 
 			if (direction != _vm->_gyro->_npcFacing) { // Dogfood.
@@ -152,7 +153,7 @@ void Celer::updateBackgroundSprites() {
 	case r__lustiesroom:
 		if (!(_vm->_gyro->_lustieIsAsleep)) {
 			byte direction = 0;
-			uint16 angle = _vm->_lucerna->bearing(2);
+			uint16 angle = _vm->_lucerna->bearing(1);
 			if ((_vm->_gyro->_roomTime % 45) > 42)
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
@@ -196,7 +197,7 @@ void Celer::updateBackgroundSprites() {
 	case r__nottspub: {
 		// Bearing of Avvy from Port.
 		byte direction = 0;
-		uint16 angle = _vm->_lucerna->bearing(5);
+		uint16 angle = _vm->_lucerna->bearing(4);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 2; // Middle.
 		else if ((angle >= 45) && (angle <= 180))
@@ -228,7 +229,7 @@ void Celer::updateBackgroundSprites() {
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
-		uint16 angle = _vm->_lucerna->bearing(2);
+		uint16 angle = _vm->_lucerna->bearing(1);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 4; // Middle.
 		else if ((angle >= 45) && (angle <= 180))
