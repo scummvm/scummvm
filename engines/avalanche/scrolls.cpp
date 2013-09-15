@@ -678,7 +678,7 @@ void Scrolls::callScrollDriver() {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
-					PedType *quasiPed = &_vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed - 1];
+					PedType *quasiPed = &_vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed];
 					_vm->_gyro->_talkX = quasiPed->_x;
 					_vm->_gyro->_talkY = quasiPed->_y; // Position.
 
