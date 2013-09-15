@@ -25,6 +25,8 @@
 
 #include "common/types.h"
 
+#include "common/keyboard.h"
+
 
 namespace Common {
 class SeekableReadStream;
@@ -68,6 +70,18 @@ public:
 	 * @return                           Was the cursor changed?
 	 */
 	virtual bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) { return false; }
+	/**
+	 * Called when a key is pressed. Default is NOP.
+	 *
+	 * @param keycode    The key that was pressed
+	 */
+	virtual void onKeyDown(Common::KeyState keyState) {}
+	/**
+	 * Called when a key is released. Default is NOP.
+	 *
+	 * @param keycode    The key that was pressed
+	 */
+	virtual void onKeyUp(Common::KeyState keyState) {}
 	/**
 	 * Processes the node given the deltaTime since last frame. Default is NOP.
 	 *
