@@ -128,7 +128,8 @@ public:
 	Common::Rect renderTextToWorkingWindow(const Common::String &text, TruetypeFont *font, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight = -1, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wrap = true);
 
 	/**
-	 * Fills the entire workingWindow with the specified color
+	 * Fills the entire workingWindow with the specified color. Internally, the color
+	 * will be converted to RGB 565 and then blitted.
 	 *
 	 * @param color    The color to fill the working window with. (In RGB 555)
 	 */
