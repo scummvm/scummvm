@@ -28,6 +28,7 @@
 #ifdef MACOSX
 #include "common/macresman.h"
 #endif
+#include "common/str-array.h"
 #include "common/system.h"
 #include "common/unzip.h"
 #include "graphics/cursorman.h"
@@ -746,6 +747,19 @@ Common::SeekableReadStream *GraphicsManager::getThemeFontStream(const Common::St
 	}
 
 	return stream;
+}
+
+void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, uint32 color, int lineHeight) {
+	if (text.empty())
+		return;
+
+	Common::StringArray lines;
+	font->wordWrapText(text, w, lines);
+
+	for (uint32 i = 0; i < lines.size(); i++) {
+		font->drawString(dst, lines[i], x, y, w, color);
+		y += lineHeight;
+	}
 }
 
 } // End of namespace Buried

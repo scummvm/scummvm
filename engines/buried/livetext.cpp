@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/str-array.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
@@ -114,19 +113,9 @@ void LiveTextWindow::onPaint() {
 	// Draw the background bitmap
 	Graphics::Surface *surface = _vm->_gfx->getBitmap(IDB_LIVE_TEXT_BACKGROUND);
 
-	// (This probably needs a look-through)
-	if (!_text.empty()) {
-		uint32 textColor = _vm->_gfx->getColor(212, 109, 0);
-
-		Common::StringArray lines;
-		_font->wordWrapText(_text, 270, lines);
-
-		uint32 y = 4;
-		for (uint32 i = 0; i < lines.size(); i++) {
-			_font->drawString(surface, lines[i], 30, y, 270, textColor);
-			y += 14;
-		}
-	}
+	// Draw the text on top of that
+	if (!_text.empty())
+		_vm->_gfx->renderText(surface, _font, _text, 30, 4, 270, _vm->_gfx->getColor(212, 109, 0), 14);
 
 	Common::Rect absoluteRect = getAbsoluteRect();
 	_vm->_gfx->blit(surface, absoluteRect.left, absoluteRect.top);
