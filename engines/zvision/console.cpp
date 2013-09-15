@@ -32,6 +32,7 @@
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
+#include "zvision/string_manager.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/zork_raw.h"
 #include "zvision/utility.h"
@@ -52,6 +53,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
 	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
 	DCmd_Register("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
+	DCmd_Register("rendertext", WRAP_METHOD(Console, cmdRenderText));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
@@ -196,6 +198,16 @@ bool Console::cmdParseAllScrFiles(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::cmdRenderText(int argc, const char **argv) {
+	if (argc != 7) {
+		DebugPrintf("Use rendertext <text> <fontNumber> <destX> <destY> <maxWidth> <1 or 0: wrap> to render text\n");
+		return true;
+	}
+
+	StringManager::TextStyle style = _engine->getStringManager()->getTextStyle(atoi(argv[2]));
+	_engine->getRenderManager()->renderTextToWorkingWindow(Common::String(argv[1]), style.font, atoi(argv[3]), atoi(argv[4]), style.color, atoi(argv[5]), -1, Graphics::kTextAlignLeft, atoi(argv[6]) == 0 ? false : true);
 }
 
 } // End of namespace ZVision
