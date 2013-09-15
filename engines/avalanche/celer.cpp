@@ -29,10 +29,10 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/celer2.h"
+#include "avalanche/celer.h"
 #include "avalanche/animation.h"
-#include "avalanche/lucerna2.h"
-#include "avalanche/gyro2.h"
+#include "avalanche/lucerna.h"
+#include "avalanche/gyro.h"
 #include "avalanche/roomnums.h"
 
 #include "common/textconsole.h"

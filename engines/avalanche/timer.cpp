@@ -30,13 +30,13 @@
 #include "avalanche/avalanche.h"
 
 #include "avalanche/timer.h"
-#include "avalanche/lucerna2.h"
+#include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
-#include "avalanche/scrolls2.h"
-#include "avalanche/acci2.h"
-#include "avalanche/sequence2.h"
-#include "avalanche/enid2.h"
-#include "avalanche/pingo2.h"
+#include "avalanche/scrolls.h"
+#include "avalanche/acci.h"
+#include "avalanche/sequence.h"
+#include "avalanche/enid.h"
+#include "avalanche/pingo.h"
 
 #include "common/textconsole.h"
 

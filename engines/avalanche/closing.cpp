@@ -29,9 +29,9 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/closing2.h"
-#include "avalanche/gyro2.h"
-#include "avalanche/lucerna2.h"
+#include "avalanche/closing.h"
+#include "avalanche/gyro.h"
+#include "avalanche/lucerna.h"
 
 #include "common/textconsole.h"
 #include "common/random.h"

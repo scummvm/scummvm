@@ -29,16 +29,16 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/acci2.h"
-#include "avalanche/gyro2.h"
-#include "avalanche/lucerna2.h"
-#include "avalanche/scrolls2.h"
+#include "avalanche/acci.h"
+#include "avalanche/gyro.h"
+#include "avalanche/lucerna.h"
+#include "avalanche/scrolls.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/enid2.h"
-#include "avalanche/celer2.h"
-#include "avalanche/pingo2.h"
-#include "avalanche/sequence2.h"
+#include "avalanche/enid.h"
+#include "avalanche/celer.h"
+#include "avalanche/pingo.h"
+#include "avalanche/sequence.h"
 
 #include "common/textconsole.h"
 
