@@ -28,7 +28,7 @@
 #include "common/types.h"
 
 #include "graphics/font.h"
-
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
 struct Surface;
@@ -40,83 +40,24 @@ class ZVision;
 
 class TruetypeFont {
 public:
-	TruetypeFont(ZVision *engine, int32 fontHeight, const Graphics::PixelFormat pixelFormat);
+	TruetypeFont(ZVision *engine, int32 fontHeight);
 	~TruetypeFont();
-
-public:
-	enum {
-		NUM_CACHED_TEXTS = 30
-	};
-
-	enum TextAlign {
-		ALIGN_LEFT = 0,
-		ALIGN_RIGHT,
-		ALIGN_CENTER
-	};
-
-	class CachedText {
-	public:
-		Common::String _text;
-		int32 _width;
-		TextAlign _align;
-		int32 _maxHeight;
-		Graphics::Surface *_surface;
-		int32 _textOffset;
-		bool _marked;
-		uint32 _lastUsed;
-
-		CachedText() {
-			_width = _maxHeight = -1;
-			_align = ALIGN_LEFT;
-			_surface = 0;
-			_lastUsed = 0;
-			_marked = false;
-		}
-
-		virtual ~CachedText() {
-			delete _surface;
-		}
-	};
 
 private:
 	ZVision *_engine;
-	const Graphics::PixelFormat _pixelFormat;
-
 	Graphics::Font *_font;
-
 	float _lineHeight;
 
 	size_t _maxCharWidth;
 	size_t _maxCharHeight;
 
-	CachedText *_cachedTexts[NUM_CACHED_TEXTS];
-
 public:
-	bool _isBold;
-	bool _isItalic;
-	bool _isUnderline;
-	bool _isStriked;
 	int32 _fontHeight;
 
-	//BaseArray<BaseTTFontLayer *> _layers;
-
 public:
-	int getTextWidth(const byte *text, int maxLength = -1);
-	int getTextHeight(const byte *text, int width);
-	void drawText(const Common::String &text, int x, int y, int width, TextAlign align = ALIGN_LEFT, int max_height = -1);
-	int getLetterHeight();
-
 	bool loadFile(const Common::String &filename);
-
-	float getLineHeight() const { return _lineHeight; }
 	
-	void clearCache();
-
-	static TruetypeFont *createFromFile(ZVision *game, const Common::String &filename);
-
-private:
-	void measureText(const Common::String &text, int maxWidth, int maxHeight, int &textWidthOut, int &textHeightOut);
-	Graphics::Surface *renderTextToTexture(const Common::String &text, int width, TextAlign align, int maxHeight);
+	Graphics::Surface *drawTextToSurface(const Common::String &text, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap);
 };
 
 } // End of namespace ZVision
