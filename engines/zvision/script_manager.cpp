@@ -38,7 +38,8 @@
 namespace ZVision {
 
 ScriptManager::ScriptManager(ZVision *engine)
-	: _engine(engine) {
+	: _engine(engine),
+	  _currentlyFocusedControl(0) {
 }
 
 ScriptManager::~ScriptManager() {
@@ -252,6 +253,20 @@ void ScriptManager::disableControl(uint32 key) {
 			break;
 		}
 	}
+}
+
+void ScriptManager::focusControl(uint32 key) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		uint32 controlKey = (*iter)->getKey();
+		
+		if (controlKey == key) {
+			(*iter)->focus();
+		} else if (controlKey == _currentlyFocusedControl) {
+			(*iter)->unfocus();
+		}
+	}
+
+	_currentlyFocusedControl = key;
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {

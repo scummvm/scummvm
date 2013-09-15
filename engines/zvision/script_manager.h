@@ -74,6 +74,8 @@ private:
 
 	Location _currentLocation;
 
+	uint32 _currentlyFocusedControl;
+
 public:
 	void initialize();
 	void update(uint deltaTimeMillis);
@@ -87,6 +89,8 @@ public:
 
 	void enableControl(uint32 key);
 	void disableControl(uint32 key);
+
+	void focusControl(uint32 key);
 
 	/**
 	 * Called when LeftMouse is pushed.
