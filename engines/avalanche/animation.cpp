@@ -32,7 +32,6 @@
 #include "avalanche/animation.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/lucerna2.h"
-#include "avalanche/visa2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/celer2.h"
 #include "avalanche/sequence2.h"
@@ -759,7 +758,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_gyro->_magics[11]._data = 5;
 		_vm->_gyro->_magics[3]._operation = Gyro::kMagicBounce; // Now works as planned!
 		stopWalking();
-		_vm->_visa->displayScrollChain('q', 26);
+		_vm->_scrolls->displayScrollChain('q', 26);
 		_vm->_gyro->_userMovesAvvy = true;
 		break;
 	case 3: // _vm->_gyro->special 3: Room 71: triggers dart.
@@ -789,11 +788,11 @@ void Animation::callSpecial(uint16 which) {
 		if (_vm->_gyro->_friarWillTieYouUp) {
 			// _vm->_gyro->special 5: Room 42: touched tree, and get tied up.
 			_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Boundary effect is now working again.
-			_vm->_visa->displayScrollChain('q', 35);
+			_vm->_scrolls->displayScrollChain('q', 35);
 			_sprites[0].remove();
 			//tr[1].vanishifstill:=true;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
-			_vm->_visa->displayScrollChain('q', 36);
+			_vm->_scrolls->displayScrollChain('q', 36);
 			_vm->_gyro->_tiedUp = true;
 			_vm->_gyro->_friarWillTieYouUp = false;
 			_sprites[1].walkTo(3);
@@ -822,7 +821,7 @@ void Animation::callSpecial(uint16 which) {
 		break;
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
 		if ((_vm->_gyro->_geidaFollows) && (!_vm->_gyro->_lustieIsAsleep)) {
-			_vm->_visa->displayScrollChain('q', 63);
+			_vm->_scrolls->displayScrollChain('q', 63);
 			_sprites[1].turn(kDirDown);
 			_sprites[1].stopWalk();
 			_sprites[1]._callEachStepFl = false; // Geida
@@ -842,9 +841,9 @@ void Animation::callSpecial(uint16 which) {
 		if ((_vm->_gyro->_catacombX == 4) && (_vm->_gyro->_catacombY == 1)) {
 			// Into Geida's room.
 			if (_vm->_gyro->_objects[Gyro::kObjectKey - 1])
-				_vm->_visa->displayScrollChain('q', 62);
+				_vm->_scrolls->displayScrollChain('q', 62);
 			else {
-				_vm->_visa->displayScrollChain('q', 61);
+				_vm->_scrolls->displayScrollChain('q', 61);
 				return;
 			}
 		}
@@ -1065,7 +1064,7 @@ void Animation::arrowProcs(byte tripnum) {
 			// OK, it's hit him... what now?
 
 			_sprites[1]._callEachStepFl = false; // prevent recursion.
-			_vm->_visa->displayScrollChain('Q', 47); // Complaint!
+			_vm->_scrolls->displayScrollChain('Q', 47); // Complaint!
 			_sprites[tripnum].remove(); // Deallocate the arrow.
 #if 0
 			tr[1].done; { Deallocate normal pic of Avvy. }
@@ -1273,7 +1272,7 @@ void Animation::animLink() {
 
 	if (_mustExclaim) {
 		_mustExclaim = false;
-		_vm->_visa->displayScrollChain('x', _sayWhat);
+		_vm->_scrolls->displayScrollChain('x', _sayWhat);
 	}
 }
 

@@ -10,7 +10,6 @@ MODULE_OBJS = \
 	gyro2.o \
 	pingo2.o \
 	scrolls2.o \
-	visa2.o \
 	lucerna2.o \
 	enid2.o \
 	celer2.o \

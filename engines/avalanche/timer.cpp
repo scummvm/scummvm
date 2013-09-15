@@ -30,7 +30,6 @@
 #include "avalanche/avalanche.h"
 
 #include "avalanche/timer.h"
-#include "avalanche/visa2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/animation.h"
 #include "avalanche/scrolls2.h"
@@ -243,7 +242,7 @@ void Timer::openDrawbridge() {
 }
 
 void Timer::avariciusTalks() {
-	_vm->_visa->displayScrollChain('q', _vm->_gyro->_avariciusTalk);
+	_vm->_scrolls->displayScrollChain('q', _vm->_gyro->_avariciusTalk);
 	_vm->_gyro->_avariciusTalk++;
 
 	if (_vm->_gyro->_avariciusTalk < 17)
@@ -286,25 +285,25 @@ void Timer::stairs() {
 void Timer::cardiffSurvey() {
 	if (_vm->_gyro->_cardiffQuestionNum == 0) {
 		_vm->_gyro->_cardiffQuestionNum++;
-		_vm->_visa->displayScrollChain('q', 27);
+		_vm->_scrolls->displayScrollChain('q', 27);
 	}
 
-	_vm->_visa->displayScrollChain('z', _vm->_gyro->_cardiffQuestionNum);
+	_vm->_scrolls->displayScrollChain('z', _vm->_gyro->_cardiffQuestionNum);
 	_vm->_gyro->_interrogation = _vm->_gyro->_cardiffQuestionNum;
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
 void Timer::cardiffReturn() {
-	_vm->_visa->displayScrollChain('q', 28);
+	_vm->_scrolls->displayScrollChain('q', 28);
 	cardiffSurvey(); // Add end of question.
 }
 
 void Timer::cwytalotInHerts() {
-	_vm->_visa->displayScrollChain('q', 29);
+	_vm->_scrolls->displayScrollChain('q', 29);
 }
 
 void Timer::getTiedUp() {
-	_vm->_visa->displayScrollChain('q', 34); // ...Trouble!
+	_vm->_scrolls->displayScrollChain('q', 34); // ...Trouble!
 	_vm->_gyro->_userMovesAvvy = false;
 	_vm->_gyro->_beenTiedUp = true;
 	_vm->_animation->stopWalking();
@@ -331,18 +330,18 @@ void Timer::hangAround() {
 	avvy->init(7, true, _vm->_animation); // Robin Hood
 	_vm->_gyro->_whereIs[Gyro::kPeopleRobinHood - 150] = r__robins;
 	_vm->_animation->appearPed(1, 2);
-	_vm->_visa->displayScrollChain('q', 39);
+	_vm->_scrolls->displayScrollChain('q', 39);
 	avvy->walkTo(7);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
 void Timer::hangAround2() {
-	_vm->_visa->displayScrollChain('q', 40);
+	_vm->_scrolls->displayScrollChain('q', 40);
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
 	spr->walkTo(4);
 	_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = r__robins;
-	_vm->_visa->displayScrollChain('q', 41);
+	_vm->_scrolls->displayScrollChain('q', 41);
 	_vm->_animation->_sprites[0].remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
 
@@ -387,7 +386,7 @@ void Timer::afterTheShootemup() {
 
 	warning("STUB: Timer::after_the_shootemup()");
 
-	_vm->_visa->displayScrollChain('q', 70);
+	_vm->_scrolls->displayScrollChain('q', 70);
 }
 
 void Timer::jacquesWakesUp() {
@@ -396,7 +395,7 @@ void Timer::jacquesWakesUp() {
 	switch (_vm->_gyro->_jacquesState) { // Additional pictures.
 	case 1 :
 		_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Eyes open.
-		_vm->_visa->displayScrollChain('Q', 45);
+		_vm->_scrolls->displayScrollChain('Q', 45);
 		break;
 	case 2 : // Going through the door.
 		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor.
@@ -444,7 +443,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 
 void Timer::naughtyDuke2() {
 	AnimationType *spr = &_vm->_animation->_sprites[1];
-	_vm->_visa->displayScrollChain('q', 48); // "Ha ha, it worked again!"
+	_vm->_scrolls->displayScrollChain('q', 48); // "Ha ha, it worked again!"
 	spr->walkTo(1); // Walk to the door.
 	spr->_vanishIfStill = true; // Then go away!
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
@@ -498,14 +497,14 @@ void Timer::jump() {
 			_vm->_gyro->_arrowInTheDoor = false; // You've got it.
 			_vm->_gyro->_objects[Gyro::kObjectBolt - 1] = true;
 			_vm->_lucerna->refreshObjectList();
-			_vm->_visa->displayScrollChain('q', 50);
+			_vm->_scrolls->displayScrollChain('q', 50);
 			_vm->_lucerna->incScore(3);
 		}
 	}
 }
 
 void Timer::crapulusSaysSpludOut() {
-	_vm->_visa->displayScrollChain('q', 56);
+	_vm->_scrolls->displayScrollChain('q', 56);
 	_vm->_gyro->_crapulusWillTell = false;
 }
 
@@ -513,11 +512,11 @@ void Timer::buyDrinks() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
 	_vm->_gyro->_malagauche = 0;
 
-	_vm->_visa->displayScrollChain('D', _vm->_gyro->_drinking); // Display message about it.
+	_vm->_scrolls->displayScrollChain('D', _vm->_gyro->_drinking); // Display message about it.
 	_vm->_pingo->wobble(); // Do the special effects.
-	_vm->_visa->displayScrollChain('D', 1); // That'll be thruppence.
+	_vm->_scrolls->displayScrollChain('D', 1); // That'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) // Pay 3d.
-		_vm->_visa->displayScrollChain('D', 3); // Tell 'em you paid up.
+		_vm->_scrolls->displayScrollChain('D', 3); // Tell 'em you paid up.
 	_vm->_acci->drink();
 }
 
@@ -525,10 +524,10 @@ void Timer::buyWine() {
 	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
 	_vm->_gyro->_malagauche = 0;
 
-	_vm->_visa->displayScrollChain('D', 50); // You buy the wine.
-	_vm->_visa->displayScrollChain('D', 1); // It'll be thruppence.
+	_vm->_scrolls->displayScrollChain('D', 50); // You buy the wine.
+	_vm->_scrolls->displayScrollChain('D', 1); // It'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) {
-		_vm->_visa->displayScrollChain('D', 4); // You paid up.
+		_vm->_scrolls->displayScrollChain('D', 4); // You paid up.
 		_vm->_gyro->_objects[Gyro::kObjectWine - 1] = true;
 		_vm->_lucerna->refreshObjectList();
 		_vm->_gyro->_wineState = 1; // OK Wine.
@@ -536,12 +535,12 @@ void Timer::buyWine() {
 }
 
 void Timer::callsGuards() {
-	_vm->_visa->displayScrollChain('Q', 58); // "GUARDS!!!"
+	_vm->_scrolls->displayScrollChain('Q', 58); // "GUARDS!!!"
 	_vm->_lucerna->gameOver();
 }
 
 void Timer::greetsMonk() {
-	_vm->_visa->displayScrollChain('Q', 59);
+	_vm->_scrolls->displayScrollChain('Q', 59);
 	_vm->_gyro->_enteredLustiesRoomAsMonk = true;
 }
 
@@ -560,7 +559,7 @@ void Timer::meetAvaroid() {
 		_vm->_scrolls->displayText(tmpStr);
 		_vm->_lucerna->gameOver();
 	} else {
-		_vm->_visa->displayScrollChain('Q', 60);
+		_vm->_scrolls->displayScrollChain('Q', 60);
 		_vm->_gyro->_metAvaroid = true;
 		addTimer(1, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 
@@ -599,7 +598,7 @@ void Timer::robinHoodAndGeida() {
 }
 
 void Timer::robinHoodAndGeidaTalk() {
-	_vm->_visa->displayScrollChain('q', 66);
+	_vm->_scrolls->displayScrollChain('q', 66);
 
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	AnimationType *spr = &_vm->_animation->_sprites[1];
@@ -618,7 +617,7 @@ void Timer::avalotReturns() {
 	spr->remove();
 	avvy->init(0, true, _vm->_animation);
 	_vm->_animation->appearPed(1, 1);
-	_vm->_visa->displayScrollChain('q', 67);
+	_vm->_scrolls->displayScrollChain('q', 67);
 	_vm->_gyro->_userMovesAvvy = true;
 }
 
@@ -649,12 +648,12 @@ void Timer::arkataShouts() {
 	if (_vm->_gyro->_teetotal)
 		return;
 
-	_vm->_visa->displayScrollChain('q', 76);
+	_vm->_scrolls->displayScrollChain('q', 76);
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
 void Timer::winning() {
-	_vm->_visa->displayScrollChain('q', 79);
+	_vm->_scrolls->displayScrollChain('q', 79);
 	_vm->_pingo->winningPic();
 
 	warning("STUB: Timer::winning()");
@@ -698,7 +697,7 @@ void Timer::spludwickLeavesCauldron() {
 }
 
 void Timer::giveLuteToGeida() { // Moved here from Acci.
-	_vm->_visa->displayScrollChain('Q', 86);
+	_vm->_scrolls->displayScrollChain('Q', 86);
 	_vm->_lucerna->incScore(4);
 	_vm->_gyro->_lustieIsAsleep = true;
 	_vm->_sequence->firstShow(5);

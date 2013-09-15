@@ -33,7 +33,6 @@
 #include "avalanche/pingo2.h"
 #include "avalanche/scrolls2.h"
 #include "avalanche/lucerna2.h"
-#include "avalanche/visa2.h"
 #include "avalanche/acci2.h"
 #include "avalanche/animation.h"
 
@@ -385,7 +384,7 @@ void Gyro::forceNumlock() {
 bool Gyro::decreaseMoney(uint16 howmuchby) {
 	_money -= howmuchby;
 	if (_money < 0) {
-		_vm->_visa->displayScrollChain('Q', 2); // "You are now denariusless!"
+		_vm->_scrolls->displayScrollChain('Q', 2); // "You are now denariusless!"
 		_vm->_lucerna->gameOver();
 		return false;
 	} else

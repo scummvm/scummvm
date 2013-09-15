@@ -78,6 +78,10 @@ public:
 	Common::String displayMoney();
 	void musicalScroll(); // Practically this one is a mini-game which called when you play the harp in the monastery.
 
+	// From Visa:
+	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false);
+	void talkTo(byte whom);
+
 private:
 	AvalancheEngine *_vm;
 
@@ -116,6 +120,12 @@ private:
 	void getIcon(int16 x, int16 y, byte which);
 	void drawSign(Common::String name, int16 xl, int16 yl, int16 y); // This is for drawing a big "about" or "gameover" picture loaded from a file into an empty scroll.
 	void loadFont();
+
+	// From Visa:
+	bool _noError;
+	void unSkrimble();
+	void doTheBubble();
+	void speak(byte who, byte subject);
 };
 
 } // End of namespace Avalanche
