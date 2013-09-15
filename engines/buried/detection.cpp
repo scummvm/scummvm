@@ -70,6 +70,10 @@ Common::String BuriedEngine::getLibraryName() const {
 	return _gameDescription->desc.filesDescriptions[1].fileName;
 }
 
+Common::Language BuriedEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 } // End of namespace Buried
 
 static const PlainGameDescriptor buriedGames[] = {

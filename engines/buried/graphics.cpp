@@ -23,11 +23,13 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/fs.h"
 #ifdef MACOSX
 #include "common/macresman.h"
 #endif
 #include "common/system.h"
+#include "common/unzip.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/palette.h"
@@ -147,9 +149,17 @@ static const uint32 s_codePage1252[256] = {
 #undef NOT_REQUIRED
 
 Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
-	// TODO: MS Gothic for the Japanese version (please buy for clone2727)
+	// MS Gothic for the Japanese version (please buy for clone2727)
 	// Arial or Arial Bold for everything else
+	if (_vm->getLanguage() == Common::JA_JPN) {
+		assert(!bold);
+		return createMSGothicFont(size);
+	}
 
+	return createArialFont(size, bold);
+}
+
+Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	Common::SeekableReadStream *stream = findArialStream(bold);
 
 	if (!stream)
@@ -178,7 +188,6 @@ Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
 	// TODO: Make the monochrome mode optional
 	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
 	// with the TrueType font on Win7/Win8 (at least)
-	// TODO: shift-jis (code page 932) for the Japanese version (again, buy for clone2727)
 	// FIXME: The font is slightly off from the original... need to check. Sizes are right though!
 	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
 
@@ -606,7 +615,13 @@ Common::SeekableReadStream *GraphicsManager::findArialStream(bool bold) const {
 #endif
 
 	if (!stream) {
-		// TODO: Find the equivalent free font
+		// TODO: It would really be nice to have "Liberation Sans", since it is metric
+		// compatible with Arial.
+
+		if (bold)
+			stream = getThemeFontStream("FreeSansBold.ttf");
+		else
+			stream = getThemeFontStream("FreeSans.ttf");
 	}
 
 	return stream;
@@ -647,6 +662,90 @@ void GraphicsManager::crossBlit(Graphics::Surface *dst, int xDst, int yDst, int 
 
 	for (int y = 0; y < h; y++)
 		memcpy(dst->getBasePtr(xDst, yDst + y), src->getBasePtr(xSrc, ySrc + y), w * src->format.bytesPerPixel);
+}
+
+Graphics::Font *GraphicsManager::createMSGothicFont(int size) const {
+	Common::SeekableReadStream *stream = findMSGothicStream();
+
+	if (!stream)
+		error("Failed to find MS Gothic font");
+
+	// TODO: Map the heights needed to point sizes
+
+	// TODO: Make the monochrome mode optional
+	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
+	// with the TrueType font on Win7/Win8 (at least)
+	// TODO: shift-jis codepage (932) and mapping
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, !_vm->isTrueColor(), s_codePage1252);
+
+	if (!font)
+		error("Failed to load MS Gothic font");
+
+	delete stream;
+	return font;
+}
+
+Common::SeekableReadStream *GraphicsManager::findMSGothicStream() const {
+	Common::SeekableReadStream *stream = 0;
+
+	// HACK: Try to load the system font
+#if defined(WIN32)
+	Common::FSNode fontPath("C:/WINDOWS/Fonts/msgothic.ttc");
+
+	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
+		stream = fontPath.createReadStream();
+
+	if (!stream) {
+		Common::FSNode win2kFontPath("C:/WINNT/Fonts/msgothic.ttc");
+
+		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
+			stream = win2kFontPath.createReadStream();
+	}
+#elif defined(MACOSX)
+	// Attempt to load the font from MS Gothic.ttf
+	Common::FSNode fontPath(Common::String::format("/Library/Fonts/MS Gothic.ttf"));
+
+	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
+		stream = fontPath.createReadStream();
+#endif
+
+	if (!stream) {
+		// TODO: Find the equivalent free font (probably "VL Gothic", which is what Wine uses)
+		// "Ume Gothic" might be another alternative
+	}
+
+	return stream;
+}
+
+Common::SeekableReadStream *GraphicsManager::getThemeFontStream(const Common::String &fileName) const {
+	// Without needing to actually come out and say it, this is all one huge hack.
+	// OK, I said it anyway.
+
+	Common::SeekableReadStream *stream = 0;
+
+	// Code loosely based on the similar Wintermute code, minus the C++11 nullptr nonsense
+	// Attempt to load it from the theme
+
+	if (ConfMan.hasKey("themepath")) {
+		Common::SeekableReadStream *archiveStream = 0;
+		Common::FSNode themeFile(ConfMan.get("themepath") + "/scummmodern.zip");
+
+		if (themeFile.exists() && !themeFile.isDirectory() && themeFile.isReadable())
+			archiveStream = themeFile.createReadStream();
+
+		if (!archiveStream)
+			archiveStream = SearchMan.createReadStreamForMember("scummmodern.zip");
+
+		if (archiveStream) {
+			Common::Archive *archive = Common::makeZipArchive(archiveStream);
+			if (archive)
+				stream = archive->createReadStreamForMember(fileName);
+
+			delete archive;
+		}
+	}
+
+	return stream;
 }
 
 } // End of namespace Buried
