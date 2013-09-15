@@ -275,6 +275,18 @@ bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Commo
 	return cursorWasChanged;
 }
 
+void ScriptManager::onKeyDown(Common::KeyState keyState) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		(*iter)->onKeyDown(keyState);
+	}
+}
+
+void ScriptManager::onKeyUp(Common::KeyState keyState) {
+	for (Common::List<Control *>::iterator iter = _activeControls.begin(); iter != _activeControls.end(); iter++) {
+		(*iter)->onKeyUp(keyState);
+	}
+}
+
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
 	assert(world != 0);
 	debug("Changing location to: %c %c %c %c %u", world, room, node, view, offset);

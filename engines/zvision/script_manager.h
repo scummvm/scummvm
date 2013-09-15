@@ -110,6 +110,18 @@ public:
 	 * @return                           Was the cursor changed?
 	 */
 	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	/**
+	 * Called when a key is pressed.
+	 *
+	 * @param keycode    The key that was pressed
+	 */
+	void onKeyDown(Common::KeyState keyState);
+	/**
+	 * Called when a key is released.
+	 *
+	 * @param keycode    The key that was pressed
+	 */
+	void onKeyUp(Common::KeyState keyState);
 
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 
