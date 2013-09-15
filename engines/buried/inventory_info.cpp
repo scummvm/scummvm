@@ -31,7 +31,6 @@
 #include "buried/resources.h"
 #include "buried/video_window.h"
 
-#include "common/str-array.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
@@ -89,29 +88,13 @@ void InventoryInfoWindow::onPaint() {
 	Common::Rect titleRect(10, 56, 263, 71);
 	Common::String title = _vm->getString(IDES_ITEM_TITLE_BASE + _currentItemID);
 	assert(!title.empty());
-
-	Common::StringArray lines;
-	_textFont->wordWrapText(title, titleRect.width(), lines);
-
-	uint32 y = titleRect.top;
-	for (uint32 i = 0; i < lines.size(); i++) {
-		_textFont->drawString(background, lines[i], titleRect.left, titleRect.top, titleRect.width(), textColor);
-		y += 14;
-	}
+	_vm->_gfx->renderText(background, _textFont, title, titleRect.left, titleRect.top, titleRect.width(), textColor, 14);
 
 	// Draw the description
 	Common::Rect descRect(10, 89, 263, 186);
 	Common::String desc = _vm->getString(IDES_ITEM_DESC_BASE + _currentItemID * 5);
 	assert(!desc.empty());
-
-	lines.clear();
-	_textFont->wordWrapText(desc, descRect.width(), lines);
-
-	y = descRect.top;
-	for (uint32 i = 0; i < lines.size(); i++) {
-		_textFont->drawString(background, lines[i], descRect.left, descRect.top, descRect.width(), textColor);
-		y += 14;
-	}
+	_vm->_gfx->renderText(background, _textFont, desc, descRect.left, descRect.top, descRect.width(), textColor, 14);
 
 	Common::Rect absoluteRect = getAbsoluteRect();
 	_vm->_gfx->blit(background, absoluteRect.left, absoluteRect.top);
