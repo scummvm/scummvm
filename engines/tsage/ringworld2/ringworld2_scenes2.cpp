@@ -4608,15 +4608,19 @@ bool Scene2900::KnobLeft::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_field416 != 0 || scene->_field414 != 0 || scene->_field425 != scene->_field426) {
+		if (scene->_field416 || scene->_altitudeChanging || 
+				scene->_field425 != scene->_field426) {
+			// Let your altitude stablize first
 			SceneItem::display2(2900, 17);
-		} else if (R2_GLOBALS._v56A99 / 48 == 0) {
+		} else if (R2_GLOBALS._balloonAltitude / 48 == 0) {
+			// Maximum altitude
 			SceneItem::display2(2900, 15);
 		} else {
+			// Increase altitude
 			R2_GLOBALS._sound2.fadeSound(282);
-			scene->_field414 = 1;
-			scene->_field41E = -1;
-			scene->_field426 = 100 - ((R2_GLOBALS._v56A99 / 48) - 1) * 25;
+			scene->_altitudeChanging = true;
+			scene->_altitudeMajorChange = -1;
+			scene->_field426 = 100 - ((R2_GLOBALS._balloonAltitude / 48) - 1) * 25;
 		}
 		break;
 
@@ -4641,15 +4645,19 @@ bool Scene2900::KnobRight::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_field416 != 0 || scene->_field414 != 0 || scene->_field425 != scene->_field426) {
+		if (scene->_field416 || scene->_altitudeChanging || 
+				scene->_field425 != scene->_field426) {
+			// Let your altitude stablize first
 			SceneItem::display2(2900, 17);
-		} else if (R2_GLOBALS._v56A99 / 48 == 0) {
+		} else if (R2_GLOBALS._balloonAltitude / 48 >= 3) {
+			// Altitude is too low - cannot land here
 			SceneItem::display2(2900, 16);
 		} else {
+			// Decrease altitude
 			R2_GLOBALS._sound2.fadeSound(212);
-			scene->_field414 = 1;
-			scene->_field41E = 1;
-			scene->_field426 = 100 - ((R2_GLOBALS._v56A99 / 48) + 1) * 25;
+			scene->_altitudeChanging = true;
+			scene->_altitudeMajorChange = 1;
+			scene->_field426 = 100 - ((R2_GLOBALS._balloonAltitude / 48) + 1) * 25;
 		}
 		break;
 
@@ -4675,10 +4683,10 @@ void Scene2900::Action1::signal() {
 	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
 	setDelay(3);
 
-	if (scene->_field416 == 0 && scene->_field414 == 0) {
+	if (!scene->_field416 && !scene->_altitudeChanging) {
 		scene->_field427 = 2;
 		scene->_field412 = 0;
-	} else if (scene->_field416 != 0) {
+	} else if (scene->_field416) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 	} else if (scene->_field427 == 0) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
@@ -4813,6 +4821,7 @@ int Scene2900::Map::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
 }
 
 void Scene2900::Map::drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2) {
+	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
 	Rect blockRect(xp, yp, xp + 160, yp + 100);
 	const byte *src = data;
 
@@ -4824,7 +4833,7 @@ void Scene2900::Map::drawBlock(const byte *data, int xp, int yp, const Rect &r1,
 			int height = blockRect.height();
 			src += (blockRect.top - yp) * 160 + blockRect.left - xp;
 
-			GfxSurface &surface = R2_GLOBALS.gfxManager().getSurface();
+			GfxSurface &surface = R2_GLOBALS._sceneManager._scene->_backSurface;
 			Graphics::Surface s = surface.lockSurface();
 
 			for (int yCtr = 0; yCtr < height; ++yCtr, src += 160) {
@@ -4833,7 +4842,7 @@ void Scene2900::Map::drawBlock(const byte *data, int xp, int yp, const Rect &r1,
 			}
 
 			surface.unlockSurface();
-			surface.addDirtyRect(blockRect);
+			R2_GLOBALS.gfxManager().copyFrom(surface, blockRect, blockRect);
 		}
 	}
 }
@@ -4897,30 +4906,30 @@ void Scene2900::Map::moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int 
 
 Scene2900::Scene2900(): SceneExt() {
 	_field412 = 0;
-	_field414 = 0;
-	_field416 = 0;
+	_altitudeChanging = false;
+	_field416 = false;
 	_offsetPos = Common::Point(550, 550);
 	_field41C = 0;
-	_field41E = 0;
+	_altitudeMajorChange = 0;
 	_pos = Common::Point(160, 100);
-	_field424 = 0;
+	_newAltitude = 0;
 	_field425 = 100;
 	_field426 = 100;
 	_field427 = 0;
-	_field8F8 = 0;
+	_field8F8 = false;
 }
 
 void Scene2900::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
+	s.syncAsSint16LE(_altitudeChanging);
 	s.syncAsSint16LE(_field416);
 	s.syncAsSint16LE(_field41C);
-	s.syncAsSint16LE(_field41E);
+	s.syncAsSint16LE(_altitudeMajorChange);
 	s.syncAsSint16LE(_offsetPos.x);
 	s.syncAsSint16LE(_offsetPos.y);
 	s.syncAsSint16LE(_pos.x);
 	s.syncAsSint16LE(_pos.y);
-	s.syncAsSint16LE(_field424);
+	s.syncAsSint16LE(_newAltitude);
 	s.syncAsSint16LE(_field425);
 	s.syncAsSint16LE(_field426);
 	s.syncAsSint16LE(_field427);
@@ -4940,6 +4949,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 
 	loadScene(2900);
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_leftEdge.setup(2900, 6, 1, 22, 0, 25);
 	_rightEdge.setup(2900, 6, 1, 280, 0, 25);
@@ -4971,7 +4981,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	_knobLeft.setDetails(Rect(165, 160, 228, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
 	_knobRight.setDetails(Rect(228, 160, 285, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
 
-//**DEBUG**	setAction(&_action1);
+	setAction(&_action1);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(2900);
 	R2_GLOBALS._player.setStrip2(3);
@@ -4982,7 +4992,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._sceneManager._previousScene == 2350 && 
 			R2_GLOBALS._balloonPosition.x == 0 && R2_GLOBALS._balloonPosition.y == 0) {
-		R2_GLOBALS._v56A99 = 5;
+		R2_GLOBALS._balloonAltitude = 5;
 		_map.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
 		_sceneMode = 10;
 
@@ -4995,9 +5005,9 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 		_offsetPos.x = R2_GLOBALS._balloonPosition.x + 120;
 		_offsetPos.y = R2_GLOBALS._balloonPosition.y + 100;
 
-		if ((R2_GLOBALS._v56A99 % 8) == 0)
+		if ((R2_GLOBALS._balloonAltitude % 8) == 0)
 			_offsetPos.x -= 70;
-		else if ((R2_GLOBALS._v56A99 % 8) == 7)
+		else if ((R2_GLOBALS._balloonAltitude % 8) == 7)
 			_offsetPos.x += 70;
 		
 		if (_offsetPos.x <= 120)
@@ -5005,12 +5015,12 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 		else if (_offsetPos.x >= 680)
 			_pos.x = _offsetPos.x - 520;
 
-		if ((R2_GLOBALS._v56A99 / 6) == 5)
+		if ((R2_GLOBALS._balloonAltitude / 6) == 5)
 			_offsetPos.y -= 50;
 		if (_offsetPos.y <= 100)
 			_pos.y = _offsetPos.y;
 
-		_field425 = _field426 = 100 - (R2_GLOBALS._v56A99 / 48) * 25;
+		_field425 = _field426 = 100 - (R2_GLOBALS._balloonAltitude / 48) * 25;
 		_map.setPosition(Common::Point(_offsetPos.x - 120, _offsetPos.y - 100));
 		_sceneMode = 11;
 
@@ -5036,7 +5046,8 @@ void Scene2900::remove() {
 
 	R2_GLOBALS._sound1.fadeOut2(NULL);
 	R2_GLOBALS._sound2.stop();
-
+	
+	R2_GLOBALS._interfaceY = UI_INTERFACE_Y;
 	SceneExt::remove();
 }
 
@@ -5057,35 +5068,35 @@ void Scene2900::signal() {
 
 void Scene2900::dispatch() {
 	if (_sceneMode == 11) {
-		_offsetPos.x += balloonData[R2_GLOBALS._v56A99].x;
-		_offsetPos.y += balloonData[R2_GLOBALS._v56A99].y;
-		_field41C = balloonData[R2_GLOBALS._v56A99].v3;
+		_offsetPos.x += balloonData[R2_GLOBALS._balloonAltitude].x;
+		_offsetPos.y += balloonData[R2_GLOBALS._balloonAltitude].y;
+		_field41C = balloonData[R2_GLOBALS._balloonAltitude].v3;
 
 		if (_field41C == 0) {
-			_field416 = 0;
+			_field416 = false;
 		} else {
-			_field416 = 1;
-			_field414 = 0;
-			_field41C += R2_GLOBALS._v56A99 / 48;
+			_field416 = true;
+			_altitudeChanging = false;
+			_field41C += R2_GLOBALS._balloonAltitude / 48;
 			_field426 = 100 - (_field41C * 25);
 		}
 
 		if (_field425 == _field426) {
-			_field416 = 0;
+			_field416 = false;
 		} else {
-			if (_field416 == 0) {
-				_field425 = _field425 - _field41E;
+			if (!_field416) {
+				_field425 = _field425 - _altitudeMajorChange;
 			} else {
 				_field425 = _field425 - _field41C;
 			}
 
-			if (_field41C == -1 || _field41E == -1) {
+			if (_field41C == -1 || _altitudeMajorChange == -1) {
 				if (_altimeterContent._frame == 1) {
 					_altimeterContent.setFrame2(10);
 				} else {
 					_altimeterContent.setFrame2(_altimeterContent._frame - 1);
 				}
-			} else if (_field41C == -1 || _field41E == 1) {
+			} else if (_field41C == -1 || _altitudeMajorChange == 1) {
 				if (_altimeterContent._frame == 10)
 					_altimeterContent.setFrame2(1);
 				else
@@ -5096,16 +5107,14 @@ void Scene2900::dispatch() {
 			R2_GLOBALS._player.changeZoom(_field425);
 		}
 
-		if (_field8F8 == 0) {
+		if (!_field8F8) {
 			R2_GLOBALS._scenePalette.loadPalette(2950);
 			R2_GLOBALS._scenePalette.refresh();
 		}
 
-		// TODO: Verify param 3
 		R2_GLOBALS._balloonPosition = _map.setPosition(
-			Common::Point(_offsetPos.x - 120, _offsetPos.y - 100), 
-			_field8F8 + (_field8F8 ? 1 : 0));
-		_field8F8 = 1;
+			Common::Point(_offsetPos.x - 120, _offsetPos.y - 100), !_field8F8);
+		_field8F8 = true;
 
 		if (_offsetPos.x <= 120)
 			_pos.x = _offsetPos.x + 40;
@@ -5117,33 +5126,34 @@ void Scene2900::dispatch() {
 
 		R2_GLOBALS._player.setPosition(_pos);
 
-		if ((_offsetPos.y % 100) == 50 && _field416 == 0) {
-			_field424 = R2_GLOBALS._v56A99;
-			if (_field414 != 0) {
-				_field424 += _field41E * 48;
-				_field414 = 0;
+		if ((_offsetPos.x % 100) == 50 && (_offsetPos.y % 100) == 50 && !_field416) {
+			_newAltitude = R2_GLOBALS._balloonAltitude;
+			if (_altitudeChanging) {
+				_newAltitude += _altitudeMajorChange * 48;
+				_altitudeChanging = false;
 			}
 
-			if (balloonData[R2_GLOBALS._v56A99].x > 0) {
-				++_field424;
-			} else if (balloonData[R2_GLOBALS._v56A99].x < 0) {
-				--_field424;
+			if (balloonData[R2_GLOBALS._balloonAltitude].x > 0) {
+				++_newAltitude;
+			} else if (balloonData[R2_GLOBALS._balloonAltitude].x < 0) {
+				--_newAltitude;
 			}
 
-			if (balloonData[R2_GLOBALS._v56A99].y > 0) {
-				_field424 += 240;
-			} else if (balloonData[R2_GLOBALS._v56A99].x < 0) {
-				_field424 += 8;
+			if (balloonData[R2_GLOBALS._balloonAltitude].y > 0) {
+				_newAltitude += 240;
+			} else if (balloonData[R2_GLOBALS._balloonAltitude].x < 0) {
+				_newAltitude += 8;
 			}
 
-			if (balloonData[R2_GLOBALS._v56A99].v3 > 0) {
-				_field424 += 48;
-			} else if (balloonData[R2_GLOBALS._v56A99].v3 < 0) {
-				_field424 += 208;
+			if (balloonData[R2_GLOBALS._balloonAltitude].v3 > 0) {
+				_newAltitude += 48;
+			} else if (balloonData[R2_GLOBALS._balloonAltitude].v3 < 0) {
+				_newAltitude += 208;
 			}
 
-			R2_GLOBALS._v56A99 = _field424;
-			if (R2_GLOBALS._v56A99 == 189) {
+			R2_GLOBALS._balloonAltitude = _newAltitude;
+			if (R2_GLOBALS._balloonAltitude == 189) {
+				// Finally reached landing point
 				_sceneMode = 12;
 				R2_GLOBALS._player.disableControl();
 

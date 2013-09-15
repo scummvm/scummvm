@@ -525,6 +525,8 @@ void SceneExt::refreshBackground(int xAmount, int yAmount) {
 	Common::copy(dataP, dataP + (s.w * s.h), destP);
 	_backSurface.unlockSurface();
 
+	R2_GLOBALS._screenSurface.addDirtyRect(_backSurface.getBounds());
+
 	// Free the resource data
 	DEALLOCATE(dataP);
 }

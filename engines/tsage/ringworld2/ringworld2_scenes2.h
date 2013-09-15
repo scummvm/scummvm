@@ -734,17 +734,17 @@ public:
 	Map _map;
 
 	int _field412;
-	int _field414;
-	int _field416;
+	bool _altitudeChanging;
+	bool _field416;
 	int _field41C;
-	int _field41E;
+	int _altitudeMajorChange;
 	Common::Point _offsetPos;
 	Common::Point _pos;
-	int _field424;
+	int _newAltitude;
 	int _field425;
 	int _field426;
 	int _field427;
-	int _field8F8;
+	bool _field8F8;
 
 	Scene2900();
 	virtual void synchronize(Serializer &s);
