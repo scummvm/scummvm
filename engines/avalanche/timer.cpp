@@ -328,7 +328,7 @@ void Timer::hangAround() {
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->init(7, true, _vm->_animation); // Robin Hood
 	_vm->_gyro->_whereIs[Gyro::kPeopleRobinHood - 150] = r__robins;
-	_vm->_animation->appearPed(1, 2);
+	_vm->_animation->appearPed(1, 1);
 	_vm->_scrolls->displayScrollChain('q', 39);
 	avvy->walkTo(6);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
@@ -358,7 +358,7 @@ void Timer::afterTheShootemup() {
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
-	_vm->_animation->appearPed(1, 2);
+	_vm->_animation->appearPed(1, 1);
 	_vm->_gyro->_userMovesAvvy = true;
 	_vm->_gyro->_objects[Gyro::kObjectCrossbow - 1] = true;
 	_vm->_lucerna->refreshObjectList();
@@ -429,7 +429,7 @@ void Timer::jacquesWakesUp() {
 void Timer::naughtyDuke() { // This is when the Duke comes in and takes your money.
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->init(9, false, _vm->_animation); // Here comes the Duke.
-	_vm->_animation->appearPed(2, 1); // He starts at the door...
+	_vm->_animation->appearPed(2, 0); // He starts at the door...
 	spr->walkTo(2); // He walks over to you.
 
 	// Let's get the door opening.
@@ -586,7 +586,7 @@ void Timer::riseUpOubliette() {
 void Timer::robinHoodAndGeida() {
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->init(7, true, _vm->_animation);
-	_vm->_animation->appearPed(1, 7);
+	_vm->_animation->appearPed(1, 6);
 	avvy->walkTo(5);
 
 	AnimationType *spr = &_vm->_animation->_sprites[1];
@@ -615,7 +615,7 @@ void Timer::avalotReturns() {
 	avvy->remove();
 	spr->remove();
 	avvy->init(0, true, _vm->_animation);
-	_vm->_animation->appearPed(1, 1);
+	_vm->_animation->appearPed(1, 0);
 	_vm->_scrolls->displayScrollChain('q', 67);
 	_vm->_gyro->_userMovesAvvy = true;
 }
