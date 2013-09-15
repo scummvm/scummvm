@@ -678,8 +678,9 @@ void Scrolls::callScrollDriver() {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
-					_vm->_gyro->_talkX = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed - 1]._x;
-					_vm->_gyro->_talkY = _vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed - 1]._y; // Position.
+					PedType *quasiPed = &_vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed - 1];
+					_vm->_gyro->_talkX = quasiPed->_x;
+					_vm->_gyro->_talkY = quasiPed->_y; // Position.
 
 					_vm->_gyro->_talkFontColor = _vm->_gyro->kQuasipeds[_param - 10]._foregroundColor;
 					_vm->_gyro->_talkBackgroundColor = _vm->_gyro->kQuasipeds[_param - 10]._backgroundColor; // Colors.

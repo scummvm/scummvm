@@ -126,7 +126,7 @@ public:
 	void catacombMove(byte ped); // When you enter a new position in the catacombs, this procedure should be called. It changes the 'also' codes so that they may match the picture on the screen.
 	void stopWalking();
 	void changeDirection(byte t, byte dir);
-	void appearPed(byte trn, byte np);
+	void appearPed(byte sprNum, byte pedNum);
 	void flipRoom(byte room, byte ped);
 	bool inField(byte which); // Returns true if you're within field "which".
 	bool nearDoor(); // Returns True if you're near a door.
