@@ -487,7 +487,7 @@ void Timer::jump() {
 	if ((_vm->_gyro->_jumpStatus == 10) // You're at the highest point of your jump.
 			&& (_vm->_gyro->_room == kRoomInsideCardiffCastle)
 			&& (_vm->_gyro->_arrowInTheDoor == true)
-			&& (_vm->_animation->inField(3))) { // Beside the wall
+			&& (_vm->_animation->inField(2))) { // Beside the wall
 		// Grab the arrow!
 		if (_vm->_gyro->_carryNum >= kCarryLimit)
 			_vm->_scrolls->displayText("You fail to grab it, because your hands are full.");

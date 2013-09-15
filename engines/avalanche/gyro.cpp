@@ -530,7 +530,7 @@ Common::String Gyro::f5Does() {
 			return Common::String::format("%cSSit down", Acci::kVerbCodeSit);
 		break;
 	case kRoomMusicRoom:
-		if (_vm->_animation->inField(7))
+		if (_vm->_animation->inField(5))
 			return Common::String::format("%cPPlay the harp", Acci::kVerbCodePlay);
 		break;
 	}
