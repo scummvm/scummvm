@@ -490,7 +490,6 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 			day += "th";
 		}
 
-	// Y2K compliant ;)
 	return day + ' ' + month + ' ' + _gyro->intToStr(y + 1900);
 }
 
