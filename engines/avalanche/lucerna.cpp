@@ -407,9 +407,7 @@ void Lucerna::enterNewTown() {
 	}
 }
 
-
-
-void Lucerna::putGeidaAt(byte whichPed, byte &ped) {
+void Lucerna::putGeidaAt(byte whichPed, byte ped) {
 	if (ped == 0)
 		return;
 	AnimationType *spr1 = &_vm->_animation->_sprites[1];
@@ -462,10 +460,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				spr1->init(8, false, _vm->_animation); // load Crapulus
 
 				if (_vm->_gyro->_roomCount[kRoomOutsideYours] == 1) {
-					_vm->_animation->appearPed(2, 4); // Start on the right-hand side of the screen.
-					spr1->walkTo(5); // Walks up to greet you.
+					_vm->_animation->appearPed(2, 3); // Start on the right-hand side of the screen.
+					spr1->walkTo(4); // Walks up to greet you.
 				} else {
-					_vm->_animation->appearPed(2, 5); // Starts where he was before.
+					_vm->_animation->appearPed(2, 4); // Starts where he was before.
 					spr1->_facingDir = Animation::kDirLeft;
 				}
 
@@ -477,8 +475,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 			if (_vm->_gyro->_crapulusWillTell) {
 				spr1->init(8, false, _vm->_animation);
-				_vm->_animation->appearPed(2, 2);
-				spr1->walkTo(4);
+				_vm->_animation->appearPed(2, 1);
+				spr1->walkTo(3);
 				_vm->_timer->addTimer(20, Timer::kProcCrapulusSpludOut, Timer::kReasonCrapulusSaysSpludwickOut);
 				_vm->_gyro->_crapulusWillTell = false;
 			}
@@ -497,7 +495,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			if (ped > 0) {
 				spr1->init(2, false, _vm->_animation); // load Spludwick
-				_vm->_animation->appearPed(2, 2);
+				_vm->_animation->appearPed(2, 1);
 				_vm->_gyro->_whereIs[1] = kRoomSpludwicks;
 			}
 
@@ -509,7 +507,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case kRoomBrummieRoad:
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(5, ped);
+			putGeidaAt(4, ped);
 		if (_vm->_gyro->_cwytalotGone) {
 			_vm->_gyro->_magics[kColorLightred - 1]._operation = Gyro::kMagicNothing;
 			_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = kRoomNowhere;
@@ -522,11 +520,11 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = kRoomBrummieRoad;
 
 				if (_vm->_gyro->_roomCount[kRoomBrummieRoad] == 1) { // First time here...
-					_vm->_animation->appearPed(2, 2); // He appears on the right of the screen...
-					spr1->walkTo(4); // ...and he walks up...
+					_vm->_animation->appearPed(2, 1); // He appears on the right of the screen...
+					spr1->walkTo(3); // ...and he walks up...
 				} else {
 					// You've been here before.
-					_vm->_animation->appearPed(2, 4); // He's standing in your way straight away...
+					_vm->_animation->appearPed(2, 3); // He's standing in your way straight away...
 					spr1->_facingDir = Animation::kDirLeft;
 				}
 			}
@@ -537,8 +535,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if ((_vm->_gyro->_cwytalotGone) && (!_vm->_gyro->_passedCwytalotInHerts) && (ped == 2) && (_vm->_gyro->_roomCount[kRoomArgentRoad] > 3)) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			spr1->init(4, false, _vm->_animation); // 4 = Cwytalot again
-			_vm->_animation->appearPed(2, 1);
-			spr1->walkTo(2);
+			_vm->_animation->appearPed(2, 0);
+			spr1->walkTo(1);
 			spr1->_vanishIfStill = true;
 			_vm->_gyro->_passedCwytalotInHerts = true;
 			// _vm->_gyro->whereis[#157] = r__Nowhere; // can we fit this in?
@@ -553,7 +551,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_gyro->_magics[kColorGreen - 1]._operation = Gyro::kMagicNothing; // You may enter the drawbridge.
 		}
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(ped + 3, ped); // load Geida
+			putGeidaAt(ped + 2, ped); // load Geida
 		break;
 
 	case kRoomRobins:
@@ -562,8 +560,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				// A welcome party... or maybe not...
 				AnimationType *spr1 = &_vm->_animation->_sprites[1];
 				spr1->init(6, false, _vm->_animation);
-				_vm->_animation->appearPed(2, 2);
-				spr1->walkTo(3);
+				_vm->_animation->appearPed(2, 1);
+				spr1->walkTo(2);
 				_vm->_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
 			}
 		}
@@ -587,8 +585,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			switch (_vm->_gyro->_cardiffQuestionNum) {
 			case 0 : // You've answered NONE of his questions.
 				spr1->init(9, false, _vm->_animation);
-				_vm->_animation->appearPed(2, 2);
-				spr1->walkTo(3);
+				_vm->_animation->appearPed(2, 1);
+				spr1->walkTo(2);
 				_vm->_timer->addTimer(47, Timer::kProcCardiffSurvey, Timer::kReasonCardiffsurvey);
 				break;
 			case 5 :
@@ -596,7 +594,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				break; // You've answered ALL his questions. => nothing happens.
 			default: // You've answered SOME of his questions.
 				spr1->init(9, false, _vm->_animation);
-				_vm->_animation->appearPed(2, 3);
+				_vm->_animation->appearPed(2, 2);
 				spr1->_facingDir = Animation::kDirRight;
 				_vm->_timer->addTimer(3, Timer::kProcCardiffReturn, Timer::kReasonCardiffsurvey);
 			}
@@ -672,7 +670,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_timer->addTimer(3, Timer::kProcGreetsMonk, Timer::kReasonDuLustieTalks);
 
 		if (_vm->_gyro->_geidaFollows) {
-			putGeidaAt(5, ped);
+			putGeidaAt(4, ped);
 			if (_vm->_gyro->_lustieIsAsleep) {
 				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_graphics->refreshBackground();
@@ -726,10 +724,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		AnimationType *spr1 = &_vm->_animation->_sprites[1];
 		spr1->init(11, false, _vm->_animation);
 		if ((_vm->_gyro->_roomCount[kRoomWiseWomans] == 1) && (ped > 0)) {
-			_vm->_animation->appearPed(2, 2); // Start on the right-hand side of the screen.
-			spr1->walkTo(4); // Walks up to greet you.
+			_vm->_animation->appearPed(2, 1); // Start on the right-hand side of the screen.
+			spr1->walkTo(3); // Walks up to greet you.
 		} else {
-			_vm->_animation->appearPed(2, 4); // Starts where she was before.
+			_vm->_animation->appearPed(2, 3); // Starts where she was before.
 			spr1->_facingDir = Animation::kDirLeft;
 		}
 
@@ -802,18 +800,18 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		break; // Ayles awake.
 
 	case kRoomGeidas:
-		putGeidaAt(2, ped);
+		putGeidaAt(1, ped);
 		break; // load Geida
 
 	case kRoomEastHall:
 	case kRoomWestHall:
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(ped + 2, ped);
+			putGeidaAt(ped + 1, ped);
 		break;
 
 	case kRoomLusties:
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(ped + 6, ped);
+			putGeidaAt(ped + 5, ped);
 		break;
 
 	case kRoomNottsPub:
@@ -1217,7 +1215,7 @@ void Lucerna::majorRedraw() {
 uint16 Lucerna::bearing(byte whichPed) {
 	static const double rad2deg = 180 / 3.14; // Pi
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
-	PedType *curPed = &_vm->_gyro->_peds[whichPed - 1]; // Different array indexes in Pascal and C.
+	PedType *curPed = &_vm->_gyro->_peds[whichPed];
 
 	if (avvy->_x == curPed->_x)
 		return 0;
