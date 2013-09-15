@@ -35,7 +35,6 @@
 #include "avalanche/scrolls.h"
 #include "avalanche/acci.h"
 #include "avalanche/sequence.h"
-#include "avalanche/enid.h"
 #include "avalanche/pingo.h"
 
 #include "common/textconsole.h"
@@ -350,7 +349,7 @@ void Timer::hangAround2() {
 
 	_vm->_gyro->_tiedUp = false;
 
-	_vm->_enid->backToBootstrap(1); // Call the shoot-'em-up.
+	// _vm->_enid->backToBootstrap(1); Call the shoot-'em-up. TODO: Replace it with proper ScummVM-friendly function(s)! Do not remove until then!
 }
 
 void Timer::afterTheShootemup() {

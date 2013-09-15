@@ -34,7 +34,6 @@
 #include "avalanche/gyro.h"
 #include "avalanche/acci.h"
 #include "avalanche/animation.h"
-#include "avalanche/enid.h"
 
 #include "common/textconsole.h"
 
@@ -590,7 +589,7 @@ void Dropdown::runMenuFile() {
 		warning("STUB: Dropdown::runMenuFile()");
 		break;
 	case 4:
-		_vm->_enid->backToBootstrap(2);
+		//_vm->_enid->backToBootstrap(2); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 		break;
 	case 5:
 		_vm->_lucerna->callVerb(Acci::kVerbCodeQuit);

@@ -35,7 +35,6 @@
 #include "avalanche/scrolls.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/enid.h"
 #include "avalanche/celer.h"
 #include "avalanche/pingo.h"
 #include "avalanche/sequence.h"
@@ -1432,7 +1431,7 @@ void Acci::giveGeidaTheLute() {
 	_vm->_scrolls->displayScrollChain('q', 64); // She plays it.
 
 	_vm->_timer->addTimer(1, Timer::kProcGiveLuteToGeida, Timer::kReasonGeidaSings);
-	_vm->_enid->backToBootstrap(4);
+	//_vm->_enid->backToBootstrap(4); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 }
 
 void Acci::playHarp() {
@@ -2106,7 +2105,7 @@ void Acci::doThat() {
 		}
 		break;
 	case kVerbCodeDir:
-		_vm->_enid->dir(_realWords[1]);
+		//_vm->_enid->dir(_realWords[1]); TODO: Replace it with proper ScummVM-friendly function(s)!
 		break;
 	case kVerbCodeDie:
 		_vm->_lucerna->gameOver();
