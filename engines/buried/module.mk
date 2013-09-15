@@ -11,6 +11,8 @@ MODULE_OBJS = \
 	frame_window.o \
 	gameui.o \
 	graphics.o \
+	inventory_info.o \
+	inventory_window.o \
 	livetext.o \
 	main_menu.o \
 	navarrow.o \

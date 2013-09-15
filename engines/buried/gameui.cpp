@@ -28,6 +28,7 @@
 #include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
+#include "buried/inventory_window.h"
 #include "buried/livetext.h"
 #include "buried/message.h"
 #include "buried/navarrow.h"
@@ -49,6 +50,7 @@ GameUIWindow::GameUIWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent
 
 	_navArrowWindow = new NavArrowWindow(_vm, this);
 	_liveTextWindow = new LiveTextWindow(_vm, this);
+	_inventoryWindow = new InventoryWindow(_vm, this);
 	_bioChipRightWindow = new BioChipRightWindow(_vm, this);
 
 	// TODO: Other windows
@@ -57,6 +59,7 @@ GameUIWindow::GameUIWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent
 GameUIWindow::~GameUIWindow() {
 	delete _navArrowWindow;
 	delete _liveTextWindow;
+	delete _inventoryWindow;
 	delete _bioChipRightWindow;
 
 	// TODO: Other windows
@@ -68,6 +71,7 @@ bool GameUIWindow::startNewGame(bool walkthrough) {
 
 	_navArrowWindow->showWindow(kWindowShow);
 	_liveTextWindow->showWindow(kWindowShow);
+	_inventoryWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
 
 	// TODO: Other windows
@@ -104,6 +108,7 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 
 	_navArrowWindow->showWindow(kWindowShow);
 	_liveTextWindow->showWindow(kWindowShow);
+	_inventoryWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
 
 	// TODO: Other windows
@@ -116,6 +121,7 @@ bool GameUIWindow::startNewGame(const Common::String &fileName) {
 
 	_navArrowWindow->showWindow(kWindowShow);
 	_liveTextWindow->showWindow(kWindowShow);
+	_inventoryWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
 
 	// TODO: Other windows
@@ -287,6 +293,7 @@ void GameUIWindow::onPaint() {
 
 void GameUIWindow::onEnable(bool enable) {
 	// Pass the enable message to all child windows
+	_inventoryWindow->enableWindow(enable);
 	_navArrowWindow->enableWindow(enable);
 	_liveTextWindow->enableWindow(enable);
 	_bioChipRightWindow->enableWindow(enable);

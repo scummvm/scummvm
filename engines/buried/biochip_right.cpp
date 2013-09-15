@@ -68,6 +68,9 @@ bool BioChipRightWindow::changeCurrentBioChip(int bioChipID) {
 	if (_bioChipViewWindow)
 		destroyBioChipViewWindow();
 
+	_curBioChip = bioChipID;
+	_status = 0;
+
 	// TODO: Set the translate enabled flag to false
 
 	invalidateWindow(false);
