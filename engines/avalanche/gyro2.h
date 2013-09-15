@@ -270,7 +270,7 @@ public:
 	bool _avvyIsAwake; // Well? Is Avvy awake? (Screen 1 only.)
 	bool _avvyInBed; // True if Avvy's in bed, but awake.
 	bool _userMovesAvvy; // If this is false, the user has no control over Avvy's movements.
-	byte _dogFoodPos; // Which way Dogfood's looking in the pub.
+	byte _npcFacing; // If there's an NPC in the current room which turns it's head according to Avvy's movement (keep looking at him), this variable tells which way it's facing at the moment.
 	bool _givenBadgeToIby; // Have you given the badge to Iby yet?
 	bool _friarWillTieYouUp; // If you're going to get tied up.
 	bool _tiedUp; // You ARE tied up!

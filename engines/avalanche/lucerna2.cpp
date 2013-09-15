@@ -502,8 +502,6 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_gyro->_whereIs[1] = r__spludwicks;
 			}
 
-			_vm->_gyro->_dogFoodPos = 0;  // _vm->_gyro->also Spludwick pos.
-
 			spr1->_callEachStepFl = true;
 			spr1->_eachStepProc = Animation::kProcGeida;
 		} else
@@ -667,7 +665,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		break;
 
 	case r__lustiesroom:
-		_vm->_gyro->_dogFoodPos = 1; // Actually, du Lustie pos.
+		_vm->_gyro->_npcFacing = 1; // du Lustie.
 		if (_vm->_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
 			_vm->_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
 		else if (!_vm->_gyro->_enteredLustiesRoomAsMonk) // already
@@ -822,7 +820,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case r__nottspub:
 		if (_vm->_gyro->_sittingInPub)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
-		_vm->_gyro->_dogFoodPos = 1; // Actually, du Lustie pos.
+		_vm->_gyro->_npcFacing = 1; // Port.
 		break;
 
 	case r__outsideducks:
@@ -839,8 +837,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		break;
 
 	case r__ducks:
-		_vm->_gyro->_dogFoodPos = 1;
-		break; // Actually, Duck pos.
+		_vm->_gyro->_npcFacing = 1; // Duck.
+		break; 
 	}
 
 	_vm->_gyro->_seeScroll = false; // Now it can work again!
