@@ -496,13 +496,13 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			if (ped > 0) {
 				spr1->init(2, false, _vm->_animation); // load Spludwick
 				_vm->_animation->appearPed(2, 1);
-				_vm->_gyro->_whereIs[1] = kRoomSpludwicks;
+				_vm->_gyro->_whereIs[Gyro::kPeopleSpludwick - 150] = kRoomSpludwicks;
 			}
 
 			spr1->_callEachStepFl = true;
 			spr1->_eachStepProc = Animation::kProcGeida;
 		} else
-			_vm->_gyro->_whereIs[1] = kRoomNowhere;
+			_vm->_gyro->_whereIs[Gyro::kPeopleSpludwick - 150] = kRoomNowhere;
 		break;
 
 	case kRoomBrummieRoad:

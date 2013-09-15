@@ -441,7 +441,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_celer->forgetBackgroundSprites();
 	_lucerna->minorRedraw();
 	_dropdown->setupMenu();
-	_gyro->_whereIs[0] = _gyro->_room;
+	_gyro->_whereIs[Gyro::kPeopleAvalot - 150] = _gyro->_room;
 	_gyro->_alive = true;
 	_lucerna->refreshObjectList();
 	_animation->updateSpeed();

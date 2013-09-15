@@ -1893,7 +1893,7 @@ void Acci::doThat() {
 		else {
 			if ((_vm->_gyro->_room == 12) & (_vm->_animation->inField(2))) { // Avaricius appears!
 				_vm->_scrolls->displayScrollChain('q', 17);
-				if (_vm->_gyro->_whereIs[1] == 12)
+				if (_vm->_gyro->_whereIs[1] == kRoomSpludwicks)
 					_vm->_scrolls->displayScrollChain('q', 18);
 				else {
 					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[1];
@@ -2044,7 +2044,7 @@ void Acci::doThat() {
 	case kVerbCodeAttack:
 		if ((_vm->_gyro->_room == kRoomBrummieRoad) &&
 				((_person == 157) || (_thing == Gyro::kObjectCrossbow) || (_thing == Gyro::kObjectBolt))
-				&& (_vm->_gyro->_whereIs[7] == _vm->_gyro->_room)) {
+				&& (_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] == _vm->_gyro->_room)) {
 			switch (_vm->_gyro->_objects[Gyro::kObjectBolt - 1] + _vm->_gyro->_objects[Gyro::kObjectCrossbow - 1] * 2) {
 				// 0 = neither, 1 = only bolt, 2 = only crossbow, 3 = both.
 			case 0:
@@ -2068,7 +2068,7 @@ void Acci::doThat() {
 				_vm->_animation->_sprites[1].walkTo(1);
 				_vm->_animation->_sprites[1]._vanishIfStill = true;
 				_vm->_animation->_sprites[1]._callEachStepFl = false;
-				_vm->_gyro->_whereIs[7] = 177;
+				_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = kRoomDummy;
 				break;
 			default:
 				_vm->_scrolls->displayScrollChain('Q', 10); // Please try not to be so violent!

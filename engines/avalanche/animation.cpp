@@ -797,7 +797,7 @@ void Animation::callSpecial(uint16 which) {
 			_sprites[1].walkTo(2);
 			_sprites[1]._vanishIfStill = true;
 			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
-			_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = 177; // Not here, then.
+			_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = kRoomDummy; // Not here, then.
 			_vm->_timer->addTimer(364, Timer::kProcHangAround, Timer::kReasonHangingAround);
 		}
 		break;
