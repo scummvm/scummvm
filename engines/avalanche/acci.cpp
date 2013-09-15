@@ -1299,12 +1299,12 @@ void Acci::cardiffClimbing() {
 	if (_vm->_gyro->_standingOnDais) { // Clamber up.
 		_vm->_scrolls->displayText("You climb down, back onto the floor.");
 		_vm->_gyro->_standingOnDais = false;
-		_vm->_animation->appearPed(1, 3);
+		_vm->_animation->appearPed(1, 2);
 	} else { // Clamber down.
 		if (_vm->_animation->inField(1)) {
 			_vm->_scrolls->displayText("You clamber up onto the dais.");
 			_vm->_gyro->_standingOnDais = true;
-			_vm->_animation->appearPed(1, 2);
+			_vm->_animation->appearPed(1, 1);
 		} else
 			_vm->_scrolls->displayText("Get a bit closer, Avvy.");
 	}
@@ -1325,7 +1325,7 @@ void Acci::standUp() {
 			}
 			_vm->_animation->_sprites[0]._visible = true;
 			_vm->_gyro->_userMovesAvvy = true;
-			_vm->_animation->appearPed(1, 2);
+			_vm->_animation->appearPed(1, 1);
 			_vm->_animation->_direction = Animation::kDirLeft;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
 			_vm->_lucerna->incScore(1);
@@ -1343,7 +1343,7 @@ void Acci::standUp() {
 		if (_vm->_gyro->_sittingInPub)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Not sitting down.
 			_vm->_animation->_sprites[0]._visible = true; // But standing up.
-			_vm->_animation->appearPed(1, 4); // And walking away.
+			_vm->_animation->appearPed(1, 3); // And walking away.
 			_vm->_gyro->_sittingInPub = false; // Really not sitting down.
 			_vm->_gyro->_userMovesAvvy = true; // And ambulant.
 		} else
@@ -1898,7 +1898,7 @@ void Acci::doThat() {
 				else {
 					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[1];
 					spr->init(1, false, _vm->_animation); // Avaricius
-					_vm->_animation->appearPed(2, 4);
+					_vm->_animation->appearPed(2, 3);
 					spr->walkTo(4);
 					spr->_callEachStepFl = true;
 					spr->_eachStepProc = Animation::kProcBackAndForth;

@@ -727,7 +727,7 @@ void Animation::catacombMove(byte ped) {
 	if ((_vm->_gyro->_geidaFollows) && (ped > 0)) {
 		if (!_sprites[1]._quick)  // If we don't already have her...
 			_sprites[1].init(5, true, this); // ...Load Geida.
-		appearPed(2, geidaPed(ped));
+		appearPed(2, geidaPed(ped) - 1);
 		_sprites[1]._callEachStepFl = true;
 		_sprites[1]._eachStepProc = kProcGeida;
 	}
@@ -765,7 +765,7 @@ void Animation::callSpecial(uint16 which) {
 
 		if (!_vm->_gyro->_arrowTriggered) {
 			_vm->_gyro->_arrowTriggered = true;
-			appearPed(2, 4); // The dart starts at ped 4, and...
+			appearPed(2, 3); // The dart starts at ped 4, and...
 			_sprites[1].walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
 			_sprites[1]._facingDir = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
@@ -853,13 +853,13 @@ void Animation::callSpecial(uint16 which) {
 			return;
 		switch ((_vm->_gyro->kCatacombMap[_vm->_gyro->_catacombY - 1][_vm->_gyro->_catacombX - 1] & 0xf00) >> 8) {
 		case 0x1:
-			appearPed(1, 12);
-			break;
-		case 0x3:
 			appearPed(1, 11);
 			break;
+		case 0x3:
+			appearPed(1, 10);
+			break;
 		default:
-			appearPed(1, 4);
+			appearPed(1, 3);
 		}
 		dawnDelay();
 		break;
@@ -869,7 +869,7 @@ void Animation::callSpecial(uint16 which) {
 		catacombMove(1);
 		if (_vm->_gyro->_room != r__catacombs)
 			return;
-		appearPed(1, 1);
+		appearPed(1, 0);
 		dawnDelay();
 		break;
 	case 12: // _vm->_gyro->special 12: transfer south in catacombs.
@@ -878,7 +878,7 @@ void Animation::callSpecial(uint16 which) {
 		catacombMove(2);
 		if (_vm->_gyro->_room != r__catacombs)
 			return;
-		appearPed(1, 2);
+		appearPed(1, 1);
 		dawnDelay();
 		break;
 	case 13: // _vm->_gyro->special 13: transfer west in catacombs.
@@ -887,7 +887,7 @@ void Animation::callSpecial(uint16 which) {
 		catacombMove(3);
 		if (_vm->_gyro->_room != r__catacombs)
 			return;
-		appearPed(1, 3);
+		appearPed(1, 2);
 		dawnDelay();
 		break;
 	}
@@ -935,7 +935,7 @@ void Animation::openDoor(byte whither, byte ped, byte magicnum) {
 				_vm->_sequence->startToClose();
 				return;
 			} else {
-				appearPed(1, 6);
+				appearPed(1, 5);
 				_sprites[0]._facingDir = kDirRight; // added by TT 12/3/1995
 				_vm->_sequence->firstShow(8);
 				_vm->_sequence->thenShow(9);
@@ -1005,7 +1005,7 @@ void Animation::changeDirection(byte t, byte dir) {
 
 void Animation::appearPed(byte sprNum, byte pedNum) {
 	AnimationType *curSpr = &_sprites[sprNum - 1];
-	PedType *curPed = &_vm->_gyro->_peds[pedNum - 1];
+	PedType *curPed = &_vm->_gyro->_peds[pedNum];
 	curSpr->appear(curPed->_x - curSpr->_info._xLength / 2, curPed->_y - curSpr->_info._yLength, curPed->_direction);
 	changeDirection(sprNum - 1, curPed->_direction);
 }
@@ -1294,7 +1294,7 @@ void Animation::hideInCupboard() {
 		} else {
 			_sprites[0]._visible = true;
 			_vm->_gyro->_userMovesAvvy = true;
-			appearPed(1, 3); // Walk out of the cupboard.
+			appearPed(1, 2); // Walk out of the cupboard.
 			_vm->_scrolls->displayText("You leave the cupboard. Nice to be out of there!");
 			_vm->_gyro->_avvysInTheCupboard = false;
 			_vm->_sequence->firstShow(8);
@@ -1344,7 +1344,7 @@ void Animation::flipRoom(byte room, byte ped) {
 		_vm->_gyro->_enterCatacombsFromLustiesRoom = true;
 
 	_vm->_lucerna->enterRoom(room, ped);
-	appearPed(1, ped);
+	appearPed(1, ped - 1);
 	_vm->_gyro->_enterCatacombsFromLustiesRoom = false;
 	_oldDirection = _direction;
 	_direction = _sprites[0]._facingDir;
