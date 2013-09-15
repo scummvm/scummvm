@@ -701,6 +701,8 @@ class Scene2900 : public SceneExt {
 	private:
 		void moveArea(Rect &r, int xAmt, int yAmt);
 		void moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width);
+		int adjustRect(Common::Rect &r1, const Common::Rect &r2);
+		void drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
 	public:
 		int _mapWidth, _mapHeight;
 		int _field4;
@@ -709,14 +711,13 @@ class Scene2900 : public SceneExt {
 		int _fieldA;
 		int _resNum;
 		int _xV, _yV;
-		Rect _rect;
+		Rect _bounds;
 
 		Map();
 		void load(int resNum);
-		Common::Point setPosition(const Common::Point &pos, int v3 = 0);
+		Common::Point setPosition(const Common::Point &pos, bool initialFlag = false);
 		void synchronize(Serializer &s);
-		int adjustRect(Common::Rect &r1, const Common::Rect &r2);
-		void drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
+		void redraw(Rect *updateRect = NULL);
 	};
 public:
 	SceneObject _leftEdge;
@@ -752,6 +753,7 @@ public:
 	virtual void remove();
 	virtual void signal();
 	virtual void dispatch();
+	virtual void refreshBackground(int xAmount, int yAmount);
 };
 
 } // End of namespace Ringworld2

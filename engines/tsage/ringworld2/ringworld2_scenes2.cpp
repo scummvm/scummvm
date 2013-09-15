@@ -4712,7 +4712,7 @@ Scene2900::Map::Map() {
 	_fieldA = 0;
 	_resNum = 0;
 	_xV = _yV = 0;
-	_rect = Rect(40, 0, 280, 150);
+	_bounds = Rect(40, 0, 280, 150);
 }
 
 void Scene2900::Map::load(int resNum) {
@@ -4726,58 +4726,67 @@ void Scene2900::Map::load(int resNum) {
 	DEALLOCATE(data);
 }
 
-Common::Point Scene2900::Map::setPosition(const Common::Point &pos, int v3) {
-	Rect rect2;
-	Rect blockRect(0, 0, 160, 100);
-	int xHalfCount = _mapWidth / 160;
-	int yHalfCount = _mapHeight / 100;
+Common::Point Scene2900::Map::setPosition(const Common::Point &pos, bool initialFlag) {
 	Common::Point p = pos;
+	Rect updateRect;
 
 	if (p.x >= 0) {
-		int xRight = p.x + _rect.width();
+		int xRight = p.x + _bounds.width();
 		if (xRight > _mapWidth) {
-			p.x = _mapWidth - _rect.width();
+			p.x = _mapWidth - _bounds.width();
 		}
 	} else {
 		p.x = 0;
 	}
 
 	if (p.y >= 0) {
-		int yBottom = p.y + _rect.height();
+		int yBottom = p.y + _bounds.height();
 		if (yBottom > _mapHeight) {
-			p.y = _mapHeight - _rect.height();
+			p.y = _mapHeight - _bounds.height();
 		}
 	} else {
 		p.y = 0;
 	}
 
-	if ((p.x != 0 || p.y != 0) && !v3) {
-		rect2 = _rect;
-		moveArea(rect2, _xV - p.x, _yV - p.y);
+	if ((p.x != 0 || p.y != 0) && !initialFlag) {
+		moveArea(updateRect, _xV - p.x, _yV - p.y);
+		redraw(&updateRect);
+	} else {
+		redraw();
 	}
 
 	_xV = p.x;
 	_yV = p.y;
-	Rect screenRect = _rect;
-	screenRect.translate(_xV - _rect.left, _yV - _rect.top);
+	return Common::Point(_xV, _yV);
+}
+
+void Scene2900::Map::redraw(Rect *updateRect) {
+	int xHalfCount = _mapWidth / 160;
+	int yHalfCount = _mapHeight / 100;
 	int rlbNum = 0;
+
+	Rect blockRect(0, 0, 160, 100);
+	Rect screenRect = _bounds;
+	screenRect.translate(_xV - _bounds.left, _yV - _bounds.top);
+
+	Rect modifyRect;
+	if (updateRect)
+		modifyRect = *updateRect;
 
 	for (int xCtr = 0; xCtr < xHalfCount; ++xCtr) {
 		for (int yCtr = 0; yCtr < yHalfCount; ++yCtr, ++rlbNum) {
 			blockRect.moveTo(160 * xCtr, 100 * yCtr);
 			if (blockRect.intersects(screenRect)) {
 				// The block of the map is at least partially on-screen, so needs drawing
-				blockRect.translate(_rect.left - _xV, _rect.top - _yV);
+				blockRect.translate(_bounds.left - _xV, _bounds.top - _yV);
 				byte *data = g_resourceManager->getResource(RES_BITMAP, _resNum, rlbNum);
 
-				drawBlock(data, blockRect.left, blockRect.top, _rect, rect2);
+				drawBlock(data, blockRect.left, blockRect.top, _bounds, modifyRect);
 
 				DEALLOCATE(data);
 			}
 		}
 	}
-
-	return Common::Point(_xV, _yV);
 }
 
 void Scene2900::Map::synchronize(Serializer &s) {
@@ -4785,7 +4794,7 @@ void Scene2900::Map::synchronize(Serializer &s) {
 	s.syncAsUint16LE(_mapHeight);
 	s.syncAsSint16LE(_xV);
 	s.syncAsSint16LE(_yV);
-	_rect.synchronize(s);
+	_bounds.synchronize(s);
 }
 
 int Scene2900::Map::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
@@ -4820,15 +4829,15 @@ int Scene2900::Map::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
 	return -1;
 }
 
-void Scene2900::Map::drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2) {
-	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
+void Scene2900::Map::drawBlock(const byte *data, int xp, int yp, 
+		const Rect &bounds, const Rect &updateRect) {
 	Rect blockRect(xp, yp, xp + 160, yp + 100);
 	const byte *src = data;
 
-	if (blockRect.intersects(r1)) {
-		blockRect.clip(r1);
+	if (blockRect.intersects(bounds)) {
+		blockRect.clip(bounds);
 
-		if (adjustRect(blockRect, r2) != 0) {
+		if (adjustRect(blockRect, updateRect) != 0) {
 			int width = blockRect.width();
 			int height = blockRect.height();
 			src += (blockRect.top - yp) * 160 + blockRect.left - xp;
@@ -5163,6 +5172,12 @@ void Scene2900::dispatch() {
 	}
 
 	Scene::dispatch();
+}
+
+void Scene2900::refreshBackground(int xAmount, int yAmount) {
+	SceneExt::refreshBackground(xAmount, yAmount);
+
+	_map.redraw();
 }
 
 } // End of namespace Ringworld2
