@@ -107,7 +107,7 @@ private:
 	void zoomOut(int16 x, int16 y); // Only used when entering the map.
 	void enterNewTown();
 	void findPeople(byte room);
-	void putGeidaAt(byte whichPed, byte &ped);
+	void putGeidaAt(byte whichPed, byte ped);
 	void guideAvvy(Common::Point cursorPos);
 
 	// Will be used in dusk() and dawn().

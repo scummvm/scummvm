@@ -1055,7 +1055,7 @@ void Scrolls::talkTo(byte whom) {
 
 		AnimationType *spr = &_vm->_animation->_sprites[1];
 		spr->_vanishIfStill = true;
-		spr->walkTo(3); // Walks away.
+		spr->walkTo(2); // Walks away.
 
 		_vm->_lucerna->incScore(2);
 	}
