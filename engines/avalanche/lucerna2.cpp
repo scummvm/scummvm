@@ -238,27 +238,30 @@ void Lucerna::loadAlso(byte num) {
 
 	_vm->_gyro->_lineNum = file.readByte();
 	for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
-		_vm->_gyro->_lines[i]._x1 = file.readSint16LE();
-		_vm->_gyro->_lines[i]._y1 = file.readSint16LE();
-		_vm->_gyro->_lines[i]._x2 = file.readSint16LE();
-		_vm->_gyro->_lines[i]._y2 = file.readSint16LE();
-		_vm->_gyro->_lines[i]._color = file.readByte();
+		LineType *curLine = &_vm->_gyro->_lines[i];
+		curLine->_x1 = file.readSint16LE();
+		curLine->_y1 = file.readSint16LE();
+		curLine->_x2 = file.readSint16LE();
+		curLine->_y2 = file.readSint16LE();
+		curLine->_color = file.readByte();
 	}
 
 	memset(_vm->_gyro->_peds, 177, sizeof(_vm->_gyro->_peds));
 	byte pedNum = file.readByte();
 	for (byte i = 0; i < pedNum; i++) {
-		_vm->_gyro->_peds[i]._x = file.readSint16LE();
-		_vm->_gyro->_peds[i]._y = file.readSint16LE();
-		_vm->_gyro->_peds[i]._direction = file.readByte();
+		PedType *curPed = &_vm->_gyro->_peds[i];
+		curPed->_x = file.readSint16LE();
+		curPed->_y = file.readSint16LE();
+		curPed->_direction = file.readByte();
 	}
 
 	_vm->_gyro->_fieldNum = file.readByte();
 	for (byte i = 0; i < _vm->_gyro->_fieldNum; i++) {
-		_vm->_gyro->_fields[i]._x1 = file.readSint16LE();
-		_vm->_gyro->_fields[i]._y1 = file.readSint16LE();
-		_vm->_gyro->_fields[i]._x2 = file.readSint16LE();
-		_vm->_gyro->_fields[i]._y2 = file.readSint16LE();
+		FieldType *curField = &_vm->_gyro->_fields[i];
+		curField->_x1 = file.readSint16LE();
+		curField->_y1 = file.readSint16LE();
+		curField->_x2 = file.readSint16LE();
+		curField->_y2 = file.readSint16LE();
 	}
 
 	for (byte i = 0; i < 15; i++) {
@@ -322,8 +325,6 @@ void Lucerna::loadRoom(byte num) {
 	_vm->_celer->loadBackgroundSprites(num);
 	CursorMan.showMouse(true);
 }
-
-
 
 void Lucerna::zoomOut(int16 x, int16 y) {
 	warning("STUB: Lucerna::zoomout()");
@@ -619,12 +620,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			zoomOut(_vm->_gyro->_peds[ped - 1]._x, _vm->_gyro->_peds[ped - 1]._y);
 		//setactivepage(1 - cp);
 
-		{
-			if ((_vm->_gyro->_objects[Gyro::kObjectWine - 1]) && (_vm->_gyro->_wineState != 3)) {
-				_vm->_visa->displayScrollChain('q', 9); // Don't want to waste the wine!
-				_vm->_gyro->_objects[Gyro::kObjectWine - 1] = false;
-				refreshObjectList();
-			}
+		if ((_vm->_gyro->_objects[Gyro::kObjectWine - 1]) && (_vm->_gyro->_wineState != 3)) {
+			_vm->_visa->displayScrollChain('q', 9); // Don't want to waste the wine!
+			_vm->_gyro->_objects[Gyro::kObjectWine - 1] = false;
+			refreshObjectList();
 		}
 
 		_vm->_visa->displayScrollChain('q', 69);
@@ -1221,16 +1220,15 @@ void Lucerna::majorRedraw() {
 
 uint16 Lucerna::bearing(byte whichPed) {
 	static const double rad2deg = 180 / 3.14; // Pi
-
-	byte pedId = whichPed - 1; // Different array indexes in Pascal and C.
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	PedType *curPed = &_vm->_gyro->_peds[whichPed - 1]; // Different array indexes in Pascal and C.
 
-	if (avvy->_x == _vm->_gyro->_peds[pedId]._x)
+	if (avvy->_x == curPed->_x)
 		return 0;
-	else if (avvy->_x < _vm->_gyro->_peds[pedId]._x) {
-		return (uint16)((atan(double((avvy->_y - _vm->_gyro->_peds[pedId]._y)) / (avvy->_x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 90);
+	else if (avvy->_x < curPed->_x) {
+		return (uint16)((atan(double((avvy->_y - curPed->_y)) / (avvy->_x - curPed->_x)) * rad2deg) + 90);
 	} else {
-		return (uint16)((atan(double((avvy->_y - _vm->_gyro->_peds[pedId]._y)) / (avvy->_x - _vm->_gyro->_peds[pedId]._x)) * rad2deg) + 270);
+		return (uint16)((atan(double((avvy->_y - curPed->_y)) / (avvy->_x - curPed->_x)) * rad2deg) + 270);
 	}
 }
 

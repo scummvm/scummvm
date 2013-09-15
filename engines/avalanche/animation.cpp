@@ -170,11 +170,9 @@ void AnimationType::appear(int16 wx, int16 wy, byte wf) {
  */
 bool AnimationType::checkCollision() {
 	for (byte i = 0; i < _anim->kSpriteNumbMax; i++) {
-		if (_anim->_sprites[i]._quick && (_anim->_sprites[i]._id != _id) &&
-			((_x + _info._xLength) > _anim->_sprites[i]._x) &&
-			(_x < (_anim->_sprites[i]._x + _anim->_sprites[i]._info._xLength)) &&
-			(_anim->_sprites[i]._y == _y))
-				return true;
+		AnimationType *spr = &_anim->_sprites[i];
+		if (spr->_quick && (spr->_id != _id) && (_x + _info._xLength > spr->_x) && (_x < spr->_x + spr->_info._xLength) && (spr->_y == _y))
+			return true;
 	}
 
 	return false;
@@ -271,11 +269,12 @@ int8 AnimationType::getSign(int16 val) {
 		return 0;
 }
 
-void AnimationType::walkTo(byte pednum) {
-	pednum--; // Pascal -> C conversion: different array indexes.
-	setSpeed(getSign(_anim->_vm->_gyro->_peds[pednum]._x - _x) * 4, getSign(_anim->_vm->_gyro->_peds[pednum]._y - _y));
-	_homingX = _anim->_vm->_gyro->_peds[pednum]._x - _info._xLength / 2;
-	_homingY = _anim->_vm->_gyro->_peds[pednum]._y - _info._yLength;
+void AnimationType::walkTo(byte pedNum) {
+	PedType *curPed = &_anim->_vm->_gyro->_peds[pedNum - 1]; // Pascal -> C conversion: different array indexes.
+
+	setSpeed(getSign(curPed->_x - _x) * 4, getSign(curPed->_y - _y));
+	_homingX = curPed->_x - _info._xLength / 2;
+	_homingY = curPed->_y - _info._yLength;
 	_homing = true;
 }
 
@@ -1006,11 +1005,11 @@ void Animation::changeDirection(byte t, byte dir) {
 	}
 }
 
-void Animation::appearPed(byte trn, byte np) {
-	trn--;
-	np--;
-	_sprites[trn].appear(_vm->_gyro->_peds[np]._x - _sprites[trn]._info._xLength / 2, _vm->_gyro->_peds[np]._y - _sprites[trn]._info._yLength, _vm->_gyro->_peds[np]._direction);
-	changeDirection(trn, _vm->_gyro->_peds[np]._direction);
+void Animation::appearPed(byte sprNum, byte pedNum) {
+	AnimationType *curSpr = &_sprites[sprNum - 1];
+	PedType *curPed = &_vm->_gyro->_peds[pedNum - 1];
+	curSpr->appear(curPed->_x - curSpr->_info._xLength / 2, curPed->_y - curSpr->_info._yLength, curPed->_direction);
+	changeDirection(sprNum - 1, curPed->_direction);
 }
 
 // Eachstep procedures:
@@ -1360,13 +1359,10 @@ void Animation::flipRoom(byte room, byte ped) {
 }
 
 bool Animation::inField(byte which) {
-	which--; // Pascal -> C: different array indexes.
-
+	FieldType *curField = &_vm->_gyro->_fields[which - 1]; // Pascal -> C: different array indexes.
 	int16 yy = _sprites[0]._y + _sprites[0]._info._yLength;
 
-	return (_sprites[0]._x >= _vm->_gyro->_fields[which]._x1) && (_sprites[0]._x <= _vm->_gyro->_fields[which]._x2)
-		&& (yy >= _vm->_gyro->_fields[which]._y1) && (yy <= _vm->_gyro->_fields[which]._y2);
-
+	return (_sprites[0]._x >= curField->_x1) && (_sprites[0]._x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);
 }
 
 bool Animation::nearDoor() {
@@ -1377,12 +1373,14 @@ bool Animation::nearDoor() {
 
 	int16 ux = _sprites[0]._x;
 	int16 uy = _sprites[0]._y + _sprites[0]._info._yLength;
-	bool nd = false;
-	for (byte fv = 8; fv < _vm->_gyro->_fieldNum; fv++)
-		if ((ux >= _vm->_gyro->_fields[fv]._x1) && (ux <= _vm->_gyro->_fields[fv]._x2)
-			&& (uy >= _vm->_gyro->_fields[fv]._y1) && (uy <= _vm->_gyro->_fields[fv]._y2))
-			nd = true;
-	return nd;
+
+	for (byte i = 8; i < _vm->_gyro->_fieldNum; i++) {
+		FieldType *curField = &_vm->_gyro->_fields[i];
+		if ((ux >= curField->_x1) && (ux <= curField->_x2) && (uy >= curField->_y1) && (uy <= curField->_y2))
+			return true;
+	}
+
+	return false;
 }
 
 void Animation::handleMoveKey(const Common::Event &event) {

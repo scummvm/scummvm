@@ -201,12 +201,15 @@ void Avalot::run(Common::String arg) {
 
 #ifdef DEBUG
 		// ONLY FOR TESTING!!!
-		for (byte i = 0; i < _vm->_gyro->_lineNum; i++)
-			_vm->_graphics->_surface.drawLine(_vm->_gyro->_lines[i]._x1, _vm->_gyro->_lines[i]._y1, _vm->_gyro->_lines[i]._x2, _vm->_gyro->_lines[i]._y2, _vm->_gyro->_lines[i].col);
+		for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
+			LineType *curLine = &_vm->_gyro->_lines[i];
+			_vm->_graphics->_surface.drawLine(curLine->_x1, curLine->_y1, curLine->_x2, curLine->_y2, curLine->col);
+		}
 
 		for (byte i = 0; i < _vm->_gyro->_fieldNum; i++) {
-			if (_vm->_gyro->_fields[i]._x1 < 640)
-				_vm->_graphics->_surface.frameRect(Common::Rect(_vm->_gyro->_fields[i]._x1, _vm->_gyro->_fields[i]._y1, _vm->_gyro->_fields[i]._x2, _vm->_gyro->_fields[i]._y2), kColorLightmagenta);
+			FieldType *curField = &_vm->_gyro->_fields[i];
+			if (curField->_x1 < 640)
+				_vm->_graphics->_surface.frameRect(Common::Rect(curField->_x1, curField->_y1, curField->_x2, curField->_y2), kColorLightmagenta);
 		}
 		// ONLY FOR TESTING!!!
 #endif
