@@ -150,7 +150,7 @@ byte Gyro::_whereIs[29] = {
 	kRoomDucks, // Duck - r__DucksRoom's not defined yet.
 	kRoomArgentPub, // Malagauche
 	kRoomRobins, // Friar Tuck.
-	177, // Robin Hood - can't meet him at the start.
+	kRoomDummy, // Robin Hood - can't meet him at the start.
 	kRoomBrummieRoad, // Cwytalot
 	kRoomLustiesRoom, // Baron du Lustie.
 	kRoomOutsideCardiffCastle, // The Duke of Cardiff.
@@ -165,7 +165,7 @@ byte Gyro::_whereIs[29] = {
 	// The Lasses
 	kRoomYours, // Arkata
 	kRoomGeidas, // Geida
-	177, // nobody allocated here!
+	kRoomDummy, // nobody allocated here!
 	kRoomWiseWomans  // The Wise Woman.
 };
 

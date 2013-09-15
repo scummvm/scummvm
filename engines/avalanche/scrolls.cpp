@@ -1051,7 +1051,7 @@ void Scrolls::talkTo(byte whom) {
 		_vm->_lucerna->refreshObjectList();
 		displayScrollChain('q', 1); // Circular from Cardiff.
 		_vm->_gyro->_talkedToCrapulus = true;
-		_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = 177; // Crapulus walks off.
+		_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = kRoomDummy; // Crapulus walks off.
 
 		AnimationType *spr = &_vm->_animation->_sprites[1];
 		spr->_vanishIfStill = true;

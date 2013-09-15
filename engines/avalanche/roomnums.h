@@ -66,7 +66,8 @@ enum Room {
 	kRoomOutsideCardiffCastle = 70,
 	kRoomInsideCardiffCastle = 71,
 	kRoomBossKey = 98, // assumed
-	kRoomMap = 99
+	kRoomMap = 99,
+	kRoomDummy = 177 // Dummy room
 };
 
 } // End of namespace Avalanche
