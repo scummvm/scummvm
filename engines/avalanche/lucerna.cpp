@@ -1217,7 +1217,7 @@ void Lucerna::majorRedraw() {
 uint16 Lucerna::bearing(byte whichPed) {
 	static const double rad2deg = 180 / 3.14; // Pi
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
-	PedType *curPed = &_vm->_gyro->_peds[whichPed - 1]; // Different array indexes in Pascal and C.
+	PedType *curPed = &_vm->_gyro->_peds[whichPed];
 
 	if (avvy->_x == curPed->_x)
 		return 0;
