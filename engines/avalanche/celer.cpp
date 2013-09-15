@@ -58,23 +58,23 @@ void Celer::updateBackgroundSprites() {
 		return; // No animation when the menus are up.
 
 	switch (_vm->_gyro->_room) {
-	case r__outsideargentpub:
+	case kRoomOutsideArgentPub:
 		if ((_vm->_gyro->_roomTime % 12) == 0)
 			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 12) % 4);
 		break;
-	case r__brummieroad:
+	case kRoomBrummieRoad:
 		if ((_vm->_gyro->_roomTime % 2) == 0)
 			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 2) % 4);
 		break;
-	case r__bridge:
+	case kRoomBridge:
 		if ((_vm->_gyro->_roomTime % 2) == 0)
 			drawBackgroundSprite(-1, -1, 4 + (_vm->_gyro->_roomTime / 2) % 4);
 		break;
-	case r__yours:
+	case kRoomYours:
 		if ((!_vm->_gyro->_avvyIsAwake) && ((_vm->_gyro->_roomTime % 4) == 0))
 			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 12) % 2);
 		break;
-	case r__argentpub:
+	case kRoomArgentPub:
 		if (((_vm->_gyro->_roomTime % 7) == 1) && (_vm->_gyro->_malagauche != 177)) {
 			// Malagauche cycle.
 			_vm->_gyro->_malagauche += 1;
@@ -131,7 +131,7 @@ void Celer::updateBackgroundSprites() {
 			}
 		}
 		break;
-	case r__westhall:
+	case kRoomWestHall:
 		if ((_vm->_gyro->_roomTime % 3) == 0) {
 			switch ((_vm->_gyro->_roomTime / int32(3)) % int32(6)) {
 			case 4:
@@ -149,7 +149,7 @@ void Celer::updateBackgroundSprites() {
 			}
 		}
 		break;
-	case r__lustiesroom:
+	case kRoomLustiesRoom:
 		if (!(_vm->_gyro->_lustieIsAsleep)) {
 			byte direction = 0;
 			uint16 angle = _vm->_lucerna->bearing(2);
@@ -169,7 +169,7 @@ void Celer::updateBackgroundSprites() {
 			}
 		}
 		break;
-	case r__aylesoffice:
+	case kRoomAylesOffice:
 		if ((!_vm->_gyro->_aylesIsAwake) && (_vm->_gyro->_roomTime % 14 == 0)) {
 			switch ((_vm->_gyro->_roomTime / 14) % 2) {
 			case 0:
@@ -181,7 +181,7 @@ void Celer::updateBackgroundSprites() {
 			}
 		}
 		break;
-	case r__robins:
+	case kRoomRobins:
 		if (_vm->_gyro->_tiedUp) {
 			switch (_vm->_gyro->_roomTime % 54) {
 			case 20:
@@ -193,7 +193,7 @@ void Celer::updateBackgroundSprites() {
 			}
 		}
 		break;
-	case r__nottspub: {
+	case kRoomNottsPub: {
 		// Bearing of Avvy from Port.
 		byte direction = 0;
 		uint16 angle = _vm->_lucerna->bearing(5);
@@ -222,7 +222,7 @@ void Celer::updateBackgroundSprites() {
 		}
 		break;
 	  }
-	case r__ducks: {
+	case kRoomDucks: {
 		if ((_vm->_gyro->_roomTime % 3) == 0) // The fire flickers.
 			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 3) % 3);
 

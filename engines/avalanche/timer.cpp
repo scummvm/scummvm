@@ -327,7 +327,7 @@ void Timer::hangAround() {
 
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->init(7, true, _vm->_animation); // Robin Hood
-	_vm->_gyro->_whereIs[Gyro::kPeopleRobinHood - 150] = r__robins;
+	_vm->_gyro->_whereIs[Gyro::kPeopleRobinHood - 150] = kRoomRobins;
 	_vm->_animation->appearPed(1, 2);
 	_vm->_scrolls->displayScrollChain('q', 39);
 	avvy->walkTo(7);
@@ -339,7 +339,7 @@ void Timer::hangAround2() {
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
 	spr->walkTo(4);
-	_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = r__robins;
+	_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = kRoomRobins;
 	_vm->_scrolls->displayScrollChain('q', 41);
 	_vm->_animation->_sprites[0].remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
@@ -485,7 +485,7 @@ void Timer::jump() {
 	}
 
 	if ((_vm->_gyro->_jumpStatus == 10) // You're at the highest point of your jump.
-			&& (_vm->_gyro->_room == r__insidecardiffcastle)
+			&& (_vm->_gyro->_room == kRoomInsideCardiffCastle)
 			&& (_vm->_gyro->_arrowInTheDoor == true)
 			&& (_vm->_animation->inField(3))) { // Beside the wall
 		// Grab the arrow!

@@ -345,21 +345,21 @@ void Lucerna::exitRoom(byte x) {
 	_vm->_gyro->_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
 
 	switch (x) {
-	case r__spludwicks:
+	case kRoomSpludwicks:
 		_vm->_timer->loseTimer(Timer::kReasonAvariciusTalks);
 		 _vm->_gyro->_avariciusTalk = 0;
 		// He doesn't HAVE to be talking for this to work. It just deletes it IF it exists.
 		break;
-	case r__bridge:
+	case kRoomBridge:
 		if (_vm->_gyro->_drawbridgeOpen > 0) {
 			_vm->_gyro->_drawbridgeOpen = 4; // Fully open.
 			_vm->_timer->loseTimer(Timer::kReasonDrawbridgeFalls);
 		}
 		break;
-	case r__outsidecardiffcastle:
+	case kRoomOutsideCardiffCastle:
 		_vm->_timer->loseTimer(Timer::kReasonCardiffsurvey);
 		break;
-	case r__robins:
+	case kRoomRobins:
 		_vm->_timer->loseTimer(Timer::kReasonGettingTiedUp);
 		break;
 	}
@@ -369,7 +369,7 @@ void Lucerna::exitRoom(byte x) {
 	_vm->_gyro->_seeScroll = false; // Now it can work again!
 
 	_vm->_gyro->_lastRoom = _vm->_gyro->_room;
-	if (_vm->_gyro->_room != r__map)
+	if (_vm->_gyro->_room != kRoomMap)
 		_vm->_gyro->_lastRoomNotMap = _vm->_gyro->_room;
 }
 
@@ -383,13 +383,13 @@ void Lucerna::enterNewTown() {
 	_vm->_dropdown->setupMenu();
 
 	switch (_vm->_gyro->_room) {
-	case r__outsidenottspub: // Entry into Nottingham.
-		if ((_vm->_gyro->_roomCount[r__robins] > 0) && (_vm->_gyro->_beenTiedUp) && (!_vm->_gyro->_takenMushroom))
+	case kRoomOutsideNottsPub: // Entry into Nottingham.
+		if ((_vm->_gyro->_roomCount[kRoomRobins] > 0) && (_vm->_gyro->_beenTiedUp) && (!_vm->_gyro->_takenMushroom))
 			_vm->_gyro->_mushroomGrowing = true;
 		break;
-	case r__wisewomans: { // Entry into Argent.
+	case kRoomWiseWomans: { // Entry into Argent.
 		if (_vm->_gyro->_talkedToCrapulus && (!_vm->_gyro->_lustieIsAsleep)) {
-			_vm->_gyro->_spludwickAtHome = !((_vm->_gyro->_roomCount[r__wisewomans] % 3) == 1);
+			_vm->_gyro->_spludwickAtHome = !((_vm->_gyro->_roomCount[kRoomWiseWomans] % 3) == 1);
 			_vm->_gyro->_crapulusWillTell = !_vm->_gyro->_spludwickAtHome;
 		} else {
 			_vm->_gyro->_spludwickAtHome = true;
@@ -401,7 +401,7 @@ void Lucerna::enterNewTown() {
 	break;
 	}
 
-	if (_vm->_gyro->_room != r__outsideducks) {
+	if (_vm->_gyro->_room != kRoomOutsideDucks) {
 		if ((_vm->_gyro->_objects[Gyro::kObjectOnion - 1]) && !(_vm->_gyro->_onionInVinegar))
 			_vm->_gyro->_rottenOnion = true; // You're holding the onion
 	}
@@ -441,12 +441,12 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	_vm->_gyro->_roomTime = 0;
 
 
-	if ((_vm->_gyro->_lastRoom == r__map) && (_vm->_gyro->_lastRoomNotMap != _vm->_gyro->_room))
+	if ((_vm->_gyro->_lastRoom == kRoomMap) && (_vm->_gyro->_lastRoomNotMap != _vm->_gyro->_room))
 		enterNewTown();
 
 
 	switch (room) {
-	case r__yours:
+	case kRoomYours:
 		if (_vm->_gyro->_avvyInBed) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
@@ -454,14 +454,14 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__outsideyours:
+	case kRoomOutsideYours:
 		if (ped > 0) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			if (!_vm->_gyro->_talkedToCrapulus) {
-				_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = r__outsideyours;
+				_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = kRoomOutsideYours;
 				spr1->init(8, false, _vm->_animation); // load Crapulus
 
-				if (_vm->_gyro->_roomCount[r__outsideyours] == 1) {
+				if (_vm->_gyro->_roomCount[kRoomOutsideYours] == 1) {
 					_vm->_animation->appearPed(2, 4); // Start on the right-hand side of the screen.
 					spr1->walkTo(5); // Walks up to greet you.
 				} else {
@@ -473,7 +473,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				spr1->_eachStepProc = Animation::kProcFaceAvvy; // He always faces Avvy.
 
 			} else
-				_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = r__nowhere;
+				_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = kRoomNowhere;
 
 			if (_vm->_gyro->_crapulusWillTell) {
 				spr1->init(8, false, _vm->_animation);
@@ -485,43 +485,43 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__outsidespludwicks:
-		if ((_vm->_gyro->_roomCount[r__outsidespludwicks] == 1) && (ped == 1)) {
+	case kRoomOutsideSpludwicks:
+		if ((_vm->_gyro->_roomCount[kRoomOutsideSpludwicks] == 1) && (ped == 1)) {
 			_vm->_timer->addTimer(20, Timer::kProcBang, Timer::kReasonExplosion);
 			_vm->_gyro->_spludwickAtHome = true;
 		}
 		break;
 
-	case r__spludwicks:
+	case kRoomSpludwicks:
 		if (_vm->_gyro->_spludwickAtHome) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			if (ped > 0) {
 				spr1->init(2, false, _vm->_animation); // load Spludwick
 				_vm->_animation->appearPed(2, 2);
-				_vm->_gyro->_whereIs[1] = r__spludwicks;
+				_vm->_gyro->_whereIs[1] = kRoomSpludwicks;
 			}
 
 			spr1->_callEachStepFl = true;
 			spr1->_eachStepProc = Animation::kProcGeida;
 		} else
-			_vm->_gyro->_whereIs[1] = r__nowhere;
+			_vm->_gyro->_whereIs[1] = kRoomNowhere;
 		break;
 
-	case r__brummieroad:
+	case kRoomBrummieRoad:
 		if (_vm->_gyro->_geidaFollows)
 			putGeidaAt(5, ped);
 		if (_vm->_gyro->_cwytalotGone) {
 			_vm->_gyro->_magics[kColorLightred - 1]._operation = Gyro::kMagicNothing;
-			_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = r__nowhere;
+			_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = kRoomNowhere;
 		} else {
 			if (ped > 0) {
 				AnimationType *spr1 = &_vm->_animation->_sprites[1];
 				spr1->init(4, false, _vm->_animation); // 4 = Cwytalot
 				spr1->_callEachStepFl = true;
 				spr1->_eachStepProc = Animation::kProcFollowAvvyY;
-				_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = r__brummieroad;
+				_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = kRoomBrummieRoad;
 
-				if (_vm->_gyro->_roomCount[r__brummieroad] == 1) { // First time here...
+				if (_vm->_gyro->_roomCount[kRoomBrummieRoad] == 1) { // First time here...
 					_vm->_animation->appearPed(2, 2); // He appears on the right of the screen...
 					spr1->walkTo(4); // ...and he walks up...
 				} else {
@@ -533,8 +533,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__argentroad:
-		if ((_vm->_gyro->_cwytalotGone) && (!_vm->_gyro->_passedCwytalotInHerts) && (ped == 2) && (_vm->_gyro->_roomCount[r__argentroad] > 3)) {
+	case kRoomArgentRoad:
+		if ((_vm->_gyro->_cwytalotGone) && (!_vm->_gyro->_passedCwytalotInHerts) && (ped == 2) && (_vm->_gyro->_roomCount[kRoomArgentRoad] > 3)) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			spr1->init(4, false, _vm->_animation); // 4 = Cwytalot again
 			_vm->_animation->appearPed(2, 1);
@@ -546,7 +546,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__bridge:
+	case kRoomBridge:
 		if (_vm->_gyro->_drawbridgeOpen == 4) { // open
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Position of drawbridge
 			_vm->_graphics->refreshBackground();
@@ -556,7 +556,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			putGeidaAt(ped + 3, ped); // load Geida
 		break;
 
-	case r__robins:
+	case kRoomRobins:
 		if (ped > 0) {
 			if (!_vm->_gyro->_beenTiedUp) {
 				// A welcome party... or maybe not...
@@ -581,7 +581,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		_vm->_graphics->refreshBackground();
 		break;
 
-	case r__outsidecardiffcastle:
+	case kRoomOutsideCardiffCastle:
 		if (ped > 0) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			switch (_vm->_gyro->_cardiffQuestionNum) {
@@ -608,12 +608,12 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_gyro->_interrogation = 0;
 		break;
 
-	case r__map:
+	case kRoomMap:
 		// You're entering the map.
 		dawn();
 		//setactivepage(cp);
 		if (ped > 0)
-			zoomOut(_vm->_gyro->_peds[ped - 1]._x, _vm->_gyro->_peds[ped - 1]._y);
+			zoomOut(_vm->_gyro->_peds[ped]._x, _vm->_gyro->_peds[ped]._y);
 		//setactivepage(1 - cp);
 
 		if ((_vm->_gyro->_objects[Gyro::kObjectWine - 1]) && (_vm->_gyro->_wineState != 3)) {
@@ -625,7 +625,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		_vm->_scrolls->displayScrollChain('q', 69);
 		break;
 
-	case r__catacombs:
+	case kRoomCatacombs:
 		if ((ped == 0) || (ped == 3) || (ped == 5) || (ped == 6)) {
 
 			switch (ped) {
@@ -652,7 +652,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__argentpub:
+	case kRoomArgentPub:
 		if (_vm->_gyro->_wonNim)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 1);   // No lute by the settle.
 		_vm->_gyro->_malagauche = 0; // Ready to boot Malagauche
@@ -663,7 +663,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		_vm->_graphics->refreshBackground();
 		break;
 
-	case r__lustiesroom:
+	case kRoomLustiesRoom:
 		_vm->_gyro->_npcFacing = 1; // du Lustie.
 		if (_vm->_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
 			_vm->_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
@@ -680,7 +680,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__musicroom:
+	case kRoomMusicRoom:
 		if (_vm->_gyro->_jacquesState > 0) {
 			_vm->_gyro->_jacquesState = 5;
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
@@ -699,7 +699,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__outsidenottspub:
+	case kRoomOutsideNottsPub:
 		if (ped == 2) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_graphics->refreshBackground();
@@ -711,7 +711,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__outsideargentpub:
+	case kRoomOutsideArgentPub:
 		if (ped == 2)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 			_vm->_graphics->refreshBackground();
@@ -722,10 +722,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__wisewomans: {
+	case kRoomWiseWomans: {
 		AnimationType *spr1 = &_vm->_animation->_sprites[1];
 		spr1->init(11, false, _vm->_animation);
-		if ((_vm->_gyro->_roomCount[r__wisewomans] == 1) && (ped > 0)) {
+		if ((_vm->_gyro->_roomCount[kRoomWiseWomans] == 1) && (ped > 0)) {
 			_vm->_animation->appearPed(2, 2); // Start on the right-hand side of the screen.
 			spr1->walkTo(4); // Walks up to greet you.
 		} else {
@@ -738,7 +738,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__insidecardiffcastle:
+	case kRoomInsideCardiffCastle:
 		if (ped > 0) {
 			_vm->_animation->_sprites[1].init(10, false, _vm->_animation); // Define the dart.
 			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
@@ -763,7 +763,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__avvysgarden:
+	case kRoomAvvysGarden:
 		if (ped == 1)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
@@ -774,9 +774,9 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__entrancehall:
-	case r__insideabbey:
-	case r__yourhall:
+	case kRoomEntranceHall:
+	case kRoomInsideAbbey:
+	case kRoomYourHall:
 		if (ped == 2)  {
 #if 0
 			// It was the original:
@@ -795,34 +795,34 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__aylesoffice:
+	case kRoomAylesOffice:
 		if (_vm->_gyro->_aylesIsAwake)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 		_vm->_graphics->refreshBackground();
 		break; // Ayles awake.
 
-	case r__geidas:
+	case kRoomGeidas:
 		putGeidaAt(2, ped);
 		break; // load Geida
 
-	case r__easthall:
-	case r__westhall:
+	case kRoomEastHall:
+	case kRoomWestHall:
 		if (_vm->_gyro->_geidaFollows)
 			putGeidaAt(ped + 2, ped);
 		break;
 
-	case r__lusties:
+	case kRoomLusties:
 		if (_vm->_gyro->_geidaFollows)
 			putGeidaAt(ped + 6, ped);
 		break;
 
-	case r__nottspub:
+	case kRoomNottsPub:
 		if (_vm->_gyro->_sittingInPub)
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 		_vm->_gyro->_npcFacing = 1; // Port.
 		break;
 
-	case r__outsideducks:
+	case kRoomOutsideDucks:
 		if (ped == 2) {
 			// Shut the door
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
@@ -835,7 +835,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 		break;
 
-	case r__ducks:
+	case kRoomDucks:
 		_vm->_gyro->_npcFacing = 1; // Duck.
 		break; 
 	}

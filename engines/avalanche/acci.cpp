@@ -700,16 +700,16 @@ void Acci::parse() {
 	replace(Common::String("\x4\xE5"),  20); // "take off" = "doff"
 
 	// Words that could mean more than one _person
-	if (_vm->_gyro->_room == r__nottspub)
+	if (_vm->_gyro->_room == kRoomNottsPub)
 		replace(Common::String('\xCC'), 164); // Barman = Port
 	else
 		replace(Common::String('\xCC'), 154); // Barman = Malagauche
 
 	switch (_vm->_gyro->_room) {
-	case r__aylesoffice:
+	case kRoomAylesOffice:
 		replace(Common::String('\xCB'), 163); // Monk = Ayles
 		break;
-	case r__musicroom:
+	case kRoomMusicRoom:
 		replace(Common::String('\xCB'), 166); // Monk = Jacques
 		break;
 	default:
@@ -880,7 +880,7 @@ bool Acci::isHolding() {
 }
 
 void Acci::openBox(bool isOpening) {
-	if ((_vm->_gyro->_room == r__yours) && (_thing == 54)) {
+	if ((_vm->_gyro->_room == kRoomYours) && (_thing == 54)) {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 
 		_vm->_celer->updateBackgroundSprites();
@@ -993,7 +993,7 @@ void Acci::swallow() {   // Eat something.
 		}
 		break;
 	default:
-		if ((_vm->_gyro->_room == r__argentpub) || (_vm->_gyro->_room == r__nottspub))
+		if ((_vm->_gyro->_room == kRoomArgentPub) || (_vm->_gyro->_room == kRoomNottsPub))
 			_vm->_scrolls->displayText("Try BUYing things before you drink them!");
 		else
 			_vm->_scrolls->displayText("The taste of it makes you retch!");
@@ -1036,27 +1036,27 @@ void Acci::peopleInRoom() {
 void Acci::lookAround() {
 	_vm->_scrolls->displayText(*_vm->_gyro->_also[0][1]);
 	switch (_vm->_gyro->_room) {
-	case r__spludwicks:
+	case kRoomSpludwicks:
 		if (_vm->_gyro->_avariciusTalk > 0)
 			_vm->_scrolls->displayScrollChain('q', 23);
 		else
 			peopleInRoom();
 		break;
-	case r__robins:
+	case kRoomRobins:
 		if (_vm->_gyro->_tiedUp)
 			_vm->_scrolls->displayScrollChain('q', 38);
 		if (_vm->_gyro->_mushroomGrowing)
 			_vm->_scrolls->displayScrollChain('q', 55);
 		break;
-	case r__insidecardiffcastle:
+	case kRoomInsideCardiffCastle:
 		if (!_vm->_gyro->_takenPen)
 			_vm->_scrolls->displayScrollChain('q', 49);
 		break;
-	case r__lustiesroom:
+	case kRoomLustiesRoom:
 		if (_vm->_gyro->_lustieIsAsleep)
 			_vm->_scrolls->displayScrollChain('q', 65);
 		break;
-	case r__catacombs:
+	case kRoomCatacombs:
 		switch (_vm->_gyro->_catacombY * 256 + _vm->_gyro->_catacombX) {
 		case 258 :
 			_vm->_scrolls->displayScrollChain('q', 80); // Inside art gallery.
@@ -1077,7 +1077,7 @@ void Acci::lookAround() {
 void Acci::openDoor() {
 	// Special cases.
 	switch (_vm->_gyro->_room) {
-	case r__yours:
+	case kRoomYours:
 		if (_vm->_animation->inField(2)) {
 			// Opening the box.
 			_thing = 54; // The box.
@@ -1086,7 +1086,7 @@ void Acci::openDoor() {
 			return;
 		}
 		break;
-	case r__spludwicks:
+	case kRoomSpludwicks:
 		if (_thing == 61) {
 			_vm->_scrolls->displayScrollChain('q', 85);
 			return;
@@ -1094,7 +1094,7 @@ void Acci::openDoor() {
 		break;
 	}
 
-	if ((!_vm->_gyro->_userMovesAvvy) && (_vm->_gyro->_room != r__lusties))
+	if ((!_vm->_gyro->_userMovesAvvy) && (_vm->_gyro->_room != kRoomLusties))
 		return; // No doors can open if you can't move Avvy.
 
 	for (byte i = 0; i < 7; i++) {
@@ -1124,7 +1124,7 @@ void Acci::openDoor() {
 		}
 	}
 
-	if (_vm->_gyro->_room == r__map)
+	if (_vm->_gyro->_room == kRoomMap)
 		_vm->_scrolls->displayText("Avvy, you can complete the whole game without ever going " \
 				"to anywhere other than Argent, Birmingham, Cardiff, Nottingham and Norwich.");
 	else
@@ -1169,7 +1169,7 @@ void Acci::putProc() {
 		break;
 
 	case 54:
-		if (_vm->_gyro->_room == r__yours) { // Put something into the box.
+		if (_vm->_gyro->_room == kRoomYours) { // Put something into the box.
 			if (_vm->_gyro->_boxContent != kNothing)
 				_vm->_scrolls->displayText("There's something in the box already, Avvy. Try taking that out first.");
 			else {
@@ -1316,7 +1316,7 @@ void Acci::already() {
 
 void Acci::standUp() {
 	switch (_vm->_gyro->_room) {
-	case r__yours: // Avvy isn't asleep.
+	case kRoomYours: // Avvy isn't asleep.
 		if (_vm->_gyro->_avvyIsAwake && _vm->_gyro->_avvyInBed) {  // But he's in bed.
 			if (_vm->_gyro->_teetotal) {
 				_vm->_scrolls->displayScrollChain('d', 12);
@@ -1335,11 +1335,11 @@ void Acci::standUp() {
 			already();
 		break;
 
-	case r__insidecardiffcastle:
+	case kRoomInsideCardiffCastle:
 		cardiffClimbing();
 		break;
 
-	case r__nottspub:
+	case kRoomNottsPub:
 		if (_vm->_gyro->_sittingInPub)  {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Not sitting down.
 			_vm->_animation->_sprites[0]._visible = true; // But standing up.
@@ -1356,7 +1356,7 @@ void Acci::standUp() {
 
 void Acci::getProc(char thing) {
 	switch (_vm->_gyro->_room) {
-	case r__yours:
+	case kRoomYours:
 		if (_vm->_animation->inField(2)) {
 			if (_vm->_gyro->_boxContent == thing) {
 				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
@@ -1372,7 +1372,7 @@ void Acci::getProc(char thing) {
 		} else
 			_vm->_scrolls->displayScrollChain('q', 57);
 		break;
-	case r__insidecardiffcastle:
+	case kRoomInsideCardiffCastle:
 		switch (thing) {
 		case Gyro::kObjectPen:
 			if (_vm->_animation->inField(2)) { // Standing on the dais.
@@ -1399,7 +1399,7 @@ void Acci::getProc(char thing) {
 			_vm->_scrolls->displayScrollChain('q', 57);
 		}
 		break;
-	case r__robins:
+	case kRoomRobins:
 		if ((thing == Gyro::kObjectMushroom) & (_vm->_animation->inField(1)) & (_vm->_gyro->_mushroomGrowing)) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_scrolls->displayText("Got it!");
@@ -1421,7 +1421,7 @@ void Acci::getProc(char thing) {
  * @remarks	Originally called 'give_Geida_the_lute'
  */
 void Acci::giveGeidaTheLute() {
-	if (_vm->_gyro->_room != r__lustiesroom) {
+	if (_vm->_gyro->_room != kRoomLustiesRoom) {
 		Common::String tmpStr = Common::String::format("Not yet. Try later!%c2%c", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
 		_vm->_scrolls->displayText(tmpStr);
 		return;
@@ -1779,7 +1779,7 @@ void Acci::doThat() {
 	case kVerbCodePlay:
 		if (_thing == kPardon) {
 			switch (_vm->_gyro->_room) { // They just typed "play"...
-			case r__argentpub: { // ...in the pub, => play Nim.
+			case kRoomArgentPub: { // ...in the pub, => play Nim.
 					warning("STUB: Acci::doThat() - case kVerbCodeplay - play_nim()");
 					// play_nim();
 					// The following parts are copied from play_nim().
@@ -1814,7 +1814,7 @@ void Acci::doThat() {
 						+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Peter (uruk)");
 				}
 				break;
-			case r__musicroom:
+			case kRoomMusicRoom:
 				playHarp();
 				break;
 			}
@@ -1830,13 +1830,13 @@ void Acci::doThat() {
 						_vm->_scrolls->displayScrollChain('U', 15);
 				break;
 			case 52:
-				if (_vm->_gyro->_room == r__musicroom)
+				if (_vm->_gyro->_room == kRoomMusicRoom)
 					playHarp();
 				else
 					_vm->_scrolls->displayText(kWhat);
 				break;
 			case 55:
-				if (_vm->_gyro->_room == r__argentpub)
+				if (_vm->_gyro->_room == kRoomArgentPub)
 					// play_nim();
 					warning("STUB: Acci::doThat() - case kVerbCodeplay - play_nim()");
 				else
@@ -1946,7 +1946,7 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeBuy: // What are they trying to buy?
 		switch (_vm->_gyro->_room) {
-		case r__argentpub:
+		case kRoomArgentPub:
 			if (_vm->_animation->inField(6)) { // We're in a pub, and near the bar.
 				switch (_thing) {
 				case 51:
@@ -2007,7 +2007,7 @@ void Acci::doThat() {
 				_vm->_scrolls->displayScrollChain('D', 5); // Go to the bar!
 			break;
 
-		case r__outsideducks:
+		case kRoomOutsideDucks:
 			if (_vm->_animation->inField(6)) {
 				if (_thing == Gyro::kObjectOnion) {
 					if (_vm->_gyro->_objects[Gyro::kObjectOnion - 1])
@@ -2034,7 +2034,7 @@ void Acci::doThat() {
 				_vm->_scrolls->displayScrollChain('D', 0);
 			break;
 
-		case r__nottspub:
+		case kRoomNottsPub:
 			_vm->_scrolls->displayScrollChain('n', 15); // Can't sell to southerners.
 			break;
 		default:
@@ -2042,7 +2042,7 @@ void Acci::doThat() {
 		}
 		break;
 	case kVerbCodeAttack:
-		if ((_vm->_gyro->_room == r__brummieroad) &&
+		if ((_vm->_gyro->_room == kRoomBrummieRoad) &&
 				((_person == 157) || (_thing == Gyro::kObjectCrossbow) || (_thing == Gyro::kObjectBolt))
 				&& (_vm->_gyro->_whereIs[7] == _vm->_gyro->_room)) {
 			switch (_vm->_gyro->_objects[Gyro::kObjectBolt - 1] + _vm->_gyro->_objects[Gyro::kObjectCrossbow - 1] * 2) {
@@ -2077,7 +2077,7 @@ void Acci::doThat() {
 			_vm->_scrolls->displayScrollChain('Q', 10);
 		break;
 	case kVerbCodePasswd:
-		if (_vm->_gyro->_room != r__bridge)
+		if (_vm->_gyro->_room != kRoomBridge)
 			_vm->_scrolls->displayScrollChain('Q', 12);
 		else {
 			bool ok = true;
@@ -2143,7 +2143,7 @@ void Acci::doThat() {
 
 		break;
 	case kVerbCodeClimb:
-		if (_vm->_gyro->_room == r__insidecardiffcastle)
+		if (_vm->_gyro->_room == kRoomInsideCardiffCastle)
 			cardiffClimbing();
 		else // In the wrong room!
 			_vm->_scrolls->displayText("Not with your head for heights, Avvy!");
@@ -2187,7 +2187,7 @@ void Acci::doThat() {
 		}
 		break;
 	case kVerbCodeSit:
-		if (_vm->_gyro->_room == r__nottspub) {
+		if (_vm->_gyro->_room == kRoomNottsPub) {
 			if (_vm->_gyro->_sittingInPub)
 				_vm->_scrolls->displayText("You're already sitting!");
 			else {
