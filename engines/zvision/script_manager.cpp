@@ -235,6 +235,8 @@ Control *ScriptManager::getControl(uint32 key) {
 			return (*iter);
 		}
 	}
+
+	return nullptr;
 }
 
 void ScriptManager::enableControl(uint32 key) {
