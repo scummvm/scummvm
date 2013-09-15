@@ -407,15 +407,13 @@ void Lucerna::enterNewTown() {
 	}
 }
 
-
-
-void Lucerna::putGeidaAt(byte whichPed, byte &ped) {
+void Lucerna::putGeidaAt(byte whichPed, byte ped) {
 	if (ped == 0)
 		return;
 	AnimationType *spr1 = &_vm->_animation->_sprites[1];
 
 	spr1->init(5, false, _vm->_animation); // load Geida
-	_vm->_animation->appearPed(2, whichPed - 1);
+	_vm->_animation->appearPed(2, whichPed);
 	spr1->_callEachStepFl = true;
 	spr1->_eachStepProc = Animation::kProcGeida;
 }
@@ -509,7 +507,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case r__brummieroad:
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(5, ped);
+			putGeidaAt(4, ped);
 		if (_vm->_gyro->_cwytalotGone) {
 			_vm->_gyro->_magics[kColorLightred - 1]._operation = Gyro::kMagicNothing;
 			_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = r__nowhere;
@@ -553,7 +551,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_gyro->_magics[kColorGreen - 1]._operation = Gyro::kMagicNothing; // You may enter the drawbridge.
 		}
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(ped + 3, ped); // load Geida
+			putGeidaAt(ped + 2, ped); // load Geida
 		break;
 
 	case r__robins:
@@ -672,7 +670,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_timer->addTimer(3, Timer::kProcGreetsMonk, Timer::kReasonDuLustieTalks);
 
 		if (_vm->_gyro->_geidaFollows) {
-			putGeidaAt(5, ped);
+			putGeidaAt(4, ped);
 			if (_vm->_gyro->_lustieIsAsleep) {
 				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_graphics->refreshBackground();
@@ -802,18 +800,18 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		break; // Ayles awake.
 
 	case r__geidas:
-		putGeidaAt(2, ped);
+		putGeidaAt(1, ped);
 		break; // load Geida
 
 	case r__easthall:
 	case r__westhall:
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(ped + 2, ped);
+			putGeidaAt(ped + 1, ped);
 		break;
 
 	case r__lusties:
 		if (_vm->_gyro->_geidaFollows)
-			putGeidaAt(ped + 6, ped);
+			putGeidaAt(ped + 5, ped);
 		break;
 
 	case r__nottspub:
