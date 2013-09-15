@@ -62,6 +62,7 @@ public:
 	bool isCompressed() const;
 	Common::String getEXEName() const;
 	Common::String getLibraryName() const;
+	Common::Language getLanguage() const;
 
 	bool hasFeature(EngineFeature f) const;
 
