@@ -208,7 +208,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:quit*", true)) {
 			actionList.push_back(new ActionQuit());
 		} else if (line.matchString("*:random*", true)) {
-			// TODO: Implement ActionRandom
+			actionList.push_back(new ActionRandom(line));
 		} else if (line.matchString("*:region*", true)) {
 			// TODO: Implement ActionRegion
 		} else if (line.matchString("*:restore_game*", true)) {
@@ -230,7 +230,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:syncsound*", true)) {
 			// TODO: Implement ActionSyncSound
 		} else if (line.matchString("*:timer*", true)) {
-			// TODO: Implement ActionTimer
+			actionList.push_back(new ActionTimer(line));
 		} else if (line.matchString("*:ttytext*", true)) {
 			// TODO: Implement ActionTTYText
 		} else if (line.matchString("*:universe_music*", true)) {
