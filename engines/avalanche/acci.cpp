@@ -843,7 +843,7 @@ void Acci::exampers() {
 				return;
 			}
 			break;
-		case 99:
+		case 9:
 			if (_vm->_gyro->_lustieIsAsleep) {
 				_vm->_scrolls->displayScrollChain('Q', 65); // He's asleep. (65! Wow!)
 				return;
@@ -852,11 +852,10 @@ void Acci::exampers() {
 		}
 		// Otherwise...
 		_vm->_scrolls->displayScrollChain('p', _person);
+		// And afterwards...
+		if ((_person == 14) && (!_vm->_gyro->_aylesIsAwake))
+			_vm->_scrolls->displayScrollChain('Q', 13);
 	}
-
-	// And afterwards...
-	if ((_person == 14) && (!_vm->_gyro->_aylesIsAwake))
-		_vm->_scrolls->displayScrollChain('Q', 13);
 }
 
 /**
