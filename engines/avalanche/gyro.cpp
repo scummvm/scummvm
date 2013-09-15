@@ -113,23 +113,23 @@ const char Gyro::kSpludwicksOrder[3] = {kObjectOnion, kObjectInk, kObjectMushroo
 // A quasiped defines how people who aren't sprites talk. For example, quasiped
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
 const QuasipedType Gyro::kQuasipeds[16] = {
-//	_whichPed, _foregroundColor, _room, _backgroundColor, _who
-	{1, kColorLightgray, 19, kColorBrown, kPeopleDogfood}, // A: Dogfood (screen 19).
-	{2, kColorGreen, 19, kColorWhite, kPeopleIbythneth}, // B: Ibythneth (screen 19).
-	{2, kColorWhite, 1, kColorMagenta, kPeopleArkata}, // C: Arkata (screen 1).
-	{2, kColorBlack, 23, kColorRed, kPeopleInvisible}, // D: Hawk (screen 23).
-	{2, kColorLightgreen, 50, kColorBrown, kPeopleTrader}, // E: Trader (screen 50).
-	{5, kColorYellow, 42, kColorRed, kPeopleAvalot}, // F: Avvy, tied up (scr.42)
-	{1, kColorBlue, 16, kColorWhite, kPeopleAyles}, // G: Ayles (screen 16).
-	{1, kColorBrown, 7, kColorWhite, kPeopleJacques}, // H: Jacques (screen 7).
-	{1, kColorLightgreen, 47, kColorGreen, kPeopleSpurge}, // I: Spurge (screen 47).
-	{2, kColorYellow, 47, kColorRed, kPeopleAvalot}, // J: Avalot (screen 47).
-	{1, kColorLightgray, 23, kColorBlack, kPeopleDuLustie}, // K: du Lustie (screen 23).
-	{1, kColorYellow, 27, kColorRed, kPeopleAvalot}, // L: Avalot (screen 27).
-	{2, kColorWhite, 27, kColorRed, kPeopleInvisible}, // M: Avaroid (screen 27).
-	{3, kColorLightgray, 19, kColorDarkgray, kPeopleMalagauche}, // N: Malagauche (screen 19).
-	{4, kColorLightmagenta, 47, kColorRed, kPeoplePort}, // O: Port (screen 47).
-	{1, kColorLightgreen, 51, kColorDarkgray, kPeopleDrDuck} // P: Duck (screen 51).
+//_whichPed, _foregroundColor,   _room,      _backgroundColor,     _who
+	{1, kColorLightgray,    kRoomArgentPub,    kColorBrown,    kPeopleDogfood},   // A: Dogfood (screen 19).
+	{2, kColorGreen,        kRoomArgentPub,    kColorWhite,    kPeopleIbythneth}, // B: Ibythneth (screen 19).
+	{2, kColorWhite,        kRoomYours,        kColorMagenta,  kPeopleArkata},    // C: Arkata (screen 1).
+	{2, kColorBlack,        kRoomLustiesRoom,  kColorRed,      kPeopleInvisible}, // D: Hawk (screen 23).
+	{2, kColorLightgreen,   kRoomOutsideDucks, kColorBrown,    kPeopleTrader},    // E: Trader (screen 50).
+	{5, kColorYellow,       kRoomRobins,       kColorRed,      kPeopleAvalot},    // F: Avvy, tied up (scr.42)
+	{1, kColorBlue,         kRoomAylesOffice,  kColorWhite,    kPeopleAyles},     // G: Ayles (screen 16).
+	{1, kColorBrown,        kRoomMusicRoom,    kColorWhite,    kPeopleJacques},   // H: Jacques (screen 7).
+	{1, kColorLightgreen,   kRoomNottsPub,     kColorGreen,    kPeopleSpurge},    // I: Spurge (screen 47).
+	{2, kColorYellow,       kRoomNottsPub,     kColorRed,      kPeopleAvalot},    // J: Avalot (screen 47).
+	{1, kColorLightgray,    kRoomLustiesRoom,  kColorBlack,    kPeopleDuLustie},  // K: du Lustie (screen 23).
+	{1, kColorYellow,       kRoomOubliette,    kColorRed,      kPeopleAvalot},    // L: Avalot (screen 27).
+	{2, kColorWhite,        kRoomOubliette,    kColorRed,      kPeopleInvisible}, // M: Avaroid (screen 27).
+	{3, kColorLightgray,    kRoomArgentPub,    kColorDarkgray, kPeopleMalagauche},// N: Malagauche (screen 19).
+	{4, kColorLightmagenta, kRoomNottsPub,     kColorRed,      kPeoplePort},      // O: Port (screen 47).
+	{1, kColorLightgreen,   kRoomDucks,        kColorDarkgray, kPeopleDrDuck}     // P: Duck (screen 51).
 };
 
 const char Gyro::kMusicKeys[] = "QWERTYUIOP[]";
