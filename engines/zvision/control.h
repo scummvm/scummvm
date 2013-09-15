@@ -48,6 +48,8 @@ public:
 
 	virtual void enable();
 	virtual void disable();
+	virtual void focus() {}
+	virtual void unfocus() {}
 	/**
 	 * Called when LeftMouse is pushed. Default is NOP.
 	 *
