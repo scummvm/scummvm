@@ -259,7 +259,7 @@ void Gyro::resetVariables() {
 	_avvyIsAwake = false;
 	_avvyInBed = false;
 	_userMovesAvvy = false;
-	_dogFoodPos = 0;
+	_npcFacing = 0;
 	_givenBadgeToIby = false;
 	_friarWillTieYouUp = false;
 	_tiedUp = false;

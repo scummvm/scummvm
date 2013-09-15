@@ -112,7 +112,7 @@ void Celer::updateBackgroundSprites() {
 			drawBackgroundSprite(-1, -1, 7);
 			break;
 		case 199:
-			_vm->_gyro->_dogFoodPos = 177; // Impossible value for this.
+			_vm->_gyro->_npcFacing = 177; // Impossible value for this.
 			break;
 		}
 
@@ -125,9 +125,9 @@ void Celer::updateBackgroundSprites() {
 			else if ((_vm->_lucerna->bearing(2) >= 271) && (_vm->_lucerna->bearing(2) <= 292))
 				direction = 4;
 
-			if (direction != _vm->_gyro->_dogFoodPos) { // Only if it's changed.
+			if (direction != _vm->_gyro->_npcFacing) { // Dogfood.
 				drawBackgroundSprite(-1, -1, direction);
-				_vm->_gyro->_dogFoodPos = direction;
+				_vm->_gyro->_npcFacing = direction;
 			}
 		}
 		break;
@@ -163,9 +163,9 @@ void Celer::updateBackgroundSprites() {
 			else if ((angle >= 181) && (angle <= 314))
 				direction = 3; // Right.
 
-			if (direction != _vm->_gyro->_dogFoodPos) { // Only if it's changed.
+			if (direction != _vm->_gyro->_npcFacing) { // du Lustie.
 				drawBackgroundSprite(-1, -1, direction);
-				_vm->_gyro->_dogFoodPos = direction; // We use DogfoodPos here too - why not?
+				_vm->_gyro->_npcFacing = direction;
 			}
 		}
 		break;
@@ -207,9 +207,9 @@ void Celer::updateBackgroundSprites() {
 		if ((_vm->_gyro->_roomTime % 60) > 57)
 			direction--; // Blinks.
 
-		if (direction != _vm->_gyro->_dogFoodPos) { // Only if it's changed.
+		if (direction != _vm->_gyro->_npcFacing) { // Port.
 			drawBackgroundSprite(-1, -1, direction);
-			_vm->_gyro->_dogFoodPos = direction; // We use DogfoodPos here too - why not?
+			_vm->_gyro->_npcFacing = direction;
 		}
 
 		switch (_vm->_gyro->_roomTime % 50) {
@@ -239,9 +239,9 @@ void Celer::updateBackgroundSprites() {
 		if ((_vm->_gyro->_roomTime % 45) > 42)
 			direction++; // Duck blinks.
 
-		if (direction != _vm->_gyro->_dogFoodPos) { // Only if it's changed.
+		if (direction != _vm->_gyro->_npcFacing) { // Duck.
 			drawBackgroundSprite(-1, -1, direction);
-			_vm->_gyro->_dogFoodPos = direction; // We use DogfoodPos here too - why not?
+			_vm->_gyro->_npcFacing = direction;
 		}
 		break;
 	   }

@@ -151,7 +151,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_gyro->_avvyIsAwake);
 	sz.syncAsByte(_gyro->_avvyInBed);
 	sz.syncAsByte(_gyro->_userMovesAvvy);
-	sz.syncAsByte(_gyro->_dogFoodPos);
+	sz.syncAsByte(_gyro->_npcFacing);
 	sz.syncAsByte(_gyro->_givenBadgeToIby);
 	sz.syncAsByte(_gyro->_friarWillTieYouUp);
 	sz.syncAsByte(_gyro->_tiedUp);
