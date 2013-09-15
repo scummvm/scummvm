@@ -440,21 +440,21 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
+    // Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_dataincAdd) {
-		_dataincAdd = false;
-		_pSnd->dataInc += _dataincToAdd;
-		_pSnd->signal = 0x7f + _pSnd->dataInc;
+    	_dataincAdd = false;
+	    _pSnd->dataInc += _dataincToAdd;
+	    _pSnd->signal = 0x7f + _pSnd->dataInc;
 		debugC(4, kDebugLevelSound, "datainc %04x", _dataincToAdd);
 	}
 	if (_signalSet) {
-		_signalSet = false;
+    	_signalSet = false;
 		_pSnd->setSignal(_signalToSet);
 
-		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
+	    debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
 	if (_jumpToHoldTick) {
-		_jumpToHoldTick = false;
+    	_jumpToHoldTick = false;
 		jumpToTick(_loopTick, false, false);
 	}
 
@@ -497,8 +497,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// immediately there.
 				if (_soundVersion <= SCI_VERSION_0_LATE ||
 					_position._playTick || info.delta) {
-					_signalSet = true;
-					_signalToSet = info.basic.param1;
+                    if (!_pSnd->inFastForward) {
+				    	_signalSet = true;
+					    _signalToSet = info.basic.param1;
+                    }
 				}
 			} else {
 				_loopTick = _position._playTick + info.delta;
@@ -552,20 +554,22 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				}
 				break;
 			case kUpdateCue:
-				_dataincAdd = true;
-				switch (_soundVersion) {
-				case SCI_VERSION_0_EARLY:
-				case SCI_VERSION_0_LATE:
-					_dataincToAdd = info.basic.param2;
-					break;
-				case SCI_VERSION_1_EARLY:
-				case SCI_VERSION_1_LATE:
-				case SCI_VERSION_2_1:
-					_dataincToAdd = 1;
-					break;
-				default:
-					error("unsupported _soundVersion");
-				}
+                if (!_pSnd->inFastForward) {
+    				_dataincAdd = true;
+				    switch (_soundVersion) {
+				    case SCI_VERSION_0_EARLY:
+				    case SCI_VERSION_0_LATE:
+                        _dataincToAdd = info.basic.param2;
+					    break;
+				    case SCI_VERSION_1_EARLY:
+				    case SCI_VERSION_1_LATE:
+				    case SCI_VERSION_2_1:
+    				    _dataincToAdd = 1;
+					    break;
+				    default:
+    					error("unsupported _soundVersion");
+				    }
+                }
 				break;
 			case kResetOnPause:
 				_resetOnPause = info.basic.param2;
