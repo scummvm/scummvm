@@ -1350,7 +1350,7 @@ void Animation::flipRoom(byte room, byte ped) {
 }
 
 bool Animation::inField(byte which) {
-	FieldType *curField = &_vm->_gyro->_fields[which - 1]; // Pascal -> C: different array indexes.
+	FieldType *curField = &_vm->_gyro->_fields[which];
 	int16 yy = _sprites[0]._y + _sprites[0]._info._yLength;
 
 	return (_sprites[0]._x >= curField->_x1) && (_sprites[0]._x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);

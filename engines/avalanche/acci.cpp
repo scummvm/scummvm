@@ -1071,7 +1071,7 @@ void Acci::openDoor() {
 	// Special cases.
 	switch (_vm->_gyro->_room) {
 	case kRoomYours:
-		if (_vm->_animation->inField(2)) {
+		if (_vm->_animation->inField(1)) {
 			// Opening the box.
 			_thing = 54; // The box.
 			_person = kPardon;
@@ -1091,7 +1091,7 @@ void Acci::openDoor() {
 		return; // No doors can open if you can't move Avvy.
 
 	for (byte i = 0; i < 7; i++) {
-		if (_vm->_animation->inField(i + 9)) {
+		if (_vm->_animation->inField(i + 8)) {
 			MagicType *portal = &_vm->_gyro->_portals[i];
 			switch (portal->_operation) {
 			case Gyro::kMagicExclaim:
@@ -1293,14 +1293,12 @@ void Acci::cardiffClimbing() {
 		_vm->_scrolls->displayText("You climb down, back onto the floor.");
 		_vm->_gyro->_standingOnDais = false;
 		_vm->_animation->appearPed(0, 2);
-	} else { // Clamber down.
-		if (_vm->_animation->inField(1)) {
-			_vm->_scrolls->displayText("You clamber up onto the dais.");
-			_vm->_gyro->_standingOnDais = true;
-			_vm->_animation->appearPed(0, 1);
-		} else
+	} else if (_vm->_animation->inField(0)) { // Clamber down
+		_vm->_scrolls->displayText("You clamber up onto the dais.");
+		_vm->_gyro->_standingOnDais = true;
+		_vm->_animation->appearPed(0, 1);
+	} else
 			_vm->_scrolls->displayText("Get a bit closer, Avvy.");
-	}
 }
 
 void Acci::already() {
@@ -1350,7 +1348,7 @@ void Acci::standUp() {
 void Acci::getProc(char thing) {
 	switch (_vm->_gyro->_room) {
 	case kRoomYours:
-		if (_vm->_animation->inField(2)) {
+		if (_vm->_animation->inField(1)) {
 			if (_vm->_gyro->_boxContent == thing) {
 				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 				_vm->_scrolls->displayText("OK, I've got it.");
@@ -1368,7 +1366,7 @@ void Acci::getProc(char thing) {
 	case kRoomInsideCardiffCastle:
 		switch (thing) {
 		case Gyro::kObjectPen:
-			if (_vm->_animation->inField(2)) { // Standing on the dais.
+			if (_vm->_animation->inField(1)) { // Standing on the dais.
 				if (_vm->_gyro->_takenPen)
 					_vm->_scrolls->displayText("It's not there, Avvy.");
 				else {
@@ -1393,7 +1391,7 @@ void Acci::getProc(char thing) {
 		}
 		break;
 	case kRoomRobins:
-		if ((thing == Gyro::kObjectMushroom) & (_vm->_animation->inField(1)) & (_vm->_gyro->_mushroomGrowing)) {
+		if ((thing == Gyro::kObjectMushroom) & (_vm->_animation->inField(0)) & (_vm->_gyro->_mushroomGrowing)) {
 			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_scrolls->displayText("Got it!");
 			_vm->_gyro->_mushroomGrowing = false;
@@ -1428,7 +1426,7 @@ void Acci::giveGeidaTheLute() {
 }
 
 void Acci::playHarp() {
-	if (_vm->_animation->inField(7))
+	if (_vm->_animation->inField(6))
 		_vm->_scrolls->musicalScroll();
 	else
 		_vm->_scrolls->displayText("Get a bit closer to it, Avvy!");
@@ -1884,7 +1882,7 @@ void Acci::doThat() {
 		if (_vm->_gyro->_avariciusTalk > 0)
 			_vm->_scrolls->displayScrollChain('q', 19);
 		else {
-			if ((_vm->_gyro->_room == kRoomSpludwicks) & (_vm->_animation->inField(2))) { // Avaricius appears!
+			if ((_vm->_gyro->_room == kRoomSpludwicks) & (_vm->_animation->inField(1))) { // Avaricius appears!
 				_vm->_scrolls->displayScrollChain('q', 17);
 				if (_vm->_gyro->_whereIs[1] == kRoomSpludwicks)
 					_vm->_scrolls->displayScrollChain('q', 18);
@@ -1940,7 +1938,7 @@ void Acci::doThat() {
 	case kVerbCodeBuy: // What are they trying to buy?
 		switch (_vm->_gyro->_room) {
 		case kRoomArgentPub:
-			if (_vm->_animation->inField(6)) { // We're in a pub, and near the bar.
+			if (_vm->_animation->inField(5)) { // We're in a pub, and near the bar.
 				switch (_thing) {
 				case 51:
 				case 53:
@@ -2001,7 +1999,7 @@ void Acci::doThat() {
 			break;
 
 		case kRoomOutsideDucks:
-			if (_vm->_animation->inField(6)) {
+			if (_vm->_animation->inField(5)) {
 				if (_thing == Gyro::kObjectOnion) {
 					if (_vm->_gyro->_objects[Gyro::kObjectOnion - 1])
 						_vm->_scrolls->displayScrollChain('D', 10); // Not planning to juggle with the things!
