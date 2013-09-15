@@ -234,7 +234,7 @@ void Gyro::resetVariables() {
 
 	_dnascore = 0;
 	_money = 0;
-	_room = 0;
+	_room = kRoomNowhere;
 	_wearing = 0;
 	_sworeNum = 0;
 	_saveNum = 0;
@@ -343,10 +343,10 @@ void Gyro::newGame() {
 	avvy->appear(300, 117, Animation::kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
-	_him = 254;
-	_her = 254;
-	_it = 254;
-	_lastPerson = 254; // = Pardon?
+	_him = Acci::kPardon;
+	_her = Acci::kPardon;
+	_it = Acci::kPardon;
+	_lastPerson = Acci::kPardon; // = Pardon?
 	_passwordNum = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;

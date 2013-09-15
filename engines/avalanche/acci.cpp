@@ -782,7 +782,7 @@ void Acci::parse() {
 		_vm->_gyro->_it = _thing;
 
 	if (_person != kPardon) {
-		if (_person < 175)
+		if (_person < Gyro::kPeopleArkata)
 			_vm->_gyro->_him = _person;
 		else
 			_vm->_gyro->_her = _person;
@@ -822,7 +822,7 @@ bool Acci::isPersonHere() { // Person equivalent of "holding".
 		return true;
 	else {
 		Common::String tmpStr;
-		if (_person < 175)
+		if (_person < Gyro::kPeopleArkata)
 			tmpStr = "He isn't around at the moment.";
 		else
 			tmpStr = "She isn't around at the moment.";
@@ -1891,7 +1891,7 @@ void Acci::doThat() {
 		if (_vm->_gyro->_avariciusTalk > 0)
 			_vm->_scrolls->displayScrollChain('q', 19);
 		else {
-			if ((_vm->_gyro->_room == 12) & (_vm->_animation->inField(2))) { // Avaricius appears!
+			if ((_vm->_gyro->_room == kRoomSpludwicks) & (_vm->_animation->inField(2))) { // Avaricius appears!
 				_vm->_scrolls->displayScrollChain('q', 17);
 				if (_vm->_gyro->_whereIs[1] == kRoomSpludwicks)
 					_vm->_scrolls->displayScrollChain('q', 18);
@@ -2043,8 +2043,8 @@ void Acci::doThat() {
 		break;
 	case kVerbCodeAttack:
 		if ((_vm->_gyro->_room == kRoomBrummieRoad) &&
-				((_person == 157) || (_thing == Gyro::kObjectCrossbow) || (_thing == Gyro::kObjectBolt))
-				&& (_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] == _vm->_gyro->_room)) {
+			((_person == Gyro::kPeopleCwytalot) || (_thing == Gyro::kObjectCrossbow) || (_thing == Gyro::kObjectBolt)) &&
+			(_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] == _vm->_gyro->_room)) {
 			switch (_vm->_gyro->_objects[Gyro::kObjectBolt - 1] + _vm->_gyro->_objects[Gyro::kObjectCrossbow - 1] * 2) {
 				// 0 = neither, 1 = only bolt, 2 = only crossbow, 3 = both.
 			case 0:
@@ -2138,7 +2138,7 @@ void Acci::doThat() {
 			default:
 				_vm->_scrolls->displayScrollChain('U', 5); // You WHAT?
 			}
-		} else if ((150 <= _person) && (_person <= 174))
+		} else if ((Gyro::kPeopleAvalot <= _person) && (_person < Gyro::kPeopleArkata))
 			_vm->_scrolls->displayText("Hey, what kind of a weirdo are you??");
 
 		break;
