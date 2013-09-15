@@ -51,9 +51,6 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
 	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
 	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
-	DCmd_Register("dumpcursorfilenames", WRAP_METHOD(Console, cmdDumpAllCursorFileNames));
-	DCmd_Register("showcursor", WRAP_METHOD(Console, cmdShowCursor));
-	DCmd_Register("dumpalllevfiles", WRAP_METHOD(Console, cmdDumpAllLevFiles));
 	DCmd_Register("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
 }
 
@@ -186,42 +183,6 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 	}
 
 	writeFileContentsToFile(argv[1], argv[1]);
-
-	return true;
-}
-
-bool Console::cmdDumpAllCursorFileNames(int argc, const char **argv) {
-	Common::DumpFile outputFile;
-	outputFile.open("cursorFileNames.txt");
-	
-	Common::ArchiveMemberList list;
-	SearchMan.listMatchingMembers(list, "*.zcr");
-
-	// Register the file entries within the zfs archives with the SearchMan
-	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-		outputFile.writeString((*iter)->getName());
-		outputFile.writeByte('\n');
-	}
-
-	return true;
-}
-
-bool Console::cmdShowCursor(int argc, const char **argv) {
-	ZorkCursor cursor(argv[1]);
-
-	_engine->_system->copyRectToScreen(cursor.getSurface(), cursor.getWidth() * 2, 0, 0, cursor.getWidth(), cursor.getHeight());
-
-	return true;
-}
-
-bool Console::cmdDumpAllLevFiles(int argc, const char **argv) {
-	Common::ArchiveMemberList list;
-	SearchMan.listMatchingMembers(list, "*.lev");
-	
-	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-		Common::String fileName = (*iter)->getName();
-		writeFileContentsToFile(fileName, fileName);
-	}
 
 	return true;
 }

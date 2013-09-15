@@ -47,9 +47,6 @@ private:
 	bool cmdSetPanoramaScale(int argc, const char **argv);
 	bool cmdChangeLocation(int argc, const char **argv);
 	bool cmdDumpFile(int argc, const char **argv);
-	bool cmdDumpAllCursorFileNames(int argc, const char **argv);
-	bool cmdShowCursor(int argc, const char **argv);
-	bool cmdDumpAllLevFiles(int argc, const char **argv);
 	bool cmdParseAllScrFiles(int argc, const char **argv);
 };
 
