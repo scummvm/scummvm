@@ -461,7 +461,7 @@ void Ringworld2Globals::reset() {
 	for (int i = 0; i < 1000; i++)
 		_v566AB[i] = 0;
 	_v56A93 = -1;
-	_v56A99 = 5;
+	_balloonAltitude = 5;
 	_scene1925CurrLevel = 0; //_v56A9C
 	_v56A9E = 0;
 	_v56AA0 = 0;
@@ -568,7 +568,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 		s.syncAsByte(_spillLocation[i]);
 	for (i = 0; i < 1000; ++i)
 		s.syncAsByte(_v566AB[i]);
-	s.syncAsByte(_v56A99);
+	s.syncAsByte(_balloonAltitude);
 	for (i = 0; i < 12; ++i)
 		s.syncAsByte(_stripManager_lookupList[i]);
 

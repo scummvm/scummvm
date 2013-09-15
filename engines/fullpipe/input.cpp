@@ -145,8 +145,72 @@ void FullpipeEngine::setCursor(int id) {
 		_inputController->setCursor(id);
 }
 
+const char *input_cheats[] = {
+	"HELP",
+	"STUFF",
+	"FASTER",
+	"OHWAIT",
+	"MUSOFF",
+	""
+};
+
 void FullpipeEngine::defHandleKeyDown(int key) {
-	warning("STUB: FullpipeEngine::defHandleKeyDown(%d)", key);
+	if (_currentCheat == -1) {
+		for (int i = 0; input_cheats[i][0]; i++)
+			if (toupper(key) == input_cheats[i][0]) {
+				_currentCheat = i;
+				_currentCheatPos = 1;
+			}
+
+		return;
+	}
+
+	warning("%d %d", _currentCheat, _currentCheatPos);
+	if (toupper(key) != input_cheats[_currentCheat][_currentCheatPos]) {
+		_currentCheat = -1;
+
+		return;
+	}
+
+	_currentCheatPos++;
+	warning("%d %d", _currentCheat, _currentCheatPos);
+
+	if (!input_cheats[_currentCheat][_currentCheatPos]) {
+		switch (_currentCheat) {
+		case 0:                               // HELP
+			winArcade();
+			break;
+		case 1:                               // STUFF
+			getAllInventory();
+			break;
+		case 2:                               // FASTER
+			_normalSpeed = !_normalSpeed;
+			break;
+		case 3:                               // OHWAIT
+			_gamePaused = 1;
+			_flgGameIsRunning = 0;
+			break;
+		case 4:                               // MUSOFF
+			if (_musicAllowed & 2)
+				setMusicAllowed(_musicAllowed & 0xFFFFFFFD);
+			else
+				setMusicAllowed(_musicAllowed | 2);
+			break;
+		default:
+			break;
+		}
+
+		_currentCheatPos = 0;
+		_currentCheat = -1;
+	}
+}
+
+void FullpipeEngine::winArcade() {
+	ExCommand *ex = new ExCommand(0, 17, MSG_CMN_WINARCADE, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 3;
+
+	ex->postMessage();
+
 }
 
 void FullpipeEngine::updateCursorsCommon() {

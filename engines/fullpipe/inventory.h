@@ -52,6 +52,7 @@ class CInventory : public CObject {
 	virtual bool load(MfcArchive &file);
 
 	int getInventoryPoolItemIndexById(int itemId);
+	uint getItemsPoolCount() { return _itemsPool.size(); }
 	bool setItemFlags(int itemId, int flags);
 };
 
@@ -102,6 +103,7 @@ class CInventory2 : public CInventory {
 	void removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority);
 
 	int getInventoryItemIndexById(int itemId);
+	int getInventoryPoolItemIdAtIndex(int itemId);
 	int getInventoryPoolItemFieldCById(int itemId);
 	int getCountItemsWithId(int itemId);
 	int getItemFlags(int itemId);
