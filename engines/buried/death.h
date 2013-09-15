@@ -23,54 +23,51 @@
  *
  */
 
-#ifndef BURIED_BIOCHIP_RIGHT_H
-#define BURIED_BIOCHIP_RIGHT_H
+#ifndef BURIED_DEATH_H
+#define BURIED_DEATH_H
 
+#include "buried/global_flags.h"
 #include "buried/window.h"
+
+namespace Graphics {
+class Font;
+struct Surface;
+}
 
 namespace Buried {
 
-// FIXME: Why is this here?
-enum {
-	CASTLE_EVIDENCE_FOOTPRINT = 1,
-	CASTLE_EVIDENCE_SWORD = 2,
-	MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID = 3,
-	MAYAN_EVIDENCE_PHONY_BLOOD = 4,
-	MAYAN_EVIDENCE_ENVIRON_CART = 5,
-	CASTLE_EVIDENCE_AGENT3 = 6,
-	AI_EVIDENCE_SCULPTURE = 7,
-	DAVINCI_EVIDENCE_FOOTPRINT = 8,
-	DAVINCI_EVIDENCE_AGENT3 = 9,
-	DAVINCI_EVIDENCE_CODEX = 10,
-	DAVINCI_EVIDENCE_LENS_FILTER = 11
-};
+class AVIFrames;
 
-class BioChipRightWindow : public Window {
+class DeathWindow : public Window {
 public:
-	BioChipRightWindow(BuriedEngine *vm, Window *parent);
-	~BioChipRightWindow();
-
-	bool changeCurrentBioChip(int bioChipID);
-	bool showBioChipMainView();
-	bool destroyBioChipViewWindow();
-	void sceneChanged();
-	void disableEvidenceCapture();
-	void jumpInitiated(bool redraw);
-	void jumpEnded(bool redraw);
+	DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, const GlobalFlags &globalFlags);
+	~DeathWindow();
 
 	void onPaint();
-	void onEnable(bool enable);
+	bool onEraseBackground();
+	void onTimer(uint timer);
 	void onLButtonUp(const Common::Point &point, uint flags);
-
-	// clone2727 says: These are labeled as HACKS, so I assume they are.
-	bool _forceHelp;
-	bool _forceComment;
+	void onLButtonDown(const Common::Point &point, uint flags);
+	void onMouseMove(const Common::Point &point, uint flags);
 
 private:
-	int _curBioChip;
-	int _status;
-	Window *_bioChipViewWindow;
-	bool _jumpInProgress;
+	Common::Rect _quit;
+	Common::Rect _restoreGame;
+	Common::Rect _mainMenu;
+	int _curButton;
+	uint _timer;
+	AVIFrames *_deathSceneFrames;
+	int _deathSceneIndex;
+	GlobalFlags _globalFlags;
+	int32 _deathFrameIndex;
+	bool _lightOn;
+	Graphics::Font *_textFontA;
+	Graphics::Font *_textFontB;
+	bool _walkthroughMode;
+
+	Common::String _scoringTextDescriptions;
+	Common::String _scoringTextScores;
+	Common::String _scoringTextFinalScore;
 };
 
 } // End of namespace Buried
