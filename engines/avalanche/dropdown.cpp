@@ -447,7 +447,7 @@ void Dropdown::setupMenuAction() {
 	else
 		_activeMenuItem.setupOption(f5Does, f5Does[0], "f5", true);
 	_activeMenuItem.setupOption("Pause game", 'P', "f6", true);
-	if (_vm->_gyro->_room == 99)
+	if (_vm->_gyro->_room == kRoomMap)
 		_activeMenuItem.setupOption("Journey thither", 'J', "f7", _vm->_animation->nearDoor());
 	else
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->nearDoor());
@@ -470,7 +470,7 @@ void Dropdown::setupMenuPeople() {
 	for (byte i = 150; i <= 178; i++)
 		if (_vm->_gyro->_whereIs[i - 150] == _vm->_gyro->_room) {
 			_activeMenuItem.setupOption(_vm->_gyro->getName(i), _vm->_gyro->getNameChar(i), "", true);
-			people = people + i;
+			people += i;
 		}
 
 	_activeMenuItem.display();
@@ -653,7 +653,7 @@ void Dropdown::runMenuWith() {
 		if (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum] == Acci::kVerbCodeGive)
 			_vm->_acci->_person = _vm->_gyro->_lastPerson;
 		else
-			_vm->_acci->_person = 254;
+			_vm->_acci->_person = Acci::kPardon;
 
 	} else {
 		switch (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum]) {
@@ -695,7 +695,7 @@ void Dropdown::runMenuWith() {
 		break;
 		default: {
 			_vm->_acci->_person = _vm->_acci->_thing;
-			_vm->_acci->_thing = 254;
+			_vm->_acci->_thing = Acci::kPardon;
 			_vm->_gyro->_subjectNum = 0;
 		}
 		}

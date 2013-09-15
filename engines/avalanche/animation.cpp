@@ -1321,7 +1321,7 @@ void Animation::flipRoom(byte room, byte ped) {
 		return;
 	}
 
-	if ((room == 177) && (_vm->_gyro->_room == kRoomLusties)) {
+	if ((room == kRoomDummy) && (_vm->_gyro->_room == kRoomLusties)) {
 		hideInCupboard();
 		return;
 	}
