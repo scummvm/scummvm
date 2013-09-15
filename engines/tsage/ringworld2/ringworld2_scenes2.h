@@ -739,8 +739,8 @@ public:
 	bool _field416;
 	int _field41C;
 	int _altitudeMajorChange;
-	Common::Point _offsetPos;
-	Common::Point _pos;
+	Common::Point _balloonLocation;
+	Common::Point _balloonScreenPos;
 	int _newAltitude;
 	int _field425;
 	int _field426;
