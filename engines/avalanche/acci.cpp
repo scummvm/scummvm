@@ -835,24 +835,19 @@ void Acci::exampers() {
 	if (isPersonHere()) {
 		if (_thing != _vm->_gyro->_thinks)
 			_vm->_lucerna->thinkAbout(_person, Gyro::kPerson);
+
 		byte newPerson = _person - 149;
-		switch (_person) { // Special cases
-		case Gyro::kPeopleDogfood:
-			if (_vm->_gyro->_wonNim)
-				_vm->_scrolls->displayScrollChain('Q', 8); // "I'm Not Playing!"
-			break;
-		case Gyro::kPeopleDuLustie:
-			if (_vm->_gyro->_lustieIsAsleep)
-				_vm->_scrolls->displayScrollChain('Q', 65); // He's asleep. (65! Wow!)
-			break;
-		case Gyro::kPeopleAyles:
+
+		if ((_person == Gyro::kPeopleDogfood) && _vm->_gyro->_wonNim)
+			_vm->_scrolls->displayScrollChain('Q', 8); // "I'm Not Playing!"
+		else if ((_person == Gyro::kPeopleDuLustie) && _vm->_gyro->_lustieIsAsleep)
+			_vm->_scrolls->displayScrollChain('Q', 65); // He's asleep. (65! Wow!)
+		else
 			_vm->_scrolls->displayScrollChain('p', newPerson);
-			if (!_vm->_gyro->_aylesIsAwake)
-				_vm->_scrolls->displayScrollChain('Q', 13);
-			break;
-		default:
-			_vm->_scrolls->displayScrollChain('p', newPerson);
-		}
+
+		if ((_person == Gyro::kPeopleAyles) && !_vm->_gyro->_aylesIsAwake)
+			_vm->_scrolls->displayScrollChain('Q', 13);
+
 		_person = newPerson;
 	}
 }
