@@ -311,6 +311,8 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 		sourceOffset += imageWidth;
 	}
 
+	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
+}
 void RenderManager::copyWorkingWindowSubRectToSurface(Graphics::Surface *destSurface, uint16 destX, uint16 destY, Common::Rect subRect) const {
 	uint32 destOffset = 0;
 	uint32 sourceOffset = 0;
@@ -325,7 +327,6 @@ void RenderManager::copyWorkingWindowSubRectToSurface(Graphics::Surface *destSur
 		destOffset += destSurface->w;
 		sourceOffset += _workingWidth;
 	}
-	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
 }
 
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
