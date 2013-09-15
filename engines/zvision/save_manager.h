@@ -44,7 +44,7 @@ struct SaveGameHeader {
 
 class SaveManager {
 public:
-	SaveManager(ZVision *engine);
+	SaveManager(ZVision *engine) : _engine(engine) {}
 
 private:
 	ZVision *_engine;
