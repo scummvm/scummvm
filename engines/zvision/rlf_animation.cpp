@@ -156,7 +156,7 @@ RlfAnimation::Frame RlfAnimation::readNextFrame() {
 
 void RlfAnimation::seekToFrame(int frameNumber) {
 	assert(!_stream);
-	assert(frameNumber < _frameCount || frameNumber >= -1);
+	assert(frameNumber < (int)_frameCount || frameNumber >= -1);
 
 	if (frameNumber == -1) {
 		_currentFrame = -1;
@@ -173,7 +173,7 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 		}
 	}
 
-	for (uint i = closestFrame; i <= frameNumber; i++) {
+	for (int i = closestFrame; i <= frameNumber; i++) {
 		applyFrameToCurrent(i);
 	}
 
