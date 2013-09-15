@@ -181,6 +181,7 @@ public:
 		// Girls:
 		kPeopleArkata = 175,
 		kPeopleGeida = 176,
+		kPeopleInvisible = 177,
 		kPeopleWisewoman = 178
 	};
 

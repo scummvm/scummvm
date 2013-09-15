@@ -117,7 +117,7 @@ const QuasipedType Gyro::kQuasipeds[16] = {
 	{1, kColorLightgray, 19, kColorBrown, kPeopleDogfood}, // A: Dogfood (screen 19).
 	{2, kColorGreen, 19, kColorWhite, kPeopleIbythneth}, // B: Ibythneth (screen 19).
 	{2, kColorWhite, 1, kColorMagenta, kPeopleArkata}, // C: Arkata (screen 1).
-	{2, kColorBlack, 23, kColorRed, 177}, // D: Hawk (screen 23).
+	{2, kColorBlack, 23, kColorRed, kPeopleInvisible}, // D: Hawk (screen 23).
 	{2, kColorLightgreen, 50, kColorBrown, kPeopleTrader}, // E: Trader (screen 50).
 	{5, kColorYellow, 42, kColorRed, kPeopleAvalot}, // F: Avvy, tied up (scr.42)
 	{1, kColorBlue, 16, kColorWhite, kPeopleAyles}, // G: Ayles (screen 16).
@@ -126,7 +126,7 @@ const QuasipedType Gyro::kQuasipeds[16] = {
 	{2, kColorYellow, 47, kColorRed, kPeopleAvalot}, // J: Avalot (screen 47).
 	{1, kColorLightgray, 23, kColorBlack, kPeopleDuLustie}, // K: du Lustie (screen 23).
 	{1, kColorYellow, 27, kColorRed, kPeopleAvalot}, // L: Avalot (screen 27).
-	{2, kColorWhite, 27, kColorRed, 177}, // M: Avaroid (screen 27).
+	{2, kColorWhite, 27, kColorRed, kPeopleInvisible}, // M: Avaroid (screen 27).
 	{3, kColorLightgray, 19, kColorDarkgray, kPeopleMalagauche}, // N: Malagauche (screen 19).
 	{4, kColorLightmagenta, 47, kColorRed, kPeoplePort}, // O: Port (screen 47).
 	{1, kColorLightgreen, 51, kColorDarkgray, kPeopleDrDuck} // P: Duck (screen 51).
