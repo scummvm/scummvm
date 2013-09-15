@@ -41,7 +41,6 @@
 #include "avalanche/timer.h"
 #include "avalanche/celer2.h"
 #include "avalanche/enid2.h"
-#include "avalanche/visa2.h"
 #include "avalanche/closing2.h"
 
 #include "common/str.h"
@@ -179,7 +178,7 @@ void Avalot::setup() {
 		_vm->_lucerna->fxToggle();
 		_vm->_lucerna->thinkAbout(Gyro::kObjectMoney, Gyro::kThing);
 
-		_vm->_visa->displayScrollChain('q', 83); // Info on the game, etc.
+		_vm->_scrolls->displayScrollChain('q', 83); // Info on the game, etc.
 	}
 }
 

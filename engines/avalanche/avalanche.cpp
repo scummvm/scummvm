@@ -64,7 +64,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _avalot;
 	delete _pingo;
 	delete _scrolls;
-	delete _visa;
 	delete _lucerna;
 	delete _enid;
 	delete _celer;
@@ -85,7 +84,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_gyro = new Gyro(this);
 	_pingo = new Pingo(this);
 	_scrolls = new Scrolls(this);
-	_visa = new Visa(this);
 	_lucerna = new Lucerna(this);
 	_enid = new Enid(this);
 	_celer = new Celer(this);

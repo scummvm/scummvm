@@ -37,7 +37,6 @@
 #include "avalanche/gyro2.h"
 #include "avalanche/pingo2.h"
 #include "avalanche/scrolls2.h"
-#include "avalanche/visa2.h"
 #include "avalanche/lucerna2.h"
 #include "avalanche/enid2.h"
 #include "avalanche/celer2.h"
@@ -74,7 +73,6 @@ public:
 	Gyro *_gyro;
 	Pingo *_pingo;
 	Scrolls *_scrolls;
-	Visa *_visa;
 	Lucerna *_lucerna;
 	Enid *_enid;
 	Celer *_celer;

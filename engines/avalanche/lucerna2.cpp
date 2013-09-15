@@ -32,7 +32,6 @@
 #include "avalanche/lucerna2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/scrolls2.h"
-#include "avalanche/visa2.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
 #include "avalanche/enid2.h"
@@ -621,12 +620,12 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		//setactivepage(1 - cp);
 
 		if ((_vm->_gyro->_objects[Gyro::kObjectWine - 1]) && (_vm->_gyro->_wineState != 3)) {
-			_vm->_visa->displayScrollChain('q', 9); // Don't want to waste the wine!
+			_vm->_scrolls->displayScrollChain('q', 9); // Don't want to waste the wine!
 			_vm->_gyro->_objects[Gyro::kObjectWine - 1] = false;
 			refreshObjectList();
 		}
 
-		_vm->_visa->displayScrollChain('q', 69);
+		_vm->_scrolls->displayScrollChain('q', 69);
 		break;
 
 	case r__catacombs:
