@@ -48,6 +48,7 @@ void ZVision::processEvents() {
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
+			// TODO: Inventory logic
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
