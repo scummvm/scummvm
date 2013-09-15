@@ -311,6 +311,20 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 		sourceOffset += imageWidth;
 	}
 
+void RenderManager::copyWorkingWindowSubRectToSurface(Graphics::Surface *destSurface, uint16 destX, uint16 destY, Common::Rect subRect) const {
+	uint32 destOffset = 0;
+	uint32 sourceOffset = 0;
+	uint16 *workingWindowBufferPtr = (uint16 *)_workingWindowBuffer.getBasePtr(subRect.left, subRect.top);
+	uint16 *destPtr = (uint16 *)destSurface->getBasePtr(destX, destY);
+
+	for (int32 y = 0; y < subRect.height(); y++) {
+		for (int32 x = 0; x < subRect.width(); x++) {
+			destPtr[destOffset + x] = workingWindowBufferPtr[sourceOffset + x];
+		}
+
+		destOffset += destSurface->w;
+		sourceOffset += _workingWidth;
+	}
 	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
 }
 
