@@ -198,7 +198,7 @@ void Gyro::newMouse(byte id) {
 		return;
 	_currentMouse = id;
 
-	loadMouse(id);
+	loadMouse(id - 1);
 }
 
 /**
@@ -550,35 +550,40 @@ void Gyro::loadMouse(byte which) {
 
 
 	// The AND mask.
-	f.seek(kMouseSize * 2 * (which - 1) + 134);
+	f.seek(kMouseSize * 2 * which + 134);
 
 	::Graphics::Surface mask = _vm->_graphics->loadPictureGraphic(f);
 
-	for (byte j = 0; j < mask.h; j++)
-		for (byte i = 0; i < mask.w; i++)
-			for (byte k = 0; k < 2; k++)
+	for (byte j = 0; j < mask.h; j++) {
+		for (byte i = 0; i < mask.w; i++) {
+			for (byte k = 0; k < 2; k++) {
 				if (*(byte *)mask.getBasePtr(i, j) == 0)
 					*(byte *)cursor.getBasePtr(i, j * 2 + k) = 0;
+			}
+		}
+	}
 
 	mask.free();
 
 	// The OR mask.
-	f.seek(kMouseSize * 2 * (which - 1) + 134 * 2);
+	f.seek(kMouseSize * 2 * which + 134 * 2);
 
 	mask = _vm->_graphics->loadPictureGraphic(f);
 
-	for (byte j = 0; j < mask.h; j++)
-		for (byte i = 0; i < mask.w; i++)
+	for (byte j = 0; j < mask.h; j++) {
+		for (byte i = 0; i < mask.w; i++) {
 			for (byte k = 0; k < 2; k++) {
 				byte pixel = *(byte *)mask.getBasePtr(i, j);
 				if (pixel != 0)
 					*(byte *)cursor.getBasePtr(i, j * 2 + k) = pixel;
 			}
+		}
+	}
 
 	mask.free();
 	f.close();
 
-	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, kMouseHotSpots[which - 1]._horizontal, kMouseHotSpots[which - 1]._vertical * 2, 255, false);
+	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
 	cursor.free();
 }
 

@@ -387,7 +387,7 @@ void Lucerna::enterNewTown() {
 		if ((_vm->_gyro->_roomCount[kRoomRobins] > 0) && (_vm->_gyro->_beenTiedUp) && (!_vm->_gyro->_takenMushroom))
 			_vm->_gyro->_mushroomGrowing = true;
 		break;
-	case kRoomWiseWomans: { // Entry into Argent.
+	case kRoomWiseWomans: // Entry into Argent.
 		if (_vm->_gyro->_talkedToCrapulus && (!_vm->_gyro->_lustieIsAsleep)) {
 			_vm->_gyro->_spludwickAtHome = !((_vm->_gyro->_roomCount[kRoomWiseWomans] % 3) == 1);
 			_vm->_gyro->_crapulusWillTell = !_vm->_gyro->_spludwickAtHome;
@@ -397,8 +397,7 @@ void Lucerna::enterNewTown() {
 		}
 		if (_vm->_gyro->_boxContent == Gyro::kObjectWine)
 			_vm->_gyro->_wineState = 3; // Vinegar
-	}
-	break;
+		break;
 	}
 
 	if (_vm->_gyro->_room != kRoomOutsideDucks) {
@@ -627,21 +626,18 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if ((ped == 0) || (ped == 3) || (ped == 5) || (ped == 6)) {
 
 			switch (ped) {
-			case 3: { // Enter from oubliette
+			case 3: // Enter from oubliette
 				_vm->_gyro->_catacombX = 8;
 				_vm->_gyro->_catacombY = 4;
-			}
-			break;
-			case 5: { // Enter from du Lustie's
+				break;
+			case 5: // Enter from du Lustie's
 				_vm->_gyro->_catacombX = 8;
 				_vm->_gyro->_catacombY = 7;
-			}
-			break;
-			case 6: { // Enter from Geida's
+				break;
+			case 6: // Enter from Geida's
 				_vm->_gyro->_catacombX = 4;
 				_vm->_gyro->_catacombY = 1;
-			}
-			break;
+				break;
 			}
 
 			_vm->_gyro->_enterCatacombsFromLustiesRoom = true;

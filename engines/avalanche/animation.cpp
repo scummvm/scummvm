@@ -656,7 +656,7 @@ void Animation::catacombMove(byte ped) {
 	// ARCHWAYS:
 	case 0x7:
 	case 0x8:
-	case 0x9: {
+	case 0x9:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 6);
 
 		if (((here & 0xf000) >> 12) > 0x7)
@@ -666,8 +666,7 @@ void Animation::catacombMove(byte ped) {
 
 		_vm->_gyro->_magics[0]._operation = Gyro::kMagicSpecial; // Middle arch north.
 		_vm->_gyro->_portals[3]._operation = Gyro::kMagicNothing; // Door.
-	}
-	break;
+		break;
 	// DECORATIONS:
 	case 0xd: // No connection + WINDOW
 		_vm->_gyro->_magics[0]._operation = Gyro::kMagicBounce;

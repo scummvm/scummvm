@@ -495,20 +495,17 @@ bool Acci::doPronouns() {
 	for (byte i = 0; i < _thats.size(); i++) {
 		byte wordCode = _thats[i];
 		switch (wordCode) {
-		case 200: {
+		case 200:
 			displayWhat(_vm->_gyro->_him, true, ambiguous);
 			_thats.setChar(_vm->_gyro->_him, i);
-			}
 			break;
-		case 201: {
+		case 201:
 			displayWhat(_vm->_gyro->_her, true, ambiguous);
 			_thats.setChar(_vm->_gyro->_her, i);
-			}
 			break;
-		case 202: {
+		case 202:
 			displayWhat(_vm->_gyro->_it, false, ambiguous);
 			_thats.setChar(_vm->_gyro->_it, i);
-			}
 			break;
 		}
 	}
@@ -1735,31 +1732,31 @@ void Acci::doThat() {
 				break;
 			case Gyro::kObjectClothes:
 			case Gyro::kObjectHabit: { // Change this!
-					if (_vm->_gyro->_wearing != kNothing) {
-						if (_vm->_gyro->_wearing == _thing)
-							_vm->_scrolls->displayText("You're already wearing that.");
-						else
-							_vm->_scrolls->displayText("You'll be rather warm wearing two sets of clothes!");
-						return;
-					} else
-						_vm->_gyro->_wearing = _thing;
-
-					_vm->_lucerna->refreshObjectList();
-
-					byte i;
-					if (_thing == Gyro::kObjectHabit)
-						i = 3;
+				if (_vm->_gyro->_wearing != kNothing) {
+					if (_vm->_gyro->_wearing == _thing)
+						_vm->_scrolls->displayText("You're already wearing that.");
 					else
-						i = 0;
-					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[0];
-					if (spr->_id != i) {
-						int16 x = spr->_x;
-						int16 y = spr->_y;
-						spr->remove();
-						spr->init(i, true, _vm->_animation);
-						spr->appear(x, y, Animation::kDirLeft);
-						spr->_visible = false;
-					}
+						_vm->_scrolls->displayText("You'll be rather warm wearing two sets of clothes!");
+					return;
+				} else
+					_vm->_gyro->_wearing = _thing;
+
+				_vm->_lucerna->refreshObjectList();
+
+				byte i;
+				if (_thing == Gyro::kObjectHabit)
+					i = 3;
+				else
+					i = 0;
+				Avalanche::AnimationType *spr = &_vm->_animation->_sprites[0];
+				if (spr->_id != i) {
+					int16 x = spr->_x;
+					int16 y = spr->_y;
+					spr->remove();
+					spr->init(i, true, _vm->_animation);
+					spr->appear(x, y, Animation::kDirLeft);
+					spr->_visible = false;
+				}
 				}
 				break;
 			default:
@@ -1770,40 +1767,39 @@ void Acci::doThat() {
 	case kVerbCodePlay:
 		if (_thing == kPardon) {
 			switch (_vm->_gyro->_room) { // They just typed "play"...
-			case kRoomArgentPub: { // ...in the pub, => play Nim.
-					warning("STUB: Acci::doThat() - case kVerbCodeplay - play_nim()");
-					// play_nim();
-					// The following parts are copied from play_nim().
-					// The player automatically wins the game everytime he wins, until I implement the mini-game.
+			case kRoomArgentPub: // ...in the pub, => play Nim.
+				warning("STUB: Acci::doThat() - case kVerbCodeplay - play_nim()");
+				// play_nim();
+				// The following parts are copied from play_nim().
+				// The player automatically wins the game everytime he wins, until I implement the mini-game.
 
-					if (_vm->_gyro->_wonNim) { // Already won the game.
-						_vm->_scrolls->displayScrollChain('Q', 6);
-						return;
-					}
-
-					if (!_vm->_gyro->_askedDogfoodAboutNim) {
-						_vm->_scrolls->displayScrollChain('q', 84);
-						return;
-					}
-
-					_vm->_scrolls->displayScrollChain('Q', 3);
-					_vm->_gyro->_playedNim++;
-
-					// You won - strange!
-					_vm->_scrolls->displayScrollChain('Q', 7); // You won! Give us a lute!
-					_vm->_gyro->_objects[Gyro::kObjectLute - 1] = true;
-					_vm->_lucerna->refreshObjectList();
-					_vm->_gyro->_wonNim = true;
-					_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Show the settle with no lute on it.
-					_vm->_lucerna->incScore(7); // 7 points for winning!
-
-					if (_vm->_gyro->_playedNim == 1)
-						_vm->_lucerna->incScore(3); // 3 points for playing your 1st game.
-
-					// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
-					_vm->_scrolls->displayText(Common::String("P.S.: There should have been the mini-game called \"Nim\", but I haven't implemented it yet: you win and get the lute automatically.")
-						+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Peter (uruk)");
+				if (_vm->_gyro->_wonNim) { // Already won the game.
+					_vm->_scrolls->displayScrollChain('Q', 6);
+					return;
 				}
+
+				if (!_vm->_gyro->_askedDogfoodAboutNim) {
+					_vm->_scrolls->displayScrollChain('q', 84);
+					return;
+				}
+
+				_vm->_scrolls->displayScrollChain('Q', 3);
+				_vm->_gyro->_playedNim++;
+
+				// You won - strange!
+				_vm->_scrolls->displayScrollChain('Q', 7); // You won! Give us a lute!
+				_vm->_gyro->_objects[Gyro::kObjectLute - 1] = true;
+				_vm->_lucerna->refreshObjectList();
+				_vm->_gyro->_wonNim = true;
+				_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Show the settle with no lute on it.
+				_vm->_lucerna->incScore(7); // 7 points for winning!
+
+				if (_vm->_gyro->_playedNim == 1)
+					_vm->_lucerna->incScore(3); // 3 points for playing your 1st game.
+
+				// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
+				_vm->_scrolls->displayText(Common::String("P.S.: There should have been the mini-game called \"Nim\", but I haven't implemented it yet: you win and get the lute automatically.")
+					+ Scrolls::kControlNewLine + Scrolls::kControlNewLine + "Peter (uruk)");
 				break;
 			case kRoomMusicRoom:
 				playHarp();
