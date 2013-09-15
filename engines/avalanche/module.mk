@@ -7,18 +7,18 @@ MODULE_OBJS = \
 	avalot.o \
 	console.o \
 	detection.o \
-	gyro2.o \
-	pingo2.o \
-	scrolls2.o \
-	lucerna2.o \
-	enid2.o \
-	celer2.o \
-	sequence2.o \
+	gyro.o \
+	pingo.o \
+	scrolls.o \
+	lucerna.o \
+	enid.o \
+	celer.o \
+	sequence.o \
 	timer.o \
 	animation.o \
-	acci2.o \
-	dropdown2.o \
-	closing2.o
+	acci.o \
+	dropdown.o \
+	closing.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

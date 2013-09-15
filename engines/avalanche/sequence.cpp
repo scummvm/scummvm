@@ -29,10 +29,10 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/sequence2.h"
-#include "avalanche/gyro2.h"
+#include "avalanche/sequence.h"
+#include "avalanche/gyro.h"
 #include "avalanche/timer.h"
-#include "avalanche/celer2.h"
+#include "avalanche/celer.h"
 #include "avalanche/animation.h"
 
 #include "common/scummsys.h"

@@ -29,11 +29,11 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/scrolls2.h"
-#include "avalanche/gyro2.h"
-#include "avalanche/lucerna2.h"
+#include "avalanche/scrolls.h"
+#include "avalanche/gyro.h"
+#include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
-#include "avalanche/acci2.h"
+#include "avalanche/acci.h"
 #include "avalanche/timer.h"
 
 #include "common/textconsole.h"
