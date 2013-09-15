@@ -32,56 +32,42 @@
 
 namespace Avalanche {
 
-const byte r__nowhere = 0;
-const byte r__yours = 1;
-const byte r__outsideyours = 2;
-const byte r__outsidespludwicks = 3;
-const byte r__yourhall = 5;
-const byte r__musicroom = 7;
-const byte r__outsideargentpub = 9;
-const byte r__argentroad = 10;
-const byte r__wisewomans = 11;
-const byte r__spludwicks = 12;
-const byte r__insideabbey = 13;
-const byte r__outsideabbey = 14; // assumed
-const byte r__avvysgarden = 15;
-const byte r__aylesoffice = 16;
-const byte r__argentpub = 19;
-const byte r__brummieroad = 20;
-const byte r__bridge = 21; // ? not sure
-const byte r__lusties = 22;
-const byte r__lustiesroom = 23;
-const byte r__westhall = 25;
-const byte r__easthall = 26;
-const byte r__oubliette = 27;
-const byte r__geidas = 28;
-const byte r__catacombs = 29;
-
-//{ -------------- }
-
-const byte r__entrancehall = 40;
-const byte r__robins = 42;
-const byte r__outsidenottspub = 46;
-const byte r__nottspub = 47;
-
-//{ -------------- }
-
-const byte r__outsideducks = 50;
-const byte r__ducks = 51;
-
-//{ -------------- }
-
-const byte r__outsidecardiffcastle = 70;
-const byte r__insidecardiffcastle = 71;
-
-//{ -------------- }
-
-// place80 appears to be bogus
-
-//{ -------------- }
-
-const byte r__bosskey = 98; // assumed
-const byte r__map = 99;
+enum Room {
+	kRoomNowhere = 0,
+	kRoomYours = 1,
+	kRoomOutsideYours = 2,
+	kRoomOutsideSpludwicks = 3,
+	kRoomYourHall = 5,
+	kRoomMusicRoom = 7,
+	kRoomOutsideArgentPub = 9,
+	kRoomArgentRoad = 10,
+	kRoomWiseWomans = 11,
+	kRoomSpludwicks = 12,
+	kRoomInsideAbbey = 13,
+	kRoomOutsideAbbey = 14,
+	kRoomAvvysGarden = 15,
+	kRoomAylesOffice = 16,
+	kRoomArgentPub = 19,
+	kRoomBrummieRoad = 20,
+	kRoomBridge = 21, 
+	kRoomLusties = 22,
+	kRoomLustiesRoom = 23,
+	kRoomWestHall = 25,
+	kRoomEastHall = 26,
+	kRoomOubliette = 27,
+	kRoomGeidas = 28,
+	kRoomCatacombs = 29,
+	kRoomEntranceHall = 40,
+	kRoomRobins = 42,
+	kRoomOutsideNottsPub = 46,
+	kRoomNottsPub = 47,
+	kRoomOutsideDucks = 50,
+	kRoomDucks = 51,
+	kRoomOutsideCardiffCastle = 70,
+	kRoomInsideCardiffCastle = 71,
+	kRoomBossKey = 98, // assumed
+	kRoomMap = 99
+};
 
 } // End of namespace Avalanche
 

@@ -439,20 +439,20 @@ void Animation::catacombMove(byte ped) {
 
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
-		flipRoom(r__lustiesroom, 4);
+		flipRoom(kRoomLustiesRoom, 4);
 		_vm->_scrolls->displayText("Phew! Nice to be out of there!");
 		return;
 	case 1033:{ // Oubliette
-		flipRoom(r__oubliette, 1);
+		flipRoom(kRoomOubliette, 1);
 		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
 		_vm->_scrolls->displayText(tmpStr);
 		}
 		return;
 	case 4:
-		flipRoom(r__geidas, 1);
+		flipRoom(kRoomGeidas, 1);
 		return;
 	case 2307:
-		flipRoom(r__lusties, 5);
+		flipRoom(kRoomLusties, 5);
 		_vm->_scrolls->displayText("Oh no... here we go again...");
 		_vm->_gyro->_userMovesAvvy = false;
 		_sprites[0]._moveY = 1;
@@ -849,7 +849,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_catacombY--;
 		catacombMove(4);
-		if (_vm->_gyro->_room != r__catacombs)
+		if (_vm->_gyro->_room != kRoomCatacombs)
 			return;
 		switch ((_vm->_gyro->kCatacombMap[_vm->_gyro->_catacombY - 1][_vm->_gyro->_catacombX - 1] & 0xf00) >> 8) {
 		case 0x1:
@@ -867,7 +867,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_catacombX++;
 		catacombMove(1);
-		if (_vm->_gyro->_room != r__catacombs)
+		if (_vm->_gyro->_room != kRoomCatacombs)
 			return;
 		appearPed(1, 1);
 		dawnDelay();
@@ -876,7 +876,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_catacombY += 1;
 		catacombMove(2);
-		if (_vm->_gyro->_room != r__catacombs)
+		if (_vm->_gyro->_room != kRoomCatacombs)
 			return;
 		appearPed(1, 2);
 		dawnDelay();
@@ -885,7 +885,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_lucerna->dusk();
 		_vm->_gyro->_catacombX--;
 		catacombMove(3);
-		if (_vm->_gyro->_room != r__catacombs)
+		if (_vm->_gyro->_room != kRoomCatacombs)
 			return;
 		appearPed(1, 3);
 		dawnDelay();
@@ -902,30 +902,30 @@ void Animation::callSpecial(uint16 which) {
  */
 void Animation::openDoor(byte whither, byte ped, byte magicnum) {
 	switch (_vm->_gyro->_room) {
-	case r__outsideyours:
-	case r__outsidenottspub:
-	case r__outsideducks:
+	case kRoomOutsideYours:
+	case kRoomOutsideNottsPub:
+	case kRoomOutsideDucks:
 		_vm->_sequence->firstShow(1);
 		_vm->_sequence->thenShow(2);
 		_vm->_sequence->thenShow(3);
 		break;
-	case r__insidecardiffcastle:
+	case kRoomInsideCardiffCastle:
 		_vm->_sequence->firstShow(1);
 		_vm->_sequence->thenShow(5);
 		break;
-	case r__avvysgarden:
-	case r__entrancehall:
-	case r__insideabbey:
-	case r__yourhall:
+	case kRoomAvvysGarden:
+	case kRoomEntranceHall:
+	case kRoomInsideAbbey:
+	case kRoomYourHall:
 		_vm->_sequence->firstShow(1);
 		_vm->_sequence->thenShow(2);
 		break;
-	case r__musicroom:
-	case r__outsideargentpub:
+	case kRoomMusicRoom:
+	case kRoomOutsideArgentPub:
 		_vm->_sequence->firstShow(5);
 		_vm->_sequence->thenShow(6);
 		break;
-	case r__lusties:
+	case kRoomLusties:
 		switch (magicnum) {
 		case 14:
 			if (_vm->_gyro->_avvysInTheCupboard) {
@@ -1321,12 +1321,12 @@ void Animation::flipRoom(byte room, byte ped) {
 		return;
 	}
 
-	if ((room == 177) && (_vm->_gyro->_room == r__lusties)) {
+	if ((room == 177) && (_vm->_gyro->_room == kRoomLusties)) {
 		hideInCupboard();
 		return;
 	}
 
-	if ((_vm->_gyro->_jumpStatus > 0) && (_vm->_gyro->_room == r__insidecardiffcastle)) {
+	if ((_vm->_gyro->_jumpStatus > 0) && (_vm->_gyro->_room == kRoomInsideCardiffCastle)) {
 		// You can't *jump* out of Cardiff Castle!
 		_sprites[0]._moveX = 0;
 		return;
@@ -1340,7 +1340,7 @@ void Animation::flipRoom(byte room, byte ped) {
 			_sprites[i].remove();
 	} // Deallocate sprite
 
-	if (_vm->_gyro->_room == r__lustiesroom)
+	if (_vm->_gyro->_room == kRoomLustiesRoom)
 		_vm->_gyro->_enterCatacombsFromLustiesRoom = true;
 
 	_vm->_lucerna->enterRoom(room, ped);

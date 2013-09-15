@@ -143,29 +143,29 @@ const TuneType Gyro::kTune = {
 
 byte Gyro::_whereIs[29] = {
 	// The Lads
-	r__yours, // Avvy
-	r__spludwicks, // Spludwick
-	r__outsideyours, // Crapulus
-	r__ducks, // Duck - r__DucksRoom's not defined yet.
-	r__argentpub, // Malagauche
-	r__robins, // Friar Tuck.
+	kRoomYours, // Avvy
+	kRoomSpludwicks, // Spludwick
+	kRoomOutsideYours, // Crapulus
+	kRoomDucks, // Duck - r__DucksRoom's not defined yet.
+	kRoomArgentPub, // Malagauche
+	kRoomRobins, // Friar Tuck.
 	177, // Robin Hood - can't meet him at the start.
-	r__brummieroad, // Cwytalot
-	r__lustiesroom, // Baron du Lustie.
-	r__outsidecardiffcastle, // The Duke of Cardiff.
-	r__argentpub, // Dogfood
-	r__outsideducks, // Trader
-	r__argentpub, // Ibythneth
-	r__aylesoffice, // Ayles
-	r__nottspub, // Port
-	r__nottspub, // Spurge
-	r__musicroom, // Jacques
+	kRoomBrummieRoad, // Cwytalot
+	kRoomLustiesRoom, // Baron du Lustie.
+	kRoomOutsideCardiffCastle, // The Duke of Cardiff.
+	kRoomArgentPub, // Dogfood
+	kRoomOutsideDucks, // Trader
+	kRoomArgentPub, // Ibythneth
+	kRoomAylesOffice, // Ayles
+	kRoomNottsPub, // Port
+	kRoomNottsPub, // Spurge
+	kRoomMusicRoom, // Jacques
 	0, 0, 0, 0, 0, 0, 0, 0,
 	// The Lasses
-	r__yours, // Arkata
-	r__geidas, // Geida
+	kRoomYours, // Arkata
+	kRoomGeidas, // Geida
 	177, // nobody allocated here!
-	r__wisewomans  // The Wise Woman.
+	kRoomWiseWomans  // The Wise Woman.
 };
 
 Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
@@ -510,25 +510,25 @@ Common::String Gyro::getItem(byte which) {
 
 Common::String Gyro::f5Does() {
 	switch (_room) {
-	case r__yours:
+	case kRoomYours:
 		if (!_avvyIsAwake)
 			return Common::String::format("%cWWake up", Acci::kVerbCodeWake);
 		else if (_avvyInBed)
 			return Common::String::format("%cGGet up", Acci::kVerbCodeStand);
 		break;
-	case r__insidecardiffcastle:
+	case kRoomInsideCardiffCastle:
 		if (_standingOnDais)
 			return Common::String::format("%cCClimb down", Acci::kVerbCodeClimb);
 		else
 			return Common::String::format("%cCClimb up", Acci::kVerbCodeClimb);
 		break;
-	case r__nottspub:
+	case kRoomNottsPub:
 		if (_sittingInPub)
 			return Common::String::format("%cSStand up", Acci::kVerbCodeStand);
 		else
 			return Common::String::format("%cSSit down", Acci::kVerbCodeSit);
 		break;
-	case r__musicroom:
+	case kRoomMusicRoom:
 		if (_vm->_animation->inField(7))
 			return Common::String::format("%cPPlay the harp", Acci::kVerbCodePlay);
 		break;
