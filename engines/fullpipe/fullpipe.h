@@ -127,6 +127,9 @@ public:
 	CInputController *_inputController;
 	bool _inputDisabled;
 
+	int _currentCheat;
+	int _currentCheatPos;
+
 	void defHandleKeyDown(int key);
 
 	SoundList *_currSoundList1[11];
@@ -171,6 +174,7 @@ public:
 	bool _needRestart;
 	bool _flgPlayIntro;
 	int _musicAllowed;
+	bool _normalSpeed;
 
 	void enableSaves() { _isSaveAllowed = true; }
 	void disableSaves(ExCommand *ex);
@@ -221,6 +225,9 @@ public:
 	void openMap();
 	void openHelp();
 	void openMainMenu();
+
+	void winArcade();
+	void getAllInventory();
 
 	int lift_getButtonIdP(int objid);
 

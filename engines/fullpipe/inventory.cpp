@@ -138,6 +138,10 @@ int CInventory2::getInventoryItemIndexById(int itemId) {
 	return -1;
 }
 
+int CInventory2::getInventoryPoolItemIdAtIndex(int itemId) {
+	return _itemsPool[itemId]->id;
+}
+
 int CInventory2::getInventoryPoolItemFieldCById(int itemId) {
 	for (uint i = 0; i < _itemsPool.size(); i++) {
 		if (_itemsPool[i]->id == itemId)
@@ -415,6 +419,19 @@ int CInventory2::getHoveredItem(Common::Point *point) {
     }
 
 	return 0;
+}
+
+void FullpipeEngine::getAllInventory() {
+	CInventory2 *inv = getGameLoaderInventory();
+
+	for (uint i = 0; i < inv->getItemsPoolCount(); ++i ) {
+		int id = inv->getInventoryPoolItemIdAtIndex(i);
+
+		if (inv->getCountItemsWithId(id) < 1)
+			inv->addItem(id, 1);
+	}
+
+	inv->rebuildItemRects();
 }
 
 } // End of namespace Fullpipe

@@ -71,6 +71,11 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_inputController = 0;
 	_inputDisabled = false;
 
+	_normalSpeed = true;
+
+	_currentCheat = -1;
+	_currentCheatPos = 0;
+
 	_modalObject = 0;
 
 	_gameContinue = true;
@@ -201,7 +206,8 @@ Common::Error FullpipeEngine::run() {
 			_needRestart = false;
 		}
 
-		_system->delayMillis(10);
+		if (_normalSpeed)
+			_system->delayMillis(10);
 		_system->updateScreen();
 	}
 
