@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	script_manager.o \
 	scripts.o \
 	single_value_container.o \
+	string_manager.o \
 	timer_node.o \
 	truetype_font.o \
 	utility.o \
