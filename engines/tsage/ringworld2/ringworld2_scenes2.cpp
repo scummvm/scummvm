@@ -4790,8 +4790,10 @@ void Scene2900::Map::redraw(Rect *updateRect) {
 }
 
 void Scene2900::Map::synchronize(Serializer &s) {
-	s.syncAsUint16LE(_mapWidth);
-	s.syncAsUint16LE(_mapHeight);
+	s.syncAsUint16LE(_resNum);
+	if (s.isLoading())
+		load(_resNum);
+
 	s.syncAsSint16LE(_xV);
 	s.syncAsSint16LE(_yV);
 	_bounds.synchronize(s);
@@ -5088,10 +5090,10 @@ void Scene2900::dispatch() {
 		} else {
 			_field416 = true;
 			_altitudeChanging = false;
-			_field41C += R2_GLOBALS._balloonAltitude / 48;
-			_field426 = 100 - (_field41C * 25);
+			_field426 = 100 - ((R2_GLOBALS._balloonAltitude / 48) + _field41C) * 25;
 		}
 
+		// Zooming/altitude balloon change
 		if (_field425 == _field426) {
 			_field416 = false;
 		} else {
@@ -5138,6 +5140,7 @@ void Scene2900::dispatch() {
 		R2_GLOBALS._player.setPosition(_balloonScreenPos);
 
 		if ((_balloonLocation.x % 100) == 50 && (_balloonLocation.y % 100) == 50 && !_field416) {
+			// At an altitude change point, so calculate new altitude
 			_newAltitude = R2_GLOBALS._balloonAltitude;
 			if (_altitudeChanging) {
 				_newAltitude += _altitudeMajorChange * 48;
@@ -5159,9 +5162,10 @@ void Scene2900::dispatch() {
 			if (balloonData[R2_GLOBALS._balloonAltitude].v3 > 0) {
 				_newAltitude += 48;
 			} else if (balloonData[R2_GLOBALS._balloonAltitude].v3 < 0) {
-				_newAltitude += 208;
+				_newAltitude -= 48;
 			}
 
+			assert(_newAltitude < 193);
 			R2_GLOBALS._balloonAltitude = _newAltitude;
 			if (R2_GLOBALS._balloonAltitude == 189) {
 				// Finally reached landing point
