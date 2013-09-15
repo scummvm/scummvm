@@ -49,6 +49,16 @@ public:
 	~RenderManager();
 
 private:
+	struct AlphaDataEntry {
+		Graphics::Surface *data;
+		uint16 alphaColor;
+		uint16 destX;
+		uint16 destY;
+		uint16 width;
+		uint16 height;
+	};
+
+private:
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
 
@@ -56,6 +66,7 @@ private:
 	// It's used for panorama/tilt warping and for clearing the workingWindow to a single color
 	Graphics::Surface _workingWindowBuffer;
 	Graphics::Surface _backBuffer;
+	Common::List<AlphaDataEntry> _alphaDataEntries;
 
 	Common::Rect _workingWindowDirtyRect;
 	Common::Rect _backBufferDirtyRect;
@@ -107,6 +118,8 @@ public:
 	 * Renders the current state of the backbuffer to the screen
 	 */
 	void renderBackbufferToScreen();
+
+	void processAlphaEntries();
 
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height);
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor);

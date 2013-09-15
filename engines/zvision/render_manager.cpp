@@ -98,8 +98,34 @@ void RenderManager::renderBackbufferToScreen() {
 
 	// TODO: Add menu rendering
 
+	// Render alpha entries
+	processAlphaEntries();
+
 	if (!_backBufferDirtyRect.isEmpty()) {
 		_system->copyRectToScreen(_backBuffer.getBasePtr(_backBufferDirtyRect.left, _backBufferDirtyRect.top), _backBuffer.pitch, _backBufferDirtyRect.left, _backBufferDirtyRect.top, _backBufferDirtyRect.width(), _backBufferDirtyRect.height());
+	}
+}
+
+void RenderManager::processAlphaEntries() {
+	for (Common::List<AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
+		uint32 destOffset = 0;
+		uint32 sourceOffset = 0;
+		uint16 *backbufferPtr = (uint16 *)_backBuffer.getBasePtr((*iter).destX + _workingWindow.left, (*iter).destY + _workingWindow.top);
+		uint16 *entryPtr = (uint16 *)(*iter).data->getPixels();
+
+		for (int32 y = 0; y < (*iter).height; y++) {
+			for (int32 x = 0; x < (*iter).width; x++) {
+				uint16 color = entryPtr[sourceOffset + x];
+				if (color != (*iter).alphaColor) {
+					backbufferPtr[destOffset + x] = color;
+				}
+			}
+
+			destOffset += _workingWidth;
+			sourceOffset += (*iter).width;
+		}
+
+		_backBufferDirtyRect.extend(Common::Rect((*iter).destX + _workingWindow.left, (*iter).destY + _workingWindow.top, (*iter).destX + _workingWindow.left + (*iter).width, (*iter).destY + _workingWindow.top + (*iter).height));
 	}
 }
 
@@ -295,24 +321,31 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 }
 
 void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor) {
-	uint32 destOffset = 0;
+	AlphaDataEntry entry;
+	entry.alphaColor = alphaColor;
+	entry.data = new Graphics::Surface();
+	entry.data->create(width, height, _pixelFormat);
+	entry.destX = destX;
+	entry.destY = destY;
+	entry.width = width;
+	entry.height = height;
+
 	uint32 sourceOffset = 0;
-	uint16 *workingWindowBufferPtr = (uint16 *)_workingWindowBuffer.getBasePtr(destX, destY);
+	uint32 destOffset = 0;
+	uint16 *surfacePtr = (uint16 *)entry.data->getPixels();
 
 	for (int32 y = 0; y < height; y++) {
 		for (int32 x = 0; x < width; x++) {
-			uint16 color = buffer[sourceOffset + x];
-			if (color != alphaColor) {
-				workingWindowBufferPtr[destOffset + x] = color;
-			}
+			surfacePtr[destOffset + x] = buffer[sourceOffset + x];
 		}
 
-		destOffset += _workingWidth;
+		destOffset += width;
 		sourceOffset += imageWidth;
 	}
 
-	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
+	_alphaDataEntries.push_back(entry);
 }
+
 void RenderManager::copyWorkingWindowSubRectToSurface(Graphics::Surface *destSurface, uint16 destX, uint16 destY, Common::Rect subRect) const {
 	uint32 destOffset = 0;
 	uint32 sourceOffset = 0;
