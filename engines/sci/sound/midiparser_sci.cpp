@@ -455,7 +455,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	}
 	if (_jumpToHoldTick) {
 		_jumpToHoldTick = false;
+		_pSnd->inFastForward = true;
 		jumpToTick(_loopTick, false, false);
+		_pSnd->inFastForward = false;
 	}
 
 	info.start = _position._playPos;
@@ -664,7 +666,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					assert(_loopTick + info.delta < _position._playTick);
 
 					uint32 extraDelta = info.delta;
+					_pSnd->inFastForward = true;
 					jumpToTick(_loopTick);
+					_pSnd->inFastForward = false;
 					_nextEvent.delta += extraDelta;
 				} else {
 					_pSnd->status = kSoundStopped;
