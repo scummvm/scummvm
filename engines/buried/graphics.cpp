@@ -749,7 +749,7 @@ Common::SeekableReadStream *GraphicsManager::getThemeFontStream(const Common::St
 	return stream;
 }
 
-void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, uint32 color, int lineHeight) {
+void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, uint32 color, int lineHeight, bool rightAligned) {
 	if (text.empty())
 		return;
 
@@ -757,7 +757,7 @@ void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, c
 	font->wordWrapText(text, w, lines);
 
 	for (uint32 i = 0; i < lines.size(); i++) {
-		font->drawString(dst, lines[i], x, y, w, color);
+		font->drawString(dst, lines[i], x, y, w, color, rightAligned ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft);
 		y += lineHeight;
 	}
 }

@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	buried.o \
 	credits.o \
 	database.o \
+	death.o \
 	detection.o \
 	frame_window.o \
 	gameui.o \
