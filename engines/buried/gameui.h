@@ -35,6 +35,7 @@ struct Surface;
 namespace Buried {
 
 class BioChipRightWindow;
+class InventoryWindow;
 class LiveTextWindow;
 class NavArrowWindow;
 
@@ -62,7 +63,7 @@ public:
 	NavArrowWindow *_navArrowWindow;
 	LiveTextWindow *_liveTextWindow;
 	// TODO: SceneViewWindow
-	// TODO: InventoryWindow
+	InventoryWindow *_inventoryWindow;
 	BioChipRightWindow *_bioChipRightWindow;
 
 private:

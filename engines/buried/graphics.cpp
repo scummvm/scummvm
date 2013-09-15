@@ -612,4 +612,41 @@ Common::SeekableReadStream *GraphicsManager::findArialStream(bool bold) const {
 	return stream;
 }
 
+int GraphicsManager::computeHPushOffset(int speed) {
+	switch (speed) {
+	case 3:
+		return 432;
+	case 2:
+		return 72;
+	case 1:
+		return 36;
+	case 0:
+		return 12;
+	}
+
+	return 432;
+}
+
+int GraphicsManager::computeVPushOffset(int speed) {
+	switch (speed) {
+	case 3:
+		return 189;
+	case 2:
+		return 63;
+	case 1:
+		return 21;
+	case 0:
+		return 7;
+	}
+
+	return 189;
+}
+
+void GraphicsManager::crossBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc) {
+	assert(dst->format.bytesPerPixel == src->format.bytesPerPixel);
+
+	for (int y = 0; y < h; y++)
+		memcpy(dst->getBasePtr(xDst, yDst + y), src->getBasePtr(xSrc, ySrc + y), w * src->format.bytesPerPixel);
+}
+
 } // End of namespace Buried

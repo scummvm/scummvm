@@ -93,8 +93,12 @@ public:
 	void fillRect(const Common::Rect &rect, uint32 color);
 	void opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc, int opacityValue, byte r, byte g, byte b);
 	bool checkPointAgainstMaskedBitmap(const Graphics::Surface *bitmap, int x, int y, const Common::Point &point, byte rTrans, byte gTrans, byte bTrans);
+	void crossBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc);
 
 	Graphics::Surface *remapPalettedFrame(const Graphics::Surface *frame, const byte *palette);
+
+	int computeHPushOffset(int speed);
+	int computeVPushOffset(int speed);
 
 private:
 	BuriedEngine *_vm;
