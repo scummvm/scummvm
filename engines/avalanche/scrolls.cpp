@@ -290,13 +290,13 @@ void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 #if 0
 	uint16 st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
 	byte bit;
-	for (uint16 fv = 1; fv <= yl; fv++)
+	for (uint16 i = 1; i <= yl; i++)
 		for (bit = 0; bit <= 3; bit++) {
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
 			port[0x3cf] = bit;
-			blockread(f, mem[0xa000 * st + (fv * 80)], xl);
+			blockread(f, mem[0xa000 * st + (i * 80)], xl);
 		}
 	bit = getpixel(0, 0);
 #endif

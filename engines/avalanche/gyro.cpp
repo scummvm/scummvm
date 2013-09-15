@@ -173,9 +173,9 @@ Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
 	_vm = vm;
 
 	// Needed because of Lucerna::load_also()
-	for (int fv = 0; fv < 31; fv++) {
-		for (int ff = 0; ff < 2; ff++)
-			_also[fv][ff] = 0;
+	for (int i = 0; i < 31; i++) {
+		for (int j = 0; j < 2; j++)
+			_also[i][j] = 0;
 	}
 
 	_totalTime = 0;
