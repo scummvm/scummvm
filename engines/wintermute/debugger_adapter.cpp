@@ -361,8 +361,8 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 		Common::String callStr = st.nextToken();
 		// Okay - now let's see if it's a call
 		Common::StringTokenizer callSt = Common::StringTokenizer(callStr.c_str(), "(");
-		methodName = callSt.nextToken();
-		Common::String arg;
+		methodName =  callSt.nextToken();
+		Common::String args;
 		if (callSt.empty()) {
 			result = pos->scGetProperty(methodName);
 			// TODO: Okay, just return that, it's a property
@@ -371,20 +371,38 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 			// Let's try to chop parenthesis off it.
 			Common::String argList = callSt.nextToken();
 			Common::StringTokenizer argSt = Common::StringTokenizer(argList.c_str(), ")");
-			arg = argSt.nextToken();
-			if (!argSt.empty()) {
+			args = argSt.nextToken();
+			if (argSt.empty()) {
+				// OK
+			} else {
 				// WTF? This should not happen.
 				*error = PARSE_ERROR;
 				return false;
 			}
+			// Split args here:
 
-			Common::StringTokenizer st3 = Common::StringTokenizer(arg, "\"");
-			Common::String dest = Common::String("");
-			while (!st3.empty()) {
-				dest += st3.nextToken();
+			Common::StringTokenizer commas = Common::StringTokenizer(args, ",");
+
+			Common::String arg = commas.nextToken();
+			int argc = 0;
+			while (!arg.empty()) {
+
+				Common::StringTokenizer st3 = Common::StringTokenizer(arg, "\"");
+				Common::String dest;
+				dest = "";
+
+				while (!st3.empty()) {
+					dest += st3.nextToken();
+					
+				}
+				
+				dest.trim();
+
+				_lastScript->_stack->pushString(dest.c_str()); // Todo: support ints and other stuff. Remove quotes correctly!
+				argc++;
 			}
-			_lastScript->_stack->pushString(dest.c_str()); // Todo: support ints and other stuff. Remove quotes correctly!
-			_lastScript->_stack->pushInt(1);
+
+			_lastScript->_stack->pushInt(argc);
 
 			if (pos->scCallMethod(_lastScript, _lastScript->_stack, _lastScript->_thisStack, methodName.c_str()) == STATUS_OK) {
 				result = _lastScript->_stack->pop();
