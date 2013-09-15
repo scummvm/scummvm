@@ -463,7 +463,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 				if (_vm->_gyro->_roomCount[r__outsideyours] == 1) {
 					_vm->_animation->appearPed(2, 4); // Start on the right-hand side of the screen.
-					spr1->walkTo(5); // Walks up to greet you.
+					spr1->walkTo(4); // Walks up to greet you.
 				} else {
 					_vm->_animation->appearPed(2, 5); // Starts where he was before.
 					spr1->_facingDir = Animation::kDirLeft;
@@ -478,7 +478,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			if (_vm->_gyro->_crapulusWillTell) {
 				spr1->init(8, false, _vm->_animation);
 				_vm->_animation->appearPed(2, 2);
-				spr1->walkTo(4);
+				spr1->walkTo(3);
 				_vm->_timer->addTimer(20, Timer::kProcCrapulusSpludOut, Timer::kReasonCrapulusSaysSpludwickOut);
 				_vm->_gyro->_crapulusWillTell = false;
 			}
@@ -523,7 +523,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 				if (_vm->_gyro->_roomCount[r__brummieroad] == 1) { // First time here...
 					_vm->_animation->appearPed(2, 2); // He appears on the right of the screen...
-					spr1->walkTo(4); // ...and he walks up...
+					spr1->walkTo(3); // ...and he walks up...
 				} else {
 					// You've been here before.
 					_vm->_animation->appearPed(2, 4); // He's standing in your way straight away...
@@ -538,7 +538,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			spr1->init(4, false, _vm->_animation); // 4 = Cwytalot again
 			_vm->_animation->appearPed(2, 1);
-			spr1->walkTo(2);
+			spr1->walkTo(1);
 			spr1->_vanishIfStill = true;
 			_vm->_gyro->_passedCwytalotInHerts = true;
 			// _vm->_gyro->whereis[#157] = r__Nowhere; // can we fit this in?
@@ -563,7 +563,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				AnimationType *spr1 = &_vm->_animation->_sprites[1];
 				spr1->init(6, false, _vm->_animation);
 				_vm->_animation->appearPed(2, 2);
-				spr1->walkTo(3);
+				spr1->walkTo(2);
 				_vm->_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
 			}
 		}
@@ -588,7 +588,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			case 0 : // You've answered NONE of his questions.
 				spr1->init(9, false, _vm->_animation);
 				_vm->_animation->appearPed(2, 2);
-				spr1->walkTo(3);
+				spr1->walkTo(2);
 				_vm->_timer->addTimer(47, Timer::kProcCardiffSurvey, Timer::kReasonCardiffsurvey);
 				break;
 			case 5 :
@@ -727,7 +727,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		spr1->init(11, false, _vm->_animation);
 		if ((_vm->_gyro->_roomCount[r__wisewomans] == 1) && (ped > 0)) {
 			_vm->_animation->appearPed(2, 2); // Start on the right-hand side of the screen.
-			spr1->walkTo(4); // Walks up to greet you.
+			spr1->walkTo(3); // Walks up to greet you.
 		} else {
 			_vm->_animation->appearPed(2, 4); // Starts where she was before.
 			spr1->_facingDir = Animation::kDirLeft;

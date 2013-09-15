@@ -268,7 +268,7 @@ int8 AnimationType::getSign(int16 val) {
 }
 
 void AnimationType::walkTo(byte pedNum) {
-	PedType *curPed = &_anim->_vm->_gyro->_peds[pedNum - 1]; // Pascal -> C conversion: different array indexes.
+	PedType *curPed = &_anim->_vm->_gyro->_peds[pedNum];
 
 	setSpeed(getSign(curPed->_x - _x) * 4, getSign(curPed->_y - _y));
 	_homingX = curPed->_x - _info._xLength / 2;
@@ -766,7 +766,7 @@ void Animation::callSpecial(uint16 which) {
 		if (!_vm->_gyro->_arrowTriggered) {
 			_vm->_gyro->_arrowTriggered = true;
 			appearPed(2, 4); // The dart starts at ped 4, and...
-			_sprites[1].walkTo(5); // flies to ped 5.
+			_sprites[1].walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
 			_sprites[1]._facingDir = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
@@ -794,7 +794,7 @@ void Animation::callSpecial(uint16 which) {
 			_vm->_scrolls->displayScrollChain('q', 36);
 			_vm->_gyro->_tiedUp = true;
 			_vm->_gyro->_friarWillTieYouUp = false;
-			_sprites[1].walkTo(3);
+			_sprites[1].walkTo(2);
 			_sprites[1]._vanishIfStill = true;
 			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
 			_vm->_gyro->_whereIs[Gyro::kPeopleFriarTuck - 150] = 177; // Not here, then.
@@ -831,7 +831,7 @@ void Animation::callSpecial(uint16 which) {
 		if (!_vm->_gyro->_geidaFollows)
 			return;   // DOESN'T COUNT: no Geida.
 		_sprites[1]._callEachStepFl = false; // She no longer follows Avvy around.
-		_sprites[1].walkTo(4); // She walks to somewhere...
+		_sprites[1].walkTo(3); // She walks to somewhere...
 		_sprites[0].remove();     // Lose Avvy.
 		_vm->_gyro->_userMovesAvvy = false;
 		_vm->_timer->addTimer(40, Timer::kProcRobinHoodAndGeida, Timer::kReasonRobinHoodAndGeida);
@@ -1035,9 +1035,9 @@ void Animation::followAvalotY(byte tripnum) {
 void Animation::backAndForth(byte tripnum) {
 	if (!_sprites[tripnum]._homing) {
 		if (_sprites[tripnum]._facingDir == kDirRight)
-			_sprites[tripnum].walkTo(4);
+			_sprites[tripnum].walkTo(3);
 		else
-			_sprites[tripnum].walkTo(5);
+			_sprites[tripnum].walkTo(4);
 	}
 }
 
