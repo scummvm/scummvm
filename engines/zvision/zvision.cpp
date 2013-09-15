@@ -83,6 +83,8 @@ ZVision::~ZVision() {
 	// Dispose of resources
 	delete _console;
 	delete _cursorManager;
+	delete _stringManager;
+	delete _saveManager;
 	delete _renderManager;
 	delete _scriptManager;
 	delete _rnd;
