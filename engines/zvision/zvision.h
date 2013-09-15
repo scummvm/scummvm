@@ -131,18 +131,14 @@ public:
 	void playAnimation(RlfAnimation *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 	void playAnimation(Video::VideoDecoder *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-	/**
-	 * Utility method to cycle through all the cursors in the game. After
-	 * calling, use Left and Right arrows to cycle. Esc to quit. This is a
-	 * blocking function call.              
-	 */
-	void cycleThroughCursors();
-
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
 
 private:
 	void initialize();
+	void initFonts();
+
+	void parseStrFile(const Common::String fileName);
 
 	/** Called every frame from ZVision::run() to process any events from EventMan */
 	void processEvents();
