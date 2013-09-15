@@ -95,14 +95,10 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 		_info._xWidth++;
 	for (byte i = 0; i < _stat._frameNum; i++) {
 		_info._sil[_animCount] = new SilType[11 * (_info._yLength + 1)];
-		//getmem(sil[totalnum-1], 11 * (a.yl + 1));
 		_info._mani[_animCount] = new ManiType[_info._size - 6];
-		//getmem(mani[totalnum-1], a.size - 6);
 		for (byte j = 0; j <= _info._yLength; j++)
 			inf.read((*_info._sil[_animCount])[j], _info._xWidth);
-			//blockread(inf, (*sil[totalnum-1])[fv], xw);
 		inf.read(*_info._mani[_animCount], _info._size - 6);
-		//blockread(inf, *mani[totalnum-1], a.size - 6);
 
 		_animCount++;
 	}
@@ -427,7 +423,6 @@ byte Animation::geidaPed(byte which) {
 void Animation::catacombMove(byte ped) {
 	int32 here;
 	uint16 xy_uint16;
-	byte fv;
 
 	// XY_uint16 is cat_x+cat_y*256. Thus, every room in the
 	// catacombs has a different number for it.
@@ -703,14 +698,14 @@ void Animation::catacombMove(byte ped) {
 		_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 		break;      // [5,7] : "Ite Mingite" sign.
 	case 258:
-		for (fv = 0; fv <= 2; fv++) { // [2,1] : Art gallery - pictures
-			_vm->_celer->drawBackgroundSprite(130 + fv * 120, 70, 15);
-			_vm->_celer->drawBackgroundSprite(184 + fv * 120, 78, 16);
+		for (int i = 0; i <= 2; i++) { // [2,1] : Art gallery - pictures
+			_vm->_celer->drawBackgroundSprite(130 + i * 120, 70, 15);
+			_vm->_celer->drawBackgroundSprite(184 + i * 120, 78, 16);
 		}
 		break;
 	case 1287:
-		for (fv = 10; fv <= 13; fv++)
-			_vm->_celer->drawBackgroundSprite(-1, -1, fv);
+		for (int i = 10; i <= 13; i++)
+			_vm->_celer->drawBackgroundSprite(-1, -1, i);
 		break; // [7,5] : 4 candles.
 	case 776:
 		_vm->_celer->drawBackgroundSprite(-1, -1, 10);
@@ -732,8 +727,6 @@ void Animation::catacombMove(byte ped) {
 		_sprites[1]._eachStepProc = kProcGeida;
 	}
 }
-
-
 
 // This proc gets called whenever you touch a line defined as _vm->_gyro->special.
 void Animation::dawnDelay() {

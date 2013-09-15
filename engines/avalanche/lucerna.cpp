@@ -935,9 +935,9 @@ void Lucerna::drawScore() {
 
 	CursorMan.showMouse(false);
 
-	for (byte fv = 0; fv < 3; fv++) {
-		if (_vm->_gyro->_scoreToDisplay[fv] != numbers[fv])
-			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_digits[numbers[fv]], 250 + (fv + 1) * 15, 177);
+	for (byte i = 0; i < 3; i++) {
+		if (_vm->_gyro->_scoreToDisplay[i] != numbers[i])
+			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_digits[numbers[i]], 250 + (i + 1) * 15, 177);
 	}
 
 	CursorMan.showMouse(true);
@@ -947,12 +947,12 @@ void Lucerna::drawScore() {
 }
 
 void Lucerna::incScore(byte num) {     // Add on no. of points
-	for (byte q = 1; q <= num; q++) {
+	for (byte i = 1; i <= num; i++) {
 		_vm->_gyro->_dnascore++;
 
 #if 0
 		if (soundfx) {
-			for (byte fv = 1; fv <= 97; fv++)
+			for (byte j = 1; j <= 97; j++)
 				sound(177 + dna.score * 3);
 		}
 		nosound;
