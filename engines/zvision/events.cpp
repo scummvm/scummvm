@@ -71,9 +71,11 @@ void ZVision::processEvents() {
 				break;
 			}
 
-			onKeyDown(_event.kbd.keycode);
+			_scriptManager->onKeyDown(_event.kbd);
 			break;
-
+		case Common::EVENT_KEYUP:
+			_scriptManager->onKeyUp(_event.kbd);
+			break;
 		default:
 			break;
 		}
@@ -175,10 +177,6 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	if (!cursorWasChanged) {
 		_cursorManager->revertToIdle();
 	}
-}
-
-void ZVision::onKeyDown(uint keyCode) {
-
 }
 
 } // End of namespace ZVision
