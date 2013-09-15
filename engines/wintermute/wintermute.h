@@ -63,6 +63,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
+	BaseGame* getGame();
 private:
 	bool _trigDebug;
 	int init();
@@ -73,7 +74,6 @@ private:
 	BaseGame *_game;
 	const ADGameDescription *_gameDescription;
 
-	friend class DebuggerAdapter;
 	friend class Console;
 };
 
