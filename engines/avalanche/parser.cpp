@@ -93,11 +93,10 @@ void Parser::handleReturn() {
 
 void Parser::handleFunctionKey(const Common::Event &event) {
 	switch (event.kbd.keycode) {
-	case Common::KEYCODE_F5: {
+	case Common::KEYCODE_F5:
 		_vm->_acci->_person = _vm->_acci->kPardon;
 		_vm->_acci->_thing = _vm->_acci->kPardon;
 		_vm->_lucerna->callVerb(_vm->_gyro->f5Does()[0]);
-		}
 		break;
 	case Common::KEYCODE_F7:
 		_vm->_lucerna->callVerb(Acci::kVerbCodeOpen);

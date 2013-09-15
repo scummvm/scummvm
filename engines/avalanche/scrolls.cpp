@@ -90,13 +90,11 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 	int16 i = 0;
 	for (byte xx = 0; xx < lz; xx++) {
 		switch (z[xx]) {
-		case kControlRoman: {
+		case kControlRoman:
 			_currentFont = kFontStyleRoman;
-			}
 			break;
-		case kControlItalic: {
+		case kControlItalic:
 			_currentFont = kFontStyleItalic;
-			}
 			break;
 		default: {
 			for (byte yy = 0; yy < 12; yy++)
@@ -370,15 +368,13 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	case 0:
 		iconIndent = 0;
 		break; // No icon.
-	case 34: {
+	case 34:
 		drawSign("about", 28, 76, 15);
 		iconIndent = 0;
-		}
 		break;
-	case 35: {
+	case 35:
 		drawSign("gameover", 52, 59, 71);
 		iconIndent = 0;
-		}
 		break;
 	}
 
@@ -391,17 +387,15 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
 		if (!_vm->_gyro->_scroll[i].empty())
 			switch (_vm->_gyro->_scroll[i][_vm->_gyro->_scroll[i].size() - 1]) {
-			case kControlCenter: {
+			case kControlCenter:
 				centre = true;
 				_vm->_gyro->_scroll[i].deleteLastChar();
-				}
 				break;
-			case kControlLeftJustified: {
+			case kControlLeftJustified:
 				centre = false;
 				_vm->_gyro->_scroll[i].deleteLastChar();
-				}
 				break;
-			case kControlQuestion: {
+			case kControlQuestion:
 				//settextjustify(1, 1);
 				_shadowBoxX = mx + lx;
 				_shadowBoxY = my + ly;
@@ -410,7 +404,6 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 				// inc(diy,14);
 				_vm->_gyro->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
 				_vm->_gyro->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
-				}
 				break;
 			}
 
@@ -618,10 +611,9 @@ void Scrolls::callScrollDriver() {
 	case kControlSpeechBubble:
 	case kControlQuestion:
 		break; // ^B = speech (B)ubble, ^Q = (Q)uestion in dialogue box
-	default: {
+	default:
+		_vm->_gyro->_buffer[_vm->_gyro->_bufSize] = kControlParagraph;
 		_vm->_gyro->_bufSize++;
-		_vm->_gyro->_buffer[_vm->_gyro->_bufSize - 1] = kControlParagraph;
-		}
 	}
 
 	uint16 size = _vm->_gyro->_bufSize;
@@ -638,7 +630,7 @@ void Scrolls::callScrollDriver() {
 			mouthnext = false;
 		} else {
 			switch (_vm->_gyro->_buffer[i]) {
-			case kControlParagraph: {
+			case kControlParagraph:
 				if ((_vm->_gyro->_scrollNum == 1) && (_vm->_gyro->_scroll[0].empty()))
 					break;
 
@@ -652,12 +644,11 @@ void Scrolls::callScrollDriver() {
 
 				if (_vm->_gyro->_scReturn)
 					return;
-			}
-			break;
+				break;
 			case kControlBell:
 				_vm->_gyro->_scrollBells++;
 				break; // #7 = "Bel"
-			case kControlSpeechBubble: {
+			case kControlSpeechBubble:
 				if ((_vm->_gyro->_scrollNum == 1) && (_vm->_gyro->_scroll[0].empty()))
 					break;
 
@@ -695,8 +686,7 @@ void Scrolls::callScrollDriver() {
 
 				if (_vm->_gyro->_scReturn)
 					return;
-			}
-			break;
+				break;
 
 			// CHECME: The whole kControlNegative block seems completely unused, as the only use (the easter egg check) is a false positive 
 			case kControlNegative:
@@ -760,8 +750,8 @@ void Scrolls::callScrollDriver() {
 					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
 
+				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum] = kControlQuestion;
 				_vm->_gyro->_scrollNum++;
-				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] = kControlQuestion;
 
 				drawScroll(&Avalanche::Scrolls::scrollModeDialogue);
 				resetScroll();
@@ -834,8 +824,8 @@ void Scrolls::unSkrimble() {
 }
 
 void Scrolls::doTheBubble() {
+	_vm->_gyro->_buffer[_vm->_gyro->_bufSize] = 2;
 	_vm->_gyro->_bufSize++;
-	_vm->_gyro->_buffer[_vm->_gyro->_bufSize - 1] = 2;
 }
 
 /**
