@@ -36,7 +36,6 @@
 #include "avalanche/celer.h"
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
-#include "avalanche/enid.h"
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
@@ -782,7 +781,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_lucerna->dusk();
 		_sprites[0].turn(kDirRight); // you'll see this after we get back from bootstrap
 		_vm->_timer->addTimer(1, Timer::kProcGhostRoomPhew, Timer::kReasonGhostRoomPhew);
-		_vm->_enid->backToBootstrap(3);
+		//_vm->_enid->backToBootstrap(3); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 		break;
 	case 5:
 		if (_vm->_gyro->_friarWillTieYouUp) {

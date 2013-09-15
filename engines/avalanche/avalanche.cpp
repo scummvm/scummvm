@@ -65,7 +65,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _pingo;
 	delete _scrolls;
 	delete _lucerna;
-	delete _enid;
 	delete _celer;
 	delete _sequence;
 	delete _timer;
@@ -85,7 +84,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_pingo = new Pingo(this);
 	_scrolls = new Scrolls(this);
 	_lucerna = new Lucerna(this);
-	_enid = new Enid(this);
 	_celer = new Celer(this);
 	_sequence = new Sequence(this);
 	_timer = new Timer(this);

@@ -34,7 +34,6 @@
 #include "avalanche/scrolls.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/enid.h"
 #include "avalanche/celer.h"
 #include "avalanche/pingo.h"
 #include "avalanche/sequence.h"

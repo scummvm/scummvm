@@ -40,7 +40,6 @@
 #include "avalanche/pingo.h"
 #include "avalanche/timer.h"
 #include "avalanche/celer.h"
-#include "avalanche/enid.h"
 #include "avalanche/closing.h"
 
 #include "common/str.h"

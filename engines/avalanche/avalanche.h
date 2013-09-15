@@ -38,7 +38,6 @@
 #include "avalanche/pingo.h"
 #include "avalanche/scrolls.h"
 #include "avalanche/lucerna.h"
-#include "avalanche/enid.h"
 #include "avalanche/celer.h"
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
@@ -74,7 +73,6 @@ public:
 	Pingo *_pingo;
 	Scrolls *_scrolls;
 	Lucerna *_lucerna;
-	Enid *_enid;
 	Celer *_celer;
 	Sequence *_sequence;
 	Timer *_timer;
