@@ -346,6 +346,22 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 	_alphaDataEntries.push_back(entry);
 }
 
+Common::Rect RenderManager::renderTextToWorkingWindow(const Common::String &text, TruetypeFont *font, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap) {
+	AlphaDataEntry entry;
+	entry.alphaColor = 0;
+	entry.destX = destX;
+	entry.destY = destY;
+	
+	// Draw the text to the working window
+	entry.data = font->drawTextToSurface(text, destX, destY, textColor, maxWidth, maxHeight, align, wrap);
+	entry.width = entry.data->w;
+	entry.height = entry.data->h;
+
+	_alphaDataEntries.push_back(entry);
+
+	return Common::Rect(destX, destY, destX + entry.width, destY + entry.height);
+}
+
 void RenderManager::copyWorkingWindowSubRectToSurface(Graphics::Surface *destSurface, uint16 destX, uint16 destY, Common::Rect subRect) const {
 	uint32 destOffset = 0;
 	uint32 sourceOffset = 0;

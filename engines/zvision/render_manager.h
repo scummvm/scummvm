@@ -29,6 +29,7 @@
 #include "graphics/surface.h"
 
 #include "zvision/render_table.h"
+#include "zvision/truetype_font.h"
 
 class OSystem;
 
@@ -123,6 +124,8 @@ public:
 
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height);
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor);
+
+	Common::Rect renderTextToWorkingWindow(const Common::String &text, TruetypeFont *font, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight = -1, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wrap = true);
 
 	/**
 	 * Fills the entire workingWindow with the specified color
