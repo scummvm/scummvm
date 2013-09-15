@@ -67,15 +67,6 @@ void ZVision::processEvents() {
 				if (_event.kbd.hasFlags(Common::KBD_CTRL))
 					quitGame();
 				break;
-			case Common::KEYCODE_F1:
-				cycleThroughCursors();
-				break;
-			case Common::KEYCODE_F2:
-				{
-					RlfAnimation *animation = new RlfAnimation("te2ea21c.rlf");
-					playAnimation(animation, 0, 0);
-					break;
-				}
 			default:
 				break;
 			}
