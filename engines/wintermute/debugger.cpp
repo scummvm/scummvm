@@ -25,12 +25,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_scriptable.h"
-#include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_engine.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+
 #define ADAPTER _engineRef->_adapter
 
 namespace Wintermute {
