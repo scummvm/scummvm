@@ -40,6 +40,7 @@
 #include "zvision/render_manager.h"
 #include "zvision/cursor_manager.h"
 #include "zvision/save_manager.h"
+#include "zvision/string_manager.h"
 #include "zvision/zfs_archive.h"
 #include "zvision/detection.h"
 
@@ -71,8 +72,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	// Create managers
 	_scriptManager = new ScriptManager(this);
 	_renderManager = new RenderManager(_system, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
-
 	_saveManager = new SaveManager(this);
+	_stringManager = new StringManager(this);
 	debug("ZVision::ZVision");
 }
 

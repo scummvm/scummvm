@@ -48,6 +48,7 @@ class Console;
 class ScriptManager;
 class RenderManager;
 class CursorManager;
+class StringManager;
 class SaveManager;
 class RlfAnimation;
  
@@ -97,6 +98,7 @@ private:
 	RenderManager *_renderManager;
 	CursorManager *_cursorManager;
 	SaveManager *_saveManager;
+	StringManager *_stringManager;
 
 	// Clock
 	Clock _clock;
@@ -114,6 +116,7 @@ public:
 	RenderManager *getRenderManager() const { return _renderManager; }
 	CursorManager *getCursorManager() const { return _cursorManager; }
 	SaveManager *getSaveManager() const { return _saveManager; }
+	StringManager *getStringManager() const { return _stringManager; }
 	Common::RandomSource *getRandomSource() const { return _rnd; }
 	ZVisionGameId getGameId() const { return _gameDescription->gameId; }
 
