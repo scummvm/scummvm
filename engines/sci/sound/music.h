@@ -65,7 +65,7 @@ public:
 	uint16 resourceId;
 
 	bool isQueued; // for SCI0 only!
-    bool inFastForward; // if we are currently fast-forwarding (disables any signals to scripts)
+	bool inFastForward; // if we are currently fast-forwarding (disables any signals to scripts)
 
 	uint16 dataInc;
 	uint16 ticker;
