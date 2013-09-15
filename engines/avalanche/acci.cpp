@@ -835,26 +835,25 @@ void Acci::exampers() {
 	if (isPersonHere()) {
 		if (_thing != _vm->_gyro->_thinks)
 			_vm->_lucerna->thinkAbout(_person, Gyro::kPerson);
-		_person -= 149;
+		byte newPerson = _person - 149;
 		switch (_person) { // Special cases
-		case 11:
-			if (_vm->_gyro->_wonNim) {
+		case Gyro::kPeopleDogfood:
+			if (_vm->_gyro->_wonNim)
 				_vm->_scrolls->displayScrollChain('Q', 8); // "I'm Not Playing!"
-				return;
-			}
 			break;
-		case 9:
-			if (_vm->_gyro->_lustieIsAsleep) {
+		case Gyro::kPeopleDuLustie:
+			if (_vm->_gyro->_lustieIsAsleep)
 				_vm->_scrolls->displayScrollChain('Q', 65); // He's asleep. (65! Wow!)
-				return;
-			}
 			break;
+		case Gyro::kPeopleAyles:
+			_vm->_scrolls->displayScrollChain('p', newPerson);
+			if (!_vm->_gyro->_aylesIsAwake)
+				_vm->_scrolls->displayScrollChain('Q', 13);
+			break;
+		default:
+			_vm->_scrolls->displayScrollChain('p', newPerson);
 		}
-		// Otherwise...
-		_vm->_scrolls->displayScrollChain('p', _person);
-		// And afterwards...
-		if ((_person == 14) && (!_vm->_gyro->_aylesIsAwake))
-			_vm->_scrolls->displayScrollChain('Q', 13);
+		_person = newPerson;
 	}
 }
 
