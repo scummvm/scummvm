@@ -324,7 +324,11 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 		sourceOffset += imageWidth;
 	}
 
-	_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
+	if (_workingWindowDirtyRect.isEmpty()) {
+		_workingWindowDirtyRect = Common::Rect(destX, destY, destX + width, destY + height);
+	} else {
+		_workingWindowDirtyRect.extend(Common::Rect(destX, destY, destX + width, destY + height));
+	}
 
 	// TODO: Remove this from release. It's here to make sure code that uses this function clips their destinations correctly
 	assert(_workingWindowDirtyRect.width() <= _workingWidth && _workingWindowDirtyRect.height() <= _workingHeight);
