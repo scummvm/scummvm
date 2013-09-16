@@ -40,12 +40,23 @@ class Console : public GUI::Debugger {
 public:
 	Console(WintermuteEngine *vm);
 	virtual ~Console();
+	/*
+	 * Debug commands 
+	 */
 	bool Cmd_ShowFps(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
-	bool Cmd_Step(int argc, const char **argv);
 	bool Cmd_StepInto(int argc, const char **argv);
+	/*
+	 * gdb-style next
+	 */
 	bool Cmd_StepOver(int argc, const char **argv);
+	/* 
+	 * Continue execution
+	 */
 	bool Cmd_Continue(int argc, const char **argv);
+	/*
+	 * Don't further break inside this block
+	 */
 	bool Cmd_Finish(int argc, const char **argv);
 	bool Cmd_Watch(int argc, const char **argv);
 	bool Cmd_Print(int argc, const char **argv);
@@ -58,9 +69,17 @@ public:
 	bool Cmd_RemoveBreakpoint(int argc, const char **argv);
 	bool Cmd_EnableBreakpoint(int argc, const char **argv);
 	bool Cmd_DisableBreakpoint(int argc, const char **argv);
+	/*
+	 * List watch-breakpoints gdb-style
+	 */
 	bool Cmd_Info(int argc, const char **argv);
+	/* 
+	 * Print source
+	 */
 	bool Cmd_List(int argc, const char **argv);
 	bool Cmd_DumpRes(int argc, const char **argv);
+
+
 	void printSource(int n = DEFAULT_SOURCE_PADDING);
 	void debugWarning(const Common::String &command, int warning_level, const Common::String &message);
 	// For use by the Adapter
