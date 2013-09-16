@@ -358,8 +358,11 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 	Common::String methodName = Common::String("");
 
 	while (!st.empty() && result) {
-		// TODO: if result is not native error out
 		pos = result->getNative();
+		if (!result->isNative()) {
+			*error = WRONG_TYPE; // TODO: Better one
+			return nullptr;
+		}
 
 		Common::String callStr = st.nextToken();
 		// Okay - now let's see if it's a call
@@ -384,10 +387,10 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 
 			Common::StringTokenizer commas = Common::StringTokenizer(args, ",");
 
-			Common::String arg = commas.nextToken();
 			int argc = 0;
-			while (!arg.empty()) {
-
+			while (!commas.empty()) {
+				
+				Common::String arg = commas.nextToken();
 				Common::StringTokenizer st3 = Common::StringTokenizer(arg, "\"");
 				Common::String dest;
 				dest = "";
@@ -395,10 +398,14 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 				dest += st3.nextToken();
 				bool isString = false;
 
+				int tokencount = 0;
 				while (!st3.empty()) {
 					dest += st3.nextToken();	
 					isString = true;
+					tokencount++;
 				}
+
+				assert (tokencount < 3);
 				
 				if (isString) {
 					dest.trim();
@@ -409,6 +416,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 					// Todo: manually parse floats and stuff
 				}
 				argc++;
+				arg = commas.nextToken();
 			}
 
 			_lastScript->_stack->pushInt(argc);
