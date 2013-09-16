@@ -356,12 +356,12 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 
 	while (!st.empty() && result) {
 		// TODO: if result is not native error out
-		pos  = result->getNative();
+		pos = result->getNative();
 
 		Common::String callStr = st.nextToken();
 		// Okay - now let's see if it's a call
 		Common::StringTokenizer callSt = Common::StringTokenizer(callStr.c_str(), "(");
-		methodName =  callSt.nextToken();
+		methodName = callSt.nextToken();
 		Common::String args;
 		if (callSt.empty()) {
 			result = pos->scGetProperty(methodName);
