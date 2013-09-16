@@ -260,7 +260,7 @@ void FullpipeEngine::updateEvents() {
 				}
 
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = 83;
+				ex->_keyCode = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;

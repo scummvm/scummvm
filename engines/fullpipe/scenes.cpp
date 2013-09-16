@@ -731,6 +731,8 @@ int global_messageHandler1(ExCommand *cmd) {
 			}
 			break;
 		case 36: // keydown
+			g_fullpipe->defHandleKeyDown(cmd->_keyCode);
+
 			switch (cmd->_keyCode) {
 			case '\x1B': // ESC
 				if (g_fullpipe->_currentScene) {
@@ -768,7 +770,6 @@ int global_messageHandler1(ExCommand *cmd) {
 				cmd->_messageKind = 0;
 				break;
 			default:
-				g_fullpipe->defHandleKeyDown(cmd->_keyCode);
 				break;
 			}
 			break;
