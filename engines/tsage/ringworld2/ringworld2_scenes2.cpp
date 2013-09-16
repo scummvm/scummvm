@@ -4677,6 +4677,18 @@ bool Scene2900::KnobRight::startAction(CursorType action, Event &event) {
 	return true;
 }
 
+bool Scene2900::Skip::startAction(CursorType action, Event &event) {
+	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 12;
+		scene->signal();
+	}
+
+	return true;
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene2900::Action1::signal() {
@@ -4912,7 +4924,6 @@ void Scene2900::Map::moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int 
 	surface.unlockSurface();
 }
 
-
 /*------------------------------------------------------------------------*/
 
 Scene2900::Scene2900(): SceneExt() {
@@ -4988,11 +4999,21 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	_knobRightContent.setPosition(Common::Point(247, 199));
 	_knobRightContent.fixPriority(200);
 
+	// Set up hotspots
 	_scenery.setDetails(Rect(0, 0, 320, 150), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
 	_controlPanel.setDetails(Rect(0, 150, 320, 200), 2900, -1, -1, -1, 1, (SceneItem *)NULL);
 	_altimeter.setDetails(Rect(42, 164, 129, 190), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
 	_knobLeft.setDetails(Rect(165, 160, 228, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
 	_knobRight.setDetails(Rect(228, 160, 285, 200), 2900, -1, -1, -1, 2, (SceneItem *)NULL);
+	_skip.postInit();
+	_skip.setBounds(185, 50, 200, 0);
+	R2_GLOBALS._sceneItems.push_front(&_skip);
+
+	// For ScummVM, we're introducing a Skip button, since the scene is a pain
+	_skipText._color1 = R2_GLOBALS._scenePalette._colors.foreground;
+	_skipText._color2 = R2_GLOBALS._scenePalette._colors.background;
+	_skipText.setPosition(Common::Point(0, 185));
+	_skipText.setup("Skip");
 
 	setAction(&_action1);
 	R2_GLOBALS._player.postInit();

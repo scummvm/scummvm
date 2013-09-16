@@ -689,6 +689,10 @@ class Scene2900 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
+	class Skip : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
 
 	/* Actions */
 	class Action1: public Action {
@@ -696,7 +700,7 @@ class Scene2900 : public SceneExt {
 		void signal();
 	};
 
-	/* Custom classes */
+	/* Miscellaneous */
 	class Map {
 	private:
 		void moveArea(Rect &r, int xAmt, int yAmt);
@@ -731,8 +735,10 @@ public:
 	Altimeter _altimeter;
 	KnobLeft _knobLeft;
 	KnobRight _knobRight;
+	Skip _skip;
 	Action1 _action1;
 	Map _map;
+	SceneText _skipText;
 
 	int _field412;
 	bool _altitudeChanging;
