@@ -1004,8 +1004,8 @@ void Lucerna::refreshObjectList() {
 
 	for (byte i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_objects[i]) {
-			_vm->_gyro->_carryNum++;
 			_vm->_gyro->_objectList[_vm->_gyro->_carryNum] = i + 1;
+			_vm->_gyro->_carryNum++;
 		}
 	}
 }
