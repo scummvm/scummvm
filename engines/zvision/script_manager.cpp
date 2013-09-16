@@ -309,7 +309,7 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	debug("Changing location to: %c %c %c %c %u", world, room, node, view, offset);
 
 	// Auto save
-	//_engine->getSaveManager()->autoSave();
+	_engine->getSaveManager()->autoSave();
 
 	// Clear all the containers
 	_referenceTable.clear();
