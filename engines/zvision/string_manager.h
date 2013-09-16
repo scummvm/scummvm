@@ -76,7 +76,7 @@ private:
 	void parseStrFile(const Common::String &fileName);
 	void parseTag(const Common::String &tagString, const Common::String &textString, uint lineNumber);
 
-	static Common::String wideToASCII(const char *wideStr, uint arrayLength);
+	static Common::String readWideLine(Common::SeekableReadStream &stream);
 };
 
 } // End of namespace ZVision

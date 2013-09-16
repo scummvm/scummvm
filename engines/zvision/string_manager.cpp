@@ -98,10 +98,10 @@ void StringManager::parseStrFile(const Common::String &fileName) {
 			}
 		}
 
-		// STR files add a null character after the CR/LF. We need to skip over that before we can read another line
-		file.readByte();
+		if (textStringCursor > 0) {
+			_inGameText[lineNumber].fragments.back().text = Common::String(textString, textStringCursor);
+		}
 
-		line = file.readLine();
 		lineNumber++;
 	}
 }
@@ -199,33 +199,43 @@ void StringManager::parseTag(const Common::String &tagString, const Common::Stri
 	fragment->text = textString;
 }
 
-Common::String StringManager::wideToASCII(const char *wideStr, uint arrayLength) {
-	// TODO: Contemplate using a largish static buffer instead of a dynamic heap buffer
-	uint newSize = arrayLength / 2;
-	char *asciiString = new char[newSize];
+Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
+	// NOTE: Hardcoded size. All strings I've checked are less than 290 chars
+	char asciiString[300];
 
 	// Don't spam the user with warnings about UTF-16 support.
 	// Just do one warning per String
 	bool charOverflowWarning = false;
-	// Crush each octet pair to a single octet with a simple cast
-	for (uint i = 0; i < newSize; i++) {
-		uint16 value = READ_LE_UINT16(wideStr + (i * 2));
+	
+	uint16 value = stream.readUint16LE();
+	uint i = 0;
+	while (!stream.eos()) {
+		// Check for CRLF
+		if (value == 0x0A0D) {
+			// Read in the extra NULL char
+			stream.readByte(); // \0
+			// End of the line. Break
+			break;
+		}
+
+		// Crush each octet pair to a single octet with a simple cast
 		if (value > 255) {
 			charOverflowWarning = true;
 			value = 255;
 		}
-		asciiString[i] = (char)value;
+		char charValue = (char)value;
+		
+		asciiString[i] = charValue;
+		i++;
+
+		value = stream.readUint16LE();
 	}
 
 	if (charOverflowWarning) {
 		warning("UTF-16 is not supported. Characters greater than 255 are clamped to 255");
 	}
 
-	Common::String returnString(asciiString, newSize);
-	// Cleanup. Common::String constructor does a memmove() internally so we can safely delete
-	delete[] asciiString;
-
-	return returnString;
+	return Common::String(asciiString, i);
 }
 
 StringManager::TextStyle StringManager::getTextStyle(uint stringNumber) {
