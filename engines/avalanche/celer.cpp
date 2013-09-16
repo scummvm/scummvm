@@ -335,7 +335,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 	} else {
 		Common::File f;
 		if (!f.open(_filename)) // Filename was set in loadBackgroundSprites().
-			error("AVALANCHE: Celer: File not found: %s", _filename.c_str());
+			return; // We skip because some rooms don't have sprites in the background.
 
 		f.seek(_offsets[which]);
 
