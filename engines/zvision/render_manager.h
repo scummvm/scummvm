@@ -214,7 +214,6 @@ public:
 	RenderTable *getRenderTable();
 	uint32 getCurrentBackgroundOffset();
 	const Graphics::Surface *getBackBuffer() { return &_backBuffer; }
-	void copyWorkingWindowSubRectToSurface(Graphics::Surface *destSurface, uint16 destX, uint16 destY, Common::Rect subRect) const;
 
 	/**
 	 * Creates a copy of surface and transposes the data.
