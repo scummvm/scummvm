@@ -44,7 +44,7 @@ namespace Avalanche {
 Timer::Timer(AvalancheEngine *vm) {
 	_vm = vm;
 
-	for (byte i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		_times[i]._timeLeft = 0;
 		_times[i]._action = 0;
 		_times[i]._reason = 0;
@@ -83,7 +83,7 @@ void Timer::updateTimer() {
 	if (_vm->_gyro->_dropdownActive)
 		return;
 
-	for (byte i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		if (_times[i]._timeLeft <= 0)
 			continue;
 
@@ -222,7 +222,7 @@ void Timer::updateTimer() {
 }
 
 void Timer::loseTimer(byte which) {
-	for (byte i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		if (_times[i]._reason == which)
 			_times[i]._timeLeft = 0; // Cancel this one!
 	}

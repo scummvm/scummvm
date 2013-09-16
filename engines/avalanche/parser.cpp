@@ -146,7 +146,7 @@ int16 Parser::pos(const Common::String &crit, const Common::String &src) {
 
 void Parser::drawCursor() {
 	// Draw the '_' character.
-	for (byte bit = 0; bit < 8; bit++)
+	for (int bit = 0; bit < 8; bit++)
 		*(byte *)_vm->_graphics->_surface.getBasePtr(24 + _inputTextPos * 8 + 7 - bit, 168) = kColorWhite;
 
 	ByteField bf;

@@ -272,10 +272,10 @@ void Celer::loadBackgroundSprites(byte number) {
 
 	f.seek(44);
 	_spriteNum = f.readByte();
-	for (byte i = 0; i < _spriteNum; i++)
+	for (int i = 0; i < _spriteNum; i++)
 		_offsets[i] = f.readSint32LE();
 
-	for (byte i = 0; i < _spriteNum; i++) {
+	for (int i = 0; i < _spriteNum; i++) {
 		f.seek(_offsets[i]);
 
 		SpriteType sprite;
@@ -315,7 +315,7 @@ void Celer::loadBackgroundSprites(byte number) {
 }
 
 void Celer::forgetBackgroundSprites() {
-	for (byte i = 0; i < _spriteNum; i++) {
+	for (int i = 0; i < _spriteNum; i++) {
 		if (_sprites[i]._x > kOnDisk)
 			_sprites[i]._picture.free();
 	}

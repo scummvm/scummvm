@@ -128,7 +128,7 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 			if (file) {
 				// Check for our signature.
 				Common::String signature;
-				for (byte i = 0; i < 4; i++)
+				for (int i = 0; i < 4; i++)
 					signature += file->readByte();
 				if (signature != "AVAL") {
 					warning("Savegame of incompatible type!");
@@ -176,7 +176,7 @@ SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, 
 	if (f) {
 		// Check for our signature.
 		Common::String signature;
-		for (byte i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			signature += f->readByte();
 		if (signature != "AVAL") {
 			warning("Savegame of incompatible type!");

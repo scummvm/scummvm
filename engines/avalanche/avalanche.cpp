@@ -121,7 +121,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	//blockwrite(f, dna, sizeof(dna));
 	sz.syncAsByte(_animation->_direction);
 	sz.syncAsByte(_gyro->_carryNum);
-	for (byte i = 0; i < kObjectNum; i++)
+	for (int i = 0; i < kObjectNum; i++)
 		sz.syncAsByte(_gyro->_objects[i]);
 	sz.syncAsSint16LE(_gyro->_dnascore);
 	sz.syncAsSint32LE(_gyro->_money);
@@ -262,7 +262,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 
 #if 0
-	for (byte groi = 0; groi < numtr; groi++) {
+	for (int groi = 0; groi < numtr; groi++) {
 		if (tr[groi].quick) {
 			blockwrite(f, groi, 1);
 			tr[groi].savedata(f);
@@ -272,7 +272,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 	byte spriteNum = 0;
 	if (sz.isSaving()) {
-		for (byte i = 0; i < _animation->kSpriteNumbMax; i++) {
+		for (int i = 0; i < _animation->kSpriteNumbMax; i++) {
 			if (_animation->_sprites[i]._quick)
 				spriteNum++;
 		}
@@ -280,14 +280,14 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(spriteNum);
 
 	if (sz.isLoading()) {
-		for (byte i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
+		for (int i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
 			AnimationType *spr = &_animation->_sprites[i];
 			if (spr->_quick)
 				spr->remove();
 		}
 	}
 
-	for (byte i = 0; i < spriteNum; i++) {
+	for (int i = 0; i < spriteNum; i++) {
 		AnimationType *spr = &_animation->_sprites[i];
 		sz.syncAsByte(spr->_id);
 		sz.syncAsByte(spr->_doCheck);
@@ -324,7 +324,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	//blockwrite(f, groi, 1);
 
 	//blockwrite(f, times, sizeof(times)); // Timeout.times: Timers.
-	for (byte i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		sz.syncAsSint32LE(_timer->_times[i]._timeLeft);
 		sz.syncAsByte(_timer->_times[i]._action);
 		sz.syncAsByte(_timer->_times[i]._reason);
@@ -396,7 +396,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	// Check for our signature.
 	Common::String signature;
-	for (byte i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		signature += f->readByte();
 	if (signature != "AVAL")
 		return false;
