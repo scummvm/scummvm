@@ -60,10 +60,6 @@ RenderManager::~RenderManager() {
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
-	// Clear the dirty rects from last frame
-	_workingWindowDirtyRect = Common::Rect();
-	_backBufferDirtyRect = Common::Rect();
-
 	// An inverse velocity of 0 would be infinitely fast, so we'll let 0 mean no velocity.
 	if (_backgroundInverseVelocity != 0) {
 		_accumulatedVelocityMilliseconds += deltaTimeInMillis;
@@ -93,7 +89,14 @@ void RenderManager::renderBackbufferToScreen() {
 		// Translate the working window dirty rect to screen coords
 		_workingWindowDirtyRect.translate(_workingWindow.left, _workingWindow.top);
 		// Then extend the backbuffer dirty rect to contain it
-		_backBufferDirtyRect.extend(_workingWindowDirtyRect);
+		if (_backBufferDirtyRect.isEmpty()) {
+			_backBufferDirtyRect = _workingWindowDirtyRect;
+		} else {
+			_backBufferDirtyRect.extend(_workingWindowDirtyRect);
+		}
+
+		// Clear the dirty rect
+		_workingWindowDirtyRect = Common::Rect();
 	}
 
 	// TODO: Add menu rendering
@@ -103,6 +106,7 @@ void RenderManager::renderBackbufferToScreen() {
 
 	if (!_backBufferDirtyRect.isEmpty()) {
 		_system->copyRectToScreen(_backBuffer.getBasePtr(_backBufferDirtyRect.left, _backBufferDirtyRect.top), _backBuffer.pitch, _backBufferDirtyRect.left, _backBufferDirtyRect.top, _backBufferDirtyRect.width(), _backBufferDirtyRect.height());
+		_backBufferDirtyRect = Common::Rect();
 	}
 }
 
