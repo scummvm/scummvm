@@ -68,7 +68,7 @@ public:
 
 	class ScBreakpoint {
 	public:
-		ScBreakpoint(const char *filename) {
+		ScBreakpoint(const Common::String &filename) {
 			_filename = filename;
 		}
 
@@ -80,7 +80,7 @@ public:
 
 	class ScWatch {
 	public:
-		ScWatch(const char *filename) {
+		ScWatch(const Common::String &filename) {
 			_filename = filename;
 		}
 		~ScWatch();
