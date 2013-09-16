@@ -534,7 +534,6 @@ bool ScScript::executeInstruction() {
 
 	uint32 inst = getDWORD();
 	
-
 	switch (inst) {
 
 	case II_DEF_VAR:
