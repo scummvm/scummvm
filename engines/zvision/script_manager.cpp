@@ -329,6 +329,9 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	// Reset the background velocity
 	_engine->getRenderManager()->setBackgroundVelocity(0);
 
+	// Remove any alphaEntries
+	_engine->getRenderManager()->clearAlphaEntries();
+
 	// Clean the global state table
 	cleanStateTable();
 
