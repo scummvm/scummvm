@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	cursor_manager.o \
 	detection.o \
 	events.o \
+	input_control.o \
 	lever_control.o \
 	lzss_read_stream.o \
 	push_toggle_control.o \
