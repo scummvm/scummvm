@@ -49,6 +49,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 	_timerSeed = 0;
 	_mainWindow = 0;
 	_focusedWindow = 0;
+	_captureWindow = 0;
 }
 
 BuriedEngine::~BuriedEngine() {
@@ -319,9 +320,8 @@ void BuriedEngine::pollForEvents() {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE: {
 			_gfx->markMouseMoved();
-			Common::Point relativePos;
-			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
-			window->postMessage(new MouseMoveMessage(relativePos, 0));
+			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
+			window->postMessage(new MouseMoveMessage(window->convertPointToLocal(event.mouse), 0));
 			window->postMessage(new SetCursorMessage(kMessageTypeMouseMove));
 			break;
 		}
@@ -334,33 +334,28 @@ void BuriedEngine::pollForEvents() {
 				_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
 			break;
 		case Common::EVENT_LBUTTONDOWN: {
-			Common::Point relativePos;
-			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
-			window->postMessage(new LButtonDownMessage(relativePos, 0));
+			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
+			window->postMessage(new LButtonDownMessage(window->convertPointToLocal(event.mouse), 0));
 			break;
 		}
 		case Common::EVENT_LBUTTONUP: {
-			Common::Point relativePos;
-			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
-			window->postMessage(new LButtonUpMessage(relativePos, 0));
+			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
+			window->postMessage(new LButtonUpMessage(window->convertPointToLocal(event.mouse), 0));
 			break;
 		}
 		case Common::EVENT_MBUTTONUP: {
-			Common::Point relativePos;
-			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
-			window->postMessage(new MButtonUpMessage(relativePos, 0));
+			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
+			window->postMessage(new MButtonUpMessage(window->convertPointToLocal(event.mouse), 0));
 			break;
 		}
 		case Common::EVENT_RBUTTONDOWN: {
-			Common::Point relativePos;
-			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
-			window->postMessage(new RButtonDownMessage(relativePos, 0));
+			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
+			window->postMessage(new RButtonDownMessage(window->convertPointToLocal(event.mouse), 0));
 			break;
 		}
 		case Common::EVENT_RBUTTONUP: {
-			Common::Point relativePos;
-			Window *window = _mainWindow->findWindowAtPoint(event.mouse, relativePos);
-			window->postMessage(new RButtonUpMessage(relativePos, 0));
+			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
+			window->postMessage(new RButtonUpMessage(window->convertPointToLocal(event.mouse), 0));
 			break;
 		}
 		default:

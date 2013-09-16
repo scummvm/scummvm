@@ -91,18 +91,17 @@ public:
 	};
 
 	Window *setFocus();
-
-	// TODO:
-	// ShowWindow
-	// BeginPaint (?)
-	// EndPaint (?)
-	// Create
-	// ...
+	Window *setCapture();
 
 	void sendMessage(Message *message);
 	void postMessage(Message *message);
 
-	Window *findWindowAtPoint(const Common::Point &point, Common::Point &relativePoint);
+	Window *childWindowAtPoint(const Common::Point &point);
+
+	// Helper functions
+	Common::Point convertPointToGlobal(const Common::Point &point);
+	Common::Point convertPointToLocal(const Common::Point &point);
+	Common::Point convertPointToWindow(const Common::Point &point, Window *dest);
 
 protected:
 	BuriedEngine *_vm;

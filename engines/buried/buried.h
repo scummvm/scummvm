@@ -84,6 +84,7 @@ public:
 	SoundManager *_sound;
 	Window *_mainWindow; // Only one main window is supported.
 	Window *_focusedWindow;
+	Window *_captureWindow;
 
 	// Timers
 	uint createTimer(Window *window, uint period);
@@ -108,6 +109,7 @@ public:
 	void yield();
 	int getTransitionSpeed();
 	void setTransitionSpeed(int newSpeed);
+	void releaseCapture() { _captureWindow = 0; }
 
 private:
 	Database *_library;
