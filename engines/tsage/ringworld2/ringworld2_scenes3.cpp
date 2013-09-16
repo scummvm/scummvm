@@ -5347,7 +5347,8 @@ void Scene3800::process(Event &event) {
  * Scene 3900 -
  *
  *--------------------------------------------------------------------------*/
-void Scene3900::Exit1::changeScene() {
+
+void Scene3900::NorthExit::changeScene() {
 	Scene3900 *scene = (Scene3900 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -5362,7 +5363,7 @@ void Scene3900::Exit1::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3900::Exit2::changeScene() {
+void Scene3900::EastExit::changeScene() {
 	Scene3900 *scene = (Scene3900 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -5377,7 +5378,7 @@ void Scene3900::Exit2::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3900::Exit3::changeScene() {
+void Scene3900::SouthExit::changeScene() {
 	Scene3900 *scene = (Scene3900 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -5392,7 +5393,7 @@ void Scene3900::Exit3::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3900::Exit4::changeScene() {
+void Scene3900::WestExit::changeScene() {
 	Scene3900 *scene = (Scene3900 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -5428,13 +5429,16 @@ void Scene3900::Exit5::changeScene() {
 }
 
 void Scene3900::postInit(SceneObjectList *OwnerList) {
-	if ((R2_GLOBALS._desertPreviousDirection == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700))
+	if ((R2_GLOBALS._desertPreviousDirection == 2) 
+			&& (R2_GLOBALS._sceneManager._previousScene != 2700))
 		loadScene(3825);
 	else
 		loadScene(3820);
 	SceneExt::postInit();
+
 	R2_GLOBALS._sound1.changeSound(231);
 	setZoomPercents(87, 40, 144, 100);
+
 	R2_GLOBALS._player.disableControl();
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(10);
@@ -5442,6 +5446,7 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.setStrip(3);
 	R2_GLOBALS._player.changeZoom(-1);
 	R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+
 	_actor1.postInit();
 	_actor1.fixPriority(10);
 	_actor1.changeZoom(-1);
@@ -5449,36 +5454,36 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	_actor1._effect = 5;
 	_actor1._field9C = _field312;
 	R2_GLOBALS._player._linkedActor = &_actor1;
+
 	if ((R2_GLOBALS._desertPreviousDirection == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700)) {
 //		loadScene(3825);
-		R2_GLOBALS._desertPreviousDirection = 4;
-		_exit1.setDetails(Rect(29, 87, 305, 125), SHADECURSOR_UP, 3900);
-		_exit3.setDetails(Rect(29, 160, 305, 168), SHADECURSOR_DOWN, 3900);
+		R2_GLOBALS._desertCorrectDirection = 4;
+		_northExit.setDetails(Rect(29, 87, 305, 125), SHADECURSOR_UP, 3900);
+		_southExit.setDetails(Rect(29, 160, 305, 168), SHADECURSOR_DOWN, 3900);
 
-		_exit2.setDetails(Rect(305, 87, 320, 168), EXITCURSOR_E, 3900);
-		_exit2.setDest(Common::Point(312, 145));
-		_exit2._enabled = true;
-		_exit2._insideArea = false;
-		_exit2._moving = false;
+		_eastExit.setDetails(Rect(305, 87, 320, 168), EXITCURSOR_E, 3900);
+		_eastExit.setDest(Common::Point(312, 145));
+		_eastExit._enabled = true;
+		_eastExit._insideArea = false;
+		_eastExit._moving = false;
 
-		_exit4._enabled = false;
+		_westExit._enabled = false;
 
 		_exit5.setDetails(Rect(0, 87, 29, 168), EXITCURSOR_W, 3900);
 		_exit5.setDest(Common::Point(24, 135));
 	} else {
 //		loadScene(3820);
-		R2_GLOBALS._desertPreviousDirection = 2;
-		_exit1.setDetails(Rect(14, 87, 290, 125), SHADECURSOR_UP, 3900);
-		_exit3.setDetails(Rect(14, 160, 290, 168), SHADECURSOR_DOWN, 3900);
+		R2_GLOBALS._desertCorrectDirection = 2;
+		_northExit.setDetails(Rect(14, 87, 290, 125), SHADECURSOR_UP, 3900);
+		_southExit.setDetails(Rect(14, 160, 290, 168), SHADECURSOR_DOWN, 3900);
 
+		_eastExit._enabled = false;
 
-		_exit2._enabled = false;
-
-		_exit4.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3900);
-		_exit4.setDest(Common::Point(7, 145));
-		_exit4._enabled = true;
-		_exit4._insideArea = false;
-		_exit4._moving = false;
+		_westExit.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3900);
+		_westExit.setDest(Common::Point(7, 145));
+		_westExit._enabled = true;
+		_westExit._insideArea = false;
+		_westExit._moving = false;
 
 		_exit5.setDetails(Rect(290, 87, 320, 168), EXITCURSOR_E, 3900);
 		_exit5.setDest(Common::Point(295, 135));
@@ -5489,15 +5494,15 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 
 	scalePalette(65, 65, 65);
 
-	_exit1.setDest(Common::Point(160, 126));
-	_exit1._enabled = true;
-	_exit1._insideArea = false;
-	_exit1._moving = false;
+	_northExit.setDest(Common::Point(160, 126));
+	_northExit._enabled = true;
+	_northExit._insideArea = false;
+	_northExit._moving = false;
 
-	_exit3.setDest(Common::Point(160, 165));
-	_exit3._enabled = true;
-	_exit3._insideArea = false;
-	_exit3._moving = false;
+	_southExit.setDest(Common::Point(160, 165));
+	_southExit._enabled = true;
+	_southExit._insideArea = false;
+	_southExit._moving = false;
 
 	R2_GLOBALS._uiElements.draw();
 
@@ -5505,29 +5510,33 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	_item1.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *)NULL);
 	if (R2_GLOBALS._sceneManager._previousScene == 3800) {
 		_sceneMode = 11;
-		switch (R2_GLOBALS._desertPreviousDirection - 1) {
-		case 0: {
+		switch (R2_GLOBALS._desertPreviousDirection) {
+		case 1: {
+			// Entering from the north
 			R2_GLOBALS._player.setPosition(Common::Point(160, 115));
 			Common::Point pt(160, 120);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 			}
 			break;
-		case 1: {
+		case 2: {
+			// Entering from the east
 			R2_GLOBALS._player.setPosition(Common::Point(330, 145));
 			Common::Point pt(300, 145);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 			}
 			break;
-		case 2: {
+		case 3: {
+			// Entering from the south
 			R2_GLOBALS._player.setPosition(Common::Point(160, 220));
 			Common::Point pt(160, 160);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 			}
 			break;
-		case 3: {
+		case 4: {
+			// Entering from the west
 			R2_GLOBALS._player.setPosition(Common::Point(-10, 145));
 			Common::Point pt(19, 145);
 			NpcMover *mover = new NpcMover();
@@ -5564,18 +5573,18 @@ void Scene3900::signal() {
 		R2_GLOBALS._sceneManager.changeScene(3800);
 		break;
 	case 3805:
-		_exit1._enabled = false;
-		_exit2._enabled = false;
-		_exit3._enabled = false;
-		_exit4._enabled = false;
+		_northExit._enabled = false;
+		_eastExit._enabled = false;
+		_southExit._enabled = false;
+		_westExit._enabled = false;
 		R2_GLOBALS._player._canWalk = false;
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
 		break;
 	case 3806:
-		_exit1._enabled = true;
-		_exit2._enabled = true;
-		_exit3._enabled = true;
-		_exit4._enabled = true;
+		_northExit._enabled = true;
+		_eastExit._enabled = true;
+		_southExit._enabled = true;
+		_westExit._enabled = true;
 		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
 		break;
 	default:

@@ -999,7 +999,7 @@ void Scene2000::signal() {
 		default:
 			if (R2_GLOBALS._v56AAB != 0)
 				R2_GLOBALS._v56AAB = 0;
-			R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 			break;
 		}
 		break;
@@ -2205,7 +2205,7 @@ void Scene2450::signal() {
 		R2_GLOBALS._player._characterScene[R2_SEEKER] = 2000;
 		R2_GLOBALS._spillLocation[R2_SEEKER] = 3;
 		_companion.remove();
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	default:
 		_companion.postInit();
@@ -3492,7 +3492,7 @@ void Scene2700::signal() {
 		break;
 	case 2700:
 		_actor1.remove();
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 2703:
 		g_globals->_sceneManager.changeScene(3900);
@@ -3525,7 +3525,7 @@ void Scene2700::signal() {
 		setAction(&_sequenceManager, this, 2713, &R2_GLOBALS._player, &_actor1, NULL);
 		break;
 	default:
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	}
 }
@@ -4506,7 +4506,7 @@ void Scene2800::signal() {
 	case 11:
 		_actor2.remove();
 		_object1.setAction(NULL);
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 		_item2.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
 		break;
@@ -4519,7 +4519,7 @@ void Scene2800::signal() {
 		g_globals->_sceneManager.changeScene(2750);
 		break;
 	case 2801:
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 2803:
