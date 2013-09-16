@@ -629,7 +629,7 @@ void Dropdown::runMenuAction() {
 }
 
 void Dropdown::runMenuObjects() {
-	_vm->_lucerna->thinkAbout(_vm->_gyro->_objectList[_activeMenuItem._choiceNum + 1], Gyro::kThing);
+	_vm->_lucerna->thinkAbout(_vm->_gyro->_objectList[_activeMenuItem._choiceNum], Gyro::kThing);
 }
 
 void Dropdown::runMenuPeople() {
