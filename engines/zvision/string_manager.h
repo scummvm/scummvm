@@ -68,13 +68,15 @@ private:
 
 	static const Graphics::PixelFormat _pixelFormat565;
 
+	TextStyle _lastStyle;
+
 public:
 	void initialize(ZVisionGameId gameId);
 	StringManager::TextStyle getTextStyle(uint stringNumber);
 
 private:
 	void parseStrFile(const Common::String &fileName);
-	void parseTag(const Common::String &tagString, const Common::String &textString, uint lineNumber);
+	void parseTag(const Common::String &tagString, uint lineNumber);
 
 	static Common::String readWideLine(Common::SeekableReadStream &stream);
 };

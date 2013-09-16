@@ -114,15 +114,15 @@ void StringManager::parseStrFile(const Common::String &fileName) {
 	}
 }
 
-void StringManager::parseTag(const Common::String &tagString, const Common::String &textString, uint lineNumber) {
+void StringManager::parseTag(const Common::String &tagString, uint lineNumber) {
 	Common::StringTokenizer tokenizer(tagString);
 
 	Common::String token = tokenizer.nextToken();
 
 	Common::String fontName;
 	bool bold = false;
-	Graphics::TextAlign align = Graphics::kTextAlignLeft;
-	int point = 12;
+	Graphics::TextAlign align = _lastStyle.align;
+	int point = _lastStyle.font != nullptr ? _lastStyle.font->_fontHeight : 12;
 	int red = 0;
 	int green = 0;
 	int blue = 0;
@@ -155,56 +155,60 @@ void StringManager::parseTag(const Common::String &tagString, const Common::Stri
 		token = tokenizer.nextToken();
 	}
 
-	Common::String newFontName;
-	if (fontName.matchString("times new roman", true)) {
-		if (bold) {
-			newFontName = "timesbd.ttf";
-		} else {
-			newFontName = "times.ttf";
-		}
-	} else if (fontName.matchString("courier new", true)) {
-		if (bold) {
-			newFontName = "courbd.ttf";
-		} else {
-			newFontName = "cour.ttf";
-		}
-	} else if (fontName.matchString("century schoolbook", true)) {
-		if (bold) {
-			newFontName = "censcbkbd.ttf";
-		} else {
-			newFontName = "censcbk.ttf";
-		}
-	} else if (fontName.matchString("times new roman", true)) {
-		if (bold) {
-			newFontName = "courbd.ttf";
-		} else {
-			newFontName = "cour.ttf";
-		}
+	TextFragment fragment = _inGameText->fragments.back();
+
+	if (fontName.empty()) {
+		fragment.style.font = _lastStyle.font;
 	} else {
-		debug("Could not identify font: %s. Reverting to Arial", fontName.c_str());
-		if (bold) {
-			newFontName = "zorknorm.ttf";
+		Common::String newFontName;
+		if (fontName.matchString("*times new roman*", true)) {
+			if (bold) {
+				newFontName = "timesbd.ttf";
+			} else {
+				newFontName = "times.ttf";
+			}
+		} else if (fontName.matchString("*courier new*", true)) {
+			if (bold) {
+				newFontName = "courbd.ttf";
+			} else {
+				newFontName = "cour.ttf";
+			}
+		} else if (fontName.matchString("*century schoolbook*", true)) {
+			if (bold) {
+				newFontName = "censcbkbd.ttf";
+			} else {
+				newFontName = "censcbk.ttf";
+			}
+		} else if (fontName.matchString("*garamond*", true)) {
+			if (bold) {
+				newFontName = "garabd.ttf";
+			} else {
+				newFontName = "gara.ttf";
+			}
 		} else {
-			newFontName = "arial.ttf";
+			debug("Could not identify font: %s. Reverting to Arial", fontName.c_str());
+			if (bold) {
+				newFontName = "zorknorm.ttf";
+			} else {
+				newFontName = "arial.ttf";
+			}
+		}
+
+		Common::String fontKey = Common::String::format("%s-%d", newFontName.c_str(), point);
+		if (_fonts.contains(fontKey)) {
+			fragment.style.font = _fonts[fontKey];
+		} else {
+			fragment.style.font = new TruetypeFont(_engine, point);
+			fragment.style.font->loadFile(newFontName);
+			_fonts[fontKey] = fragment.style.font;
 		}
 	}
 
-	// Push an empty TextFragment onto the end of the list
-	// Creating the TextFragement before filling it prevents extra data copying during creation
-	_inGameText->fragments.push_back(TextFragment());
-	TextFragment *fragment = &_inGameText->fragments.back();
+	fragment.style.align = align;
+	fragment.style.color = _pixelFormat565.ARGBToColor(0, red, green, blue);
+	_inGameText[lineNumber].fragments.push_back(fragment);
 
-	Common::String fontKey = Common::String::format("%s-&d", newFontName.c_str(), point);
-	if (_fonts.contains(fontKey)) {
-		fragment->style.font = _fonts[fontKey];
-	} else {
-		fragment->style.font = new TruetypeFont(_engine, point);
-		fragment->style.font->loadFile(newFontName);
-	}
-
-	fragment->style.align = align;
-	fragment->style.color = _pixelFormat565.ARGBToColor(0, red, green, blue);
-	fragment->text = textString;
+	_lastStyle = fragment.style;
 }
 
 Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
