@@ -103,6 +103,7 @@ void ZVision::initialize() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets2", 0, 2, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx", 0, 1, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "zgi", 0, 4, true);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "fonts", 0, 1, true);
 
 	// Find zfs archive files
 	Common::ArchiveMemberList list;
