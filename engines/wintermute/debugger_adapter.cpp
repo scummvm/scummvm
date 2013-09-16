@@ -51,8 +51,11 @@ SourceFile::SourceFile(const Common::String &filename) {
 		if (file->err()) {
 			_err = file->err();
 		}
+
+		_strings.empty();
+
 		while (!file->eos()) {
-			_strings[_strings.size()] = file->readLine();
+			_strings.insert_at(_strings.size(), file->readLine());
 			if (file->err()) {
 				_err = file->err();
 			}
