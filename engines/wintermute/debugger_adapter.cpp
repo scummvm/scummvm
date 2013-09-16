@@ -365,9 +365,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 		Common::String args;
 		if (callSt.empty()) {
 			result = pos->scGetProperty(methodName);
-			// TODO: Okay, just return that, it's a property
 		} else {
-			// TODO: support multiple arguments.
 			// Let's try to chop parenthesis off it.
 			Common::String argList = callSt.nextToken();
 			Common::StringTokenizer argSt = Common::StringTokenizer(argList.c_str(), ")");
@@ -391,14 +389,22 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 				Common::String dest;
 				dest = "";
 
+				dest += st3.nextToken();
+				bool isString = false;
+
 				while (!st3.empty()) {
-					dest += st3.nextToken();
-					
+					dest += st3.nextToken();	
+					isString = true;
 				}
 				
-				dest.trim();
-
-				_lastScript->_stack->pushString(dest.c_str()); // Todo: support ints and other stuff. Remove quotes correctly!
+				if (isString) {
+					dest.trim();
+					_lastScript->_stack->pushString(dest.c_str());
+				} else {
+					// We assume is int.
+					_lastScript->_stack->pushInt(atoi(dest.c_str())); 
+					// Todo: manually parse floats and stuff
+				}
 				argc++;
 			}
 
