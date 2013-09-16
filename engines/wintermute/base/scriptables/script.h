@@ -45,7 +45,7 @@ class DebuggerAdapter;
 const int kDefaultStep = -2;
 class ScScript : public BaseClass {
 public:
-	BaseArray<ScEngine::CScWatch> _watchlist; 
+	BaseArray<ScEngine::ScWatch> _watchlist; 
 	// We need a per-script watchlist, we can have different threads, same filename, different rvalues.
 	bool _tracingMode;
 	ScScript *_parentScript;

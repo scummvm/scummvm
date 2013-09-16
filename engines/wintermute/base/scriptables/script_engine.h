@@ -66,9 +66,9 @@ public:
 		Common::String _filename;
 	};
 
-	class CScBreakpoint {
+	class ScBreakpoint {
 	public:
-		CScBreakpoint(const char *filename) {
+		ScBreakpoint(const char *filename) {
 			_filename = filename;
 		}
 
@@ -78,12 +78,12 @@ public:
 		int _enabled;
 	};
 
-	class CScWatch {
+	class ScWatch {
 	public:
-		CScWatch(const char *filename) {
+		ScWatch(const char *filename) {
 			_filename = filename;
 		}
-		~CScWatch();
+		~ScWatch();
 		Common::String _filename;
 		Common::String _symbol;
 		ScValue *_lastValue; 
@@ -113,8 +113,8 @@ public:
 	ScValue *_globals;
 	ScScript *runScript(const char *filename, BaseScriptHolder *owner = nullptr);
 	static const bool _compilerAvailable = false;
-	Common::Array<CScBreakpoint> _breakpoints;
-	Common::Array<CScWatch> _watchlist;
+	Common::Array<ScBreakpoint> _breakpoints;
+	Common::Array<ScWatch> _watchlist;
 	ScEngine(BaseGame *inGame);
 
 	bool addBreakpoint(const char *filename, int line);

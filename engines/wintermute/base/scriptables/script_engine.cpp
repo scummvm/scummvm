@@ -90,7 +90,7 @@ ScEngine::~ScEngine() {
 }
 
 
-ScEngine::CScWatch::~CScWatch() {
+ScEngine::ScWatch::~ScWatch() {
 	delete _lastValue;
 }
 
@@ -173,7 +173,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 }
 
 bool ScEngine::addWatch(const char *filename, const char *name) {
-	CScWatch watch = CScWatch(filename);
+	ScWatch watch = ScWatch(filename);
 	watch._symbol = name;
 	watch._lastValue = new ScValue(_gameRef);
 	_watchlist.insert_at(_watchlist.size(), watch);
@@ -205,7 +205,7 @@ bool ScEngine::refreshWatchlist() {
 
 bool ScEngine::addBreakpoint(const char *filename, int line) {
 	// Add a <filename, line> pair to the per-Engine list of breakpoints.
-	CScBreakpoint breakpoint = CScBreakpoint(filename);
+	ScBreakpoint breakpoint = ScBreakpoint(filename);
 	breakpoint._line = line;
 	breakpoint._hits = 0;
 	_breakpoints.insert_at(_breakpoints.size(), breakpoint);
