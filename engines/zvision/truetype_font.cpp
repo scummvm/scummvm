@@ -82,10 +82,11 @@ Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, i
 	if (!wrap) {
 		int width = MIN(_font->getStringWidth(text), maxWidth);
 		surface->create(width, _lineHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-		// Copy the pixels from the RenderManager::_workingWindow, so we can get nice antialiasing
-		_engine->getRenderManager()->copyWorkingWindowSubRectToSurface(surface, 0, 0, Common::Rect(destX, destY, destX + width, destY + _lineHeight));
+		// TODO: Add better alpha support by getting the pixels from the backbuffer.
+		// However doing that requires some kind of caching system so future text doesn't try to use this text as it's alpha background.
+		surface->fillRect(Common::Rect(0, 0, surface->w, surface->h), 0);
 
-		_font->drawString(surface, text, destX, destY, maxWidth, textColor, align);
+		_font->drawString(surface, text, 0, 0, maxWidth, textColor, align);
 		return surface;
 	}
 
@@ -100,12 +101,11 @@ Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, i
 	}
 
 	surface->create(maxWidth, lines.size() * _lineHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-	// Copy the pixels from the RenderManager::_workingWindow, so we can get nice antialiasing
-	_engine->getRenderManager()->copyWorkingWindowSubRectToSurface(surface, 0, 0, Common::Rect(destX, destY, destX + maxWidth, destY + lines.size() * _lineHeight));
+	surface->fillRect(Common::Rect(0, 0, surface->w, surface->h), 0);
 
 	int heightOffset = 0;
 	for (Common::Array<Common::String>::iterator it = lines.begin(); it != lines.end(); it++) {
-		_font->drawString(surface, *it, destX, destY + heightOffset, maxWidth, textColor, align);
+		_font->drawString(surface, *it, 0, 0 + heightOffset, maxWidth, textColor, align);
 		heightOffset += (int)_lineHeight;
 	}
 
