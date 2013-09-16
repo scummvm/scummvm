@@ -388,7 +388,6 @@ public:
 	void newGame(); // This sets up the DNA for a completely new game.
 	void slowDown();
 	bool setFlag(char x);
-	void forceNumlock();
 	bool decreaseMoney(uint16 howmuchby); // Called pennycheck in the original.
 	void hangAroundForAWhile();
 	

@@ -378,10 +378,6 @@ bool Gyro::setFlag(char x) {
 	return false;
 }
 
-void Gyro::forceNumlock() {
-	warning("STUB: Gyro::force_numlock()");
-}
-
 bool Gyro::decreaseMoney(uint16 howmuchby) {
 	_money -= howmuchby;
 	if (_money < 0) {
