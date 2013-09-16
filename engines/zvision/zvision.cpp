@@ -125,6 +125,7 @@ void ZVision::initialize() {
 	_cursorManager = new CursorManager(this, &_pixelFormat);
 	_cursorManager->initialize();
 	_scriptManager->initialize();
+	_stringManager->initialize(_gameDescription->gameId);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
