@@ -111,25 +111,31 @@ void RenderManager::renderBackbufferToScreen() {
 }
 
 void RenderManager::processAlphaEntries() {
-	for (Common::List<AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
+	// TODO: Add dirty rectangling support. AKA only draw an entry if the _backbufferDirtyRect intersects/contains the entry Rect
+
+	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
 		uint32 destOffset = 0;
 		uint32 sourceOffset = 0;
-		uint16 *backbufferPtr = (uint16 *)_backBuffer.getBasePtr((*iter).destX + _workingWindow.left, (*iter).destY + _workingWindow.top);
-		uint16 *entryPtr = (uint16 *)(*iter).data->getPixels();
+		uint16 *backbufferPtr = (uint16 *)_backBuffer.getBasePtr((*iter)._value.destX + _workingWindow.left, (*iter)._value.destY + _workingWindow.top);
+		uint16 *entryPtr = (uint16 *)(*iter)._value.data->getPixels();
 
-		for (int32 y = 0; y < (*iter).height; y++) {
-			for (int32 x = 0; x < (*iter).width; x++) {
+		for (int32 y = 0; y < (*iter)._value.height; y++) {
+			for (int32 x = 0; x < (*iter)._value.width; x++) {
 				uint16 color = entryPtr[sourceOffset + x];
-				if (color != (*iter).alphaColor) {
+				if (color != (*iter)._value.alphaColor) {
 					backbufferPtr[destOffset + x] = color;
 				}
 			}
 
-			destOffset += _workingWidth;
-			sourceOffset += (*iter).width;
+			destOffset += _backBuffer.w;
+			sourceOffset += (*iter)._value.width;
 		}
 
-		_backBufferDirtyRect.extend(Common::Rect((*iter).destX + _workingWindow.left, (*iter).destY + _workingWindow.top, (*iter).destX + _workingWindow.left + (*iter).width, (*iter).destY + _workingWindow.top + (*iter).height));
+		if (_backBufferDirtyRect.isEmpty()) {
+			_backBufferDirtyRect = Common::Rect((*iter)._value.destX + _workingWindow.left, (*iter)._value.destY + _workingWindow.top, (*iter)._value.destX + _workingWindow.left + (*iter)._value.width, (*iter)._value.destY + _workingWindow.top + (*iter)._value.height);
+		} else {
+			_backBufferDirtyRect.extend(Common::Rect((*iter)._value.destX + _workingWindow.left, (*iter)._value.destY + _workingWindow.top, (*iter)._value.destX + _workingWindow.left + (*iter)._value.width, (*iter)._value.destY + _workingWindow.top + (*iter)._value.height));
+		}
 	}
 }
 
@@ -324,7 +330,7 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 	assert(_workingWindowDirtyRect.width() <= _workingWidth && _workingWindowDirtyRect.height() <= _workingHeight);
 }
 
-void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor) {
+void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor, uint32 idNumber) {
 	AlphaDataEntry entry;
 	entry.alphaColor = alphaColor;
 	entry.data = new Graphics::Surface();
@@ -347,10 +353,10 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 		sourceOffset += imageWidth;
 	}
 
-	_alphaDataEntries.push_back(entry);
+	_alphaDataEntries[idNumber] = entry;
 }
 
-Common::Rect RenderManager::renderTextToWorkingWindow(const Common::String &text, TruetypeFont *font, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap) {
+Common::Rect RenderManager::renderTextToWorkingWindow(uint32 idNumber, const Common::String &text, TruetypeFont *font, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap) {
 	AlphaDataEntry entry;
 	entry.alphaColor = 0;
 	entry.destX = destX;
@@ -361,7 +367,7 @@ Common::Rect RenderManager::renderTextToWorkingWindow(const Common::String &text
 	entry.width = entry.data->w;
 	entry.height = entry.data->h;
 
-	_alphaDataEntries.push_back(entry);
+	_alphaDataEntries[idNumber] = entry;
 
 	return Common::Rect(destX, destY, destX + entry.width, destY + entry.height);
 }
