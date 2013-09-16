@@ -55,8 +55,7 @@ public:
 	int32 _fontHeight;
 
 public:
-	bool loadFile(const Common::String &filename);
-	
+	bool loadFile(const Common::String &filename);	
 	Graphics::Surface *drawTextToSurface(const Common::String &text, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap);
 };
 
