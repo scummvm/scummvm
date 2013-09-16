@@ -55,6 +55,10 @@ Window::~Window() {
 	if (_vm->_focusedWindow == this)
 		_vm->_focusedWindow = 0;
 
+	// And also not captured
+	if (_vm->_captureWindow == this)
+		_vm->_captureWindow = 0;
+
 	// Invalidate this window's rect as well
 	_vm->_gfx->invalidateRect(getAbsoluteRect());
 }
@@ -258,19 +262,14 @@ Window *Window::setFocus() {
 	return oldWindow;
 }
 
-Window *Window::findWindowAtPoint(const Common::Point &point, Common::Point &relativePos) {
+Window *Window::childWindowAtPoint(const Common::Point &point) {
 	for (WindowList::iterator it = _topMostChildren.reverse_begin(); it != _topMostChildren.end(); it--)
 		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
-			return (*it)->findWindowAtPoint(point, relativePos);
+			return (*it)->childWindowAtPoint(point);
 
 	for (WindowList::iterator it = _children.reverse_begin(); it != _children.end(); it--)
 		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
-			return (*it)->findWindowAtPoint(point, relativePos);
-
-	// Also calculate the relative position of the point within the window
-	Common::Rect absoluteRect = getAbsoluteRect();
-	relativePos.x = point.x - absoluteRect.left;
-	relativePos.y = point.y - absoluteRect.top;
+			return (*it)->childWindowAtPoint(point);
 
 	return this;
 }
@@ -282,6 +281,26 @@ bool Window::handleSetCursorMessage(uint message) {
 		return true;
 
 	return onSetCursor(message);
+}
+
+Window *Window::setCapture() {
+	Window *oldCapturedWindow = _vm->_focusedWindow;
+	_vm->_focusedWindow = this;
+	return oldCapturedWindow;
+}
+
+Common::Point Window::convertPointToGlobal(const Common::Point &point) {
+	Common::Rect absoluteRect = getAbsoluteRect();
+	return Common::Point(point.x + absoluteRect.left, point.y + absoluteRect.top);
+}
+
+Common::Point Window::convertPointToLocal(const Common::Point &point) {
+	Common::Rect absoluteRect = getAbsoluteRect();
+	return Common::Point(point.x - absoluteRect.left, point.y - absoluteRect.top);
+}
+
+Common::Point Window::convertPointToWindow(const Common::Point &point, Window *dest) {
+	return dest->convertPointToLocal(convertPointToGlobal(point));
 }
 
 } // End of namespace Buried
