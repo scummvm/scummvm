@@ -207,7 +207,9 @@ bool Console::cmdRenderText(int argc, const char **argv) {
 	}
 
 	StringManager::TextStyle style = _engine->getStringManager()->getTextStyle(atoi(argv[2]));
-	_engine->getRenderManager()->renderTextToWorkingWindow(Common::String(argv[1]), style.font, atoi(argv[3]), atoi(argv[4]), style.color, atoi(argv[5]), -1, Graphics::kTextAlignLeft, atoi(argv[6]) == 0 ? false : true);
+	_engine->getRenderManager()->renderTextToWorkingWindow(333, Common::String(argv[1]), style.font, atoi(argv[3]), atoi(argv[4]), style.color, atoi(argv[5]), -1, Graphics::kTextAlignLeft, atoi(argv[6]) == 0 ? false : true);
+
+	return true;
 }
 
 } // End of namespace ZVision
