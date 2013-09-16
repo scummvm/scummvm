@@ -265,22 +265,22 @@ public:
 	int _v565E9;
 	int _v565EB;
 	int _foodCount;
-	int _v565F6;
-	int _v565FA;
+	int _rimLocation;
+	int _rimTransportLocation;
 	int _v5657C;
 	byte _v565AE;
-	byte _v56605[14];
+	byte _spillLocation[14];
 	int _v56613[76];
 	byte _v566A4;
 	byte _v566A5;
 	int _v566A6;
 	byte _landerSuitNumber;
-	byte _v566A8;
-	byte _v566A9;
-	byte _v566AA;
-	byte _v566AB[1000];
-	int _v56A93;
-	byte _v56A99;
+	byte _desertStepsRemaining;
+	byte _desertCorrectDirection;
+	byte _desertPreviousDirection;
+	byte _desertMovements[1000];
+	int _desertWrongDirCtr;
+	byte _balloonAltitude;
 	int _scene1925CurrLevel; //_v56A9C
 	int _v56A9E;
 	byte _v56AA0;
@@ -302,6 +302,8 @@ public:
 	byte _scannerFrequencies[4];
 	byte _stripManager_lookupList[12];
 	byte _scene1550JunkLocations[508];
+	Common::Point _balloonPosition;
+
 	ScannerDialog *_scannerDialog;
 
 	Ringworld2Globals();

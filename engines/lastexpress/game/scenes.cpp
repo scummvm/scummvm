@@ -587,8 +587,8 @@ void SceneManager::updateDoorsAndClock() {
 			Common::String name = Common::String::format("633X%c-%02d.seq", (index - firstIndex) + 65, scene->position);
 			Sequence *sequence = loadSequence1(name, 255);
 
-			// If the sequence doesn't exists, skip
-			if (!sequence || !sequence->isLoaded())
+			// If the sequence doesn't exists or could not be loaded, skip index
+			if (!sequence)
 				continue;
 
 			// Adjust frame data and store in frame list

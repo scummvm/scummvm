@@ -209,6 +209,14 @@ extern const byte scene1550JunkRegions[];
 extern const byte k5A79B[];
 extern const byte k5A7F6[];
 
+// Scene 2900 balloon data
+struct BalloonRecord {
+	int8 x;
+	int8 y;
+	int8 v3;
+};
+extern const BalloonRecord balloonData[];
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

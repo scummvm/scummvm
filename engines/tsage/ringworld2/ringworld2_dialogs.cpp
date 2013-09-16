@@ -272,7 +272,7 @@ void CharacterDialog::show() {
 			default:
 				break;
 			}
-		} else if ((R2_GLOBALS._player._characterScene[1] == 300) && (R2_GLOBALS._scannerFrequencies[1] != 1)) {
+		} else if ((R2_GLOBALS._player._characterScene[R2_QUINN] == 300) && (R2_GLOBALS._scannerFrequencies[1] != 1)) {
 			switch (R2_GLOBALS._scannerFrequencies[1] - 1) {
 			case 2:
 				R2_GLOBALS._sound4.play(45);
@@ -289,7 +289,7 @@ void CharacterDialog::show() {
 			default:
 				break;
 			}
-		} else if (R2_GLOBALS._player._characterScene[2] != 300) {
+		} else if (R2_GLOBALS._player._characterScene[R2_SEEKER] != 300) {
 			R2_GLOBALS._sound4.stop();
 		} else if (R2_GLOBALS._scannerFrequencies[2] == 1) {
 			R2_GLOBALS._sound4.stop();

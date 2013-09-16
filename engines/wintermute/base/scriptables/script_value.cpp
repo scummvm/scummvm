@@ -827,6 +827,17 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_valRef));
 	persistMgr->transfer(TMEMBER(_valString));
 
+	if (!persistMgr->getIsSaving() && !persistMgr->checkVersion(1,2,2)) {
+		// Savegames prior to 1.2.2 stored empty strings as NULL.
+		// We disambiguate those by turning NULL strings into empty
+		// strings if _type is VAL_STRING instead of VAL_NULL.
+
+		if (_type == VAL_STRING && !_valString) {
+			_valString = new char[1];
+			_valString[0] = '\0';
+		}
+	}
+
 	/* // TODO: Convert to Debug-statements.
 	FILE* f = fopen("c:\\val.log", "a+");
 	switch(_type)

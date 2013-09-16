@@ -778,22 +778,22 @@ public:
 };
 
 class Scene3800 : public SceneExt {
-	class Exit1 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 
-	class Exit2 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 
-	class Exit3 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 
-	class Exit4 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -802,19 +802,19 @@ public:
 	SceneObject _object1;
 	SceneObject _object2;
 	SceneActor _actor1;
-	NamedHotspot _item1;
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
+	NamedHotspot _background;
+	NorthExit _northExit;
+	EastExit _eastExit;
+	SouthExit _southExit;
+	WestExit _westExit;
 	Rect _rect1;
 	SequenceManager _sequenceManager1;
 
-	int _field412;
+	int _desertDirection;
 
 	Scene3800();
-	void initScene3800();
-	void sub110BBD();
+	void initExits();
+	void enterArea();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -823,22 +823,22 @@ public:
 };
 
 class Scene3900 : public SceneExt {
-	class Exit1 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 
-	class Exit2 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 
-	class Exit3 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 
-	class Exit4 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -850,10 +850,10 @@ class Scene3900 : public SceneExt {
 public:
 	SceneActor _actor1;
 	NamedHotspot _item1;
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
+	NorthExit _northExit;
+	EastExit _eastExit;
+	SouthExit _southExit;
+	WestExit _westExit;
 	Exit5 _exit5;
 	Rect _rect1;
 

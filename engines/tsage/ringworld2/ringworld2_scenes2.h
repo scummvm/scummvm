@@ -45,23 +45,23 @@ class Scene2000 : public SceneExt {
 		virtual void signal();
 	};
 
-	class Exit1 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit4 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit5 : public SceneExit {
+	class DoorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -72,11 +72,11 @@ public:
 	NamedHotspot _item1;
 	SceneActor _object1;
 	SceneActor _objList1[11];
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
-	Exit5 _exit5;
+	WestExit _westExit;
+	EastExit _eastExit;
+	SouthExit _southExit;
+	NorthExit _northExit;
+	DoorExit _doorExit;
 	Action1 _action1, _action2, _action3, _action4, _action5;
 	SequenceManager _sequenceManager;
 
@@ -230,11 +230,11 @@ public:
 };
 
 class Scene2435 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Companion : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Astor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -247,11 +247,11 @@ public:
 	SpeakerQuinn2435 _quinnSpeaker;
 	SpeakerSeeker2435 _seekerSpeaker;
 	SpeakerPharisha2435 _pharishaSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	Actor1 _actor1;
-	Actor2 _actor2;
+	NamedHotspot _background;
+	NamedHotspot _leftWindow;
+	NamedHotspot _rightWindow;
+	Companion _companion;
+	Astor _astor;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -301,11 +301,11 @@ public:
 };
 
 class Scene2450 : public SceneExt {
-	class Actor2 : public SceneActor {
+	class Parker : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class CareTaker : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -318,12 +318,12 @@ public:
 	SpeakerQuinn2450 _quinnSpeaker;
 	SpeakerSeeker2450 _seekerSpeaker;
 	SpeakerCaretaker2450 _caretakerSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	SceneActor _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
+	NamedHotspot _background;
+	NamedHotspot _post;
+	NamedHotspot _bedspread;
+	SceneActor _companion;
+	Parker _parker;
+	CareTaker _careTaker;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -447,11 +447,11 @@ public:
 };
 
 class Scene2535 : public SceneExt {
-	class Actor3 : public SceneActor {
+	class RebreatherTank : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class TannerMask : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -461,17 +461,17 @@ class Scene2535 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	NamedHotspot _item5;
-	NamedHotspot _item6;
-	NamedHotspot _item7;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	Actor3 _actor3;
-	Actor4 _actor4;
+	NamedHotspot _background;
+	NamedHotspot _roof;
+	NamedHotspot _skin1;
+	NamedHotspot _skin2;
+	NamedHotspot _skin3;
+	NamedHotspot _skin4;
+	NamedHotspot _depression;
+	SceneActor _companion;
+	SceneActor _rope;
+	RebreatherTank _rebreatherTank;
+	TannerMask _tannerMask;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -665,6 +665,101 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
+};
+
+class Scene2900 : public SceneExt {
+	/* Items */
+	class Scenery : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class ControlPanel : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Altimeter : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class KnobLeft : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class KnobRight : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Skip : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+
+	/* Miscellaneous */
+	class Map {
+	private:
+		void moveArea(Rect &r, int xAmt, int yAmt);
+		void moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width);
+		int adjustRect(Common::Rect &r1, const Common::Rect &r2);
+		void drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
+	public:
+		int _mapWidth, _mapHeight;
+		int _field4;
+		int _field6;
+		int _field8;
+		int _fieldA;
+		int _resNum;
+		int _xV, _yV;
+		Rect _bounds;
+
+		Map();
+		void load(int resNum);
+		Common::Point setPosition(const Common::Point &pos, bool initialFlag = false);
+		void synchronize(Serializer &s);
+		void redraw(Rect *updateRect = NULL);
+	};
+public:
+	SceneObject _leftEdge;
+	SceneObject _rightEdge;
+	SceneObject _knob;
+	SceneObject _altimeterContent;
+	SceneObject _knobRightContent;
+	SceneObject _knobLeftContent;
+	Scenery _scenery;
+	ControlPanel _controlPanel;
+	Altimeter _altimeter;
+	KnobLeft _knobLeft;
+	KnobRight _knobRight;
+	Skip _skip;
+	Action1 _action1;
+	Map _map;
+	SceneText _skipText;
+
+	int _field412;
+	bool _altitudeChanging;
+	bool _field416;
+	int _field41C;
+	int _altitudeMajorChange;
+	Common::Point _balloonLocation;
+	Common::Point _balloonScreenPos;
+	int _newAltitude;
+	int _field425;
+	int _field426;
+	int _field427;
+	bool _field8F8;
+
+	Scene2900();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+	virtual void refreshBackground(int xAmount, int yAmount);
 };
 
 } // End of namespace Ringworld2

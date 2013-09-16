@@ -165,10 +165,10 @@ Common::Error LastExpressEngine::run() {
 
 void LastExpressEngine::pollEvents() {
 	Common::Event ev;
-	_eventMan->pollEvent(ev);
+	if (!_eventMan->pollEvent(ev))
+		return;
 
 	switch (ev.type) {
-
 	case Common::EVENT_LBUTTONUP:
 		getGameLogic()->getGameState()->getGameFlags()->mouseLeftClick = true;
 		break;

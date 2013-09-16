@@ -465,44 +465,53 @@ uint32 BasePersistenceManager::getDWORD() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BasePersistenceManager::putString(const Common::String &val) {
-	if (!val.size()) {
-		putString("(null)");
-	} else {
-		_saveStream->writeUint32LE(val.size());
-		_saveStream->writeString(val);
+void BasePersistenceManager::putString(const char *val) {
+	if (!val) {
+		_saveStream->writeUint32LE(0);
+		return;
 	}
+
+	uint32 len = strlen(val);
+
+	_saveStream->writeUint32LE(len + 1);
+	_saveStream->write(val, len);
 }
 
 Common::String BasePersistenceManager::getStringObj() {
-	uint32 len = _loadStream->readUint32LE();
-	char *ret = new char[len + 1];
-	_loadStream->read(ret, len);
-	ret[len] = '\0';
-
-	Common::String retString = ret;
-	delete[] ret;
-
-	if (retString == "(null)") {
-		retString = "";
-	}
-
-	return retString;
+	return getString();
 }
 
 //////////////////////////////////////////////////////////////////////////
 char *BasePersistenceManager::getString() {
 	uint32 len = _loadStream->readUint32LE();
-	char *ret = new char[len + 1];
-	_loadStream->read(ret, len);
-	ret[len] = '\0';
 
-	if (!strcmp(ret, "(null)")) {
-		delete[] ret;
-		return nullptr;
+	if (checkVersion(1,2,2)) {
+		// Version 1.2.2 and above: len == strlen() + 1, NULL has len == 0
+
+		if (len == 0)
+			return nullptr;
+
+		char *ret = new char[len];
+		_loadStream->read(ret, len - 1);
+		ret[len - 1] = '\0';
+
+		return ret;
+
 	} else {
+
+		// Version 1.2.1 and older: NULL strings are represented as "(null)"
+		char *ret = new char[len + 1];
+		_loadStream->read(ret, len);
+		ret[len] = '\0';
+
+		if (!strcmp(ret, "(null)")) {
+			delete[] ret;
+			return nullptr;
+		}
+
 		return ret;
 	}
+
 }
 
 bool BasePersistenceManager::putTimeDate(const TimeDate &t) {
@@ -536,8 +545,7 @@ void BasePersistenceManager::putFloat(float val) {
 	int exponent = 0;
 	float significand = frexp(val, &exponent);
 	Common::String str = Common::String::format("FS%f", significand);
-	_saveStream->writeUint32LE(str.size());
-	_saveStream->writeString(str);
+	putString(str.c_str());
 	_saveStream->writeSint32LE(exponent);
 }
 
@@ -559,8 +567,7 @@ void BasePersistenceManager::putDouble(double val) {
 	int exponent = 0;
 	double significand = frexp(val, &exponent);
 	Common::String str = Common::String::format("DS%f", significand);
-	_saveStream->writeUint32LE(str.size());
-	_saveStream->writeString(str);
+	putString(str.c_str());
 	_saveStream->writeSint32LE(exponent);
 }
 
@@ -711,7 +718,7 @@ bool BasePersistenceManager::transfer(const char *name, const char **val) {
 // Common::String
 bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
 	if (_saving) {
-		putString(*val);
+		putString(val->c_str());
 		return STATUS_OK;
 	} else {
 		char *str = getString();

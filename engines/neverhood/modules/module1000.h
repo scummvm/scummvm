@@ -102,15 +102,6 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-// TODO: Move this to some common file since it's used several times
-
-class StaticScene : public Scene {
-public:
-	StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 // Scene1002
 
 class AsScene1002Ring : public AnimatedSprite {
