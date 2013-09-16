@@ -122,6 +122,8 @@ public:
 	void renderBackbufferToScreen();
 
 	void processAlphaEntries();
+	void clearAlphaEntries() { _alphaDataEntries.clear(); }
+	void removeAlphaEntry(uint32 idNumber) { _alphaDataEntries.erase(idNumber); }
 
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height);
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor, uint32 idNumber);
