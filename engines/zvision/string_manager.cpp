@@ -63,11 +63,16 @@ void StringManager::parseStrFile(const Common::String &fileName) {
 		return;
 	}
 
-	Common::String line = file.readLine();
-
 	uint lineNumber = 0;
 	while (!file.eos()) {
-		Common::String asciiLine = wideToASCII(line.c_str(), line.size());
+		_lastStyle.align = Graphics::kTextAlignLeft;
+		_lastStyle.color = 0;
+		_lastStyle.font = nullptr;
+
+		Common::String asciiLine = readWideLine(file);
+		if (asciiLine.empty()) {
+			continue;
+		}
 
 		char tagString[150];
 		uint tagStringCursor = 0;
@@ -79,16 +84,19 @@ void StringManager::parseStrFile(const Common::String &fileName) {
 			switch (asciiLine[i]) {
 			case '<':
 				inTag = true;
+				if (!_inGameText[lineNumber].fragments.empty()) {
+					_inGameText[lineNumber].fragments.back().text = Common::String(textString, textStringCursor);
+					textStringCursor = 0;
+				}
 				break;
 			case '>':
 				inTag = false;
-				parseTag(Common::String(tagString, tagStringCursor), Common::String(textString, textStringCursor), i);
+				parseTag(Common::String(tagString, tagStringCursor), lineNumber);
 				tagStringCursor = 0;
-				textStringCursor = 0;
 				break;
 			default:
 				if (inTag) {
-					textString[tagStringCursor] = asciiLine[i];
+					tagString[tagStringCursor] = asciiLine[i];
 					tagStringCursor++;
 				} else {
 					textString[textStringCursor] = asciiLine[i];
