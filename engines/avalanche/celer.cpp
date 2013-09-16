@@ -60,19 +60,19 @@ void Celer::updateBackgroundSprites() {
 	switch (_vm->_gyro->_room) {
 	case kRoomOutsideArgentPub:
 		if ((_vm->_gyro->_roomTime % 12) == 0)
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 12) % 4);
+			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 12) % 4);
 		break;
 	case kRoomBrummieRoad:
 		if ((_vm->_gyro->_roomTime % 2) == 0)
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 2) % 4);
+			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 2) % 4);
 		break;
 	case kRoomBridge:
 		if ((_vm->_gyro->_roomTime % 2) == 0)
-			drawBackgroundSprite(-1, -1, 4 + (_vm->_gyro->_roomTime / 2) % 4);
+			drawBackgroundSprite(-1, -1, 3 + (_vm->_gyro->_roomTime / 2) % 4);
 		break;
 	case kRoomYours:
 		if ((!_vm->_gyro->_avvyIsAwake) && ((_vm->_gyro->_roomTime % 4) == 0))
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 12) % 2);
+			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 12) % 2);
 		break;
 	case kRoomArgentPub:
 		if (((_vm->_gyro->_roomTime % 7) == 1) && (_vm->_gyro->_malagauche != 177)) {
@@ -82,16 +82,16 @@ void Celer::updateBackgroundSprites() {
 			case 1:
 			case 11:
 			case 21:
-				drawBackgroundSprite(-1, -1, 12); // Looks forwards.
+				drawBackgroundSprite(-1, -1, 11); // Looks forwards.
 				break;
 			case 8:
 			case 18:
 			case 28:
 			case 32:
-				drawBackgroundSprite(-1, -1, 11); // Looks at you.
+				drawBackgroundSprite(-1, -1, 10); // Looks at you.
 				break;
 			case 30:
-				drawBackgroundSprite(-1, -1, 13); // Winks.
+				drawBackgroundSprite(-1, -1, 12); // Winks.
 				break;
 			case 33:
 				_vm->_gyro->_malagauche = 0;
@@ -102,14 +102,14 @@ void Celer::updateBackgroundSprites() {
 		switch (_vm->_gyro->_roomTime % 200) {
 		case 179:
 		case 197:
-			drawBackgroundSprite(-1, -1, 5); // Dogfood's drinking cycle.
+			drawBackgroundSprite(-1, -1, 4); // Dogfood's drinking cycle.
 			break;
 		case 182:
 		case 194:
-			drawBackgroundSprite(-1, -1, 6);
+			drawBackgroundSprite(-1, -1, 5);
 			break;
 		case 185:
-			drawBackgroundSprite(-1, -1, 7);
+			drawBackgroundSprite(-1, -1, 6);
 			break;
 		case 199:
 			_vm->_gyro->_npcFacing = 177; // Impossible value for this.
@@ -127,7 +127,7 @@ void Celer::updateBackgroundSprites() {
 				direction = 4;
 
 			if (direction != _vm->_gyro->_npcFacing) { // Dogfood.
-				drawBackgroundSprite(-1, -1, direction);
+				drawBackgroundSprite(-1, -1, direction - 1);
 				_vm->_gyro->_npcFacing = direction;
 			}
 		}
@@ -136,16 +136,16 @@ void Celer::updateBackgroundSprites() {
 		if ((_vm->_gyro->_roomTime % 3) == 0) {
 			switch ((_vm->_gyro->_roomTime / int32(3)) % int32(6)) {
 			case 4:
-				drawBackgroundSprite(-1, -1, 1);
+				drawBackgroundSprite(-1, -1, 0);
 				break;
 			case 1:
 			case 3:
 			case 5:
-				drawBackgroundSprite(-1, -1, 2);
+				drawBackgroundSprite(-1, -1, 1);
 				break;
 			case 0:
 			case 2:
-				drawBackgroundSprite(-1, -1, 3);
+				drawBackgroundSprite(-1, -1, 2);
 				break;
 			}
 		}
@@ -165,7 +165,7 @@ void Celer::updateBackgroundSprites() {
 				direction = 3; // Right.
 
 			if (direction != _vm->_gyro->_npcFacing) { // du Lustie.
-				drawBackgroundSprite(-1, -1, direction);
+				drawBackgroundSprite(-1, -1, direction - 1);
 				_vm->_gyro->_npcFacing = direction;
 			}
 		}
@@ -174,10 +174,10 @@ void Celer::updateBackgroundSprites() {
 		if ((!_vm->_gyro->_aylesIsAwake) && (_vm->_gyro->_roomTime % 14 == 0)) {
 			switch ((_vm->_gyro->_roomTime / 14) % 2) {
 			case 0:
-				drawBackgroundSprite(-1, -1, 1);  // Frame 2: EGA.
+				drawBackgroundSprite(-1, -1, 0);  // Frame 2: EGA.
 				break;
 			case 1:
-				drawBackgroundSprite(-1, -1, 3); // Frame 1: Natural.
+				drawBackgroundSprite(-1, -1, 2); // Frame 1: Natural.
 				break;
 			}
 		}
@@ -186,10 +186,10 @@ void Celer::updateBackgroundSprites() {
 		if (_vm->_gyro->_tiedUp) {
 			switch (_vm->_gyro->_roomTime % 54) {
 			case 20:
-				drawBackgroundSprite(-1, -1, 4); // Frame 4: Avalot blinks.
+				drawBackgroundSprite(-1, -1, 3); // Frame 4: Avalot blinks.
 				break;
 			case 23:
-				drawBackgroundSprite(-1, -1, 2); // Frame 1: Back to normal.
+				drawBackgroundSprite(-1, -1, 1); // Frame 1: Back to normal.
 				break;
 			}
 		}
@@ -209,23 +209,23 @@ void Celer::updateBackgroundSprites() {
 			direction--; // Blinks.
 
 		if (direction != _vm->_gyro->_npcFacing) { // Port.
-			drawBackgroundSprite(-1, -1, direction);
+			drawBackgroundSprite(-1, -1, direction - 1);
 			_vm->_gyro->_npcFacing = direction;
 		}
 
 		switch (_vm->_gyro->_roomTime % 50) {
 		case 45 :
-			drawBackgroundSprite(-1, -1, 9); // Spurge blinks.
+			drawBackgroundSprite(-1, -1, 8); // Spurge blinks.
 			break;
 		case 49 :
-			drawBackgroundSprite(-1, -1, 10);
+			drawBackgroundSprite(-1, -1, 9);
 			break;
 		}
 		break;
 	  }
 	case kRoomDucks: {
 		if ((_vm->_gyro->_roomTime % 3) == 0) // The fire flickers.
-			drawBackgroundSprite(-1, -1, 1 + (_vm->_gyro->_roomTime / 3) % 3);
+			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 3) % 3);
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
@@ -241,7 +241,7 @@ void Celer::updateBackgroundSprites() {
 			direction++; // Duck blinks.
 
 		if (direction != _vm->_gyro->_npcFacing) { // Duck.
-			drawBackgroundSprite(-1, -1, direction);
+			drawBackgroundSprite(-1, -1, direction - 1);
 			_vm->_gyro->_npcFacing = direction;
 		}
 		break;
@@ -321,23 +321,23 @@ void Celer::forgetBackgroundSprites() {
 	}
 }
 
-void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
-	which--; // For the difference between the Pascal and C array indexes.
-	//setactivepage(3);
-	warning("STUB: Celer::show_one()");
-
-	if (_sprites[which]._x > kOnDisk) {
+/**
+ * Draw background animation
+ * @remarks	Originally called 'show_one'
+ */
+void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte sprId) {
+	if (_sprites[sprId]._x > kOnDisk) {
 		if (destX < 0) {
-			destX = _sprites[which]._x * 8;
-			destY = _sprites[which]._y;
+			destX = _sprites[sprId]._x * 8;
+			destY = _sprites[sprId]._y;
 		}
-		drawSprite(destX, destY, _sprites[which]);
+		drawSprite(destX, destY, _sprites[sprId]);
 	} else {
 		Common::File f;
 		if (!f.open(_filename)) // Filename was set in loadBackgroundSprites().
 			return; // We skip because some rooms don't have sprites in the background.
 
-		f.seek(_offsets[which]);
+		f.seek(_offsets[sprId]);
 
 		SpriteType sprite;
 		sprite._type = PictureType(f.readByte());
@@ -358,9 +358,6 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte which) {
 		sprite._picture.free();
 		f.close();
 	}
-
-	//setactivepage(1 - cp);
-	warning("STUB: Celer::show_one()");
 }
 
 

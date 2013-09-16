@@ -232,7 +232,7 @@ void Timer::loseTimer(byte which) {
 
 void Timer::openDrawbridge() {
 	_vm->_gyro->_drawbridgeOpen++;
-	_vm->_celer->drawBackgroundSprite(-1, -1, _vm->_gyro->_drawbridgeOpen - 1);
+	_vm->_celer->drawBackgroundSprite(-1, -1, _vm->_gyro->_drawbridgeOpen - 2);
 
 	if (_vm->_gyro->_drawbridgeOpen == 4)
 		_vm->_gyro->_magics[1]._operation = Gyro::kMagicNothing; // You may enter the drawbridge.
@@ -274,7 +274,7 @@ void Timer::bang2() {
 void Timer::stairs() {
 	_vm->_gyro->blip();
 	_vm->_animation->_sprites[0].walkTo(3);
-	_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 	_vm->_gyro->_brummieStairs = 2;
 	_vm->_gyro->_magics[10]._operation = Gyro::kMagicSpecial;
 	_vm->_gyro->_magics[10]._data = 2; // Reached the bottom of the stairs.
@@ -393,17 +393,17 @@ void Timer::jacquesWakesUp() {
 
 	switch (_vm->_gyro->_jacquesState) { // Additional pictures.
 	case 1 :
-		_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Eyes open.
+		_vm->_celer->drawBackgroundSprite(-1, -1, 0); // Eyes open.
 		_vm->_scrolls->displayScrollChain('Q', 45);
 		break;
 	case 2 : // Going through the door.
-		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor.
-		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // But going through the door.
+		_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Not on the floor.
+		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // But going through the door.
 		_vm->_gyro->_magics[5]._operation = Gyro::kMagicNothing; // You can't wake him up now.
 		break;
 	case 3 :  // Gone through the door.
-		_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Not on the floor, either.
-		_vm->_celer->drawBackgroundSprite(-1, -1, 4); // He's gone... so the door's open.
+		_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Not on the floor, either.
+		_vm->_celer->drawBackgroundSprite(-1, -1, 3); // He's gone... so the door's open.
 		_vm->_gyro->_whereIs[Gyro::kPeopleJacques - 150] = 0; // Gone!
 		break;
 	}
@@ -433,7 +433,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 	spr->walkTo(2); // He walks over to you.
 
 	// Let's get the door opening.
-	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
+	_vm->_celer->drawBackgroundSprite(-1, -1, 0);
 	_vm->_sequence->firstShow(2);
 	_vm->_sequence->startToClose();
 
@@ -449,7 +449,7 @@ void Timer::naughtyDuke2() {
 }
 
 void Timer::naughtyDuke3() {
-	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
+	_vm->_celer->drawBackgroundSprite(-1, -1, 0);
 	_vm->_sequence->firstShow(2);
 	_vm->_sequence->startToClose();
 }
@@ -492,7 +492,7 @@ void Timer::jump() {
 		if (_vm->_gyro->_carryNum >= kCarryLimit)
 			_vm->_scrolls->displayText("You fail to grab it, because your hands are full.");
 		else {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_gyro->_arrowInTheDoor = false; // You've got it.
 			_vm->_gyro->_objects[Gyro::kObjectBolt - 1] = true;
 			_vm->_lucerna->refreshObjectList();
@@ -508,7 +508,7 @@ void Timer::crapulusSaysSpludOut() {
 }
 
 void Timer::buyDrinks() {
-	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
+	_vm->_celer->drawBackgroundSprite(-1, -1, 10); // Malagauche gets up again.
 	_vm->_gyro->_malagauche = 0;
 
 	_vm->_scrolls->displayScrollChain('D', _vm->_gyro->_drinking); // Display message about it.
@@ -520,7 +520,7 @@ void Timer::buyDrinks() {
 }
 
 void Timer::buyWine() {
-	_vm->_celer->drawBackgroundSprite(-1, -1, 11); // Malagauche gets up again.
+	_vm->_celer->drawBackgroundSprite(-1, -1, 10); // Malagauche gets up again.
 	_vm->_gyro->_malagauche = 0;
 
 	_vm->_scrolls->displayScrollChain('D', 50); // You buy the wine.
@@ -630,7 +630,7 @@ void Timer::avvySitDown() {
 	if (avvy->_homing)    // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
-		_vm->_celer->drawBackgroundSprite(-1, -1, 3);
+		_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 		_vm->_gyro->_sittingInPub = true;
 		_vm->_gyro->_userMovesAvvy = false;
 		avvy->_visible = false;

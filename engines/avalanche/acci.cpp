@@ -871,7 +871,7 @@ bool Acci::isHolding() {
 
 void Acci::openBox(bool isOpening) {
 	if ((_vm->_gyro->_room == kRoomYours) && (_thing == 54)) {
-		_vm->_celer->drawBackgroundSprite(-1, -1, 5);
+		_vm->_celer->drawBackgroundSprite(-1, -1, 4);
 
 		_vm->_celer->updateBackgroundSprites();
 		_vm->_animation->animLink();
@@ -880,7 +880,7 @@ void Acci::openBox(bool isOpening) {
 		_vm->_system->delayMillis(55);
 
 		if (!isOpening) {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 			_vm->_celer->updateBackgroundSprites();
 			_vm->_animation->animLink();
 			_vm->_graphics->refreshScreen();
@@ -1315,7 +1315,7 @@ void Acci::standUp() {
 			_vm->_gyro->_userMovesAvvy = true;
 			_vm->_animation->appearPed(0, 1);
 			_vm->_animation->_direction = Animation::kDirLeft;
-			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Picture of empty pillow.
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Picture of empty pillow.
 			_vm->_lucerna->incScore(1);
 			_vm->_gyro->_avvyInBed = false;
 			_vm->_timer->loseTimer(Timer::kReasonArkataShouts);
@@ -1329,7 +1329,7 @@ void Acci::standUp() {
 
 	case kRoomNottsPub:
 		if (_vm->_gyro->_sittingInPub)  {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 4); // Not sitting down.
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Not sitting down.
 			_vm->_animation->_sprites[0]._visible = true; // But standing up.
 			_vm->_animation->appearPed(0, 3); // And walking away.
 			_vm->_gyro->_sittingInPub = false; // Really not sitting down.
@@ -1347,12 +1347,12 @@ void Acci::getProc(char thing) {
 	case kRoomYours:
 		if (_vm->_animation->inField(1)) {
 			if (_vm->_gyro->_boxContent == thing) {
-				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 4);
 				_vm->_scrolls->displayText("OK, I've got it.");
 				_vm->_gyro->_objects[thing - 1] = true;
 				_vm->_lucerna->refreshObjectList();
 				_vm->_gyro->_boxContent = kNothing;
-				_vm->_celer->drawBackgroundSprite(-1, -1, 6);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 			} else {
 				Common::String tmpStr = Common::String::format("I can't see %s in the box.", _vm->_gyro->getItem(thing).c_str());
 				_vm->_scrolls->displayText(tmpStr);
@@ -1368,7 +1368,7 @@ void Acci::getProc(char thing) {
 					_vm->_scrolls->displayText("It's not there, Avvy.");
 				else {
 					// OK: we're taking the pen, and it's there.
-					_vm->_celer->drawBackgroundSprite(-1, -1, 4); // No pen there now.
+					_vm->_celer->drawBackgroundSprite(-1, -1, 3); // No pen there now.
 					_vm->_animation->callSpecial(3); // Zap!
 					_vm->_gyro->_takenPen = true;
 					_vm->_gyro->_objects[Gyro::kObjectPen - 1] = true;
@@ -1389,7 +1389,7 @@ void Acci::getProc(char thing) {
 		break;
 	case kRoomRobins:
 		if ((thing == Gyro::kObjectMushroom) & (_vm->_animation->inField(0)) & (_vm->_gyro->_mushroomGrowing)) {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_scrolls->displayText("Got it!");
 			_vm->_gyro->_mushroomGrowing = false;
 			_vm->_gyro->_takenMushroom = true;
@@ -1608,8 +1608,8 @@ void Acci::doThat() {
 							_vm->_gyro->_objects[Gyro::kObjectBadge - 1] = false;
 							_vm->_gyro->_objects[Gyro::kObjectHabit - 1] = true;
 							_vm->_gyro->_givenBadgeToIby = true;
+							_vm->_celer->drawBackgroundSprite(-1, -1, 7);
 							_vm->_celer->drawBackgroundSprite(-1, -1, 8);
-							_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 						} else
 							heyThanks();
 						break;
@@ -1791,7 +1791,7 @@ void Acci::doThat() {
 				_vm->_gyro->_objects[Gyro::kObjectLute - 1] = true;
 				_vm->_lucerna->refreshObjectList();
 				_vm->_gyro->_wonNim = true;
-				_vm->_celer->drawBackgroundSprite(-1, -1, 1); // Show the settle with no lute on it.
+				_vm->_celer->drawBackgroundSprite(-1, -1, 0); // Show the settle with no lute on it.
 				_vm->_lucerna->incScore(7); // 7 points for winning!
 
 				if (_vm->_gyro->_playedNim == 1)
@@ -1953,11 +1953,11 @@ void Acci::doThat() {
 					if (_vm->_gyro->_alcoholLevel == 0)
 						_vm->_lucerna->incScore(3);
 
-					_vm->_celer->drawBackgroundSprite(-1, -1, 12);
+					_vm->_celer->drawBackgroundSprite(-1, -1, 11);
 					_vm->_scrolls->displayText(booze[_thing - 51] + ", please." + Scrolls::kControlRegister + '1' + Scrolls::kControlSpeechBubble);
 					_vm->_gyro->_drinking = _thing;
 
-					_vm->_celer->drawBackgroundSprite(-1, -1, 10);
+					_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 					_vm->_gyro->_malagauche = 177;
 					_vm->_timer->addTimer(27, Timer::kProcBuyDrinks, Timer::kReasonDrinks);
 					break;
@@ -1978,12 +1978,12 @@ void Acci::doThat() {
 							return;
 						}
 
-						_vm->_celer->drawBackgroundSprite(-1, -1, 12);
+						_vm->_celer->drawBackgroundSprite(-1, -1, 11);
 						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
 						_vm->_scrolls->displayText(tmpStr);
 						if (_vm->_gyro->_alcoholLevel == 0)
 							_vm->_lucerna->incScore(3);
-						_vm->_celer->drawBackgroundSprite(-1, -1, 10);
+						_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 						_vm->_gyro->_malagauche = 177;
 
 						_vm->_timer->addTimer(27, Timer::kProcBuyWine, Timer::kReasonDrinks);
@@ -2153,7 +2153,7 @@ void Acci::doThat() {
 					_vm->_gyro->_avvyIsAwake = true;
 					_vm->_lucerna->incScore(1);
 					_vm->_gyro->_avvyInBed = true;
-					_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Picture of Avvy, awake in bed.
+					_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Picture of Avvy, awake in bed.
 					if (_vm->_gyro->_teetotal)
 						_vm->_scrolls->displayScrollChain('d', 13);
 				} else

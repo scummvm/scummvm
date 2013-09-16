@@ -445,7 +445,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	switch (room) {
 	case kRoomYours:
 		if (_vm->_gyro->_avvyInBed) {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_timer->addTimer(100, Timer::kProcArkataShouts, Timer::kReasonArkataShouts);
 		}
@@ -545,7 +545,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case kRoomBridge:
 		if (_vm->_gyro->_drawbridgeOpen == 4) { // open
-			_vm->_celer->drawBackgroundSprite(-1, -1, 3); // Position of drawbridge
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2); // Position of drawbridge
 			_vm->_graphics->refreshBackground();
 			_vm->_gyro->_magics[kColorGreen - 1]._operation = Gyro::kMagicNothing; // You may enter the drawbridge.
 		}
@@ -571,10 +571,10 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		}
 
 		if (_vm->_gyro->_tiedUp)
-			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 
 		if (!_vm->_gyro->_mushroomGrowing)
-			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 		_vm->_graphics->refreshBackground();
 		break;
 
@@ -648,11 +648,11 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case kRoomArgentPub:
 		if (_vm->_gyro->_wonNim)
-			_vm->_celer->drawBackgroundSprite(-1, -1, 1);   // No lute by the settle.
+			_vm->_celer->drawBackgroundSprite(-1, -1, 0);   // No lute by the settle.
 		_vm->_gyro->_malagauche = 0; // Ready to boot Malagauche
 		if (_vm->_gyro->_givenBadgeToIby) {
+			_vm->_celer->drawBackgroundSprite(-1, -1, 7);
 			_vm->_celer->drawBackgroundSprite(-1, -1, 8);
-			_vm->_celer->drawBackgroundSprite(-1, -1, 9);
 		}
 		_vm->_graphics->refreshBackground();
 		break;
@@ -668,7 +668,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 		if (_vm->_gyro->_geidaFollows) {
 			putGeidaAt(4, ped);
 			if (_vm->_gyro->_lustieIsAsleep) {
-				_vm->_celer->drawBackgroundSprite(-1, -1, 5);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 4);
 				_vm->_graphics->refreshBackground();
 			}
 		}
@@ -677,14 +677,14 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case kRoomMusicRoom:
 		if (_vm->_gyro->_jacquesState > 0) {
 			_vm->_gyro->_jacquesState = 5;
-			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
-			_vm->_celer->drawBackgroundSprite(-1, -1, 4);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 			_vm->_gyro->_magics[kColorBrown - 1]._operation = Gyro::kMagicNothing;
 			_vm->_gyro->_whereIs[Gyro::kPeopleJacques - 150] = 0;
 		}
 		if (ped != 0) {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(6);
 			_vm->_sequence->thenShow(5);
@@ -695,7 +695,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case kRoomOutsideNottsPub:
 		if (ped == 2) {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(3);
 			_vm->_sequence->thenShow(2);
@@ -707,7 +707,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case kRoomOutsideArgentPub:
 		if (ped == 2)  {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 6);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 5);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(6);
 			_vm->_sequence->thenShow(5);
@@ -735,7 +735,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case kRoomInsideCardiffCastle:
 		if (ped > 0) {
 			_vm->_animation->_sprites[1].init(10, false, _vm->_animation); // Define the dart.
-			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 0);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(1);
 			if (_vm->_gyro->_arrowInTheDoor)
@@ -744,22 +744,22 @@ void Lucerna::enterRoom(byte room, byte ped) {
 				_vm->_sequence->thenShow(2);
 
 			if (_vm->_gyro->_takenPen)
-				_vm->_celer->drawBackgroundSprite(-1, -1, 4);
+				_vm->_celer->drawBackgroundSprite(-1, -1, 3);
 
 			_vm->_sequence->startToClose();
 		} else {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 0);
 			if (_vm->_gyro->_arrowInTheDoor)
-				_vm->_celer->drawBackgroundSprite(-1, -1, 3);
-			else
 				_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+			else
+				_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 		}
 		break;
 
 	case kRoomAvvysGarden:
 		if (ped == 1)  {
-			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(2);
 			_vm->_sequence->thenShow(1);
@@ -780,7 +780,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			_vm->_sequence->start_to_close();
 #endif
 
-			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(2);
 			_vm->_sequence->thenShow(1);
@@ -791,7 +791,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case kRoomAylesOffice:
 		if (_vm->_gyro->_aylesIsAwake)
-			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 		_vm->_graphics->refreshBackground();
 		break; // Ayles awake.
 
@@ -812,14 +812,14 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	case kRoomNottsPub:
 		if (_vm->_gyro->_sittingInPub)
-			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 		_vm->_gyro->_npcFacing = 1; // Port.
 		break;
 
 	case kRoomOutsideDucks:
 		if (ped == 2) {
 			// Shut the door
-			_vm->_celer->drawBackgroundSprite(-1, -1, 3);
+			_vm->_celer->drawBackgroundSprite(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(3);
 			_vm->_sequence->firstShow(2);
