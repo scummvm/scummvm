@@ -455,12 +455,12 @@ void Ringworld2Globals::reset() {
 	_landerSuitNumber = 2;
 	_v566A4 = 1;
 	_v566A5 = 0;
-	_v566A8 = 5;
-	_v566A9 = 0;
-	_v566AA = 0;
+	_desertStepsRemaining = 5;
+	_desertCorrectDirection = 0;
+	_desertPreviousDirection = 0;
 	for (int i = 0; i < 1000; i++)
-		_v566AB[i] = 0;
-	_v56A93 = -1;
+		_desertMovements[i] = 0;
+	_desertWrongDirCtr = -1;
 	_balloonAltitude = 5;
 	_scene1925CurrLevel = 0; //_v56A9C
 	_v56A9E = 0;
@@ -528,7 +528,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_rimTransportLocation);
 	s.syncAsSint16LE(_landerSuitNumber);
 	s.syncAsSint16LE(_v566A6);
-	s.syncAsSint16LE(_v56A93);
+	s.syncAsSint16LE(_desertWrongDirCtr);
 	s.syncAsSint16LE(_scene1925CurrLevel); // _v56A9C
 	s.syncAsSint16LE(_v56A9E);
 	s.syncAsSint16LE(_v56AA2);
@@ -555,9 +555,9 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsByte(_v565AE);
 	s.syncAsByte(_v566A4);
 	s.syncAsByte(_v566A5);
-	s.syncAsByte(_v566A8);
-	s.syncAsByte(_v566A9);
-	s.syncAsByte(_v566AA);
+	s.syncAsByte(_desertStepsRemaining);
+	s.syncAsByte(_desertCorrectDirection);
+	s.syncAsByte(_desertPreviousDirection);
 	s.syncAsByte(_v56AA0);
 	s.syncAsByte(_v56AA1);
 	s.syncAsByte(_v56AA6);
@@ -567,7 +567,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	for (i = 0; i < 14; ++i)
 		s.syncAsByte(_spillLocation[i]);
 	for (i = 0; i < 1000; ++i)
-		s.syncAsByte(_v566AB[i]);
+		s.syncAsByte(_desertMovements[i]);
 	s.syncAsByte(_balloonAltitude);
 	for (i = 0; i < 12; ++i)
 		s.syncAsByte(_stripManager_lookupList[i]);

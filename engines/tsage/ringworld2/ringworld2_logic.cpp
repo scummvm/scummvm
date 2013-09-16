@@ -294,6 +294,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Teleport outside
 		return new Scene3700();
 	case 3800:
+		// Desert
 		return new Scene3800();
 	case 3900:
 		return new Scene3900();
@@ -2290,13 +2291,13 @@ void ScannerDialog::Button::reset() {
 			break;
 		case 3800:
 		case 3900:
-			if ((R2_GLOBALS._v56A93 + 1) == 0 && R2_GLOBALS._v566A9 == 0) {
+			if ((R2_GLOBALS._desertWrongDirCtr + 1) == 0 && R2_GLOBALS._desertCorrectDirection == 0) {
 				do {
-					R2_GLOBALS._v566A9 = R2_GLOBALS._randomSource.getRandomNumber(3);
-				} while (R2_GLOBALS._v566A9 == R2_GLOBALS._v566AA);
+					R2_GLOBALS._desertCorrectDirection = R2_GLOBALS._randomSource.getRandomNumber(3) + 1;
+				} while (R2_GLOBALS._desertCorrectDirection == R2_GLOBALS._desertPreviousDirection);
 			}
 
-			scanner._obj4.setup(4, 7, R2_GLOBALS._v566A9);
+			scanner._obj4.setup(4, 7, R2_GLOBALS._desertCorrectDirection);
 			if (!R2_GLOBALS.getFlag(46))
 				R2_GLOBALS.setFlag(46);
 			break;

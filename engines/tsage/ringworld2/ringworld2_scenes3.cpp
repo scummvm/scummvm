@@ -4950,45 +4950,47 @@ void Scene3700::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 3800 -
+ * Scene 3800 - Desert
  *
  *--------------------------------------------------------------------------*/
+
 Scene3800::Scene3800() {
-	_field412 = 0;
+	_desertDirection = 0;
 }
+
 void Scene3800::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_desertDirection);
 }
 
-void Scene3800::Exit1::changeScene() {
+void Scene3800::NorthExit::changeScene() {
 	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
-	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	scene->_field412 = 1;
+	R2_GLOBALS._player.disableControl();
+	scene->_desertDirection = 1;
 
 	if (R2_GLOBALS.getFlag(46)) {
-		if (scene->_field412 == R2_GLOBALS._v566A9) {
-			R2_GLOBALS._v566AA = 3;
-			if (R2_GLOBALS._v56A93 + 1 == 0) {
-				R2_GLOBALS._v566A8--;
-				R2_GLOBALS._v566A9 = 0;
+		if (scene->_desertDirection == R2_GLOBALS._desertCorrectDirection) {
+			R2_GLOBALS._desertPreviousDirection = 3;
+			if (R2_GLOBALS._desertWrongDirCtr + 1 == 0) {
+				R2_GLOBALS._desertStepsRemaining--;
+				R2_GLOBALS._desertCorrectDirection = 0;
 			} else {
-				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
-				R2_GLOBALS._v56A93--;
+				R2_GLOBALS._desertCorrectDirection = R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr];
+				R2_GLOBALS._desertWrongDirCtr--;
 			}
 		} else {
-			++R2_GLOBALS._v56A93;
-			if (R2_GLOBALS._v56A93 > 999)
-				R2_GLOBALS._v56A93 = 999;
-			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
-			R2_GLOBALS._v566A9 = 3;
+			++R2_GLOBALS._desertWrongDirCtr;
+			if (R2_GLOBALS._desertWrongDirCtr > 999)
+				R2_GLOBALS._desertWrongDirCtr = 999;
+			R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr] = R2_GLOBALS._desertCorrectDirection;
+			R2_GLOBALS._desertCorrectDirection = 3;
 		}
 	}
 
-	if (R2_GLOBALS._v566A8 == 0)
+	if (R2_GLOBALS._desertStepsRemaining == 0)
 		scene->_sceneMode = 16;
 	else
 		scene->_sceneMode = 11;
@@ -4998,33 +5000,33 @@ void Scene3800::Exit1::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3800::Exit2::changeScene() {
+void Scene3800::EastExit::changeScene() {
 	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	scene->_field412 = 2;
+	scene->_desertDirection = 2;
 
 	if (R2_GLOBALS.getFlag(46)) {
-		if (scene->_field412 == R2_GLOBALS._v566A9) {
-			R2_GLOBALS._v566AA = 4;
-			if (R2_GLOBALS._v56A93 + 1 == 0) {
-				R2_GLOBALS._v566A8--;
-				R2_GLOBALS._v566A9 = 0;
+		if (scene->_desertDirection == R2_GLOBALS._desertCorrectDirection) {
+			R2_GLOBALS._desertPreviousDirection = 4;
+			if (R2_GLOBALS._desertWrongDirCtr + 1 == 0) {
+				R2_GLOBALS._desertStepsRemaining--;
+				R2_GLOBALS._desertCorrectDirection = 0;
 			} else {
-				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
-				R2_GLOBALS._v56A93--;
+				R2_GLOBALS._desertCorrectDirection = R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr];
+				R2_GLOBALS._desertWrongDirCtr--;
 			}
 		} else {
-			++R2_GLOBALS._v56A93;
-			if (R2_GLOBALS._v56A93 > 999)
-				R2_GLOBALS._v56A93 = 999;
-			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
-			R2_GLOBALS._v566A9 = 4;
+			++R2_GLOBALS._desertWrongDirCtr;
+			if (R2_GLOBALS._desertWrongDirCtr > 999)
+				R2_GLOBALS._desertWrongDirCtr = 999;
+			R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr] = R2_GLOBALS._desertCorrectDirection;
+			R2_GLOBALS._desertCorrectDirection = 4;
 		}
 	}
 
-	if (R2_GLOBALS._v566A8 == 0)
+	if (R2_GLOBALS._desertStepsRemaining == 0)
 		scene->_sceneMode = 16;
 	else
 		scene->_sceneMode = 12;
@@ -5034,33 +5036,33 @@ void Scene3800::Exit2::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3800::Exit3::changeScene() {
+void Scene3800::SouthExit::changeScene() {
 	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	scene->_field412 = 3;
+	scene->_desertDirection = 3;
 
 	if (R2_GLOBALS.getFlag(46)) {
-		if (scene->_field412 == R2_GLOBALS._v566A9) {
-			R2_GLOBALS._v566AA = 1;
-			if (R2_GLOBALS._v56A93 + 1 == 0) {
-				R2_GLOBALS._v566A8--;
-				R2_GLOBALS._v566A9 = 0;
+		if (scene->_desertDirection == R2_GLOBALS._desertCorrectDirection) {
+			R2_GLOBALS._desertPreviousDirection = 1;
+			if (R2_GLOBALS._desertWrongDirCtr + 1 == 0) {
+				R2_GLOBALS._desertStepsRemaining--;
+				R2_GLOBALS._desertCorrectDirection = 0;
 			} else {
-				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
-				R2_GLOBALS._v56A93--;
+				R2_GLOBALS._desertCorrectDirection = R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr];
+				R2_GLOBALS._desertWrongDirCtr--;
 			}
 		} else {
-			++R2_GLOBALS._v56A93;
-			if (R2_GLOBALS._v56A93 > 999)
-				R2_GLOBALS._v56A93 = 999;
-			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
-			R2_GLOBALS._v566A9 = 1;
+			++R2_GLOBALS._desertWrongDirCtr;
+			if (R2_GLOBALS._desertWrongDirCtr > 999)
+				R2_GLOBALS._desertWrongDirCtr = 999;
+			R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr] = R2_GLOBALS._desertCorrectDirection;
+			R2_GLOBALS._desertCorrectDirection = 1;
 		}
 	}
 
-	if (R2_GLOBALS._v566A8 == 0)
+	if (R2_GLOBALS._desertStepsRemaining == 0)
 		scene->_sceneMode = 16;
 	else
 		scene->_sceneMode = 13;
@@ -5070,33 +5072,33 @@ void Scene3800::Exit3::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3800::Exit4::changeScene() {
+void Scene3800::WestExit::changeScene() {
 	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	scene->_field412 = 4;
+	scene->_desertDirection = 4;
 
 	if (R2_GLOBALS.getFlag(46)) {
-		if (scene->_field412 == R2_GLOBALS._v566A9) {
-			R2_GLOBALS._v566AA = 2;
-			if (R2_GLOBALS._v56A93 + 1 == 0) {
-				R2_GLOBALS._v566A8--;
-				R2_GLOBALS._v566A9 = 0;
+		if (scene->_desertDirection == R2_GLOBALS._desertCorrectDirection) {
+			R2_GLOBALS._desertPreviousDirection = 2;
+			if (R2_GLOBALS._desertWrongDirCtr + 1 == 0) {
+				R2_GLOBALS._desertStepsRemaining--;
+				R2_GLOBALS._desertCorrectDirection = 0;
 			} else {
-				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
-				R2_GLOBALS._v56A93--;
+				R2_GLOBALS._desertCorrectDirection = R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr];
+				R2_GLOBALS._desertWrongDirCtr--;
 			}
 		} else {
-			++R2_GLOBALS._v56A93;
-			if (R2_GLOBALS._v56A93 > 999)
-				R2_GLOBALS._v56A93 = 999;
-			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
-			R2_GLOBALS._v566A9 = 2;
+			++R2_GLOBALS._desertWrongDirCtr;
+			if (R2_GLOBALS._desertWrongDirCtr > 999)
+				R2_GLOBALS._desertWrongDirCtr = 999;
+			R2_GLOBALS._desertMovements[R2_GLOBALS._desertWrongDirCtr] = R2_GLOBALS._desertCorrectDirection;
+			R2_GLOBALS._desertCorrectDirection = 2;
 		}
 	}
 
-	if (R2_GLOBALS._v566A8 == 0)
+	if (R2_GLOBALS._desertStepsRemaining == 0)
 		scene->_sceneMode = 16;
 	else
 		scene->_sceneMode = 14;
@@ -5106,28 +5108,28 @@ void Scene3800::Exit4::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3800::initScene3800() {
-	_exit1._enabled = true;
-	_exit2._enabled = true;
-	_exit3._enabled = true;
-	_exit4._enabled = true;
-	_exit1._insideArea = false;
-	_exit2._insideArea = false;
-	_exit3._insideArea = false;
-	_exit4._insideArea = false;
-	_exit1._moving = false;
-	_exit2._moving = false;
-	_exit3._moving = false;
-	_exit4._moving = false;
+void Scene3800::initExits() {
+	_northExit._enabled = true;
+	_eastExit._enabled = true;
+	_southExit._enabled = true;
+	_westExit._enabled = true;
+	_northExit._insideArea = false;
+	_eastExit._insideArea = false;
+	_southExit._insideArea = false;
+	_westExit._insideArea = false;
+	_northExit._moving = false;
+	_eastExit._moving = false;
+	_southExit._moving = false;
+	_westExit._moving = false;
 
 	loadScene(R2_GLOBALS._v566A6);
 
 	R2_GLOBALS._uiElements.draw();
 }
 
-void Scene3800::sub110BBD() {
+void Scene3800::enterArea() {
 	R2_GLOBALS._player.disableControl();
-	switch (_field412) {
+	switch (_desertDirection) {
 	case 0:
 		R2_GLOBALS._player.postInit();
 		R2_GLOBALS._player.setVisage(10);
@@ -5153,7 +5155,7 @@ void Scene3800::sub110BBD() {
 			break;
 		case 3900:
 			_sceneMode = 15;
-			switch (R2_GLOBALS._v566AA - 1) {
+			switch (R2_GLOBALS._desertPreviousDirection - 1) {
 			case 0: {
 				R2_GLOBALS._player.setPosition(Common::Point(160, 220));
 				Common::Point pt(160, 160);
@@ -5228,9 +5230,9 @@ void Scene3800::sub110BBD() {
 }
 
 void Scene3800::postInit(SceneObjectList *OwnerList) {
-	_field412 = 0;
+	_desertDirection = 0;
 
-	initScene3800();
+	initExits();
 
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(231);
@@ -5239,19 +5241,19 @@ void Scene3800::postInit(SceneObjectList *OwnerList) {
 
 	setZoomPercents(87, 40, 144, 100);
 
-	_exit1.setDetails(Rect(14, 87, 305, 125), SHADECURSOR_UP, 3800);
-	_exit1.setDest(Common::Point(160, 126));
-	_exit2.setDetails(Rect(305, 87, 320, 128), EXITCURSOR_E, 3800);
-	_exit2.setDest(Common::Point(312, 145));
-	_exit3.setDetails(Rect(14, 160, 305, 168), SHADECURSOR_DOWN, 3800);
-	_exit3.setDest(Common::Point(160, 165));
-	_exit4.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3800);
-	_exit4.setDest(Common::Point(7, 145));
+	_northExit.setDetails(Rect(14, 87, 305, 125), SHADECURSOR_UP, 3800);
+	_northExit.setDest(Common::Point(160, 126));
+	_eastExit.setDetails(Rect(305, 87, 320, 168), EXITCURSOR_E, 3800);
+	_eastExit.setDest(Common::Point(312, 145));
+	_southExit.setDetails(Rect(14, 160, 305, 168), SHADECURSOR_DOWN, 3800);
+	_southExit.setDest(Common::Point(160, 165));
+	_westExit.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3800);
+	_westExit.setDest(Common::Point(7, 145));
 
 	_rect1.set(0, 0, 320, 87);
-	_item1.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *) NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *) NULL);
 
-	sub110BBD();
+	enterArea();
 }
 
 void Scene3800::signal() {
@@ -5260,33 +5262,33 @@ void Scene3800::signal() {
 		R2_GLOBALS._v566A6 += 15;
 		if (R2_GLOBALS._v566A6 > 3815)
 			R2_GLOBALS._v566A6 -= 20;
-		initScene3800();
-		sub110BBD();
+		initExits();
+		enterArea();
 		break;
 	case 12:
 		R2_GLOBALS._v566A6 += 5;
 		if (R2_GLOBALS._v566A6 > 3815)
 			R2_GLOBALS._v566A6 = 3800;
-		initScene3800();
-		sub110BBD();
+		initExits();
+		enterArea();
 		break;
 	case 13:
 		R2_GLOBALS._v566A6 -= 15;
 		if (R2_GLOBALS._v566A6 < 3800)
 			R2_GLOBALS._v566A6 += 20;
-		initScene3800();
-		sub110BBD();
+		initExits();
+		enterArea();
 		break;
 	case 14:
 		R2_GLOBALS._v566A6 -= 5;
 		if (R2_GLOBALS._v566A6 < 3800)
 			R2_GLOBALS._v566A6 = 3815;
-		initScene3800();
-		sub110BBD();
+		initExits();
+		enterArea();
 		break;
 	case 15:
 		R2_GLOBALS._v56AAB = 0;
-		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl();
 		break;
 	case 16:
 		g_globals->_sceneManager.changeScene(3900);
@@ -5296,22 +5298,22 @@ void Scene3800::signal() {
 		_object1.remove();
 		_object2.remove();
 		R2_GLOBALS._v56AAB = 0;
-		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl();
 		break;
 	case 3805:
-		_exit1._enabled = false;
-		_exit2._enabled = false;
-		_exit3._enabled = false;
-		_exit4._enabled = false;
+		_northExit._enabled = false;
+		_eastExit._enabled = false;
+		_southExit._enabled = false;
+		_westExit._enabled = false;
 		R2_GLOBALS._player._canWalk = false;
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
 		break;
 	case 3806:
-		_exit1._enabled = true;
-		_exit2._enabled = true;
-		_exit3._enabled = true;
-		_exit4._enabled = true;
-		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+		_northExit._enabled = true;
+		_eastExit._enabled = true;
+		_southExit._enabled = true;
+		_westExit._enabled = true;
+		R2_GLOBALS._player.enableControl();
 		break;
 	default:
 		break;
@@ -5350,9 +5352,9 @@ void Scene3900::Exit1::changeScene() {
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	R2_GLOBALS._v566A9 = 3;
-	R2_GLOBALS._v566AA = 1;
-	R2_GLOBALS._v566A8 = 1;
+	R2_GLOBALS._desertCorrectDirection = 3;
+	R2_GLOBALS._desertPreviousDirection = 1;
+	R2_GLOBALS._desertStepsRemaining = 1;
 	scene->_sceneMode = 14;
 
 	Common::Point pt(160, 115);
@@ -5365,9 +5367,9 @@ void Scene3900::Exit2::changeScene() {
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	R2_GLOBALS._v566A9 = 4;
-	R2_GLOBALS._v566AA = 2;
-	R2_GLOBALS._v566A8 = 1;
+	R2_GLOBALS._desertCorrectDirection = 4;
+	R2_GLOBALS._desertPreviousDirection = 2;
+	R2_GLOBALS._desertStepsRemaining = 1;
 	scene->_sceneMode = 14;
 
 	Common::Point pt(330, 145);
@@ -5380,9 +5382,9 @@ void Scene3900::Exit3::changeScene() {
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	R2_GLOBALS._v566A9 = 1;
-	R2_GLOBALS._v566AA = 3;
-	R2_GLOBALS._v566A8 = 1;
+	R2_GLOBALS._desertCorrectDirection = 1;
+	R2_GLOBALS._desertPreviousDirection = 3;
+	R2_GLOBALS._desertStepsRemaining = 1;
 	scene->_sceneMode = 14;
 
 	Common::Point pt(160, 220);
@@ -5395,9 +5397,9 @@ void Scene3900::Exit4::changeScene() {
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
-	R2_GLOBALS._v566A9 = 2;
-	R2_GLOBALS._v566AA = 4;
-	R2_GLOBALS._v566A8 = 1;
+	R2_GLOBALS._desertCorrectDirection = 2;
+	R2_GLOBALS._desertPreviousDirection = 4;
+	R2_GLOBALS._desertStepsRemaining = 1;
 	scene->_sceneMode = 14;
 
 	Common::Point pt(-10, 145);
@@ -5412,7 +5414,7 @@ void Scene3900::Exit5::changeScene() {
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	scene->_sceneMode = 13;
 
-	if (R2_GLOBALS._v566A9 == 4) {
+	if (R2_GLOBALS._desertCorrectDirection == 4) {
 		Common::Point pt(-10, 135);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, scene);
@@ -5422,11 +5424,11 @@ void Scene3900::Exit5::changeScene() {
 		R2_GLOBALS._player.addMover(mover, &pt, scene);
 	}
 
-	R2_GLOBALS._v566A9 = 0;
+	R2_GLOBALS._desertCorrectDirection = 0;
 }
 
 void Scene3900::postInit(SceneObjectList *OwnerList) {
-	if ((R2_GLOBALS._v566AA == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700))
+	if ((R2_GLOBALS._desertPreviousDirection == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700))
 		loadScene(3825);
 	else
 		loadScene(3820);
@@ -5447,9 +5449,9 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	_actor1._effect = 5;
 	_actor1._field9C = _field312;
 	R2_GLOBALS._player._linkedActor = &_actor1;
-	if ((R2_GLOBALS._v566AA == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700)) {
+	if ((R2_GLOBALS._desertPreviousDirection == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700)) {
 //		loadScene(3825);
-		R2_GLOBALS._v566AA = 4;
+		R2_GLOBALS._desertPreviousDirection = 4;
 		_exit1.setDetails(Rect(29, 87, 305, 125), SHADECURSOR_UP, 3900);
 		_exit3.setDetails(Rect(29, 160, 305, 168), SHADECURSOR_DOWN, 3900);
 
@@ -5465,7 +5467,7 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 		_exit5.setDest(Common::Point(24, 135));
 	} else {
 //		loadScene(3820);
-		R2_GLOBALS._v566AA = 2;
+		R2_GLOBALS._desertPreviousDirection = 2;
 		_exit1.setDetails(Rect(14, 87, 290, 125), SHADECURSOR_UP, 3900);
 		_exit3.setDetails(Rect(14, 160, 290, 168), SHADECURSOR_DOWN, 3900);
 
@@ -5503,7 +5505,7 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	_item1.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *)NULL);
 	if (R2_GLOBALS._sceneManager._previousScene == 3800) {
 		_sceneMode = 11;
-		switch (R2_GLOBALS._v566AA - 1) {
+		switch (R2_GLOBALS._desertPreviousDirection - 1) {
 		case 0: {
 			R2_GLOBALS._player.setPosition(Common::Point(160, 115));
 			Common::Point pt(160, 120);
@@ -5553,7 +5555,7 @@ void Scene3900::signal() {
 	// No break on purpose
 	case 12:
 		R2_GLOBALS._v56AAB = 0;
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 13:
 		R2_GLOBALS._sceneManager.changeScene(2700);
@@ -5567,7 +5569,7 @@ void Scene3900::signal() {
 		_exit3._enabled = false;
 		_exit4._enabled = false;
 		R2_GLOBALS._player._canWalk = false;
-		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
 		break;
 	case 3806:
 		_exit1._enabled = true;

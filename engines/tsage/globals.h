@@ -275,11 +275,11 @@ public:
 	byte _v566A5;
 	int _v566A6;
 	byte _landerSuitNumber;
-	byte _v566A8;
-	byte _v566A9;
-	byte _v566AA;
-	byte _v566AB[1000];
-	int _v56A93;
+	byte _desertStepsRemaining;
+	byte _desertCorrectDirection;
+	byte _desertPreviousDirection;
+	byte _desertMovements[1000];
+	int _desertWrongDirCtr;
 	byte _balloonAltitude;
 	int _scene1925CurrLevel; //_v56A9C
 	int _v56A9E;
