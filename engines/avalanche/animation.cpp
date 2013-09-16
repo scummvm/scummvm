@@ -70,13 +70,13 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	if (!_stat._name.empty())
 		_stat._name.clear();
 	byte nameSize = inf.readByte();
-	for (byte i = 0; i < nameSize; i++)
+	for (int i = 0; i < nameSize; i++)
 		_stat._name += inf.readByte();
 	inf.skip(12 - nameSize);
 
 	//inf.skip(1); // Same as above.
 	byte commentSize = inf.readByte();
-	for (byte i = 0; i < commentSize; i++)
+	for (int i = 0; i < commentSize; i++)
 		_stat._comment += inf.readByte();
 	inf.skip(16 - commentSize);
 
@@ -93,10 +93,10 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
 		_info._xWidth++;
-	for (byte i = 0; i < _stat._frameNum; i++) {
+	for (int i = 0; i < _stat._frameNum; i++) {
 		_info._sil[_animCount] = new SilType[11 * (_info._yLength + 1)];
 		_info._mani[_animCount] = new ManiType[_info._size - 6];
-		for (byte j = 0; j <= _info._yLength; j++)
+		for (int j = 0; j <= _info._yLength; j++)
 			inf.read((*_info._sil[_animCount])[j], _info._xWidth);
 		inf.read(*_info._mani[_animCount], _info._size - 6);
 
@@ -163,7 +163,7 @@ void AnimationType::appear(int16 wx, int16 wy, byte wf) {
  * @remarks	Originally called 'collision_check'
  */
 bool AnimationType::checkCollision() {
-	for (byte i = 0; i < _anim->kSpriteNumbMax; i++) {
+	for (int i = 0; i < _anim->kSpriteNumbMax; i++) {
 		AnimationType *spr = &_anim->_sprites[i];
 		if (spr->_quick && (spr->_id != _id) && (_x + _info._xLength > spr->_x) && (_x < spr->_x + spr->_info._xLength) && (spr->_y == _y))
 			return true;
@@ -343,7 +343,7 @@ void AnimationType::remove() {
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
 		_info._xWidth++;
-	for (byte i = 0; i < _stat._frameNum; i++) {
+	for (int i = 0; i < _stat._frameNum; i++) {
 		assert(_animCount > 0);
 		_animCount--;
 		delete[] _info._mani[_animCount];
@@ -1200,7 +1200,7 @@ void Animation::drawSprites() {
 
 	do {
 		ok = true;
-		for (byte i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			if (((order[i] != -1) && (order[i + 1] != -1))
 					&& (_sprites[order[i]]._y > _sprites[order[i + 1]]._y)) {
 				// Swap them!
@@ -1215,7 +1215,7 @@ void Animation::drawSprites() {
 
 	_vm->_graphics->refreshBackground();
 
-	for (byte i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		if (order[i] > -1)
 			_sprites[order[i]].draw();
 	}
@@ -1364,7 +1364,7 @@ bool Animation::nearDoor() {
 	int16 ux = _sprites[0]._x;
 	int16 uy = _sprites[0]._y + _sprites[0]._info._yLength;
 
-	for (byte i = 8; i < _vm->_gyro->_fieldNum; i++) {
+	for (int i = 8; i < _vm->_gyro->_fieldNum; i++) {
 		FieldType *curField = &_vm->_gyro->_fields[i];
 		if ((ux >= curField->_x1) && (ux <= curField->_x2) && (uy >= curField->_y1) && (uy <= curField->_y2))
 			return true;

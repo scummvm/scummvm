@@ -88,7 +88,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 	x /= 8;
 	y++;
 	int16 i = 0;
-	for (byte xx = 0; xx < lz; xx++) {
+	for (int xx = 0; xx < lz; xx++) {
 		switch (z[xx]) {
 		case kControlRoman:
 			_currentFont = kFontStyleRoman;
@@ -97,7 +97,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 			_currentFont = kFontStyleItalic;
 			break;
 		default: {
-			for (byte yy = 0; yy < 12; yy++)
+			for (int yy = 0; yy < 12; yy++)
 				itw[(byte)z[xx]][yy] = _scrollFonts[_currentFont][(byte)z[xx]][yy + 2];
 
 			// We have to draw the characters one-by-one because of the accidental font changes.
@@ -198,7 +198,7 @@ void Scrolls::store(byte what, TuneType &played) {
 bool Scrolls::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
-	for (byte i = 0; i < sizeof(played); i++) {
+	for (int i = 0; i < sizeof(played); i++) {
 		if (played[i] != _vm->_gyro->kTune[i]) {
 			mistakes += 1;
 		}
@@ -244,7 +244,7 @@ void Scrolls::resetScrollDriver() {
 }
 
 void Scrolls::ringBell() {   // Pussy's in the well. Who put her in? Little...
-	for (byte i = 0; i < _vm->_gyro->_scrollBells; i++)
+	for (int i = 0; i < _vm->_gyro->_scrollBells; i++)
 		_vm->_lucerna->errorLed(); // Ring the bell "x" times.
 }
 
@@ -313,7 +313,7 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 
 	int16 lx = 0;
 	int16 ly = (_vm->_gyro->_scrollNum) * 6;
-	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
 		ex = _vm->_gyro->_scroll[i].size() * 8;
 		if (lx < ex)
 			lx = ex;
@@ -384,7 +384,7 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	}
 
 
-	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
 		if (!_vm->_gyro->_scroll[i].empty())
 			switch (_vm->_gyro->_scroll[i][_vm->_gyro->_scroll[i].size() - 1]) {
 			case kControlCenter:
@@ -456,7 +456,7 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 
 	int16 xl = 0;
 	int16 yl = _vm->_gyro->_scrollNum * 5;
-	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
 		uint16 textWidth = _vm->_gyro->_scroll[i].size() * 8;
 		if (textWidth > xl)
 			xl = textWidth;
@@ -506,7 +506,7 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
-	for (byte i = 0; i < _vm->_gyro->_scrollNum; i++) {
+	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
 		int16 x = xc + _vm->_gyro->_talkX - _vm->_gyro->_scroll[i].size() / 2 * 8;
 		bool offset = _vm->_gyro->_scroll[i].size() % 2;
 		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->_scroll[i], _vm->_gyro->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_gyro->_talkFontColor);
@@ -732,7 +732,7 @@ void Scrolls::callScrollDriver() {
 					}
 					break;
 				case 11:
-					for (byte j = 0; j < kObjectNum; j++) {
+					for (int j = 0; j < kObjectNum; j++) {
 						if (_vm->_gyro->_objects[j]) 
 							displayText(_vm->_gyro->getItem(j) + ", " + kControlToBuffer);
 					}
@@ -760,7 +760,7 @@ void Scrolls::callScrollDriver() {
 				mouthnext = true;
 				break;
 			case kControlInsertSpaces:
-				for (byte j = 0; j < 9; j++)
+				for (int j = 0; j < 9; j++)
 					_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += ' ';
 				break;
 			default: // Add new char.
@@ -1017,7 +1017,7 @@ void Scrolls::talkTo(byte whom) {
 		whom -= 149;
 
 	bool noMatches = true;
-	for (byte i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
+	for (int i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
 			Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, i + 49, Scrolls::kControlToBuffer);
 			_vm->_scrolls->displayText(tmpStr);

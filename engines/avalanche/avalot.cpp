@@ -149,7 +149,7 @@ void Avalot::setup() {
 	_vm->_gyro->_enidFilename = ""; // Undefined.
 	_vm->_lucerna->drawToolbar();
 	_vm->_scrolls->setReadyLight(2);
-	for (byte i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // Impossible digits.
 
 	_vm->_animation->loadAnims();
@@ -198,12 +198,12 @@ void Avalot::run(Common::String arg) {
 
 #ifdef DEBUG
 		// ONLY FOR TESTING!!!
-		for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
+		for (int i = 0; i < _vm->_gyro->_lineNum; i++) {
 			LineType *curLine = &_vm->_gyro->_lines[i];
 			_vm->_graphics->_surface.drawLine(curLine->_x1, curLine->_y1, curLine->_x2, curLine->_y2, curLine->col);
 		}
 
-		for (byte i = 0; i < _vm->_gyro->_fieldNum; i++) {
+		for (int i = 0; i < _vm->_gyro->_fieldNum; i++) {
 			FieldType *curField = &_vm->_gyro->_fields[i];
 			if (curField->_x1 < 640)
 				_vm->_graphics->_surface.frameRect(Common::Rect(curField->_x1, curField->_y1, curField->_x2, curField->_y2), kColorLightmagenta);

@@ -143,7 +143,7 @@ void MenuItem::display() {
 	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((_flx1 + 1) * 8 - 1, 11, (_flx2 + 1) * 8 + 1, fly + 1), _dr->kMenuBorderColor);
 
 	displayOption(0, true);
-	for (byte y = 1; y < _optionNum; y++)
+	for (int y = 1; y < _optionNum; y++)
 		displayOption(y, false);
 
 	_dr->_vm->_gyro->_defaultLed = 1;
@@ -209,7 +209,7 @@ void MenuItem::select(byte which) {
 void MenuItem::parseKey(char c) {
 	c = toupper(c);
 	bool found = false;
-	for (byte i = 0; i < _optionNum; i++) {
+	for (int i = 0; i < _optionNum; i++) {
 		if ((toupper(_options[i]._trigger) == c) && _options[i]._valid) {
 			select(i);
 			found = true;
@@ -237,7 +237,7 @@ void MenuBar::draw() {
 	byte savecp = _dr->_vm->_gyro->_cp;
 	_dr->_vm->_gyro->_cp = 3;
 
-	for (byte i = 0; i < _menuNum; i++)
+	for (int i = 0; i < _menuNum; i++)
 		_menuItems[i].draw();
 
 	_dr->_vm->_gyro->_cp = savecp;
@@ -325,12 +325,12 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 		ander = 170;
 
 	FontType font;
-	for (byte i = 0; i < text.size(); i++) {
-		for (byte j = 0; j < 8; j++) {
+	for (uint i = 0; i < text.size(); i++) {
+		for (int j = 0; j < 8; j++) {
 			byte idx = text[i];
 			font[idx][j] = _vm->_gyro->_font[idx][j] & ander; // Set the font.
 			// And set the background of the text to the desired color.
-			for (byte k = 0; k < 8; k++)
+			for (int k = 0; k < 8; k++)
 				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + k, y + j) = backgroundColor;
 		}
 	}
@@ -346,7 +346,7 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 			; // Search for the character in the string.
 
 		byte pixel = ander;
-		for (byte bit = 0; bit < 8; bit++) {
+		for (int bit = 0; bit < 8; bit++) {
 			byte pixelBit = (pixel >> bit) & 1;
 			if (pixelBit)
 				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + 7 - bit, y + 8) = fontColor;
@@ -438,7 +438,7 @@ void Dropdown::setupMenuAction() {
 	_activeMenuItem.reset();
 
 	Common::String f5Does = _vm->_gyro->f5Does();
-	for (byte i = 0; i < 2; i++)
+	for (int i = 0; i < 2; i++)
 		if (!f5Does.empty())
 			f5Does.deleteChar(0);
 	if (f5Does.empty())
@@ -466,7 +466,7 @@ void Dropdown::setupMenuPeople() {
 
 	_activeMenuItem.reset();
 
-	for (byte i = 150; i <= 178; i++) {
+	for (int i = 150; i <= 178; i++) {
 		if (_vm->_gyro->_whereIs[i - 150] == _vm->_gyro->_room) {
 			_activeMenuItem.setupOption(_vm->_gyro->getName(i), _vm->_gyro->getNameChar(i), "", true);
 			people += i;
@@ -478,7 +478,7 @@ void Dropdown::setupMenuPeople() {
 
 void Dropdown::setupMenuObjects() {
 	_activeMenuItem.reset();
-	for (byte i = 0; i < kObjectNum; i++) {
+	for (int i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_objects[i])
 			_activeMenuItem.setupOption(_vm->_gyro->getThing(i + 1), _vm->_gyro->getThingChar(i + 1), "", true);
 	}
@@ -491,7 +491,7 @@ void Dropdown::setupMenuWith() {
 	if (_vm->_gyro->_thinkThing) {
 		findWhatYouCanDoWithIt();
 
-		for (byte i = 0; i < _vm->_gyro->_verbStr.size(); i++) {
+		for (uint i = 0; i < _vm->_gyro->_verbStr.size(); i++) {
 			char vbchar;
 			Common::String verb;
 

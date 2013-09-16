@@ -117,8 +117,8 @@ Lucerna::Lucerna(AvalancheEngine *vm) : _fxHidden(false), _clock(vm) {
 }
 
 Lucerna::~Lucerna() {
-	for (byte i = 0; i < 31; i++) {
-		for (byte j = 0; j < 2; j++) {
+	for (int i = 0; i < 31; i++) {
+		for (int j = 0; j < 2; j++) {
 			if (_vm->_gyro->_also[i][j] != 0)  {
 				delete _vm->_gyro->_also[i][j];
 				_vm->_gyro->_also[i][j] = 0;
@@ -128,8 +128,8 @@ Lucerna::~Lucerna() {
 }
 
 void Lucerna::init() {
-	for (byte i = 0; i < 31; i++) {
-		for (byte j = 0; j < 2; j++)
+	for (int i = 0; i < 31; i++) {
+		for (int j = 0; j < 2; j++)
 			_vm->_gyro->_also[i][j] = 0;
 	}
 
@@ -165,7 +165,7 @@ void Lucerna::drawAlsoLines() {
 	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
-	for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
+	for (int i = 0; i < _vm->_gyro->_lineNum; i++) {
 		// We had to check if the lines are within the borders of the screen.
 		if ((_vm->_gyro->_lines[i]._x1 >= 0) && (_vm->_gyro->_lines[i]._x1 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->_lines[i]._y1 >= 0) && (_vm->_gyro->_lines[i]._y1 < _vm->_graphics->kScreenHeight)
 		 && (_vm->_gyro->_lines[i]._x2 >= 0) && (_vm->_gyro->_lines[i]._x2 < _vm->_graphics->kScreenWidth) && (_vm->_gyro->_lines[i]._y2 >= 0) && (_vm->_gyro->_lines[i]._y2 < _vm->_graphics->kScreenHeight))
@@ -195,8 +195,8 @@ void Lucerna::scram(Common::String &str) {
 }
 
 void Lucerna::unScramble() {
-	for (byte i = 0; i < 31; i++) {
-		for (byte j = 0; j < 2; j++) {
+	for (int i = 0; i < 31; i++) {
+		for (int j = 0; j < 2; j++) {
 			if (_vm->_gyro->_also[i][j] != 0)
 				scram(*_vm->_gyro->_also[i][j]);
 		}
@@ -206,8 +206,8 @@ void Lucerna::unScramble() {
 }
 
 void Lucerna::loadAlso(byte num) {
-	for (byte i = 0; i < 31; i++) {
-		for (byte j = 0; j < 2; j++) {
+	for (int i = 0; i < 31; i++) {
+		for (int j = 0; j < 2; j++) {
 			if (_vm->_gyro->_also[i][j] != 0)  {
 				delete _vm->_gyro->_also[i][j];
 				_vm->_gyro->_also[i][j] = 0;
@@ -223,8 +223,8 @@ void Lucerna::loadAlso(byte num) {
 
 	byte alsoNum = file.readByte();
 	Common::String tmpStr;
-	for (byte i = 0; i <= alsoNum; i++) {
-		for (byte j = 0; j < 2; j++) {
+	for (int i = 0; i <= alsoNum; i++) {
+		for (int j = 0; j < 2; j++) {
 			_vm->_gyro->_also[i][j] = new Common::String;
 			*_vm->_gyro->_also[i][j] = readAlsoStringFromFile();
 		}
@@ -235,7 +235,7 @@ void Lucerna::loadAlso(byte num) {
 	memset(_vm->_gyro->_lines, 0xFF, sizeof(_vm->_gyro->_lines));
 
 	_vm->_gyro->_lineNum = file.readByte();
-	for (byte i = 0; i < _vm->_gyro->_lineNum; i++) {
+	for (int i = 0; i < _vm->_gyro->_lineNum; i++) {
 		LineType *curLine = &_vm->_gyro->_lines[i];
 		curLine->_x1 = file.readSint16LE();
 		curLine->_y1 = file.readSint16LE();
@@ -246,7 +246,7 @@ void Lucerna::loadAlso(byte num) {
 
 	memset(_vm->_gyro->_peds, 177, sizeof(_vm->_gyro->_peds));
 	byte pedNum = file.readByte();
-	for (byte i = 0; i < pedNum; i++) {
+	for (int i = 0; i < pedNum; i++) {
 		PedType *curPed = &_vm->_gyro->_peds[i];
 		curPed->_x = file.readSint16LE();
 		curPed->_y = file.readSint16LE();
@@ -254,7 +254,7 @@ void Lucerna::loadAlso(byte num) {
 	}
 
 	_vm->_gyro->_fieldNum = file.readByte();
-	for (byte i = 0; i < _vm->_gyro->_fieldNum; i++) {
+	for (int i = 0; i < _vm->_gyro->_fieldNum; i++) {
 		FieldType *curField = &_vm->_gyro->_fields[i];
 		curField->_x1 = file.readSint16LE();
 		curField->_y1 = file.readSint16LE();
@@ -262,32 +262,32 @@ void Lucerna::loadAlso(byte num) {
 		curField->_y2 = file.readSint16LE();
 	}
 
-	for (byte i = 0; i < 15; i++) {
+	for (int i = 0; i < 15; i++) {
 		MagicType *magic = &_vm->_gyro->_magics[i];
 		magic->_operation = file.readByte();
 		magic->_data = file.readUint16LE();
 	}
 
-	for (byte i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		MagicType *portal = &_vm->_gyro->_portals[i];
 		portal->_operation = file.readByte();
 		portal->_data = file.readUint16LE();
 	}
 
 	_vm->_gyro->_flags.clear();
-	for (byte i = 0;  i < 26; i++)
+	for (int i = 0;  i < 26; i++)
 		_vm->_gyro->_flags += file.readByte();
 
 	int16 listen_length = file.readByte();
 	_vm->_gyro->_listen.clear();
-	for (byte i = 0; i < listen_length; i++)
+	for (int i = 0; i < listen_length; i++)
 		_vm->_gyro->_listen += file.readByte();
 
 	drawAlsoLines();
 
 	file.close();
 	unScramble();
-	for (byte i = 0; i <= alsoNum; i++) {
+	for (int i = 0; i <= alsoNum; i++) {
 		tmpStr = Common::String::format(",%s,", _vm->_gyro->_also[i][0]->c_str());
 		*_vm->_gyro->_also[i][0] = tmpStr;
 	}
@@ -305,7 +305,7 @@ void Lucerna::loadRoom(byte num) {
 	file.seek(146);
 	if (!_vm->_gyro->_roomnName.empty())
 		_vm->_gyro->_roomnName.clear();
-	for (byte i = 0; i < 30; i++) {
+	for (int i = 0; i < 30; i++) {
 		char actChar = file.readByte();
 		if ((32 <= actChar) && (actChar <= 126))
 			_vm->_gyro->_roomnName += actChar;
@@ -329,7 +329,7 @@ void Lucerna::zoomOut(int16 x, int16 y) {
 }
 
 void Lucerna::findPeople(byte room) {
-	for (byte i = 1; i < 29; i++) {
+	for (int i = 1; i < 29; i++) {
 		if (_vm->_gyro->_whereIs[i] == room) {
 			if (i < 25)
 				_vm->_gyro->_him = i + 150;
@@ -886,12 +886,12 @@ void Lucerna::loadDigits() {   // Load the scoring digits & rwlites
 	if (!file.open("digit.avd"))
 		error("AVALANCHE: Lucerna: File not found: digit.avd");
 
-	for (byte i = 0; i < 10; i++) {
+	for (int i = 0; i < 10; i++) {
 		file.seek(i * digitsize);
 		_vm->_gyro->_digits[i] = _vm->_graphics->loadPictureGraphic(file);
 	}
 
-	for (byte i = 0; i < 9; i++) {
+	for (int i = 0; i < 9; i++) {
 		file.seek(10 * digitsize + i * rwlitesize);
 		_vm->_gyro->_directions[i] = _vm->_graphics->loadPictureGraphic(file);
 	}
@@ -920,9 +920,9 @@ void Lucerna::drawToolbar() {
 void Lucerna::drawScore() {
 	uint16 score = _vm->_gyro->_dnascore;
 	int8 numbers[3] = {0, 0, 0};
-	for (byte i = 0; i < 2; i++) {
+	for (int i = 0; i < 2; i++) {
 		byte divisor = 1;
-		for (byte j = 0; j < (2 - i); j++)
+		for (int j = 0; j < (2 - i); j++)
 			divisor *= 10;
 		numbers[i] = score / divisor;
 		score -= numbers[i] * divisor;
@@ -931,24 +931,24 @@ void Lucerna::drawScore() {
 
 	CursorMan.showMouse(false);
 
-	for (byte i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		if (_vm->_gyro->_scoreToDisplay[i] != numbers[i])
 			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_gyro->_digits[numbers[i]], 250 + (i + 1) * 15, 177);
 	}
 
 	CursorMan.showMouse(true);
 
-	for (byte i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = numbers[i];
 }
 
 void Lucerna::incScore(byte num) {     // Add on no. of points
-	for (byte i = 1; i <= num; i++) {
+	for (int i = 1; i <= num; i++) {
 		_vm->_gyro->_dnascore++;
 
 #if 0
 		if (soundfx) {
-			for (byte j = 1; j <= 97; j++)
+			for (int j = 1; j <= 97; j++)
 				sound(177 + dna.score * 3);
 		}
 		nosound;
@@ -1002,7 +1002,7 @@ void Lucerna::refreshObjectList() {
 	if (_vm->_gyro->_thinkThing && !_vm->_gyro->_objects[_vm->_gyro->_thinks - 1])
 		thinkAbout(Gyro::kObjectMoney, Gyro::kThing); // you always have money
 
-	for (byte i = 0; i < kObjectNum; i++) {
+	for (int i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_objects[i]) {
 			_vm->_gyro->_objectList[_vm->_gyro->_carryNum] = i + 1;
 			_vm->_gyro->_carryNum++;
@@ -1197,7 +1197,7 @@ void Lucerna::minorRedraw() {
 
 	enterRoom(_vm->_gyro->_room, 0); // Ped unknown or non-existant.
 
-	for (byte i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 		_vm->_gyro->_scoreToDisplay[i] = -1; // impossible digits
 	drawScore();
 

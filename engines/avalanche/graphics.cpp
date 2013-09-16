@@ -62,7 +62,7 @@ void Graphics::init() {
 		_egaPalette[i][2] = (i      & 1) * 0xaa + (i >> 3 & 1) * 0x55;
 	}
 
-	for (byte i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++)
 		g_system->getPaletteManager()->setPalette(_egaPalette[kEgaPaletteIndex[i]], i, 1);
 
 	_surface.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
@@ -176,7 +176,7 @@ void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte
 
 	// Get the top and the bottom of the triangle.
 	uint16 maxY = p[0].y, minY = p[0].y;
-	for (byte i = 1; i < 3; i++) {
+	for (int i = 1; i < 3; i++) {
 		if (p[i].y < minY)
 			minY = p[i].y;
 		if (p[i].y > maxY)
@@ -206,10 +206,10 @@ void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte
 }
 
 void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, byte color) {
-	for (byte i = 0; i < text.size(); i++) {
-		for (byte j = 0; j < fontHeight; j++) {
+	for (uint i = 0; i < text.size(); i++) {
+		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
-			for (byte bit = 0; bit < 8; bit++) {
+			for (int bit = 0; bit < 8; bit++) {
 				byte pixelBit = (pixel >> bit) & 1;
 				if (pixelBit)
 					*(byte *)surface.getBasePtr(x + i * 8 + 7 - bit, y + j) = color;
@@ -228,11 +228,11 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
-	for (byte y = 0; y < height; y++) {
+	for (int y = 0; y < height; y++) {
 		for (int8 plane = 3; plane >= 0; plane--) { // The planes are in the opposite way.
 			for (uint16 x = 0; x < width; x += 8) {
 				byte pixel = file.readByte();
-				for (byte bit = 0; bit < 8; bit++) {
+				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
 					if (pixelBit != 0)
 						*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
@@ -251,11 +251,11 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	::Graphics::Surface picture;
 	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
 
-	for (byte plane = 0; plane < 4; plane++) {
+	for (int plane = 0; plane < 4; plane++) {
 		for (uint16 y = 0; y < height; y++) {
 			for (uint16 x = 0; x < width; x += 8) {
 				byte pixel = file.readByte();
-				for (byte i = 0; i < 8; i++) {
+				for (int i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
 					*(byte *)picture.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
 				}
@@ -268,8 +268,8 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 	// First we make the pixels of the spirte blank.
-	for (byte j = 0; j < sprite._yLength; j++) {
-		for (byte i = 0; i < sprite._xLength; i++) {
+	for (int j = 0; j < sprite._yLength; j++) {
+		for (int i = 0; i < sprite._xLength; i++) {
 			if (((*sprite._sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
 				*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
 		}
@@ -278,11 +278,11 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 	// Then we draw the picture to the blank places.
 	uint16 maniPos = 0; // Because the original manitype starts at 5!!! See Graphics.h for definition.
 
-	for (byte j = 0; j < sprite._yLength; j++) {
+	for (int j = 0; j < sprite._yLength; j++) {
 		for (int8 plane = 3; plane >= 0; plane--) { // The planes are in the opposite way.
 			for (uint16 i = 0; i  < sprite._xLength; i += 8) {
 				byte pixel = (*sprite._mani[picnum])[maniPos++];
-				for (byte bit = 0; bit < 8; bit++) {
+				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
 					*(byte *)_surface.getBasePtr(x + i + 7 - bit, y + j) += (pixelBit << plane);
 				}
@@ -304,7 +304,7 @@ void Graphics::refreshScreen() {
 	// These cycles are for doubling the screen height.
 	for (uint16 y = 0; y < _screen.h / 2; y++) {
 		for (uint16 x = 0; x < _screen.w; x++) {
-			for (byte j = 0; j < 2; j++)
+			for (int j = 0; j < 2; j++)
 				*(byte *)_screen.getBasePtr(x, y * 2 + j) = *(byte *)_surface.getBasePtr(x, y);
 		}
 	}

@@ -182,7 +182,7 @@ Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
 }
 
 Gyro::~Gyro() {
-	for (byte i = 0; i < 9; i++) {
+	for (int i = 0; i < 9; i++) {
 		_digits[i].free();
 		_directions[i].free();
 	}
@@ -309,7 +309,7 @@ void Gyro::resetVariables() {
 }
 
 void Gyro::newGame() {
-	for (byte i = 0; i < kMaxSprites; i++) {
+	for (int i = 0; i < kMaxSprites; i++) {
 		AnimationType *spr = &_vm->_animation->_sprites[i];
 		if (spr->_quick)
 			spr->remove();
@@ -550,9 +550,9 @@ void Gyro::loadMouse(byte which) {
 
 	::Graphics::Surface mask = _vm->_graphics->loadPictureGraphic(f);
 
-	for (byte j = 0; j < mask.h; j++) {
-		for (byte i = 0; i < mask.w; i++) {
-			for (byte k = 0; k < 2; k++) {
+	for (int j = 0; j < mask.h; j++) {
+		for (int i = 0; i < mask.w; i++) {
+			for (int k = 0; k < 2; k++) {
 				if (*(byte *)mask.getBasePtr(i, j) == 0)
 					*(byte *)cursor.getBasePtr(i, j * 2 + k) = 0;
 			}
@@ -566,9 +566,9 @@ void Gyro::loadMouse(byte which) {
 
 	mask = _vm->_graphics->loadPictureGraphic(f);
 
-	for (byte j = 0; j < mask.h; j++) {
-		for (byte i = 0; i < mask.w; i++) {
-			for (byte k = 0; k < 2; k++) {
+	for (int j = 0; j < mask.h; j++) {
+		for (int i = 0; i < mask.w; i++) {
+			for (int k = 0; k < 2; k++) {
 				byte pixel = *(byte *)mask.getBasePtr(i, j);
 				if (pixel != 0)
 					*(byte *)cursor.getBasePtr(i, j * 2 + k) = pixel;
@@ -588,7 +588,7 @@ void Gyro::setBackgroundColor(byte x) {
 }
 
 void Gyro::hangAroundForAWhile() {
-	for (byte i = 0; i < 28; i++)
+	for (int i = 0; i < 28; i++)
 		slowDown();
 }
 

@@ -370,7 +370,7 @@ void Acci::init() {
 }
 
 void Acci::clearWords() {
-	for (byte i = 0; i < 11; i++) {
+	for (int i = 0; i < 11; i++) {
 		if (!_realWords[i].empty())
 			_realWords[i].clear();
 	}
@@ -400,7 +400,7 @@ void Acci::replace(Common::String oldChars, byte newChar) {
 		if (newChar == 0)
 			_thats.deleteChar(pos);
 		else {
-			for (byte i = pos; i < pos + oldChars.size(); i++)
+			for (uint i = pos; i < pos + oldChars.size(); i++)
 				_thats.deleteChar(pos);
 			_thats.insertChar(newChar, pos);
 		}
@@ -417,7 +417,7 @@ Common::String Acci::rank() {
 		{32767, "copyright'93"}
 	};
 
-	for (byte i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if ((_vm->_gyro->_dnascore >= kRanks[i]._score) && (_vm->_gyro->_dnascore < kRanks[i + 1]._score)) {
 			return kRanks[i]._title;
 		}
@@ -458,7 +458,7 @@ void Acci::cheatParse(Common::String codes) {
 void Acci::stripPunctuation(Common::String &word) {
 	const char punct[] = "~`!@#$%^&*()_+-={}[]:\"|;'\\,./<>?";
 
-	for (byte i = 0; i < 32; i++) {
+	for (int i = 0; i < 32; i++) {
 		for (;;) {
 			int16 pos = _vm->_parser->pos(Common::String(punct[i]), word);
 			if (pos == -1)
@@ -492,7 +492,7 @@ void Acci::displayWhat(byte target, bool animate, bool &ambiguous) {
 bool Acci::doPronouns() {
 	bool ambiguous = false;
 
-	for (byte i = 0; i < _thats.size(); i++) {
+	for (uint i = 0; i < _thats.size(); i++) {
 		byte wordCode = _thats[i];
 		switch (wordCode) {
 		case 200:
@@ -517,7 +517,7 @@ void Acci::properNouns() {
 	_vm->_parser->_inputText.toLowercase();
 
 	// We set every word's first character to uppercase.
-	for (byte i = 1; i < (_vm->_parser->_inputText.size() - 1); i++) {
+	for (uint i = 1; i < (_vm->_parser->_inputText.size() - 1); i++) {
 		if (_vm->_parser->_inputText[i] == ' ')
 			_vm->_parser->_inputText.setChar(toupper(_vm->_parser->_inputText[i + 1]), i + 1);
 	}
@@ -644,7 +644,7 @@ void Acci::parse() {
 
 		// Check also[] first, which contains words about the actual room.
 		if (!thisword.empty()) {
-			for (byte i = 0; i < 31; i++) {
+			for (int i = 0; i < 31; i++) {
 				if ((_vm->_gyro->_also[i][0] != 0) && (_vm->_parser->pos(',' + thisword, *_vm->_gyro->_also[i][0]) > -1)) {
 					_thats += Common::String(99 + i);
 					notfound = false;
@@ -666,13 +666,13 @@ void Acci::parse() {
 		// Delete words we already processed.
 		int16 spacePos = _vm->_parser->pos(Common::String(' '), inputTextUpper);
 		if (spacePos > -1) {
-			for (byte i = 0; i <= spacePos; i++)
+			for (int i = 0; i <= spacePos; i++)
 				inputTextUpper.deleteChar(0);
 		}
 
 		spacePos = _vm->_parser->pos(Common::String(' '), inputText);
 		if (spacePos > -1) {
-			for (byte i = 0; i <= spacePos; i++)
+			for (int i = 0; i <= spacePos; i++)
 				inputText.deleteChar(0);
 		}
 	}
@@ -911,7 +911,7 @@ void Acci::inventory() {
 	byte itemNum = 0;
 	Common::String tmpStr = Common::String("You're carrying ");
 
-	for (byte i = 0; i < kObjectNum; i++) {
+	for (int i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_objects[i]) {
 			itemNum++;
 			if (itemNum == _vm->_gyro->_carryNum)
@@ -993,7 +993,7 @@ void Acci::swallow() {   // Eat something.
 void Acci::peopleInRoom() {
 	byte numPeople = 0; // Number of people in the room.
 
-	for (byte i = 1; i < 29; i++) { // Start at 1 so we don't list Avvy himself!
+	for (int i = 1; i < 29; i++) { // Start at 1 so we don't list Avvy himself!
 		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_room)
 			numPeople++;
 	}
@@ -1003,7 +1003,7 @@ void Acci::peopleInRoom() {
 
 	Common::String tmpStr;
 	byte actPerson = 0; // Actually listed people.
-	for (byte i = 1; i < 29; i++) {
+	for (int i = 1; i < 29; i++) {
 		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
@@ -1087,7 +1087,7 @@ void Acci::openDoor() {
 	if ((!_vm->_gyro->_userMovesAvvy) && (_vm->_gyro->_room != kRoomLusties))
 		return; // No doors can open if you can't move Avvy.
 
-	for (byte i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		if (_vm->_animation->inField(i + 8)) {
 			MagicType *portal = &_vm->_gyro->_portals[i];
 			switch (portal->_operation) {
@@ -1453,7 +1453,7 @@ Common::String Acci::personSpeaks() {
 	bool found = false; // The _person we're looking for's code is in _person.
 	Common::String tmpStr;
 
-	for (byte i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
+	for (int i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
 			tmpStr += Common::String::format("%c%c", Scrolls::kControlRegister, '1' + i);
 			found = true;
@@ -1463,7 +1463,7 @@ Common::String Acci::personSpeaks() {
 	if (found)
 		return tmpStr;
 
-	for (byte i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_room))
 			tmpStr += Common::String::format("%c%c", Scrolls::kControlRegister, 'A' + i);
 	}
@@ -1550,7 +1550,7 @@ void Acci::doThat() {
 			} else if (((1 <= _vm->_gyro->_subjectNum) && (_vm->_gyro->_subjectNum <= 49)) || (_vm->_gyro->_subjectNum == 253) || (_vm->_gyro->_subjectNum == 249)) {
 				_thats.deleteChar(0);
 
-				for (byte i = 0; i < 10; i++)
+				for (int i = 0; i < 10; i++)
 					_realWords[i] = _realWords[i + 1];
 
 				_verb = _vm->_gyro->_subjectNum;
@@ -1701,7 +1701,7 @@ void Acci::doThat() {
 		_vm->_scrolls->_aboutScroll = true;
 
 		Common::String toDisplay;
-		for (byte i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++)
 			toDisplay += Scrolls::kControlNewLine;
 		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + Scrolls::kControlCenter + Scrolls::kControlNewLine
 			+ "The medi\x91val descendant of" + Scrolls::kControlNewLine
@@ -2068,11 +2068,11 @@ void Acci::doThat() {
 			_vm->_scrolls->displayScrollChain('Q', 12);
 		else {
 			bool ok = true;
-			for (byte i = 0; i < _thats.size(); i++) {
+			for (uint i = 0; i < _thats.size(); i++) {
 				Common::String temp = _realWords[i];
 				temp.toUppercase();
 				int pwdId = _vm->_gyro->_passwordNum + kFirstPassword;
-				for (byte j = 0; j < _vocabulary[pwdId]._word.size(); j++) {
+				for (uint j = 0; j < _vocabulary[pwdId]._word.size(); j++) {
 					if (_vocabulary[pwdId]._word[j] != temp[j])
 						ok = false;
 				}
