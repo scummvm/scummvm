@@ -176,7 +176,7 @@ bool ScEngine::addWatch(const char *filename, const char *name) {
 	CScWatch watch = CScWatch(filename);
 	watch._symbol = name;
 	watch._lastValue = new ScValue(_gameRef);
-	_watchlist.add(watch);
+	_watchlist.insert_at(_watchlist.size(), watch);
 	refreshWatchlist();
 	return false;
 }
@@ -208,7 +208,7 @@ bool ScEngine::addBreakpoint(const char *filename, int line) {
 	CScBreakpoint breakpoint = CScBreakpoint(filename);
 	breakpoint._line = line;
 	breakpoint._hits = 0;
-	_breakpoints.add(breakpoint);
+	_breakpoints.insert_at(_breakpoints.size(), breakpoint);
 	return true;
 }
 

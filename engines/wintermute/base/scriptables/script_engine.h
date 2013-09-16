@@ -113,8 +113,8 @@ public:
 	ScValue *_globals;
 	ScScript *runScript(const char *filename, BaseScriptHolder *owner = nullptr);
 	static const bool _compilerAvailable = false;
-	BaseArray<CScBreakpoint> _breakpoints;
-	BaseArray<CScWatch> _watchlist;
+	Common::Array<CScBreakpoint> _breakpoints;
+	Common::Array<CScWatch> _watchlist;
 	ScEngine(BaseGame *inGame);
 
 	bool addBreakpoint(const char *filename, int line);
