@@ -589,7 +589,7 @@ Common::Error AvalancheEngine::run() {
 		//	break;
 		//}
 
-	} while (!shouldQuit());
+	} while (!_gyro->_letMeOut && !shouldQuit());
 
 	return Common::kNoError;
 }
