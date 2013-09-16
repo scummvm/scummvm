@@ -53,11 +53,17 @@ TruetypeFont::~TruetypeFont(void) {
 bool TruetypeFont::loadFile(const Common::String &filename) {
 	Common::File file;
 
+	bool fileOpened = false;
 	if (!Common::File::exists(filename)) {
 		debug("TTF font file %s was not found. Reverting to arial.ttf", filename.c_str());
-		file.open("arial.ttf");
+		fileOpened = file.open("arial.ttf");
 	} else {
-		file.open(filename);
+		fileOpened = file.open(filename);
+	}
+
+	if (!fileOpened) {
+		debug("TTF file could not be opened");
+		return false;
 	}
 
 	_font = Graphics::loadTTFFont(file, _fontHeight);
