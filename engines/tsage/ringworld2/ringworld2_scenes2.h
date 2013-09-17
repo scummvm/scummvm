@@ -192,11 +192,11 @@ class Scene2430 : public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class GunPowder : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class OilLamp : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -220,8 +220,8 @@ public:
 	NamedHotspot _item12;
 	NamedHotspot _item13;
 	Actor1 _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
+	GunPowder _gunPowder;
+	OilLamp _oilLamp;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -265,7 +265,7 @@ class Scene2440 : public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class OilLamp : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -283,7 +283,7 @@ public:
 	NamedHotspot _item6;
 	NamedHotspot _item7;
 	Actor1 _actor1;
-	Actor2 _actor2;
+	OilLamp _oilLamp;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -627,7 +627,7 @@ public:
 };
 
 class Scene2800 : public SceneExt {
-	class Item2 : public NamedHotspot {
+	class Outpost : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -652,7 +652,7 @@ public:
 	SpeakerNej2800 _nejSpeaker;
 	SpeakerGuard2800 _guardSpeaker;
 	NamedHotspot _item1;
-	Item2 _item2;
+	Outpost _outpost;
 	Guard _guard;
 	SceneActor _actor2;
 	SceneActor _actor3;

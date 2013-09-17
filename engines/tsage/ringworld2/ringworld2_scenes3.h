@@ -45,7 +45,6 @@ class Scene3100 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-
 	int _field412;
 	SpeakerGuard _guardSpeaker;
 	NamedHotspot _item1;

@@ -30,9 +30,10 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 /*--------------------------------------------------------------------------
- * Scene 3100 -
+ * Scene 3100 - ARM Base Hanager
  *
  *--------------------------------------------------------------------------*/
+
 Scene3100::Scene3100() {
 	_field412 = 0;
 }
@@ -63,7 +64,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._uiElements._active = false;
 		} else {
 			loadScene(3100);
-			g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
+			_sceneBounds = Rect(160, 0, 480, SCREEN_HEIGHT);
 		}
 	} else {
 		loadScene(3100);
@@ -148,7 +149,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		R2_GLOBALS._player.setPosition(Common::Point(160, 150));
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 
 		R2_GLOBALS._sound1.play(243);
 	}
@@ -172,7 +173,7 @@ void Scene3100::signal() {
 	case 3100:
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 3101:
 		R2_GLOBALS._sceneManager.changeScene(1000);
@@ -182,7 +183,7 @@ void Scene3100::signal() {
 		R2_GLOBALS._sceneManager.changeScene(1000);
 		break;
 	default:
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	}
 }
@@ -2119,7 +2120,7 @@ void Scene3375::signalCase3379() {
 	_actor1._effect = 1;
 	_actor2._effect = 1;
 	_actor3._effect = 1;
-	R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+	R2_GLOBALS._player.enableControl(CURSOR_WALK);
 }
 
 void Scene3375::signal() {
@@ -2412,7 +2413,7 @@ void Scene3385::signal() {
 		R2_GLOBALS._player.enableControl(CURSOR_TALK);
 		break;
 	default:
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	}
 }
@@ -2632,7 +2633,7 @@ void Scene3395::signal() {
 		R2_GLOBALS._player.enableControl(CURSOR_TALK);
 		break;
 	default:
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	}
 }
@@ -4511,7 +4512,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 3623;
 
 		g_globals->_events.setCursor(CURSOR_ARROW);
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 	} else {
 		_field254A = 0;
 		_field2548 = 0;
@@ -4630,14 +4631,14 @@ void Scene3600::signal() {
 	// No break on purpose
 	case 3607:
 		g_globals->_events.setCursor(CURSOR_ARROW);
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		_actor13.fixPriority(-1);
 		_sceneMode = 3623;
 		_field2548 = 1;
 		break;
 	case 3327:
 		g_globals->_events.setCursor(CURSOR_ARROW);
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		_sceneMode = 3623;
 		break;
 	case 3450:
@@ -5188,7 +5189,7 @@ void Scene3800::enterArea() {
 				break;
 			}
 		default:
-			R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 			break;
 		}
 		break;
@@ -5554,7 +5555,7 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 	} else {
 		R2_GLOBALS._player.setPosition(Common::Point(160, 145));
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 	}
 }
 
@@ -5585,7 +5586,7 @@ void Scene3900::signal() {
 		_eastExit._enabled = true;
 		_southExit._enabled = true;
 		_westExit._enabled = true;
-		R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	default:
 		break;

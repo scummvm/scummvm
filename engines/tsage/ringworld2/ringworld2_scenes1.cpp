@@ -68,7 +68,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 100;
 		break;
 	case 2800:
-		_sceneMode = 2800;
+		_sceneMode = 70;
 		break;
 	case 3100:
 		if (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 1000)

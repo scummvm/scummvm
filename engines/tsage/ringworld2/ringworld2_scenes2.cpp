@@ -1294,9 +1294,9 @@ bool Scene2425::Item1::startAction(CursorType action, Event &event) {
 		R2_GLOBALS.setFlag(84);
 		return true;
 	} else if (action == R2_GUNPOWDER) {
-		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
-		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		return NamedHotspot::startAction(CURSOR_USE, event);
 	} else
 		return NamedHotspot::startAction(action, event);
 }
@@ -1311,9 +1311,9 @@ bool Scene2425::Item2::startAction(CursorType action, Event &event) {
 		R2_GLOBALS.clearFlag(84);
 		return true;
 	} else if (action == R2_GUNPOWDER) {
-		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
-		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		return NamedHotspot::startAction(CURSOR_USE, event);
 	} else
 		return NamedHotspot::startAction(action, event);
 }
@@ -1341,15 +1341,15 @@ bool Scene2425::Item4::startAction(CursorType action, Event &event) {
 	if (action != R2_GUNPOWDER)
 		return NamedHotspot::startAction(action, event);
 	else {
-		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
-		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		return NamedHotspot::startAction(CURSOR_USE, event);
 	}
 }
 
 bool Scene2425::Actor1::startAction(CursorType action, Event &event) {
 	if (action == R2_STEPPING_DISKS) {
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			R2_GLOBALS._events.setCursor(R2_GUNPOWDER);
 			return true;
 		} else {
@@ -1365,9 +1365,9 @@ bool Scene2425::Actor2::startAction(CursorType action, Event &event) {
 	if (action != R2_GUNPOWDER)
 		return SceneActor::startAction(action, event);
 	else {
-		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
-		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return SceneActor::startAction(R2_STEPPING_DISKS, event);
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		return SceneActor::startAction(CURSOR_USE, event);
 	}
 }
 
@@ -1503,27 +1503,27 @@ bool Scene2430::Actor1::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene2430::Actor2::startAction(CursorType action, Event &event) {
+bool Scene2430::GunPowder::startAction(CursorType action, Event &event) {
 	Scene2430 *scene = (Scene2430 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action != R2_STEPPING_DISKS) || (R2_GLOBALS._player._characterIndex != 2))
+	if ((action != CURSOR_USE) || (R2_GLOBALS._player._characterIndex != 2))
 		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 2430;
-	scene->setAction(&scene->_sequenceManager, scene, 2430, &R2_GLOBALS._player, &scene->_actor2, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 2430, &R2_GLOBALS._player, &scene->_gunPowder, NULL);
 	return true;
 }
 
-bool Scene2430::Actor3::startAction(CursorType action, Event &event) {
+bool Scene2430::OilLamp::startAction(CursorType action, Event &event) {
 	Scene2430 *scene = (Scene2430 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action != R2_STEPPING_DISKS) || (R2_GLOBALS._player._characterIndex != 2))
+	if ((action != CURSOR_USE) || (R2_GLOBALS._player._characterIndex != 2))
 		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 2435;
-	scene->setAction(&scene->_sequenceManager, scene, 2435, &R2_GLOBALS._player, &scene->_actor3, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 2435, &R2_GLOBALS._player, &scene->_oilLamp, NULL);
 	return true;
 }
 
@@ -1546,18 +1546,18 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDest(Common::Point(108, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_GUNPOWDER) == 2430) {
-		_actor2.postInit();
-		_actor2.setup(2435, 1, 5);
-		_actor2.setPosition(Common::Point(205, 119));
-		_actor2.fixPriority(152);
-		_actor2.setDetails(2430, 51, -1, 53, 1, (SceneItem *)NULL);
+		_gunPowder.postInit();
+		_gunPowder.setup(2435, 1, 5);
+		_gunPowder.setPosition(Common::Point(205, 119));
+		_gunPowder.fixPriority(152);
+		_gunPowder.setDetails(2430, 51, -1, 53, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2435) {
-		_actor3.postInit();
-		_actor3.setup(2435, 1, 1);
-		_actor3.setPosition(Common::Point(31, 65));
-		_actor3.setDetails(2430, 48, -1, -1, 1, (SceneItem *)NULL);
+		_oilLamp.postInit();
+		_oilLamp.setup(2435, 1, 1);
+		_oilLamp.setPosition(Common::Point(31, 65));
+		_oilLamp.setDetails(2430, 48, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	R2_GLOBALS._player.postInit();
@@ -1618,12 +1618,12 @@ void Scene2430::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 2430:
-		_actor2.remove();
+		_gunPowder.remove();
 		R2_INVENTORY.setObjectScene(R2_GUNPOWDER, 2);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 2435:
-		_actor3.remove();
+		_oilLamp.remove();
 		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_3, 2);
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -1803,13 +1803,13 @@ bool Scene2440::Actor1::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene2440::Actor2::startAction(CursorType action, Event &event) {
+bool Scene2440::OilLamp::startAction(CursorType action, Event &event) {
 	Scene2440 *scene = (Scene2440 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == CURSOR_USE) && (R2_GLOBALS._player._characterIndex == 2)){
+	if ((action == CURSOR_USE) && (R2_GLOBALS._player._characterIndex == R2_SEEKER)) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2440;
-		scene->setAction(&scene->_sequenceManager, scene, 2440, &R2_GLOBALS._player, &scene->_actor2, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2440, &R2_GLOBALS._player, &scene->_oilLamp, NULL);
 		return true;
 	}
 
@@ -1835,11 +1835,11 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_SE, 2000);
 	_exit1.setDest(Common::Point(210, 160));
 	if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2440) {
-		_actor2.postInit();
-		_actor2.setup(2435, 1, 1);
-		_actor2.setPosition(Common::Point(94, 80));
-		_actor2.fixPriority(106);
-		_actor2.setDetails(2430, 48, -1, -1, 1, (SceneItem *)NULL);
+		_oilLamp.postInit();
+		_oilLamp.setup(2435, 1, 1);
+		_oilLamp.setPosition(Common::Point(94, 80));
+		_oilLamp.fixPriority(106);
+		_oilLamp.setDetails(2430, 48, -1, -1, 1, (SceneItem *)NULL);
 	}
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.enableControl();
@@ -1898,7 +1898,7 @@ void Scene2440::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 2440:
-		_actor2.remove();
+		_oilLamp.remove();
 		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_2, 2);
 	// No break on purpose
 	default:
@@ -1965,7 +1965,7 @@ bool Scene2450::CareTaker::startAction(CursorType action, Event &event) {
 void Scene2450::Exit1::changeScene() {
 	Scene2450 *scene = (Scene2450 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((R2_GLOBALS._player._characterIndex == 2) || (R2_GLOBALS.getFlag(61))) {
+	if ((R2_GLOBALS._player._characterIndex == R2_SEEKER) || (R2_GLOBALS.getFlag(61))) {
 		_enabled = false;
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		R2_GLOBALS._player.disableControl();
@@ -2526,7 +2526,7 @@ bool Scene2525::Actor3::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
-	if (R2_GLOBALS._player._characterIndex == 2) {
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2525;
 		scene->setAction(&scene->_sequenceManager, scene, 2525, &R2_GLOBALS._player, &scene->_actor3, NULL);
@@ -2653,7 +2653,7 @@ bool Scene2530::Actor2::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
-	if (R2_GLOBALS._player._characterIndex == 2) {
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2530;
 		scene->setAction(&scene->_sequenceManager, scene, 2530, &R2_GLOBALS._player, &scene->_actor2, NULL);
@@ -2830,7 +2830,7 @@ bool Scene2535::TannerMask::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
-	if (R2_GLOBALS._player._characterIndex == 2) {
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2535;
 		scene->setAction(&scene->_sequenceManager, scene, 2535, &R2_GLOBALS._player, &scene->_tannerMask, NULL);
@@ -4179,7 +4179,7 @@ void Scene2800::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field412);
 }
 
-bool Scene2800::Item2::startAction(CursorType action, Event &event) {
+bool Scene2800::Outpost::startAction(CursorType action, Event &event) {
 	Scene2800 *scene = (Scene2800 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action == CURSOR_USE) && (R2_GLOBALS.getFlag(47))) {
@@ -4469,7 +4469,7 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 	if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0) {
 		R2_GLOBALS._sound1.fadeSound(237);
 		if (R2_GLOBALS.getFlag(47)) {
-			_item2.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
+			_outpost.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
 		} else {
 			_actor2.postInit();
 			_actor2.setup(2752, 5, 1);
@@ -4516,7 +4516,7 @@ void Scene2800::signal() {
 		_object1.setAction(NULL);
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
-		_item2.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
+		_outpost.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
 		break;
 	case 12:
 		R2_GLOBALS._sound1.fadeOut2(NULL);

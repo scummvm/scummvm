@@ -1518,7 +1518,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
 	if (g_vm->getGameID() == GType_Ringworld2 && !GLOBALS._player._uiEnabled
 			&& T2_GLOBALS._interfaceY == UI_INTERFACE_Y) {
-		g_globals->_screenSurface.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		g_globals->_screenSurface.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT - 1), 0);
 	}
 
 	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
