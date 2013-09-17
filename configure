@@ -167,7 +167,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
 _aos4path="Games:ScummVM"
-_staticlibpath=/sw
+_staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -2115,6 +2115,24 @@ case $_host_os in
 
 			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
 			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
+			
+			if test -z "$_staticlibpath"; then
+				_staticlibpath=${macport_prefix}
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			fi
+		fi
+		# If _staticlibpath is not set yet try first /sw (fink) then /usr/local
+		# (the macports case is handled above).
+		if test -z "$_staticlibpath"; then
+			if test -d "/sw"; then
+				_staticlibpath=/sw
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			elif test -d "/usr/local"; then
+				_staticlibpath=/usr/local
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			else
+				echo "Could not determine prefix for static libraries"
+			fi
 		fi
 		;;
 	dreamcast)
