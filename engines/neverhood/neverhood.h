@@ -135,9 +135,12 @@ public:
 	NPoint getMousePos();
 
 	void toggleSoundUpdate(bool state) { _updateSound = state; }
+	void toggleMusic(bool state) { _enableMusic = state; }
+	bool musicIsEnabled() { return _enableMusic; }
 
 private:
 	bool _updateSound;
+	bool _enableMusic;
 
 };
 

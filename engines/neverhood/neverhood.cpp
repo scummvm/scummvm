@@ -109,6 +109,7 @@ Common::Error NeverhoodEngine::run() {
 
 	_isSaveAllowed = true;
 	_updateSound = true;
+	_enableMusic = !_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 
 	if (isDemo()) {
 		// Adjust this navigation list for the demo version
