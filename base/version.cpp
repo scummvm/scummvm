@@ -129,4 +129,8 @@ const char *gScummVMFeatures = ""
 #ifdef USE_FREETYPE2
 	"FreeType2 "
 #endif
+
+#ifdef USE_JPEG
+	"JPEG "
+#endif
 	;
