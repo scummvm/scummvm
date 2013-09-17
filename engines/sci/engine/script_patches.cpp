@@ -910,6 +910,68 @@ const SciScriptSignature mothergoose256Signatures[] = {
 };
 
 // ===========================================================================
+// Police Quest 1 VGA
+// When at the police station, you can put or get your gun from your locker.
+// The script, that handles this, is buggy. It disposes the gun as soon as
+//  you click, but then waits 2 seconds before it also closes the locker.
+// Problem is that it's possible to click again, which then results in a
+//  disposed object getting accessed. This happened to work by pure luck in
+//  SSCI.
+// This patch changes the code, so that the gun is actually given away
+//  when the 2 seconds have passed and the locker got closed.
+// Responsible method: putGun::changeState (script 341)
+// Fixes bug #3036933 / #3303802
+const byte pq1vgaSignaturePutGunInLockerBug[] = {
+	5,
+	0x35, 0x00,       // ldi 00
+	0x1a,             // eq?
+	0x31, 0x25,       // bnt [next state check]
+	+22, 29,          // [skip 22 bytes]
+	0x38, 0x5f, 0x01, // pushi 15fh
+	0x78,             // push1
+	0x76,             // push0
+	0x81, 0x00,       // lag 00
+	0x4a, 0x06,       // send 06 - ego::put(0)
+	0x35, 0x02,       // ldi 02
+	0x65, 0x1c,       // aTop 1c (set timer to 2 seconds)
+	0x33, 0x0e,       // jmp [end of method]
+	0x3c,             // dup --- next state check target
+	0x35, 0x01,       // ldi 01
+	0x1a,             // eq?
+	0x31, 0x08,       // bnt [end of method]
+	0x39, 0x6f,       // pushi 6fh
+	0x76,             // push0
+	0x72, 0x88, 0x00, // lofsa 0088
+	0x4a, 0x04,       // send 04 - locker::dispose
+	0
+};
+
+const uint16 pq1vgaPatchPutGunInLockerBug[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x31, 0x1c,       // bnt [next state check]
+	PATCH_ADDTOOFFSET | +22,
+	0x35, 0x02,       // ldi 02
+	0x65, 0x1c,       // aTop 1c (set timer to 2 seconds)
+	0x33, 0x17,       // jmp [end of method]
+	0x3c,             // dup --- next state check target
+	0x35, 0x01,       // ldi 01
+	0x1a,             // eq?
+	0x31, 0x11,       // bnt [end of method]
+	0x38, 0x5f, 0x01, // pushi 15fh
+	0x78,             // push1
+	0x76,             // push0
+	0x81, 0x00,       // lag 00
+	0x4a, 0x06,       // send 06 - ego::put(0)
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature pq1vgaSignatures[] = {
+	{    341, "put gun in locker bug",                       1, PATCH_MAGICDWORD(0x38, 0x5f, 0x01, 0x78),   -27, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 //  script 215 of qfg1vga pointBox::doit actually processes button-presses
 //   during fighting with monsters. It strangely also calls kGetEvent. Because
 //   the main User::doit also calls kGetEvent it's pure luck, where the event
@@ -1495,6 +1557,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
+		break;
+	case GID_PQ1:
+		signatureTable = pq1vgaSignatures;
 		break;
 	case GID_QFG1VGA:
 		signatureTable = qfg1vgaSignatures;
