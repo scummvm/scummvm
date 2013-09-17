@@ -396,6 +396,8 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		if (_objectMap.size() < obTag) {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
+		debug(7, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
+
 		res = _objectMap[obTag];
 
 		*isCopyReturned = true;

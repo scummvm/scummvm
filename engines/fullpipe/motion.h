@@ -77,6 +77,7 @@ class Unk2 : public CObject {
 };
 
 class CMovGraphNode : public CObject {
+ public:
 	int _x;
 	int _y;
 	int _distance;
@@ -137,6 +138,7 @@ class CReactPolygonal : public CMovGraphReact {
 };
 
 class CMovGraphLink : public CObject {
+ public:
 	CMovGraphNode *_movGraphNode1;
 	CMovGraphNode *_movGraphNode2;
 	CDWordArray _dwordArray1;
@@ -155,6 +157,7 @@ class CMovGraphLink : public CObject {
 };
 
 class CMovGraph : public CMotionController {
+ public:
 	CObList _nodes;
 	CObList _links;
 	int _field_44;
@@ -168,6 +171,9 @@ class CMovGraph : public CMotionController {
 	virtual bool load(MfcArchive &file);
 
 	virtual void addObject(StaticANIObject *obj);
+
+	double calcDistance(Common::Point *point, CMovGraphLink *link, int flag);
+	CMovGraphNode *calcOffset(int ox, int oy);
 };
 
 class CMctlConnectionPoint : public CObject {

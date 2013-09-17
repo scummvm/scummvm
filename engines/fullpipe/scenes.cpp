@@ -1313,6 +1313,63 @@ int global_messageHandler4(ExCommand *cmd) {
 	return 1;
 }
 
+int CMovGraph_messageHandler(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	if (cmd->_messageNum != 33)
+		return 0;
+
+	StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
+
+	if (!getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId))
+		return 0;
+
+	if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_objtype != kObjTypeMovGraph || !ani)
+		return 0;
+
+	CMovGraph *gr = (CMovGraph *)getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+
+	CMovGraphLink *link = 0;
+	double mindistance = 1.0e10;
+	Common::Point point;
+
+	for (CObList::iterator i = gr->_links.begin(); i != gr->_links.end(); ++i) {
+		point.x = ani->_ox;
+		point.y = ani->_oy;
+
+		double dst = gr->calcDistance(&point, (CMovGraphLink *)(*i), 0);
+		if (dst >= 0.0 && dst < mindistance) {
+			mindistance = dst;
+			link = (CMovGraphLink *)(*i);
+		}
+	}
+
+	int top;
+
+	if (link) {
+		CMovGraphNode *node = link->_movGraphNode1;
+
+		double sq = (ani->_oy - node->_y) * (ani->_oy - node->_y) + (ani->_ox - node->_x) * (ani->_ox - node->_x);
+		int off = (node->_field_14 >> 16) & 0xFF;
+		double off2 = (link->_movGraphNode2->_field_14 >> 8) & 0xff - off;
+
+		top = off + (int)(sqrt(sq) * off2 / link->_distance);
+	} else {
+		top = (gr->calcOffset(ani->_ox, ani->_oy)->_field_14 >> 8) & 0xff;
+	}
+
+	if (ani->_movement) {
+		ani->_movement->_currDynamicPhase->_rect->top = 255 - top;
+		return 0;
+	}
+
+	if (ani->_statics)
+		ani->_statics->_rect->top = 255 - top;
+
+	return 0;
+}
+
 int defaultUpdateCursor() {
 	g_fullpipe->updateCursorsCommon();
 

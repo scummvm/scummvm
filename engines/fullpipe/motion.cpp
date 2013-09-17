@@ -28,6 +28,7 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/messages.h"
 
 namespace Fullpipe {
 
@@ -104,13 +105,17 @@ bool CMctlCompoundArray::load(MfcArchive &file) {
 	return true;
 }
 
+int CMovGraph_messageHandler(ExCommand *cmd);
+
 CMovGraph::CMovGraph() {
 	warning("STUB: CMovGraph::CMovGraph()");
 	_itemsCount = 0;
 	_items = 0;
 	//_callback1 = CMovGraphCallback1;  // TODO
 	_field_44 = 0;
-	// insertMessageHandler(CMovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
+	insertMessageHandler(CMovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
+
+	_objtype = kObjTypeMovGraph;
 }
 
 bool CMovGraph::load(MfcArchive &file) {
@@ -125,6 +130,19 @@ bool CMovGraph::load(MfcArchive &file) {
 void CMovGraph::addObject(StaticANIObject *obj) {
 	warning("STUB: CMovGraph::addObject()");
 }
+
+double CMovGraph::calcDistance(Common::Point *point, CMovGraphLink *link, int flag) {
+	warning("STUB: CMovGraph::calcDistance()");
+
+	return 0;
+}
+
+CMovGraphNode *CMovGraph::calcOffset(int ox, int oy) {
+	warning("STUB: CMovGraph::calcOffset()");
+
+	return 0;
+}
+
 
 CMovGraphLink::CMovGraphLink() {
 	_distance = 0;
