@@ -36,6 +36,7 @@ namespace ZVision {
 class ZVision;
 
 struct SaveGameHeader {
+	byte version;
 	Common::String saveName;
 	Graphics::Surface *thumbnail;
 	int saveYear, saveMonth, saveDay;

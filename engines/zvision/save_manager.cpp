@@ -44,6 +44,9 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName) {
 	// Write out the savegame header
 	file->writeUint32BE(SAVEGAME_ID);
 
+	// Write version
+	file->writeByte(1);
+
 	// Write savegame name
 	file->writeString(saveName);
 	file->writeByte(0);
@@ -58,6 +61,7 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName) {
 
 	// Skip over the header info
 	autoSaveFile->readSint32BE(); // SAVEGAME_ID
+	autoSaveFile->readByte(); // Version
 	autoSaveFile->seek(5, SEEK_CUR); // The string "auto" with terminating NULL
 
 	// Read the rest to a buffer
@@ -78,6 +82,9 @@ void SaveManager::autoSave() {
 
 	// Write out the savegame header
 	file->writeUint32BE(SAVEGAME_ID);
+
+	// Version
+	file->writeByte(1);
 
 	file->writeString("auto");
 	file->writeByte(0);
@@ -153,6 +160,9 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		return false;
 	}
 	
+	// Read in the version
+	header.version = in->readByte();
+
 	// Read in the save name
 	header.saveName.clear();
 	char ch;
