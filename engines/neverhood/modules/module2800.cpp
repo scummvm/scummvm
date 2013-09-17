@@ -294,30 +294,8 @@ void Module2800::updateScene() {
 				createScene(8, 0);
 			else if (_moduleResult == 6)
 				createScene(2, 6);
-			else if (_moduleResult == 11)
-				createScene(12, 0);
-			else if (_moduleResult == 12)
-				createScene(13, 0);
-			else if (_moduleResult == 13)
-				createScene(14, 0);
-			else if (_moduleResult == 14)
-				createScene(15, 0);
-			else if (_moduleResult == 15)
-				createScene(16, 0);
-			else if (_moduleResult == 16)
-				createScene(17, 0);
-			else if (_moduleResult == 17)
-				createScene(18, 0);
-			else if (_moduleResult == 18)
-				createScene(19, 0);
-			else if (_moduleResult == 19)
-				createScene(20, 0);
-			else if (_moduleResult == 20)
-				createScene(21, 0);
-			else if (_moduleResult == 21)
-				createScene(22, 0);
-			else if (_moduleResult == 22)
-				createScene(23, 0);
+			else if (_moduleResult >= 11 && _moduleResult <= 22)
+				createScene(_moduleResult + 1, 0);
 			else
 				createScene(2, 4);
 			break;
@@ -335,40 +313,18 @@ void Module2800::updateScene() {
 				createScene(9, 1);
 			break;
 		case 12:
-			createScene(9, 11);
-			break;
 		case 13:
-			createScene(9, 12);
-			break;
 		case 14:
-			createScene(9, 13);
-			break;
 		case 15:
-			createScene(9, 14);
-			break;
 		case 16:
-			createScene(9, 15);
-			break;
 		case 17:
-			createScene(9, 16);
-			break;
 		case 18:
-			createScene(9, 17);
-			break;
 		case 19:
-			createScene(9, 18);
-			break;
 		case 20:
-			createScene(9, 19);
-			break;
 		case 21:
-			createScene(9, 20);
-			break;
 		case 22:
-			createScene(9, 21);
-			break;
 		case 23:
-			createScene(9, 22);
+			createScene(9, _sceneNum - 1);
 			break;
 		case 24:
 			createScene(9, 3);
