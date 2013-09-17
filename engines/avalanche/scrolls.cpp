@@ -28,7 +28,6 @@
  /* SCROLLS		The scroll driver. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/scrolls.h"
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"
@@ -199,9 +198,8 @@ bool Scrolls::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
 	for (int i = 0; i < sizeof(played); i++) {
-		if (played[i] != _vm->_gyro->kTune[i]) {
+		if (played[i] != _vm->_gyro->kTune[i])
 			mistakes += 1;
-		}
 	}
 
 	return mistakes < 5;
@@ -320,7 +318,7 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	}
 	int16 mx = 320;
 	int16 my = 100; // Getmaxx & getmaxy div 2, both.
-	lx = lx / 2;
+	lx /= 2;
 	ly -= 2;
 
 	if ((1 <= _useIcon) && (_useIcon <= 34))
@@ -539,9 +537,10 @@ bool Scrolls::displayQuestion(Common::String question) {
 
 void Scrolls::resetScroll() {
 	_vm->_gyro->_scrollNum = 1;
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 15; i++) {
 		if (!_vm->_gyro->_scroll[i].empty())
 			_vm->_gyro->_scroll[i].clear();
+	}
 }
 
 void Scrolls::setBubbleStateNatural() {
@@ -574,9 +573,8 @@ Common::String Scrolls::displayMoney() {
 }
 
 void Scrolls::stripTrailingSpaces(Common::String &str) {
-	while (str[str.size() - 1] == ' ') {
+	while (str[str.size() - 1] == ' ')
 		str.deleteLastChar();
-	}
 }
 
 void Scrolls::solidify(byte n) {
@@ -594,8 +592,6 @@ void Scrolls::solidify(byte n) {
 
 void Scrolls::callScrollDriver() {
 //	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
-
-
 	//nosound();
 	warning("STUB: Scrolls::calldrivers()");
 

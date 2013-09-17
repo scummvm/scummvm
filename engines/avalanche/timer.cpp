@@ -480,9 +480,8 @@ void Timer::jump() {
 	if (_vm->_gyro->_jumpStatus == 20) { // End of jump.
 		_vm->_gyro->_userMovesAvvy = true;
 		_vm->_gyro->_jumpStatus = 0;
-	} else { // Still jumping.
+	} else // Still jumping.
 		addTimer(1, kProcJump, kReasonJumping);
-	}
 
 	if ((_vm->_gyro->_jumpStatus == 10) // You're at the highest point of your jump.
 			&& (_vm->_gyro->_room == kRoomInsideCardiffCastle)

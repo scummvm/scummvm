@@ -74,7 +74,7 @@ public:
 	byte _optionNum;
 	uint16 _width, _left;
 	bool _firstlix;
-	int16 _flx1, _flx2, fly;
+	int16 _flx1, _flx2, _fly;
 	byte _oldY; // used by lightUp */
 	bool _activeNow; // Is there an active option now?
 	byte _activeNum; // And if so, which is it?
