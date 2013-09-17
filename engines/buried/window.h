@@ -54,7 +54,7 @@ public:
 	virtual void onMButtonUp(const Common::Point &point, uint flags) {}
 	virtual void onRButtonUp(const Common::Point &point, uint flags) {}
 	virtual void onRButtonDown(const Common::Point &point, uint flags) {}
-	virtual bool onSetCursor(uint message) { return false; }
+	virtual bool onSetCursor(uint message);
 	virtual void onEnable(bool enable) {}
 
 	void invalidateRect(const Common::Rect &rect, bool erase = true);

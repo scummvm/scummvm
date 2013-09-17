@@ -303,4 +303,10 @@ Common::Point Window::convertPointToWindow(const Common::Point &point, Window *d
 	return dest->convertPointToLocal(convertPointToGlobal(point));
 }
 
+bool Window::onSetCursor(uint message) {
+	// Default to the arrow
+	_vm->_gfx->setCursor(kCursorArrow);
+	return false;
+}
+
 } // End of namespace Buried

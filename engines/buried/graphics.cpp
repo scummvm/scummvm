@@ -200,6 +200,10 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 }
 
 Cursor GraphicsManager::setCursor(Cursor newCursor) {
+	// Don't set the cursor again
+	if (newCursor == _curCursor)
+		return _curCursor;
+
 	Cursor oldCursor = _curCursor;
 	Graphics::Cursor *cursor = 0;
 	Graphics::WinCursorGroup *cursorGroup = 0;
