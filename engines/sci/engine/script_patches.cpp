@@ -742,6 +742,48 @@ const SciScriptSignature longbowSignatures[] = {
 };
 
 // ===========================================================================
+// Leisure Suit Larry 2
+// On the plane, Larry is able to wear the parachute. This grants 4 points.
+// In early versions of LSL2, it was possible to get "unlimited" points by
+//  simply wearing it multiple times.
+// They fixed it in later versions by remembering, if the parachute was already
+//  used before.
+// But instead of adding it properly, it seems they hacked the script / forgot
+//  to replace script 0 as well, which holds information about how many global
+//  variables are allocated at the start of the game.
+// The script tries to read an out-of-bounds global variable, which somewhat
+//  "worked" in SSCI, but ScummVM/SCI doesn't allow that.
+// That's why those points weren't granted here at all.
+// We patch the script to use global 90, which seems to be unused in the whole game.
+// Responsible method: rm63Script::handleEvent
+// Fixes bug #3614419
+const byte larry2SignatureWearParachutePoints[] = {
+	16,
+	0x35, 0x01,       // ldi 01
+	0xa1, 0x8e,       // sag 8e
+	0x80, 0xe0, 0x01, // lag 1e0
+	0x18,             // not
+	0x30, 0x0f, 0x00, // bnt [don't give points]
+	0x35, 0x01,       // ldi 01
+	0xa0, 0xe0, 0x01, // sag 1e0
+	0
+};
+
+const uint16 larry2PatchWearParachutePoints[] = {
+	PATCH_ADDTOOFFSET | +4,
+	0x80, 0x5a, 0x00, // lag 5a (global 90)
+	PATCH_ADDTOOFFSET | +6,
+	0xa0, 0x5a, 0x00, // sag 5a (global 90)
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature larry2Signatures[] = {
+	{     63, "plane: no points for wearing plane",          1, PATCH_MAGICDWORD(0x8e, 0x80, 0xe0, 0x01),    -3, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // this is called on every death dialog. Problem is at least the german
 //  version of lsl6 gets title text that is far too long for the
 //  available temp space resulting in temp space corruption
@@ -996,9 +1038,10 @@ const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 };
 
 // Typo in the original Sierra scripts
-//  Looking at a cheetaur resulted in a text about a Saurus Rex
-//  Code is in smallMonster::doVerb. It treats both monster
-//  types the same. We fix this. Fixes bug #3604943.
+// Looking at a cheetaur resulted in a text about a Saurus Rex
+// The code treats both monster types the same.
+// Responsible method: smallMonster::doVerb
+// Fixes bug #3604943.
 const byte qfg1vgaSignatureCheetaurDescription[] = {
 	16,
 	0x34, 0xb8, 0x01, // ldi 01b8
@@ -1443,6 +1486,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_LONGBOW:
 		signatureTable = longbowSignatures;
+		break;
+	case GID_LSL2:
+		signatureTable = larry2Signatures;
 		break;
 	case GID_LSL6:
 		signatureTable = larry6Signatures;
