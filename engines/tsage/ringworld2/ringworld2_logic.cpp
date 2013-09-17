@@ -215,13 +215,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Exit
 		return new Scene2600();
 	case 2700:
-		// Forest Maze
+		// Outer Forest
 		return new Scene2700();
 	case 2750:
-		// Forest Maze
+		// Inner Forest
 		return new Scene2750();
 	case 2800:
-		// Exiting Forest
+		// Guard post
 		return new Scene2800();
 	case 2900:
 		// Balloon Cutscene
@@ -297,6 +297,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Desert
 		return new Scene3800();
 	case 3900:
+		// Forest Entrance
 		return new Scene3900();
 	default:
 		error("Unknown scene number - %d", sceneNumber);

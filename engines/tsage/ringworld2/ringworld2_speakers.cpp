@@ -414,10 +414,10 @@ SpeakerGuard::SpeakerGuard() {
 
 void SpeakerGuard2800::proc15() {
 	int v = _speakerMode;
-	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
+	Scene2800 *scene = (Scene2800 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_guard;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -933,7 +933,7 @@ void SpeakerNej2700::proc15() {
 	Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_nej;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -968,7 +968,7 @@ void SpeakerNej2750::proc15() {
 	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_nej;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
