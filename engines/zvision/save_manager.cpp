@@ -45,7 +45,7 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName) {
 	file->writeUint32BE(SAVEGAME_ID);
 
 	// Write version
-	file->writeByte(1);
+	file->writeByte(SAVE_VERSION);
 
 	// Write savegame name
 	file->writeString(saveName);
@@ -84,7 +84,7 @@ void SaveManager::autoSave() {
 	file->writeUint32BE(SAVEGAME_ID);
 
 	// Version
-	file->writeByte(1);
+	file->writeByte(SAVE_VERSION);
 
 	file->writeString("auto");
 	file->writeByte(0);

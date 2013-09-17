@@ -51,6 +51,10 @@ private:
 	ZVision *_engine;
 	static const uint32 SAVEGAME_ID;
 
+	enum {
+		SAVE_VERSION = 1
+	};
+
 public:
 	void autoSave();
 	void saveGame(uint slot, const Common::String &saveName);
