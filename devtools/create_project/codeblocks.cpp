@@ -64,6 +64,11 @@ std::string processLibraryName(std::string name) {
 	if (pos != std::string::npos)
 		return name.replace(pos, 7, "");
 
+	// Remove "-static" in lib name
+	pos = name.find("-static");
+	if (pos != std::string::npos)
+		return name.replace(pos, 7, "");
+
 	// Replace "zlib" by "libz"
 	if (name == "zlib")
 		return "libz";
