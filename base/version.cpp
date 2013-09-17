@@ -133,4 +133,8 @@ const char *gScummVMFeatures = ""
 #ifdef USE_JPEG
 	"JPEG "
 #endif
+
+#ifdef USE_PNG
+	"PNG "
+#endif
 	;
