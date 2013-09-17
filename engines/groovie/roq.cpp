@@ -28,6 +28,7 @@
 #include "groovie/groovie.h"
 
 #include "common/debug.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 
 #include "graphics/palette.h"
@@ -436,14 +437,19 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 
 	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
 	jpg->setOutputColorSpace(Graphics::JPEGDecoder::kColorSpaceYUV);
-	jpg->loadStream(*_file);
+
+	uint32 startPos = _file->pos();
+	Common::SeekableSubReadStream subStream(_file, startPos, startPos + blockHeader.size, DisposeAfterUse::NO);
+	jpg->loadStream(subStream);
 
 	const Graphics::Surface *srcSurf = jpg->getSurface();
 	const byte *src = (const byte *)srcSurf->getPixels();
 	byte *ptr = (byte *)_currBuf->getPixels();
-	memcpy(ptr, src, _currBuf->w * _currBuf->h);
+	memcpy(ptr, src, _currBuf->w * _currBuf->h * srcSurf->format.bytesPerPixel);
 
 	delete jpg;
+
+	_file->seek(startPos + blockHeader.size);
 	return true;
 }
 
