@@ -27,6 +27,8 @@
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 
+#include "gui/message.h"
+
 #include "zvision/save_manager.h"
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
@@ -162,6 +164,13 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	
 	// Read in the version
 	header.version = in->readByte();
+
+	// Check that the save version isn't newer than this binary
+	if (header.version > SAVE_VERSION) {
+		uint tempVersion = header.version;
+		GUI::MessageDialog dialog(Common::String::format("This save file uses version %u, but this engine only supports up to version %d. You will need an updated version of the engine to use this save file.", tempVersion, SAVE_VERSION), "OK");
+		dialog.runModal();
+	}
 
 	// Read in the save name
 	header.saveName.clear();
