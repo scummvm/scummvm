@@ -81,8 +81,6 @@ bool HeadType::parseAltTrigger(char key) {
 	return false;
 }
 
-
-
 void MenuItem::init(Dropdown *dr) {
 	_dr = dr;
 	_activeNow = false;
@@ -135,12 +133,12 @@ void MenuItem::display() {
 	_firstlix = true;
 	_flx1 = _left - 2;
 	_flx2 = _left + _width;
-	fly = 15 + _optionNum * 10;
+	_fly = 15 + _optionNum * 10;
 	_activeNow = true;
 	_dr->_vm->_gyro->_dropdownActive = true;
 
-	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, fly), _dr->kMenuBackgroundColor);
-	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((_flx1 + 1) * 8 - 1, 11, (_flx2 + 1) * 8 + 1, fly + 1), _dr->kMenuBorderColor);
+	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly), _dr->kMenuBackgroundColor);
+	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((_flx1 + 1) * 8 - 1, 11, (_flx2 + 1) * 8 + 1, _fly + 1), _dr->kMenuBorderColor);
 
 	displayOption(0, true);
 	for (int y = 1; y < _optionNum; y++)
@@ -183,7 +181,7 @@ void MenuItem::moveHighlight(int8 inc) {
 }
 
 void MenuItem::lightUp(Common::Point cursorPos) {
-	if ((cursorPos.x < _flx1 * 8) || (cursorPos.x > _flx2 * 8) || (cursorPos.y <= 25) || (cursorPos.y > ((fly - 3) * 2 + 1)))
+	if ((cursorPos.x < _flx1 * 8) || (cursorPos.x > _flx2 * 8) || (cursorPos.y <= 25) || (cursorPos.y > ((_fly - 3) * 2 + 1)))
 		return;
 	_highlightNum = (cursorPos.y - 26) / 20;
 	if (_highlightNum == _oldY)
@@ -263,14 +261,12 @@ void MenuBar::setupMenuItem(byte which) {
 }
 
 void MenuBar::chooseMenuItem(int16 x) {
-	byte i = 0;
-	do {
+	for (int i = 0; i < _menuNum; i++) {
 		if ((x > _menuItems[i]._xpos * 8) && (x < _menuItems[i]._xright * 8)) {
 			setupMenuItem(i);
-			return;
+			break;
 		}
-		i++;
-	} while (i < _menuNum);
+	}
 }
 
 Dropdown::Dropdown(AvalancheEngine *vm) {
@@ -641,14 +637,12 @@ void Dropdown::runMenuWith() {
 	_vm->_acci->_thing = _vm->_gyro->_thinks;
 
 	if (_vm->_gyro->_thinkThing) {
-
 		_vm->_acci->_thing += 49;
 
 		if (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum] == Acci::kVerbCodeGive)
 			_vm->_acci->_person = _vm->_gyro->_lastPerson;
 		else
 			_vm->_acci->_person = Acci::kPardon;
-
 	} else {
 		switch (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: // Beer
@@ -720,7 +714,7 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 				if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
 					_vm->_gyro->newMouse(1); // Up arrow
 				else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
-					if ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= _activeMenuItem.fly * 2 + 1))
+					if ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= _activeMenuItem._fly * 2 + 1))
 						_vm->_gyro->newMouse(3); // Right-arrow
 					else
 						_vm->_gyro->newMouse(4); // Fletch
@@ -735,7 +729,7 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 			if (_vm->_lucerna->_holdLeftMouse) {
 				if (cursorPos.y > 21) {
 					if (!((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
-						&& (cursorPos.y >= 24) && (cursorPos.y <= (_activeMenuItem.fly * 2 + 1))))) {
+						&& (cursorPos.y >= 24) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1))))) {
 							// Clicked OUTSIDE the menu.
 							if (_activeMenuItem._activeNow) {
 								_activeMenuItem.wipe();
@@ -765,28 +759,27 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 
 				// NOT clicked button...
 				if ((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
-					&& (cursorPos.y >= 12) && (cursorPos.y <= (_activeMenuItem.fly * 2 + 1)))) {
+					&& (cursorPos.y >= 12) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1)))) {
 
-						// We act only if the button is released over a menu item.
-						while (!_vm->shouldQuit()) {
-							cursorPos = _vm->getMousePos();
-							_activeMenuItem.lightUp(cursorPos);
-							_vm->_graphics->refreshScreen();
+					// We act only if the button is released over a menu item.
+					while (!_vm->shouldQuit()) {
+						cursorPos = _vm->getMousePos();
+						_activeMenuItem.lightUp(cursorPos);
+						_vm->_graphics->refreshScreen();
 
-							_vm->updateEvents();
-							if (!_vm->_lucerna->_holdLeftMouse)
-								break;
-						}
+						_vm->updateEvents();
+						if (!_vm->_lucerna->_holdLeftMouse)
+							break;
+					}
 
-						uint16 which = (cursorPos.y - 26) / 20;
-						_activeMenuItem.select(which);
-						if (_activeMenuItem._options[which]._valid) { // If the menu item wasn't active, we do nothing.
-							backup.free();
-							return;
-						}
+					uint16 which = (cursorPos.y - 26) / 20;
+					_activeMenuItem.select(which);
+					if (_activeMenuItem._options[which]._valid) { // If the menu item wasn't active, we do nothing.
+						backup.free();
+						return;
+					}
 				}
 			}
-
 		}
 	}
 

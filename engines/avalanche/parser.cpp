@@ -80,14 +80,12 @@ void Parser::handleBackspace() {
 void Parser::handleReturn() {
 	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
-	else {
-		if (!_inputText.empty()) {
-			_inputTextBackup = _inputText;
-			_vm->_acci->parse();
-			_vm->_acci->doThat();
-			_inputText.clear();
-			wipeText();
-		}
+	else if (!_inputText.empty()) {
+		_inputTextBackup = _inputText;
+		_vm->_acci->parse();
+		_vm->_acci->doThat();
+		_inputText.clear();
+		wipeText();
 	}
 }
 
@@ -108,11 +106,9 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 
 void Parser::plotText() {
 	CursorMan.showMouse(false);
-
 	cursorOff();
 
 	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
-
 	_vm->_graphics->drawText(_vm->_graphics->_surface, _vm->_parser->_inputText, _vm->_gyro->_font, 8, 24, 161, kColorWhite);
 
 	cursorOn();
