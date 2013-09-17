@@ -212,15 +212,13 @@ void StringManager::parseTag(const Common::String &tagString, uint lineNumber) {
 }
 
 Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
-	// NOTE: Hardcoded size. All strings I've checked are less than 290 chars
-	char asciiString[300];
+	Common::String asciiString;
 
 	// Don't spam the user with warnings about UTF-16 support.
 	// Just do one warning per String
 	bool charOverflowWarning = false;
 	
 	uint16 value = stream.readUint16LE();
-	uint i = 0;
 	while (!stream.eos()) {
 		// Check for CRLF
 		if (value == 0x0A0D) {
@@ -233,12 +231,11 @@ Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
 		// Crush each octet pair to a single octet with a simple cast
 		if (value > 255) {
 			charOverflowWarning = true;
-			value = 255;
+			value = '?';
 		}
 		char charValue = (char)value;
 		
-		asciiString[i] = charValue;
-		i++;
+		asciiString += charValue;
 
 		value = stream.readUint16LE();
 	}
@@ -247,7 +244,7 @@ Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
 		warning("UTF-16 is not supported. Characters greater than 255 are clamped to 255");
 	}
 
-	return Common::String(asciiString, i);
+	return asciiString;
 }
 
 StringManager::TextStyle StringManager::getTextStyle(uint stringNumber) {
