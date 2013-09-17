@@ -481,6 +481,8 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 	default:
 		return Common::DefaultEventMapper::mapEvent(ev, source);
 	}
+
+	return Common::DefaultEventMapper::mapEvent(ev, source);
 }
 
 void EventRecorder::setGameMd5(const ADGameDescription *gameDesc) {

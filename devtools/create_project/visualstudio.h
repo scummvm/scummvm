@@ -42,7 +42,7 @@ protected:
 
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
-	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis);
+	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration);
 
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();

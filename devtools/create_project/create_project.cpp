@@ -39,7 +39,7 @@
 
 #include <fstream>
 #include <iostream>
-
+#include <sstream>
 #include <stack>
 #include <algorithm>
 #include <iomanip>
@@ -845,6 +845,7 @@ const Feature s_features[] = {
 	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
 	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
 	{"freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
+	{    "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
 
 	// Feature flags
 	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },
@@ -964,6 +965,10 @@ bool producesObjectFile(const std::string &fileName) {
 		return true;
 	else
 		return false;
+}
+
+std::string toString(int num) {
+    return static_cast<std::ostringstream*>(&(std::ostringstream() << num))->str();
 }
 
 /**

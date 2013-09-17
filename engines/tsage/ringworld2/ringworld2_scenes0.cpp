@@ -577,7 +577,7 @@ bool Scene125::DiskSlot::startAction(CursorType action, Event &event) {
 	Scene125 *scene = (Scene125 *)R2_GLOBALS._sceneManager._scene;
 	switch (action) {
 	case CURSOR_USE:
-		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[1]) {
+		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[R2_QUINN]) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 126;
 			scene->setAction(&scene->_sequenceManager, scene, 126, &scene->_infoDisk, NULL);
@@ -619,13 +619,13 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._sceneManager._previousScene != 125)
 		// Save the prior scene to return to when the console is turned off
-		R2_GLOBALS._player._oldCharacterScene[1] = R2_GLOBALS._sceneManager._previousScene;
+		R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = R2_GLOBALS._sceneManager._previousScene;
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[1]) {
+	if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[R2_QUINN]) {
 		_infoDisk.postInit();
 		_infoDisk.setup(160, 3, 5);
 		_infoDisk.setPosition(Common::Point(47, 167));
@@ -781,7 +781,7 @@ void Scene125::signal() {
 		}
 		break;
 	case 125:
-		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, R2_GLOBALS._player._oldCharacterScene[1]);
+		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, R2_GLOBALS._player._oldCharacterScene[R2_QUINN]);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 126:
@@ -883,7 +883,7 @@ void Scene125::consoleAction(int id) {
 		_icon2.setIcon(23);
 		break;
 	case 6:
-		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._oldCharacterScene[1]);
+		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._oldCharacterScene[R2_QUINN]);
 		break;
 	case 7:
 		if (_consoleMode == 11)
@@ -946,7 +946,7 @@ void Scene125::consoleAction(int id) {
 		break;
 	case 13:
 		consoleAction(2);
-		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) != R2_GLOBALS._player._oldCharacterScene[1]) {
+		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) != R2_GLOBALS._player._oldCharacterScene[R2_QUINN]) {
 			SceneItem::display2(126, 17);
 		} else {
 			R2_GLOBALS._player.disableControl();
@@ -3279,7 +3279,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		_miranda.setAction(&_action3);
 		_miranda.setDetails(300, 39, 40, 41, 1, (SceneItem *)NULL);
 
-		if ((R2_GLOBALS._player._characterScene[2] == 300) || (R2_GLOBALS._player._characterScene[2] == 325)) {
+		if ((R2_GLOBALS._player._characterScene[R2_SEEKER] == 300) || (R2_GLOBALS._player._characterScene[R2_SEEKER] == 325)) {
 			_seeker.postInit();
 			_seeker.setVisage(302);
 			_seeker.setPosition(Common::Point(158, 108));
@@ -3301,7 +3301,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		_miranda.setAction(&_action3);
 		_miranda.setDetails(300, 39, 40, 41, 1, (SceneItem *)NULL);
 
-		if ((R2_GLOBALS._player._characterScene[1] == 300) || (R2_GLOBALS._player._characterScene[1] == 325)) {
+		if ((R2_GLOBALS._player._characterScene[R2_QUINN] == 300) || (R2_GLOBALS._player._characterScene[R2_QUINN] == 325)) {
 			_quinn.postInit();
 			_quinn.setup(302, 3, 1);
 			_quinn.setPosition(Common::Point(271, 150));
@@ -3317,7 +3317,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		break;
 
 	case 3:
-		if ((R2_GLOBALS._player._characterScene[2] == 300) || (R2_GLOBALS._player._characterScene[2] == 325)) {
+		if ((R2_GLOBALS._player._characterScene[R2_SEEKER] == 300) || (R2_GLOBALS._player._characterScene[R2_SEEKER] == 325)) {
 			_seeker.postInit();
 			_seeker.setVisage(302);
 			_seeker.setPosition(Common::Point(158, 108));
@@ -3326,7 +3326,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			_seeker.setDetails(300, 42, 43, 44, 1, (SceneItem *)NULL);
 		}
 
-		if ((R2_GLOBALS._player._characterScene[1] == 300) || (R2_GLOBALS._player._characterScene[1] == 325)) {
+		if ((R2_GLOBALS._player._characterScene[R2_QUINN] == 300) || (R2_GLOBALS._player._characterScene[R2_QUINN] == 325)) {
 			_quinn.postInit();
 			_quinn.setup(302, 3, 1);
 			_quinn.setPosition(Common::Point(271, 150));
@@ -3657,7 +3657,7 @@ void Scene300::signal() {
 		break;
 
 	case 316:
-		R2_GLOBALS._player._characterScene[2] = 500;
+		R2_GLOBALS._player._characterScene[R2_SEEKER] = 500;
 		_seeker.remove();
 		R2_GLOBALS._player.enableControl(CURSOR_CROSSHAIRS);
 		break;

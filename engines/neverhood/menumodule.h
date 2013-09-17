@@ -79,7 +79,6 @@ class MainMenu : public Scene {
 public:
 	MainMenu(NeverhoodEngine *vm, Module *parentModule);
 protected:
-	Sprite *_musicOnButton;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

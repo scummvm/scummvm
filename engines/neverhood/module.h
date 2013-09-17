@@ -48,6 +48,7 @@ public:
 	Module(NeverhoodEngine *vm, Module *parentModule);
 	virtual ~Module();
 	virtual void draw();
+	SceneType getSceneType() { return _sceneType; }
 
 	Entity *_childObject;
 protected:

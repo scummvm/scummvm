@@ -1179,7 +1179,7 @@ void PaletteRotation::signal() {
 		int count = _end - _currIndex;
 		g_system->getPaletteManager()->setPalette((const byte *)&_palette[_currIndex * 3], _start, count);
 
-		if (count2) {
+		if (count2 > 0) {
 			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start * 3], _start + count, count2);
 		}
 	}
@@ -1516,6 +1516,10 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 
 	g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface,
 		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
+	if (g_vm->getGameID() == GType_Ringworld2 && !GLOBALS._player._uiEnabled
+			&& T2_GLOBALS._interfaceY == UI_INTERFACE_Y) {
+		g_globals->_screenSurface.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT - 1), 0);
+	}
 
 	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
 		delete *i;
@@ -2757,13 +2761,29 @@ void BackgroundSceneObject::draw() {
 	g_globals->_sceneManager._scene->_backSurface.copyFrom(frame, destRect, priorityRegion);
 }
 
-void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10) {
-	warning("TODO: Implement properly BackgroundSceneObject::setup2()");
+SceneObject *BackgroundSceneObject::clone() const {
+	BackgroundSceneObject *obj = new BackgroundSceneObject(*this);
+	return obj;
+}
+
+void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int effect) {
+	// Check if the given object is already in the background object list
+	if (R2_GLOBALS._sceneManager._scene->_bgSceneObjects.contains(this)) {
+		_flags |= OBJFLAG_REMOVE;
+
+		// Clone the item
+		SceneObject *obj = clone();
+		obj->_flags |= OBJFLAG_CLONED;
+		R2_GLOBALS._sceneManager._scene->_bgSceneObjects.push_back(obj);
+
+		_flags |= ~OBJFLAG_REMOVE;
+	}
+
 	postInit();
 	setVisage(visage);
 	setStrip(stripFrameNum);
 	setFrame(frameNum);
-	setPosition(Common::Point(posX, posY), 0);
+	setPosition(Common::Point(posX, posY));
 	fixPriority(priority);
 }
 

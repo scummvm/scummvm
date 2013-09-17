@@ -144,16 +144,22 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Miranda being questioned
 		return new Scene1625();
 	case 1700:
+		// Rim
 		return new Scene1700();
 	case 1750:
+		// Rim Transport Vechile
 		return new Scene1750();
 	case 1800:
+		// Rim Lift Exterior
 		return new Scene1800();
 	case 1850:
+		// Rim Lift Interior
 		return new Scene1850();
 	case 1875:
+		// Rim Lift Computer
 		return new Scene1875();
 	case 1900:
+		// Spill Mountains Elevator Exit
 		return new Scene1900();
 	case 1925:
 		return new Scene1925();
@@ -164,61 +170,63 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #2 */
 	//
 	case 2000:
-		// Ice Maze
+		// Spill Mountains
 		return new Scene2000();
 	case 2350:
-		// Ice Maze: Balloon Launch Platform
+		// Spill Mountains: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
-		// Ice Maze: Large empty room
+		// Spill Mountains: Large empty room
 		return new Scene2400();
 	case 2425:
-		// Ice Maze: The Hall of Records
+		// Spill Mountains: The Hall of Records
 		return new Scene2425();
 	case 2430:
-		// Ice Maze: Bedroom
+		// Spill Mountains: Bedroom
 		return new Scene2430();
 	case 2435:
-		// Ice Maze: Throne room
+		// Spill Mountains: Throne room
 		return new Scene2435();
 	case 2440:
-		// Ice Maze: Another bedroom
+		// Spill Mountains: Another bedroom
 		return new Scene2440();
 	case 2445:
-		// Ice Maze:
+		// Spill Mountains:
 		return new Scene2445();
 	case 2450:
-		// Ice Maze: Another bedroom
+		// Spill Mountains: Another bedroom
 		return new Scene2450();
 	case 2455:
-		// Ice Maze: Inside crevasse
+		// Spill Mountains: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Ice Maze: Large Cave
+		// Spill Mountains: Large Cave
 		return new Scene2500();
 	case 2525:
-		// Ice Maze: Furnace room
+		// Spill Mountains: Furnace room
 		return new Scene2525();
 	case 2530:
-		// Ice Maze: Well
+		// Spill Mountains: Well
 		return new Scene2530();
 	case 2535:
-		// Ice Maze: Tannery
+		// Spill Mountains: Tannery
 		return new Scene2535();
 	case 2600:
-		// Ice Maze: Exit
+		// Spill Mountains: Exit
 		return new Scene2600();
 	case 2700:
-		// Forest Maze
+		// Outer Forest
 		return new Scene2700();
 	case 2750:
-		// Forest Maze
+		// Inner Forest
 		return new Scene2750();
 	case 2800:
-		// Exiting Forest
+		// Guard post
 		return new Scene2800();
 	case 2900:
-		error("Missing scene %d from group 2", sceneNumber);
+		// Balloon Cutscene
+		return new Scene2900();
+
 	/* Scene group #3 */
 	// ARM Base Hanager
 	case 3100:
@@ -286,8 +294,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Teleport outside
 		return new Scene3700();
 	case 3800:
+		// Desert
 		return new Scene3800();
 	case 3900:
+		// Forest Entrance
 		return new Scene3900();
 	default:
 		error("Unknown scene number - %d", sceneNumber);
@@ -516,6 +526,8 @@ void SceneExt::refreshBackground(int xAmount, int yAmount) {
 	byte *destP = (byte *)s.getPixels();
 	Common::copy(dataP, dataP + (s.w * s.h), destP);
 	_backSurface.unlockSurface();
+
+	R2_GLOBALS._screenSurface.addDirtyRect(_backSurface.getBounds());
 
 	// Free the resource data
 	DEALLOCATE(dataP);
@@ -2271,22 +2283,22 @@ void ScannerDialog::Button::reset() {
 			break;
 		case 1700:
 		case 1800:
-			if (R2_GLOBALS._v565F6 < 1201)
+			if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 3);
-			else if (R2_GLOBALS._v565F6 < 1201)
+			else if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 4);
 			else
 				scanner._obj4.setup(4, 3, 5);
 			break;
 		case 3800:
 		case 3900:
-			if ((R2_GLOBALS._v56A93 + 1) == 0 && R2_GLOBALS._v566A9 == 0) {
+			if ((R2_GLOBALS._desertWrongDirCtr + 1) == 0 && R2_GLOBALS._desertCorrectDirection == 0) {
 				do {
-					R2_GLOBALS._v566A9 = R2_GLOBALS._randomSource.getRandomNumber(3);
-				} while (R2_GLOBALS._v566A9 == R2_GLOBALS._v566AA);
+					R2_GLOBALS._desertCorrectDirection = R2_GLOBALS._randomSource.getRandomNumber(3) + 1;
+				} while (R2_GLOBALS._desertCorrectDirection == R2_GLOBALS._desertPreviousDirection);
 			}
 
-			scanner._obj4.setup(4, 7, R2_GLOBALS._v566A9);
+			scanner._obj4.setup(4, 7, R2_GLOBALS._desertCorrectDirection);
 			if (!R2_GLOBALS.getFlag(46))
 				R2_GLOBALS.setFlag(46);
 			break;

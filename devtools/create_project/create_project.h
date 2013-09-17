@@ -303,6 +303,14 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
 bool producesObjectFile(const std::string &fileName);
 
 /**
+* Convert an integer to string
+*
+* @param num the integer to convert
+* @return string representation of the number
+*/
+std::string toString(int num);
+
+/**
  * Structure representing a file tree. This contains two
  * members: name and children. "name" holds the name of
  * the node. "children" does contain all the node's children.

@@ -995,14 +995,38 @@ const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 	PATCH_END
 };
 
+// Typo in the original Sierra scripts
+//  Looking at a cheetaur resulted in a text about a Saurus Rex
+//  Code is in smallMonster::doVerb. It treats both monster
+//  types the same. We fix this. Fixes bug #3604943.
+const byte qfg1vgaSignatureCheetaurDescription[] = {
+	16,
+	0x34, 0xb8, 0x01, // ldi 01b8
+	0x1a,             // eq?
+	0x31, 0x16,       // bnt 16
+	0x38, 0x27, 0x01, // pushi 0127
+	0x39, 0x06,       // pushi 06
+	0x39, 0x03,       // pushi 03
+	0x78,             // push1
+	0x39, 0x12,       // pushi 12 -> monster type Saurus Rex
+	0
+};
+
+const uint16 qfg1vgaPatchCheetaurDescription[] = {
+	PATCH_ADDTOOFFSET | +14,
+	0x39, 0x11,       // pushi 11 -> monster type cheetaur
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
-	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
-	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
-	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,         qfg1vgaPatchTempSpace },
-	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,      qfg1vgaPatchDialogHeader },
-	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,     qfg1vgaPatchMoveToCrusher },
-	{     41, "moving to castle gate",                       1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCastleGate,  qfg1vgaPatchMoveToCastleGate },
+	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
+	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
+	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
+	{     41, "moving to castle gate",                       1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
+	{    210, "cheetaur description fixed",                  1, PATCH_MAGICDWORD(0x34, 0xb8, 0x01, 0x1a),     0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

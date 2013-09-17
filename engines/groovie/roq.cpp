@@ -28,6 +28,7 @@
 #include "groovie/groovie.h"
 
 #include "common/debug.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 
 #include "graphics/palette.h"
@@ -435,19 +436,20 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	warning("Groovie::ROQ: JPEG frame (unfinished)");
 
 	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
-	jpg->loadStream(*_file);
-	const byte *y = (const byte *)jpg->getComponent(1)->getPixels();
-	const byte *u = (const byte *)jpg->getComponent(2)->getPixels();
-	const byte *v = (const byte *)jpg->getComponent(3)->getPixels();
+	jpg->setOutputColorSpace(Graphics::JPEGDecoder::kColorSpaceYUV);
 
+	uint32 startPos = _file->pos();
+	Common::SeekableSubReadStream subStream(_file, startPos, startPos + blockHeader.size, DisposeAfterUse::NO);
+	jpg->loadStream(subStream);
+
+	const Graphics::Surface *srcSurf = jpg->getSurface();
+	const byte *src = (const byte *)srcSurf->getPixels();
 	byte *ptr = (byte *)_currBuf->getPixels();
-	for (int i = 0; i < _currBuf->w * _currBuf->h; i++) {
-		*ptr++ = *y++;
-		*ptr++ = *u++;
-		*ptr++ = *v++;
-	}
+	memcpy(ptr, src, _currBuf->w * _currBuf->h * srcSurf->format.bytesPerPixel);
 
 	delete jpg;
+
+	_file->seek(startPos + blockHeader.size);
 	return true;
 }
 

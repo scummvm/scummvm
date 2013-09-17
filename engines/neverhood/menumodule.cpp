@@ -160,7 +160,8 @@ void MenuModule::updateScene() {
 				createScene(MAKING_OF, -1);
 				break;
 			case kMainMenuToggleMusic:
-				// TODO Toggle music 0048A367
+				_vm->toggleMusic(!_vm->musicIsEnabled());
+				_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_vm->musicIsEnabled());
 				createScene(MAIN_MENU, -1);
 				break;
 			case kMainMenuDeleteGame:
@@ -356,8 +357,8 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	insertStaticSprite(0x41137051, 100);
 	insertStaticSprite(0xC10B2015, 100);
 
-	// TODO Only if music is enabled
-	_musicOnButton = insertStaticSprite(0x0C24C0EE, 100);
+	if (!_vm->musicIsEnabled())
+		insertStaticSprite(0x0C24C0EE, 100);	// "Music is off" button
 
 	for (uint buttonIndex = 0; buttonIndex < 9; ++buttonIndex) {
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,

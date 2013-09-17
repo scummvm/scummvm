@@ -440,7 +440,7 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
+    // Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_dataincAdd) {
 		_dataincAdd = false;
 		_pSnd->dataInc += _dataincToAdd;
@@ -455,7 +455,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	}
 	if (_jumpToHoldTick) {
 		_jumpToHoldTick = false;
+		_pSnd->inFastForward = true;
 		jumpToTick(_loopTick, false, false);
+		_pSnd->inFastForward = false;
 	}
 
 	info.start = _position._playPos;
@@ -497,8 +499,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// immediately there.
 				if (_soundVersion <= SCI_VERSION_0_LATE ||
 					_position._playTick || info.delta) {
-					_signalSet = true;
-					_signalToSet = info.basic.param1;
+					if (!_pSnd->inFastForward) {
+						_signalSet = true;
+						_signalToSet = info.basic.param1;
+					}
 				}
 			} else {
 				_loopTick = _position._playTick + info.delta;
@@ -552,19 +556,21 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				}
 				break;
 			case kUpdateCue:
-				_dataincAdd = true;
-				switch (_soundVersion) {
-				case SCI_VERSION_0_EARLY:
-				case SCI_VERSION_0_LATE:
-					_dataincToAdd = info.basic.param2;
-					break;
-				case SCI_VERSION_1_EARLY:
-				case SCI_VERSION_1_LATE:
-				case SCI_VERSION_2_1:
-					_dataincToAdd = 1;
-					break;
-				default:
-					error("unsupported _soundVersion");
+				if (!_pSnd->inFastForward) {
+					_dataincAdd = true;
+					switch (_soundVersion) {
+					case SCI_VERSION_0_EARLY:
+					case SCI_VERSION_0_LATE:
+						_dataincToAdd = info.basic.param2;
+						break;
+					case SCI_VERSION_1_EARLY:
+					case SCI_VERSION_1_LATE:
+					case SCI_VERSION_2_1:
+						_dataincToAdd = 1;
+						break;
+					default:
+						error("unsupported _soundVersion");
+					}
 				}
 				break;
 			case kResetOnPause:
@@ -660,7 +666,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					assert(_loopTick + info.delta < _position._playTick);
 
 					uint32 extraDelta = info.delta;
+					_pSnd->inFastForward = true;
 					jumpToTick(_loopTick);
+					_pSnd->inFastForward = false;
 					_nextEvent.delta += extraDelta;
 				} else {
 					_pSnd->status = kSoundStopped;
