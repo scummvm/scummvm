@@ -31,18 +31,15 @@
 #define AVALANCHE_DROPDOWN2_H
 
 #include "avalanche/color.h"
-
 #include "common/scummsys.h"
 #include "common/str.h"
-
-
 
 namespace Avalanche {
 class AvalancheEngine;
 
-class Dropdown;
+class Menu;
 
-typedef void (Dropdown::*DropdownFunc)();
+typedef void (Menu::*MenuFunc)();
 
 class HeadType {
 public:
@@ -50,15 +47,15 @@ public:
 	char _trigger, _altTrigger;
 	byte _position;
 	int16 _xpos, _xright;
-	DropdownFunc _setupFunc, _chooseFunc;
+	MenuFunc _setupFunc, _chooseFunc;
 
-	void init(char trig, char alTtrig, Common::String title, byte pos, DropdownFunc setupFunc, DropdownFunc chooseFunc, Dropdown *dr);
+	void init(char trig, char alTtrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *dr);
 	void draw();
 	void highlight();
 	bool parseAltTrigger(char key);
 
 private:
-	Dropdown *_dr;
+	Menu *_dr;
 };
 
 struct OptionType {
@@ -81,7 +78,7 @@ public:
 	byte _choiceNum; // Your choice?
 	byte _highlightNum;
 
-	void init(Dropdown *dr);
+	void init(Menu *dr);
 	void reset();
 	void setupOption(Common::String title, char trigger, Common::String shortcut, bool valid);
 	void display();
@@ -93,7 +90,7 @@ public:
 	void parseKey(char c);
 
 private:
-	Dropdown *_dr;
+	Menu *_dr;
 };
 
 class MenuBar {
@@ -101,18 +98,18 @@ public:
 	HeadType _menuItems[8];
 	byte _menuNum;
 
-	void init(Dropdown *dr);
-	void createMenuItem(char trig, Common::String title, char altTrig, DropdownFunc setupFunc, DropdownFunc chooseFunc);
+	void init(Menu *dr);
+	void createMenuItem(char trig, Common::String title, char altTrig, MenuFunc setupFunc, MenuFunc chooseFunc);
 	void draw();
 	void parseAltTrigger(char c);
 	void setupMenuItem(byte which);
 	void chooseMenuItem(int16 x);
 
 private:
-	Dropdown *_dr;
+	Menu *_dr;
 };
 
-class Dropdown {
+class Menu {
 public:
 	friend class HeadType;
 	friend class MenuItem;
@@ -123,11 +120,13 @@ public:
 
 	Common::String people;
 
-	Dropdown(AvalancheEngine *vm);
+	Menu(AvalancheEngine *vm);
 
 	void parseKey(char r, char re);
-	void updateMenu();
-	void setupMenu(); // Standard menu bar.
+	void update();
+	void setup(); // Standard menu bar.
+	bool isActive();
+	void init();
 
 private:
 	static const byte kIndent = 5;
@@ -139,6 +138,8 @@ private:
 	static const byte kHighlightBackgroundColor = kColorBlack;
 	static const byte kHighlightFontColor = kColorWhite;
 	static const byte kDisabledColor = kColorDarkgray;
+
+	bool _menuActive; // Kludge so we don't have to keep referring to Dropdown
 
 	AvalancheEngine *_vm;
 

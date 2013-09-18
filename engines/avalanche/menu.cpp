@@ -28,8 +28,7 @@
  /* DROPDOWN	A customised version of Oopmenu (qv). */
 
 #include "avalanche/avalanche.h"
-
-#include "avalanche/dropdown.h"
+#include "avalanche/menu.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/gyro.h"
 #include "avalanche/acci.h"
@@ -39,7 +38,7 @@
 
 namespace Avalanche {
 
-void HeadType::init(char trig, char altTrig, Common::String title, byte pos, DropdownFunc setupFunc, DropdownFunc chooseFunc, Dropdown *dr) {
+void HeadType::init(char trig, char altTrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *dr) {
 	_trigger = trig;
 	_altTrigger = altTrig;
 	_title = title;
@@ -69,8 +68,8 @@ void HeadType::highlight() {
 
 	_dr->_activeMenuItem._left = _xpos;
 	_dr->_activeMenuItem._activeNow = true;
-	_dr->_vm->_gyro->_dropdownActive = true;
 	_dr->_activeMenuItem._activeNum = _position;
+	_dr->_menuActive = true;
 
 	_dr->_vm->_gyro->_currentMouse = 177; // Force redraw of cursor.
 }
@@ -81,11 +80,12 @@ bool HeadType::parseAltTrigger(char key) {
 	return false;
 }
 
-void MenuItem::init(Dropdown *dr) {
+void MenuItem::init(Menu *dr) {
 	_dr = dr;
+
 	_activeNow = false;
-	_dr->_vm->_gyro->_dropdownActive = false;
 	_activeNum = 1;
+	_dr->_menuActive = false;
 }
 
 void MenuItem::reset() {
@@ -135,7 +135,7 @@ void MenuItem::display() {
 	_flx2 = _left + _width;
 	_fly = 15 + _optionNum * 10;
 	_activeNow = true;
-	_dr->_vm->_gyro->_dropdownActive = true;
+	_dr->_menuActive = true;
 
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly), _dr->kMenuBackgroundColor);
 	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((_flx1 + 1) * 8 - 1, 11, (_flx2 + 1) * 8 + 1, _fly + 1), _dr->kMenuBorderColor);
@@ -157,7 +157,7 @@ void MenuItem::wipe() {
 	_dr->drawMenuText(_dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._xpos, 1, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._trigger, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._title, true, false);
 
 	_activeNow = false;
-	_dr->_vm->_gyro->_dropdownActive = false;
+	_dr->_menuActive = false;
 	_firstlix = false;
 	_dr->_vm->_gyro->_defaultLed = 2;
 
@@ -217,12 +217,12 @@ void MenuItem::parseKey(char c) {
 		_dr->_vm->_gyro->blip();
 }
 
-void MenuBar::init(Dropdown *dr) {
+void MenuBar::init(Menu *dr) {
 	_dr = dr;
 	_menuNum = 0;
 }
 
-void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, DropdownFunc setupFunc, DropdownFunc chooseFunc) {
+void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, MenuFunc setupFunc, MenuFunc chooseFunc) {
 	_menuItems[_menuNum].init(trig, altTrig, title, _menuNum, setupFunc, chooseFunc, _dr);
 	_menuNum++;
 }
@@ -269,13 +269,13 @@ void MenuBar::chooseMenuItem(int16 x) {
 	}
 }
 
-Dropdown::Dropdown(AvalancheEngine *vm) {
+Menu::Menu(AvalancheEngine *vm) {
 	_vm = vm;
 	_activeMenuItem.init(this);
 	_menuBar.init(this);
 }
 
-void Dropdown::findWhatYouCanDoWithIt() {
+void Menu::findWhatYouCanDoWithIt() {
 	switch (_vm->_gyro->_thinks) {
 	case Gyro::kObjectWine:
 	case Gyro::kObjectPotion:
@@ -303,7 +303,7 @@ void Dropdown::findWhatYouCanDoWithIt() {
 	}
 }
 
-void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted) {
+void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted) {
 	byte fontColor;
 	byte backgroundColor;
 	if (highlighted) {
@@ -352,64 +352,67 @@ void Dropdown::drawMenuText(int16 x, int16 y, char trigger, Common::String text,
 	_vm->_graphics->refreshScreen();
 }
 
-void Dropdown::bleep() {
+void Menu::bleep() {
 	warning("STUB: Dropdown::bleep()");
 }
 
-void Dropdown::parseKey(char r, char re) {
-	//switch (r) {
-	//case 0:
-	//case 224: {
-	//	switch (re) {
-	//	case 'K':
-	//		if (_activeMenuItem._activeNum > 1)  {
-	//			_activeMenuItem.wipe();
-	//			_menuBar.setupMenuItem(_activeMenuItem._activeNum - 1);
-	//		} else {
-	//			// Get menu on the left-hand side.
-	//			_activeMenuItem.wipe();
-	//			_menuBar.chooseMenuItem((_menuBar._menuNum - 1) * kSpacing + kIndent);
-	//		}
-	//		break;
-	//	case 'M':
-	//		if (_activeMenuItem._activeNum < _menuBar._menuNum)  {
-	//			_activeMenuItem.wipe();
-	//			_menuBar.setupMenuItem(_activeMenuItem._activeNum + 1);
-	//		} else {
-	//			// Get menu on the far right-hand side.
-	//			_activeMenuItem.wipe();
-	//			_menuBar.chooseMenuItem(kIndent);
-	//		}
-	//		break;
-	//	case 'H':
-	//		_activeMenuItem.moveHighlight(-1);
-	//		break;
-	//	case 'P':
-	//		_activeMenuItem.moveHighlight(1);
-	//		break;
-	//	default:
-	//		_menuBar.parseAltTrigger(re);
-	//	}
-	//}
-	//break;
-	//case 13:
-	//	_activeMenuItem.select(_activeMenuItem._highlightNum);
-	//	break;
-	//default:
-	//	if (_activeMenuItem._activeNow)
-	//		_activeMenuItem.parseKey(r);
-	//}
+void Menu::parseKey(char r, char re) {
+#if 0
+	switch (r) {
+	case 0:
+	case 224: {
+		switch (re) {
+		case 'K':
+			if (_activeMenuItem._activeNum > 1)  {
+				_activeMenuItem.wipe();
+				_menuBar.setupMenuItem(_activeMenuItem._activeNum - 1);
+			} else {
+				// Get menu on the left-hand side.
+				_activeMenuItem.wipe();
+				_menuBar.chooseMenuItem((_menuBar._menuNum - 1) * kSpacing + kIndent);
+			}
+			break;
+		case 'M':
+			if (_activeMenuItem._activeNum < _menuBar._menuNum)  {
+				_activeMenuItem.wipe();
+				_menuBar.setupMenuItem(_activeMenuItem._activeNum + 1);
+			} else {
+				// Get menu on the far right-hand side.
+				_activeMenuItem.wipe();
+				_menuBar.chooseMenuItem(kIndent);
+			}
+			break;
+		case 'H':
+			_activeMenuItem.moveHighlight(-1);
+			break;
+		case 'P':
+			_activeMenuItem.moveHighlight(1);
+			break;
+		default:
+			_menuBar.parseAltTrigger(re);
+		}
+	}
+	break;
+	case 13:
+		_activeMenuItem.select(_activeMenuItem._highlightNum);
+		break;
+	default:
+		if (_activeMenuItem._activeNow)
+			_activeMenuItem.parseKey(r);
+	}
+#endif
+
 	warning("STUB: Dropdown::parseKey()"); // To be implemented properly later! Don't remove the comment above!
 }
 
-Common::String Dropdown::selectGender(byte x) {
+Common::String Menu::selectGender(byte x) {
 	if (x < 175)
 		return "im";
 	else
 		return "er";
 }
 
-void Dropdown::setupMenuGame() {
+void Menu::setupMenuGame() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("Help...", 'H', "f1", true);
 	_activeMenuItem.setupOption("Boss Key", 'B', "alt-B", true);
@@ -419,7 +422,7 @@ void Dropdown::setupMenuGame() {
 	_activeMenuItem.display();
 }
 
-void Dropdown::setupMenuFile() {
+void Menu::setupMenuFile() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("New game", 'N', "f4", true);
 	_activeMenuItem.setupOption("Load...", 'L', "^f3", true);
@@ -430,7 +433,7 @@ void Dropdown::setupMenuFile() {
 	_activeMenuItem.display();
 }
 
-void Dropdown::setupMenuAction() {
+void Menu::setupMenuAction() {
 	_activeMenuItem.reset();
 
 	Common::String f5Does = _vm->_gyro->f5Does();
@@ -456,7 +459,7 @@ void Dropdown::setupMenuAction() {
 	_activeMenuItem.display();
 }
 
-void Dropdown::setupMenuPeople() {
+void Menu::setupMenuPeople() {
 	if (!people.empty())
 		people.clear();
 
@@ -472,7 +475,7 @@ void Dropdown::setupMenuPeople() {
 	_activeMenuItem.display();
 }
 
-void Dropdown::setupMenuObjects() {
+void Menu::setupMenuObjects() {
 	_activeMenuItem.reset();
 	for (int i = 0; i < kObjectNum; i++) {
 		if (_vm->_gyro->_objects[i])
@@ -481,7 +484,7 @@ void Dropdown::setupMenuObjects() {
 	_activeMenuItem.display();
 }
 
-void Dropdown::setupMenuWith() {
+void Menu::setupMenuWith() {
 	_activeMenuItem.reset();
 
 	if (_vm->_gyro->_thinkThing) {
@@ -538,7 +541,7 @@ void Dropdown::setupMenuWith() {
 	_activeMenuItem.display();
 }
 
-void Dropdown::runMenuGame() {
+void Menu::runMenuGame() {
 	// Help, boss, untrash screen.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
@@ -559,7 +562,7 @@ void Dropdown::runMenuGame() {
 	}
 }
 
-void Dropdown::runMenuFile() {
+void Menu::runMenuFile() {
 	// New game, load, save, save as, DOS shell, about, quit.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
@@ -588,7 +591,7 @@ void Dropdown::runMenuFile() {
 	}
 }
 
-void Dropdown::runMenuAction() {
+void Menu::runMenuAction() {
 	Common::String f5Does;
 	// Get up, pause game, open door, look, inventory, walk/run.
 	switch (_activeMenuItem._choiceNum) {
@@ -624,16 +627,16 @@ void Dropdown::runMenuAction() {
 	}
 }
 
-void Dropdown::runMenuObjects() {
+void Menu::runMenuObjects() {
 	_vm->_lucerna->thinkAbout(_vm->_gyro->_objectList[_activeMenuItem._choiceNum], Gyro::kThing);
 }
 
-void Dropdown::runMenuPeople() {
+void Menu::runMenuPeople() {
 	_vm->_lucerna->thinkAbout(people[_activeMenuItem._choiceNum], Gyro::kPerson);
 	_vm->_gyro->_lastPerson = people[_activeMenuItem._choiceNum];
 }
 
-void Dropdown::runMenuWith() {
+void Menu::runMenuWith() {
 	_vm->_acci->_thing = _vm->_gyro->_thinks;
 
 	if (_vm->_gyro->_thinkThing) {
@@ -678,21 +681,21 @@ void Dropdown::runMenuWith() {
 	_vm->_lucerna->callVerb(_vm->_gyro->_verbStr[_activeMenuItem._choiceNum]);
 }
 
-void Dropdown::setupMenu() {
+void Menu::setup() {
 	_menuBar.init(this);
 	_activeMenuItem.init(this);
 
-	_menuBar.createMenuItem('F', "File", '!', &Avalanche::Dropdown::setupMenuFile, &Avalanche::Dropdown::runMenuFile);
-	_menuBar.createMenuItem('G', "Game", 34, &Avalanche::Dropdown::setupMenuGame, &Avalanche::Dropdown::runMenuGame);
-	_menuBar.createMenuItem('A', "Action", 30, &Avalanche::Dropdown::setupMenuAction, &Avalanche::Dropdown::runMenuAction);
-	_menuBar.createMenuItem('O', "Objects", 24, &Avalanche::Dropdown::setupMenuObjects, &Avalanche::Dropdown::runMenuObjects);
-	_menuBar.createMenuItem('P', "People", 25, &Avalanche::Dropdown::setupMenuPeople, &Avalanche::Dropdown::runMenuPeople);
-	_menuBar.createMenuItem('W', "With", 17, &Avalanche::Dropdown::setupMenuWith, &Avalanche::Dropdown::runMenuWith);
+	_menuBar.createMenuItem('F', "File", '!', &Avalanche::Menu::setupMenuFile, &Avalanche::Menu::runMenuFile);
+	_menuBar.createMenuItem('G', "Game", 34, &Avalanche::Menu::setupMenuGame, &Avalanche::Menu::runMenuGame);
+	_menuBar.createMenuItem('A', "Action", 30, &Avalanche::Menu::setupMenuAction, &Avalanche::Menu::runMenuAction);
+	_menuBar.createMenuItem('O', "Objects", 24, &Avalanche::Menu::setupMenuObjects, &Avalanche::Menu::runMenuObjects);
+	_menuBar.createMenuItem('P', "People", 25, &Avalanche::Menu::setupMenuPeople, &Avalanche::Menu::runMenuPeople);
+	_menuBar.createMenuItem('W', "With", 17, &Avalanche::Menu::setupMenuWith, &Avalanche::Menu::runMenuWith);
 
 	_menuBar.draw();
 }
 
-void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
+void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 	Common::Point cursorPos = _vm->getMousePos();
 	::Graphics::Surface backup;
 	backup.copyFrom(_vm->_graphics->_surface);
@@ -786,4 +789,11 @@ void Dropdown::updateMenu() { // TODO: Optimize it ASAP!!! It really needs it...
 	backup.free();
 }
 
+bool Menu::isActive() {
+	return _menuActive;
+}
+
+void Menu::init() {
+	_menuActive = false;
+}
 } // End of namespace Avalanche.

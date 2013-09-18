@@ -1226,7 +1226,7 @@ void Animation::drawSprites() {
  * @remarks	Originally called 'trippancy_link'
  */
 void Animation::animLink() {
-	if (_vm->_gyro->_dropdownActive | _vm->_gyro->_onToolbar | _vm->_gyro->_seeScroll)
+	if (_vm->_menu->isActive() | _vm->_gyro->_onToolbar | _vm->_gyro->_seeScroll)
 		return;
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
 		if (_sprites[i]._quick && _sprites[i]._visible)
@@ -1377,7 +1377,7 @@ void Animation::handleMoveKey(const Common::Event &event) {
 	if (!_vm->_gyro->_userMovesAvvy)
 		return;
 
-	if (_vm->_dropdown->_activeMenuItem._activeNow)
+	if (_vm->_menu->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
 	else {
 		switch (event.kbd.keycode) {

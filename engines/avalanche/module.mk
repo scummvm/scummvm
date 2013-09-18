@@ -16,7 +16,7 @@ MODULE_OBJS = \
 	timer.o \
 	animation.o \
 	acci.o \
-	dropdown.o \
+	menu.o \
 	closing.o
 
 # This module can be built as a plugin

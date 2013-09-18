@@ -54,7 +54,7 @@ Celer::~Celer() {
  * @remarks	Originally called 'pics_link'
  */
 void Celer::updateBackgroundSprites() {
-	if (_vm->_gyro->_dropdownActive)
+	if (_vm->_menu->isActive())
 		return; // No animation when the menus are up.
 
 	switch (_vm->_gyro->_room) {

@@ -28,7 +28,6 @@
 /* AVALOT		The kernel of the program. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/graphics.h"
 #include "avalanche/avalot.h"
 #include "avalanche/gyro.h"
@@ -36,7 +35,7 @@
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/scrolls.h"
-#include "avalanche/dropdown.h"
+#include "avalanche/menu.h"
 #include "avalanche/pingo.h"
 #include "avalanche/timer.h"
 #include "avalanche/celer.h"
@@ -136,7 +135,6 @@ void Avalot::setup() {
 	_vm->_gyro->setMousePointerWait();
 	_vm->_gyro->_dropsOk = true;
 	_vm->_gyro->_mouseText = "";
-	_vm->_gyro->_dropdownActive = false;
 	_vm->_lucerna->loadDigits();
 	_vm->_gyro->_cheat = false;
 	_vm->_gyro->_cp = 0;
@@ -161,7 +159,7 @@ void Avalot::setup() {
 	_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kWalk;
 	_vm->_animation->updateSpeed();
 
-
+	_vm->_menu->init();
 
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {
@@ -190,7 +188,7 @@ void Avalot::run(Common::String arg) {
 		_vm->updateEvents(); // The event handler.
 
 		_vm->_lucerna->_clock.update();
-		_vm->_dropdown->updateMenu();
+		_vm->_menu->update();
 		_vm->_celer->updateBackgroundSprites();
 		_vm->_animation->animLink();
 		_vm->_lucerna->checkClick();

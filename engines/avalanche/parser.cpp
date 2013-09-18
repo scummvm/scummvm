@@ -65,7 +65,7 @@ void Parser::handleInputText(const Common::Event &event) {
 }
 
 void Parser::handleBackspace() {
-	if (!_vm->_dropdown->_activeMenuItem._activeNow) {
+	if (!_vm->_menu->_activeMenuItem._activeNow) {
 		if (_inputTextPos > _leftMargin) {
 			_inputTextPos--;
 			if ((_inputText[_inputTextPos] == '"') || (_inputText[_inputTextPos] == '`'))
@@ -78,7 +78,7 @@ void Parser::handleBackspace() {
 }
 
 void Parser::handleReturn() {
-	if (_vm->_dropdown->_activeMenuItem._activeNow)
+	if (_vm->_menu->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
 	else if (!_inputText.empty()) {
 		_inputTextBackup = _inputText;
