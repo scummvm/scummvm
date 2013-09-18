@@ -715,14 +715,14 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 				cursorPos = _vm->getMousePos();
 				// Change arrow...
 				if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
-					_vm->_gyro->newMouse(1); // Up arrow
+					_vm->_gyro->newMouse(0); // Up arrow
 				else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
 					if ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= _activeMenuItem._fly * 2 + 1))
-						_vm->_gyro->newMouse(3); // Right-arrow
+						_vm->_gyro->newMouse(2); // Right-arrow
 					else
-						_vm->_gyro->newMouse(4); // Fletch
+						_vm->_gyro->newMouse(3); // Fletch
 				} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
-					_vm->_gyro->newMouse(2); // Screwdriver
+					_vm->_gyro->newMouse(1); // Screwdriver
 
 				_activeMenuItem.lightUp(cursorPos);
 

@@ -1075,17 +1075,17 @@ void Lucerna::checkClick() {
 	_vm->_gyro->after_the_scroll = false;*/
 
 	if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
-		_vm->_gyro->newMouse(1); // up arrow
+		_vm->_gyro->newMouse(0); // up arrow
 	else if ((317 <= cursorPos.y) && (cursorPos.y <= 339))
-		_vm->_gyro->newMouse(8); //I-beam
+		_vm->_gyro->newMouse(7); //I-beam
 	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
-		_vm->_gyro->newMouse(2); // screwdriver
+		_vm->_gyro->newMouse(1); // screwdriver
 	else if (!_vm->_menu->isActive()) { // Dropdown can handle its own pointers.
 		if (_holdLeftMouse) {
-			_vm->_gyro->newMouse(7); // Mark's crosshairs
+			_vm->_gyro->newMouse(6); // Mark's crosshairs
 			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
 		} else
-			_vm->_gyro->newMouse(4); // fletch
+			_vm->_gyro->newMouse(3); // fletch
 	}
 
 	if (_holdLeftMouse) {

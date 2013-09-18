@@ -196,9 +196,9 @@ Common::String Gyro::intToStr(int32 num) {
 void Gyro::newMouse(byte id) {
 	if (id == _currentMouse)
 		return;
-	_currentMouse = id;
 
-	loadMouse(id - 1);
+	_currentMouse = id;
+	loadMouse(id);
 }
 
 /**
@@ -206,7 +206,7 @@ void Gyro::newMouse(byte id) {
  * @remarks	Originally called 'wait'
  */
 void Gyro::setMousePointerWait() {
-	newMouse(5);
+	newMouse(4);
 }
 
 void Gyro::note(uint16 hertz) {
