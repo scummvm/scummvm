@@ -56,11 +56,8 @@ Avalot::Avalot(AvalancheEngine *vm) {
 }
 
 void Avalot::handleKeyDown(Common::Event &event) {
-	//if (keyboardclick)
-	//	click();
-	//
-	// To be implemented later with the sounds, I assume.
-
+//	if (keyboardclick)
+	_vm->_sound->click();
 
 	if ((Common::KEYCODE_F1 <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_F15))
 		_vm->_parser->handleFunctionKey(event);

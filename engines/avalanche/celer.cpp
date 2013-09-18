@@ -255,7 +255,8 @@ void Celer::updateBackgroundSprites() {
 			if (_vm->_gyro->_nextBell < 5)
 				_vm->_gyro->_nextBell = 12;
 			_vm->_gyro->_nextBell--;
-			_vm->_gyro->note(_vm->_gyro->kNotes[_vm->_gyro->_nextBell]);
+			// CHECKME: 2 is a guess. No length in the original? 
+			_vm->_sound->playNote(_vm->_gyro->kNotes[_vm->_gyro->_nextBell], 2);
 			break;
 		case 2:
 			//nosound();

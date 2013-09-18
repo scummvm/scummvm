@@ -45,6 +45,7 @@
 #include "avalanche/acci.h"
 #include "avalanche/menu.h"
 #include "avalanche/closing.h"
+#include "avalanche/sound.h"
 
 #include "common/serializer.h"
 
@@ -80,6 +81,7 @@ public:
 	Acci *_acci;
 	Menu *_menu;
 	Closing *_closing;
+	SoundHandler *_sound;
 
 	OSystem *_system;
 

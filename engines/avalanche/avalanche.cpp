@@ -73,6 +73,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _menu;
 	delete _closing;
 	delete _gyro;
+	delete _sound;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
@@ -91,6 +92,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_acci = new Acci(this);
 	_menu = new Menu(this);
 	_closing = new Closing(this);
+	_sound = new SoundHandler(this);
 
 	_graphics->init();
 	_scrolls->init();

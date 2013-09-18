@@ -370,10 +370,6 @@ public:
 	void setMousePointerWait();    // Makes hourglass.
 	void loadMouse(byte which);
 
-	void note(uint16 hertz);
-	void blip();
-	void click(); // "Audio keyboard feedback"
-
 	void setBackgroundColor(byte x);
 	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
 

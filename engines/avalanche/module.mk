@@ -17,7 +17,8 @@ MODULE_OBJS = \
 	animation.o \
 	acci.o \
 	menu.o \
-	closing.o
+	closing.o \
+	sound.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)
