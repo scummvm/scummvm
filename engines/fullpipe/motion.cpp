@@ -29,6 +29,7 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -285,7 +286,10 @@ void ReactPolygonal::createRegion() {
 }
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5) {
-	warning("STUB: startWalkTo(%d, %d, %d, %d, %d)", objId, objKey, x, y, a5);
+	MctlCompound *mc = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+
+	if (mc)
+		return (mc->method34(g_fullpipe->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, a5, 0) != 0);
 
 	return 0;
 }
