@@ -31,7 +31,7 @@
 
 namespace Fullpipe {
 
-CInventory2 *getGameLoaderInventory() {
+Inventory2 *getGameLoaderInventory() {
 	return &g_fullpipe->_gameLoader->_inventory;
 }
 

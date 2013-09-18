@@ -92,7 +92,7 @@ class CGameLoader : public CObject {
 	GameProject *_gameProject;
 	InteractionController *_interactionController;
 	InputController *_inputController;
-	CInventory2 _inventory;
+	Inventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	bool (*_preloadCallback)(const PreloadItem &pre, int flag);
@@ -108,7 +108,7 @@ class CGameLoader : public CObject {
 	int _preloadEntranceId;
 };
 
-CInventory2 *getGameLoaderInventory();
+Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();
 MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
 
