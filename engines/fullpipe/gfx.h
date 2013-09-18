@@ -137,7 +137,7 @@ class GameObject : public CObject {
 
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
-	void renumPictures(CPtrList *lst);
+	void renumPictures(PtrList *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
 	const char *getName() { return _objectName; }
@@ -149,7 +149,7 @@ class GameObject : public CObject {
 class PictureObject : public GameObject {
   public:
 	Picture *_picture;
-	CPtrList *_pictureObject2List;
+	PtrList *_pictureObject2List;
 	int _ox2;
 	int _oy2;
 
@@ -169,7 +169,7 @@ class PictureObject : public GameObject {
 
 class Background : public CObject {
   public:
-	CPtrList _picObjList;
+	PtrList _picObjList;
 
 	char *_bgname;
 	int _x;

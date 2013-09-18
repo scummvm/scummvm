@@ -118,7 +118,7 @@ class Movement : public GameObject {
 	int _field_50;
 	int _counterMax;
 	int _counter;
-	CPtrList _dynamicPhases;
+	PtrList _dynamicPhases;
 	int _field_78;
 	Common::Point **_framePosOffsets;
 	Movement *_currMovement;
@@ -172,8 +172,8 @@ class StaticANIObject : public GameObject {
 	int _initialCounter;
 	int _callback1;
 	void (*_callback2)(int *);
-	CPtrList _movements;
-	CPtrList _staticsList;
+	PtrList _movements;
+	PtrList _staticsList;
 	CStepArray _stepArray;
 	int16 _field_96;
 	int _messageQueueId;

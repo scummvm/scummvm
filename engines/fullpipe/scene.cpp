@@ -259,7 +259,7 @@ void Scene::init() {
 	if (_staticANIObjectList2.size() != _staticANIObjectList1.size()) {
 		_staticANIObjectList2.clear();
 
-		for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s)
+		for (PtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s)
 			_staticANIObjectList2.push_back(*s);
 	}
 }
@@ -273,7 +273,7 @@ StaticANIObject *Scene::getAniMan() {
 }
 
 StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
-	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
+	for (PtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
 		StaticANIObject *o = (StaticANIObject *)*s;
 		if (o->_id == obj && (a3 == -1 || o->_okeyCode == a3))
 			return o;
@@ -441,7 +441,7 @@ bool Scene::compareObjPriority(const void *p1, const void *p2) {
 	return false;
 }
 
-void Scene::objectList_sortByPriority(CPtrList &list) {
+void Scene::objectList_sortByPriority(PtrList &list) {
 	Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
 }
 
@@ -453,12 +453,12 @@ void Scene::draw() {
 
 	objectList_sortByPriority(_staticANIObjectList2);
 
-	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
+	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
 		((StaticANIObject *)*s)->draw2();
 	}
 
 	int priority = -1;
-	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
+	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
 		drawContent(((StaticANIObject *)*s)->_priority, priority, false);
 		((StaticANIObject *)*s)->draw();
 
@@ -526,7 +526,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 void Scene::update(int counterdiff) {
 	debug(0, "Scene::update(%d)", counterdiff);
 
-	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
+	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
 		((StaticANIObject *)*s)->update(counterdiff);
 }
 

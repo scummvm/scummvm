@@ -31,10 +31,10 @@ class MessageQueue;
 
 class Scene : public Background {
  public:
-	CPtrList _staticANIObjectList1;
-	CPtrList _staticANIObjectList2;
-	CPtrList _messageQueueList;
-	CPtrList _faObjectList;
+	PtrList _staticANIObjectList1;
+	PtrList _staticANIObjectList2;
+	PtrList _messageQueueList;
+	PtrList _faObjectList;
 	Shadows *_shadows;
 	SoundList *_soundList;
 	int16 _sceneId;
@@ -79,7 +79,7 @@ class Scene : public Background {
 
   private:
 	static bool compareObjPriority(const void *p1, const void *p2);
-	void objectList_sortByPriority(CPtrList &list);
+	void objectList_sortByPriority(PtrList &list);
 };
 
 class SceneTag : public CObject {

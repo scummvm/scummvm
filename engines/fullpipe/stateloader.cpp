@@ -54,7 +54,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	_inventory->rebuildItemRects();
 
-	for (CPtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
+	for (PtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
 		((MemoryObject *)((PictureObject *)*p)->_picture)->load();
 	}
 
