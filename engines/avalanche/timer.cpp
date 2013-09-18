@@ -80,7 +80,7 @@ void Timer::addTimer(int32 duration, byte action, byte reason) {
  * @remarks	Originally called 'one_tick'
  */
 void Timer::updateTimer() {
-	if (_vm->_gyro->_dropdownActive)
+	if (_vm->_menu->isActive())
 		return;
 
 	for (int i = 0; i < 7; i++) {

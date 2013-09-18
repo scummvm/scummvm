@@ -356,7 +356,7 @@ void Gyro::newGame() {
 	_vm->_lucerna->enterRoom(1, 1);
 	avvy->_visible = false;
 	_vm->_lucerna->drawScore();
-	_vm->_dropdown->setupMenu();
+	_vm->_menu->setup();
 	_vm->_lucerna->_clock.update();
 	_vm->_lucerna->spriteRun();
 }

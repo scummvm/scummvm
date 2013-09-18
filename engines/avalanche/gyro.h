@@ -348,7 +348,6 @@ public:
 	byte _buffer[2000];
 	uint16 _bufSize;
 	int16 _underScroll; // Y-coord of just under the scroll text.
-	bool _dropdownActive; // Kludge so we don't have to keep referring to Dropdown
 	Common::String _roomnName; // Name of actual room
 	Common::String _subject; // What you're talking to them about.
 	byte _subjectNum; // The same thing.

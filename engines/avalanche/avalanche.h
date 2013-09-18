@@ -43,7 +43,7 @@
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
 #include "avalanche/acci.h"
-#include "avalanche/dropdown.h"
+#include "avalanche/menu.h"
 #include "avalanche/closing.h"
 
 #include "common/serializer.h"
@@ -78,7 +78,7 @@ public:
 	Timer *_timer;
 	Animation *_animation;
 	Acci *_acci;
-	Dropdown *_dropdown;
+	Menu *_menu;
 	Closing *_closing;
 
 	OSystem *_system;

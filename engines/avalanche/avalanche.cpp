@@ -70,7 +70,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _timer;
 	delete _animation;
 	delete _acci;
-	delete _dropdown;
+	delete _menu;
 	delete _closing;
 	delete _gyro;
 }
@@ -89,7 +89,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_timer = new Timer(this);
 	_animation = new Animation(this);
 	_acci = new Acci(this);
-	_dropdown = new Dropdown(this);
+	_menu = new Menu(this);
 	_closing = new Closing(this);
 
 	_graphics->init();
@@ -440,7 +440,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_celer->forgetBackgroundSprites();
 	_lucerna->minorRedraw();
-	_dropdown->setupMenu();
+	_menu->setup();
 	_gyro->_whereIs[Gyro::kPeopleAvalot - 150] = _gyro->_room;
 	_gyro->_alive = true;
 	_lucerna->refreshObjectList();

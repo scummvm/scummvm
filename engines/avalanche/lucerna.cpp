@@ -380,7 +380,7 @@ void Lucerna::exitRoom(byte x) {
  * @remarks	Originally called 'new_town'
  */
 void Lucerna::enterNewTown() {
-	_vm->_dropdown->setupMenu();
+	_vm->_menu->setup();
 
 	switch (_vm->_gyro->_room) {
 	case kRoomOutsideNottsPub: // Entry into Nottingham.
@@ -1080,7 +1080,7 @@ void Lucerna::checkClick() {
 		_vm->_gyro->newMouse(8); //I-beam
 	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
 		_vm->_gyro->newMouse(2); // screwdriver
-	else if (!_vm->_gyro->_dropdownActive) { // Dropdown can handle its own pointers.
+	else if (!_vm->_menu->isActive()) { // Dropdown can handle its own pointers.
 		if (_holdLeftMouse) {
 			_vm->_gyro->newMouse(7); // Mark's crosshairs
 			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
@@ -1091,7 +1091,7 @@ void Lucerna::checkClick() {
 	if (_holdLeftMouse) {
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_vm->_gyro->_dropsOk)
-				_vm->_dropdown->updateMenu();
+				_vm->_menu->update();
 		} else if ((317 <= cursorPos.y) && (cursorPos.y <= 339)) { // Click on the command line.
 			_vm->_parser->_inputTextPos = (cursorPos.x - 23) / 8;
 			if (_vm->_parser->_inputTextPos > _vm->_parser->_inputText.size() + 1)
