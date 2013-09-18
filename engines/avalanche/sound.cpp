@@ -20,12 +20,8 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/system.h"
-#include "common/textconsole.h"
 #include "common/config-manager.h"
-
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
 
 #include "avalanche/avalanche.h"
