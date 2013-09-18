@@ -35,7 +35,7 @@ int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int in
 bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId);
 
 
-class CInteraction : public CObject {
+class Interaction : public CObject {
  public:
 	int16 _objectId1;
 	int16 _objectId2;
@@ -53,13 +53,13 @@ class CInteraction : public CObject {
 	char *_actionName;
 
  public:
-	CInteraction();
+	Interaction();
 	virtual bool load(MfcArchive &file);
 	bool canInteract(GameObject *obj1, GameObject *obj2, int invId);
 	bool isOverlapping(StaticANIObject *subj, GameObject *obj);
 };
 
-class CInteractionController : public CObject {
+class InteractionController : public CObject {
  public:
 	ObList _interactions;
 	int16 _field_20;
@@ -69,7 +69,7 @@ class CInteractionController : public CObject {
 	static bool compareInteractions(const void *p1, const void *p2);
 
  public:
-	CInteractionController() : _field_20(0), _flag24(true) {}
+	InteractionController() : _field_20(0), _flag24(true) {}
 
 	virtual bool load(MfcArchive &file);
 

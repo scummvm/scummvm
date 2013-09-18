@@ -43,12 +43,12 @@ MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
 	return 0;
 }
 
-CInteractionController *getGameLoaderInteractionController() {
+InteractionController *getGameLoaderInteractionController() {
 	return g_fullpipe->_gameLoader->_interactionController;
 }
 
 CGameLoader::CGameLoader() {
-	_interactionController = new CInteractionController();
+	_interactionController = new InteractionController();
 	_inputController = new CInputController();
 
 	_gameProject = 0;

@@ -32,7 +32,7 @@ namespace Fullpipe {
 class SceneTag;
 class MctlCompound;
 class CInputController;
-class CInteractionController;
+class InteractionController;
 class MotionController;
 
 class Sc2 : public CObject {
@@ -90,7 +90,7 @@ class CGameLoader : public CObject {
 	void saveScenePicAniInfos(int sceneId);
 
 	GameProject *_gameProject;
-	CInteractionController *_interactionController;
+	InteractionController *_interactionController;
 	CInputController *_inputController;
 	CInventory2 _inventory;
 	Sc2Array _sc2array;
@@ -109,7 +109,7 @@ class CGameLoader : public CObject {
 };
 
 CInventory2 *getGameLoaderInventory();
-CInteractionController *getGameLoaderInteractionController();
+InteractionController *getGameLoaderInteractionController();
 MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
 
 } // End of namespace Fullpipe

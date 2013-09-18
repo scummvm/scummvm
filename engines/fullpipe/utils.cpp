@@ -262,7 +262,7 @@ double MfcArchive::readDouble() {
 
 enum {
 	kNullObject,
-	kCInteraction,
+	kInteraction,
 	kMessageQueue,
 	kExCommand,
 	kCObjstateCommand,
@@ -279,17 +279,17 @@ const struct {
 	const char *name;
 	int id;
 } classMap[] = {
-	{ "CInteraction",	kCInteraction },
+	{ "CInteraction",	kInteraction },
 	{ "MessageQueue",	kMessageQueue },
 	{ "ExCommand",		kExCommand },
 	{ "CObjstateCommand", kCObjstateCommand },
 	{ "CGameVar",		kCGameVar },
-	{ "MctlCompound",	kMctlCompound },
-	{ "MovGraph",		kMovGraph },
-	{ "MovGraphLink",	kMovGraphLink },
-	{ "MovGraphNode",	kMovGraphNode },
-	{ "ReactParallel",	kReactParallel },
-	{ "ReactPolygonal", kReactPolygonal },
+	{ "CMctlCompound",	kMctlCompound },
+	{ "CMovGraph",		kMovGraph },
+	{ "CMovGraphLink",	kMovGraphLink },
+	{ "CMovGraphNode",	kMovGraphNode },
+	{ "CReactParallel",	kReactParallel },
+	{ "CReactPolygonal", kReactPolygonal },
 	{ 0, 0 }
 };
 
@@ -306,8 +306,8 @@ static CObject *createObject(int objectId) {
 	switch (objectId) {
 	case kNullObject:
 		return 0;
-	case kCInteraction:
-		return new CInteraction();
+	case kInteraction:
+		return new Interaction();
 	case kMessageQueue:
 		return new MessageQueue();
 	case kExCommand:
