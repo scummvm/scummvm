@@ -107,11 +107,16 @@ bool MctlCompoundArray::load(MfcArchive &file) {
 
 int MovGraph_messageHandler(ExCommand *cmd);
 
+int MovGraphCallback(int a1, int a2, int a3) {
+	warning("STUB: MovgraphCallback");
+
+	return 0;
+}
+
 MovGraph::MovGraph() {
-	warning("STUB: MovGraph::MovGraph()");
 	_itemsCount = 0;
 	_items = 0;
-	//_callback1 = MovGraphCallback1;  // TODO
+	_callback1 = MovGraphCallback;
 	_field_44 = 0;
 	insertMessageHandler(MovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
 
