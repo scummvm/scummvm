@@ -35,7 +35,7 @@ struct Location {
 	int16 environment;
 	int16 node;
 	int16 facing;
-	int16 orientaton;
+	int16 orientation;
 	int16 depth;
 };
 
