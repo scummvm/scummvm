@@ -47,7 +47,7 @@ class BehaviorManager;
 class CBaseModalObject;
 class CGameLoader;
 class CGameVar;
-class CInputController;
+class InputController;
 class CInventory2;
 struct CursorInfo;
 struct EntranceInfo;
@@ -103,7 +103,7 @@ public:
 	bool loadGam(const char *fname, int scene = 0);
 
 	CGameVar *getGameLoaderGameVar();
-	CInputController *getGameLoaderInputController();
+	InputController *getGameLoaderInputController();
 
 	int _gameProjectVersion;
 	int _pictureScale;
@@ -124,7 +124,7 @@ public:
 	StaticANIObject *_aniMan2;
 	byte *_globalPalette;
 
-	CInputController *_inputController;
+	InputController *_inputController;
 	bool _inputDisabled;
 
 	int _currentCheat;

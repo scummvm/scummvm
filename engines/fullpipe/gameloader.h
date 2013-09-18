@@ -31,7 +31,7 @@ namespace Fullpipe {
 
 class SceneTag;
 class MctlCompound;
-class CInputController;
+class InputController;
 class InteractionController;
 class MotionController;
 
@@ -91,7 +91,7 @@ class CGameLoader : public CObject {
 
 	GameProject *_gameProject;
 	InteractionController *_interactionController;
-	CInputController *_inputController;
+	InputController *_inputController;
 	CInventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;

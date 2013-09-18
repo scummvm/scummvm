@@ -49,7 +49,7 @@ InteractionController *getGameLoaderInteractionController() {
 
 CGameLoader::CGameLoader() {
 	_interactionController = new InteractionController();
-	_inputController = new CInputController();
+	_inputController = new InputController();
 
 	_gameProject = 0;
 	_gameName = 0;
@@ -503,7 +503,7 @@ CGameVar *FullpipeEngine::getGameLoaderGameVar() {
 		return 0;
 }
 
-CInputController *FullpipeEngine::getGameLoaderInputController() {
+InputController *FullpipeEngine::getGameLoaderInputController() {
 	if (_gameLoader)
 		return _gameLoader->_inputController;
 	else

@@ -33,7 +33,7 @@
 
 namespace Fullpipe {
 
-CInputController::CInputController() {
+InputController::InputController() {
 	g_fullpipe->_inputController = this;
 
 	_flag = 0;
@@ -52,13 +52,13 @@ CInputController::CInputController() {
 	_cursorItemPicture = 0;
 }
 
-CInputController::~CInputController() {
+InputController::~InputController() {
 	removeMessageHandler(126, -1);
 
 	g_fullpipe->_inputController = 0;
 }
 
-void CInputController::setInputDisabled(bool state) {
+void InputController::setInputDisabled(bool state) {
 	_flag = state;
 	g_fullpipe->_inputDisabled = state;
 }
@@ -67,7 +67,7 @@ void setInputDisabled(bool state) {
 	g_fullpipe->_inputController->setInputDisabled(state);
 }
 
-void CInputController::addCursor(CursorInfo *cursor) {
+void InputController::addCursor(CursorInfo *cursor) {
 	CursorInfo *newc = new CursorInfo(cursor);
 	Common::Point p;
 	
@@ -82,14 +82,14 @@ void CInputController::addCursor(CursorInfo *cursor) {
 	_cursorsArray.push_back(newc);
 }
 
-void CInputController::setCursorMode(bool enabled) {
+void InputController::setCursorMode(bool enabled) {
 	if (enabled)
 		_inputFlags |= 1;
 	else
 		_inputFlags &= ~1;
 }
 
-void CInputController::drawCursor(int x, int y) {
+void InputController::drawCursor(int x, int y) {
 	if (_cursorIndex == -1)
 		return;
 
@@ -105,7 +105,7 @@ void CInputController::drawCursor(int x, int y) {
 								 _cursorBounds.top + _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
 }
 
-void CInputController::setCursor(int cursorId) {
+void InputController::setCursor(int cursorId) {
 	if (_cursorIndex == -1 || _cursorsArray[_cursorIndex]->pictureId != cursorId) {
 		_cursorIndex = -1;
 
