@@ -25,14 +25,14 @@
 
 namespace Fullpipe {
 
-class CBaseModalObject {
+class BaseModalObject {
  public:
 
-	CBaseModalObject *_parentObj;
+	BaseModalObject *_parentObj;
 
  public:
- 	CBaseModalObject() : _parentObj(0) {}
-	virtual ~CBaseModalObject() {}
+ 	BaseModalObject() : _parentObj(0) {}
+	virtual ~BaseModalObject() {}
 
 	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
@@ -41,7 +41,7 @@ class CBaseModalObject {
 	void saveload();
 };
 
-class CModalIntro : public CBaseModalObject {
+class ModalIntro : public BaseModalObject {
 	int _field_8;
 	int _introFlags;
 	int _countDown;
@@ -49,7 +49,7 @@ class CModalIntro : public CBaseModalObject {
 	int _sfxVolume;
 
  public:
-	CModalIntro();
+	ModalIntro();
 
 	virtual bool handleMessage(ExCommand *message);
 };

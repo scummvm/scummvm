@@ -236,7 +236,7 @@ void FullpipeEngine::updateEvents() {
 							_modalObject->update();
 						} else {
 							_modalObject->saveload();
-							CBaseModalObject *obj = _modalObject->_parentObj;
+							BaseModalObject *obj = _modalObject->_parentObj;
 							if (obj)
 								delete _modalObject;
 							_modalObject = obj;
@@ -360,7 +360,7 @@ void FullpipeEngine::updateScreen() {
 				_modalObject->update();
 			} else {
 				_modalObject->saveload();
-				CBaseModalObject *tmp = _modalObject->_parentObj;
+				BaseModalObject *tmp = _modalObject->_parentObj;
 
 				delete _modalObject;
 

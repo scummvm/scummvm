@@ -44,7 +44,7 @@ enum FullpipeGameFeatures {
 };
 
 class BehaviorManager;
-class CBaseModalObject;
+class BaseModalObject;
 class CGameLoader;
 class CGameVar;
 class InputController;
@@ -197,7 +197,7 @@ public:
 	int32 _lastInputTicks;
 	int32 _lastButtonUpTicks;
 
-	CBaseModalObject *_modalObject;
+	BaseModalObject *_modalObject;
 
 	int (*_updateScreenCallback)();
 	int (*_updateCursorCallback)();

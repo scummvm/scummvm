@@ -1406,7 +1406,7 @@ void sceneIntro_initScene(Scene *sc) {
 	if (g_fullpipe->_recordEvents || g_fullpipe->_inputArFlag)
 		g_vars->sceneIntro_skipIntro = false;
 
-	g_fullpipe->_modalObject = new CModalIntro;
+	g_fullpipe->_modalObject = new ModalIntro;
 }
 
 int sceneHandlerIntro(ExCommand *cmd) {
