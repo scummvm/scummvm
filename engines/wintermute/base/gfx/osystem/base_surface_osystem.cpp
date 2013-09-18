@@ -338,20 +338,20 @@ bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 al
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, int32 zoomX, int32 zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(zoomX, zoomY, blendMode, alpha, mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, TransformStruct((int32)zoomX, (int32)zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, int32 zoomX, int32 zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	TransformStruct transform;
 	if (transparent) {
-		transform = TransformStruct(zoomX, zoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
+		transform = TransformStruct((int32)zoomX, (int32)zoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
 	} else {
-		transform = TransformStruct(zoomX, zoomY, mirrorX, mirrorY);
+		transform = TransformStruct((int32)zoomX, (int32)zoomY, mirrorX, mirrorY);
 	}
 	return drawSprite(x, y, &rect, nullptr, transform);
 }
