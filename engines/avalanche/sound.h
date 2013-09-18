@@ -30,6 +30,8 @@ namespace Avalanche {
 
 class SoundHandler {
 public:
+	bool _soundFl;
+
 	SoundHandler(AvalancheEngine *vm);
 	~SoundHandler();
 
@@ -37,7 +39,6 @@ public:
 	void playNote(int freq, int length);
 	void click();
 	void blip();
-	void initSound();
 	void syncVolume();
 
 private:
