@@ -37,9 +37,20 @@ void TransformStruct::init(Point32 zoom, uint32 angle, Point32 hotspot, bool alp
 	_offset = offset;
 }
 
-
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
 	init(Point32(zoomX, zoomY), 
+		angle, 
+		Point32(hotspotX, hotspotY), 
+		false, 
+		blendMode, 
+		rgbaMod, 
+		mirrorX, mirrorY, 
+		Point32(offsetX, offsetY));
+}
+
+TransformStruct::TransformStruct(float zoomX, float zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
+	init(Point32((int32)(zoomX / 100.0 * kDefaultZoomX), 
+		     (int32)(zoomY / 100.0 * kDefaultZoomY)), 
 		angle, 
 		Point32(hotspotX, hotspotY), 
 		false, 
