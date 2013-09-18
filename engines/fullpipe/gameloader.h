@@ -30,17 +30,17 @@
 namespace Fullpipe {
 
 class SceneTag;
-class CMctlCompound;
+class MctlCompound;
 class CInputController;
 class CInteractionController;
-class CMotionController;
+class MotionController;
 
 class Sc2 : public CObject {
  public:
 	int16 _sceneId;
 	int16 _field_2;
 	Scene *_scene;
-	CMotionController *_motionController;
+	MotionController *_motionController;
 	int32 *_data1; // FIXME, could be a struct
 	int _count1;
 	PicAniInfo **_defPicAniInfos;
@@ -110,7 +110,7 @@ class CGameLoader : public CObject {
 
 CInventory2 *getGameLoaderInventory();
 CInteractionController *getGameLoaderInteractionController();
-CMctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
+MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
 
 } // End of namespace Fullpipe
 

@@ -32,31 +32,31 @@
 
 namespace Fullpipe {
 
-bool CMotionController::load(MfcArchive &file) {
+bool MotionController::load(MfcArchive &file) {
 	// Is originally empty	file.readClass();
 
-	debug(5, "CMotionController::load()");
+	debug(5, "MotionController::load()");
 
 	return true;
 }
 
-bool CMctlCompound::load(MfcArchive &file) {
-	debug(5, "CMctlCompound::load()");
+bool MctlCompound::load(MfcArchive &file) {
+	debug(5, "MctlCompound::load()");
 
 	int count = file.readUint32LE();
 
-	debug(6, "CMctlCompound::count = %d", count);
+	debug(6, "MctlCompound::count = %d", count);
 
 	for (int i = 0; i < count; i++) {
 		debug(6, "CompoundArray[%d]", i);
-		CMctlCompoundArrayItem *obj = (CMctlCompoundArrayItem *)file.readClass();
+		MctlCompoundArrayItem *obj = (MctlCompoundArrayItem *)file.readClass();
 
 		int count1 = file.readUint32LE();
 
 		debug(6, "ConnectionPoint::count: %d", count1);
 		for (int j = 0; j < count1; j++) {
 			debug(6, "ConnectionPoint[%d]", j);
-			CMctlConnectionPoint *obj1 = (CMctlConnectionPoint *)file.readClass();
+			MctlConnectionPoint *obj1 = (MctlConnectionPoint *)file.readClass();
 
 			obj->_connectionPoints.push_back(*obj1);
 		}
@@ -65,7 +65,7 @@ bool CMctlCompound::load(MfcArchive &file) {
 		obj->_field_24 = file.readUint32LE();
 
 		debug(6, "graphReact");
-		obj->_movGraphReactObj = (CMovGraphReact *)file.readClass();
+		obj->_movGraphReactObj = (MovGraphReact *)file.readClass();
 
 		_motionControllers.push_back(*obj);
 	}
@@ -73,53 +73,53 @@ bool CMctlCompound::load(MfcArchive &file) {
 	return true;
 }
 
-void CMctlCompound::addObject(StaticANIObject *obj) {
-	warning("STUB: CMctlCompound::addObject()");
+void MctlCompound::addObject(StaticANIObject *obj) {
+	warning("STUB: MctlCompound::addObject()");
 }
 
-void CMctlCompound::initMovGraph2() {
-	warning("STUB: CMctlCompound::initMovGraph2()");
+void MctlCompound::initMovGraph2() {
+	warning("STUB: MctlCompound::initMovGraph2()");
 }
 
-MessageQueue *CMctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
-	warning("STUB: CMctlCompound::method34()");
+MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MctlCompound::method34()");
 
 	return 0;
 }
 
-MessageQueue *CMctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
-	warning("STUB: CMctlCompound::method4C()");
+MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MctlCompound::method4C()");
 
 	return 0;
 }
 
-bool CMctlCompoundArray::load(MfcArchive &file) {
-	debug(5, "CMctlCompoundArray::load()");
+bool MctlCompoundArray::load(MfcArchive &file) {
+	debug(5, "MctlCompoundArray::load()");
 
 	int count = file.readUint32LE();
 
-	debug(0, "CMctlCompoundArray::count = %d", count);
+	debug(0, "MctlCompoundArray::count = %d", count);
 
 	assert(0);
 
 	return true;
 }
 
-int CMovGraph_messageHandler(ExCommand *cmd);
+int MovGraph_messageHandler(ExCommand *cmd);
 
-CMovGraph::CMovGraph() {
-	warning("STUB: CMovGraph::CMovGraph()");
+MovGraph::MovGraph() {
+	warning("STUB: MovGraph::MovGraph()");
 	_itemsCount = 0;
 	_items = 0;
-	//_callback1 = CMovGraphCallback1;  // TODO
+	//_callback1 = MovGraphCallback1;  // TODO
 	_field_44 = 0;
-	insertMessageHandler(CMovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
+	insertMessageHandler(MovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
 
 	_objtype = kObjTypeMovGraph;
 }
 
-bool CMovGraph::load(MfcArchive &file) {
-	debug(5, "CMovGraph::load()");
+bool MovGraph::load(MfcArchive &file) {
+	debug(5, "MovGraph::load()");
 
 	_links.load(file);
 	_nodes.load(file);
@@ -127,24 +127,24 @@ bool CMovGraph::load(MfcArchive &file) {
 	return true;
 }
 
-void CMovGraph::addObject(StaticANIObject *obj) {
-	warning("STUB: CMovGraph::addObject()");
+void MovGraph::addObject(StaticANIObject *obj) {
+	warning("STUB: MovGraph::addObject()");
 }
 
-double CMovGraph::calcDistance(Common::Point *point, CMovGraphLink *link, int flag) {
-	warning("STUB: CMovGraph::calcDistance()");
+double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag) {
+	warning("STUB: MovGraph::calcDistance()");
 
 	return 0;
 }
 
-CMovGraphNode *CMovGraph::calcOffset(int ox, int oy) {
-	warning("STUB: CMovGraph::calcOffset()");
+MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
+	warning("STUB: MovGraph::calcOffset()");
 
 	return 0;
 }
 
 
-CMovGraphLink::CMovGraphLink() {
+MovGraphLink::MovGraphLink() {
 	_distance = 0;
 	_angle = 0;
 	_flags = 0x10000000;
@@ -156,8 +156,8 @@ CMovGraphLink::CMovGraphLink() {
 	_name = 0;
 }
 
-bool CMovGraphLink::load(MfcArchive &file) {
-	debug(5, "CMovGraphLink::load()");
+bool MovGraphLink::load(MfcArchive &file) {
+	debug(5, "MovGraphLink::load()");
 
 	_dwordArray1.load(file);
 	_dwordArray2.load(file);
@@ -165,23 +165,23 @@ bool CMovGraphLink::load(MfcArchive &file) {
 	_flags = file.readUint32LE();
 
 	debug(8, "GraphNode1");
-	_movGraphNode1 = (CMovGraphNode *)file.readClass();
+	_movGraphNode1 = (MovGraphNode *)file.readClass();
 	debug(8, "GraphNode2");
-	_movGraphNode2 = (CMovGraphNode *)file.readClass();
+	_movGraphNode2 = (MovGraphNode *)file.readClass();
 
 	_distance = file.readDouble();
 	_angle = file.readDouble();
 
 	debug(8, "distance: %g, angle: %g", _distance, _angle);
 
-	_movGraphReact = (CMovGraphReact *)file.readClass();
+	_movGraphReact = (MovGraphReact *)file.readClass();
 	_name = file.readPascalString();
 
 	return true;
 }
 
-bool CMovGraphNode::load(MfcArchive &file) {
-	debug(5, "CMovGraphNode::load()");
+bool MovGraphNode::load(MfcArchive &file) {
+	debug(5, "MovGraphNode::load()");
 
 	_field_14 = file.readUint32LE();
 	_x = file.readUint32LE();
@@ -191,7 +191,7 @@ bool CMovGraphNode::load(MfcArchive &file) {
 	return true;
 }
 
-CReactParallel::CReactParallel() {
+ReactParallel::ReactParallel() {
 	_x1 = 0;
 	_x2 = 0;
 	_dy = 0;
@@ -201,8 +201,8 @@ CReactParallel::CReactParallel() {
 	_y2 = 0;
 }
 
-bool CReactParallel::load(MfcArchive &file) {
-	debug(5, "CReactParallel::load()");
+bool ReactParallel::load(MfcArchive &file) {
+	debug(5, "ReactParallel::load()");
 
 	_x1 = file.readUint32LE();
 	_y1 = file.readUint32LE();
@@ -216,7 +216,7 @@ bool CReactParallel::load(MfcArchive &file) {
 	return true;
 }
 
-void CReactParallel::createRegion() {
+void ReactParallel::createRegion() {
 	_points = (Common::Point **)malloc(sizeof(Common::Point *) * 4);
 
 	for (int i = 0; i < 4; i++)
@@ -241,15 +241,15 @@ void CReactParallel::createRegion() {
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
 
-CReactPolygonal::CReactPolygonal() {
+ReactPolygonal::ReactPolygonal() {
 	_field_C = 0;
 	_points = 0;
 	_pointCount = 0;
 	_field_10 = 0;
 }
 
-bool CReactPolygonal::load(MfcArchive &file) {
-	debug(5, "CReactPolygonal::load()");
+bool ReactPolygonal::load(MfcArchive &file) {
+	debug(5, "ReactPolygonal::load()");
 
 	_field_C = file.readUint32LE();
 	_field_10 = file.readUint32LE();
@@ -272,7 +272,7 @@ bool CReactPolygonal::load(MfcArchive &file) {
 	return true;
 }
 
-void CReactPolygonal::createRegion() {
+void ReactPolygonal::createRegion() {
 	if (_points) {
 
 		// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, _pointCount, 2);

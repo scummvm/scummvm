@@ -267,12 +267,12 @@ enum {
 	kExCommand,
 	kCObjstateCommand,
 	kCGameVar,
-	kCMctlCompound,
-	kCMovGraph,
-	kCMovGraphLink,
-	kCMovGraphNode,
-	kCReactParallel,
-	kCReactPolygonal
+	kMctlCompound,
+	kMovGraph,
+	kMovGraphLink,
+	kMovGraphNode,
+	kReactParallel,
+	kReactPolygonal
 };
 
 const struct {
@@ -284,12 +284,12 @@ const struct {
 	{ "ExCommand",		kExCommand },
 	{ "CObjstateCommand", kCObjstateCommand },
 	{ "CGameVar",		kCGameVar },
-	{ "CMctlCompound",	kCMctlCompound },
-	{ "CMovGraph",		kCMovGraph },
-	{ "CMovGraphLink",	kCMovGraphLink },
-	{ "CMovGraphNode",	kCMovGraphNode },
-	{ "CReactParallel", kCReactParallel },
-	{ "CReactPolygonal", kCReactPolygonal },
+	{ "MctlCompound",	kMctlCompound },
+	{ "MovGraph",		kMovGraph },
+	{ "MovGraphLink",	kMovGraphLink },
+	{ "MovGraphNode",	kMovGraphNode },
+	{ "ReactParallel",	kReactParallel },
+	{ "ReactPolygonal", kReactPolygonal },
 	{ 0, 0 }
 };
 
@@ -316,18 +316,18 @@ static CObject *createObject(int objectId) {
 		return new CObjstateCommand();
 	case kCGameVar:
 		return new CGameVar();
-	case kCMctlCompound:
-		return new CMctlCompound();
-	case kCMovGraph:
-		return new CMovGraph();
-	case kCMovGraphLink:
-		return new CMovGraphLink();
-	case kCMovGraphNode:
-		return new CMovGraphNode();
-	case kCReactParallel:
-		return new CReactParallel();
-	case kCReactPolygonal:
-		return new CReactPolygonal();
+	case kMctlCompound:
+		return new MctlCompound();
+	case kMovGraph:
+		return new MovGraph();
+	case kMovGraphLink:
+		return new MovGraphLink();
+	case kMovGraphNode:
+		return new MovGraphNode();
+	case kReactParallel:
+		return new ReactParallel();
+	case kReactPolygonal:
+		return new ReactPolygonal();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}

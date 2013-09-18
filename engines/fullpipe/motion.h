@@ -29,13 +29,13 @@ int startWalkTo(int objId, int objKey, int x, int y, int a5);
 int doSomeAnimation(int objId, int objKey, int a3);
 int doSomeAnimation2(int objId, int objKey);
 
-class CMotionController : public CObject {
+class MotionController : public CObject {
  public:
 	int _field_4;
 	bool _isEnabled;
 
  public:
-	CMotionController() : _isEnabled(true) {}
+	MotionController() : _isEnabled(true) {}
 	virtual bool load(MfcArchive &file);
 
 	void setEnabled() { _isEnabled = true; }
@@ -45,18 +45,18 @@ class CMotionController : public CObject {
 	virtual void freeItems() {}
 };
 
-class CMctlCompoundArray : public Common::Array<CObject>, public CObject {
+class MctlCompoundArray : public Common::Array<CObject>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
 
-class CMctlConnectionPointsArray : public Common::Array<CObject>, public CObject {
+class MctlConnectionPointsArray : public Common::Array<CObject>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
 
-class CMctlCompound : public CMotionController {
-	CMctlCompoundArray _motionControllers;
+class MctlCompound : public MotionController {
+	MctlCompoundArray _motionControllers;
 
  public:
 	virtual bool load(MfcArchive &file);
@@ -76,7 +76,7 @@ class Unk2 : public CObject {
 	Unk2() : _items(0), _count(0) {}
 };
 
-class CMovGraphNode : public CObject {
+class MovGraphNode : public CObject {
  public:
 	int _x;
 	int _y;
@@ -85,30 +85,30 @@ class CMovGraphNode : public CObject {
 	int _field_14;
 
   public:
-	CMovGraphNode() : _x(0), _y(0), _distance(0), _field_10(0), _field_14(0) {}
+	MovGraphNode() : _x(0), _y(0), _distance(0), _field_10(0), _field_14(0) {}
 	virtual bool load(MfcArchive &file);
 };
 
-class CMovGraphReact : public CObject {
+class MovGraphReact : public CObject {
 	// Empty
 };
 
-class CMctlCompoundArrayItem : public CObject {
-	friend class CMctlCompound;
+class MctlCompoundArrayItem : public CObject {
+	friend class MctlCompound;
 
   protected:
-	CMotionController *_motionControllerObj;
-	CMovGraphReact *_movGraphReactObj;
-	CMctlConnectionPointsArray _connectionPoints;
+	MotionController *_motionControllerObj;
+	MovGraphReact *_movGraphReactObj;
+	MctlConnectionPointsArray _connectionPoints;
 	int _field_20;
 	int _field_24;
 	int _field_28;
 
  public:
-	CMctlCompoundArrayItem() : _movGraphReactObj(0) {}
+	MctlCompoundArrayItem() : _movGraphReactObj(0) {}
 };
 
-class CReactParallel : public CMovGraphReact {
+class ReactParallel : public MovGraphReact {
 	//CRgn _rgn;
 	int _x1;
 	int _y1;
@@ -119,12 +119,12 @@ class CReactParallel : public CMovGraphReact {
 	Common::Point **_points;
 
   public:
-	CReactParallel();
+	ReactParallel();
 	virtual bool load(MfcArchive &file);
 	void createRegion();
 };
 
-class CReactPolygonal : public CMovGraphReact {
+class ReactPolygonal : public MovGraphReact {
 	//CRgn _rgn;
 	int _field_C;
 	int _field_10;
@@ -132,15 +132,15 @@ class CReactPolygonal : public CMovGraphReact {
 	Common::Point **_points;
 
   public:
-	CReactPolygonal();
+	ReactPolygonal();
 	virtual bool load(MfcArchive &file);
 	void createRegion();
 };
 
-class CMovGraphLink : public CObject {
+class MovGraphLink : public CObject {
  public:
-	CMovGraphNode *_movGraphNode1;
-	CMovGraphNode *_movGraphNode2;
+	MovGraphNode *_movGraphNode1;
+	MovGraphNode *_movGraphNode2;
 	CDWordArray _dwordArray1;
 	CDWordArray _dwordArray2;
 	int _flags;
@@ -148,15 +148,15 @@ class CMovGraphLink : public CObject {
 	int _field_3C;
 	double _distance;
 	double _angle;
-	CMovGraphReact *_movGraphReact;
+	MovGraphReact *_movGraphReact;
 	char *_name;
 
   public:
-	CMovGraphLink();
+	MovGraphLink();
 	virtual bool load(MfcArchive &file);
 };
 
-class CMovGraph : public CMotionController {
+class MovGraph : public MotionController {
  public:
 	CObList _nodes;
 	CObList _links;
@@ -167,16 +167,16 @@ class CMovGraph : public CMotionController {
 	Unk2 _unk2;
 
  public:
-	CMovGraph();
+	MovGraph();
 	virtual bool load(MfcArchive &file);
 
 	virtual void addObject(StaticANIObject *obj);
 
-	double calcDistance(Common::Point *point, CMovGraphLink *link, int flag);
-	CMovGraphNode *calcOffset(int ox, int oy);
+	double calcDistance(Common::Point *point, MovGraphLink *link, int flag);
+	MovGraphNode *calcOffset(int ox, int oy);
 };
 
-class CMctlConnectionPoint : public CObject {
+class MctlConnectionPoint : public CObject {
 	int _connectionX;
 	int _connectionY;
 	int _field_C;

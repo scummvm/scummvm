@@ -35,10 +35,10 @@ CInventory2 *getGameLoaderInventory() {
 	return &g_fullpipe->_gameLoader->_inventory;
 }
 
-CMctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
+MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
 	for (uint i = 0; i < g_fullpipe->_gameLoader->_sc2array.size(); i++)
 		if (g_fullpipe->_gameLoader->_sc2array[i]._sceneId == sceneId)
-			return (CMctlCompound *)g_fullpipe->_gameLoader->_sc2array[i]._motionController;
+			return (MctlCompound *)g_fullpipe->_gameLoader->_sc2array[i]._motionController;
 
 	return 0;
 }
@@ -425,7 +425,7 @@ bool Sc2::load(MfcArchive &file) {
 
 	_sceneId = file.readUint16LE();
 
-	_motionController = (CMotionController *)file.readClass();
+	_motionController = (MotionController *)file.readClass();
 
 	_count1 = file.readUint32LE();
 	debug(4, "count1: %d", _count1);

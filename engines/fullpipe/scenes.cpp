@@ -139,7 +139,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	if (_aniMan) {
 		_aniMan2 = _aniMan;
-		CMctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
+		MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
 		cmp->initMovGraph2();
 		cmp->addObject(_aniMan);
 		cmp->setEnabled();
@@ -1313,7 +1313,7 @@ int global_messageHandler4(ExCommand *cmd) {
 	return 1;
 }
 
-int CMovGraph_messageHandler(ExCommand *cmd) {
+int MovGraph_messageHandler(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
@@ -1328,9 +1328,9 @@ int CMovGraph_messageHandler(ExCommand *cmd) {
 	if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_objtype != kObjTypeMovGraph || !ani)
 		return 0;
 
-	CMovGraph *gr = (CMovGraph *)getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+	MovGraph *gr = (MovGraph *)getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
 
-	CMovGraphLink *link = 0;
+	MovGraphLink *link = 0;
 	double mindistance = 1.0e10;
 	Common::Point point;
 
@@ -1338,17 +1338,17 @@ int CMovGraph_messageHandler(ExCommand *cmd) {
 		point.x = ani->_ox;
 		point.y = ani->_oy;
 
-		double dst = gr->calcDistance(&point, (CMovGraphLink *)(*i), 0);
+		double dst = gr->calcDistance(&point, (MovGraphLink *)(*i), 0);
 		if (dst >= 0.0 && dst < mindistance) {
 			mindistance = dst;
-			link = (CMovGraphLink *)(*i);
+			link = (MovGraphLink *)(*i);
 		}
 	}
 
 	int top;
 
 	if (link) {
-		CMovGraphNode *node = link->_movGraphNode1;
+		MovGraphNode *node = link->_movGraphNode1;
 
 		double sq = (ani->_oy - node->_y) * (ani->_oy - node->_y) + (ani->_ox - node->_x) * (ani->_ox - node->_x);
 		int off = (node->_field_14 >> 16) & 0xFF;
