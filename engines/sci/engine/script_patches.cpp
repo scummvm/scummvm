@@ -1123,6 +1123,12 @@ const uint16 qfg1vgaPatchCheetaurDescription[] = {
 	PATCH_END
 };
 
+
+// Hitting the button on the right causes extremely broken behaviour if the
+// door on the top right is open at the time (bug #3585793).
+// Local 5 is the timer controlling automatically closing that door (door11).
+// We force it to 1 in happyFace::changeState which is triggered on hitting the
+// button.
 const byte qfg1vgaSignatureFunnyRoomFix[] = {
 	14,
 	0x65, 0x14,       // aTop 14 (state)
