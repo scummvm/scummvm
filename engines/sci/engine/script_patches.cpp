@@ -1123,6 +1123,29 @@ const uint16 qfg1vgaPatchCheetaurDescription[] = {
 	PATCH_END
 };
 
+const byte qfg1vgaSignatureFunnyRoomFix[] = {
+	14,
+	0x65, 0x14,       // aTop 14 (state)
+	0x36,             // push
+	0x3c,             // dup
+	0x35, 0x00,       // ldi 00
+	0x1a,             // eq?
+	0x30, 0x25, 0x00, // bnt 0025 [-> next state]
+	0x35, 0x01,       // ldi 01
+	0xa3, 0x4e,       // sal 4e
+	0
+};
+
+const uint16 qfg1vgaPatchFunnyRoomFix[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x2e, 0x29, 0x00, // bt 0029 [-> next state] - saves 4 bytes
+	0x35, 0x01,       // ldi 01
+	0xa3, 0x4e,       // sal 4e
+	0xa3, 0x05,       // sal 05 (sets local 5 to 1)
+	0xa3, 0x05,       // and again to make absolutely sure (actually to waste 2 bytes)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
@@ -1132,6 +1155,7 @@ const SciScriptSignature qfg1vgaSignatures[] = {
 	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{     41, "moving to castle gate",                       1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
 	{    210, "cheetaur description fixed",                  1, PATCH_MAGICDWORD(0x34, 0xb8, 0x01, 0x1a),     0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
+	{     96, "funny room script bug fixed",                 1, PATCH_MAGICDWORD(0x35, 0x01, 0xa3, 0x4e),   -10, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
