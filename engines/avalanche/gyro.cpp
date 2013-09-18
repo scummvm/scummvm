@@ -592,4 +592,24 @@ void Gyro::hangAroundForAWhile() {
 		slowDown();
 }
 
+void Gyro::init() {
+	_mouse = kMouseStateNo;
+	_letMeOut = false;
+	_holdTheDawn = true;
+	_currentMouse = 177;
+	_dropsOk = true;
+	_mouseText = "";
+	_cheat = false;
+	_cp = 0;
+	_ledStatus = 177;
+	_defaultLed = 2;
+	_enidFilename = ""; // Undefined.
+	for (int i = 0; i < 3; i++)
+		_scoreToDisplay[i] = -1; // Impossible digits.
+	_holdTheDawn = false;
+
+	setMousePointerWait();
+	CursorMan.showMouse(true);
+}
+
 } // End of namespace Avalanche

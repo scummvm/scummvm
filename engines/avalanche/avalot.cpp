@@ -125,34 +125,22 @@ void Avalot::handleKeyDown(Common::Event &event) {
 }
 
 void Avalot::setup() {
-	_vm->_gyro->_mouse = _vm->_gyro->kMouseStateNo;
-	_vm->_gyro->_letMeOut = false;
+	_vm->_gyro->init();
+
 	_vm->_scrolls->resetScroll();
-	CursorMan.showMouse(true);
-	_vm->_gyro->_holdTheDawn = true;
 	_vm->_lucerna->dusk();
-	_vm->_gyro->_currentMouse = 177;
-	_vm->_gyro->setMousePointerWait();
-	_vm->_gyro->_dropsOk = true;
-	_vm->_gyro->_mouseText = "";
 	_vm->_lucerna->loadDigits();
-	_vm->_gyro->_cheat = false;
-	_vm->_gyro->_cp = 0;
+
 	_vm->_parser->_inputTextPos = 0;
 	_vm->_parser->_quote = true;
-	_vm->_gyro->_ledStatus = 177;
-	_vm->_gyro->_defaultLed = 2;
+
 	// TSkellern = 0; Replace with a more local variable sometime
-	_vm->_animation->_direction = Animation::kDirStopped;
-	_vm->_gyro->_enidFilename = ""; // Undefined.
 	_vm->_lucerna->drawToolbar();
 	_vm->_scrolls->setReadyLight(2);
-	for (int i = 0; i < 3; i++)
-		_vm->_gyro->_scoreToDisplay[i] = -1; // Impossible digits.
 
+	_vm->_animation->_direction = Animation::kDirStopped;
 	_vm->_animation->loadAnims();
 
-	_vm->_gyro->_holdTheDawn = false;
 	_vm->_lucerna->dawn();
 	_vm->_parser->_cursorState = false;
 	_vm->_parser->cursorOn();
@@ -168,7 +156,7 @@ void Avalot::setup() {
 
 		_vm->loadGame(loadSlot);
 	} else {
-		_vm->_gyro->isLoaded = false; // Set to true in _vm->loadGame().
+		_vm->_gyro->_isLoaded = false; // Set to true in _vm->loadGame().
 		_vm->_gyro->newGame(); // No game was requested- load the default.
 
 		_vm->_gyro->_soundFx = !_vm->_gyro->_soundFx;

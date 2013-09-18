@@ -42,7 +42,6 @@
 namespace Avalanche {
 class AvalancheEngine;
 
-
 static const byte kObjectNum = 18; // always preface with a #
 static const int16 kCarryLimit = 12;  // carry limit
 
@@ -187,11 +186,8 @@ public:
 
 	static const int16 kXW = 30;
 	static const int16 kYW = 36; // x width & y whatsit
-
 	static const int16 kMargin = 5;
-
 	static const MouseHotspotType kMouseHotSpots[9];
-
 	static const int16 kMaxSprites = 2; // Current max no. of sprites.
 
 	// For Thinkabout:
@@ -363,10 +359,8 @@ public:
 	byte _lastPerson; // Last person to have been selected using the People menu.
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
 	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
-	bool isLoaded; // Is it a loaded gamestate?
+	bool _isLoaded; // Is it a loaded gamestate?
 	Common::String _enidFilename;
-
-
 
 	Gyro(AvalancheEngine *vm);
 	~Gyro();
@@ -397,6 +391,7 @@ public:
 	Common::String getItem(byte which); // Called get_better in the original.
 	Common::String f5Does(); // This procedure determines what f5 does.
 
+	void init();
 private:
 	AvalancheEngine *_vm;
 

@@ -835,7 +835,7 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	}
 
 	_vm->_gyro->_seeScroll = false; // Now it can work again!
-	_vm->_gyro->isLoaded = false;
+	_vm->_gyro->_isLoaded = false;
 }
 
 void Lucerna::thinkAbout(byte object, bool type) {

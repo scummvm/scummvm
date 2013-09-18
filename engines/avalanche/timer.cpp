@@ -57,7 +57,7 @@ Timer::Timer(AvalancheEngine *vm) {
  * @remarks	Originally called 'set_up_timer'
  */
 void Timer::addTimer(int32 duration, byte action, byte reason) {
-	if ((_vm->_gyro->isLoaded == false) || (_timerLost == true)) {
+	if ((_vm->_gyro->_isLoaded == false) || (_timerLost == true)) {
 		byte i = 0;
 		while ((i < 7) && (_times[i]._timeLeft != 0))
 			i++;
@@ -70,7 +70,7 @@ void Timer::addTimer(int32 duration, byte action, byte reason) {
 		_times[i]._action = action;
 		_times[i]._reason = reason;
 	} else {
-		_vm->_gyro->isLoaded = false;
+		_vm->_gyro->_isLoaded = false;
 		return;
 	}
 }
