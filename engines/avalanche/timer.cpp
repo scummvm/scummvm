@@ -272,7 +272,7 @@ void Timer::bang2() {
 }
 
 void Timer::stairs() {
-	_vm->_gyro->blip();
+	_vm->_sound->blip();
 	_vm->_animation->_sprites[0].walkTo(3);
 	_vm->_celer->drawBackgroundSprite(-1, -1, 1);
 	_vm->_gyro->_brummieStairs = 2;

@@ -209,14 +209,6 @@ void Gyro::setMousePointerWait() {
 	newMouse(4);
 }
 
-void Gyro::note(uint16 hertz) {
-	warning("STUB: Gyro::note()");
-}
-
-void Gyro::blip() {
-	warning("STUB: Gyro::blip()");
-}
-
 void Gyro::drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc) {
 	warning("STUB: Gyro::shadow()");
 }
@@ -359,10 +351,6 @@ void Gyro::newGame() {
 	_vm->_menu->setup();
 	_vm->_lucerna->_clock.update();
 	_vm->_lucerna->spriteRun();
-}
-
-void Gyro::click() {
-	warning("STUB: Gyro::click()");
 }
 
 void Gyro::slowDown() {

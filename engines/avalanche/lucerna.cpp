@@ -946,13 +946,11 @@ void Lucerna::incScore(byte num) {     // Add on no. of points
 	for (int i = 1; i <= num; i++) {
 		_vm->_gyro->_dnascore++;
 
-#if 0
-		if (soundfx) {
+//		if (soundfx) {
 			for (int j = 1; j <= 97; j++)
-				sound(177 + dna.score * 3);
-		}
-		nosound;
-#endif
+				// Length os 2 is a guess, the original doesn't have a delay specified
+				_vm->_sound->playNote(177 + _vm->_gyro->_dnascore * 3, 2);
+//		}
 	}
 	warning("STUB: Lucerna::points()");
 

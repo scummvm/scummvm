@@ -60,7 +60,7 @@ void Parser::handleInputText(const Common::Event &event) {
 			_inputTextPos++;
 			plotText();
 		} else
-			_vm->_gyro->blip();
+			_vm->_sound->blip();
 //	}
 }
 
@@ -73,7 +73,7 @@ void Parser::handleBackspace() {
 			_inputText.deleteChar(_inputTextPos);
 			plotText();
 		} else
-			_vm->_gyro->blip();
+			_vm->_sound->blip();
 	}
 }
 

@@ -214,7 +214,7 @@ void MenuItem::parseKey(char c) {
 		}
 	}
 	if (!found)
-		_dr->_vm->_gyro->blip();
+		_dr->_vm->_sound->blip();
 }
 
 void MenuBar::init(Menu *dr) {
