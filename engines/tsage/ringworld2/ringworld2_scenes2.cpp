@@ -1280,20 +1280,20 @@ void Scene2400::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 2425 - Spill Mountains:
+ * Scene 2425 - Spill Mountains: The Hall Of Records
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2425::Item1::startAction(CursorType action, Event &event) {
+bool Scene2425::RopeDest1::startAction(CursorType action, Event &event) {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == R2_GUNPOWDER) && (!R2_GLOBALS.getFlag(84))) {
+	if ((action == R2_CURSOR_ROPE) && (!R2_GLOBALS.getFlag(84))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2426;
-		scene->setAction(&scene->_sequenceManager, scene, 2426, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2426, &R2_GLOBALS._player, &scene->_rope, NULL);
 		R2_GLOBALS.setFlag(84);
 		return true;
-	} else if (action == R2_GUNPOWDER) {
+	} else if (action == R2_CURSOR_ROPE) {
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		return NamedHotspot::startAction(CURSOR_USE, event);
@@ -1301,16 +1301,16 @@ bool Scene2425::Item1::startAction(CursorType action, Event &event) {
 		return NamedHotspot::startAction(action, event);
 }
 
-bool Scene2425::Item2::startAction(CursorType action, Event &event) {
+bool Scene2425::RopeDest2::startAction(CursorType action, Event &event) {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == R2_GUNPOWDER) && (R2_GLOBALS.getFlag(84))) {
+	if ((action == R2_CURSOR_ROPE) && (R2_GLOBALS.getFlag(84))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2427;
-		scene->setAction(&scene->_sequenceManager, scene, 2427, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2427, &R2_GLOBALS._player, &scene->_rope, NULL);
 		R2_GLOBALS.clearFlag(84);
 		return true;
-	} else if (action == R2_GUNPOWDER) {
+	} else if (action == R2_CURSOR_ROPE) {
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		return NamedHotspot::startAction(CURSOR_USE, event);
@@ -1318,27 +1318,27 @@ bool Scene2425::Item2::startAction(CursorType action, Event &event) {
 		return NamedHotspot::startAction(action, event);
 }
 
-bool Scene2425::Item3::startAction(CursorType action, Event &event) {
+bool Scene2425::Crevasse::startAction(CursorType action, Event &event) {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
-	if (action != R2_GUNPOWDER)
+	if (action != R2_CURSOR_ROPE)
 		return NamedHotspot::startAction(action, event);
 	else {
 		R2_GLOBALS._player.disableControl();
 		if (R2_GLOBALS.getFlag(84)) {
 			scene->_sceneMode = 20;
-			scene->setAction(&scene->_sequenceManager, scene, 2427, &R2_GLOBALS._player, &scene->_actor1, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2427, &R2_GLOBALS._player, &scene->_rope, NULL);
 			R2_GLOBALS.clearFlag(84);
 		} else {
 			scene->_sceneMode = 2425;
-			scene->setAction(&scene->_sequenceManager, scene, 2425, &R2_GLOBALS._player, &scene->_actor1, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2425, &R2_GLOBALS._player, &scene->_rope, NULL);
 		}
 		return true;
 	}
 }
 
 bool Scene2425::Item4::startAction(CursorType action, Event &event) {
-	if (action != R2_GUNPOWDER)
+	if (action != R2_CURSOR_ROPE)
 		return NamedHotspot::startAction(action, event);
 	else {
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
@@ -1347,22 +1347,22 @@ bool Scene2425::Item4::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene2425::Actor1::startAction(CursorType action, Event &event) {
-	if (action == R2_STEPPING_DISKS) {
+bool Scene2425::Rope::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE) {
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
-			R2_GLOBALS._events.setCursor(R2_GUNPOWDER);
+			R2_GLOBALS._events.setCursor(R2_CURSOR_ROPE);
 			return true;
 		} else {
 			return SceneActor::startAction(action, event);
 		}
-	} else if (R2_GLOBALS._events.getCursor() == R2_GUNPOWDER)
+	} else if (R2_GLOBALS._events.getCursor() == R2_CURSOR_ROPE)
 		return false;
 	else
 		return SceneActor::startAction(action, event);
 }
 
-bool Scene2425::Actor2::startAction(CursorType action, Event &event) {
-	if (action != R2_GUNPOWDER)
+bool Scene2425::Pictographs::startAction(CursorType action, Event &event) {
+	if (action != R2_CURSOR_ROPE)
 		return SceneActor::startAction(action, event);
 	else {
 		R2_GLOBALS._events.setCursor(CURSOR_USE);
@@ -1407,39 +1407,39 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor2.postInit();
+		_pictographs1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
-			_actor2.setup(20, 5, 1);
-			_actor2.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			_pictographs1.setup(20, 5, 1);
+			_pictographs1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor2.setup(2008, 5, 1);
-			_actor2.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
+			_pictographs1.setup(2008, 5, 1);
+			_pictographs1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
-		_actor2.setPosition(Common::Point(250, 185));
+		_pictographs1.setPosition(Common::Point(250, 185));
 	}
 
-	_actor1.postInit();
+	_rope.postInit();
 	if (R2_GLOBALS._sceneManager._previousScene == 2455)
-		_actor1.setup(2426, 1, 1);
+		_rope.setup(2426, 1, 1);
 	else
-		_actor1.setup(2426, 1, 2);
+		_rope.setup(2426, 1, 2);
 
-	_actor1.setPosition(Common::Point(290, 9));
-	_actor1.fixPriority(20);
-	_actor1.setDetails(2455, 12, -1, -1, 1, (SceneItem *)NULL);
-	_item1.setDetails(Rect(225, 52, 248, 65), 2425, -1, -1, -1, 1, NULL);
-	_item2.setDetails(Rect(292, 81, 316, 94), 2425, -1, -1, -1, 1, NULL);
+	_rope.setPosition(Common::Point(290, 9));
+	_rope.fixPriority(20);
+	_rope.setDetails(2455, 12, -1, -1, 1, (SceneItem *)NULL);
+	_ropeDest1.setDetails(Rect(225, 52, 248, 65), 2425, -1, -1, -1, 1, NULL);
+	_ropeDest2.setDetails(Rect(292, 81, 316, 94), 2425, -1, -1, -1, 1, NULL);
 
 //  CHECKME: SceneActor using a SceneItem function??
-//	_actor3.setDetails(11, 2425, 3, -1, 6);
-	_actor3._sceneRegionId = 11;
-	_actor3._resNum = 2425;
-	_actor3._lookLineNum = 3;
-	_actor3._talkLineNum = -1;
-	_actor3._useLineNum = 6;
-	g_globals->_sceneItems.push_back(&_actor3);
+//	_pictographs2.setDetails(11, 2425, 3, -1, 6);
+	_pictographs2._sceneRegionId = 11;
+	_pictographs2._resNum = 2425;
+	_pictographs2._lookLineNum = 3;
+	_pictographs2._talkLineNum = -1;
+	_pictographs2._useLineNum = 6;
+	g_globals->_sceneItems.push_back(&_pictographs2);
 
-	_item3.setDetails(12, 2425, 7, -1, 9);
+	_crevasse.setDetails(12, 2425, 7, -1, 9);
 	_item4.setDetails(Rect(0, 0, 320, 200), 2425, 0, -1, -1, 1, NULL);
 
 	R2_GLOBALS._player.disableControl();
@@ -1460,7 +1460,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 		break;
 	case 2455:
 		_sceneMode = 2428;
-		setAction(&_sequenceManager, this, 2428, &R2_GLOBALS._player, &_actor1, NULL);
+		setAction(&_sequenceManager, this, 2428, &R2_GLOBALS._player, &_rope, NULL);
 		break;
 	default:
 		R2_GLOBALS._player.setPosition(Common::Point(280, 150));
@@ -1483,7 +1483,7 @@ void Scene2425::signal() {
 		break;
 	case 20:
 		_sceneMode = 2425;
-		setAction(&_sequenceManager, this, 2425, &R2_GLOBALS._player, &_actor1, NULL);
+		setAction(&_sequenceManager, this, 2425, &R2_GLOBALS._player, &_rope, NULL);
 		break;
 	case 2425:
 		g_globals->_sceneManager.changeScene(2455);
@@ -2223,18 +2223,18 @@ void Scene2450::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2455::Actor1::startAction(CursorType action, Event &event) {
+bool Scene2455::Lamp::startAction(CursorType action, Event &event) {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == R2_GLASS_DOME) {
 		if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2455) || (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2455)) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2458;
-			scene->_actor2._lookLineNum = 9;
-			scene->_actor1.remove();
-			scene->_actor3.postInit();
-			scene->_actor3.setDetails(2455, 16, 1, -1, 2, (SceneItem *)NULL);
-			scene->setAction(&scene->_sequenceManager, scene, 2458, &R2_GLOBALS._player, &scene->_actor2, &scene->_actor3, NULL);
+			scene->_pool._lookLineNum = 9;
+			scene->_lamp.remove();
+			scene->_scrithKey.postInit();
+			scene->_scrithKey.setDetails(2455, 16, 1, -1, 2, (SceneItem *)NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2458, &R2_GLOBALS._player, &scene->_pool, &scene->_scrithKey, NULL);
 			return true;
 		}
 	}
@@ -2242,31 +2242,31 @@ bool Scene2455::Actor1::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
+bool Scene2455::Pool::startAction(CursorType action, Event &event) {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case R2_ALCOHOL_LAMP_2:
 		if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) != 2455) {
 			R2_GLOBALS._player.disableControl();
-			scene->_actor1.postInit();
-			scene->_actor1.setup(2456, 3, 3);
-			scene->_actor1.setPosition(Common::Point(162, 165));
-			scene->_actor1.setDetails(2455, 15, 1, -1, 2, (SceneItem *)NULL);
+			scene->_lamp.postInit();
+			scene->_lamp.setup(2456, 3, 3);
+			scene->_lamp.setPosition(Common::Point(162, 165));
+			scene->_lamp.setDetails(2455, 15, 1, -1, 2, (SceneItem *)NULL);
 			scene->_sceneMode = 11;
-			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_actor2, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_pool, NULL);
 			return true;
 		}
 		break;
 	case R2_ALCOHOL_LAMP_3:
 		if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) != 2455) {
 			R2_GLOBALS._player.disableControl();
-			scene->_actor1.postInit();
-			scene->_actor1.setup(2456, 3, 3);
-			scene->_actor1.setPosition(Common::Point(162, 165));
-			scene->_actor1.setDetails(2455, 15, 1, -1, 2, (SceneItem *)NULL);
+			scene->_lamp.postInit();
+			scene->_lamp.setup(2456, 3, 3);
+			scene->_lamp.setPosition(Common::Point(162, 165));
+			scene->_lamp.setDetails(2455, 15, 1, -1, 2, (SceneItem *)NULL);
 			scene->_sceneMode = 12;
-			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_actor2, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_pool, NULL);
 			return true;
 		}
 		break;
@@ -2277,13 +2277,13 @@ bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene2455::Actor3::startAction(CursorType action, Event &event) {
+bool Scene2455::ScrithKey::startAction(CursorType action, Event &event) {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_USE) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2459;
-		scene->setAction(&scene->_sequenceManager, scene, 2459, &R2_GLOBALS._player, &scene->_actor3, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2459, &R2_GLOBALS._player, &scene->_scrithKey, NULL);
 		return true;
 	}
 
@@ -2313,37 +2313,36 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDetails(Rect(0, 0, 320, 15), EXITCURSOR_N, 2425);
 
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2455) {
-		if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2455) || (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2455)) {
-			_actor1.postInit();
-			_actor1.setup(2456, 3, 3);
-			_actor1.setPosition(Common::Point(162, 165));
-			_actor1.setDetails(2455, 15, 1, -1, 1, (SceneItem *)NULL);
-		}
-	} else {
-		_actor3.postInit();
-		_actor3.setup(2456, 3, 1);
-		_actor3.setPosition(Common::Point(176, 165));
-		_actor3.setDetails(2455, 16, 1, -1, 1, (SceneItem *)NULL);
+		_scrithKey.postInit();
+		_scrithKey.setup(2456, 3, 1);
+		_scrithKey.setPosition(Common::Point(176, 165));
+		_scrithKey.setDetails(2455, 16, 1, -1, 1, (SceneItem *)NULL);
+	} else if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2455) || 
+			(R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2455)) {
+		_lamp.postInit();
+		_lamp.setup(2456, 3, 3);
+		_lamp.setPosition(Common::Point(162, 165));
+		_lamp.setDetails(2455, 15, 1, -1, 1, (SceneItem *)NULL);
 	}
 
-	_actor2.postInit();
+	_pool.postInit();
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2455) {
-		_actor2.setup(2456, 3, 2);
-		_actor2.setDetails(2455, 9, 1, -1, 1, (SceneItem *)NULL);
+		_pool.setup(2456, 3, 2);
+		_pool.setDetails(2455, 9, 1, -1, 1, (SceneItem *)NULL);
 	} else {
 		if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) != 2455) && (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) != 2455))
-			_actor2.setup(2455, 1, 1);
+			_pool.setup(2455, 1, 1);
 		else
-			_actor2.setup(2456, 1, 1);
-		_actor2.setDetails(2455, 3, 1, -1, 1, (SceneItem *)NULL);
+			_pool.setup(2456, 1, 1);
+		_pool.setDetails(2455, 3, 1, -1, 1, (SceneItem *)NULL);
 	}
-	_actor2.setPosition(Common::Point(162, 165));
-	_actor2.fixPriority(20);
+	_pool.setPosition(Common::Point(162, 165));
+	_pool.fixPriority(20);
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) != 2455)
-		_actor2.animate(ANIM_MODE_2, NULL);
+		_pool.animate(ANIM_MODE_2, NULL);
 
 	R2_GLOBALS._player.postInit();
-	_item1.setDetails(Rect(0, 0, 320, 200), 2455, 0, 1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2455, 0, 1, -1, 1, NULL);
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2425) {
@@ -2386,7 +2385,7 @@ void Scene2455::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 2459:
-		_actor3.remove();
+		_scrithKey.remove();
 		R2_INVENTORY.setObjectScene(R2_SCRITH_KEY, 2);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		R2_GLOBALS._player._canWalk = false;
@@ -2507,6 +2506,7 @@ void Scene2500::signal() {
  * Scene 2525 - Furnace room
  *
  *--------------------------------------------------------------------------*/
+
 bool Scene2525::Item5::startAction(CursorType action, Event &event) {
 	Scene2525 *scene = (Scene2525 *)R2_GLOBALS._sceneManager._scene;
 
@@ -2520,7 +2520,7 @@ bool Scene2525::Item5::startAction(CursorType action, Event &event) {
 	return SceneItem::startAction(action, event);
 }
 
-bool Scene2525::Actor3::startAction(CursorType action, Event &event) {
+bool Scene2525::GlassDome::startAction(CursorType action, Event &event) {
 	Scene2525 *scene = (Scene2525 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -2529,7 +2529,7 @@ bool Scene2525::Actor3::startAction(CursorType action, Event &event) {
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2525;
-		scene->setAction(&scene->_sequenceManager, scene, 2525, &R2_GLOBALS._player, &scene->_actor3, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2525, &R2_GLOBALS._player, &scene->_glassDome, NULL);
 	} else {
 		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 	}
@@ -2558,11 +2558,11 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDetails(Rect(86, 155, 228, 168), EXITCURSOR_S, 2000);
 
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2525) {
-		_actor3.postInit();
-		_actor3.setup(2435, 1, 2);
-		_actor3.setPosition(Common::Point(78, 155));
-		_actor3.fixPriority(155);
-		_actor3.setDetails(2525, 27, -1, -1, 1, (SceneItem *)NULL);
+		_glassDome.postInit();
+		_glassDome.setup(2435, 1, 2);
+		_glassDome.setPosition(Common::Point(78, 155));
+		_glassDome.fixPriority(155);
+		_glassDome.setDetails(2525, 27, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	_actor2.postInit();
@@ -2629,7 +2629,7 @@ void Scene2525::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 2525:
-		_actor3.remove();
+		_glassDome.remove();
 		R2_INVENTORY.setObjectScene(R2_GLASS_DOME, 2);
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -2647,6 +2647,7 @@ void Scene2525::signal() {
  * Scene 2530 - Spill Mountains: Well
  *
  *--------------------------------------------------------------------------*/
+
 bool Scene2530::Actor2::startAction(CursorType action, Event &event) {
 	Scene2530 *scene = (Scene2530 *)R2_GLOBALS._sceneManager._scene;
 

@@ -271,6 +271,11 @@ void EventsClass::setCursor(CursorType cursorType) {
 		_currentCursor = cursorType;
 		cursor = g_resourceManager->getSubResource(5, 1, cursorType - R2CURSORS_START, &size);
 		break;
+
+	case R2_CURSOR_ROPE:
+		_currentCursor = cursorType;
+		cursor = g_resourceManager->getSubResource(5, 4, 1, &size);
+		break;
 	}
 
 	// Decode the cursor

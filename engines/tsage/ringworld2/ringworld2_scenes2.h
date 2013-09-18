@@ -141,15 +141,15 @@ public:
 };
 
 class Scene2425 : public SceneExt {
-	class Item1 : public NamedHotspot {
+	class RopeDest1 : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item2 : public NamedHotspot {
+	class RopeDest2 : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item3 : public NamedHotspot {
+	class Crevasse : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -158,11 +158,11 @@ class Scene2425 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor1 : public SceneActor {
+	class Rope : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Pictographs : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -172,13 +172,13 @@ class Scene2425 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	Item1 _item1;
-	Item2 _item2;
-	Item3 _item3;
+	RopeDest1 _ropeDest1;
+	RopeDest2 _ropeDest2;
+	Crevasse _crevasse;
 	Item4 _item4;
-	Actor1 _actor1;
-	Actor2 _actor2;
-	Actor2 _actor3;
+	Rope _rope;
+	Pictographs _pictographs1;
+	Pictographs _pictographs2;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -333,15 +333,15 @@ public:
 };
 
 class Scene2455 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Lamp : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Pool : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class ScrithKey : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -351,10 +351,10 @@ class Scene2455 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
-	Actor1 _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
+	NamedHotspot _background;
+	Lamp _lamp;
+	Pool _pool;
+	ScrithKey _scrithKey;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 
@@ -390,7 +390,7 @@ class Scene2525 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor3 : public SceneActor {
+	class GlassDome : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -407,7 +407,7 @@ public:
 	Item5 _item5;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	Actor3 _actor3;
+	GlassDome _glassDome;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 

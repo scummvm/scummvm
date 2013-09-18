@@ -376,6 +376,10 @@ void SceneExt::remove() {
 	_sceneAreas.clear();
 	Scene::remove();
 	R2_GLOBALS._uiElements._active = true;
+
+	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N && 
+			R2_GLOBALS._events.getCursor() <= SHADECURSOR_DOWN)
+		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 }
 
 void SceneExt::process(Event &event) {
