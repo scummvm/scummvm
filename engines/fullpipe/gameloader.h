@@ -72,10 +72,10 @@ class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class CGameLoader : public CObject {
+class GameLoader : public CObject {
  public:
-	CGameLoader();
-	virtual ~CGameLoader();
+	GameLoader();
+	virtual ~GameLoader();
 
 	virtual bool load(MfcArchive &file);
 	bool loadScene(int sceneId);

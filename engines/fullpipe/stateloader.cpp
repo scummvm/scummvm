@@ -37,7 +37,7 @@
 namespace Fullpipe {
 
 bool FullpipeEngine::loadGam(const char *fname, int scene) {
-	_gameLoader = new CGameLoader();
+	_gameLoader = new GameLoader();
 
 	if (!_gameLoader->loadFile(fname))
 		return false;

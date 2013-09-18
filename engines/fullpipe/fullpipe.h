@@ -45,7 +45,7 @@ enum FullpipeGameFeatures {
 
 class BehaviorManager;
 class BaseModalObject;
-class CGameLoader;
+class GameLoader;
 class GameVar;
 class InputController;
 class Inventory2;
@@ -98,7 +98,7 @@ public:
 
 	Graphics::Surface _backgroundSurface;
 
-	CGameLoader *_gameLoader;
+	GameLoader *_gameLoader;
 	GameProject *_gameProject;
 	bool loadGam(const char *fname, int scene = 0);
 
