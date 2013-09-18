@@ -33,7 +33,7 @@
 
 namespace Fullpipe {
 
-CStepArray::CStepArray() {
+StepArray::StepArray() {
 	_points = 0;
 	_maxPointIndex = 0;
 	_currPointIndex = 0;
@@ -41,7 +41,7 @@ CStepArray::CStepArray() {
 	_isEos = 0;
 }
 
-CStepArray::~CStepArray() {
+StepArray::~StepArray() {
 	if (_pointsCount) {
 		for (int i = 0; i < _pointsCount; i++)
 			delete _points[i];
@@ -52,7 +52,7 @@ CStepArray::~CStepArray() {
 	}
 }
 
-void CStepArray::clear() {
+void StepArray::clear() {
 	_currPointIndex = 0;
 	_maxPointIndex = 0;
 	_isEos = 0;
@@ -63,7 +63,7 @@ void CStepArray::clear() {
 	}
 }
 
-Common::Point *CStepArray::getCurrPoint(Common::Point *point) {
+Common::Point *StepArray::getCurrPoint(Common::Point *point) {
 	if (_isEos || _points == 0) {
 		point->x = 0;
 		point->y = 0;
@@ -73,7 +73,7 @@ Common::Point *CStepArray::getCurrPoint(Common::Point *point) {
 	return point;
 }
 
-bool CStepArray::gotoNextPoint() {
+bool StepArray::gotoNextPoint() {
 	if (_currPointIndex < _maxPointIndex) {
 		_currPointIndex++;
 		return true;

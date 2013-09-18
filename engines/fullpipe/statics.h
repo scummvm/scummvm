@@ -29,7 +29,7 @@ namespace Fullpipe {
 
 class ExCommand;
 
-class CStepArray : public CObject {
+class StepArray : public CObject {
 	int _currPointIndex;
 	Common::Point **_points;
 	int _maxPointIndex;
@@ -37,8 +37,8 @@ class CStepArray : public CObject {
 	int _isEos;
 
   public:
-	CStepArray();
-	~CStepArray();
+	StepArray();
+	~StepArray();
 	void clear();
 
 	int getCurrPointIndex() { return _currPointIndex; }
@@ -174,7 +174,7 @@ class StaticANIObject : public GameObject {
 	void (*_callback2)(int *);
 	PtrList _movements;
 	PtrList _staticsList;
-	CStepArray _stepArray;
+	StepArray _stepArray;
 	int16 _field_96;
 	int _messageQueueId;
 	int _messageNum;
