@@ -82,14 +82,14 @@ class ExCommand2 : public ExCommand {
 	int _pointsSize;
 };
 
-class CObjstateCommand : public CObject {
+class ObjstateCommand : public CObject {
  public:
 	ExCommand _cmd;
 	char *_objCommandName;
 	int _value;
 
  public:
-	CObjstateCommand();
+	ObjstateCommand();
 	virtual bool load(MfcArchive &file);
 };
 

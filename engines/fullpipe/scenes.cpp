@@ -1076,7 +1076,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		return doSomeAnimation2(cmd->_parentId, cmd->_keyCode);
 	case 63:
 		if (cmd->_objtype == kObjTypeObjstateCommand) {
-			CObjstateCommand *c = (CObjstateCommand *)cmd;
+			ObjstateCommand *c = (ObjstateCommand *)cmd;
 			result = 1;
 			g_fullpipe->setObjectState(c->_objCommandName, c->_value);
 		}

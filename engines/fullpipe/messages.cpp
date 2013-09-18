@@ -169,13 +169,13 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 	_field_34 = 0;
 }
 
-CObjstateCommand::CObjstateCommand() {
+ObjstateCommand::ObjstateCommand() {
 	_value = 0;
 	_objCommandName = 0;
 }
 
-bool CObjstateCommand::load(MfcArchive &file) {
-	debug(5, "CObjStateCommand::load()");
+bool ObjstateCommand::load(MfcArchive &file) {
+	debug(5, "ObjStateCommand::load()");
 
 	_objtype = kObjTypeObjstateCommand;
 

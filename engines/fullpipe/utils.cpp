@@ -265,7 +265,7 @@ enum {
 	kInteraction,
 	kMessageQueue,
 	kExCommand,
-	kCObjstateCommand,
+	kObjstateCommand,
 	kCGameVar,
 	kMctlCompound,
 	kMovGraph,
@@ -282,7 +282,7 @@ const struct {
 	{ "CInteraction",	kInteraction },
 	{ "MessageQueue",	kMessageQueue },
 	{ "ExCommand",		kExCommand },
-	{ "CObjstateCommand", kCObjstateCommand },
+	{ "CObjstateCommand", kObjstateCommand },
 	{ "CGameVar",		kCGameVar },
 	{ "CMctlCompound",	kMctlCompound },
 	{ "CMovGraph",		kMovGraph },
@@ -312,8 +312,8 @@ static CObject *createObject(int objectId) {
 		return new MessageQueue();
 	case kExCommand:
 		return new ExCommand();
-	case kCObjstateCommand:
-		return new CObjstateCommand();
+	case kObjstateCommand:
+		return new ObjstateCommand();
 	case kCGameVar:
 		return new CGameVar();
 	case kMctlCompound:
