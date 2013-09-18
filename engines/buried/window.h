@@ -66,7 +66,7 @@ public:
 	void updateWindow();
 	void enableWindow(bool enable);
 	bool isWindowEnabled() const;
-	void setWindowPos(Window *insertAfter, int x, int y, int width, int height, uint flags);
+	void setWindowPos(const Window *insertAfter, int x, int y, int width, int height, uint flags);
 
 	// The subset of show modes we'll accept
 	enum WindowShowMode {

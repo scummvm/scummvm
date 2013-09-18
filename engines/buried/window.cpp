@@ -147,7 +147,7 @@ void Window::updateWindow() {
 		(*it)->updateWindow();
 }
 
-void Window::setWindowPos(Window *insertAfter, int x, int y, int width, int height, uint flags) {
+void Window::setWindowPos(const Window *insertAfter, int x, int y, int width, int height, uint flags) {
 	if (!(flags & kWindowPosNoZOrder)) {
 		assert(insertAfter != this); // I don't even want to think about this case
 
