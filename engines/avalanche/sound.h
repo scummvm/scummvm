@@ -24,7 +24,6 @@
 #define AVALANCHE_SOUND_H
 
 #include "audio/mixer.h"
-#include "audio/midiplayer.h"
 #include "audio/softsynth/pcspk.h"
 
 namespace Avalanche {
