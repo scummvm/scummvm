@@ -119,7 +119,7 @@ void Scrolls::scrollModeNormal() {
 	setReadyLight(3);
 	_vm->_gyro->_seeScroll = true;
 	CursorMan.showMouse(true);
-	_vm->_gyro->newMouse(4);
+	_vm->_gyro->newMouse(3);
 
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
@@ -209,7 +209,7 @@ void Scrolls::scrollModeMusic() {
 	setReadyLight(3);
 	_vm->_gyro->_seeScroll = true;
 	CursorMan.showMouse(true);
-	_vm->_gyro->newMouse(4);
+	_vm->_gyro->newMouse(3);
 
 	// Since there are no sounds in the game yet, it's pretty pointless to implement this function further.
 	// For now we act like the player just played the right tone.
