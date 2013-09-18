@@ -30,6 +30,7 @@
 namespace Avalanche {
 
 SoundHandler::SoundHandler(AvalancheEngine *vm) : _vm(vm) {
+	_soundFl = true;
 	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -51,14 +52,7 @@ void SoundHandler::stopSound() {
  * Turn digitized sound on and off
  */
 void SoundHandler::toggleSound() {
-//	_vm->_config._soundFl = !_vm->_config._soundFl;
-}
-
-/**
- * Initialize for MCI sound and midi
- */
-void SoundHandler::initSound() {
-	//_midiPlayer->open();
+	_soundFl = !_soundFl;
 }
 
 void SoundHandler::syncVolume() {
@@ -74,8 +68,7 @@ void SoundHandler::syncVolume() {
 
 void SoundHandler::playNote(int freq, int length) {
 	// Does the user not want any sound?
-//	if (!_vm->_config._soundFl || !_vm->_mixer->isReady())
-	if (!_vm->_mixer->isReady())
+	if (!_soundFl || !_vm->_mixer->isReady())
 		return;
 
 	// Start a note playing (we will stop it when the timer expires).
