@@ -417,11 +417,11 @@ public:
 };
 
 class Scene2530 : public SceneExt {
-	class Actor2 : public SceneActor {
+	class Flask : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Crank : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -431,14 +431,14 @@ class Scene2530 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	NamedHotspot _item2;
-	NamedHotspot _item3;
+	NamedHotspot _shelf;
 	NamedHotspot _item4;
 	NamedHotspot _item5;
 	SceneActor _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
+	Flask _flask;
+	Crank _crank;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 

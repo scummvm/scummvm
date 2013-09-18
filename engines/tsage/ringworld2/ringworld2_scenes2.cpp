@@ -349,9 +349,9 @@ void Scene2000::initExits() {
 		break;
 	case 23:
 		_northExit._enabled = true;
-		_northExit._bounds.set(108, 83, 128, 184);
+		_northExit._bounds.set(108, 83, 184, 125);
 		_northExit.setDest(Common::Point(135, 129));
-		_northExit._cursorNum = CURSOR_INVALID;
+		_northExit._cursorNum = EXITCURSOR_NE;
 		loadScene(2275);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (!_exitingFlag)
@@ -2648,7 +2648,7 @@ void Scene2525::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2530::Actor2::startAction(CursorType action, Event &event) {
+bool Scene2530::Flask::startAction(CursorType action, Event &event) {
 	Scene2530 *scene = (Scene2530 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -2657,7 +2657,7 @@ bool Scene2530::Actor2::startAction(CursorType action, Event &event) {
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2530;
-		scene->setAction(&scene->_sequenceManager, scene, 2530, &R2_GLOBALS._player, &scene->_actor2, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2530, &R2_GLOBALS._player, &scene->_flask, NULL);
 	} else {
 		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 	}
@@ -2665,29 +2665,29 @@ bool Scene2530::Actor2::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene2530::Actor3::startAction(CursorType action, Event &event) {
+bool Scene2530::Crank::startAction(CursorType action, Event &event) {
 	Scene2530 *scene = (Scene2530 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		if (R2_GLOBALS.getFlag(73))
 			SceneItem::display(2530, 35, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 		else {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2532;
-			scene->setAction(&scene->_sequenceManager, scene, 2532, &R2_GLOBALS._player, &scene->_actor3, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2532, &R2_GLOBALS._player, &scene->_crank, NULL);
 		}
 	} else {
 		if (R2_GLOBALS.getFlag(73)) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2533;
-			scene->setAction(&scene->_sequenceManager, scene, 2533, &R2_GLOBALS._player, &scene->_actor3, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2533, &R2_GLOBALS._player, &scene->_crank, NULL);
 		} else {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2531;
-			scene->setAction(&scene->_sequenceManager, scene, 2531, &R2_GLOBALS._player, &scene->_actor3, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2531, &R2_GLOBALS._player, &scene->_crank, NULL);
 		}
 	}
 
@@ -2715,22 +2715,22 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 	_exit1.setDest(Common::Point(108, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 2530) {
-		_actor2.postInit();
-		_actor2.setup(2435, 1, 3);
-		_actor2.setPosition(Common::Point(299, 80));
-		_actor2.fixPriority(80);
-		_actor2.setDetails(2530, 28, -1, -1, 1, (SceneItem *)NULL);
+		_flask.postInit();
+		_flask.setup(2435, 1, 3);
+		_flask.setPosition(Common::Point(299, 80));
+		_flask.fixPriority(80);
+		_flask.setDetails(2530, 28, -1, -1, 1, (SceneItem *)NULL);
 	}
 
-	_actor3.postInit();
+	_crank.postInit();
 	if (R2_GLOBALS.getFlag(73)) {
-		_actor3.setup(2531, 4, 2);
-		_actor3.setPosition(Common::Point(154, 130));
+		_crank.setup(2531, 4, 2);
+		_crank.setPosition(Common::Point(154, 130));
 	} else {
-		_actor3.setup(2531, 4, 1);
-		_actor3.setPosition(Common::Point(173, 131));
+		_crank.setup(2531, 4, 1);
+		_crank.setPosition(Common::Point(173, 131));
 	}
-	_actor3.setDetails(2530, 22, -1, -1, 1, (SceneItem *)NULL);
+	_crank.setDetails(2530, 22, -1, -1, 1, (SceneItem *)NULL);
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -2759,8 +2759,8 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 
 	_item2.setDetails(Rect(108, 90, 135, 205), 2530, 22, -1, -1, 1, NULL);
 	_item5.setDetails(Rect(115, 112, 206, 130), 2530, 25, -1, 27, 1, NULL);
-	_item3.setDetails(Rect(256, 64, 311, 85), 2530, 31, -1, 33, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 2530, 0, 1, -1, 1, NULL);
+	_shelf.setDetails(Rect(256, 64, 311, 85), 2530, 31, -1, 33, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2530, 0, 1, -1, 1, NULL);
 
 	R2_GLOBALS._player.disableControl();
 
@@ -2783,7 +2783,8 @@ void Scene2530::signal() {
 		break;
 	case 2530:
 		R2_INVENTORY.setObjectScene(R2_PURE_GRAIN_ALCOHOL, 2);
-		_actor2.remove();
+		_flask.remove();
+		R2_GLOBALS._player.enableControl();
 		break;
 	case 2531:
 	// No break on purpose
@@ -2946,7 +2947,7 @@ void Scene2535::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 2535:
-		R2_INVENTORY.setObjectScene(R2_TANNER_MASK, 2);
+		R2_INVENTORY.setObjectScene(R2_TANNER_MASK, R2_SEEKER);
 		_tannerMask.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
