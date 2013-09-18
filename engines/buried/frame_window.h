@@ -31,6 +31,7 @@
 namespace Buried {
 
 class BuriedEngine;
+struct GlobalFlags;
 
 class FrameWindow : public Window {
 public:
@@ -46,8 +47,8 @@ public:
 	bool startNewGame(bool walkthrough = false, bool introMovie = false);
 	bool startNewGame(const Common::String &fileName);
 	// TODO: startNewGame with continue data
-	// TODO: showDeathScene
-	// TODO: showCompletionScene
+	bool showDeathScene(int deathSceneIndex, const GlobalFlags &globalFlags);
+	bool showCompletionScene(const GlobalFlags &globalFlags);
 	bool showCredits();
 	bool showOverview();
 	bool notifyUserOfFrameCycling();

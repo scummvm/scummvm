@@ -29,7 +29,9 @@
 #include "graphics/surface.h"
 
 #include "buried/buried.h"
+#include "buried/complete.h"
 #include "buried/credits.h"
+#include "buried/death.h"
 #include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
@@ -269,6 +271,34 @@ bool FrameWindow::startNewGame(const Common::String &fileName) {
 
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
+	return true;
+}
+
+bool FrameWindow::showDeathScene(int deathSceneIndex, const GlobalFlags &globalFlags) {
+	_gameInProgress = false;
+	_atMainMenu = false;
+
+	_vm->removeMouseMessages(this);
+
+	delete _mainChildWindow;
+	_mainChildWindow = new DeathWindow(_vm, this, deathSceneIndex, globalFlags);
+	_mainChildWindow->showWindow(kWindowShow);
+	_mainChildWindow->invalidateWindow(false);
+
+	return true;
+}
+
+bool FrameWindow::showCompletionScene(const GlobalFlags &globalFlags) {
+	_gameInProgress = false;
+	_atMainMenu = false;
+
+	_vm->removeMouseMessages(this);
+
+	delete _mainChildWindow;
+	_mainChildWindow = new CompletionWindow(_vm, this, globalFlags);
+	_mainChildWindow->showWindow(kWindowShow);
+	_mainChildWindow->invalidateWindow(false);
+
 	return true;
 }
 
