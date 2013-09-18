@@ -1123,12 +1123,18 @@ const uint16 qfg1vgaPatchCheetaurDescription[] = {
 	PATCH_END
 };
 
-
-// Hitting the button on the right causes extremely broken behaviour if the
-// door on the top right is open at the time (bug #3585793).
-// Local 5 is the timer controlling automatically closing that door (door11).
-// We force it to 1 in happyFace::changeState which is triggered on hitting the
-// button.
+// In the "funny" room (Yorick's room) in QfG1 VGA, pulling the chain and
+//  then pressing the button on the right side of the room results in
+//  a broken game. This also happens in SSCI.
+// Problem is that the Sierra programmers forgot to disable the door, that
+//  gets opened by pulling the chain. So when ego falls down and then
+//  rolls through the door, one method thinks that the player walks through
+//  it and acts that way and the other method is still doing the roll animation.
+// Local 5 of that room is a timer, that closes the door (object door11).
+// Setting it to 1 during happyFace::changeState(0) stops door11::doit from
+//  calling goTo6::init, so the whole issue is stopped from happening.
+// Responsible method: happyFace::changeState, door11::doit
+// Fixes bug #3585793
 const byte qfg1vgaSignatureFunnyRoomFix[] = {
 	14,
 	0x65, 0x14,       // aTop 14 (state)
