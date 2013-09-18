@@ -269,7 +269,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 		Point32 origin(x, y);
 		Rect32 oldRect = getRect();
 		Point32 newHotspot;
-		TransformStruct transform = TransformStruct(zoomX, zoomY, rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
+		TransformStruct transform = TransformStruct(zoomX, zoomY, (uint32)rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
 		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
 		newOrigin = origin - newHotspot;
 		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
