@@ -75,7 +75,7 @@ Vars::Vars() {
 }
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
-	CGameVar *sceneVar;
+	GameVar *sceneVar;
 	Common::Point sceneDim;
 
 	Scene *scene = accessScene(entrance->_sceneId);
@@ -657,7 +657,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 }
 
 void setElevatorButton(const char *name, int state) {
-	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (var)
 		var->setSubVarAsInt(name, state);
@@ -1383,7 +1383,7 @@ int sceneIntro_updateCursor() {
 }
 
 void FullpipeEngine::setSwallowedEggsState() {
-	CGameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
+	GameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
 	g_vars->swallowedEgg1 = v->getSubVarByName(sO_Egg1);
 	g_vars->swallowedEgg2 = v->getSubVarByName(sO_Egg2);
@@ -1416,7 +1416,7 @@ int sceneHandlerIntro(ExCommand *cmd) {
 }
 
 void scene01_fixEntrance() {
-	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 	if (var->getSubVarAsInt("Entrance") == TrubaLeft)
 		var->setSubVarAsInt("Entrance", TrubaRight);
 }

@@ -31,9 +31,9 @@ class Vars {
  public:
 	Vars();
 
-	CGameVar *swallowedEgg1;
-	CGameVar *swallowedEgg2;
-	CGameVar *swallowedEgg3;
+	GameVar *swallowedEgg1;
+	GameVar *swallowedEgg2;
+	GameVar *swallowedEgg3;
 
 	StaticANIObject *sceneIntro_aniin1man;
 	bool sceneIntro_needSleep;

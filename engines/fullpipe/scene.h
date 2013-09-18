@@ -69,7 +69,7 @@ class Scene : public Background {
 	PictureObject *getPictureObjectById(int objId, int flags);
 	PictureObject *getPictureObjectByName(const char *name, int keyCode);
 	void deletePictureObject(PictureObject *obj);
-	void preloadMovements(CGameVar *var);
+	void preloadMovements(GameVar *var);
 
 	StaticANIObject *getStaticANIObjectAtPos(int x, int y);
 	PictureObject *getPictureObjectAtPos(int x, int y);

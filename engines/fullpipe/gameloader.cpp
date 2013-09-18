@@ -124,7 +124,7 @@ bool CGameLoader::load(MfcArchive &file) {
 	_field_FA = file.readUint16LE();
 	_field_F8 = file.readUint16LE();
 
-	_gameVar = (CGameVar *)file.readClass();
+	_gameVar = (GameVar *)file.readClass();
 
 	return true;
 }
@@ -181,7 +181,7 @@ bool CGameLoader::gotoScene(int sceneId, int entranceId) {
 				return false;
 		}
 
-	CGameVar *sg = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+	GameVar *sg = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 
 	if (sg || (sg = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0)) != 0)
 		sg->setSubVarAsInt("Entrance", entranceId);
@@ -496,7 +496,7 @@ bool PreloadItems::load(MfcArchive &file) {
 	return true;
 }
 
-CGameVar *FullpipeEngine::getGameLoaderGameVar() {
+GameVar *FullpipeEngine::getGameLoaderGameVar() {
 	if (_gameLoader)
 		return _gameLoader->_gameVar;
 	else

@@ -547,7 +547,7 @@ void StaticANIObject::draw2() {
 }
 
 MovTable *StaticANIObject::countMovements() {
-	CGameVar *preloadSubVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
+	GameVar *preloadSubVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
 		return 0;
@@ -561,7 +561,7 @@ MovTable *StaticANIObject::countMovements() {
 		GameObject *obj = (GameObject *)_movements[i];
 		movTable->movs[i] = 2;
 
-		for (CGameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
+		for (GameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
 			if (scumm_stricmp(obj->getName(), sub->_varName) == 0) {
 				movTable->movs[i] = 1;
 				break;
@@ -573,7 +573,7 @@ MovTable *StaticANIObject::countMovements() {
 }
 
 void StaticANIObject::setSpeed(int speed) {
-	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
 
 	if (!var)
 		return;

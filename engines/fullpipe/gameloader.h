@@ -100,7 +100,7 @@ class CGameLoader : public CObject {
 	int16 _field_F8;
 	int16 _field_FA;
 	PreloadItems _preloadItems;
-	CGameVar *_gameVar;
+	GameVar *_gameVar;
 	char *_gameName;
 	ExCommand _exCommand;
 	int _updateCounter;

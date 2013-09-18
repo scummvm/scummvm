@@ -46,7 +46,7 @@ enum FullpipeGameFeatures {
 class BehaviorManager;
 class BaseModalObject;
 class CGameLoader;
-class CGameVar;
+class GameVar;
 class InputController;
 class Inventory2;
 struct CursorInfo;
@@ -102,7 +102,7 @@ public:
 	GameProject *_gameProject;
 	bool loadGam(const char *fname, int scene = 0);
 
-	CGameVar *getGameLoaderGameVar();
+	GameVar *getGameLoaderGameVar();
 	InputController *getGameLoaderInputController();
 
 	int _gameProjectVersion;
@@ -218,7 +218,7 @@ public:
 
 	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
-	void setSceneMusicParameters(CGameVar *var);
+	void setSceneMusicParameters(GameVar *var);
 
 	NGIArchive *_currArchive;
 

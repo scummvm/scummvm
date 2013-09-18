@@ -48,17 +48,17 @@ void BehaviorManager::clear() {
 	_behaviors.clear();
 }
 
-void BehaviorManager::initBehavior(Scene *sc, CGameVar *var) {
+void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 	clear();
 	_scene = sc;
 
 	BehaviorInfo *behinfo;
 
-	CGameVar *behvar = var->getSubVarByName("BEHAVIOR");
+	GameVar *behvar = var->getSubVarByName("BEHAVIOR");
 	if (!behvar)
 		return;
 
-	for (CGameVar *subvar = behvar->_subVars; subvar; subvar = subvar->_nextVarObj) {
+	for (GameVar *subvar = behvar->_subVars; subvar; subvar = subvar->_nextVarObj) {
 		if (!strcmp(subvar->_varName, "AMBIENT")) {
 			behinfo = new BehaviorInfo;
 			behinfo->initAmbientBehavior(subvar, sc);
@@ -191,7 +191,7 @@ void BehaviorInfo::clear() {
 	_bheItems.clear();
 }
 
-void BehaviorInfo::initAmbientBehavior(CGameVar *var, Scene *sc) {
+void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 	debug(0, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
@@ -215,7 +215,7 @@ void BehaviorInfo::initAmbientBehavior(CGameVar *var, Scene *sc) {
 	}
 }
 
-void BehaviorInfo::initObjectBehavior(CGameVar *var, Scene *sc, StaticANIObject *ani) {
+void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
 	debug(0, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
@@ -227,7 +227,7 @@ void BehaviorInfo::initObjectBehavior(CGameVar *var, Scene *sc, StaticANIObject 
 		if (strcmp(var->_value.stringValue, "ROOT"))
 			break;
 
-		CGameVar *v1 = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
+		GameVar *v1 = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
 		if (v1 == var)
 			return;
 
@@ -255,7 +255,7 @@ BehaviorEntry::BehaviorEntry() {
 	_items = 0;
 }
 
-BehaviorEntry::BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay) {
+BehaviorEntry::BehaviorEntry(GameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay) {
 	_staticsId = 0;
 	_itemsCount = 0;
 
@@ -274,7 +274,7 @@ BehaviorEntry::BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int
 		_items = (BehaviorEntryInfo**)calloc(_itemsCount, sizeof(BehaviorEntryInfo *));
 
 		for (int i = 0; i < _itemsCount; i++) {
-			CGameVar *subvar = var->getSubVarByIndex(i);
+			GameVar *subvar = var->getSubVarByIndex(i);
 			int delay;
 
 			_items[i] = new BehaviorEntryInfo(subvar, sc, &delay);
@@ -289,14 +289,14 @@ BehaviorEntry::BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int
 	}
 }
 
-BehaviorEntryInfo::BehaviorEntryInfo(CGameVar *subvar, Scene *sc, int *delay) {
+BehaviorEntryInfo::BehaviorEntryInfo(GameVar *subvar, Scene *sc, int *delay) {
 	_messageQueue = 0;
 	_delay = 0;
 	_percent = 0;
 	_flags = 0;
 	_messageQueue = sc->getMessageQueueByName(subvar->_varName);
 
-	CGameVar *vart = subvar->getSubVarByName("dwDelay");
+	GameVar *vart = subvar->getSubVarByName("dwDelay");
 	if (vart)
 		_delay = vart->_value.intValue;
 

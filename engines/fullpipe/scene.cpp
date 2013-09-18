@@ -371,16 +371,16 @@ MessageQueue *Scene::getMessageQueueByName(char *name) {
 	return 0;
 }
 
-void Scene::preloadMovements(CGameVar *var) {
-	CGameVar *preload = var->getSubVarByName("PRELOAD");
+void Scene::preloadMovements(GameVar *var) {
+	GameVar *preload = var->getSubVarByName("PRELOAD");
 	if (!preload)
 		return;
 
-	for (CGameVar *i = preload->_subVars; i; i = i->_nextVarObj) {
+	for (GameVar *i = preload->_subVars; i; i = i->_nextVarObj) {
 		StaticANIObject *ani = getStaticANIObject1ByName(i->_varName, -1);
 
 		if (ani) {
-			CGameVar *subVars = i->_subVars;
+			GameVar *subVars = i->_subVars;
 
 			if (subVars) {
 				for (;subVars; subVars = subVars->_nextVarObj) {
@@ -397,7 +397,7 @@ void Scene::preloadMovements(CGameVar *var) {
 }
 
 void Scene::initObjectCursors(const char *varname) {
-	CGameVar *cursorsVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("CURSORS");
+	GameVar *cursorsVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("CURSORS");
 
 	if (!cursorsVar || !cursorsVar->_subVars)
 		return;
@@ -405,7 +405,7 @@ void Scene::initObjectCursors(const char *varname) {
 	int maxId = 0;
 	int minId = 0xffff;
 
-	for (CGameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
+	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
 		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
 		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != 0) {
@@ -421,7 +421,7 @@ void Scene::initObjectCursors(const char *varname) {
 
 	g_fullpipe->_objectIdCursors.resize(maxId - minId + 1);
 
-	for (CGameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
+	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
 		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
 		if (!obj)
