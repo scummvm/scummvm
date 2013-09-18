@@ -1334,7 +1334,7 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 	double mindistance = 1.0e10;
 	Common::Point point;
 
-	for (CObList::iterator i = gr->_links.begin(); i != gr->_links.end(); ++i) {
+	for (ObList::iterator i = gr->_links.begin(); i != gr->_links.end(); ++i) {
 		point.x = ani->_ox;
 		point.y = ani->_oy;
 

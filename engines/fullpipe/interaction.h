@@ -61,7 +61,7 @@ class CInteraction : public CObject {
 
 class CInteractionController : public CObject {
  public:
-	CObList _interactions;
+	ObList _interactions;
 	int16 _field_20;
 	bool _flag24;
 

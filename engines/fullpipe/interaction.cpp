@@ -40,7 +40,7 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 		sceneId = g_fullpipe->_currentScene->_sceneId;
 
 	CInteractionController *intC = getGameLoaderInteractionController();
-	for (CObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
+	for (ObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
 		CInteraction *intr = (CInteraction *)*i;
 
 		if (intr->_sceneId > 0 && intr->_sceneId != sceneId)
@@ -112,7 +112,7 @@ bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject
 	MessageQueue *mq;
 	ExCommand *ex;
 
-	for (CObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
+	for (ObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
 		CInteraction *cinter = (CInteraction *)*i;
 
 		if (!cinter->canInteract(subj, obj, invId))

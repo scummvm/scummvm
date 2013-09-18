@@ -83,7 +83,7 @@ class CObject {
 	bool loadFile(const char *fname);
 };
 
-class CObList : public Common::List<CObject *>, public CObject {
+class ObList : public Common::List<CObject *>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
@@ -135,12 +135,12 @@ class MemoryObject2 : public MemoryObject {
 	void copyData(byte *src, int dataSize);
 };
 
-class CObArray : public Common::Array<CObject>, public CObject {
+class ObArray : public Common::Array<CObject>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
 
-class CDWordArray : public Common::Array<int32>, public CObject {
+class DWordArray : public Common::Array<int32>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };

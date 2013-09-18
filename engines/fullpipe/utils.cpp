@@ -44,14 +44,14 @@ bool CObject::loadFile(const char *fname) {
 	return load(archive);
 }
 
-bool CObList::load(MfcArchive &file) {
-	debug(5, "CObList::load()");
+bool ObList::load(MfcArchive &file) {
+	debug(5, "ObList::load()");
 	int count = file.readCount();
 
-	debug(9, "CObList::count: %d:", count);
+	debug(9, "ObList::count: %d:", count);
 
 	for (int i = 0; i < count; i++) {
-		debug(9, "CObList::[%d]", i);
+		debug(9, "ObList::[%d]", i);
 		CObject *t = file.readClass();
 
 		push_back(t);
@@ -60,8 +60,8 @@ bool CObList::load(MfcArchive &file) {
 	return true;
 }
 
-bool CObArray::load(MfcArchive &file) {
-	debug(5, "CObArray::load()");
+bool ObArray::load(MfcArchive &file) {
+	debug(5, "ObArray::load()");
 	int count = file.readCount();
 
 	resize(count);
@@ -75,11 +75,11 @@ bool CObArray::load(MfcArchive &file) {
 	return true;
 }
 
-bool CDWordArray::load(MfcArchive &file) {
-	debug(5, "CWordArray::load()");
+bool DWordArray::load(MfcArchive &file) {
+	debug(5, "DWordArray::load()");
 	int count = file.readCount();
 
-	debug(9, "CDWordArray::count: %d", count);
+	debug(9, "DWordArray::count: %d", count);
 
 	resize(count);
 

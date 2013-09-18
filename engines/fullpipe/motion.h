@@ -141,8 +141,8 @@ class MovGraphLink : public CObject {
  public:
 	MovGraphNode *_movGraphNode1;
 	MovGraphNode *_movGraphNode2;
-	CDWordArray _dwordArray1;
-	CDWordArray _dwordArray2;
+	DWordArray _dwordArray1;
+	DWordArray _dwordArray2;
 	int _flags;
 	int _field_38;
 	int _field_3C;
@@ -158,8 +158,8 @@ class MovGraphLink : public CObject {
 
 class MovGraph : public MotionController {
  public:
-	CObList _nodes;
-	CObList _links;
+	ObList _nodes;
+	ObList _links;
 	int _field_44;
 	int _items;
 	int _itemsCount;
