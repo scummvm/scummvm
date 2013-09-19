@@ -1575,7 +1575,7 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(189, 137));
-		R2_GLOBALS._walkRegions.enableRegion(4);
+		R2_GLOBALS._walkRegions.disableRegion(4);
 	}
 
 	_item2.setDetails(Rect(11, 30, 37, 45), 2430, 3, -1, 5, 1, NULL);
@@ -1720,7 +1720,7 @@ void Scene2435::postInit(SceneObjectList *OwnerList) {
 			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_companion.setPosition(Common::Point(107, 145));
-		R2_GLOBALS._walkRegions.enableRegion(2);
+		R2_GLOBALS._walkRegions.disableRegion(2);
 	}
 
 	_leftWindow.setDetails(Rect(52, 44, 96, 82), 2430, 3, -1, 5, 1, NULL);
@@ -1778,7 +1778,7 @@ void Scene2435::signal() {
 		setAction(&_sequenceManager, this, 2436, &_companion, NULL);
 		break;
 	case 2436:
-		R2_GLOBALS._walkRegions.enableRegion(2);
+		R2_GLOBALS._walkRegions.disableRegion(2);
 		_sceneMode = 20;
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(709, this);
@@ -2587,7 +2587,7 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 		}
 		_actor1.setPosition(Common::Point(209, 162));
 
-		R2_GLOBALS._walkRegions.enableRegion(4);
+		R2_GLOBALS._walkRegions.disableRegion(4);
 	}
 
 	_item5.setDetails(Rect(125, 73, 140, 86), 2525, 6, -1, -1, 1, NULL);
@@ -2748,7 +2748,7 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(20, 130));
-		R2_GLOBALS._walkRegions.enableRegion(1);
+		R2_GLOBALS._walkRegions.disableRegion(1);
 	}
 
 	_item2.setDetails(Rect(108, 90, 135, 205), 2530, 22, -1, -1, 1, NULL);
@@ -2872,7 +2872,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		_rebreatherTank.setup(2535, 3, 1);
 		_rebreatherTank.setPosition(Common::Point(203, 131));
 		_rebreatherTank.setDetails(3, 20, -1, -1, 1, (SceneItem *)NULL);
-		R2_GLOBALS._walkRegions.enableRegion(6);
+		R2_GLOBALS._walkRegions.disableRegion(6);
 	}
 
 	if ((R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 0) && (R2_GLOBALS.getFlag(73))) {
@@ -2911,7 +2911,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_companion.setPosition(Common::Point(245, 115));
-		R2_GLOBALS._walkRegions.enableRegion(2);
+		R2_GLOBALS._walkRegions.disableRegion(2);
 	}
 
 	_roof.setDetails(Rect(96, 3, 215, 33), 2535, 3, 6, 5, 1, NULL);
@@ -2947,7 +2947,7 @@ void Scene2535::signal() {
 		break;
 	case 2536:
 		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 0);
-		R2_GLOBALS._walkRegions.disableRegion(6);
+		R2_GLOBALS._walkRegions.enableRegion(6);
 		if (!R2_GLOBALS.getFlag(73)) {
 			_rebreatherTank.remove();
 			R2_GLOBALS._player.enableControl();

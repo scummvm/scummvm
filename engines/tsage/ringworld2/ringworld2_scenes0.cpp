@@ -5225,7 +5225,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._characterScene[R2_SEEKER] = 500;
 
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			R2_GLOBALS._walkRegions.disableRegion(1);
+			R2_GLOBALS._walkRegions.enableRegion(1);
 
 			_seeker.postInit();
 			_seeker._effect = 1;
@@ -5239,9 +5239,9 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 			_seeker.setup(R2_GLOBALS.getFlag(26) ? 1500 : 10, 1, 1);
 			_seeker.setPosition(Common::Point(42, 151));
 
-			R2_GLOBALS._walkRegions.disableRegion(1);
-			R2_GLOBALS._walkRegions.disableRegion(2);
-			R2_GLOBALS._walkRegions.disableRegion(3);
+			R2_GLOBALS._walkRegions.enableRegion(1);
+			R2_GLOBALS._walkRegions.enableRegion(2);
+			R2_GLOBALS._walkRegions.enableRegion(3);
 
 			_seeker.setDetails(500, 37, 38, -1, 1, (SceneItem *)NULL);
 		}
@@ -5757,7 +5757,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	loadScene(600);
 	SceneExt::postInit();
 	R2_GLOBALS.setFlag(39);
-	R2_GLOBALS._walkRegions.enableRegion(3);
+	R2_GLOBALS._walkRegions.disableRegion(3);
 	_field412 = 0;
 
 	// Initialize pixel map for the obscuring effect
@@ -5907,10 +5907,10 @@ void Scene600::signal() {
 	case 605:
 	// After cloud is active
 		R2_GLOBALS._player.enableControl();
-		R2_GLOBALS._walkRegions.enableRegion(6);
-		R2_GLOBALS._walkRegions.enableRegion(7);
-		R2_GLOBALS._walkRegions.enableRegion(9);
-		R2_GLOBALS._walkRegions.enableRegion(10);
+		R2_GLOBALS._walkRegions.disableRegion(6);
+		R2_GLOBALS._walkRegions.disableRegion(7);
+		R2_GLOBALS._walkRegions.disableRegion(9);
+		R2_GLOBALS._walkRegions.disableRegion(10);
 
 		R2_INVENTORY.setObjectScene(R2_AEROSOL, 600);
 		R2_GLOBALS.setFlag(5);
@@ -5932,9 +5932,9 @@ void Scene600::signal() {
 	// deactivate cloud
 		R2_GLOBALS.setFlag(8);
 		_smoke.remove();
-		R2_GLOBALS._walkRegions.disableRegion(6);
-		R2_GLOBALS._walkRegions.disableRegion(9);
-		R2_GLOBALS._walkRegions.disableRegion(10);
+		R2_GLOBALS._walkRegions.enableRegion(6);
+		R2_GLOBALS._walkRegions.enableRegion(9);
+		R2_GLOBALS._walkRegions.enableRegion(10);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 612:
@@ -5951,7 +5951,7 @@ void Scene600::signal() {
 		R2_GLOBALS._player.enableControl();
 		_aerosol.remove();
 		R2_INVENTORY.setObjectScene(R2_AEROSOL, 1);
-		R2_GLOBALS._walkRegions.disableRegion(7);
+		R2_GLOBALS._walkRegions.enableRegion(7);
 		break;
 	case 615:
 	// Pick up Com Scanner
