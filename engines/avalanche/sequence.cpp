@@ -32,7 +32,7 @@
 #include "avalanche/sequence.h"
 #include "avalanche/gyro.h"
 #include "avalanche/timer.h"
-#include "avalanche/celer.h"
+#include "avalanche/background.h"
 #include "avalanche/animation.h"
 
 #include "common/scummsys.h"
@@ -98,7 +98,7 @@ void Sequence::callSequencer() {
 
 	if ((_seq[0] >= 1) && (_seq[0] <= 176)) {
 		// Show a frame.
-		_vm->_celer->drawBackgroundSprite(-1, -1, _seq[0] - 1);
+		_vm->_background->drawBackgroundSprite(-1, -1, _seq[0] - 1);
 		shoveLeft();
 	}
 

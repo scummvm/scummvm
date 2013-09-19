@@ -38,7 +38,7 @@
 #include "avalanche/menu.h"
 #include "avalanche/pingo.h"
 #include "avalanche/timer.h"
-#include "avalanche/celer.h"
+#include "avalanche/background.h"
 #include "avalanche/closing.h"
 
 #include "common/str.h"
@@ -174,7 +174,7 @@ void Avalot::run(Common::String arg) {
 
 		_vm->_lucerna->_clock.update();
 		_vm->_menu->update();
-		_vm->_celer->updateBackgroundSprites();
+		_vm->_background->updateBackgroundSprites();
 		_vm->_animation->animLink();
 		_vm->_lucerna->checkClick();
 		_vm->_timer->updateTimer();

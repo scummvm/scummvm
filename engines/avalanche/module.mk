@@ -11,7 +11,7 @@ MODULE_OBJS = \
 	pingo.o \
 	scrolls.o \
 	lucerna.o \
-	celer.o \
+	background.o \
 	sequence.o \
 	timer.o \
 	animation.o \

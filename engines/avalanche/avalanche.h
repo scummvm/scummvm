@@ -38,7 +38,7 @@
 #include "avalanche/pingo.h"
 #include "avalanche/scrolls.h"
 #include "avalanche/lucerna.h"
-#include "avalanche/celer.h"
+#include "avalanche/background.h"
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
@@ -74,7 +74,7 @@ public:
 	Pingo *_pingo;
 	Scrolls *_scrolls;
 	Lucerna *_lucerna;
-	Celer *_celer;
+	Background *_background;
 	Sequence *_sequence;
 	Timer *_timer;
 	Animation *_animation;
