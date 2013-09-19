@@ -28,15 +28,12 @@
 /* CLOSING		The closing screen and error handler. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/closing.h"
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"
 
 #include "common/textconsole.h"
 #include "common/random.h"
-
-
 
 namespace Avalanche {
 

@@ -28,7 +28,6 @@
 /* GYRO		It all revolves around this bit! */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/gyro.h"
 #include "avalanche/pingo.h"
 #include "avalanche/scrolls.h"

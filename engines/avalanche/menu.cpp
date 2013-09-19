@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
- /* DROPDOWN	A customised version of Oopmenu (qv). */
+/* Original name: DROPDOWN		A customised version of Oopmenu (qv). */
 
 #include "avalanche/avalanche.h"
 #include "avalanche/menu.h"

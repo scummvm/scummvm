@@ -25,8 +25,6 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "math.h"
-
 #include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
 
@@ -36,6 +34,8 @@
 #include "engines/util.h"
 
 #include "graphics/palette.h"
+
+#include "math.h"
 
 namespace Avalanche {
 

@@ -29,10 +29,8 @@
 #define AVALANCHE_AVALANCHE_H
 
 #include "avalanche/console.h"
-
 #include "avalanche/graphics.h"
 #include "avalanche/parser.h"
-
 #include "avalanche/avalot.h"
 #include "avalanche/gyro.h"
 #include "avalanche/pingo.h"

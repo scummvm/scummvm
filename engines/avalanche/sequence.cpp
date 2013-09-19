@@ -28,7 +28,6 @@
 /* SEQUENCE		The sequencer. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/sequence.h"
 #include "avalanche/gyro.h"
 #include "avalanche/timer.h"

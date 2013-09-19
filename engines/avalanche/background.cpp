@@ -25,10 +25,9 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* CELER	The unit for updating the screen pics. */
+/* Original name: CELER		The unit for updating the screen pics. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/background.h"
 #include "avalanche/animation.h"
 #include "avalanche/lucerna.h"
