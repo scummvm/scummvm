@@ -28,7 +28,6 @@
 /* TRIP5	Trippancy V - the sprite animation subsystem */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/animation.h"
 #include "avalanche/scrolls.h"
 #include "avalanche/lucerna.h"

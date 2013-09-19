@@ -28,7 +28,6 @@
 /* ACCIDENCE II		The parser. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/acci.h"
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"

@@ -30,14 +30,14 @@
 #ifndef AVALANCHE_GYRO2_H
 #define AVALANCHE_GYRO2_H
 
+#include "avalanche/roomnums.h"
+#include "avalanche/color.h"
+
 #include "common/str.h"
 #include "common/scummsys.h"
 #include "common/file.h"
 
 #include "graphics/surface.h"
-
-#include "avalanche/roomnums.h"
-#include "avalanche/color.h"
 
 namespace Avalanche {
 class AvalancheEngine;

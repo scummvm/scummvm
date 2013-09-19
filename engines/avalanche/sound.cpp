@@ -20,12 +20,13 @@
  *
  */
 
-#include "common/system.h"
-#include "common/config-manager.h"
 #include "audio/audiostream.h"
 
 #include "avalanche/avalanche.h"
 #include "avalanche/sound.h"
+
+#include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Avalanche {
 

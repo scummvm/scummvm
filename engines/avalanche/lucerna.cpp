@@ -28,7 +28,6 @@
 /* LUCERNA		The screen, [keyboard] and mouse handler.*/
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/lucerna.h"
 #include "avalanche/gyro.h"
 #include "avalanche/scrolls.h"

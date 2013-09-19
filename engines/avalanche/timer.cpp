@@ -28,7 +28,6 @@
 /* Original name: TIMEOUT	The scheduling unit. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/timer.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/animation.h"

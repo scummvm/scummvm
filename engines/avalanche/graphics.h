@@ -29,9 +29,9 @@
 #define AVALANCHE_GRAPHICS_H
 
 #include "common/file.h"
+#include "common/rect.h"
 
 #include "graphics/surface.h"
-#include "common/rect.h"
 
 namespace Avalanche {
 class AvalancheEngine;

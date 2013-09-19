@@ -25,12 +25,14 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "engines/advancedDetector.h"
+#include "avalanche/avalanche.h"
+
 #include "common/system.h"
 #include "common/savefile.h"
-#include "graphics/thumbnail.h"
 
-#include "avalanche/avalanche.h"
+#include "engines/advancedDetector.h"
+
+#include "graphics/thumbnail.h"
 
 namespace Avalanche {
 

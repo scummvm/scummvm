@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-/* CELER	The unit for updating the screen pics. */
+/* Original name: CELER		The unit for updating the screen pics. */
 
 #ifndef AVALANCHE_CELER2_H
 #define AVALANCHE_CELER2_H

@@ -45,11 +45,7 @@
 #include "common/textconsole.h"
 #include "common/config-manager.h"
 
-
-
 namespace Avalanche {
-
-
 
 Avalot::Avalot(AvalancheEngine *vm) {
 	_vm = vm;
