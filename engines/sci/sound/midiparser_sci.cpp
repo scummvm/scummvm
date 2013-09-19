@@ -663,7 +663,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					// as there aren't any subsequent MIDI events after this one.
 					// This assert is here to detect cases where the song ends
 					// up jumping forward, like with bug #3614566 (see above).
-					assert(_loopTick + info.delta < _position._playTick);
+					// (Exception: delta == 0, in which case the loop points
+					// at the previous event, which is fine.)
+					assert(_loopTick + info.delta < _position._playTick ||
+					       ((_loopTick == _position._playTick && info.delta == 0)));
 
 					uint32 extraDelta = info.delta;
 					_pSnd->inFastForward = true;
