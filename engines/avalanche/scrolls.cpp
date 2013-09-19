@@ -215,8 +215,8 @@ void Scrolls::scrollModeMusic() {
 
 	TuneType played;
 	for (int i = 0; i < sizeof(played); i++)
-		played[i] = 0;
-	byte lastOne = 0, thisOne = 0;
+		played[i] = Gyro::kPitchInvalid;
+	int8 lastOne = -1, thisOne = -1; // Invalid values.
 
 	_vm->_gyro->_seeScroll = true;
 

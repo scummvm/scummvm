@@ -216,9 +216,10 @@ public:
 	static const QuasipedType kQuasipeds[16];
 
 	enum Pitch {
+		kPitchInvalid,
 		kPitchLower,
 		kPitchSame,
-		kPitchHigher
+		kPitchHigher,
 	};
 
 	static const uint16 kNotes[12];
