@@ -1011,7 +1011,7 @@ public:
 };
 
 class Scene1925 : public SceneExt {
-	class Hotspot2 : public NamedHotspot {
+	class Button : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1038,7 +1038,7 @@ class Scene1925 : public SceneExt {
 	};
 public:
 	NamedHotspot _item1;
-	Hotspot2 _item2;
+	Button _button;
 	Hotspot3 _item3;
 	SceneActor _actor1;
 	ExitUp _exitUp;

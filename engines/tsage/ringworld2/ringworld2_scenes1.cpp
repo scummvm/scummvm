@@ -12917,9 +12917,10 @@ void Scene1900::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1925 -
+ * Scene 1925 - Spill Mountains Elevator Shaft
  *
  *--------------------------------------------------------------------------*/
+
 Scene1925::Scene1925() {
 	_field9B8 = 0;
 	for (int i = 0; i < 5; i++)
@@ -12934,7 +12935,7 @@ void Scene1925::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_levelResNum[i]);
 }
 
-bool Scene1925::Hotspot2::startAction(CursorType action, Event &event) {
+bool Scene1925::Button::startAction(CursorType action, Event &event) {
 	Scene1925 *scene = (Scene1925 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -13092,7 +13093,7 @@ void Scene1925::changeLevel(bool upFlag) {
 		break;
 	case 3:
 		loadScene(_levelResNum[4]);
-		_item2.setDetails(Rect(133, 68, 140, 77), 1925, 3, -1, 5, 2, NULL);
+		_button.setDetails(Rect(133, 68, 140, 77), 1925, 3, -1, 5, 2, NULL);
 		_actor1.setDetails(1925, 0, 1, 2, 2, (SceneItem *) NULL);
 		_actor1.show();
 		break;
@@ -13101,7 +13102,7 @@ void Scene1925::changeLevel(bool upFlag) {
 	// No break on purpose
 	default:
 		loadScene(_levelResNum[(R2_GLOBALS._scene1925CurrLevel % 4)]);
-		R2_GLOBALS._sceneItems.remove(&_item2);
+		R2_GLOBALS._sceneItems.remove(&_button);
 		R2_GLOBALS._sceneItems.remove(&_actor1);
 		_actor1.hide();
 		break;
@@ -13140,7 +13141,7 @@ void Scene1925::postInit(SceneObjectList *OwnerList) {
 		break;
 	case 3:
 		_actor1.setDetails(1925, 0, 1, 2, 1, (SceneItem *) NULL);
-		_item2.setDetails(Rect(133, 68, 140, 77), 1925, 3, -1, 5, 1, NULL);
+		_button.setDetails(Rect(133, 68, 140, 77), 1925, 3, -1, 5, 1, NULL);
 	// No break on purpose
 	case -3:
 		_exit3.setDetails(Rect(83, 38, 128, 101), EXITCURSOR_W, 1925);
