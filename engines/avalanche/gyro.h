@@ -221,7 +221,6 @@ public:
 		kPitchHigher
 	};
 
-	static const char kMusicKeys[];
 	static const uint16 kNotes[12];
 
 	static const TuneType kTune;

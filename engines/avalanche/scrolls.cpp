@@ -131,7 +131,9 @@ void Scrolls::scrollModeNormal() {
 
 		_vm->getEvent(event);
 		if ((event.type == Common::EVENT_LBUTTONUP) ||
-			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) || (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) || (event.kbd.keycode == Common::KEYCODE_PLUS))))
+			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			|| (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH)
+			|| (event.kbd.keycode == Common::KEYCODE_PLUS))))
 			break;
 	}
 
@@ -208,30 +210,111 @@ bool Scrolls::theyMatch(TuneType &played) {
 void Scrolls::scrollModeMusic() {
 	setReadyLight(3);
 	_vm->_gyro->_seeScroll = true;
-	CursorMan.showMouse(true);
+	CursorMan.showMouse(false);
 	_vm->_gyro->newMouse(3);
 
-	// Since there are no sounds in the game yet, it's pretty pointless to implement this function further.
-	// For now we act like the player just played the right tone.
-#if 0
-	if (they_match(played)) {
-#endif
-		_vm->_gyro->_scReturn = true;
-		CursorMan.showMouse(false);
-		setReadyLight(0);
-		_vm->_gyro->_seeScroll = false;
+	TuneType played;
+	for (int i = 0; i < sizeof(played); i++)
+		played[i] = 0;
+	byte lastOne = 0, thisOne = 0;
 
-		_vm->_timer->addTimer(8, Timer::kProcJacquesWakesUp, Timer::kReasonJacquesWakingUp);
-		warning("STUB: Scrolls::music_scroll()");
-		return;
-#if 0
+	_vm->_gyro->_seeScroll = true;
+
+	::Graphics::Surface temp;
+	temp.copyFrom(_vm->_graphics->_surface);
+	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
+
+	Common::Event event;
+	while (!_vm->shouldQuit()) {
+		_vm->_graphics->refreshScreen();
+
+		_vm->getEvent(event);
+
+		// When we stop playing?
+		if ((event.type == Common::EVENT_LBUTTONDOWN) ||
+			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_ESCAPE)))) {
+				_vm->_graphics->_surface.copyFrom(temp);
+				temp.free();
+				_vm->_gyro->_seeScroll = false;
+				CursorMan.showMouse(true);
+				return;
+		}
+
+		// When we DO play:
+		if ((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_q)
+			|| (event.kbd.keycode == Common::KEYCODE_w) || (event.kbd.keycode == Common::KEYCODE_e)
+			|| (event.kbd.keycode == Common::KEYCODE_r) || (event.kbd.keycode == Common::KEYCODE_t)
+			|| (event.kbd.keycode == Common::KEYCODE_y) || (event.kbd.keycode == Common::KEYCODE_u)
+			|| (event.kbd.keycode == Common::KEYCODE_i) || (event.kbd.keycode == Common::KEYCODE_o)
+			|| (event.kbd.keycode == Common::KEYCODE_p) || (event.kbd.keycode == Common::KEYCODE_LEFTBRACKET)
+			|| (event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET))) {
+				byte value;
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_q:
+					value = 0;
+					break;
+				case Common::KEYCODE_w:
+					value = 1;
+					break;
+				case Common::KEYCODE_e:
+					value = 2;
+					break;
+				case Common::KEYCODE_r:
+					value = 3;
+					break;
+				case Common::KEYCODE_t:
+					value = 4;
+					break;
+				case Common::KEYCODE_y:
+					value = 5;
+					break;
+				case Common::KEYCODE_u:
+					value = 6;
+					break;
+				case Common::KEYCODE_i:
+					value = 7;
+					break;
+				case Common::KEYCODE_o:
+					value = 8;
+					break;
+				case Common::KEYCODE_p:
+					value = 9;
+					break;
+				case Common::KEYCODE_LEFTBRACKET:
+					value = 10;
+					break;
+				case Common::KEYCODE_RIGHTBRACKET:
+					value = 11;
+					break;
+				}
+
+				lastOne = thisOne;
+				thisOne = value;
+
+				_vm->_sound->playNote(_vm->_gyro->kNotes[thisOne], 100);
+
+				if (!_vm->_gyro->_bellsAreRinging) { // These handle playing the right tune.
+					if (thisOne < lastOne)
+						store(Gyro::kPitchLower, played);
+					else if (thisOne == lastOne)
+						store(Gyro::kPitchSame, played);
+					else
+						store(Gyro::kPitchHigher, played);
+				}
+				
+				if (theyMatch(played)) {
+					setReadyLight(0);
+					_vm->_timer->addTimer(8, Timer::kProcJacquesWakesUp, Timer::kReasonJacquesWakingUp);
+
+
+					_vm->_graphics->_surface.copyFrom(temp);
+					temp.free();
+					_vm->_gyro->_seeScroll = false;
+					CursorMan.showMouse(true);
+					return;
+				}
+		}
 	}
-
-	_vm->_gyro->screturn = false;
-	CursorMan.showMouse(false);
-	state(0);
-	_vm->_gyro->seescroll = false;
-#endif
 }
 
 void Scrolls::resetScrollDriver() {
