@@ -374,4 +374,8 @@ void BuriedEngine::setTransitionSpeed(int newSpeed) {
 	((FrameWindow *)_mainWindow)->setTransitionSpeed(newSpeed);
 }
 
+uint32 BuriedEngine::getVersion() {
+	return _mainEXE->getVersion();
+}
+
 } // End of namespace Buried
