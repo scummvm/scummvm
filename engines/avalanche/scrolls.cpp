@@ -190,7 +190,7 @@ void Scrolls::scrollModeDialogue() {
 }
 
 void Scrolls::store(byte what, TuneType &played) {
-	memcpy(played + 1, played + 2, sizeof(played) - 1);
+	memcpy(played, played + 1, sizeof(played) - 1);
 	played[30] = what;
 }
 
@@ -809,7 +809,9 @@ void Scrolls::musicalScroll() {
 	displayText(tmpStr);
 
 	_vm->_lucerna->spriteRun();
+	CursorMan.showMouse(false);
 	drawScroll(&Avalanche::Scrolls::scrollModeMusic);
+	CursorMan.showMouse(true);
 	resetScroll();
 }
 
