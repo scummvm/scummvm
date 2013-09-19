@@ -237,15 +237,15 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 		return;
 	} else if (ina == 255) {
 		*outa = *outa;
-		*outr = MAX(*outr - inr, 0);
-		*outg = MAX(*outg - ing, 0);
-		*outb = MAX(*outb - inb, 0);
+		*outr = MAX(*outr - (inr * *outr >> 8), 0);
+		*outg = MAX(*outg - (ing * *outg >> 8), 0);
+		*outb = MAX(*outb - (inb * *outb >> 8), 0);
 		return;
 	} else {
 		*outa = *outa;
-		*outb = MAX(*outb - (inb * ina >> 8), 0);
-		*outg = MAX(*outg - (ing * ina >> 8), 0);
-		*outr = MAX(*outr - (inr * ina >> 8), 0);
+		*outb = MAX(*outb - ((inb * *outb >> 8) * ina >> 8), 0);
+		*outg = MAX(*outg - ((ing * *outg >> 8) * ina >> 8), 0);
+		*outr = MAX(*outr - ((inr * *outr >> 8) * ina >> 8), 0);
 		return;
 	}
 }
