@@ -131,8 +131,6 @@ const QuasipedType Gyro::kQuasipeds[16] = {
 	{1, kColorLightgreen,   kRoomDucks,        kColorDarkgray, kPeopleDrDuck}     // P: Duck (screen 51).
 };
 
-const char Gyro::kMusicKeys[] = "QWERTYUIOP[]";
-
 const uint16 Gyro::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
 
 const TuneType Gyro::kTune = {
