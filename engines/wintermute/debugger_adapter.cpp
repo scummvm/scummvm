@@ -162,7 +162,6 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 		return NO_SUCH_SOURCE;
 	} else if (error == NO_SUCH_LINE) {
 		return NO_SUCH_LINE; // There is apparently no such line in the SOURCE file.
-		// TODO: I guess we should simply raise a WARNING for these.
 	} else {
 		return error;
 	}
