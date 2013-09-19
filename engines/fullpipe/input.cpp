@@ -172,7 +172,6 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 	}
 
 	_currentCheatPos++;
-	warning("%d %d", _currentCheat, _currentCheatPos);
 
 	if (!input_cheats[_currentCheat][_currentCheatPos]) {
 		switch (_currentCheat) {
