@@ -65,6 +65,10 @@ DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
 	_lastScript = nullptr;
 }
 
+DebuggerAdapter::~DebuggerAdapter() {
+	delete _lastSource; 
+}
+
 bool SourceFile::isBlank(int line) {
 	Common::String theLine = getLine(line);
 	Common::StringTokenizer st(theLine, "//");

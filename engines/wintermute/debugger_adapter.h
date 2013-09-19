@@ -79,6 +79,7 @@ class DebuggerAdapter {
 	/* Faux MVA Adapter */
 public:
 	DebuggerAdapter(WintermuteEngine *vm);
+	~DebuggerAdapter();
 	// Called by Script (=~Model)
 	bool triggerBreakpoint(ScScript *script);
 	bool triggerStep(ScScript *script);
