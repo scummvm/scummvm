@@ -165,8 +165,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains Elevator Shaft
 		return new Scene1925();
 	case 1945:
+		// Spill Mountains Shaft Bottom
 		return new Scene1945();
 	case 1950:
+		// Flup Tube Corridor Maze
 		return new Scene1950();
 	/* Scene group #2 */
 	//

@@ -1015,7 +1015,7 @@ class Scene1925 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Hotspot3 : public NamedHotspot {
+	class Ladder : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1039,7 +1039,7 @@ class Scene1925 : public SceneExt {
 public:
 	NamedHotspot _item1;
 	Button _button;
-	Hotspot3 _item3;
+	Ladder _ladder;
 	SceneActor _actor1;
 	ExitUp _exitUp;
 	Exit2 _exit2;
@@ -1060,16 +1060,16 @@ public:
 };
 
 class Scene1945 : public SceneExt {
-	class Hotspot3 : public NamedHotspot {
+	class Ice : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Hotspot4 : public NamedHotspot {
+	class Ladder : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor3 : public SceneActor {
+	class Gunpowder : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1085,19 +1085,19 @@ class Scene1945 : public SceneExt {
 public:
 	NamedHotspot _item1;
 	NamedHotspot _item2;
-	Hotspot3 _item3;
-	Hotspot4 _item4;
+	Ice _ice;
+	Ladder _ladder;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	Actor3 _actor3;
+	Gunpowder _gunpowder;
 	ExitUp _exitUp;
 	Exit2 _exit2;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 
-	int _fieldEAA;
-	int _fieldEAC;
-	CursorType _fieldEAE;
+	int _nextSceneMode1;
+	int _nextSceneMode2;
+	CursorType _lampUsed;
 
 	Scene1945();
 	void synchronize(Serializer &s);
@@ -1144,7 +1144,7 @@ class Scene1950 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor2 : public SceneActor {
+	class Door : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1214,7 +1214,7 @@ public:
 	Hotspot2 _item2;
 	SceneActor _actor1;
 	BackgroundSceneObject _object1;
-	Actor2 _actor2;
+	Door _door;
 	Actor3 _actor3;
 	SceneActor _actor4;
 	Actor5 _actor5;
@@ -1241,8 +1241,8 @@ public:
 	Scene1950();
 	void synchronize(Serializer &s);
 
-	void subBDC1E();
-	void subBE59B();
+	void initExits();
+	void enterArea();
 	void subBF4B4(int indx);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
