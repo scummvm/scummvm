@@ -361,7 +361,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 			if (!argSt.empty()) {
 				// WTF? This should not happen.
 				*error = PARSE_ERROR;
-				return false;
+				return nullptr;
 			}
 
 			Common::StringTokenizer st3 = Common::StringTokenizer(arg, "\"");
