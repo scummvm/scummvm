@@ -40,13 +40,12 @@ public:
 	void click();
 	void blip();
 	void syncVolume();
+	void stopSound();
 
 private:
 	AvalancheEngine *_vm;
 	Audio::PCSpeaker *_speakerStream;
 	Audio::SoundHandle _speakerHandle;
-
-	void stopSound();
 };
 
 } // End of namespace Avalanche

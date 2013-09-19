@@ -340,7 +340,7 @@ void Lucerna::findPeople(byte room) {
 }
 
 void Lucerna::exitRoom(byte x) {
-	//nosound();
+	_vm->_sound->stopSound();
 	_vm->_celer->forgetBackgroundSprites();
 	_vm->_gyro->_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
 
@@ -365,7 +365,6 @@ void Lucerna::exitRoom(byte x) {
 	}
 
 	_vm->_gyro->_interrogation = 0; // Leaving the room cancels all the questions automatically.
-
 	_vm->_gyro->_seeScroll = false; // Now it can work again!
 
 	_vm->_gyro->_lastRoom = _vm->_gyro->_room;
