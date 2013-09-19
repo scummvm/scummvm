@@ -247,6 +247,14 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 		}
 	}
 
+	// Walk regions loading
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		int walkRegionsId = GLOBALS._walkRegions._resNum;
+		s.syncAsSint16LE(walkRegionsId);
+		if (s.isLoading())
+			GLOBALS._walkRegions.load(walkRegionsId);
+	}
+
 	g_globals->_sceneManager._scrollerRect.synchronize(s);
 	SYNC_POINTER(g_globals->_scrollFollower);
 	s.syncAsSint16LE(_loadMode);

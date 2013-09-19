@@ -162,6 +162,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains Elevator Exit
 		return new Scene1900();
 	case 1925:
+		// Spill Mountains Elevator Shaft
 		return new Scene1925();
 	case 1945:
 		return new Scene1945();
