@@ -13373,7 +13373,7 @@ void Scene1945::ExitUp::changeScene() {
 	}
 }
 
-void Scene1945::Exit2::changeScene() {
+void Scene1945::CorridorExit::changeScene() {
 	Scene1945 *scene = (Scene1945 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
@@ -13404,12 +13404,12 @@ void Scene1945::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterIndex = R2_SEEKER;
 
 	_exitUp.setDetails(Rect(128, 0, 186, 10), EXITCURSOR_N, 1945);
-	_exit2.setDetails(Rect(238, 144, 274, 167), EXITCURSOR_E, 1945);
+	_corridorExit.setDetails(Rect(238, 144, 274, 167), EXITCURSOR_E, 1945);
 
 	_ladder.setDetails(Rect(141, 3, 167, 126), 1945, 9, -1, -1, 1, NULL);
 
 	if (!R2_GLOBALS.getFlag(43)) {
-		_exit2._enabled = false;
+		_corridorExit._enabled = false;
 		_gunpowder.postInit();
 		_gunpowder.setup(1945, 4, 1);
 		_gunpowder.setPosition(Common::Point(253, 169));
@@ -13429,7 +13429,7 @@ void Scene1945::postInit(SceneObjectList *OwnerList) {
 		_actor2.setup(1945, 3, 1);
 		_actor2.hide();
 	} else {
-		_exit2._enabled = true;
+		_corridorExit._enabled = true;
 	}
 
 	switch (R2_GLOBALS._sceneManager._previousScene) {
@@ -13525,10 +13525,10 @@ void Scene1945::signal() {
 		return;
 	case 1948:
 		R2_GLOBALS._sound1.play(220);
-		_exit2._enabled = true;
+		_corridorExit._enabled = true;
 		R2_GLOBALS._sceneItems.remove(&_gunpowder);
 		R2_GLOBALS.clearFlag(42);
-		R2_GLOBALS.clearFlag(43);
+		R2_GLOBALS.setFlag(43);
 		_nextSceneMode1 = 1940;
 	// No break on purpose
 	case 1949:

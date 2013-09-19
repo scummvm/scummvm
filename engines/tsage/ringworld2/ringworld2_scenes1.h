@@ -1078,7 +1078,7 @@ class Scene1945 : public SceneExt {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class CorridorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -1091,7 +1091,7 @@ public:
 	SceneActor _actor2;
 	Gunpowder _gunpowder;
 	ExitUp _exitUp;
-	Exit2 _exit2;
+	CorridorExit _corridorExit;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 
