@@ -292,6 +292,7 @@ void Scrolls::scrollModeMusic() {
 				thisOne = value;
 
 				_vm->_sound->playNote(_vm->_gyro->kNotes[thisOne], 100);
+				_vm->_system->delayMillis(500);
 
 				if (!_vm->_gyro->_bellsAreRinging) { // These handle playing the right tune.
 					if (thisOne < lastOne)
