@@ -29,7 +29,7 @@
 
 #include "avalanche/avalanche.h"
 
-#include "avalanche/celer.h"
+#include "avalanche/background.h"
 #include "avalanche/animation.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/gyro.h"
@@ -39,21 +39,21 @@
 
 namespace Avalanche {
 
-const int16 Celer::kOnDisk = -1;
+const int16 Background::kOnDisk = -1;
 
-Celer::Celer(AvalancheEngine *vm) {
+Background::Background(AvalancheEngine *vm) {
 	_vm = vm;
 	_spriteNum = 0;
 }
 
-Celer::~Celer() {
+Background::~Background() {
 	forgetBackgroundSprites();
 }
 
 /**
  * @remarks	Originally called 'pics_link'
  */
-void Celer::updateBackgroundSprites() {
+void Background::updateBackgroundSprites() {
 	if (_vm->_menu->isActive())
 		return; // No animation when the menus are up.
 
@@ -265,7 +265,7 @@ void Celer::updateBackgroundSprites() {
 	}
 }
 
-void Celer::loadBackgroundSprites(byte number) {
+void Background::loadBackgroundSprites(byte number) {
 	Common::File f;
 	_filename = _filename.format("chunk%d.avd", number);
 	if (!f.open(_filename))
@@ -315,7 +315,7 @@ void Celer::loadBackgroundSprites(byte number) {
 	f.close();
 }
 
-void Celer::forgetBackgroundSprites() {
+void Background::forgetBackgroundSprites() {
 	for (int i = 0; i < _spriteNum; i++) {
 		if (_sprites[i]._x > kOnDisk)
 			_sprites[i]._picture.free();
@@ -326,7 +326,7 @@ void Celer::forgetBackgroundSprites() {
  * Draw background animation
  * @remarks	Originally called 'show_one'
  */
-void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte sprId) {
+void Background::drawBackgroundSprite(int16 destX, int16 destY, byte sprId) {
 	if (_sprites[sprId]._x > kOnDisk) {
 		if (destX < 0) {
 			destX = _sprites[sprId]._x * 8;
@@ -363,7 +363,7 @@ void Celer::drawBackgroundSprite(int16 destX, int16 destY, byte sprId) {
 
 
 
-void Celer::drawSprite(int16 x, int16 y, SpriteType &sprite) {
+void Background::drawSprite(int16 x, int16 y, SpriteType &sprite) {
 	_r._x1 = x;
 	_r._y1 = y;
 	_r._y2 = y + sprite._yl;

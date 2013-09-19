@@ -65,7 +65,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _pingo;
 	delete _scrolls;
 	delete _lucerna;
-	delete _celer;
+	delete _background;
 	delete _sequence;
 	delete _timer;
 	delete _animation;
@@ -85,7 +85,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_pingo = new Pingo(this);
 	_scrolls = new Scrolls(this);
 	_lucerna = new Lucerna(this);
-	_celer = new Celer(this);
+	_background = new Background(this);
 	_sequence = new Sequence(this);
 	_timer = new Timer(this);
 	_animation = new Animation(this);
@@ -440,7 +440,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		_lucerna->dawn();
 	}
 
-	_celer->forgetBackgroundSprites();
+	_background->forgetBackgroundSprites();
 	_lucerna->minorRedraw();
 	_menu->setup();
 	_gyro->_whereIs[Gyro::kPeopleAvalot - 150] = _gyro->_room;
@@ -450,7 +450,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_lucerna->drawDirection();
 	_gyro->_onToolbar = false;
 	_animation->animLink();
-	_celer->updateBackgroundSprites();
+	_background->updateBackgroundSprites();
 
 	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
 		Scrolls::kControlItalic, Scrolls::kControlRoman, description.c_str(), Scrolls::kControlCenter, 

@@ -39,10 +39,10 @@
 namespace Avalanche {
 class AvalancheEngine;
 
-class Celer {
+class Background {
 public:
-	Celer(AvalancheEngine *vm);
-	~Celer();
+	Background(AvalancheEngine *vm);
+	~Background();
 
 	void updateBackgroundSprites();
 	void loadBackgroundSprites(byte number);
