@@ -78,6 +78,7 @@ public:
 	Common::SeekableReadStream *getBookData(uint32 resourceID);
 	Common::SeekableReadStream *getFileBCData(uint32 resourceID);
 	Common::SeekableReadStream *getINNData(uint32 resourceID);
+	uint32 getVersion();
 
 	GraphicsManager *_gfx;
 	Database *_mainEXE;
@@ -137,6 +138,10 @@ private:
 	MessageQueue _messageQueue;
 	void pollForEvents();
 };
+
+// Macro for creating a version field
+#define MAKEVERSION(a, b, c, d) \
+	(((uint32)((a) & 0xFF) << 24) | ((uint32)((b) & 0xFF) << 16) | ((uint32)((c) & 0xFF) << 8) | ((uint32)((d) & 0xFF)))
 
 } // End of namespace Buried
 

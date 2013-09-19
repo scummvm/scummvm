@@ -51,6 +51,7 @@ public:
 	virtual Common::SeekableReadStream *getBitmapStream(uint32 bitmapID) = 0;
 	virtual Graphics::WinCursorGroup *getCursorGroup(uint32 cursorGroupID) = 0;
 	virtual Common::SeekableReadStream *getResourceStream(const Common::String &resourceType, uint32 resourceID) = 0;
+	virtual uint32 getVersion() = 0;
 };
 
 /**
@@ -68,6 +69,7 @@ public:
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 	Graphics::WinCursorGroup *getCursorGroup(uint32 cursorGroupID);
 	Common::SeekableReadStream *getResourceStream(const Common::String &resourceType, uint32 resourceID);
+	uint32 getVersion();
 
 protected:
 	Common::NEResources *_exe;
@@ -93,6 +95,7 @@ public:
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 	Graphics::WinCursorGroup *getCursorGroup(uint32 cursorGroupID);
 	Common::SeekableReadStream *getResourceStream(const Common::String &resourceType, uint32 resourceID);
+	uint32 getVersion();
 
 private:
 	Common::PEResources *_exe;
