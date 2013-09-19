@@ -3297,6 +3297,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// RAMA - German Windows CD
+	{"rama", "", {
+		{"resmap.001", 0, "f68cd73308c46977a9632dfc618e1e38", 8338},
+	 	{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70595521},
+	 	{"resmap.002", 0, "891fc2f5d9e23e7d9a9454acc7aaae52", 12082},
+	 	{"ressci.002", 0, "2a68edd064e5e4937b5e9c74b38f2082", 128508558},
+	 	{"resmap.003", 0, "222096000bd83a1d56577114a452cccf", 1636},
+	 	{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6954219},
+		AD_LISTEND},
+	 	Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// RAMA - Italian Windows CD (from glorifindel)
 	// SCI interpreter version 3.000.000 (a guess?)
 	{"rama", "", {
