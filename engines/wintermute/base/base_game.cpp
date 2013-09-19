@@ -3031,7 +3031,7 @@ bool BaseGame::displayWindows(bool inGame) {
 
 	// display all windows
 	for (uint32 i = 0; i < _windows.size(); i++) {
-		if (_windows[i]->_visible && _windows[i]->_inGame == inGame) {
+		if (_windows[i]->_visible && _windows[i]->getInGame() == inGame) {
 
 			res = _windows[i]->display();
 			if (DID_FAIL(res)) {
@@ -3131,7 +3131,7 @@ bool BaseGame::focusWindow(UIWindow *window) {
 				_gameRef->_focusedWindow = window;
 			}
 
-			if (window->_mode == WINDOW_NORMAL && prev != window && _gameRef->validObject(prev) && (prev->_mode == WINDOW_EXCLUSIVE || prev->_mode == WINDOW_SYSTEM_EXCLUSIVE)) {
+			if (window->getMode() == WINDOW_NORMAL && prev != window && _gameRef->validObject(prev) && (prev->getMode() == WINDOW_EXCLUSIVE || prev->getMode() == WINDOW_SYSTEM_EXCLUSIVE)) {
 				return focusWindow(prev);
 			} else {
 				return STATUS_OK;

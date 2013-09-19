@@ -1442,4 +1442,14 @@ bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactive
 	return STATUS_OK;
 }
 
+bool UIWindow::getInGame() {
+	return _inGame;
+}
+
+TWindowMode UIWindow::getMode() {
+	return _mode;
+}
+
+
+
 } // End of namespace Wintermute
