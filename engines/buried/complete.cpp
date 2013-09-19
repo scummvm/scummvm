@@ -28,6 +28,7 @@
 #include "buried/complete.h"
 #include "buried/frame_window.h"
 #include "buried/graphics.h"
+#include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
 
@@ -132,15 +133,38 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, const Globa
 	int completionScore = 2000;
 	int totalScore = finalCriticalEvidenceScore + finalSupportingEvidenceScore + finalPuzzleScore + finalResearchScore + completionScore;
 
+	// Build the string buffers
 	if (_walkthroughMode) {
-		// TODO: This is a fucking mess between versions
+		if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
+			// HACK HACK HACK: Oh god. This is horrid.
+			Common::String stringResource = _vm->getString(IDS_COMPL_WALK_SCORE_DESC_TEMPL);
+			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
+			stringResource = _vm->getString(IDS_COMPL_WALK_SCORE_AMT_TEMPL);
+			_scoringTextScores = Common::String::format(stringResource.c_str(), finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore);
+		} else {
+			_scoringTextDescriptions = Common::String::format("Critical Evidence: %d / 4 x 1000\nSupporting Evidence: %d / 7 x 500\nPuzzles Solved: %d / 19 x 200\nResearch Bonus: %d / 15 x 100\nCompletion Bonus:",
+					criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
+			_scoringTextScores = Common::String::format("%d\n%d\n%d\n%d\n%d", finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore);
+		}
 	} else {
 		totalScore -= hintsScore;
 
-		// TODO: Another mess
+		if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
+			// HACK HACK HACK: Again, horrid.
+			Common::String stringResource = _vm->getString(IDS_COMPL_SCORE_DESC_TEMPL);
+			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
+			stringResource = _vm->getString(IDS_COMPL_SCORE_AMT_TEMPL);
+			_scoringTextScores = Common::String::format(stringResource.c_str(), finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore, -hintsScore);
+		} else {
+			_scoringTextDescriptions = Common::String::format("Critical Evidence: %d / 4 x 1000\nSupporting Evidence: %d / 7 x 500\nPuzzles Solved: %d / 20 x 200\nResearch Bonus: %d / 15 x 100\nCompletion Bonus:\n\nHints: %d @ -50 ea.",
+					criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
+			_scoringTextScores = Common::String::format("%d\n%d\n%d\n%d\n%d\n\n%d", finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore, -hintsScore);
+		}
 	}
 
-	// TODO: A third mess
+	// This would be a hack, but since it's just printing one number, I'm not
+	// loading that damned string too.
+	_scoringTextFinalScore = Common::String::format("%d", totalScore);
 
 	_vm->_sound->setAmbientSound();
 }
