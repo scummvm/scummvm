@@ -233,21 +233,17 @@ void Scrolls::scrollModeMusic() {
 		// When we stop playing?
 		if ((event.type == Common::EVENT_LBUTTONDOWN) ||
 			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_ESCAPE)))) {
-				_vm->_graphics->_surface.copyFrom(temp);
-				temp.free();
-				_vm->_gyro->_seeScroll = false;
-				CursorMan.showMouse(true);
-				return;
+				break;
 		}
 
 		// When we DO play:
-		if ((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_q)
-			|| (event.kbd.keycode == Common::KEYCODE_w) || (event.kbd.keycode == Common::KEYCODE_e)
-			|| (event.kbd.keycode == Common::KEYCODE_r) || (event.kbd.keycode == Common::KEYCODE_t)
-			|| (event.kbd.keycode == Common::KEYCODE_y) || (event.kbd.keycode == Common::KEYCODE_u)
-			|| (event.kbd.keycode == Common::KEYCODE_i) || (event.kbd.keycode == Common::KEYCODE_o)
-			|| (event.kbd.keycode == Common::KEYCODE_p) || (event.kbd.keycode == Common::KEYCODE_LEFTBRACKET)
-			|| (event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET))) {
+		if ((event.type == Common::EVENT_KEYDOWN)
+			&& ((event.kbd.keycode == Common::KEYCODE_q) || (event.kbd.keycode == Common::KEYCODE_w)
+			|| (event.kbd.keycode == Common::KEYCODE_e) || (event.kbd.keycode == Common::KEYCODE_r)
+			|| (event.kbd.keycode == Common::KEYCODE_t) || (event.kbd.keycode == Common::KEYCODE_y)
+			|| (event.kbd.keycode == Common::KEYCODE_u) || (event.kbd.keycode == Common::KEYCODE_i)
+			|| (event.kbd.keycode == Common::KEYCODE_o) || (event.kbd.keycode == Common::KEYCODE_p)
+			|| (event.kbd.keycode == Common::KEYCODE_LEFTBRACKET) || (event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET))) {
 				byte value;
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_q:
@@ -292,7 +288,7 @@ void Scrolls::scrollModeMusic() {
 				thisOne = value;
 
 				_vm->_sound->playNote(_vm->_gyro->kNotes[thisOne], 100);
-				_vm->_system->delayMillis(500);
+				_vm->_system->delayMillis(200);
 
 				if (!_vm->_gyro->_bellsAreRinging) { // These handle playing the right tune.
 					if (thisOne < lastOne)
@@ -306,16 +302,15 @@ void Scrolls::scrollModeMusic() {
 				if (theyMatch(played)) {
 					setReadyLight(0);
 					_vm->_timer->addTimer(8, Timer::kProcJacquesWakesUp, Timer::kReasonJacquesWakingUp);
-
-
-					_vm->_graphics->_surface.copyFrom(temp);
-					temp.free();
-					_vm->_gyro->_seeScroll = false;
-					CursorMan.showMouse(true);
-					return;
+					break;
 				}
 		}
 	}
+
+	_vm->_graphics->_surface.copyFrom(temp);
+	temp.free();
+	_vm->_gyro->_seeScroll = false;
+	CursorMan.showMouse(true);
 }
 
 void Scrolls::resetScrollDriver() {
