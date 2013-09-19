@@ -592,8 +592,9 @@ void Scrolls::solidify(byte n) {
 
 void Scrolls::callScrollDriver() {
 //	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
-	//nosound();
 	warning("STUB: Scrolls::calldrivers()");
+
+	_vm->_sound->stopSound();
 
 	setReadyLight(0);
 	_vm->_gyro->_scReturn = false;

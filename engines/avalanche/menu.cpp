@@ -60,10 +60,7 @@ void HeadType::draw() {
 void HeadType::highlight() {
 	CursorMan.showMouse(false);
 
-	//nosound();
-	//setactivepage(cp);
-	warning("STUB: Dropdown::headytpe::highlight()");
-
+	_dr->_vm->_sound->stopSound();
 	_dr->drawMenuText(_xpos, 1, _trigger, _title, true, true);
 
 	_dr->_activeMenuItem._left = _xpos;

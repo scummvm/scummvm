@@ -259,7 +259,7 @@ void Celer::updateBackgroundSprites() {
 			_vm->_sound->playNote(_vm->_gyro->kNotes[_vm->_gyro->_nextBell], 2);
 			break;
 		case 2:
-			//nosound();
+			_vm->_sound->stopSound();
 			break;
 		}
 	}
