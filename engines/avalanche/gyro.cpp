@@ -166,7 +166,7 @@ byte Gyro::_whereIs[29] = {
 	kRoomWiseWomans  // The Wise Woman.
 };
 
-Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0), _onCanDoPageSwap(true) {
+Gyro::Gyro(AvalancheEngine *vm) : _interrogation(0) {
 	_vm = vm;
 
 	// Needed because of Lucerna::load_also()

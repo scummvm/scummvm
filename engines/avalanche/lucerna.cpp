@@ -605,10 +605,8 @@ void Lucerna::enterRoom(byte room, byte ped) {
 	case kRoomMap:
 		// You're entering the map.
 		dawn();
-		//setactivepage(cp);
 		if (ped > 0)
 			zoomOut(_vm->_gyro->_peds[ped]._x, _vm->_gyro->_peds[ped]._y);
-		//setactivepage(1 - cp);
 
 		if ((_vm->_gyro->_objects[Gyro::kObjectWine - 1]) && (_vm->_gyro->_wineState != 3)) {
 			_vm->_scrolls->displayScrollChain('q', 9); // Don't want to waste the wine!
@@ -867,9 +865,7 @@ void Lucerna::thinkAbout(byte object, bool type) {
 	CursorMan.showMouse(false);
 
 #if 0
-	setactivepage(3);
 	putimage(x, y, p, 0);
-	setactivepage(1 - cp);
 #endif
 
 	CursorMan.showMouse(true);

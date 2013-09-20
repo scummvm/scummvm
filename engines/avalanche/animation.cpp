@@ -248,9 +248,7 @@ void AnimationType::bounce() {
 		_anim->stopWalking();
 	else
 		stopWalk();
-	_anim->_vm->_gyro->_onCanDoPageSwap = false;
 	_anim->_vm->_lucerna->drawDirection();
-	_anim->_vm->_gyro->_onCanDoPageSwap = true;
 }
 
 int8 AnimationType::getSign(int16 val) {
@@ -375,7 +373,6 @@ byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	// if not alive then begin checkfeet:=0; exit; end;
 	byte a = 0;
 
-	//setactivepage(2);
 	if (x1 < 0)
 		x1 = 0;
 	if (x2 > 639)
@@ -398,7 +395,6 @@ byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 		}
 	}
 
-	//setactivepage(1 - cp);
 	return a;
 }
 
@@ -950,8 +946,6 @@ void Animation::updateSpeed() {
 
 	_sprites[0]._moveX = (_sprites[0]._moveX / 3) * _sprites[0]._speedX;
 
-	//setactivepage(3);
-
 	if (_sprites[0]._speedX == _vm->_gyro->kRun)
 		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorYellow);
 	else
@@ -961,8 +955,6 @@ void Animation::updateSpeed() {
 		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorLightblue);
 	else
 		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorLightblue);
-
-	//setactivepage(1 - cp);
 }
 
 void Animation::changeDirection(byte t, byte dir) {
