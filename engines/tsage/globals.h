@@ -271,8 +271,8 @@ public:
 	byte _v565AE;
 	byte _spillLocation[14];
 	int _v56613[76];
-	byte _v566A4;
-	byte _v566A5;
+	byte _flubMazeArea;
+	byte _flubMazeEntryDirection;
 	int _v566A6;
 	byte _landerSuitNumber;
 	byte _desertStepsRemaining;

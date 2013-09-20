@@ -453,8 +453,8 @@ void Ringworld2Globals::reset() {
 
 	_v566A6 = 3800;
 	_landerSuitNumber = 2;
-	_v566A4 = 1;
-	_v566A5 = 0;
+	_flubMazeArea = 1;
+	_flubMazeEntryDirection = 0;
 	_desertStepsRemaining = 5;
 	_desertCorrectDirection = 0;
 	_desertPreviousDirection = 0;
@@ -553,8 +553,8 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 		s.syncAsByte(_scannerFrequencies[i]);
 
 	s.syncAsByte(_v565AE);
-	s.syncAsByte(_v566A4);
-	s.syncAsByte(_v566A5);
+	s.syncAsByte(_flubMazeArea);
+	s.syncAsByte(_flubMazeEntryDirection);
 	s.syncAsByte(_desertStepsRemaining);
 	s.syncAsByte(_desertCorrectDirection);
 	s.syncAsByte(_desertPreviousDirection);

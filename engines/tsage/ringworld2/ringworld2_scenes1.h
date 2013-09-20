@@ -1108,6 +1108,7 @@ public:
 };
 
 class Scene1950 : public SceneExt {
+	/* Areas */
 	class Area1: public SceneArea {
 	public:
 		class Actor10 : public SceneActor {
@@ -1144,6 +1145,7 @@ class Scene1950 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
+	/* Actors */
 	class Door : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
@@ -1160,7 +1162,7 @@ class Scene1950 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor8 : public SceneActor {
+	class Vampire : public SceneActor {
 	public:
 		int _fieldA4;
 		int _fieldA6;
@@ -1170,34 +1172,35 @@ class Scene1950 : public SceneExt {
 		byte _fieldAE;
 		byte _fieldAF;
 
-		Actor8();
+		Vampire();
 		void synchronize(Serializer &s);
 
 		virtual void signal();
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	/* Exits */
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class UpExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit4 : public SceneExit {
+	class DownExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit5 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit6 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -1209,25 +1212,29 @@ class Scene1950 : public SceneExt {
 	public:
 		virtual void changeScene();
 	};
+private:
+	void initArea();
+	void enterArea();
+	void subBF4B4(int indx);
 public:
 	NamedHotspot _item1;
 	Hotspot2 _item2;
-	SceneActor _actor1;
-	BackgroundSceneObject _object1;
+	SceneActor _southDoorway;
+	SceneObject _northDoorway;
 	Door _door;
 	Actor3 _actor3;
 	SceneActor _actor4;
 	Actor5 _actor5;
 	SceneActor _actor6;
 	SceneActor _actor7;
-	Actor8 _actor8;
+	Vampire _vampire;
 	Area1 _area1;
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
-	Exit5 _exit5;
-	Exit6 _exit6;
+	NorthExit _northExit;
+	UpExit _upExit;
+	EastExit _eastExit;
+	DownExit _downExit;
+	SouthExit _southExit;
+	WestExit _westExit;
 	Exit7 _exit7;
 	Exit8 _exit8;
 	SequenceManager _sequenceManager;
@@ -1236,14 +1243,11 @@ public:
 	int _field414;
 	int _field416;
 	Common::Point _field418;
-	int _field41C;
+	int _vampireIndex;
 
 	Scene1950();
 	void synchronize(Serializer &s);
 
-	void initExits();
-	void enterArea();
-	void subBF4B4(int indx);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void signal();

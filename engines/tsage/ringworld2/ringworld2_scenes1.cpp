@@ -13571,7 +13571,7 @@ Scene1950::Scene1950() {
 	_field414 = 0;
 	_field416 = 0;
 	_field418 = Common::Point(0, 0);
-	_field41C = 0;
+	_vampireIndex = 0;
 }
 
 void Scene1950::synchronize(Serializer &s) {
@@ -13582,7 +13582,7 @@ void Scene1950::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field416);
 	s.syncAsSint16LE(_field418.x);
 	s.syncAsSint16LE(_field418.y);
-	s.syncAsSint16LE(_field41C);
+	s.syncAsSint16LE(_vampireIndex);
 }
 
 Scene1950::Area1::Actor10::Actor10() {
@@ -13659,7 +13659,7 @@ void Scene1950::Area1::remove() {
 		R2_GLOBALS._sound2.play(278);
 
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	scene->_exit3._enabled = true;
+	scene->_eastExit._enabled = true;
 
 	if (!R2_GLOBALS.getFlag(37)) {
 		if (R2_GLOBALS.getFlag(36)) {
@@ -13715,7 +13715,7 @@ void Scene1950::Area1::proc12(int visage, int stripFrameNum, int frameNum, int p
 	//
 
 	_areaActor.fixPriority(248);
-	scene->_exit3._enabled = false;
+	scene->_eastExit._enabled = false;
 	proc13(1950, 27, 28, 27);
 
 	for (_fieldB65 = 0; _fieldB65 < 16; _fieldB65++)
@@ -13783,7 +13783,7 @@ bool Scene1950::Actor5::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-Scene1950::Actor8::Actor8() {
+Scene1950::Vampire::Vampire() {
 	_fieldA4 = 0;
 	_fieldA6 = 0;
 	_fieldA8 = 0;
@@ -13793,7 +13793,7 @@ Scene1950::Actor8::Actor8() {
 	_fieldAF = 0;
 }
 
-void Scene1950::Actor8::synchronize(Serializer &s) {
+void Scene1950::Vampire::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
 	s.syncAsSint16LE(_fieldA4);
@@ -13805,14 +13805,14 @@ void Scene1950::Actor8::synchronize(Serializer &s) {
 	s.syncAsByte(_fieldAF);
 }
 
-void Scene1950::Actor8::signal() {
+void Scene1950::Vampire::signal() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (_fieldAC) {
 	case 19: {
 		_fieldAC = 0;
 		setVisage(1960);
-		if (R2_GLOBALS._v566A5 == 3)
+		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			setStrip(2);
 		else
 			setStrip(1);
@@ -13824,14 +13824,14 @@ void Scene1950::Actor8::signal() {
 	case 20: {
 		_fieldAC = 19;
 		R2_GLOBALS._player.setVisage(22);
-		if (R2_GLOBALS._v566A5 == 3)
+		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			R2_GLOBALS._player.setStrip(1);
 		else
 			R2_GLOBALS._player.setStrip(2);
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-		R2_GLOBALS._v56613[((scene->_field41C - 1) * 4) + 1]--;
+		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 1]--;
 
-		if (R2_GLOBALS._v566A5 == 3)
+		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			_fieldA4 = _position.x + 10;
 		else
 			_fieldA4 = _position.x - 10;
@@ -13839,7 +13839,7 @@ void Scene1950::Actor8::signal() {
 		_fieldA6 = _position.y -4;
 		setVisage(1961);
 
-		if (R2_GLOBALS._v566A5 == 3)
+		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			setStrip(2);
 		else
 			setStrip(1);
@@ -13854,14 +13854,14 @@ void Scene1950::Actor8::signal() {
 		break;
 	case 21:
 		R2_GLOBALS._player.setVisage(22);
-		if (R2_GLOBALS._v566A5 == 3)
+		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			R2_GLOBALS._player.setStrip(1);
 		else
 			R2_GLOBALS._player.setStrip(2);
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
 		setVisage(1961);
-		if (R2_GLOBALS._v566A5 == 3)
+		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			setStrip(4);
 		else
 			setStrip(3);
@@ -13871,10 +13871,10 @@ void Scene1950::Actor8::signal() {
 		R2_GLOBALS._sound2.play(226);
 		animate(ANIM_MODE_5, NULL);
 		fixPriority(10);
-		R2_GLOBALS._v56613[((scene->_field41C - 1) * 4) ]--;
-		R2_GLOBALS._v56613[((scene->_field41C - 1) * 4) + 1]--;
-		R2_GLOBALS._v56613[((scene->_field41C - 1) * 4) + 2] = _position.x;
-		R2_GLOBALS._v56613[((scene->_field41C - 1) * 4) + 3] = _position.y;
+		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) ]--;
+		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 1]--;
+		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 2] = _position.x;
+		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 3] = _position.y;
 		_fieldA8 = (_position.x - R2_GLOBALS._player._position.x) / 2;
 		_fieldAA = (_position.y - R2_GLOBALS._player._position.y) / 2;
 
@@ -13898,10 +13898,10 @@ void Scene1950::Actor8::signal() {
 			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		}
 
-		if (R2_GLOBALS._v566A5 == 3)
-			scene->_exit3._enabled = true;
+		if (R2_GLOBALS._flubMazeEntryDirection == 3)
+			scene->_eastExit._enabled = true;
 		else
-			scene->_exit6._enabled = true;
+			scene->_westExit._enabled = true;
 
 		scene->_field416 = 0;
 		break;
@@ -13911,7 +13911,7 @@ void Scene1950::Actor8::signal() {
 		break;
 	case 23:
 		SceneItem::display(1950, 25, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
-		scene->_sceneMode = R2_GLOBALS._v566A5;
+		scene->_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 		scene->setAction(&scene->_sequenceManager, scene, 1960, &R2_GLOBALS._player, NULL);
 		break;
 	default:
@@ -13919,21 +13919,22 @@ void Scene1950::Actor8::signal() {
 	}
 }
 
-bool Scene1950::Actor8::startAction(CursorType action, Event &event) {
+bool Scene1950::Vampire::startAction(CursorType action, Event &event) {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((R2_GLOBALS._v56613[(scene->_field41C - 1) * 4] == 0) || (action != R2_PHOTON_STUNNER))
+	if ((R2_GLOBALS._v56613[(scene->_vampireIndex - 1) * 4] == 0) || 
+			(action != R2_PHOTON_STUNNER))
 		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_GLOBALS._v56613[((scene->_field41C - 1) * 4) + 1] <= 1)
+	if (R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 1] <= 1)
 		_fieldAC = 21;
 	else
 		_fieldAC = 20;
 
 	R2_GLOBALS._player.setVisage(25);
-	if (R2_GLOBALS._v566A5 == 3)
+	if (R2_GLOBALS._flubMazeEntryDirection == 3)
 		R2_GLOBALS._player.setStrip(2);
 	else
 		R2_GLOBALS._player.setStrip(1);
@@ -13943,12 +13944,12 @@ bool Scene1950::Actor8::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene1950::Exit1::changeScene() {
+void Scene1950::NorthExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 1;
+	R2_GLOBALS._flubMazeEntryDirection = 1;
 	scene->_sceneMode = 11;
 
 	Common::Point pt(160, 127);
@@ -13956,12 +13957,12 @@ void Scene1950::Exit1::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene1950::Exit2::changeScene() {
+void Scene1950::UpExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 2;
+	R2_GLOBALS._flubMazeEntryDirection = 2;
 	scene->_sceneMode = 12;
 
 	if (scene->_field412 == 0) {
@@ -13977,12 +13978,12 @@ void Scene1950::Exit2::changeScene() {
 	}
 }
 
-void Scene1950::Exit3::changeScene() {
+void Scene1950::EastExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 3;
+	R2_GLOBALS._flubMazeEntryDirection = 3;
 	scene->_sceneMode = 13;
 
 	if (scene->_field416 != 0)
@@ -13993,12 +13994,12 @@ void Scene1950::Exit3::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene1950::Exit4::changeScene() {
+void Scene1950::DownExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 4;
+	R2_GLOBALS._flubMazeEntryDirection = 4;
 	scene->_sceneMode = 14;
 
 	if (R2_GLOBALS.getFlag(36))
@@ -14007,12 +14008,12 @@ void Scene1950::Exit4::changeScene() {
 		scene->setAction(&scene->_sequenceManager, scene, 1973, &R2_GLOBALS._player, NULL);
 }
 
-void Scene1950::Exit5::changeScene() {
+void Scene1950::SouthExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 5;
+	R2_GLOBALS._flubMazeEntryDirection = 5;
 	scene->_sceneMode = 15;
 
 	Common::Point pt(160, 213);
@@ -14020,13 +14021,15 @@ void Scene1950::Exit5::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene1950::Exit6::changeScene() {
+void Scene1950::WestExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 5;
-	if (R2_GLOBALS._v566A4 == 2) {
+	R2_GLOBALS._flubMazeEntryDirection = 6;
+
+	if (R2_GLOBALS._flubMazeArea == 2) {
+		// In the very first corridor area after the Scrith Door
 		if ((R2_GLOBALS.getFlag(36)) && (R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 2) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2)) {
 			scene->_sceneMode = 1961;
 			Common::Point pt(-20, 160);
@@ -14058,7 +14061,7 @@ void Scene1950::Exit7::changeScene() {
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 0;
+	R2_GLOBALS._flubMazeEntryDirection = 0;
 	scene->_sceneMode = 1951;
 	scene->setAction(&scene->_sequenceManager, scene, 1951, &R2_GLOBALS._player, NULL);
 }
@@ -14068,13 +14071,13 @@ void Scene1950::Exit8::changeScene() {
 
 	_enabled = false;
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	R2_GLOBALS._v566A5 = 3;
+	R2_GLOBALS._flubMazeEntryDirection = 3;
 	if (R2_GLOBALS._player._visage == 22) {
 		scene->_sceneMode = 1975;
 		scene->setAction(&scene->_sequenceManager, scene, 1975, &R2_GLOBALS._player, NULL);
 	} else {
 		SceneItem::display(1950, 22, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
-		R2_GLOBALS._v566A5 = 0;
+		R2_GLOBALS._flubMazeEntryDirection = 0;
 		scene->_sceneMode = 0;
 		Common::Point pt(250, 150);
 		NpcMover *mover = new NpcMover();
@@ -14083,34 +14086,34 @@ void Scene1950::Exit8::changeScene() {
 	}
 }
 
-void Scene1950::initExits() {
-	_exit1._enabled = false;
-	_exit2._enabled = false;
-	_exit3._enabled = false;
-	_exit4._enabled = false;
-	_exit5._enabled = false;
-	_exit6._enabled = false;
+void Scene1950::initArea() {
+	_northExit._enabled = false;
+	_upExit._enabled = false;
+	_eastExit._enabled = false;
+	_downExit._enabled = false;
+	_southExit._enabled = false;
+	_westExit._enabled = false;
 	_exit7._enabled = false;
 	_exit8._enabled = false;
-	_exit1._insideArea = false;
-	_exit2._insideArea = false;
-	_exit3._insideArea = false;
-	_exit4._insideArea = false;
-	_exit5._insideArea = false;
-	_exit6._insideArea = false;
+	_northExit._insideArea = false;
+	_upExit._insideArea = false;
+	_eastExit._insideArea = false;
+	_downExit._insideArea = false;
+	_southExit._insideArea = false;
+	_westExit._insideArea = false;
 	_exit7._insideArea = false;
 	_exit8._insideArea = false;
-	_exit1._moving = false;
-	_exit2._moving = false;
-	_exit3._moving = false;
-	_exit4._moving = false;
-	_exit5._moving = false;
-	_exit6._moving = false;
+	_northExit._moving = false;
+	_upExit._moving = false;
+	_eastExit._moving = false;
+	_downExit._moving = false;
+	_southExit._moving = false;
+	_westExit._moving = false;
 	_exit7._moving = false;
 	_exit8._moving = false;
 	_field412 = 0;
 
-	switch (R2_GLOBALS._v566A4 - 1) {
+	switch (R2_GLOBALS._flubMazeArea - 1) {
 	case 0:
 		loadScene(1948);
 		break;
@@ -14341,10 +14344,10 @@ void Scene1950::initExits() {
 		break;
 	}
 
-	if (R2_GLOBALS._v566A4 != 1)
+	if (R2_GLOBALS._flubMazeArea != 1)
 		R2_GLOBALS._walkRegions.load(1950);
 
-	switch (R2_GLOBALS._v566A4 - 1) {
+	switch (R2_GLOBALS._flubMazeArea - 1) {
 	case 0:
 		_exit7._enabled = true;
 		if ((R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0) && (R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 1950))
@@ -14418,8 +14421,8 @@ void Scene1950::initExits() {
 	case 102:
 	// No break on purpose
 	case 103:
-		_exit3._enabled = true;
-		_exit6._enabled = true;
+		_eastExit._enabled = true;
+		_westExit._enabled = true;
 		break;
 	case 4:
 	// No break on purpose
@@ -14470,7 +14473,7 @@ void Scene1950::initExits() {
 	case 100:
 	// No break on purpose
 	case 104:
-		_exit6._enabled = true;
+		_westExit._enabled = true;
 		R2_GLOBALS._walkRegions.disableRegion(6);
 		R2_GLOBALS._walkRegions.disableRegion(9);
 		break;
@@ -14521,7 +14524,7 @@ void Scene1950::initExits() {
 	case 99:
 	// No break on purpose
 	case 101:
-		_exit3._enabled = true;
+		_eastExit._enabled = true;
 		R2_GLOBALS._walkRegions.disableRegion(1);
 		R2_GLOBALS._walkRegions.disableRegion(7);
 		R2_GLOBALS._walkRegions.disableRegion(13);
@@ -14535,11 +14538,11 @@ void Scene1950::initExits() {
 		break;
 	}
 
-	_object1.remove();
-	_object1.removeObject();
-	_actor1.remove();
+	_northDoorway.remove();
+	_northDoorway.removeObject();
+	_southDoorway.remove();
 
-	switch (R2_GLOBALS._v566A4 - 4) {
+	switch (R2_GLOBALS._flubMazeArea - 4) {
 	case 0:
 	// No break on purpose
 	case 3:
@@ -14577,15 +14580,15 @@ void Scene1950::initExits() {
 	case 82:
 	// No break on purpose
 	case 90:
-		_exit1._enabled = true;
-		_object1.setup2(1950, (R2_GLOBALS._v566A4 % 2) + 1, 1, 160, 237, 25, 0);
-
-		_actor1.postInit();
-		_actor1.setVisage(1950);
-		_actor1.setStrip((((R2_GLOBALS._v566A4 - 1) / 35) % 2) + 1);
-		_actor1.setFrame(2);
-		_actor1.setPosition(Common::Point(160, 167));
-		_actor1.fixPriority(220);
+		_northExit._enabled = true;
+		_northDoorway.setup(1950, (R2_GLOBALS._flubMazeArea % 2) + 1, 1, 160, 137, 25);
+		//visage,strip,frame,px,py,priority,effect
+		_southDoorway.postInit();
+		_southDoorway.setVisage(1950);
+		_southDoorway.setStrip((((R2_GLOBALS._flubMazeArea - 1) / 35) % 2) + 1);
+		_southDoorway.setFrame(2);
+		_southDoorway.setPosition(Common::Point(160, 167));
+		_southDoorway.fixPriority(220);
 		R2_GLOBALS._walkRegions.disableRegion(3);
 		R2_GLOBALS._walkRegions.disableRegion(4);
 		break;
@@ -14626,44 +14629,45 @@ void Scene1950::initExits() {
 	case 89:
 	// No break on purpose
 	case 97:
-		_exit5._enabled = true;
-		_actor1.postInit();
-		_actor1.setVisage(1950);
-		_actor1.setStrip((((R2_GLOBALS._v566A4 - 1) / 35) % 2) + 1);
-		_actor1.setFrame(3);
-		_actor1.setPosition(Common::Point(160, 167));
-		_actor1.fixPriority(220);
+		_southExit._enabled = true;
+
+		_southDoorway.postInit();
+		_southDoorway.setVisage(1950);
+		_southDoorway.setStrip((((R2_GLOBALS._flubMazeArea - 1) / 35) % 2) + 1);
+		_southDoorway.setFrame(3);
+		_southDoorway.setPosition(Common::Point(160, 167));
+		_southDoorway.fixPriority(220);
 		break;
 	case 58:
 	// No break on purpose
 	case 74:
 	// No break on purpose
 	case 80:
-		_exit1._enabled = true;
-		_exit5._enabled = true;
+		_northExit._enabled = true;
+		_southExit._enabled = true;
 
-		_object1.setup(1950, (R2_GLOBALS._v566A4 % 2) + 1, 1, 160, 137, 25);
+		_northDoorway.setup(1950, (R2_GLOBALS._flubMazeArea % 2) + 1, 1, 160, 137, 25);
 
-		_actor1.postInit();
-		_actor1.setVisage(1950);
-		_actor1.setStrip((((R2_GLOBALS._v566A4 - 1) / 35) % 2) + 1);
-		_actor1.setFrame(3);
-		_actor1.setPosition(Common::Point(160, 167));
-		_actor1.fixPriority(220);
+		_southDoorway.postInit();
+		_southDoorway.setVisage(1950);
+		_southDoorway.setStrip((((R2_GLOBALS._flubMazeArea - 1) / 35) % 2) + 1);
+		_southDoorway.setFrame(3);
+		_southDoorway.setPosition(Common::Point(160, 167));
+		_southDoorway.fixPriority(220);
 		R2_GLOBALS._walkRegions.disableRegion(3);
 		R2_GLOBALS._walkRegions.disableRegion(4);
 		break;
 	default:
-		_actor1.postInit();
-		_actor1.setVisage(1950);
-		_actor1.setStrip(((R2_GLOBALS._v566A4 - 1) % 35) + 1);
-		_actor1.setFrame(2);
-		_actor1.setPosition(Common::Point(160, 167));
-		_actor1.fixPriority(220);
+		_southDoorway.postInit();
+		_southDoorway.setVisage(1950);
+		_southDoorway.setStrip(((R2_GLOBALS._flubMazeArea - 1) / 35) % 2 + 1);
+		_southDoorway.setFrame(2);
+		_southDoorway.setPosition(Common::Point(160, 167));
+		_southDoorway.fixPriority(220);
 		break;
 	}
 
-	switch (R2_GLOBALS._v566A4 - 3) {
+	switch (R2_GLOBALS._flubMazeArea - 3) {
 	case 0:
 	// No break on purpose
 	case 3:
@@ -14707,7 +14711,8 @@ void Scene1950::initExits() {
 	case 60:
 	// No break on purpose
 	case 63:
-		_exit2._enabled = true;
+		_upExit._enabled = true;
+		break;
 	case 54:
 	// No break on purpose
 	case 61:
@@ -14715,7 +14720,7 @@ void Scene1950::initExits() {
 	case 62:
 	// No break on purpose
 	case 65:
-		_exit2._enabled = true;
+		_upExit._enabled = true;
 	// No break on purpose
 	case 35:
 	// No break on purpose
@@ -14760,7 +14765,7 @@ void Scene1950::initExits() {
 	case 98:
 	// No break on purpose
 	case 100:
-		_exit4._enabled = true;
+		_downExit._enabled = true;
 		R2_GLOBALS._walkRegions.disableRegion(4);
 		R2_GLOBALS._walkRegions.disableRegion(5);
 		R2_GLOBALS._walkRegions.disableRegion(6);
@@ -14776,96 +14781,97 @@ void Scene1950::enterArea() {
 	R2_GLOBALS._player.disableControl();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
-	_actor8.remove();
+	_vampire.remove();
 	_door.remove();
 	_actor3.remove();
 
 	_field416 = 0;
-	_field41C = 0;
+	_vampireIndex = 0;
 
-	switch (R2_GLOBALS._v566A4) {
+	switch (R2_GLOBALS._flubMazeArea) {
 	case 10:
-		_field41C = 1;
+		_vampireIndex = 1;
 		break;
 	case 13:
-		_field41C = 2;
+		_vampireIndex = 2; 
 		break;
 	case 16:
-		_field41C = 3;
+		_vampireIndex = 3;
 		break;
 	case 17:
-		_field41C = 4;
+		_vampireIndex = 4;
 		break;
 	case 24:
-		_field41C = 5;
+		_vampireIndex = 5;
 		break;
 	case 25:
-		_field41C = 6;
+		_vampireIndex = 6;
 		break;
 	case 31:
-		_field41C = 7;
+		_vampireIndex = 7;
 		break;
 	case 40:
-		_field41C = 8;
+		_vampireIndex = 8;
 		break;
 	case 45:
-		_field41C = 9;
+		_vampireIndex = 9;
 		break;
 	case 46:
-		_field41C = 10;
+		_vampireIndex = 10;
 		break;
 	case 73:
-		_field41C = 11;
+		_vampireIndex = 11;
 		break;
 	case 75:
-		_field41C = 12;
+		_vampireIndex = 12;
 		break;
 	case 80:
-		_field41C = 13;
+		_vampireIndex = 13;
 		break;
 	case 87:
-		_field41C = 14;
+		_vampireIndex = 14;
 		break;
 	case 88:
-		_field41C = 15;
+		_vampireIndex = 15;
 		break;
 	case 96:
-		_field41C = 16;
+		_vampireIndex = 16;
 		break;
 	case 97:
-		_field41C = 17;
+		_vampireIndex = 17;
 		break;
 	case 104:
-		_field41C = 18;
+		_vampireIndex = 18;
 		break;
 	default:
 		break;
 	}
 
-	if (_field41C != 0) {
-		_actor8.postInit();
-		_actor8._numFrames = 6;
-		_actor8._moveRate = 6;
-		_actor8._moveDiff = Common::Point(3, 2);
-		_actor8._effect = 1;
-		if (R2_GLOBALS._v56613[(_field41C - 1) * 4] == 0) {
-			_actor8.setPosition(Common::Point(R2_GLOBALS._v56613[((_field41C - 1) * 4) + 2], R2_GLOBALS._v56613[((_field41C - 1) * 4) + 3]));
-			_actor8.animate(ANIM_MODE_NONE, NULL);
-			_actor8.addMover(NULL);
-			_actor8.setVisage(1961);
-			_actor8.setStrip(4);
-			_actor8.setFrame(10);
-			_actor8.fixPriority(10);
-			_actor8.setDetails(1950, 15, -1, 17, 2, (SceneItem *) NULL);
+	if (_vampireIndex != 0) {
+		_vampire.postInit();
+		_vampire._numFrames = 6;
+		_vampire._moveRate = 6;
+		_vampire._moveDiff = Common::Point(3, 2);
+		_vampire._effect = 1;
+		if (R2_GLOBALS._v56613[(_vampireIndex - 1) * 4] == 0) {
+			_vampire.setPosition(Common::Point(R2_GLOBALS._v56613[((_vampireIndex - 1) * 4) + 2], R2_GLOBALS._v56613[((_vampireIndex - 1) * 4) + 3]));
+			_vampire.animate(ANIM_MODE_NONE, NULL);
+			_vampire.addMover(NULL);
+			_vampire.setVisage(1961);
+			_vampire.setStrip(4);
+			_vampire.setFrame(10);
+			_vampire.fixPriority(10);
+			_vampire.setDetails(1950, 15, -1, 17, 2, (SceneItem *) NULL);
 		} else {
-			_actor8.setVisage(1960);
-			_actor8.setPosition(Common::Point(160, 130));
-			_actor8.animate(ANIM_MODE_2, NULL);
-			_actor8.setDetails(1950, 12, -1, 14, 2, (SceneItem *) NULL);
+			_vampire.setVisage(1960);
+			_vampire.setPosition(Common::Point(160, 130));
+			_vampire.animate(ANIM_MODE_2, NULL);
+			_vampire.setDetails(1950, 12, -1, 14, 2, (SceneItem *) NULL);
 			_field416 = 1;
 		}
 	}
-	if ((R2_GLOBALS._v566A4 == 1) && (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) != 0)) {
+	if ((R2_GLOBALS._flubMazeArea == 1) && (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) != 0)) {
+		// Show doorway at the right hand side of the very first flub corridor
 		_door.postInit();
 		_door.setVisage(1948);
 		_door.setStrip(3);
@@ -14874,7 +14880,7 @@ void Scene1950::enterArea() {
 		_door.setDetails(1950, 19, 20, 23, 2, (SceneItem *) NULL);
 	}
 
-	if (R2_GLOBALS._v566A4 == 102) {
+	if (R2_GLOBALS._flubMazeArea == 102) {
 		R2_GLOBALS._walkRegions.load(1951);
 		R2_GLOBALS._walkRegions.disableRegion(1);
 		R2_GLOBALS._walkRegions.disableRegion(5);
@@ -14948,7 +14954,7 @@ void Scene1950::enterArea() {
 		_item1.setDetails(Rect(0, 0, 320, 200), 1950, 0, 1, 2, 2, NULL);
 	}
 
-	switch (R2_GLOBALS._v566A5) {
+	switch (R2_GLOBALS._flubMazeEntryDirection) {
 	case 0:
 		_sceneMode = 1950;
 		if (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0) {
@@ -14959,7 +14965,7 @@ void Scene1950::enterArea() {
 		}
 		break;
 	case 1: {
-		_sceneMode = R2_GLOBALS._v566A5;
+		_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 		R2_GLOBALS._player.setPosition(Common::Point(160, 213));
 		Common::Point pt(160, 160);
 		NpcMover *mover = new NpcMover();
@@ -14967,30 +14973,31 @@ void Scene1950::enterArea() {
 		}
 		break;
 	case 2:
-		_sceneMode = R2_GLOBALS._v566A5;
+		_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 		if (R2_GLOBALS.getFlag(36))
 			setAction(&_sequenceManager, this, 1957, &R2_GLOBALS._player, NULL);
 		else
 			setAction(&_sequenceManager, this, 1974, &R2_GLOBALS._player, NULL);
 		break;
 	case 3:
+		// Entering from the left
 		if (_field416 == 0) {
-			_sceneMode = R2_GLOBALS._v566A5;
+			_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 			R2_GLOBALS._player.setPosition(Common::Point(-20, 160));
 			Common::Point pt(30, 160);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 		} else {
 			_sceneMode = 18;
-			_exit3._enabled = false;
+			_eastExit._enabled = false;
 			_field418 = Common::Point(60, 152);
 			R2_GLOBALS._v56AAB = 0;
 			R2_GLOBALS._player.enableControl(CURSOR_USE);
 			R2_GLOBALS._player._canWalk = false;
 
-			_actor8.setStrip(2);
+			_vampire.setStrip(2);
 			NpcMover *mover = new NpcMover();
-			_actor8.addMover(mover, &_field418, this);
+			_vampire.addMover(mover, &_field418, this);
 
 			R2_GLOBALS._player.setPosition(Common::Point(-20, 160));
 			Common::Point pt2(30, 160);
@@ -14999,7 +15006,7 @@ void Scene1950::enterArea() {
 		}
 		break;
 	case 4:
-		_sceneMode = R2_GLOBALS._v566A5;
+		_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 		if (_field412 == 0) {
 			if (R2_GLOBALS.getFlag(36))
 				setAction(&_sequenceManager, this, 1955, &R2_GLOBALS._player, NULL);
@@ -15013,7 +15020,7 @@ void Scene1950::enterArea() {
 		}
 		break;
 	case 5: {
-		_sceneMode = R2_GLOBALS._v566A5;
+		_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 		R2_GLOBALS._player.setPosition(Common::Point(160, 127));
 		Common::Point pt(160, 160);
 		NpcMover *mover = new NpcMover();
@@ -15021,9 +15028,10 @@ void Scene1950::enterArea() {
 		}
 		break;
 	case 6:
+		// Entering from the right
 		if (_field416 == 0) {
-			_sceneMode = R2_GLOBALS._v566A5;
-			if (R2_GLOBALS._v566A4 == 1) {
+			_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
+			if (R2_GLOBALS._flubMazeArea == 1) {
 				setAction(&_sequenceManager, this, 1961, &R2_GLOBALS._player, NULL);
 			} else {
 				R2_GLOBALS._player.setPosition(Common::Point(340, 160));
@@ -15033,16 +15041,16 @@ void Scene1950::enterArea() {
 			}
 		} else {
 			_sceneMode = 17;
-			_exit6._enabled = false;
+			_westExit._enabled = false;
 			_field418 = Common::Point(259, 152);
 
 			R2_GLOBALS._v56AAB = 0;
 			R2_GLOBALS._player.enableControl(CURSOR_USE);
 			R2_GLOBALS._player._canWalk = false;
 
-			_actor8.setStrip(1);
+			_vampire.setStrip(1);
 			NpcMover *mover = new NpcMover();
-			_actor8.addMover(mover, &_field418, this);
+			_vampire.addMover(mover, &_field418, this);
 
 			R2_GLOBALS._player.setPosition(Common::Point(340, 160));
 			Common::Point pt2(289, 160);
@@ -15133,31 +15141,31 @@ void Scene1950::postInit(SceneObjectList *OwnerList) {
 	_field412 = 0;
 	_field414 = 0;
 	_field416 = 0;
-	_field41C = 0;
+	_vampireIndex = 0;
 	if (R2_GLOBALS._sceneManager._previousScene == 300)
-		R2_GLOBALS._v566A4 = 103;
+		R2_GLOBALS._flubMazeArea = 103;
 
-	initExits();
+	initArea();
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(105);
 
-	_exit1.setDetails(Rect(130, 46, 189, 135), SHADECURSOR_UP, 1950);
-	_exit1.setDest(Common::Point(160, 145));
+	_northExit.setDetails(Rect(130, 46, 189, 135), SHADECURSOR_UP, 1950);
+	_northExit.setDest(Common::Point(160, 145));
 
-	_exit2.setDetails(Rect(208, 0, 255, 73), EXITCURSOR_N, 1950);
-	_exit2.setDest(Common::Point(200, 151));
+	_upExit.setDetails(Rect(208, 0, 255, 73), EXITCURSOR_N, 1950);
+	_upExit.setDest(Common::Point(200, 151));
 
-	_exit3.setDetails(Rect(305, 95, 320, 147), EXITCURSOR_E, 1950);
-	_exit3.setDest(Common::Point(312, 160));
+	_eastExit.setDetails(Rect(305, 95, 320, 147), EXITCURSOR_E, 1950);
+	_eastExit.setDest(Common::Point(312, 160));
 
-	_exit4.setDetails(Rect(208, 99, 255, 143), EXITCURSOR_S, 1950);
-	_exit4.setDest(Common::Point(200, 151));
+	_downExit.setDetails(Rect(208, 99, 255, 143), EXITCURSOR_S, 1950);
+	_downExit.setDest(Common::Point(200, 151));
 
-	_exit5.setDetails(Rect(113, 154, 206, 168), SHADECURSOR_DOWN, 1950);
-	_exit5.setDest(Common::Point(160, 165));
+	_southExit.setDetails(Rect(113, 154, 206, 168), SHADECURSOR_DOWN, 1950);
+	_southExit.setDest(Common::Point(160, 165));
 
-	_exit6.setDetails(Rect(0, 95, 14, 147), EXITCURSOR_W, 1950);
-	_exit6.setDest(Common::Point(7, 160));
+	_westExit.setDetails(Rect(0, 95, 14, 147), EXITCURSOR_W, 1950);
+	_westExit.setDest(Common::Point(7, 160));
 
 	_exit7.setDetails(Rect(72, 54, 120, 128), EXITCURSOR_NW, 1950);
 	_exit7.setDest(Common::Point(120, 140));
@@ -15187,43 +15195,48 @@ void Scene1950::remove() {
 void Scene1950::signal() {
 	switch (_sceneMode) {
 	case 11:
-		R2_GLOBALS._v566A4 += 7;
-		initExits();
+		R2_GLOBALS._flubMazeArea += 7;
+		initArea();
 		enterArea();
 		break;
 	case 12:
-		R2_GLOBALS._v566A4 += 35;
-		initExits();
+		// Moving up a ladder within the Flub maze
+		R2_GLOBALS._flubMazeArea += 35;
+		initArea();
 		enterArea();
 		break;
 	case 1975:
-		SceneItem::display(1950, 21, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1950, 21, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, 1, 
+			SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
 	// No break on purpose
 	case 13:
-		++R2_GLOBALS._v566A4;
-		initExits();
+		// Moving east within the Flub maze
+		++R2_GLOBALS._flubMazeArea;
+		initArea();
 		enterArea();
 		break;
 	case 14:
-		R2_GLOBALS._v566A4 += 221;
-		initExits();
+		// Moving down a ladder within the Flub maze
+		R2_GLOBALS._flubMazeArea -= 35;
+		initArea();
 		enterArea();
 		break;
 	case 15:
-		R2_GLOBALS._v566A4 += 249;
-		initExits();
+		R2_GLOBALS._flubMazeArea -= 7;
+		initArea();
 		enterArea();
 		break;
 	case 16:
+		// Moving west within the Flub maze
 	// No break on purpose
 	case 1961:
-		--R2_GLOBALS._v566A4;
-		initExits();
+		--R2_GLOBALS._flubMazeArea;
+		initArea();
 		enterArea();
 		break;
 	case 17: {
 		_sceneMode = 13;
-		R2_GLOBALS._v566A5 = 3;
+		R2_GLOBALS._flubMazeEntryDirection = 3;
 		_field416 = 0;
 		R2_GLOBALS._player.disableControl(CURSOR_WALK);
 		R2_GLOBALS._player._canWalk = true;
@@ -15234,12 +15247,12 @@ void Scene1950::signal() {
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 		Common::Point pt2(289, 160);
 		NpcMover *mover2 = new NpcMover();
-		_actor8.addMover(mover2, &pt2, NULL);
+		_vampire.addMover(mover2, &pt2, NULL);
 		}
 		break;
 	case 18: {
 		_sceneMode = 16;
-		R2_GLOBALS._v566A5 = 6;
+		R2_GLOBALS._flubMazeEntryDirection = 6;
 		_field416 = 0;
 		R2_GLOBALS._player.disableControl(CURSOR_WALK);
 		R2_GLOBALS._player._canWalk = true;
@@ -15250,7 +15263,7 @@ void Scene1950::signal() {
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 		Common::Point pt2(30, 160);
 		NpcMover *mover2 = new NpcMover();
-		_actor8.addMover(mover2, &pt2, NULL);
+		_vampire.addMover(mover2, &pt2, NULL);
 		}
 		break;
 	case 24:
@@ -15344,6 +15357,7 @@ void Scene1950::process(Event &event) {
 		_sceneMode = 1959;
 		setAction(&_sequenceManager, this, 1959, &R2_GLOBALS._player, NULL);
 	}
+
 	Scene::process(event);
 }
 

@@ -5172,7 +5172,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 
 		case 2:
 			if (++R2_GLOBALS._landerSuitNumber == 4)
-				R2_GLOBALS._v566A4 = 1;
+				R2_GLOBALS._flubMazeArea = 1;
 
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 6;
