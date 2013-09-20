@@ -54,7 +54,7 @@ public:
 	bool parseAltTrigger(char key);
 
 private:
-	Menu *_dr;
+	Menu *_menu;
 };
 
 struct OptionType {

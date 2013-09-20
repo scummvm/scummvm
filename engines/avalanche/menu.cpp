@@ -38,37 +38,37 @@
 
 namespace Avalanche {
 
-void HeadType::init(char trig, char altTrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *dr) {
+void HeadType::init(char trig, char altTrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *menu) {
 	_trigger = trig;
 	_altTrigger = altTrig;
 	_title = title;
 	_position = pos;
-	_xpos = _position * _dr->kSpacing + _dr->kIndent;
-	_xright = (_position + 1) * _dr->kSpacing + _dr->kIndent;
+	_xpos = _position * _menu->kSpacing + _menu->kIndent;
+	_xright = (_position + 1) * _menu->kSpacing + _menu->kIndent;
 	_setupFunc = setupFunc;
 	_chooseFunc = chooseFunc;
 
-	_dr = dr;
+	_menu = menu;
 }
 
 void HeadType::draw() {
 	CursorMan.showMouse(false);
-	_dr->drawMenuText(_xpos, 1, _trigger, _title, true, false);
+	_menu->drawMenuText(_xpos, 1, _trigger, _title, true, false);
 	CursorMan.showMouse(true);
 }
 
 void HeadType::highlight() {
 	CursorMan.showMouse(false);
 
-	_dr->_vm->_sound->stopSound();
-	_dr->drawMenuText(_xpos, 1, _trigger, _title, true, true);
+	_menu->_vm->_sound->stopSound();
+	_menu->drawMenuText(_xpos, 1, _trigger, _title, true, true);
 
-	_dr->_activeMenuItem._left = _xpos;
-	_dr->_activeMenuItem._activeNow = true;
-	_dr->_activeMenuItem._activeNum = _position;
-	_dr->_menuActive = true;
+	_menu->_activeMenuItem._left = _xpos;
+	_menu->_activeMenuItem._activeNow = true;
+	_menu->_activeMenuItem._activeNum = _position;
+	_menu->_menuActive = true;
 
-	_dr->_vm->_gyro->_currentMouse = 177; // Force redraw of cursor.
+	_menu->_vm->_gyro->_currentMouse = 177; // Force redraw of cursor.
 }
 
 bool HeadType::parseAltTrigger(char key) {
