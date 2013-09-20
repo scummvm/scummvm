@@ -107,27 +107,32 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
 	// Just use the faster, sans-colormod version
 
-	if (*ca != 255) {
-		ina = ina * (*ca) >> 8;
-	}
+	//if (*ca != 255) {
+	//	ina = ina * (*ca) >> 8;
+	// }
+
+	// As weird as it is, evidence suggests that alphamod is ignored when doing
+	// subtractive...
+
+	// TODO if ina == 255 fast version
 
 	if (ina == 0) {
 		return;
 	} else {
 		if (*cb != 255)
-			*outb = MAX(*outb - ((inb * (*cb) * ina) >> 16), 0);
+			*outb = MAX(*outb - ((inb * (*cb)  * (*outb) * ina) >> 24), 0);
 		else
-			*outb = MAX(*outb - (inb * ina >> 8), 0);
+			*outb = MAX(*outb - (inb * (*outb) * ina >> 16), 0);
 
 		if (*cg != 255)
-			*outg = MAX(*outg - ((ing * (*cg) * ina) >> 16), 0);
+			*outg = MAX(*outg - ((ing * (*cg)  * (*outg) * ina) >> 24), 0);
 		else
-			*outg = MAX(*outg - (ing * ina >> 8), 0);
+			*outg = MAX(*outg - (ing * (*outg) * ina >> 16), 0);
 
 		if (*cr != 255)
-			*outr = MAX(*outr - ((inr * (*cr) * ina) >> 16), 0);
+			*outr = MAX(*outr - ((inr * (*cr) *  (*outr) * ina) >> 24), 0);
 		else
-			*outr = MAX(*outr - (inr * ina >> 8), 0);
+			*outr = MAX(*outr - (inr * (*outr) * ina >> 16), 0);
 	}
 }
 
@@ -237,15 +242,15 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 		return;
 	} else if (ina == 255) {
 		*outa = *outa;
-		*outr = MAX(*outr - (inr * *outr >> 8), 0);
-		*outg = MAX(*outg - (ing * *outg >> 8), 0);
-		*outb = MAX(*outb - (inb * *outb >> 8), 0);
+		*outr = MAX(*outr - (inr * (*outr) >> 8), 0);
+		*outg = MAX(*outg - (ing * (*outg) >> 8), 0);
+		*outb = MAX(*outb - (inb * (*outb) >> 8), 0);
 		return;
 	} else {
 		*outa = *outa;
-		*outb = MAX(*outb - ((inb * *outb >> 8) * ina >> 8), 0);
-		*outg = MAX(*outg - ((ing * *outg >> 8) * ina >> 8), 0);
-		*outr = MAX(*outr - ((inr * *outr >> 8) * ina >> 8), 0);
+		*outb = MAX(*outb - ((inb * (*outb) >> 8) * ina >> 8), 0);
+		*outg = MAX(*outg - ((ing * (*outg) >> 8) * ina >> 8), 0);
+		*outr = MAX(*outr - ((inr * (*outr) >> 8) * ina >> 8), 0);
 		return;
 	}
 }
