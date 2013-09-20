@@ -38,7 +38,6 @@ namespace Wintermute {
 class UIButton : public UIObject {
 public:
 
-	uint32 _oneTimePressTime;
 	DECLARE_PERSISTENT(UIButton, UIObject)
 	void press();
 	virtual bool display() { return display(0, 0); }
@@ -58,12 +57,13 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
 
-	TTextAlign _align;
 	
 	void putFontHover(BaseFont *font);
 	BaseFont *getFontHover();
 	void putFontPress(BaseFont *font);
 	
+	void setTextAlign(TTextAlign align);
+
 	void putImageHover(BaseSprite *sprite);
 	void putImagePress(BaseSprite *sprite);
 
@@ -86,6 +86,8 @@ private:
 	BaseSprite *_imagePress;
 	BaseSprite *_imageDisable;
 	BaseSprite *_imageFocus;
+	uint32 _oneTimePressTime;
+	TTextAlign _align;
 
 };
 

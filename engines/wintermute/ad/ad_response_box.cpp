@@ -171,7 +171,7 @@ bool AdResponseBox::createButtons() {
 				}
 				btn->putFontHover((_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover);
 				btn->putFontPress(btn->getFontHover());
-				btn->_align = _align;
+				btn->setTextAlign(_align);
 
 				if (_gameRef->_touchInterface) {
 					btn->putFontHover(btn->getFont());
