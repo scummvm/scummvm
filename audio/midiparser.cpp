@@ -229,14 +229,16 @@ void MidiParser::onTimer() {
 	}
 }
 
-bool MidiParser::processEvent(const EventInfo &info) {
+bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 	if (info.event == 0xF0) {
 		// SysEx event
 		// Check for trailing 0xF7 -- if present, remove it.
-		if (info.ext.data[info.length-1] == 0xF7)
-			_driver->sysEx(info.ext.data, (uint16)info.length-1);
-		else
-			_driver->sysEx(info.ext.data, (uint16)info.length);
+		if (fireEvents) {
+			if (info.ext.data[info.length-1] == 0xF7)
+				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+			else
+				_driver->sysEx(info.ext.data, (uint16)info.length);
+		}
 	} else if (info.event == 0xFF) {
 		// META event
 		if (info.ext.type == 0x2F) {
@@ -247,7 +249,8 @@ bool MidiParser::processEvent(const EventInfo &info) {
 				parseNextEvent(_nextEvent);
 			} else {
 				stopPlaying();
-				_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+				if (fireEvents)
+					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
 			}
 			return false;
 		} else if (info.ext.type == 0x51) {
@@ -255,9 +258,11 @@ bool MidiParser::processEvent(const EventInfo &info) {
 				setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
 			}
 		}
-		_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+		if (fireEvents)
+			_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
 	} else {
-		sendToDriver(info.event, info.basic.param1, info.basic.param2);
+		if (fireEvents)
+			sendToDriver(info.event, info.basic.param1, info.basic.param2);
 	}
 
 	return true;
@@ -399,34 +404,18 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 			_position._playTick = _position._lastEventTick;
 			_position._playTime = _position._lastEventTime;
 
-			if (info.event == 0xFF) {
-				if (info.ext.type == 0x2F) { // End of track
-					_position = currentPos;
-					_nextEvent = currentEvent;
-					return false;
-				} else {
-					if (info.ext.type == 0x51 && info.length >= 3) // Tempo
-						setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
-					if (fireEvents)
-						_driver->metaEvent(info.ext.type, info.ext.data, (uint16) info.length);
-				}
-			} else if (fireEvents) {
-				if (info.event == 0xF0) {
-					if (info.ext.data[info.length-1] == 0xF7)
-						_driver->sysEx(info.ext.data, (uint16)info.length-1);
-					else
-						_driver->sysEx(info.ext.data, (uint16)info.length);
-				} else {
-					// The note on sending code is used by the SCUMM engine. Other engine using this code
-					// (such as SCI) have issues with this, as all the notes sent can be heard when a song
-					// is fast-forwarded.	Thus, if the engine requests it, don't send note on events.
-					if (info.command() == 0x9 && dontSendNoteOn) {
-						// Don't send note on; doing so creates a "warble" with some instruments on the MT-32.
-						// Refer to patch #3117577
-					} else {
-						sendToDriver(info.event, info.basic.param1, info.basic.param2);
-					}
-				}
+			// Some special processing for the fast-forward case
+			if (info.command() == 0x9 && dontSendNoteOn) {
+				// Don't send note on; doing so creates a "warble" with
+				// some instruments on the MT-32. Refer to patch #3117577
+			} else if (info.event == 0xFF && info.ext.type == 0x2F) {
+				// End of track
+				// This means that we failed to find the right tick.
+				_position = currentPos;
+				_nextEvent = currentEvent;
+				return false;
+			} else {
+				processEvent(info, fireEvents);
 			}
 
 			parseNextEvent(_nextEvent);
