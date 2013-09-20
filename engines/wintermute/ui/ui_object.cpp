@@ -720,5 +720,9 @@ BaseFont *UIObject::getFont() {
 	return _font;
 }
 
+BaseScriptHolder *UIObject::getListener() {
+	return _listenerObject;
+}
+
 
 } // End of namespace Wintermute

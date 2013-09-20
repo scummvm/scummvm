@@ -57,9 +57,8 @@ public:
 	UIObject(BaseGame *inGame = nullptr);
 	virtual ~UIObject();
 	void setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam);
-	BaseScriptHolder *_listenerParamObject;
-	uint32 _listenerParamDWORD;
-	BaseScriptHolder *_listenerObject;
+	BaseScriptHolder *getListener();
+
 	UIObject *_focusedWidget;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
@@ -89,6 +88,9 @@ public:
 	bool canFocus();
 
 protected:
+	BaseScriptHolder *_listenerParamObject;
+	uint32 _listenerParamDWORD;
+	BaseScriptHolder *_listenerObject;	
 	BaseSprite *_image;
 	BaseFont *_font;
 	bool _sharedFonts;
