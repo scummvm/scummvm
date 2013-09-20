@@ -35,6 +35,7 @@ namespace Buried {
 // (There clearly aren't enough variables)
 // For double-fun, they still need to be accessed by index for AI support
 // -> It therefore needs to be packed (Yes, this is totally evil)
+// This is all horrible, really. Avert your eyes.
 
 #include "common/pack-start.h"
 
@@ -286,22 +287,30 @@ struct GlobalFlags {
 	byte scoreTransportToKrynn;         // 317
 	byte scoreGotKrynnArtifacts;        // 318
 	byte scoreDefeatedIcarus;           // 319
-	byte scoreResearchINNHighBidder;    // 320
-	byte scoreResearchINNAppeal;        // 321
-	byte scoreResearchINNUpdate;        // 322
-	byte scoreResearchINNJumpsuit;      // 323
-	byte scoreResearchBCJumpsuit;       // 324
-	byte scoreResearchMichelle;         // 325
-	byte scoreResearchMichelleBkg;      // 326
-	byte scoreResearchLensFilter;       // 327
-	byte scoreResearchCastleFootprint;  // 328
-	byte scoreResearchDaVinciFootprint; // 329
-	byte scoreResearchMorphSculpture;   // 330
-	byte scoreResearchEnvironCart;      // 331
-	byte scoreResearchAgent3Note;       // 332
-	byte scoreResearchAgent3DaVinci;    // 333
-	uint16 scoreHintsTotal;             // 334-335
-	byte unused3[54];                   // 336-389
+
+	// clone2727 would like to take time away from his busy schedule
+	// to describe how broken this next section is. This data was modified
+	// between 1.01 and 1.03, without changing the saved game version
+	// field -- just to add the Louvre research boolean. That's really
+	// unacceptable. I'll have the 1.01 offsets in parentheses.
+	byte scoreResearchINNLouvreReport;  // 320 (---)
+	byte scoreResearchINNHighBidder;    // 321 (320)
+	byte scoreResearchINNAppeal;        // 322 (321)
+	byte scoreResearchINNUpdate;        // 323 (322)
+	byte scoreResearchINNJumpsuit;      // 324 (323)
+	byte scoreResearchBCJumpsuit;       // 325 (324)
+	byte scoreResearchMichelle;         // 326 (325)
+	byte scoreResearchMichelleBkg;      // 327 (326)
+	byte scoreResearchLensFilter;       // 328 (327)
+	byte scoreResearchCastleFootprint;  // 329 (328)
+	byte scoreResearchDaVinciFootprint; // 330 (329)
+	byte scoreResearchMorphSculpture;   // 331 (330)
+	byte scoreResearchEnvironCart;      // 332 (331)
+	byte scoreResearchAgent3Note;       // 333 (332)
+	byte scoreResearchAgent3DaVinci;    // 334 (333)
+	uint16 scoreHintsTotal;             // 335-336 (334-335)
+	byte unused3[53];                   // 337-389 (336-389)
+
 	byte genJumpCastleBriefing;         // 390
 	byte genJumpMayanBriefing;          // 391
 	byte genJumpDaVinciBriefing;        // 392
