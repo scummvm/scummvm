@@ -92,6 +92,7 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, const Globa
 	CHECK_PUZZLE_FLAG(scoreDefeatedIcarus);
 
 	int researchBonusRaw = 0;
+	CHECK_RESEARCH_FLAG(scoreResearchINNLouvreReport); // > v1.01
 	CHECK_RESEARCH_FLAG(scoreResearchINNHighBidder);
 	CHECK_RESEARCH_FLAG(scoreResearchINNAppeal);
 	CHECK_RESEARCH_FLAG(scoreResearchINNUpdate);
