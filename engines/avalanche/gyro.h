@@ -76,11 +76,6 @@ public:
 	byte _color;
 };
 
-struct DemoType {
-	uint16 _delay;
-	char _key, _extd;
-};
-
 typedef byte TuneType[31];
 
 struct QuasipedType {
@@ -350,11 +345,6 @@ public:
 	bool _keyboardClick; // Is a keyboard click noise wanted?
 	byte _him, _her, _it;
 	int32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
-
-	// For the demo:
-	DemoType _demoRec;
-	Common::File _demoFile; // of demo_type
-	Common::DumpFile _demoFileSave; // uruk added it - first use located in constructor of Basher
 
 	byte _lastPerson; // Last person to have been selected using the People menu.
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.

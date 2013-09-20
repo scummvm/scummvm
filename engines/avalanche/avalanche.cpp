@@ -621,24 +621,9 @@ Common::String AvalancheEngine::elmToStr(Elm how) {
 	}
 }
 
-// Getting used only in demo() / call_menu(). Going to be implemented at the same time with these.
-bool AvalancheEngine::keyPressed() {
-	warning("STUB: keyPressed()");
-	return false;
-}
-
 // Same as keypressed1().
 void AvalancheEngine::flushBuffer() {
 	warning("STUB: flushBuffer()");
-}
-
-// Same as keypressed1().
-void AvalancheEngine::demo() {
-	warning("STUB: demo()");
-}
-
-void AvalancheEngine::runDemo() {
-	warning("STUB: runDemo()");
 }
 
 void AvalancheEngine::dosShell() {

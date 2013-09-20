@@ -147,7 +147,7 @@ private:
 	// From bootstrp:
 	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
 
-	Common::String _demoArgs, _argsWithNoFilename;
+	Common::String _argsWithNoFilename;
 	byte _originalMode;
 	byte *_old1c;
 	Common::String _segofs;
@@ -158,8 +158,6 @@ private:
 	Common::String elmToStr(Elm how);
 	bool keyPressed();
 	void flushBuffer();
-	void demo();
-	void runDemo();
 	void dosShell();
 	void bFlight();
 	Common::String commandCom();
