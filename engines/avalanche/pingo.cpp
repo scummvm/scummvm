@@ -57,7 +57,7 @@ const
 var fv:byte; gd,gm:int16; r:char;
 begin;
 	dusk; delavvy;
-	off;
+	CursorMan.showMouse(false);
 	cleardevice; setfillstyle(xhatchfill,11);
 	settextstyle(1,0,4); settextjustify(1,1);
 	dplot(320,10,title);
@@ -76,7 +76,9 @@ begin;
 	setcolor(yellow);   outtextxy(gd+1,gm-1,fish);
 	end;
 	newpointer(6); { TTHand }
-	dawn; on; setbkcolor(1); repeat check until (mpress>0) or keypressed;
+	dawn;
+	CursorMan.showMouse(true);
+	setbkcolor(1); repeat check until (mpress>0) or keypressed;
 	while keypressed do r:=readkey; setbkcolor(0); settextjustify(0,0);
 	dusk; dawn;
 	copy02;

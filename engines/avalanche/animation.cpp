@@ -103,7 +103,7 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	}
 	_animCount++;
 
-	// on;
+	CursorMan.showMouse(true);
 	_x = 0;
 	_y = 0;
 	_quick = true;
@@ -1051,13 +1051,13 @@ void Animation::arrowProcs(byte tripnum) {
 #if 0
 			tr[1].done; { Deallocate normal pic of Avvy. }
 
-			off;
+			CursorMan.showMouse(false);
 			for byte fv:=0 to 1 do
 			begin
 			cp:=1-cp;
 			getback;
 			end;
-			on;
+			CursorMan.showMouse(true);
 #endif
 			_vm->_lucerna->gameOver();
 
