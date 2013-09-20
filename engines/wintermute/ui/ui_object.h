@@ -53,7 +53,6 @@ public:
 	virtual void correctSize();
 	void setText(const char *text);
 
-	UITiledImage *_back;
 	UIObject(BaseGame *inGame = nullptr);
 	virtual ~UIObject();
 	void setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam);
@@ -102,6 +101,7 @@ protected:
 	int32 _height;
 	bool _canFocus;
 	bool _parentNotify;
+	UITiledImage *_back;
 };
 
 } // End of namespace Wintermute
