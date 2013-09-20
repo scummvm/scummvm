@@ -44,7 +44,7 @@ public:
 	bool focus();
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
 	bool isFocused();
-	bool _parentNotify;
+
 	DECLARE_PERSISTENT(UIObject, BaseObject)
 	UIObject *_parent;
 	virtual bool display() override { return display(0, 0); }
@@ -101,7 +101,7 @@ protected:
 	int32 _width;
 	int32 _height;
 	bool _canFocus;
-
+	bool _parentNotify;
 };
 
 } // End of namespace Wintermute
