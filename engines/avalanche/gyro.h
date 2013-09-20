@@ -235,20 +235,12 @@ public:
 	};
 
 	static const uint16 kNotes[12];
-
 	static const TuneType kTune;
-
-
 
 	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.
 	// If a scroll comes up, or you leave the room, it's automatically set to zero.
 	byte _interrogation;
-
 	static byte _whereIs[29];
-
-	// Variable static constant for overriding the ability of On to switch pages.
-	// You may know better than On which page to switch to.
-	bool _onCanDoPageSwap;
 
 	// Former DNA structure
 	byte _carryNum; // How many objects you're carrying...

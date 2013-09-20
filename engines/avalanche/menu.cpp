@@ -123,8 +123,6 @@ void MenuItem::displayOption(byte y, bool highlit) {
 
 void MenuItem::display() {
 	CursorMan.showMouse(false);
-	//setactivepage(cp);
-	//setvisualpage(cp);
 	//setfillstyle(1, menu_b);
 	//setcolor(menu_border);
 	_firstlix = true;
@@ -143,12 +141,11 @@ void MenuItem::display() {
 
 	_dr->_vm->_gyro->_defaultLed = 1;
 	_dr->_vm->_gyro->_currentMouse = 177;
-	//mousepage(cp);
+
 	CursorMan.showMouse(true); // 4 = fletch
 }
 
 void MenuItem::wipe() {
-	//setactivepage(cp);
 	CursorMan.showMouse(false);
 
 	_dr->drawMenuText(_dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._xpos, 1, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._trigger, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._title, true, false);
@@ -168,11 +165,9 @@ void MenuItem::moveHighlight(int8 inc) {
 			return;
 		_highlightNum = highlightNum;
 	}
-	//setactivepage(cp);
 	CursorMan.showMouse(false);
 	displayOption(_oldY, false);
 	displayOption(_highlightNum, true);
-	//setactivepage(1 - cp);
 	_oldY = _highlightNum;
 	CursorMan.showMouse(true);
 }
@@ -225,8 +220,6 @@ void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, Menu
 }
 
 void MenuBar::draw() {
-	//setactivepage(3);
-
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect(0, 0, 640, 10), _dr->kMenuBackgroundColor);
 
 	byte savecp = _dr->_vm->_gyro->_cp;
@@ -702,7 +695,6 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 		do
 			_vm->updateEvents();
 		while (_vm->_lucerna->_holdLeftMouse);
-
 
 		while (!_vm->shouldQuit()) {
 			do {

@@ -57,7 +57,7 @@ const
 var fv:byte; gd,gm:int16; r:char;
 begin;
 	dusk; delavvy;
-	setactivepage(3); mousepage(3); setvisualpage(3); off;
+	off;
 	cleardevice; setfillstyle(xhatchfill,11);
 	settextstyle(1,0,4); settextjustify(1,1);
 	dplot(320,10,title);
@@ -78,7 +78,7 @@ begin;
 	newpointer(6); { TTHand }
 	dawn; on; setbkcolor(1); repeat check until (mpress>0) or keypressed;
 	while keypressed do r:=readkey; setbkcolor(0); settextjustify(0,0);
-	dusk; setvisualpage(0); setactivepage(0); mousepage(0); dawn;
+	dusk; dawn;
 	copy02;
 #endif
 
@@ -126,11 +126,8 @@ void Pingo::winningPic() {
 	}
 #endif
 
-	warning("STUB: Pingo::winningPic()");
-
 	f.close();
 
-	//setvisualpage(0);
 	warning("STUB: Pingo::winningPic()");
 
 	_vm->_lucerna->dawn();

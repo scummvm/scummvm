@@ -378,14 +378,9 @@ void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 }
 
 void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
-	int16 ex;
-
-	//setvisualpage(cp);
-	//setactivepage(1 - cp);
-	_vm->_gyro->_onCanDoPageSwap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
-
 	int16 lx = 0;
 	int16 ly = (_vm->_gyro->_scrollNum) * 6;
+	int16 ex;
 	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
 		ex = _vm->_gyro->_scroll[i].size() * 8;
 		if (lx < ex)
@@ -489,7 +484,6 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	}
 
 	_vm->_gyro->_underScroll = my * 2 + 6; // Multiplying because of the doubled screen height.
-	//setvisualpage(1 - cp);
 	ringBell();
 	//my = getpixel(0, 0);
 	_vm->_gyro->_dropsOk = false;
@@ -499,13 +493,10 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 
 	unDodgem();
 	_vm->_gyro->_dropsOk = true;
-	//setvisualpage(cp);
-	//mousepage(cp);
 	CursorMan.showMouse(false);
 	// mblit(ex-46,ey-6,ex+lx*2+15,ey+ly*2+6,3,0);
 	//mblit((ex - 46) / 8, ey - 6, 1 + (ex + lx * 2 + 15) / 8, ey + ly * 2 + 6, cp, 1 - cp);
 	//blitfix();
-	_vm->_gyro->_onCanDoPageSwap = true; // Normality again.
 	CursorMan.showMouse(true);
 	//settextjustify(0, 0); // sink
 	resetScrollDriver();
@@ -518,15 +509,8 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	Common::Point points[3];
 //	byte *rp1, *rp2; // replace: 1=bubble, 2=pointer
-	int16 xc; // x correction
-
-	//setvisualpage(cp);
-	//setactivepage(1 - cp);
-	_vm->_gyro->_onCanDoPageSwap = false;  // On can now no longer swap pages. So we can do what we want without its interference!
-	//mousepage(1 - cp); // Mousepage
 
 	CursorMan.showMouse(false);
-
 	int16 xl = 0;
 	int16 yl = _vm->_gyro->_scrollNum * 5;
 	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
@@ -539,7 +523,7 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	int16 xw = xl + 18;
 	int16 yw = yl + 7;
 	int16 my = yw * 2 - 2;
-	xc = 0;
+	int16 xc = 0;
 
 	if ((_vm->_gyro->_talkX - xw) < 0)
 		xc = -(_vm->_gyro->_talkX - xw);
@@ -585,9 +569,7 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->_scroll[i], _vm->_gyro->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_gyro->_talkFontColor);
 	}
 
-	//setvisualpage(1 - cp);
 	ringBell();
-	_vm->_gyro->_onCanDoPageSwap = false;
 	CursorMan.showMouse(true);
 	_vm->_gyro->_dropsOk = false;
 
@@ -597,12 +579,13 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	CursorMan.showMouse(false);
 	_vm->_gyro->_dropsOk = true;
 
-	//setvisualpage(cp);
 	CursorMan.showMouse(true); // sink;
-	_vm->_gyro->_onCanDoPageSwap = true;
 	resetScrollDriver();
-	/*if (_vm->_gyro->mpress > 0)
-	_vm->_gyro->after_the_scroll = true;*/
+
+#if 0
+	if (_vm->_gyro->mpress > 0)
+		_vm->_gyro->after_the_scroll = true;
+#endif
 }
 
 bool Scrolls::displayQuestion(Common::String question) {
