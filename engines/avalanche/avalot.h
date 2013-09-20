@@ -42,7 +42,7 @@ public:
 
 	void handleKeyDown(Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
 	void setup();
-	void run(Common::String arg);
+	void runAvalot();
 
 private:
 	AvalancheEngine *_vm;

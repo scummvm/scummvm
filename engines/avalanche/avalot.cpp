@@ -160,7 +160,7 @@ void Avalot::setup() {
 	}
 }
 
-void Avalot::run(Common::String arg) {
+void Avalot::runAvalot() {
 	setup();
 
 	do {

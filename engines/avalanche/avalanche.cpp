@@ -519,63 +519,15 @@ Common::Point AvalancheEngine::getMousePos() {
 	return _eventMan->getMousePos();
 }
 
-// From Bootstrp:
-const char AvalancheEngine::kRuncodes[2][3] = {"et", "Go"};
-
-void AvalancheEngine::bFlightOn() {
-	_storage._skellern = kReset;
-	// setintvec(0x1c, &b_flight);
-}
-
-void AvalancheEngine::getArguments() {
-	// This function should mess around with command line arguments,
-	// but I am not sure if there'll be use of these arguments at all...
-	warning("STUB: getArguments()");
-}
-
-void AvalancheEngine::getSlope() {
-	// Same as get_arguments()
-	warning("STUB: getSlope()");
-}
-
-void AvalancheEngine::callMenu() {
-	warning("STUB: callMenu()");
-}
-
-void AvalancheEngine::runAvalot() {
-	bFlightOn();
-
-	_avalot->run(Common::String(kRuncodes[_firstTime]) + _arguments);
-	// TODO: Check if parameters are ever used (probably not) and eventually remove them.
-	// If there's an error initializing avalot, i'll handle it in there, not here
-
-	_firstTime = false;
-}
-
 Common::Error AvalancheEngine::run() {
 	Common::ErrorCode err = initialize();
 	if (err != Common::kNoError)
 		return err;
 
-	// From bootstrp:
-	_firstTime = true;
-
-	getArguments();
-	getSlope();
-
-	_zoomy = true;
-	// Don't call the menu by default. Might be modified later, if get_slope() gets implemented,
-	// because zoomy's value is given there. Not sure yet what "zoomy" stands for.
-	if (!_zoomy)
-		callMenu();    // Not run when zoomy.
-
 	do {
-		runAvalot();
+		_avalot->runAvalot();
 
 		// Needed for later implementation!!! Don't remove these comments!!!
-
-		//if (dosexitcode != 77)  quit(); // Didn't stop for us.
-
 		//switch (_storage._operation) {
 		//case kRunShootemup:
 		//	run("seu.avx", kJsb, kBflight, kNormal);
@@ -600,6 +552,11 @@ Common::Error AvalancheEngine::run() {
 void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
 	warning("STUB: run(%s)", what.c_str());
 	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
+}
+
+void AvalancheEngine::bFlightOn() {
+	_storage._skellern = kReset;
+	// setintvec(0x1c, &b_flight);
 }
 
 void AvalancheEngine::bFlightOff() {
