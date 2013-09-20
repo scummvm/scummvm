@@ -122,28 +122,18 @@ private:
 	AvalancheConsole *_console;
 	Common::Platform _platform;
 
-	static const int16 kRunShootemup = 1, kRunDosshell = 2, kRunGhostroom = 3, kRunGolden = 4;
-	static const char kRuncodes[2][3];
-	static const int16 kReset = 0;
-	static const bool kJsb = true, kNoJsb = false, kBflight = true, kNoBflight = false;
-
+#if 0
 	struct {
 		byte _operation;
 		uint16 _skellern;
 		byte _contents[1000];
 	} _storage;
 
-	Common::String _arguments;
-	bool _firstTime;
-	bool _zoomy;
+	static const int16 kRunShootemup = 1, kRunDosshell = 2, kRunGhostroom = 3, kRunGolden = 4;
+	static const int16 kReset = 0;
 
-	void bFlightOn();
-	void getArguments();
-	void getSlope();
-	void callMenu();
-	void runAvalot();
+	static const bool kJsb = true, kNoJsb = false, kBflight = true, kNoBflight = false;
 
-#if 0
 	// From bootstrp:
 	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
 
@@ -152,8 +142,10 @@ private:
 	byte *_old1c;
 	Common::String _segofs;
 	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
+	bool _zoomy;
 
 	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
+	void bFlightOn();
 	void bFlightOff();
 	Common::String elmToStr(Elm how);
 	bool keyPressed();
