@@ -182,10 +182,12 @@ bool AdResponseBox::createButtons() {
 					btn->putFont(_responses[i]->getFont());
 				}
 
-				btn->setWidth(_responseArea.right - _responseArea.left);
-				if (btn->getWidth() <= 0) {
-					// TODO: This is not very pretty. Should do it at setWidth level, heh?
+				int width = _responseArea.right - _responseArea.left;
+
+				if (width <= 0) {
 					btn->setWidth(_gameRef->_renderer->getWidth());
+				} else {
+					btn->setWidth(width);
 				}
 			}
 			btn->setName("response");

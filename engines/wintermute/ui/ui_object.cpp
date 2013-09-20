@@ -657,14 +657,12 @@ int32 UIObject::getHeight() {
 }
 
 void UIObject::setWidth(int32 width) {
-	// assert (width >= 0);
-	// This would be ideal, but ATM must be failing pretty much everywhere.
+	assert (width >= 0);
 	_width = width;
 }
 
 void UIObject::setHeight(int32 height) {
-	// assert (height >= 0);
-	// This would be ideal, but ATM must be failing pretty much everywhere.
+	assert (height >= 0);
 	_height = height;
 }
 
