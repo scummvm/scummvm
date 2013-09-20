@@ -648,11 +648,11 @@ bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 
-int32 UIObject::getWidth() {
+int32 UIObject::getWidth() const {
 	return _width;
 }
 
-int32 UIObject::getHeight() {
+int32 UIObject::getHeight() const {
 	return _height;
 }
 
@@ -698,7 +698,7 @@ void UIObject::setSharedImages(bool shared) {
 	_sharedImages = shared;
 }
 
-BaseSprite *UIObject::getImage() {
+BaseSprite *UIObject::getImage() const {
 	return _image;
 }
 
@@ -714,11 +714,11 @@ void UIObject::setFont(BaseFont *font) {
 	_font = font;
 }
 
-BaseFont *UIObject::getFont() {
+BaseFont *UIObject::getFont() const {
 	return _font;
 }
 
-BaseScriptHolder *UIObject::getListener() {
+BaseScriptHolder *UIObject::getListener() const {
 	return _listenerObject;
 }
 

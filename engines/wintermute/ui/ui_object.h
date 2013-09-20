@@ -56,7 +56,7 @@ public:
 	UIObject(BaseGame *inGame = nullptr);
 	virtual ~UIObject();
 	void setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam);
-	BaseScriptHolder *getListener();
+	BaseScriptHolder *getListener() const;
 
 	UIObject *_focusedWidget;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
@@ -68,8 +68,8 @@ public:
 	virtual const char *scToString() override;
 	TUIObjectType _type;
 
-	int32 getWidth();
-	int32 getHeight();
+	int32 getWidth() const;
+	int32 getHeight() const;
 	void setHeight(int32 height);
 	void setWidth(int32 width);
 	bool isDisabled();
@@ -80,10 +80,10 @@ public:
 	void setSharedFonts(bool shared);
 	bool hasSharedImages();
 	void setSharedImages(bool shared);
-	BaseSprite *getImage();
+	BaseSprite *getImage() const;
 	void setImage(BaseSprite *image);
 	void setFont(BaseFont *font);
-	BaseFont *getFont();
+	BaseFont *getFont() const;
 	bool canFocus();
 
 protected:
