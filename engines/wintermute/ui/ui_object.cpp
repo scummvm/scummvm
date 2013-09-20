@@ -702,7 +702,7 @@ BaseSprite *UIObject::getImage() {
 	return _image;
 }
 
-void UIObject::putImage(BaseSprite *image) {
+void UIObject::setImage(BaseSprite *image) {
 	_image = image;
 }
 
@@ -710,7 +710,7 @@ bool UIObject::canFocus() {
 	return _canFocus;
 }
 
-void UIObject::putFont(BaseFont *font) {
+void UIObject::setFont(BaseFont *font) {
 	_font = font;
 }
 

@@ -121,12 +121,12 @@ void AdResponseBox::clearButtons() {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::invalidateButtons() {
 	for (uint32 i = 0; i < _respButtons.size(); i++) {
-		_respButtons[i]->putImage(nullptr);
-		_respButtons[i]->putFont(nullptr);
+		_respButtons[i]->setImage(nullptr);
+		_respButtons[i]->setFont(nullptr);
 		_respButtons[i]->setText("");
 		_respButtons[i]->_cursor = nullptr;
-		_respButtons[i]->putFontHover(nullptr);
-		_respButtons[i]->putFontPress(nullptr);
+		_respButtons[i]->setFontHover(nullptr);
+		_respButtons[i]->setFontPress(nullptr);
 	}
 	return STATUS_OK;
 }
@@ -146,12 +146,12 @@ bool AdResponseBox::createButtons() {
 			btn->_sharedCursors = true;
 			// iconic
 			if (_responses[i]->getIcon()) {
-				btn->putImage(_responses[i]->getIcon());
+				btn->setImage(_responses[i]->getIcon());
 				if (_responses[i]->getIconHover()) {
-					btn->putImageHover(_responses[i]->getIconHover());
+					btn->setImageHover(_responses[i]->getIconHover());
 				}
 				if (_responses[i]->getIconPressed()) {
-					btn->putImagePress(_responses[i]->getIconPressed());
+					btn->setImagePress(_responses[i]->getIconPressed());
 				}
 
 				btn->setCaption(_responses[i]->getText());
@@ -165,21 +165,21 @@ bool AdResponseBox::createButtons() {
 			else {
 				btn->setText(_responses[i]->getText());
 				if (_font == nullptr) {
-					btn->putFont(_gameRef->getSystemFont());
+					btn->setFont(_gameRef->getSystemFont());
 				} else {
-					btn->putFont(_font);
+					btn->setFont(_font);
 				}
-				btn->putFontHover((_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover);
-				btn->putFontPress(btn->getFontHover());
+				btn->setFontHover((_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover);
+				btn->setFontPress(btn->getFontHover());
 				btn->setTextAlign(_align);
 
 				if (_gameRef->_touchInterface) {
-					btn->putFontHover(btn->getFont());
+					btn->setFontHover(btn->getFont());
 				}
 
 
 				if (_responses[i]->getFont()) {
-					btn->putFont(_responses[i]->getFont());
+					btn->setFont(_responses[i]->getFont());
 				}
 
 				int width = _responseArea.right - _responseArea.left;

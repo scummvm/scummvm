@@ -1206,7 +1206,7 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-void UIButton::putFontHover(BaseFont *font) {
+void UIButton::setFontHover(BaseFont *font) {
 	_fontHover = font;
 }
 
@@ -1214,15 +1214,15 @@ BaseFont *UIButton::getFontHover() {
 	return _fontHover;
 }
 
-void UIButton::putFontPress(BaseFont *font) {
+void UIButton::setFontPress(BaseFont *font) {
 	_fontPress = font;
 }
 
-void UIButton::putImageHover(BaseSprite *sprite) {
+void UIButton::setImageHover(BaseSprite *sprite) {
 	_imageHover = sprite;
 }
 
-void UIButton::putImagePress(BaseSprite *sprite) {
+void UIButton::setImagePress(BaseSprite *sprite) {
 	_imagePress = sprite;
 }
 

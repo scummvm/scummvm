@@ -81,8 +81,8 @@ public:
 	bool hasSharedImages();
 	void setSharedImages(bool shared);
 	BaseSprite *getImage();
-	void putImage(BaseSprite *image);
-	void putFont(BaseFont *font);
+	void setImage(BaseSprite *image);
+	void setFont(BaseFont *font);
 	BaseFont *getFont();
 	bool canFocus();
 

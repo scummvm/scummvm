@@ -58,14 +58,14 @@ public:
 	virtual const char *scToString() override;
 
 	
-	void putFontHover(BaseFont *font);
+	void setFontHover(BaseFont *font);
 	BaseFont *getFontHover();
-	void putFontPress(BaseFont *font);
+	void setFontPress(BaseFont *font);
 	
 	void setTextAlign(TTextAlign align);
 
-	void putImageHover(BaseSprite *sprite);
-	void putImagePress(BaseSprite *sprite);
+	void setImageHover(BaseSprite *sprite);
+	void setImagePress(BaseSprite *sprite);
 
 private:
 	bool _pixelPerfect;
