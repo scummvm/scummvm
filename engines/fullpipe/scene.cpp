@@ -72,6 +72,7 @@ SceneTag::SceneTag() {
 	_field_4 = 0;
 	_scene = 0;
 	_tag = 0;
+	_sceneId = 0;
 }
 
 bool SceneTag::load(MfcArchive &file) {
