@@ -204,44 +204,18 @@ void MidiParser::onTimer() {
 			return;
 		}
 
-		if (info.event == 0xF0) {
-			// SysEx event
-			// Check for trailing 0xF7 -- if present, remove it.
-			if (info.ext.data[info.length-1] == 0xF7)
-				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+		if (info.command() == 0x8) {
+			activeNote(info.channel(), info.basic.param1, false);
+		} else if (info.command() == 0x9) {
+			if (info.length > 0)
+				hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
 			else
-				_driver->sysEx(info.ext.data, (uint16)info.length);
-		} else if (info.event == 0xFF) {
-			// META event
-			if (info.ext.type == 0x2F) {
-				// End of Track must be processed by us,
-				// as well as sending it to the output device.
-				if (_autoLoop) {
-					jumpToTick(0);
-					parseNextEvent(_nextEvent);
-				} else {
-					stopPlaying();
-					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
-				}
-				return;
-			} else if (info.ext.type == 0x51) {
-				if (info.length >= 3) {
-					setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
-				}
-			}
-			_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
-		} else {
-			if (info.command() == 0x8) {
-				activeNote(info.channel(), info.basic.param1, false);
-			} else if (info.command() == 0x9) {
-				if (info.length > 0)
-					hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
-				else
-					activeNote(info.channel(), info.basic.param1, true);
-			}
-			sendToDriver(info.event, info.basic.param1, info.basic.param2);
+				activeNote(info.channel(), info.basic.param1, true);
 		}
 
+		bool ret = processEvent(info);
+		if (!ret)
+			return;
 
 		if (!_abortParse) {
 			_position._lastEventTime = eventTime;
@@ -254,6 +228,41 @@ void MidiParser::onTimer() {
 		_position._playTick = (_position._playTime - _position._lastEventTime) / _psecPerTick + _position._lastEventTick;
 	}
 }
+
+bool MidiParser::processEvent(const EventInfo &info) {
+	if (info.event == 0xF0) {
+		// SysEx event
+		// Check for trailing 0xF7 -- if present, remove it.
+		if (info.ext.data[info.length-1] == 0xF7)
+			_driver->sysEx(info.ext.data, (uint16)info.length-1);
+		else
+			_driver->sysEx(info.ext.data, (uint16)info.length);
+	} else if (info.event == 0xFF) {
+		// META event
+		if (info.ext.type == 0x2F) {
+			// End of Track must be processed by us,
+			// as well as sending it to the output device.
+			if (_autoLoop) {
+				jumpToTick(0);
+				parseNextEvent(_nextEvent);
+			} else {
+				stopPlaying();
+				_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+			}
+			return false;
+		} else if (info.ext.type == 0x51) {
+			if (info.length >= 3) {
+				setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
+			}
+		}
+		_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+	} else {
+		sendToDriver(info.event, info.basic.param1, info.basic.param2);
+	}
+
+	return true;
+}
+
 
 void MidiParser::allNotesOff() {
 	if (!_driver)
