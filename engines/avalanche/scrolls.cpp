@@ -151,12 +151,7 @@ void Scrolls::scrollModeNormal() {
 
 //#ifdef RECORD slowdown(); basher::count += 1; #endif
 
-			if (_vm->_gyro->demo) {
-				if (_vm->_basher->demo_ready())
-					break;
-				if (_vm->_enhanced->keypressede())
-					return;
-			} else if (_vm->_enhanced->keypressede())
+			if (_vm->_enhanced->keypressede())
 				break;
 		} while (!((mrelease > 0) || (buttona1()) || (buttonb1())));
 
