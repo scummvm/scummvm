@@ -30,8 +30,6 @@
 #ifndef AVALANCHE_GYRO2_H
 #define AVALANCHE_GYRO2_H
 
-#include "avalanche/color.h"
-
 #include "common/str.h"
 #include "common/scummsys.h"
 #include "common/file.h"
@@ -40,6 +38,13 @@
 
 namespace Avalanche {
 class AvalancheEngine;
+
+enum Color {
+	kColorBlack,      kColorBlue,      kColorGreen,     kColorCyan,         kColorRed,
+	kColorMagenta,    kColorBrown,     kColorLightgray, kColorDarkgray,     kColorLightblue,
+	kColorLightgreen, kColorLightcyan, kColorLightred,  kColorLightmagenta, kColorYellow,
+	kColorWhite
+};
 
 // CHECKME: kRoomBossKey is a guess
 enum Room {
