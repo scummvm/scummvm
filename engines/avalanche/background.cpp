@@ -32,7 +32,6 @@
 #include "avalanche/animation.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/gyro.h"
-#include "avalanche/roomnums.h"
 
 #include "common/textconsole.h"
 
