@@ -37,7 +37,6 @@
 #include "avalanche/pingo.h"
 #include "avalanche/sequence.h"
 #include "avalanche/acci.h"
-#include "avalanche/roomnums.h"
 
 #include "common/rect.h"
 #include "common/system.h"
