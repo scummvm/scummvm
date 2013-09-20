@@ -213,14 +213,13 @@ void MidiParser::onTimer() {
 				activeNote(info.channel(), info.basic.param1, true);
 		}
 
-		bool ret = processEvent(info);
-		if (!ret)
-			return;
+		processEvent(info);
 
-		if (!_abortParse) {
-			_position._lastEventTime = eventTime;
-			parseNextEvent(_nextEvent);
-		}
+		if (_abortParse)
+			break;
+
+		_position._lastEventTime = eventTime;
+		parseNextEvent(_nextEvent);
 	}
 
 	if (!_abortParse) {
@@ -229,7 +228,7 @@ void MidiParser::onTimer() {
 	}
 }
 
-bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
+void MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 	if (info.event == 0xF0) {
 		// SysEx event
 		// Check for trailing 0xF7 -- if present, remove it.
@@ -252,7 +251,8 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 				if (fireEvents)
 					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
 			}
-			return false;
+			_abortParse = true;
+			return;
 		} else if (info.ext.type == 0x51) {
 			if (info.length >= 3) {
 				setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
@@ -264,8 +264,6 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 		if (fireEvents)
 			sendToDriver(info.event, info.basic.param1, info.basic.param2);
 	}
-
-	return true;
 }
 
 
