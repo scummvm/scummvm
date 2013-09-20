@@ -1218,4 +1218,12 @@ void UIButton::putFontPress(BaseFont *font) {
 	_fontPress = font;
 }
 
+void UIButton::putImageHover(BaseSprite *sprite) {
+	_imageHover = sprite;
+}
+
+void UIButton::putImagePress(BaseSprite *sprite) {
+	_imagePress = sprite;
+}
+
 } // End of namespace Wintermute

@@ -58,15 +58,14 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
 
-	BaseSprite *_imageHover;
-	BaseSprite *_imagePress;
-	BaseSprite *_imageDisable;
-	BaseSprite *_imageFocus;
 	TTextAlign _align;
 	
 	void putFontHover(BaseFont *font);
 	BaseFont *getFontHover();
 	void putFontPress(BaseFont *font);
+	
+	void putImageHover(BaseSprite *sprite);
+	void putImagePress(BaseSprite *sprite);
 
 private:
 	bool _pixelPerfect;
@@ -83,6 +82,11 @@ private:
 	BaseFont *_fontPress;
 	BaseFont *_fontHover;
 	BaseFont *_fontFocus;
+	BaseSprite *_imageHover;
+	BaseSprite *_imagePress;
+	BaseSprite *_imageDisable;
+	BaseSprite *_imageFocus;
+
 };
 
 } // End of namespace Wintermute

@@ -148,10 +148,10 @@ bool AdResponseBox::createButtons() {
 			if (_responses[i]->getIcon()) {
 				btn->putImage(_responses[i]->getIcon());
 				if (_responses[i]->getIconHover()) {
-					btn->_imageHover = _responses[i]->getIconHover();
+					btn->putImageHover(_responses[i]->getIconHover());
 				}
 				if (_responses[i]->getIconPressed()) {
-					btn->_imagePress = _responses[i]->getIconPressed();
+					btn->putImagePress(_responses[i]->getIconPressed());
 				}
 
 				btn->setCaption(_responses[i]->getText());
