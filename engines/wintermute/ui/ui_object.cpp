@@ -648,4 +648,77 @@ bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 
+int32 UIObject::getWidth() {
+	return _width;
+}
+
+int32 UIObject::getHeight() {
+	return _height;
+}
+
+void UIObject::setWidth(int32 width) {
+	// assert (width >= 0);
+	// This would be ideal, but ATM must be failing pretty much everywhere.
+	_width = width;
+}
+
+void UIObject::setHeight(int32 height) {
+	// assert (height >= 0);
+	// This would be ideal, but ATM must be failing pretty much everywhere.
+	_height = height;
+}
+
+bool UIObject::isDisabled() {
+	return _disable;
+} 
+
+bool UIObject::isVisible() {
+	return _visible;
+}
+
+void UIObject::setVisible(bool visible) {
+	_visible = visible;
+}
+
+void UIObject::setDisabled(bool disable) {
+	_disable = disable;
+}
+
+bool UIObject::hasSharedFonts() {
+	return _sharedFonts;
+}
+
+void UIObject::setSharedFonts(bool shared) {
+	_sharedFonts = shared;
+}
+
+bool UIObject::hasSharedImages() {
+	return _sharedImages;
+}
+
+void UIObject::setSharedImages(bool shared) {
+	_sharedImages = shared;
+}
+
+BaseSprite *UIObject::getImage() {
+	return _image;
+}
+
+void UIObject::putImage(BaseSprite *image) {
+	_image = image;
+}
+
+bool UIObject::canFocus() {
+	return _canFocus;
+}
+
+void UIObject::putFont(BaseFont *font) {
+	_font = font;
+}
+
+BaseFont *UIObject::getFont() {
+	return _font;
+}
+
+
 } // End of namespace Wintermute

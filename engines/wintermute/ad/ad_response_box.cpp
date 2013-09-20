@@ -121,12 +121,12 @@ void AdResponseBox::clearButtons() {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::invalidateButtons() {
 	for (uint32 i = 0; i < _respButtons.size(); i++) {
-		_respButtons[i]->_image = nullptr;
+		_respButtons[i]->putImage(nullptr);
+		_respButtons[i]->putFont(nullptr);
+		_respButtons[i]->setText("");
 		_respButtons[i]->_cursor = nullptr;
-		_respButtons[i]->_font = nullptr;
 		_respButtons[i]->_fontHover = nullptr;
 		_respButtons[i]->_fontPress = nullptr;
-		_respButtons[i]->setText("");
 	}
 	return STATUS_OK;
 }
@@ -141,11 +141,12 @@ bool AdResponseBox::createButtons() {
 		UIButton *btn = new UIButton(_gameRef);
 		if (btn) {
 			btn->_parent = _window;
-			btn->_sharedFonts = btn->_sharedImages = true;
+			btn->setSharedFonts(true);
+			btn->setSharedImages(true);
 			btn->_sharedCursors = true;
 			// iconic
 			if (_responses[i]->getIcon()) {
-				btn->_image = _responses[i]->getIcon();
+				btn->putImage(_responses[i]->getIcon());
 				if (_responses[i]->getIconHover()) {
 					btn->_imageHover = _responses[i]->getIconHover();
 				}
@@ -163,23 +164,28 @@ bool AdResponseBox::createButtons() {
 			// textual
 			else {
 				btn->setText(_responses[i]->getText());
-				btn->_font = (_font == nullptr) ? _gameRef->getSystemFont() : _font;
+				if (_font == nullptr) {
+					btn->putFont(_gameRef->getSystemFont());
+				} else {
+					btn->putFont(_font);
+				}
 				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover;
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 
 				if (_gameRef->_touchInterface) {
-					btn->_fontHover = btn->_font;
+					btn->_fontHover = btn->getFont();
 				}
 
 
 				if (_responses[i]->getFont()) {
-					btn->_font = _responses[i]->getFont();
+					btn->putFont(_responses[i]->getFont());
 				}
 
-				btn->_width = _responseArea.right - _responseArea.left;
-				if (btn->_width <= 0) {
-					btn->_width = _gameRef->_renderer->getWidth();
+				btn->setWidth(_responseArea.right - _responseArea.left);
+				if (btn->getWidth() <= 0) {
+					// TODO: This is not very pretty. Should do it at setWidth level, heh?
+					btn->setWidth(_gameRef->_renderer->getWidth());
 				}
 			}
 			btn->setName("response");
@@ -187,17 +193,17 @@ bool AdResponseBox::createButtons() {
 
 			// make the responses touchable
 			if (_gameRef->_touchInterface) {
-				btn->_height = MAX<int32>(btn->_height, 50);
+				btn->setHeight(MAX<int32>(btn->getHeight(), 50));
 			}
 
 			//btn->SetListener(this, btn, _responses[i]->_iD);
 			btn->setListener(this, btn, i);
-			btn->_visible = false;
+			btn->setVisible(false);
 			_respButtons.add(btn);
 
-			if (_responseArea.bottom - _responseArea.top < btn->_height) {
+			if (_responseArea.bottom - _responseArea.top < btn->getHeight()) {
 				_gameRef->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->getText());
-				_responseArea.bottom += (btn->_height - (_responseArea.bottom - _responseArea.top));
+				_responseArea.bottom += (btn->getHeight() - (_responseArea.bottom - _responseArea.top));
 			}
 		}
 	}
@@ -461,7 +467,7 @@ bool AdResponseBox::display() {
 	if (!_horizontal) {
 		int totalHeight = 0;
 		for (i = 0; i < _respButtons.size(); i++) {
-			totalHeight += (_respButtons[i]->_height + _spacing);
+			totalHeight += (_respButtons[i]->getHeight() + _spacing);
 		}
 		totalHeight -= _spacing;
 
@@ -487,22 +493,22 @@ bool AdResponseBox::display() {
 	// prepare response buttons
 	bool scrollNeeded = false;
 	for (i = _scrollOffset; i < _respButtons.size(); i++) {
-		if ((_horizontal && xxx + _respButtons[i]->_width > rect.right)
-		        || (!_horizontal && yyy + _respButtons[i]->_height > rect.bottom)) {
+		if ((_horizontal && xxx + _respButtons[i]->getWidth() > rect.right)
+		        || (!_horizontal && yyy + _respButtons[i]->getHeight() > rect.bottom)) {
 
 			scrollNeeded = true;
-			_respButtons[i]->_visible = false;
+			_respButtons[i]->setVisible(false);
 			break;
 		}
 
-		_respButtons[i]->_visible = true;
+		_respButtons[i]->setVisible(true);
 		_respButtons[i]->_posX = xxx;
 		_respButtons[i]->_posY = yyy;
 
 		if (_horizontal) {
-			xxx += (_respButtons[i]->_width + _spacing);
+			xxx += (_respButtons[i]->getWidth() + _spacing);
 		} else {
-			yyy += (_respButtons[i]->_height + _spacing);
+			yyy += (_respButtons[i]->getHeight() + _spacing);
 		}
 	}
 
@@ -515,8 +521,8 @@ bool AdResponseBox::display() {
 	// go exclusive
 	if (_shieldWindow) {
 		_shieldWindow->_posX = _shieldWindow->_posY = 0;
-		_shieldWindow->_width = _gameRef->_renderer->getWidth();
-		_shieldWindow->_height = _gameRef->_renderer->getHeight();
+		_shieldWindow->setWidth(_gameRef->_renderer->getWidth());
+		_shieldWindow->setHeight(_gameRef->_renderer->getHeight());
 
 		_shieldWindow->display();
 	}

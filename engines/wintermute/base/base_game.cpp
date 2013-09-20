@@ -573,7 +573,7 @@ bool BaseGame::initLoop() {
 
 	_focusedWindow = nullptr;
 	for (int i = _windows.size() - 1; i >= 0; i--) {
-		if (_windows[i]->_visible) {
+		if (_windows[i]->isVisible()) {
 			_focusedWindow = _windows[i];
 			break;
 		}
@@ -3019,10 +3019,10 @@ bool BaseGame::displayWindows(bool inGame) {
 	bool res;
 
 	// did we lose focus? focus topmost window
-	if (_focusedWindow == nullptr || !_focusedWindow->_visible || _focusedWindow->_disable) {
+	if (_focusedWindow == nullptr || !_focusedWindow->isVisible() || _focusedWindow->isDisabled()) {
 		_focusedWindow = nullptr;
 		for (int i = _windows.size() - 1; i >= 0; i--) {
-			if (_windows[i]->_visible && !_windows[i]->_disable) {
+			if (_windows[i]->isVisible() && !_windows[i]->isDisabled()) {
 				_focusedWindow = _windows[i];
 				break;
 			}
@@ -3031,7 +3031,7 @@ bool BaseGame::displayWindows(bool inGame) {
 
 	// display all windows
 	for (uint32 i = 0; i < _windows.size(); i++) {
-		if (_windows[i]->_visible && _windows[i]->getInGame() == inGame) {
+		if (_windows[i]->isVisible() && _windows[i]->getInGame() == inGame) {
 
 			res = _windows[i]->display();
 			if (DID_FAIL(res)) {

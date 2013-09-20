@@ -141,8 +141,8 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		}
 		if (_shieldButton) {
 			_shieldButton->_posX = _shieldButton->_posY = 0;
-			_shieldButton->_width = _gameRef->_renderer->getWidth();
-			_shieldButton->_height = _gameRef->_renderer->getHeight();
+			_shieldButton->setWidth(_gameRef->_renderer->getWidth());
+			_shieldButton->setHeight(_gameRef->_renderer->getHeight());
 
 			_shieldButton->display();
 		}
@@ -170,7 +170,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		_dragFrom.y = _gameRef->_mousePos.y;
 	}
 
-	if (!_focusedWidget || (!_focusedWidget->_canFocus || _focusedWidget->_disable || !_focusedWidget->_visible)) {
+	if (!_focusedWidget || (!_focusedWidget->canFocus() || _focusedWidget->isDisabled() || !_focusedWidget->isVisible())) {
 		moveFocus();
 	}
 
@@ -737,7 +737,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool UIWindow::enableWidget(const char *name, bool enable) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
-			_widgets[i]->_disable = !enable;
+			_widgets[i]->setDisabled(!enable);
 		}
 	}
 	return STATUS_OK;
@@ -748,7 +748,7 @@ bool UIWindow::enableWidget(const char *name, bool enable) {
 bool UIWindow::showWidget(const char *name, bool visible) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
-			_widgets[i]->_visible = visible;
+			_widgets[i]->setVisible(visible);
 		}
 	}
 	return STATUS_OK;
@@ -1309,7 +1309,7 @@ bool UIWindow::moveFocus(bool forward) {
 	bool done = false;
 
 	while (numTries <= (int32)_widgets.size()) {
-		if (_widgets[i] != _focusedWidget && _widgets[i]->_canFocus && _widgets[i]->_visible && !_widgets[i]->_disable) {
+		if (_widgets[i] != _focusedWidget && _widgets[i]->canFocus() && _widgets[i]->isVisible() && !_widgets[i]->isDisabled()) {
 			_focusedWidget = _widgets[i];
 			done = true;
 			break;
@@ -1419,7 +1419,7 @@ void UIWindow::makeFreezable(bool freezable) {
 bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		UIObject *control = _widgets[i];
-		if (control->_disable && interactiveOnly) {
+		if (control->isDisabled() && interactiveOnly) {
 			continue;
 		}
 

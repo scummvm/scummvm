@@ -120,8 +120,8 @@ bool AdInventoryBox::display() {
 
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
-		_closeButton->_width = _gameRef->_renderer->getWidth();
-		_closeButton->_height = _gameRef->_renderer->getHeight();
+		_closeButton->setWidth(_gameRef->_renderer->getWidth());
+		_closeButton->setHeight(_gameRef->_renderer->getHeight());
 
 		_closeButton->display();
 	}
