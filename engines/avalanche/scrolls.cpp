@@ -130,7 +130,8 @@ void Scrolls::scrollModeNormal() {
 		_vm->_graphics->refreshScreen();
 
 		_vm->getEvent(event);
-		if ((event.type == Common::EVENT_LBUTTONUP) ||
+		if (_vm->shouldQuit() || 
+			(event.type == Common::EVENT_LBUTTONUP) ||
 			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE)
 			|| (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH)
 			|| (event.kbd.keycode == Common::KEYCODE_PLUS))))
