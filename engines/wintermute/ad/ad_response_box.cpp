@@ -125,8 +125,8 @@ bool AdResponseBox::invalidateButtons() {
 		_respButtons[i]->putFont(nullptr);
 		_respButtons[i]->setText("");
 		_respButtons[i]->_cursor = nullptr;
-		_respButtons[i]->_fontHover = nullptr;
-		_respButtons[i]->_fontPress = nullptr;
+		_respButtons[i]->putFontHover(nullptr);
+		_respButtons[i]->putFontPress(nullptr);
 	}
 	return STATUS_OK;
 }
@@ -169,12 +169,12 @@ bool AdResponseBox::createButtons() {
 				} else {
 					btn->putFont(_font);
 				}
-				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover;
-				btn->_fontPress = btn->_fontHover;
+				btn->putFontHover((_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover);
+				btn->putFontPress(btn->getFontHover());
 				btn->_align = _align;
 
 				if (_gameRef->_touchInterface) {
-					btn->_fontHover = btn->getFont();
+					btn->putFontHover(btn->getFont());
 				}
 
 
