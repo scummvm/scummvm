@@ -1631,7 +1631,7 @@ void Parser::doThat() {
 		openDoor();
 		break;
 	case kVerbCodePause: { // Note that the original game doesn't care about the "O.K." box neither, it accepts clicks from everywhere on the screen to continue. Just like my code.
-		Common::String tmpStr = Common::String::format("Game paused.%c%c%cPress Enter, Esc, or click the mouse on the \"O.K.\" box to continue.", Dialogs::kControlCenter, Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+		Common::String tmpStr = Common::String::format("Game paused.%c%c%cPress Enter, Esc, or click the mouse on the `O.K.\" box to continue.", Dialogs::kControlCenter, Dialogs::kControlNewLine, Dialogs::kControlNewLine);
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
@@ -2028,7 +2028,6 @@ void Parser::doThat() {
 			break;
 		default: {
 			_vm->_pingo->zonk();
-			// CHECKME: Weird character in string
 			Common::String tmpStr = Common::String::format("A crack of lightning shoots from the sky, and fries you.%c%c(`Such is the anger of the gods, Avvy!\")", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
 			_vm->_dialogs->displayText(tmpStr);
 			_vm->_avalot->gameOver();
