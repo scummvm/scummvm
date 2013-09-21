@@ -77,7 +77,9 @@ void Sequence::startToOpen() {
 }
 
 void Sequence::shoveLeft() {
-	memcpy(_seq, _seq+1, kSeqLength - 1); // Shift everything to the left.
+	for (uint i = 0; i < kSeqLength - 1; i++)
+		_seq[i] = _seq[i + 1];
+	_seq[kSeqLength - 1] = 0;
 }
 
 void Sequence::callSequencer() {
@@ -93,8 +95,7 @@ void Sequence::callSequencer() {
 		break;
 	}
 
-	if ((_seq[0] >= 1) && (_seq[0] <= 176)) {
-		// Show a frame.
+	if (_seq[0] <= 176) { // Show a frame.
 		_vm->_background->drawBackgroundSprite(-1, -1, _seq[0] - 1);
 		shoveLeft();
 	}
