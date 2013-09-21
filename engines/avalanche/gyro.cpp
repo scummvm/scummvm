@@ -32,7 +32,6 @@
 #include "avalanche/pingo.h"
 #include "avalanche/dialogs.h"
 #include "avalanche/lucerna.h"
-#include "avalanche/acci.h"
 #include "avalanche/animation.h"
 
 #include "common/file.h"
@@ -332,10 +331,10 @@ void Gyro::newGame() {
 	avvy->appear(300, 117, Animation::kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
-	_him = Acci::kPardon;
-	_her = Acci::kPardon;
-	_it = Acci::kPardon;
-	_lastPerson = Acci::kPardon; // = Pardon?
+	_him = Parser::kPardon;
+	_her = Parser::kPardon;
+	_it = Parser::kPardon;
+	_lastPerson = Parser::kPardon; // = Pardon?
 	_passwordNum = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
@@ -494,29 +493,29 @@ Common::String Gyro::f5Does() {
 	switch (_room) {
 	case kRoomYours:
 		if (!_avvyIsAwake)
-			return Common::String::format("%cWWake up", Acci::kVerbCodeWake);
+			return Common::String::format("%cWWake up", Parser::kVerbCodeWake);
 		else if (_avvyInBed)
-			return Common::String::format("%cGGet up", Acci::kVerbCodeStand);
+			return Common::String::format("%cGGet up", Parser::kVerbCodeStand);
 		break;
 	case kRoomInsideCardiffCastle:
 		if (_standingOnDais)
-			return Common::String::format("%cCClimb down", Acci::kVerbCodeClimb);
+			return Common::String::format("%cCClimb down", Parser::kVerbCodeClimb);
 		else
-			return Common::String::format("%cCClimb up", Acci::kVerbCodeClimb);
+			return Common::String::format("%cCClimb up", Parser::kVerbCodeClimb);
 		break;
 	case kRoomNottsPub:
 		if (_sittingInPub)
-			return Common::String::format("%cSStand up", Acci::kVerbCodeStand);
+			return Common::String::format("%cSStand up", Parser::kVerbCodeStand);
 		else
-			return Common::String::format("%cSSit down", Acci::kVerbCodeSit);
+			return Common::String::format("%cSSit down", Parser::kVerbCodeSit);
 		break;
 	case kRoomMusicRoom:
 		if (_vm->_animation->inField(5))
-			return Common::String::format("%cPPlay the harp", Acci::kVerbCodePlay);
+			return Common::String::format("%cPPlay the harp", Parser::kVerbCodePlay);
 		break;
 	}
 
-	return Common::String::format("%c", _vm->_acci->kPardon); // If all else fails...
+	return Common::String::format("%c", _vm->_parser->kPardon); // If all else fails...
 }
 
 void Gyro::loadMouse(byte which) {

@@ -32,7 +32,6 @@
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
-#include "avalanche/acci.h"
 #include "avalanche/timer.h"
 
 #include "common/textconsole.h"
@@ -726,8 +725,8 @@ void Dialogs::callDialogDriver() {
 					displayText(displayMoney() + kControlToBuffer); // Insert cash balance. (Recursion)
 					break;
 				case 2: {
-					int pwdId = _vm->_acci->kFirstPassword + _vm->_gyro->_passwordNum;
-					displayText(_vm->_acci->_vocabulary[pwdId]._word + kControlToBuffer);
+					int pwdId = _vm->_parser->kFirstPassword + _vm->_gyro->_passwordNum;
+					displayText(_vm->_parser->_vocabulary[pwdId]._word + kControlToBuffer);
 					}
 					break;
 				case 3:
@@ -750,12 +749,12 @@ void Dialogs::callDialogDriver() {
 				case 10:
 					switch (_vm->_gyro->_boxContent) {
 					case 0: // Sixpence.
-						_vm->_dialogs->displayScrollChain('q', 37); // You find the sixpence.
+						displayScrollChain('q', 37); // You find the sixpence.
 						_vm->_gyro->_money += 6;
-						_vm->_gyro->_boxContent = _vm->_acci->kNothing;
+						_vm->_gyro->_boxContent = _vm->_parser->kNothing;
 						_vm->_lucerna->incScore(2);
 						return;
-					case Acci::kNothing:
+					case Parser::kNothing:
 						displayText("nothing at all. It's completely empty.");
 						break;
 					default:
@@ -889,7 +888,7 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
 	if (error) {
 		if (report) {
 			Common::String todisplay = Common::String::format("%cError accessing scroll %c%d", Dialogs::kControlBell, block, point);
-			_vm->_dialogs->displayText(todisplay);
+			displayText(todisplay);
 		}
 		return;
 	}
@@ -907,7 +906,7 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
 	if (bubbling)
 		doTheBubble();
 
-	_vm->_dialogs->callDialogDriver();
+	callDialogDriver();
 }
 
 /**
@@ -952,13 +951,13 @@ void Dialogs::speak(byte who, byte subject) {
 	unSkrimble();
 	doTheBubble();
 
-	_vm->_dialogs->callDialogDriver();
+	callDialogDriver();
 	_noError = true;
 }
 
 void Dialogs::talkTo(byte whom) {
-	if (_vm->_acci->_person == _vm->_acci->kPardon) {
-		_vm->_acci->_person = _vm->_gyro->_subjectNum;
+	if (_vm->_parser->_person == _vm->_parser->kPardon) {
+		_vm->_parser->_person = _vm->_gyro->_subjectNum;
 		_vm->_gyro->_subjectNum = 0;
 	}
 
@@ -979,7 +978,7 @@ void Dialogs::talkTo(byte whom) {
 				case 2: {
 					Common::String objStr = _vm->_gyro->getItem(Gyro::kSpludwicksOrder[_vm->_gyro->_givenToSpludwick]);
 					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", objStr.c_str(), Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
-					_vm->_dialogs->displayText(tmpStr);
+					displayText(tmpStr);
 					}
 					return;
 				case 3:
@@ -1053,7 +1052,7 @@ void Dialogs::talkTo(byte whom) {
 	for (int i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
 			Common::String tmpStr = Common::String::format("%c%c%c", Dialogs::kControlRegister, i + 49, Dialogs::kControlToBuffer);
-			_vm->_dialogs->displayText(tmpStr);
+			displayText(tmpStr);
 			noMatches = false;
 			break;
 		}
@@ -1061,7 +1060,7 @@ void Dialogs::talkTo(byte whom) {
 
 	if (noMatches) {
 		Common::String tmpStr = Common::String::format("%c%c%c", Dialogs::kControlRegister, Dialogs::kControlRegister, Dialogs::kControlToBuffer);
-		_vm->_dialogs->displayText(tmpStr);
+		displayText(tmpStr);
 	}
 
 	speak(whom, _vm->_gyro->_subjectNum);

@@ -32,7 +32,6 @@
 #include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
 #include "avalanche/dialogs.h"
-#include "avalanche/acci.h"
 #include "avalanche/sequence.h"
 #include "avalanche/pingo.h"
 
@@ -513,7 +512,7 @@ void Timer::buyDrinks() {
 	_vm->_dialogs->displayScrollChain('D', 1); // That'll be thruppence.
 	if (_vm->_gyro->decreaseMoney(3)) // Pay 3d.
 		_vm->_dialogs->displayScrollChain('D', 3); // Tell 'em you paid up.
-	_vm->_acci->drink();
+	_vm->_parser->drink();
 }
 
 void Timer::buyWine() {
@@ -660,7 +659,7 @@ void Timer::winning() {
 #endif
 	// TODO: To be implemented with Pingo::winningPic().
 
-	_vm->_lucerna->callVerb(Acci::kVerbCodeScore);
+	_vm->_lucerna->callVerb(Parser::kVerbCodeScore);
 	_vm->_dialogs->displayText(" T H E    E N D ");
 	_vm->_gyro->_letMeOut = true;
 }

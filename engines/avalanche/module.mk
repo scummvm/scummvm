@@ -1,7 +1,6 @@
 MODULE := engines/avalanche
 
 MODULE_OBJS = \
-	acci.o \
 	animation.o \
 	avalanche.o \
 	avalot.o \

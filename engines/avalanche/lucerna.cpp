@@ -36,7 +36,6 @@
 #include "avalanche/background.h"
 #include "avalanche/pingo.h"
 #include "avalanche/sequence.h"
-#include "avalanche/acci.h"
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -144,16 +143,16 @@ void Lucerna::init() {
  * @remarks	Originally called 'callverb'
  */
 void Lucerna::callVerb(byte id) {
-	if (id == _vm->_acci->kPardon) {
+	if (id == _vm->_parser->kPardon) {
 		Common::String tmpStr = Common::String::format("The f5 key lets you do a particular action in certain " \
 			"situations. However, at the moment there is nothing assigned to it. You may press alt-A to see " \
 			"what the current setting of this key is.");
 		_vm->_dialogs->displayText(tmpStr);
 	} else {
 		_vm->_gyro->_weirdWord = false;
-		_vm->_acci->_polite = true;
-		_vm->_acci->_verb = id;
-		_vm->_acci->doThat();
+		_vm->_parser->_polite = true;
+		_vm->_parser->_verb = id;
+		_vm->_parser->doThat();
 	}
 }
 
@@ -1094,20 +1093,20 @@ void Lucerna::checkClick() {
 				} while (_holdLeftMouse);
 
 				if (_vm->_gyro->_thinkThing) {
-					_vm->_acci->_thing = _vm->_gyro->_thinks;
-					_vm->_acci->_thing += 49;
-					_vm->_acci->_person = _vm->_acci->kPardon;
+					_vm->_parser->_thing = _vm->_gyro->_thinks;
+					_vm->_parser->_thing += 49;
+					_vm->_parser->_person = _vm->_parser->kPardon;
 				} else {
-					_vm->_acci->_person = _vm->_gyro->_thinks;
-					_vm->_acci->_thing = _vm->_acci->kPardon;
+					_vm->_parser->_person = _vm->_gyro->_thinks;
+					_vm->_parser->_thing = _vm->_parser->kPardon;
 				}
-				callVerb(Acci::kVerbCodeExam);
+				callVerb(Parser::kVerbCodeExam);
 			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
 				do {
 					_vm->updateEvents();
 				} while (_holdLeftMouse);
 
-				callVerb(Acci::kVerbCodeScore);
+				callVerb(Parser::kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
 				_vm->_animation->_sprites[0]._speedX = _vm->_gyro->kWalk;
 				_vm->_animation->updateSpeed();
