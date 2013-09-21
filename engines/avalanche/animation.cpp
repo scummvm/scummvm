@@ -197,11 +197,11 @@ void AnimationType::walk() {
 			return;
 		}
 
-		byte tc = _anim->checkFeet(_x, _x + _info._xLength, _oldY[_anim->_vm->_gyro->_cp], _y, _info._yLength) - 1;
+		byte magicColor = _anim->checkFeet(_x, _x + _info._xLength, _oldY[_anim->_vm->_gyro->_cp], _y, _info._yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
-		if ((tc != 255) & (!_anim->_vm->_gyro->_doingSpriteRun)) {
-			MagicType *magic = &_anim->_vm->_gyro->_magics[tc];
+		if ((magicColor != 255) & (!_anim->_vm->_gyro->_doingSpriteRun)) {
+			MagicType *magic = &_anim->_vm->_gyro->_magics[magicColor];
 			switch (magic->_operation) {
 			case Gyro::kMagicExclaim:
 				bounce();
@@ -224,7 +224,7 @@ void AnimationType::walk() {
 				_anim->callSpecial(magic->_data);
 				break;
 			case Gyro::kMagicOpenDoor:
-				_anim->openDoor(magic->_data >> 8, magic->_data & 0xff, tc);
+				_anim->openDoor(magic->_data >> 8, magic->_data & 0xff, magicColor);
 				break;
 			}
 		}
@@ -370,8 +370,7 @@ void Animation::loadAnims() {
 }
 
 byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
-	// if not alive then begin checkfeet:=0; exit; end;
-	byte a = 0;
+	byte returnColor = 0;
 
 	if (x1 < 0)
 		x1 = 0;
@@ -380,22 +379,22 @@ byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 	if (oy < y) {
 		for (int16 i = x1; i <= x2; i++) {
 			for (int16 j = oy + yl; j <= y + yl; j++) {
-				byte c = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
-				if (c > a)
-					a = c;
+				byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
+				if (actColor > returnColor)
+					returnColor = actColor;
 			}
 		}
 	} else {
 		for (int16 i = x1; i <= x2; i++) {
 			for (int16 j = y + yl; j <= oy + yl; j++) {
-				byte c = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
-				if (c > a)
-					a = c;
+				byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
+				if (actColor > returnColor)
+					returnColor = actColor;
 			}
 		}
 	}
 
-	return a;
+	return returnColor;
 }
 
 byte Animation::geidaPed(byte which) {
@@ -421,9 +420,6 @@ void Animation::catacombMove(byte ped) {
 
 	// XY_uint16 is cat_x+cat_y*256. Thus, every room in the
 	// catacombs has a different number for it.
-
-
-
 	xy_uint16 = _vm->_gyro->_catacombX + _vm->_gyro->_catacombY * 256;
 	_vm->_gyro->_geidaSpin = 0;
 
@@ -571,8 +567,6 @@ void Animation::catacombMove(byte ped) {
 		_vm->_gyro->_portals[6]._operation = Gyro::kMagicNothing; // Door.
 		break;
 	}
-
-	/*  ---- */
 
 	switch ((here & 0xf00) >> 8) { // South
 	case 0: // No connection.
@@ -993,7 +987,6 @@ void Animation::appearPed(byte sprNum, byte pedNum) {
 	changeDirection(sprNum, curPed->_direction);
 }
 
-// Eachstep procedures:
 void Animation::followAvalotY(byte tripnum) {
 	if (_sprites[0]._facingDir == kDirLeft)
 		return;
@@ -1048,17 +1041,7 @@ void Animation::arrowProcs(byte tripnum) {
 			_sprites[1]._callEachStepFl = false; // prevent recursion.
 			_vm->_scrolls->displayScrollChain('Q', 47); // Complaint!
 			_sprites[tripnum].remove(); // Deallocate the arrow.
-#if 0
-			tr[1].done; { Deallocate normal pic of Avvy. }
 
-			CursorMan.showMouse(false);
-			for byte fv:=0 to 1 do
-			begin
-			cp:=1-cp;
-			getback;
-			end;
-			CursorMan.showMouse(true);
-#endif
 			_vm->_lucerna->gameOver();
 
 			_vm->_gyro->_userMovesAvvy = false; // Stop the user from moving him.
@@ -1071,22 +1054,6 @@ void Animation::arrowProcs(byte tripnum) {
 	}
 
 }
-
-#if 0
-procedure Spludwick_procs(tripnum:byte);
-var fv:byte;
-begin
-	with tr[tripnum] do
-	if not homing then { We only need to do anything if Spludwick *stops*
-						walking. }
-	with _vm->_gyro->dna do
-	begin
-	inc(DogfoodPos);
-	if DogfoodPos=8 then DogfoodPos:=1;
-	walkto(DogfoodPos);
-	end;
-end;
-#endif
 
 void Animation::grabAvvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
 	int16 tox = _sprites[0]._x + 17;
@@ -1202,7 +1169,6 @@ void Animation::drawSprites() {
 			}
 		}
 	} while (!ok);
-
 
 	_vm->_graphics->refreshBackground();
 
@@ -1436,6 +1402,5 @@ void Animation::handleMoveKey(const Common::Event &event) {
 		}
 	}
 }
-
 
 } // End of namespace Avalanche.
