@@ -267,7 +267,6 @@ Avalot::~Avalot() {
 }
 
 void Avalot::handleKeyDown(Common::Event &event) {
-//	if (keyboardclick)
 	_vm->_sound->click();
 
 	if ((Common::KEYCODE_F1 <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_F15))
@@ -409,8 +408,6 @@ void Avalot::runAvalot() {
 			_vm->_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
 	} while (!_letMeOut && !_vm->shouldQuit());
 
-	//if (logging)
-	//	close(logfile);
 	warning("STUB: Avalot::run()");
 
 	_vm->_closing->exitGame();
@@ -811,22 +808,20 @@ void Avalot::enterRoom(byte room, byte ped) {
 		if (_cwytalotGone) {
 			_magics[kColorLightred - 1]._operation = Avalot::kMagicNothing;
 			_whereIs[Avalot::kPeopleCwytalot - 150] = kRoomNowhere;
-		} else {
-			if (ped > 0) {
-				AnimationType *spr1 = &_vm->_animation->_sprites[1];
-				spr1->init(4, false, _vm->_animation); // 4 = Cwytalot
-				spr1->_callEachStepFl = true;
-				spr1->_eachStepProc = Animation::kProcFollowAvvyY;
-				_whereIs[Avalot::kPeopleCwytalot - 150] = kRoomBrummieRoad;
+		} else if (ped > 0) {
+			AnimationType *spr1 = &_vm->_animation->_sprites[1];
+			spr1->init(4, false, _vm->_animation); // 4 = Cwytalot
+			spr1->_callEachStepFl = true;
+			spr1->_eachStepProc = Animation::kProcFollowAvvyY;
+			_whereIs[Avalot::kPeopleCwytalot - 150] = kRoomBrummieRoad;
 
-				if (_roomCount[kRoomBrummieRoad] == 1) { // First time here...
-					_vm->_animation->appearPed(1, 1); // He appears on the right of the screen...
-					spr1->walkTo(3); // ...and he walks up...
-				} else {
-					// You've been here before.
-					_vm->_animation->appearPed(1, 3); // He's standing in your way straight away...
-					spr1->_facingDir = Animation::kDirLeft;
-				}
+			if (_roomCount[kRoomBrummieRoad] == 1) { // First time here...
+				_vm->_animation->appearPed(1, 1); // He appears on the right of the screen...
+				spr1->walkTo(3); // ...and he walks up...
+			} else {
+				// You've been here before.
+				_vm->_animation->appearPed(1, 3); // He's standing in your way straight away...
+				spr1->_facingDir = Animation::kDirLeft;
 			}
 		}
 		break;
@@ -855,15 +850,13 @@ void Avalot::enterRoom(byte room, byte ped) {
 		break;
 
 	case kRoomRobins:
-		if (ped > 0) {
-			if (!_beenTiedUp) {
-				// A welcome party... or maybe not...
-				AnimationType *spr1 = &_vm->_animation->_sprites[1];
-				spr1->init(6, false, _vm->_animation);
-				_vm->_animation->appearPed(1, 1);
-				spr1->walkTo(2);
-				_vm->_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
-			}
+		if ((ped > 0) && (!_beenTiedUp)) {
+			// A welcome party... or maybe not...
+			AnimationType *spr1 = &_vm->_animation->_sprites[1];
+			spr1->init(6, false, _vm->_animation);
+			_vm->_animation->appearPed(1, 1);
+			spr1->walkTo(2);
+			_vm->_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
 		}
 
 		if (_beenTiedUp) {
@@ -1239,11 +1232,11 @@ void Avalot::incScore(byte num) {
 	for (int i = 1; i <= num; i++) {
 		_dnascore++;
 
-//		if (soundfx) {
+		if (_soundFx) {
 			for (int j = 1; j <= 97; j++)
 				// Length os 2 is a guess, the original doesn't have a delay specified
 				_vm->_sound->playNote(177 + _dnascore * 3, 2);
-//		}
+		}
 	}
 	warning("STUB: Avalot::points()");
 
