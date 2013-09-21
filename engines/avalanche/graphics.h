@@ -86,7 +86,7 @@ public:
 	::Graphics::Surface loadPictureRow(Common::File &file, uint16 width, uint16 height); // Reads Row-planar EGA data.
 
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
-	void drawPicture(::Graphics::Surface &target, ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
+	void drawPicture(::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
 	void refreshScreen();
 	void refreshBackground();
 
