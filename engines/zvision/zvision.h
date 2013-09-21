@@ -131,9 +131,6 @@ public:
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
 
-	void playAnimation(RlfAnimation *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-	void playAnimation(Video::VideoDecoder *animation, uint16 x, uint16 y, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
 
