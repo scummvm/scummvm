@@ -521,11 +521,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 				pSnd->pMidiParser->jumpToTick(0);
 			else {
 				// Fast forward to the last position and perform associated events when loading
-				pSnd->inFastForward = true;
-				// we set this flag, so that the midiparser doesn't set any signals for scripts
-				// if we don't do this, at least accessing the debugger will reset previously set signals
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
-				pSnd->inFastForward = false;
 			}
 
 			// Restore looping and hold
@@ -765,7 +761,6 @@ MusicEntry::MusicEntry() {
 	resourceId = 0;
 
 	isQueued = false;
-	inFastForward = false;
 
 	dataInc = 0;
 	ticker = 0;

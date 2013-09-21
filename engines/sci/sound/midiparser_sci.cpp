@@ -53,11 +53,6 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_masterVolume = 15;
 	_volume = 127;
 
-	_signalSet = false;
-	_signalToSet = 0;
-	_dataincAdd = false;
-	_dataincToAdd = 0;
-	_jumpToHoldTick = false;
 	_resetOnPause = false;
 	_pSnd = 0;
 }
@@ -440,25 +435,6 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-    // Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
-	if (_dataincAdd) {
-		_dataincAdd = false;
-		_pSnd->dataInc += _dataincToAdd;
-		debugC(4, kDebugLevelSound, "datainc %04x", _dataincToAdd);
-	}
-	if (_signalSet) {
-		_signalSet = false;
-		_pSnd->setSignal(_signalToSet);
-
-		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
-	}
-	if (_jumpToHoldTick) {
-		_jumpToHoldTick = false;
-		_pSnd->inFastForward = true;
-		jumpToTick(_loopTick, false, false);
-		_pSnd->inFastForward = false;
-	}
-
 	info.start = _position._playPos;
 	info.delta = 0;
 	while (*_position._playPos == 0xF8) {
@@ -480,33 +456,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0xC:
 		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = 0;
-		if (info.channel() == 0xF) {// SCI special case
-			if (info.basic.param1 != kSetSignalLoop) {
-				// At least in kq5/french&mac the first scene in the intro has
-				// a song that sets signal to 4 immediately on tick 0. Signal
-				// isn't set at that point by sierra sci and it would cause the
-				// castle daventry text to get immediately removed, so we
-				// currently filter it. Sierra SCI ignores them as well at that
-				// time. However, this filtering should only be performed for
-				// SCI1 and newer games. Signalling is done differently in SCI0
-				// though, so ignoring these signals in SCI0 games will result
-				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
-				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
-				// FIXME: SSCI doesn't start playing at the very beginning
-				// of the stream, but at a fixed location a few commands later.
-				// That is probably why this signal isn't triggered
-				// immediately there.
-				if (_soundVersion <= SCI_VERSION_0_LATE ||
-					_position._playTick || info.delta) {
-					if (!_pSnd->inFastForward) {
-						_signalSet = true;
-						_signalToSet = info.basic.param1;
-					}
-				}
-			} else {
-				_loopTick = _position._playTick + info.delta;
-			}
-		}
 		break;
 	case 0xD:
 		info.basic.param1 = *(_position._playPos++);
@@ -516,92 +465,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0xB:
 		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = *(_position._playPos++);
-
-		// Reference for some events:
-		// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
-		// Handle common special events
-		switch (info.basic.param1) {
-		case kSetReverb:
-			if (info.basic.param2 == 127)		// Set global reverb instead
-				_pSnd->reverb = _music->getGlobalReverb();
-			else
-				_pSnd->reverb = info.basic.param2;
-
-			((MidiPlayer *)_driver)->setReverb(_pSnd->reverb);
-			break;
-		default:
-			break;
-		}
-
-		// Handle events sent to the SCI special channel (15)
-		if (info.channel() == 0xF) {
-			switch (info.basic.param1) {
-			case kSetReverb:
-				// Already handled above
-				break;
-			case kMidiHold:
-				// Check if the hold ID marker is the same as the hold ID
-				// marker set for that song by cmdSetSoundHold.
-				// If it is, loop back, but don't stop notes when jumping.
-				// We need to wait for the delta of the current event before
-				// jumping, thus the jump will be performed on the next
-				// parseNextEvent() call, like with the signal set events.
-				// In LSL6, room 360, song 381, this ends up jumping forward
-				// one tick (the hold marker occurs at playtick 27, with
-				// _loopTick being 15 and the event itself having a delta of
-				// 13, total = 28) - bug #3614566.
-				if (info.basic.param2 == _pSnd->hold) {
-					_jumpToHoldTick = true;
-				}
-				break;
-			case kUpdateCue:
-				if (!_pSnd->inFastForward) {
-					_dataincAdd = true;
-					switch (_soundVersion) {
-					case SCI_VERSION_0_EARLY:
-					case SCI_VERSION_0_LATE:
-						_dataincToAdd = info.basic.param2;
-						break;
-					case SCI_VERSION_1_EARLY:
-					case SCI_VERSION_1_LATE:
-					case SCI_VERSION_2_1:
-						_dataincToAdd = 1;
-						break;
-					default:
-						error("unsupported _soundVersion");
-					}
-				}
-				break;
-			case kResetOnPause:
-				_resetOnPause = info.basic.param2;
-				break;
-			// Unhandled SCI commands
-			case 0x46: // LSL3 - binoculars
-			case 0x61: // Iceman (AdLib?)
-			case 0x73: // Hoyle
-			case 0xD1: // KQ4, when riding the unicorn
-				// Obscure SCI commands - ignored
-				break;
-			// Standard MIDI commands
-			case 0x01:	// mod wheel
-			case 0x04:	// foot controller
-			case 0x07:	// channel volume
-			case 0x0A:	// pan
-			case 0x0B:	// expression
-			case 0x40:	// sustain
-			case 0x79:	// reset all
-			case 0x7B:	// notes off
-				// These are all handled by the music driver, so ignore them
-				break;
-			case 0x4B:	// voice mapping
-				// TODO: is any support for this needed at the MIDI parser level?
-				warning("Unhanded SCI MIDI command 0x%x - voice mapping (parameter %d)", info.basic.param1, info.basic.param2);
-				break;
-			default:
-				warning("Unhandled SCI MIDI command 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
-				break;
-			}
-		}
 		info.length = 0;
 		break;
 
@@ -648,37 +511,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			info.length = readVLQ(_position._playPos);
 			info.ext.data = _position._playPos;
 			_position._playPos += info.length;
-			if (info.ext.type == 0x2F) {// end of track reached
-				if (_pSnd->loop)
-					_pSnd->loop--;
-				// QFG3 abuses the hold flag. Its scripts call kDoSoundSetHold,
-				// but sometimes there's no hold marker in the associated songs
-				// (e.g. song 110, during the intro). The original interpreter
-				// treats this case as an infinite loop (bug #3311911).
-				if (_pSnd->loop || _pSnd->hold > 0) {
-					// TODO: this jump is also vulnerable to the same lockup as
-					// the MIDI hold one above. However, we can't perform the
-					// jump on the next tick like with the MIDI hold jump above,
-					// as there aren't any subsequent MIDI events after this one.
-					// This assert is here to detect cases where the song ends
-					// up jumping forward, like with bug #3614566 (see above).
-					// (Exception: delta == 0, in which case the loop points
-					// at the previous event, which is fine.)
-					assert(_loopTick + info.delta < _position._playTick ||
-					       ((_loopTick == _position._playTick && info.delta == 0)));
-
-					uint32 extraDelta = info.delta;
-					_pSnd->inFastForward = true;
-					jumpToTick(_loopTick);
-					_pSnd->inFastForward = false;
-					_nextEvent.delta += extraDelta;
-				} else {
-					_pSnd->status = kSoundStopped;
-					_pSnd->setSignal(SIGNAL_OFFSET);
-
-					debugC(4, kDebugLevelSound, "signal EOT");
-				}
-			}
 			break;
 		default:
 			warning(
@@ -686,6 +518,170 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					info.event);
 		} // // System Common, Meta or SysEx event
 	}// switch (info.command())
+}
+
+void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
+	if (!fireEvents) {
+		// We don't do any processing that should be done while skipping events
+		MidiParser::processEvent(info, fireEvents);
+		return;
+	}
+
+	switch (info.command()) {
+	case 0xC:
+		if (info.channel() == 0xF) {// SCI special case
+			if (info.basic.param1 != kSetSignalLoop) {
+				// At least in kq5/french&mac the first scene in the intro has
+				// a song that sets signal to 4 immediately on tick 0. Signal
+				// isn't set at that point by sierra sci and it would cause the
+				// castle daventry text to get immediately removed, so we
+				// currently filter it. Sierra SCI ignores them as well at that
+				// time. However, this filtering should only be performed for
+				// SCI1 and newer games. Signalling is done differently in SCI0
+				// though, so ignoring these signals in SCI0 games will result
+				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
+				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
+				// FIXME: SSCI doesn't start playing at the very beginning
+				// of the stream, but at a fixed location a few commands later.
+				// That is probably why this signal isn't triggered
+				// immediately there.
+				if (_soundVersion <= SCI_VERSION_0_LATE || _position._playTick) {
+					if (!_jumpingToTick) {
+						_pSnd->setSignal(info.basic.param1);
+						debugC(4, kDebugLevelSound, "signal %04x", info.basic.param1);
+					}
+				}
+			} else {
+				_loopTick = _position._playTick;
+			}
+
+			// Done with this event.
+			return;
+		}
+
+		// Break to let parent handle the rest.
+		break;
+	case 0xB:
+		// Reference for some events:
+		// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
+		// Handle common special events
+		switch (info.basic.param1) {
+		case kSetReverb:
+			if (info.basic.param2 == 127)		// Set global reverb instead
+				_pSnd->reverb = _music->getGlobalReverb();
+			else
+				_pSnd->reverb = info.basic.param2;
+
+			((MidiPlayer *)_driver)->setReverb(_pSnd->reverb);
+			break;
+		default:
+			break;
+		}
+
+		// Handle events sent to the SCI special channel (15)
+		if (info.channel() == 0xF) {
+			switch (info.basic.param1) {
+			case kSetReverb:
+				// Already handled above
+				return;
+			case kMidiHold:
+				// Check if the hold ID marker is the same as the hold ID
+				// marker set for that song by cmdSetSoundHold.
+				// If it is, loop back, but don't stop notes when jumping.
+				if (info.basic.param2 == _pSnd->hold) {
+					jumpToTick(_loopTick, false, false);
+					// Done with this event.
+					return;
+				}
+				return;
+			case kUpdateCue:
+				if (!_jumpingToTick) {
+					int inc;
+					switch (_soundVersion) {
+					case SCI_VERSION_0_EARLY:
+					case SCI_VERSION_0_LATE:
+						inc = info.basic.param2;
+						break;
+					case SCI_VERSION_1_EARLY:
+					case SCI_VERSION_1_LATE:
+					case SCI_VERSION_2_1:
+						inc = 1;
+						break;
+					default:
+						error("unsupported _soundVersion");
+					}
+					_pSnd->dataInc += inc;
+					debugC(4, kDebugLevelSound, "datainc %04x", inc);
+
+				}
+				return;
+			case kResetOnPause:
+				_resetOnPause = info.basic.param2;
+				return;
+			// Unhandled SCI commands
+			case 0x46: // LSL3 - binoculars
+			case 0x61: // Iceman (AdLib?)
+			case 0x73: // Hoyle
+			case 0xD1: // KQ4, when riding the unicorn
+				// Obscure SCI commands - ignored
+				return;
+			// Standard MIDI commands
+			case 0x01:	// mod wheel
+			case 0x04:	// foot controller
+			case 0x07:	// channel volume
+			case 0x0A:	// pan
+			case 0x0B:	// expression
+			case 0x40:	// sustain
+			case 0x79:	// reset all
+			case 0x7B:	// notes off
+				// These are all handled by the music driver, so ignore them
+				break;
+			case 0x4B:	// voice mapping
+				// TODO: is any support for this needed at the MIDI parser level?
+				warning("Unhanded SCI MIDI command 0x%x - voice mapping (parameter %d)", info.basic.param1, info.basic.param2);
+				return;
+			default:
+				warning("Unhandled SCI MIDI command 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
+				return;
+			}
+
+		}
+
+		// Break to let parent handle the rest.
+		break;
+	case 0xF: // META event
+		if (info.ext.type == 0x2F) {// end of track reached
+			if (_pSnd->loop)
+				_pSnd->loop--;
+			// QFG3 abuses the hold flag. Its scripts call kDoSoundSetHold,
+			// but sometimes there's no hold marker in the associated songs
+			// (e.g. song 110, during the intro). The original interpreter
+			// treats this case as an infinite loop (bug #3311911).
+			if (_pSnd->loop || _pSnd->hold > 0) {
+				jumpToTick(_loopTick);
+
+				// Done with this event.
+				return;
+
+			} else {
+				_pSnd->status = kSoundStopped;
+				_pSnd->setSignal(SIGNAL_OFFSET);
+
+				debugC(4, kDebugLevelSound, "signal EOT");
+			}
+		}
+
+		// Break to let parent handle the rest.
+		break;
+
+	default:
+		// Break to let parent handle the rest.
+		break;
+	}
+
+
+	// Let parent handle the rest
+	MidiParser::processEvent(info, fireEvents);
 }
 
 byte MidiParser_SCI::getSongReverb() {
