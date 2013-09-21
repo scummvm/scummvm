@@ -65,12 +65,17 @@ private:
 	const Graphics::PixelFormat _pixelFormat;
 
 	// A buffer the exact same size as the workingWindow
-	// It's used for panorama/tilt warping and for clearing the workingWindow to a single color
+	// This buffer stores everything un-warped, then does a warp at the end of the frame
 	Graphics::Surface _workingWindowBuffer;
+	// A buffer representing the entire screen. Any graphical updates are first done with this buffer
+	// before actually being blitted to the screen
 	Graphics::Surface _backBuffer;
+	// A list of Alpha Entries that need to be blitted to the backbuffer
 	Common::HashMap<uint32, AlphaDataEntry> _alphaDataEntries;
 
+	// A rectangle representing the portion of the working window where the pixels have been changed since last frame
 	Common::Rect _workingWindowDirtyRect;
+	// A rectangle representing the portion of the backbuffer where the pixels have been changed since last frame
 	Common::Rect _backBufferDirtyRect;
 
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
@@ -121,13 +126,61 @@ public:
 	 */
 	void renderBackbufferToScreen();
 
+	/**
+	 * Renders all AlphaEntries to the backbuffer
+	 */
 	void processAlphaEntries();
+	/**
+	 * Clears the AlphaEntry list
+	 */
 	void clearAlphaEntries() { _alphaDataEntries.clear(); }
+	/**
+	 * Removes a specific AlphaEntry from the list
+	 *
+	 * @param idNumber    The id number identifing the AlphaEntry
+	 */
 	void removeAlphaEntry(uint32 idNumber) { _alphaDataEntries.erase(idNumber); }
 
+	/**
+	 * Copies a sub-rectangle of a buffer to the working window
+	 *
+	 * @param buffer        The pixel data to copy to the working window
+	 * @param destX         The X destination in the working window where the subRect of data should be put
+	 * @param destY         The Y destination in the working window where the subRect of data should be put
+	 * @param imageWidth    The width of the source image
+	 * @param width         The width of the sub rectangle
+	 * @param height        The height of the sub rectangle
+	 */
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height);
+	/**
+	 * Copies a sub-rectangle of a buffer to the working window with binary alpha support.
+	 *
+	 * @param buffer        The pixel data to copy to the working window
+	 * @param destX         The X destination in the working window where the subRect of data should be put
+	 * @param destY         The Y destination in the working window where the subRect of data should be put
+	 * @param imageWidth    The width of the source image
+	 * @param width         The width of the sub rectangle
+	 * @param height        The height of the sub rectangle
+	 * @param alphaColor    The color to interpret as meaning 'transparent'
+	 * @param idNumber      A unique identifier for the data being copied over.
+	 */
 	void copyRectToWorkingWindow(const uint16 *buffer, int32 destX, int32 destY, int32 imageWidth, int32 width, int32 height, int16 alphaColor, uint32 idNumber);
 
+	/**
+	 * Renders the supplied text to the working window
+	 *
+	 * @param idNumber     A unique identifier for the text
+	 * @param text         The text to be rendered
+	 * @param font         The font to use to render the text
+	 * @param destX        The X destination in the working window where the text should be rendered
+	 * @param destY        The Y destination in the working window where the text should be rendered
+	 * @param textColor    The color to render the text with (in RBG 565)
+	 * @param maxWidth     The max width the text should take up.
+	 * @param maxHeight    The max height the text should take up.
+	 * @param align        The alignment of the text within the bounds of maxWidth
+	 * @param wrap         If true, any words extending past maxWidth will wrap to a new line. If false, ellipses will be rendered to show that the text didn't fit
+	 * @return             A rectangle representing where the text was drawn in the working window
+	 */
 	Common::Rect renderTextToWorkingWindow(uint32 idNumber, const Common::String &text, TruetypeFont *font, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight = -1, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wrap = true);
 
 	/**
@@ -242,8 +295,29 @@ private:
 	 */
 	void renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap);
 
+	/**
+	 * Reads an image file pixel data into a Surface buffer. In the process
+	 * it converts the pixel data from RGB 555 to RGB 565. Also, if the image
+	 * is transposed, it will un-transpose the pixel data. The function will
+	 * call destination::create() if the dimensions of destination do not match
+	 * up with the dimensions of the image.
+	 *
+	 * @param fileName       The name of a .tga file
+	 * @param destination    A reference to the Surface to store the pixel data in
+	 */
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
 
+	/**
+	 * Move the background image by an offset. If we are currently in Panorama mode,
+	 * the offset will correspond to a horizontal motion. If we are currently in Tilt mode,
+	 * the offset will correspond to a vertical motion. This function should not be called
+	 * if we are in Flat mode. 
+	 *
+	 * The RenderManager will take care of wrapping the image.
+	 * Ex: If the image has width 1400px, it is legal to offset 1500px.
+	 *
+	 * @param offset    The amount to move the background
+	 */
 	void moveBackground(int offset);
 };
 
