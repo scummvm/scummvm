@@ -521,8 +521,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 }
 
 void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
-
-	// TODO: Properly handle fireEvents
+	if (!fireEvents) {
+		// We don't do any processing that should be done while skipping events
+		MidiParser::processEvent(info, fireEvents);
+		return;
+	}
 
 	switch (info.command()) {
 	case 0xC:
