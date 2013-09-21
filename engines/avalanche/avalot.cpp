@@ -641,7 +641,25 @@ void Avalot::loadRoom(byte num) {
 }
 
 void Avalot::zoomOut(int16 x, int16 y) {
-	warning("STUB: Avalot::zoomout()");
+	//setlinestyle(dottedln, 0, 1); TODO: Implement it with a dotted line style!!!
+
+	::Graphics::Surface backup;
+	backup.copyFrom(_vm->_graphics->_surface);
+	
+	for (byte i = 1; i <= 20; i ++) {
+		int16 x1 = x - (x / 20) * i;
+		int16 y1 = y - ((y - 10) / 20) * i;
+		int16 x2 = x + (((639 - x) / 20) * i);
+		int16 y2 = y + (((161 - y) / 20) * i);
+
+		_vm->_graphics->_surface.frameRect(Common::Rect(x1, y1, x2, y2), kColorWhite);
+		_vm->_graphics->refreshScreen();
+		_vm->_system->delayMillis(17);
+		_vm->_graphics->_surface.copyFrom(backup);
+		_vm->_graphics->refreshScreen();
+	}
+
+	backup.free();
 }
 
 void Avalot::findPeople(byte room) {
