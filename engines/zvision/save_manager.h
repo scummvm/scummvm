@@ -56,8 +56,27 @@ private:
 	};
 
 public:
+	/**
+	 * Called every room change. Saves the state of the room just before
+	 * we switched rooms. Uses ZVision::generateAutoSaveFileName() to 
+	 * create the save file name.
+	 */
 	void autoSave();
+	/**
+	 * Copies the data from the last auto-save into a new save file. We
+	 * can't use the current state data because the save menu *IS* a room.
+	 * The file is named using ZVision::generateSaveFileName(slot)
+	 *
+	 * @param slot        The save slot this save pertains to. Must be [1, 20]
+	 * @param saveName    The internal name for this save. This is NOT the name of the actual save file.
+	 */
 	void saveGame(uint slot, const Common::String &saveName);
+	/**
+	 * Loads the state data from the save file that slot references. Uses
+	 * ZVision::generateSaveFileName(slot) to get the save file name.
+	 *
+	 * @param slot    The save slot to load. Must be [1, 20]
+	 */
 	Common::Error loadGame(uint slot);
 
 private:
