@@ -71,7 +71,7 @@ private:
 	SpriteType _sprites[40];
 	ByteField _r;
 	Common::String _filename;
-	static const int16 kOnDisk; // Value of memos[fv].x when it's not in memory.
+	static const int16 kOnDisk; // Value of _sprites[fv]._x when it's not in memory.
 
 	void drawSprite(int16 x, int16 y, SpriteType &sprite);
 };

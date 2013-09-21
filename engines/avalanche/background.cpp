@@ -359,8 +359,6 @@ void Background::drawBackgroundSprite(int16 destX, int16 destY, byte sprId) {
 	}
 }
 
-
-
 void Background::drawSprite(int16 x, int16 y, SpriteType &sprite) {
 	_r._x1 = x;
 	_r._y1 = y;
