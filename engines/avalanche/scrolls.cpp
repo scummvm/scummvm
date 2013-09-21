@@ -423,9 +423,6 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), kColorRed);
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), kColorRed);
 
-//	CHECKME: unused?
-//	ex = mx - lx;
-//	int16 ey = my - ly;
 	mx -= lx;
 	my -= ly + 2;
 
@@ -450,7 +447,6 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 		getIcon(mx, my + ly / 2, _useIcon);
 		iconIndent = 53;
 	}
-
 
 	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
 		if (!_vm->_gyro->_scroll[i].empty())
@@ -485,7 +481,7 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 
 	_vm->_gyro->_underScroll = my * 2 + 6; // Multiplying because of the doubled screen height.
 	ringBell();
-	//my = getpixel(0, 0);
+	
 	_vm->_gyro->_dropsOk = false;
 	dodgem();
 
@@ -493,22 +489,12 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 
 	unDodgem();
 	_vm->_gyro->_dropsOk = true;
-	CursorMan.showMouse(false);
-	// mblit(ex-46,ey-6,ex+lx*2+15,ey+ly*2+6,3,0);
-	//mblit((ex - 46) / 8, ey - 6, 1 + (ex + lx * 2 + 15) / 8, ey + ly * 2 + 6, cp, 1 - cp);
-	//blitfix();
-	CursorMan.showMouse(true);
-	//settextjustify(0, 0); // sink
+	
 	resetScrollDriver();
-	/*if (_vm->_gyro->mpress > 0)
-	_vm->_gyro->after_the_scroll = true;*/
-
-	warning("STUB: Scrolls::drawScroll()");
 }
 
 void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	Common::Point points[3];
-//	byte *rp1, *rp2; // replace: 1=bubble, 2=pointer
 
 	CursorMan.showMouse(false);
 	int16 xl = 0;
@@ -557,9 +543,6 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, points, _vm->_gyro->_talkBackgroundColor);
 
 
-	// CHECKME: Unused?
-	// yl -= 3;
-
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
@@ -570,22 +553,15 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	}
 
 	ringBell();
-	CursorMan.showMouse(true);
+	CursorMan.showMouse(false);
 	_vm->_gyro->_dropsOk = false;
 
 	// This does the actual drawing to the screen.
 	(this->*modeFunc)();
 
-	CursorMan.showMouse(false);
 	_vm->_gyro->_dropsOk = true;
-
 	CursorMan.showMouse(true); // sink;
 	resetScrollDriver();
-
-#if 0
-	if (_vm->_gyro->mpress > 0)
-		_vm->_gyro->after_the_scroll = true;
-#endif
 }
 
 bool Scrolls::displayQuestion(Common::String question) {
