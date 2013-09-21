@@ -399,7 +399,8 @@ void ScriptManager::deserializeStateTable(Common::SeekableReadStream *stream) {
 	for (uint32 i = 0; i < numberOfPairs; i++) {
 		uint32 key = stream->readUint32LE();
 		uint32 value = stream->readUint32LE();
-		setStateValue(key, value);
+		// Directly access the state table so we don't trigger Puzzle checks
+		_globalState[key] = value;
 	}
 }
 
