@@ -1230,6 +1230,4 @@ void UIButton::setTextAlign(TTextAlign align) {
 	_align = align;
 }
 
-
-
 } // End of namespace Wintermute
