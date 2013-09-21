@@ -444,11 +444,6 @@ Common::String Acci::totalTime() {
 }
 
 void Acci::cheatParse(Common::String codes) {
-//	uint16 num;
-//	int16 e;
-//	char cmd;
-//	int16 se, sx, sy;
-
 	warning("STUB: Acci::cheatParse()");
 }
 
@@ -804,12 +799,12 @@ void Acci::examineObject() {
 		break;
 	case Gyro::kObjectOnion:
 		if (_vm->_gyro->_rottenOnion)
-			_vm->_scrolls->displayScrollChain('q', 21); // Yucky onion.
+			_vm->_scrolls->displayScrollChain('q', 21); // Yucky onion
 		else
-			_vm->_scrolls->displayScrollChain('t', 18);  // Normal onion scroll
+			_vm->_scrolls->displayScrollChain('t', 18);  // Normal onion
 		break;
 	default:
-		_vm->_scrolls->displayScrollChain('t', _thing); // <<< Ordinarily
+		_vm->_scrolls->displayScrollChain('t', _thing); // Ordinarily
 	}
 }
 
@@ -837,7 +832,7 @@ void Acci::exampers() {
 		if ((_person == Gyro::kPeopleDogfood) && _vm->_gyro->_wonNim)
 			_vm->_scrolls->displayScrollChain('Q', 8); // "I'm Not Playing!"
 		else if ((_person == Gyro::kPeopleDuLustie) && _vm->_gyro->_lustieIsAsleep)
-			_vm->_scrolls->displayScrollChain('Q', 65); // He's asleep. (65! Wow!)
+			_vm->_scrolls->displayScrollChain('Q', 65); // He's asleep.
 		else
 			_vm->_scrolls->displayScrollChain('p', newPerson);
 
@@ -891,7 +886,7 @@ void Acci::examine() {
 	// EITHER it's an object OR it's an Also OR it's a _person OR it's something else.
 	if ((_person == kPardon) && (_thing != kPardon)) {
 		if (isHolding()) {
-			// Remember: it's been Slipped! Ie subtract 49.
+			// Remember: it's been slipped! Ie subtract 49.
 			if ((1 <= _thing) && (_thing <= 49)) // Standard object
 				examineObject();
 			else if ((50 <= _thing) && (_thing <= 100)) { // Also _thing
@@ -934,7 +929,7 @@ void Acci::inventory() {
 	_vm->_scrolls->displayText(tmpStr);
 }
 
-void Acci::swallow() {   // Eat something.
+void Acci::swallow() { // Eat something.
 	switch (_thing) {
 	case Gyro::kObjectWine:
 		switch (_vm->_gyro->_wineState) { // 4 is perfect
@@ -1119,8 +1114,6 @@ void Acci::openDoor() {
 	else
 		_vm->_scrolls->displayText("Door? What door?");
 }
-
-
 
 void Acci::silly() {
 	_vm->_scrolls->displayText("Don't be silly!");
@@ -1469,6 +1462,7 @@ Common::String Acci::personSpeaks() {
 
 	return tmpStr;
 }
+
 void Acci::heyThanks() {
 	Common::String tmpStr = personSpeaks();
 	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", Scrolls::kControlSpeechBubble);
