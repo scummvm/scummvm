@@ -527,7 +527,7 @@ Common::Error AvalancheEngine::run() {
 	do {
 		_avalot->runAvalot();
 
-		// Needed for later implementation!!! Don't remove these comments!!!
+#if 0
 		//switch (_storage._operation) {
 		//case kRunShootemup:
 		//	run("seu.avx", kJsb, kBflight, kNormal);
@@ -542,6 +542,7 @@ Common::Error AvalancheEngine::run() {
 		//	run("golden.avx", kJsb, kBflight, kMusical);
 		//	break;
 		//}
+#endif
 
 	} while (!_gyro->_letMeOut && !shouldQuit());
 
@@ -552,15 +553,6 @@ Common::Error AvalancheEngine::run() {
 void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
 	warning("STUB: run(%s)", what.c_str());
 	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
-}
-
-void AvalancheEngine::bFlightOn() {
-	_storage._skellern = kReset;
-	// setintvec(0x1c, &b_flight);
-}
-
-void AvalancheEngine::bFlightOff() {
-	// setintvec(0x1c, old_1c);
 }
 
 Common::String AvalancheEngine::elmToStr(Elm how) {
@@ -587,11 +579,6 @@ void AvalancheEngine::dosShell() {
 	warning("STUB: dosShell()");
 }
 
-//TODO: Remove these (b_flight) functions later ( https://github.com/tthurman/avalot/wiki/B-Flight )
-void AvalancheEngine::bFlight() {   //interrupt;
-	_storage._skellern++;
-}
-
 // Needed in dos_shell(). TODO: Remove later.
 Common::String AvalancheEngine::commandCom() {
 	warning("STUB: commandCom()");
@@ -601,16 +588,6 @@ Common::String AvalancheEngine::commandCom() {
 // Needed for run_avalot()'s errors. TODO: Remove later.
 void AvalancheEngine::explain(byte error) {
 	warning("STUB: explain()");
-}
-
-// The original ones were all commented out, so probably there's no need
-// of these two cursor functions at all. TODO: Remove later.
-void AvalancheEngine::cursorOff() {
-	warning("STUB: cursorOff()");
-}
-
-void AvalancheEngine::cursorOn() {
-	warning("STUB: cursorOn()");
 }
 
 // Needed later.
