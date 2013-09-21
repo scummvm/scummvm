@@ -44,7 +44,8 @@ _centerPitchWheelOnUnload(false),
 _sendSustainOffOnNotesOff(false),
 _numTracks(0),
 _activeTrack(255),
-_abortParse(0) {
+_abortParse(false),
+_jumpingToTick(false) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	memset(_tracks, 0, sizeof(_tracks));
 	_nextEvent.start = NULL;
@@ -382,6 +383,9 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 	if (_activeTrack >= _numTracks)
 		return false;
 
+	assert(!_jumpingToTick); // This function is not re-entrant
+	_jumpingToTick = true;
+
 	Tracker currentPos(_position);
 	EventInfo currentEvent(_nextEvent);
 
@@ -411,6 +415,7 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 				// This means that we failed to find the right tick.
 				_position = currentPos;
 				_nextEvent = currentEvent;
+				_jumpingToTick = false;
 				return false;
 			} else {
 				processEvent(info, fireEvents);
@@ -437,6 +442,7 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 	}
 
 	_abortParse = true;
+	_jumpingToTick = false;
 	return true;
 }
 

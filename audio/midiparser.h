@@ -287,6 +287,7 @@ protected:
 	                        ///< so each event is parsed only once; this permits
 	                        ///< simulated events in certain formats.
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
+	bool   _jumpingToTick; ///< True if currently inside jumpToTick
 
 protected:
 	static uint32 readVLQ(byte * &data);

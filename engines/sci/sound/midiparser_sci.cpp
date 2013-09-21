@@ -543,7 +543,7 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				// That is probably why this signal isn't triggered
 				// immediately there.
 				if (_soundVersion <= SCI_VERSION_0_LATE || _position._playTick) {
-					if (!_pSnd->inFastForward) {
+					if (!_jumpingToTick) {
 						_pSnd->setSignal(info.basic.param1);
 						debugC(4, kDebugLevelSound, "signal %04x", info.basic.param1);
 					}
@@ -586,15 +586,13 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				// marker set for that song by cmdSetSoundHold.
 				// If it is, loop back, but don't stop notes when jumping.
 				if (info.basic.param2 == _pSnd->hold) {
-					_pSnd->inFastForward = true;
 					jumpToTick(_loopTick, false, false);
-					_pSnd->inFastForward = false;
 					// Done with this event.
 					return;
 				}
 				return;
 			case kUpdateCue:
-				if (!_pSnd->inFastForward) {
+				if (!_jumpingToTick) {
 					int inc;
 					switch (_soundVersion) {
 					case SCI_VERSION_0_EARLY:
@@ -658,9 +656,7 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			// (e.g. song 110, during the intro). The original interpreter
 			// treats this case as an infinite loop (bug #3311911).
 			if (_pSnd->loop || _pSnd->hold > 0) {
-				_pSnd->inFastForward = true;
 				jumpToTick(_loopTick);
-				_pSnd->inFastForward = false;
 
 				// Done with this event.
 				return;
