@@ -600,7 +600,10 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(dataInc);
 	s.syncAsSint16LE(ticker);
 	s.syncAsSint16LE(signal, VER(17));
-	s.syncAsByte(priority);
+	if (s.getVersion() >= 31) // FE sound/music.h -> priority
+		s.syncAsSint16LE(priority);
+	else
+		s.syncAsByte(priority);
 	s.syncAsSint16LE(loop, VER(17));
 	s.syncAsByte(volume);
 	s.syncAsByte(hold, VER(17));

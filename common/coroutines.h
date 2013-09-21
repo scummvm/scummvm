@@ -146,6 +146,7 @@ public:
 #define CORO_BEGIN_CODE(x) \
 	if (&coroParam == &Common::nullContext) assert(!Common::nullContext); \
 	if (!x) { coroParam = x = new CoroContextTag(); } \
+	x->DUMMY = 0; \
 	Common::CoroContextHolder tmpHolder(coroParam); \
 	switch (coroParam->_line) { case 0:;
 

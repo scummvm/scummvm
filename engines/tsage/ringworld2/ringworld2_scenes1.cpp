@@ -13784,11 +13784,9 @@ bool Scene1950::Actor5::startAction(CursorType action, Event &event) {
 }
 
 Scene1950::Vampire::Vampire() {
-	_fieldA4 = 0;
-	_fieldA6 = 0;
 	_fieldA8 = 0;
 	_fieldAA = 0;
-	_fieldAC = 0;
+	_vampireMode = 0;
 	_fieldAE = 0;
 	_fieldAF = 0;
 }
@@ -13796,11 +13794,11 @@ Scene1950::Vampire::Vampire() {
 void Scene1950::Vampire::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
-	s.syncAsSint16LE(_fieldA4);
-	s.syncAsSint16LE(_fieldA6);
+	s.syncAsSint16LE(_deadPosition.x);
+	s.syncAsSint16LE(_deadPosition.y);
 	s.syncAsSint16LE(_fieldA8);
 	s.syncAsSint16LE(_fieldAA);
-	s.syncAsSint16LE(_fieldAC);
+	s.syncAsSint16LE(_vampireMode);
 	s.syncAsByte(_fieldAE);
 	s.syncAsByte(_fieldAF);
 }
@@ -13808,9 +13806,9 @@ void Scene1950::Vampire::synchronize(Serializer &s) {
 void Scene1950::Vampire::signal() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
-	switch (_fieldAC) {
+	switch (_vampireMode) {
 	case 19: {
-		_fieldAC = 0;
+		_vampireMode = 0;
 		setVisage(1960);
 		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			setStrip(2);
@@ -13822,21 +13820,21 @@ void Scene1950::Vampire::signal() {
 		}
 		break;
 	case 20: {
-		_fieldAC = 19;
+		_vampireMode = 19;
 		R2_GLOBALS._player.setVisage(22);
 		if (R2_GLOBALS._flubMazeEntryDirection == 3)
 			R2_GLOBALS._player.setStrip(1);
 		else
 			R2_GLOBALS._player.setStrip(2);
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 1]--;
+		R2_GLOBALS._vampireData[scene->_vampireIndex - 1].var2--;
 
 		if (R2_GLOBALS._flubMazeEntryDirection == 3)
-			_fieldA4 = _position.x + 10;
+			_deadPosition.x = _position.x + 10;
 		else
-			_fieldA4 = _position.x - 10;
+			_deadPosition.x = _position.x - 10;
+		_deadPosition.y = _position.y - 4;
 
-		_fieldA6 = _position.y -4;
 		setVisage(1961);
 
 		if (R2_GLOBALS._flubMazeEntryDirection == 3)
@@ -13845,7 +13843,7 @@ void Scene1950::Vampire::signal() {
 			setStrip(1);
 
 		animate(ANIM_MODE_2, NULL);
-		Common::Point pt(_fieldA4, _fieldA6);
+		Common::Point pt = _deadPosition;
 		PlayerMover *mover = new PlayerMover();
 		addMover(mover, &pt, this);
 
@@ -13871,26 +13869,26 @@ void Scene1950::Vampire::signal() {
 		R2_GLOBALS._sound2.play(226);
 		animate(ANIM_MODE_5, NULL);
 		fixPriority(10);
-		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) ]--;
-		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 1]--;
-		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 2] = _position.x;
-		R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 3] = _position.y;
+
+		R2_GLOBALS._vampireData[scene->_vampireIndex - 1]._isAlive = false;
+		R2_GLOBALS._vampireData[scene->_vampireIndex - 1].var2--;
+		R2_GLOBALS._vampireData[scene->_vampireIndex - 1]._position = _position;
 		_fieldA8 = (_position.x - R2_GLOBALS._player._position.x) / 2;
 		_fieldAA = (_position.y - R2_GLOBALS._player._position.y) / 2;
 
 		_fieldAE = 0;
 		for (_fieldAF = 0; _fieldAF < 18; ++_fieldAF)
-			if (R2_GLOBALS._v56613[4 * _fieldAF] == 0)
+			if (!R2_GLOBALS._vampireData[_fieldAF]._isAlive)
 				++_fieldAE;
 
 		if (_fieldAE == 18) {
 			R2_GLOBALS.setFlag(36);
-			_fieldAC = 23;
+			_vampireMode = 23;
 			Common::Point pt(R2_GLOBALS._player._position.x + _fieldA8, R2_GLOBALS._player._position.y + _fieldAA);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 		} else if (_fieldAE == 1) {
-			_fieldAC = 22;
+			_vampireMode = 22;
 			Common::Point pt(R2_GLOBALS._player._position.x + _fieldA8, R2_GLOBALS._player._position.y + _fieldAA);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -13922,16 +13920,16 @@ void Scene1950::Vampire::signal() {
 bool Scene1950::Vampire::startAction(CursorType action, Event &event) {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((R2_GLOBALS._v56613[(scene->_vampireIndex - 1) * 4] == 0) || 
+	if (!R2_GLOBALS._vampireData[scene->_vampireIndex - 1]._isAlive || 
 			(action != R2_PHOTON_STUNNER))
 		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_GLOBALS._v56613[((scene->_vampireIndex - 1) * 4) + 1] <= 1)
-		_fieldAC = 21;
+	if (R2_GLOBALS._vampireData[scene->_vampireIndex - 1].var2 <= 1)
+		_vampireMode = 21;
 	else
-		_fieldAC = 20;
+		_vampireMode = 20;
 
 	R2_GLOBALS._player.setVisage(25);
 	if (R2_GLOBALS._flubMazeEntryDirection == 3)
@@ -14788,6 +14786,7 @@ void Scene1950::enterArea() {
 	_field416 = 0;
 	_vampireIndex = 0;
 
+	// Certain areas have a vampire in them
 	switch (R2_GLOBALS._flubMazeArea) {
 	case 10:
 		_vampireIndex = 1;
@@ -14853,8 +14852,10 @@ void Scene1950::enterArea() {
 		_vampire._moveRate = 6;
 		_vampire._moveDiff = Common::Point(3, 2);
 		_vampire._effect = 1;
-		if (R2_GLOBALS._v56613[(_vampireIndex - 1) * 4] == 0) {
-			_vampire.setPosition(Common::Point(R2_GLOBALS._v56613[((_vampireIndex - 1) * 4) + 2], R2_GLOBALS._v56613[((_vampireIndex - 1) * 4) + 3]));
+
+		if (!R2_GLOBALS._vampireData[_vampireIndex - 1]._isAlive) {
+			// Show vampire ashes
+			_vampire.setPosition(Common::Point(R2_GLOBALS._vampireData[_vampireIndex - 1]._position));
 			_vampire.animate(ANIM_MODE_NONE, NULL);
 			_vampire.addMover(NULL);
 			_vampire.setVisage(1961);
@@ -14863,6 +14864,7 @@ void Scene1950::enterArea() {
 			_vampire.fixPriority(10);
 			_vampire.setDetails(1950, 15, -1, 17, 2, (SceneItem *) NULL);
 		} else {
+			// Start the vampire
 			_vampire.setVisage(1960);
 			_vampire.setPosition(Common::Point(160, 130));
 			_vampire.animate(ANIM_MODE_2, NULL);

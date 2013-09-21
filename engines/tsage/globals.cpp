@@ -427,29 +427,29 @@ void Ringworld2Globals::reset() {
 	_spillLocation[12] = 27;
 	_spillLocation[13] = 31;
 
+	// Initialise the vampire data within the Flub maze
 	for (int i = 0; i < 18; i++) {
-		_v56613[(i * 4)    ] = 1;
-		_v56613[(i * 4) + 2] = 0;
-		_v56613[(i * 4) + 3] = 0;
+		_vampireData[i]._isAlive = true;
+		_vampireData[i]._position = Common::Point();
 	}
-	_v56613[( 0 * 4) + 1] = 1;
-	_v56613[( 1 * 4) + 1] = 2;
-	_v56613[( 2 * 4) + 1] = 2;
-	_v56613[( 3 * 4) + 1] = 3;
-	_v56613[( 4 * 4) + 1] = 2;
-	_v56613[( 5 * 4) + 1] = 2;
-	_v56613[( 6 * 4) + 1] = 3;
-	_v56613[( 7 * 4) + 1] = 1;
-	_v56613[( 8 * 4) + 1] = 1;
-	_v56613[( 9 * 4) + 1] = 3;
-	_v56613[(10 * 4) + 1] = 3;
-	_v56613[(11 * 4) + 1] = 1;
-	_v56613[(12 * 4) + 1] = 2;
-	_v56613[(13 * 4) + 1] = 3;
-	_v56613[(14 * 4) + 1] = 2;
-	_v56613[(15 * 4) + 1] = 3;
-	_v56613[(16 * 4) + 1] = 1;
-	_v56613[(17 * 4) + 1] = 1;
+	_vampireData[0].var2 = 1;
+	_vampireData[1].var2 = 2;
+	_vampireData[2].var2 = 2;
+	_vampireData[3].var2 = 3;
+	_vampireData[4].var2 = 2;
+	_vampireData[5].var2 = 2;
+	_vampireData[6].var2 = 3;
+	_vampireData[7].var2 = 1;
+	_vampireData[8].var2 = 1;
+	_vampireData[9].var2 = 3;
+	_vampireData[10].var2 = 3;
+	_vampireData[11].var2 = 1;
+	_vampireData[12].var2 = 2;
+	_vampireData[13].var2 = 3;
+	_vampireData[14].var2 = 2;
+	_vampireData[15].var2 = 3;
+	_vampireData[16].var2 = 1;
+	_vampireData[17].var2 = 1;
 
 	_v566A6 = 3800;
 	_landerSuitNumber = 2;
@@ -580,6 +580,14 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_balloonPosition.x);
 	s.syncAsSint16LE(_balloonPosition.y);
+
+	// Synchronise Flub maze vampire data
+	for (i = 0; i < 18; ++i) {
+		s.syncAsSint16LE(_vampireData[i]._isAlive);
+		s.syncAsSint16LE(_vampireData[i].var2);
+		s.syncAsSint16LE(_vampireData[i]._position.x);
+		s.syncAsSint16LE(_vampireData[i]._position.y);
+	}
 }
 
 } // end of namespace Ringworld2

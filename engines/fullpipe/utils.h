@@ -98,9 +98,6 @@ class MemoryObject : CObject {
 	int _mfield_C;
 	int _mfield_10;
 	char _mfield_14;
-	char _mfield_15;
-	char _mfield_16;
-	char _mfield_17;
 	byte *_data;
 	int _dataSize;
 	int _mflags;

@@ -611,7 +611,6 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 						error("unsupported _soundVersion");
 					}
 					_pSnd->dataInc += inc;
-					_pSnd->signal = 0x7f + inc;
 					debugC(4, kDebugLevelSound, "datainc %04x", inc);
 
 				}

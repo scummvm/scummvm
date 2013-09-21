@@ -1164,11 +1164,10 @@ class Scene1950 : public SceneExt {
 	};
 	class Vampire : public SceneActor {
 	public:
-		int _fieldA4;
-		int _fieldA6;
+		Common::Point _deadPosition;
 		int _fieldA8;
 		int _fieldAA;
-		int _fieldAC;
+		int _vampireMode;
 		byte _fieldAE;
 		byte _fieldAF;
 
