@@ -43,12 +43,10 @@ Sequence::Sequence(AvalancheEngine *vm) {
 }
 
 void Sequence::firstShow(byte what) {
-	// First, we need to blank out the entire array.
-	for (uint i = 0; i < sizeof(_seq); i++)
-		_seq[i] = 0;
+	_seq[0] = what;
 
-	// Then it's just the same as thenShow.
-	thenShow(what);
+	for (uint i = 1; i < kSeqLength; i++)
+		_seq[i] = 0;
 }
 
 void Sequence::thenShow(byte what) {
