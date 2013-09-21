@@ -390,6 +390,9 @@ void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
 }
 
 void ScriptManager::deserializeStateTable(Common::SeekableReadStream *stream) {
+	// Clear out the current table values
+	_globalState.clear();
+
 	// Read the number of key/value pairs
 	uint32 numberOfPairs = stream->readUint32LE();
 
