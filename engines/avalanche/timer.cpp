@@ -353,8 +353,10 @@ void Timer::hangAround2() {
 
 void Timer::afterTheShootemup() {
 
-	_vm->_animation->flipRoom(_vm->_gyro->_room, 0);
+	// CHECKME: is it correct?
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
+	_vm->_animation->flipRoom(_vm->_gyro->_room, 1);
+	//
 
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
 	_vm->_animation->appearPed(0, 1);
