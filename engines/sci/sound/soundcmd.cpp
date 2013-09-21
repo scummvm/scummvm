@@ -116,7 +116,10 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	newSound->resourceId = resourceId;
 	newSound->soundObj = obj;
 	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority)) & 0xFF;
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	else
+		newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority)) & 0xFF;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
@@ -428,7 +431,7 @@ reg_t SoundCommandParser::kDoSoundUpdate(int argc, reg_t *argv, reg_t acc) {
 	int16 objVol = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, 255);
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
-	uint32 objPrio = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	int32 objPrio = readSelectorValue(_segMan, obj, SELECTOR(priority));
 	if (objPrio != musicSlot->priority)
 		_music->soundSetPriority(musicSlot, objPrio);
 	return acc;
