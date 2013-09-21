@@ -1258,6 +1258,7 @@ void Animation::hideInCupboard() {
 }
 
 void Animation::flipRoom(byte room, byte ped) {
+	assert((ped > 0) && (ped < 15));
 	if (!_vm->_gyro->_alive) {
 		// You can't leave the room if you're dead.
 		_sprites[0]._moveX = 0;
