@@ -128,7 +128,7 @@ public:
  */
 #define CORO_BEGIN_CONTEXT  \
 	struct CoroContextTag : Common::CoroBaseContext { \
-		CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) {} \
+ CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) { DUMMY = 0; } \
 		int DUMMY
 
 /**
