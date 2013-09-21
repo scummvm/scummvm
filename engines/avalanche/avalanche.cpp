@@ -63,7 +63,7 @@ AvalancheEngine::~AvalancheEngine() {
 
 	delete _avalot;
 	delete _pingo;
-	delete _scrolls;
+	delete _dialogs;
 	delete _lucerna;
 	delete _background;
 	delete _sequence;
@@ -83,7 +83,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_avalot = new Avalot(this);
 	_gyro = new Gyro(this);
 	_pingo = new Pingo(this);
-	_scrolls = new Scrolls(this);
+	_dialogs = new Dialogs(this);
 	_lucerna = new Lucerna(this);
 	_background = new Background(this);
 	_sequence = new Sequence(this);
@@ -95,7 +95,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_sound = new SoundHandler(this);
 
 	_graphics->init();
-	_scrolls->init();
+	_dialogs->init();
 	_lucerna->init();
 	_acci->init();
 	_parser->init();
@@ -453,10 +453,10 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_background->updateBackgroundSprites();
 
 	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
-		Scrolls::kControlItalic, Scrolls::kControlRoman, description.c_str(), Scrolls::kControlCenter, 
-		Scrolls::kControlNewLine, Scrolls::kControlNewLine, _gyro->_roomnName.c_str(), Scrolls::kControlNewLine, 
-		Scrolls::kControlNewLine, expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
-	_scrolls->displayText(tmpStr);
+		Dialogs::kControlItalic, Dialogs::kControlRoman, description.c_str(), Dialogs::kControlCenter, 
+		Dialogs::kControlNewLine, Dialogs::kControlNewLine, _gyro->_roomnName.c_str(), Dialogs::kControlNewLine, 
+		Dialogs::kControlNewLine, expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
+	_dialogs->displayText(tmpStr);
 
 	AnimationType *avvy = &_animation->_sprites[0];
 	if (avvy->_quick && avvy->_visible)

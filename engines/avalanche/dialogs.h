@@ -27,19 +27,19 @@
 
  /* SCROLLS		The scroll driver. */
 
-#ifndef AVALANCHE_SCROLLS2_H
-#define AVALANCHE_SCROLLS2_H
+#ifndef AVALANCHE_DIALOGS_H
+#define AVALANCHE_DIALOGS_H
 
 #include "common/system.h"
 
 namespace Avalanche {
 class AvalancheEngine;
 
-class Scrolls;
+class Dialogs;
 
-typedef void (Scrolls::*ScrollsFunctionType)();
+typedef void (Dialogs::*DialogFunctionType)();
 
-class Scrolls {
+class Dialogs {
 public:
 	// Constants to replace the command characters from Pascal.
 	// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
@@ -61,22 +61,22 @@ public:
 		kControlIcon = 22 // ^V
 	};
 
-	bool _aboutScroll; // Is this the about box?
-	FontType _scrollFonts[2];
+	bool _aboutBox; // Is this the about box?
+	FontType _fonts[2];
 
-	Scrolls(AvalancheEngine *vm);
+	Dialogs(AvalancheEngine *vm);
 
 	void init();
 	void setReadyLight(byte state); // Sets "Ready" light to whatever.
-	void drawScroll(ScrollsFunctionType modeFunc);
-	void drawBubble(ScrollsFunctionType modeFunc);
-	void resetScroll();
-	void callScrollDriver();
+	void drawScroll(DialogFunctionType modeFunc);
+	void drawBubble(DialogFunctionType modeFunc);
+	void reset();
+	void callDialogDriver();
 	void displayText(Common::String text);
 	bool displayQuestion(Common::String question);
 	void setBubbleStateNatural(); // Natural state of bubbles
 	Common::String displayMoney();
-	void musicalScroll(); // Practically this one is a mini-game which called when you play the harp in the monastery.
+	void displayMusicalScroll(); // Practically this one is a mini-game which called when you play the harp in the monastery.
 
 	// From Visa:
 	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false);
@@ -130,4 +130,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif // AVALANCHE_SCROLLS2_H
+#endif // AVALANCHE_DIALOGS_H

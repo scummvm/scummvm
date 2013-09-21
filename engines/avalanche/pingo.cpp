@@ -33,7 +33,7 @@
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
-#include "avalanche/scrolls.h"
+#include "avalanche/dialogs.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"

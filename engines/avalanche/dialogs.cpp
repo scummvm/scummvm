@@ -28,7 +28,7 @@
  /* SCROLLS		The scroll driver. */
 
 #include "avalanche/avalanche.h"
-#include "avalanche/scrolls.h"
+#include "avalanche/dialogs.h"
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
@@ -40,17 +40,17 @@
 
 namespace Avalanche {
 
-Scrolls::Scrolls(AvalancheEngine *vm) {
+Dialogs::Dialogs(AvalancheEngine *vm) {
 	_vm = vm;
 	_noError = true;
 }
 
-void Scrolls::init() {
+void Dialogs::init() {
 	loadFont();
 	resetScrollDriver();
 }
 
-void Scrolls::setReadyLight(byte state) {     // Sets "Ready" light to whatever
+void Dialogs::setReadyLight(byte state) {     // Sets "Ready" light to whatever
 	if (_vm->_gyro->_ledStatus == state)
 		return; // Already like that!
 
@@ -75,11 +75,11 @@ void Scrolls::setReadyLight(byte state) {     // Sets "Ready" light to whatever
 	_vm->_gyro->_ledStatus = state;
 }
 
-void Scrolls::easterEgg() {
+void Dialogs::easterEgg() {
 	warning("STUB: Scrolls::easterEgg()");
 }
 
-void Scrolls::say(int16 x, int16 y, Common::String z) {
+void Dialogs::say(int16 x, int16 y, Common::String z) {
 	FontType itw;
 	byte lz = z.size();
 
@@ -97,7 +97,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 			break;
 		default: {
 			for (int yy = 0; yy < 12; yy++)
-				itw[(byte)z[xx]][yy] = _scrollFonts[_currentFont][(byte)z[xx]][yy + 2];
+				itw[(byte)z[xx]][yy] = _fonts[_currentFont][(byte)z[xx]][yy + 2];
 
 			// We have to draw the characters one-by-one because of the accidental font changes.
 			i++;
@@ -108,7 +108,7 @@ void Scrolls::say(int16 x, int16 y, Common::String z) {
 	}
 }
 
-void Scrolls::scrollModeNormal() {
+void Dialogs::scrollModeNormal() {
 	// Original code is:
 	// egg : array[1..8] of char = ^P^L^U^G^H+'***';
 	// this is not using kControl characters: it's the secret code to be entered to trigger the easter egg
@@ -181,16 +181,16 @@ void Scrolls::scrollModeNormal() {
 	warning("STUB: Scrolls::scrollModeNormal()");
 }
 
-void Scrolls::scrollModeDialogue() {
+void Dialogs::scrollModeDialogue() {
 	warning("STUB: Scrolls::scrollModeDialogue()");
 }
 
-void Scrolls::store(byte what, TuneType &played) {
+void Dialogs::store(byte what, TuneType &played) {
 	memcpy(played, played + 1, sizeof(played) - 1);
 	played[30] = what;
 }
 
-bool Scrolls::theyMatch(TuneType &played) {
+bool Dialogs::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
 	for (unsigned int i = 0; i < sizeof(played); i++) {
@@ -201,7 +201,7 @@ bool Scrolls::theyMatch(TuneType &played) {
 	return mistakes < 5;
 }
 
-void Scrolls::scrollModeMusic() {
+void Dialogs::scrollModeMusic() {
 	setReadyLight(3);
 	_vm->_gyro->_seeScroll = true;
 	CursorMan.showMouse(false);
@@ -309,30 +309,30 @@ void Scrolls::scrollModeMusic() {
 	CursorMan.showMouse(true);
 }
 
-void Scrolls::resetScrollDriver() {
+void Dialogs::resetScrollDriver() {
 	_vm->_gyro->_scrollBells = 0;
 	_currentFont = kFontStyleRoman;
 	_useIcon = 0;
 	_vm->_gyro->_interrogation = 0; // Always reset after a scroll comes up.
 }
 
-void Scrolls::ringBell() {   // Pussy's in the well. Who put her in? Little...
+void Dialogs::ringBell() {   // Pussy's in the well. Who put her in? Little...
 	for (int i = 0; i < _vm->_gyro->_scrollBells; i++)
 		_vm->_lucerna->errorLed(); // Ring the bell "x" times.
 }
 
-void Scrolls::dodgem() {
+void Dialogs::dodgem() {
 	_dodgeCoord = _vm->getMousePos();
 	g_system->warpMouse(_dodgeCoord.x, _vm->_gyro->_underScroll); // Move the pointer off the scroll.
 }
 
-void Scrolls::unDodgem() {
+void Dialogs::unDodgem() {
 	Common::Point actCoord = _vm->getMousePos();
 	if ((actCoord.x == _dodgeCoord.x) && (actCoord.y == _vm->_gyro->_underScroll))
 		g_system->warpMouse(_dodgeCoord.x, _dodgeCoord.y); // No change, so restore the pointer's original position.
 }
 
-void Scrolls::getIcon(int16 x, int16 y, byte which) {
+void Dialogs::getIcon(int16 x, int16 y, byte which) {
 	Common::File file;
 
 	if (!file.open("icons.avd"))
@@ -351,7 +351,7 @@ void Scrolls::getIcon(int16 x, int16 y, byte which) {
 	file.close();
 }
 
-void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
+void Dialogs::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File file;
 	Common::String filename = Common::String::format("%s.avd", fn.c_str());
 
@@ -377,7 +377,7 @@ void Scrolls::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	file.close();
 }
 
-void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
+void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	int16 lx = 0;
 	int16 ly = (_vm->_gyro->_scrollNum) * 6;
 	int16 ex;
@@ -493,7 +493,7 @@ void Scrolls::drawScroll(ScrollsFunctionType modeFunc) {
 	resetScrollDriver();
 }
 
-void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
+void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	Common::Point points[3];
 
 	CursorMan.showMouse(false);
@@ -564,12 +564,12 @@ void Scrolls::drawBubble(ScrollsFunctionType modeFunc) {
 	resetScrollDriver();
 }
 
-bool Scrolls::displayQuestion(Common::String question) {
+bool Dialogs::displayQuestion(Common::String question) {
 	warning("STUB: Scrolls::displayQuestion()");
 	return true;
 }
 
-void Scrolls::resetScroll() {
+void Dialogs::reset() {
 	_vm->_gyro->_scrollNum = 1;
 	for (int i = 0; i < 15; i++) {
 		if (!_vm->_gyro->_scroll[i].empty())
@@ -577,14 +577,14 @@ void Scrolls::resetScroll() {
 	}
 }
 
-void Scrolls::setBubbleStateNatural() {
+void Dialogs::setBubbleStateNatural() {
 	_vm->_gyro->_talkX = 320;
 	_vm->_gyro->_talkY = 200;
 	_vm->_gyro->_talkBackgroundColor = 8;
 	_vm->_gyro->_talkFontColor = 15;
 }
 
-Common::String Scrolls::displayMoney() {
+Common::String Dialogs::displayMoney() {
 	Common::String result;
 
 	if (_vm->_gyro->_money < 12) { // just pence
@@ -606,12 +606,12 @@ Common::String Scrolls::displayMoney() {
 	return result;
 }
 
-void Scrolls::stripTrailingSpaces(Common::String &str) {
+void Dialogs::stripTrailingSpaces(Common::String &str) {
 	while (str[str.size() - 1] == ' ')
 		str.deleteLastChar();
 }
 
-void Scrolls::solidify(byte n) {
+void Dialogs::solidify(byte n) {
 	if (!_vm->_gyro->_scroll[n].contains(' '))
 		return; // No spaces.
 
@@ -624,7 +624,7 @@ void Scrolls::solidify(byte n) {
 	stripTrailingSpaces(_vm->_gyro->_scroll[n]);
 }
 
-void Scrolls::callScrollDriver() {
+void Dialogs::callDialogDriver() {
 //	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
 	warning("STUB: Scrolls::calldrivers()");
 
@@ -669,9 +669,9 @@ void Scrolls::callScrollDriver() {
 					_vm->_lucerna->spriteRun();
 				call_spriterun = false;
 
-				drawScroll(&Avalanche::Scrolls::scrollModeNormal);
+				drawScroll(&Avalanche::Dialogs::scrollModeNormal);
 
-				resetScroll();
+				reset();
 
 				if (_vm->_gyro->_scReturn)
 					return;
@@ -711,9 +711,9 @@ void Scrolls::callScrollDriver() {
 					setBubbleStateNatural();
 				}
 
-				drawBubble(&Avalanche::Scrolls::scrollModeNormal);
+				drawBubble(&Avalanche::Dialogs::scrollModeNormal);
 
-				resetScroll();
+				reset();
 
 				if (_vm->_gyro->_scReturn)
 					return;
@@ -750,7 +750,7 @@ void Scrolls::callScrollDriver() {
 				case 10:
 					switch (_vm->_gyro->_boxContent) {
 					case 0: // Sixpence.
-						_vm->_scrolls->displayScrollChain('q', 37); // You find the sixpence.
+						_vm->_dialogs->displayScrollChain('q', 37); // You find the sixpence.
 						_vm->_gyro->_money += 6;
 						_vm->_gyro->_boxContent = _vm->_acci->kNothing;
 						_vm->_lucerna->incScore(2);
@@ -784,8 +784,8 @@ void Scrolls::callScrollDriver() {
 				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum] = kControlQuestion;
 				_vm->_gyro->_scrollNum++;
 
-				drawScroll(&Avalanche::Scrolls::scrollModeDialogue);
-				resetScroll();
+				drawScroll(&Avalanche::Dialogs::scrollModeDialogue);
+				reset();
 				break;
 			case kControlRegister:
 				mouthnext = true;
@@ -806,27 +806,27 @@ void Scrolls::callScrollDriver() {
 	}
 }
 
-void Scrolls::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
+void Dialogs::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
 	_vm->_gyro->_bufSize = text.size();
 	memcpy(_vm->_gyro->_buffer, text.c_str(), _vm->_gyro->_bufSize);
-	callScrollDriver();
+	callDialogDriver();
 }
 
-void Scrolls::loadFont() {
+void Dialogs::loadFont() {
 	Common::File file;
 
 	if (!file.open("avalot.fnt"))
 		error("AVALANCHE: Scrolls: File not found: avalot.fnt");
 
 	for (int16 i = 0; i < 256; i++)
-		file.read(_scrollFonts[0][i], 16);
+		file.read(_fonts[0][i], 16);
 	file.close();
 
 	if (!file.open("avitalic.fnt"))
 		error("AVALANCHE: Scrolls: File not found: avitalic.fnt");
 
 	for (int16 i = 0; i < 256; i++)
-		file.read(_scrollFonts[1][i], 16);
+		file.read(_fonts[1][i], 16);
 	file.close();
 
 	if (!file.open("ttsmall.fnt"))
@@ -837,26 +837,26 @@ void Scrolls::loadFont() {
 	file.close();
 }
 
-void Scrolls::musicalScroll() {
+void Dialogs::displayMusicalScroll() {
 	Common::String tmpStr = Common::String::format("To play the harp...%c%cUse these keys:%c%cQ W E R T Y U I O P [ ]%c%cOr press Enter to stop playing.%c", 
 		        kControlNewLine, kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlNewLine, kControlNewLine, kControlToBuffer);
 	displayText(tmpStr);
 
 	_vm->_lucerna->spriteRun();
 	CursorMan.showMouse(false);
-	drawScroll(&Avalanche::Scrolls::scrollModeMusic);
+	drawScroll(&Avalanche::Dialogs::scrollModeMusic);
 	CursorMan.showMouse(true);
-	resetScroll();
+	reset();
 }
 
 // From Visa:
 
-void Scrolls::unSkrimble() {
+void Dialogs::unSkrimble() {
 	for (uint16  i = 0; i < _vm->_gyro->_bufSize; i++)
 		_vm->_gyro->_buffer[i] = (~(_vm->_gyro->_buffer[i] - (i + 1))) % 256;
 }
 
-void Scrolls::doTheBubble() {
+void Dialogs::doTheBubble() {
 	_vm->_gyro->_buffer[_vm->_gyro->_bufSize] = 2;
 	_vm->_gyro->_bufSize++;
 }
@@ -865,7 +865,7 @@ void Scrolls::doTheBubble() {
  * Display a string in a scroll
  * @remarks	Originally called 'dixi'
  */
-void Scrolls::displayScrollChain(char block, byte point, bool report, bool bubbling) {
+void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbling) {
 	Common::File indexfile;
 	if (!indexfile.open("avalot.idx"))
 		error("AVALANCHE: Visa: File not found: avalot.idx");
@@ -888,8 +888,8 @@ void Scrolls::displayScrollChain(char block, byte point, bool report, bool bubbl
 
 	if (error) {
 		if (report) {
-			Common::String todisplay = Common::String::format("%cError accessing scroll %c%d", Scrolls::kControlBell, block, point);
-			_vm->_scrolls->displayText(todisplay);
+			Common::String todisplay = Common::String::format("%cError accessing scroll %c%d", Dialogs::kControlBell, block, point);
+			_vm->_dialogs->displayText(todisplay);
 		}
 		return;
 	}
@@ -907,14 +907,14 @@ void Scrolls::displayScrollChain(char block, byte point, bool report, bool bubbl
 	if (bubbling)
 		doTheBubble();
 
-	_vm->_scrolls->callScrollDriver();
+	_vm->_dialogs->callDialogDriver();
 }
 
 /**
  * Start speech
  * @remarks	Originally called 'speech'
  */
-void Scrolls::speak(byte who, byte subject) {
+void Dialogs::speak(byte who, byte subject) {
 	if (subject == 0) { // No subject.
 		displayScrollChain('s', who, false, true);
 		return;
@@ -952,11 +952,11 @@ void Scrolls::speak(byte who, byte subject) {
 	unSkrimble();
 	doTheBubble();
 
-	_vm->_scrolls->callScrollDriver();
+	_vm->_dialogs->callDialogDriver();
 	_noError = true;
 }
 
-void Scrolls::talkTo(byte whom) {
+void Dialogs::talkTo(byte whom) {
 	if (_vm->_acci->_person == _vm->_acci->kPardon) {
 		_vm->_acci->_person = _vm->_gyro->_subjectNum;
 		_vm->_gyro->_subjectNum = 0;
@@ -978,8 +978,8 @@ void Scrolls::talkTo(byte whom) {
 				case 1: // Fallthrough is intended.
 				case 2: {
 					Common::String objStr = _vm->_gyro->getItem(Gyro::kSpludwicksOrder[_vm->_gyro->_givenToSpludwick]);
-					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", objStr.c_str(), Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
-					_vm->_scrolls->displayText(tmpStr);
+					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", objStr.c_str(), Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+					_vm->_dialogs->displayText(tmpStr);
 					}
 					return;
 				case 3:
@@ -1052,16 +1052,16 @@ void Scrolls::talkTo(byte whom) {
 	bool noMatches = true;
 	for (int i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
-			Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, i + 49, Scrolls::kControlToBuffer);
-			_vm->_scrolls->displayText(tmpStr);
+			Common::String tmpStr = Common::String::format("%c%c%c", Dialogs::kControlRegister, i + 49, Dialogs::kControlToBuffer);
+			_vm->_dialogs->displayText(tmpStr);
 			noMatches = false;
 			break;
 		}
 	}
 
 	if (noMatches) {
-		Common::String tmpStr = Common::String::format("%c%c%c", Scrolls::kControlRegister, Scrolls::kControlRegister, Scrolls::kControlToBuffer);
-		_vm->_scrolls->displayText(tmpStr);
+		Common::String tmpStr = Common::String::format("%c%c%c", Dialogs::kControlRegister, Dialogs::kControlRegister, Dialogs::kControlToBuffer);
+		_vm->_dialogs->displayText(tmpStr);
 	}
 
 	speak(whom, _vm->_gyro->_subjectNum);

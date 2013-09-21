@@ -30,7 +30,7 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/gyro.h"
-#include "avalanche/scrolls.h"
+#include "avalanche/dialogs.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
 #include "avalanche/background.h"
@@ -70,8 +70,8 @@ void Clock::update() { // TODO: Move variables from Gyro to here (or at least so
 	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717)) {
 		Common::String tmpStr = Common::String::format("Good morning!%c%cYes, it's just past " \
 			"midnight. Are you having an all-night Avvy session? Glad you like the game that much!", 
-			Scrolls::kControlNewLine, Scrolls::kControlNewLine);
-		_vm->_scrolls->displayText(tmpStr);
+			Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+		_vm->_dialogs->displayText(tmpStr);
 	}
 	_oldHour = _hour;
 	_oldHourAngle = _hourAngle;
@@ -148,7 +148,7 @@ void Lucerna::callVerb(byte id) {
 		Common::String tmpStr = Common::String::format("The f5 key lets you do a particular action in certain " \
 			"situations. However, at the moment there is nothing assigned to it. You may press alt-A to see " \
 			"what the current setting of this key is.");
-		_vm->_scrolls->displayText(tmpStr);
+		_vm->_dialogs->displayText(tmpStr);
 	} else {
 		_vm->_gyro->_weirdWord = false;
 		_vm->_acci->_polite = true;
@@ -606,12 +606,12 @@ void Lucerna::enterRoom(byte room, byte ped) {
 			zoomOut(_vm->_gyro->_peds[ped]._x, _vm->_gyro->_peds[ped]._y);
 
 		if ((_vm->_gyro->_objects[Gyro::kObjectWine - 1]) && (_vm->_gyro->_wineState != 3)) {
-			_vm->_scrolls->displayScrollChain('q', 9); // Don't want to waste the wine!
+			_vm->_dialogs->displayScrollChain('q', 9); // Don't want to waste the wine!
 			_vm->_gyro->_objects[Gyro::kObjectWine - 1] = false;
 			refreshObjectList();
 		}
 
-		_vm->_scrolls->displayScrollChain('q', 69);
+		_vm->_dialogs->displayScrollChain('q', 69);
 		break;
 
 	case kRoomCatacombs:
@@ -1117,7 +1117,7 @@ void Lucerna::checkClick() {
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxToggle();
 			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
-				_vm->_gyro->_mouseText.insertChar(Scrolls::kControlNewLine, 0);
+				_vm->_gyro->_mouseText.insertChar(Dialogs::kControlNewLine, 0);
 		} else if (!_vm->_gyro->_dropsOk)
 			_vm->_gyro->_mouseText = Common::String(13) + _vm->_gyro->_mouseText;
 	}
@@ -1218,7 +1218,7 @@ void Lucerna::spriteRun() {
 void Lucerna::fixFlashers() {
 	_vm->_gyro->_ledStatus = 177;
 	_vm->_animation->_oldDirection = 177;
-	_vm->_scrolls->setReadyLight(2);
+	_vm->_dialogs->setReadyLight(2);
 	drawDirection();
 }
 

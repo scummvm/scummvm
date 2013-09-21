@@ -30,7 +30,7 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/gyro.h"
 #include "avalanche/pingo.h"
-#include "avalanche/scrolls.h"
+#include "avalanche/dialogs.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/acci.h"
 #include "avalanche/animation.h"
@@ -311,7 +311,7 @@ void Gyro::newGame() {
 	_alive = true;
 	resetVariables();
 
-	_vm->_scrolls->setBubbleStateNatural();
+	_vm->_dialogs->setBubbleStateNatural();
 
 	_spareEvening = "answer a questionnaire";
 	_favouriteDrink = "beer";
@@ -366,7 +366,7 @@ bool Gyro::setFlag(char x) {
 bool Gyro::decreaseMoney(uint16 howmuchby) {
 	_money -= howmuchby;
 	if (_money < 0) {
-		_vm->_scrolls->displayScrollChain('Q', 2); // "You are now denariusless!"
+		_vm->_dialogs->displayScrollChain('Q', 2); // "You are now denariusless!"
 		_vm->_lucerna->gameOver();
 		return false;
 	} else

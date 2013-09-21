@@ -15,7 +15,7 @@ MODULE_OBJS = \
 	menu.o \
 	parser.o \
 	pingo.o \
-	scrolls.o \
+	dialogs.o \
 	sequence.o \
 	sound.o \
 	timer.o
