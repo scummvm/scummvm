@@ -193,7 +193,7 @@ void Scrolls::store(byte what, TuneType &played) {
 bool Scrolls::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
-	for (int i = 0; i < sizeof(played); i++) {
+	for (byte i = 0; i < sizeof(played); i++) {
 		if (played[i] != _vm->_gyro->kTune[i])
 			mistakes += 1;
 	}
@@ -208,7 +208,7 @@ void Scrolls::scrollModeMusic() {
 	_vm->_gyro->newMouse(3);
 
 	TuneType played;
-	for (int i = 0; i < sizeof(played); i++)
+	for (byte i = 0; i < sizeof(played); i++)
 		played[i] = Gyro::kPitchInvalid;
 	int8 lastOne = -1, thisOne = -1; // Invalid values.
 
