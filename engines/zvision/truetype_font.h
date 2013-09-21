@@ -56,7 +56,7 @@ public:
 
 public:
 	bool loadFile(const Common::String &filename);	
-	Graphics::Surface *drawTextToSurface(const Common::String &text, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap);
+	Graphics::Surface *drawTextToSurface(const Common::String &text, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap);
 };
 
 } // End of namespace ZVision

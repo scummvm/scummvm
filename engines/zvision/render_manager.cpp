@@ -367,7 +367,7 @@ Common::Rect RenderManager::renderTextToWorkingWindow(uint32 idNumber, const Com
 	entry.destY = destY;
 	
 	// Draw the text to the working window
-	entry.data = font->drawTextToSurface(text, destX, destY, textColor, maxWidth, maxHeight, align, wrap);
+	entry.data = font->drawTextToSurface(text, textColor, maxWidth, maxHeight, align, wrap);
 	entry.width = entry.data->w;
 	entry.height = entry.data->h;
 

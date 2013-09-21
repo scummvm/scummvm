@@ -72,7 +72,7 @@ bool TruetypeFont::loadFile(const Common::String &filename) {
 	return true;
 }
 
-Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, int destX, int destY, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap) {
+Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap) {
 	if (text.equals("")) {
 		return nullptr;
 	}
