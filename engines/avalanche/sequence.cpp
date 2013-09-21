@@ -83,20 +83,22 @@ void Sequence::shoveLeft() {
 }
 
 void Sequence::callSequencer() {
-	switch (_seq[0]) {
+	byte curSeq = _seq[0];
+
+	switch (curSeq) {
 	case 0:
 		return; // No more routines.
 		break;
 	case 177: // Flip room.
 		_vm->_gyro->_userMovesAvvy = true;
 		_vm->_animation->flipRoom(_vm->_gyro->_flipToWhere, _vm->_gyro->_flipToPed);
-		if (_seq[0] == 177)
+		if (curSeq == 177)
 			shoveLeft();
 		break;
 	}
 
-	if (_seq[0] <= 176) { // Show a frame.
-		_vm->_background->drawBackgroundSprite(-1, -1, _seq[0] - 1);
+	if (curSeq <= 176) { // Show a frame.
+		_vm->_background->drawBackgroundSprite(-1, -1, curSeq - 1);
 		shoveLeft();
 	}
 
