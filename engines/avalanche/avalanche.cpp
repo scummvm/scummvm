@@ -113,7 +113,6 @@ const char *AvalancheEngine::getCopyrightString() const {
 }
 
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
-	//blockwrite(f, dna, sizeof(dna));
 	sz.syncAsByte(_animation->_direction);
 	sz.syncAsByte(_avalot->_carryNum);
 	for (int i = 0; i < kObjectNum; i++)
@@ -255,16 +254,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_avalot->_givenPenToAyles);
 	sz.syncAsByte(_avalot->_askedDogfoodAboutNim);
 
-
-#if 0
-	for (int groi = 0; groi < numtr; groi++) {
-		if (tr[groi].quick) {
-			blockwrite(f, groi, 1);
-			tr[groi].savedata(f);
-		}
-	}
-#endif
-
 	byte spriteNum = 0;
 	if (sz.isSaving()) {
 		for (int i = 0; i < _animation->kSpriteNumbMax; i++) {
@@ -315,17 +304,12 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 			spr->appear(spr->_x, spr->_y, spr->_facingDir);
 	}
 
-	//groi = 177;
-	//blockwrite(f, groi, 1);
-
-	//blockwrite(f, times, sizeof(times)); // Timeout.times: Timers.
 	for (int i = 0; i < 7; i++) {
 		sz.syncAsSint32LE(_timer->_times[i]._timeLeft);
 		sz.syncAsByte(_timer->_times[i]._action);
 		sz.syncAsByte(_timer->_times[i]._reason);
 	}
 
-	//blockwrite(f, seq, sizeof(seq)); // Sequencer information.
 	sz.syncBytes(_sequence->_seq, _sequence->kSeqLength);
 }
 
