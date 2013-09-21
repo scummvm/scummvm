@@ -44,7 +44,8 @@ _centerPitchWheelOnUnload(false),
 _sendSustainOffOnNotesOff(false),
 _numTracks(0),
 _activeTrack(255),
-_abortParse(0) {
+_abortParse(false),
+_jumpingToTick(false) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	memset(_tracks, 0, sizeof(_tracks));
 	_nextEvent.start = NULL;
@@ -204,49 +205,22 @@ void MidiParser::onTimer() {
 			return;
 		}
 
-		if (info.event == 0xF0) {
-			// SysEx event
-			// Check for trailing 0xF7 -- if present, remove it.
-			if (info.ext.data[info.length-1] == 0xF7)
-				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+		if (info.command() == 0x8) {
+			activeNote(info.channel(), info.basic.param1, false);
+		} else if (info.command() == 0x9) {
+			if (info.length > 0)
+				hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
 			else
-				_driver->sysEx(info.ext.data, (uint16)info.length);
-		} else if (info.event == 0xFF) {
-			// META event
-			if (info.ext.type == 0x2F) {
-				// End of Track must be processed by us,
-				// as well as sending it to the output device.
-				if (_autoLoop) {
-					jumpToTick(0);
-					parseNextEvent(_nextEvent);
-				} else {
-					stopPlaying();
-					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
-				}
-				return;
-			} else if (info.ext.type == 0x51) {
-				if (info.length >= 3) {
-					setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
-				}
-			}
-			_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
-		} else {
-			if (info.command() == 0x8) {
-				activeNote(info.channel(), info.basic.param1, false);
-			} else if (info.command() == 0x9) {
-				if (info.length > 0)
-					hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
-				else
-					activeNote(info.channel(), info.basic.param1, true);
-			}
-			sendToDriver(info.event, info.basic.param1, info.basic.param2);
+				activeNote(info.channel(), info.basic.param1, true);
 		}
 
+		processEvent(info);
 
-		if (!_abortParse) {
-			_position._lastEventTime = eventTime;
-			parseNextEvent(_nextEvent);
-		}
+		if (_abortParse)
+			break;
+
+		_position._lastEventTime = eventTime;
+		parseNextEvent(_nextEvent);
 	}
 
 	if (!_abortParse) {
@@ -254,6 +228,45 @@ void MidiParser::onTimer() {
 		_position._playTick = (_position._playTime - _position._lastEventTime) / _psecPerTick + _position._lastEventTick;
 	}
 }
+
+void MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
+	if (info.event == 0xF0) {
+		// SysEx event
+		// Check for trailing 0xF7 -- if present, remove it.
+		if (fireEvents) {
+			if (info.ext.data[info.length-1] == 0xF7)
+				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+			else
+				_driver->sysEx(info.ext.data, (uint16)info.length);
+		}
+	} else if (info.event == 0xFF) {
+		// META event
+		if (info.ext.type == 0x2F) {
+			// End of Track must be processed by us,
+			// as well as sending it to the output device.
+			if (_autoLoop) {
+				jumpToTick(0);
+				parseNextEvent(_nextEvent);
+			} else {
+				stopPlaying();
+				if (fireEvents)
+					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+			}
+			_abortParse = true;
+			return;
+		} else if (info.ext.type == 0x51) {
+			if (info.length >= 3) {
+				setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
+			}
+		}
+		if (fireEvents)
+			_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+	} else {
+		if (fireEvents)
+			sendToDriver(info.event, info.basic.param1, info.basic.param2);
+	}
+}
+
 
 void MidiParser::allNotesOff() {
 	if (!_driver)
@@ -370,6 +383,9 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 	if (_activeTrack >= _numTracks)
 		return false;
 
+	assert(!_jumpingToTick); // This function is not re-entrant
+	_jumpingToTick = true;
+
 	Tracker currentPos(_position);
 	EventInfo currentEvent(_nextEvent);
 
@@ -390,34 +406,19 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 			_position._playTick = _position._lastEventTick;
 			_position._playTime = _position._lastEventTime;
 
-			if (info.event == 0xFF) {
-				if (info.ext.type == 0x2F) { // End of track
-					_position = currentPos;
-					_nextEvent = currentEvent;
-					return false;
-				} else {
-					if (info.ext.type == 0x51 && info.length >= 3) // Tempo
-						setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
-					if (fireEvents)
-						_driver->metaEvent(info.ext.type, info.ext.data, (uint16) info.length);
-				}
-			} else if (fireEvents) {
-				if (info.event == 0xF0) {
-					if (info.ext.data[info.length-1] == 0xF7)
-						_driver->sysEx(info.ext.data, (uint16)info.length-1);
-					else
-						_driver->sysEx(info.ext.data, (uint16)info.length);
-				} else {
-					// The note on sending code is used by the SCUMM engine. Other engine using this code
-					// (such as SCI) have issues with this, as all the notes sent can be heard when a song
-					// is fast-forwarded.	Thus, if the engine requests it, don't send note on events.
-					if (info.command() == 0x9 && dontSendNoteOn) {
-						// Don't send note on; doing so creates a "warble" with some instruments on the MT-32.
-						// Refer to patch #3117577
-					} else {
-						sendToDriver(info.event, info.basic.param1, info.basic.param2);
-					}
-				}
+			// Some special processing for the fast-forward case
+			if (info.command() == 0x9 && dontSendNoteOn) {
+				// Don't send note on; doing so creates a "warble" with
+				// some instruments on the MT-32. Refer to patch #3117577
+			} else if (info.event == 0xFF && info.ext.type == 0x2F) {
+				// End of track
+				// This means that we failed to find the right tick.
+				_position = currentPos;
+				_nextEvent = currentEvent;
+				_jumpingToTick = false;
+				return false;
+			} else {
+				processEvent(info, fireEvents);
 			}
 
 			parseNextEvent(_nextEvent);
@@ -441,6 +442,7 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 	}
 
 	_abortParse = true;
+	_jumpingToTick = false;
 	return true;
 }
 
