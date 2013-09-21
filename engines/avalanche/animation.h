@@ -137,7 +137,7 @@ private:
 	AvalancheEngine *_vm;
 
 	byte checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
-	byte geidaPed(byte which);
+	byte geidaPed(byte ped);
 	void dawnDelay();
 
 	void grabAvvy(byte tripnum);

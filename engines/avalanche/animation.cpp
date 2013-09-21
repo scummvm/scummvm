@@ -59,12 +59,12 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 
 	int32 id = inf.readSint32LE();
 	if (id != idshould) {
-		//output << '\7';
 		inf.close();
 		return;
 	}
 
-	inf.skip(2); // Replace variable named 'soa' in the original code.
+	// Replace variable named 'soa' in the original code.
+	inf.skip(2);
 
 	if (!_stat._name.empty())
 		_stat._name.clear();
@@ -73,7 +73,6 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 		_stat._name += inf.readByte();
 	inf.skip(12 - nameSize);
 
-	//inf.skip(1); // Same as above.
 	byte commentSize = inf.readByte();
 	for (int i = 0; i < commentSize; i++)
 		_stat._comment += inf.readByte();
@@ -134,7 +133,8 @@ void AnimationType::original() {
 void AnimationType::draw() {
 	if ((_vanishIfStill) && (_moveX == 0) && (_moveY == 0))
 		return;
-	byte picnum = _facingDir * _stat._seq + _stepNum; // There'll maybe problem because of the different array indexes in Pascal (starting from 1).
+
+	byte picnum = _facingDir * _stat._seq + _stepNum;
 
 	_anim->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
 }
@@ -370,47 +370,42 @@ void Animation::loadAnims() {
 }
 
 byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
-	byte returnColor = 0;
+	if (!_vm->_gyro->_alive)
+		return 0;
 
 	if (x1 < 0)
 		x1 = 0;
 	if (x2 > 639)
 		x2 = 639;
-	if (oy < y) {
-		for (int16 i = x1; i <= x2; i++) {
-			for (int16 j = oy + yl; j <= y + yl; j++) {
-				byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
-				if (actColor > returnColor)
-					returnColor = actColor;
-			}
-		}
-	} else {
-		for (int16 i = x1; i <= x2; i++) {
-			for (int16 j = y + yl; j <= oy + yl; j++) {
-				byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
-				if (actColor > returnColor)
-					returnColor = actColor;
-			}
+
+	int16 minY = MIN(oy, y) + yl;
+	int16 maxY = MAX(oy, y) + yl;
+	byte returnColor = 0;
+
+	for (int16 i = x1; i <= x2; i++) {
+		for (int16 j = minY; j <= maxY; j++) {
+			byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
+			returnColor = MAX(returnColor, actColor);
 		}
 	}
 
 	return returnColor;
 }
 
-byte Animation::geidaPed(byte which) {
-	switch (which) {
+byte Animation::geidaPed(byte ped) {
+	switch (ped) {
 	case 1:
-		return 7;
+		return 6;
 	case 2:
 	case 6:
-		return 8;
+		return 7;
 	case 3:
 	case 5:
-		return 9;
+		return 8;
 	case 4:
-		return 10;
+		return 9;
 	default:
-		return 0;
+		error("geidaPed(): Unhandled ped value %d", ped);
 	}
 }
 
@@ -710,7 +705,7 @@ void Animation::catacombMove(byte ped) {
 	if ((_vm->_gyro->_geidaFollows) && (ped > 0)) {
 		if (!_sprites[1]._quick)  // If we don't already have her...
 			_sprites[1].init(5, true, this); // ...Load Geida.
-		appearPed(1, geidaPed(ped) - 1);
+		appearPed(1, geidaPed(ped));
 		_sprites[1]._callEachStepFl = true;
 		_sprites[1]._eachStepProc = kProcGeida;
 	}
@@ -1300,9 +1295,6 @@ void Animation::flipRoom(byte room, byte ped) {
 	_vm->_lucerna->drawDirection();
 
 	_vm->_lucerna->dawn();
-
-	// Tidy up after mouse. I know it's a kludge...
-	//  tidy_after_mouse;
 }
 
 bool Animation::inField(byte which) {
