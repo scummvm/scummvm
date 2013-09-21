@@ -34,7 +34,7 @@
 #include "avalanche/animation.h"
 #include "avalanche/gyro.h"
 #include "avalanche/lucerna.h"
-#include "avalanche/scrolls.h"
+#include "avalanche/dialogs.h"
 #include "avalanche/menu.h"
 #include "avalanche/pingo.h"
 #include "avalanche/timer.h"
@@ -120,7 +120,7 @@ void Avalot::handleKeyDown(Common::Event &event) {
 void Avalot::setup() {
 	_vm->_gyro->init();
 
-	_vm->_scrolls->resetScroll();
+	_vm->_dialogs->reset();
 	_vm->_lucerna->dusk();
 	_vm->_lucerna->loadDigits();
 
@@ -128,7 +128,7 @@ void Avalot::setup() {
 	_vm->_parser->_quote = true;
 
 	_vm->_lucerna->drawToolbar();
-	_vm->_scrolls->setReadyLight(2);
+	_vm->_dialogs->setReadyLight(2);
 
 	_vm->_animation->_direction = Animation::kDirStopped;
 	_vm->_animation->loadAnims();
@@ -155,7 +155,7 @@ void Avalot::setup() {
 		_vm->_lucerna->fxToggle();
 		_vm->_lucerna->thinkAbout(Gyro::kObjectMoney, Gyro::kThing);
 
-		_vm->_scrolls->displayScrollChain('q', 83); // Info on the game, etc.
+		_vm->_dialogs->displayScrollChain('q', 83); // Info on the game, etc.
 	}
 }
 

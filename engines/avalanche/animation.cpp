@@ -29,7 +29,7 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/animation.h"
-#include "avalanche/scrolls.h"
+#include "avalanche/dialogs.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/gyro.h"
 #include "avalanche/background.h"
@@ -216,8 +216,8 @@ void AnimationType::walk() {
 				break;
 			case Gyro::kMagicUnfinished: {
 				bounce();
-				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", Scrolls::kControlBell, Scrolls::kControlCenter, Scrolls::kControlRoman);
-				_anim->_vm->_scrolls->displayText(tmpStr);
+				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", Dialogs::kControlBell, Dialogs::kControlCenter, Dialogs::kControlRoman);
+				_anim->_vm->_dialogs->displayText(tmpStr);
 				}
 				break;
 			case Gyro::kMagicSpecial:
@@ -421,12 +421,12 @@ void Animation::catacombMove(byte ped) {
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
 		flipRoom(kRoomLustiesRoom, 4);
-		_vm->_scrolls->displayText("Phew! Nice to be out of there!");
+		_vm->_dialogs->displayText("Phew! Nice to be out of there!");
 		return;
 	case 1033:{ // Oubliette
 		flipRoom(kRoomOubliette, 1);
-		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", Scrolls::kControlRegister, Scrolls::kControlSpeechBubble);
-		_vm->_scrolls->displayText(tmpStr);
+		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+		_vm->_dialogs->displayText(tmpStr);
 		}
 		return;
 	case 4:
@@ -434,7 +434,7 @@ void Animation::catacombMove(byte ped) {
 		return;
 	case 2307:
 		flipRoom(kRoomLusties, 5);
-		_vm->_scrolls->displayText("Oh no... here we go again...");
+		_vm->_dialogs->displayText("Oh no... here we go again...");
 		_vm->_gyro->_userMovesAvvy = false;
 		_sprites[0]._moveY = 1;
 		_sprites[0]._moveX = 0;
@@ -733,7 +733,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_gyro->_magics[11]._data = 5;
 		_vm->_gyro->_magics[3]._operation = Gyro::kMagicBounce; // Now works as planned!
 		stopWalking();
-		_vm->_scrolls->displayScrollChain('q', 26);
+		_vm->_dialogs->displayScrollChain('q', 26);
 		_vm->_gyro->_userMovesAvvy = true;
 		break;
 	case 3: // _vm->_gyro->special 3: Room 71: triggers dart.
@@ -763,11 +763,11 @@ void Animation::callSpecial(uint16 which) {
 		if (_vm->_gyro->_friarWillTieYouUp) {
 			// _vm->_gyro->special 5: Room 42: touched tree, and get tied up.
 			_vm->_gyro->_magics[4]._operation = Gyro::kMagicBounce; // Boundary effect is now working again.
-			_vm->_scrolls->displayScrollChain('q', 35);
+			_vm->_dialogs->displayScrollChain('q', 35);
 			_sprites[0].remove();
 			//tr[1].vanishifstill:=true;
 			_vm->_background->drawBackgroundSprite(-1, -1, 1);
-			_vm->_scrolls->displayScrollChain('q', 36);
+			_vm->_dialogs->displayScrollChain('q', 36);
 			_vm->_gyro->_tiedUp = true;
 			_vm->_gyro->_friarWillTieYouUp = false;
 			_sprites[1].walkTo(2);
@@ -791,12 +791,12 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_timer->loseTimer(Timer::kReasonFallingDownOubliette);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 0);
 		//_vm->_lucerna->mblit(12, 80, 38, 160, 3, 1);
-		_vm->_scrolls->displayText("Oh dear, you seem to be down the bottom of an oubliette.");
+		_vm->_dialogs->displayText("Oh dear, you seem to be down the bottom of an oubliette.");
 		_vm->_timer->addTimer(200, Timer::kProcMeetAvaroid, Timer::kReasonMeetingAvaroid);
 		break;
 	case 8:        // _vm->_gyro->special 8: leave du Lustie's room.
 		if ((_vm->_gyro->_geidaFollows) && (!_vm->_gyro->_lustieIsAsleep)) {
-			_vm->_scrolls->displayScrollChain('q', 63);
+			_vm->_dialogs->displayScrollChain('q', 63);
 			_sprites[1].turn(kDirDown);
 			_sprites[1].stopWalk();
 			_sprites[1]._callEachStepFl = false; // Geida
@@ -816,9 +816,9 @@ void Animation::callSpecial(uint16 which) {
 		if ((_vm->_gyro->_catacombX == 4) && (_vm->_gyro->_catacombY == 1)) {
 			// Into Geida's room.
 			if (_vm->_gyro->_objects[Gyro::kObjectKey - 1])
-				_vm->_scrolls->displayScrollChain('q', 62);
+				_vm->_dialogs->displayScrollChain('q', 62);
 			else {
-				_vm->_scrolls->displayScrollChain('q', 61);
+				_vm->_dialogs->displayScrollChain('q', 61);
 				return;
 			}
 		}
@@ -1034,7 +1034,7 @@ void Animation::arrowProcs(byte tripnum) {
 			// OK, it's hit him... what now?
 
 			_sprites[1]._callEachStepFl = false; // prevent recursion.
-			_vm->_scrolls->displayScrollChain('Q', 47); // Complaint!
+			_vm->_dialogs->displayScrollChain('Q', 47); // Complaint!
 			_sprites[tripnum].remove(); // Deallocate the arrow.
 
 			_vm->_lucerna->gameOver();
@@ -1091,7 +1091,7 @@ void Animation::spin(byte whichway, byte &tripnum) {
 		_vm->_gyro->_geidaSpin += 1;
 		_vm->_gyro->_geidaTime = 20;
 		if (_vm->_gyro->_geidaSpin == 5) {
-			_vm->_scrolls->displayText("Steady on, Avvy, you'll make the poor girl dizzy!");
+			_vm->_dialogs->displayText("Steady on, Avvy, you'll make the poor girl dizzy!");
 			_vm->_gyro->_geidaSpin = 0;
 			_vm->_gyro->_geidaTime = 0; // knock out records
 		}
@@ -1215,7 +1215,7 @@ void Animation::animLink() {
 
 	if (_mustExclaim) {
 		_mustExclaim = false;
-		_vm->_scrolls->displayScrollChain('x', _sayWhat);
+		_vm->_dialogs->displayScrollChain('x', _sayWhat);
 	}
 }
 
@@ -1233,13 +1233,13 @@ void Animation::stopWalking() {
 void Animation::hideInCupboard() {
 	if (_vm->_gyro->_avvysInTheCupboard) {
 		if (_vm->_gyro->_wearing == Acci::kNothing) {
-			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", Scrolls::kControlItalic, Scrolls::kControlRoman);
-			_vm->_scrolls->displayText(tmpStr);
+			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", Dialogs::kControlItalic, Dialogs::kControlRoman);
+			_vm->_dialogs->displayText(tmpStr);
 		} else {
 			_sprites[0]._visible = true;
 			_vm->_gyro->_userMovesAvvy = true;
 			appearPed(0, 2); // Walk out of the cupboard.
-			_vm->_scrolls->displayText("You leave the cupboard. Nice to be out of there!");
+			_vm->_dialogs->displayText("You leave the cupboard. Nice to be out of there!");
 			_vm->_gyro->_avvysInTheCupboard = false;
 			_vm->_sequence->firstShow(8);
 			_vm->_sequence->thenShow(7);
@@ -1250,8 +1250,8 @@ void Animation::hideInCupboard() {
 		_sprites[0]._visible = false;
 		_vm->_gyro->_userMovesAvvy = false;
 		Common::String tmpStr = Common::String::format("You walk into the room...%cIt seems to be an empty, " \
-			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", Scrolls::kControlParagraph);
-		_vm->_scrolls->displayText(tmpStr);
+			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", Dialogs::kControlParagraph);
+		_vm->_dialogs->displayText(tmpStr);
 		_vm->_gyro->_avvysInTheCupboard = true;
 		_vm->_background->drawBackgroundSprite(-1, -1, 7);
 	}

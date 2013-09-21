@@ -34,7 +34,7 @@
 #include "avalanche/avalot.h"
 #include "avalanche/gyro.h"
 #include "avalanche/pingo.h"
-#include "avalanche/scrolls.h"
+#include "avalanche/dialogs.h"
 #include "avalanche/lucerna.h"
 #include "avalanche/background.h"
 #include "avalanche/sequence.h"
@@ -70,7 +70,7 @@ public:
 	Avalot *_avalot;
 	Gyro *_gyro;
 	Pingo *_pingo;
-	Scrolls *_scrolls;
+	Dialogs *_dialogs;
 	Lucerna *_lucerna;
 	Background *_background;
 	Sequence *_sequence;
