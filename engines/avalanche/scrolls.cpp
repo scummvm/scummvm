@@ -118,7 +118,6 @@ void Scrolls::scrollModeNormal() {
 
 	setReadyLight(3);
 	_vm->_gyro->_seeScroll = true;
-	CursorMan.showMouse(true);
 	_vm->_gyro->newMouse(3);
 
 	::Graphics::Surface temp;
@@ -177,7 +176,6 @@ void Scrolls::scrollModeNormal() {
 
 	setReadyLight(0);
 	_vm->_gyro->_seeScroll = false;
-	CursorMan.showMouse(false);
 	_vm->_lucerna->_holdLeftMouse = false; // Used in Lucerna::checkclick().
 
 	warning("STUB: Scrolls::scrollModeNormal()");
@@ -277,6 +275,8 @@ void Scrolls::scrollModeMusic() {
 					break;
 				case Common::KEYCODE_RIGHTBRACKET:
 					value = 11;
+					break;
+				default:
 					break;
 				}
 

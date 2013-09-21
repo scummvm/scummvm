@@ -93,7 +93,7 @@ public:
 	byte _color;
 };
 
-typedef byte TuneType[31];
+typedef int8 TuneType[31];
 
 struct QuasipedType {
 	byte _whichPed, _foregroundColor, _room, _backgroundColor;
@@ -200,7 +200,7 @@ public:
 		kPitchInvalid,
 		kPitchLower,
 		kPitchSame,
-		kPitchHigher,
+		kPitchHigher
 	};
 
 	static const uint16 kNotes[12];
