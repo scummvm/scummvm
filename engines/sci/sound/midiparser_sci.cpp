@@ -444,7 +444,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	if (_dataincAdd) {
 		_dataincAdd = false;
 		_pSnd->dataInc += _dataincToAdd;
-		_pSnd->signal = 0x7f + _pSnd->dataInc;
 		debugC(4, kDebugLevelSound, "datainc %04x", _dataincToAdd);
 	}
 	if (_signalSet) {
