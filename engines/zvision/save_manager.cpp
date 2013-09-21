@@ -144,11 +144,11 @@ Common::Error SaveManager::loadGame(uint slot) {
 	uint32 offset = (char)saveFile->readUint32LE();
 
 	ScriptManager *scriptManager = _engine->getScriptManager();
-	// Load the room
-	scriptManager->changeLocation(world, room, node, view, offset);
-
 	// Update the state table values
 	scriptManager->deserializeStateTable(saveFile);
+
+	// Load the room
+	scriptManager->changeLocation(world, room, node, view, offset);
 
 	// Update the controls
 	scriptManager->deserializeControls(saveFile);
