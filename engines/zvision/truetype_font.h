@@ -55,7 +55,25 @@ public:
 	int32 _fontHeight;
 
 public:
+	/**
+	 * Loads a .ttf file into memory. This must be called
+	 * before any calls to drawTextToSurface
+	 *
+	 * @param filename    The file name of the .ttf file to load
+	 */
 	bool loadFile(const Common::String &filename);	
+	/**
+	 * Renders the supplied text to a Surface using 0x0 as the 
+	 * background color. 
+	 *
+	 * @param text         The to render
+	 * @param textColor    The color to render the text with
+	 * @param maxWidth     The max width the text should take up.
+	 * @param maxHeight    The max height the text should take up.
+	 * @param align        The alignment of the text within the bounds of maxWidth
+	 * @param wrap         If true, any words extending past maxWidth will wrap to a new line. If false, ellipses will be rendered to show that the text didn't fit
+	 * @return             A Surface containing the rendered text
+	 */
 	Graphics::Surface *drawTextToSurface(const Common::String &text, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap);
 };
 
