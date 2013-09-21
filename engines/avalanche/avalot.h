@@ -247,8 +247,6 @@ public:
 	int16 _dnascore; // your score, of course
 	int32 _money; // your current amount of dosh
 	byte _room; // your current room
-	byte _wearing; // what you're wearing
-	byte _sworeNum; // number of times you've sworn
 	byte _saveNum; // number of times this game has been saved
 	byte _roomCount[100]; // Add one to each every time you enter a room
 	byte _alcoholLevel; // Your blood alcohol level.

@@ -1230,7 +1230,7 @@ void Animation::stopWalking() {
  */
 void Animation::hideInCupboard() {
 	if (_vm->_avalot->_avvysInTheCupboard) {
-		if (_vm->_avalot->_wearing == Parser::kNothing) {
+		if (_vm->_parser->_wearing == Parser::kNothing) {
 			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", Dialogs::kControlItalic, Dialogs::kControlRoman);
 			_vm->_dialogs->displayText(tmpStr);
 		} else {

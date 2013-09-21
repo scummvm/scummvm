@@ -1560,8 +1560,8 @@ void Avalot::resetVariables() {
 	_dnascore = 0;
 	_money = 0;
 	_room = kRoomNowhere;
-	_wearing = 0;
-	_sworeNum = 0;
+	_vm->_parser->_wearing = 0;
+	_vm->_parser->_sworeNum = 0;
 	_saveNum = 0;
 	for (int i = 0; i < 100; i++)
 		_roomCount[i] = 0;
@@ -1653,7 +1653,7 @@ void Avalot::newGame() {
 	_favouriteDrink = "beer";
 	_money = 30; // 2/6
 	_vm->_animation->_direction = Animation::kDirStopped;
-	_wearing = kObjectClothes;
+	_vm->_parser->_wearing = kObjectClothes;
 	_objects[kObjectMoney - 1] = true;
 	_objects[kObjectBodkin - 1] = true;
 	_objects[kObjectBell - 1] = true;
