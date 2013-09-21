@@ -354,8 +354,8 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	setPalette(0x08C0020C);
 	insertScreenMouse(0x00208084);
 
-	insertStaticSprite(0x41137051, 100);
-	insertStaticSprite(0xC10B2015, 100);
+	insertStaticSprite(0x41137051, 100);	// "Options" header text
+	insertStaticSprite(0xC10B2015, 100);	// Button texts
 
 	if (!_vm->musicIsEnabled())
 		insertStaticSprite(0x0C24C0EE, 100);	// "Music is off" button
