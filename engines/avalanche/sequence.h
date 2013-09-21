@@ -54,7 +54,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	void shoveLeft(); // This PROC is called by Timer when it's time to do another frame.
+	void shoveLeft(); // This is called by Timer when it's time to do another frame. It shifts everything to the left.
 };
 
 } // End of namespace Avalanche.
