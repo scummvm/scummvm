@@ -144,12 +144,6 @@ void Parser::drawCursor() {
 	// Draw the '_' character.
 	for (int bit = 0; bit < 8; bit++)
 		*(byte *)_vm->_graphics->_surface.getBasePtr(24 + _inputTextPos * 8 + 7 - bit, 168) = kColorWhite;
-
-	ByteField bf;
-	bf._x1 = _inputTextPos + 1;
-	bf._x2 = _inputTextPos + 2;
-	bf._y1 = 168;
-	bf._y2 = 168;
 }
 
 void Parser::wipeText() {
