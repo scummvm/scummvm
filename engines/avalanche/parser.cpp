@@ -27,8 +27,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/parser.h"
-#include "avalanche/gyro.h"
-#include "avalanche/lucerna.h"
 #include "avalanche/dialogs.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
@@ -53,7 +51,7 @@ void Parser::init() {
 		_inputText.clear();
 	_inputTextPos = 0;
 
-	_vm->_gyro->_weirdWord = false;
+	_vm->_avalot->_weirdWord = false;
 
 	// Initailaze the vocabulary.
 	// Verbs: 1-49
@@ -425,10 +423,10 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 	case Common::KEYCODE_F5:
 		_person = kPardon;
 		_thing = kPardon;
-		_vm->_lucerna->callVerb(_vm->_gyro->f5Does()[0]);
+		_vm->_avalot->callVerb(_vm->_avalot->f5Does()[0]);
 		break;
 	case Common::KEYCODE_F7:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeOpen);
+		_vm->_avalot->callVerb(Parser::kVerbCodeOpen);
 		break;
 	default:
 		break;
@@ -440,7 +438,7 @@ void Parser::plotText() {
 	cursorOff();
 
 	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
-	_vm->_graphics->drawText(_vm->_graphics->_surface, _inputText, _vm->_gyro->_font, 8, 24, 161, kColorWhite);
+	_vm->_graphics->drawText(_vm->_graphics->_surface, _inputText, _vm->_avalot->_font, 8, 24, 161, kColorWhite);
 
 	cursorOn();
 	CursorMan.showMouse(true);
@@ -539,7 +537,7 @@ Common::String Parser::rank() {
 	};
 
 	for (int i = 0; i < 8; i++) {
-		if ((_vm->_gyro->_dnascore >= kRanks[i]._score) && (_vm->_gyro->_dnascore < kRanks[i + 1]._score)) {
+		if ((_vm->_avalot->_dnascore >= kRanks[i]._score) && (_vm->_avalot->_dnascore < kRanks[i + 1]._score)) {
 			return kRanks[i]._title;
 		}
 	}
@@ -551,7 +549,7 @@ Common::String Parser::totalTime() {
 	const double ticksInOneSec = (double)(65535) / 3600;
 	uint16 h, m, s;
 
-	h = floor(_vm->_gyro->_totalTime / ticksInOneSec); // No. of seconds.
+	h = floor(_vm->_avalot->_totalTime / ticksInOneSec); // No. of seconds.
 	m = h % 3600;
 	h /= 3600;
 	s = m % 60;
@@ -593,10 +591,10 @@ void Parser::displayWhat(byte target, bool animate, bool &ambiguous) {
 			_vm->_dialogs->displayText("What?");
 	} else {
 		if (animate) {
-			Common::String tmpStr = Common::String::format("{ %s }", _vm->_gyro->getName(target).c_str());
+			Common::String tmpStr = Common::String::format("{ %s }", _vm->_avalot->getName(target).c_str());
 			_vm->_dialogs->displayText(tmpStr);
 		} else {
-			Common::String z = _vm->_gyro->getItem(target);
+			Common::String z = _vm->_avalot->getItem(target);
 			if (z != "") {
 				Common::String tmpStr = Common::String::format("{ %s }", z.c_str());
 				_vm->_dialogs->displayText(tmpStr);
@@ -612,16 +610,16 @@ bool Parser::doPronouns() {
 		byte wordCode = _thats[i];
 		switch (wordCode) {
 		case 200:
-			displayWhat(_vm->_gyro->_him, true, ambiguous);
-			_thats.setChar(_vm->_gyro->_him, i);
+			displayWhat(_vm->_avalot->_him, true, ambiguous);
+			_thats.setChar(_vm->_avalot->_him, i);
 			break;
 		case 201:
-			displayWhat(_vm->_gyro->_her, true, ambiguous);
-			_thats.setChar(_vm->_gyro->_her, i);
+			displayWhat(_vm->_avalot->_her, true, ambiguous);
+			_thats.setChar(_vm->_avalot->_her, i);
 			break;
 		case 202:
-			displayWhat(_vm->_gyro->_it, false, ambiguous);
-			_thats.setChar(_vm->_gyro->_it, i);
+			displayWhat(_vm->_avalot->_it, false, ambiguous);
+			_thats.setChar(_vm->_avalot->_it, i);
 			break;
 		}
 	}
@@ -666,32 +664,32 @@ void Parser::storeInterrogation(byte interrogation) {
 	case 1:
 		_inputText.toLowercase();
 		sayIt();
-		_vm->_gyro->_favouriteDrink = _inputText;
-		_vm->_gyro->_cardiffQuestionNum = 2;
+		_vm->_avalot->_favouriteDrink = _inputText;
+		_vm->_avalot->_cardiffQuestionNum = 2;
 		break;
 	case 2:
 		properNouns();
 		sayIt();
-		_vm->_gyro->_favouriteSong = _inputText;
-		_vm->_gyro->_cardiffQuestionNum = 3;
+		_vm->_avalot->_favouriteSong = _inputText;
+		_vm->_avalot->_cardiffQuestionNum = 3;
 		break;
 	case 3:
 		properNouns();
 		sayIt();
-		_vm->_gyro->_worstPlaceOnEarth = _inputText;
-		_vm->_gyro->_cardiffQuestionNum = 4;
+		_vm->_avalot->_worstPlaceOnEarth = _inputText;
+		_vm->_avalot->_cardiffQuestionNum = 4;
 		break;
 	case 4:
 		_inputText.toLowercase();
 		sayIt();
-		if (!_vm->_gyro->_spareEvening.empty())
-			_vm->_gyro->_spareEvening.clear();
-		_vm->_gyro->_spareEvening = _inputText;
+		if (!_vm->_avalot->_spareEvening.empty())
+			_vm->_avalot->_spareEvening.clear();
+		_vm->_avalot->_spareEvening = _inputText;
 		_vm->_dialogs->displayScrollChain('z', 5); // His closing statement...
 		_vm->_animation->_sprites[1].walkTo(3); // The end of the drawbridge
 		_vm->_animation->_sprites[1]._vanishIfStill = true; // Then go away!
-		_vm->_gyro->_magics[1]._operation = Gyro::kMagicNothing;
-		_vm->_gyro->_cardiffQuestionNum = 5;
+		_vm->_avalot->_magics[1]._operation = Avalot::kMagicNothing;
+		_vm->_avalot->_cardiffQuestionNum = 5;
 		break;
 	case 99:
 		//store_high(_inputText);
@@ -727,9 +725,9 @@ void Parser::parse() {
 	}
 
 	// Are we being interrogated right now?
-	if (_vm->_gyro->_interrogation > 0) {
-		storeInterrogation(_vm->_gyro->_interrogation);
-		_vm->_gyro->_weirdWord = true;
+	if (_vm->_avalot->_interrogation > 0) {
+		storeInterrogation(_vm->_avalot->_interrogation);
+		_vm->_avalot->_weirdWord = true;
 		return;
 	}
 
@@ -761,7 +759,7 @@ void Parser::parse() {
 		// Check also[] first, which contains words about the actual room.
 		if (!thisword.empty()) {
 			for (int i = 0; i < 31; i++) {
-				if ((_vm->_gyro->_also[i][0] != 0) && (getPos(',' + thisword, *_vm->_gyro->_also[i][0]) > -1)) {
+				if ((_vm->_avalot->_also[i][0] != 0) && (getPos(',' + thisword, *_vm->_avalot->_also[i][0]) > -1)) {
 					_thats += Common::String(99 + i);
 					notfound = false;
 				}
@@ -813,12 +811,12 @@ void Parser::parse() {
 	replace(Common::String("\x4\xE5"),  20); // "take off" = "doff"
 
 	// Words that could mean more than one _person
-	if (_vm->_gyro->_room == kRoomNottsPub)
+	if (_vm->_avalot->_room == kRoomNottsPub)
 		replace(Common::String('\xCC'), 164); // Barman = Port
 	else
 		replace(Common::String('\xCC'), 154); // Barman = Malagauche
 
-	switch (_vm->_gyro->_room) {
+	switch (_vm->_avalot->_room) {
 	case kRoomAylesOffice:
 		replace(Common::String('\xCB'), 163); // Monk = Ayles
 		break;
@@ -830,39 +828,39 @@ void Parser::parse() {
 	}
 
 	if (doPronouns()) {
-		_vm->_gyro->_weirdWord = true;
+		_vm->_avalot->_weirdWord = true;
 		_thats = kNothing;
 		return;
 	}
 
 	// Second parsing.
-	if (!_vm->_gyro->_subject.empty())
-		_vm->_gyro->_subject.clear();
-	_vm->_gyro->_subjectNum = 0; // Find subject of conversation.
+	if (!_vm->_avalot->_subject.empty())
+		_vm->_avalot->_subject.clear();
+	_vm->_avalot->_subjectNum = 0; // Find subject of conversation.
 
 	for (int i = 0; (i < 11) && !_realWords[i].empty(); i++) {
 		if ((_realWords[i][0] == '\'') || (_realWords[i][0] == '\"')) {
-			_vm->_gyro->_subjectNum = (byte)_thats[i];
+			_vm->_avalot->_subjectNum = (byte)_thats[i];
 			_thats.setChar(kMoved, i);
 			break;
 		}
 	}
 
-	if ((_vm->_gyro->_subjectNum == 0) && !_thats.empty()) { // Still not found.
+	if ((_vm->_avalot->_subjectNum == 0) && !_thats.empty()) { // Still not found.
 		for (uint16 i = 0; i < _thats.size() - 1; i++) {
 			if ((byte)_thats[i] == 252) { // The word is "about", or something similar.
-				_vm->_gyro->_subjectNum = (byte)_thats[i + 1];
+				_vm->_avalot->_subjectNum = (byte)_thats[i + 1];
 				_thats.setChar(0, i + 1);
 				break;
 			}
 		}
 	}
 
-	if ((_vm->_gyro->_subjectNum == 0) && !_thats.empty()) { // STILL not found! Must be the word after "say".
+	if ((_vm->_avalot->_subjectNum == 0) && !_thats.empty()) { // STILL not found! Must be the word after "say".
 		for (uint16 i = 0; i < _thats.size() - 1; i++) {
 			if (((byte)_thats[i] == 7) && ((byte)_thats[i + 1] != 0) && !((225 <= (byte)_thats[i + 1]) && ((byte)_thats[i + 1] <= 229))) {
 				// SAY not followed by a preposition
-				_vm->_gyro->_subjectNum = (byte)_thats[i + 1];
+				_vm->_avalot->_subjectNum = (byte)_thats[i + 1];
 				_thats.setChar(0, i + 1);
 				break;
 			}
@@ -884,30 +882,30 @@ void Parser::parse() {
 	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
 		Common::String tmpStr = Common::String::format("Sorry, but I have no idea what \"%s\" means. Can you rephrase it?", unkString.c_str());
 		_vm->_dialogs->displayText(tmpStr);
-		_vm->_gyro->_weirdWord = true;
+		_vm->_avalot->_weirdWord = true;
 	} else
-		_vm->_gyro->_weirdWord = false;
+		_vm->_avalot->_weirdWord = false;
 
 	if (_thats.empty())
 		_thats = kNothing;
 
 	if (_thing != kPardon)
-		_vm->_gyro->_it = _thing;
+		_vm->_avalot->_it = _thing;
 
 	if (_person != kPardon) {
-		if (_person < Gyro::kPeopleArkata)
-			_vm->_gyro->_him = _person;
+		if (_person < Avalot::kPeopleArkata)
+			_vm->_avalot->_him = _person;
 		else
-			_vm->_gyro->_her = _person;
+			_vm->_avalot->_her = _person;
 	}
 }
 
 void Parser::examineObject() {
-	if (_thing != _vm->_gyro->_thinks)
-		_vm->_lucerna->thinkAbout(_thing, Gyro::kThing);
+	if (_thing != _vm->_avalot->_thinks)
+		_vm->_avalot->thinkAbout(_thing, Avalot::kThing);
 	switch (_thing) {
-	case Gyro::kObjectWine :
-		switch (_vm->_gyro->_wineState) {// 4 is perfect wine. 0 is not holding the wine.
+	case Avalot::kObjectWine :
+		switch (_vm->_avalot->_wineState) {// 4 is perfect wine. 0 is not holding the wine.
 		case 1:
 			_vm->_dialogs->displayScrollChain('t', 1); // Normal examine wine scroll
 			break;
@@ -919,8 +917,8 @@ void Parser::examineObject() {
 			break;
 		}
 		break;
-	case Gyro::kObjectOnion:
-		if (_vm->_gyro->_rottenOnion)
+	case Avalot::kObjectOnion:
+		if (_vm->_avalot->_rottenOnion)
 			_vm->_dialogs->displayScrollChain('q', 21); // Yucky onion
 		else
 			_vm->_dialogs->displayScrollChain('t', 18);  // Normal onion
@@ -931,11 +929,11 @@ void Parser::examineObject() {
 }
 
 bool Parser::isPersonHere() { // Person equivalent of "holding".
-	if ((_person == kPardon) || (_person == 0) || (_vm->_gyro->_whereIs[_person - 150] == _vm->_gyro->_room))
+	if ((_person == kPardon) || (_person == 0) || (_vm->_avalot->_whereIs[_person - 150] == _vm->_avalot->_room))
 		return true;
 	else {
 		Common::String tmpStr;
-		if (_person < Gyro::kPeopleArkata)
+		if (_person < Avalot::kPeopleArkata)
 			tmpStr = "He isn't around at the moment.";
 		else
 			tmpStr = "She isn't around at the moment.";
@@ -946,19 +944,19 @@ bool Parser::isPersonHere() { // Person equivalent of "holding".
 
 void Parser::exampers() {
 	if (isPersonHere()) {
-		if (_thing != _vm->_gyro->_thinks)
-			_vm->_lucerna->thinkAbout(_person, Gyro::kPerson);
+		if (_thing != _vm->_avalot->_thinks)
+			_vm->_avalot->thinkAbout(_person, Avalot::kPerson);
 
 		byte newPerson = _person - 149;
 
-		if ((_person == Gyro::kPeopleDogfood) && _vm->_gyro->_wonNim)
+		if ((_person == Avalot::kPeopleDogfood) && _vm->_avalot->_wonNim)
 			_vm->_dialogs->displayScrollChain('Q', 8); // "I'm Not Playing!"
-		else if ((_person == Gyro::kPeopleDuLustie) && _vm->_gyro->_lustieIsAsleep)
+		else if ((_person == Avalot::kPeopleDuLustie) && _vm->_avalot->_lustieIsAsleep)
 			_vm->_dialogs->displayScrollChain('Q', 65); // He's asleep.
 		else
 			_vm->_dialogs->displayScrollChain('p', newPerson);
 
-		if ((_person == Gyro::kPeopleAyles) && !_vm->_gyro->_aylesIsAwake)
+		if ((_person == Avalot::kPeopleAyles) && !_vm->_avalot->_aylesIsAwake)
 			_vm->_dialogs->displayScrollChain('Q', 13);
 
 		_person = newPerson;
@@ -977,7 +975,7 @@ bool Parser::isHolding() {
 
 	if (_thing > 100)
 		_vm->_dialogs->displayText("Be reasonable!");
-	else if (!_vm->_gyro->_objects[_thing - 1])  // Verbs that need "_thing" to be in the inventory.
+	else if (!_vm->_avalot->_objects[_thing - 1])  // Verbs that need "_thing" to be in the inventory.
 		_vm->_dialogs->displayText("You're not holding it, Avvy.");
 	else
 		holdingResult = true;
@@ -986,7 +984,7 @@ bool Parser::isHolding() {
 }
 
 void Parser::openBox(bool isOpening) {
-	if ((_vm->_gyro->_room == kRoomYours) && (_thing == 54)) {
+	if ((_vm->_avalot->_room == kRoomYours) && (_thing == 54)) {
 		_vm->_background->drawBackgroundSprite(-1, -1, 4);
 
 		_vm->_background->updateBackgroundSprites();
@@ -1013,7 +1011,7 @@ void Parser::examine() {
 				examineObject();
 			else if ((50 <= _thing) && (_thing <= 100)) { // Also _thing
 				openBox(true);
-				_vm->_dialogs->displayText(*_vm->_gyro->_also[_thing - 50][1]);
+				_vm->_dialogs->displayText(*_vm->_avalot->_also[_thing - 50][1]);
 				openBox(false);
 			}
 		}
@@ -1028,22 +1026,22 @@ void Parser::inventory() {
 	Common::String tmpStr = Common::String("You're carrying ");
 
 	for (int i = 0; i < kObjectNum; i++) {
-		if (_vm->_gyro->_objects[i]) {
+		if (_vm->_avalot->_objects[i]) {
 			itemNum++;
-			if (itemNum == _vm->_gyro->_carryNum)
+			if (itemNum == _vm->_avalot->_carryNum)
 				tmpStr += "and ";
 
-			tmpStr += _vm->_gyro->getItem(i + 1);
+			tmpStr += _vm->_avalot->getItem(i + 1);
 
-			if ((i + 1) == _vm->_gyro->_wearing)
+			if ((i + 1) == _vm->_avalot->_wearing)
 				tmpStr += ", which you're wearing";
 
-			if (itemNum < _vm->_gyro->_carryNum)
+			if (itemNum < _vm->_avalot->_carryNum)
 				tmpStr += ", ";
 		}
 	}
 
-	if (_vm->_gyro->_wearing == kNothing)
+	if (_vm->_avalot->_wearing == kNothing)
 		tmpStr += Common::String::format("...%c%c...and you're stark naked!", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
 	else
 		tmpStr += '.';
@@ -1053,18 +1051,18 @@ void Parser::inventory() {
 
 void Parser::swallow() { // Eat something.
 	switch (_thing) {
-	case Gyro::kObjectWine:
-		switch (_vm->_gyro->_wineState) { // 4 is perfect
+	case Avalot::kObjectWine:
+		switch (_vm->_avalot->_wineState) { // 4 is perfect
 		case 1:
-			if (_vm->_gyro->_teetotal)  {
+			if (_vm->_avalot->_teetotal)  {
 				_vm->_dialogs->displayScrollChain('D', 6);
 				return;
 			}
 			_vm->_dialogs->displayScrollChain('U', 1);
 			_vm->_pingo->wobble();
 			_vm->_dialogs->displayScrollChain('U', 2);
-			_vm->_gyro->_objects[Gyro::kObjectWine - 1] = false;
-			_vm->_lucerna->refreshObjectList();
+			_vm->_avalot->_objects[Avalot::kObjectWine - 1] = false;
+			_vm->_avalot->refreshObjectList();
 			drink();
 			break;
 		case 2:
@@ -1073,33 +1071,33 @@ void Parser::swallow() { // Eat something.
 			break; // You can't drink it!
 		}
 		break;
-	case Gyro::kObjectPotion:
-		_vm->_gyro->setBackgroundColor(4);
+	case Avalot::kObjectPotion:
+		_vm->_avalot->setBackgroundColor(4);
 		_vm->_dialogs->displayScrollChain('U', 3);
-		_vm->_lucerna->gameOver();
-		_vm->_gyro->setBackgroundColor(0);
+		_vm->_avalot->gameOver();
+		_vm->_avalot->setBackgroundColor(0);
 		break;
-	case Gyro::kObjectInk:
+	case Avalot::kObjectInk:
 		_vm->_dialogs->displayScrollChain('U', 4);
 		break;
-	case Gyro::kObjectChastity:
+	case Avalot::kObjectChastity:
 		_vm->_dialogs->displayScrollChain('U', 5);
 		break;
-	case Gyro::kObjectMushroom:
+	case Avalot::kObjectMushroom:
 		_vm->_dialogs->displayScrollChain('U', 6);
-		_vm->_lucerna->gameOver();
+		_vm->_avalot->gameOver();
 		break;
-	case Gyro::kObjectOnion:
-		if (_vm->_gyro->_rottenOnion)
+	case Avalot::kObjectOnion:
+		if (_vm->_avalot->_rottenOnion)
 			_vm->_dialogs->displayScrollChain('U', 11);
 		else {
 			_vm->_dialogs->displayScrollChain('U', 8);
-			_vm->_gyro->_objects[Gyro::kObjectOnion - 1] = false;
-			_vm->_lucerna->refreshObjectList();
+			_vm->_avalot->_objects[Avalot::kObjectOnion - 1] = false;
+			_vm->_avalot->refreshObjectList();
 		}
 		break;
 	default:
-		if ((_vm->_gyro->_room == kRoomArgentPub) || (_vm->_gyro->_room == kRoomNottsPub))
+		if ((_vm->_avalot->_room == kRoomArgentPub) || (_vm->_avalot->_room == kRoomNottsPub))
 			_vm->_dialogs->displayText("Try BUYing things before you drink them!");
 		else
 			_vm->_dialogs->displayText("The taste of it makes you retch!");
@@ -1110,7 +1108,7 @@ void Parser::peopleInRoom() {
 	byte numPeople = 0; // Number of people in the room.
 
 	for (int i = 1; i < 29; i++) { // Start at 1 so we don't list Avvy himself!
-		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_room)
+		if (_vm->_avalot->_whereIs[i] == _vm->_avalot->_room)
 			numPeople++;
 	}
 
@@ -1120,14 +1118,14 @@ void Parser::peopleInRoom() {
 	Common::String tmpStr;
 	byte actPerson = 0; // Actually listed people.
 	for (int i = 1; i < 29; i++) {
-		if (_vm->_gyro->_whereIs[i] == _vm->_gyro->_room) {
+		if (_vm->_avalot->_whereIs[i] == _vm->_avalot->_room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
-				tmpStr = _vm->_gyro->getName(i + 150);
+				tmpStr = _vm->_avalot->getName(i + 150);
 			else if (actPerson < numPeople) // The middle...
-				tmpStr += ", " + _vm->_gyro->getName(i + 150);
+				tmpStr += ", " + _vm->_avalot->getName(i + 150);
 			else // The end.
-				tmpStr += " and " + _vm->_gyro->getName(i + 150);
+				tmpStr += " and " + _vm->_avalot->getName(i + 150);
 		}
 	}
 
@@ -1140,30 +1138,30 @@ void Parser::peopleInRoom() {
 }
 
 void Parser::lookAround() {
-	_vm->_dialogs->displayText(*_vm->_gyro->_also[0][1]);
-	switch (_vm->_gyro->_room) {
+	_vm->_dialogs->displayText(*_vm->_avalot->_also[0][1]);
+	switch (_vm->_avalot->_room) {
 	case kRoomSpludwicks:
-		if (_vm->_gyro->_avariciusTalk > 0)
+		if (_vm->_avalot->_avariciusTalk > 0)
 			_vm->_dialogs->displayScrollChain('q', 23);
 		else
 			peopleInRoom();
 		break;
 	case kRoomRobins:
-		if (_vm->_gyro->_tiedUp)
+		if (_vm->_avalot->_tiedUp)
 			_vm->_dialogs->displayScrollChain('q', 38);
-		if (_vm->_gyro->_mushroomGrowing)
+		if (_vm->_avalot->_mushroomGrowing)
 			_vm->_dialogs->displayScrollChain('q', 55);
 		break;
 	case kRoomInsideCardiffCastle:
-		if (!_vm->_gyro->_takenPen)
+		if (!_vm->_avalot->_takenPen)
 			_vm->_dialogs->displayScrollChain('q', 49);
 		break;
 	case kRoomLustiesRoom:
-		if (_vm->_gyro->_lustieIsAsleep)
+		if (_vm->_avalot->_lustieIsAsleep)
 			_vm->_dialogs->displayScrollChain('q', 65);
 		break;
 	case kRoomCatacombs:
-		switch (_vm->_gyro->_catacombY * 256 + _vm->_gyro->_catacombX) {
+		switch (_vm->_avalot->_catacombY * 256 + _vm->_avalot->_catacombX) {
 		case 258 :
 			_vm->_dialogs->displayScrollChain('q', 80); // Inside art gallery.
 			break;
@@ -1182,7 +1180,7 @@ void Parser::lookAround() {
 
 void Parser::openDoor() {
 	// Special cases.
-	switch (_vm->_gyro->_room) {
+	switch (_vm->_avalot->_room) {
 	case kRoomYours:
 		if (_vm->_animation->inField(1)) {
 			// Opening the box.
@@ -1200,28 +1198,28 @@ void Parser::openDoor() {
 		break;
 	}
 
-	if ((!_vm->_gyro->_userMovesAvvy) && (_vm->_gyro->_room != kRoomLusties))
+	if ((!_vm->_avalot->_userMovesAvvy) && (_vm->_avalot->_room != kRoomLusties))
 		return; // No doors can open if you can't move Avvy.
 
 	for (int i = 0; i < 7; i++) {
 		if (_vm->_animation->inField(i + 8)) {
-			MagicType *portal = &_vm->_gyro->_portals[i];
+			MagicType *portal = &_vm->_avalot->_portals[i];
 			switch (portal->_operation) {
-			case Gyro::kMagicExclaim:
+			case Avalot::kMagicExclaim:
 				_vm->_animation->_sprites[0].bounce();
 				_vm->_dialogs->displayScrollChain('x', portal->_data);
 				break;
-			case Gyro::kMagicTransport:
+			case Avalot::kMagicTransport:
 				_vm->_animation->flipRoom((portal->_data) >> 8, portal->_data & 0x0F);
 				break;
-			case Gyro::kMagicUnfinished:
+			case Avalot::kMagicUnfinished:
 				_vm->_animation->_sprites[0].bounce();
 				_vm->_dialogs->displayText("Sorry. This place is not available yet!");
 				break;
-			case Gyro::kMagicSpecial:
+			case Avalot::kMagicSpecial:
 				_vm->_animation->callSpecial(portal->_data);
 				break;
-			case Gyro::kMagicOpenDoor:
+			case Avalot::kMagicOpenDoor:
 				_vm->_animation->openDoor(portal->_data >> 8, portal->_data & 0x0F, i + 9);
 				break;
 			}
@@ -1230,7 +1228,7 @@ void Parser::openDoor() {
 		}
 	}
 
-	if (_vm->_gyro->_room == kRoomMap)
+	if (_vm->_avalot->_room == kRoomMap)
 		_vm->_dialogs->displayText("Avvy, you can complete the whole game without ever going " \
 				"to anywhere other than Argent, Birmingham, Cardiff, Nottingham and Norwich.");
 	else
@@ -1254,17 +1252,17 @@ void Parser::putProc() {
 
 	// Thing is the _thing which you're putting in. _thing2 is where you're putting it.
 	switch (_thing2) {
-	case Gyro::kObjectWine:
-		if (_thing == Gyro::kObjectOnion) {
-			if (_vm->_gyro->_rottenOnion)
+	case Avalot::kObjectWine:
+		if (_thing == Avalot::kObjectOnion) {
+			if (_vm->_avalot->_rottenOnion)
 				_vm->_dialogs->displayText("That's a bit like shutting the stable door after the horse has bolted!");
 			else { // Put onion into wine?
-				if (_vm->_gyro->_wineState != 3) {
+				if (_vm->_avalot->_wineState != 3) {
 					Common::String tmpStr = Common::String::format("%cOignon au vin%c is a bit too strong for your tastes!", Dialogs::kControlItalic, Dialogs::kControlRoman);
 					_vm->_dialogs->displayText(tmpStr);
 				} else { // Put onion into vinegar! Yes!
-					_vm->_gyro->_onionInVinegar = true;
-					_vm->_lucerna->incScore(7);
+					_vm->_avalot->_onionInVinegar = true;
+					_vm->_avalot->incScore(7);
 					_vm->_dialogs->displayScrollChain('u', 9);
 				}
 			}
@@ -1273,33 +1271,33 @@ void Parser::putProc() {
 		break;
 
 	case 54:
-		if (_vm->_gyro->_room == kRoomYours) { // Put something into the box.
-			if (_vm->_gyro->_boxContent != kNothing)
+		if (_vm->_avalot->_room == kRoomYours) { // Put something into the box.
+			if (_vm->_avalot->_boxContent != kNothing)
 				_vm->_dialogs->displayText("There's something in the box already, Avvy. Try taking that out first.");
 			else {
 				switch (_thing) {
-				case Gyro::kObjectMoney:
+				case Avalot::kObjectMoney:
 					_vm->_dialogs->displayText("You'd better keep some ready cash on you!");
 					break;
-				case Gyro::kObjectBell:
+				case Avalot::kObjectBell:
 					_vm->_dialogs->displayText("That's a silly place to keep a bell.");
 					break;
-				case Gyro::kObjectBodkin:
+				case Avalot::kObjectBodkin:
 					_vm->_dialogs->displayText("But you might need it!");
 					break;
-				case Gyro::kObjectOnion:
+				case Avalot::kObjectOnion:
 					_vm->_dialogs->displayText("Just give it to Spludwick, Avvy!");
 					break;
 				default: // Put the object into the box...
-					if (_vm->_gyro->_wearing == _thing) {
-						Common::String tmpStr = Common::String::format("You'd better take %s off first!", _vm->_gyro->getItem(_thing).c_str());
+					if (_vm->_avalot->_wearing == _thing) {
+						Common::String tmpStr = Common::String::format("You'd better take %s off first!", _vm->_avalot->getItem(_thing).c_str());
 						_vm->_dialogs->displayText(tmpStr);
 					} else {
 						openBox(true); // Open box.
 
-						_vm->_gyro->_boxContent = _thing;
-						_vm->_gyro->_objects[_thing - 1] = false;
-						_vm->_lucerna->refreshObjectList();
+						_vm->_avalot->_boxContent = _thing;
+						_vm->_avalot->_objects[_thing - 1] = false;
+						_vm->_avalot->refreshObjectList();
 						_vm->_dialogs->displayText("OK, it's in the box.");
 
 						openBox(false); // Shut box.
@@ -1320,7 +1318,7 @@ void Parser::putProc() {
  * @remarks	Originally called 'not_in_order'
  */
 void Parser::notInOrder() {
-	Common::String itemStr = _vm->_gyro->getItem(_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_givenToSpludwick]);
+	Common::String itemStr = _vm->_avalot->getItem(_vm->_avalot->kSpludwicksOrder[_vm->_avalot->_givenToSpludwick]);
 	Common::String tmpStr = Common::String::format("Sorry, I need the ingredients in the right order for this potion. " \
 		"What I need next is %s%c2%c", itemStr.c_str(), Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 	_vm->_dialogs->displayText(tmpStr);
@@ -1341,40 +1339,40 @@ void Parser::goToCauldron() {
  * @remarks	Originally called 'give2spludwick'
  */
 bool Parser::giveToSpludwick() {
-	if (_vm->_gyro->kSpludwicksOrder[_vm->_gyro->_givenToSpludwick] != _thing) {
+	if (_vm->_avalot->kSpludwicksOrder[_vm->_avalot->_givenToSpludwick] != _thing) {
 		notInOrder();
 		return false;
 	}
 
 	switch (_thing) {
-	case Gyro::kObjectOnion:
-		_vm->_gyro->_objects[Gyro::kObjectOnion - 1] = false;
-		if (_vm->_gyro->_rottenOnion)
+	case Avalot::kObjectOnion:
+		_vm->_avalot->_objects[Avalot::kObjectOnion - 1] = false;
+		if (_vm->_avalot->_rottenOnion)
 			_vm->_dialogs->displayScrollChain('q', 22);
 		else {
-			_vm->_gyro->_givenToSpludwick++;
+			_vm->_avalot->_givenToSpludwick++;
 			_vm->_dialogs->displayScrollChain('q', 20);
 			goToCauldron();
-			_vm->_lucerna->incScore(3);
+			_vm->_avalot->incScore(3);
 		}
-		_vm->_lucerna->refreshObjectList();
+		_vm->_avalot->refreshObjectList();
 		break;
-	case Gyro::kObjectInk:
-		_vm->_gyro->_objects[Gyro::kObjectInk - 1] = false;
-		_vm->_lucerna->refreshObjectList();
-		_vm->_gyro->_givenToSpludwick++;
+	case Avalot::kObjectInk:
+		_vm->_avalot->_objects[Avalot::kObjectInk - 1] = false;
+		_vm->_avalot->refreshObjectList();
+		_vm->_avalot->_givenToSpludwick++;
 		_vm->_dialogs->displayScrollChain('q', 24);
 		goToCauldron();
-		_vm->_lucerna->incScore(3);
+		_vm->_avalot->incScore(3);
 		break;
-	case Gyro::kObjectMushroom:
-		_vm->_gyro->_objects[Gyro::kObjectMushroom - 1] = false;
+	case Avalot::kObjectMushroom:
+		_vm->_avalot->_objects[Avalot::kObjectMushroom - 1] = false;
 		_vm->_dialogs->displayScrollChain('q', 25);
-		_vm->_lucerna->incScore(5);
-		_vm->_gyro->_givenToSpludwick++;
+		_vm->_avalot->incScore(5);
+		_vm->_avalot->_givenToSpludwick++;
 		goToCauldron();
-		_vm->_gyro->_objects[Gyro::kObjectPotion - 1] = true;
-		_vm->_lucerna->refreshObjectList();
+		_vm->_avalot->_objects[Avalot::kObjectPotion - 1] = true;
+		_vm->_avalot->refreshObjectList();
 		break;
 	default:
 		return true;
@@ -1384,29 +1382,29 @@ bool Parser::giveToSpludwick() {
 }
 
 void Parser::drink() {
-	_vm->_gyro->_alcoholLevel += 1;
-	if (_vm->_gyro->_alcoholLevel == 5) {
-		_vm->_gyro->_objects[Gyro::kObjectKey - 1] = true; // Get the key.
-		_vm->_gyro->_teetotal = true;
-		_vm->_gyro->_avvyIsAwake = false;
-		_vm->_gyro->_avvyInBed = true;
-		_vm->_lucerna->refreshObjectList();
-		_vm->_lucerna->dusk();
-		_vm->_gyro->hangAroundForAWhile();
+	_vm->_avalot->_alcoholLevel += 1;
+	if (_vm->_avalot->_alcoholLevel == 5) {
+		_vm->_avalot->_objects[Avalot::kObjectKey - 1] = true; // Get the key.
+		_vm->_avalot->_teetotal = true;
+		_vm->_avalot->_avvyIsAwake = false;
+		_vm->_avalot->_avvyInBed = true;
+		_vm->_avalot->refreshObjectList();
+		_vm->_avalot->dusk();
+		_vm->_avalot->hangAroundForAWhile();
 		_vm->_animation->flipRoom(1, 1);
-		_vm->_gyro->setBackgroundColor(14);
+		_vm->_avalot->setBackgroundColor(14);
 		_vm->_animation->_sprites[0]._visible = false;
 	}
 }
 
 void Parser::cardiffClimbing() {
-	if (_vm->_gyro->_standingOnDais) { // Clamber up.
+	if (_vm->_avalot->_standingOnDais) { // Clamber up.
 		_vm->_dialogs->displayText("You climb down, back onto the floor.");
-		_vm->_gyro->_standingOnDais = false;
+		_vm->_avalot->_standingOnDais = false;
 		_vm->_animation->appearPed(0, 2);
 	} else if (_vm->_animation->inField(0)) { // Clamber down
 		_vm->_dialogs->displayText("You clamber up onto the dais.");
-		_vm->_gyro->_standingOnDais = true;
+		_vm->_avalot->_standingOnDais = true;
 		_vm->_animation->appearPed(0, 1);
 	} else
 			_vm->_dialogs->displayText("Get a bit closer, Avvy.");
@@ -1417,21 +1415,21 @@ void Parser::already() {
 }
 
 void Parser::standUp() {
-	switch (_vm->_gyro->_room) {
+	switch (_vm->_avalot->_room) {
 	case kRoomYours: // Avvy isn't asleep.
-		if (_vm->_gyro->_avvyIsAwake && _vm->_gyro->_avvyInBed) {  // But he's in bed.
-			if (_vm->_gyro->_teetotal) {
+		if (_vm->_avalot->_avvyIsAwake && _vm->_avalot->_avvyInBed) {  // But he's in bed.
+			if (_vm->_avalot->_teetotal) {
 				_vm->_dialogs->displayScrollChain('d', 12);
-				_vm->_gyro->setBackgroundColor(0);
+				_vm->_avalot->setBackgroundColor(0);
 				_vm->_dialogs->displayScrollChain('d', 14);
 			}
 			_vm->_animation->_sprites[0]._visible = true;
-			_vm->_gyro->_userMovesAvvy = true;
+			_vm->_avalot->_userMovesAvvy = true;
 			_vm->_animation->appearPed(0, 1);
 			_vm->_animation->_direction = Animation::kDirLeft;
 			_vm->_background->drawBackgroundSprite(-1, -1, 3); // Picture of empty pillow.
-			_vm->_lucerna->incScore(1);
-			_vm->_gyro->_avvyInBed = false;
+			_vm->_avalot->incScore(1);
+			_vm->_avalot->_avvyInBed = false;
 			_vm->_timer->loseTimer(Timer::kReasonArkataShouts);
 		} else
 			already();
@@ -1442,12 +1440,12 @@ void Parser::standUp() {
 		break;
 
 	case kRoomNottsPub:
-		if (_vm->_gyro->_sittingInPub)  {
+		if (_vm->_avalot->_sittingInPub)  {
 			_vm->_background->drawBackgroundSprite(-1, -1, 3); // Not sitting down.
 			_vm->_animation->_sprites[0]._visible = true; // But standing up.
 			_vm->_animation->appearPed(0, 3); // And walking away.
-			_vm->_gyro->_sittingInPub = false; // Really not sitting down.
-			_vm->_gyro->_userMovesAvvy = true; // And ambulant.
+			_vm->_avalot->_sittingInPub = false; // Really not sitting down.
+			_vm->_avalot->_userMovesAvvy = true; // And ambulant.
 		} else
 			already();
 		break;
@@ -1457,18 +1455,18 @@ void Parser::standUp() {
 }
 
 void Parser::getProc(char thing) {
-	switch (_vm->_gyro->_room) {
+	switch (_vm->_avalot->_room) {
 	case kRoomYours:
 		if (_vm->_animation->inField(1)) {
-			if (_vm->_gyro->_boxContent == thing) {
+			if (_vm->_avalot->_boxContent == thing) {
 				_vm->_background->drawBackgroundSprite(-1, -1, 4);
 				_vm->_dialogs->displayText("OK, I've got it.");
-				_vm->_gyro->_objects[thing - 1] = true;
-				_vm->_lucerna->refreshObjectList();
-				_vm->_gyro->_boxContent = kNothing;
+				_vm->_avalot->_objects[thing - 1] = true;
+				_vm->_avalot->refreshObjectList();
+				_vm->_avalot->_boxContent = kNothing;
 				_vm->_background->drawBackgroundSprite(-1, -1, 5);
 			} else {
-				Common::String tmpStr = Common::String::format("I can't see %s in the box.", _vm->_gyro->getItem(thing).c_str());
+				Common::String tmpStr = Common::String::format("I can't see %s in the box.", _vm->_avalot->getItem(thing).c_str());
 				_vm->_dialogs->displayText(tmpStr);
 			}
 		} else
@@ -1476,25 +1474,25 @@ void Parser::getProc(char thing) {
 		break;
 	case kRoomInsideCardiffCastle:
 		switch (thing) {
-		case Gyro::kObjectPen:
+		case Avalot::kObjectPen:
 			if (_vm->_animation->inField(1)) { // Standing on the dais.
-				if (_vm->_gyro->_takenPen)
+				if (_vm->_avalot->_takenPen)
 					_vm->_dialogs->displayText("It's not there, Avvy.");
 				else {
 					// OK: we're taking the pen, and it's there.
 					_vm->_background->drawBackgroundSprite(-1, -1, 3); // No pen there now.
 					_vm->_animation->callSpecial(3); // Zap!
-					_vm->_gyro->_takenPen = true;
-					_vm->_gyro->_objects[Gyro::kObjectPen - 1] = true;
-					_vm->_lucerna->refreshObjectList();
+					_vm->_avalot->_takenPen = true;
+					_vm->_avalot->_objects[Avalot::kObjectPen - 1] = true;
+					_vm->_avalot->refreshObjectList();
 					_vm->_dialogs->displayText("Taken.");
 				}
-			} else if (_vm->_gyro->_standingOnDais)
+			} else if (_vm->_avalot->_standingOnDais)
 				_vm->_dialogs->displayScrollChain('q', 53);
 			else
 				_vm->_dialogs->displayScrollChain('q', 51);
 			break;
-		case Gyro::kObjectBolt:
+		case Avalot::kObjectBolt:
 			_vm->_dialogs->displayScrollChain('q', 52);
 			break;
 		default:
@@ -1502,14 +1500,14 @@ void Parser::getProc(char thing) {
 		}
 		break;
 	case kRoomRobins:
-		if ((thing == Gyro::kObjectMushroom) & (_vm->_animation->inField(0)) & (_vm->_gyro->_mushroomGrowing)) {
+		if ((thing == Avalot::kObjectMushroom) & (_vm->_animation->inField(0)) & (_vm->_avalot->_mushroomGrowing)) {
 			_vm->_background->drawBackgroundSprite(-1, -1, 2);
 			_vm->_dialogs->displayText("Got it!");
-			_vm->_gyro->_mushroomGrowing = false;
-			_vm->_gyro->_takenMushroom = true;
-			_vm->_gyro->_objects[Gyro::kObjectMushroom - 1] = true;
-			_vm->_lucerna->refreshObjectList();
-			_vm->_lucerna->incScore(3);
+			_vm->_avalot->_mushroomGrowing = false;
+			_vm->_avalot->_takenMushroom = true;
+			_vm->_avalot->_objects[Avalot::kObjectMushroom - 1] = true;
+			_vm->_avalot->refreshObjectList();
+			_vm->_avalot->incScore(3);
 		} else
 			_vm->_dialogs->displayScrollChain('q', 57);
 		break;
@@ -1523,13 +1521,13 @@ void Parser::getProc(char thing) {
  * @remarks	Originally called 'give_Geida_the_lute'
  */
 void Parser::giveGeidaTheLute() {
-	if (_vm->_gyro->_room != kRoomLustiesRoom) {
+	if (_vm->_avalot->_room != kRoomLustiesRoom) {
 		Common::String tmpStr = Common::String::format("Not yet. Try later!%c2%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		return;
 	}
-	_vm->_gyro->_objects[Gyro::kObjectLute - 1] = false;
-	_vm->_lucerna->refreshObjectList();
+	_vm->_avalot->_objects[Avalot::kObjectLute - 1] = false;
+	_vm->_avalot->refreshObjectList();
 	_vm->_dialogs->displayScrollChain('q', 64); // She plays it.
 
 	_vm->_timer->addTimer(1, Timer::kProcGiveLuteToGeida, Timer::kReasonGeidaSings);
@@ -1554,13 +1552,13 @@ void Parser::winSequence() {
 
 Common::String Parser::personSpeaks() {
 	if ((_person == kPardon) || (_person == 0)) {
-		if ((_vm->_gyro->_him == kPardon) || (_vm->_gyro->_whereIs[_vm->_gyro->_him - 150] != _vm->_gyro->_room))
-			_person = _vm->_gyro->_her;
+		if ((_vm->_avalot->_him == kPardon) || (_vm->_avalot->_whereIs[_vm->_avalot->_him - 150] != _vm->_avalot->_room))
+			_person = _vm->_avalot->_her;
 		else
-			_person = _vm->_gyro->_him;
+			_person = _vm->_avalot->_him;
 	}
 
-	if (_vm->_gyro->_whereIs[_person - 150] != _vm->_gyro->_room) {
+	if (_vm->_avalot->_whereIs[_person - 150] != _vm->_avalot->_room) {
 		return Common::String::format("%c1", Dialogs::kControlRegister); // Avvy himself!
 	}
 
@@ -1578,7 +1576,7 @@ Common::String Parser::personSpeaks() {
 		return tmpStr;
 
 	for (int i = 0; i < 16; i++) {
-		if ((_vm->_gyro->kQuasipeds[i]._who == _person) && (_vm->_gyro->kQuasipeds[i]._room == _vm->_gyro->_room))
+		if ((_vm->_avalot->kQuasipeds[i]._who == _person) && (_vm->_avalot->kQuasipeds[i]._room == _vm->_avalot->_room))
 			tmpStr += Common::String::format("%c%c", Dialogs::kControlRegister, 'A' + i);
 	}
 
@@ -1589,7 +1587,7 @@ void Parser::heyThanks() {
 	Common::String tmpStr = personSpeaks();
 	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", Dialogs::kControlSpeechBubble);
 	_vm->_dialogs->displayText(tmpStr);
-	_vm->_gyro->_objects[_thing - 1] = false;
+	_vm->_avalot->_objects[_thing - 1] = false;
 }
 
 /**
@@ -1605,7 +1603,7 @@ void Parser::doThat() {
 		return;
 	}
 
-	if (_vm->_gyro->_weirdWord)
+	if (_vm->_avalot->_weirdWord)
 		return;
 
 	if (_thing < 200)
@@ -1615,11 +1613,11 @@ void Parser::doThat() {
 	if ((_verb != kVerbCodeLoad) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeQuit) && (_verb != kVerbCodeInfo) && (_verb != kVerbCodeHelp)
 	&& (_verb != kVerbCodeLarrypass) && (_verb != kVerbCodePhaon) && (_verb != kVerbCodeBoss) && (_verb != kVerbCodeCheat) && (_verb != kVerbCodeRestart)
 	&& (_verb != kVerbCodeDir) && (_verb != kVerbCodeScore) && (_verb != kVerbCodeHiscores) && (_verb != kVerbCodeSmartAlec)) {
-		if (!_vm->_gyro->_alive) {
+		if (!_vm->_avalot->_alive) {
 			_vm->_dialogs->displayText("You're dead, so don't talk. What are you, a ghost or something? Try restarting, or restoring a saved game!");
 			return;
 		}
-		if (!_vm->_gyro->_avvyIsAwake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
+		if (!_vm->_avalot->_avvyIsAwake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
 			_vm->_dialogs->displayText("Talking in your sleep? Try waking up!");
 			return;
 		}
@@ -1639,7 +1637,7 @@ void Parser::doThat() {
 		break;
 	case kVerbCodeGet:
 		if (_thing != kPardon) { // Legitimate try to pick something up.
-			if (_vm->_gyro->_carryNum >= kCarryLimit)
+			if (_vm->_avalot->_carryNum >= kCarryLimit)
 				_vm->_dialogs->displayText("You can't carry any more!");
 			else
 				getProc(_thing);
@@ -1659,21 +1657,21 @@ void Parser::doThat() {
 		break;
 	case kVerbCodeTalk:
 		if (_person == kPardon) {
-			if (_vm->_gyro->_subjectNum == 99) { // They typed "say password".
+			if (_vm->_avalot->_subjectNum == 99) { // They typed "say password".
 				Common::String tmpStr = Common::String::format("Yes, but what %cis%c the password?", Dialogs::kControlItalic, Dialogs::kControlRoman);
 				_vm->_dialogs->displayText(tmpStr);
-			} else if (((1 <= _vm->_gyro->_subjectNum) && (_vm->_gyro->_subjectNum <= 49)) || (_vm->_gyro->_subjectNum == 253) || (_vm->_gyro->_subjectNum == 249)) {
+			} else if (((1 <= _vm->_avalot->_subjectNum) && (_vm->_avalot->_subjectNum <= 49)) || (_vm->_avalot->_subjectNum == 253) || (_vm->_avalot->_subjectNum == 249)) {
 				_thats.deleteChar(0);
 
 				for (int i = 0; i < 10; i++)
 					_realWords[i] = _realWords[i + 1];
 
-				_verb = _vm->_gyro->_subjectNum;
+				_verb = _vm->_avalot->_subjectNum;
 				doThat();
 				return;
 			} else {
-				_person = _vm->_gyro->_subjectNum;
-				_vm->_gyro->_subjectNum = 0;
+				_person = _vm->_avalot->_subjectNum;
+				_vm->_avalot->_subjectNum = 0;
 				if ((_person == 0) || (_person == kPardon))
 					_vm->_dialogs->displayText("Talk to whom?");
 				else if (isPersonHere())
@@ -1688,80 +1686,80 @@ void Parser::doThat() {
 				_vm->_dialogs->displayText("Give to whom?");
 			else if (isPersonHere()) {
 				switch (_thing) {
-				case Gyro::kObjectMoney :
+				case Avalot::kObjectMoney :
 					_vm->_dialogs->displayText("You can't bring yourself to give away your moneybag.");
 					break;
-				case Gyro::kObjectBodkin:
-				case Gyro::kObjectBell:
-				case Gyro::kObjectClothes:
-				case Gyro::kObjectHabit :
+				case Avalot::kObjectBodkin:
+				case Avalot::kObjectBell:
+				case Avalot::kObjectClothes:
+				case Avalot::kObjectHabit :
 					_vm->_dialogs->displayText("Don't give it away, it might be useful!");
 					break;
 				default:
 					switch (_person) {
-					case Gyro::kPeopleCrapulus:
-						if (_thing == Gyro::kObjectWine) {
+					case Avalot::kPeopleCrapulus:
+						if (_thing == Avalot::kObjectWine) {
 							_vm->_dialogs->displayText("Crapulus grabs the wine and gulps it down.");
-							_vm->_gyro->_objects[Gyro::kObjectWine - 1] = false;
+							_vm->_avalot->_objects[Avalot::kObjectWine - 1] = false;
 						} else
 							heyThanks();
 						break;
-					case Gyro::kPeopleCwytalot:
-						if ((_thing == Gyro::kObjectCrossbow) || (_thing == Gyro::kObjectBolt))
+					case Avalot::kPeopleCwytalot:
+						if ((_thing == Avalot::kObjectCrossbow) || (_thing == Avalot::kObjectBolt))
 							_vm->_dialogs->displayText("You might be able to influence Cwytalot more if you used it!");
 						else
 							heyThanks();
 						break;
-					case Gyro::kPeopleSpludwick:
+					case Avalot::kPeopleSpludwick:
 						if (giveToSpludwick())
 							heyThanks();
 						break;
-					case Gyro::kPeopleIbythneth:
-						if (_thing == Gyro::kObjectBadge) {
+					case Avalot::kPeopleIbythneth:
+						if (_thing == Avalot::kObjectBadge) {
 							_vm->_dialogs->displayScrollChain('q', 32); // Thanks! Wow!
-							_vm->_lucerna->incScore(3);
-							_vm->_gyro->_objects[Gyro::kObjectBadge - 1] = false;
-							_vm->_gyro->_objects[Gyro::kObjectHabit - 1] = true;
-							_vm->_gyro->_givenBadgeToIby = true;
+							_vm->_avalot->incScore(3);
+							_vm->_avalot->_objects[Avalot::kObjectBadge - 1] = false;
+							_vm->_avalot->_objects[Avalot::kObjectHabit - 1] = true;
+							_vm->_avalot->_givenBadgeToIby = true;
 							_vm->_background->drawBackgroundSprite(-1, -1, 7);
 							_vm->_background->drawBackgroundSprite(-1, -1, 8);
 						} else
 							heyThanks();
 						break;
-					case Gyro::kPeopleAyles:
-						if (_vm->_gyro->_aylesIsAwake) {
-							if (_thing == Gyro::kObjectPen) {
-								_vm->_gyro->_objects[Gyro::kObjectPen - 1] = false;
+					case Avalot::kPeopleAyles:
+						if (_vm->_avalot->_aylesIsAwake) {
+							if (_thing == Avalot::kObjectPen) {
+								_vm->_avalot->_objects[Avalot::kObjectPen - 1] = false;
 								_vm->_dialogs->displayScrollChain('q', 54);
-								_vm->_gyro->_objects[Gyro::kObjectInk - 1] = true;
-								_vm->_gyro->_givenPenToAyles = true;
-								_vm->_lucerna->refreshObjectList();
-								_vm->_lucerna->incScore(2);
+								_vm->_avalot->_objects[Avalot::kObjectInk - 1] = true;
+								_vm->_avalot->_givenPenToAyles = true;
+								_vm->_avalot->refreshObjectList();
+								_vm->_avalot->incScore(2);
 							} else
 								heyThanks();
 						} else
 							_vm->_dialogs->displayText("But he's asleep!");
 						break;
-					case Gyro::kPeopleGeida:
+					case Avalot::kPeopleGeida:
 						switch (_thing) {
-						case Gyro::kObjectPotion:
-							_vm->_gyro->_objects[Gyro::kObjectPotion - 1] = false;
+						case Avalot::kObjectPotion:
+							_vm->_avalot->_objects[Avalot::kObjectPotion - 1] = false;
 							_vm->_dialogs->displayScrollChain('u', 16); // She drinks it.
-							_vm->_lucerna->incScore(2);
-							_vm->_gyro->_givenPotionToGeida = true;
-							_vm->_lucerna->refreshObjectList();
+							_vm->_avalot->incScore(2);
+							_vm->_avalot->_givenPotionToGeida = true;
+							_vm->_avalot->refreshObjectList();
 							break;
-						case Gyro::kObjectLute:
+						case Avalot::kObjectLute:
 							giveGeidaTheLute();
 							break;
 						default:
 							heyThanks();
 						}
 						break;
-					case Gyro::kPeopleArkata:
+					case Avalot::kPeopleArkata:
 						switch (_thing) {
-						case Gyro::kObjectPotion:
-							if (_vm->_gyro->_givenPotionToGeida)
+						case Avalot::kObjectPotion:
+							if (_vm->_avalot->_givenPotionToGeida)
 								winSequence();
 							else
 								_vm->_dialogs->displayScrollChain('q', 77); // That Geida woman!
@@ -1775,7 +1773,7 @@ void Parser::doThat() {
 					}
 				}
 			}
-			_vm->_lucerna->refreshObjectList(); // Just in case...
+			_vm->_avalot->refreshObjectList(); // Just in case...
 		}
 		break;
 
@@ -1806,7 +1804,7 @@ void Parser::doThat() {
 		else {
 			Common::String tmpStr = Common::String::format("%cC%cDo you really want to quit?", Dialogs::kControlRegister, Dialogs::kControlIcon);
 			if (_vm->_dialogs->displayQuestion(tmpStr))
-				_vm->_gyro->_letMeOut = true;
+				_vm->_avalot->_letMeOut = true;
 		}
 		break;
 	case kVerbCodeGo:
@@ -1821,45 +1819,45 @@ void Parser::doThat() {
 		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + Dialogs::kControlCenter + Dialogs::kControlNewLine
 			+ "The medi\x91val descendant of" + Dialogs::kControlNewLine
 			+ "Denarius Avaricius Sextus" + Dialogs::kControlNewLine + Dialogs::kControlNewLine
-			+ "version " + _vm->_gyro->kVersionNum + Dialogs::kControlNewLine + Dialogs::kControlNewLine + "Copyright \xEF "
-			+ _vm->_gyro->kCopyright + ", Mark, Mike and Thomas Thurman." + Dialogs::kControlRegister + 'Y' + Dialogs::kControlIcon;
+			+ "version " + _vm->_avalot->kVersionNum + Dialogs::kControlNewLine + Dialogs::kControlNewLine + "Copyright \xEF "
+			+ _vm->_avalot->kCopyright + ", Mark, Mike and Thomas Thurman." + Dialogs::kControlRegister + 'Y' + Dialogs::kControlIcon;
 		_vm->_dialogs->displayText(toDisplay);
 		_vm->_dialogs->_aboutBox = false;
 		}
 		break;
 	case kVerbCodeUndress:
-		if (_vm->_gyro->_wearing == kNothing)
+		if (_vm->_avalot->_wearing == kNothing)
 			_vm->_dialogs->displayText("You're already stark naked!");
-		else if (_vm->_gyro->_avvysInTheCupboard) {
-			Common::String tmpStr = Common::String::format("You take off %s.", _vm->_gyro->getItem(_vm->_gyro->_wearing).c_str());
+		else if (_vm->_avalot->_avvysInTheCupboard) {
+			Common::String tmpStr = Common::String::format("You take off %s.", _vm->_avalot->getItem(_vm->_avalot->_wearing).c_str());
 			_vm->_dialogs->displayText(tmpStr);
-			_vm->_gyro->_wearing = kNothing;
-			_vm->_lucerna->refreshObjectList();
+			_vm->_avalot->_wearing = kNothing;
+			_vm->_avalot->refreshObjectList();
 		} else
 			_vm->_dialogs->displayText("Hadn't you better find somewhere more private, Avvy?");
 		break;
 	case kVerbCodeWear:
 		if (isHolding()) { // Wear something.
 			switch (_thing) {
-			case Gyro::kObjectChastity:
+			case Avalot::kObjectChastity:
 				// \? are used to avoid that ??! is parsed as a trigraph
 				_vm->_dialogs->displayText("Hey, what kind of a weirdo are you\?\?!");
 				break;
-			case Gyro::kObjectClothes:
-			case Gyro::kObjectHabit: { // Change this!
-				if (_vm->_gyro->_wearing != kNothing) {
-					if (_vm->_gyro->_wearing == _thing)
+			case Avalot::kObjectClothes:
+			case Avalot::kObjectHabit: { // Change this!
+				if (_vm->_avalot->_wearing != kNothing) {
+					if (_vm->_avalot->_wearing == _thing)
 						_vm->_dialogs->displayText("You're already wearing that.");
 					else
 						_vm->_dialogs->displayText("You'll be rather warm wearing two sets of clothes!");
 					return;
 				} else
-					_vm->_gyro->_wearing = _thing;
+					_vm->_avalot->_wearing = _thing;
 
-				_vm->_lucerna->refreshObjectList();
+				_vm->_avalot->refreshObjectList();
 
 				byte i;
-				if (_thing == Gyro::kObjectHabit)
+				if (_thing == Avalot::kObjectHabit)
 					i = 3;
 				else
 					i = 0;
@@ -1881,36 +1879,36 @@ void Parser::doThat() {
 		break;
 	case kVerbCodePlay:
 		if (_thing == kPardon) {
-			switch (_vm->_gyro->_room) { // They just typed "play"...
+			switch (_vm->_avalot->_room) { // They just typed "play"...
 			case kRoomArgentPub: // ...in the pub, => play Nim.
 				warning("STUB: Parser::doThat() - case kVerbCodeplay - play_nim()");
 				// play_nim();
 				// The following parts are copied from play_nim().
 				// The player automatically wins the game everytime he wins, until I implement the mini-game.
 
-				if (_vm->_gyro->_wonNim) { // Already won the game.
+				if (_vm->_avalot->_wonNim) { // Already won the game.
 					_vm->_dialogs->displayScrollChain('Q', 6);
 					return;
 				}
 
-				if (!_vm->_gyro->_askedDogfoodAboutNim) {
+				if (!_vm->_avalot->_askedDogfoodAboutNim) {
 					_vm->_dialogs->displayScrollChain('q', 84);
 					return;
 				}
 
 				_vm->_dialogs->displayScrollChain('Q', 3);
-				_vm->_gyro->_playedNim++;
+				_vm->_avalot->_playedNim++;
 
 				// You won - strange!
 				_vm->_dialogs->displayScrollChain('Q', 7); // You won! Give us a lute!
-				_vm->_gyro->_objects[Gyro::kObjectLute - 1] = true;
-				_vm->_lucerna->refreshObjectList();
-				_vm->_gyro->_wonNim = true;
+				_vm->_avalot->_objects[Avalot::kObjectLute - 1] = true;
+				_vm->_avalot->refreshObjectList();
+				_vm->_avalot->_wonNim = true;
 				_vm->_background->drawBackgroundSprite(-1, -1, 0); // Show the settle with no lute on it.
-				_vm->_lucerna->incScore(7); // 7 points for winning!
+				_vm->_avalot->incScore(7); // 7 points for winning!
 
-				if (_vm->_gyro->_playedNim == 1)
-					_vm->_lucerna->incScore(3); // 3 points for playing your 1st game.
+				if (_vm->_avalot->_playedNim == 1)
+					_vm->_avalot->incScore(3); // 3 points for playing your 1st game.
 
 				// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
 				_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"Nim\", but I haven't implemented it yet: you win and get the lute automatically.")
@@ -1922,23 +1920,23 @@ void Parser::doThat() {
 			}
 		} else if (isHolding()) {
 			switch (_thing) {
-			case Gyro::kObjectLute :
+			case Avalot::kObjectLute :
 					_vm->_dialogs->displayScrollChain('U', 7);
 
-					if (_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] == _vm->_gyro->_room)
+					if (_vm->_avalot->_whereIs[Avalot::kPeopleCwytalot - 150] == _vm->_avalot->_room)
 						_vm->_dialogs->displayScrollChain('U', 10);
 
-					if (_vm->_gyro->_whereIs[Gyro::kPeopleDuLustie - 150] == _vm->_gyro->_room)
+					if (_vm->_avalot->_whereIs[Avalot::kPeopleDuLustie - 150] == _vm->_avalot->_room)
 						_vm->_dialogs->displayScrollChain('U', 15);
 				break;
 			case 52:
-				if (_vm->_gyro->_room == kRoomMusicRoom)
+				if (_vm->_avalot->_room == kRoomMusicRoom)
 					playHarp();
 				else
 					_vm->_dialogs->displayText(kWhat);
 				break;
 			case 55:
-				if (_vm->_gyro->_room == kRoomArgentPub)
+				if (_vm->_avalot->_room == kRoomArgentPub)
 					// play_nim();
 					warning("STUB: Parser::doThat() - case kVerbCodeplay - play_nim()");
 				else
@@ -1951,9 +1949,9 @@ void Parser::doThat() {
 		break;
 	case kVerbCodeRing:
 		if (isHolding()) {
-			if (_thing == Gyro::kObjectBell) {
+			if (_thing == Avalot::kObjectBell) {
 				_vm->_dialogs->displayText("Ding, dong, ding, dong, ding, dong, ding, dong...");
-				if ((_vm->_gyro->_bellsAreRinging) & (_vm->_gyro->setFlag('B')))
+				if ((_vm->_avalot->_bellsAreRinging) & (_vm->_avalot->setFlag('B')))
 					// \? are used to avoid that ??! is parsed as a trigraph
 					_vm->_dialogs->displayText("(Are you trying to join in, Avvy\?\?!)");
 			} else
@@ -1975,7 +1973,7 @@ void Parser::doThat() {
 		warning("STUB: Parser::doThat() - case kVerbCodeboss");
 		break;
 	case kVerbCodePee:
-		if (_vm->_gyro->setFlag('P')) {
+		if (_vm->_avalot->setFlag('P')) {
 			_vm->_dialogs->displayText("Hmm, I don't think anyone will notice...");
 			_vm->_timer->addTimer(4, Timer::kProcUrinate, Timer::kReasonGoToToilet);
 		} else {
@@ -1986,16 +1984,16 @@ void Parser::doThat() {
 	case kVerbCodeCheat: {
 		Common::String tmpStr = Common::String::format("%cCheat mode now enabled.", Dialogs::kControlItalic);
 		_vm->_dialogs->displayText(tmpStr);
-		_vm->_gyro->_cheat = true;
+		_vm->_avalot->_cheat = true;
 		}
 		break;
 	case kVerbCodeMagic:
-		if (_vm->_gyro->_avariciusTalk > 0)
+		if (_vm->_avalot->_avariciusTalk > 0)
 			_vm->_dialogs->displayScrollChain('q', 19);
 		else {
-			if ((_vm->_gyro->_room == kRoomSpludwicks) & (_vm->_animation->inField(1))) { // Avaricius appears!
+			if ((_vm->_avalot->_room == kRoomSpludwicks) & (_vm->_animation->inField(1))) { // Avaricius appears!
 				_vm->_dialogs->displayScrollChain('q', 17);
-				if (_vm->_gyro->_whereIs[1] == kRoomSpludwicks)
+				if (_vm->_avalot->_whereIs[1] == kRoomSpludwicks)
 					_vm->_dialogs->displayScrollChain('q', 18);
 				else {
 					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[1];
@@ -2004,7 +2002,7 @@ void Parser::doThat() {
 					spr->walkTo(4);
 					spr->_callEachStepFl = true;
 					spr->_eachStepProc = Animation::kProcBackAndForth;
-					_vm->_gyro->_avariciusTalk = 14;
+					_vm->_avalot->_avariciusTalk = 14;
 					_vm->_timer->addTimer(177, Timer::kProcAvariciusTalks, Timer::kReasonAvariciusTalks);
 				}
 			} else
@@ -2015,7 +2013,7 @@ void Parser::doThat() {
 		_vm->_dialogs->displayText("Listen, smart alec, that was just rhetoric.");
 		break;
 	case kVerbCodeExpletive:
-		switch (_vm->_gyro->_sworeNum) {
+		switch (_vm->_avalot->_sworeNum) {
 		case 0: {
 			Common::String tmpStr = Common::String::format("Avvy! Do you mind? There might be kids playing!%c%c" \
 				"(I shouldn't say it again, if I were you!)", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
@@ -2033,21 +2031,21 @@ void Parser::doThat() {
 			// CHECKME: Weird character in string
 			Common::String tmpStr = Common::String::format("A crack of lightning shoots from the sky, and fries you.%c%c(`Such is the anger of the gods, Avvy!\")", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
 			_vm->_dialogs->displayText(tmpStr);
-			_vm->_lucerna->gameOver();
+			_vm->_avalot->gameOver();
 			}
 		}
-		_vm->_gyro->_sworeNum++;
+		_vm->_avalot->_sworeNum++;
 		break;
 	case kVerbCodeListen:
-		if ((_vm->_gyro->_bellsAreRinging) & (_vm->_gyro->setFlag('B')))
+		if ((_vm->_avalot->_bellsAreRinging) & (_vm->_avalot->setFlag('B')))
 			_vm->_dialogs->displayText("All other noise is drowned out by the ringing of the bells.");
-		else if (_vm->_gyro->_listen.empty())
+		else if (_vm->_avalot->_listen.empty())
 			_vm->_dialogs->displayText("You can't hear anything much at the moment, Avvy.");
 		else
-			_vm->_dialogs->displayText(_vm->_gyro->_listen);
+			_vm->_dialogs->displayText(_vm->_avalot->_listen);
 		break;
 	case kVerbCodeBuy: // What are they trying to buy?
-		switch (_vm->_gyro->_room) {
+		switch (_vm->_avalot->_room) {
 		case kRoomArgentPub:
 			if (_vm->_animation->inField(5)) { // We're in a pub, and near the bar.
 				switch (_thing) {
@@ -2055,40 +2053,40 @@ void Parser::doThat() {
 				case 53:
 				case 54:
 				case 58: // Beer, whisky, cider or mead.
-					if (_vm->_gyro->_malagauche == 177) { // Already getting us one.
+					if (_vm->_avalot->_malagauche == 177) { // Already getting us one.
 						_vm->_dialogs->displayScrollChain('D', 15);
 						return;
 					}
 
-					if (_vm->_gyro->_teetotal)  {
+					if (_vm->_avalot->_teetotal)  {
 						_vm->_dialogs->displayScrollChain('D', 6);
 						return;
 					}
 
-					if (_vm->_gyro->_alcoholLevel == 0)
-						_vm->_lucerna->incScore(3);
+					if (_vm->_avalot->_alcoholLevel == 0)
+						_vm->_avalot->incScore(3);
 
 					_vm->_background->drawBackgroundSprite(-1, -1, 11);
 					_vm->_dialogs->displayText(booze[_thing - 51] + ", please." + Dialogs::kControlRegister + '1' + Dialogs::kControlSpeechBubble);
-					_vm->_gyro->_drinking = _thing;
+					_vm->_avalot->_drinking = _thing;
 
 					_vm->_background->drawBackgroundSprite(-1, -1, 9);
-					_vm->_gyro->_malagauche = 177;
+					_vm->_avalot->_malagauche = 177;
 					_vm->_timer->addTimer(27, Timer::kProcBuyDrinks, Timer::kReasonDrinks);
 					break;
 				case 52:
 					examine();
 					break; // We have a right one here - buy Pepsi??!
-				case Gyro::kObjectWine:
-					if (_vm->_gyro->_objects[Gyro::kObjectWine - 1])  // We've already got the wine!
+				case Avalot::kObjectWine:
+					if (_vm->_avalot->_objects[Avalot::kObjectWine - 1])  // We've already got the wine!
 						_vm->_dialogs->displayScrollChain('D', 2); // 1 bottle's shufishent!
 					else {
-						if (_vm->_gyro->_malagauche == 177) { // Already getting us one.
+						if (_vm->_avalot->_malagauche == 177) { // Already getting us one.
 							_vm->_dialogs->displayScrollChain('D', 15);
 							return;
 						}
 
-						if (_vm->_gyro->_carryNum >= kCarryLimit) {
+						if (_vm->_avalot->_carryNum >= kCarryLimit) {
 							_vm->_dialogs->displayText("Your hands are full.");
 							return;
 						}
@@ -2096,10 +2094,10 @@ void Parser::doThat() {
 						_vm->_background->drawBackgroundSprite(-1, -1, 11);
 						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 						_vm->_dialogs->displayText(tmpStr);
-						if (_vm->_gyro->_alcoholLevel == 0)
-							_vm->_lucerna->incScore(3);
+						if (_vm->_avalot->_alcoholLevel == 0)
+							_vm->_avalot->incScore(3);
 						_vm->_background->drawBackgroundSprite(-1, -1, 9);
-						_vm->_gyro->_malagauche = 177;
+						_vm->_avalot->_malagauche = 177;
 
 						_vm->_timer->addTimer(27, Timer::kProcBuyWine, Timer::kReasonDrinks);
 					}
@@ -2111,24 +2109,24 @@ void Parser::doThat() {
 
 		case kRoomOutsideDucks:
 			if (_vm->_animation->inField(5)) {
-				if (_thing == Gyro::kObjectOnion) {
-					if (_vm->_gyro->_objects[Gyro::kObjectOnion - 1])
+				if (_thing == Avalot::kObjectOnion) {
+					if (_vm->_avalot->_objects[Avalot::kObjectOnion - 1])
 						_vm->_dialogs->displayScrollChain('D', 10); // Not planning to juggle with the things!
-					else if (_vm->_gyro->_carryNum >= kCarryLimit)
+					else if (_vm->_avalot->_carryNum >= kCarryLimit)
 						_vm->_dialogs->displayText("Before you ask, you remember that your hands are full.");
 					else {
-						if (_vm->_gyro->_boughtOnion)
+						if (_vm->_avalot->_boughtOnion)
 							_vm->_dialogs->displayScrollChain('D', 11);
 						else {
 							_vm->_dialogs->displayScrollChain('D', 9);
-							_vm->_lucerna->incScore(3);
+							_vm->_avalot->incScore(3);
 						}
-						_vm->_gyro->decreaseMoney(3); // It costs thruppence.
-						_vm->_gyro->_objects[Gyro::kObjectOnion - 1] = true;
-						_vm->_lucerna->refreshObjectList();
-						_vm->_gyro->_boughtOnion = true;
-						_vm->_gyro->_rottenOnion = false; // It's OK when it leaves the stall!
-						_vm->_gyro->_onionInVinegar = false;
+						_vm->_avalot->decreaseMoney(3); // It costs thruppence.
+						_vm->_avalot->_objects[Avalot::kObjectOnion - 1] = true;
+						_vm->_avalot->refreshObjectList();
+						_vm->_avalot->_boughtOnion = true;
+						_vm->_avalot->_rottenOnion = false; // It's OK when it leaves the stall!
+						_vm->_avalot->_onionInVinegar = false;
 					}
 				} else
 					_vm->_dialogs->displayScrollChain('D', 0);
@@ -2144,33 +2142,33 @@ void Parser::doThat() {
 		}
 		break;
 	case kVerbCodeAttack:
-		if ((_vm->_gyro->_room == kRoomBrummieRoad) &&
-			((_person == Gyro::kPeopleCwytalot) || (_thing == Gyro::kObjectCrossbow) || (_thing == Gyro::kObjectBolt)) &&
-			(_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] == _vm->_gyro->_room)) {
-			switch (_vm->_gyro->_objects[Gyro::kObjectBolt - 1] + _vm->_gyro->_objects[Gyro::kObjectCrossbow - 1] * 2) {
+		if ((_vm->_avalot->_room == kRoomBrummieRoad) &&
+			((_person == Avalot::kPeopleCwytalot) || (_thing == Avalot::kObjectCrossbow) || (_thing == Avalot::kObjectBolt)) &&
+			(_vm->_avalot->_whereIs[Avalot::kPeopleCwytalot - 150] == _vm->_avalot->_room)) {
+			switch (_vm->_avalot->_objects[Avalot::kObjectBolt - 1] + _vm->_avalot->_objects[Avalot::kObjectCrossbow - 1] * 2) {
 				// 0 = neither, 1 = only bolt, 2 = only crossbow, 3 = both.
 			case 0:
 				_vm->_dialogs->displayScrollChain('Q', 10);
 				_vm->_dialogs->displayText("(At the very least, don't use your bare hands!)");
 				break;
 			case 1:
-				_vm->_dialogs->displayText("Attack _vm->_gyro->him with only a crossbow bolt? Are you planning on playing darts?!");
+				_vm->_dialogs->displayText("Attack _vm->_avalot->him with only a crossbow bolt? Are you planning on playing darts?!");
 				break;
 			case 2:
 				_vm->_dialogs->displayText("Come on, Avvy! You're not going to get very far with only a crossbow!");
 				break;
 			case 3:
 				_vm->_dialogs->displayScrollChain('Q', 11);
-				_vm->_gyro->_cwytalotGone = true;
-				_vm->_gyro->_objects[Gyro::kObjectBolt - 1] = false;
-				_vm->_gyro->_objects[Gyro::kObjectCrossbow - 1] = false;
-				_vm->_lucerna->refreshObjectList();
-				_vm->_gyro->_magics[11]._operation = Gyro::kMagicNothing;
-				_vm->_lucerna->incScore(7);
+				_vm->_avalot->_cwytalotGone = true;
+				_vm->_avalot->_objects[Avalot::kObjectBolt - 1] = false;
+				_vm->_avalot->_objects[Avalot::kObjectCrossbow - 1] = false;
+				_vm->_avalot->refreshObjectList();
+				_vm->_avalot->_magics[11]._operation = Avalot::kMagicNothing;
+				_vm->_avalot->incScore(7);
 				_vm->_animation->_sprites[1].walkTo(1);
 				_vm->_animation->_sprites[1]._vanishIfStill = true;
 				_vm->_animation->_sprites[1]._callEachStepFl = false;
-				_vm->_gyro->_whereIs[Gyro::kPeopleCwytalot - 150] = kRoomDummy;
+				_vm->_avalot->_whereIs[Avalot::kPeopleCwytalot - 150] = kRoomDummy;
 				break;
 			default:
 				_vm->_dialogs->displayScrollChain('Q', 10); // Please try not to be so violent!
@@ -2179,14 +2177,14 @@ void Parser::doThat() {
 			_vm->_dialogs->displayScrollChain('Q', 10);
 		break;
 	case kVerbCodePasswd:
-		if (_vm->_gyro->_room != kRoomBridge)
+		if (_vm->_avalot->_room != kRoomBridge)
 			_vm->_dialogs->displayScrollChain('Q', 12);
 		else {
 			bool ok = true;
 			for (uint i = 0; i < _thats.size(); i++) {
 				Common::String temp = _realWords[i];
 				temp.toUppercase();
-				int pwdId = _vm->_gyro->_passwordNum + kFirstPassword;
+				int pwdId = _vm->_avalot->_passwordNum + kFirstPassword;
 				for (uint j = 0; j < _vocabulary[pwdId]._word.size(); j++) {
 					if (_vocabulary[pwdId]._word[j] != temp[j])
 						ok = false;
@@ -2194,13 +2192,13 @@ void Parser::doThat() {
 			}
 
 			if (ok) {
-				if (_vm->_gyro->_drawbridgeOpen != 0)
+				if (_vm->_avalot->_drawbridgeOpen != 0)
 					_vm->_dialogs->displayText("Contrary to your expectations, the drawbridge fails to close again.");
 				else {
-					_vm->_lucerna->incScore(4);
+					_vm->_avalot->incScore(4);
 					_vm->_dialogs->displayText("The drawbridge opens!");
 					_vm->_timer->addTimer(7, Timer::kProcOpenDrawbridge, Timer::kReasonDrawbridgeFalls);
-					_vm->_gyro->_drawbridgeOpen = 1;
+					_vm->_avalot->_drawbridgeOpen = 1;
 				}
 			} else
 				_vm->_dialogs->displayScrollChain('Q', 12);
@@ -2210,10 +2208,10 @@ void Parser::doThat() {
 		//_vm->_enid->dir(_realWords[1]); TODO: Replace it with proper ScummVM-friendly function(s)!
 		break;
 	case kVerbCodeDie:
-		_vm->_lucerna->gameOver();
+		_vm->_avalot->gameOver();
 		break;
 	case kVerbCodeScore: {
-		Common::String tmpStr = Common::String::format("Your score is %d,%c%cout of a possible 128.%c%cThis gives you a rank of %s.%c%c%s", _vm->_gyro->_dnascore, Dialogs::kControlCenter, Dialogs::kControlNewLine, Dialogs::kControlNewLine, Dialogs::kControlNewLine, rank().c_str(), Dialogs::kControlNewLine, Dialogs::kControlNewLine, totalTime().c_str());
+		Common::String tmpStr = Common::String::format("Your score is %d,%c%cout of a possible 128.%c%cThis gives you a rank of %s.%c%c%s", _vm->_avalot->_dnascore, Dialogs::kControlCenter, Dialogs::kControlNewLine, Dialogs::kControlNewLine, Dialogs::kControlNewLine, rank().c_str(), Dialogs::kControlNewLine, Dialogs::kControlNewLine, totalTime().c_str());
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
@@ -2228,31 +2226,31 @@ void Parser::doThat() {
 			_vm->_dialogs->displayText("Kiss whom?");
 		else if (isPersonHere()) {
 			switch (_person) {
-			case Gyro::kPeopleArkata:
+			case Avalot::kPeopleArkata:
 				_vm->_dialogs->displayScrollChain('U', 12);
 				break;
-			case Gyro::kPeopleGeida:
+			case Avalot::kPeopleGeida:
 				_vm->_dialogs->displayScrollChain('U', 13);
 				break;
-			case Gyro::kPeopleWisewoman:
+			case Avalot::kPeopleWisewoman:
 				_vm->_dialogs->displayScrollChain('U', 14);
 				break;
 			default:
 				_vm->_dialogs->displayScrollChain('U', 5); // You WHAT?
 			}
-		} else if ((Gyro::kPeopleAvalot <= _person) && (_person < Gyro::kPeopleArkata))
+		} else if ((Avalot::kPeopleAvalot <= _person) && (_person < Avalot::kPeopleArkata))
 			_vm->_dialogs->displayText("Hey, what kind of a weirdo are you??");
 
 		break;
 	case kVerbCodeClimb:
-		if (_vm->_gyro->_room == kRoomInsideCardiffCastle)
+		if (_vm->_avalot->_room == kRoomInsideCardiffCastle)
 			cardiffClimbing();
 		else // In the wrong room!
 			_vm->_dialogs->displayText("Not with your head for heights, Avvy!");
 		break;
 	case kVerbCodeJump:
 		_vm->_timer->addTimer(1, Timer::kProcJump, Timer::kReasonJumping);
-		_vm->_gyro->_userMovesAvvy = false;
+		_vm->_avalot->_userMovesAvvy = false;
 		break;
 	case kVerbCodeHiscores:
 		//	show_highs();
@@ -2262,23 +2260,23 @@ void Parser::doThat() {
 		if (isPersonHere())
 			switch (_person) {
 			case kPardon:
-			case Gyro::kPeopleAvalot:
+			case Avalot::kPeopleAvalot:
 			case 0:
-				if (!_vm->_gyro->_avvyIsAwake) {
-					_vm->_gyro->_avvyIsAwake = true;
-					_vm->_lucerna->incScore(1);
-					_vm->_gyro->_avvyInBed = true;
+				if (!_vm->_avalot->_avvyIsAwake) {
+					_vm->_avalot->_avvyIsAwake = true;
+					_vm->_avalot->incScore(1);
+					_vm->_avalot->_avvyInBed = true;
 					_vm->_background->drawBackgroundSprite(-1, -1, 2); // Picture of Avvy, awake in bed.
-					if (_vm->_gyro->_teetotal)
+					if (_vm->_avalot->_teetotal)
 						_vm->_dialogs->displayScrollChain('d', 13);
 				} else
 					_vm->_dialogs->displayText("You're already awake, Avvy!");
 				break;
-			case Gyro::kPeopleAyles:
-				if (!_vm->_gyro->_aylesIsAwake)
+			case Avalot::kPeopleAyles:
+				if (!_vm->_avalot->_aylesIsAwake)
 					_vm->_dialogs->displayText("You can't seem to wake him by yourself.");
 				break;
-			case Gyro::kPeopleJacques: {
+			case Avalot::kPeopleJacques: {
 				Common::String tmpStr = Common::String::format("Brother Jacques, Brother Jacques, are you asleep?%c1%c" \
 					"Hmmm... that doesn't seem to do any good...", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 				_vm->_dialogs->displayText(tmpStr);
@@ -2289,26 +2287,26 @@ void Parser::doThat() {
 		}
 		break;
 	case kVerbCodeSit:
-		if (_vm->_gyro->_room == kRoomNottsPub) {
-			if (_vm->_gyro->_sittingInPub)
+		if (_vm->_avalot->_room == kRoomNottsPub) {
+			if (_vm->_avalot->_sittingInPub)
 				_vm->_dialogs->displayText("You're already sitting!");
 			else {
 				_vm->_animation->_sprites[0].walkTo(3); // Move Avvy to the place, and sit him down.
 				_vm->_timer->addTimer(1, Timer::kProcAvvySitDown, Timer::kReasonSittingDown);
 			}
 		} else { // Default doodah.
-			_vm->_lucerna->dusk();
-			_vm->_gyro->hangAroundForAWhile();
-			_vm->_lucerna->dawn();
+			_vm->_avalot->dusk();
+			_vm->_avalot->hangAroundForAWhile();
+			_vm->_avalot->dawn();
 			Common::String tmpStr = Common::String::format("A few hours later...%cnothing much has happened...", Dialogs::kControlParagraph);
 			_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
 	case kVerbCodeRestart:
 		if (_vm->_dialogs->displayQuestion("Restart game and lose changes?"))  {
-			_vm->_lucerna->dusk();
-			_vm->_gyro->newGame();
-			_vm->_lucerna->dawn();
+			_vm->_avalot->dusk();
+			_vm->_avalot->newGame();
+			_vm->_avalot->dawn();
 		}
 		break;
 	case kPardon:

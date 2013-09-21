@@ -32,10 +32,8 @@
 #include "avalanche/graphics.h"
 #include "avalanche/parser.h"
 #include "avalanche/avalot.h"
-#include "avalanche/gyro.h"
 #include "avalanche/pingo.h"
 #include "avalanche/dialogs.h"
-#include "avalanche/lucerna.h"
 #include "avalanche/background.h"
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
@@ -67,10 +65,8 @@ public:
 	Parser *_parser;
 
 	Avalot *_avalot;
-	Gyro *_gyro;
 	Pingo *_pingo;
 	Dialogs *_dialogs;
-	Lucerna *_lucerna;
 	Background *_background;
 	Sequence *_sequence;
 	Timer *_timer;

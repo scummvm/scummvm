@@ -29,8 +29,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/menu.h"
-#include "avalanche/lucerna.h"
-#include "avalanche/gyro.h"
 #include "avalanche/animation.h"
 
 #include "common/textconsole.h"
@@ -67,7 +65,7 @@ void HeadType::highlight() {
 	_menu->_activeMenuItem._activeNum = _position;
 	_menu->_menuActive = true;
 
-	_menu->_vm->_gyro->_currentMouse = 177; // Force redraw of cursor.
+	_menu->_vm->_avalot->_currentMouse = 177; // Force redraw of cursor.
 }
 
 bool HeadType::parseAltTrigger(char key) {
@@ -137,8 +135,8 @@ void MenuItem::display() {
 	for (int y = 1; y < _optionNum; y++)
 		displayOption(y, false);
 
-	_dr->_vm->_gyro->_defaultLed = 1;
-	_dr->_vm->_gyro->_currentMouse = 177;
+	_dr->_vm->_avalot->_defaultLed = 1;
+	_dr->_vm->_avalot->_currentMouse = 177;
 
 	CursorMan.showMouse(true); // 4 = fletch
 }
@@ -151,7 +149,7 @@ void MenuItem::wipe() {
 	_activeNow = false;
 	_dr->_menuActive = false;
 	_firstlix = false;
-	_dr->_vm->_gyro->_defaultLed = 2;
+	_dr->_vm->_avalot->_defaultLed = 2;
 
 	CursorMan.showMouse(true);
 }
@@ -220,13 +218,13 @@ void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, Menu
 void MenuBar::draw() {
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect(0, 0, 640, 10), _dr->kMenuBackgroundColor);
 
-	byte savecp = _dr->_vm->_gyro->_cp;
-	_dr->_vm->_gyro->_cp = 3;
+	byte savecp = _dr->_vm->_avalot->_cp;
+	_dr->_vm->_avalot->_cp = 3;
 
 	for (int i = 0; i < _menuNum; i++)
 		_menuItems[i].draw();
 
-	_dr->_vm->_gyro->_cp = savecp;
+	_dr->_vm->_avalot->_cp = savecp;
 }
 
 void MenuBar::parseAltTrigger(char c) {
@@ -264,30 +262,30 @@ Menu::Menu(AvalancheEngine *vm) {
 }
 
 void Menu::findWhatYouCanDoWithIt() {
-	switch (_vm->_gyro->_thinks) {
-	case Gyro::kObjectWine:
-	case Gyro::kObjectPotion:
-	case Gyro::kObjectInk:
-		_vm->_gyro->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeDrink;
+	switch (_vm->_avalot->_thinks) {
+	case Avalot::kObjectWine:
+	case Avalot::kObjectPotion:
+	case Avalot::kObjectInk:
+		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeDrink;
 		break;
-	case Gyro::kObjectBell:
-		_vm->_gyro->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeRing;
+	case Avalot::kObjectBell:
+		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeRing;
 		break;
-	case Gyro::kObjectChastity:
-		_vm->_gyro->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
+	case Avalot::kObjectChastity:
+		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
 		break;
-	case Gyro::kObjectLute:
-		_vm->_gyro->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodePlay;
+	case Avalot::kObjectLute:
+		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodePlay;
 		break;
-	case Gyro::kObjectMushroom:
-	case Gyro::kObjectOnion:
-		_vm->_gyro->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeEat;
+	case Avalot::kObjectMushroom:
+	case Avalot::kObjectOnion:
+		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeEat;
 		break;
-	case Gyro::kObjectClothes:
-		_vm->_gyro->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
+	case Avalot::kObjectClothes:
+		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
 		break;
 	default:
-		_vm->_gyro->_verbStr = Parser::kVerbCodeExam; // Anything else.
+		_vm->_avalot->_verbStr = Parser::kVerbCodeExam; // Anything else.
 	}
 }
 
@@ -312,7 +310,7 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < 8; j++) {
 			byte idx = text[i];
-			font[idx][j] = _vm->_gyro->_font[idx][j] & ander; // Set the font.
+			font[idx][j] = _vm->_avalot->_font[idx][j] & ander; // Set the font.
 			// And set the background of the text to the desired color.
 			for (int k = 0; k < 8; k++)
 				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + k, y + j) = backgroundColor;
@@ -414,9 +412,9 @@ void Menu::setupMenuFile() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("New game", 'N', "f4", true);
 	_activeMenuItem.setupOption("Load...", 'L', "^f3", true);
-	_activeMenuItem.setupOption("Save", 'S', "^f2", _vm->_gyro->_alive);
-	_activeMenuItem.setupOption("Save As...", 'v', "", _vm->_gyro->_alive);
-	_activeMenuItem.setupOption("DOS Shell", 'D', _vm->_gyro->_atKey + '1', true);
+	_activeMenuItem.setupOption("Save", 'S', "^f2", _vm->_avalot->_alive);
+	_activeMenuItem.setupOption("Save As...", 'v', "", _vm->_avalot->_alive);
+	_activeMenuItem.setupOption("DOS Shell", 'D', _vm->_avalot->_atKey + '1', true);
 	_activeMenuItem.setupOption("Quit", 'Q', "alt-X", true);
 	_activeMenuItem.display();
 }
@@ -424,7 +422,7 @@ void Menu::setupMenuFile() {
 void Menu::setupMenuAction() {
 	_activeMenuItem.reset();
 
-	Common::String f5Does = _vm->_gyro->f5Does();
+	Common::String f5Does = _vm->_avalot->f5Does();
 	for (int i = 0; i < 2; i++)
 		if (!f5Does.empty())
 			f5Does.deleteChar(0);
@@ -433,13 +431,13 @@ void Menu::setupMenuAction() {
 	else
 		_activeMenuItem.setupOption(f5Does, f5Does[0], "f5", true);
 	_activeMenuItem.setupOption("Pause game", 'P', "f6", true);
-	if (_vm->_gyro->_room == kRoomMap)
+	if (_vm->_avalot->_room == kRoomMap)
 		_activeMenuItem.setupOption("Journey thither", 'J', "f7", _vm->_animation->nearDoor());
 	else
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->nearDoor());
 	_activeMenuItem.setupOption("Look around", 'L', "f8", true);
 	_activeMenuItem.setupOption("Inventory", 'I', "Tab", true);
-	if (_vm->_animation->_sprites[0]._speedX == _vm->_gyro->kWalk)
+	if (_vm->_animation->_sprites[0]._speedX == _vm->_avalot->kWalk)
 		_activeMenuItem.setupOption("Run fast", 'R', "^R", true);
 	else
 		_activeMenuItem.setupOption("Walk slowly", 'W', "^W", true);
@@ -454,8 +452,8 @@ void Menu::setupMenuPeople() {
 	_activeMenuItem.reset();
 
 	for (int i = 150; i <= 178; i++) {
-		if (_vm->_gyro->_whereIs[i - 150] == _vm->_gyro->_room) {
-			_activeMenuItem.setupOption(_vm->_gyro->getName(i), _vm->_gyro->getNameChar(i), "", true);
+		if (_vm->_avalot->_whereIs[i - 150] == _vm->_avalot->_room) {
+			_activeMenuItem.setupOption(_vm->_avalot->getName(i), _vm->_avalot->getNameChar(i), "", true);
 			people += i;
 		}
 	}
@@ -466,8 +464,8 @@ void Menu::setupMenuPeople() {
 void Menu::setupMenuObjects() {
 	_activeMenuItem.reset();
 	for (int i = 0; i < kObjectNum; i++) {
-		if (_vm->_gyro->_objects[i])
-			_activeMenuItem.setupOption(_vm->_gyro->getThing(i + 1), _vm->_gyro->getThingChar(i + 1), "", true);
+		if (_vm->_avalot->_objects[i])
+			_activeMenuItem.setupOption(_vm->_avalot->getThing(i + 1), _vm->_avalot->getThingChar(i + 1), "", true);
 	}
 	_activeMenuItem.display();
 }
@@ -475,54 +473,54 @@ void Menu::setupMenuObjects() {
 void Menu::setupMenuWith() {
 	_activeMenuItem.reset();
 
-	if (_vm->_gyro->_thinkThing) {
+	if (_vm->_avalot->_thinkThing) {
 		findWhatYouCanDoWithIt();
 
-		for (uint i = 0; i < _vm->_gyro->_verbStr.size(); i++) {
+		for (uint i = 0; i < _vm->_avalot->_verbStr.size(); i++) {
 			char vbchar;
 			Common::String verb;
 
-			_vm->_parser->verbOpt(_vm->_gyro->_verbStr[i], verb, vbchar);
+			_vm->_parser->verbOpt(_vm->_avalot->_verbStr[i], verb, vbchar);
 			_activeMenuItem.setupOption(verb, vbchar, "", true);
 		}
 
 		// We disable the "give" option if: (a), you haven't selected anybody, (b), the _person you've selected isn't in the room,
 		// or (c), the _person you've selected is YOU!
 
-		if ((_vm->_gyro->_lastPerson == Gyro::kPeopleAvalot) || (_vm->_gyro->_lastPerson == _vm->_parser->kNothing)
-			|| (_vm->_gyro->_whereIs[_vm->_gyro->_lastPerson - 150] != _vm->_gyro->_room))
+		if ((_vm->_avalot->_lastPerson == Avalot::kPeopleAvalot) || (_vm->_avalot->_lastPerson == _vm->_parser->kNothing)
+			|| (_vm->_avalot->_whereIs[_vm->_avalot->_lastPerson - 150] != _vm->_avalot->_room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
-			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_gyro->getName(_vm->_gyro->_lastPerson), 'G', "", true);
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + Parser::kVerbCodeGive;
+			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_avalot->getName(_vm->_avalot->_lastPerson), 'G', "", true);
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodeGive;
 		}
 	} else {
 		_activeMenuItem.setupOption("Examine", 'x', "", true);
-		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_gyro->_thinks), 'T', "", true);
-		_vm->_gyro->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeTalk;
-		switch (_vm->_gyro->_thinks) {
-		case Gyro::kPeopleGeida:
-		case Gyro::kPeopleArkata:
+		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_avalot->_thinks), 'T', "", true);
+		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeTalk;
+		switch (_vm->_avalot->_thinks) {
+		case Avalot::kPeopleGeida:
+		case Avalot::kPeopleArkata:
 			_activeMenuItem.setupOption("Kiss her", 'K', "", true);
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + Parser::kVerbCodeKiss;
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodeKiss;
 			break;
-		case Gyro::kPeopleDogfood:
-			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_gyro->_wonNim); // True if you HAVEN'T won.
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + Parser::kVerbCodePlay;
+		case Avalot::kPeopleDogfood:
+			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_avalot->_wonNim); // True if you HAVEN'T won.
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodePlay;
 			break;
-		case Gyro::kPeopleMalagauche: {
-			bool isSober = !_vm->_gyro->_teetotal;
-			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_gyro->_objects[Gyro::kObjectWine - 1]);
+		case Avalot::kPeopleMalagauche: {
+			bool isSober = !_vm->_avalot->_teetotal;
+			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_avalot->_objects[Avalot::kObjectWine - 1]);
 			_activeMenuItem.setupOption("Buy some beer", 'b', "", isSober);
 			_activeMenuItem.setupOption("Buy some whisky", 'h', "", isSober);
 			_activeMenuItem.setupOption("Buy some cider", 'c', "", isSober);
 			_activeMenuItem.setupOption("Buy some mead", 'm', "", isSober);
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + 101 + 100 + 102 + 103 + 104;
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + 101 + 100 + 102 + 103 + 104;
 			}
 			break;
-		case Gyro::kPeopleTrader:
-			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_gyro->_objects[Gyro::kObjectOnion - 1]);
-			_vm->_gyro->_verbStr = _vm->_gyro->_verbStr + 105;
+		case Avalot::kPeopleTrader:
+			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_avalot->_objects[Avalot::kObjectOnion - 1]);
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + 105;
 			break;
 		}
 	}
@@ -533,19 +531,19 @@ void Menu::runMenuGame() {
 	// Help, boss, untrash screen.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeHelp);
+		_vm->_avalot->callVerb(Parser::kVerbCodeHelp);
 		break;
 	case 1:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeBoss);
+		_vm->_avalot->callVerb(Parser::kVerbCodeBoss);
 		break;
 	case 2:
-		_vm->_lucerna->majorRedraw();
+		_vm->_avalot->majorRedraw();
 		break;
 	case 3:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeScore);
+		_vm->_avalot->callVerb(Parser::kVerbCodeScore);
 		break;
 	case 4:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeInfo);
+		_vm->_avalot->callVerb(Parser::kVerbCodeInfo);
 		break;
 	}
 }
@@ -554,17 +552,17 @@ void Menu::runMenuFile() {
 	// New game, load, save, save as, DOS shell, about, quit.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeRestart);
+		_vm->_avalot->callVerb(Parser::kVerbCodeRestart);
 		break;
 	case 1:
 		if (!_vm->_parser->_realWords[1].empty())
 			_vm->_parser->_realWords[1].clear();
-		_vm->_lucerna->callVerb(Parser::kVerbCodeLoad);
+		_vm->_avalot->callVerb(Parser::kVerbCodeLoad);
 		break;
 	case 2:
 		if (!_vm->_parser->_realWords[1].empty())
 			_vm->_parser->_realWords[1].clear();
-		_vm->_lucerna->callVerb(Parser::kVerbCodeSave);
+		_vm->_avalot->callVerb(Parser::kVerbCodeSave);
 		break;
 	case 3:
 		//_vm->_basher->filename_edit();
@@ -574,7 +572,7 @@ void Menu::runMenuFile() {
 		//_vm->_enid->backToBootstrap(2); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 		break;
 	case 5:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeQuit);
+		_vm->_avalot->callVerb(Parser::kVerbCodeQuit);
 		break;
 	}
 }
@@ -586,29 +584,29 @@ void Menu::runMenuAction() {
 	case 0:
 		_vm->_parser->_person = _vm->_parser->kPardon;
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		f5Does = _vm->_gyro->f5Does();
-		_vm->_lucerna->callVerb(f5Does[0]);
+		f5Does = _vm->_avalot->f5Does();
+		_vm->_avalot->callVerb(f5Does[0]);
 		break;
 	case 1:
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		_vm->_lucerna->callVerb(Parser::kVerbCodePause);
+		_vm->_avalot->callVerb(Parser::kVerbCodePause);
 		break;
 	case 2:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeOpen);
+		_vm->_avalot->callVerb(Parser::kVerbCodeOpen);
 		break;
 	case 3:
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		_vm->_lucerna->callVerb(Parser::kVerbCodeLook);
+		_vm->_avalot->callVerb(Parser::kVerbCodeLook);
 		break;
 	case 4:
-		_vm->_lucerna->callVerb(Parser::kVerbCodeInv);
+		_vm->_avalot->callVerb(Parser::kVerbCodeInv);
 		break;
 	case 5: {
 		AnimationType *avvy = &_vm->_animation->_sprites[0];
-		if (avvy->_speedX == _vm->_gyro->kWalk)
-			avvy->_speedX = _vm->_gyro->kRun;
+		if (avvy->_speedX == _vm->_avalot->kWalk)
+			avvy->_speedX = _vm->_avalot->kRun;
 		else
-			avvy->_speedX = _vm->_gyro->kWalk;
+			avvy->_speedX = _vm->_avalot->kWalk;
 		_vm->_animation->updateSpeed();
 		}
 		break;
@@ -616,57 +614,57 @@ void Menu::runMenuAction() {
 }
 
 void Menu::runMenuObjects() {
-	_vm->_lucerna->thinkAbout(_vm->_gyro->_objectList[_activeMenuItem._choiceNum], Gyro::kThing);
+	_vm->_avalot->thinkAbout(_vm->_avalot->_objectList[_activeMenuItem._choiceNum], Avalot::kThing);
 }
 
 void Menu::runMenuPeople() {
-	_vm->_lucerna->thinkAbout(people[_activeMenuItem._choiceNum], Gyro::kPerson);
-	_vm->_gyro->_lastPerson = people[_activeMenuItem._choiceNum];
+	_vm->_avalot->thinkAbout(people[_activeMenuItem._choiceNum], Avalot::kPerson);
+	_vm->_avalot->_lastPerson = people[_activeMenuItem._choiceNum];
 }
 
 void Menu::runMenuWith() {
-	_vm->_parser->_thing = _vm->_gyro->_thinks;
+	_vm->_parser->_thing = _vm->_avalot->_thinks;
 
-	if (_vm->_gyro->_thinkThing) {
+	if (_vm->_avalot->_thinkThing) {
 		_vm->_parser->_thing += 49;
 
-		if (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum] == Parser::kVerbCodeGive)
-			_vm->_parser->_person = _vm->_gyro->_lastPerson;
+		if (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum] == Parser::kVerbCodeGive)
+			_vm->_parser->_person = _vm->_avalot->_lastPerson;
 		else
 			_vm->_parser->_person = Parser::kPardon;
 	} else {
-		switch (_vm->_gyro->_verbStr[_activeMenuItem._choiceNum]) {
+		switch (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: // Beer
 			_vm->_parser->_thing = 100;
-			_vm->_lucerna->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
 			return;
 		case 101: // Wine
 			_vm->_parser->_thing = 50;
-			_vm->_lucerna->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
 			return;
 		case 102: // Whisky
 			_vm->_parser->_thing = 102;
-			_vm->_lucerna->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
 			return;
 		case 103: // Cider
 			_vm->_parser->_thing = 103;
-			_vm->_lucerna->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
 			return;
 		case 104: // Mead
 			_vm->_parser->_thing = 107;
-			_vm->_lucerna->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
 			return;
 		case 105: // Onion (trader)
 			_vm->_parser->_thing = 67;
-			_vm->_lucerna->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
 			return;
 		default:
 			_vm->_parser->_person = _vm->_parser->_thing;
 			_vm->_parser->_thing = Parser::kPardon;
-			_vm->_gyro->_subjectNum = 0;
+			_vm->_avalot->_subjectNum = 0;
 		}
 	}
-	_vm->_lucerna->callVerb(_vm->_gyro->_verbStr[_activeMenuItem._choiceNum]);
+	_vm->_avalot->callVerb(_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]);
 }
 
 void Menu::setup() {
@@ -688,11 +686,11 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 	::Graphics::Surface backup;
 	backup.copyFrom(_vm->_graphics->_surface);
 
-	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_lucerna->_holdLeftMouse) {
+	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_avalot->_holdLeftMouse) {
 		_menuBar.chooseMenuItem(cursorPos.x);
 		do
 			_vm->updateEvents();
-		while (_vm->_lucerna->_holdLeftMouse);
+		while (_vm->_avalot->_holdLeftMouse);
 
 		while (!_vm->shouldQuit()) {
 			do {
@@ -702,28 +700,28 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 				cursorPos = _vm->getMousePos();
 				// Change arrow...
 				if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
-					_vm->_gyro->newMouse(0); // Up arrow
+					_vm->_avalot->newMouse(0); // Up arrow
 				else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
 					if ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= _activeMenuItem._fly * 2 + 1))
-						_vm->_gyro->newMouse(2); // Right-arrow
+						_vm->_avalot->newMouse(2); // Right-arrow
 					else
-						_vm->_gyro->newMouse(3); // Fletch
+						_vm->_avalot->newMouse(3); // Fletch
 				} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
-					_vm->_gyro->newMouse(1); // Screwdriver
+					_vm->_avalot->newMouse(1); // Screwdriver
 
 				_activeMenuItem.lightUp(cursorPos);
 
 				_vm->_graphics->refreshScreen();
-			} while (!_vm->_lucerna->_holdLeftMouse);
+			} while (!_vm->_avalot->_holdLeftMouse);
 
-			if (_vm->_lucerna->_holdLeftMouse) {
+			if (_vm->_avalot->_holdLeftMouse) {
 				if (cursorPos.y > 21) {
 					if (!((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
 						&& (cursorPos.y >= 24) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1))))) {
 							// Clicked OUTSIDE the menu.
 							if (_activeMenuItem._activeNow) {
 								_activeMenuItem.wipe();
-								_vm->_lucerna->_holdLeftMouse = false;
+								_vm->_avalot->_holdLeftMouse = false;
 								backup.free();
 								return;
 							} // No "else"- clicking on menu has no effect (only releasing).
@@ -737,11 +735,11 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 
 						if (((_activeMenuItem._left * 8) <= cursorPos.x) && (cursorPos.x <= (_activeMenuItem._left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
 							// If we clicked on the same menu item (the one that is already active) on the bar...
-							_vm->_lucerna->_holdLeftMouse = false;
+							_vm->_avalot->_holdLeftMouse = false;
 							backup.free();
 							return;
 						} else {
-							_vm->_lucerna->_holdLeftMouse = true;
+							_vm->_avalot->_holdLeftMouse = true;
 							break;
 						}
 					}
@@ -758,7 +756,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 						_vm->_graphics->refreshScreen();
 
 						_vm->updateEvents();
-						if (!_vm->_lucerna->_holdLeftMouse)
+						if (!_vm->_avalot->_holdLeftMouse)
 							break;
 					}
 

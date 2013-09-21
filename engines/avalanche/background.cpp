@@ -30,8 +30,6 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/background.h"
 #include "avalanche/animation.h"
-#include "avalanche/lucerna.h"
-#include "avalanche/gyro.h"
 
 #include "common/textconsole.h"
 
@@ -55,28 +53,28 @@ void Background::updateBackgroundSprites() {
 	if (_vm->_menu->isActive())
 		return; // No animation when the menus are up.
 
-	switch (_vm->_gyro->_room) {
+	switch (_vm->_avalot->_room) {
 	case kRoomOutsideArgentPub:
-		if ((_vm->_gyro->_roomTime % 12) == 0)
-			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 12) % 4);
+		if ((_vm->_avalot->_roomTime % 12) == 0)
+			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 12) % 4);
 		break;
 	case kRoomBrummieRoad:
-		if ((_vm->_gyro->_roomTime % 2) == 0)
-			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 2) % 4);
+		if ((_vm->_avalot->_roomTime % 2) == 0)
+			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 2) % 4);
 		break;
 	case kRoomBridge:
-		if ((_vm->_gyro->_roomTime % 2) == 0)
-			drawBackgroundSprite(-1, -1, 3 + (_vm->_gyro->_roomTime / 2) % 4);
+		if ((_vm->_avalot->_roomTime % 2) == 0)
+			drawBackgroundSprite(-1, -1, 3 + (_vm->_avalot->_roomTime / 2) % 4);
 		break;
 	case kRoomYours:
-		if ((!_vm->_gyro->_avvyIsAwake) && ((_vm->_gyro->_roomTime % 4) == 0))
-			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 12) % 2);
+		if ((!_vm->_avalot->_avvyIsAwake) && ((_vm->_avalot->_roomTime % 4) == 0))
+			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 12) % 2);
 		break;
 	case kRoomArgentPub:
-		if (((_vm->_gyro->_roomTime % 7) == 1) && (_vm->_gyro->_malagauche != 177)) {
+		if (((_vm->_avalot->_roomTime % 7) == 1) && (_vm->_avalot->_malagauche != 177)) {
 			// Malagauche cycle.
-			_vm->_gyro->_malagauche += 1;
-			switch (_vm->_gyro->_malagauche) {
+			_vm->_avalot->_malagauche += 1;
+			switch (_vm->_avalot->_malagauche) {
 			case 1:
 			case 11:
 			case 21:
@@ -92,12 +90,12 @@ void Background::updateBackgroundSprites() {
 				drawBackgroundSprite(-1, -1, 12); // Winks.
 				break;
 			case 33:
-				_vm->_gyro->_malagauche = 0;
+				_vm->_avalot->_malagauche = 0;
 				break;
 			}
 		}
 
-		switch (_vm->_gyro->_roomTime % 200) {
+		switch (_vm->_avalot->_roomTime % 200) {
 		case 179:
 		case 197:
 			drawBackgroundSprite(-1, -1, 4); // Dogfood's drinking cycle.
@@ -110,13 +108,13 @@ void Background::updateBackgroundSprites() {
 			drawBackgroundSprite(-1, -1, 6);
 			break;
 		case 199:
-			_vm->_gyro->_npcFacing = 177; // Impossible value for this.
+			_vm->_avalot->_npcFacing = 177; // Impossible value for this.
 			break;
 		}
 
-		if ((_vm->_gyro->_roomTime % 200 >= 0) && (_vm->_gyro->_roomTime % 200 <= 178)) { // Normally.
+		if ((_vm->_avalot->_roomTime % 200 >= 0) && (_vm->_avalot->_roomTime % 200 <= 178)) { // Normally.
 			byte direction = 0;
-			uint16 angle = _vm->_lucerna->bearing(1);
+			uint16 angle = _vm->_avalot->bearing(1);
 			if (((angle >= 1) && (angle <= 90)) || ((angle >= 358) && (angle <= 360)))
 				direction = 3;
 			else if ((angle >= 293) && (angle <= 357))
@@ -124,15 +122,15 @@ void Background::updateBackgroundSprites() {
 			else if ((angle >= 271) && (angle <= 292))
 				direction = 4;
 
-			if (direction != _vm->_gyro->_npcFacing) { // Dogfood.
+			if (direction != _vm->_avalot->_npcFacing) { // Dogfood.
 				drawBackgroundSprite(-1, -1, direction - 1);
-				_vm->_gyro->_npcFacing = direction;
+				_vm->_avalot->_npcFacing = direction;
 			}
 		}
 		break;
 	case kRoomWestHall:
-		if ((_vm->_gyro->_roomTime % 3) == 0) {
-			switch ((_vm->_gyro->_roomTime / int32(3)) % int32(6)) {
+		if ((_vm->_avalot->_roomTime % 3) == 0) {
+			switch ((_vm->_avalot->_roomTime / int32(3)) % int32(6)) {
 			case 4:
 				drawBackgroundSprite(-1, -1, 0);
 				break;
@@ -149,10 +147,10 @@ void Background::updateBackgroundSprites() {
 		}
 		break;
 	case kRoomLustiesRoom:
-		if (!(_vm->_gyro->_lustieIsAsleep)) {
+		if (!(_vm->_avalot->_lustieIsAsleep)) {
 			byte direction = 0;
-			uint16 angle = _vm->_lucerna->bearing(1);
-			if ((_vm->_gyro->_roomTime % 45) > 42)
+			uint16 angle = _vm->_avalot->bearing(1);
+			if ((_vm->_avalot->_roomTime % 45) > 42)
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
 			else if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
@@ -162,15 +160,15 @@ void Background::updateBackgroundSprites() {
 			else if ((angle >= 181) && (angle <= 314))
 				direction = 3; // Right.
 
-			if (direction != _vm->_gyro->_npcFacing) { // du Lustie.
+			if (direction != _vm->_avalot->_npcFacing) { // du Lustie.
 				drawBackgroundSprite(-1, -1, direction - 1);
-				_vm->_gyro->_npcFacing = direction;
+				_vm->_avalot->_npcFacing = direction;
 			}
 		}
 		break;
 	case kRoomAylesOffice:
-		if ((!_vm->_gyro->_aylesIsAwake) && (_vm->_gyro->_roomTime % 14 == 0)) {
-			switch ((_vm->_gyro->_roomTime / 14) % 2) {
+		if ((!_vm->_avalot->_aylesIsAwake) && (_vm->_avalot->_roomTime % 14 == 0)) {
+			switch ((_vm->_avalot->_roomTime / 14) % 2) {
 			case 0:
 				drawBackgroundSprite(-1, -1, 0);  // Frame 2: EGA.
 				break;
@@ -181,8 +179,8 @@ void Background::updateBackgroundSprites() {
 		}
 		break;
 	case kRoomRobins:
-		if (_vm->_gyro->_tiedUp) {
-			switch (_vm->_gyro->_roomTime % 54) {
+		if (_vm->_avalot->_tiedUp) {
+			switch (_vm->_avalot->_roomTime % 54) {
 			case 20:
 				drawBackgroundSprite(-1, -1, 3); // Frame 4: Avalot blinks.
 				break;
@@ -195,7 +193,7 @@ void Background::updateBackgroundSprites() {
 	case kRoomNottsPub: {
 		// Bearing of Avvy from Port.
 		byte direction = 0;
-		uint16 angle = _vm->_lucerna->bearing(4);
+		uint16 angle = _vm->_avalot->bearing(4);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 2; // Middle.
 		else if ((angle >= 45) && (angle <= 180))
@@ -203,15 +201,15 @@ void Background::updateBackgroundSprites() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_gyro->_roomTime % 60) > 57)
+		if ((_vm->_avalot->_roomTime % 60) > 57)
 			direction--; // Blinks.
 
-		if (direction != _vm->_gyro->_npcFacing) { // Port.
+		if (direction != _vm->_avalot->_npcFacing) { // Port.
 			drawBackgroundSprite(-1, -1, direction - 1);
-			_vm->_gyro->_npcFacing = direction;
+			_vm->_avalot->_npcFacing = direction;
 		}
 
-		switch (_vm->_gyro->_roomTime % 50) {
+		switch (_vm->_avalot->_roomTime % 50) {
 		case 45 :
 			drawBackgroundSprite(-1, -1, 8); // Spurge blinks.
 			break;
@@ -222,12 +220,12 @@ void Background::updateBackgroundSprites() {
 		break;
 	  }
 	case kRoomDucks: {
-		if ((_vm->_gyro->_roomTime % 3) == 0) // The fire flickers.
-			drawBackgroundSprite(-1, -1, (_vm->_gyro->_roomTime / 3) % 3);
+		if ((_vm->_avalot->_roomTime % 3) == 0) // The fire flickers.
+			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 3) % 3);
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
-		uint16 angle = _vm->_lucerna->bearing(1);
+		uint16 angle = _vm->_avalot->bearing(1);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 4; // Middle.
 		else if ((angle >= 45) && (angle <= 180))
@@ -235,26 +233,26 @@ void Background::updateBackgroundSprites() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_gyro->_roomTime % 45) > 42)
+		if ((_vm->_avalot->_roomTime % 45) > 42)
 			direction++; // Duck blinks.
 
-		if (direction != _vm->_gyro->_npcFacing) { // Duck.
+		if (direction != _vm->_avalot->_npcFacing) { // Duck.
 			drawBackgroundSprite(-1, -1, direction - 1);
-			_vm->_gyro->_npcFacing = direction;
+			_vm->_avalot->_npcFacing = direction;
 		}
 		break;
 	   }
 	}
 
-	if ((_vm->_gyro->_bellsAreRinging) && (_vm->_gyro->setFlag('B'))) {
+	if ((_vm->_avalot->_bellsAreRinging) && (_vm->_avalot->setFlag('B'))) {
 		// They're ringing the bells.
-		switch (_vm->_gyro->_roomTime % 4) {
+		switch (_vm->_avalot->_roomTime % 4) {
 		case 1:
-			if (_vm->_gyro->_nextBell < 5)
-				_vm->_gyro->_nextBell = 12;
-			_vm->_gyro->_nextBell--;
+			if (_vm->_avalot->_nextBell < 5)
+				_vm->_avalot->_nextBell = 12;
+			_vm->_avalot->_nextBell--;
 			// CHECKME: 2 is a guess. No length in the original? 
-			_vm->_sound->playNote(_vm->_gyro->kNotes[_vm->_gyro->_nextBell], 2);
+			_vm->_sound->playNote(_vm->_avalot->kNotes[_vm->_avalot->_nextBell], 2);
 			break;
 		case 2:
 			_vm->_sound->stopSound();

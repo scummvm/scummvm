@@ -30,8 +30,6 @@
 #include "avalanche/avalanche.h"
 
 #include "avalanche/pingo.h"
-#include "avalanche/gyro.h"
-#include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
 #include "avalanche/dialogs.h"
 
@@ -78,7 +76,7 @@ void Pingo::zonk() {
 
 void Pingo::winningPic() {
 	Common::File f;
-	_vm->_lucerna->dusk();
+	_vm->_avalot->dusk();
 
 	if (!f.open("finale.avd"))
 		error("AVALANCHE: Lucerna: File not found: finale.avd");
@@ -97,11 +95,11 @@ void Pingo::winningPic() {
 
 	warning("STUB: Pingo::winningPic()");
 
-	_vm->_lucerna->dawn();
+	_vm->_avalot->dawn();
 
 #if 0
 	do {
-		_vm->_gyro->check();
+		_vm->_avalot->check();
 	} while (!(keypressed() || (mrelease > 0)));
 	while (keypressed())
 		char r = readkey();
