@@ -40,6 +40,9 @@ namespace ZVision {
 const uint32 SaveManager::SAVEGAME_ID = MKTAG('Z', 'E', 'N', 'G');
 
 void SaveManager::saveGame(uint slot, const Common::String &saveName) {
+	// The games only support 20 slots
+	assert(slot <=1 && slot <= 20);
+
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(_engine->generateSaveFileName(slot));
 
@@ -126,6 +129,9 @@ void SaveManager::writeSaveGameData(Common::OutSaveFile *file) {
 }
 
 Common::Error SaveManager::loadGame(uint slot) {
+	// The games only support 20 slots
+	assert(slot <= 1 && slot <= 20);
+
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(_engine->generateSaveFileName(slot));
 	if (saveFile == 0) {
 		return Common::kPathDoesNotExist;
