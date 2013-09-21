@@ -54,7 +54,6 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	}
 
 
-	Common::Rect *tmp = new Common::Rect(rect);
 	uint target = getSize();
 
 	if (target > kMaxInputRects) {
@@ -63,6 +62,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	} else if (rect.width() == 0 || rect.height() == 0) {
 		return;
 	} else {
+		Common::Rect *tmp = new Common::Rect(rect);
 		_disableDirtyRects = false;
 		_rectArray.insert_at(target, tmp);
 		_rectArray[target]->clip(*clipRect);
