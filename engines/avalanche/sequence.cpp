@@ -29,7 +29,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/sequence.h"
-#include "avalanche/gyro.h"
 #include "avalanche/timer.h"
 #include "avalanche/background.h"
 #include "avalanche/animation.h"
@@ -61,8 +60,8 @@ void Sequence::thenShow(byte what) {
 void Sequence::thenFlip(byte where, byte ped) {
 	thenShow(kNowFlip);
 
-	_vm->_gyro->_flipToWhere = where;
-	_vm->_gyro->_flipToPed = ped;
+	_vm->_avalot->_flipToWhere = where;
+	_vm->_avalot->_flipToPed = ped;
 }
 
 void Sequence::startToClose() {
@@ -71,7 +70,7 @@ void Sequence::startToClose() {
 }
 
 void Sequence::startToOpen() {
-	_vm->_gyro->_userMovesAvvy = false; // They can't move.
+	_vm->_avalot->_userMovesAvvy = false; // They can't move.
 	_vm->_animation->stopWalking(); // And they're not moving now.
 	startToClose(); // Apart from that, it's the same thing.
 }
@@ -90,8 +89,8 @@ void Sequence::callSequencer() {
 		return; // No more routines.
 		break;
 	case 177: // Flip room.
-		_vm->_gyro->_userMovesAvvy = true;
-		_vm->_animation->flipRoom(_vm->_gyro->_flipToWhere, _vm->_gyro->_flipToPed);
+		_vm->_avalot->_userMovesAvvy = true;
+		_vm->_animation->flipRoom(_vm->_avalot->_flipToWhere, _vm->_avalot->_flipToPed);
 		if (curSeq == 177)
 			shoveLeft();
 		break;

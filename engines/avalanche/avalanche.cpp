@@ -64,14 +64,12 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _avalot;
 	delete _pingo;
 	delete _dialogs;
-	delete _lucerna;
 	delete _background;
 	delete _sequence;
 	delete _timer;
 	delete _animation;
 	delete _menu;
 	delete _closing;
-	delete _gyro;
 	delete _sound;
 }
 
@@ -80,10 +78,8 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_parser = new Parser(this);
 
 	_avalot = new Avalot(this);
-	_gyro = new Gyro(this);
 	_pingo = new Pingo(this);
 	_dialogs = new Dialogs(this);
-	_lucerna = new Lucerna(this);
 	_background = new Background(this);
 	_sequence = new Sequence(this);
 	_timer = new Timer(this);
@@ -94,7 +90,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 
 	_graphics->init();
 	_dialogs->init();
-	_lucerna->init();
+	_avalot->init();
 	_parser->init();
 
 	return Common::kNoError;
@@ -119,145 +115,145 @@ const char *AvalancheEngine::getCopyrightString() const {
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	//blockwrite(f, dna, sizeof(dna));
 	sz.syncAsByte(_animation->_direction);
-	sz.syncAsByte(_gyro->_carryNum);
+	sz.syncAsByte(_avalot->_carryNum);
 	for (int i = 0; i < kObjectNum; i++)
-		sz.syncAsByte(_gyro->_objects[i]);
-	sz.syncAsSint16LE(_gyro->_dnascore);
-	sz.syncAsSint32LE(_gyro->_money);
-	sz.syncAsByte(_gyro->_room);
-	sz.syncAsByte(_gyro->_wearing);
-	sz.syncAsByte(_gyro->_sworeNum);
-	sz.syncAsByte(_gyro->_saveNum);
-	sz.syncBytes(_gyro->_roomCount, 100);
-	sz.syncAsByte(_gyro->_alcoholLevel);
-	sz.syncAsByte(_gyro->_playedNim);
-	sz.syncAsByte(_gyro->_wonNim);
-	sz.syncAsByte(_gyro->_wineState);
-	sz.syncAsByte(_gyro->_cwytalotGone);
-	sz.syncAsByte(_gyro->_passwordNum);
-	sz.syncAsByte(_gyro->_aylesIsAwake);
-	sz.syncAsByte(_gyro->_drawbridgeOpen);
-	sz.syncAsByte(_gyro->_avariciusTalk);
-	sz.syncAsByte(_gyro->_boughtOnion);
-	sz.syncAsByte(_gyro->_rottenOnion);
-	sz.syncAsByte(_gyro->_onionInVinegar);
-	sz.syncAsByte(_gyro->_givenToSpludwick);
-	sz.syncAsByte(_gyro->_brummieStairs);
-	sz.syncAsByte(_gyro->_cardiffQuestionNum);
-	sz.syncAsByte(_gyro->_passedCwytalotInHerts);
-	sz.syncAsByte(_gyro->_avvyIsAwake);
-	sz.syncAsByte(_gyro->_avvyInBed);
-	sz.syncAsByte(_gyro->_userMovesAvvy);
-	sz.syncAsByte(_gyro->_npcFacing);
-	sz.syncAsByte(_gyro->_givenBadgeToIby);
-	sz.syncAsByte(_gyro->_friarWillTieYouUp);
-	sz.syncAsByte(_gyro->_tiedUp);
-	sz.syncAsByte(_gyro->_boxContent);
-	sz.syncAsByte(_gyro->_talkedToCrapulus);
-	sz.syncAsByte(_gyro->_jacquesState);
-	sz.syncAsByte(_gyro->_bellsAreRinging);
-	sz.syncAsByte(_gyro->_standingOnDais);
-	sz.syncAsByte(_gyro->_takenPen);
-	sz.syncAsByte(_gyro->_arrowTriggered);
-	sz.syncAsByte(_gyro->_arrowInTheDoor);
+		sz.syncAsByte(_avalot->_objects[i]);
+	sz.syncAsSint16LE(_avalot->_dnascore);
+	sz.syncAsSint32LE(_avalot->_money);
+	sz.syncAsByte(_avalot->_room);
+	sz.syncAsByte(_avalot->_wearing);
+	sz.syncAsByte(_avalot->_sworeNum);
+	sz.syncAsByte(_avalot->_saveNum);
+	sz.syncBytes(_avalot->_roomCount, 100);
+	sz.syncAsByte(_avalot->_alcoholLevel);
+	sz.syncAsByte(_avalot->_playedNim);
+	sz.syncAsByte(_avalot->_wonNim);
+	sz.syncAsByte(_avalot->_wineState);
+	sz.syncAsByte(_avalot->_cwytalotGone);
+	sz.syncAsByte(_avalot->_passwordNum);
+	sz.syncAsByte(_avalot->_aylesIsAwake);
+	sz.syncAsByte(_avalot->_drawbridgeOpen);
+	sz.syncAsByte(_avalot->_avariciusTalk);
+	sz.syncAsByte(_avalot->_boughtOnion);
+	sz.syncAsByte(_avalot->_rottenOnion);
+	sz.syncAsByte(_avalot->_onionInVinegar);
+	sz.syncAsByte(_avalot->_givenToSpludwick);
+	sz.syncAsByte(_avalot->_brummieStairs);
+	sz.syncAsByte(_avalot->_cardiffQuestionNum);
+	sz.syncAsByte(_avalot->_passedCwytalotInHerts);
+	sz.syncAsByte(_avalot->_avvyIsAwake);
+	sz.syncAsByte(_avalot->_avvyInBed);
+	sz.syncAsByte(_avalot->_userMovesAvvy);
+	sz.syncAsByte(_avalot->_npcFacing);
+	sz.syncAsByte(_avalot->_givenBadgeToIby);
+	sz.syncAsByte(_avalot->_friarWillTieYouUp);
+	sz.syncAsByte(_avalot->_tiedUp);
+	sz.syncAsByte(_avalot->_boxContent);
+	sz.syncAsByte(_avalot->_talkedToCrapulus);
+	sz.syncAsByte(_avalot->_jacquesState);
+	sz.syncAsByte(_avalot->_bellsAreRinging);
+	sz.syncAsByte(_avalot->_standingOnDais);
+	sz.syncAsByte(_avalot->_takenPen);
+	sz.syncAsByte(_avalot->_arrowTriggered);
+	sz.syncAsByte(_avalot->_arrowInTheDoor);
 
 	if (sz.isSaving()) {
-		uint16 like2drinkSize = _gyro->_favouriteDrink.size();
+		uint16 like2drinkSize = _avalot->_favouriteDrink.size();
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
-			char actChr = _gyro->_favouriteDrink[i];
+			char actChr = _avalot->_favouriteDrink[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 favourite_songSize = _gyro->_favouriteSong.size();
+		uint16 favourite_songSize = _avalot->_favouriteSong.size();
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
-			char actChr = _gyro->_favouriteSong[i];
+			char actChr = _avalot->_favouriteSong[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 worst_place_on_earthSize = _gyro->_worstPlaceOnEarth.size();
+		uint16 worst_place_on_earthSize = _avalot->_worstPlaceOnEarth.size();
 		sz.syncAsUint16LE(worst_place_on_earthSize);
 		for (uint16 i = 0; i < worst_place_on_earthSize; i++) {
-			char actChr = _gyro->_worstPlaceOnEarth[i];
+			char actChr = _avalot->_worstPlaceOnEarth[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 spare_eveningSize = _gyro->_spareEvening.size();
+		uint16 spare_eveningSize = _avalot->_spareEvening.size();
 		sz.syncAsUint16LE(spare_eveningSize);
 		for (uint16 i = 0; i < spare_eveningSize; i++) {
-			char actChr = _gyro->_spareEvening[i];
+			char actChr = _avalot->_spareEvening[i];
 			sz.syncAsByte(actChr);
 		}
 	} else {
-		if (!_gyro->_favouriteDrink.empty())
-			_gyro->_favouriteDrink.clear();
+		if (!_avalot->_favouriteDrink.empty())
+			_avalot->_favouriteDrink.clear();
 		uint16 like2drinkSize = 0;
 		char actChr = ' ';
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_favouriteDrink += actChr;
+			_avalot->_favouriteDrink += actChr;
 		}
 
-		if (!_gyro->_favouriteSong.empty())
-			_gyro->_favouriteSong.clear();
+		if (!_avalot->_favouriteSong.empty())
+			_avalot->_favouriteSong.clear();
 		uint16 favourite_songSize = 0;
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_favouriteSong += actChr;
+			_avalot->_favouriteSong += actChr;
 		}
 
-		if (!_gyro->_worstPlaceOnEarth.empty())
-			_gyro->_worstPlaceOnEarth.clear();
+		if (!_avalot->_worstPlaceOnEarth.empty())
+			_avalot->_worstPlaceOnEarth.clear();
 		uint16 worst_place_on_earthSize = 0;
 		sz.syncAsUint16LE(worst_place_on_earthSize);
 		for (uint16 i = 0; i < worst_place_on_earthSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_worstPlaceOnEarth += actChr;
+			_avalot->_worstPlaceOnEarth += actChr;
 		}
 
-		if (!_gyro->_spareEvening.empty())
-			_gyro->_spareEvening.clear();
+		if (!_avalot->_spareEvening.empty())
+			_avalot->_spareEvening.clear();
 		uint16 spare_eveningSize = 0;
 		sz.syncAsUint16LE(spare_eveningSize);
 		for (uint16 i = 0; i < spare_eveningSize; i++) {
 			sz.syncAsByte(actChr);
-			_gyro->_spareEvening += actChr;
+			_avalot->_spareEvening += actChr;
 		}
 	}
 
-	sz.syncAsSint32LE(_gyro->_totalTime);
-	sz.syncAsByte(_gyro->_jumpStatus);
-	sz.syncAsByte(_gyro->_mushroomGrowing);
-	sz.syncAsByte(_gyro->_spludwickAtHome);
-	sz.syncAsByte(_gyro->_lastRoom);
-	sz.syncAsByte(_gyro->_lastRoomNotMap);
-	sz.syncAsByte(_gyro->_crapulusWillTell);
-	sz.syncAsByte(_gyro->_enterCatacombsFromLustiesRoom);
-	sz.syncAsByte(_gyro->_teetotal);
-	sz.syncAsByte(_gyro->_malagauche);
-	sz.syncAsByte(_gyro->_drinking);
-	sz.syncAsByte(_gyro->_enteredLustiesRoomAsMonk);
-	sz.syncAsByte(_gyro->_catacombX);
-	sz.syncAsByte(_gyro->_catacombY);
-	sz.syncAsByte(_gyro->_avvysInTheCupboard);
-	sz.syncAsByte(_gyro->_geidaFollows);
-	sz.syncAsByte(_gyro->_geidaSpin);
-	sz.syncAsByte(_gyro->_geidaTime);
-	sz.syncAsByte(_gyro->_nextBell);
-	sz.syncAsByte(_gyro->_givenPotionToGeida);
-	sz.syncAsByte(_gyro->_lustieIsAsleep);
-	sz.syncAsByte(_gyro->_flipToWhere);
-	sz.syncAsByte(_gyro->_flipToPed);
-	sz.syncAsByte(_gyro->_beenTiedUp);
-	sz.syncAsByte(_gyro->_sittingInPub);
-	sz.syncAsByte(_gyro->_spurgeTalkCount);
-	sz.syncAsByte(_gyro->_metAvaroid);
-	sz.syncAsByte(_gyro->_takenMushroom);
-	sz.syncAsByte(_gyro->_givenPenToAyles);
-	sz.syncAsByte(_gyro->_askedDogfoodAboutNim);
+	sz.syncAsSint32LE(_avalot->_totalTime);
+	sz.syncAsByte(_avalot->_jumpStatus);
+	sz.syncAsByte(_avalot->_mushroomGrowing);
+	sz.syncAsByte(_avalot->_spludwickAtHome);
+	sz.syncAsByte(_avalot->_lastRoom);
+	sz.syncAsByte(_avalot->_lastRoomNotMap);
+	sz.syncAsByte(_avalot->_crapulusWillTell);
+	sz.syncAsByte(_avalot->_enterCatacombsFromLustiesRoom);
+	sz.syncAsByte(_avalot->_teetotal);
+	sz.syncAsByte(_avalot->_malagauche);
+	sz.syncAsByte(_avalot->_drinking);
+	sz.syncAsByte(_avalot->_enteredLustiesRoomAsMonk);
+	sz.syncAsByte(_avalot->_catacombX);
+	sz.syncAsByte(_avalot->_catacombY);
+	sz.syncAsByte(_avalot->_avvysInTheCupboard);
+	sz.syncAsByte(_avalot->_geidaFollows);
+	sz.syncAsByte(_avalot->_geidaSpin);
+	sz.syncAsByte(_avalot->_geidaTime);
+	sz.syncAsByte(_avalot->_nextBell);
+	sz.syncAsByte(_avalot->_givenPotionToGeida);
+	sz.syncAsByte(_avalot->_lustieIsAsleep);
+	sz.syncAsByte(_avalot->_flipToWhere);
+	sz.syncAsByte(_avalot->_flipToPed);
+	sz.syncAsByte(_avalot->_beenTiedUp);
+	sz.syncAsByte(_avalot->_sittingInPub);
+	sz.syncAsByte(_avalot->_spurgeTalkCount);
+	sz.syncAsByte(_avalot->_metAvaroid);
+	sz.syncAsByte(_avalot->_takenMushroom);
+	sz.syncAsByte(_avalot->_givenPenToAyles);
+	sz.syncAsByte(_avalot->_askedDogfoodAboutNim);
 
 
 #if 0
@@ -334,7 +330,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 }
 
 bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
-	return (!_gyro->_seeScroll && _gyro->_alive);
+	return (!_avalot->_seeScroll && _avalot->_alive);
 }
 
 Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {
@@ -380,7 +376,7 @@ Common::String AvalancheEngine::getSaveFileName(const int slot) {
 }
 
 bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
-	return (!_gyro->_seeScroll);
+	return (!_avalot->_seeScroll);
 }
 
 Common::Error AvalancheEngine::loadGameState(int slot) {
@@ -429,29 +425,29 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	synchronize(sz);
 	delete f;
 
-	_gyro->_isLoaded = true;
-	_gyro->_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
+	_avalot->_isLoaded = true;
+	_avalot->_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
 
-	if (_gyro->_holdTheDawn) {
-		_gyro->_holdTheDawn = false;
-		_lucerna->dawn();
+	if (_avalot->_holdTheDawn) {
+		_avalot->_holdTheDawn = false;
+		_avalot->dawn();
 	}
 
 	_background->forgetBackgroundSprites();
-	_lucerna->minorRedraw();
+	_avalot->minorRedraw();
 	_menu->setup();
-	_gyro->_whereIs[Gyro::kPeopleAvalot - 150] = _gyro->_room;
-	_gyro->_alive = true;
-	_lucerna->refreshObjectList();
+	_avalot->_whereIs[Avalot::kPeopleAvalot - 150] = _avalot->_room;
+	_avalot->_alive = true;
+	_avalot->refreshObjectList();
 	_animation->updateSpeed();
-	_lucerna->drawDirection();
-	_gyro->_onToolbar = false;
+	_avalot->drawDirection();
+	_avalot->_onToolbar = false;
 	_animation->animLink();
 	_background->updateBackgroundSprites();
 
 	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
 		Dialogs::kControlItalic, Dialogs::kControlRoman, description.c_str(), Dialogs::kControlCenter, 
-		Dialogs::kControlNewLine, Dialogs::kControlNewLine, _gyro->_roomnName.c_str(), Dialogs::kControlNewLine, 
+		Dialogs::kControlNewLine, Dialogs::kControlNewLine, _avalot->_roomnName.c_str(), Dialogs::kControlNewLine, 
 		Dialogs::kControlNewLine, expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
 	_dialogs->displayText(tmpStr);
 
@@ -468,7 +464,7 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 	};
 
 	Common::String month = months[m];
-	Common::String day = _gyro->intToStr(d);
+	Common::String day = _avalot->intToStr(d);
 
 	if (((1 <= d) && (d <= 9)) || ((21 <= d) && (d <= 31)))
 		switch (d % 10) {
@@ -485,7 +481,7 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 			day += "th";
 		}
 
-	return day + ' ' + month + ' ' + _gyro->intToStr(y + 1900);
+	return day + ' ' + month + ' ' + _avalot->intToStr(y + 1900);
 }
 
 void AvalancheEngine::updateEvents() {
@@ -494,10 +490,10 @@ void AvalancheEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			_lucerna->_holdLeftMouse = true; // Used in Lucerna::checkclick() and Dropdown::menu_link().
+			_avalot->_holdLeftMouse = true; // Used in Lucerna::checkclick() and Dropdown::menu_link().
 			break;
 		case Common::EVENT_LBUTTONUP:
-			_lucerna->_holdLeftMouse = false; // Same as above.
+			_avalot->_holdLeftMouse = false; // Same as above.
 			break;
 		case Common::EVENT_KEYDOWN:
 			_avalot->handleKeyDown(event);
@@ -541,7 +537,7 @@ Common::Error AvalancheEngine::run() {
 		//}
 #endif
 
-	} while (!_gyro->_letMeOut && !shouldQuit());
+	} while (!_avalot->_letMeOut && !shouldQuit());
 
 	return Common::kNoError;
 }

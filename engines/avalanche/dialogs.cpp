@@ -29,8 +29,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/dialogs.h"
-#include "avalanche/gyro.h"
-#include "avalanche/lucerna.h"
 #include "avalanche/animation.h"
 #include "avalanche/timer.h"
 
@@ -50,7 +48,7 @@ void Dialogs::init() {
 }
 
 void Dialogs::setReadyLight(byte state) {     // Sets "Ready" light to whatever
-	if (_vm->_gyro->_ledStatus == state)
+	if (_vm->_avalot->_ledStatus == state)
 		return; // Already like that!
 
 	byte color = kColorBlack;
@@ -71,7 +69,7 @@ void Dialogs::setReadyLight(byte state) {     // Sets "Ready" light to whatever
 	_vm->_graphics->_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
 
 	CursorMan.showMouse(true);
-	_vm->_gyro->_ledStatus = state;
+	_vm->_avalot->_ledStatus = state;
 }
 
 void Dialogs::easterEgg() {
@@ -116,8 +114,8 @@ void Dialogs::scrollModeNormal() {
 	Common::String e = "(c) 1994";
 
 	setReadyLight(3);
-	_vm->_gyro->_seeScroll = true;
-	_vm->_gyro->newMouse(3);
+	_vm->_avalot->_seeScroll = true;
+	_vm->_avalot->newMouse(3);
 
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
@@ -145,7 +143,7 @@ void Dialogs::scrollModeNormal() {
 	bool oktoexit;
 	do {
 		do {
-			_vm->_gyro->check(); // was "checkclick;"
+			_vm->_avalot->check(); // was "checkclick;"
 
 //#ifdef RECORD slowdown(); basher::count += 1; #endif
 
@@ -170,12 +168,12 @@ void Dialogs::scrollModeNormal() {
 
 //#ifdef RECORD record_one(); #endif
 
-	_vm->_gyro->screturn = r == '#'; // "back door"
+	_vm->_avalot->screturn = r == '#'; // "back door"
 #endif
 
 	setReadyLight(0);
-	_vm->_gyro->_seeScroll = false;
-	_vm->_lucerna->_holdLeftMouse = false; // Used in Lucerna::checkclick().
+	_vm->_avalot->_seeScroll = false;
+	_vm->_avalot->_holdLeftMouse = false; // Used in Lucerna::checkclick().
 
 	warning("STUB: Scrolls::scrollModeNormal()");
 }
@@ -193,7 +191,7 @@ bool Dialogs::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
 	for (unsigned int i = 0; i < sizeof(played); i++) {
-		if (played[i] != _vm->_gyro->kTune[i])
+		if (played[i] != _vm->_avalot->kTune[i])
 			mistakes += 1;
 	}
 
@@ -202,16 +200,16 @@ bool Dialogs::theyMatch(TuneType &played) {
 
 void Dialogs::scrollModeMusic() {
 	setReadyLight(3);
-	_vm->_gyro->_seeScroll = true;
+	_vm->_avalot->_seeScroll = true;
 	CursorMan.showMouse(false);
-	_vm->_gyro->newMouse(3);
+	_vm->_avalot->newMouse(3);
 
 	TuneType played;
 	for (unsigned int i = 0; i < sizeof(played); i++)
-		played[i] = Gyro::kPitchInvalid;
+		played[i] = Avalot::kPitchInvalid;
 	int8 lastOne = -1, thisOne = -1; // Invalid values.
 
-	_vm->_gyro->_seeScroll = true;
+	_vm->_avalot->_seeScroll = true;
 
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
@@ -282,16 +280,16 @@ void Dialogs::scrollModeMusic() {
 				lastOne = thisOne;
 				thisOne = value;
 
-				_vm->_sound->playNote(_vm->_gyro->kNotes[thisOne], 100);
+				_vm->_sound->playNote(_vm->_avalot->kNotes[thisOne], 100);
 				_vm->_system->delayMillis(200);
 
-				if (!_vm->_gyro->_bellsAreRinging) { // These handle playing the right tune.
+				if (!_vm->_avalot->_bellsAreRinging) { // These handle playing the right tune.
 					if (thisOne < lastOne)
-						store(Gyro::kPitchLower, played);
+						store(Avalot::kPitchLower, played);
 					else if (thisOne == lastOne)
-						store(Gyro::kPitchSame, played);
+						store(Avalot::kPitchSame, played);
 					else
-						store(Gyro::kPitchHigher, played);
+						store(Avalot::kPitchHigher, played);
 				}
 				
 				if (theyMatch(played)) {
@@ -304,30 +302,30 @@ void Dialogs::scrollModeMusic() {
 
 	_vm->_graphics->_surface.copyFrom(temp);
 	temp.free();
-	_vm->_gyro->_seeScroll = false;
+	_vm->_avalot->_seeScroll = false;
 	CursorMan.showMouse(true);
 }
 
 void Dialogs::resetScrollDriver() {
-	_vm->_gyro->_scrollBells = 0;
+	_vm->_avalot->_scrollBells = 0;
 	_currentFont = kFontStyleRoman;
 	_useIcon = 0;
-	_vm->_gyro->_interrogation = 0; // Always reset after a scroll comes up.
+	_vm->_avalot->_interrogation = 0; // Always reset after a scroll comes up.
 }
 
 void Dialogs::ringBell() {   // Pussy's in the well. Who put her in? Little...
-	for (int i = 0; i < _vm->_gyro->_scrollBells; i++)
-		_vm->_lucerna->errorLed(); // Ring the bell "x" times.
+	for (int i = 0; i < _vm->_avalot->_scrollBells; i++)
+		_vm->_avalot->errorLed(); // Ring the bell "x" times.
 }
 
 void Dialogs::dodgem() {
 	_dodgeCoord = _vm->getMousePos();
-	g_system->warpMouse(_dodgeCoord.x, _vm->_gyro->_underScroll); // Move the pointer off the scroll.
+	g_system->warpMouse(_dodgeCoord.x, _vm->_avalot->_underScroll); // Move the pointer off the scroll.
 }
 
 void Dialogs::unDodgem() {
 	Common::Point actCoord = _vm->getMousePos();
-	if ((actCoord.x == _dodgeCoord.x) && (actCoord.y == _vm->_gyro->_underScroll))
+	if ((actCoord.x == _dodgeCoord.x) && (actCoord.y == _vm->_avalot->_underScroll))
 		g_system->warpMouse(_dodgeCoord.x, _dodgeCoord.y); // No change, so restore the pointer's original position.
 }
 
@@ -358,7 +356,7 @@ void Dialogs::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
 
 #if 0
-	uint16 st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_gyro->cp) * _vm->_gyro->pagetop);
+	uint16 st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->_avalot->cp) * _vm->_avalot->pagetop);
 	byte bit;
 	for (uint16 i = 1; i <= yl; i++)
 		for (bit = 0; bit <= 3; bit++) {
@@ -378,10 +376,10 @@ void Dialogs::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 
 void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	int16 lx = 0;
-	int16 ly = (_vm->_gyro->_scrollNum) * 6;
+	int16 ly = (_vm->_avalot->_scrollNum) * 6;
 	int16 ex;
-	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
-		ex = _vm->_gyro->_scroll[i].size() * 8;
+	for (int i = 0; i < _vm->_avalot->_scrollNum; i++) {
+		ex = _vm->_avalot->_scroll[i].size() * 8;
 		if (lx < ex)
 			lx = ex;
 	}
@@ -447,47 +445,47 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 		iconIndent = 53;
 	}
 
-	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
-		if (!_vm->_gyro->_scroll[i].empty())
-			switch (_vm->_gyro->_scroll[i][_vm->_gyro->_scroll[i].size() - 1]) {
+	for (int i = 0; i < _vm->_avalot->_scrollNum; i++) {
+		if (!_vm->_avalot->_scroll[i].empty())
+			switch (_vm->_avalot->_scroll[i][_vm->_avalot->_scroll[i].size() - 1]) {
 			case kControlCenter:
 				centre = true;
-				_vm->_gyro->_scroll[i].deleteLastChar();
+				_vm->_avalot->_scroll[i].deleteLastChar();
 				break;
 			case kControlLeftJustified:
 				centre = false;
-				_vm->_gyro->_scroll[i].deleteLastChar();
+				_vm->_avalot->_scroll[i].deleteLastChar();
 				break;
 			case kControlQuestion:
 				//settextjustify(1, 1);
 				_shadowBoxX = mx + lx;
 				_shadowBoxY = my + ly;
-				_vm->_gyro->_scroll[i].setChar(' ', 0);
+				_vm->_avalot->_scroll[i].setChar(' ', 0);
 				// byte groi = *_vm->_graphics->getPixel(0, 0);
 				// inc(diy,14);
-				_vm->_gyro->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
-				_vm->_gyro->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
+				_vm->_avalot->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
+				_vm->_avalot->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
 				break;
 			}
 
 		if (centre)
-			say(320 - _vm->_gyro->_scroll[i].size() * 4 + iconIndent, my, _vm->_gyro->_scroll[i]);
+			say(320 - _vm->_avalot->_scroll[i].size() * 4 + iconIndent, my, _vm->_avalot->_scroll[i]);
 		else
-			say(mx + iconIndent, my, _vm->_gyro->_scroll[i]);
+			say(mx + iconIndent, my, _vm->_avalot->_scroll[i]);
 
 		my += 12;
 	}
 
-	_vm->_gyro->_underScroll = my * 2 + 6; // Multiplying because of the doubled screen height.
+	_vm->_avalot->_underScroll = my * 2 + 6; // Multiplying because of the doubled screen height.
 	ringBell();
 	
-	_vm->_gyro->_dropsOk = false;
+	_vm->_avalot->_dropsOk = false;
 	dodgem();
 
 	(this->*modeFunc)();
 
 	unDodgem();
-	_vm->_gyro->_dropsOk = true;
+	_vm->_avalot->_dropsOk = true;
 	
 	resetScrollDriver();
 }
@@ -497,9 +495,9 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 
 	CursorMan.showMouse(false);
 	int16 xl = 0;
-	int16 yl = _vm->_gyro->_scrollNum * 5;
-	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
-		uint16 textWidth = _vm->_gyro->_scroll[i].size() * 8;
+	int16 yl = _vm->_avalot->_scrollNum * 5;
+	for (int i = 0; i < _vm->_avalot->_scrollNum; i++) {
+		uint16 textWidth = _vm->_avalot->_scroll[i].size() * 8;
 		if (textWidth > xl)
 			xl = textWidth;
 	}
@@ -510,55 +508,55 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	int16 my = yw * 2 - 2;
 	int16 xc = 0;
 
-	if ((_vm->_gyro->_talkX - xw) < 0)
-		xc = -(_vm->_gyro->_talkX - xw);
-	if ((_vm->_gyro->_talkX + xw) > 639)
-		xc = 639 - (_vm->_gyro->_talkX + xw);
+	if ((_vm->_avalot->_talkX - xw) < 0)
+		xc = -(_vm->_avalot->_talkX - xw);
+	if ((_vm->_avalot->_talkX + xw) > 639)
+		xc = 639 - (_vm->_avalot->_talkX + xw);
 
-	points[0].x = _vm->_gyro->_talkX - 10;
+	points[0].x = _vm->_avalot->_talkX - 10;
 	points[0].y = yw;
-	points[1].x = _vm->_gyro->_talkX + 10;
+	points[1].x = _vm->_avalot->_talkX + 10;
 	points[1].y = yw;
-	points[2].x = _vm->_gyro->_talkX;
-	points[2].y = _vm->_gyro->_talkY;
+	points[2].x = _vm->_avalot->_talkX;
+	points[2].y = _vm->_avalot->_talkY;
 
 	// Backup the screen before drawing the bubble.
 	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
 
 	// The body of the bubble.
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_gyro->_talkX - xw + 9, 7, _vm->_gyro->_talkX + xw - 8 + xc, my + 1), _vm->_gyro->_talkBackgroundColor);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_gyro->_talkX - xw - 1, 12, _vm->_gyro->_talkX + xw + xc + 2, my - 4), _vm->_gyro->_talkBackgroundColor);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_avalot->_talkX - xw + 9, 7, _vm->_avalot->_talkX + xw - 8 + xc, my + 1), _vm->_avalot->_talkBackgroundColor);
+	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_avalot->_talkX - xw - 1, 12, _vm->_avalot->_talkX + xw + xc + 2, my - 4), _vm->_avalot->_talkBackgroundColor);
 
 	// Top right corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->_talkX + xw - 10, 11, 0, 90, 9, _vm->_gyro->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_avalot->_talkX + xw - 10, 11, 0, 90, 9, _vm->_avalot->_talkBackgroundColor);
 	// Bottom right corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->_talkX + xw - 10, my - 4, 270, 360, 9, _vm->_gyro->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_avalot->_talkX + xw - 10, my - 4, 270, 360, 9, _vm->_avalot->_talkBackgroundColor);
 	// Top left corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->_talkX - xw + 10, 11, 90, 180, 9, _vm->_gyro->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_avalot->_talkX - xw + 10, 11, 90, 180, 9, _vm->_avalot->_talkBackgroundColor);
 	// Bottom left corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_gyro->_talkX - xw + 10, my - 4, 180, 270, 9, _vm->_gyro->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_avalot->_talkX - xw + 10, my - 4, 180, 270, 9, _vm->_avalot->_talkBackgroundColor);
 
 	// "Tail" of the speech bubble.
-	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, points, _vm->_gyro->_talkBackgroundColor);
+	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, points, _vm->_avalot->_talkBackgroundColor);
 
 
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
-	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Gyro::characters instead.
+	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used Avalot::characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
-	for (int i = 0; i < _vm->_gyro->_scrollNum; i++) {
-		int16 x = xc + _vm->_gyro->_talkX - _vm->_gyro->_scroll[i].size() / 2 * 8;
-		bool offset = _vm->_gyro->_scroll[i].size() % 2;
-		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_gyro->_scroll[i], _vm->_gyro->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_gyro->_talkFontColor);
+	for (int i = 0; i < _vm->_avalot->_scrollNum; i++) {
+		int16 x = xc + _vm->_avalot->_talkX - _vm->_avalot->_scroll[i].size() / 2 * 8;
+		bool offset = _vm->_avalot->_scroll[i].size() % 2;
+		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_avalot->_scroll[i], _vm->_avalot->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_avalot->_talkFontColor);
 	}
 
 	ringBell();
 	CursorMan.showMouse(false);
-	_vm->_gyro->_dropsOk = false;
+	_vm->_avalot->_dropsOk = false;
 
 	// This does the actual drawing to the screen.
 	(this->*modeFunc)();
 
-	_vm->_gyro->_dropsOk = true;
+	_vm->_avalot->_dropsOk = true;
 	CursorMan.showMouse(true); // sink;
 	resetScrollDriver();
 }
@@ -569,36 +567,36 @@ bool Dialogs::displayQuestion(Common::String question) {
 }
 
 void Dialogs::reset() {
-	_vm->_gyro->_scrollNum = 1;
+	_vm->_avalot->_scrollNum = 1;
 	for (int i = 0; i < 15; i++) {
-		if (!_vm->_gyro->_scroll[i].empty())
-			_vm->_gyro->_scroll[i].clear();
+		if (!_vm->_avalot->_scroll[i].empty())
+			_vm->_avalot->_scroll[i].clear();
 	}
 }
 
 void Dialogs::setBubbleStateNatural() {
-	_vm->_gyro->_talkX = 320;
-	_vm->_gyro->_talkY = 200;
-	_vm->_gyro->_talkBackgroundColor = 8;
-	_vm->_gyro->_talkFontColor = 15;
+	_vm->_avalot->_talkX = 320;
+	_vm->_avalot->_talkY = 200;
+	_vm->_avalot->_talkBackgroundColor = 8;
+	_vm->_avalot->_talkFontColor = 15;
 }
 
 Common::String Dialogs::displayMoney() {
 	Common::String result;
 
-	if (_vm->_gyro->_money < 12) { // just pence
-		result = Common::String::format("%dd", _vm->_gyro->_money);
-	} else if (_vm->_gyro->_money < 240) { // shillings & pence
-		if ((_vm->_gyro->_money % 12) == 0)
-			result = Common::String::format("%d/-", _vm->_gyro->_money / 12);
+	if (_vm->_avalot->_money < 12) { // just pence
+		result = Common::String::format("%dd", _vm->_avalot->_money);
+	} else if (_vm->_avalot->_money < 240) { // shillings & pence
+		if ((_vm->_avalot->_money % 12) == 0)
+			result = Common::String::format("%d/-", _vm->_avalot->_money / 12);
 		else
-			result = Common::String::format("%d/%d", _vm->_gyro->_money / 12, _vm->_gyro->_money % 12);
+			result = Common::String::format("%d/%d", _vm->_avalot->_money / 12, _vm->_avalot->_money % 12);
 	} else { // L, s & d
-		result = Common::String::format("\x9C%d.%d.%d", _vm->_gyro->_money / 240, (_vm->_gyro->_money / 12) % 20, 
-		                _vm->_gyro->_money % 12);
+		result = Common::String::format("\x9C%d.%d.%d", _vm->_avalot->_money / 240, (_vm->_avalot->_money / 12) % 20, 
+		                _vm->_avalot->_money % 12);
 	}
-	if (_vm->_gyro->_money > 12) {
-		Common::String extraStr = Common::String::format(" (that's %dd)", _vm->_gyro->_money);
+	if (_vm->_avalot->_money > 12) {
+		Common::String extraStr = Common::String::format(" (that's %dd)", _vm->_avalot->_money);
 		result += extraStr;
 	}
 
@@ -611,16 +609,16 @@ void Dialogs::stripTrailingSpaces(Common::String &str) {
 }
 
 void Dialogs::solidify(byte n) {
-	if (!_vm->_gyro->_scroll[n].contains(' '))
+	if (!_vm->_avalot->_scroll[n].contains(' '))
 		return; // No spaces.
 
 	// So there MUST be a space there, somewhere...
 	do {
-		_vm->_gyro->_scroll[n + 1] = _vm->_gyro->_scroll[n][_vm->_gyro->_scroll[n].size() - 1] + _vm->_gyro->_scroll[n + 1];
-		_vm->_gyro->_scroll[n].deleteLastChar();
-	} while (_vm->_gyro->_scroll[n][_vm->_gyro->_scroll[n].size() - 1] != ' ');
+		_vm->_avalot->_scroll[n + 1] = _vm->_avalot->_scroll[n][_vm->_avalot->_scroll[n].size() - 1] + _vm->_avalot->_scroll[n + 1];
+		_vm->_avalot->_scroll[n].deleteLastChar();
+	} while (_vm->_avalot->_scroll[n][_vm->_avalot->_scroll[n].size() - 1] != ' ');
 
-	stripTrailingSpaces(_vm->_gyro->_scroll[n]);
+	stripTrailingSpaces(_vm->_avalot->_scroll[n]);
 }
 
 void Dialogs::callDialogDriver() {
@@ -630,60 +628,60 @@ void Dialogs::callDialogDriver() {
 	_vm->_sound->stopSound();
 
 	setReadyLight(0);
-	_vm->_gyro->_scReturn = false;
+	_vm->_avalot->_scReturn = false;
 	bool mouthnext = false;
 	bool call_spriterun = true; // Only call sprite_run the FIRST time.
 
-	switch (_vm->_gyro->_buffer[_vm->_gyro->_bufSize - 1]) {
+	switch (_vm->_avalot->_buffer[_vm->_avalot->_bufSize - 1]) {
 	case kControlToBuffer:
-		_vm->_gyro->_bufSize--;
+		_vm->_avalot->_bufSize--;
 		break; // ^D = (D)on't include pagebreak
 	case kControlSpeechBubble:
 	case kControlQuestion:
 		break; // ^B = speech (B)ubble, ^Q = (Q)uestion in dialogue box
 	default:
-		_vm->_gyro->_buffer[_vm->_gyro->_bufSize] = kControlParagraph;
-		_vm->_gyro->_bufSize++;
+		_vm->_avalot->_buffer[_vm->_avalot->_bufSize] = kControlParagraph;
+		_vm->_avalot->_bufSize++;
 	}
 
-	uint16 size = _vm->_gyro->_bufSize;
+	uint16 size = _vm->_avalot->_bufSize;
 
 	for (uint16 i = 0; i < size; i++) {
 		if (mouthnext) {
-			if (_vm->_gyro->_buffer[i] == kControlRegister)
+			if (_vm->_avalot->_buffer[i] == kControlRegister)
 				_param = 0;
-			else if (('0' <= _vm->_gyro->_buffer[i]) && (_vm->_gyro->_buffer[i] <= '9'))
-				_param = _vm->_gyro->_buffer[i] - 48;
-			else if (('A' <= _vm->_gyro->_buffer[i]) && (_vm->_gyro->_buffer[i] <= 'Z'))
-				_param = _vm->_gyro->_buffer[i] - 55;
+			else if (('0' <= _vm->_avalot->_buffer[i]) && (_vm->_avalot->_buffer[i] <= '9'))
+				_param = _vm->_avalot->_buffer[i] - 48;
+			else if (('A' <= _vm->_avalot->_buffer[i]) && (_vm->_avalot->_buffer[i] <= 'Z'))
+				_param = _vm->_avalot->_buffer[i] - 55;
 
 			mouthnext = false;
 		} else {
-			switch (_vm->_gyro->_buffer[i]) {
+			switch (_vm->_avalot->_buffer[i]) {
 			case kControlParagraph:
-				if ((_vm->_gyro->_scrollNum == 1) && (_vm->_gyro->_scroll[0].empty()))
+				if ((_vm->_avalot->_scrollNum == 1) && (_vm->_avalot->_scroll[0].empty()))
 					break;
 
 				if (call_spriterun)
-					_vm->_lucerna->spriteRun();
+					_vm->_avalot->spriteRun();
 				call_spriterun = false;
 
 				drawScroll(&Avalanche::Dialogs::scrollModeNormal);
 
 				reset();
 
-				if (_vm->_gyro->_scReturn)
+				if (_vm->_avalot->_scReturn)
 					return;
 				break;
 			case kControlBell:
-				_vm->_gyro->_scrollBells++;
+				_vm->_avalot->_scrollBells++;
 				break; // #7 = "Bel"
 			case kControlSpeechBubble:
-				if ((_vm->_gyro->_scrollNum == 1) && (_vm->_gyro->_scroll[0].empty()))
+				if ((_vm->_avalot->_scrollNum == 1) && (_vm->_avalot->_scroll[0].empty()))
 					break;
 
 				if (call_spriterun)
-					_vm->_lucerna->spriteRun();
+					_vm->_avalot->spriteRun();
 				call_spriterun = false;
 
 				if (_param == 0)
@@ -691,7 +689,7 @@ void Dialogs::callDialogDriver() {
 				else if ((1 <= _param) && (_param <= 9)) {
 					AnimationType *spr = &_vm->_animation->_sprites[_param - 1];
 					if ((_param > _vm->_animation->kSpriteNumbMax) || (!spr->_quick)) { // Not valid.
-						_vm->_lucerna->errorLed();
+						_vm->_avalot->errorLed();
 						setBubbleStateNatural();
 					} else
 						spr->chatter(); // Normal sprite talking routine.
@@ -699,14 +697,14 @@ void Dialogs::callDialogDriver() {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
-					PedType *quasiPed = &_vm->_gyro->_peds[_vm->_gyro->kQuasipeds[_param - 10]._whichPed];
-					_vm->_gyro->_talkX = quasiPed->_x;
-					_vm->_gyro->_talkY = quasiPed->_y; // Position.
+					PedType *quasiPed = &_vm->_avalot->_peds[_vm->_avalot->kQuasipeds[_param - 10]._whichPed];
+					_vm->_avalot->_talkX = quasiPed->_x;
+					_vm->_avalot->_talkY = quasiPed->_y; // Position.
 
-					_vm->_gyro->_talkFontColor = _vm->_gyro->kQuasipeds[_param - 10]._foregroundColor;
-					_vm->_gyro->_talkBackgroundColor = _vm->_gyro->kQuasipeds[_param - 10]._backgroundColor; // Colors.
+					_vm->_avalot->_talkFontColor = _vm->_avalot->kQuasipeds[_param - 10]._foregroundColor;
+					_vm->_avalot->_talkBackgroundColor = _vm->_avalot->kQuasipeds[_param - 10]._backgroundColor; // Colors.
 				} else {
-					_vm->_lucerna->errorLed(); // Not valid.
+					_vm->_avalot->errorLed(); // Not valid.
 					setBubbleStateNatural();
 				}
 
@@ -714,7 +712,7 @@ void Dialogs::callDialogDriver() {
 
 				reset();
 
-				if (_vm->_gyro->_scReturn)
+				if (_vm->_avalot->_scReturn)
 					return;
 				break;
 
@@ -725,46 +723,46 @@ void Dialogs::callDialogDriver() {
 					displayText(displayMoney() + kControlToBuffer); // Insert cash balance. (Recursion)
 					break;
 				case 2: {
-					int pwdId = _vm->_parser->kFirstPassword + _vm->_gyro->_passwordNum;
+					int pwdId = _vm->_parser->kFirstPassword + _vm->_avalot->_passwordNum;
 					displayText(_vm->_parser->_vocabulary[pwdId]._word + kControlToBuffer);
 					}
 					break;
 				case 3:
-					displayText(_vm->_gyro->_favouriteDrink + kControlToBuffer);
+					displayText(_vm->_avalot->_favouriteDrink + kControlToBuffer);
 					break;
 				case 4:
-					displayText(_vm->_gyro->_favouriteSong + kControlToBuffer);
+					displayText(_vm->_avalot->_favouriteSong + kControlToBuffer);
 					break;
 				case 5:
-					displayText(_vm->_gyro->_worstPlaceOnEarth + kControlToBuffer);
+					displayText(_vm->_avalot->_worstPlaceOnEarth + kControlToBuffer);
 					break;
 				case 6:
-					displayText(_vm->_gyro->_spareEvening + kControlToBuffer);
+					displayText(_vm->_avalot->_spareEvening + kControlToBuffer);
 					break;
 				case 9: {
-					Common::String tmpStr = Common::String::format("%d,%d%c",_vm->_gyro->_catacombX, _vm->_gyro->_catacombY, kControlToBuffer);
+					Common::String tmpStr = Common::String::format("%d,%d%c",_vm->_avalot->_catacombX, _vm->_avalot->_catacombY, kControlToBuffer);
 					displayText(tmpStr);
 					}
 					break;
 				case 10:
-					switch (_vm->_gyro->_boxContent) {
+					switch (_vm->_avalot->_boxContent) {
 					case 0: // Sixpence.
 						displayScrollChain('q', 37); // You find the sixpence.
-						_vm->_gyro->_money += 6;
-						_vm->_gyro->_boxContent = _vm->_parser->kNothing;
-						_vm->_lucerna->incScore(2);
+						_vm->_avalot->_money += 6;
+						_vm->_avalot->_boxContent = _vm->_parser->kNothing;
+						_vm->_avalot->incScore(2);
 						return;
 					case Parser::kNothing:
 						displayText("nothing at all. It's completely empty.");
 						break;
 					default:
-						displayText(_vm->_gyro->getItem(_vm->_gyro->_boxContent) + '.');
+						displayText(_vm->_avalot->getItem(_vm->_avalot->_boxContent) + '.');
 					}
 					break;
 				case 11:
 					for (int j = 0; j < kObjectNum; j++) {
-						if (_vm->_gyro->_objects[j]) 
-							displayText(_vm->_gyro->getItem(j) + ", " + kControlToBuffer);
+						if (_vm->_avalot->_objects[j]) 
+							displayText(_vm->_avalot->getItem(j) + ", " + kControlToBuffer);
 					}
 					break;
 				}
@@ -773,15 +771,15 @@ void Dialogs::callDialogDriver() {
 				_useIcon = _param;
 				break;
 			case kControlNewLine:
-				_vm->_gyro->_scrollNum++;
+				_vm->_avalot->_scrollNum++;
 				break;
 			case kControlQuestion:
 				if (call_spriterun)
-					_vm->_lucerna->spriteRun();
+					_vm->_avalot->spriteRun();
 				call_spriterun = false;
 
-				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum] = kControlQuestion;
-				_vm->_gyro->_scrollNum++;
+				_vm->_avalot->_scroll[_vm->_avalot->_scrollNum] = kControlQuestion;
+				_vm->_avalot->_scrollNum++;
 
 				drawScroll(&Avalanche::Dialogs::scrollModeDialogue);
 				reset();
@@ -791,14 +789,14 @@ void Dialogs::callDialogDriver() {
 				break;
 			case kControlInsertSpaces:
 				for (int j = 0; j < 9; j++)
-					_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += ' ';
+					_vm->_avalot->_scroll[_vm->_avalot->_scrollNum - 1] += ' ';
 				break;
 			default: // Add new char.
-				if (_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1].size() == 50) {
-					solidify(_vm->_gyro->_scrollNum - 1);
-					_vm->_gyro->_scrollNum++;
+				if (_vm->_avalot->_scroll[_vm->_avalot->_scrollNum - 1].size() == 50) {
+					solidify(_vm->_avalot->_scrollNum - 1);
+					_vm->_avalot->_scrollNum++;
 				}
-				_vm->_gyro->_scroll[_vm->_gyro->_scrollNum - 1] += _vm->_gyro->_buffer[i];
+				_vm->_avalot->_scroll[_vm->_avalot->_scrollNum - 1] += _vm->_avalot->_buffer[i];
 				break;
 			}
 		}
@@ -806,8 +804,8 @@ void Dialogs::callDialogDriver() {
 }
 
 void Dialogs::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
-	_vm->_gyro->_bufSize = text.size();
-	memcpy(_vm->_gyro->_buffer, text.c_str(), _vm->_gyro->_bufSize);
+	_vm->_avalot->_bufSize = text.size();
+	memcpy(_vm->_avalot->_buffer, text.c_str(), _vm->_avalot->_bufSize);
 	callDialogDriver();
 }
 
@@ -832,7 +830,7 @@ void Dialogs::loadFont() {
 		error("AVALANCHE: Scrolls: File not found: ttsmall.fnt");
 
 	for (int16 i = 0; i < 256; i++)
-		file.read(_vm->_gyro->_font[i],16);
+		file.read(_vm->_avalot->_font[i],16);
 	file.close();
 }
 
@@ -841,7 +839,7 @@ void Dialogs::displayMusicalScroll() {
 		        kControlNewLine, kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlNewLine, kControlNewLine, kControlToBuffer);
 	displayText(tmpStr);
 
-	_vm->_lucerna->spriteRun();
+	_vm->_avalot->spriteRun();
 	CursorMan.showMouse(false);
 	drawScroll(&Avalanche::Dialogs::scrollModeMusic);
 	CursorMan.showMouse(true);
@@ -851,13 +849,13 @@ void Dialogs::displayMusicalScroll() {
 // From Visa:
 
 void Dialogs::unSkrimble() {
-	for (uint16  i = 0; i < _vm->_gyro->_bufSize; i++)
-		_vm->_gyro->_buffer[i] = (~(_vm->_gyro->_buffer[i] - (i + 1))) % 256;
+	for (uint16  i = 0; i < _vm->_avalot->_bufSize; i++)
+		_vm->_avalot->_buffer[i] = (~(_vm->_avalot->_buffer[i] - (i + 1))) % 256;
 }
 
 void Dialogs::doTheBubble() {
-	_vm->_gyro->_buffer[_vm->_gyro->_bufSize] = 2;
-	_vm->_gyro->_bufSize++;
+	_vm->_avalot->_buffer[_vm->_avalot->_bufSize] = 2;
+	_vm->_avalot->_bufSize++;
 }
 
 /**
@@ -898,8 +896,8 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
 		::error("AVALANCHE: Visa: File not found: avalot.sez");
 
 	sezfile.seek(sez_offset);
-	_vm->_gyro->_bufSize = sezfile.readUint16LE();
-	sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
+	_vm->_avalot->_bufSize = sezfile.readUint16LE();
+	sezfile.read(_vm->_avalot->_buffer, _vm->_avalot->_bufSize);
 	sezfile.close();
 	unSkrimble();
 
@@ -944,8 +942,8 @@ void Dialogs::speak(byte who, byte subject) {
 		error("AVALANCHE: Visa: File not found: avalot.sez");
 
 	sezfile.seek(sez_offset);
-	_vm->_gyro->_bufSize = sezfile.readUint16LE();
-	sezfile.read(_vm->_gyro->_buffer, _vm->_gyro->_bufSize);
+	_vm->_avalot->_bufSize = sezfile.readUint16LE();
+	sezfile.read(_vm->_avalot->_buffer, _vm->_avalot->_bufSize);
 	sezfile.close();
 
 	unSkrimble();
@@ -957,26 +955,26 @@ void Dialogs::speak(byte who, byte subject) {
 
 void Dialogs::talkTo(byte whom) {
 	if (_vm->_parser->_person == _vm->_parser->kPardon) {
-		_vm->_parser->_person = _vm->_gyro->_subjectNum;
-		_vm->_gyro->_subjectNum = 0;
+		_vm->_parser->_person = _vm->_avalot->_subjectNum;
+		_vm->_avalot->_subjectNum = 0;
 	}
 
-	if (_vm->_gyro->_subjectNum == 0) {
+	if (_vm->_avalot->_subjectNum == 0) {
 		switch (whom) {
-		case Gyro::kPeopleSpludwick:
-			if ((_vm->_gyro->_lustieIsAsleep) & (!_vm->_gyro->_objects[Gyro::kObjectPotion - 1])) {
+		case Avalot::kPeopleSpludwick:
+			if ((_vm->_avalot->_lustieIsAsleep) & (!_vm->_avalot->_objects[Avalot::kObjectPotion - 1])) {
 				displayScrollChain('q', 68);
-				_vm->_gyro->_objects[Gyro::kObjectPotion - 1] = true;
-				_vm->_lucerna->refreshObjectList();
-				_vm->_lucerna->incScore(3);
+				_vm->_avalot->_objects[Avalot::kObjectPotion - 1] = true;
+				_vm->_avalot->refreshObjectList();
+				_vm->_avalot->incScore(3);
 				return;
-			} else if (_vm->_gyro->_talkedToCrapulus) {
+			} else if (_vm->_avalot->_talkedToCrapulus) {
 				// Spludwick - what does he need?
 				// 0 - let it through to use normal routine.
-				switch (_vm->_gyro->_givenToSpludwick) {
+				switch (_vm->_avalot->_givenToSpludwick) {
 				case 1: // Fallthrough is intended.
 				case 2: {
-					Common::String objStr = _vm->_gyro->getItem(Gyro::kSpludwicksOrder[_vm->_gyro->_givenToSpludwick]);
+					Common::String objStr = _vm->_avalot->getItem(Avalot::kSpludwicksOrder[_vm->_avalot->_givenToSpludwick]);
 					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", objStr.c_str(), Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 					displayText(tmpStr);
 					}
@@ -990,57 +988,57 @@ void Dialogs::talkTo(byte whom) {
 				return;
 			}
 			break;
-		case Gyro::kPeopleIbythneth:
-			if (_vm->_gyro->_givenBadgeToIby) {
+		case Avalot::kPeopleIbythneth:
+			if (_vm->_avalot->_givenBadgeToIby) {
 				displayScrollChain('q', 33); // Thanks a lot!
 				return; // And leave the proc.
 			}
 			break; // Or... just continue, 'cos he hasn't got it.
-		case Gyro::kPeopleDogfood:
-			if (_vm->_gyro->_wonNim) { // We've won the game.
+		case Avalot::kPeopleDogfood:
+			if (_vm->_avalot->_wonNim) { // We've won the game.
 				displayScrollChain('q', 6); // "I'm Not Playing!"
 				return; // Zap back.
 			} else
-				_vm->_gyro->_askedDogfoodAboutNim = true;
+				_vm->_avalot->_askedDogfoodAboutNim = true;
 			break;
-		case Gyro::kPeopleAyles:
-			if (!_vm->_gyro->_aylesIsAwake) {
+		case Avalot::kPeopleAyles:
+			if (!_vm->_avalot->_aylesIsAwake) {
 				displayScrollChain('q', 43); // He's fast asleep!
 				return;
-			} else if (!_vm->_gyro->_givenPenToAyles) {
+			} else if (!_vm->_avalot->_givenPenToAyles) {
 				displayScrollChain('q', 44); // Can you get me a pen, Avvy?
 				return;
 			}
 			break;
 
-		case Gyro::kPeopleJacques:
+		case Avalot::kPeopleJacques:
 			displayScrollChain('q', 43);
 			return;
 
-		case Gyro::kPeopleGeida:
-			if (_vm->_gyro->_givenPotionToGeida)
-				_vm->_gyro->_geidaFollows = true;
+		case Avalot::kPeopleGeida:
+			if (_vm->_avalot->_givenPotionToGeida)
+				_vm->_avalot->_geidaFollows = true;
 			else {
 				displayScrollChain('u', 17);
 				return;
 			}
 			break;
-		case Gyro::kPeopleSpurge:
-			if (!_vm->_gyro->_sittingInPub) {
+		case Avalot::kPeopleSpurge:
+			if (!_vm->_avalot->_sittingInPub) {
 				displayScrollChain('q', 71); // Try going over and sitting down.
 				return;
 			} else {
-				if (_vm->_gyro->_spurgeTalkCount < 5)
-					_vm->_gyro->_spurgeTalkCount++;
-				if (_vm->_gyro->_spurgeTalkCount > 1) { // no. 1 falls through
-					displayScrollChain('q', 70 + _vm->_gyro->_spurgeTalkCount);
+				if (_vm->_avalot->_spurgeTalkCount < 5)
+					_vm->_avalot->_spurgeTalkCount++;
+				if (_vm->_avalot->_spurgeTalkCount > 1) { // no. 1 falls through
+					displayScrollChain('q', 70 + _vm->_avalot->_spurgeTalkCount);
 					return;
 				}
 			}
 			break;
 		}
 	// On a subject. Is there any reason to block it?
-	} else if ((whom == Gyro::kPeopleAyles) && (!_vm->_gyro->_aylesIsAwake)) {
+	} else if ((whom == Avalot::kPeopleAyles) && (!_vm->_avalot->_aylesIsAwake)) {
 		displayScrollChain('q', 43); // He's fast asleep!
 		return;
 	}
@@ -1063,23 +1061,23 @@ void Dialogs::talkTo(byte whom) {
 		displayText(tmpStr);
 	}
 
-	speak(whom, _vm->_gyro->_subjectNum);
+	speak(whom, _vm->_avalot->_subjectNum);
 
 	if (!_noError)
 		displayScrollChain('n', whom); // File not found!
 
-	if ((_vm->_gyro->_subjectNum == 0) && ((whom + 149) == Gyro::kPeopleCrapulus)) { // Crapulus: get the badge - first time only
-		_vm->_gyro->_objects[Gyro::kObjectBadge - 1] = true;
-		_vm->_lucerna->refreshObjectList();
+	if ((_vm->_avalot->_subjectNum == 0) && ((whom + 149) == Avalot::kPeopleCrapulus)) { // Crapulus: get the badge - first time only
+		_vm->_avalot->_objects[Avalot::kObjectBadge - 1] = true;
+		_vm->_avalot->refreshObjectList();
 		displayScrollChain('q', 1); // Circular from Cardiff.
-		_vm->_gyro->_talkedToCrapulus = true;
-		_vm->_gyro->_whereIs[Gyro::kPeopleCrapulus - 150] = kRoomDummy; // Crapulus walks off.
+		_vm->_avalot->_talkedToCrapulus = true;
+		_vm->_avalot->_whereIs[Avalot::kPeopleCrapulus - 150] = kRoomDummy; // Crapulus walks off.
 
 		AnimationType *spr = &_vm->_animation->_sprites[1];
 		spr->_vanishIfStill = true;
 		spr->walkTo(2); // Walks away.
 
-		_vm->_lucerna->incScore(2);
+		_vm->_avalot->incScore(2);
 	}
 }
 

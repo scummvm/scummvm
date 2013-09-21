@@ -9,8 +9,6 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	graphics.o \
-	gyro.o \
-	lucerna.o \
 	menu.o \
 	parser.o \
 	pingo.o \
