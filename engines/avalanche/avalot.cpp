@@ -233,7 +233,21 @@ void Clock::plotHands() {
 }
 
 void Clock::chime() {
-	warning("STUB: Clock::chime()");
+	if ((_oldHour == 17717) || (!_vm->_avalot->_soundFx)) // Too high - must be first time around
+		return;
+	
+	byte hour = _hour % 12;
+	if (hour == 0)
+		hour = 12;
+
+	_vm->_avalot->setMousePointerWait();
+
+	for (int i = 1; i <= hour; i++) {
+		for (int j = 1; j <= 3; j++)
+			_vm->_sound->playNote((i % 3) * 64 + 140 - j * 30, 50 - j * 12);
+		if (i != hour) 
+			_vm->_system->delayMillis(100);
+	}
 }
 
 
