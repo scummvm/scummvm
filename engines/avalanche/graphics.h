@@ -36,9 +36,10 @@
 namespace Avalanche {
 class AvalancheEngine;
 
-typedef byte FontType[256][16]; // raw font type
+typedef byte FontType[256][16];
 
-typedef byte ManiType[2049]; // manitype = array[5..2053] of byte;
+typedef byte ManiType[2049];
+// manitype = array[5..2053] of byte;
 // Be aware!!!
 
 typedef byte SilType[51][11]; // 35, 4

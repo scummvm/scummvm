@@ -42,12 +42,12 @@ public:
 	void exitGame();
 
 private:
-// CHECKME: Useless values?
+	// Will be needed during implementation of Closing.
 	enum ScreenType {
-//		kScreenBugAlert = 1,
-//		kScreenRamCram = 2,
-//		kScreenTwoCopies = 5,
-		kScreenNagScreen = 3
+		kScreenBugAlert = 1,
+		kScreenRamCram = 2,
+		kScreenNagScreen = 3,
+		kScreenTwoCopies = 5
 	};
 
 	AvalancheEngine *_vm;
@@ -56,10 +56,6 @@ private:
 	void showScreen();
 	void putIn(Common::String str, uint16 where);
 
-	// CHECKME: Unused?
-	// Common::String q; //absolute $B8FA:0* ; Nobody's using the graphics memory now.
-	// Common::File f;
-	// void handleBug();
 };
 
 } // End of namespace Avalanche.

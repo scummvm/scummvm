@@ -107,37 +107,6 @@ struct Sundry { // Things which must be saved over a backtobootstrap, outside DN
 	byte _qThinks;
 	bool _qThinkThing;
 };
-
-struct ednahead { // Edna header
-	// This header starts at byte offset 177 in the .ASG file.
-	char id[9];   // signature
-	uint16 revision; // EDNA revision, here 2 (1=dna256)
-	Common::String game; // Long name, eg Lord Avalot D'Argent
-	Common::String shortname; // Short name, eg Avalot
-	uint16 number; // Game's code number, here 2
-	uint16 ver; // Version number as int16 (eg 1.00 = 100)
-	Common::String verstr; // Vernum as Common::String (eg 1.00 = "1.00")
-	Common::String filename; // Filename, eg AVALOT.EXE
-	byte osbyte; // Saving OS (here 1=DOS. See below for others.
-	Common::String os; // Saving OS in text format.
-
-	// Info on this particular game
-
-	Common::String fn; // Filename (not extension ('cos that's .ASG))
-	byte d, m; // D, M, Y are the Day, Month & Year this game was...
-	uint16 y;  // ...saved on.
-	Common::String desc; // Description of game (same as in Avaricius!)
-	uint16 len; // Length of DNA (it's not going to be above 65535!)
-
-	// Quick reference & miscellaneous
-
-	uint16 saves; // no. of times this game has been saved
-	int16 cash; // contents of your wallet in numerical form
-	Common::String money; // ditto in Common::String form (eg 5/-, or 1 denarius)
-	uint16 points; // your score
-
-	// DNA values follow, then footer (which is ignored)
-};
 #endif
 
 class Gyro {

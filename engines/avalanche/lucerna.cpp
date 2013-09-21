@@ -173,8 +173,6 @@ void Lucerna::drawAlsoLines() {
 	CursorMan.showMouse(true);
 }
 
-// readAlsoStringFromFile, scram and unScramble are only used in loadAlso
-
 /**
  * Check is it's possible to give something to Spludwick
  * @remarks	Originally called 'nextstring'
@@ -437,7 +435,6 @@ void Lucerna::enterRoom(byte room, byte ped) {
 
 	if ((_vm->_gyro->_lastRoom == kRoomMap) && (_vm->_gyro->_lastRoomNotMap != _vm->_gyro->_room))
 		enterNewTown();
-
 
 	switch (room) {
 	case kRoomYours:
@@ -855,18 +852,14 @@ void Lucerna::thinkAbout(byte object, bool type) {
 			object--; // Last time...
 	}
 
+	CursorMan.showMouse(false);
+
 	file.seek(object * picSize + 65);
 	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(file);
 	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 205, 170);
 
 	picture.free();
 	file.close();
-
-	CursorMan.showMouse(false);
-
-#if 0
-	putimage(x, y, p, 0);
-#endif
 
 	CursorMan.showMouse(true);
 	_vm->_gyro->_thinkThing = type;
@@ -935,7 +928,7 @@ void Lucerna::drawScore() {
 		_vm->_gyro->_scoreToDisplay[i] = numbers[i];
 }
 
-void Lucerna::incScore(byte num) {     // Add on no. of points
+void Lucerna::incScore(byte num) {    
 	for (int i = 1; i <= num; i++) {
 		_vm->_gyro->_dnascore++;
 
@@ -1214,10 +1207,6 @@ uint16 Lucerna::bearing(byte whichPed) {
 }
 
 /** 
- * A sprite run is performed before displaying a scroll, if not all the
- * sprites are still. It performs two fast cycles, only using a few of
- * the links usually used, and without any extra animation. This should
- * make the sprites the same on both pages.
  * @remarks	Originally called 'sprite_run'
  */
 void Lucerna::spriteRun() {
