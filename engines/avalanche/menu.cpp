@@ -123,8 +123,7 @@ void MenuItem::displayOption(byte y, bool highlit) {
 
 void MenuItem::display() {
 	CursorMan.showMouse(false);
-	//setfillstyle(1, menu_b);
-	//setcolor(menu_border);
+
 	_firstlix = true;
 	_flx1 = _left - 2;
 	_flx2 = _left + _width;

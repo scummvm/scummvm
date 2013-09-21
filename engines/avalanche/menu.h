@@ -71,7 +71,7 @@ public:
 	uint16 _width, _left;
 	bool _firstlix;
 	int16 _flx1, _flx2, _fly;
-	byte _oldY; // used by lightUp */
+	byte _oldY; // used by lightUp
 	bool _activeNow; // Is there an active option now?
 	byte _activeNum; // And if so, which is it?
 	byte _choiceNum; // Your choice?
@@ -138,7 +138,7 @@ private:
 	static const byte kHighlightFontColor = kColorWhite;
 	static const byte kDisabledColor = kColorDarkgray;
 
-	bool _menuActive; // Kludge so we don't have to keep referring to Dropdown
+	bool _menuActive; // Kludge so we don't have to keep referring to the menu.
 
 	AvalancheEngine *_vm;
 
