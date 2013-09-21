@@ -290,11 +290,11 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 	}
 }
 
-void Graphics::drawPicture(::Graphics::Surface &target, ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
+void Graphics::drawPicture(::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
 	for (uint16 y = 0; y < picture.h; y++) {
 		for (uint16 x = 0; x < picture.w; x++)
-			*(byte *)target.getBasePtr(x + destX, y + destY) = *(byte *)picture.getBasePtr(x, y);
+			*(byte *)target.getBasePtr(x + destX, y + destY) = *(const byte *)picture.getBasePtr(x, y);
 	}
 }
 
