@@ -32,7 +32,6 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-
 namespace Avalanche {
 class AvalancheEngine;
 
@@ -78,6 +77,9 @@ public:
 	bool _quote; // 66 or 99 next?
 	byte _leftMargin;
 	bool _cursorState;
+
+	byte _wearing; // what you're wearing
+	byte _sworeNum; // number of times you've sworn
 
 	Parser(AvalancheEngine *vm);
 

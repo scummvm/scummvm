@@ -1033,7 +1033,7 @@ void Parser::inventory() {
 
 			tmpStr += _vm->_avalot->getItem(i + 1);
 
-			if ((i + 1) == _vm->_avalot->_wearing)
+			if ((i + 1) == _wearing)
 				tmpStr += ", which you're wearing";
 
 			if (itemNum < _vm->_avalot->_carryNum)
@@ -1041,7 +1041,7 @@ void Parser::inventory() {
 		}
 	}
 
-	if (_vm->_avalot->_wearing == kNothing)
+	if (_wearing == kNothing)
 		tmpStr += Common::String::format("...%c%c...and you're stark naked!", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
 	else
 		tmpStr += '.';
@@ -1289,7 +1289,7 @@ void Parser::putProc() {
 					_vm->_dialogs->displayText("Just give it to Spludwick, Avvy!");
 					break;
 				default: // Put the object into the box...
-					if (_vm->_avalot->_wearing == _thing) {
+					if (_wearing == _thing) {
 						Common::String tmpStr = Common::String::format("You'd better take %s off first!", _vm->_avalot->getItem(_thing).c_str());
 						_vm->_dialogs->displayText(tmpStr);
 					} else {
@@ -1826,12 +1826,12 @@ void Parser::doThat() {
 		}
 		break;
 	case kVerbCodeUndress:
-		if (_vm->_avalot->_wearing == kNothing)
+		if (_wearing == kNothing)
 			_vm->_dialogs->displayText("You're already stark naked!");
 		else if (_vm->_avalot->_avvysInTheCupboard) {
-			Common::String tmpStr = Common::String::format("You take off %s.", _vm->_avalot->getItem(_vm->_avalot->_wearing).c_str());
+			Common::String tmpStr = Common::String::format("You take off %s.", _vm->_avalot->getItem(_wearing).c_str());
 			_vm->_dialogs->displayText(tmpStr);
-			_vm->_avalot->_wearing = kNothing;
+			_wearing = kNothing;
 			_vm->_avalot->refreshObjectList();
 		} else
 			_vm->_dialogs->displayText("Hadn't you better find somewhere more private, Avvy?");
@@ -1845,14 +1845,14 @@ void Parser::doThat() {
 				break;
 			case Avalot::kObjectClothes:
 			case Avalot::kObjectHabit: { // Change this!
-				if (_vm->_avalot->_wearing != kNothing) {
-					if (_vm->_avalot->_wearing == _thing)
+				if (_wearing != kNothing) {
+					if (_wearing == _thing)
 						_vm->_dialogs->displayText("You're already wearing that.");
 					else
 						_vm->_dialogs->displayText("You'll be rather warm wearing two sets of clothes!");
 					return;
 				} else
-					_vm->_avalot->_wearing = _thing;
+					_wearing = _thing;
 
 				_vm->_avalot->refreshObjectList();
 
@@ -2013,7 +2013,7 @@ void Parser::doThat() {
 		_vm->_dialogs->displayText("Listen, smart alec, that was just rhetoric.");
 		break;
 	case kVerbCodeExpletive:
-		switch (_vm->_avalot->_sworeNum) {
+		switch (_sworeNum) {
 		case 0: {
 			Common::String tmpStr = Common::String::format("Avvy! Do you mind? There might be kids playing!%c%c" \
 				"(I shouldn't say it again, if I were you!)", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
@@ -2034,7 +2034,7 @@ void Parser::doThat() {
 			_vm->_avalot->gameOver();
 			}
 		}
-		_vm->_avalot->_sworeNum++;
+		_sworeNum++;
 		break;
 	case kVerbCodeListen:
 		if ((_vm->_avalot->_bellsAreRinging) & (_vm->_avalot->setFlag('B')))

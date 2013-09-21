@@ -120,8 +120,10 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsSint16LE(_avalot->_dnascore);
 	sz.syncAsSint32LE(_avalot->_money);
 	sz.syncAsByte(_avalot->_room);
-	sz.syncAsByte(_avalot->_wearing);
-	sz.syncAsByte(_avalot->_sworeNum);
+	sz.syncAsByte(_parser->_wearing);
+	sz.syncAsByte(_parser->_sworeNum);
+	if (sz.isSaving())
+		_avalot->_saveNum++;
 	sz.syncAsByte(_avalot->_saveNum);
 	sz.syncBytes(_avalot->_roomCount, 100);
 	sz.syncAsByte(_avalot->_alcoholLevel);
@@ -474,7 +476,7 @@ void AvalancheEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			_avalot->_holdLeftMouse = true; // Used in Lucerna::checkclick() and Dropdown::menu_link().
+			_avalot->_holdLeftMouse = true; // Used in Avalot::checkclick() and Menu::menu_link().
 			break;
 		case Common::EVENT_LBUTTONUP:
 			_avalot->_holdLeftMouse = false; // Same as above.
@@ -505,20 +507,20 @@ Common::Error AvalancheEngine::run() {
 		_avalot->runAvalot();
 
 #if 0
-		//switch (_storage._operation) {
-		//case kRunShootemup:
-		//	run("seu.avx", kJsb, kBflight, kNormal);
-		//	break;
-		//case kRunDosshell:
-		//	dosShell();
-		//	break;
-		//case kRunGhostroom:
-		//	run("g-room.avx", kJsb, kNoBflight, kNormal);
-		//	break;
-		//case kRunGolden:
-		//	run("golden.avx", kJsb, kBflight, kMusical);
-		//	break;
-		//}
+		switch (_storage._operation) {
+		case kRunShootemup:
+			run("seu.avx", kJsb, kBflight, kNormal);
+			break;
+		case kRunDosshell:
+			dosShell();
+			break;
+		case kRunGhostroom:
+			run("g-room.avx", kJsb, kNoBflight, kNormal);
+			break;
+		case kRunGolden:
+			run("golden.avx", kJsb, kBflight, kMusical);
+			break;
+		}
 #endif
 
 	} while (!_avalot->_letMeOut && !shouldQuit());
@@ -528,8 +530,8 @@ Common::Error AvalancheEngine::run() {
 
 #if 0
 void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
-	warning("STUB: run(%s)", what.c_str());
 	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
+	warning("STUB: run(%s)", what.c_str());
 }
 
 Common::String AvalancheEngine::elmToStr(Elm how) {
@@ -541,7 +543,7 @@ Common::String AvalancheEngine::elmToStr(Elm how) {
 		return Common::String("REGI");
 	case kElmpoyten:
 		return Common::String("ELMPOYTEN");
-		// Useless, but silent a warning
+	// Useless, but silent a warning
 	default:
 		return Common::String("");
 	}
