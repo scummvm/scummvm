@@ -127,7 +127,6 @@ void Avalot::setup() {
 	_vm->_parser->_inputTextPos = 0;
 	_vm->_parser->_quote = true;
 
-	// TSkellern = 0; Replace with a more local variable sometime
 	_vm->_lucerna->drawToolbar();
 	_vm->_scrolls->setReadyLight(2);
 
@@ -150,7 +149,7 @@ void Avalot::setup() {
 		_vm->loadGame(loadSlot);
 	} else {
 		_vm->_gyro->_isLoaded = false; // Set to true in _vm->loadGame().
-		_vm->_gyro->newGame(); // No game was requested- load the default.
+		_vm->_gyro->newGame();
 
 		_vm->_gyro->_soundFx = !_vm->_gyro->_soundFx;
 		_vm->_lucerna->fxToggle();
@@ -176,7 +175,6 @@ void Avalot::runAvalot() {
 		_vm->_timer->updateTimer();
 
 #ifdef DEBUG
-		// ONLY FOR TESTING!!!
 		for (int i = 0; i < _vm->_gyro->_lineNum; i++) {
 			LineType *curLine = &_vm->_gyro->_lines[i];
 			_vm->_graphics->_surface.drawLine(curLine->_x1, curLine->_y1, curLine->_x2, curLine->_y2, curLine->col);
@@ -187,10 +185,9 @@ void Avalot::runAvalot() {
 			if (curField->_x1 < 640)
 				_vm->_graphics->_surface.frameRect(Common::Rect(curField->_x1, curField->_y1, curField->_x2, curField->_y2), kColorLightmagenta);
 		}
-		// ONLY FOR TESTING!!!
 #endif
 
-		_vm->_graphics->refreshScreen();  // TODO: Maybe it'll have a better place later. Move it there when it's needed.
+		_vm->_graphics->refreshScreen();
 
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
 		if (delay <= 55)
