@@ -3297,7 +3297,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// RAMA - German Windows CD
+	// RAMA - German Windows CD (from farmboy0, in pull request 397)
 	{"rama", "", {
 		{"resmap.001", 0, "f68cd73308c46977a9632dfc618e1e38", 8338},
 	 	{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70595521},
