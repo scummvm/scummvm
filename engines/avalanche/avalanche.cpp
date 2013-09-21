@@ -69,7 +69,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _sequence;
 	delete _timer;
 	delete _animation;
-	delete _acci;
 	delete _menu;
 	delete _closing;
 	delete _gyro;
@@ -89,7 +88,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_sequence = new Sequence(this);
 	_timer = new Timer(this);
 	_animation = new Animation(this);
-	_acci = new Acci(this);
 	_menu = new Menu(this);
 	_closing = new Closing(this);
 	_sound = new SoundHandler(this);
@@ -97,7 +95,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_graphics->init();
 	_dialogs->init();
 	_lucerna->init();
-	_acci->init();
 	_parser->init();
 
 	return Common::kNoError;

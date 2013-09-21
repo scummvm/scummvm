@@ -40,7 +40,6 @@
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/acci.h"
 #include "avalanche/menu.h"
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
@@ -76,7 +75,6 @@ public:
 	Sequence *_sequence;
 	Timer *_timer;
 	Animation *_animation;
-	Acci *_acci;
 	Menu *_menu;
 	Closing *_closing;
 	SoundHandler *_sound;
