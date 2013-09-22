@@ -455,27 +455,6 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
 
-			if (pSnd->status != kSoundPaused) {
-				// Stop any in progress music fading, as that will reset the
-				// volume of the sound channels that the faded song occupies..
-				// Fixes bug #3266480 and partially fixes bug #3041738.
-				// CHECKME: Is this the right thing to do? Are these
-				// overlapping channels not a deeper underlying problem?
-				for (uint i = 0; i < playListCount; i++) {
-					// Is another MIDI song being faded down? If yes, stop it
-					// immediately instead
-					if (_playList[i]->fadeStep < 0 && _playList[i]->pMidiParser) {
-						_playList[i]->status = kSoundStopped;
-						if (_soundVersion <= SCI_VERSION_0_LATE)
-							_playList[i]->isQueued = false;
-						_playList[i]->pMidiParser->stop();
-						remapChannels();
-						_playList[i]->fadeStep = 0;
-						_playList[i]->fadeCompleted = true;
-					}
-				}
-			}
-
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
