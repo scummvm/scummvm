@@ -103,6 +103,18 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	return true;
 }
 
+bool MidiParser_SCI::jumpToOffset(uint32 offset) {
+	if (_activeTrack >= _numTracks)
+		return false;
+
+	assert(!_jumpingToTick); // This function must not be called while within MidiParser::jumpToTick()
+
+	resetTracking();
+	_position._playPos = _tracks[_activeTrack] + offset;
+	parseNextEvent(_nextEvent);
+	return true;
+}
+
 byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	byte curr = 0xFF;
 	long closest = ticker + 1000000, next = 0;
@@ -531,25 +543,9 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 	case 0xC:
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != kSetSignalLoop) {
-				// At least in kq5/french&mac the first scene in the intro has
-				// a song that sets signal to 4 immediately on tick 0. Signal
-				// isn't set at that point by sierra sci and it would cause the
-				// castle daventry text to get immediately removed, so we
-				// currently filter it. Sierra SCI ignores them as well at that
-				// time. However, this filtering should only be performed for
-				// SCI1 and newer games. Signalling is done differently in SCI0
-				// though, so ignoring these signals in SCI0 games will result
-				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
-				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
-				// FIXME: SSCI doesn't start playing at the very beginning
-				// of the stream, but at a fixed location a few commands later.
-				// That is probably why this signal isn't triggered
-				// immediately there.
-				if (_soundVersion <= SCI_VERSION_0_LATE || _position._playTick) {
-					if (!_jumpingToTick) {
-						_pSnd->setSignal(info.basic.param1);
-						debugC(4, kDebugLevelSound, "signal %04x", info.basic.param1);
-					}
+				if (!_jumpingToTick) {
+					_pSnd->setSignal(info.basic.param1);
+					debugC(4, kDebugLevelSound, "signal %04x", info.basic.param1);
 				}
 			} else {
 				_loopTick = _position._playTick;

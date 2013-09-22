@@ -518,7 +518,25 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->hold = -1;
 
 			if (pSnd->status == kSoundStopped)
-				pSnd->pMidiParser->jumpToTick(0);
+				if (_soundVersion <= SCI_VERSION_0_LATE) {
+					// SCI0 sound subsystem seems to start at offset 0
+					// Not starting at offset 0 for SCI0 games will result
+					//  in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
+					// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
+					pSnd->pMidiParser->jumpToOffset(0);
+				} else {
+					// SCI1 sound subsystem starts at offset 10 (and also sets loop offset to 0)
+					// At least in kq5/french&mac the first scene in the intro has
+					//  a song that sets signal to 4 immediately on tick 0. Signal
+					//  isn't set at that point by sierra sci and it would cause the
+					//  castle daventry text to get immediately removed.
+					// Also Eco Quest 2 Gonzales Dances music (room 530) requires a signal
+					//  to get set exactly at tick 0. We previously didn't handle signals
+					//  on tick 0 for SCI1. Which then resulted in broken dance animations.
+					//  See bug #3037267
+					// FIXME: maybe also change looping logic to use offset instead of ticks
+					pSnd->pMidiParser->jumpToOffset(10);
+				}
 			else {
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
