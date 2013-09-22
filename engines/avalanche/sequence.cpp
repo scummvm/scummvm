@@ -44,7 +44,7 @@ Sequence::Sequence(AvalancheEngine *vm) {
 void Sequence::firstShow(byte what) {
 	_seq[0] = what;
 
-	for (uint i = 1; i < kSeqLength; i++)
+	for (int i = 1; i < kSeqLength; i++)
 		_seq[i] = 0;
 }
 
