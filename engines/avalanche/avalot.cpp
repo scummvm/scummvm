@@ -137,7 +137,6 @@ const QuasipedType Avalot::kQuasipeds[16] = {
 };
 
 const uint16 Avalot::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
-
 const TuneType Avalot::kTune = {
 	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
 	kPitchLower, kPitchHigher, kPitchHigher, kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher,

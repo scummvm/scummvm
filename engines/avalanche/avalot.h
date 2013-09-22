@@ -101,8 +101,7 @@ struct MagicType {
 	uint16 _data; // data for them
 };
 
-class FieldType {
-public:
+struct FieldType {
 	int16 _x1, _y1, _x2, _y2;
 };
 
@@ -110,8 +109,7 @@ struct ByteField {
 	byte _x1, _y1, _x2, _y2;
 };
 
-class LineType : public FieldType {
-public:
+struct LineType : public FieldType {
 	byte _color;
 };
 
