@@ -1134,7 +1134,6 @@ class Scene1950 : public SceneExt {
 		KeypadWindow();
 		virtual void synchronize(Serializer &s);
 		virtual void remove();
-		virtual void process(Event &event);
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
