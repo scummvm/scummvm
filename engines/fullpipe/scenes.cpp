@@ -137,17 +137,13 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_aniMan->_statics = _aniMan->getStaticsById(ST_MAN_EMPTY);
 	_aniMan->setOXY(0, 0);
 
-	if (_aniMan) {
-		_aniMan2 = _aniMan;
-		MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
-		cmp->initMovGraph2();
-		cmp->addObject(_aniMan);
-		cmp->setEnabled();
-		getGameLoaderInteractionController()->enableFlag24();
-		setInputDisabled(0);
-	} else {
-		_aniMan2 = 0;
-	}
+	_aniMan2 = _aniMan;
+	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
+	cmp->initMovGraph2();
+	cmp->addObject(_aniMan);
+	cmp->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
+	setInputDisabled(0);
 
 	scene->setPictureObjectsFlag4();
 
