@@ -47,18 +47,39 @@ public:
 		NO_SUCH_SCRIPT
 	};
 	SourceFile(const Common::String &filename);
+
+	/**
+	 * @brief (attempt to) load a source file.
+	 * @param filename the WME path (with DOS-style slashes, starting from the DCP root) of the source, e.g. scripts\myscript.script.
+	 * @param error will contain an error code in case of failure
+	 */
 	bool loadFile(Common::String filename, int *error = nullptr);
+	/**
+	 * @brief get the source file length (in lines)
+	 */
 	int getLength();
+	/**
+	 * @brief see if a given line is blank or comment-only
+	 */
 	bool isBlank(int line);
+	/**
+	 * @brief shorthand to get a lump of lines instead of calling getLine a number of times
+	 */
 	Common::Array<Common::String> getSurroundingLines(int centre, int lines, int *error = nullptr);
 	Common::Array<Common::String> getSurroundingLines(int cemtre, int before, int after, int *error = nullptr);
+	/**
+	 * @brief return a specific line from the already-loaded source file
+	 * @param n line number
+	 * @param error in case of failure this will contain an error code 
+	 */
 	Common::String getLine(uint n, int *error = nullptr);
 };
 
 struct BreakpointInfo {
+	// Slightly non-standard. If in doubt make sure you have the way II_DBG_LINE works figured out.
 	Common::String _filename;
 	int _line;
-	int _hits;
+	int _hits; // How many times has it been hit?
 	bool _enabled;
 };
 
@@ -71,7 +92,10 @@ struct WatchInfo {
 
 class DebuggerAdapter {
 
-/* Faux MVA Adapter */
+/** 
+ * MVA Adapter to be placed between the script engine proper and the Debugger class,
+ * hiding one from another.
+ */
 public:
 	enum ErrorCode {
 		OK,
@@ -90,8 +114,17 @@ public:
 
 	DebuggerAdapter(WintermuteEngine *vm);
 	// Called by Script (=~Model)
+	/**
+	 * @brief To be called by the script engine when hitting a breakpoint.
+	 */
 	bool triggerBreakpoint(ScScript *script);
+	/**
+	 * @brief To be called by the script engine when stepping
+	 */
 	bool triggerStep(ScScript *script);
+	/**
+	 * @brief To be called by the script engine when hitting a watch event.
+	 */
 	bool triggerWatch(ScScript *script, const char *symbol);
 	// Called by Console (~=View)
 	int addWatch(const char *filename, const char *symbol);
@@ -103,18 +136,45 @@ public:
 	int enableBreakpoint(int id);
 	Common::Array<BreakpointInfo> getBreakpoints();
 	Common::Array<WatchInfo> getWatchlist();
+	/** 
+	 * @brief step to the next line in the current block
+	 */
 	int stepOver();
+	/**
+	 * @brief step at the next line entering any function encountered
+	 */
 	int stepInto();
+	/**
+	 * @brief continue and don't step until next breakpoint
+	 */
 	int stepContinue();
+	/**
+	 * @brief finish current block, step to the next line of the caller
+	 */
 	int stepFinish();
 	int32 getLastLine();
+	/** 
+	 * @brief read value for a variable accessible from within the current scope.
+	 */
 	Common::String readValue(const char *name, int *error);
+	/** 
+	 * @brief set value for a variable accessible from within the current scope.
+	 */
 	int setValue(Common::String name, Common::String value, ScValue * &var);
 	int DebuggerAdapter::setType(const Common::String &name, Common::String &type);
+	/** 
+	 * @brief Dump *engine* debug info about a variable accessible from within the current scope.
+	 * While readValue(somestring) will simply return its value (e.g. "foo") 
+	 * this will give you the output of the relevant ScValue or Entity's debuggetToString() 
+	 * method, which can include engine information inaccessible from the scripting environment.
+	 */
 	Common::String readRes(const Common::String &name, int *error);
 	void showFps(bool show);
 	SourceFile *_lastSource;
 private:
+	/** 
+	 * @brief see if we have compiled bytecode for a given script
+	 */
 	bool compiledExists(Common::String filename);
 	WintermuteEngine *_engine;
 	int32 _lastDepth;
