@@ -48,7 +48,7 @@ private:
 	};
 
 	struct Direction {
-		Direction(uint angle, uint toFrame) : angle(angle), toFrame(toFrame) {}
+		Direction(uint a, uint t) : angle(a), toFrame(t) {}
 
 		uint angle;
 		uint toFrame;
