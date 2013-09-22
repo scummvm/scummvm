@@ -323,27 +323,27 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		// Origin => (pointOne.x, pointOne.y)
 		//   *    => (pointTwo.x, pointTwo.y)
 		//
-		//                         90
-		//                         ^
-		//                 *       |       *
-		//                  \      |      /
-		//                   \     |     /
-		//                    \    |    /
-		// Quadrant 1          \   |   /         Quadrant 0
-		//                      \  |  /
-		//                       \ | /
-		//                angle ( \|/ ) -angle
-		// 180 <----------------------------------------> 0
-		//               -angle ( /|\ )  angle
-		//                       / | \
-		//                      /  |  \
-		// Quadrant 3          /   |   \         Quadrant 2
-		//                    /    |    \
-		//                   /     |     \
-		//                  /      |      \
-		//                 *       |       *
-		//                         ^
-		//                        270
+		//                         90                                             |
+		//                         ^                                              |
+		//                 *       |       *                                      |
+		//                  \      |      /                                       |
+		//                   \     |     /                                        |
+		//                    \    |    /                                         |
+		// Quadrant 1          \   |   /         Quadrant 0                       |
+		//                      \  |  /                                           |
+		//                       \ | /                                            |
+		//                angle ( \|/ ) -angle                                    |
+		// 180 <----------------------------------------> 0                       |
+		//               -angle ( /|\ )  angle                                    |
+		//                       / | \                                            |
+		//                      /  |  \                                           |
+		// Quadrant 3          /   |   \         Quadrant 2                       |
+		//                    /    |    \                                         |
+		//                   /     |     \                                        |
+		//                  /      |      \                                       |
+		//                 *       |       *                                      |
+		//                         ^                                              |
+		//                        270                                             |
 
 		// Convert the local angles to unit circle angles
 		switch (quadrant) {
