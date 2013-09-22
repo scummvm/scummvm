@@ -549,7 +549,7 @@ Common::String Parser::totalTime() {
 	const double ticksInOneSec = (double)(65535) / 3600;
 	uint16 h, m, s;
 
-	h = floor(_vm->_avalot->_totalTime / ticksInOneSec); // No. of seconds.
+	h = (uint16)floor(_vm->_avalot->_totalTime / ticksInOneSec); // No. of seconds.
 	m = h % 3600;
 	h /= 3600;
 	s = m % 60;
