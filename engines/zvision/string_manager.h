@@ -60,10 +60,13 @@ private:
 		Common::List<TextFragment> fragments;
 	};
 
+	enum {
+		NUM_TEXT_LINES = 56 // Max number of lines in a .str file. We hardcode this number because we know ZNem uses 42 strings and ZGI uses 56
+	};
+
 private:
 	ZVision *_engine;
-	// NOTE: We hardcode this number because we know ZNem uses 42 strings and ZGI uses 56
-	InGameText _inGameText[56];
+	InGameText _inGameText[NUM_TEXT_LINES];
 	Common::HashMap<Common::String, TruetypeFont *> _fonts;
 
 	static const Graphics::PixelFormat _pixelFormat565;
