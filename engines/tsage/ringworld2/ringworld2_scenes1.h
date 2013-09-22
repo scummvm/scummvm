@@ -1156,7 +1156,7 @@ class Scene1950 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor5 : public SceneActor {
+	class Gem : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1201,11 +1201,11 @@ class Scene1950 : public SceneExt {
 	public:
 		virtual void changeScene();
 	};
-	class Exit7 : public SceneExit {
+	class ShaftExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit8 : public SceneExit {
+	class DoorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -1214,14 +1214,14 @@ private:
 	void enterArea();
 	void doButtonPress(int indx);
 public:
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	Keypad _keypad;
 	SceneActor _southDoorway;
 	SceneObject _northDoorway;
 	Door _door;
 	Scrolls _scrolls;
 	SceneActor _containmentField;
-	Actor5 _gem;
+	Gem _gem;
 	SceneActor _cube;
 	SceneActor _actor7;
 	Vampire _vampire;
@@ -1232,8 +1232,8 @@ public:
 	DownExit _downExit;
 	SouthExit _southExit;
 	WestExit _westExit;
-	Exit7 _exit7;
-	Exit8 _exit8;
+	ShaftExit _shaftExit;
+	DoorExit _doorExit;
 	SequenceManager _sequenceManager;
 
 	int _field412;

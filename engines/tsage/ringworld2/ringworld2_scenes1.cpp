@@ -13717,7 +13717,7 @@ bool Scene1950::Scrolls::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene1950::Actor5::startAction(CursorType action, Event &event) {
+bool Scene1950::Gem::startAction(CursorType action, Event &event) {
 	if ((action != CURSOR_USE) || (!R2_GLOBALS.getFlag(37)))
 		return SceneActor::startAction(action, event);
 
@@ -14007,7 +14007,7 @@ void Scene1950::WestExit::changeScene() {
 	}
 }
 
-void Scene1950::Exit7::changeScene() {
+void Scene1950::ShaftExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -14017,7 +14017,7 @@ void Scene1950::Exit7::changeScene() {
 	scene->setAction(&scene->_sequenceManager, scene, 1951, &R2_GLOBALS._player, NULL);
 }
 
-void Scene1950::Exit8::changeScene() {
+void Scene1950::DoorExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -14065,24 +14065,24 @@ void Scene1950::initArea() {
 	_downExit._enabled = false;
 	_southExit._enabled = false;
 	_westExit._enabled = false;
-	_exit7._enabled = false;
-	_exit8._enabled = false;
+	_shaftExit._enabled = false;
+	_doorExit._enabled = false;
 	_northExit._insideArea = false;
 	_upExit._insideArea = false;
 	_eastExit._insideArea = false;
 	_downExit._insideArea = false;
 	_southExit._insideArea = false;
 	_westExit._insideArea = false;
-	_exit7._insideArea = false;
-	_exit8._insideArea = false;
+	_shaftExit._insideArea = false;
+	_doorExit._insideArea = false;
 	_northExit._moving = false;
 	_upExit._moving = false;
 	_eastExit._moving = false;
 	_downExit._moving = false;
 	_southExit._moving = false;
 	_westExit._moving = false;
-	_exit7._moving = false;
-	_exit8._moving = false;
+	_shaftExit._moving = false;
+	_doorExit._moving = false;
 	_field412 = 0;
 
 	switch (R2_GLOBALS._flubMazeArea - 1) {
@@ -14321,9 +14321,9 @@ void Scene1950::initArea() {
 
 	switch (R2_GLOBALS._flubMazeArea - 1) {
 	case 0:
-		_exit7._enabled = true;
+		_shaftExit._enabled = true;
 		if ((R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0) && (R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 1950))
-			_exit8._enabled = true;
+			_doorExit._enabled = true;
 		R2_GLOBALS._walkRegions.disableRegion(2);
 		R2_GLOBALS._walkRegions.disableRegion(3);
 		R2_GLOBALS._walkRegions.disableRegion(4);
@@ -14927,7 +14927,8 @@ void Scene1950::enterArea() {
 		_actor7.remove();
 		_scrolls.remove();
 
-		_item1.setDetails(Rect(0, 0, 320, 200), 1950, 0, 1, 2, 2, NULL);
+		R2_GLOBALS._sceneItems.remove(&_background);
+		_background.setDetails(Rect(0, 0, 320, 200), 1950, 0, 1, 2, 2, NULL);
 	}
 
 	switch (R2_GLOBALS._flubMazeEntryDirection) {
@@ -15150,11 +15151,11 @@ void Scene1950::postInit(SceneObjectList *OwnerList) {
 	_westExit.setDetails(Rect(0, 95, 14, 147), EXITCURSOR_W, 1950);
 	_westExit.setDest(Common::Point(7, 160));
 
-	_exit7.setDetails(Rect(72, 54, 120, 128), EXITCURSOR_NW, 1950);
-	_exit7.setDest(Common::Point(120, 140));
+	_shaftExit.setDetails(Rect(72, 54, 120, 128), EXITCURSOR_NW, 1950);
+	_shaftExit.setDest(Common::Point(120, 140));
 
-	_exit8.setDetails(Rect(258, 60, 300, 145), EXITCURSOR_NE, 1950);
-	_exit8.setDest(Common::Point(268, 149));
+	_doorExit.setDetails(Rect(258, 60, 300, 145), EXITCURSOR_NE, 1950);
+	_doorExit.setDest(Common::Point(268, 149));
 
 	R2_GLOBALS._player.postInit();
 	if ( (R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 0) && (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 0)
@@ -15164,7 +15165,7 @@ void Scene1950::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.setVisage(20);
 
 	R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
-	_item1.setDetails(Rect(0, 0, 320, 200), 1950, 0, 1, 2, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 1950, 0, 1, 2, 1, NULL);
 
 	enterArea();
 }
@@ -15263,13 +15264,13 @@ void Scene1950::signal() {
 		SceneItem::display(1950, 24, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
-		_exit8._enabled = true;
+		_doorExit._enabled = true;
 		break;
 	case 1959:
 		R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, 0);
 		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
-		_exit8._enabled = true;
+		_doorExit._enabled = true;
 		break;
 	case 1962:
 	// No break on purpose
@@ -15336,8 +15337,8 @@ void Scene1950::process(Event &event) {
 			&& (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0)) {
 		event.handled = true;
 		R2_GLOBALS._player.disableControl();
-		_exit7._enabled = false;
-		_exit8._enabled = false;
+		_shaftExit._enabled = false;
+		_doorExit._enabled = false;
 		_sceneMode = 1959;
 		setAction(&_sequenceManager, this, 1959, &R2_GLOBALS._player, NULL);
 	}
