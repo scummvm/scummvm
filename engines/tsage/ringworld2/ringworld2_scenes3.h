@@ -106,52 +106,51 @@ public:
 };
 
 class Scene3150 : public SceneExt {
-	class Item5 : public NamedHotspot {
+	class LightFixture : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item6 : public NamedHotspot {
+	class Toilet : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class Water : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor5 : public SceneActor {
+	class FoodTray : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Actor6 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor7 : public SceneActor {
+	class AirVent : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class DoorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class VentExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 public:
-
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	Item5 _item5;
-	Item6 _item6;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	Actor4 _actor4;
-	Actor5 _actor5;
-	Actor6 _actor6;
-	Actor7 _actor7;
-	Exit1 _exit1;
-	Exit2 _exit2;
+	NamedHotspot _background;
+	NamedHotspot _bed;
+	NamedHotspot _lightFixture2;
+	NamedHotspot _bars;
+	LightFixture _lightFixture;
+	Toilet _toilet;
+	SceneActor _guard;
+	SceneActor _doorBars;
+	SceneActor _bulbOrWire;
+	Water _water;
+	FoodTray _foodTray;
+	Actor6 _toiletFlush;
+	AirVent _airVent;
+	DoorExit _doorExit;
+	VentExit _ventExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -309,10 +308,10 @@ public:
 };
 
 class Scene3260 : public SceneExt {
-	class Actor13 : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor14 : public SceneActor {
+	class Toolbox : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
@@ -321,22 +320,21 @@ class Scene3260 : public SceneExt {
 		void signal();
 	};
 public:
-
 	NamedHotspot _item1;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
+	SceneActor _sceeen1;
+	SceneActor _screen2;
+	SceneActor _screen3;
+	SceneActor _screen4;
+	SceneActor _screen5;
+	SceneActor _screen6;
 	SceneActor _actor7;
 	SceneActor _actor8;
 	SceneActor _actor9;
-	SceneActor _actor10;
-	SceneActor _actor11;
-	SceneActor _actor12;
-	Actor13 _actor13;
-	Actor14 _actor14;
+	SceneActor _securityConsole;
+	SceneActor _computerConsole;
+	SceneActor _lightingConsole;
+	Door _door;
+	Toolbox _toolbox;
 	Action1 _action1;
 	Action1 _action2;
 	Action1 _action3;
@@ -357,23 +355,23 @@ public:
 };
 
 class Scene3275 : public SceneExt {
-	class Actor2 : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class CellExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	NamedHotspot _item5;
+	NamedHotspot _background;
+	NamedHotspot _emptyCell1;
+	NamedHotspot _emptyCell2;
+	NamedHotspot _securityBeams1;
+	NamedHotspot _securityBeams2;
 	SceneActor _actor1;
-	Actor2 _actor2;
-	Exit1 _exit1;
+	Door _door;
+	CellExit _cellExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

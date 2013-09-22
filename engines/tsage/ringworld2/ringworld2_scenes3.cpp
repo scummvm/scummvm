@@ -374,7 +374,8 @@ void Scene3125::dispatch() {
  * Scene 3150 - Jail
  *
  *--------------------------------------------------------------------------*/
-bool Scene3150::Item5::startAction(CursorType action, Event &event) {
+
+bool Scene3150::LightFixture::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -384,16 +385,16 @@ bool Scene3150::Item5::startAction(CursorType action, Event &event) {
 
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3154;
-		scene->setAction(&scene->_sequenceManager, scene, 3154, &R2_GLOBALS._player, &scene->_actor3, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 3154, &R2_GLOBALS._player, &scene->_bulbOrWire, NULL);
 		return true;
 	case R2_SUPERCONDUCTOR_WIRE:
 		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && (R2_GLOBALS.getFlag(75))) {
 			R2_GLOBALS._player.disableControl();
-			scene->_actor3.postInit();
-			scene->_actor3._effect = 3;
-			scene->_actor3._shade = 5;
+			scene->_bulbOrWire.postInit();
+			scene->_bulbOrWire._effect = 3;
+			scene->_bulbOrWire._shade = 5;
 			scene->_sceneMode = 3155;
-			scene->setAction(&scene->_sequenceManager, scene, 3155, &R2_GLOBALS._player, &scene->_actor3, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 3155, &R2_GLOBALS._player, &scene->_bulbOrWire, NULL);
 		} else {
 			SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 		}
@@ -404,39 +405,42 @@ bool Scene3150::Item5::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene3150::Item6::startAction(CursorType action, Event &event) {
+bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case R2_PILLOW:
 		R2_GLOBALS._player.disableControl();
-		scene->_actor4.postInit();
-		scene->_actor4._effect = 6;
-		scene->_actor4._shade = 3;
+		scene->_water.postInit();
+		scene->_water._effect = 6;
+		scene->_water._shade = 3;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3158;
-		scene->setAction(&scene->_sequenceManager, scene, 3158, &R2_GLOBALS._player, &scene->_actor4, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 3158, &R2_GLOBALS._player, &scene->_water, NULL);
 		return true;
 	case R2_FOOD_TRAY:
-		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && (R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) && (R2_GLOBALS.getFlag(75))) {
-			scene->_actor5.postInit();
-			scene->_actor5._effect = 6;
-			scene->_actor5._shade = 3;
-			scene->_actor5.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
+		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && 
+				(R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) 
+				&& (R2_GLOBALS.getFlag(75))) {
+			scene->_foodTray.postInit();
+			scene->_foodTray._effect = 6;
+			scene->_foodTray._shade = 3;
+			scene->_foodTray.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
 
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 3159;
-			scene->setAction(&scene->_sequenceManager, scene, 3159, &R2_GLOBALS._player, &scene->_actor5, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 3159, &R2_GLOBALS._player, &scene->_foodTray, NULL);
 		} else {
 			SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 		}
+		return true;
 	default:
 		return SceneHotspot::startAction(action, event);
 		break;
 	}
 }
 
-bool Scene3150::Actor4::startAction(CursorType action, Event &event) {
+bool Scene3150::Water::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -446,7 +450,7 @@ bool Scene3150::Actor4::startAction(CursorType action, Event &event) {
 
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3151;
-		scene->setAction(&scene->_sequenceManager, scene, 3151, &R2_GLOBALS._player, &scene->_actor4, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 3151, &R2_GLOBALS._player, &scene->_water, NULL);
 		return true;
 	case R2_FOOD_TRAY:
 		return false;
@@ -456,15 +460,15 @@ bool Scene3150::Actor4::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene3150::Actor5::startAction(CursorType action, Event &event) {
+bool Scene3150::FoodTray::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action != CURSOR_USE) || (R2_GLOBALS.getFlag(77)))
-		return SceneActor::startAction(action ,event);
+		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3157;
-	scene->setAction(&scene->_sequenceManager, scene, 3157, &R2_GLOBALS._player, &scene->_actor5, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 3157, &R2_GLOBALS._player, &scene->_foodTray, NULL);
 	return true;
 }
 
@@ -480,7 +484,7 @@ bool Scene3150::Actor6::startAction(CursorType action, Event &event) {
 					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, NULL);
 				} else {
 					scene->_sceneMode = 3153;
-					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, &scene->_actor4, NULL);
+					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, &scene->_water, NULL);
 				}
 			} else {
 				SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
@@ -496,20 +500,20 @@ bool Scene3150::Actor6::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene3150::Actor7::startAction(CursorType action, Event &event) {
+bool Scene3150::AirVent::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action == R2_LASER_HACKSAW) && (!R2_GLOBALS.getFlag(80))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3160;
-		scene->setAction(&scene->_sequenceManager, scene, 3160, &R2_GLOBALS._player, &scene->_actor7, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 3160, &R2_GLOBALS._player, &scene->_airVent, NULL);
 		return true;
 	}
 
 	return SceneActor::startAction(action, event);
 }
 
-void Scene3150::Exit1::changeScene() {
+void Scene3150::DoorExit::changeScene() {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -522,7 +526,7 @@ void Scene3150::Exit1::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
-void Scene3150::Exit2::changeScene() {
+void Scene3150::VentExit::changeScene() {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -544,120 +548,120 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	if (R2_GLOBALS.getFlag(78)) {
-		_exit1.setDetails(Rect(0, 135, 60, 168), EXITCURSOR_SW, 3275);
-		_exit1.setDest(Common::Point(70, 125));
+		_doorExit.setDetails(Rect(0, 135, 60, 168), EXITCURSOR_SW, 3275);
+		_doorExit.setDest(Common::Point(70, 125));
 	}
 
 	if (R2_GLOBALS.getFlag(80)) {
-		_exit2.setDetails(Rect(249, 36, 279, 60), EXITCURSOR_NE, 3150);
-		_exit2.setDest(Common::Point(241, 106));
+		_ventExit.setDetails(Rect(249, 36, 279, 60), EXITCURSOR_NE, 3150);
+		_ventExit.setDest(Common::Point(241, 106));
 	}
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.disableControl();
 
-	_actor2.postInit();
-	_actor2.setPosition(Common::Point(64, 139));
+	_doorBars.postInit();
+	_doorBars.setPosition(Common::Point(64, 139));
 	if (R2_GLOBALS.getFlag(78)) {
-		_actor2.setup(3151, 1, 5);
-		_actor2.fixPriority(125);
+		_doorBars.setup(3151, 1, 5);
+		_doorBars.fixPriority(125);
 	} else {
-		_actor2.setup(3151, 1, 1);
-		_actor2.setDetails(3150, 8, -1, 9, 1, (SceneItem *)NULL);
+		_doorBars.setup(3151, 1, 1);
+		_doorBars.setDetails(3150, 8, -1, 9, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_GLOBALS.getFlag(78)) {
-		_actor1.postInit();
-		_actor1.setup(3154, 1, 16);
-		_actor1.setPosition(Common::Point(104, 129));
-		_actor1._effect = 6;
-		_actor1._shade = 3;
-		_actor1.setDetails(3150, 24, -1, -1, -1, (SceneItem *)NULL);
+		_guard.postInit();
+		_guard.setup(3154, 1, 16);
+		_guard.setPosition(Common::Point(104, 129));
+		_guard._effect = 6;
+		_guard._shade = 3;
+		_guard.setDetails(3150, 24, -1, -1, -1, (SceneItem *)NULL);
 	}
 
-	_actor7.postInit();
-	_actor7.setup(3154, 5, 1);
+	_airVent.postInit();
+	_airVent.setup(3154, 5, 1);
 	if (R2_GLOBALS.getFlag(80))
-		_actor7.setPosition(Common::Point(264, 108));
+		_airVent.setPosition(Common::Point(264, 108));
 	else
-		_actor7.setPosition(Common::Point(264, 58));
-	_actor7.fixPriority(50);
-	_actor7.setDetails(3150, 17, -1, 19, 1, (SceneItem *)NULL);
+		_airVent.setPosition(Common::Point(264, 58));
+	_airVent.fixPriority(50);
+	_airVent.setDetails(3150, 17, -1, 19, 1, (SceneItem *)NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_PILLOW) == 3150) {
-		_actor4.postInit();
+		_water.postInit();
 		if (R2_GLOBALS.getFlag(75)) {
 			if (R2_GLOBALS.getFlag(76)) {
 				R2_GLOBALS._walkRegions.disableRegion(1);
 				R2_GLOBALS._walkRegions.disableRegion(4);
 				R2_GLOBALS._walkRegions.disableRegion(5);
 				R2_GLOBALS._walkRegions.disableRegion(6);
-				_actor4.setup(3152, 4, 10);
-				_actor4.setDetails(3150, 14, -1, -1, 1, (SceneItem *)NULL);
+				_water.setup(3152, 4, 10);
+				_water.setDetails(3150, 14, -1, -1, 1, (SceneItem *)NULL);
 			} else {
-				_actor4.setup(3152, 7, 4);
-				_actor4.setDetails(3150, 13, -1, -1, 1, (SceneItem *)NULL);
+				_water.setup(3152, 7, 4);
+				_water.setDetails(3150, 13, -1, -1, 1, (SceneItem *)NULL);
 			}
-			_actor4.fixPriority(110);
-			_actor4.setPosition(Common::Point(83, 88));
-			_actor4._effect = 6;
-			_actor4._shade = 3;
+			_water.fixPriority(110);
+			_water.setPosition(Common::Point(83, 88));
+			_water._effect = 6;
+			_water._shade = 3;
 		} else {
-			_actor4.setup(3152, 7, 3);
-			_actor4.setPosition(Common::Point(143, 70));
-			_actor4.setDetails(3150, 15, -1, -1, 1, (SceneItem *)NULL);
+			_water.setup(3152, 7, 3);
+			_water.setPosition(Common::Point(143, 70));
+			_water.setDetails(3150, 15, -1, -1, 1, (SceneItem *)NULL);
 		}
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) == 3150) {
-		_actor3.postInit();
-		_actor3.setup(3152, 7, 1);
-		_actor3.setPosition(Common::Point(73, 83));
+		_bulbOrWire.postInit();
+		_bulbOrWire.setup(3152, 7, 1);
+		_bulbOrWire.setPosition(Common::Point(73, 83));
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) {
-		_actor3.postInit();
-		_actor3.setup(3152, 7, 3);
-		_actor3.setPosition(Common::Point(70, 55));
-		_actor3.fixPriority(111);
-		_actor3._effect = 6;
-		_actor3._shade = 5;
+		_bulbOrWire.postInit();
+		_bulbOrWire.setup(3152, 7, 3);
+		_bulbOrWire.setPosition(Common::Point(70, 55));
+		_bulbOrWire.fixPriority(111);
+		_bulbOrWire._effect = 6;
+		_bulbOrWire._shade = 5;
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_FOOD_TRAY) == 3150) {
-		_actor5.postInit();
+		_foodTray.postInit();
 		if (R2_GLOBALS.getFlag(77)) {
-			_actor5.setup(3152, 7, 8);
-			_actor5.setPosition(Common::Point(82, 92));
-			_actor5.fixPriority(111);
-			_actor5._effect = 6;
-			_actor5._shade = 3;
+			_foodTray.setup(3152, 7, 8);
+			_foodTray.setPosition(Common::Point(82, 92));
+			_foodTray.fixPriority(111);
+			_foodTray._effect = 6;
+			_foodTray._shade = 3;
 		} else {
-			_actor5.setup(3152, 7, 7);
-			_actor5.setPosition(Common::Point(155, 79));
+			_foodTray.setup(3152, 7, 7);
+			_foodTray.setPosition(Common::Point(155, 79));
 		}
-		_actor5.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
+		_foodTray.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
 	}
 
-	_actor6.postInit();
-	_actor6.setup(3152, 7, 6);
-	_actor6.setPosition(Common::Point(98, 73));
-	_actor6.setDetails(3150, 43, -1, -1, 1, (SceneItem *)NULL);
+	_toiletFlush.postInit();
+	_toiletFlush.setup(3152, 7, 6);
+	_toiletFlush.setPosition(Common::Point(98, 73));
+	_toiletFlush.setDetails(3150, 43, -1, -1, 1, (SceneItem *)NULL);
 
-	_item2.setDetails(12, 3150, 10, -1, 12);
-	_item3.setDetails(Rect(186, 17, 210, 36), 3150, 6, -1, -1, 1, NULL);
-	_item4.setDetails(Rect(61, 21, 92, 41), 3150, 7, -1, -1, 1, NULL);
-	_item5.setDetails(Rect(63, 48, 78, 58), 3150, 6, -1, -1, 1, NULL);
-	_item6.setDetails(Rect(63, 81, 100, 95), 3150, 3, 4, -1, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 200, 320), 3150, 0, 1, 2, 1, NULL);
+	_bed.setDetails(12, 3150, 10, -1, 12);
+	_lightFixture2.setDetails(Rect(186, 17, 210, 36), 3150, 6, -1, -1, 1, NULL);
+	_bars.setDetails(Rect(61, 21, 92, 41), 3150, 7, -1, -1, 1, NULL);
+	_lightFixture.setDetails(Rect(63, 48, 78, 58), 3150, 6, -1, -1, 1, NULL);
+	_toilet.setDetails(Rect(63, 81, 100, 95), 3150, 3, 4, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 200, 320), 3150, 0, 1, 2, 1, NULL);
 
-	switch (R2_GLOBALS._player._oldCharacterScene[3]) {
+	switch (R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA]) {
 	case 0:
 		_sceneMode = 3150;
-		_actor1.postInit();
-		_actor1._effect = 6;
-		_actor1._shade = 5;
-		setAction(&_sequenceManager, this, 3150, &R2_GLOBALS._player, &_actor1, &_actor2, NULL);
+		_guard.postInit();
+		_guard._effect = 6;
+		_guard._shade = 5;
+		setAction(&_sequenceManager, this, 3150, &R2_GLOBALS._player, &_guard, &_doorBars, NULL);
 		break;
 	case 1200:
 		_sceneMode = 3162;
@@ -679,16 +683,16 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		if ((R2_GLOBALS._v56AA0 == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000) && (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 3100)) {
 			++R2_GLOBALS._v56AA0;
 			_sceneMode = 3156;
-			_actor1.postInit();
-			_actor1._effect = 6;
-			_actor1._shade = 3;
+			_guard.postInit();
+			_guard._effect = 6;
+			_guard._shade = 3;
 
-			_actor2.postInit();
-			_actor5.postInit();
-			_actor5._effect = 6;
-			_actor5._shade = 3;
+			_doorBars.postInit();
+			_foodTray.postInit();
+			_foodTray._effect = 6;
+			_foodTray._shade = 3;
 
-			setAction(&_sequenceManager, this, 3156, &R2_GLOBALS._player, &_actor1, &_actor2, &_actor5, NULL);
+			setAction(&_sequenceManager, this, 3156, &R2_GLOBALS._player, &_guard, &_doorBars, &_foodTray, NULL);
 		} else {
 			if (R2_GLOBALS._v56AA0 != 2)
 				++R2_GLOBALS._v56AA0;
@@ -713,20 +717,20 @@ void Scene3150::signal() {
 		R2_GLOBALS._sceneManager.changeScene(1200);
 		break;
 	case 3151:
-		_actor1.remove();
+		_guard.remove();
 		R2_INVENTORY.setObjectScene(R2_PILLOW, 3);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3153:
 		R2_GLOBALS.setFlag(76);
-		_actor4.setDetails(3150, 14, -1, -1, 3, (SceneItem *)NULL);
-		_actor1.postInit();
-		_actor1.setDetails(3150, 24, -1, -1, 2, (SceneItem *)NULL);
+		_water.setDetails(3150, 14, -1, -1, 3, (SceneItem *)NULL);
+		_guard.postInit();
+		_guard.setDetails(3150, 24, -1, -1, 2, (SceneItem *)NULL);
 		_sceneMode = 3161;
-		setAction(&_sequenceManager, this, 3161, &_actor1, &_actor2, NULL);
+		setAction(&_sequenceManager, this, 3161, &_guard, &_doorBars, NULL);
 		break;
 	case 3154:
-		_actor3.remove();
+		_bulbOrWire.remove();
 		R2_INVENTORY.setObjectScene(R2_LIGHT_BULB, 3);
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -735,20 +739,20 @@ void Scene3150::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3156:
-		_actor5.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
+		_foodTray.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
 		R2_INVENTORY.setObjectScene(R2_FOOD_TRAY, 3150);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3157:
-		_actor5.remove();
+		_foodTray.remove();
 		R2_INVENTORY.setObjectScene(R2_FOOD_TRAY, 3);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3158:
 		R2_GLOBALS.setFlag(75);
 		R2_INVENTORY.setObjectScene(R2_PILLOW, 3150);
-		_actor4.fixPriority(110);
-		_actor4.setDetails(3150, 13, -1, -1, 2, (SceneItem *)NULL);
+		_water.fixPriority(110);
+		_water.setDetails(3150, 13, -1, -1, 2, (SceneItem *)NULL);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3159:
@@ -762,9 +766,9 @@ void Scene3150::signal() {
 		R2_GLOBALS._sceneManager.changeScene(1200);
 		break;
 	case 3161:
-		R2_GLOBALS._sceneItems.remove(&_actor2);
-		_exit1.setDetails(Rect(0, 135, 60, 168), EXITCURSOR_SW, 3275);
-		_exit1.setDest(Common::Point(70, 125));
+		R2_GLOBALS._sceneItems.remove(&_doorBars);
+		_doorExit.setDetails(Rect(0, 135, 60, 168), EXITCURSOR_SW, 3275);
+		_doorExit.setDest(Common::Point(70, 125));
 		R2_GLOBALS._walkRegions.disableRegion(1);
 		R2_GLOBALS._walkRegions.disableRegion(4);
 		R2_GLOBALS._walkRegions.disableRegion(5);
@@ -779,14 +783,14 @@ void Scene3150::signal() {
 }
 
 void Scene3150::dispatch() {
-	if (_actor5._position.x == 155) {
-		_actor5._effect = 0;
-		_actor5._shade = 0;
+	if (_foodTray._position.x == 155) {
+		_foodTray._effect = 0;
+		_foodTray._shade = 0;
 	}
 
-	if (_actor1._visage == 3154) {
-		_actor1._effect = 0;
-		_actor1._shade = 0;
+	if (_guard._visage == 3154) {
+		_guard._effect = 0;
+		_guard._shade = 0;
 	}
 
 	Scene::dispatch();
@@ -796,6 +800,7 @@ void Scene3150::dispatch() {
  * Scene 3175 - Autopsy room
  *
  *--------------------------------------------------------------------------*/
+
 bool Scene3175::Item1::startAction(CursorType action, Event &event) {
 	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
 
@@ -1366,7 +1371,8 @@ void Scene3255::dispatch() {
  * Scene 3260 - Computer room
  *
  *--------------------------------------------------------------------------*/
-bool Scene3260::Actor13::startAction(CursorType action, Event &event) {
+
+bool Scene3260::Door::startAction(CursorType action, Event &event) {
 	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -1374,11 +1380,11 @@ bool Scene3260::Actor13::startAction(CursorType action, Event &event) {
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3271;
-	scene->setAction(&scene->_sequenceManager, scene, 3271, &R2_GLOBALS._player, &scene->_actor13, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 3271, &R2_GLOBALS._player, &scene->_door, NULL);
 	return true;
 }
 
-bool Scene3260::Actor14::startAction(CursorType action, Event &event) {
+bool Scene3260::Toolbox::startAction(CursorType action, Event &event) {
 	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -1386,7 +1392,7 @@ bool Scene3260::Actor14::startAction(CursorType action, Event &event) {
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3272;
-	scene->setAction(&scene->_sequenceManager, scene, 3272, &R2_GLOBALS._player, &scene->_actor14, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 3272, &R2_GLOBALS._player, &scene->_toolbox, NULL);
 	return true;
 }
 
@@ -1403,53 +1409,53 @@ void Scene3260::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(285);
 
-	_actor13.postInit();
-	_actor13.setup(3260, 6, 1);
-	_actor13.setPosition(Common::Point(40, 106));
-	_actor13.setDetails(3260, 18, 1, -1, 1, (SceneItem *)NULL);
+	_door.postInit();
+	_door.setup(3260, 6, 1);
+	_door.setPosition(Common::Point(40, 106));
+	_door.setDetails(3260, 18, 1, -1, 1, (SceneItem *)NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_TOOLBOX) == 3260) {
-		_actor14.postInit();
-		_actor14.setup(3260, 7, 1);
-		_actor14.setPosition(Common::Point(202, 66));
-		_actor14.setDetails(3260, 12, 1, -1, 1, (SceneItem *)NULL);
+		_toolbox.postInit();
+		_toolbox.setup(3260, 7, 1);
+		_toolbox.setPosition(Common::Point(202, 66));
+		_toolbox.setDetails(3260, 12, 1, -1, 1, (SceneItem *)NULL);
 	}
 
-	_actor1.postInit();
-	_actor1.setup(3260, 1, 1);
-	_actor1.setPosition(Common::Point(93, 73));
-	_actor1.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor1.setAction(&_action1, &_actor1);
+	_sceeen1.postInit();
+	_sceeen1.setup(3260, 1, 1);
+	_sceeen1.setPosition(Common::Point(93, 73));
+	_sceeen1.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_sceeen1.setAction(&_action1, &_sceeen1);
 
-	_actor2.postInit();
-	_actor2.setup(3260, 2, 1);
-	_actor2.setPosition(Common::Point(142, 63));
-	_actor2.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor2.setAction(&_action2, &_actor2);
+	_screen2.postInit();
+	_screen2.setup(3260, 2, 1);
+	_screen2.setPosition(Common::Point(142, 63));
+	_screen2.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen2.setAction(&_action2, &_screen2);
 
-	_actor3.postInit();
-	_actor3.setup(3260, 2, 1);
-	_actor3.setPosition(Common::Point(166, 54));
-	_actor3.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor3.setAction(&_action3, &_actor3);
+	_screen3.postInit();
+	_screen3.setup(3260, 2, 1);
+	_screen3.setPosition(Common::Point(166, 54));
+	_screen3.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen3.setAction(&_action3, &_screen3);
 
-	_actor4.postInit();
-	_actor4.setup(3260, 2, 1);
-	_actor4.setPosition(Common::Point(190, 46));
-	_actor4.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor4.setAction(&_action4, &_actor4);
+	_screen4.postInit();
+	_screen4.setup(3260, 2, 1);
+	_screen4.setPosition(Common::Point(190, 46));
+	_screen4.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen4.setAction(&_action4, &_screen4);
 
-	_actor5.postInit();
-	_actor5.setup(3260, 2, 1);
-	_actor5.setPosition(Common::Point(142, 39));
-	_actor5.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor5.setAction(&_action5, &_actor5);
+	_screen5.postInit();
+	_screen5.setup(3260, 2, 1);
+	_screen5.setPosition(Common::Point(142, 39));
+	_screen5.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen5.setAction(&_action5, &_screen5);
 
-	_actor6.postInit();
-	_actor6.setup(3260, 2, 1);
-	_actor6.setPosition(Common::Point(166, 30));
-	_actor6.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor6.setAction(&_action6, &_actor6);
+	_screen6.postInit();
+	_screen6.setup(3260, 2, 1);
+	_screen6.setPosition(Common::Point(166, 30));
+	_screen6.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen6.setAction(&_action6, &_screen6);
 
 	_actor7.postInit();
 	_actor7.setup(3260, 2, 1);
@@ -1469,37 +1475,37 @@ void Scene3260::postInit(SceneObjectList *OwnerList) {
 	_actor9.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
 	_actor9.setAction(&_action9, &_actor9);
 
-	_actor10.postInit();
-	_actor10.setup(3260, 3, 1);
-	_actor10.setPosition(Common::Point(265, 163));
-	_actor10.fixPriority(180);
-	_actor10._numFrames = 10;
-	_actor10.setDetails(3260, 6, 1, 8, 1, (SceneItem *)NULL);
-	_actor10.animate(ANIM_MODE_2, NULL);
+	_securityConsole.postInit();
+	_securityConsole.setup(3260, 3, 1);
+	_securityConsole.setPosition(Common::Point(265, 163));
+	_securityConsole.fixPriority(180);
+	_securityConsole._numFrames = 10;
+	_securityConsole.setDetails(3260, 6, 1, 8, 1, (SceneItem *)NULL);
+	_securityConsole.animate(ANIM_MODE_2, NULL);
 
-	_actor11.postInit();
-	_actor11.setup(3260, 4, 1);
-	_actor11.setPosition(Common::Point(127, 108));
-	_actor11.fixPriority(120);
-	_actor11.setAction(&_action11, &_actor11);
-	_actor11._numFrames = 15;
-	_actor11.setDetails(3260, 6, 1, 8, 1, (SceneItem *)NULL);
-	_actor11.animate(ANIM_MODE_2, NULL);
+	_computerConsole.postInit();
+	_computerConsole.setup(3260, 4, 1);
+	_computerConsole.setPosition(Common::Point(127, 108));
+	_computerConsole.fixPriority(120);
+	_computerConsole.setAction(&_action11, &_computerConsole);
+	_computerConsole._numFrames = 15;
+	_computerConsole.setDetails(3260, 6, 1, 8, 1, (SceneItem *)NULL);
+	_computerConsole.animate(ANIM_MODE_2, NULL);
 
-	_actor12.postInit();
-	_actor12.setup(3260, 5, 1);
-	_actor12.setPosition(Common::Point(274, 65));
-	_actor12.setAction(&_action12, &_actor12);
-	_actor12._numFrames = 5;
-	_actor12.setDetails(3260, 9, 1, 11, 1, (SceneItem *)NULL);
-	_actor12.animate(ANIM_MODE_2, NULL);
+	_lightingConsole.postInit();
+	_lightingConsole.setup(3260, 5, 1);
+	_lightingConsole.setPosition(Common::Point(274, 65));
+	_lightingConsole.setAction(&_action12, &_lightingConsole);
+	_lightingConsole._numFrames = 5;
+	_lightingConsole.setDetails(3260, 9, 1, 11, 1, (SceneItem *)NULL);
+	_lightingConsole.animate(ANIM_MODE_2, NULL);
 
 	_item1.setDetails(Rect(0, 0, 320, 200), 3260, 0, 1, 2, 1, NULL);
 	R2_GLOBALS._player.postInit();
 
 	if (R2_GLOBALS._player._oldCharacterScene[3] == 3275) {
 		_sceneMode = 3270;
-		setAction(&_sequenceManager, this, 3270, &R2_GLOBALS._player, &_actor13, NULL);
+		setAction(&_sequenceManager, this, 3270, &R2_GLOBALS._player, &_door, NULL);
 	} else {
 		R2_GLOBALS._player.setup(30, 5, 1);
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -1522,15 +1528,15 @@ void Scene3260::signal() {
 		break;
 	case 3272:
 		_sceneMode = 3273;
-		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		SceneItem::display(3260, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
 		R2_GLOBALS._player.disableControl();
 		R2_INVENTORY.setObjectScene(R2_TOOLBOX, 3);
 		R2_INVENTORY.setObjectScene(R2_LASER_HACKSAW, 3);
-		setAction(&_sequenceManager, this, 3273, &R2_GLOBALS._player, &_actor14, NULL);
+		setAction(&_sequenceManager, this, 3273, &R2_GLOBALS._player, &_toolbox, NULL);
 		break;
 	case 3273:
-		_actor4.remove();
+		_screen4.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	default:
@@ -1543,7 +1549,8 @@ void Scene3260::signal() {
  * Scene 3275 - Hall
  *
  *--------------------------------------------------------------------------*/
-bool Scene3275::Actor2::startAction(CursorType action, Event &event) {
+
+bool Scene3275::Door::startAction(CursorType action, Event &event) {
 	Scene3275 *scene = (Scene3275 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -1551,11 +1558,11 @@ bool Scene3275::Actor2::startAction(CursorType action, Event &event) {
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3275;
-	scene->setAction(&scene->_sequenceManager, scene, 3275, &R2_GLOBALS._player, &scene->_actor2, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 3275, &R2_GLOBALS._player, &scene->_door, NULL);
 	return true;
 }
 
-void Scene3275::Exit1::changeScene() {
+void Scene3275::CellExit::changeScene() {
 	Scene3275 *scene = (Scene3275 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 0;
@@ -1574,28 +1581,26 @@ void Scene3275::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._sceneManager._previousScene = 3260;
 
 	if (R2_GLOBALS._sceneManager._previousScene == 3150)
-		g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
-	else
-		g_globals->gfxManager()._bounds.moveTo(Common::Point(0, 0));
+		_sceneBounds = Rect(160, 0, 480, 200);
 
 	SceneExt::postInit();
-	_exit1.setDetails(Rect(398, 60, 439, 118), SHADECURSOR_UP, 3150);
-	_exit1.setDest(Common::Point(418, 128));
+	_cellExit.setDetails(Rect(398, 60, 439, 118), SHADECURSOR_UP, 3150);
+	_cellExit.setDest(Common::Point(418, 128));
 
 	_actor1.postInit();
 	_actor1.setup(3275, 1, 7);
 	_actor1.setPosition(Common::Point(419, 119));
 
-	_actor2.postInit();
-	_actor2.setup(3275, 2, 1);
-	_actor2.setPosition(Common::Point(56, 118));
-	_actor2.setDetails(3275, 3, 4, -1, 1, (SceneItem *)NULL);
+	_door.postInit();
+	_door.setup(3275, 2, 1);
+	_door.setPosition(Common::Point(56, 118));
+	_door.setDetails(3275, 3, 4, -1, 1, (SceneItem *)NULL);
 
-	_item2.setDetails(Rect(153, 58, 200, 120), 3275, 6, 7, 8, 1, NULL);
-	_item3.setDetails(Rect(275, 58, 331, 120), 3275, 6, 7, 8, 1, NULL);
-	_item4.setDetails(Rect(0, 66, 22, 127), 3275, 9, 10, 11, 1, NULL);
-	_item5.setDetails(Rect(457, 66, 480, 127), 3275, 9, 10, 11, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 480, 200), 3275, 0, 1, 2, 1, NULL);
+	_emptyCell1.setDetails(Rect(153, 58, 200, 120), 3275, 6, 7, 8, 1, NULL);
+	_emptyCell2.setDetails(Rect(275, 58, 331, 120), 3275, 6, 7, 8, 1, NULL);
+	_securityBeams1.setDetails(Rect(0, 66, 22, 127), 3275, 9, 10, 11, 1, NULL);
+	_securityBeams2.setDetails(Rect(457, 66, 480, 127), 3275, 9, 10, 11, 1, NULL);
+	_background.setDetails(Rect(0, 0, 480, 200), 3275, 0, 1, 2, 1, NULL);
 
 	R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
 	R2_GLOBALS._player.postInit();
@@ -1611,7 +1616,7 @@ void Scene3275::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 	} else if (R2_GLOBALS._player._oldCharacterScene[3] == 3260) {
 		_sceneMode = 3276;
-		setAction(&_sequenceManager, this, 3276, &R2_GLOBALS._player, &_actor2, NULL);
+		setAction(&_sequenceManager, this, 3276, &R2_GLOBALS._player, &_door, NULL);
 	} else {
 		R2_GLOBALS._player.setup(30, 3, 1);
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -1640,6 +1645,7 @@ void Scene3275::signal() {
  * Scene 3350 - Cutscene - Ship landing
  *
  *--------------------------------------------------------------------------*/
+
 void Scene3350::postInit(SceneObjectList *OwnerList) {
 	loadScene(3350);
 	R2_GLOBALS._uiElements._active = false;

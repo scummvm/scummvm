@@ -267,10 +267,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 3255:
 		return new Scene3255();
 	case 3260:
-		// Computer room
+		// ARM Base - Computer room
 		return new Scene3260();
 	case 3275:
-		// Hall
+		// ARM Base - Hall
 		return new Scene3275();
 	case 3350:
 		// Cutscene - Ship landing
@@ -1351,10 +1351,13 @@ void SceneArea::remove() {
 }
 
 void SceneArea::process(Event &event) {
+	Common::Point mousePos = event.mousePos;
+	mousePos.x += R2_GLOBALS._sceneManager._scene->_sceneBounds.left;
+
 	if (!R2_GLOBALS._insetUp && _enabled && R2_GLOBALS._events.isCursorVisible()) {
 		CursorType cursor = R2_GLOBALS._events.getCursor();
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_bounds.contains(mousePos)) {
 			// Cursor moving in bounded area
 			if (cursor != _cursorNum) {
 				_savedCursorNum = cursor;
@@ -1362,7 +1365,7 @@ void SceneArea::process(Event &event) {
 				R2_GLOBALS._events.setCursor(_cursorNum);
 			}
 			_insideArea = true;
-		} else if ((event.mousePos.y < 171) && _insideArea && (_cursorNum == cursor) &&
+		} else if ((mousePos.y < 171) && _insideArea && (_cursorNum == cursor) &&
 				(_savedCursorNum != CURSOR_NONE)) {
 			// Cursor moved outside bounded area
 			R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -1402,20 +1405,23 @@ void SceneExit::changeScene() {
 }
 
 void SceneExit::process(Event &event) {
+	Common::Point mousePos = event.mousePos;
+	mousePos.x += R2_GLOBALS._sceneManager._scene->_sceneBounds.left;
+
 	if (!R2_GLOBALS._insetUp) {
 		SceneArea::process(event);
 
 		if (_enabled) {
 			if (event.eventType == EVENT_BUTTON_DOWN) {
-				if (!_bounds.contains(event.mousePos))
+				if (!_bounds.contains(mousePos))
 					_moving = false;
 				else if (!R2_GLOBALS._player._canWalk) {
 					_moving = false;
 					changeScene();
 					event.handled = true;
 				} else {
-					Common::Point dest((_destPos.x == -1) ? event.mousePos.x : _destPos.x,
-						(_destPos.y == -1) ? event.mousePos.y : _destPos.y);
+					Common::Point dest((_destPos.x == -1) ? mousePos.x : _destPos.x,
+						(_destPos.y == -1) ? mousePos.y : _destPos.y);
 					ADD_PLAYER_MOVER(dest.x, dest.y);
 
 					_moving = true;
