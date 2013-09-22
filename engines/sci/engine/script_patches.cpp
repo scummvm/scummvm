@@ -59,6 +59,58 @@ struct SciScriptSignature {
 //  - rinse and repeat
 
 // ===========================================================================
+// Conquests of Camelot
+// At the bazaar in Jerusalem, it's possible to see a girl taking a shower.
+//  If you get too close, you get warned by the father - if you don't get away,
+//  he will kill you.
+// Instead of walking there manually, it's also possible to enter "look window"
+//  and ego will automatically walk to the window. It seems that this is something
+//  that wasn't properly implemented, because instead of getting killed, you will
+//  get an "Oops" message in Sierra SCI.
+//
+// This is caused by peepingTom in script 169 not getting properly initialized.
+// peepingTom calls the object behind global b9h. This global variable is
+//  properly initialized, when walking there manually (method fawaz::doit).
+// When you instead walk there automatically (method fawaz::handleEvent), that
+//  global isn't initialized, which then results in the Oops-message in Sierra SCI
+//  and an error message in ScummVM/SCI.
+//
+// We fix the script by patching in a jump to the proper code inside fawaz::doit.
+// Responsible method: fawaz::handleEvent
+// Fixes bug #3614969
+const byte camelotSignaturePeepingTom[] = {
+	5,
+	0x72, 0x7e, 0x07,  // lofsa fawaz <-- start of proper initializion code
+	0xa1, 0xb9,        // sag b9h
+	+255, 0,
+	+255, 0,
+	+61, 19,           // skip 571 bytes
+	0x39, 0x7a,        // pushi 7a <-- initialization code when walking automatically
+	0x78,              // push1
+	0x7a,              // push2
+	0x38, 0xa9, 0x00,  // pushi 00a9 - script 169
+	0x78,              // push1
+	0x43, 0x02, 0x04,  // call kScriptID
+	0x36,              // push
+	0x81, 0x00,        // lag 00
+	0x4a, 0x06,        // send 06
+	0x32, 0x20, 0x05,  // jmp [end of fawaz::handleEvent]
+	0
+};
+
+const uint16 camelotPatchPeepingTom[] = {
+	PATCH_ADDTOOFFSET | +576,
+	0x32, 0xbd, 0xfd,  // jmp to fawaz::doit / properly init peepingTom code
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                 adjust
+const SciScriptSignature camelotSignatures[] = {
+	{    62, "fix peepingTom Sierra bug", 1, PATCH_MAGICDWORD(0x7e, 0x07, 0xa1, 0xb9), -1, camelotSignaturePeepingTom, camelotPatchPeepingTom },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // stayAndHelp::changeState (0) is called when ego swims to the left or right
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
@@ -1554,6 +1606,9 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
 	switch (g_sci->getGameId()) {
+	case GID_CAMELOT:
+		signatureTable = camelotSignatures;
+		break;
 	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
 		break;
