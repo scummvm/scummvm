@@ -57,6 +57,10 @@ RenderManager::~RenderManager() {
 	_workingWindowBuffer.free();
 	_currentBackground.free();
 	_backBuffer.free();
+
+	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
+		delete (*iter)._value.data;
+	}
 }
 
 void RenderManager::update(uint deltaTimeInMillis) {
