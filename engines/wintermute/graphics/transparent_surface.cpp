@@ -60,15 +60,15 @@ public:
 	static void blendPixel(byte *in, byte *out, int colorMod);
 };
 
+/**
+ * Perform additive blending of a pixel, applying beforehand a given colormod.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+ */
 
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
-	/**
-	 * Perform additive blending of a pixel, applying beforehand a given colormod.
-	 * @param ina, inr, ing, inb: the input pixel, split into its components.
-	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
-	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
-	 */
 
 	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
 	// Just use the faster, sans-colormod version
@@ -97,14 +97,14 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
 	}
 }
 
-void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+/**
+ * Perform subtractive blending of a pixel, applying beforehand a given colormod.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+ */
 
-	/**
-	 * Perform subtractive blending of a pixel, applying beforehand a given colormod.
-	 * @param ina, inr, ing, inb: the input pixel, split into its components.
-	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
-	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
-	 */
+void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
 	// Just use the faster, sans-colormod version
@@ -138,14 +138,14 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 	}
 }
 
-void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+/**
+ * Perform "regular" alphablending of a pixel, applying beforehand a given colormod.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+ */
 
-	/**
-	 * Perform "regular" alphablending of a pixel, applying beforehand a given colormod.
-	 * @param ina, inr, ing, inb: the input pixel, split into its components.
-	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
-	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
-	 */
+void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
 	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
 	// Just use the faster, sans-colormod version
@@ -208,13 +208,13 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 	}
 }
 
-void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+/**
+ * Perform "regular" alphablending of a pixel.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ */
 
-	/**
-	 * Perform "regular" alphablending of a pixel.
-	 * @param ina, inr, ing, inb: the input pixel, split into its components.
-	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
-	 */
+void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
 	if (ina == 0) {
 		return;
@@ -232,13 +232,13 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 	}
 }
 
-void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+/**
+ * Perform subtractive blending of a pixel.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ */
 
-	/**
-	 * Perform subtractive blending of a pixel.
-	 * @param ina, inr, ing, inb: the input pixel, split into its components.
-	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
-	 */
+void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
 	if (ina == 0) {
 		return;
@@ -257,13 +257,13 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 	}
 }
 
+/**
+ * Perform additive blending of a pixel.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ */
+
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
-	
-	/**
-	 * Perform additive blending of a pixel.
-	 * @param ina, inr, ing, inb: the input pixel, split into its components.
-	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
-	 */
 
 	if (ina == 0) {
 		return;
@@ -433,10 +433,12 @@ void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 	}
 }
 
-void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 /**
  * Optimized version of doBlit to be used w/binary blitting (blit or no-blit, no blending).
  */
+
+void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+
 	byte *in;
 	byte *out;
 
@@ -460,22 +462,22 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 	}
 }
 
+/**
+ * What we have here is a template method that calls blendPixel() from a different
+ * class - the one we call it with - thus performing a different type of blending.
+ *
+ * @param *ino a pointer to the input surface
+ * @param *outo a pointer to the output surface
+ * @param width width of the input surface
+ * @param height height of the input surface
+ * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
+ * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
+ * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
+ * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
+ */
+
 template<class Blender> 
 void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	/**
-	 * What we have here is a template method that calls blendPixel() from a different
-	 * class - the one we call it with - thus performing a different type of blending.
-	 *
-	 * @param *ino a pointer to the input surface
-	 * @param *outo a pointer to the output surface
-	 * @param width width of the input surface
-	 * @param height height of the input surface
-	 * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
-	 * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
-	 * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
-	 * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
-	 */
 
 	byte *in;
 	byte *out;

@@ -167,7 +167,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @brief Scale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle != 0, use rotoscale.
 	 *
-	 * @param transform a TransformStruct wrapping the required info. See relevant docs.
+	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
 	 * 
 	 */
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
@@ -176,7 +176,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
 	 *
-	 * @param transform a TransformStruct wrapping the required info. See relevant docs.
+	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
 	 * 
 	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
