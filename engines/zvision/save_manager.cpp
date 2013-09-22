@@ -80,6 +80,7 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName) {
 	// Cleanup
 	delete[] buffer;
 	file->finalize();
+	delete file;
 }
 
 void SaveManager::autoSave() {
@@ -96,7 +97,9 @@ void SaveManager::autoSave() {
 
 	writeSaveGameData(file);
 
+	// Cleanup
 	file->finalize();
+	delete file;
 }
 
 void SaveManager::writeSaveGameData(Common::OutSaveFile *file) {
