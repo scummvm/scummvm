@@ -52,17 +52,6 @@ public:
 	 */
 	void reset();
 	/**
-	 * How big has the DirtyRect input list grown?
-	 */
-	int getSize();
-	/**
-	 * True if DR are temporarily disabled.
-	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
-	 * may decide to do so.
-	 */
-	bool _disableDirtyRects;
-	Common::Rect *getRect(int id);
-	/**
 	 * @brief returns on optimized list of rects where duplicates and intersections are eschewed.
 	 */
 	Common::Array<Common::Rect *> getOptimized();
@@ -100,6 +89,17 @@ private:
 	// when the renderer is done with them.
 	Common::Rect *_clipRect;
 	bool isHuge(const Common::Rect *rect);
+	/**
+	 * How big has the DirtyRect input list grown?
+	 */
+	int getSize();
+	/**
+	 * True if DR are temporarily disabled.
+	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
+	 * may decide to do so.
+	 */
+	bool _disableDirtyRects;
+	Common::Rect *getRect(int id);
 };
 } // End of namespace Wintermute
 
