@@ -34,6 +34,8 @@ namespace Wintermute {
 void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 
+// These gather together various blendPixel functions for use with templates.
+
 class BlenderAdditive {
 public:
 	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
@@ -282,6 +284,9 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
 
 #if ENABLE_BILINEAR
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
+
+	// TODO: Do some optimization on this. This is completely naive.
+	
 	int srcW = srcRect.width();
 	int srcH = srcRect.height();
 	int dstW = dstRect.width();
@@ -368,6 +373,9 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 }
 #else
 void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
+
+	// TODO: Have the Rect arguments become completely useless at this point?
+
 	int srcW = srcRect.width();
 	int srcH = srcRect.height();
 	int dstW = dstRect.width();
@@ -406,7 +414,9 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 }
 
 void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
-
+/**
+ * Optimized version of doBlit to be used w/opaque blitting (no alpha).
+ */
 	byte *in;
 	byte *out;
 
@@ -424,6 +434,9 @@ void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 }
 
 void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+/**
+ * Optimized version of doBlit to be used w/binary blitting (blit or no-blit, no blending).
+ */
 	byte *in;
 	byte *out;
 
@@ -449,6 +462,20 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 
 template<class Blender> 
 void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+
+	/**
+	 * What we have here is a template method that calls blendPixel() from a different
+	 * class - the one we call it with - thus performing a different type of blending.
+	 *
+	 * @param *ino a pointer to the input surface
+	 * @param *outo a pointer to the output surface
+	 * @param width width of the input surface
+	 * @param height height of the input surface
+	 * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
+	 * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
+	 * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
+	 * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
+	 */
 
 	byte *in;
 	byte *out;
@@ -684,6 +711,7 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 }
 
 TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
+
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
 

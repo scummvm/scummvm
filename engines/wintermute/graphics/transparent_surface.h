@@ -54,8 +54,28 @@ struct TransparentSurface : public Graphics::Surface {
 	void disableColorKey();
 
 #if ENABLE_BILINEAR
+	/*
+	 * Pick color from a point in source and copy it to a pixel in target.
+	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
+	 * We do bilinear interpolation to estimate the color of the point even if the 
+	 * point is specuified w/subpixel accuracy.
+	 *
+	 * @param projX, projY, point in the source to pick color from.
+	 * @param dstX, dstY destionation pixel
+	 * @param *src, *dst pointer to the source and dest surfaces
+	 */
 	static void copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
 #else
+	/*
+	 * Pick color from a point in source and copy it to a pixel in target.
+	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
+	 * HOWEVER, this particular function just does nearest neighbor.
+	 * Use copyPixelBilinear if you interpolation.
+	 *
+	 * @param projX, projY, point in the source to pick color from.
+	 * @param dstX, dstY destionation pixel
+	 * @param *src, *dst pointer to the source and dest surfaces
+	 */
 	static void copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
 #endif
 	// Enums
@@ -142,8 +162,23 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
-
+	
+	/**
+	 * @brief Scale function; this returns a transformed version of this surface after rotation and
+	 * scaling. Please do not use this if angle != 0, use rotoscale.
+	 *
+	 * @param transform a TransformStruct wrapping the required info. See relevant docs.
+	 * 
+	 */
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
+
+	/**
+	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
+	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
+	 *
+	 * @param transform a TransformStruct wrapping the required info. See relevant docs.
+	 * 
+	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 };
 
