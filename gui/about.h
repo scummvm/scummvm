@@ -50,6 +50,11 @@ public:
 	void drawDialog();
 	void handleTickle();
 	void handleMouseUp(int x, int y, int button, int clickCount);
+#ifdef ENABLE_TOUCHMAPPER
+	void handleFingerSingleTap(int x, int y, int button, int clickCount) {
+		handleMouseUp(x, y, button, clickCount);
+	};
+#endif
 	void handleKeyDown(Common::KeyState state);
 	void handleKeyUp(Common::KeyState state);
 
