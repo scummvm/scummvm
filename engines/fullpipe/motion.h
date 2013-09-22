@@ -30,12 +30,12 @@ int doSomeAnimation(int objId, int objKey, int a3);
 int doSomeAnimation2(int objId, int objKey);
 
 class MotionController : public CObject {
- public:
+public:
 	int _field_4;
 	bool _isEnabled;
 
- public:
-	MotionController() : _isEnabled(true) {}
+public:
+	MotionController() : _isEnabled(true), _field_4(0) {}
 	virtual bool load(MfcArchive &file);
 
 	void setEnabled() { _isEnabled = true; }
