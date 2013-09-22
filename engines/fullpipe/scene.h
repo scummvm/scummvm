@@ -88,7 +88,6 @@ class SceneTag : public CObject {
 	char *_tag;
 	Scene *_scene;
 	int16 _sceneId;
-	int16 _field_12;
 
  public:
 	SceneTag();
