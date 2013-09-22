@@ -1553,7 +1553,7 @@ bool Movement::gotoPrevFrame() {
 
 		_currDynamicPhaseIndex--;
 		if (_currDynamicPhaseIndex < 0)
-			_currDynamicPhaseIndex = _currMovement->_dynamicPhases.size() - 1;
+			_currDynamicPhaseIndex = _dynamicPhases.size() - 1;
 	}
 
 	updateCurrDynamicPhase();
