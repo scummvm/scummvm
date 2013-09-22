@@ -61,10 +61,11 @@ static const int kSavegameVersion = 1;
 
 class AvalancheEngine : public Engine {
 public:
-	Graphics *_graphics;
-	Parser *_parser;
+	byte _saveNum; // number of times this game has been saved
 
 	Avalot *_avalot;
+	Graphics *_graphics;
+	Parser *_parser;
 	Pingo *_pingo;
 	Dialogs *_dialogs;
 	Background *_background;

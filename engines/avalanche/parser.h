@@ -80,6 +80,9 @@ public:
 
 	byte _wearing; // what you're wearing
 	byte _sworeNum; // number of times you've sworn
+	byte _alcoholLevel; // Your blood alcohol level.
+	byte _playedNim; // How many times you've played Nim.
+	bool _boughtOnion; // Have you bought an onion yet?
 
 	Parser(AvalancheEngine *vm);
 

@@ -123,11 +123,11 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_parser->_wearing);
 	sz.syncAsByte(_parser->_sworeNum);
 	if (sz.isSaving())
-		_avalot->_saveNum++;
-	sz.syncAsByte(_avalot->_saveNum);
+		_saveNum++;
+	sz.syncAsByte(_saveNum);
 	sz.syncBytes(_avalot->_roomCount, 100);
-	sz.syncAsByte(_avalot->_alcoholLevel);
-	sz.syncAsByte(_avalot->_playedNim);
+	sz.syncAsByte(_parser->_alcoholLevel);
+	sz.syncAsByte(_parser->_playedNim);
 	sz.syncAsByte(_avalot->_wonNim);
 	sz.syncAsByte(_avalot->_wineState);
 	sz.syncAsByte(_avalot->_cwytalotGone);
@@ -135,7 +135,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_avalot->_aylesIsAwake);
 	sz.syncAsByte(_avalot->_drawbridgeOpen);
 	sz.syncAsByte(_avalot->_avariciusTalk);
-	sz.syncAsByte(_avalot->_boughtOnion);
+	sz.syncAsByte(_parser->_boughtOnion);
 	sz.syncAsByte(_avalot->_rottenOnion);
 	sz.syncAsByte(_avalot->_onionInVinegar);
 	sz.syncAsByte(_avalot->_givenToSpludwick);
