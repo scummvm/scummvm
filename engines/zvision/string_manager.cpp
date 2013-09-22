@@ -111,6 +111,7 @@ void StringManager::parseStrFile(const Common::String &fileName) {
 		}
 
 		lineNumber++;
+		assert(lineNumber <= NUM_TEXT_LINES);
 	}
 }
 
