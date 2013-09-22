@@ -38,12 +38,37 @@ class DirtyRectContainer {
 public:
 	DirtyRectContainer();
 	~DirtyRectContainer();
+	/**
+	 * @brief Add a dirty rect. To be called by the outside world.
+	 * Doesn't necessarily result in a new dirty rect, it just informs the 
+	 * DR container that an area is to be considered dirty.
+	 * The DirtyRectContainer may then do what's optimal, which includes
+	 * ignoring the rect altoegether (e.g. if a subset of an existing one)
+	 * or disabling dirtyrects altogether.
+	 */
 	void addDirtyRect(const Common::Rect &rect, const Common::Rect *clipRect);
+	/** 
+	 * resets the DirtyRectContainer
+	 */
 	void reset();
+	/**
+	 * How big has the DirtyRect input list grown?
+	 */
 	int getSize();
+	/**
+	 * True if DR are temporarily disabled.
+	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
+	 * may decide to do so.
+	 */
 	bool _disableDirtyRects;
 	Common::Rect *getRect(int id);
+	/**
+	 * @brief returns on optimized list of rects where duplicates and intersections are eschewed.
+	 */
 	Common::Array<Common::Rect *> getOptimized();
+	/**
+	 * @brief returns the most naive but cheap solution - the whole viewport
+	 */
 	Common::Array<Common::Rect *> getFallback();
 private:
 	static const uint kMaxOutputRects = UINT_MAX;
