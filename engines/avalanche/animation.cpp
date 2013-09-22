@@ -933,15 +933,13 @@ void Animation::updateSpeed() {
 
 	_sprites[0]._moveX = (_sprites[0]._moveX / 3) * _sprites[0]._speedX;
 
-	if (_sprites[0]._speedX == _vm->_avalot->kRun)
-		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorYellow);
-	else
-		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorYellow);
-
-	if (_sprites[0]._speedX == _vm->_avalot->kRun)
+	if (_sprites[0]._speedX == _vm->_avalot->kRun) {
 		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorLightblue);
-	else
+		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorYellow);
+	} else {
 		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorLightblue);
+		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorYellow);
+	}
 }
 
 void Animation::changeDirection(byte t, byte dir) {
