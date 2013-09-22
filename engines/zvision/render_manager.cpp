@@ -506,7 +506,7 @@ Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surfa
 	Graphics::Surface *tranposedSurface = new Graphics::Surface();
 	tranposedSurface->create(surface->h, surface->w, surface->format);
 
-	uint16 *source = (uint16 *)surface->getPixels();
+	const uint16 *source = (const uint16 *)surface->getPixels();
 	uint16 *dest = (uint16 *)tranposedSurface->getPixels();
 
 	for (uint32 y = 0; y < tranposedSurface->h; y++) {
