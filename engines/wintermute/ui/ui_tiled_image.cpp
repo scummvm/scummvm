@@ -66,7 +66,7 @@ UITiledImage::~UITiledImage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UITiledImage::display(int x, int y, int width, int height) {
+bool UITiledImage::display(int posX, int posY, int width, int height) {
 	if (!_image) {
 		return STATUS_FAILED;
 	}
@@ -83,11 +83,11 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	assert (height != 0);
 
 	if (_cache == nullptr || width != _width || height != _height) {
+		
+		// Hack to render to an separate "reusable" surface.
+		
 		_gameRef->_renderer->startSpriteBatch(true, width, height);
 		
-		// TODO: Ugly.
- 		//_image->_surface->setAlphaType(ALPHA_FULL);
-
 		int x = 0; 
 		int y = 0;
 		_width = width;
@@ -129,7 +129,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 		}
 
 		_gameRef->_renderer->endSpriteBatch(false);
-		// TODO: Hack!	
+
 		_cache = _gameRef->_renderer->getAuxSurface();
 	}
 
@@ -138,7 +138,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	dst.left = 0;
 	dst.setWidth(width);
 	dst.setHeight(height);
-	_cache->displayTrans(x, y, dst);
+	_cache->displayTrans(posX, posY, dst);
 	
 	return STATUS_OK;
 }
