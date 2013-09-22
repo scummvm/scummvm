@@ -196,6 +196,9 @@ MessageQueue::MessageQueue() {
 	_isFinished = 0;
 	_flags = 0;
 	_queueName = 0;
+	_counter = 0;
+	_field_38 = 0;
+	_flag1 = 0;
 }
 
 MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {

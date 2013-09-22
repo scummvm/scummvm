@@ -99,7 +99,6 @@ class MessageQueue : public CObject {
 	int _flags;
 	char *_queueName;
 	int16 _dataId;
-	int16 _field_12;
 	CObject *_field_14;
 	Common::List<ExCommand *> _exCommands;
 	int _counter;
