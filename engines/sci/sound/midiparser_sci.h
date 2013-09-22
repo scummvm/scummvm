@@ -60,7 +60,6 @@ public:
 	bool loadMusic(byte *, uint32) {
 		return false;
 	}
-	bool jumpToOffset(uint32 offset);
 	void sendInitCommands();
 	void unloadMusic();
 	void setMasterVolume(byte masterVolume);

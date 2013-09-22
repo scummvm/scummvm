@@ -20,6 +20,9 @@
  *
  */
 
+#include "sci/sci.h"
+#include "sci/engine/state.h"
+
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/sound/midiparser_sci.h"
@@ -100,18 +103,6 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 		setTrack(0);
 	_loopTick = 0;
 
-	return true;
-}
-
-bool MidiParser_SCI::jumpToOffset(uint32 offset) {
-	if (_activeTrack >= _numTracks)
-		return false;
-
-	assert(!_jumpingToTick); // This function must not be called while within MidiParser::jumpToTick()
-
-	resetTracking();
-	_position._playPos = _tracks[_activeTrack] + offset;
-	parseNextEvent(_nextEvent);
 	return true;
 }
 
@@ -543,9 +534,45 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 	case 0xC:
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != kSetSignalLoop) {
-				if (!_jumpingToTick) {
-					_pSnd->setSignal(info.basic.param1);
-					debugC(4, kDebugLevelSound, "signal %04x", info.basic.param1);
+				// At least in kq5/french&mac the first scene in the intro has
+				// a song that sets signal to 4 immediately on tick 0. Signal
+				// isn't set at that point by sierra sci and it would cause the
+				// castle daventry text to get immediately removed, so we
+				// currently filter it. Sierra SCI ignores them as well at that
+				// time. However, this filtering should only be performed for
+				// SCI1 and newer games. Signalling is done differently in SCI0
+				// though, so ignoring these signals in SCI0 games will result
+				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
+				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
+				// FIXME: SSCI doesn't start playing at the very beginning
+				// of the stream, but at a fixed location a few commands later.
+				// That is probably why this signal isn't triggered
+				// immediately there.
+				bool skipSignal = false;
+				if (_soundVersion >= SCI_VERSION_1_EARLY) {
+					if (!_position._playTick) {
+						skipSignal = true;
+						switch (g_sci->getGameId()) {
+						case GID_ECOQUEST2:
+							// In Eco Quest 2 room 530 - gonzales is supposed to dance
+							// WORKAROUND: we need to signal in this case on tick 0
+							// this whole issue is complicated and can only be properly fixed by
+							// changing the whole parser to a per-channel parser. SSCI seems to
+							// start each channel at offset 13 (may be 10 for us) and only
+							// starting at offset 0 when the music loops to the initial position.
+							if (g_sci->getEngineState()->currentRoomNumber() == 530)
+								skipSignal = false;
+							break;
+						default:
+							break;
+						}
+					}
+				}
+				if (!skipSignal) {
+					if (!_jumpingToTick) {
+						_pSnd->setSignal(info.basic.param1);
+						debugC(4, kDebugLevelSound, "signal %04x", info.basic.param1);
+					}
 				}
 			} else {
 				_loopTick = _position._playTick;
