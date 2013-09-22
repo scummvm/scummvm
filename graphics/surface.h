@@ -219,7 +219,7 @@ public:
 	 * @param width     The width of the destination rectangle
 	 * @param height    The height of the destination rectangle
 	 */
-	void copyRectToSurface(const void *buffer, int pitch, int destX, int destY, int width, int height);
+	void copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height);
 	/**
 	 * Copies a bitmap to the Surface internal buffer. The pixel format
 	 * of buffer must match the pixel format of the Surface.

@@ -133,7 +133,7 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	return subSurface;
 }
 
-void Surface::copyRectToSurface(const void *buffer, int pitch, int destX, int destY, int width, int height) {
+void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < w);
@@ -146,8 +146,8 @@ void Surface::copyRectToSurface(const void *buffer, int pitch, int destX, int de
 	byte *dst = (byte *)getBasePtr(destX, destY);
 	for (int i = 0; i < height; i++) {
 		memcpy(dst, src, width * format.bytesPerPixel);
-		src += pitch;
-		dst += this->pitch;
+		src += srcPitch;
+		dst += pitch;
 	}
 }
 
