@@ -225,6 +225,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	g_fullpipe->_globalMessageQueueList->addMessageQueue(this);
 
 	_isFinished = 0;
+	_flag1 = 0;
 }
 
 MessageQueue::~MessageQueue() {
