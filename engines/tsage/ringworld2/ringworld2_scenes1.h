@@ -1108,16 +1108,16 @@ public:
 };
 
 class Scene1950 : public SceneExt {
-	/* Areas */
-	class Area1: public SceneArea {
+	/* Windows */
+	class KeypadWindow: public ModalWindow {
 	public:
-		class Actor10 : public SceneActor {
+		class KeypadButton : public SceneActor {
 		public:
-			int _fieldA4;
+			int _buttonIndex;
 			int _fieldA6;
 			int _fieldA8;
 
-			Actor10();
+			KeypadButton();
 			void synchronize(Serializer &s);
 
 			void init(int indx);
@@ -1126,21 +1126,20 @@ class Scene1950 : public SceneExt {
 		};
 
 		SceneActor _areaActor;
-		Actor10 _arrActor1[16];
+		KeypadButton _buttons[16];
 
 		byte _field20;
-		int _fieldB65;
+		int _buttonIndex;
 
-		Area1();
-		void synchronize(Serializer &s);
-
+		KeypadWindow();
+		virtual void synchronize(Serializer &s);
 		virtual void remove();
 		virtual void process(Event &event);
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
-	class Hotspot2 : public NamedHotspot {
+	class Keypad : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1150,7 +1149,7 @@ class Scene1950 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Scrolls : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1217,17 +1216,17 @@ private:
 	void subBF4B4(int indx);
 public:
 	NamedHotspot _item1;
-	Hotspot2 _item2;
+	Keypad _keypad;
 	SceneActor _southDoorway;
 	SceneObject _northDoorway;
 	Door _door;
-	Actor3 _actor3;
-	SceneActor _actor4;
+	Scrolls _scrolls;
+	SceneActor _containmentField;
 	Actor5 _actor5;
-	SceneActor _actor6;
+	SceneActor _cube;
 	SceneActor _actor7;
 	Vampire _vampire;
-	Area1 _area1;
+	KeypadWindow _KeypadWindow;
 	NorthExit _northExit;
 	UpExit _upExit;
 	EastExit _eastExit;

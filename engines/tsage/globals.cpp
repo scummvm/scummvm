@@ -432,24 +432,24 @@ void Ringworld2Globals::reset() {
 		_vampireData[i]._isAlive = true;
 		_vampireData[i]._position = Common::Point();
 	}
-	_vampireData[0].var2 = 1;
-	_vampireData[1].var2 = 2;
-	_vampireData[2].var2 = 2;
-	_vampireData[3].var2 = 3;
-	_vampireData[4].var2 = 2;
-	_vampireData[5].var2 = 2;
-	_vampireData[6].var2 = 3;
-	_vampireData[7].var2 = 1;
-	_vampireData[8].var2 = 1;
-	_vampireData[9].var2 = 3;
-	_vampireData[10].var2 = 3;
-	_vampireData[11].var2 = 1;
-	_vampireData[12].var2 = 2;
-	_vampireData[13].var2 = 3;
-	_vampireData[14].var2 = 2;
-	_vampireData[15].var2 = 3;
-	_vampireData[16].var2 = 1;
-	_vampireData[17].var2 = 1;
+	_vampireData[0]._shotsRequired = 1;
+	_vampireData[1]._shotsRequired = 2;
+	_vampireData[2]._shotsRequired = 2;
+	_vampireData[3]._shotsRequired = 3;
+	_vampireData[4]._shotsRequired = 2;
+	_vampireData[5]._shotsRequired = 2;
+	_vampireData[6]._shotsRequired = 3;
+	_vampireData[7]._shotsRequired = 1;
+	_vampireData[8]._shotsRequired = 1;
+	_vampireData[9]._shotsRequired = 3;
+	_vampireData[10]._shotsRequired = 3;
+	_vampireData[11]._shotsRequired = 1;
+	_vampireData[12]._shotsRequired = 2;
+	_vampireData[13]._shotsRequired = 3;
+	_vampireData[14]._shotsRequired = 2;
+	_vampireData[15]._shotsRequired = 3;
+	_vampireData[16]._shotsRequired = 1;
+	_vampireData[17]._shotsRequired = 1;
 
 	_v566A6 = 3800;
 	_landerSuitNumber = 2;
@@ -584,7 +584,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	// Synchronise Flub maze vampire data
 	for (i = 0; i < 18; ++i) {
 		s.syncAsSint16LE(_vampireData[i]._isAlive);
-		s.syncAsSint16LE(_vampireData[i].var2);
+		s.syncAsSint16LE(_vampireData[i]._shotsRequired);
 		s.syncAsSint16LE(_vampireData[i]._position.x);
 		s.syncAsSint16LE(_vampireData[i]._position.y);
 	}

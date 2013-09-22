@@ -246,7 +246,7 @@ class ScannerDialog;
 
 struct VampireData {
 	bool _isAlive;
-	int var2;
+	int _shotsRequired;
 	Common::Point _position;
 };
 
