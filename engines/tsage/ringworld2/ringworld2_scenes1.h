@@ -1114,8 +1114,8 @@ class Scene1950 : public SceneExt {
 		class KeypadButton : public SceneActor {
 		public:
 			int _buttonIndex;
-			int _fieldA6;
-			int _fieldA8;
+			bool _pressed;
+			bool _toggled;
 
 			KeypadButton();
 			void synchronize(Serializer &s);
@@ -1212,7 +1212,7 @@ class Scene1950 : public SceneExt {
 private:
 	void initArea();
 	void enterArea();
-	void subBF4B4(int indx);
+	void doButtonPress(int indx);
 public:
 	NamedHotspot _item1;
 	Keypad _keypad;
@@ -1221,7 +1221,7 @@ public:
 	Door _door;
 	Scrolls _scrolls;
 	SceneActor _containmentField;
-	Actor5 _actor5;
+	Actor5 _gem;
 	SceneActor _cube;
 	SceneActor _actor7;
 	Vampire _vampire;

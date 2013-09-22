@@ -2138,7 +2138,7 @@ void AnimationPlayerExt::synchronize(Serializer &s) {
 /*--------------------------------------------------------------------------*/
 
 ModalWindow::ModalWindow() {
-	_field20 = 0;
+	_insetCount = 0;
 }
 
 void ModalWindow::remove() {
@@ -2153,11 +2153,11 @@ void ModalWindow::remove() {
 void ModalWindow::synchronize(Serializer &s) {
 	SceneArea::synchronize(s);
 
-	s.syncAsByte(_field20);
+	s.syncAsByte(_insetCount);
 }
 
 void ModalWindow::process(Event &event) {
-	if (_field20 != R2_GLOBALS._insetUp)
+	if (_insetCount != R2_GLOBALS._insetUp)
 		return;
 
 	CursorType cursor = R2_GLOBALS._events.getCursor();
@@ -2189,7 +2189,7 @@ void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, 
 	_cursorNum = CURSOR_INVALID;
 	scene->_sceneAreas.push_front(this);
 	++R2_GLOBALS._insetUp;
-	_field20 = R2_GLOBALS._insetUp;
+	_insetCount = R2_GLOBALS._insetUp;
 }
 
 void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {

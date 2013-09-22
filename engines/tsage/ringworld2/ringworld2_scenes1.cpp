@@ -13567,45 +13567,26 @@ void Scene1950::KeypadWindow::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_buttonIndex);
 }
 
-Scene1950::Scene1950() {
-	_field412 = 0;
-	_field414 = 0;
-	_field416 = 0;
-	_field418 = Common::Point(0, 0);
-	_vampireIndex = 0;
-}
-
-void Scene1950::synchronize(Serializer &s) {
-	SceneExt::synchronize(s);
-
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
-	s.syncAsSint16LE(_field416);
-	s.syncAsSint16LE(_field418.x);
-	s.syncAsSint16LE(_field418.y);
-	s.syncAsSint16LE(_vampireIndex);
-}
-
 Scene1950::KeypadWindow::KeypadButton::KeypadButton() {
 	_buttonIndex = 0;
-	_fieldA6 = 0;
-	_fieldA8 = 0;
+	_pressed = false;
+	_toggled = false;
 }
 
 void Scene1950::KeypadWindow::KeypadButton::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
 	s.syncAsSint16LE(_buttonIndex);
-	s.syncAsSint16LE(_fieldA6);
-	s.syncAsSint16LE(_fieldA8);
+	s.syncAsSint16LE(_pressed);
+	s.syncAsSint16LE(_toggled);
 }
 
 void Scene1950::KeypadWindow::KeypadButton::init(int indx) {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	_buttonIndex = indx;
-	_fieldA6 = 0;
-	_fieldA8 = 0;
+	_pressed = false;
+	_toggled = false;
 
 	postInit();
 	setup(1971, 2, 1);
@@ -13615,24 +13596,25 @@ void Scene1950::KeypadWindow::KeypadButton::init(int indx) {
 }
 
 void Scene1950::KeypadWindow::KeypadButton::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) && (_bounds.contains(event.mousePos)) && (_fieldA6 == 0)) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) 
+			&& (_bounds.contains(event.mousePos)) && !_pressed) {
 		R2_GLOBALS._sound2.play(227);
-		if (_fieldA8 == 0) {
+		if (!_toggled) {
 			setFrame(2);
-			_fieldA8 = 1;
+			_toggled = true;
 		} else {
 			setFrame(1);
-			_fieldA8 = 0;
+			_toggled = false;
 		}
-		_fieldA6 = 1;
+		_pressed = true;
 		event.handled = true;
 	}
 
-	if ((event.eventType == EVENT_BUTTON_UP) && (_fieldA6 != 0)) {
-		_fieldA6 = 0;
+	if ((event.eventType == EVENT_BUTTON_UP) && _pressed) {
+		_pressed = false;
 		event.handled = true;
 		Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
-		scene->subBF4B4(_buttonIndex);
+		scene->doButtonPress(_buttonIndex);
 	}
 }
 
@@ -13649,11 +13631,7 @@ void Scene1950::KeypadWindow::remove() {
 		_buttons[_buttonIndex].remove();
 	}
 
-	// sub201EA
-	R2_GLOBALS._sceneItems.remove((SceneItem *)this);
-	_areaActor.remove();
-	SceneArea::remove();
-	R2_GLOBALS._insetUp--;
+	ModalWindow::remove();
 
 	if (!R2_GLOBALS.getFlag(37))
 		R2_GLOBALS._sound2.play(278);
@@ -13680,17 +13658,8 @@ void Scene1950::KeypadWindow::proc12(int visage, int stripFrameNum, int frameNum
 	R2_GLOBALS._player._canWalk = false;
 
 	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
-	_areaActor.postInit();
-	_areaActor.setup(visage, stripFrameNum, frameNum);
-	_areaActor.setPosition(Common::Point(posX, posY));
-	_areaActor.fixPriority(250);
-	_cursorNum = CURSOR_INVALID;
-	scene->_sceneAreas.push_front(this);
-	++R2_GLOBALS._insetUp;
-	_field20 = R2_GLOBALS._insetUp;
-	//
 
-	_areaActor.fixPriority(248);
+	_object1.fixPriority(248);
 	scene->_eastExit._enabled = false;
 	proc13(1950, 27, 28, 27);
 
@@ -13702,6 +13671,8 @@ void Scene1950::KeypadWindow::proc13(int resNum, int lookLineNum, int talkLineNu
 	// Copy of Scene1200::LaserPanel::proc13()
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
+
+/*--------------------------------------------------------------------------*/
 
 bool Scene1950::Keypad::startAction(CursorType action, Event &event) {
 	if ((action != CURSOR_USE) || (R2_GLOBALS.getFlag(37)))
@@ -13758,6 +13729,8 @@ bool Scene1950::Actor5::startAction(CursorType action, Event &event) {
 
 	return true;
 }
+
+/*--------------------------------------------------------------------------*/
 
 Scene1950::Vampire::Vampire() {
 	_fieldA8 = 0;
@@ -13920,6 +13893,8 @@ bool Scene1950::Vampire::startAction(CursorType action, Event &event) {
 	return true;
 }
 
+/*--------------------------------------------------------------------------*/
+
 void Scene1950::NorthExit::changeScene() {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
@@ -14060,6 +14035,27 @@ void Scene1950::Exit8::changeScene() {
 		R2_GLOBALS._player.addMover(mover, &pt, scene);
 		_enabled = true;
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene1950::Scene1950() {
+	_field412 = 0;
+	_field414 = 0;
+	_field416 = 0;
+	_field418 = Common::Point(0, 0);
+	_vampireIndex = 0;
+}
+
+void Scene1950::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_field414);
+	s.syncAsSint16LE(_field416);
+	s.syncAsSint16LE(_field418.x);
+	s.syncAsSint16LE(_field418.y);
+	s.syncAsSint16LE(_vampireIndex);
 }
 
 void Scene1950::initArea() {
@@ -14888,16 +14884,16 @@ void Scene1950::enterArea() {
 		_keypad.setDetails(Rect(188, 124, 199, 133), 1950, 27, 28, -1, 2, NULL);
 
 		if (R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 1950) {
-			_actor5.postInit();
-			_actor5.setVisage(1970);
-			_actor5.setStrip(1);
-			_actor5.setFrame(2);
-			_actor5.fixPriority(160);
+			_gem.postInit();
+			_gem.setVisage(1970);
+			_gem.setStrip(1);
+			_gem.setFrame(2);
+			_gem.fixPriority(160);
 		}
 
 		if (R2_GLOBALS.getFlag(37)) {
-			_actor5.setPosition(Common::Point(192, 118));
-			_actor5.setDetails(1950, 9, 4, -1, 2, (SceneItem *) NULL);
+			_gem.setPosition(Common::Point(192, 118));
+			_gem.setDetails(1950, 9, 4, -1, 2, (SceneItem *) NULL);
 		} else {
 			_containmentField.postInit();
 			_containmentField.setVisage(1970);
@@ -14908,8 +14904,8 @@ void Scene1950::enterArea() {
 			_containmentField.fixPriority(159);
 			_containmentField.setDetails(1950, 6, 7, 8, 2, (SceneItem *) NULL);
 
-			_actor5.setPosition(Common::Point(192, 109));
-			_actor5.setDetails(1950, 9, 7, 8, 2, (SceneItem *) NULL);
+			_gem.setPosition(Common::Point(192, 109));
+			_gem.setDetails(1950, 9, 7, 8, 2, (SceneItem *) NULL);
 		}
 
 		_scrolls.postInit();
@@ -14927,7 +14923,7 @@ void Scene1950::enterArea() {
 	} else if (_field414 != 0) {
 		_cube.remove();
 		_containmentField.remove();
-		_actor5.remove();
+		_gem.remove();
 		_actor7.remove();
 		_scrolls.remove();
 
@@ -15043,65 +15039,74 @@ void Scene1950::enterArea() {
 	}
 }
 
-void Scene1950::subBF4B4(int indx) {
+void Scene1950::doButtonPress(int indx) {
+	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 	R2_GLOBALS._player.disableControl();
-	int si = indx - 1;
-	if ((indx / 4) == (si / 4)) {
-		if (si < 0)
-			si = 3;
-	} else
-		si = 4;
 
-	if (_KeypadWindow._buttons[si]._fieldA8 == 0) {
-		_KeypadWindow._buttons[si].setFrame(2);
-		_KeypadWindow._buttons[si]._fieldA8 = 1;
+	int prevIndex = indx - 1;
+	if ((indx / 4) == (prevIndex / 4)) {
+		if (prevIndex < 0)
+			prevIndex = 3;
 	} else {
-		_KeypadWindow._buttons[si].setFrame(1);
-		_KeypadWindow._buttons[si]._fieldA8 = 0;
+		prevIndex += 4;
 	}
 
-	si = indx + 1;
-	if ((indx / 4) == (si / 4)) {
-		if (si >  15)
-			si = 12;
-	} else
-		si -= 4;
-
-	if (_KeypadWindow._buttons[si]._fieldA8 == 0) {
-		_KeypadWindow._buttons[si].setFrame(2);
-		_KeypadWindow._buttons[si]._fieldA8 = 1;
+	assert(prevIndex >= 0 && prevIndex < 16);
+	if (!_KeypadWindow._buttons[prevIndex]._toggled) {
+		_KeypadWindow._buttons[prevIndex].setFrame(2);
+		_KeypadWindow._buttons[prevIndex]._toggled = true;
 	} else {
-		_KeypadWindow._buttons[si].setFrame(1);
-		_KeypadWindow._buttons[si]._fieldA8 = 0;
+		_KeypadWindow._buttons[prevIndex].setFrame(1);
+		_KeypadWindow._buttons[prevIndex]._toggled = false;
 	}
 
-	si = indx - 4;
-	if (si < 0)
-		si += 16;
-
-	if (_KeypadWindow._buttons[si]._fieldA8 == 0) {
-		_KeypadWindow._buttons[si].setFrame(2);
-		_KeypadWindow._buttons[si]._fieldA8 = 1;
+	prevIndex = indx + 1;
+	if ((indx / 4) == (prevIndex / 4)) {
+		if (prevIndex >  15)
+			prevIndex = 12;
 	} else {
-		_KeypadWindow._buttons[si].setFrame(1);
-		_KeypadWindow._buttons[si]._fieldA8 = 0;
+		prevIndex -= 4;
 	}
 
-	si = indx + 4;
-	if (si > 15)
-		si -= 16;
-
-	if (_KeypadWindow._buttons[si]._fieldA8 == 0) {
-		_KeypadWindow._buttons[si].setFrame(2);
-		_KeypadWindow._buttons[si]._fieldA8 = 1;
+	assert(prevIndex >= 0 && prevIndex < 16);
+	if (!_KeypadWindow._buttons[prevIndex]._toggled) {
+		_KeypadWindow._buttons[prevIndex].setFrame(2);
+		_KeypadWindow._buttons[prevIndex]._toggled = true;
 	} else {
-		_KeypadWindow._buttons[si].setFrame(1);
-		_KeypadWindow._buttons[si]._fieldA8 = 0;
+		_KeypadWindow._buttons[prevIndex].setFrame(1);
+		_KeypadWindow._buttons[prevIndex]._toggled = false;
 	}
 
+	prevIndex = indx - 4;
+	if (prevIndex < 0)
+		prevIndex += 16;
+
+	assert(prevIndex >= 0 && prevIndex < 16);
+	if (!_KeypadWindow._buttons[prevIndex]._toggled) {
+		_KeypadWindow._buttons[prevIndex].setFrame(2);
+		_KeypadWindow._buttons[prevIndex]._toggled = true;
+	} else {
+		_KeypadWindow._buttons[prevIndex].setFrame(1);
+		_KeypadWindow._buttons[prevIndex]._toggled = false;
+	}
+
+	prevIndex = indx + 4;
+	if (prevIndex > 15)
+		prevIndex -= 16;
+
+	assert(prevIndex >= 0 && prevIndex < 16);
+	if (!_KeypadWindow._buttons[prevIndex]._toggled) {
+		_KeypadWindow._buttons[prevIndex].setFrame(2);
+		_KeypadWindow._buttons[prevIndex]._toggled = true;
+	} else {
+		_KeypadWindow._buttons[prevIndex].setFrame(1);
+		_KeypadWindow._buttons[prevIndex]._toggled = false;
+	}
+
+	// Check whether all the buttons are highlighted
 	int cpt = 0;
-	for (si = 0; si < 16; si++) {
-		if (_KeypadWindow._buttons[si]._fieldA8 != 0)
+	for (prevIndex = 0; prevIndex < 16; prevIndex++) {
+		if (_KeypadWindow._buttons[prevIndex]._toggled)
 			++cpt;
 	}
 
@@ -15111,9 +15116,7 @@ void Scene1950::subBF4B4(int indx) {
 	} else {
 		R2_GLOBALS.setFlag(37);
 		_sceneMode = 24;
-		// TODO: check if correct. The original doesn't countain a sceneActor in
-		// this call, but it's extremely unusual
-		setAction(&_sequenceManager, this, 1976, NULL);
+		setAction(&_sequenceManager, scene, 1976, NULL);
 	}
 }
 
@@ -15250,7 +15253,7 @@ void Scene1950::signal() {
 		_KeypadWindow.remove();
 		_sceneMode = 1966;
 		_cube.setFrame(3);
-		setAction(&_sequenceManager, this, 1966, &_containmentField, &_actor5, NULL);
+		setAction(&_sequenceManager, this, 1966, &_containmentField, &_gem, NULL);
 		break;
 	case 1951:
 		R2_GLOBALS._sound1.fadeOut2(NULL);
@@ -15279,8 +15282,8 @@ void Scene1950::signal() {
 	case 1965:
 		if (!R2_GLOBALS.getFlag(37)) {
 			SceneItem::display(1950, 26, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
-			R2_GLOBALS._player.enableControl();
 		}
+		R2_GLOBALS._player.enableControl();
 		break;
 	case 1966:
 		_containmentField.remove();
@@ -15291,11 +15294,12 @@ void Scene1950::signal() {
 			_sceneMode = 1965;
 			setAction(&_sequenceManager, this, 1965, &R2_GLOBALS._player, NULL);
 		}
-		_actor5.setDetails(1950, 9, -1, -1, 2, (SceneItem *) NULL);
+		_gem.setDetails(1950, 9, -1, -1, 2, (SceneItem *) NULL);
+		break;
 	case 1967: {
 		_sceneMode = 0;
 		R2_INVENTORY.setObjectScene(R2_SAPPHIRE_BLUE, 2);
-		_actor5.remove();
+		_gem.remove();
 		if (R2_GLOBALS.getFlag(36))
 			R2_GLOBALS._player.setVisage(20);
 		else
@@ -15308,7 +15312,7 @@ void Scene1950::signal() {
 		}
 		break;
 	case 1968:
-		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._player.enableControl();
 		R2_INVENTORY.setObjectScene(R2_ANCIENT_SCROLLS, 2);
 		_scrolls.setFrame(2);
 		if (R2_GLOBALS.getFlag(36))

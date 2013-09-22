@@ -451,7 +451,7 @@ public:
 class ModalWindow: public SceneArea {
 public:
 	SceneActor _object1;
-	byte _field20;
+	int _insetCount;
 public:
 	ModalWindow();
 
