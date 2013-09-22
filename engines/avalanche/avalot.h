@@ -247,10 +247,7 @@ public:
 	int16 _dnascore; // your score, of course
 	int32 _money; // your current amount of dosh
 	byte _room; // your current room
-	byte _saveNum; // number of times this game has been saved
 	byte _roomCount[100]; // Add one to each every time you enter a room
-	byte _alcoholLevel; // Your blood alcohol level.
-	byte _playedNim; // How many times you've played Nim.
 	bool _wonNim; // Have you *won* Nim? (That's harder.)
 	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
 	bool _cwytalotGone; // Has Cwytalot rushed off to Jerusalem yet?
@@ -258,7 +255,6 @@ public:
 	bool _aylesIsAwake; // pretty obvious!
 	byte _drawbridgeOpen; // Between 0 (shut) and 4 (open).
 	byte _avariciusTalk; // How much Avaricius has said to you.
-	bool _boughtOnion; // Have you bought an onion yet?
 	bool _rottenOnion; // And has it rotted?
 	bool _onionInVinegar; // Is the onion in the vinegar?
 	byte _givenToSpludwick; // 0 = nothing given, 1 = onion...

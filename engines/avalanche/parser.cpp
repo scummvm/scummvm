@@ -1382,8 +1382,8 @@ bool Parser::giveToSpludwick() {
 }
 
 void Parser::drink() {
-	_vm->_avalot->_alcoholLevel += 1;
-	if (_vm->_avalot->_alcoholLevel == 5) {
+	_alcoholLevel += 1;
+	if (_alcoholLevel == 5) {
 		_vm->_avalot->_objects[Avalot::kObjectKey - 1] = true; // Get the key.
 		_vm->_avalot->_teetotal = true;
 		_vm->_avalot->_avvyIsAwake = false;
@@ -1897,7 +1897,7 @@ void Parser::doThat() {
 				}
 
 				_vm->_dialogs->displayScrollChain('Q', 3);
-				_vm->_avalot->_playedNim++;
+				_playedNim++;
 
 				// You won - strange!
 				_vm->_dialogs->displayScrollChain('Q', 7); // You won! Give us a lute!
@@ -1907,7 +1907,7 @@ void Parser::doThat() {
 				_vm->_background->drawBackgroundSprite(-1, -1, 0); // Show the settle with no lute on it.
 				_vm->_avalot->incScore(7); // 7 points for winning!
 
-				if (_vm->_avalot->_playedNim == 1)
+				if (_playedNim == 1)
 					_vm->_avalot->incScore(3); // 3 points for playing your 1st game.
 
 				// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
@@ -2062,7 +2062,7 @@ void Parser::doThat() {
 						return;
 					}
 
-					if (_vm->_avalot->_alcoholLevel == 0)
+					if (_alcoholLevel == 0)
 						_vm->_avalot->incScore(3);
 
 					_vm->_background->drawBackgroundSprite(-1, -1, 11);
@@ -2093,7 +2093,7 @@ void Parser::doThat() {
 						_vm->_background->drawBackgroundSprite(-1, -1, 11);
 						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 						_vm->_dialogs->displayText(tmpStr);
-						if (_vm->_avalot->_alcoholLevel == 0)
+						if (_alcoholLevel == 0)
 							_vm->_avalot->incScore(3);
 						_vm->_background->drawBackgroundSprite(-1, -1, 9);
 						_vm->_avalot->_malagauche = 177;
@@ -2114,7 +2114,7 @@ void Parser::doThat() {
 					else if (_vm->_avalot->_carryNum >= kCarryLimit)
 						_vm->_dialogs->displayText("Before you ask, you remember that your hands are full.");
 					else {
-						if (_vm->_avalot->_boughtOnion)
+						if (_boughtOnion)
 							_vm->_dialogs->displayScrollChain('D', 11);
 						else {
 							_vm->_dialogs->displayScrollChain('D', 9);
@@ -2123,7 +2123,7 @@ void Parser::doThat() {
 						_vm->_avalot->decreaseMoney(3); // It costs thruppence.
 						_vm->_avalot->_objects[Avalot::kObjectOnion - 1] = true;
 						_vm->_avalot->refreshObjectList();
-						_vm->_avalot->_boughtOnion = true;
+						_boughtOnion = true;
 						_vm->_avalot->_rottenOnion = false; // It's OK when it leaves the stall!
 						_vm->_avalot->_onionInVinegar = false;
 					}

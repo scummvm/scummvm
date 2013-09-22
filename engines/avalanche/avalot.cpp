@@ -1594,12 +1594,12 @@ void Avalot::resetVariables() {
 	_room = kRoomNowhere;
 	_vm->_parser->_wearing = 0;
 	_vm->_parser->_sworeNum = 0;
-	_saveNum = 0;
+	_vm->_saveNum = 0;
 	for (int i = 0; i < 100; i++)
 		_roomCount[i] = 0;
 
-	_alcoholLevel = 0;
-	_playedNim = 0;
+	_vm->_parser->_alcoholLevel = 0;
+	_vm->_parser->_playedNim = 0;
 	_wonNim = false;
 	_wineState = 0;
 	_cwytalotGone = false;
@@ -1607,7 +1607,7 @@ void Avalot::resetVariables() {
 	_aylesIsAwake = false;
 	_drawbridgeOpen = 0;
 	_avariciusTalk = 0;
-	_boughtOnion = false;
+	_vm->_parser->_boughtOnion = false;
 	_rottenOnion = false;
 	_onionInVinegar = false;
 	_givenToSpludwick = 0;
