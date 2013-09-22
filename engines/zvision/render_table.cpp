@@ -103,10 +103,10 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth, const Common::Rect &subRect) {
 	uint32 destOffset = 0;
 
-	for (uint32 y = subRect.top; y < subRect.bottom; y++) {
+	for (int16 y = subRect.top; y < subRect.bottom; y++) {
 		uint32 sourceOffset = y * _numColumns;
 
-		for (uint32 x = subRect.left; x < subRect.right; x++) {
+		for (int16 x = subRect.left; x < subRect.right; x++) {
 			uint32 normalizedX = x - subRect.left;
 			uint32 index = sourceOffset + x;
 
