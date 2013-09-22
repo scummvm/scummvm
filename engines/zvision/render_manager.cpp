@@ -59,6 +59,7 @@ RenderManager::~RenderManager() {
 	_backBuffer.free();
 
 	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
+		(*iter)._value.data->free();
 		delete (*iter)._value.data;
 	}
 }
