@@ -97,4 +97,9 @@ int BaseViewport::getHeight() const {
 	return _rect.bottom - _rect.top;
 }
 
+//////////////////////////////////////////////////////////////////////////
+Common::String BaseViewport::debuggerToString() const {
+	return Common::String::format("%p: BaseViewport: (top, right, bottom, left): (%d, %d, %d, %d)", (const void *)this, _rect.top, _rect.right, _rect.bottom, _rect.left);
+}
+
 } // end of namespace Wintermute

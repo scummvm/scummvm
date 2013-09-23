@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/persistent.h"
+#include "common/str.h"
 
 namespace Wintermute {
 class BaseObject;
@@ -48,6 +49,8 @@ public:
 	BaseObject *_mainObject;
 	BaseViewport(BaseGame *inGame = nullptr);
 	virtual ~BaseViewport();
+	virtual Common::String debuggerToString() const override;
+
 private:
 	Rect32 _rect;
 };
