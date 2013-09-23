@@ -219,6 +219,10 @@ public:
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); draw(); }
 	void handleTickle();
 
+#ifdef ENABLE_TOUCHMAPPER
+	void handleFingerMoved(int x, int y, int deltax, int deltay, int button);
+#endif
+
 	void setHighLighted(bool enable);
 	void setPressedState();
 	void startAnimatePressedState();
