@@ -54,8 +54,28 @@ struct TransparentSurface : public Graphics::Surface {
 	void disableColorKey();
 
 #if ENABLE_BILINEAR
+	/*
+	 * Pick color from a point in source and copy it to a pixel in target.
+	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
+	 * We do bilinear interpolation to estimate the color of the point even if the 
+	 * point is specuified w/subpixel accuracy.
+	 *
+	 * @param projX, projY, point in the source to pick color from.
+	 * @param dstX, dstY destionation pixel
+	 * @param *src, *dst pointer to the source and dest surfaces
+	 */
 	static void copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
 #else
+	/*
+	 * Pick color from a point in source and copy it to a pixel in target.
+	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
+	 * HOWEVER, this particular function just does nearest neighbor.
+	 * Use copyPixelBilinear if you interpolation.
+	 *
+	 * @param projX, projY, point in the source to pick color from.
+	 * @param dstX, dstY destionation pixel
+	 * @param *src, *dst pointer to the source and dest surfaces
+	 */
 	static void copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
 #endif
 	// Enums
@@ -63,25 +83,49 @@ struct TransparentSurface : public Graphics::Surface {
 	 @brief The possible flipping parameters for the blit methode.
 	 */
 	enum FLIP_FLAGS {
-		/// The image will not be flipped.
-		FLIP_NONE = 0,
-		/// The image will be flipped at the horizontal axis.
-		FLIP_H = 1,
-		/// The image will be flipped at the vertical axis.
-		FLIP_V = 2,
-		/// The image will be flipped at the horizontal and vertical axis.
-		FLIP_HV = FLIP_H | FLIP_V,
-		/// The image will be flipped at the horizontal and vertical axis.
-		FLIP_VH = FLIP_H | FLIP_V
+	    /// The image will not be flipped.
+	    FLIP_NONE = 0,
+	    /// The image will be flipped at the horizontal axis.
+	    FLIP_H = 1,
+	    /// The image will be flipped at the vertical axis.
+	    FLIP_V = 2,
+	    /// The image will be flipped at the horizontal and vertical axis.
+	    FLIP_HV = FLIP_H | FLIP_V,
+	    /// The image will be flipped at the horizontal and vertical axis.
+	    FLIP_VH = FLIP_H | FLIP_V
 	};
 
 	enum AlphaType {
-		ALPHA_OPAQUE = 0,
-		ALPHA_BINARY = 1,
-		ALPHA_FULL = 2
+	    ALPHA_OPAQUE = 0,
+	    ALPHA_BINARY = 1,
+	    ALPHA_FULL = 2
 	};
 
 	AlphaType _alphaMode;
+
+	#ifdef SCUMM_LITTLE_ENDIAN
+	static const int kAIndex = 0;
+	static const int kBIndex = 1;
+	static const int kGIndex = 2;
+	static const int kRIndex = 3;
+	#else
+	static const int kAIndex = 3;
+	static const int kBIndex = 2;
+	static const int kGIndex = 1;
+	static const int kRIndex = 0;
+	#endif
+
+	static const int kBShift = 8;//img->format.bShift;
+	static const int kGShift = 16;//img->format.gShift;
+	static const int kRShift = 24;//img->format.rShift;
+	static const int kAShift = 0;//img->format.aShift;
+
+
+	static const int kBModShift = 0;//img->format.bShift;
+	static const int kGModShift = 8;//img->format.gShift;
+	static const int kRModShift = 16;//img->format.rShift;
+	static const int kAModShift = 24;//img->format.aShift;
+
 
 	/**
 	 @brief renders the surface to another surface
@@ -115,10 +159,26 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = nullptr,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1);
+	                  int width = -1, int height = -1,
+	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
-
+	
+	/**
+	 * @brief Scale function; this returns a transformed version of this surface after rotation and
+	 * scaling. Please do not use this if angle != 0, use rotoscale.
+	 *
+	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
+	 * 
+	 */
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
+
+	/**
+	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
+	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
+	 *
+	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
+	 * 
+	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 };
 
@@ -133,7 +193,6 @@ struct TransparentSurface : public Graphics::Surface {
         delete ptr;
     }
 };*/
-
 
 } // End of namespace Wintermute
 
