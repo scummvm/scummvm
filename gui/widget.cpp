@@ -305,6 +305,13 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	setPressedState();
 }
 
+#ifdef ENABLE_TOUCHMAPPER
+void ButtonWidget::handleFingerMoved(int x, int y, int deltax, int deltay, int button) {
+	clearFlags(WIDGET_HILITED | WIDGET_PRESSED); 
+	draw();
+}
+#endif
+
 void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, getFlags());
 }
