@@ -118,7 +118,7 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 						delete tranposedFrame;
 					}
 				} else {
-					renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
+					renderManager->copyRectToWorkingWindow((const uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
 
 					// If the background can move, we need to cache the last frame so it can be rendered during background movement
 					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
@@ -202,7 +202,7 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 						delete tranposedFrame;
 					}
 				} else {
-					renderManager->copyRectToWorkingWindow((uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
+					renderManager->copyRectToWorkingWindow((const uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
 
 					// If the background can move, we need to cache the last frame so it can be rendered during background movement
 					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
