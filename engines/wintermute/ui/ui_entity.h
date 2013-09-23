@@ -44,7 +44,6 @@ public:
 
 	virtual bool display() override { return display(0, 0); }
 	virtual bool display(int offsetX, int offsetY) override;
-	AdEntity *_entity;
 	bool setEntity(const char *filename);
 
 	// scripting interface
@@ -52,6 +51,9 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
+
+private:
+	AdEntity *_entity;
 };
 
 } // End of namespace Wintermute

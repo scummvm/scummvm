@@ -1206,4 +1206,28 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
+void UIButton::setFontHover(BaseFont *font) {
+	_fontHover = font;
+}
+
+BaseFont *UIButton::getFontHover() {
+	return _fontHover;
+}
+
+void UIButton::setFontPress(BaseFont *font) {
+	_fontPress = font;
+}
+
+void UIButton::setImageHover(BaseSprite *sprite) {
+	_imageHover = sprite;
+}
+
+void UIButton::setImagePress(BaseSprite *sprite) {
+	_imagePress = sprite;
+}
+
+void UIButton::setTextAlign(TTextAlign align) {
+	_align = align;
+}
+
 } // End of namespace Wintermute

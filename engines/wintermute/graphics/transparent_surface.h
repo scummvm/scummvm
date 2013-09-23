@@ -81,8 +81,6 @@ struct TransparentSurface : public Graphics::Surface {
 		ALPHA_FULL = 2
 	};
 
-	AlphaType _alphaMode;
-
 	/**
 	 @brief renders the surface to another surface
 	 @param pDest a pointer to the target image. In most cases this is the framebuffer.
@@ -120,6 +118,11 @@ struct TransparentSurface : public Graphics::Surface {
 
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
+	AlphaType getAlphaMode();
+	void setAlphaMode(AlphaType);
+private:
+	AlphaType _alphaMode;
+
 };
 
 /**
@@ -133,7 +136,6 @@ struct TransparentSurface : public Graphics::Surface {
         delete ptr;
     }
 };*/
-
 
 } // End of namespace Wintermute
 

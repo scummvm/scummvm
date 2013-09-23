@@ -612,4 +612,11 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 	}
 }
 
+TransparentSurface::AlphaType TransparentSurface::getAlphaMode() {
+	return _alphaMode;
+}
+
+void TransparentSurface::setAlphaMode(TransparentSurface::AlphaType mode) {
+	_alphaMode = mode;
+}
 } // End of namespace Wintermute

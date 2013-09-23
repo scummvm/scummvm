@@ -1014,8 +1014,8 @@ bool AdScene::traverseNodes(bool doUpdate) {
 				}
 				if (_shieldWindow) {
 					_shieldWindow->_posX = _shieldWindow->_posY = 0;
-					_shieldWindow->_width = _gameRef->_renderer->getWidth();
-					_shieldWindow->_height = _gameRef->_renderer->getHeight();
+					_shieldWindow->setWidth(_gameRef->_renderer->getWidth());
+					_shieldWindow->setHeight(_gameRef->_renderer->getHeight());
 					_shieldWindow->display();
 				}
 			}
