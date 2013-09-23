@@ -288,13 +288,13 @@ public:
 
 class Scene3255 : public SceneExt {
 public:
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _teal;
+	SceneActor _guard;
 	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
+	SceneActor _quinn;
+	SceneActor _ghoul1;
+	SceneActor _ghoul2;
+	SceneActor _ghoul3;
 	SpeakerQuinn3255 _quinnSpeaker;
 	SpeakerMiranda3255 _mirandaSpeaker;
 	SequenceManager _sequenceManager;

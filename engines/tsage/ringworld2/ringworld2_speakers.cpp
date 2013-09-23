@@ -1477,7 +1477,7 @@ void SpeakerQuinn3255::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor4;
+		_object2 = &scene->_quinn;
 		_object2->hide();
 		_object1.postInit();
 		_object1._effect = _object2->_effect;

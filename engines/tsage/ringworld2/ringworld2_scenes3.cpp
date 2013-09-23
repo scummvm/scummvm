@@ -1269,9 +1269,10 @@ void Scene3250::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 3255 -
+ * Scene 3255 - Guard Post
  *
  *--------------------------------------------------------------------------*/
+
 void Scene3255::postInit(SceneObjectList *OwnerList) {
 	loadScene(3255);
 	SceneExt::postInit();
@@ -1290,16 +1291,16 @@ void Scene3255::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._sound2.play(268);
 		_sceneMode = 3257;
 		_actor3.postInit();
-		_actor4.postInit();
-		_actor4._effect = 1;
-		setAction(&_sequenceManager, this, 3257, &R2_GLOBALS._player, &_actor4, &_actor3, NULL);
+		_quinn.postInit();
+		_quinn._effect = 1;
+		setAction(&_sequenceManager, this, 3257, &R2_GLOBALS._player, &_quinn, &_actor3, NULL);
 	} else {
-		_actor1.postInit();
-		_actor1.setup(303, 1, 1);
-		_actor1.setPosition(Common::Point(208, 128));
-		_actor2.postInit();
-		_actor2.setup(3107, 3, 1);
-		_actor2.setPosition(Common::Point(230, 127));
+		_teal.postInit();
+		_teal.setup(303, 1, 1);
+		_teal.setPosition(Common::Point(208, 128));
+		_guard.postInit();
+		_guard.setup(3107, 3, 1);
+		_guard.setPosition(Common::Point(230, 127));
 		_sceneMode = 3255;
 		setAction(&_sequenceManager, this, 3255, &R2_GLOBALS._player, NULL);
 	}
@@ -1310,10 +1311,11 @@ void Scene3255::signal() {
 	switch (_sceneMode) {
 	case 10:
 		_sceneMode = 3258;
-		_actor5.postInit();
-		_actor6.postInit();
-		_actor7.postInit();
-		setAction(&_sequenceManager, this, 3258, &R2_GLOBALS._player, &_actor4, &_actor3, &_actor5, &_actor6, &_actor7, NULL);
+		_ghoul1.postInit();
+		_ghoul2.postInit();
+		_ghoul3.postInit();
+		setAction(&_sequenceManager, this, 3258, &R2_GLOBALS._player, &_quinn, 
+			&_actor3, &_ghoul1, &_ghoul2, &_ghoul3, NULL);
 		break;
 	case 3256:
 		R2_GLOBALS._sceneManager.changeScene(3250);
@@ -1335,40 +1337,40 @@ void Scene3255::signal() {
 
 void Scene3255::dispatch() {
 	if (R2_GLOBALS.getFlag(79)) {
-		if (_actor5._position.y >= 95) {
-			if (_actor5._position.y <= 110)
-				_actor5._shade = 6 - (_actor5._position.y - 95) / 3;
+		if (_ghoul1._position.y >= 95) {
+			if (_ghoul1._position.y <= 110)
+				_ghoul1._shade = 6 - (_ghoul1._position.y - 95) / 3;
 			else
-				_actor5._effect = 1;
+				_ghoul1._effect = 1;
 		} else {
-			_actor5._effect = 6;
-			_actor5._shade = 6;
+			_ghoul1._effect = 6;
+			_ghoul1._shade = 6;
 		}
 
-		if (_actor6._position.y >= 95) {
-			if (_actor6._position.y <= 110)
-				_actor6._shade = 6 - (_actor6._position.y - 95) / 3;
+		if (_ghoul2._position.y >= 95) {
+			if (_ghoul2._position.y <= 110)
+				_ghoul2._shade = 6 - (_ghoul2._position.y - 95) / 3;
 			else
-				_actor6._effect = 1;
+				_ghoul2._effect = 1;
 		} else {
-			_actor6._effect = 6;
-			_actor6._shade = 6;
+			_ghoul2._effect = 6;
+			_ghoul2._shade = 6;
 		}
 
-		if (_actor7._position.y >= 95) {
-			if (_actor7._position.y <= 110)
-				_actor7._shade = 6 - (_actor7._position.y - 95) / 3;
+		if (_ghoul3._position.y >= 95) {
+			if (_ghoul3._position.y <= 110)
+				_ghoul3._shade = 6 - (_ghoul3._position.y - 95) / 3;
 			else
-				_actor7._effect = 1;
+				_ghoul3._effect = 1;
 		} else {
-			_actor7._effect = 6;
-			_actor7._shade = 6;
+			_ghoul3._effect = 6;
+			_ghoul3._shade = 6;
 		}
 	}
 
 	if ((R2_GLOBALS._player._position.x > 250) && (R2_GLOBALS._player._shade == 1)) {
 		R2_GLOBALS._player._effect = 6;
-		_actor4._effect = 6;
+		_quinn._effect = 6;
 	}
 	Scene::dispatch();
 }
@@ -3587,12 +3589,14 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 
 	loadScene(1050);
 	R2_GLOBALS._uiElements._active = false;
+	R2_GLOBALS._interfaceY = 200;
+
 	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
 	R2_GLOBALS._sound1.play(305);
 	R2_GLOBALS._player._characterIndex = R2_QUINN;
 	R2_GLOBALS._player._characterScene[R2_QUINN] = 3500;
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3500;
-	R2_GLOBALS._player._characterScene[3] = 3500;
+	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3500;
 	_field1284 = 0;
 	_field1282 = 0;
 	_field1278 = 0;
