@@ -31,6 +31,8 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/serializer.h"
+
 
 namespace Avalanche {
 class AvalancheEngine;
@@ -101,6 +103,8 @@ public:
 	void cursorOff();
 	void tryDropdown(); // This asks the parsekey proc in Dropdown if it knows it.
 	int16 getPos(const Common::String &crit, const Common::String &src); // Returns the index of the first appearance of crit in src.
+
+	void synchronize(Common::Serializer &sz);
 
 private:
 	AvalancheEngine *_vm;

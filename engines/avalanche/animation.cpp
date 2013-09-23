@@ -137,14 +137,14 @@ void AnimationType::draw() {
 	_anim->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
 }
 
-void AnimationType::turn(byte whichway) {
+void AnimationType::turn(Direction whichway) {
 	if (whichway == 8)
-		_facingDir = Animation::kDirUp;
+		_facingDir = kDirUp;
 	else
 		_facingDir = whichway;
 }
 
-void AnimationType::appear(int16 wx, int16 wy, byte wf) {
+void AnimationType::appear(int16 wx, int16 wy, Direction wf) {
 	_x = (wx / 8) * 8;
 	_y = wy;
 	_oldX[_anim->_vm->_avalot->_cp] = wx;
@@ -309,14 +309,14 @@ void AnimationType::setSpeed(int8 xx, int8 yy) {
 	if (_moveX == 0) {
 		// No horz movement
 		if (_moveY < 0)
-			turn(Animation::kDirUp);
+			turn(kDirUp);
 		else
-			turn(Animation::kDirDown);
+			turn(kDirDown);
 	} else {
 		if (_moveX < 0)
-			turn(Animation::kDirLeft);
+			turn(kDirLeft);
 		else
-			turn(Animation::kDirRight);
+			turn(kDirRight);
 	}
 }
 
@@ -942,7 +942,7 @@ void Animation::updateSpeed() {
 	}
 }
 
-void Animation::changeDirection(byte t, byte dir) {
+void Animation::setMoveSpeed(byte t, Direction dir) {
 	switch (dir) {
 	case kDirUp:
 		_sprites[t].setSpeed(0, -_sprites[t]._speedY);
@@ -975,7 +975,7 @@ void Animation::appearPed(byte sprNum, byte pedNum) {
 	AnimationType *curSpr = &_sprites[sprNum];
 	PedType *curPed = &_vm->_avalot->_peds[pedNum];
 	curSpr->appear(curPed->_x - curSpr->_info._xLength / 2, curPed->_y - curSpr->_info._yLength, curPed->_direction);
-	changeDirection(sprNum, curPed->_direction);
+	setMoveSpeed(sprNum, curPed->_direction);
 }
 
 void Animation::followAvalotY(byte tripnum) {
@@ -1078,19 +1078,20 @@ void Animation::takeAStep(byte &tripnum) {
 	}
 }
 
-void Animation::spin(byte whichway, byte &tripnum) {
-	if (_sprites[tripnum]._facingDir != whichway) {
-		_sprites[tripnum]._facingDir = whichway;
-		if (_sprites[tripnum]._id == 2)
-			return; // Not for Spludwick
+void Animation::spin(Direction dir, byte &tripnum) {
+	if (_sprites[tripnum]._facingDir == dir)
+		return;
 
-		_vm->_avalot->_geidaSpin += 1;
-		_vm->_avalot->_geidaTime = 20;
-		if (_vm->_avalot->_geidaSpin == 5) {
-			_vm->_dialogs->displayText("Steady on, Avvy, you'll make the poor girl dizzy!");
-			_vm->_avalot->_geidaSpin = 0;
-			_vm->_avalot->_geidaTime = 0; // knock out records
-		}
+	_sprites[tripnum]._facingDir = dir;
+	if (_sprites[tripnum]._id == 2)
+		return; // Not for Spludwick
+
+	_vm->_avalot->_geidaSpin += 1;
+	_vm->_avalot->_geidaTime = 20;
+	if (_vm->_avalot->_geidaSpin == 5) {
+		_vm->_dialogs->displayText("Steady on, Avvy, you'll make the poor girl dizzy!");
+		_vm->_avalot->_geidaSpin = 0;
+		_vm->_avalot->_geidaTime = 0; // knock out records
 	}
 }
 
@@ -1330,56 +1331,56 @@ void Animation::handleMoveKey(const Common::Event &event) {
 		case Common::KEYCODE_UP:
 			if (_direction != kDirUp) {
 				_direction = kDirUp;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_DOWN:
 			if (_direction != kDirDown) {
 				_direction = kDirDown;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_LEFT:
 			if (_direction != kDirLeft) {
 				_direction = kDirLeft;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_RIGHT:
 			if (_direction != kDirRight) {
 				_direction = kDirRight;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEUP:
 			if (_direction != kDirUpRight) {
 				_direction = kDirUpRight;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_PAGEDOWN:
 			if (_direction != kDirDownRight) {
 				_direction = kDirDownRight;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_END:
 			if (_direction != kDirDownLeft) {
 				_direction = kDirDownLeft;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
 		case Common::KEYCODE_HOME:
 			if (_direction != kDirUpLeft) {
 				_direction = kDirUpLeft;
-				changeDirection(0, _direction);
+				setMoveSpeed(0, _direction);
 			} else
 				stopWalking();
 			break;
@@ -1390,6 +1391,26 @@ void Animation::handleMoveKey(const Common::Event &event) {
 			break;
 		}
 	}
+}
+
+void Animation::setDirection(Direction dir) {
+	_direction = dir;
+}
+
+void Animation::setOldDirection(Direction dir) {
+	_oldDirection = dir;
+}
+
+Direction Animation::getDirection() {
+	return _direction;
+}
+
+Direction Animation::getOldDirection() {
+	return _oldDirection;
+}
+
+void Animation::synchronize(Common::Serializer &sz) {
+	sz.syncAsByte(_direction);
 }
 
 } // End of namespace Avalanche.

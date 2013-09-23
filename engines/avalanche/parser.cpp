@@ -1426,7 +1426,7 @@ void Parser::standUp() {
 			_vm->_animation->_sprites[0]._visible = true;
 			_vm->_avalot->_userMovesAvvy = true;
 			_vm->_animation->appearPed(0, 1);
-			_vm->_animation->_direction = Animation::kDirLeft;
+			_vm->_animation->setDirection(kDirLeft);
 			_vm->_background->drawBackgroundSprite(-1, -1, 3); // Picture of empty pillow.
 			_vm->_avalot->incScore(1);
 			_vm->_avalot->_avvyInBed = false;
@@ -1867,7 +1867,7 @@ void Parser::doThat() {
 					int16 y = spr->_y;
 					spr->remove();
 					spr->init(i, true, _vm->_animation);
-					spr->appear(x, y, Animation::kDirLeft);
+					spr->appear(x, y, kDirLeft);
 					spr->_visible = false;
 				}
 				}
@@ -2360,6 +2360,11 @@ void Parser::verbOpt(byte verb, Common::String &answer, char &ansKey) {
 		answer = "? Unknown!"; // Bug!
 		ansKey = '?';
 	}
+}
+
+void Parser::synchronize(Common::Serializer &sz) {
+	sz.syncAsByte(_wearing);
+	sz.syncAsByte(_sworeNum);
 }
 
 } // End of namespace Avalanche

@@ -248,7 +248,7 @@ void Timer::avariciusTalks() {
 }
 
 void Timer::urinate() {
-	_vm->_animation->_sprites[0].turn(Animation::kDirUp);
+	_vm->_animation->_sprites[0].turn(kDirUp);
 	_vm->_animation->stopWalking();
 	_vm->_avalot->drawDirection();
 	addTimer(14, kProcToilet, kReasonGoToToilet);
@@ -558,7 +558,7 @@ void Timer::meetAvaroid() {
 		addTimer(1, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 
 		AnimationType *avvy = &_vm->_animation->_sprites[0];
-		avvy->_facingDir = Animation::kDirLeft;
+		avvy->_facingDir = kDirLeft;
 		avvy->_x = 151;
 		avvy->_moveX = -3;
 		avvy->_moveY = -5;
@@ -586,7 +586,7 @@ void Timer::robinHoodAndGeida() {
 
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->stopWalk();
-	spr->_facingDir = Animation::kDirLeft;
+	spr->_facingDir = kDirLeft;
 	addTimer(20, kProcRobinHoodAndGeidaTalk, kReasonRobinHoodAndGeida);
 	_vm->_avalot->_geidaFollows = false;
 }

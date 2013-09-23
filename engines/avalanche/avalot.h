@@ -30,6 +30,8 @@
 #ifndef AVALANCHE_AVALOT_H
 #define AVALANCHE_AVALOT_H
 
+#include "avalanche/animation.h"
+
 #include "common/events.h"
 #include "common/system.h"
 #include "common/str.h"
@@ -93,7 +95,7 @@ struct MouseHotspotType { // mouse-void
 
 struct PedType {
 	int16 _x, _y;
-	byte _direction;
+	Direction _direction;
 };
 
 struct MagicType {

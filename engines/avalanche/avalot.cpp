@@ -357,7 +357,7 @@ void Avalot::setup() {
 	drawToolbar();
 	_vm->_dialogs->setReadyLight(2);
 
-	_vm->_animation->_direction = Animation::kDirStopped;
+	_vm->_animation->setDirection(kDirStopped);
 	_vm->_animation->loadAnims();
 
 	dawn();
@@ -565,7 +565,7 @@ void Avalot::loadAlso(byte num) {
 		PedType *curPed = &_peds[i];
 		curPed->_x = file.readSint16LE();
 		curPed->_y = file.readSint16LE();
-		curPed->_direction = file.readByte();
+		curPed->_direction = (Direction)file.readByte();
 	}
 
 	_fieldNum = file.readByte();
@@ -792,7 +792,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 					spr1->walkTo(4); // Walks up to greet you.
 				} else {
 					_vm->_animation->appearPed(1, 4); // Starts where he was before.
-					spr1->_facingDir = Animation::kDirLeft;
+					spr1->_facingDir = kDirLeft;
 				}
 
 				spr1->_callEachStepFl = true;
@@ -852,7 +852,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 			} else {
 				// You've been here before.
 				_vm->_animation->appearPed(1, 3); // He's standing in your way straight away...
-				spr1->_facingDir = Animation::kDirLeft;
+				spr1->_facingDir = kDirLeft;
 			}
 		}
 		break;
@@ -919,7 +919,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 			default: // You've answered SOME of his questions.
 				spr1->init(9, false, _vm->_animation);
 				_vm->_animation->appearPed(1, 2);
-				spr1->_facingDir = Animation::kDirRight;
+				spr1->_facingDir = kDirRight;
 				_vm->_timer->addTimer(3, Timer::kProcCardiffReturn, Timer::kReasonCardiffsurvey);
 			}
 		}
@@ -1047,7 +1047,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 			spr1->walkTo(3); // Walks up to greet you.
 		} else {
 			_vm->_animation->appearPed(1, 3); // Starts where she was before.
-			spr1->_facingDir = Animation::kDirLeft;
+			spr1->_facingDir = kDirLeft;
 		}
 
 		spr1->_callEachStepFl = true;
@@ -1230,7 +1230,7 @@ void Avalot::drawToolbar() {
 	file.close();
 
 	CursorMan.showMouse(true);
-	_vm->_animation->_oldDirection = 177;
+	_vm->_animation->setOldDirection(kDirNone);
 	drawDirection();
 }
 
@@ -1279,23 +1279,23 @@ void Avalot::useCompass(const Common::Point &cursorPos) {
 
 	switch (color) {
 	case kColorGreen:
-		_vm->_animation->_direction = Animation::kDirUp;
-		_vm->_animation->changeDirection(0, Animation::kDirUp);
+		_vm->_animation->setDirection(kDirUp);
+		_vm->_animation->setMoveSpeed(0, kDirUp);
 		drawDirection();
 		break;
 	case kColorBrown:
-		_vm->_animation->_direction = Animation::kDirDown;
-		_vm->_animation->changeDirection(0, Animation::kDirDown);
+		_vm->_animation->setDirection(kDirDown);
+		_vm->_animation->setMoveSpeed(0, kDirDown);
 		drawDirection();
 		break;
 	case kColorCyan:
-		_vm->_animation->_direction = Animation::kDirLeft;
-		_vm->_animation->changeDirection(0, Animation::kDirLeft);
+		_vm->_animation->setDirection(kDirLeft);
+		_vm->_animation->setMoveSpeed(0, kDirLeft);
 		drawDirection();
 		break;
 	case kColorLightmagenta:
-		_vm->_animation->_direction = Animation::kDirRight;
-		_vm->_animation->changeDirection(0, Animation::kDirRight);
+		_vm->_animation->setDirection(kDirRight);
+		_vm->_animation->setMoveSpeed(0, kDirRight);
 		drawDirection();
 		break;
 	case kColorRed:
@@ -1354,28 +1354,28 @@ void Avalot::guideAvvy(Common::Point cursorPos) {
 		_vm->_animation->stopWalking();
 		break; // Clicked on Avvy: no movement.
 	case 1:
-		_vm->_animation->changeDirection(0, Animation::kDirLeft);
+		_vm->_animation->setMoveSpeed(0, kDirLeft);
 		break;
 	case 2:
-		_vm->_animation->changeDirection(0, Animation::kDirRight);
+		_vm->_animation->setMoveSpeed(0, kDirRight);
 		break;
 	case 3:
-		_vm->_animation->changeDirection(0, Animation::kDirUp);
+		_vm->_animation->setMoveSpeed(0, kDirUp);
 		break;
 	case 4:
-		_vm->_animation->changeDirection(0, Animation::kDirUpLeft);
+		_vm->_animation->setMoveSpeed(0, kDirUpLeft);
 		break;
 	case 5:
-		_vm->_animation->changeDirection(0, Animation::kDirUpRight);
+		_vm->_animation->setMoveSpeed(0, kDirUpRight);
 		break;
 	case 6:
-		_vm->_animation->changeDirection(0, Animation::kDirDown);
+		_vm->_animation->setMoveSpeed(0, kDirDown);
 		break;
 	case 7:
-		_vm->_animation->changeDirection(0, Animation::kDirDownLeft);
+		_vm->_animation->setMoveSpeed(0, kDirDownLeft);
 		break;
 	case 8:
-		_vm->_animation->changeDirection(0, Animation::kDirDownRight);
+		_vm->_animation->setMoveSpeed(0, kDirDownRight);
 		break;
 	}    // No other values are possible.
 
@@ -1480,13 +1480,13 @@ void Avalot::dawn() {
 }
 
 void Avalot::drawDirection() { // It's data is loaded in load_digits().
-	if (_vm->_animation->_oldDirection == _vm->_animation->_direction)
+	if (_vm->_animation->getOldDirection() == _vm->_animation->getDirection())
 		return;
 
-	_vm->_animation->_oldDirection = _vm->_animation->_direction;
+	_vm->_animation->setOldDirection(_vm->_animation->getDirection());
 
 	CursorMan.showMouse(false);
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _directions[_vm->_animation->_direction], 0, 161);
+	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _directions[_vm->_animation->getDirection()], 0, 161);
 	CursorMan.showMouse(true);
 }
 
@@ -1501,7 +1501,7 @@ void Avalot::gameOver() {
 	avvy->remove();
 	avvy->init(12, true, _vm->_animation); // 12 = Avalot falls
 	avvy->_stepNum = 0;
-	avvy->appear(sx, sy, 0);
+	avvy->appear(sx, sy, kDirUp);
 
 	_vm->_timer->addTimer(3, Timer::kProcAvalotFalls, Timer::kReasonFallingOver);
 	_alive = false;
@@ -1548,7 +1548,7 @@ void Avalot::spriteRun() {
 
 void Avalot::fixFlashers() {
 	_ledStatus = 177;
-	_vm->_animation->_oldDirection = 177;
+	_vm->_animation->setOldDirection(kDirNone);
 	_vm->_dialogs->setReadyLight(2);
 	drawDirection();
 }
@@ -1582,8 +1582,7 @@ void Avalot::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::Strin
 }
 
 void Avalot::resetVariables() {
-// Replaces memset(&_dna, 0, sizeof(DnaType));
-	_vm->_animation->_direction = 0;
+	_vm->_animation->setDirection(kDirUp);
 	_carryNum = 0;
 	for (int i = 0; i < kObjectNum; i++)
 		_objects[i] = false;
@@ -1683,7 +1682,7 @@ void Avalot::newGame() {
 	_spareEvening = "answer a questionnaire";
 	_favouriteDrink = "beer";
 	_money = 30; // 2/6
-	_vm->_animation->_direction = Animation::kDirStopped;
+	_vm->_animation->setDirection(kDirStopped);
 	_vm->_parser->_wearing = kObjectClothes;
 	_objects[kObjectMoney - 1] = true;
 	_objects[kObjectBodkin - 1] = true;
@@ -1696,7 +1695,7 @@ void Avalot::newGame() {
 	_onToolbar = false;
 	_seeScroll = false;
 
-	avvy->appear(300, 117, Animation::kDirRight); // Needed to initialize Avalot.
+	avvy->appear(300, 117, kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
 	_him = Parser::kPardon;
