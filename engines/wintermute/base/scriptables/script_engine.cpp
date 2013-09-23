@@ -185,6 +185,7 @@ bool ScEngine::removeWatch(uint id) {
 	if (id >= _watchlist.size()) {
 		return false;
 	}
+	delete _watchlist[id]._lastValue;
 	_watchlist.remove_at(id);
 	refreshWatchlist();
 	return true;

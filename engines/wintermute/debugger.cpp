@@ -276,7 +276,7 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 		} else if (Common::String(argv[1]) == "false") {
 			ADAPTER->showFps(false);
 		} else {
-			DebugPrintf("Argument 1 must be \"true\" or \"false\"\n", argv[0]);
+			DebugPrintf("%s: argument 1 must be \"true\" or \"false\"\n", argv[0]);
 		}
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);

@@ -113,6 +113,7 @@ public:
 	};
 
 	DebuggerAdapter(WintermuteEngine *vm);
+	~DebuggerAdapter();
 	// Called by Script (=~Model)
 	/**
 	 * @brief To be called by the script engine when hitting a breakpoint.
@@ -161,7 +162,7 @@ public:
 	 * @brief set value for a variable accessible from within the current scope.
 	 */
 	int setValue(Common::String name, Common::String value, ScValue * &var);
-	int DebuggerAdapter::setType(const Common::String &name, Common::String &type);
+	int setType(const Common::String &name, Common::String &type);
 	/** 
 	 * @brief Dump *engine* debug info about a variable accessible from within the current scope.
 	 * While readValue(somestring) will simply return its value (e.g. "foo") 

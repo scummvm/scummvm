@@ -129,6 +129,10 @@ DebuggerAdapter::DebuggerAdapter(WintermuteEngine *vm) {
 	reset();
 }
 
+DebuggerAdapter::~DebuggerAdapter() {
+	delete _lastSource; 
+}
+
 bool DebuggerAdapter::compiledExists(Common::String filename) {
 	uint32 compSize;
 	byte *compBuffer = SCENGINE->getCompiledScript(filename.c_str(), &compSize);
@@ -164,7 +168,6 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 		return NO_SUCH_SOURCE;
 	} else if (error == NO_SUCH_LINE) {
 		return NO_SUCH_LINE; // There is apparently no such line in the SOURCE file.
-		// TODO: I guess we should simply raise a WARNING for these.
 	} else {
 		return error;
 	}
@@ -381,7 +384,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 			} else {
 				// WTF? This should not happen.
 				*error = PARSE_ERROR;
-				return false;
+				return nullptr;
 			}
 			// Split args here:
 

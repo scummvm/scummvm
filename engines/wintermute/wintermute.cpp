@@ -86,6 +86,7 @@ WintermuteEngine::~WintermuteEngine() {
 	deinit();
 	delete _game;
 	delete _debugger;
+	delete _adapter;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
