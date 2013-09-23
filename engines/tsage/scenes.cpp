@@ -56,8 +56,13 @@ void SceneManager::setNewScene(int sceneNumber) {
 
 void SceneManager::checkScene() {
 	if (_nextSceneNumber != -1) {
+		int nextSceneNumber = _nextSceneNumber;
+
 		sceneChange();
-		_nextSceneNumber = -1;
+
+		// Unless we've already switched to yet another scene, reset
+		if (_nextSceneNumber == nextSceneNumber)
+			_nextSceneNumber = -1;
 	}
 
 	g_globals->dispatchSounds();

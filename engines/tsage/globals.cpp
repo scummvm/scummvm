@@ -465,9 +465,8 @@ void Ringworld2Globals::reset() {
 	_scene1925CurrLevel = 0; //_v56A9C
 	_v56A9E = 0;
 	_v56AA0 = 0;
-	_v56AA1 = 0;
-	_v56AA2 = 60;
-	_v56AA4 = 660;
+	_scientistConvIndex = 0;
+	_ventCellPos = Common::Point(60, 660);
 	_v56AA6 = 1;
 	_v56AA7 = 1;
 	_v56AA8 = 1;
@@ -531,8 +530,8 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_desertWrongDirCtr);
 	s.syncAsSint16LE(_scene1925CurrLevel); // _v56A9C
 	s.syncAsSint16LE(_v56A9E);
-	s.syncAsSint16LE(_v56AA2);
-	s.syncAsSint16LE(_v56AA4);
+	s.syncAsSint16LE(_ventCellPos.x);
+	s.syncAsSint16LE(_ventCellPos.y);
 	s.syncAsSint16LE(_v56AAB);
 	s.syncAsSint16LE(_scene180Mode);
 	s.syncAsSint16LE(_v57709);
@@ -559,7 +558,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsByte(_desertCorrectDirection);
 	s.syncAsByte(_desertPreviousDirection);
 	s.syncAsByte(_v56AA0);
-	s.syncAsByte(_v56AA1);
+	s.syncAsByte(_scientistConvIndex);
 	s.syncAsByte(_v56AA6);
 	s.syncAsByte(_v56AA7);
 	s.syncAsByte(_v56AA8);

@@ -1065,6 +1065,7 @@ void Scene3240::signal() {
  * Scene 3245 - Cutscene : Discussions with Dr. Tomko
  *
  *--------------------------------------------------------------------------*/
+
 void Scene3245::postInit(SceneObjectList *OwnerList) {
 	loadScene(3245);
 	R2_GLOBALS._uiElements._active = false;
@@ -1080,14 +1081,14 @@ void Scene3245::postInit(SceneObjectList *OwnerList) {
 	_actor1.postInit();
 	_actor2.postInit();
 
-	if (R2_GLOBALS._v56AA1 < 4)
-		++R2_GLOBALS._v56AA1;
+	if (R2_GLOBALS._scientistConvIndex < 4)
+		++R2_GLOBALS._scientistConvIndex;
 
-	if (R2_GLOBALS._v56AA1 >= 4) {
+	if (R2_GLOBALS._scientistConvIndex >= 4) {
 		SceneItem::display(1200, 7, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 		signal();
 	} else {
-		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._v56AA1, &_actor1, &_actor2, NULL);
+		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._scientistConvIndex, &_actor1, &_actor2, NULL);
 	}
 }
 
@@ -1099,6 +1100,7 @@ void Scene3245::signal() {
  * Scene 3250 - Room with large stasis field negator
  *
  *--------------------------------------------------------------------------*/
+
 bool Scene3250::Item::startAction(CursorType action, Event &event) {
 	Scene3250 *scene = (Scene3250 *)R2_GLOBALS._sceneManager._scene;
 

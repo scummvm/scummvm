@@ -118,6 +118,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1100:
 		return new Scene1100();
 	case 1200:
+		// ARM Base - Air Ducts Maze
 		return new Scene1200();
 	case 1337:
 	case 1330:
@@ -1504,7 +1505,7 @@ MazeUI::~MazeUI() {
 }
 
 void MazeUI::synchronize(Serializer &s) {
-	SavedObject::synchronize(s);
+	SceneObject::synchronize(s);
 
 	s.syncAsSint16LE(_resNum);
 	if (s.isLoading())
@@ -1516,7 +1517,6 @@ void MazeUI::synchronize(Serializer &s) {
 }
 
 void MazeUI::load(int resNum) {
-	postInit();
 	clear();
 	_resNum = resNum;
 

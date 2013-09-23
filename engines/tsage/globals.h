@@ -290,8 +290,8 @@ public:
 	int _scene1925CurrLevel; //_v56A9C
 	int _v56A9E;
 	byte _v56AA0;
-	byte _v56AA1;
-	int _v56AA2;
+	byte _scientistConvIndex;
+	Common::Point _ventCellPos;
 	int _v56AA4;
 	byte _v56AA6;
 	byte _v56AA7;

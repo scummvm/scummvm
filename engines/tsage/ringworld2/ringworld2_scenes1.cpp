@@ -1311,7 +1311,7 @@ void Scene1100::saveCharacter(int characterIndex) {
  *--------------------------------------------------------------------------*/
 
 Scene1200::Scene1200() {
-	_field412 = 0;
+	_nextCrawlDirection = 0;
 	_field414 = 0;
 	_field416 = 0;
 	_field418 = 0;
@@ -1322,7 +1322,7 @@ Scene1200::Scene1200() {
 void Scene1200::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_nextCrawlDirection);
 	s.syncAsSint16LE(_field414);
 	s.syncAsSint16LE(_field416);
 	s.syncAsSint16LE(_field418);
@@ -1418,7 +1418,7 @@ bool Scene1200::LaserPanel::Jumper::startAction(CursorType action, Event &event)
 
 		switch (R2_GLOBALS._v56AA7) {
 		case 1:
-			setFrame2(1);
+			setFrame2(2);
 			setPosition(Common::Point(152, 101));
 			break;
 		case 2:
@@ -1482,20 +1482,14 @@ void Scene1200::LaserPanel::remove() {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_field41A = 0;
-	warning("Unexpected _sceneAreas.remove() call");
-//	scene->_sceneAreas.remove(&_jumper1);
-//	scene->_sceneAreas.remove(&_jumper2);
-//	scene->_sceneAreas.remove(&_jumper3);
+	scene->_sceneAreas.remove(&_jumper1);
+	scene->_sceneAreas.remove(&_jumper2);
+	scene->_sceneAreas.remove(&_jumper3);
 	_jumper1.remove();
 	_jumper2.remove();
 	_jumper3.remove();
 
-	// sub201EA
-	R2_GLOBALS._sceneItems.remove((SceneItem *)this);
-	_object1.remove();
-	SceneArea::remove();
-	R2_GLOBALS._insetUp--;
-
+	ModalWindow::remove();
 	R2_GLOBALS._player._canWalk = true;
 }
 
@@ -1506,7 +1500,7 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene < 3200)
 		R2_GLOBALS._sound1.play(257);
 
-	_field412 = 1;
+	_nextCrawlDirection = CRAWL_EAST;
 	_field414 = 0;
 	_field416 = 0;
 	_field418 = 0;
@@ -1533,8 +1527,9 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 
 	_mazeUI.setDisplayBounds(Rect(110, 20, 210, 120));
 
+	_mazeUI.postInit();
 	_mazeUI.load(1);
-	_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
+	_mazeUI.setMazePosition(R2_GLOBALS._ventCellPos);
 
 	R2_GLOBALS._player.enableControl();
 	_item1.setDetails(Rect(0, 0, 320, 200), 1200, 0, 1, 2, 1, NULL);
@@ -1790,7 +1785,7 @@ void Scene1200::process(Event &event) {
 		return;
 
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		Common::Point cellPos(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+		Common::Point cellPos = R2_GLOBALS._ventCellPos;
 		_mazeUI.pixelToCellXY(cellPos);
 
 		int cellId = _mazeUI.getCellFromPixelXY(event.mousePos);
@@ -1840,7 +1835,7 @@ void Scene1200::process(Event &event) {
 						R2_GLOBALS._sceneManager.changeScene(3150);
 						break;
 					case 33:
-						if (R2_GLOBALS._v56AA1 >= 4)
+						if (R2_GLOBALS._scientistConvIndex >= 4)
 							R2_GLOBALS._sceneManager.changeScene(3250);
 						else
 							SceneItem::display(1200, 6, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
@@ -1860,7 +1855,7 @@ void Scene1200::process(Event &event) {
 				case 3:
 					// It was your cell.
 					SceneItem::display(1200, 8, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
-						break;
+					break;
 				case 9:
 						R2_GLOBALS._sceneManager.changeScene(3240);
 						break;
@@ -1914,20 +1909,20 @@ void Scene1200::process(Event &event) {
 		}
 
 		switch (event.kbd.keycode) {
-		case Common::KEYCODE_1:
-			warning("FIXME: keycode = 0x4800");
+		case Common::KEYCODE_KP8:
+		case Common::KEYCODE_UP:
 			startCrawling(CRAWL_NORTH);
 			break;
-		case Common::KEYCODE_2:
-			warning("FIXME: keycode = 0x4B00");
+		case Common::KEYCODE_KP4:
+		case Common::KEYCODE_LEFT:
 			startCrawling(CRAWL_WEST);
 			break;
-		case Common::KEYCODE_3:
-			warning("FIXME: keycode = 0x4D00");
+		case Common::KEYCODE_KP6:
+		case Common::KEYCODE_RIGHT:
 			startCrawling(CRAWL_EAST);
 			break;
-		case Common::KEYCODE_4:
-			warning("FIXME: keycode = 0x5000");
+		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_DOWN:
 			startCrawling(CRAWL_SOUTH);
 			break;
 		default:
@@ -1945,49 +1940,47 @@ void Scene1200::dispatch() {
 	Scene::dispatch();
 
 	if (_fixupMaze) {
-		_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
-
-		warning("_gfxManager.sub294AC(unk);");
-		warning("tmpRect.sub14DF3();");
+		_mazeUI.setMazePosition(R2_GLOBALS._ventCellPos);
+		//_mazeUI.draw();
 		_fixupMaze = false;
 	}
 
 	if (_field414 != 0) {
 		tmpRect.set(110, 20, 210, 120);
 		_field414--;
-		switch (_field412 - 1) {
-		case 0:
-			R2_GLOBALS._v56AA2 += 2;
+
+		switch (_nextCrawlDirection) {
+		case CRAWL_EAST:
+			R2_GLOBALS._ventCellPos.x += 2;
 			break;
-		case 1:
-			R2_GLOBALS._v56AA2 -= 2;
+		case CRAWL_WEST:
+			R2_GLOBALS._ventCellPos.x -= 2;
 			break;
-		case 2:
-			R2_GLOBALS._v56AA4 += 2;
+		case CRAWL_SOUTH:
+			R2_GLOBALS._ventCellPos.y += 2;
 			break;
-		case 3:
-			R2_GLOBALS._v56AA4 -= 2;
+		case CRAWL_NORTH:
+			R2_GLOBALS._ventCellPos.y -= 2;
 			break;
 		default:
 			break;
 		}
-		_mazeUI.setMazePosition(Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4));
 
-		debug("_gfxManager.sub294AC(unk);");
-		debug("tmpRect.sub14DF3();");
+		_mazeUI.setMazePosition(R2_GLOBALS._ventCellPos);
+		//_mazeUI.draw();
 
 		if (_field416 != 0) {
-			switch(_field412 - 1) {
-			case 0:
+			switch(_nextCrawlDirection) {
+			case CRAWL_EAST:
 				R2_GLOBALS._player.setPosition(Common::Point(R2_GLOBALS._player._position.x - 2, R2_GLOBALS._player._position.y));
 				break;
-			case 1:
+			case CRAWL_WEST:
 				R2_GLOBALS._player.setPosition(Common::Point(R2_GLOBALS._player._position.x + 2, R2_GLOBALS._player._position.y));
 				break;
-			case 2:
+			case CRAWL_SOUTH:
 				R2_GLOBALS._player.setPosition(Common::Point(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y - 2));
 				break;
-			case 3:
+			case CRAWL_NORTH:
 				R2_GLOBALS._player.setPosition(Common::Point(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y + 2));
 				break;
 			default:
@@ -2008,7 +2001,7 @@ void Scene1200::saveCharacter(int characterIndex) {
 }
 
 void Scene1200::startCrawling(CrawlDirection dir) {
-	Common::Point cellPos = Common::Point(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+	Common::Point cellPos = R2_GLOBALS._ventCellPos;
 	_mazeUI.pixelToCellXY(cellPos);
 
 	switch (dir) {
@@ -2023,26 +2016,26 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 			_sceneMode = 1200;
 			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
 		} else if (_mazeUI.getCellFromPixelXY(Common::Point(200, 69)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
+			switch (_nextCrawlDirection) {
+			case CRAWL_EAST:
 				if (R2_GLOBALS._player._visage == 3155)
 					_sceneMode = 15;
 				else
 					_sceneMode = 10;
 				break;
-			case 1:
+			case CRAWL_WEST:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 76;
 				else
 					_sceneMode = 75;
 				break;
-			case 2:
+			case CRAWL_SOUTH:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 101;
 				else
 					_sceneMode = 100;
 				break;
-			case 3:
+			case CRAWL_NORTH:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 111;
 				else
@@ -2052,7 +2045,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 				break;
 			}
 			R2_GLOBALS._player.disableControl();
-			_field412 = 1;
+			_nextCrawlDirection = 1;
 			signal();
 		}
 		break;
@@ -2067,26 +2060,26 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 			_sceneMode = 1201;
 			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
 		} else if (_mazeUI.getCellFromPixelXY(Common::Point(120, 69)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
+			switch (_nextCrawlDirection) {
+			case CRAWL_EAST:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 56;
 				else
 					_sceneMode = 55;
 				break;
-			case 1:
+			case CRAWL_WEST:
 				if (R2_GLOBALS._player._visage == 3155)
 					_sceneMode = 25;
 				else
 					_sceneMode = 20;
 				break;
-			case 2:
+			case CRAWL_SOUTH:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 91;
 				else
 					_sceneMode = 90;
 				break;
-			case 3:
+			case CRAWL_NORTH:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 121;
 				else
@@ -2096,7 +2089,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 				break;
 			}
 			R2_GLOBALS._player.disableControl();
-			_field412 = 2;
+			_nextCrawlDirection = 2;
 			signal();
 		}
 		break;
@@ -2109,26 +2102,26 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 			_sceneMode = 1203;
 			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
 		} else if (_mazeUI.getCellFromPixelXY(Common::Point(160, 110)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
+			switch (_nextCrawlDirection) {
+			case CRAWL_EAST:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 51;
 				else
 					_sceneMode = 50;
 				break;
-			case 1:
+			case CRAWL_WEST:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 81;
 				else
 					_sceneMode = 80;
 				break;
-			case 2:
+			case CRAWL_SOUTH:
 				if (R2_GLOBALS._player._visage == 3155)
 					_sceneMode = 35;
 				else
 					_sceneMode = 30;
 				break;
-			case 3:
+			case CRAWL_NORTH:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 116;
 				else
@@ -2138,7 +2131,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 				break;
 			}
 			R2_GLOBALS._player.disableControl();
-			_field412 = 3;
+			_nextCrawlDirection = 3;
 			signal();
 		}
 		break;
@@ -2151,26 +2144,26 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 			_sceneMode = 1202;
 			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);
 		} else if (_mazeUI.getCellFromPixelXY(Common::Point(160, 30)) == 36) {
-			switch (_field412 - 1) {
-			case 0:
+			switch (_nextCrawlDirection) {
+			case CRAWL_EAST:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 61;
 				else
 					_sceneMode = 60;
 				break;
-			case 1:
+			case CRAWL_WEST:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 71;
 				else
 					_sceneMode = 70;
 				break;
-			case 2:
+			case CRAWL_SOUTH:
 				if (R2_GLOBALS._player._visage == 3156)
 					_sceneMode = 96;
 				else
 					_sceneMode = 95;
 				break;
-			case 3:
+			case CRAWL_NORTH:
 				if (R2_GLOBALS._player._visage == 3155)
 					_sceneMode = 45;
 				else
@@ -2182,7 +2175,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 				break;
 			}
 			R2_GLOBALS._player.disableControl();
-			_field412 = 4;
+			_nextCrawlDirection = 4;
 			signal();
 		}
 		break;

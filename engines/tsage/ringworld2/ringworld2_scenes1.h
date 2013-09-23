@@ -163,7 +163,7 @@ public:
 	MazeUI _mazeUI;
 	SequenceManager _sequenceManager;
 
-	int _field412;
+	int _nextCrawlDirection;
 	int _field414;
 	int _field416;
 	int _field418;
