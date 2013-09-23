@@ -67,33 +67,32 @@ public:
 };
 
 class Scene3125 : public SceneExt {
-	class Item1 : public NamedHotspot {
+	class Background : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item2 : public Item1 {
+	class Table : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item3 : public Item1 {
+	class Computer : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor1 : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-
 	int _field412;
-	Item1 _item1;
-	Actor1 _actor1;
-	Item2 _item2;
-	Item3 _item3;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
+	Background _background;
+	Door _door;
+	Table _table;
+	Computer _computer;
+	SceneActor _ghoul1;
+	SceneActor _ghoul2;
+	SceneActor _ghoul3;
+	SceneActor _ghoul4;
 	SequenceManager _sequenceManager1;
 	// Second sequence manager... Unused?
 	SequenceManager _sequenceManager2;
@@ -164,20 +163,19 @@ class Scene3175 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor3 : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor1 : public Actor3 {
+	class Corpse : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-
-	Item1 _item1;
+	Item1 _background;
 	Item1 _item2;
 	Item1 _item3;
-	Actor1 _actor1;
+	Door _door;
 	SceneActor _actor2;
-	Actor3 _actor3;
+	Corpse _corpse;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -266,22 +264,21 @@ class Scene3250 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-
-	Item _item1;
-	Item _item2;
-	Item _item3;
-	Item _item4;
-	Actor _actor1;
-	Actor _actor2;
-	Actor _actor3;
-	Actor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
+	Item _background;
+	Item _tnuctipunShip;
+	Item _floodLights;
+	Item _negator;
+	Door _leftDoor;
+	Door _topDoor;
+	Door _rightDoor;
+	Door _actor4;
+	SceneActor _ghoul1;
+	SceneActor _ghoul2;
+	SceneActor _ghoul3;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
