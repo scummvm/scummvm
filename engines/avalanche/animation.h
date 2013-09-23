@@ -39,6 +39,12 @@ namespace Avalanche {
 class AvalancheEngine;
 class Animation;
 
+enum Direction {
+	kDirUp = 0, kDirRight, kDirDown, kDirLeft,
+	kDirUpRight, kDirDownRight, kDirDownLeft, kDirUpLeft,
+	kDirStopped, kDirNone = 177
+};
+
 struct StatType {
 	Common::String _name; // Name of character.
 	Common::String _comment; // Comment.
@@ -52,7 +58,8 @@ class AnimationType {
 public:
 	SpriteInfo _info;
 	StatType _stat; // Vital statistics.
-	byte _facingDir, _stepNum;
+	Direction _facingDir;
+	byte _stepNum;
 	int16 _x, _y; // Current xy coords.
 	int16 _oldX[2], _oldY[2];  // Last xy coords.
 	int8 _moveX, _moveY; // Amount to move sprite by, each step.
@@ -69,8 +76,8 @@ public:
 	void init(byte spritenum, bool doCheck, Animation *anim); // Loads & sets up the sprite.
 	void original(); // Just sets 'quick' to false.
 	void draw(); // Drops sprite onto screen. Original: andexor().
-	void turn(byte whichway); // Turns character round.
-	void appear(int16 wx, int16 wy, byte wf); // Switches it on.
+	void turn(Direction whichway); // Turns character round.
+	void appear(int16 wx, int16 wy, Direction wf); // Switches it on.
 	void bounce(); // Bounces off walls.
 	void walk(); // Prepares for andexor, etc.
 	void walkTo(byte pednum); // Home in on a point.
@@ -92,12 +99,6 @@ class Animation {
 public:
 	friend class AnimationType;
 
-	enum Direction {
-		kDirUp, kDirRight, kDirDown, kDirLeft,
-		kDirUpRight, kDirDownRight, kDirDownLeft, kDirUpLeft,
-		kDirStopped
-	};
-
 	static const byte kSpriteNumbMax = 5; // current max no. of sprites
 
 	enum Proc {
@@ -113,8 +114,6 @@ public:
 	AnimationType _sprites[kSpriteNumbMax];
 	bool _mustExclaim;
 	uint16 _sayWhat;
-	byte _direction; // The direction Avvy is currently facing.
-	byte _oldDirection;
 
 	Animation(AvalancheEngine *vm);
 	~Animation();
@@ -125,7 +124,7 @@ public:
 	void openDoor(byte whither, byte ped, byte magicnum); // Handles slidey-open doors.
 	void catacombMove(byte ped); // When you enter a new position in the catacombs, this procedure should be called. It changes the 'also' codes so that they may match the picture on the screen.
 	void stopWalking();
-	void changeDirection(byte t, byte dir);
+	void setMoveSpeed(byte t, Direction dir);
 	void appearPed(byte sprNum, byte pedNum);
 	void flipRoom(byte room, byte ped);
 	bool inField(byte which); // Returns true if you're within field "which".
@@ -133,7 +132,16 @@ public:
 	void updateSpeed();
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
 
+	void setDirection(Direction dir);
+	void setOldDirection(Direction dir);
+	Direction getDirection();
+	Direction getOldDirection();
+
+	void synchronize(Common::Serializer &sz);
 private:
+	Direction _direction; // The direction Avvy is currently facing.
+	Direction _oldDirection;
+
 	AvalancheEngine *_vm;
 
 	byte checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl);
@@ -150,7 +158,7 @@ private:
 	void faceAvvy(byte tripnum);
 	
 	// Movements for Homing NPCs: Spludwick and Geida.
-	void spin(byte whichway, byte &tripnum);
+	void spin(Direction dir, byte &tripnum);
 	void takeAStep(byte &tripnum);
 	void geidaProcs(byte tripnum);
 

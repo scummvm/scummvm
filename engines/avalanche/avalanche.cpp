@@ -113,15 +113,15 @@ const char *AvalancheEngine::getCopyrightString() const {
 }
 
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
-	sz.syncAsByte(_animation->_direction);
+	_animation->synchronize(sz);
+	_parser->synchronize(sz);
+
 	sz.syncAsByte(_avalot->_carryNum);
 	for (int i = 0; i < kObjectNum; i++)
 		sz.syncAsByte(_avalot->_objects[i]);
 	sz.syncAsSint16LE(_avalot->_dnascore);
 	sz.syncAsSint32LE(_avalot->_money);
 	sz.syncAsByte(_avalot->_room);
-	sz.syncAsByte(_parser->_wearing);
-	sz.syncAsByte(_parser->_sworeNum);
 	if (sz.isSaving())
 		_saveNum++;
 	sz.syncAsByte(_saveNum);
@@ -439,7 +439,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	AnimationType *avvy = &_animation->_sprites[0];
 	if (avvy->_quick && avvy->_visible)
-		_animation->changeDirection(0, _animation->_direction); // We push Avvy in the right direction is he was moving.
+		_animation->setMoveSpeed(0, _animation->getDirection()); // We push Avvy in the right direction is he was moving.
 
 	return true;
 }
