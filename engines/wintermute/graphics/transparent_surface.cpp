@@ -68,11 +68,6 @@ public:
  */
 
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
-
-	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
-	// Just use the faster, sans-colormod version
-
 	if (*ca != 255) {
 		ina = (ina) * (*ca) >> 8;
 	}
@@ -105,10 +100,6 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
  */
 
 void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
-	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
-	// Just use the faster, sans-colormod version
-
 	//if (*ca != 255) {
 	//	ina = ina * (*ca) >> 8;
 	// }
@@ -146,10 +137,6 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
  */
 
 void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-
-	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
-	// Just use the faster, sans-colormod version
-
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
 	}
