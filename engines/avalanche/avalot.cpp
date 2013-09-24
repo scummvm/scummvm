@@ -361,11 +361,11 @@ void Avalot::setup() {
 	_vm->_parser->_inputTextPos = 0;
 	_vm->_parser->_quote = true;
 
+	_vm->_animation->setDirection(kDirStopped);
+	_vm->_animation->resetAnims();
+
 	drawToolbar();
 	_vm->_dialogs->setReadyLight(2);
-
-	_vm->_animation->setDirection(kDirStopped);
-	_vm->_animation->loadAnims();
 
 	dawn();
 	_vm->_parser->_cursorState = false;

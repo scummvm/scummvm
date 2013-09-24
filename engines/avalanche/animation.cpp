@@ -123,7 +123,7 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	inf.close();
 }
 
-void AnimationType::original() {
+void AnimationType::reset() {
 	_quick = false;
 	_id = 177;
 }
@@ -362,9 +362,9 @@ Animation::~Animation() {
 	}
 }
 
-void Animation::loadAnims() {
+void Animation::resetAnims() {
 	for (int16 i = 0; i < kSpriteNumbMax; i++)
-		_sprites[i].original();
+		_sprites[i].reset();
 }
 
 byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
