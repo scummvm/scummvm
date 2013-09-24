@@ -1071,7 +1071,7 @@ void Dialogs::talkTo(byte whom) {
 		_vm->_avalot->refreshObjectList();
 		displayScrollChain('q', 1); // Circular from Cardiff.
 		_vm->_avalot->_talkedToCrapulus = true;
-		_vm->_avalot->_whereIs[kPeopleCrapulus - 150] = kRoomDummy; // Crapulus walks off.
+		_vm->_avalot->setRoom(kPeopleCrapulus, kRoomDummy); // Crapulus walks off.
 
 		AnimationType *spr = &_vm->_animation->_sprites[1];
 		spr->_vanishIfStill = true;

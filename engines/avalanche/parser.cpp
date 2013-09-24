@@ -929,7 +929,7 @@ void Parser::examineObject() {
 }
 
 bool Parser::isPersonHere() { // Person equivalent of "holding".
-	if ((_person == kPardon) || (_person == 0) || (_vm->_avalot->_whereIs[_person - 150] == _vm->_avalot->_room))
+	if ((_person == kPardon) || (_person == 0) || (_vm->_avalot->getRoom(_person) == _vm->_avalot->_room))
 		return true;
 	else {
 		Common::String tmpStr;
@@ -1107,8 +1107,8 @@ void Parser::swallow() { // Eat something.
 void Parser::peopleInRoom() {
 	byte numPeople = 0; // Number of people in the room.
 
-	for (int i = 1; i < 29; i++) { // Start at 1 so we don't list Avvy himself!
-		if (_vm->_avalot->_whereIs[i] == _vm->_avalot->_room)
+	for (int i = 151; i < 179; i++) { // Start at 1 so we don't list Avvy himself!
+		if (_vm->_avalot->getRoom(i) == _vm->_avalot->_room)
 			numPeople++;
 	}
 
@@ -1117,8 +1117,8 @@ void Parser::peopleInRoom() {
 
 	Common::String tmpStr;
 	byte actPerson = 0; // Actually listed people.
-	for (int i = 1; i < 29; i++) {
-		if (_vm->_avalot->_whereIs[i] == _vm->_avalot->_room) {
+	for (int i = 151; i < 179; i++) {
+		if (_vm->_avalot->getRoom(i) == _vm->_avalot->_room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
 				tmpStr = _vm->_avalot->getName(i + 150);
@@ -1210,7 +1210,7 @@ void Parser::openDoor() {
 				_vm->_dialogs->displayScrollChain('x', portal->_data);
 				break;
 			case Avalot::kMagicTransport:
-				_vm->_animation->flipRoom((portal->_data) >> 8, portal->_data & 0x0F);
+				_vm->_avalot->flipRoom((Room)((portal->_data) >> 8), portal->_data & 0x0F);
 				break;
 			case Avalot::kMagicUnfinished:
 				_vm->_animation->_sprites[0].bounce();
@@ -1220,7 +1220,7 @@ void Parser::openDoor() {
 				_vm->_animation->callSpecial(portal->_data);
 				break;
 			case Avalot::kMagicOpenDoor:
-				_vm->_animation->openDoor(portal->_data >> 8, portal->_data & 0x0F, i + 9);
+				_vm->_avalot->openDoor((Room)(portal->_data >> 8), portal->_data & 0x0F, i + 9);
 				break;
 			}
 
@@ -1391,7 +1391,7 @@ void Parser::drink() {
 		_vm->_avalot->refreshObjectList();
 		_vm->_avalot->dusk();
 		_vm->_avalot->hangAroundForAWhile();
-		_vm->_animation->flipRoom(1, 1);
+		_vm->_avalot->flipRoom(kRoomYours, 1);
 		_vm->_avalot->setBackgroundColor(14);
 		_vm->_animation->_sprites[0]._visible = false;
 	}
@@ -1552,13 +1552,13 @@ void Parser::winSequence() {
 
 Common::String Parser::personSpeaks() {
 	if ((_person == kPardon) || (_person == 0)) {
-		if ((_vm->_avalot->_him == kPardon) || (_vm->_avalot->_whereIs[_vm->_avalot->_him - 150] != _vm->_avalot->_room))
+		if ((_vm->_avalot->_him == kPardon) || (_vm->_avalot->getRoom(_vm->_avalot->_him) != _vm->_avalot->_room))
 			_person = _vm->_avalot->_her;
 		else
 			_person = _vm->_avalot->_him;
 	}
 
-	if (_vm->_avalot->_whereIs[_person - 150] != _vm->_avalot->_room) {
+	if (_vm->_avalot->getRoom(_person) != _vm->_avalot->_room) {
 		return Common::String::format("%c1", Dialogs::kControlRegister); // Avvy himself!
 	}
 
@@ -1923,10 +1923,10 @@ void Parser::doThat() {
 			case kObjectLute :
 					_vm->_dialogs->displayScrollChain('U', 7);
 
-					if (_vm->_avalot->_whereIs[kPeopleCwytalot - 150] == _vm->_avalot->_room)
+					if (_vm->_avalot->getRoom(kPeopleCwytalot) == _vm->_avalot->_room)
 						_vm->_dialogs->displayScrollChain('U', 10);
 
-					if (_vm->_avalot->_whereIs[kPeopleDuLustie - 150] == _vm->_avalot->_room)
+					if (_vm->_avalot->getRoom(kPeopleDuLustie) == _vm->_avalot->_room)
 						_vm->_dialogs->displayScrollChain('U', 15);
 				break;
 			case 52:
@@ -1993,7 +1993,7 @@ void Parser::doThat() {
 		else {
 			if ((_vm->_avalot->_room == kRoomSpludwicks) & (_vm->_animation->inField(1))) { // Avaricius appears!
 				_vm->_dialogs->displayScrollChain('q', 17);
-				if (_vm->_avalot->_whereIs[1] == kRoomSpludwicks)
+				if (_vm->_avalot->getRoom(kPeopleSpludwick) == kRoomSpludwicks)
 					_vm->_dialogs->displayScrollChain('q', 18);
 				else {
 					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[1];
@@ -2143,7 +2143,7 @@ void Parser::doThat() {
 	case kVerbCodeAttack:
 		if ((_vm->_avalot->_room == kRoomBrummieRoad) &&
 			((_person == kPeopleCwytalot) || (_thing == kObjectCrossbow) || (_thing == kObjectBolt)) &&
-			(_vm->_avalot->_whereIs[kPeopleCwytalot - 150] == _vm->_avalot->_room)) {
+			(_vm->_avalot->getRoom(kPeopleCwytalot) == _vm->_avalot->_room)) {
 			switch (_vm->_avalot->_objects[kObjectBolt - 1] + _vm->_avalot->_objects[kObjectCrossbow - 1] * 2) {
 				// 0 = neither, 1 = only bolt, 2 = only crossbow, 3 = both.
 			case 0:
@@ -2167,7 +2167,7 @@ void Parser::doThat() {
 				_vm->_animation->_sprites[1].walkTo(1);
 				_vm->_animation->_sprites[1]._vanishIfStill = true;
 				_vm->_animation->_sprites[1]._callEachStepFl = false;
-				_vm->_avalot->_whereIs[kPeopleCwytalot - 150] = kRoomDummy;
+				_vm->_avalot->setRoom(kPeopleCwytalot, kRoomDummy);
 				break;
 			default:
 				_vm->_dialogs->displayScrollChain('Q', 10); // Please try not to be so violent!

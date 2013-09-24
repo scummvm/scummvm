@@ -57,7 +57,7 @@ void Sequence::thenShow(byte what) {
 	}
 }
 
-void Sequence::thenFlip(byte where, byte ped) {
+void Sequence::thenFlip(Room where, byte ped) {
 	thenShow(kNowFlip);
 
 	_vm->_avalot->_flipToWhere = where;
@@ -90,7 +90,7 @@ void Sequence::callSequencer() {
 		break;
 	case 177: // Flip room.
 		_vm->_avalot->_userMovesAvvy = true;
-		_vm->_animation->flipRoom(_vm->_avalot->_flipToWhere, _vm->_avalot->_flipToPed);
+		_vm->_avalot->flipRoom(_vm->_avalot->_flipToWhere, _vm->_avalot->_flipToPed);
 		if (curSeq == 177)
 			shoveLeft();
 		break;

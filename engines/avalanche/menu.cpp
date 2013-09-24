@@ -452,7 +452,7 @@ void Menu::setupMenuPeople() {
 	_activeMenuItem.reset();
 
 	for (int i = 150; i <= 178; i++) {
-		if (_vm->_avalot->_whereIs[i - 150] == _vm->_avalot->_room) {
+		if (_vm->_avalot->getRoom(i) == _vm->_avalot->_room) {
 			_activeMenuItem.setupOption(_vm->_avalot->getName(i), _vm->_avalot->getNameChar(i), "", true);
 			people += i;
 		}
@@ -488,7 +488,7 @@ void Menu::setupMenuWith() {
 		// or (c), the _person you've selected is YOU!
 
 		if ((_vm->_avalot->_lastPerson == kPeopleAvalot) || (_vm->_avalot->_lastPerson == _vm->_parser->kNothing)
-			|| (_vm->_avalot->_whereIs[_vm->_avalot->_lastPerson - 150] != _vm->_avalot->_room))
+			|| (_vm->_avalot->getRoom(_vm->_avalot->_lastPerson) != _vm->_avalot->_room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_avalot->getName(_vm->_avalot->_lastPerson), 'G', "", true);

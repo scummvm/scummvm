@@ -121,16 +121,15 @@ public:
 	void animLink();
 	void loadAnims(); // Original: loadtrip().
 	void callSpecial(uint16 which);
-	void openDoor(byte whither, byte ped, byte magicnum); // Handles slidey-open doors.
 	void catacombMove(byte ped); // When you enter a new position in the catacombs, this procedure should be called. It changes the 'also' codes so that they may match the picture on the screen.
 	void stopWalking();
 	void setMoveSpeed(byte t, Direction dir);
 	void appearPed(byte sprNum, byte pedNum);
-	void flipRoom(byte room, byte ped);
 	bool inField(byte which); // Returns true if you're within field "which".
 	bool nearDoor(); // Returns True if you're near a door.
 	void updateSpeed();
 	void handleMoveKey(const Common::Event &event); // To replace tripkey().
+	void hideInCupboard();
 
 	void setDirection(Direction dir);
 	void setOldDirection(Direction dir);
@@ -150,7 +149,6 @@ private:
 
 	void grabAvvy(byte tripnum);
 	void arrowProcs(byte tripnum);
-	void hideInCupboard();
 
 	// Different movements for NPCs:
 	void followAvalotY(byte tripnum); // Original: follow_avvy_y().

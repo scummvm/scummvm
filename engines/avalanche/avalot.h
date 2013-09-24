@@ -240,14 +240,13 @@ public:
 	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.
 	// If a scroll comes up, or you leave the room, it's automatically set to zero.
 	byte _interrogation;
-	static byte _whereIs[29];
 
 	// Former DNA structure
 	byte _carryNum; // How many objects you're carrying...
 	bool _objects[kObjectNum]; // ...and which ones they are.
 	int16 _dnascore; // your score, of course
 	int32 _money; // your current amount of dosh
-	byte _room; // your current room
+	Room _room; // your current room
 	byte _roomCount[100]; // Add one to each every time you enter a room
 	bool _wonNim; // Have you *won* Nim? (That's harder.)
 	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
@@ -297,7 +296,8 @@ public:
 	byte _nextBell; // For the ringing.
 	bool _givenPotionToGeida; // Does Geida have the potion?
 	bool _lustieIsAsleep; // Is BDL asleep?
-	byte _flipToWhere, _flipToPed; // For the sequencer.
+	Room _flipToWhere;
+	byte _flipToPed; // For the sequencer.
 	bool _beenTiedUp; // In r__Robins.
 	bool _sittingInPub; // Are you sitting down in the pub?
 	byte _spurgeTalkCount; // Count for talking to Spurge.
@@ -364,7 +364,7 @@ public:
 	void drawAlsoLines();
 	void loadRoom(byte num);
 	void exitRoom(byte x);
-	void enterRoom(byte room, byte ped);
+	void enterRoom(Room room, byte ped);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
 	void loadDigits(); // Load the scoring digits & rwlites
 	void drawToolbar();
@@ -411,8 +411,15 @@ public:
 	Common::String getItem(byte which); // Called get_better in the original.
 	Common::String f5Does(); // This procedure determines what f5 does.
 
+	void openDoor(Room whither, byte ped, byte magicnum); // Handles slidey-open doors.
+	void flipRoom(Room room, byte ped);
+
+	void setRoom(byte persId, Room roomId);
+	Room getRoom(byte persId);
 private:
 	AvalancheEngine *_vm;
+
+	static Room _whereIs[29];
 
 	Common::File file;
 	Common::String readAlsoStringFromFile();

@@ -143,7 +143,7 @@ const TuneType Avalot::kTune = {
 	kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
 };
 
-byte Avalot::_whereIs[29] = {
+Room Avalot::_whereIs[29] = {
 	// The Lads
 	kRoomYours, // Avvy
 	kRoomSpludwicks, // Spludwick
@@ -162,7 +162,14 @@ byte Avalot::_whereIs[29] = {
 	kRoomNottsPub, // Port
 	kRoomNottsPub, // Spurge
 	kRoomMusicRoom, // Jacques
-	0, 0, 0, 0, 0, 0, 0, 0,
+	kRoomNowhere,
+	kRoomNowhere,
+	kRoomNowhere,
+	kRoomNowhere,
+	kRoomNowhere,
+	kRoomNowhere,
+	kRoomNowhere,
+	kRoomNowhere,
 	// The Lasses
 	kRoomYours, // Arkata
 	kRoomGeidas, // Geida
@@ -747,23 +754,23 @@ void Avalot::putGeidaAt(byte whichPed, byte ped) {
 	spr1->_eachStepProc = Animation::kProcGeida;
 }
 
-void Avalot::enterRoom(byte room, byte ped) {
+void Avalot::enterRoom(Room roomId, byte ped) {
 	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
 
-	findPeople(room);
-	_room = room;
+	findPeople(roomId);
+	_room = roomId;
 	if (ped != 0)
-		_roomCount[room]++;
+		_roomCount[roomId]++;
 
-	loadRoom(room);
+	loadRoom(roomId);
 
-	if ((_roomCount[room] == 0) && (!setFlag('S')))
+	if ((_roomCount[roomId] == 0) && (!setFlag('S')))
 		incScore(1);
 
 	_whereIs[kPeopleAvalot - 150] = _room;
 
 	if (_geidaFollows)
-		_whereIs[kPeopleGeida - 150] = room;
+		_whereIs[kPeopleGeida - 150] = roomId;
 
 	_roomTime = 0;
 
@@ -771,7 +778,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 	if ((_lastRoom == kRoomMap) && (_lastRoomNotMap != _room))
 		enterNewTown();
 
-	switch (room) {
+	switch (roomId) {
 	case kRoomYours:
 		if (_avvyInBed) {
 			_vm->_background->drawBackgroundSprite(-1, -1, 2);
@@ -891,8 +898,8 @@ void Avalot::enterRoom(byte room, byte ped) {
 		}
 
 		if (_beenTiedUp) {
-			_whereIs[kPeopleRobinHood - 150] = 0;
-			_whereIs[kPeopleFriarTuck - 150] = 0;
+			_whereIs[kPeopleRobinHood - 150] = kRoomNowhere;
+			_whereIs[kPeopleFriarTuck - 150] = kRoomNowhere;
 		}
 
 		if (_tiedUp)
@@ -1004,7 +1011,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 			_vm->_graphics->refreshBackground();
 			_vm->_background->drawBackgroundSprite(-1, -1, 3);
 			_magics[kColorBrown - 1]._operation = Avalot::kMagicNothing;
-			_whereIs[kPeopleJacques - 150] = 0;
+			_whereIs[kPeopleJacques - 150] = kRoomNowhere;
 		}
 		if (ped != 0) {
 			_vm->_background->drawBackgroundSprite(-1, -1, 5);
@@ -1647,7 +1654,7 @@ void Avalot::resetVariables() {
 	_nextBell = 0;
 	_givenPotionToGeida = false;
 	_lustieIsAsleep = false;
-	_flipToWhere = 0;
+	_flipToWhere = kRoomNowhere;
 	_flipToPed = 0;
 	_beenTiedUp = false;
 	_sittingInPub = false;
@@ -1705,7 +1712,7 @@ void Avalot::newGame() {
 	_avvyInBed = true;
 	_enidFilename = "";
 
-	enterRoom(1, 1);
+	enterRoom(kRoomYours, 1);
 	avvy->_visible = false;
 	drawScore();
 	_vm->_menu->setup();
@@ -1938,5 +1945,115 @@ void Avalot::setBackgroundColor(byte x) {
 void Avalot::hangAroundForAWhile() {
 	for (int i = 0; i < 28; i++)
 		slowDown();
+}
+
+void Avalot::flipRoom(Room room, byte ped) {
+	assert((ped > 0) && (ped < 15));
+	if (!_alive) {
+		// You can't leave the room if you're dead.
+		_vm->_animation->_sprites[0]._moveX = 0;
+		_vm->_animation->_sprites[0]._moveY = 0; // Stop him from moving.
+		return;
+	}
+
+	if ((room == kRoomDummy) && (_room == kRoomLusties)) {
+		_vm->_animation->hideInCupboard();
+		return;
+	}
+
+	if ((_jumpStatus > 0) && (_room == kRoomInsideCardiffCastle)) {
+		// You can't *jump* out of Cardiff Castle!
+		_vm->_animation->_sprites[0]._moveX = 0;
+		return;
+	}
+
+	exitRoom(_room);
+	dusk();
+
+	for (int16 i = 1; i < _vm->_animation->kSpriteNumbMax; i++) {
+		if (_vm->_animation->_sprites[i]._quick)
+			_vm->_animation->_sprites[i].remove();
+	} // Deallocate sprite
+
+	if (_room == kRoomLustiesRoom)
+		_enterCatacombsFromLustiesRoom = true;
+
+	enterRoom(room, ped);
+	_vm->_animation->appearPed(0, ped - 1);
+	_enterCatacombsFromLustiesRoom = false;
+	_vm->_animation->setOldDirection(_vm->_animation->getDirection());
+	_vm->_animation->setDirection(_vm->_animation->_sprites[0]._facingDir);
+	drawDirection();
+
+	dawn();
+}
+
+/**
+ * Open the Door.
+ * This slides the door open. The data really ought to be saved in
+ * the Also file, and will be next time. However, for now, they're
+ * here.
+ * @remarks	Originally called 'open_the_door'
+ */
+void Avalot::openDoor(Room whither, byte ped, byte magicnum) {
+	switch (_room) {
+	case kRoomOutsideYours:
+	case kRoomOutsideNottsPub:
+	case kRoomOutsideDucks:
+		_vm->_sequence->firstShow(1);
+		_vm->_sequence->thenShow(2);
+		_vm->_sequence->thenShow(3);
+		break;
+	case kRoomInsideCardiffCastle:
+		_vm->_sequence->firstShow(1);
+		_vm->_sequence->thenShow(5);
+		break;
+	case kRoomAvvysGarden:
+	case kRoomEntranceHall:
+	case kRoomInsideAbbey:
+	case kRoomYourHall:
+		_vm->_sequence->firstShow(1);
+		_vm->_sequence->thenShow(2);
+		break;
+	case kRoomMusicRoom:
+	case kRoomOutsideArgentPub:
+		_vm->_sequence->firstShow(5);
+		_vm->_sequence->thenShow(6);
+		break;
+	case kRoomLusties:
+		switch (magicnum) {
+		case 14:
+			if (_avvysInTheCupboard) {
+				_vm->_animation->hideInCupboard();
+				_vm->_sequence->firstShow(8);
+				_vm->_sequence->thenShow(7);
+				_vm->_sequence->startToClose();
+				return;
+			} else {
+				_vm->_animation->appearPed(0, 5);
+				_vm->_animation->_sprites[0]._facingDir = kDirRight; // added by TT 12/3/1995
+				_vm->_sequence->firstShow(8);
+				_vm->_sequence->thenShow(9);
+			}
+			break;
+		case 12:
+			_vm->_sequence->firstShow(4);
+			_vm->_sequence->thenShow(5);
+			_vm->_sequence->thenShow(6);
+			break;
+		}
+		break;
+	}
+
+	_vm->_sequence->thenFlip(whither, ped);
+	_vm->_sequence->startToOpen();
+}
+
+void Avalot::setRoom(byte persId, Room roomId) {
+	_whereIs[persId - 150] = roomId;	
+}
+
+Room Avalot::getRoom(byte persId) {
+	return _whereIs[persId - 150];	
 }
 } // End of namespace Avalanche
