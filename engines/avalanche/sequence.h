@@ -46,7 +46,7 @@ public:
 
 	void firstShow(byte what);
 	void thenShow(byte what);
-	void thenFlip(byte where, byte ped);
+	void thenFlip(Room where, byte ped);
 	void startToClose();
 	void startToOpen();
 	void callSequencer();

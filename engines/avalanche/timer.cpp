@@ -324,7 +324,7 @@ void Timer::hangAround() {
 
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->init(7, true, _vm->_animation); // Robin Hood
-	_vm->_avalot->_whereIs[kPeopleRobinHood - 150] = kRoomRobins;
+	_vm->_avalot->setRoom(kPeopleRobinHood, kRoomRobins);
 	_vm->_animation->appearPed(0, 1);
 	_vm->_dialogs->displayScrollChain('q', 39);
 	avvy->walkTo(6);
@@ -336,7 +336,7 @@ void Timer::hangAround2() {
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
 	spr->walkTo(3);
-	_vm->_avalot->_whereIs[kPeopleFriarTuck - 150] = kRoomRobins;
+	_vm->_avalot->setRoom(kPeopleFriarTuck, kRoomRobins);
 	_vm->_dialogs->displayScrollChain('q', 41);
 	_vm->_animation->_sprites[0].remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
@@ -351,7 +351,7 @@ void Timer::hangAround2() {
 
 void Timer::afterTheShootemup() {
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
-	_vm->_animation->flipRoom(_vm->_avalot->_room, 1);
+	_vm->_avalot->flipRoom(_vm->_avalot->_room, 1);
 
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
 	_vm->_animation->appearPed(0, 1);
@@ -400,7 +400,7 @@ void Timer::jacquesWakesUp() {
 	case 3 :  // Gone through the door.
 		_vm->_background->drawBackgroundSprite(-1, -1, 1); // Not on the floor, either.
 		_vm->_background->drawBackgroundSprite(-1, -1, 3); // He's gone... so the door's open.
-		_vm->_avalot->_whereIs[kPeopleJacques - 150] = 0; // Gone!
+		_vm->_avalot->setRoom(kPeopleJacques, kRoomNowhere); // Gone!
 		break;
 	}
 

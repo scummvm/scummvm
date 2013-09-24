@@ -210,7 +210,7 @@ void AnimationType::walk() {
 				bounce();
 				break;
 			case Avalot::kMagicTransport:
-				_anim->flipRoom(magic->_data >> 8, magic->_data & 0xff);
+				_anim->_vm->_avalot->flipRoom((Room)(magic->_data >> 8), magic->_data & 0xff);
 				break;
 			case Avalot::kMagicUnfinished: {
 				bounce();
@@ -222,7 +222,7 @@ void AnimationType::walk() {
 				_anim->callSpecial(magic->_data);
 				break;
 			case Avalot::kMagicOpenDoor:
-				_anim->openDoor(magic->_data >> 8, magic->_data & 0xff, magicColor);
+				_anim->_vm->_avalot->openDoor((Room)(magic->_data >> 8), magic->_data & 0xff, magicColor);
 				break;
 			}
 		}
@@ -418,20 +418,20 @@ void Animation::catacombMove(byte ped) {
 
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
-		flipRoom(kRoomLustiesRoom, 4);
+		_vm->_avalot->flipRoom(kRoomLustiesRoom, 4);
 		_vm->_dialogs->displayText("Phew! Nice to be out of there!");
 		return;
 	case 1033:{ // Oubliette
-		flipRoom(kRoomOubliette, 1);
+		_vm->_avalot->flipRoom(kRoomOubliette, 1);
 		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		return;
 	case 4:
-		flipRoom(kRoomGeidas, 1);
+		_vm->_avalot->flipRoom(kRoomGeidas, 1);
 		return;
 	case 2307:
-		flipRoom(kRoomLusties, 5);
+		_vm->_avalot->flipRoom(kRoomLusties, 5);
 		_vm->_dialogs->displayText("Oh no... here we go again...");
 		_vm->_avalot->_userMovesAvvy = false;
 		_sprites[0]._moveY = 1;
@@ -771,7 +771,7 @@ void Animation::callSpecial(uint16 which) {
 			_sprites[1].walkTo(2);
 			_sprites[1]._vanishIfStill = true;
 			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
-			_vm->_avalot->_whereIs[kPeopleFriarTuck - 150] = kRoomDummy; // Not here, then.
+			_vm->_avalot->setRoom(kPeopleFriarTuck, kRoomDummy); // Not here, then.
 			_vm->_timer->addTimer(364, Timer::kProcHangAround, Timer::kReasonHangingAround);
 		}
 		break;
@@ -865,67 +865,6 @@ void Animation::callSpecial(uint16 which) {
 		dawnDelay();
 		break;
 	}
-}
-
-/**
- * Open the Door.
- * This slides the door open. The data really ought to be saved in
- * the Also file, and will be next time. However, for now, they're
- * here.
- * @remarks	Originally called 'open_the_door'
- */
-void Animation::openDoor(byte whither, byte ped, byte magicnum) {
-	switch (_vm->_avalot->_room) {
-	case kRoomOutsideYours:
-	case kRoomOutsideNottsPub:
-	case kRoomOutsideDucks:
-		_vm->_sequence->firstShow(1);
-		_vm->_sequence->thenShow(2);
-		_vm->_sequence->thenShow(3);
-		break;
-	case kRoomInsideCardiffCastle:
-		_vm->_sequence->firstShow(1);
-		_vm->_sequence->thenShow(5);
-		break;
-	case kRoomAvvysGarden:
-	case kRoomEntranceHall:
-	case kRoomInsideAbbey:
-	case kRoomYourHall:
-		_vm->_sequence->firstShow(1);
-		_vm->_sequence->thenShow(2);
-		break;
-	case kRoomMusicRoom:
-	case kRoomOutsideArgentPub:
-		_vm->_sequence->firstShow(5);
-		_vm->_sequence->thenShow(6);
-		break;
-	case kRoomLusties:
-		switch (magicnum) {
-		case 14:
-			if (_vm->_avalot->_avvysInTheCupboard) {
-				hideInCupboard();
-				_vm->_sequence->firstShow(8);
-				_vm->_sequence->thenShow(7);
-				_vm->_sequence->startToClose();
-				return;
-			} else {
-				appearPed(0, 5);
-				_sprites[0]._facingDir = kDirRight; // added by TT 12/3/1995
-				_vm->_sequence->firstShow(8);
-				_vm->_sequence->thenShow(9);
-			}
-			break;
-		case 12:
-			_vm->_sequence->firstShow(4);
-			_vm->_sequence->thenShow(5);
-			_vm->_sequence->thenShow(6);
-			break;
-		}
-		break;
-	}
-
-	_vm->_sequence->thenFlip(whither, ped);
-	_vm->_sequence->startToOpen();
 }
 
 void Animation::updateSpeed() {
@@ -1252,47 +1191,6 @@ void Animation::hideInCupboard() {
 		_vm->_avalot->_avvysInTheCupboard = true;
 		_vm->_background->drawBackgroundSprite(-1, -1, 7);
 	}
-}
-
-void Animation::flipRoom(byte room, byte ped) {
-	assert((ped > 0) && (ped < 15));
-	if (!_vm->_avalot->_alive) {
-		// You can't leave the room if you're dead.
-		_sprites[0]._moveX = 0;
-		_sprites[0]._moveY = 0; // Stop him from moving.
-		return;
-	}
-
-	if ((room == kRoomDummy) && (_vm->_avalot->_room == kRoomLusties)) {
-		hideInCupboard();
-		return;
-	}
-
-	if ((_vm->_avalot->_jumpStatus > 0) && (_vm->_avalot->_room == kRoomInsideCardiffCastle)) {
-		// You can't *jump* out of Cardiff Castle!
-		_sprites[0]._moveX = 0;
-		return;
-	}
-
-	_vm->_avalot->exitRoom(_vm->_avalot->_room);
-	_vm->_avalot->dusk();
-
-	for (int16 i = 1; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]._quick)
-			_sprites[i].remove();
-	} // Deallocate sprite
-
-	if (_vm->_avalot->_room == kRoomLustiesRoom)
-		_vm->_avalot->_enterCatacombsFromLustiesRoom = true;
-
-	_vm->_avalot->enterRoom(room, ped);
-	appearPed(0, ped - 1);
-	_vm->_avalot->_enterCatacombsFromLustiesRoom = false;
-	_oldDirection = _direction;
-	_direction = _sprites[0]._facingDir;
-	_vm->_avalot->drawDirection();
-
-	_vm->_avalot->dawn();
 }
 
 bool Animation::inField(byte which) {

@@ -419,7 +419,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_background->forgetBackgroundSprites();
 	_avalot->minorRedraw();
 	_menu->setup();
-	_avalot->_whereIs[kPeopleAvalot - 150] = _avalot->_room;
+	_avalot->setRoom(kPeopleAvalot, _avalot->_room);
 	_avalot->_alive = true;
 	_avalot->refreshObjectList();
 	_animation->updateSpeed();
