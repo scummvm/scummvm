@@ -315,15 +315,29 @@ void LA32PartialPair::generateNextSample(const PairType useMaster, const Bit32u 
 	}
 }
 
-float LA32PartialPair::nextOutSample() {
-	float outputSample;
-	if (ringModulated) {
-		float ringModulatedSample = masterOutputSample * slaveOutputSample;
-		outputSample = mixed ? masterOutputSample + ringModulatedSample : ringModulatedSample;
-	} else {
-		outputSample = masterOutputSample + slaveOutputSample;
+static inline float produceDistortedSample(float sample) {
+	if (sample < -1.0f) {
+		return sample + 2.0f;
+	} else if (1.0f < sample) {
+		return sample - 2.0f;
 	}
-	return outputSample;
+	return sample;
+}
+
+float LA32PartialPair::nextOutSample() {
+	if (!ringModulated) {
+		return masterOutputSample + slaveOutputSample;
+	}
+	/*
+	 * SEMI-CONFIRMED: Ring modulation model derived from sample analysis of specially constructed patches which exploit distortion.
+	 * LA32 ring modulator found to produce distorted output in case if the absolute value of maximal amplitude of one of the input partials exceeds 8191.
+	 * This is easy to reproduce using synth partials with resonance values close to the maximum. It looks like an integer overflow happens in this case.
+	 * As the distortion is strictly bound to the amplitude of the complete mixed square + resonance wave in the linear space,
+	 * it is reasonable to assume the ring modulation is performed also in the linear space by sample multiplication.
+	 * Most probably the overflow is caused by limited precision of the multiplication circuit as the very similar distortion occurs with panning.
+	 */
+	float ringModulatedSample = produceDistortedSample(masterOutputSample) * produceDistortedSample(slaveOutputSample);
+	return mixed ? masterOutputSample + ringModulatedSample : ringModulatedSample;
 }
 
 void LA32PartialPair::deactivate(const PairType useMaster) {

@@ -209,7 +209,7 @@ class LA32PartialPair {
 	bool ringModulated;
 	bool mixed;
 
-	static Bit16s unlogAndMixWGOutput(const LA32WaveGenerator &wg, const LogSample * const ringModulatingLogSample);
+	static Bit16s unlogAndMixWGOutput(const LA32WaveGenerator &wg);
 
 public:
 	enum PairType {
