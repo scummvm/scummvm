@@ -74,7 +74,7 @@ public:
 	byte _eachStepProc;
 
 	void init(byte spritenum, bool doCheck, Animation *anim); // Loads & sets up the sprite.
-	void original(); // Just sets 'quick' to false.
+	void reset(); // Just sets 'quick' to false. Original name: original().
 	void draw(); // Drops sprite onto screen. Original: andexor().
 	void turn(Direction whichway); // Turns character round.
 	void appear(int16 wx, int16 wy, Direction wf); // Switches it on.
@@ -119,7 +119,7 @@ public:
 	~Animation();
 
 	void animLink();
-	void loadAnims(); // Original: loadtrip().
+	void resetAnims(); // Original: loadtrip().
 	void callSpecial(uint16 which);
 	void catacombMove(byte ped); // When you enter a new position in the catacombs, this procedure should be called. It changes the 'also' codes so that they may match the picture on the screen.
 	void stopWalking();
