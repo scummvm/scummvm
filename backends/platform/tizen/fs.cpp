@@ -339,7 +339,6 @@ bool TizenFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	if (_isVirtualDir && mode != Common::FSNode::kListFilesOnly && _path == "/") {
 		// present well known TIZEN file system areas
 		myList.push_back(new TizenFilesystemNode(kData));
-		myList.push_back(new TizenFilesystemNode(kResource));
 		myList.push_back(new TizenFilesystemNode(kSdCard));
 		myList.push_back(new TizenFilesystemNode(kMedia));
 		myList.push_back(new TizenFilesystemNode(kShared));

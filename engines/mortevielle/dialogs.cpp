@@ -39,7 +39,7 @@ namespace Mortevielle {
  * Alert function - Show
  * @remarks	Originally called 'do_alert'
  */
-int DialogManager::show(const Common::String &msg, int n) {
+int DialogManager::show(const Common::String &msg) {
 	// Make a copy of the current screen surface for later restore
 	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
 
@@ -57,13 +57,12 @@ int DialogManager::show(const Common::String &msg, int n) {
 
 	decodeAlertDetails(msg, caseNumb, lignNumb, colNumb, alertStr, caseStr);
 
-	int i = 0;
 	Common::Point curPos;
 	if (alertStr == "") {
 		drawAlertBox(10, 5, colNumb);
 	} else {
 		drawAlertBox(8, 7, colNumb);
-		i = 0;
+		int i = 0;
 		_vm->_screenSurface._textPos.y = 70;
 		do {
 			curPos.x = 320;
@@ -71,10 +70,7 @@ int DialogManager::show(const Common::String &msg, int n) {
 			while ((alertStr[i + 1] != '\174') && (alertStr[i + 1] != '\135')) {
 				++i;
 				displayStr += alertStr[i];
-				if (_vm->_resolutionScaler == 2)
-					curPos.x -= 3;
-				else
-					curPos.x -= 5;
+				curPos.x -= 3;
 			}
 			_vm->_screenSurface.putxy(curPos.x, _vm->_screenSurface._textPos.y);
 			_vm->_screenSurface._textPos.y += 6;
@@ -95,12 +91,12 @@ int DialogManager::show(const Common::String &msg, int n) {
 	int limit[3][3];
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 
-	limit[1][1] = ((uint)(coldep) / 2) * _vm->_resolutionScaler;
+	limit[1][1] = ((uint)(coldep) / 2) * kResolutionScaler;
 	limit[1][2] = limit[1][1] + 40;
 	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * _vm->_resolutionScaler;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * kResolutionScaler;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
 	_vm->_mouse.showMouse();
@@ -168,10 +164,10 @@ int DialogManager::show(const Common::String &msg, int n) {
 	_vm->setMouseClick(false);
 	_vm->_mouse.hideMouse();
 	if (!test3)  {
-		id = n;
-		setPosition(n, coldep, esp);
+		id = 1;
+		setPosition(1, coldep, esp);
 		Common::String tmp4(" ");
-		tmp4 += buttonStr[n];
+		tmp4 += buttonStr[1];
 		tmp4 += " ";
 		_vm->_screenSurface.drawString(tmp4, 1);
 	}
@@ -221,10 +217,7 @@ void DialogManager::decodeAlertDetails(Common::String inputStr, int &choiceNumb,
 	}
 
 	choiceListStr = Common::String(inputStr.c_str() + i);
-	if (_vm->_resolutionScaler == 2)
-		col *= 6;
-	else
-		col *= 10;
+	col *= 6;
 }
 
 void DialogManager::setPosition(int ji, int coldep, int esp) {
@@ -235,13 +228,13 @@ void DialogManager::setPosition(int ji, int coldep, int esp) {
  * Alert function - Draw Alert Box
  * @remarks	Originally called 'fait_boite'
  */
-void DialogManager::drawAlertBox(int lidep, int nli, int tx) {
-	if (tx > 640)
-		tx = 640;
-	int x = 320 - ((uint)tx / 2);
-	int y = (lidep - 1) * 8;
-	int xx = x + tx;
-	int yy = y + (nli * 8);
+void DialogManager::drawAlertBox(int firstLine, int lineNum, int width) {
+	if (width > 640)
+		width = 640;
+	int x = 320 - ((uint)width / 2);
+	int y = (firstLine - 1) * 8;
+	int xx = x + width;
+	int yy = y + (lineNum * 8);
 	_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
 	_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
 	_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
@@ -302,11 +295,7 @@ bool DialogManager::showKnowledgeCheck() {
 		_vm->_mouse.hideMouse();
 		_vm->clearScreen();
 		_vm->_mouse.showMouse();
-		int dialogHeight;
-		if (_vm->_resolutionScaler == 1)
-			dialogHeight = 29;
-		else
-			dialogHeight = 23;
+		int dialogHeight = 23;
 		_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = _vm->getString(textIndexArr[indx]);
 		_vm->_text.displayStr(tmpStr, 20, 15, 100, 2, 0);
@@ -335,7 +324,7 @@ bool DialogManager::showKnowledgeCheck() {
 		}
 
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			coor[j]._rect = Common::Rect(45 * _vm->_resolutionScaler, 27 + j * 8, (maxLength * 3 + 55) * _vm->_resolutionScaler, 34 + j * 8);
+			coor[j]._rect = Common::Rect(45 * kResolutionScaler, 27 + j * 8, (maxLength * 3 + 55) * kResolutionScaler, 34 + j * 8);
 			coor[j]._enabled = true;
 
 			while ((int)choiceArray[j].size() < maxLength) {
@@ -343,11 +332,7 @@ bool DialogManager::showKnowledgeCheck() {
 			}
 		}
 		coor[lastOption - firstOption + 2]._enabled = false;
-		int rep;
-		if (_vm->_resolutionScaler == 1)
-			rep = 10;
-		else
-			rep = 6;
+		int rep = 6;
 		_vm->_screenSurface.drawBox(80, 33, 40 + (maxLength * rep), (lastOption - firstOption) * 8 + 16, 15);
 		rep = 0;
 
@@ -431,12 +416,6 @@ void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 		_vm->_key = waitForF3F8();
 		if (_vm->shouldQuit())
 			return;
-
-		if (_vm->_newGraphicalDevice != _vm->_currGraphicalDevice) {
-			_vm->_currGraphicalDevice = _vm->_newGraphicalDevice;
-			_vm->clearScreen();
-			displayIntroScreen(drawFrame2Fl);
-		}
 	} while (_vm->_key != 66); // keycode for F8
 }
 
@@ -483,7 +462,7 @@ void DialogManager::displayIntroFrame2() {
 	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
 	_vm->_crep = _vm->getAnimOffset(2, 1);
 	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
-	_vm->_largestClearScreen = (_vm->_resolutionScaler == 1);
+	_vm->_largestClearScreen = false;
 	_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
 

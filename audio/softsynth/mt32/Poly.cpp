@@ -19,8 +19,8 @@
 
 namespace MT32Emu {
 
-Poly::Poly(Part *usePart) {
-	part = usePart;
+Poly::Poly() {
+	part = NULL;
 	key = 255;
 	velocity = 255;
 	sustain = false;
@@ -32,10 +32,21 @@ Poly::Poly(Part *usePart) {
 	next = NULL;
 }
 
+void Poly::setPart(Part *usePart) {
+	part = usePart;
+}
+
 void Poly::reset(unsigned int newKey, unsigned int newVelocity, bool newSustain, Partial **newPartials) {
 	if (isActive()) {
-		// FIXME: Throw out some big ugly debug output with a lot of exclamation marks - we should never get here
-		terminate();
+		// This should never happen
+		part->getSynth()->printDebug("Resetting active poly. Active partial count: %i\n", activePartialCount);
+		for (int i = 0; i < 4; i++) {
+			if (partials[i] != NULL && partials[i]->isActive()) {
+				partials[i]->deactivate();
+				activePartialCount--;
+			}
+		}
+		state = POLY_Inactive;
 	}
 
 	key = newKey;
@@ -92,41 +103,24 @@ bool Poly::startDecay() {
 }
 
 bool Poly::startAbort() {
-	if (state == POLY_Inactive) {
+	if (state == POLY_Inactive || part->getSynth()->isAbortingPoly()) {
 		return false;
 	}
 	for (int t = 0; t < 4; t++) {
 		Partial *partial = partials[t];
 		if (partial != NULL) {
 			partial->startAbort();
+			part->getSynth()->abortingPoly = this;
 		}
 	}
 	return true;
 }
 
-void Poly::terminate() {
-	if (state == POLY_Inactive) {
-		return;
-	}
-	for (int t = 0; t < 4; t++) {
-		Partial *partial = partials[t];
-		if (partial != NULL) {
-			partial->deactivate();
-		}
-	}
-	if (state != POLY_Inactive) {
-		// FIXME: Throw out lots of debug output - this should never happen
-		// (Deactivating the partials above should've made them each call partialDeactivated(), ultimately changing the state to POLY_Inactive)
-		state = POLY_Inactive;
-	}
-}
-
 void Poly::backupCacheToPartials(PatchCache cache[4]) {
 	for (int partialNum = 0; partialNum < 4; partialNum++) {
 		Partial *partial = partials[partialNum];
-		if (partial != NULL && partial->patchCache == &cache[partialNum]) {
-			partial->cachebackup = cache[partialNum];
-			partial->patchCache = &partial->cachebackup;
+		if (partial != NULL) {
+			partial->backupCache(cache[partialNum]);
 		}
 	}
 }
@@ -171,11 +165,14 @@ void Poly::partialDeactivated(Partial *partial) {
 	}
 	if (activePartialCount == 0) {
 		state = POLY_Inactive;
+		if (part->getSynth()->abortingPoly == this) {
+			part->getSynth()->abortingPoly = NULL;
+		}
 	}
 	part->partialDeactivated(this);
 }
 
-Poly *Poly::getNext() {
+Poly *Poly::getNext() const {
 	return next;
 }
 

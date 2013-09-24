@@ -3237,7 +3237,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.disableControl();
 
-	// Initialise objects
+	// Initialize objects
 	_door.postInit();
 	_door.setVisage(190);
 	_door.setStrip(1);

@@ -112,11 +112,11 @@ protected:
 		String              resolution;
 		String              bitmapName;
 		Graphics::Surface   *image;
-		OverlayColor        transparentColor;
+		uint32              transparentColor;
 		ImageMap            imageMap;
 		VKEventMap          events;
 		Rect                displayArea;
-		OverlayColor        displayFontColor;
+		uint32              displayFontColor;
 
 		Mode() : image(0) {}
 		~Mode() {

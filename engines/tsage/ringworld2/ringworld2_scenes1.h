@@ -75,15 +75,15 @@ public:
 };
 
 class Scene1100 : public SceneExt {
-	class Actor16 : public SceneActor {
+	class Seeker : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor17 : public SceneActor {
+	class Trooper : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor18 : public SceneActor {
+	class Chief : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -118,9 +118,9 @@ public:
 	SceneActor _actor15;
 	BackgroundSceneObject _object1;
 	BackgroundSceneObject _object2;
-	Actor16 _actor16;
-	Actor17 _actor17;
-	Actor18 _actor18;
+	Seeker _seeker;
+	Trooper _trooper;
+	Chief _chief;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	SequenceManager _sequenceManager3;
@@ -427,26 +427,26 @@ class Scene1550 : public SceneExt {
 		void subA4D14(int frameNumber, int strip);
 	};
 
-	class UnkObj15501 : public SceneActor {
+	class Junk : public SceneActor {
 	public:
 		int _fieldA4;
-		int _fieldA6;
+		int _junkNumber;
 
-		UnkObj15501();
+		Junk();
 		void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class UnkObj15502 : public SceneActor {
+	class ShipComponent : public SceneActor {
 	public:
-		int _fieldA4;
+		int _componentId;
 
-		UnkObj15502();
+		ShipComponent();
 		void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
-		void subA5CDF(int strip);
+		void setupShipComponent(int componentId);
 	};
 
 	class UnkObj15503 : public SceneActor {
@@ -472,7 +472,7 @@ class Scene1550 : public SceneExt {
 		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
-	class Hotspot1 : public NamedHotspot {
+	class WorkingShip : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -482,12 +482,12 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor6 : public SceneActor {
+	class Wreckage : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor7 : public SceneActor {
+	class Companion : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -522,7 +522,7 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor14 : public SceneActor1550 {
+	class Wall : public SceneActor1550 {
 		// Nothing specific found in the original
 		// TODO: check if it's an useless class
 	};
@@ -530,30 +530,30 @@ class Scene1550 : public SceneExt {
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	Hotspot1 _item1;
-	Hotspot1 _item2;
+	WorkingShip _shipHull;
+	WorkingShip _item2;
 	Hotspot3 _item3;
-	SceneActor _actor1;
+	SceneActor _landingStrut;
 	SceneActor _actor2;
 	SceneActor _actor3;
 	SceneActor _actor4;
 	SceneActor _actor5;
-	Actor6 _actor6;
-	Actor7 _actor7;
+	Wreckage _wreckage;
+	Companion _companion;
 	Actor8 _actor8;
 	Actor9 _actor9;
 	Actor10 _actor10;
 	Actor11 _actor11;
 	Actor12 _actor12;
 	Actor13 _actor13;
-	UnkObj15501 _arrUnkObj15501[8];
-	Actor14 _actor14;
-	Actor14 _actor15;
-	Actor14 _actor16;
-	Actor14 _actor17;
-	Actor14 _actor18;
-	Actor14 _actor19;
-	UnkObj15502 _arrUnkObj15502[8];
+	Junk _junk[8];
+	Wall _actor14;
+	Wall _northWall;	// Is also reused for landing strip
+	Wall _actor16;
+	Wall _westWall;		// Is also reused for left hand space
+	Wall _eastWall;
+	Wall _southWall;
+	ShipComponent _shipComponents[8];
 	UnkArea1550 _unkArea1;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
@@ -566,7 +566,7 @@ public:
 
 	Scene1550();
 	void synchronize(Serializer &s);
-	void subA2B2F();
+	void enterArea();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

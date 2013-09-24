@@ -100,6 +100,8 @@ void TizenGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 }
 
 void TizenGraphicsManager::setReady() {
+	logEntered();
+	_appForm->GetVisualElement()->SetShowState(true);
 	_initState = false;
 }
 
@@ -176,7 +178,9 @@ bool TizenGraphicsManager::loadEgl() {
 		systemError("eglMakeCurrent() failed");
 		return false;
 	}
-
+	if (!_initState) {
+		_appForm->GetVisualElement()->SetShowState(true);
+	}
 	logLeaving();
 	return true;
 }
@@ -213,6 +217,7 @@ void TizenGraphicsManager::internUpdateScreen() {
 
 void TizenGraphicsManager::unloadGFXMode() {
 	logEntered();
+	_appForm->GetVisualElement()->SetShowState(false);
 
 	if (_eglDisplay != EGL_NO_DISPLAY) {
 		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);

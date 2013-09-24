@@ -204,16 +204,19 @@ void writeGameStrings() {
 /**
  * Write out the data for the English menu
  */
-void writeMenuBlock() {
-	// Write out a section header to the output file and the font data
+void writeMenuData(const char *menuData, int languageId) {
+	// Write out a section header to the output file and the menu data
 	const char menuHeader[4] = { 'M', 'E', 'N', 'U' };
 	outputFile.write(menuHeader, 4);				// Section Id
-	outputFile.writeWord(strlen(menuDataEn) / 8);	// Section size
+	int size = strlen(menuData) / 8 + 1; // Language code + Menu data size
+	outputFile.writeWord(size);
+
+	outputFile.writeByte(languageId);
 	// Write each 8-characters block as a byte (one bit per character)
 	// ' ' -> 0, anything else -> 1
 	byte value;
 	int valueCpt = 0;
-	const char* str = menuDataEn;
+	const char* str = menuData;
 	while (*str != 0) {
 		if (*(str++) != ' ')
 			value |= (1 << (7 - valueCpt));
@@ -226,10 +229,34 @@ void writeMenuBlock() {
 	}
 }
 
+void writeMenuBlock() {
+	writeMenuData(menuDataEn, 1);
+	writeMenuData(menuDataDe, 2);
+}
+
+void writeVerbNums(const int *verbs, int languageId) {
+	// Write out a section header to the output file
+	const char menuHeader[4] = { 'V', 'E', 'R', 'B' };
+	outputFile.write(menuHeader, 4);				// Section Id
+	int size = 52 + 1; // Language code + 26 words
+	outputFile.writeWord(size);
+
+	outputFile.writeByte(languageId);
+	for (int i = 0; i < 26; i++)
+		outputFile.writeWord(verbs[i]);
+}
+
+void writeMenuVerbs() {
+	writeVerbNums(verbsEn, 1);
+	writeVerbNums(verbsFr, 0);
+	writeVerbNums(verbsDe, 2);
+}
+
 void process() {
 	writeFontBlock();
 	writeGameStrings();
 	writeEngineStrings();
+	writeMenuVerbs();
 	writeMenuBlock();
 }
 

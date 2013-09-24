@@ -888,6 +888,7 @@ void Scene60::Action1::signal() {
 		break;
 	case 4:
 		remove();
+		break;
 	case 5:
 		setDelay(120);
 		break;

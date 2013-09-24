@@ -57,6 +57,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_text.setParent(this);
 	_soundManager.setParent(this);
 	_savegameManager.setParent(this);
+	_menu.setParent(this);
 
 	_lastGameFrame = 0;
 	_mouseClick = false;
@@ -91,8 +92,6 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_uptodatePresence = false;
 
 	_textColor = 0;
-	_currGraphicalDevice = -1;
-	_newGraphicalDevice = -1;
 	_place = -1;
 
 	_x26KeyCount = -1;
@@ -179,10 +178,6 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	// Set up an intermediate screen surface
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
-	// Set the screen mode
-	_currGraphicalDevice = MODE_EGA;
-	_resolutionScaler = 2;
-
 	_txxFileFl = false;
 	// Load texts from TXX files
 	loadTexts();
@@ -203,8 +198,6 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	// Setup the mouse cursor
 	initMouse();
 
-	_currGraphicalDevice = MODE_EGA;
-	_newGraphicalDevice = _currGraphicalDevice;
 	loadPalette();
 	loadCFIPH();
 	loadCFIEC();
@@ -219,10 +212,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 
 	testKeyboard();
 	showConfigScreen();
-	_newGraphicalDevice = _currGraphicalDevice;
 	testKeyboard();
-	if (_newGraphicalDevice != _currGraphicalDevice)
-		_currGraphicalDevice = _newGraphicalDevice;
 	clearScreen();
 
 	_soundManager.loadNoise();
@@ -273,6 +263,8 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 			readStaticStrings(f, dataSize, kStaticStrings);
 		} else if ((!strncmp(dataType, "GSTR", 4)) && (!_txxFileFl)) {
 			readStaticStrings(f, dataSize, kGameStrings);
+		} else if (!strncmp(dataType, "VERB", 4)) {
+			_menu.readVerbNums(f, dataSize);
 		} else {
 			// Unknown section
 			f.skip(dataSize);
@@ -285,6 +277,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	assert(_engineStrings.size() > 0);
 	return Common::kNoError;
 }
+
 
 /**
  * Read in a static strings block, and if the language matches, load up the static strings
@@ -354,10 +347,16 @@ Common::Error MortevielleEngine::run() {
 	if (loadSlot == 0)
 		// Show the game introduction
 		showIntroduction();
+	else {
+		_caff = 51;
+		_text.taffich();
+	}
 
 	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
-	_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
+	resetVariables();
+	if (loadSlot != 0)
+		_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
 
 	// Run the main game loop
 	mainGame();
@@ -400,7 +399,7 @@ void MortevielleEngine::mainGame() {
 	for (_crep = 1; _crep <= _x26KeyCount; ++_crep)
 		decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 
-	_menu.initMenu(this);
+	_menu.initMenu();
 
 	charToHour();
 	initGame();

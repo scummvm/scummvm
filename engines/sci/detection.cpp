@@ -105,9 +105,8 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	// === SCI2.1 games ========================================================
 	{"chest",           "Inside the Chest"},	// aka Behind the Developer's Shield
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
-	// TODO: Inside The Chest/Behind the Developer's Shield
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
-	// TODO: King's Questions
+	{"kquestions",      "King's Questions"},
 	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
 	{"mothergoosehires","Mixed-Up Mother Goose Deluxe"},
 	{"phantasmagoria",  "Phantasmagoria"},
@@ -161,6 +160,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "kq5",             GID_KQ5 },
 	{ "kq6",             GID_KQ6 },
 	{ "kq7",             GID_KQ7 },
+	{ "kquestions",      GID_KQUESTIONS },
 	{ "laurabow",        GID_LAURABOW },
 	{ "laurabow2",       GID_LAURABOW2 },
 	{ "lighthouse",      GID_LIGHTHOUSE },
@@ -242,6 +242,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	// kq5 is the same
 	// kq6 is the same
 	{ "kq7cd",		"kq7",				SCI_VERSION_NONE     },
+	{ "quizgame-demo", "kquestions",    SCI_VERSION_NONE     },
 	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },

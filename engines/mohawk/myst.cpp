@@ -418,6 +418,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 
 	_sound->stopSound();
 	_sound->stopBackgroundMyst();
+	_video->stopVideos();
 	if (linkSrcSound)
 		_sound->playSoundBlocking(linkSrcSound);
 

@@ -137,7 +137,7 @@ public:
 	virtual void process(Event &event);
 
 	void setup(const Common::Point &pt);
-	void updateInventory();
+	void updateInventory(int objectNumber = 0);
 	void addScore(int amount);
 	void scrollInventory(bool isLeft);
 

@@ -75,7 +75,13 @@ struct TransparentSurface : public Graphics::Surface {
 		FLIP_VH = FLIP_H | FLIP_V
 	};
 
-	bool _enableAlphaBlit;
+	enum AlphaType {
+		ALPHA_OPAQUE = 0,
+		ALPHA_BINARY = 1,
+		ALPHA_FULL = 2
+	};
+
+	AlphaType _alphaMode;
 
 	/**
 	 @brief renders the surface to another surface
@@ -114,11 +120,6 @@ struct TransparentSurface : public Graphics::Surface {
 
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
-	static byte *_lookup;
-	static void destroyLookup();
-private:
-	static void doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
-	static void generateLookup();
 };
 
 /**

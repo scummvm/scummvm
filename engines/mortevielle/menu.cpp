@@ -48,34 +48,164 @@ const byte menuConstants[8][4] = {
 	{62, 46, 13, 10}
 };
 
+Menu::Menu() {
+	_opcodeAttach = _opcodeWait = _opcodeForce = _opcodeSleep = OPCODE_NONE;
+	_opcodeListen = _opcodeEnter = _opcodeClose = _opcodeSearch = OPCODE_NONE;
+	_opcodeKnock = _opcodeScratch = _opcodeRead = _opcodeEat = OPCODE_NONE;
+	_opcodePlace = _opcodeOpen = _opcodeTake = _opcodeLook = OPCODE_NONE;
+	_opcodeSmell = _opcodeSound = _opcodeLeave = _opcodeLift = OPCODE_NONE;
+	_opcodeTurn = _opcodeSHide = _opcodeSSearch = _opcodeSRead = OPCODE_NONE;
+	_opcodeSPut = _opcodeSLook = OPCODE_NONE;
+}
+
+void Menu::readVerbNums(Common::File &f, int dataSize) {
+	// Figure out what language Id is needed
+	byte desiredLanguageId;
+	switch(_vm->getLanguage()) {
+	case Common::EN_ANY:
+		desiredLanguageId = MORTDAT_LANG_ENGLISH;
+		break;
+	case Common::FR_FRA:
+		desiredLanguageId = MORTDAT_LANG_FRENCH;
+		break;
+	case Common::DE_DEU:
+		desiredLanguageId = MORTDAT_LANG_GERMAN;
+		break;
+	default:
+		warning("Language not supported, switching to English");
+		desiredLanguageId = MORTDAT_LANG_ENGLISH;
+		break;
+	}
+	// Read in the language
+	byte languageId = f.readByte();
+	--dataSize;
+
+	// If the language isn't correct, then skip the entire block
+	if (languageId != desiredLanguageId) {
+		f.skip(dataSize);
+		return;
+	}
+
+	assert(dataSize == 52);
+	_opcodeAttach  = f.readUint16LE();
+	_opcodeWait    = f.readUint16LE();
+	_opcodeForce   = f.readUint16LE();
+	_opcodeSleep   = f.readUint16LE();
+	_opcodeListen  = f.readUint16LE();
+	_opcodeEnter   = f.readUint16LE();
+	_opcodeClose   = f.readUint16LE();
+	_opcodeSearch  = f.readUint16LE();
+	_opcodeKnock   = f.readUint16LE();
+	_opcodeScratch = f.readUint16LE();
+	_opcodeRead    = f.readUint16LE();
+	_opcodeEat     = f.readUint16LE();
+	_opcodePlace   = f.readUint16LE();
+	_opcodeOpen    = f.readUint16LE();
+	_opcodeTake    = f.readUint16LE();
+	_opcodeLook    = f.readUint16LE();
+	_opcodeSmell   = f.readUint16LE();
+	_opcodeSound   = f.readUint16LE();
+	_opcodeLeave   = f.readUint16LE();
+	_opcodeLift    = f.readUint16LE();
+	_opcodeTurn    = f.readUint16LE();
+	_opcodeSHide   = f.readUint16LE();
+	_opcodeSSearch = f.readUint16LE();
+	_opcodeSRead   = f.readUint16LE();
+	_opcodeSPut    = f.readUint16LE();
+	_opcodeSLook   = f.readUint16LE();
+
+	_actionMenu[0]._menuId    = OPCODE_NONE   >> 8;
+	_actionMenu[0]._actionId  = OPCODE_NONE   & 0xFF;
+
+	_actionMenu[1]._menuId    = _opcodeSHide  >> 8;
+	_actionMenu[1]._actionId  = _opcodeSHide  & 0xFF;
+
+	_actionMenu[2]._menuId    = _opcodeAttach >> 8;
+	_actionMenu[2]._actionId  = _opcodeAttach & 0xFF; 
+
+	_actionMenu[3]._menuId    = _opcodeForce  >> 8;
+	_actionMenu[3]._actionId  = _opcodeForce  & 0xFF; 
+
+	_actionMenu[4]._menuId    = _opcodeSleep  >> 8;
+	_actionMenu[4]._actionId  = _opcodeSleep  & 0xFF;
+
+	_actionMenu[5]._menuId    = _opcodeEnter  >> 8;
+	_actionMenu[5]._actionId  = _opcodeEnter  & 0xFF; 
+
+	_actionMenu[6]._menuId    = _opcodeClose  >> 8;
+	_actionMenu[6]._actionId  = _opcodeClose  & 0xFF; 
+
+	_actionMenu[7]._menuId    = _opcodeKnock  >> 8;
+	_actionMenu[7]._actionId  = _opcodeKnock  & 0xFF;
+
+	_actionMenu[8]._menuId    = _opcodeEat    >> 8;
+	_actionMenu[8]._actionId  = _opcodeEat    & 0xFF;
+
+	_actionMenu[9]._menuId    = _opcodePlace  >> 8;
+	_actionMenu[9]._actionId  = _opcodePlace  & 0xFF;
+
+	_actionMenu[10]._menuId   = _opcodeOpen   >> 8;
+	_actionMenu[10]._actionId = _opcodeOpen   & 0xFF;
+
+	_actionMenu[11]._menuId   = _opcodeLeave  >> 8;
+	_actionMenu[11]._actionId = _opcodeLeave  & 0xFF;
+}
+
 /**
  * Setup a menu's contents
  * @remarks	Originally called 'menut'
  */
-void Menu::setText(int menuId, int actionId, Common::String name) {
+void Menu::setText(MenuItem item, Common::String name) {
 	Common::String s = name;
 
-	while (s.size() < 22)
-		s += ' ';
-
-	switch (menuId) {
+	switch (item._menuId) {
 	case MENU_INVENTORY:
-		if (actionId != 7) {
-			_inventoryStringArray[actionId] = s;
-			_inventoryStringArray[actionId].insertChar(' ', 0);
+		if (item._actionId != 7) {
+			while (s.size() < 22)
+				s += ' ';
+
+			_inventoryStringArray[item._actionId] = s;
+			_inventoryStringArray[item._actionId].insertChar(' ', 0);
 		}
 		break;
-	case MENU_MOVE:
-		_moveStringArray[actionId] = s;
+	case MENU_MOVE: {
+		// If the first character isn't '*' or ' ' then it's missing a heading space
+		char c = s[0];
+		if (c != '*' && c != ' ')
+			s.insertChar(' ', 0);
+
+		while (s.size() < 22)
+			s += ' ';
+
+		_moveStringArray[item._actionId] = s;
+		}
 		break;
-	case MENU_ACTION:
-		_actionStringArray[actionId] = s;
+	case MENU_ACTION: {
+		// If the first character isn't '*' or ' ' then it's missing a heading space
+		char c = s[0];
+		if (c != '*' && c != ' ')
+			s.insertChar(' ', 0);
+
+		while (s.size() < 10)
+			s += ' ';
+
+		_actionStringArray[item._actionId] = s;
+		}
 		break;
-	case MENU_SELF:
-		_selfStringArray[actionId] = s;
+	case MENU_SELF: {
+		// If the first character isn't '*' or ' ' then it's missing a heading space
+		char c = s[0];
+		if (c != '*' && c != ' ')
+			s.insertChar(' ', 0);
+
+		while (s.size() < 10)
+			s += ' ';
+
+		_selfStringArray[item._actionId] = s;
+		}
 		break;
 	case MENU_DISCUSS:
-		_discussStringArray[actionId] = s;
+		_discussStringArray[item._actionId] = s;
 		break;
 	default:
 		break;
@@ -89,7 +219,7 @@ void Menu::setText(int menuId, int actionId, Common::String name) {
 void Menu::setDestinationText(int roomId) {
 	Common::String nomp;
 
-	if (roomId == 26)
+	if (roomId == ROOM26)
 		roomId = LANDING;
 
 	int destinationId = 0;
@@ -97,11 +227,11 @@ void Menu::setDestinationText(int roomId) {
 		nomp = _vm->getString(_vm->_destinationArray[destinationId][roomId] + kMenuPlaceStringIndex);
 		while (nomp.size() < 20)
 			nomp += ' ';
-		setText(_moveMenu[destinationId + 1]._menuId, _moveMenu[destinationId + 1]._actionId, nomp);
+		setText(_moveMenu[destinationId + 1], nomp);
 	}
 	nomp = "*                   ";
 	for (int i = 7; i >= destinationId + 1; --i)
-		setText(_moveMenu[i]._menuId, _moveMenu[i]._actionId, nomp);
+		setText(_moveMenu[i], nomp);
 }
 
 /**
@@ -109,26 +239,26 @@ void Menu::setDestinationText(int roomId) {
  * @param menuId	Menu number
  * @param actionId  Item index
  */
-void Menu::disableMenuItem(int menuId, int actionId) {
-	switch (menuId) {
+void Menu::disableMenuItem(MenuItem item) {
+	switch (item._menuId) {
 	case MENU_INVENTORY:
-		if (actionId > 6) {
-			_inventoryStringArray[actionId].setChar('<', 0);
-			_inventoryStringArray[actionId].setChar('>', 21);
+		if (item._actionId > 6) {
+			_inventoryStringArray[item._actionId].setChar('<', 0);
+			_inventoryStringArray[item._actionId].setChar('>', 21);
 		} else
-			_inventoryStringArray[actionId].setChar('*', 0);
+			_inventoryStringArray[item._actionId].setChar('*', 0);
 		break;
 	case MENU_MOVE:
-		_moveStringArray[actionId].setChar('*', 0);
+		_moveStringArray[item._actionId].setChar('*', 0);
 		break;
 	case MENU_ACTION:
-		_actionStringArray[actionId].setChar('*', 0);
+		_actionStringArray[item._actionId].setChar('*', 0);
 		break;
 	case MENU_SELF:
-		_selfStringArray[actionId].setChar('*', 0);
+		_selfStringArray[item._actionId].setChar('*', 0);
 		break;
 	case MENU_DISCUSS:
-		_discussStringArray[actionId].setChar('*', 0);
+		_discussStringArray[item._actionId].setChar('*', 0);
 		break;
 	default:
 		break;
@@ -141,25 +271,23 @@ void Menu::disableMenuItem(int menuId, int actionId) {
  * @param actionId  Item index
  * @remarks	Originally called menu_enable
  */
-void Menu::enableMenuItem(int menuId, int actionId) {
-	switch (menuId) {
+void Menu::enableMenuItem(MenuItem item) {
+	switch (item._menuId) {
 	case MENU_INVENTORY:
-		_inventoryStringArray[actionId].setChar(' ', 0);
-		_inventoryStringArray[actionId].setChar(' ', 21);
+		_inventoryStringArray[item._actionId].setChar(' ', 0);
+		_inventoryStringArray[item._actionId].setChar(' ', 21);
 		break;
 	case MENU_MOVE:
-		_moveStringArray[actionId].setChar(' ', 0);
+		_moveStringArray[item._actionId].setChar(' ', 0);
 		break;
 	case MENU_ACTION:
-		_actionStringArray[actionId].setChar(' ', 0);
+		_actionStringArray[item._actionId].setChar(' ', 0);
 		break;
 	case MENU_SELF:
-		_selfStringArray[actionId].setChar(' ', 0);
-		// The original sets two times the same value. Skipped
-		// _selfStringArray[l].setChar(' ', 0);
+		_selfStringArray[item._actionId].setChar(' ', 0);
 		break;
 	case MENU_DISCUSS:
-		_discussStringArray[actionId].setChar(' ', 0);
+		_discussStringArray[item._actionId].setChar(' ', 0);
 		break;
 	default:
 		break;
@@ -167,44 +295,33 @@ void Menu::enableMenuItem(int menuId, int actionId) {
 }
 
 void Menu::displayMenu() {
-	int ind_tabl, k, col;
-
-	int pt, x, y, color, msk, num_letr;
-
 	_vm->_mouse.hideMouse();
-
 	_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
-	col = 28 * _vm->_resolutionScaler;
-	if (_vm->_currGraphicalDevice == MODE_CGA)
-		color = 1;
-	else
-		color = 9;
-	num_letr = 0;
-	do {       // One character after the other
-		++num_letr;
-		ind_tabl = 0;
-		y = 1;
-		do {     // One column after the other
-			k = 0;
-			x = col;
-			do {   // One line after the other
-				msk = 0x80;
-				for (pt = 0; pt <= 7; ++pt) {
-					if ((_charArr[num_letr - 1][ind_tabl] & msk) != 0) {
+
+	int col = 28 * kResolutionScaler;
+	for (int charNum = 0; charNum < 6; charNum++) {
+	// One character after the other
+		int idx = 0;
+		for (int y = 1; y < 9; ++y) {
+		// One column after the other
+			int x = col;
+			for (int k = 0; k < 3; ++k) {
+			// One line after the other
+				uint msk = 0x80;
+				for (int pt = 0; pt <= 7; ++pt) {
+					if ((_charArr[charNum][idx] & msk) != 0) {
 						_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
 						_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
-						_vm->_screenSurface.setPixel(Common::Point(x, y), color);
+						_vm->_screenSurface.setPixel(Common::Point(x, y), 9);
 					}
-					msk = (uint)msk >> 1;
+					msk >>= 1;
 					++x;
 				}
-				++ind_tabl;
-				++k;
-			} while (k != 3);
-			++y;
-		} while (y != 9);
-		col += 48 * _vm->_resolutionScaler;
-	} while (num_letr != 6);
+				++idx;
+			}
+		}
+		col += 48 * kResolutionScaler;
+	}
 	_vm->_mouse.showMouse();
 }
 
@@ -280,16 +397,12 @@ void Menu::util(Common::Point pos) {
 
 	int ymx = (menuConstants[_msg3 - 1][3] << 3) + 16;
 	int dxcar = menuConstants[_msg3 - 1][2];
-	int xmn = (menuConstants[_msg3 - 1][0] << 2) * _vm->_resolutionScaler;
+	int xmn = (menuConstants[_msg3 - 1][0] << 2) * kResolutionScaler;
 
-	int ix;
-	if (_vm->_resolutionScaler == 1)
-		ix = 5;
-	else
-		ix = 3;
-	int xmx = dxcar * ix * _vm->_resolutionScaler + xmn + 2;
+	int charWidth = 6;
+	int xmx = dxcar * charWidth + xmn + 2;
 	if ((pos.x > xmn) && (pos.x < xmx) && (pos.y < ymx) && (pos.y > 15)) {
-		ix = (((uint)pos.y >> 3) - 1) + (_msg3 << 8);
+		int ix = (((uint)pos.y >> 3) - 1) + (_msg3 << 8);
 		if (ix != _msg4) {
 			invert(1);
 			_msg4 = ix;
@@ -305,79 +418,70 @@ void Menu::util(Common::Point pos) {
  * Draw a menu
  */
 void Menu::menuDown(int ii) {
-	int cx, xcc, xco;
-	int lignNumb;
-
 	// Make a copy of the current screen surface for later restore
 	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
 
 	// Draw the menu
-	xco = menuConstants[ii - 1][0];
-	lignNumb = menuConstants[ii - 1][3];
+	int minX = menuConstants[ii - 1][0] << 3;
+	int lineNum = menuConstants[ii - 1][3];
 	_vm->_mouse.hideMouse();
-	xco = xco << 3;
-	if (_vm->_resolutionScaler == 1)
-		cx = 10;
-	else
-		cx = 6;
-	xcc = xco + (menuConstants[ii - 1][2] * cx) + 6;
+	int deltaX = 6;
+	int maxX = minX + (menuConstants[ii - 1][2] * deltaX) + 6;
 	if ((ii == 4) && (_vm->getLanguage() == Common::EN_ANY))
 		// Extra width needed for Self menu in English version
-		xcc = 435;
+		maxX = 435;
 
-	_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.putxy(xco, 16);
-	cx = 0;
-	do {
-		++cx;
+	_vm->_screenSurface.fillRect(15, Common::Rect(minX, 12, maxX, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.fillRect(0, Common::Rect(maxX, 12, maxX + 4, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.fillRect(0, Common::Rect(minX, 8 + (menuConstants[ii - 1][1] << 1), maxX + 4, 12 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface.putxy(minX, 16);
+	for (int i = 1; i <= lineNum; i++) {
 		switch (ii) {
 		case 1:
-			if (_inventoryStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_inventoryStringArray[cx], 4);
+			if (_inventoryStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_inventoryStringArray[i], 4);
 			break;
 		case 2:
-			if (_moveStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_moveStringArray[cx], 4);
+			if (_moveStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_moveStringArray[i], 4);
 			break;
 		case 3:
-			if (_actionStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_actionStringArray[cx], 4);
+			if (_actionStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_actionStringArray[i], 4);
 			break;
 		case 4:
-			if (_selfStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_selfStringArray[cx], 4);
+			if (_selfStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_selfStringArray[i], 4);
 			break;
 		case 5:
-			if (_discussStringArray[cx][0] != '*')
-				_vm->_screenSurface.drawString(_discussStringArray[cx], 4);
+			if (_discussStringArray[i][0] != '*')
+				_vm->_screenSurface.drawString(_discussStringArray[i], 4);
 			break;
 		case 6:
-			_vm->_screenSurface.drawString(_vm->getEngineString(S_SAVE_LOAD + cx), 4);
+			_vm->_screenSurface.drawString(_vm->getEngineString(S_SAVE_LOAD + i), 4);
 			break;
 		case 7: {
 			Common::String s = _vm->getEngineString(S_SAVE_LOAD + 1);
 			s += ' ';
-			s += (char)(48 + cx);
+			s += (char)(48 + i);
 			_vm->_screenSurface.drawString(s, 4);
 			}
 			break;
 		case 8:
-			if (cx == 1)
+			if (i == 1)
 				_vm->_screenSurface.drawString(_vm->getEngineString(S_RESTART), 4);
 			else {
 				Common::String s = _vm->getEngineString(S_SAVE_LOAD + 2);
 				s += ' ';
-				s += (char)(47 + cx);
+				s += (char)(47 + i);
 				_vm->_screenSurface.drawString(s, 4);
 			}
 			break;
 		default:
 			break;
 		}
-		_vm->_screenSurface.putxy(xco, _vm->_screenSurface._textPos.y + 8);
-	} while (cx != lignNumb);
+		_vm->_screenSurface.putxy(minX, _vm->_screenSurface._textPos.y + 8);
+	}
 	_multiTitle = true;
 	_vm->_mouse.showMouse();
 }
@@ -427,24 +531,24 @@ void Menu::updateMenu() {
 			_vm->_prevPos = curPos;
 
 		bool tes =  (curPos.y < 11)
-		   && ((curPos.x >= (28 * _vm->_resolutionScaler) && curPos.x <= (28 * _vm->_resolutionScaler + 24))
-		   ||  (curPos.x >= (76 * _vm->_resolutionScaler) && curPos.x <= (76 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 124 * _vm->_resolutionScaler) && (curPos.x < 124 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 172 * _vm->_resolutionScaler) && (curPos.x < 172 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 220 * _vm->_resolutionScaler) && (curPos.x < 220 * _vm->_resolutionScaler + 24))
-		   || ((curPos.x > 268 * _vm->_resolutionScaler) && (curPos.x < 268 * _vm->_resolutionScaler + 24)));
+		   && ((curPos.x >= (28 * kResolutionScaler) && curPos.x <= (28 * kResolutionScaler + 24))
+		   ||  (curPos.x >= (76 * kResolutionScaler) && curPos.x <= (76 * kResolutionScaler + 24))
+		   || ((curPos.x > 124 * kResolutionScaler) && (curPos.x < 124 * kResolutionScaler + 24))
+		   || ((curPos.x > 172 * kResolutionScaler) && (curPos.x < 172 * kResolutionScaler + 24))
+		   || ((curPos.x > 220 * kResolutionScaler) && (curPos.x < 220 * kResolutionScaler + 24))
+		   || ((curPos.x > 268 * kResolutionScaler) && (curPos.x < 268 * kResolutionScaler + 24)));
 		if (tes) {
 			int ix;
 
-			if (curPos.x < 76 * _vm->_resolutionScaler)
+			if (curPos.x < 76 * kResolutionScaler)
 				ix = MENU_INVENTORY;
-			else if (curPos.x < 124 * _vm->_resolutionScaler)
+			else if (curPos.x < 124 * kResolutionScaler)
 				ix = MENU_MOVE;
-			else if (curPos.x < 172 * _vm->_resolutionScaler)
+			else if (curPos.x < 172 * kResolutionScaler)
 				ix = MENU_ACTION;
-			else if (curPos.x < 220 * _vm->_resolutionScaler)
+			else if (curPos.x < 220 * kResolutionScaler)
 				ix = MENU_SELF;
-			else if (curPos.x < 268 * _vm->_resolutionScaler)
+			else if (curPos.x < 268 * kResolutionScaler)
 				ix = MENU_DISCUSS;
 			else
 				ix = MENU_FILE;
@@ -486,18 +590,37 @@ void Menu::updateMenu() {
 	}
 }
 
-void Menu::initMenu(MortevielleEngine *vm) {
+void Menu::setParent(MortevielleEngine *vm) {
 	_vm = vm;
+}
 
-	int i;
+void Menu::initMenu() {
 	Common::File f;
 	
-	bool enMenuLoaded = false;
-	if (_vm->getLanguage() == Common::EN_ANY) {
-		// Open the mort.dat file
+	bool menuLoaded = false;
+	// First try to read it from mort.dat if useOriginalData() is false
+	if (!_vm->useOriginalData()) {
 		if (!f.open(MORT_DAT))
 			warning("File %s not found. Using default menu from game data", MORT_DAT);
 		else {
+			// Figure out what language Id is needed
+			byte desiredLanguageId;
+			switch(_vm->getLanguage()) {
+			case Common::EN_ANY:
+				desiredLanguageId = MORTDAT_LANG_ENGLISH;
+				break;
+			case Common::FR_FRA:
+				desiredLanguageId = MORTDAT_LANG_FRENCH;
+				break;
+			case Common::DE_DEU:
+				desiredLanguageId = MORTDAT_LANG_GERMAN;
+				break;
+			default:
+				warning("Language not supported, switching to English");
+				desiredLanguageId = MORTDAT_LANG_ENGLISH;
+				break;
+			}
+		
 			// Validate the data file header
 			char fileId[4];
 			f.read(fileId, 4);
@@ -512,12 +635,20 @@ void Menu::initMenu(MortevielleEngine *vm) {
 					f.read(dataType, 4);
 					dataSize = f.readUint16LE();
 					if (!strncmp(dataType, "MENU", 4)) {
-						// MENU section
-						if (dataSize <= 7 * 24) {
+						// Read in the language
+						byte languageId = f.readByte();
+						--dataSize;
+					
+						// If the language isn't correct, then skip the entire block
+						if (languageId != desiredLanguageId) {
+							f.skip(dataSize);
+							continue;
+						}
+						if (dataSize == 6 * 24) {
 							f.read(_charArr, dataSize);
-							enMenuLoaded = true;
+							menuLoaded = true;
 						} else
-							warning("Wrong size %d for menu data. Expected %d or less", dataSize, 7*24);
+							warning("Wrong size %d for menu data. Expected %d or less", dataSize, 6 * 24);
 						break;
 					} else {
 						// Other sections
@@ -527,46 +658,50 @@ void Menu::initMenu(MortevielleEngine *vm) {
 			}
 			// Close the file
 			f.close();
-			if (!enMenuLoaded)
-				warning("Failed to load English menu. Will use default menu from game data instead");
+			if (!menuLoaded)
+				warning("Failed to load menu from mort.dat. Will use default menu from game data instead.");
 		}
 	}
 
-	if (!enMenuLoaded) {
-		if (!f.open("menufr.mor"))
+	if (!menuLoaded) {
+		// Load menu from game data using the original language
+		if (_vm->getOriginalLanguage() == Common::FR_FRA) {
+			if (!f.open("menufr.mor"))
+				error("Missing file - menufr.mor");
+		} else { // Common::DE_DEU
 			if (!f.open("menual.mor"))
-				if (!f.open("menu.mor"))
-					error("Missing file - menufr.mor or menual.mor or menu.mor");
-
-		f.read(_charArr, 7 * 24);
+				error("Missing file - menual.mor");
+		}
+		f.read(_charArr, 6 * 24);
 		f.close();
 	}
 
 	// Skipped: dialog asking to swap floppy
 
-	for (i = 1; i <= 8; ++i)
+	for (int i = 1; i <= 8; ++i)
 		_inventoryStringArray[i] = "*                     ";
 	_inventoryStringArray[7] = "< -*-*-*-*-*-*-*-*-*- ";
-	for (i = 1; i <= 7; ++i)
+	for (int i = 1; i <= 7; ++i)
 		_moveStringArray[i] = "*                       ";
-	i = 1;
-	do {
+	for (int i = 1; i < 22; i++) {
 		_actionStringArray[i] = _vm->getString(i + kMenuActionStringIndex);
-
+		if ((_actionStringArray[i][0] != '*') && (_actionStringArray[i][0] != ' '))
+			_actionStringArray[i].insertChar(' ', 0);
 		while (_actionStringArray[i].size() < 10)
 			_actionStringArray[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
 				_selfStringArray[i] = _vm->getString(i + kMenuSelfStringIndex);
+				if ((_selfStringArray[i][0] != '*') && (_selfStringArray[i][0] != ' '))
+					_selfStringArray[i].insertChar(' ', 0);
 				while (_selfStringArray[i].size() < 10)
 					_selfStringArray[i] += ' ';
 			}
 			_discussStringArray[i] = _vm->getString(i + kMenuSayStringIndex) + ' ';
 		}
-		++i;
-	} while (i != 22);
-	for (i = 1; i <= 8; ++i) {
+	}
+	for (int i = 1; i <= 8; ++i) {
 		_discussMenu[i]._menuId = MENU_DISCUSS;
 		_discussMenu[i]._actionId = i;
 		if (i < 8) {
@@ -576,7 +711,7 @@ void Menu::initMenu(MortevielleEngine *vm) {
 		_inventoryMenu[i]._menuId = MENU_INVENTORY;
 		_inventoryMenu[i]._actionId = i;
 		if (i > 6)
-			disableMenuItem(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId);
+			disableMenuItem(_inventoryMenu[i]);
 	}
 	_msg3 = OPCODE_NONE;
 	_msg4 = OPCODE_NONE;
@@ -591,13 +726,21 @@ void Menu::initMenu(MortevielleEngine *vm) {
  */
 void Menu::setSearchMenu() {
 	for (int i = 1; i <= 7; ++i)
-		disableMenuItem(MENU_MOVE, _moveMenu[i]._actionId);
+		disableMenuItem(_moveMenu[i]);
 
 	for (int i = 1; i <= 11; ++i)
-		disableMenuItem(_actionMenu[i]._menuId, _actionMenu[i]._actionId);
+		disableMenuItem(_actionMenu[i]);
 
-	setText(OPCODE_SOUND >> 8, OPCODE_SOUND & 0xFF, _vm->getEngineString(S_SUITE));
-	setText(OPCODE_LIFT  >> 8, OPCODE_LIFT  & 0xFF, _vm->getEngineString(S_STOP));
+	MenuItem miSound;
+	miSound._menuId   = _opcodeSound >> 8;
+	miSound._actionId = _opcodeSound & 0xFF;
+
+	MenuItem miLift;
+	miLift._menuId   = _opcodeLift >> 8;
+	miLift._actionId = _opcodeLift & 0xFF;
+
+	setText(miSound, _vm->getEngineString(S_SUITE));
+	setText(miLift,  _vm->getEngineString(S_STOP));
 }
 
 /**
@@ -607,10 +750,18 @@ void Menu::setSearchMenu() {
 void Menu::unsetSearchMenu() {
 	setDestinationText(_vm->_coreVar._currPlace);
 	for (int i = 1; i <= 11; ++i)
-		enableMenuItem(_actionMenu[i]._menuId, _actionMenu[i]._actionId);
+		enableMenuItem(_actionMenu[i]);
 
-	setText(OPCODE_SOUND >> 8, OPCODE_SOUND & 0xFF, _vm->getEngineString(S_PROBE));
-	setText(OPCODE_LIFT  >> 8, OPCODE_LIFT  & 0xFF, _vm->getEngineString(S_RAISE));
+	MenuItem miSound;
+	miSound._menuId   = _opcodeSound >> 8;
+	miSound._actionId = _opcodeSound & 0xFF;
+
+	MenuItem miLift;
+	miLift._menuId   = _opcodeLift >> 8;
+	miLift._actionId = _opcodeLift & 0xFF;
+
+	setText(miSound, _vm->getEngineString(S_PROBE));
+	setText(miLift,  _vm->getEngineString(S_RAISE));
 }
 
 /**
@@ -626,15 +777,15 @@ void Menu::setInventoryText() {
 			++cy;
 			int r = _vm->_coreVar._inventory[i] + 400;
 			nomp = _vm->getString(r - 501 + kInventoryStringIndex);
-			setText(_inventoryMenu[cy]._menuId, _inventoryMenu[cy]._actionId, nomp);
-			enableMenuItem(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId);
+			setText(_inventoryMenu[cy], nomp);
+			enableMenuItem(_inventoryMenu[i]);
 		}
 	}
 
 	if (cy < 6) {
 		for (int i = cy + 1; i <= 6; ++i) {
-			setText(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId, "                       ");
-			disableMenuItem(_inventoryMenu[i]._menuId, _inventoryMenu[i]._actionId);
+			setText(_inventoryMenu[i], "                       ");
+			disableMenuItem(_inventoryMenu[i]);
 		}
 	}
 }

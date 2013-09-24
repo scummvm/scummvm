@@ -272,7 +272,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	if (_deletableFont) { // We actually have a TTF
-		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _gameRef->_renderer->getPixelFormat());
 	} else { // We are using a fallback, they can't do 32bpp
 		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	}
@@ -285,7 +285,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	}
 
 	BaseSurface *retSurface = _gameRef->_renderer->createSurface();
-	Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+	Graphics::Surface *convertedSurface = surface->convertTo(_gameRef->_renderer->getPixelFormat());
 	retSurface->putSurface(*convertedSurface, true);
 	convertedSurface->free();
 	surface->free();

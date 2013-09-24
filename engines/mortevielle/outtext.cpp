@@ -53,7 +53,6 @@ int TextHandler::nextWord(int p, const char *ch, int &tab) {
  * @remarks	Originally called 'afftex'
  */
 void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) {
-	int tab;
 	Common::String s;
 	int i, j;
 
@@ -61,10 +60,7 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	inputStr += '$';
 
 	_vm->_screenSurface.putxy(x, y);
-	if (_vm->_resolutionScaler == 1)
-		tab = 10;
-	else
-		tab = 6;
+	int tab = 6;
 	dx *= 6;
 	dy *= 6;
 	int xc = x;
@@ -168,14 +164,11 @@ void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int lengt
 }
 
 void TextHandler::taffich() {
-	static const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
-
 	static const byte tran1[] = { 121, 121, 138, 139, 120 };
 	static const byte tran2[] = { 150, 150, 152, 152, 100, 110, 159, 100, 100 };
 
 	int cx, drawingSize, npal;
 	int32 drawingStartPos;
-	int alllum[16];
 
 	int a = _vm->_caff;
 	if ((a >= 153) && (a <= 161))
@@ -272,21 +265,6 @@ void TextHandler::taffich() {
 		npal = a + 37;
 	}
 	loadPictureFile(filename, altFilename, drawingStartPos, drawingSize);
-	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
-		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&_vm->_curPict[2 + (i << 1)]);
-			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
-		}
-		for (int i = 0; i <= 15; ++i) {
-			int k = 0;
-			for (int j = 0; j <= 15; ++j) {
-				if (alllum[j] > alllum[k])
-					k = j;
-			}
-			_vm->_curPict[2 + (k << 1)] = rang[i];
-			alllum[k] = -1;
-		}
-	}
 	_vm->_numpal = npal;
 	_vm->setPal(npal);
 
@@ -314,7 +292,7 @@ void TextHandler::taffich() {
 		loadAniFile(filename, drawingStartPos, drawingSize);
 	}
 	_vm->_mouse.showMouse();
-	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != OPCODE_ENTER)) {
+	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != _vm->_menu._opcodeEnter)) {
 		if ((a == ATTIC) || (a == CELLAR))
 			_vm->displayAloneText();
 		else if (!_vm->_blo)

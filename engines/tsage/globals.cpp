@@ -26,6 +26,7 @@
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/staticres.h"
 
 namespace TsAGE {
 
@@ -389,7 +390,7 @@ void Ringworld2Globals::reset() {
 	_scrollFollower = &_player;
 
 	// Reset fields
-	Common::fill(&_fadePaletteMap[0][0], &_fadePaletteMap[10][256], 0);
+	Common::fill(&_fadePaletteMap[0][0], &_fadePaletteMap[9][256], 0);
 	Common::fill(&_paletteMap[0], &_paletteMap[4096], 0);
 
 	_fadePaletteFlag = false;
@@ -404,7 +405,7 @@ void Ringworld2Globals::reset() {
 	_v565E7 = 0;
 	_v565E9 = -5;
 	_v565EB = 26;
-	_v565F5 = 0;
+	_foodCount = 0;
 	_v565F6 = 0;
 	_v565F8 = 0;
 	_v565FA = 0;
@@ -449,7 +450,7 @@ void Ringworld2Globals::reset() {
 	_v56613[(17 * 4) + 1] = 1;
 
 	_v566A6 = 3800;
-	_v566A3 = 2;
+	_landerSuitNumber = 2;
 	_v566A4 = 1;
 	_v566A5 = 0;
 	_v566A8 = 5;
@@ -475,15 +476,12 @@ void Ringworld2Globals::reset() {
 	_v5780E = 0;
 	_v57810 = 0;
 	_v57C2C = 0;
-	_v565EC[0] = 0;
-	_v565EC[1] = 27;
-	_v565EC[2] = 27;
-	_v565EC[3] = 4;
-	_v565EC[4] = 4;
+	_s1550PlayerArea[R2_QUINN] = Common::Point(27, 4);
+	_s1550PlayerArea[R2_SEEKER] = Common::Point(27, 4);
 	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
 	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
-	_frameEdgeColour = 2;
+	_frameEdgeColor = 2;
 	Common::fill(&_stripManager_lookupList[0], &_stripManager_lookupList[12], 0);
 	_stripManager_lookupList[0] = 1;
 	_stripManager_lookupList[1] = 1;
@@ -495,6 +493,10 @@ void Ringworld2Globals::reset() {
 	_stripManager_lookupList[9] = 1;
 	_stripManager_lookupList[10] = 1;
 	_stripManager_lookupList[11] = 1;
+
+	// Reset junk/component data in scene 1550
+	Common::copy(&scene1550JunkLocationsDefault[0], &scene1550JunkLocationsDefault[508],
+		&_scene1550JunkLocations[0]);
 
 	// Reset fields stored in the player class
 	_player._characterIndex = R2_QUINN;
@@ -519,11 +521,11 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v565E7);
 	s.syncAsSint16LE(_v565E9);
 	s.syncAsSint16LE(_v565EB);
-	s.syncAsSint16LE(_v565F5);
+	s.syncAsSint16LE(_foodCount);
 	s.syncAsSint16LE(_v565F6);
 	s.syncAsSint16LE(_v565F8);
 	s.syncAsSint16LE(_v565FA);
-	s.syncAsSint16LE(_v566A3);
+	s.syncAsSint16LE(_landerSuitNumber);
 	s.syncAsSint16LE(_v566A6);
 	s.syncAsSint16LE(_v56A93);
 	s.syncAsSint16LE(_scene1925CurrLevel); // _v56A9C
@@ -539,8 +541,12 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v57C2C);
 	s.syncAsSint16LE(_speechSubtitles);
 
-	for (i = 0; i < 5; i++)
-		s.syncAsByte(_v565EC[i]);
+	byte temp;
+	s.syncAsByte(temp);
+	s.syncAsByte(_s1550PlayerArea[R2_QUINN].x);
+	s.syncAsByte(_s1550PlayerArea[R2_SEEKER].x);
+	s.syncAsByte(_s1550PlayerArea[R2_QUINN].y);
+	s.syncAsByte(_s1550PlayerArea[R2_SEEKER].y);
 
 	for (i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsByte(_scannerFrequencies[i]);
@@ -566,7 +572,10 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 		s.syncAsByte(_stripManager_lookupList[i]);
 
 	s.syncAsSint16LE(_insetUp);
-	s.syncAsByte(_frameEdgeColour);
+	s.syncAsByte(_frameEdgeColor);
+
+	for (i = 0; i < 508; i += 4)
+		s.syncAsByte(_scene1550JunkLocations[i + 2]);
 }
 
 } // end of namespace Ringworld2

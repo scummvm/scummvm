@@ -156,7 +156,7 @@ private:
 	 * - a negative number if *this < right
 	 */
 	int cmp(const reg_t right, bool treatAsUnsigned) const;
-	reg_t lookForWorkaround(const reg_t right) const;
+	reg_t lookForWorkaround(const reg_t right, const char *operation) const;
 	bool pointerComparisonWithInteger(const reg_t right) const;
 };
 

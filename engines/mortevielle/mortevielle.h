@@ -62,6 +62,11 @@ enum {
 	MORTDAT_LANG_GERMAN = 2
 };
 
+enum {
+	kUseOriginalData = 0,
+	kUseEngineDataFile = 1
+};
+
 // Static string list
 enum {
 	S_YES_NO = 0, S_GO_TO = 1, S_SOMEONE_ENTERS = 2, S_COOL = 3, S_LOURDE = 4,
@@ -115,6 +120,7 @@ const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
 const int kMaxPatt = 20;
 
+const int kResolutionScaler = 2;
 /*
 9   "A glance at the forbidden$",
 18  "It's already open$",
@@ -127,18 +133,6 @@ enum Places {
 	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17, ROOM18 = 18,      MOUNTAIN = 19,
 	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,     INSIDE_WELL = 23, WELL = 24,
 	DOOR = 25,        ROOM26 = 26,      COAT_ARMS = 27
-};
-
-enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCULES = 3, MODE_TANDY = 4 };
-
-struct nhom {
-	byte _id;     /* number between 0 and 32 */
-	byte _hom[4];
-};
-
-struct CgaPalette {
-	byte _p;
-	nhom _a[16];
 };
 
 struct Pattern {
@@ -180,7 +174,6 @@ private:
 	Common::StringArray _engineStrings;
 	Common::StringArray _gameStrings;
 
-	Pattern _patternArr[15];
 	int _menuOpcode;
 
 	bool _inMainGameLoop;	// Flag when the main game loop is active
@@ -224,7 +217,6 @@ private:
 	int  _startHour;
 	int  _endHour;
 	Common::Point _stdPal[91][17];
-	CgaPalette _cgaPal[91];
 
 	int  _x26KeyCount;
 	int  _roomDoorId;
@@ -257,7 +249,6 @@ private:
 	void mainGame();
 	void playGame();
 	void handleAction();
-	void displayCGAPattern(int n, Pattern *p, nhom *pal);
 	void loadPalette();
 	void loadTexts();
 	void loadCFIEC();
@@ -278,7 +269,6 @@ private:
 	void getReadDescription(int objId);
 	void getSearchDescription(int objId);
 	int  checkLeaveSecretPassage();
-	void changeGraphicalDevice(int newDevice);
 	void startDialog(int16 rep);
 	void endSearch();
 	int convertCharacterIndexToBitIndex(int characterIndex);
@@ -419,8 +409,6 @@ public:
 	bool _blo;
 	bool _destinationOk;
 	bool _largestClearScreen;
-	int  _currGraphicalDevice;
-	int  _newGraphicalDevice;
 	float _addFix;
 	int  _savedBitIndex;
 	int  _numpal;
@@ -432,7 +420,6 @@ public:
 	int _caff;
 	int _crep;
 
-	int _resolutionScaler;
 	byte _destinationArray[7][25];
 
 	byte *_curPict;
@@ -461,6 +448,8 @@ public:
 	virtual Common::Error run();
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
+	Common::Language getOriginalLanguage() const;
+	bool useOriginalData() const;
 	static Common::String generateSaveFilename(const Common::String &target, int slot);
 	Common::String generateSaveFilename(int slot) { return generateSaveFilename(_targetName, slot); }
 

@@ -2111,8 +2111,13 @@ int SceneObject::getFrameCount() {
 
 void SceneObject::animEnded() {
 	_animateMode = ANIM_MODE_NONE;
-	if (_endAction)
-		_endAction->signal();
+	if (_endAction) {
+		Action *endAction = _endAction;
+		if (g_vm->getGameID() == GType_Ringworld2)
+			_endAction = NULL;
+
+		endAction->signal();
+	}
 }
 
 int SceneObject::changeFrame() {
@@ -3992,7 +3997,7 @@ int WalkRegions::indexOf(const Common::Point &pt, const Common::List<int> *index
 }
 
 void WalkRegions::synchronize(Serializer &s) {
-	// Synchronise the list of disabled regions as a list of values terminated with a '-1'
+	// Synchronize the list of disabled regions as a list of values terminated with a '-1'
 	int regionId = 0;
 	if (s.isLoading()) {
 		_disabledRegions.clear();
@@ -4242,9 +4247,10 @@ void SceneHandler::process(Event &event) {
 			// Scan the item list to find one the mouse is within
 			SynchronizedList<SceneItem *>::iterator i;
 			for (i = g_globals->_sceneItems.begin(); i != g_globals->_sceneItems.end(); ++i) {
-				if ((*i)->contains(event.mousePos)) {
+				SceneItem *item = *i;				
+				if (item->contains(event.mousePos)) {
 					// Pass the action to the item
-					bool handled = (*i)->startAction(g_globals->_events.getCursor(), event);
+					bool handled = item->startAction(g_globals->_events.getCursor(), event);
 					if (!handled)
 						// Item wasn't handled, keep scanning
 						continue;

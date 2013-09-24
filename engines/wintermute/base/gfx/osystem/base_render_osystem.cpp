@@ -84,7 +84,6 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	delete _renderSurface;
 	_blankSurface->free();
 	delete _blankSurface;
-	TransparentSurface::destroyLookup();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,7 +126,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	_windowed = !ConfMan.getBool("fullscreen");
 
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
 	g_system->initSize(_width, _height, &format);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
@@ -613,8 +612,8 @@ bool BaseRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 	// TODO: Hopefully this is the same logic that ScummVM uses.
 	rect.left = (int16)(left + _borderLeft);
 	rect.top = (int16)(top + _borderTop);
-	rect.right = (int16)((right - left) * _ratioX);
-	rect.bottom = (int16)((bottom - top) * _ratioY);
+	rect.setWidth((int16)((right - left) * _ratioX));
+	rect.setHeight((int16)((bottom - top) * _ratioY));
 
 	_renderRect = rect;
 	return STATUS_OK;
@@ -631,15 +630,13 @@ Rect32 BaseRenderOSystem::getViewPort() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
-	// FIXME: This is wrong in quite a few ways right now, and ends up
-	// breaking the notebook in Dirty Split, so we disable the correction
-	// for now, this will need fixing when a game with odd aspect-ratios
-	// show up.
 	return;
-	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft - _renderRect.left);
-	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop - _renderRect.top);
-	rect->setWidth((int16)MathUtil::roundUp(rect->width() * _ratioX));
-	rect->setHeight((int16)MathUtil::roundUp(rect->height() * _ratioY));
+	int newWidth = (int16)MathUtil::roundUp(rect->width() * _ratioX);
+	int newHeight = (int16)MathUtil::roundUp(rect->height() * _ratioY);
+	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft);
+	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop);
+	rect->setWidth(newWidth);
+	rect->setHeight(newHeight);
 }
 
 //////////////////////////////////////////////////////////////////////////

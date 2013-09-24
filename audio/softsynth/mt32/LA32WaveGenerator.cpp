@@ -20,7 +20,9 @@
 #include "mmath.h"
 #include "LA32WaveGenerator.h"
 
-#if MT32EMU_ACCURATE_WG == 0
+#if MT32EMU_USE_FLOAT_SAMPLES
+#include "LA32FloatWaveGenerator.cpp"
+#else
 
 namespace MT32Emu {
 
@@ -129,7 +131,8 @@ void LA32WaveGenerator::advancePosition() {
 	computePositions(highLinearLength, lowLinearLength, resonanceWaveLengthFactor);
 
 	// resonancePhase computation hack
-	*(int*)&resonancePhase = ((resonanceSinePosition >> 18) + (phase > POSITIVE_FALLING_SINE_SEGMENT ? 2 : 0)) & 3;
+	int *resonancePhaseAlias = (int *)&resonancePhase;
+	*resonancePhaseAlias = ((resonanceSinePosition >> 18) + (phase > POSITIVE_FALLING_SINE_SEGMENT ? 2 : 0)) & 3;
 }
 
 void LA32WaveGenerator::generateNextSquareWaveLogSample() {
@@ -415,4 +418,4 @@ bool LA32PartialPair::isActive(const PairType useMaster) const {
 
 }
 
-#endif // #if MT32EMU_ACCURATE_WG == 0
+#endif // #if MT32EMU_USE_FLOAT_SAMPLES

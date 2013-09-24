@@ -927,16 +927,28 @@ TestExitStatus GFXtests::overlayGraphics() {
 
 	Graphics::PixelFormat pf = g_system->getOverlayFormat();
 
-	OverlayColor buffer[50 * 100];
-	OverlayColor value = pf.RGBToColor(0, 255, 0);
+	byte *buffer = new byte[50 * 100 * pf.bytesPerPixel];
+	const uint32 value = pf.RGBToColor(0, 255, 0);
 
-	for (int i = 0; i < 50 * 100; i++) {
-		buffer[i] = value;
+	if (pf.bytesPerPixel == 2) {
+		uint16 *dst = (uint16 *)buffer;
+		for (int i = 50 * 100; i > 0; --i) {
+			*dst++ = value;
+		}
+	} else if (pf.bytesPerPixel == 4) {
+		uint32 *dst = (uint32 *)buffer;
+		for (int i = 50 * 100; i > 0; --i) {
+			*dst++ = value;
+		}
+	} else {
+		error("GFXtests::overlayGraphics: Unsupported color depth: %d", pf.bytesPerPixel);
 	}
 
 	g_system->showOverlay();
-	g_system->copyRectToOverlay(buffer, 200, 270, 175, 100, 50);
+	g_system->copyRectToOverlay(buffer, 100 * pf.bytesPerPixel, 270, 175, 100, 50);
 	g_system->updateScreen();
+
+	delete[] buffer;
 
 	g_system->delayMillis(1000);
 

@@ -691,6 +691,7 @@ void Myst::toggleVar(uint16 var) {
 			else
 				_state.courtyardImageBoxes |= mask;
 		}
+		break;
 	case 41: // Vault white page
 		if (_globals.ending != 4) {
 			if (_dockVaultState == 1) {
