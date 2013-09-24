@@ -954,8 +954,8 @@ void Dialogs::speak(byte who, byte subject) {
 }
 
 void Dialogs::talkTo(byte whom) {
-	if (_vm->_parser->_person == _vm->_parser->kPardon) {
-		_vm->_parser->_person = _vm->_avalot->_subjectNum;
+	if (_vm->_parser->_person == kPeoplePardon) {
+		_vm->_parser->_person = (People)_vm->_avalot->_subjectNum;
 		_vm->_avalot->_subjectNum = 0;
 	}
 

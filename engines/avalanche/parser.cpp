@@ -421,7 +421,7 @@ void Parser::handleReturn() {
 void Parser::handleFunctionKey(const Common::Event &event) {
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_F5:
-		_person = kPardon;
+		_person = kPeoplePardon;
 		_thing = kPardon;
 		_vm->_avalot->callVerb(_vm->_avalot->f5Does()[0]);
 		break;
@@ -591,7 +591,7 @@ void Parser::displayWhat(byte target, bool animate, bool &ambiguous) {
 			_vm->_dialogs->displayText("What?");
 	} else {
 		if (animate) {
-			Common::String tmpStr = Common::String::format("{ %s }", _vm->_avalot->getName(target).c_str());
+			Common::String tmpStr = Common::String::format("{ %s }", _vm->_avalot->getName((People)target).c_str());
 			_vm->_dialogs->displayText(tmpStr);
 		} else {
 			Common::String z = _vm->_avalot->getItem(target);
@@ -713,7 +713,7 @@ void Parser::parse() {
 	_verb = kPardon;
 	_thing = kPardon;
 	_thing2 = kPardon;
-	_person = kPardon;
+	_person = kPeoplePardon;
 	clearWords();
 
 
@@ -868,14 +868,15 @@ void Parser::parse() {
 	}
 
 	for (int16 i = _thats.size() - 1; i >= 0; i--) { // Reverse order, so first will be used.
-		if (((byte)_thats[i] == 253) || ((byte)_thats[i] == 249) || ((1 <= (byte)_thats[i]) && ((byte)_thats[i] <= 49)))
-			_verb = (byte)_thats[i];
-		else if ((50 <= (byte)_thats[i]) && ((byte)_thats[i] <= 149)) {
+		byte curChar = (byte)_thats[i];
+		if ((curChar == 253) || (curChar == 249) || ((1 <= curChar) && (curChar <= 49)))
+			_verb = curChar;
+		else if ((50 <= curChar) && (curChar <= 149)) {
 			_thing2 = _thing;
-			_thing = (byte)_thats[i];
-		} else if ((150 <= (byte)_thats[i]) && ((byte)_thats[i] <= 199))
-			_person = (byte)_thats[i];
-		else if ((byte)_thats[i] == 251)
+			_thing = curChar;
+		} else if ((150 <= curChar) && (curChar <= 199))
+			_person = (People)curChar;
+		else if (curChar == 251)
 			_polite = true;
 	}
 
@@ -929,7 +930,7 @@ void Parser::examineObject() {
 }
 
 bool Parser::isPersonHere() { // Person equivalent of "holding".
-	if ((_person == kPardon) || (_person == 0) || (_vm->_avalot->getRoom(_person) == _vm->_avalot->_room))
+	if ((_person == kPeoplePardon) || (_person == kPeopleNone) || (_vm->_avalot->getRoom(_person) == _vm->_avalot->_room))
 		return true;
 	else {
 		Common::String tmpStr;
@@ -959,7 +960,8 @@ void Parser::exampers() {
 		if ((_person == kPeopleAyles) && !_vm->_avalot->_aylesIsAwake)
 			_vm->_dialogs->displayScrollChain('Q', 13);
 
-		_person = newPerson;
+		// CHECKME: Present in the original, but it doesn't make sense.
+		// _person = newPerson;
 	}
 }
 
@@ -1004,7 +1006,7 @@ void Parser::openBox(bool isOpening) {
 
 void Parser::examine() {
 	// EITHER it's an object OR it's an Also OR it's a _person OR it's something else.
-	if ((_person == kPardon) && (_thing != kPardon)) {
+	if ((_person == kPeoplePardon) && (_thing != kPardon)) {
 		if (isHolding()) {
 			// Remember: it's been slipped! Ie subtract 49.
 			if ((1 <= _thing) && (_thing <= 49)) // Standard object
@@ -1108,7 +1110,7 @@ void Parser::peopleInRoom() {
 	byte numPeople = 0; // Number of people in the room.
 
 	for (int i = 151; i < 179; i++) { // Start at 1 so we don't list Avvy himself!
-		if (_vm->_avalot->getRoom(i) == _vm->_avalot->_room)
+		if (_vm->_avalot->getRoom((People)i) == _vm->_avalot->_room)
 			numPeople++;
 	}
 
@@ -1118,14 +1120,14 @@ void Parser::peopleInRoom() {
 	Common::String tmpStr;
 	byte actPerson = 0; // Actually listed people.
 	for (int i = 151; i < 179; i++) {
-		if (_vm->_avalot->getRoom(i) == _vm->_avalot->_room) {
+		if (_vm->_avalot->getRoom((People)i) == _vm->_avalot->_room) {
 			actPerson++;
 			if (actPerson == 1) // First on the list.
-				tmpStr = _vm->_avalot->getName(i + 150);
+				tmpStr = _vm->_avalot->getName((People)i);
 			else if (actPerson < numPeople) // The middle...
-				tmpStr += ", " + _vm->_avalot->getName(i + 150);
+				tmpStr += ", " + _vm->_avalot->getName((People)i);
 			else // The end.
-				tmpStr += " and " + _vm->_avalot->getName(i + 150);
+				tmpStr += " and " + _vm->_avalot->getName((People)i);
 		}
 	}
 
@@ -1185,7 +1187,7 @@ void Parser::openDoor() {
 		if (_vm->_animation->inField(1)) {
 			// Opening the box.
 			_thing = 54; // The box.
-			_person = kPardon;
+			_person = kPeoplePardon;
 			examine();
 			return;
 		}
@@ -1551,8 +1553,8 @@ void Parser::winSequence() {
 }
 
 Common::String Parser::personSpeaks() {
-	if ((_person == kPardon) || (_person == 0)) {
-		if ((_vm->_avalot->_him == kPardon) || (_vm->_avalot->getRoom(_vm->_avalot->_him) != _vm->_avalot->_room))
+	if ((_person == kPeoplePardon) || (_person == kPeopleNone)) {
+		if ((_vm->_avalot->_him == kPeoplePardon) || (_vm->_avalot->getRoom(_vm->_avalot->_him) != _vm->_avalot->_room))
 			_person = _vm->_avalot->_her;
 		else
 			_person = _vm->_avalot->_him;
@@ -1642,7 +1644,7 @@ void Parser::doThat() {
 			else
 				getProc(_thing);
 		} else { // Not... ditto.
-			if (_person != kPardon)
+			if (_person != kPeoplePardon)
 				_vm->_dialogs->displayText("You can't sweep folk off their feet!");
 			else
 				_vm->_dialogs->displayText("I assure you, you don't need it.");
@@ -1656,7 +1658,7 @@ void Parser::doThat() {
 		inventory();
 		break;
 	case kVerbCodeTalk:
-		if (_person == kPardon) {
+		if (_person == kPeoplePardon) {
 			if (_vm->_avalot->_subjectNum == 99) { // They typed "say password".
 				Common::String tmpStr = Common::String::format("Yes, but what %cis%c the password?", Dialogs::kControlItalic, Dialogs::kControlRoman);
 				_vm->_dialogs->displayText(tmpStr);
@@ -1670,9 +1672,9 @@ void Parser::doThat() {
 				doThat();
 				return;
 			} else {
-				_person = _vm->_avalot->_subjectNum;
+				_person = (People)_vm->_avalot->_subjectNum;
 				_vm->_avalot->_subjectNum = 0;
-				if ((_person == 0) || (_person == kPardon))
+				if ((_person == kPeopleNone) || (_person == kPeoplePardon))
 					_vm->_dialogs->displayText("Talk to whom?");
 				else if (isPersonHere())
 					_vm->_dialogs->talkTo(_person);
@@ -1682,7 +1684,7 @@ void Parser::doThat() {
 		break;
 	case kVerbCodeGive:
 		if (isHolding()) {
-			if (_person == kPardon)
+			if (_person == kPeoplePardon)
 				_vm->_dialogs->displayText("Give to whom?");
 			else if (isPersonHere()) {
 				switch (_thing) {
@@ -2221,7 +2223,7 @@ void Parser::doThat() {
 		standUp();
 		break;
 	case kVerbCodeKiss:
-		if (_person == kPardon)
+		if (_person == kPeoplePardon)
 			_vm->_dialogs->displayText("Kiss whom?");
 		else if (isPersonHere()) {
 			switch (_person) {
@@ -2258,7 +2260,7 @@ void Parser::doThat() {
 	case kVerbCodeWake:
 		if (isPersonHere())
 			switch (_person) {
-			case kPardon:
+			case kPeoplePardon:
 			case kPeopleAvalot:
 			case 0:
 				if (!_vm->_avalot->_avvyIsAwake) {

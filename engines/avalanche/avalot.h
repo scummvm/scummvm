@@ -63,76 +63,6 @@ private:
 	void chime();
 };
 
-enum Color {
-	kColorBlack,      kColorBlue,      kColorGreen,     kColorCyan,         kColorRed,
-	kColorMagenta,    kColorBrown,     kColorLightgray, kColorDarkgray,     kColorLightblue,
-	kColorLightgreen, kColorLightcyan, kColorLightred,  kColorLightmagenta, kColorYellow,
-	kColorWhite
-};
-
-// CHECKME: kRoomBossKey is a guess
-enum Room {
-	kRoomNowhere = 0,       kRoomYours = 1,        kRoomOutsideYours = 2,          kRoomOutsideSpludwicks = 3,
-	kRoomYourHall = 5,      kRoomMusicRoom = 7,    kRoomOutsideArgentPub = 9,      kRoomArgentRoad = 10,
-	kRoomWiseWomans = 11,   kRoomSpludwicks = 12,  kRoomInsideAbbey = 13,          kRoomOutsideAbbey = 14,
-	kRoomAvvysGarden = 15,  kRoomAylesOffice = 16, kRoomArgentPub = 19,            kRoomBrummieRoad = 20,
-	kRoomBridge = 21,       kRoomLusties = 22,     kRoomLustiesRoom = 23,          kRoomWestHall = 25,
-	kRoomEastHall = 26,     kRoomOubliette = 27,   kRoomGeidas = 28,               kRoomCatacombs = 29,
-	kRoomEntranceHall = 40, kRoomRobins = 42,      kRoomOutsideNottsPub = 46,      kRoomNottsPub = 47,
-	kRoomOutsideDucks = 50, kRoomDucks = 51,       kRoomOutsideCardiffCastle = 70, kRoomInsideCardiffCastle = 71,
-	kRoomBossKey = 98,      kRoomMap = 99,         kRoomDummy = 177 // Dummy room
-};
-
-// Objects you can hold:
-enum Object {
-	kObjectWine = 1,
-	kObjectMoney,
-	kObjectBodkin,
-	kObjectPotion,
-	kObjectChastity,
-	kObjectBolt,
-	kObjectCrossbow,
-	kObjectLute,
-	kObjectBadge,
-	kObjectMushroom,
-	kObjectKey,
-	kObjectBell,
-	kObjectPrescription,
-	kObjectPen,
-	kObjectInk,
-	kObjectClothes,
-	kObjectHabit,
-	kObjectOnion,
-	kObjectDummy = 177
-};
-
-// People who hang around this game.
-enum People {
-	// Boys:
-	kPeopleAvalot = 150,
-	kPeopleSpludwick = 151,
-	kPeopleCrapulus = 152,
-	kPeopleDrDuck = 153,
-	kPeopleMalagauche = 154,
-	kPeopleFriarTuck = 155,
-	kPeopleRobinHood = 156,
-	kPeopleCwytalot = 157,
-	kPeopleDuLustie = 158,
-	kPeopleDuke = 159,
-	kPeopleDogfood = 160,
-	kPeopleTrader = 161,
-	kPeopleIbythneth = 162,
-	kPeopleAyles = 163,
-	kPeoplePort = 164,
-	kPeopleSpurge = 165,
-	kPeopleJacques = 166,
-	// Girls:
-	kPeopleArkata = 175,
-	kPeopleGeida = 176,
-	kPeopleInvisible = 177,
-	kPeopleWisewoman = 178
-};
-
 static const byte kObjectNum = 18; // always preface with a #
 static const int16 kCarryLimit = 12;  // carry limit
 
@@ -169,7 +99,7 @@ typedef int8 TuneType[31];
 
 struct QuasipedType {
 	byte _whichPed, _foregroundColor, _room, _backgroundColor;
-	uint16 _who;
+	People _who;
 };
 
 #if 0
@@ -346,10 +276,11 @@ public:
 	Common::String _subject; // What you're talking to them about.
 	byte _subjectNum; // The same thing.
 	bool _keyboardClick; // Is a keyboard click noise wanted?
-	byte _him, _her, _it;
+	People _him, _her;
+	byte _it;
 	int32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
 
-	byte _lastPerson; // Last person to have been selected using the People menu.
+	People _lastPerson; // Last person to have been selected using the People menu.
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
 	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
 	bool _isLoaded; // Is it a loaded gamestate?
@@ -404,8 +335,8 @@ public:
 	bool decreaseMoney(uint16 howmuchby); // Called pennycheck in the original.
 	void hangAroundForAWhile();
 	
-	Common::String getName(byte whose);
-	byte getNameChar(byte whose);
+	Common::String getName(People whose);
+	byte getNameChar(People whose);
 	Common::String getThing(byte which);
 	char getThingChar(byte which);
 	Common::String getItem(byte which); // Called get_better in the original.
@@ -414,8 +345,8 @@ public:
 	void openDoor(Room whither, byte ped, byte magicnum); // Handles slidey-open doors.
 	void flipRoom(Room room, byte ped);
 
-	void setRoom(byte persId, Room roomId);
-	Room getRoom(byte persId);
+	void setRoom(People persId, Room roomId);
+	Room getRoom(People persId);
 private:
 	AvalancheEngine *_vm;
 
