@@ -961,10 +961,10 @@ void Dialogs::talkTo(byte whom) {
 
 	if (_vm->_avalot->_subjectNum == 0) {
 		switch (whom) {
-		case Avalot::kPeopleSpludwick:
-			if ((_vm->_avalot->_lustieIsAsleep) & (!_vm->_avalot->_objects[Avalot::kObjectPotion - 1])) {
+		case kPeopleSpludwick:
+			if ((_vm->_avalot->_lustieIsAsleep) & (!_vm->_avalot->_objects[kObjectPotion - 1])) {
 				displayScrollChain('q', 68);
-				_vm->_avalot->_objects[Avalot::kObjectPotion - 1] = true;
+				_vm->_avalot->_objects[kObjectPotion - 1] = true;
 				_vm->_avalot->refreshObjectList();
 				_vm->_avalot->incScore(3);
 				return;
@@ -988,20 +988,20 @@ void Dialogs::talkTo(byte whom) {
 				return;
 			}
 			break;
-		case Avalot::kPeopleIbythneth:
+		case kPeopleIbythneth:
 			if (_vm->_avalot->_givenBadgeToIby) {
 				displayScrollChain('q', 33); // Thanks a lot!
 				return; // And leave the proc.
 			}
 			break; // Or... just continue, 'cos he hasn't got it.
-		case Avalot::kPeopleDogfood:
+		case kPeopleDogfood:
 			if (_vm->_avalot->_wonNim) { // We've won the game.
 				displayScrollChain('q', 6); // "I'm Not Playing!"
 				return; // Zap back.
 			} else
 				_vm->_avalot->_askedDogfoodAboutNim = true;
 			break;
-		case Avalot::kPeopleAyles:
+		case kPeopleAyles:
 			if (!_vm->_avalot->_aylesIsAwake) {
 				displayScrollChain('q', 43); // He's fast asleep!
 				return;
@@ -1011,11 +1011,11 @@ void Dialogs::talkTo(byte whom) {
 			}
 			break;
 
-		case Avalot::kPeopleJacques:
+		case kPeopleJacques:
 			displayScrollChain('q', 43);
 			return;
 
-		case Avalot::kPeopleGeida:
+		case kPeopleGeida:
 			if (_vm->_avalot->_givenPotionToGeida)
 				_vm->_avalot->_geidaFollows = true;
 			else {
@@ -1023,7 +1023,7 @@ void Dialogs::talkTo(byte whom) {
 				return;
 			}
 			break;
-		case Avalot::kPeopleSpurge:
+		case kPeopleSpurge:
 			if (!_vm->_avalot->_sittingInPub) {
 				displayScrollChain('q', 71); // Try going over and sitting down.
 				return;
@@ -1038,7 +1038,7 @@ void Dialogs::talkTo(byte whom) {
 			break;
 		}
 	// On a subject. Is there any reason to block it?
-	} else if ((whom == Avalot::kPeopleAyles) && (!_vm->_avalot->_aylesIsAwake)) {
+	} else if ((whom == kPeopleAyles) && (!_vm->_avalot->_aylesIsAwake)) {
 		displayScrollChain('q', 43); // He's fast asleep!
 		return;
 	}
@@ -1066,12 +1066,12 @@ void Dialogs::talkTo(byte whom) {
 	if (!_noError)
 		displayScrollChain('n', whom); // File not found!
 
-	if ((_vm->_avalot->_subjectNum == 0) && ((whom + 149) == Avalot::kPeopleCrapulus)) { // Crapulus: get the badge - first time only
-		_vm->_avalot->_objects[Avalot::kObjectBadge - 1] = true;
+	if ((_vm->_avalot->_subjectNum == 0) && ((whom + 149) == kPeopleCrapulus)) { // Crapulus: get the badge - first time only
+		_vm->_avalot->_objects[kObjectBadge - 1] = true;
 		_vm->_avalot->refreshObjectList();
 		displayScrollChain('q', 1); // Circular from Cardiff.
 		_vm->_avalot->_talkedToCrapulus = true;
-		_vm->_avalot->_whereIs[Avalot::kPeopleCrapulus - 150] = kRoomDummy; // Crapulus walks off.
+		_vm->_avalot->_whereIs[kPeopleCrapulus - 150] = kRoomDummy; // Crapulus walks off.
 
 		AnimationType *spr = &_vm->_animation->_sprites[1];
 		spr->_vanishIfStill = true;
