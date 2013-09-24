@@ -395,28 +395,28 @@ public:
 };
 
 class Scene3375 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Companion1 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Companion2 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Webbster : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Actor4 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class LeftExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class DownExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class RightExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -429,15 +429,15 @@ public:
 	SpeakerSeeker3375 _seekerSpeaker;
 	SpeakerMiranda3375 _mirandaSpeaker;
 	SpeakerWebbster3375 _webbsterSpeaker;
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	NamedHotspot _itemArray[13];
-	Actor1 _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
+	Companion1 _companion1;
+	Companion2 _companion2;
+	Webbster _webbster;
 	Actor4 _actor4;
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
+	LeftExit _leftExit;
+	DownExit _downExit;
+	RightExit _rightExit;
 	SequenceManager _sequenceManager;
 	int _field1488;
 	int _field148A[4];
@@ -452,16 +452,16 @@ public:
 };
 
 class Scene3385 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Companion1 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Companion2 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Webbster : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
@@ -480,11 +480,11 @@ public:
 	SpeakerSeeker3385 _seekerSpeaker;
 	SpeakerMiranda3385 _mirandaSpeaker;
 	SpeakerWebbster3385 _webbsterSpeaker;
-	NamedHotspot _item1;
-	Actor1 _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
-	Actor4 _actor4;
+	NamedHotspot _background;
+	Companion1 _companion1;
+	Companion2 _companion2;
+	Webbster _webbster;
+	Door _door;
 	Exit1 _exit1;
 	Action1 _action1;
 	SequenceManager _sequenceManager;
@@ -499,16 +499,16 @@ public:
 };
 
 class Scene3395 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Companion1 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor2 : public SceneActor {
+	class Companion2 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Webbster : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
@@ -522,12 +522,12 @@ public:
 	SpeakerSeeker3395 _seekerSpeaker;
 	SpeakerMiranda3395 _mirandaSpeaker;
 	SpeakerWebbster3395 _webbsterSpeaker;
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	NamedHotspot _itemArray[13];
-	Actor1 _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
-	Actor4 _actor4;
+	Companion1 _companion1;
+	Companion2 _companion2;
+	Webbster _webbster;
+	Door _door;
 	Action1 _action1;
 	SequenceManager _sequenceManager;
 

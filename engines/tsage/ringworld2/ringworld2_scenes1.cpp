@@ -462,7 +462,7 @@ void Scene1000::dispatch() {
 			_animationPlayer.remove();
 
 			if (_sceneMode == 52)
-				_endHandler = this;
+				_animationPlayer._endAction = this;
 		} else {
 			_animationPlayer.dispatch();
 		}

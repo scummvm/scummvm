@@ -630,7 +630,7 @@ void SpeakerMiranda3375::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 3)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor2;
+			_object2 = &scene->_companion2;
 
 		_object2->hide();
 		_object1.postInit();
@@ -639,7 +639,7 @@ void SpeakerMiranda3375::proc15() {
 		_object1._effect = 1;
 		_object1.changeZoom(-1);
 
-		if (scene->_actor1._position.y != 163)
+		if (scene->_companion1._position.y != 163)
 			R2_GLOBALS._player.setStrip(8);
 		else
 			R2_GLOBALS._player.setStrip(2);
@@ -680,7 +680,7 @@ void SpeakerMiranda3385::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 3)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor2;
+			_object2 = &scene->_companion2;
 
 		_object2->hide();
 		_object1.postInit();
@@ -729,7 +729,7 @@ void SpeakerMiranda3395::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 3)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor2;
+			_object2 = &scene->_companion2;
 
 		_object2->hide();
 		_object1.postInit();
@@ -1503,9 +1503,9 @@ void SpeakerQuinn3375::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 1)
 			_object2 = &R2_GLOBALS._player;
 		else if (R2_GLOBALS._player._characterIndex == 2)
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion1;
 		else
-			_object2 = &scene->_actor2;
+			_object2 = &scene->_companion2;
 
 		_object2->hide();
 		_object1.postInit();
@@ -1514,7 +1514,7 @@ void SpeakerQuinn3375::proc15() {
 		_object1._effect = 1;
 		_object1.changeZoom(-1);
 
-		if (scene->_actor1._position.y != 163)
+		if (scene->_companion1._position.y != 163)
 			R2_GLOBALS._player.setStrip(8);
 		else
 			R2_GLOBALS._player.setStrip(2);
@@ -1554,9 +1554,9 @@ void SpeakerQuinn3385::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 1)
 			_object2 = &R2_GLOBALS._player;
 		else if (R2_GLOBALS._player._characterIndex == 2)
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion1;
 		else
-			_object2 = &scene->_actor2;
+			_object2 = &scene->_companion2;
 
 		_object2->hide();
 		_object1.postInit();
@@ -1609,9 +1609,9 @@ void SpeakerQuinn3395::proc15() {
 		if (R2_GLOBALS._player._characterIndex == 1)
 			_object2 = &R2_GLOBALS._player;
 		else if (R2_GLOBALS._player._characterIndex == 2)
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion1;
 		else
-			_object2 = &scene->_actor2;
+			_object2 = &scene->_companion2;
 
 		_object2->hide();
 		_object1.postInit();
@@ -2215,10 +2215,10 @@ void SpeakerSeeker3375::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2)
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion1;
 
 		_object2->hide();
 		_object1.postInit();
@@ -2227,7 +2227,7 @@ void SpeakerSeeker3375::proc15() {
 		_object1._effect = 1;
 		_object1.changeZoom(-1);
 
-		if (scene->_actor1._position.y != 163)
+		if (scene->_companion1._position.y != 163)
 			R2_GLOBALS._player.setStrip(8);
 		else
 			R2_GLOBALS._player.setStrip(2);
@@ -2264,10 +2264,10 @@ void SpeakerSeeker3385::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2)
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion1;
 
 		_object2->hide();
 		_object1.postInit();
@@ -2313,10 +2313,10 @@ void SpeakerSeeker3395::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2)
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion1;
 
 		_object2->hide();
 		_object1.postInit();
@@ -2918,7 +2918,7 @@ void SpeakerWebbster3375::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor3;
+		_object2 = &scene->_webbster;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2926,7 +2926,7 @@ void SpeakerWebbster3375::proc15() {
 		_object1._effect = 1;
 		_object1.changeZoom(-1);
 
-		if (scene->_actor1._position.y != 163)
+		if (scene->_companion1._position.y != 163)
 			R2_GLOBALS._player.setStrip(8);
 		else
 			R2_GLOBALS._player.setStrip(2);
@@ -2962,7 +2962,7 @@ void SpeakerWebbster3385::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor3;
+		_object2 = &scene->_webbster;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -3006,7 +3006,7 @@ void SpeakerWebbster3395::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor3;
+		_object2 = &scene->_webbster;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
