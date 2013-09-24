@@ -74,12 +74,24 @@ bool MctlCompound::load(MfcArchive &file) {
 	return true;
 }
 
-void MctlCompound::addObject(StaticANIObject *obj) {
+int MctlCompound::addObject(StaticANIObject *obj) {
 	warning("STUB: MctlCompound::addObject()");
+
+	return 0;
+}
+
+int MctlCompound::removeObject(StaticANIObject *obj) {
+	warning("STUB: MctlCompound::removeObject()");
+
+	return 0;
 }
 
 void MctlCompound::initMovGraph2() {
 	warning("STUB: MctlCompound::initMovGraph2()");
+}
+
+void MctlCompound::freeItems() {
+	warning("STUB: MctlCompound::freeItems()");
 }
 
 MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
@@ -133,8 +145,10 @@ bool MovGraph::load(MfcArchive &file) {
 	return true;
 }
 
-void MovGraph::addObject(StaticANIObject *obj) {
+int MovGraph::addObject(StaticANIObject *obj) {
 	warning("STUB: MovGraph::addObject()");
+
+	return 0;
 }
 
 double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag) {

@@ -36,13 +36,25 @@ public:
 
 public:
 	MotionController() : _isEnabled(true), _field_4(0) {}
+	virtual ~MotionController() {}
 	virtual bool load(MfcArchive &file);
-
-	void setEnabled() { _isEnabled = true; }
-	void clearEnabled() { _isEnabled = false; }
-
-	virtual void addObject(StaticANIObject *obj) {}
+	virtual void methodC() {}
+	virtual void method10() {}
+	virtual void clearEnabled() { _isEnabled = false; }
+	virtual void setEnabled() { _isEnabled = true; }
+	virtual int addObject(StaticANIObject *obj) { return 0; }
+	virtual int removeObject(StaticANIObject *obj) { return 0; }
 	virtual void freeItems() {}
+	virtual int method28() { return 0; }
+	virtual int method2C() { return 0; }
+	virtual int method30() { return 0; }
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) { return 0; }
+	virtual int changeCallback() { return 0; }
+	virtual int method3C() { return 0; }
+	virtual int method40() { return 0; }
+	virtual int method44() { return 0; }
+	virtual int method48() { return -1; }
+	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) { return 0; }
 };
 
 class MctlCompoundArray : public Common::Array<CObject>, public CObject {
@@ -61,11 +73,13 @@ class MctlCompound : public MotionController {
  public:
 	virtual bool load(MfcArchive &file);
 
-	virtual void addObject(StaticANIObject *obj);
-	void initMovGraph2();
+	virtual int addObject(StaticANIObject *obj);
+	virtual int removeObject(StaticANIObject *obj);
+	virtual void freeItems();
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
 
-	MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
-	MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+	void initMovGraph2();
 };
 
 class Unk2 : public CObject {
@@ -170,7 +184,7 @@ class MovGraph : public MotionController {
 	MovGraph();
 	virtual bool load(MfcArchive &file);
 
-	virtual void addObject(StaticANIObject *obj);
+	virtual int addObject(StaticANIObject *obj);
 
 	double calcDistance(Common::Point *point, MovGraphLink *link, int flag);
 	MovGraphNode *calcOffset(int ox, int oy);
