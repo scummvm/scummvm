@@ -291,7 +291,7 @@ public:
 	void runAvalot();
 
 	void init();
-	void callVerb(byte id);
+	void callVerb(VerbCode id);
 	void drawAlsoLines();
 	void loadRoom(byte num);
 	void exitRoom(byte x);

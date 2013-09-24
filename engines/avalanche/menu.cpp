@@ -266,26 +266,26 @@ void Menu::findWhatYouCanDoWithIt() {
 	case kObjectWine:
 	case kObjectPotion:
 	case kObjectInk:
-		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeDrink;
+		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeDrink;
 		break;
 	case kObjectBell:
-		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeRing;
+		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeRing;
 		break;
 	case kObjectChastity:
-		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
+		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
 	case kObjectLute:
-		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodePlay;
+		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodePlay;
 		break;
 	case kObjectMushroom:
 	case kObjectOnion:
-		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeEat;
+		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeEat;
 		break;
 	case kObjectClothes:
-		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
+		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
 	default:
-		_vm->_avalot->_verbStr = Parser::kVerbCodeExam; // Anything else.
+		_vm->_avalot->_verbStr = kVerbCodeExam; // Anything else.
 	}
 }
 
@@ -492,21 +492,21 @@ void Menu::setupMenuWith() {
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_avalot->getName(_vm->_avalot->_lastPerson), 'G', "", true);
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodeGive;
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + kVerbCodeGive;
 		}
 	} else {
 		_activeMenuItem.setupOption("Examine", 'x', "", true);
 		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_avalot->_thinks), 'T', "", true);
-		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeTalk;
+		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeTalk;
 		switch (_vm->_avalot->_thinks) {
 		case kPeopleGeida:
 		case kPeopleArkata:
 			_activeMenuItem.setupOption("Kiss her", 'K', "", true);
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodeKiss;
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + kVerbCodeKiss;
 			break;
 		case kPeopleDogfood:
 			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_avalot->_wonNim); // True if you HAVEN'T won.
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodePlay;
+			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + kVerbCodePlay;
 			break;
 		case kPeopleMalagauche: {
 			bool isSober = !_vm->_avalot->_teetotal;
@@ -531,19 +531,19 @@ void Menu::runMenuGame() {
 	// Help, boss, untrash screen.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_avalot->callVerb(Parser::kVerbCodeHelp);
+		_vm->_avalot->callVerb(kVerbCodeHelp);
 		break;
 	case 1:
-		_vm->_avalot->callVerb(Parser::kVerbCodeBoss);
+		_vm->_avalot->callVerb(kVerbCodeBoss);
 		break;
 	case 2:
 		_vm->_avalot->majorRedraw();
 		break;
 	case 3:
-		_vm->_avalot->callVerb(Parser::kVerbCodeScore);
+		_vm->_avalot->callVerb(kVerbCodeScore);
 		break;
 	case 4:
-		_vm->_avalot->callVerb(Parser::kVerbCodeInfo);
+		_vm->_avalot->callVerb(kVerbCodeInfo);
 		break;
 	}
 }
@@ -552,17 +552,17 @@ void Menu::runMenuFile() {
 	// New game, load, save, save as, DOS shell, about, quit.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_avalot->callVerb(Parser::kVerbCodeRestart);
+		_vm->_avalot->callVerb(kVerbCodeRestart);
 		break;
 	case 1:
 		if (!_vm->_parser->_realWords[1].empty())
 			_vm->_parser->_realWords[1].clear();
-		_vm->_avalot->callVerb(Parser::kVerbCodeLoad);
+		_vm->_avalot->callVerb(kVerbCodeLoad);
 		break;
 	case 2:
 		if (!_vm->_parser->_realWords[1].empty())
 			_vm->_parser->_realWords[1].clear();
-		_vm->_avalot->callVerb(Parser::kVerbCodeSave);
+		_vm->_avalot->callVerb(kVerbCodeSave);
 		break;
 	case 3:
 		//_vm->_basher->filename_edit();
@@ -572,34 +572,35 @@ void Menu::runMenuFile() {
 		//_vm->_enid->backToBootstrap(2); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 		break;
 	case 5:
-		_vm->_avalot->callVerb(Parser::kVerbCodeQuit);
+		_vm->_avalot->callVerb(kVerbCodeQuit);
 		break;
 	}
 }
 
 void Menu::runMenuAction() {
-	Common::String f5Does;
 	// Get up, pause game, open door, look, inventory, walk/run.
 	switch (_activeMenuItem._choiceNum) {
-	case 0:
+	case 0: {
 		_vm->_parser->_person = kPeoplePardon;
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		f5Does = _vm->_avalot->f5Does();
-		_vm->_avalot->callVerb(f5Does[0]);
+		Common::String f5Does = _vm->_avalot->f5Does();
+		VerbCode verb = (VerbCode)f5Does[0];
+		_vm->_avalot->callVerb(verb);
+		}
 		break;
 	case 1:
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		_vm->_avalot->callVerb(Parser::kVerbCodePause);
+		_vm->_avalot->callVerb(kVerbCodePause);
 		break;
 	case 2:
-		_vm->_avalot->callVerb(Parser::kVerbCodeOpen);
+		_vm->_avalot->callVerb(kVerbCodeOpen);
 		break;
 	case 3:
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		_vm->_avalot->callVerb(Parser::kVerbCodeLook);
+		_vm->_avalot->callVerb(kVerbCodeLook);
 		break;
 	case 4:
-		_vm->_avalot->callVerb(Parser::kVerbCodeInv);
+		_vm->_avalot->callVerb(kVerbCodeInv);
 		break;
 	case 5: {
 		AnimationType *avvy = &_vm->_animation->_sprites[0];
@@ -628,7 +629,7 @@ void Menu::runMenuWith() {
 	if (_vm->_avalot->_thinkThing) {
 		_vm->_parser->_thing += 49;
 
-		if (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum] == Parser::kVerbCodeGive)
+		if (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum] == kVerbCodeGive)
 			_vm->_parser->_person = _vm->_avalot->_lastPerson;
 		else
 			_vm->_parser->_person = kPeoplePardon;
@@ -636,27 +637,27 @@ void Menu::runMenuWith() {
 		switch (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: // Beer
 			_vm->_parser->_thing = 100;
-			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(kVerbCodeBuy);
 			return;
 		case 101: // Wine
 			_vm->_parser->_thing = 50;
-			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(kVerbCodeBuy);
 			return;
 		case 102: // Whisky
 			_vm->_parser->_thing = 102;
-			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(kVerbCodeBuy);
 			return;
 		case 103: // Cider
 			_vm->_parser->_thing = 103;
-			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(kVerbCodeBuy);
 			return;
 		case 104: // Mead
 			_vm->_parser->_thing = 107;
-			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(kVerbCodeBuy);
 			return;
 		case 105: // Onion (trader)
 			_vm->_parser->_thing = 67;
-			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
+			_vm->_avalot->callVerb(kVerbCodeBuy);
 			return;
 		default:
 			_vm->_parser->_person = (People)_vm->_parser->_thing;
@@ -664,7 +665,7 @@ void Menu::runMenuWith() {
 			_vm->_avalot->_subjectNum = 0;
 		}
 	}
-	_vm->_avalot->callVerb(_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]);
+	_vm->_avalot->callVerb((VerbCode)_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]);
 }
 
 void Menu::setup() {
