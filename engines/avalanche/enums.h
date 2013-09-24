@@ -51,55 +51,38 @@ enum Room {
 
 // Objects you can hold:
 enum Object {
-	kObjectWine = 1,
-	kObjectMoney,
-	kObjectBodkin,
-	kObjectPotion,
-	kObjectChastity,
-	kObjectBolt,
-	kObjectCrossbow,
-	kObjectLute,
-	kObjectBadge,
-	kObjectMushroom,
-	kObjectKey,
-	kObjectBell,
-	kObjectPrescription,
-	kObjectPen,
-	kObjectInk,
-	kObjectClothes,
-	kObjectHabit,
-	kObjectOnion,
-	kObjectDummy = 177
+	kObjectWine = 1, kObjectMoney,    kObjectBodkin,       kObjectPotion, kObjectChastity,
+	kObjectBolt,     kObjectCrossbow, kObjectLute,         kObjectBadge,  kObjectMushroom,
+	kObjectKey,      kObjectBell,     kObjectPrescription, kObjectPen,    kObjectInk,
+	kObjectClothes,  kObjectHabit,    kObjectOnion,        kObjectDummy = 177
 };
 
 // People who hang around this game.
 enum People {
 	// Boys:
-	kPeopleAvalot = 150,
-	kPeopleSpludwick = 151,
-	kPeopleCrapulus = 152,
-	kPeopleDrDuck = 153,
-	kPeopleMalagauche = 154,
-	kPeopleFriarTuck = 155,
-	kPeopleRobinHood = 156,
-	kPeopleCwytalot = 157,
-	kPeopleDuLustie = 158,
-	kPeopleDuke = 159,
-	kPeopleDogfood = 160,
-	kPeopleTrader = 161,
-	kPeopleIbythneth = 162,
-	kPeopleAyles = 163,
-	kPeoplePort = 164,
-	kPeopleSpurge = 165,
+	kPeopleAvalot = 150,     kPeopleSpludwick = 151, kPeopleCrapulus = 152,  kPeopleDrDuck = 153,
+	kPeopleMalagauche = 154, kPeopleFriarTuck = 155, kPeopleRobinHood = 156, kPeopleCwytalot = 157,
+	kPeopleDuLustie = 158,   kPeopleDuke = 159,      kPeopleDogfood = 160,   kPeopleTrader = 161,
+	kPeopleIbythneth = 162,  kPeopleAyles = 163,     kPeoplePort = 164,      kPeopleSpurge = 165,
 	kPeopleJacques = 166,
 	// Girls:
-	kPeopleArkata = 175,
-	kPeopleGeida = 176,
-	kPeopleInvisible = 177,
-	kPeopleWisewoman = 178,
+	kPeopleArkata = 175,     kPeopleGeida = 176,     kPeopleInvisible = 177, kPeopleWisewoman = 178,
 	//
-	kPeoplePardon = 254,
-	kPeopleNone = 0
+	kPeoplePardon = 254,     kPeopleNone = 0
+};
+
+enum VerbCode {
+	kVerbCodeExam = 1,     kVerbCodeOpen = 2,    kVerbCodePause = 3,   kVerbCodeGet = 4,       kVerbCodeDrop = 5,
+	kVerbCodeInv = 6,      kVerbCodeTalk = 7,    kVerbCodeGive = 8,    kVerbCodeDrink = 9,     kVerbCodeLoad = 10,
+	kVerbCodeSave = 11,    kVerbCodePay = 12,    kVerbCodeLook = 13,   kVerbCodeBreak = 14,    kVerbCodeQuit = 15,
+	kVerbCodeSit = 16,     kVerbCodeStand = 17,  kVerbCodeGo = 18,     kVerbCodeInfo = 19,     kVerbCodeUndress = 20,
+	kVerbCodeWear = 21,    kVerbCodePlay = 22,   kVerbCodeRing = 23,   kVerbCodeHelp = 24,     kVerbCodeLarrypass = 25,
+	kVerbCodePhaon = 26,   kVerbCodeBoss = 27,   kVerbCodePee = 28,    kVerbCodeCheat = 29,    kVerbCodeMagic = 30,
+	kVerbCodeRestart = 31, kVerbCodeEat = 32,    kVerbCodeListen = 33, kVerbCodeBuy = 34,      kVerbCodeAttack = 35,
+	kVerbCodePasswd = 36,  kVerbCodeDir = 37,    kVerbCodeDie = 38,    kVerbCodeScore = 39,    kVerbCodePut = 40,
+	kVerbCodeKiss = 41,    kVerbCodeClimb = 42,  kVerbCodeJump = 43,   kVerbCodeHiscores = 44, kVerbCodeWake = 45,
+	kVerbCodeHello = 46,   kVerbCodeThanks = 47, 
+	kVerbCodeSmartAlec = 249, kVerbCodeExpletive = 253, kVerbCodePardon = 254
 };
 
 } // End of namespace Avalanche

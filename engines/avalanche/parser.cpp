@@ -420,13 +420,16 @@ void Parser::handleReturn() {
 
 void Parser::handleFunctionKey(const Common::Event &event) {
 	switch (event.kbd.keycode) {
-	case Common::KEYCODE_F5:
+	case Common::KEYCODE_F5: {
 		_person = kPeoplePardon;
 		_thing = kPardon;
-		_vm->_avalot->callVerb(_vm->_avalot->f5Does()[0]);
+		Common::String f5does = _vm->_avalot->f5Does();
+		VerbCode verb = (VerbCode)f5does[0];
+		_vm->_avalot->callVerb(verb);
+		}
 		break;
 	case Common::KEYCODE_F7:
-		_vm->_avalot->callVerb(Parser::kVerbCodeOpen);
+		_vm->_avalot->callVerb(kVerbCodeOpen);
 		break;
 	default:
 		break;
@@ -710,7 +713,7 @@ void Parser::parse() {
 
 	byte n = 0;
 	_polite = false;
-	_verb = kPardon;
+	_verb = kVerbCodePardon;
 	_thing = kPardon;
 	_thing2 = kPardon;
 	_person = kPeoplePardon;
@@ -870,7 +873,7 @@ void Parser::parse() {
 	for (int16 i = _thats.size() - 1; i >= 0; i--) { // Reverse order, so first will be used.
 		byte curChar = (byte)_thats[i];
 		if ((curChar == 253) || (curChar == 249) || ((1 <= curChar) && (curChar <= 49)))
-			_verb = curChar;
+			_verb = (VerbCode)curChar;
 		else if ((50 <= curChar) && (curChar <= 149)) {
 			_thing2 = _thing;
 			_thing = curChar;
@@ -1668,7 +1671,7 @@ void Parser::doThat() {
 				for (int i = 0; i < 10; i++)
 					_realWords[i] = _realWords[i + 1];
 
-				_verb = _vm->_avalot->_subjectNum;
+				_verb = (VerbCode)_vm->_avalot->_subjectNum;
 				doThat();
 				return;
 			} else {
@@ -2310,7 +2313,7 @@ void Parser::doThat() {
 			_vm->_avalot->dawn();
 		}
 		break;
-	case kPardon:
+	case kVerbCodePardon:
 		_vm->_dialogs->displayText("Hey, a verb would be helpful!");
 		break;
 	case kVerbCodeHello: {

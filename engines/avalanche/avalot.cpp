@@ -37,6 +37,7 @@
 #include "avalanche/timer.h"
 #include "avalanche/background.h"
 #include "avalanche/closing.h"
+#include "avalanche/enums.h"
 
 #include "common/file.h"
 #include "common/random.h"
@@ -469,7 +470,7 @@ void Avalot::init() {
  * Call a given Verb
  * @remarks	Originally called 'callverb'
  */
-void Avalot::callVerb(byte id) {
+void Avalot::callVerb(VerbCode id) {
 	if (id == _vm->_parser->kPardon) {
 		Common::String tmpStr = Common::String::format("The f5 key lets you do a particular action in certain " \
 			"situations. However, at the moment there is nothing assigned to it. You may press alt-A to see " \
@@ -1439,13 +1440,13 @@ void Avalot::checkClick() {
 					_vm->_parser->_person = (People) _thinks;
 					_vm->_parser->_thing = _vm->_parser->kPardon;
 				}
-				callVerb(Parser::kVerbCodeExam);
+				callVerb(kVerbCodeExam);
 			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
 				do {
 					_vm->updateEvents();
 				} while (_holdLeftMouse);
 
-				callVerb(Parser::kVerbCodeScore);
+				callVerb(kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
 				_vm->_animation->_sprites[0]._speedX = kWalk;
 				_vm->_animation->updateSpeed();
@@ -1864,29 +1865,29 @@ Common::String Avalot::f5Does() {
 	switch (_room) {
 	case kRoomYours:
 		if (!_avvyIsAwake)
-			return Common::String::format("%cWWake up", Parser::kVerbCodeWake);
+			return Common::String::format("%cWWake up", kVerbCodeWake);
 		else if (_avvyInBed)
-			return Common::String::format("%cGGet up", Parser::kVerbCodeStand);
+			return Common::String::format("%cGGet up", kVerbCodeStand);
 		break;
 	case kRoomInsideCardiffCastle:
 		if (_standingOnDais)
-			return Common::String::format("%cCClimb down", Parser::kVerbCodeClimb);
+			return Common::String::format("%cCClimb down", kVerbCodeClimb);
 		else
-			return Common::String::format("%cCClimb up", Parser::kVerbCodeClimb);
+			return Common::String::format("%cCClimb up", kVerbCodeClimb);
 		break;
 	case kRoomNottsPub:
 		if (_sittingInPub)
-			return Common::String::format("%cSStand up", Parser::kVerbCodeStand);
+			return Common::String::format("%cSStand up", kVerbCodeStand);
 		else
-			return Common::String::format("%cSSit down", Parser::kVerbCodeSit);
+			return Common::String::format("%cSSit down", kVerbCodeSit);
 		break;
 	case kRoomMusicRoom:
 		if (_vm->_animation->inField(5))
-			return Common::String::format("%cPPlay the harp", Parser::kVerbCodePlay);
+			return Common::String::format("%cPPlay the harp", kVerbCodePlay);
 		break;
 	}
 
-	return Common::String::format("%c", _vm->_parser->kPardon); // If all else fails...
+	return Common::String::format("%c", kVerbCodePardon); // If all else fails...
 }
 
 void Avalot::loadMouse(byte which) {

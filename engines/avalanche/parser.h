@@ -41,19 +41,6 @@ class AvalancheEngine;
 
 class Parser {
 public:
-	enum VerbCode {
-		kVerbCodeExam = 1,     kVerbCodeOpen = 2,    kVerbCodePause = 3,   kVerbCodeGet = 4,       kVerbCodeDrop = 5,
-		kVerbCodeInv = 6,      kVerbCodeTalk = 7,    kVerbCodeGive = 8,    kVerbCodeDrink = 9,     kVerbCodeLoad = 10,
-		kVerbCodeSave = 11,    kVerbCodePay = 12,    kVerbCodeLook = 13,   kVerbCodeBreak = 14,    kVerbCodeQuit = 15,
-		kVerbCodeSit = 16,     kVerbCodeStand = 17,  kVerbCodeGo = 18,     kVerbCodeInfo = 19,     kVerbCodeUndress = 20,
-		kVerbCodeWear = 21,    kVerbCodePlay = 22,   kVerbCodeRing = 23,   kVerbCodeHelp = 24,     kVerbCodeLarrypass = 25,
-		kVerbCodePhaon = 26,   kVerbCodeBoss = 27,   kVerbCodePee = 28,    kVerbCodeCheat = 29,    kVerbCodeMagic = 30,
-		kVerbCodeRestart = 31, kVerbCodeEat = 32,    kVerbCodeListen = 33, kVerbCodeBuy = 34,      kVerbCodeAttack = 35,
-		kVerbCodePasswd = 36,  kVerbCodeDir = 37,    kVerbCodeDie = 38,    kVerbCodeScore = 39,    kVerbCodePut = 40,
-		kVerbCodeKiss = 41,    kVerbCodeClimb = 42,  kVerbCodeJump = 43,   kVerbCodeHiscores = 44, kVerbCodeWake = 45,
-		kVerbCodeHello = 46,   kVerbCodeThanks = 47, kVerbCodeSmartAlec = 249, kVerbCodeExpletive = 253
-	};
-
 	static const byte kPardon = 254; // Didn't understand / wasn't given.
 	static const int16 kParserWordsNum = 277; // How many words does the parser know?
 	static const byte kNothing = 250;
@@ -73,7 +60,8 @@ public:
 	VocabEntry _vocabulary[kParserWordsNum];
 
 	Common::String _realWords[11];
-	byte _verb, _thing;
+	VerbCode _verb;
+	byte _thing;
 	People _person;
 	bool _polite;
 	Common::String _inputText; // Original name: current

@@ -658,7 +658,7 @@ void Timer::winning() {
 #endif
 	// TODO: To be implemented with Pingo::winningPic().
 
-	_vm->_avalot->callVerb(Parser::kVerbCodeScore);
+	_vm->_avalot->callVerb(kVerbCodeScore);
 	_vm->_dialogs->displayText(" T H E    E N D ");
 	_vm->_avalot->_letMeOut = true;
 }
