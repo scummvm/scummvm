@@ -263,25 +263,25 @@ Menu::Menu(AvalancheEngine *vm) {
 
 void Menu::findWhatYouCanDoWithIt() {
 	switch (_vm->_avalot->_thinks) {
-	case Avalot::kObjectWine:
-	case Avalot::kObjectPotion:
-	case Avalot::kObjectInk:
+	case kObjectWine:
+	case kObjectPotion:
+	case kObjectInk:
 		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeDrink;
 		break;
-	case Avalot::kObjectBell:
+	case kObjectBell:
 		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeRing;
 		break;
-	case Avalot::kObjectChastity:
+	case kObjectChastity:
 		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
 		break;
-	case Avalot::kObjectLute:
+	case kObjectLute:
 		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodePlay;
 		break;
-	case Avalot::kObjectMushroom:
-	case Avalot::kObjectOnion:
+	case kObjectMushroom:
+	case kObjectOnion:
 		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeEat;
 		break;
-	case Avalot::kObjectClothes:
+	case kObjectClothes:
 		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeWear;
 		break;
 	default:
@@ -487,7 +487,7 @@ void Menu::setupMenuWith() {
 		// We disable the "give" option if: (a), you haven't selected anybody, (b), the _person you've selected isn't in the room,
 		// or (c), the _person you've selected is YOU!
 
-		if ((_vm->_avalot->_lastPerson == Avalot::kPeopleAvalot) || (_vm->_avalot->_lastPerson == _vm->_parser->kNothing)
+		if ((_vm->_avalot->_lastPerson == kPeopleAvalot) || (_vm->_avalot->_lastPerson == _vm->_parser->kNothing)
 			|| (_vm->_avalot->_whereIs[_vm->_avalot->_lastPerson - 150] != _vm->_avalot->_room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
@@ -499,18 +499,18 @@ void Menu::setupMenuWith() {
 		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_avalot->_thinks), 'T', "", true);
 		_vm->_avalot->_verbStr = Common::String(Parser::kVerbCodeExam) + Parser::kVerbCodeTalk;
 		switch (_vm->_avalot->_thinks) {
-		case Avalot::kPeopleGeida:
-		case Avalot::kPeopleArkata:
+		case kPeopleGeida:
+		case kPeopleArkata:
 			_activeMenuItem.setupOption("Kiss her", 'K', "", true);
 			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodeKiss;
 			break;
-		case Avalot::kPeopleDogfood:
+		case kPeopleDogfood:
 			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_avalot->_wonNim); // True if you HAVEN'T won.
 			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + Parser::kVerbCodePlay;
 			break;
-		case Avalot::kPeopleMalagauche: {
+		case kPeopleMalagauche: {
 			bool isSober = !_vm->_avalot->_teetotal;
-			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_avalot->_objects[Avalot::kObjectWine - 1]);
+			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_avalot->_objects[kObjectWine - 1]);
 			_activeMenuItem.setupOption("Buy some beer", 'b', "", isSober);
 			_activeMenuItem.setupOption("Buy some whisky", 'h', "", isSober);
 			_activeMenuItem.setupOption("Buy some cider", 'c', "", isSober);
@@ -518,8 +518,8 @@ void Menu::setupMenuWith() {
 			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + 101 + 100 + 102 + 103 + 104;
 			}
 			break;
-		case Avalot::kPeopleTrader:
-			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_avalot->_objects[Avalot::kObjectOnion - 1]);
+		case kPeopleTrader:
+			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_avalot->_objects[kObjectOnion - 1]);
 			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + 105;
 			break;
 		}

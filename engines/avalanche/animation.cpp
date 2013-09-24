@@ -771,7 +771,7 @@ void Animation::callSpecial(uint16 which) {
 			_sprites[1].walkTo(2);
 			_sprites[1]._vanishIfStill = true;
 			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
-			_vm->_avalot->_whereIs[Avalot::kPeopleFriarTuck - 150] = kRoomDummy; // Not here, then.
+			_vm->_avalot->_whereIs[kPeopleFriarTuck - 150] = kRoomDummy; // Not here, then.
 			_vm->_timer->addTimer(364, Timer::kProcHangAround, Timer::kReasonHangingAround);
 		}
 		break;
@@ -813,7 +813,7 @@ void Animation::callSpecial(uint16 which) {
 	case 10: // _vm->_avalot->special 10: transfer north in catacombs.
 		if ((_vm->_avalot->_catacombX == 4) && (_vm->_avalot->_catacombY == 1)) {
 			// Into Geida's room.
-			if (_vm->_avalot->_objects[Avalot::kObjectKey - 1])
+			if (_vm->_avalot->_objects[kObjectKey - 1])
 				_vm->_dialogs->displayScrollChain('q', 62);
 			else {
 				_vm->_dialogs->displayScrollChain('q', 61);
@@ -1229,7 +1229,7 @@ void Animation::stopWalking() {
  */
 void Animation::hideInCupboard() {
 	if (_vm->_avalot->_avvysInTheCupboard) {
-		if (_vm->_parser->_wearing == Parser::kNothing) {
+		if (_vm->_parser->_wearing == kObjectDummy) {
 			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", Dialogs::kControlItalic, Dialogs::kControlRoman);
 			_vm->_dialogs->displayText(tmpStr);
 		} else {

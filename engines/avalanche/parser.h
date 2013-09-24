@@ -81,10 +81,6 @@ public:
 	bool _cursorState;
 
 	byte _wearing; // what you're wearing
-	byte _sworeNum; // number of times you've sworn
-	byte _alcoholLevel; // Your blood alcohol level.
-	byte _playedNim; // How many times you've played Nim.
-	bool _boughtOnion; // Have you bought an onion yet?
 
 	Parser(AvalancheEngine *vm);
 
@@ -104,6 +100,7 @@ public:
 	void tryDropdown(); // This asks the parsekey proc in Dropdown if it knows it.
 	int16 getPos(const Common::String &crit, const Common::String &src); // Returns the index of the first appearance of crit in src.
 
+	void resetVariables();
 	void synchronize(Common::Serializer &sz);
 
 private:
@@ -116,6 +113,10 @@ private:
 
 	Common::String _thats;
 	byte _thing2;
+	byte _sworeNum; // number of times you've sworn
+	byte _alcoholLevel; // Your blood alcohol level.
+	byte _playedNim; // How many times you've played Nim.
+	bool _boughtOnion; // Have you bought an onion yet?
 
 	byte wordNum(Common::String word);
 	void replace(Common::String oldChars, byte newChar);

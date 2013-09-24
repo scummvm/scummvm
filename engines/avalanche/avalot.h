@@ -83,6 +83,56 @@ enum Room {
 	kRoomBossKey = 98,      kRoomMap = 99,         kRoomDummy = 177 // Dummy room
 };
 
+// Objects you can hold:
+enum Object {
+	kObjectWine = 1,
+	kObjectMoney,
+	kObjectBodkin,
+	kObjectPotion,
+	kObjectChastity,
+	kObjectBolt,
+	kObjectCrossbow,
+	kObjectLute,
+	kObjectBadge,
+	kObjectMushroom,
+	kObjectKey,
+	kObjectBell,
+	kObjectPrescription,
+	kObjectPen,
+	kObjectInk,
+	kObjectClothes,
+	kObjectHabit,
+	kObjectOnion,
+	kObjectDummy = 177
+};
+
+// People who hang around this game.
+enum People {
+	// Boys:
+	kPeopleAvalot = 150,
+	kPeopleSpludwick = 151,
+	kPeopleCrapulus = 152,
+	kPeopleDrDuck = 153,
+	kPeopleMalagauche = 154,
+	kPeopleFriarTuck = 155,
+	kPeopleRobinHood = 156,
+	kPeopleCwytalot = 157,
+	kPeopleDuLustie = 158,
+	kPeopleDuke = 159,
+	kPeopleDogfood = 160,
+	kPeopleTrader = 161,
+	kPeopleIbythneth = 162,
+	kPeopleAyles = 163,
+	kPeoplePort = 164,
+	kPeopleSpurge = 165,
+	kPeopleJacques = 166,
+	// Girls:
+	kPeopleArkata = 175,
+	kPeopleGeida = 176,
+	kPeopleInvisible = 177,
+	kPeopleWisewoman = 178
+};
+
 static const byte kObjectNum = 18; // always preface with a #
 static const int16 kCarryLimit = 12;  // carry limit
 
@@ -133,55 +183,6 @@ struct Sundry { // Things which must be saved over a backtobootstrap, outside DN
 
 class Avalot {
 public:
-	// Objects you can hold:
-	enum Object {
-		kObjectWine = 1,
-		kObjectMoney,
-		kObjectBodkin,
-		kObjectPotion,
-		kObjectChastity,
-		kObjectBolt,
-		kObjectCrossbow,
-		kObjectLute,
-		kObjectBadge,
-		kObjectMushroom,
-		kObjectKey,
-		kObjectBell,
-		kObjectPrescription,
-		kObjectPen,
-		kObjectInk,
-		kObjectClothes,
-		kObjectHabit,
-		kObjectOnion
-	};
-
-	// People who hang around this game.
-	enum People {
-		// Boys:
-		kPeopleAvalot = 150,
-		kPeopleSpludwick = 151,
-		kPeopleCrapulus = 152,
-		kPeopleDrDuck = 153,
-		kPeopleMalagauche = 154,
-		kPeopleFriarTuck = 155,
-		kPeopleRobinHood = 156,
-		kPeopleCwytalot = 157,
-		kPeopleDuLustie = 158,
-		kPeopleDuke = 159,
-		kPeopleDogfood = 160,
-		kPeopleTrader = 161,
-		kPeopleIbythneth = 162,
-		kPeopleAyles = 163,
-		kPeoplePort = 164,
-		kPeopleSpurge = 165,
-		kPeopleJacques = 166,
-		// Girls:
-		kPeopleArkata = 175,
-		kPeopleGeida = 176,
-		kPeopleInvisible = 177,
-		kPeopleWisewoman = 178
-	};
-
 	static const int16 kXW = 30;
 	static const int16 kYW = 36; // x width & y whatsit
 	static const int16 kMargin = 5;

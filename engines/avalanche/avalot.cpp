@@ -371,7 +371,7 @@ void Avalot::setup() {
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_thinks = 2; // You always have money.
-		thinkAbout(Avalot::kObjectMoney, Avalot::kThing);
+		thinkAbout(kObjectMoney, Avalot::kThing);
 
 		_vm->loadGame(loadSlot);
 	} else {
@@ -380,7 +380,7 @@ void Avalot::setup() {
 
 		_soundFx = !_soundFx;
 		fxToggle();
-		thinkAbout(Avalot::kObjectMoney, Avalot::kThing);
+		thinkAbout(kObjectMoney, Avalot::kThing);
 
 		_vm->_dialogs->displayScrollChain('q', 83); // Info on the game, etc.
 	}
@@ -727,12 +727,12 @@ void Avalot::enterNewTown() {
 			_spludwickAtHome = true;
 			_crapulusWillTell = false;
 		}
-		if (_boxContent == Avalot::kObjectWine)
+		if (_boxContent == kObjectWine)
 			_wineState = 3; // Vinegar
 		break;
 	}
 
-	if ((_room != kRoomOutsideDucks) && (_objects[Avalot::kObjectOnion - 1]) && !(_onionInVinegar))
+	if ((_room != kRoomOutsideDucks) && (_objects[kObjectOnion - 1]) && !(_onionInVinegar))
 		_rottenOnion = true; // You're holding the onion
 }
 
@@ -760,10 +760,10 @@ void Avalot::enterRoom(byte room, byte ped) {
 	if ((_roomCount[room] == 0) && (!setFlag('S')))
 		incScore(1);
 
-	_whereIs[Avalot::kPeopleAvalot - 150] = _room;
+	_whereIs[kPeopleAvalot - 150] = _room;
 
 	if (_geidaFollows)
-		_whereIs[Avalot::kPeopleGeida - 150] = room;
+		_whereIs[kPeopleGeida - 150] = room;
 
 	_roomTime = 0;
 
@@ -784,7 +784,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 		if (ped > 0) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			if (!_talkedToCrapulus) {
-				_whereIs[Avalot::kPeopleCrapulus - 150] = kRoomOutsideYours;
+				_whereIs[kPeopleCrapulus - 150] = kRoomOutsideYours;
 				spr1->init(8, false, _vm->_animation); // load Crapulus
 
 				if (_roomCount[kRoomOutsideYours] == 1) {
@@ -799,7 +799,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 				spr1->_eachStepProc = Animation::kProcFaceAvvy; // He always faces Avvy.
 
 			} else
-				_whereIs[Avalot::kPeopleCrapulus - 150] = kRoomNowhere;
+				_whereIs[kPeopleCrapulus - 150] = kRoomNowhere;
 
 			if (_crapulusWillTell) {
 				spr1->init(8, false, _vm->_animation);
@@ -824,13 +824,13 @@ void Avalot::enterRoom(byte room, byte ped) {
 			if (ped > 0) {
 				spr1->init(2, false, _vm->_animation); // load Spludwick
 				_vm->_animation->appearPed(1, 1);
-				_whereIs[Avalot::kPeopleSpludwick - 150] = kRoomSpludwicks;
+				_whereIs[kPeopleSpludwick - 150] = kRoomSpludwicks;
 			}
 
 			spr1->_callEachStepFl = true;
 			spr1->_eachStepProc = Animation::kProcGeida;
 		} else
-			_whereIs[Avalot::kPeopleSpludwick - 150] = kRoomNowhere;
+			_whereIs[kPeopleSpludwick - 150] = kRoomNowhere;
 		break;
 
 	case kRoomBrummieRoad:
@@ -838,13 +838,13 @@ void Avalot::enterRoom(byte room, byte ped) {
 			putGeidaAt(4, ped);
 		if (_cwytalotGone) {
 			_magics[kColorLightred - 1]._operation = Avalot::kMagicNothing;
-			_whereIs[Avalot::kPeopleCwytalot - 150] = kRoomNowhere;
+			_whereIs[kPeopleCwytalot - 150] = kRoomNowhere;
 		} else if (ped > 0) {
 			AnimationType *spr1 = &_vm->_animation->_sprites[1];
 			spr1->init(4, false, _vm->_animation); // 4 = Cwytalot
 			spr1->_callEachStepFl = true;
 			spr1->_eachStepProc = Animation::kProcFollowAvvyY;
-			_whereIs[Avalot::kPeopleCwytalot - 150] = kRoomBrummieRoad;
+			_whereIs[kPeopleCwytalot - 150] = kRoomBrummieRoad;
 
 			if (_roomCount[kRoomBrummieRoad] == 1) { // First time here...
 				_vm->_animation->appearPed(1, 1); // He appears on the right of the screen...
@@ -891,8 +891,8 @@ void Avalot::enterRoom(byte room, byte ped) {
 		}
 
 		if (_beenTiedUp) {
-			_whereIs[Avalot::kPeopleRobinHood - 150] = 0;
-			_whereIs[Avalot::kPeopleFriarTuck - 150] = 0;
+			_whereIs[kPeopleRobinHood - 150] = 0;
+			_whereIs[kPeopleFriarTuck - 150] = 0;
 		}
 
 		if (_tiedUp)
@@ -936,9 +936,9 @@ void Avalot::enterRoom(byte room, byte ped) {
 		if (ped > 0)
 			zoomOut(_peds[ped]._x, _peds[ped]._y);
 
-		if ((_objects[Avalot::kObjectWine - 1]) && (_wineState != 3)) {
+		if ((_objects[kObjectWine - 1]) && (_wineState != 3)) {
 			_vm->_dialogs->displayScrollChain('q', 9); // Don't want to waste the wine!
-			_objects[Avalot::kObjectWine - 1] = false;
+			_objects[kObjectWine - 1] = false;
 			refreshObjectList();
 		}
 
@@ -1004,7 +1004,7 @@ void Avalot::enterRoom(byte room, byte ped) {
 			_vm->_graphics->refreshBackground();
 			_vm->_background->drawBackgroundSprite(-1, -1, 3);
 			_magics[kColorBrown - 1]._operation = Avalot::kMagicNothing;
-			_whereIs[Avalot::kPeopleJacques - 150] = 0;
+			_whereIs[kPeopleJacques - 150] = 0;
 		}
 		if (ped != 0) {
 			_vm->_background->drawBackgroundSprite(-1, -1, 5);
@@ -1315,7 +1315,7 @@ void Avalot::fxToggle() {
 void Avalot::refreshObjectList() {
 	_carryNum = 0;
 	if (_thinkThing && !_objects[_thinks - 1])
-		thinkAbout(Avalot::kObjectMoney, Avalot::kThing); // you always have money
+		thinkAbout(kObjectMoney, Avalot::kThing); // you always have money
 
 	for (int i = 0; i < kObjectNum; i++) {
 		if (_objects[i]) {
@@ -1590,14 +1590,10 @@ void Avalot::resetVariables() {
 	_dnascore = 0;
 	_money = 0;
 	_room = kRoomNowhere;
-	_vm->_parser->_wearing = 0;
-	_vm->_parser->_sworeNum = 0;
 	_vm->_saveNum = 0;
 	for (int i = 0; i < 100; i++)
 		_roomCount[i] = 0;
 
-	_vm->_parser->_alcoholLevel = 0;
-	_vm->_parser->_playedNim = 0;
 	_wonNim = false;
 	_wineState = 0;
 	_cwytalotGone = false;
@@ -1605,7 +1601,6 @@ void Avalot::resetVariables() {
 	_aylesIsAwake = false;
 	_drawbridgeOpen = 0;
 	_avariciusTalk = 0;
-	_vm->_parser->_boughtOnion = false;
 	_rottenOnion = false;
 	_onionInVinegar = false;
 	_givenToSpludwick = 0;
@@ -1661,6 +1656,8 @@ void Avalot::resetVariables() {
 	_takenMushroom = false;
 	_givenPenToAyles = false;
 	_askedDogfoodAboutNim = false;
+
+	_vm->_parser->resetVariables();
 }
 
 void Avalot::newGame() {

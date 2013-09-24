@@ -126,8 +126,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		_saveNum++;
 	sz.syncAsByte(_saveNum);
 	sz.syncBytes(_avalot->_roomCount, 100);
-	sz.syncAsByte(_parser->_alcoholLevel);
-	sz.syncAsByte(_parser->_playedNim);
 	sz.syncAsByte(_avalot->_wonNim);
 	sz.syncAsByte(_avalot->_wineState);
 	sz.syncAsByte(_avalot->_cwytalotGone);
@@ -135,7 +133,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_avalot->_aylesIsAwake);
 	sz.syncAsByte(_avalot->_drawbridgeOpen);
 	sz.syncAsByte(_avalot->_avariciusTalk);
-	sz.syncAsByte(_parser->_boughtOnion);
 	sz.syncAsByte(_avalot->_rottenOnion);
 	sz.syncAsByte(_avalot->_onionInVinegar);
 	sz.syncAsByte(_avalot->_givenToSpludwick);
@@ -422,7 +419,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_background->forgetBackgroundSprites();
 	_avalot->minorRedraw();
 	_menu->setup();
-	_avalot->_whereIs[Avalot::kPeopleAvalot - 150] = _avalot->_room;
+	_avalot->_whereIs[kPeopleAvalot - 150] = _avalot->_room;
 	_avalot->_alive = true;
 	_avalot->refreshObjectList();
 	_animation->updateSpeed();
