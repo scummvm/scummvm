@@ -28,6 +28,8 @@
 #ifndef AVALANCHE_PARSER_H
 #define AVALANCHE_PARSER_H
 
+#include "avalanche/enums.h"
+
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -71,7 +73,8 @@ public:
 	VocabEntry _vocabulary[kParserWordsNum];
 
 	Common::String _realWords[11];
-	byte _verb, _person, _thing;
+	byte _verb, _thing;
+	People _person;
 	bool _polite;
 	Common::String _inputText; // Original name: current
 	Common::String _inputTextBackup;

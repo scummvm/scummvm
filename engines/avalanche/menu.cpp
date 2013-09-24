@@ -451,9 +451,9 @@ void Menu::setupMenuPeople() {
 
 	_activeMenuItem.reset();
 
-	for (int i = 150; i <= 178; i++) {
-		if (_vm->_avalot->getRoom(i) == _vm->_avalot->_room) {
-			_activeMenuItem.setupOption(_vm->_avalot->getName(i), _vm->_avalot->getNameChar(i), "", true);
+	for (int i = kPeopleAvalot; i <= kPeopleWisewoman; i++) {
+		if (_vm->_avalot->getRoom((People)i) == _vm->_avalot->_room) {
+			_activeMenuItem.setupOption(_vm->_avalot->getName((People)i), _vm->_avalot->getNameChar((People)i), "", true);
 			people += i;
 		}
 	}
@@ -582,7 +582,7 @@ void Menu::runMenuAction() {
 	// Get up, pause game, open door, look, inventory, walk/run.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_parser->_person = _vm->_parser->kPardon;
+		_vm->_parser->_person = kPeoplePardon;
 		_vm->_parser->_thing = _vm->_parser->kPardon;
 		f5Does = _vm->_avalot->f5Does();
 		_vm->_avalot->callVerb(f5Does[0]);
@@ -619,7 +619,7 @@ void Menu::runMenuObjects() {
 
 void Menu::runMenuPeople() {
 	_vm->_avalot->thinkAbout(people[_activeMenuItem._choiceNum], Avalot::kPerson);
-	_vm->_avalot->_lastPerson = people[_activeMenuItem._choiceNum];
+	_vm->_avalot->_lastPerson = (People)people[_activeMenuItem._choiceNum];
 }
 
 void Menu::runMenuWith() {
@@ -631,7 +631,7 @@ void Menu::runMenuWith() {
 		if (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum] == Parser::kVerbCodeGive)
 			_vm->_parser->_person = _vm->_avalot->_lastPerson;
 		else
-			_vm->_parser->_person = Parser::kPardon;
+			_vm->_parser->_person = kPeoplePardon;
 	} else {
 		switch (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: // Beer
@@ -659,7 +659,7 @@ void Menu::runMenuWith() {
 			_vm->_avalot->callVerb(Parser::kVerbCodeBuy);
 			return;
 		default:
-			_vm->_parser->_person = _vm->_parser->_thing;
+			_vm->_parser->_person = (People)_vm->_parser->_thing;
 			_vm->_parser->_thing = Parser::kPardon;
 			_vm->_avalot->_subjectNum = 0;
 		}

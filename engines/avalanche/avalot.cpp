@@ -672,9 +672,9 @@ void Avalot::findPeople(byte room) {
 	for (int i = 1; i < 29; i++) {
 		if (_whereIs[i] == room) {
 			if (i < 25)
-				_him = i + 150;
+				_him = (People)(150 + i);
 			else
-				_her = i + 150;
+				_her = (People)(150 + i);
 		}
 	}
 }
@@ -1434,9 +1434,9 @@ void Avalot::checkClick() {
 				if (_thinkThing) {
 					_vm->_parser->_thing = _thinks;
 					_vm->_parser->_thing += 49;
-					_vm->_parser->_person = _vm->_parser->kPardon;
+					_vm->_parser->_person = kPeoplePardon;
 				} else {
-					_vm->_parser->_person = _thinks;
+					_vm->_parser->_person = (People) _thinks;
 					_vm->_parser->_thing = _vm->_parser->kPardon;
 				}
 				callVerb(Parser::kVerbCodeExam);
@@ -1702,10 +1702,10 @@ void Avalot::newGame() {
 	avvy->appear(300, 117, kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;
 	// fillchar(previous^,sizeof(previous^),#0); { blank out array }
-	_him = Parser::kPardon;
-	_her = Parser::kPardon;
+	_him = kPeoplePardon;
+	_her = kPeoplePardon;
 	_it = Parser::kPardon;
-	_lastPerson = Parser::kPardon; // = Pardon?
+	_lastPerson = kPeoplePardon; // = Pardon?
 	_passwordNum = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
@@ -1743,7 +1743,7 @@ bool Avalot::decreaseMoney(uint16 howmuchby) {
 		return true;
 }
 
-Common::String Avalot::getName(byte whose) {
+Common::String Avalot::getName(People whose) {
 	static const Common::String kLads[17] = {
 		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
 		"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
@@ -1752,20 +1752,20 @@ Common::String Avalot::getName(byte whose) {
 
 	static const Common::String kLasses[4] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
 
-	if (whose < 175)
-		return kLads[whose - 150];
+	if (whose < kPeopleArkata)
+		return kLads[whose - kPeopleAvalot];
 	else
-		return kLasses[whose - 175];
+		return kLasses[whose - kPeopleArkata];
 }
 
-byte Avalot::getNameChar(byte whose) {
+byte Avalot::getNameChar(People whose) {
 	static const char kLadChar[] = "ASCDMTRwLfgeIyPu";
 	static const char kLassChar[] = "kG\0xB1o";
 
-	if (whose < 175)
-		return kLadChar[whose - 150];
+	if (whose < kPeopleArkata)
+		return kLadChar[whose - kPeopleAvalot];
 	else
-		return kLassChar[whose - 175];
+		return kLassChar[whose - kPeopleArkata];
 }
 
 Common::String Avalot::getThing(byte which) {
@@ -2049,11 +2049,11 @@ void Avalot::openDoor(Room whither, byte ped, byte magicnum) {
 	_vm->_sequence->startToOpen();
 }
 
-void Avalot::setRoom(byte persId, Room roomId) {
-	_whereIs[persId - 150] = roomId;	
+void Avalot::setRoom(People persId, Room roomId) {
+	_whereIs[persId - kPeopleAvalot] = roomId;	
 }
 
-Room Avalot::getRoom(byte persId) {
-	return _whereIs[persId - 150];	
+Room Avalot::getRoom(People persId) {
+	return _whereIs[persId - kPeopleAvalot];	
 }
 } // End of namespace Avalanche
