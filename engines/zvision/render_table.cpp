@@ -113,12 +113,6 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 d
 			// RenderTable only stores offsets from the original coordinates
 			uint32 sourceYIndex = y + _internalBuffer[index].y;
 			uint32 sourceXIndex = x + _internalBuffer[index].x;
-
-			// Clamp the yIndex to the size of the image
-			sourceYIndex = CLIP<uint32>(sourceYIndex, 0, _numRows - 1);
-
-			// Clamp the xIndex to the size of the image
-			sourceXIndex = CLIP<uint32>(sourceXIndex, 0, _numColumns - 1);
 			
 			destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
 		}
