@@ -43,32 +43,32 @@ Background::Background(AvalancheEngine *vm) {
 }
 
 Background::~Background() {
-	forgetBackgroundSprites();
+	release();
 }
 
 /**
  * @remarks	Originally called 'pics_link'
  */
-void Background::updateBackgroundSprites() {
+void Background::update() {
 	if (_vm->_menu->isActive())
 		return; // No animation when the menus are up.
 
 	switch (_vm->_avalot->_room) {
 	case kRoomOutsideArgentPub:
 		if ((_vm->_avalot->_roomTime % 12) == 0)
-			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 12) % 4);
+			draw(-1, -1, (_vm->_avalot->_roomTime / 12) % 4);
 		break;
 	case kRoomBrummieRoad:
 		if ((_vm->_avalot->_roomTime % 2) == 0)
-			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 2) % 4);
+			draw(-1, -1, (_vm->_avalot->_roomTime / 2) % 4);
 		break;
 	case kRoomBridge:
 		if ((_vm->_avalot->_roomTime % 2) == 0)
-			drawBackgroundSprite(-1, -1, 3 + (_vm->_avalot->_roomTime / 2) % 4);
+			draw(-1, -1, 3 + (_vm->_avalot->_roomTime / 2) % 4);
 		break;
 	case kRoomYours:
 		if ((!_vm->_avalot->_avvyIsAwake) && ((_vm->_avalot->_roomTime % 4) == 0))
-			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 12) % 2);
+			draw(-1, -1, (_vm->_avalot->_roomTime / 12) % 2);
 		break;
 	case kRoomArgentPub:
 		if (((_vm->_avalot->_roomTime % 7) == 1) && (_vm->_avalot->_malagauche != 177)) {
@@ -78,16 +78,16 @@ void Background::updateBackgroundSprites() {
 			case 1:
 			case 11:
 			case 21:
-				drawBackgroundSprite(-1, -1, 11); // Looks forwards.
+				draw(-1, -1, 11); // Looks forwards.
 				break;
 			case 8:
 			case 18:
 			case 28:
 			case 32:
-				drawBackgroundSprite(-1, -1, 10); // Looks at you.
+				draw(-1, -1, 10); // Looks at you.
 				break;
 			case 30:
-				drawBackgroundSprite(-1, -1, 12); // Winks.
+				draw(-1, -1, 12); // Winks.
 				break;
 			case 33:
 				_vm->_avalot->_malagauche = 0;
@@ -98,14 +98,14 @@ void Background::updateBackgroundSprites() {
 		switch (_vm->_avalot->_roomTime % 200) {
 		case 179:
 		case 197:
-			drawBackgroundSprite(-1, -1, 4); // Dogfood's drinking cycle.
+			draw(-1, -1, 4); // Dogfood's drinking cycle.
 			break;
 		case 182:
 		case 194:
-			drawBackgroundSprite(-1, -1, 5);
+			draw(-1, -1, 5);
 			break;
 		case 185:
-			drawBackgroundSprite(-1, -1, 6);
+			draw(-1, -1, 6);
 			break;
 		case 199:
 			_vm->_avalot->_npcFacing = 177; // Impossible value for this.
@@ -123,7 +123,7 @@ void Background::updateBackgroundSprites() {
 				direction = 4;
 
 			if (direction != _vm->_avalot->_npcFacing) { // Dogfood.
-				drawBackgroundSprite(-1, -1, direction - 1);
+				draw(-1, -1, direction - 1);
 				_vm->_avalot->_npcFacing = direction;
 			}
 		}
@@ -132,16 +132,16 @@ void Background::updateBackgroundSprites() {
 		if ((_vm->_avalot->_roomTime % 3) == 0) {
 			switch ((_vm->_avalot->_roomTime / int32(3)) % int32(6)) {
 			case 4:
-				drawBackgroundSprite(-1, -1, 0);
+				draw(-1, -1, 0);
 				break;
 			case 1:
 			case 3:
 			case 5:
-				drawBackgroundSprite(-1, -1, 1);
+				draw(-1, -1, 1);
 				break;
 			case 0:
 			case 2:
-				drawBackgroundSprite(-1, -1, 2);
+				draw(-1, -1, 2);
 				break;
 			}
 		}
@@ -161,7 +161,7 @@ void Background::updateBackgroundSprites() {
 				direction = 3; // Right.
 
 			if (direction != _vm->_avalot->_npcFacing) { // du Lustie.
-				drawBackgroundSprite(-1, -1, direction - 1);
+				draw(-1, -1, direction - 1);
 				_vm->_avalot->_npcFacing = direction;
 			}
 		}
@@ -170,10 +170,10 @@ void Background::updateBackgroundSprites() {
 		if ((!_vm->_avalot->_aylesIsAwake) && (_vm->_avalot->_roomTime % 14 == 0)) {
 			switch ((_vm->_avalot->_roomTime / 14) % 2) {
 			case 0:
-				drawBackgroundSprite(-1, -1, 0);  // Frame 2: EGA.
+				draw(-1, -1, 0);  // Frame 2: EGA.
 				break;
 			case 1:
-				drawBackgroundSprite(-1, -1, 2); // Frame 1: Natural.
+				draw(-1, -1, 2); // Frame 1: Natural.
 				break;
 			}
 		}
@@ -182,10 +182,10 @@ void Background::updateBackgroundSprites() {
 		if (_vm->_avalot->_tiedUp) {
 			switch (_vm->_avalot->_roomTime % 54) {
 			case 20:
-				drawBackgroundSprite(-1, -1, 3); // Frame 4: Avalot blinks.
+				draw(-1, -1, 3); // Frame 4: Avalot blinks.
 				break;
 			case 23:
-				drawBackgroundSprite(-1, -1, 1); // Frame 1: Back to normal.
+				draw(-1, -1, 1); // Frame 1: Back to normal.
 				break;
 			}
 		}
@@ -205,23 +205,23 @@ void Background::updateBackgroundSprites() {
 			direction--; // Blinks.
 
 		if (direction != _vm->_avalot->_npcFacing) { // Port.
-			drawBackgroundSprite(-1, -1, direction - 1);
+			draw(-1, -1, direction - 1);
 			_vm->_avalot->_npcFacing = direction;
 		}
 
 		switch (_vm->_avalot->_roomTime % 50) {
 		case 45 :
-			drawBackgroundSprite(-1, -1, 8); // Spurge blinks.
+			draw(-1, -1, 8); // Spurge blinks.
 			break;
 		case 49 :
-			drawBackgroundSprite(-1, -1, 9);
+			draw(-1, -1, 9);
 			break;
 		}
 		break;
 	  }
 	case kRoomDucks: {
 		if ((_vm->_avalot->_roomTime % 3) == 0) // The fire flickers.
-			drawBackgroundSprite(-1, -1, (_vm->_avalot->_roomTime / 3) % 3);
+			draw(-1, -1, (_vm->_avalot->_roomTime / 3) % 3);
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
@@ -237,7 +237,7 @@ void Background::updateBackgroundSprites() {
 			direction++; // Duck blinks.
 
 		if (direction != _vm->_avalot->_npcFacing) { // Duck.
-			drawBackgroundSprite(-1, -1, direction - 1);
+			draw(-1, -1, direction - 1);
 			_vm->_avalot->_npcFacing = direction;
 		}
 		break;
@@ -261,7 +261,7 @@ void Background::updateBackgroundSprites() {
 	}
 }
 
-void Background::loadBackgroundSprites(byte number) {
+void Background::load(byte number) {
 	Common::File f;
 	_filename = _filename.format("chunk%d.avd", number);
 	if (!f.open(_filename))
@@ -276,7 +276,7 @@ void Background::loadBackgroundSprites(byte number) {
 		f.seek(_offsets[i]);
 
 		SpriteType sprite;
-		sprite._type = PictureType(f.readByte());
+		sprite._type = (PictureType)(f.readByte());
 		sprite._x = f.readSint16LE();
 		sprite._y = f.readSint16LE();
 		sprite._xl = f.readSint16LE();
@@ -311,7 +311,7 @@ void Background::loadBackgroundSprites(byte number) {
 	f.close();
 }
 
-void Background::forgetBackgroundSprites() {
+void Background::release() {
 	for (int i = 0; i < _spriteNum; i++) {
 		if (_sprites[i]._x > kOnDisk)
 			_sprites[i]._picture.free();
@@ -322,7 +322,7 @@ void Background::forgetBackgroundSprites() {
  * Draw background animation
  * @remarks	Originally called 'show_one'
  */
-void Background::drawBackgroundSprite(int16 destX, int16 destY, byte sprId) {
+void Background::draw(int16 destX, int16 destY, byte sprId) {
 	if (_sprites[sprId]._x > kOnDisk) {
 		if (destX < 0) {
 			destX = _sprites[sprId]._x * 8;
@@ -337,13 +337,13 @@ void Background::drawBackgroundSprite(int16 destX, int16 destY, byte sprId) {
 		f.seek(_offsets[sprId]);
 
 		SpriteType sprite;
-		sprite._type = PictureType(f.readByte());
+		sprite._type = (PictureType)(f.readByte());
 		sprite._x = f.readSint16LE();
 		sprite._y = f.readSint16LE();
 		sprite._xl = f.readSint16LE();
 		sprite._yl = f.readSint16LE();
 		sprite._size = f.readSint32LE();
-		f.skip(2); // For the now not existing natural and memorize data members of the SpriteType (called chunkblocktype in the original).
+		f.skip(2); // Natural and Memorize are used in Load()
 		sprite._picture = _vm->_graphics->loadPictureRow(f, sprite._xl * 8, sprite._yl + 1);
 
 		if (destX < 0) {

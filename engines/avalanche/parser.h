@@ -68,7 +68,6 @@ public:
 	Common::String _inputTextBackup;
 	byte _inputTextPos; // Original name: curpos
 	bool _quote; // 66 or 99 next?
-	byte _leftMargin;
 	bool _cursorState;
 
 	byte _wearing; // what you're wearing

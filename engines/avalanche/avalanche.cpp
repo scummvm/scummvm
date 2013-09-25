@@ -416,7 +416,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		_avalot->dawn();
 	}
 
-	_background->forgetBackgroundSprites();
+	_background->release();
 	_avalot->minorRedraw();
 	_menu->setup();
 	_avalot->setRoom(kPeopleAvalot, _avalot->_room);
@@ -426,7 +426,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_avalot->drawDirection();
 	_avalot->_onToolbar = false;
 	_animation->animLink();
-	_background->updateBackgroundSprites();
+	_background->update();
 
 	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
 		Dialogs::kControlItalic, Dialogs::kControlRoman, description.c_str(), Dialogs::kControlCenter, 

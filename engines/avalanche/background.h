@@ -44,14 +44,14 @@ public:
 	Background(AvalancheEngine *vm);
 	~Background();
 
-	void updateBackgroundSprites();
-	void loadBackgroundSprites(byte number);
-	void forgetBackgroundSprites();
+	void update();
+	void load(byte number);
+	void release();
 
 	// Setting the destination to negative coordinates means the picture should be drawn to it's original position.
 	// If you give it positive values, the picture will be plotted to the desired coordinates on the screen.
 	// By that we get rid of show_one_at(), which would be almost identical and cause a lot of code duplication.
-	void drawBackgroundSprite(int16 destX, int16 destY, byte sprId);
+	void draw(int16 destX, int16 destY, byte sprId);
 
 private:
 	enum PictureType {kEga, kBgi, kNaturalImage};

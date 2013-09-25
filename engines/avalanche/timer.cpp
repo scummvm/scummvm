@@ -229,7 +229,7 @@ void Timer::loseTimer(byte which) {
 
 void Timer::openDrawbridge() {
 	_vm->_avalot->_drawbridgeOpen++;
-	_vm->_background->drawBackgroundSprite(-1, -1, _vm->_avalot->_drawbridgeOpen - 2);
+	_vm->_background->draw(-1, -1, _vm->_avalot->_drawbridgeOpen - 2);
 
 	if (_vm->_avalot->_drawbridgeOpen == 4)
 		_vm->_avalot->_magics[1]._operation = Avalot::kMagicNothing; // You may enter the drawbridge.
@@ -271,7 +271,7 @@ void Timer::bang2() {
 void Timer::stairs() {
 	_vm->_sound->blip();
 	_vm->_animation->_sprites[0].walkTo(3);
-	_vm->_background->drawBackgroundSprite(-1, -1, 1);
+	_vm->_background->draw(-1, -1, 1);
 	_vm->_avalot->_brummieStairs = 2;
 	_vm->_avalot->_magics[10]._operation = Avalot::kMagicSpecial;
 	_vm->_avalot->_magics[10]._data = 2; // Reached the bottom of the stairs.
@@ -389,17 +389,17 @@ void Timer::jacquesWakesUp() {
 
 	switch (_vm->_avalot->_jacquesState) { // Additional pictures.
 	case 1 :
-		_vm->_background->drawBackgroundSprite(-1, -1, 0); // Eyes open.
+		_vm->_background->draw(-1, -1, 0); // Eyes open.
 		_vm->_dialogs->displayScrollChain('Q', 45);
 		break;
 	case 2 : // Going through the door.
-		_vm->_background->drawBackgroundSprite(-1, -1, 1); // Not on the floor.
-		_vm->_background->drawBackgroundSprite(-1, -1, 2); // But going through the door.
+		_vm->_background->draw(-1, -1, 1); // Not on the floor.
+		_vm->_background->draw(-1, -1, 2); // But going through the door.
 		_vm->_avalot->_magics[5]._operation = Avalot::kMagicNothing; // You can't wake him up now.
 		break;
 	case 3 :  // Gone through the door.
-		_vm->_background->drawBackgroundSprite(-1, -1, 1); // Not on the floor, either.
-		_vm->_background->drawBackgroundSprite(-1, -1, 3); // He's gone... so the door's open.
+		_vm->_background->draw(-1, -1, 1); // Not on the floor, either.
+		_vm->_background->draw(-1, -1, 3); // He's gone... so the door's open.
 		_vm->_avalot->setRoom(kPeopleJacques, kRoomNowhere); // Gone!
 		break;
 	}
@@ -429,7 +429,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 	spr->walkTo(2); // He walks over to you.
 
 	// Let's get the door opening.
-	_vm->_background->drawBackgroundSprite(-1, -1, 0);
+	_vm->_background->draw(-1, -1, 0);
 	_vm->_sequence->firstShow(2);
 	_vm->_sequence->startToClose();
 
@@ -445,7 +445,7 @@ void Timer::naughtyDuke2() {
 }
 
 void Timer::naughtyDuke3() {
-	_vm->_background->drawBackgroundSprite(-1, -1, 0);
+	_vm->_background->draw(-1, -1, 0);
 	_vm->_sequence->firstShow(2);
 	_vm->_sequence->startToClose();
 }
@@ -487,7 +487,7 @@ void Timer::jump() {
 		if (_vm->_avalot->_carryNum >= kCarryLimit)
 			_vm->_dialogs->displayText("You fail to grab it, because your hands are full.");
 		else {
-			_vm->_background->drawBackgroundSprite(-1, -1, 1);
+			_vm->_background->draw(-1, -1, 1);
 			_vm->_avalot->_arrowInTheDoor = false; // You've got it.
 			_vm->_avalot->_objects[kObjectBolt - 1] = true;
 			_vm->_avalot->refreshObjectList();
@@ -503,7 +503,7 @@ void Timer::crapulusSaysSpludOut() {
 }
 
 void Timer::buyDrinks() {
-	_vm->_background->drawBackgroundSprite(-1, -1, 10); // Malagauche gets up again.
+	_vm->_background->draw(-1, -1, 10); // Malagauche gets up again.
 	_vm->_avalot->_malagauche = 0;
 
 	_vm->_dialogs->displayScrollChain('D', _vm->_avalot->_drinking); // Display message about it.
@@ -515,7 +515,7 @@ void Timer::buyDrinks() {
 }
 
 void Timer::buyWine() {
-	_vm->_background->drawBackgroundSprite(-1, -1, 10); // Malagauche gets up again.
+	_vm->_background->draw(-1, -1, 10); // Malagauche gets up again.
 	_vm->_avalot->_malagauche = 0;
 
 	_vm->_dialogs->displayScrollChain('D', 50); // You buy the wine.
@@ -625,7 +625,7 @@ void Timer::avvySitDown() {
 	if (avvy->_homing)    // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
-		_vm->_background->drawBackgroundSprite(-1, -1, 2);
+		_vm->_background->draw(-1, -1, 2);
 		_vm->_avalot->_sittingInPub = true;
 		_vm->_avalot->_userMovesAvvy = false;
 		avvy->_visible = false;
