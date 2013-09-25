@@ -414,7 +414,7 @@ void Animation::catacombMove(byte ped) {
 	// XY_uint16 is cat_x+cat_y*256. Thus, every room in the
 	// catacombs has a different number for it.
 	xy_uint16 = _vm->_avalot->_catacombX + _vm->_avalot->_catacombY * 256;
-	_vm->_avalot->_geidaSpin = 0;
+	_geidaSpin = 0;
 
 	switch (xy_uint16) {
 	case 1801: // Exit catacombs
@@ -1025,20 +1025,20 @@ void Animation::spin(Direction dir, byte &tripnum) {
 	if (_sprites[tripnum]._id == 2)
 		return; // Not for Spludwick
 
-	_vm->_avalot->_geidaSpin += 1;
-	_vm->_avalot->_geidaTime = 20;
-	if (_vm->_avalot->_geidaSpin == 5) {
+	_geidaSpin++;
+	_geidaTime = 20;
+	if (_geidaSpin == 5) {
 		_vm->_dialogs->displayText("Steady on, Avvy, you'll make the poor girl dizzy!");
-		_vm->_avalot->_geidaSpin = 0;
-		_vm->_avalot->_geidaTime = 0; // knock out records
+		_geidaSpin = 0;
+		_geidaTime = 0; // knock out records
 	}
 }
 
 void Animation::geidaProcs(byte tripnum) {
-	if (_vm->_avalot->_geidaTime > 0) {
-		_vm->_avalot->_geidaTime--;
-		if (_vm->_avalot->_geidaTime == 0)
-			_vm->_avalot->_geidaSpin = 0;
+	if (_geidaTime > 0) {
+		_geidaTime--;
+		if (_geidaTime == 0)
+			_geidaSpin = 0;
 	}
 
 	if (_sprites[tripnum]._y < (_sprites[0]._y - 2)) {
@@ -1307,8 +1307,66 @@ Direction Animation::getOldDirection() {
 	return _oldDirection;
 }
 
+void Animation::resetVariables() {
+	_geidaSpin = 0;
+	_geidaTime = 0;
+}
+
 void Animation::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_direction);
+	sz.syncAsByte(_geidaSpin);
+	sz.syncAsByte(_geidaTime);
+
+	byte spriteNum = 0;
+	if (sz.isSaving()) {
+		for (int i = 0; i < kSpriteNumbMax; i++) {
+			if (_sprites[i]._quick)
+				spriteNum++;
+		}
+	}
+	sz.syncAsByte(spriteNum);
+
+	if (sz.isLoading()) {
+		for (int i = 0; i < kSpriteNumbMax; i++) { // Deallocate sprites.
+			AnimationType *spr = &_sprites[i];
+			if (spr->_quick)
+				spr->remove();
+		}
+	}
+
+	for (int i = 0; i < spriteNum; i++) {
+		AnimationType *spr = &_sprites[i];
+		sz.syncAsByte(spr->_id);
+		sz.syncAsByte(spr->_doCheck);
+
+		if (sz.isLoading()) {
+			spr->_quick = true;
+			spr->init(spr->_id, spr->_doCheck, this);
+		}
+
+		sz.syncAsByte(spr->_moveX);
+		sz.syncAsByte(spr->_moveY);
+		sz.syncAsByte(spr->_facingDir);
+		sz.syncAsByte(spr->_stepNum);
+		sz.syncAsByte(spr->_visible);
+		sz.syncAsByte(spr->_homing);
+		sz.syncAsByte(spr->_count);
+		sz.syncAsByte(spr->_info._xWidth);
+		sz.syncAsByte(spr->_speedX);
+		sz.syncAsByte(spr->_speedY);
+		sz.syncAsByte(spr->_animCount);
+		sz.syncAsSint16LE(spr->_homingX);
+		sz.syncAsSint16LE(spr->_homingY);
+		sz.syncAsByte(spr->_callEachStepFl);
+		sz.syncAsByte(spr->_eachStepProc);
+		sz.syncAsByte(spr->_vanishIfStill);
+		sz.syncAsSint16LE(spr->_x);
+		sz.syncAsSint16LE(spr->_y);
+
+		if (sz.isLoading() && spr->_visible)
+			spr->appear(spr->_x, spr->_y, spr->_facingDir);
+	}
+
 }
 
 } // End of namespace Avalanche.

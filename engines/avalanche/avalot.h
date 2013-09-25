@@ -222,7 +222,6 @@ public:
 	byte _catacombX, _catacombY;   // XY coords in the catacombs.
 	bool _avvysInTheCupboard; // On screen 22.
 	bool _geidaFollows; // Is Geida following you?
-	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
 	byte _nextBell; // For the ringing.
 	bool _givenPotionToGeida; // Does Geida have the potion?
 	bool _lustieIsAsleep; // Is BDL asleep?

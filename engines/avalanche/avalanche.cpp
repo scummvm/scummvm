@@ -238,8 +238,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_avalot->_catacombY);
 	sz.syncAsByte(_avalot->_avvysInTheCupboard);
 	sz.syncAsByte(_avalot->_geidaFollows);
-	sz.syncAsByte(_avalot->_geidaSpin);
-	sz.syncAsByte(_avalot->_geidaTime);
 	sz.syncAsByte(_avalot->_nextBell);
 	sz.syncAsByte(_avalot->_givenPotionToGeida);
 	sz.syncAsByte(_avalot->_lustieIsAsleep);
@@ -252,56 +250,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_avalot->_takenMushroom);
 	sz.syncAsByte(_avalot->_givenPenToAyles);
 	sz.syncAsByte(_avalot->_askedDogfoodAboutNim);
-
-	byte spriteNum = 0;
-	if (sz.isSaving()) {
-		for (int i = 0; i < _animation->kSpriteNumbMax; i++) {
-			if (_animation->_sprites[i]._quick)
-				spriteNum++;
-		}
-	}
-	sz.syncAsByte(spriteNum);
-
-	if (sz.isLoading()) {
-		for (int i = 0; i < _animation->kSpriteNumbMax; i++) { // Deallocate sprites.
-			AnimationType *spr = &_animation->_sprites[i];
-			if (spr->_quick)
-				spr->remove();
-		}
-	}
-
-	for (int i = 0; i < spriteNum; i++) {
-		AnimationType *spr = &_animation->_sprites[i];
-		sz.syncAsByte(spr->_id);
-		sz.syncAsByte(spr->_doCheck);
-
-		if (sz.isLoading()) {
-			spr->_quick = true;
-			spr->init(spr->_id, spr->_doCheck, _animation);
-		}
-
-		sz.syncAsByte(spr->_moveX);
-		sz.syncAsByte(spr->_moveY);
-		sz.syncAsByte(spr->_facingDir);
-		sz.syncAsByte(spr->_stepNum);
-		sz.syncAsByte(spr->_visible);
-		sz.syncAsByte(spr->_homing);
-		sz.syncAsByte(spr->_count);
-		sz.syncAsByte(spr->_info._xWidth);
-		sz.syncAsByte(spr->_speedX);
-		sz.syncAsByte(spr->_speedY);
-		sz.syncAsByte(spr->_animCount);
-		sz.syncAsSint16LE(spr->_homingX);
-		sz.syncAsSint16LE(spr->_homingY);
-		sz.syncAsByte(spr->_callEachStepFl);
-		sz.syncAsByte(spr->_eachStepProc);
-		sz.syncAsByte(spr->_vanishIfStill);
-		sz.syncAsSint16LE(spr->_x);
-		sz.syncAsSint16LE(spr->_y);
-
-		if (sz.isLoading() && spr->_visible)
-			spr->appear(spr->_x, spr->_y, spr->_facingDir);
-	}
 
 	for (int i = 0; i < 7; i++) {
 		sz.syncAsSint32LE(_timer->_times[i]._timeLeft);

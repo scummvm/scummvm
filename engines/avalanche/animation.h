@@ -136,10 +136,13 @@ public:
 	Direction getDirection();
 	Direction getOldDirection();
 
+	void resetVariables();
 	void synchronize(Common::Serializer &sz);
 private:
 	Direction _direction; // The direction Avvy is currently facing.
 	Direction _oldDirection;
+
+	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
 
 	AvalancheEngine *_vm;
 
