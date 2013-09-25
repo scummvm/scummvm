@@ -1716,15 +1716,9 @@ void Scene3350::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 3375 - Outer Walkway
+ * Scene 3375 - Circular Walkway
  *
  *--------------------------------------------------------------------------*/
-
-Scene3375::Scene3375() {
-	_field1488 = _field1492 = 0;
-	for (int i = 0; i < 4; ++i)
-		_field148A[i] = 0;
-}
 
 void Scene3375::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
@@ -1732,10 +1726,10 @@ void Scene3375::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field1488);
 	s.syncAsSint16LE(_field1492);
 	for (int i = 0; i < 4; ++i)
-		s.syncAsSint16LE(_field148A[i]);
+		s.syncAsSint16LE(_sceneAreas[i]);
 }
 
-void Scene3375::subFC696(int sceneMode) {
+void Scene3375::enterArea(int sceneMode) {
 	switch (sceneMode) {
 	case 3379:
 		R2_GLOBALS._player.setPosition(Common::Point(0, 155));
@@ -1744,11 +1738,11 @@ void Scene3375::subFC696(int sceneMode) {
 		_webbster.setPosition(Common::Point(-20, 152));
 		break;
 	case 3380:
-		++R2_GLOBALS._v56A9E;
-		if (R2_GLOBALS._v56A9E >= 4)
-			R2_GLOBALS._v56A9E = 0;
+		++R2_GLOBALS._walkwaySceneNumber;
+		if (R2_GLOBALS._walkwaySceneNumber >= 4)
+			R2_GLOBALS._walkwaySceneNumber = 0;
 
-		loadScene(_field148A[R2_GLOBALS._v56A9E]);
+		loadScene(_sceneAreas[R2_GLOBALS._walkwaySceneNumber]);
 
 		R2_GLOBALS._uiElements.show();
 		R2_GLOBALS._player.setStrip(4);
@@ -1762,11 +1756,11 @@ void Scene3375::subFC696(int sceneMode) {
 		_webbster._effect = 1;
 		break;
 	case 3381:
-		--R2_GLOBALS._v56A9E;
-		if (R2_GLOBALS._v56A9E < 0)
-			R2_GLOBALS._v56A9E = 3;
+		--R2_GLOBALS._walkwaySceneNumber;
+		if (R2_GLOBALS._walkwaySceneNumber < 0)
+			R2_GLOBALS._walkwaySceneNumber = 3;
 
-		loadScene(_field148A[R2_GLOBALS._v56A9E]);
+		loadScene(_sceneAreas[R2_GLOBALS._walkwaySceneNumber]);
 
 		R2_GLOBALS._uiElements.show();
 		R2_GLOBALS._player.setStrip(6);
@@ -1788,22 +1782,22 @@ void Scene3375::subFC696(int sceneMode) {
 		break;
 	}
 
-	if (R2_GLOBALS._v56A9E == 2) {
-		R2_GLOBALS._sceneItems.remove(&_actor4);
+	if (R2_GLOBALS._walkwaySceneNumber == 2) {
+		R2_GLOBALS._sceneItems.remove(&_door);
 		for (int i = 0; i <= 12; i++)
 			R2_GLOBALS._sceneItems.remove(&_itemArray[i]);
 		R2_GLOBALS._sceneItems.remove(&_background);
 
-		_actor4.show();
-		_actor4.setDetails(3375, 9, 10, -1, 1, (SceneItem *)NULL);
+		_door.show();
+		_door.setDetails(3375, 9, 10, -1, 1, (SceneItem *)NULL);
 
 		for (int i = 0; i <= 12; i++)
 			_itemArray[i].setDetails(3375, 3, -1, -1);
 
 		_background.setDetails(Rect(0, 0, 320, 200), 3375, 0, -1, -1, 1, NULL);
 	} else {
-		_actor4.hide();
-		R2_GLOBALS._sceneItems.remove(&_actor4);
+		_door.hide();
+		R2_GLOBALS._sceneItems.remove(&_door);
 	}
 
 	if (_sceneMode == 0)
@@ -1854,13 +1848,13 @@ bool Scene3375::Webbster::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene3375::Actor4::startAction(CursorType action, Event &event) {
+bool Scene3375::Door::startAction(CursorType action, Event &event) {
 	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
-	if (R2_GLOBALS._v56A9E != 0) {
+	if (R2_GLOBALS._walkwaySceneNumber != 0) {
 		R2_GLOBALS._walkRegions.enableRegion(2);
 		R2_GLOBALS._walkRegions.enableRegion(3);
 	} else {
@@ -1876,7 +1870,7 @@ bool Scene3375::Actor4::startAction(CursorType action, Event &event) {
 
 	scene->_sceneMode = 3375;
 	scene->setAction(&scene->_sequenceManager, scene, 3375, &R2_GLOBALS._player, 
-		&scene->_companion1, &scene->_companion2, &scene->_webbster, &scene->_actor4, NULL);
+		&scene->_companion1, &scene->_companion2, &scene->_webbster, &scene->_door, NULL);
 
 	return true;
 }
@@ -1887,7 +1881,7 @@ void Scene3375::LeftExit::changeScene() {
 	_moving = false;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	scene->_sceneMode = 3376;
-	if (R2_GLOBALS._v56A9E != 0) {
+	if (R2_GLOBALS._walkwaySceneNumber != 0) {
 		R2_GLOBALS._walkRegions.enableRegion(2);
 		R2_GLOBALS._walkRegions.enableRegion(3);
 	} else {
@@ -1896,7 +1890,7 @@ void Scene3375::LeftExit::changeScene() {
 		R2_GLOBALS._walkRegions.enableRegion(4);
 	}
 	if (scene->_companion1._position.y != 163) {
-		R2_GLOBALS._player.setStrip(-1);
+		R2_GLOBALS._player.setStrip2(-1);
 		scene->_companion1.setStrip2(-1);
 		scene->_companion2.setStrip2(-1);
 		scene->_webbster.setStrip2(-1);
@@ -1925,7 +1919,7 @@ void Scene3375::DownExit::changeScene() {
 	scene->_sceneMode = 3377;
 	scene->_field1488 = 3381;
 
-	if (R2_GLOBALS._v56A9E != 0) {
+	if (R2_GLOBALS._walkwaySceneNumber != 0) {
 		R2_GLOBALS._walkRegions.enableRegion(2);
 		R2_GLOBALS._walkRegions.enableRegion(3);
 	} else {
@@ -1947,7 +1941,7 @@ void Scene3375::RightExit::changeScene() {
 	scene->_sceneMode = 3378;
 	scene->_field1488 = 3380;
 
-	if (R2_GLOBALS._v56A9E != 0) {
+	if (R2_GLOBALS._walkwaySceneNumber != 0) {
 		R2_GLOBALS._walkRegions.enableRegion(2);
 		R2_GLOBALS._walkRegions.enableRegion(3);
 	} else {
@@ -1958,13 +1952,17 @@ void Scene3375::RightExit::changeScene() {
 	scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_companion1, &scene->_companion2, &scene->_webbster, NULL);
 }
 
-void Scene3375::postInit(SceneObjectList *OwnerList) {
-	_field148A[0] = 3376;
-	_field148A[1] = 3377;
-	_field148A[2] = 3375;
-	_field148A[3] = 3378;
+Scene3375::Scene3375() {
+	_field1488 = _field1492 = 0;
 
-	loadScene(_field148A[R2_GLOBALS._v56A9E]);
+	_sceneAreas[0] = 3376;
+	_sceneAreas[1] = 3377;
+	_sceneAreas[2] = 3375;
+	_sceneAreas[3] = 3378;
+}
+
+void Scene3375::postInit(SceneObjectList *OwnerList) {
+	loadScene(_sceneAreas[R2_GLOBALS._walkwaySceneNumber]);
 	SceneExt::postInit();
 
 	R2_GLOBALS._sound1.play(313);
@@ -1983,7 +1981,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(126, 55, 200, 167);
 	R2_GLOBALS._player.postInit();
 
-	if (R2_GLOBALS._player._characterIndex == 2) {
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 		R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
 	} else {
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
@@ -1991,13 +1989,13 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.changeZoom(-1);
 
 	switch (R2_GLOBALS._player._characterIndex) {
-	case 2:
+	case R2_SEEKER:
 		if (R2_GLOBALS._sceneManager._previousScene == 3385)
 			R2_GLOBALS._player.setup(20, 1, 1);
 		else
 			R2_GLOBALS._player.setup(20, 3, 1);
 		break;
-	case 3:
+	case R2_MIRANDA:
 		if (R2_GLOBALS._sceneManager._previousScene == 3385)
 			R2_GLOBALS._player.setup(30, 1, 1);
 		else
@@ -2015,7 +2013,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.disableControl();
 
 	_companion1.postInit();
-	if (R2_GLOBALS._player._characterIndex == 2) {
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 		_companion1._moveRate = 10;
 		_companion1._moveDiff = Common::Point(3, 2);
 	} else {
@@ -2031,7 +2029,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	else
 		tmpStrip = 4;
 
-	if (R2_GLOBALS._player._characterIndex == 2)
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 		tmpVisage = 10;
 	else
 		tmpVisage = 20;
@@ -2048,7 +2046,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	else
 		tmpStrip = 8;
 
-	if (R2_GLOBALS._player._characterIndex == 3)
+	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 		tmpVisage = 10;
 	else
 		tmpVisage = 30;
@@ -2073,11 +2071,11 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	_webbster.setDetails(3375, 21, -1, -1, 1, (SceneItem *)NULL);
 	_companion1.setDetails(3375, -1, -1, -1, 1, (SceneItem *)NULL);
 
-	_actor4.postInit();
-	_actor4.setup(3375, 1, 1);
-	_actor4.setPosition(Common::Point(254, 166));
-	_actor4.fixPriority(140);
-	_actor4.hide();
+	_door.postInit();
+	_door.setup(3375, 1, 1);
+	_door.setPosition(Common::Point(254, 166));
+	_door.fixPriority(140);
+	_door.hide();
 
 	_leftExit.setDetails(Rect(0, 84, 24, 167), EXITCURSOR_W, 3375);
 	_leftExit.setDest(Common::Point(65, 155));
@@ -2096,7 +2094,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	else
 		_sceneMode = 0;
 
-	subFC696(_sceneMode);
+	enterArea(_sceneMode);
 }
 
 void Scene3375::remove() {
@@ -2105,17 +2103,30 @@ void Scene3375::remove() {
 }
 
 void Scene3375::signalCase3379() {
-	switch (R2_GLOBALS._v56A9E) {
+	switch (R2_GLOBALS._walkwaySceneNumber) {
 	case 0:
 		_leftExit._enabled = true;
-		if (R2_GLOBALS._sceneManager._previousScene == 3385)
-			R2_GLOBALS._walkRegions.disableRegion(1);
-		else {
+		if (R2_GLOBALS._sceneManager._previousScene == 3385) {
+			// WORKAROUND: The original disables the left entry region here for
+			// some reason. But there's also some walk issue even I leave it enabled.
+			// Instead, for now, add an extra walk into the properly enabled regions
+			_sceneMode = 1;
+			ADD_MOVER(R2_GLOBALS._player, 70, R2_GLOBALS._player._position.y);
+			R2_GLOBALS._sceneManager._previousScene = 3375;
+			R2_GLOBALS._player._effect = 1;
+			_companion1._effect = 1;
+			_companion2._effect = 1;
+			_webbster._effect = 1;
+
+			return;
+			//R2_GLOBALS._walkRegions.disableRegion(1);
+		} else {
 			R2_GLOBALS._walkRegions.disableRegion(3);
 			R2_GLOBALS._walkRegions.disableRegion(4);
 		}
 		R2_GLOBALS._walkRegions.disableRegion(6);
 		R2_GLOBALS._walkRegions.disableRegion(7);
+		break;
 	case 2:
 		_leftExit._enabled = false;
 		R2_GLOBALS._walkRegions.disableRegion(2);
@@ -2125,6 +2136,7 @@ void Scene3375::signalCase3379() {
 		R2_GLOBALS._walkRegions.disableRegion(7);
 		R2_GLOBALS._walkRegions.disableRegion(8);
 		R2_GLOBALS._walkRegions.disableRegion(9);
+		break;
 	default:
 		_leftExit._enabled = false;
 		R2_GLOBALS._walkRegions.disableRegion(2);
@@ -2143,6 +2155,9 @@ void Scene3375::signalCase3379() {
 
 void Scene3375::signal() {
 	switch (_sceneMode) {
+	case 1:
+		R2_GLOBALS._player.enableControl();
+		break;
 	case 3375:
 		R2_GLOBALS._sceneManager.changeScene(3400);
 		break;
@@ -2160,7 +2175,7 @@ void Scene3375::signal() {
 		_companion2._shade = 4;
 		_webbster._effect = 6;
 		_webbster._shade = 4;
-		subFC696(_sceneMode);
+		enterArea(_sceneMode);
 		break;
 	case 3379:
 		signalCase3379();
@@ -2412,7 +2427,7 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_background.setDetails(Rect(0, 0, 320, 200), 3385, 0, -1, -1, 1, NULL);
-	R2_GLOBALS._v56A9E = 0;
+	R2_GLOBALS._walkwaySceneNumber = 0;
 }
 
 void Scene3385::remove() {
@@ -2680,7 +2695,8 @@ void Scene3400::synchronize(Serializer &s) {
 
 void Scene3400::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
-	g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
+	_sceneBounds = Rect(160, 0, 480, 200);
+
 	loadScene(3400);
 	_field157C = 0;
 	R2_GLOBALS._v558B6.set(60, 0, 260, 200);
@@ -4389,7 +4405,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._v558B6.set(60, 0, 260, 200);
 	} else {
 		R2_GLOBALS._scrollFollower = &_actor2;
-		g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
+		_sceneBounds = Rect(160, 0, 480, 200);
 		R2_GLOBALS._v558B6.set(25, 0, 260, 200);
 	}
 

@@ -288,7 +288,7 @@ public:
 	int _desertWrongDirCtr;
 	byte _balloonAltitude;
 	int _scene1925CurrLevel; //_v56A9C
-	int _v56A9E;
+	int _walkwaySceneNumber;
 	byte _v56AA0;
 	byte _scientistConvIndex;
 	Common::Point _ventCellPos;

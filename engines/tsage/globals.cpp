@@ -463,7 +463,7 @@ void Ringworld2Globals::reset() {
 	_desertWrongDirCtr = -1;
 	_balloonAltitude = 5;
 	_scene1925CurrLevel = 0; //_v56A9C
-	_v56A9E = 0;
+	_walkwaySceneNumber = 0;
 	_v56AA0 = 0;
 	_scientistConvIndex = 0;
 	_ventCellPos = Common::Point(60, 660);
@@ -529,7 +529,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v566A6);
 	s.syncAsSint16LE(_desertWrongDirCtr);
 	s.syncAsSint16LE(_scene1925CurrLevel); // _v56A9C
-	s.syncAsSint16LE(_v56A9E);
+	s.syncAsSint16LE(_walkwaySceneNumber);
 	s.syncAsSint16LE(_ventCellPos.x);
 	s.syncAsSint16LE(_ventCellPos.y);
 	s.syncAsSint16LE(_v56AAB);

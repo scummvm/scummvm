@@ -404,7 +404,7 @@ class Scene3375 : public SceneExt {
 	class Webbster : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class Door : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
@@ -422,7 +422,7 @@ class Scene3375 : public SceneExt {
 	};
 
 	void signalCase3379();
-	void subFC696(int sceneMode);
+	void enterArea(int sceneMode);
 
 public:
 	SpeakerQuinn3375 _quinnSpeaker;
@@ -434,13 +434,13 @@ public:
 	Companion1 _companion1;
 	Companion2 _companion2;
 	Webbster _webbster;
-	Actor4 _actor4;
+	Door _door;
 	LeftExit _leftExit;
 	DownExit _downExit;
 	RightExit _rightExit;
 	SequenceManager _sequenceManager;
 	int _field1488;
-	int _field148A[4];
+	int _sceneAreas[4];
 	int _field1492;
 
 	Scene3375();

@@ -278,7 +278,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship landing
 		return new Scene3350();
 	case 3375:
-		// Outer walkway
+		// Circular Walkway
 		return new Scene3375();
 	case 3385:
 		// Corridor
