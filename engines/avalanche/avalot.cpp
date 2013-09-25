@@ -264,7 +264,7 @@ Avalot::Avalot(AvalancheEngine *vm) : _fxHidden(false), _clock(vm), _interrogati
 	// Needed because of Lucerna::load_also()
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++)
-			_also[i][j] = 0;
+			_also[i][j] = nullptr;
 	}
 
 	_totalTime = 0;
@@ -273,9 +273,9 @@ Avalot::Avalot(AvalancheEngine *vm) : _fxHidden(false), _clock(vm), _interrogati
 Avalot::~Avalot() {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
-			if (_also[i][j] != 0)  {
+			if (_also[i][j] != nullptr)  {
 				delete _also[i][j];
-				_also[i][j] = 0;
+				_also[i][j] = nullptr;
 			}
 		}
 	}
@@ -437,7 +437,7 @@ void Avalot::runAvalot() {
 void Avalot::init() {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++)
-			_also[i][j] = 0;
+			_also[i][j] = nullptr;
 	}
 
 #if 0
@@ -520,7 +520,7 @@ void Avalot::scram(Common::String &str) {
 void Avalot::unScramble() {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
-			if (_also[i][j] != 0)
+			if (_also[i][j] != nullptr)
 				scram(*_also[i][j]);
 		}
 	}
@@ -531,9 +531,9 @@ void Avalot::unScramble() {
 void Avalot::loadAlso(byte num) {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
-			if (_also[i][j] != 0)  {
+			if (_also[i][j] != nullptr)  {
 				delete _also[i][j];
-				_also[i][j] = 0;
+				_also[i][j] = nullptr;
 			}
 		}
 	}
