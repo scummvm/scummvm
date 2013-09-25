@@ -848,7 +848,7 @@ void Animation::callSpecial(uint16 which) {
 		break;
 	case 12: // _vm->_avalot->special 12: transfer south in catacombs.
 		_vm->_avalot->dusk();
-		_vm->_avalot->_catacombY += 1;
+		_vm->_avalot->_catacombY++;
 		catacombMove(2);
 		if (_vm->_avalot->_room != kRoomCatacombs)
 			return;
@@ -924,13 +924,13 @@ void Animation::followAvalotY(byte tripnum) {
 		_sprites[tripnum]._homingY = _sprites[1]._y;
 	else {
 		if (_sprites[tripnum]._y < _sprites[1]._y)
-			_sprites[tripnum]._y += 1;
+			_sprites[tripnum]._y++;
 		else if (_sprites[tripnum]._y > _sprites[1]._y)
-			_sprites[tripnum]._y -= 1;
+			_sprites[tripnum]._y--;
 		else
 			return;
 		if (_sprites[tripnum]._moveX == 0)  {
-			_sprites[tripnum]._stepNum += 1;
+			_sprites[tripnum]._stepNum++;
 			if (_sprites[tripnum]._stepNum == _sprites[tripnum]._stat._seq)
 				_sprites[tripnum]._stepNum = 0;
 			_sprites[tripnum]._count = 0;
