@@ -1734,8 +1734,8 @@ bool Avalot::setFlag(char x) {
 	return false;
 }
 
-bool Avalot::decreaseMoney(uint16 howmuchby) {
-	_money -= howmuchby;
+bool Avalot::decreaseMoney(uint16 amount) {
+	_money -= amount;
 	if (_money < 0) {
 		_vm->_dialogs->displayScrollChain('Q', 2); // "You are now denariusless!"
 		gameOver();

@@ -265,7 +265,6 @@ public:
 	byte _fieldNum;
 	Common::String _flags;
 	Common::String _listen;
-	Common::String _atKey; // For XTs, set to "alt-". For ATs, set to "f1".
 	byte _cp, _ledStatus, _defaultLed;
 	FontType _font;
 	bool _alive;
@@ -332,7 +331,7 @@ public:
 	void newGame(); // This sets up the DNA for a completely new game.
 	void slowDown();
 	bool setFlag(char x);
-	bool decreaseMoney(uint16 howmuchby); // Called pennycheck in the original.
+	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
 	void hangAroundForAWhile();
 	
 	Common::String getName(People whose);

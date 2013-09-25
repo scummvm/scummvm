@@ -401,7 +401,7 @@ Common::String Menu::selectGender(byte x) {
 void Menu::setupMenuGame() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("Help...", 'H', "f1", true);
-	_activeMenuItem.setupOption("Boss Key", 'B', "alt-B", true);
+	_activeMenuItem.setupOption("Boss Key", 'B', "alt-B", false);
 	_activeMenuItem.setupOption("Untrash screen", 'U', "ctrl-f7", true);
 	_activeMenuItem.setupOption("Score and rank", 'S', "f9", true);
 	_activeMenuItem.setupOption("About Avvy...", 'A', "shift-f10", true);
@@ -414,7 +414,7 @@ void Menu::setupMenuFile() {
 	_activeMenuItem.setupOption("Load...", 'L', "^f3", true);
 	_activeMenuItem.setupOption("Save", 'S', "^f2", _vm->_avalot->_alive);
 	_activeMenuItem.setupOption("Save As...", 'v', "", _vm->_avalot->_alive);
-	_activeMenuItem.setupOption("DOS Shell", 'D', _vm->_avalot->_atKey + '1', true);
+	_activeMenuItem.setupOption("DOS Shell", 'D', "alt-1", false);
 	_activeMenuItem.setupOption("Quit", 'Q', "alt-X", true);
 	_activeMenuItem.display();
 }
