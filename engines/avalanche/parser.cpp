@@ -761,7 +761,7 @@ void Parser::parse() {
 		// Check also[] first, which contains words about the actual room.
 		if (!thisword.empty()) {
 			for (int i = 0; i < 31; i++) {
-				if ((_vm->_avalot->_also[i][0] != 0) && (getPos(',' + thisword, *_vm->_avalot->_also[i][0]) > -1)) {
+				if ((_vm->_avalot->_also[i][0]) && (getPos(',' + thisword, *_vm->_avalot->_also[i][0]) > -1)) {
 					_thats += Common::String(99 + i);
 					notfound = false;
 				}
