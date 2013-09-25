@@ -1650,8 +1650,6 @@ void Avalot::resetVariables() {
 	_catacombY = 0;
 	_avvysInTheCupboard = false;
 	_geidaFollows = false;
-	_geidaSpin = 0;
-	_geidaTime = 0;
 	_nextBell = 0;
 	_givenPotionToGeida = false;
 	_lustieIsAsleep = false;
@@ -1666,6 +1664,7 @@ void Avalot::resetVariables() {
 	_askedDogfoodAboutNim = false;
 
 	_vm->_parser->resetVariables();
+	_vm->_animation->resetVariables();
 }
 
 void Avalot::newGame() {
