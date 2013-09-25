@@ -1908,9 +1908,10 @@ void Avalot::loadMouse(byte which) {
 
 	for (int j = 0; j < mask.h; j++) {
 		for (int i = 0; i < mask.w; i++) {
-			for (int k = 0; k < 2; k++) {
-				if (*(byte *)mask.getBasePtr(i, j) == 0)
-					*(byte *)cursor.getBasePtr(i, j * 2 + k) = 0;
+			byte pixel = *(byte *)mask.getBasePtr(i, j);
+			if (pixel == 0) {
+				*(byte *)cursor.getBasePtr(i, j * 2    ) = 0;
+				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = 0;
 			}
 		}
 	}
@@ -1924,10 +1925,10 @@ void Avalot::loadMouse(byte which) {
 
 	for (int j = 0; j < mask.h; j++) {
 		for (int i = 0; i < mask.w; i++) {
-			for (int k = 0; k < 2; k++) {
-				byte pixel = *(byte *)mask.getBasePtr(i, j);
-				if (pixel != 0)
-					*(byte *)cursor.getBasePtr(i, j * 2 + k) = pixel;
+			byte pixel = *(byte *)mask.getBasePtr(i, j);
+			if (pixel != 0) {
+				*(byte *)cursor.getBasePtr(i, j * 2    ) = pixel;
+				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = pixel;
 			}
 		}
 	}
