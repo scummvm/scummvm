@@ -260,7 +260,6 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 			if (_returnRoutesCurrentProgress == _frameInfo[_currentFrame].returnRoute.end()) {
 				_isReturning = false;
 				_currentFrame = _returnRoutesCurrentFrame;
-				_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 				return false;
 			}
 
@@ -271,6 +270,7 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 				_returnRoutesCurrentFrame--;
 			}
 
+			_engine->getScriptManager()->setStateValue(_key, _returnRoutesCurrentFrame);
 			renderFrame(_returnRoutesCurrentFrame);
 		}
 	}
