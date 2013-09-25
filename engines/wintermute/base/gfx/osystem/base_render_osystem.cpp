@@ -55,7 +55,6 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_lastFrameIter = _renderQueue.end();
 	_needsFlip = true;
 	_skipThisFrame = false;
-	_previousTicket = nullptr;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
@@ -265,7 +264,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
-		_previousTicket = ticket;
 		drawFromSurface(ticket);
 		return;
 	}
@@ -296,7 +294,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 					drawFromSurface(compareTicket);
 				} else {
 					drawFromQueuedTicket(it);
-					_previousTicket = compareTicket;
 				}
 				return;
 			}
@@ -305,54 +302,10 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
-		_previousTicket = ticket;
 	} else {
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
-		_previousTicket = ticket;
 		drawFromSurface(ticket);
-	}
-}
-
-void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY) {
-	if (_previousTicket && _lastAddedTicket != _renderQueue.end()) {
-		RenderTicket *origTicket = _previousTicket;
-
-		// Make sure drawSurface WILL start from the correct _lastAddedTicket
-		if (!_disableDirtyRects && *_lastAddedTicket != origTicket) {
-			RenderQueueIterator it;
-			RenderQueueIterator endIterator = _renderQueue.end();
-			for (it = _renderQueue.begin(); it != endIterator; ++it) {
-				if ((*it) == _previousTicket) {
-					_lastAddedTicket = it;
-					break;
-				}
-			}
-		}
-		Common::Rect srcRect(0, 0, 0, 0);
-		srcRect.setWidth(origTicket->getSrcRect()->width());
-		srcRect.setHeight(origTicket->getSrcRect()->height());
-
-		Common::Rect dstRect = origTicket->_dstRect;
-		int initLeft = dstRect.left;
-		int initRight = dstRect.right;
-
-		TransformStruct temp = TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, BLEND_NORMAL, kDefaultRgbaMod, false, false, kDefaultOffsetX, kDefaultOffsetY);
-
-		for (int i = 0; i < numTimesY; i++) {
-			if (i == 0) {
-				dstRect.translate(offsetX, 0);
-			}
-			for (int j = (i == 0 ? 1 : 0); j < numTimesX; j++) {
-				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, temp); 
-				dstRect.translate(offsetX, 0);
-			}
-			dstRect.left = initLeft;
-			dstRect.right = initRight;
-			dstRect.translate(0, offsetY);
-		}
-	} else {
-		error("Repeat-draw failed (did you forget to draw something before this?)");
 	}
 }
 
@@ -614,7 +567,6 @@ void BaseRenderOSystem::endSaveLoad() {
 		delete ticket;
 	}
 	_lastAddedTicket = _renderQueue.begin();
-	_previousTicket = nullptr;
 	// HACK: After a save the buffer will be drawn before the scripts get to update it,
 	// so just skip this single frame.
 	_skipThisFrame = true;

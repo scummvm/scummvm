@@ -111,7 +111,6 @@ public:
 	virtual bool endSpriteBatch() override;
 	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
-	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
 	BaseSurface *createSurface() override;
 private:
 	/**
@@ -130,7 +129,6 @@ private:
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket *> _renderQueue;
 	RenderQueueIterator _lastAddedTicket;
-	RenderTicket *_previousTicket;
 
 	bool _needsFlip;
 	uint32 _drawNum; ///< The global number of the current draw-operation.

@@ -381,6 +381,14 @@ bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newR
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseSurfaceOSystem::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
+	assert(numTimesX > 0 && numTimesY > 0);
+	TransformStruct transform(numTimesX, numTimesY);
+	return drawSprite(x, y, &rect, nullptr, transform);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transform) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
@@ -424,8 +432,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		position.setWidth(newRect->width());
 		position.setHeight(newRect->height());
 	} else {
-		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / kDefaultZoomX));
-		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / kDefaultZoomY));
+		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / kDefaultZoomX) * transform._numTimesX);
+		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / kDefaultZoomY) * transform._numTimesY);
 	}
 	renderer->modTargetRect(&position);
 
@@ -438,12 +446,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	}
 
 	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
-	return STATUS_OK;
-}
-
-bool BaseSurfaceOSystem::repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) {
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-	renderer->repeatLastDraw(offsetX, offsetY, numTimesX, numTimesY);
 	return STATUS_OK;
 }
 
