@@ -71,6 +71,8 @@ class MctlCompound : public MotionController {
 	MctlCompoundArray _motionControllers;
 
  public:
+	MctlCompound() { _objtype = kObjTypeMctlCompound; }
+
 	virtual bool load(MfcArchive &file);
 
 	virtual int addObject(StaticANIObject *obj);

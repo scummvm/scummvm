@@ -69,7 +69,8 @@ enum ObjType {
 	kObjTypeObjstateCommand,
 	kObjTypeStaticANIObject,
 	kObjTypePictureObject,
-	kObjTypeMovGraph
+	kObjTypeMovGraph,
+	kObjTypeMctlCompound
 };
 
 class CObject {
