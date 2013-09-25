@@ -73,7 +73,7 @@ void Background::update() {
 	case kRoomArgentPub:
 		if (((_vm->_avalot->_roomTime % 7) == 1) && (_vm->_avalot->_malagauche != 177)) {
 			// Malagauche cycle.
-			_vm->_avalot->_malagauche += 1;
+			_vm->_avalot->_malagauche++;
 			switch (_vm->_avalot->_malagauche) {
 			case 1:
 			case 11:

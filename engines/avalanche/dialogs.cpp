@@ -145,7 +145,7 @@ void Dialogs::scrollModeNormal() {
 		do {
 			_vm->_avalot->check(); // was "checkclick;"
 
-//#ifdef RECORD slowdown(); basher::count += 1; #endif
+//#ifdef RECORD slowdown(); basher::count++; #endif
 
 			if (_vm->_enhanced->keypressede())
 				break;
@@ -192,7 +192,7 @@ bool Dialogs::theyMatch(TuneType &played) {
 
 	for (unsigned int i = 0; i < sizeof(played); i++) {
 		if (played[i] != _vm->_avalot->kTune[i])
-			mistakes += 1;
+			mistakes++;
 	}
 
 	return mistakes < 5;

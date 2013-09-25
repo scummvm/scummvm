@@ -1386,7 +1386,7 @@ bool Parser::giveToSpludwick() {
 }
 
 void Parser::drink() {
-	_alcoholLevel += 1;
+	_alcoholLevel++;
 	if (_alcoholLevel == 5) {
 		_vm->_avalot->_objects[kObjectKey - 1] = true; // Get the key.
 		_vm->_avalot->_teetotal = true;
