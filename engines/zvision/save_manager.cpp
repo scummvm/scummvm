@@ -104,8 +104,8 @@ void SaveManager::autoSave() {
 
 void SaveManager::writeSaveGameData(Common::OutSaveFile *file) {
 	// Create a thumbnail and save it
-	Graphics::saveThumbnail(*file, *_engine->getRenderManager()->getBackBuffer());
-
+	Graphics::saveThumbnail(*file);
+	
 	// Write out the save date/time
 	TimeDate td;
 	g_system->getTimeAndDate(td);
