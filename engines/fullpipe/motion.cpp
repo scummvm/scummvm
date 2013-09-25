@@ -87,7 +87,29 @@ int MctlCompound::removeObject(StaticANIObject *obj) {
 }
 
 void MctlCompound::initMovGraph2() {
-	warning("STUB: MctlCompound::initMovGraph2()");
+#if 0
+	if (_objtype != kObjTypeMctlCompound)
+		return;
+
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_motionControllerObj->_objtype != kObjTypeMovGraph)
+			continue;
+
+		MovGraph *gr = (MovGraph *)_motionControllers[i]->_motionControllerObj;
+
+		CMovGraph2 *newgr = new MovGraph2();
+
+		newgr->_links.push_back(gr->_links);
+		newgr->_nodes.push_back(gr->_nodes);
+
+		gr->_links.clear();
+		gr->_nodes.clear();
+
+		delete gr;
+
+		_motionControllers[i]->_motionControllerObj = newgr;
+	}
+#endif
 }
 
 void MctlCompound::freeItems() {
