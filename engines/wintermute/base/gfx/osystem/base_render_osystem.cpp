@@ -61,7 +61,6 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_colorMod = kDefaultRgbaMod;
 	_dirtyRect = nullptr;
 	_disableDirtyRects = false;
-	_tempDisableDirtyRects = 0;
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
@@ -153,9 +152,6 @@ bool BaseRenderOSystem::indicatorFlip() {
 }
 
 bool BaseRenderOSystem::flip() {
-	if (_renderQueue.size() > DIRTY_RECT_LIMIT) {
-		_tempDisableDirtyRects++;
-	}
 	if (_skipThisFrame) {
 		_skipThisFrame = false;
 		delete _dirtyRect;
@@ -166,7 +162,7 @@ bool BaseRenderOSystem::flip() {
 		addDirtyRect(_renderRect);
 		return true;
 	}
-	if (!_tempDisableDirtyRects && !_disableDirtyRects) {
+	if (!_disableDirtyRects) {
 		drawTickets();
 	} else {
 		// Clear the scale-buffered tickets that wasn't reused.
@@ -182,8 +178,8 @@ bool BaseRenderOSystem::flip() {
 			}
 		}
 	}
-	if (_needsFlip || _disableDirtyRects || _tempDisableDirtyRects) {
-		if (_disableDirtyRects || _tempDisableDirtyRects) {
+	if (_needsFlip || _disableDirtyRects) {
+		if (_disableDirtyRects) {
 			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
 		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
@@ -194,29 +190,13 @@ bool BaseRenderOSystem::flip() {
 	}
 	_drawNum = 1;
 
-	if (_tempDisableDirtyRects && !_disableDirtyRects) {
-		_tempDisableDirtyRects--;
-		if (!_tempDisableDirtyRects) {
-			Common::Rect screen(_screenRect.top, _screenRect.left, _screenRect.bottom, _screenRect.right);
-			addDirtyRect(screen);
-
-			// The queue has been ignored but updated, and is guaranteed to be in draw-order when run without dirty-rects.
-			RenderQueueIterator it = _renderQueue.begin();
-			int drawNum = 1;
-			while (it != _renderQueue.end()) {
-				(*it)->_drawNum = drawNum++;
-				++it;
-			}
-		}
-	}
-
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
-	if (!_disableDirtyRects && !_tempDisableDirtyRects) {
+	if (!_disableDirtyRects) {
 		return STATUS_OK;
 	}
 	if (!rect) {
@@ -277,7 +257,7 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 
 void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) { 
 
-	if (_tempDisableDirtyRects || _disableDirtyRects) {
+	if (_disableDirtyRects) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
 		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
@@ -315,10 +295,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 					drawFromTicket(compareTicket);
 					_previousTicket = compareTicket;
 				}
-				if (_renderQueue.size() > DIRTY_RECT_LIMIT) {
-					drawTickets();
-					_tempDisableDirtyRects = 3;
-				}
 				return;
 			}
 		}
@@ -340,7 +316,7 @@ void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, 
 		RenderTicket *origTicket = _previousTicket;
 
 		// Make sure drawSurface WILL start from the correct _lastAddedTicket
-		if (!_tempDisableDirtyRects && !_disableDirtyRects && *_lastAddedTicket != origTicket) {
+		if (!_disableDirtyRects && *_lastAddedTicket != origTicket) {
 			RenderQueueIterator it;
 			RenderQueueIterator endIterator = _renderQueue.end();
 			for (it = _renderQueue.begin(); it != endIterator; ++it) {
@@ -553,7 +529,7 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	// This function isn't used outside of indicator-displaying, and thus quite unused in
 	// BaseRenderOSystem when dirty-rects are enabled.
-	if (!_tempDisableDirtyRects && !_disableDirtyRects && !_indicatorDisplay) {
+	if (!_disableDirtyRects && !_indicatorDisplay) {
 		error("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
 	}
 

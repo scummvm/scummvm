@@ -138,7 +138,6 @@ private:
 	int _borderBottom;
 
 	bool _disableDirtyRects;
-	uint32 _tempDisableDirtyRects;
 	float _ratioX;
 	float _ratioY;
 	uint32 _colorMod;
