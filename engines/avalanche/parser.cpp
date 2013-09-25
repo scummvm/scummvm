@@ -46,7 +46,6 @@ Parser::Parser(AvalancheEngine *vm) {
 }
 
 void Parser::init() {
-	_leftMargin = 0;
 	if (!_inputText.empty())
 		_inputText.clear();
 	_inputTextPos = 0;
@@ -396,7 +395,7 @@ void Parser::handleBackspace() {
 	if (_vm->_menu->_activeMenuItem._activeNow)
 		return;
 
-	if (_inputTextPos > _leftMargin) {
+	if (_inputTextPos > 0) {
 		_inputTextPos--;
 		if ((_inputText[_inputTextPos] == '"') || (_inputText[_inputTextPos] == '`'))
 			_quote = !_quote;
@@ -990,17 +989,17 @@ bool Parser::isHolding() {
 
 void Parser::openBox(bool isOpening) {
 	if ((_vm->_avalot->_room == kRoomYours) && (_thing == 54)) {
-		_vm->_background->drawBackgroundSprite(-1, -1, 4);
+		_vm->_background->draw(-1, -1, 4);
 
-		_vm->_background->updateBackgroundSprites();
+		_vm->_background->update();
 		_vm->_animation->animLink();
 		_vm->_graphics->refreshScreen();
 
 		_vm->_system->delayMillis(55);
 
 		if (!isOpening) {
-			_vm->_background->drawBackgroundSprite(-1, -1, 5);
-			_vm->_background->updateBackgroundSprites();
+			_vm->_background->draw(-1, -1, 5);
+			_vm->_background->update();
 			_vm->_animation->animLink();
 			_vm->_graphics->refreshScreen();
 		}
@@ -1432,7 +1431,7 @@ void Parser::standUp() {
 			_vm->_avalot->_userMovesAvvy = true;
 			_vm->_animation->appearPed(0, 1);
 			_vm->_animation->setDirection(kDirLeft);
-			_vm->_background->drawBackgroundSprite(-1, -1, 3); // Picture of empty pillow.
+			_vm->_background->draw(-1, -1, 3); // Picture of empty pillow.
 			_vm->_avalot->incScore(1);
 			_vm->_avalot->_avvyInBed = false;
 			_vm->_timer->loseTimer(Timer::kReasonArkataShouts);
@@ -1446,7 +1445,7 @@ void Parser::standUp() {
 
 	case kRoomNottsPub:
 		if (_vm->_avalot->_sittingInPub)  {
-			_vm->_background->drawBackgroundSprite(-1, -1, 3); // Not sitting down.
+			_vm->_background->draw(-1, -1, 3); // Not sitting down.
 			_vm->_animation->_sprites[0]._visible = true; // But standing up.
 			_vm->_animation->appearPed(0, 3); // And walking away.
 			_vm->_avalot->_sittingInPub = false; // Really not sitting down.
@@ -1464,12 +1463,12 @@ void Parser::getProc(char thing) {
 	case kRoomYours:
 		if (_vm->_animation->inField(1)) {
 			if (_vm->_avalot->_boxContent == thing) {
-				_vm->_background->drawBackgroundSprite(-1, -1, 4);
+				_vm->_background->draw(-1, -1, 4);
 				_vm->_dialogs->displayText("OK, I've got it.");
 				_vm->_avalot->_objects[thing - 1] = true;
 				_vm->_avalot->refreshObjectList();
 				_vm->_avalot->_boxContent = kNothing;
-				_vm->_background->drawBackgroundSprite(-1, -1, 5);
+				_vm->_background->draw(-1, -1, 5);
 			} else {
 				Common::String tmpStr = Common::String::format("I can't see %s in the box.", _vm->_avalot->getItem(thing).c_str());
 				_vm->_dialogs->displayText(tmpStr);
@@ -1485,7 +1484,7 @@ void Parser::getProc(char thing) {
 					_vm->_dialogs->displayText("It's not there, Avvy.");
 				else {
 					// OK: we're taking the pen, and it's there.
-					_vm->_background->drawBackgroundSprite(-1, -1, 3); // No pen there now.
+					_vm->_background->draw(-1, -1, 3); // No pen there now.
 					_vm->_animation->callSpecial(3); // Zap!
 					_vm->_avalot->_takenPen = true;
 					_vm->_avalot->_objects[kObjectPen - 1] = true;
@@ -1506,7 +1505,7 @@ void Parser::getProc(char thing) {
 		break;
 	case kRoomRobins:
 		if ((thing == kObjectMushroom) & (_vm->_animation->inField(0)) & (_vm->_avalot->_mushroomGrowing)) {
-			_vm->_background->drawBackgroundSprite(-1, -1, 2);
+			_vm->_background->draw(-1, -1, 2);
 			_vm->_dialogs->displayText("Got it!");
 			_vm->_avalot->_mushroomGrowing = false;
 			_vm->_avalot->_takenMushroom = true;
@@ -1726,8 +1725,8 @@ void Parser::doThat() {
 							_vm->_avalot->_objects[kObjectBadge - 1] = false;
 							_vm->_avalot->_objects[kObjectHabit - 1] = true;
 							_vm->_avalot->_givenBadgeToIby = true;
-							_vm->_background->drawBackgroundSprite(-1, -1, 7);
-							_vm->_background->drawBackgroundSprite(-1, -1, 8);
+							_vm->_background->draw(-1, -1, 7);
+							_vm->_background->draw(-1, -1, 8);
 						} else
 							heyThanks();
 						break;
@@ -1909,7 +1908,7 @@ void Parser::doThat() {
 				_vm->_avalot->_objects[kObjectLute - 1] = true;
 				_vm->_avalot->refreshObjectList();
 				_vm->_avalot->_wonNim = true;
-				_vm->_background->drawBackgroundSprite(-1, -1, 0); // Show the settle with no lute on it.
+				_vm->_background->draw(-1, -1, 0); // Show the settle with no lute on it.
 				_vm->_avalot->incScore(7); // 7 points for winning!
 
 				if (_playedNim == 1)
@@ -2070,11 +2069,11 @@ void Parser::doThat() {
 					if (_alcoholLevel == 0)
 						_vm->_avalot->incScore(3);
 
-					_vm->_background->drawBackgroundSprite(-1, -1, 11);
+					_vm->_background->draw(-1, -1, 11);
 					_vm->_dialogs->displayText(booze[_thing - 51] + ", please." + Dialogs::kControlRegister + '1' + Dialogs::kControlSpeechBubble);
 					_vm->_avalot->_drinking = _thing;
 
-					_vm->_background->drawBackgroundSprite(-1, -1, 9);
+					_vm->_background->draw(-1, -1, 9);
 					_vm->_avalot->_malagauche = 177;
 					_vm->_timer->addTimer(27, Timer::kProcBuyDrinks, Timer::kReasonDrinks);
 					break;
@@ -2095,12 +2094,12 @@ void Parser::doThat() {
 							return;
 						}
 
-						_vm->_background->drawBackgroundSprite(-1, -1, 11);
+						_vm->_background->draw(-1, -1, 11);
 						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
 						_vm->_dialogs->displayText(tmpStr);
 						if (_alcoholLevel == 0)
 							_vm->_avalot->incScore(3);
-						_vm->_background->drawBackgroundSprite(-1, -1, 9);
+						_vm->_background->draw(-1, -1, 9);
 						_vm->_avalot->_malagauche = 177;
 
 						_vm->_timer->addTimer(27, Timer::kProcBuyWine, Timer::kReasonDrinks);
@@ -2270,7 +2269,7 @@ void Parser::doThat() {
 					_vm->_avalot->_avvyIsAwake = true;
 					_vm->_avalot->incScore(1);
 					_vm->_avalot->_avvyInBed = true;
-					_vm->_background->drawBackgroundSprite(-1, -1, 2); // Picture of Avvy, awake in bed.
+					_vm->_background->draw(-1, -1, 2); // Picture of Avvy, awake in bed.
 					if (_vm->_avalot->_teetotal)
 						_vm->_dialogs->displayScrollChain('d', 13);
 				} else

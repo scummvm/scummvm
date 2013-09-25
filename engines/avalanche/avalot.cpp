@@ -404,7 +404,7 @@ void Avalot::runAvalot() {
 
 		_clock.update();
 		_vm->_menu->update();
-		_vm->_background->updateBackgroundSprites();
+		_vm->_background->update();
 		_vm->_animation->animLink();
 		checkClick();
 		_vm->_timer->updateTimer();
@@ -643,7 +643,7 @@ void Avalot::loadRoom(byte num) {
 	file.close();
 
 	loadAlso(num);
-	_vm->_background->loadBackgroundSprites(num);
+	_vm->_background->load(num);
 	CursorMan.showMouse(true);
 }
 
@@ -682,7 +682,7 @@ void Avalot::findPeople(byte room) {
 
 void Avalot::exitRoom(byte x) {
 	_vm->_sound->stopSound();
-	_vm->_background->forgetBackgroundSprites();
+	_vm->_background->release();
 	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
 
 	switch (x) {
@@ -782,7 +782,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 	switch (roomId) {
 	case kRoomYours:
 		if (_avvyInBed) {
-			_vm->_background->drawBackgroundSprite(-1, -1, 2);
+			_vm->_background->draw(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_timer->addTimer(100, Timer::kProcArkataShouts, Timer::kReasonArkataShouts);
 		}
@@ -880,7 +880,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomBridge:
 		if (_drawbridgeOpen == 4) { // open
-			_vm->_background->drawBackgroundSprite(-1, -1, 2); // Position of drawbridge
+			_vm->_background->draw(-1, -1, 2); // Position of drawbridge
 			_vm->_graphics->refreshBackground();
 			_magics[kColorGreen - 1]._operation = Avalot::kMagicNothing; // You may enter the drawbridge.
 		}
@@ -904,10 +904,10 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		}
 
 		if (_tiedUp)
-			_vm->_background->drawBackgroundSprite(-1, -1, 1);
+			_vm->_background->draw(-1, -1, 1);
 
 		if (!_mushroomGrowing)
-			_vm->_background->drawBackgroundSprite(-1, -1, 2);
+			_vm->_background->draw(-1, -1, 2);
 		_vm->_graphics->refreshBackground();
 		break;
 
@@ -979,11 +979,11 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomArgentPub:
 		if (_wonNim)
-			_vm->_background->drawBackgroundSprite(-1, -1, 0);   // No lute by the settle.
+			_vm->_background->draw(-1, -1, 0);   // No lute by the settle.
 		_malagauche = 0; // Ready to boot Malagauche
 		if (_givenBadgeToIby) {
-			_vm->_background->drawBackgroundSprite(-1, -1, 7);
-			_vm->_background->drawBackgroundSprite(-1, -1, 8);
+			_vm->_background->draw(-1, -1, 7);
+			_vm->_background->draw(-1, -1, 8);
 		}
 		_vm->_graphics->refreshBackground();
 		break;
@@ -999,7 +999,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (_geidaFollows) {
 			putGeidaAt(4, ped);
 			if (_lustieIsAsleep) {
-				_vm->_background->drawBackgroundSprite(-1, -1, 4);
+				_vm->_background->draw(-1, -1, 4);
 				_vm->_graphics->refreshBackground();
 			}
 		}
@@ -1008,14 +1008,14 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 	case kRoomMusicRoom:
 		if (_jacquesState > 0) {
 			_jacquesState = 5;
-			_vm->_background->drawBackgroundSprite(-1, -1, 1);
+			_vm->_background->draw(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
-			_vm->_background->drawBackgroundSprite(-1, -1, 3);
+			_vm->_background->draw(-1, -1, 3);
 			_magics[kColorBrown - 1]._operation = Avalot::kMagicNothing;
 			_whereIs[kPeopleJacques - 150] = kRoomNowhere;
 		}
 		if (ped != 0) {
-			_vm->_background->drawBackgroundSprite(-1, -1, 5);
+			_vm->_background->draw(-1, -1, 5);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(6);
 			_vm->_sequence->thenShow(5);
@@ -1026,7 +1026,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomOutsideNottsPub:
 		if (ped == 2) {
-			_vm->_background->drawBackgroundSprite(-1, -1, 2);
+			_vm->_background->draw(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(3);
 			_vm->_sequence->thenShow(2);
@@ -1038,7 +1038,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomOutsideArgentPub:
 		if (ped == 2)  {
-			_vm->_background->drawBackgroundSprite(-1, -1, 5);
+			_vm->_background->draw(-1, -1, 5);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(6);
 			_vm->_sequence->thenShow(5);
@@ -1066,7 +1066,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 	case kRoomInsideCardiffCastle:
 		if (ped > 0) {
 			_vm->_animation->_sprites[1].init(10, false, _vm->_animation); // Define the dart.
-			_vm->_background->drawBackgroundSprite(-1, -1, 0);
+			_vm->_background->draw(-1, -1, 0);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(1);
 			if (_arrowInTheDoor)
@@ -1075,22 +1075,22 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 				_vm->_sequence->thenShow(2);
 
 			if (_takenPen)
-				_vm->_background->drawBackgroundSprite(-1, -1, 3);
+				_vm->_background->draw(-1, -1, 3);
 
 			_vm->_sequence->startToClose();
 		} else {
-			_vm->_background->drawBackgroundSprite(-1, -1, 0);
+			_vm->_background->draw(-1, -1, 0);
 			if (_arrowInTheDoor)
-				_vm->_background->drawBackgroundSprite(-1, -1, 2);
+				_vm->_background->draw(-1, -1, 2);
 			else
-				_vm->_background->drawBackgroundSprite(-1, -1, 1);
+				_vm->_background->draw(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 		}
 		break;
 
 	case kRoomAvvysGarden:
 		if (ped == 1)  {
-			_vm->_background->drawBackgroundSprite(-1, -1, 1);
+			_vm->_background->draw(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(2);
 			_vm->_sequence->thenShow(1);
@@ -1111,7 +1111,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 			_vm->_sequence->start_to_close();
 #endif
 
-			_vm->_background->drawBackgroundSprite(-1, -1, 1);
+			_vm->_background->draw(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(2);
 			_vm->_sequence->thenShow(1);
@@ -1122,7 +1122,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomAylesOffice:
 		if (_aylesIsAwake)
-			_vm->_background->drawBackgroundSprite(-1, -1, 1);
+			_vm->_background->draw(-1, -1, 1);
 		_vm->_graphics->refreshBackground();
 		break; // Ayles awake.
 
@@ -1143,14 +1143,14 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomNottsPub:
 		if (_sittingInPub)
-			_vm->_background->drawBackgroundSprite(-1, -1, 2);
+			_vm->_background->draw(-1, -1, 2);
 		_npcFacing = 1; // Port.
 		break;
 
 	case kRoomOutsideDucks:
 		if (ped == 2) {
 			// Shut the door
-			_vm->_background->drawBackgroundSprite(-1, -1, 2);
+			_vm->_background->draw(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
 			_vm->_sequence->firstShow(3);
 			_vm->_sequence->firstShow(2);

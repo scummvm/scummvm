@@ -97,7 +97,7 @@ void Sequence::callSequencer() {
 	}
 
 	if (curSeq <= 176) { // Show a frame.
-		_vm->_background->drawBackgroundSprite(-1, -1, curSeq - 1);
+		_vm->_background->draw(-1, -1, curSeq - 1);
 		shoveLeft();
 	}
 
