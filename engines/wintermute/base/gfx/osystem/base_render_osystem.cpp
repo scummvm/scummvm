@@ -53,8 +53,6 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_blankSurface = new Graphics::Surface();
 	_drawNum = 1;
 	_needsFlip = true;
-	_spriteBatch = false;
-	_batchNum = 0;
 	_skipThisFrame = false;
 	_previousTicket = nullptr;
 
@@ -302,10 +300,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 
 	if (owner) { // Fade-tickets are owner-less
 		RenderTicket compare(owner, nullptr, srcRect, dstRect, transform);
-		compare._batchNum = _batchNum;
-		if (_spriteBatch) {
-			_batchNum++;
-		}
 		RenderQueueIterator it;
 		// Avoid calling end() and operator* every time, when potentially going through
 		// LOTS of tickets.
@@ -678,14 +672,10 @@ void BaseRenderOSystem::endSaveLoad() {
 }
 
 bool BaseRenderOSystem::startSpriteBatch() {
-	_spriteBatch = true;
-	_batchNum = 1;
 	return STATUS_OK;
 }
 
 bool BaseRenderOSystem::endSpriteBatch() {
-	_spriteBatch = false;
-	_batchNum = 0;
 	return STATUS_OK;
 }
 

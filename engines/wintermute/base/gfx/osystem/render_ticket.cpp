@@ -42,7 +42,6 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 	_isValid(true),
 	_wantsDraw(true),
 	_transform(transform) {
-	_batchNum = 0;
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
@@ -87,7 +86,6 @@ RenderTicket::~RenderTicket() {
 
 bool RenderTicket::operator==(const RenderTicket &t) const {
 	if ((t._owner != _owner) ||
-		(t._batchNum != _batchNum) ||
 		(t._transform != _transform)  || 
 		(t._dstRect != _dstRect) ||
 		(t._srcRect != _srcRect) 

@@ -61,7 +61,6 @@ public:
 	void drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const;
 
 	Common::Rect _dstRect;
-	uint32 _batchNum;
 
 	bool _isValid;
 	bool _wantsDraw;
