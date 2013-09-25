@@ -156,7 +156,7 @@ void StringManager::parseTag(const Common::String &tagString, uint lineNumber) {
 		token = tokenizer.nextToken();
 	}
 
-	TextFragment fragment = _inGameText->fragments.back();
+	TextFragment fragment;
 
 	if (fontName.empty()) {
 		fragment.style.font = _lastStyle.font;
