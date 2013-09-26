@@ -70,11 +70,11 @@ private:
 	AvalancheEngine *_vm;
 
 	void shoveLeft(); // This is called by Timer when it's time to do another frame. It shifts everything to the left.
-	void firstShow(byte what);
-	void thenShow(byte what);
-	void thenFlip(Room where, byte ped);
-	void startToClose();
-	void startToOpen();
+	void init(byte what);
+	void add(byte what);
+	void switchRoom(Room where, byte ped);
+	void startTimer();
+	void startTimerImmobilized();
 };
 
 } // End of namespace Avalanche.

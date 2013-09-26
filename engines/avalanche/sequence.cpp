@@ -41,14 +41,14 @@ Sequence::Sequence(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-void Sequence::firstShow(byte what) {
+void Sequence::init(byte what) {
 	_seq[0] = what;
 
 	for (int i = 1; i < kSeqLength; i++)
 		_seq[i] = 0;
 }
 
-void Sequence::thenShow(byte what) {
+void Sequence::add(byte what) {
 	for (int16 i = 0; i < kSeqLength; i++) {
 		if (_seq[i] == 0) {
 			_seq[i] = what;
@@ -57,22 +57,22 @@ void Sequence::thenShow(byte what) {
 	}
 }
 
-void Sequence::thenFlip(Room where, byte ped) {
-	thenShow(kNowFlip);
+void Sequence::switchRoom(Room where, byte ped) {
+	add(kNowFlip);
 
 	_vm->_avalot->_flipToWhere = where;
 	_vm->_avalot->_flipToPed = ped;
 }
 
-void Sequence::startToClose() {
+void Sequence::startTimer() {
 	_vm->_timer->loseTimer(Timer::kReasonSequencer);
 	_vm->_timer->addTimer(7, Timer::kProcSequence, Timer::kReasonSequencer);
 }
 
-void Sequence::startToOpen() {
+void Sequence::startTimerImmobilized() {
 	_vm->_avalot->_userMovesAvvy = false; // They can't move.
 	_vm->_animation->stopWalking(); // And they're not moving now.
-	startToClose(); // Apart from that, it's the same thing.
+	startTimer(); // Apart from that, it's the same thing.
 }
 
 void Sequence::shoveLeft() {
@@ -101,129 +101,129 @@ void Sequence::callSequencer() {
 		shoveLeft();
 	}
 
-	startToClose(); // Make sure this PROC gets called again.
+	startTimer(); // Make sure this PROC gets called again.
 }
 
 void Sequence::startHallSeq(Room whither, byte ped) {
-	firstShow(1);
-	thenShow(2);
-	thenFlip(whither, ped);
-	startToOpen();
+	init(1);
+	add(2);
+	switchRoom(whither, ped);
+	startTimerImmobilized();
 }
 
 void Sequence::startOutsideSeq(Room whither, byte ped) {
-	firstShow(1);
-	thenShow(2);
-	thenShow(3);
-	thenFlip(whither, ped);
-	startToOpen();
+	init(1);
+	add(2);
+	add(3);
+	switchRoom(whither, ped);
+	startTimerImmobilized();
 }
 
 void Sequence::startCardiffSeq(Room whither, byte ped) {
-	firstShow(1);
-	thenShow(5);
-	thenFlip(whither, ped);
-	startToOpen();
+	init(1);
+	add(5);
+	switchRoom(whither, ped);
+	startTimerImmobilized();
 }
 
 void Sequence::startNaughtyDukeSeq() {
-	firstShow(2);
-	startToClose();
+	init(2);
+	startTimer();
 }
 
 void Sequence::startGardenSeq() {
-	firstShow(2);
-	thenShow(1);
-	thenShow(3);
-	startToClose();
+	init(2);
+	add(1);
+	add(3);
+	startTimer();
 }
 
 void Sequence::startDuckSeq() {
-	firstShow(3);
-	thenShow(2);
-	thenShow(1);
-	thenShow(4);
-	startToClose();
+	init(3);
+	add(2);
+	add(1);
+	add(4);
+	startTimer();
 }
 
 void Sequence::startNottsSeq() {
-	firstShow(3);
-	thenShow(2);
-	thenShow(1);
-	thenShow(4);
-	startToClose();
+	init(3);
+	add(2);
+	add(1);
+	add(4);
+	startTimer();
 }
 
 void Sequence::startLustiesSeq3(Room whither, byte ped) {
-	firstShow(4);
-	thenShow(5);
-	thenShow(6);
-	thenFlip(whither, ped);
-	startToOpen();
+	init(4);
+	add(5);
+	add(6);
+	switchRoom(whither, ped);
+	startTimerImmobilized();
 }
 
 void Sequence::startMusicRoomSeq2(Room whither, byte ped) {
-	firstShow(5);
-	thenShow(6);
-	thenFlip(whither, ped);
-	startToOpen();
+	init(5);
+	add(6);
+	switchRoom(whither, ped);
+	startTimerImmobilized();
 }
 
 void Sequence::startGeidaLuteSeq() {
-	firstShow(5);
-	thenShow(6); // He falls asleep...
-	startToClose(); // Not really closing, but we're using the same procedure.
+	init(5);
+	add(6); // He falls asleep...
+	startTimer(); // Not really closing, but we're using the same procedure.
 }
 
 void Sequence::startMusicRoomSeq() {
-	firstShow(6);
-	thenShow(5);
-	thenShow(7);
-	startToClose();
+	init(6);
+	add(5);
+	add(7);
+	startTimer();
 }
 
 void Sequence::startWinSeq() {
-	firstShow(7);
-	thenShow(8);
-	thenShow(9);
-	startToClose();
+	init(7);
+	add(8);
+	add(9);
+	startTimer();
 }
 
 void Sequence::startCupboardSeq() {
-	firstShow(8);
-	thenShow(7);
-	startToClose();
+	init(8);
+	add(7);
+	startTimer();
 }
 
 void Sequence::startLustiesSeq1() {
-	firstShow(8);
-	thenShow(7);
-	startToClose();
+	init(8);
+	add(7);
+	startTimer();
 }
 
 void Sequence::startLustiesSeq2(Room whither, byte ped) {
-	firstShow(8);
-	thenShow(9);
-	thenFlip(whither, ped);
-	startToOpen();
+	init(8);
+	add(9);
+	switchRoom(whither, ped);
+	startTimerImmobilized();
 }
 
 void Sequence::startCardiffSeq2() {
-	firstShow(1);
+	init(1);
 	if (_vm->_avalot->_arrowInTheDoor)
-		thenShow(3);
+		add(3);
 	else
-		thenShow(2);
+		add(2);
 
 	if (_vm->_avalot->_takenPen)
 		_vm->_background->draw(-1, -1, 3);
 
-	startToClose();
+	startTimer();
 }
 
 void Sequence::startDummySeq(Room whither, byte ped) {
-	thenFlip(whither, ped);
-	startToOpen();
+	switchRoom(whither, ped);
+	startTimerImmobilized();
 }
 
 void Sequence::synchronize(Common::Serializer &sz) {
