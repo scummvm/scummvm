@@ -72,8 +72,10 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+	Common::Language getLanguage() const;
 	bool hasFeature(EngineFeature f) const;
 	bool isDemo() const;
+	bool applyResourceFixes() const;
 	Common::String getTargetName() { return _targetName; };
 
 	Common::RandomSource *_rnd;

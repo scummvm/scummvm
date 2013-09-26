@@ -85,7 +85,25 @@ void ResourceMan::queryResource(uint32 fileHash, ResourceHandle &resourceHandle)
 	resourceHandle._extData = firstEntry ? firstEntry->archiveEntry->extData : NULL;
 }
 
-void ResourceMan::loadResource(ResourceHandle &resourceHandle) {
+struct EntrySizeFix {
+	uint32 fileHash;
+	uint32 offset;
+	uint32 diskSize;
+	uint32 size;
+	uint32 fixedSize;
+};
+
+static const EntrySizeFix entrySizeFixes[] = {
+	//  fileHash    offset   diskSize   size  fixedSize
+	// Fixes for the Russian "Dyadyushka Risech" version
+	// TODO
+	// Fixes for the Russian "Fargus" version
+	// TODO
+	//
+	{          0,        0,         0,     0,         0 }
+};
+
+void ResourceMan::loadResource(ResourceHandle &resourceHandle, bool applyResourceFixes) {
 	resourceHandle._data = NULL;
 	if (resourceHandle.isValid()) {
 		const uint32 fileHash = resourceHandle.fileHash();
@@ -97,8 +115,19 @@ void ResourceMan::loadResource(ResourceHandle &resourceHandle) {
 		if (resourceData->data != NULL) {
 			resourceData->dataRefCount++;
 		} else {
-			resourceData->data = new byte[resourceHandle._resourceFileEntry->archiveEntry->size];
-			resourceHandle._resourceFileEntry->archive->load(resourceHandle._resourceFileEntry->archiveEntry, resourceData->data, 0);
+			BlbArchiveEntry *entry = resourceHandle._resourceFileEntry->archiveEntry;
+
+			// Apply fixes for broken resources in Russian versions
+			if (applyResourceFixes) {
+				for (const EntrySizeFix *cur = entrySizeFixes; cur->fileHash > 0; ++cur) {
+					if (entry->fileHash == cur->fileHash && entry->offset == cur->offset &&
+						entry->diskSize == cur->diskSize && entry->size == cur->size)
+						entry->size = cur->fixedSize;
+				}
+			}
+
+			resourceData->data = new byte[entry->size];
+			resourceHandle._resourceFileEntry->archive->load(entry, resourceData->data, 0);
 			resourceData->dataRefCount = 1;
 		}
 		resourceHandle._data = resourceData->data;

@@ -577,7 +577,7 @@ AudioResourceManSoundItem::AudioResourceManSoundItem(NeverhoodEngine *vm, uint32
 void AudioResourceManSoundItem::loadSound() {
 	if (!_data && _resourceHandle.isValid() &&
 		(_resourceHandle.type() == kResTypeSound || _resourceHandle.type() == kResTypeMusic)) {
-		_vm->_res->loadResource(_resourceHandle);
+		_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 		_data = _resourceHandle.data();
 	}
 }
