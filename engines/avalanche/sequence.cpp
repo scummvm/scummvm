@@ -138,10 +138,9 @@ void Sequence::startGardenSeq() {
 	startToClose();
 }
 
-// FIXME! 2 firstShow()!
 void Sequence::startDuckSeq() {
 	firstShow(3);
-	firstShow(2);
+	thenShow(2);
 	thenShow(1);
 	thenShow(4);
 	startToClose();
