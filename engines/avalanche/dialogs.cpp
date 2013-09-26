@@ -178,8 +178,60 @@ void Dialogs::scrollModeNormal() {
 	warning("STUB: Scrolls::scrollModeNormal()");
 }
 
+void Dialogs::drawShadow(int16 x1, int16 y1, int16 x2, int16 y2) {
+	for (byte i = 0; i < 2; i ++) {
+		_vm->_graphics->_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x1 + i + 1, y2 - i), kColorWhite);
+		_vm->_graphics->_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x2 - i, y1 + i + 1), kColorWhite);
+
+		_vm->_graphics->_scrolls.fillRect(Common::Rect(x2 - i, y1 + i, x2 - i + 1, y2 - i + 1), kColorDarkgray);
+		_vm->_graphics->_scrolls.fillRect(Common::Rect(x1 + i, y2 - i, x2 - i, y2 - i + 1), kColorDarkgray);
+	}
+}
+
+void Dialogs::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text) {
+	CursorMan.showMouse(false);
+	
+	drawShadow(x1, y1, x2, y2);
+
+	bool offset = text.size() % 2;
+	x1 = (x2 - x1) / 2 + x1 - text.size() / 2 * 8 - offset * 3;
+	y1 = (y2 - y1) / 2 + y1 - 4;
+	_vm->_graphics->drawText(_vm->_graphics->_scrolls, text, _vm->_avalot->_font, 8, x1, y1, kColorBlue);
+	_vm->_graphics->drawText(_vm->_graphics->_scrolls, Common::String('_'), _vm->_avalot->_font, 8, x1, y1, kColorBlue);
+
+	CursorMan.showMouse(true);
+}
+
 void Dialogs::scrollModeDialogue() {
 	warning("STUB: Scrolls::scrollModeDialogue()");
+	// It should work with keypresses too! TODO: Implement it!
+
+	_vm->_avalot->loadMouse(5);
+
+	::Graphics::Surface temp;
+	temp.copyFrom(_vm->_graphics->_surface);
+	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
+
+	Common::Event event;
+	while (!_vm->shouldQuit()) {
+		_vm->_graphics->refreshScreen();
+
+		_vm->getEvent(event);
+		Common::Point cursorPos = _vm->getMousePos();
+		cursorPos.y /= 2;
+		if (_vm->shouldQuit() || (event.type == Common::EVENT_LBUTTONUP)) {
+			if ((cursorPos.x >= _shadowBoxX - 65) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX - 5) && (cursorPos.y <= _shadowBoxY - 10)) {
+				_scReturn = true;
+				break;
+			} else if ((cursorPos.x >= _shadowBoxX + 5) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX + 65) && (cursorPos.y <= _shadowBoxY - 10)) {
+				_scReturn = false;
+				break;
+			}
+		}
+	}
+
+	_vm->_graphics->_surface.copyFrom(temp);
+	temp.free();
 }
 
 void Dialogs::store(byte what, TuneType &played) {
@@ -457,14 +509,11 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 				_vm->_avalot->_scroll[i].deleteLastChar();
 				break;
 			case kControlQuestion:
-				//settextjustify(1, 1);
 				_shadowBoxX = mx + lx;
 				_shadowBoxY = my + ly;
 				_vm->_avalot->_scroll[i].setChar(' ', 0);
-				// byte groi = *_vm->_graphics->getPixel(0, 0);
-				// inc(diy,14);
-				_vm->_avalot->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
-				_vm->_avalot->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
+				drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
+				drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
 				break;
 			}
 
@@ -561,11 +610,6 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	resetScrollDriver();
 }
 
-bool Dialogs::displayQuestion(Common::String question) {
-	warning("STUB: Scrolls::displayQuestion()");
-	return true;
-}
-
 void Dialogs::reset() {
 	_vm->_avalot->_scrollNum = 1;
 	for (int i = 0; i < 15; i++) {
@@ -628,7 +672,7 @@ void Dialogs::callDialogDriver() {
 	_vm->_sound->stopSound();
 
 	setReadyLight(0);
-	_vm->_avalot->_scReturn = false;
+	_scReturn = false;
 	bool mouthnext = false;
 	bool call_spriterun = true; // Only call sprite_run the FIRST time.
 
@@ -670,7 +714,7 @@ void Dialogs::callDialogDriver() {
 
 				reset();
 
-				if (_vm->_avalot->_scReturn)
+				if (_scReturn)
 					return;
 				break;
 			case kControlBell:
@@ -712,7 +756,7 @@ void Dialogs::callDialogDriver() {
 
 				reset();
 
-				if (_vm->_avalot->_scReturn)
+				if (_scReturn)
 					return;
 				break;
 
@@ -807,6 +851,12 @@ void Dialogs::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A 
 	_vm->_avalot->_bufSize = text.size();
 	memcpy(_vm->_avalot->_buffer, text.c_str(), _vm->_avalot->_bufSize);
 	callDialogDriver();
+}
+
+bool Dialogs::displayQuestion(Common::String question) {
+	displayText(question + kControlNewLine + kControlQuestion);
+	warning("STUB: Dialogs::displayQuestion()");
+	return _scReturn;
 }
 
 void Dialogs::loadFont() {

@@ -97,10 +97,15 @@ private:
 	Common::Point _dodgeCoord;
 	byte _param; // For using arguments code
 	byte _useIcon;
+	bool _scReturn;
 
-	// These 3 functions are always passed as ScrollsFunctionType parameters.
+	// These 3 "Mode" functions are always passed as ScrollsFunctionType parameters.
 	void scrollModeNormal();
+	// The "asking" scroll. Used indirectly in diplayQuestion().
+	void drawShadow(int16 x1, int16 y1, int16 x2, int16 y2);
+	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text);
 	void scrollModeDialogue();
+	// Part of the harp mini-game.
 	void scrollModeMusic();
 
 	// These 2 are used only in musicalScroll().
