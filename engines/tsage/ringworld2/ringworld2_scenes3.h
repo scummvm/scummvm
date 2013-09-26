@@ -547,10 +547,10 @@ public:
 	SpeakerMiranda3400 _mirandaSpeaker;
 	SpeakerWebbster3400 _webbsterSpeaker;
 	SpeakerTeal3400 _tealSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
+	SceneActor _companion1;
+	SceneActor _companion2;
+	SceneActor _webbster;
+	SceneActor _teal;
 	SceneActor _actor5;
 	SceneActor _actor6;
 	SceneActor _actor7;

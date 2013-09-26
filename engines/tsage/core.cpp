@@ -2370,12 +2370,17 @@ void SceneObject::animate(AnimateMode animMode, ...) {
 
 	case ANIM_MODE_8:
 	case ANIM_MODE_9:
-		_field68 = va_arg(va, int);
-		_endAction = va_arg(va, Action *);
-		_frameChange = 1;
-		_endFrame = getFrameCount();
-		if (_frame == _endFrame)
-			setFrame(getNewFrame());
+		if (_animateMode == ANIM_MODE_9 && g_vm->getGameID() == GType_Ringworld2) {
+			_frameChange = -1;
+			_field2E = _position;
+		} else {
+			_field68 = va_arg(va, int);
+			_endAction = va_arg(va, Action *);
+			_frameChange = 1;
+			_endFrame = getFrameCount();
+			if (_frame == _endFrame)
+				setFrame(getNewFrame());
+		}
 		break;
 	}
 	va_end(va);
