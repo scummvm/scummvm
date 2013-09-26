@@ -1025,7 +1025,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (ped == 2) {
 			_vm->_background->draw(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startNottsSeq();
+			_vm->_sequence->startDuckSeq();
 		}
 		break;
 
@@ -1984,7 +1984,7 @@ void Avalot::openDoor(Room whither, byte ped, byte magicnum) {
 		case 14:
 			if (_avvysInTheCupboard) {
 				_vm->_animation->hideInCupboard();
-				_vm->_sequence->startLustiesSeq1();
+				_vm->_sequence->startCupboardSeq();
 				return;
 			} else {
 				_vm->_animation->appearPed(0, 5);
