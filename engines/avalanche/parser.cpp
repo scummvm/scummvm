@@ -1547,10 +1547,7 @@ void Parser::playHarp() {
 
 void Parser::winSequence() {
 	_vm->_dialogs->displayScrollChain('q', 78);
-	_vm->_sequence->firstShow(7);
-	_vm->_sequence->thenShow(8);
-	_vm->_sequence->thenShow(9);
-	_vm->_sequence->startToClose();
+	_vm->_sequence->startWinSeq();
 	_vm->_timer->addTimer(30, Timer::kProcWinning, Timer::kReasonWinning);
 }
 

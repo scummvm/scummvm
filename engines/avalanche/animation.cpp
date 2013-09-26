@@ -1177,9 +1177,7 @@ void Animation::hideInCupboard() {
 			appearPed(0, 2); // Walk out of the cupboard.
 			_vm->_dialogs->displayText("You leave the cupboard. Nice to be out of there!");
 			_vm->_avalot->_avvysInTheCupboard = false;
-			_vm->_sequence->firstShow(8);
-			_vm->_sequence->thenShow(7);
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startCupboardSeq();
 		}
 	} else {
 		// Not hiding in the cupboard
