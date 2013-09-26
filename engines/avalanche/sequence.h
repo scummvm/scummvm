@@ -27,8 +27,8 @@
 
 /* SEQUENCE		The sequencer. */
 
-#ifndef AVALANCHE_SEQUENCE2_H
-#define AVALANCHE_SEQUENCE2_H
+#ifndef AVALANCHE_SEQUENCE_H
+#define AVALANCHE_SEQUENCE_H
 
 #include "common/scummsys.h"
 
@@ -40,12 +40,24 @@ private:
 	static const int16 kNowFlip = 177;
 	static const int16 kSeqLength = 10;
 
-public:
 	byte _seq[kSeqLength];
 
+	Room _flipToWhere;
+	byte _flipToPed;
+
+	AvalancheEngine *_vm;
+
+	void shoveLeft(); // This is called by Timer when it's time to do another frame. It shifts everything to the left.
+	void init(byte what);
+	void add(byte what);
+	void switchRoom(Room where, byte ped);
+	void startTimer();
+	void startTimerImmobilized();
+
+public:
 	Sequence(AvalancheEngine *vm);
 	void synchronize(Common::Serializer &sz);
-
+	void resetVariables();
 	void callSequencer();
 
 	void startCupboardSeq();
@@ -63,18 +75,8 @@ public:
 	void startDuckSeq();
 	void startCardiffSeq2();
 	void startDummySeq(Room whither, byte ped);
-
-private:
-	AvalancheEngine *_vm;
-
-	void shoveLeft(); // This is called by Timer when it's time to do another frame. It shifts everything to the left.
-	void init(byte what);
-	void add(byte what);
-	void switchRoom(Room where, byte ped);
-	void startTimer();
-	void startTimerImmobilized();
 };
 
 } // End of namespace Avalanche.
 
-#endif // AVALANCHE_SEQUENCE2_H
+#endif // AVALANCHE_SEQUENCE_H

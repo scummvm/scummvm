@@ -242,8 +242,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_avalot->_nextBell);
 	sz.syncAsByte(_avalot->_givenPotionToGeida);
 	sz.syncAsByte(_avalot->_lustieIsAsleep);
-	sz.syncAsByte(_avalot->_flipToWhere);
-	sz.syncAsByte(_avalot->_flipToPed);
 	sz.syncAsByte(_avalot->_beenTiedUp);
 	sz.syncAsByte(_avalot->_sittingInPub);
 	sz.syncAsByte(_avalot->_spurgeTalkCount);

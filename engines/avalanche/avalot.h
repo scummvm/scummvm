@@ -225,8 +225,6 @@ public:
 	byte _nextBell; // For the ringing.
 	bool _givenPotionToGeida; // Does Geida have the potion?
 	bool _lustieIsAsleep; // Is BDL asleep?
-	Room _flipToWhere;
-	byte _flipToPed; // For the sequencer.
 	bool _beenTiedUp; // In r__Robins.
 	bool _sittingInPub; // Are you sitting down in the pub?
 	byte _spurgeTalkCount; // Count for talking to Spurge.
