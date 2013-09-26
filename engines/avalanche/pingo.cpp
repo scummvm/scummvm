@@ -76,7 +76,7 @@ void Pingo::zonk() {
 
 void Pingo::winningPic() {
 	Common::File f;
-	_vm->_avalot->dusk();
+	_vm->dusk();
 
 	if (!f.open("finale.avd"))
 		error("AVALANCHE: Lucerna: File not found: finale.avd");
@@ -95,11 +95,11 @@ void Pingo::winningPic() {
 
 	warning("STUB: Pingo::winningPic()");
 
-	_vm->_avalot->dawn();
+	_vm->dawn();
 
 #if 0
 	do {
-		_vm->_avalot->check();
+		_vm->check();
 	} while (!(keypressed() || (mrelease > 0)));
 	while (keypressed())
 		char r = readkey();

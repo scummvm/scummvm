@@ -53,28 +53,28 @@ void Background::update() {
 	if (_vm->_menu->isActive())
 		return; // No animation when the menus are up.
 
-	switch (_vm->_avalot->_room) {
+	switch (_vm->_room) {
 	case kRoomOutsideArgentPub:
-		if ((_vm->_avalot->_roomTime % 12) == 0)
-			draw(-1, -1, (_vm->_avalot->_roomTime / 12) % 4);
+		if ((_vm->_roomTime % 12) == 0)
+			draw(-1, -1, (_vm->_roomTime / 12) % 4);
 		break;
 	case kRoomBrummieRoad:
-		if ((_vm->_avalot->_roomTime % 2) == 0)
-			draw(-1, -1, (_vm->_avalot->_roomTime / 2) % 4);
+		if ((_vm->_roomTime % 2) == 0)
+			draw(-1, -1, (_vm->_roomTime / 2) % 4);
 		break;
 	case kRoomBridge:
-		if ((_vm->_avalot->_roomTime % 2) == 0)
-			draw(-1, -1, 3 + (_vm->_avalot->_roomTime / 2) % 4);
+		if ((_vm->_roomTime % 2) == 0)
+			draw(-1, -1, 3 + (_vm->_roomTime / 2) % 4);
 		break;
 	case kRoomYours:
-		if ((!_vm->_avalot->_avvyIsAwake) && ((_vm->_avalot->_roomTime % 4) == 0))
-			draw(-1, -1, (_vm->_avalot->_roomTime / 12) % 2);
+		if ((!_vm->_avvyIsAwake) && ((_vm->_roomTime % 4) == 0))
+			draw(-1, -1, (_vm->_roomTime / 12) % 2);
 		break;
 	case kRoomArgentPub:
-		if (((_vm->_avalot->_roomTime % 7) == 1) && (_vm->_avalot->_malagauche != 177)) {
+		if (((_vm->_roomTime % 7) == 1) && (_vm->_malagauche != 177)) {
 			// Malagauche cycle.
-			_vm->_avalot->_malagauche++;
-			switch (_vm->_avalot->_malagauche) {
+			_vm->_malagauche++;
+			switch (_vm->_malagauche) {
 			case 1:
 			case 11:
 			case 21:
@@ -90,12 +90,12 @@ void Background::update() {
 				draw(-1, -1, 12); // Winks.
 				break;
 			case 33:
-				_vm->_avalot->_malagauche = 0;
+				_vm->_malagauche = 0;
 				break;
 			}
 		}
 
-		switch (_vm->_avalot->_roomTime % 200) {
+		switch (_vm->_roomTime % 200) {
 		case 179:
 		case 197:
 			draw(-1, -1, 4); // Dogfood's drinking cycle.
@@ -108,13 +108,13 @@ void Background::update() {
 			draw(-1, -1, 6);
 			break;
 		case 199:
-			_vm->_avalot->_npcFacing = 177; // Impossible value for this.
+			_vm->_npcFacing = 177; // Impossible value for this.
 			break;
 		}
 
-		if ((_vm->_avalot->_roomTime % 200 >= 0) && (_vm->_avalot->_roomTime % 200 <= 178)) { // Normally.
+		if ((_vm->_roomTime % 200 >= 0) && (_vm->_roomTime % 200 <= 178)) { // Normally.
 			byte direction = 0;
-			uint16 angle = _vm->_avalot->bearing(1);
+			uint16 angle = _vm->bearing(1);
 			if (((angle >= 1) && (angle <= 90)) || ((angle >= 358) && (angle <= 360)))
 				direction = 3;
 			else if ((angle >= 293) && (angle <= 357))
@@ -122,15 +122,15 @@ void Background::update() {
 			else if ((angle >= 271) && (angle <= 292))
 				direction = 4;
 
-			if (direction != _vm->_avalot->_npcFacing) { // Dogfood.
+			if (direction != _vm->_npcFacing) { // Dogfood.
 				draw(-1, -1, direction - 1);
-				_vm->_avalot->_npcFacing = direction;
+				_vm->_npcFacing = direction;
 			}
 		}
 		break;
 	case kRoomWestHall:
-		if ((_vm->_avalot->_roomTime % 3) == 0) {
-			switch ((_vm->_avalot->_roomTime / int32(3)) % int32(6)) {
+		if ((_vm->_roomTime % 3) == 0) {
+			switch ((_vm->_roomTime / int32(3)) % int32(6)) {
 			case 4:
 				draw(-1, -1, 0);
 				break;
@@ -147,10 +147,10 @@ void Background::update() {
 		}
 		break;
 	case kRoomLustiesRoom:
-		if (!(_vm->_avalot->_lustieIsAsleep)) {
+		if (!(_vm->_lustieIsAsleep)) {
 			byte direction = 0;
-			uint16 angle = _vm->_avalot->bearing(1);
-			if ((_vm->_avalot->_roomTime % 45) > 42)
+			uint16 angle = _vm->bearing(1);
+			if ((_vm->_roomTime % 45) > 42)
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
 			else if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
@@ -160,15 +160,15 @@ void Background::update() {
 			else if ((angle >= 181) && (angle <= 314))
 				direction = 3; // Right.
 
-			if (direction != _vm->_avalot->_npcFacing) { // du Lustie.
+			if (direction != _vm->_npcFacing) { // du Lustie.
 				draw(-1, -1, direction - 1);
-				_vm->_avalot->_npcFacing = direction;
+				_vm->_npcFacing = direction;
 			}
 		}
 		break;
 	case kRoomAylesOffice:
-		if ((!_vm->_avalot->_aylesIsAwake) && (_vm->_avalot->_roomTime % 14 == 0)) {
-			switch ((_vm->_avalot->_roomTime / 14) % 2) {
+		if ((!_vm->_aylesIsAwake) && (_vm->_roomTime % 14 == 0)) {
+			switch ((_vm->_roomTime / 14) % 2) {
 			case 0:
 				draw(-1, -1, 0);  // Frame 2: EGA.
 				break;
@@ -179,8 +179,8 @@ void Background::update() {
 		}
 		break;
 	case kRoomRobins:
-		if (_vm->_avalot->_tiedUp) {
-			switch (_vm->_avalot->_roomTime % 54) {
+		if (_vm->_tiedUp) {
+			switch (_vm->_roomTime % 54) {
 			case 20:
 				draw(-1, -1, 3); // Frame 4: Avalot blinks.
 				break;
@@ -193,7 +193,7 @@ void Background::update() {
 	case kRoomNottsPub: {
 		// Bearing of Avvy from Port.
 		byte direction = 0;
-		uint16 angle = _vm->_avalot->bearing(4);
+		uint16 angle = _vm->bearing(4);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 2; // Middle.
 		else if ((angle >= 45) && (angle <= 180))
@@ -201,15 +201,15 @@ void Background::update() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_avalot->_roomTime % 60) > 57)
+		if ((_vm->_roomTime % 60) > 57)
 			direction--; // Blinks.
 
-		if (direction != _vm->_avalot->_npcFacing) { // Port.
+		if (direction != _vm->_npcFacing) { // Port.
 			draw(-1, -1, direction - 1);
-			_vm->_avalot->_npcFacing = direction;
+			_vm->_npcFacing = direction;
 		}
 
-		switch (_vm->_avalot->_roomTime % 50) {
+		switch (_vm->_roomTime % 50) {
 		case 45 :
 			draw(-1, -1, 8); // Spurge blinks.
 			break;
@@ -220,12 +220,12 @@ void Background::update() {
 		break;
 	  }
 	case kRoomDucks: {
-		if ((_vm->_avalot->_roomTime % 3) == 0) // The fire flickers.
-			draw(-1, -1, (_vm->_avalot->_roomTime / 3) % 3);
+		if ((_vm->_roomTime % 3) == 0) // The fire flickers.
+			draw(-1, -1, (_vm->_roomTime / 3) % 3);
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
-		uint16 angle = _vm->_avalot->bearing(1);
+		uint16 angle = _vm->bearing(1);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 4; // Middle.
 		else if ((angle >= 45) && (angle <= 180))
@@ -233,26 +233,26 @@ void Background::update() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_avalot->_roomTime % 45) > 42)
+		if ((_vm->_roomTime % 45) > 42)
 			direction++; // Duck blinks.
 
-		if (direction != _vm->_avalot->_npcFacing) { // Duck.
+		if (direction != _vm->_npcFacing) { // Duck.
 			draw(-1, -1, direction - 1);
-			_vm->_avalot->_npcFacing = direction;
+			_vm->_npcFacing = direction;
 		}
 		break;
 	   }
 	}
 
-	if ((_vm->_avalot->_bellsAreRinging) && (_vm->_avalot->setFlag('B'))) {
+	if ((_vm->_bellsAreRinging) && (_vm->setFlag('B'))) {
 		// They're ringing the bells.
-		switch (_vm->_avalot->_roomTime % 4) {
+		switch (_vm->_roomTime % 4) {
 		case 1:
-			if (_vm->_avalot->_nextBell < 5)
-				_vm->_avalot->_nextBell = 12;
-			_vm->_avalot->_nextBell--;
+			if (_vm->_nextBell < 5)
+				_vm->_nextBell = 12;
+			_vm->_nextBell--;
 			// CHECKME: 2 is a guess. No length in the original? 
-			_vm->_sound->playNote(_vm->_avalot->kNotes[_vm->_avalot->_nextBell], 2);
+			_vm->_sound->playNote(_vm->kNotes[_vm->_nextBell], 2);
 			break;
 		case 2:
 			_vm->_sound->stopSound();
