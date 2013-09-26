@@ -28,16 +28,6 @@
 /* AVALOT		The kernel of the program. */
 
 #include "avalanche/avalanche.h"
-#include "avalanche/graphics.h"
-#include "avalanche/avalot.h"
-#include "avalanche/animation.h"
-#include "avalanche/dialogs.h"
-#include "avalanche/menu.h"
-#include "avalanche/pingo.h"
-#include "avalanche/timer.h"
-#include "avalanche/background.h"
-#include "avalanche/closing.h"
-#include "avalanche/enums.h"
 
 #include "common/file.h"
 #include "common/random.h"
@@ -47,10 +37,10 @@
 
 namespace Avalanche {
 
-const char *Avalot::kVersionNum = "1.30";
-const char *Avalot::kCopyright = "1995";
+const char *AvalancheEngine::kVersionNum = "1.30";
+const char *AvalancheEngine::kCopyright = "1995";
 
-const MouseHotspotType Avalot::kMouseHotSpots[9] = {
+const MouseHotspotType AvalancheEngine::kMouseHotSpots[9] = {
 	{8,0}, // 0 - up-arrow
 	{0,0}, // 1 - screwdriver
 	{15,6}, // 2 - right-arrow
@@ -63,7 +53,7 @@ const MouseHotspotType Avalot::kMouseHotSpots[9] = {
 };
 
 // Art gallery at 2,1; notice about this at 2,2.
-const int32 Avalot::kCatacombMap[8][8] = {
+const int32 AvalancheEngine::kCatacombMap[8][8] = {
 	// Geida's room
 	// 1       2	   3     | 4	   5	   6	   7       8
 	{0x204,	 0x200,  0xd0f0, 0xf0ff, 0xff,   0xd20f, 0xd200, 0x200},
@@ -113,11 +103,11 @@ const int32 Avalot::kCatacombMap[8][8] = {
 		7     = wall with door and candles,
 		F     = straight-through corridor. */
 
-const char Avalot::kSpludwicksOrder[3] = {kObjectOnion, kObjectInk, kObjectMushroom};
+const char AvalancheEngine::kSpludwicksOrder[3] = {kObjectOnion, kObjectInk, kObjectMushroom};
 
 // A quasiped defines how people who aren't sprites talk. For example, quasiped
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
-const QuasipedType Avalot::kQuasipeds[16] = {
+const QuasipedType AvalancheEngine::kQuasipeds[16] = {
 //_whichPed, _foregroundColor,   _room,      _backgroundColor,     _who
 	{1, kColorLightgray,    kRoomArgentPub,    kColorBrown,    kPeopleDogfood},   // A: Dogfood (screen 19).
 	{2, kColorGreen,        kRoomArgentPub,    kColorWhite,    kPeopleIbythneth}, // B: Ibythneth (screen 19).
@@ -137,14 +127,14 @@ const QuasipedType Avalot::kQuasipeds[16] = {
 	{1, kColorLightgreen,   kRoomDucks,        kColorDarkgray, kPeopleDrDuck}     // P: Duck (screen 51).
 };
 
-const uint16 Avalot::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
-const TuneType Avalot::kTune = {
+const uint16 AvalancheEngine::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
+const TuneType AvalancheEngine::kTune = {
 	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
 	kPitchLower, kPitchHigher, kPitchHigher, kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher,
 	kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
 };
 
-Room Avalot::_whereIs[29] = {
+Room AvalancheEngine::_whereIs[29] = {
 	// The Lads
 	kRoomYours, // Avvy
 	kRoomSpludwicks, // Spludwick
@@ -240,14 +230,14 @@ void Clock::plotHands() {
 }
 
 void Clock::chime() {
-	if ((_oldHour == 17717) || (!_vm->_avalot->_soundFx)) // Too high - must be first time around
+	if ((_oldHour == 17717) || (!_vm->_soundFx)) // Too high - must be first time around
 		return;
 	
 	byte hour = _hour % 12;
 	if (hour == 0)
 		hour = 12;
 
-	_vm->_avalot->setMousePointerWait();
+	_vm->setMousePointerWait();
 
 	for (int i = 1; i <= hour; i++) {
 		for (int j = 1; j <= 3; j++)
@@ -258,42 +248,13 @@ void Clock::chime() {
 }
 
 
-Avalot::Avalot(AvalancheEngine *vm) : _fxHidden(false), _clock(vm), _interrogation(0) {
-	_vm = vm;
-
-	// Needed because of Lucerna::load_also()
-	for (int i = 0; i < 31; i++) {
-		for (int j = 0; j < 2; j++)
-			_also[i][j] = nullptr;
-	}
-
-	_totalTime = 0;
-}
-
-Avalot::~Avalot() {
-	for (int i = 0; i < 31; i++) {
-		for (int j = 0; j < 2; j++) {
-			if (_also[i][j] != nullptr)  {
-				delete _also[i][j];
-				_also[i][j] = nullptr;
-			}
-		}
-	}
-
-	for (int i = 0; i < 9; i++) {
-		_digits[i].free();
-		_directions[i].free();
-	}
-	_digits[9].free();
-}
-
-void Avalot::handleKeyDown(Common::Event &event) {
-	_vm->_sound->click();
+void AvalancheEngine::handleKeyDown(Common::Event &event) {
+	_sound->click();
 
 	if ((Common::KEYCODE_F1 <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_F15))
-		_vm->_parser->handleFunctionKey(event);
+		_parser->handleFunctionKey(event);
 	else if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
-		_vm->_parser->handleInputText(event);
+		_parser->handleInputText(event);
 	else
 		switch (event.kbd.keycode) { // We can control Avvy with the numpad as well.
 		case Common::KEYCODE_KP8:
@@ -335,15 +296,15 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP5:
 		if (_alive && _avvyIsAwake) {
-			_vm->_animation->handleMoveKey(event); // Fallthroughs are intended.
+			_animation->handleMoveKey(event); // Fallthroughs are intended.
 			drawDirection();
 			return;
 		}
 	case Common::KEYCODE_BACKSPACE:
-		_vm->_parser->handleBackspace();
+		_parser->handleBackspace();
 		break;
 	case Common::KEYCODE_RETURN:
-		_vm->_parser->handleReturn();
+		_parser->handleReturn();
 		break;
 	default:
 		break;
@@ -352,89 +313,89 @@ void Avalot::handleKeyDown(Common::Event &event) {
 	drawDirection();
 }
 
-void Avalot::setup() {
+void AvalancheEngine::setup() {
 	init();
 
-	_vm->_dialogs->reset();
+	_dialogs->reset();
 	dusk();
 	loadDigits();
 
-	_vm->_parser->_inputTextPos = 0;
-	_vm->_parser->_quote = true;
+	_parser->_inputTextPos = 0;
+	_parser->_quote = true;
 
-	_vm->_animation->setDirection(kDirStopped);
-	_vm->_animation->resetAnims();
+	_animation->setDirection(kDirStopped);
+	_animation->resetAnims();
 
 	drawToolbar();
-	_vm->_dialogs->setReadyLight(2);
+	_dialogs->setReadyLight(2);
 
 	dawn();
-	_vm->_parser->_cursorState = false;
-	_vm->_parser->cursorOn();
-	_vm->_animation->_sprites[0]._speedX = kWalk;
-	_vm->_animation->updateSpeed();
+	_parser->_cursorState = false;
+	_parser->cursorOn();
+	_animation->_sprites[0]._speedX = kWalk;
+	_animation->updateSpeed();
 
-	_vm->_menu->init();
+	_menu->init();
 
 	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_thinks = 2; // You always have money.
-		thinkAbout(kObjectMoney, Avalot::kThing);
+		thinkAbout(kObjectMoney, kThing);
 
-		_vm->loadGame(loadSlot);
+		loadGame(loadSlot);
 	} else {
 		_isLoaded = false; // Set to true in _vm->loadGame().
 		newGame();
 
 		_soundFx = !_soundFx;
 		fxToggle();
-		thinkAbout(kObjectMoney, Avalot::kThing);
+		thinkAbout(kObjectMoney, kThing);
 
-		_vm->_dialogs->displayScrollChain('q', 83); // Info on the game, etc.
+		_dialogs->displayScrollChain('q', 83); // Info on the game, etc.
 	}
 }
 
-void Avalot::runAvalot() {
+void AvalancheEngine::runAvalot() {
 	setup();
 
 	do {
-		uint32 beginLoop = _vm->_system->getMillis();
+		uint32 beginLoop = _system->getMillis();
 
-		_vm->updateEvents(); // The event handler.
+		updateEvents(); // The event handler.
 
-		_clock.update();
-		_vm->_menu->update();
-		_vm->_background->update();
-		_vm->_animation->animLink();
+		_clock->update();
+		_menu->update();
+		_background->update();
+		_animation->animLink();
 		checkClick();
-		_vm->_timer->updateTimer();
+		_timer->updateTimer();
 
 #ifdef DEBUG
 		for (int i = 0; i < _lineNum; i++) {
 			LineType *curLine = &_lines[i];
-			_vm->_graphics->_surface.drawLine(curLine->_x1, curLine->_y1, curLine->_x2, curLine->_y2, curLine->col);
+			_graphics->_surface.drawLine(curLine->_x1, curLine->_y1, curLine->_x2, curLine->_y2, curLine->col);
 		}
 
 		for (int i = 0; i < _fieldNum; i++) {
 			FieldType *curField = &_fields[i];
 			if (curField->_x1 < 640)
-				_vm->_graphics->_surface.frameRect(Common::Rect(curField->_x1, curField->_y1, curField->_x2, curField->_y2), kColorLightmagenta);
+				_graphics->_surface.frameRect(Common::Rect(curField->_x1, curField->_y1, curField->_x2, curField->_y2), kColorLightmagenta);
 		}
 #endif
 
-		_vm->_graphics->refreshScreen();
+		_graphics->refreshScreen();
 
-		uint32 delay = _vm->_system->getMillis() - beginLoop;
+		uint32 delay = _system->getMillis() - beginLoop;
 		if (delay <= 55)
-			_vm->_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
-	} while (!_letMeOut && !_vm->shouldQuit());
+			_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
+	} while (!_letMeOut && !shouldQuit());
 
-	warning("STUB: Avalot::run()");
+	warning("STUB: run()");
 
-	_vm->_closing->exitGame();
+	_closing->exitGame();
 }
 
-void Avalot::init() {
+void AvalancheEngine::init() {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++)
 			_also[i][j] = nullptr;
@@ -470,31 +431,31 @@ void Avalot::init() {
  * Call a given Verb
  * @remarks	Originally called 'callverb'
  */
-void Avalot::callVerb(VerbCode id) {
-	if (id == _vm->_parser->kPardon) {
+void AvalancheEngine::callVerb(VerbCode id) {
+	if (id == _parser->kPardon) {
 		Common::String tmpStr = Common::String::format("The f5 key lets you do a particular action in certain " \
 			"situations. However, at the moment there is nothing assigned to it. You may press alt-A to see " \
 			"what the current setting of this key is.");
-		_vm->_dialogs->displayText(tmpStr);
+		_dialogs->displayText(tmpStr);
 	} else {
 		_weirdWord = false;
-		_vm->_parser->_polite = true;
-		_vm->_parser->_verb = id;
-		_vm->_parser->doThat();
+		_parser->_polite = true;
+		_parser->_verb = id;
+		_parser->doThat();
 	}
 }
 
-void Avalot::drawAlsoLines() {
+void AvalancheEngine::drawAlsoLines() {
 	CursorMan.showMouse(false);
 
-	_vm->_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
-	_vm->_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
+	_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
+	_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 
 	for (int i = 0; i < _lineNum; i++) {
 		// We had to check if the lines are within the borders of the screen.
-		if ((_lines[i]._x1 >= 0) && (_lines[i]._x1 < _vm->_graphics->kScreenWidth) && (_lines[i]._y1 >= 0) && (_lines[i]._y1 < _vm->_graphics->kScreenHeight)
-		 && (_lines[i]._x2 >= 0) && (_lines[i]._x2 < _vm->_graphics->kScreenWidth) && (_lines[i]._y2 >= 0) && (_lines[i]._y2 < _vm->_graphics->kScreenHeight))
-			_vm->_graphics->_magics.drawLine(_lines[i]._x1, _lines[i]._y1, _lines[i]._x2, _lines[i]._y2, _lines[i]._color);
+		if ((_lines[i]._x1 >= 0) && (_lines[i]._x1 < _graphics->kScreenWidth) && (_lines[i]._y1 >= 0) && (_lines[i]._y1 < _graphics->kScreenHeight)
+		 && (_lines[i]._x2 >= 0) && (_lines[i]._x2 < _graphics->kScreenWidth) && (_lines[i]._y2 >= 0) && (_lines[i]._y2 < _graphics->kScreenHeight))
+			_graphics->_magics.drawLine(_lines[i]._x1, _lines[i]._y1, _lines[i]._x2, _lines[i]._y2, _lines[i]._color);
 	}
 
 	CursorMan.showMouse(true);
@@ -504,7 +465,7 @@ void Avalot::drawAlsoLines() {
  * Check is it's possible to give something to Spludwick
  * @remarks	Originally called 'nextstring'
  */
-Common::String Avalot::readAlsoStringFromFile() {
+Common::String AvalancheEngine::readAlsoStringFromFile() {
 	Common::String str;
 	byte length = file.readByte();
 	for (int i = 0; i < length; i++)
@@ -512,12 +473,12 @@ Common::String Avalot::readAlsoStringFromFile() {
 	return str;
 }
 
-void Avalot::scram(Common::String &str) {
+void AvalancheEngine::scram(Common::String &str) {
 	for (uint i = 0; i < str.size(); i++)
 		str.setChar(str[i] ^ 177, i);
 }
 
-void Avalot::unScramble() {
+void AvalancheEngine::unScramble() {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (_also[i][j] != nullptr)
@@ -528,7 +489,7 @@ void Avalot::unScramble() {
 	scram(_flags);
 }
 
-void Avalot::loadAlso(byte num) {
+void AvalancheEngine::loadAlso(byte num) {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (_also[i][j] != nullptr)  {
@@ -616,10 +577,10 @@ void Avalot::loadAlso(byte num) {
 	}
 }
 
-void Avalot::loadRoom(byte num) {
+void AvalancheEngine::loadRoom(byte num) {
 	CursorMan.showMouse(false);
 
-	_vm->_graphics->fleshColors();
+	_graphics->fleshColors();
 
 	Common::String filename = Common::String::format("place%d.avd", num);
 	if (!file.open(filename))
@@ -637,21 +598,21 @@ void Avalot::loadRoom(byte num) {
 
 	file.seek(177);
 
-	_vm->_graphics->_background = _vm->_graphics->loadPictureRow(file, _vm->_graphics->kBackgroundWidth, _vm->_graphics->kBackgroundHeight);
-	_vm->_graphics->refreshBackground();
+	_graphics->_background = _graphics->loadPictureRow(file, _graphics->kBackgroundWidth, _graphics->kBackgroundHeight);
+	_graphics->refreshBackground();
 
 	file.close();
 
 	loadAlso(num);
-	_vm->_background->load(num);
+	_background->load(num);
 	CursorMan.showMouse(true);
 }
 
-void Avalot::zoomOut(int16 x, int16 y) {
+void AvalancheEngine::zoomOut(int16 x, int16 y) {
 	//setlinestyle(dottedln, 0, 1); TODO: Implement it with a dotted line style!!!
 
 	::Graphics::Surface backup;
-	backup.copyFrom(_vm->_graphics->_surface);
+	backup.copyFrom(_graphics->_surface);
 	
 	for (byte i = 1; i <= 20; i ++) {
 		int16 x1 = x - (x / 20) * i;
@@ -659,17 +620,17 @@ void Avalot::zoomOut(int16 x, int16 y) {
 		int16 x2 = x + (((639 - x) / 20) * i);
 		int16 y2 = y + (((161 - y) / 20) * i);
 
-		_vm->_graphics->_surface.frameRect(Common::Rect(x1, y1, x2, y2), kColorWhite);
-		_vm->_graphics->refreshScreen();
-		_vm->_system->delayMillis(17);
-		_vm->_graphics->_surface.copyFrom(backup);
-		_vm->_graphics->refreshScreen();
+		_graphics->_surface.frameRect(Common::Rect(x1, y1, x2, y2), kColorWhite);
+		_graphics->refreshScreen();
+		_system->delayMillis(17);
+		_graphics->_surface.copyFrom(backup);
+		_graphics->refreshScreen();
 	}
 
 	backup.free();
 }
 
-void Avalot::findPeople(byte room) {
+void AvalancheEngine::findPeople(byte room) {
 	for (int i = 1; i < 29; i++) {
 		if (_whereIs[i] == room) {
 			if (i < 25)
@@ -680,28 +641,28 @@ void Avalot::findPeople(byte room) {
 	}
 }
 
-void Avalot::exitRoom(byte x) {
-	_vm->_sound->stopSound();
-	_vm->_background->release();
+void AvalancheEngine::exitRoom(byte x) {
+	_sound->stopSound();
+	_background->release();
 	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
 
 	switch (x) {
 	case kRoomSpludwicks:
-		_vm->_timer->loseTimer(Timer::kReasonAvariciusTalks);
+		_timer->loseTimer(Timer::kReasonAvariciusTalks);
 		 _avariciusTalk = 0;
 		// He doesn't HAVE to be talking for this to work. It just deletes it IF it exists.
 		break;
 	case kRoomBridge:
 		if (_drawbridgeOpen > 0) {
 			_drawbridgeOpen = 4; // Fully open.
-			_vm->_timer->loseTimer(Timer::kReasonDrawbridgeFalls);
+			_timer->loseTimer(Timer::kReasonDrawbridgeFalls);
 		}
 		break;
 	case kRoomOutsideCardiffCastle:
-		_vm->_timer->loseTimer(Timer::kReasonCardiffsurvey);
+		_timer->loseTimer(Timer::kReasonCardiffsurvey);
 		break;
 	case kRoomRobins:
-		_vm->_timer->loseTimer(Timer::kReasonGettingTiedUp);
+		_timer->loseTimer(Timer::kReasonGettingTiedUp);
 		break;
 	}
 
@@ -719,8 +680,8 @@ void Avalot::exitRoom(byte x) {
  * but choosing another from the map.
  * @remarks	Originally called 'new_town'
  */
-void Avalot::enterNewTown() {
-	_vm->_menu->setup();
+void AvalancheEngine::enterNewTown() {
+	_menu->setup();
 
 	switch (_room) {
 	case kRoomOutsideNottsPub: // Entry into Nottingham.
@@ -744,18 +705,18 @@ void Avalot::enterNewTown() {
 		_rottenOnion = true; // You're holding the onion
 }
 
-void Avalot::putGeidaAt(byte whichPed, byte ped) {
+void AvalancheEngine::putGeidaAt(byte whichPed, byte ped) {
 	if (ped == 0)
 		return;
-	AnimationType *spr1 = &_vm->_animation->_sprites[1];
+	AnimationType *spr1 = &_animation->_sprites[1];
 
-	spr1->init(5, false, _vm->_animation); // load Geida
-	_vm->_animation->appearPed(1, whichPed);
+	spr1->init(5, false, _animation); // load Geida
+	_animation->appearPed(1, whichPed);
 	spr1->_callEachStepFl = true;
 	spr1->_eachStepProc = Animation::kProcGeida;
 }
 
-void Avalot::enterRoom(Room roomId, byte ped) {
+void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
 
 	findPeople(roomId);
@@ -782,24 +743,24 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 	switch (roomId) {
 	case kRoomYours:
 		if (_avvyInBed) {
-			_vm->_background->draw(-1, -1, 2);
-			_vm->_graphics->refreshBackground();
-			_vm->_timer->addTimer(100, Timer::kProcArkataShouts, Timer::kReasonArkataShouts);
+			_background->draw(-1, -1, 2);
+			_graphics->refreshBackground();
+			_timer->addTimer(100, Timer::kProcArkataShouts, Timer::kReasonArkataShouts);
 		}
 		break;
 
 	case kRoomOutsideYours:
 		if (ped > 0) {
-			AnimationType *spr1 = &_vm->_animation->_sprites[1];
+			AnimationType *spr1 = &_animation->_sprites[1];
 			if (!_talkedToCrapulus) {
 				_whereIs[kPeopleCrapulus - 150] = kRoomOutsideYours;
-				spr1->init(8, false, _vm->_animation); // load Crapulus
+				spr1->init(8, false, _animation); // load Crapulus
 
 				if (_roomCount[kRoomOutsideYours] == 1) {
-					_vm->_animation->appearPed(1, 3); // Start on the right-hand side of the screen.
+					_animation->appearPed(1, 3); // Start on the right-hand side of the screen.
 					spr1->walkTo(4); // Walks up to greet you.
 				} else {
-					_vm->_animation->appearPed(1, 4); // Starts where he was before.
+					_animation->appearPed(1, 4); // Starts where he was before.
 					spr1->_facingDir = kDirLeft;
 				}
 
@@ -810,10 +771,10 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 				_whereIs[kPeopleCrapulus - 150] = kRoomNowhere;
 
 			if (_crapulusWillTell) {
-				spr1->init(8, false, _vm->_animation);
-				_vm->_animation->appearPed(1, 1);
+				spr1->init(8, false, _animation);
+				_animation->appearPed(1, 1);
 				spr1->walkTo(3);
-				_vm->_timer->addTimer(20, Timer::kProcCrapulusSpludOut, Timer::kReasonCrapulusSaysSpludwickOut);
+				_timer->addTimer(20, Timer::kProcCrapulusSpludOut, Timer::kReasonCrapulusSaysSpludwickOut);
 				_crapulusWillTell = false;
 			}
 		}
@@ -821,17 +782,17 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomOutsideSpludwicks:
 		if ((_roomCount[kRoomOutsideSpludwicks] == 1) && (ped == 1)) {
-			_vm->_timer->addTimer(20, Timer::kProcBang, Timer::kReasonExplosion);
+			_timer->addTimer(20, Timer::kProcBang, Timer::kReasonExplosion);
 			_spludwickAtHome = true;
 		}
 		break;
 
 	case kRoomSpludwicks:
 		if (_spludwickAtHome) {
-			AnimationType *spr1 = &_vm->_animation->_sprites[1];
+			AnimationType *spr1 = &_animation->_sprites[1];
 			if (ped > 0) {
-				spr1->init(2, false, _vm->_animation); // load Spludwick
-				_vm->_animation->appearPed(1, 1);
+				spr1->init(2, false, _animation); // load Spludwick
+				_animation->appearPed(1, 1);
 				_whereIs[kPeopleSpludwick - 150] = kRoomSpludwicks;
 			}
 
@@ -845,21 +806,21 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (_geidaFollows)
 			putGeidaAt(4, ped);
 		if (_cwytalotGone) {
-			_magics[kColorLightred - 1]._operation = Avalot::kMagicNothing;
+			_magics[kColorLightred - 1]._operation = kMagicNothing;
 			_whereIs[kPeopleCwytalot - 150] = kRoomNowhere;
 		} else if (ped > 0) {
-			AnimationType *spr1 = &_vm->_animation->_sprites[1];
-			spr1->init(4, false, _vm->_animation); // 4 = Cwytalot
+			AnimationType *spr1 = &_animation->_sprites[1];
+			spr1->init(4, false, _animation); // 4 = Cwytalot
 			spr1->_callEachStepFl = true;
 			spr1->_eachStepProc = Animation::kProcFollowAvvyY;
 			_whereIs[kPeopleCwytalot - 150] = kRoomBrummieRoad;
 
 			if (_roomCount[kRoomBrummieRoad] == 1) { // First time here...
-				_vm->_animation->appearPed(1, 1); // He appears on the right of the screen...
+				_animation->appearPed(1, 1); // He appears on the right of the screen...
 				spr1->walkTo(3); // ...and he walks up...
 			} else {
 				// You've been here before.
-				_vm->_animation->appearPed(1, 3); // He's standing in your way straight away...
+				_animation->appearPed(1, 3); // He's standing in your way straight away...
 				spr1->_facingDir = kDirLeft;
 			}
 		}
@@ -867,22 +828,22 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomArgentRoad:
 		if ((_cwytalotGone) && (!_passedCwytalotInHerts) && (ped == 2) && (_roomCount[kRoomArgentRoad] > 3)) {
-			AnimationType *spr1 = &_vm->_animation->_sprites[1];
-			spr1->init(4, false, _vm->_animation); // 4 = Cwytalot again
-			_vm->_animation->appearPed(1, 0);
+			AnimationType *spr1 = &_animation->_sprites[1];
+			spr1->init(4, false, _animation); // 4 = Cwytalot again
+			_animation->appearPed(1, 0);
 			spr1->walkTo(1);
 			spr1->_vanishIfStill = true;
 			_passedCwytalotInHerts = true;
 			// whereis[#157] = r__Nowhere; // can we fit this in?
-			_vm->_timer->addTimer(20, Timer::kProcCwytalotInHerts, Timer::kReasonCwytalotInHerts);
+			_timer->addTimer(20, Timer::kProcCwytalotInHerts, Timer::kReasonCwytalotInHerts);
 		}
 		break;
 
 	case kRoomBridge:
 		if (_drawbridgeOpen == 4) { // open
-			_vm->_background->draw(-1, -1, 2); // Position of drawbridge
-			_vm->_graphics->refreshBackground();
-			_magics[kColorGreen - 1]._operation = Avalot::kMagicNothing; // You may enter the drawbridge.
+			_background->draw(-1, -1, 2); // Position of drawbridge
+			_graphics->refreshBackground();
+			_magics[kColorGreen - 1]._operation = kMagicNothing; // You may enter the drawbridge.
 		}
 		if (_geidaFollows)
 			putGeidaAt(ped + 2, ped); // load Geida
@@ -891,11 +852,11 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 	case kRoomRobins:
 		if ((ped > 0) && (!_beenTiedUp)) {
 			// A welcome party... or maybe not...
-			AnimationType *spr1 = &_vm->_animation->_sprites[1];
-			spr1->init(6, false, _vm->_animation);
-			_vm->_animation->appearPed(1, 1);
+			AnimationType *spr1 = &_animation->_sprites[1];
+			spr1->init(6, false, _animation);
+			_animation->appearPed(1, 1);
 			spr1->walkTo(2);
-			_vm->_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
+			_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
 		}
 
 		if (_beenTiedUp) {
@@ -904,31 +865,31 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		}
 
 		if (_tiedUp)
-			_vm->_background->draw(-1, -1, 1);
+			_background->draw(-1, -1, 1);
 
 		if (!_mushroomGrowing)
-			_vm->_background->draw(-1, -1, 2);
-		_vm->_graphics->refreshBackground();
+			_background->draw(-1, -1, 2);
+		_graphics->refreshBackground();
 		break;
 
 	case kRoomOutsideCardiffCastle:
 		if (ped > 0) {
-			AnimationType *spr1 = &_vm->_animation->_sprites[1];
+			AnimationType *spr1 = &_animation->_sprites[1];
 			switch (_cardiffQuestionNum) {
 			case 0 : // You've answered NONE of his questions.
-				spr1->init(9, false, _vm->_animation);
-				_vm->_animation->appearPed(1, 1);
+				spr1->init(9, false, _animation);
+				_animation->appearPed(1, 1);
 				spr1->walkTo(2);
-				_vm->_timer->addTimer(47, Timer::kProcCardiffSurvey, Timer::kReasonCardiffsurvey);
+				_timer->addTimer(47, Timer::kProcCardiffSurvey, Timer::kReasonCardiffsurvey);
 				break;
 			case 5 :
-				_magics[1]._operation = Avalot::kMagicNothing;
+				_magics[1]._operation = kMagicNothing;
 				break; // You've answered ALL his questions. => nothing happens.
 			default: // You've answered SOME of his questions.
-				spr1->init(9, false, _vm->_animation);
-				_vm->_animation->appearPed(1, 2);
+				spr1->init(9, false, _animation);
+				_animation->appearPed(1, 2);
 				spr1->_facingDir = kDirRight;
-				_vm->_timer->addTimer(3, Timer::kProcCardiffReturn, Timer::kReasonCardiffsurvey);
+				_timer->addTimer(3, Timer::kProcCardiffReturn, Timer::kReasonCardiffsurvey);
 			}
 		}
 
@@ -945,12 +906,12 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 			zoomOut(_peds[ped]._x, _peds[ped]._y);
 
 		if ((_objects[kObjectWine - 1]) && (_wineState != 3)) {
-			_vm->_dialogs->displayScrollChain('q', 9); // Don't want to waste the wine!
+			_dialogs->displayScrollChain('q', 9); // Don't want to waste the wine!
 			_objects[kObjectWine - 1] = false;
 			refreshObjectList();
 		}
 
-		_vm->_dialogs->displayScrollChain('q', 69);
+		_dialogs->displayScrollChain('q', 69);
 		break;
 
 	case kRoomCatacombs:
@@ -972,35 +933,35 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 			}
 
 			_enterCatacombsFromLustiesRoom = true;
-			_vm->_animation->catacombMove(ped);
+			_animation->catacombMove(ped);
 			_enterCatacombsFromLustiesRoom = false;
 		}
 		break;
 
 	case kRoomArgentPub:
 		if (_wonNim)
-			_vm->_background->draw(-1, -1, 0);   // No lute by the settle.
+			_background->draw(-1, -1, 0);   // No lute by the settle.
 		_malagauche = 0; // Ready to boot Malagauche
 		if (_givenBadgeToIby) {
-			_vm->_background->draw(-1, -1, 7);
-			_vm->_background->draw(-1, -1, 8);
+			_background->draw(-1, -1, 7);
+			_background->draw(-1, -1, 8);
 		}
-		_vm->_graphics->refreshBackground();
+		_graphics->refreshBackground();
 		break;
 
 	case kRoomLustiesRoom:
 		_npcFacing = 1; // du Lustie.
-		if (_vm->_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
-			_vm->_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
+		if (_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
+			_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
 		else if (!_enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
-			_vm->_timer->addTimer(3, Timer::kProcGreetsMonk, Timer::kReasonDuLustieTalks);
+			_timer->addTimer(3, Timer::kProcGreetsMonk, Timer::kReasonDuLustieTalks);
 
 		if (_geidaFollows) {
 			putGeidaAt(4, ped);
 			if (_lustieIsAsleep) {
-				_vm->_background->draw(-1, -1, 4);
-				_vm->_graphics->refreshBackground();
+				_background->draw(-1, -1, 4);
+				_graphics->refreshBackground();
 			}
 		}
 		break;
@@ -1008,43 +969,43 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 	case kRoomMusicRoom:
 		if (_jacquesState > 0) {
 			_jacquesState = 5;
-			_vm->_background->draw(-1, -1, 1);
-			_vm->_graphics->refreshBackground();
-			_vm->_background->draw(-1, -1, 3);
-			_magics[kColorBrown - 1]._operation = Avalot::kMagicNothing;
+			_background->draw(-1, -1, 1);
+			_graphics->refreshBackground();
+			_background->draw(-1, -1, 3);
+			_magics[kColorBrown - 1]._operation = kMagicNothing;
 			_whereIs[kPeopleJacques - 150] = kRoomNowhere;
 		}
 		if (ped != 0) {
-			_vm->_background->draw(-1, -1, 5);
-			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startMusicRoomSeq();
+			_background->draw(-1, -1, 5);
+			_graphics->refreshBackground();
+			_sequence->startMusicRoomSeq();
 		}
 		break;
 
 	case kRoomOutsideNottsPub:
 		if (ped == 2) {
-			_vm->_background->draw(-1, -1, 2);
-			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startDuckSeq();
+			_background->draw(-1, -1, 2);
+			_graphics->refreshBackground();
+			_sequence->startDuckSeq();
 		}
 		break;
 
 	case kRoomOutsideArgentPub:
 		if (ped == 2)  {
-			_vm->_background->draw(-1, -1, 5);
-			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startMusicRoomSeq();
+			_background->draw(-1, -1, 5);
+			_graphics->refreshBackground();
+			_sequence->startMusicRoomSeq();
 		}
 		break;
 
 	case kRoomWiseWomans: {
-		AnimationType *spr1 = &_vm->_animation->_sprites[1];
-		spr1->init(11, false, _vm->_animation);
+		AnimationType *spr1 = &_animation->_sprites[1];
+		spr1->init(11, false, _animation);
 		if ((_roomCount[kRoomWiseWomans] == 1) && (ped > 0)) {
-			_vm->_animation->appearPed(1, 1); // Start on the right-hand side of the screen.
+			_animation->appearPed(1, 1); // Start on the right-hand side of the screen.
 			spr1->walkTo(3); // Walks up to greet you.
 		} else {
-			_vm->_animation->appearPed(1, 3); // Starts where she was before.
+			_animation->appearPed(1, 3); // Starts where she was before.
 			spr1->_facingDir = kDirLeft;
 		}
 
@@ -1055,25 +1016,25 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomInsideCardiffCastle:
 		if (ped > 0) {
-			_vm->_animation->_sprites[1].init(10, false, _vm->_animation); // Define the dart.
-			_vm->_background->draw(-1, -1, 0);
-			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startCardiffSeq2();
+			_animation->_sprites[1].init(10, false, _animation); // Define the dart.
+			_background->draw(-1, -1, 0);
+			_graphics->refreshBackground();
+			_sequence->startCardiffSeq2();
 		} else {
-			_vm->_background->draw(-1, -1, 0);
+			_background->draw(-1, -1, 0);
 			if (_arrowInTheDoor)
-				_vm->_background->draw(-1, -1, 2);
+				_background->draw(-1, -1, 2);
 			else
-				_vm->_background->draw(-1, -1, 1);
-			_vm->_graphics->refreshBackground();
+				_background->draw(-1, -1, 1);
+			_graphics->refreshBackground();
 		}
 		break;
 
 	case kRoomAvvysGarden:
 		if (ped == 1)  {
-			_vm->_background->draw(-1, -1, 1);
-			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startGardenSeq();
+			_background->draw(-1, -1, 1);
+			_graphics->refreshBackground();
+			_sequence->startGardenSeq();
 		}
 		break;
 
@@ -1083,22 +1044,22 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (ped == 2)  {
 #if 0
 			// It was the original:
-			_vm->_celer->show_one(-1, -1, 2);
-			_vm->_sequence->first_show(1);
-			_vm->_sequence->then_show(3);
-			_vm->_sequence->start_to_close();
+			_celer->show_one(-1, -1, 2);
+			_sequence->first_show(1);
+			_sequence->then_show(3);
+			_sequence->start_to_close();
 #endif
 
-			_vm->_background->draw(-1, -1, 1);
-			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startGardenSeq();
+			_background->draw(-1, -1, 1);
+			_graphics->refreshBackground();
+			_sequence->startGardenSeq();
 		}
 		break;
 
 	case kRoomAylesOffice:
 		if (_aylesIsAwake)
-			_vm->_background->draw(-1, -1, 1);
-		_vm->_graphics->refreshBackground();
+			_background->draw(-1, -1, 1);
+		_graphics->refreshBackground();
 		break; // Ayles awake.
 
 	case kRoomGeidas:
@@ -1118,16 +1079,16 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 	case kRoomNottsPub:
 		if (_sittingInPub)
-			_vm->_background->draw(-1, -1, 2);
+			_background->draw(-1, -1, 2);
 		_npcFacing = 1; // Port.
 		break;
 
 	case kRoomOutsideDucks:
 		if (ped == 2) {
 			// Shut the door
-			_vm->_background->draw(-1, -1, 2);
-			_vm->_graphics->refreshBackground();
-			_vm->_sequence->startDuckSeq();
+			_background->draw(-1, -1, 2);
+			_graphics->refreshBackground();
+			_sequence->startDuckSeq();
 		}
 		break;
 
@@ -1140,7 +1101,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 	_isLoaded = false;
 }
 
-void Avalot::thinkAbout(byte object, bool type) {
+void AvalancheEngine::thinkAbout(byte object, bool type) {
 	const int16 picSize = 966;
 
 	_thinks = object;
@@ -1148,10 +1109,10 @@ void Avalot::thinkAbout(byte object, bool type) {
 
 	setMousePointerWait();
 
-	if (type == Avalot::kThing) {
+	if (type == kThing) {
 		if (!file.open("thinks.avd"))
 			error("AVALANCHE: Lucerna: File not found: thinks.avd");
-	} else { // Avalot::kPerson
+	} else { // kPerson
 		if (!file.open("folk.avd"))
 			error("AVALANCHE: Lucerna: File not found: folk.avd");
 
@@ -1165,8 +1126,8 @@ void Avalot::thinkAbout(byte object, bool type) {
 	CursorMan.showMouse(false);
 
 	file.seek(object * picSize + 65);
-	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(file);
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 205, 170);
+	::Graphics::Surface picture = _graphics->loadPictureGraphic(file);
+	_graphics->drawPicture(_graphics->_surface, picture, 205, 170);
 
 	picture.free();
 	file.close();
@@ -1175,7 +1136,7 @@ void Avalot::thinkAbout(byte object, bool type) {
 	_thinkThing = type;
 }
 
-void Avalot::loadDigits() {   // Load the scoring digits & rwlites
+void AvalancheEngine::loadDigits() {   // Load the scoring digits & rwlites
 	const byte digitsize = 134;
 	const byte rwlitesize = 126;
 
@@ -1184,36 +1145,36 @@ void Avalot::loadDigits() {   // Load the scoring digits & rwlites
 
 	for (int i = 0; i < 10; i++) {
 		file.seek(i * digitsize);
-		_digits[i] = _vm->_graphics->loadPictureGraphic(file);
+		_digits[i] = _graphics->loadPictureGraphic(file);
 	}
 
 	for (int i = 0; i < 9; i++) {
 		file.seek(10 * digitsize + i * rwlitesize);
-		_directions[i] = _vm->_graphics->loadPictureGraphic(file);
+		_directions[i] = _graphics->loadPictureGraphic(file);
 	}
 
 	file.close();
 }
 
-void Avalot::drawToolbar() {
+void AvalancheEngine::drawToolbar() {
 	if (!file.open("useful.avd"))
 		error("AVALANCHE: Lucerna: File not found: useful.avd");
 
 	file.seek(40);
 
 	CursorMan.showMouse(false);
-	::Graphics::Surface picture = _vm->_graphics->loadPictureGraphic(file);
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, picture, 5, 169);
+	::Graphics::Surface picture = _graphics->loadPictureGraphic(file);
+	_graphics->drawPicture(_graphics->_surface, picture, 5, 169);
 
 	picture.free();
 	file.close();
 
 	CursorMan.showMouse(true);
-	_vm->_animation->setOldDirection(kDirNone);
+	_animation->setOldDirection(kDirNone);
 	drawDirection();
 }
 
-void Avalot::drawScore() {
+void AvalancheEngine::drawScore() {
 	uint16 score = _dnascore;
 	int8 numbers[3] = {0, 0, 0};
 	for (int i = 0; i < 2; i++) {
@@ -1229,7 +1190,7 @@ void Avalot::drawScore() {
 
 	for (int i = 0; i < 3; i++) {
 		if (_scoreToDisplay[i] != numbers[i])
-			_vm->_graphics->drawPicture(_vm->_graphics->_surface, _digits[numbers[i]], 250 + (i + 1) * 15, 177);
+			_graphics->drawPicture(_graphics->_surface, _digits[numbers[i]], 250 + (i + 1) * 15, 177);
 	}
 
 	CursorMan.showMouse(true);
@@ -1238,63 +1199,63 @@ void Avalot::drawScore() {
 		_scoreToDisplay[i] = numbers[i];
 }
 
-void Avalot::incScore(byte num) {    
+void AvalancheEngine::incScore(byte num) {    
 	for (int i = 1; i <= num; i++) {
 		_dnascore++;
 
 		if (_soundFx) {
 			for (int j = 1; j <= 97; j++)
 				// Length os 2 is a guess, the original doesn't have a delay specified
-				_vm->_sound->playNote(177 + _dnascore * 3, 2);
+				_sound->playNote(177 + _dnascore * 3, 2);
 		}
 	}
-	warning("STUB: Avalot::points()");
+	warning("STUB: points()");
 
 	drawScore();
 }
 
-void Avalot::useCompass(const Common::Point &cursorPos) {
-	byte color = *(byte *)_vm->_graphics->_surface.getBasePtr(cursorPos.x, cursorPos.y / 2);
+void AvalancheEngine::useCompass(const Common::Point &cursorPos) {
+	byte color = *(byte *)_graphics->_surface.getBasePtr(cursorPos.x, cursorPos.y / 2);
 
 	switch (color) {
 	case kColorGreen:
-		_vm->_animation->setDirection(kDirUp);
-		_vm->_animation->setMoveSpeed(0, kDirUp);
+		_animation->setDirection(kDirUp);
+		_animation->setMoveSpeed(0, kDirUp);
 		drawDirection();
 		break;
 	case kColorBrown:
-		_vm->_animation->setDirection(kDirDown);
-		_vm->_animation->setMoveSpeed(0, kDirDown);
+		_animation->setDirection(kDirDown);
+		_animation->setMoveSpeed(0, kDirDown);
 		drawDirection();
 		break;
 	case kColorCyan:
-		_vm->_animation->setDirection(kDirLeft);
-		_vm->_animation->setMoveSpeed(0, kDirLeft);
+		_animation->setDirection(kDirLeft);
+		_animation->setMoveSpeed(0, kDirLeft);
 		drawDirection();
 		break;
 	case kColorLightmagenta:
-		_vm->_animation->setDirection(kDirRight);
-		_vm->_animation->setMoveSpeed(0, kDirRight);
+		_animation->setDirection(kDirRight);
+		_animation->setMoveSpeed(0, kDirRight);
 		drawDirection();
 		break;
 	case kColorRed:
 	case kColorWhite:
 	case kColorLightcyan:
 	case kColorYellow: // Fall-throughs are intended.
-		_vm->_animation->stopWalking();
+		_animation->stopWalking();
 		drawDirection();
 		break;
 	}
 }
 
-void Avalot::fxToggle() {
-	warning("STUB: Avalot::fxtoggle()");
+void AvalancheEngine::fxToggle() {
+	warning("STUB: fxtoggle()");
 }
 
-void Avalot::refreshObjectList() {
+void AvalancheEngine::refreshObjectList() {
 	_carryNum = 0;
 	if (_thinkThing && !_objects[_thinks - 1])
-		thinkAbout(kObjectMoney, Avalot::kThing); // you always have money
+		thinkAbout(kObjectMoney, kThing); // you always have money
 
 	for (int i = 0; i < kObjectNum; i++) {
 		if (_objects[i]) {
@@ -1307,15 +1268,15 @@ void Avalot::refreshObjectList() {
 /**
  * @remarks	Originally called 'verte'
  */
-void Avalot::guideAvvy(Common::Point cursorPos) {
+void AvalancheEngine::guideAvvy(Common::Point cursorPos) {
 	if (!_userMovesAvvy)
 		return;
 
 	cursorPos.y /= 2;
 	byte what;
 
-	// _vm->_animation->tr[0] is Avalot.)
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	// _animation->tr[0] is Avalot.)
+	AnimationType *avvy = &_animation->_sprites[0];
 	if (cursorPos.x < avvy->_x)
 		what = 1;
 	else if (cursorPos.x > (avvy->_x + avvy->_info._xLength))
@@ -1330,39 +1291,39 @@ void Avalot::guideAvvy(Common::Point cursorPos) {
 
 	switch (what) {
 	case 0:
-		_vm->_animation->stopWalking();
+		_animation->stopWalking();
 		break; // Clicked on Avvy: no movement.
 	case 1:
-		_vm->_animation->setMoveSpeed(0, kDirLeft);
+		_animation->setMoveSpeed(0, kDirLeft);
 		break;
 	case 2:
-		_vm->_animation->setMoveSpeed(0, kDirRight);
+		_animation->setMoveSpeed(0, kDirRight);
 		break;
 	case 3:
-		_vm->_animation->setMoveSpeed(0, kDirUp);
+		_animation->setMoveSpeed(0, kDirUp);
 		break;
 	case 4:
-		_vm->_animation->setMoveSpeed(0, kDirUpLeft);
+		_animation->setMoveSpeed(0, kDirUpLeft);
 		break;
 	case 5:
-		_vm->_animation->setMoveSpeed(0, kDirUpRight);
+		_animation->setMoveSpeed(0, kDirUpRight);
 		break;
 	case 6:
-		_vm->_animation->setMoveSpeed(0, kDirDown);
+		_animation->setMoveSpeed(0, kDirDown);
 		break;
 	case 7:
-		_vm->_animation->setMoveSpeed(0, kDirDownLeft);
+		_animation->setMoveSpeed(0, kDirDownLeft);
 		break;
 	case 8:
-		_vm->_animation->setMoveSpeed(0, kDirDownRight);
+		_animation->setMoveSpeed(0, kDirDownRight);
 		break;
 	}    // No other values are possible.
 
 	drawDirection();
 }
 
-void Avalot::checkClick() {
-	Common::Point cursorPos = _vm->getMousePos();
+void AvalancheEngine::checkClick() {
+	Common::Point cursorPos = getMousePos();
 	_onToolbar = kSlowComputer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
 
 	/*if (mrelease > 0)
@@ -1374,7 +1335,7 @@ void Avalot::checkClick() {
 		newMouse(7); //I-beam
 	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
 		newMouse(1); // screwdriver
-	else if (!_vm->_menu->isActive()) { // Dropdown can handle its own pointers.
+	else if (!_menu->isActive()) { // Dropdown can handle its own pointers.
 		if (_holdLeftMouse) {
 			newMouse(6); // Mark's crosshairs
 			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
@@ -1385,45 +1346,45 @@ void Avalot::checkClick() {
 	if (_holdLeftMouse) {
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_dropsOk)
-				_vm->_menu->update();
+				_menu->update();
 		} else if ((317 <= cursorPos.y) && (cursorPos.y <= 339)) { // Click on the command line.
-			_vm->_parser->_inputTextPos = (cursorPos.x - 23) / 8;
-			if (_vm->_parser->_inputTextPos > _vm->_parser->_inputText.size() + 1)
-				_vm->_parser->_inputTextPos = _vm->_parser->_inputText.size() + 1;
-			if (_vm->_parser->_inputTextPos < 1)
-				_vm->_parser->_inputTextPos = 1;
-			_vm->_parser->_inputTextPos--;
-			_vm->_parser->plotText();
+			_parser->_inputTextPos = (cursorPos.x - 23) / 8;
+			if (_parser->_inputTextPos > _parser->_inputText.size() + 1)
+				_parser->_inputTextPos = _parser->_inputText.size() + 1;
+			if (_parser->_inputTextPos < 1)
+				_parser->_inputTextPos = 1;
+			_parser->_inputTextPos--;
+			_parser->plotText();
 		} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399)) { // Check the toolbar.
 			if ((137 <= cursorPos.x) && (cursorPos.x <= 207)) { // Control Avvy with the compass.
 				if (_alive && _avvyIsAwake)
 					useCompass(cursorPos);
 			} else if ((208 <= cursorPos.x) && (cursorPos.x <= 260)) { // Examine the _thing.
 				do {
-					_vm->updateEvents();
+					updateEvents();
 				} while (_holdLeftMouse);
 
 				if (_thinkThing) {
-					_vm->_parser->_thing = _thinks;
-					_vm->_parser->_thing += 49;
-					_vm->_parser->_person = kPeoplePardon;
+					_parser->_thing = _thinks;
+					_parser->_thing += 49;
+					_parser->_person = kPeoplePardon;
 				} else {
-					_vm->_parser->_person = (People) _thinks;
-					_vm->_parser->_thing = _vm->_parser->kPardon;
+					_parser->_person = (People) _thinks;
+					_parser->_thing = _parser->kPardon;
 				}
 				callVerb(kVerbCodeExam);
 			} else if ((261 <= cursorPos.x) && (cursorPos.x <= 319)) { // Display the score.
 				do {
-					_vm->updateEvents();
+					updateEvents();
 				} while (_holdLeftMouse);
 
 				callVerb(kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
-				_vm->_animation->_sprites[0]._speedX = kWalk;
-				_vm->_animation->updateSpeed();
+				_animation->_sprites[0]._speedX = kWalk;
+				_animation->updateSpeed();
 			} else if ((358 <= cursorPos.x) && (cursorPos.x <= 395)) { // Change speed.
-				_vm->_animation->_sprites[0]._speedX = kRun;
-				_vm->_animation->updateSpeed();
+				_animation->_sprites[0]._speedX = kRun;
+				_animation->updateSpeed();
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxToggle();
 			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
@@ -1433,60 +1394,60 @@ void Avalot::checkClick() {
 	}
 }
 
-void Avalot::errorLed() {
-	warning("STUB: Avalot::errorled()");
+void AvalancheEngine::errorLed() {
+	warning("STUB: errorled()");
 }
 
-int8 Avalot::fades(int8 x) {
-	warning("STUB: Avalot::fades()");
+int8 AvalancheEngine::fades(int8 x) {
+	warning("STUB: fades()");
 	return 0;
 }
 
-void Avalot::fadeOut(byte n) {
-	warning("STUB: Avalot::fadeOut()");
+void AvalancheEngine::fadeOut(byte n) {
+	warning("STUB: fadeOut()");
 }
 
-void Avalot::dusk() {
-	warning("STUB: Avalot::dusk()");
+void AvalancheEngine::dusk() {
+	warning("STUB: dusk()");
 }
 
-void Avalot::fadeIn(byte n) {
-	warning("STUB: Avalot::fadeIn()");
+void AvalancheEngine::fadeIn(byte n) {
+	warning("STUB: fadeIn()");
 }
 
-void Avalot::dawn() {
-	warning("STUB: Avalot::dawn()");
+void AvalancheEngine::dawn() {
+	warning("STUB: dawn()");
 }
 
-void Avalot::drawDirection() { // It's data is loaded in load_digits().
-	if (_vm->_animation->getOldDirection() == _vm->_animation->getDirection())
+void AvalancheEngine::drawDirection() { // It's data is loaded in load_digits().
+	if (_animation->getOldDirection() == _animation->getDirection())
 		return;
 
-	_vm->_animation->setOldDirection(_vm->_animation->getDirection());
+	_animation->setOldDirection(_animation->getDirection());
 
 	CursorMan.showMouse(false);
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _directions[_vm->_animation->getDirection()], 0, 161);
+	_graphics->drawPicture(_graphics->_surface, _directions[_animation->getDirection()], 0, 161);
 	CursorMan.showMouse(true);
 }
 
 
-void Avalot::gameOver() {
+void AvalancheEngine::gameOver() {
 	_userMovesAvvy = false;
 
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	AnimationType *avvy = &_animation->_sprites[0];
 	int16 sx = avvy->_x;
 	int16 sy = avvy->_y;
 
 	avvy->remove();
-	avvy->init(12, true, _vm->_animation); // 12 = Avalot falls
+	avvy->init(12, true, _animation); // 12 = Avalot falls
 	avvy->_stepNum = 0;
 	avvy->appear(sx, sy, kDirUp);
 
-	_vm->_timer->addTimer(3, Timer::kProcAvalotFalls, Timer::kReasonFallingOver);
+	_timer->addTimer(3, Timer::kProcAvalotFalls, Timer::kReasonFallingOver);
 	_alive = false;
 }
 
-void Avalot::minorRedraw() {
+void AvalancheEngine::minorRedraw() {
 	dusk();
 
 	enterRoom(_room, 0); // Ped unknown or non-existant.
@@ -1498,13 +1459,13 @@ void Avalot::minorRedraw() {
 	dawn();
 }
 
-void Avalot::majorRedraw() {
-	warning("STUB: Avalot::major_redraw()");
+void AvalancheEngine::majorRedraw() {
+	warning("STUB: major_redraw()");
 }
 
-uint16 Avalot::bearing(byte whichPed) {
+uint16 AvalancheEngine::bearing(byte whichPed) {
 	static const double rad2deg = 180 / 3.14; // Pi
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	AnimationType *avvy = &_animation->_sprites[0];
 	PedType *curPed = &_peds[whichPed];
 
 	if (avvy->_x == curPed->_x)
@@ -1519,24 +1480,24 @@ uint16 Avalot::bearing(byte whichPed) {
 /** 
  * @remarks	Originally called 'sprite_run'
  */
-void Avalot::spriteRun() {
+void AvalancheEngine::spriteRun() {
 	_doingSpriteRun = true;
-	_vm->_animation->animLink();
+	_animation->animLink();
 	_doingSpriteRun = false;
 }
 
-void Avalot::fixFlashers() {
+void AvalancheEngine::fixFlashers() {
 	_ledStatus = 177;
-	_vm->_animation->setOldDirection(kDirNone);
-	_vm->_dialogs->setReadyLight(2);
+	_animation->setOldDirection(kDirNone);
+	_dialogs->setReadyLight(2);
 	drawDirection();
 }
 
-Common::String Avalot::intToStr(int32 num) {
+Common::String AvalancheEngine::intToStr(int32 num) {
 	return Common::String::format("%d", num);
 }
 
-void Avalot::newMouse(byte id) {
+void AvalancheEngine::newMouse(byte id) {
 	if (id == _currentMouse)
 		return;
 
@@ -1548,12 +1509,12 @@ void Avalot::newMouse(byte id) {
  * Set the mouse pointer to 'HourGlass"
  * @remarks	Originally called 'wait'
  */
-void Avalot::setMousePointerWait() {
+void AvalancheEngine::setMousePointerWait() {
 	newMouse(4);
 }
 
-void Avalot::resetVariables() {
-	_vm->_animation->setDirection(kDirUp);
+void AvalancheEngine::resetVariables() {
+	_animation->setDirection(kDirUp);
 	_carryNum = 0;
 	for (int i = 0; i < kObjectNum; i++)
 		_objects[i] = false;
@@ -1561,7 +1522,7 @@ void Avalot::resetVariables() {
 	_dnascore = 0;
 	_money = 0;
 	_room = kRoomNowhere;
-	_vm->_saveNum = 0;
+	_saveNum = 0;
 	for (int i = 0; i < 100; i++)
 		_roomCount[i] = 0;
 
@@ -1624,32 +1585,32 @@ void Avalot::resetVariables() {
 	_givenPenToAyles = false;
 	_askedDogfoodAboutNim = false;
 
-	_vm->_parser->resetVariables();
-	_vm->_animation->resetVariables();
-	_vm->_sequence->resetVariables();
+	_parser->resetVariables();
+	_animation->resetVariables();
+	_sequence->resetVariables();
 }
 
-void Avalot::newGame() {
+void AvalancheEngine::newGame() {
 	for (int i = 0; i < kMaxSprites; i++) {
-		AnimationType *spr = &_vm->_animation->_sprites[i];
+		AnimationType *spr = &_animation->_sprites[i];
 		if (spr->_quick)
 			spr->remove();
 	}
 	// Deallocate sprite. Sorry, beta testers!
 
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
-	avvy->init(0, true, _vm->_animation);
+	AnimationType *avvy = &_animation->_sprites[0];
+	avvy->init(0, true, _animation);
 
 	_alive = true;
 	resetVariables();
 
-	_vm->_dialogs->setBubbleStateNatural();
+	_dialogs->setBubbleStateNatural();
 
 	_spareEvening = "answer a questionnaire";
 	_favouriteDrink = "beer";
 	_money = 30; // 2/6
-	_vm->_animation->setDirection(kDirStopped);
-	_vm->_parser->_wearing = kObjectClothes;
+	_animation->setDirection(kDirStopped);
+	_parser->_wearing = kObjectClothes;
 	_objects[kObjectMoney - 1] = true;
 	_objects[kObjectBodkin - 1] = true;
 	_objects[kObjectBell - 1] = true;
@@ -1668,7 +1629,7 @@ void Avalot::newGame() {
 	_her = kPeoplePardon;
 	_it = Parser::kPardon;
 	_lastPerson = kPeoplePardon; // = Pardon?
-	_passwordNum = _vm->_rnd->getRandomNumber(30) + 1; //Random(30) + 1;
+	_passwordNum = _rnd->getRandomNumber(30) + 1; //Random(30) + 1;
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
 	_avvyInBed = true;
@@ -1677,16 +1638,16 @@ void Avalot::newGame() {
 	enterRoom(kRoomYours, 1);
 	avvy->_visible = false;
 	drawScore();
-	_vm->_menu->setup();
-	_clock.update();
+	_menu->setup();
+	_clock->update();
 	spriteRun();
 }
 
-void Avalot::slowDown() {
-	warning("STUB: Avalot::slowdown()");
+void AvalancheEngine::slowDown() {
+	warning("STUB: slowdown()");
 }
 
-bool Avalot::setFlag(char x) {
+bool AvalancheEngine::setFlag(char x) {
 	for (uint16 i = 0; i < _flags.size(); i++) {
 		if (_flags[i] == x)
 			return true;
@@ -1695,17 +1656,17 @@ bool Avalot::setFlag(char x) {
 	return false;
 }
 
-bool Avalot::decreaseMoney(uint16 amount) {
+bool AvalancheEngine::decreaseMoney(uint16 amount) {
 	_money -= amount;
 	if (_money < 0) {
-		_vm->_dialogs->displayScrollChain('Q', 2); // "You are now denariusless!"
+		_dialogs->displayScrollChain('Q', 2); // "You are now denariusless!"
 		gameOver();
 		return false;
 	} else
 		return true;
 }
 
-Common::String Avalot::getName(People whose) {
+Common::String AvalancheEngine::getName(People whose) {
 	static const Common::String kLads[17] = {
 		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
 		"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
@@ -1720,7 +1681,7 @@ Common::String Avalot::getName(People whose) {
 		return kLasses[whose - kPeopleArkata];
 }
 
-byte Avalot::getNameChar(People whose) {
+byte AvalancheEngine::getNameChar(People whose) {
 	static const char kLadChar[] = "ASCDMTRwLfgeIyPu";
 	static const char kLassChar[] = "kG\0xB1o";
 
@@ -1730,7 +1691,7 @@ byte Avalot::getNameChar(People whose) {
 		return kLassChar[whose - kPeopleArkata];
 }
 
-Common::String Avalot::getThing(byte which) {
+Common::String AvalancheEngine::getThing(byte which) {
 	static const Common::String kThings[kObjectNum] = {
 		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
 		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
@@ -1762,7 +1723,7 @@ Common::String Avalot::getThing(byte which) {
 	return get_thing_result;
 }
 
-char Avalot::getThingChar(byte which) {
+char AvalancheEngine::getThingChar(byte which) {
 	static const char kThingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
 
 	char get_thingchar_result;
@@ -1779,7 +1740,7 @@ char Avalot::getThingChar(byte which) {
 	return get_thingchar_result;
 }
 
-Common::String Avalot::getItem(byte which) {
+Common::String AvalancheEngine::getItem(byte which) {
 	static const Common::String kItems[kObjectNum] = {
 		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
 		"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
@@ -1821,8 +1782,7 @@ Common::String Avalot::getItem(byte which) {
 	return get_better_result;
 }
 
-
-Common::String Avalot::f5Does() {
+Common::String AvalancheEngine::f5Does() {
 	switch (_room) {
 	case kRoomYours:
 		if (!_avvyIsAwake)
@@ -1843,7 +1803,7 @@ Common::String Avalot::f5Does() {
 			return Common::String::format("%cSSit down", kVerbCodeSit);
 		break;
 	case kRoomMusicRoom:
-		if (_vm->_animation->inField(5))
+		if (_animation->inField(5))
 			return Common::String::format("%cPPlay the harp", kVerbCodePlay);
 		break;
 	}
@@ -1851,7 +1811,7 @@ Common::String Avalot::f5Does() {
 	return Common::String::format("%c", kVerbCodePardon); // If all else fails...
 }
 
-void Avalot::loadMouse(byte which) {
+void AvalancheEngine::loadMouse(byte which) {
 	Common::File f;
 
 	if (!f.open("mice.avd"))
@@ -1865,7 +1825,7 @@ void Avalot::loadMouse(byte which) {
 	// The AND mask.
 	f.seek(kMouseSize * 2 * which + 134);
 
-	::Graphics::Surface mask = _vm->_graphics->loadPictureGraphic(f);
+	::Graphics::Surface mask = _graphics->loadPictureGraphic(f);
 
 	for (int j = 0; j < mask.h; j++) {
 		for (int i = 0; i < mask.w; i++) {
@@ -1882,7 +1842,7 @@ void Avalot::loadMouse(byte which) {
 	// The OR mask.
 	f.seek(kMouseSize * 2 * which + 134 * 2);
 
-	mask = _vm->_graphics->loadPictureGraphic(f);
+	mask = _graphics->loadPictureGraphic(f);
 
 	for (int j = 0; j < mask.h; j++) {
 		for (int i = 0; i < mask.w; i++) {
@@ -1901,51 +1861,51 @@ void Avalot::loadMouse(byte which) {
 	cursor.free();
 }
 
-void Avalot::setBackgroundColor(byte x) {
-	warning("STUB: Avalot::background()");
+void AvalancheEngine::setBackgroundColor(byte x) {
+	warning("STUB: background()");
 }
 
-void Avalot::hangAroundForAWhile() {
+void AvalancheEngine::hangAroundForAWhile() {
 	for (int i = 0; i < 28; i++)
 		slowDown();
 }
 
-void Avalot::flipRoom(Room room, byte ped) {
+void AvalancheEngine::flipRoom(Room room, byte ped) {
 	assert((ped > 0) && (ped < 15));
 	if (!_alive) {
 		// You can't leave the room if you're dead.
-		_vm->_animation->_sprites[0]._moveX = 0;
-		_vm->_animation->_sprites[0]._moveY = 0; // Stop him from moving.
+		_animation->_sprites[0]._moveX = 0;
+		_animation->_sprites[0]._moveY = 0; // Stop him from moving.
 		return;
 	}
 
 	if ((room == kRoomDummy) && (_room == kRoomLusties)) {
-		_vm->_animation->hideInCupboard();
+		_animation->hideInCupboard();
 		return;
 	}
 
 	if ((_jumpStatus > 0) && (_room == kRoomInsideCardiffCastle)) {
 		// You can't *jump* out of Cardiff Castle!
-		_vm->_animation->_sprites[0]._moveX = 0;
+		_animation->_sprites[0]._moveX = 0;
 		return;
 	}
 
 	exitRoom(_room);
 	dusk();
 
-	for (int16 i = 1; i < _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->_sprites[i]._quick)
-			_vm->_animation->_sprites[i].remove();
+	for (int16 i = 1; i < _animation->kSpriteNumbMax; i++) {
+		if (_animation->_sprites[i]._quick)
+			_animation->_sprites[i].remove();
 	} // Deallocate sprite
 
 	if (_room == kRoomLustiesRoom)
 		_enterCatacombsFromLustiesRoom = true;
 
 	enterRoom(room, ped);
-	_vm->_animation->appearPed(0, ped - 1);
+	_animation->appearPed(0, ped - 1);
 	_enterCatacombsFromLustiesRoom = false;
-	_vm->_animation->setOldDirection(_vm->_animation->getDirection());
-	_vm->_animation->setDirection(_vm->_animation->_sprites[0]._facingDir);
+	_animation->setOldDirection(_animation->getDirection());
+	_animation->setDirection(_animation->_sprites[0]._facingDir);
 	drawDirection();
 
 	dawn();
@@ -1958,54 +1918,54 @@ void Avalot::flipRoom(Room room, byte ped) {
  * here.
  * @remarks	Originally called 'open_the_door'
  */
-void Avalot::openDoor(Room whither, byte ped, byte magicnum) {
+void AvalancheEngine::openDoor(Room whither, byte ped, byte magicnum) {
 	switch (_room) {
 	case kRoomOutsideYours:
 	case kRoomOutsideNottsPub:
 	case kRoomOutsideDucks:
-		_vm->_sequence->startOutsideSeq(whither, ped);
+		_sequence->startOutsideSeq(whither, ped);
 		break;
 	case kRoomInsideCardiffCastle:
-		_vm->_sequence->startCardiffSeq(whither, ped);
+		_sequence->startCardiffSeq(whither, ped);
 		break;
 	case kRoomAvvysGarden:
 	case kRoomEntranceHall:
 	case kRoomInsideAbbey:
 	case kRoomYourHall:
-		_vm->_sequence->startHallSeq(whither, ped);
+		_sequence->startHallSeq(whither, ped);
 		break;
 	case kRoomMusicRoom:
 	case kRoomOutsideArgentPub:
-		_vm->_sequence->startMusicRoomSeq2(whither, ped);
+		_sequence->startMusicRoomSeq2(whither, ped);
 		break;
 	case kRoomLusties:
 		switch (magicnum) {
 		case 14:
 			if (_avvysInTheCupboard) {
-				_vm->_animation->hideInCupboard();
-				_vm->_sequence->startCupboardSeq();
+				_animation->hideInCupboard();
+				_sequence->startCupboardSeq();
 				return;
 			} else {
-				_vm->_animation->appearPed(0, 5);
-				_vm->_animation->_sprites[0]._facingDir = kDirRight;
-				_vm->_sequence->startLustiesSeq2(whither, ped);
+				_animation->appearPed(0, 5);
+				_animation->_sprites[0]._facingDir = kDirRight;
+				_sequence->startLustiesSeq2(whither, ped);
 			}
 			break;
 		case 12:
-			_vm->_sequence->startLustiesSeq3(whither, ped);
+			_sequence->startLustiesSeq3(whither, ped);
 			break;
 		}
 		break;
 	default:
-		_vm->_sequence->startDummySeq(whither, ped);
+		_sequence->startDummySeq(whither, ped);
 	}
 }
 
-void Avalot::setRoom(People persId, Room roomId) {
+void AvalancheEngine::setRoom(People persId, Room roomId) {
 	_whereIs[persId - kPeopleAvalot] = roomId;	
 }
 
-Room Avalot::getRoom(People persId) {
+Room AvalancheEngine::getRoom(People persId) {
 	return _whereIs[persId - kPeopleAvalot];	
 }
 } // End of namespace Avalanche

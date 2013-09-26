@@ -54,7 +54,7 @@ Timer::Timer(AvalancheEngine *vm) {
  * @remarks	Originally called 'set_up_timer'
  */
 void Timer::addTimer(int32 duration, byte action, byte reason) {
-	if ((_vm->_avalot->_isLoaded == false) || (_timerLost == true)) {
+	if ((_vm->_isLoaded == false) || (_timerLost == true)) {
 		byte i = 0;
 		while ((i < 7) && (_times[i]._timeLeft != 0))
 			i++;
@@ -67,7 +67,7 @@ void Timer::addTimer(int32 duration, byte action, byte reason) {
 		_times[i]._action = action;
 		_times[i]._reason = reason;
 	} else {
-		_vm->_avalot->_isLoaded = false;
+		_vm->_isLoaded = false;
 		return;
 	}
 }
@@ -155,7 +155,7 @@ void Timer::updateTimer() {
 				crapulusSaysSpludOut();
 				break;
 			case kProcDawnDelay:
-				_vm->_avalot->dawn();
+				_vm->dawn();
 				break;
 			case kProcBuyDrinks:
 				buyDrinks();
@@ -214,8 +214,8 @@ void Timer::updateTimer() {
 			}
 		}
 	}
-	_vm->_avalot->_roomTime++; // Cycles since you've been in this room.
-	_vm->_avalot->_totalTime++; // Total amount of time for this game.
+	_vm->_roomTime++; // Cycles since you've been in this room.
+	_vm->_totalTime++; // Total amount of time for this game.
 }
 
 void Timer::loseTimer(byte which) {
@@ -228,29 +228,29 @@ void Timer::loseTimer(byte which) {
 }
 
 void Timer::openDrawbridge() {
-	_vm->_avalot->_drawbridgeOpen++;
-	_vm->_background->draw(-1, -1, _vm->_avalot->_drawbridgeOpen - 2);
+	_vm->_drawbridgeOpen++;
+	_vm->_background->draw(-1, -1, _vm->_drawbridgeOpen - 2);
 
-	if (_vm->_avalot->_drawbridgeOpen == 4)
-		_vm->_avalot->_magics[1]._operation = Avalot::kMagicNothing; // You may enter the drawbridge.
+	if (_vm->_drawbridgeOpen == 4)
+		_vm->_magics[1]._operation = AvalancheEngine::kMagicNothing; // You may enter the drawbridge.
 	else
 		addTimer(7, kProcOpenDrawbridge, kReasonDrawbridgeFalls);
 }
 
 void Timer::avariciusTalks() {
-	_vm->_dialogs->displayScrollChain('q', _vm->_avalot->_avariciusTalk);
-	_vm->_avalot->_avariciusTalk++;
+	_vm->_dialogs->displayScrollChain('q', _vm->_avariciusTalk);
+	_vm->_avariciusTalk++;
 
-	if (_vm->_avalot->_avariciusTalk < 17)
+	if (_vm->_avariciusTalk < 17)
 		addTimer(177, kProcAvariciusTalks, kReasonAvariciusTalks);
 	else
-		_vm->_avalot->incScore(3);
+		_vm->incScore(3);
 }
 
 void Timer::urinate() {
 	_vm->_animation->_sprites[0].turn(kDirUp);
 	_vm->_animation->stopWalking();
-	_vm->_avalot->drawDirection();
+	_vm->drawDirection();
 	addTimer(14, kProcToilet, kReasonGoToToilet);
 }
 
@@ -272,20 +272,20 @@ void Timer::stairs() {
 	_vm->_sound->blip();
 	_vm->_animation->_sprites[0].walkTo(3);
 	_vm->_background->draw(-1, -1, 1);
-	_vm->_avalot->_brummieStairs = 2;
-	_vm->_avalot->_magics[10]._operation = Avalot::kMagicSpecial;
-	_vm->_avalot->_magics[10]._data = 2; // Reached the bottom of the stairs.
-	_vm->_avalot->_magics[3]._operation = Avalot::kMagicNothing; // Stop them hitting the sides (or the game will hang.)
+	_vm->_brummieStairs = 2;
+	_vm->_magics[10]._operation = AvalancheEngine::kMagicSpecial;
+	_vm->_magics[10]._data = 2; // Reached the bottom of the stairs.
+	_vm->_magics[3]._operation = AvalancheEngine::kMagicNothing; // Stop them hitting the sides (or the game will hang.)
 }
 
 void Timer::cardiffSurvey() {
-	if (_vm->_avalot->_cardiffQuestionNum == 0) {
-		_vm->_avalot->_cardiffQuestionNum++;
+	if (_vm->_cardiffQuestionNum == 0) {
+		_vm->_cardiffQuestionNum++;
 		_vm->_dialogs->displayScrollChain('q', 27);
 	}
 
-	_vm->_dialogs->displayScrollChain('z', _vm->_avalot->_cardiffQuestionNum);
-	_vm->_avalot->_interrogation = _vm->_avalot->_cardiffQuestionNum;
+	_vm->_dialogs->displayScrollChain('z', _vm->_cardiffQuestionNum);
+	_vm->_interrogation = _vm->_cardiffQuestionNum;
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
@@ -300,8 +300,8 @@ void Timer::cwytalotInHerts() {
 
 void Timer::getTiedUp() {
 	_vm->_dialogs->displayScrollChain('q', 34); // ...Trouble!
-	_vm->_avalot->_userMovesAvvy = false;
-	_vm->_avalot->_beenTiedUp = true;
+	_vm->_userMovesAvvy = false;
+	_vm->_beenTiedUp = true;
 	_vm->_animation->stopWalking();
 
 	AnimationType *spr = &_vm->_animation->_sprites[1];
@@ -315,8 +315,8 @@ void Timer::getTiedUp() {
 void Timer::getTiedUp2() {
 	_vm->_animation->_sprites[0].walkTo(3);
 	_vm->_animation->_sprites[1].walkTo(4);
-	_vm->_avalot->_magics[3]._operation = Avalot::kMagicNothing; // No effect when you touch the boundaries.
-	_vm->_avalot->_friarWillTieYouUp = true;
+	_vm->_magics[3]._operation = AvalancheEngine::kMagicNothing; // No effect when you touch the boundaries.
+	_vm->_friarWillTieYouUp = true;
 }
 
 void Timer::hangAround() {
@@ -324,7 +324,7 @@ void Timer::hangAround() {
 
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->init(7, true, _vm->_animation); // Robin Hood
-	_vm->_avalot->setRoom(kPeopleRobinHood, kRoomRobins);
+	_vm->setRoom(kPeopleRobinHood, kRoomRobins);
 	_vm->_animation->appearPed(0, 1);
 	_vm->_dialogs->displayScrollChain('q', 39);
 	avvy->walkTo(6);
@@ -336,7 +336,7 @@ void Timer::hangAround2() {
 	AnimationType *spr = &_vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
 	spr->walkTo(3);
-	_vm->_avalot->setRoom(kPeopleFriarTuck, kRoomRobins);
+	_vm->setRoom(kPeopleFriarTuck, kRoomRobins);
 	_vm->_dialogs->displayScrollChain('q', 41);
 	_vm->_animation->_sprites[0].remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
@@ -344,20 +344,20 @@ void Timer::hangAround2() {
 	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
 	// Immediately call the following proc (when you have a chance).
 
-	_vm->_avalot->_tiedUp = false;
+	_vm->_tiedUp = false;
 
 	// _vm->_enid->backToBootstrap(1); Call the shoot-'em-up. TODO: Replace it with proper ScummVM-friendly function(s)! Do not remove until then!
 }
 
 void Timer::afterTheShootemup() {
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
-	_vm->_avalot->flipRoom(_vm->_avalot->_room, 1);
+	_vm->flipRoom(_vm->_room, 1);
 
 	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
 	_vm->_animation->appearPed(0, 1);
-	_vm->_avalot->_userMovesAvvy = true;
-	_vm->_avalot->_objects[kObjectCrossbow - 1] = true;
-	_vm->_avalot->refreshObjectList();
+	_vm->_userMovesAvvy = true;
+	_vm->_objects[kObjectCrossbow - 1] = true;
+	_vm->refreshObjectList();
 
 	// Same as the added line above: TODO: Remove it later!!!
 	_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
@@ -385,9 +385,9 @@ void Timer::afterTheShootemup() {
 }
 
 void Timer::jacquesWakesUp() {
-	_vm->_avalot->_jacquesState++;
+	_vm->_jacquesState++;
 
-	switch (_vm->_avalot->_jacquesState) { // Additional pictures.
+	switch (_vm->_jacquesState) { // Additional pictures.
 	case 1 :
 		_vm->_background->draw(-1, -1, 0); // Eyes open.
 		_vm->_dialogs->displayScrollChain('Q', 45);
@@ -395,22 +395,22 @@ void Timer::jacquesWakesUp() {
 	case 2 : // Going through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor.
 		_vm->_background->draw(-1, -1, 2); // But going through the door.
-		_vm->_avalot->_magics[5]._operation = Avalot::kMagicNothing; // You can't wake him up now.
+		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // You can't wake him up now.
 		break;
 	case 3 :  // Gone through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor, either.
 		_vm->_background->draw(-1, -1, 3); // He's gone... so the door's open.
-		_vm->_avalot->setRoom(kPeopleJacques, kRoomNowhere); // Gone!
+		_vm->setRoom(kPeopleJacques, kRoomNowhere); // Gone!
 		break;
 	}
 
-	if (_vm->_avalot->_jacquesState == 5) {
-		_vm->_avalot->_bellsAreRinging = true;
-		_vm->_avalot->_aylesIsAwake = true;
-		_vm->_avalot->incScore(2);
+	if (_vm->_jacquesState == 5) {
+		_vm->_bellsAreRinging = true;
+		_vm->_aylesIsAwake = true;
+		_vm->incScore(2);
 	}
 
-	switch (_vm->_avalot->_jacquesState) {
+	switch (_vm->_jacquesState) {
 	case 1:
 	case 2:
 	case 3:
@@ -452,8 +452,8 @@ void Timer::naughtyDuke3() {
 void Timer::jump() {
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 
-	_vm->_avalot->_jumpStatus++;
-	switch (_vm->_avalot->_jumpStatus) {
+	_vm->_jumpStatus++;
+	switch (_vm->_jumpStatus) {
 	case 1:
 	case 2:
 	case 3:
@@ -472,73 +472,73 @@ void Timer::jump() {
 		break;
 	}
 
-	if (_vm->_avalot->_jumpStatus == 20) { // End of jump.
-		_vm->_avalot->_userMovesAvvy = true;
-		_vm->_avalot->_jumpStatus = 0;
+	if (_vm->_jumpStatus == 20) { // End of jump.
+		_vm->_userMovesAvvy = true;
+		_vm->_jumpStatus = 0;
 	} else // Still jumping.
 		addTimer(1, kProcJump, kReasonJumping);
 
-	if ((_vm->_avalot->_jumpStatus == 10) // You're at the highest point of your jump.
-			&& (_vm->_avalot->_room == kRoomInsideCardiffCastle)
-			&& (_vm->_avalot->_arrowInTheDoor == true)
+	if ((_vm->_jumpStatus == 10) // You're at the highest point of your jump.
+			&& (_vm->_room == kRoomInsideCardiffCastle)
+			&& (_vm->_arrowInTheDoor == true)
 			&& (_vm->_animation->inField(2))) { // Beside the wall
 		// Grab the arrow!
-		if (_vm->_avalot->_carryNum >= kCarryLimit)
+		if (_vm->_carryNum >= kCarryLimit)
 			_vm->_dialogs->displayText("You fail to grab it, because your hands are full.");
 		else {
 			_vm->_background->draw(-1, -1, 1);
-			_vm->_avalot->_arrowInTheDoor = false; // You've got it.
-			_vm->_avalot->_objects[kObjectBolt - 1] = true;
-			_vm->_avalot->refreshObjectList();
+			_vm->_arrowInTheDoor = false; // You've got it.
+			_vm->_objects[kObjectBolt - 1] = true;
+			_vm->refreshObjectList();
 			_vm->_dialogs->displayScrollChain('q', 50);
-			_vm->_avalot->incScore(3);
+			_vm->incScore(3);
 		}
 	}
 }
 
 void Timer::crapulusSaysSpludOut() {
 	_vm->_dialogs->displayScrollChain('q', 56);
-	_vm->_avalot->_crapulusWillTell = false;
+	_vm->_crapulusWillTell = false;
 }
 
 void Timer::buyDrinks() {
 	_vm->_background->draw(-1, -1, 10); // Malagauche gets up again.
-	_vm->_avalot->_malagauche = 0;
+	_vm->_malagauche = 0;
 
-	_vm->_dialogs->displayScrollChain('D', _vm->_avalot->_drinking); // Display message about it.
+	_vm->_dialogs->displayScrollChain('D', _vm->_drinking); // Display message about it.
 	_vm->_pingo->wobble(); // Do the special effects.
 	_vm->_dialogs->displayScrollChain('D', 1); // That'll be thruppence.
-	if (_vm->_avalot->decreaseMoney(3)) // Pay 3d.
+	if (_vm->decreaseMoney(3)) // Pay 3d.
 		_vm->_dialogs->displayScrollChain('D', 3); // Tell 'em you paid up.
 	_vm->_parser->drink();
 }
 
 void Timer::buyWine() {
 	_vm->_background->draw(-1, -1, 10); // Malagauche gets up again.
-	_vm->_avalot->_malagauche = 0;
+	_vm->_malagauche = 0;
 
 	_vm->_dialogs->displayScrollChain('D', 50); // You buy the wine.
 	_vm->_dialogs->displayScrollChain('D', 1); // It'll be thruppence.
-	if (_vm->_avalot->decreaseMoney(3)) {
+	if (_vm->decreaseMoney(3)) {
 		_vm->_dialogs->displayScrollChain('D', 4); // You paid up.
-		_vm->_avalot->_objects[kObjectWine - 1] = true;
-		_vm->_avalot->refreshObjectList();
-		_vm->_avalot->_wineState = 1; // OK Wine.
+		_vm->_objects[kObjectWine - 1] = true;
+		_vm->refreshObjectList();
+		_vm->_wineState = 1; // OK Wine.
 	}
 }
 
 void Timer::callsGuards() {
 	_vm->_dialogs->displayScrollChain('Q', 58); // "GUARDS!!!"
-	_vm->_avalot->gameOver();
+	_vm->gameOver();
 }
 
 void Timer::greetsMonk() {
 	_vm->_dialogs->displayScrollChain('Q', 59);
-	_vm->_avalot->_enteredLustiesRoomAsMonk = true;
+	_vm->_enteredLustiesRoomAsMonk = true;
 }
 
 void Timer::fallDownOubliette() {
-	_vm->_avalot->_magics[8]._operation = Avalot::kMagicNothing;
+	_vm->_magics[8]._operation = AvalancheEngine::kMagicNothing;
 
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->_moveY++; // Increments dx/dy!
@@ -547,13 +547,13 @@ void Timer::fallDownOubliette() {
 }
 
 void Timer::meetAvaroid() {
-	if (_vm->_avalot->_metAvaroid) {
+	if (_vm->_metAvaroid) {
 		Common::String tmpStr = Common::String::format("You can't expect to be %cthat%c lucky twice in a row!", Dialogs::kControlItalic, Dialogs::kControlRoman);
 		_vm->_dialogs->displayText(tmpStr);
-		_vm->_avalot->gameOver();
+		_vm->gameOver();
 	} else {
 		_vm->_dialogs->displayScrollChain('Q', 60);
-		_vm->_avalot->_metAvaroid = true;
+		_vm->_metAvaroid = true;
 		addTimer(1, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 
 		AnimationType *avvy = &_vm->_animation->_sprites[0];
@@ -562,7 +562,7 @@ void Timer::meetAvaroid() {
 		avvy->_moveX = -3;
 		avvy->_moveY = -5;
 
-		_vm->_avalot->setBackgroundColor(2);
+		_vm->setBackgroundColor(2);
 	}
 }
 
@@ -574,7 +574,7 @@ void Timer::riseUpOubliette() {
 	if (avvy->_moveY > 0)
 		addTimer(3, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 	else
-		_vm->_avalot->_userMovesAvvy = true;
+		_vm->_userMovesAvvy = true;
 }
 
 void Timer::robinHoodAndGeida() {
@@ -587,7 +587,7 @@ void Timer::robinHoodAndGeida() {
 	spr->stopWalk();
 	spr->_facingDir = kDirLeft;
 	addTimer(20, kProcRobinHoodAndGeidaTalk, kReasonRobinHoodAndGeida);
-	_vm->_avalot->_geidaFollows = false;
+	_vm->_geidaFollows = false;
 }
 
 void Timer::robinHoodAndGeidaTalk() {
@@ -611,7 +611,7 @@ void Timer::avalotReturns() {
 	avvy->init(0, true, _vm->_animation);
 	_vm->_animation->appearPed(0, 0);
 	_vm->_dialogs->displayScrollChain('q', 67);
-	_vm->_avalot->_userMovesAvvy = true;
+	_vm->_userMovesAvvy = true;
 }
 
 /**
@@ -625,8 +625,8 @@ void Timer::avvySitDown() {
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
 		_vm->_background->draw(-1, -1, 2);
-		_vm->_avalot->_sittingInPub = true;
-		_vm->_avalot->_userMovesAvvy = false;
+		_vm->_sittingInPub = true;
+		_vm->_userMovesAvvy = false;
 		avvy->_visible = false;
 	}
 }
@@ -638,7 +638,7 @@ void Timer::ghostRoomPhew() {
 }
 
 void Timer::arkataShouts() {
-	if (_vm->_avalot->_teetotal)
+	if (_vm->_teetotal)
 		return;
 
 	_vm->_dialogs->displayScrollChain('q', 76);
@@ -652,14 +652,14 @@ void Timer::winning() {
 	warning("STUB: Timer::winning()");
 #if 0
 	do {
-		_vm->_avalot->checkclick();
-	} while (!(_vm->_avalot->mrelease == 0));
+		_vm->checkclick();
+	} while (!(_vm->mrelease == 0));
 #endif
 	// TODO: To be implemented with Pingo::winningPic().
 
-	_vm->_avalot->callVerb(kVerbCodeScore);
+	_vm->callVerb(kVerbCodeScore);
 	_vm->_dialogs->displayText(" T H E    E N D ");
-	_vm->_avalot->_letMeOut = true;
+	_vm->_letMeOut = true;
 }
 
 void Timer::avalotFalls() {
@@ -691,8 +691,8 @@ void Timer::spludwickLeavesCauldron() {
 
 void Timer::giveLuteToGeida() { // Moved here from Acci.
 	_vm->_dialogs->displayScrollChain('Q', 86);
-	_vm->_avalot->incScore(4);
-	_vm->_avalot->_lustieIsAsleep = true;
+	_vm->incScore(4);
+	_vm->_lustieIsAsleep = true;
 	_vm->_sequence->startGeidaLuteSeq();
 }
 

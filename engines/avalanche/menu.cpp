@@ -65,7 +65,7 @@ void HeadType::highlight() {
 	_menu->_activeMenuItem._activeNum = _position;
 	_menu->_menuActive = true;
 
-	_menu->_vm->_avalot->_currentMouse = 177; // Force redraw of cursor.
+	_menu->_vm->_currentMouse = 177; // Force redraw of cursor.
 }
 
 bool HeadType::parseAltTrigger(char key) {
@@ -135,8 +135,8 @@ void MenuItem::display() {
 	for (int y = 1; y < _optionNum; y++)
 		displayOption(y, false);
 
-	_dr->_vm->_avalot->_defaultLed = 1;
-	_dr->_vm->_avalot->_currentMouse = 177;
+	_dr->_vm->_defaultLed = 1;
+	_dr->_vm->_currentMouse = 177;
 
 	CursorMan.showMouse(true); // 4 = fletch
 }
@@ -149,7 +149,7 @@ void MenuItem::wipe() {
 	_activeNow = false;
 	_dr->_menuActive = false;
 	_firstlix = false;
-	_dr->_vm->_avalot->_defaultLed = 2;
+	_dr->_vm->_defaultLed = 2;
 
 	CursorMan.showMouse(true);
 }
@@ -218,13 +218,13 @@ void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, Menu
 void MenuBar::draw() {
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect(0, 0, 640, 10), _dr->kMenuBackgroundColor);
 
-	byte savecp = _dr->_vm->_avalot->_cp;
-	_dr->_vm->_avalot->_cp = 3;
+	byte savecp = _dr->_vm->_cp;
+	_dr->_vm->_cp = 3;
 
 	for (int i = 0; i < _menuNum; i++)
 		_menuItems[i].draw();
 
-	_dr->_vm->_avalot->_cp = savecp;
+	_dr->_vm->_cp = savecp;
 }
 
 void MenuBar::parseAltTrigger(char c) {
@@ -262,30 +262,30 @@ Menu::Menu(AvalancheEngine *vm) {
 }
 
 void Menu::findWhatYouCanDoWithIt() {
-	switch (_vm->_avalot->_thinks) {
+	switch (_vm->_thinks) {
 	case kObjectWine:
 	case kObjectPotion:
 	case kObjectInk:
-		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeDrink;
+		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeDrink;
 		break;
 	case kObjectBell:
-		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeRing;
+		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeRing;
 		break;
 	case kObjectChastity:
-		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
+		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
 	case kObjectLute:
-		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodePlay;
+		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodePlay;
 		break;
 	case kObjectMushroom:
 	case kObjectOnion:
-		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeEat;
+		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeEat;
 		break;
 	case kObjectClothes:
-		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
+		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
 	default:
-		_vm->_avalot->_verbStr = kVerbCodeExam; // Anything else.
+		_vm->_verbStr = kVerbCodeExam; // Anything else.
 	}
 }
 
@@ -310,7 +310,7 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < 8; j++) {
 			byte idx = text[i];
-			font[idx][j] = _vm->_avalot->_font[idx][j] & ander; // Set the font.
+			font[idx][j] = _vm->_font[idx][j] & ander; // Set the font.
 			// And set the background of the text to the desired color.
 			for (int k = 0; k < 8; k++)
 				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + k, y + j) = backgroundColor;
@@ -412,8 +412,8 @@ void Menu::setupMenuFile() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("New game", 'N', "f4", true);
 	_activeMenuItem.setupOption("Load...", 'L', "^f3", true);
-	_activeMenuItem.setupOption("Save", 'S', "^f2", _vm->_avalot->_alive);
-	_activeMenuItem.setupOption("Save As...", 'v', "", _vm->_avalot->_alive);
+	_activeMenuItem.setupOption("Save", 'S', "^f2", _vm->_alive);
+	_activeMenuItem.setupOption("Save As...", 'v', "", _vm->_alive);
 	_activeMenuItem.setupOption("DOS Shell", 'D', "alt-1", false);
 	_activeMenuItem.setupOption("Quit", 'Q', "alt-X", true);
 	_activeMenuItem.display();
@@ -422,7 +422,7 @@ void Menu::setupMenuFile() {
 void Menu::setupMenuAction() {
 	_activeMenuItem.reset();
 
-	Common::String f5Does = _vm->_avalot->f5Does();
+	Common::String f5Does = _vm->f5Does();
 	for (int i = 0; i < 2; i++)
 		if (!f5Does.empty())
 			f5Does.deleteChar(0);
@@ -431,13 +431,13 @@ void Menu::setupMenuAction() {
 	else
 		_activeMenuItem.setupOption(f5Does, f5Does[0], "f5", true);
 	_activeMenuItem.setupOption("Pause game", 'P', "f6", true);
-	if (_vm->_avalot->_room == kRoomMap)
+	if (_vm->_room == kRoomMap)
 		_activeMenuItem.setupOption("Journey thither", 'J', "f7", _vm->_animation->nearDoor());
 	else
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->nearDoor());
 	_activeMenuItem.setupOption("Look around", 'L', "f8", true);
 	_activeMenuItem.setupOption("Inventory", 'I', "Tab", true);
-	if (_vm->_animation->_sprites[0]._speedX == _vm->_avalot->kWalk)
+	if (_vm->_animation->_sprites[0]._speedX == _vm->kWalk)
 		_activeMenuItem.setupOption("Run fast", 'R', "^R", true);
 	else
 		_activeMenuItem.setupOption("Walk slowly", 'W', "^W", true);
@@ -452,8 +452,8 @@ void Menu::setupMenuPeople() {
 	_activeMenuItem.reset();
 
 	for (int i = kPeopleAvalot; i <= kPeopleWisewoman; i++) {
-		if (_vm->_avalot->getRoom((People)i) == _vm->_avalot->_room) {
-			_activeMenuItem.setupOption(_vm->_avalot->getName((People)i), _vm->_avalot->getNameChar((People)i), "", true);
+		if (_vm->getRoom((People)i) == _vm->_room) {
+			_activeMenuItem.setupOption(_vm->getName((People)i), _vm->getNameChar((People)i), "", true);
 			people += i;
 		}
 	}
@@ -464,8 +464,8 @@ void Menu::setupMenuPeople() {
 void Menu::setupMenuObjects() {
 	_activeMenuItem.reset();
 	for (int i = 0; i < kObjectNum; i++) {
-		if (_vm->_avalot->_objects[i])
-			_activeMenuItem.setupOption(_vm->_avalot->getThing(i + 1), _vm->_avalot->getThingChar(i + 1), "", true);
+		if (_vm->_objects[i])
+			_activeMenuItem.setupOption(_vm->getThing(i + 1), _vm->getThingChar(i + 1), "", true);
 	}
 	_activeMenuItem.display();
 }
@@ -473,54 +473,54 @@ void Menu::setupMenuObjects() {
 void Menu::setupMenuWith() {
 	_activeMenuItem.reset();
 
-	if (_vm->_avalot->_thinkThing) {
+	if (_vm->_thinkThing) {
 		findWhatYouCanDoWithIt();
 
-		for (uint i = 0; i < _vm->_avalot->_verbStr.size(); i++) {
+		for (uint i = 0; i < _vm->_verbStr.size(); i++) {
 			char vbchar;
 			Common::String verb;
 
-			_vm->_parser->verbOpt(_vm->_avalot->_verbStr[i], verb, vbchar);
+			_vm->_parser->verbOpt(_vm->_verbStr[i], verb, vbchar);
 			_activeMenuItem.setupOption(verb, vbchar, "", true);
 		}
 
 		// We disable the "give" option if: (a), you haven't selected anybody, (b), the _person you've selected isn't in the room,
 		// or (c), the _person you've selected is YOU!
 
-		if ((_vm->_avalot->_lastPerson == kPeopleAvalot) || (_vm->_avalot->_lastPerson == _vm->_parser->kNothing)
-			|| (_vm->_avalot->getRoom(_vm->_avalot->_lastPerson) != _vm->_avalot->_room))
+		if ((_vm->_lastPerson == kPeopleAvalot) || (_vm->_lastPerson == _vm->_parser->kNothing)
+			|| (_vm->getRoom(_vm->_lastPerson) != _vm->_room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
-			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->_avalot->getName(_vm->_avalot->_lastPerson), 'G', "", true);
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + kVerbCodeGive;
+			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->getName(_vm->_lastPerson), 'G', "", true);
+			_vm->_verbStr = _vm->_verbStr + kVerbCodeGive;
 		}
 	} else {
 		_activeMenuItem.setupOption("Examine", 'x', "", true);
-		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_avalot->_thinks), 'T', "", true);
-		_vm->_avalot->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeTalk;
-		switch (_vm->_avalot->_thinks) {
+		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_thinks), 'T', "", true);
+		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeTalk;
+		switch (_vm->_thinks) {
 		case kPeopleGeida:
 		case kPeopleArkata:
 			_activeMenuItem.setupOption("Kiss her", 'K', "", true);
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + kVerbCodeKiss;
+			_vm->_verbStr = _vm->_verbStr + kVerbCodeKiss;
 			break;
 		case kPeopleDogfood:
-			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_avalot->_wonNim); // True if you HAVEN'T won.
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + kVerbCodePlay;
+			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_wonNim); // True if you HAVEN'T won.
+			_vm->_verbStr = _vm->_verbStr + kVerbCodePlay;
 			break;
 		case kPeopleMalagauche: {
-			bool isSober = !_vm->_avalot->_teetotal;
-			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_avalot->_objects[kObjectWine - 1]);
+			bool isSober = !_vm->_teetotal;
+			_activeMenuItem.setupOption("Buy some wine", 'w', "", !_vm->_objects[kObjectWine - 1]);
 			_activeMenuItem.setupOption("Buy some beer", 'b', "", isSober);
 			_activeMenuItem.setupOption("Buy some whisky", 'h', "", isSober);
 			_activeMenuItem.setupOption("Buy some cider", 'c', "", isSober);
 			_activeMenuItem.setupOption("Buy some mead", 'm', "", isSober);
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + 101 + 100 + 102 + 103 + 104;
+			_vm->_verbStr = _vm->_verbStr + 101 + 100 + 102 + 103 + 104;
 			}
 			break;
 		case kPeopleTrader:
-			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_avalot->_objects[kObjectOnion - 1]);
-			_vm->_avalot->_verbStr = _vm->_avalot->_verbStr + 105;
+			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_objects[kObjectOnion - 1]);
+			_vm->_verbStr = _vm->_verbStr + 105;
 			break;
 		}
 	}
@@ -531,19 +531,19 @@ void Menu::runMenuGame() {
 	// Help, boss, untrash screen.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_avalot->callVerb(kVerbCodeHelp);
+		_vm->callVerb(kVerbCodeHelp);
 		break;
 	case 1:
-		_vm->_avalot->callVerb(kVerbCodeBoss);
+		_vm->callVerb(kVerbCodeBoss);
 		break;
 	case 2:
-		_vm->_avalot->majorRedraw();
+		_vm->majorRedraw();
 		break;
 	case 3:
-		_vm->_avalot->callVerb(kVerbCodeScore);
+		_vm->callVerb(kVerbCodeScore);
 		break;
 	case 4:
-		_vm->_avalot->callVerb(kVerbCodeInfo);
+		_vm->callVerb(kVerbCodeInfo);
 		break;
 	}
 }
@@ -552,17 +552,17 @@ void Menu::runMenuFile() {
 	// New game, load, save, save as, DOS shell, about, quit.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
-		_vm->_avalot->callVerb(kVerbCodeRestart);
+		_vm->callVerb(kVerbCodeRestart);
 		break;
 	case 1:
 		if (!_vm->_parser->_realWords[1].empty())
 			_vm->_parser->_realWords[1].clear();
-		_vm->_avalot->callVerb(kVerbCodeLoad);
+		_vm->callVerb(kVerbCodeLoad);
 		break;
 	case 2:
 		if (!_vm->_parser->_realWords[1].empty())
 			_vm->_parser->_realWords[1].clear();
-		_vm->_avalot->callVerb(kVerbCodeSave);
+		_vm->callVerb(kVerbCodeSave);
 		break;
 	case 3:
 		//_vm->_basher->filename_edit();
@@ -572,7 +572,7 @@ void Menu::runMenuFile() {
 		//_vm->_enid->backToBootstrap(2); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 		break;
 	case 5:
-		_vm->_avalot->callVerb(kVerbCodeQuit);
+		_vm->callVerb(kVerbCodeQuit);
 		break;
 	}
 }
@@ -583,31 +583,31 @@ void Menu::runMenuAction() {
 	case 0: {
 		_vm->_parser->_person = kPeoplePardon;
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		Common::String f5Does = _vm->_avalot->f5Does();
+		Common::String f5Does = _vm->f5Does();
 		VerbCode verb = (VerbCode)f5Does[0];
-		_vm->_avalot->callVerb(verb);
+		_vm->callVerb(verb);
 		}
 		break;
 	case 1:
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		_vm->_avalot->callVerb(kVerbCodePause);
+		_vm->callVerb(kVerbCodePause);
 		break;
 	case 2:
-		_vm->_avalot->callVerb(kVerbCodeOpen);
+		_vm->callVerb(kVerbCodeOpen);
 		break;
 	case 3:
 		_vm->_parser->_thing = _vm->_parser->kPardon;
-		_vm->_avalot->callVerb(kVerbCodeLook);
+		_vm->callVerb(kVerbCodeLook);
 		break;
 	case 4:
-		_vm->_avalot->callVerb(kVerbCodeInv);
+		_vm->callVerb(kVerbCodeInv);
 		break;
 	case 5: {
 		AnimationType *avvy = &_vm->_animation->_sprites[0];
-		if (avvy->_speedX == _vm->_avalot->kWalk)
-			avvy->_speedX = _vm->_avalot->kRun;
+		if (avvy->_speedX == _vm->kWalk)
+			avvy->_speedX = _vm->kRun;
 		else
-			avvy->_speedX = _vm->_avalot->kWalk;
+			avvy->_speedX = _vm->kWalk;
 		_vm->_animation->updateSpeed();
 		}
 		break;
@@ -615,57 +615,57 @@ void Menu::runMenuAction() {
 }
 
 void Menu::runMenuObjects() {
-	_vm->_avalot->thinkAbout(_vm->_avalot->_objectList[_activeMenuItem._choiceNum], Avalot::kThing);
+	_vm->thinkAbout(_vm->_objectList[_activeMenuItem._choiceNum], AvalancheEngine::kThing);
 }
 
 void Menu::runMenuPeople() {
-	_vm->_avalot->thinkAbout(people[_activeMenuItem._choiceNum], Avalot::kPerson);
-	_vm->_avalot->_lastPerson = (People)people[_activeMenuItem._choiceNum];
+	_vm->thinkAbout(people[_activeMenuItem._choiceNum], AvalancheEngine::kPerson);
+	_vm->_lastPerson = (People)people[_activeMenuItem._choiceNum];
 }
 
 void Menu::runMenuWith() {
-	_vm->_parser->_thing = _vm->_avalot->_thinks;
+	_vm->_parser->_thing = _vm->_thinks;
 
-	if (_vm->_avalot->_thinkThing) {
+	if (_vm->_thinkThing) {
 		_vm->_parser->_thing += 49;
 
-		if (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum] == kVerbCodeGive)
-			_vm->_parser->_person = _vm->_avalot->_lastPerson;
+		if (_vm->_verbStr[_activeMenuItem._choiceNum] == kVerbCodeGive)
+			_vm->_parser->_person = _vm->_lastPerson;
 		else
 			_vm->_parser->_person = kPeoplePardon;
 	} else {
-		switch (_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]) {
+		switch (_vm->_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: // Beer
 			_vm->_parser->_thing = 100;
-			_vm->_avalot->callVerb(kVerbCodeBuy);
+			_vm->callVerb(kVerbCodeBuy);
 			return;
 		case 101: // Wine
 			_vm->_parser->_thing = 50;
-			_vm->_avalot->callVerb(kVerbCodeBuy);
+			_vm->callVerb(kVerbCodeBuy);
 			return;
 		case 102: // Whisky
 			_vm->_parser->_thing = 102;
-			_vm->_avalot->callVerb(kVerbCodeBuy);
+			_vm->callVerb(kVerbCodeBuy);
 			return;
 		case 103: // Cider
 			_vm->_parser->_thing = 103;
-			_vm->_avalot->callVerb(kVerbCodeBuy);
+			_vm->callVerb(kVerbCodeBuy);
 			return;
 		case 104: // Mead
 			_vm->_parser->_thing = 107;
-			_vm->_avalot->callVerb(kVerbCodeBuy);
+			_vm->callVerb(kVerbCodeBuy);
 			return;
 		case 105: // Onion (trader)
 			_vm->_parser->_thing = 67;
-			_vm->_avalot->callVerb(kVerbCodeBuy);
+			_vm->callVerb(kVerbCodeBuy);
 			return;
 		default:
 			_vm->_parser->_person = (People)_vm->_parser->_thing;
 			_vm->_parser->_thing = Parser::kPardon;
-			_vm->_avalot->_subjectNum = 0;
+			_vm->_subjectNum = 0;
 		}
 	}
-	_vm->_avalot->callVerb((VerbCode)_vm->_avalot->_verbStr[_activeMenuItem._choiceNum]);
+	_vm->callVerb((VerbCode)_vm->_verbStr[_activeMenuItem._choiceNum]);
 }
 
 void Menu::setup() {
@@ -687,11 +687,11 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 	::Graphics::Surface backup;
 	backup.copyFrom(_vm->_graphics->_surface);
 
-	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_avalot->_holdLeftMouse) {
+	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_holdLeftMouse) {
 		_menuBar.chooseMenuItem(cursorPos.x);
 		do
 			_vm->updateEvents();
-		while (_vm->_avalot->_holdLeftMouse);
+		while (_vm->_holdLeftMouse);
 
 		while (!_vm->shouldQuit()) {
 			do {
@@ -701,28 +701,28 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 				cursorPos = _vm->getMousePos();
 				// Change arrow...
 				if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
-					_vm->_avalot->newMouse(0); // Up arrow
+					_vm->newMouse(0); // Up arrow
 				else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
 					if ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= _activeMenuItem._fly * 2 + 1))
-						_vm->_avalot->newMouse(2); // Right-arrow
+						_vm->newMouse(2); // Right-arrow
 					else
-						_vm->_avalot->newMouse(3); // Fletch
+						_vm->newMouse(3); // Fletch
 				} else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
-					_vm->_avalot->newMouse(1); // Screwdriver
+					_vm->newMouse(1); // Screwdriver
 
 				_activeMenuItem.lightUp(cursorPos);
 
 				_vm->_graphics->refreshScreen();
-			} while (!_vm->_avalot->_holdLeftMouse);
+			} while (!_vm->_holdLeftMouse);
 
-			if (_vm->_avalot->_holdLeftMouse) {
+			if (_vm->_holdLeftMouse) {
 				if (cursorPos.y > 21) {
 					if (!((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
 						&& (cursorPos.y >= 24) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1))))) {
 							// Clicked OUTSIDE the menu.
 							if (_activeMenuItem._activeNow) {
 								_activeMenuItem.wipe();
-								_vm->_avalot->_holdLeftMouse = false;
+								_vm->_holdLeftMouse = false;
 								backup.free();
 								return;
 							} // No "else"- clicking on menu has no effect (only releasing).
@@ -736,11 +736,11 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 
 						if (((_activeMenuItem._left * 8) <= cursorPos.x) && (cursorPos.x <= (_activeMenuItem._left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
 							// If we clicked on the same menu item (the one that is already active) on the bar...
-							_vm->_avalot->_holdLeftMouse = false;
+							_vm->_holdLeftMouse = false;
 							backup.free();
 							return;
 						} else {
-							_vm->_avalot->_holdLeftMouse = true;
+							_vm->_holdLeftMouse = true;
 							break;
 						}
 					}
@@ -757,7 +757,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 						_vm->_graphics->refreshScreen();
 
 						_vm->updateEvents();
-						if (!_vm->_avalot->_holdLeftMouse)
+						if (!_vm->_holdLeftMouse)
 							break;
 					}
 

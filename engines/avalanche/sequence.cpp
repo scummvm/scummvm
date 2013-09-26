@@ -75,7 +75,7 @@ void Sequence::startTimer() {
 }
 
 void Sequence::startTimerImmobilized() {
-	_vm->_avalot->_userMovesAvvy = false; // They can't move.
+	_vm->_userMovesAvvy = false; // They can't move.
 	_vm->_animation->stopWalking(); // And they're not moving now.
 	startTimer(); // Apart from that, it's the same thing.
 }
@@ -94,8 +94,8 @@ void Sequence::callSequencer() {
 		return; // No more routines.
 		break;
 	case kNowFlip: // Flip room.
-		_vm->_avalot->_userMovesAvvy = true;
-		_vm->_avalot->flipRoom(_flipToWhere, _flipToPed);
+		_vm->_userMovesAvvy = true;
+		_vm->flipRoom(_flipToWhere, _flipToPed);
 		// CHECKME: Always true?
 		if (curSeq == kNowFlip)
 			shoveLeft();
@@ -202,12 +202,12 @@ void Sequence::startLustiesSeq2(Room whither, byte ped) {
 
 void Sequence::startCardiffSeq2() {
 	init(1);
-	if (_vm->_avalot->_arrowInTheDoor)
+	if (_vm->_arrowInTheDoor)
 		add(3);
 	else
 		add(2);
 
-	if (_vm->_avalot->_takenPen)
+	if (_vm->_takenPen)
 		_vm->_background->draw(-1, -1, 3);
 
 	startTimer();
