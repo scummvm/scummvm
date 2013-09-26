@@ -38,7 +38,6 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 	_owner(owner),
 	_srcRect(*srcRect),
 	_dstRect(*dstRect),
-	_drawNum(0),
 	_isValid(true),
 	_wantsDraw(true),
 	_transform(transform) {

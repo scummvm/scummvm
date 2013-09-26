@@ -52,6 +52,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
 	_blankSurface = new Graphics::Surface();
 	_drawNum = 1;
+	_lastFrameIter = _renderQueue.end();
 	_needsFlip = true;
 	_skipThisFrame = false;
 	_previousTicket = nullptr;
@@ -159,6 +160,7 @@ bool BaseRenderOSystem::flip() {
 		g_system->updateScreen();
 		_needsFlip = false;
 		_drawNum = 1;
+		_lastFrameIter = _renderQueue.end();
 		addDirtyRect(_renderRect);
 		return true;
 	}
@@ -189,6 +191,7 @@ bool BaseRenderOSystem::flip() {
 		_needsFlip = false;
 	}
 	_drawNum = 1;
+	_lastFrameIter = _renderQueue.end();
 
 	return STATUS_OK;
 }
@@ -292,7 +295,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket);
 				} else {
-					drawFromTicket(compareTicket);
+					drawFromQueuedTicket(it);
 					_previousTicket = compareTicket;
 				}
 				return;
@@ -370,59 +373,40 @@ void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 
 void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
-	// A new item always has _drawNum == 0
-	if (renderTicket->_drawNum == 0) {
-		// In-order
-		if (_renderQueue.empty() || _drawNum > (_renderQueue.back())->_drawNum) {
-			renderTicket->_drawNum = _drawNum++;
-			_renderQueue.push_back(renderTicket);
-			addDirtyRect(renderTicket->_dstRect);
-			++_lastAddedTicket;
-		} else {
-			// Before something
-			RenderQueueIterator pos;
-			for (pos = _renderQueue.begin(); pos != _renderQueue.end(); pos++) {
-				if ((*pos)->_drawNum >= _drawNum) {
-					break;
-				}
-			}
-			_renderQueue.insert(pos, renderTicket);
-			renderTicket->_drawNum = _drawNum++;
-			// Increment the following tickets, so they still are in line
-			RenderQueueIterator it;
-			for (it = pos; it != _renderQueue.end(); ++it) {
-				(*it)->_drawNum++;
-				(*it)->_wantsDraw = false;
-			}
-			addDirtyRect(renderTicket->_dstRect);
-			_lastAddedTicket = pos;
-		}
+
+	++_lastFrameIter;
+	// In-order
+	if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
+		_lastFrameIter--;
+		_renderQueue.push_back(renderTicket);
+		++_lastFrameIter;
+		addDirtyRect(renderTicket->_dstRect);
+		++_lastAddedTicket;
 	} else {
-		// Was drawn last round, still in the same order
-		if (_drawNum == renderTicket->_drawNum) {
-			_drawNum++;
-			++_lastAddedTicket;
-		} else {
-			// Remove the ticket from the list
-			RenderQueueIterator it = _renderQueue.begin();
-			while (it != _renderQueue.end()) {
-				if ((*it) == renderTicket) {
-					it = _renderQueue.erase(it);
-					break;
-				} else {
-					++it;
-				}
-			}
-			if (it != _renderQueue.end()) {
-				// Decreement the following tickets.
-				for (; it != _renderQueue.end(); ++it) {
-					(*it)->_drawNum--;
-				}
-			}
-			// Is not in order, so readd it as if it was a new ticket
-			renderTicket->_drawNum = 0;
-			drawFromTicket(renderTicket);
-		}
+		// Before something
+		RenderQueueIterator pos = _lastFrameIter;
+		_renderQueue.insert(pos, renderTicket);
+		--_lastFrameIter;
+		addDirtyRect(renderTicket->_dstRect);
+		_lastAddedTicket = pos;
+	}
+}
+
+void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
+	RenderTicket *renderTicket = *ticket;
+	renderTicket->_wantsDraw = true;
+
+	++_lastFrameIter;
+	// Was drawn last round, still in the same order
+	if (*_lastFrameIter == renderTicket) {
+		_drawNum++;
+		++_lastAddedTicket;
+	} else {
+		--_lastFrameIter;
+		// Remove the ticket from the list
+		_renderQueue.erase(ticket);
+		// Is not in order, so readd it as if it was a new ticket
+		drawFromTicket(renderTicket);
 	}
 }
 
@@ -441,16 +425,13 @@ void BaseRenderOSystem::drawTickets() {
 	// Note: We draw invalid tickets too, otherwise we wouldn't be honouring
 	// the draw request they obviously made BEFORE becoming invalid, either way
 	// we have a copy of their data, so their invalidness won't affect us.
-	uint32 decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_wantsDraw == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			it = _renderQueue.erase(it);
 			delete ticket;
-			decrement++;
 		} else {
-			(*it)->_drawNum -= decrement;
 			++it;
 		}
 	}
@@ -470,9 +451,9 @@ void BaseRenderOSystem::drawTickets() {
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
 	_drawNum = 1;
+	_lastFrameIter = _renderQueue.end();
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		RenderTicket *ticket = *it;
-		assert(ticket->_drawNum == _drawNum);
 		++_drawNum;
 		if (ticket->_dstRect.intersects(*_dirtyRect)) {
 			// dstClip is the area we want redrawn.
@@ -500,16 +481,13 @@ void BaseRenderOSystem::drawTickets() {
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets
-	decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_isValid == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			it = _renderQueue.erase(it);
 			delete ticket;
-			decrement++;
 		} else {
-			(*it)->_drawNum -= decrement;
 			++it;
 		}
 	}
@@ -641,6 +619,7 @@ void BaseRenderOSystem::endSaveLoad() {
 	// so just skip this single frame.
 	_skipThisFrame = true;
 	_drawNum = 1;
+	_lastFrameIter = _renderQueue.end();
 
 	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->h, _renderSurface->w), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
 	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
