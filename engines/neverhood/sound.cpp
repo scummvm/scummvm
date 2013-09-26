@@ -629,7 +629,8 @@ bool AudioResourceManSoundItem::isPlaying() {
 
 AudioResourceManMusicItem::AudioResourceManMusicItem(NeverhoodEngine *vm, uint32 fileHash)
 	: _vm(vm), _fileHash(fileHash), _terminate(false), _canRestart(false),
-	_volume(100), _panning(50),	_start(false), _isFadingIn(false), _isFadingOut(false), _isPlaying(false) {
+	_volume(100), _panning(50),	_start(false), _isFadingIn(false), _isFadingOut(false), _isPlaying(false),
+	_fadeVolume(0), _fadeVolumeStep(0) {
 
 }
 
