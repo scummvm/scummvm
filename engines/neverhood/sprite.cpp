@@ -211,6 +211,12 @@ void AnimatedSprite::init() {
 	_replNewColor = 0;
 	_animResource.setReplEnabled(false);
 	_playBackwards = false;
+	_currAnimFileHash = 0;
+	_lastFrameIndex = 0;
+	_plLastFrameIndex = 0;
+	_plFirstFrameHash = 0;
+	_plLastFrameHash = 0;
+	_animStatus = 0;
 }
 
 void AnimatedSprite::update() {
