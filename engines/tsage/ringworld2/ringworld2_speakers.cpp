@@ -541,7 +541,7 @@ void SpeakerMiranda300::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3) {
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
@@ -627,7 +627,7 @@ void SpeakerMiranda3375::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3)
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_companion2;
@@ -677,7 +677,7 @@ void SpeakerMiranda3385::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3)
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_companion2;
@@ -726,7 +726,7 @@ void SpeakerMiranda3395::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3)
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_companion2;
@@ -776,7 +776,7 @@ void SpeakerMiranda3400::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3)
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_companion2;
@@ -820,7 +820,7 @@ void SpeakerMiranda3600::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3)
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_actor12;
@@ -1176,7 +1176,7 @@ void SpeakerQuinn300::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 3) {
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 300);
@@ -1272,7 +1272,7 @@ void SpeakerQuinn1100::proc15() {
 		if (v == 0)
 			return;
 
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 1100);
@@ -1318,7 +1318,7 @@ void SpeakerQuinn2435::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
@@ -1345,7 +1345,7 @@ void SpeakerQuinn2450::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
@@ -1500,9 +1500,9 @@ void SpeakerQuinn3375::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_object2 = &R2_GLOBALS._player;
-		else if (R2_GLOBALS._player._characterIndex == 2)
+		else if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &scene->_companion1;
 		else
 			_object2 = &scene->_companion2;
@@ -1551,9 +1551,9 @@ void SpeakerQuinn3385::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_object2 = &R2_GLOBALS._player;
-		else if (R2_GLOBALS._player._characterIndex == 2)
+		else if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &scene->_companion1;
 		else
 			_object2 = &scene->_companion2;
@@ -1587,7 +1587,7 @@ void SpeakerQuinn3385::proc15() {
 		break;
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		if (R2_GLOBALS._player._characterIndex == 2)
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object1.setup(4010, 3, 1);
 		else
 			_object1.setup(4010, 5, 1);
@@ -1606,9 +1606,9 @@ void SpeakerQuinn3395::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_object2 = &R2_GLOBALS._player;
-		else if (R2_GLOBALS._player._characterIndex == 2)
+		else if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &scene->_companion1;
 		else
 			_object2 = &scene->_companion2;
@@ -1642,7 +1642,7 @@ void SpeakerQuinn3395::proc15() {
 		break;
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		if (R2_GLOBALS._player._characterIndex == 2)
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object1.setup(4010, 3, 1);
 		else
 			_object1.setup(4010, 5, 1);
@@ -1661,9 +1661,9 @@ void SpeakerQuinn3400::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_object2 = &R2_GLOBALS._player;
-		else if (R2_GLOBALS._player._characterIndex == 2)
+		else if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &scene->_companion1;
 		else
 			_object2 = &scene->_companion2;
@@ -1710,7 +1710,7 @@ void SpeakerQuinn3600::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_actor10;
@@ -2072,7 +2072,7 @@ void SpeakerSeeker1100::proc15() {
 		if (v == 0)
 			return;
 
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 1100);
@@ -2129,7 +2129,7 @@ void SpeakerSeeker1900::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 1900);
@@ -2160,7 +2160,7 @@ void SpeakerSeeker2435::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2435);
@@ -2187,7 +2187,7 @@ void SpeakerSeeker2450::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 2450);
@@ -2362,7 +2362,7 @@ void SpeakerSeeker3400::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2)
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_companion1;
@@ -2421,7 +2421,7 @@ void SpeakerSeeker3600::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == 2)
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &R2_GLOBALS._player;
 		else
 			_object2 = &scene->_actor11;

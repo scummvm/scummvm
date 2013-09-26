@@ -51,77 +51,77 @@ void Scene2000::initPlayer() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2001;
 		else
 			_sceneMode = 2021;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 2:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2002;
 		else
 			_sceneMode = 2022;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 3:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2000;
 		else
 			_sceneMode = 2020;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 4:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2005;
 		else
 			_sceneMode = 2025;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 5:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2004;
 		else
 			_sceneMode = 2024;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 6:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2009;
 		else
 			_sceneMode = 2029;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 7:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2008;
 		else
 			_sceneMode = 2028;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 8:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2013;
 		else
 			_sceneMode = 2033;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 9:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2012;
 		else
 			_sceneMode = 2032;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 10:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2016;
 		else
 			_sceneMode = 2036;
 		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		break;
 	case 11:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_sceneMode = 2038;
 		else
 			_sceneMode = 2040;
@@ -137,7 +137,7 @@ void Scene2000::initPlayer() {
 
 	if ((R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) && (R2_GLOBALS._spillLocation[R2_QUINN] == R2_GLOBALS._spillLocation[R2_SEEKER])) {
 		_object1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_object1.setup(20, 5, 1);
 			_object1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
@@ -601,25 +601,25 @@ void Scene2000::SouthExit::changeScene() {
 
 	switch (scene->_mazePlayerMode) {
 	case 4:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2003, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2023, &R2_GLOBALS._player, NULL);
 		break;
 	case 6:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2007, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2027, &R2_GLOBALS._player, NULL);
 		break;
 	case 8:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2011, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2031, &R2_GLOBALS._player, NULL);
 		break;
 	case 11:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->_sceneMode = 2039;
 		else
 			scene->_sceneMode = 2041;
@@ -666,19 +666,19 @@ void Scene2000::NorthExit::changeScene() {
 
 	switch (scene->_mazePlayerMode) {
 	case 5:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2006, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2026, &R2_GLOBALS._player, NULL);
 		break;
 	case 7:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2010, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2030, &R2_GLOBALS._player, NULL);
 		break;
 	case 9:
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2014, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2034, &R2_GLOBALS._player, NULL);
@@ -698,56 +698,56 @@ void Scene2000::DoorExit::changeScene() {
 	switch (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex]) {
 	case 3:
 		scene->_mazePlayerMode = 1;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 4:
 		scene->_mazePlayerMode = 7;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2037, &R2_GLOBALS._player, NULL);
 		break;
 	case 10:
 		scene->_mazePlayerMode = 8;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 12:
 		scene->_mazePlayerMode = 3;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2037, &R2_GLOBALS._player, NULL);
 		break;
 	case 16:
 		scene->_mazePlayerMode = 4;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 21:
 		scene->_mazePlayerMode = 5;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 25:
 		scene->_mazePlayerMode = 2;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2037, &R2_GLOBALS._player, NULL);
 		break;
 	case 34:
 		scene->_mazePlayerMode = 6;
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2037, &R2_GLOBALS._player, NULL);
@@ -791,7 +791,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setup(2008, 3, 1);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -1063,7 +1063,7 @@ void Scene2350::ExitUp::changeScene() {
 
 	R2_GLOBALS._player.disableControl(CURSOR_CROSSHAIRS);
 	scene->_sceneMode = 12;
-	if (R2_GLOBALS._player._characterIndex == 1)
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 		scene->setAction(&scene->_sequenceManager, scene, 2350, &R2_GLOBALS._player, NULL);
 	else
 		scene->setAction(&scene->_sequenceManager, scene, 2352, &R2_GLOBALS._player, NULL);
@@ -1099,7 +1099,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setup(2008, 3, 1);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -1109,7 +1109,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_actor2.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor2.setup(20, 5, 1);
 			_actor2.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
@@ -1139,7 +1139,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
 		if (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex] == 34) {
-			if (R2_GLOBALS._player._characterIndex == 1)
+			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				_sceneMode = 2351;
 			else
 				_sceneMode = 2353;
@@ -1392,7 +1392,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setVisage(2008);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -1402,7 +1402,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_pictographs1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_pictographs1.setup(20, 5, 1);
 			_pictographs1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
@@ -1556,7 +1556,7 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setVisage(2008);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -1567,7 +1567,7 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_actor1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor1.setup(20, 5, 1);
 			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
@@ -1657,7 +1657,7 @@ bool Scene2435::Astor::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 20;
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
-		if ((R2_GLOBALS._player._characterIndex == 1) || (R2_GLOBALS.getFlag(82))) {
+		if ((R2_GLOBALS._player._characterIndex == R2_QUINN) || (R2_GLOBALS.getFlag(82))) {
 			scene->_stripManager.start(605, scene);
 			return true;
 		} else if (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2) {
@@ -1771,7 +1771,7 @@ void Scene2435::signal() {
 		_sceneMode = 2436;
 		R2_GLOBALS._player.setStrip(7);
 		_companion.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1)
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_companion.setVisage(20);
 		else
 			_companion.setVisage(2008);
@@ -1839,7 +1839,7 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setVisage(2008);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -1849,7 +1849,7 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.setPosition(Common::Point(210, 200));
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_actor1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor1.setup(20, 5, 1);
 			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
@@ -1927,7 +1927,7 @@ void Scene2445::signal() {
 bool Scene2450::Parker::startAction(CursorType action, Event &event) {
 	Scene2450 *scene = (Scene2450 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == CURSOR_USE) && (R2_GLOBALS._player._characterIndex == 1)) {
+	if ((action == CURSOR_USE) && (R2_GLOBALS._player._characterIndex == R2_QUINN)) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2452;
 		scene->setAction(&scene->_sequenceManager, scene, 2452, &R2_GLOBALS._player, &scene->_parker, NULL);
@@ -1945,7 +1945,7 @@ bool Scene2450::CareTaker::startAction(CursorType action, Event &event) {
 			++R2_GLOBALS._v565AE;
 			scene->_sceneMode = 20;
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
-			if (R2_GLOBALS._player._characterIndex == 1)
+			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_stripManager.start(699 + (R2_GLOBALS._v565AE * 2), scene);
 			else
 				scene->_stripManager.start(700 + (R2_GLOBALS._v565AE * 2), scene);
@@ -2017,7 +2017,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 		break;
 	case 2000:
 		_sceneMode = 2451;
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			if (R2_GLOBALS._player._characterScene[R2_SEEKER] == 2450) {
 				_companion.postInit();
 				_companion.setup(20, 6, 1);
@@ -2041,7 +2041,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	case 2450:
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			R2_GLOBALS._player.postInit();
 			if (R2_GLOBALS.getFlag(61)) {
 				R2_GLOBALS._player.setup(2008, 6, 1);
@@ -2111,7 +2111,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 		break;
 	default:
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			if (R2_GLOBALS.getFlag(61)) {
 				R2_GLOBALS._player.setup(2008, 3, 1);
 			} else {
@@ -2429,7 +2429,7 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setVisage(11);
 		R2_GLOBALS._player._moveDiff = Common::Point(2, 1);
 	} else {
@@ -2439,7 +2439,7 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_actor1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor1.setup(21, 3, 1);
 			_actor1.setDetails(9002, 1, -1, -1, 1, (SceneItem *)NULL);
 		} else {
@@ -2568,7 +2568,7 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setup(2008, 3, 1);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -2578,7 +2578,7 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_actor1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor1.setup(20, 5, 1);
 			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
@@ -2729,7 +2729,7 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setVisage(2008);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -2740,7 +2740,7 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_actor1.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor1.setup(20, 5, 1);
 			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
@@ -2892,7 +2892,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-	if (R2_GLOBALS._player._characterIndex == 1) {
+	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.setVisage(2008);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 	} else {
@@ -2903,7 +2903,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
 		_companion.postInit();
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_companion.setup(20, 5, 1);
 			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {

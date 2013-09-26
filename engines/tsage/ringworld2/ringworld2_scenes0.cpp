@@ -2805,12 +2805,12 @@ void Scene300::Action1::signal() {
 
 	switch (_actionIndex) {
 	case 0:
-		setAction(&scene->_sequenceManager2, this, 311, (R2_GLOBALS._player._characterIndex == 1) ?
+		setAction(&scene->_sequenceManager2, this, 311, (R2_GLOBALS._player._characterIndex == R2_QUINN) ?
 			(SceneObject *)&R2_GLOBALS._player : (SceneObject *)&scene->_quinn);
 		_actionIndex = 2;
 		break;
 	case 1:
-		setAction(&scene->_sequenceManager2, this, 312, (R2_GLOBALS._player._characterIndex == 1) ?
+		setAction(&scene->_sequenceManager2, this, 312, (R2_GLOBALS._player._characterIndex == R2_QUINN) ?
 			(SceneObject *)&R2_GLOBALS._player : (SceneObject *)&scene->_quinn);
 		_actionIndex = 0;
 		break;
@@ -2904,7 +2904,7 @@ bool Scene300::QuinnWorkstation::startAction(CursorType action, Event &event) {
 		return true;
 
 	case CURSOR_LOOK:
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			SceneItem::display2(300, 47);
 			return true;
 		}
@@ -2927,7 +2927,7 @@ bool Scene300::MirandaWorkstation::startAction(CursorType action, Event &event) 
 		return true;
 
 	case CURSOR_LOOK:
-		if (R2_GLOBALS._player._characterIndex == 3) {
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA) {
 			SceneItem::display2(300, 47);
 			return true;
 		}
@@ -2943,7 +2943,7 @@ bool Scene300::MirandaWorkstation::startAction(CursorType action, Event &event) 
 bool Scene300::SeekerWorkstation::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			SceneItem::display2(300, 47);
 			return true;
 		}
@@ -3452,8 +3452,8 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 
 	case 3:
 		if (R2_GLOBALS._sceneManager._previousScene == 1500) {
-			R2_GLOBALS._player._oldCharacterScene[3] = 3150;
-			R2_GLOBALS._player._characterScene[3] = 3150;
+			R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 3150;
+			R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3150;
 			R2_GLOBALS._player._effect = 0;
 			R2_GLOBALS._player.setAction(NULL);
 			R2_GLOBALS._player.disableControl();
@@ -4281,7 +4281,7 @@ void Scene325::consoleAction(int id) {
 		break;
 
 	case 11:
-		if (R2_GLOBALS.getFlag(57) && (R2_GLOBALS._player._characterIndex == 1) && !R2_GLOBALS.getFlag(25)) {
+		if (R2_GLOBALS.getFlag(57) && (R2_GLOBALS._player._characterIndex == R2_QUINN) && !R2_GLOBALS.getFlag(25)) {
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 			_sceneMode = 13;

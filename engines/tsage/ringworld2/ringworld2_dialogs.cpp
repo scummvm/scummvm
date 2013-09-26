@@ -235,7 +235,7 @@ void CharacterDialog::show() {
 		scene->saveCharacter(oldCharacter);
 
 		// Play the correctfrequency, if any, of the character being switched to's scanner device 
-		if (R2_GLOBALS._player._characterScene[0] != 300) {
+		if (R2_GLOBALS._player._characterScene[R2_NONE] != 300) {
 			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] - 1) {
 			case 0:
 				R2_GLOBALS._sound4.stop();

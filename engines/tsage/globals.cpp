@@ -503,7 +503,7 @@ void Ringworld2Globals::reset() {
 	_player._characterIndex = R2_QUINN;
 	_player._characterScene[R2_QUINN] = 100;
 	_player._characterScene[R2_SEEKER] = 300;
-	_player._characterScene[3] = 300;
+	_player._characterScene[R2_MIRANDA] = 300;
 }
 
 void Ringworld2Globals::synchronize(Serializer &s) {
