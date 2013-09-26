@@ -237,7 +237,7 @@ public:
 	byte _lineNum; // Number of lines.
 	LineType _lines[50]; // For Also.
 	enum MouseState { kMouseStateNo, kMouseStateYes, kMouseStateVirtual } _mouse;
-	bool _dropsOk, _scReturn, _soundFx, _cheat;
+	bool _dropsOk, _soundFx, _cheat;
 	Common::String _mouseText;
 	bool _weirdWord;
 	bool _letMeOut;
@@ -324,8 +324,7 @@ public:
 	void loadMouse(byte which);
 
 	void setBackgroundColor(byte x);
-	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t);
-
+	
 	void resetVariables();
 	void newGame(); // This sets up the DNA for a completely new game.
 	void slowDown();
@@ -367,8 +366,6 @@ private:
 	int8 fades(int8 x);
 	void fadeOut(byte n);
 	void fadeIn(byte n);
-
-	void drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc);
 };
 
 } // End of namespace Avalanche

@@ -51,15 +51,15 @@ const char *Avalot::kVersionNum = "1.30";
 const char *Avalot::kCopyright = "1995";
 
 const MouseHotspotType Avalot::kMouseHotSpots[9] = {
-	{8,0}, // 1 - up-arrow
-	{0,0}, // 2 - screwdriver
-	{15,6}, // 3 - right-arrow
-	{0,0}, // 4 - fletch
-	{8,7}, // 5 - hourglass
-	{4,0}, // 6 - TTHand
-	{8,5}, // 7- Mark's crosshairs
-	{8,7}, // 8- I-beam
-	{0,0} // 9 - question mark
+	{8,0}, // 0 - up-arrow
+	{0,0}, // 1 - screwdriver
+	{15,6}, // 2 - right-arrow
+	{0,0}, // 3 - fletch
+	{8,7}, // 4 - hourglass
+	{4,0}, // 5 - TTHand
+	{8,5}, // 6 - Mark's crosshairs
+	{8,7}, // 7 - I-beam
+	{0,0} // 8 - question mark
 };
 
 // Art gallery at 2,1; notice about this at 2,2.
@@ -1579,14 +1579,6 @@ void Avalot::newMouse(byte id) {
  */
 void Avalot::setMousePointerWait() {
 	newMouse(4);
-}
-
-void Avalot::drawShadow(int16 x1, int16 y1, int16 x2, int16 y2, byte hc, byte sc) {
-	warning("STUB: Avalot::shadow()");
-}
-
-void Avalot::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String t) {
-	warning("STUB: Avalot::shbox()");
 }
 
 void Avalot::resetVariables() {
