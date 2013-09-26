@@ -55,7 +55,6 @@ public:
 	void startGeidaLuteSeq();
 	void startWinSeq();
 	void startNaughtyDukeSeq();
-	void startLustiesSeq1();
 	void startLustiesSeq2(Room whither, byte ped);
 	void startLustiesSeq3(Room whither, byte ped);
 	void startHallSeq(Room whither, byte ped);
@@ -63,7 +62,6 @@ public:
 	void startOutsideSeq(Room whither, byte ped);
 	void startDuckSeq();
 	void startCardiffSeq2();
-	void startNottsSeq();
 	void startDummySeq(Room whither, byte ped);
 
 private:

@@ -88,10 +88,11 @@ void Sequence::callSequencer() {
 	case 0:
 		return; // No more routines.
 		break;
-	case 177: // Flip room.
+	case kNowFlip: // Flip room.
 		_vm->_avalot->_userMovesAvvy = true;
 		_vm->_avalot->flipRoom(_vm->_avalot->_flipToWhere, _vm->_avalot->_flipToPed);
-		if (curSeq == 177)
+		// CHECKME: Always true?
+		if (curSeq == kNowFlip)
 			shoveLeft();
 		break;
 	}
@@ -146,14 +147,6 @@ void Sequence::startDuckSeq() {
 	startTimer();
 }
 
-void Sequence::startNottsSeq() {
-	init(3);
-	add(2);
-	add(1);
-	add(4);
-	startTimer();
-}
-
 void Sequence::startLustiesSeq3(Room whither, byte ped) {
 	init(4);
 	add(5);
@@ -190,12 +183,6 @@ void Sequence::startWinSeq() {
 }
 
 void Sequence::startCupboardSeq() {
-	init(8);
-	add(7);
-	startTimer();
-}
-
-void Sequence::startLustiesSeq1() {
 	init(8);
 	add(7);
 	startTimer();
