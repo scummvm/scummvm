@@ -1616,8 +1616,6 @@ void Avalot::resetVariables() {
 	_nextBell = 0;
 	_givenPotionToGeida = false;
 	_lustieIsAsleep = false;
-	_flipToWhere = kRoomNowhere;
-	_flipToPed = 0;
 	_beenTiedUp = false;
 	_sittingInPub = false;
 	_spurgeTalkCount = 0;
@@ -1628,6 +1626,7 @@ void Avalot::resetVariables() {
 
 	_vm->_parser->resetVariables();
 	_vm->_animation->resetVariables();
+	_vm->_sequence->resetVariables();
 }
 
 void Avalot::newGame() {

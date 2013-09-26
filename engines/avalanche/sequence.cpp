@@ -41,6 +41,11 @@ Sequence::Sequence(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
+void Sequence::resetVariables() {
+	_flipToWhere = kRoomNowhere;
+	_flipToPed = 0;
+}
+
 void Sequence::init(byte what) {
 	_seq[0] = what;
 
@@ -60,8 +65,8 @@ void Sequence::add(byte what) {
 void Sequence::switchRoom(Room where, byte ped) {
 	add(kNowFlip);
 
-	_vm->_avalot->_flipToWhere = where;
-	_vm->_avalot->_flipToPed = ped;
+	_flipToWhere = where;
+	_flipToPed = ped;
 }
 
 void Sequence::startTimer() {
@@ -90,7 +95,7 @@ void Sequence::callSequencer() {
 		break;
 	case kNowFlip: // Flip room.
 		_vm->_avalot->_userMovesAvvy = true;
-		_vm->_avalot->flipRoom(_vm->_avalot->_flipToWhere, _vm->_avalot->_flipToPed);
+		_vm->_avalot->flipRoom(_flipToWhere, _flipToPed);
 		// CHECKME: Always true?
 		if (curSeq == kNowFlip)
 			shoveLeft();
@@ -215,5 +220,7 @@ void Sequence::startDummySeq(Room whither, byte ped) {
 
 void Sequence::synchronize(Common::Serializer &sz) {
 	sz.syncBytes(_seq, kSeqLength);
+	sz.syncAsByte(_flipToWhere);
+	sz.syncAsByte(_flipToPed);
 }
 } // End of namespace Avalanche.
