@@ -373,42 +373,40 @@ void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 
 void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
-	{
+
+	++_lastFrameIter;
+	// In-order
+	if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
+		_lastFrameIter--;
+		_renderQueue.push_back(renderTicket);
 		++_lastFrameIter;
-		// In-order
-		if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
-			_lastFrameIter--;
-			_renderQueue.push_back(renderTicket);
-			++_lastFrameIter;
-			addDirtyRect(renderTicket->_dstRect);
-			++_lastAddedTicket;
-		} else {
-			// Before something
-			RenderQueueIterator pos = _lastFrameIter;
-			_renderQueue.insert(pos, renderTicket);
-			--_lastFrameIter;
-			addDirtyRect(renderTicket->_dstRect);
-			_lastAddedTicket = pos;
-		}
+		addDirtyRect(renderTicket->_dstRect);
+		++_lastAddedTicket;
+	} else {
+		// Before something
+		RenderQueueIterator pos = _lastFrameIter;
+		_renderQueue.insert(pos, renderTicket);
+		--_lastFrameIter;
+		addDirtyRect(renderTicket->_dstRect);
+		_lastAddedTicket = pos;
 	}
 }
 
 void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
 	RenderTicket *renderTicket = *ticket;
 	renderTicket->_wantsDraw = true;
-	{
-		++_lastFrameIter;
-		// Was drawn last round, still in the same order
-		if (*_lastFrameIter == renderTicket) {
-			_drawNum++;
-			++_lastAddedTicket;
-		} else {
-			--_lastFrameIter;
-			// Remove the ticket from the list
-			_renderQueue.erase(ticket);
-			// Is not in order, so readd it as if it was a new ticket
-			drawFromTicket(renderTicket);
-		}
+
+	++_lastFrameIter;
+	// Was drawn last round, still in the same order
+	if (*_lastFrameIter == renderTicket) {
+		_drawNum++;
+		++_lastAddedTicket;
+	} else {
+		--_lastFrameIter;
+		// Remove the ticket from the list
+		_renderQueue.erase(ticket);
+		// Is not in order, so readd it as if it was a new ticket
+		drawFromTicket(renderTicket);
 	}
 }
 
@@ -427,14 +425,12 @@ void BaseRenderOSystem::drawTickets() {
 	// Note: We draw invalid tickets too, otherwise we wouldn't be honouring
 	// the draw request they obviously made BEFORE becoming invalid, either way
 	// we have a copy of their data, so their invalidness won't affect us.
-	uint32 decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_wantsDraw == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			it = _renderQueue.erase(it);
 			delete ticket;
-			decrement++;
 		} else {
 			++it;
 		}
@@ -485,14 +481,12 @@ void BaseRenderOSystem::drawTickets() {
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets
-	decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_isValid == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			it = _renderQueue.erase(it);
 			delete ticket;
-			decrement++;
 		} else {
 			++it;
 		}
