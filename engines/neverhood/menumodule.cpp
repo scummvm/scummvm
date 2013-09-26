@@ -574,6 +574,7 @@ TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateM
 
 	_maxVisibleChars = (_rect.x2 - _rect.x1) / _fontSurface->getCharWidth();
 	_cursorPos = 0;
+	_textLabelWidget = NULL;
 
 	SetUpdateHandler(&TextEditWidget::update);
 	SetMessageHandler(&TextEditWidget::handleMessage);
