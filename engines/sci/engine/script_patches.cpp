@@ -1467,6 +1467,32 @@ const SciScriptSignature sq4Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+// When you leave Ulence Flats, another timepod is supposed to appear.
+// On fast machines, that timepod appears fully immediately and then
+//  starts to appear like it should be. That first appearance is caused
+//  by the scripts setting an invalid cel number and the machine being
+//  so fast that there is no time for another script to actually fix
+//  the cel number. On slower machines, the cel number gets fixed
+//  by the cycler and that's why only fast machines are affected.
+//  The same issue happens in Sierra SCI.
+// We simply set the correct starting cel number to fix the bug.
+// Responsible method: robotIntoShip::changeState(9)
+const byte sq1vgaSignatureUlenceFlatsTimepodGfxGlitch[] = {
+	8,
+	0x39, 0x07,       // pushi 07 (ship::cel)
+	0x78,             // push1
+	0x39, 0x0a,       // pushi 0x0a (set ship::cel to 10)
+	0x38, 0xa0, 0x00, // pushi 0x00a0 (ship::setLoop)
+	0
+};
+
+const uint16 sq1vgaPatchUlenceFlatsTimepodGfxGlitch[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x39, 0x09,       // pushi 0x09 (set ship::cel to 9)
+	PATCH_END
+};
+
 const byte sq1vgaSignatureEgoShowsCard[] = {
 	25,
 	0x38, 0x46, 0x02, // push 0x246 (set up send frame to set timesShownID)
@@ -1484,7 +1510,8 @@ const byte sq1vgaSignatureEgoShowsCard[] = {
 	0x36,             // push      (wrong, acc clobbered by class, above)
 	0x35, 0x03,       // ldi 0x03
 	0x22,             // lt?
-	0};
+	0
+};
 
 // Note that this script patch is merely a reordering of the
 // instructions in the original script.
@@ -1504,13 +1531,14 @@ const uint16 sq1vgaPatchEgoShowsCard[] = {
 	0x4a, 0x06,       // send 0x06 (set timesShownID)
 	0x35, 0x03,       // ldi 0x03
 	0x22,             // lt?
-	PATCH_END};
+	PATCH_END
+};
 
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature sq1vgaSignatures[] = {
-	{   58, "Sarien armory droid zapping ego first time", 1, PATCH_MAGICDWORD( 0x72, 0x88, 0x15, 0x36 ), -70,
-		sq1vgaSignatureEgoShowsCard, sq1vgaPatchEgoShowsCard },
+	{     45, "Ulence Flats: timepod graphic glitch",        1, PATCH_MAGICDWORD( 0x07, 0x78, 0x39, 0x0a ),  -1,       sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
+	{     58, "Sarien armory droid zapping ego first time",  1, PATCH_MAGICDWORD( 0x72, 0x88, 0x15, 0x36 ), -70,       sq1vgaSignatureEgoShowsCard, sq1vgaPatchEgoShowsCard },
 
 	SCI_SIGNATUREENTRY_TERMINATOR};
 
