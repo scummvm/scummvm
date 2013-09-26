@@ -250,7 +250,9 @@ void SoundItem::update() {
 // SoundMan
 
 SoundMan::SoundMan(NeverhoodEngine *vm)
-	: _vm(vm), _soundIndex1(-1), _soundIndex2(-1), _soundIndex3(-1) {
+	: _vm(vm), _soundIndex1(-1), _soundIndex2(-1), _soundIndex3(-1),
+	  _initialCountdown(0), _playOnceAfterCountdown(false),
+	  _initialCountdown3(0), _playOnceAfterCountdown3(false) {
 }
 
 SoundMan::~SoundMan() {
