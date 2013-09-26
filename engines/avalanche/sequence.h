@@ -36,25 +36,45 @@ namespace Avalanche {
 class AvalancheEngine;
 
 class Sequence {
-public:
+private:
 	static const int16 kNowFlip = 177;
 	static const int16 kSeqLength = 10;
 
+public:
 	byte _seq[kSeqLength];
 
 	Sequence(AvalancheEngine *vm);
+	void synchronize(Common::Serializer &sz);
 
-	void firstShow(byte what);
-	void thenShow(byte what);
-	void thenFlip(Room where, byte ped);
-	void startToClose();
-	void startToOpen();
 	void callSequencer();
+
+	void startCupboardSeq();
+	void startMusicRoomSeq();
+	void startMusicRoomSeq2(Room whither, byte ped);
+	void startGardenSeq();
+	void startGeidaLuteSeq();
+	void startWinSeq();
+	void startNaughtyDukeSeq();
+	void startLustiesSeq1();
+	void startLustiesSeq2(Room whither, byte ped);
+	void startLustiesSeq3(Room whither, byte ped);
+	void startHallSeq(Room whither, byte ped);
+	void startCardiffSeq(Room whither, byte ped);
+	void startOutsideSeq(Room whither, byte ped);
+	void startDuckSeq();
+	void startCardiffSeq2();
+	void startNottsSeq();
+	void startDummySeq(Room whither, byte ped);
 
 private:
 	AvalancheEngine *_vm;
 
 	void shoveLeft(); // This is called by Timer when it's time to do another frame. It shifts everything to the left.
+	void firstShow(byte what);
+	void thenShow(byte what);
+	void thenFlip(Room where, byte ped);
+	void startToClose();
+	void startToOpen();
 };
 
 } // End of namespace Avalanche.

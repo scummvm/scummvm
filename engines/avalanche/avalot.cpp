@@ -1017,10 +1017,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (ped != 0) {
 			_vm->_background->draw(-1, -1, 5);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->firstShow(6);
-			_vm->_sequence->thenShow(5);
-			_vm->_sequence->thenShow(7);
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startMusicRoomSeq();
 		}
 		break;
 
@@ -1028,11 +1025,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (ped == 2) {
 			_vm->_background->draw(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->firstShow(3);
-			_vm->_sequence->thenShow(2);
-			_vm->_sequence->thenShow(1);
-			_vm->_sequence->thenShow(4);
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startNottsSeq();
 		}
 		break;
 
@@ -1040,10 +1033,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (ped == 2)  {
 			_vm->_background->draw(-1, -1, 5);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->firstShow(6);
-			_vm->_sequence->thenShow(5);
-			_vm->_sequence->thenShow(7);
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startMusicRoomSeq();
 		}
 		break;
 
@@ -1068,16 +1058,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 			_vm->_animation->_sprites[1].init(10, false, _vm->_animation); // Define the dart.
 			_vm->_background->draw(-1, -1, 0);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->firstShow(1);
-			if (_arrowInTheDoor)
-				_vm->_sequence->thenShow(3);
-			else
-				_vm->_sequence->thenShow(2);
-
-			if (_takenPen)
-				_vm->_background->draw(-1, -1, 3);
-
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startCardiffSeq2();
 		} else {
 			_vm->_background->draw(-1, -1, 0);
 			if (_arrowInTheDoor)
@@ -1092,10 +1073,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 		if (ped == 1)  {
 			_vm->_background->draw(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->firstShow(2);
-			_vm->_sequence->thenShow(1);
-			_vm->_sequence->thenShow(3);
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startGardenSeq();
 		}
 		break;
 
@@ -1113,10 +1091,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 
 			_vm->_background->draw(-1, -1, 1);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->firstShow(2);
-			_vm->_sequence->thenShow(1);
-			_vm->_sequence->thenShow(3);
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startGardenSeq();
 		}
 		break;
 
@@ -1152,11 +1127,7 @@ void Avalot::enterRoom(Room roomId, byte ped) {
 			// Shut the door
 			_vm->_background->draw(-1, -1, 2);
 			_vm->_graphics->refreshBackground();
-			_vm->_sequence->firstShow(3);
-			_vm->_sequence->firstShow(2);
-			_vm->_sequence->thenShow(1);
-			_vm->_sequence->thenShow(4);
-			_vm->_sequence->startToClose();
+			_vm->_sequence->startDuckSeq();
 		}
 		break;
 
@@ -1993,53 +1964,42 @@ void Avalot::openDoor(Room whither, byte ped, byte magicnum) {
 	case kRoomOutsideYours:
 	case kRoomOutsideNottsPub:
 	case kRoomOutsideDucks:
-		_vm->_sequence->firstShow(1);
-		_vm->_sequence->thenShow(2);
-		_vm->_sequence->thenShow(3);
+		_vm->_sequence->startOutsideSeq(whither, ped);
 		break;
 	case kRoomInsideCardiffCastle:
-		_vm->_sequence->firstShow(1);
-		_vm->_sequence->thenShow(5);
+		_vm->_sequence->startCardiffSeq(whither, ped);
 		break;
 	case kRoomAvvysGarden:
 	case kRoomEntranceHall:
 	case kRoomInsideAbbey:
 	case kRoomYourHall:
-		_vm->_sequence->firstShow(1);
-		_vm->_sequence->thenShow(2);
+		_vm->_sequence->startHallSeq(whither, ped);
 		break;
 	case kRoomMusicRoom:
 	case kRoomOutsideArgentPub:
-		_vm->_sequence->firstShow(5);
-		_vm->_sequence->thenShow(6);
+		_vm->_sequence->startMusicRoomSeq2(whither, ped);
 		break;
 	case kRoomLusties:
 		switch (magicnum) {
 		case 14:
 			if (_avvysInTheCupboard) {
 				_vm->_animation->hideInCupboard();
-				_vm->_sequence->firstShow(8);
-				_vm->_sequence->thenShow(7);
-				_vm->_sequence->startToClose();
+				_vm->_sequence->startLustiesSeq1();
 				return;
 			} else {
 				_vm->_animation->appearPed(0, 5);
-				_vm->_animation->_sprites[0]._facingDir = kDirRight; // added by TT 12/3/1995
-				_vm->_sequence->firstShow(8);
-				_vm->_sequence->thenShow(9);
+				_vm->_animation->_sprites[0]._facingDir = kDirRight;
+				_vm->_sequence->startLustiesSeq2(whither, ped);
 			}
 			break;
 		case 12:
-			_vm->_sequence->firstShow(4);
-			_vm->_sequence->thenShow(5);
-			_vm->_sequence->thenShow(6);
+			_vm->_sequence->startLustiesSeq3(whither, ped);
 			break;
 		}
 		break;
+	default:
+		_vm->_sequence->startDummySeq(whither, ped);
 	}
-
-	_vm->_sequence->thenFlip(whither, ped);
-	_vm->_sequence->startToOpen();
 }
 
 void Avalot::setRoom(People persId, Room roomId) {

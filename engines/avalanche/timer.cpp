@@ -430,8 +430,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 
 	// Let's get the door opening.
 	_vm->_background->draw(-1, -1, 0);
-	_vm->_sequence->firstShow(2);
-	_vm->_sequence->startToClose();
+	_vm->_sequence->startNaughtyDukeSeq();
 
 	addTimer(50, kProcNaughtyDuke2, kReasonNaughtyDuke);
 }
@@ -441,13 +440,13 @@ void Timer::naughtyDuke2() {
 	_vm->_dialogs->displayScrollChain('q', 48); // "Ha ha, it worked again!"
 	spr->walkTo(0); // Walk to the door.
 	spr->_vanishIfStill = true; // Then go away!
+
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
 }
 
 void Timer::naughtyDuke3() {
 	_vm->_background->draw(-1, -1, 0);
-	_vm->_sequence->firstShow(2);
-	_vm->_sequence->startToClose();
+	_vm->_sequence->startNaughtyDukeSeq();
 }
 
 void Timer::jump() {
@@ -694,9 +693,7 @@ void Timer::giveLuteToGeida() { // Moved here from Acci.
 	_vm->_dialogs->displayScrollChain('Q', 86);
 	_vm->_avalot->incScore(4);
 	_vm->_avalot->_lustieIsAsleep = true;
-	_vm->_sequence->firstShow(5);
-	_vm->_sequence->thenShow(6); // He falls asleep...
-	_vm->_sequence->startToClose(); // Not really closing, but we're using the same procedure.
+	_vm->_sequence->startGeidaLuteSeq();
 }
 
 } // End of namespace Avalanche.

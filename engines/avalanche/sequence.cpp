@@ -104,4 +104,130 @@ void Sequence::callSequencer() {
 	startToClose(); // Make sure this PROC gets called again.
 }
 
+void Sequence::startHallSeq(Room whither, byte ped) {
+	firstShow(1);
+	thenShow(2);
+	thenFlip(whither, ped);
+	startToOpen();
+}
+
+void Sequence::startOutsideSeq(Room whither, byte ped) {
+	firstShow(1);
+	thenShow(2);
+	thenShow(3);
+	thenFlip(whither, ped);
+	startToOpen();
+}
+
+void Sequence::startCardiffSeq(Room whither, byte ped) {
+	firstShow(1);
+	thenShow(5);
+	thenFlip(whither, ped);
+	startToOpen();
+}
+
+void Sequence::startNaughtyDukeSeq() {
+	firstShow(2);
+	startToClose();
+}
+
+void Sequence::startGardenSeq() {
+	firstShow(2);
+	thenShow(1);
+	thenShow(3);
+	startToClose();
+}
+
+// FIXME! 2 firstShow()!
+void Sequence::startDuckSeq() {
+	firstShow(3);
+	firstShow(2);
+	thenShow(1);
+	thenShow(4);
+	startToClose();
+}
+
+void Sequence::startNottsSeq() {
+	firstShow(3);
+	thenShow(2);
+	thenShow(1);
+	thenShow(4);
+	startToClose();
+}
+
+void Sequence::startLustiesSeq3(Room whither, byte ped) {
+	firstShow(4);
+	thenShow(5);
+	thenShow(6);
+	thenFlip(whither, ped);
+	startToOpen();
+}
+
+void Sequence::startMusicRoomSeq2(Room whither, byte ped) {
+	firstShow(5);
+	thenShow(6);
+	thenFlip(whither, ped);
+	startToOpen();
+}
+
+void Sequence::startGeidaLuteSeq() {
+	firstShow(5);
+	thenShow(6); // He falls asleep...
+	startToClose(); // Not really closing, but we're using the same procedure.
+}
+
+void Sequence::startMusicRoomSeq() {
+	firstShow(6);
+	thenShow(5);
+	thenShow(7);
+	startToClose();
+}
+
+void Sequence::startWinSeq() {
+	firstShow(7);
+	thenShow(8);
+	thenShow(9);
+	startToClose();
+}
+
+void Sequence::startCupboardSeq() {
+	firstShow(8);
+	thenShow(7);
+	startToClose();
+}
+
+void Sequence::startLustiesSeq1() {
+	firstShow(8);
+	thenShow(7);
+	startToClose();
+}
+
+void Sequence::startLustiesSeq2(Room whither, byte ped) {
+	firstShow(8);
+	thenShow(9);
+	thenFlip(whither, ped);
+	startToOpen();
+}
+
+void Sequence::startCardiffSeq2() {
+	firstShow(1);
+	if (_vm->_avalot->_arrowInTheDoor)
+		thenShow(3);
+	else
+		thenShow(2);
+
+	if (_vm->_avalot->_takenPen)
+		_vm->_background->draw(-1, -1, 3);
+
+	startToClose();
+}
+
+void Sequence::startDummySeq(Room whither, byte ped) {
+	thenFlip(whither, ped);
+	startToOpen();
+}
+
+void Sequence::synchronize(Common::Serializer &sz) {
+	sz.syncBytes(_seq, kSeqLength);
+}
 } // End of namespace Avalanche.

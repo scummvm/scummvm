@@ -115,6 +115,7 @@ const char *AvalancheEngine::getCopyrightString() const {
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	_animation->synchronize(sz);
 	_parser->synchronize(sz);
+	_sequence->synchronize(sz);
 
 	sz.syncAsByte(_avalot->_carryNum);
 	for (int i = 0; i < kObjectNum; i++)
@@ -256,8 +257,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(_timer->_times[i]._action);
 		sz.syncAsByte(_timer->_times[i]._reason);
 	}
-
-	sz.syncBytes(_sequence->_seq, _sequence->kSeqLength);
+	
 }
 
 bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
