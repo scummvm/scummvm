@@ -33,10 +33,6 @@
 #undef main
 #endif // main
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "common/endian.h"
 #include "create_mortdat.h"
 #include "enginetext.h"
