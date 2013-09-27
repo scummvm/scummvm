@@ -201,7 +201,7 @@ void Clock::update() { // TODO: Move variables from Gyro to here (or at least so
 	_oldMinute = _minute;
 }
 
-void Clock::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color) {
+void Clock::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, Color color) {
 	if (angle > 900) {
 		endPoint.x = 177;
 		return;
@@ -210,7 +210,7 @@ void Clock::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte 
 	endPoint = _vm->_graphics->drawArc(_vm->_graphics->_surface, kCenterX, kCenterY, 449 - angle, 450 - angle, length, color);
 }
 
-void Clock::drawHand(const Common::Point &endPoint, byte color) {
+void Clock::drawHand(const Common::Point &endPoint, Color color) {
 	if (endPoint.x == 177)
 		return;
 
@@ -522,7 +522,7 @@ void AvalancheEngine::loadAlso(byte num) {
 		curLine->_y1 = file.readSint16LE();
 		curLine->_x2 = file.readSint16LE();
 		curLine->_y2 = file.readSint16LE();
-		curLine->_color = file.readByte();
+		curLine->_color = (Color)file.readByte();
 	}
 
 	memset(_peds, 177, sizeof(_peds));
@@ -1483,6 +1483,7 @@ void AvalancheEngine::spriteRun() {
 	_doingSpriteRun = false;
 }
 
+// CHECKME: Unused function
 void AvalancheEngine::fixFlashers() {
 	_ledStatus = 177;
 	_animation->setOldDirection(kDirNone);

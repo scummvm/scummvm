@@ -103,11 +103,11 @@ void MenuItem::setupOption(Common::String title, char trigger, Common::String sh
 }
 
 void MenuItem::displayOption(byte y, bool highlit) {
-	byte backgroundColor;
+	Color backgroundColor;
 	if (highlit)
-		backgroundColor = 0;
+		backgroundColor = kColorBlack;
 	else
-		backgroundColor = 7;
+		backgroundColor = kColorLightgray;
 	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10), backgroundColor);
 
 	Common::String text = _options[y]._title;
@@ -290,8 +290,8 @@ void Menu::findWhatYouCanDoWithIt() {
 }
 
 void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted) {
-	byte fontColor;
-	byte backgroundColor;
+	Color fontColor;
+	Color backgroundColor;
 	if (highlighted) {
 		fontColor = kColorWhite;
 		backgroundColor = kColorBlack;
@@ -339,7 +339,7 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 }
 
 void Menu::bleep() {
-	warning("STUB: Dropdown::bleep()");
+	warning("STUB: Menu::bleep()");
 }
 
 void Menu::parseKey(char r, char re) {

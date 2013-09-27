@@ -279,7 +279,7 @@ public:
 	byte _thinks;
 	bool _thinkThing;
 	int16 _talkX, _talkY;
-	byte _talkBackgroundColor, _talkFontColor;
+	Color _talkBackgroundColor, _talkFontColor;
 	byte _scrollBells; // no. of times to ring the bell
 	bool _onToolbar, _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 	char _objectList[10];

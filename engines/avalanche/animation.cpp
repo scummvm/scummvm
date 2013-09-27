@@ -81,8 +81,8 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	_info._yLength = inf.readByte();
 	_stat._seq = inf.readByte();
 	_info._size = inf.readUint16LE();
-	_stat._fgBubbleCol = inf.readByte();
-	_stat._bgBubbleCol = inf.readByte();
+	_stat._fgBubbleCol = (Color)inf.readByte();
+	_stat._bgBubbleCol = (Color)inf.readByte();
 	_stat._acciNum = inf.readByte();
 
 	_animCount = 0; // = 1;
