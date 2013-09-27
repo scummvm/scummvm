@@ -569,8 +569,6 @@ void Parser::cheatParse(Common::String codes) {
 	warning("STUB: Parser::cheatParse()");
 }
 
-
-
 void Parser::stripPunctuation(Common::String &word) {
 	const char punct[] = "~`!@#$%^&*()_+-={}[]:\"|;'\\,./<>?";
 
@@ -642,14 +640,6 @@ void Parser::properNouns() {
 	_inputText.setChar(toupper(_inputText[0]), 0);
 }
 
-void Parser::sayIt() {
-	Common::String x = _inputText;
-	x.setChar(toupper(x[0]), 0);
-	Common::String tmpStr = Common::String::format("%c1%s.%c%c2", Dialogs::kControlRegister, x.c_str(), 
-		                                           Dialogs::kControlSpeechBubble, Dialogs::kControlRegister);
-	_vm->_dialogs->displayText(tmpStr);
-}
-
 void Parser::storeInterrogation(byte interrogation) {
 	if (_inputText.empty())
 		return;
@@ -665,25 +655,25 @@ void Parser::storeInterrogation(byte interrogation) {
 	switch (interrogation) {
 	case 1:
 		_inputText.toLowercase();
-		sayIt();
+		_vm->_dialogs->sayIt(_inputText);
 		_vm->_favouriteDrink = _inputText;
 		_vm->_cardiffQuestionNum = 2;
 		break;
 	case 2:
 		properNouns();
-		sayIt();
+		_vm->_dialogs->sayIt(_inputText);
 		_vm->_favouriteSong = _inputText;
 		_vm->_cardiffQuestionNum = 3;
 		break;
 	case 3:
 		properNouns();
-		sayIt();
+		_vm->_dialogs->sayIt(_inputText);
 		_vm->_worstPlaceOnEarth = _inputText;
 		_vm->_cardiffQuestionNum = 4;
 		break;
 	case 4:
 		_inputText.toLowercase();
-		sayIt();
+		_vm->_dialogs->sayIt(_inputText);
 		if (!_vm->_spareEvening.empty())
 			_vm->_spareEvening.clear();
 		_vm->_spareEvening = _inputText;
@@ -710,7 +700,6 @@ void Parser::parse() {
 	if (!_thats.empty())
 		_thats.clear();
 
-	byte n = 0;
 	_polite = false;
 	_verb = kVerbCodePardon;
 	_thing = kPardon;
@@ -736,6 +725,7 @@ void Parser::parse() {
 	// Actually process the command.
 	Common::String inputText = _inputText + ' ';
 	Common::String inputTextUpper = inputText;
+	byte n = 0;
 	inputTextUpper.toUppercase();
 	while (!inputTextUpper.empty()) {
 		while ((!inputTextUpper.empty()) && (inputTextUpper[0] == ' ')) {
