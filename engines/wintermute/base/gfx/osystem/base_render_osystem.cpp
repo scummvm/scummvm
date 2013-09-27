@@ -299,7 +299,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 			_previousTicket = ticket;
 			drawFromSurface(ticket);
 		} else {
-			ticket->_transform._blendMode = BLEND_ADDITIVE;
+			ticket->_transform._blendMode = BLEND_HARD;
 			drawFromSurface(ticket);
 			delete ticket;
 		}

@@ -204,6 +204,7 @@ enum TSpriteBlendMode {
 	BLEND_NORMAL        = 0,
 	BLEND_ADDITIVE      = 1,
 	BLEND_SUBTRACTIVE   = 2,
+	BLEND_HARD      = 3,
 	NUM_BLEND_MODES
 };
 

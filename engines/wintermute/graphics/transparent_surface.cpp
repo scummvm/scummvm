@@ -235,17 +235,14 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32
 
 				default: // alpha blending
 					// TODO: turn special case into something more fleshed out
-					if (blendMode == BLEND_ADDITIVE) {
-						outa = a;
-						outb = ((b * 255) + ((oPix >> bShiftTarget) & 0xff) * (255-a)) >> 8;
-						outg = ((g * 255) + ((oPix >> gShiftTarget) & 0xff) * (255-a)) >> 8;
-						outr = ((r * 255) + ((oPix >> rShiftTarget) & 0xff) * (255-a)) >> 8;
+					if (blendMode == BLEND_HARD) {
 
-						out[aIndex] = outa;
-						out[bIndex] = outb;
-						out[gIndex] = outg;
-						out[rIndex] = outr;
+						out[aIndex] = a;
+						out[bIndex] = b;
+						out[gIndex] = b;
+						out[rIndex] = r;
 						out += 4;
+
 					} else {
 						outa = 255;
 						outb = ((b * a) + ((oPix >> bShiftTarget) & 0xff) * (255-a)) >> 8;
