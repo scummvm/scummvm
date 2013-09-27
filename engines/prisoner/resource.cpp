@@ -58,7 +58,7 @@ void PictureResource::load(Common::MemoryReadStream &stream) {
 	debug(1, "PictureResource::load() width = %d; height = %d", width, height);
 	_picture = new Graphics::Surface();
 	_picture->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	stream.read(_picture->pixels, width * height);
+	stream.read(_picture->getPixels(), width * height);
 }
 
 /* PaletteResource */

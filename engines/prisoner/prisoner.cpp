@@ -1046,7 +1046,7 @@ bool PrisonerEngine::backupScreen() {
 	if (!_screenBackedup) {
 		_screenBackedup = true;
 		_screen->setFullPalette(_scenePalette);
-		memcpy(_screenBackupSurface->pixels, _screen->getScreen()->pixels, 640 * 480);
+		memcpy(_screenBackupSurface->getPixels(), _screen->getScreen()->getPixels(), 640 * 480);
 		return false;
 	} else
 		return true;
@@ -1056,7 +1056,7 @@ bool PrisonerEngine::backupScreen() {
 void PrisonerEngine::restoreScreen(bool ignorePalette) {
 	if (_screenBackedup) {
 		_screenBackedup = ignorePalette;
-		memcpy(_screen->getScreen()->pixels, _screenBackupSurface->pixels, 640 * 480);
+		memcpy(_screen->getScreen()->getPixels(), _screenBackupSurface->getPixels(), 640 * 480);
 		addDirtyRect(0, 0, 640, 480, 1);
 		if (!ignorePalette) {
 			_screen->setFullPalette(_effectPalette);

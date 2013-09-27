@@ -106,7 +106,7 @@ Graphics::Surface *PrisonerEngine::decompressAnimationCel(AnimationCel *animatio
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(animationCel->width, animationCel->height, Graphics::PixelFormat::createFormatCLUT8());
 	byte *src = animationCel->data;
-	byte *dst = (byte*)surface->pixels;
+	byte *dst = (byte*)surface->getPixels();
 	int height = animationCel->height;
 	while (height--) {
 		byte *row = dst;
@@ -133,7 +133,7 @@ void PrisonerEngine::setMouseCursor(int16 elementIndex, AnimationResource *anima
 	int16 hotspotX = CLIP(-command->points[0].x, 0, animationCel->width - 1);
 	int16 hotspotY = CLIP(animationCel->height - command->points[0].y - 1, 0, animationCel->height - 1);
 	Graphics::Surface *surface = decompressAnimationCel(animationCel);
-	CursorMan.replaceCursor((const byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
+	CursorMan.replaceCursor((const byte *)surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, 0);
 	delete surface;
 	CursorMan.showMouse(true);
 }

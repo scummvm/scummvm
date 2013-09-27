@@ -26,7 +26,7 @@ Screen::~Screen() {
 }
 
 void Screen::update() {
-	_vm->_system->copyRectToScreen((byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+	_vm->_system->copyRectToScreen((byte*)_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
 	_vm->_system->updateScreen();
 }
 
@@ -39,7 +39,7 @@ void Screen::setFullPalette(byte *palette) {
 }
 
 void Screen::clear() {
-	memset(_workScreen->pixels, 0, _workScreen->pitch * _workScreen->h);
+	memset(_workScreen->getPixels(), 0, _workScreen->pitch * _workScreen->h);
 }
 
 void Screen::putPixel(int x, int y, byte color) {
