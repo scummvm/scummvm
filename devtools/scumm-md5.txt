@@ -598,6 +598,7 @@ catalog	Humongous Interactive Catalog
 	a56e8d9d4281c53c3f63c9bd22a59e21	10978342	en	All	HE CUP	Preview	George Kormendi
 	74da3494fbe1a7d20213b0afe0954755	10841544	fr	All	HE CUP	Preview	-	George Kormendi
 	4c4820518e16e1a0e3616a3b021a04f3	10927456	de	All	HE CUP	Preview	-	Kirben
+	288fb75b24389733c29fa107fe8d44e8	10795148	us	All	HE CUP	Preview	-	Kirben
 
 airport	Let's Explore the Airport with Buzzy
 	d6334a5a9b61afe18c368540fdf522ca	-1	en	Mac	-	-	-	Joachim Eberhard
