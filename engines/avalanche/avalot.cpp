@@ -595,7 +595,7 @@ void AvalancheEngine::loadRoom(byte num) {
 
 	file.seek(177);
 
-	_graphics->_background = _graphics->loadPictureRow(file, _graphics->kBackgroundWidth, _graphics->kBackgroundHeight);
+	_graphics->loadBackground(file);
 	_graphics->refreshBackground();
 
 	file.close();

@@ -89,6 +89,7 @@ public:
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
 	void drawPicture(::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
 	void refreshScreen();
+	void loadBackground(Common::File &file);
 	void refreshBackground();
 	void zoomOut(int16 x, int16 y); // Only used when entering the map.
 

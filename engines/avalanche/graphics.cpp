@@ -308,6 +308,10 @@ void Graphics::refreshScreen() {
 	g_system->updateScreen();
 }
 
+void Graphics::loadBackground(Common::File &file) {
+	_background = loadPictureRow(file, kBackgroundWidth, kBackgroundHeight);
+}
+
 void Graphics::refreshBackground() {
 	drawPicture(_surface, _background, 0, 10);
 }
