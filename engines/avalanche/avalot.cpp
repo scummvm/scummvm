@@ -407,7 +407,6 @@ void AvalancheEngine::init() {
 		atkey = "alt-";
 #endif
 
-	_mouse = kMouseStateNo;
 	_letMeOut = false;
 	_holdTheDawn = true;
 	_currentMouse = 177;
@@ -417,7 +416,6 @@ void AvalancheEngine::init() {
 	_cp = 0;
 	_ledStatus = 177;
 	_defaultLed = 2;
-	_enidFilename = ""; // Undefined.
 	for (int i = 0; i < 3; i++)
 		_scoreToDisplay[i] = -1; // Impossible digits.
 	_holdTheDawn = false;
@@ -1632,7 +1630,6 @@ void AvalancheEngine::newGame() {
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
 	_avvyInBed = true;
-	_enidFilename = "";
 
 	enterRoom(kRoomYours, 1);
 	avvy->_visible = false;

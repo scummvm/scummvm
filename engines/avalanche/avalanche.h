@@ -270,7 +270,6 @@ public:
 
 	byte _lineNum; // Number of lines.
 	LineType _lines[50]; // For Also.
-	enum MouseState { kMouseStateNo, kMouseStateYes, kMouseStateVirtual } _mouse;
 	bool _dropsOk, _soundFx, _cheat;
 	Common::String _mouseText;
 	bool _weirdWord;
@@ -316,7 +315,6 @@ public:
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
 	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
 	bool _isLoaded; // Is it a loaded gamestate?
-	Common::String _enidFilename;
 
 	void handleKeyDown(Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
 	void setup();
