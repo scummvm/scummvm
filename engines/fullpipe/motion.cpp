@@ -68,7 +68,7 @@ bool MctlCompound::load(MfcArchive &file) {
 		debug(6, "graphReact");
 		obj->_movGraphReactObj = (MovGraphReact *)file.readClass();
 
-		_motionControllers.push_back(*obj);
+		_motionControllers.push_back(obj);
 	}
 
 	return true;
@@ -87,7 +87,6 @@ int MctlCompound::removeObject(StaticANIObject *obj) {
 }
 
 void MctlCompound::initMovGraph2() {
-#if 0
 	if (_objtype != kObjTypeMctlCompound)
 		return;
 
@@ -97,10 +96,10 @@ void MctlCompound::initMovGraph2() {
 
 		MovGraph *gr = (MovGraph *)_motionControllers[i]->_motionControllerObj;
 
-		CMovGraph2 *newgr = new MovGraph2();
+		MovGraph2 *newgr = new MovGraph2();
 
-		newgr->_links.push_back(gr->_links);
-		newgr->_nodes.push_back(gr->_nodes);
+		newgr->_links = gr->_links;
+		newgr->_nodes = gr->_nodes;
 
 		gr->_links.clear();
 		gr->_nodes.clear();
@@ -109,7 +108,6 @@ void MctlCompound::initMovGraph2() {
 
 		_motionControllers[i]->_motionControllerObj = newgr;
 	}
-#endif
 }
 
 void MctlCompound::freeItems() {
@@ -173,8 +171,94 @@ int MovGraph::addObject(StaticANIObject *obj) {
 	return 0;
 }
 
+int MovGraph::removeObject(StaticANIObject *obj) {
+	warning("STUB: MovGraph::removeObject()");
+
+	return 0;
+}
+
+void MovGraph::freeItems() {
+	warning("STUB: MovGraph::freeItems()");
+}
+
+int MovGraph::method28() {
+	warning("STUB: MovGraph::method28()");
+
+	return 0;
+}
+
+int MovGraph::method2C() {
+	warning("STUB: MovGraph::method2C()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph::method34()");
+
+	return 0;
+}
+
+int MovGraph::changeCallback() {
+	warning("STUB: MovGraph::changeCallback()");
+
+	return 0;
+}
+
+int MovGraph::method3C() {
+	warning("STUB: MovGraph::method3C()");
+
+	return 0;
+}
+
+int MovGraph::method44() {
+	warning("STUB: MovGraph::method44()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph::method4C()");
+
+	return 0;
+}
+
+int MovGraph::method50() {
+	warning("STUB: MovGraph::method50()");
+
+	return 0;
+}
+
 double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag) {
 	warning("STUB: MovGraph::calcDistance()");
+
+	return 0;
+}
+
+int MovGraph2::addObject(StaticANIObject *obj) {
+	warning("STUB: MovGraph2::addObject()");
+
+	return 0;
+}
+
+int MovGraph2::removeObject(StaticANIObject *obj) {
+	warning("STUB: MovGraph2::removeObject()");
+
+	return 0;
+}
+
+void MovGraph2::freeItems() {
+	warning("STUB: MovGraph2::freeItems()");
+}
+
+MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph2::method34()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph2::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph2::method4C()");
 
 	return 0;
 }
