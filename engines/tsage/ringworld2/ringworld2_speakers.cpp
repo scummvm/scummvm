@@ -1116,7 +1116,7 @@ void SpeakerProtector3600::proc15() {
 	Scene3600 *scene = (Scene3600 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor13;
+		_object2 = &scene->_protector;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);

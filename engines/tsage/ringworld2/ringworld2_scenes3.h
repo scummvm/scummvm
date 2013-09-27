@@ -704,7 +704,7 @@ class Scene3600 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor13 : public SceneActorExt {
+	class Protector : public SceneActorExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
@@ -732,7 +732,7 @@ public:
 	SceneActor _actor10;
 	SceneActor _actor11;
 	SceneActor _actor12;
-	Actor13 _actor13;
+	Protector _protector;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	SequenceManager _sequenceManager3;
