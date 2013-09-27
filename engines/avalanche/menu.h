@@ -131,12 +131,14 @@ private:
 	static const byte kIndent = 5;
 	static const byte kSpacing = 10;
 
-	static const byte kMenuBackgroundColor = kColorLightgray;
-	static const byte kMenuFontColor = kColorBlack;
-	static const byte kMenuBorderColor = kColorBlack;
-	static const byte kHighlightBackgroundColor = kColorBlack;
-	static const byte kHighlightFontColor = kColorWhite;
-	static const byte kDisabledColor = kColorDarkgray;
+	static const Color kMenuBackgroundColor = kColorLightgray;
+	static const Color kMenuBorderColor = kColorBlack;
+
+//	Checkme: Useless constants?
+//	static const Color kMenuFontColor = kColorBlack;
+//	static const Color kHighlightBackgroundColor = kColorBlack;
+//	static const Color kHighlightFontColor = kColorWhite;
+//	static const Color kDisabledColor = kColorDarkgray;
 
 	bool _menuActive; // Kludge so we don't have to keep referring to the menu.
 

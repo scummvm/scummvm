@@ -51,7 +51,7 @@ void Dialogs::setReadyLight(byte state) {     // Sets "Ready" light to whatever
 	if (_vm->_ledStatus == state)
 		return; // Already like that!
 
-	byte color = kColorBlack;
+	Color color = kColorBlack;
 	switch (state) {
 	case 0:
 		color = kColorBlack;
@@ -621,8 +621,8 @@ void Dialogs::reset() {
 void Dialogs::setBubbleStateNatural() {
 	_vm->_talkX = 320;
 	_vm->_talkY = 200;
-	_vm->_talkBackgroundColor = 8;
-	_vm->_talkFontColor = 15;
+	_vm->_talkBackgroundColor = kColorDarkgray;
+	_vm->_talkFontColor = kColorWhite;
 }
 
 Common::String Dialogs::displayMoney() {

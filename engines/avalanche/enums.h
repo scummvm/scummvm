@@ -30,10 +30,10 @@
 
 namespace Avalanche {
 enum Color {
-	kColorBlack,      kColorBlue,      kColorGreen,     kColorCyan,         kColorRed,
-	kColorMagenta,    kColorBrown,     kColorLightgray, kColorDarkgray,     kColorLightblue,
-	kColorLightgreen, kColorLightcyan, kColorLightred,  kColorLightmagenta, kColorYellow,
-	kColorWhite
+	kColorBlack = 0,       kColorBlue,      kColorGreen,     kColorCyan,         kColorRed,
+	kColorMagenta = 5,     kColorBrown,     kColorLightgray, kColorDarkgray,     kColorLightblue,
+	kColorLightgreen = 10, kColorLightcyan, kColorLightred,  kColorLightmagenta, kColorYellow,
+	kColorWhite = 15
 };
 
 // CHECKME: kRoomBossKey is a guess

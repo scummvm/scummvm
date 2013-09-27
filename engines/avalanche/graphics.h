@@ -32,6 +32,7 @@
 #include "common/rect.h"
 
 #include "graphics/surface.h"
+#include "avalanche/enums.h"
 
 namespace Avalanche {
 class AvalancheEngine;
@@ -74,11 +75,11 @@ public:
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 	// Returns the end point of the arc. (Needed in Lucerna::lucerna_clock().)
 	// TODO: Make it more accurate later.
-	Common::Point drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
+	Common::Point drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 
-	void drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, byte color);
-	void drawTriangle(::Graphics::Surface &surface, Common::Point *p, byte color);
-	void drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, byte color);
+	void drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
+	void drawTriangle(::Graphics::Surface &surface, Common::Point *p, Color color);
+	void drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 
 	// The caller has to .free() the returned Surfaces!!!
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data

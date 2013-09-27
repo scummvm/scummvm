@@ -57,8 +57,8 @@ private:
 	uint16 _hour, _minute, _second, _hourAngle, _oldHour, _oldMinute, _oldHourAngle;
 	Common::Point _clockHandHour, _clockHandMinute;
 
-	void calcHand(uint16 angle, uint16 length, Common::Point &endPoint, byte color);
-	void drawHand(const Common::Point &endPoint, byte color);
+	void calcHand(uint16 angle, uint16 length, Common::Point &endPoint, Color color);
+	void drawHand(const Common::Point &endPoint, Color color);
 	void plotHands();
 	void chime();
 };
@@ -92,13 +92,16 @@ struct ByteField {
 };
 
 struct LineType : public FieldType {
-	byte _color;
+	Color _color;
 };
 
 typedef int8 TuneType[31];
 
 struct QuasipedType {
-	byte _whichPed, _foregroundColor, _room, _backgroundColor;
+	byte   _whichPed;
+	Color  _foregroundColor;
+	Room   _room;
+	Color  _backgroundColor;
 	People _who;
 };
 

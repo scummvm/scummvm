@@ -50,7 +50,7 @@ struct StatType {
 	Common::String _comment; // Comment.
 	byte _frameNum; // Number of pictures.
 	byte _seq; // How many in one stride.
-	byte _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
+	Color _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
 	byte _acciNum; // The number according to Acci. (1=Avvy, etc.)
 };
 
