@@ -323,7 +323,6 @@ void AvalancheEngine::setup() {
 	_parser->_inputTextPos = 0;
 	_parser->_quote = true;
 
-	_animation->setDirection(kDirStopped);
 	_animation->resetAnims();
 
 	drawToolbar();

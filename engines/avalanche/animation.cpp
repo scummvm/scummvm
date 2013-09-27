@@ -363,6 +363,7 @@ Animation::~Animation() {
 }
 
 void Animation::resetAnims() {
+	setDirection(kDirStopped);
 	for (int16 i = 0; i < kSpriteNumbMax; i++)
 		_sprites[i].reset();
 }

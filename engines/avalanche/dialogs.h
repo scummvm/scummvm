@@ -82,6 +82,8 @@ public:
 	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false);
 	void talkTo(byte whom);
 
+	void sayIt(Common::String str);  // This makes Avalot say the response.
+
 private:
 	AvalancheEngine *_vm;
 

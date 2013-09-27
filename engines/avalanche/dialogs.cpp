@@ -1131,4 +1131,10 @@ void Dialogs::talkTo(byte whom) {
 	}
 }
 
+void Dialogs::sayIt(Common::String str) {
+	Common::String x = str;
+	x.setChar(toupper(x[0]), 0);
+	Common::String tmpStr = Common::String::format("%c1%s.%c%c2", kControlRegister, x.c_str(), kControlSpeechBubble, kControlRegister);
+	displayText(tmpStr);
+}
 } // End of namespace Avalanche

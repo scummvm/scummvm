@@ -121,7 +121,6 @@ private:
 	bool doPronouns();
 	void properNouns();
 	void lookAround(); // This is called when you say "look".
-	void sayIt();  // This makes Avalot say the response.
 	void openDoor();
 	void storeInterrogation(byte interrogation);
 	void examineObject(); // Examine a standard object-thing
