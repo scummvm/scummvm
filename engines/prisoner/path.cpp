@@ -1183,11 +1183,11 @@ void PathSystem::setPathEdgeOrPolygonEnabled(int16 type, int16 index, bool enabl
 
 void PathSystem::setPathEdgeEnabled(int16 edgeIndex, bool enabled) {
 
-	PathNode *node;
+	//PathNode *node;
 	PathEdge *edge = &_pathEdges[edgeIndex];
 	edge->enabled = enabled;
 
-	node = &_pathNodes[edge->nodeIndex1];
+	//node = &_pathNodes[edge->nodeIndex1];
 	for (int16 connIndex = 0; connIndex < kMaxPathNodeConnections; connIndex++) {
 		PathNodeConnection *nodeConnection = &_pathNodes[edge->nodeIndex1].connections[connIndex];
 		if (nodeConnection->used && nodeConnection->nodeIndex == edge->nodeIndex2) {
