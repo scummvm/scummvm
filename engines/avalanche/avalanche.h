@@ -384,7 +384,6 @@ private:
 	void scram(Common::String &str);
 	void unScramble();
 
-	void zoomOut(int16 x, int16 y); // Only used when entering the map.
 	void enterNewTown();
 	void findPeople(byte room);
 	void putGeidaAt(byte whichPed, byte ped);

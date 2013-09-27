@@ -30,11 +30,8 @@
 
 #include "common/system.h"
 #include "common/rect.h"
-
 #include "engines/util.h"
-
 #include "graphics/palette.h"
-
 #include "math.h"
 
 namespace Avalanche {
@@ -312,7 +309,29 @@ void Graphics::refreshScreen() {
 }
 
 void Graphics::refreshBackground() {
-	_vm->_graphics->drawPicture(_vm->_graphics->_surface, _vm->_graphics->_background, 0, 10);
+	drawPicture(_surface, _background, 0, 10);
+}
+
+void Graphics::zoomOut(int16 x, int16 y) {
+	//setlinestyle(dottedln, 0, 1); TODO: Implement it with a dotted line style!!!
+
+	::Graphics::Surface backup;
+	backup.copyFrom(_surface);
+
+	for (byte i = 1; i <= 20; i ++) {
+		int16 x1 = x - (x / 20) * i;
+		int16 y1 = y - ((y - 10) / 20) * i;
+		int16 x2 = x + (((639 - x) / 20) * i);
+		int16 y2 = y + (((161 - y) / 20) * i);
+
+		_surface.frameRect(Common::Rect(x1, y1, x2, y2), kColorWhite);
+		refreshScreen();
+		_vm->_system->delayMillis(17);
+		_surface.copyFrom(backup);
+		refreshScreen();
+	}
+
+	backup.free();
 }
 
 } // End of namespace Avalanche
