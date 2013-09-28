@@ -1246,7 +1246,36 @@ Common::Point *Movement::getCurrDynamicPhaseXY(Common::Point &p) {
 }
 
 Common::Point *Movement::calcSomeXY(Common::Point &p, int idx) {
-	warning("STUB: Movement::calcSomeXY()");
+	int oldox = _ox;
+	int oldoy = _oy;
+	int oldidx = _currDynamicPhaseIndex;
+
+	int x = 0;
+	int y = 0;
+
+	if (!idx) {
+		Common::Point point;
+
+		_staticsObj1->getSomeXY(point);
+		int y1 = _my - point.y;
+		int x1 = _mx - point.x;
+
+		setDynamicPhaseIndex(0);
+
+		x = _currDynamicPhase->_someX + x1;
+		y = _currDynamicPhase->_someY + y1;
+	}
+
+	setOXY(x, y);
+
+	while (_currDynamicPhaseIndex != idx)
+		gotoNextFrame(0, 0);
+
+	p.x = _ox;
+	p.y = _oy;
+
+	setDynamicPhaseIndex(oldidx);
+	setOXY(oldox, oldoy);
 
 	return &p;
 }
