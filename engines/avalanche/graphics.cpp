@@ -363,6 +363,36 @@ void Graphics::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::Str
 	CursorMan.showMouse(true);
 }
 
+void Graphics::drawScroll(int mx, int lx, int my, int ly) {
+	_scrolls.copyFrom(_surface);
+
+	// The right corners of the scroll.
+	drawPieSlice(mx + lx, my - ly, 0, 90, 15, kColorLightgray);
+	drawPieSlice(mx + lx, my + ly, 270, 360, 15, kColorLightgray);
+	drawArc(_scrolls, mx + lx, my - ly, 0, 90, 15, kColorRed);
+	drawArc(_scrolls, mx + lx, my + ly, 270, 360, 15, kColorRed);
+
+	// The body of the scroll.
+	_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), kColorLightgray);
+	_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly + 1), kColorLightgray);
+	_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly + 1), kColorLightgray);
+
+	// The left corners of the scroll.
+	drawPieSlice(mx - lx - 31, my - ly, 0, 180, 15, kColorDarkgray);
+	drawArc(_scrolls, mx - lx - 31, my - ly, 0, 180, 15, kColorRed);
+	_scrolls.drawLine(mx - lx - 31 - 15, my - ly, mx - lx - 31 + 15, my - ly, kColorRed);
+	drawPieSlice(mx - lx - 31, my + ly, 180, 360, 15, kColorDarkgray);
+	drawArc(_scrolls, mx - lx - 31, my + ly, 180, 360, 15, kColorRed);
+	_scrolls.drawLine(mx - lx - 31 - 15, my + ly, mx - lx - 31 + 15, my + ly, kColorRed);
+
+	// The rear borders of the scroll.
+	_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5), kColorRed);
+	_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7), kColorRed);
+	_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), kColorRed);
+	_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), kColorRed);
+
+}
+
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
 	// This function mimics Pascal's getimage().
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.

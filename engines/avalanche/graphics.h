@@ -81,6 +81,7 @@ public:
 	void drawDirection(int index, int x, int y);
 	void drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text);
+	void drawScroll(int mx, int lx, int my, int ly);
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);

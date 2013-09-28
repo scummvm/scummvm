@@ -419,34 +419,8 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	if ((1 <= _useIcon) && (_useIcon <= 34))
 		lx += kHalfIconWidth;
 
-	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
-
 	CursorMan.showMouse(false);
-
-	// The right corners of the scroll.
-	_vm->_graphics->drawPieSlice(mx + lx, my - ly, 0, 90, 15, kColorLightgray);
-	_vm->_graphics->drawPieSlice(mx + lx, my + ly, 270, 360, 15, kColorLightgray);
-	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, kColorRed);
-	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, kColorRed);
-
-	// The body of the scroll.
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly, mx + lx, my + ly + 6), kColorLightgray);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly + 1), kColorLightgray);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly + 1), kColorLightgray);
-
-	// The left corners of the scroll.
-	_vm->_graphics->drawPieSlice(mx - lx - 31, my - ly, 0, 180, 15, kColorDarkgray);
-	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx - lx - 31, my - ly, 0, 180, 15, kColorRed);
-	_vm->_graphics->_scrolls.drawLine(mx - lx - 31 - 15, my - ly, mx - lx - 31 + 15, my - ly, kColorRed);
-	_vm->_graphics->drawPieSlice(mx - lx - 31, my + ly, 180, 360, 15, kColorDarkgray);
-	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx - lx - 31, my + ly, 180, 360, 15, kColorRed);
-	_vm->_graphics->_scrolls.drawLine(mx - lx - 31 - 15, my + ly, mx - lx - 31 + 15, my + ly, kColorRed);
-
-	// The rear borders of the scroll.
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my - ly - 6, mx + lx, my - ly - 5), kColorRed);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7), kColorRed);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), kColorRed);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), kColorRed);
+	_vm->_graphics->drawScroll(mx, lx, my, ly);
 
 	mx -= lx;
 	my -= ly + 2;
