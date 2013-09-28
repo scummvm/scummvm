@@ -78,7 +78,7 @@ void Graphics::loadDigits(Common::File &file) {   // Load the scoring digits & r
 	const byte rwlitesize = 126;
 
 	if (!file.open("digit.avd"))
-		error("AVALANCHE: Lucerna: File not found: digit.avd");
+		error("AVALANCHE: File not found: digit.avd");
 
 	for (int i = 0; i < 10; i++) {
 		file.seek(i * digitsize);
@@ -91,6 +91,60 @@ void Graphics::loadDigits(Common::File &file) {   // Load the scoring digits & r
 	}
 
 	file.close();
+}
+
+void Graphics::loadMouse(byte which) {
+	if (which == _vm->_currentMouse)
+		return;
+
+	_vm->_currentMouse = which;
+
+	Common::File f;
+	if (!f.open("mice.avd"))
+		error("AVALANCHE: Gyro: File not found: mice.avd");
+
+	::Graphics::Surface cursor;
+	cursor.create(16, 32, ::Graphics::PixelFormat::createFormatCLUT8());
+	cursor.fillRect(Common::Rect(0, 0, 16, 32), 255);
+
+
+	// The AND mask.
+	f.seek(kMouseSize * 2 * which + 134);
+
+	::Graphics::Surface mask = loadPictureGraphic(f);
+
+	for (int j = 0; j < mask.h; j++) {
+		for (int i = 0; i < mask.w; i++) {
+			byte pixel = *(byte *)mask.getBasePtr(i, j);
+			if (pixel == 0) {
+				*(byte *)cursor.getBasePtr(i, j * 2    ) = 0;
+				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = 0;
+			}
+		}
+	}
+
+	mask.free();
+
+	// The OR mask.
+	f.seek(kMouseSize * 2 * which + 134 * 2);
+
+	mask = loadPictureGraphic(f);
+
+	for (int j = 0; j < mask.h; j++) {
+		for (int i = 0; i < mask.w; i++) {
+			byte pixel = *(byte *)mask.getBasePtr(i, j);
+			if (pixel != 0) {
+				*(byte *)cursor.getBasePtr(i, j * 2    ) = pixel;
+				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = pixel;
+			}
+		}
+	}
+
+	mask.free();
+	f.close();
+
+	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, AvalancheEngine::kMouseHotSpots[which]._horizontal, AvalancheEngine::kMouseHotSpots[which]._vertical * 2, 255, false);
+	cursor.free();
 }
 
 void Graphics::fleshColors() {

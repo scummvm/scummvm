@@ -71,11 +71,12 @@ public:
 	~Graphics();
 	void init();
 	void loadDigits(Common::File &file); // Load the scoring digits & rwlites
+	void loadMouse(byte which);
 
 	void fleshColors();
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
-	// Returns the end point of the arc. (Needed in Lucerna::lucerna_clock().)
+	// Returns the end point of the arc. (Needed in Clock.)
 	// TODO: Make it more accurate later.
 	Common::Point drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 
@@ -91,7 +92,7 @@ public:
 	::Graphics::Surface loadPictureRow(Common::File &file, uint16 width, uint16 height); // Reads Row-planar EGA data.
 
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
-	void drawPicture(::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See Lucerna::showscore() for example.
+	void drawPicture(::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY); // Can't call .free() here. See showScore() for example.
 	void refreshScreen();
 	void loadBackground(Common::File &file);
 	void refreshBackground();
@@ -99,7 +100,7 @@ public:
 
 private:
 	static const byte kEgaPaletteIndex[16];
-	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
+	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in loadDigits() !!!
 	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	::Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
 	byte _egaPalette[64][3];
