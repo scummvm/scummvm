@@ -409,7 +409,7 @@ static uint32 *getSelectList(uint32 i) {
 			sl[k++] = dialog->_choice[i]._select[j]._dwData;
 	}
 
-	sl[k] = (uint32)NULL;
+	sl[k] = 0;
 	return sl;
 }
 
@@ -436,7 +436,7 @@ static uint32 *GetItemList(uint32 nLoc) {
 		}
 	}
 
-	il[j] = (uint32)NULL;
+	il[j] = 0;
 	return il;
 }
 
@@ -832,7 +832,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		if (_ctx->k == 0)
 			// We can remove this item from the list
-			_ctx->il[_ctx->i] = (uint32)NULL;
+			_ctx->il[_ctx->i] = 0;
 		else
 			_ctx->nRealItems++;
 	}
