@@ -866,7 +866,7 @@ void SpeakerMiranda3700::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor3;
+		_object2 = &scene->_miranda;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -886,25 +886,25 @@ void SpeakerMiranda3700::proc15() {
 		break;
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		scene->_actor1.setup(10, 6, 1);
-		scene->_actor2.setup(20, 5, 1);
+		scene->_quinn.setup(10, 6, 1);
+		scene->_seeker.setup(20, 5, 1);
 		_object2->setup(30, 1, 1);
-		scene->_actor4.setup(40, 1, 1);
+		scene->_webbster.setup(40, 1, 1);
 		_object1.setup(4050, 5, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		scene->_actor3.setup(30, 8, 1);
+		scene->_miranda.setup(30, 8, 1);
 		_object1.setup(4052, 3, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		scene->_actor2.setup(20, 1, 1);
-		scene->_actor3.setup(30, 1, 1);
+		scene->_seeker.setup(20, 1, 1);
+		scene->_miranda.setup(30, 1, 1);
 		_object1.setup(4051, 7, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		signal();
@@ -1757,14 +1757,14 @@ void SpeakerQuinn3700::setText(const Common::String &msg) {
 
 	switch (_speakerMode) {
 	case 2:
-		scene->_actor3.setup(30, 1, 1);
+		scene->_miranda.setup(30, 1, 1);
 		R2_GLOBALS._sound2.play(44);
 		break;
 	case 3:
-		scene->_actor3.setup(30, 1, 1);
+		scene->_miranda.setup(30, 1, 1);
 		break;
 	default:
-		scene->_actor3.setup(30, 7, 1);
+		scene->_miranda.setup(30, 7, 1);
 		break;
 	}
 	VisualSpeaker::setText(msg);
@@ -1776,7 +1776,7 @@ void SpeakerQuinn3700::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_quinn;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1797,24 +1797,24 @@ void SpeakerQuinn3700::proc15() {
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		R2_GLOBALS._sound2.stop();
-		scene->_actor1.setup(10, 4, 1);
-		scene->_actor3.setup(30, 7, 1);
+		scene->_quinn.setup(10, 4, 1);
+		scene->_miranda.setup(30, 7, 1);
 		_object1.setup(3701, 1, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		scene->_actor2.setup(20, 1, 1);
-		scene->_actor3.setup(30, 1, 1);
-		_object1.setup(3701, 2, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		scene->_seeker.setup(20, 1, 1);
+		scene->_miranda.setup(30, 1, 1);
+		_object1.setup(3702, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		scene->_actor1.setup(10, 2, 1);
-		scene->_actor3.setup(30, 1, 1);
+		scene->_quinn.setup(10, 2, 1);
+		scene->_miranda.setup(30, 1, 1);
 		_object1.setup(4011, 1, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		signal();
@@ -2467,10 +2467,11 @@ void SpeakerSeeker3700::setText(const Common::String &msg) {
 
 	if (_speakerMode == 1) {
 		R2_GLOBALS._sound2.play(44);
-		scene->_actor3.setup(30, 8, 1);
+		scene->_miranda.setup(30, 8, 1);
 	} else {
-		scene->_actor3.setup(30, 2, 1);
+		scene->_miranda.setup(30, 2, 1);
 	}
+
 	VisualSpeaker::setText(msg);
 }
 
@@ -2480,7 +2481,7 @@ void SpeakerSeeker3700::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_seeker;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2501,19 +2502,19 @@ void SpeakerSeeker3700::proc15() {
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		R2_GLOBALS._sound2.stop();
-		scene->_actor1.setup(10, 8, 1);
-		scene->_actor2.setup(20, 7, 1);
-		scene->_actor3.setup(30, 8, 1);
+		scene->_quinn.setup(10, 8, 1);
+		scene->_seeker.setup(20, 7, 1);
+		scene->_miranda.setup(30, 8, 1);
 		_object1.setup(3701, 3, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		scene->_actor1.setup(10, 2, 1);
-		scene->_actor2.setup(20, 1, 1);
-		scene->_actor3.setup(30, 1, 1);
+		scene->_quinn.setup(10, 2, 1);
+		scene->_seeker.setup(20, 1, 1);
+		scene->_miranda.setup(30, 1, 1);
 		_object1.setup(4031, 1, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		signal();

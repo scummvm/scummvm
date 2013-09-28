@@ -4238,7 +4238,7 @@ Scene3600::Scene3600() {
 	_field254A = 0;
 	_field254C = 0;
 	_field254E = 0;
-	_field2550 = false;
+	_ghoulTeleported = false;
 }
 void Scene3600::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
@@ -4247,7 +4247,7 @@ void Scene3600::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field254A);
 	s.syncAsSint16LE(_field254C);
 	s.syncAsSint16LE(_field254E);
-	s.syncAsSint16LE(_field2550);
+	s.syncAsSint16LE(_ghoulTeleported);
 }
 
 Scene3600::Action3600::Action3600() {
@@ -4277,8 +4277,8 @@ void Scene3600::Action3600::signal() {
 			R2_GLOBALS._sound2.play(330, NULL, 0);
 			R2_GLOBALS._sound2.fade(127, 5, 10, false, NULL);
 		}
+
 		setDelay(1);
-		warning("TODO: Palette fader using parameter 2 = 256");
 		R2_GLOBALS._scenePalette.fade((const byte *)&scene->_palette1._palette, true, _field20);
 		if (_field20 > 0)
 			_field20 -= 2;
@@ -4595,7 +4595,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		_field254E = 0;
 	}
 	_field254E = 0;
-	_field2550 = R2_GLOBALS.getFlag(71);
+	_ghoulTeleported = R2_GLOBALS.getFlag(71);
 
 	R2_GLOBALS._sound1.play(326);
 	_item1.setDetails(Rect(0, 0, 480, 200), 3600, 0, -1, -1, 1, NULL);
@@ -4909,10 +4909,10 @@ void Scene3600::dispatch() {
 		_actor4.setAction(&_sequenceManager1, this, 3613, &_actor4, NULL);
 	}
 
-	if ((_protector.getRegionIndex() == 200) && (_action1._field1E != 0) && (_field254E == 0)) {
+	if ((_protector.getRegionIndex() == 200) && (_action1._field1E != 0) && !_ghoulTeleported) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 		_sceneMode = 3620;
-		_field2550 = 1;
+		_ghoulTeleported = true;
 		R2_GLOBALS._player.disableControl();
 
 		if (R2_GLOBALS._player._mover)
@@ -4937,8 +4937,9 @@ void Scene3600::dispatch() {
 
 void Scene3700::postInit(SceneObjectList *OwnerList) {
 	loadScene(3700);
-	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
+	R2_GLOBALS._uiElements._active = false;
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_stripManager.setColors(60, 255);
 	_stripManager.setFontNumber(3);
@@ -4946,30 +4947,31 @@ void Scene3700::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_seekerSpeaker);
 	_stripManager.addSpeaker(&_mirandaSpeaker);
 
-	_actor1.postInit();
-	_actor1._moveDiff = Common::Point(3, 2);
+	_quinn.postInit();
+	_quinn._moveDiff = Common::Point(3, 2);
 
-	_actor2.postInit();
-	_actor2._numFrames = 7;
-	_actor2._moveDiff = Common::Point(5, 3);
-	_actor2.hide();
+	_seeker.postInit();
+	_seeker._numFrames = 7;
+	_seeker._moveDiff = Common::Point(5, 3);
+	_seeker.hide();
 
-	_actor3.postInit();
-	_actor3._moveDiff = Common::Point(3, 2);
-	_actor3.hide();
+	_miranda.postInit();
+	_miranda._moveDiff = Common::Point(3, 2);
+	_miranda.hide();
 
-	_actor4.postInit();
-	_actor4._numFrames = 7;
-	_actor4._moveDiff = Common::Point(5, 3);
-	_actor4.hide();
+	_webbster.postInit();
+	_webbster._numFrames = 7;
+	_webbster._moveDiff = Common::Point(5, 3);
+	_webbster.hide();
 
 	_actor5.postInit();
 
-	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.disableControl();
 	R2_GLOBALS._sound1.play(332);
 
 	_sceneMode = 3700;
-	setAction(&_sequenceManager, this, 3700, &_actor1, &_actor2, &_actor3, &_actor4, &_actor5, NULL);
+	setAction(&_sequenceManager, this, 3700, &_quinn, &_seeker, &_miranda, 
+		&_webbster, &_actor5, NULL);
 }
 
 void Scene3700::remove() {
@@ -4984,11 +4986,11 @@ void Scene3700::signal() {
 	case 3329:
 		warning("STUB: sub_1D227()");
 		_sceneMode = 3701;
-		setAction(&_sequenceManager, this, 3701, &_actor2, &_actor3, &_actor4, NULL);
+		setAction(&_sequenceManager, this, 3701, &_seeker, &_miranda, &_webbster, NULL);
 		break;
 	case 3700:
-		_actor1.setup(10, 6, 1);
-		_actor2.setup(20, 5, 1);
+		_quinn.setup(10, 6, 1);
+		_seeker.setup(20, 5, 1);
 		if (R2_GLOBALS.getFlag(71)) {
 			_sceneMode = 3329;
 			_stripManager.start(3329, this);
