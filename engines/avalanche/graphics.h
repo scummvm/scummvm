@@ -70,6 +70,8 @@ public:
 	Graphics(AvalancheEngine *vm);
 	~Graphics();
 	void init();
+	void loadDigits(Common::File &file); // Load the scoring digits & rwlites
+
 	void fleshColors();
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
@@ -80,6 +82,8 @@ public:
 	void drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(::Graphics::Surface &surface, Common::Point *p, Color color);
 	void drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawDigit(int index, int x, int y);
+	void drawDirection(int index, int x, int y);
 
 	// The caller has to .free() the returned Surfaces!!!
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
@@ -94,12 +98,14 @@ public:
 	void zoomOut(int16 x, int16 y); // Only used when entering the map.
 
 private:
+	static const byte kEgaPaletteIndex[16];
+	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
+	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
+	::Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
+	byte _egaPalette[64][3];
+
 	AvalancheEngine *_vm;
 
-	static const byte kEgaPaletteIndex[16];
-
-	byte _egaPalette[64][3];
-	::Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
 };
 
 } // End of namespace Avalanche

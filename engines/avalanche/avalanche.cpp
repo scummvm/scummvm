@@ -88,12 +88,6 @@ AvalancheEngine::~AvalancheEngine() {
 			}
 		}
 	}
-
-	for (int i = 0; i < 9; i++) {
-		_digits[i].free();
-		_directions[i].free();
-	}
-	_digits[9].free();
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {

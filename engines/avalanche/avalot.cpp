@@ -318,7 +318,7 @@ void AvalancheEngine::setup() {
 
 	_dialogs->reset();
 	dusk();
-	loadDigits();
+	_graphics->loadDigits(file);
 
 	_parser->_inputTextPos = 0;
 	_parser->_quote = true;
@@ -1111,26 +1111,6 @@ void AvalancheEngine::thinkAbout(byte object, bool type) {
 	_thinkThing = type;
 }
 
-void AvalancheEngine::loadDigits() {   // Load the scoring digits & rwlites
-	const byte digitsize = 134;
-	const byte rwlitesize = 126;
-
-	if (!file.open("digit.avd"))
-		error("AVALANCHE: Lucerna: File not found: digit.avd");
-
-	for (int i = 0; i < 10; i++) {
-		file.seek(i * digitsize);
-		_digits[i] = _graphics->loadPictureGraphic(file);
-	}
-
-	for (int i = 0; i < 9; i++) {
-		file.seek(10 * digitsize + i * rwlitesize);
-		_directions[i] = _graphics->loadPictureGraphic(file);
-	}
-
-	file.close();
-}
-
 void AvalancheEngine::drawToolbar() {
 	if (!file.open("useful.avd"))
 		error("AVALANCHE: Lucerna: File not found: useful.avd");
@@ -1138,10 +1118,11 @@ void AvalancheEngine::drawToolbar() {
 	file.seek(40);
 
 	CursorMan.showMouse(false);
+
 	::Graphics::Surface picture = _graphics->loadPictureGraphic(file);
 	_graphics->drawPicture(_graphics->_surface, picture, 5, 169);
-
 	picture.free();
+
 	file.close();
 
 	CursorMan.showMouse(true);
@@ -1165,7 +1146,7 @@ void AvalancheEngine::drawScore() {
 
 	for (int i = 0; i < 3; i++) {
 		if (_scoreToDisplay[i] != numbers[i])
-			_graphics->drawPicture(_graphics->_surface, _digits[numbers[i]], 250 + (i + 1) * 15, 177);
+			_graphics->drawDigit(numbers[i], 250 + (i + 1) * 15, 177);
 	}
 
 	CursorMan.showMouse(true);
@@ -1401,7 +1382,7 @@ void AvalancheEngine::drawDirection() { // It's data is loaded in load_digits().
 	_animation->setOldDirection(_animation->getDirection());
 
 	CursorMan.showMouse(false);
-	_graphics->drawPicture(_graphics->_surface, _directions[_animation->getDirection()], 0, 161);
+	_graphics->drawDirection(_animation->getDirection(), 0, 161);
 	CursorMan.showMouse(true);
 }
 
