@@ -348,9 +348,7 @@ public:
 	void spriteRun();
 
 	Common::String intToStr(int32 num);
-	void newMouse(byte id);
 	void setMousePointerWait();    // Makes hourglass.
-	void loadMouse(byte which);
 
 	void setBackgroundColor(byte x);
 	

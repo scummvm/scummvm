@@ -79,7 +79,7 @@ void Pingo::winningPic() {
 	_vm->dusk();
 
 	if (!f.open("finale.avd"))
-		error("AVALANCHE: Lucerna: File not found: finale.avd");
+		error("AVALANCHE: File not found: finale.avd");
 
 #if 0
 	for (int bit = 0; bit <= 3; bit++) {

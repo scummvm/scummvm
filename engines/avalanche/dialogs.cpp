@@ -115,7 +115,7 @@ void Dialogs::scrollModeNormal() {
 
 	setReadyLight(3);
 	_vm->_seeScroll = true;
-	_vm->newMouse(3);
+	_vm->_graphics->loadMouse(3);
 
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
@@ -206,7 +206,7 @@ void Dialogs::scrollModeDialogue() {
 	warning("STUB: Scrolls::scrollModeDialogue()");
 	// It should work with keypresses too! TODO: Implement it!
 
-	_vm->loadMouse(5);
+	_vm->_graphics->loadMouse(5);
 
 	::Graphics::Surface temp;
 	temp.copyFrom(_vm->_graphics->_surface);
@@ -254,7 +254,7 @@ void Dialogs::scrollModeMusic() {
 	setReadyLight(3);
 	_vm->_seeScroll = true;
 	CursorMan.showMouse(false);
-	_vm->newMouse(3);
+	_vm->_graphics->loadMouse(3);
 
 	TuneType played;
 	for (unsigned int i = 0; i < sizeof(played); i++)

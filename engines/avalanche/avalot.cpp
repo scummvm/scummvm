@@ -498,7 +498,7 @@ void AvalancheEngine::loadAlso(byte num) {
 	Common::String filename;
 	filename = Common::String::format("also%d.avd", num);
 	if (!file.open(filename))
-		error("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
+		error("AVALANCHE: File not found: %s", filename.c_str());
 
 	file.seek(128);
 
@@ -581,7 +581,7 @@ void AvalancheEngine::loadRoom(byte num) {
 
 	Common::String filename = Common::String::format("place%d.avd", num);
 	if (!file.open(filename))
-		error("AVALANCHE: Lucerna: File not found: %s", filename.c_str());
+		error("AVALANCHE: File not found: %s", filename.c_str());
 
 	file.seek(146);
 	if (!_roomnName.empty())
@@ -1086,10 +1086,10 @@ void AvalancheEngine::thinkAbout(byte object, bool type) {
 
 	if (type == kThing) {
 		if (!file.open("thinks.avd"))
-			error("AVALANCHE: Lucerna: File not found: thinks.avd");
+			error("AVALANCHE: File not found: thinks.avd");
 	} else { // kPerson
 		if (!file.open("folk.avd"))
-			error("AVALANCHE: Lucerna: File not found: folk.avd");
+			error("AVALANCHE: File not found: folk.avd");
 
 		object -= 149;
 		if (object >= 25)
@@ -1113,7 +1113,7 @@ void AvalancheEngine::thinkAbout(byte object, bool type) {
 
 void AvalancheEngine::drawToolbar() {
 	if (!file.open("useful.avd"))
-		error("AVALANCHE: Lucerna: File not found: useful.avd");
+		error("AVALANCHE: File not found: useful.avd");
 
 	file.seek(40);
 
@@ -1286,17 +1286,17 @@ void AvalancheEngine::checkClick() {
 		after_the_scroll = false;*/
 
 	if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
-		newMouse(0); // up arrow
+		_graphics->loadMouse(0); // up arrow
 	else if ((317 <= cursorPos.y) && (cursorPos.y <= 339))
-		newMouse(7); //I-beam
+		_graphics->loadMouse(7); //I-beam
 	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
-		newMouse(1); // screwdriver
+		_graphics->loadMouse(1); // screwdriver
 	else if (!_menu->isActive()) { // Dropdown can handle its own pointers.
 		if (_holdLeftMouse) {
-			newMouse(6); // Mark's crosshairs
+			_graphics->loadMouse(6); // Mark's crosshairs
 			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
 		} else
-			newMouse(3); // fletch
+			_graphics->loadMouse(3); // fletch
 	}
 
 	if (_holdLeftMouse) {
@@ -1454,20 +1454,12 @@ Common::String AvalancheEngine::intToStr(int32 num) {
 	return Common::String::format("%d", num);
 }
 
-void AvalancheEngine::newMouse(byte id) {
-	if (id == _currentMouse)
-		return;
-
-	_currentMouse = id;
-	loadMouse(id);
-}
-
 /**
  * Set the mouse pointer to 'HourGlass"
  * @remarks	Originally called 'wait'
  */
 void AvalancheEngine::setMousePointerWait() {
-	newMouse(4);
+	_graphics->loadMouse(4);
 }
 
 void AvalancheEngine::resetVariables() {
@@ -1765,56 +1757,6 @@ Common::String AvalancheEngine::f5Does() {
 	}
 
 	return Common::String::format("%c", kVerbCodePardon); // If all else fails...
-}
-
-void AvalancheEngine::loadMouse(byte which) {
-	Common::File f;
-
-	if (!f.open("mice.avd"))
-		error("AVALANCHE: Gyro: File not found: mice.avd");
-
-	::Graphics::Surface cursor;
-	cursor.create(16, 32, ::Graphics::PixelFormat::createFormatCLUT8());
-	cursor.fillRect(Common::Rect(0, 0, 16, 32), 255);
-
-
-	// The AND mask.
-	f.seek(kMouseSize * 2 * which + 134);
-
-	::Graphics::Surface mask = _graphics->loadPictureGraphic(f);
-
-	for (int j = 0; j < mask.h; j++) {
-		for (int i = 0; i < mask.w; i++) {
-			byte pixel = *(byte *)mask.getBasePtr(i, j);
-			if (pixel == 0) {
-				*(byte *)cursor.getBasePtr(i, j * 2    ) = 0;
-				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = 0;
-			}
-		}
-	}
-
-	mask.free();
-
-	// The OR mask.
-	f.seek(kMouseSize * 2 * which + 134 * 2);
-
-	mask = _graphics->loadPictureGraphic(f);
-
-	for (int j = 0; j < mask.h; j++) {
-		for (int i = 0; i < mask.w; i++) {
-			byte pixel = *(byte *)mask.getBasePtr(i, j);
-			if (pixel != 0) {
-				*(byte *)cursor.getBasePtr(i, j * 2    ) = pixel;
-				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = pixel;
-			}
-		}
-	}
-
-	mask.free();
-	f.close();
-
-	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
-	cursor.free();
 }
 
 void AvalancheEngine::setBackgroundColor(byte x) {
