@@ -1125,12 +1125,24 @@ void Ringworld2Game::start() {
 	g_globals->_events.showCursor();
 }
 
+void Ringworld2Game::restartGame() {
+	if (MessageDialog::show(Ringworld2::R2_RESTART_MSG, CANCEL_BTN_STRING, YES_MSG) == 1)
+		restart();
+}
+
 void Ringworld2Game::restart() {
 	g_globals->_scenePalette.clearListeners();
 	g_globals->_soundHandler.stop();
 
+	// Reset the globals
+	g_globals->reset();
+
+	// Clear save/load slots
+	g_globals->_sceneHandler->_saveGameSlot = -1;
+	g_globals->_sceneHandler->_loadGameSlot = -1;
+
 	// Change to the first game scene
-	g_globals->_sceneManager.changeScene(180);
+	g_globals->_sceneManager.changeScene(100);
 }
 
 void Ringworld2Game::endGame(int resNum, int lineNum) {
