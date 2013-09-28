@@ -100,7 +100,7 @@ public:
 	    @brief Setzt die Farbe des Textes.
 	    @param Color eine 24-Bit RGB Farbe, die die Farbe des Textes festlegt.
 	*/
-	void setColor(uint modulationColor);
+	void setColor(uint32 modulationColor);
 
 	/**
 	    @brief Gibt den Alphawert des Textes zurück.
@@ -142,7 +142,7 @@ private:
 	Text(RenderObjectPtr<RenderObject> parentPtr);
 	Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle);
 
-	uint _modulationColor;
+	uint32 _modulationColor;
 	Common::String _font;
 	Common::String _text;
 	bool _autoWrap;
