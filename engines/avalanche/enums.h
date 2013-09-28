@@ -87,4 +87,8 @@ enum VerbCode {
 
 } // End of namespace Avalanche
 
+enum MouseCursor {
+	kCurUpArrow = 0,   kCurScrewDriver = 1, kCurRightArrow = 2, kCurFletch = 3, kCurWait = 4, kCurHand = 5, 
+	kCurCrosshair = 6, kCurIBeam = 7
+};
 #endif // AVALANCHE_ENUMS_H
