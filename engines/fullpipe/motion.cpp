@@ -27,6 +27,7 @@
 #include "common/list.h"
 
 #include "fullpipe/objects.h"
+#include "fullpipe/statics.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/gameloader.h"
@@ -234,8 +235,37 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag
 	return 0;
 }
 
+int MovGraph2::getItemIndexByGameObjectId(int objectId) {
+	for (uint i = 0; i < _items.size(); i++)
+		if (_items[i]->_objectId == objectId)
+			return i;
+
+	return -1;
+}
+
+bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
+	warning("STUB: MovGraph2::initDirections()");
+
+	return false;
+}
+
 void MovGraph2::addObject(StaticANIObject *obj) {
-	warning("STUB: MovGraph2::addObject()");
+	MovGraph::addObject(obj);
+
+	int id = getItemIndexByGameObjectId(obj->_id);
+
+	if (id >= 0) {
+		_items[id]->_obj = obj;
+	} else {
+
+		MovGraph2Item *item = new MovGraph2Item;
+
+		if (initDirections(obj, item)) {
+			_items.push_back(item);
+		} else {
+			delete item;
+		}
+	}
 }
 
 int MovGraph2::removeObject(StaticANIObject *obj) {
@@ -265,7 +295,6 @@ MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
 
 	return 0;
 }
-
 
 MovGraphLink::MovGraphLink() {
 	_distance = 0;

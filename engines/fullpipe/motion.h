@@ -101,10 +101,11 @@ class MctlCompound : public MotionController {
 };
 
 class Unk2 : public CObject {
+public:
 	int _items;
 	int _count;
 
- public:
+public:
 	Unk2() : _items(0), _count(0) {}
 };
 
@@ -199,9 +200,32 @@ class MovGraph : public MotionController {
 	MovGraphNode *calcOffset(int ox, int oy);
 };
 
+class Movement;
+
+struct MG2I {
+	int _movementId;
+	Movement *_movement;
+	int _mx;
+	int _my;
+};
+
+struct MovGraph2ItemSub {
+	int _staticsId2;
+	int _staticsId1;
+	MG2I _field_8[3];
+	MG2I _field_38[4];
+	MG2I _field_78[4];
+};
+
+struct MovGraph2Item {
+	int _objectId;
+	StaticANIObject *_obj;
+	MovGraph2ItemSub _subItems[4];
+};
+
 class MovGraph2 : public MovGraph {
 public:
-	ObArray _items;
+	Common::Array<MovGraph2Item *> _items;
 
 public:
 	virtual void addObject(StaticANIObject *obj);
@@ -209,9 +233,13 @@ public:
 	virtual void freeItems();
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
 	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+
+	int getItemIndexByGameObjectId(int objectId);
+	bool initDirections(StaticANIObject *obj, MovGraph2Item *item);
 };
 
 class MctlConnectionPoint : public CObject {
+public:
 	int _connectionX;
 	int _connectionY;
 	int _field_C;
