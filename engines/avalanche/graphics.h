@@ -58,7 +58,6 @@ class Graphics {
 public:
 	::Graphics::Surface _surface;
 	::Graphics::Surface _background;
-	::Graphics::Surface _magics; // Lucerna::draw_also_lines() draws the "magical" lines here. Further information: https://github.com/urukgit/avalot/wiki/Also
 	::Graphics::Surface _scrolls;
 
 	Graphics(AvalancheEngine *vm);
@@ -79,7 +78,9 @@ public:
 	void drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
 	void drawDirection(int index, int x, int y);
-	void drawAlsoLines();
+	void prepareAlsoDisplay();
+	void drawAlsoLines(int x1, int y1, int x2, int y2, Color color);
+	byte getAlsoColor(int x1, int y1, int x2, int y2);
 
 	// The caller has to .free() the returned Surfaces!!!
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
@@ -104,6 +105,7 @@ private:
 	// The 8 = number of bits in a byte, and 12080 comes from Lucerna::load().
 
 	static const byte kEgaPaletteIndex[16];
+	::Graphics::Surface _magics; // Lucerna::draw_also_lines() draws the "magical" lines here. Further information: https://github.com/urukgit/avalot/wiki/Also
 	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in loadDigits() !!!
 	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	::Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)

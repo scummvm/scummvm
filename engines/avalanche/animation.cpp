@@ -379,16 +379,8 @@ byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
 
 	int16 minY = MIN(oy, y) + yl;
 	int16 maxY = MAX(oy, y) + yl;
-	byte returnColor = 0;
 
-	for (int16 i = x1; i <= x2; i++) {
-		for (int16 j = minY; j <= maxY; j++) {
-			byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
-			returnColor = MAX(returnColor, actColor);
-		}
-	}
-
-	return returnColor;
+	return _vm->_graphics->getAlsoColor(x1, minY, x2, maxY);
 }
 
 byte Animation::geidaPed(byte ped) {

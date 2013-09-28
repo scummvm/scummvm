@@ -543,14 +543,24 @@ void AvalancheEngine::loadAlso(byte num) {
 	for (int i = 0;  i < 26; i++)
 		_flags += file.readByte();
 
-	int16 listen_length = file.readByte();
+	int16 size = file.readByte();
 	_listen.clear();
-	for (int i = 0; i < listen_length; i++)
+	for (int i = 0; i < size; i++)
 		_listen += file.readByte();
 
-	_graphics->drawAlsoLines();
+	_graphics->prepareAlsoDisplay();
+
+	CursorMan.showMouse(false);
+	for (int i = 0; i < _lineNum; i++) {
+		// We had to check if the lines are within the borders of the screen.
+		if ((_lines[i]._x1 >= 0) && (_lines[i]._x1 < kScreenWidth) && (_lines[i]._y1 >= 0) && (_lines[i]._y1 < kScreenHeight)
+			&& (_lines[i]._x2 >= 0) && (_lines[i]._x2 < kScreenWidth) && (_lines[i]._y2 >= 0) && (_lines[i]._y2 < kScreenHeight))
+			_graphics->drawAlsoLines(_lines[i]._x1, _lines[i]._y1, _lines[i]._x2, _lines[i]._y2, _lines[i]._color);
+	}
+	CursorMan.showMouse(true);
 
 	file.close();
+
 	unScramble();
 	for (int i = 0; i <= alsoNum; i++) {
 		tmpStr = Common::String::format(",%s,", _also[i][0]->c_str());
