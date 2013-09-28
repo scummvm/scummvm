@@ -48,6 +48,11 @@ Graphics::~Graphics() {
 	_background.free();
 	_screen.free();
 	_scrolls.free();
+
+	for (int i = 0; i < 10; i++)
+		_digits[i].free();
+	for (int i = 0; i < 9; i++)
+		_directions[i].free();
 }
 
 void Graphics::init() {
@@ -66,6 +71,26 @@ void Graphics::init() {
 	_magics.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
 	_screen.create(kScreenWidth, kScreenHeight * 2, ::Graphics::PixelFormat::createFormatCLUT8());
 	_scrolls.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+}
+
+void Graphics::loadDigits(Common::File &file) {   // Load the scoring digits & rwlites
+	const byte digitsize = 134;
+	const byte rwlitesize = 126;
+
+	if (!file.open("digit.avd"))
+		error("AVALANCHE: Lucerna: File not found: digit.avd");
+
+	for (int i = 0; i < 10; i++) {
+		file.seek(i * digitsize);
+		_digits[i] = loadPictureGraphic(file);
+	}
+
+	for (int i = 0; i < 9; i++) {
+		file.seek(10 * digitsize + i * rwlitesize);
+		_directions[i] = loadPictureGraphic(file);
+	}
+
+	file.close();
 }
 
 void Graphics::fleshColors() {
@@ -212,6 +237,14 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 			}
 		}
 	}
+}
+
+void Graphics::drawDigit(int index, int x, int y) {
+	drawPicture(_surface, _digits[index], x, y);
+}
+
+void Graphics::drawDirection(int index, int x, int y) {
+	drawPicture(_surface, _directions[index], x, y);
 }
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {

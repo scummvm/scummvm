@@ -283,8 +283,6 @@ public:
 	byte _scrollBells; // no. of times to ring the bell
 	bool _onToolbar, _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 	char _objectList[10];
-	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in Lucerna::load_digits() !!!
-	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	// Called .free() for them in ~Gyro().
 	int8 _scoreToDisplay[3];
 	byte _currentMouse; // current mouse-void
@@ -327,7 +325,6 @@ public:
 	void exitRoom(byte x);
 	void enterRoom(Room room, byte ped);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
-	void loadDigits(); // Load the scoring digits & rwlites
 	void drawToolbar();
 	void drawScore();
 	void incScore(byte num); // Add on no. of points
