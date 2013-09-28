@@ -439,8 +439,8 @@ void Parser::plotText() {
 	CursorMan.showMouse(false);
 	cursorOff();
 
-	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
-	_vm->_graphics->drawText(_vm->_graphics->_surface, _inputText, _vm->_font, 8, 24, 161, kColorWhite);
+	_vm->_graphics->clearTextBar();
+	_vm->_graphics->drawNormalText(_inputText, _vm->_font, 8, 24, 161, kColorWhite);
 
 	cursorOn();
 	CursorMan.showMouse(true);

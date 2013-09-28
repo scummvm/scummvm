@@ -73,13 +73,17 @@ public:
 	// TODO: Make it more accurate later.
 	Common::Point drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 
-	void drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
-	void drawTriangle(::Graphics::Surface &surface, Common::Point *p, Color color);
-	void drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
+	void drawTriangle(Common::Point *p, Color color);
+	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
 	void drawDirection(int index, int x, int y);
-	void prepareAlsoDisplay();
-	void drawAlsoLines(int x1, int y1, int x2, int y2, Color color);
+	void drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2);
+	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text);
+	void clearAlso();
+	void clearTextBar();
+	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);
 	byte getAlsoColor(int x1, int y1, int x2, int y2);
 
 	// The caller has to .free() the returned Surfaces!!!
@@ -114,6 +118,7 @@ private:
 	AvalancheEngine *_vm;
 
 	::Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
+	void drawText(::Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 };
 
 } // End of namespace Avalanche

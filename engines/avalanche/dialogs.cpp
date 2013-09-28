@@ -99,7 +99,7 @@ void Dialogs::say(int16 x, int16 y, Common::String z) {
 			// We have to draw the characters one-by-one because of the accidental font changes.
 			i++;
 			Common::String chr(z[xx]);
-			_vm->_graphics->drawText(_vm->_graphics->_scrolls, chr, itw, 12, (x - 1) * 8 + offset * 4 + i * 8, y, kColorBlack);
+			_vm->_graphics->drawScrollText(chr, itw, 12, (x - 1) * 8 + offset * 4 + i * 8, y, kColorBlack);
 			}
 		}
 	}
@@ -176,30 +176,6 @@ void Dialogs::scrollModeNormal() {
 	_vm->_holdLeftMouse = false; // Used in Lucerna::checkclick().
 
 	warning("STUB: Scrolls::scrollModeNormal()");
-}
-
-void Dialogs::drawShadow(int16 x1, int16 y1, int16 x2, int16 y2) {
-	for (byte i = 0; i < 2; i ++) {
-		_vm->_graphics->_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x1 + i + 1, y2 - i), kColorWhite);
-		_vm->_graphics->_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x2 - i, y1 + i + 1), kColorWhite);
-
-		_vm->_graphics->_scrolls.fillRect(Common::Rect(x2 - i, y1 + i, x2 - i + 1, y2 - i + 1), kColorDarkgray);
-		_vm->_graphics->_scrolls.fillRect(Common::Rect(x1 + i, y2 - i, x2 - i, y2 - i + 1), kColorDarkgray);
-	}
-}
-
-void Dialogs::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text) {
-	CursorMan.showMouse(false);
-	
-	drawShadow(x1, y1, x2, y2);
-
-	bool offset = text.size() % 2;
-	x1 = (x2 - x1) / 2 + x1 - text.size() / 2 * 8 - offset * 3;
-	y1 = (y2 - y1) / 2 + y1 - 4;
-	_vm->_graphics->drawText(_vm->_graphics->_scrolls, text, _vm->_font, 8, x1, y1, kColorBlue);
-	_vm->_graphics->drawText(_vm->_graphics->_scrolls, Common::String('_'), _vm->_font, 8, x1, y1, kColorBlue);
-
-	CursorMan.showMouse(true);
 }
 
 void Dialogs::scrollModeDialogue() {
@@ -448,8 +424,8 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	CursorMan.showMouse(false);
 
 	// The right corners of the scroll.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, kColorLightgray);
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, kColorLightgray);
+	_vm->_graphics->drawPieSlice(mx + lx, my - ly, 0, 90, 15, kColorLightgray);
+	_vm->_graphics->drawPieSlice(mx + lx, my + ly, 270, 360, 15, kColorLightgray);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my - ly, 0, 90, 15, kColorRed);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx + lx, my + ly, 270, 360, 15, kColorRed);
 
@@ -459,10 +435,10 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx + lx + 15, my + ly + 1), kColorLightgray);
 
 	// The left corners of the scroll.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx - lx - 31, my - ly, 0, 180, 15, kColorDarkgray);
+	_vm->_graphics->drawPieSlice(mx - lx - 31, my - ly, 0, 180, 15, kColorDarkgray);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx - lx - 31, my - ly, 0, 180, 15, kColorRed);
 	_vm->_graphics->_scrolls.drawLine(mx - lx - 31 - 15, my - ly, mx - lx - 31 + 15, my - ly, kColorRed);
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, mx - lx - 31, my + ly, 180, 360, 15, kColorDarkgray);
+	_vm->_graphics->drawPieSlice(mx - lx - 31, my + ly, 180, 360, 15, kColorDarkgray);
 	_vm->_graphics->drawArc(_vm->_graphics->_scrolls, mx - lx - 31, my + ly, 180, 360, 15, kColorRed);
 	_vm->_graphics->_scrolls.drawLine(mx - lx - 31 - 15, my + ly, mx - lx - 31 + 15, my + ly, kColorRed);
 
@@ -512,8 +488,8 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 				_shadowBoxX = mx + lx;
 				_shadowBoxY = my + ly;
 				_vm->_scroll[i].setChar(' ', 0);
-				drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
-				drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
+				_vm->_graphics->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
+				_vm->_graphics->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
 				break;
 			}
 
@@ -577,16 +553,16 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw - 1, 12, _vm->_talkX + xw + xc + 2, my - 4), _vm->_talkBackgroundColor);
 
 	// Top right corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_talkX + xw - 10, 11, 0, 90, 9, _vm->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(xc + _vm->_talkX + xw - 10, 11, 0, 90, 9, _vm->_talkBackgroundColor);
 	// Bottom right corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_talkX + xw - 10, my - 4, 270, 360, 9, _vm->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(xc + _vm->_talkX + xw - 10, my - 4, 270, 360, 9, _vm->_talkBackgroundColor);
 	// Top left corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_talkX - xw + 10, 11, 90, 180, 9, _vm->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(xc + _vm->_talkX - xw + 10, 11, 90, 180, 9, _vm->_talkBackgroundColor);
 	// Bottom left corner of the bubble.
-	_vm->_graphics->drawPieSlice(_vm->_graphics->_scrolls, xc + _vm->_talkX - xw + 10, my - 4, 180, 270, 9, _vm->_talkBackgroundColor);
+	_vm->_graphics->drawPieSlice(xc + _vm->_talkX - xw + 10, my - 4, 180, 270, 9, _vm->_talkBackgroundColor);
 
 	// "Tail" of the speech bubble.
-	_vm->_graphics->drawTriangle(_vm->_graphics->_scrolls, points, _vm->_talkBackgroundColor);
+	_vm->_graphics->drawTriangle(points, _vm->_talkBackgroundColor);
 
 
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
@@ -595,7 +571,7 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	for (int i = 0; i < _vm->_scrollNum; i++) {
 		int16 x = xc + _vm->_talkX - _vm->_scroll[i].size() / 2 * 8;
 		bool offset = _vm->_scroll[i].size() % 2;
-		_vm->_graphics->drawText(_vm->_graphics->_scrolls, _vm->_scroll[i], _vm->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_talkFontColor);
+		_vm->_graphics->drawScrollText(_vm->_scroll[i], _vm->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_talkFontColor);
 	}
 
 	ringBell();
