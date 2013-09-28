@@ -244,9 +244,132 @@ int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 }
 
 bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
-	warning("STUB: MovGraph2::initDirections()");
+	item->_obj = obj;
+	item->_objectId = obj->_id;
 
-	return false;
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
+	if (!var)
+		return false;
+
+	var = var->getSubVarByName("Test_walk");
+
+	if (!var)
+		return false;
+
+	GameVar *varD = 0;
+	Common::Point point;
+
+	for (int dir = 0; dir < 4; dir++) {
+		switch (dir) {
+		case 0:
+			varD = var->getSubVarByName("Right");
+			break;
+		case 1:
+			varD = var->getSubVarByName("Left");
+			break;
+		case 2:
+			varD = var->getSubVarByName("Up");
+			break;
+		case 3:
+			varD = var->getSubVarByName("Down");
+			break;
+		}
+
+		if (!varD)
+			return false;
+
+		for (int act = 0; act < 3; act++) {
+			int idx;
+
+			switch(act) {
+			case 0:
+				idx = varD->getSubVarAsInt("Start");
+				break;
+			case 1:
+				idx = varD->getSubVarAsInt("Go");
+				break;
+			case 2:
+				idx = varD->getSubVarAsInt("Stop");
+				break;
+			}
+
+			item->_subItems[dir]._walk[act]._movementId = idx;
+
+			Movement *mov = obj->getMovementById(idx);
+
+			item->_subItems[dir]._walk[act]._mov = mov;
+			if (mov) {
+				mov->calcSomeXY(point, 0);
+				item->_subItems[dir]._walk[act]._mx = point.x;
+				item->_subItems[dir]._walk[act]._my = point.y;
+			}
+		}
+
+		for (int act = 0; act < 4; act++) {
+			int idx;
+
+			switch(act) {
+			case 0:
+				idx = varD->getSubVarAsInt("TurnR");
+				break;
+			case 1:
+				idx = varD->getSubVarAsInt("TurnL");
+				break;
+			case 2:
+				idx = varD->getSubVarAsInt("TurnU");
+				break;
+			case 3:
+				idx = varD->getSubVarAsInt("TurnD");
+				break;
+			}
+
+			item->_subItems[dir]._turn[act]._movementId = idx;
+
+			Movement *mov = obj->getMovementById(idx);
+
+			item->_subItems[dir]._turn[act]._mov = mov;
+			if (mov) {
+				mov->calcSomeXY(point, 0);
+				item->_subItems[dir]._turn[act]._mx = point.x;
+				item->_subItems[dir]._turn[act]._my = point.y;
+			}
+		}
+
+		for (int act = 0; act < 4; act++) {
+			int idx;
+
+			switch(act) {
+			case 0:
+				idx = varD->getSubVarAsInt("TurnSR");
+				break;
+			case 1:
+				idx = varD->getSubVarAsInt("TurnSL");
+				break;
+			case 2:
+				idx = varD->getSubVarAsInt("TurnSU");
+				break;
+			case 3:
+				idx = varD->getSubVarAsInt("TurnSD");
+				break;
+			}
+
+			item->_subItems[dir]._turnS[act]._movementId = idx;
+
+			Movement *mov = obj->getMovementById(idx);
+
+			item->_subItems[dir]._turnS[act]._mov = mov;
+			if (mov) {
+				mov->calcSomeXY(point, 0);
+				item->_subItems[dir]._turnS[act]._mx = point.x;
+				item->_subItems[dir]._turnS[act]._my = point.y;
+			}
+		}
+
+		item->_subItems[dir]._staticsId1 = item->_subItems[dir]._walk[0]._mov->_staticsObj1->_staticsId;
+		item->_subItems[dir]._staticsId2 = item->_subItems[dir]._walk[0]._mov->_staticsObj2->_staticsId;
+
+	}
+	return true;
 }
 
 void MovGraph2::addObject(StaticANIObject *obj) {
@@ -257,7 +380,6 @@ void MovGraph2::addObject(StaticANIObject *obj) {
 	if (id >= 0) {
 		_items[id]->_obj = obj;
 	} else {
-
 		MovGraph2Item *item = new MovGraph2Item;
 
 		if (initDirections(obj, item)) {

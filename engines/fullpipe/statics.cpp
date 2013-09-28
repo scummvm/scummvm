@@ -1245,6 +1245,12 @@ Common::Point *Movement::getCurrDynamicPhaseXY(Common::Point &p) {
 	return &p;
 }
 
+Common::Point *Movement::calcSomeXY(Common::Point &p, int idx) {
+	warning("STUB: Movement::calcSomeXY()");
+
+	return &p;
+}
+
 void Movement::setAlpha(int alpha) {
 	if (_currMovement)
 		for (uint i = 0; i < _currMovement->_dynamicPhases.size(); i++) {

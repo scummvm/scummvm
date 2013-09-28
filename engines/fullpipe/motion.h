@@ -204,7 +204,7 @@ class Movement;
 
 struct MG2I {
 	int _movementId;
-	Movement *_movement;
+	Movement *_mov;
 	int _mx;
 	int _my;
 };
@@ -212,9 +212,9 @@ struct MG2I {
 struct MovGraph2ItemSub {
 	int _staticsId2;
 	int _staticsId1;
-	MG2I _field_8[3];
-	MG2I _field_38[4];
-	MG2I _field_78[4];
+	MG2I _walk[3];
+	MG2I _turn[4];
+	MG2I _turnS[4];
 };
 
 struct MovGraph2Item {
