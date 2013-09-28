@@ -181,7 +181,7 @@ bool AnimationTemplate::persist(OutputPersistenceBlock &writer) {
 	Result &= AnimationDescription::persist(writer);
 
 	// Frameanzahl schreiben.
-	writer.write(_frames.size());
+	writer.write((uint32)_frames.size());
 
 	// Frames einzeln persistieren.
 	Common::Array<const Frame>::const_iterator Iter = _frames.begin();
@@ -209,7 +209,7 @@ bool AnimationTemplate::unpersist(InputPersistenceBlock &reader) {
 	result &= AnimationDescription::unpersist(reader);
 
 	// Frameanzahl lesen.
-	uint frameCount;
+	uint32 frameCount;
 	reader.read(frameCount);
 
 	// Frames einzeln wieder herstellen.

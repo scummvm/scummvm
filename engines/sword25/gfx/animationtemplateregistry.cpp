@@ -47,7 +47,7 @@ bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {
 	writer.write(_nextHandle);
 
 	// Anzahl an BS_AnimationTemplates schreiben.
-	writer.write(_handle2PtrMap.size());
+	writer.write((uint32)_handle2PtrMap.size());
 
 	// Alle BS_AnimationTemplates persistieren.
 	HANDLE2PTR_MAP::const_iterator iter = _handle2PtrMap.begin();

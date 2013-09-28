@@ -36,7 +36,7 @@
 namespace Sword25 {
 
 bool AnimationDescription::persist(OutputPersistenceBlock &writer) {
-	writer.write(static_cast<uint>(_animationType));
+	writer.write(static_cast<uint32>(_animationType));
 	writer.write(_FPS);
 	writer.write(_millisPerFrame);
 	writer.write(_scalingAllowed);
