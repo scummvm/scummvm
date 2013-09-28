@@ -320,7 +320,6 @@ public:
 
 	void init();
 	void callVerb(VerbCode id);
-	void drawAlsoLines();
 	void loadRoom(byte num);
 	void exitRoom(byte x);
 	void enterRoom(Room room, byte ped);
@@ -349,8 +348,6 @@ public:
 
 	Common::String intToStr(int32 num);
 
-	void setBackgroundColor(byte x);
-	
 	void resetVariables();
 	void newGame(); // This sets up the DNA for a completely new game.
 	void slowDown();

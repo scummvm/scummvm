@@ -1066,10 +1066,10 @@ void Parser::swallow() { // Eat something.
 		}
 		break;
 	case kObjectPotion:
-		_vm->setBackgroundColor(4);
+		_vm->_graphics->setBackgroundColor(kColorRed);
 		_vm->_dialogs->displayScrollChain('U', 3);
 		_vm->gameOver();
-		_vm->setBackgroundColor(0);
+		_vm->_graphics->setBackgroundColor(kColorBlack);
 		break;
 	case kObjectInk:
 		_vm->_dialogs->displayScrollChain('U', 4);
@@ -1386,7 +1386,7 @@ void Parser::drink() {
 		_vm->dusk();
 		_vm->hangAroundForAWhile();
 		_vm->flipRoom(kRoomYours, 1);
-		_vm->setBackgroundColor(14);
+		_vm->_graphics->setBackgroundColor(kColorYellow);
 		_vm->_animation->_sprites[0]._visible = false;
 	}
 }
@@ -1414,7 +1414,7 @@ void Parser::standUp() {
 		if (_vm->_avvyIsAwake && _vm->_avvyInBed) {  // But he's in bed.
 			if (_vm->_teetotal) {
 				_vm->_dialogs->displayScrollChain('d', 12);
-				_vm->setBackgroundColor(0);
+				_vm->_graphics->setBackgroundColor(kColorBlack);
 				_vm->_dialogs->displayScrollChain('d', 14);
 			}
 			_vm->_animation->_sprites[0]._visible = true;

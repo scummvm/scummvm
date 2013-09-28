@@ -562,7 +562,7 @@ void Timer::meetAvaroid() {
 		avvy->_moveX = -3;
 		avvy->_moveY = -5;
 
-		_vm->setBackgroundColor(2);
+		_vm->_graphics->setBackgroundColor(kColorGreen);
 	}
 }
 

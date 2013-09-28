@@ -442,22 +442,6 @@ void AvalancheEngine::callVerb(VerbCode id) {
 	}
 }
 
-void AvalancheEngine::drawAlsoLines() {
-	CursorMan.showMouse(false);
-
-	_graphics->_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
-	_graphics->_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
-
-	for (int i = 0; i < _lineNum; i++) {
-		// We had to check if the lines are within the borders of the screen.
-		if ((_lines[i]._x1 >= 0) && (_lines[i]._x1 < _graphics->kScreenWidth) && (_lines[i]._y1 >= 0) && (_lines[i]._y1 < _graphics->kScreenHeight)
-		 && (_lines[i]._x2 >= 0) && (_lines[i]._x2 < _graphics->kScreenWidth) && (_lines[i]._y2 >= 0) && (_lines[i]._y2 < _graphics->kScreenHeight))
-			_graphics->_magics.drawLine(_lines[i]._x1, _lines[i]._y1, _lines[i]._x2, _lines[i]._y2, _lines[i]._color);
-	}
-
-	CursorMan.showMouse(true);
-}
-
 /**
  * Check is it's possible to give something to Spludwick
  * @remarks	Originally called 'nextstring'
@@ -564,7 +548,7 @@ void AvalancheEngine::loadAlso(byte num) {
 	for (int i = 0; i < listen_length; i++)
 		_listen += file.readByte();
 
-	drawAlsoLines();
+	_graphics->drawAlsoLines();
 
 	file.close();
 	unScramble();
@@ -1077,19 +1061,14 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 }
 
 void AvalancheEngine::thinkAbout(byte object, bool type) {
-	const int16 picSize = 966;
-
 	_thinks = object;
 	object--;
 
-	_graphics->loadMouse(kCurWait);
-
+	Common::String filename;
 	if (type == kThing) {
-		if (!file.open("thinks.avd"))
-			error("AVALANCHE: File not found: thinks.avd");
+		filename = "thinks.avd";
 	} else { // kPerson
-		if (!file.open("folk.avd"))
-			error("AVALANCHE: File not found: folk.avd");
+		filename = "folk.avd";
 
 		object -= 149;
 		if (object >= 25)
@@ -1098,34 +1077,16 @@ void AvalancheEngine::thinkAbout(byte object, bool type) {
 			object--; // Last time...
 	}
 
+	_graphics->loadMouse(kCurWait);
 	CursorMan.showMouse(false);
-
-	file.seek(object * picSize + 65);
-	::Graphics::Surface picture = _graphics->loadPictureGraphic(file);
-	_graphics->drawPicture(_graphics->_surface, picture, 205, 170);
-
-	picture.free();
-	file.close();
-
+	_graphics->drawThinkPic(filename, object);
 	CursorMan.showMouse(true);
+
 	_thinkThing = type;
 }
 
 void AvalancheEngine::drawToolbar() {
-	if (!file.open("useful.avd"))
-		error("AVALANCHE: File not found: useful.avd");
-
-	file.seek(40);
-
-	CursorMan.showMouse(false);
-
-	::Graphics::Surface picture = _graphics->loadPictureGraphic(file);
-	_graphics->drawPicture(_graphics->_surface, picture, 5, 169);
-	picture.free();
-
-	file.close();
-
-	CursorMan.showMouse(true);
+	_graphics->drawToolbar();
 	_animation->setOldDirection(kDirNone);
 	drawDirection();
 }
@@ -1749,10 +1710,6 @@ Common::String AvalancheEngine::f5Does() {
 	}
 
 	return Common::String::format("%c", kVerbCodePardon); // If all else fails...
-}
-
-void AvalancheEngine::setBackgroundColor(byte x) {
-	warning("STUB: background()");
 }
 
 void AvalancheEngine::hangAroundForAWhile() {
