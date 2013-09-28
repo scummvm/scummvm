@@ -399,7 +399,7 @@ RenderObjectPtr<Text> RenderObject::addText(const Common::String &font, const Co
 
 bool RenderObject::persist(OutputPersistenceBlock &writer) {
 	// Typ und Handle werden als erstes gespeichert, damit beim Laden ein Objekt vom richtigen Typ mit dem richtigen Handle erzeugt werden kann.
-	writer.write(static_cast<uint>(_type));
+	writer.write(static_cast<uint32>(_type));
 	writer.write(_handle);
 
 	// Restliche Objekteigenschaften speichern.

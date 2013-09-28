@@ -388,14 +388,14 @@ protected:
 	typedef Common::List<RenderObjectPtr<RenderObject> >          RENDEROBJECT_LIST;
 	typedef Common::List<RenderObjectPtr<RenderObject> >::iterator    RENDEROBJECT_ITER;
 
-	int         _x;            ///< Die X-Position des Objektes relativ zum Eltern-Objekt
-	int         _y;            ///< Die Y-Position des Objektes relativ zum Eltern-Objekt
-	int         _z;            ///< Der Z-Wert des Objektes relativ zum Eltern-Objekt
-	int         _absoluteX;    ///< Die absolute X-Position des Objektes
-	int         _absoluteY;    ///< Die absolute Y-Position des Objektes
-	int			_absoluteZ;
-	int         _width;        ///< Die Breite des Objektes
-	int         _height;       ///< Die Höhe des Objektes
+	int32       _x;            ///< Die X-Position des Objektes relativ zum Eltern-Objekt
+	int32       _y;            ///< Die Y-Position des Objektes relativ zum Eltern-Objekt
+	int32       _z;            ///< Der Z-Wert des Objektes relativ zum Eltern-Objekt
+	int32       _absoluteX;    ///< Die absolute X-Position des Objektes
+	int32       _absoluteY;    ///< Die absolute Y-Position des Objektes
+	int32		_absoluteZ;
+	int32       _width;        ///< Die Breite des Objektes
+	int32       _height;       ///< Die Höhe des Objektes
 	bool        _visible;      ///< Ist true, wenn das Objekt sichtbar ist
 	bool        _childChanged; ///< Ist true, wenn sich ein Kinderobjekt verändert hat
 	TYPES       _type;         ///< Der Objekttyp
@@ -404,14 +404,14 @@ protected:
 
 	// Kopien der Variablen, die für die Errechnung des Dirty-Rects und zur Bestimmung der Objektveränderung notwendig sind
 	Common::Rect     _oldBbox;
-	int         _oldX;
-	int         _oldY;
-	int         _oldZ;
+	int32       _oldX;
+	int32       _oldY;
+	int32       _oldZ;
 	bool        _oldVisible;
 
 	static int _nextGlobalVersion;
 
-	int _version;
+	int32 _version;
 
 	// This should be set to true if the RenderObject is NOT alpha-blended to optimize drawing
 	bool _isSolid;
