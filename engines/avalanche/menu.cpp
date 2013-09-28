@@ -317,7 +317,7 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 		}
 	}
 
-	_vm->_graphics->drawText(_vm->_graphics->_surface, text, font, 8, x * 8, y, fontColor);
+	_vm->_graphics->drawNormalText(text, font, 8, x * 8, y, fontColor);
 
 	// Underline the selected character.
 	if ((trigger == 0) || !text.contains(trigger) )

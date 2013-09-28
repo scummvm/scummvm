@@ -268,12 +268,12 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 	return endPoint;
 }
 
-void Graphics::drawPieSlice(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
+void Graphics::drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	while (radius > 0)
-		drawArc(surface, x, y, stAngle, endAngle, radius--, color);
+		drawArc(_scrolls, x, y, stAngle, endAngle, radius--, color);
 }
 
-void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, Color color) {
+void Graphics::drawTriangle(Common::Point *p, Color color) {
 	// Draw the borders with a marking color.
 	_scrolls.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, 255);
 	_scrolls.drawLine(p[1].x, p[1].y, p[2].x, p[2].y, 255);
@@ -310,7 +310,7 @@ void Graphics::drawTriangle(::Graphics::Surface &surface, Common::Point *p, Colo
 	_scrolls.drawLine(p[2].x, p[2].y, p[0].x, p[0].y, color);
 }
 
-void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void Graphics::drawText(::Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -323,12 +323,44 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String &text
 	}
 }
 
+void Graphics::drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+	_vm->_graphics->drawText(_surface, text, font, fontHeight, x, y, color);
+}
+
+void Graphics::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+	_vm->_graphics->drawText(_scrolls, text, font, fontHeight, x, y, color);
+}
+
 void Graphics::drawDigit(int index, int x, int y) {
 	drawPicture(_surface, _digits[index], x, y);
 }
 
 void Graphics::drawDirection(int index, int x, int y) {
 	drawPicture(_surface, _directions[index], x, y);
+}
+
+void Graphics::drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2) {
+	for (byte i = 0; i < 2; i ++) {
+		_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x1 + i + 1, y2 - i), kColorWhite);
+		_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x2 - i, y1 + i + 1), kColorWhite);
+
+		_scrolls.fillRect(Common::Rect(x2 - i, y1 + i, x2 - i + 1, y2 - i + 1), kColorDarkgray);
+		_scrolls.fillRect(Common::Rect(x1 + i, y2 - i, x2 - i, y2 - i + 1), kColorDarkgray);
+	}
+}
+
+void Graphics::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text) {
+	CursorMan.showMouse(false);
+
+	drawScrollShadow(x1, y1, x2, y2);
+
+	bool offset = text.size() % 2;
+	x1 = (x2 - x1) / 2 + x1 - text.size() / 2 * 8 - offset * 3;
+	y1 = (y2 - y1) / 2 + y1 - 4;
+	drawScrollText(text, _vm->_font, 8, x1, y1, kColorBlue);
+	drawScrollText(Common::String('_'), _vm->_font, 8, x1, y1, kColorBlue);
+
+	CursorMan.showMouse(true);
 }
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
@@ -379,12 +411,16 @@ void Graphics::drawDirection(int index, int x, int y) {
 	return picture;
 }
 
-void Graphics::prepareAlsoDisplay() {
+void Graphics::clearAlso() {
 	_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 }
 
-void Graphics::drawAlsoLines(int x1, int y1, int x2, int y2, Color color) {
+void Graphics::clearTextBar() {
+	_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
+}
+
+void Graphics::setAlsoLine(int x1, int y1, int x2, int y2, Color color) {
 	_magics.drawLine(x1, y1, x2, y2, color);
 }
 
