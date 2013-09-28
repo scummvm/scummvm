@@ -147,6 +147,36 @@ void Graphics::loadMouse(byte which) {
 	cursor.free();
 }
 
+void Graphics::drawThinkPic(Common::String filename, int id) {
+	static const int16 kPicSize = 966;
+	Common::File file;
+	if (!file.open(filename))
+		error("drawThinkPic(): File not found: %s", filename.c_str());
+
+	file.seek(id * kPicSize + 65);
+	::Graphics::Surface picture = loadPictureGraphic(file);
+	drawPicture(_surface, picture, 205, 170);
+
+	picture.free();
+	file.close();
+}
+
+void Graphics::drawToolbar() {
+	Common::File file;
+	if (!file.open("useful.avd"))
+		error("drawToolbar(): File not found: useful.avd");
+
+	file.seek(40);
+
+	CursorMan.showMouse(false);
+	::Graphics::Surface picture = loadPictureGraphic(file);
+	drawPicture(_surface, picture, 5, 169);
+	CursorMan.showMouse(true);
+
+	picture.free();
+	file.close();
+}
+
 void Graphics::fleshColors() {
 	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
 	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
@@ -349,6 +379,22 @@ void Graphics::drawDirection(int index, int x, int y) {
 	return picture;
 }
 
+void Graphics::drawAlsoLines() {
+	CursorMan.showMouse(false);
+
+	_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
+	_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
+
+	for (int i = 0; i < _vm->_lineNum; i++) {
+		// We had to check if the lines are within the borders of the screen.
+		if ((_vm->_lines[i]._x1 >= 0) && (_vm->_lines[i]._x1 < kScreenWidth) && (_vm->_lines[i]._y1 >= 0) && (_vm->_lines[i]._y1 < kScreenHeight)
+			&& (_vm->_lines[i]._x2 >= 0) && (_vm->_lines[i]._x2 < kScreenWidth) && (_vm->_lines[i]._y2 >= 0) && (_vm->_lines[i]._y2 < kScreenHeight))
+			_magics.drawLine(_vm->_lines[i]._x1, _vm->_lines[i]._y1, _vm->_lines[i]._x2, _vm->_lines[i]._y2, _vm->_lines[i]._color);
+	}
+
+	CursorMan.showMouse(true);
+}
+
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 	// First we make the pixels of the spirte blank.
 	for (int j = 0; j < sprite._yLength; j++) {
@@ -423,6 +469,11 @@ void Graphics::zoomOut(int16 x, int16 y) {
 	}
 
 	backup.free();
+}
+
+// Original name background()
+void Graphics::setBackgroundColor(Color x) {
+	warning("STUB: setBackgroundColor(%d)", x);
 }
 
 } // End of namespace Avalanche
