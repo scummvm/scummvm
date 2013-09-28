@@ -50,7 +50,9 @@ bool MctlCompound::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		debug(6, "CompoundArray[%d]", i);
-		MctlCompoundArrayItem *obj = (MctlCompoundArrayItem *)file.readClass();
+		MctlCompoundArrayItem *obj = new MctlCompoundArrayItem();
+
+		obj->_motionControllerObj = (MotionController *)file.readClass();
 
 		int count1 = file.readUint32LE();
 

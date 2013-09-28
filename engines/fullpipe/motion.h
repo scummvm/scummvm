@@ -61,10 +61,7 @@ class MovGraphReact : public CObject {
 	// Empty
 };
 
-class MctlConnectionPointsArray : public Common::Array<CObject>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
+typedef Common::Array<CObject> MctlConnectionPointsArray;
 
 class MctlCompoundArrayItem : public CObject {
 	friend class MctlCompound;
