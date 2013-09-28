@@ -379,24 +379,29 @@ void Graphics::drawDirection(int index, int x, int y) {
 	return picture;
 }
 
-void Graphics::drawAlsoLines() {
-	CursorMan.showMouse(false);
-
+void Graphics::prepareAlsoDisplay() {
 	_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
+}
 
-	for (int i = 0; i < _vm->_lineNum; i++) {
-		// We had to check if the lines are within the borders of the screen.
-		if ((_vm->_lines[i]._x1 >= 0) && (_vm->_lines[i]._x1 < kScreenWidth) && (_vm->_lines[i]._y1 >= 0) && (_vm->_lines[i]._y1 < kScreenHeight)
-			&& (_vm->_lines[i]._x2 >= 0) && (_vm->_lines[i]._x2 < kScreenWidth) && (_vm->_lines[i]._y2 >= 0) && (_vm->_lines[i]._y2 < kScreenHeight))
-			_magics.drawLine(_vm->_lines[i]._x1, _vm->_lines[i]._y1, _vm->_lines[i]._x2, _vm->_lines[i]._y2, _vm->_lines[i]._color);
+void Graphics::drawAlsoLines(int x1, int y1, int x2, int y2, Color color) {
+	_magics.drawLine(x1, y1, x2, y2, color);
+}
+
+byte Graphics::getAlsoColor(int x1, int y1, int x2, int y2) {
+	byte returnColor = 0;
+	for (int16 i = x1; i <= x2; i++) {
+		for (int16 j = y1; j <= y2; j++) {
+			byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
+			returnColor = MAX(returnColor, actColor);
+		}
 	}
 
-	CursorMan.showMouse(true);
+	return returnColor;
 }
 
 void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
-	// First we make the pixels of the spirte blank.
+	// First we make the pixels of the sprite blank.
 	for (int j = 0; j < sprite._yLength; j++) {
 		for (int i = 0; i < sprite._xLength; i++) {
 			if (((*sprite._sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
