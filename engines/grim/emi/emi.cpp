@@ -25,7 +25,6 @@
 #include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/emi_registry.h"
 #include "engines/grim/emi/lua_v2.h"
-#include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/set.h"
 #include "engines/grim/gfx_base.h"
