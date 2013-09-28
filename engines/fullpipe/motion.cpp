@@ -76,10 +76,9 @@ bool MctlCompound::load(MfcArchive &file) {
 	return true;
 }
 
-int MctlCompound::addObject(StaticANIObject *obj) {
-	warning("STUB: MctlCompound::addObject()");
-
-	return 0;
+void MctlCompound::addObject(StaticANIObject *obj) {
+	for (uint i = 0; i < _motionControllers.size(); i++)
+		_motionControllers[i]->_motionControllerObj->addObject(obj);
 }
 
 int MctlCompound::removeObject(StaticANIObject *obj) {
@@ -167,10 +166,8 @@ bool MovGraph::load(MfcArchive &file) {
 	return true;
 }
 
-int MovGraph::addObject(StaticANIObject *obj) {
+void MovGraph::addObject(StaticANIObject *obj) {
 	warning("STUB: MovGraph::addObject()");
-
-	return 0;
 }
 
 int MovGraph::removeObject(StaticANIObject *obj) {
@@ -237,10 +234,8 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag
 	return 0;
 }
 
-int MovGraph2::addObject(StaticANIObject *obj) {
+void MovGraph2::addObject(StaticANIObject *obj) {
 	warning("STUB: MovGraph2::addObject()");
-
-	return 0;
 }
 
 int MovGraph2::removeObject(StaticANIObject *obj) {

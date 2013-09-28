@@ -42,7 +42,7 @@ public:
 	virtual void method10() {}
 	virtual void clearEnabled() { _isEnabled = false; }
 	virtual void setEnabled() { _isEnabled = true; }
-	virtual int addObject(StaticANIObject *obj) { return 0; }
+	virtual void addObject(StaticANIObject *obj) {}
 	virtual int removeObject(StaticANIObject *obj) { return 0; }
 	virtual void freeItems() {}
 	virtual int method28() { return 0; }
@@ -91,7 +91,7 @@ class MctlCompound : public MotionController {
 
 	virtual bool load(MfcArchive &file);
 
-	virtual int addObject(StaticANIObject *obj);
+	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
@@ -183,7 +183,7 @@ class MovGraph : public MotionController {
 	MovGraph();
 	virtual bool load(MfcArchive &file);
 
-	virtual int addObject(StaticANIObject *obj);
+	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
 	virtual int method28();
@@ -204,7 +204,7 @@ public:
 	ObArray _items;
 
 public:
-	virtual int addObject(StaticANIObject *obj);
+	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
