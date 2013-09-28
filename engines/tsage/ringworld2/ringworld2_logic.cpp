@@ -38,8 +38,6 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 Scene *Ringworld2Game::createScene(int sceneNumber) {
-	warning("Switching to scene %d", sceneNumber);
-
 	switch (sceneNumber) {
 	/* Scene group #0 */
 	case 50:
@@ -1118,10 +1116,10 @@ void Ringworld2Game::start() {
 	if (slot >= 0)
 		R2_GLOBALS._sceneHandler->_loadGameSlot = slot;
 	else {
-		// Switch to the first game scene
+		// Switch to the first title screen
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		R2_GLOBALS._uiElements._active = true;
-		R2_GLOBALS._sceneManager.setNewScene(100);
+		R2_GLOBALS._sceneManager.setNewScene(180);
 	}
 
 	g_globals->_events.showCursor();
@@ -1132,7 +1130,7 @@ void Ringworld2Game::restart() {
 	g_globals->_soundHandler.stop();
 
 	// Change to the first game scene
-	g_globals->_sceneManager.changeScene(100);
+	g_globals->_sceneManager.changeScene(180);
 }
 
 void Ringworld2Game::endGame(int resNum, int lineNum) {
@@ -2087,7 +2085,7 @@ void AnimationPlayer::close() {
 
 	_field38 = 0;
 	if (g_globals != NULL)
-		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr, 0);
+		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr - 1, 0);
 }
 
 void AnimationPlayer::rleDecode(const byte *pSrc, byte *pDest, int size) {
@@ -2133,13 +2131,13 @@ void AnimationPlayer::getSlices() {
 /*--------------------------------------------------------------------------*/
 
 AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
-	_v = 0;
+	_isActive = false;
 	_field3A = 0;
 }
 
 void AnimationPlayerExt::synchronize(Serializer &s) {
 	AnimationPlayer::synchronize(s);
-	s.syncAsSint16LE(_v);
+	s.syncAsSint16LE(_isActive);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -2638,6 +2638,41 @@ SpeakerTealMode7::SpeakerTealMode7(): SpeakerTeal() {
 	_displayMode = 7;
 }
 
+void SpeakerTeal180::proc15() {
+	int v = _speakerMode;
+
+	if (!_object2) {
+		Scene180 *scene = (Scene180 *)R2_GLOBALS._sceneManager._scene;
+		_object2 = &scene->_teal;
+		_object2->hide();
+
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(75, 5, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(77, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
 void SpeakerTeal300::proc15() {
 	int v = _speakerMode;
 
@@ -2890,6 +2925,47 @@ SpeakerWebbster::SpeakerWebbster(int color) {
 	_numFrames = 0;
 }
 
+void SpeakerWebbster180::proc15() {
+	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _speakerMode;
+
+	if (!_object2) {
+		_object2 = &scene->_webbster;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 6;
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(75, 7, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(76, 4, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(75, 6, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
 void SpeakerWebbster3240::proc15() {
 	int v = _speakerMode;
 	Scene3240 *scene = (Scene3240 *)R2_GLOBALS._sceneManager._scene;
@@ -3092,7 +3168,7 @@ void SpeakerWebbster3400::proc15() {
 
 //----------------------------------------------------------------------------
 
-SpeakerDutyOfficer::SpeakerDutyOfficer(): VisualSpeaker() {
+SpeakerDutyOfficer180::SpeakerDutyOfficer180(): VisualSpeaker() {
 	_speakerName = "DUTYOFFICER";
 	_color1 = 5;
 	_color2 = 0;
@@ -3104,13 +3180,13 @@ SpeakerDutyOfficer::SpeakerDutyOfficer(): VisualSpeaker() {
 	_numFrames = 0;
 }
 
-void SpeakerDutyOfficer::proc15() {
+void SpeakerDutyOfficer180::proc15() {
 	Scene180 *scene = (Scene180 *)R2_GLOBALS._sceneManager._scene;
 
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_object2;
+		_object2 = &scene->_dutyOfficer;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);

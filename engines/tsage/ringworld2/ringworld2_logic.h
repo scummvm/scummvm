@@ -441,7 +441,7 @@ public:
 
 class AnimationPlayerExt: public AnimationPlayer {
 public:
-	int _v;
+	bool _isActive;
 public:
 	AnimationPlayerExt();
 
