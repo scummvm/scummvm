@@ -53,7 +53,7 @@ void InputPersistenceBlock::read(int16 &value) {
 	value = static_cast<int16>(v);
 }
 
-void InputPersistenceBlock::read(signed int &value) {
+void InputPersistenceBlock::read(int32 &value) {
 	if (checkMarker(SINT_MARKER)) {
 		value = (int32)READ_LE_UINT32(_iter);
 		_iter += 4;
@@ -62,7 +62,7 @@ void InputPersistenceBlock::read(signed int &value) {
 	}
 }
 
-void InputPersistenceBlock::read(uint &value) {
+void InputPersistenceBlock::read(uint32 &value) {
 	if (checkMarker(UINT_MARKER)) {
 		value = READ_LE_UINT32(_iter);
 		_iter += 4;
