@@ -237,7 +237,7 @@ void Clock::chime() {
 	if (hour == 0)
 		hour = 12;
 
-	_vm->setMousePointerWait();
+	_vm->_graphics->loadMouse(kCurWait);
 
 	for (int i = 1; i <= hour; i++) {
 		for (int j = 1; j <= 3; j++)
@@ -420,7 +420,7 @@ void AvalancheEngine::init() {
 		_scoreToDisplay[i] = -1; // Impossible digits.
 	_holdTheDawn = false;
 
-	setMousePointerWait();
+	_graphics->loadMouse(kCurWait);
 	CursorMan.showMouse(true);
 }
 
@@ -1082,7 +1082,7 @@ void AvalancheEngine::thinkAbout(byte object, bool type) {
 	_thinks = object;
 	object--;
 
-	setMousePointerWait();
+	_graphics->loadMouse(kCurWait);
 
 	if (type == kThing) {
 		if (!file.open("thinks.avd"))
@@ -1286,17 +1286,17 @@ void AvalancheEngine::checkClick() {
 		after_the_scroll = false;*/
 
 	if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
-		_graphics->loadMouse(0); // up arrow
+		_graphics->loadMouse(kCurUpArrow); // up arrow
 	else if ((317 <= cursorPos.y) && (cursorPos.y <= 339))
-		_graphics->loadMouse(7); //I-beam
+		_graphics->loadMouse(kCurIBeam); //I-beam
 	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
-		_graphics->loadMouse(1); // screwdriver
+		_graphics->loadMouse(kCurScrewDriver); // screwdriver
 	else if (!_menu->isActive()) { // Dropdown can handle its own pointers.
 		if (_holdLeftMouse) {
-			_graphics->loadMouse(6); // Mark's crosshairs
+			_graphics->loadMouse(kCurCrosshair); // Mark's crosshairs
 			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
 		} else
-			_graphics->loadMouse(3); // fletch
+			_graphics->loadMouse(kCurFletch); // fletch
 	}
 
 	if (_holdLeftMouse) {
@@ -1452,14 +1452,6 @@ void AvalancheEngine::fixFlashers() {
 
 Common::String AvalancheEngine::intToStr(int32 num) {
 	return Common::String::format("%d", num);
-}
-
-/**
- * Set the mouse pointer to 'HourGlass"
- * @remarks	Originally called 'wait'
- */
-void AvalancheEngine::setMousePointerWait() {
-	_graphics->loadMouse(4);
 }
 
 void AvalancheEngine::resetVariables() {
