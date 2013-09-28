@@ -47,7 +47,7 @@ bool AnimationDescription::persist(OutputPersistenceBlock &writer) {
 }
 
 bool AnimationDescription::unpersist(InputPersistenceBlock &reader) {
-	uint animationType;
+	uint32 animationType;
 	reader.read(animationType);
 	_animationType = static_cast<Animation::ANIMATION_TYPES>(animationType);
 	reader.read(_FPS);

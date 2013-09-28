@@ -359,7 +359,7 @@ public:
 	/**
 	    @brief Gibt das Handle des Objekte zurück.
 	*/
-	uint getHandle() const {
+	uint32 getHandle() const {
 		return _handle;
 	}
 
@@ -475,7 +475,7 @@ private:
 	/// Ist true, wenn das Objekt in nächsten Frame neu gezeichnet werden soll
 	bool _refreshForced;
 
-	uint _handle;
+	uint32 _handle;
 
 	/**
 	    @brief Entfernt ein Objekt aus der Kinderliste.
