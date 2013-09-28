@@ -77,13 +77,13 @@ bool AnimationTemplateRegistry::unpersist(InputPersistenceBlock &reader) {
 		delete _handle2PtrMap.begin()->_value;
 
 	// Anzahl an BS_AnimationTemplates einlesen.
-	uint animationTemplateCount;
+	uint32 animationTemplateCount;
 	reader.read(animationTemplateCount);
 
 	// Alle gespeicherten BS_AnimationTemplates wieder herstellen.
 	for (uint i = 0; i < animationTemplateCount; ++i) {
 		// Handle lesen.
-		uint handle;
+		uint32 handle;
 		reader.read(handle);
 
 		// BS_AnimationTemplate wieder herstellen.
