@@ -413,10 +413,10 @@ bool RenderObject::persist(OutputPersistenceBlock &writer) {
 	writer.write(_visible);
 	writer.write(_childChanged);
 	writer.write(_initSuccess);
-	writer.write(_bbox.left);
-	writer.write(_bbox.top);
-	writer.write(_bbox.right);
-	writer.write(_bbox.bottom);
+	writer.write((int32)_bbox.left);
+	writer.write((int32)_bbox.top);
+	writer.write((int32)_bbox.right);
+	writer.write((int32)_bbox.bottom);
 	writer.write((int32)_oldBbox.left);
 	writer.write((int32)_oldBbox.top);
 	writer.write((int32)_oldBbox.right);
