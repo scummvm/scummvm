@@ -48,6 +48,7 @@ Graphics::~Graphics() {
 	_background.free();
 	_screen.free();
 	_scrolls.free();
+	_backup.free();
 
 	for (int i = 0; i < 10; i++)
 		_digits[i].free();
@@ -363,6 +364,15 @@ void Graphics::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::Str
 	CursorMan.showMouse(true);
 }
 
+void Graphics::drawSpeedBar(int speed) {
+	if (speed == _vm->kRun) {
+		_surface.drawLine(336, 199, 338, 199, kColorLightblue);
+		_surface.drawLine(371, 199, 373, 199, kColorYellow);
+	} else {
+		_surface.drawLine(371, 199, 373, 199, kColorLightblue);
+		_surface.drawLine(336, 199, 338, 199, kColorYellow);
+	}
+}
 void Graphics::drawScroll(int mx, int lx, int my, int ly) {
 	_scrolls.copyFrom(_surface);
 
@@ -390,7 +400,6 @@ void Graphics::drawScroll(int mx, int lx, int my, int ly) {
 	_scrolls.fillRect(Common::Rect(mx - lx - 30, my + ly + 6, mx + lx, my + ly + 7), kColorRed);
 	_scrolls.fillRect(Common::Rect(mx - lx - 15, my - ly, mx - lx - 14, my + ly), kColorRed);
 	_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), kColorRed);
-
 }
 
 ::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
@@ -523,9 +532,7 @@ void Graphics::refreshBackground() {
 void Graphics::zoomOut(int16 x, int16 y) {
 	//setlinestyle(dottedln, 0, 1); TODO: Implement it with a dotted line style!!!
 
-	::Graphics::Surface backup;
-	backup.copyFrom(_surface);
-
+	saveScreen();
 	for (byte i = 1; i <= 20; i ++) {
 		int16 x1 = x - (x / 20) * i;
 		int16 y1 = y - ((y - 10) / 20) * i;
@@ -535,11 +542,10 @@ void Graphics::zoomOut(int16 x, int16 y) {
 		_surface.frameRect(Common::Rect(x1, y1, x2, y2), kColorWhite);
 		refreshScreen();
 		_vm->_system->delayMillis(17);
-		_surface.copyFrom(backup);
-		refreshScreen();
-	}
 
-	backup.free();
+		restoreScreen();
+	}
+	removeBackup();
 }
 
 // Original name background()
@@ -547,4 +553,16 @@ void Graphics::setBackgroundColor(Color x) {
 	warning("STUB: setBackgroundColor(%d)", x);
 }
 
+void Graphics::saveScreen() {
+	_backup.copyFrom(_surface);
+}
+
+void Graphics::removeBackup() {
+	_backup.free();
+}
+
+void Graphics::restoreScreen() {
+	_surface.copyFrom(_backup);
+	refreshScreen();
+}
 } // End of namespace Avalanche

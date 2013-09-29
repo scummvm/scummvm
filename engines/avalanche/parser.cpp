@@ -481,7 +481,7 @@ void Parser::wipeText() {
 	CursorMan.showMouse(false);
 	cursorOff();
 
-	_vm->_graphics->_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
+	_vm->_graphics->clearTextBar();
 
 	_quote = true;
 	_inputTextPos = 0;

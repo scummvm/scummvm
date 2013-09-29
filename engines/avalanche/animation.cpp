@@ -861,17 +861,9 @@ void Animation::callSpecial(uint16 which) {
 }
 
 void Animation::updateSpeed() {
-	// Given that you've just changed the speed in triptype._speedX, this adjusts _moveX.
-
+	// Given that you've just changed the speed in _speedX, this adjusts _moveX.
 	_sprites[0]._moveX = (_sprites[0]._moveX / 3) * _sprites[0]._speedX;
-
-	if (_sprites[0]._speedX == _vm->kRun) {
-		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorLightblue);
-		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorYellow);
-	} else {
-		_vm->_graphics->_surface.drawLine(371, 199, 373, 199, kColorLightblue);
-		_vm->_graphics->_surface.drawLine(336, 199, 338, 199, kColorYellow);
-	}
+	_vm->_graphics->drawSpeedBar(_sprites[0]._speedX);
 }
 
 void Animation::setMoveSpeed(byte t, Direction dir) {
