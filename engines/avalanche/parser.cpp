@@ -449,14 +449,14 @@ void Parser::plotText() {
 void Parser::cursorOn() {
 	if (_cursorState == true)
 		return;
-	drawCursor();
+	_vm->_graphics->drawCursor(_inputTextPos);
 	_cursorState = true;
 }
 
 void Parser::cursorOff() {
 	if (_cursorState == false)
 		return;
-	drawCursor();
+	_vm->_graphics->drawCursor(_inputTextPos);
 	_cursorState = false;
 }
 
@@ -469,12 +469,6 @@ int16 Parser::getPos(const Common::String &crit, const Common::String &src) {
 		return strstr(src.c_str(),crit.c_str()) - src.c_str();
 	else
 		return -1;
-}
-
-void Parser::drawCursor() {
-	// Draw the '_' character.
-	for (int bit = 0; bit < 8; bit++)
-		*(byte *)_vm->_graphics->_surface.getBasePtr(24 + _inputTextPos * 8 + 7 - bit, 168) = kColorWhite;
 }
 
 void Parser::wipeText() {

@@ -147,7 +147,6 @@ private:
 	Common::String personSpeaks();
 	void heyThanks();
 
-	void drawCursor();
 	void wipeText();
 
 };

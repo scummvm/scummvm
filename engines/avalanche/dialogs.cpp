@@ -65,9 +65,7 @@ void Dialogs::setReadyLight(byte state) {     // Sets "Ready" light to whatever
 	warning("STUB: Scrolls::state()");
 
 	CursorMan.showMouse(false);
-
-	_vm->_graphics->_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
-
+	_vm->_graphics->drawReadyLight(color);
 	CursorMan.showMouse(true);
 	_vm->_ledStatus = state;
 }
@@ -117,9 +115,8 @@ void Dialogs::scrollModeNormal() {
 	_vm->_seeScroll = true;
 	_vm->_graphics->loadMouse(kCurFletch);
 
-	::Graphics::Surface temp;
-	temp.copyFrom(_vm->_graphics->_surface);
-	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
+	_vm->_graphics->saveScreen();
+	_vm->_graphics->showScroll();
 
 	Common::Event event;
 	while (!_vm->shouldQuit()) {
@@ -134,8 +131,8 @@ void Dialogs::scrollModeNormal() {
 			break;
 	}
 
-	_vm->_graphics->_surface.copyFrom(temp);
-	temp.free();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
 
 	warning("STUB: scrollModeNormal() - Check Easter Egg trigger");
 #if 0
@@ -184,9 +181,8 @@ void Dialogs::scrollModeDialogue() {
 
 	_vm->_graphics->loadMouse(kCurHand);
 
-	::Graphics::Surface temp;
-	temp.copyFrom(_vm->_graphics->_surface);
-	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
+	_vm->_graphics->saveScreen();
+	_vm->_graphics->showScroll();
 
 	Common::Event event;
 	while (!_vm->shouldQuit()) {
@@ -206,8 +202,8 @@ void Dialogs::scrollModeDialogue() {
 		}
 	}
 
-	_vm->_graphics->_surface.copyFrom(temp);
-	temp.free();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
 }
 
 void Dialogs::store(byte what, TuneType &played) {
@@ -239,9 +235,8 @@ void Dialogs::scrollModeMusic() {
 
 	_vm->_seeScroll = true;
 
-	::Graphics::Surface temp;
-	temp.copyFrom(_vm->_graphics->_surface);
-	_vm->_graphics->_surface.copyFrom(_vm->_graphics->_scrolls); // TODO: Rework it using getSubArea !!!!!!!
+	_vm->_graphics->saveScreen();
+	_vm->_graphics->showScroll();
 
 	Common::Event event;
 	while (!_vm->shouldQuit()) {
@@ -328,8 +323,9 @@ void Dialogs::scrollModeMusic() {
 		}
 	}
 
-	_vm->_graphics->_surface.copyFrom(temp);
-	temp.free();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+
 	_vm->_seeScroll = false;
 	CursorMan.showMouse(true);
 }
@@ -512,6 +508,7 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	if ((_vm->_talkX + xw) > 639)
 		xc = 639 - (_vm->_talkX + xw);
 
+	// Compute triangle coords for the tail of the bubble
 	points[0].x = _vm->_talkX - 10;
 	points[0].y = yw;
 	points[1].x = _vm->_talkX + 10;
@@ -519,25 +516,7 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	points[2].x = _vm->_talkX;
 	points[2].y = _vm->_talkY;
 
-	// Backup the screen before drawing the bubble.
-	_vm->_graphics->_scrolls.copyFrom(_vm->_graphics->_surface);
-
-	// The body of the bubble.
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw + 9, 7, _vm->_talkX + xw - 8 + xc, my + 1), _vm->_talkBackgroundColor);
-	_vm->_graphics->_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw - 1, 12, _vm->_talkX + xw + xc + 2, my - 4), _vm->_talkBackgroundColor);
-
-	// Top right corner of the bubble.
-	_vm->_graphics->drawPieSlice(xc + _vm->_talkX + xw - 10, 11, 0, 90, 9, _vm->_talkBackgroundColor);
-	// Bottom right corner of the bubble.
-	_vm->_graphics->drawPieSlice(xc + _vm->_talkX + xw - 10, my - 4, 270, 360, 9, _vm->_talkBackgroundColor);
-	// Top left corner of the bubble.
-	_vm->_graphics->drawPieSlice(xc + _vm->_talkX - xw + 10, 11, 90, 180, 9, _vm->_talkBackgroundColor);
-	// Bottom left corner of the bubble.
-	_vm->_graphics->drawPieSlice(xc + _vm->_talkX - xw + 10, my - 4, 180, 270, 9, _vm->_talkBackgroundColor);
-
-	// "Tail" of the speech bubble.
-	_vm->_graphics->drawTriangle(points, _vm->_talkBackgroundColor);
-
+	_vm->_graphics->prepareBubble(xc, xw, my, points);
 
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used characters instead.
