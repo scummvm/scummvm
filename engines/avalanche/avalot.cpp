@@ -201,13 +201,12 @@ void Clock::update() { // TODO: Move variables from Gyro to here (or at least so
 	_oldMinute = _minute;
 }
 
-void Clock::calcHand(uint16 angle, uint16 length, Common::Point &endPoint, Color color) {
+Common::Point Clock::calcHand(uint16 angle, uint16 length, Color color) {
 	if (angle > 900) {
-		endPoint.x = 177;
-		return;
+		return(Common::Point(177, 177));
 	}
 
-	endPoint = _vm->_graphics->drawArc(_vm->_graphics->_surface, kCenterX, kCenterY, 449 - angle, 450 - angle, length, color);
+	return(_vm->_graphics->drawArc(_vm->_graphics->_surface, kCenterX, kCenterY, 449 - angle, 450 - angle, length, color));
 }
 
 void Clock::drawHand(const Common::Point &endPoint, Color color) {
@@ -218,13 +217,13 @@ void Clock::drawHand(const Common::Point &endPoint, Color color) {
 }
 
 void Clock::plotHands() {
-	calcHand(_oldHourAngle, 14, _clockHandHour, kColorYellow);
-	calcHand(_oldMinute * 6, 17, _clockHandMinute, kColorYellow);
+	_clockHandHour = calcHand(_oldHourAngle, 14, kColorYellow);
+	_clockHandMinute = calcHand(_oldMinute * 6, 17, kColorYellow);
 	drawHand(_clockHandHour, kColorBrown);
 	drawHand(_clockHandMinute, kColorBrown);
 
-	calcHand(_hourAngle, 14, _clockHandHour, kColorBrown);
-	calcHand(_minute * 6, 17, _clockHandMinute, kColorBrown);
+	_clockHandHour = calcHand(_hourAngle, 14, kColorBrown);
+	_clockHandMinute = calcHand(_minute * 6, 17, kColorBrown);
 	drawHand(_clockHandHour, kColorYellow);
 	drawHand(_clockHandMinute, kColorYellow);
 }
@@ -1142,7 +1141,7 @@ void AvalancheEngine::incScore(byte num) {
 }
 
 void AvalancheEngine::useCompass(const Common::Point &cursorPos) {
-	byte color = *(byte *)_graphics->_surface.getBasePtr(cursorPos.x, cursorPos.y / 2);
+	byte color = _graphics->getScreenColor(cursorPos);
 
 	switch (color) {
 	case kColorGreen:

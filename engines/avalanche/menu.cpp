@@ -128,8 +128,7 @@ void MenuItem::display() {
 	_activeNow = true;
 	_dr->_menuActive = true;
 
-	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly), kMenuBackgroundColor);
-	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((_flx1 + 1) * 8 - 1, 11, (_flx2 + 1) * 8 + 1, _fly + 1), kMenuBorderColor);
+	_dr->_vm->_graphics->drawMenuItem((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly);
 
 	displayOption(0, true);
 	for (int y = 1; y < _optionNum; y++)

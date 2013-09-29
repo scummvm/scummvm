@@ -85,6 +85,7 @@ public:
 	void drawSpeedBar(int speed);
 	void drawBackgroundSprite(int16 x, int16 y, SpriteType &sprite);
 	void drawMenuBlock(int x1, int y1, int x2, int y2, Color color);
+	void drawMenuItem(int x1, int y1, int x2, int y2);
 	void wipeChar(int x, int y, Color color);
 	void drawChar(byte ander, int x, int y, Color color);
 
@@ -92,6 +93,7 @@ public:
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);
 	byte getAlsoColor(int x1, int y1, int x2, int y2);
+	byte getScreenColor(Common::Point pos);
 
 	// The caller has to .free() the returned Surfaces!!!
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data

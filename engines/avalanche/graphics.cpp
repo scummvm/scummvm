@@ -372,6 +372,11 @@ void GraphicManager::drawMenuBlock(int x1, int y1, int x2, int y2, Color color) 
 	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
+void GraphicManager::drawMenuItem(int x1, int y1, int x2, int y2) {
+	_surface.fillRect(Common::Rect(x1, y1, x2, y2), kMenuBackgroundColor);
+	_surface.frameRect(Common::Rect(x1 - 1, y1 - 1, x2 + 1, y2 + 1), kMenuBorderColor);
+}
+
 void GraphicManager::drawSpeedBar(int speed) {
 	if (speed == _vm->kRun) {
 		_surface.drawLine(336, 199, 338, 199, kColorLightblue);
@@ -485,6 +490,10 @@ byte GraphicManager::getAlsoColor(int x1, int y1, int x2, int y2) {
 	}
 
 	return returnColor;
+}
+
+byte GraphicManager::getScreenColor(Common::Point pos) {
+	return *(byte *)_surface.getBasePtr(pos.x, pos.y / 2);
 }
 
 void GraphicManager::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
