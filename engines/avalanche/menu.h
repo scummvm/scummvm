@@ -39,6 +39,8 @@ class AvalancheEngine;
 class Menu;
 
 typedef void (Menu::*MenuFunc)();
+static const Color kMenuBackgroundColor = kColorLightgray;
+static const Color kMenuBorderColor = kColorBlack;
 
 class HeadType {
 public:
@@ -130,9 +132,6 @@ public:
 private:
 	static const byte kIndent = 5;
 	static const byte kSpacing = 10;
-
-	static const Color kMenuBackgroundColor = kColorLightgray;
-	static const Color kMenuBorderColor = kColorBlack;
 
 //	Checkme: Useless constants?
 //	static const Color kMenuFontColor = kColorBlack;
