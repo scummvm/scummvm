@@ -57,7 +57,7 @@ private:
 	uint16 _hour, _minute, _second, _hourAngle, _oldHour, _oldMinute, _oldHourAngle;
 	Common::Point _clockHandHour, _clockHandMinute;
 
-	void calcHand(uint16 angle, uint16 length, Common::Point &endPoint, Color color);
+	Common::Point calcHand(uint16 angle, uint16 length, Color color);
 	void drawHand(const Common::Point &endPoint, Color color);
 	void plotHands();
 	void chime();
