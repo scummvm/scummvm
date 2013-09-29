@@ -58,7 +58,6 @@ class Graphics {
 public:
 	::Graphics::Surface _surface;
 	::Graphics::Surface _background;
-	::Graphics::Surface _scrolls;
 
 	Graphics(AvalancheEngine *vm);
 	~Graphics();
@@ -125,6 +124,7 @@ private:
 	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in loadDigits() !!!
 	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	::Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
+	::Graphics::Surface _scrolls;
 	::Graphics::Surface _backup;
 	byte _egaPalette[64][3];
 
