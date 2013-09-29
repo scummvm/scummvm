@@ -98,6 +98,10 @@ public:
 
 	void drawThinkPic(Common::String filename, int id);
 	void drawToolbar();
+	void drawCursor(byte pos);
+	void drawReadyLight(Color color);
+
+	void prepareBubble(int xc, int xw, int my, Common::Point points[3]);
 
 	void refreshScreen();
 	void loadBackground(Common::File &file);
@@ -105,6 +109,8 @@ public:
 	void setBackgroundColor(Color x);
 
 	void zoomOut(int16 x, int16 y); // Only used when entering the map.
+
+	void showScroll();
 
 	void saveScreen();
 	void removeBackup();

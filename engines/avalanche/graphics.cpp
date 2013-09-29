@@ -325,11 +325,11 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String text,
 }
 
 void Graphics::drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
-	_vm->_graphics->drawText(_surface, text, font, fontHeight, x, y, color);
+	drawText(_surface, text, font, fontHeight, x, y, color);
 }
 
 void Graphics::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
-	_vm->_graphics->drawText(_scrolls, text, font, fontHeight, x, y, color);
+	drawText(_scrolls, text, font, fontHeight, x, y, color);
 }
 
 void Graphics::drawDigit(int index, int x, int y) {
@@ -467,7 +467,7 @@ byte Graphics::getAlsoColor(int x1, int y1, int x2, int y2) {
 	byte returnColor = 0;
 	for (int16 i = x1; i <= x2; i++) {
 		for (int16 j = y1; j <= y2; j++) {
-			byte actColor = *(byte *)_vm->_graphics->_magics.getBasePtr(i, j);
+			byte actColor = *(byte *)_magics.getBasePtr(i, j);
 			returnColor = MAX(returnColor, actColor);
 		}
 	}
@@ -506,6 +506,38 @@ void Graphics::drawPicture(::Graphics::Surface &target, const ::Graphics::Surfac
 		for (uint16 x = 0; x < picture.w; x++)
 			*(byte *)target.getBasePtr(x + destX, y + destY) = *(const byte *)picture.getBasePtr(x, y);
 	}
+}
+
+void Graphics::drawCursor(byte pos) {
+	int pixPos = 24 + (pos * 8);
+	// Draw the '_' character.
+	for (int i = 0; i < 8; i++)
+		*(byte *)_surface.getBasePtr(pixPos + i, 168) = kColorWhite;
+}
+
+void Graphics::drawReadyLight(Color color) {
+	_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
+}
+
+void Graphics::prepareBubble(int xc, int xw, int my, Common::Point points[3]) {
+	// Backup the screen before drawing the bubble.
+	_scrolls.copyFrom(_surface);
+
+	// The body of the bubble.
+	_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw + 9, 7, _vm->_talkX + xw - 8 + xc, my + 1), _vm->_talkBackgroundColor);
+	_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw - 1, 12, _vm->_talkX + xw + xc + 2, my - 4), _vm->_talkBackgroundColor);
+
+	// Top right corner of the bubble.
+	drawPieSlice(xc + _vm->_talkX + xw - 10, 11, 0, 90, 9, _vm->_talkBackgroundColor);
+	// Bottom right corner of the bubble.
+	drawPieSlice(xc + _vm->_talkX + xw - 10, my - 4, 270, 360, 9, _vm->_talkBackgroundColor);
+	// Top left corner of the bubble.
+	drawPieSlice(xc + _vm->_talkX - xw + 10, 11, 90, 180, 9, _vm->_talkBackgroundColor);
+	// Bottom left corner of the bubble.
+	drawPieSlice(xc + _vm->_talkX - xw + 10, my - 4, 180, 270, 9, _vm->_talkBackgroundColor);
+
+	// "Tail" of the speech bubble.
+	drawTriangle(points, _vm->_talkBackgroundColor);
 }
 
 void Graphics::refreshScreen() {
@@ -548,9 +580,8 @@ void Graphics::zoomOut(int16 x, int16 y) {
 	removeBackup();
 }
 
-// Original name background()
-void Graphics::setBackgroundColor(Color x) {
-	warning("STUB: setBackgroundColor(%d)", x);
+void Graphics::showScroll() {
+	_surface.copyFrom(_scrolls); // TODO: Rework it using getSubArea !!!!!!!
 }
 
 void Graphics::saveScreen() {
@@ -565,4 +596,10 @@ void Graphics::restoreScreen() {
 	_surface.copyFrom(_backup);
 	refreshScreen();
 }
+
+// Original name background()
+void Graphics::setBackgroundColor(Color x) {
+	warning("STUB: setBackgroundColor(%d)", x);
+}
+
 } // End of namespace Avalanche
