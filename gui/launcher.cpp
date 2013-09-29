@@ -837,9 +837,13 @@ void LauncherDialog::addGame() {
 			Common::FSNode dir(_browser->getResult());
 			Common::FSList files;
 			if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-				MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
-				alert.runModal();
-				return;
+				// If a file is selected, try looking for the game in the directory it resides 
+				dir = dir.getParent();
+				if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+					MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
+					alert.runModal();
+					return;
+				}
 			}
 
 			// ...so let's determine a list of candidates, games that

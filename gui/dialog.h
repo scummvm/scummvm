@@ -101,6 +101,12 @@ protected:
 #ifdef ENABLE_KEYMAPPER
 	virtual void handleOtherEvent(Common::Event evt);
 #endif
+	
+#ifdef ENABLE_TOUCHMAPPER
+	virtual void handleFingerDown(int x, int y, int button, int clickCount);
+	virtual void handleFingerSingleTap(int x, int y, int button, int clickCount);
+	virtual void handleFingerMoved(int x, int y, int deltax, int deltay, int button);
+#endif
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);

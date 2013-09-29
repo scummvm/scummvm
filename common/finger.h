@@ -8,59 +8,41 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
-#ifndef ABOUT_DIALOG_H
-#define ABOUT_DIALOG_H
+#ifndef COMMON_FINGER_H
+#define COMMON_FINGER_H
 
-#include "gui/dialog.h"
-#include "common/str.h"
-#include "common/array.h"
-#include "common/keyboard.h"
+#include "common/scummsys.h"
+#include "common/rect.h"
 
-namespace GUI {
+namespace Common {
 
-class AboutDialog : public Dialog {
-	typedef Common::Array<Common::String> StringArray;
-protected:
-	int			_scrollPos;
-	uint32		_scrollTime;
-	StringArray	_lines;
-	uint32		_lineHeight;
-	bool		_willClose;
+struct FingerState {
+	/**
+	 * Position of the finger, in virtual screen coordinates. 
+	 * Virtual screen coordinates means: the coordinate system of the
+	 * screen area as defined by the most recent call to initSize().
+	 */
+	Point position;
+	int deltax;
+	int deltay;
 
-	int _xOff, _yOff;
+	int holdTime;
 
-	void addLine(const char *str);
-
-public:
-	AboutDialog();
-
-	void open();
-	void close();
-	void drawDialog();
-	void handleTickle();
-	void handleMouseUp(int x, int y, int button, int clickCount);
-#ifdef ENABLE_TOUCHMAPPER
-	void handleFingerSingleTap(int x, int y, int button, int clickCount) {
-		handleMouseUp(x, y, button, clickCount);
-	};
-#endif
-	void handleKeyDown(Common::KeyState state);
-	void handleKeyUp(Common::KeyState state);
-
-	void reflowLayout();
+	byte flags;
 };
 
-} // End of namespace GUI
+} // End of namespace Common
 
 #endif

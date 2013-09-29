@@ -33,6 +33,9 @@ class Keymapper;
 #ifdef ENABLE_VKEYBD
 class VirtualKeyboard;
 #endif
+#ifdef ENABLE_TOUCHMAPPER
+class Touchmapper;
+#endif
 }
 
 
@@ -44,6 +47,10 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 #ifdef ENABLE_KEYMAPPER
 	Common::Keymapper *_keymapper;
 	bool _remap;
+#endif
+
+#ifdef ENABLE_TOUCHMAPPER
+	Common::Touchmapper *_touchmapper;
 #endif
 
 	Common::ArtificialEventSource _artificialEventSource;

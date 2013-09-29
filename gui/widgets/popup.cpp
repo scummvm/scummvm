@@ -55,6 +55,10 @@ public:
 	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
 	void handleKeyDown(Common::KeyState state);	// Scroll through entries with arrow keys etc.
 
+#ifdef ENABLE_TOUCHMAPPER
+	void handleFingerSingleTap(int x, int y, int button, int clickCount);
+#endif
+
 protected:
 	void drawMenuEntry(int entry, bool hilite);
 
@@ -260,6 +264,27 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 		break;
 	}
 }
+
+#ifdef ENABLE_TOUCHMAPPER
+
+void PopUpDialog::handleFingerSingleTap(int x, int y, int button, int clickCount) {
+	int dist = (_clickX - x) * (_clickX - x) + (_clickY - y) * (_clickY - y);
+	if (dist > 3 * 3 || g_system->getMillis() - _openTime > 300) {
+		int item = findItem(x, y);
+	
+		if (item >= 0 && _popUpBoss->_entries[item].name.size() == 0)
+			item = -1;
+
+		setSelection(item);
+		setResult(_selection);
+		close();
+	}
+	_clickX = -1;
+	_clickY = -1;
+	_openTime = (uint32)-1;
+}
+
+#endif
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
