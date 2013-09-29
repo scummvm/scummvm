@@ -30,10 +30,25 @@
 
 namespace Avalanche {
 
-	AvalancheConsole::AvalancheConsole(AvalancheEngine *vm) : GUI::Debugger(), _vm(vm) {
+AvalancheConsole::AvalancheConsole(AvalancheEngine *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("magic_lines", WRAP_METHOD(AvalancheConsole, Cmd_MagicLines));
+}
+
+AvalancheConsole::~AvalancheConsole() {
+}
+
+/**
+ * This command loads up the specified new scene number
+ */
+bool AvalancheConsole::Cmd_MagicLines(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
 	}
 
-	AvalancheConsole::~AvalancheConsole() {
-	}
+	_vm->_showDebugLines = !_vm->_showDebugLines;
+	return false;
+}
+
 
 } // End of namespace Avalanche

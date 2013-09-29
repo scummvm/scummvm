@@ -368,19 +368,7 @@ void AvalancheEngine::runAvalot() {
 		checkClick();
 		_timer->updateTimer();
 
-#ifdef DEBUG
-		for (int i = 0; i < _lineNum; i++) {
-			LineType *curLine = &_lines[i];
-			_graphics->_surface.drawLine(curLine->_x1, curLine->_y1, curLine->_x2, curLine->_y2, curLine->col);
-		}
-
-		for (int i = 0; i < _fieldNum; i++) {
-			FieldType *curField = &_fields[i];
-			if (curField->_x1 < 640)
-				_graphics->_surface.frameRect(Common::Rect(curField->_x1, curField->_y1, curField->_x2, curField->_y2), kColorLightmagenta);
-		}
-#endif
-
+		_graphics->drawDebugLines();
 		_graphics->refreshScreen();
 
 		uint32 delay = _system->getMillis() - beginLoop;

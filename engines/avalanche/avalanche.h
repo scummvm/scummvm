@@ -202,7 +202,7 @@ public:
 	static const int16 kGameCode = 2; // Avalot's code number
 
 	bool _holdLeftMouse;
-	
+
 	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.
 	// If a scroll comes up, or you leave the room, it's automatically set to zero.
 	byte _interrogation;
@@ -268,6 +268,7 @@ public:
 	bool _takenMushroom, _givenPenToAyles, _askedDogfoodAboutNim;
 	// End of former DNA Structure
 
+	bool _showDebugLines;
 	byte _lineNum; // Number of lines.
 	LineType _lines[50]; // For Also.
 	bool _dropsOk, _soundFx, _cheat;

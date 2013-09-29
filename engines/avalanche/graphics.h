@@ -84,6 +84,7 @@ public:
 	void drawMenuItem(int x1, int y1, int x2, int y2);
 	void wipeChar(int x, int y, Color color);
 	void drawChar(byte ander, int x, int y, Color color);
+	void drawDebugLines();
 
 	void clearAlso();
 	void clearTextBar();
