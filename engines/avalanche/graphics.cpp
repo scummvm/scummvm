@@ -423,6 +423,22 @@ void GraphicManager::drawBackgroundSprite(int16 x, int16 y, SpriteType &sprite) 
 	drawPicture(_background, sprite._picture, x, y);
 }
 
+void GraphicManager::drawDebugLines() {
+	if (!_vm->_showDebugLines)
+		return;
+
+	for (int i = 0; i < _vm->_lineNum; i++) {
+		LineType *curLine = &_vm->_lines[i];
+		_surface.drawLine(curLine->_x1, curLine->_y1, curLine->_x2, curLine->_y2, curLine->_color);
+	}
+
+	for (int i = 0; i < _vm->_fieldNum; i++) {
+		FieldType *curField = &_vm->_fields[i];
+		if (curField->_x1 < 640)
+			_surface.frameRect(Common::Rect(curField->_x1, curField->_y1, curField->_x2, curField->_y2), kColorLightmagenta);
+	}
+}
+
 Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 	// This function mimics Pascal's getimage().
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.

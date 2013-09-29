@@ -60,6 +60,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	}
 
 	_totalTime = 0;
+	_showDebugLines = false;
 }
 
 AvalancheEngine::~AvalancheEngine() {
@@ -442,7 +443,12 @@ void AvalancheEngine::updateEvents() {
 			_holdLeftMouse = false; // Same as above.
 			break;
 		case Common::EVENT_KEYDOWN:
-			handleKeyDown(event);
+			if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				_console->attach();
+				_console->onFrame();
+			} else
+				handleKeyDown(event);
 			break;
 		default:
 			break;

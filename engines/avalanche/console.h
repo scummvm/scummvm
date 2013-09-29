@@ -32,16 +32,19 @@
 
 namespace Avalanche {
 
-	class AvalancheEngine;
+class AvalancheEngine;
 
-	class AvalancheConsole : public GUI::Debugger {
-	public:
-		AvalancheConsole(AvalancheEngine *vm);
-		virtual ~AvalancheConsole(void);
+class AvalancheConsole : public GUI::Debugger {
+public:
+	AvalancheConsole(AvalancheEngine *vm);
+	virtual ~AvalancheConsole(void);
 
-	private:
-		AvalancheEngine *_vm;
-	};
+protected:
+	bool Cmd_MagicLines(int argc, const char **argv);
+
+private:
+	AvalancheEngine *_vm;
+};
 
 } // End of namespace Avalanche
 
