@@ -1184,6 +1184,8 @@ void Parser::openDoor() {
 			return;
 		}
 		break;
+	default:
+		break;
 	}
 
 	if ((!_vm->_userMovesAvvy) && (_vm->_room != kRoomLusties))
@@ -1901,6 +1903,8 @@ void Parser::doThat() {
 				break;
 			case kRoomMusicRoom:
 				playHarp();
+				break;
+			default:
 				break;
 			}
 		} else if (isHolding()) {
