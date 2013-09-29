@@ -500,17 +500,17 @@ private:
 	/**
 	    @brief Berechnet die absolute Position des Objektes.
 	*/
-	void calcAbsolutePos(int &x, int &y, int &z) const;
+	void calcAbsolutePos(int32 &x, int32 &y, int32 &z) const;
 	/**
 	    @brief Berechnet die absolute Position des Objektes auf der X-Achse.
 	*/
-	int calcAbsoluteX() const;
+	int32 calcAbsoluteX() const;
 	/**
 	    @brief Berechnet die absolute Position des Objektes.
 	*/
-	int calcAbsoluteY() const;
+	int32 calcAbsoluteY() const;
 
-	int calcAbsoluteZ() const;
+	int32 calcAbsoluteZ() const;
 
 	/**
 	    @brief Sortiert alle Kinderobjekte nach ihrem Renderang.
