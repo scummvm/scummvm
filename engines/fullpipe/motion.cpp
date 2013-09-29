@@ -230,9 +230,39 @@ int MovGraph::method50() {
 }
 
 double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag) {
-	warning("STUB: MovGraph::calcDistance()");
+	int n1x = link->_movGraphNode1->_x;
+	int n1y = link->_movGraphNode1->_y;
+	int n2x = link->_movGraphNode2->_x;
+	int n2y = link->_movGraphNode2->_y;
+	double dist1x = (double)(point->x - n1x);
+	double dist1y = (double)(n1y - point->y);
+	double dist2x = (double)(n2x - n1x);
+	double dist2y = (double)(n2y - n1y);
+	double dist1 = sqrt(dist1y * dist1y + dist1x * dist1x);
+	double dist2 = ((double)(n1y - n2y) * dist1y + dist2x * dist1x) / link->_distance / dist1;
+	double distm = dist2 * dist1;
+	double res = sqrt(1.0 - dist2 * dist2) * dist1;
 
-	return 0;
+	if (dist2 <= 0.0 || distm >= link->_distance) {
+		if (flag) {
+			if (dist2 > 0.0) {
+				if (distm >= link->_distance) {
+					point->x = n2x;
+					point->y = n2y;
+				}
+			} else {
+				point->x = n1x;
+				point->y = n1y;
+			}
+		} else {
+			return -1.0;
+		}
+	} else {
+		point->x = n1x + (dist2x * distm / link->_distance);
+		point->y = n1y + (dist2y * distm / link->_distance);
+	}
+
+	return res;
 }
 
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
