@@ -67,7 +67,7 @@ uint Region::create(REGION_TYPE type) {
 
 uint Region::create(InputPersistenceBlock &reader, uint handle) {
 	// Read type
-	uint type;
+	uint32 type;
 	reader.read(type);
 
 	// Depending on the type, create a new BS_Region or BS_WalkRegion object
