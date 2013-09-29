@@ -48,7 +48,7 @@ InputPersistenceBlock::~InputPersistenceBlock() {
 }
 
 void InputPersistenceBlock::read(int16 &value) {
-	signed int v;
+	int32 v;
 	read(v);
 	value = static_cast<int16>(v);
 }
@@ -96,7 +96,7 @@ void InputPersistenceBlock::readString(Common::String &value) {
 	value = "";
 
 	if (checkMarker(STRING_MARKER)) {
-		uint size;
+		uint32 size;
 		read(size);
 
 		if (checkBlockSize(size)) {
@@ -108,7 +108,7 @@ void InputPersistenceBlock::readString(Common::String &value) {
 
 void InputPersistenceBlock::readByteArray(Common::Array<byte> &value) {
 	if (checkMarker(BLOCK_MARKER)) {
-		uint size;
+		uint32 size;
 		read(size);
 
 		if (checkBlockSize(size)) {
