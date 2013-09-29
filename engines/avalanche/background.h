@@ -39,6 +39,16 @@
 namespace Avalanche {
 class AvalancheEngine;
 
+enum PictureType {kEga, kBgi, kNaturalImage};
+
+struct SpriteType {
+	PictureType _type;
+	int16 _x, _y;
+	int16 _xl, _yl;
+	int32 _size;
+	Graphics::Surface _picture;
+};
+
 class Background {
 public:
 	Background(AvalancheEngine *vm);
@@ -54,16 +64,6 @@ public:
 	void draw(int16 destX, int16 destY, byte sprId);
 
 private:
-	enum PictureType {kEga, kBgi, kNaturalImage};
-
-	struct SpriteType {
-		PictureType _type;
-		int16 _x, _y;
-		int16 _xl, _yl;
-		int32 _size;
-		::Graphics::Surface _picture;
-	};
-
 	AvalancheEngine *_vm;
 
 	int32 _offsets[40];

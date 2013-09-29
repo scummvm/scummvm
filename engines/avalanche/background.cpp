@@ -295,7 +295,7 @@ void Background::load(byte number) {
 			if (natural) {
 				_sprites[i]._type = kNaturalImage; // We simply read from the screen and later, in drawSprite() we draw it right back.
 				_sprites[i]._size = _sprites[i]._xl * 8 * _sprites[i]._yl + 1;
-				_sprites[i]._picture.create(_sprites[i]._xl * 8, _sprites[i]._yl + 1, ::Graphics::PixelFormat::createFormatCLUT8());
+				_sprites[i]._picture.create(_sprites[i]._xl * 8, _sprites[i]._yl + 1, Graphics::PixelFormat::createFormatCLUT8());
 
 				for (uint16 y = 0; y < _sprites[i]._yl + 1; y++) {
 					for (uint16 x = 0; x < _sprites[i]._xl * 8; x++)
@@ -373,7 +373,7 @@ void Background::drawSprite(int16 x, int16 y, SpriteType &sprite) {
 	}
 
 	// These pictures are practically parts of the background. -10 is for the drop-down menu.
-	_vm->_graphics->drawPicture(_vm->_graphics->_background, sprite._picture, x, y - 10);
+	_vm->_graphics->drawBackgroundSprite(x, y - 10, sprite);
 }
 
 } // End of namespace Avalanche.

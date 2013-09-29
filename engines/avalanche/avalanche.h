@@ -71,7 +71,7 @@ public:
 	byte _saveNum; // number of times this game has been saved
 
 	Clock *_clock;
-	Graphics *_graphics;
+	GraphicManager *_graphics;
 	Parser *_parser;
 	Pingo *_pingo;
 	Dialogs *_dialogs;
