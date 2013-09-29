@@ -291,13 +291,13 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		// Reconstruct the alpha channel of the font.
 
 		// Since we painted it with color 0xFFFFFFFF onto a black background,
-		// the alpha channel is gone, but the colour value of each pixel corresponds
+		// the alpha channel is gone, but the color value of each pixel corresponds
 		// to its original alpha value.
 
 		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
 		uint32 *pixels = (uint32 *)convertedSurface->getPixels();
 
-		// This is a Surface we created ourselves, so no emtpy space between rows.
+		// This is a Surface we created ourselves, so no empty space between rows.
 		for (int i = 0; i < surface->w * surface->h; ++i) {
 			uint8 a, r, g, b;
 			format.colorToRGB(*pixels, r, g, b);
