@@ -74,14 +74,14 @@ void OutputPersistenceBlock::write(bool value) {
 void OutputPersistenceBlock::writeString(const Common::String &string) {
 	writeMarker(STRING_MARKER);
 
-	write(string.size());
+	write((uint32)string.size());
 	rawWrite(string.c_str(), string.size());
 }
 
 void OutputPersistenceBlock::writeByteArray(Common::Array<byte> &value) {
 	writeMarker(BLOCK_MARKER);
 
-	write((uint)value.size());
+	write((uint32)value.size());
 	rawWrite(&value[0], value.size());
 }
 

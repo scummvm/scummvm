@@ -263,7 +263,7 @@ bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 	// Read number of character callbacks and their names.
 	// Note: We do this only for compatibility with older engines resp.
 	// the original engine.
-	uint characterCallbackCount;
+	uint32 characterCallbackCount;
 	reader.read(characterCallbackCount);
 	assert(characterCallbackCount == 1);
 
