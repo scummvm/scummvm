@@ -91,7 +91,7 @@ AvalancheEngine::~AvalancheEngine() {
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
-	_graphics = new Graphics(this);
+	_graphics = new GraphicManager(this);
 	_parser = new Parser(this);
 
 	_clock = new Clock(this);
@@ -299,7 +299,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 
 	f->writeUint32LE(desc.size());
 	f->write(desc.c_str(), desc.size());
-	::Graphics::saveThumbnail(*f);
+	Graphics::saveThumbnail(*f);
 
 	TimeDate t;
 	_system->getTimeAndDate(t);
@@ -359,7 +359,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	}
 
 	description.toUppercase();
-	::Graphics::skipThumbnail(*f);
+	Graphics::skipThumbnail(*f);
 
 	// Read the time the game was saved.
 	TimeDate t;

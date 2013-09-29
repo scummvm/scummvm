@@ -36,13 +36,13 @@
 
 namespace Avalanche {
 
-const byte Graphics::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
+const byte GraphicManager::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 
-Graphics::Graphics(AvalancheEngine *vm) {
+GraphicManager::GraphicManager(AvalancheEngine *vm) {
 	_vm = vm;
 }
 
-Graphics::~Graphics() {
+GraphicManager::~GraphicManager() {
 	_surface.free();
 	_magics.free();
 	_background.free();
@@ -56,7 +56,7 @@ Graphics::~Graphics() {
 		_directions[i].free();
 }
 
-void Graphics::init() {
+void GraphicManager::init() {
 	initGraphics(kScreenWidth, kScreenHeight * 2, true); // Doubling the height.
 
 	for (int i = 0; i < 64; ++i) {
@@ -68,13 +68,13 @@ void Graphics::init() {
 	for (int i = 0; i < 16; i++)
 		g_system->getPaletteManager()->setPalette(_egaPalette[kEgaPaletteIndex[i]], i, 1);
 
-	_surface.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
-	_magics.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
-	_screen.create(kScreenWidth, kScreenHeight * 2, ::Graphics::PixelFormat::createFormatCLUT8());
-	_scrolls.create(kScreenWidth, kScreenHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+	_surface.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_magics.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_screen.create(kScreenWidth, kScreenHeight * 2, Graphics::PixelFormat::createFormatCLUT8());
+	_scrolls.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
-void Graphics::loadDigits(Common::File &file) {   // Load the scoring digits & rwlites
+void GraphicManager::loadDigits(Common::File &file) {   // Load the scoring digits & rwlites
 	const byte digitsize = 134;
 	const byte rwlitesize = 126;
 
@@ -94,7 +94,7 @@ void Graphics::loadDigits(Common::File &file) {   // Load the scoring digits & r
 	file.close();
 }
 
-void Graphics::loadMouse(byte which) {
+void GraphicManager::loadMouse(byte which) {
 	if (which == _vm->_currentMouse)
 		return;
 
@@ -104,15 +104,15 @@ void Graphics::loadMouse(byte which) {
 	if (!f.open("mice.avd"))
 		error("AVALANCHE: Gyro: File not found: mice.avd");
 
-	::Graphics::Surface cursor;
-	cursor.create(16, 32, ::Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface cursor;
+	cursor.create(16, 32, Graphics::PixelFormat::createFormatCLUT8());
 	cursor.fillRect(Common::Rect(0, 0, 16, 32), 255);
 
 
 	// The AND mask.
 	f.seek(kMouseSize * 2 * which + 134);
 
-	::Graphics::Surface mask = loadPictureGraphic(f);
+	Graphics::Surface mask = loadPictureGraphic(f);
 
 	for (int j = 0; j < mask.h; j++) {
 		for (int i = 0; i < mask.w; i++) {
@@ -148,21 +148,21 @@ void Graphics::loadMouse(byte which) {
 	cursor.free();
 }
 
-void Graphics::drawThinkPic(Common::String filename, int id) {
+void GraphicManager::drawThinkPic(Common::String filename, int id) {
 	static const int16 kPicSize = 966;
 	Common::File file;
 	if (!file.open(filename))
 		error("drawThinkPic(): File not found: %s", filename.c_str());
 
 	file.seek(id * kPicSize + 65);
-	::Graphics::Surface picture = loadPictureGraphic(file);
+	Graphics::Surface picture = loadPictureGraphic(file);
 	drawPicture(_surface, picture, 205, 170);
 
 	picture.free();
 	file.close();
 }
 
-void Graphics::drawToolbar() {
+void GraphicManager::drawToolbar() {
 	Common::File file;
 	if (!file.open("useful.avd"))
 		error("drawToolbar(): File not found: useful.avd");
@@ -170,7 +170,7 @@ void Graphics::drawToolbar() {
 	file.seek(40);
 
 	CursorMan.showMouse(false);
-	::Graphics::Surface picture = loadPictureGraphic(file);
+	Graphics::Surface picture = loadPictureGraphic(file);
 	drawPicture(_surface, picture, 5, 169);
 	CursorMan.showMouse(true);
 
@@ -178,12 +178,12 @@ void Graphics::drawToolbar() {
 	file.close();
 }
 
-void Graphics::fleshColors() {
+void GraphicManager::fleshColors() {
 	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
 	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
 }
 
-Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
+Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	Common::Point endPoint;
 	const double pi = 3.14;
 	const double convfac = pi / 180.0;
@@ -269,12 +269,12 @@ Common::Point Graphics::drawArc(::Graphics::Surface &surface, int16 x, int16 y, 
 	return endPoint;
 }
 
-void Graphics::drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
+void GraphicManager::drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	while (radius > 0)
 		drawArc(_scrolls, x, y, stAngle, endAngle, radius--, color);
 }
 
-void Graphics::drawTriangle(Common::Point *p, Color color) {
+void GraphicManager::drawTriangle(Common::Point *p, Color color) {
 	// Draw the borders with a marking color.
 	_scrolls.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, 255);
 	_scrolls.drawLine(p[1].x, p[1].y, p[2].x, p[2].y, 255);
@@ -311,7 +311,7 @@ void Graphics::drawTriangle(Common::Point *p, Color color) {
 	_scrolls.drawLine(p[2].x, p[2].y, p[0].x, p[0].y, color);
 }
 
-void Graphics::drawText(::Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -324,23 +324,23 @@ void Graphics::drawText(::Graphics::Surface &surface, const Common::String text,
 	}
 }
 
-void Graphics::drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_surface, text, font, fontHeight, x, y, color);
 }
 
-void Graphics::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_scrolls, text, font, fontHeight, x, y, color);
 }
 
-void Graphics::drawDigit(int index, int x, int y) {
+void GraphicManager::drawDigit(int index, int x, int y) {
 	drawPicture(_surface, _digits[index], x, y);
 }
 
-void Graphics::drawDirection(int index, int x, int y) {
+void GraphicManager::drawDirection(int index, int x, int y) {
 	drawPicture(_surface, _directions[index], x, y);
 }
 
-void Graphics::drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2) {
+void GraphicManager::drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2) {
 	for (byte i = 0; i < 2; i ++) {
 		_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x1 + i + 1, y2 - i), kColorWhite);
 		_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x2 - i, y1 + i + 1), kColorWhite);
@@ -350,7 +350,7 @@ void Graphics::drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2) {
 	}
 }
 
-void Graphics::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text) {
+void GraphicManager::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text) {
 	CursorMan.showMouse(false);
 
 	drawScrollShadow(x1, y1, x2, y2);
@@ -364,7 +364,7 @@ void Graphics::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::Str
 	CursorMan.showMouse(true);
 }
 
-void Graphics::drawSpeedBar(int speed) {
+void GraphicManager::drawSpeedBar(int speed) {
 	if (speed == _vm->kRun) {
 		_surface.drawLine(336, 199, 338, 199, kColorLightblue);
 		_surface.drawLine(371, 199, 373, 199, kColorYellow);
@@ -373,7 +373,7 @@ void Graphics::drawSpeedBar(int speed) {
 		_surface.drawLine(336, 199, 338, 199, kColorYellow);
 	}
 }
-void Graphics::drawScroll(int mx, int lx, int my, int ly) {
+void GraphicManager::drawScroll(int mx, int lx, int my, int ly) {
 	_scrolls.copyFrom(_surface);
 
 	// The right corners of the scroll.
@@ -402,14 +402,18 @@ void Graphics::drawScroll(int mx, int lx, int my, int ly) {
 	_scrolls.fillRect(Common::Rect(mx + lx + 15, my - ly, mx + lx + 16, my + ly), kColorRed);
 }
 
-::Graphics::Surface Graphics::loadPictureGraphic(Common::File &file) {
+void GraphicManager::drawBackgroundSprite(int16 x, int16 y, SpriteType &sprite) {
+	drawPicture(_background, sprite._picture, x, y);
+}
+
+Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 	// This function mimics Pascal's getimage().
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
 	uint16 width = file.readUint16LE() + 1;
 	uint16 height = file.readUint16LE() + 1;
 
-	::Graphics::Surface picture; // We make a Surface object for the picture itself.
-	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface picture; // We make a Surface object for the picture itself.
+	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
 	for (int y = 0; y < height; y++) {
@@ -427,13 +431,13 @@ void Graphics::drawScroll(int mx, int lx, int my, int ly) {
 	return picture;
 }
 
-::Graphics::Surface Graphics::loadPictureRow(Common::File &file, uint16 width, uint16 height) {
+Graphics::Surface GraphicManager::loadPictureRow(Common::File &file, uint16 width, uint16 height) {
 	// This function is our own creation, very much like the one above. The main differences are that
 	// we don't read the width and the height from the file, the planes are in a different order
 	// and we read the picture plane-by-plane.
 
-	::Graphics::Surface picture;
-	picture.create(width, height, ::Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface picture;
+	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (int plane = 0; plane < 4; plane++) {
 		for (uint16 y = 0; y < height; y++) {
@@ -450,20 +454,20 @@ void Graphics::drawScroll(int mx, int lx, int my, int ly) {
 	return picture;
 }
 
-void Graphics::clearAlso() {
+void GraphicManager::clearAlso() {
 	_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
 }
 
-void Graphics::clearTextBar() {
+void GraphicManager::clearTextBar() {
 	_surface.fillRect(Common::Rect(24, 161, 640, 169), kColorBlack); // Black out the line of the text.
 }
 
-void Graphics::setAlsoLine(int x1, int y1, int x2, int y2, Color color) {
+void GraphicManager::setAlsoLine(int x1, int y1, int x2, int y2, Color color) {
 	_magics.drawLine(x1, y1, x2, y2, color);
 }
 
-byte Graphics::getAlsoColor(int x1, int y1, int x2, int y2) {
+byte GraphicManager::getAlsoColor(int x1, int y1, int x2, int y2) {
 	byte returnColor = 0;
 	for (int16 i = x1; i <= x2; i++) {
 		for (int16 j = y1; j <= y2; j++) {
@@ -475,7 +479,7 @@ byte Graphics::getAlsoColor(int x1, int y1, int x2, int y2) {
 	return returnColor;
 }
 
-void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
+void GraphicManager::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
 	// First we make the pixels of the sprite blank.
 	for (int j = 0; j < sprite._yLength; j++) {
 		for (int i = 0; i < sprite._xLength; i++) {
@@ -500,7 +504,7 @@ void Graphics::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 
 	}
 }
 
-void Graphics::drawPicture(::Graphics::Surface &target, const ::Graphics::Surface &picture, uint16 destX, uint16 destY) {
+void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
 	for (uint16 y = 0; y < picture.h; y++) {
 		for (uint16 x = 0; x < picture.w; x++)
@@ -508,18 +512,18 @@ void Graphics::drawPicture(::Graphics::Surface &target, const ::Graphics::Surfac
 	}
 }
 
-void Graphics::drawCursor(byte pos) {
+void GraphicManager::drawCursor(byte pos) {
 	int pixPos = 24 + (pos * 8);
 	// Draw the '_' character.
 	for (int i = 0; i < 8; i++)
 		*(byte *)_surface.getBasePtr(pixPos + i, 168) = kColorWhite;
 }
 
-void Graphics::drawReadyLight(Color color) {
+void GraphicManager::drawReadyLight(Color color) {
 	_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
 }
 
-void Graphics::prepareBubble(int xc, int xw, int my, Common::Point points[3]) {
+void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[3]) {
 	// Backup the screen before drawing the bubble.
 	_scrolls.copyFrom(_surface);
 
@@ -540,7 +544,7 @@ void Graphics::prepareBubble(int xc, int xw, int my, Common::Point points[3]) {
 	drawTriangle(points, _vm->_talkBackgroundColor);
 }
 
-void Graphics::refreshScreen() {
+void GraphicManager::refreshScreen() {
 	// These cycles are for doubling the screen height.
 	for (uint16 y = 0; y < _screen.h / 2; y++) {
 		for (uint16 x = 0; x < _screen.w; x++) {
@@ -553,15 +557,15 @@ void Graphics::refreshScreen() {
 	g_system->updateScreen();
 }
 
-void Graphics::loadBackground(Common::File &file) {
+void GraphicManager::loadBackground(Common::File &file) {
 	_background = loadPictureRow(file, kBackgroundWidth, kBackgroundHeight);
 }
 
-void Graphics::refreshBackground() {
+void GraphicManager::refreshBackground() {
 	drawPicture(_surface, _background, 0, 10);
 }
 
-void Graphics::zoomOut(int16 x, int16 y) {
+void GraphicManager::zoomOut(int16 x, int16 y) {
 	//setlinestyle(dottedln, 0, 1); TODO: Implement it with a dotted line style!!!
 
 	saveScreen();
@@ -580,25 +584,25 @@ void Graphics::zoomOut(int16 x, int16 y) {
 	removeBackup();
 }
 
-void Graphics::showScroll() {
+void GraphicManager::showScroll() {
 	_surface.copyFrom(_scrolls); // TODO: Rework it using getSubArea !!!!!!!
 }
 
-void Graphics::saveScreen() {
+void GraphicManager::saveScreen() {
 	_backup.copyFrom(_surface);
 }
 
-void Graphics::removeBackup() {
+void GraphicManager::removeBackup() {
 	_backup.free();
 }
 
-void Graphics::restoreScreen() {
+void GraphicManager::restoreScreen() {
 	_surface.copyFrom(_backup);
 	refreshScreen();
 }
 
 // Original name background()
-void Graphics::setBackgroundColor(Color x) {
+void GraphicManager::setBackgroundColor(Color x) {
 	warning("STUB: setBackgroundColor(%d)", x);
 }
 
