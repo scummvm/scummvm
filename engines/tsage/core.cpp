@@ -2066,8 +2066,8 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_visage = 0;
 	_strip = 0;
 	_frame = 0;
-	_effect = 0;
-	_shade = _shade2 = 0;
+	_effect = EFFECT_NONE;
+	_shade = _oldShade = 0;
 	_linkedActor = NULL;
 
 	_field8A = Common::Point(0, 0);
@@ -2473,7 +2473,7 @@ void SceneObject::synchronize(Serializer &s) {
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_effect);
 		s.syncAsSint16LE(_shade);
-		s.syncAsSint16LE(_shade2);
+		s.syncAsSint16LE(_oldShade);
 		SYNC_POINTER(_linkedActor);
 	}
 }
@@ -2519,9 +2519,9 @@ void SceneObject::remove() {
 
 void SceneObject::dispatch() {
 	if (g_vm->getGameID() == GType_Ringworld2) {
-		if (_shade != _shade2)
+		if (_shade != _oldShade)
 			_flags |= OBJFLAG_PANES;
-		_shade2 = _shade;
+		_oldShade = _shade;
 	}
 
 	uint32 currTime = g_globals->_events.getFrameNumber();
@@ -2639,8 +2639,9 @@ void SceneObject::dispatch() {
 			_linkedActor->setFrame(_frame);
 		}
 
-		if ((_effect == 1) && (getRegionIndex() < 11))
-			_shade = 0;
+		int regionIndex = getRegionIndex();
+		if ((_effect == EFFECT_SHADED) && (regionIndex < 11))
+			_shade = regionIndex;
 	}
 }
 
@@ -2669,7 +2670,24 @@ void SceneObject::removeObject() {
 
 GfxSurface SceneObject::getFrame() {
 	_visageImages.setVisage(_visage, _strip);
-	return _visageImages.getFrame(_frame);
+	GfxSurface frame = _visageImages.getFrame(_frame);
+
+	// If shading is needed, post apply the shadiing onto the frame
+	if ((g_vm->getGameID() == GType_Ringworld2) && (_shade >= 1)) {
+		Graphics::Surface s = frame.lockSurface();
+		byte *p = (byte *)s.getPixels();
+		byte *endP = p + s.w * s.h;
+		
+		while (p < endP) {
+			if (*p != frame._transColor)
+				*p = R2_GLOBALS._fadePaletteMap[_shade - 1][*p];
+			++p;
+		}
+
+		frame.unlockSurface();
+	}
+
+	return frame;
 }
 
 void SceneObject::reposition() {
@@ -3290,7 +3308,7 @@ void Player::postInit(SceneObjectList *OwnerList) {
 	{
 		_moveDiff.x = 3;
 		_moveDiff.y = 2;
-		_effect = 1;
+		_effect = EFFECT_SHADED;
 		_shade = 0;
 		_linkedActor = NULL;
 

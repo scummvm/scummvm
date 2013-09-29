@@ -306,7 +306,6 @@ public:
 	virtual void dispatch();
 };
 
-
 class Scene250: public SceneExt {
 	class Button: public SceneActor {
 	public:
@@ -476,7 +475,6 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 };
-
 
 class Scene400: public SceneExt {
 	/* Items */

@@ -1317,18 +1317,18 @@ GfxSurface SceneActor::getFrame() {
 
 	// TODO: Proper effects handling
 	switch (_effect) {
-	case 0:
-	case 5:
+	case EFFECT_NONE:
+	case EFFECT_5:
 		// TODO: Figure out purpose of setting image flags to 64, and getting
 		// scene priorities -1 or _shade
 		break;
-	case 1:
+	case EFFECT_SHADED:
 		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
 		break;
-	case 2:
+	case EFFECT_2:
 		// No effect
 		break;
-	case 4:
+	case EFFECT_4:
 		break;
 	default:
 		// TODO: Default effect

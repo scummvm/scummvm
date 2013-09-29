@@ -466,6 +466,9 @@ enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MOD
 		ANIM_MODE_9 = 9
 };
 
+enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_2 = 2, EFFECT_3 = 3,
+	EFFECT_4 = 4, EFFECT_5 = 5 };
+
 class SceneObject;
 
 class Visage {
@@ -550,7 +553,7 @@ public:
 
 	// Ringworld 2 specific fields
 	byte *_field9C;
-	int _shade, _shade2;
+	int _shade, _oldShade;
 	int _effect;
 	SceneObject *_linkedActor;
 public:
