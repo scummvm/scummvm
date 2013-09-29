@@ -683,10 +683,9 @@ void Menu::setup() {
 }
 
 void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
-	Common::Point cursorPos = _vm->getMousePos();
-	::Graphics::Surface backup;
-	backup.copyFrom(_vm->_graphics->_surface);
+	_vm->_graphics->saveScreen();
 
+	Common::Point cursorPos = _vm->getMousePos();
 	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_holdLeftMouse) {
 		_menuBar.chooseMenuItem(cursorPos.x);
 		do
@@ -723,7 +722,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 							if (_activeMenuItem._activeNow) {
 								_activeMenuItem.wipe();
 								_vm->_holdLeftMouse = false;
-								backup.free();
+								_vm->_graphics->removeBackup();
 								return;
 							} // No "else"- clicking on menu has no effect (only releasing).
 						}
@@ -731,13 +730,12 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 					// Clicked on menu bar.
 					if (_activeMenuItem._activeNow) {
 						_activeMenuItem.wipe();
-						_vm->_graphics->_surface.copyFrom(backup);
-						_vm->_graphics->refreshScreen();
+						_vm->_graphics->restoreScreen();
 
 						if (((_activeMenuItem._left * 8) <= cursorPos.x) && (cursorPos.x <= (_activeMenuItem._left * 8 + 80))) { // 80: the width of one menu item on the bar in pixels.
 							// If we clicked on the same menu item (the one that is already active) on the bar...
 							_vm->_holdLeftMouse = false;
-							backup.free();
+							_vm->_graphics->removeBackup();
 							return;
 						} else {
 							_vm->_holdLeftMouse = true;
@@ -764,7 +762,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 					uint16 which = (cursorPos.y - 26) / 20;
 					_activeMenuItem.select(which);
 					if (_activeMenuItem._options[which]._valid) { // If the menu item wasn't active, we do nothing.
-						backup.free();
+						_vm->_graphics->removeBackup();
 						return;
 					}
 				}
@@ -772,7 +770,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 		}
 	}
 
-	backup.free();
+	_vm->_graphics->removeBackup();
 }
 
 bool Menu::isActive() {

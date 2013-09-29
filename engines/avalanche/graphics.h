@@ -82,6 +82,8 @@ public:
 	void drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text);
 	void drawScroll(int mx, int lx, int my, int ly);
+	void drawSpeedBar(int speed);
+
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);
@@ -104,6 +106,9 @@ public:
 
 	void zoomOut(int16 x, int16 y); // Only used when entering the map.
 
+	void saveScreen();
+	void removeBackup();
+	void restoreScreen();
 private:
 	static const uint16 kBackgroundWidth = kScreenWidth;
 	static const byte kBackgroundHeight = 8 * 12080 / kScreenWidth; // With 640 width it's 151.
@@ -114,6 +119,7 @@ private:
 	::Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in loadDigits() !!!
 	::Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
 	::Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
+	::Graphics::Surface _backup;
 	byte _egaPalette[64][3];
 
 	AvalancheEngine *_vm;
