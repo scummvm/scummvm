@@ -892,6 +892,8 @@ void Animation::setMoveSpeed(byte t, Direction dir) {
 	case kDirDownRight:
 		_sprites[t].setSpeed(_sprites[t]._speedX, _sprites[t]._speedY);
 		break;
+	default:
+		break;
 	}
 }
 

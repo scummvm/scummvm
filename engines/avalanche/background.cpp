@@ -242,6 +242,8 @@ void Background::update() {
 		}
 		break;
 	   }
+	default:
+		break;
 	}
 
 	if ((_vm->_bellsAreRinging) && (_vm->setFlag('B'))) {
