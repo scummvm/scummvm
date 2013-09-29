@@ -655,6 +655,8 @@ void AvalancheEngine::enterNewTown() {
 		if (_boxContent == kObjectWine)
 			_wineState = 3; // Vinegar
 		break;
+	default:
+		break;
 	}
 
 	if ((_room != kRoomOutsideDucks) && (_objects[kObjectOnion - 1]) && !(_onionInVinegar))
@@ -1051,6 +1053,9 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 	case kRoomDucks:
 		_npcFacing = 1; // Duck.
 		break; 
+
+	default:
+		break;
 	}
 
 	_seeScroll = false; // Now it can work again!
@@ -1703,6 +1708,8 @@ Common::String AvalancheEngine::f5Does() {
 	case kRoomMusicRoom:
 		if (_animation->inField(5))
 			return Common::String::format("%cPPlay the harp", kVerbCodePlay);
+		break;
+	default:
 		break;
 	}
 
