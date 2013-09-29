@@ -269,6 +269,10 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	return endPoint;
 }
 
+Common::Point GraphicManager::drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
+	return drawArc(_surface, x, y, stAngle, endAngle, radius, color);
+}
+
 void GraphicManager::drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	while (radius > 0)
 		drawArc(_scrolls, x, y, stAngle, endAngle, radius--, color);

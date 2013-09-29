@@ -206,7 +206,7 @@ Common::Point Clock::calcHand(uint16 angle, uint16 length, Color color) {
 		return(Common::Point(177, 177));
 	}
 
-	return(_vm->_graphics->drawArc(_vm->_graphics->_surface, kCenterX, kCenterY, 449 - angle, 450 - angle, length, color));
+	return(_vm->_graphics->drawScreenArc(kCenterX, kCenterY, 449 - angle, 450 - angle, length, color));
 }
 
 void Clock::drawHand(const Common::Point &endPoint, Color color) {
