@@ -47,7 +47,7 @@ bool RegionRegistry::persist(OutputPersistenceBlock &writer) {
 	writer.write(_nextHandle);
 
 	// Number of regions to write
-	writer.write(_handle2PtrMap.size());
+	writer.write((uint32)_handle2PtrMap.size());
 
 	// Persist all the BS_Regions
 	HANDLE2PTR_MAP::const_iterator iter = _handle2PtrMap.begin();
@@ -76,13 +76,13 @@ bool RegionRegistry::unpersist(InputPersistenceBlock &reader) {
 		delete _handle2PtrMap.begin()->_value;
 
 	// read in the number of BS_Regions
-	uint regionCount;
+	uint32 regionCount;
 	reader.read(regionCount);
 
 	// Restore all the BS_Regions objects
 	for (uint i = 0; i < regionCount; ++i)  {
 		// Handle read
-		uint handle;
+		uint32 handle;
 		reader.read(handle);
 
 		// BS_Region restore

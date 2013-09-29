@@ -244,6 +244,12 @@ namespace Ringworld2 {
 
 class ScannerDialog;
 
+struct VampireData {
+	bool _isAlive;
+	int _shotsRequired;
+	Common::Point _position;
+};
+
 class Ringworld2Globals: public TsAGE2Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
@@ -270,9 +276,9 @@ public:
 	int _v5657C;
 	byte _v565AE;
 	byte _spillLocation[14];
-	int _v56613[76];
-	byte _v566A4;
-	byte _v566A5;
+	VampireData _vampireData[18];
+	byte _flubMazeArea;
+	byte _flubMazeEntryDirection;
 	int _v566A6;
 	byte _landerSuitNumber;
 	byte _desertStepsRemaining;
@@ -282,10 +288,10 @@ public:
 	int _desertWrongDirCtr;
 	byte _balloonAltitude;
 	int _scene1925CurrLevel; //_v56A9C
-	int _v56A9E;
+	int _walkwaySceneNumber;
 	byte _v56AA0;
-	byte _v56AA1;
-	int _v56AA2;
+	byte _scientistConvIndex;
+	Common::Point _ventCellPos;
 	int _v56AA4;
 	byte _v56AA6;
 	byte _v56AA7;

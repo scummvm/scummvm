@@ -163,7 +163,7 @@ public:
 	MazeUI _mazeUI;
 	SequenceManager _sequenceManager;
 
-	int _field412;
+	int _nextCrawlDirection;
 	int _field414;
 	int _field416;
 	int _field418;
@@ -1011,11 +1011,11 @@ public:
 };
 
 class Scene1925 : public SceneExt {
-	class Hotspot2 : public NamedHotspot {
+	class Button : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Hotspot3 : public NamedHotspot {
+	class Ladder : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1038,8 +1038,8 @@ class Scene1925 : public SceneExt {
 	};
 public:
 	NamedHotspot _item1;
-	Hotspot2 _item2;
-	Hotspot3 _item3;
+	Button _button;
+	Ladder _ladder;
 	SceneActor _actor1;
 	ExitUp _exitUp;
 	Exit2 _exit2;
@@ -1060,16 +1060,16 @@ public:
 };
 
 class Scene1945 : public SceneExt {
-	class Hotspot3 : public NamedHotspot {
+	class Ice : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Hotspot4 : public NamedHotspot {
+	class Ladder : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor3 : public SceneActor {
+	class Gunpowder : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1078,26 +1078,26 @@ class Scene1945 : public SceneExt {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class CorridorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 public:
 	NamedHotspot _item1;
 	NamedHotspot _item2;
-	Hotspot3 _item3;
-	Hotspot4 _item4;
+	Ice _ice;
+	Ladder _ladder;
 	SceneActor _actor1;
 	SceneActor _actor2;
-	Actor3 _actor3;
+	Gunpowder _gunpowder;
 	ExitUp _exitUp;
-	Exit2 _exit2;
+	CorridorExit _corridorExit;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 
-	int _fieldEAA;
-	int _fieldEAC;
-	CursorType _fieldEAE;
+	int _nextSceneMode1;
+	int _nextSceneMode2;
+	CursorType _lampUsed;
 
 	Scene1945();
 	void synchronize(Serializer &s);
@@ -1108,15 +1108,16 @@ public:
 };
 
 class Scene1950 : public SceneExt {
-	class Area1: public SceneArea {
+	/* Windows */
+	class KeypadWindow: public ModalWindow {
 	public:
-		class Actor10 : public SceneActor {
+		class KeypadButton : public SceneActor {
 		public:
-			int _fieldA4;
-			int _fieldA6;
-			int _fieldA8;
+			int _buttonIndex;
+			bool _pressed;
+			bool _toggled;
 
-			Actor10();
+			KeypadButton();
 			void synchronize(Serializer &s);
 
 			void init(int indx);
@@ -1125,30 +1126,29 @@ class Scene1950 : public SceneExt {
 		};
 
 		SceneActor _areaActor;
-		Actor10 _arrActor1[16];
+		KeypadButton _buttons[16];
 
 		byte _field20;
-		int _fieldB65;
+		int _buttonIndex;
 
-		Area1();
-		void synchronize(Serializer &s);
-
+		KeypadWindow();
+		virtual void synchronize(Serializer &s);
 		virtual void remove();
-		virtual void process(Event &event);
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
-	class Hotspot2 : public NamedHotspot {
+	class Keypad : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor2 : public SceneActor {
+	/* Actors */
+	class Door : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Scrolls : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -1156,94 +1156,95 @@ class Scene1950 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor5 : public SceneActor {
+	class Gem : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor8 : public SceneActor {
+	class Vampire : public SceneActor {
 	public:
-		int _fieldA4;
-		int _fieldA6;
+		Common::Point _deadPosition;
 		int _fieldA8;
 		int _fieldAA;
-		int _fieldAC;
+		int _vampireMode;
 		byte _fieldAE;
 		byte _fieldAF;
 
-		Actor8();
+		Vampire();
 		void synchronize(Serializer &s);
 
 		virtual void signal();
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	/* Exits */
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class UpExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit4 : public SceneExit {
+	class DownExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit5 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit6 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit7 : public SceneExit {
+	class ShaftExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit8 : public SceneExit {
+	class DoorExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
+private:
+	void initArea();
+	void enterArea();
+	void doButtonPress(int indx);
 public:
-	NamedHotspot _item1;
-	Hotspot2 _item2;
-	SceneActor _actor1;
-	BackgroundSceneObject _object1;
-	Actor2 _actor2;
-	Actor3 _actor3;
-	SceneActor _actor4;
-	Actor5 _actor5;
-	SceneActor _actor6;
+	NamedHotspot _background;
+	Keypad _keypad;
+	SceneActor _southDoorway;
+	SceneObject _northDoorway;
+	Door _door;
+	Scrolls _scrolls;
+	SceneActor _containmentField;
+	Gem _gem;
+	SceneActor _cube;
 	SceneActor _actor7;
-	Actor8 _actor8;
-	Area1 _area1;
-	Exit1 _exit1;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
-	Exit5 _exit5;
-	Exit6 _exit6;
-	Exit7 _exit7;
-	Exit8 _exit8;
+	Vampire _vampire;
+	KeypadWindow _KeypadWindow;
+	NorthExit _northExit;
+	UpExit _upExit;
+	EastExit _eastExit;
+	DownExit _downExit;
+	SouthExit _southExit;
+	WestExit _westExit;
+	ShaftExit _shaftExit;
+	DoorExit _doorExit;
 	SequenceManager _sequenceManager;
 
 	int _field412;
 	int _field414;
 	int _field416;
 	Common::Point _field418;
-	int _field41C;
+	int _vampireIndex;
 
 	Scene1950();
 	void synchronize(Serializer &s);
 
-	void subBDC1E();
-	void subBE59B();
-	void subBF4B4(int indx);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void signal();

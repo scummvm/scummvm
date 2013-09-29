@@ -197,11 +197,11 @@ class Scene180: public SceneExt {
 private:
 	void setSceneDelay(int v);
 public:
-	SpeakerWebbster _webbsterSpeaker;
-	SpeakerDutyOfficer _dutyOfficerSpeaker;
-	SpeakerTeal _tealSpeaker;
+	SpeakerWebbster180 _webbsterSpeaker;
+	SpeakerDutyOfficer180 _dutyOfficerSpeaker;
+	SpeakerTeal180 _tealSpeaker;
 	SpeakerGameText _gameTextSpeaker;
-	SceneActor _object1, _object2, _object3, _object4, _object5;
+	SceneActor _dutyOfficer, _teal, _webbser, _door, _shipDisplay;
 	ScenePalette _palette;
 	SceneText _textList[20];
 	AnimationPlayerExt _animationPlayer;
@@ -305,7 +305,6 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 };
-
 
 class Scene250: public SceneExt {
 	class Button: public SceneActor {
@@ -476,7 +475,6 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 };
-
 
 class Scene400: public SceneExt {
 	/* Items */

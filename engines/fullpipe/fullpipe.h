@@ -44,11 +44,11 @@ enum FullpipeGameFeatures {
 };
 
 class BehaviorManager;
-class CBaseModalObject;
-class CGameLoader;
-class CGameVar;
-class CInputController;
-class CInventory2;
+class BaseModalObject;
+class GameLoader;
+class GameVar;
+class InputController;
+class Inventory2;
 struct CursorInfo;
 struct EntranceInfo;
 class ExCommand;
@@ -98,12 +98,12 @@ public:
 
 	Graphics::Surface _backgroundSurface;
 
-	CGameLoader *_gameLoader;
+	GameLoader *_gameLoader;
 	GameProject *_gameProject;
 	bool loadGam(const char *fname, int scene = 0);
 
-	CGameVar *getGameLoaderGameVar();
-	CInputController *getGameLoaderInputController();
+	GameVar *getGameLoaderGameVar();
+	InputController *getGameLoaderInputController();
 
 	int _gameProjectVersion;
 	int _pictureScale;
@@ -124,7 +124,7 @@ public:
 	StaticANIObject *_aniMan2;
 	byte *_globalPalette;
 
-	CInputController *_inputController;
+	InputController *_inputController;
 	bool _inputDisabled;
 
 	int _currentCheat;
@@ -190,14 +190,14 @@ public:
 	int32 _mapTable[200];
 
 	Scene *_inventoryScene;
-	CInventory2 *_inventory;
+	Inventory2 *_inventory;
 	int _currSelectedInventoryItemId;
 
 	int32 _updateTicks;
 	int32 _lastInputTicks;
 	int32 _lastButtonUpTicks;
 
-	CBaseModalObject *_modalObject;
+	BaseModalObject *_modalObject;
 
 	int (*_updateScreenCallback)();
 	int (*_updateCursorCallback)();
@@ -218,7 +218,7 @@ public:
 
 	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
-	void setSceneMusicParameters(CGameVar *var);
+	void setSceneMusicParameters(GameVar *var);
 
 	NGIArchive *_currArchive;
 

@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	modules/module2600.o \
 	modules/module2700.o \
 	modules/module2800.o \
+	modules/module2800_sprites.o \
 	modules/module2900.o \
 	modules/module3000.o \
 	mouse.o \

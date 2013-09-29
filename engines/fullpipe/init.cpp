@@ -123,7 +123,7 @@ void FullpipeEngine::initObjectStates() {
 }
 
 void FullpipeEngine::setLevelStates() {
-	CGameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+	GameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (v) {
 		v->setSubVarAsInt(sO_Level0, 2833);

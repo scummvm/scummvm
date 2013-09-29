@@ -29,7 +29,7 @@ namespace Fullpipe {
 
 class ExCommand;
 
-class CStepArray : public CObject {
+class StepArray : public CObject {
 	int _currPointIndex;
 	Common::Point **_points;
 	int _maxPointIndex;
@@ -37,8 +37,8 @@ class CStepArray : public CObject {
 	int _isEos;
 
   public:
-	CStepArray();
-	~CStepArray();
+	StepArray();
+	~StepArray();
 	void clear();
 
 	int getCurrPointIndex() { return _currPointIndex; }
@@ -118,7 +118,7 @@ class Movement : public GameObject {
 	int _field_50;
 	int _counterMax;
 	int _counter;
-	CPtrList _dynamicPhases;
+	PtrList _dynamicPhases;
 	int _field_78;
 	Common::Point **_framePosOffsets;
 	Movement *_currMovement;
@@ -139,6 +139,8 @@ class Movement : public GameObject {
 	Common::Point *getCurrDynamicPhaseXY(Common::Point &p);
 	Common::Point *getCenter(Common::Point *p);
 	Common::Point *getDimensionsOfPhase(Common::Point *p, int phaseIndex);
+
+	Common::Point *calcSomeXY(Common::Point &p, int idx);
 
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
@@ -172,9 +174,9 @@ class StaticANIObject : public GameObject {
 	int _initialCounter;
 	int _callback1;
 	void (*_callback2)(int *);
-	CPtrList _movements;
-	CPtrList _staticsList;
-	CStepArray _stepArray;
+	PtrList _movements;
+	PtrList _staticsList;
+	StepArray _stepArray;
 	int16 _field_96;
 	int _messageQueueId;
 	int _messageNum;

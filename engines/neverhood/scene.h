@@ -204,8 +204,6 @@ protected:
 	// Used for debugging
 	uint32 _backgroundFileHash, _cursorFileHash;    // for StaticScene and all Scene* classes
 
-	void (Entity::*_savedUpdateHandlerCb)();
-	uint32 (Entity::*_savedMessageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);
 	int _messageValue;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	bool queryPositionSprite(int16 mouseX, int16 mouseY);

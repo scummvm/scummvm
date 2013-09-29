@@ -236,7 +236,7 @@ void FullpipeEngine::updateEvents() {
 							_modalObject->update();
 						} else {
 							_modalObject->saveload();
-							CBaseModalObject *obj = _modalObject->_parentObj;
+							BaseModalObject *obj = _modalObject->_parentObj;
 							if (obj)
 								delete _modalObject;
 							_modalObject = obj;
@@ -260,7 +260,7 @@ void FullpipeEngine::updateEvents() {
 				}
 
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = 83;
+				ex->_keyCode = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;
@@ -360,7 +360,7 @@ void FullpipeEngine::updateScreen() {
 				_modalObject->update();
 			} else {
 				_modalObject->saveload();
-				CBaseModalObject *tmp = _modalObject->_parentObj;
+				BaseModalObject *tmp = _modalObject->_parentObj;
 
 				delete _modalObject;
 
@@ -389,7 +389,7 @@ void FullpipeEngine::updateScreen() {
 }
 
 int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
-	CGameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
+	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
 		var = _gameLoader->_gameVar->addSubVarAsInt("OBJSTATES", 0);
@@ -406,7 +406,7 @@ int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
 }
 
 int FullpipeEngine::getObjectState(const char *objname) {
-	CGameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
+	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (var)
 		return var->getSubVarAsInt(objname);
@@ -415,7 +415,7 @@ int FullpipeEngine::getObjectState(const char *objname) {
 }
 
 void FullpipeEngine::setObjectState(const char *name, int state) {
-	CGameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
+	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
 		var = _gameLoader->_gameVar->addSubVarAsInt("OBJSTATES", 0);

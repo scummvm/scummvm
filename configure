@@ -115,6 +115,7 @@ _timidity=auto
 _zlib=auto
 _mpeg2=auto
 _sparkle=auto
+_jpeg=auto
 _png=auto
 _theoradec=auto
 _faad=auto
@@ -166,7 +167,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
 _aos4path="Games:ScummVM"
-_staticlibpath=/sw
+_staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -188,6 +189,7 @@ add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature freetype2 "FreeType2" "_freetype2"
 add_feature mad "MAD" "_mad"
+add_feature jpeg "JPEG" "_jpeg"
 add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
@@ -936,6 +938,9 @@ Optional Libraries:
   --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
+  --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
+  --disable-jpeg           disable JPEG decoder [autodetect]
+
   --with-png-prefix=DIR    Prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
@@ -1015,6 +1020,8 @@ for ac_option in $@; do
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
+	--disable-jpeg)           _jpeg=no        ;;
+	--enable-jpeg)            _jpeg=yes       ;;
 	--disable-png)            _png=no         ;;
 	--enable-png)             _png=yes        ;;
 	--disable-theoradec)      _theoradec=no   ;;
@@ -1095,6 +1102,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-jpeg-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		JPEG_CFLAGS="-I$arg/include"
+		JPEG_LIBS="-L$arg/lib"
 		;;
 	--with-png-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2103,6 +2115,24 @@ case $_host_os in
 
 			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
 			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
+			
+			if test -z "$_staticlibpath"; then
+				_staticlibpath=${macport_prefix}
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			fi
+		fi
+		# If _staticlibpath is not set yet try first /sw (fink) then /usr/local
+		# (the macports case is handled above).
+		if test -z "$_staticlibpath"; then
+			if test -d "/sw"; then
+				_staticlibpath=/sw
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			elif test -d "/usr/local"; then
+				_staticlibpath=/usr/local
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			else
+				echo "Could not determine prefix for static libraries"
+			fi
 		fi
 		;;
 	dreamcast)
@@ -3339,6 +3369,32 @@ define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
 
 #
+# Check for libjpeg
+#
+echocheck "libjpeg >= v6b"
+if test "$_jpeg" = auto ; then
+	_jpeg=no
+	cat > $TMPC << EOF
+#include <stdio.h>
+#include <jpeglib.h>
+int main(void) {
+#if JPEG_LIB_VERSION >= 62
+#else
+  syntax error
+#endif
+  return 0;
+}
+EOF
+	cc_check $JPEG_CFLAGS $JPEG_LIBS -ljpeg && _jpeg=yes
+fi
+if test "$_jpeg" = yes ; then
+	LIBS="$LIBS $JPEG_LIBS -ljpeg"
+	INCLUDES="$INCLUDES $JPEG_CFLAGS"
+fi
+define_in_config_if_yes "$_jpeg" 'USE_JPEG'
+echo "$_jpeg"
+
+#
 # Check for PNG
 #
 echocheck "PNG >= 1.2.8"
@@ -3354,10 +3410,10 @@ int main(void) {
   return 0;
 }
 EOF
-	cc_check $PNG_CFLAGS $PNG_LIBS -lpng && _png=yes
+	cc_check $PNG_CFLAGS $PNG_LIBS -lpng -lz && _png=yes
 fi
 if test "$_png" = yes ; then
-	LIBS="$LIBS $PNG_LIBS -lpng"
+	LIBS="$LIBS $PNG_LIBS -lpng -lz"
 	INCLUDES="$INCLUDES $PNG_CFLAGS"
 fi
 define_in_config_if_yes "$_png" 'USE_PNG'

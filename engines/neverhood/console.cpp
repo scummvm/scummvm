@@ -252,7 +252,7 @@ bool Console::Cmd_DumpResource(int argc, const char **argv) {
 		if (!handle.isValid()) {
 			DebugPrintf("Invalid resource hash\n");
 		} else {
-			_vm->_res->loadResource(handle);
+			_vm->_res->loadResource(handle, _vm->applyResourceFixes());
 			Common::DumpFile outFile;
 			outFile.open(outFileName);
 			outFile.write(handle.data(), handle.size());

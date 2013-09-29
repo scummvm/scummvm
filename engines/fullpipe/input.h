@@ -45,7 +45,7 @@ struct CursorInfo {
 
 typedef Common::Array<CursorInfo *> CursorsArray;
 
-class CInputController {
+class InputController {
 	//CObject obj;
 	int _flag;
 	int _inputFlags;
@@ -59,8 +59,8 @@ class CInputController {
 	Picture *_cursorItemPicture;
 
  public:
-	CInputController();
-	~CInputController();
+	InputController();
+	~InputController();
 
 	void setInputDisabled(bool state);
 	void addCursor(CursorInfo *cursor);

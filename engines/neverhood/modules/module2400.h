@@ -33,6 +33,7 @@
 #include "neverhood/modules/module2100.h"
 #include "neverhood/modules/module2200.h"
 #include "neverhood/modules/module2800.h"
+#include "neverhood/modules/module2800_sprites.h"
 #include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {

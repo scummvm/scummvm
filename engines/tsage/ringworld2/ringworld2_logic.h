@@ -163,58 +163,58 @@ private:
 	static void selectDefault(int obectNumber);
 public:
 	InvObject _none;
-	InvObject _inv1;
-	InvObject _inv2;
+	InvObject _optoDisk;
+	InvObject _reader;
 	InvObject _negatorGun;
 	InvObject _steppingDisks;
-	InvObject _inv5;
-	InvObject _inv6;
-	InvObject _inv7;
-	InvObject _inv8;
-	InvObject _inv9;
-	InvObject _inv10;
-	InvObject _inv11;
-	InvObject _inv12;
-	InvObject _inv13;
-	InvObject _inv14;
-	InvObject _inv15;
-	InvObject _inv16;
-	InvObject _inv17;
-	InvObject _inv18;
-	InvObject _inv19;
-	InvObject _inv20;
-	InvObject _inv21;
-	InvObject _inv22;
-	InvObject _inv23;
-	InvObject _inv24;
-	InvObject _inv25;
-	InvObject _inv26;
-	InvObject _inv27;
-	InvObject _inv28;
-	InvObject _inv29;
-	InvObject _inv30;
-	InvObject _inv31;
-	InvObject _inv32;
-	InvObject _inv33;
-	InvObject _inv34;
-	InvObject _inv35;
-	InvObject _inv36;
-	InvObject _inv37;
-	InvObject _inv38;
-	InvObject _inv39;
-	InvObject _inv40;
-	InvObject _inv41;
-	InvObject _inv42;
-	InvObject _inv43;
-	InvObject _inv44;
-	InvObject _inv45;
-	InvObject _inv46;
-	InvObject _inv47;
-	InvObject _inv48;
-	InvObject _inv49;
-	InvObject _inv50;
-	InvObject _inv51;
-	InvObject _inv52;
+	InvObject _attractorUnit;
+	InvObject _sensorProbe;
+	InvObject _sonicStunner;
+	InvObject _cableHarness;
+	InvObject _comScanner;
+	InvObject _spentPowerCapsule;	// 10
+	InvObject _chargedPowerCapsule;
+	InvObject _aerosol;
+	InvObject _remoteControl;
+	InvObject _opticalFibre;
+	InvObject _clamp;
+	InvObject _attractorHarness;
+	InvObject _fuelCell;
+	InvObject _gyroscope;
+	InvObject _airbag;
+	InvObject _rebreatherTank;		// 20
+	InvObject _reserveTank;
+	InvObject _guidanceModule;
+	InvObject _thrusterValve;
+	InvObject _balloonBackpack;
+	InvObject _radarMechanism;
+	InvObject _joystick;
+	InvObject _ignitor;
+	InvObject _diagnosticsDisplay;
+	InvObject _glassDome;
+	InvObject _wickLamp;			// 30
+	InvObject _scrithKey;
+	InvObject _tannerMask;
+	InvObject _pureGrainAlcohol;
+	InvObject _blueSapphire;
+	InvObject _ancientScrolls;
+	InvObject _flute;
+	InvObject _gunpowder;
+	InvObject _unused;
+	InvObject _comScanner2;
+	InvObject _superconductorWire;	// 40
+	InvObject _pillow;
+	InvObject _foodTray;
+	InvObject _laserHacksaw;
+	InvObject _photonStunner;
+	InvObject _battery;
+	InvObject _soakedFaceMask;
+	InvObject _lightBulb;
+	InvObject _alcoholLamp1;
+	InvObject _alcoholLamp2;
+	InvObject _alocholLamp3;		// 50
+	InvObject _brokenDisplay;
+	InvObject _toolbox;
 
 	Ringworld2InvObjectList();
 	void reset();
@@ -228,6 +228,7 @@ public:
 class Ringworld2Game: public Game {
 public:
 	virtual void start();
+	virtual void restartGame();
 	virtual void restart();
 	virtual void endGame(int resNum, int lineNum);
 
@@ -441,7 +442,7 @@ public:
 
 class AnimationPlayerExt: public AnimationPlayer {
 public:
-	int _v;
+	bool _isActive;
 public:
 	AnimationPlayerExt();
 
@@ -451,7 +452,7 @@ public:
 class ModalWindow: public SceneArea {
 public:
 	SceneActor _object1;
-	byte _field20;
+	int _insetCount;
 public:
 	ModalWindow();
 

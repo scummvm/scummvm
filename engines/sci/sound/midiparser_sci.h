@@ -89,6 +89,7 @@ public:
 
 protected:
 	void parseNextEvent(EventInfo &info);
+	void processEvent(const EventInfo &info, bool fireEvents = true);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
@@ -106,11 +107,6 @@ protected:
 	byte _masterVolume; // the overall master volume (same for all tracks)
 	byte _volume; // the global volume of the current track
 
-	bool _signalSet;
-	int16 _signalToSet;
-	bool _dataincAdd;
-	int16 _dataincToAdd;
-	bool _jumpToHoldTick;
 	bool _resetOnPause;
 
 	bool _channelUsed[16];

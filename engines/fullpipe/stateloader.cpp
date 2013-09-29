@@ -37,7 +37,7 @@
 namespace Fullpipe {
 
 bool FullpipeEngine::loadGam(const char *fname, int scene) {
-	_gameLoader = new CGameLoader();
+	_gameLoader = new GameLoader();
 
 	if (!_gameLoader->loadFile(fname))
 		return false;
@@ -54,7 +54,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	_inventory->rebuildItemRects();
 
-	for (CPtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
+	for (PtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
 		((MemoryObject *)((PictureObject *)*p)->_picture)->load();
 	}
 
@@ -145,7 +145,7 @@ GameProject::~GameProject() {
 	free(_headerFilename);
 }
 
-CGameVar::CGameVar() {
+GameVar::GameVar() {
 	_subVars = 0;
 	_parentVarObj = 0;
 	_nextVarObj = 0;
@@ -156,7 +156,7 @@ CGameVar::CGameVar() {
 	_varName = 0;
 }
 
-bool CGameVar::load(MfcArchive &file) {
+bool GameVar::load(MfcArchive &file) {
 	_varName = file.readPascalString();
 	_varType = file.readUint32LE();
 
@@ -184,18 +184,18 @@ bool CGameVar::load(MfcArchive &file) {
 	}
 
 	file.incLevel();
-	_parentVarObj = (CGameVar *)file.readClass();
-	_prevVarObj = (CGameVar *)file.readClass();
-	_nextVarObj = (CGameVar *)file.readClass();
-	_field_14 = (CGameVar *)file.readClass();
-	_subVars = (CGameVar *)file.readClass();
+	_parentVarObj = (GameVar *)file.readClass();
+	_prevVarObj = (GameVar *)file.readClass();
+	_nextVarObj = (GameVar *)file.readClass();
+	_field_14 = (GameVar *)file.readClass();
+	_subVars = (GameVar *)file.readClass();
 	file.decLevel();
 
 	return true;
 }
 
-CGameVar *CGameVar::getSubVarByName(const char *name) {
-	CGameVar *sv = 0;
+GameVar *GameVar::getSubVarByName(const char *name) {
+	GameVar *sv = 0;
 
 	if (_subVars != 0) {
 		sv = _subVars;
@@ -205,8 +205,8 @@ CGameVar *CGameVar::getSubVarByName(const char *name) {
 	return sv;
 }
 
-bool CGameVar::setSubVarAsInt(const char *name, int value) {
-	CGameVar *var = getSubVarByName(name);
+bool GameVar::setSubVarAsInt(const char *name, int value) {
+	GameVar *var = getSubVarByName(name);
 
 	if (var) {
 		if (var->_varType == 0) {
@@ -217,7 +217,7 @@ bool CGameVar::setSubVarAsInt(const char *name, int value) {
 		return false;
 	}
 
-	var = new CGameVar();
+	var = new GameVar();
 	var->_varType = 0;
 	var->_value.intValue = value;
 	var->_varName = (char *)calloc(strlen(name) + 1, 1);
@@ -226,8 +226,8 @@ bool CGameVar::setSubVarAsInt(const char *name, int value) {
 	return addSubVar(var);
 }
 
-int CGameVar::getSubVarAsInt(const char *name) {
-	CGameVar *var = getSubVarByName(name);
+int GameVar::getSubVarAsInt(const char *name) {
+	GameVar *var = getSubVarByName(name);
 
 	if (var)
 		return var->_value.intValue;
@@ -235,11 +235,11 @@ int CGameVar::getSubVarAsInt(const char *name) {
 		return 0;
 }
 
-CGameVar *CGameVar::addSubVarAsInt(const char *name, int value) {
+GameVar *GameVar::addSubVarAsInt(const char *name, int value) {
 	if (getSubVarByName(name)) {
 		return 0;
 	} else {
-		CGameVar *var = new CGameVar();
+		GameVar *var = new GameVar();
 
 		var->_varType = 0;
 		var->_value.intValue = value;
@@ -251,11 +251,11 @@ CGameVar *CGameVar::addSubVarAsInt(const char *name, int value) {
 	}
 }
 
-bool CGameVar::addSubVar(CGameVar *subvar) {
-	CGameVar *var = _subVars;
+bool GameVar::addSubVar(GameVar *subvar) {
+	GameVar *var = _subVars;
 
 	if (var) {
-		for (CGameVar *i = var->_nextVarObj; i; i = i->_nextVarObj)
+		for (GameVar *i = var->_nextVarObj; i; i = i->_nextVarObj)
 			var = i;
 
 		var->_nextVarObj = subvar;
@@ -273,9 +273,9 @@ bool CGameVar::addSubVar(CGameVar *subvar) {
 	return false;
 }
 
-int CGameVar::getSubVarsCount() {
+int GameVar::getSubVarsCount() {
 	int res;
-	CGameVar *sub = _subVars;
+	GameVar *sub = _subVars;
 
 	for (res = 0; sub; res++)
 		sub = sub->_nextVarObj;
@@ -283,8 +283,8 @@ int CGameVar::getSubVarsCount() {
 	return res;
 }
 
-CGameVar *CGameVar::getSubVarByIndex(int idx) {
-	CGameVar *sub = _subVars;
+GameVar *GameVar::getSubVarByIndex(int idx) {
+	GameVar *sub = _subVars;
 
 	while (idx--) {
 		sub = sub->_nextVarObj;

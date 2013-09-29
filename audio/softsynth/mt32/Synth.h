@@ -343,8 +343,16 @@ private:
 
 	MIDIDelayMode midiDelayMode;
 	DACInputMode dacInputMode;
+
+#if MT32EMU_USE_FLOAT_SAMPLES
 	float outputGain;
 	float reverbOutputGain;
+#else
+	int outputGain;
+	int reverbOutputGain;
+#endif
+
+	bool reversedStereoEnabled;
 
 	bool isOpen;
 
@@ -476,6 +484,9 @@ public:
 	// Ignored in DACInputMode_PURE
 	void setReverbOutputGain(float);
 	float getReverbOutputGain() const;
+
+	void setReversedStereoEnabled(bool enabled);
+	bool isReversedStereoEnabled();
 
 	// Renders samples to the specified output stream.
 	// The length is in frames, not bytes (in 16-bit stereo,

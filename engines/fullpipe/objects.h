@@ -69,27 +69,27 @@ union VarValue {
 	char *stringValue;
 };
 
-class CGameVar : public CObject {
+class GameVar : public CObject {
  public:
-	CGameVar *_nextVarObj;
-	CGameVar *_prevVarObj;
-	CGameVar *_parentVarObj;
-	CGameVar *_subVars;
-	CGameVar *_field_14;
+	GameVar *_nextVarObj;
+	GameVar *_prevVarObj;
+	GameVar *_parentVarObj;
+	GameVar *_subVars;
+	GameVar *_field_14;
 	char *_varName;
 	VarValue _value;
 	int _varType;
 
  public:
-	CGameVar();
+	GameVar();
 	virtual bool load(MfcArchive &file);
-	CGameVar *getSubVarByName(const char *name);
+	GameVar *getSubVarByName(const char *name);
 	bool setSubVarAsInt(const char *name, int value);
 	int getSubVarAsInt(const char *name);
-	CGameVar *addSubVarAsInt(const char *name, int value);
-	bool addSubVar(CGameVar *subvar);
+	GameVar *addSubVarAsInt(const char *name, int value);
+	bool addSubVar(GameVar *subvar);
 	int getSubVarsCount();
-	CGameVar *getSubVarByIndex(int idx);
+	GameVar *getSubVarByIndex(int idx);
 };
 
 } // End of namespace Fullpipe

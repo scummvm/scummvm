@@ -2,6 +2,9 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.7.0 (????-??-??)
+ General:
+   - Updated MT-32 emulation code to version 1.3.0.
+
  Gob:
    - Improved video quality in Urban Runner
 

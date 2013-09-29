@@ -59,6 +59,58 @@ struct SciScriptSignature {
 //  - rinse and repeat
 
 // ===========================================================================
+// Conquests of Camelot
+// At the bazaar in Jerusalem, it's possible to see a girl taking a shower.
+//  If you get too close, you get warned by the father - if you don't get away,
+//  he will kill you.
+// Instead of walking there manually, it's also possible to enter "look window"
+//  and ego will automatically walk to the window. It seems that this is something
+//  that wasn't properly implemented, because instead of getting killed, you will
+//  get an "Oops" message in Sierra SCI.
+//
+// This is caused by peepingTom in script 169 not getting properly initialized.
+// peepingTom calls the object behind global b9h. This global variable is
+//  properly initialized, when walking there manually (method fawaz::doit).
+// When you instead walk there automatically (method fawaz::handleEvent), that
+//  global isn't initialized, which then results in the Oops-message in Sierra SCI
+//  and an error message in ScummVM/SCI.
+//
+// We fix the script by patching in a jump to the proper code inside fawaz::doit.
+// Responsible method: fawaz::handleEvent
+// Fixes bug #3614969
+const byte camelotSignaturePeepingTom[] = {
+	5,
+	0x72, 0x7e, 0x07,  // lofsa fawaz <-- start of proper initializion code
+	0xa1, 0xb9,        // sag b9h
+	+255, 0,
+	+255, 0,
+	+61, 19,           // skip 571 bytes
+	0x39, 0x7a,        // pushi 7a <-- initialization code when walking automatically
+	0x78,              // push1
+	0x7a,              // push2
+	0x38, 0xa9, 0x00,  // pushi 00a9 - script 169
+	0x78,              // push1
+	0x43, 0x02, 0x04,  // call kScriptID
+	0x36,              // push
+	0x81, 0x00,        // lag 00
+	0x4a, 0x06,        // send 06
+	0x32, 0x20, 0x05,  // jmp [end of fawaz::handleEvent]
+	0
+};
+
+const uint16 camelotPatchPeepingTom[] = {
+	PATCH_ADDTOOFFSET | +576,
+	0x32, 0xbd, 0xfd,  // jmp to fawaz::doit / properly init peepingTom code
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                 adjust
+const SciScriptSignature camelotSignatures[] = {
+	{    62, "fix peepingTom Sierra bug", 1, PATCH_MAGICDWORD(0x7e, 0x07, 0xa1, 0xb9), -1, camelotSignaturePeepingTom, camelotPatchPeepingTom },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // stayAndHelp::changeState (0) is called when ego swims to the left or right
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
@@ -742,6 +794,48 @@ const SciScriptSignature longbowSignatures[] = {
 };
 
 // ===========================================================================
+// Leisure Suit Larry 2
+// On the plane, Larry is able to wear the parachute. This grants 4 points.
+// In early versions of LSL2, it was possible to get "unlimited" points by
+//  simply wearing it multiple times.
+// They fixed it in later versions by remembering, if the parachute was already
+//  used before.
+// But instead of adding it properly, it seems they hacked the script / forgot
+//  to replace script 0 as well, which holds information about how many global
+//  variables are allocated at the start of the game.
+// The script tries to read an out-of-bounds global variable, which somewhat
+//  "worked" in SSCI, but ScummVM/SCI doesn't allow that.
+// That's why those points weren't granted here at all.
+// We patch the script to use global 90, which seems to be unused in the whole game.
+// Responsible method: rm63Script::handleEvent
+// Fixes bug #3614419
+const byte larry2SignatureWearParachutePoints[] = {
+	16,
+	0x35, 0x01,       // ldi 01
+	0xa1, 0x8e,       // sag 8e
+	0x80, 0xe0, 0x01, // lag 1e0
+	0x18,             // not
+	0x30, 0x0f, 0x00, // bnt [don't give points]
+	0x35, 0x01,       // ldi 01
+	0xa0, 0xe0, 0x01, // sag 1e0
+	0
+};
+
+const uint16 larry2PatchWearParachutePoints[] = {
+	PATCH_ADDTOOFFSET | +4,
+	0x80, 0x5a, 0x00, // lag 5a (global 90)
+	PATCH_ADDTOOFFSET | +6,
+	0xa0, 0x5a, 0x00, // sag 5a (global 90)
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature larry2Signatures[] = {
+	{     63, "plane: no points for wearing plane",          1, PATCH_MAGICDWORD(0x8e, 0x80, 0xe0, 0x01),    -3, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // this is called on every death dialog. Problem is at least the german
 //  version of lsl6 gets title text that is far too long for the
 //  available temp space resulting in temp space corruption
@@ -864,6 +958,68 @@ const SciScriptSignature mothergoose256Signatures[] = {
 	{      0, "replay save issue",                           1, PATCH_MAGICDWORD(0x20, 0x04, 0xa1, 0xb3),    -2, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
 	{      0, "save limit dialog (SCI1.1)",                  1, PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
 	{    994, "save limit dialog (SCI1)",                    1, PATCH_MAGICDWORD(0xb3, 0x35, 0x0d, 0x20),    -1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Police Quest 1 VGA
+// When at the police station, you can put or get your gun from your locker.
+// The script, that handles this, is buggy. It disposes the gun as soon as
+//  you click, but then waits 2 seconds before it also closes the locker.
+// Problem is that it's possible to click again, which then results in a
+//  disposed object getting accessed. This happened to work by pure luck in
+//  SSCI.
+// This patch changes the code, so that the gun is actually given away
+//  when the 2 seconds have passed and the locker got closed.
+// Responsible method: putGun::changeState (script 341)
+// Fixes bug #3036933 / #3303802
+const byte pq1vgaSignaturePutGunInLockerBug[] = {
+	5,
+	0x35, 0x00,       // ldi 00
+	0x1a,             // eq?
+	0x31, 0x25,       // bnt [next state check]
+	+22, 29,          // [skip 22 bytes]
+	0x38, 0x5f, 0x01, // pushi 15fh
+	0x78,             // push1
+	0x76,             // push0
+	0x81, 0x00,       // lag 00
+	0x4a, 0x06,       // send 06 - ego::put(0)
+	0x35, 0x02,       // ldi 02
+	0x65, 0x1c,       // aTop 1c (set timer to 2 seconds)
+	0x33, 0x0e,       // jmp [end of method]
+	0x3c,             // dup --- next state check target
+	0x35, 0x01,       // ldi 01
+	0x1a,             // eq?
+	0x31, 0x08,       // bnt [end of method]
+	0x39, 0x6f,       // pushi 6fh
+	0x76,             // push0
+	0x72, 0x88, 0x00, // lofsa 0088
+	0x4a, 0x04,       // send 04 - locker::dispose
+	0
+};
+
+const uint16 pq1vgaPatchPutGunInLockerBug[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x31, 0x1c,       // bnt [next state check]
+	PATCH_ADDTOOFFSET | +22,
+	0x35, 0x02,       // ldi 02
+	0x65, 0x1c,       // aTop 1c (set timer to 2 seconds)
+	0x33, 0x17,       // jmp [end of method]
+	0x3c,             // dup --- next state check target
+	0x35, 0x01,       // ldi 01
+	0x1a,             // eq?
+	0x31, 0x11,       // bnt [end of method]
+	0x38, 0x5f, 0x01, // pushi 15fh
+	0x78,             // push1
+	0x76,             // push0
+	0x81, 0x00,       // lag 00
+	0x4a, 0x06,       // send 06 - ego::put(0)
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature pq1vgaSignatures[] = {
+	{    341, "put gun in locker bug",                       1, PATCH_MAGICDWORD(0x38, 0x5f, 0x01, 0x78),   -27, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -995,14 +1151,75 @@ const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 	PATCH_END
 };
 
+// Typo in the original Sierra scripts
+// Looking at a cheetaur resulted in a text about a Saurus Rex
+// The code treats both monster types the same.
+// Responsible method: smallMonster::doVerb
+// Fixes bug #3604943.
+const byte qfg1vgaSignatureCheetaurDescription[] = {
+	16,
+	0x34, 0xb8, 0x01, // ldi 01b8
+	0x1a,             // eq?
+	0x31, 0x16,       // bnt 16
+	0x38, 0x27, 0x01, // pushi 0127
+	0x39, 0x06,       // pushi 06
+	0x39, 0x03,       // pushi 03
+	0x78,             // push1
+	0x39, 0x12,       // pushi 12 -> monster type Saurus Rex
+	0
+};
+
+const uint16 qfg1vgaPatchCheetaurDescription[] = {
+	PATCH_ADDTOOFFSET | +14,
+	0x39, 0x11,       // pushi 11 -> monster type cheetaur
+	PATCH_END
+};
+
+// In the "funny" room (Yorick's room) in QfG1 VGA, pulling the chain and
+//  then pressing the button on the right side of the room results in
+//  a broken game. This also happens in SSCI.
+// Problem is that the Sierra programmers forgot to disable the door, that
+//  gets opened by pulling the chain. So when ego falls down and then
+//  rolls through the door, one method thinks that the player walks through
+//  it and acts that way and the other method is still doing the roll animation.
+// Local 5 of that room is a timer, that closes the door (object door11).
+// Setting it to 1 during happyFace::changeState(0) stops door11::doit from
+//  calling goTo6::init, so the whole issue is stopped from happening.
+// Responsible method: happyFace::changeState, door11::doit
+// Fixes bug #3585793
+const byte qfg1vgaSignatureFunnyRoomFix[] = {
+	14,
+	0x65, 0x14,       // aTop 14 (state)
+	0x36,             // push
+	0x3c,             // dup
+	0x35, 0x00,       // ldi 00
+	0x1a,             // eq?
+	0x30, 0x25, 0x00, // bnt 0025 [-> next state]
+	0x35, 0x01,       // ldi 01
+	0xa3, 0x4e,       // sal 4e
+	0
+};
+
+const uint16 qfg1vgaPatchFunnyRoomFix[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x2e, 0x29, 0x00, // bt 0029 [-> next state] - saves 4 bytes
+	0x35, 0x01,       // ldi 01
+	0xa3, 0x4e,       // sal 4e
+	0xa3, 0x05,       // sal 05 (sets local 5 to 1)
+	0xa3, 0x05,       // and again to make absolutely sure (actually to waste 2 bytes)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
-	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
-	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
-	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,         qfg1vgaPatchTempSpace },
-	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,      qfg1vgaPatchDialogHeader },
-	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,     qfg1vgaPatchMoveToCrusher },
-	{     41, "moving to castle gate",                       1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCastleGate,  qfg1vgaPatchMoveToCastleGate },
+	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
+	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
+	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
+	{     41, "moving to castle gate",                       1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
+	{    210, "cheetaur description fixed",                  1, PATCH_MAGICDWORD(0x34, 0xb8, 0x01, 0x1a),     0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
+	{     96, "funny room script bug fixed",                 1, PATCH_MAGICDWORD(0x35, 0x01, 0xa3, 0x4e),   -10, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1250,6 +1467,32 @@ const SciScriptSignature sq4Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+// When you leave Ulence Flats, another timepod is supposed to appear.
+// On fast machines, that timepod appears fully immediately and then
+//  starts to appear like it should be. That first appearance is caused
+//  by the scripts setting an invalid cel number and the machine being
+//  so fast that there is no time for another script to actually fix
+//  the cel number. On slower machines, the cel number gets fixed
+//  by the cycler and that's why only fast machines are affected.
+//  The same issue happens in Sierra SCI.
+// We simply set the correct starting cel number to fix the bug.
+// Responsible method: robotIntoShip::changeState(9)
+const byte sq1vgaSignatureUlenceFlatsTimepodGfxGlitch[] = {
+	8,
+	0x39, 0x07,       // pushi 07 (ship::cel)
+	0x78,             // push1
+	0x39, 0x0a,       // pushi 0x0a (set ship::cel to 10)
+	0x38, 0xa0, 0x00, // pushi 0x00a0 (ship::setLoop)
+	0
+};
+
+const uint16 sq1vgaPatchUlenceFlatsTimepodGfxGlitch[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x39, 0x09,       // pushi 0x09 (set ship::cel to 9)
+	PATCH_END
+};
+
 const byte sq1vgaSignatureEgoShowsCard[] = {
 	25,
 	0x38, 0x46, 0x02, // push 0x246 (set up send frame to set timesShownID)
@@ -1267,7 +1510,8 @@ const byte sq1vgaSignatureEgoShowsCard[] = {
 	0x36,             // push      (wrong, acc clobbered by class, above)
 	0x35, 0x03,       // ldi 0x03
 	0x22,             // lt?
-	0};
+	0
+};
 
 // Note that this script patch is merely a reordering of the
 // instructions in the original script.
@@ -1287,13 +1531,14 @@ const uint16 sq1vgaPatchEgoShowsCard[] = {
 	0x4a, 0x06,       // send 0x06 (set timesShownID)
 	0x35, 0x03,       // ldi 0x03
 	0x22,             // lt?
-	PATCH_END};
+	PATCH_END
+};
 
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature sq1vgaSignatures[] = {
-	{   58, "Sarien armory droid zapping ego first time", 1, PATCH_MAGICDWORD( 0x72, 0x88, 0x15, 0x36 ), -70,
-		sq1vgaSignatureEgoShowsCard, sq1vgaPatchEgoShowsCard },
+	{     45, "Ulence Flats: timepod graphic glitch",        1, PATCH_MAGICDWORD( 0x07, 0x78, 0x39, 0x0a ),  -1,       sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
+	{     58, "Sarien armory droid zapping ego first time",  1, PATCH_MAGICDWORD( 0x72, 0x88, 0x15, 0x36 ), -70,       sq1vgaSignatureEgoShowsCard, sq1vgaPatchEgoShowsCard },
 
 	SCI_SIGNATUREENTRY_TERMINATOR};
 
@@ -1389,6 +1634,9 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
 	switch (g_sci->getGameId()) {
+	case GID_CAMELOT:
+		signatureTable = camelotSignatures;
+		break;
 	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
 		break;
@@ -1420,11 +1668,17 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 	case GID_LONGBOW:
 		signatureTable = longbowSignatures;
 		break;
+	case GID_LSL2:
+		signatureTable = larry2Signatures;
+		break;
 	case GID_LSL6:
 		signatureTable = larry6Signatures;
 		break;
 	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
+		break;
+	case GID_PQ1:
+		signatureTable = pq1vgaSignatures;
 		break;
 	case GID_QFG1VGA:
 		signatureTable = qfg1vgaSignatures;

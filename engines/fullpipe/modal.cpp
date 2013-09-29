@@ -28,30 +28,30 @@
 
 namespace Fullpipe {
 
-bool CBaseModalObject::handleMessage(ExCommand *message) {
-	warning("STUB: CBaseModalObject::handleMessage()");
+bool BaseModalObject::handleMessage(ExCommand *message) {
+	warning("STUB: BaseModalObject::handleMessage()");
 
 	return true;
 }
 
-bool CBaseModalObject::init(int counterdiff) {
-	warning("STUB: CBaseModalObject::init(%d)", counterdiff);
+bool BaseModalObject::init(int counterdiff) {
+	warning("STUB: BaseModalObject::init(%d)", counterdiff);
 
 	return true;
 }
 
-bool CBaseModalObject::update() {
-	warning("STUB: CBaseModalObject::update()");
+bool BaseModalObject::update() {
+	warning("STUB: BaseModalObject::update()");
 
 	return true;
 }
 
-void CBaseModalObject::saveload() {
-	warning("STUB: CBaseModalObject::saveload()");
+void BaseModalObject::saveload() {
+	warning("STUB: BaseModalObject::saveload()");
 }
 
 
-CModalIntro::CModalIntro() {
+ModalIntro::ModalIntro() {
 	_field_8 = 0;
 	_countDown = 0;
 	_needRedraw = 0;
@@ -68,7 +68,7 @@ CModalIntro::CModalIntro() {
 	_sfxVolume = g_fullpipe->_sfxVolume;
 }
 
-bool CModalIntro::handleMessage(ExCommand *message) {
+bool ModalIntro::handleMessage(ExCommand *message) {
 	if (message->_messageKind != 17)
 		return false;
 

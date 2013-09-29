@@ -39,9 +39,9 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 	if (g_fullpipe->_currentScene)
 		sceneId = g_fullpipe->_currentScene->_sceneId;
 
-	CInteractionController *intC = getGameLoaderInteractionController();
-	for (CObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
-		CInteraction *intr = (CInteraction *)*i;
+	InteractionController *intC = getGameLoaderInteractionController();
+	for (ObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
+		Interaction *intr = (Interaction *)*i;
 
 		if (intr->_sceneId > 0 && intr->_sceneId != sceneId)
 			break;
@@ -55,17 +55,17 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 	return false;
 }
 
-bool CInteractionController::load(MfcArchive &file) {
-	debug(5, "CInteractionController::load()");
+bool InteractionController::load(MfcArchive &file) {
+	debug(5, "InteractionController::load()");
 
 	return _interactions.load(file);
 }
 
 int static_compSceneId = 0;
 
-bool CInteractionController::compareInteractions(const void *p1, const void *p2) {
-	const CInteraction *i1 = (const CInteraction *)p1;
-	const CInteraction *i2 = (const CInteraction *)p2;
+bool InteractionController::compareInteractions(const void *p1, const void *p2) {
+	const Interaction *i1 = (const Interaction *)p1;
+	const Interaction *i2 = (const Interaction *)p2;
 
 	if (i2->_sceneId < i1->_sceneId) {
 		if (i1->_sceneId != static_compSceneId)
@@ -89,13 +89,13 @@ bool CInteractionController::compareInteractions(const void *p1, const void *p2)
 	return true;
 }
 
-void CInteractionController::sortInteractions(int sceneId) {
+void InteractionController::sortInteractions(int sceneId) {
 	static_compSceneId = sceneId;
 
-	Common::sort(_interactions.begin(), _interactions.end(), CInteractionController::compareInteractions);
+	Common::sort(_interactions.begin(), _interactions.end(), InteractionController::compareInteractions);
 }
 
-bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject *obj, int invId) {
+bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject *obj, int invId) {
 	if (subj) {
 		if (!subj->isIdle() || (subj->_flags & 0x100))
 			return false;
@@ -104,16 +104,16 @@ bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject
 	if (!_interactions.size())
 		return false;
 
-	CInteraction *inter = 0;
-	CInteraction *previnter = 0;
+	Interaction *inter = 0;
+	Interaction *previnter = 0;
 	int dur = 0;
 	int mindur = 0xFFFF;
 
 	MessageQueue *mq;
 	ExCommand *ex;
 
-	for (CObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
-		CInteraction *cinter = (CInteraction *)*i;
+	for (ObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
+		Interaction *cinter = (Interaction *)*i;
 
 		if (!cinter->canInteract(subj, obj, invId))
 			continue;
@@ -394,7 +394,7 @@ LABEL_38:
 	return true;
 }
 
-CInteraction::CInteraction() {
+Interaction::Interaction() {
 	_objectId1 = 0;
 	_objectId2 = 0;
 	_staticsId1 = 0;
@@ -411,8 +411,8 @@ CInteraction::CInteraction() {
 	_actionName = 0;
 }
 
-bool CInteraction::load(MfcArchive &file) {
-	debug(5, "CInteraction::load()");
+bool Interaction::load(MfcArchive &file) {
+	debug(5, "Interaction::load()");
 
 	_objectId1 = file.readUint16LE();
 	_objectId2 = file.readUint16LE();
@@ -432,7 +432,7 @@ bool CInteraction::load(MfcArchive &file) {
 	return true;
 }
 
-bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
+bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 	if (_sceneId > 0 && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_sceneId != _sceneId)
 		return false;
 
@@ -489,7 +489,7 @@ bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 	return true;
 }
 
-bool CInteraction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
+bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 	StaticANIObject *ani = (StaticANIObject *)obj;
 
 	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1

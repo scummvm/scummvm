@@ -82,14 +82,14 @@ class ExCommand2 : public ExCommand {
 	int _pointsSize;
 };
 
-class CObjstateCommand : public CObject {
+class ObjstateCommand : public CObject {
  public:
 	ExCommand _cmd;
 	char *_objCommandName;
 	int _value;
 
  public:
-	CObjstateCommand();
+	ObjstateCommand();
 	virtual bool load(MfcArchive &file);
 };
 
@@ -99,7 +99,6 @@ class MessageQueue : public CObject {
 	int _flags;
 	char *_queueName;
 	int16 _dataId;
-	int16 _field_12;
 	CObject *_field_14;
 	Common::List<ExCommand *> _exCommands;
 	int _counter;

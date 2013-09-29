@@ -111,7 +111,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 	debug(3, "STUB Sound::setPanAndVolumeByStaticAni()");
 }
 
-void FullpipeEngine::setSceneMusicParameters(CGameVar *var) {
+void FullpipeEngine::setSceneMusicParameters(GameVar *var) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
 }
 

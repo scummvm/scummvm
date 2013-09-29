@@ -286,6 +286,26 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 
 	BaseSurface *retSurface = _gameRef->_renderer->createSurface();
 	Graphics::Surface *convertedSurface = surface->convertTo(_gameRef->_renderer->getPixelFormat());
+
+	if (_deletableFont) {
+		// Reconstruct the alpha channel of the font.
+
+		// Since we painted it with color 0xFFFFFFFF onto a black background,
+		// the alpha channel is gone, but the color value of each pixel corresponds
+		// to its original alpha value.
+
+		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
+		uint32 *pixels = (uint32 *)convertedSurface->getPixels();
+
+		// This is a Surface we created ourselves, so no empty space between rows.
+		for (int i = 0; i < surface->w * surface->h; ++i) {
+			uint8 a, r, g, b;
+			format.colorToRGB(*pixels, r, g, b);
+			a = r;
+			*pixels++ = format.ARGBToColor(a, r, g, b); 
+		}
+	}
+
 	retSurface->putSurface(*convertedSurface, true);
 	convertedSurface->free();
 	surface->free();

@@ -33,7 +33,7 @@
 
 namespace Fullpipe {
 
-CStepArray::CStepArray() {
+StepArray::StepArray() {
 	_points = 0;
 	_maxPointIndex = 0;
 	_currPointIndex = 0;
@@ -41,7 +41,7 @@ CStepArray::CStepArray() {
 	_isEos = 0;
 }
 
-CStepArray::~CStepArray() {
+StepArray::~StepArray() {
 	if (_pointsCount) {
 		for (int i = 0; i < _pointsCount; i++)
 			delete _points[i];
@@ -52,7 +52,7 @@ CStepArray::~CStepArray() {
 	}
 }
 
-void CStepArray::clear() {
+void StepArray::clear() {
 	_currPointIndex = 0;
 	_maxPointIndex = 0;
 	_isEos = 0;
@@ -63,7 +63,7 @@ void CStepArray::clear() {
 	}
 }
 
-Common::Point *CStepArray::getCurrPoint(Common::Point *point) {
+Common::Point *StepArray::getCurrPoint(Common::Point *point) {
 	if (_isEos || _points == 0) {
 		point->x = 0;
 		point->y = 0;
@@ -73,7 +73,7 @@ Common::Point *CStepArray::getCurrPoint(Common::Point *point) {
 	return point;
 }
 
-bool CStepArray::gotoNextPoint() {
+bool StepArray::gotoNextPoint() {
 	if (_currPointIndex < _maxPointIndex) {
 		_currPointIndex++;
 		return true;
@@ -547,7 +547,7 @@ void StaticANIObject::draw2() {
 }
 
 MovTable *StaticANIObject::countMovements() {
-	CGameVar *preloadSubVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
+	GameVar *preloadSubVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
 		return 0;
@@ -561,7 +561,7 @@ MovTable *StaticANIObject::countMovements() {
 		GameObject *obj = (GameObject *)_movements[i];
 		movTable->movs[i] = 2;
 
-		for (CGameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
+		for (GameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
 			if (scumm_stricmp(obj->getName(), sub->_varName) == 0) {
 				movTable->movs[i] = 1;
 				break;
@@ -573,7 +573,7 @@ MovTable *StaticANIObject::countMovements() {
 }
 
 void StaticANIObject::setSpeed(int speed) {
-	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
 
 	if (!var)
 		return;
@@ -1131,6 +1131,9 @@ Movement::Movement(Movement *src, StaticANIObject *ani) {
 	_currDynamicPhaseIndex = src->_currDynamicPhaseIndex;
 	_field_94 = 0;
 
+	_field_24 = 0;
+	_field_28 = 0;
+
 	_currMovement = src;
 	_ox = src->_ox;
 	_oy = src->_oy;
@@ -1238,6 +1241,41 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 Common::Point *Movement::getCurrDynamicPhaseXY(Common::Point &p) {
 	p.x = _currDynamicPhase->_someX;
 	p.y = _currDynamicPhase->_someY;
+
+	return &p;
+}
+
+Common::Point *Movement::calcSomeXY(Common::Point &p, int idx) {
+	int oldox = _ox;
+	int oldoy = _oy;
+	int oldidx = _currDynamicPhaseIndex;
+
+	int x = 0;
+	int y = 0;
+
+	if (!idx) {
+		Common::Point point;
+
+		_staticsObj1->getSomeXY(point);
+		int y1 = _my - point.y;
+		int x1 = _mx - point.x;
+
+		setDynamicPhaseIndex(0);
+
+		x = _currDynamicPhase->_someX + x1;
+		y = _currDynamicPhase->_someY + y1;
+	}
+
+	setOXY(x, y);
+
+	while (_currDynamicPhaseIndex != idx)
+		gotoNextFrame(0, 0);
+
+	p.x = _ox;
+	p.y = _oy;
+
+	setDynamicPhaseIndex(oldidx);
+	setOXY(oldox, oldoy);
 
 	return &p;
 }
@@ -1553,7 +1591,7 @@ bool Movement::gotoPrevFrame() {
 
 		_currDynamicPhaseIndex--;
 		if (_currDynamicPhaseIndex < 0)
-			_currDynamicPhaseIndex = _currMovement->_dynamicPhases.size() - 1;
+			_currDynamicPhaseIndex = _dynamicPhases.size() - 1;
 	}
 
 	updateCurrDynamicPhase();

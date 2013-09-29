@@ -72,6 +72,7 @@ SceneTag::SceneTag() {
 	_field_4 = 0;
 	_scene = 0;
 	_tag = 0;
+	_sceneId = 0;
 }
 
 bool SceneTag::load(MfcArchive &file) {
@@ -259,7 +260,7 @@ void Scene::init() {
 	if (_staticANIObjectList2.size() != _staticANIObjectList1.size()) {
 		_staticANIObjectList2.clear();
 
-		for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s)
+		for (PtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s)
 			_staticANIObjectList2.push_back(*s);
 	}
 }
@@ -273,7 +274,7 @@ StaticANIObject *Scene::getAniMan() {
 }
 
 StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
-	for (CPtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
+	for (PtrList::iterator s = _staticANIObjectList1.begin(); s != _staticANIObjectList1.end(); ++s) {
 		StaticANIObject *o = (StaticANIObject *)*s;
 		if (o->_id == obj && (a3 == -1 || o->_okeyCode == a3))
 			return o;
@@ -327,7 +328,7 @@ void Scene::setPictureObjectsFlag4() {
 }
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
-	for (uint i = 0; i < _picObjList.size(); i++) {
+	for (uint i = 1; i < _picObjList.size(); i++) {
 		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_okeyCode == flags)
 			return (PictureObject *)_picObjList[i];
 	}
@@ -371,16 +372,16 @@ MessageQueue *Scene::getMessageQueueByName(char *name) {
 	return 0;
 }
 
-void Scene::preloadMovements(CGameVar *var) {
-	CGameVar *preload = var->getSubVarByName("PRELOAD");
+void Scene::preloadMovements(GameVar *var) {
+	GameVar *preload = var->getSubVarByName("PRELOAD");
 	if (!preload)
 		return;
 
-	for (CGameVar *i = preload->_subVars; i; i = i->_nextVarObj) {
+	for (GameVar *i = preload->_subVars; i; i = i->_nextVarObj) {
 		StaticANIObject *ani = getStaticANIObject1ByName(i->_varName, -1);
 
 		if (ani) {
-			CGameVar *subVars = i->_subVars;
+			GameVar *subVars = i->_subVars;
 
 			if (subVars) {
 				for (;subVars; subVars = subVars->_nextVarObj) {
@@ -397,7 +398,7 @@ void Scene::preloadMovements(CGameVar *var) {
 }
 
 void Scene::initObjectCursors(const char *varname) {
-	CGameVar *cursorsVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("CURSORS");
+	GameVar *cursorsVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("CURSORS");
 
 	if (!cursorsVar || !cursorsVar->_subVars)
 		return;
@@ -405,7 +406,7 @@ void Scene::initObjectCursors(const char *varname) {
 	int maxId = 0;
 	int minId = 0xffff;
 
-	for (CGameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
+	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
 		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
 		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != 0) {
@@ -421,7 +422,7 @@ void Scene::initObjectCursors(const char *varname) {
 
 	g_fullpipe->_objectIdCursors.resize(maxId - minId + 1);
 
-	for (CGameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
+	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
 		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
 		if (!obj)
@@ -441,7 +442,7 @@ bool Scene::compareObjPriority(const void *p1, const void *p2) {
 	return false;
 }
 
-void Scene::objectList_sortByPriority(CPtrList &list) {
+void Scene::objectList_sortByPriority(PtrList &list) {
 	Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
 }
 
@@ -453,12 +454,12 @@ void Scene::draw() {
 
 	objectList_sortByPriority(_staticANIObjectList2);
 
-	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
+	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
 		((StaticANIObject *)*s)->draw2();
 	}
 
 	int priority = -1;
-	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
+	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s) {
 		drawContent(((StaticANIObject *)*s)->_priority, priority, false);
 		((StaticANIObject *)*s)->draw();
 
@@ -526,7 +527,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 void Scene::update(int counterdiff) {
 	debug(0, "Scene::update(%d)", counterdiff);
 
-	for (CPtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
+	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
 		((StaticANIObject *)*s)->update(counterdiff);
 }
 

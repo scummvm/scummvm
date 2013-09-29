@@ -155,8 +155,6 @@ protected:
 class SsScene1201Tnt : public StaticSprite {
 public:
 	SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 pointIndex, int16 clipY2);
-protected:
-	uint32 _elemIndex;
 };
 
 class Scene1201 : public Scene {

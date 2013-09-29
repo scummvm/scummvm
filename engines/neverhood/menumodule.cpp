@@ -160,7 +160,8 @@ void MenuModule::updateScene() {
 				createScene(MAKING_OF, -1);
 				break;
 			case kMainMenuToggleMusic:
-				// TODO Toggle music 0048A367
+				_vm->toggleMusic(!_vm->musicIsEnabled());
+				_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_vm->musicIsEnabled());
 				createScene(MAIN_MENU, -1);
 				break;
 			case kMainMenuDeleteGame:
@@ -353,11 +354,11 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	setPalette(0x08C0020C);
 	insertScreenMouse(0x00208084);
 
-	insertStaticSprite(0x41137051, 100);
-	insertStaticSprite(0xC10B2015, 100);
+	insertStaticSprite(0x41137051, 100);	// "Options" header text
+	insertStaticSprite(0xC10B2015, 100);	// Button texts
 
-	// TODO Only if music is enabled
-	_musicOnButton = insertStaticSprite(0x0C24C0EE, 100);
+	if (!_vm->musicIsEnabled())
+		insertStaticSprite(0x0C24C0EE, 100);	// "Music is off" button
 
 	for (uint buttonIndex = 0; buttonIndex < 9; ++buttonIndex) {
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
@@ -573,6 +574,7 @@ TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateM
 
 	_maxVisibleChars = (_rect.x2 - _rect.x1) / _fontSurface->getCharWidth();
 	_cursorPos = 0;
+	_textLabelWidget = NULL;
 
 	SetUpdateHandler(&TextEditWidget::update);
 	SetMessageHandler(&TextEditWidget::handleMessage);

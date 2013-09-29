@@ -65,12 +65,11 @@ public:
 	uint16 resourceId;
 
 	bool isQueued; // for SCI0 only!
-	bool inFastForward; // if we are currently fast-forwarding (disables any signals to scripts)
 
 	uint16 dataInc;
 	uint16 ticker;
 	uint16 signal;
-	byte priority;
+	int16 priority; // must be int16, at least in Laura Bow 1, main music (object conMusic) uses priority -1
 	uint16 loop;
 	int16 volume;
 	int16 hold;

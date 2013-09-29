@@ -70,38 +70,7 @@ protected:
 	void changeTuneStatus(int prevTuneStatus, int newTuneStatus);
 };
 
-class AsScene2803LightCord : public AnimatedSprite {
-public:
-	AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y);
-	void stPulled();
-	void stIdle();
-	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
-protected:
-	Scene *_parentScene;
-	uint32 _fileHash1, _fileHash2;
-	bool _isPulled, _isBusy;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmPulled(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2803TestTubeOne : public AnimatedSprite {
-public:
-	AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileHash1, uint32 fileHash2);
-protected:
-	uint32 _fileHash1, _fileHash2;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2803Rope : public AnimatedSprite {
-public:
-	AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmReleased(int messageNum, const MessageParam &param, Entity *sender);
-	void stReleased();
-	void stHide();
-};
+class AsScene2803LightCord;
 
 class Scene2803 : public Scene {
 public:
@@ -158,101 +127,8 @@ protected:
 	void updatePaletteArea(bool instantly);
 };
 
-class Scene2804;
-
-class SsScene2804RedButton : public StaticSprite {
-public:
-	SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene);
-protected:
-	Scene2804 *_parentScene;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene2804LightCoil : public StaticSprite {
-public:
-	SsScene2804LightCoil(NeverhoodEngine *vm);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene2804BeamCoilBody : public StaticSprite {
-public:
-	SsScene2804BeamCoilBody(NeverhoodEngine *vm);
-};
-
-class SsScene2804LightTarget : public StaticSprite {
-public:
-	SsScene2804LightTarget(NeverhoodEngine *vm);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene2804Flash : public StaticSprite {
-public:
-	SsScene2804Flash(NeverhoodEngine *vm);
-	void show();
-};
-
-class AsScene2804CrystalWaves : public AnimatedSprite {
-public:
-	AsScene2804CrystalWaves(NeverhoodEngine *vm, uint crystalIndex);
-	void show();
-	void hide();
-protected:
-	uint _crystalIndex;
-};
-
-class AsScene2804Crystal : public AnimatedSprite {
-public:
-	AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWaves *asCrystalWaves, uint crystalIndex);
-	void show();
-	void hide();
-	void activate();
-	int16 getColorNum() const { return _colorNum; }
-protected:
-	AsScene2804CrystalWaves *_asCrystalWaves;
-	uint _crystalIndex;
-	int16 _colorNum;
-	bool _isLightOn;
-	bool _isShowing;
-};
-
-class SsScene2804CrystalButton : public StaticSprite {
-public:
-	SsScene2804CrystalButton(NeverhoodEngine *vm, Scene2804 *parentScene, AsScene2804Crystal *asCrystal, uint crystalIndex);
-protected:
-	Scene2804 *_parentScene;
-	AsScene2804Crystal *_asCrystal;
-	uint _crystalIndex;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2804BeamCoil : public AnimatedSprite {
-public:
-	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody);
-	virtual ~AsScene2804BeamCoil();
-protected:
-	Scene *_parentScene;
-	SsScene2804BeamCoilBody *_ssBeamCoilBody;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void show();
-	void hide();
-	void stBeaming();
-	uint32 hmBeaming(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2804BeamTarget : public AnimatedSprite {
-public:
-	AsScene2804BeamTarget(NeverhoodEngine *vm);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
+class SsScene2804Flash;
+class AsScene2804Crystal;
 
 class Scene2804 : public Scene {
 public:
@@ -284,13 +160,6 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class AsScene2806Spew : public AnimatedSprite {
-public:
-	AsScene2806Spew(NeverhoodEngine *vm);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 class Scene2806 : public Scene {
 public:
 	Scene2806(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -315,63 +184,8 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class SsScene2808Dispenser : public StaticSprite {
-public:
-	SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex);
-	void startCountdown(int index);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	int _testTubeSetNum, _testTubeIndex;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2808TestTube : public AnimatedSprite {
-public:
-	AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, SsScene2808Dispenser *ssDispenser);
-	void fill();
-	void flush();
-	uint32 getFillLevel() const { return _fillLevel; }
-protected:
-	SsScene2808Dispenser *_ssDispenser;
-	int _testTubeSetNum;
-	uint32 _fillLevel;
-	int _testTubeIndex;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2808Handle : public AnimatedSprite {
-public:
-	AsScene2808Handle(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum);
-	void activate();
-	void stActivated();
-protected:
-	Scene *_parentScene;
-	int _testTubeSetNum;
-	bool _isActivated;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmActivating(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2808Flow : public AnimatedSprite {
-public:
-	AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum);
-	void start();
-	void stKeepFlowing();
-protected:
-	Scene *_parentScene;
-	int _testTubeSetNum;
-	uint32 hmFlowing(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2808LightEffect : public AnimatedSprite {
-public:
-	AsScene2808LightEffect(NeverhoodEngine *vm, int which);
-protected:
-	int _countdown;
-	void update();
-};
+class AsScene2808Flow;
+class AsScene2808TestTube;
 
 class Scene2808 : public Scene {
 public:
@@ -387,13 +201,6 @@ protected:
 	void update();
 	bool isMixtureGood();
 	bool isAnyTestTubeFilled();
-};
-
-class AsScene2809Spew : public AnimatedSprite {
-public:
-	AsScene2809Spew(NeverhoodEngine *vm);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene2809 : public Scene {
@@ -413,14 +220,6 @@ protected:
 	void findClosestPoint();
 };
 
-class AsScene2810Rope : public AnimatedSprite {
-public:
-	AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 class Scene2810 : public Scene {
 public:
 	Scene2810(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -438,31 +237,6 @@ protected:
 	NRect _clipRects[2];
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void insertKlaymenLadder();
-};
-
-class AsScene2812Winch : public AnimatedSprite {
-public:
-	AsScene2812Winch(NeverhoodEngine *vm);
-	virtual ~AsScene2812Winch();
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2812Rope : public AnimatedSprite {
-public:
-	AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmRopingDown(int messageNum, const MessageParam &param, Entity *sender);
-	void stRopingDown();
-};
-
-class AsScene2812TrapDoor : public AnimatedSprite {
-public:
-	AsScene2812TrapDoor(NeverhoodEngine *vm);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene2812 : public Scene {

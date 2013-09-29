@@ -171,7 +171,7 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 
 	_picture->load(file);
 
-	_pictureObject2List = new CPtrList();
+	_pictureObject2List = new PtrList();
 
 	int count = file.readUint16LE();
 
@@ -325,7 +325,7 @@ void GameObject::setOXY(int x, int y) {
 	_oy = y;
 }
 
-void GameObject::renumPictures(CPtrList *lst) {
+void GameObject::renumPictures(PtrList *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {

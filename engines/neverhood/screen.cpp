@@ -27,7 +27,8 @@ namespace Neverhood {
 
 Screen::Screen(NeverhoodEngine *vm)
 	: _vm(vm), _paletteData(NULL), _paletteChanged(false), _smackerDecoder(NULL),
-	_yOffset(0), _fullRefresh(false) {
+	_yOffset(0), _fullRefresh(false), _frameDelay(0), _savedSmackerDecoder(NULL),
+	_savedFrameDelay(0), _savedYOffset(0) {
 
 	_ticks = _vm->_system->getMillis();
 

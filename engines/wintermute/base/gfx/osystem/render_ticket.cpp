@@ -132,7 +132,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 			src._alphaMode = _owner->getAlphaType();
 		}
 	}
-	src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height());
+	src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height(), _transform._blendMode);
 	if (doDelete) {
 		delete clipRect;
 	}

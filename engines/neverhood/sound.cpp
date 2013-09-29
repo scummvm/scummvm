@@ -250,11 +250,24 @@ void SoundItem::update() {
 // SoundMan
 
 SoundMan::SoundMan(NeverhoodEngine *vm)
-	: _vm(vm), _soundIndex1(-1), _soundIndex2(-1), _soundIndex3(-1) {
+	: _vm(vm), _soundIndex1(-1), _soundIndex2(-1), _soundIndex3(-1),
+	  _initialCountdown(0), _playOnceAfterCountdown(false),
+	  _initialCountdown3(0), _playOnceAfterCountdown3(false) {
 }
 
 SoundMan::~SoundMan() {
+	stopAllMusic();
 	stopAllSounds();
+}
+
+void SoundMan::stopAllMusic() {
+	for (uint i = 0; i < _musicItems.size(); ++i) {
+		if (_musicItems[i]) {
+			_musicItems[i]->stopMusic(0, 0);
+			delete _musicItems[i];
+			_musicItems[i] = NULL;
+		}
+	}
 }
 
 void SoundMan::stopAllSounds() {
@@ -263,13 +276,6 @@ void SoundMan::stopAllSounds() {
 			_soundItems[i]->stopSound();
 			delete _soundItems[i];
 			_soundItems[i] = NULL;
-		}
-	}
-	for (uint i = 0; i < _musicItems.size(); ++i) {
-		if (_musicItems[i]) {
-			_musicItems[i]->stopMusic(0, 0);
-			delete _musicItems[i];
-			_musicItems[i] = NULL;
 		}
 	}
 
@@ -573,7 +579,7 @@ AudioResourceManSoundItem::AudioResourceManSoundItem(NeverhoodEngine *vm, uint32
 void AudioResourceManSoundItem::loadSound() {
 	if (!_data && _resourceHandle.isValid() &&
 		(_resourceHandle.type() == kResTypeSound || _resourceHandle.type() == kResTypeMusic)) {
-		_vm->_res->loadResource(_resourceHandle);
+		_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 		_data = _resourceHandle.data();
 	}
 }
@@ -623,7 +629,8 @@ bool AudioResourceManSoundItem::isPlaying() {
 
 AudioResourceManMusicItem::AudioResourceManMusicItem(NeverhoodEngine *vm, uint32 fileHash)
 	: _vm(vm), _fileHash(fileHash), _terminate(false), _canRestart(false),
-	_volume(100), _panning(50),	_start(false), _isFadingIn(false), _isFadingOut(false), _isPlaying(false) {
+	_volume(100), _panning(50),	_start(false), _isFadingIn(false), _isFadingOut(false), _isPlaying(false),
+	_fadeVolume(0), _fadeVolumeStep(0) {
 
 }
 
@@ -724,14 +731,7 @@ AudioResourceMan::AudioResourceMan(NeverhoodEngine *vm)
 	: _vm(vm) {
 }
 
-void AudioResourceMan::stopAllSounds() {
-	for (uint i = 0; i < _soundItems.size(); ++i) {
-		if (_soundItems[i]) {
-			_soundItems[i]->stopSound();
-			delete _soundItems[i];
-			_soundItems[i] = NULL;
-		}
-	}
+void AudioResourceMan::stopAllMusic() {
 	for (uint i = 0; i < _musicItems.size(); ++i) {
 		if (_musicItems[i]) {
 			_musicItems[i]->stopMusic(0);
@@ -741,7 +741,18 @@ void AudioResourceMan::stopAllSounds() {
 	}
 }
 
+void AudioResourceMan::stopAllSounds() {
+	for (uint i = 0; i < _soundItems.size(); ++i) {
+		if (_soundItems[i]) {
+			_soundItems[i]->stopSound();
+			delete _soundItems[i];
+			_soundItems[i] = NULL;
+		}
+	}
+}
+
 AudioResourceMan::~AudioResourceMan() {
+	stopAllMusic();
 	stopAllSounds();
 }
 

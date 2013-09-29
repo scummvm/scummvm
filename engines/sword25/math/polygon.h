@@ -169,7 +169,7 @@ public:
 	//
 
 	/// Specifies the number of Vertecies in the Vertecies array.
-	int vertexCount;
+	int32 vertexCount;
 	/// COntains the Vertecies of the polygon
 	Vertex *vertices;
 

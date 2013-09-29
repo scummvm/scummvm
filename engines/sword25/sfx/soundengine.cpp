@@ -339,7 +339,7 @@ bool SoundEngine::persist(OutputPersistenceBlock &writer) {
 			_handles[i].type = kFreeHandle;
 
 		writer.writeString(_handles[i].fileName);
-		writer.write((int)_handles[i].sndType);
+		writer.write(_handles[i].sndType);
 		writer.write(_handles[i].volume);
 		writer.write(_handles[i].pan);
 		writer.write(_handles[i].loop);
@@ -363,13 +363,13 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 		reader.read(_handles[i].id);
 
 		Common::String fileName;
-		int sndType;
+		int32 sndType;
 		float volume;
 		float pan;
 		bool loop;
-		int loopStart;
-		int loopEnd;
-		uint layer;
+		int32 loopStart;
+		int32 loopEnd;
+		uint32 layer;
 
 		reader.readString(fileName);
 		reader.read(sndType);

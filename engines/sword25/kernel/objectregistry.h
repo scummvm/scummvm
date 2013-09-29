@@ -139,12 +139,12 @@ protected:
 		}
 	};
 
-	typedef Common::HashMap<uint, T *>  HANDLE2PTR_MAP;
-	typedef Common::HashMap<T *, uint, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
+	typedef Common::HashMap<uint32, T *>  HANDLE2PTR_MAP;
+	typedef Common::HashMap<T *, uint32, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
 
 	HANDLE2PTR_MAP  _handle2PtrMap;
 	PTR2HANDLE_MAP  _ptr2HandleMap;
-	uint    _nextHandle;
+	uint32    _nextHandle;
 
 	T *findPtrByHandle(uint handle) {
 		// Zum Handle gehörigen Pointer finden.

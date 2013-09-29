@@ -53,7 +53,7 @@ bool SpriteResource::load(uint32 fileHash, bool doLoadPosition) {
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
 	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeBitmap) {
-		_vm->_res->loadResource(_resourceHandle);
+		_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 		const byte *spriteData = _resourceHandle.data();
 		NPoint *position = doLoadPosition ? &_position : NULL;
 		parseBitmapResource(spriteData, &_rle, &_dimensions, position, NULL, &_pixels);
@@ -83,7 +83,7 @@ bool PaletteResource::load(uint32 fileHash) {
 	_vm->_res->queryResource(fileHash, _resourceHandle);
 	if (_resourceHandle.isValid() &&
 		(_resourceHandle.type() == kResTypeBitmap || _resourceHandle.type() == kResTypePalette)) {
-		_vm->_res->loadResource(_resourceHandle);
+		_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 		_palette = _resourceHandle.data();
 		// Check if the palette is stored in a bitmap
 		if (_resourceHandle.type() == kResTypeBitmap)
@@ -144,7 +144,7 @@ bool AnimResource::load(uint32 fileHash) {
 	uint16 frameListStartOfs, frameCount;
 	uint32 spriteDataOfs, paletteDataOfs;
 
-	_vm->_res->loadResource(_resourceHandle);
+	_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 	resourceData = _resourceHandle.data();
 
 	animListCount = READ_LE_UINT16(resourceData);
@@ -323,7 +323,7 @@ void TextResource::load(uint32 fileHash) {
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
 	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeText) {
-		_vm->_res->loadResource(_resourceHandle);
+		_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 		_textData = _resourceHandle.data();
 		_count = READ_LE_UINT32(_textData);
 	}
@@ -359,7 +359,7 @@ void DataResource::load(uint32 fileHash) {
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
 	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeData) {
-		_vm->_res->loadResource(_resourceHandle);
+		_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 		data = _resourceHandle.data();
 		dataSize = _resourceHandle.size();
 	}

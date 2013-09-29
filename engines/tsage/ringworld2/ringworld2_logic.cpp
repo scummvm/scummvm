@@ -38,8 +38,6 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 Scene *Ringworld2Game::createScene(int sceneNumber) {
-	warning("Switching to scene %d", sceneNumber);
-
 	switch (sceneNumber) {
 	/* Scene group #0 */
 	case 50:
@@ -118,6 +116,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1100:
 		return new Scene1100();
 	case 1200:
+		// ARM Base - Air Ducts Maze
 		return new Scene1200();
 	case 1337:
 	case 1330:
@@ -162,10 +161,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains Elevator Exit
 		return new Scene1900();
 	case 1925:
+		// Spill Mountains Elevator Shaft
 		return new Scene1925();
 	case 1945:
+		// Spill Mountains Shaft Bottom
 		return new Scene1945();
 	case 1950:
+		// Flup Tube Corridor Maze
 		return new Scene1950();
 	/* Scene group #2 */
 	//
@@ -215,13 +217,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Exit
 		return new Scene2600();
 	case 2700:
-		// Forest Maze
+		// Outer Forest
 		return new Scene2700();
 	case 2750:
-		// Forest Maze
+		// Inner Forest
 		return new Scene2750();
 	case 2800:
-		// Exiting Forest
+		// Guard post
 		return new Scene2800();
 	case 2900:
 		// Balloon Cutscene
@@ -262,18 +264,19 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Room with large stasis field negator
 		return new Scene3250();
 	case 3255:
+		// Guard Post
 		return new Scene3255();
 	case 3260:
-		// Computer room
+		// ARM Base - Computer room
 		return new Scene3260();
 	case 3275:
-		// Hall
+		// ARM Base - Hall
 		return new Scene3275();
 	case 3350:
 		// Cutscene - Ship landing
 		return new Scene3350();
 	case 3375:
-		// Outer walkway
+		// Circular Walkway
 		return new Scene3375();
 	case 3385:
 		// Corridor
@@ -297,6 +300,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Desert
 		return new Scene3800();
 	case 3900:
+		// Forest Entrance
 		return new Scene3900();
 	default:
 		error("Unknown scene number - %d", sceneNumber);
@@ -375,6 +379,10 @@ void SceneExt::remove() {
 	_sceneAreas.clear();
 	Scene::remove();
 	R2_GLOBALS._uiElements._active = true;
+
+	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N && 
+			R2_GLOBALS._events.getCursor() <= SHADECURSOR_DOWN)
+		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 }
 
 void SceneExt::process(Event &event) {
@@ -777,116 +785,115 @@ bool DisplayObject::performAction(int action) {
 
 Ringworld2InvObjectList::Ringworld2InvObjectList():
 		_none(1, 1),
-		_inv1(1, 2),
-		_inv2(1, 3),
+		_optoDisk(1, 2),
+		_reader(1, 3),
 		_negatorGun(1, 4),
 		_steppingDisks(1, 5),
-		_inv5(1, 6),
-		_inv6(1, 7),
-		_inv7(1, 8),
-		_inv8(1, 9),
-		_inv9(1, 10),
-		_inv10(1, 11),
-		_inv11(1, 12),
-		_inv12(1, 13),
-		_inv13(1, 14),
-		_inv14(1, 15),
-		_inv15(1, 16),
-		_inv16(1, 17),
-		_inv17(2, 2),
-		_inv18(2, 3),
-		_inv19(2, 4),
-		_inv20(2, 5),
-		_inv21(2, 5),
-		_inv22(2, 6),
-		_inv23(2, 7),
-		_inv24(2, 8),
-		_inv25(2, 9),
-		_inv26(2, 10),
-		_inv27(2, 11),
-		_inv28(2, 12),
-		_inv29(2, 13),
-		_inv30(2, 14),
-		_inv31(2, 15),
-		_inv32(2, 16),
-		_inv33(3, 2),
-		_inv34(3, 3),
-		_inv35(3, 4),
-		_inv36(3, 5),
-		_inv37(3, 6),
-		_inv38(3, 7),
-		_inv39(1, 10),
-		_inv40(3, 8),
-		_inv41(3, 9),
-		_inv42(3, 10),
-		_inv43(3, 11),
-		_inv44(3, 12),
-		_inv45(3, 13),
-		_inv46(3, 17),
-		_inv47(3, 14),
-		_inv48(3, 14),
-		_inv49(3, 15),
-		_inv50(3, 15),
-		_inv51(3, 17),
-		_inv52(4, 2) {
+		_attractorUnit(1, 6),
+		_sensorProbe(1, 7),
+		_sonicStunner(1, 8),
+		_cableHarness(1, 9),
+		_comScanner(1, 10),
+		_spentPowerCapsule(1, 11),		// 10
+		_chargedPowerCapsule(1, 12),
+		_aerosol(1, 13),
+		_remoteControl(1, 14),
+		_opticalFibre(1, 15),
+		_clamp(1, 16),
+		_attractorHarness(1, 17),
+		_fuelCell(2, 2),
+		_gyroscope(2, 3),
+		_airbag(2, 4),
+		_rebreatherTank(2, 5),			// 20
+		_reserveTank(2, 5),
+		_guidanceModule(2, 6),
+		_thrusterValve(2, 7),
+		_balloonBackpack(2, 8),
+		_radarMechanism(2, 9),
+		_joystick(2, 10),
+		_ignitor(2, 11),
+		_diagnosticsDisplay(2, 12),
+		_glassDome(2, 13),
+		_wickLamp(2, 14),				// 30
+		_scrithKey(2, 15),
+		_tannerMask(2, 16),
+		_pureGrainAlcohol(3, 2),
+		_blueSapphire(3, 3),
+		_ancientScrolls(3, 4),
+		_flute(3, 5),
+		_gunpowder(3, 6),
+		_unused(3, 7),
+		_comScanner2(1, 10),
+		_superconductorWire(3, 8),		// 40
+		_pillow(3, 9),
+		_foodTray(3, 10),
+		_laserHacksaw(3, 11),
+		_photonStunner(3, 12),
+		_battery(3, 13),
+		_soakedFaceMask(2, 17),
+		_lightBulb(3, 14),
+		_alcoholLamp1(2, 14),
+		_alcoholLamp2(3, 15),
+		_alocholLamp3(3, 15),			// 50
+		_brokenDisplay(3, 17),
+		_toolbox(4, 2) {
 
 	// Add the items to the list
 	_itemList.push_back(&_none);
-	_itemList.push_back(&_inv1);
-	_itemList.push_back(&_inv2);
+	_itemList.push_back(&_optoDisk);
+	_itemList.push_back(&_reader);
 	_itemList.push_back(&_negatorGun);
 	_itemList.push_back(&_steppingDisks);
-	_itemList.push_back(&_inv5);
-	_itemList.push_back(&_inv6);
-	_itemList.push_back(&_inv7);
-	_itemList.push_back(&_inv8);
-	_itemList.push_back(&_inv9);
-	_itemList.push_back(&_inv10);
-	_itemList.push_back(&_inv11);
-	_itemList.push_back(&_inv12);
-	_itemList.push_back(&_inv13);
-	_itemList.push_back(&_inv14);
-	_itemList.push_back(&_inv15);
-	_itemList.push_back(&_inv16);
-	_itemList.push_back(&_inv17);
-	_itemList.push_back(&_inv18);
-	_itemList.push_back(&_inv19);
-	_itemList.push_back(&_inv20);
-	_itemList.push_back(&_inv21);
-	_itemList.push_back(&_inv22);
-	_itemList.push_back(&_inv23);
-	_itemList.push_back(&_inv24);
-	_itemList.push_back(&_inv25);
-	_itemList.push_back(&_inv26);
-	_itemList.push_back(&_inv27);
-	_itemList.push_back(&_inv28);
-	_itemList.push_back(&_inv29);
-	_itemList.push_back(&_inv30);
-	_itemList.push_back(&_inv31);
-	_itemList.push_back(&_inv32);
-	_itemList.push_back(&_inv33);
-	_itemList.push_back(&_inv34);
-	_itemList.push_back(&_inv35);
-	_itemList.push_back(&_inv36);
-	_itemList.push_back(&_inv37);
-	_itemList.push_back(&_inv38);
-	_itemList.push_back(&_inv39);
-	_itemList.push_back(&_inv40);
-	_itemList.push_back(&_inv41);
-	_itemList.push_back(&_inv42);
-	_itemList.push_back(&_inv43);
-	_itemList.push_back(&_inv44);
-	_itemList.push_back(&_inv45);
-	_itemList.push_back(&_inv46);
-	_itemList.push_back(&_inv47);
-	_itemList.push_back(&_inv48);
-	_itemList.push_back(&_inv49);
-	_itemList.push_back(&_inv50);
-	_itemList.push_back(&_inv51);
-	_itemList.push_back(&_inv52);
+	_itemList.push_back(&_attractorUnit);
+	_itemList.push_back(&_sensorProbe);
+	_itemList.push_back(&_sonicStunner);
+	_itemList.push_back(&_cableHarness);
+	_itemList.push_back(&_comScanner);
+	_itemList.push_back(&_spentPowerCapsule);	// 10
+	_itemList.push_back(&_chargedPowerCapsule);
+	_itemList.push_back(&_aerosol);
+	_itemList.push_back(&_remoteControl);
+	_itemList.push_back(&_opticalFibre);
+	_itemList.push_back(&_clamp);
+	_itemList.push_back(&_attractorHarness);
+	_itemList.push_back(&_fuelCell);
+	_itemList.push_back(&_gyroscope);
+	_itemList.push_back(&_airbag);
+	_itemList.push_back(&_rebreatherTank);		// 20
+	_itemList.push_back(&_reserveTank);
+	_itemList.push_back(&_guidanceModule);
+	_itemList.push_back(&_thrusterValve);
+	_itemList.push_back(&_balloonBackpack);
+	_itemList.push_back(&_radarMechanism);
+	_itemList.push_back(&_joystick);
+	_itemList.push_back(&_ignitor);
+	_itemList.push_back(&_diagnosticsDisplay);
+	_itemList.push_back(&_glassDome);
+	_itemList.push_back(&_wickLamp);			// 30
+	_itemList.push_back(&_scrithKey);
+	_itemList.push_back(&_tannerMask);
+	_itemList.push_back(&_pureGrainAlcohol);
+	_itemList.push_back(&_blueSapphire);
+	_itemList.push_back(&_ancientScrolls);
+	_itemList.push_back(&_flute);
+	_itemList.push_back(&_gunpowder);
+	_itemList.push_back(&_unused);
+	_itemList.push_back(&_comScanner2);
+	_itemList.push_back(&_superconductorWire);	// 40
+	_itemList.push_back(&_pillow);
+	_itemList.push_back(&_foodTray);
+	_itemList.push_back(&_laserHacksaw);
+	_itemList.push_back(&_photonStunner);
+	_itemList.push_back(&_battery);
+	_itemList.push_back(&_soakedFaceMask);
+	_itemList.push_back(&_lightBulb);
+	_itemList.push_back(&_alcoholLamp1);
+	_itemList.push_back(&_alcoholLamp2);
+	_itemList.push_back(&_alocholLamp3);		// 50
+	_itemList.push_back(&_brokenDisplay);
+	_itemList.push_back(&_toolbox);
 
 	_selectedItem = NULL;
-
 }
 
 void Ringworld2InvObjectList::reset() {
@@ -1060,7 +1067,7 @@ bool Ringworld2InvObjectList::SelectItem(int objectNumber) {
 				currentItem == R2_PURE_GRAIN_ALCOHOL) {
 			R2_INVENTORY.setObjectScene(R2_TANNER_MASK, 0);
 			R2_INVENTORY.setObjectScene(R2_PURE_GRAIN_ALCOHOL, 0);
-			R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, 1);
+			R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, R2_SEEKER);
 		} else {
 			selectDefault(objectNumber);
 		}
@@ -1109,18 +1116,30 @@ void Ringworld2Game::start() {
 	if (slot >= 0)
 		R2_GLOBALS._sceneHandler->_loadGameSlot = slot;
 	else {
-		// Switch to the first game scene
+		// Switch to the first title screen
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		R2_GLOBALS._uiElements._active = true;
-		R2_GLOBALS._sceneManager.setNewScene(100);
+		R2_GLOBALS._sceneManager.setNewScene(180);
 	}
 
 	g_globals->_events.showCursor();
 }
 
+void Ringworld2Game::restartGame() {
+	if (MessageDialog::show(Ringworld2::R2_RESTART_MSG, CANCEL_BTN_STRING, YES_MSG) == 1)
+		restart();
+}
+
 void Ringworld2Game::restart() {
 	g_globals->_scenePalette.clearListeners();
 	g_globals->_soundHandler.stop();
+
+	// Reset the globals
+	g_globals->reset();
+
+	// Clear save/load slots
+	g_globals->_sceneHandler->_saveGameSlot = -1;
+	g_globals->_sceneHandler->_loadGameSlot = -1;
 
 	// Change to the first game scene
 	g_globals->_sceneManager.changeScene(100);
@@ -1298,18 +1317,18 @@ GfxSurface SceneActor::getFrame() {
 
 	// TODO: Proper effects handling
 	switch (_effect) {
-	case 0:
-	case 5:
+	case EFFECT_NONE:
+	case EFFECT_5:
 		// TODO: Figure out purpose of setting image flags to 64, and getting
 		// scene priorities -1 or _shade
 		break;
-	case 1:
+	case EFFECT_SHADED:
 		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
 		break;
-	case 2:
+	case EFFECT_2:
 		// No effect
 		break;
-	case 4:
+	case EFFECT_4:
 		break;
 	default:
 		// TODO: Default effect
@@ -1344,10 +1363,13 @@ void SceneArea::remove() {
 }
 
 void SceneArea::process(Event &event) {
+	Common::Point mousePos = event.mousePos;
+	mousePos.x += R2_GLOBALS._sceneManager._scene->_sceneBounds.left;
+
 	if (!R2_GLOBALS._insetUp && _enabled && R2_GLOBALS._events.isCursorVisible()) {
 		CursorType cursor = R2_GLOBALS._events.getCursor();
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_bounds.contains(mousePos)) {
 			// Cursor moving in bounded area
 			if (cursor != _cursorNum) {
 				_savedCursorNum = cursor;
@@ -1355,7 +1377,7 @@ void SceneArea::process(Event &event) {
 				R2_GLOBALS._events.setCursor(_cursorNum);
 			}
 			_insideArea = true;
-		} else if ((event.mousePos.y < 171) && _insideArea && (_cursorNum == cursor) &&
+		} else if ((mousePos.y < 171) && _insideArea && (_cursorNum == cursor) &&
 				(_savedCursorNum != CURSOR_NONE)) {
 			// Cursor moved outside bounded area
 			R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -1395,20 +1417,23 @@ void SceneExit::changeScene() {
 }
 
 void SceneExit::process(Event &event) {
+	Common::Point mousePos = event.mousePos;
+	mousePos.x += R2_GLOBALS._sceneManager._scene->_sceneBounds.left;
+
 	if (!R2_GLOBALS._insetUp) {
 		SceneArea::process(event);
 
 		if (_enabled) {
 			if (event.eventType == EVENT_BUTTON_DOWN) {
-				if (!_bounds.contains(event.mousePos))
+				if (!_bounds.contains(mousePos))
 					_moving = false;
 				else if (!R2_GLOBALS._player._canWalk) {
 					_moving = false;
 					changeScene();
 					event.handled = true;
 				} else {
-					Common::Point dest((_destPos.x == -1) ? event.mousePos.x : _destPos.x,
-						(_destPos.y == -1) ? event.mousePos.y : _destPos.y);
+					Common::Point dest((_destPos.x == -1) ? mousePos.x : _destPos.x,
+						(_destPos.y == -1) ? mousePos.y : _destPos.y);
 					ADD_PLAYER_MOVER(dest.x, dest.y);
 
 					_moving = true;
@@ -1491,7 +1516,7 @@ MazeUI::~MazeUI() {
 }
 
 void MazeUI::synchronize(Serializer &s) {
-	SavedObject::synchronize(s);
+	SceneObject::synchronize(s);
 
 	s.syncAsSint16LE(_resNum);
 	if (s.isLoading())
@@ -1503,7 +1528,6 @@ void MazeUI::synchronize(Serializer &s) {
 }
 
 void MazeUI::load(int resNum) {
-	postInit();
 	clear();
 	_resNum = resNum;
 
@@ -2073,7 +2097,7 @@ void AnimationPlayer::close() {
 
 	_field38 = 0;
 	if (g_globals != NULL)
-		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr, 0);
+		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr - 1, 0);
 }
 
 void AnimationPlayer::rleDecode(const byte *pSrc, byte *pDest, int size) {
@@ -2119,19 +2143,19 @@ void AnimationPlayer::getSlices() {
 /*--------------------------------------------------------------------------*/
 
 AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
-	_v = 0;
+	_isActive = false;
 	_field3A = 0;
 }
 
 void AnimationPlayerExt::synchronize(Serializer &s) {
 	AnimationPlayer::synchronize(s);
-	s.syncAsSint16LE(_v);
+	s.syncAsSint16LE(_isActive);
 }
 
 /*--------------------------------------------------------------------------*/
 
 ModalWindow::ModalWindow() {
-	_field20 = 0;
+	_insetCount = 0;
 }
 
 void ModalWindow::remove() {
@@ -2146,11 +2170,11 @@ void ModalWindow::remove() {
 void ModalWindow::synchronize(Serializer &s) {
 	SceneArea::synchronize(s);
 
-	s.syncAsByte(_field20);
+	s.syncAsByte(_insetCount);
 }
 
 void ModalWindow::process(Event &event) {
-	if (_field20 != R2_GLOBALS._insetUp)
+	if (_insetCount != R2_GLOBALS._insetUp)
 		return;
 
 	CursorType cursor = R2_GLOBALS._events.getCursor();
@@ -2182,7 +2206,7 @@ void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, 
 	_cursorNum = CURSOR_INVALID;
 	scene->_sceneAreas.push_front(this);
 	++R2_GLOBALS._insetUp;
-	_field20 = R2_GLOBALS._insetUp;
+	_insetCount = R2_GLOBALS._insetUp;
 }
 
 void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {

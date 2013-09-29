@@ -75,7 +75,7 @@ Vars::Vars() {
 }
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
-	CGameVar *sceneVar;
+	GameVar *sceneVar;
 	Common::Point sceneDim;
 
 	Scene *scene = accessScene(entrance->_sceneId);
@@ -137,21 +137,17 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_aniMan->_statics = _aniMan->getStaticsById(ST_MAN_EMPTY);
 	_aniMan->setOXY(0, 0);
 
-	if (_aniMan) {
-		_aniMan2 = _aniMan;
-		CMctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
-		cmp->initMovGraph2();
-		cmp->addObject(_aniMan);
-		cmp->setEnabled();
-		getGameLoaderInteractionController()->enableFlag24();
-		setInputDisabled(0);
-	} else {
-		_aniMan2 = 0;
-	}
+	_aniMan2 = _aniMan;
+	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
+	cmp->initMovGraph2();
+	cmp->addObject(_aniMan);
+	cmp->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
+	setInputDisabled(0);
 
 	scene->setPictureObjectsFlag4();
 
-	for (CPtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {
+	for (PtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {
 		StaticANIObject *o = (StaticANIObject *)*s;
 		o->setFlags(o->_flags & 0xFE7F);
 	}
@@ -657,7 +653,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 }
 
 void setElevatorButton(const char *name, int state) {
-	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (var)
 		var->setSubVarAsInt(name, state);
@@ -731,6 +727,8 @@ int global_messageHandler1(ExCommand *cmd) {
 			}
 			break;
 		case 36: // keydown
+			g_fullpipe->defHandleKeyDown(cmd->_keyCode);
+
 			switch (cmd->_keyCode) {
 			case '\x1B': // ESC
 				if (g_fullpipe->_currentScene) {
@@ -768,7 +766,6 @@ int global_messageHandler1(ExCommand *cmd) {
 				cmd->_messageKind = 0;
 				break;
 			default:
-				g_fullpipe->defHandleKeyDown(cmd->_keyCode);
 				break;
 			}
 			break;
@@ -1075,7 +1072,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		return doSomeAnimation2(cmd->_parentId, cmd->_keyCode);
 	case 63:
 		if (cmd->_objtype == kObjTypeObjstateCommand) {
-			CObjstateCommand *c = (CObjstateCommand *)cmd;
+			ObjstateCommand *c = (ObjstateCommand *)cmd;
 			result = 1;
 			g_fullpipe->setObjectState(c->_objCommandName, c->_value);
 		}
@@ -1312,6 +1309,63 @@ int global_messageHandler4(ExCommand *cmd) {
 	return 1;
 }
 
+int MovGraph_messageHandler(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	if (cmd->_messageNum != 33)
+		return 0;
+
+	StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
+
+	if (!getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId))
+		return 0;
+
+	if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_objtype != kObjTypeMovGraph || !ani)
+		return 0;
+
+	MovGraph *gr = (MovGraph *)getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+
+	MovGraphLink *link = 0;
+	double mindistance = 1.0e10;
+	Common::Point point;
+
+	for (ObList::iterator i = gr->_links.begin(); i != gr->_links.end(); ++i) {
+		point.x = ani->_ox;
+		point.y = ani->_oy;
+
+		double dst = gr->calcDistance(&point, (MovGraphLink *)(*i), 0);
+		if (dst >= 0.0 && dst < mindistance) {
+			mindistance = dst;
+			link = (MovGraphLink *)(*i);
+		}
+	}
+
+	int top;
+
+	if (link) {
+		MovGraphNode *node = link->_movGraphNode1;
+
+		double sq = (ani->_oy - node->_y) * (ani->_oy - node->_y) + (ani->_ox - node->_x) * (ani->_ox - node->_x);
+		int off = (node->_field_14 >> 16) & 0xFF;
+		double off2 = ((link->_movGraphNode2->_field_14 >> 8) & 0xff) - off;
+
+		top = off + (int)(sqrt(sq) * off2 / link->_distance);
+	} else {
+		top = (gr->calcOffset(ani->_ox, ani->_oy)->_field_14 >> 8) & 0xff;
+	}
+
+	if (ani->_movement) {
+		ani->_movement->_currDynamicPhase->_rect->top = 255 - top;
+		return 0;
+	}
+
+	if (ani->_statics)
+		ani->_statics->_rect->top = 255 - top;
+
+	return 0;
+}
+
 int defaultUpdateCursor() {
 	g_fullpipe->updateCursorsCommon();
 
@@ -1325,7 +1379,7 @@ int sceneIntro_updateCursor() {
 }
 
 void FullpipeEngine::setSwallowedEggsState() {
-	CGameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
+	GameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
 	g_vars->swallowedEgg1 = v->getSubVarByName(sO_Egg1);
 	g_vars->swallowedEgg2 = v->getSubVarByName(sO_Egg2);
@@ -1348,7 +1402,7 @@ void sceneIntro_initScene(Scene *sc) {
 	if (g_fullpipe->_recordEvents || g_fullpipe->_inputArFlag)
 		g_vars->sceneIntro_skipIntro = false;
 
-	g_fullpipe->_modalObject = new CModalIntro;
+	g_fullpipe->_modalObject = new ModalIntro;
 }
 
 int sceneHandlerIntro(ExCommand *cmd) {
@@ -1358,7 +1412,7 @@ int sceneHandlerIntro(ExCommand *cmd) {
 }
 
 void scene01_fixEntrance() {
-	CGameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 	if (var->getSubVarAsInt("Entrance") == TrubaLeft)
 		var->setSubVarAsInt("Entrance", TrubaRight);
 }

@@ -56,8 +56,13 @@ void SceneManager::setNewScene(int sceneNumber) {
 
 void SceneManager::checkScene() {
 	if (_nextSceneNumber != -1) {
+		int nextSceneNumber = _nextSceneNumber;
+
 		sceneChange();
-		_nextSceneNumber = -1;
+
+		// Unless we've already switched to yet another scene, reset
+		if (_nextSceneNumber == nextSceneNumber)
+			_nextSceneNumber = -1;
 	}
 
 	g_globals->dispatchSounds();
@@ -245,6 +250,14 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 			sceneChange();
 			_nextSceneNumber = -1;
 		}
+	}
+
+	// Walk regions loading
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		int walkRegionsId = GLOBALS._walkRegions._resNum;
+		s.syncAsSint16LE(walkRegionsId);
+		if (s.isLoading())
+			GLOBALS._walkRegions.load(walkRegionsId);
 	}
 
 	g_globals->_sceneManager._scrollerRect.synchronize(s);

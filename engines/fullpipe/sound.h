@@ -29,7 +29,6 @@ class Sound : public MemoryObject {
 	int _id;
 	char *_description;
 	int16 _objectId;
-	int16 _field_32;
 	int _directSoundBuffer;
 	int _directSoundBuffers[7];
 	byte *_soundData;

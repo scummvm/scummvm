@@ -171,7 +171,7 @@ bool RenderObjectManager::persist(OutputPersistenceBlock &writer) {
 	writer.write(_frameStarted);
 
 	// Referenzen auf die TimedRenderObjects persistieren.
-	writer.write(_timedRenderObjects.size());
+	writer.write((uint32)_timedRenderObjects.size());
 	RenderObjectList::const_iterator iter = _timedRenderObjects.begin();
 	while (iter != _timedRenderObjects.end()) {
 		writer.write((*iter)->getHandle());
@@ -200,10 +200,10 @@ bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 	_timedRenderObjects.resize(0);
 
 	// Referenzen auf die TimedRenderObjects wieder herstellen.
-	uint timedObjectCount;
+	uint32 timedObjectCount;
 	reader.read(timedObjectCount);
-	for (uint i = 0; i < timedObjectCount; ++i) {
-		uint handle;
+	for (uint32 i = 0; i < timedObjectCount; ++i) {
+		uint32 handle;
 		reader.read(handle);
 		_timedRenderObjects.push_back(handle);
 	}
