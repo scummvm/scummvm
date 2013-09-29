@@ -103,18 +103,18 @@ void MenuItem::setupOption(Common::String title, char trigger, Common::String sh
 }
 
 void MenuItem::displayOption(byte y, bool highlit) {
-	Color backgroundColor;
-	if (highlit)
-		backgroundColor = kColorBlack;
-	else
-		backgroundColor = kColorLightgray;
-	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10), backgroundColor);
-
 	Common::String text = _options[y]._title;
 	while (text.size() + _options[y]._shortcut.size() < _width)
 		text += ' '; // Pad _options[y] with spaces.
 	text += _options[y]._shortcut;
 
+	Color backgroundColor;
+	if (highlit)
+		backgroundColor = kColorBlack;
+	else
+		backgroundColor = kColorLightgray;
+
+	_dr->_vm->_graphics->drawMenuBlock((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10, backgroundColor);
 	_dr->drawMenuText(_left, 4 + (y + 1) * 10, _options[y]._trigger, text, _options[y]._valid, highlit);
 }
 
@@ -128,8 +128,8 @@ void MenuItem::display() {
 	_activeNow = true;
 	_dr->_menuActive = true;
 
-	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly), _dr->kMenuBackgroundColor);
-	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((_flx1 + 1) * 8 - 1, 11, (_flx2 + 1) * 8 + 1, _fly + 1), _dr->kMenuBorderColor);
+	_dr->_vm->_graphics->_surface.fillRect(Common::Rect((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly), kMenuBackgroundColor);
+	_dr->_vm->_graphics->_surface.frameRect(Common::Rect((_flx1 + 1) * 8 - 1, 11, (_flx2 + 1) * 8 + 1, _fly + 1), kMenuBorderColor);
 
 	displayOption(0, true);
 	for (int y = 1; y < _optionNum; y++)
@@ -216,7 +216,7 @@ void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, Menu
 }
 
 void MenuBar::draw() {
-	_dr->_vm->_graphics->_surface.fillRect(Common::Rect(0, 0, 640, 10), _dr->kMenuBackgroundColor);
+	_dr->_vm->_graphics->drawMenuBar(kMenuBackgroundColor);
 
 	byte savecp = _dr->_vm->_cp;
 	_dr->_vm->_cp = 3;
@@ -312,8 +312,7 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 			byte idx = text[i];
 			font[idx][j] = _vm->_font[idx][j] & ander; // Set the font.
 			// And set the background of the text to the desired color.
-			for (int k = 0; k < 8; k++)
-				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + k, y + j) = backgroundColor;
+			_vm->_graphics->wipeChar(x * 8 + i * 8, y + j, backgroundColor);
 		}
 	}
 
@@ -327,12 +326,7 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 		for (i = 0; text[i] != trigger; i++)
 			; // Search for the character in the string.
 
-		byte pixel = ander;
-		for (int bit = 0; bit < 8; bit++) {
-			byte pixelBit = (pixel >> bit) & 1;
-			if (pixelBit)
-				*(byte *)_vm->_graphics->_surface.getBasePtr(x * 8 + i * 8 + 7 - bit, y + 8) = fontColor;
-		}
+		_vm->_graphics->drawChar(ander, x * 8 + i * 8, y + 8, fontColor);
 	}
 
 	_vm->_graphics->refreshScreen();

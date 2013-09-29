@@ -364,6 +364,14 @@ void GraphicManager::drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Commo
 	CursorMan.showMouse(true);
 }
 
+void GraphicManager::drawMenuBar(Color color) {
+	_surface.fillRect(Common::Rect(0, 0, 640, 10), color);
+}
+
+void GraphicManager::drawMenuBlock(int x1, int y1, int x2, int y2, Color color) {
+	_surface.fillRect(Common::Rect(x1, y1, x2, y2), color);
+}
+
 void GraphicManager::drawSpeedBar(int speed) {
 	if (speed == _vm->kRun) {
 		_surface.drawLine(336, 199, 338, 199, kColorLightblue);
@@ -544,6 +552,20 @@ void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[
 	drawTriangle(points, _vm->_talkBackgroundColor);
 }
 
+// And set the background of the text to the desired color.
+void GraphicManager::wipeChar(int x, int y, Color color) {
+	for (int k = 0; k < 8; k++)
+		*(byte *)_surface.getBasePtr(x + k, y) = color;
+}
+
+void GraphicManager::drawChar(byte ander, int x, int y, Color color) {
+	byte pixel = ander;
+	for (int bit = 0; bit < 8; bit++) {
+		byte pixelBit = (pixel >> bit) & 1;
+		if (pixelBit)
+			*(byte *)_surface.getBasePtr(x + 7 - bit, y) = color;
+	}
+}
 void GraphicManager::refreshScreen() {
 	// These cycles are for doubling the screen height.
 	for (uint16 y = 0; y < _screen.h / 2; y++) {

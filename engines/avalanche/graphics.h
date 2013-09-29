@@ -81,8 +81,12 @@ public:
 	void drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawShadowBox(int16 x1, int16 y1, int16 x2, int16 y2, Common::String text);
 	void drawScroll(int mx, int lx, int my, int ly);
+	void drawMenuBar(Color color);
 	void drawSpeedBar(int speed);
 	void drawBackgroundSprite(int16 x, int16 y, SpriteType &sprite);
+	void drawMenuBlock(int x1, int y1, int x2, int y2, Color color);
+	void wipeChar(int x, int y, Color color);
+	void drawChar(byte ander, int x, int y, Color color);
 
 	void clearAlso();
 	void clearTextBar();
