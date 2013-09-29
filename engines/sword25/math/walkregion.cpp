@@ -341,9 +341,9 @@ bool WalkRegion::persist(OutputPersistenceBlock &writer) {
 	Common::Array< Common::Array<int> >::const_iterator rowIter = _visibilityMatrix.begin();
 	while (rowIter != _visibilityMatrix.end()) {
 		writer.write((uint32)rowIter->size());
-		Common::Array<int32>::const_iterator colIter = rowIter->begin();
+		Common::Array<int>::const_iterator colIter = rowIter->begin();
 		while (colIter != rowIter->end()) {
-			writer.write(*colIter);
+			writer.write((int32)*colIter);
 			++colIter;
 		}
 
@@ -381,9 +381,11 @@ bool WalkRegion::unpersist(InputPersistenceBlock &reader) {
 		uint32 colCount;
 		reader.read(colCount);
 		rowIter->resize(colCount);
-		Common::Array<int32>::iterator colIter = rowIter->begin();
+		Common::Array<int>::iterator colIter = rowIter->begin();
 		while (colIter != rowIter->end()) {
-			reader.read(*colIter);
+			int32 t;
+			reader.read(t);
+			*colIter = t;
 			++colIter;
 		}
 
