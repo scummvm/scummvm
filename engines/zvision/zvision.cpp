@@ -54,7 +54,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		  _workingWindow((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2) + WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2) + WORKING_WINDOW_HEIGHT),
 		  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
 		  _desiredFrameTime(33), /* ~30 fps */
-		  _clock(_system) {
 
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
@@ -65,15 +64,13 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	// Here is the right place to set up the engine specific debug channels
 	//DebugMan.addDebugChannel(kZVisionDebugExample, "example", "this is just an example for a engine specific debug channel");
 	//DebugMan.addDebugChannel(kZVisionDebugExample2, "example2", "also an example");
+		  _clock(_system),
+		  _scriptManager(nullptr),
+		  _renderManager(nullptr),
+		  _saveManager(nullptr),
+		  _stringManager(nullptr),
+		  _cursorManager(nullptr) {
  
-	// Register random source
-	_rnd = new Common::RandomSource("zvision");
-
-	// Create managers
-	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(_system, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
-	_saveManager = new SaveManager(this);
-	_stringManager = new StringManager(this);
 	debug("ZVision::ZVision");
 }
 
@@ -122,8 +119,17 @@ void ZVision::initialize() {
 
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
 
-	// CursorManager must be created after all the directories have been added
+	// Register random source
+	_rnd = new Common::RandomSource("zvision");
+
+	// Create managers
+	_scriptManager = new ScriptManager(this);
+	_renderManager = new RenderManager(_system, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
+	_saveManager = new SaveManager(this);
+	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, &_pixelFormat);
+
+	// Initialize the managers
 	_cursorManager->initialize();
 	_scriptManager->initialize();
 	_stringManager->initialize(_gameDescription->gameId);
